@@ -175,19 +175,38 @@ jobs:
                   image = Image.open(io.BytesIO(raw))
                   image = ImageOps.exif_transpose(image)
 
-                  if image.width < 400 or image.height < 500:
+                  source_width = image.width
+                  source_height = image.height
+
+                  # TCG Collector's exact 2013 McDonald's scans are clean
+                  # but only ~320px wide. Accept genuine scans at this size,
+                  # then upscale for consistent LuckyDex rendering.
+                  if source_width < 300 or source_height < 400:
                       raise RuntimeError(
-                          f"Image unexpectedly small: {image.width}x{image.height}"
+                          f"Image unexpectedly small: {source_width}x{source_height}"
                       )
 
-                  if image.width >= image.height:
+                  if source_width >= source_height:
                       raise RuntimeError("Image is not portrait card-shaped")
 
                   if image.mode not in ("RGB", "RGBA"):
                       image = image.convert("RGBA")
 
+                  upscaled = False
+                  target_width = 640
+
+                  if image.width < target_width:
+                      target_height = round(
+                          image.height * target_width / image.width
+                      )
+                      image = image.resize(
+                          (target_width, target_height),
+                          Image.Resampling.LANCZOS
+                      )
+                      upscaled = True
+
                   buf = io.BytesIO()
-                  image.save(buf, format="WEBP", quality=92, method=6)
+                  image.save(buf, format="WEBP", quality=94, method=6)
                   final = buf.getvalue()
 
                   path = img_dir / f"{cid}.webp"
@@ -206,6 +225,9 @@ jobs:
                       "file": f"images/{cid}.webp",
                       "width": image.width,
                       "height": image.height,
+                      "source_width": source_width,
+                      "source_height": source_height,
+                      "upscaled": upscaled,
                       "bytes": len(final),
                       "sha256": sha256,
                       "provider": "tcgcollector",
@@ -214,7 +236,12 @@ jobs:
                   })
 
                   contact.append((n, name, image.copy()))
-                  print(f"OK {cid} {name} {image.width}x{image.height}")
+                  print(
+                      f"OK {cid} {name} "
+                      f"source={source_width}x{source_height} "
+                      f"stored={image.width}x{image.height} "
+                      f"upscaled={upscaled}"
+                  )
 
               except Exception as exc:
                   missing.append({
