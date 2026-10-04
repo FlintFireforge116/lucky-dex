@@ -1,0 +1,851 @@
+name: Build LuckyDex Full Card Library
+
+on:
+  workflow_dispatch:
+    inputs:
+      release_tag:
+        description: Draft release tag used to store the card packs
+        required: true
+        default: luckydex-card-art-v1
+        type: string
+  push:
+    branches:
+      - main
+    paths:
+      - '.github/workflows/build-full-card-library.yml'
+
+permissions:
+  contents: write
+
+concurrency:
+  group: luckydex-full-card-library
+  cancel-in-progress: false
+
+env:
+  RELEASE_TAG: ${{ inputs.release_tag || 'luckydex-card-art-v1' }}
+
+jobs:
+  prepare-release:
+    name: Prepare draft card-art release
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Create or reuse draft release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          if gh release view "$RELEASE_TAG" --repo "$GITHUB_REPOSITORY" >/dev/null 2>&1; then
+            echo "Reusing release $RELEASE_TAG"
+          else
+            cat > release-notes.txt <<'EOF'
+          LuckyDex card-art library build.
+
+          This release is intentionally kept as a draft while the generated library is validated.
+          Each set is a separate ZIP so LuckyDex can eventually download only the sets a user needs.
+          EOF
+            gh release create "$RELEASE_TAG" \
+              --repo "$GITHUB_REPOSITORY" \
+              --target "$GITHUB_SHA" \
+              --title "LuckyDex Card Art Library v1" \
+              --notes-file release-notes.txt \
+              --draft
+          fi
+
+  build-shards:
+    name: Build ${{ matrix.label }}
+    needs: prepare-release
+    runs-on: ubuntu-latest
+    timeout-minutes: 330
+    strategy:
+      fail-fast: false
+      max-parallel: 3
+      matrix:
+        include:
+          - key: black-white
+            label: Black & White
+            path: Black & White
+          - key: clb
+            label: CLB
+            path: CLB
+          - key: clc
+            label: CLC
+            path: CLC
+          - key: clv
+            label: CLV
+            path: CLV
+          - key: classic
+            label: Classic
+            path: Classic
+          - key: diamond-pearl
+            label: Diamond & Pearl
+            path: Diamond & Pearl
+          - key: e-card
+            label: E-Card
+            path: E-Card
+          - key: ex
+            label: EX
+            path: EX
+          - key: gym
+            label: Gym
+            path: Gym
+          - key: hgss
+            label: HeartGold & SoulSilver
+            path: HeartGold & SoulSilver
+          - key: mega-evolution
+            label: Mega Evolution
+            path: Mega Evolution
+          - key: neo
+            label: Neo
+            path: Neo
+          - key: other
+            label: Other
+            path: Other
+          - key: platinum
+            label: Platinum
+            path: Platinum
+          - key: promos
+            label: Promos
+            path: Promos
+          - key: scarlet-violet
+            label: Scarlet & Violet
+            path: Scarlet & Violet
+          - key: sun-moon
+            label: Sun & Moon
+            path: Sun & Moon
+          - key: sword-shield
+            label: Sword & Shield
+            path: Sword & Shield
+          - key: xy
+            label: XY
+            path: XY
+
+    steps:
+      - name: Check out source metadata for ${{ matrix.label }}
+        uses: actions/checkout@v4
+        with:
+          repository: type-null/PTCG-database
+          ref: main
+          path: card-db
+          fetch-depth: 1
+          sparse-checkout: |
+            data_en/${{ matrix.path }}
+          sparse-checkout-cone-mode: false
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install image tools
+        run: |
+          python -m pip install --upgrade pip
+          pip install requests pillow
+
+      - name: Build exact set packs
+        env:
+          SHARD_KEY: ${{ matrix.key }}
+          SHARD_LABEL: ${{ matrix.label }}
+          SHARD_PATH: ${{ matrix.path }}
+        run: |
+          python - <<'PY'
+          import concurrent.futures
+          import hashlib
+          import io
+          import json
+          import os
+          import re
+          import threading
+          import time
+          import zipfile
+          from collections import defaultdict
+          from pathlib import Path
+          
+          import requests
+          from PIL import Image, ImageOps
+          
+          SHARD_KEY = os.environ["SHARD_KEY"]
+          SHARD_LABEL = os.environ["SHARD_LABEL"]
+          SHARD_PATH = os.environ["SHARD_PATH"]
+          RELEASE_TAG = os.environ["RELEASE_TAG"]
+          
+          source_root = Path("card-db/data_en") / SHARD_PATH
+          out_root = Path("out") / SHARD_KEY
+          sets_root = out_root / "sets"
+          assets_root = out_root / "release-assets"
+          sets_root.mkdir(parents=True, exist_ok=True)
+          assets_root.mkdir(parents=True, exist_ok=True)
+          
+          thread_local = threading.local()
+          
+          def safe(value):
+              value = str(value or "").strip()
+              value = re.sub(r"[^A-Za-z0-9._-]+", "-", value)
+              value = re.sub(r"-+", "-", value).strip("-._")
+              return value or "unknown"
+          
+          def natural_key(value):
+              return [int(x) if x.isdigit() else x.casefold() for x in re.split(r"(\d+)", str(value))]
+          
+          def get_session():
+              if not hasattr(thread_local, "session"):
+                  s = requests.Session()
+                  s.headers.update({
+                      "User-Agent": "Mozilla/5.0 LuckyDex-Card-Asset-Builder/6.0",
+                      "Accept": "image/avif,image/webp,image/apng,image/*,*/*;q=0.8",
+                  })
+                  thread_local.session = s
+              return thread_local.session
+          
+          def fetch(url, attempts=4):
+              last = None
+              session = get_session()
+              for attempt in range(1, attempts + 1):
+                  try:
+                      r = session.get(url, timeout=35, allow_redirects=True)
+                      if r.status_code == 200:
+                          return r.content
+                      last = f"HTTP {r.status_code}"
+                  except Exception as exc:
+                      last = repr(exc)
+                  if attempt < attempts:
+                      time.sleep(attempt * 1.5)
+              raise RuntimeError(f"{url}: {last}")
+          
+          metadata_files = sorted(source_root.rglob("*.json"), key=lambda p: natural_key(str(p)))
+          if not metadata_files:
+              raise SystemExit(f"No metadata JSON files found under {source_root}")
+          
+          items = []
+          parse_failures = []
+          set_seed = {}
+          set_metadata_counts = defaultdict(int)
+          
+          for metadata_path in metadata_files:
+              try:
+                  card = json.loads(metadata_path.read_text(encoding="utf-8"))
+                  set_code = str(card.get("set_code") or card.get("set_name") or metadata_path.parent.name).strip()
+                  set_key = safe(set_code)
+                  stem = safe(metadata_path.stem)
+                  canonical_id = f"{set_key}-{stem}"
+                  set_metadata_counts[set_key] += 1
+                  if set_key not in set_seed:
+                      set_seed[set_key] = {
+                          "code": set_code,
+                          "key": set_key,
+                          "name": card.get("set_full_name") or set_code,
+                          "series": card.get("series") or SHARD_LABEL,
+                          "release_date": card.get("date"),
+                          "reported_total": card.get("set_total"),
+                          "source_directory": str(metadata_path.parent.relative_to(Path("card-db/data_en"))),
+                      }
+                  items.append({
+                      "metadata_path": metadata_path,
+                      "card": card,
+                      "set_key": set_key,
+                      "canonical_id": canonical_id,
+                      "stem": stem,
+                  })
+              except Exception as exc:
+                  parse_failures.append({
+                      "metadata_file": str(metadata_path),
+                      "error": f"metadata parse failure: {exc}",
+                  })
+          
+          print(f"{SHARD_LABEL}: {len(metadata_files)} metadata files, {len(items)} parsed")
+          
+          locks = defaultdict(threading.Lock)
+          
+          def process(item):
+              card = item["card"]
+              set_key = item["set_key"]
+              cid = item["canonical_id"]
+              img_url = card.get("img")
+              base = {
+                  "id": cid,
+                  "set": str(card.get("set_code") or card.get("set_name") or set_key),
+                  "number": str(card.get("number") or item["metadata_path"].stem),
+                  "name": str(card.get("name") or "").strip(),
+                  "print_key": card.get("print_key"),
+                  "rarity": card.get("rarity"),
+                  "source_page": card.get("url"),
+                  "source_url": img_url,
+                  "exact_print": True,
+              }
+              if not img_url:
+                  return (False, {**base, "error": "metadata has no image URL"})
+              try:
+                  raw = fetch(img_url)
+                  probe = Image.open(io.BytesIO(raw))
+                  probe.verify()
+                  image = Image.open(io.BytesIO(raw))
+                  image = ImageOps.exif_transpose(image)
+                  source_width, source_height = image.size
+                  if source_width < 180 or source_height < 250:
+                      raise RuntimeError(f"image unexpectedly small: {source_width}x{source_height}")
+                  if source_width >= source_height:
+                      raise RuntimeError(f"image is not portrait card-shaped: {source_width}x{source_height}")
+                  if image.mode not in ("RGB", "RGBA"):
+                      image = image.convert("RGBA")
+          
+                  # Keep good source resolution, but cap unusually huge scans so the
+                  # library remains practical on phones. Never upscale general cards.
+                  resized = False
+                  if image.width > 800:
+                      target_h = round(image.height * 800 / image.width)
+                      image = image.resize((800, target_h), Image.Resampling.LANCZOS)
+                      resized = True
+          
+                  set_dir = sets_root / set_key
+                  image_dir = set_dir / "images"
+                  image_dir.mkdir(parents=True, exist_ok=True)
+                  output_path = image_dir / f"{cid}.webp"
+                  buffer = io.BytesIO()
+                  image.save(buffer, format="WEBP", quality=90, method=4)
+                  final = buffer.getvalue()
+                  output_path.write_bytes(final)
+                  sha = hashlib.sha256(final).hexdigest()
+                  return (True, {
+                      **base,
+                      "file": f"images/{cid}.webp",
+                      "source_width": source_width,
+                      "source_height": source_height,
+                      "width": image.width,
+                      "height": image.height,
+                      "resized_down": resized,
+                      "bytes": len(final),
+                      "sha256": sha,
+                      "provider": "pkmncards",
+                  })
+              except Exception as exc:
+                  return (False, {**base, "error": str(exc)})
+          
+          cards_by_set = defaultdict(list)
+          missing = list(parse_failures)
+          with concurrent.futures.ThreadPoolExecutor(max_workers=6) as executor:
+              futures = [executor.submit(process, item) for item in items]
+              for idx, future in enumerate(concurrent.futures.as_completed(futures), 1):
+                  ok, result = future.result()
+                  if ok:
+                      set_key = safe(result["set"])
+                      cards_by_set[set_key].append(result)
+                  else:
+                      missing.append(result)
+                  if idx % 100 == 0 or idx == len(futures):
+                      print(f"{SHARD_LABEL}: processed {idx}/{len(futures)}")
+          
+          missing_by_set = defaultdict(list)
+          for entry in missing:
+              set_key = safe(entry.get("set") or "metadata")
+              missing_by_set[set_key].append(entry)
+          
+          set_summaries = []
+          all_warnings = []
+          
+          for set_key in sorted(set_seed, key=str.casefold):
+              info = set_seed[set_key]
+              cards = cards_by_set.get(set_key, [])
+              cards.sort(key=lambda c: natural_key(c.get("number")))
+              set_dir = sets_root / set_key
+              set_dir.mkdir(parents=True, exist_ok=True)
+          
+              hashes = defaultdict(list)
+              ids = defaultdict(int)
+              for card in cards:
+                  hashes[card["sha256"]].append(card["id"])
+                  ids[card["id"]] += 1
+              duplicate_image_groups = [v for v in hashes.values() if len(v) > 1]
+              duplicate_ids = sorted([k for k, v in ids.items() if v > 1])
+              warnings = []
+              if duplicate_ids:
+                  warnings.append({"type": "duplicate_ids", "ids": duplicate_ids})
+              if duplicate_image_groups:
+                  warnings.append({"type": "duplicate_images", "groups": duplicate_image_groups})
+              all_warnings.extend({"set": set_key, **w} for w in warnings)
+          
+              manifest = {
+                  "schema": 1,
+                  "set": info,
+                  "cards": cards,
+                  "missing": missing_by_set.get(set_key, []),
+                  "warnings": warnings,
+                  "summary": {
+                      "metadata_records": set_metadata_counts[set_key],
+                      "downloaded": len(cards),
+                      "missing": len(missing_by_set.get(set_key, [])),
+                      "warnings": len(warnings),
+                  },
+              }
+              (set_dir / "manifest.json").write_text(
+                  json.dumps(manifest, indent=2, ensure_ascii=False), encoding="utf-8"
+              )
+          
+              asset_name = f"luckydex-set-{set_key}-v1.zip"
+              asset_path = assets_root / asset_name
+              with zipfile.ZipFile(asset_path, "w", compression=zipfile.ZIP_STORED, allowZip64=True) as zf:
+                  for path in sorted(set_dir.rglob("*")):
+                      if path.is_file():
+                          zf.write(path, arcname=f"{set_key}/{path.relative_to(set_dir)}")
+              asset_sha = hashlib.sha256(asset_path.read_bytes()).hexdigest()
+              set_summaries.append({
+                  **info,
+                  "asset_name": asset_name,
+                  "asset_bytes": asset_path.stat().st_size,
+                  "asset_sha256": asset_sha,
+                  "metadata_records": set_metadata_counts[set_key],
+                  "downloaded": len(cards),
+                  "missing": len(missing_by_set.get(set_key, [])),
+                  "warnings": len(warnings),
+              })
+              print(f"PACK {set_key}: {len(cards)} cards, {len(missing_by_set.get(set_key, []))} missing, {asset_path.stat().st_size / 1024 / 1024:.1f} MiB")
+          
+          shard_summary = {
+              "schema": 1,
+              "shard": SHARD_KEY,
+              "label": SHARD_LABEL,
+              "source_path": SHARD_PATH,
+              "release_tag": RELEASE_TAG,
+              "metadata_records": len(metadata_files),
+              "parsed_records": len(items),
+              "downloaded": sum(s["downloaded"] for s in set_summaries),
+              "missing": len(missing),
+              "set_count": len(set_summaries),
+              "sets": set_summaries,
+          }
+          summary_path = assets_root / f"shard-summary-{SHARD_KEY}.json"
+          summary_path.write_text(json.dumps(shard_summary, indent=2, ensure_ascii=False), encoding="utf-8")
+          (assets_root / f"missing-{SHARD_KEY}.json").write_text(
+              json.dumps(missing, indent=2, ensure_ascii=False), encoding="utf-8"
+          )
+          (assets_root / f"warnings-{SHARD_KEY}.json").write_text(
+              json.dumps(all_warnings, indent=2, ensure_ascii=False), encoding="utf-8"
+          )
+          print(json.dumps({k: shard_summary[k] for k in ("shard", "set_count", "downloaded", "missing")}, indent=2))
+          PY
+
+      - name: Upload set packs and reports to draft release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          for file in out/${{ matrix.key }}/release-assets/*; do
+            echo "Uploading $(basename "$file")"
+            gh release upload "$RELEASE_TAG" "$file" \
+              --repo "$GITHUB_REPOSITORY" \
+              --clobber
+          done
+
+  build-specials:
+    name: Build special-case sets
+    needs: prepare-release
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install tools
+        run: |
+          python -m pip install --upgrade pip
+          pip install requests pillow beautifulsoup4
+
+      - name: Build My First Battle and McDonalds 2013
+        run: |
+          python - <<'PY'
+          import hashlib
+          import io
+          import json
+          import re
+          import time
+          import zipfile
+          from pathlib import Path
+          from urllib.parse import unquote, urljoin
+          
+          import requests
+          from bs4 import BeautifulSoup
+          from PIL import Image, ImageOps
+          
+          out = Path("out/specials")
+          sets_root = out / "sets"
+          assets = out / "release-assets"
+          sets_root.mkdir(parents=True, exist_ok=True)
+          assets.mkdir(parents=True, exist_ok=True)
+          
+          session = requests.Session()
+          session.headers.update({
+              "User-Agent": "Mozilla/5.0 LuckyDex-Card-Asset-Builder/6.0",
+              "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,image/*,*/*;q=0.8",
+          })
+          
+          def get(url, attempts=4, referer=None):
+              last = None
+              headers = {"Referer": referer} if referer else {}
+              for attempt in range(1, attempts + 1):
+                  try:
+                      r = session.get(url, headers=headers, timeout=35, allow_redirects=True)
+                      if r.status_code == 200:
+                          return r
+                      last = f"HTTP {r.status_code}"
+                  except Exception as exc:
+                      last = repr(exc)
+                  if attempt < attempts:
+                      time.sleep(attempt * 1.5)
+              raise RuntimeError(f"{url}: {last}")
+          
+          def norm(value):
+              return re.sub(r"[^a-z0-9]+", "", str(value or "").casefold())
+          
+          def save_webp(raw, path, min_w=180, min_h=250, upscale_width=None):
+              probe = Image.open(io.BytesIO(raw))
+              probe.verify()
+              image = Image.open(io.BytesIO(raw))
+              image = ImageOps.exif_transpose(image)
+              sw, sh = image.size
+              if sw < min_w or sh < min_h:
+                  raise RuntimeError(f"image unexpectedly small: {sw}x{sh}")
+              if sw >= sh:
+                  raise RuntimeError(f"image is not portrait card-shaped: {sw}x{sh}")
+              if image.mode not in ("RGB", "RGBA"):
+                  image = image.convert("RGBA")
+              upscaled = False
+              if upscale_width and image.width < upscale_width:
+                  th = round(image.height * upscale_width / image.width)
+                  image = image.resize((upscale_width, th), Image.Resampling.LANCZOS)
+                  upscaled = True
+              buf = io.BytesIO()
+              image.save(buf, format="WEBP", quality=94 if upscaled else 92, method=5)
+              final = buf.getvalue()
+              path.parent.mkdir(parents=True, exist_ok=True)
+              path.write_bytes(final)
+              return {
+                  "source_width": sw,
+                  "source_height": sh,
+                  "width": image.width,
+                  "height": image.height,
+                  "upscaled": upscaled,
+                  "bytes": len(final),
+                  "sha256": hashlib.sha256(final).hexdigest(),
+              }
+          
+          def package_set(code):
+              set_dir = sets_root / code
+              asset_name = f"luckydex-set-{code}-v1.zip"
+              asset_path = assets / asset_name
+              with zipfile.ZipFile(asset_path, "w", compression=zipfile.ZIP_STORED, allowZip64=True) as zf:
+                  for path in sorted(set_dir.rglob("*")):
+                      if path.is_file():
+                          zf.write(path, arcname=f"{code}/{path.relative_to(set_dir)}")
+              return asset_name, asset_path.stat().st_size, hashlib.sha256(asset_path.read_bytes()).hexdigest()
+          
+          special_summaries = []
+          all_missing = []
+          all_warnings = []
+          
+          # ------------------------------------------------------------
+          # My First Battle: 48 distinct physical print identities
+          # ------------------------------------------------------------
+          DECKS = {
+              "BULBASAUR": ("mfbb", [
+                  ("Bulbasaur", "first-pokemon"), ("Basic Grass Energy", "starting-energy"),
+                  ("Bulbasaur", "standard"), ("Ivysaur", "standard"), ("Oddish", "standard"),
+                  ("Gloom", "standard"), ("Exeggcute", "standard"), ("Exeggutor", "standard"),
+                  ("Scyther", "standard"), ("Potion", "standard"), ("Switch", "standard"),
+                  ("Basic Grass Energy", "standard"),
+              ]),
+              "PIKACHU": ("mfbp", [
+                  ("Pikachu", "first-pokemon"), ("Basic Lightning Energy", "starting-energy"),
+                  ("Pikachu", "standard"), ("Raichu", "standard"), ("Magnemite", "standard"),
+                  ("Magneton", "standard"), ("Voltorb", "standard"), ("Electrode", "standard"),
+                  ("Electabuzz", "standard"), ("Potion", "standard"), ("Switch", "standard"),
+                  ("Basic Lightning Energy", "standard"),
+              ]),
+              "CHARMANDER": ("mfbc", [
+                  ("Charmander", "first-pokemon"), ("Basic Fire Energy", "starting-energy"),
+                  ("Charmander", "standard"), ("Charmeleon", "standard"), ("Vulpix", "standard"),
+                  ("Ninetales", "standard"), ("Growlithe", "standard"), ("Arcanine", "standard"),
+                  ("Magmar", "standard"), ("Potion", "standard"), ("Switch", "standard"),
+                  ("Basic Fire Energy", "standard"),
+              ]),
+              "SQUIRTLE": ("mfbs", [
+                  ("Squirtle", "first-pokemon"), ("Basic Water Energy", "starting-energy"),
+                  ("Squirtle", "standard"), ("Wartortle", "standard"), ("Poliwag", "standard"),
+                  ("Poliwhirl", "standard"), ("Magikarp", "standard"), ("Gyarados", "standard"),
+                  ("Lapras", "standard"), ("Potion", "standard"), ("Switch", "standard"),
+                  ("Basic Water Energy", "standard"),
+              ]),
+          }
+          
+          mfb_dir = sets_root / "MFB"
+          (mfb_dir / "images").mkdir(parents=True, exist_ok=True)
+          mfb_cards = []
+          mfb_missing = []
+          
+          for deck_key, (source_id, expected) in DECKS.items():
+              page_url = f"https://dextcg.com/expansions/{source_id}"
+              try:
+                  soup = BeautifulSoup(get(page_url).text, "html.parser")
+                  found = {}
+                  for img in soup.find_all("img"):
+                      src = img.get("src") or ""
+                      alt = img.get("alt") or ""
+                      decoded = src
+                      for _ in range(3):
+                          newer = unquote(decoded)
+                          if newer == decoded:
+                              break
+                          decoded = newer
+                      match = re.search(rf"static\.dextcg\.com/cards/{re.escape(source_id)}/(\d+)\.png", decoded, flags=re.I)
+                      if match:
+                          pos = int(match.group(1))
+                          found[pos] = {
+                              "name": re.sub(r"\s+card\s*$", "", alt.strip(), flags=re.I),
+                              "fallback": urljoin("https://dextcg.com", src) if src.startswith("/") else src,
+                          }
+              except Exception as exc:
+                  found = {}
+                  for pos in range(1, 13):
+                      mfb_missing.append({"set": "MFB", "deck": deck_key, "position": pos, "error": f"source page failed: {exc}"})
+          
+              for pos in range(1, 13):
+                  expected_name, variant = expected[pos - 1]
+                  cid = f"MFB-{deck_key}-{pos:02d}"
+                  source = found.get(pos)
+                  if not source:
+                      if not any(m.get("deck") == deck_key and m.get("position") == pos for m in mfb_missing):
+                          mfb_missing.append({"set": "MFB", "id": cid, "deck": deck_key, "position": pos, "error": "exact print not found on source page"})
+                      continue
+                  if source["name"] and norm(source["name"]) != norm(expected_name):
+                      mfb_missing.append({"set": "MFB", "id": cid, "deck": deck_key, "position": pos, "expected_name": expected_name, "source_name": source["name"], "error": "source name mismatch"})
+                      continue
+                  direct = f"https://static.dextcg.com/cards/{source_id}/{pos}.png"
+                  try:
+                      try:
+                          raw = get(direct, referer=page_url).content
+                          used_url = direct
+                      except Exception:
+                          raw = get(source["fallback"], referer=page_url).content
+                          used_url = source["fallback"]
+                      image_info = save_webp(raw, mfb_dir / "images" / f"{cid}.webp", min_w=400, min_h=500)
+                      mfb_cards.append({
+                          "id": cid, "set": "MFB", "name": expected_name, "deck": deck_key,
+                          "deck_position": pos, "variant": variant, "official_card_number": None,
+                          "file": f"images/{cid}.webp", "provider": "dextcg", "source_url": used_url,
+                          "source_page": page_url, "exact_print": True, **image_info,
+                      })
+                  except Exception as exc:
+                      mfb_missing.append({"set": "MFB", "id": cid, "deck": deck_key, "position": pos, "error": str(exc)})
+          
+          mfb_manifest = {
+              "schema": 1,
+              "set": {"code": "MFB", "name": "My First Battle", "release_date": "2023-09-29", "distinct_print_count": 48},
+              "cards": mfb_cards,
+              "missing": mfb_missing,
+              "warnings": [],
+              "summary": {"expected": 48, "downloaded": len(mfb_cards), "missing": len(mfb_missing)},
+          }
+          (mfb_dir / "manifest.json").write_text(json.dumps(mfb_manifest, indent=2, ensure_ascii=False), encoding="utf-8")
+          mfb_asset, mfb_bytes, mfb_sha = package_set("MFB")
+          special_summaries.append({
+              "code": "MFB", "key": "MFB", "name": "My First Battle", "series": "Special",
+              "release_date": "2023-09-29", "asset_name": mfb_asset, "asset_bytes": mfb_bytes,
+              "asset_sha256": mfb_sha, "metadata_records": 48, "downloaded": len(mfb_cards),
+              "missing": len(mfb_missing), "warnings": 0,
+          })
+          all_missing.extend(mfb_missing)
+          
+          # ------------------------------------------------------------
+          # McDonald's Collection 2013: exact clean French scans
+          # ------------------------------------------------------------
+          MCD13 = [
+              (1, "Leafeon", "https://www.tcgcollector.com/cards/13380/leafeon-mcdonalds-collection-2013-1-12", "https://static.tcgcollector.com/content/images/d0/6c/70/d06c70ebe4866ba000f23c60daff625274fbdf068ba7898c576023f75c8c1cc0.jpg"),
+              (2, "Flareon", "https://www.tcgcollector.com/cards/13381/flareon-mcdonalds-collection-2013-2-12", "https://static.tcgcollector.com/content/images/74/46/a2/7446a25b3769c823843da691605cc3d03ca1c42bc84ad7858c49919c9542b7cc.jpg"),
+              (3, "Vaporeon", "https://www.tcgcollector.com/cards/13382/vaporeon-mcdonalds-collection-2013-3-12", "https://static.tcgcollector.com/content/images/a5/d4/e2/a5d4e214b4027ae677b7e775d875774510af40964f3eaee1623f52ce46db3f19.jpg"),
+              (4, "Glaceon", "https://www.tcgcollector.com/cards/13383/glaceon-mcdonalds-collection-2013-4-12", "https://static.tcgcollector.com/content/images/24/e3/18/24e318d676db4a8d560800bb4ea2b5819082a1f312530e8748c3efa14e9443dd.jpg"),
+              (5, "Pikachu", "https://www.tcgcollector.com/cards/13384/pikachu-mcdonalds-collection-2013-5-12", "https://static.tcgcollector.com/content/images/90/8f/1c/908f1c9bed0af1149381446e5315d7fc3fe563cc8dbef456594a6ad5181920bc.jpg"),
+              (6, "Jolteon", "https://www.tcgcollector.com/cards/13385/jolteon-mcdonalds-collection-2013-6-12", "https://static.tcgcollector.com/content/images/31/be/5a/31be5a39d1c370387ffd29d93663e8b6ada6a8f311f34cef58d467ac67d2b4ee.jpg"),
+              (7, "Espeon", "https://www.tcgcollector.com/cards/13386/espeon-mcdonalds-collection-2013-7-12", "https://static.tcgcollector.com/content/images/50/4c/27/504c27ba58bf06835039c6d40d403ae88b778c48a56e0cd07d958234f97a3dbb.jpg"),
+              (8, "Timburr", "https://www.tcgcollector.com/cards/13387/timburr-mcdonalds-collection-2013-8-12", "https://static.tcgcollector.com/content/images/44/3f/8b/443f8b78fd43027f47f9c31cea6c725487e5e87a2323ab9c4e76db13f418d75a.jpg"),
+              (9, "Umbreon", "https://www.tcgcollector.com/cards/13388/umbreon-mcdonalds-collection-2013-9-12", "https://static.tcgcollector.com/content/images/4d/ad/4c/4dad4c79a9ffa02c58cf27b6ded80eba5e91208c67fe7a0992e4285a4a4e0e13.jpg"),
+              (10, "Scraggy", "https://www.tcgcollector.com/cards/13389/scraggy-mcdonalds-collection-2013-10-12", "https://static.tcgcollector.com/content/images/32/90/89/329089fbf33ee54dac19bc871d43998f9b454b919afb6ae3ddaa7bac96f9dcec.jpg"),
+              (11, "Zorua", "https://www.tcgcollector.com/cards/13390/zorua-mcdonalds-collection-2013-11-12", "https://static.tcgcollector.com/content/images/84/2a/fb/842afb3275d74d39f44e452c0eedfbe541be7d519dac436612ef616cdbc446cb.jpg"),
+              (12, "Eevee", "https://www.tcgcollector.com/cards/13391/eevee-mcdonalds-collection-2013-12-12", "https://static.tcgcollector.com/content/images/69/5b/3f/695b3ff44f9817bf83696d12d6ed7d7b08f205d9e2679826b716b3949a4ac99f.jpg"),
+          ]
+          
+          mcd_dir = sets_root / "MCD13"
+          (mcd_dir / "images").mkdir(parents=True, exist_ok=True)
+          mcd_cards = []
+          mcd_missing = []
+          for number, name, page, image_url in MCD13:
+              cid = f"MCD13-{number:03d}"
+              try:
+                  raw = get(image_url, referer=page).content
+                  image_info = save_webp(raw, mcd_dir / "images" / f"{cid}.webp", min_w=300, min_h=400, upscale_width=640)
+                  mcd_cards.append({
+                      "id": cid, "set": "MCD13", "number": str(number), "printed_number": f"{number}/12",
+                      "name": name, "language": "French", "file": f"images/{cid}.webp",
+                      "provider": "tcgcollector", "source_page": page, "source_url": image_url,
+                      "exact_print": True, **image_info,
+                  })
+              except Exception as exc:
+                  mcd_missing.append({"set": "MCD13", "id": cid, "number": number, "name": name, "error": str(exc)})
+          
+          mcd_manifest = {
+              "schema": 1,
+              "set": {"code": "MCD13", "name": "McDonald's Collection 2013", "language": "French", "expected_count": 12},
+              "cards": mcd_cards,
+              "missing": mcd_missing,
+              "warnings": [],
+              "summary": {"expected": 12, "downloaded": len(mcd_cards), "missing": len(mcd_missing)},
+          }
+          (mcd_dir / "manifest.json").write_text(json.dumps(mcd_manifest, indent=2, ensure_ascii=False), encoding="utf-8")
+          mcd_asset, mcd_bytes, mcd_sha = package_set("MCD13")
+          special_summaries.append({
+              "code": "MCD13", "key": "MCD13", "name": "McDonald's Collection 2013", "series": "Special",
+              "release_date": "2013", "language": "French", "asset_name": mcd_asset, "asset_bytes": mcd_bytes,
+              "asset_sha256": mcd_sha, "metadata_records": 12, "downloaded": len(mcd_cards),
+              "missing": len(mcd_missing), "warnings": 0,
+          })
+          all_missing.extend(mcd_missing)
+          
+          summary = {
+              "schema": 1,
+              "shard": "specials",
+              "label": "LuckyDex special-case sets",
+              "set_count": len(special_summaries),
+              "downloaded": sum(s["downloaded"] for s in special_summaries),
+              "missing": len(all_missing),
+              "sets": special_summaries,
+          }
+          (assets / "specials-summary.json").write_text(json.dumps(summary, indent=2, ensure_ascii=False), encoding="utf-8")
+          (assets / "missing-specials.json").write_text(json.dumps(all_missing, indent=2, ensure_ascii=False), encoding="utf-8")
+          (assets / "warnings-specials.json").write_text(json.dumps(all_warnings, indent=2, ensure_ascii=False), encoding="utf-8")
+          print(json.dumps(summary, indent=2))
+          PY
+
+      - name: Upload special packs and reports to draft release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          for file in out/specials/release-assets/*; do
+            echo "Uploading $(basename "$file")"
+            gh release upload "$RELEASE_TAG" "$file" \
+              --repo "$GITHUB_REPOSITORY" \
+              --clobber
+          done
+
+  build-catalog:
+    name: Build master library manifest
+    if: ${{ always() }}
+    needs:
+      - prepare-release
+      - build-shards
+      - build-specials
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Download all small build reports from draft release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          mkdir -p catalog-input
+          gh release download "$RELEASE_TAG" \
+            --repo "$GITHUB_REPOSITORY" \
+            --pattern 'shard-summary-*.json' \
+            --pattern 'specials-summary.json' \
+            --pattern 'missing-*.json' \
+            --dir catalog-input
+
+      - name: Merge into master manifest
+        run: |
+          python - <<'PY'
+          import glob
+          import json
+          import os
+          from datetime import datetime, timezone
+          from pathlib import Path
+          
+          root = Path("catalog-input")
+          summaries = []
+          for path in sorted(root.glob("*summary*.json")):
+              try:
+                  data = json.loads(path.read_text(encoding="utf-8"))
+                  if isinstance(data, dict) and "sets" in data:
+                      summaries.append(data)
+              except Exception as exc:
+                  print(f"Skipping unreadable summary {path}: {exc}")
+          
+          sets = []
+          for summary in summaries:
+              sets.extend(summary.get("sets", []))
+          
+          # De-duplicate by set key/code, preferring special-case records when present.
+          by_key = {}
+          for entry in sets:
+              key = entry.get("key") or entry.get("code")
+              if not key:
+                  continue
+              if key not in by_key or entry.get("series") == "Special":
+                  by_key[key] = entry
+          
+          sets = sorted(by_key.values(), key=lambda s: (str(s.get("series") or ""), str(s.get("name") or s.get("code") or "")))
+          
+          missing = []
+          for path in sorted(root.glob("missing-*.json")):
+              try:
+                  data = json.loads(path.read_text(encoding="utf-8"))
+                  if isinstance(data, list):
+                      missing.extend(data)
+              except Exception as exc:
+                  print(f"Skipping unreadable missing report {path}: {exc}")
+          
+          manifest = {
+              "schema": 1,
+              "library": "LuckyDex Card Art Library",
+              "release_tag": os.environ["RELEASE_TAG"],
+              "repository": os.environ["GITHUB_REPOSITORY"],
+              "draft_release": True,
+              "generated_at": datetime.now(timezone.utc).isoformat(),
+              "set_count": len(sets),
+              "downloaded_cards": sum(int(s.get("downloaded") or 0) for s in sets),
+              "missing_cards": sum(int(s.get("missing") or 0) for s in sets),
+              "sets": sets,
+              "notes": [
+                  "Each set is stored as its own ZIP release asset for on-demand LuckyDex downloads.",
+                  "This release remains draft during validation; asset_name is stable even before a public hosting URL is chosen.",
+                  "Missing artwork is reported rather than guessed or substituted.",
+              ],
+          }
+          Path("library-manifest.json").write_text(json.dumps(manifest, indent=2, ensure_ascii=False), encoding="utf-8")
+          Path("missing-art-all.json").write_text(json.dumps(missing, indent=2, ensure_ascii=False), encoding="utf-8")
+          
+          summary_text = (
+              "LuckyDex Card Art Library v1\n"
+              "=============================\n"
+              f"Sets:              {manifest['set_count']}\n"
+              f"Downloaded cards:  {manifest['downloaded_cards']}\n"
+              f"Missing cards:     {manifest['missing_cards']}\n"
+              f"Raw missing rows:  {len(missing)}\n"
+          )
+          Path("build-summary.txt").write_text(summary_text, encoding="utf-8")
+          print(summary_text)
+          PY
+
+      - name: Upload master manifest and complete missing report
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          gh release upload "$RELEASE_TAG" \
+            library-manifest.json \
+            missing-art-all.json \
+            build-summary.txt \
+            --repo "$GITHUB_REPOSITORY" \
+            --clobber
+          echo
+          cat build-summary.txt
+          echo
+          echo "Draft release prepared: $RELEASE_TAG"
