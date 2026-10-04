@@ -1,0 +1,394 @@
+name: Build LuckyDex Card Assets - McDonalds 2013 Clean Test
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [ main ]
+    paths:
+      - '.github/workflows/build-mcd2013-assets.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  build-mcd2013-clean:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    steps:
+      - name: Check out LuckyDex
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install tools
+        run: |
+          python -m pip install --upgrade pip
+          pip install requests pillow
+
+      - name: Build clean McDonalds Collection 2013 artwork pack
+        shell: bash
+        run: |
+          python - <<'PY'
+          import io
+          import json
+          import hashlib
+          import time
+          from pathlib import Path
+
+          import requests
+          from PIL import Image, ImageOps, ImageDraw
+
+          SET_CODE = "MCD13"
+          SET_NAME = "McDonald's Collection 2013"
+
+          CARDS = [
+              {
+                  "number": 1,
+                  "name": "Leafeon",
+                  "page": "https://www.tcgcollector.com/cards/13380/leafeon-mcdonalds-collection-2013-1-12",
+                  "image": "https://static.tcgcollector.com/content/images/d0/6c/70/d06c70ebe4866ba000f23c60daff625274fbdf068ba7898c576023f75c8c1cc0.jpg",
+              },
+              {
+                  "number": 2,
+                  "name": "Flareon",
+                  "page": "https://www.tcgcollector.com/cards/13381/flareon-mcdonalds-collection-2013-2-12",
+                  "image": "https://static.tcgcollector.com/content/images/74/46/a2/7446a25b3769c823843da691605cc3d03ca1c42bc84ad7858c49919c9542b7cc.jpg",
+              },
+              {
+                  "number": 3,
+                  "name": "Vaporeon",
+                  "page": "https://www.tcgcollector.com/cards/13382/vaporeon-mcdonalds-collection-2013-3-12",
+                  "image": "https://static.tcgcollector.com/content/images/a5/d4/e2/a5d4e214b4027ae677b7e775d875774510af40964f3eaee1623f52ce46db3f19.jpg",
+              },
+              {
+                  "number": 4,
+                  "name": "Glaceon",
+                  "page": "https://www.tcgcollector.com/cards/13383/glaceon-mcdonalds-collection-2013-4-12",
+                  "image": "https://static.tcgcollector.com/content/images/24/e3/18/24e318d676db4a8d560800bb4ea2b5819082a1f312530e8748c3efa14e9443dd.jpg",
+              },
+              {
+                  "number": 5,
+                  "name": "Pikachu",
+                  "page": "https://www.tcgcollector.com/cards/13384/pikachu-mcdonalds-collection-2013-5-12",
+                  "image": "https://static.tcgcollector.com/content/images/90/8f/1c/908f1c9bed0af1149381446e5315d7fc3fe563cc8dbef456594a6ad5181920bc.jpg",
+              },
+              {
+                  "number": 6,
+                  "name": "Jolteon",
+                  "page": "https://www.tcgcollector.com/cards/13385/jolteon-mcdonalds-collection-2013-6-12",
+                  "image": "https://static.tcgcollector.com/content/images/31/be/5a/31be5a39d1c370387ffd29d93663e8b6ada6a8f311f34cef58d467ac67d2b4ee.jpg",
+              },
+              {
+                  "number": 7,
+                  "name": "Espeon",
+                  "page": "https://www.tcgcollector.com/cards/13386/espeon-mcdonalds-collection-2013-7-12",
+                  "image": "https://static.tcgcollector.com/content/images/50/4c/27/504c27ba58bf06835039c6d40d403ae88b778c48a56e0cd07d958234f97a3dbb.jpg",
+              },
+              {
+                  "number": 8,
+                  "name": "Timburr",
+                  "page": "https://www.tcgcollector.com/cards/13387/timburr-mcdonalds-collection-2013-8-12",
+                  "image": "https://static.tcgcollector.com/content/images/44/3f/8b/443f8b78fd43027f47f9c31cea6c725487e5e87a2323ab9c4e76db13f418d75a.jpg",
+              },
+              {
+                  "number": 9,
+                  "name": "Umbreon",
+                  "page": "https://www.tcgcollector.com/cards/13388/umbreon-mcdonalds-collection-2013-9-12",
+                  "image": "https://static.tcgcollector.com/content/images/4d/ad/4c/4dad4c79a9ffa02c58cf27b6ded80eba5e91208c67fe7a0992e4285a4a4e0e13.jpg",
+              },
+              {
+                  "number": 10,
+                  "name": "Scraggy",
+                  "page": "https://www.tcgcollector.com/cards/13389/scraggy-mcdonalds-collection-2013-10-12",
+                  "image": "https://static.tcgcollector.com/content/images/32/90/89/329089fbf33ee54dac19bc871d43998f9b454b919afb6ae3ddaa7bac96f9dcec.jpg",
+              },
+              {
+                  "number": 11,
+                  "name": "Zorua",
+                  "page": "https://www.tcgcollector.com/cards/13390/zorua-mcdonalds-collection-2013-11-12",
+                  "image": "https://static.tcgcollector.com/content/images/84/2a/fb/842afb3275d74d39f44e452c0eedfbe541be7d519dac436612ef616cdbc446cb.jpg",
+              },
+              {
+                  "number": 12,
+                  "name": "Eevee",
+                  "page": "https://www.tcgcollector.com/cards/13391/eevee-mcdonalds-collection-2013-12-12",
+                  "image": "https://static.tcgcollector.com/content/images/69/5b/3f/695b3ff44f9817bf83696d12d6ed7d7b08f205d9e2679826b716b3949a4ac99f.jpg",
+              },
+          ]
+
+          out = Path("card-assets/MCD13")
+          img_dir = out / "images"
+          img_dir.mkdir(parents=True, exist_ok=True)
+
+          session = requests.Session()
+          session.headers.update({
+              "User-Agent": "Mozilla/5.0 LuckyDex-Card-Asset-Builder/5.0",
+              "Accept": "image/avif,image/webp,image/apng,image/*,*/*;q=0.8",
+          })
+
+          manifest = {
+              "schema": 3,
+              "set": {
+                  "code": SET_CODE,
+                  "name": SET_NAME,
+                  "language": "French",
+                  "expected_count": 12,
+                  "source": "TCG Collector",
+              },
+              "cards": [],
+          }
+
+          missing = []
+          warnings = []
+          contact = []
+
+          def get(url, attempts=4):
+              last = None
+              for attempt in range(1, attempts + 1):
+                  try:
+                      r = session.get(url, timeout=30, allow_redirects=True)
+                      if r.status_code == 200:
+                          return r
+                      last = f"HTTP {r.status_code}"
+                  except Exception as exc:
+                      last = repr(exc)
+                  if attempt < attempts:
+                      time.sleep(attempt * 2)
+              raise RuntimeError(f"{url}: {last}")
+
+          for card in CARDS:
+              n = card["number"]
+              name = card["name"]
+              cid = f"{SET_CODE}-{n:03d}"
+
+              try:
+                  r = get(card["image"])
+                  raw = r.content
+
+                  probe = Image.open(io.BytesIO(raw))
+                  probe.verify()
+
+                  image = Image.open(io.BytesIO(raw))
+                  image = ImageOps.exif_transpose(image)
+
+                  if image.width < 400 or image.height < 500:
+                      raise RuntimeError(
+                          f"Image unexpectedly small: {image.width}x{image.height}"
+                      )
+
+                  if image.width >= image.height:
+                      raise RuntimeError("Image is not portrait card-shaped")
+
+                  if image.mode not in ("RGB", "RGBA"):
+                      image = image.convert("RGBA")
+
+                  buf = io.BytesIO()
+                  image.save(buf, format="WEBP", quality=92, method=6)
+                  final = buf.getvalue()
+
+                  path = img_dir / f"{cid}.webp"
+                  path.write_bytes(final)
+
+                  sha256 = hashlib.sha256(final).hexdigest()
+
+                  manifest["cards"].append({
+                      "id": cid,
+                      "set": SET_CODE,
+                      "number": str(n),
+                      "printed_number": f"{n}/12",
+                      "name": name,
+                      "language": "French",
+                      "exact_print": True,
+                      "file": f"images/{cid}.webp",
+                      "width": image.width,
+                      "height": image.height,
+                      "bytes": len(final),
+                      "sha256": sha256,
+                      "provider": "tcgcollector",
+                      "source_page": card["page"],
+                      "source_url": card["image"],
+                  })
+
+                  contact.append((n, name, image.copy()))
+                  print(f"OK {cid} {name} {image.width}x{image.height}")
+
+              except Exception as exc:
+                  missing.append({
+                      "id": cid,
+                      "number": n,
+                      "name": name,
+                      "source_page": card["page"],
+                      "source_url": card["image"],
+                      "error": str(exc),
+                  })
+                  print(f"FAILED {cid}: {exc}")
+
+          numbers = [int(c["number"]) for c in manifest["cards"]]
+          expected_numbers = list(range(1, 13))
+
+          missing_numbers = sorted(set(expected_numbers) - set(numbers))
+          duplicate_numbers = sorted({
+              n for n in numbers if numbers.count(n) > 1
+          })
+
+          hash_groups = {}
+          for c in manifest["cards"]:
+              hash_groups.setdefault(c["sha256"], []).append(c["id"])
+
+          duplicate_images = [
+              ids for ids in hash_groups.values() if len(ids) > 1
+          ]
+
+          if missing_numbers:
+              warnings.append({
+                  "type": "missing_numbers",
+                  "numbers": missing_numbers,
+              })
+
+          if duplicate_numbers:
+              warnings.append({
+                  "type": "duplicate_numbers",
+                  "numbers": duplicate_numbers,
+              })
+
+          if duplicate_images:
+              warnings.append({
+                  "type": "duplicate_images",
+                  "groups": duplicate_images,
+              })
+
+          columns = 4
+          thumb_w, thumb_h = 190, 270
+          label_h, gap, margin = 34, 16, 20
+          rows = 3
+
+          sheet_w = margin * 2 + columns * thumb_w + (columns - 1) * gap
+          sheet_h = margin * 2 + rows * (thumb_h + label_h) + (rows - 1) * gap
+
+          sheet = Image.new("RGB", (sheet_w, sheet_h), "white")
+          draw = ImageDraw.Draw(sheet)
+
+          for i, (n, name, image) in enumerate(sorted(contact)):
+              row, col = divmod(i, columns)
+              x = margin + col * (thumb_w + gap)
+              y = margin + row * (thumb_h + label_h + gap)
+
+              thumb = ImageOps.contain(
+                  image.convert("RGB"),
+                  (thumb_w, thumb_h)
+              )
+
+              px = x + (thumb_w - thumb.width) // 2
+              py = y + (thumb_h - thumb.height) // 2
+              sheet.paste(thumb, (px, py))
+              draw.text(
+                  (x, y + thumb_h + 4),
+                  f"{n:02d}/12 {name}",
+                  fill="black"
+              )
+
+          sheet.save(out / "contact-sheet.jpg", format="JPEG", quality=90)
+
+          downloaded = len(manifest["cards"])
+          exact = sum(1 for c in manifest["cards"] if c["exact_print"])
+
+          complete = (
+              downloaded == 12
+              and exact == 12
+              and not missing
+              and not missing_numbers
+              and not duplicate_numbers
+              and not duplicate_images
+          )
+
+          manifest["summary"] = {
+              "expected": 12,
+              "downloaded": downloaded,
+              "exact_prints": exact,
+              "missing": len(missing),
+              "missing_numbers": missing_numbers,
+              "duplicate_numbers": duplicate_numbers,
+              "duplicate_image_groups": duplicate_images,
+              "warnings": len(warnings),
+              "complete": complete,
+          }
+
+          (out / "manifest.json").write_text(
+              json.dumps(manifest, indent=2, ensure_ascii=False),
+              encoding="utf-8"
+          )
+          (out / "missing-art.json").write_text(
+              json.dumps(missing, indent=2, ensure_ascii=False),
+              encoding="utf-8"
+          )
+          (out / "warnings.json").write_text(
+              json.dumps(warnings, indent=2, ensure_ascii=False),
+              encoding="utf-8"
+          )
+
+          report = (
+              "LuckyDex McDonald's Collection 2013 clean-art test\n"
+              "=================================================\n"
+              f"Expected cards:       12\n"
+              f"Downloaded:           {downloaded}\n"
+              f"Exact prints:         {exact}\n"
+              f"Missing/errors:       {len(missing)}\n"
+              f"Missing numbers:      {len(missing_numbers)}\n"
+              f"Duplicate numbers:    {len(duplicate_numbers)}\n"
+              f"Duplicate images:     {len(duplicate_images)}\n"
+              f"Warnings:             {len(warnings)}\n"
+              f"Complete:             {complete}\n"
+          )
+
+          (out / "report.txt").write_text(report, encoding="utf-8")
+          print(report)
+          PY
+
+      - name: Package clean McDonalds 2013 artwork
+        run: |
+          cd card-assets
+          zip -9 -r ../LuckyDex-MCD13-clean-art-test.zip MCD13
+
+      - name: Show result
+        run: |
+          cat card-assets/MCD13/report.txt
+          echo
+          du -h LuckyDex-MCD13-clean-art-test.zip
+
+      - name: Upload clean McDonalds 2013 test
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: LuckyDex-card-art-MCD13-clean-test
+          path: |
+            LuckyDex-MCD13-clean-art-test.zip
+            card-assets/MCD13/manifest.json
+            card-assets/MCD13/missing-art.json
+            card-assets/MCD13/warnings.json
+            card-assets/MCD13/report.txt
+            card-assets/MCD13/contact-sheet.jpg
+          if-no-files-found: warn
+          retention-days: 30
+
+      - name: Require complete clean 12-card set
+        run: |
+          python - <<'PY'
+          import json
+          with open("card-assets/MCD13/manifest.json", encoding="utf-8") as f:
+              summary = json.load(f)["summary"]
+
+          if not summary["complete"]:
+              raise SystemExit(
+                  "McDonald's Collection 2013 clean validation FAILED: "
+                  + json.dumps(summary)
+              )
+
+          print(
+              "PASS: all 12 exact French McDonald's Collection 2013 "
+              "prints were downloaded from TCG Collector."
+          )
+          PY
