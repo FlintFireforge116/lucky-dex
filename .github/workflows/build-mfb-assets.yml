@@ -1,0 +1,853 @@
+name: Build LuckyDex Card Assets - My First Battle Test
+
+on:
+  workflow_dispatch:
+
+  push:
+    branches:
+      - main
+    paths:
+      - '.github/workflows/build-mfb-assets.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  build-mfb-art-pack:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    steps:
+      - name: Check out LuckyDex
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install tools
+        run: |
+          python -m pip install --upgrade pip
+          pip install requests pillow beautifulsoup4
+
+      - name: Build My First Battle artwork pack
+        shell: bash
+        run: |
+          python - <<'PY'
+          import io
+          import json
+          import hashlib
+          import re
+          import time
+          from pathlib import Path
+          from urllib.parse import unquote, urljoin
+
+          import requests
+          from bs4 import BeautifulSoup
+          from PIL import Image, ImageOps, ImageDraw
+
+          OUTPUT_ROOT = Path("card-assets/MFB")
+          IMAGE_DIR = OUTPUT_ROOT / "images"
+
+          OUTPUT_ROOT.mkdir(parents=True, exist_ok=True)
+          IMAGE_DIR.mkdir(parents=True, exist_ok=True)
+
+          # My First Battle has four mini-decks.
+          # Each physical deck contains 17 cards because some cards repeat,
+          # but each deck has 12 distinct collectible print identities.
+          # 4 decks × 12 distinct prints = 48 collection entries.
+
+          DECKS = {
+              "BULBASAUR": {
+                  "source_id": "mfbb",
+                  "display_name": "Bulbasaur Deck",
+                  "expected": [
+                      ("Bulbasaur", "first-pokemon"),
+                      ("Basic Grass Energy", "starting-energy"),
+                      ("Bulbasaur", "standard"),
+                      ("Ivysaur", "standard"),
+                      ("Oddish", "standard"),
+                      ("Gloom", "standard"),
+                      ("Exeggcute", "standard"),
+                      ("Exeggutor", "standard"),
+                      ("Scyther", "standard"),
+                      ("Potion", "standard"),
+                      ("Switch", "standard"),
+                      ("Basic Grass Energy", "standard"),
+                  ],
+              },
+
+              "PIKACHU": {
+                  "source_id": "mfbp",
+                  "display_name": "Pikachu Deck",
+                  "expected": [
+                      ("Pikachu", "first-pokemon"),
+                      ("Basic Lightning Energy", "starting-energy"),
+                      ("Pikachu", "standard"),
+                      ("Raichu", "standard"),
+                      ("Magnemite", "standard"),
+                      ("Magneton", "standard"),
+                      ("Voltorb", "standard"),
+                      ("Electrode", "standard"),
+                      ("Electabuzz", "standard"),
+                      ("Potion", "standard"),
+                      ("Switch", "standard"),
+                      ("Basic Lightning Energy", "standard"),
+                  ],
+              },
+
+              "CHARMANDER": {
+                  "source_id": "mfbc",
+                  "display_name": "Charmander Deck",
+                  "expected": [
+                      ("Charmander", "first-pokemon"),
+                      ("Basic Fire Energy", "starting-energy"),
+                      ("Charmander", "standard"),
+                      ("Charmeleon", "standard"),
+                      ("Vulpix", "standard"),
+                      ("Ninetales", "standard"),
+                      ("Growlithe", "standard"),
+                      ("Arcanine", "standard"),
+                      ("Magmar", "standard"),
+                      ("Potion", "standard"),
+                      ("Switch", "standard"),
+                      ("Basic Fire Energy", "standard"),
+                  ],
+              },
+
+              "SQUIRTLE": {
+                  "source_id": "mfbs",
+                  "display_name": "Squirtle Deck",
+                  "expected": [
+                      ("Squirtle", "first-pokemon"),
+                      ("Basic Water Energy", "starting-energy"),
+                      ("Squirtle", "standard"),
+                      ("Wartortle", "standard"),
+                      ("Poliwag", "standard"),
+                      ("Poliwhirl", "standard"),
+                      ("Magikarp", "standard"),
+                      ("Gyarados", "standard"),
+                      ("Lapras", "standard"),
+                      ("Potion", "standard"),
+                      ("Switch", "standard"),
+                      ("Basic Water Energy", "standard"),
+                  ],
+              },
+          }
+
+          session = requests.Session()
+          session.headers.update({
+              "User-Agent":
+                  "Mozilla/5.0 LuckyDex-Card-Asset-Builder/2.0",
+              "Accept":
+                  "text/html,application/xhtml+xml,"
+                  "application/xml;q=0.9,image/avif,image/webp,"
+                  "image/apng,image/*,*/*;q=0.8",
+          })
+
+          manifest = {
+              "schema": 2,
+              "set": {
+                  "code": "MFB",
+                  "name": "My First Battle",
+                  "release_date": "2023-09-29",
+                  "numbered": False,
+                  "deck_count": 4,
+                  "distinct_print_count": 48,
+              },
+              "cards": [],
+          }
+
+          missing = []
+          warnings = []
+
+          def normalise(value):
+              return re.sub(
+                  r"[^a-z0-9]+",
+                  "",
+                  str(value or "").casefold()
+              )
+
+          def get(url, attempts=3, referer=None):
+              last_error = None
+
+              headers = {}
+
+              if referer:
+                  headers["Referer"] = referer
+
+              for attempt in range(1, attempts + 1):
+                  try:
+                      response = session.get(
+                          url,
+                          headers=headers,
+                          timeout=30,
+                          allow_redirects=True
+                      )
+
+                      if response.status_code == 200:
+                          return response
+
+                      last_error = (
+                          f"HTTP {response.status_code}"
+                      )
+
+                  except Exception as exc:
+                      last_error = repr(exc)
+
+                  if attempt < attempts:
+                      time.sleep(attempt * 2)
+
+              raise RuntimeError(
+                  f"{url}: {last_error}"
+              )
+
+          def discover_source_cards(source_id):
+              page_url = (
+                  f"https://dextcg.com/expansions/{source_id}"
+              )
+
+              response = get(page_url)
+
+              soup = BeautifulSoup(
+                  response.text,
+                  "html.parser"
+              )
+
+              found = {}
+
+              for img in soup.find_all("img"):
+                  src = img.get("src") or ""
+                  alt = img.get("alt") or ""
+
+                  decoded = src
+
+                  # Decode nested URL encoding if present.
+                  for _ in range(3):
+                      newer = unquote(decoded)
+
+                      if newer == decoded:
+                          break
+
+                      decoded = newer
+
+                  pattern = (
+                      rf"static\.dextcg\.com/cards/"
+                      rf"{re.escape(source_id)}/"
+                      rf"(\d+)\.png"
+                  )
+
+                  match = re.search(
+                      pattern,
+                      decoded,
+                      flags=re.IGNORECASE
+                  )
+
+                  if not match:
+                      continue
+
+                  position = int(match.group(1))
+
+                  card_name = re.sub(
+                      r"\s+card\s*$",
+                      "",
+                      alt.strip(),
+                      flags=re.IGNORECASE
+                  )
+
+                  if src.startswith("/"):
+                      fallback_url = urljoin(
+                          "https://dextcg.com",
+                          src
+                      )
+                  else:
+                      fallback_url = src
+
+                  found[position] = {
+                      "position": position,
+                      "name_from_page": card_name,
+                      "page_image_url": fallback_url,
+                  }
+
+              return page_url, found
+
+          contact_images = {}
+
+          for deck_key, deck in DECKS.items():
+              source_id = deck["source_id"]
+
+              print()
+              print(
+                  "========================================"
+              )
+              print(
+                  f"Checking {deck['display_name']} "
+                  f"({source_id})"
+              )
+              print(
+                  "========================================"
+              )
+
+              try:
+                  page_url, discovered = (
+                      discover_source_cards(source_id)
+                  )
+              except Exception as exc:
+                  for position in range(1, 13):
+                      missing.append({
+                          "deck": deck_key,
+                          "position": position,
+                          "error":
+                              f"Could not load source page: {exc}",
+                      })
+
+                  continue
+
+              expected_positions = set(
+                  range(1, 13)
+              )
+
+              found_positions = set(
+                  discovered.keys()
+              )
+
+              if found_positions != expected_positions:
+                  missing_positions = sorted(
+                      expected_positions - found_positions
+                  )
+
+                  extra_positions = sorted(
+                      found_positions - expected_positions
+                  )
+
+                  warnings.append({
+                      "deck": deck_key,
+                      "missing_positions":
+                          missing_positions,
+                      "unexpected_positions":
+                          extra_positions,
+                  })
+
+              for position in range(1, 13):
+                  expected_name, variant = (
+                      deck["expected"][position - 1]
+                  )
+
+                  canonical_id = (
+                      f"MFB-{deck_key}-{position:02d}"
+                  )
+
+                  source_info = discovered.get(
+                      position
+                  )
+
+                  if not source_info:
+                      missing.append({
+                          "id": canonical_id,
+                          "deck": deck_key,
+                          "position": position,
+                          "expected_name":
+                              expected_name,
+                          "error":
+                              "Card image was not found "
+                              "on source expansion page",
+                      })
+
+                      continue
+
+                  page_name = (
+                      source_info["name_from_page"]
+                  )
+
+                  if (
+                      page_name
+                      and normalise(page_name)
+                      != normalise(expected_name)
+                  ):
+                      missing.append({
+                          "id": canonical_id,
+                          "deck": deck_key,
+                          "position": position,
+                          "expected_name":
+                              expected_name,
+                          "source_name":
+                              page_name,
+                          "error":
+                              "Source card name does not "
+                              "match expected deck slot",
+                      })
+
+                      print(
+                          f"FAILED {canonical_id}: "
+                          f"expected {expected_name!r}, "
+                          f"source says {page_name!r}"
+                      )
+
+                      continue
+
+                  direct_url = (
+                      "https://static.dextcg.com/cards/"
+                      f"{source_id}/{position}.png"
+                  )
+
+                  raw_image = None
+                  provider_url = None
+
+                  # First try the direct original image.
+                  try:
+                      response = get(
+                          direct_url,
+                          referer=page_url
+                      )
+
+                      raw_image = response.content
+                      provider_url = direct_url
+
+                  except Exception as primary_exc:
+                      # If direct image access is blocked,
+                      # use the exact CDN URL exposed by
+                      # the source page.
+                      try:
+                          fallback_url = (
+                              source_info[
+                                  "page_image_url"
+                              ]
+                          )
+
+                          response = get(
+                              fallback_url,
+                              referer=page_url
+                          )
+
+                          raw_image = response.content
+                          provider_url = fallback_url
+
+                      except Exception as fallback_exc:
+                          missing.append({
+                              "id": canonical_id,
+                              "deck": deck_key,
+                              "position": position,
+                              "expected_name":
+                                  expected_name,
+                              "direct_error":
+                                  str(primary_exc),
+                              "fallback_error":
+                                  str(fallback_exc),
+                              "error":
+                                  "Both exact image URLs "
+                                  "failed",
+                          })
+
+                          print(
+                              f"FAILED {canonical_id}: "
+                              "image download failed"
+                          )
+
+                          continue
+
+                  try:
+                      probe = Image.open(
+                          io.BytesIO(raw_image)
+                      )
+
+                      probe.verify()
+
+                  except Exception as exc:
+                      missing.append({
+                          "id": canonical_id,
+                          "deck": deck_key,
+                          "position": position,
+                          "expected_name":
+                              expected_name,
+                          "error":
+                              f"Invalid image: {exc}",
+                      })
+
+                      continue
+
+                  image = Image.open(
+                      io.BytesIO(raw_image)
+                  )
+
+                  image = ImageOps.exif_transpose(
+                      image
+                  )
+
+                  width, height = image.size
+
+                  if width < 400 or height < 500:
+                      missing.append({
+                          "id": canonical_id,
+                          "deck": deck_key,
+                          "position": position,
+                          "expected_name":
+                              expected_name,
+                          "error":
+                              "Image resolution unexpectedly "
+                              f"small: {width}x{height}",
+                      })
+
+                      continue
+
+                  if image.mode not in ("RGB", "RGBA"):
+                      image = image.convert("RGBA")
+
+                  output_file = (
+                      IMAGE_DIR /
+                      f"{canonical_id}.webp"
+                  )
+
+                  buffer = io.BytesIO()
+
+                  image.save(
+                      buffer,
+                      format="WEBP",
+                      quality=92,
+                      method=6
+                  )
+
+                  final_bytes = buffer.getvalue()
+
+                  output_file.write_bytes(
+                      final_bytes
+                  )
+
+                  sha256 = hashlib.sha256(
+                      final_bytes
+                  ).hexdigest()
+
+                  manifest["cards"].append({
+                      "id": canonical_id,
+                      "set": "MFB",
+                      "deck": deck_key,
+                      "deck_name":
+                          deck["display_name"],
+                      "deck_position": position,
+                      "official_card_number": None,
+                      "name": expected_name,
+                      "variant": variant,
+                      "file":
+                          f"images/{canonical_id}.webp",
+                      "width": width,
+                      "height": height,
+                      "bytes": len(final_bytes),
+                      "sha256": sha256,
+                      "provider": "dextcg",
+                      "source_expansion":
+                          source_id,
+                      "source_page":
+                          page_url,
+                      "source_url":
+                          provider_url,
+                  })
+
+                  contact_images[
+                      (deck_key, position)
+                  ] = (
+                      image.copy(),
+                      expected_name,
+                      variant
+                  )
+
+                  print(
+                      f"OK {canonical_id}: "
+                      f"{expected_name} "
+                      f"[{variant}] "
+                      f"{width}x{height}"
+                  )
+
+          # ------------------------------------------------
+          # Build an easy-to-view contact sheet
+          # ------------------------------------------------
+
+          thumb_width = 180
+          thumb_height = 251
+          label_height = 48
+          column_gap = 18
+          row_gap = 10
+          margin = 20
+          header_height = 60
+
+          deck_keys = list(DECKS.keys())
+
+          sheet_width = (
+              margin * 2
+              + len(deck_keys) * thumb_width
+              + (len(deck_keys) - 1) * column_gap
+          )
+
+          sheet_height = (
+              margin * 2
+              + header_height
+              + 12 * (thumb_height + label_height)
+              + 11 * row_gap
+          )
+
+          sheet = Image.new(
+              "RGB",
+              (sheet_width, sheet_height),
+              "white"
+          )
+
+          draw = ImageDraw.Draw(sheet)
+
+          for column, deck_key in enumerate(
+              deck_keys
+          ):
+              x = (
+                  margin
+                  + column * (
+                      thumb_width + column_gap
+                  )
+              )
+
+              draw.text(
+                  (x, margin),
+                  DECKS[deck_key]["display_name"],
+                  fill="black"
+              )
+
+              for position in range(1, 13):
+                  y = (
+                      margin
+                      + header_height
+                      + (position - 1)
+                      * (
+                          thumb_height
+                          + label_height
+                          + row_gap
+                      )
+                  )
+
+                  entry = contact_images.get(
+                      (deck_key, position)
+                  )
+
+                  if not entry:
+                      draw.rectangle(
+                          (
+                              x,
+                              y,
+                              x + thumb_width,
+                              y + thumb_height
+                          ),
+                          outline="black"
+                      )
+
+                      draw.text(
+                          (x + 10, y + 10),
+                          "MISSING",
+                          fill="black"
+                      )
+
+                      continue
+
+                  image, name, variant = entry
+
+                  thumb = ImageOps.contain(
+                      image.convert("RGB"),
+                      (thumb_width, thumb_height)
+                  )
+
+                  paste_x = (
+                      x
+                      + (
+                          thumb_width
+                          - thumb.width
+                      ) // 2
+                  )
+
+                  paste_y = (
+                      y
+                      + (
+                          thumb_height
+                          - thumb.height
+                      ) // 2
+                  )
+
+                  sheet.paste(
+                      thumb,
+                      (paste_x, paste_y)
+                  )
+
+                  label = (
+                      f"{position:02d} {name}"
+                  )
+
+                  draw.text(
+                      (
+                          x,
+                          y + thumb_height + 3
+                      ),
+                      label,
+                      fill="black"
+                  )
+
+                  if variant != "standard":
+                      draw.text(
+                          (
+                              x,
+                              y + thumb_height + 20
+                          ),
+                          f"[{variant}]",
+                          fill="black"
+                      )
+
+          contact_sheet_path = (
+              OUTPUT_ROOT /
+              "contact-sheet.jpg"
+          )
+
+          sheet.save(
+              contact_sheet_path,
+              format="JPEG",
+              quality=88
+          )
+
+          # ------------------------------------------------
+          # Validation
+          # ------------------------------------------------
+
+          card_ids = [
+              card["id"]
+              for card in manifest["cards"]
+          ]
+
+          duplicate_ids = sorted({
+              card_id
+              for card_id in card_ids
+              if card_ids.count(card_id) > 1
+          })
+
+          downloaded = len(
+              manifest["cards"]
+          )
+
+          complete = (
+              downloaded == 48
+              and len(missing) == 0
+              and len(duplicate_ids) == 0
+          )
+
+          manifest["summary"] = {
+              "expected_prints": 48,
+              "downloaded": downloaded,
+              "missing": len(missing),
+              "warnings": len(warnings),
+              "duplicate_ids": duplicate_ids,
+              "complete": complete,
+          }
+
+          (OUTPUT_ROOT / "manifest.json").write_text(
+              json.dumps(
+                  manifest,
+                  indent=2,
+                  ensure_ascii=False
+              ),
+              encoding="utf-8"
+          )
+
+          (OUTPUT_ROOT / "missing-art.json").write_text(
+              json.dumps(
+                  missing,
+                  indent=2,
+                  ensure_ascii=False
+              ),
+              encoding="utf-8"
+          )
+
+          (OUTPUT_ROOT / "warnings.json").write_text(
+              json.dumps(
+                  warnings,
+                  indent=2,
+                  ensure_ascii=False
+              ),
+              encoding="utf-8"
+          )
+
+          report = (
+              "LuckyDex My First Battle artwork test\n"
+              "======================================\n"
+              "Expected distinct prints: 48\n"
+              f"Downloaded:              {downloaded}\n"
+              f"Missing/errors:          {len(missing)}\n"
+              f"Warnings:                {len(warnings)}\n"
+              f"Duplicate IDs:           "
+              f"{len(duplicate_ids)}\n"
+              f"Complete:                {complete}\n"
+              "\n"
+              "Deck model:\n"
+              "  Bulbasaur:  12 distinct prints\n"
+              "  Pikachu:    12 distinct prints\n"
+              "  Charmander: 12 distinct prints\n"
+              "  Squirtle:   12 distinct prints\n"
+          )
+
+          (OUTPUT_ROOT / "report.txt").write_text(
+              report,
+              encoding="utf-8"
+          )
+
+          print()
+          print(report)
+
+          PY
+
+      - name: Package My First Battle artwork
+        run: |
+          cd card-assets
+          zip -9 -r ../LuckyDex-MFB-art-test.zip MFB
+
+      - name: Show result
+        run: |
+          echo "Artwork files:"
+          find card-assets/MFB/images -type f | wc -l
+
+          echo
+          echo "ZIP size:"
+          du -h LuckyDex-MFB-art-test.zip
+
+          echo
+          echo "Report:"
+          cat card-assets/MFB/report.txt
+
+      - name: Upload My First Battle test
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: LuckyDex-card-art-MFB-test
+          path: |
+            LuckyDex-MFB-art-test.zip
+            card-assets/MFB/manifest.json
+            card-assets/MFB/missing-art.json
+            card-assets/MFB/warnings.json
+            card-assets/MFB/report.txt
+            card-assets/MFB/contact-sheet.jpg
+          if-no-files-found: warn
+          retention-days: 30
+
+      - name: Require complete 48-print set
+        run: |
+          python - <<'PY'
+          import json
+
+          with open(
+              "card-assets/MFB/manifest.json",
+              encoding="utf-8"
+          ) as f:
+              manifest = json.load(f)
+
+          summary = manifest["summary"]
+
+          if not summary["complete"]:
+              raise SystemExit(
+                  "My First Battle validation FAILED: "
+                  + json.dumps(summary)
+              )
+
+          print(
+              "PASS: all 48 My First Battle "
+              "print identities were validated."
+          )
+          PY
