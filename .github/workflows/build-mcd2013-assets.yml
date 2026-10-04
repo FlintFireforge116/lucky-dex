@@ -1,0 +1,907 @@
+name: Build LuckyDex Card Assets - McDonalds 2013 Test
+
+on:
+  workflow_dispatch:
+
+  push:
+    branches:
+      - main
+    paths:
+      - '.github/workflows/build-mcd2013-assets.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  build-mcd2013:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    steps:
+      - name: Check out LuckyDex
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install tools
+        run: |
+          python -m pip install --upgrade pip
+          pip install requests pillow beautifulsoup4
+
+      - name: Build McDonalds Collection 2013 artwork pack
+        shell: bash
+        run: |
+          python - <<'PY'
+          import io
+          import json
+          import hashlib
+          import re
+          import time
+          from pathlib import Path
+          from urllib.parse import urljoin, urlparse
+
+          import requests
+          from bs4 import BeautifulSoup
+          from PIL import Image, ImageOps, ImageDraw
+
+          SET_CODE = "MCD13"
+          SET_NAME = "McDonald's Collection (2013)"
+          EXPECTED_COUNT = 12
+
+          CARDS = [
+              (1,  "Leafeon"),
+              (2,  "Flareon"),
+              (3,  "Vaporeon"),
+              (4,  "Glaceon"),
+              (5,  "Pikachu"),
+              (6,  "Jolteon"),
+              (7,  "Espeon"),
+              (8,  "Timburr"),
+              (9,  "Umbreon"),
+              (10, "Scraggy"),
+              (11, "Zorua"),
+              (12, "Eevee"),
+          ]
+
+          output_root = Path("card-assets/MCD13")
+          image_dir = output_root / "images"
+
+          image_dir.mkdir(parents=True, exist_ok=True)
+
+          session = requests.Session()
+          session.headers.update({
+              "User-Agent":
+                  "Mozilla/5.0 LuckyDex-Card-Asset-Builder/4.0",
+              "Accept":
+                  "text/html,application/xhtml+xml,"
+                  "application/xml;q=0.9,image/avif,image/webp,"
+                  "image/apng,image/*,*/*;q=0.8",
+              "Accept-Language":
+                  "en-GB,en;q=0.9",
+          })
+
+          manifest = {
+              "schema": 2,
+              "set": {
+                  "code": SET_CODE,
+                  "name": SET_NAME,
+                  "language": "French",
+                  "expected_count": EXPECTED_COUNT,
+                  "source": "Pokellector",
+              },
+              "cards": [],
+          }
+
+          missing = []
+          warnings = []
+          contact_images = []
+
+          def normalise(value):
+              return re.sub(
+                  r"[^a-z0-9]+",
+                  "",
+                  str(value or "").casefold()
+              )
+
+          def get(url, attempts=4, referer=None):
+              last_error = None
+
+              headers = {}
+
+              if referer:
+                  headers["Referer"] = referer
+
+              for attempt in range(1, attempts + 1):
+                  try:
+                      response = session.get(
+                          url,
+                          headers=headers,
+                          timeout=30,
+                          allow_redirects=True
+                      )
+
+                      if response.status_code == 200:
+                          return response
+
+                      last_error = (
+                          f"HTTP {response.status_code}"
+                      )
+
+                  except Exception as exc:
+                      last_error = repr(exc)
+
+                  if attempt < attempts:
+                      time.sleep(attempt * 2)
+
+              raise RuntimeError(
+                  f"{url}: {last_error}"
+              )
+
+          def build_card_page_url(number, name):
+              return (
+                  "https://www.pokellector.com/"
+                  "McDonalds-Collection-2013-Expansion/"
+                  f"{name}-Card-{number}"
+              )
+
+          def find_exact_card_image(
+              soup,
+              expected_name,
+              expected_number,
+              page_url
+          ):
+              candidates = []
+
+              for img in soup.find_all("img"):
+                  src = (
+                      img.get("src")
+                      or img.get("data-src")
+                      or img.get("data-lazy-src")
+                      or ""
+                  )
+
+                  alt = str(img.get("alt") or "")
+
+                  if not src:
+                      continue
+
+                  absolute = urljoin(
+                      page_url,
+                      src
+                  )
+
+                  host = (
+                      urlparse(absolute)
+                      .netloc
+                      .casefold()
+                  )
+
+                  if (
+                      "pokellector.com"
+                      not in host
+                  ):
+                      continue
+
+                  score = 0
+
+                  if (
+                      "den-cards.pokellector.com"
+                      in host
+                  ):
+                      score += 100
+
+                  if (
+                      normalise(expected_name)
+                      in normalise(alt)
+                  ):
+                      score += 20
+
+                  if (
+                      f"#{expected_number}"
+                      in alt
+                  ):
+                      score += 10
+
+                  if (
+                      "mcd"
+                      in absolute.casefold()
+                  ):
+                      score += 10
+
+                  candidates.append(
+                      (
+                          score,
+                          absolute,
+                          alt
+                      )
+                  )
+
+              if not candidates:
+                  raise RuntimeError(
+                      "No Pokellector card image "
+                      "found on card page"
+                  )
+
+              candidates.sort(
+                  key=lambda item: item[0],
+                  reverse=True
+              )
+
+              best = candidates[0]
+
+              if best[0] < 100:
+                  raise RuntimeError(
+                      "No exact den-cards "
+                      "Pokellector image found"
+                  )
+
+              return best[1], best[2]
+
+          for index, (number, name) in enumerate(
+              CARDS,
+              start=1
+          ):
+              canonical_id = (
+                  f"{SET_CODE}-{number:03d}"
+              )
+
+              page_url = build_card_page_url(
+                  number,
+                  name
+              )
+
+              print()
+              print(
+                  f"[{index}/{EXPECTED_COUNT}] "
+                  f"{canonical_id} {name}"
+              )
+
+              try:
+                  page_response = get(page_url)
+
+                  soup = BeautifulSoup(
+                      page_response.text,
+                      "html.parser"
+                  )
+
+                  page_text = soup.get_text(
+                      " ",
+                      strip=True
+                  )
+
+                  # -----------------------------
+                  # Validate exact card page
+                  # -----------------------------
+
+                  if (
+                      normalise(name)
+                      not in normalise(page_text)
+                  ):
+                      raise RuntimeError(
+                          "Expected card name is "
+                          "not present on source page"
+                      )
+
+                  if (
+                      normalise(SET_NAME)
+                      not in normalise(page_text)
+                  ):
+                      raise RuntimeError(
+                          "Expected set name is "
+                          "not present on source page"
+                      )
+
+                  number_patterns = [
+                      f"{number}/12",
+                      f"#{number}",
+                      f"Card {number}/12",
+                  ]
+
+                  if not any(
+                      pattern.casefold()
+                      in page_text.casefold()
+                      for pattern
+                      in number_patterns
+                  ):
+                      raise RuntimeError(
+                          "Expected collector number "
+                          f"{number}/12 not found "
+                          "on source page"
+                      )
+
+                  image_url, image_alt = (
+                      find_exact_card_image(
+                          soup,
+                          name,
+                          number,
+                          page_url
+                      )
+                  )
+
+                  image_host = (
+                      urlparse(image_url)
+                      .netloc
+                      .casefold()
+                  )
+
+                  if (
+                      image_host
+                      != "den-cards.pokellector.com"
+                  ):
+                      raise RuntimeError(
+                          "Unexpected card image host: "
+                          f"{image_host}"
+                      )
+
+                  # -----------------------------
+                  # Download exact print
+                  # -----------------------------
+
+                  image_response = get(
+                      image_url,
+                      referer=page_url
+                  )
+
+                  raw_image = (
+                      image_response.content
+                  )
+
+                  try:
+                      probe = Image.open(
+                          io.BytesIO(raw_image)
+                      )
+
+                      probe.verify()
+
+                  except Exception as exc:
+                      raise RuntimeError(
+                          f"Invalid image: {exc}"
+                      )
+
+                  image = Image.open(
+                      io.BytesIO(raw_image)
+                  )
+
+                  image = ImageOps.exif_transpose(
+                      image
+                  )
+
+                  width, height = image.size
+
+                  if (
+                      width < 400
+                      or height < 500
+                  ):
+                      raise RuntimeError(
+                          "Image resolution "
+                          "unexpectedly small: "
+                          f"{width}x{height}"
+                      )
+
+                  if (
+                      image.width
+                      >= image.height
+                  ):
+                      raise RuntimeError(
+                          "Image is not portrait "
+                          "card-shaped"
+                      )
+
+                  if image.mode not in (
+                      "RGB",
+                      "RGBA"
+                  ):
+                      image = image.convert(
+                          "RGBA"
+                      )
+
+                  # -----------------------------
+                  # Convert to LuckyDex WebP
+                  # -----------------------------
+
+                  output_file = (
+                      image_dir /
+                      f"{canonical_id}.webp"
+                  )
+
+                  buffer = io.BytesIO()
+
+                  image.save(
+                      buffer,
+                      format="WEBP",
+                      quality=92,
+                      method=6
+                  )
+
+                  final_bytes = (
+                      buffer.getvalue()
+                  )
+
+                  output_file.write_bytes(
+                      final_bytes
+                  )
+
+                  sha256 = hashlib.sha256(
+                      final_bytes
+                  ).hexdigest()
+
+                  manifest["cards"].append({
+                      "id": canonical_id,
+                      "set": SET_CODE,
+                      "number": str(number),
+                      "printed_number":
+                          f"{number}/12",
+                      "name": name,
+                      "language": "French",
+                      "exact_print": True,
+                      "file":
+                          f"images/{canonical_id}.webp",
+                      "width": width,
+                      "height": height,
+                      "bytes": len(
+                          final_bytes
+                      ),
+                      "sha256": sha256,
+                      "provider":
+                          "pokellector",
+                      "source_page":
+                          page_url,
+                      "source_url":
+                          image_url,
+                      "source_alt":
+                          image_alt,
+                  })
+
+                  contact_images.append(
+                      (
+                          number,
+                          name,
+                          image.copy()
+                      )
+                  )
+
+                  print(
+                      f"OK {canonical_id} "
+                      f"{name} "
+                      f"{width}x{height}"
+                  )
+
+              except Exception as exc:
+                  missing.append({
+                      "id": canonical_id,
+                      "number": number,
+                      "name": name,
+                      "source_page":
+                          page_url,
+                      "error": str(exc),
+                  })
+
+                  print(
+                      f"FAILED {canonical_id}: "
+                      f"{exc}"
+                  )
+
+          # -------------------------------------
+          # Number validation
+          # -------------------------------------
+
+          numbers = sorted(
+              int(card["number"])
+              for card
+              in manifest["cards"]
+          )
+
+          expected_numbers = list(
+              range(
+                  1,
+                  EXPECTED_COUNT + 1
+              )
+          )
+
+          missing_numbers = sorted(
+              set(expected_numbers)
+              - set(numbers)
+          )
+
+          duplicate_numbers = sorted({
+              number
+              for number in numbers
+              if numbers.count(number) > 1
+          })
+
+          if missing_numbers:
+              warnings.append({
+                  "type":
+                      "missing_numbers",
+                  "numbers":
+                      missing_numbers,
+              })
+
+          if duplicate_numbers:
+              warnings.append({
+                  "type":
+                      "duplicate_numbers",
+                  "numbers":
+                      duplicate_numbers,
+              })
+
+          # -------------------------------------
+          # Duplicate-image validation
+          # -------------------------------------
+
+          hash_groups = {}
+
+          for card in manifest["cards"]:
+              hash_groups.setdefault(
+                  card["sha256"],
+                  []
+              ).append(
+                  card["id"]
+              )
+
+          duplicate_image_groups = [
+              group
+              for group
+              in hash_groups.values()
+              if len(group) > 1
+          ]
+
+          if duplicate_image_groups:
+              warnings.append({
+                  "type":
+                      "duplicate_images",
+                  "groups":
+                      duplicate_image_groups,
+              })
+
+          # -------------------------------------
+          # Contact sheet
+          # -------------------------------------
+
+          columns = 4
+
+          thumb_width = 190
+          thumb_height = 270
+
+          label_height = 34
+          gap = 16
+          margin = 20
+
+          rows = (
+              EXPECTED_COUNT
+              + columns - 1
+          ) // columns
+
+          sheet_width = (
+              margin * 2
+              + columns * thumb_width
+              + (columns - 1) * gap
+          )
+
+          sheet_height = (
+              margin * 2
+              + rows
+              * (
+                  thumb_height
+                  + label_height
+              )
+              + (rows - 1) * gap
+          )
+
+          sheet = Image.new(
+              "RGB",
+              (
+                  sheet_width,
+                  sheet_height
+              ),
+              "white"
+          )
+
+          draw = ImageDraw.Draw(
+              sheet
+          )
+
+          image_lookup = {
+              number: (
+                  name,
+                  image
+              )
+              for number, name, image
+              in contact_images
+          }
+
+          for number in range(
+              1,
+              EXPECTED_COUNT + 1
+          ):
+              index = number - 1
+
+              row = index // columns
+              col = index % columns
+
+              x = (
+                  margin
+                  + col
+                  * (
+                      thumb_width
+                      + gap
+                  )
+              )
+
+              y = (
+                  margin
+                  + row
+                  * (
+                      thumb_height
+                      + label_height
+                      + gap
+                  )
+              )
+
+              entry = image_lookup.get(
+                  number
+              )
+
+              if not entry:
+                  draw.rectangle(
+                      (
+                          x,
+                          y,
+                          x + thumb_width,
+                          y + thumb_height
+                      ),
+                      outline="black"
+                  )
+
+                  draw.text(
+                      (
+                          x + 10,
+                          y + 10
+                      ),
+                      "MISSING",
+                      fill="black"
+                  )
+
+                  continue
+
+              name, card_image = entry
+
+              thumb = ImageOps.contain(
+                  card_image.convert("RGB"),
+                  (
+                      thumb_width,
+                      thumb_height
+                  )
+              )
+
+              px = (
+                  x
+                  + (
+                      thumb_width
+                      - thumb.width
+                  ) // 2
+              )
+
+              py = (
+                  y
+                  + (
+                      thumb_height
+                      - thumb.height
+                  ) // 2
+              )
+
+              sheet.paste(
+                  thumb,
+                  (
+                      px,
+                      py
+                  )
+              )
+
+              draw.text(
+                  (
+                      x,
+                      y + thumb_height + 4
+                  ),
+                  f"{number:02d}/12 {name}",
+                  fill="black"
+              )
+
+          sheet.save(
+              output_root /
+              "contact-sheet.jpg",
+              format="JPEG",
+              quality=90
+          )
+
+          # -------------------------------------
+          # Final result
+          # -------------------------------------
+
+          downloaded = len(
+              manifest["cards"]
+          )
+
+          exact_count = sum(
+              1
+              for card
+              in manifest["cards"]
+              if card.get(
+                  "exact_print"
+              )
+          )
+
+          complete = (
+              downloaded
+              == EXPECTED_COUNT
+              and exact_count
+              == EXPECTED_COUNT
+              and len(missing) == 0
+              and len(
+                  missing_numbers
+              ) == 0
+              and len(
+                  duplicate_numbers
+              ) == 0
+              and len(
+                  duplicate_image_groups
+              ) == 0
+          )
+
+          manifest["summary"] = {
+              "expected":
+                  EXPECTED_COUNT,
+              "downloaded":
+                  downloaded,
+              "exact_prints":
+                  exact_count,
+              "missing":
+                  len(missing),
+              "missing_numbers":
+                  missing_numbers,
+              "duplicate_numbers":
+                  duplicate_numbers,
+              "duplicate_image_groups":
+                  duplicate_image_groups,
+              "warnings":
+                  len(warnings),
+              "complete":
+                  complete,
+          }
+
+          (
+              output_root /
+              "manifest.json"
+          ).write_text(
+              json.dumps(
+                  manifest,
+                  indent=2,
+                  ensure_ascii=False
+              ),
+              encoding="utf-8"
+          )
+
+          (
+              output_root /
+              "missing-art.json"
+          ).write_text(
+              json.dumps(
+                  missing,
+                  indent=2,
+                  ensure_ascii=False
+              ),
+              encoding="utf-8"
+          )
+
+          (
+              output_root /
+              "warnings.json"
+          ).write_text(
+              json.dumps(
+                  warnings,
+                  indent=2,
+                  ensure_ascii=False
+              ),
+              encoding="utf-8"
+          )
+
+          report = (
+              "LuckyDex McDonald's Collection "
+              "2013 artwork test\n"
+              "================================"
+              "============\n"
+              f"Expected cards:       "
+              f"{EXPECTED_COUNT}\n"
+              f"Downloaded:           "
+              f"{downloaded}\n"
+              f"Exact prints:         "
+              f"{exact_count}\n"
+              f"Missing/errors:       "
+              f"{len(missing)}\n"
+              f"Missing numbers:      "
+              f"{len(missing_numbers)}\n"
+              f"Duplicate numbers:    "
+              f"{len(duplicate_numbers)}\n"
+              f"Duplicate images:     "
+              f"{len(duplicate_image_groups)}\n"
+              f"Warnings:             "
+              f"{len(warnings)}\n"
+              f"Complete:             "
+              f"{complete}\n"
+          )
+
+          (
+              output_root /
+              "report.txt"
+          ).write_text(
+              report,
+              encoding="utf-8"
+          )
+
+          print()
+          print(report)
+
+          PY
+
+      - name: Package McDonalds 2013 artwork
+        run: |
+          cd card-assets
+          zip -9 -r ../LuckyDex-MCD13-art-test.zip MCD13
+
+      - name: Show result
+        run: |
+          echo "Artwork files:"
+          find card-assets/MCD13/images -type f | wc -l
+
+          echo
+          echo "ZIP size:"
+          du -h LuckyDex-MCD13-art-test.zip
+
+          echo
+          echo "Report:"
+          cat card-assets/MCD13/report.txt
+
+      - name: Upload McDonalds 2013 test
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: LuckyDex-card-art-MCD13-test
+          path: |
+            LuckyDex-MCD13-art-test.zip
+            card-assets/MCD13/manifest.json
+            card-assets/MCD13/missing-art.json
+            card-assets/MCD13/warnings.json
+            card-assets/MCD13/report.txt
+            card-assets/MCD13/contact-sheet.jpg
+          if-no-files-found: warn
+          retention-days: 30
+
+      - name: Require complete exact 12-card set
+        run: |
+          python - <<'PY'
+          import json
+
+          with open(
+              "card-assets/MCD13/manifest.json",
+              encoding="utf-8"
+          ) as f:
+              manifest = json.load(f)
+
+          summary = manifest["summary"]
+
+          if not summary["complete"]:
+              raise SystemExit(
+                  "McDonald's Collection 2013 "
+                  "validation FAILED: "
+                  + json.dumps(summary)
+              )
+
+          print(
+              "PASS: all 12 exact French "
+              "McDonald's Collection 2013 "
+              "prints were validated."
+          )
+          PY
