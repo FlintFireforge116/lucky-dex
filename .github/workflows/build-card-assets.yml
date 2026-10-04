@@ -1,0 +1,431 @@
+name: Build LuckyDex Card Assets - SVI Test
+
+on:
+  workflow_dispatch:
+
+  push:
+    branches:
+      - main
+    paths:
+      - '.github/workflows/build-card-assets.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  build-svi-art-pack:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    steps:
+      - name: Check out LuckyDex
+        uses: actions/checkout@v4
+
+      - name: Check out Scarlet & Violet card metadata
+        uses: actions/checkout@v4
+        with:
+          repository: type-null/PTCG-database
+          ref: main
+          path: card-db
+          fetch-depth: 1
+          sparse-checkout: |
+            data_en/Scarlet & Violet/SVI
+          sparse-checkout-cone-mode: false
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install image tools
+        run: |
+          python -m pip install --upgrade pip
+          pip install requests pillow
+
+      - name: Build Scarlet & Violet artwork pack
+        shell: bash
+        run: |
+          python - <<'PY'
+          import io
+          import json
+          import hashlib
+          import re
+          import time
+          from pathlib import Path
+
+          import requests
+          from PIL import Image, ImageOps
+
+          SET_CODE = "SVI"
+          TCGDEX_SET = "sv01"
+
+          source_dir = Path(
+              "card-db/data_en/Scarlet & Violet/SVI"
+          )
+
+          output_root = Path("card-assets/SVI")
+          image_dir = output_root / "images"
+
+          image_dir.mkdir(parents=True, exist_ok=True)
+
+          session = requests.Session()
+          session.headers.update({
+              "User-Agent":
+                  "Mozilla/5.0 LuckyDex-Card-Asset-Builder/1.0",
+              "Accept":
+                  "image/avif,image/webp,image/apng,image/*,*/*;q=0.8",
+          })
+
+          manifest = {
+              "schema": 1,
+              "set": {
+                  "code": "SVI",
+                  "name": "Scarlet & Violet",
+                  "tcgdex_id": "sv01"
+              },
+              "cards": []
+          }
+
+          missing = []
+          errors = []
+
+          def normalise_name(value):
+              if value is None:
+                  return ""
+              return re.sub(
+                  r"[^a-z0-9]+",
+                  "",
+                  str(value).casefold()
+              )
+
+          def get(url, attempts=3):
+              last_error = None
+
+              for attempt in range(1, attempts + 1):
+                  try:
+                      response = session.get(
+                          url,
+                          timeout=30,
+                          allow_redirects=True
+                      )
+
+                      if response.status_code == 200:
+                          return response
+
+                      last_error = (
+                          f"HTTP {response.status_code}"
+                      )
+
+                  except Exception as exc:
+                      last_error = repr(exc)
+
+                  if attempt < attempts:
+                      time.sleep(attempt * 2)
+
+              raise RuntimeError(
+                  f"{url}: {last_error}"
+              )
+
+          def tcgdex_fallback(card):
+              number = str(card.get("number", "")).strip()
+
+              if number.isdigit():
+                  local_id = str(int(number))
+              else:
+                  local_id = number
+
+              api_url = (
+                  "https://api.tcgdex.net/v2/en/cards/"
+                  f"{TCGDEX_SET}-{local_id}"
+              )
+
+              response = get(api_url)
+              tcg = response.json()
+
+              returned_set = (
+                  tcg.get("set", {}).get("id")
+              )
+
+              returned_name = tcg.get("name", "")
+              returned_local_id = str(
+                  tcg.get("localId", "")
+              )
+
+              if returned_set != TCGDEX_SET:
+                  raise RuntimeError(
+                      "TCGdex set mismatch: "
+                      f"{returned_set}"
+                  )
+
+              if normalise_name(returned_name) != normalise_name(
+                  card.get("name")
+              ):
+                  raise RuntimeError(
+                      "TCGdex name mismatch: "
+                      f"{returned_name!r} != "
+                      f"{card.get('name')!r}"
+                  )
+
+              if returned_local_id.lstrip("0") != local_id.lstrip("0"):
+                  raise RuntimeError(
+                      "TCGdex number mismatch: "
+                      f"{returned_local_id!r} != "
+                      f"{local_id!r}"
+                  )
+
+              image_base = tcg.get("image")
+
+              if not image_base:
+                  raise RuntimeError(
+                      "TCGdex returned no artwork"
+                  )
+
+              return (
+                  image_base + "/high.webp",
+                  "tcgdex"
+              )
+
+          files = sorted(source_dir.glob("*.json"))
+
+          print(
+              f"Found {len(files)} metadata records "
+              f"for {SET_CODE}"
+          )
+
+          for index, metadata_path in enumerate(
+              files,
+              start=1
+          ):
+              try:
+                  card = json.loads(
+                      metadata_path.read_text(
+                          encoding="utf-8"
+                      )
+                  )
+
+                  source_stem = metadata_path.stem
+
+                  name = str(card.get("name", "")).strip()
+                  number = str(card.get("number", "")).strip()
+
+                  source_set = str(
+                      card.get("set_name", "")
+                  ).strip()
+
+                  if source_set != SET_CODE:
+                      raise RuntimeError(
+                          "Metadata set mismatch: "
+                          f"{source_set!r}"
+                      )
+
+                  if not name:
+                      raise RuntimeError(
+                          "Card has no name"
+                      )
+
+                  if not number:
+                      raise RuntimeError(
+                          "Card has no collector number"
+                      )
+
+                  canonical_id = (
+                      f"{SET_CODE}-{source_stem}"
+                  )
+
+                  output_file = (
+                      image_dir /
+                      f"{canonical_id}.webp"
+                  )
+
+                  primary_url = card.get("img")
+                  image_url = primary_url
+                  provider = "pkmncards"
+
+                  raw_image = None
+                  primary_error = None
+
+                  if primary_url:
+                      try:
+                          response = get(primary_url)
+                          raw_image = response.content
+                      except Exception as exc:
+                          primary_error = str(exc)
+
+                  if raw_image is None:
+                      image_url, provider = (
+                          tcgdex_fallback(card)
+                      )
+
+                      response = get(image_url)
+                      raw_image = response.content
+
+                  try:
+                      probe = Image.open(
+                          io.BytesIO(raw_image)
+                      )
+                      probe.verify()
+                  except Exception as exc:
+                      raise RuntimeError(
+                          f"Invalid image: {exc}"
+                      )
+
+                  image = Image.open(
+                      io.BytesIO(raw_image)
+                  )
+
+                  image = ImageOps.exif_transpose(image)
+
+                  if image.mode not in ("RGB", "RGBA"):
+                      image = image.convert("RGBA")
+
+                  buffer = io.BytesIO()
+
+                  image.save(
+                      buffer,
+                      format="WEBP",
+                      quality=92,
+                      method=6
+                  )
+
+                  final_bytes = buffer.getvalue()
+
+                  output_file.write_bytes(final_bytes)
+
+                  sha256 = hashlib.sha256(
+                      final_bytes
+                  ).hexdigest()
+
+                  manifest["cards"].append({
+                      "id": canonical_id,
+                      "set": SET_CODE,
+                      "number": number,
+                      "name": name,
+                      "file": (
+                          f"images/"
+                          f"{canonical_id}.webp"
+                      ),
+                      "width": image.width,
+                      "height": image.height,
+                      "bytes": len(final_bytes),
+                      "sha256": sha256,
+                      "provider": provider,
+                      "source_url": image_url,
+                      "primary_url": primary_url,
+                      "primary_error": primary_error
+                  })
+
+                  print(
+                      f"[{index}/{len(files)}] "
+                      f"OK {canonical_id} "
+                      f"{name} ({provider})"
+                  )
+
+              except Exception as exc:
+                  failure = {
+                      "metadata_file":
+                          str(metadata_path),
+                      "id":
+                          f"{SET_CODE}-{metadata_path.stem}",
+                      "error":
+                          str(exc)
+                  }
+
+                  missing.append(failure)
+
+                  print(
+                      f"[{index}/{len(files)}] "
+                      f"FAILED "
+                      f"{metadata_path.name}: {exc}"
+                  )
+
+          manifest["summary"] = {
+              "metadata_records": len(files),
+              "downloaded": len(
+                  manifest["cards"]
+              ),
+              "missing": len(missing),
+              "complete":
+                  len(missing) == 0
+                  and len(manifest["cards"]) == len(files)
+          }
+
+          (output_root / "manifest.json").write_text(
+              json.dumps(
+                  manifest,
+                  indent=2,
+                  ensure_ascii=False
+              ),
+              encoding="utf-8"
+          )
+
+          (output_root / "missing-art.json").write_text(
+              json.dumps(
+                  missing,
+                  indent=2,
+                  ensure_ascii=False
+              ),
+              encoding="utf-8"
+          )
+
+          report = (
+              "LuckyDex Scarlet & Violet artwork test\n"
+              "=======================================\n"
+              f"Metadata records: {len(files)}\n"
+              f"Downloaded:       "
+              f"{len(manifest['cards'])}\n"
+              f"Missing:          {len(missing)}\n"
+              f"Complete:         "
+              f"{manifest['summary']['complete']}\n"
+          )
+
+          (output_root / "report.txt").write_text(
+              report,
+              encoding="utf-8"
+          )
+
+          print()
+          print(report)
+
+          if not files:
+              raise SystemExit(
+                  "No SVI metadata was found."
+              )
+
+          if missing:
+              print(
+                  "WARNING: Some artwork is missing. "
+                  "The artifact will still be uploaded "
+                  "so missing-art.json can be inspected."
+              )
+
+          PY
+
+      - name: Package SVI artwork
+        run: |
+          cd card-assets
+          zip -9 -r ../LuckyDex-SVI-art-test.zip SVI
+
+      - name: Show final contents
+        run: |
+          echo "Artwork files:"
+          find card-assets/SVI/images -type f | wc -l
+
+          echo
+          echo "ZIP size:"
+          du -h LuckyDex-SVI-art-test.zip
+
+          echo
+          echo "Report:"
+          cat card-assets/SVI/report.txt
+
+      - name: Upload SVI artwork test
+        uses: actions/upload-artifact@v4
+        with:
+          name: LuckyDex-card-art-SVI-test
+          path: |
+            LuckyDex-SVI-art-test.zip
+            card-assets/SVI/manifest.json
+            card-assets/SVI/missing-art.json
+            card-assets/SVI/report.txt
+          if-no-files-found: error
+          retention-days: 30
