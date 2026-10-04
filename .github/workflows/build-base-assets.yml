@@ -1,0 +1,771 @@
+name: Build LuckyDex Card Assets - Base Set Test
+
+on:
+  workflow_dispatch:
+
+  push:
+    branches:
+      - main
+    paths:
+      - '.github/workflows/build-base-assets.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  build-base-set:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    steps:
+      - name: Check out LuckyDex
+        uses: actions/checkout@v4
+
+      - name: Check out Base Set metadata
+        uses: actions/checkout@v4
+        with:
+          repository: type-null/PTCG-database
+          ref: main
+          path: card-db
+          fetch-depth: 1
+          sparse-checkout: |
+            data_en/Classic/BS
+          sparse-checkout-cone-mode: false
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install tools
+        run: |
+          python -m pip install --upgrade pip
+          pip install requests pillow
+
+      - name: Build Base Set artwork pack
+        shell: bash
+        run: |
+          python - <<'PY'
+          import io
+          import json
+          import hashlib
+          import re
+          import time
+          from pathlib import Path
+
+          import requests
+          from PIL import Image, ImageOps, ImageDraw
+
+          SET_CODE = "BS"
+          SET_NAME = "Base Set"
+          EXPECTED_COUNT = 102
+          TCGDEX_SET = "base1"
+
+          source_dir = Path(
+              "card-db/data_en/Classic/BS"
+          )
+
+          output_root = Path("card-assets/BS")
+          image_dir = output_root / "images"
+
+          image_dir.mkdir(parents=True, exist_ok=True)
+
+          session = requests.Session()
+          session.headers.update({
+              "User-Agent":
+                  "Mozilla/5.0 LuckyDex-Card-Asset-Builder/3.0",
+              "Accept":
+                  "image/avif,image/webp,image/apng,image/*,*/*;q=0.8",
+          })
+
+          manifest = {
+              "schema": 2,
+              "set": {
+                  "code": SET_CODE,
+                  "name": SET_NAME,
+                  "tcgdex_id": TCGDEX_SET,
+                  "expected_count": EXPECTED_COUNT,
+              },
+              "cards": [],
+          }
+
+          missing = []
+          warnings = []
+          contact_images = []
+
+          def normalise(value):
+              return re.sub(
+                  r"[^a-z0-9]+",
+                  "",
+                  str(value or "").casefold()
+              )
+
+          def get(url, attempts=3):
+              last_error = None
+
+              for attempt in range(1, attempts + 1):
+                  try:
+                      response = session.get(
+                          url,
+                          timeout=30,
+                          allow_redirects=True
+                      )
+
+                      if response.status_code == 200:
+                          return response
+
+                      last_error = (
+                          f"HTTP {response.status_code}"
+                      )
+
+                  except Exception as exc:
+                      last_error = repr(exc)
+
+                  if attempt < attempts:
+                      time.sleep(attempt * 2)
+
+              raise RuntimeError(
+                  f"{url}: {last_error}"
+              )
+
+          def tcgdex_fallback(card):
+              number = str(
+                  card.get("number", "")
+              ).strip()
+
+              if not number.isdigit():
+                  raise RuntimeError(
+                      "Base Set card number is not numeric"
+                  )
+
+              local_id = str(int(number))
+
+              api_url = (
+                  "https://api.tcgdex.net/v2/en/cards/"
+                  f"{TCGDEX_SET}-{local_id}"
+              )
+
+              response = get(api_url)
+              tcg = response.json()
+
+              returned_set = (
+                  tcg.get("set", {}).get("id")
+              )
+
+              returned_name = str(
+                  tcg.get("name", "")
+              )
+
+              returned_local_id = str(
+                  tcg.get("localId", "")
+              )
+
+              if returned_set != TCGDEX_SET:
+                  raise RuntimeError(
+                      "TCGdex set mismatch: "
+                      f"{returned_set!r}"
+                  )
+
+              if (
+                  normalise(returned_name)
+                  != normalise(card.get("name"))
+              ):
+                  raise RuntimeError(
+                      "TCGdex name mismatch: "
+                      f"{returned_name!r} != "
+                      f"{card.get('name')!r}"
+                  )
+
+              if (
+                  returned_local_id.lstrip("0")
+                  != local_id.lstrip("0")
+              ):
+                  raise RuntimeError(
+                      "TCGdex number mismatch: "
+                      f"{returned_local_id!r} != "
+                      f"{local_id!r}"
+                  )
+
+              image_base = tcg.get("image")
+
+              if not image_base:
+                  raise RuntimeError(
+                      "TCGdex returned no artwork"
+                  )
+
+              return (
+                  image_base + "/high.webp",
+                  "tcgdex"
+              )
+
+          files = sorted(
+              source_dir.glob("*.json"),
+              key=lambda p: int(p.stem)
+          )
+
+          print(
+              f"Found {len(files)} metadata records"
+          )
+
+          if len(files) != EXPECTED_COUNT:
+              warnings.append({
+                  "type": "metadata_count",
+                  "expected": EXPECTED_COUNT,
+                  "found": len(files),
+              })
+
+          for index, metadata_path in enumerate(
+              files,
+              start=1
+          ):
+              try:
+                  card = json.loads(
+                      metadata_path.read_text(
+                          encoding="utf-8"
+                      )
+                  )
+
+                  number = str(
+                      card.get("number", "")
+                  ).strip()
+
+                  name = str(
+                      card.get("name", "")
+                  ).strip()
+
+                  source_set = str(
+                      card.get("set_name", "")
+                  ).strip()
+
+                  full_set_name = str(
+                      card.get("set_full_name", "")
+                  ).strip()
+
+                  total = str(
+                      card.get("set_total", "")
+                  ).strip()
+
+                  if source_set != SET_CODE:
+                      raise RuntimeError(
+                          "Metadata set mismatch: "
+                          f"{source_set!r}"
+                      )
+
+                  if full_set_name != SET_NAME:
+                      raise RuntimeError(
+                          "Metadata full set name mismatch: "
+                          f"{full_set_name!r}"
+                      )
+
+                  if total != str(EXPECTED_COUNT):
+                      raise RuntimeError(
+                          "Metadata set total mismatch: "
+                          f"{total!r}"
+                      )
+
+                  if not number.isdigit():
+                      raise RuntimeError(
+                          "Collector number is not numeric"
+                      )
+
+                  numeric_number = int(number)
+
+                  if not (
+                      1 <= numeric_number <= EXPECTED_COUNT
+                  ):
+                      raise RuntimeError(
+                          "Collector number out of range: "
+                          f"{numeric_number}"
+                      )
+
+                  if not name:
+                      raise RuntimeError(
+                          "Card name is empty"
+                      )
+
+                  canonical_id = (
+                      f"{SET_CODE}-"
+                      f"{numeric_number:03d}"
+                  )
+
+                  output_file = (
+                      image_dir /
+                      f"{canonical_id}.webp"
+                  )
+
+                  primary_url = card.get("img")
+
+                  raw_image = None
+                  provider = None
+                  image_url = None
+                  primary_error = None
+
+                  if primary_url:
+                      try:
+                          response = get(primary_url)
+                          raw_image = response.content
+                          provider = "pkmncards"
+                          image_url = primary_url
+
+                      except Exception as exc:
+                          primary_error = str(exc)
+
+                  if raw_image is None:
+                      image_url, provider = (
+                          tcgdex_fallback(card)
+                      )
+
+                      response = get(image_url)
+                      raw_image = response.content
+
+                  try:
+                      probe = Image.open(
+                          io.BytesIO(raw_image)
+                      )
+
+                      probe.verify()
+
+                  except Exception as exc:
+                      raise RuntimeError(
+                          f"Invalid image: {exc}"
+                      )
+
+                  image = Image.open(
+                      io.BytesIO(raw_image)
+                  )
+
+                  image = ImageOps.exif_transpose(
+                      image
+                  )
+
+                  width, height = image.size
+
+                  if width < 400 or height < 500:
+                      raise RuntimeError(
+                          "Image unexpectedly small: "
+                          f"{width}x{height}"
+                      )
+
+                  if image.mode not in ("RGB", "RGBA"):
+                      image = image.convert("RGBA")
+
+                  buffer = io.BytesIO()
+
+                  image.save(
+                      buffer,
+                      format="WEBP",
+                      quality=92,
+                      method=6
+                  )
+
+                  final_bytes = buffer.getvalue()
+
+                  output_file.write_bytes(
+                      final_bytes
+                  )
+
+                  sha256 = hashlib.sha256(
+                      final_bytes
+                  ).hexdigest()
+
+                  manifest["cards"].append({
+                      "id": canonical_id,
+                      "set": SET_CODE,
+                      "number": number,
+                      "name": name,
+                      "rarity": card.get("rarity"),
+                      "file":
+                          f"images/{canonical_id}.webp",
+                      "width": width,
+                      "height": height,
+                      "bytes": len(final_bytes),
+                      "sha256": sha256,
+                      "provider": provider,
+                      "source_url": image_url,
+                      "primary_url": primary_url,
+                      "primary_error": primary_error,
+                  })
+
+                  contact_images.append(
+                      (
+                          numeric_number,
+                          name,
+                          image.copy()
+                      )
+                  )
+
+                  print(
+                      f"[{index}/{len(files)}] "
+                      f"OK {canonical_id} "
+                      f"{name} ({provider})"
+                  )
+
+              except Exception as exc:
+                  failure = {
+                      "metadata_file":
+                          str(metadata_path),
+                      "id":
+                          f"{SET_CODE}-"
+                          f"{int(metadata_path.stem):03d}",
+                      "error":
+                          str(exc),
+                  }
+
+                  missing.append(failure)
+
+                  print(
+                      f"[{index}/{len(files)}] "
+                      f"FAILED "
+                      f"{metadata_path.name}: {exc}"
+                  )
+
+          # -----------------------------------------
+          # Validate collector-number sequence
+          # -----------------------------------------
+
+          numbers = sorted(
+              int(card["number"])
+              for card in manifest["cards"]
+          )
+
+          expected_numbers = list(
+              range(1, EXPECTED_COUNT + 1)
+          )
+
+          absent_numbers = sorted(
+              set(expected_numbers)
+              - set(numbers)
+          )
+
+          duplicate_numbers = sorted({
+              n
+              for n in numbers
+              if numbers.count(n) > 1
+          })
+
+          if absent_numbers:
+              warnings.append({
+                  "type": "missing_numbers",
+                  "numbers": absent_numbers,
+              })
+
+          if duplicate_numbers:
+              warnings.append({
+                  "type": "duplicate_numbers",
+                  "numbers": duplicate_numbers,
+              })
+
+          # -----------------------------------------
+          # Check duplicate full-card image hashes
+          # -----------------------------------------
+
+          hash_to_cards = {}
+
+          for card in manifest["cards"]:
+              hash_to_cards.setdefault(
+                  card["sha256"],
+                  []
+              ).append(card["id"])
+
+          duplicate_image_groups = [
+              ids
+              for ids in hash_to_cards.values()
+              if len(ids) > 1
+          ]
+
+          if duplicate_image_groups:
+              warnings.append({
+                  "type": "duplicate_images",
+                  "groups":
+                      duplicate_image_groups,
+              })
+
+          # -----------------------------------------
+          # Contact sheet
+          # -----------------------------------------
+
+          columns = 6
+
+          thumb_width = 150
+          thumb_height = 210
+
+          label_height = 36
+          gap = 12
+          margin = 20
+
+          rows = (
+              len(contact_images)
+              + columns - 1
+          ) // columns
+
+          sheet_width = (
+              margin * 2
+              + columns * thumb_width
+              + (columns - 1) * gap
+          )
+
+          sheet_height = (
+              margin * 2
+              + rows
+              * (
+                  thumb_height
+                  + label_height
+              )
+              + (rows - 1) * gap
+          )
+
+          sheet = Image.new(
+              "RGB",
+              (
+                  sheet_width,
+                  sheet_height
+              ),
+              "white"
+          )
+
+          draw = ImageDraw.Draw(sheet)
+
+          for i, (
+              number,
+              name,
+              card_image
+          ) in enumerate(
+              sorted(
+                  contact_images,
+                  key=lambda item: item[0]
+              )
+          ):
+              row = i // columns
+              col = i % columns
+
+              x = (
+                  margin
+                  + col
+                  * (
+                      thumb_width + gap
+                  )
+              )
+
+              y = (
+                  margin
+                  + row
+                  * (
+                      thumb_height
+                      + label_height
+                      + gap
+                  )
+              )
+
+              thumb = ImageOps.contain(
+                  card_image.convert("RGB"),
+                  (
+                      thumb_width,
+                      thumb_height
+                  )
+              )
+
+              px = (
+                  x
+                  + (
+                      thumb_width
+                      - thumb.width
+                  ) // 2
+              )
+
+              py = (
+                  y
+                  + (
+                      thumb_height
+                      - thumb.height
+                  ) // 2
+              )
+
+              sheet.paste(
+                  thumb,
+                  (px, py)
+              )
+
+              label = (
+                  f"{number:03d} {name}"
+              )
+
+              if len(label) > 24:
+                  label = (
+                      label[:21] + "..."
+                  )
+
+              draw.text(
+                  (
+                      x,
+                      y + thumb_height + 4
+                  ),
+                  label,
+                  fill="black"
+              )
+
+          sheet.save(
+              output_root /
+              "contact-sheet.jpg",
+              format="JPEG",
+              quality=88
+          )
+
+          # -----------------------------------------
+          # Final validation
+          # -----------------------------------------
+
+          downloaded = len(
+              manifest["cards"]
+          )
+
+          complete = (
+              downloaded == EXPECTED_COUNT
+              and len(missing) == 0
+              and len(absent_numbers) == 0
+              and len(duplicate_numbers) == 0
+              and len(
+                  duplicate_image_groups
+              ) == 0
+          )
+
+          manifest["summary"] = {
+              "expected": EXPECTED_COUNT,
+              "downloaded": downloaded,
+              "missing": len(missing),
+              "warnings": len(warnings),
+              "missing_numbers":
+                  absent_numbers,
+              "duplicate_numbers":
+                  duplicate_numbers,
+              "duplicate_image_groups":
+                  duplicate_image_groups,
+              "complete": complete,
+          }
+
+          (
+              output_root /
+              "manifest.json"
+          ).write_text(
+              json.dumps(
+                  manifest,
+                  indent=2,
+                  ensure_ascii=False
+              ),
+              encoding="utf-8"
+          )
+
+          (
+              output_root /
+              "missing-art.json"
+          ).write_text(
+              json.dumps(
+                  missing,
+                  indent=2,
+                  ensure_ascii=False
+              ),
+              encoding="utf-8"
+          )
+
+          (
+              output_root /
+              "warnings.json"
+          ).write_text(
+              json.dumps(
+                  warnings,
+                  indent=2,
+                  ensure_ascii=False
+              ),
+              encoding="utf-8"
+          )
+
+          report = (
+              "LuckyDex Base Set artwork test\n"
+              "==============================\n"
+              f"Expected cards:      "
+              f"{EXPECTED_COUNT}\n"
+              f"Downloaded:          "
+              f"{downloaded}\n"
+              f"Missing/errors:      "
+              f"{len(missing)}\n"
+              f"Missing numbers:     "
+              f"{len(absent_numbers)}\n"
+              f"Duplicate numbers:   "
+              f"{len(duplicate_numbers)}\n"
+              f"Duplicate images:    "
+              f"{len(duplicate_image_groups)}\n"
+              f"Warnings:            "
+              f"{len(warnings)}\n"
+              f"Complete:            "
+              f"{complete}\n"
+          )
+
+          (
+              output_root /
+              "report.txt"
+          ).write_text(
+              report,
+              encoding="utf-8"
+          )
+
+          print()
+          print(report)
+
+          PY
+
+      - name: Package Base Set artwork
+        run: |
+          cd card-assets
+          zip -9 -r ../LuckyDex-Base-Set-art-test.zip BS
+
+      - name: Show result
+        run: |
+          echo "Artwork files:"
+          find card-assets/BS/images -type f | wc -l
+
+          echo
+          echo "ZIP size:"
+          du -h LuckyDex-Base-Set-art-test.zip
+
+          echo
+          echo "Report:"
+          cat card-assets/BS/report.txt
+
+      - name: Upload Base Set test
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: LuckyDex-card-art-Base-Set-test
+          path: |
+            LuckyDex-Base-Set-art-test.zip
+            card-assets/BS/manifest.json
+            card-assets/BS/missing-art.json
+            card-assets/BS/warnings.json
+            card-assets/BS/report.txt
+            card-assets/BS/contact-sheet.jpg
+          if-no-files-found: warn
+          retention-days: 30
+
+      - name: Require complete 102-card set
+        run: |
+          python - <<'PY'
+          import json
+
+          with open(
+              "card-assets/BS/manifest.json",
+              encoding="utf-8"
+          ) as f:
+              manifest = json.load(f)
+
+          summary = manifest["summary"]
+
+          if not summary["complete"]:
+              raise SystemExit(
+                  "Base Set validation FAILED: "
+                  + json.dumps(summary)
+              )
+
+          print(
+              "PASS: all 102 Base Set cards "
+              "were validated."
+          )
+          PY
