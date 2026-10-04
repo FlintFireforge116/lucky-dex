@@ -1,0 +1,195 @@
+name: Build LuckyDex Card Art Index
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+    paths:
+      - '.github/workflows/build-card-art-index.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  build-index:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    steps:
+      - name: Check out LuckyDex
+        uses: actions/checkout@v4
+
+      - name: Check out validated card metadata snapshot
+        uses: actions/checkout@v4
+        with:
+          repository: type-null/PTCG-database
+          ref: 18e0de2feb7a35ebe4296ede0ba6cc768961489b
+          path: card-db
+          fetch-depth: 1
+          sparse-checkout: |
+            data_en
+          sparse-checkout-cone-mode: true
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Build exact artwork index
+        shell: bash
+        run: |
+          python - <<'PY'
+          import json
+          import re
+          from collections import OrderedDict
+          from pathlib import Path
+
+          SOURCE = Path('card-db/data_en')
+          OUT = Path('card-art-index.json')
+          SNAPSHOT = '18e0de2feb7a35ebe4296ede0ba6cc768961489b'
+
+          def safe(value):
+              value = str(value or '').strip()
+              value = re.sub(r'[^A-Za-z0-9._-]+', '-', value)
+              value = re.sub(r'-+', '-', value).strip('-._')
+              return value or 'unknown'
+
+          def natural(value):
+              return [int(x) if x.isdigit() else x.casefold() for x in re.split(r'(\d+)', str(value))]
+
+          sets = OrderedDict()
+          missing = []
+          duplicate_ids = []
+          all_ids = set()
+
+          for path in sorted(SOURCE.rglob('*.json'), key=lambda p: natural(str(p))):
+              try:
+                  card = json.loads(path.read_text(encoding='utf-8'))
+              except Exception as exc:
+                  missing.append({'metadata': str(path), 'error': f'parse: {exc}'})
+                  continue
+
+              set_code = str(card.get('set_code') or card.get('set_name') or path.parent.name).strip()
+              key = safe(set_code)
+              canonical_id = f'{key}-{safe(path.stem)}'
+              image = str(card.get('img') or '').strip()
+              name = str(card.get('name') or '').strip()
+              number = str(card.get('number') or path.stem).strip()
+              rarity = str(card.get('rarity') or 'Unknown').strip()
+
+              if not image or not name:
+                  missing.append({'id': canonical_id, 'metadata': str(path), 'name': name, 'image': image})
+                  continue
+
+              if canonical_id in all_ids:
+                  duplicate_ids.append(canonical_id)
+                  continue
+              all_ids.add(canonical_id)
+
+              if key not in sets:
+                  sets[key] = {
+                      'k': key,
+                      'n': str(card.get('set_full_name') or set_code),
+                      's': str(card.get('series') or path.parent.parent.name),
+                      'd': str(card.get('date') or ''),
+                      'c': [],
+                  }
+              # Compact card row:
+              # [canonical id, collector number, display name, rarity, exact image URL]
+              sets[key]['c'].append([canonical_id, number, name, rarity, image])
+
+          # Replace any ordinary/collapsed My First Battle representation with
+          # the validated 48 distinct physical print identities.
+          sets.pop('MFB', None)
+          mfb_decks = {
+              'BULBASAUR': ('mfbb', [
+                  ('Bulbasaur','first-pokemon'),('Basic Grass Energy','starting-energy'),('Bulbasaur','standard'),('Ivysaur','standard'),('Oddish','standard'),('Gloom','standard'),('Exeggcute','standard'),('Exeggutor','standard'),('Scyther','standard'),('Potion','standard'),('Switch','standard'),('Basic Grass Energy','standard')]),
+              'PIKACHU': ('mfbp', [
+                  ('Pikachu','first-pokemon'),('Basic Lightning Energy','starting-energy'),('Pikachu','standard'),('Raichu','standard'),('Magnemite','standard'),('Magneton','standard'),('Voltorb','standard'),('Electrode','standard'),('Electabuzz','standard'),('Potion','standard'),('Switch','standard'),('Basic Lightning Energy','standard')]),
+              'CHARMANDER': ('mfbc', [
+                  ('Charmander','first-pokemon'),('Basic Fire Energy','starting-energy'),('Charmander','standard'),('Charmeleon','standard'),('Vulpix','standard'),('Ninetales','standard'),('Growlithe','standard'),('Arcanine','standard'),('Magmar','standard'),('Potion','standard'),('Switch','standard'),('Basic Fire Energy','standard')]),
+              'SQUIRTLE': ('mfbs', [
+                  ('Squirtle','first-pokemon'),('Basic Water Energy','starting-energy'),('Squirtle','standard'),('Wartortle','standard'),('Poliwag','standard'),('Poliwhirl','standard'),('Magikarp','standard'),('Gyarados','standard'),('Lapras','standard'),('Potion','standard'),('Switch','standard'),('Basic Water Energy','standard')]),
+          }
+          mfb_cards = []
+          for deck, (source_id, rows) in mfb_decks.items():
+              for pos, (name, variant) in enumerate(rows, 1):
+                  cid = f'MFB-{deck}-{pos:02d}'
+                  mfb_cards.append([cid, f'{deck}-{pos:02d}', name, 'Common', f'https://static.dextcg.com/cards/{source_id}/{pos}.png', variant])
+          sets['MFB'] = {'k':'MFB','n':'My First Battle','s':'Special','d':'2023-09-29','c':mfb_cards}
+
+          # French-only McDonald's 2013 exact clean scans validated separately.
+          sets.pop('MCD13', None)
+          mcd = [
+              (1,'Leafeon','d0/6c/70/d06c70ebe4866ba000f23c60daff625274fbdf068ba7898c576023f75c8c1cc0.jpg'),
+              (2,'Flareon','74/46/a2/7446a25b3769c823843da691605cc3d03ca1c42bc84ad7858c49919c9542b7cc.jpg'),
+              (3,'Vaporeon','a5/d4/e2/a5d4e214b4027ae677b7e775d875774510af40964f3eaee1623f52ce46db3f19.jpg'),
+              (4,'Glaceon','24/e3/18/24e318d676db4a8d560800bb4ea2b5819082a1f312530e8748c3efa14e9443dd.jpg'),
+              (5,'Pikachu','90/8f/1c/908f1c9bed0af1149381446e5315d7fc3fe563cc8dbef456594a6ad5181920bc.jpg'),
+              (6,'Jolteon','31/be/5a/31be5a39d1c370387ffd29d93663e8b6ada6a8f311f34cef58d467ac67d2b4ee.jpg'),
+              (7,'Espeon','50/4c/27/504c27ba58bf06835039c6d40d403ae88b778c48a56e0cd07d958234f97a3dbb.jpg'),
+              (8,'Timburr','44/3f/8b/443f8b78fd43027f47f9c31cea6c725487e5e87a2323ab9c4e76db13f418d75a.jpg'),
+              (9,'Umbreon','4d/ad/4c/4dad4c79a9ffa02c58cf27b6ded80eba5e91208c67fe7a0992e4285a4a4e0e13.jpg'),
+              (10,'Scraggy','32/90/89/329089fbf33ee54dac19bc871d43998f9b454b919afb6ae3ddaa7bac96f9dcec.jpg'),
+              (11,'Zorua','84/2a/fb/842afb3275d74d39f44e452c0eedfbe541be7d519dac436612ef616cdbc446cb.jpg'),
+              (12,'Eevee','69/5b/3f/695b3ff44f9817bf83696d12d6ed7d7b08f205d9e2679826b716b3949a4ac99f.jpg'),
+          ]
+          mcd_cards = [[f'MCD13-{n:03d}', str(n), name, 'Promo', f'https://static.tcgcollector.com/content/images/{tail}'] for n,name,tail in mcd]
+          sets['MCD13'] = {'k':'MCD13','n':"McDonald's Collection 2013",'s':'Special','d':'2013','c':mcd_cards}
+
+          for row in sets.values():
+              row['c'].sort(key=lambda c: natural(c[1]))
+
+          ordered = sorted(sets.values(), key=lambda row: (str(row.get('d') or '9999'), str(row.get('s') or ''), str(row.get('n') or '')))
+          card_count = sum(len(row['c']) for row in ordered)
+          payload = {
+              'schema': 1,
+              'metadata_snapshot': SNAPSHOT,
+              'set_count': len(ordered),
+              'card_count': card_count,
+              'missing_count': len(missing),
+              'duplicate_id_count': len(duplicate_ids),
+              'sets': ordered,
+          }
+
+          if missing:
+              raise SystemExit(f'Index build has {len(missing)} missing metadata/image rows; first: {missing[:3]}')
+          if duplicate_ids:
+              raise SystemExit(f'Index build has duplicate IDs: {duplicate_ids[:10]}')
+          if len(ordered) != 199:
+              raise SystemExit(f'Expected validated 199 sets, got {len(ordered)}')
+          if card_count != 21337:
+              raise SystemExit(f'Expected validated 21,337 cards, got {card_count}')
+          if len(mfb_cards) != 48 or len(mcd_cards) != 12:
+              raise SystemExit('Special-set validation failed')
+
+          OUT.write_text(json.dumps(payload, ensure_ascii=False, separators=(',', ':')), encoding='utf-8')
+          print(f'PASS: {len(ordered)} sets / {card_count} exact card-art records')
+          print(f'Index size: {OUT.stat().st_size / 1024 / 1024:.2f} MiB')
+          PY
+
+      - name: Validate JSON
+        run: |
+          python -m json.tool card-art-index.json >/dev/null
+          sha256sum card-art-index.json
+          du -h card-art-index.json
+
+      - name: Commit exact index to main
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add card-art-index.json
+          if git diff --cached --quiet; then
+            echo "Index unchanged"
+          else
+            git commit -m "Build validated LuckyDex card art index"
+            git push origin HEAD:main
+          fi
+
+      - name: Upload index artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: LuckyDex-card-art-index
+          path: card-art-index.json
+          retention-days: 30
