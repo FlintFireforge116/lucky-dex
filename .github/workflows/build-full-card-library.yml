@@ -7,6 +7,12 @@ on:
         description: Draft release tag used to store the card packs
         required: true
         default: luckydex-card-art-v1
+        type: string
+  push:
+    branches:
+      - main
+    paths:
+      - '.github/workflows/build-full-card-library.yml'
 
 permissions:
   contents: write
@@ -16,7 +22,7 @@ concurrency:
   cancel-in-progress: false
 
 env:
-  RELEASE_TAG: ${{ inputs.release_tag }}
+  RELEASE_TAG: ${{ inputs.release_tag || 'luckydex-card-art-v1' }}
 
 jobs:
   prepare-release:
