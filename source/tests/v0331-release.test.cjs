@@ -1,0 +1,14 @@
+'use strict';
+const assert=require('node:assert/strict'),fs=require('node:fs'),path=require('node:path');
+const root=path.resolve(__dirname,'..'),read=p=>fs.readFileSync(path.join(root,p),'utf8');
+const gradle=read('app/build.gradle'),html=read('app/src/main/assets/index.html'),app=read('app/src/main/assets/app-v0167.js');
+assert.match(gradle,/applicationId 'com\.example\.luckydex'/);
+assert.ok(Number((gradle.match(/versionCode\s+(\d+)/)||[])[1])>=331);
+const current=(gradle.match(/versionName '([^']+)'/)||[])[1];assert.ok(current.localeCompare('0.33.1',undefined,{numeric:true})>=0);
+assert.match(gradle,/luckydex-dev\.keystore/);
+assert.equal(JSON.parse(read('package.json')).version,current);
+assert.equal(JSON.parse(read('package-lock.json')).version,current);
+assert.equal(JSON.parse(read('package-lock.json')).packages[''].version,current);
+assert.ok(html.includes('v'+current));
+assert.ok(app.includes("window.__LUCKYDEX_BUILD='"+current+"'"));
+console.log('PASS v0.33.1 / 331 update identity and patch release markers');

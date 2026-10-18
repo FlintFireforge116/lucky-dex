@@ -1,0 +1,10 @@
+'use strict';
+const assert=require('node:assert/strict'),fs=require('fs'),path=require('path');
+const root=path.join(__dirname,'..'),read=p=>fs.readFileSync(path.join(root,p),'utf8');
+const pkg=require('../package.json'),lock=require('../package-lock.json'),gradle=read('app/build.gradle'),app=read('app/src/main/assets/app-v0167.js'),html=read('app/src/main/assets/index.html');
+const semver=v=>String(v).split('.').map(n=>Number(n)||0),atLeast=(v,f)=>{const a=semver(v),b=semver(f);for(let i=0;i<3;i++){if(a[i]>b[i])return true;if(a[i]<b[i])return false;}return true;};
+assert.ok(atLeast(pkg.version,'0.37.0'),'release remains at or beyond the Magikarp Splash baseline');assert.equal(lock.version,pkg.version);assert.equal(lock.packages[''].version,pkg.version);
+const code=Number(gradle.match(/versionCode\s+(\d+)/)?.[1]);assert.ok(code>=3700);assert.match(gradle,new RegExp(`versionName '${pkg.version.replaceAll('.','\\.')}'`));assert.match(gradle,new RegExp(`LuckyDex-asset-builder/${pkg.version.replaceAll('.','\\.')}`));
+assert.match(app,new RegExp(`__LUCKYDEX_BUILD='${pkg.version.replaceAll('.','\\.')}'`));assert.match(html,new RegExp(`v${pkg.version.replaceAll('.','\\.')}`));
+for(const f of ['app/src/main/assets/arcade-magikarp-splash-core.js','app/src/main/assets/arcade-magikarp-splash.js','app/src/main/assets/arcade-magikarp-splash.css'])assert.ok(fs.existsSync(path.join(root,f)),f);
+console.log('PASS v0.37.0 release floor preserved');

@@ -1,0 +1,22 @@
+'use strict';
+const assert=require('node:assert/strict');
+const fs=require('node:fs');
+const path=require('node:path');
+const ROOT=path.resolve(__dirname,'..');
+const gradle=fs.readFileSync(path.join(ROOT,'app/build.gradle'),'utf8');
+const css=fs.readFileSync(path.join(ROOT,'app/src/main/assets/styles-v013.css'),'utf8');
+const app=fs.readFileSync(path.join(ROOT,'app/src/main/assets/app-v0167.js'),'utf8');
+const builder=fs.readFileSync(path.join(ROOT,'scripts/build-booster-art-index.py'),'utf8');
+const pkg=JSON.parse(fs.readFileSync(path.join(ROOT,'package.json'),'utf8'));
+
+assert.match(gradle,/materializeBoosterArt/i,'Gradle itself must own booster-art materialisation so the outer repository workflow cannot skip it');
+assert.match(gradle,/build-booster-art-index\.py/,'Gradle materialisation task must call the complete booster-art builder');
+assert.match(gradle,/preBuild[\s\S]{0,300}dependsOn[\s\S]{0,120}materializeBoosterArt/i,'Android preBuild must depend on booster-art materialisation');
+assert.match(builder,/\.png|png\b/i,'Physical pack builder must accept PNG-only packshots such as Perfect Order, not silently skip them');
+assert.match(builder,/me3[^\n]*Perfect Order|Perfect Order[^\n]*me3/i,'Artwork audit must explicitly protect Perfect Order coverage');
+assert.match(css,/\.v13-summary-card \.card-art-wrap\s*>\s*img\s*\{[^}]*object-fit:\s*contain/i,'Pack summary cards must show the complete card artwork instead of cropping it');
+assert.match(css,/@media\s*\(max-width:\s*420px\)[^{]*\{[^}]*\.v13-summary-grid\s*\{[^}]*repeat\(3/i,'Phone pack summaries should use three columns so ordinary 5-10 card packs fit the screen more cleanly');
+assert.match(css,/\.v13-back-shop\s*\{[^}]*position:\s*static/i,'Pack summary exit button must not sit over the bottom row of cards');
+const runtimeVersion=(app.match(/__LUCKYDEX_BUILD=['"]([^'"]+)['"]/)||[])[1];assert.ok(runtimeVersion&&runtimeVersion.localeCompare('0.26.2',undefined,{numeric:true})>=0,'runtime build marker must remain at v0.26.2 or newer');
+assert.ok(pkg.version.localeCompare('0.26.2',undefined,{numeric:true})>=0,'package version must remain at v0.26.2 or newer');
+console.log('PASS v0.26.2 pack art build hook + summary fitting contract');

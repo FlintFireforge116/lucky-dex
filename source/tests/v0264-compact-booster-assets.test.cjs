@@ -1,0 +1,12 @@
+'use strict';
+const assert=require('node:assert/strict');
+const fs=require('node:fs');
+const path=require('node:path');
+const ROOT=path.resolve(__dirname,'..');
+const dir=path.join(ROOT,'app/src/main/assets/booster-art-v0260');
+const files=fs.readdirSync(dir).filter(n=>/\.(?:webp|png|jpe?g)$/i.test(n));
+assert.equal(files.length,144,'all 144 audited packshots must remain bundled');
+assert.ok(files.every(n=>n.endsWith('.webp')),'compact offline bundle should use WebP for every packshot');
+const total=files.reduce((sum,n)=>sum+fs.statSync(path.join(dir,n)).size,0);
+assert.ok(total < 9.5*1024*1024,`booster artwork bundle must stay under 9.5 MiB; got ${(total/1024/1024).toFixed(2)} MiB`);
+console.log(`PASS compact booster assets: 144 WebP files, ${(total/1024/1024).toFixed(2)} MiB`);

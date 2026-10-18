@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 700" role="img" aria-label="Sunny Route 19 surf beach">
+  <defs>
+    <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#72d9ff"/><stop offset="1" stop-color="#d9f7ff"/></linearGradient>
+    <linearGradient id="sea" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#087dd4"/><stop offset="1" stop-color="#00488f"/></linearGradient>
+    <linearGradient id="sand" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#ffe58f"/><stop offset="1" stop-color="#dcb658"/></linearGradient>
+  </defs>
+  <rect width="1200" height="700" fill="url(#sky)"/>
+  <circle cx="1020" cy="112" r="72" fill="#fff2a2" opacity=".95"/>
+  <g fill="#fff" opacity=".92">
+    <ellipse cx="185" cy="120" rx="112" ry="35"/><ellipse cx="255" cy="111" rx="78" ry="31"/><ellipse cx="112" cy="128" rx="65" ry="25"/>
+    <ellipse cx="700" cy="86" rx="96" ry="29"/><ellipse cx="770" cy="96" rx="78" ry="25"/>
+  </g>
+  <path d="M0 300 C150 275 250 320 400 294 C560 265 690 316 850 291 C1000 266 1100 307 1200 286 L1200 610 L0 610Z" fill="url(#sea)"/>
+  <g fill="none" stroke="#b9efff" stroke-width="12" opacity=".8">
+    <path d="M0 360 C130 325 240 400 380 356 C520 315 670 398 820 354 C980 310 1080 384 1200 350"/>
+    <path d="M0 465 C120 430 245 505 390 460 C540 418 665 502 820 458 C960 419 1080 490 1200 451"/>
+  </g>
+  <path d="M0 560 C230 520 320 600 520 565 C745 525 920 611 1200 555 L1200 700 L0 700Z" fill="url(#sand)"/>
+  <path d="M0 565 C220 528 360 595 525 566 C750 525 930 606 1200 555" fill="none" stroke="#fff" stroke-width="18" opacity=".9"/>
+  <g transform="translate(92 460)">
+    <rect x="0" y="50" width="175" height="105" rx="8" fill="#fff3c7" stroke="#7b4a2c" stroke-width="8"/>
+    <path d="M-12 52 L88 -12 L188 52Z" fill="#e85b4f" stroke="#7b4a2c" stroke-width="8"/>
+    <rect x="55" y="94" width="62" height="61" fill="#74b6d9" stroke="#7b4a2c" stroke-width="7"/>
+    <rect x="18" y="86" width="27" height="27" fill="#74b6d9" stroke="#7b4a2c" stroke-width="6"/>
+    <text x="87" y="38" text-anchor="middle" font-family="sans-serif" font-size="22" font-weight="700" fill="#7b2f2f">SEA HOUSE</text>
+  </g>
+  <g fill="#4e8a45"><path d="M1040 603 q45-135 78 0Z"/><path d="M1095 603 q38-112 65 0Z"/></g>
+</svg>

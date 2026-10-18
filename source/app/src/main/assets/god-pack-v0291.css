@@ -1,0 +1,100 @@
+/* v0.29.1 God Pack spectacle — intentionally excessive. */
+.pack-overlay.god-pack-omen{
+  background:
+    radial-gradient(circle at 50% 42%,rgba(255,237,143,.17),transparent 23%),
+    radial-gradient(circle at 22% 18%,rgba(91,225,255,.10),transparent 22%),
+    radial-gradient(circle at 78% 20%,rgba(255,86,220,.10),transparent 24%),
+    linear-gradient(#081225,#050812 70%)!important;
+}
+.pack-overlay.god-pack-omen::before{
+  content:"";position:absolute;inset:-30%;pointer-events:none;z-index:0;opacity:.72;
+  background:conic-gradient(from 0deg,transparent 0 12deg,#ffe68018 13deg 15deg,transparent 16deg 42deg,#73eaff14 43deg 45deg,transparent 46deg 78deg,#ff74dd14 79deg 81deg,transparent 82deg 360deg);
+  animation:godOmenSpin 7s linear infinite;
+}
+.god-pack-sealed{filter:drop-shadow(0 0 14px #ffe68088) drop-shadow(0 0 34px #a260ff55);animation:godSealedPulse 1.35s ease-in-out infinite!important;}
+.god-pack-sealed::after{content:"";position:absolute;inset:-18%;z-index:9;pointer-events:none;background:linear-gradient(115deg,transparent 32%,#fff9bf00 41%,#fff9bfe6 49%,#7fe9ffb8 52%,#ff7fe8a6 55%,transparent 65%);transform:translateX(-78%) rotate(-4deg);animation:godPackSweep 1.8s ease-in-out infinite;mix-blend-mode:screen;}
+
+.pack-overlay.god-pack-active{
+  background:
+    radial-gradient(circle at 50% 36%,rgba(255,221,82,.20),transparent 26%),
+    radial-gradient(circle at 18% 22%,rgba(57,221,255,.15),transparent 28%),
+    radial-gradient(circle at 82% 26%,rgba(255,74,213,.14),transparent 30%),
+    linear-gradient(180deg,#100d24,#07172b 50%,#090713)!important;
+}
+.pack-overlay.god-pack-active::before{
+  content:"";position:absolute;inset:-55%;z-index:0;pointer-events:none;opacity:.72;
+  background:conic-gradient(from 10deg,transparent 0 8deg,#ffe56e20 9deg 11deg,transparent 12deg 27deg,#62e7ff1d 28deg 31deg,transparent 32deg 49deg,#ff75df1c 50deg 53deg,transparent 54deg 74deg,#fff4a91b 75deg 78deg,transparent 79deg 360deg);
+  animation:godActiveSpin 9s linear infinite;
+}
+.pack-overlay.god-pack-active::after{
+  content:"";position:absolute;inset:0;z-index:0;pointer-events:none;opacity:.8;
+  background:
+    radial-gradient(circle at 8% 14%,#fff 0 1px,transparent 2px),radial-gradient(circle at 18% 72%,#ffe57b 0 1.5px,transparent 2.5px),
+    radial-gradient(circle at 31% 28%,#74e8ff 0 1px,transparent 2px),radial-gradient(circle at 43% 84%,#ff75dc 0 1.5px,transparent 2.5px),
+    radial-gradient(circle at 57% 16%,#fff7bc 0 1.5px,transparent 2.5px),radial-gradient(circle at 69% 67%,#88ecff 0 1px,transparent 2px),
+    radial-gradient(circle at 82% 35%,#ff8be6 0 1.5px,transparent 2.5px),radial-gradient(circle at 94% 79%,#fff 0 1px,transparent 2px);
+  background-size:100% 100%;animation:godStars 1.15s ease-in-out infinite alternate;
+}
+.pack-overlay.god-pack-active>.pack-reveal,.pack-overlay.god-pack-active>.v13-summary{position:relative;z-index:2;}
+.pack-overlay.god-pack-active .pack-reveal{border:1px solid #f5d75d42;border-radius:22px;box-shadow:inset 0 0 55px #ffc94f0d,0 0 42px #8a61ff1c;}
+.pack-overlay.god-pack-active .pack-theatre{filter:drop-shadow(0 0 18px #ffd75a2e);}
+.pack-overlay.god-pack-active .pack-theatre::after{content:"";position:absolute;inset:4% 3%;border:1px solid #ffe77a2b;border-radius:50%;pointer-events:none;box-shadow:0 0 30px #71e6ff20,inset 0 0 30px #ff69d719;animation:godRingPulse 1.45s ease-in-out infinite;}
+.god-pack-running-badge{position:absolute;z-index:8;top:calc(15px + env(safe-area-inset-top));left:50%;transform:translateX(-50%);padding:6px 12px;border:1px solid #ffe4728c;border-radius:999px;background:#1b1325e8;box-shadow:0 0 20px #ffd95b55,inset 0 0 13px #9e68ff24;color:#fff1a4;font-size:8px;font-weight:1000;letter-spacing:.22em;pointer-events:none;text-shadow:0 0 9px #ffcf4f;animation:godBadgePulse .9s ease-in-out infinite alternate;}
+
+.god-pack-intro{position:absolute;inset:0;z-index:80;overflow:hidden;display:grid;place-items:center;background:radial-gradient(circle at 50% 50%,#fff7c8 0 1%,#ffc94f 2%,#6a36b9 13%,#11142e 35%,#03050c 72%);animation:godIntroBackdrop 1.65s cubic-bezier(.2,.7,.2,1) both;}
+.god-pack-intro::before{content:"";position:absolute;inset:-50%;background:repeating-conic-gradient(from 0deg,#fff5a7 0 2deg,transparent 2deg 12deg,#71eaff55 12deg 14deg,transparent 14deg 24deg,#ff6ddd44 24deg 26deg,transparent 26deg 36deg);animation:godIntroSpin 1.1s cubic-bezier(.2,.8,.2,1) both;mix-blend-mode:screen;}
+.god-pack-intro::after{content:"";position:absolute;inset:0;background:radial-gradient(circle,#fff 0 2%,transparent 18%);animation:godIntroFlash 1.65s ease-out both;pointer-events:none;}
+.god-pack-intro-core{position:relative;z-index:5;text-align:center;display:grid;gap:6px;place-items:center;animation:godIntroCore 1.65s cubic-bezier(.18,.8,.22,1) both;}
+.god-pack-intro-kicker{font-size:9px;letter-spacing:.42em;font-weight:1000;color:#bdf5ff;text-shadow:0 0 12px #67eaff;}
+.god-pack-intro-title{font-size:clamp(36px,12vw,74px);line-height:.9;font-weight:1000;letter-spacing:.04em;background:linear-gradient(180deg,#fffef1 0%,#fff08a 30%,#ffbd38 52%,#ff78dd 72%,#87efff 90%);-webkit-background-clip:text;background-clip:text;color:transparent;-webkit-text-stroke:1px #fff5a566;filter:drop-shadow(0 0 8px #fff6b5) drop-shadow(0 0 26px #ffb936) drop-shadow(0 0 48px #9c62ff);}
+.god-pack-intro-sub{font-size:10px;font-weight:1000;letter-spacing:.22em;color:#fff;text-shadow:0 0 10px #ffcf50,0 0 20px #69e8ff;}
+.god-pack-intro-particle{--a:calc(var(--i)*13deg);position:absolute;left:50%;top:50%;z-index:4;width:7px;height:19px;border-radius:2px;background:hsl(calc(var(--i)*37deg) 95% 72%);box-shadow:0 0 8px currentColor;transform:rotate(var(--a)) translateY(-8vh);animation:godParticle 1.45s cubic-bezier(.15,.7,.2,1) both;animation-delay:calc(var(--i)*-9ms);}
+.god-pack-intro-ribbon{--a:calc(var(--i)*30deg);position:absolute;left:50%;top:50%;z-index:3;width:5px;height:46vh;border-radius:50%;border:3px solid hsla(calc(var(--i)*48deg) 95% 72%/.72);border-left-color:transparent;border-bottom-color:transparent;transform:translate(-50%,-50%) rotate(var(--a)) scale(.15);animation:godRibbon 1.55s cubic-bezier(.16,.78,.18,1) both;}
+.god-pack-summary{border:1px solid #f2d65b66;border-radius:18px;background:linear-gradient(180deg,#17152acc,#0a1425e8);box-shadow:0 0 35px #ffcf4c33,inset 0 0 40px #9b67ff12;padding-left:10px;padding-right:10px;}
+.god-pack-summary .screen-title{border-bottom:1px solid #ffe36c3d;padding-bottom:10px;}
+.god-pack-summary .eyebrow{color:#fff09b!important;text-shadow:0 0 10px #ffc840;letter-spacing:.2em;}
+.god-pack-summary .v13-summary-card{border-color:#ad8e3f;box-shadow:0 0 12px #ffd75822;animation:godSummaryCard 1.2s ease-in-out infinite alternate;}
+
+@keyframes godOmenSpin{to{transform:rotate(360deg)}}
+@keyframes godActiveSpin{to{transform:rotate(-360deg)}}
+@keyframes godSealedPulse{50%{filter:drop-shadow(0 0 20px #fff2a0d0) drop-shadow(0 0 42px #7deaff8a) drop-shadow(0 0 62px #ff77db62);transform:scale(1.018)}}
+@keyframes godPackSweep{0%,18%{transform:translateX(-85%) rotate(-4deg);opacity:0}45%{opacity:1}72%,100%{transform:translateX(85%) rotate(-4deg);opacity:0}}
+@keyframes godStars{to{opacity:.35;filter:brightness(1.7)}}
+@keyframes godRingPulse{50%{transform:scale(1.025);opacity:.45;box-shadow:0 0 50px #fff08b3c,inset 0 0 40px #ff5cda26}}
+@keyframes godBadgePulse{to{filter:brightness(1.35);box-shadow:0 0 30px #ffe06f88,inset 0 0 15px #8d63ff40}}
+@keyframes godIntroBackdrop{0%{opacity:0;filter:brightness(3)}10%{opacity:1}80%{opacity:1}100%{opacity:0;filter:brightness(.7)}}
+@keyframes godIntroSpin{0%{transform:rotate(-60deg) scale(.18);opacity:0}18%{opacity:1}82%{opacity:.85}100%{transform:rotate(160deg) scale(1.3);opacity:0}}
+@keyframes godIntroFlash{0%{opacity:1}10%{opacity:.1}24%{opacity:.8}55%{opacity:.08}100%{opacity:0}}
+@keyframes godIntroCore{0%{opacity:0;transform:scale(.15) rotate(-9deg)}22%{opacity:1;transform:scale(1.18) rotate(2deg)}38%{transform:scale(.96)}54%{transform:scale(1.03)}78%{opacity:1}100%{opacity:0;transform:scale(1.22)}}
+@keyframes godParticle{0%{opacity:0;transform:rotate(var(--a)) translateY(-4vh) scale(.2)}15%{opacity:1}75%{opacity:1}100%{opacity:0;transform:rotate(var(--a)) translateY(-62vh) scale(1.2)}}
+@keyframes godRibbon{0%{opacity:0;transform:translate(-50%,-50%) rotate(var(--a)) scale(.08)}22%{opacity:1}85%{opacity:.8}100%{opacity:0;transform:translate(-50%,-50%) rotate(calc(var(--a) + 80deg)) scale(1.3)}}
+@keyframes godSummaryCard{to{box-shadow:0 0 18px #ffe0713d,0 0 28px #8f6fff16}}
+
+@media(prefers-reduced-motion:reduce){.god-pack-sealed,.pack-overlay.god-pack-omen::before,.pack-overlay.god-pack-active::before,.pack-overlay.god-pack-active::after,.god-pack-running-badge,.god-pack-summary .v13-summary-card{animation:none!important}.god-pack-intro{animation-duration:.75s}.god-pack-intro::before,.god-pack-intro::after,.god-pack-intro-core,.god-pack-intro-particle,.god-pack-intro-ribbon{animation-duration:.7s!important}}
+
+/* v0.40.30 Rare Pack — premium uplift, deliberately calmer than a God Pack. */
+.pack-overlay.rare-pack-active{
+  background:radial-gradient(circle at 50% 32%,rgba(255,232,137,.18),transparent 28%),linear-gradient(180deg,#17243b,#0b1424 58%,#080d17)!important;
+}
+.pack-overlay.rare-pack-active>.pack-reveal,.pack-overlay.rare-pack-active>.v13-summary{position:relative;z-index:2;}
+.pack-overlay.rare-pack-active .pack-reveal{border:1px solid #f4cf7160;border-radius:20px;box-shadow:inset 0 0 34px #f4cf710c,0 0 24px #f4cf7118;}
+.rare-pack-sealed{filter:drop-shadow(0 0 12px #f5cc6b72);animation:rarePackSealedPulse 1.7s ease-in-out infinite!important;}
+.rare-pack-running-badge{position:absolute;z-index:8;top:calc(15px + env(safe-area-inset-top));left:50%;transform:translateX(-50%);padding:6px 12px;border:1px solid #f4cd7190;border-radius:999px;background:#182239ec;box-shadow:0 0 16px #e7bd4f36;color:#ffe7a1;font-size:8px;font-weight:1000;letter-spacing:.16em;pointer-events:none;text-shadow:0 0 8px #d9aa3b;}
+.rare-pack-intro{position:absolute;inset:0;z-index:80;overflow:hidden;display:grid;place-items:center;background:radial-gradient(circle at 50% 48%,#ffeaa2 0 2%,#a8732c 5%,#263451 24%,#0c1524 64%);animation:rarePackIntroFade 1.18s ease both;}
+.rare-pack-intro::after{content:"";position:absolute;inset:0;background:linear-gradient(115deg,transparent 32%,#fff5c900 42%,#fff5c9b8 50%,transparent 59%);animation:rarePackIntroSweep 1.05s ease-out both;}
+.rare-pack-intro-core{position:relative;z-index:3;text-align:center;display:grid;gap:7px;place-items:center;animation:rarePackIntroCore 1.12s cubic-bezier(.2,.75,.2,1) both;}
+.rare-pack-intro-core small{font-size:9px;font-weight:1000;letter-spacing:.34em;color:#ffe4a0;}
+.rare-pack-intro-core strong{font-size:clamp(32px,10vw,60px);line-height:.92;font-weight:1000;letter-spacing:.05em;color:#fff4c3;text-shadow:0 0 10px #e8bd4f,0 5px 24px #000;}
+.rare-pack-intro-core span{font-size:8px;font-weight:900;letter-spacing:.14em;color:#dce8ff;}
+.rare-pack-intro-spark{--a:calc(var(--i)*25.7deg);position:absolute;left:50%;top:50%;z-index:2;width:5px;height:5px;border-radius:50%;background:#fff1b3;box-shadow:0 0 8px #f5c85d;animation:rarePackSpark 1s ease-out both;animation-delay:calc(var(--i)*-12ms);}
+.rare-pack-summary{border:1px solid #e7c26870;border-radius:18px;background:linear-gradient(180deg,#18243ad9,#0b1423ed);box-shadow:0 0 24px #e6bd5030,inset 0 0 28px #f0ce6810;padding-left:10px;padding-right:10px;}
+.rare-pack-summary .screen-title{border-bottom:1px solid #e7c26840;padding-bottom:10px;}
+.rare-pack-summary .eyebrow{color:#ffe6a0!important;letter-spacing:.16em;}
+.rare-pack-summary .v13-summary-card{border-color:#826f47;box-shadow:0 0 9px #d8b45b16;}
+@keyframes rarePackSealedPulse{50%{filter:drop-shadow(0 0 18px #ffe196a3);transform:scale(1.008)}}
+@keyframes rarePackIntroFade{0%{opacity:0}10%,82%{opacity:1}100%{opacity:0}}
+@keyframes rarePackIntroSweep{0%{transform:translateX(-80%);opacity:0}35%{opacity:1}100%{transform:translateX(80%);opacity:0}}
+@keyframes rarePackIntroCore{0%{opacity:0;transform:scale(.72)}28%{opacity:1;transform:scale(1.06)}48%{transform:scale(1)}82%{opacity:1}100%{opacity:0;transform:scale(1.04)}}
+@keyframes rarePackSpark{0%{opacity:0;transform:rotate(var(--a)) translateY(-12px) scale(.4)}24%{opacity:1}100%{opacity:0;transform:rotate(var(--a)) translateY(-38vh) scale(1)}}
+@media(prefers-reduced-motion:reduce){.rare-pack-sealed,.rare-pack-intro,.rare-pack-intro::after,.rare-pack-intro-core,.rare-pack-intro-spark{animation:none!important}}
+.pack-batch-running-badge{position:absolute;z-index:9;top:calc(15px + env(safe-area-inset-top));right:max(14px,env(safe-area-inset-right));padding:6px 10px;border:1px solid #8fbce2;border-radius:999px;background:#122a42e8;color:#eaf6ff;font-size:8px;font-weight:1000;letter-spacing:.12em;pointer-events:none;box-shadow:0 2px 12px #07121f55}.pack-overlay.god-pack-active .pack-batch-running-badge,.pack-overlay.rare-pack-active .pack-batch-running-badge{top:calc(50px + env(safe-area-inset-top))}

@@ -1,0 +1,339 @@
+{
+  "version": "0.25.7",
+  "items": [
+    {
+      "id": "armor-fossil",
+      "file": "arcade/fossil-museum-v0257/items/armor-fossil.png",
+      "sourceRepo": "joos-too/Soullink-Tracker",
+      "sourcePath": "public/fossil-sprites/gen4/armor-fossil.png",
+      "sourceBlobSha": "e373e0b1cb273548ec82eb4affb2e7514face97c",
+      "sourceType": "upstream-sprite"
+    },
+    {
+      "id": "big-nugget",
+      "file": "arcade/fossil-museum-v0257/items/big-nugget.png",
+      "sourceRepo": "PokeAPI/sprites",
+      "sourcePath": "sprites/items/big-nugget.png",
+      "sourceBlobSha": "09a956fcecc19110cd4917ac7609f470e7aa9f15",
+      "sourceType": "upstream-sprite"
+    },
+    {
+      "id": "big-pearl",
+      "file": "arcade/fossil-museum-v0257/items/big-pearl.png",
+      "sourceRepo": "PokeAPI/sprites",
+      "sourcePath": "sprites/items/big-pearl.png",
+      "sourceBlobSha": "ace3694a5308c155d097dd153bba33a6d84cb673",
+      "sourceType": "upstream-sprite"
+    },
+    {
+      "id": "claw-fossil",
+      "file": "arcade/fossil-museum-v0257/items/claw-fossil.png",
+      "sourceRepo": "joos-too/Soullink-Tracker",
+      "sourcePath": "public/fossil-sprites/gen3/claw-fossil.png",
+      "sourceBlobSha": "af10ce7ecad3cb76db10602ef4412cd1388feac9",
+      "sourceType": "upstream-sprite"
+    },
+    {
+      "id": "comet-shard",
+      "file": "arcade/fossil-museum-v0257/items/comet-shard.png",
+      "sourceRepo": "PokeAPI/sprites",
+      "sourcePath": "sprites/items/comet-shard.png",
+      "sourceBlobSha": "33db646eb21b82057ea118dda6608a7706078c59",
+      "sourceType": "upstream-sprite"
+    },
+    {
+      "id": "cover-fossil",
+      "file": "arcade/fossil-museum-v0257/items/cover-fossil.png",
+      "sourceRepo": "joos-too/Soullink-Tracker",
+      "sourcePath": "public/fossil-sprites/gen5/cover-fossil.png",
+      "sourceBlobSha": "ed48e7109b9130c4c1252b62e21e050685f05d60",
+      "sourceType": "upstream-sprite"
+    },
+    {
+      "id": "dome-fossil",
+      "file": "arcade/fossil-museum-v0257/items/dome-fossil.png",
+      "sourceRepo": "joos-too/Soullink-Tracker",
+      "sourcePath": "public/fossil-sprites/gen1/dome-fossil.png",
+      "sourceBlobSha": "f72235f64ca6361d4528a4f9d0fd647790fef6bc",
+      "sourceType": "upstream-sprite"
+    },
+    {
+      "id": "everstone",
+      "file": "arcade/fossil-museum-v0257/items/everstone.png",
+      "sourceRepo": "PokeAPI/sprites",
+      "sourcePath": "sprites/items/everstone.png",
+      "sourceBlobSha": "87e69da98836271d2958e61e960420d309d1f561",
+      "sourceType": "upstream-sprite"
+    },
+    {
+      "id": "fire-stone",
+      "file": "arcade/fossil-museum-v0257/items/fire-stone.png",
+      "sourceRepo": "joos-too/Soullink-Tracker",
+      "sourcePath": "public/stone-sprites/gen1/fire-stone.png",
+      "sourceBlobSha": "512aab2aa6e1cda2ff740ce5e584f0ef8daf2252",
+      "sourceType": "upstream-sprite"
+    },
+    {
+      "id": "fossilized-bird",
+      "file": "arcade/fossil-museum-v0257/items/fossilized-bird.png",
+      "sourceRepo": "joos-too/Soullink-Tracker",
+      "sourcePath": "public/fossil-sprites/gen8/fossilized-bird.png",
+      "sourceBlobSha": "6e92c963c29711325b3ff3c07e51277bfaec0032",
+      "sourceType": "upstream-sprite"
+    },
+    {
+      "id": "fossilized-dino",
+      "file": "arcade/fossil-museum-v0257/items/fossilized-dino.png",
+      "sourceRepo": "joos-too/Soullink-Tracker",
+      "sourcePath": "public/fossil-sprites/gen8/fossilized-dino.png",
+      "sourceBlobSha": "8fa2ab463966c6160bb51e9e92bdbe47e5d1896d",
+      "sourceType": "upstream-sprite"
+    },
+    {
+      "id": "fossilized-drake",
+      "file": "arcade/fossil-museum-v0257/items/fossilized-drake.png",
+      "sourceRepo": "joos-too/Soullink-Tracker",
+      "sourcePath": "public/fossil-sprites/gen8/fossilized-drake.png",
+      "sourceBlobSha": "4120ff35cb06238a5a5469e5c9675019a5320b00",
+      "sourceType": "upstream-sprite"
+    },
+    {
+      "id": "fossilized-fish",
+      "file": "arcade/fossil-museum-v0257/items/fossilized-fish.png",
+      "sourceRepo": "joos-too/Soullink-Tracker",
+      "sourcePath": "public/fossil-sprites/gen8/fossilized-fish.png",
+      "sourceBlobSha": "5deb36b3c200e8fef4d71e2b89cce01f86ff7a02",
+      "sourceType": "upstream-sprite"
+    },
+    {
+      "id": "great-ball",
+      "file": "arcade/fossil-museum-v0257/items/great-ball.png",
+      "sourceRepo": "PokeAPI/sprites",
+      "sourcePath": "sprites/items/great-ball.png",
+      "sourceBlobSha": "af321b012a5b0e86d5ee3f44f89a1f4197b0afb7",
+      "sourceType": "upstream-sprite"
+    },
+    {
+      "id": "hard-stone",
+      "file": "arcade/fossil-museum-v0257/items/hard-stone.png",
+      "sourceRepo": "PokeAPI/sprites",
+      "sourcePath": "sprites/items/hard-stone.png",
+      "sourceBlobSha": "8601b20e4b2ccde4b17f2d7ae225ca978bd4e2ad",
+      "sourceType": "upstream-sprite"
+    },
+    {
+      "id": "helix-fossil",
+      "file": "arcade/fossil-museum-v0257/items/helix-fossil.png",
+      "sourceRepo": "joos-too/Soullink-Tracker",
+      "sourcePath": "public/fossil-sprites/gen1/helix-fossil.png",
+      "sourceBlobSha": "4abfb01a2054de5c60d931997ed0dc2c7cf38dbc",
+      "sourceType": "upstream-sprite"
+    },
+    {
+      "id": "jaw-fossil",
+      "file": "arcade/fossil-museum-v0257/items/jaw-fossil.png",
+      "sourceRepo": "joos-too/Soullink-Tracker",
+      "sourcePath": "public/fossil-sprites/gen6/jaw-fossil.png",
+      "sourceBlobSha": "82b2241f7f5d74840c7042aa2ee757629609b1da",
+      "sourceType": "upstream-sprite"
+    },
+    {
+      "id": "leaf-stone",
+      "file": "arcade/fossil-museum-v0257/items/leaf-stone.png",
+      "sourceRepo": "joos-too/Soullink-Tracker",
+      "sourcePath": "public/stone-sprites/gen1/leaf-stone.png",
+      "sourceBlobSha": "69116e9248449bfc3a4df8c30f10b990b16c1282",
+      "sourceType": "upstream-sprite"
+    },
+    {
+      "id": "moon-stone",
+      "file": "arcade/fossil-museum-v0257/items/moon-stone.png",
+      "sourceRepo": "joos-too/Soullink-Tracker",
+      "sourcePath": "public/stone-sprites/gen1/moon-stone.png",
+      "sourceBlobSha": "d5f41bf9dccc6b368ec7355cfe9c5a0fef530230",
+      "sourceType": "upstream-sprite"
+    },
+    {
+      "id": "nugget",
+      "file": "arcade/fossil-museum-v0257/items/nugget.png",
+      "sourceRepo": "PokeAPI/sprites",
+      "sourcePath": "sprites/items/nugget.png",
+      "sourceBlobSha": "25b835b5b2c205b2877d2b6a2515233173cabda6",
+      "sourceType": "upstream-sprite"
+    },
+    {
+      "id": "odd-keystone",
+      "file": "arcade/fossil-museum-v0257/items/odd-keystone.png",
+      "sourceRepo": "PokeAPI/sprites",
+      "sourcePath": "sprites/items/odd-keystone.png",
+      "sourceBlobSha": "fd992140a6a0023726aa3dda2ec8b01305a1ba47",
+      "sourceType": "upstream-sprite"
+    },
+    {
+      "id": "old-amber",
+      "file": "arcade/fossil-museum-v0257/items/old-amber.png",
+      "sourceRepo": "joos-too/Soullink-Tracker",
+      "sourcePath": "public/fossil-sprites/gen1/old-amber.png",
+      "sourceBlobSha": "116ef68fa77cbaaed247478f3593ec3e37a2a5b5",
+      "sourceType": "upstream-sprite"
+    },
+    {
+      "id": "pearl",
+      "file": "arcade/fossil-museum-v0257/items/pearl.png",
+      "sourceRepo": "PokeAPI/sprites",
+      "sourcePath": "sprites/items/pearl.png",
+      "sourceBlobSha": "f769f1f1ad22fae154223a1ab17163bd4b038ebe",
+      "sourceType": "upstream-sprite"
+    },
+    {
+      "id": "plume-fossil",
+      "file": "arcade/fossil-museum-v0257/items/plume-fossil.png",
+      "sourceRepo": "joos-too/Soullink-Tracker",
+      "sourcePath": "public/fossil-sprites/gen5/plume-fossil.png",
+      "sourceBlobSha": "56bafa056b321479ed8a057f4175ca262b300de3",
+      "sourceType": "upstream-sprite"
+    },
+    {
+      "id": "poke-ball",
+      "file": "arcade/fossil-museum-v0257/items/poke-ball.png",
+      "sourceRepo": "PokeAPI/sprites",
+      "sourcePath": "sprites/items/poke-ball.png",
+      "sourceBlobSha": "538b46fc6763f593950527eaf14689790560d643",
+      "sourceType": "upstream-sprite"
+    },
+    {
+      "id": "rare-bone",
+      "file": "arcade/fossil-museum-v0257/items/rare-bone.png",
+      "sourceRepo": "PokeAPI/sprites",
+      "sourcePath": "sprites/items/rare-bone.png",
+      "sourceBlobSha": "73ac7470ea7d50bcf45778a6083b7dd1df4ff963",
+      "sourceType": "upstream-sprite"
+    },
+    {
+      "id": "relic-band",
+      "file": "arcade/fossil-museum-v0257/items/relic-band.png",
+      "sourceRepo": "PokeAPI/sprites",
+      "sourcePath": "sprites/items/relic-band.png",
+      "sourceBlobSha": "15c960a67d77dedbb7a94d984063bd28bda61141",
+      "sourceType": "upstream-sprite"
+    },
+    {
+      "id": "relic-copper",
+      "file": "arcade/fossil-museum-v0257/items/relic-copper.png",
+      "sourceRepo": "PokeAPI/sprites",
+      "sourcePath": "sprites/items/relic-copper.png",
+      "sourceBlobSha": "284c0d176a188a3336edcf0e5bbc45608e9fba88",
+      "sourceType": "upstream-sprite"
+    },
+    {
+      "id": "relic-crown",
+      "file": "arcade/fossil-museum-v0257/items/relic-crown.png",
+      "sourceRepo": "PokeAPI/sprites",
+      "sourcePath": "sprites/items/relic-crown.png",
+      "sourceBlobSha": "91b301b98eb078c33dcd2795df9a9fa3101411ef",
+      "sourceType": "upstream-sprite"
+    },
+    {
+      "id": "relic-gold",
+      "file": "arcade/fossil-museum-v0257/items/relic-gold.png",
+      "sourceRepo": "PokeAPI/sprites",
+      "sourcePath": "sprites/items/relic-gold.png",
+      "sourceBlobSha": "de74f019899d29823d3b91c65d033eec42db7e15",
+      "sourceType": "upstream-sprite"
+    },
+    {
+      "id": "relic-silver",
+      "file": "arcade/fossil-museum-v0257/items/relic-silver.png",
+      "sourceRepo": "PokeAPI/sprites",
+      "sourcePath": "sprites/items/relic-silver.png",
+      "sourceBlobSha": "fe049f4e14b56e5778621a3a6d04f76fd96f0862",
+      "sourceType": "upstream-sprite"
+    },
+    {
+      "id": "relic-statue",
+      "file": "arcade/fossil-museum-v0257/items/relic-statue.png",
+      "sourceRepo": "PokeAPI/sprites",
+      "sourcePath": "sprites/items/relic-statue.png",
+      "sourceBlobSha": "c0255c5d1309e5852aa1b5efb2ea61772bf58603",
+      "sourceType": "upstream-sprite"
+    },
+    {
+      "id": "relic-vase",
+      "file": "arcade/fossil-museum-v0257/items/relic-vase.png",
+      "sourceRepo": "PokeAPI/sprites",
+      "sourcePath": "sprites/items/relic-vase.png",
+      "sourceBlobSha": "00cbce628c479bf8e978bcabc1fca5fb01913462",
+      "sourceType": "upstream-sprite"
+    },
+    {
+      "id": "root-fossil",
+      "file": "arcade/fossil-museum-v0257/items/root-fossil.png",
+      "sourceRepo": "joos-too/Soullink-Tracker",
+      "sourcePath": "public/fossil-sprites/gen3/root-fossil.png",
+      "sourceBlobSha": "df5e5c3c96e9bf619cd8c9bbcb90b3d1a9f4ec9e",
+      "sourceType": "upstream-sprite"
+    },
+    {
+      "id": "sail-fossil",
+      "file": "arcade/fossil-museum-v0257/items/sail-fossil.png",
+      "sourceRepo": "joos-too/Soullink-Tracker",
+      "sourcePath": "public/fossil-sprites/gen6/sail-fossil.png",
+      "sourceBlobSha": "2a7ec87b27ba2a3f668f762c1eb9334f5a1a7a17",
+      "sourceType": "upstream-sprite"
+    },
+    {
+      "id": "skull-fossil",
+      "file": "arcade/fossil-museum-v0257/items/skull-fossil.png",
+      "sourceRepo": "joos-too/Soullink-Tracker",
+      "sourcePath": "public/fossil-sprites/gen4/skull-fossil.png",
+      "sourceBlobSha": "ee40c811a5d291dff703f993fac480bd814dee3a",
+      "sourceType": "upstream-sprite"
+    },
+    {
+      "id": "star-piece",
+      "file": "arcade/fossil-museum-v0257/items/star-piece.png",
+      "sourceRepo": "PokeAPI/sprites",
+      "sourcePath": "sprites/items/star-piece.png",
+      "sourceBlobSha": "02aa2f7caca93293d3dc23fe85e32f7f30dcffb0",
+      "sourceType": "upstream-sprite"
+    },
+    {
+      "id": "stardust",
+      "file": "arcade/fossil-museum-v0257/items/stardust.png",
+      "sourceRepo": "PokeAPI/sprites",
+      "sourcePath": "sprites/items/stardust.png",
+      "sourceBlobSha": "b84b29b3021a646b965a8a44003a0b52dbe70cd9",
+      "sourceType": "upstream-sprite"
+    },
+    {
+      "id": "thunder-stone",
+      "file": "arcade/fossil-museum-v0257/items/thunder-stone.png",
+      "sourceRepo": "joos-too/Soullink-Tracker",
+      "sourcePath": "public/stone-sprites/gen1/thunder-stone.png",
+      "sourceBlobSha": "0b69dd2efc70a505dc27697e181e91dbbdf84f62",
+      "sourceType": "upstream-sprite"
+    },
+    {
+      "id": "ultra-ball",
+      "file": "arcade/fossil-museum-v0257/items/ultra-ball.png",
+      "sourceRepo": "PokeAPI/sprites",
+      "sourcePath": "sprites/items/ultra-ball.png",
+      "sourceBlobSha": "728f552e0bfbfb3068fdea9ca9e082f44acc27ff",
+      "sourceType": "upstream-sprite"
+    },
+    {
+      "id": "water-stone",
+      "file": "arcade/fossil-museum-v0257/items/water-stone.png",
+      "sourceRepo": "joos-too/Soullink-Tracker",
+      "sourcePath": "public/stone-sprites/gen1/water-stone.png",
+      "sourceBlobSha": "36669d6e96c69ec071a3f571e81ffdd8c843be13",
+      "sourceType": "upstream-sprite"
+    },
+    {
+      "id": "tcg-card",
+      "file": "arcade/fossil-museum-v0257/items/tcg-card.png",
+      "sourceType": "runtime-card-placeholder",
+      "note": "Only shown before the buried card is hydrated; actual card art is used when available."
+    }
+  ]
+}

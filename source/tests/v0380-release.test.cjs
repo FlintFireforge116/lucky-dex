@@ -1,0 +1,10 @@
+'use strict';
+const assert=require('node:assert/strict'),fs=require('node:fs'),path=require('node:path');
+const root=path.join(__dirname,'..'),read=p=>fs.readFileSync(path.join(root,p),'utf8');
+const pkg=require('../package.json'),lock=require('../package-lock.json'),gradle=read('app/build.gradle'),app=read('app/src/main/assets/app-v0167.js'),html=read('app/src/main/assets/index.html'),readme=read('README.md');
+const parts=String(pkg.version).split('.').map(Number);assert.ok(parts[0]>0||parts[1]>38||(parts[1]===38&&parts[2]>=0),'release must remain v0.38.0+');assert.equal(lock.version,pkg.version);assert.equal(lock.packages[''].version,pkg.version);
+const code=Number(gradle.match(/versionCode\s+(\d+)/)?.[1]||0);assert.ok(code>=3800);assert.ok(gradle.includes(`versionName '${pkg.version}'`));assert.ok(gradle.includes(`LuckyDex-asset-builder/${pkg.version}`));
+assert.ok(app.includes(`__LUCKYDEX_BUILD='${pkg.version}'`));assert.ok(html.includes(`v${pkg.version}`));
+assert.match(readme,/v0\.38\.[0-9]+\s+—\s+Rock Harden/i);assert.match(readme,/random|unique/i);assert.match(readme,/Perfect|precision/i);assert.match(readme,/Gold Rock/i);
+for(const f of ['app/src/main/assets/arcade-rock-harden-core.js','app/src/main/assets/arcade-rock-harden.js','app/src/main/assets/arcade-rock-harden.css'])assert.ok(fs.existsSync(path.join(root,f)),`missing ${f}`);
+console.log('PASS v0.38.0 release identity and Rock Harden bundle contract');

@@ -1,0 +1,502 @@
+LUCKYDEX — MASTER UPDATE / CONTINUATION PLAN
+Reusable cross-chat handover
+==============================================
+
+PURPOSE
+-------
+This file is intended to be reusable in ANY future LuckyDex development chat.
+
+Do NOT assume that every pass below is still outstanding.
+
+FIRST ACTION IN EVERY NEW CHAT
+------------------------------
+Before editing anything:
+
+1. Treat the source ZIP / repository supplied in that chat as the ONLY current baseline.
+2. Inspect the actual source, current version, relevant tests, changelogs/test reports, and screenshots if supplied.
+3. Audit every pass in this document against the CURRENT code.
+4. Mark each pass as:
+   - DONE
+   - PARTIALLY DONE
+   - NOT DONE
+   - REGRESSED / BROKEN
+5. Do not redo completed work just because it appears in this document.
+6. For PARTIALLY DONE passes, list the remaining gaps against the acceptance criteria below.
+7. Preserve existing mechanics, saves, inventories, currencies, rewards, transactions, signing identity, and user progress unless a change below explicitly requires otherwise.
+8. Add or update regression tests for every changed behaviour.
+9. Verify mobile layouts against realistic phone dimensions and safe areas, especially screens with the persistent bottom navigation.
+10. Prefer direct, bounded implementation in the current chat. Avoid sending the whole job to Codex unless a genuinely awkward isolated task makes it worthwhile.
+11. If a pass is already complete, verify it briefly and move on.
+12. Never infer completion purely from a version number or old report. Check the code and behaviour.
+
+IMPORTANT DESIGN RULE FOR RARE EVENTS
+-------------------------------------
+All rare-event rewards must follow:
+
+ROLL ONCE -> PERSIST FOR THAT ATTEMPT -> CLAIM ONCE
+
+Backing out, refreshing, reopening a menu, rotating the device, changing tabs, or intentionally failing must NOT reroll or duplicate a rare reward.
+
+============================================================
+PASS 1 — ADVENTURE INTERACTION / NAVIGATION
+============================================================
+
+GOAL:
+Make the Kanto journey feel like a coherent Pokémon adventure rather than a collection of overlapping menu buttons.
+
+ROUTES / FORESTS / CAVES:
+- Remove confusing duplication between:
+  - Search Grass
+  - Explore
+  - Rare Pokémon
+  - Wild Hunt
+- Wild Hunt should NOT appear as a local route action if it already exists as its own dedicated activity/section.
+- Merge routine area searching into ONE primary action:
+  - EXPLORE AREA
+- EXPLORE AREA can produce context-appropriate events such as:
+  - normal wild Pokémon
+  - rare wild Pokémon
+  - item/cache discovery
+  - NPC/event
+  - other suitable local discoveries
+- Authored trainers should remain a separate obvious TRAINER action where appropriate.
+- Mandatory progression must never depend on randomly rolling a trainer/event through Explore.
+
+CITIES / TOWNS:
+- Remove generic Explore if it does not genuinely do something distinct.
+- Keep Talk to Locals only where it provides actual dialogue, hints, story, NPC interactions, or local flavour.
+- Pokémon Center, Poké Mart, Gym, etc. remain independent actions.
+
+ACTION AVAILABILITY:
+- The player should generally be able to use all normal local options unless an actual event/state temporarily prevents it.
+- Visiting one routine option should not unnecessarily consume or lock the location.
+
+MAP BUTTON:
+- While inside Kanto Adventure, MAP must open the Kanto / Gen 1 journey map.
+- It must NOT send the user back to the broad region-selection screen.
+- Region selection belongs at the higher Adventure level.
+
+ACCEPTANCE:
+- No redundant Search Grass / Explore / Rare Pokémon / Wild Hunt stack.
+- One clear area exploration action.
+- Trainers remain explicit where authored.
+- Kanto Map opens from Party/Bag/Map controls.
+- Progression is not RNG-gated by the exploration merge.
+
+============================================================
+PASS 2 — REAL / AUTHENTIC KANTO LOCATION MAPS
+============================================================
+
+GOAL:
+Stop using made-up or loosely reconstructed location images where high-quality proper game maps exist.
+
+RULE:
+If a proper game map for the location exists, use the proper map rather than inventing a substitute.
+
+AUDIT:
+- Pallet Town
+- Route 1
+- Viridian City
+- Viridian Forest
+- Route 2
+- Pewter City
+- and every later Kanto location currently represented by custom/fake approximations
+
+DISPLAY:
+- Preserve pixel art.
+- Use nearest-neighbour / integer-friendly scaling.
+- Never stretch sprites or map artwork.
+- Crop/window large maps intelligently if necessary.
+- Player marker/avatar may remain a separate overlay.
+- Maintain readable mobile framing.
+
+ACCEPTANCE:
+- No obvious invented substitute map remains where a suitable authentic map asset exists.
+- No stretched map art.
+- Location identity is immediately recognisable.
+
+============================================================
+PASS 3 — BATTLE ENGINE + BATTLE UI
+============================================================
+
+GOAL:
+Fix missing move mechanics generically rather than patching individual moves one by one.
+
+KNOWN EXAMPLES:
+- Yawn currently needs proper delayed sleep behaviour.
+- Fury Swipes / other multi-hit moves must actually hit the correct number of times.
+
+ENGINE WORK:
+- Support move metadata that already exists in the move database where practical.
+- Implement multi-hit handling generically.
+- Implement delayed Yawn -> sleep behaviour.
+- Audit learnable Adventure moves for other effects that currently silently do nothing or behave incorrectly.
+- Move descriptions shown to the player must match what LuckyDex actually supports.
+
+STICKY BATTLE MENU:
+- Remember the last battle submenu used.
+- Example:
+  Fight -> choose Scratch -> next turn should remain/open in Fight.
+- Bag stays in Bag.
+- Pokémon stays in Pokémon.
+- The player deliberately backs/closes out to change the menu.
+
+VISIBLE EXP:
+- Show player Pokémon EXP during battle.
+- Include a visible EXP bar.
+- Prefer numeric progress too, e.g.:
+  EXP 286 / 420
+- Update visibly after earned EXP where practical.
+
+MOVE LEARNING SCREEN:
+- Show Power and PP for ALL currently known moves.
+- Do not make the player select/guess to compare them.
+- Keep type/category visible.
+
+ACCEPTANCE:
+- Yawn works.
+- Multi-hit moves work.
+- No obvious learnable move claims an effect that is silently ignored.
+- Last battle drawer persists.
+- EXP is visible.
+- Forget-a-move comparison shows Power + PP for all moves.
+
+============================================================
+PASS 4 — POKÉ MART PURCHASE UX
+============================================================
+
+GOAL:
+Replace hard-coded purchase bundles with a proper quantity selector.
+
+REQUIREMENTS:
+- Player chooses how many of an item to buy.
+- Include + / - quantity controls.
+- Optional quick quantities are fine if useful.
+- Confirmation screen clearly shows:
+  - item
+  - quantity
+  - total cost
+  - currency before -> after
+  - inventory before -> after
+
+PREMIER BALL:
+- Buying 10 Poké Balls should award 1 Premier Ball.
+- Apply the intended bonus rule consistently for larger eligible quantities.
+- Show the Premier Ball bonus in the confirmation/result UI.
+
+TRANSACTION SAFETY:
+- Preserve existing rollback/save-failure protection.
+- Never spend currency without delivering the purchased goods.
+- Failed transactions must leave balances/inventory consistent.
+
+ACCEPTANCE:
+- No forced "Buy 5 Poké Balls?" bundle.
+- Quantity is user-controlled.
+- Premier Ball bonus works and is visible.
+- Transactions remain atomic/safe.
+
+============================================================
+PASS 5 — ROCK HARDEN EXPANSION
+============================================================
+
+GOAL:
+Turn Harden into a reaction/decision game rather than a single repeated timing action.
+
+ROCK VARIETY:
+- Add more visual rock/boulder/hazard variants.
+- Different weights/damage levels are welcome where fair.
+
+DANGEROUS POKÉMON HAZARDS:
+Add suitable tough/spiky/heavy Pokémon such as:
+- Golem
+- Graveler
+- Ferroseed
+- Pincurchin
+- other appropriate choices
+
+If the player fails to Harden against these:
+- they should hurt more than normal rocks.
+
+HEALING BERRIES:
+- Add Oran Berry.
+- Add Sitrus Berry.
+- These reward NOT hardening.
+- Successfully taking/collecting them heals the player.
+- Oran = smaller heal.
+- Sitrus = larger heal.
+- Hardening through one means missing the heal.
+
+HARD MODE:
+- Falling objects should use genuinely randomised speeds within fair bounds.
+- Do not make every object follow one learnable rhythm.
+- CPU timing must respond to actual impact timing rather than old fixed timing assumptions.
+
+ACCEPTANCE:
+- More than three repetitive rock visuals/behaviours.
+- Tough Pokémon hazards are recognisable and more dangerous.
+- Oran/Sitrus create a meaningful "do not Harden" decision.
+- Hard difficulty has randomised fall speeds without becoming unfair.
+
+============================================================
+PASS 6 — SHARED RARE REWARD SYSTEM
+============================================================
+
+GOAL:
+Use one safe reward path for rare events instead of implementing separate fragile reward logic in every minigame.
+
+SUPPORTED REWARD TYPES SHOULD INCLUDE:
+- Lucky Coins
+- Card Dust
+- tickets / vouchers
+- exact cards
+- random filtered cards
+- sealed booster packs
+
+RULES:
+- Roll once.
+- Persist the selected reward/event for the attempt.
+- Claim once.
+- No duplicate grant on reload/re-entry.
+- No reroll abuse by backing out.
+- Failed/abandoned runs do not accidentally grant the reward unless explicitly designed to.
+
+ACCEPTANCE:
+- Tile Puzzle, Berry Picker and Unown rare rewards use consistent safe claiming logic where practical.
+
+============================================================
+PASS 7 — TILE PUZZLE OVERHAUL
+============================================================
+
+LANDSCAPE:
+- Add a proper landscape layout.
+- Use the extra horizontal space to make the reference image and puzzle board easier to see.
+- Portrait must remain fully supported.
+- Rotation must not reroll/reset a rare event.
+
+BAD IMAGE FILTERING:
+- Remove/exclude puzzle images whose tile sets are too visually indistinguishable.
+- Existing "equivalent tile" tolerance can remain as a safety net, but bad source images should not be routinely selected.
+- Use automatic checks and/or a manual blacklist.
+- Difficulty-specific exclusion is acceptable where an image only becomes problematic at certain grid sizes.
+
+RARE CARD / PACK PUZZLE:
+- Tiny chance on puzzle creation that the normal puzzle becomes:
+  - an actual card, OR
+  - a booster pack
+- The selected card/pack is chosen ONCE when the puzzle instance is created.
+- The image/puzzle is replaced by that reward object.
+- Leaving and reopening must NOT reroll it.
+- Completing the puzzle awards that exact card/pack.
+- Abandoning/failing gives no reward.
+
+PRESENT TILE:
+- A tile can very rarely reveal a small present icon plus its tile number.
+- Revealing it marks the bonus as discovered.
+- The random gift is only awarded if the entire puzzle is completed.
+- Do not reward flip-and-quit farming.
+
+ACCEPTANCE:
+- Landscape is meaningfully better, not just stretched portrait.
+- Poor tile images are filtered out.
+- Rare card/pack event cannot be rerolled by re-entry.
+- Present tile cannot be farmed without completing the puzzle.
+
+============================================================
+PASS 8 — BERRY PICKER RARE REQUESTS
+============================================================
+
+GOAL:
+Add occasional jackpot-style special requests without replacing the core berry loop.
+
+VERY RARE SPECIAL REQUEST:
+A Pokémon can request one of:
+- a card
+- a booster pack
+- Card Dust
+- a voucher/ticket
+
+VISUAL:
+- The relevant requested berry/item should visually transform into the special reward for that request/turn where practical.
+- The player should clearly understand that this is a special delivery.
+
+REWARD:
+- Correctly deliver it -> bank the special prize for the run.
+- Show/grant it at the end-of-run results.
+- Missing the request loses the special reward.
+- Do not immediately grant it at pickup if that creates duplication/exploit risk.
+
+BALANCE:
+- Keep these genuinely rare.
+- Berry Picker should not become the dominant farming method for packs/cards.
+
+ACCEPTANCE:
+- Special request is obvious.
+- Correct delivery matters.
+- Reward is granted once at run completion.
+- No re-entry/reroll exploit.
+
+============================================================
+PASS 9 — UNOWN / SPELLING RARE SHINY LETTER
+============================================================
+
+GOAL:
+Add a very rare shiny-Unown jackpot tied to successful word solving.
+
+BEHAVIOUR:
+- Tiny chance for a letter/glyph in the current Unown word to be shiny.
+- Prefer at most one shiny jackpot letter per word unless intentionally designed otherwise.
+- Shiny state is rolled once with the question.
+- It must remain stable for that question.
+
+SUCCESS REWARD:
+- Correctly spell/decode the whole word.
+- Award a random card whose Pokémon/card name starts with the shiny letter.
+- Reward pool can include BOTH:
+  - Pokémon TCG
+  - Pokémon TCG Pocket (TCGP)
+- Result screen should identify what format/card was won.
+
+FAILURE:
+- Wrong answer / timeout / failed question loses the special reward.
+
+ACCEPTANCE:
+- Shiny glyph is visually distinct.
+- Reward letter matches the card-name initial.
+- TCG + TCGP are both valid pools.
+- No reroll by reopening the same question.
+
+============================================================
+PASS 10 — COLLECTION / ARCADE / PROFILE / DAILY CLEANUP
+============================================================
+
+CARD BINDER REGRESSION:
+Known behaviour:
+- Card Binder may initially show Pokémon sprites until the user changes set.
+
+Fix:
+- Switching Pokédex -> Card Binder must immediately rebuild/render the card grid correctly.
+- Changing set must NOT be required to fix the visuals.
+
+Regression test:
+1. Open Pokédex.
+2. Switch to Card Binder.
+3. Do NOT change set.
+4. Verify proper card art is already displayed.
+
+ARCADE BOTTOM CLIPPING:
+- Audit shared Arcade location/page containers.
+- Ensure location buttons / numbered tiles / controls never disappear behind the persistent bottom nav.
+- Respect mobile safe areas.
+- Do not patch only one screen if the issue comes from a shared layout.
+
+DAILY CHALLENGES:
+- Remove "Complete a Regional Journey" from the daily challenge pool.
+- A full 8-badge regional run is too large for a daily.
+- Replace with Adventure-sized tasks, e.g.:
+  - win an Adventure battle
+  - explore several locations
+  - find an item
+  - catch a Pokémon during Adventure
+  - defeat a trainer
+  - use a Pokémon Center, etc.
+
+ACHIEVEMENTS:
+Preferred design:
+- Move achievements to a dedicated sub-screen opened from Profile.
+- Do NOT add another bottom-nav tab unless there is a strong reason.
+- Profile should show a compact Achievements card/summary:
+  e.g. "37 / 86 earned — View challenge log"
+- Dedicated page can contain:
+  - Active
+  - Complete
+  - Secrets
+  - categories / filtering as already supported
+- If the dedicated screen already exists in the current baseline, verify Profile is no longer clogged.
+
+ACCEPTANCE:
+- Card Binder renders cards immediately.
+- Arcade pages do not clip behind bottom nav.
+- Full regional journey is not a daily.
+- Achievements no longer dominate Profile.
+
+============================================================
+CROSS-CUTTING TEST / UX REQUIREMENTS
+============================================================
+
+EVERY PASS:
+- Add focused tests first or alongside the change.
+- Run the relevant focused tests after each pass.
+- Run the broader regression suite before release.
+- Test real mobile viewport behaviour, not just DOM assertions.
+- Inspect screenshots for changed UI screens.
+- Verify no currency/reward duplication.
+- Verify save compatibility.
+- Verify no navigation dead ends.
+- Verify no accidental removal of existing functionality.
+
+SPECIAL MOBILE CHECKS:
+- Android portrait.
+- Landscape where newly supported.
+- Bottom safe-area/navigation clearance.
+- No content hidden behind persistent bottom nav.
+- No accidental body scrolling when a screen is intended to be fixed.
+- No stretched pixel art.
+
+============================================================
+RECOMMENDED IMPLEMENTATION ORDER
+============================================================
+
+1. Audit current baseline and mark pass status.
+2. Pass 1 — Adventure interaction/navigation.
+3. Pass 2 — real/authentic Kanto location maps.
+4. Pass 3 — battle mechanics + battle UI + EXP.
+5. Pass 4 — Poké Mart quantity + Premier Ball.
+6. Pass 5 — Rock Harden expansion.
+7. Pass 6 — shared rare reward system.
+8. Pass 7 — Tile Puzzle.
+9. Pass 8 — Berry Picker.
+10. Pass 9 — Unown shiny letter.
+11. Pass 10 — Collection / Arcade / Profile / Daily cleanup.
+12. Full regression, screenshots, packaging/release.
+
+If a later pass is already complete, skip it after verification.
+If one pass has hidden dependencies, stop and document them before widening scope.
+
+============================================================
+HOW TO REPORT STATUS IN A NEW CHAT
+============================================================
+
+Before implementing, reply with a concise audit like:
+
+BASELINE:
+- Version: ...
+- Source inspected: yes
+- Tests/reports inspected: ...
+
+PASS STATUS:
+1. Adventure interaction/navigation — PARTIAL
+   Remaining: ...
+2. Kanto map assets — DONE
+3. Battle mechanics/UI — NOT DONE
+...
+10. Cleanup — PARTIAL
+   Remaining: ...
+
+Then state which ONE pass (or tightly related group) you recommend doing next and why.
+
+Do NOT begin by rewriting every pass.
+Do NOT assume old screenshots still describe the current build.
+Do NOT undo newer fixes that are already present.
+
+============================================================
+PRODUCT INTENT
+============================================================
+
+LuckyDex should reward PLAY rather than artificial time gates or pay-to-win friction.
+
+The Adventure should feel like an actual Pokémon journey.
+Arcade minigames should be replayable, readable and occasionally surprising.
+Rare rewards should feel exciting, not exploitable.
+UI should remain compact and mobile-first.
+Mechanics shown to the player should genuinely work.
+Existing player progress and economy integrity are more important than convenience during development.

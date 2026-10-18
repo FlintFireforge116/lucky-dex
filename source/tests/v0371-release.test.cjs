@@ -1,0 +1,14 @@
+'use strict';
+const assert=require('node:assert/strict'),fs=require('fs'),path=require('path');
+const root=path.join(__dirname,'..'),read=p=>fs.readFileSync(path.join(root,p),'utf8');
+const pkg=require('../package.json'),lock=require('../package-lock.json'),gradle=read('app/build.gradle'),app=read('app/src/main/assets/app-v0167.js'),html=read('app/src/main/assets/index.html');
+const parse=v=>v.split('.').map(Number),gte=(a,b)=>{const aa=parse(a),bb=parse(b);for(let i=0;i<3;i++){if(aa[i]>bb[i])return true;if(aa[i]<bb[i])return false;}return true;};
+assert.ok(gte(pkg.version,'0.37.1'),`expected release >= 0.37.1, got ${pkg.version}`);
+assert.equal(lock.version,pkg.version);assert.equal(lock.packages[''].version,pkg.version);
+const versionCode=Number((gradle.match(/versionCode\s+(\d+)/)||[])[1]);
+assert.ok(versionCode>=3701,`expected versionCode >= 3701, got ${versionCode}`);
+assert.match(gradle,new RegExp(`versionName\\s+'${pkg.version.replaceAll('.', '\\.')}'`));
+assert.match(gradle,new RegExp(`LuckyDex-asset-builder/${pkg.version.replaceAll('.', '\\.')}`));
+assert.match(app,new RegExp(`__LUCKYDEX_BUILD='${pkg.version.replaceAll('.', '\\.')}'`));
+assert.match(html,new RegExp(`v${pkg.version.replaceAll('.', '\\.')}`));
+console.log('PASS v0.37.1 release floor and current identity coherence');

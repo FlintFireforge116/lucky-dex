@@ -1,0 +1,13 @@
+'use strict';
+const assert=require('node:assert/strict'),fs=require('fs'),path=require('path');
+const root=path.join(__dirname,'..'),css=fs.readFileSync(path.join(root,'app/src/main/assets/arcade-magikarp-splash.css'),'utf8'),html=fs.readFileSync(path.join(root,'app/src/main/assets/index.html'),'utf8');
+const shell=html.slice(html.indexOf('id="magikarpSplashGame"'),html.indexOf('id="dashGame"'));
+assert.strictEqual((shell.match(/arcade\/sprites\/actors\/pokemon\/129\.png/g)||[]).length,5);
+assert.match(css,/\.magikarp-sprite\s*\{[^}]*width:\s*44px[^}]*height:\s*auto[^}]*aspect-ratio:\s*44\s*\/\s*57[^}]*image-rendering:\s*pixelated/s);
+assert.match(css,/#magikarpSplashButton\s*\{[^}]*min-height:\s*(?:6[4-9]|[7-9]\d)px[^}]*touch-action:\s*none/s);
+for(const hook of ['is-held','is-counter-hit','magikarp-plus','is-quick','magikarp-splash-fx','magikarp-countdown','is-finished'])assert.ok(css.includes(hook),hook);
+assert.match(css,/grid-template-columns:\s*repeat\(4,minmax\(0,1fr\)\)/);
+assert.doesNotMatch(css,/\.magikarp-lane[^}]*width:\s*\d+px/s,'lanes must not force fixed horizontal width');
+assert.match(css,/shore-water\.png|shallow-water\.png/,'use local Gen III water tile');
+assert.doesNotMatch(css,/linear-gradient\([^)]*(?:#f|white)[^)]*(?:#f|white)/i,'avoid glossy white gameplay gradients');
+console.log('PASS v0.37.0 Magikarp Gen III presentation contract');

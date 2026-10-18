@@ -1,0 +1,32 @@
+[
+  {
+    "id": "cafe-table",
+    "path": "Completed Assets/Catalogue, Decor and Plushies/Displayed in Home/Pokemon Cafe/DW_Café_Table(RIP).png",
+    "source": "https://raw.githubusercontent.com/Shade-of-Gr3y/Dream-World-Revival/36e3c302d4ba3f79886efccb731c5e4e65143341/Completed%20Assets/Catalogue%2C%20Decor%20and%20Plushies/Displayed%20in%20Home/Pokemon%20Cafe/DW_Caf%C3%A9_Table%28RIP%29.png",
+    "local": "reference\\dw-candidates\\cafe-table.png",
+    "bytes": 56911,
+    "sha256": "b19b4fd8758f09aee7f8f228d8aa7b702d0cf6c904ecb7134c41cb5b5cb9dc18",
+    "gitBlob": "5603920353958d6182b6392bcbbcda7898738daf",
+    "category": "furniture-searchable-props"
+  },
+  {
+    "id": "cafe-pot",
+    "path": "Completed Assets/Catalogue, Decor and Plushies/Displayed in Home/Pokemon Cafe/DW_Café_Pot(RIP).png",
+    "source": "https://raw.githubusercontent.com/Shade-of-Gr3y/Dream-World-Revival/36e3c302d4ba3f79886efccb731c5e4e65143341/Completed%20Assets/Catalogue%2C%20Decor%20and%20Plushies/Displayed%20in%20Home/Pokemon%20Cafe/DW_Caf%C3%A9_Pot%28RIP%29.png",
+    "local": "reference\\dw-candidates\\cafe-pot.png",
+    "bytes": 14034,
+    "sha256": "85d9644ea6fbf565749073e9c3d3de8a00620113d46b82f020b9eec9011c923a",
+    "gitBlob": "bc444f79a2ecfa28096524e98047bf91329aecd4",
+    "category": "furniture-searchable-props"
+  },
+  {
+    "id": "cafe-cup",
+    "path": "Completed Assets/Catalogue, Decor and Plushies/Displayed in Home/Pokemon Cafe/DW_Blue_Café_Cup(RIP).png",
+    "source": "https://raw.githubusercontent.com/Shade-of-Gr3y/Dream-World-Revival/36e3c302d4ba3f79886efccb731c5e4e65143341/Completed%20Assets/Catalogue%2C%20Decor%20and%20Plushies/Displayed%20in%20Home/Pokemon%20Cafe/DW_Blue_Caf%C3%A9_Cup%28RIP%29.png",
+    "local": "reference\\dw-candidates\\cafe-cup.png",
+    "bytes": 6656,
+    "sha256": "c9bfc666382d277661296e00e3b94be70d85df87dd70591de908aa9a17aaa5cc",
+    "gitBlob": "e9241eb33c7983fa232d7906945b5f0ed2179573",
+    "category": "furniture-searchable-props"
+  }
+]

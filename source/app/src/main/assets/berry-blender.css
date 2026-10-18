@@ -1,0 +1,180 @@
+/* Lucky Dex v0.16.0 — Gen III-inspired Berry Blender
+   Behaviour is implemented from the retail Emerald decomp. */
+
+#berryGame.berry-rse{
+  --berry-speed:0;
+  --berry-shake-x:0px;
+  --berry-shake-y:0px;
+  background:
+    radial-gradient(circle at 50% 26%,rgba(151,117,196,.20),transparent 27%),
+    linear-gradient(180deg,#28203a 0%,#17192a 52%,#0b111b 100%)!important;
+  overflow:hidden;
+}
+#berryGame .berry-help{margin:-2px 0 4px;text-align:center;line-height:1.35}
+#berryGame .berry-help b{color:#ffd56a}
+
+.berry-progress-wrap{
+  display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:8px;
+  width:100%;padding:5px 8px;border:1px solid rgba(190,178,220,.34);border-radius:9px;
+  background:#151326;box-shadow:inset 0 0 0 2px rgba(0,0,0,.18)
+}
+.berry-progress-wrap>span,.berry-progress-wrap>b{font-size:9px;letter-spacing:.13em;color:#d5cde8}
+.berry-progress-track{height:12px;border-radius:3px;background:#2f2a43;border:2px solid #75688e;overflow:hidden;box-shadow:inset 0 2px 4px rgba(0,0,0,.5)}
+.berry-progress-track i{display:block;height:100%;width:0;background:linear-gradient(180deg,#ffdb63,#ee8e37 48%,#c85b30);box-shadow:0 0 8px rgba(255,194,75,.45);transition:width .06s linear}
+
+#berryGame .berry-machine{
+  position:relative!important;display:grid!important;place-items:center!important;
+  min-height:310px!important;flex:1 1 auto;padding:30px 25px 34px!important;
+  perspective:800px;isolation:isolate
+}
+.berry-blender-shell{
+  position:relative!important;width:min(64vw,270px)!important;height:min(64vw,270px)!important;
+  transform:translate(var(--berry-shake-x),var(--berry-shake-y));
+  transition:filter .12s ease;z-index:3
+}
+.berry-machine-frame{
+  position:absolute;inset:-10%;border-radius:28%;
+  background:linear-gradient(145deg,#8f82a7,#615475 48%,#3d354c 49%,#6b607d 77%,#9185a4);
+  border:4px solid #30283d;
+  box-shadow:inset 0 0 0 5px #b4a6c7,inset 0 0 0 9px #514660,0 15px 28px rgba(0,0,0,.42)
+}
+.berry-machine-frame:before{
+  content:"";position:absolute;inset:8%;border-radius:50%;
+  background:radial-gradient(circle,#1d1726 0 58%,#463a55 59% 68%,#9384aa 69% 74%,#443950 75%);
+  box-shadow:inset 0 0 20px #000,0 0 0 3px #2d2638
+}
+
+/* Berry loading pods around the original machine's corners. */
+.berry-slot{position:absolute;width:48px;height:35px;border-radius:12px 12px 7px 7px;background:linear-gradient(180deg,#c83d3b,#7b212b 70%,#4b1b22);border:3px solid #44202a;box-shadow:inset 0 2px 2px rgba(255,255,255,.25),0 4px 6px rgba(0,0,0,.35);z-index:2}
+.berry-slot:after{content:"";position:absolute;width:7px;height:7px;border-radius:50%;background:#f2a44b;right:7px;top:6px;box-shadow:0 0 5px #ffca62}
+.slot-a{left:8%;top:3%;transform:rotate(-28deg)}
+.slot-b{right:8%;top:3%;transform:rotate(28deg)}
+.slot-c{left:8%;bottom:3%;transform:rotate(28deg)}
+.slot-d{right:8%;bottom:3%;transform:rotate(-28deg)}
+
+#berryGame .berry-wheel{
+  position:absolute!important;inset:9%!important;width:auto!important;height:auto!important;
+  border-radius:50%!important;overflow:hidden!important;
+  background:radial-gradient(circle at 43% 39%,#34303d 0 10%,#17141c 35%,#09080d 69%,#020204 100%)!important;
+  border:7px solid #4e4559!important;
+  box-shadow:inset 0 0 0 5px #1f1a27,inset 0 0 40px #000,0 0 0 4px #a293b6,0 0 22px rgba(121,96,154,.36)!important;
+  transform:none!important
+}
+#berryGame .berry-wheel-rim{position:absolute;inset:6%;border:2px solid rgba(213,196,229,.22);border-radius:50%;background:none!important;pointer-events:none}
+.berry-speed-streaks{position:absolute;inset:8%;border-radius:50%;opacity:calc(var(--berry-speed)*.65);background:repeating-conic-gradient(from 0deg,transparent 0deg 16deg,rgba(244,223,255,.22) 17deg 18deg,transparent 19deg 31deg);filter:blur(calc(var(--berry-speed)*2px));animation:berryRseStreak .35s linear infinite;pointer-events:none}
+@keyframes berryRseStreak{to{transform:rotate(360deg)}}
+
+/* The central pointer itself rotates; the machine doesn't. */
+#berryGame .berry-moving-arrow{position:absolute!important;inset:0!important;z-index:7!important;transform-origin:50% 50%!important;pointer-events:none}
+.berry-dial-arm{position:absolute;left:50%;top:50%;width:5px;height:42%;transform:translate(-50%,-100%);transform-origin:50% 100%;background:linear-gradient(90deg,#7b1c21,#ef4d48 50%,#78191e);border-radius:4px;box-shadow:0 0 4px rgba(255,74,69,.5)}
+.berry-dial-head{position:absolute;left:50%;top:7%;width:0;height:0;transform:translateX(-50%);border-left:13px solid transparent;border-right:13px solid transparent;border-bottom:26px solid #ee4b45;filter:drop-shadow(0 2px 0 #711a1d) drop-shadow(0 0 5px rgba(255,87,77,.55))}
+#berryGame .berry-center-disc{position:absolute!important;inset:39%!important;border-radius:50%!important;background:radial-gradient(circle,#b3a8bc 0 21%,#655970 23% 55%,#2c2534 58% 100%)!important;box-shadow:0 0 0 3px #b7abc5,0 4px 12px #000!important;z-index:8}
+#berryGame .berry-center-cap{position:absolute!important;left:50%!important;top:50%!important;width:17px!important;height:17px!important;transform:translate(-50%,-50%)!important;border-radius:50%!important;background:#ed4b46!important;box-shadow:0 0 0 3px #722127,0 0 8px rgba(255,84,73,.7)!important;z-index:9}
+
+.berry-particles{position:absolute;inset:0;pointer-events:none;z-index:12;overflow:visible}
+.berry-particle{position:absolute;left:50%;top:50%;width:5px;height:5px;border-radius:50%;background:#ffe18b;box-shadow:0 0 6px #ffd264;animation:berryParticle .52s ease-out forwards}
+.berry-particle.good{background:#ff9b75;box-shadow:0 0 6px #ff7259}
+.berry-particle.miss{background:#74b6ff;box-shadow:0 0 6px #3c8cff}
+@keyframes berryParticle{from{transform:translate(-50%,-50%) scale(1);opacity:1}to{transform:translate(calc(-50% + var(--px)),calc(-50% + var(--py))) scale(.25);opacity:0}}
+
+.berry-rpm-panel{position:absolute;left:50%;bottom:-31px;transform:translateX(-50%);min-width:106px;padding:4px 13px 5px;text-align:center;border:3px solid #473b55;border-radius:7px;background:linear-gradient(180deg,#dad2e3,#9b8da9 12%,#3b3346 14% 100%);box-shadow:0 5px 10px rgba(0,0,0,.35);z-index:12}
+.berry-rpm-panel small{display:block;font-size:7px;letter-spacing:.18em;color:#c8bdd4}
+.berry-rpm-panel strong{display:block;font-variant-numeric:tabular-nums;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:19px;letter-spacing:.05em;color:#fff3a0;text-shadow:0 0 7px rgba(255,224,109,.35)}
+
+/* Original four-player layout: YOU top-left, then the three Lilycove NPCs. */
+.berry-station{position:absolute;width:76px;min-height:34px;display:grid;place-items:center;z-index:10;color:#f3edf9;pointer-events:none}
+.berry-station .station-name{padding:4px 8px;border:2px solid #645576;border-radius:7px;background:linear-gradient(180deg,#50425f,#2b2435);font-size:8px;font-weight:900;letter-spacing:.11em;box-shadow:0 3px 8px rgba(0,0,0,.3)}
+.berry-station .station-pointer{position:absolute;width:0;height:0;border-left:8px solid transparent;border-right:8px solid transparent;border-top:15px solid #ef5048;filter:drop-shadow(0 2px 0 #641b21)}
+.berry-station em{position:absolute;z-index:15;font-style:normal;font-weight:1000;font-size:25px;line-height:1;color:#ff6761;text-shadow:0 2px 0 #651a1d,0 0 9px rgba(255,96,82,.7);opacity:0;transform:translateY(4px) scale(.7)}
+.berry-station em.best{color:#ffe36e;text-shadow:0 2px 0 #795814,0 0 12px #ffc94c}.berry-station em.miss{color:#83c0ff;text-shadow:0 2px 0 #234d81,0 0 10px #4a97ff}
+.berry-station em.pop{animation:berryFeedback .58s ease-out}
+@keyframes berryFeedback{0%{opacity:0;transform:translateY(8px) scale(.55)}25%{opacity:1;transform:translateY(-2px) scale(1.15)}75%{opacity:1;transform:translateY(-8px) scale(1)}100%{opacity:0;transform:translateY(-17px) scale(.88)}}
+.berry-station-you{left:1px;top:6px}.berry-station-you .station-pointer{right:-10px;bottom:-3px;transform:rotate(-45deg)}.berry-station-you em{right:-1px;top:35px}
+.berry-station-mister{right:1px;top:6px}.berry-station-mister .station-pointer{left:-10px;bottom:-3px;transform:rotate(45deg)}.berry-station-mister em{left:-1px;top:35px}
+.berry-station-laddie{left:1px;bottom:6px}.berry-station-laddie .station-pointer{right:-10px;top:-3px;transform:rotate(-135deg)}.berry-station-laddie em{right:-1px;bottom:35px}
+.berry-station-lassie{right:1px;bottom:6px}.berry-station-lassie .station-pointer{left:-10px;top:-3px;transform:rotate(135deg)}.berry-station-lassie em{left:-1px;bottom:35px}
+
+.berry-countdown{position:absolute;z-index:30;width:104px;height:104px;display:grid;place-items:center;border-radius:50%;background:rgba(16,11,23,.88);border:4px solid #d7c4eb;color:#ffe36f;font-size:54px;font-weight:1000;text-shadow:0 4px 0 #78561b,0 0 18px rgba(255,219,91,.55);box-shadow:0 0 35px rgba(75,54,105,.65);animation:berryCountPulse .54s ease both}
+.berry-countdown[hidden]{display:none!important}
+@keyframes berryCountPulse{0%{transform:scale(.55);opacity:0}40%{transform:scale(1.1);opacity:1}100%{transform:scale(1);opacity:1}}
+
+.berry-rse-readout{grid-template-columns:repeat(4,1fr)!important;gap:5px!important}
+#berryGame .berry-rse-readout span{padding:6px 3px!important;font-size:7px!important;background:#111522!important;border-color:#474258!important}
+#berryGame .berry-rse-readout b{font-size:11px!important;font-variant-numeric:tabular-nums}
+#berryGame .blend-result{min-height:28px;display:grid;place-items:center;text-align:center;color:#dad2e8}
+#berryGame .blend-result.perfect{color:#ffe36b;text-shadow:0 0 10px rgba(255,216,77,.42)}
+#berryGame .blend-result.good{color:#ff9f7b}.blend-result.miss{color:#85bfff}
+.berry-a-button{display:flex!important;align-items:center!important;justify-content:center!important;gap:9px!important}
+.berry-a-button span{display:grid;place-items:center;width:29px;height:29px;border-radius:50%;background:#e85348;border:3px solid #842a2a;color:#fff;font-size:15px;box-shadow:inset 0 2px 0 rgba(255,255,255,.3),0 2px 0 #4d1a1d}
+.berry-a-button:active span{transform:translateY(2px);box-shadow:inset 0 2px 0 rgba(255,255,255,.15)}
+
+/* A Best at high RPM shakes the machine, like Emerald. */
+#berryGame.berry-high-hit .berry-blender-shell{animation:berryHighHit .12s linear 2}
+@keyframes berryHighHit{0%,100%{transform:translate(0,0)}25%{transform:translate(-2px,1px)}50%{transform:translate(2px,-1px)}75%{transform:translate(-1px,-2px)}}
+#berryGame.berry-finishing .berry-speed-streaks{opacity:.35}
+
+@media(max-height:780px){
+  #berryGame .berry-machine{min-height:265px!important;padding-top:24px!important;padding-bottom:29px!important}
+  .berry-blender-shell{width:min(55vw,230px)!important;height:min(55vw,230px)!important}
+  .berry-station{width:68px}.berry-station .station-name{font-size:7px;padding:3px 6px}
+  .berry-rpm-panel{bottom:-27px}.berry-rpm-panel strong{font-size:16px}
+  #berryGame .berry-help{font-size:8px!important}
+}
+@media(max-width:360px){
+  .berry-blender-shell{width:min(62vw,220px)!important;height:min(62vw,220px)!important}
+  .berry-station{width:64px}.berry-station .station-name{letter-spacing:.06em}
+}
+
+/* v0.16.4 — timing target is drawn from the scoring constants themselves.
+   GOOD is the gold outer arc, BEST is the brighter inner slice, and the small
+   yellow notch is positioned at the exact mathematical midpoint.  There is no
+   floating "TAP ZONE" pill to imply a different hit location. */
+.berry-player-hit-zone{
+  position:absolute;inset:1.5%;border-radius:50%;z-index:6;pointer-events:none;
+  filter:drop-shadow(0 0 5px rgba(255,209,65,.62));
+  opacity:.82;transition:opacity .08s ease,filter .08s ease,transform .08s ease
+}
+.berry-player-hit-zone:before{
+  content:"";position:absolute;inset:0;border-radius:50%;
+  background:conic-gradient(from var(--berry-good-start,281.25deg),rgba(255,214,70,.92) 0deg var(--berry-good-sweep,67.5deg),transparent var(--berry-good-sweep,67.5deg) 360deg);
+  -webkit-mask:radial-gradient(circle,transparent 0 75%,#000 76% 100%);
+  mask:radial-gradient(circle,transparent 0 75%,#000 76% 100%)
+}
+.berry-player-hit-zone:after{
+  content:"";position:absolute;inset:0;border-radius:50%;
+  background:conic-gradient(from var(--berry-best-start,309.375deg),rgba(255,250,190,1) 0deg var(--berry-best-sweep,11.25deg),transparent var(--berry-best-sweep,11.25deg) 360deg);
+  -webkit-mask:radial-gradient(circle,transparent 0 68%,#000 69% 100%);
+  mask:radial-gradient(circle,transparent 0 68%,#000 69% 100%);
+  filter:drop-shadow(0 0 8px #fff2a0)
+}
+.berry-player-hit-zone span{
+  position:absolute;left:var(--berry-target-x,19.95%);top:var(--berry-target-y,19.95%);
+  width:14px;height:14px;display:block;transform:translate(-50%,-50%) rotate(45deg);
+  background:#ffe05d;border:2px solid #fff4ae;border-radius:3px;
+  box-shadow:0 0 0 2px rgba(102,74,10,.55),0 0 13px rgba(255,213,65,.95)
+}
+.berry-player-hit-zone span:after{
+  content:"";position:absolute;left:50%;top:50%;width:4px;height:4px;transform:translate(-50%,-50%);
+  border-radius:50%;background:#5a3d08
+}
+.berry-player-hit-zone.in-good{
+  opacity:1;filter:drop-shadow(0 0 11px rgba(255,216,75,.98));transform:scale(1.012)
+}
+.berry-player-hit-zone.in-best{
+  opacity:1;filter:drop-shadow(0 0 17px #fff4a8) drop-shadow(0 0 8px #ffbd35);transform:scale(1.022)
+}
+.berry-player-hit-zone.in-best span{background:#fff5a7;box-shadow:0 0 0 2px rgba(102,74,10,.55),0 0 18px #ffe165}
+.berry-station-you .station-name{
+  color:#211707;background:linear-gradient(180deg,#ffe477,#d6a72d);border-color:#fff0a7;
+  box-shadow:0 0 13px rgba(255,211,62,.4),0 3px 8px rgba(0,0,0,.3)
+}
+.berry-station-you .station-pointer{
+  border-top-color:#ffd447;filter:drop-shadow(0 2px 0 #765516) drop-shadow(0 0 6px rgba(255,210,60,.75))
+}
+
+
+/* v0.16.4 — the visible blender itself is a real tap target. */
+.berry-blender-shell{touch-action:manipulation;cursor:pointer;outline:none}
+.berry-blender-shell:focus-visible{filter:drop-shadow(0 0 10px rgba(255,224,96,.85))}
+.berry-blender-shell.berry-tapped{animation:berryTapPress .12s ease-out}
+@keyframes berryTapPress{0%{transform:translate(var(--berry-shake-x),var(--berry-shake-y)) scale(1)}45%{transform:translate(var(--berry-shake-x),var(--berry-shake-y)) scale(.975)}100%{transform:translate(var(--berry-shake-x),var(--berry-shake-y)) scale(1)}}

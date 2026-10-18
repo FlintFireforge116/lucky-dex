@@ -1,0 +1,1169 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#0b0f1a" />
+  <title>Lucky Dex</title>
+
+  <link rel="stylesheet" href="styles-v013.css" />
+  <link rel="stylesheet" href="cosmetics-v0413.css" />
+  <link rel="stylesheet" href="pack-opening-v0160.css" />
+  <link rel="stylesheet" href="god-pack-v0291.css" />
+  <link rel="stylesheet" href="trade-v0163.css" />
+  <link rel="stylesheet" href="collection-trade-v0167.css" />
+  <link rel="stylesheet" href="trade-browser-v0169.css" />
+  <link rel="stylesheet" href="arcade.css" />
+  <link rel="stylesheet" href="arcade-help.css" />
+  <link rel="stylesheet" href="arcade-records.css" />
+  <link rel="stylesheet" href="arcade-amie.css" />
+  <link rel="stylesheet" href="arcade-dash.css" />
+  <link rel="stylesheet" href="arcade-goldenrod.css" />
+  <link rel="stylesheet" href="arcade-power-trial.css" />
+  <link rel="stylesheet" href="arcade-impact-trial.css" />
+  <link rel="stylesheet" href="arcade-target-range.css" />
+  <link rel="stylesheet" href="arcade-elemental-gauntlet.css" />
+  <link rel="stylesheet" href="arcade-endurance-expedition.css" />
+  <link rel="stylesheet" href="arcade-ekans-hoop.css" />
+  <link rel="stylesheet" href="arcade-dig-dig-dig.css" />
+  <link rel="stylesheet" href="arcade-magikarp-splash.css" />
+  <link rel="stylesheet" href="arcade-rock-harden.css" />
+  <link rel="stylesheet" href="arcade-thundering-dynamo.css" />
+  <link rel="stylesheet" href="arcade-snore-war.css" />
+  <link rel="stylesheet" href="arcade-run-rattata-run.css" />
+  <link rel="stylesheet" href="arcade-sushi-go-round.css" />
+  <link rel="stylesheet" href="arcade-clear-cut.css" />
+  <link rel="stylesheet" href="arcade-gutsy-golbat.css" />
+  <link rel="stylesheet" href="arcade-furret-frolic.css" />
+  <link rel="stylesheet" href="arcade-topsy-turvy.css" />
+  <link rel="stylesheet" href="arcade-barrier-ball.css" />
+  <link rel="stylesheet" href="arcade-ice-cream-scoop.css" />
+  <link rel="stylesheet" href="arcade-wailord-water-spout.css" />
+  <link rel="stylesheet" href="arcade-pokemon-seek.css" />
+  <link rel="stylesheet" href="arcade-pikachu-beach.css" />
+  <link rel="stylesheet" href="arcade-picross.css" />
+  <link rel="stylesheet" href="arcade-roulette.css" />
+  <link rel="stylesheet" href="arcade-slot-machine.css" />
+  <link rel="stylesheet" href="berry-blender.css" />
+  <link rel="stylesheet" href="clefairy-scene.css" />
+  <link rel="stylesheet" href="adventure/adventure-battle.css" />
+  <link rel="stylesheet" href="adventure/adventure.css" />
+  <link rel="stylesheet" href="adventure/adventure-regional.css" />
+  <link rel="stylesheet" href="adventure/adventure-tools.css" />
+  <link rel="stylesheet" href="adventure/adventure-hub.css" />
+  <link rel="stylesheet" href="adventure/adventure3.css" />
+</head>
+<body>
+
+  <div id="titleScreen" class="title-screen">
+    <div class="title-stars"></div>
+    <div class="title-logo-wrap">
+      <div class="title-ball"><i></i></div>
+      <div class="title-kicker">A POCKET COLLECTION ADVENTURE</div>
+      <h1>LUCKY <span>DEX</span></h1>
+      <p>Catch. Battle. Explore. Collect.</p>
+    </div>
+    <div class="title-partner-row" id="titlePartners"></div>
+    <button id="titleContinueBtn" class="title-start">PRESS TO START</button>
+    <div class="title-footer"><span id="titleRankText">TRAINER RANK 1</span><span>v0.59.1</span></div>
+  </div>
+
+  <div id="starterPanel" class="starter-screen" hidden>
+    <div class="starter-lab-bg"></div>
+    <button class="starter-back" id="starterBackBtn">‹ TITLE</button>
+    <div class="starter-screen-copy">
+      <div class="eyebrow">PROFESSOR'S LAB</div>
+      <h2>Choose your first partner</h2>
+      <p>Your partner battles, explores regional journeys and unlocks Arcade helper abilities.</p>
+    </div>
+    <div id="starterChoices" class="starter-grid"></div>
+    <div class="starter-hint">Your choice is only your first partner — you can catch the others later.</div>
+  </div>
+  <div id="app" class="app-shell">
+    <header class="topbar">
+      <div class="brand-block">
+        <div class="eyebrow">LUCKY DEX · v0.59.1</div>
+        <h1>Lucky Dex</h1>
+      </div>
+      <div class="top-resources">
+        <div class="resource-chip rank-chip"><small>RANK</small><b id="trainerRankMini">1</b></div>
+        <div class="resource-chip"><span>◉</span><b id="coinMini">0</b></div>
+        <div class="resource-chip"><span>🎟</span><b id="ticketMini">0</b></div>
+      </div>
+      <button class="icon-btn" id="settingsBtn" aria-label="Settings">⚙</button>
+    </header>
+
+    <main>
+
+      <section class="page active app-page" data-page="adventure">
+        <div id="adventureRoot"></div>
+      </section>
+
+      <section class="page app-page" data-page="arcade">
+        <div class="arcade-hero panel">
+          <div><div class="eyebrow">LUCKY DEX ARCADE</div><h2>Play for your packs</h2><p class="muted small">Coins buy packs and supplies. No energy timers, ads or real-money currency.</p></div>
+          <div class="big-wallet"><span>◉</span><b id="arcadeCoinCount">0</b><small>Lucky Coins</small></div>
+        </div>
+        <div id="helperStrip" class="helper-strip"></div>
+        <div id="arcadeResultSheet" class="arcade-result-sheet" hidden role="dialog" aria-modal="true" aria-labelledby="arcadeResultTitle">
+          <div class="arcade-result-card-v018">
+            <div id="arcadeResultCardReveal" class="arcade-card-reveal-stage" hidden>
+              <div class="eyebrow" id="arcadeResultRevealKicker">CARD WON</div>
+              <div class="arcade-card-reveal-count" id="arcadeResultRevealCount">1 / 1</div>
+              <div class="arcade-card-reveal-art"><img id="arcadeResultRevealImage" alt="Won card" draggable="false"><div id="arcadeResultRevealFallback" class="arcade-card-reveal-fallback" hidden>CARD</div></div>
+              <div class="arcade-card-reveal-copy"><b id="arcadeResultRevealName">CARD</b><span id="arcadeResultRevealMeta"></span></div>
+              <button class="primary" id="arcadeResultRevealNext">VIEW RESULTS</button>
+            </div>
+            <div id="arcadeResultSummary">
+              <div class="eyebrow">GAME REVIEW</div><h2 id="arcadeResultTitle">GAME COMPLETE</h2>
+              <div id="arcadeResultMode" class="arcade-result-mode" hidden></div>
+              <div class="arcade-result-metric"><span id="arcadeResultMetricLabel">SCORE</span><b id="arcadeResultMetricValue">0</b></div>
+              <div class="arcade-result-awards" id="arcadeResultLegacyAwards"><b id="arcadeResultCoins">+0 Lucky Coins</b><span id="arcadeResultItem" hidden></span><span id="arcadeResultBest" class="arcade-result-best" hidden></span></div>
+              <div id="arcadeResultScoreboard" class="arcade-review-scoreboard" hidden></div>
+              <div id="arcadeResultStats" class="arcade-review-section" hidden></div>
+              <div id="arcadeResultPbs" class="arcade-review-section" hidden></div>
+              <div id="arcadeResultRewards" class="arcade-review-section arcade-review-rewards" hidden></div>
+              <div id="arcadeResultAchievements" class="arcade-review-achievements" hidden></div>
+              <div id="arcadeResultDetails" class="arcade-result-details" hidden></div>
+              <div class="arcade-result-actions"><button class="primary" id="arcadeResultReplay">PLAY AGAIN</button><button class="secondary" id="arcadeResultChange" hidden>CHANGE RACER</button><button class="secondary" id="arcadeResultRecords">RECORDS</button><button class="secondary" id="arcadeResultBack">BACK TO VENUE</button></div>
+            </div>
+          </div>
+        </div>
+        <div id="arcadeRecordsView" class="arcade-records-view" hidden>
+          <div class="arcade-records-head"><button type="button" id="arcadeRecordsBack" class="arcade-world-back">‹ ARCADE</button><div><div class="eyebrow">LUCKY DEX ARCADE</div><h2 id="arcadeRecordsTitle">ARCADE RECORDS</h2><p id="arcadeRecordsSummary">Permanent records and your 10 most recent completed runs.</p></div></div>
+          <div id="arcadeRecordsList" class="arcade-records-list"></div>
+          <div id="arcadeRecordsDetail" class="arcade-records-detail" hidden></div>
+        </div>
+        <div id="arcadeWorldView" class="arcade-world-view">
+          <div class="arcade-world-shell">
+            <button type="button" id="arcadeWorldPrev" class="arcade-world-arrow prev" aria-label="Previous venue">‹</button>
+            <div id="arcadeWorldRoute" class="arcade-world-viewport" aria-label="Arcade world route"></div>
+            <button type="button" id="arcadeWorldNext" class="arcade-world-arrow next" aria-label="Next venue">›</button>
+          </div>
+        </div>
+        <div id="arcadeVenueView" class="arcade-venue-view" hidden>
+          <div class="arcade-venue-hero"><img id="arcadeVenueArt" alt="Arcade venue landmark"><button type="button" id="arcadeWorldBack" class="arcade-world-back">‹ LOCATIONS</button><div class="arcade-venue-head"><div class="eyebrow">ARCADE VENUE</div><h2 id="arcadeVenueTitle">Venue</h2><p id="arcadeVenueDescription"></p></div></div>
+          <div id="arcadeVenueGames" class="arcade-venue-games"></div>
+        </div>
+        <div id="arcadeLegacyHooks" hidden aria-hidden="true">
+          <button data-game="voltorb"></button><button data-game="clefairy"></button><button data-game="berry"></button><button data-game="fossil"></button><button data-game="quiz"></button><button data-game="ballDrop"></button><button data-game="unown"></button>
+        </div>
+
+        <div id="ekansHoopGame" class="panel arcade-game ekans-hoop-game" hidden>
+          <div class="arcade-full-head ekans-hoop-head"><button class="game-exit" data-exit-game>‹ ARCADE</button><div class="arcade-mascot"><img src="arcade/sprites/actors/pokemon/23.png" alt="Ekans" /><span>KIDS CLUB · EKANS’ HOOP HURL</span></div></div>
+          <div class="ekans-hoop-stage" id="ekansHoopStage">
+            <div class="ekans-hoop-hud">
+              <div class="ekans-hoop-timer"><small>TIME</small><b id="ekansHoopTimer">60</b></div>
+              <div class="ekans-hoop-score"><small>SCORE</small><b id="ekansHoopScore">0</b><em id="ekansHoopTier">NEXT · BRONZE 20</em></div>
+              <div class="ekans-hoop-combo"><span><small>STREAK</small><b id="ekansHoopStreak">0</b></span><span><small>BONUS</small><b id="ekansHoopMultiplier">×1</b></span></div>
+            </div>
+            <div id="ekansHoopField" class="ekans-hoop-field" aria-label="Diglett and Dugtrio hoop targets">
+              <div class="ekans-hoop-grid-lines" aria-hidden="true"></div>
+              <div id="ekansHoopCountdown" class="ekans-hoop-countdown" hidden aria-live="polite"></div>
+              <div id="ekansHoopAimMarker" class="ekans-hoop-aim-marker" aria-hidden="true"></div>
+              <div class="ekans-hoop-preloads" aria-hidden="true">
+                <img src="arcade/sprites/actors/pokemon/50.png" alt=""><img src="arcade/sprites/actors/pokemon/51.png" alt=""><img src="arcade/sprites/actors/pokemon/shiny/50.png" alt=""><img src="arcade/sprites/actors/pokemon/shiny/51.png" alt="">
+              </div>
+            </div>
+            <div class="ekans-hoop-launch-zone">
+              <div id="ekansHoopReady" class="ekans-hoop-ready">
+                <div class="ekans-hoop-ready-copy"><small>KIDS CLUB · SCORE ATTACK</small><b>HOOP HURL</b><span>Pull Ekans back like a slingshot, then release.</span><em id="ekansHoopReadyMeta">NORMAL · 60 SEC</em></div>
+                <div class="ekans-hoop-difficulty" aria-label="Hoop Hurl difficulty">
+                  <button type="button" data-ekans-difficulty="easy" aria-pressed="false"><b>EASY</b><small>75 SEC</small></button>
+                  <button type="button" data-ekans-difficulty="normal" class="active" aria-pressed="true"><b>NORMAL</b><small>60 SEC</small></button>
+                  <button type="button" data-ekans-difficulty="hard" aria-pressed="false"><b>HARD</b><small>50 SEC</small></button>
+                </div>
+                <div class="ekans-hoop-score-key">DIGLETT +1 · DUGTRIO +3 · SHINY +5 / +10</div>
+                <button type="button" id="ekansHoopStart" class="ekans-hoop-start">START</button>
+              </div>
+              <button type="button" id="ekansHoopLauncher" class="ekans-hoop-launcher" aria-label="Hold Ekans, pull back like a slingshot, then release to throw" hidden><img src="arcade/sprites/actors/pokemon/23.png" alt="Ekans" draggable="false"></button>
+              <div id="ekansHoopHint" class="ekans-hoop-hint" hidden><b>PULL BACK · RELEASE TO THROW</b><span>PULL LEFT → AIM RIGHT · DIGLETT +1 · DUGTRIO +3 · SHINY +5 / +10</span></div>
+            </div>
+            <div id="ekansHoopPauseOverlay" class="ekans-hoop-pause" hidden><div><small>KIDS CLUB</small><b>ROUND PAUSED</b><span>Your timer is frozen.</span><button type="button" id="ekansHoopResume">RESUME</button></div></div>
+          </div>
+        </div>
+
+        <div id="digDigDigGame" class="panel arcade-game dig-dig-dig-game" hidden>
+          <div class="arcade-full-head dig-dig-dig-head"><button class="game-exit" data-exit-game>‹ ARCADE</button><div class="arcade-mascot"><img src="arcade/sprites/actors/pokemon/27.png" alt="Sandshrew" /><span>KIDS CLUB · DIG! DIG! DIG!</span></div></div>
+          <div id="digDigDigStage" class="dig-dig-dig-stage">
+            <div class="dig-dig-dig-hud"><span><small>PLACE</small><b id="digDigDigPlace">—</b></span><span><small>TIME</small><b id="digDigDigTimer">0.00</b></span><span><small>LEVEL</small><b id="digDigDigDifficultyLabel">NORMAL</b></span></div>
+            <div id="digDigDigRace" class="dig-dig-dig-race" aria-label="Four Sandshrew digging race">
+              <div id="digDigDigPlayerLane" class="dig-lane is-player" data-dig-racer="player"><b>YOU</b><div class="dig-shaft"><div class="dig-earth"></div><div class="dig-water"></div><img class="dig-sandshrew" src="arcade/sprites/actors/pokemon/27.png" alt="Your Sandshrew" draggable="false"><i class="dig-dust" aria-hidden="true"></i></div><small data-dig-progress>0/80</small></div>
+              <div id="digDigDigCpu1Lane" class="dig-lane" data-dig-racer="cpu1"><b>COM 1</b><div class="dig-shaft"><div class="dig-earth"></div><div class="dig-water"></div><img class="dig-sandshrew" src="arcade/sprites/actors/pokemon/27.png" alt="COM 1 Sandshrew" draggable="false"><i class="dig-dust" aria-hidden="true"></i></div><small data-dig-progress>0/80</small></div>
+              <div id="digDigDigCpu2Lane" class="dig-lane" data-dig-racer="cpu2"><b>COM 2</b><div class="dig-shaft"><div class="dig-earth"></div><div class="dig-water"></div><img class="dig-sandshrew" src="arcade/sprites/actors/pokemon/27.png" alt="COM 2 Sandshrew" draggable="false"><i class="dig-dust" aria-hidden="true"></i></div><small data-dig-progress>0/80</small></div>
+              <div id="digDigDigCpu3Lane" class="dig-lane" data-dig-racer="cpu3"><b>COM 3</b><div class="dig-shaft"><div class="dig-earth"></div><div class="dig-water"></div><img class="dig-sandshrew" src="arcade/sprites/actors/pokemon/27.png" alt="COM 3 Sandshrew" draggable="false"><i class="dig-dust" aria-hidden="true"></i></div><small data-dig-progress>0/80</small></div>
+              <div id="digDigDigCountdown" class="dig-countdown" hidden>3</div>
+              <div id="digDigDigStandings" class="dig-standings" hidden></div>
+            </div>
+            <div id="digDigDigReady" class="dig-ready">
+              <small>KIDS CLUB · SANDSHREW RACE</small><b>DIG! DIG! DIG!</b><span>Alternate LEFT and RIGHT. First through 80 digs wins.</span><em id="digDigDigBest">BEST —</em>
+              <div class="dig-difficulty" aria-label="Dig Dig Dig difficulty"><button type="button" data-dig-difficulty="easy" aria-pressed="false">EASY</button><button type="button" data-dig-difficulty="normal" class="active" aria-pressed="true">NORMAL</button><button type="button" data-dig-difficulty="hard" aria-pressed="false">HARD</button></div>
+              <button type="button" id="digDigDigStart" class="dig-start">START</button>
+            </div>
+            <div class="dig-controls" id="digDigDigControls" hidden><button type="button" id="digDigDigLeft" class="dig-control" aria-label="Dig left">L</button><div class="dig-next"><small>NEXT</small><b id="digDigDigNext">L / R</b></div><button type="button" id="digDigDigRight" class="dig-control" aria-label="Dig right">R</button></div>
+            <div id="digDigDigPauseOverlay" class="dig-pause" hidden><div><small>KIDS CLUB</small><b>RACE PAUSED</b><span>Digging and COM racers are frozen.</span><button type="button" id="digDigDigResume">RESUME</button></div></div>
+          </div>
+        </div>
+
+
+        <div id="magikarpSplashGame" class="panel arcade-game magikarp-splash-game" hidden>
+          <div class="arcade-full-head magikarp-splash-head"><button class="game-exit" data-exit-game>‹ ARCADE</button><div class="arcade-mascot"><img src="arcade/sprites/actors/pokemon/129.png" alt="Magikarp" /><span>KIDS CLUB · MAGIKARP’S SPLASH</span></div></div>
+          <div id="magikarpSplashStage" class="magikarp-splash-stage">
+            <div id="magikarpSplashHud" class="magikarp-splash-hud"><span><small>PLACE</small><b id="magikarpSplashPlace">—</b></span><span><small>TIME</small><b id="magikarpSplashTimer">20.00</b></span><span><small>LEVEL</small><b id="magikarpSplashDifficultyLabel">NORMAL</b></span></div>
+            <div class="magikarp-splash-arena" id="magikarpSplashArena" aria-label="Four Magikarp splash timing challenge">
+              <div id="magikarpSplashPlayerLane" class="magikarp-lane is-player" data-magikarp-racer="player"><b>YOU</b><div class="magikarp-counter"><span id="magikarpSplashPlayerScore">0</span><i id="magikarpSplashPlayerSwitch" class="magikarp-switch"></i></div><div class="magikarp-jump-space"><div class="magikarp-plus">+1</div><div class="magikarp-quick">QUICK!</div><div class="magikarp-fish-wrap"><img class="magikarp-sprite" src="arcade/sprites/actors/pokemon/129.png" alt="Your Magikarp" draggable="false"></div><div class="magikarp-splash-fx"></div></div></div>
+              <div id="magikarpSplashCpu1Lane" class="magikarp-lane" data-magikarp-racer="cpu1"><b>COM 1</b><div class="magikarp-counter"><span id="magikarpSplashCpu1Score">0</span><i id="magikarpSplashCpu1Switch" class="magikarp-switch"></i></div><div class="magikarp-jump-space"><div class="magikarp-plus">+1</div><div class="magikarp-quick">QUICK!</div><div class="magikarp-fish-wrap"><img class="magikarp-sprite" src="arcade/sprites/actors/pokemon/129.png" alt="COM 1 Magikarp" draggable="false"></div><div class="magikarp-splash-fx"></div></div></div>
+              <div id="magikarpSplashCpu2Lane" class="magikarp-lane" data-magikarp-racer="cpu2"><b>COM 2</b><div class="magikarp-counter"><span id="magikarpSplashCpu2Score">0</span><i id="magikarpSplashCpu2Switch" class="magikarp-switch"></i></div><div class="magikarp-jump-space"><div class="magikarp-plus">+1</div><div class="magikarp-quick">QUICK!</div><div class="magikarp-fish-wrap"><img class="magikarp-sprite" src="arcade/sprites/actors/pokemon/129.png" alt="COM 2 Magikarp" draggable="false"></div><div class="magikarp-splash-fx"></div></div></div>
+              <div id="magikarpSplashCpu3Lane" class="magikarp-lane" data-magikarp-racer="cpu3"><b>COM 3</b><div class="magikarp-counter"><span id="magikarpSplashCpu3Score">0</span><i id="magikarpSplashCpu3Switch" class="magikarp-switch"></i></div><div class="magikarp-jump-space"><div class="magikarp-plus">+1</div><div class="magikarp-quick">QUICK!</div><div class="magikarp-fish-wrap"><img class="magikarp-sprite" src="arcade/sprites/actors/pokemon/129.png" alt="COM 3 Magikarp" draggable="false"></div><div class="magikarp-splash-fx"></div></div></div>
+              <div id="magikarpSplashCountdown" class="magikarp-countdown" hidden>3</div>
+              <div id="magikarpSplashStandings" class="magikarp-standings" hidden></div>
+            </div>
+            <div id="magikarpSplashReady" class="magikarp-ready"><small>KIDS CLUB · TIMING CHALLENGE</small><b>MAGIKARP’S SPLASH</b><span>Hold SPLASH for height. Press again as Magikarp lands for a Quick Splash.</span><em id="magikarpSplashBest">BEST —</em><div class="magikarp-difficulty" aria-label="Magikarp Splash difficulty"><button type="button" data-magikarp-difficulty="easy" aria-pressed="false">EASY</button><button type="button" data-magikarp-difficulty="normal" class="active" aria-pressed="true">NORMAL</button><button type="button" data-magikarp-difficulty="hard" aria-pressed="false">HARD</button></div><button type="button" id="magikarpSplashStart" class="magikarp-start">START</button></div>
+            <div id="magikarpSplashControls" class="magikarp-controls" hidden><div class="magikarp-chain"><small>QUICK CHAIN</small><b id="magikarpSplashQuickChain">0</b></div><button type="button" id="magikarpSplashButton" class="magikarp-splash-button" aria-label="Splash">SPLASH</button></div>
+            <div id="magikarpSplashPauseOverlay" class="magikarp-pause" hidden><div><small>KIDS CLUB</small><b>ROUND PAUSED</b><span>Timer and all four Magikarp are frozen.</span><button type="button" id="magikarpSplashResume">RESUME</button></div></div>
+          </div>
+        </div>
+
+        <div id="rockHardenGame" class="panel arcade-game rock-harden-game" hidden>
+          <div class="arcade-full-head rock-harden-head"><button class="game-exit" data-exit-game>‹ ARCADE</button><div class="arcade-mascot"><img src="arcade/sprites/actors/pokemon/11.png" alt="Metapod" /><span>KIDS CLUB · ROCK HARDEN</span></div></div>
+          <div id="rockHardenStage" class="rock-harden-stage">
+            <div id="rockHardenHud" class="rock-harden-hud"><span><small>PLACE</small><b id="rockHardenPlace">—</b></span><span><small>TIME</small><b id="rockHardenTimer">0.00</b></span><span><small>LEVEL</small><b id="rockHardenDifficultyLabel">NORMAL</b></span></div>
+            <div id="rockHardenArena" class="rock-harden-arena" aria-label="Four Pokémon Rock Harden survival challenge">
+              <div id="rockHardenPlayerLane" class="rock-harden-lane is-player" data-rock-harden-racer="player"><b>YOU</b><div class="rock-harden-score"><small>SCORE</small><strong id="rockHardenPlayerScore">0</strong></div><div class="rock-harden-hp"><i id="rockHardenPlayerHp"></i></div><div class="rock-harden-drop"><i id="rockHardenPlayerShadow" class="rock-harden-shadow"></i><i id="rockHardenPlayerRock" class="rock-harden-rock"></i><em id="rockHardenPlayerGrade" class="rock-harden-grade"></em><img id="rockHardenPlayerSprite" class="rock-harden-sprite" src="arcade/sprites/actors/pokemon/11.png" alt="Your competitor" draggable="false"></div></div>
+              <div id="rockHardenCpu1Lane" class="rock-harden-lane" data-rock-harden-racer="cpu1"><b>COM 1</b><div class="rock-harden-score"><small>SCORE</small><strong id="rockHardenCpu1Score">0</strong></div><div class="rock-harden-hp"><i id="rockHardenCpu1Hp"></i></div><div class="rock-harden-drop"><i id="rockHardenCpu1Shadow" class="rock-harden-shadow"></i><i id="rockHardenCpu1Rock" class="rock-harden-rock"></i><em id="rockHardenCpu1Grade" class="rock-harden-grade"></em><img id="rockHardenCpu1Sprite" class="rock-harden-sprite" src="arcade/sprites/actors/pokemon/11.png" alt="COM 1 competitor" draggable="false"></div></div>
+              <div id="rockHardenCpu2Lane" class="rock-harden-lane" data-rock-harden-racer="cpu2"><b>COM 2</b><div class="rock-harden-score"><small>SCORE</small><strong id="rockHardenCpu2Score">0</strong></div><div class="rock-harden-hp"><i id="rockHardenCpu2Hp"></i></div><div class="rock-harden-drop"><i id="rockHardenCpu2Shadow" class="rock-harden-shadow"></i><i id="rockHardenCpu2Rock" class="rock-harden-rock"></i><em id="rockHardenCpu2Grade" class="rock-harden-grade"></em><img id="rockHardenCpu2Sprite" class="rock-harden-sprite" src="arcade/sprites/actors/pokemon/11.png" alt="COM 2 competitor" draggable="false"></div></div>
+              <div id="rockHardenCpu3Lane" class="rock-harden-lane" data-rock-harden-racer="cpu3"><b>COM 3</b><div class="rock-harden-score"><small>SCORE</small><strong id="rockHardenCpu3Score">0</strong></div><div class="rock-harden-hp"><i id="rockHardenCpu3Hp"></i></div><div class="rock-harden-drop"><i id="rockHardenCpu3Shadow" class="rock-harden-shadow"></i><i id="rockHardenCpu3Rock" class="rock-harden-rock"></i><em id="rockHardenCpu3Grade" class="rock-harden-grade"></em><img id="rockHardenCpu3Sprite" class="rock-harden-sprite" src="arcade/sprites/actors/pokemon/11.png" alt="COM 3 competitor" draggable="false"></div></div>
+              <div id="rockHardenCountdown" class="rock-harden-countdown" hidden>3</div>
+              <div id="rockHardenStandings" class="rock-harden-standings" hidden></div>
+            </div>
+            <div id="rockHardenReady" class="rock-harden-ready"><small>KIDS CLUB · SURVIVAL CHALLENGE</small><b>ROCK HARDEN</b><span>HOLD HARDEN TO BLOCK HAZARDS. HARDEN DRAINS HP — RELEASE FOR ORAN/SITRUS BERRIES TO HEAL.</span><em id="rockHardenBest">BEST —</em><div class="rock-harden-difficulty" aria-label="Rock Harden difficulty"><button type="button" data-rock-harden-difficulty="easy" aria-pressed="false">EASY</button><button type="button" data-rock-harden-difficulty="normal" class="active" aria-pressed="true">NORMAL</button><button type="button" data-rock-harden-difficulty="hard" aria-pressed="false">HARD</button></div><button type="button" id="rockHardenStart" class="rock-harden-start">START</button></div>
+            <div id="rockHardenControls" class="rock-harden-controls" hidden><button type="button" id="rockHardenButton" class="rock-harden-button" aria-label="Hold Harden">HARDEN</button></div>
+            <div id="rockHardenPauseOverlay" class="rock-harden-pause" hidden><div><small>KIDS CLUB</small><b>ROUND PAUSED</b><span>Timer, rocks and HP drain are frozen.</span><button type="button" id="rockHardenResume">RESUME</button></div></div>
+          </div>
+        </div>
+
+
+        <div id="thunderingDynamoGame" class="panel arcade-game thundering-dynamo-game" hidden>
+          <div class="arcade-full-head thundering-dynamo-head"><button class="game-exit" data-exit-game>‹ ARCADE</button><div class="arcade-mascot"><img src="arcade/sprites/actors/pokemon/25.png" alt="Pikachu" /><span>KIDS CLUB · THUNDERING DYNAMO</span></div></div>
+          <div id="thunderingDynamoStage" class="dynamo-stage">
+            <div class="dynamo-hud"><span><small>PLACE</small><b id="thunderingDynamoPlace">—</b></span><span><small>LEVEL</small><b id="thunderingDynamoDifficultyLabel">NORMAL</b></span></div>
+            <div class="dynamo-machine" aria-label="Thundering Dynamo signal lamp and generator"><div class="dynamo-generator" aria-hidden="true"><i></i></div><div id="thunderingDynamoLamp" class="dynamo-lamp" data-lamp="a"><b>A</b><span>BLUE · A</span></div></div>
+            <div class="dynamo-race" aria-label="Four player electricity charging race">
+              <div id="thunderingDynamoPlayerLane" class="dynamo-lane is-player"><b>YOU</b><div class="dynamo-racer"><img data-dynamo-sprite src="arcade/sprites/actors/pokemon/25.png" alt="Your Pokémon" draggable="false"></div><div class="dynamo-charge-track"><i class="dynamo-charge-fill"></i></div><small class="dynamo-meter" data-dynamo-meter>0%</small></div>
+              <div id="thunderingDynamoCpu1Lane" class="dynamo-lane"><b>COM 1</b><div class="dynamo-racer"><img data-dynamo-sprite src="arcade/sprites/actors/pokemon/100.png" alt="COM 1 Pokémon" draggable="false"></div><div class="dynamo-charge-track"><i class="dynamo-charge-fill"></i></div><small class="dynamo-meter" data-dynamo-meter>0%</small></div>
+              <div id="thunderingDynamoCpu2Lane" class="dynamo-lane"><b>COM 2</b><div class="dynamo-racer"><img data-dynamo-sprite src="arcade/sprites/actors/pokemon/25.png" alt="COM 2 Pokémon" draggable="false"></div><div class="dynamo-charge-track"><i class="dynamo-charge-fill"></i></div><small class="dynamo-meter" data-dynamo-meter>0%</small></div>
+              <div id="thunderingDynamoCpu3Lane" class="dynamo-lane"><b>COM 3</b><div class="dynamo-racer"><img data-dynamo-sprite src="arcade/sprites/actors/pokemon/100.png" alt="COM 3 Pokémon" draggable="false"></div><div class="dynamo-charge-track"><i class="dynamo-charge-fill"></i></div><small class="dynamo-meter" data-dynamo-meter>0%</small></div>
+              <div id="thunderingDynamoStandings" class="dynamo-standings" hidden></div>
+            </div>
+            <div id="thunderingDynamoReady" class="dynamo-ready"><small>KIDS CLUB · ELECTRICITY RACE</small><b>THUNDERING DYNAMO</b><span>When the lamp is BLUE, mash A. When it is GREEN, mash B. Wrong presses drain charge.</span><em id="thunderingDynamoBest">BEST —</em><div class="dynamo-difficulty" aria-label="Thundering Dynamo difficulty"><button type="button" data-dynamo-difficulty="easy" aria-pressed="false">EASY</button><button type="button" data-dynamo-difficulty="normal" class="active" aria-pressed="true">NORMAL</button><button type="button" data-dynamo-difficulty="hard" aria-pressed="false">HARD</button></div><button type="button" id="thunderingDynamoStart" class="dynamo-start">START</button></div>
+            <div id="thunderingDynamoControls" class="dynamo-controls" hidden><button type="button" id="thunderingDynamoButtonA" class="dynamo-button dynamo-button-a" aria-label="Blue A"><span>A</span>BLUE A</button><button type="button" id="thunderingDynamoButtonB" class="dynamo-button dynamo-button-b" aria-label="Green B"><span>B</span>GREEN B</button></div>
+            <div id="thunderingDynamoPauseOverlay" class="dynamo-pause" hidden><div><small>KIDS CLUB</small><b>ROUND PAUSED</b><span>Lamp and all charge meters are frozen.</span><button type="button" id="thunderingDynamoResume">RESUME</button></div></div>
+          </div>
+        </div>
+
+
+        <div id="snoreWarGame" class="panel arcade-game snore-war-game" hidden>
+          <div class="arcade-full-head snore-war-head"><button class="game-exit" data-exit-game>‹ ARCADE</button><div class="arcade-mascot"><img src="arcade/sprites/actors/pokemon/96.png" alt="Drowzee" /><span>KIDS CLUB · SNORE WAR</span></div></div>
+          <div id="snoreWarStage" class="snore-stage">
+            <div class="snore-hud"><span><small id="snoreWarMetricLabel">PLACE</small><b id="snoreWarPlace">—</b></span><span><small>LEVEL</small><b id="snoreWarDifficultyLabel">NORMAL</b></span></div>
+            <div id="snoreWarArena" class="snore-arena" aria-label="Four Drowzee pendulum timing survival game">
+              <div class="snore-pendulum-box"><i class="snore-center-marker" aria-hidden="true"></i><div id="snoreWarPendulum" class="snore-pendulum" aria-hidden="true"></div></div>
+              <div class="snore-racers">
+                <div id="snoreWarPlayer" class="snore-racer is-player"><b>YOU</b><div class="snore-hypnosis"></div><img src="arcade/sprites/actors/pokemon/96.png" alt="Your Drowzee" draggable="false"><span class="snore-status" data-snore-status>AWAKE</span><div class="snore-stats"><span>HIT <b data-snore-hits>0</b></span><span>STREAK <b data-snore-streak>×0</b></span></div></div>
+                <div id="snoreWarCpu1" class="snore-racer"><b>COM 1</b><div class="snore-hypnosis"></div><img src="arcade/sprites/actors/pokemon/96.png" alt="COM 1 Drowzee" draggable="false"><span class="snore-status" data-snore-status>AWAKE</span><div class="snore-stats"><span>HIT <b data-snore-hits>0</b></span><span>STREAK <b data-snore-streak>×0</b></span></div></div>
+                <div id="snoreWarCpu2" class="snore-racer"><b>COM 2</b><div class="snore-hypnosis"></div><img src="arcade/sprites/actors/pokemon/96.png" alt="COM 2 Drowzee" draggable="false"><span class="snore-status" data-snore-status>AWAKE</span><div class="snore-stats"><span>HIT <b data-snore-hits>0</b></span><span>STREAK <b data-snore-streak>×0</b></span></div></div>
+                <div id="snoreWarCpu3" class="snore-racer"><b>COM 3</b><div class="snore-hypnosis"></div><img src="arcade/sprites/actors/pokemon/96.png" alt="COM 3 Drowzee" draggable="false"><span class="snore-status" data-snore-status>AWAKE</span><div class="snore-stats"><span>HIT <b data-snore-hits>0</b></span><span>STREAK <b data-snore-streak>×0</b></span></div></div>
+              </div>
+              <div id="snoreWarStandings" class="snore-standings" hidden></div>
+            </div>
+            <div id="snoreWarReady" class="snore-ready"><small>KIDS CLUB · HYPNOSIS SURVIVAL</small><b>SNORE WAR</b><span id="snoreWarInstructions">Press A as the pendulum crosses the red centre marker. Miss and Drowzee sleeps for two swings. Last one awake wins.</span><em id="snoreWarBest">BEST —</em><div class="snore-mode" aria-label="Snore War mode"><button type="button" data-snore-war-mode="match" class="active" aria-pressed="true">MATCH</button><button type="button" data-snore-war-mode="endless" aria-pressed="false">ENDLESS</button></div><div class="snore-difficulty" aria-label="Snore War difficulty"><button type="button" data-snore-war-difficulty="easy" aria-pressed="false">EASY</button><button type="button" data-snore-war-difficulty="normal" class="active" aria-pressed="true">NORMAL</button><button type="button" data-snore-war-difficulty="hard" aria-pressed="false">HARD</button></div><button type="button" id="snoreWarStart" class="snore-start">START</button></div>
+            <div id="snoreWarControls" class="snore-controls" hidden><button type="button" id="snoreWarButton" class="snore-button" aria-label="Use Hypnosis"><span>A</span>HYPNOSIS</button></div>
+            <div id="snoreWarPauseOverlay" class="snore-pause" hidden><div><small>KIDS CLUB</small><b>ROUND PAUSED</b><span>The pendulum and all Drowzee are frozen.</span><button type="button" id="snoreWarResume">RESUME</button></div></div>
+          </div>
+        </div>
+
+        <div id="runRattataRunGame" class="panel arcade-game run-rattata-run-game" hidden>
+          <div class="arcade-full-head run-rattata-run-head"><button class="game-exit" data-exit-game>‹ ARCADE</button><div class="arcade-mascot"><img src="arcade/sprites/actors/pokemon/19.png" alt="Rattata" /><span>KIDS CLUB · RUN, RATTATA, RUN</span></div></div>
+          <div id="runRattataRunStage" class="rattata-stage">
+            <div class="rattata-hud"><span><small>PLACE</small><b id="runRattataRunPlace">—</b></span><span><small>TIME</small><b id="runRattataRunTimer">0.00</b></span><span><small>LEVEL</small><b id="runRattataRunDifficultyLabel">NORMAL</b></span></div>
+            <div class="rattata-arena" aria-label="Top-down four-lane Rattata obstacle sprint">
+              <div id="runRattataRunCourse" class="rattata-course">
+                <div class="rattata-lane-lines" aria-hidden="true"></div>
+                <div id="runRattataRunHurdles" class="rattata-hurdle-field" aria-hidden="true"></div>
+                <div id="runRattataRunFinish" class="rattata-finish-line" aria-hidden="true"></div>
+                <div id="runRattataRunPlayerLane" class="rattata-racer-slot is-player"><b>YOU</b><div class="rattata-runner-shadow"></div><div class="rattata-runner"><img src="arcade/sprites/actors/pokemon/19.png" alt="Your Rattata" draggable="false"></div><small data-rattata-progress>0%</small><span class="rattata-clears">H <b data-rattata-clears>0/6</b></span><div class="rattata-momentum"><i data-rattata-momentum></i></div></div>
+                <div id="runRattataRunCpu1Lane" class="rattata-racer-slot"><b>COM 1</b><div class="rattata-runner-shadow"></div><div class="rattata-runner"><img src="arcade/sprites/actors/pokemon/19.png" alt="COM 1 Rattata" draggable="false"></div><small data-rattata-progress>0%</small><span class="rattata-clears">H <b data-rattata-clears>0/6</b></span><div class="rattata-momentum"><i data-rattata-momentum></i></div></div>
+                <div id="runRattataRunCpu2Lane" class="rattata-racer-slot"><b>COM 2</b><div class="rattata-runner-shadow"></div><div class="rattata-runner"><img src="arcade/sprites/actors/pokemon/19.png" alt="COM 2 Rattata" draggable="false"></div><small data-rattata-progress>0%</small><span class="rattata-clears">H <b data-rattata-clears>0/6</b></span><div class="rattata-momentum"><i data-rattata-momentum></i></div></div>
+                <div id="runRattataRunCpu3Lane" class="rattata-racer-slot"><b>COM 3</b><div class="rattata-runner-shadow"></div><div class="rattata-runner"><img src="arcade/sprites/actors/pokemon/19.png" alt="COM 3 Rattata" draggable="false"></div><small data-rattata-progress>0%</small><span class="rattata-clears">H <b data-rattata-clears>0/6</b></span><div class="rattata-momentum"><i data-rattata-momentum></i></div></div>
+              </div>
+              <div id="runRattataRunCountdown" class="rattata-countdown" hidden>3</div><div id="runRattataRunGrace" class="rattata-grace" hidden>FINISH WINDOW · <b>3.0</b></div>
+            </div>
+            <div id="runRattataRunReady" class="rattata-ready"><small>KIDS CLUB · OBSTACLE SPRINT</small><b>RUN, RATTATA, RUN</b><span>Mash RUN to build momentum. Tap JUMP before each hurdle. Hitting one causes a stumble.</span><em id="runRattataRunBest">BEST —</em><div class="rattata-difficulty" aria-label="Run Rattata Run difficulty"><button type="button" data-rattata-difficulty="easy" aria-pressed="false">EASY</button><button type="button" data-rattata-difficulty="normal" class="active" aria-pressed="true">NORMAL</button><button type="button" data-rattata-difficulty="hard" aria-pressed="false">HARD</button></div><button type="button" id="runRattataRunStart" class="rattata-start">START</button></div>
+            <div id="runRattataRunControls" class="rattata-controls" hidden><button type="button" id="runRattataRunRun" class="rattata-control rattata-run" aria-label="Run">RUN</button><button type="button" id="runRattataRunJump" class="rattata-control rattata-jump" aria-label="Jump">JUMP</button></div>
+            <div id="runRattataRunPauseOverlay" class="rattata-pause" hidden><div><small>KIDS CLUB</small><b>RACE PAUSED</b><span>All four Rattata are frozen.</span><button type="button" id="runRattataRunResume">RESUME</button></div></div>
+          </div>
+        </div>
+
+        <div id="sushiGoRoundGame" class="panel arcade-game sushi-game" hidden>
+          <div class="arcade-full-head sushi-head"><button class="game-exit" data-exit-game>‹ ARCADE</button><div class="arcade-mascot"><img src="arcade/sprites/actors/pokemon/108.png" alt="Lickitung" /><span>KIDS CLUB · SUSHI-GO-ROUND</span></div></div>
+          <div id="sushiGoRoundStage" class="sushi-stage">
+            <div class="sushi-hud"><span><small>PLACE</small><b id="sushiGoRoundPlace">—</b></span><span><small>BILL</small><b id="sushiGoRoundBill">¥0</b></span><span><small>LEVEL</small><b id="sushiGoRoundDifficultyLabel">NORMAL</b></span></div>
+            <div class="sushi-arena" aria-label="Four fixed Lickitung choosing sushi from three circular conveyor rings">
+              <div class="sushi-board">
+                <div id="sushiGoRoundConveyor" class="sushi-conveyor" aria-label="Three-ring sushi conveyor">
+                  <div class="sushi-ring-guide sushi-ring-inner" aria-hidden="true"></div><div class="sushi-ring-guide sushi-ring-middle" aria-hidden="true"></div><div class="sushi-ring-guide sushi-ring-outer" aria-hidden="true"></div>
+                  <div id="sushiGoRoundPlates" class="sushi-plates"></div>
+                </div>
+                <div id="sushiGoRoundTongue" class="sushi-tongue" hidden aria-hidden="true"></div>
+                <div id="sushiGoRoundPlayer" class="sushi-station sushi-player is-player"><b>YOU</b><img src="arcade/sprites/actors/pokemon/108.png" alt="Your Lickitung" draggable="false"><div class="sushi-score"><span data-sushi-bill>¥0</span><span data-sushi-combo>×1</span></div></div>
+                <div id="sushiGoRoundCpu1" class="sushi-station sushi-cpu1"><b>COM 1</b><img src="arcade/sprites/actors/pokemon/108.png" alt="COM 1 Lickitung" draggable="false"><div class="sushi-score"><span data-sushi-bill>¥0</span><span data-sushi-combo>×1</span></div></div>
+                <div id="sushiGoRoundCpu2" class="sushi-station sushi-cpu2"><b>COM 2</b><img src="arcade/sprites/actors/pokemon/108.png" alt="COM 2 Lickitung" draggable="false"><div class="sushi-score"><span data-sushi-bill>¥0</span><span data-sushi-combo>×1</span></div></div>
+                <div id="sushiGoRoundCpu3" class="sushi-station sushi-cpu3"><b>COM 3</b><img src="arcade/sprites/actors/pokemon/108.png" alt="COM 3 Lickitung" draggable="false"><div class="sushi-score"><span data-sushi-bill>¥0</span><span data-sushi-combo>×1</span></div></div>
+                <div id="sushiGoRoundEnding" class="sushi-ending" hidden>LAST 10!</div><div id="sushiGoRoundFeedback" class="sushi-feedback" hidden></div>
+              </div>
+              <div id="sushiGoRoundReturnLane" class="sushi-return-lane" aria-hidden="true"><b>REFRESH</b><div class="sushi-return-track"></div><div id="sushiGoRoundReturnPlates" class="sushi-return-plates"></div></div>
+              <aside id="sushiGoRoundMenu" class="sushi-menu" aria-label="Sushi value menu">
+                <b>MENU</b>
+                <span class="tier-orange"><i></i><em>UNI</em><strong>¥1000</strong></span><span class="tier-red"><i></i><em>TORO</em><strong>¥600</strong></span><span class="tier-yellow"><i></i><em>EBI</em><strong>¥350</strong></span><span class="tier-orange"><i></i><em>IKURA</em><strong>¥250</strong></span><span class="tier-red"><i></i><em>TEKKA</em><strong>¥200</strong></span><span class="tier-yellow"><i></i><em>EGG</em><strong>¥150</strong></span><span class="tier-green"><i></i><em>KAPPA</em><strong>¥50</strong></span><span class="tier-tea"><i></i><em>TEA</em><strong>¥20</strong></span>
+              </aside>
+            </div>
+            <div id="sushiGoRoundReady" class="sushi-ready"><small>KIDS CLUB · VALUE & COMBO CHALLENGE</small><b>SUSHI-GO-ROUND</b><span>Tap a glowing plate when it enters YOUR reach. Choose between all three rings, chain matching sushi up to ×5, and avoid the hot tea.</span><em id="sushiGoRoundBest">BEST —</em><div class="sushi-difficulty" aria-label="Sushi-Go-Round difficulty"><button type="button" data-sushi-difficulty="easy" aria-pressed="false">EASY</button><button type="button" data-sushi-difficulty="normal" class="active" aria-pressed="true">NORMAL</button><button type="button" data-sushi-difficulty="hard" aria-pressed="false">HARD</button></div><button type="button" id="sushiGoRoundStart" class="sushi-start">START</button></div>
+            <div id="sushiGoRoundControls" class="sushi-status" hidden><span><small>CHAIN</small><b id="sushiGoRoundCombo">×1</b></span><em>Tap a glowing plate to lick it</em><span><small>HOT TEA</small><b id="sushiGoRoundStun">READY</b></span></div>
+            <div id="sushiGoRoundPauseOverlay" class="sushi-pause" hidden><div><small>KIDS CLUB</small><b>ROUND PAUSED</b><span>The conveyor and all four Lickitung are frozen.</span><button type="button" id="sushiGoRoundResume">RESUME</button></div></div>
+          </div>
+        </div>
+
+
+        <div id="gutsyGolbatGame" class="panel arcade-game gutsy-game" hidden>
+          <div class="arcade-full-head gutsy-head"><button class="game-exit" data-exit-game>‹ ARCADE</button><div class="arcade-mascot"><img src="arcade/sprites/actors/pokemon/42.png" alt="Golbat" /><span>STADIUM 2 · GUTSY GOLBAT</span></div></div>
+          <div id="gutsyGolbatStage" class="gutsy-stage">
+            <div class="gutsy-hud"><span><small>HEARTS</small><b id="gutsyGolbatHearts">0</b></span><span><small>PLACE</small><b id="gutsyGolbatPlace">1ST</b></span><span><small>CAVE</small><b id="gutsyGolbatProgress">0%</b></span><span><small>LEVEL</small><b id="gutsyGolbatDifficultyLabel">NORMAL</b></span></div>
+            <div id="gutsyGolbatArena" class="gutsy-arena" aria-label="Gutsy Golbat cave race">
+              <div class="gutsy-cave-layer gutsy-cave-back" aria-hidden="true"></div><div class="gutsy-cave-layer gutsy-cave-mid" aria-hidden="true"></div>
+              <div id="gutsyGolbatFinish" class="gutsy-finish" hidden><img src="arcade/sprites/actors/pokemon/124.png" alt="Jynx at the finish" draggable="false"><b>FINISH!</b></div>
+              <div id="gutsyGolbatEntities" class="gutsy-entities" aria-hidden="true"></div>
+              <div id="gutsyGolbatPlayer0" class="gutsy-bat is-you" data-player="0"><img src="arcade/sprites/actors/pokemon/42.png" alt="Your Golbat" draggable="false"><b>YOU</b><i></i></div>
+              <div id="gutsyGolbatPlayer1" class="gutsy-bat is-com" data-player="1"><img src="arcade/sprites/actors/pokemon/42.png" alt="COM Golbat 1" draggable="false"><b>COM</b><i></i></div>
+              <div id="gutsyGolbatPlayer2" class="gutsy-bat is-com" data-player="2"><img src="arcade/sprites/actors/pokemon/42.png" alt="COM Golbat 2" draggable="false"><b>COM</b><i></i></div>
+              <div id="gutsyGolbatPlayer3" class="gutsy-bat is-com" data-player="3"><img src="arcade/sprites/actors/pokemon/42.png" alt="COM Golbat 3" draggable="false"><b>COM</b><i></i></div>
+              <div id="gutsyGolbatMessage" class="gutsy-message" hidden></div>
+              <div id="gutsyGolbatCountdown" class="gutsy-countdown" hidden>3</div>
+              <div id="gutsyGolbatReady" class="gutsy-ready"><small>STADIUM 2 · KIDS CLUB</small><b>GUTSY GOLBAT</b><span>Tap FLAP to rise, steer through the cave and collect more hearts than the three COM flyers. Hit a Magnemite and up to three hearts scatter; a hard rival collision can knock one loose too.</span><em id="gutsyGolbatBest">BEST —</em><div class="gutsy-picker-wrap"><small>YOUR FLYER · <b id="gutsyGolbatFlyerName">GOLBAT</b></small><div class="gutsy-picker" aria-label="Choose your cave flyer"><button type="button" data-gutsy-pokemon="41" aria-pressed="false"><img src="arcade/sprites/actors/pokemon/41.png" alt="">ZUBAT</button><button type="button" data-gutsy-pokemon="42" class="active" aria-pressed="true"><img src="arcade/sprites/actors/pokemon/42.png" alt="">GOLBAT</button><button type="button" data-gutsy-pokemon="169" aria-pressed="false"><img src="arcade/sprites/actors/pokemon/169.png" alt="">CROBAT</button><button type="button" data-gutsy-pokemon="527" aria-pressed="false"><img src="arcade/sprites/actors/pokemon/527.png" alt="">WOOBAT</button><button type="button" data-gutsy-pokemon="528" aria-pressed="false"><img src="arcade/sprites/actors/pokemon/528.png" alt="">SWOOBAT</button><button type="button" data-gutsy-pokemon="714" aria-pressed="false"><img src="arcade/sprites/actors/pokemon/714.png" alt="">NOIBAT</button><button type="button" data-gutsy-pokemon="715" aria-pressed="false"><img src="arcade/sprites/actors/pokemon/715.png" alt="">NOIVERN</button><button type="button" data-gutsy-pokemon="207" aria-pressed="false"><img src="arcade/sprites/actors/pokemon/207.png" alt="">GLIGAR</button><button type="button" data-gutsy-pokemon="472" aria-pressed="false"><img src="arcade/sprites/actors/pokemon/472.png" alt="">GLISCOR</button></div></div><div class="gutsy-difficulty" aria-label="Gutsy Golbat difficulty"><button type="button" data-gutsy-difficulty="easy" aria-pressed="false">EASY</button><button type="button" data-gutsy-difficulty="normal" class="active" aria-pressed="true">NORMAL</button><button type="button" data-gutsy-difficulty="hard" aria-pressed="false">HARD</button></div><button type="button" id="gutsyGolbatHandedness" class="gutsy-handedness" aria-pressed="false">CONTROLS · RIGHT-HANDED</button><button type="button" id="gutsyGolbatStart" class="gutsy-start">ENTER CAVE</button></div>
+              <div id="gutsyGolbatPauseOverlay" class="gutsy-pause" hidden><div><small>STADIUM 2</small><b>CAVE PAUSED</b><span>Golbat, hearts and hazards are frozen.</span><button type="button" id="gutsyGolbatResume">RESUME</button></div></div>
+            </div>
+            <div id="gutsyGolbatControls" class="gutsy-controls" hidden><div id="gutsyGolbatSteerPad" class="gutsy-steer-pad"><button type="button" id="gutsyGolbatLeft" class="gutsy-steer" aria-label="Steer left">◀<small>LEFT</small></button><button type="button" id="gutsyGolbatRight" class="gutsy-steer" aria-label="Steer right">▶<small>RIGHT</small></button></div><button type="button" id="gutsyGolbatFlap" class="gutsy-flap" aria-label="Flap upward">A<small>FLAP</small></button></div>
+            <div class="gutsy-status"><span id="gutsyGolbatStatus">Collect the most hearts before the finish.</span></div>
+          </div>
+        </div>
+
+
+        <div id="furretFrolicGame" class="panel arcade-game furret-game" hidden>
+          <div class="arcade-full-head furret-head"><button class="game-exit" data-exit-game>‹ ARCADE</button><div class="arcade-mascot"><img src="arcade/sprites/actors/pokemon/162.png" alt="Furret" /><span>STADIUM 2 · FURRET’S FROLIC</span></div></div>
+          <div id="furretFrolicStage" class="furret-stage">
+            <div class="furret-hud"><span><small>SCORE</small><b id="furretFrolicScore">0</b></span><span><small>PLACE</small><b id="furretFrolicPlace">1ST</b></span><span><small>TIME</small><b id="furretFrolicTimer">60</b></span><span><small>LEVEL</small><b id="furretFrolicDifficultyLabel">NORMAL</b></span></div>
+            <div id="furretFrolicArena" class="furret-arena" aria-label="Furret's Frolic four-player ball arena">
+              <div class="furret-field furret-cross" aria-hidden="true"></div>
+              <div class="furret-chutes" aria-hidden="true"><i class="nw"></i><i class="ne"></i><i class="se"></i><i class="sw"></i></div>
+              <div class="furret-goal furret-goal-south is-you">YOU</div><div class="furret-goal furret-goal-west">COM 1</div><div class="furret-goal furret-goal-north">COM 2</div><div class="furret-goal furret-goal-east">COM 3</div>
+              <div class="furret-patch-layer" aria-hidden="true">
+                <i class="p0 up"></i><i class="p0 right"></i><i class="p0 down"></i><i class="p0 left"></i>
+                <i class="p1 up"></i><i class="p1 right"></i><i class="p1 down"></i><i class="p1 left"></i>
+                <i class="p2 up"></i><i class="p2 right"></i><i class="p2 down"></i><i class="p2 left"></i>
+                <i class="p3 up"></i><i class="p3 right"></i><i class="p3 down"></i><i class="p3 left"></i>
+              </div>
+              <div class="furret-burrow-layer" aria-hidden="true"><i class="p0 furret-burrow"></i><i class="p1 furret-burrow"></i><i class="p2 furret-burrow"></i><i class="p3 furret-burrow"></i></div>
+              <div id="furretFrolicBalls" class="furret-balls" aria-hidden="true"></div>
+              <div id="furretFrolicPlayer0" class="furret-player is-you"><img src="arcade/sprites/actors/pokemon/162.png" alt="Your Furret" draggable="false"><b>YOU</b><i>0</i></div>
+              <div id="furretFrolicPlayer1" class="furret-player"><img src="arcade/sprites/actors/pokemon/162.png" alt="COM 1 Furret" draggable="false"><b>COM 1</b><i>0</i></div>
+              <div id="furretFrolicPlayer2" class="furret-player"><img src="arcade/sprites/actors/pokemon/162.png" alt="COM 2 Furret" draggable="false"><b>COM 2</b><i>0</i></div>
+              <div id="furretFrolicPlayer3" class="furret-player"><img src="arcade/sprites/actors/pokemon/162.png" alt="COM 3 Furret" draggable="false"><b>COM 3</b><i>0</i></div>
+              <div id="furretFrolicMessage" class="furret-message" hidden></div><div id="furretFrolicCountdown" class="furret-countdown" hidden>3</div>
+              <div id="furretFrolicReady" class="furret-ready"><small>STADIUM 2 · KIDS CLUB</small><b>FURRET’S FROLIC</b><span>Hold a direction to lock into a grass patch. Release to ping straight back into your burrow. Only A can hit a ball, sending it toward your BLUE goal. Poké Ball 1 · Great 2 · Ultra 3 · Master 5.</span><em id="furretFrolicBest">BEST —</em><small>YOUR POKÉMON · <b id="furretFrolicPokemonName">FURRET</b></small><div class="furret-picker" aria-label="Choose your Furret Frolic Pokémon"><button type="button" data-furret-pokemon="162" class="active" aria-pressed="true"><img src="arcade/sprites/actors/pokemon/162.png" alt="">FURRET</button><button type="button" data-furret-pokemon="203" aria-pressed="false"><img src="arcade/sprites/actors/pokemon/203.png" alt="">GIRAFARIG</button></div><div class="furret-difficulty" aria-label="Furret's Frolic difficulty"><button type="button" data-furret-difficulty="easy" aria-pressed="false">EASY</button><button type="button" data-furret-difficulty="normal" class="active" aria-pressed="true">NORMAL</button><button type="button" data-furret-difficulty="hard" aria-pressed="false">HARD</button></div><button type="button" id="furretFrolicStart" class="furret-start">START FROLIC</button></div>
+              <div id="furretFrolicPauseOverlay" class="furret-pause" hidden><div><small>STADIUM 2</small><b>FROLIC PAUSED</b><span>The players and every ball are frozen.</span><button type="button" id="furretFrolicResume">RESUME</button></div></div>
+            </div>
+            <div id="furretFrolicControls" class="furret-controls" hidden><div class="furret-dpad"><button type="button" id="furretFrolicUp" class="up" aria-label="Move up">▲<small>UP</small></button><button type="button" id="furretFrolicLeft" class="left" aria-label="Move left">◀<small>LEFT</small></button><button type="button" id="furretFrolicDown" class="down" aria-label="Move down">▼<small>DOWN</small></button><button type="button" id="furretFrolicRight" class="right" aria-label="Move right">▶<small>RIGHT</small></button></div><button type="button" id="furretFrolicHit" class="furret-hit" aria-label="Hit the ball">A<small>HIT</small></button></div>
+            <div class="furret-status"><span id="furretFrolicStatus">LOCK TO A PATCH · RELEASE TO BURROW · ONLY A HITS</span></div>
+          </div>
+        </div>
+
+
+        <div id="topsyTurvyGame" class="panel arcade-game topsy-game" hidden>
+          <div class="arcade-full-head topsy-head"><button class="game-exit" data-exit-game>‹ ARCADE</button><div class="arcade-mascot"><img src="arcade/sprites/actors/pokemon/237.png" alt="Hitmontop" /><span>STADIUM 2 · TOPSY-TURVY</span></div></div>
+          <div id="topsyTurvyStage" class="topsy-stage">
+            <div class="topsy-hud"><span><small>RING-OUTS</small><b id="topsyTurvyScore">0/5</b></span><span><small>FALLS</small><b id="topsyTurvyFalls">0</b></span><span><small>PLACE</small><b id="topsyTurvyPlace">1ST</b></span><span><small>TIME</small><b id="topsyTurvyTimer">60</b></span><span><small>SPIN</small><b id="topsyTurvySpinState">READY</b></span></div>
+            <div id="topsyTurvyArena" class="topsy-arena" aria-label="Topsy-Turvy four Hitmontop ring-out arena">
+              <div id="topsyTurvyPlayer0" class="topsy-player is-you"><img src="arcade/sprites/actors/pokemon/237.png" alt="Your Hitmontop" draggable="false"><b>YOU</b><i>0</i></div>
+              <div id="topsyTurvyPlayer1" class="topsy-player"><img src="arcade/sprites/actors/pokemon/237.png" alt="COM 1 Hitmontop" draggable="false"><b>COM 1</b><small></small><i>0</i></div>
+              <div id="topsyTurvyPlayer2" class="topsy-player"><img src="arcade/sprites/actors/pokemon/237.png" alt="COM 2 Hitmontop" draggable="false"><b>COM 2</b><small></small><i>0</i></div>
+              <div id="topsyTurvyPlayer3" class="topsy-player"><img src="arcade/sprites/actors/pokemon/237.png" alt="COM 3 Hitmontop" draggable="false"><b>COM 3</b><small></small><i>0</i></div>
+              <div id="topsyTurvyMessage" class="topsy-message" hidden></div><div id="topsyTurvyCountdown" class="topsy-countdown" hidden>3</div>
+              <div id="topsyTurvyReady" class="topsy-ready"><small>STADIUM 2 · KIDS CLUB</small><b>TOPSY-TURVY</b><span>You have 60 seconds to knock rivals out of the ring. Build momentum with movement, then press A for Rapid Spin. The first Hitmontop to five ring-outs wins; if nobody reaches five, the most ring-outs at the horn wins.</span><em id="topsyTurvyBest">BEST —</em><div class="topsy-difficulty" aria-label="Topsy-Turvy difficulty"><button type="button" data-topsy-difficulty="easy" aria-pressed="false">EASY</button><button type="button" data-topsy-difficulty="normal" class="active" aria-pressed="true">NORMAL</button><button type="button" data-topsy-difficulty="hard" aria-pressed="false">HARD</button></div><button type="button" id="topsyTurvyStart" class="topsy-start">START SPINNING</button></div>
+              <div id="topsyTurvyPauseOverlay" class="topsy-pause" hidden><div><small>STADIUM 2</small><b>MATCH PAUSED</b><span>All four Hitmontop are frozen in place.</span><button type="button" id="topsyTurvyResume">RESUME</button></div></div>
+            </div>
+            <div id="topsyTurvyControls" class="topsy-controls" hidden><div id="topsyTurvyStick" class="topsy-stick" role="application" aria-label="Move Hitmontop"><div class="topsy-keys" aria-hidden="true"><span class="u">▲</span><span class="l">◀</span><span class="r">▶</span><span class="d">▼</span></div><i id="topsyTurvyKnob"></i></div><button type="button" id="topsyTurvySpin" class="topsy-spin-btn" aria-label="Use Rapid Spin">A<small>RAPID SPIN</small></button></div>
+            <div class="topsy-key-proxy" aria-hidden="true"><i id="topsyTurvyUp"></i><i id="topsyTurvyDown"></i><i id="topsyTurvyLeft"></i><i id="topsyTurvyRight"></i></div>
+            <div class="topsy-status"><span id="topsyTurvyStatus">MOVE · BUILD MOMENTUM · RAPID SPIN</span><b id="topsyTurvyDifficultyLabel" hidden>NORMAL</b></div>
+          </div>
+        </div>
+
+        <div id="barrierBallGame" class="panel arcade-game barrier-ball-game" hidden>
+          <div class="arcade-full-head barrier-ball-head"><button class="game-exit" data-exit-game>‹ ARCADE</button><div class="arcade-mascot"><img src="arcade/sprites/actors/pokemon/122.png" alt="Mr. Mime" /><span>STADIUM 2 · BARRIER BALL</span></div></div>
+          <div id="barrierBallStage" class="barrier-ball-stage">
+            <div class="barrier-ball-hud"><span><small>YOU</small><b id="barrierBallScore0">0</b></span><span><small>COM 1</small><b id="barrierBallScore1">0</b></span><span><small>COM 2</small><b id="barrierBallScore2">0</b></span><span><small>COM 3</small><b id="barrierBallScore3">0</b></span><span><small>PLACE</small><b id="barrierBallPlace">1ST</b></span><span><small>TIME</small><b id="barrierBallTimer">60</b></span></div>
+            <div id="barrierBallArena" class="barrier-ball-arena" aria-label="Barrier Ball four-way Mr. Mime court">
+              <div class="barrier-goal g0"></div><div class="barrier-goal g1"></div><div class="barrier-goal g2"></div><div class="barrier-goal g3"></div>
+              <div id="barrierBallBarrier0" class="barrier-line b0"></div><div id="barrierBallBarrier1" class="barrier-line b1"></div><div id="barrierBallBarrier2" class="barrier-line b2"></div><div id="barrierBallBarrier3" class="barrier-line b3"></div>
+              <div id="barrierBallPlayer0" class="barrier-mime p0"><img src="arcade/sprites/actors/pokemon/122.png" alt="Your Mr. Mime" draggable="false"><b>YOU</b></div>
+              <div id="barrierBallPlayer1" class="barrier-mime p1"><img src="arcade/sprites/actors/pokemon/122.png" alt="COM 1 Mr. Mime" draggable="false"><b>COM 1</b></div>
+              <div id="barrierBallPlayer2" class="barrier-mime p2"><img src="arcade/sprites/actors/pokemon/122.png" alt="COM 2 Mr. Mime" draggable="false"><b>COM 2</b></div>
+              <div id="barrierBallPlayer3" class="barrier-mime p3"><img src="arcade/sprites/actors/pokemon/122.png" alt="COM 3 Mr. Mime" draggable="false"><b>COM 3</b></div>
+              <div id="barrierBallBalls"></div><div id="barrierBallMessage" class="barrier-ball-message" hidden></div><div id="barrierBallCountdown" class="barrier-ball-countdown" hidden>3</div>
+              <div id="barrierBallReady" class="barrier-ball-ready"><small>STADIUM 2 · KIDS CLUB</small><b>BARRIER BALL</b><span>Defend your court for 60 seconds. Slide Mr. Mime left and right to return Poké Balls with Barrier. Press A as a ball reaches the Barrier for a smash; moving while you hit adds angle and curve. Score on a rival for +1 and lose a point when they score on you. First to five points wins.</span><em id="barrierBallBest">BEST —</em><div class="barrier-ball-difficulty" aria-label="Barrier Ball difficulty"><button type="button" data-barrier-difficulty="easy" aria-pressed="false">EASY</button><button type="button" data-barrier-difficulty="normal" class="active" aria-pressed="true">NORMAL</button><button type="button" data-barrier-difficulty="hard" aria-pressed="false">HARD</button></div><button type="button" id="barrierBallStart" class="barrier-ball-start">START MATCH</button></div>
+              <div id="barrierBallPauseOverlay" class="barrier-ball-pause" hidden><small>STADIUM 2</small><b>MATCH PAUSED</b><span>The balls and all four Mr. Mime are frozen.</span><button type="button" id="barrierBallResume">RESUME</button></div>
+            </div>
+            <div id="barrierBallControls" class="barrier-ball-controls" hidden><div id="barrierBallSlider" class="barrier-ball-slider" role="application" aria-label="Slide Mr. Mime left and right"><i id="barrierBallSliderKnob"></i></div><button type="button" id="barrierBallSmash" class="barrier-ball-smash-btn" aria-label="Smash with Barrier">A<small>SMASH</small></button></div>
+            <div class="barrier-ball-status"><span id="barrierBallStatus">SLIDE · DEFEND · A TO SMASH</span><b id="barrierBallDifficultyLabel" hidden>NORMAL</b></div>
+          </div>
+        </div>
+
+        <div id="clearCutGame" class="panel arcade-game clearcut-game" hidden>
+          <div class="arcade-full-head clearcut-head"><button class="game-exit" data-exit-game>‹ ARCADE</button><div class="arcade-mascot"><img src="arcade/sprites/actors/pokemon/123.png" alt="Scyther" /><span>STADIUM 2 · CLEAR CUT CHALLENGE</span></div></div>
+          <div id="clearCutStage" class="clearcut-stage">
+            <div class="clearcut-hud"><span><small>ROUND</small><b id="clearCutRound">1/5</b></span><span><small>ACCURACY</small><b id="clearCutAccuracy">—</b></span><span><small>TOTAL</small><b id="clearCutTotal">0/100</b></span><span><small>LEVEL</small><b id="clearCutDifficultyLabel">NORMAL</b></span></div>
+            <div class="clearcut-arena" aria-label="Clear Cut Challenge precision cutting arena">
+              <div id="clearCutDropZone" class="clearcut-drop-zone">
+                <div id="clearCutBladeGuide" class="clearcut-blade-guide" aria-hidden="true"></div>
+                <div id="clearCutLog" class="clearcut-object" data-kind="log" aria-label="Falling cutting target">
+                  <span id="clearCutPieceA" class="clearcut-piece clearcut-piece-a" aria-hidden="true"></span>
+                  <span id="clearCutPieceB" class="clearcut-piece clearcut-piece-b" aria-hidden="true"></span>
+                  <span id="clearCutMysteryBag" class="clearcut-mystery-bag" hidden aria-hidden="true">?</span>
+                  <i id="clearCutTarget" class="clearcut-line clearcut-target" aria-label="Target cut line"></i>
+                  <i id="clearCutActual" class="clearcut-line clearcut-actual" hidden aria-label="Actual cut line"></i>
+                </div>
+                <div id="clearCutSlash" class="clearcut-slash" hidden aria-hidden="true"></div>
+                <div id="clearCutRoundBanner" class="clearcut-round-banner" hidden>LOG 1</div>
+                <div id="clearCutJudgement" class="clearcut-judgement" hidden></div>
+              </div>
+              <div id="clearCutPlayer" class="clearcut-player"><img src="arcade/sprites/actors/pokemon/123.png" alt="Your Scyther" draggable="false"><b>YOU</b></div>
+            </div>
+            <div id="clearCutReady" class="clearcut-ready"><small>STADIUM 2 · PRECISION CHALLENGE</small><b>CLEAR CUT CHALLENGE</b><span>Five scored cuts. Match the painted line as closely as possible for 100 total points. Then take one unscored Mystery Bag cut — a PERFECT opens a random prize.</span><em id="clearCutBest">BEST —</em><div class="clearcut-picker" aria-label="Choose your cutter"><button type="button" data-clear-cut-pokemon="123" class="active" aria-pressed="true"><img src="arcade/sprites/actors/pokemon/123.png" alt="">SCYTHER</button><button type="button" data-clear-cut-pokemon="127" aria-pressed="false"><img src="arcade/sprites/actors/pokemon/127.png" alt="">PINSIR</button><button type="button" data-clear-cut-pokemon="212" aria-pressed="false"><img src="arcade/sprites/actors/pokemon/212.png" alt="">SCIZOR</button></div><div class="clearcut-difficulty" aria-label="Clear Cut difficulty"><button type="button" data-clear-cut-difficulty="easy" aria-pressed="false">EASY</button><button type="button" data-clear-cut-difficulty="normal" class="active" aria-pressed="true">NORMAL</button><button type="button" data-clear-cut-difficulty="hard" aria-pressed="false">HARD</button></div><button type="button" id="clearCutStart" class="clearcut-start">START</button></div>
+            <div id="clearCutControls" class="clearcut-controls" hidden><span><small>STATUS</small><b id="clearCutStatus">READY</b></span><button type="button" id="clearCutButton" class="clearcut-button" aria-label="Cut the object">CUT</button><span><small>PERFECT</small><b>20 PTS</b></span></div>
+            <div id="clearCutPauseOverlay" class="clearcut-pause" hidden><div><small>STADIUM 2</small><b>CHALLENGE PAUSED</b><span>The falling object is frozen exactly where you left it.</span><button type="button" id="clearCutResume">RESUME</button></div></div>
+          </div>
+        </div>
+
+        <div id="iceCreamScoopGame" class="panel arcade-game icecream-game" hidden>
+          <div class="arcade-full-head icecream-head"><button class="game-exit" data-exit-game>‹ ARCADE</button><div class="arcade-mascot"><span style="font-size:24px">🍦</span><span>DREAM WORLD · ICE CREAM SCOOP</span></div></div>
+          <div id="iceCreamStage" class="icecream-stage">
+            <div class="icecream-hud"><span><small>HEIGHT</small><b id="iceCreamHeight">0</b></span><span><small>SCORE</small><b id="iceCreamScore">0</b></span><span><small>PERFECT CHAIN</small><b id="iceCreamCombo">×0</b></span><span><small>LEVEL</small><b id="iceCreamDifficultyLabel">NORMAL</b></span></div>
+            <div id="iceCreamPlayfield" class="icecream-playfield" aria-label="Dream World ice cream stacking tower">
+              <i class="icecream-cloud c1" aria-hidden="true"></i><i class="icecream-cloud c2" aria-hidden="true"></i><div class="icecream-guide" aria-hidden="true"></div>
+              <div class="icecream-combee" aria-hidden="true"><img src="arcade/sprites/pokemon/415.png" alt="" draggable="false" /></div><div class="icecream-target-line" aria-hidden="true"><span>20 in. TARGET</span></div>
+              <div class="icecream-arrow-mask" aria-hidden="true"></div>
+              <div id="iceCreamTower" class="icecream-tower"><div class="icecream-cone"></div></div>
+              <div id="iceCreamShadow" class="icecream-shadow" aria-hidden="true"></div><div id="iceCreamMovingScoop" class="icecream-scoop icecream-moving vanilla" hidden></div>
+              <div id="iceCreamDreamBanner" class="icecream-dream-banner" hidden>✦ DREAM SCOOP ✦</div><div id="iceCreamJudgement" class="icecream-judgement" hidden></div>
+              <div id="iceCreamReady" class="icecream-ready"><small>DREAM WORLD</small><b>ICE CREAM SCOOP</b><span>Stack moving scoops and keep the weight supported.</span><em id="iceCreamReadyMeta">NORMAL · STACK UNTIL IT FALLS</em><div class="icecream-difficulty" aria-label="Ice Cream Scoop difficulty"><button type="button" data-icecream-difficulty="easy" aria-pressed="false">EASY</button><button type="button" data-icecream-difficulty="normal" class="active" aria-pressed="true">NORMAL</button><button type="button" data-icecream-difficulty="hard" aria-pressed="false">HARD</button></div><button type="button" id="iceCreamStart" class="icecream-start">START SCOOPING</button></div>
+              <div id="iceCreamPauseOverlay" class="icecream-pause" hidden><div><small>DREAM WORLD</small><b>STACK PAUSED</b><span>The scoop and tower are frozen exactly where you left them.</span><button type="button" id="iceCreamResume">RESUME</button></div></div>
+            </div>
+            <div class="icecream-controls"><button type="button" id="iceCreamDrop" class="icecream-drop" disabled>DROP SCOOP</button><div class="icecream-control-meta"><span id="iceCreamStatus" class="icecream-status">BUILD THE TALLEST STABLE STACK</span><b id="iceCreamBest" class="icecream-best">BEST 0</b></div></div>
+          </div>
+        </div>
+
+        <div id="wailordWaterSpoutGame" class="panel arcade-game wailord-game" hidden>
+          <div class="arcade-full-head wailord-head"><button class="game-exit" data-exit-game>‹ ARCADE</button><div class="arcade-mascot"><img src="arcade/sprites/pokemon/321.png" alt="Wailord" /><span>DREAM WORLD · WAILORD’S WATER SPOUT</span></div></div>
+          <div id="wailordStage" class="wailord-stage">
+            <div class="wailord-hud"><span><small>TIME</small><b id="wailordTimer">1:30</b></span><span><small>BALLS</small><b id="wailordOpened">0/15</b></span><span><small>MULTIPLIER</small><b id="wailordCombo">×1</b></span><span><small>SCORE</small><b id="wailordScore">0</b></span></div>
+            <div id="wailordPlayfield" class="wailord-playfield" aria-label="Wailord Water Spout Dream World game">
+              <div class="wailord-water" aria-hidden="true"></div><div class="wailord-island" aria-hidden="true"></div>
+              <div class="wailord-legend" aria-label="Colour matches"><span id="wailordLegendPikachu" class="yellow is-active"><img src="arcade/sprites/pokemon/25.png" alt="Pikachu"><b>YELLOW</b></span><span id="wailordLegendMeowth" class="brown"><img src="arcade/sprites/pokemon/52.png" alt="Meowth"><b>BROWN</b></span><span id="wailordLegendPiplup" class="blue"><img src="arcade/sprites/pokemon/393.png" alt="Piplup"><b>BLUE</b></span><span id="wailordLegendBuizel" class="orange"><img src="arcade/sprites/pokemon/418.png" alt="Buizel"><b>ORANGE</b></span></div>
+              <div id="wailordBalls" class="wailord-balls"></div><div id="wailordPokemon" class="wailord-pokemon-layer"></div>
+              <div id="wailordSpout" class="wailord-spout" aria-hidden="true"></div><div id="wailordActor" class="wailord-actor"><img src="arcade/sprites/pokemon/321.png" alt="Wailord" draggable="false"></div>
+              <div id="wailordStatus" class="wailord-status-banner">HOLD ◀ ▶ · CATCH THEM ON THE SPOUT · TAP SHOOT</div>
+              <div id="wailordReady" class="wailord-ready"><small>DREAM WORLD</small><b>WAILORD’S WATER SPOUT</b><span>Catch Pokémon on the spout, then SHOOT them into matching coloured balls.</span><em id="wailordReadyMeta">NORMAL · 90 SECONDS · 15 TO CLEAR</em><div class="wailord-difficulty" aria-label="Wailord Water Spout difficulty"><button type="button" data-wailord-difficulty="easy" aria-pressed="false">EASY</button><button type="button" data-wailord-difficulty="normal" class="active" aria-pressed="true">NORMAL</button><button type="button" data-wailord-difficulty="hard" aria-pressed="false">HARD</button></div><button type="button" id="wailordStart" class="wailord-start">START WATER SPOUT</button></div>
+              <div id="wailordPauseOverlay" class="wailord-pause" hidden><div><small>DREAM WORLD</small><b>WATER SPOUT PAUSED</b><span>Wailord, the Pokémon and all balls are frozen.</span><button type="button" id="wailordResume">RESUME</button></div></div>
+            </div>
+            <div class="wailord-controls"><button type="button" id="wailordLeft" class="wailord-move" aria-label="Move Wailord left">◀</button><button type="button" id="wailordShoot" class="wailord-shoot">SHOOT</button><button type="button" id="wailordRight" class="wailord-move" aria-label="Move Wailord right">▶</button></div><div id="wailordControlStatus" class="wailord-control-status"><span>15 TO CLEAR · SPLASH RESETS ×</span><b id="wailordBest">BEST 0 BALLS</b></div>
+          </div>
+        </div>
+
+        <div id="pokemonSeekGame" class="panel arcade-game pokemonseek-game" hidden>
+          <div class="arcade-full-head pokemonseek-head"><button class="game-exit" data-exit-game>‹ DREAM WORLD</button><b>POKÉMON SEEK</b><button type="button" id="pokemonSeekPauseButton" aria-label="Pause search">Ⅱ</button></div>
+          <div id="pokemonSeekStage" class="pokemonseek-stage">
+            <div class="pokemonseek-hud"><span><small>TIME</small><b id="pokemonSeekTimer">1:30</b></span><span><small>SCORE</small><b id="pokemonSeekScore">0</b></span><span><small>WRONG</small><b id="pokemonSeekWrong">0</b></span></div>
+            <div class="pokemonseek-target"><img id="pokemonSeekTargetSprite" alt="" draggable="false" hidden><div><b id="pokemonSeekTargetName">POKÉMON SEEK</b><small id="pokemonSeekTargetHint">Choose your Dream World destination.</small></div></div>
+            <div class="pokemonseek-location"><div><small id="pokemonSeekAreaName">Spooky Manor</small><b id="pokemonSeekRoom">Manor Steps</b></div><span id="pokemonSeekMap">EXPLORE · LISTEN · FIND</span></div>
+            <div id="pokemonSeekPlayfield" class="pokemonseek-playfield" aria-label="Dream World search scene">
+              <div id="pokemonSeekScenery" class="pokemonseek-scenery" aria-hidden="true"></div>
+              <div id="pokemonSeekSpots" class="pokemonseek-spots" aria-label="Visible search spots"></div>
+              <div id="pokemonSeekReveal" class="pokemonseek-reveal" hidden><img id="pokemonSeekRevealSprite" alt="" draggable="false"><b id="pokemonSeekRevealTitle">FOUND!</b></div>
+            </div><!-- /seek-scene -->
+            <div id="pokemonSeekReady" class="pokemonseek-ready">
+              <div class="pokemonseek-section-label">YOUR DESTINATION</div><div id="pokemonSeekAreaPicker" class="pokemonseek-area-picker" aria-label="Dream World area"></div>
+              <div class="pokemonseek-difficulty" aria-label="Search difficulty"><button type="button" data-pokemonseek-difficulty="easy" aria-pressed="false">EASY</button><button type="button" data-pokemonseek-difficulty="normal" aria-pressed="true">NORMAL</button><button type="button" data-pokemonseek-difficulty="hard" aria-pressed="false">HARD</button></div>
+              <div id="pokemonSeekReadyMeta" class="pokemonseek-ready-meta">Normal · 90 seconds</div>
+              <button type="button" id="pokemonSeekStart" class="pokemonseek-start">START SEARCH ›</button>
+            </div>
+            <div id="pokemonSeekActions" class="pokemonseek-actions" hidden>
+              <div id="pokemonSeekSpotChoices" class="pokemonseek-spot-choices" aria-label="Choose a visible spot"></div>
+              <div id="pokemonSeekSelected" class="pokemonseek-selected">SELECT A VISIBLE SPOT</div>
+              <div class="pokemonseek-primary-controls"><button type="button" id="pokemonSeekSearch">SEARCH</button><button type="button" id="pokemonSeekListen">LISTEN CAREFULLY ♪</button></div>
+              <div class="pokemonseek-section-label">CONNECTED LOCATIONS</div><div id="pokemonSeekNavigation" class="pokemonseek-navigation" aria-label="Connected destinations"></div>
+            </div>
+            <div id="pokemonSeekStatus" class="pokemonseek-status" role="status" aria-live="polite">Choose an area, then start your search.</div>
+            <div class="pokemonseek-control-meta"><span>LOCAL SCENERY · DREAM WORLD</span><b id="pokemonSeekBest">BEST 0</b></div>
+          </div>
+          <div id="pokemonSeekPauseOverlay" class="pokemonseek-pause" hidden><div><small>DREAM WORLD</small><b>SEARCH PAUSED</b><p>The timer is frozen until you return.</p><button type="button" id="pokemonSeekResume">RESUME</button></div></div>
+        </div>
+
+
+        <div id="picrossGame" class="panel arcade-game picross-game" hidden>
+          <div class="arcade-full-head picross-head"><button class="game-exit" data-exit-game>‹ POKÉMON PICROSS</button><div class="arcade-mascot"><span>PUZZLE PLAZA · 31 AREAS · 312 STAGES</span></div></div>
+          <div id="picrossStage" class="picross-stage">
+            <section id="picrossAreaView" class="picross-screen">
+              <div class="picross-screen-head"><div><small>POKÉMON PICROSS</small><b>Choose an Area</b><span>All original standard stages · touch-first controls</span></div></div>
+              <div id="picrossOverview" class="picross-overview"></div>
+              <div id="picrossAreaGrid" class="picross-area-grid" aria-label="Picross areas"></div>
+            </section>
+            <section id="picrossLevelView" class="picross-screen" hidden>
+              <div class="picross-screen-head"><button type="button" id="picrossBackAreas">‹ AREAS</button><div><small>LEVEL SELECT</small><b id="picrossLevelTitle">AREA 00</b><span id="picrossLevelProgress">0 / 0 COMPLETE</span></div></div>
+              <div id="picrossLevelGrid" class="picross-level-layout" aria-label="Picross stages"></div>
+            </section>
+            <section id="picrossPuzzleView" class="picross-screen picross-puzzle-view" hidden>
+              <div class="picross-screen-head"><button type="button" id="picrossBackLevels">‹ LEVELS</button><div><small>PUZZLE</small><b><span id="picrossStageLabel" class="picross-stage-badge">S00-01</span></b><span>Fill the picture from the row and column clues.</span></div></div>
+              <div id="picrossFocusBar" class="picross-focus-bar" hidden><button type="button" id="picrossFocusClose">‹ DONE</button><div><button type="button" id="picrossZoomOut" aria-label="Zoom out">−</button><span id="picrossZoomLabel">32px</span><button type="button" id="picrossZoomIn" aria-label="Zoom in">+</button></div></div>
+              <div class="picross-puzzle-toolbar">
+                <div class="picross-puzzle-meta"><span><small>SIZE</small><b id="picrossPuzzleSize">5×5</b></span><span><small>TIME</small><b id="picrossTimer">0:00</b></span><span><small>MISTAKES</small><b id="picrossMistakes">0</b></span><span><small>BEST</small><b id="picrossBest">—</b></span></div>
+                <div class="picross-puzzle-actions"><button type="button" id="picrossFocusBtn" aria-pressed="false">MAGNIFY</button><button type="button" id="picrossUndo">UNDO</button><button type="button" id="picrossReset">RESET</button></div>
+              </div>
+              <div id="picrossBoardWrap" class="picross-board-wrap"><div id="picrossBoard" class="picross-board" aria-label="Picross puzzle grid"></div></div>
+              <div class="picross-tools" aria-label="Picross drawing tools"><button type="button" data-picross-tool="fill" class="active">■ FILL</button><button type="button" data-picross-tool="x">× EMPTY</button><button type="button" data-picross-tool="pan">☝ PAN</button></div>
+              <div id="picrossStatus" class="picross-status" role="status" aria-live="polite"></div>
+              <p class="picross-hint">Drag smoothly to mark every crossed cell. Drags never overwrite the opposite mark; tap a marked cell to replace or erase it.</p>
+            </section>
+          </div>
+        </div>
+
+
+
+        <div id="pikachuBeachGame" class="panel arcade-game pikachu-beach-game" hidden>
+          <div class="arcade-full-head pikachu-beach-head"><button class="game-exit" data-exit-game>‹ SUMMER BEACH HOUSE</button><div class="arcade-mascot"><img src="arcade/sprites/actors/pokemon/25.png" alt="Pikachu" /><span>ROUTE 19 · PIKACHU’S BEACH</span></div></div>
+          <div id="pikachuBeachStage" class="pikachu-beach-stage">
+            <div id="pikachuBeachDxView" class="pikachu-beach-mode-view is-ready">
+              <div class="pikachu-beach-subhead"><span>SUPER SURFING PIKACHU DX</span></div>
+              <div id="pikachuBeachDxReady" class="pikachu-beach-ready">
+                <div class="dx-ready-hero"><img class="dx-ready-surfer" src="arcade/pikachu-beach/dx/sprites/surfingpika/000.png" alt="Surfing Pikachu" draggable="false"><div><small>SUPER SURFING PIKACHU DX</small><b>PIKACHU’S BEACH</b></div></div>
+                <span>Line up with waves, jump and spin with ◀ ▶. ATTACK is Thunderbolt on the water and Iron Tail in the air.</span>
+                <div class="pikachu-beach-difficulty"><button type="button" data-pikachu-beach-dx-difficulty="easy">EASY</button><button type="button" data-pikachu-beach-dx-difficulty="normal" class="active">NORMAL</button><button type="button" data-pikachu-beach-dx-difficulty="hard">HARD</button></div>
+                <div id="pikachuBeachDxDistance" class="dx-distance"></div>
+                <button type="button" id="pikachuBeachDxStart" class="pikachu-beach-start">START SURFING</button>
+              </div>
+              <div class="dx-hud"><span><small>HP</small><b id="pikachuBeachDxHp">100</b></span><span><small>SCORE</small><b id="pikachuBeachDxScore">0</b></span><span><small>RINGS</small><b id="pikachuBeachDxRings">0</b></span><span><small>GOAL</small><b id="pikachuBeachDxProgress">0%</b></span></div>
+              <div id="pikachuBeachDxPlayfield" class="pikachu-beach-dx-playfield" aria-label="Super Surfing Pikachu DX playfield"><img class="dx-bg" src="arcade/pikachu-beach/dx/sprites/s_background/000.png" alt="" draggable="false"><div id="pikachuBeachDxEntities" class="dx-entities"></div><div id="pikachuBeachDxLucky" class="pikachu-beach-lucky" hidden>✦ LUCKY WAVE ✦</div></div>
+              <div id="pikachuBeachDxAllies" class="dx-ally-guide" aria-label="Companion effects"><span data-dx-ally-guide="seaking"><b>SEAKING</b><small>+5 rings on join</small></span><span data-dx-ally-guide="lapras"><b>LAPRAS</b><small>+20 HP · 5s shield</small></span><span data-dx-ally-guide="natu"><b>NATU</b><small>Auto-fires at threats</small></span></div>
+              <div id="pikachuBeachDxControls" class="dx-controls" hidden><button data-dx-control="jump">JUMP</button><button data-dx-control="up">▲</button><button data-dx-control="attack">ATTACK</button><button data-dx-control="left">◀</button><button data-dx-control="down">▼</button><button data-dx-control="right">▶</button></div>
+              <div id="pikachuBeachDxStatus" class="pikachu-beach-status" role="status">CHOOSE DIFFICULTY AND DISTANCE</div><div class="pikachu-beach-control-meta"><span>ATTACK: THUNDERBOLT · AIRBORNE: IRON TAIL</span><b id="pikachuBeachDxBest">BEST 0</b></div>
+              <div id="pikachuBeachDxPause" class="pikachu-beach-pause" hidden><div><small>DX</small><b>SURF PAUSED</b><span>Combat and distance are frozen.</span><button type="button" id="pikachuBeachDxResume">RESUME</button></div></div>
+            </div>
+          </div>
+        </div>
+
+        <div id="dashGame" class="panel arcade-game dash-game" hidden>
+          <div class="arcade-full-head dash-full-head"><button class="game-exit" data-exit-game>‹ ARCADE</button><div class="arcade-mascot"><img src="arcade/sprites/pokemon/78.png" alt="Rapidash" /><span>POKÉMON DASH RACE COURSE</span></div></div>
+
+          <div id="dashModeView" class="dash-menu-view">
+            <div class="dash-title-row"><div><div class="eyebrow">POKÉMON DASH</div><h2>Race Course</h2><p>Pick a quick race or challenge one of the 18 Type Leagues.</p></div><div id="dashCareerStats" class="dash-career-stats"></div></div>
+            <div class="dash-mode-grid"><button id="dashQuickBtn" class="dash-mode-card"><img class="dash-mode-scene" src="arcade/dash/gen3/previews/normal.png" alt="Meadow route"><b>QUICK RACE</b><span>One course · Choose your Speed class</span></button><button id="dashLeaguesBtn" class="dash-mode-card"><img class="dash-mode-scene" src="arcade/dash/gen3/previews/fire.png" alt="Volcanic route"><b>TYPE LEAGUES</b><span>18 themed three-race cups</span></button></div><div class="dash-field-guide"><b>RACE NOTES</b><span>◀ ▶ Choose a clean line</span><span>Hold SPRINT · Release to recover</span><span>» Boost arrows · Berries restore stamina</span></div>
+          </div>
+
+          <div id="dashLeagueView" class="dash-menu-view" hidden>
+            <div class="dash-screen-head"><button type="button" class="dash-back" data-dash-back="mode">‹ BACK</button><div><div class="eyebrow">TYPE LEAGUES</div><h2>Choose a league</h2><p>Use a Pokémon matching the league type. Dual types count for both.</p></div></div>
+            <div id="dashLeagueGrid" class="dash-league-grid"></div>
+          </div>
+
+          <div id="dashDifficultyView" class="dash-menu-view" hidden>
+            <div class="dash-screen-head"><button type="button" class="dash-back" data-dash-back="difficulty">‹ BACK</button><div><div id="dashDifficultyEyebrow" class="eyebrow">QUICK RACE</div><h2>Choose difficulty</h2><p>Your racer and every rival must be inside the selected Speed range.</p></div></div>
+            <div id="dashDifficultyButtons" class="dash-difficulty-grid">
+              <button data-dash-difficulty="easy"><b>EASY</b><span>SPEED 20–65</span><small>Relaxed AI</small></button>
+              <button data-dash-difficulty="normal"><b>NORMAL</b><span>SPEED 55–100</span><small>Balanced AI</small></button>
+              <button data-dash-difficulty="hard"><b>HARD</b><span>SPEED 90–135</span><small>Strong AI</small></button>
+              <button data-dash-difficulty="expert"><b>EXPERT</b><span>SPEED 100–180</span><small>Elite AI</small></button>
+            </div>
+          </div>
+
+          <div id="dashPickerView" class="dash-picker-view" hidden>
+            <div class="dash-screen-head"><button type="button" class="dash-back" data-dash-back="picker">‹ BACK</button><div><div id="dashPickerEyebrow" class="eyebrow">QUICK RACE · NORMAL</div><h2>Choose your racer</h2><p id="dashPickerHint">Choose an eligible racer inside the selected Speed range.</p></div></div>
+            <div class="dash-picker-tools"><label><span>SEARCH</span><input id="dashRacerSearch" type="search" autocomplete="off" placeholder="Search Pokémon"></label><label><span>SORT</span><select id="dashRacerSort"><option value="speed">Speed · fastest</option><option value="name">Name · A–Z</option><option value="level">Level · highest</option></select></label></div>
+            <div id="dashRacerGrid" class="dash-racer-grid" aria-label="Caught Pokémon racers"></div>
+            <div id="dashEmptyState" class="dash-empty-state" hidden><b>No racers yet</b><span>Catch a Pokémon in Adventure, then return to the Race Course.</span></div>
+            <div id="dashSelectedRacer" class="dash-selected-racer" hidden></div>
+            <div class="game-actions dash-picker-actions"><button class="primary" id="dashStartBtn" disabled>START RACE</button></div>
+          </div>
+
+          <div id="dashStandingsView" class="dash-menu-view dash-standings-view" hidden>
+            <div class="dash-title-row"><div><div id="dashStandingsEyebrow" class="eyebrow">LEAGUE STANDINGS</div><h2 id="dashStandingsTitle">Race complete</h2><p id="dashStandingsSubtitle"></p></div><div id="dashStandingsTrophy" class="dash-trophy"></div></div>
+            <div id="dashStandingsTable" class="dash-standings-table"></div>
+            <button id="dashStandingsContinue" class="primary dash-continue" type="button">NEXT RACE</button>
+          </div>
+
+          <div id="dashRaceView" class="dash-race-view" hidden>
+            <div class="dash-hud" aria-live="polite"><div class="dash-place"><small>PLACE</small><b id="dashPlace">1st</b></div><div class="dash-progress"><small>COURSE</small><div><i id="dashProgressFill"></i></div><b id="dashProgressText">0%</b></div><div class="dash-stamina"><small>STAMINA</small><div><i id="dashStaminaFill"></i></div><b id="dashStaminaText">100</b></div></div>
+            <div class="dash-canvas-wrap"><canvas id="dashCanvas" width="540" height="720" aria-label="Six Pokémon racing on a top-down route"></canvas><div id="dashRaceFeedback" class="dash-race-feedback" hidden></div><div id="dashCountdown" class="dash-countdown" hidden>3</div><div id="dashPauseOverlay" class="dash-pause-overlay" hidden><b>PAUSED</b><span>Return to LuckyDex to continue the same race.</span></div><div id="dashUnavailable" class="dash-unavailable" hidden><b>Race display unavailable</b><span>Your collection and progress are safe. Return to the venue and reopen Dash.</span></div></div>
+            <div class="dash-controls"><button id="dashLeftBtn" type="button" aria-label="Move left">◀<span>LEFT</span></button><button id="dashSprintBtn" class="dash-sprint" type="button"><b>SPRINT</b><span>HOLD</span></button><button id="dashRightBtn" type="button" aria-label="Move right">▶<span>RIGHT</span></button></div>
+          </div>
+        </div>
+
+        <div id="powerTrialGame" class="panel arcade-game powertrial-game" hidden></div>
+        <div id="impactTrialGame" class="panel arcade-game impacttrial-game" hidden></div>
+        <div id="targetRangeGame" class="panel arcade-game target-range-game" hidden></div>
+        <div id="elementalGauntletGame" class="panel arcade-game elemental-gauntlet-game" hidden></div>
+        <div id="enduranceExpeditionGame" class="panel arcade-game endurance-expedition-game" hidden></div>
+
+        <div id="berryPickerGame" class="panel arcade-game amie-game" hidden>
+          <div class="arcade-full-head"><button class="game-exit" data-exit-game>‹ ARCADE</button><div class="arcade-mascot"><img src="arcade/sprites/pokemon/133.png" alt="Eevee" /><span>KALOS AMIE GARDEN</span></div></div>
+          <div class="section-head"><div><div class="eyebrow">BERRY PICKER</div><h2>Berry Service</h2></div><div class="bank-display">SERVED <b id="berryPickerCorrect">0</b></div></div>
+          <div id="berryPickerModes" class="amie-mode-row"><button class="active" data-berry-mode="easy">EASY</button><button data-berry-mode="normal">NORMAL</button><button data-berry-mode="hard">HARD</button><button data-berry-mode="unlimited">UNLIMITED</button></div>
+          <div class="amie-hud"><span>TIME<b id="berryPickerTimer">60</b></span><span>SCORE<b id="berryPickerScore">0</b></span><span>COMBO<b id="berryPickerCombo">0</b></span><span>DAILY<b>ITEM</b></span></div>
+          <div class="berry-picker-stage"><div id="berryPickerCustomers" class="berry-picker-customers"></div><div id="berryPickerTray" class="berry-picker-tray"></div><div id="berryPickerMessage" class="amie-message">Choose a mode and start serving.</div></div>
+          <div class="game-actions"><button class="secondary" id="berryPickerRestartBtn" hidden>RESTART</button><button class="primary" id="berryPickerStartBtn">START PICKER</button></div>
+        </div>
+
+        <div id="tilePuzzleGame" class="panel arcade-game amie-game tile-puzzle-focus" hidden>
+          <div class="arcade-full-head"><button class="game-exit" data-exit-game>‹ ARCADE</button><div class="arcade-mascot"><img src="arcade/sprites/pokemon/25.png" alt="Pikachu" /><span>KALOS AMIE GARDEN</span></div></div>
+          <div class="section-head tile-puzzle-title"><div><div class="eyebrow">TILE PUZZLE</div><h2>Pokémon Picture Puzzle</h2></div><div class="bank-display">MOVES <b id="tilePuzzleMoves">0</b></div></div>
+          <div id="tilePuzzleModes" class="amie-mode-row"><button class="active" data-tile-mode="easy">EASY · 4×5</button><button data-tile-mode="normal">NORMAL · 5×6</button><button data-tile-mode="hard">HARD · 6×8</button><button type="button" id="tilePuzzleLandscapeBtn" class="tile-orientation-btn">LANDSCAPE</button></div>
+          <div class="tile-puzzle-meta"><button type="button" id="tilePuzzleReferenceBtn" class="tile-target-mini" aria-label="Enlarge completed picture reference"><img id="tilePuzzleTarget" src="arcade/sprites/pokemon/25.png" alt="Completed puzzle reference"><span><small>REFERENCE · TAP TO ENLARGE</small><b id="tilePuzzleTargetName">Pokémon</b></span></button><div class="tile-time-mini"><small>TIME</small><b><span id="tilePuzzleTimer">0.0</span>s</b></div></div>
+          <div id="tilePuzzleBoard" class="tile-puzzle-board" aria-label="Moving-picture Pokémon tile puzzle"></div>
+          <div id="tilePuzzleReferenceOverlay" class="tile-reference-overlay" role="dialog" aria-modal="true" aria-label="Completed puzzle reference" hidden><button type="button" id="tilePuzzleReferenceClose" class="tile-reference-close" aria-label="Close enlarged reference">×</button><img id="tilePuzzleReferenceLarge" src="arcade/sprites/pokemon/25.png" alt="Enlarged completed puzzle reference"><div class="tile-reference-hint">TAP IMAGE OR × TO RETURN</div></div>
+          <div id="tilePuzzleMessage" class="amie-message tile-puzzle-message">Choose a difficulty and start a puzzle.</div>
+          <div class="game-actions tile-puzzle-actions"><button class="secondary" id="tilePuzzleRestartBtn" hidden>RESHUFFLE</button><button class="primary" id="tilePuzzleStartBtn">START PUZZLE</button></div>
+        </div>
+
+        <div id="voltorbGame" class="panel arcade-game" hidden>
+          <div class="arcade-full-head"><button class="game-exit" data-exit-game>‹ ARCADE</button><div class="arcade-mascot"><img src="arcade/sprites/pokemon/100.png" alt="Voltorb" /><span>GOLDENROD GAME CORNER</span></div></div>
+          <div class="section-head"><div><div class="eyebrow">VOLTORB FLIP</div><h2>Level <span id="voltorbLevel">1</span></h2></div><div class="bank-display">BANK <b id="voltorbBank">0</b></div></div>
+          <div class="vf-gamecorner-sign"><span>🎰 GOLDENROD GAME CORNER</span><b>VOLTORB FLIP</b></div><p class="muted small">Read each clue card: the top number is the row/column total, the Voltorb count is underneath. Flip every ×2 and ×3 tile without waking a Voltorb.</p>
+          <div id="voltorbBoard" class="voltorb-board"></div>
+          <div class="game-actions"><button class="secondary" id="voltorbNewBtn">NEW BOARD</button></div>
+          <button class="perk-btn" id="voltorbPerkBtn" hidden>⚡ STATIC SCAN</button>
+        </div>
+
+        <div id="rouletteGame" class="panel arcade-game roulette-game" hidden>
+          <div class="arcade-full-head"><button class="game-exit" data-exit-game>‹ ARCADE</button><div class="arcade-mascot"><img src="arcade/sprites/actors/pokemon/360.png" alt="Wynaut" /><span>MAUVILLE GAME CORNER · GEN III</span></div></div>
+          <div class="roulette-header"><div><div class="eyebrow">MAUVILLE ROULETTE</div><h2>Pick your bet</h2></div><div class="roulette-wallet"><small>LUCKY COINS</small><b id="rouletteCoins">0</b></div></div>
+          <div id="rouletteService" class="roulette-service" hidden>POKÉMON NEWS · SERVICE DAY</div>
+          <div class="roulette-table-row" aria-label="Roulette table stake"><button type="button" data-roulette-table="0" class="active"><small>LOW TABLE</small><b>25 COINS</b></button><button type="button" data-roulette-table="1"><small>HIGH TABLE</small><b>75 COINS</b></button></div>
+          <div class="roulette-stage-wrap"><div id="rouletteRescue" class="roulette-rescue" hidden></div><div class="roulette-stage">
+            <div class="roulette-wheel-panel"><div class="roulette-wheel" aria-label="Twelve-slot Mauville roulette wheel"><div id="rouletteWheelRotor" class="roulette-wheel-rotor"><div id="rouletteWheelSlots"></div></div><div class="roulette-wheel-hub"><span>MAUVILLE</span><small>BALLS LEFT <b id="rouletteBallCount">6</b></small></div><div id="rouletteBall" class="roulette-ball"></div><div id="rouletteResultFlash" class="roulette-result-flash" hidden></div></div></div>
+            <div class="roulette-board-panel"><div id="rouletteBetBoard"></div><div id="rouletteSelection" class="roulette-selection"><small>YOUR BET</small><b>Choose a slot, Pokémon or colour</b></div><button id="rouletteSpinBtn" type="button" class="primary roulette-spin">SPIN</button><div id="rouletteMessage" class="roulette-message"><b>PLACE YOUR BET</b><span>Occupied slots stay blocked until the sixth ball.</span></div></div>
+          </div></div>
+        </div>
+
+        <div id="slotMachineGame" class="panel arcade-game slot-machine-game" hidden>
+          <div class="arcade-full-head"><button class="game-exit" data-exit-game>‹ ARCADE</button><div class="arcade-mascot"><img src="arcade/sprites/actors/pokemon/25.png" alt="Pikachu" /><span>MAUVILLE GAME CORNER · GEN III</span></div></div>
+          <div class="slot-machine-shell">
+            <div class="slot-machine-marquee"><div><small>MAUVILLE SLOT MACHINE</small><h2>Stop the reels</h2></div><div class="slot-machine-wallet"><small>LUCKY COINS</small><b id="slotCoins">0</b></div></div>
+            <div id="slotMachineCabinet" class="slot-machine-cabinet">
+              <div class="slot-machine-topbar"><div class="slot-machine-logo"><img src="arcade/sprites/actors/pokemon/25.png" alt="Pikachu"><span><b>PIKA POWER</b>Build charge to trigger Reel Time.</span></div><div class="slot-power"><div class="slot-power-head"><span>POWER</span><b id="slotPowerValue">0 / 16</b></div><div class="slot-power-track"><i id="slotPowerFill"></i></div></div></div>
+              <div id="slotReelTime" class="slot-reel-time" hidden></div>
+              <div class="slot-machine-reels">
+                <div id="slotReel0" class="slot-reel"></div><div id="slotReel1" class="slot-reel"></div><div id="slotReel2" class="slot-reel"></div>
+                <i class="slot-payline top" data-slot-line="top"></i><i class="slot-payline center" data-slot-line="center"></i><i class="slot-payline bottom" data-slot-line="bottom"></i><i class="slot-payline diagDown" data-slot-line="diagDown"></i><i class="slot-payline diagUp" data-slot-line="diagUp"></i>
+              </div>
+              <div class="slot-stop-row"><button type="button" data-slot-stop="0" disabled>STOP 1</button><button type="button" data-slot-stop="1" disabled>STOP 2</button><button type="button" data-slot-stop="2" disabled>STOP 3</button></div>
+              <div class="slot-controls"><div class="slot-bets" aria-label="Lucky Coins wagered"><button type="button" data-slot-bet="1"><b>25</b><small>LUCKY COINS</small></button><button type="button" data-slot-bet="2"><b>50</b><small>LUCKY COINS</small></button><button type="button" data-slot-bet="3" class="active"><b>75</b><small>LUCKY COINS</small></button></div><button id="slotSpinBtn" type="button" class="primary slot-spin-btn">SPIN · 75</button></div>
+              <div id="slotOutcome" class="slot-outcome" hidden aria-live="polite"></div>
+              <div class="slot-paytable">
+                <span><img class="slot-pay-icon" src="arcade/ui/slot-icons/red7.svg" alt=""><b>777</b> 7,500</span>
+                <span><img class="slot-pay-icon" src="arcade/ui/slot-icons/blue7.svg" alt=""><b>MIX 7</b> 2,250</span>
+                <span><img class="slot-pay-icon" src="arcade/sprites/actors/pokemon/298.png" alt=""><b>AZURILL</b> 300</span>
+                <span><img class="slot-pay-icon" src="arcade/sprites/actors/pokemon/270.png" alt=""><b>LOTAD</b> 150</span>
+                <span><img class="slot-pay-icon" src="arcade/sprites/actors/pokemon/25.png" alt=""><b>PIKACHU</b> 75</span>
+                <span><img class="slot-pay-icon" src="arcade/ui/slot-icons/cherry.svg" alt=""><b>CHERRY</b> 50</span>
+                <span><img class="slot-pay-icon" src="arcade/ui/slot-icons/replay.svg" alt=""><b>REPLAY</b> FREE</span>
+                <span><img class="slot-pay-icon" src="arcade/ui/slot-icons/lightning.svg" alt=""><b>POWER</b> CHARGE</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div id="clefairyGame" class="arcade-game" hidden></div>
+
+        <div id="berryGame" class="panel arcade-game berry-rse" hidden>
+          <div class="arcade-full-head"><button class="game-exit" data-exit-game>‹ ARCADE</button><div class="arcade-mascot"><img src="arcade/sprites/pokemon/235.png" alt="Smeargle" /><span>LILYCOVE CONTEST HALL</span></div></div>
+          <div class="section-head"><div><div class="eyebrow">BERRY BLENDER · 4 PLAYER</div><h2><span id="berryRound">READY</span></h2></div><div class="bank-display">MAX RPM <b id="berryScore">0.00</b></div></div>
+          <p class="muted small berry-help">Tap the blender or press A when the spinning pointer reaches <b>YOU</b>. ◎ raises speed most, ○ raises it a little, × slows the blender. Faster blending finishes sooner.</p>
+          <div class="berry-progress-wrap" aria-label="Blending progress"><span>BLEND</span><div class="berry-progress-track"><i id="berryProgressFill"></i></div><b id="berryProgressText">0%</b></div>
+          <div class="berry-machine" id="timingTrack">
+            <div class="berry-countdown" id="berryCountdown" hidden>3</div>
+            <div class="berry-station berry-station-you"><span class="station-name">YOU</span><i class="station-pointer"></i><em id="berryFeedbackYou"></em></div>
+            <div class="berry-station berry-station-mister"><span class="station-name">MISTER</span><i class="station-pointer"></i><em id="berryFeedbackMister"></em></div>
+            <div class="berry-station berry-station-laddie"><span class="station-name">LADDIE</span><i class="station-pointer"></i><em id="berryFeedbackLaddie"></em></div>
+            <div class="berry-station berry-station-lassie"><span class="station-name">LASSIE</span><i class="station-pointer"></i><em id="berryFeedbackLassie"></em></div>
+            <div class="berry-blender-shell" id="berryBlenderShell">
+              <div class="berry-machine-frame">
+                <div class="berry-slot slot-a"></div><div class="berry-slot slot-b"></div><div class="berry-slot slot-c"></div><div class="berry-slot slot-d"></div>
+                <div class="berry-wheel" id="berryWheel">
+                  <div class="berry-speed-streaks" id="berrySpeedStreaks"></div>
+                  <div class="berry-wheel-rim"></div>
+                  <div class="berry-player-hit-zone" id="berryPlayerHitZone" aria-hidden="true"><span></span></div>
+                  <div class="berry-moving-arrow" id="berryMovingArrow"><span class="berry-dial-arm"></span><span class="berry-dial-head"></span></div>
+                  <div class="berry-center-disc"></div>
+                  <div class="berry-center-cap"></div>
+                  <div class="berry-particles" id="berryParticles"></div>
+                </div>
+              </div>
+              <div class="berry-rpm-panel"><small>RPM</small><strong id="berryRpmLarge">007.03</strong></div>
+            </div>
+          </div>
+          <div class="berry-readout berry-rse-readout"><span>CURRENT <b id="berrySpeed">7.03</b></span><span>◎ BEST <b id="berryHits">0</b></span><span>○ GOOD <b id="berryCombo">0</b></span><span>× MISS <b id="berryMisses">0</b></span></div>
+          <div class="blend-result" id="blendResult">Press START BLENDER, then time A to your marker.</div>
+          <div class="game-actions"><button class="secondary" id="berryStartBtn">START BLENDER</button><button class="primary berry-a-button" id="berryTapBtn" disabled><span>A</span> HIT!</button></div>
+        </div>
+
+        <div id="fossilGame" class="panel arcade-game fossil-game" hidden>
+          <div class="arcade-full-head"><button class="game-exit" data-exit-game>‹ ARCADE</button><div class="arcade-mascot"><img src="arcade/sprites/pokemon/408.png" alt="Cranidos" /><span>OREBURGH MINING MUSEUM</span></div></div>
+          <div class="section-head"><div><div class="eyebrow">UNDERGROUND FOSSIL DIG</div><h2 id="fossilStatus">Fresh dig site</h2></div><div class="bank-display">TOOLS <b id="fossilTools">24</b></div></div>
+          <p class="muted small">Rock that shimmers is close to something ancient. Hammer a broad area to search, then switch to the chisel for precise excavation.</p>
+          <div class="fossil-museum-strip"><span>🦴 Fossils restored <b id="fossilFoundCount">0</b></span><span>🏆 Best dig <b id="fossilBest">0</b></span></div>
+          <div class="fossil-workbench">
+            <div id="fossilGrid" class="fossil-grid" aria-label="Fossil excavation grid"></div>
+            <div id="fossilReveal" class="fossil-reveal">
+              <div class="fossil-scan-ring"><img id="fossilRevealSprite" alt="" /></div>
+              <div><small>RESTORATION TARGET</small><b id="fossilRevealName">Unknown Fossil</b><span id="fossilRevealCopy">Excavate every fossil fragment before your tools run out.</span></div>
+            </div>
+          </div>
+          <div class="fossil-tools">
+            <button id="fossilChiselBtn" class="active"><span>⛏️</span><b>CHISEL</b><small>1 tool · precise</small></button>
+            <button id="fossilHammerBtn"><span>🔨</span><b>HAMMER</b><small>2 tools · wide hit</small></button>
+          </div>
+          <div class="game-actions"><button class="secondary" id="fossilNewBtn">NEW DIG SITE</button></div>
+        </div>
+
+        <div id="museumGame" class="panel arcade-game museum-game-v0253" hidden>
+          <div id="museumScene" class="museum-scene-v0253" aria-label="Oreburgh Mining Museum collection room">
+            <div class="museum-room-frame-v0253" id="museumRoomStage">
+              <img id="oreburghMuseumRoom" src="arcade/fossil-museum-v0252/oreburgh-museum-dppt-landscape-v0252.png" alt="Oreburgh Mining Museum display room" />
+              <div id="museumExhibitLayer" class="museum-exhibit-layer-v0250"></div>
+            </div>
+            <button type="button" id="museumBackOverlay" class="museum-back-overlay-v0253 game-exit" data-exit-game>‹ BACK</button>
+            <span id="museumExhibitCount" class="museum-count-overlay-v0253">0 EXHIBITS</span>
+            <div id="museumPlaque" class="museum-plaque-v0253" hidden role="dialog" aria-modal="false" aria-labelledby="museumPlaqueName">
+              <button type="button" id="museumPlaqueClose" class="museum-plaque-close-v0250" aria-label="Close exhibit plaque">✕</button>
+              <small>MUSEUM EXHIBIT</small><h3 id="museumPlaqueName"></h3><p id="museumPlaqueFlavour"></p><b id="museumPlaqueCount"></b>
+            </div>
+          </div>
+        </div>
+
+        <div id="quizGame" class="panel arcade-game quiz-game" hidden>
+          <div class="arcade-full-head"><button class="game-exit" data-exit-game>‹ ARCADE</button><div class="arcade-mascot"><img src="arcade/sprites/pokemon/25.png" alt="Pikachu" /><span>INDIGO LEAGUE QUIZ STUDIO</span></div></div>
+          <div class="section-head"><div><div class="eyebrow">WHO'S THAT POKÉMON?</div><h2><span id="quizRoundLabel">Question</span> <span id="quizRound">0</span><span id="quizRoundMax">/10</span></h2></div><div class="bank-display">SCORE <b id="quizScore">0</b></div></div>
+          <div class="quiz-difficulty segmented mini-tabs" id="quizDifficulty">
+            <button data-quiz-difficulty="easy">EASY</button><button class="active" data-quiz-difficulty="normal">NORMAL</button><button data-quiz-difficulty="hard">HARD</button><button data-quiz-difficulty="super">SUPER HARD</button><button data-quiz-difficulty="endless">ENDLESS</button>
+          </div>
+          <div class="quiz-stage">
+            <div class="quiz-burst"></div>
+            <div class="quiz-silhouette-wrap"><img id="quizSprite" alt="Mystery Pokémon silhouette" /></div>
+            <div class="quiz-banner"><b id="quizPrompt">WHO'S THAT POKÉMON?</b><span id="quizHint">Press START QUIZ.</span></div>
+          </div>
+          <div class="quiz-timer"><i id="quizTimerFill"></i></div>
+          <div id="quizAnswers" class="quiz-answers"></div>
+          <div class="quiz-meta"><span>🔥 Streak <b id="quizStreak">0</b></span><span>🏆 Best <b id="quizBest">0</b></span><span id="quizEndlessMeta">♾️ Endless <b id="quizEndlessBest">0</b></span></div>
+          <div class="game-actions"><button class="primary" id="quizStartBtn">START QUIZ</button></div>
+        </div>
+
+        <div id="ballDropGame" class="panel arcade-game ball-drop-game" hidden>
+          <div class="arcade-full-head"><button class="game-exit" data-exit-game>‹ ARCADE</button><div class="arcade-mascot"><img src="arcade/sprites/items/poke-ball.png" alt="Poké Ball" /><span>CELADON PRIZE MACHINE</span></div></div>
+          <div class="section-head ball-drop-head"><div><div class="eyebrow">POKÉ BALL DROP</div><h2>Ball <span id="ballDropRound">1</span>/<span id="ballDropRoundMax">3</span></h2></div><div class="bank-display">COINS <b id="ballDropScore">0</b></div></div>
+          <p class="muted small ball-drop-help">Drag the Poké Ball across the launch rail (or tap where you want it), then drop. Move pins and pickups stay put for the whole game; prize slots reroll each ball.</p>
+          <div id="ballDropEventLog" class="ball-drop-event-log" aria-live="polite"></div>
+          <div class="ball-drop-machine">
+            <canvas id="ballDropBackboardCanvas" width="720" height="1004" aria-hidden="true"></canvas>
+            <canvas id="ballDropPinsCanvas" width="720" height="1004" aria-hidden="true"></canvas>
+            <canvas id="ballDropPrizeCanvas" width="720" height="1004" aria-hidden="true"></canvas>
+            <canvas id="ballDropPowerupCanvas" width="720" height="1004" aria-hidden="true"></canvas>
+            <canvas id="ballDropBallCanvas" width="720" height="1004" aria-hidden="true"></canvas>
+            <canvas id="ballDropEffectsCanvas" width="720" height="1004" aria-hidden="true"></canvas>
+            <div id="ballDropAimSurface" class="ball-drop-aim-surface" role="application" aria-label="Touch-aim Poké Ball prize machine with move pins, persistent power-ups and persistent prizes"></div>
+            <div id="ballDropToastStack" class="ball-drop-toast-stack" aria-live="polite"></div>
+            <div id="ballDropLanding" class="ball-drop-landing" hidden><b id="ballDropLandingTitle">PRIZE</b><span id="ballDropLandingScore">+0</span><small id="ballDropLandingDetail">Ready</small></div>
+          </div>
+          <div class="game-actions ball-drop-actions"><button class="primary" id="ballDropBtn">DROP BALL</button></div>
+        </div>
+
+        <div id="unownGame" class="panel arcade-game unown-game mode-easy" hidden>
+          <div class="arcade-full-head"><button class="game-exit" data-exit-game>‹ ARCADE</button><div class="arcade-mascot"><img src="arcade/sprites/pokemon/201.png" alt="Unown" /><span>RUINS OF ALPH</span></div></div>
+          <div class="section-head"><div><div class="eyebrow">UNOWN DECODER</div><h2>Ancient Script</h2></div><div class="unown-run-stats"><span>STREAK <b id="unownStreak">0</b></span><span>SCORE <b id="unownScore">0</b></span></div></div>
+          <p class="muted small">Read the Unown, build a streak, then decide when to bank your run.</p>
+          <div class="unown-difficulty segmented mini-tabs" id="unownDifficulty"><button class="active" data-unown-difficulty="easy">EASY</button><button data-unown-difficulty="normal">NORMAL</button><button data-unown-difficulty="hard">HARD</button></div>
+          <div class="unown-category" id="unownCategory">RUINS MESSAGE</div>
+          <div class="unown-chamber" id="unownChamber"><div class="unown-glyphs" id="unownGlyphs"></div><div class="unown-clue" id="unownClue">Choose a difficulty and press START DECODER.</div></div>
+          <div class="quiz-timer unown-timer"><i id="unownTimerFill"></i></div>
+          <div class="unown-answers" id="unownAnswers"></div>
+          <div class="unown-typed-launch"><button class="primary" id="unownAnswerOpenBtn" type="button" disabled>ENTER ANSWER</button></div>
+          <div class="game-actions unown-actions"><button class="secondary" id="unownCashBtn" disabled hidden>CASH OUT</button><button class="primary" id="unownStartBtn">START DECODER</button></div>
+          <div class="unown-answer-screen" id="unownAnswerScreen" hidden role="dialog" aria-modal="true" aria-label="Decode Unown message">
+            <div class="unown-answer-shell">
+              <div class="unown-answer-head"><button class="secondary" id="unownAnswerCloseBtn" type="button">‹ BACK</button><div><span>UNOWN DECODER</span><b>Decode the message</b></div></div>
+              <div class="unown-category" id="unownAnswerCategory">MESSAGE</div>
+              <div class="unown-answer-chamber"><div class="unown-glyphs" id="unownAnswerGlyphs"></div><div class="unown-clue" id="unownAnswerClue"></div></div>
+              <div class="quiz-timer unown-answer-timer"><i id="unownAnswerTimerFill"></i></div>
+              <form class="unown-typed-form" id="unownTypedForm" autocomplete="off"><input id="unownInput" type="text" inputmode="text" autocomplete="off" autocapitalize="characters" spellcheck="false" aria-label="Decoded message" placeholder="TYPE THE MESSAGE"><button class="primary" id="unownDecodeBtn" type="submit">DECODE</button></form>
+            </div>
+          </div>
+        </div>
+
+      </section>
+
+      <section class="page app-page packs-page" data-page="packs">
+        <div id="packHome" class="pack-home screen-view">
+          <div class="screen-title">
+            <div><div class="eyebrow">CARD SHOP</div><h2>Booster Packs</h2></div>
+            <span class="pill" id="dailyPackPill">Daily ready</span>
+          </div>
+          <div class="pack-wallet compact-wallet">
+            <div><small>COINS</small><b>◉ <span id="packCoinCount">0</span></b></div>
+            <div><small>TICKETS</small><b>🎟 <span id="packTicketCount">0</span></b></div>
+            <div><small>DUST</small><b>✦ <span id="packDustCount">0</span></b></div>
+          </div>
+          <details class="pack-currency-guide">
+            <summary>What are Coins, Tickets &amp; Dust?</summary>
+            <div class="pack-currency-guide-grid">
+              <div><b>◉ Lucky Coins</b><span>Your main shop currency. Earn them from Arcade games, Adventure rewards, milestones and achievements; spend them on packs and supplies.</span></div>
+              <div><b>🎟 Pack Tickets</b><span>Open a booster without spending Coins. Earn them from Daily Board completion, achievements, collection milestones, rank rewards and selected first-clear rewards.</span></div>
+              <div><b>✦ Card Dust</b><span>Convert spare card copies in Trade → Dust Exchange. Spend Dust on Promo Vault cards, or exchange 100 Dust for a Pack Ticket.</span></div>
+            </div>
+          </details>
+          <div class="pack-selector-card">
+            <label>COLLECTION
+              <select id="cardSource"><option value="tcg">Physical Pokémon TCG</option><option value="tcgp">Pokémon TCG Pocket</option></select>
+            </label>
+            <div class="pack-set-accordion">
+              <button id="packSetAccordionToggle" class="pack-set-accordion-toggle" type="button" aria-expanded="false" aria-controls="packSetAccordionPanel">
+                <span><small>SET</small><b id="packSelectedSetName">Choose a set</b><em id="packSelectedSetMeta"></em></span><i aria-hidden="true">⌄</i>
+              </button>
+              <div id="packSetAccordionPanel" class="pack-set-accordion-panel" hidden>
+                <div class="pack-set-tools" aria-label="Browse booster sets">
+                  <label class="pack-set-search"><span>SEARCH</span><input id="packSetSearch" type="search" placeholder="Find a set…" autocomplete="off" /></label>
+                  <label class="pack-sort-control"><span>SORT</span><select id="packSortKey"><option value="releaseDate">Release Date</option><option value="name">Name</option><option value="setSize">Set Size</option><option value="completion">Completion %</option><option value="packsOpened">Packs Opened</option><option value="recentlyOpened">Recently Opened</option></select></label>
+                  <button id="packSortDir" class="pack-sort-dir" type="button" aria-label="Sort descending" title="Reverse sort direction">↓</button>
+                </div>
+                <div id="packSetBrowser" class="pack-set-browser" role="listbox" aria-label="Booster sets"></div>
+              </div>
+            </div>
+            <select id="setSelect" class="pack-set-select-compat" aria-hidden="true" tabindex="-1"><option>Loading sets…</option></select>
+            <div class="pack-format-row"><b id="packFormatTitle">10-card booster</b></div>
+            <div class="pack-price-row"><span><span id="packPriceCopy">Daily pack available</span><small id="packDustHint">Duplicate cards stay in your binder. Convert spare copies from Trade → Dust Exchange.</small></span></div>
+            <div class="pack-open-actions">
+              <button class="primary pack-open-main" id="openPackBtn">FREE DAILY PACK</button>
+              <button class="secondary pack-open-ten" id="openTenPackBtn" type="button" hidden>OPEN 10 · 4,500 COINS</button>
+            </div>
+          </div>
+          <button class="promo-vault-entry" id="promoVaultBtn" type="button" hidden><span><small>PROMOS</small><b>Promo Vault</b><em id="promoVaultCount">Promo series sync with the physical catalogue</em></span><i>›</i></button>
+        </div>
+        <div class="pack-stage-wrap pack-overlay" id="packStage" hidden></div>
+      </section>
+
+      <section class="page app-page trade-page" data-page="trade">
+        <div class="screen-title trade-title">
+          <div><div class="eyebrow">LINK TRADE</div><h2>Trainer Trade Board</h2></div>
+          <div class="trade-clock"><small>NEXT REFRESH</small><b id="tradeCountdown">--:--:--</b></div>
+        </div>
+        <div class="segmented trade-section-tabs" id="tradeSectionTabs">
+          <button class="active" data-trade-section="market">TRADES</button>
+          <button data-trade-section="dust">DUST EXCHANGE</button>
+        </div>
+        <div id="tradeMarketPanel">
+          <div class="segmented trade-tabs" id="tradeModeTabs">
+            <button class="active" data-trade-mode="same">SAME SET</button>
+            <button data-trade-mode="global">ACROSS SETS</button>
+          </div>
+          <div class="trade-browser" aria-label="Trade market filters">
+            <div class="trade-browser-line"><span class="trade-browser-label">SHOW</span><div class="trade-view-tabs" id="tradeViewTabs">
+              <button class="active" data-trade-view="featured">FEATURED <b id="tradeFeaturedCount">0</b></button>
+              <button data-trade-view="all">ALL <b id="tradeAllCount">—</b></button>
+              <button data-trade-view="tradeable">CAN TRADE <b id="tradeReadyCount">—</b></button>
+              <button data-trade-view="spares">SPARES <b id="tradeSpareCount">—</b></button>
+            </div></div>
+            <div class="trade-browser-line compact"><span class="trade-browser-label">CARDS</span><div class="trade-source-tabs" id="tradeSourceTabs">
+              <button class="active" data-trade-source="all">ALL</button><button data-trade-source="tcg">PHYSICAL</button><button data-trade-source="tcgp">POCKET</button>
+            </div></div>
+            <label class="trade-search-box"><span>⌕</span><input id="tradeSearch" placeholder="Search trainer, card, set or rarity" autocomplete="off" /><button id="tradeSearchClear" type="button" aria-label="Clear trade search" hidden>✕</button></label>
+          </div>
+          <div class="trade-discovery" id="tradeDiscoveryText"></div>
+          <div class="trade-offer-list" id="tradeOfferList"><div class="loading">Building trade board…</div></div>
+        </div>
+        <div id="dustExchangePanel" class="dust-exchange-panel" hidden>
+          <div class="panel dust-ticket-panel"><div><div class="eyebrow">CARD DUST</div><h3>Duplicate exchange</h3><p>Filter your binder, choose how many copies of each card to keep, then convert only the matching extras. Your final copy is always protected.</p></div><div class="dust-balance">✦ <b id="tradeDustCount">0</b> Dust</div><button class="secondary full" id="dustTicketExchangeBtn">100 Dust → 1 Ticket</button></div>
+          <div class="dust-filter-grid" aria-label="Dust Exchange filters">
+            <label class="trade-search-box dust-search"><span>⌕</span><input id="dustCardSearch" type="search" placeholder="Name or collector number" autocomplete="off" /></label>
+            <label><span>SET</span><select id="dustSetFilter"><option value="">ALL SETS</option></select></label>
+            <div class="dust-rarity-filter"><span>RARITY</span><div id="dustRarityFilter" class="dust-rarity-options" role="group" aria-label="Filter by rarity"></div></div>
+            <label><span>DUST VALUE</span><select id="dustValueFilter"><option value="">ALL VALUES</option></select></label>
+            <button class="secondary" id="dustClearFilters" type="button">CLEAR FILTERS</button>
+          </div>
+          <div class="dust-bulk-panel">
+            <label class="dust-keep-control"><span>KEEP COPIES</span><input id="dustKeepCopies" type="number" inputmode="numeric" min="1" max="99" value="3" aria-label="Copies of each matching card to keep"></label>
+            <div class="dust-bulk-copy"><b id="dustBulkSummary">No filtered extras to convert</b><span>Only cards matching the filters above are included.</span></div>
+            <button class="primary" id="dustConvertFiltered" type="button" disabled>CONVERT FILTERED</button>
+          </div>
+          <div id="dustCardList" class="dust-card-list"><div class="loading">Loading spare cards…</div></div>
+        </div>
+      </section>
+
+      <section class="page app-page" data-page="collection">
+        <div class="segmented"><button class="active" data-collection="pokemon">Pokédex</button><button data-collection="cards">Card binder</button><button data-collection="sealed">Sealed Packs</button></div>
+        <div class="collection-progress" id="collectionProgress"></div>
+        <div id="cardBinderSourceTabs" class="segmented binder-source-tabs-v0280" hidden aria-label="Card collection type">
+          <button class="active" data-binder-source="tcg" type="button">TCG</button>
+          <button data-binder-source="tcgp" type="button">TCGP</button>
+        </div>
+        <div id="collectionSetPickerWrap" class="collection-set-picker-wrap" hidden>
+          <button id="collectionSetPickerButton" class="collection-set-picker-card" type="button" aria-haspopup="dialog" aria-controls="collectionSetPickerDialog">
+            <span class="collection-set-picker-copy"><small>SELECTED SET</small><b id="collectionSetPickerTitle">All owned sets</b><span id="collectionSetPickerMeta">Browse every owned card</span></span>
+            <span class="collection-set-picker-side"><em id="collectionSetPickerComplete" hidden>COMPLETE</em><i aria-hidden="true">›</i></span>
+            <span class="collection-set-picker-track" id="collectionSetPickerTrack" hidden><span id="collectionSetPickerBar"></span></span>
+          </button>
+        </div>
+        <div class="binder-quick-filters" id="binderQuickFilters" hidden>
+          <button class="active" data-binder-filter="all">ALL CARDS</button>
+          <button data-binder-filter="duplicates">SPARE COPIES <b id="binderDuplicateCount">0</b></button>
+          <button data-binder-filter="rare">RARE HITS</button>
+        </div>
+        <div class="search-row collection-tools-v0280"><input id="collectionSearch" type="search" placeholder="Search collection" autocomplete="off" /><select id="collectionFilter"></select><select id="collectionSort" hidden aria-label="Sort card collection"><option value="releaseDate">Release date</option><option value="setName">Set name</option><option value="name">Card name</option><option value="number">Card number</option><option value="rarity">Rarity</option><option value="quantity">Quantity owned</option></select><button id="collectionSortDir" class="collection-sort-dir-v0280" type="button" hidden aria-label="Sort descending" title="Reverse sort direction">↓</button></div>
+        <select id="collectionGroupFilter" class="group-filter"></select>
+        <div id="collectionGrid" class="collection-grid"></div>
+      </section>
+
+      <section class="page" data-page="profile">
+        <div id="profileMainView">
+          <div class="panel trainer-card">
+            <div class="trainer-rank-orb"><small>RANK</small><b id="trainerRank">1</b></div>
+            <div class="trainer-rank-copy"><div class="eyebrow">TRAINER PROGRESS</div><h2 id="trainerXpText">0 XP</h2><div class="progress-track"><i id="trainerXpBar"></i></div><span id="trainerNextUnlock">Next unlock</span></div>
+          </div>
+          <div class="panel daily-panel">
+            <div class="section-head"><div><div class="eyebrow">DAILY BOARD</div><h2>Today's goals</h2></div><span class="pill" id="dailyStatusPill">0/3</span></div>
+            <div id="dailyChallenges" class="daily-challenges"></div>
+            <button class="primary full" id="dailyClaimBtn" disabled>COMPLETE ALL 3 · CLAIM 🎟 + 250 COINS</button>
+          </div>
+          <button id="achievementSummaryCard" class="panel achievement-summary-card" type="button"><span><small>CHALLENGE LOG</small><b>Achievements</b><em id="achievementSummaryText">0 / 0 earned</em></span><strong>VIEW ›</strong></button>
+          <button id="customiseSummaryCard" class="panel customise-summary-card" type="button"><span id="customiseSummaryPreview" class="customise-summary-preview"></span><span class="customise-summary-copy"><small>TRAINER STYLE</small><b>Customise</b><em id="customiseSummaryName">LuckyDex Default</em></span><strong>VIEW ›</strong></button>
+          <div class="stats-grid" id="statsGrid"></div>
+          <div class="panel"><h2>Unlocks</h2><div id="unlockList" class="unlock-list"></div></div>
+          <div class="panel"><h2>Rare hits</h2><div id="rarestList" class="rarest-list"></div></div>
+          <div class="panel"><h2>Data</h2><button class="secondary full" id="exportBtn">Export save</button><button class="secondary full danger" id="resetBtn">Reset collection</button></div>
+        </div>
+        <div id="profileAchievementsView" class="profile-achievements-view" hidden>
+          <div class="profile-subscreen-head"><button id="achievementsBackBtn" class="secondary" type="button">‹ PROFILE</button><div><div class="eyebrow">CHALLENGE LOG</div><h2>Achievements</h2></div></div>
+          <div class="panel challenge-panel"><div class="section-head"><div><div class="eyebrow">PROGRESS</div><h2>Challenge log</h2></div><span class="pill" id="achievementCountPill">0 earned</span></div><div class="segmented mini-tabs" id="challengeTabs"><button class="active" data-challenge-tab="active">Active</button><button data-challenge-tab="complete">Complete</button><button data-challenge-tab="hidden">Secrets</button></div><label class="achievement-category-control"><span>CATEGORY</span><select id="achievementCategoryFilter"><option value="all">All categories</option><option value="collection">Collection</option><option value="tcg">TCG</option><option value="tcgp">TCGP</option><option value="pokemon">Pokémon</option><option value="adventure">Adventure</option><option value="arcade">Arcade</option><option value="museum">Museum</option></select></label><div id="achievementList" class="achievement-list"></div></div>
+        </div>
+        <div id="profileCustomiseView" class="profile-customise-view" hidden>
+          <div class="profile-subscreen-head"><button id="customiseBackBtn" class="secondary" type="button">‹ PROFILE</button><div><div class="eyebrow">TRAINER STYLE</div><h2>Customise</h2></div></div>
+          <div class="panel"><div class="customise-toolbar"><label class="customise-search"><span>SEARCH SLEEVES</span><input id="customiseSleeveSearch" type="search" placeholder="Pokémon, trainer or sleeve name" autocomplete="off" maxlength="100"></label><div class="segmented mini-tabs" id="customiseOwnershipFilter"><button class="active" data-cosmetic-filter="all">All</button><button data-cosmetic-filter="owned">Owned</button><button data-cosmetic-filter="locked">Locked</button></div><div class="customise-filter-row"><label class="customise-category"><span>SOURCE</span><select id="customiseSourceFilter"><option value="all">All sources</option><option value="LuckyDex">LuckyDex</option><option value="Physical TCG">Physical TCG</option><option value="TCG Pocket">TCG Pocket</option></select></label><label class="customise-category"><span>THEME</span><select id="customiseCategoryFilter"><option value="all">All themes</option></select></label></div><p id="customiseCatalogueCount" class="customise-count" role="status"></p></div><div class="customise-shell"><div id="customiseSleeveGrid" class="customise-sleeve-grid"></div></div></div>
+          <dialog id="customisePreviewDialog" aria-label="Sleeve preview"><button id="customisePreviewClose" type="button" class="secondary">‹ CATALOGUE</button><div id="customiseSleeveDetail" class="customise-detail"></div></dialog>
+        </div>
+      </section>
+    </main>
+
+    <nav class="bottom-nav">
+      <button class="active" data-nav="adventure"><span>◆</span>Adventure</button>
+      <button data-nav="arcade"><span>✦</span>Arcade</button>
+      <button data-nav="packs"><span>▣</span>Packs</button>
+      <button data-nav="trade"><span>⇄</span>Trade</button>
+      <button data-nav="collection"><span>◫</span>Collection</button>
+      <button data-nav="profile"><span>◉</span>Profile</button>
+    </nav>
+  </div>
+
+  <dialog id="collectionSetPickerDialog" class="collection-set-picker-dialog">
+    <div class="collection-set-picker-sheet">
+      <div class="collection-set-picker-head"><div><div class="eyebrow">CARD BINDER</div><h2>Choose set</h2><p id="collectionSetPickerSourceLabel">TCG · owned sets</p></div><button id="collectionSetPickerClose" class="icon-btn" type="button" aria-label="Close set picker">✕</button></div>
+      <label class="collection-set-search"><span>SEARCH SETS</span><input id="collectionSetSearch" type="search" placeholder="Set name or release date…" autocomplete="off" /></label>
+      <div id="collectionSetPickerList" class="collection-set-picker-list" role="listbox" aria-label="Owned card sets"></div>
+    </div>
+  </dialog>
+
+  <dialog id="promoVaultDialog" class="promo-vault-dialog"><div class="dialog-card promo-vault-dialog-card"><div class="section-head"><div><div class="eyebrow">PROMO VAULT</div><h2>Promo Cards</h2></div><button class="icon-btn" id="promoVaultClose">✕</button></div><p class="small muted">Promo cards are kept out of booster packs. Buy ordinary promos with Card Dust; iconic trophy cards are reserved for Achievement Rewards.</p><div class="promo-vault-toolbar"><label>SERIES<select id="promoVaultSetSelect"></select></label><div><small>DUST</small><b>✦ <span id="promoVaultDust">0</span></b></div></div><label class="promo-vault-search"><span>SEARCH CARDS</span><input id="promoVaultSearch" type="search" placeholder="Name, number or rarity…" autocomplete="off" /></label><div id="promoVaultGrid" class="promo-vault-grid"><div class="loading">Choose a promo series.</div></div></div></dialog>
+
+  <dialog id="dustBulkDialog" class="dust-bulk-dialog"><div class="dialog-card dust-bulk-dialog-card"><div class="section-head"><div><div class="eyebrow">DUST EXCHANGE</div><h2>Confirm filtered conversion</h2></div><button class="icon-btn" type="button" data-dust-bulk-cancel>✕</button></div><p id="dustBulkConfirmSummary" class="small muted"></p><div id="dustBulkConfirmList" class="dust-bulk-confirm-list"></div><div class="dust-bulk-confirm-warning">This removes card copies from your binder. Protected Achievement Reward cards are never included.</div><div class="dust-bulk-confirm-actions"><button class="secondary" type="button" data-dust-bulk-cancel>KEEP CARDS</button><button class="primary" id="dustBulkConfirmBtn" type="button">CONVERT FILTERED</button></div></div></dialog>
+
+  <dialog id="settingsDialog"><div class="dialog-card"><div class="section-head"><h2>Settings</h2><button class="icon-btn" id="closeSettings">✕</button></div>
+    <label>Shiny odds<select id="shinyOddsSelect"><option value="4096">Original-style · 1/4096</option><option value="2048">Lucky Dex (Vanilla) · 1/2048</option><option value="512">Boosted · 1/512</option><option value="128">Chaos · 1/128</option></select></label>
+    <div class="settings-rare-odds"><div class="eyebrow">RARE EVENT ODDS</div><p class="small muted">Vanilla is the normal Lucky Dex balance. Use boosted or Always while testing; your choice is saved.</p>
+      <label>Golden Target · Power Trial<select id="rarePowerTrialGoldenOddsSelect"><option value="0">Off</option><option value="0.02">Vanilla · 2%</option><option value="0.25">Test · 25%</option><option value="1">Always · 100%</option></select></label>
+      <label>Golden Hazard · Impact Trial<select id="rareImpactTrialGoldenOddsSelect"><option value="0">Off</option><option value="0.02">Vanilla · 2%</option><option value="0.25">Test · 25%</option><option value="1">Always · 100%</option></select></label>
+      <label>Golden Target · Target Range<select id="rareTargetRangeGoldenOddsSelect"><option value="0">Off</option><option value="0.02">Vanilla · 2%</option><option value="0.25">Test · 25%</option><option value="1">Always · 100%</option></select></label>
+      <label>Prismatic Storm · Elemental Gauntlet<select id="rareElementalGauntletPrismaticOddsSelect"><option value="0">Off</option><option value="0.02">Vanilla · 2%</option><option value="0.25">Test · 25%</option><option value="1">Always · 100%</option></select></label>
+      <label>Golden Trail Cache · Endurance Expedition<select id="rareEnduranceExpeditionCacheOddsSelect"><option value="0">Off</option><option value="0.02">Vanilla · 2%</option><option value="0.25">Test · 25%</option><option value="1">Always · 100%</option></select></label>
+      <label>Golden Berry<select id="rareBerryOddsSelect"><option value="0">Off</option><option value="0.03">Vanilla · 3%</option><option value="0.25">Test · 25%</option><option value="1">Always · 100%</option></select></label>
+      <label>Shiny Unown<select id="rareUnownOddsSelect"><option value="0">Off</option><option value="0.004">Vanilla · 1/250 (0.4%)</option><option value="0.04">Test · 1/25</option><option value="1">Always · 100%</option></select></label>
+      <label>Tile Puzzle card<select id="rareTileCardOddsSelect"><option value="0">Off</option><option value="0.004">Vanilla · 1/250 (0.4%)</option><option value="0.05">Test · 5%</option><option value="1">Always · 100%</option></select></label>
+      <label>Tile Puzzle pack<select id="rareTilePackOddsSelect"><option value="0">Off</option><option value="0.004">Vanilla · 1/250 (0.4%)</option><option value="0.05">Test · 5%</option><option value="1">Always · 100%</option></select></label>
+      <label>Tile Puzzle present<select id="rareTilePresentOddsSelect"><option value="0">Off</option><option value="0.018">Vanilla · 1.8%</option><option value="0.20">Test · 20%</option><option value="1">Always · 100%</option></select></label>
+      <label>Voltorb Gift<select id="rareVoltorbGiftOddsSelect"><option value="0">Off</option><option value="0.02">Vanilla · 2%</option><option value="0.20">Test · 20%</option><option value="1">Always · 100%</option></select></label>
+      <label>Roulette Service Day<select id="rareRouletteServiceDayOddsSelect"><option value="0">Off</option><option value="0.02">Vanilla · 2%</option><option value="0.25">Test · 25%</option><option value="1">Always · 100%</option></select></label>
+      <label>Roulette Stuck-Ball Rescue<select id="rareRouletteRescueOddsSelect"><option value="0">Off</option><option value="0.02">Vanilla · 2%</option><option value="0.25">Test · 25%</option><option value="1">Always · 100%</option></select></label>
+          <label>Roulette Golden Ball<select id="rareRouletteGoldenBallOddsSelect"><option value="0">Off</option><option value="0.02">Vanilla · 2%</option><option value="0.25">Test · 25%</option><option value="1">Always · 100%</option></select></label>
+      <label>Slot Machine Reel Time<select id="rareSlotReelTimeOddsSelect"><option value="0">Off</option><option value="0.02">Vanilla · 2%</option><option value="0.25">Test · 25%</option><option value="1">Always · 100%</option></select></label>
+      <label>Golden Heart · Gutsy Golbat<select id="rareGutsyGolbatGoldenHeartOddsSelect"><option value="0">Off</option><option value="0.02">Vanilla · 2%</option><option value="0.25">Test · 25%</option><option value="1">Always · 100%</option></select></label>
+      <label>Master Ball · Furret’s Frolic<select id="rareFurretFrolicMasterBallOddsSelect"><option value="0">Off</option><option value="0.08">Natural · late match</option><option value="0.40">Test · frequent</option><option value="1">Always when unlocked</option></select></label>
+      <label>Dream Scoop · Ice Cream Scoop<select id="rareIceCreamDreamScoopOddsSelect"><option value="0">Off</option><option value="0.02">Vanilla · 2%</option><option value="0.25">Test · 25%</option><option value="1">Always · 100%</option></select></label>
+      <label>Rainbow Dream Ball · Wailord<select id="rareWailordRainbowBallOddsSelect"><option value="0">Off</option><option value="0.02">Vanilla · 2%</option><option value="0.25">Test · 25%</option><option value="1">Always · 100%</option></select></label>
+      <label>Dream Sparkle · Pokémon Seek<select id="rarePokemonSeekDreamSparkleOddsSelect"><option value="0">Off</option><option value="0.02">Vanilla · 2%</option><option value="0.25">Test · 25%</option><option value="1">Always · 100%</option></select></label>
+      <label>Lucky Wave · Pikachu’s Beach<select id="rarePikachuBeachLuckyWaveOddsSelect"><option value="0">Off</option><option value="0.02">Vanilla · 2%</option><option value="0.25">Test · 25%</option><option value="1">Always · 100%</option></select></label>
+      <label>Gold Rock<select id="rareGoldRockOddsSelect"><option value="0">Off</option><option value="0.10">Vanilla · 10%</option><option value="0.50">Test · 50%</option><option value="1">Always · 100%</option></select></label>
+      <label>Fossil Dig card<select id="rareFossilCardOddsSelect"><option value="0">Off</option><option value="0.15">Vanilla · 15%</option><option value="0.50">Test · 50%</option><option value="1">Always · 100%</option></select></label>
+      <label>Fossil Dig booster<select id="rareFossilPackOddsSelect"><option value="0">Off</option><option value="0.04">Vanilla · 4%</option><option value="0.25">Test · 25%</option><option value="1">Always · 100%</option></select></label>
+    </div>
+    <label class="check"><input type="checkbox" id="vibrationToggle" checked /> Vibrate on catches, rare pulls and arcade hits</label>
+    <div class="settings-save-actions"><button class="secondary" id="settingsExportBtn">EXPORT SAVE</button><button class="secondary" id="importBtn">IMPORT SAVE</button></div>
+    <div id="importSavePanel" hidden><label>Paste LuckyDex save JSON<textarea id="importSaveText" rows="7" spellcheck="false"></textarea></label><div class="small muted" id="importSaveSummary">Paste an exported save to validate it.</div><div class="game-actions"><button class="secondary" id="cancelImportBtn">CANCEL</button><button class="primary" id="confirmImportBtn" disabled>CONFIRM IMPORT</button></div></div>
+    <p class="small muted">Fan-made personal app. Pokémon and card artwork remain the property of their respective rights holders.</p>
+  </div></dialog>
+
+
+  <dialog id="cardDialog" class="card-dialog"><div class="card-dialog-card"><button class="modal-close" id="closeCardDialog" aria-label="Close">✕</button><div class="modal-art-wrap"><img id="cardDialogImage" alt="Card artwork" /><div class="card-art-fallback">Artwork unavailable<br><small>Card still added to binder</small></div></div><div class="card-dialog-copy"><h2 id="cardDialogName"></h2><p id="cardDialogMeta"></p><div class="card-dialog-badges" id="cardDialogBadges"></div></div></div></dialog>
+
+  <dialog id="pokemonDialog"><div class="dialog-card pokemon-dialog-card"><button class="modal-close" id="closePokemonDialog">✕</button><div class="pokemon-modal-hero"><img id="pokemonDialogSprite" alt="Pokémon" /><div><div class="eyebrow" id="pokemonDialogDex"></div><h2 id="pokemonDialogName"></h2><div id="pokemonDialogTypes" class="type-badges"></div></div></div><div id="pokemonDialogStats" class="pokemon-stat-grid"></div><div class="helper-card" id="pokemonDialogHelper"></div><button class="primary full" id="teamToggleBtn">VIEW IN ADVENTURE PARTY</button></div></dialog>
+
+  <div class="toast" id="toast" role="status"></div>
+
+  <script src="tcgp-source-v0160.js"></script>
+  <script src="card-rarity-v0253.js"></script>
+  <script src="pack-policy-v0343.js"></script>
+  <script src="pokemon-go-ditto-v04030.js"></script>
+  <script src="fixed-products-v03514.js"></script>
+  <script src="card-acquisition-v0246.js"></script>
+  <script src="pack-opening-v0160.js"></script>
+  <script src="god-pack-v0291.js"></script>
+  <script src="booster-art-v0259.js"></script>
+  <script src="booster-art-v0260.js"></script>
+  <script src="booster-mini-v0266.js"></script>
+  <script src="card-art-library-v0165.js"></script>
+  <script src="card-art-identity-v0533.js"></script>
+  <script src="pack-flow-v0165.js"></script>
+  <script src="arcade-special-stats.js"></script>
+  <script src="adventure/adventure-model.js"></script>
+  <script src="adventure/adventure-species.js"></script>
+  <script src="adventure/adventure-move-data.js"></script>
+  <script src="adventure/adventure-progression.js"></script>
+  <script src="adventure/adventure-regions.js"></script>
+  <script src="adventure/adventure-assets.js"></script>
+  <script src="adventure/adventure-move-view.js"></script>
+  <script src="adventure/adventure-battle.js"></script>
+  <script src="adventure/adventure-journeys.js"></script>
+  <script src="adventure/adventure-regional-engine.js"></script>
+  <script src="adventure/adventure-tools.js"></script>
+  <script src="adventure/adventure-wild-hunt.js"></script>
+  <script src="adventure-location-scenes.js"></script>
+<script src="adventure/adventure-kanto-canonical-v0410.js"></script>
+  <script src="adventure/adventure-location-flow.js"></script>
+  <script src="adventure/adventure-regional-ui.js"></script>
+  <script src="adventure/adventure-controller.js"></script>
+  <script src="dust-exchange-core.js"></script>
+  <script src="retired-achievement-migrations-v0410.js"></script>
+  <script src="cosmetics-catalog-v0413.js"></script>
+  <script src="cosmetics-core-v0413.js"></script>
+  <script src="cosmetics-customise-v0413.js"></script>
+  <script src="achievement-telemetry-v0413.js"></script>
+  <script src="arcade-goldenrod-core.js"></script>
+  <script src="arcade-goldenrod-state.js"></script>
+  <script src="app-v0167.js"></script>
+  <script src="trade-v0163.js"></script>
+  <script src="arcade-records-core.js"></script>
+  <script src="arcade-help.js"></script>
+  <script src="arcade-platform.js"></script>
+  <script src="arcade-session.js"></script>
+  <script src="berry-blender.js"></script>
+
+  <script src="binder-controls.js"></script>
+  <script src="collection-browser-v0280.js"></script>
+  <script src="achievements-expansion-v0413.js"></script>
+  <script src="achievements-v0341.js"></script>
+  <script src="arcade-records.js"></script>
+  <script src="arcade-rare-rewards.js"></script>
+  <script src="arcade-special-events-v0407.js"></script>
+  <script src="arcade-tile-puzzle-core.js"></script>
+  <script src="arcade-voltorb-gift-core.js"></script>
+  <script src="arcade-tile-scenes-v0253.js"></script>
+  <script src="arcade-amie.js"></script>
+  <script src="arcade-dash-config.js"></script>
+  <script src="arcade-dash-league.js"></script>
+  <script src="arcade-dash-course-data.js"></script>
+  <script src="arcade-dash-course.js"></script>
+  <script src="arcade-dash-gen3-manifest.js"></script>
+  <script src="arcade-dash-assets.js"></script>
+  <script src="arcade-dash-renderer.js"></script>
+  <script src="arcade-goldenrod-stat-curve.js"></script>
+  <script src="arcade-dash.js"></script>
+  <script src="arcade-power-trial-core.js"></script>
+  <script src="arcade-power-trial.js"></script>
+  <script src="arcade-impact-trial-core.js"></script>
+  <script src="arcade-target-range-core.js"></script>
+  <script src="arcade-elemental-gauntlet-core.js"></script>
+  <script src="arcade-endurance-expedition-core.js"></script>
+  <script src="arcade-goldenrod-adapters.js"></script>
+  <script src="arcade-impact-trial.js"></script>
+  <script src="arcade-target-range.js"></script>
+  <script src="arcade-elemental-gauntlet.js"></script>
+  <script src="arcade-endurance-expedition.js"></script>
+  <script src="arcade-goldenrod.js"></script>
+  <script src="arcade-ekans-hoop-core.js"></script>
+  <script src="arcade-ekans-hoop.js"></script>
+  <script src="arcade-dig-dig-dig-core.js"></script>
+  <script src="arcade-dig-dig-dig.js"></script>
+  <script src="arcade-magikarp-splash-core.js"></script>
+  <script src="arcade-magikarp-splash.js"></script>
+  <script src="arcade-rock-harden-core.js"></script>
+  <script src="arcade-rock-harden.js"></script>
+  <script src="arcade-thundering-dynamo-core.js"></script>
+  <script src="arcade-thundering-dynamo.js"></script>
+  <script src="arcade-snore-war-core.js"></script>
+  <script src="arcade-snore-war.js"></script>
+  <script src="arcade-run-rattata-run-core.js"></script>
+  <script src="arcade-run-rattata-run-view.js"></script>
+  <script src="arcade-run-rattata-run.js"></script>
+  <script src="arcade-sushi-go-round-core.js"></script>
+  <script src="arcade-sushi-go-round.js"></script>
+  <script src="arcade-clear-cut-core.js"></script>
+  <script src="arcade-clear-cut.js"></script>
+  <script src="arcade-gutsy-golbat-core.js"></script>
+  <script src="arcade-gutsy-golbat.js"></script>
+  <script src="arcade-furret-frolic-core.js"></script>
+  <script src="arcade-furret-frolic.js"></script>
+  <script src="arcade-topsy-turvy-core.js"></script>
+  <script src="arcade-topsy-turvy.js"></script>
+  <script src="arcade-barrier-ball-core.js"></script>
+  <script src="arcade-barrier-ball.js"></script>
+  <script src="arcade-ice-cream-scoop-core.js"></script>
+  <script src="arcade-ice-cream-scoop.js"></script>
+  <script src="arcade-wailord-water-spout-core.js"></script>
+  <script src="arcade-wailord-water-spout.js"></script>
+<script src="arcade-pokemon-seek-locations.js"></script>
+<script src="arcade-pokemon-seek-core.js"></script>
+<script src="arcade-pokemon-seek-prizes.js"></script>
+  <script src="arcade-pokemon-seek.js"></script>
+  <script src="arcade-pikachu-beach-prizes.js"></script>
+  <script src="arcade-pikachu-beach-dx-content.js"></script>
+  <script src="arcade-pikachu-beach-dx-core.js"></script>
+  <script src="arcade-pikachu-beach-dx.js"></script>
+  <script src="arcade-pikachu-beach.js"></script>
+  <script src="arcade-ball-drop.js"></script>
+  <script src="arcade-roulette-core.js"></script>
+  <script src="arcade-roulette.js"></script>
+  <script src="arcade-slot-machine-core.js"></script>
+  <script src="arcade-slot-machine.js"></script>
+  <script src="arcade-classics.js"></script>
+  <script src="arcade-fossil-museum-core.js"></script>
+  <script src="arcade-fossil-museum.js"></script>
+  <script src="clefairy-scene.js"></script>
+  <script src="clefairy-memory.js"></script>
+  <script src="arcade-quiz.js"></script>
+  <script src="arcade-unown-data.js"></script>
+  <script src="arcade-unown.js"></script>
+  <script src="arcade-picross-data.js"></script>
+  <script src="arcade-picross-core.js"></script>
+  <script src="arcade-picross.js"></script>
+  <script src="arcade-world.js"></script>
+</body>
+</html>

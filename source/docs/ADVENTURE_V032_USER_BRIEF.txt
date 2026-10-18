@@ -1,0 +1,450 @@
+You are working on the existing LuckyDex project.
+
+This is a substantial systems pass, not a cosmetic patch. Inspect the current repository/source thoroughly before changing anything. Preserve existing working features, saved collections/currency/progression wherever possible, the existing Android application ID, and in-place update compatibility.
+
+Use the current project as the source of truth rather than rebuilding LuckyDex from scratch.
+
+==================================================
+PRIMARY GOAL: ADVENTURE 2.0 — REGIONAL ROGUELIKE
+==================================================
+
+The current Adventure/Roam concept should evolve into a substantial Pokémon roguelike campaign system based around the actual Pokémon regions.
+
+The goal is NOT to recreate every route tile-for-tile.
+
+Instead, create compressed roguelike interpretations of each region:
+
+Example flow:
+
+Region start
+→ routes / branching encounters
+→ Gym
+→ new routes / locations / events
+→ Gym
+→ ...
+→ Victory Road / equivalent
+→ Elite Four
+→ Champion
+
+A run should feel recognisably like travelling through that Pokémon region while remaining suitable for repeatable roguelike gameplay.
+
+Start by inspecting how Adventure, Roam, encounters, battles, Pokémon ownership, moves and persistence currently work.
+
+Design the new architecture so later regions can be added primarily through data/configuration rather than duplicating large amounts of code.
+
+--------------------------------------------------
+1. REGIONS
+--------------------------------------------------
+
+Support actual Pokémon regions.
+
+At minimum architect the system so these can exist cleanly:
+
+Kanto
+Johto
+Hoenn
+Sinnoh
+Unova
+Kalos
+Alola
+Galar
+Paldea
+
+Do not fake all nine regions with identical encounter tables.
+
+Each region should eventually be capable of defining:
+
+- its own route/location sequence
+- branching paths
+- Pokémon encounter pools
+- Gym Leaders
+- Gym order
+- Gym teams
+- special encounters
+- environmental events
+- Elite Four
+- Champion
+- final progression/rewards
+
+It is acceptable to fully implement an initial subset if populating every region properly would otherwise lead to low-quality placeholder content, but build the architecture for all of them.
+
+Do not silently invent large quantities of inaccurate Pokémon data just to fill tables.
+
+Reuse reliable Pokémon/species data already present in LuckyDex wherever possible.
+
+--------------------------------------------------
+2. REGIONAL ENCOUNTERS
+--------------------------------------------------
+
+Wild Pokémon should strongly reflect the selected region.
+
+Examples:
+
+Kanto should primarily feel like Kanto.
+Johto should primarily feel like Johto.
+Hoenn should primarily feel like Hoenn.
+
+Encounter pools can include sensible cross-generation evolutions/forms where appropriate, but a region should not simply pull randomly from the entire Pokédex.
+
+Routes/areas should also have distinct pools where practical.
+
+Encounter choices should become more interesting than simply repeatedly fighting one random Pokémon.
+
+Possible encounter nodes include:
+
+- wild battle
+- stronger wild Pokémon
+- trainer
+- item
+- healing/rest
+- branching route
+- rare encounter
+- environmental event
+- mystery event
+- shop/trader
+- TM opportunity
+- boss/Gym
+
+Use judgement and keep the system extensible.
+
+--------------------------------------------------
+3. ROGUELIKE MAP / PROGRESSION UI
+--------------------------------------------------
+
+The current Adventure choice UI needs a major improvement.
+
+Create a clear visual progression screen showing where the player is within the region.
+
+It does not need to be a literal Pokémon overworld map.
+
+A node/path based roguelike map is suitable.
+
+The player should understand:
+
+- where they currently are
+- what choices are available
+- what kind of encounter a node broadly represents
+- how far the next Gym is
+- their Gym progress
+- how far they are through the region
+- current party health/status
+- meaningful run resources
+
+Branching routes should occasionally create meaningful decisions rather than only cosmetic choices.
+
+The UI must remain practical on a phone.
+
+Avoid tiny buttons, unnecessary scrolling and desktop-like layouts.
+
+--------------------------------------------------
+4. GYMS / ELITE FOUR / CHAMPION
+--------------------------------------------------
+
+Gyms should be major checkpoints during a regional run.
+
+They should:
+
+- use the appropriate Gym Leader
+- broadly reflect that Leader's speciality
+- be stronger than surrounding encounters
+- provide meaningful rewards
+- advance the regional run
+
+After the required Gyms, progress toward the region's final sequence.
+
+Where applicable:
+
+Victory Road / equivalent
+→ Elite Four
+→ Champion
+
+The final battles should feel substantially more important than ordinary encounters.
+
+Do not make every boss simply “normal battle but more HP”.
+
+Use stronger teams, better moves, progression scaling and presentation.
+
+--------------------------------------------------
+5. POKÉMON LEVELS / EXP
+--------------------------------------------------
+
+Introduce a proper Pokémon level and EXP system.
+
+Pokémon should be capable of levelling through Adventure battles.
+
+Audit the current owned-Pokémon model carefully before deciding how levels are stored.
+
+Requirements:
+
+- level must actually affect combat
+- EXP should be awarded for appropriate victories
+- levelling should feel useful
+- scaling should not make early regions permanently trivial after a short amount of play
+- existing owned Pokémon/saves must migrate safely
+- missing legacy level values must receive a sensible default
+
+Prefer a clean persistent level system if compatible with the current collection model.
+
+Do not destroy or duplicate existing owned Pokémon during migration.
+
+Document the progression/scaling model you choose.
+
+--------------------------------------------------
+6. REAL MOVES
+--------------------------------------------------
+
+Replace generic placeholder/basic “quick move” behaviour with actual Pokémon moves.
+
+Every Pokémon should have an appropriate real starting/basic move.
+
+For the initial/basic move:
+
+- use a real move associated sensibly with that Pokémon
+- aim for base power 40 or lower
+- favour sensible STAB/thematic moves
+- avoid obviously inappropriate moves simply because their power matches
+- preserve special cases where a species legitimately needs different treatment
+
+Example intent:
+
+a Fire-type should not generically use “Quick Move” when Ember would make sense.
+
+This should be data driven, not hundreds of hard-coded UI conditionals.
+
+--------------------------------------------------
+7. LEVEL-UP MOVES
+--------------------------------------------------
+
+Pokémon should be able to learn additional moves as they level.
+
+Create a proper move-learning framework rather than only changing the displayed move name.
+
+The battle system should understand the resulting moves.
+
+If LuckyDex's combat is intentionally simpler than the main games, adapt moves to LuckyDex rather than attempting to simulate every obscure Pokémon battle mechanic.
+
+Preserve recognisable:
+
+- move type
+- power
+- broad role/effect
+- appropriateness for the Pokémon
+
+Keep the system expandable.
+
+--------------------------------------------------
+8. TMs
+--------------------------------------------------
+
+Add TMs as meaningful Adventure rewards.
+
+TMs should allow compatible Pokémon to learn moves.
+
+Requirements:
+
+- TM inventory/reward representation
+- compatibility checking
+- Pokémon selection
+- move learning/replacement UX where required
+- persistence
+- integration with Adventure rewards
+
+Do not dump every TM in the game into one huge menu without usable filtering/search/navigation.
+
+Keep mobile UX in mind.
+
+--------------------------------------------------
+9. BALANCE
+--------------------------------------------------
+
+Create an explicit balancing model covering:
+
+- wild Pokémon level
+- trainer level
+- Gym scaling
+- Elite Four scaling
+- Champion scaling
+- EXP gains
+- healing availability
+- loss conditions
+- rewards
+
+Avoid both extremes:
+
+A) trivial runaway snowball after a few wins
+B) enemies simply gaining enormous HP numbers
+
+Difficulty should come from progression, teams and moves as well as stats.
+
+Preserve LuckyDex's relatively accessible arcade/collection feel. This is not intended to become a hardcore competitive Pokémon simulator.
+
+==================================================
+SECONDARY GOAL: POKÉ BALL DROP PHYSICS REBUILD
+==================================================
+
+The current Poké Ball Drop board has a persistent mechanical problem:
+
+balls can become trapped/rest indefinitely on circular pins, against edge geometry, or in awkward collision states.
+
+Do NOT simply increase gravity again or randomly teleport balls when stuck.
+
+Rework the actual collision geometry.
+
+The preferred concept is to replace circular-pin collision behaviour with small triangular / angled / sloped bumpers or ledges.
+
+They can still visually fit the existing neon Game Corner aesthetic.
+
+The important property is:
+
+there should be essentially no stable horizontal surface on which a ball can permanently rest.
+
+Desired interaction:
+
+impact
+→ bounce/deflection
+→ roll/slide down slope
+→ continue falling
+
+Requirements:
+
+- preserve the general Pachinko/Plinko concept
+- preserve aiming
+- preserve reward slots
+- preserve power pins / Mystery / Web / Gravity / Explosion / Warp etc
+- preserve the neon visual style
+- balls must not escape outside the playfield
+- edge geometry must remain symmetrical
+- avoid invisible collision boxes that disagree dramatically with visuals
+- test extreme left/right launches
+- test power-up collisions
+- test repeated drops
+
+Implement a stuck-ball failsafe as a SECONDARY protection only.
+
+For example, if velocity remains effectively zero for an unreasonable period while the ball is not inside a reward slot, apply a very small deterministic downward/sideways impulse.
+
+The normal board physics should prevent the problem without relying on the failsafe.
+
+==================================================
+IMPORTANT: DO NOT INCLUDE THESE OTHER TASKS
+==================================================
+
+Do not use this architectural pass to redesign unrelated LuckyDex features.
+
+The following are being handled separately and should only be touched if required for compatibility:
+
+- achievement expansion
+- TCG/TCGP completion achievements
+- God Pack achievements
+- tickets/dust as minigame prizes
+- TCGP rarity/reveal theatrics
+- Voltorb Flip cash-out exploit
+- general pack-opening presentation
+- collection sort/search work
+
+Avoid scope creep.
+
+==================================================
+DATA / SAVE COMPATIBILITY
+==================================================
+
+This app has existing users/save data.
+
+Do not casually rename storage keys or replace persistent models without migration.
+
+Before changing persistence:
+
+1. identify current storage format
+2. identify backwards-compatibility risks
+3. add migration/default behaviour
+4. verify old saves can load
+
+The application ID/package identity must remain unchanged so the APK installs as an update rather than a separate app.
+
+==================================================
+WORKFLOW
+==================================================
+
+Before implementation:
+
+1. Inspect the relevant source files.
+2. Trace the current Adventure/Roam flow.
+3. Trace Pokémon ownership and persistence.
+4. Trace the battle/move implementation.
+5. Trace Poké Ball Drop rendering and collision physics.
+6. Identify reusable systems.
+7. Write a concise architectural plan.
+8. Note any assumptions.
+9. Then implement.
+
+Use existing project conventions unless there is a strong reason not to.
+
+Prefer data-driven configuration for regions, encounters, trainers, moves and progression.
+
+Avoid giant switch statements containing the whole game.
+
+Refactor where needed, but do not rewrite the app unnecessarily.
+
+==================================================
+TESTING / VERIFICATION
+==================================================
+
+Verify at minimum:
+
+- existing save can load
+- owned Pokémon still exist
+- existing currencies remain intact
+- region can be selected/started
+- run can progress through multiple nodes
+- branching encounter selection works
+- wild encounters use appropriate regional pools
+- Pokémon gain EXP
+- Pokémon level correctly
+- levels persist as designed
+- real starter moves are assigned
+- level-up move acquisition works
+- TM acquisition works
+- TM compatibility works
+- move replacement works if required
+- Gym progression works
+- run can reach its final regional sequence
+- loss/restart behaviour works
+- UI fits realistic phone viewport sizes
+- switching app/backgrounding does not unnecessarily destroy run state
+- Poké Ball Drop balls no longer rest indefinitely on normal board geometry
+- extreme-edge Ball Drop launches remain contained
+- reward slots still function
+- power pins still function
+- no regression to existing collection/pack/minigame systems
+
+Run the project's existing tests/build verification as well.
+
+==================================================
+DELIVERABLE
+==================================================
+
+Produce the completed source/build using the project's established workflow.
+
+Keep the same application identity.
+
+Increment versioning appropriately based on the current source.
+
+Provide a versioned source archive, e.g.
+
+LuckyDex_source_vX.XX.X.zip
+
+Do not overwrite the only previous source archive.
+
+Also give a concise completion summary covering:
+
+- Adventure architecture created
+- regions actually populated
+- levelling model
+- move system
+- TM system
+- save migration
+- Ball Drop physics changes
+- tests/build verification
+- anything intentionally deferred
+
+Do not claim a region or feature is complete if it only contains placeholder data.

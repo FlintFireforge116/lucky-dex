@@ -1,0 +1,14 @@
+'use strict';
+const assert=require('node:assert/strict');
+const fs=require('node:fs');
+const path=require('node:path');
+const app=fs.readFileSync(path.join(__dirname,'../app/src/main/assets/app-v0167.js'),'utf8');
+const flow=fs.readFileSync(path.join(__dirname,'../app/src/main/assets/pack-flow-v0165.js'),'utf8');
+assert.match(app,/function packEntitlement\(setArg=null,sourceArg=null\)/,'packEntitlement must accept set/source while preserving no-arg DOM fallback');
+assert.match(app,/LuckyDexPackPolicy\?\.priceFor|LuckyDexPackPolicy\.priceFor/,'physical price must come from pack policy');
+assert.doesNotMatch(app,/const PACK_COST = \{tcg:600/,'physical global 600-cost assumption must be removed');
+assert.match(app,/LuckyDexPackPolicy\?\.packSizeFor|LuckyDexPackPolicy\.packSizeFor/,'pack count must come from policy');
+assert.match(app,/mode:'daily'.*cost:0|mode:"daily".*cost:0/s,'daily entitlement stays free');
+assert.match(app,/mode:'ticket'.*cost:0|mode:"ticket".*cost:0/s,'ticket entitlement stays free');
+assert.match(flow,/entitlement:\{mode:'sealed',setId\}/,'sealed pack path remains currency-free');
+console.log('PASS v0.34.3 pack entitlement/price contract');

@@ -1,0 +1,542 @@
+[
+  {
+    "id": "forest-base",
+    "path": "Completed Assets/Island of Dreams/Pleasant Forest/Pleasant Forest Template/Image/image 5.jpg",
+    "source": "https://raw.githubusercontent.com/Shade-of-Gr3y/Dream-World-Revival/36e3c302d4ba3f79886efccb731c5e4e65143341/Completed%20Assets/Island%20of%20Dreams/Pleasant%20Forest/Pleasant%20Forest%20Template/Image/image%205.jpg",
+    "local": "reference\\dw-candidates\\forest-base.jpg",
+    "bytes": 110337,
+    "sha256": "6c1a9c09ff52f8a46a0ce185ccb01e33910282e102b82b3a199be7fea22b3a2c",
+    "gitBlob": "d4f06029ff77102380a8491f597a190323e7343c",
+    "category": "backgrounds-environment"
+  },
+  {
+    "id": "sky-base",
+    "path": "Completed Assets/Island of Dreams/Windswept Sky/Windswept Sky Template/Image/image 5.jpg",
+    "source": "https://raw.githubusercontent.com/Shade-of-Gr3y/Dream-World-Revival/36e3c302d4ba3f79886efccb731c5e4e65143341/Completed%20Assets/Island%20of%20Dreams/Windswept%20Sky/Windswept%20Sky%20Template/Image/image%205.jpg",
+    "local": "reference\\dw-candidates\\sky-base.jpg",
+    "bytes": 103479,
+    "sha256": "9a85359fc9de9bc49dcefd04b800e017fae5548465b12c82c47316dc3260d1c1",
+    "gitBlob": "34f704f92b54fbea0c64de29c3b5298880ced307",
+    "category": "backgrounds-environment"
+  },
+  {
+    "id": "sea-base",
+    "path": "Completed Assets/Island of Dreams/Sparkling Sea/Sparkling Sea Template/Image/image 685.jpg",
+    "source": "https://raw.githubusercontent.com/Shade-of-Gr3y/Dream-World-Revival/36e3c302d4ba3f79886efccb731c5e4e65143341/Completed%20Assets/Island%20of%20Dreams/Sparkling%20Sea/Sparkling%20Sea%20Template/Image/image%20685.jpg",
+    "local": "reference\\dw-candidates\\sea-base.jpg",
+    "bytes": 103962,
+    "sha256": "b4f8a14997383068814160cbf7289ad421c3646ee5cb746af8c2096dc39c0da6",
+    "gitBlob": "52eac8c172c14646a0056a2387ff9f31e991f642",
+    "category": "backgrounds-environment"
+  },
+  {
+    "id": "manor-a",
+    "path": "Completed Assets/Island of Dreams/Spooky Manor/Spooky-Manor-Template/image 11.jpg",
+    "source": "https://raw.githubusercontent.com/Shade-of-Gr3y/Dream-World-Revival/36e3c302d4ba3f79886efccb731c5e4e65143341/Completed%20Assets/Island%20of%20Dreams/Spooky%20Manor/Spooky-Manor-Template/image%2011.jpg",
+    "local": "reference\\dw-candidates\\manor-a.jpg",
+    "bytes": 14535,
+    "sha256": "544a80c351407302a828d4ace6e9a59548cf76ded0c589ebad254cd90c598405",
+    "gitBlob": "cdd8677a957595a55014531e1741c4f279dcec53",
+    "category": "backgrounds-environment"
+  },
+  {
+    "id": "manor-b",
+    "path": "Completed Assets/Island of Dreams/Spooky Manor/Spooky-Manor-Template/image 340.jpg",
+    "source": "https://raw.githubusercontent.com/Shade-of-Gr3y/Dream-World-Revival/36e3c302d4ba3f79886efccb731c5e4e65143341/Completed%20Assets/Island%20of%20Dreams/Spooky%20Manor/Spooky-Manor-Template/image%20340.jpg",
+    "local": "reference\\dw-candidates\\manor-b.jpg",
+    "bytes": 49330,
+    "sha256": "d0e2413bd8b9ae73e1fcd6a8ff482cbb7fa99919d4daa7982d6c0b1530c225f4",
+    "gitBlob": "7848d09e73b6ace0ce3c3b114b18875a62baa1f8",
+    "category": "backgrounds-environment"
+  },
+  {
+    "id": "manor-c",
+    "path": "Completed Assets/Island of Dreams/Spooky Manor/Spooky-Manor-Template/image 450.jpg",
+    "source": "https://raw.githubusercontent.com/Shade-of-Gr3y/Dream-World-Revival/36e3c302d4ba3f79886efccb731c5e4e65143341/Completed%20Assets/Island%20of%20Dreams/Spooky%20Manor/Spooky-Manor-Template/image%20450.jpg",
+    "local": "reference\\dw-candidates\\manor-c.jpg",
+    "bytes": 16043,
+    "sha256": "167db20d98b87380ac2a8e608798cd9de74c3181a647feff8d9ee658414f9464",
+    "gitBlob": "34b1c03a6f43ef05faf3c9700586a6b3bc11e9c2",
+    "category": "backgrounds-environment"
+  },
+  {
+    "id": "manor-d",
+    "path": "Completed Assets/Island of Dreams/Spooky Manor/Spooky-Manor-Template/image 574.jpg",
+    "source": "https://raw.githubusercontent.com/Shade-of-Gr3y/Dream-World-Revival/36e3c302d4ba3f79886efccb731c5e4e65143341/Completed%20Assets/Island%20of%20Dreams/Spooky%20Manor/Spooky-Manor-Template/image%20574.jpg",
+    "local": "reference\\dw-candidates\\manor-d.jpg",
+    "bytes": 27030,
+    "sha256": "95942687b4e5cf36421d1204b1e16787c0541bc44804db2c7957386afb92ffd6",
+    "gitBlob": "2e80eb13cb924ac40f36000a2e78c09157b5fb2d",
+    "category": "backgrounds-environment"
+  },
+  {
+    "id": "manor-e",
+    "path": "Completed Assets/Island of Dreams/Spooky Manor/Spooky-Manor-Template/image 863.jpg",
+    "source": "https://raw.githubusercontent.com/Shade-of-Gr3y/Dream-World-Revival/36e3c302d4ba3f79886efccb731c5e4e65143341/Completed%20Assets/Island%20of%20Dreams/Spooky%20Manor/Spooky-Manor-Template/image%20863.jpg",
+    "local": "reference\\dw-candidates\\manor-e.jpg",
+    "bytes": 487538,
+    "sha256": "6d434c5b4d56b718a8790f604765c031921b0405974dc10ecb1d156cc9b0ecec",
+    "gitBlob": "0becb5cb5fa18084ea76a5fee86b4d25e47c173f",
+    "category": "backgrounds-environment"
+  },
+  {
+    "id": "mountain-a",
+    "path": "Completed Assets/Island of Dreams/Rugged Mountain/Rugged Mountain Template/Image/image 1.jpg",
+    "source": "https://raw.githubusercontent.com/Shade-of-Gr3y/Dream-World-Revival/36e3c302d4ba3f79886efccb731c5e4e65143341/Completed%20Assets/Island%20of%20Dreams/Rugged%20Mountain/Rugged%20Mountain%20Template/Image/image%201.jpg",
+    "local": "reference\\dw-candidates\\mountain-a.jpg",
+    "bytes": 16920,
+    "sha256": "21ecf805791e0c716b8dc8a1f7eb66601d4b09c4ca86ea16ad04c47e2dc19a8b",
+    "gitBlob": "5030ce128bdfa75afbd560944cfca850c721b039",
+    "category": "backgrounds-environment"
+  },
+  {
+    "id": "mountain-b",
+    "path": "Completed Assets/Island of Dreams/Rugged Mountain/Rugged Mountain Template/Image/image 537.jpg",
+    "source": "https://raw.githubusercontent.com/Shade-of-Gr3y/Dream-World-Revival/36e3c302d4ba3f79886efccb731c5e4e65143341/Completed%20Assets/Island%20of%20Dreams/Rugged%20Mountain/Rugged%20Mountain%20Template/Image/image%20537.jpg",
+    "local": "reference\\dw-candidates\\mountain-b.jpg",
+    "bytes": 379975,
+    "sha256": "b6bacb65b1037b3f39077bc5960c0ac22ad638f6a299706826fd9ea9ccdc2e5e",
+    "gitBlob": "f36287651159aefdc591ff391415286cff6d8e34",
+    "category": "backgrounds-environment"
+  },
+  {
+    "id": "ice-a",
+    "path": "Completed Assets/Island of Dreams/Icy Cave/Icy Cave Template/Image/image 1.jpg",
+    "source": "https://raw.githubusercontent.com/Shade-of-Gr3y/Dream-World-Revival/36e3c302d4ba3f79886efccb731c5e4e65143341/Completed%20Assets/Island%20of%20Dreams/Icy%20Cave/Icy%20Cave%20Template/Image/image%201.jpg",
+    "local": "reference\\dw-candidates\\ice-a.jpg",
+    "bytes": 71679,
+    "sha256": "82e6efd357f95458794728aabca763d64c0b33ac6c7067e7d5694c1b4f27d5d9",
+    "gitBlob": "5bebe667336d74f9fd52143da5120de8bb15a69d",
+    "category": "backgrounds-environment"
+  },
+  {
+    "id": "ice-b",
+    "path": "Completed Assets/Island of Dreams/Icy Cave/Icy Cave Template/Image/image 83.jpg",
+    "source": "https://raw.githubusercontent.com/Shade-of-Gr3y/Dream-World-Revival/36e3c302d4ba3f79886efccb731c5e4e65143341/Completed%20Assets/Island%20of%20Dreams/Icy%20Cave/Icy%20Cave%20Template/Image/image%2083.jpg",
+    "local": "reference\\dw-candidates\\ice-b.jpg",
+    "bytes": 57674,
+    "sha256": "e7116530dac526a9927b431bb0fb1ec3c1b334de3a556c4efc1c998edd8e15f9",
+    "gitBlob": "c86a5b5be7d439f970dd509b9c67d86c6f075e34",
+    "category": "backgrounds-environment"
+  },
+  {
+    "id": "ice-c",
+    "path": "Completed Assets/Island of Dreams/Icy Cave/Icy Cave Template/Image/image 684.jpg",
+    "source": "https://raw.githubusercontent.com/Shade-of-Gr3y/Dream-World-Revival/36e3c302d4ba3f79886efccb731c5e4e65143341/Completed%20Assets/Island%20of%20Dreams/Icy%20Cave/Icy%20Cave%20Template/Image/image%20684.jpg",
+    "local": "reference\\dw-candidates\\ice-c.jpg",
+    "bytes": 78102,
+    "sha256": "2f868a5d4a470d56af8a6908bc17ffa466da57d676959d500c53ca1c30cf5dbd",
+    "gitBlob": "7aa4dfaf3ec6393eca39f126294f1cf2894f5948",
+    "category": "backgrounds-environment"
+  },
+  {
+    "id": "park-a",
+    "path": "Completed Assets/Island of Dreams/Dream Park/Dream-Park-Template/image 1.jpg",
+    "source": "https://raw.githubusercontent.com/Shade-of-Gr3y/Dream-World-Revival/36e3c302d4ba3f79886efccb731c5e4e65143341/Completed%20Assets/Island%20of%20Dreams/Dream%20Park/Dream-Park-Template/image%201.jpg",
+    "local": "reference\\dw-candidates\\park-a.jpg",
+    "bytes": 96999,
+    "sha256": "0bc0251c84986262d040605f7f8734c30883d377c3a3e8b7638e893335423f78",
+    "gitBlob": "947b443d7f5c99c1b7469ec768cab80afbbca7fc",
+    "category": "backgrounds-environment"
+  },
+  {
+    "id": "park-b",
+    "path": "Completed Assets/Island of Dreams/Dream Park/Dream-Park-Template/image 814.jpg",
+    "source": "https://raw.githubusercontent.com/Shade-of-Gr3y/Dream-World-Revival/36e3c302d4ba3f79886efccb731c5e4e65143341/Completed%20Assets/Island%20of%20Dreams/Dream%20Park/Dream-Park-Template/image%20814.jpg",
+    "local": "reference\\dw-candidates\\park-b.jpg",
+    "bytes": 73273,
+    "sha256": "d537a3c238b433049a7173cc96bd720a5e303eac5209c79da32738c0696585fa",
+    "gitBlob": "623f42915fccb0ff730a23147644c89401c88963",
+    "category": "backgrounds-environment"
+  },
+  {
+    "id": "cafe-a",
+    "path": "Asset Recreation/Backgrounds/Pokemon Cafe Forest/Cafe_Forest_Sub_Area(A)1.png",
+    "source": "https://raw.githubusercontent.com/Shade-of-Gr3y/Dream-World-Revival/36e3c302d4ba3f79886efccb731c5e4e65143341/Asset%20Recreation/Backgrounds/Pokemon%20Cafe%20Forest/Cafe_Forest_Sub_Area%28A%291.png",
+    "local": "reference\\dw-candidates\\cafe-a.png",
+    "bytes": 847383,
+    "sha256": "e931b03de84b96ef4d5b9de41e1b8a2d76948c713aae7e4f9a89fd53cf711382",
+    "gitBlob": "cedfaa83f82f75bd24baf3cf2fa353691b94c50e",
+    "category": "backgrounds-environment"
+  },
+  {
+    "id": "cafe-b",
+    "path": "Asset Recreation/Backgrounds/Pokemon Cafe Forest/Cafe_Forest_Sub_Area(B)1.jpg",
+    "source": "https://raw.githubusercontent.com/Shade-of-Gr3y/Dream-World-Revival/36e3c302d4ba3f79886efccb731c5e4e65143341/Asset%20Recreation/Backgrounds/Pokemon%20Cafe%20Forest/Cafe_Forest_Sub_Area%28B%291.jpg",
+    "local": "reference\\dw-candidates\\cafe-b.jpg",
+    "bytes": 136295,
+    "sha256": "faa45c374ef78ccd759dccf7a673f4c03208973b3db22e6996d256e34aed5067",
+    "gitBlob": "bd60a086e0f093d7aea6643885e931cc1863e05f",
+    "category": "backgrounds-environment"
+  },
+  {
+    "id": "cafe-c",
+    "path": "Asset Recreation/Backgrounds/Pokemon Cafe Forest/Cafe_Forest_Sub_Area(C)2.webp",
+    "source": "https://raw.githubusercontent.com/Shade-of-Gr3y/Dream-World-Revival/36e3c302d4ba3f79886efccb731c5e4e65143341/Asset%20Recreation/Backgrounds/Pokemon%20Cafe%20Forest/Cafe_Forest_Sub_Area%28C%292.webp",
+    "local": "reference\\dw-candidates\\cafe-c.webp",
+    "bytes": 753100,
+    "sha256": "4db48cce5f4251c6e925adeb3319f63ca3a42604ab31aa28b782a2528e7ba6c7",
+    "gitBlob": "5225590c763b9b61df6dbb7e634bd00625e145c7",
+    "category": "backgrounds-environment"
+  },
+  {
+    "id": "cafe-e",
+    "path": "Asset Recreation/Backgrounds/Pokemon Cafe Forest/Cafe_Forest_Sub_Area(E).png",
+    "source": "https://raw.githubusercontent.com/Shade-of-Gr3y/Dream-World-Revival/36e3c302d4ba3f79886efccb731c5e4e65143341/Asset%20Recreation/Backgrounds/Pokemon%20Cafe%20Forest/Cafe_Forest_Sub_Area%28E%29.png",
+    "local": "reference\\dw-candidates\\cafe-e.png",
+    "bytes": 2334812,
+    "sha256": "fbe2a988ba940cb3be96887f2cdf225c8b84d17e95107939b91272f2d966cd23",
+    "gitBlob": "74912595ff48221a1641dd7443c8fb6153211329",
+    "category": "backgrounds-environment"
+  },
+  {
+    "id": "cafe-f",
+    "path": "Asset Recreation/Backgrounds/Pokemon Cafe Forest/Cafe_Forest_Sub_Area(F).jpg",
+    "source": "https://raw.githubusercontent.com/Shade-of-Gr3y/Dream-World-Revival/36e3c302d4ba3f79886efccb731c5e4e65143341/Asset%20Recreation/Backgrounds/Pokemon%20Cafe%20Forest/Cafe_Forest_Sub_Area%28F%29.jpg",
+    "local": "reference\\dw-candidates\\cafe-f.jpg",
+    "bytes": 132126,
+    "sha256": "2d735ff5962081dceaf06fa2227680ddaf4f4f1c015cbc3f439f6a3c456ac29f",
+    "gitBlob": "2cc7f5c0bfdc4bc27ee446628279ee0c883156c5",
+    "category": "backgrounds-environment"
+  },
+  {
+    "id": "seek-background",
+    "path": "Completed Assets/Minigames/Pokemon Seek/Image/image 452.png",
+    "source": "https://raw.githubusercontent.com/Shade-of-Gr3y/Dream-World-Revival/36e3c302d4ba3f79886efccb731c5e4e65143341/Completed%20Assets/Minigames/Pokemon%20Seek/Image/image%20452.png",
+    "local": "reference\\dw-candidates\\seek-background.png",
+    "bytes": 619632,
+    "sha256": "587925cb5e6da4de394001808bc1f64e4104f4b2536a93261f773c324186fe66",
+    "gitBlob": "4f7846df0a57566b20ef353359445eb42598446b",
+    "category": "minigame-specific"
+  },
+  {
+    "id": "forest-layer-8",
+    "path": "Completed Assets/Island of Dreams/Pleasant Forest/Pleasant Forest Template/Image/image 8.png",
+    "source": "https://raw.githubusercontent.com/Shade-of-Gr3y/Dream-World-Revival/36e3c302d4ba3f79886efccb731c5e4e65143341/Completed%20Assets/Island%20of%20Dreams/Pleasant%20Forest/Pleasant%20Forest%20Template/Image/image%208.png",
+    "local": "reference\\dw-candidates\\forest-layer-8.png",
+    "bytes": 687208,
+    "sha256": "b7380c9dfcc2aa38b2874d6a4349d8ca74c6fe7af8e32fa6be2b409169658a5e",
+    "gitBlob": "2e07faa48afebaeef9e7d474bfb1fdae47efd093",
+    "category": "backgrounds-environment"
+  },
+  {
+    "id": "forest-layer-393",
+    "path": "Completed Assets/Island of Dreams/Pleasant Forest/Pleasant Forest Template/Image/image 393.png",
+    "source": "https://raw.githubusercontent.com/Shade-of-Gr3y/Dream-World-Revival/36e3c302d4ba3f79886efccb731c5e4e65143341/Completed%20Assets/Island%20of%20Dreams/Pleasant%20Forest/Pleasant%20Forest%20Template/Image/image%20393.png",
+    "local": "reference\\dw-candidates\\forest-layer-393.png",
+    "bytes": 417195,
+    "sha256": "300a78211b423f566cd7b57fc3910b0aaae778e9f9bbe9a0f8a7164ca37d523c",
+    "gitBlob": "c35abd06028f2a27d52707b2508a32684c0e378f",
+    "category": "backgrounds-environment"
+  },
+  {
+    "id": "forest-layer-72",
+    "path": "Completed Assets/Island of Dreams/Pleasant Forest/Pleasant Forest Template/Image/image 72.png",
+    "source": "https://raw.githubusercontent.com/Shade-of-Gr3y/Dream-World-Revival/36e3c302d4ba3f79886efccb731c5e4e65143341/Completed%20Assets/Island%20of%20Dreams/Pleasant%20Forest/Pleasant%20Forest%20Template/Image/image%2072.png",
+    "local": "reference\\dw-candidates\\forest-layer-72.png",
+    "bytes": 405469,
+    "sha256": "edd1760a9afdd0de708c2998d9497b3e39a6ceaa9f8175880ec2fa5324d828ad",
+    "gitBlob": "3e6ba1542b650ed0d2995607475db8c7a58a3147",
+    "category": "backgrounds-environment"
+  },
+  {
+    "id": "forest-layer-120",
+    "path": "Completed Assets/Island of Dreams/Pleasant Forest/Pleasant Forest Template/Image/image 120.png",
+    "source": "https://raw.githubusercontent.com/Shade-of-Gr3y/Dream-World-Revival/36e3c302d4ba3f79886efccb731c5e4e65143341/Completed%20Assets/Island%20of%20Dreams/Pleasant%20Forest/Pleasant%20Forest%20Template/Image/image%20120.png",
+    "local": "reference\\dw-candidates\\forest-layer-120.png",
+    "bytes": 386413,
+    "sha256": "ebc30fe551d1bb8650a84323ab46c3c4d32c9f936f967f20b71558fa7d105da5",
+    "gitBlob": "da159081bfb779a5b2327f2e3210300b526a776a",
+    "category": "backgrounds-environment"
+  },
+  {
+    "id": "sky-layer-188",
+    "path": "Completed Assets/Island of Dreams/Windswept Sky/Windswept Sky Template/Image/image 188.png",
+    "source": "https://raw.githubusercontent.com/Shade-of-Gr3y/Dream-World-Revival/36e3c302d4ba3f79886efccb731c5e4e65143341/Completed%20Assets/Island%20of%20Dreams/Windswept%20Sky/Windswept%20Sky%20Template/Image/image%20188.png",
+    "local": "reference\\dw-candidates\\sky-layer-188.png",
+    "bytes": 735199,
+    "sha256": "23dfffa1b5677185b8b97fd529e9ad4f9ccc99ae70327bef26e4502e779d48a5",
+    "gitBlob": "2e534ada14911237d656842cfb5f16f8838f4eae",
+    "category": "backgrounds-environment"
+  },
+  {
+    "id": "sky-layer-129",
+    "path": "Completed Assets/Island of Dreams/Windswept Sky/Windswept Sky Template/Image/image 129.png",
+    "source": "https://raw.githubusercontent.com/Shade-of-Gr3y/Dream-World-Revival/36e3c302d4ba3f79886efccb731c5e4e65143341/Completed%20Assets/Island%20of%20Dreams/Windswept%20Sky/Windswept%20Sky%20Template/Image/image%20129.png",
+    "local": "reference\\dw-candidates\\sky-layer-129.png",
+    "bytes": 704615,
+    "sha256": "cce0e29bd5b14ffb4145957cf0d339380e4214e7edff647d44017d1297fe8e2a",
+    "gitBlob": "2f61aad7b4746c47b63810f40e8317622e3124d4",
+    "category": "backgrounds-environment"
+  },
+  {
+    "id": "sky-layer-273",
+    "path": "Completed Assets/Island of Dreams/Windswept Sky/Windswept Sky Template/Image/image 273.png",
+    "source": "https://raw.githubusercontent.com/Shade-of-Gr3y/Dream-World-Revival/36e3c302d4ba3f79886efccb731c5e4e65143341/Completed%20Assets/Island%20of%20Dreams/Windswept%20Sky/Windswept%20Sky%20Template/Image/image%20273.png",
+    "local": "reference\\dw-candidates\\sky-layer-273.png",
+    "bytes": 544193,
+    "sha256": "01d0a7c453a62a14b6d508f5f7741a478bbde9df4a94b79969e5bfe2763abf0c",
+    "gitBlob": "c95e30b4cbdad697468239be85ccf7be3cc2983d",
+    "category": "backgrounds-environment"
+  },
+  {
+    "id": "sky-layer-8",
+    "path": "Completed Assets/Island of Dreams/Windswept Sky/Windswept Sky Template/Image/image 8.png",
+    "source": "https://raw.githubusercontent.com/Shade-of-Gr3y/Dream-World-Revival/36e3c302d4ba3f79886efccb731c5e4e65143341/Completed%20Assets/Island%20of%20Dreams/Windswept%20Sky/Windswept%20Sky%20Template/Image/image%208.png",
+    "local": "reference\\dw-candidates\\sky-layer-8.png",
+    "bytes": 519034,
+    "sha256": "8322946c8b2660c521c1b35089f39ac20228877d2af62eb5a72c5e0b72bed367",
+    "gitBlob": "2bccce065c99983208c1a44091cb70a3dd9b2c1a",
+    "category": "backgrounds-environment"
+  },
+  {
+    "id": "sea-layer-1",
+    "path": "Completed Assets/Island of Dreams/Sparkling Sea/Sparkling Sea Template/Image/image 1.png",
+    "source": "https://raw.githubusercontent.com/Shade-of-Gr3y/Dream-World-Revival/36e3c302d4ba3f79886efccb731c5e4e65143341/Completed%20Assets/Island%20of%20Dreams/Sparkling%20Sea/Sparkling%20Sea%20Template/Image/image%201.png",
+    "local": "reference\\dw-candidates\\sea-layer-1.png",
+    "bytes": 654411,
+    "sha256": "88198c10b10ae79fee6dbfdd6dd2a09aa0f4893d5359c1850afbdf99e721203a",
+    "gitBlob": "bf69ba9d6a29b32c9e16a694e052103850d5b785",
+    "category": "backgrounds-environment"
+  },
+  {
+    "id": "sea-layer-4",
+    "path": "Completed Assets/Island of Dreams/Sparkling Sea/Sparkling Sea Template/Image/image 4.png",
+    "source": "https://raw.githubusercontent.com/Shade-of-Gr3y/Dream-World-Revival/36e3c302d4ba3f79886efccb731c5e4e65143341/Completed%20Assets/Island%20of%20Dreams/Sparkling%20Sea/Sparkling%20Sea%20Template/Image/image%204.png",
+    "local": "reference\\dw-candidates\\sea-layer-4.png",
+    "bytes": 421143,
+    "sha256": "5d16a1fbae05cd49d2824ebe1ed3721185b23be867b674fa52065125936faea0",
+    "gitBlob": "e43a27899241e12d529d2af50361fc942cf1c1ed",
+    "category": "backgrounds-environment"
+  },
+  {
+    "id": "sea-layer-105",
+    "path": "Completed Assets/Island of Dreams/Sparkling Sea/Sparkling Sea Template/Image/image 105.png",
+    "source": "https://raw.githubusercontent.com/Shade-of-Gr3y/Dream-World-Revival/36e3c302d4ba3f79886efccb731c5e4e65143341/Completed%20Assets/Island%20of%20Dreams/Sparkling%20Sea/Sparkling%20Sea%20Template/Image/image%20105.png",
+    "local": "reference\\dw-candidates\\sea-layer-105.png",
+    "bytes": 226441,
+    "sha256": "7633ca1a73faca653e17ca0496d394bc1112177b13074d0448566905bb9a09a8",
+    "gitBlob": "bbb4faeaa6a9159e9f07a2b0189db4acdf965122",
+    "category": "backgrounds-environment"
+  },
+  {
+    "id": "sea-layer-429",
+    "path": "Completed Assets/Island of Dreams/Sparkling Sea/Sparkling Sea Template/Image/image 429.png",
+    "source": "https://raw.githubusercontent.com/Shade-of-Gr3y/Dream-World-Revival/36e3c302d4ba3f79886efccb731c5e4e65143341/Completed%20Assets/Island%20of%20Dreams/Sparkling%20Sea/Sparkling%20Sea%20Template/Image/image%20429.png",
+    "local": "reference\\dw-candidates\\sea-layer-429.png",
+    "bytes": 213147,
+    "sha256": "046b0e4199a961881f731926f88e07dd2c9abcd5124b11c7097625cc6510f678",
+    "gitBlob": "863057804917ddb9c9a102c284b015b5682a0008",
+    "category": "backgrounds-environment"
+  },
+  {
+    "id": "manor-layer-345",
+    "path": "Completed Assets/Island of Dreams/Spooky Manor/Spooky-Manor-Template/image 345.png",
+    "source": "https://raw.githubusercontent.com/Shade-of-Gr3y/Dream-World-Revival/36e3c302d4ba3f79886efccb731c5e4e65143341/Completed%20Assets/Island%20of%20Dreams/Spooky%20Manor/Spooky-Manor-Template/image%20345.png",
+    "local": "reference\\dw-candidates\\manor-layer-345.png",
+    "bytes": 424130,
+    "sha256": "dae1eb9991291bf85ba9900b2fdfe2290b5d3eab92d6075de74f7e3e3953ff53",
+    "gitBlob": "b00bfa8026551a0776b46bcc3bb56a5e5355a2f0",
+    "category": "backgrounds-environment"
+  },
+  {
+    "id": "manor-layer-365",
+    "path": "Completed Assets/Island of Dreams/Spooky Manor/Spooky-Manor-Template/image 365.png",
+    "source": "https://raw.githubusercontent.com/Shade-of-Gr3y/Dream-World-Revival/36e3c302d4ba3f79886efccb731c5e4e65143341/Completed%20Assets/Island%20of%20Dreams/Spooky%20Manor/Spooky-Manor-Template/image%20365.png",
+    "local": "reference\\dw-candidates\\manor-layer-365.png",
+    "bytes": 297914,
+    "sha256": "29abb23a8dd2a685111a960f030b6e7dd0d9f825a97e3bab969246392b803387",
+    "gitBlob": "c515ec6ae68262b6dad80221db285f45257eb123",
+    "category": "backgrounds-environment"
+  },
+  {
+    "id": "manor-layer-380",
+    "path": "Completed Assets/Island of Dreams/Spooky Manor/Spooky-Manor-Template/image 380.png",
+    "source": "https://raw.githubusercontent.com/Shade-of-Gr3y/Dream-World-Revival/36e3c302d4ba3f79886efccb731c5e4e65143341/Completed%20Assets/Island%20of%20Dreams/Spooky%20Manor/Spooky-Manor-Template/image%20380.png",
+    "local": "reference\\dw-candidates\\manor-layer-380.png",
+    "bytes": 276506,
+    "sha256": "c8e6412d4b7acdf23f181bf98b722c9effbec12918e0f7b817885273dff0d22d",
+    "gitBlob": "b149829eb610523a5485d63077ba341455160e57",
+    "category": "backgrounds-environment"
+  },
+  {
+    "id": "manor-layer-65",
+    "path": "Completed Assets/Island of Dreams/Spooky Manor/Spooky-Manor-Template/image 65.png",
+    "source": "https://raw.githubusercontent.com/Shade-of-Gr3y/Dream-World-Revival/36e3c302d4ba3f79886efccb731c5e4e65143341/Completed%20Assets/Island%20of%20Dreams/Spooky%20Manor/Spooky-Manor-Template/image%2065.png",
+    "local": "reference\\dw-candidates\\manor-layer-65.png",
+    "bytes": 236457,
+    "sha256": "1557334fb5fde23527e5735f814c34ed33df5bbf1cb02f9eb153cdb880f4492d",
+    "gitBlob": "76485111cebe9762467caf49931e2b4c5d86c443",
+    "category": "backgrounds-environment"
+  },
+  {
+    "id": "mountain-layer-189",
+    "path": "Completed Assets/Island of Dreams/Rugged Mountain/Rugged Mountain Template/Image/image 189.png",
+    "source": "https://raw.githubusercontent.com/Shade-of-Gr3y/Dream-World-Revival/36e3c302d4ba3f79886efccb731c5e4e65143341/Completed%20Assets/Island%20of%20Dreams/Rugged%20Mountain/Rugged%20Mountain%20Template/Image/image%20189.png",
+    "local": "reference\\dw-candidates\\mountain-layer-189.png",
+    "bytes": 345127,
+    "sha256": "ef92781b76e8e5df463100b69f45966245069771fc97e25736cafa089a102aec",
+    "gitBlob": "e66c5c239998b884df1dd43e86a7c1e60ecd85a8",
+    "category": "backgrounds-environment"
+  },
+  {
+    "id": "mountain-layer-514",
+    "path": "Completed Assets/Island of Dreams/Rugged Mountain/Rugged Mountain Template/Image/image 514.png",
+    "source": "https://raw.githubusercontent.com/Shade-of-Gr3y/Dream-World-Revival/36e3c302d4ba3f79886efccb731c5e4e65143341/Completed%20Assets/Island%20of%20Dreams/Rugged%20Mountain/Rugged%20Mountain%20Template/Image/image%20514.png",
+    "local": "reference\\dw-candidates\\mountain-layer-514.png",
+    "bytes": 277850,
+    "sha256": "1437d5de47079e3be797e9afd25b4578fc77762c0f05dd6bc9afc1c25828ba1f",
+    "gitBlob": "9fd993f076182ef308d8bb555f25106d4508ef46",
+    "category": "backgrounds-environment"
+  },
+  {
+    "id": "mountain-layer-393",
+    "path": "Completed Assets/Island of Dreams/Rugged Mountain/Rugged Mountain Template/Image/image 393.png",
+    "source": "https://raw.githubusercontent.com/Shade-of-Gr3y/Dream-World-Revival/36e3c302d4ba3f79886efccb731c5e4e65143341/Completed%20Assets/Island%20of%20Dreams/Rugged%20Mountain/Rugged%20Mountain%20Template/Image/image%20393.png",
+    "local": "reference\\dw-candidates\\mountain-layer-393.png",
+    "bytes": 233498,
+    "sha256": "c4075b64fc2fd885ba7c7727347cbca3d9dce8a08f523b3d884d11e5632f2923",
+    "gitBlob": "61b839b4f5cd73d0b5cb682274a9cc4b5eeab38b",
+    "category": "backgrounds-environment"
+  },
+  {
+    "id": "mountain-layer-90",
+    "path": "Completed Assets/Island of Dreams/Rugged Mountain/Rugged Mountain Template/Image/image 90.png",
+    "source": "https://raw.githubusercontent.com/Shade-of-Gr3y/Dream-World-Revival/36e3c302d4ba3f79886efccb731c5e4e65143341/Completed%20Assets/Island%20of%20Dreams/Rugged%20Mountain/Rugged%20Mountain%20Template/Image/image%2090.png",
+    "local": "reference\\dw-candidates\\mountain-layer-90.png",
+    "bytes": 210245,
+    "sha256": "5c13b37fe2f8c0c81dd3683ca1e9eacc0d6642e1cb130556b7b46ae2b4a83c13",
+    "gitBlob": "07145e1d641f86a61696f3388e6dfb7137b36c5a",
+    "category": "backgrounds-environment"
+  },
+  {
+    "id": "ice-layer-687",
+    "path": "Completed Assets/Island of Dreams/Icy Cave/Icy Cave Template/Image/image 687.png",
+    "source": "https://raw.githubusercontent.com/Shade-of-Gr3y/Dream-World-Revival/36e3c302d4ba3f79886efccb731c5e4e65143341/Completed%20Assets/Island%20of%20Dreams/Icy%20Cave/Icy%20Cave%20Template/Image/image%20687.png",
+    "local": "reference\\dw-candidates\\ice-layer-687.png",
+    "bytes": 561369,
+    "sha256": "56cedf0aa7e32bf0aed627822393fa2752470b014c99be480f460f8a04bd770b",
+    "gitBlob": "78f3cd4d74742046ab50b727d1fd6a2d21379961",
+    "category": "backgrounds-environment"
+  },
+  {
+    "id": "ice-layer-690",
+    "path": "Completed Assets/Island of Dreams/Icy Cave/Icy Cave Template/Image/image 690.png",
+    "source": "https://raw.githubusercontent.com/Shade-of-Gr3y/Dream-World-Revival/36e3c302d4ba3f79886efccb731c5e4e65143341/Completed%20Assets/Island%20of%20Dreams/Icy%20Cave/Icy%20Cave%20Template/Image/image%20690.png",
+    "local": "reference\\dw-candidates\\ice-layer-690.png",
+    "bytes": 535273,
+    "sha256": "6a8f68c64fb0a09cac5a17b3dbd4df7429715dd9fe6950bd95ef1a3b49618cda",
+    "gitBlob": "10ce379a319f768ca0ef754ed293d46a53345a5f",
+    "category": "backgrounds-environment"
+  },
+  {
+    "id": "ice-layer-173",
+    "path": "Completed Assets/Island of Dreams/Icy Cave/Icy Cave Template/Image/image 173.png",
+    "source": "https://raw.githubusercontent.com/Shade-of-Gr3y/Dream-World-Revival/36e3c302d4ba3f79886efccb731c5e4e65143341/Completed%20Assets/Island%20of%20Dreams/Icy%20Cave/Icy%20Cave%20Template/Image/image%20173.png",
+    "local": "reference\\dw-candidates\\ice-layer-173.png",
+    "bytes": 296619,
+    "sha256": "9db51a8dc6506a4cbfa35184cc352ef372b7e41b105088b6ab0caeb4704aed9d",
+    "gitBlob": "2b193d9d73d15ec6021e565d534b96d1c304af0e",
+    "category": "backgrounds-environment"
+  },
+  {
+    "id": "ice-layer-123",
+    "path": "Completed Assets/Island of Dreams/Icy Cave/Icy Cave Template/Image/image 123.png",
+    "source": "https://raw.githubusercontent.com/Shade-of-Gr3y/Dream-World-Revival/36e3c302d4ba3f79886efccb731c5e4e65143341/Completed%20Assets/Island%20of%20Dreams/Icy%20Cave/Icy%20Cave%20Template/Image/image%20123.png",
+    "local": "reference\\dw-candidates\\ice-layer-123.png",
+    "bytes": 260199,
+    "sha256": "b1a2900d454bffd1f49fa05303d33eaed7be2d2a100dda7cef06db1f4a65fa5b",
+    "gitBlob": "886a298cc3b51ff8e9ef9d23ae1508e6ff322b1c",
+    "category": "backgrounds-environment"
+  },
+  {
+    "id": "park-layer-134",
+    "path": "Completed Assets/Island of Dreams/Dream Park/Dream-Park-Template/image 134.png",
+    "source": "https://raw.githubusercontent.com/Shade-of-Gr3y/Dream-World-Revival/36e3c302d4ba3f79886efccb731c5e4e65143341/Completed%20Assets/Island%20of%20Dreams/Dream%20Park/Dream-Park-Template/image%20134.png",
+    "local": "reference\\dw-candidates\\park-layer-134.png",
+    "bytes": 527874,
+    "sha256": "4b6cce1bacec40b772e4abb1141c0d4abbbe258ae8629993b00b7906012b7131",
+    "gitBlob": "9eccade47611849bcd972eedc0416ad3ce0c2007",
+    "category": "backgrounds-environment"
+  },
+  {
+    "id": "park-layer-889",
+    "path": "Completed Assets/Island of Dreams/Dream Park/Dream-Park-Template/image 889.png",
+    "source": "https://raw.githubusercontent.com/Shade-of-Gr3y/Dream-World-Revival/36e3c302d4ba3f79886efccb731c5e4e65143341/Completed%20Assets/Island%20of%20Dreams/Dream%20Park/Dream-Park-Template/image%20889.png",
+    "local": "reference\\dw-candidates\\park-layer-889.png",
+    "bytes": 395902,
+    "sha256": "1573abdc050be22e58558e5ab058bfbd6aed528a9c92443ed41a3746cd2e1454",
+    "gitBlob": "76ae32f81f0da542501e05dbf6459b3da81902a8",
+    "category": "backgrounds-environment"
+  },
+  {
+    "id": "park-layer-874",
+    "path": "Completed Assets/Island of Dreams/Dream Park/Dream-Park-Template/image 874.png",
+    "source": "https://raw.githubusercontent.com/Shade-of-Gr3y/Dream-World-Revival/36e3c302d4ba3f79886efccb731c5e4e65143341/Completed%20Assets/Island%20of%20Dreams/Dream%20Park/Dream-Park-Template/image%20874.png",
+    "local": "reference\\dw-candidates\\park-layer-874.png",
+    "bytes": 371781,
+    "sha256": "f62698e2956391968d6e1e22e76b6b20e31f1602112d39da013abb11b528b54e",
+    "gitBlob": "05754f69b4aba04a7a006c533c3940ef7418deb4",
+    "category": "backgrounds-environment"
+  },
+  {
+    "id": "park-layer-684",
+    "path": "Completed Assets/Island of Dreams/Dream Park/Dream-Park-Template/image 684.png",
+    "source": "https://raw.githubusercontent.com/Shade-of-Gr3y/Dream-World-Revival/36e3c302d4ba3f79886efccb731c5e4e65143341/Completed%20Assets/Island%20of%20Dreams/Dream%20Park/Dream-Park-Template/image%20684.png",
+    "local": "reference\\dw-candidates\\park-layer-684.png",
+    "bytes": 350580,
+    "sha256": "8fd58fa9b80be236ed8178a4af09346be4b1f363220cadedbae6c20a566b4495",
+    "gitBlob": "ebe8c0bc88e130356cbd4573fc007a83256233c3",
+    "category": "backgrounds-environment"
+  },
+  {
+    "id": "cafe-interior",
+    "path": "Completed Assets/Pokemon Cafe/Pokemon_Cafe_Interior(A).png",
+    "source": "https://raw.githubusercontent.com/Shade-of-Gr3y/Dream-World-Revival/36e3c302d4ba3f79886efccb731c5e4e65143341/Completed%20Assets/Pokemon%20Cafe/Pokemon_Cafe_Interior%28A%29.png",
+    "local": "reference\\dw-candidates\\cafe-interior.png",
+    "bytes": 2045382,
+    "sha256": "a8f43b9bfcf77c7c28f243d9d4e7532adc591b43bde27be694ee4de1e3274ff6",
+    "gitBlob": "330043dd405c6257e681fdb18790a1735e374fff",
+    "category": "backgrounds-environment"
+  },
+  {
+    "id": "manor-bookcase",
+    "path": "Completed Assets/Catalogue, Decor and Plushies/Displayed in Home/Manor Furniture/DW_Low_Bookcase(RIP).png",
+    "source": "https://raw.githubusercontent.com/Shade-of-Gr3y/Dream-World-Revival/36e3c302d4ba3f79886efccb731c5e4e65143341/Completed%20Assets/Catalogue%2C%20Decor%20and%20Plushies/Displayed%20in%20Home/Manor%20Furniture/DW_Low_Bookcase%28RIP%29.png",
+    "local": "reference\\dw-candidates\\manor-bookcase.png",
+    "bytes": 150111,
+    "sha256": "abc0b2bccc65725593a5b6545b23c20efd2a6259eb8dd353ffdb60b214b3789a",
+    "gitBlob": "6d3c67aa6aabdaab6e549ea3c7b67e0bbe95bf73",
+    "category": "furniture-searchable-props"
+  },
+  {
+    "id": "manor-sofa",
+    "path": "Completed Assets/Catalogue, Decor and Plushies/Displayed in Home/Manor Furniture/DW_Elegant_Sofa(RIP).png",
+    "source": "https://raw.githubusercontent.com/Shade-of-Gr3y/Dream-World-Revival/36e3c302d4ba3f79886efccb731c5e4e65143341/Completed%20Assets/Catalogue%2C%20Decor%20and%20Plushies/Displayed%20in%20Home/Manor%20Furniture/DW_Elegant_Sofa%28RIP%29.png",
+    "local": "reference\\dw-candidates\\manor-sofa.png",
+    "bytes": 174283,
+    "sha256": "2fe9c12fecc15e550f700e34f3cddff470915457d2422fa102161ff77b2627b5",
+    "gitBlob": "4f7d4996aa410e691895331dc8114b9ef305dc94",
+    "category": "furniture-searchable-props"
+  },
+  {
+    "id": "manor-bed",
+    "path": "Completed Assets/Catalogue, Decor and Plushies/Displayed in Home/Manor Furniture/DW_Elegant_Bed(RIP).png",
+    "source": "https://raw.githubusercontent.com/Shade-of-Gr3y/Dream-World-Revival/36e3c302d4ba3f79886efccb731c5e4e65143341/Completed%20Assets/Catalogue%2C%20Decor%20and%20Plushies/Displayed%20in%20Home/Manor%20Furniture/DW_Elegant_Bed%28RIP%29.png",
+    "local": "reference\\dw-candidates\\manor-bed.png",
+    "bytes": 261842,
+    "sha256": "ba882d62017b1fdd5e9b4169eb63b6299f272b5b3b517a7bc0836ed3c11fd68c",
+    "gitBlob": "d4f09d2cb714a089766d9d93ea6f14ad7a824df1",
+    "category": "furniture-searchable-props"
+  },
+  {
+    "id": "manor-lamp",
+    "path": "Completed Assets/Catalogue, Decor and Plushies/Displayed in Home/Manor Furniture/DW_Elegant_Lamp(RIP).png",
+    "source": "https://raw.githubusercontent.com/Shade-of-Gr3y/Dream-World-Revival/36e3c302d4ba3f79886efccb731c5e4e65143341/Completed%20Assets/Catalogue%2C%20Decor%20and%20Plushies/Displayed%20in%20Home/Manor%20Furniture/DW_Elegant_Lamp%28RIP%29.png",
+    "local": "reference\\dw-candidates\\manor-lamp.png",
+    "bytes": 34588,
+    "sha256": "b57608f864e84a563a0df59e3b7de52fb35ab7331eccaabc3240afe6959ec8f8",
+    "gitBlob": "b0d66ac52dd29449813412e1c512af8de810b3d8",
+    "category": "furniture-searchable-props"
+  }
+]

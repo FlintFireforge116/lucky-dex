@@ -1,0 +1,14 @@
+'use strict';
+const assert=require('node:assert/strict'),fs=require('node:fs'),path=require('node:path');
+const root=path.resolve(__dirname,'..');
+const gradle=fs.readFileSync(path.join(root,'app/build.gradle'),'utf8');
+const pkg=JSON.parse(fs.readFileSync(path.join(root,'package.json'),'utf8'));
+const lock=JSON.parse(fs.readFileSync(path.join(root,'package-lock.json'),'utf8'));
+const html=fs.readFileSync(path.join(root,'app/src/main/assets/index.html'),'utf8');
+const code=Number((gradle.match(/versionCode\s+(\d+)/)||[])[1]);
+const name=(gradle.match(/versionName\s+'([^']+)'/)||[])[1];
+assert.ok(code>=280,'release must not roll back below v0.28.0');
+assert.ok(name&&name.localeCompare('0.28.0',undefined,{numeric:true})>=0,'release must remain v0.28.0 or newer');
+assert.equal(pkg.version,name);assert.equal(lock.version,name);assert.equal(lock.packages?.['']?.version,name);
+assert.ok((html.match(new RegExp(`v${name.replaceAll('.','\\.')}`,'g'))||[]).length>=2,'visible version should match current release');
+console.log('PASS v0.28.0+ release identity');

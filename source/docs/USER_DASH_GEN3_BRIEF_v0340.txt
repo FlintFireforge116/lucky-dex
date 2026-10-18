@@ -1,0 +1,818 @@
+You are continuing development of LuckyDex from:
+
+LuckyDex_source_v0.33.1.zip
+
+Treat v0.33.1 as the authoritative baseline.
+
+Do NOT revert or overwrite the v0.33.1 fixes to:
+- Dust conversion quantity selection
+- Ball Drop / Ball Rain turn-safety
+- pack-opening navigation/crash hardening
+- pack reveal diagnostics
+
+Preserve:
+- package/application ID
+- save compatibility
+- current currencies and collection
+- existing minigames
+- Adventure work
+- in-place Android update compatibility
+
+=========================================================
+PASS GOAL
+POKÉMON DASH — AUTHENTIC GEN 3 COURSE / ASSET OVERHAUL
+=========================================================
+
+Pokémon Dash currently has a working racing-game foundation, but visually it still feels like a prototype assembled from painted backgrounds, floating sprites and placeholder assets.
+
+This pass is NOT about simply adding more decoration.
+
+Rebuild the race-course presentation so it looks like a genuine Pokémon Gen 3-era minigame using authentic or faithfully reconstructed Gen 3 assets and visual language wherever practical.
+
+The intended quality bar is:
+
+"If Game Freak had made a small Pokémon racing minigame inside Ruby/Sapphire/Emerald, this could plausibly be what it looked like."
+
+The game should still fit LuckyDex's existing UI, but the actual race environment should strongly resemble a coherent GBA Pokémon game rather than a modern painted road.
+
+=========================================================
+1. AUDIT FIRST — DO NOT START BY DRAWING MORE PLACEHOLDERS
+=========================================================
+
+Before changing anything:
+
+1. Inspect the complete Pokémon Dash implementation.
+2. Inspect every Dash-specific asset.
+3. Inspect all existing LuckyDex Gen 3 assets that can be reused.
+4. Inspect authentic-v0200 assets and other Arcade asset folders.
+5. Inspect any Emerald/Ruby/Sapphire tilesets already bundled.
+6. Identify which current Dash visuals are:
+   - authentic Gen 3 assets
+   - reconstructed from authentic assets
+   - generated/painted placeholders
+   - simple coloured geometry
+   - badly cropped/incomplete sprites
+   - visually inconsistent assets
+7. Trace how:
+   - course rendering works
+   - preview images are produced
+   - scenery is positioned
+   - world scrolling works
+   - boost pads / berries / hazards render
+   - Pokémon sprites scale and animate
+
+Write a concise findings note before implementing.
+
+Do not blindly preserve bad assumptions from the current renderer.
+
+=========================================================
+2. STOP USING "PAINTED ROAD" COURSE BACKGROUNDS
+=========================================================
+
+The current race course looks like a single painted/generated image with objects placed over it.
+
+This is not the desired direction.
+
+The course should instead be composed from:
+
+- Gen 3 tiles
+- metatiles
+- environmental sprites
+- route objects
+- gym assets
+- cave assets
+- trees
+- water
+- cliffs
+- fences
+- flowers
+- grass
+- bridges
+- machinery
+- rocks
+- building/interior tiles
+- other appropriate Gen 3 scenery
+
+The road, verge and scenery should look like a coherent place constructed from Pokémon game assets.
+
+Do not just paste random sprites onto the current image.
+
+It should look like an actual location.
+
+A course does not need to correspond exactly to an existing Pokémon route.
+
+It can be an original race course assembled from genuine Gen 3 visual building blocks.
+
+That is preferable to a fake "route screenshot".
+
+=========================================================
+3. USE AUTHENTIC GEN 3 ASSETS AGGRESSIVELY
+=========================================================
+
+Before creating any new art, ask:
+
+"Does Ruby/Sapphire/Emerald already contain something suitable?"
+
+Examples:
+
+BOOST PADS
+Use the directional / launch-pad visual language from Mossdeep Gym rather than generic arrows or modern neon rectangles.
+
+TREES
+Use complete Gen 3 tree assets/metatiles.
+
+Do not crop off their tops.
+
+Do not position giant trees halfway outside the render area.
+
+ROCKS
+Use appropriate cave/route/volcanic rocks.
+
+WATER
+Use actual Gen 3 water / shoreline / bridge visual language.
+
+ELECTRIC COURSE
+Use machinery / electric-gym / generator-style objects rather than painted electric boxes.
+
+STEEL
+Use industrial / gym / mechanical tiles.
+
+FIRE
+Use volcanic / soot / scorched / cave assets.
+
+GRASS
+Use proper grass, hedges, flowers, trees and natural route tiles.
+
+POISON
+Do NOT use random purple rectangular blocks.
+Use appropriate marshy, toxic, industrial, cave or other Gen 3-compatible environmental motifs.
+
+ICE
+Use proper ice / slick-floor / frozen visual language where available.
+
+PSYCHIC
+Mossdeep / warp / reflective / futuristic Gen 3 interior assets are suitable references.
+
+GHOST
+Use Mt. Pyre / grave / dark-interior visual language.
+
+ROCK / GROUND
+Use cave, desert and rugged route assets.
+
+WATER
+Use currents, bridges, docks, surf-area scenery.
+
+FLYING
+Use high-route / cloud / wind / open-sky themed composition where practical without abandoning Gen 3 presentation.
+
+BUG
+Use forest / dense vegetation / web-like environmental elements if appropriate.
+
+NORMAL
+Use classic Hoenn route / town-adjacent racing visuals.
+
+DRAGON
+Use ancient / cave / meteor / stone visual language.
+
+DARK
+Use darker cave/interior/night-like palettes within the GBA style.
+
+FAIRY
+Fairy does not exist as a Gen 3 type, so create a Gen 3-compatible interpretation using flowers, pastel tiles, sparkles and appropriate existing decorative assets rather than modern HD art.
+
+Use judgement for all 18 courses.
+
+=========================================================
+4. ASSET SOURCING
+=========================================================
+
+This is a private Pokémon fan project.
+
+Where suitable assets are not already bundled, research and source appropriate Gen 3 visual material.
+
+Preferred sources include:
+
+- The Spriters Resource
+- pret / decomp projects where appropriate
+- Bulbapedia for identifying source locations/assets
+- Pokémon Emerald / Ruby / Sapphire extracted asset references
+
+Prefer reproducible local assets over hotlinking.
+
+Bundle required assets locally.
+
+Maintain or update asset/source credit/provenance notes.
+
+Do not rely on AI memory for identifying an asset if it can be verified.
+
+Do not use modern Pokémon assets unless there is a clear reason.
+
+Do not generate fake "Gen 3-looking" HD artwork when genuine GBA assets already solve the problem.
+
+=========================================================
+5. PIXEL ART RULES
+=========================================================
+
+All race-environment artwork must remain pixel clean.
+
+Use:
+
+- nearest-neighbour scaling
+- integer-friendly placement where practical
+- no image smoothing
+- no anti-aliased scaling
+- no blurry CSS transforms
+- no soft modern gradients over pixel scenery
+- no painted backgrounds
+
+Avoid mixing:
+- tiny GBA sprites
+- high-resolution painted art
+- CSS rectangles
+- differently scaled sprites
+
+in the same scene.
+
+If a new LuckyDex-specific asset must be created, match Gen 3 constraints rather than merely applying a pixel-art filter.
+
+=========================================================
+6. FIX THE COURSE VIEWPORT PROPERLY
+=========================================================
+
+Current problem:
+
+The usable race area is still pushed too far down on a phone and can extend below the visible viewport.
+
+Do not fix this merely by shrinking every object again.
+
+Audit the complete Arcade → Dash → race-screen layout hierarchy.
+
+One layer should clearly own the available visual viewport.
+
+The entire active race must fit on a realistic phone screen:
+
+TOP:
+compact race HUD
+
+MIDDLE:
+the course, which gets the majority of the screen
+
+BOTTOM:
+Left / Sprint / Right controls
+
+No page scrolling during a race.
+
+Do not allow:
+- race track extending below the screen
+- controls overlapping the course
+- hidden lower scenery
+- large wasted cream UI bands
+
+Test realistic portrait Android sizes.
+
+=========================================================
+7. WORLD-SPACE / SCROLLING MODEL
+=========================================================
+
+The sides/verges currently move at a different apparent speed from the road, which makes them look like a distant background layer below the road.
+
+This is wrong.
+
+The road and immediate roadside scenery occupy the SAME physical world plane.
+
+Trees, rocks, grass, barriers and nearby course objects should therefore progress toward the player consistently with the road.
+
+Do not use arbitrary parallax on nearby scenery.
+
+Parallax may only be used for genuinely distant background layers.
+
+The visual world should make spatial sense.
+
+=========================================================
+8. COMPLETE ENVIRONMENTAL ASSETS
+=========================================================
+
+Current trees and some other environmental assets are visibly incomplete or cut off.
+
+Fix this structurally.
+
+For every environmental object:
+
+- render the complete sprite
+- anchor it appropriately at its base
+- keep its visual bounding area inside the intended world space
+- avoid arbitrary clipping by the canvas
+- avoid giant invisible bounding boxes
+- avoid objects that appear detached from the ground
+
+Test:
+- trees
+- tall rocks
+- signs
+- machinery
+- columns
+- bridges
+- course barriers
+- any other tall scenery
+
+=========================================================
+9. COURSE PREVIEWS MUST REPRESENT THE REAL COURSE
+=========================================================
+
+Current preview images look like manually assembled sprites placed over an unrelated track.
+
+Remove that approach.
+
+Course previews should be produced from the actual course composition.
+
+Ideally:
+- render a representative real section of that course
+- crop/frame it appropriately for the course-select UI
+- optionally place one or two appropriate racers if that naturally fits
+
+But scenery must match the actual playable course.
+
+Do not make separate fake promotional scenes.
+
+A player selecting Electric should recognise the environment they then race through.
+
+=========================================================
+10. BOOST PADS
+=========================================================
+
+The current boost graphics are not acceptable.
+
+Use authentic Gen 3 directional-pad / launch-pad visual language, especially Mossdeep Gym as a reference.
+
+A boost area should look physically embedded in the course.
+
+It must:
+- be visible before the player reaches it
+- clearly communicate direction/boost
+- visually belong to the environment
+- animate or respond when activated
+- retain pixel-art authenticity
+
+Avoid:
+- floating arrows
+- modern translucent neon
+- generic painted chevrons
+
+=========================================================
+11. ENVIRONMENTAL DENSITY — THE COURSE IS TOO EMPTY
+=========================================================
+
+The race currently feels bare.
+
+Add much more happening visually and mechanically without turning the mode into Mario Kart or an item-collection game.
+
+Appropriate course elements include:
+
+- grass strips
+- tall-grass sections
+- flowers
+- puddles
+- shallow water
+- rough ground
+- narrow passages
+- bridges
+- ledges
+- gates
+- fences
+- boulders
+- directional pads
+- moving environmental pieces
+- short alternative lines
+- hazard patches
+- visually distinct safer/riskier paths
+- environmental set pieces
+- route transitions
+- course-specific animated scenery
+- occasional Pokémon crossing in the distance or foreground
+- weather/particle moments where appropriate
+
+These should create visual rhythm.
+
+The player should regularly have something new entering the screen.
+
+Do not simply increase obstacle count randomly.
+
+=========================================================
+12. TYPE LEAGUES MUST FEEL DIFFERENT
+=========================================================
+
+There are 18 Type League courses.
+
+They should not simply be:
+
+same road
++ different colour
++ different obstacle sprite.
+
+Each should have a recognisable environmental identity.
+
+Create a reusable course-data system rather than 18 huge hard-coded rendering functions.
+
+Each course should be able to specify:
+
+- ground tile family
+- road/path tile family
+- verge/environment family
+- common scenery
+- uncommon scenery
+- hazards
+- boost-pad presentation
+- ambient effects
+- set-piece definitions
+- preview configuration
+- optional environmental mechanics
+
+Reuse systems, not visual sameness.
+
+=========================================================
+13. COURSE SECTIONS / SET PIECES
+=========================================================
+
+Introduce course sections rather than endless repeated random object placement.
+
+For example, a course might move through:
+
+open straight
+→ tree-lined narrowing
+→ boost-pad section
+→ bridge
+→ obstacle cluster
+→ open sprint
+→ distinctive landmark
+→ final stretch
+
+The race can still be procedurally arranged, but it should feel authored.
+
+Build reusable section templates.
+
+Examples:
+
+FOREST CHICANE
+trees tighten the road and create weaving space.
+
+MOSSDEEP BOOST HALL
+several directional pads create a high-speed section.
+
+BRIDGE RUN
+narrow lane with water either side.
+
+CAVE SQUEEZE
+rocks constrict safe racing lines.
+
+FLOWER FIELD
+low-risk open sprint section with strong visual identity.
+
+VOLCANIC RUN
+rock/heat/ash themed environmental sequence.
+
+Do not over-script every second of the race.
+
+The goal is authored rhythm plus replay variation.
+
+=========================================================
+14. BERRIES / PICKUPS
+=========================================================
+
+Preserve the v0.33 behaviour work, but improve visual presentation as necessary.
+
+Berries should:
+
+- be large enough to recognise instantly on a phone
+- use authentic sprite assets
+- sit naturally on the course
+- have a readable collection radius
+- visibly disappear once collected
+- produce a small Gen 3-compatible pickup effect
+
+Do not turn berries into giant modern UI icons.
+
+=========================================================
+15. POKÉMON PRESENTATION
+=========================================================
+
+Do not introduce violent sprite shaking again.
+
+Pokémon should feel alive, but movement must remain readable.
+
+Audit the current motion system.
+
+Desired movement:
+
+GROUNDED:
+- small gentle running bob
+- slight forward lean while sprinting
+- slight lateral lean while steering
+
+FLYING / LEVITATING:
+- smooth hover
+- very small vertical oscillation
+
+SERPENTINE:
+- subtle glide/sway
+
+COLLISION:
+- brief impact motion
+- quick recovery
+
+BOOST:
+- brief stronger forward/scale response
+
+Avoid constant high-frequency vibration.
+
+Keep sprites pixel-clean.
+
+Preserve sensible species-scale normalisation.
+
+Large species should feel larger without covering half the road.
+
+=========================================================
+16. TRACK OBJECT VISUAL / COLLISION AGREEMENT
+=========================================================
+
+Objects should visually correspond to their interaction footprint.
+
+A player should not:
+
+- hit invisible areas far outside a rock
+- pass through the middle of something that looks solid
+- collide with decoration that appears harmless
+- clip through scenery because sprite and collision coordinates disagree
+
+Use sensible base/foot collision zones.
+
+Large trees can visually overhang without treating their entire canopy as solid.
+
+=========================================================
+17. RESPONSIVENESS / RACE FEEL
+=========================================================
+
+Do not rebuild the controls into a virtual joystick.
+
+Keep:
+
+LEFT
+SPRINT
+RIGHT
+
+But inspect the current lateral response.
+
+The user reports that left/right positioning feels too sluggish.
+
+Improve responsiveness while preserving controllability.
+
+Desired feel:
+
+- immediate response when press begins
+- smooth movement
+- predictable stopping
+- no long delay waiting to reach a lane
+- still possible to make small corrections
+- no instant teleporting between positions
+
+If the internal system still uses lanes, make the visual movement feel continuous rather than like queued lane-switch commands.
+
+Do not change race balance radically in this asset pass.
+
+=========================================================
+18. MENU / COURSE SELECTION PRESENTATION
+=========================================================
+
+Bring the Dash menus into the same Gen 3 visual language.
+
+Do not create giant artwork panels that make the page taller than the viewport.
+
+Use:
+
+- compact panels
+- Gen 3-inspired borders
+- coherent thumbnails
+- readable speed-class labels
+- clear Type League identity
+- useful hierarchy
+
+The playable race remains the star.
+
+=========================================================
+19. DO NOT TURN THIS INTO MODERN MARIO KART
+=========================================================
+
+Do not add:
+
+- weapons
+- shells
+- random attack items
+- giant item boxes
+- drifting systems
+- complicated combo mechanics
+- modern 3D-style UI
+
+Pokémon Dash should remain:
+
+simple steering
++ sprint/stamina
++ environmental racing
++ course knowledge
++ Pokémon speed differences
++ collisions/hazards
++ boosts
++ berries
++ rival positioning
+
+The depth should come from the course.
+
+=========================================================
+20. PERFORMANCE
+=========================================================
+
+This runs in an Android WebView.
+
+Do not destroy performance by placing hundreds of full-resolution DOM images.
+
+Prefer:
+
+- reusable sprite atlases where appropriate
+- efficient canvas rendering
+- pooled objects
+- data-driven assets
+- limited active object counts
+- preloaded required sprites
+- nearest-neighbour raster assets
+
+Avoid expensive per-frame DOM creation.
+
+Test repeated races for memory/resource leaks.
+
+=========================================================
+21. RESEARCH / ASSET MANIFEST
+=========================================================
+
+Add or update a Dash asset manifest documenting:
+
+- local asset path
+- source game/location where known
+- original source/reference
+- whether it is:
+  - authentic
+  - extracted
+  - cropped/reassembled
+  - LuckyDex-original
+- what course/system uses it
+
+This will make later course expansion far easier.
+
+=========================================================
+22. DO NOT REGRESS v0.33.1
+=========================================================
+
+Do not regress:
+
+- Dust quantity conversion
+- binder-copy preservation
+- Ball Drop Ball Rain protection
+- Ball Drop timeout/failsafe logic
+- pack reveal locking
+- pack crash containment
+- reveal diagnostics
+- collection
+- TCG
+- TCGP
+- Adventure
+- Fossil Digger
+- Museum
+- other minigames
+- app-switch persistence fixes already present
+
+If unrelated code must change, explain why.
+
+=========================================================
+23. TESTING
+=========================================================
+
+Add tests/validation for the Dash work where feasible.
+
+Verify at minimum:
+
+COURSE DATA
+- every Type League resolves
+- every referenced asset exists
+- no duplicate/broken asset paths
+- every course has valid sections
+- boost references resolve
+
+RENDERING
+- no missing-image placeholders
+- no tree sprites intentionally clipped
+- nearest-neighbour/pixel rendering maintained
+- course renderer survives repeated runs
+
+VIEWPORT
+Test at representative portrait sizes, including approximately:
+
+360x640
+360x740
+390x844
+412x915
+
+The race HUD + playable area + controls must all remain usable without page scrolling.
+
+GAMEPLAY
+- left/right works
+- sprint works
+- berries work
+- boosts work
+- obstacles work
+- rival AI still functions
+- race finishes
+- Type League progression remains intact
+- speed-class restrictions remain strict
+
+PERFORMANCE
+- repeated races do not continually increase active objects
+- no obvious WebView memory leak
+- assets are preloaded appropriately
+
+PREVIEWS
+- every Type League preview resolves
+- preview corresponds to the playable course's actual visual identity
+
+=========================================================
+24. VISUAL QA
+=========================================================
+
+Do not treat "assets load" as completion.
+
+Manually inspect screenshots/renders for every Type League.
+
+Look specifically for:
+
+- incomplete trees
+- stretched sprites
+- inconsistent pixel scaling
+- floating scenery
+- bizarre object layering
+- painted/generated backgrounds
+- random rectangular blocks
+- empty stretches
+- boost pads that don't look embedded
+- objects partially outside the viewport
+- unreadably tiny berries
+- incoherent previews
+- repeated scenery patterns
+- road/verge scroll mismatch
+
+If one of these remains obvious, the pass is not visually complete.
+
+=========================================================
+25. DELIVERABLE
+=========================================================
+
+Use v0.33.1 as the baseline.
+
+Increment version appropriately.
+
+Keep application identity unchanged.
+
+Produce a versioned source ZIP:
+
+LuckyDex_source_vX.XX.X.zip
+
+Do not overwrite the only previous version.
+
+Provide a concise completion report including:
+
+- courses rebuilt
+- authentic Gen 3 assets introduced
+- assets sourced/reconstructed
+- renderer changes
+- viewport changes
+- Type League differentiation
+- environmental/set-piece systems
+- boost-pad replacement
+- preview-generation changes
+- steering/presentation changes
+- performance work
+- tests run
+- anything intentionally deferred
+
+IMPORTANT:
+
+Do not describe a course as "authentic Gen 3" merely because several Pokémon sprites were placed on top of a modern background.
+
+The COURSE ITSELF must be built from a coherent Gen 3 visual language.
+
+=========================================================
+FINAL PRINCIPLE
+=========================================================
+
+Before drawing or generating anything new:
+
+ASK WHETHER POKÉMON EMERALD ALREADY SOLVED THE VISUAL PROBLEM.
+
+If it did, use that visual language.
+
+This pass should make Pokémon Dash feel like it belongs inside Pokémon Emerald rather than inside a generic mobile racing prototype.

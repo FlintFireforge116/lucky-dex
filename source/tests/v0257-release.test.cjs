@@ -1,0 +1,18 @@
+const assert=require('assert');
+const fs=require('fs');
+const path=require('path');
+const root=path.resolve(__dirname,'..');
+const gradle=fs.readFileSync(path.join(root,'app/build.gradle'),'utf8');
+const pkg=JSON.parse(fs.readFileSync(path.join(root,'package.json'),'utf8'));
+const lock=JSON.parse(fs.readFileSync(path.join(root,'package-lock.json'),'utf8'));
+assert.match(gradle,/applicationId\s+'com\.example\.luckydex'/);
+assert.ok(Number((gradle.match(/versionCode\s+(\d+)/)||[])[1])>=257);
+const versionName=(gradle.match(/versionName\s+'([^']+)'/)||[])[1];assert.ok(versionName&&versionName.localeCompare('0.25.7',undefined,{numeric:true})>=0);
+assert.ok(pkg.version.localeCompare('0.25.7',undefined,{numeric:true})>=0);
+assert.equal(lock.version,pkg.version);
+assert.equal(lock.packages?.['']?.version,pkg.version);
+assert.ok(fs.existsSync(path.join(root,'app/src/main/assets/arcade/fossil-museum-v0257/manifest.json')));
+const index=fs.readFileSync(path.join(root,'app/src/main/assets/index.html'),'utf8');
+assert.ok(index.includes(`v${pkg.version}`),'visible app version must match the package version');
+assert.ok(!index.includes('v0.25.6'),'visible app shell must not retain v0.25.6');
+console.log('PASS v0.25.7 release contract');

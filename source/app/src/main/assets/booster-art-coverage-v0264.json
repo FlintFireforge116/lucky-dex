@@ -1,0 +1,23 @@
+{
+  "schema": 1,
+  "audit": "v0.26.5",
+  "catalog_sets": 156,
+  "assigned_packshots": 144,
+  "known_non_booster_rows_without_packshots": [
+    "basep",
+    "bp",
+    "smp",
+    "sve",
+    "swsh45sv",
+    "swshp",
+    "tk1a",
+    "tk1b",
+    "tk2a",
+    "tk2b",
+    "xy0",
+    "xyp"
+  ],
+  "runtime_sets_checked": 0,
+  "runtime_mapped_booster_sets": 0,
+  "sets": []
+}

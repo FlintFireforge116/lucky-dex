@@ -1,0 +1,33 @@
+'use strict';
+const assert=require('node:assert/strict');
+const fs=require('node:fs'),path=require('node:path');
+const root=path.join(__dirname,'..');
+const read=p=>fs.readFileSync(path.join(root,p),'utf8');
+const world=read('app/src/main/assets/arcade-world.js');
+const html=read('app/src/main/assets/index.html');
+const css=read('app/src/main/assets/arcade-dig-dig-dig.css');
+const sources=read('app/src/main/assets/arcade/kids-club/SOURCES.md');
+
+assert.match(world,/id:"stadiumKidsClub"[^\n]*games:\['ekansHoop','digDigDig'(?:,'[^']+')*\]/);
+for(const id of ['amieGarden','goldenrod','celadonPrize','lilycoveContest','oreburghMuseum','ruinsAlph','indigoQuiz','dashCourse'])assert.match(world,new RegExp(`id:"${id}"`),`existing venue ${id} preserved`);
+assert.match(world,/digDigDig:'Dig! Dig! Dig!'/);
+assert.match(world,/digDigDig:'[^']*(?:alternate|LEFT)[^']*(?:RIGHT|right)[^']*(?:three|3)[^']*COM[^']*Sandshrew[^']*'/i);
+assert.match(world,/digDigDig:\(\)=>window\.LuckyDexDigDigDig/);
+
+const start=html.indexOf('id="digDigDigGame"'),end=html.indexOf('id="dashGame"');
+assert.ok(start>0&&end>start,'Dig shell is before Dash shell');
+const shell=html.slice(start,end);
+for(const id of ['digDigDigGame','digDigDigStage','digDigDigReady','digDigDigStart','digDigDigCountdown','digDigDigPlace','digDigDigTimer','digDigDigRace','digDigDigPlayerLane','digDigDigCpu1Lane','digDigDigCpu2Lane','digDigDigCpu3Lane','digDigDigLeft','digDigDigRight','digDigDigPauseOverlay','digDigDigResume'])assert.match(shell,new RegExp(`id="${id}"`),`missing ${id}`);
+for(const d of ['easy','normal','hard'])assert.match(shell,new RegExp(`data-dig-difficulty="${d}"`));
+assert.match(shell,/arcade\/sprites\/actors\/pokemon\/27\.png/);assert.doesNotMatch(shell,/https?:\/\//);
+for(const asset of ['cave-floor.png','cave-wall.png','cave-floor-dark.png','cave-rock.png'])assert.match(css,new RegExp(asset.replace('.','\\.')));
+assert.match(css,/(?:shallow-water|shore-water)\.png/,'Dig finish uses a local Gen III water tile');
+assert.match(css,/image-rendering:\s*pixelated/);
+const coreAt=html.indexOf('<script src="arcade-dig-dig-dig-core.js"></script>');
+const runtimeAt=html.indexOf('<script src="arcade-dig-dig-dig.js"></script>');
+const worldAt=html.indexOf('<script src="arcade-world.js"></script>');
+assert.ok(coreAt>0&&runtimeAt>coreAt&&worldAt>runtimeAt,'Dig core/runtime load before world');
+assert.match(html,/<link rel="stylesheet" href="arcade-dig-dig-dig\.css" \/>/);
+for(const asset of ['arcade/dash/gen3/cave-floor.png','arcade/dash/gen3/cave-wall.png','arcade/dash/gen3/cave-floor-dark.png','arcade/dash/gen3/cave-rock.png','arcade/dash/gen3/shallow-water.png'])assert.match(sources,new RegExp(asset.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')));
+assert.doesNotMatch(sources,/https?:\/\//);
+console.log('PASS v0.36.0 Dig Kids Club integration and local asset contract');

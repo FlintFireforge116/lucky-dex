@@ -1,0 +1,14 @@
+'use strict';
+const assert=require('node:assert/strict');
+global.LuckyDexCardRarity=require('../app/src/main/assets/card-rarity-v0253.js');
+delete require.cache[require.resolve('../app/src/main/assets/pack-opening-v0160.js')];
+const Pack=require('../app/src/main/assets/pack-opening-v0160.js');
+const dbl=Pack.profileFor({rarity:'Double Rare'}),ultra=Pack.profileFor({rarity:'Ultra Rare'}),ir=Pack.profileFor({rarity:'Illustration Rare'}),sir=Pack.profileFor({rarity:'Special Illustration Rare'}),legend=Pack.profileFor({rarity:'LEGEND'}),gold=Pack.profileFor({rarity:'Gold Rare'});
+assert.ok(dbl.duration<ultra.duration,'Ultra reveal lasts longer than Double Rare');
+assert.ok(ultra.duration<ir.duration,'Illustration Rare has more anticipation than Ultra Rare');
+assert.ok(ir.duration<sir.duration,'SIR exceeds Illustration Rare');
+assert.ok(ir.particles>ultra.particles,'IR has stronger visual flare than Ultra Rare');
+assert.equal(legend.style,'legend');assert.equal(legend.label,'LEGEND PULL');assert.ok(legend.duration>sir.duration,'LEGEND is a major historic chase reveal');
+assert.equal(gold.style,'gold');assert.ok(gold.duration>=legend.duration,'gold jackpot remains top tier');
+const reverse=Pack.profileFor({rarity:'Common',_foil:'Reverse Holo'});assert.equal(reverse.rarityClass,'common');assert.equal(reverse.style,'reverse');
+console.log('PASS v0.34.3 rarity reveal hierarchy');

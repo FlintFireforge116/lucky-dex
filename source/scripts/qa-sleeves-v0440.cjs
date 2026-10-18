@@ -1,0 +1,21 @@
+'use strict';
+const fs=require('node:fs'),path=require('node:path'),assert=require('node:assert/strict');
+const {launch,appPage,root}=require('./recovery-browser.cjs');
+const out=path.join(root,'qa/v0440/ui');fs.mkdirSync(out,{recursive:true});
+(async()=>{const browser=await launch(),errors=[],checks=[];try{
+ for(const viewport of [{width:360,height:800},{width:393,height:873},{width:412,height:915},{width:320,height:640}]){
+  const {page,context}=await appPage(browser,viewport,errors);await page.locator('#titleContinueBtn').click();if(await page.locator('#starterPanel').isVisible())await page.locator('#starterChoices button').first().click();await page.waitForTimeout(1800);await page.evaluate(()=>navigate('profile'));await page.locator('#customiseSummaryCard').click();
+  async function shot(name){await page.waitForTimeout(220);const check=await page.evaluate(()=>({overflow:document.documentElement.scrollWidth>innerWidth,rows:document.querySelectorAll('.customise-sleeve-tile').length,secretLeak:[...document.querySelectorAll('.customise-sleeve-tile')].some(el=>el.querySelector('b')?.textContent==='???'&&el.querySelector('img')),visibleMissing:[...document.querySelectorAll('#profileCustomiseView img')].filter(i=>{const r=i.getBoundingClientRect();return r.bottom>0&&r.top<innerHeight&&!i.closest('dialog:not([open])')&&(!i.complete||!i.naturalWidth)}).map(i=>i.src),dialog:document.getElementById('customisePreviewDialog').open}));checks.push({viewport,name,...check});assert(!check.overflow&&!check.secretLeak&&!check.visibleMissing.length,JSON.stringify(check));await page.screenshot({path:path.join(out,`${viewport.width}-${name}.png`)});}
+  await page.locator('[data-cosmetic-filter="owned"]').click();await shot('free');
+  await page.locator('[data-cosmetic-filter="all"]').click();await page.locator('#customiseSourceFilter').selectOption('Physical TCG');await shot('physical');await page.locator('.customise-sleeve-tile').first().click();await shot('physical-detail');await page.locator('#customisePreviewClose').click();
+  await page.locator('#customiseSourceFilter').selectOption('TCG Pocket');await shot('pocket');await page.locator('.customise-sleeve-tile').first().click();await shot('pocket-detail');await page.locator('#customisePreviewClose').click();
+  await page.locator('#customiseSourceFilter').selectOption('all');await page.locator('[data-cosmetic-filter="locked"]').click();await shot('locked');
+  await page.locator('#customiseCategoryFilter').selectOption('Secrets');await shot('hidden');await page.locator('.customise-sleeve-tile').first().click();await shot('hidden-detail');await page.locator('#customisePreviewClose').click();
+  await page.locator('#customiseCategoryFilter').selectOption('all');await page.locator('[data-cosmetic-filter="all"]').click();await page.locator('#customiseSourceFilter').selectOption('LuckyDex');await shot('originals');await page.locator('[data-sleeve-id="luckydex-default"]').first().click();await shot('default-detail');await page.locator('#customisePreviewClose').click();
+  await page.evaluate(()=>{LuckyDexCosmeticsV0413.unlockSleeve(state,'physical-substitute-and-squirtle','qa:visual:physical');LuckyDexCosmeticsV0413.equipSleeve(state,'physical-substitute-and-squirtle');save();LuckyDexCustomiseV0413.render();});
+  await page.locator('#customiseSourceFilter').selectOption('Physical TCG');await page.locator('[data-sleeve-id="physical-substitute-and-squirtle"]').first().click();await shot('equipped');await page.locator('#customisePreviewClose').click();
+  await page.locator('#customiseSourceFilter').selectOption('all');await page.locator('#customiseSleeveSearch').fill('Charizard');await shot('search');
+  await context.close();
+ }
+ fs.writeFileSync(path.join(out,'results.json'),JSON.stringify({errors,checks,fixtureNote:'Equipped screenshot grants one physical sleeve only in a disposable browser context. Other views show a fresh save.'},null,2));assert.deepEqual(errors,[]);console.log('PASS four phone sizes: free/physical/Pocket/locked/hidden/original/equipped/search and enlarged previews, no overflow/missing visible art or secret leaks');
+}finally{await browser.close();}})().catch(e=>{console.error(e);process.exitCode=1;});

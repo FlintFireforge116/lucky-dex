@@ -1,0 +1,10 @@
+'use strict';
+const assert=require('node:assert/strict'),fs=require('fs'),vm=require('vm'),path=require('path');
+const root=path.join(__dirname,'..');const src=fs.readFileSync(path.join(root,'app/src/main/assets/arcade-world.js'),'utf8');
+assert.match(src,/stadiumKidsClub[\s\S]*23\.png[\s\S]*27\.png[\s\S]*129\.png/);
+assert.match(src,/Aim[^<]*trajectory|aim[^<]*trajectory/i);
+assert.match(src,/alternat[^<]*speed/i);
+assert.match(src,/hold[^<]*landing/i);
+assert.match(src,/if\(id===['"]stadiumKidsClub['"]\)/,'Kids Club gets isolated selector branch');
+assert.match(src,/class="arcade-venue-game" data-venue-game="\$\{g\}"/,'generic venue markup remains present');
+console.log('PASS v0.37.0 Kids Club three-game selector contract');

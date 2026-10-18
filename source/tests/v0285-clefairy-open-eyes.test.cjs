@@ -1,0 +1,12 @@
+const assert=require('node:assert/strict');
+const fs=require('node:fs');
+const path=require('node:path');
+const crypto=require('node:crypto');
+const root=path.resolve(__dirname,'..');
+const sha=b=>crypto.createHash('sha256').update(b).digest('hex');
+const star=fs.readFileSync(path.join(root,'app/src/main/assets/clefairy_pose_star.png'));
+const moon=fs.readFileSync(path.join(root,'app/src/main/assets/clefairy_pose_moon.png'));
+assert.notEqual(sha(star),'4f1fa35d5e65bf0eeaee63cb972f21603e7459383e681067396606a1522c6cf7','star pose should no longer use the closed-eye overlay asset');
+assert.notEqual(sha(moon),'d8fa8e4ad6218816f42a7999316b46a95a3935a56e0ec8a04a2bc81bffbf2b8c','moon pose should no longer use the closed-eye overlay asset');
+assert.ok(star.length>1000&&moon.length>1000,'pose assets should remain non-empty PNGs');
+console.log('PASS v0.28.7 Clefairy open-eye pose assets');

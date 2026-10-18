@@ -1,0 +1,12 @@
+'use strict';
+const assert=require('node:assert/strict');const fs=require('node:fs');const path=require('node:path');const crypto=require('node:crypto');
+const root=path.resolve(__dirname,'..'),gradle=fs.readFileSync(path.join(root,'app/build.gradle'),'utf8'),pkg=JSON.parse(fs.readFileSync(path.join(root,'package.json'),'utf8')),lock=JSON.parse(fs.readFileSync(path.join(root,'package-lock.json'),'utf8')),html=fs.readFileSync(path.join(root,'app/src/main/assets/index.html'),'utf8');
+assert.match(gradle,/applicationId\s+'com\.example\.luckydex'/,'applicationId must remain stable');
+assert.ok(Number((gradle.match(/versionCode\s+(\d+)/)||[])[1])>=250,'Android versionCode must remain at least 250');
+const versionName=(gradle.match(/versionName\s+'([^']+)'/)||[])[1];assert.ok(versionName&&versionName.localeCompare('0.25.0',undefined,{numeric:true})>=0,'Android versionName must not regress below v0.25.0');
+assert.ok(pkg.version.localeCompare('0.25.0',undefined,{numeric:true})>=0,'package version must not regress below v0.25.0');
+assert.equal(lock.version,pkg.version,'package-lock root version must match package');assert.equal(lock.packages[''].version,pkg.version,'package-lock workspace version must match package');
+assert.ok(html.includes(`v${pkg.version}`),'visible app version must match package version');
+assert.match(gradle,/signingConfig\s+signingConfigs\.debug/,'debug build must use permanent signer config');
+const key=fs.readFileSync(path.join(root,'app/luckydex-dev.keystore'));assert.equal(crypto.createHash('sha256').update(key).digest('hex'),'90de91cea469f0eec5fbd69389cf03adc94ced396fa2ec85e2a51d2365a4f6d3');
+console.log('PASS v0.25.0 release/update identity contract');

@@ -1,0 +1,10 @@
+const fs=require('fs'),assert=require('assert');
+const html=fs.readFileSync('app/src/main/assets/index.html','utf8');
+const special=html.indexOf('<script src="arcade-special-stats.js"></script>');
+const battle=html.indexOf('<script src="adventure/adventure-battle.js"></script>');
+const tools=html.indexOf('<script src="adventure/adventure-tools.js"></script>');
+assert.ok(special>=0,'special stat module must be loaded');
+assert.ok(special<battle,'special stat module must load before Adventure battle captures it');
+assert.ok(special<tools,'special stat module must load before Adventure tools captures it');
+assert.equal(html.match(/<script src="arcade-special-stats\.js"><\/script>/g)?.length,1,'special stat module should only be loaded once');
+console.log('PASS v0.55.6 Adventure special stats load before consumers');

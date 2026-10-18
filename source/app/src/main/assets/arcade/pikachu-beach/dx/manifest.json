@@ -1,0 +1,3045 @@
+{
+  "version": 1,
+  "source": "superSurfingPikachuDX_v1_1.zip",
+  "format": "GameMaker data.win",
+  "assets": [
+    {
+      "resource": "s_aeroblast",
+      "kind": "sprite",
+      "local": "arcade/pikachu-beach/dx/sprites/s_aeroblast/000.png",
+      "frameFiles": [
+        "arcade/pikachu-beach/dx/sprites/s_aeroblast/000.png",
+        "arcade/pikachu-beach/dx/sprites/s_aeroblast/001.png",
+        "arcade/pikachu-beach/dx/sprites/s_aeroblast/002.png",
+        "arcade/pikachu-beach/dx/sprites/s_aeroblast/003.png",
+        "arcade/pikachu-beach/dx/sprites/s_aeroblast/004.png",
+        "arcade/pikachu-beach/dx/sprites/s_aeroblast/005.png",
+        "arcade/pikachu-beach/dx/sprites/s_aeroblast/006.png",
+        "arcade/pikachu-beach/dx/sprites/s_aeroblast/007.png",
+        "arcade/pikachu-beach/dx/sprites/s_aeroblast/008.png",
+        "arcade/pikachu-beach/dx/sprites/s_aeroblast/009.png",
+        "arcade/pikachu-beach/dx/sprites/s_aeroblast/010.png",
+        "arcade/pikachu-beach/dx/sprites/s_aeroblast/011.png",
+        "arcade/pikachu-beach/dx/sprites/s_aeroblast/012.png",
+        "arcade/pikachu-beach/dx/sprites/s_aeroblast/013.png",
+        "arcade/pikachu-beach/dx/sprites/s_aeroblast/014.png",
+        "arcade/pikachu-beach/dx/sprites/s_aeroblast/015.png",
+        "arcade/pikachu-beach/dx/sprites/s_aeroblast/016.png",
+        "arcade/pikachu-beach/dx/sprites/s_aeroblast/017.png",
+        "arcade/pikachu-beach/dx/sprites/s_aeroblast/018.png",
+        "arcade/pikachu-beach/dx/sprites/s_aeroblast/019.png",
+        "arcade/pikachu-beach/dx/sprites/s_aeroblast/020.png",
+        "arcade/pikachu-beach/dx/sprites/s_aeroblast/021.png",
+        "arcade/pikachu-beach/dx/sprites/s_aeroblast/022.png",
+        "arcade/pikachu-beach/dx/sprites/s_aeroblast/023.png",
+        "arcade/pikachu-beach/dx/sprites/s_aeroblast/024.png"
+      ],
+      "frames": 25,
+      "width": 8,
+      "height": 70,
+      "required": false
+    },
+    {
+      "resource": "s_aeroblast2",
+      "kind": "sprite",
+      "local": "arcade/pikachu-beach/dx/sprites/s_aeroblast2/000.png",
+      "frameFiles": [
+        "arcade/pikachu-beach/dx/sprites/s_aeroblast2/000.png",
+        "arcade/pikachu-beach/dx/sprites/s_aeroblast2/001.png",
+        "arcade/pikachu-beach/dx/sprites/s_aeroblast2/002.png",
+        "arcade/pikachu-beach/dx/sprites/s_aeroblast2/003.png",
+        "arcade/pikachu-beach/dx/sprites/s_aeroblast2/004.png",
+        "arcade/pikachu-beach/dx/sprites/s_aeroblast2/005.png",
+        "arcade/pikachu-beach/dx/sprites/s_aeroblast2/006.png",
+        "arcade/pikachu-beach/dx/sprites/s_aeroblast2/007.png",
+        "arcade/pikachu-beach/dx/sprites/s_aeroblast2/008.png",
+        "arcade/pikachu-beach/dx/sprites/s_aeroblast2/009.png",
+        "arcade/pikachu-beach/dx/sprites/s_aeroblast2/010.png",
+        "arcade/pikachu-beach/dx/sprites/s_aeroblast2/011.png",
+        "arcade/pikachu-beach/dx/sprites/s_aeroblast2/012.png",
+        "arcade/pikachu-beach/dx/sprites/s_aeroblast2/013.png",
+        "arcade/pikachu-beach/dx/sprites/s_aeroblast2/014.png",
+        "arcade/pikachu-beach/dx/sprites/s_aeroblast2/015.png",
+        "arcade/pikachu-beach/dx/sprites/s_aeroblast2/016.png",
+        "arcade/pikachu-beach/dx/sprites/s_aeroblast2/017.png",
+        "arcade/pikachu-beach/dx/sprites/s_aeroblast2/018.png",
+        "arcade/pikachu-beach/dx/sprites/s_aeroblast2/019.png",
+        "arcade/pikachu-beach/dx/sprites/s_aeroblast2/020.png",
+        "arcade/pikachu-beach/dx/sprites/s_aeroblast2/021.png",
+        "arcade/pikachu-beach/dx/sprites/s_aeroblast2/022.png",
+        "arcade/pikachu-beach/dx/sprites/s_aeroblast2/023.png",
+        "arcade/pikachu-beach/dx/sprites/s_aeroblast2/024.png"
+      ],
+      "frames": 25,
+      "width": 8,
+      "height": 70,
+      "required": false
+    },
+    {
+      "resource": "s_articuno_0",
+      "kind": "sprite",
+      "local": "arcade/pikachu-beach/dx/sprites/s_articuno_0/000.png",
+      "frameFiles": [
+        "arcade/pikachu-beach/dx/sprites/s_articuno_0/000.png",
+        "arcade/pikachu-beach/dx/sprites/s_articuno_0/001.png",
+        "arcade/pikachu-beach/dx/sprites/s_articuno_0/002.png"
+      ],
+      "frames": 3,
+      "width": 68,
+      "height": 60,
+      "required": true
+    },
+    {
+      "resource": "s_articuno_1",
+      "kind": "sprite",
+      "local": "arcade/pikachu-beach/dx/sprites/s_articuno_1/000.png",
+      "frameFiles": [
+        "arcade/pikachu-beach/dx/sprites/s_articuno_1/000.png",
+        "arcade/pikachu-beach/dx/sprites/s_articuno_1/001.png",
+        "arcade/pikachu-beach/dx/sprites/s_articuno_1/002.png"
+      ],
+      "frames": 3,
+      "width": 55,
+      "height": 59,
+      "required": false
+    },
+    {
+      "resource": "s_articuno_2",
+      "kind": "sprite",
+      "local": "arcade/pikachu-beach/dx/sprites/s_articuno_2/000.png",
+      "frameFiles": [
+        "arcade/pikachu-beach/dx/sprites/s_articuno_2/000.png",
+        "arcade/pikachu-beach/dx/sprites/s_articuno_2/001.png",
+        "arcade/pikachu-beach/dx/sprites/s_articuno_2/002.png"
+      ],
+      "frames": 3,
+      "width": 63,
+      "height": 59,
+      "required": false
+    },
+    {
+      "resource": "s_articuno_6",
+      "kind": "sprite",
+      "local": "arcade/pikachu-beach/dx/sprites/s_articuno_6/000.png",
+      "frameFiles": [
+        "arcade/pikachu-beach/dx/sprites/s_articuno_6/000.png",
+        "arcade/pikachu-beach/dx/sprites/s_articuno_6/001.png",
+        "arcade/pikachu-beach/dx/sprites/s_articuno_6/002.png"
+      ],
+      "frames": 3,
+      "width": 63,
+      "height": 53,
+      "required": false
+    },
+    {
+      "resource": "s_articuno_7",
+      "kind": "sprite",
+      "local": "arcade/pikachu-beach/dx/sprites/s_articuno_7/000.png",
+      "frameFiles": [
+        "arcade/pikachu-beach/dx/sprites/s_articuno_7/000.png",
+        "arcade/pikachu-beach/dx/sprites/s_articuno_7/001.png",
+        "arcade/pikachu-beach/dx/sprites/s_articuno_7/002.png"
+      ],
+      "frames": 3,
+      "width": 51,
+      "height": 55,
+      "required": false
+    },
+    {
+      "resource": "s_articuno_atk_0",
+      "kind": "sprite",
+      "local": "arcade/pikachu-beach/dx/sprites/s_articuno_atk_0/000.png",
+      "frameFiles": [
+        "arcade/pikachu-beach/dx/sprites/s_articuno_atk_0/000.png",
+        "arcade/pikachu-beach/dx/sprites/s_articuno_atk_0/001.png"
+      ],
+      "frames": 2,
+      "width": 59,
+      "height": 43,
+      "required": false
+    },
+    {
+      "resource": "s_articuno_atk_1",
+      "kind": "sprite",
+      "local": "arcade/pikachu-beach/dx/sprites/s_articuno_atk_1/000.png",
+      "frameFiles": [
+        "arcade/pikachu-beach/dx/sprites/s_articuno_atk_1/000.png",
+        "arcade/pikachu-beach/dx/sprites/s_articuno_atk_1/001.png"
+      ],
+      "frames": 2,
+      "width": 53,
+      "height": 55,
+      "required": false
+    },
+    {
+      "resource": "s_articuno_atk_2",
+      "kind": "sprite",
+      "local": "arcade/pikachu-beach/dx/sprites/s_articuno_atk_2/000.png",
+      "frameFiles": [
+        "arcade/pikachu-beach/dx/sprites/s_articuno_atk_2/000.png",
+        "arcade/pikachu-beach/dx/sprites/s_articuno_atk_2/001.png"
+      ],
+      "frames": 2,
+      "width": 63,
+      "height": 50,
+      "required": false
+    },
+    {
+      "resource": "s_articuno_atk_6",
+      "kind": "sprite",
+      "local": "arcade/pikachu-beach/dx/sprites/s_articuno_atk_6/000.png",
+      "frameFiles": [
+        "arcade/pikachu-beach/dx/sprites/s_articuno_atk_6/000.png",
+        "arcade/pikachu-beach/dx/sprites/s_articuno_atk_6/001.png"
+      ],
+      "frames": 2,
+      "width": 65,
+      "height": 32,
+      "required": false
+    },
+    {
+      "resource": "s_articuno_atk_7",
+      "kind": "sprite",
+      "local": "arcade/pikachu-beach/dx/sprites/s_articuno_atk_7/000.png",
+      "frameFiles": [
+        "arcade/pikachu-beach/dx/sprites/s_articuno_atk_7/000.png",
+        "arcade/pikachu-beach/dx/sprites/s_articuno_atk_7/001.png"
+      ],
+      "frames": 2,
+      "width": 45,
+      "height": 47,
+      "required": false
+    },
+    {
+      "resource": "s_background",
+      "kind": "sprite",
+      "local": "arcade/pikachu-beach/dx/sprites/s_background/000.png",
+      "frameFiles": [
+        "arcade/pikachu-beach/dx/sprites/s_background/000.png"
+      ],
+      "frames": 1,
+      "width": 480,
+      "height": 272,
+      "required": false
+    },
+    {
+      "resource": "s_boss_hp_bar",
+      "kind": "sprite",
+      "local": "arcade/pikachu-beach/dx/sprites/s_boss_hp_bar/000.png",
+      "frameFiles": [
+        "arcade/pikachu-beach/dx/sprites/s_boss_hp_bar/000.png"
+      ],
+      "frames": 1,
+      "width": 400,
+      "height": 10,
+      "required": false
+    },
+    {
+      "resource": "s_bulletBlast",
+      "kind": "sprite",
+      "local": "arcade/pikachu-beach/dx/sprites/s_bulletBlast/000.png",
+      "frameFiles": [
+        "arcade/pikachu-beach/dx/sprites/s_bulletBlast/000.png",
+        "arcade/pikachu-beach/dx/sprites/s_bulletBlast/001.png"
+      ],
+      "frames": 2,
+      "width": 16,
+      "height": 16,
+      "required": false
+    },
+    {
+      "resource": "s_bullet_small",
+      "kind": "sprite",
+      "local": "arcade/pikachu-beach/dx/sprites/s_bullet_small/000.png",
+      "frameFiles": [
+        "arcade/pikachu-beach/dx/sprites/s_bullet_small/000.png",
+        "arcade/pikachu-beach/dx/sprites/s_bullet_small/001.png",
+        "arcade/pikachu-beach/dx/sprites/s_bullet_small/002.png"
+      ],
+      "frames": 3,
+      "width": 14,
+      "height": 14,
+      "required": false
+    },
+    {
+      "resource": "s_charge",
+      "kind": "sprite",
+      "local": "arcade/pikachu-beach/dx/sprites/s_charge/000.png",
+      "frameFiles": [
+        "arcade/pikachu-beach/dx/sprites/s_charge/000.png",
+        "arcade/pikachu-beach/dx/sprites/s_charge/001.png",
+        "arcade/pikachu-beach/dx/sprites/s_charge/002.png",
+        "arcade/pikachu-beach/dx/sprites/s_charge/003.png",
+        "arcade/pikachu-beach/dx/sprites/s_charge/004.png",
+        "arcade/pikachu-beach/dx/sprites/s_charge/005.png",
+        "arcade/pikachu-beach/dx/sprites/s_charge/006.png",
+        "arcade/pikachu-beach/dx/sprites/s_charge/007.png",
+        "arcade/pikachu-beach/dx/sprites/s_charge/008.png"
+      ],
+      "frames": 9,
+      "width": 64,
+      "height": 64,
+      "required": false
+    },
+    {
+      "resource": "s_clouds1",
+      "kind": "sprite",
+      "local": "arcade/pikachu-beach/dx/sprites/s_clouds1/000.png",
+      "frameFiles": [
+        "arcade/pikachu-beach/dx/sprites/s_clouds1/000.png"
+      ],
+      "frames": 1,
+      "width": 162,
+      "height": 90,
+      "required": false
+    },
+    {
+      "resource": "s_clouds2",
+      "kind": "sprite",
+      "local": "arcade/pikachu-beach/dx/sprites/s_clouds2/000.png",
+      "frameFiles": [
+        "arcade/pikachu-beach/dx/sprites/s_clouds2/000.png"
+      ],
+      "frames": 1,
+      "width": 480,
+      "height": 90,
+      "required": false
+    },
+    {
+      "resource": "s_danger_32",
+      "kind": "sprite",
+      "local": "arcade/pikachu-beach/dx/sprites/s_danger_32/000.png",
+      "frameFiles": [
+        "arcade/pikachu-beach/dx/sprites/s_danger_32/000.png",
+        "arcade/pikachu-beach/dx/sprites/s_danger_32/001.png",
+        "arcade/pikachu-beach/dx/sprites/s_danger_32/002.png",
+        "arcade/pikachu-beach/dx/sprites/s_danger_32/003.png",
+        "arcade/pikachu-beach/dx/sprites/s_danger_32/004.png",
+        "arcade/pikachu-beach/dx/sprites/s_danger_32/005.png",
+        "arcade/pikachu-beach/dx/sprites/s_danger_32/006.png",
+        "arcade/pikachu-beach/dx/sprites/s_danger_32/007.png"
+      ],
+      "frames": 8,
+      "width": 38,
+      "height": 34,
+      "required": false
+    },
+    {
+      "resource": "s_danger_32_2",
+      "kind": "sprite",
+      "local": "arcade/pikachu-beach/dx/sprites/s_danger_32_2/000.png",
+      "frameFiles": [
+        "arcade/pikachu-beach/dx/sprites/s_danger_32_2/000.png",
+        "arcade/pikachu-beach/dx/sprites/s_danger_32_2/001.png",
+        "arcade/pikachu-beach/dx/sprites/s_danger_32_2/002.png",
+        "arcade/pikachu-beach/dx/sprites/s_danger_32_2/003.png",
+        "arcade/pikachu-beach/dx/sprites/s_danger_32_2/004.png",
+        "arcade/pikachu-beach/dx/sprites/s_danger_32_2/005.png",
+        "arcade/pikachu-beach/dx/sprites/s_danger_32_2/006.png",
+        "arcade/pikachu-beach/dx/sprites/s_danger_32_2/007.png",
+        "arcade/pikachu-beach/dx/sprites/s_danger_32_2/008.png"
+      ],
+      "frames": 9,
+      "width": 38,
+      "height": 34,
+      "required": false
+    },
+    {
+      "resource": "s_danger_32_long",
+      "kind": "sprite",
+      "local": "arcade/pikachu-beach/dx/sprites/s_danger_32_long/000.png",
+      "frameFiles": [
+        "arcade/pikachu-beach/dx/sprites/s_danger_32_long/000.png",
+        "arcade/pikachu-beach/dx/sprites/s_danger_32_long/001.png",
+        "arcade/pikachu-beach/dx/sprites/s_danger_32_long/002.png",
+        "arcade/pikachu-beach/dx/sprites/s_danger_32_long/003.png",
+        "arcade/pikachu-beach/dx/sprites/s_danger_32_long/004.png",
+        "arcade/pikachu-beach/dx/sprites/s_danger_32_long/005.png",
+        "arcade/pikachu-beach/dx/sprites/s_danger_32_long/006.png",
+        "arcade/pikachu-beach/dx/sprites/s_danger_32_long/007.png",
+        "arcade/pikachu-beach/dx/sprites/s_danger_32_long/008.png",
+        "arcade/pikachu-beach/dx/sprites/s_danger_32_long/009.png",
+        "arcade/pikachu-beach/dx/sprites/s_danger_32_long/010.png",
+        "arcade/pikachu-beach/dx/sprites/s_danger_32_long/011.png",
+        "arcade/pikachu-beach/dx/sprites/s_danger_32_long/012.png",
+        "arcade/pikachu-beach/dx/sprites/s_danger_32_long/013.png"
+      ],
+      "frames": 14,
+      "width": 273,
+      "height": 36,
+      "required": false
+    },
+    {
+      "resource": "s_danger_64",
+      "kind": "sprite",
+      "local": "arcade/pikachu-beach/dx/sprites/s_danger_64/000.png",
+      "frameFiles": [
+        "arcade/pikachu-beach/dx/sprites/s_danger_64/000.png",
+        "arcade/pikachu-beach/dx/sprites/s_danger_64/001.png",
+        "arcade/pikachu-beach/dx/sprites/s_danger_64/002.png",
+        "arcade/pikachu-beach/dx/sprites/s_danger_64/003.png",
+        "arcade/pikachu-beach/dx/sprites/s_danger_64/004.png",
+        "arcade/pikachu-beach/dx/sprites/s_danger_64/005.png",
+        "arcade/pikachu-beach/dx/sprites/s_danger_64/006.png",
+        "arcade/pikachu-beach/dx/sprites/s_danger_64/007.png"
+      ],
+      "frames": 8,
+      "width": 72,
+      "height": 65,
+      "required": false
+    },
+    {
+      "resource": "s_danger_stripe",
+      "kind": "sprite",
+      "local": "arcade/pikachu-beach/dx/sprites/s_danger_stripe/000.png",
+      "frameFiles": [
+        "arcade/pikachu-beach/dx/sprites/s_danger_stripe/000.png",
+        "arcade/pikachu-beach/dx/sprites/s_danger_stripe/001.png",
+        "arcade/pikachu-beach/dx/sprites/s_danger_stripe/002.png",
+        "arcade/pikachu-beach/dx/sprites/s_danger_stripe/003.png",
+        "arcade/pikachu-beach/dx/sprites/s_danger_stripe/004.png",
+        "arcade/pikachu-beach/dx/sprites/s_danger_stripe/005.png",
+        "arcade/pikachu-beach/dx/sprites/s_danger_stripe/006.png",
+        "arcade/pikachu-beach/dx/sprites/s_danger_stripe/007.png",
+        "arcade/pikachu-beach/dx/sprites/s_danger_stripe/008.png",
+        "arcade/pikachu-beach/dx/sprites/s_danger_stripe/009.png",
+        "arcade/pikachu-beach/dx/sprites/s_danger_stripe/010.png",
+        "arcade/pikachu-beach/dx/sprites/s_danger_stripe/011.png",
+        "arcade/pikachu-beach/dx/sprites/s_danger_stripe/012.png",
+        "arcade/pikachu-beach/dx/sprites/s_danger_stripe/013.png",
+        "arcade/pikachu-beach/dx/sprites/s_danger_stripe/014.png",
+        "arcade/pikachu-beach/dx/sprites/s_danger_stripe/015.png"
+      ],
+      "frames": 16,
+      "width": 32,
+      "height": 20,
+      "required": false
+    },
+    {
+      "resource": "s_danger_symbol",
+      "kind": "sprite",
+      "local": "arcade/pikachu-beach/dx/sprites/s_danger_symbol/000.png",
+      "frameFiles": [
+        "arcade/pikachu-beach/dx/sprites/s_danger_symbol/000.png",
+        "arcade/pikachu-beach/dx/sprites/s_danger_symbol/001.png",
+        "arcade/pikachu-beach/dx/sprites/s_danger_symbol/002.png",
+        "arcade/pikachu-beach/dx/sprites/s_danger_symbol/003.png",
+        "arcade/pikachu-beach/dx/sprites/s_danger_symbol/004.png",
+        "arcade/pikachu-beach/dx/sprites/s_danger_symbol/005.png",
+        "arcade/pikachu-beach/dx/sprites/s_danger_symbol/006.png",
+        "arcade/pikachu-beach/dx/sprites/s_danger_symbol/007.png"
+      ],
+      "frames": 8,
+      "width": 480,
+      "height": 272,
+      "required": false
+    },
+    {
+      "resource": "s_drifloon",
+      "kind": "sprite",
+      "local": "arcade/pikachu-beach/dx/sprites/s_drifloon/000.png",
+      "frameFiles": [
+        "arcade/pikachu-beach/dx/sprites/s_drifloon/000.png",
+        "arcade/pikachu-beach/dx/sprites/s_drifloon/001.png",
+        "arcade/pikachu-beach/dx/sprites/s_drifloon/002.png",
+        "arcade/pikachu-beach/dx/sprites/s_drifloon/003.png"
+      ],
+      "frames": 4,
+      "width": 18,
+      "height": 72,
+      "required": false
+    },
+    {
+      "resource": "s_electroBall",
+      "kind": "sprite",
+      "local": "arcade/pikachu-beach/dx/sprites/s_electroBall/000.png",
+      "frameFiles": [
+        "arcade/pikachu-beach/dx/sprites/s_electroBall/000.png",
+        "arcade/pikachu-beach/dx/sprites/s_electroBall/001.png",
+        "arcade/pikachu-beach/dx/sprites/s_electroBall/002.png",
+        "arcade/pikachu-beach/dx/sprites/s_electroBall/003.png",
+        "arcade/pikachu-beach/dx/sprites/s_electroBall/004.png",
+        "arcade/pikachu-beach/dx/sprites/s_electroBall/005.png",
+        "arcade/pikachu-beach/dx/sprites/s_electroBall/006.png",
+        "arcade/pikachu-beach/dx/sprites/s_electroBall/007.png",
+        "arcade/pikachu-beach/dx/sprites/s_electroBall/008.png",
+        "arcade/pikachu-beach/dx/sprites/s_electroBall/009.png",
+        "arcade/pikachu-beach/dx/sprites/s_electroBall/010.png",
+        "arcade/pikachu-beach/dx/sprites/s_electroBall/011.png",
+        "arcade/pikachu-beach/dx/sprites/s_electroBall/012.png",
+        "arcade/pikachu-beach/dx/sprites/s_electroBall/013.png",
+        "arcade/pikachu-beach/dx/sprites/s_electroBall/014.png",
+        "arcade/pikachu-beach/dx/sprites/s_electroBall/015.png",
+        "arcade/pikachu-beach/dx/sprites/s_electroBall/016.png",
+        "arcade/pikachu-beach/dx/sprites/s_electroBall/017.png",
+        "arcade/pikachu-beach/dx/sprites/s_electroBall/018.png"
+      ],
+      "frames": 19,
+      "width": 28,
+      "height": 28,
+      "required": false
+    },
+    {
+      "resource": "s_electroball_end",
+      "kind": "sprite",
+      "local": "arcade/pikachu-beach/dx/sprites/s_electroball_end/000.png",
+      "frameFiles": [
+        "arcade/pikachu-beach/dx/sprites/s_electroball_end/000.png",
+        "arcade/pikachu-beach/dx/sprites/s_electroball_end/001.png",
+        "arcade/pikachu-beach/dx/sprites/s_electroball_end/002.png",
+        "arcade/pikachu-beach/dx/sprites/s_electroball_end/003.png",
+        "arcade/pikachu-beach/dx/sprites/s_electroball_end/004.png",
+        "arcade/pikachu-beach/dx/sprites/s_electroball_end/005.png"
+      ],
+      "frames": 6,
+      "width": 18,
+      "height": 18,
+      "required": false
+    },
+    {
+      "resource": "s_exlopsion",
+      "kind": "sprite",
+      "local": "arcade/pikachu-beach/dx/sprites/s_exlopsion/000.png",
+      "frameFiles": [
+        "arcade/pikachu-beach/dx/sprites/s_exlopsion/000.png",
+        "arcade/pikachu-beach/dx/sprites/s_exlopsion/001.png",
+        "arcade/pikachu-beach/dx/sprites/s_exlopsion/002.png",
+        "arcade/pikachu-beach/dx/sprites/s_exlopsion/003.png",
+        "arcade/pikachu-beach/dx/sprites/s_exlopsion/004.png",
+        "arcade/pikachu-beach/dx/sprites/s_exlopsion/005.png",
+        "arcade/pikachu-beach/dx/sprites/s_exlopsion/006.png",
+        "arcade/pikachu-beach/dx/sprites/s_exlopsion/007.png"
+      ],
+      "frames": 8,
+      "width": 34,
+      "height": 32,
+      "required": false
+    },
+    {
+      "resource": "s_exlpode",
+      "kind": "sprite",
+      "local": "arcade/pikachu-beach/dx/sprites/s_exlpode/000.png",
+      "frameFiles": [
+        "arcade/pikachu-beach/dx/sprites/s_exlpode/000.png",
+        "arcade/pikachu-beach/dx/sprites/s_exlpode/001.png",
+        "arcade/pikachu-beach/dx/sprites/s_exlpode/002.png",
+        "arcade/pikachu-beach/dx/sprites/s_exlpode/003.png",
+        "arcade/pikachu-beach/dx/sprites/s_exlpode/004.png",
+        "arcade/pikachu-beach/dx/sprites/s_exlpode/005.png",
+        "arcade/pikachu-beach/dx/sprites/s_exlpode/006.png",
+        "arcade/pikachu-beach/dx/sprites/s_exlpode/007.png",
+        "arcade/pikachu-beach/dx/sprites/s_exlpode/008.png",
+        "arcade/pikachu-beach/dx/sprites/s_exlpode/009.png",
+        "arcade/pikachu-beach/dx/sprites/s_exlpode/010.png",
+        "arcade/pikachu-beach/dx/sprites/s_exlpode/011.png",
+        "arcade/pikachu-beach/dx/sprites/s_exlpode/012.png"
+      ],
+      "frames": 13,
+      "width": 32,
+      "height": 31,
+      "required": false
+    },
+    {
+      "resource": "s_fire",
+      "kind": "sprite",
+      "local": "arcade/pikachu-beach/dx/sprites/s_fire/000.png",
+      "frameFiles": [
+        "arcade/pikachu-beach/dx/sprites/s_fire/000.png",
+        "arcade/pikachu-beach/dx/sprites/s_fire/001.png",
+        "arcade/pikachu-beach/dx/sprites/s_fire/002.png",
+        "arcade/pikachu-beach/dx/sprites/s_fire/003.png",
+        "arcade/pikachu-beach/dx/sprites/s_fire/004.png",
+        "arcade/pikachu-beach/dx/sprites/s_fire/005.png",
+        "arcade/pikachu-beach/dx/sprites/s_fire/006.png",
+        "arcade/pikachu-beach/dx/sprites/s_fire/007.png",
+        "arcade/pikachu-beach/dx/sprites/s_fire/008.png",
+        "arcade/pikachu-beach/dx/sprites/s_fire/009.png",
+        "arcade/pikachu-beach/dx/sprites/s_fire/010.png",
+        "arcade/pikachu-beach/dx/sprites/s_fire/011.png",
+        "arcade/pikachu-beach/dx/sprites/s_fire/012.png",
+        "arcade/pikachu-beach/dx/sprites/s_fire/013.png",
+        "arcade/pikachu-beach/dx/sprites/s_fire/014.png",
+        "arcade/pikachu-beach/dx/sprites/s_fire/015.png",
+        "arcade/pikachu-beach/dx/sprites/s_fire/016.png",
+        "arcade/pikachu-beach/dx/sprites/s_fire/017.png",
+        "arcade/pikachu-beach/dx/sprites/s_fire/018.png",
+        "arcade/pikachu-beach/dx/sprites/s_fire/019.png",
+        "arcade/pikachu-beach/dx/sprites/s_fire/020.png",
+        "arcade/pikachu-beach/dx/sprites/s_fire/021.png",
+        "arcade/pikachu-beach/dx/sprites/s_fire/022.png",
+        "arcade/pikachu-beach/dx/sprites/s_fire/023.png"
+      ],
+      "frames": 24,
+      "width": 90,
+      "height": 90,
+      "required": false
+    },
+    {
+      "resource": "s_friend1",
+      "kind": "sprite",
+      "local": "arcade/pikachu-beach/dx/sprites/s_friend1/000.png",
+      "frameFiles": [
+        "arcade/pikachu-beach/dx/sprites/s_friend1/000.png",
+        "arcade/pikachu-beach/dx/sprites/s_friend1/001.png",
+        "arcade/pikachu-beach/dx/sprites/s_friend1/002.png",
+        "arcade/pikachu-beach/dx/sprites/s_friend1/003.png",
+        "arcade/pikachu-beach/dx/sprites/s_friend1/004.png",
+        "arcade/pikachu-beach/dx/sprites/s_friend1/005.png",
+        "arcade/pikachu-beach/dx/sprites/s_friend1/006.png",
+        "arcade/pikachu-beach/dx/sprites/s_friend1/007.png",
+        "arcade/pikachu-beach/dx/sprites/s_friend1/008.png",
+        "arcade/pikachu-beach/dx/sprites/s_friend1/009.png",
+        "arcade/pikachu-beach/dx/sprites/s_friend1/010.png",
+        "arcade/pikachu-beach/dx/sprites/s_friend1/011.png",
+        "arcade/pikachu-beach/dx/sprites/s_friend1/012.png",
+        "arcade/pikachu-beach/dx/sprites/s_friend1/013.png",
+        "arcade/pikachu-beach/dx/sprites/s_friend1/014.png",
+        "arcade/pikachu-beach/dx/sprites/s_friend1/015.png",
+        "arcade/pikachu-beach/dx/sprites/s_friend1/016.png",
+        "arcade/pikachu-beach/dx/sprites/s_friend1/017.png",
+        "arcade/pikachu-beach/dx/sprites/s_friend1/018.png",
+        "arcade/pikachu-beach/dx/sprites/s_friend1/019.png",
+        "arcade/pikachu-beach/dx/sprites/s_friend1/020.png",
+        "arcade/pikachu-beach/dx/sprites/s_friend1/021.png",
+        "arcade/pikachu-beach/dx/sprites/s_friend1/022.png",
+        "arcade/pikachu-beach/dx/sprites/s_friend1/023.png"
+      ],
+      "frames": 24,
+      "width": 13,
+      "height": 32,
+      "required": false
+    },
+    {
+      "resource": "s_friend2",
+      "kind": "sprite",
+      "local": "arcade/pikachu-beach/dx/sprites/s_friend2/000.png",
+      "frameFiles": [
+        "arcade/pikachu-beach/dx/sprites/s_friend2/000.png",
+        "arcade/pikachu-beach/dx/sprites/s_friend2/001.png",
+        "arcade/pikachu-beach/dx/sprites/s_friend2/002.png",
+        "arcade/pikachu-beach/dx/sprites/s_friend2/003.png",
+        "arcade/pikachu-beach/dx/sprites/s_friend2/004.png",
+        "arcade/pikachu-beach/dx/sprites/s_friend2/005.png",
+        "arcade/pikachu-beach/dx/sprites/s_friend2/006.png",
+        "arcade/pikachu-beach/dx/sprites/s_friend2/007.png",
+        "arcade/pikachu-beach/dx/sprites/s_friend2/008.png",
+        "arcade/pikachu-beach/dx/sprites/s_friend2/009.png",
+        "arcade/pikachu-beach/dx/sprites/s_friend2/010.png",
+        "arcade/pikachu-beach/dx/sprites/s_friend2/011.png",
+        "arcade/pikachu-beach/dx/sprites/s_friend2/012.png",
+        "arcade/pikachu-beach/dx/sprites/s_friend2/013.png",
+        "arcade/pikachu-beach/dx/sprites/s_friend2/014.png",
+        "arcade/pikachu-beach/dx/sprites/s_friend2/015.png",
+        "arcade/pikachu-beach/dx/sprites/s_friend2/016.png",
+        "arcade/pikachu-beach/dx/sprites/s_friend2/017.png",
+        "arcade/pikachu-beach/dx/sprites/s_friend2/018.png",
+        "arcade/pikachu-beach/dx/sprites/s_friend2/019.png",
+        "arcade/pikachu-beach/dx/sprites/s_friend2/020.png",
+        "arcade/pikachu-beach/dx/sprites/s_friend2/021.png",
+        "arcade/pikachu-beach/dx/sprites/s_friend2/022.png"
+      ],
+      "frames": 23,
+      "width": 9,
+      "height": 18,
+      "required": false
+    },
+    {
+      "resource": "s_hp",
+      "kind": "sprite",
+      "local": "arcade/pikachu-beach/dx/sprites/s_hp/000.png",
+      "frameFiles": [
+        "arcade/pikachu-beach/dx/sprites/s_hp/000.png",
+        "arcade/pikachu-beach/dx/sprites/s_hp/001.png"
+      ],
+      "frames": 2,
+      "width": 109,
+      "height": 14,
+      "required": false
+    },
+    {
+      "resource": "s_hpBar",
+      "kind": "sprite",
+      "local": "arcade/pikachu-beach/dx/sprites/s_hpBar/000.png",
+      "frameFiles": [
+        "arcade/pikachu-beach/dx/sprites/s_hpBar/000.png"
+      ],
+      "frames": 1,
+      "width": 1,
+      "height": 6,
+      "required": false
+    },
+    {
+      "resource": "s_hpUp",
+      "kind": "sprite",
+      "local": "arcade/pikachu-beach/dx/sprites/s_hpUp/000.png",
+      "frameFiles": [
+        "arcade/pikachu-beach/dx/sprites/s_hpUp/000.png",
+        "arcade/pikachu-beach/dx/sprites/s_hpUp/001.png",
+        "arcade/pikachu-beach/dx/sprites/s_hpUp/002.png",
+        "arcade/pikachu-beach/dx/sprites/s_hpUp/003.png",
+        "arcade/pikachu-beach/dx/sprites/s_hpUp/004.png"
+      ],
+      "frames": 5,
+      "width": 14,
+      "height": 25,
+      "required": true
+    },
+    {
+      "resource": "s_hydropump",
+      "kind": "sprite",
+      "local": "arcade/pikachu-beach/dx/sprites/s_hydropump/000.png",
+      "frameFiles": [
+        "arcade/pikachu-beach/dx/sprites/s_hydropump/000.png",
+        "arcade/pikachu-beach/dx/sprites/s_hydropump/001.png",
+        "arcade/pikachu-beach/dx/sprites/s_hydropump/002.png",
+        "arcade/pikachu-beach/dx/sprites/s_hydropump/003.png"
+      ],
+      "frames": 4,
+      "width": 273,
+      "height": 50,
+      "required": false
+    },
+    {
+      "resource": "s_icePillar",
+      "kind": "sprite",
+      "local": "arcade/pikachu-beach/dx/sprites/s_icePillar/000.png",
+      "frameFiles": [
+        "arcade/pikachu-beach/dx/sprites/s_icePillar/000.png",
+        "arcade/pikachu-beach/dx/sprites/s_icePillar/001.png",
+        "arcade/pikachu-beach/dx/sprites/s_icePillar/002.png",
+        "arcade/pikachu-beach/dx/sprites/s_icePillar/003.png",
+        "arcade/pikachu-beach/dx/sprites/s_icePillar/004.png",
+        "arcade/pikachu-beach/dx/sprites/s_icePillar/005.png",
+        "arcade/pikachu-beach/dx/sprites/s_icePillar/006.png",
+        "arcade/pikachu-beach/dx/sprites/s_icePillar/007.png",
+        "arcade/pikachu-beach/dx/sprites/s_icePillar/008.png",
+        "arcade/pikachu-beach/dx/sprites/s_icePillar/009.png",
+        "arcade/pikachu-beach/dx/sprites/s_icePillar/010.png",
+        "arcade/pikachu-beach/dx/sprites/s_icePillar/011.png",
+        "arcade/pikachu-beach/dx/sprites/s_icePillar/012.png"
+      ],
+      "frames": 13,
+      "width": 64,
+      "height": 148,
+      "required": false
+    },
+    {
+      "resource": "s_icePillar2",
+      "kind": "sprite",
+      "local": "arcade/pikachu-beach/dx/sprites/s_icePillar2/000.png",
+      "frameFiles": [
+        "arcade/pikachu-beach/dx/sprites/s_icePillar2/000.png",
+        "arcade/pikachu-beach/dx/sprites/s_icePillar2/001.png",
+        "arcade/pikachu-beach/dx/sprites/s_icePillar2/002.png",
+        "arcade/pikachu-beach/dx/sprites/s_icePillar2/003.png",
+        "arcade/pikachu-beach/dx/sprites/s_icePillar2/004.png",
+        "arcade/pikachu-beach/dx/sprites/s_icePillar2/005.png",
+        "arcade/pikachu-beach/dx/sprites/s_icePillar2/006.png"
+      ],
+      "frames": 7,
+      "width": 64,
+      "height": 148,
+      "required": false
+    },
+    {
+      "resource": "s_iceRipple",
+      "kind": "sprite",
+      "local": "arcade/pikachu-beach/dx/sprites/s_iceRipple/000.png",
+      "frameFiles": [
+        "arcade/pikachu-beach/dx/sprites/s_iceRipple/000.png",
+        "arcade/pikachu-beach/dx/sprites/s_iceRipple/001.png",
+        "arcade/pikachu-beach/dx/sprites/s_iceRipple/002.png",
+        "arcade/pikachu-beach/dx/sprites/s_iceRipple/003.png"
+      ],
+      "frames": 4,
+      "width": 64,
+      "height": 64,
+      "required": false
+    },
+    {
+      "resource": "s_icebeam",
+      "kind": "sprite",
+      "local": "arcade/pikachu-beach/dx/sprites/s_icebeam/000.png",
+      "frameFiles": [
+        "arcade/pikachu-beach/dx/sprites/s_icebeam/000.png",
+        "arcade/pikachu-beach/dx/sprites/s_icebeam/001.png",
+        "arcade/pikachu-beach/dx/sprites/s_icebeam/002.png",
+        "arcade/pikachu-beach/dx/sprites/s_icebeam/003.png"
+      ],
+      "frames": 4,
+      "width": 6,
+      "height": 14,
+      "required": false
+    },
+    {
+      "resource": "s_icebeam2",
+      "kind": "sprite",
+      "local": "arcade/pikachu-beach/dx/sprites/s_icebeam2/000.png",
+      "frameFiles": [
+        "arcade/pikachu-beach/dx/sprites/s_icebeam2/000.png",
+        "arcade/pikachu-beach/dx/sprites/s_icebeam2/001.png",
+        "arcade/pikachu-beach/dx/sprites/s_icebeam2/002.png",
+        "arcade/pikachu-beach/dx/sprites/s_icebeam2/003.png"
+      ],
+      "frames": 4,
+      "width": 40,
+      "height": 40,
+      "required": false
+    },
+    {
+      "resource": "s_lapras",
+      "kind": "sprite",
+      "local": "arcade/pikachu-beach/dx/sprites/s_lapras/000.png",
+      "frameFiles": [
+        "arcade/pikachu-beach/dx/sprites/s_lapras/000.png",
+        "arcade/pikachu-beach/dx/sprites/s_lapras/001.png",
+        "arcade/pikachu-beach/dx/sprites/s_lapras/002.png",
+        "arcade/pikachu-beach/dx/sprites/s_lapras/003.png",
+        "arcade/pikachu-beach/dx/sprites/s_lapras/004.png",
+        "arcade/pikachu-beach/dx/sprites/s_lapras/005.png",
+        "arcade/pikachu-beach/dx/sprites/s_lapras/006.png"
+      ],
+      "frames": 7,
+      "width": 84,
+      "height": 74,
+      "required": true
+    },
+    {
+      "resource": "s_lightning",
+      "kind": "sprite",
+      "local": "arcade/pikachu-beach/dx/sprites/s_lightning/000.png",
+      "frameFiles": [
+        "arcade/pikachu-beach/dx/sprites/s_lightning/000.png",
+        "arcade/pikachu-beach/dx/sprites/s_lightning/001.png",
+        "arcade/pikachu-beach/dx/sprites/s_lightning/002.png",
+        "arcade/pikachu-beach/dx/sprites/s_lightning/003.png",
+        "arcade/pikachu-beach/dx/sprites/s_lightning/004.png",
+        "arcade/pikachu-beach/dx/sprites/s_lightning/005.png",
+        "arcade/pikachu-beach/dx/sprites/s_lightning/006.png",
+        "arcade/pikachu-beach/dx/sprites/s_lightning/007.png",
+        "arcade/pikachu-beach/dx/sprites/s_lightning/008.png",
+        "arcade/pikachu-beach/dx/sprites/s_lightning/009.png",
+        "arcade/pikachu-beach/dx/sprites/s_lightning/010.png",
+        "arcade/pikachu-beach/dx/sprites/s_lightning/011.png",
+        "arcade/pikachu-beach/dx/sprites/s_lightning/012.png",
+        "arcade/pikachu-beach/dx/sprites/s_lightning/013.png",
+        "arcade/pikachu-beach/dx/sprites/s_lightning/014.png",
+        "arcade/pikachu-beach/dx/sprites/s_lightning/015.png",
+        "arcade/pikachu-beach/dx/sprites/s_lightning/016.png",
+        "arcade/pikachu-beach/dx/sprites/s_lightning/017.png",
+        "arcade/pikachu-beach/dx/sprites/s_lightning/018.png",
+        "arcade/pikachu-beach/dx/sprites/s_lightning/019.png",
+        "arcade/pikachu-beach/dx/sprites/s_lightning/020.png",
+        "arcade/pikachu-beach/dx/sprites/s_lightning/021.png",
+        "arcade/pikachu-beach/dx/sprites/s_lightning/022.png",
+        "arcade/pikachu-beach/dx/sprites/s_lightning/023.png",
+        "arcade/pikachu-beach/dx/sprites/s_lightning/024.png",
+        "arcade/pikachu-beach/dx/sprites/s_lightning/025.png",
+        "arcade/pikachu-beach/dx/sprites/s_lightning/026.png",
+        "arcade/pikachu-beach/dx/sprites/s_lightning/027.png",
+        "arcade/pikachu-beach/dx/sprites/s_lightning/028.png",
+        "arcade/pikachu-beach/dx/sprites/s_lightning/029.png",
+        "arcade/pikachu-beach/dx/sprites/s_lightning/030.png",
+        "arcade/pikachu-beach/dx/sprites/s_lightning/031.png",
+        "arcade/pikachu-beach/dx/sprites/s_lightning/032.png",
+        "arcade/pikachu-beach/dx/sprites/s_lightning/033.png",
+        "arcade/pikachu-beach/dx/sprites/s_lightning/034.png",
+        "arcade/pikachu-beach/dx/sprites/s_lightning/035.png",
+        "arcade/pikachu-beach/dx/sprites/s_lightning/036.png",
+        "arcade/pikachu-beach/dx/sprites/s_lightning/037.png",
+        "arcade/pikachu-beach/dx/sprites/s_lightning/038.png",
+        "arcade/pikachu-beach/dx/sprites/s_lightning/039.png"
+      ],
+      "frames": 40,
+      "width": 534,
+      "height": 88,
+      "required": false
+    },
+    {
+      "resource": "s_lugia_atk1",
+      "kind": "sprite",
+      "local": "arcade/pikachu-beach/dx/sprites/s_lugia_atk1/000.png",
+      "frameFiles": [
+        "arcade/pikachu-beach/dx/sprites/s_lugia_atk1/000.png",
+        "arcade/pikachu-beach/dx/sprites/s_lugia_atk1/001.png",
+        "arcade/pikachu-beach/dx/sprites/s_lugia_atk1/002.png",
+        "arcade/pikachu-beach/dx/sprites/s_lugia_atk1/003.png",
+        "arcade/pikachu-beach/dx/sprites/s_lugia_atk1/004.png",
+        "arcade/pikachu-beach/dx/sprites/s_lugia_atk1/005.png",
+        "arcade/pikachu-beach/dx/sprites/s_lugia_atk1/006.png",
+        "arcade/pikachu-beach/dx/sprites/s_lugia_atk1/007.png",
+        "arcade/pikachu-beach/dx/sprites/s_lugia_atk1/008.png",
+        "arcade/pikachu-beach/dx/sprites/s_lugia_atk1/009.png",
+        "arcade/pikachu-beach/dx/sprites/s_lugia_atk1/010.png",
+        "arcade/pikachu-beach/dx/sprites/s_lugia_atk1/011.png",
+        "arcade/pikachu-beach/dx/sprites/s_lugia_atk1/012.png",
+        "arcade/pikachu-beach/dx/sprites/s_lugia_atk1/013.png",
+        "arcade/pikachu-beach/dx/sprites/s_lugia_atk1/014.png",
+        "arcade/pikachu-beach/dx/sprites/s_lugia_atk1/015.png",
+        "arcade/pikachu-beach/dx/sprites/s_lugia_atk1/016.png",
+        "arcade/pikachu-beach/dx/sprites/s_lugia_atk1/017.png",
+        "arcade/pikachu-beach/dx/sprites/s_lugia_atk1/018.png",
+        "arcade/pikachu-beach/dx/sprites/s_lugia_atk1/019.png",
+        "arcade/pikachu-beach/dx/sprites/s_lugia_atk1/020.png",
+        "arcade/pikachu-beach/dx/sprites/s_lugia_atk1/021.png",
+        "arcade/pikachu-beach/dx/sprites/s_lugia_atk1/022.png",
+        "arcade/pikachu-beach/dx/sprites/s_lugia_atk1/023.png",
+        "arcade/pikachu-beach/dx/sprites/s_lugia_atk1/024.png",
+        "arcade/pikachu-beach/dx/sprites/s_lugia_atk1/025.png"
+      ],
+      "frames": 26,
+      "width": 102,
+      "height": 102,
+      "required": false
+    },
+    {
+      "resource": "s_lugia_idle",
+      "kind": "sprite",
+      "local": "arcade/pikachu-beach/dx/sprites/s_lugia_idle/000.png",
+      "frameFiles": [
+        "arcade/pikachu-beach/dx/sprites/s_lugia_idle/000.png",
+        "arcade/pikachu-beach/dx/sprites/s_lugia_idle/001.png",
+        "arcade/pikachu-beach/dx/sprites/s_lugia_idle/002.png",
+        "arcade/pikachu-beach/dx/sprites/s_lugia_idle/003.png",
+        "arcade/pikachu-beach/dx/sprites/s_lugia_idle/004.png",
+        "arcade/pikachu-beach/dx/sprites/s_lugia_idle/005.png"
+      ],
+      "frames": 6,
+      "width": 116,
+      "height": 63,
+      "required": true
+    },
+    {
+      "resource": "s_lugia_spin",
+      "kind": "sprite",
+      "local": "arcade/pikachu-beach/dx/sprites/s_lugia_spin/000.png",
+      "frameFiles": [
+        "arcade/pikachu-beach/dx/sprites/s_lugia_spin/000.png",
+        "arcade/pikachu-beach/dx/sprites/s_lugia_spin/001.png",
+        "arcade/pikachu-beach/dx/sprites/s_lugia_spin/002.png",
+        "arcade/pikachu-beach/dx/sprites/s_lugia_spin/003.png",
+        "arcade/pikachu-beach/dx/sprites/s_lugia_spin/004.png",
+        "arcade/pikachu-beach/dx/sprites/s_lugia_spin/005.png",
+        "arcade/pikachu-beach/dx/sprites/s_lugia_spin/006.png",
+        "arcade/pikachu-beach/dx/sprites/s_lugia_spin/007.png",
+        "arcade/pikachu-beach/dx/sprites/s_lugia_spin/008.png",
+        "arcade/pikachu-beach/dx/sprites/s_lugia_spin/009.png",
+        "arcade/pikachu-beach/dx/sprites/s_lugia_spin/010.png",
+        "arcade/pikachu-beach/dx/sprites/s_lugia_spin/011.png"
+      ],
+      "frames": 12,
+      "width": 133,
+      "height": 70,
+      "required": false
+    },
+    {
+      "resource": "s_mantine1",
+      "kind": "sprite",
+      "local": "arcade/pikachu-beach/dx/sprites/s_mantine1/000.png",
+      "frameFiles": [
+        "arcade/pikachu-beach/dx/sprites/s_mantine1/000.png",
+        "arcade/pikachu-beach/dx/sprites/s_mantine1/001.png",
+        "arcade/pikachu-beach/dx/sprites/s_mantine1/002.png",
+        "arcade/pikachu-beach/dx/sprites/s_mantine1/003.png",
+        "arcade/pikachu-beach/dx/sprites/s_mantine1/004.png",
+        "arcade/pikachu-beach/dx/sprites/s_mantine1/005.png"
+      ],
+      "frames": 6,
+      "width": 185,
+      "height": 178,
+      "required": false
+    },
+    {
+      "resource": "s_mantine2",
+      "kind": "sprite",
+      "local": "arcade/pikachu-beach/dx/sprites/s_mantine2/000.png",
+      "frameFiles": [
+        "arcade/pikachu-beach/dx/sprites/s_mantine2/000.png",
+        "arcade/pikachu-beach/dx/sprites/s_mantine2/001.png"
+      ],
+      "frames": 2,
+      "width": 45,
+      "height": 43,
+      "required": false
+    },
+    {
+      "resource": "s_mantineBullet",
+      "kind": "sprite",
+      "local": "arcade/pikachu-beach/dx/sprites/s_mantineBullet/000.png",
+      "frameFiles": [
+        "arcade/pikachu-beach/dx/sprites/s_mantineBullet/000.png",
+        "arcade/pikachu-beach/dx/sprites/s_mantineBullet/001.png",
+        "arcade/pikachu-beach/dx/sprites/s_mantineBullet/002.png",
+        "arcade/pikachu-beach/dx/sprites/s_mantineBullet/003.png",
+        "arcade/pikachu-beach/dx/sprites/s_mantineBullet/004.png",
+        "arcade/pikachu-beach/dx/sprites/s_mantineBullet/005.png",
+        "arcade/pikachu-beach/dx/sprites/s_mantineBullet/006.png",
+        "arcade/pikachu-beach/dx/sprites/s_mantineBullet/007.png"
+      ],
+      "frames": 8,
+      "width": 42,
+      "height": 14,
+      "required": false
+    },
+    {
+      "resource": "s_mantineDanger",
+      "kind": "sprite",
+      "local": "arcade/pikachu-beach/dx/sprites/s_mantineDanger/000.png",
+      "frameFiles": [
+        "arcade/pikachu-beach/dx/sprites/s_mantineDanger/000.png",
+        "arcade/pikachu-beach/dx/sprites/s_mantineDanger/001.png",
+        "arcade/pikachu-beach/dx/sprites/s_mantineDanger/002.png",
+        "arcade/pikachu-beach/dx/sprites/s_mantineDanger/003.png"
+      ],
+      "frames": 4,
+      "width": 38,
+      "height": 178,
+      "required": false
+    },
+    {
+      "resource": "s_missle",
+      "kind": "sprite",
+      "local": "arcade/pikachu-beach/dx/sprites/s_missle/000.png",
+      "frameFiles": [
+        "arcade/pikachu-beach/dx/sprites/s_missle/000.png",
+        "arcade/pikachu-beach/dx/sprites/s_missle/001.png",
+        "arcade/pikachu-beach/dx/sprites/s_missle/002.png",
+        "arcade/pikachu-beach/dx/sprites/s_missle/003.png"
+      ],
+      "frames": 4,
+      "width": 11,
+      "height": 8,
+      "required": false
+    },
+    {
+      "resource": "s_missleCase",
+      "kind": "sprite",
+      "local": "arcade/pikachu-beach/dx/sprites/s_missleCase/000.png",
+      "frameFiles": [
+        "arcade/pikachu-beach/dx/sprites/s_missleCase/000.png",
+        "arcade/pikachu-beach/dx/sprites/s_missleCase/001.png",
+        "arcade/pikachu-beach/dx/sprites/s_missleCase/002.png"
+      ],
+      "frames": 3,
+      "width": 22,
+      "height": 22,
+      "required": false
+    },
+    {
+      "resource": "s_missleFire",
+      "kind": "sprite",
+      "local": "arcade/pikachu-beach/dx/sprites/s_missleFire/000.png",
+      "frameFiles": [
+        "arcade/pikachu-beach/dx/sprites/s_missleFire/000.png",
+        "arcade/pikachu-beach/dx/sprites/s_missleFire/001.png",
+        "arcade/pikachu-beach/dx/sprites/s_missleFire/002.png",
+        "arcade/pikachu-beach/dx/sprites/s_missleFire/003.png",
+        "arcade/pikachu-beach/dx/sprites/s_missleFire/004.png",
+        "arcade/pikachu-beach/dx/sprites/s_missleFire/005.png"
+      ],
+      "frames": 6,
+      "width": 25,
+      "height": 22,
+      "required": false
+    },
+    {
+      "resource": "s_moltress_0",
+      "kind": "sprite",
+      "local": "arcade/pikachu-beach/dx/sprites/s_moltress_0/000.png",
+      "frameFiles": [
+        "arcade/pikachu-beach/dx/sprites/s_moltress_0/000.png",
+        "arcade/pikachu-beach/dx/sprites/s_moltress_0/001.png",
+        "arcade/pikachu-beach/dx/sprites/s_moltress_0/002.png"
+      ],
+      "frames": 3,
+      "width": 92,
+      "height": 67,
+      "required": true
+    },
+    {
+      "resource": "s_moltress_1",
+      "kind": "sprite",
+      "local": "arcade/pikachu-beach/dx/sprites/s_moltress_1/000.png",
+      "frameFiles": [
+        "arcade/pikachu-beach/dx/sprites/s_moltress_1/000.png",
+        "arcade/pikachu-beach/dx/sprites/s_moltress_1/001.png",
+        "arcade/pikachu-beach/dx/sprites/s_moltress_1/002.png"
+      ],
+      "frames": 3,
+      "width": 92,
+      "height": 67,
+      "required": false
+    },
+    {
+      "resource": "s_moltress_2",
+      "kind": "sprite",
+      "local": "arcade/pikachu-beach/dx/sprites/s_moltress_2/000.png",
+      "frameFiles": [
+        "arcade/pikachu-beach/dx/sprites/s_moltress_2/000.png",
+        "arcade/pikachu-beach/dx/sprites/s_moltress_2/001.png",
+        "arcade/pikachu-beach/dx/sprites/s_moltress_2/002.png"
+      ],
+      "frames": 3,
+      "width": 92,
+      "height": 67,
+      "required": false
+    },
+    {
+      "resource": "s_moltress_6",
+      "kind": "sprite",
+      "local": "arcade/pikachu-beach/dx/sprites/s_moltress_6/000.png",
+      "frameFiles": [
+        "arcade/pikachu-beach/dx/sprites/s_moltress_6/000.png",
+        "arcade/pikachu-beach/dx/sprites/s_moltress_6/001.png",
+        "arcade/pikachu-beach/dx/sprites/s_moltress_6/002.png"
+      ],
+      "frames": 3,
+      "width": 92,
+      "height": 67,
+      "required": false
+    },
+    {
+      "resource": "s_moltress_7",
+      "kind": "sprite",
+      "local": "arcade/pikachu-beach/dx/sprites/s_moltress_7/000.png",
+      "frameFiles": [
+        "arcade/pikachu-beach/dx/sprites/s_moltress_7/000.png",
+        "arcade/pikachu-beach/dx/sprites/s_moltress_7/001.png",
+        "arcade/pikachu-beach/dx/sprites/s_moltress_7/002.png"
+      ],
+      "frames": 3,
+      "width": 92,
+      "height": 67,
+      "required": false
+    },
+    {
+      "resource": "s_moltress_atk_0",
+      "kind": "sprite",
+      "local": "arcade/pikachu-beach/dx/sprites/s_moltress_atk_0/000.png",
+      "frameFiles": [
+        "arcade/pikachu-beach/dx/sprites/s_moltress_atk_0/000.png"
+      ],
+      "frames": 1,
+      "width": 92,
+      "height": 67,
+      "required": false
+    },
+    {
+      "resource": "s_moltress_atk_1",
+      "kind": "sprite",
+      "local": "arcade/pikachu-beach/dx/sprites/s_moltress_atk_1/000.png",
+      "frameFiles": [
+        "arcade/pikachu-beach/dx/sprites/s_moltress_atk_1/000.png"
+      ],
+      "frames": 1,
+      "width": 92,
+      "height": 67,
+      "required": false
+    },
+    {
+      "resource": "s_moltress_atk_2",
+      "kind": "sprite",
+      "local": "arcade/pikachu-beach/dx/sprites/s_moltress_atk_2/000.png",
+      "frameFiles": [
+        "arcade/pikachu-beach/dx/sprites/s_moltress_atk_2/000.png"
+      ],
+      "frames": 1,
+      "width": 92,
+      "height": 67,
+      "required": false
+    },
+    {
+      "resource": "s_moltress_atk_6",
+      "kind": "sprite",
+      "local": "arcade/pikachu-beach/dx/sprites/s_moltress_atk_6/000.png",
+      "frameFiles": [
+        "arcade/pikachu-beach/dx/sprites/s_moltress_atk_6/000.png"
+      ],
+      "frames": 1,
+      "width": 92,
+      "height": 67,
+      "required": false
+    },
+    {
+      "resource": "s_moltress_atk_7",
+      "kind": "sprite",
+      "local": "arcade/pikachu-beach/dx/sprites/s_moltress_atk_7/000.png",
+      "frameFiles": [
+        "arcade/pikachu-beach/dx/sprites/s_moltress_atk_7/000.png"
+      ],
+      "frames": 1,
+      "width": 92,
+      "height": 67,
+      "required": false
+    },
+    {
+      "resource": "s_natu1",
+      "kind": "sprite",
+      "local": "arcade/pikachu-beach/dx/sprites/s_natu1/000.png",
+      "frameFiles": [
+        "arcade/pikachu-beach/dx/sprites/s_natu1/000.png",
+        "arcade/pikachu-beach/dx/sprites/s_natu1/001.png"
+      ],
+      "frames": 2,
+      "width": 32,
+      "height": 32,
+      "required": true
+    },
+    {
+      "resource": "s_natu2",
+      "kind": "sprite",
+      "local": "arcade/pikachu-beach/dx/sprites/s_natu2/000.png",
+      "frameFiles": [
+        "arcade/pikachu-beach/dx/sprites/s_natu2/000.png",
+        "arcade/pikachu-beach/dx/sprites/s_natu2/001.png"
+      ],
+      "frames": 2,
+      "width": 32,
+      "height": 32,
+      "required": false
+    },
+    {
+      "resource": "s_natu3",
+      "kind": "sprite",
+      "local": "arcade/pikachu-beach/dx/sprites/s_natu3/000.png",
+      "frameFiles": [
+        "arcade/pikachu-beach/dx/sprites/s_natu3/000.png",
+        "arcade/pikachu-beach/dx/sprites/s_natu3/001.png"
+      ],
+      "frames": 2,
+      "width": 32,
+      "height": 32,
+      "required": false
+    },
+    {
+      "resource": "s_natu4",
+      "kind": "sprite",
+      "local": "arcade/pikachu-beach/dx/sprites/s_natu4/000.png",
+      "frameFiles": [
+        "arcade/pikachu-beach/dx/sprites/s_natu4/000.png",
+        "arcade/pikachu-beach/dx/sprites/s_natu4/001.png"
+      ],
+      "frames": 2,
+      "width": 32,
+      "height": 32,
+      "required": false
+    },
+    {
+      "resource": "s_natu5",
+      "kind": "sprite",
+      "local": "arcade/pikachu-beach/dx/sprites/s_natu5/000.png",
+      "frameFiles": [
+        "arcade/pikachu-beach/dx/sprites/s_natu5/000.png",
+        "arcade/pikachu-beach/dx/sprites/s_natu5/001.png"
+      ],
+      "frames": 2,
+      "width": 32,
+      "height": 32,
+      "required": false
+    },
+    {
+      "resource": "s_octillery",
+      "kind": "sprite",
+      "local": "arcade/pikachu-beach/dx/sprites/s_octillery/000.png",
+      "frameFiles": [
+        "arcade/pikachu-beach/dx/sprites/s_octillery/000.png",
+        "arcade/pikachu-beach/dx/sprites/s_octillery/001.png",
+        "arcade/pikachu-beach/dx/sprites/s_octillery/002.png",
+        "arcade/pikachu-beach/dx/sprites/s_octillery/003.png",
+        "arcade/pikachu-beach/dx/sprites/s_octillery/004.png",
+        "arcade/pikachu-beach/dx/sprites/s_octillery/005.png",
+        "arcade/pikachu-beach/dx/sprites/s_octillery/006.png",
+        "arcade/pikachu-beach/dx/sprites/s_octillery/007.png",
+        "arcade/pikachu-beach/dx/sprites/s_octillery/008.png",
+        "arcade/pikachu-beach/dx/sprites/s_octillery/009.png",
+        "arcade/pikachu-beach/dx/sprites/s_octillery/010.png",
+        "arcade/pikachu-beach/dx/sprites/s_octillery/011.png",
+        "arcade/pikachu-beach/dx/sprites/s_octillery/012.png",
+        "arcade/pikachu-beach/dx/sprites/s_octillery/013.png",
+        "arcade/pikachu-beach/dx/sprites/s_octillery/014.png",
+        "arcade/pikachu-beach/dx/sprites/s_octillery/015.png",
+        "arcade/pikachu-beach/dx/sprites/s_octillery/016.png",
+        "arcade/pikachu-beach/dx/sprites/s_octillery/017.png",
+        "arcade/pikachu-beach/dx/sprites/s_octillery/018.png",
+        "arcade/pikachu-beach/dx/sprites/s_octillery/019.png",
+        "arcade/pikachu-beach/dx/sprites/s_octillery/020.png",
+        "arcade/pikachu-beach/dx/sprites/s_octillery/021.png",
+        "arcade/pikachu-beach/dx/sprites/s_octillery/022.png",
+        "arcade/pikachu-beach/dx/sprites/s_octillery/023.png"
+      ],
+      "frames": 24,
+      "width": 32,
+      "height": 31,
+      "required": false
+    },
+    {
+      "resource": "s_p_0",
+      "kind": "sprite",
+      "local": "arcade/pikachu-beach/dx/sprites/s_p_0/000.png",
+      "frameFiles": [
+        "arcade/pikachu-beach/dx/sprites/s_p_0/000.png",
+        "arcade/pikachu-beach/dx/sprites/s_p_0/001.png"
+      ],
+      "frames": 2,
+      "width": 21,
+      "height": 22,
+      "required": false
+    },
+    {
+      "resource": "s_p_a1",
+      "kind": "sprite",
+      "local": "arcade/pikachu-beach/dx/sprites/s_p_a1/000.png",
+      "frameFiles": [
+        "arcade/pikachu-beach/dx/sprites/s_p_a1/000.png",
+        "arcade/pikachu-beach/dx/sprites/s_p_a1/001.png"
+      ],
+      "frames": 2,
+      "width": 20,
+      "height": 25,
+      "required": false
+    },
+    {
+      "resource": "s_p_a2",
+      "kind": "sprite",
+      "local": "arcade/pikachu-beach/dx/sprites/s_p_a2/000.png",
+      "frameFiles": [
+        "arcade/pikachu-beach/dx/sprites/s_p_a2/000.png",
+        "arcade/pikachu-beach/dx/sprites/s_p_a2/001.png"
+      ],
+      "frames": 2,
+      "width": 18,
+      "height": 23,
+      "required": false
+    },
+    {
+      "resource": "s_p_a3",
+      "kind": "sprite",
+      "local": "arcade/pikachu-beach/dx/sprites/s_p_a3/000.png",
+      "frameFiles": [
+        "arcade/pikachu-beach/dx/sprites/s_p_a3/000.png",
+        "arcade/pikachu-beach/dx/sprites/s_p_a3/001.png"
+      ],
+      "frames": 2,
+      "width": 20,
+      "height": 23,
+      "required": false
+    },
+    {
+      "resource": "s_p_d1",
+      "kind": "sprite",
+      "local": "arcade/pikachu-beach/dx/sprites/s_p_d1/000.png",
+      "frameFiles": [
+        "arcade/pikachu-beach/dx/sprites/s_p_d1/000.png",
+        "arcade/pikachu-beach/dx/sprites/s_p_d1/001.png"
+      ],
+      "frames": 2,
+      "width": 21,
+      "height": 23,
+      "required": false
+    },
+    {
+      "resource": "s_p_d2",
+      "kind": "sprite",
+      "local": "arcade/pikachu-beach/dx/sprites/s_p_d2/000.png",
+      "frameFiles": [
+        "arcade/pikachu-beach/dx/sprites/s_p_d2/000.png",
+        "arcade/pikachu-beach/dx/sprites/s_p_d2/001.png"
+      ],
+      "frames": 2,
+      "width": 18,
+      "height": 21,
+      "required": false
+    },
+    {
+      "resource": "s_p_e",
+      "kind": "sprite",
+      "local": "arcade/pikachu-beach/dx/sprites/s_p_e/000.png",
+      "frameFiles": [
+        "arcade/pikachu-beach/dx/sprites/s_p_e/000.png",
+        "arcade/pikachu-beach/dx/sprites/s_p_e/001.png",
+        "arcade/pikachu-beach/dx/sprites/s_p_e/002.png",
+        "arcade/pikachu-beach/dx/sprites/s_p_e/003.png"
+      ],
+      "frames": 4,
+      "width": 27,
+      "height": 20,
+      "required": false
+    },
+    {
+      "resource": "s_p_h",
+      "kind": "sprite",
+      "local": "arcade/pikachu-beach/dx/sprites/s_p_h/000.png",
+      "frameFiles": [
+        "arcade/pikachu-beach/dx/sprites/s_p_h/000.png",
+        "arcade/pikachu-beach/dx/sprites/s_p_h/001.png",
+        "arcade/pikachu-beach/dx/sprites/s_p_h/002.png",
+        "arcade/pikachu-beach/dx/sprites/s_p_h/003.png",
+        "arcade/pikachu-beach/dx/sprites/s_p_h/004.png",
+        "arcade/pikachu-beach/dx/sprites/s_p_h/005.png",
+        "arcade/pikachu-beach/dx/sprites/s_p_h/006.png",
+        "arcade/pikachu-beach/dx/sprites/s_p_h/007.png"
+      ],
+      "frames": 8,
+      "width": 25,
+      "height": 23,
+      "required": false
+    },
+    {
+      "resource": "s_p_i1",
+      "kind": "sprite",
+      "local": "arcade/pikachu-beach/dx/sprites/s_p_i1/000.png",
+      "frameFiles": [
+        "arcade/pikachu-beach/dx/sprites/s_p_i1/000.png",
+        "arcade/pikachu-beach/dx/sprites/s_p_i1/001.png",
+        "arcade/pikachu-beach/dx/sprites/s_p_i1/002.png",
+        "arcade/pikachu-beach/dx/sprites/s_p_i1/003.png",
+        "arcade/pikachu-beach/dx/sprites/s_p_i1/004.png",
+        "arcade/pikachu-beach/dx/sprites/s_p_i1/005.png",
+        "arcade/pikachu-beach/dx/sprites/s_p_i1/006.png",
+        "arcade/pikachu-beach/dx/sprites/s_p_i1/007.png",
+        "arcade/pikachu-beach/dx/sprites/s_p_i1/008.png",
+        "arcade/pikachu-beach/dx/sprites/s_p_i1/009.png"
+      ],
+      "frames": 10,
+      "width": 52,
+      "height": 52,
+      "required": false
+    },
+    {
+      "resource": "s_p_s1",
+      "kind": "sprite",
+      "local": "arcade/pikachu-beach/dx/sprites/s_p_s1/000.png",
+      "frameFiles": [
+        "arcade/pikachu-beach/dx/sprites/s_p_s1/000.png",
+        "arcade/pikachu-beach/dx/sprites/s_p_s1/001.png"
+      ],
+      "frames": 2,
+      "width": 21,
+      "height": 21,
+      "required": false
+    },
+    {
+      "resource": "s_p_sp1",
+      "kind": "sprite",
+      "local": "arcade/pikachu-beach/dx/sprites/s_p_sp1/000.png",
+      "frameFiles": [
+        "arcade/pikachu-beach/dx/sprites/s_p_sp1/000.png",
+        "arcade/pikachu-beach/dx/sprites/s_p_sp1/001.png",
+        "arcade/pikachu-beach/dx/sprites/s_p_sp1/002.png",
+        "arcade/pikachu-beach/dx/sprites/s_p_sp1/003.png"
+      ],
+      "frames": 4,
+      "width": 25,
+      "height": 23,
+      "required": false
+    },
+    {
+      "resource": "s_p_u1",
+      "kind": "sprite",
+      "local": "arcade/pikachu-beach/dx/sprites/s_p_u1/000.png",
+      "frameFiles": [
+        "arcade/pikachu-beach/dx/sprites/s_p_u1/000.png",
+        "arcade/pikachu-beach/dx/sprites/s_p_u1/001.png"
+      ],
+      "frames": 2,
+      "width": 21,
+      "height": 22,
+      "required": false
+    },
+    {
+      "resource": "s_p_u2",
+      "kind": "sprite",
+      "local": "arcade/pikachu-beach/dx/sprites/s_p_u2/000.png",
+      "frameFiles": [
+        "arcade/pikachu-beach/dx/sprites/s_p_u2/000.png",
+        "arcade/pikachu-beach/dx/sprites/s_p_u2/001.png"
+      ],
+      "frames": 2,
+      "width": 21,
+      "height": 22,
+      "required": false
+    },
+    {
+      "resource": "s_p_walk",
+      "kind": "sprite",
+      "local": "arcade/pikachu-beach/dx/sprites/s_p_walk/000.png",
+      "frameFiles": [
+        "arcade/pikachu-beach/dx/sprites/s_p_walk/000.png",
+        "arcade/pikachu-beach/dx/sprites/s_p_walk/001.png"
+      ],
+      "frames": 2,
+      "width": 20,
+      "height": 20,
+      "required": false
+    },
+    {
+      "resource": "s_pelipper1",
+      "kind": "sprite",
+      "local": "arcade/pikachu-beach/dx/sprites/s_pelipper1/000.png",
+      "frameFiles": [
+        "arcade/pikachu-beach/dx/sprites/s_pelipper1/000.png",
+        "arcade/pikachu-beach/dx/sprites/s_pelipper1/001.png",
+        "arcade/pikachu-beach/dx/sprites/s_pelipper1/002.png",
+        "arcade/pikachu-beach/dx/sprites/s_pelipper1/003.png",
+        "arcade/pikachu-beach/dx/sprites/s_pelipper1/004.png",
+        "arcade/pikachu-beach/dx/sprites/s_pelipper1/005.png"
+      ],
+      "frames": 6,
+      "width": 44,
+      "height": 35,
+      "required": false
+    },
+    {
+      "resource": "s_pelipper2",
+      "kind": "sprite",
+      "local": "arcade/pikachu-beach/dx/sprites/s_pelipper2/000.png",
+      "frameFiles": [
+        "arcade/pikachu-beach/dx/sprites/s_pelipper2/000.png",
+        "arcade/pikachu-beach/dx/sprites/s_pelipper2/001.png",
+        "arcade/pikachu-beach/dx/sprites/s_pelipper2/002.png",
+        "arcade/pikachu-beach/dx/sprites/s_pelipper2/003.png",
+        "arcade/pikachu-beach/dx/sprites/s_pelipper2/004.png"
+      ],
+      "frames": 5,
+      "width": 44,
+      "height": 35,
+      "required": false
+    },
+    {
+      "resource": "s_poof",
+      "kind": "sprite",
+      "local": "arcade/pikachu-beach/dx/sprites/s_poof/000.png",
+      "frameFiles": [
+        "arcade/pikachu-beach/dx/sprites/s_poof/000.png",
+        "arcade/pikachu-beach/dx/sprites/s_poof/001.png",
+        "arcade/pikachu-beach/dx/sprites/s_poof/002.png",
+        "arcade/pikachu-beach/dx/sprites/s_poof/003.png",
+        "arcade/pikachu-beach/dx/sprites/s_poof/004.png",
+        "arcade/pikachu-beach/dx/sprites/s_poof/005.png",
+        "arcade/pikachu-beach/dx/sprites/s_poof/006.png",
+        "arcade/pikachu-beach/dx/sprites/s_poof/007.png"
+      ],
+      "frames": 8,
+      "width": 24,
+      "height": 25,
+      "required": false
+    },
+    {
+      "resource": "s_progress",
+      "kind": "sprite",
+      "local": "arcade/pikachu-beach/dx/sprites/s_progress/000.png",
+      "frameFiles": [
+        "arcade/pikachu-beach/dx/sprites/s_progress/000.png"
+      ],
+      "frames": 1,
+      "width": 512,
+      "height": 24,
+      "required": false
+    },
+    {
+      "resource": "s_qwilfish",
+      "kind": "sprite",
+      "local": "arcade/pikachu-beach/dx/sprites/s_qwilfish/000.png",
+      "frameFiles": [
+        "arcade/pikachu-beach/dx/sprites/s_qwilfish/000.png",
+        "arcade/pikachu-beach/dx/sprites/s_qwilfish/001.png",
+        "arcade/pikachu-beach/dx/sprites/s_qwilfish/002.png",
+        "arcade/pikachu-beach/dx/sprites/s_qwilfish/003.png"
+      ],
+      "frames": 4,
+      "width": 36,
+      "height": 25,
+      "required": false
+    },
+    {
+      "resource": "s_ring",
+      "kind": "sprite",
+      "local": "arcade/pikachu-beach/dx/sprites/s_ring/000.png",
+      "frameFiles": [
+        "arcade/pikachu-beach/dx/sprites/s_ring/000.png",
+        "arcade/pikachu-beach/dx/sprites/s_ring/001.png",
+        "arcade/pikachu-beach/dx/sprites/s_ring/002.png",
+        "arcade/pikachu-beach/dx/sprites/s_ring/003.png"
+      ],
+      "frames": 4,
+      "width": 24,
+      "height": 37,
+      "required": true
+    },
+    {
+      "resource": "s_ringShadow",
+      "kind": "sprite",
+      "local": "arcade/pikachu-beach/dx/sprites/s_ringShadow/000.png",
+      "frameFiles": [
+        "arcade/pikachu-beach/dx/sprites/s_ringShadow/000.png"
+      ],
+      "frames": 1,
+      "width": 8,
+      "height": 34,
+      "required": false
+    },
+    {
+      "resource": "s_seaking1",
+      "kind": "sprite",
+      "local": "arcade/pikachu-beach/dx/sprites/s_seaking1/000.png",
+      "frameFiles": [
+        "arcade/pikachu-beach/dx/sprites/s_seaking1/000.png",
+        "arcade/pikachu-beach/dx/sprites/s_seaking1/001.png",
+        "arcade/pikachu-beach/dx/sprites/s_seaking1/002.png"
+      ],
+      "frames": 3,
+      "width": 27,
+      "height": 30,
+      "required": true
+    },
+    {
+      "resource": "s_seaking2",
+      "kind": "sprite",
+      "local": "arcade/pikachu-beach/dx/sprites/s_seaking2/000.png",
+      "frameFiles": [
+        "arcade/pikachu-beach/dx/sprites/s_seaking2/000.png",
+        "arcade/pikachu-beach/dx/sprites/s_seaking2/001.png",
+        "arcade/pikachu-beach/dx/sprites/s_seaking2/002.png"
+      ],
+      "frames": 3,
+      "width": 27,
+      "height": 30,
+      "required": false
+    },
+    {
+      "resource": "s_seaking3",
+      "kind": "sprite",
+      "local": "arcade/pikachu-beach/dx/sprites/s_seaking3/000.png",
+      "frameFiles": [
+        "arcade/pikachu-beach/dx/sprites/s_seaking3/000.png",
+        "arcade/pikachu-beach/dx/sprites/s_seaking3/001.png",
+        "arcade/pikachu-beach/dx/sprites/s_seaking3/002.png"
+      ],
+      "frames": 3,
+      "width": 27,
+      "height": 30,
+      "required": false
+    },
+    {
+      "resource": "s_seaking4",
+      "kind": "sprite",
+      "local": "arcade/pikachu-beach/dx/sprites/s_seaking4/000.png",
+      "frameFiles": [
+        "arcade/pikachu-beach/dx/sprites/s_seaking4/000.png",
+        "arcade/pikachu-beach/dx/sprites/s_seaking4/001.png",
+        "arcade/pikachu-beach/dx/sprites/s_seaking4/002.png"
+      ],
+      "frames": 3,
+      "width": 27,
+      "height": 30,
+      "required": false
+    },
+    {
+      "resource": "s_seaking5",
+      "kind": "sprite",
+      "local": "arcade/pikachu-beach/dx/sprites/s_seaking5/000.png",
+      "frameFiles": [
+        "arcade/pikachu-beach/dx/sprites/s_seaking5/000.png",
+        "arcade/pikachu-beach/dx/sprites/s_seaking5/001.png",
+        "arcade/pikachu-beach/dx/sprites/s_seaking5/002.png"
+      ],
+      "frames": 3,
+      "width": 27,
+      "height": 30,
+      "required": false
+    },
+    {
+      "resource": "s_sharpedo",
+      "kind": "sprite",
+      "local": "arcade/pikachu-beach/dx/sprites/s_sharpedo/000.png",
+      "frameFiles": [
+        "arcade/pikachu-beach/dx/sprites/s_sharpedo/000.png",
+        "arcade/pikachu-beach/dx/sprites/s_sharpedo/001.png",
+        "arcade/pikachu-beach/dx/sprites/s_sharpedo/002.png",
+        "arcade/pikachu-beach/dx/sprites/s_sharpedo/003.png",
+        "arcade/pikachu-beach/dx/sprites/s_sharpedo/004.png",
+        "arcade/pikachu-beach/dx/sprites/s_sharpedo/005.png",
+        "arcade/pikachu-beach/dx/sprites/s_sharpedo/006.png",
+        "arcade/pikachu-beach/dx/sprites/s_sharpedo/007.png",
+        "arcade/pikachu-beach/dx/sprites/s_sharpedo/008.png",
+        "arcade/pikachu-beach/dx/sprites/s_sharpedo/009.png",
+        "arcade/pikachu-beach/dx/sprites/s_sharpedo/010.png",
+        "arcade/pikachu-beach/dx/sprites/s_sharpedo/011.png",
+        "arcade/pikachu-beach/dx/sprites/s_sharpedo/012.png",
+        "arcade/pikachu-beach/dx/sprites/s_sharpedo/013.png",
+        "arcade/pikachu-beach/dx/sprites/s_sharpedo/014.png",
+        "arcade/pikachu-beach/dx/sprites/s_sharpedo/015.png",
+        "arcade/pikachu-beach/dx/sprites/s_sharpedo/016.png",
+        "arcade/pikachu-beach/dx/sprites/s_sharpedo/017.png",
+        "arcade/pikachu-beach/dx/sprites/s_sharpedo/018.png",
+        "arcade/pikachu-beach/dx/sprites/s_sharpedo/019.png",
+        "arcade/pikachu-beach/dx/sprites/s_sharpedo/020.png",
+        "arcade/pikachu-beach/dx/sprites/s_sharpedo/021.png",
+        "arcade/pikachu-beach/dx/sprites/s_sharpedo/022.png",
+        "arcade/pikachu-beach/dx/sprites/s_sharpedo/023.png",
+        "arcade/pikachu-beach/dx/sprites/s_sharpedo/024.png",
+        "arcade/pikachu-beach/dx/sprites/s_sharpedo/025.png",
+        "arcade/pikachu-beach/dx/sprites/s_sharpedo/026.png",
+        "arcade/pikachu-beach/dx/sprites/s_sharpedo/027.png",
+        "arcade/pikachu-beach/dx/sprites/s_sharpedo/028.png",
+        "arcade/pikachu-beach/dx/sprites/s_sharpedo/029.png",
+        "arcade/pikachu-beach/dx/sprites/s_sharpedo/030.png",
+        "arcade/pikachu-beach/dx/sprites/s_sharpedo/031.png",
+        "arcade/pikachu-beach/dx/sprites/s_sharpedo/032.png",
+        "arcade/pikachu-beach/dx/sprites/s_sharpedo/033.png",
+        "arcade/pikachu-beach/dx/sprites/s_sharpedo/034.png",
+        "arcade/pikachu-beach/dx/sprites/s_sharpedo/035.png",
+        "arcade/pikachu-beach/dx/sprites/s_sharpedo/036.png"
+      ],
+      "frames": 37,
+      "width": 52,
+      "height": 44,
+      "required": false
+    },
+    {
+      "resource": "s_spinBonus",
+      "kind": "sprite",
+      "local": "arcade/pikachu-beach/dx/sprites/s_spinBonus/000.png",
+      "frameFiles": [
+        "arcade/pikachu-beach/dx/sprites/s_spinBonus/000.png",
+        "arcade/pikachu-beach/dx/sprites/s_spinBonus/001.png",
+        "arcade/pikachu-beach/dx/sprites/s_spinBonus/002.png",
+        "arcade/pikachu-beach/dx/sprites/s_spinBonus/003.png",
+        "arcade/pikachu-beach/dx/sprites/s_spinBonus/004.png",
+        "arcade/pikachu-beach/dx/sprites/s_spinBonus/005.png",
+        "arcade/pikachu-beach/dx/sprites/s_spinBonus/006.png"
+      ],
+      "frames": 7,
+      "width": 38,
+      "height": 34,
+      "required": false
+    },
+    {
+      "resource": "s_splash3",
+      "kind": "sprite",
+      "local": "arcade/pikachu-beach/dx/sprites/s_splash3/000.png",
+      "frameFiles": [
+        "arcade/pikachu-beach/dx/sprites/s_splash3/000.png",
+        "arcade/pikachu-beach/dx/sprites/s_splash3/001.png",
+        "arcade/pikachu-beach/dx/sprites/s_splash3/002.png",
+        "arcade/pikachu-beach/dx/sprites/s_splash3/003.png",
+        "arcade/pikachu-beach/dx/sprites/s_splash3/004.png",
+        "arcade/pikachu-beach/dx/sprites/s_splash3/005.png",
+        "arcade/pikachu-beach/dx/sprites/s_splash3/006.png",
+        "arcade/pikachu-beach/dx/sprites/s_splash3/007.png",
+        "arcade/pikachu-beach/dx/sprites/s_splash3/008.png",
+        "arcade/pikachu-beach/dx/sprites/s_splash3/009.png"
+      ],
+      "frames": 10,
+      "width": 28,
+      "height": 62,
+      "required": false
+    },
+    {
+      "resource": "s_splash_land",
+      "kind": "sprite",
+      "local": "arcade/pikachu-beach/dx/sprites/s_splash_land/000.png",
+      "frameFiles": [
+        "arcade/pikachu-beach/dx/sprites/s_splash_land/000.png",
+        "arcade/pikachu-beach/dx/sprites/s_splash_land/001.png",
+        "arcade/pikachu-beach/dx/sprites/s_splash_land/002.png",
+        "arcade/pikachu-beach/dx/sprites/s_splash_land/003.png",
+        "arcade/pikachu-beach/dx/sprites/s_splash_land/004.png"
+      ],
+      "frames": 5,
+      "width": 18,
+      "height": 16,
+      "required": false
+    },
+    {
+      "resource": "s_splash_land2",
+      "kind": "sprite",
+      "local": "arcade/pikachu-beach/dx/sprites/s_splash_land2/000.png",
+      "frameFiles": [
+        "arcade/pikachu-beach/dx/sprites/s_splash_land2/000.png",
+        "arcade/pikachu-beach/dx/sprites/s_splash_land2/001.png",
+        "arcade/pikachu-beach/dx/sprites/s_splash_land2/002.png",
+        "arcade/pikachu-beach/dx/sprites/s_splash_land2/003.png",
+        "arcade/pikachu-beach/dx/sprites/s_splash_land2/004.png",
+        "arcade/pikachu-beach/dx/sprites/s_splash_land2/005.png",
+        "arcade/pikachu-beach/dx/sprites/s_splash_land2/006.png",
+        "arcade/pikachu-beach/dx/sprites/s_splash_land2/007.png",
+        "arcade/pikachu-beach/dx/sprites/s_splash_land2/008.png",
+        "arcade/pikachu-beach/dx/sprites/s_splash_land2/009.png"
+      ],
+      "frames": 10,
+      "width": 44,
+      "height": 31,
+      "required": false
+    },
+    {
+      "resource": "s_starmie",
+      "kind": "sprite",
+      "local": "arcade/pikachu-beach/dx/sprites/s_starmie/000.png",
+      "frameFiles": [
+        "arcade/pikachu-beach/dx/sprites/s_starmie/000.png",
+        "arcade/pikachu-beach/dx/sprites/s_starmie/001.png",
+        "arcade/pikachu-beach/dx/sprites/s_starmie/002.png",
+        "arcade/pikachu-beach/dx/sprites/s_starmie/003.png"
+      ],
+      "frames": 4,
+      "width": 40,
+      "height": 40,
+      "required": false
+    },
+    {
+      "resource": "s_tentacle",
+      "kind": "sprite",
+      "local": "arcade/pikachu-beach/dx/sprites/s_tentacle/000.png",
+      "frameFiles": [
+        "arcade/pikachu-beach/dx/sprites/s_tentacle/000.png",
+        "arcade/pikachu-beach/dx/sprites/s_tentacle/001.png",
+        "arcade/pikachu-beach/dx/sprites/s_tentacle/002.png",
+        "arcade/pikachu-beach/dx/sprites/s_tentacle/003.png",
+        "arcade/pikachu-beach/dx/sprites/s_tentacle/004.png",
+        "arcade/pikachu-beach/dx/sprites/s_tentacle/005.png",
+        "arcade/pikachu-beach/dx/sprites/s_tentacle/006.png",
+        "arcade/pikachu-beach/dx/sprites/s_tentacle/007.png",
+        "arcade/pikachu-beach/dx/sprites/s_tentacle/008.png",
+        "arcade/pikachu-beach/dx/sprites/s_tentacle/009.png",
+        "arcade/pikachu-beach/dx/sprites/s_tentacle/010.png",
+        "arcade/pikachu-beach/dx/sprites/s_tentacle/011.png"
+      ],
+      "frames": 12,
+      "width": 42,
+      "height": 98,
+      "required": false
+    },
+    {
+      "resource": "s_tentacruel_idle",
+      "kind": "sprite",
+      "local": "arcade/pikachu-beach/dx/sprites/s_tentacruel_idle/000.png",
+      "frameFiles": [
+        "arcade/pikachu-beach/dx/sprites/s_tentacruel_idle/000.png",
+        "arcade/pikachu-beach/dx/sprites/s_tentacruel_idle/001.png",
+        "arcade/pikachu-beach/dx/sprites/s_tentacruel_idle/002.png",
+        "arcade/pikachu-beach/dx/sprites/s_tentacruel_idle/003.png",
+        "arcade/pikachu-beach/dx/sprites/s_tentacruel_idle/004.png",
+        "arcade/pikachu-beach/dx/sprites/s_tentacruel_idle/005.png",
+        "arcade/pikachu-beach/dx/sprites/s_tentacruel_idle/006.png",
+        "arcade/pikachu-beach/dx/sprites/s_tentacruel_idle/007.png"
+      ],
+      "frames": 8,
+      "width": 147,
+      "height": 205,
+      "required": false
+    },
+    {
+      "resource": "s_toxapex",
+      "kind": "sprite",
+      "local": "arcade/pikachu-beach/dx/sprites/s_toxapex/000.png",
+      "frameFiles": [
+        "arcade/pikachu-beach/dx/sprites/s_toxapex/000.png",
+        "arcade/pikachu-beach/dx/sprites/s_toxapex/001.png",
+        "arcade/pikachu-beach/dx/sprites/s_toxapex/002.png",
+        "arcade/pikachu-beach/dx/sprites/s_toxapex/003.png"
+      ],
+      "frames": 4,
+      "width": 46,
+      "height": 32,
+      "required": false
+    },
+    {
+      "resource": "s_trail",
+      "kind": "sprite",
+      "local": "arcade/pikachu-beach/dx/sprites/s_trail/000.png",
+      "frameFiles": [
+        "arcade/pikachu-beach/dx/sprites/s_trail/000.png",
+        "arcade/pikachu-beach/dx/sprites/s_trail/001.png",
+        "arcade/pikachu-beach/dx/sprites/s_trail/002.png",
+        "arcade/pikachu-beach/dx/sprites/s_trail/003.png",
+        "arcade/pikachu-beach/dx/sprites/s_trail/004.png",
+        "arcade/pikachu-beach/dx/sprites/s_trail/005.png",
+        "arcade/pikachu-beach/dx/sprites/s_trail/006.png"
+      ],
+      "frames": 7,
+      "width": 7,
+      "height": 8,
+      "required": false
+    },
+    {
+      "resource": "s_trail2",
+      "kind": "sprite",
+      "local": "arcade/pikachu-beach/dx/sprites/s_trail2/000.png",
+      "frameFiles": [
+        "arcade/pikachu-beach/dx/sprites/s_trail2/000.png",
+        "arcade/pikachu-beach/dx/sprites/s_trail2/001.png",
+        "arcade/pikachu-beach/dx/sprites/s_trail2/002.png",
+        "arcade/pikachu-beach/dx/sprites/s_trail2/003.png",
+        "arcade/pikachu-beach/dx/sprites/s_trail2/004.png"
+      ],
+      "frames": 5,
+      "width": 11,
+      "height": 36,
+      "required": false
+    },
+    {
+      "resource": "s_trail3",
+      "kind": "sprite",
+      "local": "arcade/pikachu-beach/dx/sprites/s_trail3/000.png",
+      "frameFiles": [
+        "arcade/pikachu-beach/dx/sprites/s_trail3/000.png",
+        "arcade/pikachu-beach/dx/sprites/s_trail3/001.png",
+        "arcade/pikachu-beach/dx/sprites/s_trail3/002.png",
+        "arcade/pikachu-beach/dx/sprites/s_trail3/003.png",
+        "arcade/pikachu-beach/dx/sprites/s_trail3/004.png",
+        "arcade/pikachu-beach/dx/sprites/s_trail3/005.png",
+        "arcade/pikachu-beach/dx/sprites/s_trail3/006.png",
+        "arcade/pikachu-beach/dx/sprites/s_trail3/007.png",
+        "arcade/pikachu-beach/dx/sprites/s_trail3/008.png",
+        "arcade/pikachu-beach/dx/sprites/s_trail3/009.png",
+        "arcade/pikachu-beach/dx/sprites/s_trail3/010.png",
+        "arcade/pikachu-beach/dx/sprites/s_trail3/011.png"
+      ],
+      "frames": 12,
+      "width": 12,
+      "height": 39,
+      "required": false
+    },
+    {
+      "resource": "s_voltorb",
+      "kind": "sprite",
+      "local": "arcade/pikachu-beach/dx/sprites/s_voltorb/000.png",
+      "frameFiles": [
+        "arcade/pikachu-beach/dx/sprites/s_voltorb/000.png"
+      ],
+      "frames": 1,
+      "width": 18,
+      "height": 18,
+      "required": false
+    },
+    {
+      "resource": "s_wailord_bounce1",
+      "kind": "sprite",
+      "local": "arcade/pikachu-beach/dx/sprites/s_wailord_bounce1/000.png",
+      "frameFiles": [
+        "arcade/pikachu-beach/dx/sprites/s_wailord_bounce1/000.png",
+        "arcade/pikachu-beach/dx/sprites/s_wailord_bounce1/001.png",
+        "arcade/pikachu-beach/dx/sprites/s_wailord_bounce1/002.png",
+        "arcade/pikachu-beach/dx/sprites/s_wailord_bounce1/003.png",
+        "arcade/pikachu-beach/dx/sprites/s_wailord_bounce1/004.png",
+        "arcade/pikachu-beach/dx/sprites/s_wailord_bounce1/005.png",
+        "arcade/pikachu-beach/dx/sprites/s_wailord_bounce1/006.png",
+        "arcade/pikachu-beach/dx/sprites/s_wailord_bounce1/007.png",
+        "arcade/pikachu-beach/dx/sprites/s_wailord_bounce1/008.png",
+        "arcade/pikachu-beach/dx/sprites/s_wailord_bounce1/009.png"
+      ],
+      "frames": 10,
+      "width": 214,
+      "height": 206,
+      "required": false
+    },
+    {
+      "resource": "s_wailord_bounce2",
+      "kind": "sprite",
+      "local": "arcade/pikachu-beach/dx/sprites/s_wailord_bounce2/000.png",
+      "frameFiles": [
+        "arcade/pikachu-beach/dx/sprites/s_wailord_bounce2/000.png",
+        "arcade/pikachu-beach/dx/sprites/s_wailord_bounce2/001.png",
+        "arcade/pikachu-beach/dx/sprites/s_wailord_bounce2/002.png",
+        "arcade/pikachu-beach/dx/sprites/s_wailord_bounce2/003.png",
+        "arcade/pikachu-beach/dx/sprites/s_wailord_bounce2/004.png",
+        "arcade/pikachu-beach/dx/sprites/s_wailord_bounce2/005.png",
+        "arcade/pikachu-beach/dx/sprites/s_wailord_bounce2/006.png",
+        "arcade/pikachu-beach/dx/sprites/s_wailord_bounce2/007.png",
+        "arcade/pikachu-beach/dx/sprites/s_wailord_bounce2/008.png",
+        "arcade/pikachu-beach/dx/sprites/s_wailord_bounce2/009.png",
+        "arcade/pikachu-beach/dx/sprites/s_wailord_bounce2/010.png",
+        "arcade/pikachu-beach/dx/sprites/s_wailord_bounce2/011.png",
+        "arcade/pikachu-beach/dx/sprites/s_wailord_bounce2/012.png",
+        "arcade/pikachu-beach/dx/sprites/s_wailord_bounce2/013.png",
+        "arcade/pikachu-beach/dx/sprites/s_wailord_bounce2/014.png",
+        "arcade/pikachu-beach/dx/sprites/s_wailord_bounce2/015.png",
+        "arcade/pikachu-beach/dx/sprites/s_wailord_bounce2/016.png",
+        "arcade/pikachu-beach/dx/sprites/s_wailord_bounce2/017.png",
+        "arcade/pikachu-beach/dx/sprites/s_wailord_bounce2/018.png",
+        "arcade/pikachu-beach/dx/sprites/s_wailord_bounce2/019.png",
+        "arcade/pikachu-beach/dx/sprites/s_wailord_bounce2/020.png",
+        "arcade/pikachu-beach/dx/sprites/s_wailord_bounce2/021.png",
+        "arcade/pikachu-beach/dx/sprites/s_wailord_bounce2/022.png",
+        "arcade/pikachu-beach/dx/sprites/s_wailord_bounce2/023.png",
+        "arcade/pikachu-beach/dx/sprites/s_wailord_bounce2/024.png",
+        "arcade/pikachu-beach/dx/sprites/s_wailord_bounce2/025.png",
+        "arcade/pikachu-beach/dx/sprites/s_wailord_bounce2/026.png",
+        "arcade/pikachu-beach/dx/sprites/s_wailord_bounce2/027.png",
+        "arcade/pikachu-beach/dx/sprites/s_wailord_bounce2/028.png",
+        "arcade/pikachu-beach/dx/sprites/s_wailord_bounce2/029.png",
+        "arcade/pikachu-beach/dx/sprites/s_wailord_bounce2/030.png",
+        "arcade/pikachu-beach/dx/sprites/s_wailord_bounce2/031.png",
+        "arcade/pikachu-beach/dx/sprites/s_wailord_bounce2/032.png",
+        "arcade/pikachu-beach/dx/sprites/s_wailord_bounce2/033.png",
+        "arcade/pikachu-beach/dx/sprites/s_wailord_bounce2/034.png",
+        "arcade/pikachu-beach/dx/sprites/s_wailord_bounce2/035.png",
+        "arcade/pikachu-beach/dx/sprites/s_wailord_bounce2/036.png",
+        "arcade/pikachu-beach/dx/sprites/s_wailord_bounce2/037.png",
+        "arcade/pikachu-beach/dx/sprites/s_wailord_bounce2/038.png",
+        "arcade/pikachu-beach/dx/sprites/s_wailord_bounce2/039.png",
+        "arcade/pikachu-beach/dx/sprites/s_wailord_bounce2/040.png",
+        "arcade/pikachu-beach/dx/sprites/s_wailord_bounce2/041.png",
+        "arcade/pikachu-beach/dx/sprites/s_wailord_bounce2/042.png",
+        "arcade/pikachu-beach/dx/sprites/s_wailord_bounce2/043.png",
+        "arcade/pikachu-beach/dx/sprites/s_wailord_bounce2/044.png",
+        "arcade/pikachu-beach/dx/sprites/s_wailord_bounce2/045.png",
+        "arcade/pikachu-beach/dx/sprites/s_wailord_bounce2/046.png",
+        "arcade/pikachu-beach/dx/sprites/s_wailord_bounce2/047.png",
+        "arcade/pikachu-beach/dx/sprites/s_wailord_bounce2/048.png",
+        "arcade/pikachu-beach/dx/sprites/s_wailord_bounce2/049.png",
+        "arcade/pikachu-beach/dx/sprites/s_wailord_bounce2/050.png",
+        "arcade/pikachu-beach/dx/sprites/s_wailord_bounce2/051.png",
+        "arcade/pikachu-beach/dx/sprites/s_wailord_bounce2/052.png",
+        "arcade/pikachu-beach/dx/sprites/s_wailord_bounce2/053.png",
+        "arcade/pikachu-beach/dx/sprites/s_wailord_bounce2/054.png",
+        "arcade/pikachu-beach/dx/sprites/s_wailord_bounce2/055.png",
+        "arcade/pikachu-beach/dx/sprites/s_wailord_bounce2/056.png",
+        "arcade/pikachu-beach/dx/sprites/s_wailord_bounce2/057.png",
+        "arcade/pikachu-beach/dx/sprites/s_wailord_bounce2/058.png",
+        "arcade/pikachu-beach/dx/sprites/s_wailord_bounce2/059.png",
+        "arcade/pikachu-beach/dx/sprites/s_wailord_bounce2/060.png",
+        "arcade/pikachu-beach/dx/sprites/s_wailord_bounce2/061.png",
+        "arcade/pikachu-beach/dx/sprites/s_wailord_bounce2/062.png",
+        "arcade/pikachu-beach/dx/sprites/s_wailord_bounce2/063.png",
+        "arcade/pikachu-beach/dx/sprites/s_wailord_bounce2/064.png",
+        "arcade/pikachu-beach/dx/sprites/s_wailord_bounce2/065.png",
+        "arcade/pikachu-beach/dx/sprites/s_wailord_bounce2/066.png",
+        "arcade/pikachu-beach/dx/sprites/s_wailord_bounce2/067.png",
+        "arcade/pikachu-beach/dx/sprites/s_wailord_bounce2/068.png",
+        "arcade/pikachu-beach/dx/sprites/s_wailord_bounce2/069.png",
+        "arcade/pikachu-beach/dx/sprites/s_wailord_bounce2/070.png",
+        "arcade/pikachu-beach/dx/sprites/s_wailord_bounce2/071.png",
+        "arcade/pikachu-beach/dx/sprites/s_wailord_bounce2/072.png",
+        "arcade/pikachu-beach/dx/sprites/s_wailord_bounce2/073.png",
+        "arcade/pikachu-beach/dx/sprites/s_wailord_bounce2/074.png",
+        "arcade/pikachu-beach/dx/sprites/s_wailord_bounce2/075.png",
+        "arcade/pikachu-beach/dx/sprites/s_wailord_bounce2/076.png",
+        "arcade/pikachu-beach/dx/sprites/s_wailord_bounce2/077.png",
+        "arcade/pikachu-beach/dx/sprites/s_wailord_bounce2/078.png",
+        "arcade/pikachu-beach/dx/sprites/s_wailord_bounce2/079.png"
+      ],
+      "frames": 80,
+      "width": 217,
+      "height": 960,
+      "required": false
+    },
+    {
+      "resource": "s_wailord_bounce3",
+      "kind": "sprite",
+      "local": "arcade/pikachu-beach/dx/sprites/s_wailord_bounce3/000.png",
+      "frameFiles": [
+        "arcade/pikachu-beach/dx/sprites/s_wailord_bounce3/000.png",
+        "arcade/pikachu-beach/dx/sprites/s_wailord_bounce3/001.png",
+        "arcade/pikachu-beach/dx/sprites/s_wailord_bounce3/002.png",
+        "arcade/pikachu-beach/dx/sprites/s_wailord_bounce3/003.png",
+        "arcade/pikachu-beach/dx/sprites/s_wailord_bounce3/004.png",
+        "arcade/pikachu-beach/dx/sprites/s_wailord_bounce3/005.png",
+        "arcade/pikachu-beach/dx/sprites/s_wailord_bounce3/006.png",
+        "arcade/pikachu-beach/dx/sprites/s_wailord_bounce3/007.png",
+        "arcade/pikachu-beach/dx/sprites/s_wailord_bounce3/008.png",
+        "arcade/pikachu-beach/dx/sprites/s_wailord_bounce3/009.png",
+        "arcade/pikachu-beach/dx/sprites/s_wailord_bounce3/010.png",
+        "arcade/pikachu-beach/dx/sprites/s_wailord_bounce3/011.png",
+        "arcade/pikachu-beach/dx/sprites/s_wailord_bounce3/012.png",
+        "arcade/pikachu-beach/dx/sprites/s_wailord_bounce3/013.png",
+        "arcade/pikachu-beach/dx/sprites/s_wailord_bounce3/014.png",
+        "arcade/pikachu-beach/dx/sprites/s_wailord_bounce3/015.png",
+        "arcade/pikachu-beach/dx/sprites/s_wailord_bounce3/016.png",
+        "arcade/pikachu-beach/dx/sprites/s_wailord_bounce3/017.png",
+        "arcade/pikachu-beach/dx/sprites/s_wailord_bounce3/018.png",
+        "arcade/pikachu-beach/dx/sprites/s_wailord_bounce3/019.png",
+        "arcade/pikachu-beach/dx/sprites/s_wailord_bounce3/020.png",
+        "arcade/pikachu-beach/dx/sprites/s_wailord_bounce3/021.png",
+        "arcade/pikachu-beach/dx/sprites/s_wailord_bounce3/022.png",
+        "arcade/pikachu-beach/dx/sprites/s_wailord_bounce3/023.png",
+        "arcade/pikachu-beach/dx/sprites/s_wailord_bounce3/024.png",
+        "arcade/pikachu-beach/dx/sprites/s_wailord_bounce3/025.png",
+        "arcade/pikachu-beach/dx/sprites/s_wailord_bounce3/026.png",
+        "arcade/pikachu-beach/dx/sprites/s_wailord_bounce3/027.png",
+        "arcade/pikachu-beach/dx/sprites/s_wailord_bounce3/028.png",
+        "arcade/pikachu-beach/dx/sprites/s_wailord_bounce3/029.png",
+        "arcade/pikachu-beach/dx/sprites/s_wailord_bounce3/030.png",
+        "arcade/pikachu-beach/dx/sprites/s_wailord_bounce3/031.png",
+        "arcade/pikachu-beach/dx/sprites/s_wailord_bounce3/032.png",
+        "arcade/pikachu-beach/dx/sprites/s_wailord_bounce3/033.png",
+        "arcade/pikachu-beach/dx/sprites/s_wailord_bounce3/034.png",
+        "arcade/pikachu-beach/dx/sprites/s_wailord_bounce3/035.png",
+        "arcade/pikachu-beach/dx/sprites/s_wailord_bounce3/036.png",
+        "arcade/pikachu-beach/dx/sprites/s_wailord_bounce3/037.png",
+        "arcade/pikachu-beach/dx/sprites/s_wailord_bounce3/038.png",
+        "arcade/pikachu-beach/dx/sprites/s_wailord_bounce3/039.png",
+        "arcade/pikachu-beach/dx/sprites/s_wailord_bounce3/040.png",
+        "arcade/pikachu-beach/dx/sprites/s_wailord_bounce3/041.png",
+        "arcade/pikachu-beach/dx/sprites/s_wailord_bounce3/042.png",
+        "arcade/pikachu-beach/dx/sprites/s_wailord_bounce3/043.png",
+        "arcade/pikachu-beach/dx/sprites/s_wailord_bounce3/044.png",
+        "arcade/pikachu-beach/dx/sprites/s_wailord_bounce3/045.png",
+        "arcade/pikachu-beach/dx/sprites/s_wailord_bounce3/046.png",
+        "arcade/pikachu-beach/dx/sprites/s_wailord_bounce3/047.png",
+        "arcade/pikachu-beach/dx/sprites/s_wailord_bounce3/048.png",
+        "arcade/pikachu-beach/dx/sprites/s_wailord_bounce3/049.png",
+        "arcade/pikachu-beach/dx/sprites/s_wailord_bounce3/050.png",
+        "arcade/pikachu-beach/dx/sprites/s_wailord_bounce3/051.png",
+        "arcade/pikachu-beach/dx/sprites/s_wailord_bounce3/052.png",
+        "arcade/pikachu-beach/dx/sprites/s_wailord_bounce3/053.png",
+        "arcade/pikachu-beach/dx/sprites/s_wailord_bounce3/054.png",
+        "arcade/pikachu-beach/dx/sprites/s_wailord_bounce3/055.png",
+        "arcade/pikachu-beach/dx/sprites/s_wailord_bounce3/056.png",
+        "arcade/pikachu-beach/dx/sprites/s_wailord_bounce3/057.png",
+        "arcade/pikachu-beach/dx/sprites/s_wailord_bounce3/058.png",
+        "arcade/pikachu-beach/dx/sprites/s_wailord_bounce3/059.png",
+        "arcade/pikachu-beach/dx/sprites/s_wailord_bounce3/060.png",
+        "arcade/pikachu-beach/dx/sprites/s_wailord_bounce3/061.png"
+      ],
+      "frames": 62,
+      "width": 217,
+      "height": 960,
+      "required": false
+    },
+    {
+      "resource": "s_wailord_bounce4",
+      "kind": "sprite",
+      "local": "arcade/pikachu-beach/dx/sprites/s_wailord_bounce4/000.png",
+      "frameFiles": [
+        "arcade/pikachu-beach/dx/sprites/s_wailord_bounce4/000.png",
+        "arcade/pikachu-beach/dx/sprites/s_wailord_bounce4/001.png",
+        "arcade/pikachu-beach/dx/sprites/s_wailord_bounce4/002.png",
+        "arcade/pikachu-beach/dx/sprites/s_wailord_bounce4/003.png",
+        "arcade/pikachu-beach/dx/sprites/s_wailord_bounce4/004.png",
+        "arcade/pikachu-beach/dx/sprites/s_wailord_bounce4/005.png",
+        "arcade/pikachu-beach/dx/sprites/s_wailord_bounce4/006.png",
+        "arcade/pikachu-beach/dx/sprites/s_wailord_bounce4/007.png",
+        "arcade/pikachu-beach/dx/sprites/s_wailord_bounce4/008.png",
+        "arcade/pikachu-beach/dx/sprites/s_wailord_bounce4/009.png"
+      ],
+      "frames": 10,
+      "width": 214,
+      "height": 206,
+      "required": false
+    },
+    {
+      "resource": "s_wailord_idle",
+      "kind": "sprite",
+      "local": "arcade/pikachu-beach/dx/sprites/s_wailord_idle/000.png",
+      "frameFiles": [
+        "arcade/pikachu-beach/dx/sprites/s_wailord_idle/000.png",
+        "arcade/pikachu-beach/dx/sprites/s_wailord_idle/001.png",
+        "arcade/pikachu-beach/dx/sprites/s_wailord_idle/002.png",
+        "arcade/pikachu-beach/dx/sprites/s_wailord_idle/003.png"
+      ],
+      "frames": 4,
+      "width": 400,
+      "height": 217,
+      "required": true
+    },
+    {
+      "resource": "s_wailord_watergun",
+      "kind": "sprite",
+      "local": "arcade/pikachu-beach/dx/sprites/s_wailord_watergun/000.png",
+      "frameFiles": [
+        "arcade/pikachu-beach/dx/sprites/s_wailord_watergun/000.png",
+        "arcade/pikachu-beach/dx/sprites/s_wailord_watergun/001.png",
+        "arcade/pikachu-beach/dx/sprites/s_wailord_watergun/002.png",
+        "arcade/pikachu-beach/dx/sprites/s_wailord_watergun/003.png",
+        "arcade/pikachu-beach/dx/sprites/s_wailord_watergun/004.png",
+        "arcade/pikachu-beach/dx/sprites/s_wailord_watergun/005.png",
+        "arcade/pikachu-beach/dx/sprites/s_wailord_watergun/006.png",
+        "arcade/pikachu-beach/dx/sprites/s_wailord_watergun/007.png",
+        "arcade/pikachu-beach/dx/sprites/s_wailord_watergun/008.png",
+        "arcade/pikachu-beach/dx/sprites/s_wailord_watergun/009.png",
+        "arcade/pikachu-beach/dx/sprites/s_wailord_watergun/010.png",
+        "arcade/pikachu-beach/dx/sprites/s_wailord_watergun/011.png",
+        "arcade/pikachu-beach/dx/sprites/s_wailord_watergun/012.png",
+        "arcade/pikachu-beach/dx/sprites/s_wailord_watergun/013.png",
+        "arcade/pikachu-beach/dx/sprites/s_wailord_watergun/014.png",
+        "arcade/pikachu-beach/dx/sprites/s_wailord_watergun/015.png",
+        "arcade/pikachu-beach/dx/sprites/s_wailord_watergun/016.png",
+        "arcade/pikachu-beach/dx/sprites/s_wailord_watergun/017.png",
+        "arcade/pikachu-beach/dx/sprites/s_wailord_watergun/018.png",
+        "arcade/pikachu-beach/dx/sprites/s_wailord_watergun/019.png",
+        "arcade/pikachu-beach/dx/sprites/s_wailord_watergun/020.png",
+        "arcade/pikachu-beach/dx/sprites/s_wailord_watergun/021.png",
+        "arcade/pikachu-beach/dx/sprites/s_wailord_watergun/022.png",
+        "arcade/pikachu-beach/dx/sprites/s_wailord_watergun/023.png",
+        "arcade/pikachu-beach/dx/sprites/s_wailord_watergun/024.png",
+        "arcade/pikachu-beach/dx/sprites/s_wailord_watergun/025.png",
+        "arcade/pikachu-beach/dx/sprites/s_wailord_watergun/026.png",
+        "arcade/pikachu-beach/dx/sprites/s_wailord_watergun/027.png",
+        "arcade/pikachu-beach/dx/sprites/s_wailord_watergun/028.png",
+        "arcade/pikachu-beach/dx/sprites/s_wailord_watergun/029.png",
+        "arcade/pikachu-beach/dx/sprites/s_wailord_watergun/030.png",
+        "arcade/pikachu-beach/dx/sprites/s_wailord_watergun/031.png",
+        "arcade/pikachu-beach/dx/sprites/s_wailord_watergun/032.png",
+        "arcade/pikachu-beach/dx/sprites/s_wailord_watergun/033.png",
+        "arcade/pikachu-beach/dx/sprites/s_wailord_watergun/034.png",
+        "arcade/pikachu-beach/dx/sprites/s_wailord_watergun/035.png",
+        "arcade/pikachu-beach/dx/sprites/s_wailord_watergun/036.png",
+        "arcade/pikachu-beach/dx/sprites/s_wailord_watergun/037.png",
+        "arcade/pikachu-beach/dx/sprites/s_wailord_watergun/038.png",
+        "arcade/pikachu-beach/dx/sprites/s_wailord_watergun/039.png",
+        "arcade/pikachu-beach/dx/sprites/s_wailord_watergun/040.png"
+      ],
+      "frames": 41,
+      "width": 402,
+      "height": 215,
+      "required": false
+    },
+    {
+      "resource": "s_wailord_watergun2",
+      "kind": "sprite",
+      "local": "arcade/pikachu-beach/dx/sprites/s_wailord_watergun2/000.png",
+      "frameFiles": [
+        "arcade/pikachu-beach/dx/sprites/s_wailord_watergun2/000.png",
+        "arcade/pikachu-beach/dx/sprites/s_wailord_watergun2/001.png",
+        "arcade/pikachu-beach/dx/sprites/s_wailord_watergun2/002.png",
+        "arcade/pikachu-beach/dx/sprites/s_wailord_watergun2/003.png",
+        "arcade/pikachu-beach/dx/sprites/s_wailord_watergun2/004.png",
+        "arcade/pikachu-beach/dx/sprites/s_wailord_watergun2/005.png",
+        "arcade/pikachu-beach/dx/sprites/s_wailord_watergun2/006.png",
+        "arcade/pikachu-beach/dx/sprites/s_wailord_watergun2/007.png",
+        "arcade/pikachu-beach/dx/sprites/s_wailord_watergun2/008.png",
+        "arcade/pikachu-beach/dx/sprites/s_wailord_watergun2/009.png",
+        "arcade/pikachu-beach/dx/sprites/s_wailord_watergun2/010.png",
+        "arcade/pikachu-beach/dx/sprites/s_wailord_watergun2/011.png",
+        "arcade/pikachu-beach/dx/sprites/s_wailord_watergun2/012.png",
+        "arcade/pikachu-beach/dx/sprites/s_wailord_watergun2/013.png",
+        "arcade/pikachu-beach/dx/sprites/s_wailord_watergun2/014.png",
+        "arcade/pikachu-beach/dx/sprites/s_wailord_watergun2/015.png",
+        "arcade/pikachu-beach/dx/sprites/s_wailord_watergun2/016.png",
+        "arcade/pikachu-beach/dx/sprites/s_wailord_watergun2/017.png",
+        "arcade/pikachu-beach/dx/sprites/s_wailord_watergun2/018.png",
+        "arcade/pikachu-beach/dx/sprites/s_wailord_watergun2/019.png",
+        "arcade/pikachu-beach/dx/sprites/s_wailord_watergun2/020.png",
+        "arcade/pikachu-beach/dx/sprites/s_wailord_watergun2/021.png",
+        "arcade/pikachu-beach/dx/sprites/s_wailord_watergun2/022.png",
+        "arcade/pikachu-beach/dx/sprites/s_wailord_watergun2/023.png",
+        "arcade/pikachu-beach/dx/sprites/s_wailord_watergun2/024.png",
+        "arcade/pikachu-beach/dx/sprites/s_wailord_watergun2/025.png",
+        "arcade/pikachu-beach/dx/sprites/s_wailord_watergun2/026.png",
+        "arcade/pikachu-beach/dx/sprites/s_wailord_watergun2/027.png",
+        "arcade/pikachu-beach/dx/sprites/s_wailord_watergun2/028.png",
+        "arcade/pikachu-beach/dx/sprites/s_wailord_watergun2/029.png",
+        "arcade/pikachu-beach/dx/sprites/s_wailord_watergun2/030.png",
+        "arcade/pikachu-beach/dx/sprites/s_wailord_watergun2/031.png",
+        "arcade/pikachu-beach/dx/sprites/s_wailord_watergun2/032.png",
+        "arcade/pikachu-beach/dx/sprites/s_wailord_watergun2/033.png",
+        "arcade/pikachu-beach/dx/sprites/s_wailord_watergun2/034.png",
+        "arcade/pikachu-beach/dx/sprites/s_wailord_watergun2/035.png",
+        "arcade/pikachu-beach/dx/sprites/s_wailord_watergun2/036.png",
+        "arcade/pikachu-beach/dx/sprites/s_wailord_watergun2/037.png",
+        "arcade/pikachu-beach/dx/sprites/s_wailord_watergun2/038.png",
+        "arcade/pikachu-beach/dx/sprites/s_wailord_watergun2/039.png",
+        "arcade/pikachu-beach/dx/sprites/s_wailord_watergun2/040.png",
+        "arcade/pikachu-beach/dx/sprites/s_wailord_watergun2/041.png",
+        "arcade/pikachu-beach/dx/sprites/s_wailord_watergun2/042.png",
+        "arcade/pikachu-beach/dx/sprites/s_wailord_watergun2/043.png",
+        "arcade/pikachu-beach/dx/sprites/s_wailord_watergun2/044.png",
+        "arcade/pikachu-beach/dx/sprites/s_wailord_watergun2/045.png",
+        "arcade/pikachu-beach/dx/sprites/s_wailord_watergun2/046.png",
+        "arcade/pikachu-beach/dx/sprites/s_wailord_watergun2/047.png"
+      ],
+      "frames": 48,
+      "width": 1000,
+      "height": 215,
+      "required": false
+    },
+    {
+      "resource": "s_water1",
+      "kind": "sprite",
+      "local": "arcade/pikachu-beach/dx/sprites/s_water1/000.png",
+      "frameFiles": [
+        "arcade/pikachu-beach/dx/sprites/s_water1/000.png",
+        "arcade/pikachu-beach/dx/sprites/s_water1/001.png",
+        "arcade/pikachu-beach/dx/sprites/s_water1/002.png",
+        "arcade/pikachu-beach/dx/sprites/s_water1/003.png",
+        "arcade/pikachu-beach/dx/sprites/s_water1/004.png",
+        "arcade/pikachu-beach/dx/sprites/s_water1/005.png",
+        "arcade/pikachu-beach/dx/sprites/s_water1/006.png",
+        "arcade/pikachu-beach/dx/sprites/s_water1/007.png",
+        "arcade/pikachu-beach/dx/sprites/s_water1/008.png",
+        "arcade/pikachu-beach/dx/sprites/s_water1/009.png",
+        "arcade/pikachu-beach/dx/sprites/s_water1/010.png",
+        "arcade/pikachu-beach/dx/sprites/s_water1/011.png",
+        "arcade/pikachu-beach/dx/sprites/s_water1/012.png",
+        "arcade/pikachu-beach/dx/sprites/s_water1/013.png",
+        "arcade/pikachu-beach/dx/sprites/s_water1/014.png",
+        "arcade/pikachu-beach/dx/sprites/s_water1/015.png",
+        "arcade/pikachu-beach/dx/sprites/s_water1/016.png"
+      ],
+      "frames": 17,
+      "width": 32,
+      "height": 32,
+      "required": false
+    },
+    {
+      "resource": "s_water2",
+      "kind": "sprite",
+      "local": "arcade/pikachu-beach/dx/sprites/s_water2/000.png",
+      "frameFiles": [
+        "arcade/pikachu-beach/dx/sprites/s_water2/000.png",
+        "arcade/pikachu-beach/dx/sprites/s_water2/001.png",
+        "arcade/pikachu-beach/dx/sprites/s_water2/002.png",
+        "arcade/pikachu-beach/dx/sprites/s_water2/003.png",
+        "arcade/pikachu-beach/dx/sprites/s_water2/004.png",
+        "arcade/pikachu-beach/dx/sprites/s_water2/005.png",
+        "arcade/pikachu-beach/dx/sprites/s_water2/006.png",
+        "arcade/pikachu-beach/dx/sprites/s_water2/007.png",
+        "arcade/pikachu-beach/dx/sprites/s_water2/008.png",
+        "arcade/pikachu-beach/dx/sprites/s_water2/009.png",
+        "arcade/pikachu-beach/dx/sprites/s_water2/010.png",
+        "arcade/pikachu-beach/dx/sprites/s_water2/011.png",
+        "arcade/pikachu-beach/dx/sprites/s_water2/012.png",
+        "arcade/pikachu-beach/dx/sprites/s_water2/013.png",
+        "arcade/pikachu-beach/dx/sprites/s_water2/014.png",
+        "arcade/pikachu-beach/dx/sprites/s_water2/015.png",
+        "arcade/pikachu-beach/dx/sprites/s_water2/016.png",
+        "arcade/pikachu-beach/dx/sprites/s_water2/017.png",
+        "arcade/pikachu-beach/dx/sprites/s_water2/018.png",
+        "arcade/pikachu-beach/dx/sprites/s_water2/019.png",
+        "arcade/pikachu-beach/dx/sprites/s_water2/020.png",
+        "arcade/pikachu-beach/dx/sprites/s_water2/021.png"
+      ],
+      "frames": 22,
+      "width": 32,
+      "height": 32,
+      "required": false
+    },
+    {
+      "resource": "s_water3",
+      "kind": "sprite",
+      "local": "arcade/pikachu-beach/dx/sprites/s_water3/000.png",
+      "frameFiles": [
+        "arcade/pikachu-beach/dx/sprites/s_water3/000.png"
+      ],
+      "frames": 1,
+      "width": 32,
+      "height": 32,
+      "required": false
+    },
+    {
+      "resource": "s_water_spout",
+      "kind": "sprite",
+      "local": "arcade/pikachu-beach/dx/sprites/s_water_spout/000.png",
+      "frameFiles": [
+        "arcade/pikachu-beach/dx/sprites/s_water_spout/000.png",
+        "arcade/pikachu-beach/dx/sprites/s_water_spout/001.png",
+        "arcade/pikachu-beach/dx/sprites/s_water_spout/002.png",
+        "arcade/pikachu-beach/dx/sprites/s_water_spout/003.png",
+        "arcade/pikachu-beach/dx/sprites/s_water_spout/004.png",
+        "arcade/pikachu-beach/dx/sprites/s_water_spout/005.png"
+      ],
+      "frames": 6,
+      "width": 24,
+      "height": 24,
+      "required": false
+    },
+    {
+      "resource": "s_water_spout2",
+      "kind": "sprite",
+      "local": "arcade/pikachu-beach/dx/sprites/s_water_spout2/000.png",
+      "frameFiles": [
+        "arcade/pikachu-beach/dx/sprites/s_water_spout2/000.png",
+        "arcade/pikachu-beach/dx/sprites/s_water_spout2/001.png",
+        "arcade/pikachu-beach/dx/sprites/s_water_spout2/002.png",
+        "arcade/pikachu-beach/dx/sprites/s_water_spout2/003.png"
+      ],
+      "frames": 4,
+      "width": 19,
+      "height": 18,
+      "required": false
+    },
+    {
+      "resource": "s_watergun",
+      "kind": "sprite",
+      "local": "arcade/pikachu-beach/dx/sprites/s_watergun/000.png",
+      "frameFiles": [
+        "arcade/pikachu-beach/dx/sprites/s_watergun/000.png",
+        "arcade/pikachu-beach/dx/sprites/s_watergun/001.png",
+        "arcade/pikachu-beach/dx/sprites/s_watergun/002.png",
+        "arcade/pikachu-beach/dx/sprites/s_watergun/003.png",
+        "arcade/pikachu-beach/dx/sprites/s_watergun/004.png",
+        "arcade/pikachu-beach/dx/sprites/s_watergun/005.png",
+        "arcade/pikachu-beach/dx/sprites/s_watergun/006.png",
+        "arcade/pikachu-beach/dx/sprites/s_watergun/007.png",
+        "arcade/pikachu-beach/dx/sprites/s_watergun/008.png"
+      ],
+      "frames": 9,
+      "width": 32,
+      "height": 123,
+      "required": false
+    },
+    {
+      "resource": "s_watergunWarning",
+      "kind": "sprite",
+      "local": "arcade/pikachu-beach/dx/sprites/s_watergunWarning/000.png",
+      "frameFiles": [
+        "arcade/pikachu-beach/dx/sprites/s_watergunWarning/000.png",
+        "arcade/pikachu-beach/dx/sprites/s_watergunWarning/001.png",
+        "arcade/pikachu-beach/dx/sprites/s_watergunWarning/002.png"
+      ],
+      "frames": 3,
+      "width": 400,
+      "height": 217,
+      "required": false
+    },
+    {
+      "resource": "s_watergun_warning",
+      "kind": "sprite",
+      "local": "arcade/pikachu-beach/dx/sprites/s_watergun_warning/000.png",
+      "frameFiles": [
+        "arcade/pikachu-beach/dx/sprites/s_watergun_warning/000.png",
+        "arcade/pikachu-beach/dx/sprites/s_watergun_warning/001.png",
+        "arcade/pikachu-beach/dx/sprites/s_watergun_warning/002.png",
+        "arcade/pikachu-beach/dx/sprites/s_watergun_warning/003.png",
+        "arcade/pikachu-beach/dx/sprites/s_watergun_warning/004.png",
+        "arcade/pikachu-beach/dx/sprites/s_watergun_warning/005.png",
+        "arcade/pikachu-beach/dx/sprites/s_watergun_warning/006.png",
+        "arcade/pikachu-beach/dx/sprites/s_watergun_warning/007.png"
+      ],
+      "frames": 8,
+      "width": 38,
+      "height": 217,
+      "required": false
+    },
+    {
+      "resource": "s_wave",
+      "kind": "sprite",
+      "local": "arcade/pikachu-beach/dx/sprites/s_wave/000.png",
+      "frameFiles": [
+        "arcade/pikachu-beach/dx/sprites/s_wave/000.png",
+        "arcade/pikachu-beach/dx/sprites/s_wave/001.png",
+        "arcade/pikachu-beach/dx/sprites/s_wave/002.png",
+        "arcade/pikachu-beach/dx/sprites/s_wave/003.png",
+        "arcade/pikachu-beach/dx/sprites/s_wave/004.png",
+        "arcade/pikachu-beach/dx/sprites/s_wave/005.png",
+        "arcade/pikachu-beach/dx/sprites/s_wave/006.png",
+        "arcade/pikachu-beach/dx/sprites/s_wave/007.png"
+      ],
+      "frames": 8,
+      "width": 96,
+      "height": 270,
+      "required": true
+    },
+    {
+      "resource": "s_wave1",
+      "kind": "sprite",
+      "local": "arcade/pikachu-beach/dx/sprites/s_wave1/000.png",
+      "frameFiles": [
+        "arcade/pikachu-beach/dx/sprites/s_wave1/000.png",
+        "arcade/pikachu-beach/dx/sprites/s_wave1/001.png",
+        "arcade/pikachu-beach/dx/sprites/s_wave1/002.png",
+        "arcade/pikachu-beach/dx/sprites/s_wave1/003.png",
+        "arcade/pikachu-beach/dx/sprites/s_wave1/004.png",
+        "arcade/pikachu-beach/dx/sprites/s_wave1/005.png"
+      ],
+      "frames": 6,
+      "width": 49,
+      "height": 58,
+      "required": false
+    },
+    {
+      "resource": "s_whilpool",
+      "kind": "sprite",
+      "local": "arcade/pikachu-beach/dx/sprites/s_whilpool/000.png",
+      "frameFiles": [
+        "arcade/pikachu-beach/dx/sprites/s_whilpool/000.png",
+        "arcade/pikachu-beach/dx/sprites/s_whilpool/001.png",
+        "arcade/pikachu-beach/dx/sprites/s_whilpool/002.png",
+        "arcade/pikachu-beach/dx/sprites/s_whilpool/003.png"
+      ],
+      "frames": 4,
+      "width": 68,
+      "height": 66,
+      "required": false
+    },
+    {
+      "resource": "s_wingull",
+      "kind": "sprite",
+      "local": "arcade/pikachu-beach/dx/sprites/s_wingull/000.png",
+      "frameFiles": [
+        "arcade/pikachu-beach/dx/sprites/s_wingull/000.png",
+        "arcade/pikachu-beach/dx/sprites/s_wingull/001.png",
+        "arcade/pikachu-beach/dx/sprites/s_wingull/002.png",
+        "arcade/pikachu-beach/dx/sprites/s_wingull/003.png",
+        "arcade/pikachu-beach/dx/sprites/s_wingull/004.png",
+        "arcade/pikachu-beach/dx/sprites/s_wingull/005.png"
+      ],
+      "frames": 6,
+      "width": 22,
+      "height": 25,
+      "required": true
+    },
+    {
+      "resource": "s_zapdos_0",
+      "kind": "sprite",
+      "local": "arcade/pikachu-beach/dx/sprites/s_zapdos_0/000.png",
+      "frameFiles": [
+        "arcade/pikachu-beach/dx/sprites/s_zapdos_0/000.png",
+        "arcade/pikachu-beach/dx/sprites/s_zapdos_0/001.png",
+        "arcade/pikachu-beach/dx/sprites/s_zapdos_0/002.png"
+      ],
+      "frames": 3,
+      "width": 41,
+      "height": 47,
+      "required": true
+    },
+    {
+      "resource": "s_zapdos_1",
+      "kind": "sprite",
+      "local": "arcade/pikachu-beach/dx/sprites/s_zapdos_1/000.png",
+      "frameFiles": [
+        "arcade/pikachu-beach/dx/sprites/s_zapdos_1/000.png",
+        "arcade/pikachu-beach/dx/sprites/s_zapdos_1/001.png",
+        "arcade/pikachu-beach/dx/sprites/s_zapdos_1/002.png"
+      ],
+      "frames": 3,
+      "width": 41,
+      "height": 42,
+      "required": false
+    },
+    {
+      "resource": "s_zapdos_2",
+      "kind": "sprite",
+      "local": "arcade/pikachu-beach/dx/sprites/s_zapdos_2/000.png",
+      "frameFiles": [
+        "arcade/pikachu-beach/dx/sprites/s_zapdos_2/000.png",
+        "arcade/pikachu-beach/dx/sprites/s_zapdos_2/001.png",
+        "arcade/pikachu-beach/dx/sprites/s_zapdos_2/002.png"
+      ],
+      "frames": 3,
+      "width": 45,
+      "height": 43,
+      "required": false
+    },
+    {
+      "resource": "s_zapdos_6",
+      "kind": "sprite",
+      "local": "arcade/pikachu-beach/dx/sprites/s_zapdos_6/000.png",
+      "frameFiles": [
+        "arcade/pikachu-beach/dx/sprites/s_zapdos_6/000.png",
+        "arcade/pikachu-beach/dx/sprites/s_zapdos_6/001.png",
+        "arcade/pikachu-beach/dx/sprites/s_zapdos_6/002.png"
+      ],
+      "frames": 3,
+      "width": 45,
+      "height": 48,
+      "required": false
+    },
+    {
+      "resource": "s_zapdos_7",
+      "kind": "sprite",
+      "local": "arcade/pikachu-beach/dx/sprites/s_zapdos_7/000.png",
+      "frameFiles": [
+        "arcade/pikachu-beach/dx/sprites/s_zapdos_7/000.png",
+        "arcade/pikachu-beach/dx/sprites/s_zapdos_7/001.png",
+        "arcade/pikachu-beach/dx/sprites/s_zapdos_7/002.png"
+      ],
+      "frames": 3,
+      "width": 46,
+      "height": 49,
+      "required": false
+    },
+    {
+      "resource": "s_zapdos_atk_0",
+      "kind": "sprite",
+      "local": "arcade/pikachu-beach/dx/sprites/s_zapdos_atk_0/000.png",
+      "frameFiles": [
+        "arcade/pikachu-beach/dx/sprites/s_zapdos_atk_0/000.png",
+        "arcade/pikachu-beach/dx/sprites/s_zapdos_atk_0/001.png"
+      ],
+      "frames": 2,
+      "width": 59,
+      "height": 61,
+      "required": false
+    },
+    {
+      "resource": "s_zapdos_atk_1",
+      "kind": "sprite",
+      "local": "arcade/pikachu-beach/dx/sprites/s_zapdos_atk_1/000.png",
+      "frameFiles": [
+        "arcade/pikachu-beach/dx/sprites/s_zapdos_atk_1/000.png",
+        "arcade/pikachu-beach/dx/sprites/s_zapdos_atk_1/001.png"
+      ],
+      "frames": 2,
+      "width": 53,
+      "height": 53,
+      "required": false
+    },
+    {
+      "resource": "s_zapdos_atk_2",
+      "kind": "sprite",
+      "local": "arcade/pikachu-beach/dx/sprites/s_zapdos_atk_2/000.png",
+      "frameFiles": [
+        "arcade/pikachu-beach/dx/sprites/s_zapdos_atk_2/000.png",
+        "arcade/pikachu-beach/dx/sprites/s_zapdos_atk_2/001.png"
+      ],
+      "frames": 2,
+      "width": 65,
+      "height": 45,
+      "required": false
+    },
+    {
+      "resource": "s_zapdos_atk_6",
+      "kind": "sprite",
+      "local": "arcade/pikachu-beach/dx/sprites/s_zapdos_atk_6/000.png",
+      "frameFiles": [
+        "arcade/pikachu-beach/dx/sprites/s_zapdos_atk_6/000.png",
+        "arcade/pikachu-beach/dx/sprites/s_zapdos_atk_6/001.png"
+      ],
+      "frames": 2,
+      "width": 57,
+      "height": 53,
+      "required": false
+    },
+    {
+      "resource": "s_zapdos_atk_7",
+      "kind": "sprite",
+      "local": "arcade/pikachu-beach/dx/sprites/s_zapdos_atk_7/000.png",
+      "frameFiles": [
+        "arcade/pikachu-beach/dx/sprites/s_zapdos_atk_7/000.png",
+        "arcade/pikachu-beach/dx/sprites/s_zapdos_atk_7/001.png"
+      ],
+      "frames": 2,
+      "width": 58,
+      "height": 56,
+      "required": false
+    },
+    {
+      "resource": "surfingpika",
+      "kind": "sprite",
+      "local": "arcade/pikachu-beach/dx/sprites/surfingpika/000.png",
+      "frameFiles": [
+        "arcade/pikachu-beach/dx/sprites/surfingpika/000.png",
+        "arcade/pikachu-beach/dx/sprites/surfingpika/001.png",
+        "arcade/pikachu-beach/dx/sprites/surfingpika/002.png",
+        "arcade/pikachu-beach/dx/sprites/surfingpika/003.png",
+        "arcade/pikachu-beach/dx/sprites/surfingpika/004.png",
+        "arcade/pikachu-beach/dx/sprites/surfingpika/005.png",
+        "arcade/pikachu-beach/dx/sprites/surfingpika/006.png",
+        "arcade/pikachu-beach/dx/sprites/surfingpika/007.png",
+        "arcade/pikachu-beach/dx/sprites/surfingpika/008.png"
+      ],
+      "frames": 9,
+      "width": 256,
+      "height": 256,
+      "required": true
+    }
+  ],
+  "audio": [
+    {
+      "resource": "a_aeroblast",
+      "kind": "audio",
+      "local": "arcade/pikachu-beach/dx/audio/a_aeroblast.wav",
+      "bytes": 89366,
+      "required": false
+    },
+    {
+      "resource": "a_befriend",
+      "kind": "audio",
+      "local": "arcade/pikachu-beach/dx/audio/a_befriend.wav",
+      "bytes": 66722,
+      "required": true
+    },
+    {
+      "resource": "a_bird",
+      "kind": "audio",
+      "local": "arcade/pikachu-beach/dx/audio/a_bird.wav",
+      "bytes": 40112,
+      "required": false
+    },
+    {
+      "resource": "a_bonus",
+      "kind": "audio",
+      "local": "arcade/pikachu-beach/dx/audio/a_bonus.wav",
+      "bytes": 58862,
+      "required": false
+    },
+    {
+      "resource": "a_bounce1",
+      "kind": "audio",
+      "local": "arcade/pikachu-beach/dx/audio/a_bounce1.wav",
+      "bytes": 42826,
+      "required": false
+    },
+    {
+      "resource": "a_bounce2",
+      "kind": "audio",
+      "local": "arcade/pikachu-beach/dx/audio/a_bounce2.wav",
+      "bytes": 54820,
+      "required": false
+    },
+    {
+      "resource": "a_brine",
+      "kind": "audio",
+      "local": "arcade/pikachu-beach/dx/audio/a_brine.wav",
+      "bytes": 41100,
+      "required": false
+    },
+    {
+      "resource": "a_collect",
+      "kind": "audio",
+      "local": "arcade/pikachu-beach/dx/audio/a_collect.wav",
+      "bytes": 66480,
+      "required": true
+    },
+    {
+      "resource": "a_explode",
+      "kind": "audio",
+      "local": "arcade/pikachu-beach/dx/audio/a_explode.wav",
+      "bytes": 53928,
+      "required": false
+    },
+    {
+      "resource": "a_explosion1",
+      "kind": "audio",
+      "local": "arcade/pikachu-beach/dx/audio/a_explosion1.wav",
+      "bytes": 288264,
+      "required": false
+    },
+    {
+      "resource": "a_explosion2",
+      "kind": "audio",
+      "local": "arcade/pikachu-beach/dx/audio/a_explosion2.wav",
+      "bytes": 78750,
+      "required": false
+    },
+    {
+      "resource": "a_fire",
+      "kind": "audio",
+      "local": "arcade/pikachu-beach/dx/audio/a_fire.wav",
+      "bytes": 89840,
+      "required": false
+    },
+    {
+      "resource": "a_gyarados",
+      "kind": "audio",
+      "local": "arcade/pikachu-beach/dx/audio/a_gyarados.wav",
+      "bytes": 103972,
+      "required": false
+    },
+    {
+      "resource": "a_hit1",
+      "kind": "audio",
+      "local": "arcade/pikachu-beach/dx/audio/a_hit1.wav",
+      "bytes": 27912,
+      "required": false
+    },
+    {
+      "resource": "a_hit2",
+      "kind": "audio",
+      "local": "arcade/pikachu-beach/dx/audio/a_hit2.wav",
+      "bytes": 32596,
+      "required": false
+    },
+    {
+      "resource": "a_hit3",
+      "kind": "audio",
+      "local": "arcade/pikachu-beach/dx/audio/a_hit3.wav",
+      "bytes": 21708,
+      "required": false
+    },
+    {
+      "resource": "a_hit4",
+      "kind": "audio",
+      "local": "arcade/pikachu-beach/dx/audio/a_hit4.wav",
+      "bytes": 8948,
+      "required": false
+    },
+    {
+      "resource": "a_hydropump",
+      "kind": "audio",
+      "local": "arcade/pikachu-beach/dx/audio/a_hydropump.wav",
+      "bytes": 220190,
+      "required": false
+    },
+    {
+      "resource": "a_iceDie",
+      "kind": "audio",
+      "local": "arcade/pikachu-beach/dx/audio/a_iceDie.wav",
+      "bytes": 35566,
+      "required": false
+    },
+    {
+      "resource": "a_iceSpawn",
+      "kind": "audio",
+      "local": "arcade/pikachu-beach/dx/audio/a_iceSpawn.wav",
+      "bytes": 68930,
+      "required": false
+    },
+    {
+      "resource": "a_ironTail",
+      "kind": "audio",
+      "local": "arcade/pikachu-beach/dx/audio/a_ironTail.wav",
+      "bytes": 62268,
+      "required": true
+    },
+    {
+      "resource": "a_lapras1",
+      "kind": "audio",
+      "local": "arcade/pikachu-beach/dx/audio/a_lapras1.wav",
+      "bytes": 93526,
+      "required": false
+    },
+    {
+      "resource": "a_lapras2",
+      "kind": "audio",
+      "local": "arcade/pikachu-beach/dx/audio/a_lapras2.wav",
+      "bytes": 23826,
+      "required": false
+    },
+    {
+      "resource": "a_lightning",
+      "kind": "audio",
+      "local": "arcade/pikachu-beach/dx/audio/a_lightning.wav",
+      "bytes": 95634,
+      "required": false
+    },
+    {
+      "resource": "a_lugia",
+      "kind": "audio",
+      "local": "arcade/pikachu-beach/dx/audio/a_lugia.wav",
+      "bytes": 167422,
+      "required": false
+    },
+    {
+      "resource": "a_mantineZoom1",
+      "kind": "audio",
+      "local": "arcade/pikachu-beach/dx/audio/a_mantineZoom1.wav",
+      "bytes": 472938,
+      "required": false
+    },
+    {
+      "resource": "a_mantineZoom2",
+      "kind": "audio",
+      "local": "arcade/pikachu-beach/dx/audio/a_mantineZoom2.wav",
+      "bytes": 444374,
+      "required": false
+    },
+    {
+      "resource": "a_menu",
+      "kind": "audio",
+      "local": "arcade/pikachu-beach/dx/audio/a_menu.wav",
+      "bytes": 12986,
+      "required": false
+    },
+    {
+      "resource": "a_menu_song",
+      "kind": "audio",
+      "local": "arcade/pikachu-beach/dx/audio/a_menu_song.wav",
+      "bytes": 2822444,
+      "required": false
+    },
+    {
+      "resource": "a_missile",
+      "kind": "audio",
+      "local": "arcade/pikachu-beach/dx/audio/a_missile.wav",
+      "bytes": 95634,
+      "required": false
+    },
+    {
+      "resource": "a_natu",
+      "kind": "audio",
+      "local": "arcade/pikachu-beach/dx/audio/a_natu.wav",
+      "bytes": 29420,
+      "required": false
+    },
+    {
+      "resource": "a_ok",
+      "kind": "audio",
+      "local": "arcade/pikachu-beach/dx/audio/a_ok.wav",
+      "bytes": 71232,
+      "required": false
+    },
+    {
+      "resource": "a_perfect",
+      "kind": "audio",
+      "local": "arcade/pikachu-beach/dx/audio/a_perfect.wav",
+      "bytes": 71232,
+      "required": false
+    },
+    {
+      "resource": "a_playerDie",
+      "kind": "audio",
+      "local": "arcade/pikachu-beach/dx/audio/a_playerDie.wav",
+      "bytes": 114518,
+      "required": false
+    },
+    {
+      "resource": "a_playerHit",
+      "kind": "audio",
+      "local": "arcade/pikachu-beach/dx/audio/a_playerHit.wav",
+      "bytes": 15178,
+      "required": true
+    },
+    {
+      "resource": "a_playerJump",
+      "kind": "audio",
+      "local": "arcade/pikachu-beach/dx/audio/a_playerJump.wav",
+      "bytes": 30516,
+      "required": true
+    },
+    {
+      "resource": "a_playerShoot",
+      "kind": "audio",
+      "local": "arcade/pikachu-beach/dx/audio/a_playerShoot.wav",
+      "bytes": 33448,
+      "required": true
+    },
+    {
+      "resource": "a_quilfish",
+      "kind": "audio",
+      "local": "arcade/pikachu-beach/dx/audio/a_quilfish.wav",
+      "bytes": 69754,
+      "required": false
+    },
+    {
+      "resource": "a_seaking",
+      "kind": "audio",
+      "local": "arcade/pikachu-beach/dx/audio/a_seaking.wav",
+      "bytes": 23826,
+      "required": false
+    },
+    {
+      "resource": "a_sharpedo",
+      "kind": "audio",
+      "local": "arcade/pikachu-beach/dx/audio/a_sharpedo.wav",
+      "bytes": 97500,
+      "required": false
+    },
+    {
+      "resource": "a_siren",
+      "kind": "audio",
+      "local": "arcade/pikachu-beach/dx/audio/a_siren.wav",
+      "bytes": 100680,
+      "required": false
+    },
+    {
+      "resource": "a_slow",
+      "kind": "audio",
+      "local": "arcade/pikachu-beach/dx/audio/a_slow.wav",
+      "bytes": 92742,
+      "required": false
+    },
+    {
+      "resource": "a_splash1",
+      "kind": "audio",
+      "local": "arcade/pikachu-beach/dx/audio/a_splash1.wav",
+      "bytes": 72208,
+      "required": false
+    },
+    {
+      "resource": "a_splashBig1",
+      "kind": "audio",
+      "local": "arcade/pikachu-beach/dx/audio/a_splashBig1.wav",
+      "bytes": 83716,
+      "required": false
+    },
+    {
+      "resource": "a_splashBig2",
+      "kind": "audio",
+      "local": "arcade/pikachu-beach/dx/audio/a_splashBig2.wav",
+      "bytes": 543788,
+      "required": false
+    },
+    {
+      "resource": "a_squeeze",
+      "kind": "audio",
+      "local": "arcade/pikachu-beach/dx/audio/a_squeeze.wav",
+      "bytes": 21276,
+      "required": false
+    },
+    {
+      "resource": "a_starmie1",
+      "kind": "audio",
+      "local": "arcade/pikachu-beach/dx/audio/a_starmie1.wav",
+      "bytes": 25260,
+      "required": false
+    },
+    {
+      "resource": "a_starmie2",
+      "kind": "audio",
+      "local": "arcade/pikachu-beach/dx/audio/a_starmie2.wav",
+      "bytes": 25260,
+      "required": false
+    },
+    {
+      "resource": "a_surf_song_2",
+      "kind": "audio",
+      "local": "arcade/pikachu-beach/dx/audio/a_surf_song_2.wav",
+      "bytes": 21730568,
+      "required": false
+    },
+    {
+      "resource": "a_surfing_pikachu_song",
+      "kind": "audio",
+      "local": "arcade/pikachu-beach/dx/audio/a_surfing_pikachu_song.wav",
+      "bytes": 19315844,
+      "required": true
+    },
+    {
+      "resource": "a_tentacruel",
+      "kind": "audio",
+      "local": "arcade/pikachu-beach/dx/audio/a_tentacruel.wav",
+      "bytes": 126360,
+      "required": false
+    },
+    {
+      "resource": "a_toxapex",
+      "kind": "audio",
+      "local": "arcade/pikachu-beach/dx/audio/a_toxapex.wav",
+      "bytes": 64032,
+      "required": false
+    },
+    {
+      "resource": "a_trick",
+      "kind": "audio",
+      "local": "arcade/pikachu-beach/dx/audio/a_trick.wav",
+      "bytes": 61386,
+      "required": true
+    },
+    {
+      "resource": "a_voltorb",
+      "kind": "audio",
+      "local": "arcade/pikachu-beach/dx/audio/a_voltorb.wav",
+      "bytes": 73654,
+      "required": false
+    },
+    {
+      "resource": "a_wailord",
+      "kind": "audio",
+      "local": "arcade/pikachu-beach/dx/audio/a_wailord.wav",
+      "bytes": 184450,
+      "required": false
+    },
+    {
+      "resource": "a_watergun",
+      "kind": "audio",
+      "local": "arcade/pikachu-beach/dx/audio/a_watergun.wav",
+      "bytes": 182264,
+      "required": false
+    },
+    {
+      "resource": "a_wave",
+      "kind": "audio",
+      "local": "arcade/pikachu-beach/dx/audio/a_wave.wav",
+      "bytes": 346272,
+      "required": true
+    },
+    {
+      "resource": "a_whirlpool",
+      "kind": "audio",
+      "local": "arcade/pikachu-beach/dx/audio/a_whirlpool.wav",
+      "bytes": 568818,
+      "required": false
+    },
+    {
+      "resource": "a_zoom",
+      "kind": "audio",
+      "local": "arcade/pikachu-beach/dx/audio/a_zoom.wav",
+      "bytes": 92742,
+      "required": false
+    }
+  ]
+}

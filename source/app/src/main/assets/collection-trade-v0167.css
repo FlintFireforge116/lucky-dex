@@ -1,0 +1,102 @@
+/* LuckyDex v0.16.7 — collection + Link Trade fit/readability pass */
+.binder-quick-filters{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;margin-top:9px}
+.binder-quick-filters[hidden]{display:none!important}
+.binder-quick-filters button{min-width:0;border:1px solid #34415d;border-radius:11px;background:#101827;color:#8fa0bc;padding:8px 6px;font-size:7px;font-weight:950;letter-spacing:.05em}
+.binder-quick-filters button.active{border-color:#e4c458;background:linear-gradient(180deg,#2c3443,#202736);color:#ffe477;box-shadow:0 0 0 1px rgba(255,221,95,.12)}
+.binder-quick-filters button b{display:inline-block;margin-left:3px;padding:1px 5px;border-radius:999px;background:#070b12;color:#fff;font-size:7px}
+
+/* Cards are portrait scans. Never crop them into square-ish tiles. */
+.collection-item.card{display:flex;flex-direction:column;align-items:stretch;padding:6px!important;overflow:visible!important;background:linear-gradient(180deg,#111827,#0d1421)}
+.collection-item.card .card-art-wrap{width:100%;height:auto!important;aspect-ratio:245/342!important;border-radius:9px;background:#080d16;display:grid;place-items:center;overflow:hidden}
+.collection-item.card .card-art-wrap>img{display:block;width:100%!important;height:100%!important;aspect-ratio:auto!important;object-fit:contain!important;image-rendering:auto!important;background:#080d16}
+.collection-item.card .card-tile-copy{padding:6px 2px 2px;min-width:0}
+.collection-item.card .card-tile-copy b{font-size:9px;line-height:1.15;margin:0}
+.collection-item.card .card-tile-copy span{display:block;margin-top:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:7px}
+.collection-item.card .count-badge{right:10px;top:10px;background:#070b12ee!important;border-color:#5a6680;box-shadow:0 2px 7px rgba(0,0,0,.35)}
+
+/* Trade cards use the exact physical-card aspect ratio instead of a fixed height. */
+.trade-controls{grid-template-columns:132px 140px minmax(0,1fr)!important;align-items:end}
+.trade-controls select,.trade-controls input{margin-top:0!important;height:40px;padding:8px 9px;font-size:8px;border-radius:11px}
+.trade-card-shell{display:flex;flex-direction:column;align-items:stretch;overflow:visible!important}
+.trade-card-art{width:100%!important;height:auto!important;aspect-ratio:245/342!important;display:grid!important;place-items:center!important;background:#080d16!important}
+.trade-card-art img{width:100%!important;height:100%!important;object-fit:contain!important;background:#080d16}
+.trade-card-shell>b,.trade-card-shell>small{padding-left:1px;padding-right:1px}
+.trade-card-shell>b{font-size:8.5px!important;line-height:1.15}
+.trade-owned{right:5px!important;top:5px!important;padding:3px 5px!important;font-size:5.6px!important;letter-spacing:.02em;background:#101827ee!important;border-color:#53617b!important;max-width:72%;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.trade-owned.has-spares{background:#163725ef!important;border-color:#3d895a!important;color:#9df3bc!important}
+.trade-owned.zero{background:#301720ee!important;border-color:#743348!important;color:#ff9fb7!important}
+.trade-new{left:5px!important;top:5px!important}
+.trade-set-name{font-size:6.5px!important}
+
+@media(max-width:520px){
+  .trade-controls{grid-template-columns:1fr 1fr!important;gap:6px!important}
+  .trade-controls #tradeSearch{grid-column:1/-1}
+  .trade-card-art{aspect-ratio:245/342!important}
+}
+@media(max-width:390px){
+  .collection-grid{gap:7px}
+  .collection-item.card{padding:4px!important;border-radius:13px}
+  .collection-item.card .card-tile-copy{padding-top:5px}
+  .binder-quick-filters button{padding:7px 3px;font-size:6.5px}
+  .trade-pair{gap:4px!important;grid-template-columns:minmax(0,1fr) 27px minmax(0,1fr)!important}
+  .trade-arrow span{width:25px!important;height:25px!important;font-size:15px!important}
+}
+
+/* LuckyDex v0.28.0 — proper Card Binder browsing */
+.binder-source-tabs-v0280{margin:10px 0 8px;display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.binder-source-tabs-v0280[hidden]{display:none!important}
+.binder-source-tabs-v0280 button{min-height:38px;font-weight:900;letter-spacing:.05em}
+.collection-tools-v0280{display:grid;grid-template-columns:minmax(0,1.7fr) minmax(92px,.9fr) minmax(118px,1fr) 38px;gap:6px;align-items:stretch}
+.collection-tools-v0280 input,.collection-tools-v0280 select,.collection-sort-dir-v0280{min-width:0;min-height:38px}
+.collection-sort-dir-v0280{border:1px solid #43516c;border-radius:9px;background:#111827;color:#fff;font-weight:900;font-size:17px;padding:0}
+.collection-sort-dir-v0280[hidden],.collection-tools-v0280 select[hidden]{display:none!important}
+@media(max-width:520px){.collection-tools-v0280{grid-template-columns:minmax(0,1fr) 44%;38px}.collection-tools-v0280 #collectionSearch{grid-column:1/-1}.collection-tools-v0280 #collectionFilter{grid-column:1/2}.collection-tools-v0280 #collectionSort{grid-column:2/3}.collection-tools-v0280 #collectionSortDir{grid-column:3/4}.binder-source-tabs-v0280{margin-top:8px}}
+
+/* LuckyDex v0.34.2 — in-app searchable Card Binder set picker */
+.collection-set-picker-wrap{margin:8px 0 2px}
+.collection-set-picker-wrap[hidden]{display:none!important}
+.collection-set-picker-card{position:relative;width:100%;min-height:78px;display:grid;grid-template-columns:minmax(0,1fr) auto;grid-template-rows:auto auto;gap:7px 10px;align-items:center;text-align:left;border:1px solid #3d5277;border-radius:16px;padding:12px 14px;background:linear-gradient(145deg,#172642 0%,#101a2d 58%,#0c1423 100%);color:#fff;box-shadow:inset 0 1px 0 rgba(255,255,255,.06),0 9px 24px rgba(0,0,0,.22)}
+.collection-set-picker-card:active{transform:translateY(1px)}
+.collection-set-picker-card.complete{border-color:#d7b94b;box-shadow:inset 0 1px 0 rgba(255,247,186,.13),0 0 0 1px rgba(255,213,79,.1),0 9px 24px rgba(0,0,0,.22);background:linear-gradient(145deg,#26314a 0%,#171f31 56%,#302713 135%)}
+.collection-set-picker-copy{min-width:0;display:grid;gap:2px}
+.collection-set-picker-copy small{font-size:6.5px;letter-spacing:.14em;color:#85a2c9;font-weight:950}
+.collection-set-picker-copy b{font-size:13px;line-height:1.15;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.collection-set-picker-copy>span{font-size:7.5px;color:#9baac2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.collection-set-picker-side{display:flex;align-items:center;gap:8px;align-self:center}
+.collection-set-picker-side em{font-style:normal;font-size:6px;font-weight:950;letter-spacing:.09em;color:#ffe370;border:1px solid #c8a93d;border-radius:999px;background:#2e2817;padding:4px 7px}
+.collection-set-picker-side i{font-style:normal;font-size:28px;line-height:.8;color:#d4dcea;font-weight:300}
+.collection-set-picker-track{grid-column:1/-1;height:5px;border-radius:999px;overflow:hidden;background:#080e19;border:1px solid rgba(111,132,169,.32)}
+.collection-set-picker-track[hidden]{display:none!important}
+.collection-set-picker-track>span{display:block;height:100%;width:0;border-radius:inherit;background:linear-gradient(90deg,#718cff,#f3d34f);transition:width .2s ease}
+/* Hide only the native card-set select. It remains the data/accessibility source of truth. */
+body:has(#cardBinderSourceTabs:not([hidden])) #collectionGroupFilter{display:none!important}
+
+.collection-set-picker-dialog{width:min(540px,calc(100% - 18px));max-width:540px;max-height:min(88dvh,760px);overflow:visible}
+.collection-set-picker-dialog::backdrop{background:rgba(2,7,15,.78);backdrop-filter:blur(3px)}
+.collection-set-picker-sheet{display:flex;flex-direction:column;max-height:min(88dvh,760px);overflow:hidden;border:1px solid #3e5478;border-radius:20px;background:linear-gradient(180deg,#121f35 0%,#0b1423 100%);box-shadow:inset 0 1px 0 rgba(255,255,255,.07),0 24px 60px rgba(0,0,0,.55);padding:14px}
+.collection-set-picker-head{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;padding:1px 1px 10px}
+.collection-set-picker-head h2{margin:2px 0 0;font-size:19px}
+.collection-set-picker-head p{margin:4px 0 0;color:#93a5c0;font-size:8px;letter-spacing:.04em}
+.collection-set-search{display:grid;gap:5px;margin:0 0 10px!important;color:#88a1c3!important;font-size:6.5px!important;font-weight:950!important;letter-spacing:.13em}
+.collection-set-search input{margin:0!important;height:42px;border:1px solid #405574;border-radius:12px;background:#08111e;color:#fff;padding:9px 12px;font-size:11px;outline:none}
+.collection-set-search input:focus{border-color:#d8bd56;box-shadow:0 0 0 2px rgba(216,189,86,.12)}
+.collection-set-picker-list{min-height:120px;overflow:auto;display:grid;gap:7px;padding:1px 2px 4px;overscroll-behavior:contain;scrollbar-width:thin}
+.collection-set-row{position:relative;display:grid;grid-template-columns:minmax(0,1fr) auto 20px;grid-template-rows:auto auto;gap:5px 10px;align-items:center;width:100%;min-height:62px;padding:10px 10px 9px;border:1px solid #2d405f;border-radius:13px;background:linear-gradient(180deg,#101c30,#0c1626);color:#fff;text-align:left}
+.collection-set-row:hover,.collection-set-row:focus-visible{border-color:#58719c;outline:none}
+.collection-set-row.selected{border-color:#6e8cf2;background:linear-gradient(180deg,#1a2b4d,#111e35);box-shadow:inset 3px 0 0 #708dff}
+.collection-set-row.complete{border-color:#9b8438;background:linear-gradient(180deg,#20283a,#1b1e26);box-shadow:inset 3px 0 0 #e1c34d}
+.collection-set-row.complete.selected{border-color:#e0c44f;box-shadow:inset 3px 0 0 #ffe16b,0 0 0 1px rgba(255,225,107,.08)}
+.collection-set-row-main{display:grid;gap:3px;min-width:0}
+.collection-set-row-main b{font-size:10.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.collection-set-row-main small{font-size:7px;color:#8fa0ba}
+.collection-set-row-count{display:grid;justify-items:end;gap:2px;white-space:nowrap}
+.collection-set-row-count strong{font-size:9.5px}
+.collection-set-row-count small{font-size:6px;letter-spacing:.07em;color:#91a0b6;font-weight:900}
+.collection-set-row.complete .collection-set-row-count small{color:#f3d65c}
+.collection-set-choice{width:16px;height:16px;border:2px solid #5a6881;border-radius:50%;display:grid;place-items:center}
+.collection-set-row.selected .collection-set-choice{border-color:#8ca4ff;box-shadow:inset 0 0 0 4px #0f1b2e;background:#7f99ff}
+.collection-set-row-track{grid-column:1/-1;height:4px;border-radius:999px;overflow:hidden;background:#070d17}
+.collection-set-row-track i{display:block;height:100%;border-radius:inherit;background:linear-gradient(90deg,#718cff,#e7c84f)}
+.collection-set-row.all{min-height:56px;border-style:dashed;margin-bottom:2px}
+.collection-set-empty{border:1px dashed #354761;border-radius:12px;padding:20px 12px;text-align:center;color:#8e9db5;font-size:8px}
+@media(max-width:390px){.collection-set-picker-card{min-height:72px;padding:10px 11px}.collection-set-picker-copy b{font-size:12px}.collection-set-picker-dialog{width:calc(100% - 12px)}.collection-set-picker-sheet{padding:11px;border-radius:17px}.collection-set-row{padding:9px 8px;gap:5px 7px}.collection-set-row-main b{font-size:10px}}

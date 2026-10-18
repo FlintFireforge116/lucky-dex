@@ -1,0 +1,17 @@
+'use strict';
+const assert=require('node:assert/strict');
+const fs=require('node:fs');
+const path=require('node:path');
+const root=path.resolve(__dirname,'..');
+const read=p=>fs.readFileSync(path.join(root,p),'utf8');
+const gradle=read('app/build.gradle'),html=read('app/src/main/assets/index.html'),app=read('app/src/main/assets/app-v0167.js'),ball=read('app/src/main/assets/arcade-ball-drop.js');
+const pkg=JSON.parse(read('package.json')),lock=JSON.parse(read('package-lock.json'));
+const code=Number((gradle.match(/versionCode\s+(\d+)/)||[])[1]);
+const name=(gradle.match(/versionName\s+'([^']+)'/)||[])[1];
+assert.ok(code>=276,'Android update must never regress below the v0.27.6 baseline');
+assert.ok(name&&name.localeCompare('0.27.6',undefined,{numeric:true})>=0,'release should remain v0.27.6 or newer');
+assert.equal(pkg.version,name);assert.equal(lock.version,name);assert.equal(lock.packages?.['']?.version,name);
+assert.ok(html.includes(`v${name}`),'visible version should match current release');
+assert.ok(app.includes(`__LUCKYDEX_BUILD='${name}'`),'runtime build marker should match current release');
+for(const alias of ['LuckyDexBallDropV0180','LuckyDexBallDropV0271','LuckyDexBallDropV0272','LuckyDexBallDropV0274','LuckyDexBallDropV0275','LuckyDexBallDropV0276'])assert.match(ball,new RegExp(alias),`${alias} must remain exported`);
+console.log('PASS v0.27.6+ release identity baseline');

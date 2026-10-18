@@ -1,0 +1,174 @@
+{
+  "version": "0.25.2",
+  "room": {
+    "path": "arcade/fossil-museum-v0252/oreburgh-museum-dppt-landscape-v0252.png",
+    "source": "user-supplied DPPt Oreburgh Museum reference; v0.25.2 restores only genuine room display furniture and uses virtual case-relative exhibit overlays in museum-only landscape mode",
+    "sha256": "09cda9656237ac65ad93e99e1dee9856bcc793fe122ab7c35f0fd360ab2c63e7"
+  },
+  "items": {
+    "helix-fossil": {
+      "path": "arcade/fossil-museum-v0252/mining/helix-fossil.png",
+      "source": "LuckyDex excavation-specific local pixel art for v0.25.2, proportioned for the mining wall rather than the generic bag-item icon"
+    },
+    "dome-fossil": {
+      "path": "arcade/fossil-museum-v0252/mining/dome-fossil.png",
+      "source": "LuckyDex excavation-specific local pixel art for v0.25.2, proportioned for the mining wall rather than the generic bag-item icon"
+    },
+    "old-amber": {
+      "path": "arcade/fossil-museum-v0252/mining/old-amber.png",
+      "source": "LuckyDex excavation-specific local pixel art for v0.25.2, proportioned for the mining wall rather than the generic bag-item icon"
+    },
+    "skull-fossil": {
+      "path": "arcade/fossil-museum-v0252/mining/skull-fossil.png",
+      "source": "LuckyDex excavation-specific local pixel art for v0.25.2, proportioned for the mining wall rather than the generic bag-item icon"
+    },
+    "armor-fossil": {
+      "path": "arcade/fossil-museum-v0252/mining/armor-fossil.png",
+      "source": "LuckyDex excavation-specific local pixel art for v0.25.2, proportioned for the mining wall rather than the generic bag-item icon"
+    },
+    "poke-ball": {
+      "path": "arcade/sprites/items/poke-ball.png",
+      "source": "existing packaged PokeAPI item sprite"
+    },
+    "root-fossil": {
+      "path": "arcade/fossil-museum-v0252/mining/root-fossil.png",
+      "source": "LuckyDex excavation-specific local pixel art for v0.25.2, proportioned for the mining wall rather than the generic bag-item icon"
+    },
+    "claw-fossil": {
+      "path": "arcade/fossil-museum-v0252/mining/claw-fossil.png",
+      "source": "LuckyDex excavation-specific local pixel art for v0.25.2, proportioned for the mining wall rather than the generic bag-item icon"
+    },
+    "cover-fossil": {
+      "path": "arcade/fossil-museum-v0250/items/cover-fossil.png",
+      "source": "LuckyDex local pixel reconstruction for offline v0.25.0"
+    },
+    "plume-fossil": {
+      "path": "arcade/fossil-museum-v0250/items/plume-fossil.png",
+      "source": "LuckyDex local pixel reconstruction for offline v0.25.0"
+    },
+    "jaw-fossil": {
+      "path": "arcade/fossil-museum-v0250/items/jaw-fossil.png",
+      "source": "LuckyDex local pixel reconstruction for offline v0.25.0"
+    },
+    "sail-fossil": {
+      "path": "arcade/fossil-museum-v0250/items/sail-fossil.png",
+      "source": "LuckyDex local pixel reconstruction for offline v0.25.0"
+    },
+    "fossilized-bird": {
+      "path": "arcade/fossil-museum-v0250/items/fossilized-bird.png",
+      "source": "LuckyDex local pixel reconstruction for offline v0.25.0"
+    },
+    "fossilized-dino": {
+      "path": "arcade/fossil-museum-v0250/items/fossilized-dino.png",
+      "source": "LuckyDex local pixel reconstruction for offline v0.25.0"
+    },
+    "fossilized-drake": {
+      "path": "arcade/fossil-museum-v0250/items/fossilized-drake.png",
+      "source": "LuckyDex local pixel reconstruction for offline v0.25.0"
+    },
+    "fossilized-fish": {
+      "path": "arcade/fossil-museum-v0250/items/fossilized-fish.png",
+      "source": "LuckyDex local pixel reconstruction for offline v0.25.0"
+    },
+    "relic-copper": {
+      "path": "arcade/fossil-museum-v0250/items/relic-copper.png",
+      "source": "LuckyDex local pixel reconstruction for offline v0.25.0"
+    },
+    "relic-silver": {
+      "path": "arcade/fossil-museum-v0250/items/relic-silver.png",
+      "source": "LuckyDex local pixel reconstruction for offline v0.25.0"
+    },
+    "relic-gold": {
+      "path": "arcade/fossil-museum-v0250/items/relic-gold.png",
+      "source": "LuckyDex local pixel reconstruction for offline v0.25.0"
+    },
+    "relic-vase": {
+      "path": "arcade/fossil-museum-v0250/items/relic-vase.png",
+      "source": "LuckyDex local pixel reconstruction for offline v0.25.0"
+    },
+    "relic-band": {
+      "path": "arcade/fossil-museum-v0250/items/relic-band.png",
+      "source": "LuckyDex local pixel reconstruction for offline v0.25.0"
+    },
+    "relic-statue": {
+      "path": "arcade/fossil-museum-v0250/items/relic-statue.png",
+      "source": "LuckyDex local pixel reconstruction for offline v0.25.0"
+    },
+    "relic-crown": {
+      "path": "arcade/fossil-museum-v0250/items/relic-crown.png",
+      "source": "LuckyDex local pixel reconstruction for offline v0.25.0"
+    },
+    "hard-stone": {
+      "path": "arcade/fossil-museum-v0252/mining/hard-stone.png",
+      "source": "LuckyDex excavation-specific local pixel art for v0.25.2, proportioned for the mining wall rather than the generic bag-item icon"
+    },
+    "everstone": {
+      "path": "arcade/fossil-museum-v0252/mining/everstone.png",
+      "source": "LuckyDex excavation-specific local pixel art for v0.25.2, proportioned for the mining wall rather than the generic bag-item icon"
+    },
+    "fire-stone": {
+      "path": "arcade/fossil-museum-v0252/mining/fire-stone.png",
+      "source": "LuckyDex excavation-specific local pixel art for v0.25.2, proportioned for the mining wall rather than the generic bag-item icon"
+    },
+    "water-stone": {
+      "path": "arcade/fossil-museum-v0252/mining/water-stone.png",
+      "source": "LuckyDex excavation-specific local pixel art for v0.25.2, proportioned for the mining wall rather than the generic bag-item icon"
+    },
+    "thunder-stone": {
+      "path": "arcade/fossil-museum-v0252/mining/thunder-stone.png",
+      "source": "LuckyDex excavation-specific local pixel art for v0.25.2, proportioned for the mining wall rather than the generic bag-item icon"
+    },
+    "leaf-stone": {
+      "path": "arcade/fossil-museum-v0252/mining/leaf-stone.png",
+      "source": "LuckyDex excavation-specific local pixel art for v0.25.2, proportioned for the mining wall rather than the generic bag-item icon"
+    },
+    "moon-stone": {
+      "path": "arcade/fossil-museum-v0252/mining/moon-stone.png",
+      "source": "LuckyDex excavation-specific local pixel art for v0.25.2, proportioned for the mining wall rather than the generic bag-item icon"
+    },
+    "odd-keystone": {
+      "path": "arcade/fossil-museum-v0252/mining/odd-keystone.png",
+      "source": "LuckyDex excavation-specific local pixel art for v0.25.2, proportioned for the mining wall rather than the generic bag-item icon"
+    },
+    "great-ball": {
+      "path": "arcade/fossil-museum-v0250/items/great-ball.png",
+      "source": "LuckyDex local pixel reconstruction for offline v0.25.0"
+    },
+    "ultra-ball": {
+      "path": "arcade/fossil-museum-v0250/items/ultra-ball.png",
+      "source": "LuckyDex local pixel reconstruction for offline v0.25.0"
+    },
+    "nugget": {
+      "path": "arcade/fossil-museum-v0250/items/nugget.png",
+      "source": "LuckyDex local pixel reconstruction for offline v0.25.0"
+    },
+    "big-nugget": {
+      "path": "arcade/fossil-museum-v0250/items/big-nugget.png",
+      "source": "LuckyDex local pixel reconstruction for offline v0.25.0"
+    },
+    "pearl": {
+      "path": "arcade/fossil-museum-v0250/items/pearl.png",
+      "source": "LuckyDex local pixel reconstruction for offline v0.25.0"
+    },
+    "big-pearl": {
+      "path": "arcade/fossil-museum-v0250/items/big-pearl.png",
+      "source": "LuckyDex local pixel reconstruction for offline v0.25.0"
+    },
+    "stardust": {
+      "path": "arcade/fossil-museum-v0250/items/stardust.png",
+      "source": "LuckyDex local pixel reconstruction for offline v0.25.0"
+    },
+    "star-piece": {
+      "path": "arcade/fossil-museum-v0252/mining/star-piece.png",
+      "source": "LuckyDex excavation-specific local pixel art for v0.25.2, proportioned for the mining wall rather than the generic bag-item icon"
+    },
+    "rare-bone": {
+      "path": "arcade/fossil-museum-v0252/mining/rare-bone.png",
+      "source": "LuckyDex excavation-specific local pixel art for v0.25.2, proportioned for the mining wall rather than the generic bag-item icon"
+    },
+    "comet-shard": {
+      "path": "arcade/fossil-museum-v0250/items/comet-shard.png",
+      "source": "LuckyDex local pixel reconstruction for offline v0.25.0"
+    }
+  }
+}

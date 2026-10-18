@@ -1,0 +1,4 @@
+source/.gradle/
+source/**/build/
+source/node_modules/
+*.apk

@@ -1,0 +1,234 @@
+Work directly from the current LuckyDex v0.42.2 source baseline.
+
+This is a bounded Target Range correction/polish pass. Do NOT redesign the wider Goldenrod Challenge Course, tournament framework, rewards, progression, records, achievements, or the other minigames.
+
+The current Target Range is closer, but the visual perspective and shooting feel are still wrong. I want it to feel much closer to Wii Sports Resort Archery while remaining visually consistent with the existing Goldenrod games.
+
+IMPORTANT: Do not spend a long time planning. Inspect the existing Target Range implementation and tests, make a short implementation note if required by your workflow, then build it.
+
+TARGET DESIGN
+
+The game remains PORTRAIT on the phone.
+
+When I previously said “landscape”, I meant the ENVIRONMENT should be viewed horizontally/downrange, NOT that the gameplay should become a wide side-on landscape panel.
+
+The desired composition is:
+
+- Pokémon positioned low near the bottom of the playfield.
+- Pokémon fires UP the phone toward targets further into the scene.
+- The environment should look like a real range extending away from the player.
+- Targets appear progressively further up the screen according to distance.
+- Perspective/depth should be immediately obvious.
+- The game should feel calm and deliberate, not like a race.
+
+Think Wii Sports Resort Archery composition/feel adapted into the existing Pokémon/Goldenrod visual style.
+
+DO NOT literally copy Nintendo artwork/assets/UI. Reproduce the gameplay feel, camera logic, pacing and readability using LuckyDex assets/styles.
+
+CURRENT PROBLEMS TO FIX
+
+1. The v0.42.2 perspective is still wrong.
+   It looks like a flat horizontal banner rather than a player looking down a range.
+
+2. Pokémon is too high in the scene.
+   Move it significantly lower and have attacks clearly launch upward from it.
+
+3. The background composition makes little visual sense.
+   Create a coherent themed shooting range with foreground, middle distance and background.
+   Avoid random scenery elements that do not help sell depth.
+
+4. The target currently feels too close/large and disconnected from its distance value.
+   Distance should visibly affect:
+   - target scale
+   - target vertical position
+   - projectile travel time
+   - trajectory/drop
+
+5. The reticle is still too prominent.
+   Make it smaller, cleaner and precise.
+
+6. The gameplay remains too fast.
+   This is NOT a race.
+   Slow the entire interaction down and give the player time to aim.
+
+7. Projectile movement needs further improvement.
+   Slightly reduce projectile speed.
+   It should visibly launch from the Pokémon, travel through the scene, and arrive at the SAME impact coordinate used for scoring.
+   The flight should feel smooth and natural rather than like a sprite tween.
+
+NEW HOLD / RELEASE MECHANIC
+
+Change the current focus mechanic.
+
+While the player holds:
+
+- The focus/charge meter should rise toward its ideal point.
+- If the player keeps holding, it should then fall back down.
+- Continue oscillating while held.
+- The player must time RELEASE.
+
+This is an intentional timing mechanic.
+
+A well-timed release near the ideal point should:
+- maximise accuracy/stability
+- give the most reliable trajectory
+- give the strongest clean hit
+
+A poorly timed release should add an appropriate accuracy/stability penalty.
+
+Do NOT make this brutally difficult on low divisions/exhibition Easy.
+
+Division/difficulty should affect things like:
+- oscillation speed
+- size of the ideal release window
+- wind
+- distance
+- moving-target complexity
+
+But even Master should remain readable and fair.
+
+GOLD TARGET CHANGE
+
+The Golden Target should remain visually a TARGET.
+
+Do not introduce a weird unrelated golden object.
+
+Its special reward condition should be the BULLSEYE.
+
+A Golden Target may use:
+- gold trim
+- gold centre
+- subtle glow/sparkle
+
+But it should still clearly be the normal archery/bullseye target format.
+
+Only hitting the required golden bullseye should trigger the rare reward.
+
+NORMAL TARGETS
+
+Keep classic scoring rings and make them highly readable.
+
+Targets should feel physically placed downrange rather than floating over the UI.
+
+Use restrained variants:
+- stationary
+- slow lateral movement
+- gentle swinging
+- pop-up
+- armoured
+
+Movement should be significantly slower than the older build.
+
+No target should disappear simply because the player took a sensible amount of time to aim.
+
+BACKGROUND / VENUE
+
+Keep the range themed to the selected attack/type where useful, but DO NOT just paste the existing Dash course image behind the game if it creates nonsense perspective.
+
+Instead, construct a simple coherent range using existing safe/offline assets and CSS:
+
+- foreground near Pokémon
+- lane/ground plane
+- receding distance markers
+- scenery at the sides/background
+- clear sky/wall/horizon area depending on venue
+
+The centre firing lane must remain visually clean.
+
+Type themes should be flavour, not clutter.
+
+Examples:
+- Grass/Bug: outdoor training field/woodland edge
+- Ground/Rock: quarry/canyon range
+- Water: coastal/dockside range
+- Ice: snowy range
+- Electric: tech/power training range
+- Ghost/Psychic: atmospheric but still readable
+
+HUD
+
+Keep the existing Goldenrod family styling.
+
+During active shooting, only keep what matters:
+- round / target count
+- score
+- combo
+- wind
+- distance
+- Sp. Atk / current move
+- focus/charge indicator
+
+Do not add more large instruction boxes.
+
+The full live game must continue to fit on one normal portrait phone viewport WITHOUT scrolling.
+
+Do not place interactive controls against the Android navigation/gesture area.
+
+TYPE ATTACKS
+
+Preserve the existing 18 type-themed special attacks and dual-type choice.
+
+Keep:
+- Mud Bomb for Ground
+- Psybeam for Psychic
+
+Do not regress the different projectile silhouettes/effects already implemented.
+
+MECHANICS TO PRESERVE
+
+Do not break:
+- Exhibition
+- Division Cups
+- Type Cups
+- six-entrant tournament standings
+- stat eligibility
+- Sp. Atk scaling
+- Golden Target rewards
+- records
+- achievements
+- trophy progression
+- legacy save migration
+- rare reward one-time settlement
+- other Goldenrod events
+
+TESTING / IMPLEMENTATION REQUIREMENTS
+
+Use TDD for behavioural changes.
+
+Add focused regressions covering at least:
+
+- Pokémon is positioned in the lower portion of the range.
+- Near/far targets map to visibly different depth positions and scales.
+- Farther targets have longer projectile flight.
+- Hold meter rises AND falls while held.
+- Releasing near the ideal focus point scores better stability than a badly timed release.
+- Gold reward requires the Golden Target bullseye.
+- Target Range active play remains one-screen/no-scroll on the intended mobile layout.
+- Projectile visual destination matches the scoring impact destination.
+- Target Range can be closed/reopened without duplicated/broken pointer handlers.
+
+Run the existing Target Range/Goldenrod regressions plus adjacent Power Trial, Impact Trial, Dash, records, rewards and achievements tests.
+
+Do not claim browser tests passed if Playwright is unavailable; report that limitation exactly as previous LuckyDex builds have.
+
+VERSION / OUTPUT
+
+Bump the app from v0.42.2 to v0.42.3.
+
+Produce:
+- updated LuckyDex source
+- TEST_REPORT_v0.42.3.md
+- LuckyDex_source_v0.42.3.zip
+- SHA-256
+- summary of changed files
+- exact tests run and pass counts
+- any known test-environment limitations
+
+Do not use external/CDN runtime dependencies.
+Preserve offline operation and Android package identity.
+
+Most importantly: judge the finished live game visually against this target:
+
+“Pokémon standing low in the foreground, calmly aiming UP a portrait phone screen at a bullseye sitting down a believable range, with a small precise reticle and a Wii Sports Resort-style timed hold/release shot.”
+
+If the implementation still looks like a flat horizontal banner, top-down course, racing minigame, or generic box with targets pasted onto it, it is not finished.

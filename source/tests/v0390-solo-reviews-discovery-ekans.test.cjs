@@ -1,0 +1,15 @@
+'use strict';
+const assert=require('node:assert/strict'),fs=require('node:fs');
+const read=f=>fs.readFileSync('app/src/main/assets/'+f,'utf8');
+const fossil=read('arcade-fossil-museum.js'),unown=read('arcade-unown.js'),quiz=read('arcade-quiz.js'),ekans=read('arcade-ekans-hoop.js');
+assert.match(fossil,/function finalizeDigResultV0260.*?review\s*:/s,'Fossil Dig result supplies structured review');
+assert.match(fossil,/keptIds.*lostIds.*collapse|collapse.*keptIds.*lostIds/s,'Fossil completion retains kept/lost/outcome facts');
+const fossilOpen=fossil.slice(fossil.indexOf('function open(activityId)'),fossil.indexOf('function close(activityId)'));
+assert.doesNotMatch(fossilOpen,/showResult/,'Museum browsing must not create a run review');
+assert.match(unown,/function finishRun.*?review\s*:/s,'Unown completion supplies structured review');
+assert.match(unown,/streak.*score.*bank.*cashout/s,'Unown review has streak/score/bank/cashout facts');
+assert.match(quiz,/function finishQuizV166.*?review\s*:/s,'Quiz completion supplies structured review');
+assert.match(quiz,/correct.*score.*final timer/s,'Quiz review has correct/score/timer facts');
+assert.match(ekans,/function finishRound.*?review\s*:/s,'Ekans completion supplies structured review');
+assert.match(ekans,/bestStreak.*totalHoops.*shinyHits/s,'Ekans review has streak/hoop/shiny facts');
+console.log('PASS v0.39.0 solo reviews: Discovery and Ekans');

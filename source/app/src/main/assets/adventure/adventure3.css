@@ -1,0 +1,15 @@
+
+/* v0.40.4 battle EXP */
+.adv-battle-xp{display:flex;align-items:center;gap:6px;margin-top:3px;font-size:10px}
+.adv-battle-xp>b{font-size:9px;color:#3d6e9b}
+.adv-battle-xp>span{display:block;flex:1;height:5px;border:1px solid #31515a;background:#d9e4d7;overflow:hidden}
+.adv-battle-xp i{display:block;height:100%;background:#78a9df}
+[data-xp-text]{display:block;text-align:right;font-size:9px;color:#36515a}
+
+/* v0.40.4 active-region journey map */
+.adv3-journey-map{display:grid;gap:10px;min-height:0}.adv3-journey-map-art{display:block;width:min(100%,260px);max-height:42vh;object-fit:contain;justify-self:center;image-rendering:pixelated;border:3px solid #547b68;background:#92c7e7}.adv3-journey-map-copy{padding:8px 10px;border:2px solid #789b7d;background:#eef0cd;color:#294840}.adv3-journey-map-copy small{letter-spacing:.12em}.adv3-journey-map-copy h3{margin:2px 0 4px;font-size:18px}.adv3-journey-map-copy p{margin:0}.adv3-journey-map-stops{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:5px;max-height:26vh;overflow:auto}.adv3-journey-map-stops li{display:flex;align-items:center;gap:6px;padding:6px 7px;border:1px solid #6f8f7b;background:#244c4b;color:#eef0cd;font-size:10px;min-width:0}.adv3-journey-map-stops li b{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.adv3-journey-map-stops li.done{opacity:.72}.adv3-journey-map-stops li.current{border-color:#f1d56e;background:#3b604e;color:#fff4bd}.adv3-journey-map-stops li span{flex:0 0 auto;color:#f1d56e}
+@media (min-width:600px){.adv3-journey-map{grid-template-columns:minmax(220px,.8fr) 1fr;align-items:start}.adv3-journey-map-art{grid-row:1/4;max-height:62vh}.adv3-journey-map-stops{grid-template-columns:1fr;max-height:50vh}}
+
+/* v0.55.6 revisit controls */
+.adv3-journey-map-stops li button{appearance:none;width:100%;min-width:0;display:flex;align-items:center;gap:6px;padding:0;border:0;background:transparent;color:inherit;font:inherit;text-align:left;cursor:pointer;touch-action:manipulation}
+.adv3-journey-map-stops li button b{min-width:0;flex:1}.adv3-journey-map-stops li button:disabled{cursor:default;color:inherit;opacity:1}.adv3-journey-map-stops li.done:has(button:not(:disabled)){opacity:.9}.adv3-journey-map-stops li.done:has(button:not(:disabled)):active{background:#315c55}

@@ -1,0 +1,11 @@
+const assert=require('node:assert/strict');
+const platform=require('../app/src/main/assets/arcade-platform.js');
+const old={voltorbLevel:4,bestFossil:99,dailyRewards:{fossil:'2026-10-05'},custom:{keep:true}};
+const migrated=platform.ensureArcadeState(old);
+assert.deepEqual(migrated.museum,{exhibits:{}},'old save receives empty museum state');
+assert.equal(migrated.voltorbLevel,4);assert.equal(migrated.bestFossil,99);assert.deepEqual(migrated.custom,{keep:true});
+const existing=platform.ensureArcadeState({...old,museum:{exhibits:{'helix-fossil':{discovered:true,foundCount:4}},note:'keep'}});
+assert.equal(existing.museum.exhibits['helix-fossil'].foundCount,4);assert.equal(existing.museum.note,'keep','museum extension keys survive migration');
+const malformed=platform.ensureArcadeState({...old,museum:{exhibits:null}});
+assert.deepEqual(malformed.museum.exhibits,{},'malformed exhibit map is repaired without resetting other arcade data');
+console.log('PASS v0.25.0 museum save migration');

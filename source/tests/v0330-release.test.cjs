@@ -1,0 +1,15 @@
+'use strict';
+const assert=require('assert'),fs=require('fs'),path=require('path');
+const root=path.resolve(__dirname,'..'),read=p=>fs.readFileSync(path.join(root,p),'utf8');
+const gradle=read('app/build.gradle'),html=read('app/src/main/assets/index.html'),app=read('app/src/main/assets/app-v0167.js');
+assert.match(gradle,/applicationId 'com\.example\.luckydex'/);
+assert.ok(Number((gradle.match(/versionCode\s+(\d+)/)||[])[1])>=330);
+const current=(gradle.match(/versionName '([^']+)'/)||[])[1];assert.ok(current.localeCompare('0.33.0',undefined,{numeric:true})>=0);
+assert.match(gradle,/luckydex-dev\.keystore/);
+for(const file of ['package.json','package-lock.json'])assert.equal(JSON.parse(read(file)).version,current);
+assert.equal(JSON.parse(read('package-lock.json')).packages[''].version,current);
+assert(html.includes('v'+current));
+assert(app.includes("window.__LUCKYDEX_BUILD='"+current+"'"));
+assert(html.includes('id="dashRaceFeedback"'));
+assert.equal(require('../app/src/main/assets/arcade-dash-assets.js').spritePath('oran-berry'),'arcade/dash/gen3/oran-berry.png');
+console.log('PASS v0.33.0+ update identity, signer, Dash feedback and authentic pickup integration');

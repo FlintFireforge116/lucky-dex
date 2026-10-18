@@ -1,0 +1,13 @@
+[
+ "README.md",
+ "app/src/main/assets/adventure/adventure-controller.js",
+ "app/src/main/assets/adventure/adventure-hub.css",
+ "app/src/main/assets/adventure/adventure-regional-ui.js",
+ "scripts/adventure3-test-inventory.cjs",
+ "scripts/verify-release.py",
+ "tests/adventure-regional-browser.test.cjs",
+ "tests/adventure-regional-ui.test.cjs",
+ "tests/adventure3-ux-v0401-journey.test.cjs",
+ "tests/adventure3-ux-v0401-release.test.cjs",
+ "tests/v0400-release.test.cjs"
+]

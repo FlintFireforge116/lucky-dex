@@ -1,0 +1,17 @@
+'use strict';
+const assert=require('node:assert/strict'),fs=require('node:fs'),path=require('node:path');
+const root=path.resolve(__dirname,'..');
+const gradle=fs.readFileSync(path.join(root,'app/build.gradle'),'utf8');
+const pkg=JSON.parse(fs.readFileSync(path.join(root,'package.json'),'utf8'));
+const lock=JSON.parse(fs.readFileSync(path.join(root,'package-lock.json'),'utf8'));
+const html=fs.readFileSync(path.join(root,'app/src/main/assets/index.html'),'utf8');
+const app=fs.readFileSync(path.join(root,'app/src/main/assets/app-v0167.js'),'utf8');
+const code=Number((gradle.match(/versionCode\s+(\d+)/)||[])[1]);
+const name=(gradle.match(/versionName\s+'([^']+)'/)||[])[1];
+assert.match(gradle,/applicationId\s+'com\.example\.luckydex'/,'Android applicationId must remain unchanged');
+assert.ok(code>=281,'release must not roll back below v0.28.1');
+assert.ok(name&&name.localeCompare('0.28.1',undefined,{numeric:true})>=0,'release must remain v0.28.1 or newer');
+assert.equal(pkg.version,name);assert.equal(lock.version,name);assert.equal(lock.packages?.['']?.version,name);
+assert.ok((html.match(new RegExp(`v${name.replaceAll('.','\\.')}`,'g'))||[]).length>=2,'visible version should match current release');
+assert.ok(app.includes(`__LUCKYDEX_BUILD='${name}'`),'runtime build marker should match current release');
+console.log('PASS v0.28.1+ release identity');

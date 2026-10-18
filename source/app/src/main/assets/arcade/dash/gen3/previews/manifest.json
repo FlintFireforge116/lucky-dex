@@ -1,0 +1,134 @@
+{
+  "schema": 1,
+  "renderer": "LuckyDexDashRenderer.drawScene",
+  "width": 540,
+  "height": 240,
+  "previews": {
+    "normal": {
+      "path": "arcade/dash/gen3/previews/normal.png",
+      "seed": 7331,
+      "distance": 385,
+      "section": "dash-section-1",
+      "label": "Hoenn Route Circuit"
+    },
+    "fire": {
+      "path": "arcade/dash/gen3/previews/fire.png",
+      "seed": 7331,
+      "distance": 825,
+      "section": "dash-section-3",
+      "label": "Volcanic Ash Run"
+    },
+    "water": {
+      "path": "arcade/dash/gen3/previews/water.png",
+      "seed": 7331,
+      "distance": 825,
+      "section": "dash-section-3",
+      "label": "Tidal Bridge Course"
+    },
+    "electric": {
+      "path": "arcade/dash/gen3/previews/electric.png",
+      "seed": 7331,
+      "distance": 1505,
+      "section": "dash-section-6",
+      "label": "Mauville Generator Circuit"
+    },
+    "grass": {
+      "path": "arcade/dash/gen3/previews/grass.png",
+      "seed": 7331,
+      "distance": 385,
+      "section": "dash-section-1",
+      "label": "Flowering Woodland"
+    },
+    "ice": {
+      "path": "arcade/dash/gen3/previews/ice.png",
+      "seed": 7331,
+      "distance": 1075,
+      "section": "dash-section-4",
+      "label": "Shoal Ice Passage"
+    },
+    "fighting": {
+      "path": "arcade/dash/gen3/previews/fighting.png",
+      "seed": 7331,
+      "distance": 600,
+      "section": "dash-section-2",
+      "label": "Stone Training Court"
+    },
+    "poison": {
+      "path": "arcade/dash/gen3/previews/poison.png",
+      "seed": 7331,
+      "distance": 825,
+      "section": "dash-section-3",
+      "label": "Marsh Boardwalk"
+    },
+    "ground": {
+      "path": "arcade/dash/gen3/previews/ground.png",
+      "seed": 7331,
+      "distance": 1505,
+      "section": "dash-section-6",
+      "label": "Desert Ruin Crossing"
+    },
+    "flying": {
+      "path": "arcade/dash/gen3/previews/flying.png",
+      "seed": 7331,
+      "distance": 825,
+      "section": "dash-section-3",
+      "label": "Fortree Canopy Bridges"
+    },
+    "psychic": {
+      "path": "arcade/dash/gen3/previews/psychic.png",
+      "seed": 7331,
+      "distance": 600,
+      "section": "dash-section-2",
+      "label": "Mossdeep Reflective Hall"
+    },
+    "bug": {
+      "path": "arcade/dash/gen3/previews/bug.png",
+      "seed": 7331,
+      "distance": 385,
+      "section": "dash-section-1",
+      "label": "Deep Forest Traverse"
+    },
+    "rock": {
+      "path": "arcade/dash/gen3/previews/rock.png",
+      "seed": 7331,
+      "distance": 1075,
+      "section": "dash-section-4",
+      "label": "Granite Cave Circuit"
+    },
+    "ghost": {
+      "path": "arcade/dash/gen3/previews/ghost.png",
+      "seed": 7331,
+      "distance": 1505,
+      "section": "dash-section-6",
+      "label": "Mt. Pyre Memorial Walk"
+    },
+    "dragon": {
+      "path": "arcade/dash/gen3/previews/dragon.png",
+      "seed": 7331,
+      "distance": 1505,
+      "section": "dash-section-6",
+      "label": "Ancient Meteor Passage"
+    },
+    "dark": {
+      "path": "arcade/dash/gen3/previews/dark.png",
+      "seed": 7331,
+      "distance": 1075,
+      "section": "dash-section-4",
+      "label": "Deep Cave Night Run"
+    },
+    "steel": {
+      "path": "arcade/dash/gen3/previews/steel.png",
+      "seed": 7331,
+      "distance": 1075,
+      "section": "dash-section-4",
+      "label": "Industrial Service Run"
+    },
+    "fairy": {
+      "path": "arcade/dash/gen3/previews/fairy.png",
+      "seed": 7331,
+      "distance": 1310,
+      "section": "dash-section-5",
+      "label": "Hoenn Flower Garden"
+    }
+  }
+}

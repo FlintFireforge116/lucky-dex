@@ -1,0 +1,20 @@
+const assert=require('node:assert/strict');
+const {launch,appPage}=require('../scripts/recovery-browser.cjs');
+(async()=>{
+ const browser=await launch(),errors=[];
+ const {page,context}=await appPage(browser,{width:360,height:800},errors);
+ await page.locator('#titleContinueBtn').click();
+ await page.locator('#starterChoices button').first().click();
+ await page.locator('.bottom-nav [data-nav="arcade"]').click();
+ await page.evaluate(()=>LuckyDexArcadeWorld.openGame('ballDrop'));
+ await page.locator('#ballDropBtn').click();
+ await page.locator('#ballDropGame [data-exit-game]').click();
+ assert.equal(await page.evaluate(()=>document.body.classList.contains('arcade-open')),false,'Ball Drop exit must restore app chrome/fullscreen state');
+ await page.evaluate(()=>LuckyDexArcadeWorld.openGame('berry'));
+ await page.locator('#berryStartBtn').click();
+ await page.evaluate(()=>LuckyDexArcadeWorld.backFromGame(true));
+ assert.equal(await page.evaluate(()=>LuckyDexBerryBlender.state()?.running),false,'Blender exit must stop its animation');
+ assert.equal(await page.evaluate(()=>window.state===state),true,'Arcade modules must access the real save state');
+ assert.deepEqual(errors,[]);
+ await context.close();await browser.close();console.log('PASS recovery navigation');
+})().catch(e=>{console.error(e);process.exit(1)});

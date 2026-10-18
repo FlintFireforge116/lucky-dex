@@ -1,0 +1,27 @@
+'use strict';
+const assert=require('node:assert/strict');
+const fs=require('node:fs'),path=require('node:path');
+const {launch,appPage,root}=require('../scripts/recovery-browser.cjs');
+(async()=>{const browser=await launch(),errors=[];try{
+ const {page,context}=await appPage(browser,{width:360,height:800},errors);
+ await page.locator('#titleContinueBtn').click();if(await page.locator('#starterPanel').isVisible())await page.locator('#starterChoices button').first().click();
+ await page.evaluate(()=>navigate('profile'));await page.locator('#customiseSummaryCard').click();
+ await page.locator('#customiseSleeveSearch').fill('Charizard');
+ const names=await page.locator('.customise-sleeve-tile b').allTextContents();assert(names.length>2);assert(names.every(n=>/charizard/i.test(n)),'search must match displayed names without exposing secret names');
+ await page.locator('#customiseSourceFilter').selectOption('TCG Pocket');
+ const pocketIds=await page.locator('[data-sleeve-id]').evaluateAll(rows=>rows.map(r=>r.dataset.sleeveId));assert(pocketIds.length);assert(await page.evaluate(ids=>ids.every(id=>LuckyDexCosmeticsCatalogV0413.BY_ID[id].sourceFamily==='TCG Pocket'),pocketIds));
+ await page.locator('#customiseSleeveSearch').fill('');await page.locator('#customiseSourceFilter').selectOption('all');
+ assert(await page.locator('.customise-sleeve-tile').count()>=200,'large catalogue must render');
+ await page.locator('[data-cosmetic-filter="owned"]').click();const free=await page.locator('.customise-sleeve-tile').count();assert(free>=4&&free<25,'new catalogue must not be automatically owned');
+ await page.locator('[data-cosmetic-filter="locked"]').click();assert(await page.locator('.customise-sleeve-tile').count()>100);
+ const locked=await page.locator('[data-sleeve-id="kanto-red"]').first();await locked.click();assert(await page.locator('#customisePreviewDialog').isVisible());assert.equal(await page.locator('#customiseSleeveDetail [data-equip-sleeve]').count(),0);await page.locator('#customisePreviewClose').click();
+ await page.locator('#customiseCategoryFilter').selectOption('Kanto');assert(await page.locator('.customise-sleeve-tile').count()>0);
+ await page.locator('#customiseCategoryFilter').selectOption('all');await page.locator('[data-cosmetic-filter="all"]').click();
+ const hidden=await page.locator('[data-sleeve-id="oak-trio"]').first();assert.equal(await hidden.locator('b').textContent(),'???');assert.equal(await hidden.locator('img').count(),0);
+ await hidden.click();assert.equal(await page.locator('#customiseSleeveDetail img').count(),0);assert(!/starter|Bulbasaur|Charmander|Squirtle/i.test(await page.locator('#customiseSleeveDetail').innerText()));await page.locator('#customisePreviewClose').click();
+ await page.locator('[data-sleeve-id="luckydex-pixel"]').first().click();await page.locator('[data-equip-sleeve="luckydex-pixel"]').click();assert.equal(await page.evaluate(()=>state.cosmetics.activeSleeve),'luckydex-pixel');
+ const image=await page.locator('#customiseSleeveDetail img').boundingBox();assert(image.width>=200&&image.height>=280,'tap opens a genuinely larger preview');await page.locator('#customisePreviewClose').click();
+ assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth),false);assert.deepEqual(errors,[]);
+ await page.reload();await page.locator('#titleContinueBtn').click();assert.equal(await page.evaluate(()=>state.cosmetics.activeSleeve),'luckydex-pixel');
+ await context.close();console.log('PASS large mobile catalogue: search, source/theme/ownership filters, secret privacy, locked equip, large preview and persisted selection');
+}finally{await browser.close();}})().catch(e=>{console.error(e);process.exitCode=1;});

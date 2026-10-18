@@ -1,0 +1,62 @@
+.wailord-game,
+.wailord-game *{
+  -webkit-user-select:none;
+  user-select:none;
+  -webkit-touch-callout:none;
+  -webkit-tap-highlight-color:transparent;
+}
+.wailord-game{padding:0!important;overflow:hidden;background:#7bc4df;color:#26394b}
+.wailord-game img{pointer-events:none;-webkit-user-drag:none}
+.wailord-head{background:linear-gradient(90deg,#2f679d,#6850a1)!important;color:#fff}
+.wailord-stage{position:relative;display:flex;min-height:calc(100dvh - 118px);flex-direction:column;gap:7px;padding:8px;background:linear-gradient(#8bd6ef 0 68%,#2c8fc7 68% 100%);overflow:hidden;color:#26394b}
+.wailord-hud{position:relative;z-index:20;display:grid;grid-template-columns:repeat(4,1fr);gap:5px}
+.wailord-hud span{min-width:0;padding:6px 3px;text-align:center;border:2px solid #315d8f;border-radius:10px;background:#fff4d2;color:#26394b;box-shadow:0 3px 0 rgba(37,72,112,.34)}
+.wailord-hud small{display:block;color:#506277;font-size:7px;font-weight:900;letter-spacing:.07em}.wailord-hud b{display:block;color:#22364a;font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.wailord-playfield{position:relative;z-index:4;flex:1;min-height:450px;border:3px solid #315d8f;border-radius:18px;background-color:#9edfee;background-image:linear-gradient(180deg,rgba(255,255,255,.12),rgba(255,255,255,.03)),url("https://archives.bulbagarden.net/media/upload/a/a6/Sparkling_Sea.png");background-size:cover;background-position:center center;box-shadow:inset 0 0 0 4px rgba(255,255,255,.34),0 5px 0 #244f7c;overflow:hidden;touch-action:none;isolation:isolate}
+.wailord-playfield:after{content:"";position:absolute;inset:0;z-index:0;background:linear-gradient(180deg,rgba(119,215,244,.12),rgba(255,255,255,.06) 60%,rgba(32,138,193,.18));pointer-events:none}
+.wailord-water{position:absolute;left:-4%;right:-4%;bottom:-2%;z-index:2;height:21%;background:repeating-radial-gradient(ellipse at 50% 0,rgba(147,225,244,.96) 0 7px,rgba(79,177,217,.96) 8px 18px,rgba(40,139,194,.97) 19px 27px);opacity:.95}.wailord-island{display:none}
+.wailord-actor{position:absolute;bottom:4.5%;left:50%;z-index:13;width:122px;transform:translateX(-50%);transition:left .06s linear;filter:drop-shadow(0 5px 2px rgba(19,74,108,.28));pointer-events:none}.wailord-actor img{display:block;width:100%;image-rendering:auto}
+.wailord-spout{position:absolute;left:50%;bottom:19%;z-index:9;width:18px;height:20%;transform:translateX(-50%);border-radius:50% 50% 0 0;background:linear-gradient(90deg,rgba(255,255,255,.10),#d8f7ff 38%,#fff 52%,#8de1ff 72%,rgba(255,255,255,.08));box-shadow:0 0 14px rgba(225,252,255,.88);transition:left .06s linear;pointer-events:none}.wailord-spout:before{content:"";position:absolute;left:50%;top:-11px;width:55px;height:23px;transform:translateX(-50%);border-radius:50%;background:radial-gradient(ellipse,#f6feff 0 14%,#9be8ff 18% 42%,transparent 46%);filter:drop-shadow(0 0 5px #d7f8ff)}
+.wailord-balls,.wailord-pokemon-layer{position:absolute;inset:0;z-index:5;pointer-events:none}.wailord-ball{--ball-size:33px;position:absolute;z-index:7;width:var(--ball-size);height:var(--ball-size);transform:translate(-50%,-50%);border:3px solid #fff;border-radius:50%;box-shadow:inset -5px -6px 0 rgba(0,0,0,.12),0 3px 0 rgba(34,70,101,.28),0 0 0 2px rgba(41,79,111,.2)}.wailord-ball i{position:absolute;left:22%;top:18%;width:24%;height:17%;border-radius:50%;background:rgba(255,255,255,.76);transform:rotate(-28deg)}
+.wailord-ball-yellow{background:#f2cf31}.wailord-ball-brown{background:#9f6941}.wailord-ball-blue{background:#4e9ee8}.wailord-ball-orange{background:#ed8d32}.wailord-rainbow-ball{background:conic-gradient(#ff6d81,#ffdf5f,#76e6a5,#6dc8ff,#b993ff,#ff6d81);animation:wailordRainbowPulse .75s ease-in-out infinite alternate;box-shadow:0 0 16px #fff,0 0 25px #f9e675,inset -4px -5px rgba(255,255,255,.15)}
+.wailord-pokemon{position:absolute;z-index:14;width:50px;text-align:center;will-change:left,top,transform;filter:drop-shadow(0 3px 1px rgba(29,60,89,.28))}.wailord-pokemon img{display:block;width:100%;image-rendering:auto}.wailord-pokemon.is-splash{animation:wailordSplash .45s ease-out}
+.wailord-legend{position:absolute;left:7px;right:7px;top:7px;z-index:16;display:grid;grid-template-columns:repeat(4,1fr);gap:4px;pointer-events:none}.wailord-legend span{display:flex;align-items:center;justify-content:center;gap:3px;min-width:0;padding:4px 3px;border:2px solid #466581;border-radius:8px;background:#fff2cf;color:#26394b;opacity:.42;filter:grayscale(.85);box-shadow:0 2px 0 rgba(48,76,104,.3)}.wailord-legend span.is-active{opacity:1;filter:none}.wailord-legend img{width:22px;height:22px;object-fit:contain}.wailord-legend b{color:#26394b;font-size:7px;font-weight:1000;white-space:nowrap;text-shadow:0 1px #fff}.wailord-legend .yellow{box-shadow:inset 0 -4px #f2cf31,0 2px 0 rgba(48,76,104,.3)}.wailord-legend .brown{box-shadow:inset 0 -4px #9f6941,0 2px 0 rgba(48,76,104,.3)}.wailord-legend .blue{box-shadow:inset 0 -4px #4e9ee8,0 2px 0 rgba(48,76,104,.3)}.wailord-legend .orange{box-shadow:inset 0 -4px #ed8d32,0 2px 0 rgba(48,76,104,.3)}
+.wailord-status-banner{position:absolute;left:50%;top:15%;z-index:30;transform:translateX(-50%);max-width:88%;padding:6px 10px;text-align:center;border:2px solid #466581;border-radius:10px;background:#fff1c8;color:#293d50;font-size:8px;font-weight:1000;letter-spacing:.04em;box-shadow:0 3px 0 rgba(45,83,119,.25);pointer-events:none}
+.wailord-ready{position:absolute;left:10px;right:10px;bottom:10px;z-index:50;padding:12px;border:3px solid #315d8f;border-radius:14px;background:#fff2cc;color:#26394b;box-shadow:0 7px 0 rgba(39,76,111,.35);text-align:center}.wailord-ready small{color:#627083;font-size:8px;font-weight:900;letter-spacing:.09em}.wailord-ready>b{display:block;color:#26394b;font-size:22px;text-shadow:0 1px #fff}.wailord-ready>span{display:block;margin:4px auto 8px;max-width:550px;color:#435568;font-size:9px;font-weight:750;line-height:1.45}.wailord-ready>em{display:block;margin-bottom:7px;color:#506277;font-size:8px;font-style:normal;font-weight:1000}.wailord-difficulty{display:grid;grid-template-columns:repeat(3,1fr);gap:5px;margin:7px 0}.wailord-difficulty button,.wailord-start{min-height:38px;border:2px solid #315d8f;border-radius:9px;background:#e8f5f8;color:#26394b;font-weight:1000}.wailord-difficulty button.active{background:#9bd8f6;color:#1f3449;box-shadow:inset 0 0 0 2px #fff}.wailord-start{width:100%;background:#347fba;color:#fff;font-size:14px}
+.wailord-controls{position:relative;z-index:20;display:grid;grid-template-columns:72px 1fr 72px;gap:6px;align-items:stretch}.wailord-move{min-height:70px;border:3px solid #315d8f;border-radius:13px;background:linear-gradient(#fff9de,#cce9f1);font-size:24px;font-weight:1000;color:#244f7c;box-shadow:0 4px 0 #315d8f}.wailord-move:active,.wailord-shoot:active{transform:translateY(2px);box-shadow:0 2px 0 #315d8f}.wailord-control-centre{display:grid;grid-template-rows:auto 1fr;gap:4px;min-width:0}.wailord-shoot{min-height:42px;border:3px solid #315d8f;border-radius:12px;background:linear-gradient(#66d6ff,#2d8fc5);color:#fff;font-size:16px;font-weight:1000;letter-spacing:.08em;box-shadow:0 4px 0 #315d8f;text-shadow:0 2px rgba(21,77,115,.32)}.wailord-shoot:disabled{opacity:.5;filter:saturate(.55)}.wailord-control-copy{display:grid;place-items:center;text-align:center;min-width:0;padding:3px 7px;border:2px solid #315d8f;border-radius:10px;background:#fff4d4;color:#26394b}.wailord-control-copy b{color:#26394b;font-size:8px;line-height:1.2}.wailord-control-copy small{font-size:7px;color:#4d6578}
+.wailord-pause{position:absolute;inset:0;z-index:70;display:grid;place-items:center;padding:18px;background:rgba(21,60,96,.76)}.wailord-pause[hidden]{display:none}.wailord-pause>div{width:min(320px,100%);padding:17px;text-align:center;border:3px solid #315d8f;border-radius:14px;background:#fff2cc;color:#26394b}.wailord-pause b{display:block;font-size:20px}.wailord-pause span{display:block;margin:5px 0 10px;color:#435568;font-size:10px}.wailord-pause button{width:100%;min-height:40px;border:0;border-radius:9px;background:#347fba;color:#fff;font-weight:1000}
+@keyframes wailordRainbowPulse{to{transform:translate(-50%,-50%) scale(1.13) rotate(12deg);filter:brightness(1.18)}}
+@keyframes wailordSplash{0%{filter:brightness(2)}100%{filter:drop-shadow(0 3px 1px rgba(29,60,89,.28))}}
+@media(max-width:390px){.wailord-stage{padding:6px;min-height:calc(100dvh - 110px)}.wailord-playfield{min-height:420px;background-position:center center}.wailord-hud b{font-size:12px}.wailord-actor{width:112px}.wailord-pokemon{width:46px}.wailord-controls{grid-template-columns:66px 1fr 66px}.wailord-move{min-height:66px}.wailord-shoot{min-height:39px;font-size:14px}.wailord-ready{left:7px;right:7px;bottom:7px;padding:9px}.wailord-ready>b{font-size:19px}}
+
+/* v0.50.3 compact Dream World presentation */
+.wailord-ready{left:50%;right:auto;bottom:12px;width:calc(100% - 28px);max-width:440px;transform:translateX(-50%);padding:10px 11px;border-radius:13px}
+.wailord-ready small{font-size:7px}.wailord-ready>b{font-size:19px;line-height:1.05;margin-top:2px}.wailord-ready>span{margin:3px auto 5px;font-size:8px;line-height:1.3}.wailord-ready>em{margin-bottom:5px;font-size:7px}.wailord-difficulty{margin:5px 0;gap:4px}.wailord-difficulty button,.wailord-start{min-height:34px}.wailord-start{font-size:12px}
+.wailord-status-banner[hidden]{display:none}
+.wailord-controls{grid-template-columns:74px minmax(0,1fr) 74px;gap:7px}.wailord-move,.wailord-shoot{min-height:58px;border-radius:12px}.wailord-shoot{font-size:18px}.wailord-control-centre,.wailord-control-copy{display:none!important}.wailord-control-status{position:relative;z-index:20;display:flex;align-items:center;justify-content:space-between;gap:8px;min-height:27px;padding:4px 9px;border:2px solid #315d8f;border-radius:9px;background:#fff4d4;color:#33495d;font-size:7px;font-weight:900}.wailord-control-status b{font-size:7px;color:#23394c;white-space:nowrap}
+@media(max-width:390px){.wailord-ready{width:calc(100% - 18px);bottom:8px;padding:8px}.wailord-ready>b{font-size:17px}.wailord-controls{grid-template-columns:64px minmax(0,1fr) 64px}.wailord-move,.wailord-shoot{min-height:52px}.wailord-control-status{font-size:6.5px}}
+
+/* v0.50.4 Dream World top-stack cleanup */
+.wailord-head{
+  position:relative;
+  top:auto;
+  left:auto;
+  right:auto;
+  z-index:60;
+  flex:0 0 56px;
+  width:100%;
+  min-height:56px;
+  padding:6px 12px;
+  box-sizing:border-box;
+  border-bottom:3px solid rgba(36,79,124,.72);
+  box-shadow:0 4px 0 rgba(36,79,124,.18);
+}
+.wailord-head .arcade-mascot{display:none}
+.wailord-stage{flex:1 1 auto;min-height:0;height:auto;padding:10px 8px 8px}
+.wailord-hud{flex:0 0 auto;margin:0 2px}
+.wailord-playfield{flex:1 1 auto;min-height:0}
+@media(max-width:390px){
+  .wailord-head{flex-basis:54px;min-height:54px;padding:5px 8px}
+  .wailord-stage{min-height:0;padding:8px 6px 6px}
+  .wailord-playfield{min-height:0}
+}

@@ -1,0 +1,637 @@
+[
+  {
+    "key": "venue_amie",
+    "path": "arcade/authentic-v0200/venues/amie-garden.jpg",
+    "source_url": "https://oraswiki.com/assets/images/mechanics/pokemon-amie/02-pokemon-oras-the-pokemon-amies-main-screen.jpg",
+    "source_format": "JPEG",
+    "format": "JPEG",
+    "width": 960,
+    "height": 720,
+    "sha256": "821faed7a6e12747be68fd054462d91c992097b7c2516fc243f5f49d57d67dce",
+    "bytes": 118744
+  },
+  {
+    "key": "venue_goldenrod",
+    "path": "arcade/authentic-v0200/venues/goldenrod-game-corner.jpg",
+    "source_url": "https://static.guidestrats.com/images/02/13788/01-pokemon-hgss-outside-goldenrod-city-game-corner.jpg",
+    "source_format": "JPEG",
+    "format": "JPEG",
+    "width": 750,
+    "height": 563,
+    "sha256": "d808d977a652c3caeb950b706b548da894704bcc87a168e268370cf16630dad4",
+    "bytes": 138074
+  },
+  {
+    "key": "venue_celadon",
+    "path": "arcade/authentic-v0200/venues/celadon-game-corner.jpg",
+    "source_url": "https://static.guidestrats.com/images/12/7482/03-pokemon-hgss-player-arriving-in-front-of-the-celadon-game-corner.jpg",
+    "source_format": "JPEG",
+    "format": "JPEG",
+    "width": 750,
+    "height": 562,
+    "sha256": "bef3b16dfe70fb0b208c5c537fcaaa278333ca40a70410385d2d1d67f61be4db",
+    "bytes": 152382
+  },
+  {
+    "key": "venue_lilycove",
+    "path": "arcade/authentic-v0200/venues/lilycove-contest-hall.jpg",
+    "source_url": "https://static.oraswiki.com/assets/images/locations/towns-cities/lilycove-city/15-pokemon-oras-outside-lilycoves-contest-hall.jpg",
+    "source_format": "JPEG",
+    "format": "JPEG",
+    "width": 1200,
+    "height": 716,
+    "sha256": "0ddb0f9e7b7dee961af3fffff5046ae8b2e10fdc75de81268051c13d8c62f2a2",
+    "bytes": 295345
+  },
+  {
+    "key": "venue_stadium",
+    "path": "arcade/authentic-v0200/venues/stadium-classroom.webp",
+    "source_url": "https://gameinformer.com/sites/default/files/styles/thumbnail/public/2023/04/04/7e3c97a1/pokemon_stadium_clefairy.png.webp",
+    "source_format": "WEBP",
+    "format": "WEBP",
+    "width": 800,
+    "height": 450,
+    "sha256": "8f99581933509fc06ebe3b32c81f800af1c86e80db2e8c65ae8dd28ccda48dc4",
+    "bytes": 34522
+  },
+  {
+    "key": "venue_oreburgh",
+    "path": "arcade/authentic-v0200/venues/oreburgh-museum.png",
+    "source_url": "https://www.pokepedia.fr/images/thumb/f/f3/Mus%C3%A9e_Minier_de_Charbourg_DEPS.png/1200px-Mus%C3%A9e_Minier_de_Charbourg_DEPS.png",
+    "source_format": "PNG",
+    "format": "PNG",
+    "width": 1200,
+    "height": 675,
+    "sha256": "f85bb2bad79981d5045315db0254c36f16a51326a5d44b438d6e3e5fbc2e1533",
+    "bytes": 1062364
+  },
+  {
+    "key": "venue_ruins",
+    "path": "arcade/authentic-v0200/venues/ruins-of-alph.jpg",
+    "source_url": "https://static.fandomspot.com/images/05/32822/13-grassy-area-containing-smeargle-and-antu-at-ruins-of-alph-pokemon-hgss-screenshot.jpg",
+    "source_format": "JPEG",
+    "format": "JPEG",
+    "width": 750,
+    "height": 557,
+    "sha256": "1ed67f8404cf41e0e984b5b59767e6d49bbad11e63f58a555f5bdb18c867758f",
+    "bytes": 125085
+  },
+  {
+    "key": "venue_indigo",
+    "path": "arcade/authentic-v0200/venues/indigo-plateau.jpg",
+    "source_url": "https://www.fandomspot.com/images/05/14797/01-indigo-plateau-screenshot-pokemon-heartgold.jpg",
+    "source_format": "JPEG",
+    "format": "JPEG",
+    "width": 750,
+    "height": 560,
+    "sha256": "c1a90d6d44acea8a9011d8d083fbc56d3ab7732dd26db0d73bc3059d637b7a03",
+    "bytes": 105078
+  },
+  {
+    "key": "amie_berry_picker",
+    "path": "arcade/authentic-v0200/amie/berry-picker.jpg",
+    "source_url": "https://oraswiki.com/assets/images/mechanics/pokemon-amie/04-pokemon-oras-the-berry-picker-minigame.jpg",
+    "source_format": "JPEG",
+    "format": "JPEG",
+    "width": 960,
+    "height": 720,
+    "sha256": "b0396c0a2579e1b8a9c5fe9fd32398796d3d434f1c1e5898af92343cf9c36208",
+    "bytes": 115980
+  },
+  {
+    "key": "amie_head_it",
+    "path": "arcade/authentic-v0200/amie/head-it.jpg",
+    "source_url": "https://oraswiki.com/assets/images/mechanics/pokemon-amie/05-pokemon-oras-the-head-it-minigame.jpg",
+    "source_format": "JPEG",
+    "format": "JPEG",
+    "width": 960,
+    "height": 720,
+    "sha256": "1407286bf67be3761ca378290debf33315af86e6acc5cbad176a9db85f2783da",
+    "bytes": 99003
+  },
+  {
+    "key": "amie_tile_puzzle",
+    "path": "arcade/authentic-v0200/amie/tile-puzzle.jpg",
+    "source_url": "https://oraswiki.com/assets/images/mechanics/pokemon-amie/06-pokemon-oras-the-tile-puzzle-minigame.jpg",
+    "source_format": "JPEG",
+    "format": "JPEG",
+    "width": 956,
+    "height": 716,
+    "sha256": "6c6aca00da182e2a3a7958068399f2907e74a41a7d717601804efa91f0b9ebf2",
+    "bytes": 199522
+  },
+  {
+    "key": "voltorb_screen",
+    "path": "arcade/authentic-v0200/voltorb/screen.jpg",
+    "source_url": "https://static.guidestrats.com/images/02/13788/06-pokemon-hgss-making-use-of-memos-in-voltorb-flip.jpg",
+    "source_format": "JPEG",
+    "format": "JPEG",
+    "width": 750,
+    "height": 563,
+    "sha256": "6f855d3ccc849ea1b52586822f11f01078db5f53d0abacc24895a7030ce8fc69",
+    "bytes": 170938
+  },
+  {
+    "key": "voltorb_blank",
+    "path": "arcade/authentic-v0200/voltorb/blank.png",
+    "source_url": "https://raw.githubusercontent.com/samualtnorman/voltorb-flip/main/src/assets/tile/blank.png",
+    "source_format": "PNG",
+    "format": "PNG",
+    "width": 22,
+    "height": 22,
+    "sha256": "2e3f070699fcbb2470092339f322d805e58cfad1340d75d5cc36d255989203de",
+    "bytes": 98
+  },
+  {
+    "key": "voltorb_1",
+    "path": "arcade/authentic-v0200/voltorb/1.png",
+    "source_url": "https://raw.githubusercontent.com/samualtnorman/voltorb-flip/main/src/assets/tile/1.png",
+    "source_format": "PNG",
+    "format": "PNG",
+    "width": 22,
+    "height": 22,
+    "sha256": "f586da4d5228b6524398f72163f728d4447628b3b94ba60b1d36714a0cfc86c8",
+    "bytes": 136
+  },
+  {
+    "key": "voltorb_2",
+    "path": "arcade/authentic-v0200/voltorb/2.png",
+    "source_url": "https://raw.githubusercontent.com/samualtnorman/voltorb-flip/main/src/assets/tile/2.png",
+    "source_format": "PNG",
+    "format": "PNG",
+    "width": 22,
+    "height": 22,
+    "sha256": "2682ff36f9bd136cd627688688b28e927d21a0ab36d8d9355d2ecd5fd6fc5fdf",
+    "bytes": 151
+  },
+  {
+    "key": "voltorb_3",
+    "path": "arcade/authentic-v0200/voltorb/3.png",
+    "source_url": "https://raw.githubusercontent.com/samualtnorman/voltorb-flip/main/src/assets/tile/3.png",
+    "source_format": "PNG",
+    "format": "PNG",
+    "width": 22,
+    "height": 22,
+    "sha256": "0d73d3d450995fa5ae830bff5a98d7dfb0624fabf2920bdea52db9463c9214ef",
+    "bytes": 142
+  },
+  {
+    "key": "berry_blender_center",
+    "path": "arcade/authentic-v0200/berry-blender/center.png",
+    "source_url": "https://raw.githubusercontent.com/pret/pokeemerald/master/graphics/berry_blender/center.png",
+    "source_format": "PNG",
+    "format": "PNG",
+    "width": 64,
+    "height": 128,
+    "sha256": "e978c5532846ec48223cbdcfb81ce890856aba6d3954f75050731fa457dd9050",
+    "bytes": 1374
+  },
+  {
+    "key": "berry_blender_outer",
+    "path": "arcade/authentic-v0200/berry-blender/outer.png",
+    "source_url": "https://raw.githubusercontent.com/pret/pokeemerald/master/graphics/berry_blender/outer.png",
+    "source_format": "PNG",
+    "format": "PNG",
+    "width": 128,
+    "height": 128,
+    "sha256": "c16a47298619b30c12e4c6ca61fc6f8b523029bf6dff3fe89de32d7e36645ce4",
+    "bytes": 1880
+  },
+  {
+    "key": "berry_blender_arrow",
+    "path": "arcade/authentic-v0200/berry-blender/arrow.png",
+    "source_url": "https://raw.githubusercontent.com/pret/pokeemerald/master/graphics/berry_blender/arrow.png",
+    "source_format": "PNG",
+    "format": "PNG",
+    "width": 32,
+    "height": 128,
+    "sha256": "5349d6333090c77a425aa4c7d5f8ff638fdd79d86edc0eaf1dafd59713e6e9c2",
+    "bytes": 682
+  },
+  {
+    "key": "berry_blender_screen",
+    "path": "arcade/authentic-v0200/berry-blender/screen.jpg",
+    "source_url": "https://assets.st-note.com/img/1719486905194-Ay3TlUL9a2.png?width=1200",
+    "source_format": "PNG",
+    "format": "JPEG",
+    "width": 761,
+    "height": 480,
+    "sha256": "4189ea4ab0afd6d57ae8ddc0b6686cd682ea921fb2fbfc6785aae6ffde6b6c17",
+    "bytes": 34097
+  },
+  {
+    "key": "clefairy_classroom",
+    "path": "arcade/authentic-v0200/clefairy/clefairy-says.webp",
+    "source_url": "https://gameinformer.com/sites/default/files/styles/thumbnail/public/2023/04/04/7e3c97a1/pokemon_stadium_clefairy.png.webp",
+    "source_format": "WEBP",
+    "format": "WEBP",
+    "width": 800,
+    "height": 450,
+    "sha256": "8f99581933509fc06ebe3b32c81f800af1c86e80db2e8c65ae8dd28ccda48dc4",
+    "bytes": 34522
+  },
+  {
+    "key": "underground_digging",
+    "path": "arcade/authentic-v0200/mining/underground-digging.jpg",
+    "source_url": "https://images.cgames.de/images/gsgp/293/pok%C3%A9mon-diamantperl_6156377.jpg",
+    "source_format": "JPEG",
+    "format": "JPEG",
+    "width": 1000,
+    "height": 522,
+    "sha256": "458cafb393057559051aa2fb59c1c2a6a7cfc00bb3642c0564f2437d48b0595a",
+    "bytes": 89043
+  },
+  {
+    "key": "amie_backgrounds_sheet",
+    "path": "arcade/authentic-v0200/amie/backgrounds-sheet.png",
+    "source_url": "https://www.spriters-resource.com/media/assets/59/62308.png",
+    "source_page": "https://www.spriters-resource.com/3ds/pokemonxy/sheet/62308/",
+    "format": "PNG",
+    "sha256": "f2385bf7e6f59e08b2656c5cb1bdc1d91874e4a1b5dbbcbb27b931ac851b698c",
+    "bytes": 964712
+  },
+  {
+    "key": "amie_berry-picker_sheet",
+    "path": "arcade/authentic-v0200/amie/berry-picker-sheet.png",
+    "source_url": "https://www.spriters-resource.com/media/assets/61/64165.png",
+    "source_page": "https://www.spriters-resource.com/3ds/pokemonxy/sheet/64165/",
+    "format": "PNG",
+    "sha256": "2852c2d10ab530fb3aa70d7ed5a1d2219a033447af54d2d9e2c2842358339969",
+    "bytes": 396005
+  },
+  {
+    "key": "amie_head-it_sheet",
+    "path": "arcade/authentic-v0200/amie/head-it-sheet.png",
+    "source_url": "https://www.spriters-resource.com/media/assets/61/64166.png",
+    "source_page": "https://www.spriters-resource.com/3ds/pokemonxy/sheet/64166/",
+    "format": "PNG",
+    "sha256": "5c814f1f6c77f5bafb2b1b62ef2b4bdbbfb9fddb29cf5bbce74ddc5e93adcedd",
+    "bytes": 403072
+  },
+  {
+    "key": "center_map",
+    "path": "arcade/authentic-v0200/berry-blender/center_map.bin",
+    "source_url": "https://raw.githubusercontent.com/pret/pokeemerald/master/graphics/berry_blender/center_map.bin",
+    "format": "BINARY",
+    "sha256": "1f6971314f5759278566d9377e5a4a87c6fbc852afe751e70ac0d7c5b48d5e25",
+    "bytes": 1024
+  },
+  {
+    "key": "outer_map",
+    "path": "arcade/authentic-v0200/berry-blender/outer_map.bin",
+    "source_url": "https://raw.githubusercontent.com/pret/pokeemerald/master/graphics/berry_blender/outer_map.bin",
+    "format": "BINARY",
+    "sha256": "35f74418455222426e1352053714c01a4257b4b624b9a58170b99a9d427d1be1",
+    "bytes": 2048
+  },
+  {
+    "key": "berry-picker-backdrop",
+    "path": "arcade/authentic-v0200/amie/berry-picker-backdrop.png",
+    "source_url": "https://www.spriters-resource.com/media/assets/61/64165.png",
+    "source_page": "https://www.spriters-resource.com/3ds/pokemonxy/sheet/64165/",
+    "derived_from": "arcade/authentic-v0200/amie/berry-picker-sheet.png",
+    "transformation": {
+      "crop": [
+        0,
+        347,
+        320,
+        587
+      ],
+      "description": "Unretouched retail asset sheet crop with original alpha; no generated pixels"
+    },
+    "format": "PNG",
+    "width": 320,
+    "height": 240,
+    "sha256": "ebad1309d327b4cbd1c84d6287807b93cfa3ea4907efecc4a79c79f8532a1f60",
+    "bytes": 45192
+  },
+  {
+    "key": "head-it-backdrop",
+    "path": "arcade/authentic-v0200/amie/head-it-backdrop.png",
+    "source_url": "https://www.spriters-resource.com/media/assets/61/64166.png",
+    "source_page": "https://www.spriters-resource.com/3ds/pokemonxy/sheet/64166/",
+    "derived_from": "arcade/authentic-v0200/amie/head-it-sheet.png",
+    "transformation": {
+      "crop": [
+        0,
+        966,
+        320,
+        1206
+      ],
+      "description": "Unretouched retail asset sheet crop with original alpha; no generated pixels"
+    },
+    "format": "PNG",
+    "width": 320,
+    "height": 240,
+    "sha256": "a4dcee40ac5a28d1bb3368d970180241de52b80204dc1f038397b0d3e00a606b",
+    "bytes": 39874
+  },
+  {
+    "key": "head-it-upper-backdrop",
+    "path": "arcade/authentic-v0200/amie/head-it-upper-backdrop.png",
+    "source_url": "https://www.spriters-resource.com/media/assets/61/64166.png",
+    "source_page": "https://www.spriters-resource.com/3ds/pokemonxy/sheet/64166/",
+    "derived_from": "arcade/authentic-v0200/amie/head-it-sheet.png",
+    "transformation": {
+      "crop": [
+        0,
+        726,
+        400,
+        966
+      ],
+      "description": "Unretouched retail asset sheet crop with original alpha; no generated pixels"
+    },
+    "format": "PNG",
+    "width": 400,
+    "height": 240,
+    "sha256": "e515f5f3fb4c4fbfe3c605679c25ed7d393d80a08805b6e49f9c915c9a726c4f",
+    "bytes": 44892
+  },
+  {
+    "key": "tile-puzzle_backdrop",
+    "path": "arcade/authentic-v0200/amie/tile-puzzle-backdrop.png",
+    "source_url": "https://oraswiki.com/assets/images/mechanics/pokemon-amie/06-pokemon-oras-the-tile-puzzle-minigame.jpg",
+    "derived_from": "arcade/authentic-v0200/amie/tile-puzzle.jpg",
+    "transformation": {
+      "crop": [
+        215,
+        548,
+        385,
+        657
+      ],
+      "description": "Unretouched screenshot crop; no inpainting, reconstruction or generated art"
+    },
+    "format": "PNG",
+    "width": 170,
+    "height": 109,
+    "sha256": "a6e5fdc1ac3c0a1bea8e7d506d8ce6fa43282473130415d051c8e1b35d4e6814",
+    "bytes": 6185
+  },
+  {
+    "key": "yarn-pink",
+    "path": "arcade/authentic-v0200/amie/yarn-pink.png",
+    "source_url": "https://www.spriters-resource.com/media/assets/61/64166.png",
+    "source_page": "https://www.spriters-resource.com/3ds/pokemonxy/sheet/64166/",
+    "derived_from": "arcade/authentic-v0200/amie/head-it-sheet.png",
+    "transformation": {
+      "crop": [
+        0,
+        1213,
+        59,
+        1296
+      ],
+      "description": "Unretouched retail asset sheet crop with original alpha; no generated pixels"
+    },
+    "format": "PNG",
+    "width": 59,
+    "height": 83,
+    "sha256": "f8b4fcc83423680e4b5a9580dd9bf228e56b95419d72924fe0b42d349cd681ad",
+    "bytes": 6737
+  },
+  {
+    "key": "yarn-blue",
+    "path": "arcade/authentic-v0200/amie/yarn-blue.png",
+    "source_url": "https://www.spriters-resource.com/media/assets/61/64166.png",
+    "source_page": "https://www.spriters-resource.com/3ds/pokemonxy/sheet/64166/",
+    "derived_from": "arcade/authentic-v0200/amie/head-it-sheet.png",
+    "transformation": {
+      "crop": [
+        0,
+        1393,
+        59,
+        1476
+      ],
+      "description": "Unretouched retail asset sheet crop with original alpha; no generated pixels"
+    },
+    "format": "PNG",
+    "width": 59,
+    "height": 83,
+    "sha256": "af388239adbe9aa4177421ce6f1b06aad66e1069153095b0b5dd68ab52dadab8",
+    "bytes": 6702
+  },
+  {
+    "key": "yarn-yellow",
+    "path": "arcade/authentic-v0200/amie/yarn-yellow.png",
+    "source_url": "https://www.spriters-resource.com/media/assets/61/64166.png",
+    "source_page": "https://www.spriters-resource.com/3ds/pokemonxy/sheet/64166/",
+    "derived_from": "arcade/authentic-v0200/amie/head-it-sheet.png",
+    "transformation": {
+      "crop": [
+        0,
+        1572,
+        61,
+        1656
+      ],
+      "description": "Unretouched retail asset sheet crop with original alpha; no generated pixels"
+    },
+    "format": "PNG",
+    "width": 61,
+    "height": 84,
+    "sha256": "2aa04975abd595a0d10460b9cbca04feccfdb334590a12150b5082fa623d5596",
+    "bytes": 6884
+  },
+  {
+    "key": "yarn-purple",
+    "path": "arcade/authentic-v0200/amie/yarn-purple.png",
+    "source_url": "https://www.spriters-resource.com/media/assets/61/64166.png",
+    "source_page": "https://www.spriters-resource.com/3ds/pokemonxy/sheet/64166/",
+    "derived_from": "arcade/authentic-v0200/amie/head-it-sheet.png",
+    "transformation": {
+      "crop": [
+        0,
+        1753,
+        59,
+        1836
+      ],
+      "description": "Unretouched retail asset sheet crop with original alpha; no generated pixels"
+    },
+    "format": "PNG",
+    "width": 59,
+    "height": 83,
+    "sha256": "b699e24b1d350ae642442344718ec0e52eda548da125d1a210995c5bdf3d8200",
+    "bytes": 6416
+  },
+  {
+    "key": "yarn-bonus",
+    "path": "arcade/authentic-v0200/amie/yarn-bonus.png",
+    "source_url": "https://www.spriters-resource.com/media/assets/61/64166.png",
+    "source_page": "https://www.spriters-resource.com/3ds/pokemonxy/sheet/64166/",
+    "derived_from": "arcade/authentic-v0200/amie/head-it-sheet.png",
+    "transformation": {
+      "crop": [
+        0,
+        1894,
+        126,
+        2089
+      ],
+      "description": "Unretouched retail asset sheet crop with original alpha; no generated pixels"
+    },
+    "format": "PNG",
+    "width": 126,
+    "height": 195,
+    "sha256": "08e8ba7d2834403225e3d7ba9ab953e8b0f775f911b4a985d695b4f0c21da1c8",
+    "bytes": 22861
+  },
+  {
+    "key": "rock-tile",
+    "path": "arcade/authentic-v0200/mining/rock-tile.png",
+    "source_url": "https://images.cgames.de/images/gsgp/293/pok%C3%A9mon-diamantperl_6156377.jpg",
+    "derived_from": "arcade/authentic-v0200/mining/underground-digging.jpg",
+    "transformation": {
+      "crop": [
+        162,
+        65,
+        205,
+        108
+      ],
+      "description": "Unretouched original crop; no generated pixels"
+    },
+    "format": "PNG",
+    "width": 43,
+    "height": 43,
+    "sha256": "f87a60085ce6e81cc28b57221adc64bc3a1b054a5f36bfa3ddc1f1bdfe85e97b",
+    "bytes": 2695
+  },
+  {
+    "key": "wall-texture",
+    "path": "arcade/authentic-v0200/mining/wall-texture.png",
+    "source_url": "https://images.cgames.de/images/gsgp/293/pok%C3%A9mon-diamantperl_6156377.jpg",
+    "derived_from": "arcade/authentic-v0200/mining/underground-digging.jpg",
+    "transformation": {
+      "crop": [
+        666,
+        455,
+        710,
+        499
+      ],
+      "description": "Unretouched original crop; no generated pixels"
+    },
+    "format": "PNG",
+    "width": 44,
+    "height": 44,
+    "sha256": "4aa9a58834737b9f5046e1314073a145f7bb29b854700dc85c2891b59a18b2ad",
+    "bytes": 2076
+  },
+  {
+    "key": "soil-tile",
+    "path": "arcade/authentic-v0200/mining/soil-tile.png",
+    "source_url": "https://images.cgames.de/images/gsgp/293/pok%C3%A9mon-diamantperl_6156377.jpg",
+    "derived_from": "arcade/authentic-v0200/mining/underground-digging.jpg",
+    "transformation": {
+      "crop": [
+        474,
+        367,
+        514,
+        406
+      ],
+      "description": "Unretouched original crop; no generated pixels"
+    },
+    "format": "PNG",
+    "width": 40,
+    "height": 39,
+    "sha256": "838bf04a8b5a279bf78718b1cc13979f792a673d2d1a1026655aa388e081e17e",
+    "bytes": 2129
+  },
+  {
+    "key": "center-composed",
+    "path": "arcade/authentic-v0200/berry-blender/center-composed.png",
+    "source_url": "https://raw.githubusercontent.com/pret/pokeemerald/master/graphics/berry_blender/center.png",
+    "derived_from": [
+      "arcade/authentic-v0200/berry-blender/center.png",
+      "arcade/authentic-v0200/berry-blender/center_map.bin"
+    ],
+    "transformation": {
+      "description": "Original GBA tilemap assembly, palette index 0 transparent; no invented pixels"
+    },
+    "format": "PNG",
+    "width": 256,
+    "height": 256,
+    "sha256": "e60093c5fd02822e0c017b0f5e875e824853db292fc0e56e280a5aedd0e5adf3",
+    "bytes": 3231
+  },
+  {
+    "key": "outer-composed",
+    "path": "arcade/authentic-v0200/berry-blender/outer-composed.png",
+    "source_url": "https://raw.githubusercontent.com/pret/pokeemerald/master/graphics/berry_blender/outer.png",
+    "derived_from": [
+      "arcade/authentic-v0200/berry-blender/outer.png",
+      "arcade/authentic-v0200/berry-blender/outer_map.bin"
+    ],
+    "transformation": {
+      "description": "Original GBA tilemap assembly, palette index 0 transparent; no invented pixels"
+    },
+    "format": "PNG",
+    "width": 256,
+    "height": 256,
+    "sha256": "746485fcc70a6ca73156471c598c61109e8284de3d3776d9968bf70ba99114f7",
+    "bytes": 4974
+  },
+  {
+    "key": "center-display",
+    "path": "arcade/authentic-v0200/berry-blender/center-display.png",
+    "source_url": "https://raw.githubusercontent.com/pret/pokeemerald/master/graphics/berry_blender/center.png",
+    "derived_from": [
+      "arcade/authentic-v0200/berry-blender/center.png",
+      "arcade/authentic-v0200/berry-blender/center_map.bin"
+    ],
+    "transformation": {
+      "crop": [
+        72,
+        32,
+        168,
+        128
+      ],
+      "description": "Original GBA tilemap assembly and display-region crop"
+    },
+    "format": "PNG",
+    "width": 96,
+    "height": 96,
+    "sha256": "1d5f4897e3e1826c062ee16dfa32edf9be328353ba3b6e24d59cd836c3a277de",
+    "bytes": 2667
+  },
+  {
+    "key": "outer-display",
+    "path": "arcade/authentic-v0200/berry-blender/outer-display.png",
+    "source_url": "https://raw.githubusercontent.com/pret/pokeemerald/master/graphics/berry_blender/outer.png",
+    "derived_from": [
+      "arcade/authentic-v0200/berry-blender/outer.png",
+      "arcade/authentic-v0200/berry-blender/outer_map.bin"
+    ],
+    "transformation": {
+      "crop": [
+        0,
+        0,
+        240,
+        160
+      ],
+      "description": "Original GBA tilemap assembly and display-region crop"
+    },
+    "format": "PNG",
+    "width": 240,
+    "height": 160,
+    "sha256": "4ef81ac73896b727cb7765dae40f09ed3b5ff2b49553c54cc7fa1c393ac86c9e",
+    "bytes": 4378
+  },
+  {
+    "key": "arrow-frame",
+    "path": "arcade/authentic-v0200/berry-blender/arrow-frame.png",
+    "source_url": "https://raw.githubusercontent.com/pret/pokeemerald/master/graphics/berry_blender/arrow.png",
+    "derived_from": [
+      "arcade/authentic-v0200/berry-blender/arrow.png"
+    ],
+    "transformation": {
+      "crop": [
+        0,
+        0,
+        32,
+        32
+      ],
+      "description": "First original arrow sprite frame, palette index 0 transparent"
+    },
+    "format": "PNG",
+    "width": 32,
+    "height": 32,
+    "sha256": "6c8e24dbb73269e67410de09771b4ec7bd5955fa26f27764d0f806b4b6e54a28",
+    "bytes": 472
+  }
+]

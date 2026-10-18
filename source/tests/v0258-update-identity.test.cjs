@@ -1,0 +1,16 @@
+'use strict';
+const assert=require('node:assert/strict');
+const fs=require('node:fs');
+const crypto=require('node:crypto');
+const path=require('node:path');
+const gradle=fs.readFileSync(path.join(__dirname,'../app/build.gradle'),'utf8');
+assert.match(gradle,/namespace\s+'com\.example\.luckydex'/);
+assert.match(gradle,/applicationId\s+'com\.example\.luckydex'/);
+const versionCode=Number((gradle.match(/versionCode\s+(\d+)/)||[])[1]||0);assert.ok(versionCode>=259,'versionCode must never regress below v0.25.9');
+const versionName=(gradle.match(/versionName\s+'(\d+)\.(\d+)\.(\d+)'/)||[]).slice(1).map(Number);
+assert.equal(versionName.length,3,'versionName must remain semantic');
+assert.ok(versionName[0]>0 || versionName[1]>25 || (versionName[1]===25 && versionName[2]>=9),'versionName must never regress below v0.25.9');
+assert.match(gradle,/file\('luckydex-dev\.keystore'\)/,'build must keep the permanent LuckyDex signer');
+const sha=crypto.createHash('sha256').update(fs.readFileSync(path.join(__dirname,'../app/luckydex-dev.keystore'))).digest('hex');
+assert.equal(sha,'90de91cea469f0eec5fbd69389cf03adc94ced396fa2ec85e2a51d2365a4f6d3','signing key must remain unchanged');
+console.log('PASS v0.25.9 Android update identity contract');

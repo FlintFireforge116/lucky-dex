@@ -1,0 +1,163 @@
+/* Single Amie presentation owner. Original cropped game artwork, local sprites. */
+#berryPickerGame,#tilePuzzleGame {
+  color:#f5fafb; background:#10212d; gap:10px;
+}
+.amie-game .amie-mode-row { display:flex; flex-wrap:wrap; gap:6px; flex-shrink:0; }
+.amie-mode-row button { flex:1; min-width:65px; min-height:38px; padding:7px 8px; color:#d7e5ed; background:#223b4b; border:1px solid #496070; border-radius:9px; font-size:11px; font-weight:800; }
+.amie-mode-row button.active { color:#153343; background:#d7f5c9; border-color:#d7f5c9; }
+.amie-mode-row button:disabled { cursor:default; }
+.amie-game .amie-hud { display:flex; gap:8px; justify-content:space-between; padding:4px 0; font-size:10px; color:#bfd1dc; }
+.amie-hud span { display:flex; align-items:center; gap:5px; }
+.amie-hud span:last-child { display:none; }
+.amie-hud b { font-size:15px; color:#fff; }
+.amie-game .amie-message { margin:0; padding:6px 0; min-height:32px; font-size:12px; line-height:1.45; color:#c7d9e4; }
+.amie-game .game-actions { flex-shrink:0; display:flex; gap:8px; }
+.amie-game .game-actions button { min-height:44px; flex:1; }
+.berry-picker-stage { position:relative; width:100%; min-height:260px; flex:1 1 auto; overflow:hidden; border-radius:8px; background-position:center; background-size:cover; }
+.berry-picker-stage { background-image:url('arcade/authentic-v0200/amie/berry-picker-backdrop.png'); }
+.amie-berry-tree { position:absolute; inset:0; }
+.amie-berry { position:absolute; display:block; width:22%; min-width:64px; max-width:88px; aspect-ratio:1; padding:0; border:2px solid transparent; border-radius:18px; background:transparent; touch-action:none; -webkit-user-select:none; user-select:none; -webkit-user-drag:none; }
+/* Local 30px item sheets include transparent margins: scale those sheets so
+   their visible berries fill the larger target without stretching the art. */
+.amie-berry img { position:absolute; left:50%; top:50%; transform:translate(-50%,-50%); width:120%; height:120%; object-fit:contain; image-rendering:pixelated; -webkit-user-drag:none; pointer-events:none; }
+.amie-berry.selected { border-color:#fff49a; background:rgba(255,247,167,.28); box-shadow:0 0 0 2px #244f32,0 0 15px #ffffb9; }
+.berry-pos-0 { left:1%; top:32%; }.berry-pos-1 { left:26%; top:32%; }.berry-pos-2 { left:51%; top:32%; }.berry-pos-3 { left:76%; top:32%; }
+.berry-pos-4 { left:14%; top:50%; }.berry-pos-5 { left:39%; top:50%; }.berry-pos-6 { left:64%; top:50%; }
+.amie-berry-tree[data-berry-count="3"] .berry-pos-0 { left:6%; top:40%; }
+.amie-berry-tree[data-berry-count="3"] .berry-pos-1 { left:39%; top:40%; }
+.amie-berry-tree[data-berry-count="3"] .berry-pos-2 { left:72%; top:40%; }
+.amie-berry-tree[data-berry-count="5"] .berry-pos-0 { left:6%; }
+.amie-berry-tree[data-berry-count="5"] .berry-pos-1 { left:39%; }
+.amie-berry-tree[data-berry-count="5"] .berry-pos-2 { left:72%; }
+.amie-berry-tree[data-berry-count="5"] .berry-pos-3 { left:23%; top:50%; }
+.amie-berry-tree[data-berry-count="5"] .berry-pos-4 { left:56%; }
+.amie-customers { position:absolute; inset:72% 5% 1%; display:flex; justify-content:center; gap:3%; }
+.amie-requester { position:relative; flex:1; max-width:36%; min-width:0; border:0; padding:0; background:transparent; touch-action:manipulation; }
+.amie-requester:only-child { max-width:40%; }
+.amie-requester .amie-pokemon { position:absolute; bottom:0; left:50%; transform:translateX(-50%); width:80%; height:72%; max-width:92px; object-fit:contain; image-rendering:pixelated; }
+.berry-thought { position:absolute; z-index:1; top:0; right:-2px; width:44px; aspect-ratio:1; border:2px solid #496b72; border-radius:50%; background:#fff; }
+.amie-requester:only-child .berry-thought { right:-12px; }
+.berry-thought img { width:75%; height:75%; margin:2% 12%; object-fit:contain; image-rendering:pixelated; }
+.berry-thought progress { position:absolute; bottom:9%; left:16%; width:68%; height:5px; accent-color:#41955c; }
+.amie-requester.impatient .berry-thought { border-color:#e97b61; }
+.amie-requester.great,.amie-requester.good { filter:drop-shadow(0 0 5px #fbf9b5); }
+.amie-requester.wrong,.amie-requester.timeout { opacity:.65; }
+.berry-drag { position:fixed; z-index:9999; width:82px; height:82px; object-fit:contain; image-rendering:pixelated; transform:translate(-50%,-50%); pointer-events:none; }
+.tile-puzzle-meta { display:flex; align-items:center; justify-content:space-between; gap:10px; font-size:12px; }
+.tile-target-mini { min-width:0; padding:0; border:0; background:transparent; color:#f5fafb; text-align:left; cursor:zoom-in; }
+.tile-target-mini img { display:block; aspect-ratio:5/3; object-fit:cover; border:2px solid #d9cf9b; border-radius:8px; background:#0f1d2a; }
+.tile-target-mini span { display:grid; gap:2px; min-width:0; }
+.tile-target-mini small { color:#a9beca; font-size:8px; letter-spacing:.06em; }
+.tile-target-mini b { overflow:hidden; color:#fff; font-size:10px; text-overflow:ellipsis; white-space:nowrap; }
+.tile-time-mini { flex:0 0 auto; display:grid; gap:1px; min-width:62px; text-align:right; }
+.tile-time-mini small { color:#a9beca; font-size:8px; letter-spacing:.08em; }
+.tile-time-mini b { color:#fff; font-size:17px; }
+#tilePuzzleGame:not(.is-running) .tile-puzzle-meta { display:grid; place-items:center; }
+#tilePuzzleGame:not(.is-running) .tile-target-mini { display:grid!important; width:100%; justify-items:center; gap:6px; text-align:center; }
+#tilePuzzleGame:not(.is-running) .tile-target-mini img { width:min(100%, 340px); }
+#tilePuzzleGame:not(.is-running) .tile-target-mini span { width:min(100%, 340px); }
+#tilePuzzleGame:not(.is-running) .tile-target-mini b { font-size:12px; }
+#tilePuzzleGame:not(.is-running) .tile-time-mini { display:none; }
+#tilePuzzleGame.is-running .tile-target-mini { display:flex!important; align-items:center; gap:8px; max-width:78%; }
+#tilePuzzleGame.is-running .tile-target-mini img { width:clamp(120px, 42vw, 180px); flex:0 0 auto; }
+#tilePuzzleGame.is-running .tile-target-mini span { max-width:150px; }
+#tilePuzzleGame.is-running #tilePuzzleModes { display:none; }
+.tile-puzzle-canvas { display:block; width:100%; aspect-ratio:5/3; height:auto; flex-shrink:0; border-radius:12px; touch-action:none; }
+.tile-solved { outline:3px solid #c7f4b6; }
+.tile-reference-overlay{position:fixed;z-index:170;inset:0;display:grid;place-items:center;padding:max(56px,env(safe-area-inset-top)) 12px max(28px,env(safe-area-inset-bottom));background:#030912ed;cursor:zoom-out;}
+.tile-reference-overlay[hidden]{display:none}
+.tile-reference-overlay img{display:block;width:min(94vw,780px);max-width:100%;max-height:78vh;aspect-ratio:5/3;object-fit:contain;border:2px solid #eadc9a;border-radius:10px;background:#07111c;box-shadow:0 18px 50px #000b;}
+.tile-reference-close{position:absolute;top:max(12px,env(safe-area-inset-top));right:14px;width:44px;height:44px;padding:0!important;border:1px solid #71889b!important;border-radius:50%!important;background:#183044!important;color:#fff!important;font-size:28px!important;line-height:1;cursor:pointer;}
+.tile-reference-hint{position:absolute;bottom:max(12px,env(safe-area-inset-bottom));left:0;right:0;text-align:center;color:#b8cad5;font-size:9px;font-weight:800;letter-spacing:.08em;pointer-events:none;}
+@media (min-width:600px) {
+ .amie-game .berry-picker-stage,.amie-game .tile-puzzle-canvas { max-width:680px; align-self:center; }
+}
+
+@media (max-height:760px) {
+ .berry-picker-stage { min-height:230px; }
+ .amie-game .amie-message { min-height:24px; padding:3px 0; font-size:11px; }
+}
+
+/* v0.22.3: reachable canopy targets and a separate instruction/control row. */
+#berryPickerGame {
+  display:grid;
+  grid-template-rows:auto auto auto auto minmax(0,1fr) auto;
+  align-content:stretch;
+  justify-content:stretch;
+  gap:5px;
+  overflow:hidden;
+}
+#berryPickerGame[hidden]{display:none}
+#berryPickerGame .section-head{min-height:30px}
+#berryPickerGame .section-head h2{font-size:16px}
+#berryPickerGame .bank-display b{font-size:17px}
+#berryPickerGame .amie-mode-row{gap:4px}
+#berryPickerGame .amie-mode-row button{min-height:34px;padding:5px 4px;font-size:9px}
+#berryPickerGame .amie-hud{min-height:25px;padding:0 2px;gap:4px}
+#berryPickerGame .amie-hud span{gap:3px;font-size:8px}
+#berryPickerGame .amie-hud b{font-size:13px}
+#berryPickerGame .amie-berry{touch-action:none}
+#berryPickerGame .berry-picker-stage{
+  min-height:0;
+  height:auto;
+  width:100%;
+  align-self:stretch;
+  border-radius:6px;
+  background-position:center center;
+  background-size:cover;
+}
+#berryPickerGame #berryPickerMessage{
+  position:static;
+  min-height:0;
+  margin:0;
+  padding:2px 4px;
+  color:#eef8fb;
+  font-size:10px;
+  line-height:1.25;
+  pointer-events:none;
+}
+#berryPickerGame .game-actions{min-height:46px}
+#berryPickerGame .game-actions button{min-height:46px}
+.berry-thought progress{bottom:7%}
+
+@media(max-height:760px){
+ #berryPickerGame{gap:3px}
+ #berryPickerGame .section-head{min-height:24px}
+ #berryPickerGame .section-head h2{font-size:14px}
+ #berryPickerGame .amie-mode-row button{min-height:31px}
+ #berryPickerGame .amie-hud{min-height:21px}
+ #berryPickerGame #berryPickerMessage{font-size:9px;padding:2px 4px}
+ #berryPickerGame .game-actions,#berryPickerGame .game-actions button{min-height:42px}
+ .amie-requester .amie-pokemon{max-width:82px}
+}
+
+/* v0.40.6: Tile Puzzle landscape workspace. The canvas takes the wide side;
+   controls stay reachable in a compact right rail instead of simply stretching portrait. */
+.tile-orientation-btn{flex:.8!important;min-width:86px!important;background:#314b61!important;color:#fff3b0!important;border-color:#8c7e46!important}
+@media (orientation:landscape) and (max-height:620px){
+ #tilePuzzleGame{max-width:none;display:grid;grid-template-columns:minmax(0,1fr) minmax(210px,30vw);grid-template-rows:auto auto auto 1fr auto;column-gap:10px;row-gap:5px;padding:52px 8px max(7px,env(safe-area-inset-bottom));overflow:hidden}
+ #tilePuzzleGame>.arcade-full-head{grid-column:1/3}
+ #tilePuzzleGame>.tile-puzzle-title{grid-column:2;grid-row:1}
+ #tilePuzzleGame>#tilePuzzleModes{grid-column:2;grid-row:2;display:grid;grid-template-columns:1fr 1fr;gap:4px}
+ #tilePuzzleGame>#tilePuzzleModes button{min-height:31px;padding:4px;font-size:8px;min-width:0}
+ #tilePuzzleGame>.tile-puzzle-meta{grid-column:2;grid-row:3;min-width:0}
+ #tilePuzzleGame:not(.is-running) .tile-puzzle-meta,#tilePuzzleGame.is-running .tile-puzzle-meta{display:flex;align-items:center;justify-content:space-between}
+ #tilePuzzleGame .tile-target-mini{display:flex!important;align-items:center;gap:6px;width:auto;max-width:100%;text-align:left}
+ #tilePuzzleGame .tile-target-mini img{width:96px!important;max-height:58px;object-fit:cover;flex:0 0 auto}
+ #tilePuzzleGame .tile-target-mini span{width:auto!important;min-width:0}
+ #tilePuzzleGame .tile-time-mini{display:grid!important}
+ #tilePuzzleGame .tile-puzzle-canvas{grid-column:1;grid-row:1/6;align-self:center;justify-self:center;width:auto;max-width:100%;height:auto;max-height:calc(100dvh - 65px);aspect-ratio:5/3}
+ #tilePuzzleGame>.tile-puzzle-message{grid-column:2;grid-row:4;align-self:start;overflow:auto;min-height:0}
+ #tilePuzzleGame>.tile-puzzle-actions{grid-column:2;grid-row:5}
+ #tilePuzzleGame.is-running #tilePuzzleModes{display:grid}
+}
+/* v0.40.7 rare Berry Picker deliveries */
+.amie-berry.berry-special-reward{border-color:#f6df82;background:rgba(22,42,55,.82);box-shadow:0 0 0 2px #6f5a1d,0 0 18px rgba(246,223,130,.75)}
+.amie-berry.berry-special-reward::after{content:attr(data-special-visual);position:absolute;inset:0;display:grid;place-items:center;font-size:34px;line-height:1;pointer-events:none;text-shadow:0 2px 0 #102535,0 0 8px #fff1a6}.amie-berry.berry-special-reward img:not([hidden]) + *{}
+.amie-requester.special-request .berry-thought{border-color:#f6df82;box-shadow:0 0 10px #f6df82;background:#fff9cf}.berry-special-reward{position:absolute;inset:0 0 12% 0;display:grid;place-items:center;font-size:25px;line-height:1}.berry-special-reward[hidden]{display:none!important}.amie-requester.special-request .berry-thought progress{accent-color:#d2a82e}
+
+/* v0.40.8 Golden Berry mystery request */
+.amie-berry.golden-berry{border-color:#ffe27a;background:rgba(92,68,8,.26);box-shadow:0 0 0 2px #8b6819,0 0 18px rgba(255,221,94,.92)}
+.golden-berry-image{filter:brightness(0) saturate(100%) invert(82%) sepia(95%) saturate(1220%) hue-rotate(345deg) brightness(108%) contrast(96%) drop-shadow(0 0 7px rgba(255,221,94,.9))}
+.amie-requester.golden-berry-request .berry-thought{border-color:#ffe27a;background:#fff5bb;box-shadow:0 0 14px rgba(255,221,94,.95)}
+.amie-requester.golden-berry-request .berry-thought progress{accent-color:#c89b18}

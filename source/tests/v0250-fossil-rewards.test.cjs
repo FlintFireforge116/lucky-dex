@@ -1,0 +1,17 @@
+const assert=require('node:assert/strict');
+const fs=require('node:fs');
+const core=require('../app/src/main/assets/arcade-fossil-museum-core.js');
+let museum=core.ensureMuseumState({});
+assert.deepEqual(museum,{exhibits:{}});
+const helix=core.byId('helix-fossil');
+let r=core.recordMuseumFind(museum,helix,1000);
+assert.deepEqual({isNew:r.isNew,duplicateCoins:r.duplicateCoins},{isNew:true,duplicateCoins:0});
+assert.deepEqual(museum.exhibits['helix-fossil'],{discovered:true,foundCount:1,firstFoundAt:1000});
+r=core.recordMuseumFind(museum,helix,2000);
+assert.equal(r.isNew,false);assert.equal(r.duplicateCoins,60);assert.equal(museum.exhibits['helix-fossil'].foundCount,2);assert.equal(museum.exhibits['helix-fossil'].firstFoundAt,1000);
+const snapshot=JSON.stringify(museum);assert.deepEqual(core.recordMuseumFind(museum,{id:'bad',museumEligible:false},3000),{isNew:false,duplicateCoins:0,record:null});assert.equal(JSON.stringify(museum),snapshot,'invalid non-museum item cannot corrupt state');
+const site={depths:[0,1],finds:[{id:'partial',itemId:'helix-fossil',cells:[0,1]}],awardedFindIds:[]};assert.equal(core.isFindRecovered(site,site.finds[0]),false);assert.deepEqual(core.completeRecoveredFinds(site),[]);assert.equal(museum.exhibits['helix-fossil'].foundCount,2,'partial find never touches museum bookkeeping');
+const app=fs.readFileSync(require('node:path').resolve(__dirname,'../app/src/main/assets/app-v0167.js'),'utf8');
+for(const method of ['getState','save','grantCoins','grantInventory','resolveBuriedCard','grantCard','showToast','vibrate'])assert(app.includes(method),`app bridge missing ${method}`);
+assert(app.includes('LuckyDexFossilMuseumBridge'),'Fossil Museum runtime bridge must be exposed');
+console.log('PASS v0.25.0 museum rewards and bridge contract');

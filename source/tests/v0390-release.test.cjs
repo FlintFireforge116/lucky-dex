@@ -1,0 +1,13 @@
+'use strict';
+const assert=require('node:assert/strict'),fs=require('node:fs');
+const read=f=>fs.readFileSync(f,'utf8');
+const pkg=JSON.parse(read('package.json')),lock=JSON.parse(read('package-lock.json')),gradle=read('app/build.gradle'),app=read('app/src/main/assets/app-v0167.js'),html=read('app/src/main/assets/index.html'),records=read('app/src/main/assets/arcade-records.js'),world=read('app/src/main/assets/arcade-world.js'),ach=read('app/src/main/assets/achievements-v0341.js');
+const parts=pkg.version.split('.').map(Number);assert.ok(parts[0]>0||parts[1]>39||(parts[1]===39&&parts[2]>=0),'release must preserve v0.39.0 or later');assert.equal(lock.version,pkg.version);assert.equal(lock.packages?.['']?.version,pkg.version);
+const code=Number(gradle.match(/versionCode\s+(\d+)/)?.[1]||0);assert.ok(code>=3900);assert.match(gradle,new RegExp(`versionName\\s+'${pkg.version.replaceAll('.','\\.')}'`));assert.ok(gradle.includes(`LuckyDex-asset-builder/${pkg.version}`));
+assert.ok(app.includes(`__LUCKYDEX_BUILD='${pkg.version}'`));assert.equal((html.match(new RegExp(`v${pkg.version.replaceAll('.','\\.')}`,'g'))||[]).length>=2,true,'visible build markers');
+for(const asset of ['arcade-records-core.js','arcade-records.js','arcade-records.css'])assert.equal((html.match(new RegExp(asset.replaceAll('.','\\.'),'g'))||[]).length,1,`${asset} loaded exactly once`);
+const ids=['berryPicker','tilePuzzle','voltorb','ballDrop','berry','clefairy','fossil','unown','quiz','dash','ekansHoop','digDigDig','magikarpSplash','rockHarden'];for(const id of ids)assert.match(records,new RegExp(`['"]${id}['"]`),`records adapter ${id}`);
+for(const id of ['ekansHoop','digDigDig','magikarpSplash','rockHarden'])assert.match(world,new RegExp(`games:\\[[^\\]]*['"]${id}['"]`),`Kids Club contains ${id}`);
+assert.equal((ach.match(/push\('rock_harden_/g)||[]).length,6,'six current Rock Harden achievements remain after retiring the obsolete Gold Rock secret');assert.ok(!ach.includes('rock_harden_gold_perfect'));
+for(const id of ['dustCardSearch','dustSetFilter','dustRarityFilter','dustValueFilter','dustKeepCopies','dustConvertFiltered'])assert.match(html,new RegExp(`id=['"]${id}['"]`),`Dust control ${id}`);assert.match(html,/CONVERT FILTERED/);assert.match(app,/dustKeepCopies/);assert.match(app,/localStorage/);
+console.log('PASS v0.39.0+ Arcade Records release preservation');

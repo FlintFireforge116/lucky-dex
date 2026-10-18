@@ -1,0 +1,23 @@
+const assert=require('node:assert/strict'),{launch,open,settle,wildFight}=require('../scripts/adventure3-browser-utils.cjs');
+function observeAdventureResources(){
+  window.adventureSchedulerProbe={frames:new Set(),timers:new Set(),introWaits:0};
+  const originalRequest=window.requestAnimationFrame.bind(window),originalCancel=window.cancelAnimationFrame.bind(window),originalLater=window.setTimeout.bind(window),originalClear=window.clearTimeout.bind(window);
+  window.requestAnimationFrame=callback=>{
+    const owned=callback.toString().includes('own.isActive()');
+    let id=originalRequest(now=>{adventureSchedulerProbe.frames.delete(id);callback(now);});
+    if(owned)adventureSchedulerProbe.frames.add(id);return id;
+  };
+  window.cancelAnimationFrame=id=>{adventureSchedulerProbe.frames.delete(id);return originalCancel(id);};
+  window.setTimeout=(callback,time,...args)=>{
+    if(typeof callback!=='function')return originalLater(callback,time,...args);
+    const owned=callback.toString().includes('jobs.delete(id)');
+    let id=originalLater(()=>{adventureSchedulerProbe.timers.delete(id);callback(...args);},time);
+    if(owned){adventureSchedulerProbe.timers.add(id);if(time===320)adventureSchedulerProbe.introWaits++;}return id;
+  };
+  window.clearTimeout=id=>{adventureSchedulerProbe.timers.delete(id);return originalClear(id);};
+}
+
+(async()=>{const b=await launch();try{for(const motion of ['reduce','no-preference']){const {page,context,errors}=await open(b,{width:360,height:700},{init:observeAdventureResources});await page.emulateMedia({reducedMotion:motion});await page.evaluate(motion=>LuckyDexAdventureBridge.getState().settings.reducedMotion=motion==='reduce',motion);
+for(let i=0;i<24;i++){await page.evaluate(()=>{LuckyDexAdventure.openDestination('meadow');LuckyDexAdventure.startRoam()});const live=await page.evaluate(()=>({owner:LuckyDexAdventure.snapshot().resources,native:{raf:adventureSchedulerProbe.frames.size,jobs:adventureSchedulerProbe.timers.size}}));assert.equal(live.owner.raf,motion==='reduce'?0:1);assert.equal(live.native.raf,live.owner.raf);assert(live.owner.jobs>=1);assert.equal(live.native.jobs,live.owner.jobs);await page.evaluate(()=>LuckyDexAdventureBridge.navigate('collection'));assert.deepEqual(await page.evaluate(()=>({owner:LuckyDexAdventure.snapshot().resources,native:{raf:adventureSchedulerProbe.frames.size,jobs:adventureSchedulerProbe.timers.size}})),{owner:{raf:0,jobs:0},native:{raf:0,jobs:0}});await page.locator('[data-nav="adventure"]').click();assert.equal(await page.locator('[data-adv-view="home"]').count(),1)}
+await wildFight(page);for(const drawer of ['fight','bag','switch']){await page.locator(`[data-adv-command="battle-${drawer}"]`).click();const f=await page.evaluate(()=>JSON.stringify(LuckyDexAdventureBridge.getState().adventureV2.activeRoam.battle));assert.equal(await page.evaluate(()=>handleLuckyBack()),true);assert.equal(await page.locator(`[data-battle-drawer="${drawer}"]`).isVisible(),false);assert.equal(await page.evaluate(()=>JSON.stringify(LuckyDexAdventureBridge.getState().adventureV2.activeRoam.battle)),f)}
+await page.locator('[data-adv-command="battle-bag"]').click();const before=await page.evaluate(()=>({seq:state.adventureV2.activeRoam.battle.actionSeq,berries:state.inventory.berry}));await page.locator('[data-adv-battle="berry"]').evaluate(el=>{el.click();el.click()});await settle(page);const after=await page.evaluate(()=>({seq:state.adventureV2.activeRoam.battle.actionSeq,berries:state.inventory.berry}));assert.equal(after.seq,before.seq+1);assert.equal(after.berries,before.berries-1);const f=await page.evaluate(()=>JSON.stringify(state.adventureV2.activeRoam.battle));await page.evaluate(()=>LuckyDexAdventureBridge.navigate('collection'));await page.locator('[data-nav="adventure"]').click();assert.equal(await page.locator('[data-adv-view="home"]').count(),1);await page.locator('[data-hub-action="wild"]').click();assert.equal(await page.locator('[data-adv-view="battle"]').count(),1);assert.equal(await page.evaluate(()=>JSON.stringify(state.adventureV2.activeRoam.battle)),f);await page.reload();await page.locator('#titleContinueBtn').click();await page.locator('[data-hub-action="wild"]').click();assert.equal(await page.evaluate(()=>JSON.stringify(state.adventureV2.activeRoam.battle)),f);await page.evaluate(()=>LuckyDexAdventureBridge.navigate('trade'));assert.deepEqual(await page.evaluate(()=>({raf:adventureSchedulerProbe.frames.size,jobs:adventureSchedulerProbe.timers.size})),{raf:0,jobs:0});assert.deepEqual(errors,[]);await context.close();console.log('PASS '+motion+':48total scoped cycles, drawerBack, rapidtap and committed battle reload')}}finally{await b.close()}})().catch(e=>{console.error(e);process.exitCode=1});

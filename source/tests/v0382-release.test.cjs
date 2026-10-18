@@ -1,0 +1,11 @@
+const fs=require('fs'),assert=require('assert');
+const read=p=>fs.readFileSync(p,'utf8');
+const pkg=JSON.parse(read('package.json')),lock=JSON.parse(read('package-lock.json'));
+const gradle=read('app/build.gradle'),html=read('app/src/main/assets/index.html'),app=read('app/src/main/assets/app-v0167.js');
+const parts=pkg.version.split('.').map(Number),atLeast0382=parts[0]>0||parts[1]>38||(parts[1]===38&&parts[2]>=2);
+assert.ok(atLeast0382,'release must preserve v0.38.2 or later');
+assert.equal(lock.version,pkg.version);assert.equal(lock.packages[''].version,pkg.version);
+const code=Number(gradle.match(/versionCode\s+(\d+)/)?.[1]||0);assert.ok(code>=3802);assert.match(gradle,new RegExp(`versionName\\s+'${pkg.version.replaceAll('.','\\.')}'`));
+assert.match(html,new RegExp(`v${pkg.version.replaceAll('.','\\.')}`));assert.match(app,new RegExp(`window\\.__LUCKYDEX_BUILD='${pkg.version.replaceAll('.','\\.')}'`));
+assert.match(html,/dust-exchange-core\.js/);assert.match(html,/dustConvertFiltered/);assert.match(html,/dustKeepCopies/);
+console.log('PASS v0.38.2+ Dust release preservation');

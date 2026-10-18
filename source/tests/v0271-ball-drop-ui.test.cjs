@@ -1,0 +1,15 @@
+'use strict';
+const assert=require('node:assert/strict');
+const fs=require('node:fs');
+const path=require('node:path');
+const root=path.resolve(__dirname,'..');
+const html=fs.readFileSync(path.join(root,'app/src/main/assets/index.html'),'utf8');
+const css=fs.readFileSync(path.join(root,'app/src/main/assets/arcade.css'),'utf8');
+assert.match(html,/id="ballDropRoundMax">3</,'Ball Drop header should support extra-ball totals');
+const canvasHeight=Number((html.match(/id="ballDropBackboardCanvas" width="720" height="(\d+)"/)||[])[1]);assert.ok(canvasHeight>=980,'Ball Drop should retain a tall phone-filling cabinet');
+assert.match(html,/id="ballDropEvent(?:Log|Feed)"/,'Ball Drop should retain visible event history for rain/powerup/reward chaos');
+assert.match(html,/bank-display">COINS <b id="ballDropScore"/,'Ball Drop live metric should be coins rather than legacy score points');
+assert.match(html,/(Aim for the prize you want|Drag the Poké Ball)/i,'instructions should explain the prize-machine aiming loop');
+assert.match(css,/\.ball-drop-(?:event-feed|event-log)\{/,'reward event history needs styling');
+assert.match(css,/\.ball-drop-machine\{[^}]*aspect-ratio:720\/(?:10[0-9]{2}|11[0-9]{2})/,'machine CSS should preserve the tall cabinet aspect ratio');
+console.log('PASS v0.27.1+ Ball Drop tall mobile UI baseline');

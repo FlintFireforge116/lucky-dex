@@ -1,0 +1,13 @@
+'use strict';
+const fs=require('fs'),path=require('path'),assert=require('assert');
+const a=path.resolve(__dirname,'../app/src/main/assets');
+const css=fs.readFileSync(path.join(a,'arcade-dash.css'),'utf8');
+const html=fs.readFileSync(path.join(a,'index.html'),'utf8');
+const dash=html.slice(html.indexOf('<div id="dashGame"'),html.indexOf('<div id="berryPickerGame"'));
+assert(/\.dash-game\{[^}]*position:fixed/i.test(css),'Dash owns the viewport instead of inheriting a scrolling arcade page');
+assert(!dash.includes('class="dash-menu-art"'),'redundant clipped menu panorama blocks are removed');
+assert(css.includes('.dash-menu-view{')&&css.includes('min-height:0')&&css.includes('overflow:hidden'),'menu shells are bounded');
+assert(css.includes('@media(max-height:700px)'),'short phones get a dedicated compact layout');
+assert(dash.includes('id="dashRaceFeedback"'),'race view has a dedicated transient feedback layer');
+assert(css.includes('.dash-race-feedback'),'collision/boost/overtake feedback has styled presentation');
+console.log('PASS Dash v0.33 compact viewport and feedback UI source contract');

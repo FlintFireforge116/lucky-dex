@@ -1,0 +1,280 @@
+{
+  "generationTool": "image_gen.imagegen (built-in)",
+  "requestedAssets": 10,
+  "packagedAssets": 10,
+  "missingAssets": [],
+  "encoding": {
+    "format": "WebP",
+    "width": 400,
+    "height": 560,
+    "quality": 88,
+    "method": 6,
+    "resampling": "LANCZOS",
+    "crop": false,
+    "pillowVersion": "12.3.0",
+    "webpVersion": "1.6.0"
+  },
+  "sleeves": [
+    {
+      "id": "luckydex-default",
+      "name": "LuckyDex Flagship",
+      "themes": [
+        "luckydex",
+        "kanto",
+        "starters"
+      ],
+      "pokemonIds": [
+        1,
+        4,
+        7
+      ],
+      "prompt": "Use case: stylized-concept. Asset type: LuckyDex exclusive collectible card sleeve art, a single flat 5:7 portrait card back, full bleed edge to edge.\nPrimary request: flagship premium red Pokédex sleeve. A substantial richly detailed red enamel Pokédex chassis forms the entire symmetrical outer frame, inset metallic edges, tiny buttons and red corner paneling. A brilliant circular blue glass lens and Poké Ball mechanical center is the dominant focal point, with charming recognizable Bulbasaur, Charmander and Squirtle arranged as a lively triangular group around the lower lens. Small botanical and flame/water details layer behind them within the red device.\nStyle: premium richly rendered 16-bit pixel art inspired by Generation III/IV handheld Pokémon game art; deliberate pixel clusters, clean readable silhouettes, sophisticated shading, jewel highlights and dense but organized ornamental details. This is polished collectible game artwork, not a simple diagram.\nComposition: strong recognizable thumbnail, intact decorative border, focal lens plus three characters, no blank regions. Every edge filled with finished art.\nConstraints: flat sleeve artwork only, no photograph, no physical card mockup, no perspective rotation, no lettering, no watermark. Aspect ratio exactly 5:7 portrait.",
+      "generationTool": "image_gen.imagegen (built-in)",
+      "sourceFamily": "LuckyDex",
+      "artPath": "cosmetics/sleeves/luckydex-default.webp",
+      "sha256": "1de5b7ec2265b4c9ecbb825f6b5f3dcb789b1bc75515dcc02a45ad3fd79aeccb",
+      "width": 400,
+      "height": 560,
+      "bytes": 118656,
+      "sourcePath": "qa/v0440/originals/luckydex-default-source.png",
+      "sourceSha256": "3237ed4a2326ce65b9a993988a191590a19b609613900e83125505938fca4d28",
+      "sourceWidth": 1060,
+      "sourceHeight": 1484
+    },
+    {
+      "id": "luckydex-midnight",
+      "name": "Midnight Legends",
+      "themes": [
+        "legendary",
+        "night",
+        "johto"
+      ],
+      "pokemonIds": [
+        249,
+        250
+      ],
+      "prompt": "Use case: stylized-concept. Asset type: LuckyDex exclusive premium collectible card sleeve art, a single flat 5:7 portrait card back, full bleed edge to edge. Style: rich polished 16-bit pixel art inspired by Generation III/IV Pokémon handheld games; clean readable pixel clusters and character silhouettes, layered environments, sophisticated shaded materials and jewel highlights. Collectible quality and recognizable thumbnail. Strong intact ornamental frame that belongs to the subject, detail to every edge. Constraints: flat printed sleeve artwork only, no photograph, no physical product mockup, no perspective rotation, no lettering, no watermark. Exactly 5:7 portrait. Midnight legendary sleeve: majestic white Lugia sweeps upward across a great crescent moon over an indigo ocean and clouds; brilliant Ho-Oh arcs high above it as a smaller warm counterpoint with trailing rainbow tail feathers. Constellations, silver stars and little gold celestial charts surround the birds. Moonlit ivory/silver frame with navy and violet enamel, intricate star corners. An asymmetric sweeping sky composition, awe and wonder.",
+      "generationTool": "image_gen.imagegen (built-in)",
+      "sourceFamily": "LuckyDex",
+      "artPath": "cosmetics/sleeves/luckydex-midnight.webp",
+      "sha256": "bb4dd5d52fa93f4ecad3c477ee23e9dcfb7b804280aebf1017f370084a7352de",
+      "width": 400,
+      "height": 560,
+      "bytes": 108744,
+      "sourcePath": "qa/v0440/originals/luckydex-midnight-source.png",
+      "sourceSha256": "5fffdb12848753a2a30c788827106dca2839f52711fd218ec974b9b6f068282f",
+      "sourceWidth": 1060,
+      "sourceHeight": 1484
+    },
+    {
+      "id": "luckydex-cream",
+      "name": "Oak’s Field Guide",
+      "themes": [
+        "kanto",
+        "trainers",
+        "vintage"
+      ],
+      "pokemonIds": [
+        1,
+        4,
+        7
+      ],
+      "prompt": "Use case: stylized-concept. Asset type: LuckyDex exclusive premium collectible card sleeve art, a single flat 5:7 portrait card back, full bleed edge to edge. Style: rich polished 16-bit pixel art inspired by Generation III/IV Pokémon handheld games; clean readable pixel clusters and character silhouettes, layered environments, sophisticated shaded materials and jewel highlights. Collectible quality and recognizable thumbnail. Strong intact ornamental frame that belongs to the subject, detail to every edge. Constraints: flat printed sleeve artwork only, no photograph, no physical product mockup, no perspective rotation, no lettering, no watermark. Exactly 5:7 portrait. Warm vintage Professor Oak laboratory field guide sleeve. Charming Professor Oak in white coat leans behind a sunlit wooden laboratory desk, with Bulbasaur, Charmander and Squirtle gathered around three detailed Poké Balls in the foreground. Cream parchment field notes with small unlettered botanical sketches, glass beakers, leafy plant and laboratory books create layered scenery. Golden afternoon window light, walnut wooden and brass frame, pale cream paper corners. A warm storybook laboratory tableau.",
+      "generationTool": "image_gen.imagegen (built-in)",
+      "sourceFamily": "LuckyDex",
+      "artPath": "cosmetics/sleeves/luckydex-cream.webp",
+      "sha256": "dcb9c1b5df67ee6cc50b6b392ddefe091993b8b132db832e12c87e3a9cada04a",
+      "width": 400,
+      "height": 560,
+      "bytes": 96776,
+      "sourcePath": "qa/v0440/originals/luckydex-cream-source.png",
+      "sourceSha256": "7371379e6245732af9a74608625017812267b0387bf4590dc94276dfad55645d",
+      "sourceWidth": 1060,
+      "sourceHeight": 1484
+    },
+    {
+      "id": "luckydex-pixel",
+      "name": "Forest Encounter",
+      "themes": [
+        "pixel",
+        "forest",
+        "pikachu"
+      ],
+      "pokemonIds": [
+        25,
+        10,
+        16,
+        43
+      ],
+      "prompt": "Use case: stylized-concept. Asset type: LuckyDex exclusive premium collectible card sleeve art, a single flat 5:7 portrait card back, full bleed edge to edge. Style: rich polished 16-bit pixel art inspired by Generation III/IV Pokémon handheld games; clean readable pixel clusters and character silhouettes, layered environments, sophisticated shaded materials and jewel highlights. Collectible quality and recognizable thumbnail. Strong intact ornamental frame that belongs to the subject, detail to every edge. Constraints: flat printed sleeve artwork only, no photograph, no physical product mockup, no perspective rotation, no lettering, no watermark. Exactly 5:7 portrait. Lush richly detailed Pokémon forest game world. Pikachu in the foreground leaps from a mossy stepping stone beside a sparkling stream, cheeks glowing happily. Caterpie on a branch, Pidgey on a higher bough and Oddish among small flowers populate different depths. A winding trail, wooden route sign with no lettering, towering trees, shafts of sunshine and distant canopy make this feel like a beloved 16-bit game location. Living forest frame of textured tree trunks and carved leaves. Vibrant emerald, honey yellow, turquoise.",
+      "generationTool": "image_gen.imagegen (built-in)",
+      "sourceFamily": "LuckyDex",
+      "artPath": "cosmetics/sleeves/luckydex-pixel.webp",
+      "sha256": "57ee76a0e587bc5f06ab015896b54b19413d6be82df417de0b458e0e3ef2bbaa",
+      "width": 400,
+      "height": 560,
+      "bytes": 131842,
+      "sourcePath": "qa/v0440/originals/luckydex-pixel-source.png",
+      "sourceSha256": "59908f4546762f7c2e2f8335f1cb9b36b8ede1e5465aba465d91b8c6cefccd4d",
+      "sourceWidth": 1060,
+      "sourceHeight": 1484
+    },
+    {
+      "id": "arcade-pass",
+      "name": "Arcade Champion",
+      "themes": [
+        "arcade",
+        "champion",
+        "pikachu"
+      ],
+      "pokemonIds": [
+        25,
+        100
+      ],
+      "prompt": "Use case: stylized-concept. Asset type: LuckyDex exclusive premium collectible card sleeve art, a single flat 5:7 portrait card back, full bleed edge to edge. Style: rich polished 16-bit pixel art inspired by Generation III/IV Pokémon handheld games; clean readable pixel clusters and character silhouettes, layered environments, sophisticated shaded materials and jewel highlights. Collectible quality and recognizable thumbnail. Strong intact ornamental frame that belongs to the subject, detail to every edge. Constraints: flat printed sleeve artwork only, no photograph, no physical product mockup, no perspective rotation, no lettering, no watermark. Exactly 5:7 portrait. Arcade Champion sleeve. A magnificent gold Poké Ball trophy is held aloft on a podium in a bustling colorful Pokémon arcade, Pikachu cheering boldly beside it and Voltorb playfully framed in a glowing game machine. Rich cabinets with tiny unlettered pixel game screens recede into the distance. Confetti, electric neon circuit trim, chrome buttons and joystick motifs create a celebratory cobalt/magenta/gold frame. Clear dominant trophy silhouette, lively arcade room scene, no numbers or letters.",
+      "generationTool": "image_gen.imagegen (built-in)",
+      "sourceFamily": "LuckyDex",
+      "artPath": "cosmetics/sleeves/arcade-pass.webp",
+      "sha256": "1eab3da425dbf9389b9ccdc4dc3d37c844c2117be0148923ef9aab1965a608d9",
+      "width": 400,
+      "height": 560,
+      "bytes": 118466,
+      "sourcePath": "qa/v0440/originals/arcade-pass-source.png",
+      "sourceSha256": "ca4bd0b904db24baefd263a7f662c501e8664f7cdc0c0d0a66bab1f9fe80eccd",
+      "sourceWidth": 1060,
+      "sourceHeight": 1484
+    },
+    {
+      "id": "museum-fossil",
+      "name": "Amber Fossil Museum",
+      "themes": [
+        "fossil",
+        "museum",
+        "amber"
+      ],
+      "pokemonIds": [
+        142
+      ],
+      "prompt": "Use case: stylized-concept. Asset type: LuckyDex exclusive premium collectible card sleeve art, a single flat 5:7 portrait card back, full bleed edge to edge. Style: rich polished 16-bit pixel art inspired by Generation III/IV Pokémon handheld games; clean readable pixel clusters and character silhouettes, layered environments, sophisticated shaded materials and jewel highlights. Collectible quality and recognizable thumbnail. Strong intact ornamental frame that belongs to the subject, detail to every edge. Constraints: flat printed sleeve artwork only, no photograph, no physical product mockup, no perspective rotation, no lettering, no watermark. Exactly 5:7 portrait. Fossil Museum sleeve. An immense richly textured translucent golden amber slab is the central object in a dignified museum, the unmistakable winged fossil skeleton silhouette of Aerodactyl preserved within it. A small living Aerodactyl perches proudly on the bottom stone plinth. Layered arched museum display alcoves, fossil shells, stone columns, scholarly diagrams without text and warm museum lights. Ornate carved sandstone/bronze fossil frame, aged archaeological beauty, amber glowing against deep teal shadows. Anatomically legible graceful fossil wings.",
+      "generationTool": "image_gen.imagegen (built-in)",
+      "sourceFamily": "LuckyDex",
+      "artPath": "cosmetics/sleeves/museum-fossil.webp",
+      "sha256": "a0b090fbda28621d08c1c4ef6359b7d6eabcdef03527f830ae513a2954361651",
+      "width": 400,
+      "height": 560,
+      "bytes": 103738,
+      "sourcePath": "qa/v0440/originals/museum-fossil-source.png",
+      "sourceSha256": "48f51ad894a2869a2a4f1e402d1dd887819abb9c787275ba0263e122612c1029",
+      "sourceWidth": 1060,
+      "sourceHeight": 1484
+    },
+    {
+      "id": "shiny-charm",
+      "name": "Shiny Celebration",
+      "themes": [
+        "shiny",
+        "rare",
+        "celebration"
+      ],
+      "pokemonIds": [
+        197,
+        6
+      ],
+      "prompt": "Use case: stylized-concept. Asset type: LuckyDex exclusive premium collectible card sleeve art, a single flat 5:7 portrait card back, full bleed edge to edge. Style: rich polished 16-bit pixel art inspired by Generation III/IV Pokémon handheld games; clean readable pixel clusters and character silhouettes, layered environments, sophisticated shaded materials and jewel highlights. Collectible quality and recognizable thumbnail. Strong intact ornamental frame that belongs to the subject, detail to every edge. Constraints: flat printed sleeve artwork only, no photograph, no physical product mockup, no perspective rotation, no lettering, no watermark. Exactly 5:7 portrait. Shiny Celebration sleeve. A confident shiny Umbreon, black fur with vivid BLUE rings and yellow eyes, fills the lower central foreground looking toward viewer; above and behind, spectacular shiny Charizard with BLACK body and RED inner wings spreads its wings diagonally across a sky of rare holographic silver starbursts. Prismatic foil rays, crystal sparkles, starlit dark violet clouds, small glittering charm ornaments. Fine black obsidian and iridescent silver foil border. Premium rare pull excitement with two clear recognizable shiny Pokémon, dramatic diagonal composition.",
+      "generationTool": "image_gen.imagegen (built-in)",
+      "sourceFamily": "LuckyDex",
+      "artPath": "cosmetics/sleeves/shiny-charm.webp",
+      "sha256": "c241956b75760477de60ee1064e67dd05ca43d737a7009012e65c9036602a9eb",
+      "width": 400,
+      "height": 560,
+      "bytes": 113506,
+      "sourcePath": "qa/v0440/originals/shiny-charm-source.png",
+      "sourceSha256": "ec2d0dfdfd3b84ffccfe440e21229bdfef6efbd93bb96ac87c35095bb971c1af",
+      "sourceWidth": 1060,
+      "sourceHeight": 1484
+    },
+    {
+      "id": "golden-recipe",
+      "name": "Berry Festival",
+      "themes": [
+        "berries",
+        "festival",
+        "forest"
+      ],
+      "pokemonIds": [
+        143,
+        133,
+        35,
+        722
+      ],
+      "prompt": "Use case: stylized-concept. Asset type: LuckyDex exclusive premium collectible card sleeve art, a single flat 5:7 portrait card back, full bleed edge to edge. Style: rich polished 16-bit pixel art inspired by Generation III/IV Pokémon handheld games; clean readable pixel clusters and character silhouettes, layered environments, sophisticated shaded materials and jewel highlights. Collectible quality and recognizable thumbnail. Strong intact ornamental frame that belongs to the subject, detail to every edge. Constraints: flat printed sleeve artwork only, no photograph, no physical product mockup, no perspective rotation, no lettering, no watermark. Exactly 5:7 portrait. Berry Festival sleeve. A joyous small Pokémon berry harvest festival in a forest clearing, round sleepy Snorlax at a laden picnic table beneath berry trees, Eevee and Clefairy carrying baskets and Rowlet sitting on a branch. Many richly differentiated recognizable Pokémon berries are integral to the whole scene: blue bumpy Oran berries, pink round Pecha berries, yellow crescent Aspear berries, red Cheri berry pairs and purple grapes of varied sizes. Rustic berry garlands and woven basket borders, bunting without lettering, wooden platters, lush layered foliage and warm lanterns. Cheerful ruby, coral, purple, green and golden palette, abundant story and detail.",
+      "generationTool": "image_gen.imagegen (built-in)",
+      "sourceFamily": "LuckyDex",
+      "artPath": "cosmetics/sleeves/golden-recipe.webp",
+      "sha256": "5535916283829506062ed6f57273fbfa2dc53ca643a3f1abd7b1235ca8c2d006",
+      "width": 400,
+      "height": 560,
+      "bytes": 130990,
+      "sourcePath": "qa/v0440/originals/golden-recipe-source.png",
+      "sourceSha256": "9f3e06370cfd07bb14228abfb72d0ff531c798728520da8bef5e26811e5a14bf",
+      "sourceWidth": 1060,
+      "sourceHeight": 1484
+    },
+    {
+      "id": "goldenrod-champion",
+      "name": "Goldenrod Champion",
+      "themes": [
+        "goldenrod",
+        "champion",
+        "johto"
+      ],
+      "pokemonIds": [
+        157,
+        181,
+        196
+      ],
+      "unlockGroup": "goldenrod:master-gold",
+      "prompt": "Use case: stylized-concept. Asset type: LuckyDex exclusive premium collectible card sleeve art, a single flat 5:7 portrait card back, full bleed edge to edge. Style: rich polished 16-bit pixel art inspired by Generation III/IV Pokémon handheld games; clean readable pixel clusters and character silhouettes, layered environments, sophisticated shaded materials and jewel highlights. Collectible quality and recognizable thumbnail. Strong intact ornamental frame that belongs to the subject, detail to every edge. Constraints: flat printed sleeve artwork only, no photograph, no physical product mockup, no perspective rotation, no lettering, no watermark. Exactly 5:7 portrait. Goldenrod Champion sleeve. A grand GOLD trophy in the shape of a Poké Ball with laurel handles towers in the center of a packed Pokémon stadium at night. Typhlosion with a blazing flame collar stands proudly on one side and Ampharos on the other, small Espeon in the lower foreground. Distant Goldenrod City skyline including the radio tower appears beyond the stadium roof. Powerful converging white spotlights, gold confetti, polished emerald field, crowd lights and championship rosettes create a memorable victory scene. Rich engraved golden frame with laurel branches and navy enamel, central trophy perspective fully inside the flat card illustration. No lettering or numbers.",
+      "generationTool": "image_gen.imagegen (built-in)",
+      "sourceFamily": "LuckyDex",
+      "artPath": "cosmetics/sleeves/goldenrod-champion.webp",
+      "sha256": "4cd5af30a73900f02565e3c0709442e71265227b64617cfe726666e43b8d47d7",
+      "width": 400,
+      "height": 560,
+      "bytes": 120600,
+      "sourcePath": "qa/v0440/originals/goldenrod-champion-source.png",
+      "sourceSha256": "5786fd8c55f2a5422d0d5aa58b2c5866242a8899810c86158cb2c8628000d076",
+      "sourceWidth": 1060,
+      "sourceHeight": 1484
+    },
+    {
+      "id": "adventure-passport",
+      "name": "Adventure Passport",
+      "themes": [
+        "adventure",
+        "travel",
+        "kanto",
+        "johto",
+        "hoenn"
+      ],
+      "pokemonIds": [
+        25,
+        152,
+        258
+      ],
+      "unlockGroup": "region:kanto",
+      "prompt": "Use case: stylized-concept. Asset type: LuckyDex exclusive premium collectible card sleeve art, a single flat 5:7 portrait card back, full bleed edge to edge. Style: rich polished 16-bit pixel art inspired by Generation III/IV Pokémon handheld games; clean readable pixel clusters and character silhouettes, layered environments, sophisticated shaded materials and jewel highlights. Collectible quality and recognizable thumbnail. Strong intact ornamental frame that belongs to the subject, detail to every edge. Constraints: flat printed sleeve artwork only, no photograph, no physical product mockup, no perspective rotation, no lettering, no watermark. Exactly 5:7 portrait. Adventure Passport sleeve. An intricate layered travel journal and folded hand-drawn map compose a rich flat illustrated collage: coastlines and mountainous routes of Kanto, Johto and Hoenn shown as distinct colorful map fragments, little symbolic stamps of a red-roof Pokémon Center, Bell Tower, a coastal lighthouse and a volcano. A red travel passport with embossed Poké Ball symbol and brass compass are the center, Pikachu peers over one corner, Chikorita beside a forest route and Mudkip beside a shoreline at the bottom. Tiny curved route dashes, pinned souvenir tickets WITHOUT text, fern leaves, rope knots and sea-blue/golden details. Worn indigo leather-bound journal border with brass corners. Adventurous layered map composition, clearly readable as travel, no letters or numbers.",
+      "generationTool": "image_gen.imagegen (built-in)",
+      "sourceFamily": "LuckyDex",
+      "artPath": "cosmetics/sleeves/adventure-passport.webp",
+      "sha256": "89430a0419700e1450afe8b2d2323611a04af8214a92bac4dd3d8190bbf9dbe9",
+      "width": 400,
+      "height": 560,
+      "bytes": 127852,
+      "sourcePath": "qa/v0440/originals/adventure-passport-source.png",
+      "sourceSha256": "b3dcbb873e89010784c31675642d0aeb66ae85523a3fa77fae9014a746526362",
+      "sourceWidth": 1060,
+      "sourceHeight": 1484
+    }
+  ]
+}

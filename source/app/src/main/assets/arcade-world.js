@@ -1,0 +1,116 @@
+/* The sole Arcade navigation and lifecycle owner. Save keys are unchanged. */
+(()=>{'use strict';
+const VENUES=[
+ {id:"amieGarden",name:"Kalos Amie Garden",kicker:"Kalos · Pokémon-Amie",art:"arcade/venues-v0223/kalos-amie-nature-xy.png",position:"50% 50%",games:['berryPicker','tilePuzzle']},
+ {id:"gameCorner",name:"Game Corner",kicker:"Kanto · Johto · Hoenn",art:"arcade/venues-v0223/goldenrod-game-corner-hgss.png",position:"50% 45%",games:['voltorb','ballDrop','roulette','slotMachine']},
+ {id:"lilycoveContest",name:"Lilycove Contest Hall",kicker:"Hoenn · Emerald",art:"arcade/venues-v0223/lilycove-contest-emerald.png",position:"50% 40%",games:['berry']},
+ {id:"oreburghMuseum",name:"Oreburgh Mining Museum",kicker:"Sinnoh · DPPt",art:"arcade/venues-v0223/oreburgh-museum-dppt.png",position:"50% 40%",games:['fossil','museum'],activityLabel:'ACTIVITIES'},
+ {id:"ruinsAlph",name:"Ruins of Alph",kicker:"Johto · HGSS",art:"arcade/venues-v0223/ruins-alph-hgss-day.png",position:"65% 50%",games:['unown']},
+ {id:"indigoQuiz",name:"Indigo Plateau",kicker:"Johto/Kanto · HGSS",art:"arcade/venues-v0223/indigo-plateau-hgss.png",position:"50% 10%",games:['quiz']},
+ {id:"dashCourse",name:"Pokémon Challenge Course",kicker:"Goldenrod · Pokéathlon Dome",art:"https://archives.bulbagarden.net/media/upload/3/33/Pok%C3%A9athlon_Dome_HGSS.png",fallbackArt:"arcade/dash-course-v0290.svg",position:"63% 52%",games:['dash','powerTrial','impactTrial','targetRange','elementalGauntlet','enduranceExpedition']},
+ {id:"stadiumKidsClub",name:"Pokémon Stadium 1 · Kids Club",kicker:"Kids Club · Gen III Remix",art:"arcade/kids-club/kids-club-venue.webp",position:"50% 50%",games:['ekansHoop','digDigDig','magikarpSplash','rockHarden','clefairy','thunderingDynamo','snoreWar','runRattataRun','sushiGoRound']},
+ {id:"stadium2KidsClub",name:"Pokémon Stadium 2 · Kids Club",kicker:"Stadium 2 · Gen III Remix",art:"https://www.vizzed.com/vizzedboard/retro/user_screenshots/saves49/495938/NINTENDO64--Pokemon%20Stadium%202_Jul10%200_30_15.png",fallbackArt:"arcade/kids-club/kids-club-2-venue.svg",position:"50% 50%",games:['clearCutChallenge','gutsyGolbat','furretFrolic','topsyTurvy','barrierBall']},
+ {id:"dreamWorld",name:"Dream World",kicker:"Pokémon Dream World · Dream Island",art:"arcade/dream-world/seek/forest-base.jpg",fallbackArt:"arcade/dream-world/seek/forest-base.jpg",position:"50% 50%",games:['iceCreamScoop','wailordWaterSpout','pokemonSeek']},
+ {id:"picrossPlaza",name:"Pokémon Picross",kicker:"Puzzle Plaza · 31 Areas · 312 Stages",art:"arcade/picross-venue.svg",position:"50% 50%",games:['picross']},
+ {id:"summerBeach",name:"Summer Beach House",kicker:"Kanto · Route 19 · Pokémon Yellow",art:"arcade/pikachu-beach/summer-beach.svg",position:"50% 50%",games:['pikachuBeach']}
+];
+const GAME_NAMES={berryPicker:'Berry Picker',tilePuzzle:'Tile Puzzle',voltorb:'Voltorb Flip',roulette:'Mauville Roulette',slotMachine:'Mauville Slot Machine',ballDrop:'Poké Ball Drop',berry:'Berry Blender',clefairy:'Clefairy Says',fossil:'Fossil Dig',museum:'Museum Collection',unown:'Unown Decoder',quiz:"Who's That Pokémon?",dash:'Pokémon Dash',powerTrial:'Power Trial',impactTrial:'Impact Trial',targetRange:'Target Range',elementalGauntlet:'Elemental Gauntlet',enduranceExpedition:'Endurance Expedition',ekansHoop:'Ekans’ Hoop Hurl',digDigDig:'Dig! Dig! Dig!',magikarpSplash:'Magikarp’s Splash',rockHarden:'Rock Harden',thunderingDynamo:'Thundering Dynamo',snoreWar:'Snore War',runRattataRun:'Run, Rattata, Run',sushiGoRound:'Sushi-Go-Round',clearCutChallenge:'Clear Cut Challenge',gutsyGolbat:'Gutsy Golbat',furretFrolic:'Furret’s Frolic',topsyTurvy:'Topsy-Turvy',barrierBall:'Barrier Ball',iceCreamScoop:'Ice Cream Scoop',wailordWaterSpout:'Wailord’s Water Spout',pokemonSeek:'Pokémon Seek',picross:'Pokémon Picross',pikachuBeach:'Pikachu’s Beach'};
+const GAME_OBJECTIVES={berryPicker:'Serve each requested berry.',tilePuzzle:'Tap two tiles to swap them.',voltorb:'Read the clues. Avoid Voltorb.',roulette:'Bet a slot, Pokémon or colour across a six-ball Gen III roulette wheel.',slotMachine:'Stop three reels across up to five paylines, build Pika Power and chase Reel Time.',ballDrop:'Aim, then drop three balls.',berry:'Tap A as the pointer reaches YOU.',clefairy:'Watch Clefairy’s sequence, then repeat it.',fossil:'Excavate buried Pokémon-world finds before the wall collapses.',museum:"Inspect the artifacts you've unearthed.",unown:'Read the Unown message.',quiz:'Name the silhouette.',dash:'Outdoor Exhibition, Division Cups and 18 themed Type Cups.',powerTrial:'Charge and time five Attack targets in Exhibition or Goldenrod Cups.',impactTrial:'Harden through five hazards in Exhibition or Goldenrod Cups.',targetRange:'Aim special attacks through wind and distance in Exhibition or Goldenrod Cups.',elementalGauntlet:'Dodge elemental attacks and use Sp. Def to survive mistakes in Exhibition or Goldenrod Cups.',enduranceExpedition:'Steer through a five-zone survival course where HP sets your endurance pool.',ekansHoop:'Pull back and release Ekans to hoop Diglett, Dugtrio and rare shinies.',digDigDig:'Alternate LEFT and RIGHT to out-dig three COM Sandshrew.',magikarpSplash:'Hold for height, then time the landing rebound rhythm.',rockHarden:'Time Harden against falling rocks while preserving HP.',thunderingDynamo:'Match the blue A or green B lamp and charge your generator first.',snoreWar:'Press A at the red centre marker. Play last-awake Match or chase an accelerating Endless streak.',runRattataRun:'Mash RUN to sprint and JUMP cleanly over each hurdle.',sushiGoRound:'Eat valuable sushi, chain matching dishes and avoid the hot tea.',clearCutChallenge:'Cut five angled targets for accuracy, then Perfect the Mystery Bag for a prize.',gutsyGolbat:'Tap A to stay airborne, steer for hearts and avoid Magnemite and rival hits.',furretFrolic:'Lock to a grass patch, release to snap back to your burrow, and use A as the only way to drive balls into your blue goal.',topsyTurvy:'Build momentum, bump rivals and use Rapid Spin to score five ring-outs before time expires.',barrierBall:'Slide your Barrier, protect your goal and use A-smashes plus movement to curve Poké Balls into rival courts.',iceCreamScoop:'Drop moving scoops onto a growing tower, manage wobble and chase the rare Dream Scoop.',wailordWaterSpout:'Move Wailord under falling Pokémon, launch them by spout position and open matching coloured balls.',pokemonSeek:'Explore eight Dream World areas. Follow sounds, choose visible hiding spots and find a lost friend.',picross:'Choose an area, solve the numbered grid and reveal every picture.',pikachuBeach:'Ride Route 19 waves, spin in the air and land cleanly for Radness.'};
+const GAME_CORNER_LOCATIONS=[
+ {id:'goldenrod',name:'Goldenrod',kicker:'Johto · HGSS',art:'arcade/venues-v0223/goldenrod-game-corner-hgss.png',position:'50% 45%',games:['voltorb']},
+ {id:'celadon',name:'Celadon',kicker:'Kanto · HGSS',art:'arcade/venues-v0223/celadon-game-corner-hgss.png',position:'50% 25%',games:['ballDrop']},
+ {id:'mauville',name:'Mauville',kicker:'Hoenn · Emerald',art:'arcade/venues-v0223/goldenrod-game-corner-hgss.png',position:'50% 45%',games:['roulette','slotMachine']}
+];
+const GAME_CORNER_GAMES=new Set(GAME_CORNER_LOCATIONS.flatMap(v=>v.games));
+const $=id=>document.getElementById(id);
+const migrateLegacyVenue=id=>({amie:'amieGarden',goldenrod:'gameCorner',celadonPrize:'gameCorner',gameCorner:'gameCorner',discovery:'oreburghMuseum',performance:'lilycoveContest',moonStage:'stadiumKidsClub',stadiumClassroom:'stadiumKidsClub'}[id]||'amieGarden');
+let active=null,activeStarted=false,selected='amieGarden',gameCornerLocation=null;
+const owners={
+ berryPicker:()=>window.LuckyDexAmie,tilePuzzle:()=>window.LuckyDexAmie,
+ voltorb:()=>window.LuckyDexArcadeClassicsV0190,roulette:()=>window.LuckyDexRoulette,slotMachine:()=>window.LuckyDexSlotMachine,clefairy:()=>window.LuckyDexClefairyGame,fossil:()=>window.LuckyDexFossilMuseum,museum:()=>window.LuckyDexFossilMuseum,
+ berry:()=>({open:()=>LuckyDexBerryBlender.reset(),close:()=>LuckyDexBerryBlender.stop()}),
+ ballDrop:()=>({open:()=>LuckyDexBallDropV0180.open(),close:()=>LuckyDexBallDropV0180.stop()}),
+ unown:()=>window.LuckyDexUnown,quiz:()=>window.LuckyDexQuiz,dash:()=>window.LuckyDexDash,powerTrial:()=>window.LuckyDexPowerTrial,impactTrial:()=>window.LuckyDexImpactTrial,targetRange:()=>window.LuckyDexTargetRange,elementalGauntlet:()=>window.LuckyDexElementalGauntlet,enduranceExpedition:()=>window.LuckyDexEnduranceExpedition,ekansHoop:()=>window.LuckyDexEkansHoop,digDigDig:()=>window.LuckyDexDigDigDig,magikarpSplash:()=>window.LuckyDexMagikarpSplash,rockHarden:()=>window.LuckyDexRockHarden,thunderingDynamo:()=>window.LuckyDexThunderingDynamo,snoreWar:()=>window.LuckyDexSnoreWar,runRattataRun:()=>window.LuckyDexRunRattataRun,sushiGoRound:()=>window.LuckyDexSushiGoRound,clearCutChallenge:()=>window.LuckyDexClearCut,gutsyGolbat:()=>window.LuckyDexGutsyGolbat,furretFrolic:()=>window.LuckyDexFurretFrolic,topsyTurvy:()=>window.LuckyDexTopsyTurvy,barrierBall:()=>window.LuckyDexBarrierBall,iceCreamScoop:()=>window.LuckyDexIceCreamScoop,wailordWaterSpout:()=>window.LuckyDexWailordWaterSpout,pokemonSeek:()=>window.LuckyDexPokemonSeek,picross:()=>window.LuckyDexPicross,pikachuBeach:()=>window.LuckyDexPikachuBeach
+};
+function selectedVenue(){const a=window.state?.arcade||{};return VENUES.some(v=>v.id===a.lastArcadeVenue)?a.lastArcadeVenue:migrateLegacyVenue(a.lastArcadeVenue||a.lastArcadeZone);}
+function selectVenue(id){if(!VENUES.some(v=>v.id===id))return false;selected=id;window.state.arcade.lastArcadeVenue=id;window.save();return true;}
+const gameCornerLocationForGame=id=>GAME_CORNER_LOCATIONS.find(v=>v.games.includes(id))||null;
+const venueForGame=id=>GAME_CORNER_GAMES.has(id)?'gameCorner':(VENUES.find(v=>v.games.includes(id))?.id||null);
+function returnLabelForGame(id){const corner=gameCornerLocationForGame(id);if(corner)return `${corner.name} GAME CORNER`.toUpperCase();const venue=VENUES.find(v=>v.id===venueForGame(id));return String(venue?.name||'VENUE').toUpperCase();}
+function cleanup(){
+ const old=active,wasStarted=activeStarted;window.LuckyDexArcadeHelp?.deactivate?.({silent:true});active=null;activeStarted=false;
+ if(old&&wasStarted)owners[old]()?.close?.(old);
+ window.LuckyDexArcadeSession.hideResult();
+ document.querySelectorAll('.arcade-game').forEach(n=>n.hidden=true);
+ document.body.classList.remove('arcade-open');
+ const recordsView=$('arcadeRecordsView');if(recordsView)recordsView.hidden=true;
+ return old;
+}
+function renderWorld(){
+ const v=VENUES.find(v=>v.id===selected),i=VENUES.indexOf(v),host=$('arcadeWorldRoute');if(!v||!host)return false;
+ host.classList.remove('is-catalog');
+ host.innerHTML=`<div class="world-toolbar"><button type="button" class="world-home" data-world-home>‹ ADVENTURE</button><span>ARCADE LOCATIONS</span><button type="button" class="world-records" data-arcade-records>ARCADE RECORDS</button></div><div class="world-scene" style="--venue-position:${v.position||'center'}"><img src="${v.art}" alt="${v.name}" draggable="false"><div class="world-caption"><small>${v.kicker}</small><h2>${v.name}</h2></div></div><div class="world-summary"><span>${v.id==='gameCorner'?GAME_CORNER_LOCATIONS.length+' LOCATIONS':v.games.length+' '+(v.activityLabel||`GAME${v.games.length===1?'':'S'}`)}</span><b>${v.id==='gameCorner'?GAME_CORNER_LOCATIONS.map(x=>x.name).join(' · '):v.games.map(g=>GAME_NAMES[g]).join(' · ')}</b></div><button type="button" class="world-enter" data-enter-venue="${v.id}">ENTER LOCATION <span>›</span></button><div class="world-stops">${VENUES.map((s,n)=>`<button type="button" data-world-dot="${n}" aria-label="${s.name}" aria-current="${s===v?'true':'false'}">${n+1}</button>`).join('')}</div>`;
+ const worldArt=host.querySelector('.world-scene img');if(worldArt&&v.fallbackArt)worldArt.onerror=()=>{worldArt.onerror=null;worldArt.src=v.fallbackArt;};
+ $('arcadeWorldPrev').hidden=false;$('arcadeWorldNext').hidden=false;$('arcadeWorldPrev').disabled=i===0;$('arcadeWorldNext').disabled=i===VENUES.length-1;return true;
+}
+function openWorld({focusVenueId,activateMode=true}={}){cleanup();if(activateMode)document.body.classList.add('arcade-mode');selectVenue(focusVenueId||selectedVenue());gameCornerLocation=null;$('arcadeWorldView').hidden=false;$('arcadeVenueView').hidden=true;if($('arcadeRecordsView'))$('arcadeRecordsView').hidden=true;document.body.classList.remove('arcade-venue-open');renderWorld();return true;}
+function renderGameCornerRoot(){const v=VENUES.find(v=>v.id==='gameCorner');if(!v)return false;gameCornerLocation=null;$('arcadeWorldBack').textContent='‹ LOCATIONS';$('arcadeVenueTitle').textContent='Game Corner';$('arcadeVenueDescription').textContent='Choose a region to play its Game Corner games.';$('arcadeVenueGames').innerHTML=GAME_CORNER_LOCATIONS.map(loc=>`<button type="button" class="arcade-venue-game game-corner-location" data-game-corner-location="${loc.id}"><span><small>${loc.kicker}</small><b>${loc.name} Game Corner</b><em>${loc.games.map(g=>GAME_NAMES[g]).join(' · ')}</em></span><strong>ENTER ›</strong></button>`).join('');return true;}
+function openGameCornerLocation(id){const loc=GAME_CORNER_LOCATIONS.find(v=>v.id===id);if(!loc)return false;cleanup();document.body.classList.add('arcade-mode','arcade-venue-open');selectVenue('gameCorner');gameCornerLocation=id;$('arcadeWorldView').hidden=true;$('arcadeVenueView').hidden=false;if($('arcadeRecordsView'))$('arcadeRecordsView').hidden=true;const venueArt=$('arcadeVenueArt');venueArt.onerror=null;venueArt.src=loc.art;venueArt.alt=`${loc.name} Game Corner`;$('arcadeVenueView').style.setProperty('--venue-position',loc.position||'center');$('arcadeVenueTitle').textContent=`${loc.name} Game Corner`;$('arcadeVenueDescription').textContent=loc.kicker;$('arcadeWorldBack').textContent='‹ GAME CORNER';$('arcadeVenueGames').innerHTML=loc.games.map(g=>`<button type="button" class="arcade-venue-game" data-venue-game="${g}"><b>${GAME_NAMES[g]}</b><span>${GAME_OBJECTIVES[g]}</span><em>PLAY ›</em></button>`).join('');return true;}
+function renderVenue(id){const v=VENUES.find(v=>v.id===id);if(!v)return false;
+ $('arcadeVenueView').style.setProperty('--venue-position',v.position||'center');const venueArt=$('arcadeVenueArt');venueArt.onerror=null;venueArt.src=v.art;venueArt.alt=v.name;if(v.fallbackArt)venueArt.onerror=()=>{venueArt.onerror=null;venueArt.src=v.fallbackArt;};$('arcadeVenueView').style.setProperty('--venue-art',`url(\"${v.fallbackArt||v.art}\")`);$('arcadeVenueTitle').textContent=v.name;
+ $('arcadeVenueDescription').textContent=v.kicker;
+ if(id==='gameCorner')return renderGameCornerRoot();
+ $('arcadeWorldBack').textContent='‹ LOCATIONS';
+ const kids={ekansHoop:{sprite:'23.png',mechanic:'Aim · trajectory'},digDigDig:{sprite:'27.png',mechanic:'Alternate · speed'},magikarpSplash:{sprite:'129.png',mechanic:'Hold · landing rhythm'},rockHarden:{sprite:'11.png',mechanic:'Hold · precision · survival'},clefairy:{sprite:'35.png',mechanic:'Memory · sequence'},thunderingDynamo:{sprite:'25.png',mechanic:'React · rapid input'},snoreWar:{sprite:'96.png',mechanic:'Timing · survival'},runRattataRun:{sprite:'19.png',mechanic:'Mash · jump · sprint'},sushiGoRound:{sprite:'108.png',mechanic:'Choose · combo · value'},clearCutChallenge:{sprite:'123.png',mechanic:'Precision · timing · cut'},gutsyGolbat:{sprite:'42.png',mechanic:'Flap · steer · collect'},furretFrolic:{sprite:'162.png',mechanic:'Patch lock · A hit · score'},topsyTurvy:{sprite:'237.png',mechanic:'Momentum · Rapid Spin · ring-outs'},barrierBall:{sprite:'122.png',mechanic:'Barrier · angle · smash'}};
+ const renderKids=()=>{$('arcadeVenueGames').innerHTML=v.games.map(g=>`<button type="button" class="arcade-venue-game kids-club-game" data-venue-game="${g}"><img src="arcade/sprites/actors/pokemon/${kids[g].sprite}" alt="" draggable="false"><span class="kids-club-game-copy"><b>${GAME_NAMES[g]}</b><span>${kids[g].mechanic}</span><small>${GAME_OBJECTIVES[g]}</small></span><em>PLAY ›</em></button>`).join('');};
+ const challenges=[{id:'dash',stat:'SPEED',sprite:'25.png',mechanic:'Race · stamina · racing lines',status:'play'},{id:'powerTrial',stat:'ATTACK',sprite:'68.png',mechanic:'Charge · impact timing',status:'play'},{id:'impactTrial',stat:'DEFENSE',sprite:'306.png',mechanic:'Read · dodge · brace',status:'play'},{id:'targetRange',name:'Target Range',stat:'SP. ATK',sprite:'65.png',mechanic:'Aim · wind · distance · combos',status:'play'},{id:'elementalGauntlet',name:'Elemental Gauntlet',stat:'SP. DEF',sprite:'197.png',mechanic:'Dodge · resist · survive',status:'play'},{id:'enduranceExpedition',name:'Endurance Expedition',stat:'HP',sprite:'242.png',mechanic:'Steer · dodge · endure',status:'play'}];
+ if(id==='dashCourse'){const goldenrod=window.LuckyDexGoldenrod;if(goldenrod?.open){$('arcadeVenueGames').innerHTML='';goldenrod.open();}else $('arcadeVenueGames').innerHTML=challenges.map(c=>c.status==='play'?`<button type="button" class="arcade-venue-game challenge-course-game" data-venue-game="${c.id}" data-stat="${c.stat}"><img src="arcade/sprites/actors/pokemon/${c.sprite}" alt="" draggable="false"><span><small>${c.stat} EVENT</small><b>${GAME_NAMES[c.id]}</b><em>${c.mechanic}</em><i>${GAME_OBJECTIVES[c.id]}</i></span><strong>PLAY ›</strong></button>`:`<div class="arcade-venue-game challenge-course-game is-coming" data-stat="${c.stat}"><img src="arcade/sprites/actors/pokemon/${c.sprite}" alt="" draggable="false"><span><small>${c.stat} EVENT</small><b>${c.name}</b><em>${c.mechanic}</em><i>Coming Soon</i></span><strong>SOON</strong></div>`).join('');}
+ else if(id==='stadiumKidsClub'){renderKids();}
+ else if(id==='stadium2KidsClub'){renderKids();}
+ else $('arcadeVenueGames').innerHTML=v.games.map(g=>`<button type="button" class="arcade-venue-game" data-venue-game="${g}"><b>${GAME_NAMES[g]}</b><span>${GAME_OBJECTIVES[g]}</span><em>PLAY ›</em></button>`).join('');return true;
+}
+function openVenue(id){if(!VENUES.some(v=>v.id===id))return false;cleanup();document.body.classList.add('arcade-mode');selectVenue(id);gameCornerLocation=null;renderVenue(id);$('arcadeWorldView').hidden=true;$('arcadeVenueView').hidden=false;if($('arcadeRecordsView'))$('arcadeRecordsView').hidden=true;document.body.classList.add('arcade-venue-open');return true;}
+function openGame(id){if(!owners[id])return false;const corner=gameCornerLocationForGame(id);cleanup();document.body.classList.add('arcade-mode');selectVenue(venueForGame(id));if(corner)gameCornerLocation=corner.id;active=id;activeStarted=false;
+ $('arcadeWorldView').hidden=true;$('arcadeVenueView').hidden=true;if($('arcadeRecordsView'))$('arcadeRecordsView').hidden=true;
+ const panelId=id==='clearCutChallenge'?'clearCutGame':`${id}Game`,panel=$(panelId);if(!panel){active=null;return false;}panel.hidden=false;document.body.classList.add('arcade-open');
+ const exit=panel.querySelector('[data-exit-game]');if(exit)exit.textContent='‹ '+returnLabelForGame(id);
+ function startGame(){if(active!==id||activeStarted)return false;owners[id]()?.open?.(id);activeStarted=true;window.LuckyDexArcadeHelp?.activate?.(id);return true;}
+ const help=window.LuckyDexArcadeHelp;if(help&&!help.isSeen?.(id)&&help.showFirstTime?.(id,startGame))return true;return startGame();
+}
+function showGameHelp(){if(!active||!activeStarted)return false;const id=active,owner=owners[id]?.(),paused=owner?.pause?.()===true,help=window.LuckyDexArcadeHelp;if(!help?.showInfo)return false;const shown=help.showInfo?.(active,{onClose:()=>{if(paused&&active===id&&activeStarted)owner?.resume?.();}});if(!shown&&paused)owner?.resume?.();return !!shown;}
+function backFromGame(){if(!active)return false;const game=active,id=venueForGame(game),corner=gameCornerLocationForGame(game);if(id==='dashCourse'&&window.LuckyDexGoldenrod?.activeCup?.())window.LuckyDexGoldenrod.abandonActiveCup();cleanup();if(corner)return openGameCornerLocation(corner.id);return openVenue(id);}
+function backFromVenue(){if(selected==='dashCourse'){window.LuckyDexGoldenrod?.abandonActiveCup?.();window.LuckyDexGoldenrod?.close?.();}if(selected==='gameCorner'&&gameCornerLocation){gameCornerLocation=null;renderVenue('gameCorner');return true;}return openWorld({focusVenueId:selected});}
+function leave(){cleanup();$('arcadeVenueView').hidden=true;if($('arcadeRecordsView'))$('arcadeRecordsView').hidden=true;document.body.classList.remove('arcade-venue-open','arcade-mode');return true;}
+function suspend(){window.save?.();window.LuckyDexTrade?.leave();}
+const previousBack=window.handleLuckyBack;
+window.handleLuckyBack=()=>{
+ if(window.LuckyDexTrade?.cancelOverlay?.())return true;
+ if(window.LuckyDexArcadeHelp?.isOpen?.()){window.LuckyDexArcadeHelp.close?.();return true;}
+ if(document.querySelector('dialog[open]'))return previousBack();
+ if(document.querySelector('[data-page="arcade"].active')){
+   if(window.LuckyDexArcadeRecords?.isOpen?.()){window.LuckyDexArcadeRecords.close();return true;}
+   if(active)return backFromGame();
+   if(!$('arcadeVenueView').hidden)return backFromVenue();
+   leave();navigate('adventure');return true;
+ }
+ const page=document.querySelector('.page.active');
+ if(page&&page.dataset.page!=='adventure'){navigate('adventure');return true;}
+ return previousBack();
+};
+document.addEventListener('click',e=>{
+ const home=e.target.closest('[data-world-home]');if(home){leave();navigate('adventure');return;}
+ const records=e.target.closest('[data-arcade-records]');if(records){window.LuckyDexArcadeRecords?.open?.();return;}
+ const exit=e.target.closest('[data-exit-game]');if(exit){backFromGame();return;}
+ const venue=e.target.closest('[data-enter-venue]');if(venue){openVenue(venue.dataset.enterVenue);return;}
+ const corner=e.target.closest('[data-game-corner-location]');if(corner){openGameCornerLocation(corner.dataset.gameCornerLocation);return;}
+ const game=e.target.closest('[data-venue-game]');if(game){openGame(game.dataset.venueGame);return;}
+ const dot=e.target.closest('[data-world-dot]');if(dot){selectVenue(VENUES[Number(dot.dataset.worldDot)].id);renderWorld();}
+});
+$('arcadeWorldPrev').onclick=()=>{const n=VENUES.findIndex(v=>v.id===selected);if(n>0){selectVenue(VENUES[n-1].id);renderWorld();}};
+$('arcadeWorldNext').onclick=()=>{const n=VENUES.findIndex(v=>v.id===selected);if(n<VENUES.length-1){selectVenue(VENUES[n+1].id);renderWorld();}};
+$('arcadeWorldBack').onclick=backFromVenue;
+document.addEventListener('visibilitychange',()=>{if(document.hidden)suspend();else if(document.querySelector('[data-page="trade"].active'))window.LuckyDexTrade?.enter();});
+window.addEventListener('pagehide',suspend);
+window.LuckyDexArcadeWorld={VENUES,GAME_CORNER_LOCATIONS,GAME_NAMES,GAME_OBJECTIVES,openWorld,openVenue,openGameCornerLocation,openGame,showGameHelp,backFromGame,backFromVenue,leave,suspend,activeGame:()=>active,selectedVenue,selectVenue,venueForGame,gameCornerLocationForGame,returnLabelForGame,migrateLegacyVenue,renderWorld,renderVenue};
+openWorld({activateMode:false});
+})();

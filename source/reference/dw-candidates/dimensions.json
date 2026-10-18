@@ -1,0 +1,496 @@
+[
+  {
+    "file": "cafe-a.png",
+    "width": 999,
+    "height": 526,
+    "mode": "RGB",
+    "alpha": null
+  },
+  {
+    "file": "cafe-b.jpg",
+    "width": 1002,
+    "height": 528,
+    "mode": "RGB",
+    "alpha": null
+  },
+  {
+    "file": "cafe-c.webp",
+    "width": 1103,
+    "height": 581,
+    "mode": "RGB",
+    "alpha": null
+  },
+  {
+    "file": "cafe-e.png",
+    "width": 1918,
+    "height": 995,
+    "mode": "RGBA",
+    "alpha": [
+      255,
+      255
+    ]
+  },
+  {
+    "file": "cafe-f.jpg",
+    "width": 1002,
+    "height": 528,
+    "mode": "RGB",
+    "alpha": null
+  },
+  {
+    "file": "cafe-interior.png",
+    "width": 1918,
+    "height": 997,
+    "mode": "RGB",
+    "alpha": null
+  },
+  {
+    "file": "contact-1.png",
+    "width": 1200,
+    "height": 960,
+    "mode": "RGB",
+    "alpha": null
+  },
+  {
+    "file": "contact-2.png",
+    "width": 1200,
+    "height": 960,
+    "mode": "RGB",
+    "alpha": null
+  },
+  {
+    "file": "forest-base.jpg",
+    "width": 1705,
+    "height": 572,
+    "mode": "RGB",
+    "alpha": null
+  },
+  {
+    "file": "forest-layer-120.png",
+    "width": 1003,
+    "height": 560,
+    "mode": "RGBA",
+    "alpha": [
+      0,
+      255
+    ]
+  },
+  {
+    "file": "forest-layer-393.png",
+    "width": 1024,
+    "height": 571,
+    "mode": "RGBA",
+    "alpha": [
+      0,
+      255
+    ]
+  },
+  {
+    "file": "forest-layer-72.png",
+    "width": 613,
+    "height": 574,
+    "mode": "RGBA",
+    "alpha": [
+      0,
+      255
+    ]
+  },
+  {
+    "file": "forest-layer-8.png",
+    "width": 1003,
+    "height": 560,
+    "mode": "RGBA",
+    "alpha": [
+      218,
+      255
+    ]
+  },
+  {
+    "file": "ice-a.jpg",
+    "width": 1003,
+    "height": 528,
+    "mode": "RGB",
+    "alpha": null
+  },
+  {
+    "file": "ice-b.jpg",
+    "width": 1003,
+    "height": 528,
+    "mode": "RGB",
+    "alpha": null
+  },
+  {
+    "file": "ice-c.jpg",
+    "width": 1300,
+    "height": 684,
+    "mode": "RGB",
+    "alpha": null
+  },
+  {
+    "file": "ice-layer-123.png",
+    "width": 452,
+    "height": 626,
+    "mode": "RGBA",
+    "alpha": [
+      0,
+      255
+    ]
+  },
+  {
+    "file": "ice-layer-173.png",
+    "width": 589,
+    "height": 472,
+    "mode": "RGBA",
+    "alpha": [
+      0,
+      255
+    ]
+  },
+  {
+    "file": "ice-layer-687.png",
+    "width": 663,
+    "height": 528,
+    "mode": "RGBA",
+    "alpha": [
+      0,
+      255
+    ]
+  },
+  {
+    "file": "ice-layer-690.png",
+    "width": 650,
+    "height": 528,
+    "mode": "RGBA",
+    "alpha": [
+      0,
+      255
+    ]
+  },
+  {
+    "file": "manor-a.jpg",
+    "width": 1003,
+    "height": 270,
+    "mode": "RGB",
+    "alpha": null
+  },
+  {
+    "file": "manor-b.jpg",
+    "width": 1003,
+    "height": 254,
+    "mode": "RGB",
+    "alpha": null
+  },
+  {
+    "file": "manor-bed.png",
+    "width": 351,
+    "height": 186,
+    "mode": "RGBA",
+    "alpha": [
+      0,
+      255
+    ]
+  },
+  {
+    "file": "manor-bookcase.png",
+    "width": 220,
+    "height": 170,
+    "mode": "RGBA",
+    "alpha": [
+      0,
+      255
+    ]
+  },
+  {
+    "file": "manor-c.jpg",
+    "width": 1003,
+    "height": 269,
+    "mode": "RGB",
+    "alpha": null
+  },
+  {
+    "file": "manor-d.jpg",
+    "width": 1003,
+    "height": 269,
+    "mode": "RGB",
+    "alpha": null
+  },
+  {
+    "file": "manor-e.jpg",
+    "width": 2600,
+    "height": 1544,
+    "mode": "RGB",
+    "alpha": null
+  },
+  {
+    "file": "manor-lamp.png",
+    "width": 78,
+    "height": 110,
+    "mode": "RGBA",
+    "alpha": [
+      0,
+      255
+    ]
+  },
+  {
+    "file": "manor-layer-345.png",
+    "width": 757,
+    "height": 507,
+    "mode": "RGBA",
+    "alpha": [
+      0,
+      255
+    ]
+  },
+  {
+    "file": "manor-layer-365.png",
+    "width": 451,
+    "height": 484,
+    "mode": "RGBA",
+    "alpha": [
+      0,
+      255
+    ]
+  },
+  {
+    "file": "manor-layer-380.png",
+    "width": 338,
+    "height": 700,
+    "mode": "RGBA",
+    "alpha": [
+      0,
+      255
+    ]
+  },
+  {
+    "file": "manor-layer-65.png",
+    "width": 373,
+    "height": 571,
+    "mode": "RGBA",
+    "alpha": [
+      0,
+      255
+    ]
+  },
+  {
+    "file": "manor-sofa.png",
+    "width": 257,
+    "height": 169,
+    "mode": "RGBA",
+    "alpha": [
+      0,
+      255
+    ]
+  },
+  {
+    "file": "mountain-a.jpg",
+    "width": 1004,
+    "height": 538,
+    "mode": "RGB",
+    "alpha": null
+  },
+  {
+    "file": "mountain-b.jpg",
+    "width": 1700,
+    "height": 528,
+    "mode": "RGB",
+    "alpha": null
+  },
+  {
+    "file": "mountain-layer-189.png",
+    "width": 947,
+    "height": 290,
+    "mode": "RGBA",
+    "alpha": [
+      0,
+      255
+    ]
+  },
+  {
+    "file": "mountain-layer-393.png",
+    "width": 1100,
+    "height": 199,
+    "mode": "RGBA",
+    "alpha": [
+      0,
+      255
+    ]
+  },
+  {
+    "file": "mountain-layer-514.png",
+    "width": 576,
+    "height": 379,
+    "mode": "RGBA",
+    "alpha": [
+      0,
+      255
+    ]
+  },
+  {
+    "file": "mountain-layer-90.png",
+    "width": 777,
+    "height": 305,
+    "mode": "RGBA",
+    "alpha": [
+      0,
+      255
+    ]
+  },
+  {
+    "file": "park-a.jpg",
+    "width": 1004,
+    "height": 528,
+    "mode": "RGB",
+    "alpha": null
+  },
+  {
+    "file": "park-b.jpg",
+    "width": 1004,
+    "height": 528,
+    "mode": "RGB",
+    "alpha": null
+  },
+  {
+    "file": "park-layer-134.png",
+    "width": 1003,
+    "height": 349,
+    "mode": "RGBA",
+    "alpha": [
+      0,
+      255
+    ]
+  },
+  {
+    "file": "park-layer-684.png",
+    "width": 1003,
+    "height": 317,
+    "mode": "RGBA",
+    "alpha": [
+      0,
+      255
+    ]
+  },
+  {
+    "file": "park-layer-874.png",
+    "width": 513,
+    "height": 652,
+    "mode": "RGBA",
+    "alpha": [
+      0,
+      255
+    ]
+  },
+  {
+    "file": "park-layer-889.png",
+    "width": 513,
+    "height": 652,
+    "mode": "RGBA",
+    "alpha": [
+      0,
+      255
+    ]
+  },
+  {
+    "file": "sea-base.jpg",
+    "width": 1003,
+    "height": 1710,
+    "mode": "RGB",
+    "alpha": null
+  },
+  {
+    "file": "sea-layer-1.png",
+    "width": 1085,
+    "height": 571,
+    "mode": "RGBA",
+    "alpha": [
+      0,
+      255
+    ]
+  },
+  {
+    "file": "sea-layer-105.png",
+    "width": 479,
+    "height": 604,
+    "mode": "RGBA",
+    "alpha": [
+      0,
+      255
+    ]
+  },
+  {
+    "file": "sea-layer-4.png",
+    "width": 1130,
+    "height": 332,
+    "mode": "RGBA",
+    "alpha": [
+      0,
+      255
+    ]
+  },
+  {
+    "file": "sea-layer-429.png",
+    "width": 501,
+    "height": 323,
+    "mode": "RGBA",
+    "alpha": [
+      0,
+      255
+    ]
+  },
+  {
+    "file": "seek-background.png",
+    "width": 1003,
+    "height": 557,
+    "mode": "RGBA",
+    "alpha": [
+      0,
+      255
+    ]
+  },
+  {
+    "file": "sky-base.jpg",
+    "width": 1003,
+    "height": 1425,
+    "mode": "RGB",
+    "alpha": null
+  },
+  {
+    "file": "sky-layer-129.png",
+    "width": 1552,
+    "height": 447,
+    "mode": "RGBA",
+    "alpha": [
+      0,
+      255
+    ]
+  },
+  {
+    "file": "sky-layer-188.png",
+    "width": 1115,
+    "height": 573,
+    "mode": "RGBA",
+    "alpha": [
+      0,
+      255
+    ]
+  },
+  {
+    "file": "sky-layer-273.png",
+    "width": 870,
+    "height": 840,
+    "mode": "RGBA",
+    "alpha": [
+      0,
+      255
+    ]
+  },
+  {
+    "file": "sky-layer-8.png",
+    "width": 874,
+    "height": 522,
+    "mode": "RGBA",
+    "alpha": [
+      0,
+      255
+    ]
+  }
+]

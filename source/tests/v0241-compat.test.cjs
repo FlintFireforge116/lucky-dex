@@ -1,0 +1,18 @@
+'use strict';
+const assert=require('node:assert/strict');
+const fs=require('node:fs');
+const path=require('node:path');
+const gradle=fs.readFileSync(path.join(__dirname,'../app/build.gradle'),'utf8');
+const html=fs.readFileSync(path.join(__dirname,'../app/src/main/assets/index.html'),'utf8');
+const pkg=JSON.parse(fs.readFileSync(path.join(__dirname,'../package.json'),'utf8'));
+const lock=JSON.parse(fs.readFileSync(path.join(__dirname,'../package-lock.json'),'utf8'));
+assert.match(gradle,/applicationId\s+'com\.example\.luckydex'/,'Android applicationId stays on the existing install identity');
+const code=Number((gradle.match(/versionCode\s+(\d+)/)||[])[1]);
+const name=(gradle.match(/versionName\s+'([^']+)'/)||[])[1];
+assert.ok(code>=241,'v0.24 patch updates do not go backwards from v0.24.1');
+const parts=String(name||'').split('.').map(Number);assert.ok(parts[0]>0||parts[1]>=24,'version remains newer than the v0.24 baseline');
+assert.equal(pkg.version,name,'package version matches Android versionName');
+assert.equal(lock.version,name,'package-lock root version matches Android versionName');
+assert.equal(lock.packages[''].version,name,'package-lock workspace version matches Android versionName');
+assert.ok((html.match(new RegExp(`v${name.replace(/\./g,'\\.')}`,'g'))||[]).length>=1,'visible app version includes current patch');
+console.log('PASS v0.24 patch update identity and metadata');

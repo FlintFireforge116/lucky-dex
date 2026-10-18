@@ -1,0 +1,16 @@
+'use strict';
+const assert=require('node:assert/strict');
+const fs=require('node:fs');
+const path=require('node:path');
+const app=fs.readFileSync(path.join(__dirname,'../app/src/main/assets/app-v0167.js'),'utf8');
+const css=fs.readFileSync(path.join(__dirname,'../app/src/main/assets/styles-v013.css'),'utf8');
+const arcadeCss=fs.readFileSync(path.join(__dirname,'../app/src/main/assets/arcade.css'),'utf8');
+const museum=fs.readFileSync(path.join(__dirname,'../app/src/main/assets/arcade-fossil-museum.js'),'utf8');
+assert.match(app,/productClass=fixedHalfDeck\?' fixed-product half-deck-product':' pointy-pack'/,'ordinary boosters retain the pointy wrapper while fixed products use their own shell');
+assert.match(app,/pack-art-shell/,'real booster artwork should sit inside the wrapper shell');
+assert.match(css,/\.sealed-pack\.pointy-pack/,'pointy wrapper silhouette needs CSS');
+assert.match(css,/\.pack-art-shell/,'pack artwork frame needs CSS');
+assert.match(museum,/fossil-booster-mini-v0266/,'buried boosters should render as standalone reusable mini pack art');
+assert.match(arcadeCss,/\.fossil-booster-mini-v0266/,'fossil dig needs dedicated standalone mini-pack styling');
+assert.doesNotMatch(museum,/className='fossil-booster-find-v0258'/,'buried booster art must no longer use the generated wrapper object');
+console.log('PASS pack shell + v0.26.6 standalone fossil mini-art contract');

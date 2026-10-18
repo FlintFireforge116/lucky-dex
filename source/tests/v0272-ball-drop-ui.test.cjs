@@ -1,0 +1,22 @@
+'use strict';
+const assert=require('node:assert/strict');
+const fs=require('node:fs');
+const path=require('node:path');
+const root=path.resolve(__dirname,'..');
+const html=fs.readFileSync(path.join(root,'app/src/main/assets/index.html'),'utf8');
+const css=fs.readFileSync(path.join(root,'app/src/main/assets/arcade.css'),'utf8');
+const js=fs.readFileSync(path.join(root,'app/src/main/assets/arcade-ball-drop.js'),'utf8');
+
+assert.match(html,/id="ballDropBackboardCanvas" width="720" height="1004"/,'Ball Drop should retain the approved 720x1004 board family');
+assert.match(html,/id="ballDropAimSurface"/,'layered board needs a dedicated touch aim surface');
+assert.doesNotMatch(html,/id="ballDropAim"[^>]*type="range"/,'phone aiming should no longer depend on the tiny range slider');
+assert.match(html,/id="ballDropEventLog" class="ball-drop-event-log"/,'persistent event log should live above the board');
+assert.match(html,/id="ballDropToastStack" class="ball-drop-toast-stack"/,'temporary notifications need their own board overlay');
+assert.match(html,/drag[^<]*Poké Ball|tap[^<]*launch/i,'instructions should explain direct touch aiming');
+assert.match(css,/\.ball-drop-event-log\{/,'event log needs dedicated styling');
+assert.match(css,/\.ball-drop-toast-stack\{/,'temporary toast stack needs dedicated styling');
+assert.match(css,/\.ball-drop-machine\{[^}]*aspect-ratio:720\/1004/,'CSS aspect ratio must match the current phone-fit cabinet crop');
+assert.match(css,/\.ball-drop-aim-surface\{[^}]*touch-action:pan-y/,'aim surface should support horizontal aiming without stealing vertical page scrolling');
+assert.match(js,/pointerdown/,'canvas should listen for direct pointer aiming');
+assert.match(js,/LuckyDexBallDropV0272/,'v0.27.2 runtime owner should be exported');
+console.log('PASS v0.27.2 Ball Drop phone UI contract');

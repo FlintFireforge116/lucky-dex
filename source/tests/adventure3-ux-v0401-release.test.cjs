@@ -1,0 +1,10 @@
+const assert=require('node:assert/strict'),fs=require('fs'),path=require('path');
+const root=path.resolve(__dirname,'..'),read=f=>fs.readFileSync(path.join(root,f),'utf8');
+const pkg=JSON.parse(read('package.json')),lock=JSON.parse(read('package-lock.json')),gradle=read('app/build.gradle');
+const m=/^0\.40\.(\d+)$/.exec(pkg.version);assert.ok(m,'expected v0.40.x');const patch=Number(m[1]);assert.ok(patch>=1);assert.equal(lock.version,pkg.version);assert.equal(lock.packages[''].version,pkg.version);
+assert.equal(Number(gradle.match(/versionCode\s+(\d+)/)[1]),4000+patch);assert.equal(gradle.match(/versionName\s+'([^']+)'/)[1],pkg.version);
+assert.ok(gradle.includes('LuckyDex-asset-builder/'+pkg.version),'asset builder metadata must match the installed release');
+assert.match(gradle,/applicationId 'com\.example\.luckydex'/);assert.ok(read('app/src/main/assets/index.html').includes('v'+pkg.version));
+assert.ok(read('app/src/main/assets/app-v0167.js').includes("__LUCKYDEX_BUILD='"+pkg.version+"'"));
+assert.ok(fs.existsSync(path.join(root,'app/luckydex-dev.keystore')));
+console.log('PASS coherent '+pkg.version+' app/package/runtime identity with supplied signer');

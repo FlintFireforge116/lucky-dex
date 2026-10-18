@@ -1,0 +1,14 @@
+const test=require('node:test'),assert=require('node:assert/strict'),vm=require('node:vm'),fs=require('node:fs'),path=require('node:path');
+const base=path.resolve(__dirname,'../app/src/main/assets');
+function setup(kind='coins'){
+  let saves=0,grants=0,resolve;const root={state:{arcade:{pokemonSeek:{dreamPrizes:0}}},LuckyDexArcadeRareRewards:require(path.join(base,'arcade-rare-rewards.js')),
+    LuckyDexVoltorbGiftCore:{rewardForRoll:()=>({kind,reward:kind==='coins'?{type:'coins',amount:100,label:'100 Lucky Coins'}:null})},
+    LuckyDexRareRewardBridge:{save:()=>saves++,resolveArcadeReward:()=>new Promise(r=>resolve=r),grantReward:async reward=>{grants++;return {label:reward.label};}}};
+  const p=path.join(base,'arcade-pokemon-seek-prizes.js');assert.ok(fs.existsSync(p),'Seek prize delivery module exists');vm.runInNewContext(fs.readFileSync(p,'utf8'),{window:root,console});
+  return {root,api:root.LuckyDexPokemonSeekPrizes,counts:()=>({saves,grants}),resolve:r=>resolve(r)};
+}
+test('Dream Sparkle reserves and saves the rolled reward synchronously before delivery or exit',()=>{const s=setup('card'),a=s.api.reserve(s.root.state,()=>.5);assert.ok(a.id);assert.equal(a.kind,'card');assert.ok(s.root.state.arcade.rareRewards.attempts[a.key]);assert.equal(s.counts().grants,0);assert.ok(s.counts().saves>0);});
+test('concurrent delivery shares one promise, grants once and counts one prize',async()=>{const s=setup(),a=s.api.reserve(s.root.state);const [x,y]=await Promise.all([s.api.deliver(s.root.state,a),s.api.deliver(s.root.state,a)]);assert.equal(s.counts().grants,1);assert.equal(s.root.state.arcade.pokemonSeek.dreamPrizes,1);assert.equal(x.pending,false);assert.equal(y.pending,false);assert.ok(s.root.state.arcade.rareRewards.claimed[a.id]);});
+test('offline resolution remains reserved and retryable after exiting the game',async()=>{const s=setup('card'),owner=s.root.state,a=s.api.reserve(owner),p=s.api.deliver(owner,a);await Promise.resolve();s.resolve(null);assert.equal((await p).pending,true);assert.ok(owner.arcade.rareRewards.attempts[a.key]);const retried=s.api.retry(owner);await Promise.resolve();s.resolve({type:'card',label:'Reserved card'});await retried;assert.equal(s.counts().grants,1);assert.equal(owner.arcade.pokemonSeek.dreamPrizes,1);});
+test('a second event cannot overwrite an older unresolved reservation',()=>{const s=setup('card'),a=s.api.reserve(s.root.state),b=s.api.reserve(s.root.state);assert.notEqual(a.id,b.id);assert.equal(Object.values(s.root.state.arcade.rareRewards.attempts).length,2);});
+test('loading another save during resolution never grants into the replacement save',async()=>{const s=setup('card'),owner=s.root.state,a=s.api.reserve(owner),p=s.api.deliver(owner,a);await Promise.resolve();s.root.state={arcade:{}};s.resolve({type:'card',label:'Old-save card'});assert.equal((await p).pending,true);assert.equal(s.counts().grants,0);assert.ok(owner.arcade.rareRewards.attempts[a.key]);});

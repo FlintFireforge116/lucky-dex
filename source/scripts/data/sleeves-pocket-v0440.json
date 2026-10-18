@@ -1,0 +1,2058 @@
+{
+  "referenceUrl": "https://www.serebii.net/tcgpocket/sleeves.shtml",
+  "referenceSnapshot": "qa/v0440/pocket/serebii-sleeves-source.html",
+  "referenceSha256": "b8377f3fc7c3465f00e80ba2f8b993d70fdf2345204398cc1098d52c40b06e0f",
+  "snapshotDateUtc": "2026-10-16T07:09:31.424703+00:00",
+  "encoding": {
+    "format": "WebP",
+    "maximumWidth": 400,
+    "quality": 86,
+    "method": 6,
+    "pillowVersion": "12.3.0",
+    "webpVersion": "1.6.0",
+    "crop": false,
+    "upscale": false,
+    "aspectRatioPreserved": true
+  },
+  "coverage": {
+    "referenceDesigns": 78,
+    "packagedDesigns": 78,
+    "uniquePackagedArtFiles": 78,
+    "missingAssets": [],
+    "duplicateArtGroups": [],
+    "duplicateOriginalGroups": [],
+    "allReferenceDesignsAccountedFor": true,
+    "allReferenceDesignsPackaged": true
+  },
+  "sleeves": [
+    {
+      "id": "pocket-mega-charizard-x",
+      "name": "Mega Charizard X",
+      "sourceFamily": "TCG Pocket",
+      "referenceUrl": "https://www.serebii.net/tcgpocket/sleeves.shtml",
+      "sourceImageUrl": "https://www.serebii.net/tcgpocket/sleeves/megacharizardx.jpg",
+      "themes": [
+        "tcg-pocket",
+        "pokemon",
+        "mega"
+      ],
+      "pokemonIds": [
+        6
+      ],
+      "sourceRequirement": "6 Premium Tickets",
+      "referenceKey": "megacharizardx",
+      "thumbnailUrl": "https://www.serebii.net/tcgpocket/sleeves/th/megacharizardx.jpg",
+      "artPath": "cosmetics/sleeves/pocket-v0440/mega-charizard-x.webp",
+      "sha256": "0587ac52b50e831bbfe3d1688c7b80c2bff15f0cbc428e3385950fbf80370223",
+      "width": 400,
+      "height": 558,
+      "bytes": 76306,
+      "sourceSha256": "8bfea6ee5bbc268580f213295ec7572c7f67dc64dc2294dded52fa6569137d99",
+      "sourceWidth": 734,
+      "sourceHeight": 1024,
+      "sourceBytes": 257222
+    },
+    {
+      "id": "pocket-hoopa",
+      "name": "Hoopa",
+      "sourceFamily": "TCG Pocket",
+      "referenceUrl": "https://www.serebii.net/tcgpocket/sleeves.shtml",
+      "sourceImageUrl": "https://www.serebii.net/tcgpocket/sleeves/hoopa.jpg",
+      "themes": [
+        "tcg-pocket",
+        "pokemon"
+      ],
+      "pokemonIds": [
+        720
+      ],
+      "sourceRequirement": "Special Bundle",
+      "referenceKey": "hoopa",
+      "thumbnailUrl": "https://www.serebii.net/tcgpocket/sleeves/th/hoopa.jpg",
+      "artPath": "cosmetics/sleeves/pocket-v0440/hoopa.webp",
+      "sha256": "6eae76cc2d4de3a42dd65894cc56d6ce9823f9a09297ef34ee5f12551dd943f1",
+      "width": 400,
+      "height": 558,
+      "bytes": 41338,
+      "sourceSha256": "0f23186af6e4e15a97f335adc8fd55b6efcaf28ee7a53beb802f75e585aa54f2",
+      "sourceWidth": 734,
+      "sourceHeight": 1024,
+      "sourceBytes": 139207
+    },
+    {
+      "id": "pocket-fennekin",
+      "name": "Fennekin",
+      "sourceFamily": "TCG Pocket",
+      "referenceUrl": "https://www.serebii.net/tcgpocket/sleeves.shtml",
+      "sourceImageUrl": "https://www.serebii.net/tcgpocket/sleeves/fennekin.jpg",
+      "themes": [
+        "tcg-pocket",
+        "pokemon"
+      ],
+      "pokemonIds": [
+        653
+      ],
+      "sourceRequirement": "Event",
+      "referenceKey": "fennekin",
+      "thumbnailUrl": "https://www.serebii.net/tcgpocket/sleeves/th/fennekin.jpg",
+      "artPath": "cosmetics/sleeves/pocket-v0440/fennekin.webp",
+      "sha256": "bba6793bc927c12c92dff4a897e68cb3e4b4dd959118714085c3ccba964a1113",
+      "width": 400,
+      "height": 558,
+      "bytes": 48180,
+      "sourceSha256": "3f0740b141bc5dde322845f6c35dbbcc3823166b84fc2f8383cd08c2f578b0b2",
+      "sourceWidth": 734,
+      "sourceHeight": 1024,
+      "sourceBytes": 167435
+    },
+    {
+      "id": "pocket-team-rocket-s-boss",
+      "name": "Team Rocket's Boss",
+      "sourceFamily": "TCG Pocket",
+      "referenceUrl": "https://www.serebii.net/tcgpocket/sleeves.shtml",
+      "sourceImageUrl": "https://www.serebii.net/tcgpocket/sleeves/teamrocket%27sboss.jpg",
+      "themes": [
+        "tcg-pocket",
+        "trainers",
+        "team-rocket"
+      ],
+      "pokemonIds": [],
+      "sourceRequirement": "6 Premium Tickets",
+      "referenceKey": "teamrocket'sboss",
+      "thumbnailUrl": "https://www.serebii.net/tcgpocket/sleeves/th/teamrocket%27sboss.jpg",
+      "artPath": "cosmetics/sleeves/pocket-v0440/team-rocket-s-boss.webp",
+      "sha256": "d29803076e588221b51f95075653ee551244629608f89c28870d587fb0861555",
+      "width": 400,
+      "height": 558,
+      "bytes": 30084,
+      "sourceSha256": "1f03623164d77674e0221f440e3f322250217992acd3c7597a64f578aeb2c533",
+      "sourceWidth": 734,
+      "sourceHeight": 1024,
+      "sourceBytes": 110599
+    },
+    {
+      "id": "pocket-team-rocket",
+      "name": "Team Rocket",
+      "sourceFamily": "TCG Pocket",
+      "referenceUrl": "https://www.serebii.net/tcgpocket/sleeves.shtml",
+      "sourceImageUrl": "https://www.serebii.net/tcgpocket/sleeves/teamrocket.jpg",
+      "themes": [
+        "tcg-pocket",
+        "team-rocket"
+      ],
+      "pokemonIds": [],
+      "sourceRequirement": "Event",
+      "referenceKey": "teamrocket",
+      "thumbnailUrl": "https://www.serebii.net/tcgpocket/sleeves/th/teamrocket.jpg",
+      "artPath": "cosmetics/sleeves/pocket-v0440/team-rocket.webp",
+      "sha256": "658d9438f9c625aa1cad5607421fbf634853238e57dbd43dfa31c63434269cf8",
+      "width": 400,
+      "height": 558,
+      "bytes": 5116,
+      "sourceSha256": "12c2772d9713f26089999cf21f7d6dfd5e452ae182004f124f36fbb5ac4ac820",
+      "sourceWidth": 734,
+      "sourceHeight": 1024,
+      "sourceBytes": 40289
+    },
+    {
+      "id": "pocket-zapdos-articuno-and-moltres",
+      "name": "Zapdos Articuno and Moltres",
+      "sourceFamily": "TCG Pocket",
+      "referenceUrl": "https://www.serebii.net/tcgpocket/sleeves.shtml",
+      "sourceImageUrl": "https://www.serebii.net/tcgpocket/sleeves/zapdosarticunoandmoltres.jpg",
+      "themes": [
+        "tcg-pocket",
+        "pokemon"
+      ],
+      "pokemonIds": [
+        145,
+        144,
+        146
+      ],
+      "sourceRequirement": "Special Bundle",
+      "referenceKey": "zapdosarticunoandmoltres",
+      "thumbnailUrl": "https://www.serebii.net/tcgpocket/sleeves/th/zapdosarticunoandmoltres.jpg",
+      "artPath": "cosmetics/sleeves/pocket-v0440/zapdos-articuno-and-moltres.webp",
+      "sha256": "8439935fbae4276b3c617e368b61024c840bf59b9202bf1d44564826c6b35a14",
+      "width": 400,
+      "height": 558,
+      "bytes": 61004,
+      "sourceSha256": "b780c51caa2b17dc72f03e70283a658402512a12c7f1ae15f3ee66b3fc759e32",
+      "sourceWidth": 734,
+      "sourceHeight": 1024,
+      "sourceBytes": 194076
+    },
+    {
+      "id": "pocket-oshawott",
+      "name": "Oshawott",
+      "sourceFamily": "TCG Pocket",
+      "referenceUrl": "https://www.serebii.net/tcgpocket/sleeves.shtml",
+      "sourceImageUrl": "https://www.serebii.net/tcgpocket/sleeves/oshawott.jpg",
+      "themes": [
+        "tcg-pocket",
+        "pokemon"
+      ],
+      "pokemonIds": [
+        501
+      ],
+      "sourceRequirement": "Event",
+      "referenceKey": "oshawott",
+      "thumbnailUrl": "https://www.serebii.net/tcgpocket/sleeves/th/oshawott.jpg",
+      "artPath": "cosmetics/sleeves/pocket-v0440/oshawott.webp",
+      "sha256": "c038dbd43ffe33bd19bff104bf0422ff2bb799948c0ce66e91fc709028c62acc",
+      "width": 400,
+      "height": 558,
+      "bytes": 26116,
+      "sourceSha256": "a202d888ed21bd0cdcc917ad34f231205f0d7891a260a540179fba7ce9ccb13f",
+      "sourceWidth": 734,
+      "sourceHeight": 1024,
+      "sourceBytes": 106601
+    },
+    {
+      "id": "pocket-mega-rayquaza",
+      "name": "Mega Rayquaza",
+      "sourceFamily": "TCG Pocket",
+      "referenceUrl": "https://www.serebii.net/tcgpocket/sleeves.shtml",
+      "sourceImageUrl": "https://www.serebii.net/tcgpocket/sleeves/megarayquaza.jpg",
+      "themes": [
+        "tcg-pocket",
+        "pokemon",
+        "mega"
+      ],
+      "pokemonIds": [
+        384
+      ],
+      "sourceRequirement": "6 Premium Tickets",
+      "referenceKey": "megarayquaza",
+      "thumbnailUrl": "https://www.serebii.net/tcgpocket/sleeves/th/megarayquaza.jpg",
+      "artPath": "cosmetics/sleeves/pocket-v0440/mega-rayquaza.webp",
+      "sha256": "0e8520b941e4d008e5fcd5265ca5b3a32d4f08b14baba70dc47656b2ebf84e35",
+      "width": 400,
+      "height": 558,
+      "bytes": 40898,
+      "sourceSha256": "354395452c0db037f0c496476264efec0a18efa907b2185ae75964dfe535376a",
+      "sourceWidth": 734,
+      "sourceHeight": 1024,
+      "sourceBytes": 143660
+    },
+    {
+      "id": "pocket-metagross",
+      "name": "Metagross",
+      "sourceFamily": "TCG Pocket",
+      "referenceUrl": "https://www.serebii.net/tcgpocket/sleeves.shtml",
+      "sourceImageUrl": "https://www.serebii.net/tcgpocket/sleeves/metagross.jpg",
+      "themes": [
+        "tcg-pocket",
+        "pokemon"
+      ],
+      "pokemonIds": [
+        376
+      ],
+      "sourceRequirement": "Special Bundle",
+      "referenceKey": "metagross",
+      "thumbnailUrl": "https://www.serebii.net/tcgpocket/sleeves/th/metagross.jpg",
+      "artPath": "cosmetics/sleeves/pocket-v0440/metagross.webp",
+      "sha256": "ef254c8ed0b2a84041b057a5fa58a6681b3a4660bac7551d3e8dda92ca511ceb",
+      "width": 400,
+      "height": 558,
+      "bytes": 36282,
+      "sourceSha256": "5cd5b214ce724c4a82d569af588b8e1ebdc1cc355e29257568d3e7e0cdb5b757",
+      "sourceWidth": 734,
+      "sourceHeight": 1024,
+      "sourceBytes": 120980
+    },
+    {
+      "id": "pocket-yamper-growlithe-lillipup-rockruff-and-fidough",
+      "name": "Yamper Growlithe Lillipup Rockruff and Fidough",
+      "sourceFamily": "TCG Pocket",
+      "referenceUrl": "https://www.serebii.net/tcgpocket/sleeves.shtml",
+      "sourceImageUrl": "https://www.serebii.net/tcgpocket/sleeves/yampergrowlithelillipuprockruffandfidough.jpg",
+      "themes": [
+        "tcg-pocket",
+        "pokemon"
+      ],
+      "pokemonIds": [
+        835,
+        58,
+        506,
+        744,
+        926
+      ],
+      "sourceRequirement": "Event",
+      "referenceKey": "yampergrowlithelillipuprockruffandfidough",
+      "thumbnailUrl": "https://www.serebii.net/tcgpocket/sleeves/th/yampergrowlithelillipuprockruffandfidough.jpg",
+      "artPath": "cosmetics/sleeves/pocket-v0440/yamper-growlithe-lillipup-rockruff-and-fidough.webp",
+      "sha256": "9ba4b7f8f186374b36aaa90331c857cec179f8f6f0de2171569057fd19a903f3",
+      "width": 400,
+      "height": 558,
+      "bytes": 61428,
+      "sourceSha256": "1169807b596a525d0551657cbdf2e0c1e35a1c55e2a589aef366d47cfdbc4711",
+      "sourceWidth": 734,
+      "sourceHeight": 1024,
+      "sourceBytes": 217848
+    },
+    {
+      "id": "pocket-piplup",
+      "name": "Piplup",
+      "sourceFamily": "TCG Pocket",
+      "referenceUrl": "https://www.serebii.net/tcgpocket/sleeves.shtml",
+      "sourceImageUrl": "https://www.serebii.net/tcgpocket/sleeves/piplup.jpg",
+      "themes": [
+        "tcg-pocket",
+        "pokemon"
+      ],
+      "pokemonIds": [
+        393
+      ],
+      "sourceRequirement": "6 Premium Tickets",
+      "referenceKey": "piplup",
+      "thumbnailUrl": "https://www.serebii.net/tcgpocket/sleeves/th/piplup.jpg",
+      "artPath": "cosmetics/sleeves/pocket-v0440/piplup.webp",
+      "sha256": "0862b7d262798c2a0d48c63ac4a1edc50be904364abd89114a8d7e7395725b3b",
+      "width": 400,
+      "height": 558,
+      "bytes": 21462,
+      "sourceSha256": "db3fca1a39211cdc8cd91cea4787c64a02f40d9c64221e5c74a29e1f289de9d6",
+      "sourceWidth": 734,
+      "sourceHeight": 1024,
+      "sourceBytes": 90347
+    },
+    {
+      "id": "pocket-elesa",
+      "name": "Elesa",
+      "sourceFamily": "TCG Pocket",
+      "referenceUrl": "https://www.serebii.net/tcgpocket/sleeves.shtml",
+      "sourceImageUrl": "https://www.serebii.net/tcgpocket/sleeves/elesa.jpg",
+      "themes": [
+        "tcg-pocket",
+        "trainers"
+      ],
+      "pokemonIds": [],
+      "sourceRequirement": "Special Bundle",
+      "referenceKey": "elesa",
+      "thumbnailUrl": "https://www.serebii.net/tcgpocket/sleeves/th/elesa.jpg",
+      "artPath": "cosmetics/sleeves/pocket-v0440/elesa.webp",
+      "sha256": "1dfca7a44ed51beaacdee12158e3c4f88223a01d2775198b27e69568baeb3638",
+      "width": 400,
+      "height": 558,
+      "bytes": 31408,
+      "sourceSha256": "4404341b0fa6e6775a16511f6fe2e94138346b3a0b55aab7397ebbfbb7038194",
+      "sourceWidth": 734,
+      "sourceHeight": 1024,
+      "sourceBytes": 132036
+    },
+    {
+      "id": "pocket-sableye",
+      "name": "Sableye",
+      "sourceFamily": "TCG Pocket",
+      "referenceUrl": "https://www.serebii.net/tcgpocket/sleeves.shtml",
+      "sourceImageUrl": "https://www.serebii.net/tcgpocket/sleeves/sableye.jpg",
+      "themes": [
+        "tcg-pocket",
+        "pokemon"
+      ],
+      "pokemonIds": [
+        302
+      ],
+      "sourceRequirement": "Event",
+      "referenceKey": "sableye",
+      "thumbnailUrl": "https://www.serebii.net/tcgpocket/sleeves/th/sableye.jpg",
+      "artPath": "cosmetics/sleeves/pocket-v0440/sableye.webp",
+      "sha256": "f0bffce17d5b767838ed21d2b112730d10afedcf575368be7a5f63b8e186c81f",
+      "width": 400,
+      "height": 558,
+      "bytes": 34818,
+      "sourceSha256": "a351b64759346e8813cc12bd00c7649b14a449725c39403c9e582341e47db7e4",
+      "sourceWidth": 734,
+      "sourceHeight": 1024,
+      "sourceBytes": 141323
+    },
+    {
+      "id": "pocket-miraidon",
+      "name": "Miraidon",
+      "sourceFamily": "TCG Pocket",
+      "referenceUrl": "https://www.serebii.net/tcgpocket/sleeves.shtml",
+      "sourceImageUrl": "https://www.serebii.net/tcgpocket/sleeves/miraidon.jpg",
+      "themes": [
+        "tcg-pocket",
+        "pokemon"
+      ],
+      "pokemonIds": [
+        1008
+      ],
+      "sourceRequirement": "6 Premium Tickets",
+      "referenceKey": "miraidon",
+      "thumbnailUrl": "https://www.serebii.net/tcgpocket/sleeves/th/miraidon.jpg",
+      "artPath": "cosmetics/sleeves/pocket-v0440/miraidon.webp",
+      "sha256": "28709d172f7ea9a1b0513f9f197977aa37de2dc98ca554cba1b101e4c75736d6",
+      "width": 400,
+      "height": 558,
+      "bytes": 40970,
+      "sourceSha256": "1f2887ea338254140617b542b94fc0f15f403cf398986fe182601beb32b9b68a",
+      "sourceWidth": 734,
+      "sourceHeight": 1024,
+      "sourceBytes": 142005
+    },
+    {
+      "id": "pocket-koraidon",
+      "name": "Koraidon",
+      "sourceFamily": "TCG Pocket",
+      "referenceUrl": "https://www.serebii.net/tcgpocket/sleeves.shtml",
+      "sourceImageUrl": "https://www.serebii.net/tcgpocket/sleeves/koraidon.jpg",
+      "themes": [
+        "tcg-pocket",
+        "pokemon"
+      ],
+      "pokemonIds": [
+        1007
+      ],
+      "sourceRequirement": "Special Bundle",
+      "referenceKey": "koraidon",
+      "thumbnailUrl": "https://www.serebii.net/tcgpocket/sleeves/th/koraidon.jpg",
+      "artPath": "cosmetics/sleeves/pocket-v0440/koraidon.webp",
+      "sha256": "7f5b4915bafaff76f9cbe5541979f2e290d08c7070f907d916c1056e07e071c0",
+      "width": 400,
+      "height": 558,
+      "bytes": 42526,
+      "sourceSha256": "15d825a1789a61727dfc3523b0d1ad58f0b67b4dc1f558e3cd5ff51d4f782f6d",
+      "sourceWidth": 734,
+      "sourceHeight": 1024,
+      "sourceBytes": 145887
+    },
+    {
+      "id": "pocket-mega-sceptile",
+      "name": "Mega Sceptile",
+      "sourceFamily": "TCG Pocket",
+      "referenceUrl": "https://www.serebii.net/tcgpocket/sleeves.shtml",
+      "sourceImageUrl": "https://www.serebii.net/tcgpocket/sleeves/megasceptile.jpg",
+      "themes": [
+        "tcg-pocket",
+        "pokemon",
+        "mega"
+      ],
+      "pokemonIds": [
+        254
+      ],
+      "sourceRequirement": "Event",
+      "referenceKey": "megasceptile",
+      "thumbnailUrl": "https://www.serebii.net/tcgpocket/sleeves/th/megasceptile.jpg",
+      "artPath": "cosmetics/sleeves/pocket-v0440/mega-sceptile.webp",
+      "sha256": "eb2319713bb46bd0c5bd75715712753312583844ea85568d3c676fae3e572d33",
+      "width": 400,
+      "height": 558,
+      "bytes": 67396,
+      "sourceSha256": "37c6ed68ca30b3fa1492b3e3d70336bdc96c358eb9993de382b91de0a175c8f2",
+      "sourceWidth": 734,
+      "sourceHeight": 1024,
+      "sourceBytes": 228981
+    },
+    {
+      "id": "pocket-mega-lucario",
+      "name": "Mega Lucario",
+      "sourceFamily": "TCG Pocket",
+      "referenceUrl": "https://www.serebii.net/tcgpocket/sleeves.shtml",
+      "sourceImageUrl": "https://www.serebii.net/tcgpocket/sleeves/megalucario.jpg",
+      "themes": [
+        "tcg-pocket",
+        "pokemon",
+        "mega"
+      ],
+      "pokemonIds": [
+        448
+      ],
+      "sourceRequirement": "6 Premium Tickets",
+      "referenceKey": "megalucario",
+      "thumbnailUrl": "https://www.serebii.net/tcgpocket/sleeves/th/megalucario.jpg",
+      "artPath": "cosmetics/sleeves/pocket-v0440/mega-lucario.webp",
+      "sha256": "d075c2a06e222ae19b65b1e0fe4b76c5441100d514309eb3880890b424ab90ec",
+      "width": 400,
+      "height": 558,
+      "bytes": 50750,
+      "sourceSha256": "5b62ff6913627b3384012d6145ef28ccc36e6e96308ce8e7cefbdf1660056b25",
+      "sourceWidth": 734,
+      "sourceHeight": 1024,
+      "sourceBytes": 166396
+    },
+    {
+      "id": "pocket-pokemon-of-the-forest",
+      "name": "Pokemon of the Forest",
+      "sourceFamily": "TCG Pocket",
+      "referenceUrl": "https://www.serebii.net/tcgpocket/sleeves.shtml",
+      "sourceImageUrl": "https://www.serebii.net/tcgpocket/sleeves/pokemonoftheforest.jpg",
+      "themes": [
+        "tcg-pocket",
+        "pokemon",
+        "special-art"
+      ],
+      "pokemonIds": [
+        816
+      ],
+      "sourceRequirement": "Mission",
+      "referenceKey": "pokemonoftheforest",
+      "thumbnailUrl": "https://www.serebii.net/tcgpocket/sleeves/th/pokemonoftheforest.jpg",
+      "artPath": "cosmetics/sleeves/pocket-v0440/pokemon-of-the-forest.webp",
+      "sha256": "afb65bbb902faacd0adada14f58c59c1733d9d4c679527de3a10f26941fae2ba",
+      "width": 400,
+      "height": 558,
+      "bytes": 22430,
+      "sourceSha256": "47e305385b6f45ffbd6ce7ffc89cccc4282c308317d93a12267cb62f4aa23b61",
+      "sourceWidth": 734,
+      "sourceHeight": 1024,
+      "sourceBytes": 92373
+    },
+    {
+      "id": "pocket-zoroark",
+      "name": "Zoroark",
+      "sourceFamily": "TCG Pocket",
+      "referenceUrl": "https://www.serebii.net/tcgpocket/sleeves.shtml",
+      "sourceImageUrl": "https://www.serebii.net/tcgpocket/sleeves/zoroark.jpg",
+      "themes": [
+        "tcg-pocket",
+        "pokemon"
+      ],
+      "pokemonIds": [
+        571
+      ],
+      "sourceRequirement": "Special Bundle",
+      "referenceKey": "zoroark",
+      "thumbnailUrl": "https://www.serebii.net/tcgpocket/sleeves/th/zoroark.jpg",
+      "artPath": "cosmetics/sleeves/pocket-v0440/zoroark.webp",
+      "sha256": "b88dde3937597deddac42f8af3d55caf92ba7f54a29cc29a4d1f3f17ceb0342c",
+      "width": 400,
+      "height": 558,
+      "bytes": 73514,
+      "sourceSha256": "617f4f74214c818f9b093784cee9c28320406a7b7e3274272e460afba49003cf",
+      "sourceWidth": 734,
+      "sourceHeight": 1024,
+      "sourceBytes": 265612
+    },
+    {
+      "id": "pocket-mega-kangaskhan",
+      "name": "Mega Kangaskhan",
+      "sourceFamily": "TCG Pocket",
+      "referenceUrl": "https://www.serebii.net/tcgpocket/sleeves.shtml",
+      "sourceImageUrl": "https://www.serebii.net/tcgpocket/sleeves/megakangaskhan.jpg",
+      "themes": [
+        "tcg-pocket",
+        "pokemon",
+        "mega"
+      ],
+      "pokemonIds": [
+        115
+      ],
+      "sourceRequirement": "Event - 5 Tickets",
+      "referenceKey": "megakangaskhan",
+      "thumbnailUrl": "https://www.serebii.net/tcgpocket/sleeves/th/megakangaskhan.jpg",
+      "artPath": "cosmetics/sleeves/pocket-v0440/mega-kangaskhan.webp",
+      "sha256": "eecf3105a1e0ff7b3f5fc731ab71e13f801de2702b17ef39a23b5e305fcf64eb",
+      "width": 400,
+      "height": 558,
+      "bytes": 27062,
+      "sourceSha256": "ed82730b919ae1c24c21678fb22db397e5efcfc37c859ab0ad24ea5c356f1da6",
+      "sourceWidth": 734,
+      "sourceHeight": 1024,
+      "sourceBytes": 102657
+    },
+    {
+      "id": "pocket-shiny-mega-gengar",
+      "name": "Shiny Mega Gengar",
+      "sourceFamily": "TCG Pocket",
+      "referenceUrl": "https://www.serebii.net/tcgpocket/sleeves.shtml",
+      "sourceImageUrl": "https://www.serebii.net/tcgpocket/sleeves/shinymegagengar.jpg",
+      "themes": [
+        "tcg-pocket",
+        "pokemon",
+        "mega",
+        "shiny"
+      ],
+      "pokemonIds": [
+        94
+      ],
+      "sourceRequirement": "6 Premium Tickets",
+      "referenceKey": "shinymegagengar",
+      "thumbnailUrl": "https://www.serebii.net/tcgpocket/sleeves/th/shinymegagengar.jpg",
+      "artPath": "cosmetics/sleeves/pocket-v0440/shiny-mega-gengar.webp",
+      "sha256": "b31caa794dce262da1046caf5836d57a0cc67803c40d8a7de29290865bf67915",
+      "width": 367,
+      "height": 512,
+      "bytes": 42160,
+      "sourceSha256": "6e27d46ff746bfef176e709fd95a0ab557b049868b6a459208c68b4dbdd06d21",
+      "sourceWidth": 367,
+      "sourceHeight": 512,
+      "sourceBytes": 56818
+    },
+    {
+      "id": "pocket-morpeko",
+      "name": "Morpeko",
+      "sourceFamily": "TCG Pocket",
+      "referenceUrl": "https://www.serebii.net/tcgpocket/sleeves.shtml",
+      "sourceImageUrl": "https://www.serebii.net/tcgpocket/sleeves/morpeko.jpg",
+      "themes": [
+        "tcg-pocket",
+        "pokemon"
+      ],
+      "pokemonIds": [
+        877
+      ],
+      "sourceRequirement": "Special Bundle",
+      "referenceKey": "morpeko",
+      "thumbnailUrl": "https://www.serebii.net/tcgpocket/sleeves/th/morpeko.jpg",
+      "artPath": "cosmetics/sleeves/pocket-v0440/morpeko.webp",
+      "sha256": "0a905b0f1c5aef4a52b1ef163eeb0593cd2b7b36d1e781764cb84c862d51aaab",
+      "width": 400,
+      "height": 558,
+      "bytes": 33390,
+      "sourceSha256": "2d979f0bad40070ef7d0ee5b3e15b1f10b99c18478300632afa1dfccbc944105",
+      "sourceWidth": 734,
+      "sourceHeight": 1024,
+      "sourceBytes": 121915
+    },
+    {
+      "id": "pocket-arven",
+      "name": "Arven",
+      "sourceFamily": "TCG Pocket",
+      "referenceUrl": "https://www.serebii.net/tcgpocket/sleeves.shtml",
+      "sourceImageUrl": "https://www.serebii.net/tcgpocket/sleeves/arven.jpg",
+      "themes": [
+        "tcg-pocket",
+        "trainers"
+      ],
+      "pokemonIds": [],
+      "sourceRequirement": "Event - 5 Tickets",
+      "referenceKey": "arven",
+      "thumbnailUrl": "https://www.serebii.net/tcgpocket/sleeves/th/arven.jpg",
+      "artPath": "cosmetics/sleeves/pocket-v0440/arven.webp",
+      "sha256": "d96fafc5aa08cd29a8367981881c62226a3de053f6a30fbb3f520503fac3f5ee",
+      "width": 400,
+      "height": 558,
+      "bytes": 36904,
+      "sourceSha256": "0656d6553ea65450361ca9fdc03d516660734141518384d02a9fb0b0f02512e5",
+      "sourceWidth": 734,
+      "sourceHeight": 1024,
+      "sourceBytes": 126498
+    },
+    {
+      "id": "pocket-sprigatito",
+      "name": "Sprigatito",
+      "sourceFamily": "TCG Pocket",
+      "referenceUrl": "https://www.serebii.net/tcgpocket/sleeves.shtml",
+      "sourceImageUrl": "https://www.serebii.net/tcgpocket/sleeves/sprigatito.jpg",
+      "themes": [
+        "tcg-pocket",
+        "pokemon"
+      ],
+      "pokemonIds": [
+        906
+      ],
+      "sourceRequirement": "6 Premium Tickets",
+      "referenceKey": "sprigatito",
+      "thumbnailUrl": "https://www.serebii.net/tcgpocket/sleeves/th/sprigatito.jpg",
+      "artPath": "cosmetics/sleeves/pocket-v0440/sprigatito.webp",
+      "sha256": "daf822a24498c242db8bdddb5749e0323a44c71d1ab123952cf2282e24f09bda",
+      "width": 400,
+      "height": 558,
+      "bytes": 53806,
+      "sourceSha256": "6f036b49bdc23f257429e19b5fc3f2d8dc23160b5e4b511e7e2e58c8e8a5f992",
+      "sourceWidth": 734,
+      "sourceHeight": 1024,
+      "sourceBytes": 194107
+    },
+    {
+      "id": "pocket-pokemon-30th-celebration-design",
+      "name": "Pokemon 30th Celebration Design",
+      "sourceFamily": "TCG Pocket",
+      "referenceUrl": "https://www.serebii.net/tcgpocket/sleeves.shtml",
+      "sourceImageUrl": "https://www.serebii.net/tcgpocket/sleeves/pokemon30thcelebrationdesign.jpg",
+      "themes": [
+        "tcg-pocket",
+        "pokemon",
+        "special-art"
+      ],
+      "pokemonIds": [
+        25
+      ],
+      "sourceRequirement": "Event",
+      "referenceKey": "pokemon30thcelebrationdesign",
+      "thumbnailUrl": "https://www.serebii.net/tcgpocket/sleeves/th/pokemon30thcelebrationdesign.jpg",
+      "artPath": "cosmetics/sleeves/pocket-v0440/pokemon-30th-celebration-design.webp",
+      "sha256": "fe297da205a7a656052a7f99ba30703710157ba809e6a781497a50a66c8f7cdf",
+      "width": 400,
+      "height": 558,
+      "bytes": 38366,
+      "sourceSha256": "5203fe71c057056e8891a8359bee1d1ea50f1b56cc5a2e6b5d9680c7421bc787",
+      "sourceWidth": 734,
+      "sourceHeight": 1024,
+      "sourceBytes": 137968
+    },
+    {
+      "id": "pocket-iono",
+      "name": "Iono",
+      "sourceFamily": "TCG Pocket",
+      "referenceUrl": "https://www.serebii.net/tcgpocket/sleeves.shtml",
+      "sourceImageUrl": "https://www.serebii.net/tcgpocket/sleeves/iono.jpg",
+      "themes": [
+        "tcg-pocket",
+        "trainers"
+      ],
+      "pokemonIds": [],
+      "sourceRequirement": "Special Bundle",
+      "referenceKey": "iono",
+      "thumbnailUrl": "https://www.serebii.net/tcgpocket/sleeves/th/iono.jpg",
+      "artPath": "cosmetics/sleeves/pocket-v0440/iono.webp",
+      "sha256": "76cab6b0791ffcfaa701bfa16e9cfbfdbf25f84fd7cc4e4fb5df3e4d326b5cdc",
+      "width": 400,
+      "height": 558,
+      "bytes": 42744,
+      "sourceSha256": "3f49051b980978b94423a876bb5e9405dbfd90068fd025779f5b6daba9cabd52",
+      "sourceWidth": 734,
+      "sourceHeight": 1024,
+      "sourceBytes": 141398
+    },
+    {
+      "id": "pocket-toxtricity",
+      "name": "Toxtricity",
+      "sourceFamily": "TCG Pocket",
+      "referenceUrl": "https://www.serebii.net/tcgpocket/sleeves.shtml",
+      "sourceImageUrl": "https://www.serebii.net/tcgpocket/sleeves/toxtricity.jpg",
+      "themes": [
+        "tcg-pocket",
+        "pokemon"
+      ],
+      "pokemonIds": [
+        849
+      ],
+      "sourceRequirement": "Event - 5 Tickets",
+      "referenceKey": "toxtricity",
+      "thumbnailUrl": "https://www.serebii.net/tcgpocket/sleeves/th/toxtricity.jpg",
+      "artPath": "cosmetics/sleeves/pocket-v0440/toxtricity.webp",
+      "sha256": "3b666ea8234ab5c8e001c2fea1b93dadbeec0da7c390de058a2d6130bbb8a10f",
+      "width": 400,
+      "height": 558,
+      "bytes": 38580,
+      "sourceSha256": "a9da26244afeeb347e0cb258f80863e8fab7dd89649fb6d6936254d9a8e71883",
+      "sourceWidth": 734,
+      "sourceHeight": 1024,
+      "sourceBytes": 140068
+    },
+    {
+      "id": "pocket-mega-gardevoir",
+      "name": "Mega Gardevoir",
+      "sourceFamily": "TCG Pocket",
+      "referenceUrl": "https://www.serebii.net/tcgpocket/sleeves.shtml",
+      "sourceImageUrl": "https://www.serebii.net/tcgpocket/sleeves/megagardevoir.jpg",
+      "themes": [
+        "tcg-pocket",
+        "pokemon",
+        "mega"
+      ],
+      "pokemonIds": [
+        282
+      ],
+      "sourceRequirement": "6 Premium Tickets",
+      "referenceKey": "megagardevoir",
+      "thumbnailUrl": "https://www.serebii.net/tcgpocket/sleeves/th/megagardevoir.jpg",
+      "artPath": "cosmetics/sleeves/pocket-v0440/mega-gardevoir.webp",
+      "sha256": "7aa8944f5ee0f1c518b563f5b6ad0fa4ee9548be741c5243d4d26f6afe770939",
+      "width": 400,
+      "height": 558,
+      "bytes": 43464,
+      "sourceSha256": "8fe69ca734a6737d55484c6fe296ebb5b33697d815ead07f0fa366c90725f3b6",
+      "sourceWidth": 734,
+      "sourceHeight": 1024,
+      "sourceBytes": 148539
+    },
+    {
+      "id": "pocket-mimikyu",
+      "name": "Mimikyu",
+      "sourceFamily": "TCG Pocket",
+      "referenceUrl": "https://www.serebii.net/tcgpocket/sleeves.shtml",
+      "sourceImageUrl": "https://www.serebii.net/tcgpocket/sleeves/mimikyu.jpg",
+      "themes": [
+        "tcg-pocket",
+        "pokemon"
+      ],
+      "pokemonIds": [
+        778
+      ],
+      "sourceRequirement": "Special Bundle",
+      "referenceKey": "mimikyu",
+      "thumbnailUrl": "https://www.serebii.net/tcgpocket/sleeves/th/mimikyu.jpg",
+      "artPath": "cosmetics/sleeves/pocket-v0440/mimikyu.webp",
+      "sha256": "f9812c915b24f0507127b27fbd91cddea93ac642157e3f28bb09e9c18c71fb4e",
+      "width": 400,
+      "height": 558,
+      "bytes": 19712,
+      "sourceSha256": "36ec18d5ba92b62955669e11b4e5f19228cded5c5d89003eb313d4bce30a19d2",
+      "sourceWidth": 734,
+      "sourceHeight": 1024,
+      "sourceBytes": 75922
+    },
+    {
+      "id": "pocket-goomy",
+      "name": "Goomy",
+      "sourceFamily": "TCG Pocket",
+      "referenceUrl": "https://www.serebii.net/tcgpocket/sleeves.shtml",
+      "sourceImageUrl": "https://www.serebii.net/tcgpocket/sleeves/goomy.jpg",
+      "themes": [
+        "tcg-pocket",
+        "pokemon"
+      ],
+      "pokemonIds": [
+        704
+      ],
+      "sourceRequirement": "Event - 5 Tickets",
+      "referenceKey": "goomy",
+      "thumbnailUrl": "https://www.serebii.net/tcgpocket/sleeves/th/goomy.jpg",
+      "artPath": "cosmetics/sleeves/pocket-v0440/goomy.webp",
+      "sha256": "6430da74b204b2816bf7a9587ac06493a338548d7305aee506c488d5ec92df1c",
+      "width": 400,
+      "height": 558,
+      "bytes": 44060,
+      "sourceSha256": "bd2bc4ff40e13c58871d0b46c66f1e826b644f6d4afce3df1c537fc29efe5340",
+      "sourceWidth": 734,
+      "sourceHeight": 1024,
+      "sourceBytes": 155267
+    },
+    {
+      "id": "pocket-mega-charizard-y",
+      "name": "Mega Charizard Y",
+      "sourceFamily": "TCG Pocket",
+      "referenceUrl": "https://www.serebii.net/tcgpocket/sleeves.shtml",
+      "sourceImageUrl": "https://www.serebii.net/tcgpocket/sleeves/megacharizardy.jpg",
+      "themes": [
+        "tcg-pocket",
+        "pokemon",
+        "mega"
+      ],
+      "pokemonIds": [
+        6
+      ],
+      "sourceRequirement": "6 Premium Tickets",
+      "referenceKey": "megacharizardy",
+      "thumbnailUrl": "https://www.serebii.net/tcgpocket/sleeves/th/megacharizardy.jpg",
+      "artPath": "cosmetics/sleeves/pocket-v0440/mega-charizard-y.webp",
+      "sha256": "149633a2a69635243487b6fc28efe5582808bfa4718a24580bc5016b53245e38",
+      "width": 400,
+      "height": 558,
+      "bytes": 45476,
+      "sourceSha256": "b98e3fe9bcad6d7de7825884ae7bc8d1c247d12dee797caa242a02e84aae832c",
+      "sourceWidth": 734,
+      "sourceHeight": 1024,
+      "sourceBytes": 163371
+    },
+    {
+      "id": "pocket-the-new-year-with-pikachu",
+      "name": "The New Year With Pikachu",
+      "sourceFamily": "TCG Pocket",
+      "referenceUrl": "https://www.serebii.net/tcgpocket/sleeves.shtml",
+      "sourceImageUrl": "https://www.serebii.net/tcgpocket/sleeves/thenewyearwithpikachu.jpg",
+      "themes": [
+        "tcg-pocket",
+        "pokemon",
+        "special-art"
+      ],
+      "pokemonIds": [
+        25
+      ],
+      "sourceRequirement": "Special Bundle",
+      "referenceKey": "thenewyearwithpikachu",
+      "thumbnailUrl": "https://www.serebii.net/tcgpocket/sleeves/th/thenewyearwithpikachu.jpg",
+      "artPath": "cosmetics/sleeves/pocket-v0440/the-new-year-with-pikachu.webp",
+      "sha256": "6f5931f64056dd80596874f4d07279b11297ed3851950dacbaaf6f908e1d4bd3",
+      "width": 400,
+      "height": 558,
+      "bytes": 33328,
+      "sourceSha256": "011619dfc71529ad15a6e8e0617759e535a8cc44effad2afaac18ef4b60fc046",
+      "sourceWidth": 734,
+      "sourceHeight": 1024,
+      "sourceBytes": 118990
+    },
+    {
+      "id": "pocket-serena",
+      "name": "Serena",
+      "sourceFamily": "TCG Pocket",
+      "referenceUrl": "https://www.serebii.net/tcgpocket/sleeves.shtml",
+      "sourceImageUrl": "https://www.serebii.net/tcgpocket/sleeves/serena.jpg",
+      "themes": [
+        "tcg-pocket",
+        "trainers"
+      ],
+      "pokemonIds": [],
+      "sourceRequirement": "Special Bundle",
+      "referenceKey": "serena",
+      "thumbnailUrl": "https://www.serebii.net/tcgpocket/sleeves/th/serena.jpg",
+      "artPath": "cosmetics/sleeves/pocket-v0440/serena.webp",
+      "sha256": "f96a5966cb3057fe58a60b98a236387bc797a6800df2a2ee82a9262b9af236cb",
+      "width": 400,
+      "height": 558,
+      "bytes": 50224,
+      "sourceSha256": "efff3dccc03c991de6c0b8e2805be59bfbb1b70778420919901ec0b3b550a5de",
+      "sourceWidth": 734,
+      "sourceHeight": 1024,
+      "sourceBytes": 171157
+    },
+    {
+      "id": "pocket-mega-gyarados",
+      "name": "Mega Gyarados",
+      "sourceFamily": "TCG Pocket",
+      "referenceUrl": "https://www.serebii.net/tcgpocket/sleeves.shtml",
+      "sourceImageUrl": "https://www.serebii.net/tcgpocket/sleeves/megagyarados.jpg",
+      "themes": [
+        "tcg-pocket",
+        "pokemon",
+        "mega"
+      ],
+      "pokemonIds": [
+        130
+      ],
+      "sourceRequirement": "Event - 5 Tickets",
+      "referenceKey": "megagyarados",
+      "thumbnailUrl": "https://www.serebii.net/tcgpocket/sleeves/th/megagyarados.jpg",
+      "artPath": "cosmetics/sleeves/pocket-v0440/mega-gyarados.webp",
+      "sha256": "b1f5fe08e431972c6c927d59e4061681b092347ed5514b792040cdfa9ddf486d",
+      "width": 400,
+      "height": 558,
+      "bytes": 52714,
+      "sourceSha256": "a07aa1a93d2add11a8b6838767ef00196bfa85b4664472de9d1495b5653cba64",
+      "sourceWidth": 734,
+      "sourceHeight": 1024,
+      "sourceBytes": 190949
+    },
+    {
+      "id": "pocket-may",
+      "name": "May",
+      "sourceFamily": "TCG Pocket",
+      "referenceUrl": "https://www.serebii.net/tcgpocket/sleeves.shtml",
+      "sourceImageUrl": "https://www.serebii.net/tcgpocket/sleeves/may.jpg",
+      "themes": [
+        "tcg-pocket",
+        "trainers"
+      ],
+      "pokemonIds": [],
+      "sourceRequirement": "6 Premium Tickets",
+      "referenceKey": "may",
+      "thumbnailUrl": "https://www.serebii.net/tcgpocket/sleeves/th/may.jpg",
+      "artPath": "cosmetics/sleeves/pocket-v0440/may.webp",
+      "sha256": "ccbcbae2f3aa10cc55ecec2d2a57058e714a76e95700391c457efaedf2dbaf25",
+      "width": 400,
+      "height": 558,
+      "bytes": 34682,
+      "sourceSha256": "59619ebe7f20f10e58e0be346a919b65260fd8aa9aeb83ca281a6b91b16b6cfe",
+      "sourceWidth": 734,
+      "sourceHeight": 1024,
+      "sourceBytes": 121299
+    },
+    {
+      "id": "pocket-psyduck",
+      "name": "Psyduck",
+      "sourceFamily": "TCG Pocket",
+      "referenceUrl": "https://www.serebii.net/tcgpocket/sleeves.shtml",
+      "sourceImageUrl": "https://www.serebii.net/tcgpocket/sleeves/psyduck.jpg",
+      "themes": [
+        "tcg-pocket",
+        "pokemon"
+      ],
+      "pokemonIds": [
+        54
+      ],
+      "sourceRequirement": "Event - 5 Tickets",
+      "referenceKey": "psyduck",
+      "thumbnailUrl": "https://www.serebii.net/tcgpocket/sleeves/th/psyduck.jpg",
+      "artPath": "cosmetics/sleeves/pocket-v0440/psyduck.webp",
+      "sha256": "28774bd1b9bd0d5baecd4f8e125db877b90c437eae96a8960e74564cfd9d7299",
+      "width": 400,
+      "height": 558,
+      "bytes": 36802,
+      "sourceSha256": "a7abe41c7eac4016eb0757b963e1d5d94e2f198bcdef4a03493c480dbdfb2649",
+      "sourceWidth": 734,
+      "sourceHeight": 1024,
+      "sourceBytes": 154253
+    },
+    {
+      "id": "pocket-mega-blaziken",
+      "name": "Mega Blaziken",
+      "sourceFamily": "TCG Pocket",
+      "referenceUrl": "https://www.serebii.net/tcgpocket/sleeves.shtml",
+      "sourceImageUrl": "https://www.serebii.net/tcgpocket/sleeves/megablaziken.jpg",
+      "themes": [
+        "tcg-pocket",
+        "pokemon",
+        "mega"
+      ],
+      "pokemonIds": [
+        257
+      ],
+      "sourceRequirement": "6 Premium Tickets",
+      "referenceKey": "megablaziken",
+      "thumbnailUrl": "https://www.serebii.net/tcgpocket/sleeves/th/megablaziken.jpg",
+      "artPath": "cosmetics/sleeves/pocket-v0440/mega-blaziken.webp",
+      "sha256": "d59e6dc6501bb4ee6d25a2d06df29820959ff12387b4443e40796050e118d451",
+      "width": 400,
+      "height": 558,
+      "bytes": 51802,
+      "sourceSha256": "69a78264ebc7d7611ea63af53cbc275d8ce32c2b450a2b9da45da2804f167fcf",
+      "sourceWidth": 734,
+      "sourceHeight": 1024,
+      "sourceBytes": 179932
+    },
+    {
+      "id": "pocket-mega-altaria",
+      "name": "Mega Altaria",
+      "sourceFamily": "TCG Pocket",
+      "referenceUrl": "https://www.serebii.net/tcgpocket/sleeves.shtml",
+      "sourceImageUrl": "https://www.serebii.net/tcgpocket/sleeves/megaaltaria.jpg",
+      "themes": [
+        "tcg-pocket",
+        "pokemon",
+        "mega"
+      ],
+      "pokemonIds": [
+        334
+      ],
+      "sourceRequirement": "Special Bundle",
+      "referenceKey": "megaaltaria",
+      "thumbnailUrl": "https://www.serebii.net/tcgpocket/sleeves/th/megaaltaria.jpg",
+      "artPath": "cosmetics/sleeves/pocket-v0440/mega-altaria.webp",
+      "sha256": "c1e4ec7efe8bb428598b0da3c32e286a1cf0552f9c25c4aca6668095fa278e9e",
+      "width": 400,
+      "height": 558,
+      "bytes": 52522,
+      "sourceSha256": "3214a6998b4707baad2f4c061b4aac2bbc6592999d86ab041f6dd6934700a1b1",
+      "sourceWidth": 734,
+      "sourceHeight": 1024,
+      "sourceBytes": 176340
+    },
+    {
+      "id": "pocket-special-set-02",
+      "name": "Special Set 02",
+      "sourceFamily": "TCG Pocket",
+      "referenceUrl": "https://www.serebii.net/tcgpocket/sleeves.shtml",
+      "sourceImageUrl": "https://www.serebii.net/tcgpocket/sleeves/specialset02.jpg",
+      "themes": [
+        "tcg-pocket",
+        "special-set"
+      ],
+      "pokemonIds": [],
+      "sourceRequirement": "12 Special Shop Tickets",
+      "referenceKey": "specialset02",
+      "thumbnailUrl": "https://www.serebii.net/tcgpocket/sleeves/th/specialset02.jpg",
+      "artPath": "cosmetics/sleeves/pocket-v0440/special-set-02.webp",
+      "sha256": "7bede7fc98d68df9d970b80ab076b16c68b9d65ac0831796685a83ec3e7bf1eb",
+      "width": 400,
+      "height": 558,
+      "bytes": 43058,
+      "sourceSha256": "ed17b7fe018d55fec492414ccabb12c79e2bdfa5a6c2bb17bc34cac52014ab19",
+      "sourceWidth": 734,
+      "sourceHeight": 1024,
+      "sourceBytes": 162864
+    },
+    {
+      "id": "pocket-professor-oak",
+      "name": "Professor Oak",
+      "sourceFamily": "TCG Pocket",
+      "referenceUrl": "https://www.serebii.net/tcgpocket/sleeves.shtml",
+      "sourceImageUrl": "https://www.serebii.net/tcgpocket/sleeves/professoroak.jpg",
+      "themes": [
+        "tcg-pocket",
+        "trainers"
+      ],
+      "pokemonIds": [],
+      "sourceRequirement": "Event - 5 Tickets",
+      "referenceKey": "professoroak",
+      "thumbnailUrl": "https://www.serebii.net/tcgpocket/sleeves/th/professoroak.jpg",
+      "artPath": "cosmetics/sleeves/pocket-v0440/professor-oak.webp",
+      "sha256": "c19baf8adaa58beda2a848929d8d274f9d37424ba1b97e489b49dc245f8ce93f",
+      "width": 400,
+      "height": 558,
+      "bytes": 22070,
+      "sourceSha256": "b939d11a306fd6dc5bbd9e21c04d9ec818bc9707acc2576e8b03eb23cb4bae0e",
+      "sourceWidth": 734,
+      "sourceHeight": 1024,
+      "sourceBytes": 86823
+    },
+    {
+      "id": "pocket-lillie-ver-2",
+      "name": "Lillie ver. 2",
+      "sourceFamily": "TCG Pocket",
+      "referenceUrl": "https://www.serebii.net/tcgpocket/sleeves.shtml",
+      "sourceImageUrl": "https://www.serebii.net/tcgpocket/sleeves/lilliever.2.jpg",
+      "themes": [
+        "tcg-pocket",
+        "trainers"
+      ],
+      "pokemonIds": [],
+      "sourceRequirement": "6 Premium Tickets",
+      "referenceKey": "lilliever.2",
+      "thumbnailUrl": "https://www.serebii.net/tcgpocket/sleeves/th/lilliever.2.jpg",
+      "artPath": "cosmetics/sleeves/pocket-v0440/lillie-ver-2.webp",
+      "sha256": "60475a371211966d8a3dca8aa0fc9f06ad2930b871e2a77bd36fd5e5f6790071",
+      "width": 400,
+      "height": 558,
+      "bytes": 37386,
+      "sourceSha256": "d5466325c8030f64838cf8111c9b9c7f76cc70c5495e2fab3cf6ea7d1c02169a",
+      "sourceWidth": 734,
+      "sourceHeight": 1024,
+      "sourceBytes": 119893
+    },
+    {
+      "id": "pocket-greninja",
+      "name": "Greninja",
+      "sourceFamily": "TCG Pocket",
+      "referenceUrl": "https://www.serebii.net/tcgpocket/sleeves.shtml",
+      "sourceImageUrl": "https://www.serebii.net/tcgpocket/sleeves/greninja.jpg",
+      "themes": [
+        "tcg-pocket",
+        "pokemon"
+      ],
+      "pokemonIds": [
+        658
+      ],
+      "sourceRequirement": "Special Bundle",
+      "referenceKey": "greninja",
+      "thumbnailUrl": "https://www.serebii.net/tcgpocket/sleeves/th/greninja.jpg",
+      "artPath": "cosmetics/sleeves/pocket-v0440/greninja.webp",
+      "sha256": "56701cb238ff494859d3f6f6d9d89fbe9728534dd5ac7f3c5c88baada46cf2e6",
+      "width": 400,
+      "height": 558,
+      "bytes": 44712,
+      "sourceSha256": "2b1b58995be491dece573f5aa76a77a43afe8b397d236f4c6ff893fe3abc99a1",
+      "sourceWidth": 734,
+      "sourceHeight": 1024,
+      "sourceBytes": 158405
+    },
+    {
+      "id": "pocket-quagsire-clodsire",
+      "name": "Quagsire & Clodsire",
+      "sourceFamily": "TCG Pocket",
+      "referenceUrl": "https://www.serebii.net/tcgpocket/sleeves.shtml",
+      "sourceImageUrl": "https://www.serebii.net/tcgpocket/sleeves/quagsire%26clodsire.jpg",
+      "themes": [
+        "tcg-pocket",
+        "pokemon"
+      ],
+      "pokemonIds": [
+        195,
+        980
+      ],
+      "sourceRequirement": "Event - 5 Tickets",
+      "referenceKey": "quagsire&clodsire",
+      "thumbnailUrl": "https://www.serebii.net/tcgpocket/sleeves/th/quagsire%26clodsire.jpg",
+      "artPath": "cosmetics/sleeves/pocket-v0440/quagsire-clodsire.webp",
+      "sha256": "8ed76bd1236749a3d3bbcd65874b0eeec103e2a6f397aed067fd3acd837c6182",
+      "width": 400,
+      "height": 558,
+      "bytes": 16094,
+      "sourceSha256": "c87e5c48f3068a54cadc535b783ce2753bca7f87f8cd1791d1e2d039a6891470",
+      "sourceWidth": 734,
+      "sourceHeight": 1024,
+      "sourceBytes": 70765
+    },
+    {
+      "id": "pocket-suicune",
+      "name": "Suicune",
+      "sourceFamily": "TCG Pocket",
+      "referenceUrl": "https://www.serebii.net/tcgpocket/sleeves.shtml",
+      "sourceImageUrl": "https://www.serebii.net/tcgpocket/sleeves/suicune.jpg",
+      "themes": [
+        "tcg-pocket",
+        "pokemon"
+      ],
+      "pokemonIds": [
+        245
+      ],
+      "sourceRequirement": "6 Premium Tickets",
+      "referenceKey": "suicune",
+      "thumbnailUrl": "https://www.serebii.net/tcgpocket/sleeves/th/suicune.jpg",
+      "artPath": "cosmetics/sleeves/pocket-v0440/suicune.webp",
+      "sha256": "edbde8c44573143df5c4343ba74eeb7ed83e395e7cf36bb865b7cbfbb696f55c",
+      "width": 400,
+      "height": 558,
+      "bytes": 54240,
+      "sourceSha256": "ccc00506a54fb11e4c08a52e18e8702332cc9a59433c59cc9d69b0bde093b5af",
+      "sourceWidth": 734,
+      "sourceHeight": 1024,
+      "sourceBytes": 180183
+    },
+    {
+      "id": "pocket-pichu",
+      "name": "Pichu",
+      "sourceFamily": "TCG Pocket",
+      "referenceUrl": "https://www.serebii.net/tcgpocket/sleeves.shtml",
+      "sourceImageUrl": "https://www.serebii.net/tcgpocket/sleeves/pichu.jpg",
+      "themes": [
+        "tcg-pocket",
+        "pokemon"
+      ],
+      "pokemonIds": [
+        172
+      ],
+      "sourceRequirement": "Special Bundle",
+      "referenceKey": "pichu",
+      "thumbnailUrl": "https://www.serebii.net/tcgpocket/sleeves/th/pichu.jpg",
+      "artPath": "cosmetics/sleeves/pocket-v0440/pichu.webp",
+      "sha256": "af7a5d847a6d1a7e43c13c7202dd56e9296d1afe340724bf9bdc93691d8ac11e",
+      "width": 400,
+      "height": 558,
+      "bytes": 25162,
+      "sourceSha256": "7b1442a94df1a966d75e73606721840a61bfa7230a593f2c91f95e8ece30239b",
+      "sourceWidth": 734,
+      "sourceHeight": 1024,
+      "sourceBytes": 87965
+    },
+    {
+      "id": "pocket-tyranitar",
+      "name": "Tyranitar",
+      "sourceFamily": "TCG Pocket",
+      "referenceUrl": "https://www.serebii.net/tcgpocket/sleeves.shtml",
+      "sourceImageUrl": "https://www.serebii.net/tcgpocket/sleeves/tyranitar.jpg",
+      "themes": [
+        "tcg-pocket",
+        "pokemon"
+      ],
+      "pokemonIds": [
+        248
+      ],
+      "sourceRequirement": "Event - 5 Tickets",
+      "referenceKey": "tyranitar",
+      "thumbnailUrl": "https://www.serebii.net/tcgpocket/sleeves/th/tyranitar.jpg",
+      "artPath": "cosmetics/sleeves/pocket-v0440/tyranitar.webp",
+      "sha256": "7849f02a7b122aa2576cf72e582bd6ed308a51880664ec02484885ac0f28e4d4",
+      "width": 400,
+      "height": 558,
+      "bytes": 35672,
+      "sourceSha256": "22d7f2652e8f4ee43a46e8aec05ee5d0e61d30e5cc73a477968c6bdfeb8a8183",
+      "sourceWidth": 734,
+      "sourceHeight": 1024,
+      "sourceBytes": 130275
+    },
+    {
+      "id": "pocket-ho-oh-lugia",
+      "name": "Ho-oh & Lugia",
+      "sourceFamily": "TCG Pocket",
+      "referenceUrl": "https://www.serebii.net/tcgpocket/sleeves.shtml",
+      "sourceImageUrl": "https://www.serebii.net/tcgpocket/sleeves/ho-oh%26lugia.jpg",
+      "themes": [
+        "tcg-pocket",
+        "pokemon"
+      ],
+      "pokemonIds": [
+        250,
+        249
+      ],
+      "sourceRequirement": "6 Premium Tickets",
+      "referenceKey": "ho-oh&lugia",
+      "thumbnailUrl": "https://www.serebii.net/tcgpocket/sleeves/th/ho-oh%26lugia.jpg",
+      "artPath": "cosmetics/sleeves/pocket-v0440/ho-oh-lugia.webp",
+      "sha256": "bd21d5177ce511b5cfe2841dd97512b3bfc0707818e894fcabc4879c8ceb416c",
+      "width": 400,
+      "height": 558,
+      "bytes": 49286,
+      "sourceSha256": "4ad6c0a10157dd32a1ee600f5cfd1afa4001d5ff2fd866abf84d7f8e30daa6c2",
+      "sourceWidth": 734,
+      "sourceHeight": 1024,
+      "sourceBytes": 170654
+    },
+    {
+      "id": "pocket-espeon-umbreon",
+      "name": "Espeon & Umbreon",
+      "sourceFamily": "TCG Pocket",
+      "referenceUrl": "https://www.serebii.net/tcgpocket/sleeves.shtml",
+      "sourceImageUrl": "https://www.serebii.net/tcgpocket/sleeves/espeon%26umbreon.jpg",
+      "themes": [
+        "tcg-pocket",
+        "pokemon"
+      ],
+      "pokemonIds": [
+        196,
+        197
+      ],
+      "sourceRequirement": "Special Bundle",
+      "referenceKey": "espeon&umbreon",
+      "thumbnailUrl": "https://www.serebii.net/tcgpocket/sleeves/th/espeon%26umbreon.jpg",
+      "artPath": "cosmetics/sleeves/pocket-v0440/espeon-umbreon.webp",
+      "sha256": "c09ff80f865547300c2c185e77292be89244ee73f595221a9b2535089d146565",
+      "width": 400,
+      "height": 558,
+      "bytes": 48486,
+      "sourceSha256": "593e2f23056d072dff09bec8c8280f720f1ab90a1a150fc59485a5fe00c34d99",
+      "sourceWidth": 734,
+      "sourceHeight": 1024,
+      "sourceBytes": 165048
+    },
+    {
+      "id": "pocket-gladion",
+      "name": "Gladion",
+      "sourceFamily": "TCG Pocket",
+      "referenceUrl": "https://www.serebii.net/tcgpocket/sleeves.shtml",
+      "sourceImageUrl": "https://www.serebii.net/tcgpocket/sleeves/gladion.jpg",
+      "themes": [
+        "tcg-pocket",
+        "trainers"
+      ],
+      "pokemonIds": [],
+      "sourceRequirement": "Event - 5 Tickets",
+      "referenceKey": "gladion",
+      "thumbnailUrl": "https://www.serebii.net/tcgpocket/sleeves/th/gladion.jpg",
+      "artPath": "cosmetics/sleeves/pocket-v0440/gladion.webp",
+      "sha256": "de783d66aeb22ece6a9f920dd8af3fd2b161fe65d87b941c54ed64b241fd39db",
+      "width": 400,
+      "height": 558,
+      "bytes": 46262,
+      "sourceSha256": "3f20a92af56d4a02b617c2038aea43d6340b2a39648c654286ebe6d4ccce8bdb",
+      "sourceWidth": 734,
+      "sourceHeight": 1024,
+      "sourceBytes": 163452
+    },
+    {
+      "id": "pocket-eevee-ver-2",
+      "name": "Eevee ver. 2",
+      "sourceFamily": "TCG Pocket",
+      "referenceUrl": "https://www.serebii.net/tcgpocket/sleeves.shtml",
+      "sourceImageUrl": "https://www.serebii.net/tcgpocket/sleeves/eeveever.2.jpg",
+      "themes": [
+        "tcg-pocket",
+        "pokemon"
+      ],
+      "pokemonIds": [
+        133
+      ],
+      "sourceRequirement": "6 Premium Tickets",
+      "referenceKey": "eeveever.2",
+      "thumbnailUrl": "https://www.serebii.net/tcgpocket/sleeves/th/eeveever.2.jpg",
+      "artPath": "cosmetics/sleeves/pocket-v0440/eevee-ver-2.webp",
+      "sha256": "8d2525aaf39cf2eb423ed45e616194cae5a0c29d713360635e6b4aabde8063a9",
+      "width": 400,
+      "height": 558,
+      "bytes": 19378,
+      "sourceSha256": "0a6318255d888c3ef4cd8c178f4f4c4f307f76bbdb4a9f111bdf985dd0e4b079",
+      "sourceWidth": 734,
+      "sourceHeight": 1024,
+      "sourceBytes": 80154
+    },
+    {
+      "id": "pocket-sylveon",
+      "name": "Sylveon",
+      "sourceFamily": "TCG Pocket",
+      "referenceUrl": "https://www.serebii.net/tcgpocket/sleeves.shtml",
+      "sourceImageUrl": "https://www.serebii.net/tcgpocket/sleeves/sylveon.jpg",
+      "themes": [
+        "tcg-pocket",
+        "pokemon"
+      ],
+      "pokemonIds": [
+        700
+      ],
+      "sourceRequirement": "Special Bundle",
+      "referenceKey": "sylveon",
+      "thumbnailUrl": "https://www.serebii.net/tcgpocket/sleeves/th/sylveon.jpg",
+      "artPath": "cosmetics/sleeves/pocket-v0440/sylveon.webp",
+      "sha256": "03872748bbca1a2aabb9e571bcb4d6599ec2ab1559c29491538ba92fe925cc85",
+      "width": 400,
+      "height": 558,
+      "bytes": 61998,
+      "sourceSha256": "8f596b0e75661ac81bae858c78821f9bad3fc12537ffc9f1996b730604cd276f",
+      "sourceWidth": 734,
+      "sourceHeight": 1024,
+      "sourceBytes": 207378
+    },
+    {
+      "id": "pocket-ultra-necrozma",
+      "name": "Ultra Necrozma",
+      "sourceFamily": "TCG Pocket",
+      "referenceUrl": "https://www.serebii.net/tcgpocket/sleeves.shtml",
+      "sourceImageUrl": "https://www.serebii.net/tcgpocket/sleeves/ultranecrozma.jpg",
+      "themes": [
+        "tcg-pocket",
+        "pokemon"
+      ],
+      "pokemonIds": [
+        800
+      ],
+      "sourceRequirement": "Event - 5 Tickets",
+      "referenceKey": "ultranecrozma",
+      "thumbnailUrl": "https://www.serebii.net/tcgpocket/sleeves/th/ultranecrozma.jpg",
+      "artPath": "cosmetics/sleeves/pocket-v0440/ultra-necrozma.webp",
+      "sha256": "7d007a0d0092e23971c252c1506cc549cda1946341590369fafa4392595e7263",
+      "width": 400,
+      "height": 558,
+      "bytes": 59932,
+      "sourceSha256": "232424de8873a73196fd637cc24e051bd9319891e41d1c48a8282c0e80126ac0",
+      "sourceWidth": 734,
+      "sourceHeight": 1024,
+      "sourceBytes": 223339
+    },
+    {
+      "id": "pocket-alolan-vulpix",
+      "name": "Alolan Vulpix",
+      "sourceFamily": "TCG Pocket",
+      "referenceUrl": "https://www.serebii.net/tcgpocket/sleeves.shtml",
+      "sourceImageUrl": "https://www.serebii.net/tcgpocket/sleeves/alolanvulpix.jpg",
+      "themes": [
+        "tcg-pocket",
+        "pokemon"
+      ],
+      "pokemonIds": [
+        37
+      ],
+      "sourceRequirement": "6 Premium Tickets",
+      "referenceKey": "alolanvulpix",
+      "thumbnailUrl": "https://www.serebii.net/tcgpocket/sleeves/th/alolanvulpix.jpg",
+      "artPath": "cosmetics/sleeves/pocket-v0440/alolan-vulpix.webp",
+      "sha256": "bcd23cc4ad638f4ab3f052ceaafdf4b64c18bd6108f28fb9c768df79775cefc9",
+      "width": 400,
+      "height": 558,
+      "bytes": 29464,
+      "sourceSha256": "71c0fc3ec57c039f4e22887a124e1251bc0beb8ebba1952b8bf1f4e95d84ed83",
+      "sourceWidth": 734,
+      "sourceHeight": 1024,
+      "sourceBytes": 114275
+    },
+    {
+      "id": "pocket-acerola",
+      "name": "Acerola",
+      "sourceFamily": "TCG Pocket",
+      "referenceUrl": "https://www.serebii.net/tcgpocket/sleeves.shtml",
+      "sourceImageUrl": "https://www.serebii.net/tcgpocket/sleeves/acerola.jpg",
+      "themes": [
+        "tcg-pocket",
+        "trainers"
+      ],
+      "pokemonIds": [],
+      "sourceRequirement": "Special Bundle",
+      "referenceKey": "acerola",
+      "thumbnailUrl": "https://www.serebii.net/tcgpocket/sleeves/th/acerola.jpg",
+      "artPath": "cosmetics/sleeves/pocket-v0440/acerola.webp",
+      "sha256": "f7f01cdde52aeb230f78aa4448bc383229c0f803bcc3af37df7135e9496df190",
+      "width": 400,
+      "height": 558,
+      "bytes": 37894,
+      "sourceSha256": "82edda642fb53ca30c62b1afed6326feacf756789e511ce0111d1334be4be7fe",
+      "sourceWidth": 734,
+      "sourceHeight": 1024,
+      "sourceBytes": 132911
+    },
+    {
+      "id": "pocket-solgaleo",
+      "name": "Solgaleo",
+      "sourceFamily": "TCG Pocket",
+      "referenceUrl": "https://www.serebii.net/tcgpocket/sleeves.shtml",
+      "sourceImageUrl": "https://www.serebii.net/tcgpocket/sleeves/solgaleo.jpg",
+      "themes": [
+        "tcg-pocket",
+        "pokemon"
+      ],
+      "pokemonIds": [
+        791
+      ],
+      "sourceRequirement": "Event - 5 Tickets",
+      "referenceKey": "solgaleo",
+      "thumbnailUrl": "https://www.serebii.net/tcgpocket/sleeves/th/solgaleo.jpg",
+      "artPath": "cosmetics/sleeves/pocket-v0440/solgaleo.webp",
+      "sha256": "64a104a0e3f66803b6b534283e164f68bfeb8637c58e111801377bf0bcea6ca5",
+      "width": 400,
+      "height": 558,
+      "bytes": 78730,
+      "sourceSha256": "68a4df3ad984daaeaf8212a60e77e5e089da28788c636b1f7fafd7b19cac2cc6",
+      "sourceWidth": 734,
+      "sourceHeight": 1024,
+      "sourceBytes": 250005
+    },
+    {
+      "id": "pocket-rowlet",
+      "name": "Rowlet",
+      "sourceFamily": "TCG Pocket",
+      "referenceUrl": "https://www.serebii.net/tcgpocket/sleeves.shtml",
+      "sourceImageUrl": "https://www.serebii.net/tcgpocket/sleeves/rowlet.jpg",
+      "themes": [
+        "tcg-pocket",
+        "pokemon"
+      ],
+      "pokemonIds": [
+        722
+      ],
+      "sourceRequirement": "6 Premium Tickets",
+      "referenceKey": "rowlet",
+      "thumbnailUrl": "https://www.serebii.net/tcgpocket/sleeves/th/rowlet.jpg",
+      "artPath": "cosmetics/sleeves/pocket-v0440/rowlet.webp",
+      "sha256": "76738218987ba311a292edd2fe64918cb302693ccc4c85816c8d301ce92f1151",
+      "width": 400,
+      "height": 558,
+      "bytes": 38476,
+      "sourceSha256": "727a7d2355b853e23d0585cd0a401b15c2cd23c9ded3960c5d2e56668404f267",
+      "sourceWidth": 734,
+      "sourceHeight": 1024,
+      "sourceBytes": 135851
+    },
+    {
+      "id": "pocket-street-party",
+      "name": "Street Party",
+      "sourceFamily": "TCG Pocket",
+      "referenceUrl": "https://www.serebii.net/tcgpocket/sleeves.shtml",
+      "sourceImageUrl": "https://www.serebii.net/tcgpocket/sleeves/streetparty.jpg",
+      "themes": [
+        "tcg-pocket",
+        "pokemon",
+        "special-art"
+      ],
+      "pokemonIds": [
+        4,
+        906
+      ],
+      "sourceRequirement": "Event",
+      "referenceKey": "streetparty",
+      "thumbnailUrl": "https://www.serebii.net/tcgpocket/sleeves/th/streetparty.jpg",
+      "artPath": "cosmetics/sleeves/pocket-v0440/street-party.webp",
+      "sha256": "35a02c9ab683c4236df9cbf4490a58033f886fd18741df56ad5b96db7c00ea63",
+      "width": 400,
+      "height": 558,
+      "bytes": 36886,
+      "sourceSha256": "24d2fb425aab039a3e998970a4ff9ae160e61e641861cac05275b57b491a02dc",
+      "sourceWidth": 734,
+      "sourceHeight": 1024,
+      "sourceBytes": 133084
+    },
+    {
+      "id": "pocket-lillie",
+      "name": "Lillie",
+      "sourceFamily": "TCG Pocket",
+      "referenceUrl": "https://www.serebii.net/tcgpocket/sleeves.shtml",
+      "sourceImageUrl": "https://www.serebii.net/tcgpocket/sleeves/lillie.jpg",
+      "themes": [
+        "tcg-pocket",
+        "trainers"
+      ],
+      "pokemonIds": [],
+      "sourceRequirement": "Special Bundle",
+      "referenceKey": "lillie",
+      "thumbnailUrl": "https://www.serebii.net/tcgpocket/sleeves/th/lillie.jpg",
+      "artPath": "cosmetics/sleeves/pocket-v0440/lillie.webp",
+      "sha256": "ccb2405ce0a298f50ee017ed70ec71332ff4cb3fb2ea21775ac11893adfd5c0f",
+      "width": 400,
+      "height": 558,
+      "bytes": 24844,
+      "sourceSha256": "3bb0150a1e6392093772aa8825e7b08c12edf68dc327e65d8fbfa2f1751dba3f",
+      "sourceWidth": 734,
+      "sourceHeight": 1024,
+      "sourceBytes": 95300
+    },
+    {
+      "id": "pocket-lucario",
+      "name": "Lucario",
+      "sourceFamily": "TCG Pocket",
+      "referenceUrl": "https://www.serebii.net/tcgpocket/sleeves.shtml",
+      "sourceImageUrl": "https://www.serebii.net/tcgpocket/sleeves/lucario.jpg",
+      "themes": [
+        "tcg-pocket",
+        "pokemon"
+      ],
+      "pokemonIds": [
+        448
+      ],
+      "sourceRequirement": "Event - 5 Tickets",
+      "referenceKey": "lucario",
+      "thumbnailUrl": "https://www.serebii.net/tcgpocket/sleeves/th/lucario.jpg",
+      "artPath": "cosmetics/sleeves/pocket-v0440/lucario.webp",
+      "sha256": "183a25df3d1c50216839640f8aab85c065fad590ea90e30312fe212053d5696d",
+      "width": 400,
+      "height": 558,
+      "bytes": 49798,
+      "sourceSha256": "4f26a57b60dad9fa6ad1825021cf5187277071fa6ad9d087faa88d8e655fe4ea",
+      "sourceWidth": 734,
+      "sourceHeight": 1024,
+      "sourceBytes": 163518
+    },
+    {
+      "id": "pocket-shiny-charizard",
+      "name": "Shiny Charizard",
+      "sourceFamily": "TCG Pocket",
+      "referenceUrl": "https://www.serebii.net/tcgpocket/sleeves.shtml",
+      "sourceImageUrl": "https://www.serebii.net/tcgpocket/sleeves/shinycharizard.jpg",
+      "themes": [
+        "tcg-pocket",
+        "pokemon",
+        "shiny"
+      ],
+      "pokemonIds": [
+        6
+      ],
+      "sourceRequirement": "6 Premium Tickets",
+      "referenceKey": "shinycharizard",
+      "thumbnailUrl": "https://www.serebii.net/tcgpocket/sleeves/th/shinycharizard.jpg",
+      "artPath": "cosmetics/sleeves/pocket-v0440/shiny-charizard.webp",
+      "sha256": "294ce8a016ca07360b9f685adbe9aad1af3a203e009be282b5beff2fdf727b2b",
+      "width": 400,
+      "height": 558,
+      "bytes": 32398,
+      "sourceSha256": "123de3058dbf58c6949cc2f65face347b9faf2197f189fb15072daf06dcf5f28",
+      "sourceWidth": 734,
+      "sourceHeight": 1024,
+      "sourceBytes": 123020
+    },
+    {
+      "id": "pocket-shiny-mewtwo",
+      "name": "Shiny Mewtwo",
+      "sourceFamily": "TCG Pocket",
+      "referenceUrl": "https://www.serebii.net/tcgpocket/sleeves.shtml",
+      "sourceImageUrl": "https://www.serebii.net/tcgpocket/sleeves/shinymewtwo.jpg",
+      "themes": [
+        "tcg-pocket",
+        "pokemon",
+        "shiny"
+      ],
+      "pokemonIds": [
+        150
+      ],
+      "sourceRequirement": "Special Bundle",
+      "referenceKey": "shinymewtwo",
+      "thumbnailUrl": "https://www.serebii.net/tcgpocket/sleeves/th/shinymewtwo.jpg",
+      "artPath": "cosmetics/sleeves/pocket-v0440/shiny-mewtwo.webp",
+      "sha256": "7ebe7b4d46149769dc7e7933d391a411e7a75ae6a01d0a31f2ecef4791731544",
+      "width": 367,
+      "height": 512,
+      "bytes": 29986,
+      "sourceSha256": "e5c3dd6934d37587218fe6324b4677d7c2cbfd194547e85df655591dc699d81a",
+      "sourceWidth": 367,
+      "sourceHeight": 512,
+      "sourceBytes": 40371
+    },
+    {
+      "id": "pocket-red-and-pikachu",
+      "name": "Red and Pikachu",
+      "sourceFamily": "TCG Pocket",
+      "referenceUrl": "https://www.serebii.net/tcgpocket/sleeves.shtml",
+      "sourceImageUrl": "https://www.serebii.net/tcgpocket/sleeves/redandpikachu.jpg",
+      "themes": [
+        "tcg-pocket",
+        "pokemon",
+        "trainers"
+      ],
+      "pokemonIds": [
+        25
+      ],
+      "sourceRequirement": "115 Poké Gold",
+      "referenceKey": "redandpikachu",
+      "thumbnailUrl": "https://www.serebii.net/tcgpocket/sleeves/th/redandpikachu.jpg",
+      "artPath": "cosmetics/sleeves/pocket-v0440/red-and-pikachu.webp",
+      "sha256": "8d6fef62278730dfcab317bd8bc67b999948e31876774e63ba28992a3022fc6d",
+      "width": 400,
+      "height": 558,
+      "bytes": 50990,
+      "sourceSha256": "c871e7b461d14e521ea7dd2adf83230bf807983b4488e875d9c37ffe8c772294",
+      "sourceWidth": 734,
+      "sourceHeight": 1024,
+      "sourceBytes": 175990
+    },
+    {
+      "id": "pocket-manaphy",
+      "name": "Manaphy",
+      "sourceFamily": "TCG Pocket",
+      "referenceUrl": "https://www.serebii.net/tcgpocket/sleeves.shtml",
+      "sourceImageUrl": "https://www.serebii.net/tcgpocket/sleeves/manaphy.jpg",
+      "themes": [
+        "tcg-pocket",
+        "pokemon"
+      ],
+      "pokemonIds": [
+        490
+      ],
+      "sourceRequirement": "Event - 5 Tickets",
+      "referenceKey": "manaphy",
+      "thumbnailUrl": "https://www.serebii.net/tcgpocket/sleeves/th/manaphy.jpg",
+      "artPath": "cosmetics/sleeves/pocket-v0440/manaphy.webp",
+      "sha256": "3bbfcd49794af469b49b57fa74e88c4282e462bde252bf6564aa8e003fbfefb6",
+      "width": 400,
+      "height": 558,
+      "bytes": 28276,
+      "sourceSha256": "574a32ececa3784f560339128de66f028a7de3c1467522a0dabc2da6649dcc5d",
+      "sourceWidth": 734,
+      "sourceHeight": 1024,
+      "sourceBytes": 104058
+    },
+    {
+      "id": "pocket-arceus",
+      "name": "Arceus",
+      "sourceFamily": "TCG Pocket",
+      "referenceUrl": "https://www.serebii.net/tcgpocket/sleeves.shtml",
+      "sourceImageUrl": "https://www.serebii.net/tcgpocket/sleeves/arceus.jpg",
+      "themes": [
+        "tcg-pocket",
+        "pokemon"
+      ],
+      "pokemonIds": [
+        493
+      ],
+      "sourceRequirement": "6 Premium Tickets",
+      "referenceKey": "arceus",
+      "thumbnailUrl": "https://www.serebii.net/tcgpocket/sleeves/th/arceus.jpg",
+      "artPath": "cosmetics/sleeves/pocket-v0440/arceus.webp",
+      "sha256": "4ecf23064b4db93154b305044a8f5937c66bb1c64c1088e0cbad7884a09752b1",
+      "width": 400,
+      "height": 558,
+      "bytes": 63570,
+      "sourceSha256": "97055a67f6f1aa8716cec66a570c82e3850e694d6d2770547a55e6d48c8f264d",
+      "sourceWidth": 734,
+      "sourceHeight": 1024,
+      "sourceBytes": 215466
+    },
+    {
+      "id": "pocket-chimchar",
+      "name": "Chimchar",
+      "sourceFamily": "TCG Pocket",
+      "referenceUrl": "https://www.serebii.net/tcgpocket/sleeves.shtml",
+      "sourceImageUrl": "https://www.serebii.net/tcgpocket/sleeves/chimchar.jpg",
+      "themes": [
+        "tcg-pocket",
+        "pokemon"
+      ],
+      "pokemonIds": [
+        390
+      ],
+      "sourceRequirement": "Event - 5 Tickets",
+      "referenceKey": "chimchar",
+      "thumbnailUrl": "https://www.serebii.net/tcgpocket/sleeves/th/chimchar.jpg",
+      "artPath": "cosmetics/sleeves/pocket-v0440/chimchar.webp",
+      "sha256": "e69567f0c18d8ed518c72392fb7e8c049123c59c6812c1a7a72f15f2feced57f",
+      "width": 400,
+      "height": 558,
+      "bytes": 33088,
+      "sourceSha256": "1703a9cdc8f27623db8ed1b125d0437ace5c54124e0288e482209dea63a6ccbc",
+      "sourceWidth": 734,
+      "sourceHeight": 1024,
+      "sourceBytes": 129953
+    },
+    {
+      "id": "pocket-darkrai",
+      "name": "Darkrai",
+      "sourceFamily": "TCG Pocket",
+      "referenceUrl": "https://www.serebii.net/tcgpocket/sleeves.shtml",
+      "sourceImageUrl": "https://www.serebii.net/tcgpocket/sleeves/darkrai.jpg",
+      "themes": [
+        "tcg-pocket",
+        "pokemon"
+      ],
+      "pokemonIds": [
+        491
+      ],
+      "sourceRequirement": "6 Premium Tickets",
+      "referenceKey": "darkrai",
+      "thumbnailUrl": "https://www.serebii.net/tcgpocket/sleeves/th/darkrai.jpg",
+      "artPath": "cosmetics/sleeves/pocket-v0440/darkrai.webp",
+      "sha256": "d687a37b076c800de6f2916716fdb3e16c9ab53801bfd8f51f2507d9c6209626",
+      "width": 400,
+      "height": 558,
+      "bytes": 25158,
+      "sourceSha256": "95a6a444eae075f4c1bd91cffeee26ddc31b68c063efedd4150f87f46b207068",
+      "sourceWidth": 734,
+      "sourceHeight": 1024,
+      "sourceBytes": 111301
+    },
+    {
+      "id": "pocket-cynthia",
+      "name": "Cynthia",
+      "sourceFamily": "TCG Pocket",
+      "referenceUrl": "https://www.serebii.net/tcgpocket/sleeves.shtml",
+      "sourceImageUrl": "https://www.serebii.net/tcgpocket/sleeves/cynthia.jpg",
+      "themes": [
+        "tcg-pocket",
+        "trainers"
+      ],
+      "pokemonIds": [],
+      "sourceRequirement": "115 Poké Gold",
+      "referenceKey": "cynthia",
+      "thumbnailUrl": "https://www.serebii.net/tcgpocket/sleeves/th/cynthia.jpg",
+      "artPath": "cosmetics/sleeves/pocket-v0440/cynthia.webp",
+      "sha256": "5f241aa5f39d7656ed48b125ccbd8f791d1a2ed0114fe38d997d2f7898ca7841",
+      "width": 400,
+      "height": 558,
+      "bytes": 44934,
+      "sourceSha256": "32b6cc45d662962a64584b33e69e3ec40cdf6be2bf1ff11bb79b4824d9ffc470",
+      "sourceWidth": 734,
+      "sourceHeight": 1024,
+      "sourceBytes": 161432
+    },
+    {
+      "id": "pocket-blastoise",
+      "name": "Blastoise",
+      "sourceFamily": "TCG Pocket",
+      "referenceUrl": "https://www.serebii.net/tcgpocket/sleeves.shtml",
+      "sourceImageUrl": "https://www.serebii.net/tcgpocket/sleeves/blastoise.jpg",
+      "themes": [
+        "tcg-pocket",
+        "pokemon"
+      ],
+      "pokemonIds": [
+        9
+      ],
+      "sourceRequirement": "Event - 5 Tickets",
+      "referenceKey": "blastoise",
+      "thumbnailUrl": "https://www.serebii.net/tcgpocket/sleeves/th/blastoise.jpg",
+      "artPath": "cosmetics/sleeves/pocket-v0440/blastoise.webp",
+      "sha256": "3bfd8674be61d11141968b82e8a94b571e6f5c4153fd4e3e2cc714f355382550",
+      "width": 400,
+      "height": 558,
+      "bytes": 43492,
+      "sourceSha256": "a8b88d649f5d4998197e8cf1adba994af4c00570cbd49a7624d39a6ac16575b3",
+      "sourceWidth": 734,
+      "sourceHeight": 1024,
+      "sourceBytes": 147053
+    },
+    {
+      "id": "pocket-charizard",
+      "name": "Charizard",
+      "sourceFamily": "TCG Pocket",
+      "referenceUrl": "https://www.serebii.net/tcgpocket/sleeves.shtml",
+      "sourceImageUrl": "https://www.serebii.net/tcgpocket/sleeves/charizard.jpg",
+      "themes": [
+        "tcg-pocket",
+        "pokemon"
+      ],
+      "pokemonIds": [
+        6
+      ],
+      "sourceRequirement": "6 Premium Tickets",
+      "referenceKey": "charizard",
+      "thumbnailUrl": "https://www.serebii.net/tcgpocket/sleeves/th/charizard.jpg",
+      "artPath": "cosmetics/sleeves/pocket-v0440/charizard.webp",
+      "sha256": "ad5826b343fda058f4dbb289affd2b465eee63161efaf870556e85b96a3ae4e4",
+      "width": 400,
+      "height": 558,
+      "bytes": 48528,
+      "sourceSha256": "811e5dd66ff7adadafe454509cc26c28cb063a965d7b7056aaa7cc7998bec7eb",
+      "sourceWidth": 734,
+      "sourceHeight": 1024,
+      "sourceBytes": 163724
+    },
+    {
+      "id": "pocket-mythical-island-mew",
+      "name": "Mythical Island Mew",
+      "sourceFamily": "TCG Pocket",
+      "referenceUrl": "https://www.serebii.net/tcgpocket/sleeves.shtml",
+      "sourceImageUrl": "https://www.serebii.net/tcgpocket/sleeves/mythicalislandmew.jpg",
+      "themes": [
+        "tcg-pocket",
+        "pokemon"
+      ],
+      "pokemonIds": [
+        151
+      ],
+      "sourceRequirement": "Complete Mythical Island Themed Collection",
+      "referenceKey": "mythicalislandmew",
+      "thumbnailUrl": "https://www.serebii.net/tcgpocket/sleeves/th/mythicalislandmew.jpg",
+      "artPath": "cosmetics/sleeves/pocket-v0440/mythical-island-mew.webp",
+      "sha256": "05cce1503c39e3ad96ad3676ca70e63c7bcec6aa65d656eb2220e33bc31e0bd1",
+      "width": 400,
+      "height": 558,
+      "bytes": 48720,
+      "sourceSha256": "7b3d958fdf5affc0d9e8d4cd5e2bff4c484bb3737dd92e1a27e155e644b2ad0e",
+      "sourceWidth": 734,
+      "sourceHeight": 1024,
+      "sourceBytes": 157408
+    },
+    {
+      "id": "pocket-venusaur",
+      "name": "Venusaur",
+      "sourceFamily": "TCG Pocket",
+      "referenceUrl": "https://www.serebii.net/tcgpocket/sleeves.shtml",
+      "sourceImageUrl": "https://www.serebii.net/tcgpocket/sleeves/venusaur.jpg",
+      "themes": [
+        "tcg-pocket",
+        "pokemon"
+      ],
+      "pokemonIds": [
+        3
+      ],
+      "sourceRequirement": "Event - 5 Tickets",
+      "referenceKey": "venusaur",
+      "thumbnailUrl": "https://www.serebii.net/tcgpocket/sleeves/th/venusaur.jpg",
+      "artPath": "cosmetics/sleeves/pocket-v0440/venusaur.webp",
+      "sha256": "fee3af866384a38b917c69e0b13d0df65247e7a9c7ced1f9cf803d6a91300509",
+      "width": 400,
+      "height": 558,
+      "bytes": 30224,
+      "sourceSha256": "521b6dfabcefdbe18d67bddbdb6aa208ff6df192258609b5f890f252b482e236",
+      "sourceWidth": 734,
+      "sourceHeight": 1024,
+      "sourceBytes": 108609
+    },
+    {
+      "id": "pocket-pikachu",
+      "name": "Pikachu",
+      "sourceFamily": "TCG Pocket",
+      "referenceUrl": "https://www.serebii.net/tcgpocket/sleeves.shtml",
+      "sourceImageUrl": "https://www.serebii.net/tcgpocket/sleeves/pikachu.jpg",
+      "themes": [
+        "tcg-pocket",
+        "pokemon"
+      ],
+      "pokemonIds": [
+        25
+      ],
+      "sourceRequirement": "6 Premium Tickets",
+      "referenceKey": "pikachu",
+      "thumbnailUrl": "https://www.serebii.net/tcgpocket/sleeves/th/pikachu.jpg",
+      "artPath": "cosmetics/sleeves/pocket-v0440/pikachu.webp",
+      "sha256": "f4efdc8345c51bebe2fbb613114b2c2eada096f0bfc58ef1be58fbbb63f1885d",
+      "width": 400,
+      "height": 558,
+      "bytes": 84230,
+      "sourceSha256": "9247db607e9eb42eda4ec93d0fb0139fb52299e684567c7c530bde4c22957e37",
+      "sourceWidth": 734,
+      "sourceHeight": 1024,
+      "sourceBytes": 262096
+    },
+    {
+      "id": "pocket-meowth",
+      "name": "Meowth",
+      "sourceFamily": "TCG Pocket",
+      "referenceUrl": "https://www.serebii.net/tcgpocket/sleeves.shtml",
+      "sourceImageUrl": "https://www.serebii.net/tcgpocket/sleeves/meowth.jpg",
+      "themes": [
+        "tcg-pocket",
+        "pokemon"
+      ],
+      "pokemonIds": [
+        52
+      ],
+      "sourceRequirement": "Event - 5 Tickets",
+      "referenceKey": "meowth",
+      "thumbnailUrl": "https://www.serebii.net/tcgpocket/sleeves/th/meowth.jpg",
+      "artPath": "cosmetics/sleeves/pocket-v0440/meowth.webp",
+      "sha256": "60c6a9054b8e0d01042edb42d2525175efcad2d5d19acde69100d3f6ae152875",
+      "width": 400,
+      "height": 558,
+      "bytes": 60914,
+      "sourceSha256": "9e5e8a392afc696f315c0b32454417cbe38935906090e2871314d929ebc20c96",
+      "sourceWidth": 734,
+      "sourceHeight": 1024,
+      "sourceBytes": 216182
+    },
+    {
+      "id": "pocket-mewtwo",
+      "name": "Mewtwo",
+      "sourceFamily": "TCG Pocket",
+      "referenceUrl": "https://www.serebii.net/tcgpocket/sleeves.shtml",
+      "sourceImageUrl": "https://www.serebii.net/tcgpocket/sleeves/mewtwo.jpg",
+      "themes": [
+        "tcg-pocket",
+        "pokemon"
+      ],
+      "pokemonIds": [
+        150
+      ],
+      "sourceRequirement": "6 Premium Tickets",
+      "referenceKey": "mewtwo",
+      "thumbnailUrl": "https://www.serebii.net/tcgpocket/sleeves/th/mewtwo.jpg",
+      "artPath": "cosmetics/sleeves/pocket-v0440/mewtwo.webp",
+      "sha256": "cd2f881c88fa158fb6039d7975dabf371d3e30d7224bf1608107e4fd9aaff1f1",
+      "width": 400,
+      "height": 558,
+      "bytes": 42368,
+      "sourceSha256": "80935c749f988546ab1ab4083844ab71162da2bef56eba8abc1dc744535b2a90",
+      "sourceWidth": 734,
+      "sourceHeight": 1024,
+      "sourceBytes": 145349
+    },
+    {
+      "id": "pocket-erika-and-vileplume",
+      "name": "Erika and Vileplume",
+      "sourceFamily": "TCG Pocket",
+      "referenceUrl": "https://www.serebii.net/tcgpocket/sleeves.shtml",
+      "sourceImageUrl": "https://www.serebii.net/tcgpocket/sleeves/erikaandvileplume.jpg",
+      "themes": [
+        "tcg-pocket",
+        "pokemon",
+        "trainers"
+      ],
+      "pokemonIds": [
+        45
+      ],
+      "sourceRequirement": "115 Poké Gold",
+      "referenceKey": "erikaandvileplume",
+      "thumbnailUrl": "https://www.serebii.net/tcgpocket/sleeves/th/erikaandvileplume.jpg",
+      "artPath": "cosmetics/sleeves/pocket-v0440/erika-and-vileplume.webp",
+      "sha256": "ba523061aa9522172f8a8b5a6c093bdd0832dd8b976c7aeba7815898e338312d",
+      "width": 400,
+      "height": 558,
+      "bytes": 32226,
+      "sourceSha256": "deb5604d04d3e2c026cb0bd4895a4b9a3ee018f7b1fd7edec2f8cba33e099ee5",
+      "sourceWidth": 734,
+      "sourceHeight": 1024,
+      "sourceBytes": 120897
+    },
+    {
+      "id": "pocket-gardevoir",
+      "name": "Gardevoir",
+      "sourceFamily": "TCG Pocket",
+      "referenceUrl": "https://www.serebii.net/tcgpocket/sleeves.shtml",
+      "sourceImageUrl": "https://www.serebii.net/tcgpocket/sleeves/gardevoir.jpg",
+      "themes": [
+        "tcg-pocket",
+        "pokemon"
+      ],
+      "pokemonIds": [
+        282
+      ],
+      "sourceRequirement": "Purchase Bundle",
+      "referenceKey": "gardevoir",
+      "thumbnailUrl": "https://www.serebii.net/tcgpocket/sleeves/th/gardevoir.jpg",
+      "artPath": "cosmetics/sleeves/pocket-v0440/gardevoir.webp",
+      "sha256": "1a5c7841dcfd036cb92d566b302bc0a15de30af6168205d48d6364524d89eb2b",
+      "width": 400,
+      "height": 558,
+      "bytes": 52552,
+      "sourceSha256": "171bfc03853da682bf14f903af8e627172d1328e9f6797674053c6bca431b554",
+      "sourceWidth": 734,
+      "sourceHeight": 1024,
+      "sourceBytes": 175095
+    },
+    {
+      "id": "pocket-special-set-01",
+      "name": "Special Set 01",
+      "sourceFamily": "TCG Pocket",
+      "referenceUrl": "https://www.serebii.net/tcgpocket/sleeves.shtml",
+      "sourceImageUrl": "https://www.serebii.net/tcgpocket/sleeves/specialset01.jpg",
+      "themes": [
+        "tcg-pocket",
+        "special-set"
+      ],
+      "pokemonIds": [],
+      "sourceRequirement": "12 Special Shop Tickets",
+      "referenceKey": "specialset01",
+      "thumbnailUrl": "https://www.serebii.net/tcgpocket/sleeves/th/specialset01.jpg",
+      "artPath": "cosmetics/sleeves/pocket-v0440/special-set-01.webp",
+      "sha256": "7ef18e36e1dfd4fca4e395a84c36f3000882fdf682c7c6c852df1eeaa1fecb97",
+      "width": 400,
+      "height": 558,
+      "bytes": 28858,
+      "sourceSha256": "ebba7c654097482f6d3bebe168420d5446b76b15504f7a2ff7c9b28e064751b1",
+      "sourceWidth": 1042,
+      "sourceHeight": 1454,
+      "sourceBytes": 163862
+    },
+    {
+      "id": "pocket-eevee",
+      "name": "Eevee",
+      "sourceFamily": "TCG Pocket",
+      "referenceUrl": "https://www.serebii.net/tcgpocket/sleeves.shtml",
+      "sourceImageUrl": "https://www.serebii.net/tcgpocket/sleeves/eevee.jpg",
+      "themes": [
+        "tcg-pocket",
+        "pokemon"
+      ],
+      "pokemonIds": [
+        133
+      ],
+      "sourceRequirement": "Beginning",
+      "referenceKey": "eevee",
+      "thumbnailUrl": "https://www.serebii.net/tcgpocket/sleeves/th/eevee.jpg",
+      "artPath": "cosmetics/sleeves/pocket-v0440/eevee.webp",
+      "sha256": "fcc80463e14c938326413a5fc09d22e536945f24d01774e1541bfc96a830a80d",
+      "width": 400,
+      "height": 558,
+      "bytes": 32618,
+      "sourceSha256": "86a22589f8f9bafb0230e0d98aa02655769f53d931cb137598bd9f5c13976535",
+      "sourceWidth": 1042,
+      "sourceHeight": 1454,
+      "sourceBytes": 170995
+    }
+  ]
+}

@@ -1,0 +1,12 @@
+const assert=require('node:assert/strict');
+const fs=require('node:fs');
+const path=require('node:path');
+const root=path.resolve(__dirname,'..');
+const css=fs.readFileSync(path.join(root,'app/src/main/assets/arcade.css'),'utf8');
+const js=fs.readFileSync(path.join(root,'app/src/main/assets/arcade-unown.js'),'utf8');
+assert.match(css,/\.unown-chamber\{[^}]*aspect-ratio:4\/(?:2\.25|1\.85)/,'main ruins chamber should stay shortened to free space below');
+assert.match(css,/\.unown-word\{[^}]*--glyph-base:54px[^}]*--glyph-size:54px/,'main ruins glyphs should use moderated base sizing with live fit');
+assert.match(css,/\.unown-answer-chamber \.unown-word\{--glyph-base:58px\}/,'typed keyboard layout should stay slightly larger than the easy panel');
+assert.match(js,/const size=Math\.max\(26,Math\.min\(baseSize,Math\.floor\(available\/glyphCount\)\)\);/,'glyph rows should calculate a fitted glyph size to keep each word on one line');
+assert.match(js,/answerOpen\.hidden=!canOpen/,'enter-answer button should be hidden before a live question starts');
+console.log('PASS v0.28.10 Unown layout regression');

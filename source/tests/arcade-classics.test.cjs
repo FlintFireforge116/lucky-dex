@@ -1,0 +1,17 @@
+const assert=require('assert');
+const fs=require('fs');
+const path=require('path');
+const root=path.join(__dirname,'..');
+const p=path.join(root,'app/src/main/assets/arcade-classics.js');
+assert.ok(fs.existsSync(p),'classics module must exist');
+const c=require(p);
+assert.deepStrictEqual(c.VOLTORB_MEMO_OPTIONS,['bomb','1','2','3']);
+assert.strictEqual(c.memoToggle(0,'bomb'),1);
+assert.strictEqual(c.memoToggle(1,'bomb'),0);
+assert.strictEqual(c.memoToggle(0,'2'),4);
+assert.strictEqual(c.memoToggle(4,'3'),12);
+assert.strictEqual(c.revealFossilCell,undefined,'legacy Fossil cell model must be removed from Classics');
+assert.strictEqual(c.makeFossil,undefined,'legacy Fossil generator must be removed from Classics');
+assert.strictEqual(c.CLEFAIRY_RULES,undefined,'classroom Clefairy must not remain an active classics owner');
+assert.strictEqual(c.FOSSIL_TOOLS,undefined,'multi-hit fossil tools are retired');
+console.log('PASS Classics owns Voltorb/Berry only; Fossil ownership retired');

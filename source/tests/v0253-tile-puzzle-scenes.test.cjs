@@ -1,0 +1,37 @@
+'use strict';
+const assert=require('node:assert/strict');
+const fs=require('node:fs');
+const path=require('node:path');
+const root=path.resolve(__dirname,'..');
+const read=p=>fs.readFileSync(path.join(root,p),'utf8');
+const manifestPath='app/src/main/assets/arcade-tile-scenes-v0253.js';
+assert.ok(fs.existsSync(path.join(root,manifestPath)),'curated Tile Puzzle manifest must exist');
+const mod=require(path.join(root,manifestPath));
+const scenes=Array.isArray(mod)?mod:mod.scenes;
+assert.ok(Array.isArray(scenes),'Tile scene module must expose a scene array');
+assert.ok(Object.isFrozen(scenes),'scene manifest must be immutable');
+assert.ok(scenes.length>=8,'at least 8 curated scenes are required');
+const ids=new Set();
+for(const scene of scenes){
+  assert.ok(scene&&scene.id&&scene.title&&scene.src,`invalid scene row ${JSON.stringify(scene)}`);
+  assert.ok(!ids.has(scene.id),`duplicate scene id ${scene.id}`);ids.add(scene.id);
+  assert.ok(fs.existsSync(path.join(root,'app/src/main/assets',scene.src)),`missing local Tile Puzzle scene ${scene.src}`);
+  assert.ok(!/^https?:/i.test(scene.src),'Tile Puzzle scenes must be offline/local');
+}
+const js=read('app/src/main/assets/arcade-amie.js');
+assert.doesNotMatch(js,/participants\(3\)/,'Tile Puzzle must not synthesize scenes from three participant Pokémon');
+assert.doesNotMatch(js,/TILE_SCENE_RECIPES/,'Tile Puzzle must not use synthetic actor/berry scene recipes');
+assert.doesNotMatch(js,/run\.props/,'Tile Puzzle must not paste berry/item props over the scene');
+assert.match(js,/LuckyDexTileScenesV0253/,'Tile Puzzle must consume the curated scene manifest');
+assert.match(js,/lastTileSceneId/,'Tile Puzzle must remember the previous scene');
+assert.match(js,/scene\.id\s*!==\s*lastTileSceneId/,'Tile Puzzle must avoid immediate repeat when alternatives exist');
+assert.match(js,/drawCover\(ctx,run\.sceneImage,w,h,run\.scene\?\.position\)/,'Tile source must draw only the selected curated scene');
+assert.match(js,/tilePuzzleTargetName[^\n]*scene\.title/,'target preview must name the selected scene');
+assert.match(js,/easy:\{rows:4,cols:5\}/,'Easy grid must remain 4x5');
+assert.match(js,/normal:\{rows:5,cols:6\}/,'Normal grid must remain 5x6');
+assert.match(js,/hard:\{rows:6,cols:8\}/,'Hard grid must remain 6x8');
+const html=read('app/src/main/assets/index.html');
+const manifestIdx=html.indexOf('arcade-tile-scenes-v0253.js');
+const amieIdx=html.indexOf('arcade-amie.js');
+assert.ok(manifestIdx>=0&&amieIdx>manifestIdx,'Tile scene manifest must load before arcade-amie.js');
+console.log('PASS v0.25.3 curated Tile Puzzle scenes contract');

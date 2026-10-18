@@ -1,0 +1,11 @@
+'use strict';
+const assert=require('node:assert/strict');
+const fs=require('node:fs');
+const path=require('node:path');
+const root=path.resolve(__dirname,'..');
+const gradle=fs.readFileSync(path.join(root,'app/build.gradle'),'utf8');
+const html=fs.readFileSync(path.join(root,'app/src/main/assets/index.html'),'utf8');
+const code=Number((gradle.match(/versionCode\s+(\d+)/)||[])[1]);assert.ok(code>=270,'Android versionCode must never regress below 270');
+assert.match(gradle,/applicationId\s+'com\.example\.luckydex'/,'application ID should remain stable');
+const currentName=(gradle.match(/versionName\s+'([^']+)'/)||[])[1];assert.ok(currentName&&currentName.localeCompare('0.27.0',undefined,{numeric:true})>=0);assert.ok(html.includes(`v${currentName}`),'visible app version should match current release');
+console.log('PASS v0.27.0 release identity');

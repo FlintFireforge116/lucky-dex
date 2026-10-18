@@ -1,0 +1,5 @@
+const assert=require('assert'),E=require('../app/src/main/assets/adventure/adventure-regional-engine.js'),R=require('../app/src/main/assets/adventure/adventure-regions.js'),J=require('../app/src/main/assets/adventure/adventure-journeys.js');
+assert.deepEqual(J.order,['kanto','johto','hoenn']);for(const id of R.order.slice(3)){assert.equal(J.get(id),null);assert.throws(()=>E.generateNodes(id,1),/Kanto, Johto or Hoenn/);}
+const old=R.regions.galar;R.regions.galar={id:'galar',available:true,stages:[{wild:[25],rare:[],habitat:'meadow'}],gyms:[{name:'Synthetic',team:[25]}]};assert.throws(()=>E.generateNodes('galar',1),/Kanto, Johto or Hoenn/,'an available registry flag cannot invent an unauthored campaign');R.regions.galar=old;
+for(const id of J.order){const nodes=E.generateNodes(id,1),main=nodes.filter(n=>!n.optional);assert.equal(main.filter(n=>n.type==='gym').length,8);assert.equal(main.filter(n=>n.type==='elite-four').length,4);assert.equal(main.at(-1).type,'champion');assert.equal(E.totalDepths({region:id}),main.length);}
+console.log('PASS three complete authored journeys and explicit rejection of unauthored later regions');

@@ -1,0 +1,18 @@
+'use strict';
+const assert=require('node:assert/strict');
+const fs=require('node:fs'),path=require('node:path');
+const css=fs.readFileSync(path.join(__dirname,'../app/src/main/assets/arcade-dig-dig-dig.css'),'utf8');
+for(const asset of ['cave-floor.png','cave-wall.png','cave-floor-dark.png','cave-rock.png'])assert.match(css,new RegExp(asset.replace('.','\\.')));
+assert.match(css,/(?:shallow-water|shore-water)\.png/,'finish water remains a local Gen III tile');
+assert.match(css,/\.dig-sandshrew[^\{]*\{[^}]*image-rendering\s*:\s*pixelated/i);
+assert.match(css,/\.dig-dig-dig-stage[^\{]*\{[^}]*border\s*:\s*[34]px\s+solid/i,'stage uses chunky GBA-style frame');
+const strongLeft=/(?:#digDigDigLeft|\.arcade-game\s+(?:button\.)?dig-control|\.arcade-game\s+#digDigDigLeft)[^{]*\{[^}]*touch-action\s*:\s*none\b/i;
+const strongRight=/(?:#digDigDigRight|\.arcade-game\s+(?:button\.)?dig-control|\.arcade-game\s+#digDigDigRight)[^{]*\{[^}]*touch-action\s*:\s*none\b/i;
+assert.ok(strongLeft.test(css)&&strongRight.test(css),'both Dig controls need strong touch-action:none ownership');
+const stage=css.match(/\.dig-dig-dig-stage\{[^}]*\}/)?.[0]||'';
+assert.doesNotMatch(stage,/linear-gradient\(|radial-gradient\(/i,'gameplay stage has no modern gradient');
+assert.doesNotMatch(css,/\.dig-sandshrew[^\{]*\{[^}]*transform\s*:[^;}]*scale\s*\([^,]+,[^)]+\)/i,'Sandshrew is never non-uniformly scaled');
+assert.match(css,/\.dig-sandshrew\{[^}]*width:35px;[^}]*height:39px/i,'native sprite is 35×39');
+assert.match(css,/@media\(min-width:560px\)\{[^}]*\.dig-sandshrew\{width:70px;height:78px\}/i,'large layout uses exact integer 2× sprite scale');
+assert.doesNotMatch(css,/\.dig-sandshrew[^\{]*\{[^}]*(?:width|height):\s*(?:\d+\.\d+|\d+%)/i,'sprite sizes are not fractional/percentage distorted');
+console.log('PASS v0.36.0 Dig Gen III presentation contract');

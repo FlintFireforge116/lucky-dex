@@ -1,0 +1,14 @@
+const assert=require('node:assert/strict');
+const fs=require('node:fs');
+const path=require('node:path');
+const root=path.resolve(__dirname,'..');
+const world=fs.readFileSync(path.join(root,'app/src/main/assets/arcade-world.js'),'utf8');
+const html=fs.readFileSync(path.join(root,'app/src/main/assets/index.html'),'utf8');
+assert.match(world,/oreburghMuseum[\s\S]{0,260}games:\['fossil','museum'\]/,'Oreburgh must list fossil and museum activities');
+assert.match(world,/museum:'Museum Collection'/,'Museum activity name missing');
+assert.match(world,/fossil:'Fossil Dig'/,'Fossil activity should be named Fossil Dig');
+assert.match(world,/fossil:\(\)=>window\.LuckyDexFossilMuseum/,'Fossil owner must be new module');
+assert.match(world,/museum:\(\)=>window\.LuckyDexFossilMuseum/,'Museum owner must be new module');
+assert.match(world,/activityLabel:'ACTIVITIES'/,'Oreburgh world summary should say activities');
+assert.ok(html.includes('id="fossilGame"')&&html.includes('id="museumGame"'),'both activity hosts must exist');
+console.log('PASS v0.25.0 Oreburgh two-activity navigation contract');

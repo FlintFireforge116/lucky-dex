@@ -1,0 +1,18 @@
+'use strict';
+const assert=require('node:assert/strict');
+const fs=require('node:fs');
+const path=require('node:path');
+const crypto=require('node:crypto');
+const root=path.resolve(__dirname,'..');
+const read=p=>fs.readFileSync(path.join(root,p),'utf8');
+const gradle=read('app/build.gradle');
+const pkg=JSON.parse(read('package.json'));
+assert.match(gradle,/applicationId\s+'com\.example\.luckydex'/);
+assert.ok(Number((gradle.match(/versionCode\s+(\d+)/)||[])[1])>=254,'versionCode must remain at least 254');
+const name=(gradle.match(/versionName\s+'([^']+)'/)||[])[1]; assert.ok(name&&name.localeCompare('0.25.4',undefined,{numeric:true})>=0,'versionName must remain on or above v0.25.4');
+assert.equal(pkg.version,name);
+const key=fs.readFileSync(path.join(root,'app/luckydex-dev.keystore'));
+assert.equal(crypto.createHash('sha256').update(key).digest('hex'),'90de91cea469f0eec5fbd69389cf03adc94ced396fa2ec85e2a51d2365a4f6d3');
+assert.ok(fs.existsSync(path.join(root,'app/src/main/assets/arcade/fossil-museum-v0254/SOURCES.md')),'v0.25.4 asset source note missing');
+assert.ok(fs.existsSync(path.join(root,'app/src/main/assets/arcade/fossil-museum-v0254/manifest.json')),'v0.25.4 asset manifest missing');
+console.log('PASS v0.25.4 release contract');

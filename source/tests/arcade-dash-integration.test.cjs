@@ -1,0 +1,35 @@
+const assert=require('assert');
+const fs=require('fs');
+const path=require('path');
+const root=path.resolve(__dirname,'..');
+const read=p=>fs.readFileSync(path.join(root,p),'utf8');
+const html=read('app/src/main/assets/index.html');
+const world=read('app/src/main/assets/arcade-world.js');
+const session=read('app/src/main/assets/arcade-session.js');
+const gradle=read('app/build.gradle');
+const pkg=JSON.parse(read('package.json'));
+
+assert.ok(html.includes('href="arcade-dash.css"'),'Dash CSS must load');
+assert.ok(html.includes('id="dashGame"'),'Dash game shell must exist');
+assert.ok(html.includes('id="dashCanvas"'),'Dash race canvas must exist');
+assert.ok(html.includes('id="dashSprintBtn"')&&html.includes('id="dashLeftBtn"')&&html.includes('id="dashRightBtn"'),'mobile race controls must exist');
+assert.ok(html.includes('id="dashModeView"')&&html.includes('id="dashDifficultyView"')&&html.includes('id="dashLeagueView"')&&html.includes('id="dashStandingsView"'),'Dash v2 mode views must exist');
+assert.ok(html.includes('id="dashRacerSearch"')&&html.includes('id="dashRacerSort"'),'racer search/sort must exist');
+assert.ok(html.includes('id="arcadeResultChange"'),'shared result sheet must support CHANGE RACER');
+
+const configIndex=html.indexOf('arcade-dash-config.js'),leagueIndex=html.indexOf('arcade-dash-league.js'),courseIndex=html.indexOf('arcade-dash-course.js'),dashIndex=html.indexOf('arcade-dash.js'),worldIndex=html.indexOf('arcade-world.js');
+assert.ok(configIndex>0&&leagueIndex>configIndex&&courseIndex>leagueIndex&&dashIndex>courseIndex&&worldIndex>dashIndex,'Dash config/league/course/runtime scripts must load before Arcade world');
+assert.ok(world.includes('id:"dashCourse"')&&/games:\['dash'(?:,'[^']+')*\]/.test(world),'Dash venue must exist and preserve Dash as the first activity');
+assert.ok(world.includes("dash:'Pokémon Dash'")&&world.includes("dash:'Outdoor Exhibition, Division Cups and 18 themed Type Cups.'"),'Dash game labels/objective must exist');
+assert.ok(world.includes('dash:()=>window.LuckyDexDash'),'Dash owner must route to LuckyDexDash');
+assert.ok(world.includes('dashCourse'),'world must recognize dashCourse for persistence');
+assert.ok(session.includes("dash:{run:'Exhibition or 3-round Division Cup / Type Cup"),'session rules must include Dash v2');
+assert.ok(fs.existsSync(path.join(root,'app/src/main/assets/arcade/dash-course-v0290.svg')),'local Dash venue art must be bundled');
+assert.match(gradle,/applicationId 'com\.example\.luckydex'/,'Android application ID must stay permanent');
+const versionCode=Number((gradle.match(/versionCode\s+(\d+)/)||[])[1]);
+assert.ok(versionCode>=291,'Android versionCode must remain at or above the Dash v0.29.0 baseline');
+const versionName=(gradle.match(/versionName\s+'([^']+)'/)||[])[1];
+assert.ok(versionName&&versionName.localeCompare('0.29.0',undefined,{numeric:true})>=0,'Android versionName must remain v0.29.0 or newer');
+assert.match(gradle,/luckydex-dev\.keystore/,'permanent LuckyDex signer must remain configured');
+assert.strictEqual(pkg.version,versionName,'package version must match Android versionName');
+console.log('PASS Pokémon Dash UI/world/source integration contract');

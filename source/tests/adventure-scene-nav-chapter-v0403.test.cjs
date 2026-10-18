@@ -1,0 +1,2 @@
+const assert=require('node:assert/strict'),{test}=require('node:test'),U=require('../scripts/adventure-scene-nav-utils-v0403.cjs'),{playFirstGym}=require('../scripts/adventure-scene-nav-acceptance-v0403.cjs');
+test('v0403 real first Johto Gym earns badge and persists onward Route32 with natural city/Gym exit',async()=>{const browser=await U.launch(),v={width:360,height:640},{page,context,errors}=await U.open(browser,v,{init:U.prepared});try{await playFirstGym(page,v,{capture:false});assert.deepEqual(errors,[])}finally{await context.close();await browser.close()}});

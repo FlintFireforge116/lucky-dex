@@ -1,0 +1,139 @@
+plugins { id 'com.android.application' }
+
+android {
+    namespace 'com.example.luckydex'
+    compileSdk 35
+
+    defaultConfig {
+        applicationId 'com.example.luckydex'
+        minSdk 26
+        targetSdk 35
+        versionCode 5901
+        versionName '0.59.1'
+    }
+
+    signingConfigs {
+        debug {
+            def devKeystore = file('luckydex-dev.keystore')
+            if (!devKeystore.exists()) {
+                throw new GradleException('Permanent LuckyDex signer missing: app/luckydex-dev.keystore')
+            }
+            storeFile devKeystore
+            storePassword 'luckydex-dev'
+            keyAlias 'luckydex'
+            keyPassword 'luckydex-dev'
+        }
+    }
+
+    buildTypes {
+        debug {
+            signingConfig signingConfigs.debug
+        }
+    }
+}
+
+
+// v0.26.8: booster artwork is fully bundled and resolved directly in-app. This preBuild task is now a
+// fast offline integrity/coverage audit only; it performs no network access.
+tasks.register('materializeBoosterArt', Exec) {
+    workingDir rootProject.projectDir
+    commandLine (System.getenv('LUCKYDEX_PYTHON') ?: 'python3'), 'scripts/build-booster-art-index.py'
+    // UX401 catalog byte guard: retain supplied formatting when data is identical.
+    def catalogBytes = [:]
+    doFirst {
+        ['booster-art-index-v0260.json', 'booster-art-coverage-v0264.json'].each { name ->
+            def target = file("src/main/assets/${name}")
+            if (target.exists()) catalogBytes[name] = target.bytes
+        }
+    }
+    doLast {
+        catalogBytes.each { name, bytes ->
+            def target = file("src/main/assets/${name}")
+            def parser = new groovy.json.JsonSlurper()
+            if (target.exists() && parser.parseText(new String(bytes, 'UTF-8')) == parser.parseText(target.getText('UTF-8'))) {
+                target.bytes = bytes
+            }
+        }
+    }
+    // UX401 end catalog byte guard
+}
+tasks.named('preBuild').configure {
+    dependsOn tasks.named('materializeBoosterArt')
+}
+
+// v0.35.15: Dragon Vault uses a verified 492x888 high-resolution Rayquaza
+// packshot from the audited ptcg-assets catalogue. The source ZIP cannot safely
+// substitute the obsolete 109x199 wrapper: GitHub Actions must materialize this
+// exact audited blob or the APK build stops.
+def EXPECTED_DRAGON_VAULT_BYTES = 210014L
+def EXPECTED_DRAGON_VAULT_GIT_SHA1 = 'b21c12cb6766ae7c6bf21a194851cad954aea1a3'
+
+def dragonVaultGitBlobSha1 = { byte[] payload ->
+    def digest = java.security.MessageDigest.getInstance('SHA-1')
+    digest.update("blob ${payload.length}\u0000".getBytes('UTF-8'))
+    digest.update(payload)
+    digest.digest().collect { String.format('%02x', it & 0xff) }.join()
+}
+
+def validateDragonVaultPackshot = { byte[] payload ->
+    def isWebp = payload != null && payload.length >= 12 &&
+        new String(payload, 0, 4, 'US-ASCII') == 'RIFF' &&
+        new String(payload, 8, 4, 'US-ASCII') == 'WEBP'
+    def sha = payload == null ? '' : dragonVaultGitBlobSha1(payload)
+    if (!isWebp || payload.length != EXPECTED_DRAGON_VAULT_BYTES || sha != EXPECTED_DRAGON_VAULT_GIT_SHA1) {
+        throw new GradleException("Dragon Vault packshot failed exact asset validation (${payload?.length ?: 0} bytes, git sha ${sha ?: 'n/a'})")
+    }
+    payload
+}
+
+tasks.register('materializeAuthenticPackArt') {
+    def target = file("$projectDir/src/main/assets/authentic-pack-art/dragon-vault-ray.webp")
+    outputs.file(target)
+    doLast {
+        target.parentFile.mkdirs()
+        def sourceUrl = 'https://raw.githubusercontent.com/1niceroli/ptcg-assets/main/dv1/packshots/ray.webp'
+        byte[] verified = null
+        Exception lastError = null
+
+        // Re-use a source-bundled/cached copy only when it is the exact audited blob.
+        if (target.exists()) {
+            try {
+                verified = validateDragonVaultPackshot(target.bytes)
+                logger.lifecycle("Verified existing Dragon Vault packshot: ${verified.length} bytes")
+            } catch (Exception invalidExisting) {
+                logger.warn("Discarding invalid Dragon Vault packshot before rebuild: ${invalidExisting.message}")
+                target.delete()
+            }
+        }
+
+        if (verified == null) {
+            for (int attempt : 1..3) {
+                try {
+                    def connection = new URL(sourceUrl).openConnection()
+                    connection.setRequestProperty('User-Agent', 'LuckyDex-asset-builder/0.58.0')
+                    connection.connectTimeout = 20000
+                    connection.readTimeout = 45000
+                    byte[] candidate = connection.inputStream.withCloseable { input -> input.bytes }
+                    verified = validateDragonVaultPackshot(candidate)
+                    target.bytes = verified
+                    logger.lifecycle("Materialized verified Dragon Vault packshot: ${verified.length} bytes (attempt ${attempt})")
+                    break
+                } catch (Exception error) {
+                    lastError = error
+                    if (target.exists()) target.delete()
+                    if (attempt < 3) {
+                        logger.warn("Dragon Vault packshot fetch attempt ${attempt} failed; retrying: ${error.message}")
+                        Thread.sleep(1000L * attempt)
+                    }
+                }
+            }
+        }
+
+        if (verified == null) {
+            throw new GradleException("Could not materialize required Dragon Vault packshot; refusing low-resolution fallback", lastError)
+        }
+    }
+}
+tasks.named('preBuild').configure {
+    dependsOn tasks.named('materializeAuthenticPackArt')
+}

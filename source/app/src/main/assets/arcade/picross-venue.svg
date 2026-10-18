@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 480">
+  <defs><linearGradient id="sky" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#76c7f2"/><stop offset="1" stop-color="#dff5ff"/></linearGradient><linearGradient id="b" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#fefefe"/><stop offset="1" stop-color="#d8eaf7"/></linearGradient></defs>
+  <rect width="960" height="480" fill="url(#sky)"/><rect y="368" width="960" height="112" fill="#77b66c"/>
+  <path d="M170 350V150L300 76h360l130 74v200z" fill="url(#b)" stroke="#194f81" stroke-width="14"/><path d="M145 162 286 60h388l141 102" fill="none" stroke="#194f81" stroke-width="20" stroke-linejoin="round"/>
+  <rect x="337" y="136" width="286" height="174" rx="12" fill="#eef8ff" stroke="#194f81" stroke-width="10"/>
+  <g fill="#23639a"><rect x="368" y="163" width="28" height="28"/><rect x="428" y="163" width="28" height="28"/><rect x="488" y="163" width="28" height="28"/><rect x="548" y="163" width="28" height="28"/><rect x="398" y="193" width="28" height="28"/><rect x="458" y="193" width="28" height="28"/><rect x="518" y="193" width="28" height="28"/><rect x="368" y="223" width="28" height="28"/><rect x="398" y="253" width="28" height="28"/><rect x="428" y="253" width="28" height="28"/><rect x="488" y="253" width="28" height="28"/><rect x="548" y="253" width="28" height="28"/></g>
+  <rect x="447" y="310" width="66" height="58" rx="8" fill="#1b5487"/><text x="480" y="118" text-anchor="middle" font-family="sans-serif" font-weight="900" font-size="34" fill="#194f81">PICROSS</text>
+</svg>

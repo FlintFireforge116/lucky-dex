@@ -1,0 +1,11 @@
+'use strict';
+const assert=require('node:assert/strict'),fs=require('node:fs');
+const read=f=>fs.readFileSync(f,'utf8');
+const pkg=JSON.parse(read('package.json')),lock=JSON.parse(read('package-lock.json')),gradle=read('app/build.gradle'),app=read('app/src/main/assets/app-v0167.js'),html=read('app/src/main/assets/index.html');
+assert.ok(pkg.version.localeCompare('0.39.1',undefined,{numeric:true})>=0);assert.equal(lock.version,pkg.version);assert.equal(lock.packages?.['']?.version,pkg.version);
+assert.ok(Number(gradle.match(/versionCode\s+(\d+)/)[1])>=3901);assert(gradle.includes("versionName '"+pkg.version+"'"));assert(gradle.includes('LuckyDex-asset-builder/'+pkg.version));
+assert(app.includes("__LUCKYDEX_BUILD='"+pkg.version+"'"));assert.equal(html.split('v'+pkg.version).length>=3,true,'visible build markers');
+assert.match(read('app/src/main/assets/arcade.css'),/\.arcade-session-strip\s*\{/);
+assert.doesNotMatch(read('app/src/main/assets/achievements-v0341.js'),/ball_drop_jackpots_(5|10)/);
+assert.match(read('app/src/main/assets/pack-flow-v0165.js'),/buildBalancedPackWithRetry/);
+console.log('PASS v0.39.1 device-stability release identity');

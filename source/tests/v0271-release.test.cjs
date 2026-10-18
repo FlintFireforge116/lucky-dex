@@ -1,0 +1,15 @@
+'use strict';
+const assert=require('node:assert/strict');
+const fs=require('node:fs');
+const path=require('node:path');
+const root=path.resolve(__dirname,'..');
+const gradle=fs.readFileSync(path.join(root,'app/build.gradle'),'utf8');
+const pkg=JSON.parse(fs.readFileSync(path.join(root,'package.json'),'utf8'));
+const html=fs.readFileSync(path.join(root,'app/src/main/assets/index.html'),'utf8');
+assert.match(gradle,/applicationId\s+'com\.example\.luckydex'/,'update identity must remain unchanged');
+const code=Number((gradle.match(/versionCode\s+(\d+)/)||[])[1]),name=(gradle.match(/versionName\s+'([^']+)'/)||[])[1];
+assert.ok(code>=271,'Android update must never regress below the v0.27.1 baseline');
+assert.ok(name&&name.localeCompare('0.27.1',undefined,{numeric:true})>=0,'release should remain v0.27.1 or newer');
+assert.equal(pkg.version,name,'package version should match Android versionName');
+assert.ok(html.includes(`v${name}`),'visible app version should match current release');
+console.log('PASS v0.27.1+ update identity/version baseline');

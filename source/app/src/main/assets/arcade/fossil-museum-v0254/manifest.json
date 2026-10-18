@@ -1,0 +1,210 @@
+{
+  "version": "0.25.4",
+  "items": [
+    {
+      "id": "armor-fossil",
+      "file": "arcade/fossil-museum-v0254/items/armor-fossil.png",
+      "source": "Pok\u00e9mon fossil/item pixel sprite; v0.25.4 authentic replacement for prior custom placeholder art"
+    },
+    {
+      "id": "big-nugget",
+      "file": "arcade/fossil-museum-v0254/items/big-nugget.png",
+      "source": "Existing packaged LuckyDex Pok\u00e9mon item pixel sprite; retained in v0.25.4 authentic item namespace"
+    },
+    {
+      "id": "big-pearl",
+      "file": "arcade/fossil-museum-v0254/items/big-pearl.png",
+      "source": "Existing packaged LuckyDex Pok\u00e9mon item pixel sprite; retained in v0.25.4 authentic item namespace"
+    },
+    {
+      "id": "claw-fossil",
+      "file": "arcade/fossil-museum-v0254/items/claw-fossil.png",
+      "source": "Pok\u00e9mon fossil/item pixel sprite; v0.25.4 authentic replacement for prior custom placeholder art"
+    },
+    {
+      "id": "comet-shard",
+      "file": "arcade/fossil-museum-v0254/items/comet-shard.png",
+      "source": "Existing packaged LuckyDex Pok\u00e9mon item pixel sprite; retained in v0.25.4 authentic item namespace"
+    },
+    {
+      "id": "cover-fossil",
+      "file": "arcade/fossil-museum-v0254/items/cover-fossil.png",
+      "source": "Pok\u00e9mon fossil/item pixel sprite; v0.25.4 authentic replacement for prior custom placeholder art"
+    },
+    {
+      "id": "dome-fossil",
+      "file": "arcade/fossil-museum-v0254/items/dome-fossil.png",
+      "source": "Pok\u00e9mon fossil/item pixel sprite; v0.25.4 authentic replacement for prior custom placeholder art"
+    },
+    {
+      "id": "everstone",
+      "file": "arcade/fossil-museum-v0254/items/everstone.png",
+      "source": "Packaged Pok\u00e9mon item sprite; v0.25.4 authentic item-art replacement"
+    },
+    {
+      "id": "fire-stone",
+      "file": "arcade/fossil-museum-v0254/items/fire-stone.png",
+      "source": "Pok\u00e9mon evolution-stone pixel sprite; v0.25.4 authentic replacement for prior generic coloured-stone placeholder"
+    },
+    {
+      "id": "fossilized-bird",
+      "file": "arcade/fossil-museum-v0254/items/fossilized-bird.png",
+      "source": "Pok\u00e9mon fossil/item pixel sprite; v0.25.4 authentic replacement for prior custom placeholder art"
+    },
+    {
+      "id": "fossilized-dino",
+      "file": "arcade/fossil-museum-v0254/items/fossilized-dino.png",
+      "source": "Pok\u00e9mon fossil/item pixel sprite; v0.25.4 authentic replacement for prior custom placeholder art"
+    },
+    {
+      "id": "fossilized-drake",
+      "file": "arcade/fossil-museum-v0254/items/fossilized-drake.png",
+      "source": "Pok\u00e9mon fossil/item pixel sprite; v0.25.4 authentic replacement for prior custom placeholder art"
+    },
+    {
+      "id": "fossilized-fish",
+      "file": "arcade/fossil-museum-v0254/items/fossilized-fish.png",
+      "source": "Pok\u00e9mon fossil/item pixel sprite; v0.25.4 authentic replacement for prior custom placeholder art"
+    },
+    {
+      "id": "great-ball",
+      "file": "arcade/fossil-museum-v0254/items/great-ball.png",
+      "source": "Existing packaged LuckyDex Pok\u00e9mon item pixel sprite; retained in v0.25.4 authentic item namespace"
+    },
+    {
+      "id": "hard-stone",
+      "file": "arcade/fossil-museum-v0254/items/hard-stone.png",
+      "source": "Packaged Pok\u00e9mon item sprite; v0.25.4 authentic item-art replacement"
+    },
+    {
+      "id": "helix-fossil",
+      "file": "arcade/fossil-museum-v0254/items/helix-fossil.png",
+      "source": "Pok\u00e9mon fossil/item pixel sprite; v0.25.4 authentic replacement for prior custom placeholder art"
+    },
+    {
+      "id": "jaw-fossil",
+      "file": "arcade/fossil-museum-v0254/items/jaw-fossil.png",
+      "source": "Pok\u00e9mon fossil/item pixel sprite; v0.25.4 authentic replacement for prior custom placeholder art"
+    },
+    {
+      "id": "leaf-stone",
+      "file": "arcade/fossil-museum-v0254/items/leaf-stone.png",
+      "source": "Pok\u00e9mon evolution-stone pixel sprite; v0.25.4 authentic replacement for prior generic coloured-stone placeholder"
+    },
+    {
+      "id": "moon-stone",
+      "file": "arcade/fossil-museum-v0254/items/moon-stone.png",
+      "source": "Pok\u00e9mon evolution-stone pixel sprite; v0.25.4 authentic replacement for prior generic coloured-stone placeholder"
+    },
+    {
+      "id": "nugget",
+      "file": "arcade/fossil-museum-v0254/items/nugget.png",
+      "source": "Existing packaged LuckyDex Pok\u00e9mon item pixel sprite; retained in v0.25.4 authentic item namespace"
+    },
+    {
+      "id": "odd-keystone",
+      "file": "arcade/fossil-museum-v0254/items/odd-keystone.png",
+      "source": "Packaged Pok\u00e9mon item sprite; v0.25.4 authentic item-art replacement"
+    },
+    {
+      "id": "old-amber",
+      "file": "arcade/fossil-museum-v0254/items/old-amber.png",
+      "source": "Pok\u00e9mon fossil/item pixel sprite; v0.25.4 authentic replacement for prior custom placeholder art"
+    },
+    {
+      "id": "pearl",
+      "file": "arcade/fossil-museum-v0254/items/pearl.png",
+      "source": "Existing packaged LuckyDex Pok\u00e9mon item pixel sprite; retained in v0.25.4 authentic item namespace"
+    },
+    {
+      "id": "plume-fossil",
+      "file": "arcade/fossil-museum-v0254/items/plume-fossil.png",
+      "source": "Pok\u00e9mon fossil/item pixel sprite; v0.25.4 authentic replacement for prior custom placeholder art"
+    },
+    {
+      "id": "rare-bone",
+      "file": "arcade/fossil-museum-v0254/items/rare-bone.png",
+      "source": "Existing packaged LuckyDex Pok\u00e9mon item pixel sprite; retained in v0.25.4 authentic item namespace"
+    },
+    {
+      "id": "relic-band",
+      "file": "arcade/fossil-museum-v0254/items/relic-band.png",
+      "source": "Existing packaged LuckyDex Pok\u00e9mon item pixel sprite; retained in v0.25.4 authentic item namespace"
+    },
+    {
+      "id": "relic-copper",
+      "file": "arcade/fossil-museum-v0254/items/relic-copper.png",
+      "source": "Existing packaged LuckyDex Pok\u00e9mon item pixel sprite; retained in v0.25.4 authentic item namespace"
+    },
+    {
+      "id": "relic-crown",
+      "file": "arcade/fossil-museum-v0254/items/relic-crown.png",
+      "source": "Existing packaged LuckyDex Pok\u00e9mon item pixel sprite; retained in v0.25.4 authentic item namespace"
+    },
+    {
+      "id": "relic-gold",
+      "file": "arcade/fossil-museum-v0254/items/relic-gold.png",
+      "source": "Existing packaged LuckyDex Pok\u00e9mon item pixel sprite; retained in v0.25.4 authentic item namespace"
+    },
+    {
+      "id": "relic-silver",
+      "file": "arcade/fossil-museum-v0254/items/relic-silver.png",
+      "source": "Existing packaged LuckyDex Pok\u00e9mon item pixel sprite; retained in v0.25.4 authentic item namespace"
+    },
+    {
+      "id": "relic-statue",
+      "file": "arcade/fossil-museum-v0254/items/relic-statue.png",
+      "source": "Existing packaged LuckyDex Pok\u00e9mon item pixel sprite; retained in v0.25.4 authentic item namespace"
+    },
+    {
+      "id": "relic-vase",
+      "file": "arcade/fossil-museum-v0254/items/relic-vase.png",
+      "source": "Existing packaged LuckyDex Pok\u00e9mon item pixel sprite; retained in v0.25.4 authentic item namespace"
+    },
+    {
+      "id": "root-fossil",
+      "file": "arcade/fossil-museum-v0254/items/root-fossil.png",
+      "source": "Pok\u00e9mon fossil/item pixel sprite; v0.25.4 authentic replacement for prior custom placeholder art"
+    },
+    {
+      "id": "sail-fossil",
+      "file": "arcade/fossil-museum-v0254/items/sail-fossil.png",
+      "source": "Pok\u00e9mon fossil/item pixel sprite; v0.25.4 authentic replacement for prior custom placeholder art"
+    },
+    {
+      "id": "skull-fossil",
+      "file": "arcade/fossil-museum-v0254/items/skull-fossil.png",
+      "source": "Pok\u00e9mon fossil/item pixel sprite; v0.25.4 authentic replacement for prior custom placeholder art"
+    },
+    {
+      "id": "star-piece",
+      "file": "arcade/fossil-museum-v0254/items/star-piece.png",
+      "source": "Existing packaged LuckyDex Pok\u00e9mon item pixel sprite; retained in v0.25.4 authentic item namespace"
+    },
+    {
+      "id": "stardust",
+      "file": "arcade/fossil-museum-v0254/items/stardust.png",
+      "source": "Existing packaged LuckyDex Pok\u00e9mon item pixel sprite; retained in v0.25.4 authentic item namespace"
+    },
+    {
+      "id": "tcg-card",
+      "file": "arcade/fossil-museum-v0254/items/tcg-card.png",
+      "source": "Existing packaged LuckyDex Pok\u00e9mon item pixel sprite; retained in v0.25.4 authentic item namespace"
+    },
+    {
+      "id": "thunder-stone",
+      "file": "arcade/fossil-museum-v0254/items/thunder-stone.png",
+      "source": "Pok\u00e9mon evolution-stone pixel sprite; v0.25.4 authentic replacement for prior generic coloured-stone placeholder"
+    },
+    {
+      "id": "ultra-ball",
+      "file": "arcade/fossil-museum-v0254/items/ultra-ball.png",
+      "source": "Existing packaged LuckyDex Pok\u00e9mon item pixel sprite; retained in v0.25.4 authentic item namespace"
+    },
+    {
+      "id": "water-stone",
+      "file": "arcade/fossil-museum-v0254/items/water-stone.png",
+      "source": "Pok\u00e9mon evolution-stone pixel sprite; v0.25.4 authentic replacement for prior generic coloured-stone placeholder"
+    }
+  ]
+}

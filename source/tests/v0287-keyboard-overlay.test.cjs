@@ -1,0 +1,12 @@
+const assert=require('node:assert/strict');
+const fs=require('node:fs');const path=require('node:path');const root=path.resolve(__dirname,'..');
+const manifest=fs.readFileSync(path.join(root,'app/src/main/AndroidManifest.xml'),'utf8');
+const css=fs.readFileSync(path.join(root,'app/src/main/assets/arcade.css'),'utf8');
+const js=fs.readFileSync(path.join(root,'app/src/main/assets/arcade-unown.js'),'utf8');
+assert.match(manifest,/windowSoftInputMode="adjustNothing"/,'Android keyboard must overlay instead of resizing the page');
+assert.doesNotMatch(js,/visualViewport/,'do not resize the answer screen to the keyboard-shrunken visual viewport');
+assert.match(css,/\.unown-answer-open\{[^}]*position:fixed!important[^}]*overflow:hidden!important|\.unown-answer-open\{[^}]*overflow:hidden!important[^}]*position:fixed!important/,'page must be locked while answer overlay is open');
+const shell=css.match(/\.unown-answer-shell\{[^}]*height:min\((\d+)vh,(\d+)px\)/);
+assert.ok(shell&&Number(shell[1])<=52&&Number(shell[2])<=520,'answer UI should fit in the top half so the keyboard can cover the lower half');
+assert.match(css,/ruins-of-alph\.jpg/,'answer overlay should preserve Ruins background');
+console.log('PASS v0.28.7 fixed keyboard-overlay contract');

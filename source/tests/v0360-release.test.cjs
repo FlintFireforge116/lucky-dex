@@ -1,0 +1,12 @@
+'use strict';
+const assert=require('node:assert/strict');
+const fs=require('node:fs'),path=require('node:path');
+const root=path.join(__dirname,'..');const read=p=>fs.readFileSync(path.join(root,p),'utf8');
+const pkg=require('../package.json');const lock=require('../package-lock.json');const gradle=read('app/build.gradle'),app=read('app/src/main/assets/app-v0167.js'),html=read('app/src/main/assets/index.html'),world=read('app/src/main/assets/arcade-world.js');
+const semver=v=>String(v).split('.').map(n=>Number(n)||0);const atLeast=(v,floor)=>{const a=semver(v),b=semver(floor);for(let i=0;i<3;i++){if(a[i]>b[i])return true;if(a[i]<b[i])return false;}return true;};
+assert.ok(atLeast(pkg.version,'0.36.0'),'release remains at or beyond the Dig! Dig! Dig! baseline');assert.equal(lock.version,pkg.version);assert.equal(lock.packages[''].version,pkg.version);
+const code=Number(gradle.match(/versionCode\s+(\d+)/)?.[1]);assert.ok(code>=3600);assert.match(gradle,/applicationId 'com\.example\.luckydex'/);assert.match(gradle,new RegExp(`versionName '${pkg.version.replaceAll('.','\\.')}'`));assert.match(gradle,new RegExp(`LuckyDex-asset-builder/${pkg.version.replaceAll('.','\\.')}`));
+assert.match(app,new RegExp(`window\.__LUCKYDEX_BUILD='${pkg.version.replaceAll('.','\\.')}'`));assert.match(html,new RegExp(`v${pkg.version.replaceAll('.','\\.')}`));assert.doesNotMatch(html,/v0\.35\.17/);
+for(const f of ['app/src/main/assets/arcade-dig-dig-dig-core.js','app/src/main/assets/arcade-dig-dig-dig.js','app/src/main/assets/arcade-dig-dig-dig.css'])assert.ok(fs.existsSync(path.join(root,f)),`missing ${f}`);
+assert.match(world,/games:\['ekansHoop','digDigDig'(?:,'[^']+')*\]/);assert.match(html,/arcade-ekans-hoop-core\.js/);assert.match(html,/arcade-dig-dig-dig-core\.js/);
+console.log('PASS v0.36.0 release identity and Kids Club bundle contract');

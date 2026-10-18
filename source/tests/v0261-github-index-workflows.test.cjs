@@ -1,0 +1,20 @@
+'use strict';
+const assert=require('node:assert/strict');
+const fs=require('node:fs');
+const path=require('node:path');
+const ROOT=path.resolve(__dirname,'..');
+const physicalIndexWorkflow=fs.readFileSync(path.join(ROOT,'.github/workflows/build-card-art-index.yml'),'utf8');
+const pocketIndexWorkflow=fs.readFileSync(path.join(ROOT,'.github/workflows/build-tcgp-card-index.yml'),'utf8');
+const indexWorkflow=physicalIndexWorkflow+'\n'+pocketIndexWorkflow;
+const apkWorkflow=fs.readFileSync(path.join(ROOT,'.github/workflows/build-apk.yml'),'utf8');
+const gradle=fs.readFileSync(path.join(ROOT,'app/build.gradle'),'utf8');
+
+assert.ok(Number((gradle.match(/versionCode\s+(\d+)/)||[])[1])>=261,'release must remain an update over v0.26.0');
+const versionName=(gradle.match(/versionName\s+['"]([^'"]+)['"]/ )||[])[1];assert.ok(versionName&&versionName.localeCompare('0.26.1',undefined,{numeric:true})>=0,'versionName must not regress below 0.26.1');
+assert.match(indexWorkflow,/PocketDecks\/pokemon-tcg-pocket-cards/,'GitHub index workflow must checkout the complete Pocket catalogue');
+assert.match(indexWorkflow,/tcgp-card-index\.json/,'GitHub index workflow must publish a Pocket index beside the physical index');
+assert.match(indexWorkflow,/images\/webp\/cards|raw\.githubusercontent\.com\/PocketDecks/,'Pocket index must retain exact per-card artwork URLs');
+assert.match(indexWorkflow,/images\/webp\/packs|pack.*art/i,'Pocket index must retain exact per-pack artwork');
+assert.match(indexWorkflow,/4097|card_count.*4000|card_count[^\n]*>=?\s*4000/i,'Pocket index generation must guard against silently losing most of the current catalogue');
+assert.match(apkWorkflow,/build-booster-art-index\.py/,'APK workflow inside the source must materialise physical pack art before Gradle');
+console.log('PASS v0.26.1 GitHub Pocket-index + physical pack-art build contracts');

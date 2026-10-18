@@ -1,0 +1,16 @@
+'use strict';
+const assert=require('node:assert/strict'),fs=require('fs'),path=require('path');
+const root=path.join(__dirname,'..'),read=p=>fs.readFileSync(path.join(root,p),'utf8');
+const world=read('app/src/main/assets/arcade-world.js'),html=read('app/src/main/assets/index.html');
+assert.match(world,/id:"stadiumKidsClub"[^\n]*games:\['ekansHoop','digDigDig','magikarpSplash'(?:,'[^']+')*\]/);
+assert.match(world,/magikarpSplash:'Magikarp’s Splash'/);
+assert.match(world,/magikarpSplash:'[^']*(?:hold|Hold)[^']*(?:land|rhythm)/i);
+assert.match(world,/magikarpSplash:\(\)=>window\.LuckyDexMagikarpSplash/);
+const coreAt=html.indexOf('<script src="arcade-magikarp-splash-core.js"></script>'),ownerAt=html.indexOf('<script src="arcade-magikarp-splash.js"></script>'),worldAt=html.indexOf('<script src="arcade-world.js"></script>');
+assert.ok(coreAt>0&&ownerAt>coreAt&&worldAt>ownerAt);
+assert.match(html,/<link rel="stylesheet" href="arcade-magikarp-splash\.css" \/>/);
+const a=html.indexOf('id="magikarpSplashGame"'),b=html.indexOf('id="dashGame"');assert.ok(a>0&&b>a);const shell=html.slice(a,b);
+for(const id of ['magikarpSplashGame','magikarpSplashStage','magikarpSplashHud','magikarpSplashTimer','magikarpSplashPlace','magikarpSplashDifficultyLabel','magikarpSplashPlayerLane','magikarpSplashCpu1Lane','magikarpSplashCpu2Lane','magikarpSplashCpu3Lane','magikarpSplashPlayerScore','magikarpSplashCpu1Score','magikarpSplashCpu2Score','magikarpSplashCpu3Score','magikarpSplashPlayerSwitch','magikarpSplashCpu1Switch','magikarpSplashCpu2Switch','magikarpSplashCpu3Switch','magikarpSplashCountdown','magikarpSplashReady','magikarpSplashStart','magikarpSplashButton','magikarpSplashPauseOverlay','magikarpSplashResume','magikarpSplashStandings'])assert.match(shell,new RegExp(`id="${id}"`),id);
+for(const d of ['easy','normal','hard'])assert.match(shell,new RegExp(`data-magikarp-difficulty="${d}"`));
+assert.strictEqual((shell.match(/arcade\/sprites\/actors\/pokemon\/129\.png/g)||[]).length,5,'four lanes + mascot use local Magikarp');
+console.log('PASS v0.37.0 Magikarp Kids Club integration contract');

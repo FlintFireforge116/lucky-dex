@@ -1,0 +1,132 @@
+.roulette-game{
+  max-width:600px;margin:0 auto;padding:58px 8px max(10px,env(safe-area-inset-bottom));
+  gap:6px;overflow-y:auto;overflow-x:hidden;background:radial-gradient(circle at 50% -10%,#315b68 0 10%,transparent 38%),repeating-linear-gradient(135deg,#102331 0 18px,#132a38 18px 36px);
+  border:0;box-shadow:inset 0 0 0 4px #c9dbc7,inset 0 0 0 8px #486b6c;
+}
+.roulette-game>.arcade-session-strip{display:none!important}
+.roulette-game .arcade-full-head{margin:0}
+.roulette-header{
+  display:flex;justify-content:space-between;gap:8px;align-items:center;
+  min-height:46px;background:linear-gradient(180deg,#21495b,#143345);border:3px solid #f0d879;
+  box-shadow:inset 0 0 0 2px #486b6c,0 2px 0 #7a5122;padding:6px 9px;flex:none
+}
+.roulette-header .eyebrow{color:#ecd36f}.roulette-header h2{margin:0;font-size:1.18rem;line-height:1.05}
+.roulette-wallet{text-align:right;white-space:nowrap}.roulette-wallet small{display:block;font-size:.57rem;letter-spacing:.12em;color:#cbd6ca}.roulette-wallet b{font-size:1.15rem;color:#ffe073}
+.roulette-service{margin:0;background:#f4d35e;color:#17202b;border:2px solid #fff2a8;padding:4px 7px;text-align:center;font-size:.68rem;font-weight:900;letter-spacing:.06em;flex:none}
+.roulette-table-row{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin:0;flex:none}
+.roulette-table-row button{min-height:42px;border:2px solid #66818a;background:#172b3d;color:#f4f7f0;font-weight:900;padding:4px 7px}
+.roulette-table-row button.active{background:#335f67;border-color:#ffe073;box-shadow:inset 0 0 0 2px #d3b64c}
+.roulette-table-row button small{display:block;color:#bdcaca;margin-bottom:1px;font-size:.58rem}.roulette-table-row button b{font-size:.86rem}
+
+.roulette-stage-wrap{position:relative;min-height:0}.roulette-stage{display:grid;grid-template-columns:1fr;gap:7px;align-items:start;max-width:560px;margin:0 auto}
+.roulette-wheel-panel,.roulette-board-panel{min-width:0;border:3px solid #70878b;padding:7px}
+.roulette-wheel-panel{position:relative;--roulette-bulb-glow:0 0 5px #fff1a8;background:linear-gradient(145deg,#7c2b50 0 42%,#51203d 100%);border-color:#f1d16b;box-shadow:inset 0 0 0 3px #b15173,0 3px 0 #351426;padding:16px 12px 9px}
+.roulette-wheel-panel:before{content:"";position:absolute;inset:3px;z-index:0;pointer-events:none;background-image:radial-gradient(circle,#fffbd2 0 2px,#f2c84b 2.5px 4px,transparent 4.5px),radial-gradient(circle,#fffbd2 0 2px,#f2c84b 2.5px 4px,transparent 4.5px),radial-gradient(circle,#fffbd2 0 2px,#f2c84b 2.5px 4px,transparent 4.5px),radial-gradient(circle,#fffbd2 0 2px,#f2c84b 2.5px 4px,transparent 4.5px);background-size:20px 11px,20px 11px,11px 20px,11px 20px;background-repeat:repeat-x,repeat-x,repeat-y,repeat-y;background-position:12px 0,12px 100%,0 12px,100% 12px;filter:drop-shadow(var(--roulette-bulb-glow));animation:rouletteBulbs 1.2s steps(2,end) infinite}
+.roulette-wheel-panel>*{position:relative;z-index:1}
+@keyframes rouletteBulbs{50%{filter:drop-shadow(0 0 8px #fff6c8) brightness(1.18)}}
+.roulette-wheel{
+  --icon-radius:151px;--pocket-radius:105px;
+  position:relative;aspect-ratio:1;max-width:390px;margin:auto;border-radius:50%;
+  background:#7d3151;border:8px solid #efd162;box-shadow:0 0 0 4px #7a3150,0 0 0 7px #f6e19a,inset 0 0 0 3px #a8733f;
+  overflow:hidden;image-rendering:pixelated
+}
+.roulette-wheel-rotor{
+  position:absolute;inset:0;border-radius:50%;overflow:hidden;z-index:1;
+  transform:rotate(var(--roulette-wheel-angle,0deg));
+  transition:transform 3.1s cubic-bezier(.08,.68,.12,1);
+  background:
+    radial-gradient(circle,#2a5c66 0 27%,#ebe4bb 27.8% 42%,transparent 42.8%),
+    repeating-conic-gradient(from -15deg,#e2bd4d 0 30deg,#66a86f 30deg 60deg,#8769aa 60deg 90deg)
+}
+.roulette-wheel-rotor:before{
+  content:"";position:absolute;inset:0;border-radius:50%;pointer-events:none;z-index:2;
+  background:repeating-conic-gradient(from -15deg,transparent 0 28.7deg,#745b49 28.7deg 30deg);
+  -webkit-mask:radial-gradient(circle,transparent 0 27%,#000 28% 96%,transparent 97%);mask:radial-gradient(circle,transparent 0 27%,#000 28% 96%,transparent 97%)
+}
+.roulette-wheel-rotor:after{content:"";position:absolute;inset:4%;border-radius:50%;pointer-events:none;z-index:2;background:linear-gradient(120deg,rgba(255,255,255,.24) 0 10%,transparent 24% 62%,rgba(255,226,125,.16) 78% 86%,transparent 92%);mix-blend-mode:screen}
+.roulette-wheel-rotor.spinning{filter:saturate(1.08) brightness(1.04)}
+#rouletteWheelSlots{position:absolute;inset:0;z-index:3}
+.roulette-wheel-hub{
+  position:absolute;left:50%;top:50%;z-index:6;transform:translate(-50%,-50%);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:7px;width:40%;aspect-ratio:1;border-radius:50%;
+  background:radial-gradient(circle at 38% 30%,#4b8a93 0 8%,#2a606a 32%,#163f4b 76%),repeating-conic-gradient(from 0deg,#2c6870 0 15deg,#225762 15deg 30deg);border:4px solid #233e48;box-shadow:0 0 0 4px #f0dc83,0 0 16px #ffe66b55,inset 0 0 0 3px #4a7880;
+  font-size:.7rem;font-weight:1000;letter-spacing:.12em;color:#ffe985;pointer-events:none
+}
+.roulette-wheel-hub>span{line-height:1}.roulette-wheel-hub small{display:flex;align-items:baseline;gap:4px;font-size:.42rem;letter-spacing:.08em;color:#d8e8df}.roulette-wheel-hub small b{font-size:1.3rem;line-height:.8;color:#fff1a0;text-shadow:0 1px 0 #5f4511}
+.roulette-wheel-slot{position:absolute;left:50%;top:50%;width:0;height:0;z-index:4;transform:rotate(calc(var(--i)*30deg))}
+.roulette-wheel-icon{
+  position:absolute;left:-23px;top:-23px;width:46px;height:46px;display:grid;place-items:center;border-radius:0;
+  transform:translateY(calc(var(--icon-radius)*-1)) rotate(calc(var(--i)*-30deg));
+  background:transparent;border:0;box-shadow:none
+}
+.roulette-wheel-icon img{width:42px;height:42px;object-fit:contain;image-rendering:pixelated;filter:drop-shadow(0 2px 0 #26313a) drop-shadow(0 0 2px #fff8)}
+.roulette-wheel-pocket{
+  position:absolute;left:-12px;top:-12px;width:24px;height:24px;border-radius:50%;
+  transform:translateY(calc(var(--pocket-radius)*-1));
+  background:radial-gradient(circle at 50% 45%,#101a20 0 48%,#293940 52% 66%,#8b9082 68% 78%,#d7d1ad 80% 100%);border:2px solid #3b4a50;box-shadow:inset 0 3px 5px #000b,0 1px 0 #f4e7b5;display:grid;place-items:center
+}
+.roulette-wheel-pocket b{display:block;width:16px;height:16px;border-radius:50%;background:radial-gradient(circle at 30% 24%,#ffffff 0 12%,rgba(255,255,255,.55) 13% 22%,transparent 23%),linear-gradient(135deg,#f9fcff 0%,#a9b6bf 25%,#eef4f7 47%,#71808b 68%,#dbe4e9 100%);border:2px solid #59656d;box-shadow:0 0 5px #ffffff99,inset -2px -2px 3px #59656d,inset 2px 2px 2px #fff}
+.roulette-wheel-pocket b.golden{background:radial-gradient(circle at 30% 24%,#fffef0 0 12%,#fff5a7 13% 22%,transparent 23%),linear-gradient(135deg,#fff7ad 0%,#d89a17 26%,#ffe66a 48%,#9b5b08 70%,#f8c93e 100%);border-color:#70470a;box-shadow:0 0 9px #ffe56b,inset -2px -2px 3px #8f5609,inset 2px 2px 2px #fff6ae}
+.roulette-wheel-slot.occupied .roulette-wheel-icon{filter:saturate(.68) brightness(.88)}
+.roulette-wheel-slot.bet-covered .roulette-wheel-pocket{border-color:#fff3a2;box-shadow:0 0 0 3px #fff1a866,inset 0 0 0 2px #fff9d5}
+.roulette-wheel-slot.bet-covered .roulette-wheel-icon img{filter:drop-shadow(0 0 4px #fff4a6) drop-shadow(0 2px 0 #26313a)}
+.roulette-wheel-slot.winning .roulette-wheel-pocket{animation:rouletteWinPocket .42s ease-in-out 3;border-color:#fff8c2;box-shadow:0 0 0 4px #ffe66b88,0 0 18px #ffe66b,inset 0 0 0 2px #fff}
+.roulette-wheel-slot.winning .roulette-wheel-icon img{animation:rouletteWinnerBounce .42s ease-in-out 3;filter:drop-shadow(0 0 8px #fff4a6) drop-shadow(0 2px 0 #26313a)}
+@keyframes rouletteWinPocket{50%{transform:translateY(calc(var(--pocket-radius)*-1)) scale(1.28)}}
+@keyframes rouletteWinnerBounce{50%{transform:scale(1.16)}}
+.roulette-ball{
+  position:absolute;left:50%;top:50%;width:20px;height:20px;margin:-10px;border-radius:50%;opacity:0;
+  background:radial-gradient(circle at 30% 24%,#fff 0 13%,rgba(255,255,255,.6) 14% 22%,transparent 23%),linear-gradient(135deg,#fbfdff,#a9b6bf 28%,#f4f7f9 48%,#6e7d87 72%,#dbe4e9);border:2px solid #4c5d62;box-shadow:0 2px 3px #0008,0 0 7px #fff9;z-index:10;
+  transform:rotate(var(--roulette-angle,0deg)) translateY(calc(var(--pocket-radius)*-1));transition:transform 3.05s cubic-bezier(.08,.7,.12,1),opacity .08s linear
+}
+.roulette-ball.spinning{opacity:1;box-shadow:0 0 0 3px #ffffff55,0 2px 4px #0008}
+.roulette-ball.golden{background:radial-gradient(circle at 30% 24%,#fffef0 0 13%,#fff4a3 14% 22%,transparent 23%),linear-gradient(135deg,#fff7ad,#d89a17 28%,#ffe66a 48%,#925406 72%,#f8c93e);border-color:#76500d;box-shadow:0 0 0 3px #fff0a655,0 0 14px #ffd84d,0 2px 4px #0008}
+
+.roulette-board-panel{background:linear-gradient(145deg,#1d684f,#123e37);border-color:#f0d77d;box-shadow:inset 0 0 0 3px #294a3d,0 2px 0 #6d4e20;padding:7px}
+.roulette-board-grid{display:grid;grid-template-columns:minmax(92px,1.2fr) repeat(3,1fr);gap:3px;padding:4px;background:#d9c778;border:2px solid #6b5630}
+.roulette-board-corner,.roulette-board-head,.roulette-pokemon-bet,.roulette-cell{border:1px solid #5f593e;min-width:0;border-radius:1px;box-shadow:inset 0 0 0 1px rgba(255,255,255,.22)}
+.roulette-board-corner{display:grid;place-items:center;background:#1e493d;color:#f7e59e;font-weight:900;font-size:.64rem}
+.roulette-board-head{min-height:42px;color:#15282b;font-weight:900;padding:2px}.roulette-board-head b{font-size:.72rem}.roulette-board-head small,.roulette-pokemon-bet small,.roulette-cell small{display:block;font-size:.59rem;line-height:1}
+.roulette-board-row{display:contents}.roulette-pokemon-bet{min-height:46px;display:flex;align-items:center;text-align:left;gap:3px;background:#275746;color:white;padding:1px 3px}
+.roulette-pokemon-bet img{width:31px;height:31px;object-fit:contain;image-rendering:pixelated}.roulette-pokemon-bet span{font-size:.64rem;font-weight:900;min-width:0;line-height:1.05}
+.roulette-cell{min-height:46px;position:relative;display:grid;place-items:center;padding:0;color:#14252a}.roulette-cell img{width:31px;height:31px;object-fit:contain;image-rendering:pixelated}
+.roulette-yellow{background:#e1bd4d}.roulette-green{background:#68a96f}.roulette-purple{background:#8667a5;color:#fff}
+.roulette-board-head.selected,.roulette-pokemon-bet.selected,.roulette-cell.selected{outline:3px solid #fff4a0;outline-offset:-3px;box-shadow:inset 0 0 0 2px #293d45}
+.roulette-cell.bet-covered{outline:3px solid #fff4a0;outline-offset:-3px;box-shadow:inset 0 0 0 2px rgba(255,255,255,.7);filter:brightness(1.12)}
+.roulette-cell.winning{z-index:2;outline:3px solid #fffbd0;outline-offset:-3px;animation:rouletteCellWin .35s ease-in-out 4;box-shadow:0 0 12px #ffe76e,inset 0 0 0 2px #fff8c7}
+@keyframes rouletteCellWin{50%{filter:brightness(1.35);transform:scale(1.04)}}
+.roulette-result-flash{position:absolute;left:50%;top:50%;z-index:30;transform:translate(-50%,-50%) scale(1);min-width:150px;padding:8px 14px;text-align:center;background:linear-gradient(180deg,#fff6b2,#e4b735);color:#17232b;border:3px solid #fffbd9;box-shadow:0 0 0 3px #8b5c16,0 0 24px #ffe86d;border-radius:7px;animation:rouletteResultPop .3s cubic-bezier(.2,1.4,.4,1)}
+.roulette-result-flash[hidden]{display:none}.roulette-result-flash small,.roulette-result-flash span{display:block;font-weight:900}.roulette-result-flash small{font-size:.66rem;letter-spacing:.12em}.roulette-result-flash b{display:block;font-size:1.55rem;line-height:1}.roulette-result-flash span{font-size:.6rem;margin-top:3px}.roulette-result-flash.golden{background:linear-gradient(180deg,#fffbd4,#ffc928 52%,#c67a05);box-shadow:0 0 0 3px #70430a,0 0 30px #ffd84d}
+@keyframes rouletteResultPop{from{opacity:0;transform:translate(-50%,-50%) scale(.62)}to{opacity:1;transform:translate(-50%,-50%) scale(1)}}
+.roulette-wallet.win-pulse b{animation:rouletteWalletWin .35s ease-in-out 4}@keyframes rouletteWalletWin{50%{color:#fff8bd;text-shadow:0 0 10px #ffe55c;transform:scale(1.12)}}
+.roulette-cell.occupied{filter:grayscale(.65) brightness(.66);cursor:not-allowed}.roulette-cell.occupied:after{content:"●";position:absolute;font-size:1rem;color:#faf5df;text-shadow:0 1px #17222b}
+.roulette-selection{margin-top:5px;padding:5px 7px;border:2px solid #d8c885;background:#13382f;display:grid;gap:0;min-height:42px}.roulette-selection small{font-size:.52rem;letter-spacing:.1em;color:#edd66e}.roulette-selection b{font-size:.78rem;line-height:1.05}.roulette-selection span{font-size:.62rem;color:#d4ded8;line-height:1.15}
+.roulette-spin{width:100%;min-height:44px;margin-top:5px;background:#f1c94c!important;color:#14202a!important;font-size:.9rem!important;padding:6px!important}
+.roulette-message{min-height:40px;margin-top:5px;padding:4px 7px;border:2px solid #82928a;background:#0d2b25;display:flex;flex-direction:column;justify-content:center}.roulette-message b{font-size:.72rem}.roulette-message span{font-size:.6rem;color:#d2dcd7}.roulette-message.win{border-color:#ecd667;background:#2b4a35}.roulette-message.golden{border-color:#ffe66b;background:#5b4615;color:#fff6bf}.roulette-message.golden span{color:#fff0a8}
+.roulette-rescue{position:absolute;left:50%;top:27%;transform:translateX(-50%);z-index:20;background:#f4f1d2;color:#17222a;border:3px solid #49606a;padding:6px 9px;display:grid;grid-template-columns:42px auto;grid-template-rows:auto auto;column-gap:6px;align-items:center;min-width:210px}.roulette-rescue[hidden]{display:none}.roulette-rescue img{grid-row:1/3;width:42px;height:42px;image-rendering:pixelated}.roulette-rescue b{font-size:.78rem}.roulette-rescue span{font-size:.62rem}
+
+@media(max-width:680px){
+  .roulette-game{height:100dvh;max-height:100dvh;overflow:hidden;padding:50px 5px max(4px,env(safe-area-inset-bottom));gap:3px;display:flex;flex-direction:column;box-shadow:inset 0 0 0 3px #c9dbc7,inset 0 0 0 6px #486b6c}
+  .roulette-header{min-height:36px;padding:3px 6px}.roulette-header h2{font-size:1rem}.roulette-wallet small{font-size:.48rem}.roulette-wallet b{font-size:1rem}
+  .roulette-table-row{gap:4px}.roulette-table-row button{min-height:32px;padding:1px 4px}.roulette-table-row button small{font-size:.5rem}.roulette-table-row button b{font-size:.75rem}
+  .roulette-stage{grid-template-columns:1fr;gap:3px;max-width:100%;min-height:0}
+  .roulette-wheel-panel,.roulette-board-panel{padding:4px;border-width:2px}.roulette-wheel-panel{padding-top:10px}
+  .roulette-wheel{--icon-radius:124px;--pocket-radius:87px;max-width:340px;max-width:clamp(238px,38dvh,305px);border-width:6px;box-shadow:0 0 0 2px #79304e,0 0 0 4px #f6e19a,inset 0 0 0 3px #ae7540}
+  .roulette-wheel-hub{font-size:.5rem;border-width:2px;box-shadow:0 0 0 2px #dcd5ad,inset 0 0 0 2px #4a7880}
+  .roulette-wheel-icon{left:-17px;top:-17px;width:34px;height:34px}.roulette-wheel-icon img{width:32px;height:32px}
+  .roulette-wheel-pocket{left:-10px;top:-10px;width:20px;height:20px;border-width:2px}.roulette-wheel-pocket b{width:14px;height:14px;border-width:1px}
+  .roulette-ball{width:17px;height:17px;margin:-8.5px;border-width:1px}
+  .roulette-board-grid{grid-template-columns:64px repeat(3,minmax(0,1fr));gap:2px;padding:2px;border-width:1px}
+  .roulette-board-head{min-height:28px;padding:1px}.roulette-board-head b{font-size:.56rem}.roulette-board-head small,.roulette-pokemon-bet small,.roulette-cell small{font-size:.47rem}
+  .roulette-pokemon-bet,.roulette-cell{min-height:34px}.roulette-pokemon-bet,.roulette-cell{min-height:31px}.roulette-pokemon-bet{gap:1px;padding:0 1px}.roulette-pokemon-bet img,.roulette-cell img{width:22px;height:22px}.roulette-pokemon-bet span{font-size:.48rem;line-height:1}
+  .roulette-selection{min-height:29px;margin-top:2px;padding:2px 4px}.roulette-selection small{font-size:.44rem}.roulette-selection b{font-size:.62rem}.roulette-selection span{font-size:.5rem}
+  .roulette-spin{min-height:32px;margin-top:2px;font-size:.72rem!important;padding:2px!important}.roulette-message{display:none;min-height:0;margin:0;padding:0}.roulette-message b{font-size:.58rem}.roulette-message span{font-size:.48rem}
+}
+@media(max-width:380px){
+  .roulette-wheel{--icon-radius:124px;--pocket-radius:86px;max-width:320px}
+  .roulette-board-grid{grid-template-columns:59px repeat(3,minmax(0,1fr))}.roulette-pokemon-bet img,.roulette-cell img{width:20px;height:20px}.roulette-pokemon-bet span{font-size:.44rem}
+}
+@media(max-height:820px) and (max-width:680px){
+  .roulette-game{padding-top:48px}.roulette-header{min-height:34px}.roulette-header .eyebrow{display:none}.roulette-table-row button{min-height:29px}
+  .roulette-wheel{max-width:285px;--icon-radius:110px;--pocket-radius:77px}.roulette-pokemon-bet,.roulette-cell{min-height:29px}.roulette-board-head{min-height:26px}.roulette-selection{min-height:27px}
+}

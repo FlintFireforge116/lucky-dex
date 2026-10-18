@@ -1,0 +1,13 @@
+const assert=require('node:assert/strict');
+const fs=require('node:fs');
+const path=require('node:path');
+const core=require('../app/src/main/assets/arcade-fossil-museum-core.js');
+const file=path.join(__dirname,'../app/src/main/assets/arcade/fossil-museum-v0257/recovery-masks.json');
+const manifest=JSON.parse(fs.readFileSync(file,'utf8'));
+assert.equal(manifest.version,'0.25.7');
+assert.equal(manifest.source,'sprite-alpha-v0257');
+assert.match(manifest.algorithm,/alpha>16/);
+assert.match(manifest.algorithm,/require-all-occupied-cells/);
+assert.deepEqual(manifest.masks,core.RECOVERY_MASKS,'runtime recovery masks must exactly match the audited alpha-mask manifest');
+assert.equal(Object.keys(manifest.masks).length,46,'all active dig rewards, including coin caches, TCG card and booster, need a recovery mask');
+console.log('PASS v0.25.7 recovery-mask manifest contract');

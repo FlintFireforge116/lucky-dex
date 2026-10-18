@@ -1,0 +1,263 @@
+/* Definitive Arcade composition. Source images are packaged with the app. */
+html,body{max-width:100%;overflow-x:clip}
+[data-page="arcade"]{--scene-width:100%}
+[data-page="arcade"]>.arcade-hero,[data-page="arcade"]>#helperStrip{display:none}
+[data-page="arcade"].active{padding:0;--venue-hero-height:clamp(200px,40vh,430px)}
+.arcade-world-view{width:100%;height:100%;margin:0;overflow:hidden}
+.arcade-world-shell{position:relative;width:100%;height:100%;margin:0}
+.arcade-world-viewport{display:grid;grid-template-rows:44px var(--venue-hero-height) auto 52px auto;align-content:start;gap:12px;overflow-x:hidden;overflow-y:auto;overscroll-behavior:contain;min-width:0;height:100%;padding:12px;padding-bottom:max(20px,env(safe-area-inset-bottom));scroll-padding-bottom:max(20px,env(safe-area-inset-bottom))}
+.world-toolbar{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.world-toolbar>span{font-size:10px;color:#becddc;letter-spacing:.12em}
+.world-home{min-height:44px;padding:8px 12px;border:1px solid #647c92;border-radius:3px;background:#183145;color:#fff;font-weight:800;font-size:12px}
+.world-scene{position:relative;height:var(--venue-hero-height);max-height:45vh;min-height:0;overflow:hidden;background:#080e18}
+.world-scene>img{width:100%;height:100%;object-fit:cover;object-position:var(--venue-position,center);display:block}
+.world-caption{position:absolute;inset:auto 0 0;padding:28px 14px 12px;background:linear-gradient(transparent,#06101bed);color:white;pointer-events:none}
+.world-caption small{font-size:11px;letter-spacing:.1em}.world-caption h2{font-size:24px;margin:4px 0 0}
+.world-summary{display:grid;gap:4px;padding:2px 4px;color:#e7edf3}.world-summary>span{font-size:9px;letter-spacing:.15em;color:#9eb8cb}.world-summary b{font-size:15px;line-height:1.35}
+.world-enter{display:flex;justify-content:space-between;align-items:center;min-height:52px;width:100%;border:0;border-left:3px solid #e8ca66;border-radius:3px;background:#203c50;color:#fff;padding:0 16px;font-weight:800;font-size:14px}
+.world-enter span{font-size:28px}
+.world-stops{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:6px;margin:0}
+.world-stops button{min-height:44px;border:1px solid #334d62;border-radius:3px;background:#1a2a3a;color:#b5c8da;font-weight:700}.world-stops [aria-current="true"]{background:#e8ca66;color:#14202e}
+.arcade-world-arrow{position:absolute;z-index:2;top:calc(68px + var(--venue-hero-height)/2 - 28px);width:44px;height:56px;border:1px solid #f5ead1;border-radius:3px;background:#071423c9;color:white;font-size:32px}.arcade-world-arrow.prev{left:12px}.arcade-world-arrow.next{right:12px}.arcade-world-arrow:disabled{visibility:hidden}
+.arcade-venue-view{width:100%;height:100%;margin:0;padding:12px;display:flex;flex-direction:column;gap:12px;position:relative;overflow:hidden}
+.arcade-venue-view[hidden],.arcade-world-view[hidden]{display:none}
+.arcade-venue-hero{position:relative;flex:none;height:var(--venue-hero-height);max-height:45vh;min-height:0;background:#080e18;overflow:hidden}
+.arcade-venue-hero>img{width:100%;height:100%;object-fit:cover;object-position:var(--venue-position,center);display:block}
+.arcade-world-back{position:absolute;z-index:2;top:8px;left:8px;border:1px solid #dfecf2;border-radius:3px;background:#071423d9;color:white;padding:9px 12px;min-height:44px;font-weight:700}
+.arcade-venue-head{position:absolute;inset:auto 0 0;padding:30px 14px 12px;background:linear-gradient(transparent,#06101bf0)}
+.arcade-venue-head>.eyebrow{display:none}.arcade-venue-head h2{font-size:23px;margin:0}.arcade-venue-head p{font-size:11px;margin:3px 0}
+.arcade-venue-games{position:relative;display:grid;gap:8px;margin:0;flex:1;min-height:0;overflow-y:auto;overscroll-behavior:contain;padding-bottom:max(8px,env(safe-area-inset-bottom));scrollbar-width:none;-webkit-overflow-scrolling:touch}.arcade-venue-games::-webkit-scrollbar{display:none}
+.arcade-venue-game{position:relative;display:grid;gap:4px;min-height:84px;width:100%;border:0;border-left:3px solid #e8ca66;border-radius:3px;background:#1d3445;color:white;text-align:left;padding:12px 76px 12px 14px}
+.arcade-venue-game b{font-size:18px}.arcade-venue-game span{font-size:12px;line-height:1.4;opacity:.85}.arcade-venue-game em{position:absolute;right:12px;top:32px;font-weight:800;font-style:normal;font-size:13px}
+body.arcade-open,body.arcade-mode{overflow:hidden}
+body.arcade-open .topbar,body.arcade-mode .topbar{display:none}
+body.arcade-open .bottom-nav,body.arcade-venue-open .bottom-nav{display:none}
+body.arcade-open #app,body.arcade-mode #app{padding:0}
+body.arcade-mode .app-shell{height:calc(100% - var(--nav-h) - env(safe-area-inset-bottom));min-height:0;padding-bottom:0}
+body.arcade-open .app-shell,body.arcade-mode.arcade-venue-open .app-shell{height:100%}
+body.arcade-mode main{height:100%}
+body.arcade-mode [data-page="arcade"].active{height:100%;position:relative;overflow:hidden}
+.arcade-game{position:absolute;z-index:90;inset:0;margin:0 auto;width:100%;height:100%;min-height:0;max-width:600px;padding:58px 10px max(16px,env(safe-area-inset-bottom));border:0;border-radius:0;background:#101d2b;color:#f4f6ef;display:flex;flex-direction:column;justify-content:flex-start;gap:8px;align-items:stretch;overflow-y:auto;overflow-x:clip;overscroll-behavior:contain;scrollbar-width:none;box-shadow:none}
+.arcade-game[hidden]{display:none}
+.arcade-game::-webkit-scrollbar{display:none}
+.arcade-game>*{min-width:0}
+.arcade-full-head{position:absolute;top:8px;left:12px;right:12px;display:flex;align-items:center;justify-content:space-between;gap:6px;flex:none;min-height:48px;margin:0}
+.arcade-session-strip{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:5px;flex:none;min-height:38px;margin:0;padding:0}
+.arcade-session-strip>span{display:grid;align-content:center;gap:1px;min-width:0;padding:5px 7px;border:1px solid #466174;border-radius:4px;background:#172b3b;color:#eef4ef;overflow:hidden}
+.arcade-session-strip>span[hidden]{display:none!important}.arcade-session-strip small{font-size:7px;line-height:1;letter-spacing:.12em;font-weight:900;color:#e7cc6f}.arcade-session-strip b{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:9px;line-height:1.2;font-weight:800}
+.arcade-session-strip>span:last-child:nth-child(3){background:#20374a}
+.game-exit{min-height:44px;max-width:72%;border:0;border-radius:3px;background:#23374a;color:#f4f6ef;padding:7px 10px;font-weight:700;font-size:12px;text-align:left}
+.arcade-mascot{display:flex;align-items:center;gap:5px}.arcade-mascot img{width:42px;height:42px;object-fit:contain;image-rendering:pixelated}.arcade-mascot span{display:none}
+.arcade-game>.section-head{display:flex;align-items:center;justify-content:space-between;margin:0;flex:none}
+.arcade-game .section-head h2{font-size:19px;margin:0}.arcade-game .eyebrow{font-size:9px;letter-spacing:.08em}.arcade-game .bank-display{font-size:9px}.arcade-game .bank-display b{font-size:20px}
+.arcade-game>p.muted,.vf-hidden-title-v019{display:none}
+.tile-target-mini{display:flex!important;align-items:center;gap:8px;min-width:0}.tile-target-mini img{width:86px;aspect-ratio:5/3;object-fit:cover;border:2px solid #d9cf9b;background:#0f1d2a}.tile-target-mini span{display:grid;min-width:0}.tile-target-mini small{font-size:8px}.tile-target-mini b{font-size:9px;max-width:150px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.arcade-game .game-actions{display:flex;justify-content:center;gap:8px;margin:0;flex:none}
+.arcade-game .game-actions button{flex:0 1 240px;width:auto;min-height:48px;border-radius:3px;padding:10px 14px;font-size:13px}
+.arcade-game button{touch-action:manipulation}.arcade-game button[hidden]{display:none}
+.arcade-game button.primary{background:#edcd64;color:#1b2934;box-shadow:none}.arcade-game button.secondary{background:#263e54;color:#f4f6ef;box-shadow:none}
+.arcade-result-sheet{position:fixed;z-index:140;inset:0;display:grid;place-items:center;padding:max(14px,env(safe-area-inset-top)) 14px max(14px,env(safe-area-inset-bottom));background:#050c18cc}
+.arcade-result-sheet[hidden]{display:none}
+.arcade-result-card-v018{width:min(100%,420px);max-height:100%;overflow:auto;background:#203349;border:2px solid #dce4d7;border-radius:6px;padding:20px}
+.arcade-result-card-v018 h2{font-size:26px;overflow-wrap:anywhere;margin:4px 0 18px}.arcade-result-metric{display:grid;gap:6px}.arcade-result-metric span{font-size:10px}.arcade-result-metric b{font-size:18px}.arcade-result-awards{display:grid;gap:8px;padding:16px 0;font-size:14px}.arcade-result-awards b{font-size:19px;color:#ffe19a}.arcade-result-actions{display:grid;gap:8px}.arcade-result-actions button{min-height:48px;border-radius:4px}
+/* HGSS: one legible 6×6 board, source tile faces and clue cards. */
+#voltorbGame{background:#28765a;color:#f7f8e6}
+.vf-top-v019{display:grid;grid-template-columns:1fr 1fr auto;gap:8px;align-items:center;padding:8px;background:#eaf0dc;color:#254b3a;border:3px solid #b5cbb5}
+.vf-top-v019>div{display:grid;text-align:center}.vf-top-v019 span{font-size:9px}.vf-top-v019 b{font-size:23px}.vf-top-v019 button{height:44px;background:#cadac4;color:#183c29;border:2px solid #47654e;border-radius:2px;padding:0 10px;font-weight:800}
+.vf-memo-panel-v019{display:flex;gap:5px;align-items:center;color:#153d29}.vf-memo-panel-v019>span{margin-right:auto;color:white;font-size:11px}.vf-memo-panel-v019 button{width:44px;height:44px;background:#eaf0dc;color:#254b3a;border:2px solid #b5cbb5;border-radius:2px;font-size:17px}.vf-memo-panel-v019 button.active,.vf-top-v019 button.active{background:#f7d778}
+#voltorbBoard{display:block;padding:4px;margin:0;background:#388963;border:3px solid #deebdc;border-radius:2px}
+.vf-grid-v019{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));grid-template-rows:repeat(6,minmax(0,1fr));gap:3px;aspect-ratio:1}
+.vf-card-v019{position:relative;min-width:0;min-height:0;border:1px solid #f5f1de;border-radius:1px;background:#f4ebdc url('arcade/authentic-v0200/voltorb/blank.png') center/contain no-repeat;color:#183f2b;padding:0}
+.vf-card-v019>small{font-size:12px;background:#f8f4e9}.vf-card-v019.revealed b{font-size:24px}.vf-card-v019.revealed img{width:100%;height:100%;object-fit:contain;image-rendering:pixelated}.vf-card-v019.revealed[data-vf-value="1"]{background-image:url('arcade/authentic-v0200/voltorb/1.png')}.vf-card-v019.revealed[data-vf-value="2"]{background-image:url('arcade/authentic-v0200/voltorb/2.png')}.vf-card-v019.revealed[data-vf-value="3"]{background-image:url('arcade/authentic-v0200/voltorb/3.png')}.vf-card-v019.revealed[data-vf-value="1"] b,.vf-card-v019.revealed[data-vf-value="2"] b,.vf-card-v019.revealed[data-vf-value="3"] b{visibility:hidden}
+.vf-clue-v019{display:grid;place-content:center;gap:2px;background:#e8e3cb;color:#183f2b;border:2px solid #7bbd8b;font-size:16px}.vf-clue-v019 span{display:flex;justify-content:center;align-items:center;gap:2px;font-size:13px}.vf-clue-v019 img{width:17px;height:17px;object-fit:contain;image-rendering:pixelated}.vf-corner-v019{display:grid;place-items:center}
+#voltorbGame>.perk-btn{display:none}
+/* Stadium classroom: original frame under live lesson, life HUD and controls. */
+#clefairyGame{background:#253c53}
+.clefairy-classroom-v019{position:relative;width:100%;aspect-ratio:4/3;background:#172c3d url('arcade/authentic-v0200/clefairy/clefairy-says.webp') center/contain no-repeat;overflow:hidden}
+.chalkboard-v019{position:absolute;top:6%;left:24%;right:7%;height:30%;display:grid;place-items:center;background:#1e4234;border:3px solid #d7bf85;color:#f8f8e3}
+.chalk-sequence-v019{font-size:clamp(18px,7vw,36px);font-weight:800}
+.teacher-clefairy-v019,.pupil-v019.cpu,.pupil-v019>img,.pupil-v019>b{display:none}
+.clefairy-desks-v019{position:absolute;left:10px;bottom:8px}.pupil-v019.player{color:#ffe5eb;text-shadow:1px 1px #09111a;font-size:22px}
+.clefairy-status-v019{display:flex;justify-content:space-between;align-items:center;gap:8px;font-size:11px;min-height:34px}.clefairy-status-v019>span{max-width:66%;text-align:right}
+.clefairy-controls-v019{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}.clefairy-controls-v019 button{height:58px;font-size:27px;background:#d7c797;color:#163144;border:2px solid #f4e7b8;border-radius:3px}.clefairy-controls-v019 button:disabled{opacity:.55}
+/* Sinnoh mining grid is 12×9; real wall image and image fragments replace painted rocks. */
+#fossilGame{background:#3b3027}
+.fossil-head-v019{display:flex;justify-content:space-between;align-items:center;gap:8px;font-size:12px}.fossil-head-v019 small{display:block;font-size:9px;opacity:.7}.wall-stability-v019{min-width:42%;font-size:10px}.wall-stability-v019>span{display:block;height:7px;background:#c1b28b}.wall-stability-v019 i{display:block;height:100%;background:#b85344}
+.underground-wall-v019{position:relative;aspect-ratio:6/7;background:#5d4935;border:2px solid #8b7658;overflow:hidden}
+.fossil-grid-v019{display:grid;position:absolute;inset:0;grid-template-columns:repeat(var(--fossil-cols,6),minmax(0,1fr));grid-template-rows:repeat(var(--fossil-rows,7),minmax(0,1fr));gap:1px}
+.dig-cell-v019{position:relative;display:grid;place-items:center;grid-column:auto;grid-row:auto;aspect-ratio:1;min-width:0;min-height:0;margin:0;padding:0;border:1px solid #3f3529;border-radius:0;background:url('arcade/authentic-v0200/mining/rock-tile.png') center/cover no-repeat;image-rendering:pixelated}.dig-cell-v019.fossil-covered{cursor:pointer}.dig-cell-v019.fossil-empty{background:#6d5741;box-shadow:inset 0 0 0 2px #4b3b2d}.dig-cell-v019.fossil-metal{background:linear-gradient(145deg,#aeb8be 0 12%,#65727b 13% 42%,#313940 43% 57%,#798790 58% 88%,#c4cdd2 89%);box-shadow:inset 0 0 0 2px #d2dade}.dig-cell-v019.fossil-treasure{background:#6d5741;box-shadow:inset 0 0 0 2px #b99d5c}.dig-cell-v019.fossil-treasure img{width:76%;height:76%;object-fit:contain;image-rendering:pixelated;filter:drop-shadow(0 2px 2px #0008)}.dig-metal-mark{font-size:18px;color:#eef4f7;text-shadow:0 1px 2px #17212a}.dig-cell-v019:disabled{opacity:1}.fossil-help-v022{font-size:10px;line-height:1.35;text-align:center;color:#efe1bf}
+.fossil-tools-v019{display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px}.fossil-tools-v019 button{min-height:54px;background:#584735;color:#fff1d3;border:1px solid #aa9873;border-radius:3px;font-size:12px}.fossil-tools-v019 button.active{background:#d8b97a;color:#35271b}.fossil-tools-v019 small{display:block;font-size:9px}
+/* LuckyDex prize board uses physical geometry, with the real Poké Ball sprite. */
+.ball-drop-game{padding-bottom:max(12px,env(safe-area-inset-bottom))}.ball-drop-head{margin-bottom:4px}.ball-drop-help{margin:4px 0 6px;line-height:1.35}.ball-drop-event-log{display:grid;grid-template-columns:1fr;grid-template-rows:repeat(2,24px);gap:4px;margin:0 1px 6px;height:52px;min-height:52px;overflow:hidden;align-items:stretch}.ball-drop-log-entry{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;padding:5px 9px;border:1px solid #405d7e;background:#071426e8;border-radius:6px;color:#d3e4f4;font-size:9px;font-weight:900;line-height:1.2;box-shadow:inset 0 0 10px #1b5b7b2e}.ball-drop-log-entry:first-child{border-color:#67cfff;color:#f0fbff;box-shadow:0 0 9px #67cfff26,inset 0 0 10px #1b5b7b33}.ball-drop-log-entry.empty{text-align:center;color:#91a9c0}.ball-drop-log-entry.power{border-color:#b98cff;color:#efdfff}.ball-drop-log-entry.card{border-color:#72c8ff;color:#d8f0ff}.ball-drop-log-entry.booster,.ball-drop-log-entry.jackpot{border-color:#f3d773;color:#fff0a8}.ball-drop-machine{position:relative;max-width:100%;width:94%;aspect-ratio:720/1004;margin-inline:auto;background:#0a1930;border:2px solid #72cbff;overflow:hidden;border-radius:12px;box-shadow:0 0 16px #66cfff42,0 0 32px #b477ff1d,0 16px 36px #0008}.ball-drop-machine:after{content:"";position:absolute;z-index:8;inset:3px;border:1px solid #e9d36a70;border-radius:9px;pointer-events:none;box-shadow:inset 0 0 16px #65cfff1f}.ball-drop-machine canvas{display:block;position:absolute;inset:0;width:100%;height:100%;pointer-events:none}.ball-drop-aim-surface{position:absolute;z-index:4;inset:0;touch-action:pan-y;cursor:ew-resize;background:transparent}.ball-drop-toast-stack{position:absolute;z-index:7;top:74px;right:8px;display:flex;flex-direction:column;align-items:flex-end;gap:3px;max-width:62%;pointer-events:none}.ball-drop-toast{max-width:100%;padding:5px 8px;border:1px solid #6bcfff;background:#071528ed;border-radius:999px;color:#e3f5ff;font-size:8px;font-weight:900;line-height:1.15;text-align:right;box-shadow:0 0 12px #68cfff42,0 3px 8px #0007;animation:ballDropToastIn .16s ease-out}.ball-drop-toast.power{border-color:#bd8bff;color:#f3e4ff;box-shadow:0 0 12px #b98cff4d,0 3px 8px #0007}.ball-drop-toast.card{border-color:#72c8ff;color:#d8f0ff}.ball-drop-toast.booster,.ball-drop-toast.jackpot{border-color:#f3d773;color:#fff0a8;background:#2f240bed;box-shadow:0 0 14px #f3d77355,0 3px 8px #0007}.ball-drop-slots{display:none}.ball-drop-landing{position:absolute;z-index:6;bottom:7%;left:5%;right:5%;padding:10px;background:#1a2c45f2;border:2px solid #e9d48c;border-radius:10px;text-align:center;box-shadow:0 0 16px #72c8ff2d,0 10px 30px #000a}.ball-drop-landing.jackpot{border-color:#ffe46b;box-shadow:0 0 24px #ffd84c88,0 10px 30px #000a}.ball-drop-landing[hidden]{display:none}.ball-drop-landing b,.ball-drop-landing span,.ball-drop-landing small{display:block}.ball-drop-landing span{font-size:13px;margin:4px 0}.ball-drop-landing small{font-size:9px}.ball-drop-actions{margin-top:7px}.ball-drop-actions .primary{min-height:46px;width:100%;box-shadow:0 0 13px #efd06125}@keyframes ballDropToastIn{from{opacity:0;transform:translateX(12px) scale(.96)}to{opacity:1;transform:none}}
+/* Quiz and ruins: dominant local imagery/silhouette with compact answer pads. */
+.quiz-difficulty,.unown-difficulty{display:flex;flex-wrap:wrap;gap:4px;background:transparent;padding:0;border:0}.quiz-difficulty button,.unown-difficulty button{flex:1 1 28%;min-height:42px;font-size:10px;border-radius:3px;border:1px solid #536b80;background:#21384d;color:#fff}.quiz-difficulty button.active,.unown-difficulty button.active{background:#e8ca66;color:#17232e}
+.quiz-stage{position:relative;aspect-ratio:4/3;background:#293c54 url('arcade/authentic-v0200/venues/indigo-plateau.jpg') center/cover no-repeat;overflow:hidden;border-radius:0;min-height:0;margin:0}
+.quiz-burst{display:none}.quiz-silhouette-wrap{position:absolute;inset:8% 14% 26%;display:grid;place-items:center;background:#dce3d5e8;border:2px solid #f7f6dc;overflow:hidden}.quiz-silhouette-wrap img{position:absolute;inset:0;width:100%;height:100%;min-width:0;min-height:0;object-fit:contain;filter:brightness(0);image-rendering:pixelated}.quiz-silhouette-wrap.reveal img{filter:none}.quiz-silhouette-wrap.hard img{transform:scaleX(-1)}.quiz-silhouette-wrap.super img{transform:translate(var(--quiz-x,0),var(--quiz-y,0)) rotate(var(--quiz-tilt,0)) scale(1.5)}
+.quiz-banner{position:absolute;left:0;right:0;bottom:0;padding:8px 10px;background:#102333ec;text-align:center}.quiz-banner b{display:block;font-size:15px}.quiz-banner span{display:block;font-size:10px;margin-top:3px}
+.quiz-timer{height:6px;background:#24384a;margin:0}.quiz-timer i{display:block;height:100%;background:#e9cf70}.quiz-answers,.unown-answers{display:grid;grid-template-columns:1fr 1fr;gap:6px;min-width:0}.quiz-answers button,.unown-answers button{min-width:0;min-height:45px;font-size:12px;background:#28415b;color:#fff;border:1px solid #7693a5;border-radius:3px;padding:5px;overflow-wrap:anywhere}.quiz-answers button.correct,.unown-answers button.correct{background:#316b47}.quiz-answers button.wrong,.unown-answers button.wrong{background:#8a363a}.quiz-meta{display:flex;justify-content:space-between;gap:6px;font-size:9px;margin:0}
+.unown-run-stats{display:flex;gap:6px;align-items:stretch}.unown-run-stats span{display:grid;gap:1px;min-width:64px;padding:5px 7px;border:1px solid #536b80;background:#14283a;text-align:center;font-size:8px}.unown-run-stats b{font-size:15px;color:#f1d46e}.unown-category{align-self:flex-start;padding:4px 8px;background:#172b21;border:1px solid #657b63;color:#f0dc8d;font-size:9px;font-weight:900;letter-spacing:.08em}
+.unown-chamber{position:relative;aspect-ratio:4/1.85;min-height:0;max-width:100%;background:#243728 url('arcade/authentic-v0200/venues/ruins-of-alph.jpg') center/cover no-repeat;display:flex;flex-direction:column;justify-content:center;padding:8px;gap:5px;border-radius:0;overflow:hidden}
+.unown-glyphs{display:flex;flex-direction:column;align-items:stretch;justify-content:center;gap:6px;max-width:100%;background:#eceddbed;padding:8px 6px;min-height:72px;overflow:hidden}.unown-word{--glyph-base:54px;--glyph-size:54px;--glyph-fit-pad:8;position:relative;display:flex;justify-content:center;align-items:center;flex:0 0 auto;width:100%;max-width:100%;min-width:0}.unown-word-glyphs{display:flex;flex-wrap:nowrap;justify-content:center;align-items:center;min-width:0;width:max-content;max-width:none;margin:0 auto;transition:opacity .2s ease}.unown-glyph{flex:0 0 var(--glyph-size);width:var(--glyph-size);min-width:var(--glyph-size);max-width:var(--glyph-size);aspect-ratio:1}.unown-glyph img{display:block;width:100%;height:100%;object-fit:contain;image-rendering:pixelated}.unown-canonical{position:absolute;inset:0;display:grid;place-items:center;max-width:100%;padding:2px 5px;text-align:center;font-size:clamp(12px,4.2vw,20px);font-weight:1000;letter-spacing:.04em;color:#14251b;opacity:0;transform:scale(.94);overflow-wrap:anywhere;transition:opacity .2s ease,transform .2s ease}.unown-glyphs.decoded .unown-word-glyphs,.unown-glyphs.failed .unown-word-glyphs{opacity:.08}.unown-glyphs.decoded .unown-canonical,.unown-glyphs.failed .unown-canonical{opacity:1;transform:none}.unown-glyphs.failed .unown-canonical{color:#702d32}.unown-clue{font-size:12px;text-align:center;background:#142e1fe8;padding:8px;color:#f4ebbd;min-height:34px}.unown-difficulty{min-height:42px}.unown-difficulty button{min-width:0}.unown-typed-form{display:none;grid-template-columns:minmax(0,1fr) auto;gap:6px;width:100%;max-width:100%}.unown-typed-form input{min-width:0;width:100%;max-width:100%;height:45px;border:1px solid #7693a5;background:#122638;color:#fff;padding:8px 10px;font:inherit;text-transform:uppercase}.unown-typed-form button{min-width:92px}.unown-game.mode-easy .unown-answers{display:grid}.unown-game.mode-easy .unown-typed-form{display:none}.unown-game.mode-normal .unown-answers,.unown-game.mode-hard .unown-answers{display:none}.unown-game.mode-normal .unown-typed-launch,.unown-game.mode-hard .unown-typed-launch{display:block}.unown-typed-launch{display:none;width:100%}.unown-typed-launch button{width:100%;min-height:45px}.unown-actions{grid-template-columns:1fr}.unown-actions.cash-available{grid-template-columns:1fr 1.35fr}.unown-actions button{min-width:0}
+.unown-answer-screen[hidden]{display:none!important}.unown-answer-screen{position:fixed;inset:0;z-index:10050;width:100vw;height:100vh;box-sizing:border-box;overflow:hidden;overscroll-behavior:none;touch-action:none;padding:max(8px,env(safe-area-inset-top)) max(10px,env(safe-area-inset-right)) 0 max(10px,env(safe-area-inset-left));background:linear-gradient(#08130fb0,#08130fb0),url('arcade/authentic-v0200/venues/ruins-of-alph.jpg') center/cover no-repeat}.unown-answer-shell{height:min(45vh,420px);max-width:720px;margin:0 auto;display:grid;grid-template-rows:auto auto auto 6px auto;gap:6px;min-height:0}.unown-answer-head{display:flex;align-items:center;gap:9px;min-height:42px}.unown-answer-head button{min-height:40px;padding:6px 11px}.unown-answer-head div{display:grid;gap:0}.unown-answer-head span{font-size:8px;letter-spacing:.12em;color:#e9cf70;font-weight:900}.unown-answer-head b{font-size:15px;color:#fff}.unown-answer-chamber{min-height:0;display:grid;grid-template-rows:auto auto;align-content:start;gap:5px;overflow:hidden;padding:7px;background:rgba(20,46,31,.78);border:1px solid #687a62}.unown-answer-chamber .unown-glyphs{height:108px;min-height:108px;overflow:hidden;justify-content:center;padding:5px 4px;background:#eceddbe8}.unown-answer-chamber .unown-word{--glyph-base:58px}.unown-answer-timer{height:6px}.unown-answer-screen .unown-typed-form{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:6px;align-items:stretch}.unown-answer-screen .unown-typed-form input{font-size:16px;height:46px}.unown-answer-screen .unown-typed-form button{min-width:96px;min-height:46px}.unown-answer-screen .unown-clue{padding:6px;font-size:11px;min-height:30px}.unown-answer-screen .unown-clue[hidden]{display:none}html.unown-answer-open,body.unown-answer-open{overflow:hidden!important;position:fixed!important;inset:0!important;width:100%!important;height:100%!important;overscroll-behavior:none!important;touch-action:none!important}.unown-typed-launch[hidden]{display:none!important}
+@media(max-height:700px){.unown-answer-shell{height:min(42vh,360px);gap:4px}.unown-answer-head{min-height:36px}.unown-answer-head button{min-height:36px;padding:5px 9px}.unown-answer-head b{font-size:13px}.unown-answer-chamber{padding:5px;gap:4px}.unown-answer-chamber .unown-glyphs{height:98px;min-height:98px}.unown-answer-chamber .unown-word{--glyph-base:54px}.unown-answer-screen .unown-clue{padding:4px;font-size:10px;min-height:26px}.unown-answer-screen .unown-typed-form input,.unown-answer-screen .unown-typed-form button{height:42px;min-height:42px}}
+@media(min-width:480px){.arcade-game{max-width:540px}.ball-drop-machine{max-width:430px;width:100%;align-self:center}}
+@media(max-height:820px){.arcade-game{padding:54px 8px max(12px,env(safe-area-inset-bottom));gap:5px}.arcade-full-head{top:5px;left:8px;right:8px;min-height:42px}.game-exit{min-height:40px;padding:5px 8px}.arcade-mascot img{width:36px;height:36px}.arcade-game>.section-head{min-height:28px}.arcade-game .section-head h2{font-size:16px}.arcade-game .bank-display b{font-size:17px}.arcade-game .game-actions{gap:5px}.arcade-game .game-actions button{min-height:42px;padding:7px 10px}.quiz-difficulty button,.unown-difficulty button{min-height:36px}.quiz-answers button,.unown-answers button{min-height:40px}}
+@media(prefers-reduced-motion:reduce){[data-page="arcade"] *{animation-duration:.01ms;transition-duration:.01ms}}
+
+/* v0.25.0 Underground-style Fossil Dig */
+.fossil-dig-v0250{background:#2d261f;overflow-y:auto;overflow-x:hidden}
+.fossil-head-v0250{display:flex;justify-content:space-between;align-items:end;gap:12px;padding:10px 4px}
+.fossil-head-v0250 h2{margin:2px 0 0}
+.fossil-stats-v0250{display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end}
+.fossil-stats-v0250 span{display:grid;gap:2px;min-width:92px;padding:7px 9px;border:2px solid #2a2119;border-radius:8px;background:#e8d2a4;color:#312619;text-align:center;box-shadow:inset 0 0 0 2px #b78a52}
+.fossil-stats-v0250 small{font-size:8px;letter-spacing:.08em}.fossil-stats-v0250 b{font-size:15px}
+.fossil-wall-shell-v0250{position:relative;padding:8px;border:3px solid #1c1713;border-radius:10px;background:#6b4c32;box-shadow:inset 0 0 0 2px #9b7452}
+.fossil-wall-stage-v0250{position:relative;aspect-ratio:12/9;overflow:hidden;background:#8d6542 url('arcade/authentic-v0200/mining/soil-tile.png') repeat;background-size:24px 24px;border:2px solid #312419;border-radius:4px;touch-action:manipulation}
+.fossil-find-layer-v0250,.fossil-grid-v0250{position:absolute;inset:0}
+.fossil-find-layer-v0250{z-index:1;overflow:hidden}
+.fossil-find-v0250{position:absolute;object-fit:contain;image-rendering:pixelated;filter:drop-shadow(0 1px 0 rgba(0,0,0,.55));padding:2px;box-sizing:border-box}
+.fossil-booster-find-v0258{position:absolute;display:grid;place-items:center;box-sizing:border-box;padding:5%;background:linear-gradient(145deg,#b79a56,#53627f 45%,#8c743d);clip-path:polygon(16% 0,84% 0,100% 10%,100% 90%,84% 100%,16% 100%,0 90%,0 10%);filter:drop-shadow(0 2px 0 rgba(0,0,0,.55));overflow:hidden}.fossil-booster-find-v0258:before,.fossil-booster-find-v0258:after{content:"";position:absolute;left:8%;right:8%;height:12%;background:repeating-linear-gradient(90deg,#ead28a 0 5px,#687694 5px 10px);opacity:.85;z-index:2}.fossil-booster-find-v0258:before{top:2%}.fossil-booster-find-v0258:after{bottom:2%}.fossil-booster-find-v0258 img{width:82%;height:76%;object-fit:contain;z-index:1;filter:drop-shadow(0 1px 1px rgba(0,0,0,.5))}
+.fossil-grid-v0250{z-index:2;display:grid;grid-template-columns:repeat(12,minmax(0,1fr));grid-template-rows:repeat(9,minmax(0,1fr));gap:0}
+.fossil-cell-v0250{min-width:0;min-height:0;border:0;border-radius:0;padding:0;margin:0;background-color:transparent;background-image:url('arcade/authentic-v0200/mining/rock-tile.png');background-size:cover;image-rendering:pixelated;box-shadow:inset 0 0 0 1px rgba(42,28,18,.18);touch-action:manipulation}
+.fossil-cell-v0250[data-depth="4"]{opacity:1;filter:brightness(.78) saturate(.75)}
+.fossil-cell-v0250[data-depth="3"]{opacity:1;filter:brightness(.94) saturate(.8)}
+.fossil-cell-v0250[data-depth="2"]{opacity:1;filter:brightness(1.08) saturate(.72)}
+.fossil-cell-v0250[data-depth="1"]{opacity:.52;filter:brightness(1.18) saturate(.6)}
+.fossil-cell-v0250[data-depth="0"]{opacity:.05;pointer-events:none}
+.fossil-cell-v0250:active{filter:brightness(1.3)}
+.fossil-tools-v0250{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px}
+.fossil-tools-v0250 button{min-height:52px;border:2px solid #251d17;border-radius:9px;background:#d4c2a1;color:#2a2119;display:grid;grid-template-columns:auto 1fr;grid-template-rows:auto auto;column-gap:8px;align-items:center;text-align:left;padding:7px 10px;box-shadow:inset 0 0 0 2px rgba(255,255,255,.18)}
+.fossil-tools-v0250 button.active{background:#f0d985;outline:3px solid rgba(255,211,67,.24)}
+.fossil-tools-v0250 button small{grid-column:2;font-size:9px;opacity:.75}.fossil-tool-icon-v0250{grid-row:1/3;font-size:24px}
+
+.fossil-dig-actions-v0251{display:flex;justify-content:center;margin-top:9px}.fossil-dig-actions-v0251 button{min-width:46%;min-height:44px;border:2px solid #9f7a4c;border-radius:8px;background:#342a22;color:#f4dfad;font-weight:900;letter-spacing:.08em}
+.fossil-end-confirm-v0251{margin-top:9px;padding:11px;border:2px solid #9f7a4c;border-radius:9px;background:#ead7aa;color:#2c241c;text-align:center;box-shadow:inset 0 0 0 2px rgba(255,255,255,.24)}.fossil-end-confirm-v0251>b,.fossil-end-confirm-v0251>span{display:block}.fossil-end-confirm-v0251>span{margin-top:3px;font-size:10px;opacity:.78}.fossil-end-confirm-v0251>div{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-top:9px}.fossil-end-confirm-v0251 button{min-height:44px;border:1px solid #745a3b;border-radius:7px;background:#f5e7c3;color:#2c241c;font-weight:800}.fossil-end-confirm-v0251 button:last-child{background:#4b382a;color:#fff2ce}
+.fossil-find-banner-v0250{position:absolute;z-index:5;left:8%;right:8%;top:42%;padding:8px 12px;border:2px solid #21170e;border-radius:8px;background:#f4dfad;color:#2a2119;text-align:center;pointer-events:none;box-shadow:0 4px 0 rgba(0,0,0,.35)}
+.fossil-find-banner-v0250 b,.fossil-find-banner-v0250 span{display:block}.fossil-find-banner-v0250 span{font-size:10px;margin-top:2px}
+.fossil-find-banner-v0250.show{animation:fossilFindPopV0250 .22s ease-out}
+.arcade-result-details{display:grid;gap:6px;margin:8px 0;max-height:210px;overflow:auto;text-align:left}
+.arcade-result-detail{display:grid;gap:2px;padding:7px 9px;border-radius:7px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1)}
+.arcade-result-detail span{font-size:11px;opacity:.75}.arcade-result-detail-museum{border-color:rgba(255,210,92,.42)}
+@keyframes fossilFindPopV0250{from{transform:scale(.88);opacity:0}to{transform:scale(1);opacity:1}}
+@media (max-width:380px){.fossil-head-v0250{align-items:stretch;flex-direction:column}.fossil-stats-v0250{justify-content:stretch}.fossil-stats-v0250 span{flex:1;min-width:0}.fossil-wall-shell-v0250{padding:5px}.fossil-tools-v0250{gap:6px}.fossil-tools-v0250 button{min-height:48px;padding:5px 7px}.fossil-tool-icon-v0250{font-size:20px}}
+@media (prefers-reduced-motion:reduce){.fossil-find-banner-v0250.show{animation:none}.fossil-cell-v0250,.fossil-find-v0250{transition:none!important}}
+
+/* v0.25.0 Oreburgh Mining Museum collection room */
+.museum-game-v0250{overflow:hidden;background:#191c24}
+.museum-head-v0250{display:flex;align-items:end;justify-content:space-between;gap:10px;margin:6px 0 8px}.museum-head-v0250 h2{margin:2px 0 0}
+.museum-room-v0250{position:relative;width:100%;overflow:hidden;border:3px solid #16131b;border-radius:8px;background:#06070a;box-shadow:inset 0 0 0 2px #51483e}
+.museum-room-v0251{width:calc(100% + 28px);margin-left:-14px;border-radius:6px}
+.museum-room-v0250>img{display:block;width:100%;height:auto;image-rendering:pixelated}
+.museum-exhibit-layer-v0250{position:absolute;inset:0;pointer-events:none}
+.museum-exhibit-v0250{position:absolute;transform:translate(-50%,-50%);aspect-ratio:1;border:0;padding:1px;background:transparent;pointer-events:auto;display:grid;place-items:center;min-width:18px;min-height:18px;border-radius:50%;touch-action:manipulation}
+.museum-exhibit-v0250 img{width:100%;height:100%;object-fit:contain;image-rendering:pixelated;filter:drop-shadow(0 1px 1px rgba(0,0,0,.8))}
+.museum-exhibit-v0250.prominent{filter:drop-shadow(0 0 4px rgba(169,119,255,.45))}
+.museum-exhibit-v0250:focus-visible{outline:2px solid #ffe27b;outline-offset:1px}
+.museum-plaque-v0250{position:relative;margin-top:8px;padding:10px 38px 10px 12px;border:2px solid #8d744b;border-radius:8px;background:#e7d6ad;color:#2c251c;text-align:left;box-shadow:inset 0 0 0 2px #c3a36e}
+.museum-plaque-v0250 small{font-size:8px;letter-spacing:.12em}.museum-plaque-v0250 h3{margin:2px 0 4px;font-size:16px}.museum-plaque-v0250 p{margin:0 0 6px;font-size:11px;line-height:1.35}.museum-plaque-v0250 b{font-size:11px}
+.museum-plaque-close-v0250{position:absolute;right:7px;top:7px;width:30px;height:30px;border-radius:50%;border:1px solid #765f3d;background:#f3e4c1;color:#2c251c}
+@media(max-width:360px){.museum-head-v0250{align-items:start}.museum-room-v0250{border-width:2px}.museum-exhibit-v0250{min-width:16px;min-height:16px}}
+
+/* v0.25.2 — museum-only landscape composition and authentic case placement. */
+.museum-game-v0252{max-width:none;padding:56px 10px 10px;overflow:hidden;background:#171b23}
+.museum-landscape-v0252{display:grid;grid-template-columns:minmax(190px,26%) minmax(0,1fr);gap:12px;align-items:stretch;height:100%;min-height:0}
+.museum-info-v0252{min-width:0;align-self:start;display:grid;gap:8px;max-height:100%;overflow:auto;padding:2px 0 8px}
+.museum-game-v0252 .museum-head-v0250{align-items:flex-start;margin:0;display:grid;gap:8px}
+.museum-game-v0252 .museum-head-v0250 h2{font-size:24px;line-height:1.05;margin:2px 0 0}
+.museum-game-v0252 .museum-head-v0250 .pill{justify-self:start}
+.museum-copy-v0252{display:block!important;margin:0;font-size:11px;line-height:1.45;color:#b9c4d0}
+.museum-room-v0252{width:auto;height:100%;max-width:100%;max-height:100%;aspect-ratio:576/400;margin:0;justify-self:center;align-self:center;border-radius:5px;overflow:hidden}
+.museum-room-v0252>img{display:block;width:100%;height:100%;object-fit:contain;image-rendering:pixelated}
+.museum-game-v0252 .museum-exhibit-v0250{min-width:20px;min-height:20px;padding:0}
+.museum-game-v0252 .museum-exhibit-v0250 img{filter:drop-shadow(0 2px 1px rgba(0,0,0,.85))}
+.museum-game-v0252 .museum-plaque-v0250{margin:4px 0 0;font-size:11px}
+.arcade-result-detail-lost{border-color:rgba(255,105,105,.5);background:rgba(122,24,24,.22)}
+@media(max-height:470px) and (orientation:landscape){
+  .museum-game-v0252{padding-top:48px}
+  .museum-landscape-v0252{grid-template-columns:minmax(165px,24%) minmax(0,1fr);gap:8px}
+  .museum-game-v0252 .museum-head-v0250 h2{font-size:19px}
+  .museum-copy-v0252{font-size:9px}
+  .museum-game-v0252 .museum-plaque-v0250{padding:7px 34px 7px 9px}
+  .museum-game-v0252 .museum-plaque-v0250 h3{font-size:13px}
+  .museum-game-v0252 .museum-plaque-v0250 p,.museum-game-v0252 .museum-plaque-v0250 b{font-size:9px}
+}
+
+/* v0.25.3 — scene-first fullscreen Oreburgh Museum. */
+.museum-game-v0253{position:fixed;inset:0;z-index:1200;width:100%;height:100%;max-width:none;margin:0;padding:0!important;border:0;border-radius:0;background:#05070b;overflow:hidden}
+.museum-scene-v0253{position:relative;width:100%;height:100%;display:grid;place-items:center;overflow:hidden;background:#05070b}
+.museum-room-frame-v0253{position:relative;height:min(100%,69.444vw);aspect-ratio:576 / 400;width:auto;max-width:100%;max-height:100%;overflow:hidden;background:#05070b}
+.museum-room-frame-v0253>img{position:absolute;inset:0;display:block;width:100%;height:100%;object-fit:fill;image-rendering:pixelated;image-rendering:crisp-edges}
+.museum-room-frame-v0253 .museum-exhibit-layer-v0250{position:absolute;inset:0}
+.museum-game-v0253 .museum-exhibit-v0250{min-width:18px;min-height:18px;padding:0;border-radius:0}
+.museum-game-v0253 .museum-exhibit-v0250 img{width:100%;height:100%;object-fit:contain;image-rendering:pixelated;image-rendering:crisp-edges;filter:drop-shadow(0 1px 0 rgba(0,0,0,.75))}
+.museum-back-overlay-v0253,.museum-count-overlay-v0253{position:absolute;z-index:5;top:max(10px,env(safe-area-inset-top));border:2px solid rgba(231,214,173,.76);background:rgba(19,25,34,.9);color:#f6edcf;box-shadow:0 2px 8px rgba(0,0,0,.45);backdrop-filter:blur(2px)}
+.museum-back-overlay-v0253{left:max(10px,env(safe-area-inset-left));min-height:42px;padding:8px 14px;border-radius:8px;font-weight:900;letter-spacing:.04em}
+.museum-count-overlay-v0253{right:max(10px,env(safe-area-inset-right));padding:8px 12px;border-radius:999px;font-size:12px;font-weight:900;letter-spacing:.06em}
+.museum-plaque-v0253{position:absolute;z-index:6;left:50%;bottom:max(12px,env(safe-area-inset-bottom));transform:translateX(-50%);width:min(560px,calc(100% - 28px));padding:12px 44px 12px 14px;border:3px solid #8d744b;border-radius:10px;background:rgba(231,214,173,.97);color:#2c251c;text-align:left;box-shadow:inset 0 0 0 2px #c3a36e,0 6px 24px rgba(0,0,0,.5)}
+.museum-plaque-v0253[hidden]{display:none!important}.museum-plaque-v0253 small{font-size:9px;letter-spacing:.12em}.museum-plaque-v0253 h3{margin:3px 0 5px;font-size:18px}.museum-plaque-v0253 p{margin:0 0 7px;font-size:12px;line-height:1.35}.museum-plaque-v0253 b{font-size:12px}
+@media(max-height:430px) and (orientation:landscape){.museum-back-overlay-v0253{min-height:36px;padding:6px 11px}.museum-count-overlay-v0253{padding:6px 10px;font-size:10px}.museum-plaque-v0253{padding-top:9px;padding-bottom:9px}.museum-plaque-v0253 h3{font-size:15px}.museum-plaque-v0253 p,.museum-plaque-v0253 b{font-size:10px}}
+
+/* v0.26.6 reusable standalone booster reward sprite: real pack art only, no generated wrapper. */
+.fossil-booster-mini-v0266{position:absolute;box-sizing:border-box;padding:2px;object-fit:contain;object-position:center;filter:drop-shadow(0 2px 1px rgba(0,0,0,.72));pointer-events:none}
+/* v0.27.4: shared end-of-run card reveal for Arcade card rewards. */
+.arcade-card-reveal-stage{display:grid;gap:10px;text-align:center;justify-items:center;position:relative;overflow:hidden}
+.arcade-card-reveal-stage[hidden]{display:none}.arcade-card-reveal-stage.reveal-pop .arcade-card-reveal-art{animation:arcadeCardRevealPop .32s cubic-bezier(.2,.82,.28,1.18)}
+.arcade-card-reveal-count{position:absolute;right:0;top:1px;font-size:10px;font-weight:900;color:#91acd0}
+.arcade-card-reveal-art{width:min(78vw,280px);aspect-ratio:63/88;display:grid;place-items:center;border-radius:14px;background:radial-gradient(circle at 50% 42%,#3d73b8 0,#173d78 48%,#071b42 78%);border:4px solid #d9c66d;box-shadow:0 18px 38px #0009,0 0 28px #67cfff55,0 0 64px #b98cff2c;overflow:hidden;margin-bottom:12px}
+.arcade-card-reveal-art img{width:100%;height:100%;object-fit:contain;display:block}.arcade-card-reveal-art img[hidden]{display:none}
+.arcade-card-reveal-fallback{display:grid;place-items:center;width:100%;height:100%;font-size:18px;font-weight:900;letter-spacing:.15em;color:#fff0a6}
+.arcade-card-reveal-copy{display:grid;gap:3px;position:relative;z-index:2;width:100%;padding:4px 0 2px;background:#203349}.arcade-card-reveal-copy b{font-size:18px}.arcade-card-reveal-copy span{font-size:11px;color:#a9bfd8;min-height:14px}.arcade-card-reveal-stage>button{width:100%;min-height:48px}
+@keyframes arcadeCardRevealPop{from{opacity:.15;transform:translateY(18px) scale(.88) rotateY(18deg)}to{opacity:1;transform:none}}
+
+/* v0.27.7 Ball Drop cabinet polish */
+.ball-drop-machine.ball-drop-launch-glow{animation:ballDropLaunchRed .65s cubic-bezier(.2,.8,.2,1)}
+.ball-drop-machine.fanfare-mystery{animation:ballDropMysteryFanfare 1.15s ease-out}
+.ball-drop-machine.fanfare-card{animation:ballDropCardFanfare 1.35s ease-out}
+.ball-drop-machine.fanfare-booster{animation:ballDropBoosterFanfare 1.6s ease-out}
+.ball-drop-machine.fanfare-mystery:before,.ball-drop-machine.fanfare-card:before,.ball-drop-machine.fanfare-booster:before{content:"";position:absolute;z-index:6;inset:0;pointer-events:none;border-radius:10px;animation:ballDropRewardFlash 1.1s ease-out forwards}
+.ball-drop-machine.fanfare-mystery:before{background:radial-gradient(circle at 50% 82%,#ff7bff66 0,#c26cff28 32%,transparent 68%)}
+.ball-drop-machine.fanfare-card:before{background:radial-gradient(circle at 50% 82%,#7fe8ff70 0,#4dbbff2c 35%,transparent 70%)}
+.ball-drop-machine.fanfare-booster:before{background:radial-gradient(circle at 50% 82%,#fff08a80 0,#ffb52e35 38%,transparent 72%)}
+@keyframes ballDropLaunchRed{0%{box-shadow:0 0 16px #66cfff42,0 0 32px #b477ff1d,0 16px 36px #0008}18%{box-shadow:0 0 22px #ff3b3bdd,0 0 52px #ff20208c,inset 0 0 34px #ff303055,0 16px 36px #0008}100%{box-shadow:0 0 16px #66cfff42,0 0 32px #b477ff1d,0 16px 36px #0008}}
+@keyframes ballDropMysteryFanfare{0%,100%{filter:none}18%{filter:brightness(1.35) saturate(1.35)}38%{box-shadow:0 0 30px #ff77ffcc,0 0 68px #a85cff88,0 16px 36px #0008}62%{filter:brightness(1.12)}}
+@keyframes ballDropCardFanfare{0%,100%{filter:none}16%{filter:brightness(1.45) saturate(1.2)}34%{box-shadow:0 0 34px #7de9ffff,0 0 76px #4cb8ff99,0 16px 36px #0008}56%{filter:brightness(1.16)}}
+@keyframes ballDropBoosterFanfare{0%,100%{filter:none}12%{filter:brightness(1.55) saturate(1.35)}28%{box-shadow:0 0 38px #fff087ff,0 0 90px #ffb52eaa,0 16px 36px #0008}44%{filter:brightness(1.25)}62%{box-shadow:0 0 26px #ffd94dcc,0 0 62px #ff9d2480,0 16px 36px #0008}}
+@keyframes ballDropRewardFlash{0%{opacity:0}14%{opacity:1}35%{opacity:.42}55%{opacity:.85}100%{opacity:0}}
+
+@media(max-height:760px){.unown-chamber{aspect-ratio:4/1.7;padding:7px;gap:4px}.unown-glyphs{min-height:58px;padding:6px 5px}.unown-word{--glyph-base:50px}.unown-clue{padding:6px;font-size:11px;min-height:28px}}
+/* v0.37.0: Kids Club-only Gen III game selector. Other venues retain .arcade-venue-game legacy markup. */
+.arcade-venue-game.kids-club-game{grid-template-columns:54px minmax(0,1fr) 48px;align-items:center;padding:8px 8px;min-height:78px;border-left-width:4px;background:#203c46}.kids-club-game>img{width:48px;height:48px;object-fit:contain;image-rendering:pixelated}.kids-club-game-copy{display:grid;gap:2px;min-width:0}.kids-club-game-copy>b{font-size:16px}.kids-club-game-copy>span{font-size:10px;font-weight:900;color:#e8ca66;opacity:1}.kids-club-game-copy>small{font-size:10px;line-height:1.25;opacity:.82}.arcade-venue-game.kids-club-game>em{position:static;justify-self:end;font-size:11px}
+/* v0.40.7: a rare Unown glyph is visibly shiny without replacing its letter form. */
+.unown-glyph[data-shiny-unown="true"]{position:relative;animation:unownShinyPulse 1s steps(2,end) infinite}.unown-glyph[data-shiny-unown="true"] img{filter:sepia(.62) saturate(2.35) hue-rotate(135deg) brightness(1.28) drop-shadow(0 0 3px rgba(98,223,244,.72))}.unown-glyph[data-shiny-unown="true"]::after{content:"✦";position:absolute;right:-2px;top:-5px;color:#eaffff;font-size:13px;text-shadow:0 0 4px #55dff6}@keyframes unownShinyPulse{50%{filter:brightness(1.12)}}
+.arcade-card-reveal-fallback.symbol{font-size:72px;letter-spacing:0;text-shadow:0 0 18px rgba(255,228,120,.65)}
+/* v0.40.12 Voltorb mini-gift: keep the in-game Mystery Gift sprite transparent and tucked into the revealed tile. */
+.vf-card-v019 .vf-mini-gift{position:absolute!important;right:2px!important;top:2px!important;width:17px!important;height:17px!important;object-fit:contain!important;image-rendering:pixelated!important;background:none!important;border:0!important;border-radius:0!important;box-shadow:none!important;padding:0!important;filter:none!important;pointer-events:none!important}
+/* v0.40.12 rare-event sprite cleanup: artwork itself stays transparent with no square container treatment. */
+.fossil-find-v0250{background:transparent!important;border:0!important;box-shadow:none!important}
+
+/* v0.40.36: Goldenrod Challenge Course stat-event selector. */
+.arcade-venue-game.challenge-course-game{grid-template-columns:58px minmax(0,1fr) 48px;align-items:center;min-height:82px;padding:8px 8px;border-left-width:4px;background:linear-gradient(90deg,#1d3e4e,#203548);overflow:hidden}.challenge-course-game>img{width:52px;height:52px;object-fit:contain;image-rendering:pixelated;filter:drop-shadow(0 3px 0 #07121b55)}.challenge-course-game>span{display:grid;gap:1px;min-width:0}.challenge-course-game>span>small{font-size:8px;font-weight:1000;letter-spacing:.08em;color:#f1d778}.challenge-course-game>span>b{font-size:15px}.challenge-course-game>span>em{position:static;font-style:normal;font-size:9px;font-weight:900;color:#b9dbe8}.challenge-course-game>span>i{font-style:normal;font-size:9px;line-height:1.25;opacity:.8;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.challenge-course-game>strong{justify-self:end;font-size:10px}.challenge-course-game.is-coming{opacity:.58;filter:saturate(.65);border-left-color:#71828c}.challenge-course-game.is-coming>strong{font-size:8px}.challenge-course-game[data-stat="ATTACK"]{border-left-color:#dc6a55}.challenge-course-game[data-stat="DEFENSE"]{border-left-color:#d4a94d}.challenge-course-game[data-stat="SPEED"]{border-left-color:#66c5d9}.challenge-course-game[data-stat="SP. ATK"]{border-left-color:#9e7bd1}.challenge-course-game[data-stat="SP. DEF"]{border-left-color:#70ad7a}.challenge-course-game[data-stat="HP"]{border-left-color:#d97891}
+
+/* v0.48.1: one Game Corner venue with region submenu. */
+.arcade-venue-game.game-corner-location{grid-template-columns:minmax(0,1fr) auto;min-height:84px;border-left-color:#e9ca62;background:linear-gradient(100deg,#234d53,#1c3542)}.game-corner-location>span{display:grid;gap:2px;min-width:0}.game-corner-location small{font-size:8px;font-weight:1000;letter-spacing:.1em;color:#efcf69}.game-corner-location b{font-size:16px}.game-corner-location em{position:static;font-size:10px;color:#c8d9df}.game-corner-location strong{justify-self:end;color:#f4d874;font-size:11px}
+
+/* v0.50.3 Dream World result presentation */
+.arcade-result-sheet[data-result-theme="dream-world"]{background:linear-gradient(rgba(30,62,91,.82),rgba(56,52,94,.9)),radial-gradient(circle at 50% 12%,rgba(151,226,245,.32),transparent 38%)}
+.arcade-result-sheet[data-result-theme="dream-world"] .arcade-result-card-v018{width:min(100%,430px);border:3px solid #f7e8ad;border-radius:16px;background:linear-gradient(180deg,#fff5cf,#f6e4b9);color:#27384b;box-shadow:0 10px 0 rgba(35,62,89,.42),0 22px 48px rgba(7,25,43,.28);padding:16px}
+.arcade-result-sheet[data-result-theme="dream-world"] .eyebrow,.arcade-result-sheet[data-result-theme="dream-world"] #arcadeResultMode{color:#6a5b78}
+.arcade-result-sheet[data-result-theme="dream-world"] #arcadeResultTitle{color:#30264f;margin-bottom:10px}
+.arcade-result-sheet[data-result-theme="dream-world"] .arcade-result-metric{padding:10px;border:2px solid #66538a;border-radius:12px;background:#fffaf0;text-align:center}.arcade-result-sheet[data-result-theme="dream-world"] .arcade-result-metric span{color:#6c5a74;font-weight:900}.arcade-result-sheet[data-result-theme="dream-world"] .arcade-result-metric b{color:#32264d;font-size:27px}
+.arcade-result-sheet[data-result-theme="dream-world"] .arcade-result-awards{padding:10px 0}.arcade-result-sheet[data-result-theme="dream-world"] .arcade-result-awards b{color:#8a5b15}
+.arcade-result-sheet[data-result-theme="dream-world"] .arcade-review-section{border-color:#8e7aa4;background:#fff9e7;color:#33485b;border-radius:10px}.arcade-result-sheet[data-result-theme="dream-world"] .arcade-review-kv{border-color:#ddcfa7}.arcade-result-sheet[data-result-theme="dream-world"] .arcade-review-kv span{color:#657184}.arcade-result-sheet[data-result-theme="dream-world"] .arcade-review-kv b{color:#2e4052}
+.arcade-result-sheet[data-result-theme="dream-world"] .arcade-result-actions{grid-template-columns:1fr 1fr}.arcade-result-sheet[data-result-theme="dream-world"] .arcade-result-actions button{min-height:44px;border-radius:10px}.arcade-result-sheet[data-result-theme="dream-world"] #arcadeResultReplay{grid-column:1/-1;background:#7654a9;color:#fff}.arcade-result-sheet[data-result-theme="dream-world"] #arcadeResultBack{background:#347fba;color:#fff}
+
+
+/* v0.52.0 Pikachu's Beach result presentation */
+.arcade-result-sheet[data-result-theme="beach"]{background:linear-gradient(rgba(37,131,185,.76),rgba(16,86,143,.88)),radial-gradient(circle at 50% 8%,rgba(255,236,155,.36),transparent 34%)}
+.arcade-result-sheet[data-result-theme="beach"] .arcade-result-card-v018{width:min(100%,430px);border:3px solid #f2d46c;border-radius:16px;background:linear-gradient(180deg,#fff7d8,#f6e8bd);color:#173c50;box-shadow:0 10px 0 rgba(8,77,117,.4),0 22px 48px rgba(4,44,78,.28);padding:16px}
+.arcade-result-sheet[data-result-theme="beach"] .eyebrow,.arcade-result-sheet[data-result-theme="beach"] #arcadeResultMode{color:#447284}
+.arcade-result-sheet[data-result-theme="beach"] #arcadeResultTitle{color:#124b6a;margin-bottom:10px}
+.arcade-result-sheet[data-result-theme="beach"] .arcade-result-metric{padding:10px;border:2px solid #2a86ad;border-radius:12px;background:#fffdf2;text-align:center}.arcade-result-sheet[data-result-theme="beach"] .arcade-result-metric span{color:#52717e;font-weight:900}.arcade-result-sheet[data-result-theme="beach"] .arcade-result-metric b{color:#0d557a;font-size:27px}
+.arcade-result-sheet[data-result-theme="beach"] .arcade-result-awards{padding:10px 0}.arcade-result-sheet[data-result-theme="beach"] .arcade-result-awards b{color:#94640a}
+.arcade-result-sheet[data-result-theme="beach"] .arcade-review-section{border-color:#7aa9b8;background:#fffaf0;color:#254755;border-radius:10px}.arcade-result-sheet[data-result-theme="beach"] .arcade-review-kv{border-color:#d9cea6}.arcade-result-sheet[data-result-theme="beach"] .arcade-review-kv span{color:#637985}.arcade-result-sheet[data-result-theme="beach"] .arcade-review-kv b{color:#1e4d62}
+.arcade-result-sheet[data-result-theme="beach"] .arcade-result-actions{grid-template-columns:1fr 1fr}.arcade-result-sheet[data-result-theme="beach"] .arcade-result-actions button{min-height:44px;border-radius:10px}.arcade-result-sheet[data-result-theme="beach"] #arcadeResultReplay{grid-column:1/-1;background:#187fab;color:#fff}.arcade-result-sheet[data-result-theme="beach"] #arcadeResultBack{background:#d29a1d;color:#fff}

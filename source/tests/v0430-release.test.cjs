@@ -1,0 +1,31 @@
+'use strict';
+const test=require('node:test');
+const assert=require('node:assert/strict');
+const fs=require('node:fs');
+const path=require('node:path');
+const root=path.resolve(__dirname,'..');
+const read=p=>fs.readFileSync(path.join(root,p),'utf8');
+
+test('v0.40.30+ release retains the venue/pack feature bundle',()=>{
+  const pkg=JSON.parse(read('package.json'));
+  const lock=JSON.parse(read('package-lock.json'));
+  const gradle=read('app/build.gradle');
+  const html=read('app/src/main/assets/index.html');
+  const app=read('app/src/main/assets/app-v0167.js');
+  const world=read('app/src/main/assets/arcade-world.js');
+  const flow=read('app/src/main/assets/pack-flow-v0165.js');
+  const css=read('app/src/main/assets/god-pack-v0291.css');
+  const v=pkg.version.split('.').map(Number);assert.ok(v[0]>0||v[1]>40||(v[1]===40&&v[2]>=30));
+  assert.equal(lock.version,pkg.version);
+  assert.equal(lock.packages?.['']?.version,pkg.version);
+  assert.match(gradle,/versionCode\s+40(?:3\d|[4-9]\d)/);
+  assert.match(gradle,/versionName\s+'0\.40\.(?:3\d|[4-9]\d)'/);
+  assert.match(gradle,/LuckyDex-asset-builder\/0\.40\.(?:3\d|[4-9]\d)/);
+  assert.match(html,/v0\.40\.(?:3\d|[4-9]\d)/);
+  assert.match(app,/window\.__LUCKYDEX_BUILD='0\.40\.(?:3\d|[4-9]\d)'/);
+  assert.ok(fs.existsSync(path.join(root,'app/src/main/assets/pokemon-go-ditto-v04030.js')));
+  assert.match(world,/stadium2KidsClub[^\n]+vizzed\.com/i);
+  assert.match(world,/fallbackArt:"arcade\/kids-club\/kids-club-2-venue\.svg"/);
+  assert.match(flow,/rare-pack-intro/);
+  assert.match(css,/\.rare-pack-intro/);
+});

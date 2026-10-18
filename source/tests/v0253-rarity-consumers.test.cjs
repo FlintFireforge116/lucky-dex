@@ -1,0 +1,30 @@
+'use strict';
+const assert=require('node:assert/strict');
+const fs=require('node:fs');
+const path=require('node:path');
+const root=path.resolve(__dirname,'..');
+const read=p=>fs.readFileSync(path.join(root,p),'utf8');
+const R=require('../app/src/main/assets/card-rarity-v0253.js');
+global.LuckyDexCardRarity=R;
+delete require.cache[require.resolve('../app/src/main/assets/pack-opening-v0160.js')];
+const Pack=require('../app/src/main/assets/pack-opening-v0160.js');
+
+let p=Pack.profileFor({name:'Secret chase',rarity:'Secret Rare'});
+assert.equal(p.level,6);assert.equal(p.style,'secret');assert.match(p.label,/SECRET RARE/);
+p=Pack.profileFor({name:'Gold chase',rarity:'Gold Secret Rare'});
+assert.equal(p.level,6);assert.equal(p.style,'gold');assert.match(p.label,/GOLD/);assert.match(p.label,/SECRET RARE/);
+p=Pack.profileFor({name:'Reverse common',rarity:'Common',_foil:'Reverse Holo'});
+assert.equal(R.tier({rarity:'Common',_foil:'Reverse Holo'}),0,'reverse finish must not change economy tier');
+assert.equal(p.level,2,'reverse finish still gets a visible reveal');assert.equal(p.style,'reverse');
+
+const app=read('app/src/main/assets/app-v0167.js');
+const trade=read('app/src/main/assets/trade-v0163.js');
+const acquisition=read('app/src/main/assets/card-acquisition-v0246.js');
+const css=read('app/src/main/assets/pack-opening-v0160.css');
+assert.match(app,/LuckyDexCardRarity\?\.classify|LuckyDexCardRarity\.classify/,'app rarity decisions must consume shared classification');
+assert.match(app,/LuckyDexCardRarity\?\.tier|LuckyDexCardRarity\.tier/,'rarityTier compatibility wrapper must delegate to shared model');
+assert.match(app,/rareHitLabel|rarityDisplayLabel|cardRarityLabel/,'Rare Hits/card UI needs normalized rarity wording');
+assert.match(trade,/LuckyDexCardRarity\?\.tradeClass|LuckyDexCardRarity\.tradeClass/,'trade matching must consume shared trade class');
+assert.match(acquisition,/LuckyDexCardRarity\?\.classify|LuckyDexCardRarity\.classify/,'promo value band should share chase classification where available');
+assert.match(css,/style-secret|data-rarity-style="secret"|secret-reveal/,'Secret Rare needs persistent/reveal-specific CSS treatment');
+console.log('PASS v0.25.3 shared rarity consumers contract');

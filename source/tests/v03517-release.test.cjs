@@ -1,0 +1,14 @@
+'use strict';
+const assert=require('node:assert/strict');
+const fs=require('node:fs'),path=require('node:path');
+const root=path.join(__dirname,'..');
+const read=p=>fs.readFileSync(path.join(root,p),'utf8');
+const pkg=require('../package.json');
+const lock=require('../package-lock.json');
+const gradle=read('app/build.gradle'),runtime=read('app/src/main/assets/app-v0167.js'),html=read('app/src/main/assets/index.html');
+assert.ok(pkg.version.localeCompare('0.35.17',undefined,{numeric:true})>=0,`release must remain 0.35.17+`);
+assert.equal(lock.version,pkg.version);assert.equal(lock.packages[''].version,pkg.version);
+const versionCode=Number((gradle.match(/versionCode\s+(\d+)/)||[])[1]||0);assert.ok(versionCode>=3517,'versionCode preserves historical floor');
+assert.match(gradle,/applicationId\s+['"]com\.example\.luckydex['"]/);
+const esc=pkg.version.replace(/\./g,'\\.');assert.match(gradle,new RegExp(`versionName\\s+['"]${esc}['"]`));assert.match(runtime,new RegExp(`__LUCKYDEX_BUILD=['"]${esc}['"]`));assert.match(html,new RegExp(`v${esc}`));
+console.log('PASS 0.35.17+ release metadata compatibility');

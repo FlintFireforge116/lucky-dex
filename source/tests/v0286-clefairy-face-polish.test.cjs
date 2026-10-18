@@ -1,0 +1,12 @@
+const assert=require('node:assert/strict');
+const fs=require('node:fs');
+const path=require('node:path');
+const crypto=require('node:crypto');
+const root=path.resolve(__dirname,'..');
+const sha=b=>crypto.createHash('sha256').update(b).digest('hex');
+const star=fs.readFileSync(path.join(root,'app/src/main/assets/clefairy_pose_star.png'));
+const moon=fs.readFileSync(path.join(root,'app/src/main/assets/clefairy_pose_moon.png'));
+assert.notEqual(sha(star),'947a8b31720915a7847c7af77b7a0265d307b6b57b1600456d8bb5cfbf79f9b8','do not regress to the v0.28.6 hand-retouched Star face');
+assert.notEqual(sha(moon),'61c017c2d094203be326ae32b0ddd8c896f3961dfde18ce6008158d1e9c4e39f','do not regress to the v0.28.6 hand-retouched Moon face');
+assert.ok(star.length>1000&&moon.length>1000,'pose assets should remain non-empty PNGs');
+console.log('PASS v0.28.7 Clefairy face regression');

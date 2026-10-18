@@ -1,0 +1,17 @@
+'use strict';
+const assert=require('node:assert/strict');
+const fs=require('node:fs');
+const path=require('node:path');
+const root=path.resolve(__dirname,'..');
+const gradle=fs.readFileSync(path.join(root,'app/build.gradle'),'utf8');
+const html=fs.readFileSync(path.join(root,'app/src/main/assets/index.html'),'utf8');
+const app=fs.readFileSync(path.join(root,'app/src/main/assets/app-v0167.js'),'utf8');
+const ball=fs.readFileSync(path.join(root,'app/src/main/assets/arcade-ball-drop.js'),'utf8');
+const pkg=require('../package.json');
+const lock=require('../package-lock.json');
+const code=Number((gradle.match(/versionCode\s+(\d+)/)||[])[1]);assert.ok(code>=277);const name=(gradle.match(/versionName\s+'([^']+)'/)||[])[1];assert.ok(name&&name.localeCompare('0.27.7',undefined,{numeric:true})>=0);
+assert.ok(pkg.version.localeCompare('0.27.7',undefined,{numeric:true})>=0);assert.equal(lock.version,pkg.version);assert.equal(lock.packages?.['']?.version,pkg.version);
+assert.ok((html.match(new RegExp(`v${pkg.version.replaceAll('.', '\\.')}`,'g'))||[]).length>=2,'visible version should match current release');
+assert.ok(app.includes(`__LUCKYDEX_BUILD='${pkg.version}'`));
+assert.match(ball,/LuckyDexBallDropV0277/,'v0.27.7 Ball Drop alias must be exported');
+console.log('PASS v0.27.7+ release identity baseline');

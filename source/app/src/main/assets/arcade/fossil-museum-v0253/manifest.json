@@ -1,0 +1,167 @@
+{
+  "version": "0.25.3",
+  "items": [
+    {
+      "id": "helix-fossil",
+      "file": "arcade/fossil-museum-v0253/items/helix-fossil.png",
+      "source": "pret/pokeplatinum res/graphics/mining/objects/helix_fossil.png (Pok\u00e9mon Platinum Underground mining object)"
+    },
+    {
+      "id": "dome-fossil",
+      "file": "arcade/fossil-museum-v0253/items/dome-fossil.png",
+      "source": "pret/pokeplatinum res/graphics/mining/objects/dome_fossil.png (Pok\u00e9mon Platinum Underground mining object)"
+    },
+    {
+      "id": "old-amber",
+      "file": "arcade/fossil-museum-v0253/items/old-amber.png",
+      "source": "existing packaged PokeAPI item sprite (arcade/sprites/items/old-amber.png)"
+    },
+    {
+      "id": "root-fossil",
+      "file": "arcade/fossil-museum-v0253/items/root-fossil.png",
+      "source": "pret/pokeplatinum res/graphics/mining/objects/root_fossil.png (Pok\u00e9mon Platinum Underground mining object)"
+    },
+    {
+      "id": "claw-fossil",
+      "file": "arcade/fossil-museum-v0253/items/claw-fossil.png",
+      "source": "pret/pokeplatinum res/graphics/mining/objects/claw_fossil.png (Pok\u00e9mon Platinum Underground mining object)"
+    },
+    {
+      "id": "skull-fossil",
+      "file": "arcade/fossil-museum-v0253/items/skull-fossil.png",
+      "source": "pret/pokeplatinum res/graphics/mining/objects/skull_fossil.png (Pok\u00e9mon Platinum Underground mining object)"
+    },
+    {
+      "id": "armor-fossil",
+      "file": "arcade/fossil-museum-v0253/items/armor-fossil.png",
+      "source": "pret/pokeplatinum res/graphics/mining/objects/armor_fossil.png (Pok\u00e9mon Platinum Underground mining object)"
+    },
+    {
+      "id": "cover-fossil",
+      "file": "arcade/fossil-museum-v0253/items/cover-fossil.png",
+      "source": "existing LuckyDex offline pixel item sprite from v0.25.0 museum set; retained for coherent low-resolution Pok\u00e9mon item presentation"
+    },
+    {
+      "id": "plume-fossil",
+      "file": "arcade/fossil-museum-v0253/items/plume-fossil.png",
+      "source": "existing LuckyDex offline pixel item sprite from v0.25.0 museum set; retained for coherent low-resolution Pok\u00e9mon item presentation"
+    },
+    {
+      "id": "jaw-fossil",
+      "file": "arcade/fossil-museum-v0253/items/jaw-fossil.png",
+      "source": "existing LuckyDex offline pixel item sprite from v0.25.0 museum set; retained for coherent low-resolution Pok\u00e9mon item presentation"
+    },
+    {
+      "id": "sail-fossil",
+      "file": "arcade/fossil-museum-v0253/items/sail-fossil.png",
+      "source": "existing LuckyDex offline pixel item sprite from v0.25.0 museum set; retained for coherent low-resolution Pok\u00e9mon item presentation"
+    },
+    {
+      "id": "fossilized-bird",
+      "file": "arcade/fossil-museum-v0253/items/fossilized-bird.png",
+      "source": "existing LuckyDex offline pixel item sprite from v0.25.0 museum set; retained for coherent low-resolution Pok\u00e9mon item presentation"
+    },
+    {
+      "id": "fossilized-dino",
+      "file": "arcade/fossil-museum-v0253/items/fossilized-dino.png",
+      "source": "existing LuckyDex offline pixel item sprite from v0.25.0 museum set; retained for coherent low-resolution Pok\u00e9mon item presentation"
+    },
+    {
+      "id": "fossilized-drake",
+      "file": "arcade/fossil-museum-v0253/items/fossilized-drake.png",
+      "source": "existing LuckyDex offline pixel item sprite from v0.25.0 museum set; retained for coherent low-resolution Pok\u00e9mon item presentation"
+    },
+    {
+      "id": "fossilized-fish",
+      "file": "arcade/fossil-museum-v0253/items/fossilized-fish.png",
+      "source": "existing LuckyDex offline pixel item sprite from v0.25.0 museum set; retained for coherent low-resolution Pok\u00e9mon item presentation"
+    },
+    {
+      "id": "odd-keystone",
+      "file": "arcade/fossil-museum-v0253/items/odd-keystone.png",
+      "source": "pret/pokeplatinum res/graphics/mining/objects/odd_keystone.png (Pok\u00e9mon Platinum Underground mining object)"
+    },
+    {
+      "id": "relic-copper",
+      "file": "arcade/fossil-museum-v0253/items/relic-copper.png",
+      "source": "existing LuckyDex offline pixel item sprite from v0.25.0 museum set; retained for coherent low-resolution Pok\u00e9mon item presentation"
+    },
+    {
+      "id": "relic-silver",
+      "file": "arcade/fossil-museum-v0253/items/relic-silver.png",
+      "source": "existing LuckyDex offline pixel item sprite from v0.25.0 museum set; retained for coherent low-resolution Pok\u00e9mon item presentation"
+    },
+    {
+      "id": "relic-gold",
+      "file": "arcade/fossil-museum-v0253/items/relic-gold.png",
+      "source": "existing LuckyDex offline pixel item sprite from v0.25.0 museum set; retained for coherent low-resolution Pok\u00e9mon item presentation"
+    },
+    {
+      "id": "relic-vase",
+      "file": "arcade/fossil-museum-v0253/items/relic-vase.png",
+      "source": "existing LuckyDex offline pixel item sprite from v0.25.0 museum set; retained for coherent low-resolution Pok\u00e9mon item presentation"
+    },
+    {
+      "id": "relic-band",
+      "file": "arcade/fossil-museum-v0253/items/relic-band.png",
+      "source": "existing LuckyDex offline pixel item sprite from v0.25.0 museum set; retained for coherent low-resolution Pok\u00e9mon item presentation"
+    },
+    {
+      "id": "relic-statue",
+      "file": "arcade/fossil-museum-v0253/items/relic-statue.png",
+      "source": "existing LuckyDex offline pixel item sprite from v0.25.0 museum set; retained for coherent low-resolution Pok\u00e9mon item presentation"
+    },
+    {
+      "id": "relic-crown",
+      "file": "arcade/fossil-museum-v0253/items/relic-crown.png",
+      "source": "existing LuckyDex offline pixel item sprite from v0.25.0 museum set; retained for coherent low-resolution Pok\u00e9mon item presentation"
+    },
+    {
+      "id": "hard-stone",
+      "file": "arcade/fossil-museum-v0253/items/hard-stone.png",
+      "source": "existing LuckyDex offline pixel item sprite from v0.25.0 museum set; retained for coherent low-resolution Pok\u00e9mon item presentation"
+    },
+    {
+      "id": "everstone",
+      "file": "arcade/fossil-museum-v0253/items/everstone.png",
+      "source": "existing LuckyDex offline pixel item sprite from v0.25.0 museum set; retained for coherent low-resolution Pok\u00e9mon item presentation"
+    },
+    {
+      "id": "fire-stone",
+      "file": "arcade/fossil-museum-v0253/items/fire-stone.png",
+      "source": "existing LuckyDex offline pixel item sprite from v0.25.0 museum set; retained for coherent low-resolution Pok\u00e9mon item presentation"
+    },
+    {
+      "id": "water-stone",
+      "file": "arcade/fossil-museum-v0253/items/water-stone.png",
+      "source": "existing LuckyDex offline pixel item sprite from v0.25.0 museum set; retained for coherent low-resolution Pok\u00e9mon item presentation"
+    },
+    {
+      "id": "thunder-stone",
+      "file": "arcade/fossil-museum-v0253/items/thunder-stone.png",
+      "source": "existing LuckyDex offline pixel item sprite from v0.25.0 museum set; retained for coherent low-resolution Pok\u00e9mon item presentation"
+    },
+    {
+      "id": "leaf-stone",
+      "file": "arcade/fossil-museum-v0253/items/leaf-stone.png",
+      "source": "existing LuckyDex offline pixel item sprite from v0.25.0 museum set; retained for coherent low-resolution Pok\u00e9mon item presentation"
+    },
+    {
+      "id": "moon-stone",
+      "file": "arcade/fossil-museum-v0253/items/moon-stone.png",
+      "source": "existing LuckyDex offline pixel item sprite from v0.25.0 museum set; retained for coherent low-resolution Pok\u00e9mon item presentation"
+    }
+  ],
+  "auxiliary": [
+    {
+      "id": "star-piece",
+      "file": "arcade/fossil-museum-v0253/items/star-piece.png",
+      "source": "existing LuckyDex offline pixel item sprite from v0.25.0 museum set"
+    },
+    {
+      "id": "rare-bone",
+      "file": "arcade/fossil-museum-v0253/items/rare-bone.png",
+      "source": "existing LuckyDex offline pixel item sprite from v0.25.0 museum set"
+    }
+  ]
+}
