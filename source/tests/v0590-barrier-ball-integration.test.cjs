@@ -13,7 +13,7 @@ test('Barrier Ball runtime assets are present',()=>{
 test('Stadium 2 Kids Club exposes Barrier Ball with Mr. Mime identity',()=>{
   const world=read('arcade-world.js');
   assert.match(world,/barrierBall:'Barrier Ball'/);
-  assert.match(world,/games:\['clearCutChallenge','gutsyGolbat','furretFrolic','topsyTurvy','barrierBall'\]/);
+  assert.match(world,/games:\['clearCutChallenge','gutsyGolbat','furretFrolic','topsyTurvy','barrierBall','pichuPowerPlant'\]/);
   assert.match(world,/barrierBall:\(\)=>window\.LuckyDexBarrierBall/);
   assert.match(world,/barrierBall:\{sprite:'122\.png',mechanic:'Barrier · angle · smash'\}/);
 });

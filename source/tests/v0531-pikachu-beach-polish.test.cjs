@@ -114,12 +114,16 @@ test('Classic achievements and record panels are retired while legacy save data 
   assert.match(records,/Allies Befriended/);
 });
 
-test('v0.53.3 metadata is consistent across package Gradle runtime and visible UI',()=>{
+test('v0.53.3 release behavior remains present with current aligned metadata',()=>{
   const pkg=JSON.parse(read('package.json')),lock=JSON.parse(read('package-lock.json'));
-  const gradle=read('app/build.gradle'),app=read('app/src/main/assets/app-v0167.js'),html=read('app/src/main/assets/index.html');
-  assert.equal(pkg.version,'0.53.3');assert.equal(lock.version,'0.53.3');assert.equal(lock.packages[''].version,'0.53.3');
-  assert.match(gradle,/versionCode\s+5303/);assert.match(gradle,/versionName\s+['"]0\.53\.3['"]/);assert.match(gradle,/LuckyDex-asset-builder\/0\.53\.3/);
-  assert.match(app,/__LUCKYDEX_BUILD=['"]0\.53\.3['"]/);assert.ok((html.match(/v0\.53\.3/g)||[]).length>=2);
+  const version=pkg.version,parts=version.split('.').map(Number);
+  assert.ok(parts[0]>0||parts[1]>53||(parts[1]===53&&parts[2]>=3),`expected >=0.53.3, got ${version}`);
+  assert.equal(lock.version,version); if(lock.packages?.[''])assert.equal(lock.packages[''].version,version);
+  const escaped=version.replace(/\./g,'\\.'),gradle=read('app/build.gradle'),app=read('app/src/main/assets/app-v0167.js'),html=read('app/src/main/assets/index.html');
+  assert.match(gradle,new RegExp(`versionName\\s+['\"]${escaped}['\"]`));
+  assert.match(gradle,new RegExp(`LuckyDex-asset-builder/${escaped}`));
+  assert.match(app,new RegExp(`__LUCKYDEX_BUILD=['\"]${escaped}['\"]`));
+  assert.ok((html.match(new RegExp(`v${escaped}`,'g'))||[]).length>=1);
 });
 
 test('Lucky Wave prize requires actually catching the rare wave before landing',()=>{

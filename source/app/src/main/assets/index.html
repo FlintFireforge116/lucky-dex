@@ -37,6 +37,7 @@
   <link rel="stylesheet" href="arcade-furret-frolic.css" />
   <link rel="stylesheet" href="arcade-topsy-turvy.css" />
   <link rel="stylesheet" href="arcade-barrier-ball.css" />
+  <link rel="stylesheet" href="arcade-pichu-power-plant.css" />
   <link rel="stylesheet" href="arcade-ice-cream-scoop.css" />
   <link rel="stylesheet" href="arcade-wailord-water-spout.css" />
   <link rel="stylesheet" href="arcade-pokemon-seek.css" />
@@ -65,7 +66,7 @@
     </div>
     <div class="title-partner-row" id="titlePartners"></div>
     <button id="titleContinueBtn" class="title-start">PRESS TO START</button>
-    <div class="title-footer"><span id="titleRankText">TRAINER RANK 1</span><span>v0.59.3</span></div>
+    <div class="title-footer"><span id="titleRankText">TRAINER RANK 1</span><span>v0.60.0</span></div>
   </div>
 
   <div id="starterPanel" class="starter-screen" hidden>
@@ -82,7 +83,7 @@
   <div id="app" class="app-shell">
     <header class="topbar">
       <div class="brand-block">
-        <div class="eyebrow">LUCKY DEX · v0.59.3</div>
+        <div class="eyebrow">LUCKY DEX · v0.60.0</div>
         <h1>Lucky Dex</h1>
       </div>
       <div class="top-resources">
@@ -418,11 +419,30 @@
               <div id="barrierBallPlayer2" class="barrier-mime p2"><img src="arcade/sprites/actors/pokemon/122.png" alt="COM 2 Mr. Mime" draggable="false"><b>COM 2</b></div>
               <div id="barrierBallPlayer3" class="barrier-mime p3"><img src="arcade/sprites/actors/pokemon/122.png" alt="COM 3 Mr. Mime" draggable="false"><b>COM 3</b></div>
               <div id="barrierBallBalls"></div><div id="barrierBallMessage" class="barrier-ball-message" hidden></div><div id="barrierBallCountdown" class="barrier-ball-countdown" hidden>3</div>
-              <div id="barrierBallReady" class="barrier-ball-ready"><small>STADIUM 2 · KIDS CLUB</small><b>BARRIER BALL</b><span>Defend your court for 60 seconds. Drag anywhere across the court to move Mr. Mime directly along your goal. Press A as a ball reaches the Barrier for a smash; dragging through contact adds angle and curve. Score on a rival for +1 and lose a point when they score on you. First to five points wins.</span><em id="barrierBallBest">BEST —</em><div class="barrier-ball-difficulty" aria-label="Barrier Ball difficulty"><button type="button" data-barrier-difficulty="easy" aria-pressed="false">EASY</button><button type="button" data-barrier-difficulty="normal" class="active" aria-pressed="true">NORMAL</button><button type="button" data-barrier-difficulty="hard" aria-pressed="false">HARD</button></div><button type="button" id="barrierBallStart" class="barrier-ball-start">START MATCH</button></div>
+              <div id="barrierBallReady" class="barrier-ball-ready"><small>STADIUM 2 · KIDS CLUB</small><b>BARRIER BALL</b><span>Defend your court for 60 seconds. Drag anywhere across the court to move Mr. Mime directly along your goal. Press A as a ball reaches the Barrier for a smash; dragging through contact adds angle and curve. Score on a rival for +1 and lose a point when they score on you. First to five points wins.</span><em id="barrierBallBest">BEST —</em><div class="barrier-ball-difficulty" aria-label="Barrier Ball difficulty"><button type="button" data-barrier-difficulty="easy" aria-pressed="false">EASY</button><button type="button" data-barrier-difficulty="normal" class="active" aria-pressed="true">NORMAL</button><button type="button" data-barrier-difficulty="hard" aria-pressed="false">HARD</button></div><button type="button" id="barrierBallHandedness" class="barrier-ball-handedness" aria-pressed="false">CONTROLS · RIGHT-HANDED</button><button type="button" id="barrierBallStart" class="barrier-ball-start">START MATCH</button></div>
               <div id="barrierBallPauseOverlay" class="barrier-ball-pause" hidden><small>STADIUM 2</small><b>MATCH PAUSED</b><span>The balls and all four Mr. Mime are frozen.</span><button type="button" id="barrierBallResume">RESUME</button></div>
             </div>
             <div id="barrierBallControls" class="barrier-ball-controls" hidden><button type="button" id="barrierBallSmash" class="barrier-ball-smash-btn" aria-label="Smash with Barrier">A<small>SMASH</small></button></div>
             <div class="barrier-ball-status"><span id="barrierBallStatus">DRAG ON COURT · A = SMASH</span><b id="barrierBallDifficultyLabel" hidden>NORMAL</b></div>
+          </div>
+        </div>
+
+        <div id="pichuPowerPlantGame" class="panel arcade-game pichu-power-game" hidden>
+          <div class="arcade-full-head pichu-power-head"><button class="game-exit" data-exit-game>‹ ARCADE</button><div class="arcade-mascot"><img src="arcade/sprites/actors/pokemon/172.png" alt="Pichu" /><span>STADIUM 2 · PICHU’S POWER PLANT</span></div></div>
+          <div id="pichuPowerPlantStage" class="pichu-power-stage">
+            <div class="pichu-power-hud"><span><small>CHARGE</small><b id="pichuPowerPlantCharge">0%</b></span><span><small>PLACE</small><b id="pichuPowerPlantPlace">1ST</b></span><span><small>SIGNAL</small><b id="pichuPowerPlantSignal">UP · A</b></span><span><small>TIME</small><b id="pichuPowerPlantTime">0.0s</b></span></div>
+            <div class="pichu-power-plant" aria-label="Pichu's Power Plant four-player generator race">
+              <div class="pichu-power-grid">
+                <div id="pichuPowerPlantPlayer0" class="pichu-power-bay is-you"><b class="pichu-power-name">YOU</b><span class="pichu-electrode up" data-direction="up"></span><span class="pichu-electrode right" data-direction="right"></span><span class="pichu-electrode down" data-direction="down"></span><span class="pichu-electrode left" data-direction="left"></span><div class="pichu-power-pokemon"><img src="arcade/sprites/actors/pokemon/172.png" alt="Your Pichu" draggable="false"></div><div class="pichu-power-meter"><i></i><b>0%</b></div></div>
+                <div id="pichuPowerPlantPlayer1" class="pichu-power-bay"><b class="pichu-power-name">COM 1</b><span class="pichu-electrode up" data-direction="up"></span><span class="pichu-electrode right" data-direction="right"></span><span class="pichu-electrode down" data-direction="down"></span><span class="pichu-electrode left" data-direction="left"></span><div class="pichu-power-pokemon"><img src="arcade/sprites/actors/pokemon/172.png" alt="COM 1 Pichu" draggable="false"></div><div class="pichu-power-meter"><i></i><b>0%</b></div></div>
+                <div id="pichuPowerPlantPlayer2" class="pichu-power-bay"><b class="pichu-power-name">COM 2</b><span class="pichu-electrode up" data-direction="up"></span><span class="pichu-electrode right" data-direction="right"></span><span class="pichu-electrode down" data-direction="down"></span><span class="pichu-electrode left" data-direction="left"></span><div class="pichu-power-pokemon"><img src="arcade/sprites/actors/pokemon/172.png" alt="COM 2 Pichu" draggable="false"></div><div class="pichu-power-meter"><i></i><b>0%</b></div></div>
+                <div id="pichuPowerPlantPlayer3" class="pichu-power-bay"><b class="pichu-power-name">COM 3</b><span class="pichu-electrode up" data-direction="up"></span><span class="pichu-electrode right" data-direction="right"></span><span class="pichu-electrode down" data-direction="down"></span><span class="pichu-electrode left" data-direction="left"></span><div class="pichu-power-pokemon"><img src="arcade/sprites/actors/pokemon/172.png" alt="COM 3 Pichu" draggable="false"></div><div class="pichu-power-meter"><i></i><b>0%</b></div></div>
+              </div>
+              <div id="pichuPowerPlantReady" class="pichu-power-ready"><small>STADIUM 2 · KIDS CLUB</small><b>PICHU’S POWER PLANT</b><span>Hold the direction of your lit electrode, then rapidly press the matching colour: blue A or green B. First Pichu to 100% wins.</span><em id="pichuPowerPlantBest">BEST —</em><div class="pichu-power-difficulty" aria-label="Pichu Power Plant difficulty"><button type="button" data-pichu-power-difficulty="easy" aria-pressed="false">EASY</button><button type="button" data-pichu-power-difficulty="normal" class="active" aria-pressed="true">NORMAL</button><button type="button" data-pichu-power-difficulty="hard" aria-pressed="false">HARD</button></div><button type="button" id="pichuPowerPlantStart" class="pichu-power-start">START CHARGING</button></div>
+              <div id="pichuPowerPlantPauseOverlay" class="pichu-power-pause" hidden><small>STADIUM 2</small><b>POWER PAUSED</b><span>Signals and charge meters are frozen.</span><button type="button" id="pichuPowerPlantResume">RESUME</button></div>
+            </div>
+            <div id="pichuPowerPlantControls" class="pichu-power-controls" hidden><div class="pichu-power-dpad" aria-label="Aim at electrode"><button type="button" id="pichuPowerPlantUp" class="up" data-pichu-direction="up" aria-label="Aim up">▲</button><button type="button" id="pichuPowerPlantLeft" class="left" data-pichu-direction="left" aria-label="Aim left">◀</button><button type="button" id="pichuPowerPlantRight" class="right" data-pichu-direction="right" aria-label="Aim right">▶</button><button type="button" id="pichuPowerPlantDown" class="down" data-pichu-direction="down" aria-label="Aim down">▼</button></div><div class="pichu-power-zaps"><button type="button" id="pichuPowerPlantA" class="a" aria-label="Blue A zap">A<small>BLUE ZAP</small></button><button type="button" id="pichuPowerPlantB" class="b" aria-label="Green B zap">B<small>GREEN ZAP</small></button></div></div>
+            <div class="pichu-power-status">HOLD DIRECTION · MASH MATCHING A / B</div>
           </div>
         </div>
 
@@ -1136,6 +1156,8 @@
   <script src="arcade-topsy-turvy.js"></script>
   <script src="arcade-barrier-ball-core.js"></script>
   <script src="arcade-barrier-ball.js"></script>
+  <script src="arcade-pichu-power-plant-core.js"></script>
+  <script src="arcade-pichu-power-plant.js"></script>
   <script src="arcade-ice-cream-scoop-core.js"></script>
   <script src="arcade-ice-cream-scoop.js"></script>
   <script src="arcade-wailord-water-spout-core.js"></script>

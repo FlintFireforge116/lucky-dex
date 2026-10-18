@@ -282,6 +282,11 @@
     push('barrier_hard_win','◆','Barrier Master','Win Barrier Ball on Hard.','arcade',{coins:1000,tickets:1},()=>[nonNeg(s().arcade?.barrierBall?.winsByDifficulty?.hard),1]);
     push('secret_barrier_clean_sheet','?','No Entry','Win Barrier Ball without conceding a goal.','arcade',{coins:1800,dust:120,tickets:1},()=>[nonNeg(s().arcade?.barrierBall?.cleanSheetWins),1],{hidden:true});
 
+    push('pichu_power_first_match','⚡','Power On','Complete your first Pichu’s Power Plant match.','arcade',{coins:300},()=>[nonNeg(s().arcade?.pichuPowerPlant?.gamesPlayed),1]);
+    push('pichu_power_first_win','🔋','Fully Charged','Win Pichu’s Power Plant.','arcade',{coins:700,dust:40},()=>[nonNeg(s().arcade?.pichuPowerPlant?.wins),1]);
+    push('pichu_power_hard_win','◆','Live Wire','Win Pichu’s Power Plant on Hard.','arcade',{coins:1000,tickets:1},()=>[nonNeg(s().arcade?.pichuPowerPlant?.winsByDifficulty?.hard),1]);
+    push('pichu_power_perfect','✦','Perfect Circuit','Win Pichu’s Power Plant without a wrong zap.','arcade',{coins:1400,dust:100},()=>[nonNeg(s().arcade?.pichuPowerPlant?.perfectWins),1]);
+
     // Dream World · Ice Cream Scoop.
     push('icecream_first_stack','🍦','First Scoop','Complete your first Ice Cream Scoop run.','arcade',{coins:300},()=>[nonNeg(s().arcade?.iceCreamScoop?.gamesPlayed),1]);
     push('icecream_height_7','🍨','Seven-Layer Sundae','Land 7 scoops in one Ice Cream Scoop run.','arcade',{coins:650,dust:30},()=>[nonNeg(s().arcade?.iceCreamScoop?.bestHeight),7]);

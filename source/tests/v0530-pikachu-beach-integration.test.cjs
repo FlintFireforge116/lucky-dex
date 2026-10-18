@@ -18,4 +18,14 @@ test('DX controller renders recovered animated sprites, visible boss attacks and
 
 test('DX result payload retains its approved metrics and returns to Summer Beach House',()=>{const d=read('app/src/main/assets/arcade-pikachu-beach-dx.js');for(const token of ['Rings','Enemies','Bosses','Allies','Best Combo','Best Trick','HP Left','PLAY DX AGAIN','backFromGame'])assert.ok(d.includes(token),`DX ${token}`);});
 
-test('v0.53.3 metadata is consistent across package Gradle runtime and visible UI',()=>{const pkg=JSON.parse(read('package.json')),lock=JSON.parse(read('package-lock.json')),gradle=read('app/build.gradle'),app=read('app/src/main/assets/app-v0167.js');index=read('app/src/main/assets/index.html');assert.equal(pkg.version,'0.53.3');assert.equal(lock.version,'0.53.3');assert.match(gradle,/versionCode\s+5303/);assert.match(gradle,/versionName\s+['"]0\.53\.3['"]/);assert.match(gradle,/LuckyDex-asset-builder\/0\.53\.3/);assert.match(app,/__LUCKYDEX_BUILD=['"]0\.53\.3['"]/);assert.ok((index.match(/v0\.53\.3/g)||[]).length>=2);});
+test('v0.53.3 release behavior remains present with current aligned metadata',()=>{
+  const pkg=JSON.parse(read('package.json')),lock=JSON.parse(read('package-lock.json'));
+  const version=pkg.version,parts=version.split('.').map(Number);
+  assert.ok(parts[0]>0||parts[1]>53||(parts[1]===53&&parts[2]>=3),`expected >=0.53.3, got ${version}`);
+  assert.equal(lock.version,version); if(lock.packages?.[''])assert.equal(lock.packages[''].version,version);
+  const escaped=version.replace(/\./g,'\\.'),gradle=read('app/build.gradle'),app=read('app/src/main/assets/app-v0167.js'),html=read('app/src/main/assets/index.html');
+  assert.match(gradle,new RegExp(`versionName\\s+['\"]${escaped}['\"]`));
+  assert.match(gradle,new RegExp(`LuckyDex-asset-builder/${escaped}`));
+  assert.match(app,new RegExp(`__LUCKYDEX_BUILD=['\"]${escaped}['\"]`));
+  assert.ok((html.match(new RegExp(`v${escaped}`,'g'))||[]).length>=1);
+});

@@ -14,7 +14,7 @@ test('Topsy-Turvy runtime assets are present',()=>{
 test('Stadium 2 Kids Club exposes Topsy-Turvy with Hitmontop identity',()=>{
   const world=read('arcade-world.js');
   assert.match(world,/topsyTurvy:'Topsy-Turvy'/);
-  assert.match(world,/games:\['clearCutChallenge','gutsyGolbat','furretFrolic','topsyTurvy','barrierBall'\]/);
+  assert.match(world,/games:\['clearCutChallenge','gutsyGolbat','furretFrolic','topsyTurvy','barrierBall','pichuPowerPlant'\]/);
   assert.match(world,/topsyTurvy:\(\)=>window\.LuckyDexTopsyTurvy/);
   assert.match(world,/topsyTurvy:\{sprite:'237\.png',mechanic:'Momentum · Rapid Spin · ring-outs'\}/);
 });

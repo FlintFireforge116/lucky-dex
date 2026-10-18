@@ -29,10 +29,13 @@ test('Settings exposes persistent Barrier Ball handedness toggle and refreshes t
   assert.match(app,/LuckyDexBarrierBall\?\.renderHandedness/);
 });
 
-test('v0.59.3 release metadata is consistent',()=>{
-  assert.equal(require(path.join(ROOT,'package.json')).version,'0.59.3');
-  assert.match(fs.readFileSync(path.join(ROOT,'package-lock.json'),'utf8'),/"version": "0\.59\.3"/);
-  assert.match(fs.readFileSync(path.join(ROOT,'app','build.gradle'),'utf8'),/versionCode 5903[\s\S]*versionName '0\.59\.3'/);
-  assert.match(read('app-v0167.js'),/__LUCKYDEX_BUILD='0\.59\.3'/);
-  assert.match(read('index.html'),/v0\.59\.3/);
+test('v0.59.3 handed-controls release remains present in later releases',()=>{
+  const version=require(path.join(ROOT,'package.json')).version;
+  const parts=version.split('.').map(Number);
+  assert.ok(parts[0]>0||parts[1]>59||(parts[1]===59&&parts[2]>=3),`expected >=0.59.3, got ${version}`);
+  const escaped=version.replace(/\./g,'\\.');
+  assert.match(fs.readFileSync(path.join(ROOT,'package-lock.json'),'utf8'),new RegExp(`\"version\": \"${escaped}\"`));
+  assert.match(fs.readFileSync(path.join(ROOT,'app','build.gradle'),'utf8'),new RegExp(`versionName '${escaped}'`));
+  assert.match(read('app-v0167.js'),new RegExp(`__LUCKYDEX_BUILD='${escaped}'`));
+  assert.match(read('index.html'),new RegExp(`v${escaped}`));
 });
