@@ -16,12 +16,8 @@
   function setControls(on){if($('rampageRolloutControls'))$('rampageRolloutControls').hidden=!on;}
   function renderDifficulty(){for(const b of document.querySelectorAll?.('[data-rampage-difficulty]')||[]){const on=b.dataset.rampageDifficulty===difficulty;b.classList.toggle('active',on);b.setAttribute('aria-pressed',String(on));}const best=root.state?.arcade?.rampageRollout?.bestTimes?.[difficulty];if($('rampageRolloutBest'))$('rampageRolloutBest').textContent=best?`BEST ${(Number(best)/1000).toFixed(2)} SEC`:'BEST —';}
   function visualPointFor(angle,radius){
-    // The race simulation remains circular (faithful steering/inside-line advantage),
-    // while the phone presentation projects it onto Stadium 2's broad rounded course.
-    const superellipse=4,theta=Number(angle)||0,span=Math.max(1,core.CONFIG.maxRaceRadius-core.CONFIG.minRaceRadius),lane=clamp((Number(radius)-core.CONFIG.startRadius)/span,-.55,.55),cx=500,cy=325,a=365+lane*112,b=208+lane*92;
-    const project=t=>{const c=Math.cos(t),sn=Math.sin(t),pow=2/superellipse;return{x:cx+a*Math.sign(c)*Math.pow(Math.abs(c),pow),y:cy+b*Math.sign(sn)*Math.pow(Math.abs(sn),pow)}};
-    const here=project(theta),next=project(theta+.004),heading=Math.atan2(next.y-here.y,next.x-here.x)*180/Math.PI;
-    return{x:(here.x/1000)*100,y:(here.y/650)*100,heading};
+    const c=core.coursePointFor(angle,radius);
+    return{x:(c.x/core.CONFIG.width)*100,y:(c.y/core.CONFIG.height)*100,heading:c.heading};
   }
   function renderRacers(){if(!race)return;for(const r of race.racers){const node=$(`rampageRolloutRacer${r.index}`);if(!node)continue;const c=visualPointFor(r.angle,r.radius);node.style.left=`${c.x}%`;node.style.top=`${c.y}%`;node.style.transform='translate(-50%,-50%)';node.style.setProperty('--heading',`${c.heading}deg`);node.classList.toggle('is-rollout',!!r.rollout);node.classList.toggle('is-stunned',Number(r.stunnedUntil||0)>now());node.classList.toggle('is-leading',core.rankRace(race)[0]?.id===r.id);const tag=node.querySelector('b');if(tag)tag.textContent=r.id==='player'?'YOU':`COM ${r.index}`;}}
   function renderDust(){const layer=$('rampageRolloutDustLayer');if(!layer||!race)return;layer.innerHTML=race.hazards.map(h=>{const c=visualPointFor(h.angle,h.radius);return`<i class="rampage-dust-cloud ${h.ownerId==='player'?'is-yours':''}" style="left:${c.x}%;top:${c.y}%" aria-hidden="true"></i>`;}).join('');}
@@ -30,6 +26,8 @@
     if($('rampageRolloutLap'))$('rampageRolloutLap').textContent=`${lap}/${core.CONFIG.lapsToWin}`;
     if($('rampageRolloutPlace'))$('rampageRolloutPlace').textContent=ordinal(place);
     if($('rampageRolloutDustCount'))$('rampageRolloutDustCount').textContent=String(player.dust||0);
+    if($('rampageRolloutDirtStock'))$('rampageRolloutDirtStock').textContent=`×${player.dust||0}`;
+    if($('rampageRolloutDust')){$('rampageRolloutDust').classList.toggle('is-empty',!Number(player.dust||0));$('rampageRolloutDust').setAttribute('aria-label',`Leave dirt whirlwind (${player.dust||0} available)`);}
     if($('rampageRolloutTime'))$('rampageRolloutTime').textContent=(elapsed(t)/1000).toFixed(1);
     if($('rampageRolloutStatus'))$('rampageRolloutStatus').textContent=player.rollout?'FINAL LAP · FULL ROLLOUT!':player.stunnedUntil>t?'DUST HIT · RECOVER!':'STEER CLOCKWISE · A = DIRT';
     $('rampageRolloutStage')?.classList?.toggle('is-final-lap',!!player.rollout);

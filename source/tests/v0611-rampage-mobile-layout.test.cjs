@@ -9,13 +9,16 @@ const read=p=>fs.readFileSync(path.join(ROOT,p),'utf8');
 test('Rampage Rollout stage stretches to the full game width instead of shrink-wrapping',()=>{
   const css=read('app/src/main/assets/arcade-rampage-rollout.css');
   assert.match(css,/\.rampage-rollout-stage\{[^}]*width:100%/);
-  assert.match(css,/\.rampage-rollout-track\{[^}]*aspect-ratio:\s*1\.4/);
+  assert.match(css,/\.rampage-rollout-track\{[^}]*aspect-ratio:\s*1\.2\/1/);
+  assert.match(css,/@media\(max-width:600px\)[\s\S]*\.rampage-rollout-track\{[^}]*aspect-ratio:\s*1\.08\/1/);
+  assert.match(css,/@media\(max-height:760px\) and \(max-width:600px\)\{\.rampage-rollout-track\{aspect-ratio:1\.14\/1\}/);
 });
 
-test('Rampage Rollout renders its circular race state onto a broad rounded-rectangle course',()=>{
+test('Rampage Rollout renderer uses the same rounded-rectangle geometry as the race simulation',()=>{
   const js=read('app/src/main/assets/arcade-rampage-rollout.js');
   assert.match(js,/function visualPointFor\(/);
-  assert.match(js,/superellipse/i);
+  assert.match(js,/core\.coursePointFor\(angle,radius\)/);
+  assert.doesNotMatch(js,/superellipse/i);
   assert.match(js,/renderRacers\(\)[\s\S]*visualPointFor\(r\.angle,r\.radius\)/);
   assert.match(js,/renderDust\(\)[\s\S]*visualPointFor\(h\.angle,h\.radius\)/);
 });

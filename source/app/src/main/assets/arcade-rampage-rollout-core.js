@@ -8,10 +8,13 @@
   const DONPHAN=Object.freeze({dex:232,name:'Donphan'});
   const CONFIG=Object.freeze({
     lapsToWin:9,
-    centreX:360,centreY:360,
-    innerRadius:158,outerRadius:302,
+    width:720,height:720,centreX:360,centreY:360,
+    // Radius is retained as the lane coordinate, but the race itself now runs on
+    // a real rounded-rectangle course.  The old circular simulation was only
+    // being visually stretched, which made Donphan zip across the long straights.
     startRadius:230,
     minRaceRadius:178,maxRaceRadius:282,
+    courseHalfWidth:270,courseHalfHeight:235,courseCornerRadius:105,
     playerAcceleration:470,
     playerBrake:650,
     playerDrag:260,
@@ -39,7 +42,39 @@
   const profileFor=key=>DIFFICULTIES[key]||DIFFICULTIES.normal;
   const normalizeAngle=a=>{let x=Number(a)||0;while(x<=-Math.PI)x+=TAU;while(x>Math.PI)x-=TAU;return x;};
   const progressFor=r=>Math.max(0,Number(r?.angularTravel||0)/TAU);
-  const coordsFor=r=>({x:CONFIG.centreX+Math.cos(r.angle)*r.radius,y:CONFIG.centreY+Math.sin(r.angle)*r.radius});
+  function courseGeometry(radius=CONFIG.startRadius){
+    const lane=clamp(Number(radius)||CONFIG.startRadius,CONFIG.minRaceRadius,CONFIG.maxRaceRadius)-CONFIG.startRadius;
+    const halfWidth=CONFIG.courseHalfWidth+lane,halfHeight=CONFIG.courseHalfHeight+lane;
+    const cornerRadius=Math.max(24,Math.min(CONFIG.courseCornerRadius+lane,halfWidth-1,halfHeight-1));
+    const topHalf=halfWidth-cornerRadius,side=2*(halfHeight-cornerRadius),bottom=2*(halfWidth-cornerRadius),quarter=Math.PI*cornerRadius/2;
+    const perimeter=topHalf+quarter+side+quarter+bottom+quarter+side+quarter+topHalf;
+    return {halfWidth,halfHeight,cornerRadius,topHalf,side,bottom,quarter,perimeter};
+  }
+  const courseLengthFor=radius=>courseGeometry(radius).perimeter;
+  function coursePointFor(angle,radius=CONFIG.startRadius){
+    const g=courseGeometry(radius),phase=((Number(angle)||0)+Math.PI/2)%TAU;
+    let d=((phase<0?phase+TAU:phase)/TAU)*g.perimeter;
+    const cx=CONFIG.centreX,cy=CONFIG.centreY,w=g.halfWidth,h=g.halfHeight,r=g.cornerRadius,q=g.quarter;
+    const finish=(x,y,tx,ty)=>({x,y,tx,ty,nx:ty,ny:-tx,heading:Math.atan2(ty,tx)*180/Math.PI,length:g.perimeter});
+    if(d<=g.topHalf)return finish(cx+d,cy-h,1,0);
+    d-=g.topHalf;
+    if(d<=q){const a=-Math.PI/2+d/r;return finish(cx+w-r+Math.cos(a)*r,cy-h+r+Math.sin(a)*r,-Math.sin(a),Math.cos(a));}
+    d-=q;
+    if(d<=g.side)return finish(cx+w,cy-h+r+d,0,1);
+    d-=g.side;
+    if(d<=q){const a=d/r;return finish(cx+w-r+Math.cos(a)*r,cy+h-r+Math.sin(a)*r,-Math.sin(a),Math.cos(a));}
+    d-=q;
+    if(d<=g.bottom)return finish(cx+w-r-d,cy+h,-1,0);
+    d-=g.bottom;
+    if(d<=q){const a=Math.PI/2+d/r;return finish(cx-w+r+Math.cos(a)*r,cy+h-r+Math.sin(a)*r,-Math.sin(a),Math.cos(a));}
+    d-=q;
+    if(d<=g.side)return finish(cx-w,cy+h-r-d,0,-1);
+    d-=g.side;
+    if(d<=q){const a=Math.PI+d/r;return finish(cx-w+r+Math.cos(a)*r,cy-h+r+Math.sin(a)*r,-Math.sin(a),Math.cos(a));}
+    d-=q;
+    return finish(cx-w+r+d,cy-h,1,0);
+  }
+  const coordsFor=r=>{const p=coursePointFor(r.angle,r.radius);return{x:p.x,y:p.y};};
   const distance=(a,b)=>{const ac=coordsFor(a),bc=('x'in b&&'y'in b)?b:coordsFor(b);return Math.hypot(ac.x-bc.x,ac.y-bc.y);};
   const dustAwardForPlace=place=>clamp(Math.trunc(Number(place)||1)-1,0,3);
   function makeRacer(id,index,kind,profile,rng,now){
@@ -78,7 +113,7 @@
   function stepPlayer(race,r,dt,atMs){
     if(r.finishedAt!=null)return;
     const stunned=Number(r.stunnedUntil||0)>atMs;
-    const tx=-Math.sin(r.angle),ty=Math.cos(r.angle),rx=Math.cos(r.angle),ry=Math.sin(r.angle);
+    const course=coursePointFor(r.angle,r.radius),tx=course.tx,ty=course.ty,rx=course.nx,ry=course.ny;
     const tangent=stunned?0:clamp(r.inputX*tx+r.inputY*ty,-1,1);
     const radial=stunned?0:clamp(r.inputX*rx+r.inputY*ry,-1,1);
     const max=r.rollout?CONFIG.rolloutMaxSpeed:CONFIG.playerMaxSpeed;
@@ -87,7 +122,7 @@
     else r.speed=approach(r.speed,0,CONFIG.playerDrag*dt);
     if(stunned)r.speed=approach(r.speed,0,CONFIG.playerBrake*dt);
     r.radius=clamp(r.radius+radial*CONFIG.radialSpeed*dt,CONFIG.minRaceRadius,CONFIG.maxRaceRadius);
-    const delta=(Math.max(0,r.speed)/Math.max(1,r.radius))*dt;
+    const delta=(Math.max(0,r.speed)/Math.max(1,courseLengthFor(r.radius)))*TAU*dt;
     applyAngularAdvance(race,r,delta,atMs);
   }
   function nearestThreat(race,r){
@@ -105,7 +140,7 @@
     r.radius=approach(r.radius,target,CONFIG.radialSpeed*.7*dt);
     const targetSpeed=stunned?0:(r.rollout?profile.cpuRolloutSpeed:profile.cpuSpeed);
     r.speed=approach(r.speed,targetSpeed,(stunned?CONFIG.playerBrake:390)*dt);
-    const delta=(Math.max(0,r.speed)/Math.max(1,r.radius))*dt;
+    const delta=(Math.max(0,r.speed)/Math.max(1,courseLengthFor(r.radius)))*TAU*dt;
     applyAngularAdvance(race,r,delta,atMs);
     if(!race.finalized&&r.dust>0&&atMs>=r.nextDustAt){
       if(rand(rng)<profile.dustDropChance)dropDust(race,r,atMs);
@@ -133,5 +168,5 @@
   }
   function rewardFor(place,difficulty='normal'){const row=REWARDS[difficulty]||REWARDS.normal;return row[clamp(Math.trunc(Number(place)||1)-1,0,3)];}
   function shiftTimestamps(race,delta){if(!race||!delta)return race;race.startedAt+=delta;race.lastAdvancedAt+=delta;if(race.finalizedAt!=null)race.finalizedAt+=delta;for(const r of race.racers){if(r.stunnedUntil)r.stunnedUntil+=delta;if(r.finishedAt!=null)r.finishedAt+=delta;if(r.nextDustAt)r.nextDustAt+=delta;}for(const h of race.hazards){h.createdAt+=delta;h.expiresAt+=delta;}return race;}
-  return {TAU,DONPHAN,CONFIG,DIFFICULTIES,REWARDS,profileFor,progressFor,coordsFor,dustAwardForPlace,awardLapDust,createRace,rankRace,placeFor,setPlayerInput,dropDust,resolveDustHits,applyAngularAdvance,advanceRace,finalizeRace,rewardFor,shiftTimestamps};
+  return {TAU,DONPHAN,CONFIG,DIFFICULTIES,REWARDS,profileFor,progressFor,courseGeometry,courseLengthFor,coursePointFor,coordsFor,dustAwardForPlace,awardLapDust,createRace,rankRace,placeFor,setPlayerInput,dropDust,resolveDustHits,applyAngularAdvance,advanceRace,finalizeRace,rewardFor,shiftTimestamps};
 });
