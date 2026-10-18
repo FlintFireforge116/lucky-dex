@@ -54,11 +54,25 @@
   }
   function updatePlayer(run,p,ms,input){
     p.smashActiveMs=Math.max(0,p.smashActiveMs-ms);p.smashCooldownMs=Math.max(0,p.smashCooldownMs-ms);
-    const sec=ms/1000,target=clamp(input?.move,-1,1)*CONFIG.paddleMaxSpeed*(p.index===0?1:run.profile.moveScale);
-    const delta=target-p.velocity,maxDelta=CONFIG.paddleAccel*sec;
+    const sec=Math.max(ms/1000,1/120);
+    if(p.index===0){
+      if(Number.isFinite(input?.targetOffset)){
+        const previous=p.offset,next=clamp(input.targetOffset,-CONFIG.paddleRange,CONFIG.paddleRange);
+        p.offset=next;
+        p.velocity=clamp((next-previous)/sec,-CONFIG.paddleMaxSpeed*1.6,CONFIG.paddleMaxSpeed*1.6);
+      }else{
+        const move=clamp(input?.move,-1,1);
+        p.velocity=move*CONFIG.paddleMaxSpeed;
+        p.offset=clamp(p.offset+p.velocity*(ms/1000),-CONFIG.paddleRange,CONFIG.paddleRange);
+        if(!move)p.velocity=0;
+      }
+      syncPlayerPosition(p);return;
+    }
+    const target=clamp(input?.move,-1,1)*CONFIG.paddleMaxSpeed*run.profile.moveScale;
+    const delta=target-p.velocity,maxDelta=CONFIG.paddleAccel*(ms/1000);
     p.velocity+=clamp(delta,-maxDelta,maxDelta);
-    if(Math.abs(target)<1)p.velocity*=Math.exp(-CONFIG.paddleDrag*sec);
-    p.offset=clamp(p.offset+p.velocity*sec,-CONFIG.paddleRange,CONFIG.paddleRange);
+    if(Math.abs(target)<1)p.velocity*=Math.exp(-CONFIG.paddleDrag*(ms/1000));
+    p.offset=clamp(p.offset+p.velocity*(ms/1000),-CONFIG.paddleRange,CONFIG.paddleRange);
     if(Math.abs(p.offset)>=CONFIG.paddleRange-.01&&Math.sign(p.velocity)===Math.sign(p.offset))p.velocity*=.25;
     syncPlayerPosition(p);
   }

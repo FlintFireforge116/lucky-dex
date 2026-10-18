@@ -17,9 +17,12 @@ test('Barrier Ball keeps START MATCH fully reachable on phone-sized courts',()=>
   assert.match(read('index.html'),/id="barrierBallStart"[^>]*>START MATCH<\/button>/);
 });
 
-test('v0.59.1 release metadata is consistent',()=>{
-  assert.equal(require(path.join(ROOT,'package.json')).version,'0.59.1');
-  assert.match(fs.readFileSync(path.join(ROOT,'app','build.gradle'),'utf8'),/versionCode 5901[\s\S]*versionName '0\.59\.1'/);
-  assert.match(read('app-v0167.js'),/__LUCKYDEX_BUILD='0\.59\.1'/);
-  assert.match(read('index.html'),/v0\.59\.1/);
+test('v0.59.1 mobile-start fix remains present in later releases with aligned metadata',()=>{
+  const version=require(path.join(ROOT,'package.json')).version;
+  const parts=version.split('.').map(Number);
+  assert.ok(parts[0]>0||parts[1]>59||(parts[1]===59&&parts[2]>=1));
+  const gradle=fs.readFileSync(path.join(ROOT,'app','build.gradle'),'utf8');
+  assert.match(gradle,new RegExp(`versionName '${version.replaceAll('.','\\.')}'`));
+  assert.match(read('app-v0167.js'),new RegExp(`__LUCKYDEX_BUILD='${version.replaceAll('.','\\.')}'`));
+  assert.match(read('index.html'),new RegExp(`v${version.replaceAll('.','\\.')}`));
 });

@@ -65,7 +65,7 @@
     </div>
     <div class="title-partner-row" id="titlePartners"></div>
     <button id="titleContinueBtn" class="title-start">PRESS TO START</button>
-    <div class="title-footer"><span id="titleRankText">TRAINER RANK 1</span><span>v0.59.1</span></div>
+    <div class="title-footer"><span id="titleRankText">TRAINER RANK 1</span><span>v0.59.2</span></div>
   </div>
 
   <div id="starterPanel" class="starter-screen" hidden>
@@ -82,7 +82,7 @@
   <div id="app" class="app-shell">
     <header class="topbar">
       <div class="brand-block">
-        <div class="eyebrow">LUCKY DEX · v0.59.1</div>
+        <div class="eyebrow">LUCKY DEX · v0.59.2</div>
         <h1>Lucky Dex</h1>
       </div>
       <div class="top-resources">
@@ -418,11 +418,11 @@
               <div id="barrierBallPlayer2" class="barrier-mime p2"><img src="arcade/sprites/actors/pokemon/122.png" alt="COM 2 Mr. Mime" draggable="false"><b>COM 2</b></div>
               <div id="barrierBallPlayer3" class="barrier-mime p3"><img src="arcade/sprites/actors/pokemon/122.png" alt="COM 3 Mr. Mime" draggable="false"><b>COM 3</b></div>
               <div id="barrierBallBalls"></div><div id="barrierBallMessage" class="barrier-ball-message" hidden></div><div id="barrierBallCountdown" class="barrier-ball-countdown" hidden>3</div>
-              <div id="barrierBallReady" class="barrier-ball-ready"><small>STADIUM 2 · KIDS CLUB</small><b>BARRIER BALL</b><span>Defend your court for 60 seconds. Slide Mr. Mime left and right to return Poké Balls with Barrier. Press A as a ball reaches the Barrier for a smash; moving while you hit adds angle and curve. Score on a rival for +1 and lose a point when they score on you. First to five points wins.</span><em id="barrierBallBest">BEST —</em><div class="barrier-ball-difficulty" aria-label="Barrier Ball difficulty"><button type="button" data-barrier-difficulty="easy" aria-pressed="false">EASY</button><button type="button" data-barrier-difficulty="normal" class="active" aria-pressed="true">NORMAL</button><button type="button" data-barrier-difficulty="hard" aria-pressed="false">HARD</button></div><button type="button" id="barrierBallStart" class="barrier-ball-start">START MATCH</button></div>
+              <div id="barrierBallReady" class="barrier-ball-ready"><small>STADIUM 2 · KIDS CLUB</small><b>BARRIER BALL</b><span>Defend your court for 60 seconds. Drag anywhere across the court to move Mr. Mime directly along your goal. Press A as a ball reaches the Barrier for a smash; dragging through contact adds angle and curve. Score on a rival for +1 and lose a point when they score on you. First to five points wins.</span><em id="barrierBallBest">BEST —</em><div class="barrier-ball-difficulty" aria-label="Barrier Ball difficulty"><button type="button" data-barrier-difficulty="easy" aria-pressed="false">EASY</button><button type="button" data-barrier-difficulty="normal" class="active" aria-pressed="true">NORMAL</button><button type="button" data-barrier-difficulty="hard" aria-pressed="false">HARD</button></div><button type="button" id="barrierBallStart" class="barrier-ball-start">START MATCH</button></div>
               <div id="barrierBallPauseOverlay" class="barrier-ball-pause" hidden><small>STADIUM 2</small><b>MATCH PAUSED</b><span>The balls and all four Mr. Mime are frozen.</span><button type="button" id="barrierBallResume">RESUME</button></div>
             </div>
-            <div id="barrierBallControls" class="barrier-ball-controls" hidden><div id="barrierBallSlider" class="barrier-ball-slider" role="application" aria-label="Slide Mr. Mime left and right"><i id="barrierBallSliderKnob"></i></div><button type="button" id="barrierBallSmash" class="barrier-ball-smash-btn" aria-label="Smash with Barrier">A<small>SMASH</small></button></div>
-            <div class="barrier-ball-status"><span id="barrierBallStatus">SLIDE · DEFEND · A TO SMASH</span><b id="barrierBallDifficultyLabel" hidden>NORMAL</b></div>
+            <div id="barrierBallControls" class="barrier-ball-controls" hidden><button type="button" id="barrierBallSmash" class="barrier-ball-smash-btn" aria-label="Smash with Barrier">A<small>SMASH</small></button></div>
+            <div class="barrier-ball-status"><span id="barrierBallStatus">DRAG ON COURT · A = SMASH</span><b id="barrierBallDifficultyLabel" hidden>NORMAL</b></div>
           </div>
         </div>
 

@@ -18,11 +18,11 @@ test('Stadium 2 Kids Club exposes Barrier Ball with Mr. Mime identity',()=>{
   assert.match(world,/barrierBall:\{sprite:'122\.png',mechanic:'Barrier · angle · smash'\}/);
 });
 
-test('Barrier Ball panel exposes a four-way court, player slider and A smash',()=>{
+test('Barrier Ball panel exposes a four-way court, direct court drag and A smash',()=>{
   const html=read('index.html');
   assert.match(html,/id="barrierBallGame"/);
   assert.match(html,/id="barrierBallArena"/);
-  assert.match(html,/id="barrierBallSlider"/);
+  assert.doesNotMatch(html,/id="barrierBallSlider"/);
   assert.match(html,/id="barrierBallSmash"/);
   assert.match(html,/60 seconds/i);
   assert.match(html,/five points/i);
@@ -32,7 +32,7 @@ test('Barrier Ball panel exposes a four-way court, player slider and A smash',()
 test('Barrier Ball is included in the shared first-play instructions system',()=>{
   const help=read('arcade-help.js');
   assert.match(help,/barrierBall:\{name:'Barrier Ball'/);
-  assert.match(help,/barrierBall:\{[^}]+controls:'Slide the Barrier/s);
+  assert.match(help,/barrierBall:\{[^}]+controls:'Drag anywhere across the court/s);
 });
 
 test('visible Barrier travel is mapped to court coordinates rather than element-width transforms',()=>{
