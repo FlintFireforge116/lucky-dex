@@ -5,11 +5,11 @@
 })(typeof window!=='undefined'?window:globalThis,function(){
   'use strict';
   const DIRECTIONS=Object.freeze(['up','right','down','left']);
-  const CONFIG=Object.freeze({maxCharge:100,correctCharge:4,wrongDrain:6,safetyCapMs:45000});
+  const CONFIG=Object.freeze({maxCharge:100,correctCharge:8,playerCorrectCharge:8,cpuCorrectCharge:4,wrongDrain:6,safetyCapMs:45000});
   const DIFFICULTIES=Object.freeze({
-    easy:Object.freeze({key:'easy',label:'Easy',signalMinMs:1550,signalMaxMs:2150,reactionMinMs:360,reactionMaxMs:560,zapMinMs:210,zapMaxMs:300,errorChance:.16}),
-    normal:Object.freeze({key:'normal',label:'Normal',signalMinMs:1200,signalMaxMs:1750,reactionMinMs:250,reactionMaxMs:410,zapMinMs:155,zapMaxMs:230,errorChance:.09}),
-    hard:Object.freeze({key:'hard',label:'Hard',signalMinMs:900,signalMaxMs:1350,reactionMinMs:150,reactionMaxMs:280,zapMinMs:115,zapMaxMs:180,errorChance:.035})
+    easy:Object.freeze({key:'easy',label:'Easy',signalMinMs:1550,signalMaxMs:2150,reactionMinMs:480,reactionMaxMs:700,zapMinMs:360,zapMaxMs:500,errorChance:.18}),
+    normal:Object.freeze({key:'normal',label:'Normal',signalMinMs:1200,signalMaxMs:1750,reactionMinMs:350,reactionMaxMs:520,zapMinMs:270,zapMaxMs:390,errorChance:.11}),
+    hard:Object.freeze({key:'hard',label:'Hard',signalMinMs:900,signalMaxMs:1350,reactionMinMs:240,reactionMaxMs:380,zapMinMs:190,zapMaxMs:290,errorChance:.05})
   });
   const REWARDS=Object.freeze({easy:Object.freeze([90,60,40,25]),normal:Object.freeze([120,80,50,30]),hard:Object.freeze([155,105,70,40])});
   const clamp01=v=>Math.max(0,Math.min(.999999,Number(v)||0));
@@ -34,7 +34,7 @@
     if(!['a','b'].includes(btn))return {accepted:false,correct:false,charge:p.charge,finished:false};
     const correct=dir===p.signal.direction&&btn===p.signal.button;
     p.totalPresses++;
-    if(correct){p.correctPresses++;p.charge=Math.min(CONFIG.maxCharge,p.charge+CONFIG.correctCharge);}else{p.wrongPresses++;p.charge=Math.max(0,p.charge-CONFIG.wrongDrain);}
+    if(correct){p.correctPresses++;const gain=p.kind==='player'?CONFIG.playerCorrectCharge:CONFIG.cpuCorrectCharge;p.charge=Math.min(CONFIG.maxCharge,p.charge+gain);}else{p.wrongPresses++;p.charge=Math.max(0,p.charge-CONFIG.wrongDrain);}
     if(p.charge>=CONFIG.maxCharge){p.charge=CONFIG.maxCharge;p.finishedAt=Number(atMs)||0;match.winnerId=p.id;finalizeMatch(match,p.finishedAt);}
     return {accepted:true,correct,charge:p.charge,finished:p.finishedAt!=null};
   }
