@@ -16,7 +16,7 @@ test('Gutsy Golbat runtime assets are present',()=>{
 test('Stadium 2 Kids Club exposes Gutsy Golbat as a playable game',()=>{
   const world=read('arcade-world.js');
   assert.match(world,/gutsyGolbat:'Gutsy Golbat'/);
-  assert.match(world,/games:\['clearCutChallenge','gutsyGolbat','furretFrolic','topsyTurvy','barrierBall','pichuPowerPlant'\]/);
+  assert.match(world,/games:\['clearCutChallenge','gutsyGolbat','furretFrolic','topsyTurvy','barrierBall','pichuPowerPlant'(?:,'[^']+')*\]/);
   assert.match(world,/gutsyGolbat:\(\)=>window\.LuckyDexGutsyGolbat/);
 });
 

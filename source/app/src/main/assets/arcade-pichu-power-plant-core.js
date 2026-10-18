@@ -5,11 +5,11 @@
 })(typeof window!=='undefined'?window:globalThis,function(){
   'use strict';
   const DIRECTIONS=Object.freeze(['up','right','down','left']);
-  const CONFIG=Object.freeze({maxCharge:100,correctCharge:8,playerCorrectCharge:8,cpuCorrectCharge:4,wrongDrain:6,safetyCapMs:45000});
+  const CONFIG=Object.freeze({maxCharge:100,correctCharge:4,playerCorrectCharge:4,cpuCorrectCharge:4,wrongDrain:6,safetyCapMs:60000});
   const DIFFICULTIES=Object.freeze({
-    easy:Object.freeze({key:'easy',label:'Easy',signalMinMs:1550,signalMaxMs:2150,reactionMinMs:480,reactionMaxMs:700,zapMinMs:360,zapMaxMs:500,errorChance:.18}),
-    normal:Object.freeze({key:'normal',label:'Normal',signalMinMs:1200,signalMaxMs:1750,reactionMinMs:350,reactionMaxMs:520,zapMinMs:270,zapMaxMs:390,errorChance:.11}),
-    hard:Object.freeze({key:'hard',label:'Hard',signalMinMs:900,signalMaxMs:1350,reactionMinMs:240,reactionMaxMs:380,zapMinMs:190,zapMaxMs:290,errorChance:.05})
+    easy:Object.freeze({key:'easy',label:'Easy',signalMinMs:1550,signalMaxMs:2150,reactionMinMs:650,reactionMaxMs:980,zapMinMs:520,zapMaxMs:720,errorChance:.28,hesitationChance:.25,hesitationMs:420}),
+    normal:Object.freeze({key:'normal',label:'Normal',signalMinMs:1200,signalMaxMs:1750,reactionMinMs:480,reactionMaxMs:700,zapMinMs:400,zapMaxMs:560,errorChance:.17,hesitationChance:.16,hesitationMs:300}),
+    hard:Object.freeze({key:'hard',label:'Hard',signalMinMs:900,signalMaxMs:1350,reactionMinMs:320,reactionMaxMs:500,zapMinMs:280,zapMaxMs:400,errorChance:.08,hesitationChance:.08,hesitationMs:180})
   });
   const REWARDS=Object.freeze({easy:Object.freeze([90,60,40,25]),normal:Object.freeze([120,80,50,30]),hard:Object.freeze([155,105,70,40])});
   const clamp01=v=>Math.max(0,Math.min(.999999,Number(v)||0));
@@ -56,7 +56,7 @@
     let direction=p.signal.direction,button=p.signal.button;
     if(mistake){if(rand(rng)<.5)direction=DIRECTIONS[(DIRECTIONS.indexOf(direction)+1+Math.floor(rand(rng)*3))%4];else button=button==='a'?'b':'a';}
     applyAttempt(match,p,direction,button,atMs);
-    if(!match.finalized&&p.finishedAt==null)p.nextZapAt=(Number(atMs)||0)+zapDelay(profile,rng);
+    if(!match.finalized&&p.finishedAt==null){const hesitate=rand(rng)<profile.hesitationChance?profile.hesitationMs:0;p.nextZapAt=(Number(atMs)||0)+zapDelay(profile,rng)+hesitate;}
   }
   function nextEvent(match){
     let at=Infinity,type=null,player=null;

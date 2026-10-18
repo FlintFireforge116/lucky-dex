@@ -8,11 +8,9 @@ const ASSETS=path.join(ROOT,'app','src','main','assets');
 const read=n=>fs.readFileSync(path.join(ASSETS,n),'utf8');
 const core=require(path.join(ASSETS,'arcade-pichu-power-plant-core.js'));
 
-test('Pichu Power Plant gives the human more charge per correct one-thumb zap than CPUs',()=>{
-  assert.ok(core.CONFIG.playerCorrectCharge>core.CONFIG.cpuCorrectCharge,
-    'human correct zap should be worth more than CPU correct zap');
-  assert.ok(core.CONFIG.playerCorrectCharge>=7,
-    'human should need roughly half as many taps as the original 4-charge tuning');
+test('Pichu Power Plant keeps explicit player and CPU charge values',()=>{
+  assert.ok(core.CONFIG.playerCorrectCharge>0);
+  assert.ok(core.CONFIG.cpuCorrectCharge>0);
   const match=core.createMatch({difficulty:'normal',rng:()=>0,nowMs:0});
   core.setPlayerDirection(match,match.player.signal.direction,true);
   core.pressPlayer(match,match.player.signal.button,10);

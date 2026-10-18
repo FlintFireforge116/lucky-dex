@@ -38,6 +38,7 @@
   <link rel="stylesheet" href="arcade-topsy-turvy.css" />
   <link rel="stylesheet" href="arcade-barrier-ball.css" />
   <link rel="stylesheet" href="arcade-pichu-power-plant.css" />
+  <link rel="stylesheet" href="arcade-rampage-rollout.css" />
   <link rel="stylesheet" href="arcade-ice-cream-scoop.css" />
   <link rel="stylesheet" href="arcade-wailord-water-spout.css" />
   <link rel="stylesheet" href="arcade-pokemon-seek.css" />
@@ -66,7 +67,7 @@
     </div>
     <div class="title-partner-row" id="titlePartners"></div>
     <button id="titleContinueBtn" class="title-start">PRESS TO START</button>
-    <div class="title-footer"><span id="titleRankText">TRAINER RANK 1</span><span>v0.60.1</span></div>
+    <div class="title-footer"><span id="titleRankText">TRAINER RANK 1</span><span>v0.61.0</span></div>
   </div>
 
   <div id="starterPanel" class="starter-screen" hidden>
@@ -83,7 +84,7 @@
   <div id="app" class="app-shell">
     <header class="topbar">
       <div class="brand-block">
-        <div class="eyebrow">LUCKY DEX · v0.60.1</div>
+        <div class="eyebrow">LUCKY DEX · v0.61.0</div>
         <h1>Lucky Dex</h1>
       </div>
       <div class="top-resources">
@@ -443,6 +444,24 @@
             </div>
             <div id="pichuPowerPlantControls" class="pichu-power-controls" hidden><div class="pichu-power-dpad" aria-label="Aim at electrode"><button type="button" id="pichuPowerPlantUp" class="up" data-pichu-direction="up" aria-label="Aim up">▲</button><button type="button" id="pichuPowerPlantLeft" class="left" data-pichu-direction="left" aria-label="Aim left">◀</button><button type="button" id="pichuPowerPlantRight" class="right" data-pichu-direction="right" aria-label="Aim right">▶</button><button type="button" id="pichuPowerPlantDown" class="down" data-pichu-direction="down" aria-label="Aim down">▼</button></div><div class="pichu-power-zaps"><button type="button" id="pichuPowerPlantA" class="a" aria-label="Blue A zap">A<small>BLUE ZAP</small></button><button type="button" id="pichuPowerPlantB" class="b" aria-label="Green B zap">B<small>GREEN ZAP</small></button></div></div>
             <div class="pichu-power-status">HOLD DIRECTION · MASH MATCHING A / B</div>
+          </div>
+        </div>
+
+        <div id="rampageRolloutGame" class="panel arcade-game rampage-rollout-game" hidden>
+          <div class="arcade-full-head rampage-rollout-head"><button class="game-exit" data-exit-game>‹ ARCADE</button><div class="arcade-mascot"><img src="arcade/sprites/actors/pokemon/232.png" alt="Donphan" /><span>STADIUM 2 · RAMPAGE ROLLOUT</span></div></div>
+          <div id="rampageRolloutStage" class="rampage-rollout-stage">
+            <div class="rampage-rollout-hud"><span><small>LAP</small><b id="rampageRolloutLap">1/9</b></span><span><small>PLACE</small><b id="rampageRolloutPlace">1ST</b></span><span><small>DIRT</small><b id="rampageRolloutDustCount">0</b></span><span><small>TIME</small><b id="rampageRolloutTime">0.0</b></span></div>
+            <div id="rampageRolloutTrack" class="rampage-rollout-track" aria-label="Rampage Rollout nine-lap circular Donphan race">
+              <div class="rampage-rollout-inner" aria-hidden="true"></div><div class="rampage-start-line" aria-hidden="true"></div><div id="rampageRolloutDustLayer"></div>
+              <div id="rampageRolloutRacer0" class="rampage-racer is-you"><img src="arcade/sprites/actors/pokemon/232.png" alt="Your Donphan" draggable="false"><b>YOU</b></div>
+              <div id="rampageRolloutRacer1" class="rampage-racer"><img src="arcade/sprites/actors/pokemon/232.png" alt="COM 1 Donphan" draggable="false"><b>COM 1</b></div>
+              <div id="rampageRolloutRacer2" class="rampage-racer"><img src="arcade/sprites/actors/pokemon/232.png" alt="COM 2 Donphan" draggable="false"><b>COM 2</b></div>
+              <div id="rampageRolloutRacer3" class="rampage-racer"><img src="arcade/sprites/actors/pokemon/232.png" alt="COM 3 Donphan" draggable="false"><b>COM 3</b></div>
+              <div id="rampageRolloutReady" class="rampage-ready"><small>STADIUM 2 · KIDS CLUB</small><b>RAMPAGE ROLLOUT</b><span>Steer Donphan clockwise around nine laps. Lower places earn Dirt uses at each finish-line crossing; press A to leave a dust whirlwind that slows rivals. The ninth lap unleashes full Rollout speed.</span><em id="rampageRolloutBest">BEST —</em><div class="rampage-difficulty" aria-label="Rampage Rollout difficulty"><button type="button" data-rampage-difficulty="easy" aria-pressed="false">EASY</button><button type="button" data-rampage-difficulty="normal" class="active" aria-pressed="true">NORMAL</button><button type="button" data-rampage-difficulty="hard" aria-pressed="false">HARD</button></div><button type="button" id="rampageRolloutStart" class="rampage-start">START RACE</button></div>
+              <div id="rampageRolloutPauseOverlay" class="rampage-pause" hidden><small>STADIUM 2</small><b>RACE PAUSED</b><span>Donphan and all dust whirlwinds are frozen.</span><button type="button" id="rampageRolloutResume">RESUME</button></div>
+            </div>
+            <div id="rampageRolloutControls" class="rampage-rollout-controls" hidden><div id="rampageRolloutStick" class="rampage-stick" role="application" aria-label="Steer Donphan"><i id="rampageRolloutKnob"></i></div><button type="button" id="rampageRolloutDust" class="rampage-dirt-btn" aria-label="Leave dirt whirlwind">A<small>DIRT</small></button></div>
+            <div id="rampageRolloutStatus" class="rampage-rollout-status">STEER CLOCKWISE · A = DIRT</div>
           </div>
         </div>
 
@@ -1158,6 +1177,8 @@
   <script src="arcade-barrier-ball.js"></script>
   <script src="arcade-pichu-power-plant-core.js"></script>
   <script src="arcade-pichu-power-plant.js"></script>
+  <script src="arcade-rampage-rollout-core.js"></script>
+  <script src="arcade-rampage-rollout.js"></script>
   <script src="arcade-ice-cream-scoop-core.js"></script>
   <script src="arcade-ice-cream-scoop.js"></script>
   <script src="arcade-wailord-water-spout-core.js"></script>

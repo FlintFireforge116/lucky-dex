@@ -68,7 +68,7 @@ test('Clear Cut shell has visible split pieces, no COM players, and a mystery ba
 test('Clear Cut lives in a dedicated Stadium 2 Kids Club venue',()=>{
   const world=read('arcade-world.js');
   assert.match(world,/id:"stadiumKidsClub"[^\n]+games:\['ekansHoop','digDigDig','magikarpSplash','rockHarden','clefairy','thunderingDynamo','snoreWar','runRattataRun','sushiGoRound'\]/);
-  assert.match(world,/id:"stadium2KidsClub"[^\n]+name:"Pokémon Stadium 2 · Kids Club"[^\n]+games:\['clearCutChallenge','gutsyGolbat','furretFrolic','topsyTurvy','barrierBall','pichuPowerPlant'\]/);
+  assert.match(world,/id:"stadium2KidsClub"[^\n]+name:"Pokémon Stadium 2 · Kids Club"[^\n]+games:\['clearCutChallenge','gutsyGolbat','furretFrolic','topsyTurvy','barrierBall','pichuPowerPlant'(?:,'[^']+')*\]/);
   assert.match(world,/stadium2KidsClub/);
   assert.equal(fs.existsSync(asset('arcade/kids-club/kids-club-2-venue.svg')),true,'Stadium 2 venue art must exist');
 });
