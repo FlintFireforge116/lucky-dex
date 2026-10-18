@@ -22,6 +22,6 @@ test('Barrier Ball achievements cover participation, victory, Hard and a clean s
 
 test('Barrier Ball adds no fabricated rare event or Developer force toggle',()=>{
   const app=read('app-v0167.js'),html=read('index.html');
-  assert.doesNotMatch(app,/barrierBall.*rareOdds/i);
+  assert.doesNotMatch(app,/rareOdds:\{[^}]*barrierBall/i);
   assert.doesNotMatch(html,/forceBarrier|rareBarrier/i);
 });

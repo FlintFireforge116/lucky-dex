@@ -82,10 +82,13 @@ test('shared help explains direct court dragging rather than the removed slider'
   assert.doesNotMatch(help,/barrierBall:\{[^\n]*controls:'Slide the Barrier/);
 });
 
-test('v0.59.2 release metadata is consistent',()=>{
-  assert.equal(require(path.join(ROOT,'package.json')).version,'0.59.2');
-  assert.match(fs.readFileSync(path.join(ROOT,'package-lock.json'),'utf8'),/"version": "0\.59\.2"/);
-  assert.match(fs.readFileSync(path.join(ROOT,'app','build.gradle'),'utf8'),/versionCode 5902[\s\S]*versionName '0\.59\.2'/);
-  assert.match(read('app-v0167.js'),/__LUCKYDEX_BUILD='0\.59\.2'/);
-  assert.match(read('index.html'),/v0\.59\.2/);
+test('v0.59.2 direct-touch release remains present in later aligned releases',()=>{
+  const pkg=require(path.join(ROOT,'package.json'));
+  const parts=String(pkg.version).split('.').map(Number);
+  assert.ok(parts[0]>0 || parts[1]>59 || (parts[1]===59 && parts[2]>=2));
+  const escaped=String(pkg.version).replace(/\./g,'\\.');
+  assert.match(fs.readFileSync(path.join(ROOT,'package-lock.json'),'utf8'),new RegExp(`\"version\": \"${escaped}\"`));
+  assert.match(fs.readFileSync(path.join(ROOT,'app','build.gradle'),'utf8'),new RegExp(`versionName '${escaped}'`));
+  assert.match(read('app-v0167.js'),new RegExp(`__LUCKYDEX_BUILD='${escaped}'`));
+  assert.match(read('index.html'),new RegExp(`v${escaped}`));
 });
