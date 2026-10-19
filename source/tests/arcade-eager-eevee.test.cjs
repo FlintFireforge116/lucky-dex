@@ -48,3 +48,13 @@ assert.deepEqual(core.PERSONALITIES.map(x=>x.key).sort(),['aggressive','cautious
 }
 
 console.log('arcade-eager-eevee core tests passed');
+
+
+{
+  const rng=()=>0.5;
+  const game=core.createGame({difficulty:'easy',rng,nowMs:0});
+  core.startGame(game,1000,rng);
+  core.forceReveal(game,{kind:'fruit',key:'oranBerry'},2000,rng);
+  core.advanceGame(game,2640,rng);
+  assert.equal(game.round.claimedBy,null,'Easy CPUs should give the player noticeably longer than half a second before claiming fruit');
+}

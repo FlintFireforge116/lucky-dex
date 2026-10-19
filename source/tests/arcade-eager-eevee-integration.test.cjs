@@ -31,4 +31,9 @@ assert.match(html,/src="arcade-eager-eevee\.js"/,'Eager Eevee runtime script sho
 assert.ok(fs.existsSync(path.join(root,'arcade-eager-eevee.css')));
 assert.ok(fs.existsSync(path.join(root,'arcade-eager-eevee.js')));
 
+const css=read('arcade-eager-eevee.css');
+assert.match(css,/\.eager-eevee-aipom\{[^}]*left:78%/,'Aipom should sit to the side of the tray rather than directly above it');
+assert.match(css,/\.eager-eevee-player\{position:absolute;width:74px;height:74px/,'All Eevees should share the same base sprite size around the tray');
+assert.doesNotMatch(css,/\.eager-eevee-player\.p0\{[^}]*width:96px/,'The player Eevee should no longer be oversized compared with the CPUs');
+
 console.log('arcade-eager-eevee integration tests passed');

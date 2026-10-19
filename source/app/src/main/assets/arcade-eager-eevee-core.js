@@ -19,9 +19,9 @@
     Object.freeze({key:'chaotic',label:'Chaotic',reactionBias:10,baitChance:.46,feintChance:.34})
   ]);
   const DIFFICULTIES=Object.freeze({
-    easy:Object.freeze({key:'easy',label:'Easy',reactionMs:520,reactionSpread:230,baitScale:1.05}),
-    normal:Object.freeze({key:'normal',label:'Normal',reactionMs:360,reactionSpread:180,baitScale:1}),
-    hard:Object.freeze({key:'hard',label:'Hard',reactionMs:245,reactionSpread:130,baitScale:.88})
+    easy:Object.freeze({key:'easy',label:'Easy',reactionMs:820,reactionSpread:260,baitScale:.82,feintScale:.55,minRevealMs:1250,maxRevealMs:2700,revealWindowMs:1650}),
+    normal:Object.freeze({key:'normal',label:'Normal',reactionMs:360,reactionSpread:180,baitScale:1,feintScale:1,minRevealMs:1050,maxRevealMs:2300,revealWindowMs:1250}),
+    hard:Object.freeze({key:'hard',label:'Hard',reactionMs:245,reactionSpread:130,baitScale:.88,feintScale:1.05,minRevealMs:1000,maxRevealMs:2200,revealWindowMs:1250})
   });
   const REWARDS=Object.freeze({easy:[90,55,35,20],normal:[125,80,50,25],hard:[165,105,65,35]});
   const clamp=(n,a,b)=>Math.max(a,Math.min(b,Number(n)||0));
@@ -41,8 +41,10 @@
   function randomTarget(rng){if(rand(rng)<CONFIG.pinecoChance)return PINECO;return FRUITS[Math.floor(rand(rng)*FRUITS.length)];}
   function prepareRound(game,atMs,rng){
     for(const p of game.players){p.sittingOut=!!p.skipNext;p.skipNext=false;p.lockedRound=false;p.nextActionAt=null;}
+    const profile=profileFor(game?.difficulty);
     const startAt=Number(atMs)||0;
-    game.round={index:game.roundIndex,state:'hidden',target:null,startAt,revealAt:startAt+CONFIG.minRevealMs+rand(rng)*(CONFIG.maxRevealMs-CONFIG.minRevealMs),resolvedAt:null,claimedBy:null,lastFeintBy:null};
+    const minReveal=profile.minRevealMs||CONFIG.minRevealMs,maxReveal=profile.maxRevealMs||CONFIG.maxRevealMs;
+    game.round={index:game.roundIndex,state:'hidden',target:null,startAt,revealAt:startAt+minReveal+rand(rng)*(maxReveal-minReveal),resolvedAt:null,claimedBy:null,lastFeintBy:null};
     return game.round;
   }
   function startGame(game,atMs,rng=Math.random){if(!game||game.finalized)return false;const t=Number(atMs)||0;game.phase='running';game.startedAt=t;game.lastAdvancedAt=t;game.roundIndex=0;prepareRound(game,t,rng);return true;}
@@ -58,13 +60,13 @@
   }
   function reactCpusToFeint(game,sourceId,atMs,rng=Math.random){if(!game?.round||game.round.state!=='hidden')return 0;let baited=0;const profile=profileFor(game.difficulty);for(const p of game.players.slice(1)){if(p.id===sourceId||p.sittingOut||p.lockedRound)continue;const chance=personalityFor(p).baitChance*profile.baitScale;if(rand(rng)<chance){p.falseStarts++;p.lockedRound=true;p.dashingUntil=Number(atMs)+220;baited++;}}return baited;}
   function feint(game,id,atMs,rng=Math.random){const p=playerById(game,id);if(!p||!game?.round||game.round.state!=='hidden'||p.sittingOut||p.lockedRound)return{accepted:false};p.feints++;p.lastFeintAt=Number(atMs)||0;game.round.lastFeintBy=id;const baited=reactCpusToFeint(game,id,atMs,rng);return{accepted:true,baited};}
-  function maybeCpuFeints(game,now,rng){if(game.round.state!=='hidden')return;const age=now-game.round.startAt;if(age<350||age>CONFIG.minRevealMs-100)return;for(const p of game.players.slice(1)){if(p.sittingOut||p.lockedRound||p.lastFeintAt>=game.round.startAt)continue;const persona=personalityFor(p);if(rand(rng)<persona.feintChance*.012){p.feints++;p.lastFeintAt=now;game.round.lastFeintBy=p.id;reactCpusToFeint(game,p.id,now,rng);}}
+  function maybeCpuFeints(game,now,rng){if(game.round.state!=='hidden')return;const profile=profileFor(game.difficulty);const minReveal=profile.minRevealMs||CONFIG.minRevealMs;const age=now-game.round.startAt;if(age<350||age>minReveal-100)return;for(const p of game.players.slice(1)){if(p.sittingOut||p.lockedRound||p.lastFeintAt>=game.round.startAt)continue;const persona=personalityFor(p);if(rand(rng)<persona.feintChance*.012*(profile.feintScale||1)){p.feints++;p.lastFeintAt=now;game.round.lastFeintBy=p.id;reactCpusToFeint(game,p.id,now,rng);}}
   }
   function advanceGame(game,nowMs,rng=Math.random){if(!game||game.finalized||game.phase!=='running'||!game.round)return game;const now=Number(nowMs)||0;if(now<Number(game.lastAdvancedAt||0))return game;const r=game.round;
     if(r.state==='hidden'){maybeCpuFeints(game,now,rng);if(now>=r.revealAt)forceReveal(game,randomTarget(rng),r.revealAt,rng);}
     if(game.round.state==='revealed'){
       for(const p of game.players.slice(1)){if(game.round.state!=='revealed')break;if(p.nextActionAt!=null&&now>=p.nextActionAt){p.nextActionAt=null;dash(game,p.id,now);}}
-      if(game.round.state==='revealed'&&now>=game.round.revealAt+CONFIG.revealWindowMs){game.round.state='resolved';game.round.resolvedAt=now;}
+      if(game.round.state==='revealed'&&now>=game.round.revealAt+(profileFor(game.difficulty).revealWindowMs||CONFIG.revealWindowMs)){game.round.state='resolved';game.round.resolvedAt=now;}
     }
     if(game.round.state==='resolved'&&now>=Number(game.round.resolvedAt||now)+CONFIG.resultHoldMs){if(game.roundIndex>=CONFIG.rounds-1)finalizeGame(game,now);else startNextRound(game,now,rng);}
     game.lastAdvancedAt=now;return game;
