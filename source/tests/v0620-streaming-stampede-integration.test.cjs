@@ -13,6 +13,10 @@ test('Streaming Stampede is registered across the Stadium 2 world, shared help, 
   assert.match(world,/stadium2KidsClub[\s\S]*streamingStampede/);
   assert.match(world,/streamingStampede:'Streaming Stampede'/);
   assert.match(world,/streamingStampede:\(\)=>window\.LuckyDexStreamingStampede/);
+  assert.match(world,/streamingStampede:\{sprite:'173\.png',mechanic:'[^']+'\}/);
+  const stadium2Games=world.match(/id:\"stadium2KidsClub\"[\s\S]*?games:\[([^\]]+)\]/)?.[1]?.match(/'([^']+)'/g)?.map(x=>x.slice(1,-1))||[];
+  const kidsBlock=world.match(/const kids=\{([\s\S]*?)\};\n const renderKids/)?.[1]||'';
+  for(const game of stadium2Games)assert.match(kidsBlock,new RegExp(`${game}:\\{sprite:`),`${game} must have Kids Club tile metadata or Stadium 2 venue rendering will throw`);
   assert.match(help,/streamingStampede:\{name:'Streaming Stampede'/);
   assert.match(html,/id="streamingStampedeGame"/);
   assert.match(html,/arcade-streaming-stampede\.css/);
