@@ -42,6 +42,18 @@
   ]);
 
   const clamp=(n,a,b)=>Math.max(a,Math.min(b,Number(n)||0));
+  function stickAxes(dx,dy,maxDistance){
+    const max=Math.max(1,Number(maxDistance)||1),x=Number(dx)||0,y=Number(dy)||0;
+    const inputX=clamp(x/max,-1,1),inputY=clamp(y/max,-1,1),mag=Math.hypot(x,y)||1,scale=mag>max?max/mag:1;
+    return {inputX,inputY,visualX:(x*scale)/max,visualY:(y*scale)/max};
+  }
+  function countdownState(elapsedMs){
+    const ms=Math.max(0,Number(elapsedMs)||0);
+    if(ms<700)return {label:'3',done:false};
+    if(ms<1400)return {label:'2',done:false};
+    if(ms<2100)return {label:'1',done:false};
+    return {label:'GO!',done:ms>=2600};
+  }
   const rand=rng=>clamp((rng||Math.random)(),0,.999999);
   const profileFor=key=>DIFFICULTIES[key]||DIFFICULTIES.normal;
   const speciesFor=id=>PLAYABLE_SPECIES.find(x=>x.id===Number(id))||PLAYABLE_SPECIES[0];
@@ -147,5 +159,5 @@
   function placeFor(race,id='player'){const i=(race?.ranking||rankRace(race)).findIndex(r=>r.id===id);return i<0?4:i+1;}
   function rewardFor(place,difficulty='normal'){const row=REWARDS[difficulty]||REWARDS.normal;return row[clamp(Math.trunc(Number(place)||1)-1,0,3)];}
   function shiftTimestamps(race,delta){if(!race||!Number(delta))return race;const d=Number(delta);race.startedAt+=d;if(race.firstFinishAt!=null)race.firstFinishAt+=d;if(race.graceEndsAt!=null)race.graceEndsAt+=d;if(race.finalizedAt!=null)race.finalizedAt+=d;for(const r of race.racers){r.lastUpdateAt+=d;r.nextDecisionAt+=d;if(r.finishedAt!=null)r.finishedAt+=d;r.boostUntil+=d;r.slowedUntil+=d;r.stumblingUntil+=d;r.jumpingUntil+=d;}return race;}
-  return {CONFIG,PLAYABLE_SPECIES,DIFFICULTIES,REWARDS,COURSE_TEMPLATE,profileFor,speciesFor,buildCourse,createRace,setInput,applyCourseObject,advanceRacer,advanceRace,rankRace,finalizeRace,placeFor,rewardFor,shiftTimestamps};
+  return {CONFIG,PLAYABLE_SPECIES,DIFFICULTIES,REWARDS,COURSE_TEMPLATE,profileFor,speciesFor,stickAxes,countdownState,buildCourse,createRace,setInput,applyCourseObject,advanceRacer,advanceRace,rankRace,finalizeRace,placeFor,rewardFor,shiftTimestamps};
 });
