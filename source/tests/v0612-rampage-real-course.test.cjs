@@ -37,7 +37,7 @@ test('renderer takes racer and dust positions from the same core course geometry
 
 test('mobile track uses more vertical phone space while leaving compact comfortable controls',()=>{
   const css=read('app/src/main/assets/arcade-rampage-rollout.css');
-  assert.match(css,/@media\(max-width:600px\)[\s\S]*?\.rampage-rollout-track\{[^}]*aspect-ratio:\s*1\.08\/1/);
+  assert.match(css,/@media\(max-width:600px\)[\s\S]*?\.rampage-rollout-track\{[^}]*aspect-ratio:\s*\.92\/1/);
   assert.match(css,/@media\(max-width:600px\)[\s\S]*?\.rampage-stick\{[^}]*width:min\(100%,112px\)/);
   assert.match(css,/@media\(max-width:600px\)[\s\S]*?\.rampage-dirt-btn\{[^}]*width:min\(100%,104px\)/);
 });

@@ -10,8 +10,8 @@ test('Rampage Rollout stage stretches to the full game width instead of shrink-w
   const css=read('app/src/main/assets/arcade-rampage-rollout.css');
   assert.match(css,/\.rampage-rollout-stage\{[^}]*width:100%/);
   assert.match(css,/\.rampage-rollout-track\{[^}]*aspect-ratio:\s*1\.2\/1/);
-  assert.match(css,/@media\(max-width:600px\)[\s\S]*\.rampage-rollout-track\{[^}]*aspect-ratio:\s*1\.08\/1/);
-  assert.match(css,/@media\(max-height:760px\) and \(max-width:600px\)\{\.rampage-rollout-track\{aspect-ratio:1\.14\/1\}/);
+  assert.match(css,/@media\(max-width:600px\)[\s\S]*\.rampage-rollout-track\{[^}]*aspect-ratio:\s*\.92\/1/);
+  assert.match(css,/@media\(max-height:760px\) and \(max-width:600px\)\{\.rampage-rollout-track\{aspect-ratio:\.92\/1\}/);
 });
 
 test('Rampage Rollout renderer uses the same rounded-rectangle geometry as the race simulation',()=>{

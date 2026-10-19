@@ -8,13 +8,17 @@
   const DONPHAN=Object.freeze({dex:232,name:'Donphan'});
   const CONFIG=Object.freeze({
     lapsToWin:9,
-    width:720,height:720,centreX:360,centreY:360,
+    width:720,height:783,centreX:360,centreY:391.5,
     // Radius is retained as the lane coordinate, but the race itself now runs on
     // a real rounded-rectangle course.  The old circular simulation was only
     // being visually stretched, which made Donphan zip across the long straights.
     startRadius:230,
     minRaceRadius:178,maxRaceRadius:282,
-    courseHalfWidth:270,courseHalfHeight:235,courseCornerRadius:105,
+    minSteerRadius:80,maxSteerRadius:318,
+    innerGrassRadius:112,outerGrassRadius:290,
+    courseHalfWidth:270,courseHalfHeight:285,courseCornerRadius:105,
+    grassSpeedFactor:.25,
+    grassBrake:980,
     playerAcceleration:470,
     playerBrake:650,
     playerDrag:260,
@@ -28,7 +32,7 @@
     dustSpeedFactor:.28,
     racerRadius:19,
     maxStepMs:32,
-    safetyCapMs:90000
+    safetyCapMs:120000
   });
   const DIFFICULTIES=Object.freeze({
     easy:Object.freeze({key:'easy',label:'Easy',cpuSpeed:242,cpuRolloutSpeed:340,laneWobble:18,dustAvoidChance:.82,dustDropChance:.45,reactionMs:520}),
@@ -43,7 +47,7 @@
   const normalizeAngle=a=>{let x=Number(a)||0;while(x<=-Math.PI)x+=TAU;while(x>Math.PI)x-=TAU;return x;};
   const progressFor=r=>Math.max(0,Number(r?.angularTravel||0)/TAU);
   function courseGeometry(radius=CONFIG.startRadius){
-    const lane=clamp(Number(radius)||CONFIG.startRadius,CONFIG.minRaceRadius,CONFIG.maxRaceRadius)-CONFIG.startRadius;
+    const lane=clamp(Number(radius)||CONFIG.startRadius,CONFIG.minSteerRadius,CONFIG.maxSteerRadius)-CONFIG.startRadius;
     const halfWidth=CONFIG.courseHalfWidth+lane,halfHeight=CONFIG.courseHalfHeight+lane;
     const cornerRadius=Math.max(24,Math.min(CONFIG.courseCornerRadius+lane,halfWidth-1,halfHeight-1));
     const topHalf=halfWidth-cornerRadius,side=2*(halfHeight-cornerRadius),bottom=2*(halfWidth-cornerRadius),quarter=Math.PI*cornerRadius/2;
@@ -51,6 +55,7 @@
     return {halfWidth,halfHeight,cornerRadius,topHalf,side,bottom,quarter,perimeter};
   }
   const courseLengthFor=radius=>courseGeometry(radius).perimeter;
+  const offRoadFactorForRadius=radius=>{const r=Number(radius)||CONFIG.startRadius;return r<CONFIG.innerGrassRadius||r>CONFIG.outerGrassRadius?CONFIG.grassSpeedFactor:1;};
   function coursePointFor(angle,radius=CONFIG.startRadius){
     const g=courseGeometry(radius),phase=((Number(angle)||0)+Math.PI/2)%TAU;
     let d=((phase<0?phase+TAU:phase)/TAU)*g.perimeter;
@@ -116,12 +121,12 @@
     const course=coursePointFor(r.angle,r.radius),tx=course.tx,ty=course.ty,rx=course.nx,ry=course.ny;
     const tangent=stunned?0:clamp(r.inputX*tx+r.inputY*ty,-1,1);
     const radial=stunned?0:clamp(r.inputX*rx+r.inputY*ry,-1,1);
-    const max=r.rollout?CONFIG.rolloutMaxSpeed:CONFIG.playerMaxSpeed;
-    if(tangent>.05)r.speed=approach(r.speed,max*tangent,CONFIG.playerAcceleration*dt);
-    else if(tangent<-.05)r.speed=approach(r.speed,0,CONFIG.playerBrake*dt*(.7+Math.abs(tangent)));
-    else r.speed=approach(r.speed,0,CONFIG.playerDrag*dt);
+    r.radius=clamp(r.radius+radial*CONFIG.radialSpeed*dt,CONFIG.minSteerRadius,CONFIG.maxSteerRadius);
+    const surfaceFactor=offRoadFactorForRadius(r.radius),baseMax=r.rollout?CONFIG.rolloutMaxSpeed:CONFIG.playerMaxSpeed,max=baseMax*surfaceFactor;
+    if(tangent>.05){const target=max*tangent,rate=surfaceFactor<1&&r.speed>target?CONFIG.grassBrake:CONFIG.playerAcceleration*(surfaceFactor<1?.45:1);r.speed=approach(r.speed,target,rate*dt);}
+    else if(tangent<-.05)r.speed=approach(r.speed,0,(surfaceFactor<1?CONFIG.grassBrake:CONFIG.playerBrake)*dt*(.7+Math.abs(tangent)));
+    else r.speed=approach(r.speed,0,(surfaceFactor<1?CONFIG.grassBrake:CONFIG.playerDrag)*dt);
     if(stunned)r.speed=approach(r.speed,0,CONFIG.playerBrake*dt);
-    r.radius=clamp(r.radius+radial*CONFIG.radialSpeed*dt,CONFIG.minRaceRadius,CONFIG.maxRaceRadius);
     const delta=(Math.max(0,r.speed)/Math.max(1,courseLengthFor(r.radius)))*TAU*dt;
     applyAngularAdvance(race,r,delta,atMs);
   }
@@ -168,5 +173,5 @@
   }
   function rewardFor(place,difficulty='normal'){const row=REWARDS[difficulty]||REWARDS.normal;return row[clamp(Math.trunc(Number(place)||1)-1,0,3)];}
   function shiftTimestamps(race,delta){if(!race||!delta)return race;race.startedAt+=delta;race.lastAdvancedAt+=delta;if(race.finalizedAt!=null)race.finalizedAt+=delta;for(const r of race.racers){if(r.stunnedUntil)r.stunnedUntil+=delta;if(r.finishedAt!=null)r.finishedAt+=delta;if(r.nextDustAt)r.nextDustAt+=delta;}for(const h of race.hazards){h.createdAt+=delta;h.expiresAt+=delta;}return race;}
-  return {TAU,DONPHAN,CONFIG,DIFFICULTIES,REWARDS,profileFor,progressFor,courseGeometry,courseLengthFor,coursePointFor,coordsFor,dustAwardForPlace,awardLapDust,createRace,rankRace,placeFor,setPlayerInput,dropDust,resolveDustHits,applyAngularAdvance,advanceRace,finalizeRace,rewardFor,shiftTimestamps};
+  return {TAU,DONPHAN,CONFIG,DIFFICULTIES,REWARDS,profileFor,progressFor,courseGeometry,courseLengthFor,coursePointFor,coordsFor,offRoadFactorForRadius,dustAwardForPlace,awardLapDust,createRace,rankRace,placeFor,setPlayerInput,dropDust,resolveDustHits,applyAngularAdvance,advanceRace,finalizeRace,rewardFor,shiftTimestamps};
 });

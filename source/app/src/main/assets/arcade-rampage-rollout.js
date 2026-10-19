@@ -29,7 +29,7 @@
     if($('rampageRolloutDirtStock'))$('rampageRolloutDirtStock').textContent=`×${player.dust||0}`;
     if($('rampageRolloutDust')){$('rampageRolloutDust').classList.toggle('is-empty',!Number(player.dust||0));$('rampageRolloutDust').setAttribute('aria-label',`Leave dirt whirlwind (${player.dust||0} available)`);}
     if($('rampageRolloutTime'))$('rampageRolloutTime').textContent=(elapsed(t)/1000).toFixed(1);
-    if($('rampageRolloutStatus'))$('rampageRolloutStatus').textContent=player.rollout?'FINAL LAP · FULL ROLLOUT!':player.stunnedUntil>t?'DUST HIT · RECOVER!':'STEER CLOCKWISE · A = DIRT';
+    if($('rampageRolloutStatus')){const grass=core.offRoadFactorForRadius(player.radius)<1;$('rampageRolloutStatus').textContent=player.stunnedUntil>t?'DUST HIT · RECOVER!':grass?'GRASS · HEAVY SLOWDOWN!':player.rollout?'FINAL LAP · FULL ROLLOUT!':'STEER CLOCKWISE · A = DIRT';}
     $('rampageRolloutStage')?.classList?.toggle('is-final-lap',!!player.rollout);
     renderRacers();renderDust();
     session()?.update?.('rampageRollout',{runText:`${lap}/9 laps · ${player.dust||0} dirt`,rewardText:'Placement · Lucky Coins',liveLabel:'PLACE',liveValue:ordinal(place)});
