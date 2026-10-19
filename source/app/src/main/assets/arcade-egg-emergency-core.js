@@ -119,10 +119,13 @@
   }
 
   function setLean(player,value){if(!player)return false;player.lean=laneFrom(value);return true;}
+  function isCatchAligned(playerLean,dropLane){
+    return LANES.includes(playerLean)&&LANES.includes(dropLane)&&playerLean===dropLane;
+  }
 
   function resolveDropForPlayer(player,drop,atMs){
     if(!player||!drop)return{caught:false};
-    const aligned=player.lean===drop.lane;
+    const aligned=isCatchAligned(player.lean,drop.lane);
     if(drop.type==='voltorb'){
       if(!aligned){player.voltorbsAvoided++;return{caught:false,avoided:true,voltorb:true,penalty:0};}
       const before=Math.max(0,Number(player.eggsCaught)||0);
@@ -230,7 +233,7 @@
   }
 
   return Object.freeze({
-    LANES,CONFIG,DIFFICULTIES,REWARDS,profileFor,countdownState,createPlayer,makeSchedule,createGame,startGame,setLean,
+    LANES,CONFIG,DIFFICULTIES,REWARDS,profileFor,countdownState,createPlayer,makeSchedule,createGame,startGame,setLean,isCatchAligned,
     resolveDropForPlayer,decideCpuForDrop,advanceGame,activeDrops,rankGame,placeFor,rewardFor,finalizeGame,matchDurationMs,shiftTimestamps
   });
 });
