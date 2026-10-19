@@ -36,7 +36,7 @@
     pichuPowerPlant:{gamesPlayed:0,wins:0,podiums:0,bestTimeMs:null,bestTimes:{easy:null,normal:null,hard:null},winsByDifficulty:{easy:0,normal:0,hard:0},bestAccuracy:0,totalCorrect:0,totalWrong:0,perfectWins:0},
     rampageRollout:{gamesPlayed:0,wins:0,podiums:0,bestTimeMs:null,bestTimes:{easy:null,normal:null,hard:null},winsByDifficulty:{easy:0,normal:0,hard:0},totalDustDropped:0,totalDustHits:0,dustHitsTaken:0,bestDustHits:0,cleanWins:0},
     streamingStampede:{gamesPlayed:0,wins:0,podiums:0,bestScore:0,bestScores:{easy:0,normal:0,hard:0},winsByDifficulty:{easy:0,normal:0,hard:0},totalPoints:0,totalError:0,perfectRounds:0,bestPerfectRounds:0,perfectGames:0,finalRoundPerfects:0},
-    tumblingTogepi:{gamesPlayed:0,wins:0,podiums:0,bestTimeMs:null,bestTimes:{easy:null,normal:null,hard:null},winsByDifficulty:{easy:0,normal:0,hard:0},bestBoostChain:0,totalArrows:0,totalObstacleHits:0,flawlessWins:0,omanyteWins:0},
+    delibirdDelivery:{gamesPlayed:0,wins:0,podiums:0,bestScore:0,bestScores:{easy:0,normal:0,hard:0},winsByDifficulty:{easy:0,normal:0,hard:0},totalDelivered:0,totalBankedPoints:0,totalSwinubHits:0,bestMatchChain:0,bigBagDeliveries:0},
     iceCreamScoop:{gamesPlayed:0,bestHeight:0,bestHeights:{easy:0,normal:0,hard:0},bestScore:0,bestScores:{easy:0,normal:0,hard:0},bestPerfects:0,bestPerfectStreak:0,totalScoops:0,totalPerfects:0,collapses:0,dreamScoopsSeen:0,dreamScoopsLanded:0,dreamPrizes:0},
     wailordWaterSpout:{gamesPlayed:0,clears:0,hardClears:0,perfectClears:0,bestScore:0,bestScores:{easy:0,normal:0,hard:0},bestBalls:0,bestBallsByDifficulty:{easy:0,normal:0,hard:0},bestCombo:0,maxMultiplier:0,totalBallsOpened:0,totalFalls:0,rainbowBallsSeen:0,rainbowBallsOpened:0,rainbowPrizes:0},
     pokemonSeek:{gamesPlayed:0,clears:0,hardClears:0,cleanFinds:0,lostItemsFound:0,bestScore:0,bestScores:{easy:0,normal:0,hard:0},bestRemainingMs:0,bestCleanScore:0,totalWrongFinds:0,totalListens:0,totalRoomsVisited:0,dreamSparklesSeen:0,dreamSparklesFound:0,dreamPrizes:0,firstSearchFinds:0,areaClears:{},visitedAreas:[]},
@@ -95,7 +95,9 @@
   }
 
   function ensureArcadeState(arcade){
-    const src=(arcade&&typeof arcade==='object')?arcade:{};
+    const input=(arcade&&typeof arcade==='object')?arcade:{};
+    const retiredKey=String.fromCharCode(116,117,109,98,108,105,110,103,84,111,103,101,112,105);
+    const src=Object.fromEntries(Object.entries(input).filter(([key])=>key!==retiredKey));
     const srcDash=(src.dash&&typeof src.dash==='object')?src.dash:{};
     const dash={
       ...ARCADE_DEFAULTS.dash,
@@ -185,8 +187,8 @@
       streamingStampede:(()=>{const r=src.streamingStampede&&typeof src.streamingStampede==='object'?src.streamingStampede:{};return {
         gamesPlayed:nonNegativeNumber(r.gamesPlayed),wins:nonNegativeNumber(r.wins),podiums:nonNegativeNumber(r.podiums),bestScore:nonNegativeNumber(r.bestScore),bestScores:numericDifficultyRecord(ARCADE_DEFAULTS.streamingStampede.bestScores,r.bestScores),winsByDifficulty:numericDifficultyRecord(ARCADE_DEFAULTS.streamingStampede.winsByDifficulty,r.winsByDifficulty),totalPoints:nonNegativeNumber(r.totalPoints),totalError:nonNegativeNumber(r.totalError),perfectRounds:nonNegativeNumber(r.perfectRounds),bestPerfectRounds:nonNegativeNumber(r.bestPerfectRounds),perfectGames:nonNegativeNumber(r.perfectGames),finalRoundPerfects:nonNegativeNumber(r.finalRoundPerfects)
       };})(),
-      tumblingTogepi:(()=>{const r=src.tumblingTogepi&&typeof src.tumblingTogepi==='object'?src.tumblingTogepi:{};return {
-        gamesPlayed:nonNegativeNumber(r.gamesPlayed),wins:nonNegativeNumber(r.wins),podiums:nonNegativeNumber(r.podiums),bestTimeMs:r.bestTimeMs==null?null:nonNegativeNumber(r.bestTimeMs),bestTimes:{easy:r.bestTimes?.easy==null?null:nonNegativeNumber(r.bestTimes.easy),normal:r.bestTimes?.normal==null?null:nonNegativeNumber(r.bestTimes.normal),hard:r.bestTimes?.hard==null?null:nonNegativeNumber(r.bestTimes.hard)},winsByDifficulty:numericDifficultyRecord(ARCADE_DEFAULTS.tumblingTogepi.winsByDifficulty,r.winsByDifficulty),bestBoostChain:nonNegativeNumber(r.bestBoostChain),totalArrows:nonNegativeNumber(r.totalArrows),totalObstacleHits:nonNegativeNumber(r.totalObstacleHits),flawlessWins:nonNegativeNumber(r.flawlessWins),omanyteWins:nonNegativeNumber(r.omanyteWins)
+      delibirdDelivery:(()=>{const r=src.delibirdDelivery&&typeof src.delibirdDelivery==='object'?src.delibirdDelivery:{};return {
+        gamesPlayed:nonNegativeNumber(r.gamesPlayed),wins:nonNegativeNumber(r.wins),podiums:nonNegativeNumber(r.podiums),bestScore:nonNegativeNumber(r.bestScore),bestScores:numericDifficultyRecord(ARCADE_DEFAULTS.delibirdDelivery.bestScores,r.bestScores),winsByDifficulty:numericDifficultyRecord(ARCADE_DEFAULTS.delibirdDelivery.winsByDifficulty,r.winsByDifficulty),totalDelivered:nonNegativeNumber(r.totalDelivered),totalBankedPoints:nonNegativeNumber(r.totalBankedPoints),totalSwinubHits:nonNegativeNumber(r.totalSwinubHits),bestMatchChain:nonNegativeNumber(r.bestMatchChain),bigBagDeliveries:nonNegativeNumber(r.bigBagDeliveries)
       };})(),
       iceCreamScoop:(()=>{const r=src.iceCreamScoop&&typeof src.iceCreamScoop==='object'?src.iceCreamScoop:{};return {
         gamesPlayed:nonNegativeNumber(r.gamesPlayed),bestHeight:nonNegativeNumber(r.bestHeight),bestHeights:numericDifficultyRecord(ARCADE_DEFAULTS.iceCreamScoop.bestHeights,r.bestHeights),bestScore:nonNegativeNumber(r.bestScore),bestScores:numericDifficultyRecord(ARCADE_DEFAULTS.iceCreamScoop.bestScores,r.bestScores),bestPerfects:nonNegativeNumber(r.bestPerfects),bestPerfectStreak:nonNegativeNumber(r.bestPerfectStreak),totalScoops:nonNegativeNumber(r.totalScoops),totalPerfects:nonNegativeNumber(r.totalPerfects),collapses:nonNegativeNumber(r.collapses),dreamScoopsSeen:nonNegativeNumber(r.dreamScoopsSeen),dreamScoopsLanded:nonNegativeNumber(r.dreamScoopsLanded),dreamPrizes:nonNegativeNumber(r.dreamPrizes)

@@ -40,7 +40,7 @@
   <link rel="stylesheet" href="arcade-pichu-power-plant.css" />
   <link rel="stylesheet" href="arcade-rampage-rollout.css" />
   <link rel="stylesheet" href="arcade-streaming-stampede.css" />
-  <link rel="stylesheet" href="arcade-tumbling-togepi.css" />
+  <link rel="stylesheet" href="arcade-delibird-delivery.css" />
   <link rel="stylesheet" href="arcade-ice-cream-scoop.css" />
   <link rel="stylesheet" href="arcade-wailord-water-spout.css" />
   <link rel="stylesheet" href="arcade-pokemon-seek.css" />
@@ -69,7 +69,7 @@
     </div>
     <div class="title-partner-row" id="titlePartners"></div>
     <button id="titleContinueBtn" class="title-start">PRESS TO START</button>
-    <div class="title-footer"><span id="titleRankText">TRAINER RANK 1</span><span>v0.63.2</span></div>
+    <div class="title-footer"><span id="titleRankText">TRAINER RANK 1</span><span>v0.64.0</span></div>
   </div>
 
   <div id="starterPanel" class="starter-screen" hidden>
@@ -86,7 +86,7 @@
   <div id="app" class="app-shell">
     <header class="topbar">
       <div class="brand-block">
-        <div class="eyebrow">LUCKY DEX · v0.63.2</div>
+        <div class="eyebrow">LUCKY DEX · v0.64.0</div>
         <h1>Lucky Dex</h1>
       </div>
       <div class="top-resources">
@@ -511,21 +511,24 @@
           </div>
         </div>
 
-        <div id="tumblingTogepiGame" class="panel arcade-game tumbling-togepi-game" hidden>
-          <div class="arcade-full-head tumbling-head"><button class="game-exit" data-exit-game>‹ ARCADE</button><div class="arcade-mascot"><img src="arcade/sprites/actors/pokemon/175.png" alt="Togepi" /><span>STADIUM 2 · TUMBLING TOGEPI</span></div></div>
-          <div id="tumblingTogepiStage" class="tumbling-stage">
-            <div class="tumbling-hud"><span><small>COURSE</small><b id="tumblingTogepiProgress">0%</b></span><span><small>PLACE</small><b id="tumblingTogepiPlace">1ST</b></span><span><small>BOOST</small><b id="tumblingTogepiBoost">—</b></span><span><small>TIME</small><b id="tumblingTogepiTime">0.0</b></span></div>
-            <div id="tumblingTogepiCourse" class="tumbling-course" aria-label="Tumbling Togepi four-lane obstacle race">
-              <div id="tumblingTogepiLane0" class="tumbling-lane is-you"><div class="tumbling-lane-head"><span>YOU</span><b data-tumbling-lane-place>1ST</b></div><div id="tumblingTogepiObjects0"></div><div id="tumblingTogepiFinish0" class="tumbling-finish" hidden></div><div id="tumblingTogepiRacer0" class="tumbling-racer"><img src="arcade/sprites/actors/pokemon/175.png" alt="Your Togepi" draggable="false"></div></div>
-              <div id="tumblingTogepiLane1" class="tumbling-lane"><div class="tumbling-lane-head"><span>COM 1</span><b data-tumbling-lane-place>2ND</b></div><div id="tumblingTogepiObjects1"></div><div id="tumblingTogepiFinish1" class="tumbling-finish" hidden></div><div id="tumblingTogepiRacer1" class="tumbling-racer"><img src="arcade/sprites/actors/pokemon/175.png" alt="COM 1 Togepi" draggable="false"></div></div>
-              <div id="tumblingTogepiLane2" class="tumbling-lane"><div class="tumbling-lane-head"><span>COM 2</span><b data-tumbling-lane-place>3RD</b></div><div id="tumblingTogepiObjects2"></div><div id="tumblingTogepiFinish2" class="tumbling-finish" hidden></div><div id="tumblingTogepiRacer2" class="tumbling-racer"><img src="arcade/sprites/actors/pokemon/175.png" alt="COM 2 Togepi" draggable="false"></div></div>
-              <div id="tumblingTogepiLane3" class="tumbling-lane"><div class="tumbling-lane-head"><span>COM 3</span><b data-tumbling-lane-place>4TH</b></div><div id="tumblingTogepiObjects3"></div><div id="tumblingTogepiFinish3" class="tumbling-finish" hidden></div><div id="tumblingTogepiRacer3" class="tumbling-racer"><img src="arcade/sprites/actors/pokemon/175.png" alt="COM 3 Togepi" draggable="false"></div></div>
-              <div id="tumblingTogepiReady" class="tumbling-ready"><small>STADIUM 2 · KIDS CLUB</small><b>TUMBLING TOGEPI</b><span>Hold the stick down to run, steer around hazards and chain blue arrows for stronger boosts.</span><em id="tumblingTogepiBest">BEST —</em><div class="tumbling-species" aria-label="Choose Tumbling Togepi Pokémon"><button type="button" data-tumbling-species="175" class="active" aria-pressed="true"><img src="arcade/sprites/actors/pokemon/175.png" alt="">TOGEPI<small>STANDARD</small></button><button type="button" data-tumbling-species="138" aria-pressed="false"><img src="arcade/sprites/actors/pokemon/138.png" alt="">OMANYTE<small>CATCH TO UNLOCK</small></button></div><div class="tumbling-difficulty" aria-label="Tumbling Togepi difficulty"><button type="button" data-tumbling-difficulty="easy" aria-pressed="false">EASY</button><button type="button" data-tumbling-difficulty="normal" class="active" aria-pressed="true">NORMAL</button><button type="button" data-tumbling-difficulty="hard" aria-pressed="false">HARD</button></div><button type="button" id="tumblingTogepiStart" class="tumbling-start">START RACE</button></div>
-              <div id="tumblingTogepiCountdown" class="tumbling-countdown" hidden aria-live="assertive"><b>3</b><span>GET READY</span></div>
-              <div id="tumblingTogepiPauseOverlay" class="tumbling-pause" hidden><small>STADIUM 2</small><b>RACE PAUSED</b><span>The course and all four racers are frozen.</span><button type="button" id="tumblingTogepiResume">RESUME</button></div>
+        <div id="delibirdDeliveryGame" class="panel arcade-game delibird-delivery-game" hidden>
+          <div class="arcade-full-head delivery-head"><button class="game-exit" data-exit-game>‹ ARCADE</button><div class="arcade-mascot"><img src="arcade/sprites/actors/pokemon/225.png" alt="Delibird" /><span>STADIUM 2 · DELIBIRD’S DELIVERY</span></div></div>
+          <div id="delibirdDeliveryStage" class="delivery-stage">
+            <div class="delivery-hud"><span><small>TIME</small><b id="delibirdDeliveryTime">60</b></span><span><small>SCORE</small><b id="delibirdDeliveryScore">0</b></span><span><small>SACK</small><b id="delibirdDeliveryCarry">0/5</b></span><span><small>PLACE</small><b id="delibirdDeliveryPlace">1ST</b></span></div>
+            <div id="delibirdDeliveryFactory" class="delivery-factory" aria-label="Delibird factory delivery arena">
+              <div class="delivery-conveyors" aria-hidden="true"><div class="delivery-conveyor player"></div><div class="delivery-conveyor"></div><div class="delivery-conveyor"></div><div class="delivery-conveyor"></div></div>
+              <div id="delibirdDeliveryGifts" class="delivery-gifts"></div><div id="delibirdDeliverySwinub" class="delivery-swinub-layer"></div>
+              <div id="delibirdDeliveryPlayer0" class="delivery-player is-you"><img src="arcade/sprites/actors/pokemon/225.png" alt="Your Delibird" draggable="false"><b>YOU · 1ST</b><small>🎁 0/5</small></div>
+              <div id="delibirdDeliveryPlayer1" class="delivery-player"><img src="arcade/sprites/actors/pokemon/225.png" alt="COM 1 Delibird" draggable="false"><b>COM 1 · 2ND</b><small>🎁 0/5</small></div>
+              <div id="delibirdDeliveryPlayer2" class="delivery-player"><img src="arcade/sprites/actors/pokemon/225.png" alt="COM 2 Delibird" draggable="false"><b>COM 2 · 3RD</b><small>🎁 0/5</small></div>
+              <div id="delibirdDeliveryPlayer3" class="delivery-player"><img src="arcade/sprites/actors/pokemon/225.png" alt="COM 3 Delibird" draggable="false"><b>COM 3 · 4TH</b><small>🎁 0/5</small></div>
+              <div id="delibirdDeliveryReady" class="delivery-ready"><small>STADIUM 2 · KIDS CLUB</small><b>DELIBIRD’S DELIVERY</b><span>Collect up to five presents, dodge crossing Swinub and return to your conveyor to bank them. Matching presents score bigger multipliers.</span><em id="delibirdDeliveryBest">BEST —</em><div class="delivery-difficulty" aria-label="Delibird Delivery difficulty"><button type="button" data-delibird-difficulty="easy" aria-pressed="false">EASY</button><button type="button" data-delibird-difficulty="normal" class="active" aria-pressed="true">NORMAL</button><button type="button" data-delibird-difficulty="hard" aria-pressed="false">HARD</button></div><button type="button" id="delibirdDeliveryStart" class="delivery-start">START SHIFT</button></div>
+              <div id="delibirdDeliveryCountdown" class="delivery-countdown" hidden aria-live="assertive"><b>3</b><span>GET READY</span></div>
+              <div id="delibirdDeliveryPauseOverlay" class="delivery-pause" hidden><small>STADIUM 2</small><b>SHIFT PAUSED</b><span>Delibird, gifts, Swinub and the timer are frozen.</span><button type="button" id="delibirdDeliveryResume">RESUME</button></div>
             </div>
-            <div id="tumblingTogepiControls" class="tumbling-controls" hidden><div id="tumblingTogepiStick" class="tumbling-stick" role="application" aria-label="Move Togepi with the control stick"><i id="tumblingTogepiKnob"></i></div></div>
-            <div id="tumblingTogepiStatus" class="tumbling-status">HOLD DOWN TO RUN · STEER FOR BLUE ARROWS</div>
+            <div id="delibirdDeliveryBag" class="delivery-bag" aria-label="Carried presents"><span>·</span><span>·</span><span>·</span><span>·</span><span>·</span></div>
+            <div id="delibirdDeliveryControls" class="delivery-controls" hidden><div id="delibirdDeliveryStick" class="delivery-stick" role="application" aria-label="Move Delibird with the control stick"><i id="delibirdDeliveryKnob"></i></div></div>
+            <div id="delibirdDeliveryStatus" class="delivery-status">MOVE DOWN TO COLLECT PRESENTS</div>
           </div>
         </div>
 
@@ -1219,8 +1222,8 @@
   <script src="arcade-rampage-rollout.js"></script>
   <script src="arcade-streaming-stampede-core.js"></script>
   <script src="arcade-streaming-stampede.js"></script>
-  <script src="arcade-tumbling-togepi-core.js"></script>
-  <script src="arcade-tumbling-togepi.js"></script>
+  <script src="arcade-delibird-delivery-core.js"></script>
+  <script src="arcade-delibird-delivery.js"></script>
   <script src="arcade-ice-cream-scoop-core.js"></script>
   <script src="arcade-ice-cream-scoop.js"></script>
   <script src="arcade-wailord-water-spout-core.js"></script>
