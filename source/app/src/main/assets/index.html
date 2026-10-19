@@ -39,6 +39,7 @@
   <link rel="stylesheet" href="arcade-barrier-ball.css" />
   <link rel="stylesheet" href="arcade-pichu-power-plant.css" />
   <link rel="stylesheet" href="arcade-rampage-rollout.css" />
+  <link rel="stylesheet" href="arcade-streaming-stampede.css" />
   <link rel="stylesheet" href="arcade-ice-cream-scoop.css" />
   <link rel="stylesheet" href="arcade-wailord-water-spout.css" />
   <link rel="stylesheet" href="arcade-pokemon-seek.css" />
@@ -67,7 +68,7 @@
     </div>
     <div class="title-partner-row" id="titlePartners"></div>
     <button id="titleContinueBtn" class="title-start">PRESS TO START</button>
-    <div class="title-footer"><span id="titleRankText">TRAINER RANK 1</span><span>v0.61.3</span></div>
+    <div class="title-footer"><span id="titleRankText">TRAINER RANK 1</span><span>v0.62.0</span></div>
   </div>
 
   <div id="starterPanel" class="starter-screen" hidden>
@@ -84,7 +85,7 @@
   <div id="app" class="app-shell">
     <header class="topbar">
       <div class="brand-block">
-        <div class="eyebrow">LUCKY DEX · v0.61.3</div>
+        <div class="eyebrow">LUCKY DEX · v0.62.0</div>
         <h1>Lucky Dex</h1>
       </div>
       <div class="top-resources">
@@ -488,6 +489,24 @@
             <div id="clearCutReady" class="clearcut-ready"><small>STADIUM 2 · PRECISION CHALLENGE</small><b>CLEAR CUT CHALLENGE</b><span>Five scored cuts. Match the painted line as closely as possible for 100 total points. Then take one unscored Mystery Bag cut — a PERFECT opens a random prize.</span><em id="clearCutBest">BEST —</em><div class="clearcut-picker" aria-label="Choose your cutter"><button type="button" data-clear-cut-pokemon="123" class="active" aria-pressed="true"><img src="arcade/sprites/actors/pokemon/123.png" alt="">SCYTHER</button><button type="button" data-clear-cut-pokemon="127" aria-pressed="false"><img src="arcade/sprites/actors/pokemon/127.png" alt="">PINSIR</button><button type="button" data-clear-cut-pokemon="212" aria-pressed="false"><img src="arcade/sprites/actors/pokemon/212.png" alt="">SCIZOR</button></div><div class="clearcut-difficulty" aria-label="Clear Cut difficulty"><button type="button" data-clear-cut-difficulty="easy" aria-pressed="false">EASY</button><button type="button" data-clear-cut-difficulty="normal" class="active" aria-pressed="true">NORMAL</button><button type="button" data-clear-cut-difficulty="hard" aria-pressed="false">HARD</button></div><button type="button" id="clearCutStart" class="clearcut-start">START</button></div>
             <div id="clearCutControls" class="clearcut-controls" hidden><span><small>STATUS</small><b id="clearCutStatus">READY</b></span><button type="button" id="clearCutButton" class="clearcut-button" aria-label="Cut the object">CUT</button><span><small>PERFECT</small><b>20 PTS</b></span></div>
             <div id="clearCutPauseOverlay" class="clearcut-pause" hidden><div><small>STADIUM 2</small><b>CHALLENGE PAUSED</b><span>The falling object is frozen exactly where you left it.</span><button type="button" id="clearCutResume">RESUME</button></div></div>
+          </div>
+        </div>
+
+        <div id="streamingStampedeGame" class="panel arcade-game streaming-stampede-game" hidden>
+          <div class="arcade-full-head stampede-head"><button class="game-exit" data-exit-game>‹ ARCADE</button><div class="arcade-mascot"><img src="arcade/sprites/actors/pokemon/173.png" alt="Cleffa" /><span>STADIUM 2 · STREAMING STAMPEDE</span></div></div>
+          <div id="streamingStampedeStage" class="stampede-stage">
+            <div class="stampede-hud"><span><small>QUESTION</small><b id="streamingStampedeRound">1/5</b></span><span><small>TARGET</small><b id="streamingStampedeTarget">—</b></span><span><small>YOUR COUNT</small><b id="streamingStampedeCount">0</b></span><span><small>SCORE</small><b id="streamingStampedeScore">0</b></span></div>
+            <div class="stampede-scoreboard" id="streamingStampedeScoreboard">
+              <div class="stampede-booth is-you" id="streamingStampedePlayer0"><img src="arcade/sprites/actors/pokemon/173.png" alt="You"><b>YOU</b><strong>0</strong><small>0 PTS</small></div>
+              <div class="stampede-booth" id="streamingStampedePlayer1"><img src="arcade/sprites/actors/pokemon/174.png" alt="COM 1"><b>COM 1</b><strong>—</strong><small>0 PTS</small></div>
+              <div class="stampede-booth" id="streamingStampedePlayer2"><img src="arcade/sprites/actors/pokemon/173.png" alt="COM 2"><b>COM 2</b><strong>—</strong><small>0 PTS</small></div>
+              <div class="stampede-booth" id="streamingStampedePlayer3"><img src="arcade/sprites/actors/pokemon/174.png" alt="COM 3"><b>COM 3</b><strong>—</strong><small>0 PTS</small></div>
+            </div>
+            <div id="streamingStampedeStudio" class="stampede-studio" aria-label="Pokémon television studio counting stream"><div class="stampede-studio-sign">LIVE · GOLDENROD STUDIO</div><div class="stampede-lane l0"></div><div class="stampede-lane l1"></div><div class="stampede-lane l2"></div><div id="streamingStampedeRunners" class="stampede-runners"></div><div id="streamingStampedePrompt" class="stampede-prompt"><small>QUESTION 1</small><b>GET READY</b><span>Count the requested Pokémon.</span></div></div>
+            <div id="streamingStampedeReady" class="stampede-ready"><small>STADIUM 2 · KIDS CLUB</small><b>STREAMING STAMPEDE</b><span>Count the Pokémon visiting the studio. Five questions get faster and busier; the final question asks for every Pokémon.</span><em id="streamingStampedeBest">BEST —</em><div class="stampede-difficulty" aria-label="Streaming Stampede difficulty"><button type="button" data-stampede-difficulty="easy" aria-pressed="false">EASY</button><button type="button" data-stampede-difficulty="normal" class="active" aria-pressed="true">NORMAL</button><button type="button" data-stampede-difficulty="hard" aria-pressed="false">HARD</button></div><button type="button" id="streamingStampedeStart" class="stampede-start">START COUNTING</button></div>
+            <div id="streamingStampedePauseOverlay" class="stampede-pause" hidden><small>STADIUM 2</small><b>COUNT PAUSED</b><span>The Pokémon stream and count window are frozen.</span><button type="button" id="streamingStampedeResume">RESUME</button></div>
+            <div id="streamingStampedeControls" class="stampede-controls" hidden><button type="button" id="streamingStampedeA" class="stampede-a" aria-label="Count one Pokémon">A<small>COUNT +1</small></button></div>
+            <div id="streamingStampedeStatus" class="stampede-status">WATCH THE STREAM · PRESS A TO COUNT</div>
           </div>
         </div>
 
@@ -1179,6 +1198,8 @@
   <script src="arcade-pichu-power-plant.js"></script>
   <script src="arcade-rampage-rollout-core.js"></script>
   <script src="arcade-rampage-rollout.js"></script>
+  <script src="arcade-streaming-stampede-core.js"></script>
+  <script src="arcade-streaming-stampede.js"></script>
   <script src="arcade-ice-cream-scoop-core.js"></script>
   <script src="arcade-ice-cream-scoop.js"></script>
   <script src="arcade-wailord-water-spout-core.js"></script>

@@ -290,6 +290,10 @@
     push('rampage_rollout_first_win','🏁','Rollout Winner','Win Rampage Rollout.','arcade',{coins:700,dust:40},()=>[nonNeg(s().arcade?.rampageRollout?.wins),1]);
     push('rampage_rollout_hard_win','◆','Iron Donphan','Win Rampage Rollout on Hard.','arcade',{coins:1000,tickets:1},()=>[nonNeg(s().arcade?.rampageRollout?.winsByDifficulty?.hard),1]);
     push('rampage_rollout_dust_devil','🌪️','Dust Devil','Hit rivals with at least three dirt whirlwinds in a single Rampage Rollout race.','arcade',{coins:1200,dust:90},()=>[nonNeg(s().arcade?.rampageRollout?.bestDustHits),3]);
+    push('streaming_stampede_first_match','🔢','Count Me In','Complete your first Streaming Stampede match.','arcade',{coins:300},()=>[nonNeg(s().arcade?.streamingStampede?.gamesPlayed),1]);
+    push('streaming_stampede_first_win','👀','Sharp Eyes','Win Streaming Stampede.','arcade',{coins:700,dust:40},()=>[nonNeg(s().arcade?.streamingStampede?.wins),1]);
+    push('streaming_stampede_hard_win','◆','Studio Spotter','Win Streaming Stampede on Hard.','arcade',{coins:1000,tickets:1},()=>[nonNeg(s().arcade?.streamingStampede?.winsByDifficulty?.hard),1]);
+    push('streaming_stampede_perfect','✦','Perfect Headcount','Score a perfect 100 in Streaming Stampede.','arcade',{coins:1400,dust:100},()=>[nonNeg(s().arcade?.streamingStampede?.perfectGames),1]);
 
     // Dream World · Ice Cream Scoop.
     push('icecream_first_stack','🍦','First Scoop','Complete your first Ice Cream Scoop run.','arcade',{coins:300},()=>[nonNeg(s().arcade?.iceCreamScoop?.gamesPlayed),1]);
