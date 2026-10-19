@@ -26,13 +26,13 @@
   });
 
   const GIFTS=Object.freeze([
-    Object.freeze({key:'candy',name:'Candy',points:20,weight:.10,visual:'🍬'}),
-    Object.freeze({key:'stocking',name:'Stocking',points:50,weight:.18,visual:'🧦'}),
-    Object.freeze({key:'gameBoy',name:'Game Boy',points:100,weight:.35,visual:'GB'}),
-    Object.freeze({key:'n64',name:'Nintendo 64',points:250,weight:.50,visual:'64'}),
-    Object.freeze({key:'snorlax',name:'Snorlax Doll',points:350,weight:.80,visual:'143'}),
-    Object.freeze({key:'piano',name:'Piano',points:600,weight:1.10,visual:'🎹'}),
-    Object.freeze({key:'ring',name:'Ring',points:1000,weight:.12,visual:'💍'})
+    Object.freeze({key:'oranBerry',name:'Oran Berry',points:20,weight:.10,asset:'arcade/sprites/items/oran-berry.png'}),
+    Object.freeze({key:'pokeBall',name:'Poké Ball',points:50,weight:.18,asset:'arcade/sprites/items/poke-ball.png'}),
+    Object.freeze({key:'stardust',name:'Stardust',points:100,weight:.35,asset:'arcade/sprites/items/stardust.png'}),
+    Object.freeze({key:'pearl',name:'Pearl',points:250,weight:.50,asset:'arcade/sprites/items/pearl.png'}),
+    Object.freeze({key:'starPiece',name:'Star Piece',points:350,weight:.80,asset:'arcade/sprites/items/star-piece.png'}),
+    Object.freeze({key:'nugget',name:'Nugget',points:600,weight:1.10,asset:'arcade/sprites/items/nugget.png'}),
+    Object.freeze({key:'bigPearl',name:'Big Pearl',points:1000,weight:.12,asset:'arcade/sprites/items/big-pearl.png'})
   ]);
 
   const DIFFICULTIES=Object.freeze({
