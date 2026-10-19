@@ -12,9 +12,8 @@ for(const [difficulty,seedBase] of [['easy',100],['normal',1000],['hard',2000]])
     let t=1000,guard=0;
     while(!game.finalized&&guard++<5000){
       t+=40;
-      // Human reacts with variable delay and occasionally feints before the reveal.
+      // Human reacts with variable delay after the reveal.
       const r=game.round;
-      if(r?.state==='hidden'&&!game.player.sittingOut&&!game.player.lockedRound&&t-r.startAt>500&&rng()<.003)core.feint(game,'player',t,rng);
       if(r?.state==='revealed'&&!r.claimedBy&&!game.player.sittingOut&&!game.player.lockedRound&&t-r.revealAt>300+rng()*260)core.dash(game,'player',t);
       core.advanceGame(game,t,rng);
     }

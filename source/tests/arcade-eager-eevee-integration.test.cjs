@@ -31,6 +31,13 @@ assert.match(html,/src="arcade-eager-eevee\.js"/,'Eager Eevee runtime script sho
 assert.ok(fs.existsSync(path.join(root,'arcade-eager-eevee.css')));
 assert.ok(fs.existsSync(path.join(root,'arcade-eager-eevee.js')));
 
+assert.doesNotMatch(html,/id="eagerEeveeB"/,'Eager Eevee should not render a B/Feint control');
+assert.ok(!help.includes('Press B before the reveal to feint'),'shared Eager Eevee instructions should not mention Feint');
+assert.ok(!session.includes('A to dash · B to feint'),'Arcade session copy should describe A-only controls');
+assert.ok(!records.includes("['Feints',fmt(r.totalFeints)]"),'Arcade Records should not show a Feints statistic');
+assert.ok(!platform.includes('totalFeints:0'),'new Eager Eevee save defaults should not create a Feints record');
+assert.ok(!world.includes("eagerEevee:'Watch Aipom, feint rivals"),'Arcade world objective should not advertise Feint');
+
 const css=read('arcade-eager-eevee.css');
 assert.match(css,/\.eager-eevee-aipom\{[^}]*left:78%/,'Aipom should sit to the side of the tray rather than directly above it');
 assert.match(css,/\.eager-eevee-player\{position:absolute;width:74px;height:74px/,'All Eevees should share the same base sprite size around the tray');

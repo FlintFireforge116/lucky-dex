@@ -5,6 +5,7 @@ const path=require('path');
 const corePath=path.join(__dirname,'../app/src/main/assets/arcade-eager-eevee-core.js');
 assert.ok(fs.existsSync(corePath),'Eager Eevee core module must exist');
 const core=require(corePath);
+assert.ok(!fs.readFileSync(corePath,'utf8').toLowerCase().includes('feint'),'Eager Eevee core should contain no remaining Feint state or logic');
 
 assert.equal(core.CONFIG.rounds,10,'Eager Eevee should play ten quick rounds');
 assert.deepEqual(core.PERSONALITIES.map(x=>x.key).sort(),['aggressive','cautious','chaotic'],'CPU personality pool should contain three distinct behaviours');
@@ -38,13 +39,11 @@ assert.deepEqual(core.PERSONALITIES.map(x=>x.key).sort(),['aggressive','cautious
 }
 
 {
-  const game=core.createGame({difficulty:'normal',rng:core.seededRng(5),nowMs:0});
-  core.startGame(game,1000);
-  const before=game.players.slice(1).map(p=>p.falseStarts);
-  core.feint(game,'cpu1',1300,core.seededRng(1));
-  core.reactCpusToFeint(game,'cpu1',1320,()=>0);
-  const after=game.players.slice(1).map(p=>p.falseStarts);
-  assert.ok(after.some((v,i)=>i!==0&&v>before[i]),'a CPU feint should be able to bait another CPU, not just the human player');
+  assert.equal(core.feint,undefined,'Eager Eevee should be A-only: no Feint action should remain');
+  assert.equal(core.reactCpusToFeint,undefined,'CPU feint/bait logic should be removed with the B action');
+  assert.ok(core.DIFFICULTIES.normal.reactionMs>=550,'Normal should give a meaningfully human reaction window');
+  assert.ok(core.DIFFICULTIES.easy.reactionMs-core.DIFFICULTIES.normal.reactionMs>=200,'Easy should remain clearly slower than Normal');
+  assert.ok(core.DIFFICULTIES.normal.reactionMs-core.DIFFICULTIES.hard.reactionMs>=250,'Normal should be clearly separated from Hard');
 }
 
 console.log('arcade-eager-eevee core tests passed');
