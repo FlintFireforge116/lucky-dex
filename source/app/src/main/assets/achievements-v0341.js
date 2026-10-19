@@ -302,6 +302,10 @@
     push('egg_emergency_first_win','◎','Egg Catcher','Win Egg Emergency.','arcade',{coins:700,dust:40},()=>[nonNeg(s().arcade?.eggEmergency?.wins),1]);
     push('egg_emergency_hard_win','◆','Shell Shock','Win Egg Emergency on Hard.','arcade',{coins:1000,tickets:1},()=>[nonNeg(s().arcade?.eggEmergency?.winsByDifficulty?.hard),1]);
     push('egg_emergency_perfect','✦','Hundred Egg Wonder','Catch all 100 Eggs without missing or catching a Voltorb.','arcade',{coins:1400,dust:100},()=>[nonNeg(s().arcade?.eggEmergency?.perfectGames),1]);
+    push('eager_eevee_first_match','🦊','Table Manners','Complete your first Eager Eevee match.','arcade',{coins:300},()=>[nonNeg(s().arcade?.eagerEevee?.gamesPlayed),1]);
+    push('eager_eevee_first_win','🍓','Quick Draw','Win Eager Eevee.','arcade',{coins:700,dust:40},()=>[nonNeg(s().arcade?.eagerEevee?.wins),1]);
+    push('eager_eevee_hard_win','◆','Eager Expert','Win Eager Eevee on Hard.','arcade',{coins:1000,tickets:1},()=>[nonNeg(s().arcade?.eagerEevee?.winsByDifficulty?.hard),1]);
+    push('eager_eevee_clean_win','✦','Pineco Sense','Win Eager Eevee without hitting Pineco.','arcade',{coins:900,dust:60},()=>[nonNeg(s().arcade?.eagerEevee?.cleanWins),1]);
 
     // Dream World · Ice Cream Scoop.
     push('icecream_first_stack','🍦','First Scoop','Complete your first Ice Cream Scoop run.','arcade',{coins:300},()=>[nonNeg(s().arcade?.iceCreamScoop?.gamesPlayed),1]);

@@ -11,6 +11,7 @@
     voltorbCount:12,
     dropIntervalMs:520,
     fallDurationMs:1500,
+    hardFallDurationMs:1125,
     voltorbPenalty:5,
     shockMs:340,
     countdownMs:3000
@@ -29,6 +30,7 @@
   const clamp=(n,a,b)=>Math.max(a,Math.min(b,Number(n)||0));
   const rand=rng=>clamp((rng||Math.random)(),0,.999999);
   const profileFor=key=>DIFFICULTIES[key]||DIFFICULTIES.normal;
+  const fallDurationFor=key=>profileFor(key).key==='hard'?CONFIG.hardFallDurationMs:CONFIG.fallDurationMs;
   const laneFrom=value=>value<=-.5?-1:value>=.5?1:0;
   const randomLane=rng=>LANES[Math.floor(rand(rng)*LANES.length)];
   const wrongLane=(lane,rng)=>{const safe=LANES.filter(x=>x!==lane);return safe[Math.floor(rand(rng)*safe.length)];};
@@ -70,7 +72,7 @@
     return used;
   }
 
-  function makeSchedule(rng=Math.random){
+  function makeSchedule(rng=Math.random,difficulty='normal'){
     const total=CONFIG.eggTarget+CONFIG.voltorbCount;
     const hazards=makeHazardSlots(rng);
     const out=[];
@@ -83,7 +85,7 @@
         type,
         lane:randomLane(rng),
         spawnAt,
-        resolveAt:spawnAt+CONFIG.fallDurationMs,
+        resolveAt:spawnAt+fallDurationFor(difficulty),
         resolved:false
       });
     }
@@ -101,7 +103,7 @@
       lastAdvancedAt:null,
       finalized:false,
       finalizedAt:null,
-      schedule:makeSchedule(rng),
+      schedule:makeSchedule(rng,key),
       resolvedEvents:0,
       eggsResolved:0,
       hazardsResolved:0,
@@ -219,9 +221,9 @@
     }));
   }
 
-  function matchDurationMs(){
+  function matchDurationMs(difficulty='normal'){
     const total=CONFIG.eggTarget+CONFIG.voltorbCount;
-    return (total-1)*CONFIG.dropIntervalMs+CONFIG.fallDurationMs;
+    return (total-1)*CONFIG.dropIntervalMs+fallDurationFor(difficulty);
   }
 
   function shiftTimestamps(game,delta){
@@ -233,7 +235,7 @@
   }
 
   return Object.freeze({
-    LANES,CONFIG,DIFFICULTIES,REWARDS,profileFor,countdownState,createPlayer,makeSchedule,createGame,startGame,setLean,isCatchAligned,
+    LANES,CONFIG,DIFFICULTIES,REWARDS,profileFor,fallDurationFor,countdownState,createPlayer,makeSchedule,createGame,startGame,setLean,isCatchAligned,
     resolveDropForPlayer,decideCpuForDrop,advanceGame,activeDrops,rankGame,placeFor,rewardFor,finalizeGame,matchDurationMs,shiftTimestamps
   });
 });

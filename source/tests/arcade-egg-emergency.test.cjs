@@ -8,6 +8,12 @@ assert.equal(core.CONFIG.eggTarget,100,'Egg Emergency must contain exactly 100 E
 assert.equal(core.CONFIG.voltorbCount,12,'default match should interleave twelve Voltorb hazards');
 assert.deepEqual(core.LANES,[-1,0,1],'Chansey must use left / centre / right catch positions');
 
+assert.equal(typeof core.fallDurationFor,'function','Egg Emergency should expose difficulty-specific fall speed');
+assert.equal(core.fallDurationFor('easy'),1500,'Easy fall timing should stay unchanged');
+assert.equal(core.fallDurationFor('normal'),1500,'Normal fall timing should stay unchanged');
+assert.ok(core.fallDurationFor('hard')<=1200,'Hard should make Eggs and Voltorb fall about 25% faster');
+
+
 {
   const game=core.createGame({difficulty:'normal',rng:seq([0.1,0.5,0.9,0.3,0.7])});
   assert.equal(game.schedule.filter(x=>x.type==='egg').length,100);

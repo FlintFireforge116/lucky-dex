@@ -37,4 +37,6 @@ const migrated=platformApi.ensureArcadeState({delibirdDelivery:{gamesPlayed:9,be
 assert.equal(migrated.delibirdDelivery.gamesPlayed,9,'existing arcade records must survive migration');
 assert.equal(migrated.eggEmergency.gamesPlayed,0,'new Egg Emergency save fields need safe defaults');
 
+assert.match(help,/Egg Emergency[^\n]+Hard mode[^\n]+faster/s,'Egg Emergency instructions should tell players that Hard falls faster');
+
 console.log('arcade-egg-emergency integration tests passed');
