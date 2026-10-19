@@ -22,3 +22,7 @@ assert.match(css,/\.egg-emergency-lane:nth-child\(n\+2\) \.egg-chansey\{[^}]*wid
 assert.match(css,/nth-child\(1\) \.egg-chansey\[data-lean="-1"\][^{]*\{[^}]*left:22%;[^}]*rotate\(-18deg\)/s,'player left lean should move and tilt strongly');
 assert.match(css,/nth-child\(1\) \.egg-chansey\[data-lean="1"\][^{]*\{[^}]*left:78%;[^}]*rotate\(18deg\)/s,'player right lean should move and tilt strongly');
 console.log('arcade-egg-emergency polish tests passed');
+
+assert.match(css,/\.egg-emergency-lane:nth-child\(n\+2\) \.egg-chansey\{[^}]*bottom:56px/s,'CPU Chanseys should sit above their score tags');
+assert.match(css,/\.egg-emergency-lane:nth-child\(1\) \.egg-drop-layer\{[^}]*inset:0 0 38px/s,'player drops should fall deeper toward Chansey before resolving');
+assert.match(css,/\.egg-emergency-lane:nth-child\(n\+2\) \.egg-drop-layer\{[^}]*inset:0 0 42px/s,'CPU drops should also fall deeper before resolving');
