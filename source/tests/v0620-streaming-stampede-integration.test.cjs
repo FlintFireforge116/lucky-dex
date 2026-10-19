@@ -19,6 +19,9 @@ test('Streaming Stampede is registered across the Stadium 2 world, shared help, 
   for(const game of stadium2Games)assert.match(kidsBlock,new RegExp(`${game}:\\{sprite:`),`${game} must have Kids Club tile metadata or Stadium 2 venue rendering will throw`);
   assert.match(help,/streamingStampede:\{name:'Streaming Stampede'/);
   assert.match(html,/id="streamingStampedeGame"/);
+  assert.match(html,/id="streamingStampedeTrainerName"/);
+  assert.match(html,/class="stampede-trainer"/);
+  assert.match(html,/class="stampede-lane l3"/);
   assert.match(html,/arcade-streaming-stampede\.css/);
   assert.match(html,/arcade-streaming-stampede-core\.js/);
   assert.match(html,/arcade-streaming-stampede\.js/);

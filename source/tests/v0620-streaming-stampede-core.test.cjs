@@ -28,6 +28,21 @@ test('each generated question has a truthful count and distractors before the fi
   assert.equal(final.actualCount,final.stream.length);
 });
 
+test('Normal difficulty is slightly calmer than Hard and the final all-Pokemon count is no longer extreme',()=>{
+  const easy=core.roundConfigFor(4,'easy');
+  const normal=core.roundConfigFor(4,'normal');
+  const hard=core.roundConfigFor(4,'hard');
+  assert.ok(easy.max<hard.max);
+  assert.ok(normal.max<hard.max);
+  assert.ok(normal.gapMin>hard.gapMin);
+  assert.ok(normal.travelMin>hard.travelMin);
+  assert.ok(normal.entryMs>=1500);
+  const match=core.createMatch({difficulty:'normal',rng:sequence([.13,.23,.33,.43,.53,.63,.73,.83,.93])});
+  const final=match.rounds[4];
+  assert.ok(final.actualCount<=28,`expected calmer final round, got ${final.actualCount}`);
+  assert.equal(final.entryDurationMs,1500);
+});
+
 test('A counts during the stream and the post-stream entry window, then locks at reveal',()=>{
   const match=core.createMatch({difficulty:'normal',rng:sequence([.2,.4,.6,.8])});
   core.beginRound(match,0,1000);
