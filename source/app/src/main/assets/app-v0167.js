@@ -1320,18 +1320,22 @@ function renderGlobalHud(){
 }
 function showAdventureHub(){window.LuckyDexAdventure?.enter?.();}
 function navigate(page){
-  if(page!=='adventure'&&document.querySelector('.page.active')?.dataset.page==='adventure')window.LuckyDexAdventure?.leave?.();
-  if(page!=='packs'&&document.body.classList.contains('pack-opening'))closePackOpening(true);
-  if(page!=='arcade')window.LuckyDexArcadeWorld?.leave();
-  if(page!=='trade')window.LuckyDexTrade?.leave();
+  // Navigation must remain available even if one feature's enter/leave hook fails.
+  // A game-specific runtime error should never strand the user on the current tab.
+  const safe=(label,fn)=>{try{return fn?.();}catch(error){console.error(`[LuckyDex] navigation hook failed (${label})`,error);return undefined;}};
+  const activePage=document.querySelector('.page.active')?.dataset.page;
+  if(page!=='adventure'&&activePage==='adventure')safe('adventure leave',()=>window.LuckyDexAdventure?.leave?.());
+  if(page!=='packs'&&document.body.classList.contains('pack-opening'))safe('pack close',()=>closePackOpening(true));
+  if(page!=='arcade')safe('arcade leave',()=>window.LuckyDexArcadeWorld?.leave?.());
+  if(page!=='trade')safe('trade leave',()=>window.LuckyDexTrade?.leave?.());
   document.querySelectorAll('.page').forEach(x=>x.classList.toggle('active',x.dataset.page===page));
   document.querySelectorAll('[data-nav]').forEach(x=>x.classList.toggle('active',x.dataset.nav===page));
-  if(page==='adventure')showAdventureHub();
-  if(page==='collection'){rebuildCollectionControls();renderTeamPanel();renderCollection();}
-  if(page==='arcade')window.LuckyDexArcadeWorld?.openWorld();
-  if(page==='trade')window.LuckyDexTrade?.enter();
-  if(page==='packs'){closePackOpening(true);loadSets(document.getElementById('cardSource').value);updatePackButton();updatePackFormatV5();}
-  if(page==='profile')renderProfile();
+  if(page==='adventure')safe('adventure enter',()=>showAdventureHub());
+  if(page==='collection')safe('collection render',()=>{rebuildCollectionControls();renderTeamPanel();renderCollection();});
+  if(page==='arcade')safe('arcade enter',()=>window.LuckyDexArcadeWorld?.openWorld?.());
+  if(page==='trade')safe('trade enter',()=>window.LuckyDexTrade?.enter?.());
+  if(page==='packs')safe('packs render',()=>{closePackOpening(true);loadSets(document.getElementById('cardSource').value);updatePackButton();updatePackFormatV5();});
+  if(page==='profile')safe('profile render',()=>renderProfile());
 }
 /* Arcade result overlay */
 /* physical packs: 10 cards / 4 common / 3 uncommon / 3 foil slots */
