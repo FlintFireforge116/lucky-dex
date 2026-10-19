@@ -201,12 +201,41 @@ function loadState(){
 function dailyTaskIdsFor(date,rank=1){let seed=[...date].reduce((n,ch)=>(n*31+ch.charCodeAt(0))>>>0,2166136261);const pool=DAILY_POOL.filter(x=>(x.rank||1)<=rank);for(let i=pool.length-1;i>0;i--){seed=(seed*1664525+1013904223)>>>0;const j=seed%(i+1);[pool[i],pool[j]]=[pool[j],pool[i]];}return pool.slice(0,3).map(x=>x.id);}
 function resetDaily(s=state){const t=todayKey(),invalidTasks=!Array.isArray(s.daily.tasks)||!s.daily.tasks.length||s.daily.tasks.some(id=>!DAILY_POOL.some(x=>x.id===id));if(s.daily.date!==t){s.daily={date:t,tasks:dailyTaskIdsFor(t,rankForXp(Number(s.profile?.xp||0))),progress:{},claimed:false};}else if(invalidTasks){s.daily.tasks=dailyTaskIdsFor(t,rankForXp(Number(s.profile?.xp||0)));s.daily.progress={caught:Number(s.daily.caught||0),arcadeCoins:Number(s.daily.arcadeCoins||0),adventureBattles:Number(s.daily.adventureBattles||0),...(s.daily.progress||{})};s.daily.claimed=!!s.daily.claimed;}}
 function bumpDaily(key,amount=1){resetDaily();state.daily.progress[key]=Number(state.daily.progress[key]||0)+amount;}
+function rebuildableStorageKeys(tier=1){
+  const exact=tier===1
+    ?new Set(['luckyDexPackCacheV13','luckyDexSetCatalogV13','luckyDexPtcgSets','luckyDexPtcgSetsAt','luckyDexBoosterArtV0259','luckyDexLastPackError','luckyDexLastRuntimeError'])
+    :new Set(['luckyDexSpecies']);
+  const prefixes=tier===1?['luckyDexPtcgCardsV151:']:['luckyDexZonePool:'];
+  const keys=[];
+  try{for(let i=0;i<localStorage.length;i++){const key=localStorage.key(i);if(key&&(exact.has(key)||prefixes.some(prefix=>key.startsWith(prefix))))keys.push(key);}}catch(_){ }
+  return keys;
+}
+function purgeRebuildableStorage(tier=1){
+  const keys=rebuildableStorageKeys(tier);for(const key of keys){try{localStorage.removeItem(key);}catch(_){ }}return keys.length;
+}
+let saveStorageWarningShown=false;
+function persistLuckyDexSave(payload){
+  try{localStorage.setItem('luckyDexSave',payload);return true;}catch(firstError){
+    const primary=purgeRebuildableStorage(1);
+    if(primary){try{localStorage.setItem('luckyDexSave',payload);console.warn(`[LuckyDex] cleared ${primary} rebuildable cache entr${primary===1?'y':'ies'} to recover save storage.`);return true;}catch(_){ }}
+    const secondary=purgeRebuildableStorage(2);
+    if(secondary){try{localStorage.setItem('luckyDexSave',payload);console.warn(`[LuckyDex] cleared ${secondary} secondary cache entr${secondary===1?'y':'ies'} to recover save storage.`);return true;}catch(_){ }}
+    console.error('[LuckyDex] save storage write failed after cache recovery',firstError);
+    if(!saveStorageWarningShown){saveStorageWarningShown=true;try{if(typeof showToast==='function')showToast('Save storage is full. LuckyDex is still usable, but new progress may not persist.',4200);}catch(_){ }}
+    return false;
+  }
+}
 function save(){
-  window.LuckyDexProgression?.ensureSave(state);state.saveVersion=7;resetDaily();localStorage.setItem('luckyDexSave',JSON.stringify(state));
+  let stored=false;
+  try{
+    window.LuckyDexProgression?.ensureSave(state);state.saveVersion=7;resetDaily();
+    stored=persistLuckyDexSave(JSON.stringify(state));
+  }catch(error){console.error('[LuckyDex] save preparation/serialization failed',error);}
   // Persistence must never fail just because a secondary HUD renderer has a bug.
   // v0.15.5-v0.15.7 could save the starter and then throw while updating the pack
   // HUD, leaving the visible screen frozen even though progress had changed.
   try{renderGlobalHud();}catch(e){console.error('[LuckyDex] HUD render failed',e);}
+  return stored;
 }
 function sealedPackKeyV0260(value){return String(value?._libraryKey||value?._libraryCode||value?.setId||value?.id||value||'').trim().replace(/^library:/i,'').replace(/^en[_:-]/i,'');}
 function ensureSealedPacksV0260(){if(!state.sealedPacks||typeof state.sealedPacks!=='object'||Array.isArray(state.sealedPacks))state.sealedPacks={};return state.sealedPacks;}

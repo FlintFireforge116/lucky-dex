@@ -447,7 +447,7 @@
       };
       trade.market=snapshot;
       trade.currentSlot=info.slot; // compatibility for older diagnostics/tests
-      try{localStorage.setItem('luckyDexSave',JSON.stringify(state));}catch(_){ }
+      try{if(typeof save==='function')save();else localStorage.setItem('luckyDexSave',JSON.stringify(state));}catch(_){ }
       return snapshot.listings;
     })().finally(()=>{marketBuildPromise=null;});
     marketBuildPromise=promise;

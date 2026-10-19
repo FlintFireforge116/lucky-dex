@@ -309,7 +309,7 @@ main{height: calc(100dvh - var(--chrome-h) - var(--nav-h) - env(safe-area-inset-
 body.pack-opening .topbar, body.pack-opening .bottom-nav{visibility: hidden;}
 body.pack-opening .pack-overlay{display: grid !important;}
 .sealed-pack{max-height: 520px; width: min(72vw, 310px) !important; height: min(62vh, 520px) !important;}
-.sealed-pack.real-pack{padding: 0px !important; background: none !important; border: 0px !important; box-shadow: none !important;}
+.sealed-pack.real-pack{padding:0!important;background:radial-gradient(circle at 50% 34%,#2b4165,#0b1729 72%)!important;border:1px solid rgba(224,190,92,.28)!important;box-shadow:0 18px 42px rgba(0,0,0,.38)!important;}
 .sealed-pack.real-pack .booster-art{width: 100%; height: 100%; object-fit: contain; filter: drop-shadow(rgba(0, 0, 0, 0.55) 0px 16px 18px);}
 .sealed-pack.batch-pack-stack{overflow:visible!important}.sealed-pack.batch-pack-stack .pack-art-shell,.sealed-pack.batch-pack-stack .pack-crimp,.sealed-pack.batch-pack-stack .pack-foil,.sealed-pack.batch-pack-stack .pack-shell-shine,.sealed-pack.batch-pack-stack .pack-tear-guide{overflow:hidden}.sealed-pack.batch-pack-stack::before,.sealed-pack.batch-pack-stack::after{content:"";position:absolute;inset:4% 2% 1%;border-radius:22px;background:linear-gradient(145deg,#243760,#725a27 48%,#182746);z-index:-1;box-shadow:0 16px 35px #0008}.sealed-pack.batch-pack-stack::before{transform:translate(10px,8px) rotate(2deg)}.sealed-pack.batch-pack-stack::after{transform:translate(-9px,13px) rotate(-2.4deg);z-index:-2}.pack-batch-badge{position:absolute;right:-8px;top:-8px;z-index:12;display:grid;place-items:center;min-width:56px;height:56px;padding:0 9px;border-radius:50%;border:3px solid #fff0b4;background:linear-gradient(145deg,#efc94f,#9a6815);color:#071322;font-size:18px;font-weight:1000;box-shadow:0 6px 18px #0009;pointer-events:none}
 @keyframes seqPop {0% { transform: scale(0.55); opacity: 0.2; }}
@@ -382,8 +382,8 @@ body.pack-opening .pack-overlay{display: grid !important;}
   border:0;
   border-radius:10px;
   clip-path:none;
-  background:transparent;
-  box-shadow:none;
+  background:radial-gradient(circle at 50% 34%,#2b4165,#0b1729 72%);
+  box-shadow:0 18px 42px rgba(0,0,0,.38);
   overflow:visible;
 }
 .sealed-pack.pointy-pack.real-pack .pack-art-shell{

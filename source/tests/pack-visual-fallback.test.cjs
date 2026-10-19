@@ -1,0 +1,10 @@
+const assert=require('node:assert/strict');
+const fs=require('node:fs');
+const path=require('node:path');
+const css=fs.readFileSync(path.join(__dirname,'../app/src/main/assets/styles-v013.css'),'utf8');
+const rules=[...css.matchAll(/\.sealed-pack\.real-pack\s*\{([^}]*)\}/g)].map(m=>m[1]);
+assert.ok(rules.length,'real pack style must exist');
+const effective=rules.join('\n');
+assert.doesNotMatch(effective,/background\s*:\s*none\s*!important/i,'a failed booster image must not leave the sealed pack completely transparent');
+assert.match(effective,/background\s*:/i,'real packs need a visible fallback shell behind artwork');
+console.log('pack-visual-fallback: ok');
