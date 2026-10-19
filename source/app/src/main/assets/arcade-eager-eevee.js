@@ -27,5 +27,5 @@
   function close(){opened=false;stop();phase='closed';game=null;return true;}
   function wire(){if(typeof document==='undefined')return;$('eagerEeveeStart')?.addEventListener('click',startRun);$('eagerEeveeA')?.addEventListener('pointerdown',e=>{e.preventDefault();pressA();});$('eagerEeveeResume')?.addEventListener('click',resume);for(const b of document.querySelectorAll?.('[data-eevee-difficulty]')||[])b.addEventListener('click',()=>{if(phase==='idle')showReady(b.dataset.eeveeDifficulty);});document.addEventListener('keydown',e=>{if(phase!=='running'||e.repeat)return;const k=String(e.key||'').toLowerCase();if(k==='a'||k==='enter'||k===' '){e.preventDefault();pressA();}});document.addEventListener('visibilitychange',()=>{if(document.hidden&&opened)pause();});}
   if(typeof document!=='undefined'){if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',wire,{once:true});else wire();}
-  return Object.freeze({open,close,pause,resume,showReady,startRun,pressA,pressB,finishRun,_getGame:()=>game,_getPhase:()=>phase,_setRng:fn=>{rng=typeof fn==='function'?fn:Math.random;}});
+  return Object.freeze({open,close,pause,resume,showReady,startRun,pressA,finishRun,_getGame:()=>game,_getPhase:()=>phase,_setRng:fn=>{rng=typeof fn==='function'?fn:Math.random;}});
 });
