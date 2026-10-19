@@ -41,6 +41,7 @@
   <link rel="stylesheet" href="arcade-rampage-rollout.css" />
   <link rel="stylesheet" href="arcade-streaming-stampede.css" />
   <link rel="stylesheet" href="arcade-delibird-delivery.css" />
+  <link rel="stylesheet" href="arcade-egg-emergency.css" />
   <link rel="stylesheet" href="arcade-ice-cream-scoop.css" />
   <link rel="stylesheet" href="arcade-wailord-water-spout.css" />
   <link rel="stylesheet" href="arcade-pokemon-seek.css" />
@@ -529,6 +530,28 @@
             <div id="delibirdDeliveryBag" class="delivery-bag" aria-label="Carried items"><span>·</span><span>·</span><span>·</span><span>·</span><span>·</span></div>
             <div id="delibirdDeliveryControls" class="delivery-controls" hidden><div id="delibirdDeliveryStick" class="delivery-stick" role="application" aria-label="Move Delibird with the control stick"><i id="delibirdDeliveryKnob"></i></div></div>
             <div id="delibirdDeliveryStatus" class="delivery-status">MOVE DOWN TO COLLECT ITEMS</div>
+          </div>
+        </div>
+
+        <div id="eggEmergencyGame" class="panel arcade-game egg-emergency-game" hidden>
+          <div class="arcade-full-head egg-emergency-head"><button class="game-exit" data-exit-game>‹ ARCADE</button><div class="arcade-mascot"><img src="arcade/sprites/actors/pokemon/113.png" alt="Chansey" /><span>STADIUM 2 · EGG EMERGENCY</span></div></div>
+          <div id="eggEmergencyStage" class="egg-emergency-stage">
+            <div class="egg-emergency-hud"><span><small>EGGS LEFT</small><b id="eggEmergencyRemaining">100</b></span><span><small>YOUR EGGS</small><b id="eggEmergencyScore">0</b></span><span><small>VOLTORB</small><b id="eggEmergencyHazards">0</b></span><span><small>PLACE</small><b id="eggEmergencyPlace">1ST</b></span></div>
+            <div id="eggEmergencyArena" class="egg-emergency-arena" aria-label="Egg Emergency four-player catching arena">
+              <div class="egg-emergency-roof" aria-hidden="true"></div>
+              <div class="egg-emergency-lanes">
+                <div id="eggEmergencyLane0" class="egg-emergency-lane"><div id="eggEmergencyDrops0" class="egg-drop-layer"></div><div id="eggEmergencyPlayer0" class="egg-chansey" data-lean="0"><img src="arcade/sprites/actors/pokemon/113.png" alt="Your Chansey" draggable="false"></div><div class="lane-tag"><b data-egg-player-name>YOU · 1ST</b><strong data-egg-player-score>0</strong></div></div>
+                <div id="eggEmergencyLane1" class="egg-emergency-lane"><div id="eggEmergencyDrops1" class="egg-drop-layer"></div><div id="eggEmergencyPlayer1" class="egg-chansey" data-lean="0"><img src="arcade/sprites/actors/pokemon/113.png" alt="COM 1 Chansey" draggable="false"></div><div class="lane-tag"><b data-egg-player-name>COM 1 · 2ND</b><strong data-egg-player-score>0</strong></div></div>
+                <div id="eggEmergencyLane2" class="egg-emergency-lane"><div id="eggEmergencyDrops2" class="egg-drop-layer"></div><div id="eggEmergencyPlayer2" class="egg-chansey" data-lean="0"><img src="arcade/sprites/actors/pokemon/113.png" alt="COM 2 Chansey" draggable="false"></div><div class="lane-tag"><b data-egg-player-name>COM 2 · 3RD</b><strong data-egg-player-score>0</strong></div></div>
+                <div id="eggEmergencyLane3" class="egg-emergency-lane"><div id="eggEmergencyDrops3" class="egg-drop-layer"></div><div id="eggEmergencyPlayer3" class="egg-chansey" data-lean="0"><img src="arcade/sprites/actors/pokemon/113.png" alt="COM 3 Chansey" draggable="false"></div><div class="lane-tag"><b data-egg-player-name>COM 3 · 4TH</b><strong data-egg-player-score>0</strong></div></div>
+              </div>
+              <div class="egg-emergency-water" aria-hidden="true"></div>
+              <div id="eggEmergencyReady" class="egg-emergency-ready"><small>STADIUM 2 · KIDS CLUB</small><b>EGG EMERGENCY</b><span>Catch all the Eggs you can. Hold LEFT or RIGHT to lean Chansey; release to return to centre. Avoid Voltorb — catching one removes five Eggs.</span><em id="eggEmergencyBest">BEST —</em><div class="egg-emergency-difficulty" aria-label="Egg Emergency difficulty"><button type="button" data-egg-difficulty="easy" aria-pressed="false">EASY</button><button type="button" data-egg-difficulty="normal" class="active" aria-pressed="true">NORMAL</button><button type="button" data-egg-difficulty="hard" aria-pressed="false">HARD</button></div><button type="button" id="eggEmergencyStart" class="egg-emergency-start">START CATCHING</button></div>
+              <div id="eggEmergencyCountdown" class="egg-emergency-countdown" hidden aria-live="assertive"><b>3</b><span>GET READY</span></div>
+              <div id="eggEmergencyPauseOverlay" class="egg-emergency-pause" hidden><small>STADIUM 2</small><b>EGGS PAUSED</b><span>Every falling Egg and Voltorb is frozen.</span><button type="button" id="eggEmergencyResume">RESUME</button></div>
+            </div>
+            <div id="eggEmergencyControls" class="egg-emergency-controls" hidden><button type="button" class="egg-emergency-control" data-egg-lean="-1" aria-label="Hold to lean Chansey left">L · LEFT</button><div class="egg-emergency-centre"><b>CENTRE</b><small>RELEASE L / R</small></div><button type="button" class="egg-emergency-control" data-egg-lean="1" aria-label="Hold to lean Chansey right">RIGHT · R</button></div>
+            <div id="eggEmergencyStatus" class="egg-emergency-status">HOLD LEFT OR RIGHT · RELEASE FOR CENTRE</div>
           </div>
         </div>
 
@@ -1224,6 +1247,8 @@
   <script src="arcade-streaming-stampede.js"></script>
   <script src="arcade-delibird-delivery-core.js"></script>
   <script src="arcade-delibird-delivery.js"></script>
+  <script src="arcade-egg-emergency-core.js"></script>
+  <script src="arcade-egg-emergency.js"></script>
   <script src="arcade-ice-cream-scoop-core.js"></script>
   <script src="arcade-ice-cream-scoop.js"></script>
   <script src="arcade-wailord-water-spout-core.js"></script>

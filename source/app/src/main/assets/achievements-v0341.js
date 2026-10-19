@@ -298,6 +298,10 @@
     push('delibird_delivery_first_win','📦','Special Delivery','Win Delibird’s Delivery.','arcade',{coins:700,dust:40},()=>[nonNeg(s().arcade?.delibirdDelivery?.wins),1]);
     push('delibird_delivery_hard_win','◆','Express Courier','Win Delibird’s Delivery on Hard.','arcade',{coins:1000,tickets:1},()=>[nonNeg(s().arcade?.delibirdDelivery?.winsByDifficulty?.hard),1]);
     push('delibird_delivery_big_bag','🛍️','Full Sack','Bank a full five-present sack in Delibird’s Delivery.','arcade',{coins:1000,dust:70},()=>[nonNeg(s().arcade?.delibirdDelivery?.bigBagDeliveries),1]);
+    push('egg_emergency_first_match','🥚','First Basket','Complete your first Egg Emergency match.','arcade',{coins:300},()=>[nonNeg(s().arcade?.eggEmergency?.gamesPlayed),1]);
+    push('egg_emergency_first_win','◎','Egg Catcher','Win Egg Emergency.','arcade',{coins:700,dust:40},()=>[nonNeg(s().arcade?.eggEmergency?.wins),1]);
+    push('egg_emergency_hard_win','◆','Shell Shock','Win Egg Emergency on Hard.','arcade',{coins:1000,tickets:1},()=>[nonNeg(s().arcade?.eggEmergency?.winsByDifficulty?.hard),1]);
+    push('egg_emergency_perfect','✦','Hundred Egg Wonder','Catch all 100 Eggs without missing or catching a Voltorb.','arcade',{coins:1400,dust:100},()=>[nonNeg(s().arcade?.eggEmergency?.perfectGames),1]);
 
     // Dream World · Ice Cream Scoop.
     push('icecream_first_stack','🍦','First Scoop','Complete your first Ice Cream Scoop run.','arcade',{coins:300},()=>[nonNeg(s().arcade?.iceCreamScoop?.gamesPlayed),1]);
