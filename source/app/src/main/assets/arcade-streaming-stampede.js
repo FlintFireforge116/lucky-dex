@@ -11,17 +11,15 @@
   const ordinal=n=>n===1?'1ST':n===2?'2ND':n===3?'3RD':'4TH';
   const profile=()=>core.profileFor(difficulty);
   const laneTop=lane=>['22%','40%','58%','76%'][Math.max(0,Math.min(3,Number(lane)||0))];
-  const titleCase=value=>String(value||'').replace(/[_-]+/g,' ').replace(/\b[a-z]/g,s=>s.toUpperCase());
-  function currentTrainerPokemon(){
-    const key=root.state?.team?.[0];
-    const mon=key?root.state?.pokemon?.[key]:null;
-    if(mon&&Number(mon.id)>0)return {id:Number(mon.id),name:titleCase(mon.name||`Pokémon ${mon.id}`)};
-    return {id:25,name:'Pikachu'};
-  }
-  function renderTrainerPokemon(){
-    const mon=currentTrainerPokemon(),img=$('streamingStampedeTrainerSprite'),name=$('streamingStampedeTrainerName');
-    if(img){img.src=`arcade/sprites/actors/pokemon/${mon.id}.png`;img.alt=mon.name;}
-    if(name)name.textContent=mon.name;
+  function renderTargetPokemon(){
+    if(!match)return;
+    const r=match.round||match.rounds?.[0],card=$('streamingStampedeTargetCard'),img=$('streamingStampedeTargetSprite'),all=$('streamingStampedeTargetAll'),name=$('streamingStampedeTargetName');
+    if(!r)return;
+    const isAll=r.targetId==='all';
+    card?.classList.toggle('is-all',isAll);
+    if(img){img.hidden=isAll;if(!isAll){img.src=`arcade/sprites/actors/pokemon/${r.targetId}.png`;img.alt=r.targetName;}}
+    if(all)all.hidden=!isAll;
+    if(name)name.textContent=isAll?'ALL POKÉMON':r.targetName;
   }
   function stopLoop(){if(rafId){caf(rafId);rafId=0;}}
   function schedule(){if(!rafId&&['streaming','entry','reveal'].includes(phase))rafId=raf(frame);}
@@ -30,7 +28,7 @@
   function clearRunners(){const n=$('streamingStampedeRunners');if(n)n.replaceChildren();}
   function renderDifficulty(){for(const btn of document.querySelectorAll?.('[data-stampede-difficulty]')||[]){const on=btn.dataset.stampedeDifficulty===difficulty;btn.classList.toggle('active',on);btn.setAttribute('aria-pressed',String(on));}const best=root.state?.arcade?.streamingStampede?.bestScores?.[difficulty];setText('streamingStampedeBest',best?`BEST ${best}/100`:'BEST —');}
   function renderPlayers(reveal=false){if(!match)return;match.players.forEach((p,i)=>{const booth=$(`streamingStampedePlayer${i}`);if(!booth)return;const img=booth.querySelector('img'),count=booth.querySelector('strong'),score=booth.querySelector('small');if(img){img.src=`arcade/sprites/actors/pokemon/${p.avatarId}.png`;img.alt=p.id==='player'?'You':`COM ${i}`;}if(count)count.textContent=p.id==='player'||reveal?String(p.roundCount):'—';if(score)score.textContent=`${p.score} PTS`;});}
-  function renderBase(){if(!match)return;const r=match.round||match.rounds[0];setText('streamingStampedeRound',`${Math.max(1,match.roundIndex+1)}/5`);setText('streamingStampedeTarget',r?.targetName||'—');setText('streamingStampedeCount',match.player.roundCount||0);setText('streamingStampedeScore',match.player.score||0);renderTrainerPokemon();renderPlayers(phase==='reveal'||phase==='finished');const place=core.rankMatch(match).findIndex(p=>p.id==='player')+1||4;session()?.update?.('streamingStampede',{runText:`Q${Math.max(1,match.roundIndex+1)}/5 · ${r?.maxPoints||10} PTS MAX`,rewardText:'Highest score wins · Perfect 100',liveLabel:'TARGET',liveValue:`${r?.targetName||'—'} · ${ordinal(place)}`});}
+  function renderBase(){if(!match)return;const r=match.round||match.rounds[0];setText('streamingStampedeRound',`${Math.max(1,match.roundIndex+1)}/5`);setText('streamingStampedeTarget',r?.targetName||'—');setText('streamingStampedeCount',match.player.roundCount||0);setText('streamingStampedeScore',match.player.score||0);renderTargetPokemon();renderPlayers(phase==='reveal'||phase==='finished');const place=core.rankMatch(match).findIndex(p=>p.id==='player')+1||4;session()?.update?.('streamingStampede',{runText:`Q${Math.max(1,match.roundIndex+1)}/5 · ${r?.maxPoints||10} PTS MAX`,rewardText:'Highest score wins · Perfect 100',liveLabel:'TARGET',liveValue:`${r?.targetName||'—'} · ${ordinal(place)}`});}
   function showPrompt(kicker,title,copy,hidden=false){const n=$('streamingStampedePrompt');if(!n)return;n.hidden=!!hidden;if(!hidden){const [a,b,c]=n.children;if(a)a.textContent=kicker;if(b)b.textContent=title;if(c)c.textContent=copy;}}
   function buildRunners(round){clearRunners();const host=$('streamingStampedeRunners');if(!host)return;for(const row of round.stream){const n=document.createElement('div');n.className=`stampede-runner ${row.direction==='rtl'?'rtl':''}`;n.style.setProperty('--lane',laneTop(row.lane));n.style.setProperty('--delay',`${row.startMs}ms`);n.style.setProperty('--travel',`${row.durationMs}ms`);const img=document.createElement('img');img.src=`arcade/sprites/actors/pokemon/${row.speciesId}.png`;img.alt=core.speciesName(row.speciesId);img.draggable=false;n.appendChild(img);host.appendChild(n);}}
   function questionCopy(r){return r.targetId==='all'?'COUNT EVERY POKÉMON!':`COUNT ONLY ${r.targetName.toUpperCase()}`;}
@@ -55,5 +53,5 @@
   function keydown(e){if(!opened||e.repeat)return false;const k=String(e.key||'').toLowerCase();if(k==='a'||k===' '||k==='enter'){count();e.preventDefault?.();return true;}return false;}
   function wire(){if(typeof document==='undefined')return;$('streamingStampedeStart')?.addEventListener('click',startRun);$('streamingStampedeResume')?.addEventListener('click',resume);$('streamingStampedeA')?.addEventListener('pointerdown',e=>{e.preventDefault();count();});for(const btn of document.querySelectorAll('[data-stampede-difficulty]'))btn.addEventListener('click',()=>selectDifficulty(btn.dataset.stampedeDifficulty));document.addEventListener('keydown',keydown,{capture:true});document.addEventListener('visibilitychange',()=>{if(document.hidden&&opened)pause();});root.addEventListener?.('pagehide',()=>{if(opened)pause();});}
   if(typeof document!=='undefined'){if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',wire,{once:true});else wire();}
-  return Object.freeze({open,close,pause,resume,showReady,startRun,selectDifficulty,count,finishRun,_setRng:fn=>{rng=typeof fn==='function'?fn:Math.random;},_getMatch:()=>match,_getPhase:()=>phase,_currentTrainerPokemon:currentTrainerPokemon});
+  return Object.freeze({open,close,pause,resume,showReady,startRun,selectDifficulty,count,finishRun,_setRng:fn=>{rng=typeof fn==='function'?fn:Math.random;},_getMatch:()=>match,_getPhase:()=>phase});
 });
