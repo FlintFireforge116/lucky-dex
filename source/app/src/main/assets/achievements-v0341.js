@@ -294,6 +294,10 @@
     push('streaming_stampede_first_win','👀','Sharp Eyes','Win Streaming Stampede.','arcade',{coins:700,dust:40},()=>[nonNeg(s().arcade?.streamingStampede?.wins),1]);
     push('streaming_stampede_hard_win','◆','Studio Spotter','Win Streaming Stampede on Hard.','arcade',{coins:1000,tickets:1},()=>[nonNeg(s().arcade?.streamingStampede?.winsByDifficulty?.hard),1]);
     push('streaming_stampede_perfect','✦','Perfect Headcount','Score a perfect 100 in Streaming Stampede.','arcade',{coins:1400,dust:100},()=>[nonNeg(s().arcade?.streamingStampede?.perfectGames),1]);
+    push('tumbling_togepi_first_match','🥚','Downhill Debut','Complete your first Tumbling Togepi race.','arcade',{coins:300},()=>[nonNeg(s().arcade?.tumblingTogepi?.gamesPlayed),1]);
+    push('tumbling_togepi_first_win','🏁','Tumble Winner','Win Tumbling Togepi.','arcade',{coins:700,dust:40},()=>[nonNeg(s().arcade?.tumblingTogepi?.wins),1]);
+    push('tumbling_togepi_hard_win','◆','Rolling Ace','Win Tumbling Togepi on Hard.','arcade',{coins:1000,tickets:1},()=>[nonNeg(s().arcade?.tumblingTogepi?.winsByDifficulty?.hard),1]);
+    push('tumbling_togepi_boost_chain','⬇','Blue Streak','Chain five blue speed arrows in Tumbling Togepi.','arcade',{coins:1100,dust:75},()=>[nonNeg(s().arcade?.tumblingTogepi?.bestBoostChain),5]);
 
     // Dream World · Ice Cream Scoop.
     push('icecream_first_stack','🍦','First Scoop','Complete your first Ice Cream Scoop run.','arcade',{coins:300},()=>[nonNeg(s().arcade?.iceCreamScoop?.gamesPlayed),1]);

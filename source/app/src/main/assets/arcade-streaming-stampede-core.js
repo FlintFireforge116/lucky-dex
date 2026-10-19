@@ -84,6 +84,7 @@
   function beginRound(match,index,atMs){if(!match||match.finalized||!match.rounds[index])return null;const r=match.rounds[index];match.roundIndex=index;match.round=r;match.phase='streaming';if(!match.startedAt)match.startedAt=Number(atMs)||0;r.phase='streaming';r.startedAt=Number(atMs)||0;r.entryStartedAt=null;r.revealedAt=null;for(const p of match.players){p.roundCount=0;p.roundPoints=0;}return r;}
   function beginEntryWindow(match,atMs){if(!match?.round||match.finalized)return false;match.phase='entry';match.round.phase='entry';match.round.entryStartedAt=Number(atMs)||0;return true;}
   function pressCount(match){if(!match?.player||!['streaming','entry'].includes(match.phase))return {accepted:false,count:Number(match?.player?.roundCount||0)};match.player.roundCount=Math.min(99,Number(match.player.roundCount||0)+1);return {accepted:true,count:match.player.roundCount};}
+  function decrementCount(match){if(!match?.player||!['streaming','entry'].includes(match.phase)||Number(match.player.roundCount||0)<=0)return {accepted:false,count:Math.max(0,Number(match?.player?.roundCount||0))};match.player.roundCount=Math.max(0,Number(match.player.roundCount||0)-1);return {accepted:true,count:match.player.roundCount};}
   function scoreAnswer(answer,actual,maxPoints){const error=Math.abs((Number(answer)||0)-(Number(actual)||0)),max=Math.max(0,Number(maxPoints)||0);if(error===0)return max;if(error===1)return Math.max(1,Math.round(max*.5));if(error===2)return Math.max(1,Math.round(max*.1));return 0;}
   function cpuAnswer(actual,profile,rng){
     const roll=rand(rng);let error=0;
@@ -103,5 +104,5 @@
   function placeFor(match,id){const list=match?.ranking||rankMatch(match),i=list.findIndex(p=>p.id===id);return i<0?4:i+1;}
   function rewardFor(place,difficulty='normal'){const row=REWARDS[difficulty]||REWARDS.normal,idx=Math.max(0,Math.min(3,(Number(place)||1)-1));return row[idx];}
   function shiftTimestamps(match,delta){if(!match||!Number(delta))return match;const d=Number(delta);match.startedAt+=d;for(const r of match.rounds){if(r.startedAt!=null)r.startedAt+=d;if(r.entryStartedAt!=null)r.entryStartedAt+=d;if(r.revealedAt!=null)r.revealedAt+=d;}return match;}
-  return {ROUND_MAX_POINTS,AVATARS,SPECIES,ROUND_CONFIG,DIFFICULTIES,REWARDS,profileFor,roundConfigFor,speciesName,createMatch,beginRound,beginEntryWindow,pressCount,scoreAnswer,revealRound,rankMatch,finalizeMatch,placeFor,rewardFor,shiftTimestamps};
+  return {ROUND_MAX_POINTS,AVATARS,SPECIES,ROUND_CONFIG,DIFFICULTIES,REWARDS,profileFor,roundConfigFor,speciesName,createMatch,beginRound,beginEntryWindow,pressCount,decrementCount,scoreAnswer,revealRound,rankMatch,finalizeMatch,placeFor,rewardFor,shiftTimestamps};
 });
