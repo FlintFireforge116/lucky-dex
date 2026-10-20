@@ -8,8 +8,8 @@
     if(!ACHIEVEMENTS.some(a=>a.id==='quiz_endless_20'))ACHIEVEMENTS.push(
       {id:'quiz_endless_20',icon:'♾️',name:'Silhouette Machine',desc:"Reach a streak of 20 in Who's That Pokémon? Endless.",reward:{coins:1500,tickets:1},progress:()=>[Number(state.arcade.bestQuizEndless||0),20]},
       {id:'ball_drop_jackpot',icon:'🔴',name:'Prize Machine Jackpot',desc:'Land a Pokéball in the centre jackpot slot.',reward:{coins:900},progress:()=>[Number(state.arcade.ballDropJackpots||0),1]},
-      {id:'unown_perfect',icon:'🔤',name:'Ruins Scholar',desc:'Decode all 5 Unown messages in one run.',reward:{coins:1000,tickets:1},progress:()=>[Number(state.arcade.unownPerfect||0),1]},
-      {id:'safari_ten',icon:'🦏',name:'Safari Regular',desc:'Catch 10 Pokémon across Safari Zone runs.',reward:{coins:1000},progress:()=>[Number(state.arcade.safariCaught||0),10]}
+      {id:'unown_perfect',icon:'🔤',name:'Ruins Scholar',desc:'Decode all 5 Unown messages in one run.',reward:{coins:1000,tickets:1},progress:()=>[Number(state.arcade.unownPerfect||0),1],legacyHidden:true},
+      {id:'safari_ten',icon:'🦏',name:'Safari Regular',desc:'Catch 10 Pokémon across Safari Zone runs.',reward:{coins:1000},progress:()=>[Number(state.arcade.safariCaught||0),10],legacyHidden:true}
     );
   }
 

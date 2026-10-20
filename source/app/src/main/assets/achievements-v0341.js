@@ -106,8 +106,8 @@
     for(const [n,reward] of [[1000,300],[50000,2500],[100000,5000]])push(`arcade_coins_${n}`,'◉',`${n.toLocaleString()} Arcade Coins`,`Earn ${n.toLocaleString()} Lucky Coins from Arcade games.`,'arcade',{coins:reward,tickets:n>=50000?2:0},()=>[Number(s().stats?.arcadeCoins||0),n]);
     for(const [n,reward] of [[5,300],[10,600],[25,1200]])push(`berry_perfect_${n}`,'🍓',`${n} Perfect Blends`,`Hit ${n} perfect Berry Blender rounds.`,'arcade',{coins:reward,dust:n*2},()=>[Number(s().stats?.perfectBerryRounds||0),n]);
     for(const [n,reward] of [[10,500],[25,1200],[50,2500]])push(`quiz_endless_${n}`,'?',`${n} Silhouettes`,`Reach an Endless Who’s That Pokémon? streak of ${n}.`,'arcade',{coins:reward,tickets:n>=25?1:0},()=>[Number(s().arcade?.bestQuizEndless||0),n]);
-    push('unown_perfect_5','🔤','Unown Linguist','Decode five perfect Unown runs.','arcade',{coins:1500,tickets:2},()=>[Number(s().arcade?.unownPerfect||0),5]);
-    push('safari_50','◆','Safari Veteran','Catch 50 Pokémon across Safari runs.','arcade',{coins:1600,dust:75},()=>[Number(s().arcade?.safariCaught||0),50]);
+    push('unown_perfect_5','🔤','Unown Linguist','Decode 5 Unown messages in a row on Normal difficulty.','arcade',{coins:1500,tickets:2},()=>[Number(s().arcade?.unown?.normalBestStreak||0),5]);
+    push('safari_50','◆','Safari Veteran','Catch 50 Pokémon across Safari runs.','arcade',{coins:1600,dust:75},()=>[Number(s().arcade?.safariCaught||0),50],{legacyHidden:true});
     for(const [n,reward] of [[1,150],[10,450],[50,1300],[100,2600]])push(`dash_races_${n}`,'➤',`${n} Dash Races`,`Finish ${n} Pokémon Dash races.`,'arcade',{coins:reward,dust:n>=50?50:0},()=>[Number(s().arcade?.dash?.races||0),n]);
     for(const [n,reward] of [[1,300],[10,900],[50,2500]])push(`dash_wins_${n}`,'🏁',n===1?'First Across the Line':`${n} Dash Wins`,`Win ${n} Pokémon Dash races.`,'arcade',{coins:reward,tickets:n>=50?2:n>=10?1:0},()=>[Number(s().arcade?.dash?.wins||0),n]);
     push('dash_podium_25','◆','Podium Regular','Finish on the Pokémon Dash podium 25 times.','arcade',{coins:1000,dust:50},()=>[Number(s().arcade?.dash?.podiums||0),25]);
@@ -408,6 +408,21 @@
     }catch(_){return [];}
   }
 
+  // Legacy-hidden achievements are kept only to preserve already-claimed history.
+  // They no longer count against the live catalogue or appear as earnable goals.
+  function achievementSummary(rows){
+    const active=(rows||[]).filter(x=>!x?.a?.legacyHidden);
+    return {earned:active.filter(x=>x?.p?.complete).length,total:active.length};
+  }
+  function achievementRowsForDisplay(rows,tab){
+    return (rows||[]).filter(({a,p})=>{
+      if(a?.legacyHidden)return tab==='complete'&&!!p?.claimed&&!a.hidden;
+      if(tab==='complete')return !!p?.complete&&!a.hidden;
+      if(tab==='hidden')return !!a.hidden;
+      return !a.hidden&&!p?.claimed;
+    });
+  }
+
   function install(){
     if(typeof document==='undefined'||typeof ACHIEVEMENTS==='undefined'||typeof state==='undefined')return false;
     const categoryById={first_shiny:'pokemon',ghost10:'pokemon',kanto_all:'pokemon',celestial_storm:'tcg',gold_card:'tcgp',haunted_visit:'adventure',haunted_clear:'adventure',packs25:'collection',packs100:'collection',arcade10k:'arcade',five_shiny:'pokemon',zubat3:'pokemon',fails3:'pokemon',loaded_pack:'collection',quiz_endless_20:'arcade',ball_drop_jackpot:'arcade',unown_perfect:'arcade',safari_ten:'arcade'};
@@ -438,8 +453,8 @@
     function sync(){annotateExisting();addCore();addV0413();syncSets();bindSleeves();annotateExisting();const rec=root.LuckyDexCosmeticsV0413?.reconcile?.(state,ACHIEVEMENTS);if(rec&&(rec.unlockedSleeves.length||rec.discoveredSecrets.length||rec.claimTokens.length))save();}
     function render(){
       sync();const list=document.getElementById('achievementList');if(!list)return;
-      const rows=ACHIEVEMENTS.map(a=>({a,p:achievementProgress(a)})),earned=rows.filter(x=>x.p.complete).length,pill=document.getElementById('achievementCountPill'),summary=document.getElementById('achievementSummaryText');if(pill)pill.textContent=`${earned}/${ACHIEVEMENTS.length} earned`;if(summary)summary.textContent=`${earned} / ${ACHIEVEMENTS.length} earned`;
-      let shown=rows.filter(({a,p})=>challengeTab==='complete'?p.complete&&!a.hidden:challengeTab==='hidden'?a.hidden:(!a.hidden&&!p.claimed));
+      const rows=ACHIEVEMENTS.map(a=>({a,p:achievementProgress(a)})),counts=achievementSummary(rows),earned=counts.earned,pill=document.getElementById('achievementCountPill'),summary=document.getElementById('achievementSummaryText');if(pill)pill.textContent=`${earned}/${counts.total} earned`;if(summary)summary.textContent=`${earned} / ${counts.total} earned`;
+      let shown=achievementRowsForDisplay(rows,challengeTab);
       if(category!=='all')shown=shown.filter(({a})=>a.category===category);
       if(challengeTab==='active')shown.sort((x,y)=>Number(y.p.complete)-Number(x.p.complete)||(y.p.value/y.p.target)-(x.p.value/x.p.target)||String(x.a.name).localeCompare(String(y.a.name)));
       else shown.sort((x,y)=>String(x.a.category).localeCompare(String(y.a.category))||String(x.a.name).localeCompare(String(y.a.name)));
@@ -453,5 +468,5 @@
     return true;
   }
 
-  return {CATEGORIES,GEN_RANGES,TYPES,sourceOf,setProgress,buildSetAchievements,buildCoreAchievements,snapshotCompletedArcadeIds,describeAchievementIds,install};
+  return {CATEGORIES,GEN_RANGES,TYPES,sourceOf,setProgress,buildSetAchievements,buildCoreAchievements,snapshotCompletedArcadeIds,describeAchievementIds,achievementSummary,achievementRowsForDisplay,install};
 });

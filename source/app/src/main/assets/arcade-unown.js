@@ -12,6 +12,17 @@ const rareOdds=()=>({unown:.004,...(root.state?.settings?.rareOdds||{})});
 const rareRewards=()=>root.LuckyDexArcadeRareRewards;
 const rareBridge=()=>root.LuckyDexRareRewardBridge;
 function persistUnownAttempt(){try{rareBridge()?.save?.();}catch(_){try{root.save?.();}catch(__){}}}
+function recordNormalAchievementStreak(g){
+  if(!g||g.mode!=='normal')return false;
+  const arcade=root.state?.arcade;if(!arcade)return false;
+  arcade.unown=arcade.unown&&typeof arcade.unown==='object'?arcade.unown:{};
+  const previous=Math.max(0,Number(arcade.unown.normalBestStreak)||0);
+  if(g.streak<=previous)return false;
+  arcade.unown.normalBestStreak=g.streak;
+  root.save?.();
+  try{root.renderAchievements?.();}catch(_){}
+  return true;
+}
 const now=()=>root.performance?.now?.()??Date.now();
 const fmt=n=>root.fmt?.(n)??Number(n||0).toLocaleString();
 
@@ -197,7 +208,7 @@ function submitAnswer(answer,{timeout=false}={}){
   const entered=data().normaliseAnswer(answer),expected=data().normaliseAnswer(current.entry.answer),ok=entered!==''&&entered===expected;
   const remainingFraction=Math.max(0,1-(now()-current.started)/current.duration);setGlyphState(ok?'decoded':'failed');setTimerFraction(0);
   if(ok){
-    const reward=data().scoreFor(current.entry,{mode:g.mode,streak:g.streak,remainingFraction});g.streak++;g.score+=reward.points;g.bank+=reward.coins;updateStats();root.vibrate?.([9,12,18]);
+    const reward=data().scoreFor(current.entry,{mode:g.mode,streak:g.streak,remainingFraction});g.streak++;g.score+=reward.points;g.bank+=reward.coins;recordNormalAchievementStreak(g);updateStats();root.vibrate?.([9,12,18]);
     setMirroredClue(current.shinyGlyph?`SHINY ${current.shinyGlyph.letter} · Decode confirmed · securing card reward…`:`DECODED · +${fmt(reward.points)} pts · bank ${fmt(g.bank)}`,false);
   }else{if(current.attempt?.id&&current.attempt.id!=='volatile-unown')rareRewards()?.abandonAttempt?.(root.state,'unown',current.attempt.id);persistUnownAttempt();root.vibrate?.(20);setMirroredClue(timeout?`TIME · ${current.entry.answer}`:`THE MESSAGE WAS · ${current.entry.answer}`,false);}
   const token=g.token;

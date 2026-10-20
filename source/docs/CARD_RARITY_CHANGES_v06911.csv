@@ -1,0 +1,744 @@
+Set ID,Set Name,Card ID,Number,Card Name,Source Rarity,Old LuckyDex Class,New LuckyDex Class,Reason
+SWSH3,Darkness Ablaze,SWSH3-001,001,Butterfree V,Holo Rare V,unknown,ultra,Explicit Pokémon V rarity; mapped to Ultra instead of Unknown.
+SWSH3,Darkness Ablaze,SWSH3-002,002,Butterfree VMAX,Holo Rare VMAX,unknown,ultra,Explicit Pokémon VMAX rarity; mapped to Ultra instead of Unknown.
+SWSH3,Darkness Ablaze,SWSH3-019,019,Charizard V,Holo Rare V,unknown,ultra,Explicit Pokémon V rarity; mapped to Ultra instead of Unknown.
+SWSH3,Darkness Ablaze,SWSH3-020,020,Charizard VMAX,Holo Rare VMAX,unknown,ultra,Explicit Pokémon VMAX rarity; mapped to Ultra instead of Unknown.
+SWSH3,Darkness Ablaze,SWSH3-021,021,Houndoom V,Holo Rare V,unknown,ultra,Explicit Pokémon V rarity; mapped to Ultra instead of Unknown.
+SWSH3,Darkness Ablaze,SWSH3-033,033,Centiskorch V,Holo Rare V,unknown,ultra,Explicit Pokémon V rarity; mapped to Ultra instead of Unknown.
+SWSH3,Darkness Ablaze,SWSH3-034,034,Centiskorch VMAX,Holo Rare VMAX,unknown,ultra,Explicit Pokémon VMAX rarity; mapped to Ultra instead of Unknown.
+SWSH3,Darkness Ablaze,SWSH3-060,060,Vikavolt V,Holo Rare V,unknown,ultra,Explicit Pokémon V rarity; mapped to Ultra instead of Unknown.
+SWSH3,Darkness Ablaze,SWSH3-069,069,Mew V,Holo Rare V,unknown,ultra,Explicit Pokémon V rarity; mapped to Ultra instead of Unknown.
+SWSH3,Darkness Ablaze,SWSH3-095,095,Rhyperior V,Holo Rare V,unknown,ultra,Explicit Pokémon V rarity; mapped to Ultra instead of Unknown.
+SWSH3,Darkness Ablaze,SWSH3-099,099,Galarian Slowbro V,Holo Rare V,unknown,ultra,Explicit Pokémon V rarity; mapped to Ultra instead of Unknown.
+SWSH3,Darkness Ablaze,SWSH3-104,104,Crobat V,Holo Rare V,unknown,ultra,Explicit Pokémon V rarity; mapped to Ultra instead of Unknown.
+SWSH3,Darkness Ablaze,SWSH3-114,114,Grimmsnarl V,Holo Rare V,unknown,ultra,Explicit Pokémon V rarity; mapped to Ultra instead of Unknown.
+SWSH3,Darkness Ablaze,SWSH3-115,115,Grimmsnarl VMAX,Holo Rare VMAX,unknown,ultra,Explicit Pokémon VMAX rarity; mapped to Ultra instead of Unknown.
+SWSH3,Darkness Ablaze,SWSH3-116,116,Eternatus V,Holo Rare V,unknown,ultra,Explicit Pokémon V rarity; mapped to Ultra instead of Unknown.
+SWSH3,Darkness Ablaze,SWSH3-117,117,Eternatus VMAX,Holo Rare VMAX,unknown,ultra,Explicit Pokémon VMAX rarity; mapped to Ultra instead of Unknown.
+SWSH3,Darkness Ablaze,SWSH3-118,118,Scizor V,Holo Rare V,unknown,ultra,Explicit Pokémon V rarity; mapped to Ultra instead of Unknown.
+SWSH3,Darkness Ablaze,SWSH3-119,119,Scizor VMAX,Holo Rare VMAX,unknown,ultra,Explicit Pokémon VMAX rarity; mapped to Ultra instead of Unknown.
+SWSH3,Darkness Ablaze,SWSH3-128,128,Galarian Stunfisk V,Holo Rare V,unknown,ultra,Explicit Pokémon V rarity; mapped to Ultra instead of Unknown.
+SWSH3,Darkness Ablaze,SWSH3-143,143,Salamence V,Holo Rare V,unknown,ultra,Explicit Pokémon V rarity; mapped to Ultra instead of Unknown.
+SWSH3,Darkness Ablaze,SWSH3-144,144,Salamence VMAX,Holo Rare VMAX,unknown,ultra,Explicit Pokémon VMAX rarity; mapped to Ultra instead of Unknown.
+EX10,Unseen Forces,EX10-113,113,Entei Star,Rare Holo Star,unknown,historic-chase,Historic Gold Star / Holo Star chase rarity; mapped to Historic Chase instead of Unknown.
+EX10,Unseen Forces,EX10-114,114,Raikou Star,Rare Holo Star,unknown,historic-chase,Historic Gold Star / Holo Star chase rarity; mapped to Historic Chase instead of Unknown.
+EX10,Unseen Forces,EX10-115,115,Suicune Star,Rare Holo Star,unknown,historic-chase,Historic Gold Star / Holo Star chase rarity; mapped to Historic Chase instead of Unknown.
+SWSH7,Evolving Skies,SWSH7-007,007,Leafeon V,Holo Rare V,unknown,ultra,Explicit Pokémon V rarity; mapped to Ultra instead of Unknown.
+SWSH7,Evolving Skies,SWSH7-008,008,Leafeon VMAX,Holo Rare VMAX,unknown,ultra,Explicit Pokémon VMAX rarity; mapped to Ultra instead of Unknown.
+SWSH7,Evolving Skies,SWSH7-013,013,Trevenant V,Holo Rare V,unknown,ultra,Explicit Pokémon V rarity; mapped to Ultra instead of Unknown.
+SWSH7,Evolving Skies,SWSH7-014,014,Trevenant VMAX,Holo Rare VMAX,unknown,ultra,Explicit Pokémon VMAX rarity; mapped to Ultra instead of Unknown.
+SWSH7,Evolving Skies,SWSH7-018,018,Flareon VMAX,Holo Rare VMAX,unknown,ultra,Explicit Pokémon VMAX rarity; mapped to Ultra instead of Unknown.
+SWSH7,Evolving Skies,SWSH7-021,021,Volcarona V,Holo Rare V,unknown,ultra,Explicit Pokémon V rarity; mapped to Ultra instead of Unknown.
+SWSH7,Evolving Skies,SWSH7-028,028,Gyarados V,Holo Rare V,unknown,ultra,Explicit Pokémon V rarity; mapped to Ultra instead of Unknown.
+SWSH7,Evolving Skies,SWSH7-029,029,Gyarados VMAX,Holo Rare VMAX,unknown,ultra,Explicit Pokémon VMAX rarity; mapped to Ultra instead of Unknown.
+SWSH7,Evolving Skies,SWSH7-030,030,Vaporeon VMAX,Holo Rare VMAX,unknown,ultra,Explicit Pokémon VMAX rarity; mapped to Ultra instead of Unknown.
+SWSH7,Evolving Skies,SWSH7-031,031,Suicune V,Holo Rare V,unknown,ultra,Explicit Pokémon V rarity; mapped to Ultra instead of Unknown.
+SWSH7,Evolving Skies,SWSH7-040,040,Glaceon V,Holo Rare V,unknown,ultra,Explicit Pokémon V rarity; mapped to Ultra instead of Unknown.
+SWSH7,Evolving Skies,SWSH7-041,041,Glaceon VMAX,Holo Rare VMAX,unknown,ultra,Explicit Pokémon VMAX rarity; mapped to Ultra instead of Unknown.
+SWSH7,Evolving Skies,SWSH7-048,048,Arctovish V,Holo Rare V,unknown,ultra,Explicit Pokémon V rarity; mapped to Ultra instead of Unknown.
+SWSH7,Evolving Skies,SWSH7-051,051,Jolteon VMAX,Holo Rare VMAX,unknown,ultra,Explicit Pokémon VMAX rarity; mapped to Ultra instead of Unknown.
+SWSH7,Evolving Skies,SWSH7-058,058,Dracozolt V,Holo Rare V,unknown,ultra,Explicit Pokémon V rarity; mapped to Ultra instead of Unknown.
+SWSH7,Evolving Skies,SWSH7-059,059,Dracozolt VMAX,Holo Rare VMAX,unknown,ultra,Explicit Pokémon VMAX rarity; mapped to Ultra instead of Unknown.
+SWSH7,Evolving Skies,SWSH7-064,064,Espeon V,Holo Rare V,unknown,ultra,Explicit Pokémon V rarity; mapped to Ultra instead of Unknown.
+SWSH7,Evolving Skies,SWSH7-065,065,Espeon VMAX,Holo Rare VMAX,unknown,ultra,Explicit Pokémon VMAX rarity; mapped to Ultra instead of Unknown.
+SWSH7,Evolving Skies,SWSH7-070,070,Golurk V,Holo Rare V,unknown,ultra,Explicit Pokémon V rarity; mapped to Ultra instead of Unknown.
+SWSH7,Evolving Skies,SWSH7-074,074,Sylveon V,Holo Rare V,unknown,ultra,Explicit Pokémon V rarity; mapped to Ultra instead of Unknown.
+SWSH7,Evolving Skies,SWSH7-075,075,Sylveon VMAX,Holo Rare VMAX,unknown,ultra,Explicit Pokémon VMAX rarity; mapped to Ultra instead of Unknown.
+SWSH7,Evolving Skies,SWSH7-083,083,Medicham V,Holo Rare V,unknown,ultra,Explicit Pokémon V rarity; mapped to Ultra instead of Unknown.
+SWSH7,Evolving Skies,SWSH7-091,091,Lycanroc V,Holo Rare V,unknown,ultra,Explicit Pokémon V rarity; mapped to Ultra instead of Unknown.
+SWSH7,Evolving Skies,SWSH7-092,092,Lycanroc VMAX,Holo Rare VMAX,unknown,ultra,Explicit Pokémon VMAX rarity; mapped to Ultra instead of Unknown.
+SWSH7,Evolving Skies,SWSH7-094,094,Umbreon V,Holo Rare V,unknown,ultra,Explicit Pokémon V rarity; mapped to Ultra instead of Unknown.
+SWSH7,Evolving Skies,SWSH7-095,095,Umbreon VMAX,Holo Rare VMAX,unknown,ultra,Explicit Pokémon VMAX rarity; mapped to Ultra instead of Unknown.
+SWSH7,Evolving Skies,SWSH7-100,100,Garbodor V,Holo Rare V,unknown,ultra,Explicit Pokémon V rarity; mapped to Ultra instead of Unknown.
+SWSH7,Evolving Skies,SWSH7-101,101,Garbodor VMAX,Holo Rare VMAX,unknown,ultra,Explicit Pokémon VMAX rarity; mapped to Ultra instead of Unknown.
+SWSH7,Evolving Skies,SWSH7-110,110,Rayquaza V,Holo Rare V,unknown,ultra,Explicit Pokémon V rarity; mapped to Ultra instead of Unknown.
+SWSH7,Evolving Skies,SWSH7-111,111,Rayquaza VMAX,Holo Rare VMAX,unknown,ultra,Explicit Pokémon VMAX rarity; mapped to Ultra instead of Unknown.
+SWSH7,Evolving Skies,SWSH7-117,117,Noivern V,Holo Rare V,unknown,ultra,Explicit Pokémon V rarity; mapped to Ultra instead of Unknown.
+SWSH7,Evolving Skies,SWSH7-122,122,Duraludon V,Holo Rare V,unknown,ultra,Explicit Pokémon V rarity; mapped to Ultra instead of Unknown.
+SWSH7,Evolving Skies,SWSH7-123,123,Duraludon VMAX,Holo Rare VMAX,unknown,ultra,Explicit Pokémon VMAX rarity; mapped to Ultra instead of Unknown.
+SM7,Celestial Storm,SM7-97,97,Jirachi Prism Star,Rare Prism Star,unknown,ultra,Explicit Prism Star rarity; mapped to Ultra instead of Unknown.
+SM7,Celestial Storm,SM7-107,107,Latias Prism Star,Rare Prism Star,unknown,ultra,Explicit Prism Star rarity; mapped to Ultra instead of Unknown.
+SM7,Celestial Storm,SM7-108,108,Latios Prism Star,Rare Prism Star,unknown,ultra,Explicit Prism Star rarity; mapped to Ultra instead of Unknown.
+SM7,Celestial Storm,SM7-SV1,SV1,Scyther,Shiny Rare,unknown,ultra,Explicit shiny chase rarity; mapped to Ultra instead of Unknown.
+SM7,Celestial Storm,SM7-SV13,SV13,Voltorb,Shiny Rare,unknown,ultra,Explicit shiny chase rarity; mapped to Ultra instead of Unknown.
+SM7,Celestial Storm,SM7-SV16,SV16,Shuppet,Shiny Rare,unknown,ultra,Explicit shiny chase rarity; mapped to Ultra instead of Unknown.
+SM7,Celestial Storm,SM7-SV32,SV32,Celesteela,Shiny Rare,unknown,ultra,Explicit shiny chase rarity; mapped to Ultra instead of Unknown.
+SM7,Celestial Storm,SM7-SV33,SV33,Kartana,Shiny Rare,unknown,ultra,Explicit shiny chase rarity; mapped to Ultra instead of Unknown.
+SM7,Celestial Storm,SM7-SV54,SV54,Articuno GX,Rare Shiny GX,unknown,special-illustration,Explicit shiny GX chase rarity; mapped to Special Illustration tier instead of Unknown.
+SM7,Celestial Storm,SM7-SV57,SV57,Electrode GX,Rare Shiny GX,unknown,special-illustration,Explicit shiny GX chase rarity; mapped to Special Illustration tier instead of Unknown.
+SM7,Celestial Storm,SM7-SV61,SV61,Banette GX,Rare Shiny GX,unknown,special-illustration,Explicit shiny GX chase rarity; mapped to Special Illustration tier instead of Unknown.
+SM7,Celestial Storm,SM7-SV72,SV72,Scizor GX,Rare Shiny GX,unknown,special-illustration,Explicit shiny GX chase rarity; mapped to Special Illustration tier instead of Unknown.
+SM7,Celestial Storm,SM7-SV74,SV74,Stakataka GX,Rare Shiny GX,unknown,special-illustration,Explicit shiny GX chase rarity; mapped to Special Illustration tier instead of Unknown.
+EX14,Crystal Guardians,EX14-99,99,Alakazam Star,Rare Holo Star,unknown,historic-chase,Historic Gold Star / Holo Star chase rarity; mapped to Historic Chase instead of Unknown.
+EX14,Crystal Guardians,EX14-100,100,Celebi Star,Rare Holo Star,unknown,historic-chase,Historic Gold Star / Holo Star chase rarity; mapped to Historic Chase instead of Unknown.
+SM3,Burning Shadows,SM3-SV4,SV4,Wimpod,Shiny Rare,unknown,ultra,Explicit shiny chase rarity; mapped to Ultra instead of Unknown.
+SM3,Burning Shadows,SM3-SV15,SV15,Seviper,Shiny Rare,unknown,ultra,Explicit shiny chase rarity; mapped to Ultra instead of Unknown.
+SM3,Burning Shadows,SM3-SV34,SV34,Ralts,Shiny Rare,unknown,ultra,Explicit shiny chase rarity; mapped to Ultra instead of Unknown.
+SM3,Burning Shadows,SM3-SV35,SV35,Kirlia,Shiny Rare,unknown,ultra,Explicit shiny chase rarity; mapped to Ultra instead of Unknown.
+SM3,Burning Shadows,SM3-SV36,SV36,Diancie,Shiny Rare,unknown,ultra,Explicit shiny chase rarity; mapped to Ultra instead of Unknown.
+SM3,Burning Shadows,SM3-SV43,SV43,Noibat,Shiny Rare,unknown,ultra,Explicit shiny chase rarity; mapped to Ultra instead of Unknown.
+SM3,Burning Shadows,SM3-SV48,SV48,Golisopod GX,Rare Shiny GX,unknown,special-illustration,Explicit shiny GX chase rarity; mapped to Special Illustration tier instead of Unknown.
+SM3,Burning Shadows,SM3-SV49,SV49,Charizard GX,Rare Shiny GX,unknown,special-illustration,Explicit shiny GX chase rarity; mapped to Special Illustration tier instead of Unknown.
+SM3,Burning Shadows,SM3-SV50,SV50,Ho-Oh GX,Rare Shiny GX,unknown,special-illustration,Explicit shiny GX chase rarity; mapped to Special Illustration tier instead of Unknown.
+SM3,Burning Shadows,SM3-SV70,SV70,Darkrai GX,Rare Shiny GX,unknown,special-illustration,Explicit shiny GX chase rarity; mapped to Special Illustration tier instead of Unknown.
+SM3,Burning Shadows,SM3-SV75,SV75,Gardevoir GX,Rare Shiny GX,unknown,special-illustration,Explicit shiny GX chase rarity; mapped to Special Illustration tier instead of Unknown.
+SM3,Burning Shadows,SM3-SV78,SV78,Noivern GX,Rare Shiny GX,unknown,special-illustration,Explicit shiny GX chase rarity; mapped to Special Illustration tier instead of Unknown.
+SM9,Team Up,SM9-10,10,Shaymin Prism Star,Rare Prism Star,unknown,ultra,Explicit Prism Star rarity; mapped to Ultra instead of Unknown.
+SM9,Team Up,SM9-51,51,Tapu Koko Prism Star,Rare Prism Star,unknown,ultra,Explicit Prism Star rarity; mapped to Ultra instead of Unknown.
+SM9,Team Up,SM9-134,134,Black Market Prism Star,Rare Prism Star,unknown,ultra,Explicit Prism Star rarity; mapped to Ultra instead of Unknown.
+SM9,Team Up,SM9-158,158,Wondrous Labyrinth Prism Star,Rare Prism Star,unknown,ultra,Explicit Prism Star rarity; mapped to Ultra instead of Unknown.
+SM9,Team Up,SM9-SV67,SV67,Lycanroc GX,Rare Shiny GX,unknown,special-illustration,Explicit shiny GX chase rarity; mapped to Special Illustration tier instead of Unknown.
+EX12,Legend Maker,EX12-90,90,Regice Star,Rare Holo Star,unknown,historic-chase,Historic Gold Star / Holo Star chase rarity; mapped to Historic Chase instead of Unknown.
+EX12,Legend Maker,EX12-91,91,Regirock Star,Rare Holo Star,unknown,historic-chase,Historic Gold Star / Holo Star chase rarity; mapped to Historic Chase instead of Unknown.
+EX12,Legend Maker,EX12-92,92,Registeel Star,Rare Holo Star,unknown,historic-chase,Historic Gold Star / Holo Star chase rarity; mapped to Historic Chase instead of Unknown.
+EX8,Deoxys,EX8-105,105,Latias Star,Rare Holo Star,unknown,historic-chase,Historic Gold Star / Holo Star chase rarity; mapped to Historic Chase instead of Unknown.
+EX8,Deoxys,EX8-106,106,Latios Star,Rare Holo Star,unknown,historic-chase,Historic Gold Star / Holo Star chase rarity; mapped to Historic Chase instead of Unknown.
+EX8,Deoxys,EX8-107,107,Rayquaza Star,Rare Holo Star,unknown,historic-chase,Historic Gold Star / Holo Star chase rarity; mapped to Historic Chase instead of Unknown.
+EX16,Power Keepers,EX16-100,100,Flareon Star,Rare Holo Star,unknown,historic-chase,Historic Gold Star / Holo Star chase rarity; mapped to Historic Chase instead of Unknown.
+EX16,Power Keepers,EX16-101,101,Jolteon Star,Rare Holo Star,unknown,historic-chase,Historic Gold Star / Holo Star chase rarity; mapped to Historic Chase instead of Unknown.
+EX16,Power Keepers,EX16-102,102,Vaporeon Star,Rare Holo Star,unknown,historic-chase,Historic Gold Star / Holo Star chase rarity; mapped to Historic Chase instead of Unknown.
+SWSH45SV,Shining Fates,SWSH45SV-009,009,Dhelmise V,Holo Rare V,unknown,ultra,Explicit Pokémon V rarity; mapped to Ultra instead of Unknown.
+SWSH45SV,Shining Fates,SWSH45SV-010,010,Dhelmise VMAX,Holo Rare VMAX,unknown,ultra,Explicit Pokémon VMAX rarity; mapped to Ultra instead of Unknown.
+SWSH45SV,Shining Fates,SWSH45SV-018,018,Cinderace V,Holo Rare V,unknown,ultra,Explicit Pokémon V rarity; mapped to Ultra instead of Unknown.
+SWSH45SV,Shining Fates,SWSH45SV-019,019,Cinderace VMAX,Holo Rare VMAX,unknown,ultra,Explicit Pokémon VMAX rarity; mapped to Ultra instead of Unknown.
+SWSH45SV,Shining Fates,SWSH45SV-037,037,Morpeko V,Holo Rare V,unknown,ultra,Explicit Pokémon V rarity; mapped to Ultra instead of Unknown.
+SWSH45SV,Shining Fates,SWSH45SV-038,038,Morpeko VMAX,Holo Rare VMAX,unknown,ultra,Explicit Pokémon VMAX rarity; mapped to Ultra instead of Unknown.
+SWSH45SV,Shining Fates,SWSH45SV-039,039,Indeedee V,Holo Rare V,unknown,ultra,Explicit Pokémon V rarity; mapped to Ultra instead of Unknown.
+SWSH45SV,Shining Fates,SWSH45SV-044,044,Crobat V,Holo Rare V,unknown,ultra,Explicit Pokémon V rarity; mapped to Ultra instead of Unknown.
+SWSH45SV,Shining Fates,SWSH45SV-045,045,Crobat VMAX,Holo Rare VMAX,unknown,ultra,Explicit Pokémon VMAX rarity; mapped to Ultra instead of Unknown.
+SWSH45SV,Shining Fates,SWSH45SV-050,050,Ditto V,Holo Rare V,unknown,ultra,Explicit Pokémon V rarity; mapped to Ultra instead of Unknown.
+SWSH45SV,Shining Fates,SWSH45SV-051,051,Ditto VMAX,Holo Rare VMAX,unknown,ultra,Explicit Pokémon VMAX rarity; mapped to Ultra instead of Unknown.
+SWSH45SV,Shining Fates,SWSH45SV-053,053,Greedent V,Holo Rare V,unknown,ultra,Explicit Pokémon V rarity; mapped to Ultra instead of Unknown.
+SWSH45SV,Shining Fates,SWSH45SV-054,054,Cramorant V,Holo Rare V,unknown,ultra,Explicit Pokémon V rarity; mapped to Ultra instead of Unknown.
+SWSH45SV,Shining Fates,SWSH45SV-055,055,Cramorant VMAX,Holo Rare VMAX,unknown,ultra,Explicit Pokémon VMAX rarity; mapped to Ultra instead of Unknown.
+SWSH45SV,Shining Fates,SWSH45SV-SV001,SV001,Rowlet,Shiny Rare,unknown,ultra,Explicit shiny chase rarity; mapped to Ultra instead of Unknown.
+SWSH45SV,Shining Fates,SWSH45SV-SV002,SV002,Dartrix,Shiny Rare,unknown,ultra,Explicit shiny chase rarity; mapped to Ultra instead of Unknown.
+SWSH45SV,Shining Fates,SWSH45SV-SV003,SV003,Decidueye,Shiny Rare,unknown,ultra,Explicit shiny chase rarity; mapped to Ultra instead of Unknown.
+SWSH45SV,Shining Fates,SWSH45SV-SV004,SV004,Grookey,Shiny Rare,unknown,ultra,Explicit shiny chase rarity; mapped to Ultra instead of Unknown.
+SWSH45SV,Shining Fates,SWSH45SV-SV005,SV005,Thwackey,Shiny Rare,unknown,ultra,Explicit shiny chase rarity; mapped to Ultra instead of Unknown.
+SWSH45SV,Shining Fates,SWSH45SV-SV006,SV006,Rillaboom,Shiny Rare,unknown,ultra,Explicit shiny chase rarity; mapped to Ultra instead of Unknown.
+SWSH45SV,Shining Fates,SWSH45SV-SV007,SV007,Blipbug,Shiny Rare,unknown,ultra,Explicit shiny chase rarity; mapped to Ultra instead of Unknown.
+SWSH45SV,Shining Fates,SWSH45SV-SV008,SV008,Dottler,Shiny Rare,unknown,ultra,Explicit shiny chase rarity; mapped to Ultra instead of Unknown.
+SWSH45SV,Shining Fates,SWSH45SV-SV009,SV009,Orbeetle,Shiny Rare,unknown,ultra,Explicit shiny chase rarity; mapped to Ultra instead of Unknown.
+SWSH45SV,Shining Fates,SWSH45SV-SV010,SV010,Gossifleur,Shiny Rare,unknown,ultra,Explicit shiny chase rarity; mapped to Ultra instead of Unknown.
+SWSH45SV,Shining Fates,SWSH45SV-SV011,SV011,Eldegoss,Shiny Rare,unknown,ultra,Explicit shiny chase rarity; mapped to Ultra instead of Unknown.
+SWSH45SV,Shining Fates,SWSH45SV-SV012,SV012,Applin,Shiny Rare,unknown,ultra,Explicit shiny chase rarity; mapped to Ultra instead of Unknown.
+SWSH45SV,Shining Fates,SWSH45SV-SV013,SV013,Flapple,Shiny Rare,unknown,ultra,Explicit shiny chase rarity; mapped to Ultra instead of Unknown.
+SWSH45SV,Shining Fates,SWSH45SV-SV014,SV014,Appletun,Shiny Rare,unknown,ultra,Explicit shiny chase rarity; mapped to Ultra instead of Unknown.
+SWSH45SV,Shining Fates,SWSH45SV-SV015,SV015,Scorbunny,Shiny Rare,unknown,ultra,Explicit shiny chase rarity; mapped to Ultra instead of Unknown.
+SWSH45SV,Shining Fates,SWSH45SV-SV016,SV016,Raboot,Shiny Rare,unknown,ultra,Explicit shiny chase rarity; mapped to Ultra instead of Unknown.
+SWSH45SV,Shining Fates,SWSH45SV-SV017,SV017,Cinderace,Shiny Rare,unknown,ultra,Explicit shiny chase rarity; mapped to Ultra instead of Unknown.
+SWSH45SV,Shining Fates,SWSH45SV-SV018,SV018,Sizzlipede,Shiny Rare,unknown,ultra,Explicit shiny chase rarity; mapped to Ultra instead of Unknown.
+SWSH45SV,Shining Fates,SWSH45SV-SV019,SV019,Centiskorch,Shiny Rare,unknown,ultra,Explicit shiny chase rarity; mapped to Ultra instead of Unknown.
+SWSH45SV,Shining Fates,SWSH45SV-SV020,SV020,Galarian Mr. Mime,Shiny Rare,unknown,ultra,Explicit shiny chase rarity; mapped to Ultra instead of Unknown.
+SWSH45SV,Shining Fates,SWSH45SV-SV021,SV021,Galarian Mr. Rime,Shiny Rare,unknown,ultra,Explicit shiny chase rarity; mapped to Ultra instead of Unknown.
+SWSH45SV,Shining Fates,SWSH45SV-SV022,SV022,Suicune,Shiny Rare,unknown,ultra,Explicit shiny chase rarity; mapped to Ultra instead of Unknown.
+SWSH45SV,Shining Fates,SWSH45SV-SV023,SV023,Galarian Darumaka,Shiny Rare,unknown,ultra,Explicit shiny chase rarity; mapped to Ultra instead of Unknown.
+SWSH45SV,Shining Fates,SWSH45SV-SV024,SV024,Galarian Darmanitan,Shiny Rare,unknown,ultra,Explicit shiny chase rarity; mapped to Ultra instead of Unknown.
+SWSH45SV,Shining Fates,SWSH45SV-SV025,SV025,Sobble,Shiny Rare,unknown,ultra,Explicit shiny chase rarity; mapped to Ultra instead of Unknown.
+SWSH45SV,Shining Fates,SWSH45SV-SV026,SV026,Drizzile,Shiny Rare,unknown,ultra,Explicit shiny chase rarity; mapped to Ultra instead of Unknown.
+SWSH45SV,Shining Fates,SWSH45SV-SV027,SV027,Inteleon,Shiny Rare,unknown,ultra,Explicit shiny chase rarity; mapped to Ultra instead of Unknown.
+SWSH45SV,Shining Fates,SWSH45SV-SV028,SV028,Chewtle,Shiny Rare,unknown,ultra,Explicit shiny chase rarity; mapped to Ultra instead of Unknown.
+SWSH45SV,Shining Fates,SWSH45SV-SV029,SV029,Drednaw,Shiny Rare,unknown,ultra,Explicit shiny chase rarity; mapped to Ultra instead of Unknown.
+SWSH45SV,Shining Fates,SWSH45SV-SV030,SV030,Cramorant,Shiny Rare,unknown,ultra,Explicit shiny chase rarity; mapped to Ultra instead of Unknown.
+SWSH45SV,Shining Fates,SWSH45SV-SV031,SV031,Arrokuda,Shiny Rare,unknown,ultra,Explicit shiny chase rarity; mapped to Ultra instead of Unknown.
+SWSH45SV,Shining Fates,SWSH45SV-SV032,SV032,Barraskewda,Shiny Rare,unknown,ultra,Explicit shiny chase rarity; mapped to Ultra instead of Unknown.
+SWSH45SV,Shining Fates,SWSH45SV-SV033,SV033,Snom,Shiny Rare,unknown,ultra,Explicit shiny chase rarity; mapped to Ultra instead of Unknown.
+SWSH45SV,Shining Fates,SWSH45SV-SV034,SV034,Frosmoth,Shiny Rare,unknown,ultra,Explicit shiny chase rarity; mapped to Ultra instead of Unknown.
+SWSH45SV,Shining Fates,SWSH45SV-SV035,SV035,Eiscue,Shiny Rare,unknown,ultra,Explicit shiny chase rarity; mapped to Ultra instead of Unknown.
+SWSH45SV,Shining Fates,SWSH45SV-SV036,SV036,Dracovish,Shiny Rare,unknown,ultra,Explicit shiny chase rarity; mapped to Ultra instead of Unknown.
+SWSH45SV,Shining Fates,SWSH45SV-SV037,SV037,Arctovish,Shiny Rare,unknown,ultra,Explicit shiny chase rarity; mapped to Ultra instead of Unknown.
+SWSH45SV,Shining Fates,SWSH45SV-SV038,SV038,Rotom,Shiny Rare,unknown,ultra,Explicit shiny chase rarity; mapped to Ultra instead of Unknown.
+SWSH45SV,Shining Fates,SWSH45SV-SV039,SV039,Yamper,Shiny Rare,unknown,ultra,Explicit shiny chase rarity; mapped to Ultra instead of Unknown.
+SWSH45SV,Shining Fates,SWSH45SV-SV040,SV040,Boltund,Shiny Rare,unknown,ultra,Explicit shiny chase rarity; mapped to Ultra instead of Unknown.
+SWSH45SV,Shining Fates,SWSH45SV-SV041,SV041,Toxel,Shiny Rare,unknown,ultra,Explicit shiny chase rarity; mapped to Ultra instead of Unknown.
+SWSH45SV,Shining Fates,SWSH45SV-SV042,SV042,Toxtricity,Shiny Rare,unknown,ultra,Explicit shiny chase rarity; mapped to Ultra instead of Unknown.
+SWSH45SV,Shining Fates,SWSH45SV-SV043,SV043,Pincurchin,Shiny Rare,unknown,ultra,Explicit shiny chase rarity; mapped to Ultra instead of Unknown.
+SWSH45SV,Shining Fates,SWSH45SV-SV044,SV044,Morpeko,Shiny Rare,unknown,ultra,Explicit shiny chase rarity; mapped to Ultra instead of Unknown.
+SWSH45SV,Shining Fates,SWSH45SV-SV045,SV045,Dracozolt,Shiny Rare,unknown,ultra,Explicit shiny chase rarity; mapped to Ultra instead of Unknown.
+SWSH45SV,Shining Fates,SWSH45SV-SV046,SV046,Arctozolt,Shiny Rare,unknown,ultra,Explicit shiny chase rarity; mapped to Ultra instead of Unknown.
+SWSH45SV,Shining Fates,SWSH45SV-SV047,SV047,Galarian Ponyta,Shiny Rare,unknown,ultra,Explicit shiny chase rarity; mapped to Ultra instead of Unknown.
+SWSH45SV,Shining Fates,SWSH45SV-SV048,SV048,Galarian Rapidash,Shiny Rare,unknown,ultra,Explicit shiny chase rarity; mapped to Ultra instead of Unknown.
+SWSH45SV,Shining Fates,SWSH45SV-SV049,SV049,Galarian Corsola,Shiny Rare,unknown,ultra,Explicit shiny chase rarity; mapped to Ultra instead of Unknown.
+SWSH45SV,Shining Fates,SWSH45SV-SV050,SV050,Galarian Cursola,Shiny Rare,unknown,ultra,Explicit shiny chase rarity; mapped to Ultra instead of Unknown.
+SWSH45SV,Shining Fates,SWSH45SV-SV051,SV051,Dedenne,Shiny Rare,unknown,ultra,Explicit shiny chase rarity; mapped to Ultra instead of Unknown.
+SWSH45SV,Shining Fates,SWSH45SV-SV052,SV052,Sinistea,Shiny Rare,unknown,ultra,Explicit shiny chase rarity; mapped to Ultra instead of Unknown.
+SWSH45SV,Shining Fates,SWSH45SV-SV053,SV053,Polteageist,Shiny Rare,unknown,ultra,Explicit shiny chase rarity; mapped to Ultra instead of Unknown.
+SWSH45SV,Shining Fates,SWSH45SV-SV054,SV054,Hatenna,Shiny Rare,unknown,ultra,Explicit shiny chase rarity; mapped to Ultra instead of Unknown.
+SWSH45SV,Shining Fates,SWSH45SV-SV055,SV055,Hattrem,Shiny Rare,unknown,ultra,Explicit shiny chase rarity; mapped to Ultra instead of Unknown.
+SWSH45SV,Shining Fates,SWSH45SV-SV056,SV056,Hatterene,Shiny Rare,unknown,ultra,Explicit shiny chase rarity; mapped to Ultra instead of Unknown.
+SWSH45SV,Shining Fates,SWSH45SV-SV057,SV057,Milcery,Shiny Rare,unknown,ultra,Explicit shiny chase rarity; mapped to Ultra instead of Unknown.
+SWSH45SV,Shining Fates,SWSH45SV-SV058,SV058,Alcremie,Shiny Rare,unknown,ultra,Explicit shiny chase rarity; mapped to Ultra instead of Unknown.
+SWSH45SV,Shining Fates,SWSH45SV-SV059,SV059,Indeedee,Shiny Rare,unknown,ultra,Explicit shiny chase rarity; mapped to Ultra instead of Unknown.
+SWSH45SV,Shining Fates,SWSH45SV-SV060,SV060,Dreepy,Shiny Rare,unknown,ultra,Explicit shiny chase rarity; mapped to Ultra instead of Unknown.
+SWSH45SV,Shining Fates,SWSH45SV-SV061,SV061,Drakloak,Shiny Rare,unknown,ultra,Explicit shiny chase rarity; mapped to Ultra instead of Unknown.
+SWSH45SV,Shining Fates,SWSH45SV-SV062,SV062,Dragapult,Shiny Rare,unknown,ultra,Explicit shiny chase rarity; mapped to Ultra instead of Unknown.
+SWSH45SV,Shining Fates,SWSH45SV-SV063,SV063,Galarian Farfetch’d,Shiny Rare,unknown,ultra,Explicit shiny chase rarity; mapped to Ultra instead of Unknown.
+SWSH45SV,Shining Fates,SWSH45SV-SV064,SV064,Galarian Sirfetch’d,Shiny Rare,unknown,ultra,Explicit shiny chase rarity; mapped to Ultra instead of Unknown.
+SWSH45SV,Shining Fates,SWSH45SV-SV065,SV065,Galarian Yamask,Shiny Rare,unknown,ultra,Explicit shiny chase rarity; mapped to Ultra instead of Unknown.
+SWSH45SV,Shining Fates,SWSH45SV-SV066,SV066,Galarian Runerigus,Shiny Rare,unknown,ultra,Explicit shiny chase rarity; mapped to Ultra instead of Unknown.
+SWSH45SV,Shining Fates,SWSH45SV-SV067,SV067,Rolycoly,Shiny Rare,unknown,ultra,Explicit shiny chase rarity; mapped to Ultra instead of Unknown.
+SWSH45SV,Shining Fates,SWSH45SV-SV068,SV068,Carkol,Shiny Rare,unknown,ultra,Explicit shiny chase rarity; mapped to Ultra instead of Unknown.
+SWSH45SV,Shining Fates,SWSH45SV-SV069,SV069,Coalossal,Shiny Rare,unknown,ultra,Explicit shiny chase rarity; mapped to Ultra instead of Unknown.
+SWSH45SV,Shining Fates,SWSH45SV-SV070,SV070,Silicobra,Shiny Rare,unknown,ultra,Explicit shiny chase rarity; mapped to Ultra instead of Unknown.
+SWSH45SV,Shining Fates,SWSH45SV-SV071,SV071,Sandaconda,Shiny Rare,unknown,ultra,Explicit shiny chase rarity; mapped to Ultra instead of Unknown.
+SWSH45SV,Shining Fates,SWSH45SV-SV072,SV072,Clobbopus,Shiny Rare,unknown,ultra,Explicit shiny chase rarity; mapped to Ultra instead of Unknown.
+SWSH45SV,Shining Fates,SWSH45SV-SV073,SV073,Grapploct,Shiny Rare,unknown,ultra,Explicit shiny chase rarity; mapped to Ultra instead of Unknown.
+SWSH45SV,Shining Fates,SWSH45SV-SV074,SV074,Falinks,Shiny Rare,unknown,ultra,Explicit shiny chase rarity; mapped to Ultra instead of Unknown.
+SWSH45SV,Shining Fates,SWSH45SV-SV075,SV075,Stonjourner,Shiny Rare,unknown,ultra,Explicit shiny chase rarity; mapped to Ultra instead of Unknown.
+SWSH45SV,Shining Fates,SWSH45SV-SV076,SV076,Koffing,Shiny Rare,unknown,ultra,Explicit shiny chase rarity; mapped to Ultra instead of Unknown.
+SWSH45SV,Shining Fates,SWSH45SV-SV077,SV077,Galarian Weezing,Shiny Rare,unknown,ultra,Explicit shiny chase rarity; mapped to Ultra instead of Unknown.
+SWSH45SV,Shining Fates,SWSH45SV-SV078,SV078,Galarian Zigzagoon,Shiny Rare,unknown,ultra,Explicit shiny chase rarity; mapped to Ultra instead of Unknown.
+SWSH45SV,Shining Fates,SWSH45SV-SV079,SV079,Galarian Linoone,Shiny Rare,unknown,ultra,Explicit shiny chase rarity; mapped to Ultra instead of Unknown.
+SWSH45SV,Shining Fates,SWSH45SV-SV080,SV080,Galarian Obstagoon,Shiny Rare,unknown,ultra,Explicit shiny chase rarity; mapped to Ultra instead of Unknown.
+SWSH45SV,Shining Fates,SWSH45SV-SV081,SV081,Nickit,Shiny Rare,unknown,ultra,Explicit shiny chase rarity; mapped to Ultra instead of Unknown.
+SWSH45SV,Shining Fates,SWSH45SV-SV082,SV082,Thievul,Shiny Rare,unknown,ultra,Explicit shiny chase rarity; mapped to Ultra instead of Unknown.
+SWSH45SV,Shining Fates,SWSH45SV-SV083,SV083,Impidimp,Shiny Rare,unknown,ultra,Explicit shiny chase rarity; mapped to Ultra instead of Unknown.
+SWSH45SV,Shining Fates,SWSH45SV-SV084,SV084,Morgrem,Shiny Rare,unknown,ultra,Explicit shiny chase rarity; mapped to Ultra instead of Unknown.
+SWSH45SV,Shining Fates,SWSH45SV-SV085,SV085,Grimmsnarl,Shiny Rare,unknown,ultra,Explicit shiny chase rarity; mapped to Ultra instead of Unknown.
+SWSH45SV,Shining Fates,SWSH45SV-SV086,SV086,Galarian Meowth,Shiny Rare,unknown,ultra,Explicit shiny chase rarity; mapped to Ultra instead of Unknown.
+SWSH45SV,Shining Fates,SWSH45SV-SV087,SV087,Galarian Perrserker,Shiny Rare,unknown,ultra,Explicit shiny chase rarity; mapped to Ultra instead of Unknown.
+SWSH45SV,Shining Fates,SWSH45SV-SV088,SV088,Galarian Stunfisk,Shiny Rare,unknown,ultra,Explicit shiny chase rarity; mapped to Ultra instead of Unknown.
+SWSH45SV,Shining Fates,SWSH45SV-SV089,SV089,Corviknight,Shiny Rare,unknown,ultra,Explicit shiny chase rarity; mapped to Ultra instead of Unknown.
+SWSH45SV,Shining Fates,SWSH45SV-SV090,SV090,Cufant,Shiny Rare,unknown,ultra,Explicit shiny chase rarity; mapped to Ultra instead of Unknown.
+SWSH45SV,Shining Fates,SWSH45SV-SV091,SV091,Copperajah,Shiny Rare,unknown,ultra,Explicit shiny chase rarity; mapped to Ultra instead of Unknown.
+SWSH45SV,Shining Fates,SWSH45SV-SV092,SV092,Duraludon,Shiny Rare,unknown,ultra,Explicit shiny chase rarity; mapped to Ultra instead of Unknown.
+SWSH45SV,Shining Fates,SWSH45SV-SV093,SV093,Minccino,Shiny Rare,unknown,ultra,Explicit shiny chase rarity; mapped to Ultra instead of Unknown.
+SWSH45SV,Shining Fates,SWSH45SV-SV094,SV094,Cinccino,Shiny Rare,unknown,ultra,Explicit shiny chase rarity; mapped to Ultra instead of Unknown.
+SWSH45SV,Shining Fates,SWSH45SV-SV095,SV095,Ducklett,Shiny Rare,unknown,ultra,Explicit shiny chase rarity; mapped to Ultra instead of Unknown.
+SWSH45SV,Shining Fates,SWSH45SV-SV096,SV096,Swanna,Shiny Rare,unknown,ultra,Explicit shiny chase rarity; mapped to Ultra instead of Unknown.
+SWSH45SV,Shining Fates,SWSH45SV-SV097,SV097,Bunnelby,Shiny Rare,unknown,ultra,Explicit shiny chase rarity; mapped to Ultra instead of Unknown.
+SWSH45SV,Shining Fates,SWSH45SV-SV098,SV098,Oranguru,Shiny Rare,unknown,ultra,Explicit shiny chase rarity; mapped to Ultra instead of Unknown.
+SWSH45SV,Shining Fates,SWSH45SV-SV099,SV099,Skwovet,Shiny Rare,unknown,ultra,Explicit shiny chase rarity; mapped to Ultra instead of Unknown.
+SWSH45SV,Shining Fates,SWSH45SV-SV100,SV100,Greedent,Shiny Rare,unknown,ultra,Explicit shiny chase rarity; mapped to Ultra instead of Unknown.
+SWSH45SV,Shining Fates,SWSH45SV-SV101,SV101,Rookidee,Shiny Rare,unknown,ultra,Explicit shiny chase rarity; mapped to Ultra instead of Unknown.
+SWSH45SV,Shining Fates,SWSH45SV-SV102,SV102,Corvisquire,Shiny Rare,unknown,ultra,Explicit shiny chase rarity; mapped to Ultra instead of Unknown.
+SWSH45SV,Shining Fates,SWSH45SV-SV103,SV103,Wooloo,Shiny Rare,unknown,ultra,Explicit shiny chase rarity; mapped to Ultra instead of Unknown.
+SWSH45SV,Shining Fates,SWSH45SV-SV104,SV104,Dubwool,Shiny Rare,unknown,ultra,Explicit shiny chase rarity; mapped to Ultra instead of Unknown.
+SWSH45SV,Shining Fates,SWSH45SV-SV105,SV105,Rillaboom V,Shiny Rare V or VMAX,unknown,special-illustration,Explicit shiny V/VMAX chase rarity; mapped to Special Illustration tier instead of Unknown.
+SWSH45SV,Shining Fates,SWSH45SV-SV106,SV106,Rillaboom VMAX,Shiny Rare V or VMAX,unknown,special-illustration,Explicit shiny V/VMAX chase rarity; mapped to Special Illustration tier instead of Unknown.
+SWSH45SV,Shining Fates,SWSH45SV-SV107,SV107,Charizard VMAX,Shiny Rare V or VMAX,unknown,special-illustration,Explicit shiny V/VMAX chase rarity; mapped to Special Illustration tier instead of Unknown.
+SWSH45SV,Shining Fates,SWSH45SV-SV108,SV108,Centiskorch V,Shiny Rare V or VMAX,unknown,special-illustration,Explicit shiny V/VMAX chase rarity; mapped to Special Illustration tier instead of Unknown.
+SWSH45SV,Shining Fates,SWSH45SV-SV109,SV109,Centiskorch VMAX,Shiny Rare V or VMAX,unknown,special-illustration,Explicit shiny V/VMAX chase rarity; mapped to Special Illustration tier instead of Unknown.
+SWSH45SV,Shining Fates,SWSH45SV-SV110,SV110,Lapras V,Shiny Rare V or VMAX,unknown,special-illustration,Explicit shiny V/VMAX chase rarity; mapped to Special Illustration tier instead of Unknown.
+SWSH45SV,Shining Fates,SWSH45SV-SV111,SV111,Lapras VMAX,Shiny Rare V or VMAX,unknown,special-illustration,Explicit shiny V/VMAX chase rarity; mapped to Special Illustration tier instead of Unknown.
+SWSH45SV,Shining Fates,SWSH45SV-SV112,SV112,Toxtricity V,Shiny Rare V or VMAX,unknown,special-illustration,Explicit shiny V/VMAX chase rarity; mapped to Special Illustration tier instead of Unknown.
+SWSH45SV,Shining Fates,SWSH45SV-SV113,SV113,Toxtricity VMAX,Shiny Rare V or VMAX,unknown,special-illustration,Explicit shiny V/VMAX chase rarity; mapped to Special Illustration tier instead of Unknown.
+SWSH45SV,Shining Fates,SWSH45SV-SV114,SV114,Indeedee V,Shiny Rare V or VMAX,unknown,special-illustration,Explicit shiny V/VMAX chase rarity; mapped to Special Illustration tier instead of Unknown.
+SWSH45SV,Shining Fates,SWSH45SV-SV115,SV115,Falinks V,Shiny Rare V or VMAX,unknown,special-illustration,Explicit shiny V/VMAX chase rarity; mapped to Special Illustration tier instead of Unknown.
+SWSH45SV,Shining Fates,SWSH45SV-SV116,SV116,Grimmsnarl V,Shiny Rare V or VMAX,unknown,special-illustration,Explicit shiny V/VMAX chase rarity; mapped to Special Illustration tier instead of Unknown.
+SWSH45SV,Shining Fates,SWSH45SV-SV117,SV117,Grimmsnarl VMAX,Shiny Rare V or VMAX,unknown,special-illustration,Explicit shiny V/VMAX chase rarity; mapped to Special Illustration tier instead of Unknown.
+SWSH45SV,Shining Fates,SWSH45SV-SV118,SV118,Ditto V,Shiny Rare V or VMAX,unknown,special-illustration,Explicit shiny V/VMAX chase rarity; mapped to Special Illustration tier instead of Unknown.
+SWSH45SV,Shining Fates,SWSH45SV-SV119,SV119,Ditto VMAX,Shiny Rare V or VMAX,unknown,special-illustration,Explicit shiny V/VMAX chase rarity; mapped to Special Illustration tier instead of Unknown.
+SWSH45SV,Shining Fates,SWSH45SV-SV120,SV120,Dubwool V,Shiny Rare V or VMAX,unknown,special-illustration,Explicit shiny V/VMAX chase rarity; mapped to Special Illustration tier instead of Unknown.
+SM5,Ultra Prism,SM5-58,58,Giratina Prism Star,Rare Prism Star,unknown,ultra,Explicit Prism Star rarity; mapped to Ultra instead of Unknown.
+SM5,Ultra Prism,SM5-62,62,Lunala Prism Star,Rare Prism Star,unknown,ultra,Explicit Prism Star rarity; mapped to Ultra instead of Unknown.
+SM5,Ultra Prism,SM5-77,77,Darkrai Prism Star,Rare Prism Star,unknown,ultra,Explicit Prism Star rarity; mapped to Ultra instead of Unknown.
+SM5,Ultra Prism,SM5-89,89,Solgaleo Prism Star,Rare Prism Star,unknown,ultra,Explicit Prism Star rarity; mapped to Ultra instead of Unknown.
+SM5,Ultra Prism,SM5-120,120,Cyrus Prism Star,Rare Prism Star,unknown,ultra,Explicit Prism Star rarity; mapped to Ultra instead of Unknown.
+SM5,Ultra Prism,SM5-136,136,Super Boost Energy Prism Star,Rare Prism Star,unknown,ultra,Explicit Prism Star rarity; mapped to Ultra instead of Unknown.
+SM5,Ultra Prism,SM5-SV21,SV21,Riolu,Shiny Rare,unknown,ultra,Explicit shiny chase rarity; mapped to Ultra instead of Unknown.
+SM5,Ultra Prism,SM5-SV22,SV22,Lucario,Shiny Rare,unknown,ultra,Explicit shiny chase rarity; mapped to Ultra instead of Unknown.
+SM5,Ultra Prism,SM5-SV27,SV27,Magnemite,Shiny Rare,unknown,ultra,Explicit shiny chase rarity; mapped to Ultra instead of Unknown.
+SM5,Ultra Prism,SM5-SV28,SV28,Magneton,Shiny Rare,unknown,ultra,Explicit shiny chase rarity; mapped to Ultra instead of Unknown.
+SM5,Ultra Prism,SM5-SV29,SV29,Magnezone,Shiny Rare,unknown,ultra,Explicit shiny chase rarity; mapped to Ultra instead of Unknown.
+SM5,Ultra Prism,SM5-SV38,SV38,Gible,Shiny Rare,unknown,ultra,Explicit shiny chase rarity; mapped to Ultra instead of Unknown.
+SM5,Ultra Prism,SM5-SV39,SV39,Gabite,Shiny Rare,unknown,ultra,Explicit shiny chase rarity; mapped to Ultra instead of Unknown.
+SM5,Ultra Prism,SM5-SV40,SV40,Garchomp,Shiny Rare,unknown,ultra,Explicit shiny chase rarity; mapped to Ultra instead of Unknown.
+SM5,Ultra Prism,SM5-SV46,SV46,Leafeon GX,Rare Shiny GX,unknown,special-illustration,Explicit shiny GX chase rarity; mapped to Special Illustration tier instead of Unknown.
+SM5,Ultra Prism,SM5-SV55,SV55,Glaceon GX,Rare Shiny GX,unknown,special-illustration,Explicit shiny GX chase rarity; mapped to Special Illustration tier instead of Unknown.
+SM5,Ultra Prism,SM5-SV58,SV58,Xurkitree GX,Rare Shiny GX,unknown,special-illustration,Explicit shiny GX chase rarity; mapped to Special Illustration tier instead of Unknown.
+SWSH9,Brilliant Stars,SWSH9-013,013,Shaymin V,Holo Rare V,unknown,ultra,Explicit Pokémon V rarity; mapped to Ultra instead of Unknown.
+SWSH9,Brilliant Stars,SWSH9-014,014,Shaymin VSTAR,Holo Rare VSTAR,unknown,ultra,Explicit Pokémon VSTAR rarity; mapped to Ultra instead of Unknown.
+SWSH9,Brilliant Stars,SWSH9-016,016,Zarude V,Holo Rare V,unknown,ultra,Explicit Pokémon V rarity; mapped to Ultra instead of Unknown.
+SWSH9,Brilliant Stars,SWSH9-017,017,Charizard V,Holo Rare V,unknown,ultra,Explicit Pokémon V rarity; mapped to Ultra instead of Unknown.
+SWSH9,Brilliant Stars,SWSH9-018,018,Charizard VSTAR,Holo Rare VSTAR,unknown,ultra,Explicit Pokémon VSTAR rarity; mapped to Ultra instead of Unknown.
+SWSH9,Brilliant Stars,SWSH9-022,022,Entei V,Holo Rare V,unknown,ultra,Explicit Pokémon V rarity; mapped to Ultra instead of Unknown.
+SWSH9,Brilliant Stars,SWSH9-027,027,Simisear V,Holo Rare V,unknown,ultra,Explicit Pokémon V rarity; mapped to Ultra instead of Unknown.
+SWSH9,Brilliant Stars,SWSH9-028,028,Kingler V,Holo Rare V,unknown,ultra,Explicit Pokémon V rarity; mapped to Ultra instead of Unknown.
+SWSH9,Brilliant Stars,SWSH9-029,029,Kingler VMAX,Holo Rare VMAX,unknown,ultra,Explicit Pokémon VMAX rarity; mapped to Ultra instead of Unknown.
+SWSH9,Brilliant Stars,SWSH9-040,040,Lumineon V,Holo Rare V,unknown,ultra,Explicit Pokémon V rarity; mapped to Ultra instead of Unknown.
+SWSH9,Brilliant Stars,SWSH9-045,045,Raichu V,Holo Rare V,unknown,ultra,Explicit Pokémon V rarity; mapped to Ultra instead of Unknown.
+SWSH9,Brilliant Stars,SWSH9-048,048,Raikou V,Holo Rare V,unknown,ultra,Explicit Pokémon V rarity; mapped to Ultra instead of Unknown.
+SWSH9,Brilliant Stars,SWSH9-057,057,Granbull V,Holo Rare V,unknown,ultra,Explicit Pokémon V rarity; mapped to Ultra instead of Unknown.
+SWSH9,Brilliant Stars,SWSH9-064,064,Whimsicott V,Holo Rare V,unknown,ultra,Explicit Pokémon V rarity; mapped to Ultra instead of Unknown.
+SWSH9,Brilliant Stars,SWSH9-065,065,Whimsicott VSTAR,Holo Rare VSTAR,unknown,ultra,Explicit Pokémon VSTAR rarity; mapped to Ultra instead of Unknown.
+SWSH9,Brilliant Stars,SWSH9-068,068,Mimikyu V,Holo Rare V,unknown,ultra,Explicit Pokémon V rarity; mapped to Ultra instead of Unknown.
+SWSH9,Brilliant Stars,SWSH9-069,069,Mimikyu VMAX,Holo Rare VMAX,unknown,ultra,Explicit Pokémon VMAX rarity; mapped to Ultra instead of Unknown.
+SWSH9,Brilliant Stars,SWSH9-088,088,Honchkrow V,Holo Rare V,unknown,ultra,Explicit Pokémon V rarity; mapped to Ultra instead of Unknown.
+SWSH9,Brilliant Stars,SWSH9-095,095,Morpeko V,Holo Rare V,unknown,ultra,Explicit Pokémon V rarity; mapped to Ultra instead of Unknown.
+SWSH9,Brilliant Stars,SWSH9-096,096,Aggron V,Holo Rare V,unknown,ultra,Explicit Pokémon V rarity; mapped to Ultra instead of Unknown.
+SWSH9,Brilliant Stars,SWSH9-097,097,Aggron VMAX,Holo Rare VMAX,unknown,ultra,Explicit Pokémon VMAX rarity; mapped to Ultra instead of Unknown.
+SWSH9,Brilliant Stars,SWSH9-105,105,Zamazenta V,Holo Rare V,unknown,ultra,Explicit Pokémon V rarity; mapped to Ultra instead of Unknown.
+SWSH9,Brilliant Stars,SWSH9-106,106,Flygon V,Holo Rare V,unknown,ultra,Explicit Pokémon V rarity; mapped to Ultra instead of Unknown.
+SWSH9,Brilliant Stars,SWSH9-114,114,Dracovish V,Holo Rare V,unknown,ultra,Explicit Pokémon V rarity; mapped to Ultra instead of Unknown.
+SWSH9,Brilliant Stars,SWSH9-122,122,Arceus V,Holo Rare V,unknown,ultra,Explicit Pokémon V rarity; mapped to Ultra instead of Unknown.
+SWSH9,Brilliant Stars,SWSH9-123,123,Arceus VSTAR,Holo Rare VSTAR,unknown,ultra,Explicit Pokémon VSTAR rarity; mapped to Ultra instead of Unknown.
+SWSH9,Brilliant Stars,SWSH9-128,128,Drampa V,Holo Rare V,unknown,ultra,Explicit Pokémon V rarity; mapped to Ultra instead of Unknown.
+SM1,Sun & Moon,SM1-SV2,SV2,Rowlet,Shiny Rare,unknown,ultra,Explicit shiny chase rarity; mapped to Ultra instead of Unknown.
+SM1,Sun & Moon,SM1-SV3,SV3,Dartrix,Shiny Rare,unknown,ultra,Explicit shiny chase rarity; mapped to Ultra instead of Unknown.
+SM1,Sun & Moon,SM1-SV41,SV41,Eevee,Shiny Rare,unknown,ultra,Explicit shiny chase rarity; mapped to Ultra instead of Unknown.
+SM1,Sun & Moon,SM1-SV44,SV44,Oranguru,Shiny Rare,unknown,ultra,Explicit shiny chase rarity; mapped to Ultra instead of Unknown.
+SM1,Sun & Moon,SM1-SV60,SV60,Espeon GX,Rare Shiny GX,unknown,special-illustration,Explicit shiny GX chase rarity; mapped to Special Illustration tier instead of Unknown.
+SM1,Sun & Moon,SM1-SV69,SV69,Umbreon GX,Rare Shiny GX,unknown,special-illustration,Explicit shiny GX chase rarity; mapped to Special Illustration tier instead of Unknown.
+SWSH1,Sword & Shield,SWSH1-001,001,Celebi V,Holo Rare V,unknown,ultra,Explicit Pokémon V rarity; mapped to Ultra instead of Unknown.
+SWSH1,Sword & Shield,SWSH1-009,009,Dhelmise V,Holo Rare V,unknown,ultra,Explicit Pokémon V rarity; mapped to Ultra instead of Unknown.
+SWSH1,Sword & Shield,SWSH1-024,024,Torkoal V,Holo Rare V,unknown,ultra,Explicit Pokémon V rarity; mapped to Ultra instead of Unknown.
+SWSH1,Sword & Shield,SWSH1-025,025,Victini V,Holo Rare V,unknown,ultra,Explicit Pokémon V rarity; mapped to Ultra instead of Unknown.
+SWSH1,Sword & Shield,SWSH1-049,049,Lapras V,Holo Rare V,unknown,ultra,Explicit Pokémon V rarity; mapped to Ultra instead of Unknown.
+SWSH1,Sword & Shield,SWSH1-050,050,Lapras VMAX,Holo Rare VMAX,unknown,ultra,Explicit Pokémon VMAX rarity; mapped to Ultra instead of Unknown.
+SWSH1,Sword & Shield,SWSH1-053,053,Keldeo V,Holo Rare V,unknown,ultra,Explicit Pokémon V rarity; mapped to Ultra instead of Unknown.
+SWSH1,Sword & Shield,SWSH1-072,072,Tapu Koko V,Holo Rare V,unknown,ultra,Explicit Pokémon V rarity; mapped to Ultra instead of Unknown.
+SWSH1,Sword & Shield,SWSH1-079,079,Morpeko V,Holo Rare V,unknown,ultra,Explicit Pokémon V rarity; mapped to Ultra instead of Unknown.
+SWSH1,Sword & Shield,SWSH1-080,080,Morpeko VMAX,Holo Rare VMAX,unknown,ultra,Explicit Pokémon VMAX rarity; mapped to Ultra instead of Unknown.
+SWSH1,Sword & Shield,SWSH1-086,086,Wobbuffet V,Holo Rare V,unknown,ultra,Explicit Pokémon V rarity; mapped to Ultra instead of Unknown.
+SWSH1,Sword & Shield,SWSH1-091,091,Indeedee V,Holo Rare V,unknown,ultra,Explicit Pokémon V rarity; mapped to Ultra instead of Unknown.
+SWSH1,Sword & Shield,SWSH1-104,104,Regirock V,Holo Rare V,unknown,ultra,Explicit Pokémon V rarity; mapped to Ultra instead of Unknown.
+SWSH1,Sword & Shield,SWSH1-115,115,Stonjourner V,Holo Rare V,unknown,ultra,Explicit Pokémon V rarity; mapped to Ultra instead of Unknown.
+SWSH1,Sword & Shield,SWSH1-116,116,Stonjourner VMAX,Holo Rare VMAX,unknown,ultra,Explicit Pokémon VMAX rarity; mapped to Ultra instead of Unknown.
+SWSH1,Sword & Shield,SWSH1-120,120,Sableye V,Holo Rare V,unknown,ultra,Explicit Pokémon V rarity; mapped to Ultra instead of Unknown.
+SWSH1,Sword & Shield,SWSH1-138,138,Zacian V,Holo Rare V,unknown,ultra,Explicit Pokémon V rarity; mapped to Ultra instead of Unknown.
+SWSH1,Sword & Shield,SWSH1-139,139,Zamazenta V,Holo Rare V,unknown,ultra,Explicit Pokémon V rarity; mapped to Ultra instead of Unknown.
+SWSH1,Sword & Shield,SWSH1-141,141,Snorlax V,Holo Rare V,unknown,ultra,Explicit Pokémon V rarity; mapped to Ultra instead of Unknown.
+SWSH1,Sword & Shield,SWSH1-142,142,Snorlax VMAX,Holo Rare VMAX,unknown,ultra,Explicit Pokémon VMAX rarity; mapped to Ultra instead of Unknown.
+SWSH1,Sword & Shield,SWSH1-155,155,Cramorant V,Holo Rare V,unknown,ultra,Explicit Pokémon V rarity; mapped to Ultra instead of Unknown.
+CZ,Crown Zenith,CZ-013,013,Leafeon V,Holo Rare V,unknown,ultra,Explicit Pokémon V rarity; mapped to Ultra instead of Unknown.
+CZ,Crown Zenith,CZ-014,014,Leafeon VSTAR,Holo Rare VSTAR,unknown,ultra,Explicit Pokémon VSTAR rarity; mapped to Ultra instead of Unknown.
+CZ,Crown Zenith,CZ-018,018,Charizard V,Holo Rare V,unknown,ultra,Explicit Pokémon V rarity; mapped to Ultra instead of Unknown.
+CZ,Crown Zenith,CZ-019,019,Charizard VSTAR,Holo Rare VSTAR,unknown,ultra,Explicit Pokémon VSTAR rarity; mapped to Ultra instead of Unknown.
+CZ,Crown Zenith,CZ-022,022,Simisear V,Holo Rare V,unknown,ultra,Explicit Pokémon V rarity; mapped to Ultra instead of Unknown.
+CZ,Crown Zenith,CZ-023,023,Simisear VSTAR,Holo Rare VSTAR,unknown,ultra,Explicit Pokémon VSTAR rarity; mapped to Ultra instead of Unknown.
+CZ,Crown Zenith,CZ-037,037,Kyogre V,Holo Rare V,unknown,ultra,Explicit Pokémon V rarity; mapped to Ultra instead of Unknown.
+CZ,Crown Zenith,CZ-038,038,Glaceon V,Holo Rare V,unknown,ultra,Explicit Pokémon V rarity; mapped to Ultra instead of Unknown.
+CZ,Crown Zenith,CZ-045,045,Rotom V,Holo Rare V,unknown,ultra,Explicit Pokémon V rarity; mapped to Ultra instead of Unknown.
+CZ,Crown Zenith,CZ-046,046,Rotom VSTAR,Holo Rare VSTAR,unknown,ultra,Explicit Pokémon VSTAR rarity; mapped to Ultra instead of Unknown.
+CZ,Crown Zenith,CZ-053,053,Zeraora V,Holo Rare V,unknown,ultra,Explicit Pokémon V rarity; mapped to Ultra instead of Unknown.
+CZ,Crown Zenith,CZ-054,054,Zeraora VMAX,Holo Rare VMAX,unknown,ultra,Explicit Pokémon VMAX rarity; mapped to Ultra instead of Unknown.
+CZ,Crown Zenith,CZ-055,055,Zeraora VSTAR,Holo Rare VSTAR,unknown,ultra,Explicit Pokémon VSTAR rarity; mapped to Ultra instead of Unknown.
+CZ,Crown Zenith,CZ-060,060,Mew V,Holo Rare V,unknown,ultra,Explicit Pokémon V rarity; mapped to Ultra instead of Unknown.
+CZ,Crown Zenith,CZ-065,065,Hatterene V,Holo Rare V,unknown,ultra,Explicit Pokémon V rarity; mapped to Ultra instead of Unknown.
+CZ,Crown Zenith,CZ-066,066,Hatterene VMAX,Holo Rare VMAX,unknown,ultra,Explicit Pokémon VMAX rarity; mapped to Ultra instead of Unknown.
+CZ,Crown Zenith,CZ-095,095,Zacian V,Holo Rare V,unknown,ultra,Explicit Pokémon V rarity; mapped to Ultra instead of Unknown.
+CZ,Crown Zenith,CZ-096,096,Zacian VSTAR,Holo Rare VSTAR,unknown,ultra,Explicit Pokémon VSTAR rarity; mapped to Ultra instead of Unknown.
+CZ,Crown Zenith,CZ-098,098,Zamazenta V,Holo Rare V,unknown,ultra,Explicit Pokémon V rarity; mapped to Ultra instead of Unknown.
+CZ,Crown Zenith,CZ-099,099,Zamazenta VSTAR,Holo Rare VSTAR,unknown,ultra,Explicit Pokémon VSTAR rarity; mapped to Ultra instead of Unknown.
+CZ,Crown Zenith,CZ-100,100,Rayquaza V,Holo Rare V,unknown,ultra,Explicit Pokémon V rarity; mapped to Ultra instead of Unknown.
+CZ,Crown Zenith,CZ-101,101,Rayquaza VMAX,Holo Rare VMAX,unknown,ultra,Explicit Pokémon VMAX rarity; mapped to Ultra instead of Unknown.
+CZ,Crown Zenith,CZ-102,102,Rayquaza VMAX,Holo Rare VMAX,unknown,ultra,Explicit Pokémon VMAX rarity; mapped to Ultra instead of Unknown.
+CZ,Crown Zenith,CZ-103,103,Duraludon V,Holo Rare V,unknown,ultra,Explicit Pokémon V rarity; mapped to Ultra instead of Unknown.
+CZ,Crown Zenith,CZ-104,104,Duraludon VMAX,Holo Rare VMAX,unknown,ultra,Explicit Pokémon VMAX rarity; mapped to Ultra instead of Unknown.
+CZ,Crown Zenith,CZ-108,108,Eevee V,Holo Rare V,unknown,ultra,Explicit Pokémon V rarity; mapped to Ultra instead of Unknown.
+CZ,Crown Zenith,CZ-113,113,Regigigas V,Holo Rare V,unknown,ultra,Explicit Pokémon V rarity; mapped to Ultra instead of Unknown.
+CZ,Crown Zenith,CZ-114,114,Regigigas VSTAR,Holo Rare VSTAR,unknown,ultra,Explicit Pokémon VSTAR rarity; mapped to Ultra instead of Unknown.
+CZ,Crown Zenith,CZ-116,116,Stoutland V,Holo Rare V,unknown,ultra,Explicit Pokémon V rarity; mapped to Ultra instead of Unknown.
+CZ,Crown Zenith,CZ-120,120,Greedent V,Holo Rare V,unknown,ultra,Explicit Pokémon V rarity; mapped to Ultra instead of Unknown.
+sv4-5,Paldean Fates,sv4-5-092,092,Oddish,Shiny Rare,unknown,ultra,Explicit shiny chase rarity; mapped to Ultra instead of Unknown.
+sv4-5,Paldean Fates,sv4-5-093,093,Gloom,Shiny Rare,unknown,ultra,Explicit shiny chase rarity; mapped to Ultra instead of Unknown.
+sv4-5,Paldean Fates,sv4-5-094,094,Vileplume,Shiny Rare,unknown,ultra,Explicit shiny chase rarity; mapped to Ultra instead of Unknown.
+sv4-5,Paldean Fates,sv4-5-095,095,Scyther,Shiny Rare,unknown,ultra,Explicit shiny chase rarity; mapped to Ultra instead of Unknown.
+sv4-5,Paldean Fates,sv4-5-096,096,Hoppip,Shiny Rare,unknown,ultra,Explicit shiny chase rarity; mapped to Ultra instead of Unknown.
+sv4-5,Paldean Fates,sv4-5-097,097,Skiploom,Shiny Rare,unknown,ultra,Explicit shiny chase rarity; mapped to Ultra instead of Unknown.
+sv4-5,Paldean Fates,sv4-5-098,098,Jumpluff,Shiny Rare,unknown,ultra,Explicit shiny chase rarity; mapped to Ultra instead of Unknown.
+sv4-5,Paldean Fates,sv4-5-099,099,Pineco,Shiny Rare,unknown,ultra,Explicit shiny chase rarity; mapped to Ultra instead of Unknown.
+sv4-5,Paldean Fates,sv4-5-100,100,Snover,Shiny Rare,unknown,ultra,Explicit shiny chase rarity; mapped to Ultra instead of Unknown.
+sv4-5,Paldean Fates,sv4-5-101,101,Abomasnow,Shiny Rare,unknown,ultra,Explicit shiny chase rarity; mapped to Ultra instead of Unknown.
+sv4-5,Paldean Fates,sv4-5-102,102,Smoliv,Shiny Rare,unknown,ultra,Explicit shiny chase rarity; mapped to Ultra instead of Unknown.
+sv4-5,Paldean Fates,sv4-5-103,103,Dolliv,Shiny Rare,unknown,ultra,Explicit shiny chase rarity; mapped to Ultra instead of Unknown.
+sv4-5,Paldean Fates,sv4-5-104,104,Arboliva,Shiny Rare,unknown,ultra,Explicit shiny chase rarity; mapped to Ultra instead of Unknown.
+sv4-5,Paldean Fates,sv4-5-105,105,Toedscool,Shiny Rare,unknown,ultra,Explicit shiny chase rarity; mapped to Ultra instead of Unknown.
+sv4-5,Paldean Fates,sv4-5-106,106,Capsakid,Shiny Rare,unknown,ultra,Explicit shiny chase rarity; mapped to Ultra instead of Unknown.
+sv4-5,Paldean Fates,sv4-5-107,107,Scovillain,Shiny Rare,unknown,ultra,Explicit shiny chase rarity; mapped to Ultra instead of Unknown.
+sv4-5,Paldean Fates,sv4-5-108,108,Rellor,Shiny Rare,unknown,ultra,Explicit shiny chase rarity; mapped to Ultra instead of Unknown.
+sv4-5,Paldean Fates,sv4-5-109,109,Charmander,Shiny Rare,unknown,ultra,Explicit shiny chase rarity; mapped to Ultra instead of Unknown.
+sv4-5,Paldean Fates,sv4-5-110,110,Charmeleon,Shiny Rare,unknown,ultra,Explicit shiny chase rarity; mapped to Ultra instead of Unknown.
+sv4-5,Paldean Fates,sv4-5-111,111,Paldean Tauros,Shiny Rare,unknown,ultra,Explicit shiny chase rarity; mapped to Ultra instead of Unknown.
+sv4-5,Paldean Fates,sv4-5-112,112,Entei,Shiny Rare,unknown,ultra,Explicit shiny chase rarity; mapped to Ultra instead of Unknown.
+sv4-5,Paldean Fates,sv4-5-113,113,Oricorio,Shiny Rare,unknown,ultra,Explicit shiny chase rarity; mapped to Ultra instead of Unknown.
+sv4-5,Paldean Fates,sv4-5-114,114,Charcadet,Shiny Rare,unknown,ultra,Explicit shiny chase rarity; mapped to Ultra instead of Unknown.
+sv4-5,Paldean Fates,sv4-5-115,115,Armarouge,Shiny Rare,unknown,ultra,Explicit shiny chase rarity; mapped to Ultra instead of Unknown.
+sv4-5,Paldean Fates,sv4-5-116,116,Slowpoke,Shiny Rare,unknown,ultra,Explicit shiny chase rarity; mapped to Ultra instead of Unknown.
+sv4-5,Paldean Fates,sv4-5-117,117,Slowbro,Shiny Rare,unknown,ultra,Explicit shiny chase rarity; mapped to Ultra instead of Unknown.
+sv4-5,Paldean Fates,sv4-5-118,118,Staryu,Shiny Rare,unknown,ultra,Explicit shiny chase rarity; mapped to Ultra instead of Unknown.
+sv4-5,Paldean Fates,sv4-5-119,119,Starmie,Shiny Rare,unknown,ultra,Explicit shiny chase rarity; mapped to Ultra instead of Unknown.
+sv4-5,Paldean Fates,sv4-5-120,120,Paldean Tauros,Shiny Rare,unknown,ultra,Explicit shiny chase rarity; mapped to Ultra instead of Unknown.
+sv4-5,Paldean Fates,sv4-5-121,121,Wiglett,Shiny Rare,unknown,ultra,Explicit shiny chase rarity; mapped to Ultra instead of Unknown.
+sv4-5,Paldean Fates,sv4-5-122,122,Wugtrio,Shiny Rare,unknown,ultra,Explicit shiny chase rarity; mapped to Ultra instead of Unknown.
+sv4-5,Paldean Fates,sv4-5-123,123,Finizen,Shiny Rare,unknown,ultra,Explicit shiny chase rarity; mapped to Ultra instead of Unknown.
+sv4-5,Paldean Fates,sv4-5-124,124,Palafin,Shiny Rare,unknown,ultra,Explicit shiny chase rarity; mapped to Ultra instead of Unknown.
+sv4-5,Paldean Fates,sv4-5-125,125,Veluza,Shiny Rare,unknown,ultra,Explicit shiny chase rarity; mapped to Ultra instead of Unknown.
+sv4-5,Paldean Fates,sv4-5-126,126,Dondozo,Shiny Rare,unknown,ultra,Explicit shiny chase rarity; mapped to Ultra instead of Unknown.
+sv4-5,Paldean Fates,sv4-5-127,127,Tatsugiri,Shiny Rare,unknown,ultra,Explicit shiny chase rarity; mapped to Ultra instead of Unknown.
+sv4-5,Paldean Fates,sv4-5-128,128,Frigibax,Shiny Rare,unknown,ultra,Explicit shiny chase rarity; mapped to Ultra instead of Unknown.
+sv4-5,Paldean Fates,sv4-5-129,129,Arctibax,Shiny Rare,unknown,ultra,Explicit shiny chase rarity; mapped to Ultra instead of Unknown.
+sv4-5,Paldean Fates,sv4-5-130,130,Baxcalibur,Shiny Rare,unknown,ultra,Explicit shiny chase rarity; mapped to Ultra instead of Unknown.
+sv4-5,Paldean Fates,sv4-5-131,131,Pikachu,Shiny Rare,unknown,ultra,Explicit shiny chase rarity; mapped to Ultra instead of Unknown.
+sv4-5,Paldean Fates,sv4-5-132,132,Raichu,Shiny Rare,unknown,ultra,Explicit shiny chase rarity; mapped to Ultra instead of Unknown.
+sv4-5,Paldean Fates,sv4-5-133,133,Voltorb,Shiny Rare,unknown,ultra,Explicit shiny chase rarity; mapped to Ultra instead of Unknown.
+sv4-5,Paldean Fates,sv4-5-134,134,Electrode,Shiny Rare,unknown,ultra,Explicit shiny chase rarity; mapped to Ultra instead of Unknown.
+sv4-5,Paldean Fates,sv4-5-135,135,Shinx,Shiny Rare,unknown,ultra,Explicit shiny chase rarity; mapped to Ultra instead of Unknown.
+sv4-5,Paldean Fates,sv4-5-136,136,Luxio,Shiny Rare,unknown,ultra,Explicit shiny chase rarity; mapped to Ultra instead of Unknown.
+sv4-5,Paldean Fates,sv4-5-137,137,Luxray,Shiny Rare,unknown,ultra,Explicit shiny chase rarity; mapped to Ultra instead of Unknown.
+sv4-5,Paldean Fates,sv4-5-138,138,Pachirisu,Shiny Rare,unknown,ultra,Explicit shiny chase rarity; mapped to Ultra instead of Unknown.
+sv4-5,Paldean Fates,sv4-5-139,139,Thundurus,Shiny Rare,unknown,ultra,Explicit shiny chase rarity; mapped to Ultra instead of Unknown.
+sv4-5,Paldean Fates,sv4-5-140,140,Toxel,Shiny Rare,unknown,ultra,Explicit shiny chase rarity; mapped to Ultra instead of Unknown.
+sv4-5,Paldean Fates,sv4-5-141,141,Toxtricity,Shiny Rare,unknown,ultra,Explicit shiny chase rarity; mapped to Ultra instead of Unknown.
+sv4-5,Paldean Fates,sv4-5-142,142,Pawmi,Shiny Rare,unknown,ultra,Explicit shiny chase rarity; mapped to Ultra instead of Unknown.
+sv4-5,Paldean Fates,sv4-5-143,143,Pawmo,Shiny Rare,unknown,ultra,Explicit shiny chase rarity; mapped to Ultra instead of Unknown.
+sv4-5,Paldean Fates,sv4-5-144,144,Pawmot,Shiny Rare,unknown,ultra,Explicit shiny chase rarity; mapped to Ultra instead of Unknown.
+sv4-5,Paldean Fates,sv4-5-145,145,Wattrel,Shiny Rare,unknown,ultra,Explicit shiny chase rarity; mapped to Ultra instead of Unknown.
+sv4-5,Paldean Fates,sv4-5-146,146,Kilowattrel,Shiny Rare,unknown,ultra,Explicit shiny chase rarity; mapped to Ultra instead of Unknown.
+sv4-5,Paldean Fates,sv4-5-147,147,Wigglytuff,Shiny Rare,unknown,ultra,Explicit shiny chase rarity; mapped to Ultra instead of Unknown.
+sv4-5,Paldean Fates,sv4-5-148,148,Abra,Shiny Rare,unknown,ultra,Explicit shiny chase rarity; mapped to Ultra instead of Unknown.
+sv4-5,Paldean Fates,sv4-5-149,149,Kadabra,Shiny Rare,unknown,ultra,Explicit shiny chase rarity; mapped to Ultra instead of Unknown.
+sv4-5,Paldean Fates,sv4-5-150,150,Cleffa,Shiny Rare,unknown,ultra,Explicit shiny chase rarity; mapped to Ultra instead of Unknown.
+sv4-5,Paldean Fates,sv4-5-151,151,Natu,Shiny Rare,unknown,ultra,Explicit shiny chase rarity; mapped to Ultra instead of Unknown.
+sv4-5,Paldean Fates,sv4-5-152,152,Xatu,Shiny Rare,unknown,ultra,Explicit shiny chase rarity; mapped to Ultra instead of Unknown.
+sv4-5,Paldean Fates,sv4-5-153,153,Ralts,Shiny Rare,unknown,ultra,Explicit shiny chase rarity; mapped to Ultra instead of Unknown.
+sv4-5,Paldean Fates,sv4-5-154,154,Kirlia,Shiny Rare,unknown,ultra,Explicit shiny chase rarity; mapped to Ultra instead of Unknown.
+sv4-5,Paldean Fates,sv4-5-155,155,Drifloon,Shiny Rare,unknown,ultra,Explicit shiny chase rarity; mapped to Ultra instead of Unknown.
+sv4-5,Paldean Fates,sv4-5-156,156,Drifblim,Shiny Rare,unknown,ultra,Explicit shiny chase rarity; mapped to Ultra instead of Unknown.
+sv4-5,Paldean Fates,sv4-5-157,157,Mime Jr.,Shiny Rare,unknown,ultra,Explicit shiny chase rarity; mapped to Ultra instead of Unknown.
+sv4-5,Paldean Fates,sv4-5-158,158,Spiritomb,Shiny Rare,unknown,ultra,Explicit shiny chase rarity; mapped to Ultra instead of Unknown.
+sv4-5,Paldean Fates,sv4-5-159,159,Klefki,Shiny Rare,unknown,ultra,Explicit shiny chase rarity; mapped to Ultra instead of Unknown.
+sv4-5,Paldean Fates,sv4-5-160,160,Mimikyu,Shiny Rare,unknown,ultra,Explicit shiny chase rarity; mapped to Ultra instead of Unknown.
+sv4-5,Paldean Fates,sv4-5-161,161,Dachsbun,Shiny Rare,unknown,ultra,Explicit shiny chase rarity; mapped to Ultra instead of Unknown.
+sv4-5,Paldean Fates,sv4-5-162,162,Ceruledge,Shiny Rare,unknown,ultra,Explicit shiny chase rarity; mapped to Ultra instead of Unknown.
+sv4-5,Paldean Fates,sv4-5-163,163,Rabsca,Shiny Rare,unknown,ultra,Explicit shiny chase rarity; mapped to Ultra instead of Unknown.
+sv4-5,Paldean Fates,sv4-5-164,164,Flittle,Shiny Rare,unknown,ultra,Explicit shiny chase rarity; mapped to Ultra instead of Unknown.
+sv4-5,Paldean Fates,sv4-5-165,165,Tinkatink,Shiny Rare,unknown,ultra,Explicit shiny chase rarity; mapped to Ultra instead of Unknown.
+sv4-5,Paldean Fates,sv4-5-166,166,Tinkatuff,Shiny Rare,unknown,ultra,Explicit shiny chase rarity; mapped to Ultra instead of Unknown.
+sv4-5,Paldean Fates,sv4-5-167,167,Tinkaton,Shiny Rare,unknown,ultra,Explicit shiny chase rarity; mapped to Ultra instead of Unknown.
+sv4-5,Paldean Fates,sv4-5-168,168,Houndstone,Shiny Rare,unknown,ultra,Explicit shiny chase rarity; mapped to Ultra instead of Unknown.
+sv4-5,Paldean Fates,sv4-5-169,169,Mankey,Shiny Rare,unknown,ultra,Explicit shiny chase rarity; mapped to Ultra instead of Unknown.
+sv4-5,Paldean Fates,sv4-5-170,170,Primeape,Shiny Rare,unknown,ultra,Explicit shiny chase rarity; mapped to Ultra instead of Unknown.
+sv4-5,Paldean Fates,sv4-5-171,171,Annihilape,Shiny Rare,unknown,ultra,Explicit shiny chase rarity; mapped to Ultra instead of Unknown.
+sv4-5,Paldean Fates,sv4-5-172,172,Paldean Tauros,Shiny Rare,unknown,ultra,Explicit shiny chase rarity; mapped to Ultra instead of Unknown.
+sv4-5,Paldean Fates,sv4-5-173,173,Riolu,Shiny Rare,unknown,ultra,Explicit shiny chase rarity; mapped to Ultra instead of Unknown.
+sv4-5,Paldean Fates,sv4-5-174,174,Lucario,Shiny Rare,unknown,ultra,Explicit shiny chase rarity; mapped to Ultra instead of Unknown.
+sv4-5,Paldean Fates,sv4-5-175,175,Hawlucha,Shiny Rare,unknown,ultra,Explicit shiny chase rarity; mapped to Ultra instead of Unknown.
+sv4-5,Paldean Fates,sv4-5-176,176,Nacli,Shiny Rare,unknown,ultra,Explicit shiny chase rarity; mapped to Ultra instead of Unknown.
+sv4-5,Paldean Fates,sv4-5-177,177,Naclstack,Shiny Rare,unknown,ultra,Explicit shiny chase rarity; mapped to Ultra instead of Unknown.
+sv4-5,Paldean Fates,sv4-5-178,178,Garganacl,Shiny Rare,unknown,ultra,Explicit shiny chase rarity; mapped to Ultra instead of Unknown.
+sv4-5,Paldean Fates,sv4-5-179,179,Glimmet,Shiny Rare,unknown,ultra,Explicit shiny chase rarity; mapped to Ultra instead of Unknown.
+sv4-5,Paldean Fates,sv4-5-180,180,Paldean Wooper,Shiny Rare,unknown,ultra,Explicit shiny chase rarity; mapped to Ultra instead of Unknown.
+sv4-5,Paldean Fates,sv4-5-181,181,Murkrow,Shiny Rare,unknown,ultra,Explicit shiny chase rarity; mapped to Ultra instead of Unknown.
+sv4-5,Paldean Fates,sv4-5-182,182,Sneasel,Shiny Rare,unknown,ultra,Explicit shiny chase rarity; mapped to Ultra instead of Unknown.
+sv4-5,Paldean Fates,sv4-5-183,183,Weavile,Shiny Rare,unknown,ultra,Explicit shiny chase rarity; mapped to Ultra instead of Unknown.
+sv4-5,Paldean Fates,sv4-5-184,184,Sableye,Shiny Rare,unknown,ultra,Explicit shiny chase rarity; mapped to Ultra instead of Unknown.
+sv4-5,Paldean Fates,sv4-5-185,185,Pawniard,Shiny Rare,unknown,ultra,Explicit shiny chase rarity; mapped to Ultra instead of Unknown.
+sv4-5,Paldean Fates,sv4-5-186,186,Bisharp,Shiny Rare,unknown,ultra,Explicit shiny chase rarity; mapped to Ultra instead of Unknown.
+sv4-5,Paldean Fates,sv4-5-187,187,Kingambit,Shiny Rare,unknown,ultra,Explicit shiny chase rarity; mapped to Ultra instead of Unknown.
+sv4-5,Paldean Fates,sv4-5-188,188,Mabosstiff,Shiny Rare,unknown,ultra,Explicit shiny chase rarity; mapped to Ultra instead of Unknown.
+sv4-5,Paldean Fates,sv4-5-189,189,Shroodle,Shiny Rare,unknown,ultra,Explicit shiny chase rarity; mapped to Ultra instead of Unknown.
+sv4-5,Paldean Fates,sv4-5-190,190,Grafaiai,Shiny Rare,unknown,ultra,Explicit shiny chase rarity; mapped to Ultra instead of Unknown.
+sv4-5,Paldean Fates,sv4-5-191,191,Scizor,Shiny Rare,unknown,ultra,Explicit shiny chase rarity; mapped to Ultra instead of Unknown.
+sv4-5,Paldean Fates,sv4-5-192,192,Varoom,Shiny Rare,unknown,ultra,Explicit shiny chase rarity; mapped to Ultra instead of Unknown.
+sv4-5,Paldean Fates,sv4-5-193,193,Revavroom,Shiny Rare,unknown,ultra,Explicit shiny chase rarity; mapped to Ultra instead of Unknown.
+sv4-5,Paldean Fates,sv4-5-194,194,Noibat,Shiny Rare,unknown,ultra,Explicit shiny chase rarity; mapped to Ultra instead of Unknown.
+sv4-5,Paldean Fates,sv4-5-195,195,Cyclizar,Shiny Rare,unknown,ultra,Explicit shiny chase rarity; mapped to Ultra instead of Unknown.
+sv4-5,Paldean Fates,sv4-5-196,196,Pidgey,Shiny Rare,unknown,ultra,Explicit shiny chase rarity; mapped to Ultra instead of Unknown.
+sv4-5,Paldean Fates,sv4-5-197,197,Pidgeotto,Shiny Rare,unknown,ultra,Explicit shiny chase rarity; mapped to Ultra instead of Unknown.
+sv4-5,Paldean Fates,sv4-5-198,198,Jigglypuff,Shiny Rare,unknown,ultra,Explicit shiny chase rarity; mapped to Ultra instead of Unknown.
+sv4-5,Paldean Fates,sv4-5-199,199,Doduo,Shiny Rare,unknown,ultra,Explicit shiny chase rarity; mapped to Ultra instead of Unknown.
+sv4-5,Paldean Fates,sv4-5-200,200,Dodrio,Shiny Rare,unknown,ultra,Explicit shiny chase rarity; mapped to Ultra instead of Unknown.
+sv4-5,Paldean Fates,sv4-5-201,201,Ditto,Shiny Rare,unknown,ultra,Explicit shiny chase rarity; mapped to Ultra instead of Unknown.
+sv4-5,Paldean Fates,sv4-5-202,202,Snorlax,Shiny Rare,unknown,ultra,Explicit shiny chase rarity; mapped to Ultra instead of Unknown.
+sv4-5,Paldean Fates,sv4-5-203,203,Wingull,Shiny Rare,unknown,ultra,Explicit shiny chase rarity; mapped to Ultra instead of Unknown.
+sv4-5,Paldean Fates,sv4-5-204,204,Pelipper,Shiny Rare,unknown,ultra,Explicit shiny chase rarity; mapped to Ultra instead of Unknown.
+sv4-5,Paldean Fates,sv4-5-205,205,Skwovet,Shiny Rare,unknown,ultra,Explicit shiny chase rarity; mapped to Ultra instead of Unknown.
+sv4-5,Paldean Fates,sv4-5-206,206,Greedent,Shiny Rare,unknown,ultra,Explicit shiny chase rarity; mapped to Ultra instead of Unknown.
+sv4-5,Paldean Fates,sv4-5-207,207,Lechonk,Shiny Rare,unknown,ultra,Explicit shiny chase rarity; mapped to Ultra instead of Unknown.
+sv4-5,Paldean Fates,sv4-5-208,208,Oinkologne,Shiny Rare,unknown,ultra,Explicit shiny chase rarity; mapped to Ultra instead of Unknown.
+sv4-5,Paldean Fates,sv4-5-209,209,Tandemaus,Shiny Rare,unknown,ultra,Explicit shiny chase rarity; mapped to Ultra instead of Unknown.
+sv4-5,Paldean Fates,sv4-5-210,210,Maushold,Shiny Rare,unknown,ultra,Explicit shiny chase rarity; mapped to Ultra instead of Unknown.
+sv4-5,Paldean Fates,sv4-5-211,211,Flamigo,Shiny Rare,unknown,ultra,Explicit shiny chase rarity; mapped to Ultra instead of Unknown.
+me2-5,Ascended Heroes,me2-5-265,265,Mega Froslass ex,Mega Attack Rare,unknown,secret,Explicit modern secret-tier rarity; mapped to Secret instead of Unknown.
+me2-5,Ascended Heroes,me2-5-266,266,Mega Eelektross ex,Mega Attack Rare,unknown,secret,Explicit modern secret-tier rarity; mapped to Secret instead of Unknown.
+me2-5,Ascended Heroes,me2-5-267,267,Mega Diancie ex,Mega Attack Rare,unknown,secret,Explicit modern secret-tier rarity; mapped to Secret instead of Unknown.
+me2-5,Ascended Heroes,me2-5-268,268,Mega Hawlucha ex,Mega Attack Rare,unknown,secret,Explicit modern secret-tier rarity; mapped to Secret instead of Unknown.
+me2-5,Ascended Heroes,me2-5-269,269,Mega Gengar ex,Mega Attack Rare,unknown,secret,Explicit modern secret-tier rarity; mapped to Secret instead of Unknown.
+me2-5,Ascended Heroes,me2-5-270,270,Mega Scrafty ex,Mega Attack Rare,unknown,secret,Explicit modern secret-tier rarity; mapped to Secret instead of Unknown.
+me2-5,Ascended Heroes,me2-5-271,271,Mega Dragonite ex,Mega Attack Rare,unknown,secret,Explicit modern secret-tier rarity; mapped to Secret instead of Unknown.
+PGO,Pokémon GO,PGO-005,005,Alolan Exeggutor V,Holo Rare V,unknown,ultra,Explicit Pokémon V rarity; mapped to Ultra instead of Unknown.
+PGO,Pokémon GO,PGO-030,030,Mewtwo V,Holo Rare V,unknown,ultra,Explicit Pokémon V rarity; mapped to Ultra instead of Unknown.
+PGO,Pokémon GO,PGO-031,031,Mewtwo VSTAR,Holo Rare VSTAR,unknown,ultra,Explicit Pokémon VSTAR rarity; mapped to Ultra instead of Unknown.
+PGO,Pokémon GO,PGO-040,040,Conkeldurr V,Holo Rare V,unknown,ultra,Explicit Pokémon V rarity; mapped to Ultra instead of Unknown.
+PGO,Pokémon GO,PGO-047,047,Melmetal V,Holo Rare V,unknown,ultra,Explicit Pokémon V rarity; mapped to Ultra instead of Unknown.
+PGO,Pokémon GO,PGO-048,048,Melmetal VMAX,Holo Rare VMAX,unknown,ultra,Explicit Pokémon VMAX rarity; mapped to Ultra instead of Unknown.
+PGO,Pokémon GO,PGO-049,049,Dragonite V,Holo Rare V,unknown,ultra,Explicit Pokémon V rarity; mapped to Ultra instead of Unknown.
+PGO,Pokémon GO,PGO-050,050,Dragonite VSTAR,Holo Rare VSTAR,unknown,ultra,Explicit Pokémon VSTAR rarity; mapped to Ultra instead of Unknown.
+PGO,Pokémon GO,PGO-058,058,Slaking V,Holo Rare V,unknown,ultra,Explicit Pokémon V rarity; mapped to Ultra instead of Unknown.
+zsv10-5,Black Bolt,zsv10-5-171,171,Victini,Black White Rare,unknown,secret,Explicit modern secret-tier rarity; mapped to Secret instead of Unknown.
+zsv10-5,Black Bolt,zsv10-5-172,172,Zekrom ex,Black White Rare,unknown,secret,Explicit modern secret-tier rarity; mapped to Secret instead of Unknown.
+rsv10-5,White Flare,rsv10-5-172,172,Victini,Black White Rare,unknown,secret,Explicit modern secret-tier rarity; mapped to Secret instead of Unknown.
+rsv10-5,White Flare,rsv10-5-173,173,Reshiram ex,Black White Rare,unknown,secret,Explicit modern secret-tier rarity; mapped to Secret instead of Unknown.
+SWSH6,Chilling Reign,SWSH6-007,007,Celebi V,Holo Rare V,unknown,ultra,Explicit Pokémon V rarity; mapped to Ultra instead of Unknown.
+SWSH6,Chilling Reign,SWSH6-008,008,Celebi VMAX,Holo Rare VMAX,unknown,ultra,Explicit Pokémon VMAX rarity; mapped to Ultra instead of Unknown.
+SWSH6,Chilling Reign,SWSH6-020,020,Blaziken V,Holo Rare V,unknown,ultra,Explicit Pokémon V rarity; mapped to Ultra instead of Unknown.
+SWSH6,Chilling Reign,SWSH6-021,021,Blaziken VMAX,Holo Rare VMAX,unknown,ultra,Explicit Pokémon VMAX rarity; mapped to Ultra instead of Unknown.
+SWSH6,Chilling Reign,SWSH6-025,025,Volcanion V,Holo Rare V,unknown,ultra,Explicit Pokémon V rarity; mapped to Ultra instead of Unknown.
+SWSH6,Chilling Reign,SWSH6-045,045,Ice Rider Calyrex V,Holo Rare V,unknown,ultra,Explicit Pokémon V rarity; mapped to Ultra instead of Unknown.
+SWSH6,Chilling Reign,SWSH6-046,046,Ice Rider Calyrex VMAX,Holo Rare VMAX,unknown,ultra,Explicit Pokémon VMAX rarity; mapped to Ultra instead of Unknown.
+SWSH6,Chilling Reign,SWSH6-053,053,Zeraora V,Holo Rare V,unknown,ultra,Explicit Pokémon V rarity; mapped to Ultra instead of Unknown.
+SWSH6,Chilling Reign,SWSH6-058,058,Galarian Articuno V,Holo Rare V,unknown,ultra,Explicit Pokémon V rarity; mapped to Ultra instead of Unknown.
+SWSH6,Chilling Reign,SWSH6-074,074,Shadow Rider Calyrex V,Holo Rare V,unknown,ultra,Explicit Pokémon V rarity; mapped to Ultra instead of Unknown.
+SWSH6,Chilling Reign,SWSH6-075,075,Shadow Rider Calyrex VMAX,Holo Rare VMAX,unknown,ultra,Explicit Pokémon VMAX rarity; mapped to Ultra instead of Unknown.
+SWSH6,Chilling Reign,SWSH6-080,080,Galarian Zapdos V,Holo Rare V,unknown,ultra,Explicit Pokémon V rarity; mapped to Ultra instead of Unknown.
+SWSH6,Chilling Reign,SWSH6-089,089,Sandaconda V,Holo Rare V,unknown,ultra,Explicit Pokémon V rarity; mapped to Ultra instead of Unknown.
+SWSH6,Chilling Reign,SWSH6-090,090,Sandaconda VMAX,Holo Rare VMAX,unknown,ultra,Explicit Pokémon VMAX rarity; mapped to Ultra instead of Unknown.
+SWSH6,Chilling Reign,SWSH6-097,097,Galarian Moltres V,Holo Rare V,unknown,ultra,Explicit Pokémon V rarity; mapped to Ultra instead of Unknown.
+SWSH6,Chilling Reign,SWSH6-099,099,Galarian Slowking V,Holo Rare V,unknown,ultra,Explicit Pokémon V rarity; mapped to Ultra instead of Unknown.
+SWSH6,Chilling Reign,SWSH6-100,100,Galarian Slowking VMAX,Holo Rare VMAX,unknown,ultra,Explicit Pokémon VMAX rarity; mapped to Ultra instead of Unknown.
+SWSH6,Chilling Reign,SWSH6-104,104,Liepard V,Holo Rare V,unknown,ultra,Explicit Pokémon V rarity; mapped to Ultra instead of Unknown.
+SWSH6,Chilling Reign,SWSH6-112,112,Metagross V,Holo Rare V,unknown,ultra,Explicit Pokémon V rarity; mapped to Ultra instead of Unknown.
+SWSH6,Chilling Reign,SWSH6-113,113,Metagross VMAX,Holo Rare VMAX,unknown,ultra,Explicit Pokémon VMAX rarity; mapped to Ultra instead of Unknown.
+SWSH6,Chilling Reign,SWSH6-119,119,Blissey V,Holo Rare V,unknown,ultra,Explicit Pokémon V rarity; mapped to Ultra instead of Unknown.
+SWSH6,Chilling Reign,SWSH6-124,124,Tornadus V,Holo Rare V,unknown,ultra,Explicit Pokémon V rarity; mapped to Ultra instead of Unknown.
+SWSH6,Chilling Reign,SWSH6-125,125,Tornadus VMAX,Holo Rare VMAX,unknown,ultra,Explicit Pokémon VMAX rarity; mapped to Ultra instead of Unknown.
+SWSH5,Battle Styles,SWSH5-006,006,Kricketune V,Holo Rare V,unknown,ultra,Explicit Pokémon V rarity; mapped to Ultra instead of Unknown.
+SWSH5,Battle Styles,SWSH5-018,018,Flapple V,Holo Rare V,unknown,ultra,Explicit Pokémon V rarity; mapped to Ultra instead of Unknown.
+SWSH5,Battle Styles,SWSH5-019,019,Flapple VMAX,Holo Rare VMAX,unknown,ultra,Explicit Pokémon VMAX rarity; mapped to Ultra instead of Unknown.
+SWSH5,Battle Styles,SWSH5-021,021,Victini V,Holo Rare V,unknown,ultra,Explicit Pokémon V rarity; mapped to Ultra instead of Unknown.
+SWSH5,Battle Styles,SWSH5-022,022,Victini VMAX,Holo Rare VMAX,unknown,ultra,Explicit Pokémon VMAX rarity; mapped to Ultra instead of Unknown.
+SWSH5,Battle Styles,SWSH5-040,040,Empoleon V,Holo Rare V,unknown,ultra,Explicit Pokémon V rarity; mapped to Ultra instead of Unknown.
+SWSH5,Battle Styles,SWSH5-050,050,Tapu Koko V,Holo Rare V,unknown,ultra,Explicit Pokémon V rarity; mapped to Ultra instead of Unknown.
+SWSH5,Battle Styles,SWSH5-051,051,Tapu Koko VMAX,Holo Rare VMAX,unknown,ultra,Explicit Pokémon VMAX rarity; mapped to Ultra instead of Unknown.
+SWSH5,Battle Styles,SWSH5-062,062,Mimikyu V,Holo Rare V,unknown,ultra,Explicit Pokémon V rarity; mapped to Ultra instead of Unknown.
+SWSH5,Battle Styles,SWSH5-063,063,Necrozma V,Holo Rare V,unknown,ultra,Explicit Pokémon V rarity; mapped to Ultra instead of Unknown.
+SWSH5,Battle Styles,SWSH5-085,085,Single Strike Urshifu V,Holo Rare V,unknown,ultra,Explicit Pokémon V rarity; mapped to Ultra instead of Unknown.
+SWSH5,Battle Styles,SWSH5-086,086,Single Strike Urshifu VMAX,Holo Rare VMAX,unknown,ultra,Explicit Pokémon VMAX rarity; mapped to Ultra instead of Unknown.
+SWSH5,Battle Styles,SWSH5-087,087,Rapid Strike Urshifu V,Holo Rare V,unknown,ultra,Explicit Pokémon V rarity; mapped to Ultra instead of Unknown.
+SWSH5,Battle Styles,SWSH5-088,088,Rapid Strike Urshifu VMAX,Holo Rare VMAX,unknown,ultra,Explicit Pokémon VMAX rarity; mapped to Ultra instead of Unknown.
+SWSH5,Battle Styles,SWSH5-097,097,Tyranitar V,Holo Rare V,unknown,ultra,Explicit Pokémon V rarity; mapped to Ultra instead of Unknown.
+SWSH5,Battle Styles,SWSH5-109,109,Corviknight V,Holo Rare V,unknown,ultra,Explicit Pokémon V rarity; mapped to Ultra instead of Unknown.
+SWSH5,Battle Styles,SWSH5-110,110,Corviknight VMAX,Holo Rare VMAX,unknown,ultra,Explicit Pokémon VMAX rarity; mapped to Ultra instead of Unknown.
+SWSH5,Battle Styles,SWSH5-117,117,Stoutland V,Holo Rare V,unknown,ultra,Explicit Pokémon V rarity; mapped to Ultra instead of Unknown.
+SWSH2,Rebel Clash,SWSH2-017,017,Rillaboom V,Holo Rare V,unknown,ultra,Explicit Pokémon V rarity; mapped to Ultra instead of Unknown.
+SWSH2,Rebel Clash,SWSH2-018,018,Rillaboom VMAX,Holo Rare VMAX,unknown,ultra,Explicit Pokémon VMAX rarity; mapped to Ultra instead of Unknown.
+SWSH2,Rebel Clash,SWSH2-019,019,Eldegoss V,Holo Rare V,unknown,ultra,Explicit Pokémon V rarity; mapped to Ultra instead of Unknown.
+SWSH2,Rebel Clash,SWSH2-026,026,Ninetales V,Holo Rare V,unknown,ultra,Explicit Pokémon V rarity; mapped to Ultra instead of Unknown.
+SWSH2,Rebel Clash,SWSH2-035,035,Cinderace V,Holo Rare V,unknown,ultra,Explicit Pokémon V rarity; mapped to Ultra instead of Unknown.
+SWSH2,Rebel Clash,SWSH2-036,036,Cinderace VMAX,Holo Rare VMAX,unknown,ultra,Explicit Pokémon VMAX rarity; mapped to Ultra instead of Unknown.
+SWSH2,Rebel Clash,SWSH2-043,043,Milotic V,Holo Rare V,unknown,ultra,Explicit Pokémon V rarity; mapped to Ultra instead of Unknown.
+SWSH2,Rebel Clash,SWSH2-049,049,Inteleon V,Holo Rare V,unknown,ultra,Explicit Pokémon V rarity; mapped to Ultra instead of Unknown.
+SWSH2,Rebel Clash,SWSH2-050,050,Inteleon VMAX,Holo Rare VMAX,unknown,ultra,Explicit Pokémon VMAX rarity; mapped to Ultra instead of Unknown.
+SWSH2,Rebel Clash,SWSH2-055,055,Eiscue V,Holo Rare V,unknown,ultra,Explicit Pokémon V rarity; mapped to Ultra instead of Unknown.
+SWSH2,Rebel Clash,SWSH2-067,067,Boltund V,Holo Rare V,unknown,ultra,Explicit Pokémon V rarity; mapped to Ultra instead of Unknown.
+SWSH2,Rebel Clash,SWSH2-070,070,Toxtricity V,Holo Rare V,unknown,ultra,Explicit Pokémon V rarity; mapped to Ultra instead of Unknown.
+SWSH2,Rebel Clash,SWSH2-071,071,Toxtricity VMAX,Holo Rare VMAX,unknown,ultra,Explicit Pokémon VMAX rarity; mapped to Ultra instead of Unknown.
+SWSH2,Rebel Clash,SWSH2-072,072,Pincurchin V,Holo Rare V,unknown,ultra,Explicit Pokémon V rarity; mapped to Ultra instead of Unknown.
+SWSH2,Rebel Clash,SWSH2-092,092,Dragapult V,Holo Rare V,unknown,ultra,Explicit Pokémon V rarity; mapped to Ultra instead of Unknown.
+SWSH2,Rebel Clash,SWSH2-093,093,Dragapult VMAX,Holo Rare VMAX,unknown,ultra,Explicit Pokémon VMAX rarity; mapped to Ultra instead of Unknown.
+SWSH2,Rebel Clash,SWSH2-108,108,Sandaconda V,Holo Rare V,unknown,ultra,Explicit Pokémon V rarity; mapped to Ultra instead of Unknown.
+SWSH2,Rebel Clash,SWSH2-110,110,Falinks V,Holo Rare V,unknown,ultra,Explicit Pokémon V rarity; mapped to Ultra instead of Unknown.
+SWSH2,Rebel Clash,SWSH2-121,121,Malamar V,Holo Rare V,unknown,ultra,Explicit Pokémon V rarity; mapped to Ultra instead of Unknown.
+SWSH2,Rebel Clash,SWSH2-122,122,Malamar VMAX,Holo Rare VMAX,unknown,ultra,Explicit Pokémon VMAX rarity; mapped to Ultra instead of Unknown.
+SWSH2,Rebel Clash,SWSH2-136,136,Copperajah V,Holo Rare V,unknown,ultra,Explicit Pokémon V rarity; mapped to Ultra instead of Unknown.
+SWSH2,Rebel Clash,SWSH2-137,137,Copperajah VMAX,Holo Rare VMAX,unknown,ultra,Explicit Pokémon VMAX rarity; mapped to Ultra instead of Unknown.
+SWSH2,Rebel Clash,SWSH2-153,153,Dubwool V,Holo Rare V,unknown,ultra,Explicit Pokémon V rarity; mapped to Ultra instead of Unknown.
+SWSH10,Astral Radiance,SWSH10-001,001,Beedrill V,Holo Rare V,unknown,ultra,Explicit Pokémon V rarity; mapped to Ultra instead of Unknown.
+SWSH10,Astral Radiance,SWSH10-017,017,Hisuian Lilligant V,Holo Rare V,unknown,ultra,Explicit Pokémon V rarity; mapped to Ultra instead of Unknown.
+SWSH10,Astral Radiance,SWSH10-018,018,Hisuian Lilligant VSTAR,Holo Rare VSTAR,unknown,ultra,Explicit Pokémon VSTAR rarity; mapped to Ultra instead of Unknown.
+SWSH10,Astral Radiance,SWSH10-025,025,Heatran V,Holo Rare V,unknown,ultra,Explicit Pokémon V rarity; mapped to Ultra instead of Unknown.
+SWSH10,Astral Radiance,SWSH10-026,026,Heatran VMAX,Holo Rare VMAX,unknown,ultra,Explicit Pokémon VMAX rarity; mapped to Ultra instead of Unknown.
+SWSH10,Astral Radiance,SWSH10-030,030,Starmie V,Holo Rare V,unknown,ultra,Explicit Pokémon V rarity; mapped to Ultra instead of Unknown.
+SWSH10,Astral Radiance,SWSH10-039,039,Origin Forme Palkia V,Holo Rare V,unknown,ultra,Explicit Pokémon V rarity; mapped to Ultra instead of Unknown.
+SWSH10,Astral Radiance,SWSH10-040,040,Origin Forme Palkia VSTAR,Holo Rare VSTAR,unknown,ultra,Explicit Pokémon VSTAR rarity; mapped to Ultra instead of Unknown.
+SWSH10,Astral Radiance,SWSH10-049,049,Galarian Mr. Rime V,Holo Rare V,unknown,ultra,Explicit Pokémon V rarity; mapped to Ultra instead of Unknown.
+SWSH10,Astral Radiance,SWSH10-050,050,Luxray V,Holo Rare V,unknown,ultra,Explicit Pokémon V rarity; mapped to Ultra instead of Unknown.
+SWSH10,Astral Radiance,SWSH10-053,053,Hisuian Typhlosion V,Holo Rare V,unknown,ultra,Explicit Pokémon V rarity; mapped to Ultra instead of Unknown.
+SWSH10,Astral Radiance,SWSH10-054,054,Hisuian Typhlosion VSTAR,Holo Rare VSTAR,unknown,ultra,Explicit Pokémon VSTAR rarity; mapped to Ultra instead of Unknown.
+SWSH10,Astral Radiance,SWSH10-072,072,Machamp V,Holo Rare V,unknown,ultra,Explicit Pokémon V rarity; mapped to Ultra instead of Unknown.
+SWSH10,Astral Radiance,SWSH10-073,073,Machamp VMAX,Holo Rare VMAX,unknown,ultra,Explicit Pokémon VMAX rarity; mapped to Ultra instead of Unknown.
+SWSH10,Astral Radiance,SWSH10-078,078,Lucario V,Holo Rare V,unknown,ultra,Explicit Pokémon V rarity; mapped to Ultra instead of Unknown.
+SWSH10,Astral Radiance,SWSH10-083,083,Hisuian Decidueye V,Holo Rare V,unknown,ultra,Explicit Pokémon V rarity; mapped to Ultra instead of Unknown.
+SWSH10,Astral Radiance,SWSH10-084,084,Hisuian Decidueye VSTAR,Holo Rare VSTAR,unknown,ultra,Explicit Pokémon VSTAR rarity; mapped to Ultra instead of Unknown.
+SWSH10,Astral Radiance,SWSH10-087,087,Kleavor V,Holo Rare V,unknown,ultra,Explicit Pokémon V rarity; mapped to Ultra instead of Unknown.
+SWSH10,Astral Radiance,SWSH10-094,094,Hisuian Sneasler V,Holo Rare V,unknown,ultra,Explicit Pokémon V rarity; mapped to Ultra instead of Unknown.
+SWSH10,Astral Radiance,SWSH10-098,098,Darkrai V,Holo Rare V,unknown,ultra,Explicit Pokémon V rarity; mapped to Ultra instead of Unknown.
+SWSH10,Astral Radiance,SWSH10-099,099,Darkrai VSTAR,Holo Rare VSTAR,unknown,ultra,Explicit Pokémon VSTAR rarity; mapped to Ultra instead of Unknown.
+SWSH10,Astral Radiance,SWSH10-101,101,Hisuian Samurott V,Holo Rare V,unknown,ultra,Explicit Pokémon V rarity; mapped to Ultra instead of Unknown.
+SWSH10,Astral Radiance,SWSH10-102,102,Hisuian Samurott VSTAR,Holo Rare VSTAR,unknown,ultra,Explicit Pokémon VSTAR rarity; mapped to Ultra instead of Unknown.
+SWSH10,Astral Radiance,SWSH10-113,113,Origin Forme Dialga V,Holo Rare V,unknown,ultra,Explicit Pokémon V rarity; mapped to Ultra instead of Unknown.
+SWSH10,Astral Radiance,SWSH10-114,114,Origin Forme Dialga VSTAR,Holo Rare VSTAR,unknown,ultra,Explicit Pokémon VSTAR rarity; mapped to Ultra instead of Unknown.
+SWSH10,Astral Radiance,SWSH10-117,117,Garchomp V,Holo Rare V,unknown,ultra,Explicit Pokémon V rarity; mapped to Ultra instead of Unknown.
+SWSH10,Astral Radiance,SWSH10-133,133,Oranguru V,Holo Rare V,unknown,ultra,Explicit Pokémon V rarity; mapped to Ultra instead of Unknown.
+SWSH10,Astral Radiance,SWSH10-134,134,Wyrdeer V,Holo Rare V,unknown,ultra,Explicit Pokémon V rarity; mapped to Ultra instead of Unknown.
+EX13,Holon Phantoms,EX13-102,102,Gyarados Star,Rare Holo Star,unknown,historic-chase,Historic Gold Star / Holo Star chase rarity; mapped to Historic Chase instead of Unknown.
+EX13,Holon Phantoms,EX13-103,103,Mewtwo Star,Rare Holo Star,unknown,historic-chase,Historic Gold Star / Holo Star chase rarity; mapped to Historic Chase instead of Unknown.
+EX13,Holon Phantoms,EX13-104,104,Pikachu Star,Rare Holo Star,unknown,historic-chase,Historic Gold Star / Holo Star chase rarity; mapped to Historic Chase instead of Unknown.
+SM6,Forbidden Light,SM6-31,31,Volcanion Prism Star,Rare Prism Star,unknown,ultra,Explicit Prism Star rarity; mapped to Ultra instead of Unknown.
+SM6,Forbidden Light,SM6-74,74,Diancie Prism Star,Rare Prism Star,unknown,ultra,Explicit Prism Star rarity; mapped to Ultra instead of Unknown.
+SM6,Forbidden Light,SM6-96,96,Arceus Prism Star,Rare Prism Star,unknown,ultra,Explicit Prism Star rarity; mapped to Ultra instead of Unknown.
+SM6,Forbidden Light,SM6-110,110,Lysandre Prism Star,Rare Prism Star,unknown,ultra,Explicit Prism Star rarity; mapped to Ultra instead of Unknown.
+SM6,Forbidden Light,SM6-117,117,Beast Energy Prism Star,Rare Prism Star,unknown,ultra,Explicit Prism Star rarity; mapped to Ultra instead of Unknown.
+SM6,Forbidden Light,SM6-SV5,SV5,Pheromosa,Shiny Rare,unknown,ultra,Explicit shiny chase rarity; mapped to Ultra instead of Unknown.
+SM6,Forbidden Light,SM6-SV11,SV11,Froakie,Shiny Rare,unknown,ultra,Explicit shiny chase rarity; mapped to Ultra instead of Unknown.
+SM6,Forbidden Light,SM6-SV12,SV12,Frogadier,Shiny Rare,unknown,ultra,Explicit shiny chase rarity; mapped to Ultra instead of Unknown.
+SM6,Forbidden Light,SM6-SV14,SV14,Xurkitree,Shiny Rare,unknown,ultra,Explicit shiny chase rarity; mapped to Ultra instead of Unknown.
+SM6,Forbidden Light,SM6-SV17,SV17,Inkay,Shiny Rare,unknown,ultra,Explicit shiny chase rarity; mapped to Ultra instead of Unknown.
+SM6,Forbidden Light,SM6-SV18,SV18,Malamar,Shiny Rare,unknown,ultra,Explicit shiny chase rarity; mapped to Ultra instead of Unknown.
+SM6,Forbidden Light,SM6-SV19,SV19,Poipole,Shiny Rare,unknown,ultra,Explicit shiny chase rarity; mapped to Ultra instead of Unknown.
+SM6,Forbidden Light,SM6-SV23,SV23,Rockruff,Shiny Rare,unknown,ultra,Explicit shiny chase rarity; mapped to Ultra instead of Unknown.
+SM6,Forbidden Light,SM6-SV24,SV24,Buzzwole,Shiny Rare,unknown,ultra,Explicit shiny chase rarity; mapped to Ultra instead of Unknown.
+SM6,Forbidden Light,SM6-SV26,SV26,Guzzlord,Shiny Rare,unknown,ultra,Explicit shiny chase rarity; mapped to Ultra instead of Unknown.
+SM6,Forbidden Light,SM6-SV56,SV56,Greninja GX,Rare Shiny GX,unknown,special-illustration,Explicit shiny GX chase rarity; mapped to Special Illustration tier instead of Unknown.
+SM6,Forbidden Light,SM6-SV63,SV63,Naganadel GX,Rare Shiny GX,unknown,special-illustration,Explicit shiny GX chase rarity; mapped to Special Illustration tier instead of Unknown.
+SM6,Forbidden Light,SM6-SV64,SV64,Lucario GX,Rare Shiny GX,unknown,special-illustration,Explicit shiny GX chase rarity; mapped to Special Illustration tier instead of Unknown.
+SM6,Forbidden Light,SM6-SV65,SV65,Zygarde GX,Rare Shiny GX,unknown,special-illustration,Explicit shiny GX chase rarity; mapped to Special Illustration tier instead of Unknown.
+SM2,Guardians Rising,SM2-SV8,SV8,Alolan Vulpix,Shiny Rare,unknown,ultra,Explicit shiny chase rarity; mapped to Ultra instead of Unknown.
+SM2,Guardians Rising,SM2-SV20,SV20,Sudowoodo,Shiny Rare,unknown,ultra,Explicit shiny chase rarity; mapped to Ultra instead of Unknown.
+SM2,Guardians Rising,SM2-SV30,SV30,Beldum,Shiny Rare,unknown,ultra,Explicit shiny chase rarity; mapped to Ultra instead of Unknown.
+SM2,Guardians Rising,SM2-SV31,SV31,Metang,Shiny Rare,unknown,ultra,Explicit shiny chase rarity; mapped to Ultra instead of Unknown.
+SM2,Guardians Rising,SM2-SV47,SV47,Decidueye GX,Rare Shiny GX,unknown,special-illustration,Explicit shiny GX chase rarity; mapped to Special Illustration tier instead of Unknown.
+SM2,Guardians Rising,SM2-SV52,SV52,Turtonator GX,Rare Shiny GX,unknown,special-illustration,Explicit shiny GX chase rarity; mapped to Special Illustration tier instead of Unknown.
+SM2,Guardians Rising,SM2-SV53,SV53,Alolan Ninetales GX,Rare Shiny GX,unknown,special-illustration,Explicit shiny GX chase rarity; mapped to Special Illustration tier instead of Unknown.
+SM2,Guardians Rising,SM2-SV66,SV66,Lycanroc GX,Rare Shiny GX,unknown,special-illustration,Explicit shiny GX chase rarity; mapped to Special Illustration tier instead of Unknown.
+SM2,Guardians Rising,SM2-SV76,SV76,Sylveon GX,Rare Shiny GX,unknown,special-illustration,Explicit shiny GX chase rarity; mapped to Special Illustration tier instead of Unknown.
+SM2,Guardians Rising,SM2-SV80,SV80,Drampa GX,Rare Shiny GX,unknown,special-illustration,Explicit shiny GX chase rarity; mapped to Special Illustration tier instead of Unknown.
+SWSH12,Silver Tempest,SWSH12-007,007,Serperior V,Holo Rare V,unknown,ultra,Explicit Pokémon V rarity; mapped to Ultra instead of Unknown.
+SWSH12,Silver Tempest,SWSH12-008,008,Serperior VSTAR,Holo Rare VSTAR,unknown,ultra,Explicit Pokémon VSTAR rarity; mapped to Ultra instead of Unknown.
+SWSH12,Silver Tempest,SWSH12-015,015,Chesnaught V,Holo Rare V,unknown,ultra,Explicit Pokémon V rarity; mapped to Ultra instead of Unknown.
+SWSH12,Silver Tempest,SWSH12-024,024,Reshiram V,Holo Rare V,unknown,ultra,Explicit Pokémon V rarity; mapped to Ultra instead of Unknown.
+SWSH12,Silver Tempest,SWSH12-033,033,Alolan Vulpix V,Holo Rare V,unknown,ultra,Explicit Pokémon V rarity; mapped to Ultra instead of Unknown.
+SWSH12,Silver Tempest,SWSH12-034,034,Alolan Vulpix VSTAR,Holo Rare VSTAR,unknown,ultra,Explicit Pokémon VSTAR rarity; mapped to Ultra instead of Unknown.
+SWSH12,Silver Tempest,SWSH12-035,035,Omastar V,Holo Rare V,unknown,ultra,Explicit Pokémon V rarity; mapped to Ultra instead of Unknown.
+SWSH12,Silver Tempest,SWSH12-057,057,Regieleki V,Holo Rare V,unknown,ultra,Explicit Pokémon V rarity; mapped to Ultra instead of Unknown.
+SWSH12,Silver Tempest,SWSH12-058,058,Regieleki VMAX,Holo Rare VMAX,unknown,ultra,Explicit Pokémon VMAX rarity; mapped to Ultra instead of Unknown.
+SWSH12,Silver Tempest,SWSH12-065,065,Unown V,Holo Rare V,unknown,ultra,Explicit Pokémon V rarity; mapped to Ultra instead of Unknown.
+SWSH12,Silver Tempest,SWSH12-066,066,Unown VSTAR,Holo Rare VSTAR,unknown,ultra,Explicit Pokémon VSTAR rarity; mapped to Ultra instead of Unknown.
+SWSH12,Silver Tempest,SWSH12-070,070,Mawile V,Holo Rare V,unknown,ultra,Explicit Pokémon V rarity; mapped to Ultra instead of Unknown.
+SWSH12,Silver Tempest,SWSH12-071,071,Mawile VSTAR,Holo Rare VSTAR,unknown,ultra,Explicit Pokémon VSTAR rarity; mapped to Ultra instead of Unknown.
+SWSH12,Silver Tempest,SWSH12-090,090,Hisuian Arcanine V,Holo Rare V,unknown,ultra,Explicit Pokémon V rarity; mapped to Ultra instead of Unknown.
+SWSH12,Silver Tempest,SWSH12-102,102,Ursaluna V,Holo Rare V,unknown,ultra,Explicit Pokémon V rarity; mapped to Ultra instead of Unknown.
+SWSH12,Silver Tempest,SWSH12-108,108,Skuntank V,Holo Rare V,unknown,ultra,Explicit Pokémon V rarity; mapped to Ultra instead of Unknown.
+SWSH12,Silver Tempest,SWSH12-128,128,Magearna V,Holo Rare V,unknown,ultra,Explicit Pokémon V rarity; mapped to Ultra instead of Unknown.
+SWSH12,Silver Tempest,SWSH12-135,135,Regidrago V,Holo Rare V,unknown,ultra,Explicit Pokémon V rarity; mapped to Ultra instead of Unknown.
+SWSH12,Silver Tempest,SWSH12-136,136,Regidrago VSTAR,Holo Rare VSTAR,unknown,ultra,Explicit Pokémon VSTAR rarity; mapped to Ultra instead of Unknown.
+SWSH12,Silver Tempest,SWSH12-138,138,Lugia V,Holo Rare V,unknown,ultra,Explicit Pokémon V rarity; mapped to Ultra instead of Unknown.
+SWSH12,Silver Tempest,SWSH12-139,139,Lugia VSTAR,Holo Rare VSTAR,unknown,ultra,Explicit Pokémon VSTAR rarity; mapped to Ultra instead of Unknown.
+SWSH12,Silver Tempest,SWSH12-140,140,Ho-Oh V,Holo Rare V,unknown,ultra,Explicit Pokémon V rarity; mapped to Ultra instead of Unknown.
+SWSH8,Fusion Strike,SWSH8-006,006,Breloom V,Holo Rare V,unknown,ultra,Explicit Pokémon V rarity; mapped to Ultra instead of Unknown.
+SWSH8,Fusion Strike,SWSH8-021,021,Tsareena V,Holo Rare V,unknown,ultra,Explicit Pokémon V rarity; mapped to Ultra instead of Unknown.
+SWSH8,Fusion Strike,SWSH8-022,022,Rillaboom V,Holo Rare V,unknown,ultra,Explicit Pokémon V rarity; mapped to Ultra instead of Unknown.
+SWSH8,Fusion Strike,SWSH8-023,023,Rillaboom VMAX,Holo Rare VMAX,unknown,ultra,Explicit Pokémon VMAX rarity; mapped to Ultra instead of Unknown.
+SWSH8,Fusion Strike,SWSH8-026,026,Appletun V,Holo Rare V,unknown,ultra,Explicit Pokémon V rarity; mapped to Ultra instead of Unknown.
+SWSH8,Fusion Strike,SWSH8-039,039,Chandelure V,Holo Rare V,unknown,ultra,Explicit Pokémon V rarity; mapped to Ultra instead of Unknown.
+SWSH8,Fusion Strike,SWSH8-040,040,Chandelure VMAX,Holo Rare VMAX,unknown,ultra,Explicit Pokémon VMAX rarity; mapped to Ultra instead of Unknown.
+SWSH8,Fusion Strike,SWSH8-043,043,Cinderace V,Holo Rare V,unknown,ultra,Explicit Pokémon V rarity; mapped to Ultra instead of Unknown.
+SWSH8,Fusion Strike,SWSH8-044,044,Cinderace V,Holo Rare V,unknown,ultra,Explicit Pokémon V rarity; mapped to Ultra instead of Unknown.
+SWSH8,Fusion Strike,SWSH8-045,045,Cinderace VMAX,Holo Rare VMAX,unknown,ultra,Explicit Pokémon VMAX rarity; mapped to Ultra instead of Unknown.
+SWSH8,Fusion Strike,SWSH8-073,073,Greninja V,Holo Rare V,unknown,ultra,Explicit Pokémon V rarity; mapped to Ultra instead of Unknown.
+SWSH8,Fusion Strike,SWSH8-076,076,Crabominable V,Holo Rare V,unknown,ultra,Explicit Pokémon V rarity; mapped to Ultra instead of Unknown.
+SWSH8,Fusion Strike,SWSH8-078,078,Inteleon V,Holo Rare V,unknown,ultra,Explicit Pokémon V rarity; mapped to Ultra instead of Unknown.
+SWSH8,Fusion Strike,SWSH8-079,079,Inteleon VMAX,Holo Rare VMAX,unknown,ultra,Explicit Pokémon VMAX rarity; mapped to Ultra instead of Unknown.
+SWSH8,Fusion Strike,SWSH8-086,086,Pikachu V,Holo Rare V,unknown,ultra,Explicit Pokémon V rarity; mapped to Ultra instead of Unknown.
+SWSH8,Fusion Strike,SWSH8-103,103,Boltund V,Holo Rare V,unknown,ultra,Explicit Pokémon V rarity; mapped to Ultra instead of Unknown.
+SWSH8,Fusion Strike,SWSH8-104,104,Boltund VMAX,Holo Rare VMAX,unknown,ultra,Explicit Pokémon VMAX rarity; mapped to Ultra instead of Unknown.
+SWSH8,Fusion Strike,SWSH8-113,113,Mew V,Holo Rare V,unknown,ultra,Explicit Pokémon V rarity; mapped to Ultra instead of Unknown.
+SWSH8,Fusion Strike,SWSH8-114,114,Mew VMAX,Holo Rare VMAX,unknown,ultra,Explicit Pokémon VMAX rarity; mapped to Ultra instead of Unknown.
+SWSH8,Fusion Strike,SWSH8-146,146,Lucario V,Holo Rare V,unknown,ultra,Explicit Pokémon V rarity; mapped to Ultra instead of Unknown.
+SWSH8,Fusion Strike,SWSH8-156,156,Gengar V,Holo Rare V,unknown,ultra,Explicit Pokémon V rarity; mapped to Ultra instead of Unknown.
+SWSH8,Fusion Strike,SWSH8-157,157,Gengar VMAX,Holo Rare VMAX,unknown,ultra,Explicit Pokémon VMAX rarity; mapped to Ultra instead of Unknown.
+SWSH8,Fusion Strike,SWSH8-158,158,Tyranitar V,Holo Rare V,unknown,ultra,Explicit Pokémon V rarity; mapped to Ultra instead of Unknown.
+SWSH8,Fusion Strike,SWSH8-185,185,Genesect V,Holo Rare V,unknown,ultra,Explicit Pokémon V rarity; mapped to Ultra instead of Unknown.
+SWSH8,Fusion Strike,SWSH8-201,201,Dodrio V,Holo Rare V,unknown,ultra,Explicit Pokémon V rarity; mapped to Ultra instead of Unknown.
+SWSH8,Fusion Strike,SWSH8-217,217,Greedent V,Holo Rare V,unknown,ultra,Explicit Pokémon V rarity; mapped to Ultra instead of Unknown.
+SWSH8,Fusion Strike,SWSH8-218,218,Greedent VMAX,Holo Rare VMAX,unknown,ultra,Explicit Pokémon VMAX rarity; mapped to Ultra instead of Unknown.
+SWSH4,Vivid Voltage,SWSH4-020,020,Orbeetle V,Holo Rare V,unknown,ultra,Explicit Pokémon V rarity; mapped to Ultra instead of Unknown.
+SWSH4,Vivid Voltage,SWSH4-021,021,Orbeetle VMAX,Holo Rare VMAX,unknown,ultra,Explicit Pokémon VMAX rarity; mapped to Ultra instead of Unknown.
+SWSH4,Vivid Voltage,SWSH4-022,022,Zarude V,Holo Rare V,unknown,ultra,Explicit Pokémon V rarity; mapped to Ultra instead of Unknown.
+SWSH4,Vivid Voltage,SWSH4-029,029,Talonflame V,Holo Rare V,unknown,ultra,Explicit Pokémon V rarity; mapped to Ultra instead of Unknown.
+SWSH4,Vivid Voltage,SWSH4-036,036,Galarian Darmanitan V,Holo Rare V,unknown,ultra,Explicit Pokémon V rarity; mapped to Ultra instead of Unknown.
+SWSH4,Vivid Voltage,SWSH4-037,037,Galarian Darmanitan VMAX,Holo Rare VMAX,unknown,ultra,Explicit Pokémon VMAX rarity; mapped to Ultra instead of Unknown.
+SWSH4,Vivid Voltage,SWSH4-043,043,Pikachu V,Holo Rare V,unknown,ultra,Explicit Pokémon V rarity; mapped to Ultra instead of Unknown.
+SWSH4,Vivid Voltage,SWSH4-044,044,Pikachu VMAX,Holo Rare VMAX,unknown,ultra,Explicit Pokémon VMAX rarity; mapped to Ultra instead of Unknown.
+SWSH4,Vivid Voltage,SWSH4-049,049,Ampharos V,Holo Rare V,unknown,ultra,Explicit Pokémon V rarity; mapped to Ultra instead of Unknown.
+SWSH4,Vivid Voltage,SWSH4-098,098,Coalossal V,Holo Rare V,unknown,ultra,Explicit Pokémon V rarity; mapped to Ultra instead of Unknown.
+SWSH4,Vivid Voltage,SWSH4-099,099,Coalossal VMAX,Holo Rare VMAX,unknown,ultra,Explicit Pokémon VMAX rarity; mapped to Ultra instead of Unknown.
+SWSH4,Vivid Voltage,SWSH4-106,106,Drapion V,Holo Rare V,unknown,ultra,Explicit Pokémon V rarity; mapped to Ultra instead of Unknown.
+SWSH4,Vivid Voltage,SWSH4-115,115,Steelix V,Holo Rare V,unknown,ultra,Explicit Pokémon V rarity; mapped to Ultra instead of Unknown.
+SWSH4,Vivid Voltage,SWSH4-126,126,Aegislash V,Holo Rare V,unknown,ultra,Explicit Pokémon V rarity; mapped to Ultra instead of Unknown.
+SWSH4,Vivid Voltage,SWSH4-127,127,Aegislash VMAX,Holo Rare VMAX,unknown,ultra,Explicit Pokémon VMAX rarity; mapped to Ultra instead of Unknown.
+SWSH4,Vivid Voltage,SWSH4-140,140,Togekiss V,Holo Rare V,unknown,ultra,Explicit Pokémon V rarity; mapped to Ultra instead of Unknown.
+SWSH4,Vivid Voltage,SWSH4-141,141,Togekiss VMAX,Holo Rare VMAX,unknown,ultra,Explicit Pokémon VMAX rarity; mapped to Ultra instead of Unknown.
+SM8,Lost Thunder,SM8-19,19,Celebi Prism Star,Rare Prism Star,unknown,ultra,Explicit Prism Star rarity; mapped to Ultra instead of Unknown.
+SM8,Lost Thunder,SM8-144,144,Xerneas Prism Star,Rare Prism Star,unknown,ultra,Explicit Prism Star rarity; mapped to Ultra instead of Unknown.
+SM8,Lost Thunder,SM8-154,154,Ditto Prism Star,Rare Prism Star,unknown,ultra,Explicit Prism Star rarity; mapped to Ultra instead of Unknown.
+SM8,Lost Thunder,SM8-178,178,Heat Factory Prism Star,Rare Prism Star,unknown,ultra,Explicit Prism Star rarity; mapped to Ultra instead of Unknown.
+SM8,Lost Thunder,SM8-180,180,Life Forest Prism Star,Rare Prism Star,unknown,ultra,Explicit Prism Star rarity; mapped to Ultra instead of Unknown.
+SM8,Lost Thunder,SM8-182,182,Lusamine Prism Star,Rare Prism Star,unknown,ultra,Explicit Prism Star rarity; mapped to Ultra instead of Unknown.
+SM8,Lost Thunder,SM8-191,191,Thunder Mountain Prism Star,Rare Prism Star,unknown,ultra,Explicit Prism Star rarity; mapped to Ultra instead of Unknown.
+SM4,Crimson Invasion,SM4-SV45,SV45,Type: Null,Shiny Rare,unknown,ultra,Explicit shiny chase rarity; mapped to Ultra instead of Unknown.
+SM4,Crimson Invasion,SM4-SV62,SV62,Nihilego GX,Rare Shiny GX,unknown,special-illustration,Explicit shiny GX chase rarity; mapped to Special Illustration tier instead of Unknown.
+SM4,Crimson Invasion,SM4-SV68,SV68,Buzzwole GX,Rare Shiny GX,unknown,special-illustration,Explicit shiny GX chase rarity; mapped to Special Illustration tier instead of Unknown.
+SM4,Crimson Invasion,SM4-SV71,SV71,Guzzlord GX,Rare Shiny GX,unknown,special-illustration,Explicit shiny GX chase rarity; mapped to Special Illustration tier instead of Unknown.
+SM4,Crimson Invasion,SM4-SV73,SV73,Kartana GX,Rare Shiny GX,unknown,special-illustration,Explicit shiny GX chase rarity; mapped to Special Illustration tier instead of Unknown.
+SM4,Crimson Invasion,SM4-SV79,SV79,Silvally GX,Rare Shiny GX,unknown,special-illustration,Explicit shiny GX chase rarity; mapped to Special Illustration tier instead of Unknown.
+EX7,Team Rocket Returns,EX7-107,107,Mudkip Star,Rare Holo Star,unknown,historic-chase,Historic Gold Star / Holo Star chase rarity; mapped to Historic Chase instead of Unknown.
+EX7,Team Rocket Returns,EX7-108,108,Torchic Star,Rare Holo Star,unknown,historic-chase,Historic Gold Star / Holo Star chase rarity; mapped to Historic Chase instead of Unknown.
+EX7,Team Rocket Returns,EX7-109,109,Treecko Star,Rare Holo Star,unknown,historic-chase,Historic Gold Star / Holo Star chase rarity; mapped to Historic Chase instead of Unknown.
+EX15,Dragon Frontiers,EX15-100,100,Charizard Star,Rare Holo Star,unknown,historic-chase,Historic Gold Star / Holo Star chase rarity; mapped to Historic Chase instead of Unknown.
+EX15,Dragon Frontiers,EX15-101,101,Mew Star,Rare Holo Star,unknown,historic-chase,Historic Gold Star / Holo Star chase rarity; mapped to Historic Chase instead of Unknown.
+EX11,Delta Species,EX11-111,111,Groudon Star,Rare Holo Star,unknown,historic-chase,Historic Gold Star / Holo Star chase rarity; mapped to Historic Chase instead of Unknown.
+EX11,Delta Species,EX11-112,112,Kyogre Star,Rare Holo Star,unknown,historic-chase,Historic Gold Star / Holo Star chase rarity; mapped to Historic Chase instead of Unknown.
+EX11,Delta Species,EX11-113,113,Metagross Star,Rare Holo Star,unknown,historic-chase,Historic Gold Star / Holo Star chase rarity; mapped to Historic Chase instead of Unknown.
+SM35,Shining Legends,SM35-SV25,SV25,Zorua,Shiny Rare,unknown,ultra,Explicit shiny chase rarity; mapped to Ultra instead of Unknown.
+SM35,Shining Legends,SM35-SV59,SV59,Mewtwo GX,Rare Shiny GX,unknown,special-illustration,Explicit shiny GX chase rarity; mapped to Special Illustration tier instead of Unknown.
+Ann25th,Celebrations,Ann25th-006,006,Flying Pikachu V,Holo Rare V,unknown,ultra,Explicit Pokémon V rarity; mapped to Ultra instead of Unknown.
+Ann25th,Celebrations,Ann25th-007,007,Flying Pikachu VMAX,Holo Rare VMAX,unknown,ultra,Explicit Pokémon VMAX rarity; mapped to Ultra instead of Unknown.
+Ann25th,Celebrations,Ann25th-008,008,Surfing Pikachu V,Holo Rare V,unknown,ultra,Explicit Pokémon V rarity; mapped to Ultra instead of Unknown.
+Ann25th,Celebrations,Ann25th-009,009,Surfing Pikachu VMAX,Holo Rare VMAX,unknown,ultra,Explicit Pokémon VMAX rarity; mapped to Ultra instead of Unknown.
+Ann25th,Celebrations,Ann25th-016,016,Zacian V,Holo Rare V,unknown,ultra,Explicit Pokémon V rarity; mapped to Ultra instead of Unknown.
+Ann25th,Celebrations,Ann25th-018,018,Zamazenta V,Holo Rare V,unknown,ultra,Explicit Pokémon V rarity; mapped to Ultra instead of Unknown.
+me5-5,30th Celebration,me5-5-114-2,114,Mew VMAX,Holo Rare VMAX,unknown,ultra,Explicit Pokémon VMAX rarity; mapped to Ultra instead of Unknown.
+me5-5,30th Celebration,me5-5-123-2,123,Arceus VSTAR,Holo Rare VSTAR,unknown,ultra,Explicit Pokémon VSTAR rarity; mapped to Ultra instead of Unknown.
+me5-5,30th Celebration,me5-5-138-2,138,Zacian V,Holo Rare V,unknown,ultra,Explicit Pokémon V rarity; mapped to Ultra instead of Unknown.
+me5-5,30th Celebration,me5-5-157,157,Mewtwo ex,Futuristic Rare,unknown,secret,Explicit modern secret-tier rarity; mapped to Secret instead of Unknown.
+me5-5,30th Celebration,me5-5-158,158,Mew ex,Futuristic Rare,unknown,secret,Explicit modern secret-tier rarity; mapped to Secret instead of Unknown.
+me5-5,30th Celebration,me5-5-B,B,Mew,RGB Rare,unknown,secret,Explicit anniversary secret-tier rarity; mapped to Secret instead of Unknown.
+me5-5,30th Celebration,me5-5-G,G,Mew,RGB Rare,unknown,secret,Explicit anniversary secret-tier rarity; mapped to Secret instead of Unknown.
+me5-5,30th Celebration,me5-5-R,R,Mew,RGB Rare,unknown,secret,Explicit anniversary secret-tier rarity; mapped to Secret instead of Unknown.
+CPA,Champion's Path,CPA-001,001,Venusaur V,Holo Rare V,unknown,ultra,Explicit Pokémon V rarity; mapped to Ultra instead of Unknown.
+CPA,Champion's Path,CPA-005,005,Eldegoss V,Holo Rare V,unknown,ultra,Explicit Pokémon V rarity; mapped to Ultra instead of Unknown.
+CPA,Champion's Path,CPA-008,008,Incineroar V,Holo Rare V,unknown,ultra,Explicit Pokémon V rarity; mapped to Ultra instead of Unknown.
+CPA,Champion's Path,CPA-013,013,Wailord V,Holo Rare V,unknown,ultra,Explicit Pokémon V rarity; mapped to Ultra instead of Unknown.
+CPA,Champion's Path,CPA-014,014,Drednaw V,Holo Rare V,unknown,ultra,Explicit Pokémon V rarity; mapped to Ultra instead of Unknown.
+CPA,Champion's Path,CPA-015,015,Drednaw VMAX,Holo Rare VMAX,unknown,ultra,Explicit Pokémon VMAX rarity; mapped to Ultra instead of Unknown.
+CPA,Champion's Path,CPA-016,016,Gardevoir V,Holo Rare V,unknown,ultra,Explicit Pokémon V rarity; mapped to Ultra instead of Unknown.
+CPA,Champion's Path,CPA-017,017,Gardevoir VMAX,Holo Rare VMAX,unknown,ultra,Explicit Pokémon VMAX rarity; mapped to Ultra instead of Unknown.
+CPA,Champion's Path,CPA-021,021,Galarian Cursola V,Holo Rare V,unknown,ultra,Explicit Pokémon V rarity; mapped to Ultra instead of Unknown.
+CPA,Champion's Path,CPA-022,022,Alcremie V,Holo Rare V,unknown,ultra,Explicit Pokémon V rarity; mapped to Ultra instead of Unknown.
+CPA,Champion's Path,CPA-023,023,Alcremie VMAX,Holo Rare VMAX,unknown,ultra,Explicit Pokémon VMAX rarity; mapped to Ultra instead of Unknown.
+CPA,Champion's Path,CPA-027,027,Lucario V,Holo Rare V,unknown,ultra,Explicit Pokémon V rarity; mapped to Ultra instead of Unknown.
+CPA,Champion's Path,CPA-032,032,Grapploct V,Holo Rare V,unknown,ultra,Explicit Pokémon V rarity; mapped to Ultra instead of Unknown.
+CPA,Champion's Path,CPA-047,047,Duraludon V,Holo Rare V,unknown,ultra,Explicit Pokémon V rarity; mapped to Ultra instead of Unknown.
+DRM,Dragon Majesty,DRM-7,7,Victini Prism Star,Rare Prism Star,unknown,ultra,Explicit Prism Star rarity; mapped to Ultra instead of Unknown.
+DRM,Dragon Majesty,DRM-61,61,Lance Prism Star,Rare Prism Star,unknown,ultra,Explicit Prism Star rarity; mapped to Ultra instead of Unknown.
+DRM,Dragon Majesty,DRM-SV6,SV6,Charmander,Shiny Rare,unknown,ultra,Explicit shiny chase rarity; mapped to Ultra instead of Unknown.
+DRM,Dragon Majesty,DRM-SV7,SV7,Charmeleon,Shiny Rare,unknown,ultra,Explicit shiny chase rarity; mapped to Ultra instead of Unknown.
+DRM,Dragon Majesty,DRM-SV9,SV9,Wooper,Shiny Rare,unknown,ultra,Explicit shiny chase rarity; mapped to Ultra instead of Unknown.
+DRM,Dragon Majesty,DRM-SV10,SV10,Quagsire,Shiny Rare,unknown,ultra,Explicit shiny chase rarity; mapped to Ultra instead of Unknown.
+DRM,Dragon Majesty,DRM-SV37,SV37,Altaria,Shiny Rare,unknown,ultra,Explicit shiny chase rarity; mapped to Ultra instead of Unknown.
+DRM,Dragon Majesty,DRM-SV42,SV42,Swablu,Shiny Rare,unknown,ultra,Explicit shiny chase rarity; mapped to Ultra instead of Unknown.
+DRM,Dragon Majesty,DRM-SV51,SV51,Reshiram GX,Rare Shiny GX,unknown,special-illustration,Explicit shiny GX chase rarity; mapped to Special Illustration tier instead of Unknown.
+DRM,Dragon Majesty,DRM-SV77,SV77,Altaria GX,Rare Shiny GX,unknown,special-illustration,Explicit shiny GX chase rarity; mapped to Special Illustration tier instead of Unknown.
+SWSH11,Lost Origin,SWSH11-027,027,Delphox V,Holo Rare V,unknown,ultra,Explicit Pokémon V rarity; mapped to Ultra instead of Unknown.
+SWSH11,Lost Origin,SWSH11-048,048,Kyurem V,Holo Rare V,unknown,ultra,Explicit Pokémon V rarity; mapped to Ultra instead of Unknown.
+SWSH11,Lost Origin,SWSH11-049,049,Kyurem VMAX,Holo Rare VMAX,unknown,ultra,Explicit Pokémon VMAX rarity; mapped to Ultra instead of Unknown.
+SWSH11,Lost Origin,SWSH11-056,056,Magnezone V,Holo Rare V,unknown,ultra,Explicit Pokémon V rarity; mapped to Ultra instead of Unknown.
+SWSH11,Lost Origin,SWSH11-057,057,Magnezone VSTAR,Holo Rare VSTAR,unknown,ultra,Explicit Pokémon VSTAR rarity; mapped to Ultra instead of Unknown.
+SWSH11,Lost Origin,SWSH11-058,058,Rotom V,Holo Rare V,unknown,ultra,Explicit Pokémon V rarity; mapped to Ultra instead of Unknown.
+SWSH11,Lost Origin,SWSH11-082,082,Enamorus V,Holo Rare V,unknown,ultra,Explicit Pokémon V rarity; mapped to Ultra instead of Unknown.
+SWSH11,Lost Origin,SWSH11-092,092,Aerodactyl V,Holo Rare V,unknown,ultra,Explicit Pokémon V rarity; mapped to Ultra instead of Unknown.
+SWSH11,Lost Origin,SWSH11-093,093,Aerodactyl VSTAR,Holo Rare VSTAR,unknown,ultra,Explicit Pokémon VSTAR rarity; mapped to Ultra instead of Unknown.
+SWSH11,Lost Origin,SWSH11-118,118,Drapion V,Holo Rare V,unknown,ultra,Explicit Pokémon V rarity; mapped to Ultra instead of Unknown.
+SWSH11,Lost Origin,SWSH11-119,119,Drapion VSTAR,Holo Rare VSTAR,unknown,ultra,Explicit Pokémon VSTAR rarity; mapped to Ultra instead of Unknown.
+SWSH11,Lost Origin,SWSH11-129,129,Galarian Perrserker V,Holo Rare V,unknown,ultra,Explicit Pokémon V rarity; mapped to Ultra instead of Unknown.
+SWSH11,Lost Origin,SWSH11-130,130,Giratina V,Holo Rare V,unknown,ultra,Explicit Pokémon V rarity; mapped to Ultra instead of Unknown.
+SWSH11,Lost Origin,SWSH11-131,131,Giratina VSTAR,Holo Rare VSTAR,unknown,ultra,Explicit Pokémon VSTAR rarity; mapped to Ultra instead of Unknown.
+SWSH11,Lost Origin,SWSH11-135,135,Hisuian Goodra V,Holo Rare V,unknown,ultra,Explicit Pokémon V rarity; mapped to Ultra instead of Unknown.
+SWSH11,Lost Origin,SWSH11-136,136,Hisuian Goodra VSTAR,Holo Rare VSTAR,unknown,ultra,Explicit Pokémon VSTAR rarity; mapped to Ultra instead of Unknown.
+SWSH11,Lost Origin,SWSH11-137,137,Pidgeot V,Holo Rare V,unknown,ultra,Explicit Pokémon V rarity; mapped to Ultra instead of Unknown.
+SWSH11,Lost Origin,SWSH11-146,146,Hisuian Zoroark V,Holo Rare V,unknown,ultra,Explicit Pokémon V rarity; mapped to Ultra instead of Unknown.
+SWSH11,Lost Origin,SWSH11-147,147,Hisuian Zoroark VSTAR,Holo Rare VSTAR,unknown,ultra,Explicit Pokémon VSTAR rarity; mapped to Ultra instead of Unknown.

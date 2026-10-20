@@ -88,12 +88,12 @@
     const r=source.text;
     if(card?._achievementReward===true)return 'promo';
     if(/\bpromo\b/.test(r))return 'promo';
-    if(/(^|\s)legend(?:ary)?(\s|$)/.test(r))return 'historic-chase';
+    if(/(^|\s)legend(?:ary)?(\s|$)|\brare holo star\b/.test(r))return 'historic-chase';
     // Secret/jackpot printed labels are their own rarity class. Pocket 3★/immersive also live here.
-    if(/\bsecret(?: rare)?\b|\brare secret\b|\bhyper rare\b|\bgold rare\b|\bcrown(?: rare)?\b|\bthree star\b|\b3 star\b|\bimmersive\b/.test(r))return 'secret';
-    if(/\bspecial illustration(?: rare)?\b|\brare rainbow\b|\brainbow rare\b|\bshiny ultra rare\b|\btwo star\b|\b2 star\b|\btwo shiny\b|\b2 shiny\b/.test(r))return 'special-illustration';
+    if(/\bsecret(?: rare)?\b|\brare secret\b|\bhyper rare\b|\bgold rare\b|\bcrown(?: rare)?\b|\bthree star\b|\b3 star\b|\bimmersive\b|\bmega attack rare\b|\bblack white rare\b|\brgb rare\b|\bfuturistic rare\b/.test(r))return 'secret';
+    if(/\bspecial illustration(?: rare)?\b|\brare rainbow\b|\brainbow rare\b|\bshiny ultra rare\b|\brare shiny gx\b|\bshiny rare v or vmax\b|\btwo star\b|\b2 star\b|\btwo shiny\b|\b2 shiny\b/.test(r))return 'special-illustration';
     if(/\billustration rare\b|\bcharacter rare\b|\btrainer gallery(?: rare)?\b|\bone star\b|\b1 star\b/.test(r))return 'illustration';
-    if(/\bultra rare\b|\brare ultra\b|\bfull art\b|\bradiant rare\b|\bradiant\b|\bamazing rare\b|\bace spec(?: rare)?\b|\bshining(?: rare)?\b|\bone shiny\b|\b1 shiny\b|\brare holo (?:ex|gx|v|max|vmax|vstar|lv\.?x)\b|\brare break\b|\brare prime\b/.test(r))return 'ultra';
+    if(/\bultra rare\b|\brare ultra\b|\bfull art\b|\bradiant rare\b|\bradiant\b|\bamazing rare\b|\bace spec(?: rare)?\b|\bshining(?: rare)?\b|\bshiny rare\b|\bone shiny\b|\b1 shiny\b|\brare holo (?:ex|gx|v|max|vmax|vstar|lv\.?x)\b|\bholo rare (?:v|vmax|vstar)\b|\brare prism star\b|\brare break\b|\brare prime\b/.test(r))return 'ultra';
     if(/\bdouble rare\b|\bfour diamond\b|\b4 diamond\b/.test(r))return 'double-rare';
     if(/\buncommon\b|\btwo diamond\b|\b2 diamond\b/.test(r))return 'uncommon';
     if(/\bcommon\b|\bone diamond\b|\b1 diamond\b/.test(r))return 'common';
@@ -118,17 +118,21 @@
   }
   function revealMetaFor(card,source,rarityClass,traits){
     const r=source.text;
-    if(rarityClass==='historic-chase')return {rank:7,style:'legend',label:'LEGEND PULL'};
+    if(rarityClass==='historic-chase'){if(/\brare holo star\b/.test(r))return {rank:7.5,style:'gold-star',label:'GOLD STAR PULL'};return {rank:7,style:'legend',label:'LEGEND PULL'};}
     if(rarityClass==='secret'){
       if(/\bcrown\b/.test(r)||traits.includes('crown'))return {rank:8,style:'crown',label:'CROWN SECRET RARE — JACKPOT'};
       if(/\bgold\b/.test(r)||traits.includes('gold'))return {rank:8,style:'gold',label:'GOLD SECRET RARE — JACKPOT'};
       if(/\bhyper\b/.test(r)||traits.includes('hyper'))return {rank:8,style:'gold',label:'HYPER SECRET RARE — JACKPOT'};
       if(/\bthree star\b|\b3 star\b|\bimmersive\b/.test(r))return {rank:7.4,style:'immersive',label:'IMMERSIVE / 3★ PULL'};
+      if(/\bmega attack rare\b/.test(r))return {rank:7.2,style:'secret',label:'MEGA ATTACK RARE'};
+      if(/\bblack white rare\b/.test(r))return {rank:7.5,style:'secret',label:'BLACK WHITE RARE'};
+      if(/\brgb rare\b/.test(r))return {rank:8,style:'secret',label:'RGB RARE — JACKPOT'};
+      if(/\bfuturistic rare\b/.test(r))return {rank:7.5,style:'secret',label:'FUTURISTIC RARE'};
       return {rank:7,style:'secret',label:'SECRET RARE'};
     }
     if(rarityClass==='special-illustration'){
       if(/\brainbow\b/.test(r)||traits.includes('rainbow'))return {rank:6.6,style:'prismatic',label:'RAINBOW RARE'};
-      if(/\btwo shiny\b|\b2 shiny\b|\bshiny ultra\b/.test(r))return {rank:6.2,style:'shiny-special',label:'SHINY HIT'};
+      if(/\btwo shiny\b|\b2 shiny\b|\bshiny ultra\b|\brare shiny gx\b|\bshiny rare v or vmax\b/.test(r))return {rank:6.2,style:'shiny-special',label:'SHINY HIT'};
       return {rank:6,style:'special-illustration',label:'SPECIAL ILLUSTRATION RARE'};
     }
     if(rarityClass==='illustration')return {rank:5,style:'illustration',label:'ILLUSTRATION RARE'};
@@ -140,7 +144,11 @@
       if(/\bradiant\b/.test(r))return {rank:4.7,style:'radiant',label:'RADIANT RARE'};
       if(/\bamazing\b/.test(r))return {rank:4.7,style:'amazing',label:'AMAZING RARE'};
       if(/\bace spec\b/.test(r))return {rank:4.5,style:'ace-spec',label:'ACE SPEC'};
-      if(/\bone shiny\b|\b1 shiny\b/.test(r))return {rank:4.8,style:'shiny',label:'SHINY HIT'};
+      if(/\bone shiny\b|\b1 shiny\b|\bshiny rare\b/.test(r))return {rank:4.8,style:'shiny',label:'SHINY RARE'};
+      if(/\brare prism star\b/.test(r))return {rank:4.8,style:'prism',label:'PRISM STAR'};
+      if(/\bholo rare vmax\b/.test(r))return {rank:4.6,style:'ultra',label:'VMAX PULL'};
+      if(/\bholo rare vstar\b/.test(r))return {rank:4.6,style:'ultra',label:'VSTAR PULL'};
+      if(/\bholo rare v\b/.test(r))return {rank:4.3,style:'ultra',label:'POKÉMON V'};
       return {rank:4,style:'ultra',label:'ULTRA RARE'};
     }
     if(rarityClass==='double-rare')return {rank:3,style:'double-rare',label:'DOUBLE RARE'};

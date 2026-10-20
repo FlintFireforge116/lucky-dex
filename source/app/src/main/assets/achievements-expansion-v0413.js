@@ -41,7 +41,7 @@
     push('v0413_locations_25','⌖','Cartographer','Visit 25 distinct Adventure locations.','adventure',{coins:1250,tickets:1},()=>[distinctLocations(s()),25]);
     push('v0413_sealed_1','▣','Sealed Deal','Own at least 1 unopened sealed booster at once.','collection',{coins:300},()=>[sealedCount(s()),1]);
     push('v0413_sealed_5','▣','Booster Vault','Own at least 5 sealed boosters at once.','collection',{coins:800,sleeve:'sealed-vault'},()=>[sealedCount(s()),5]);
-    push('v0413_retreats_10','↶','Back From the Past','Record 10 expedition or past returns.','adventure',{coins:700},()=>[num(s().stats?.expeditionRetreats),10]);
+    push('v0413_retreats_10','↶','Back From the Past','Record 10 expedition or past returns.','adventure',{coins:700},()=>[num(s().stats?.expeditionRetreats),10],{legacyHidden:true});
 
     push('v0413_types_all_18','◆','Type Collector','Own Pokémon collectively representing all 18 types.','pokemon',{coins:1200,sleeve:'type-wheel'},()=>[typesOwned(s()),18]);
     push('v0413_gens_all_9','◉','Across the Eras','Own at least one Pokémon from every generation 1–9.','pokemon',{coins:1500,sleeve:'eras'},()=>[gensOwned(s()),9]);

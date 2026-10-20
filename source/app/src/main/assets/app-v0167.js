@@ -95,8 +95,8 @@ const ACHIEVEMENTS = [
   {id:'kanto_all',icon:'🔴',name:'Professor Oak Would Be Proud',desc:'Own every species in the Kanto Pokédex.',reward:{coins:2500,tickets:2,fragment:1,card:{name:'Ancient Mew',setName:'Miscellaneous'}},progress:()=>[ownedRangeCount(1,151),151]},
   {id:'celestial_storm',icon:'🌌',name:'Celestial Storm Master',desc:'Complete the Celestial Storm card set.',reward:{coins:2000,tickets:2},progress:()=>setCompletionProgress(/celestial storm/i)},
   {id:'gold_card',icon:'👑',name:'Golden Ticket',desc:'Pull a Gold/Crown rarity card from TCG Pocket.',reward:{coins:1000,tickets:1},progress:()=>[Math.max(Number(state.stats.goldCards||0),Object.values(state.cards).filter(c=>c.source==='tcgp'&&/(crown|gold)/i.test(String(c.rarity||''))).length),1]},
-  {id:'haunted_visit',icon:'🏚️',name:'Things That Go Bump',desc:'Explore Lavender during a Wild Hunt.',reward:{coins:400},progress:()=>[state.stats.visitedLocations?.haunted?1:0,1]},
-  {id:'haunted_clear',icon:'🕯️',name:'Exorcist',desc:'Clear the Lavender Haunted House.',reward:{coins:1000,tickets:1},progress:()=>[state.profile.firstClears?.haunted?1:0,1]},
+  {id:'haunted_visit',icon:'🏚️',name:'Things That Go Bump',desc:'Explore Lavender during a Wild Hunt.',reward:{coins:400},progress:()=>[(state.stats.visitedLocations?.haunted||Number(state.adventureV2?.destinations?.haunted?.encounters||0)>0)?1:0,1]},
+  {id:'haunted_clear',icon:'🕯️',name:'Exorcist',desc:'Clear the Pokémon Tower leg of a Kanto Regional Adventure.',reward:{coins:1000,tickets:1},progress:()=>[(state.profile.firstClears?.haunted||Object.values(state.adventureRegional?.journeys||{}).some(j=>j?.region==='kanto'&&(j.completedLocations||[]).some(name=>/Pokémon Tower/i.test(String(name)))))?1:0,1]},
   {id:'packs25',icon:'🃏',name:'Card Shop Regular',desc:'Open 25 packs.',reward:{coins:750,tickets:1},progress:()=>[state.stats.packs,25]},
   {id:'packs100',icon:'📦',name:'I Can Quit Whenever I Want',desc:'Open 100 packs.',reward:{coins:2500,tickets:3},progress:()=>[state.stats.packs,100]},
   {id:'arcade10k',icon:'🕹️',name:'Game Corner Ace',desc:'Earn 10,000 Lucky Coins from Arcade games.',reward:{coins:1000,tickets:1,card:{name:'Victory Medal',setName:'Victory Medals'}},progress:()=>[state.stats.arcadeCoins,10000]},
@@ -1963,7 +1963,7 @@ renderCollection=function(){const grid=document.getElementById('collectionGrid')
    before the app could finish wiring. That single runtime exception explained
    the frozen starter, Wild Search/Expedition stalls and permanent Loading sets.
 */
-window.__LUCKYDEX_BUILD='0.69.10';
+window.__LUCKYDEX_BUILD='0.69.11';
 window.addEventListener('error',event=>{
   try{localStorage.setItem('luckyDexLastRuntimeError',JSON.stringify({build:window.__LUCKYDEX_BUILD,message:String(event?.message||'Unknown error'),source:String(event?.filename||''),line:Number(event?.lineno||0),at:Date.now()}));}catch(_){ }
 });
