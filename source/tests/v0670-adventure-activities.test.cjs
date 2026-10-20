@@ -30,5 +30,5 @@ test('shared shell module exposes lifecycle/help APIs and mobile stylesheet has 
   const Shell=require('../app/src/main/assets/adventure/adventure-activity-shell.js');
   for(const k of ['open','close','pause','resume','showHelp','hideHelp','isInputLocked'])assert.equal(typeof Shell[k],'function',k);
   const css=fs.readFileSync(path.join(ROOT,'app/src/main/assets/adventure/adventure-activities.css'),'utf8');
-  assert.match(css,/min-height:\s*44px/);assert.match(css,/position:\s*(sticky|fixed)/);
+  assert.match(css,/min-height:\s*44px/);assert.match(css,/\.adv-activity-controls\{[^}]*position:\s*relative/);assert.match(css,/safe-area-inset-bottom/);
 });
