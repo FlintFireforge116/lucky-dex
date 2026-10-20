@@ -21,7 +21,7 @@
   const DIFFICULTIES=Object.freeze({
     easy:Object.freeze({key:'easy',label:'Easy',reactionMs:820,reactionSpread:260,minRevealMs:1250,maxRevealMs:2700,revealWindowMs:1650}),
     normal:Object.freeze({key:'normal',label:'Normal',reactionMs:560,reactionSpread:220,minRevealMs:1150,maxRevealMs:2450,revealWindowMs:1450}),
-    hard:Object.freeze({key:'hard',label:'Hard',reactionMs:245,reactionSpread:130,minRevealMs:1000,maxRevealMs:2200,revealWindowMs:1250})
+    hard:Object.freeze({key:'hard',label:'Hard',reactionMs:450,reactionSpread:120,minRevealMs:1000,maxRevealMs:2200,revealWindowMs:1350})
   });
   const REWARDS=Object.freeze({easy:[90,55,35,20],normal:[125,80,50,25],hard:[165,105,65,35]});
   const clamp=(n,a,b)=>Math.max(a,Math.min(b,Number(n)||0));

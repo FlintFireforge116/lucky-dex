@@ -6,14 +6,15 @@ const path=require('node:path');
 const ROOT=path.join(__dirname,'..');
 const read=p=>fs.readFileSync(path.join(ROOT,p),'utf8');
 
-test('v0.64.0 metadata is aligned',()=>{
-  assert.equal(require(path.join(ROOT,'package.json')).version,'0.64.0');
+test('release metadata fields stay aligned without pinning a historical version',()=>{
+  const version=require(path.join(ROOT,'package.json')).version;
   const lock=require(path.join(ROOT,'package-lock.json'));
-  assert.equal(lock.version,'0.64.0');
-  assert.equal(lock.packages[''].version,'0.64.0');
-  assert.match(read('app/build.gradle'),/versionCode 6400[\s\S]*versionName '0\.64\.0'/);
-  assert.match(read('app/build.gradle'),/LuckyDex-asset-builder\/0\.64\.0/);
-  assert.match(read('app/src/main/assets/app-v0167.js'),/__LUCKYDEX_BUILD='0\.64\.0'/);
+  const escaped=version.replace(/\./g,'\\.');
+  assert.equal(lock.version,version);
+  assert.equal(lock.packages[''].version,version);
+  assert.match(read('app/build.gradle'),new RegExp(`versionName '${escaped}'`));
+  assert.match(read('app/build.gradle'),new RegExp(`LuckyDex-asset-builder/${escaped}`));
+  assert.match(read('app/src/main/assets/app-v0167.js'),new RegExp(`__LUCKYDEX_BUILD='${escaped}'`));
 });
 
 test('every Stadium 2 Kids Club game has tile metadata so the venue can render safely',()=>{

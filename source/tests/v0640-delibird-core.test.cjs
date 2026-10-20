@@ -9,10 +9,10 @@ const core=fs.existsSync(corePath)?require(corePath):null;
 function coreReady(){assert.ok(core,'Delibird Delivery core must exist');}
 function sequence(values){let i=0;return()=>values[i++%values.length];}
 
-test('original gift table and five-present carrying limit are preserved',()=>{
+test('current Pokémon-item gift table preserves the Stadium 2 score ladder and five-present carrying limit',()=>{
   coreReady();
   assert.deepEqual(core.GIFTS.map(g=>[g.key,g.points]),[
-    ['candy',20],['stocking',50],['gameBoy',100],['n64',250],['snorlax',350],['piano',600],['ring',1000]
+    ['oranBerry',20],['pokeBall',50],['stardust',100],['pearl',250],['starPiece',350],['nugget',600],['bigPearl',1000]
   ]);
   assert.equal(core.CONFIG.maxCarry,5);
   assert.equal(core.CONFIG.durationMs,60000);
@@ -22,10 +22,10 @@ test('collecting stops at five and heavier/full sacks reduce movement speed',()=
   coreReady();
   const game=core.createGame({difficulty:'normal',rng:sequence([.1,.2,.3,.4,.5]),nowMs:0});
   const p=game.player;
-  const ring=core.GIFTS.find(g=>g.key==='ring');
-  for(let i=0;i<5;i++)assert.equal(core.collectGift(p,{...ring,id:`r${i}`}).accepted,true);
+  const bigPearl=core.GIFTS.find(g=>g.key==='bigPearl');
+  for(let i=0;i<5;i++)assert.equal(core.collectGift(p,{...bigPearl,id:`r${i}`}).accepted,true);
   assert.equal(p.carried.length,5);
-  assert.equal(core.collectGift(p,{...ring,id:'extra'}).accepted,false);
+  assert.equal(core.collectGift(p,{...bigPearl,id:'extra'}).accepted,false);
   assert.ok(core.speedForPlayer(p)<core.speedForPlayer({...p,carried:[]}));
 });
 
@@ -33,10 +33,10 @@ test('banking scores carried gifts and rewards repeated matching presents',()=>{
   coreReady();
   const game=core.createGame({difficulty:'normal',rng:sequence([.2,.4,.6,.8]),nowMs:0});
   const p=game.player;
-  const candy=core.GIFTS.find(g=>g.key==='candy');
-  core.collectGift(p,{...candy,id:'a'});
-  core.collectGift(p,{...candy,id:'b'});
-  core.collectGift(p,{...candy,id:'c'});
+  const berry=core.GIFTS.find(g=>g.key==='oranBerry');
+  core.collectGift(p,{...berry,id:'a'});
+  core.collectGift(p,{...berry,id:'b'});
+  core.collectGift(p,{...berry,id:'c'});
   const out=core.bankCarried(p);
   assert.equal(p.carried.length,0);
   assert.equal(out.basePoints,60);

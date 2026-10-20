@@ -43,7 +43,8 @@ assert.deepEqual(core.PERSONALITIES.map(x=>x.key).sort(),['aggressive','cautious
   assert.equal(core.reactCpusToFeint,undefined,'CPU feint/bait logic should be removed with the B action');
   assert.ok(core.DIFFICULTIES.normal.reactionMs>=550,'Normal should give a meaningfully human reaction window');
   assert.ok(core.DIFFICULTIES.easy.reactionMs-core.DIFFICULTIES.normal.reactionMs>=200,'Easy should remain clearly slower than Normal');
-  assert.ok(core.DIFFICULTIES.normal.reactionMs-core.DIFFICULTIES.hard.reactionMs>=250,'Normal should be clearly separated from Hard');
+  assert.ok(core.DIFFICULTIES.hard.reactionMs>=400,'Hard should remain human-reactable on a phone rather than using sub-300ms base timing');
+  assert.ok(core.DIFFICULTIES.normal.reactionMs-core.DIFFICULTIES.hard.reactionMs>=80,'Normal should remain measurably slower than Hard');
 }
 
 console.log('arcade-eager-eevee core tests passed');

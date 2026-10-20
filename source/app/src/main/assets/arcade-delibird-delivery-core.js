@@ -17,9 +17,9 @@
     baseSpeed:35,
     pickupRadius:5.2,
     bankRadius:8,
-    swinubCollisionRadius:5.4,
-    stunMs:850,
-    hitGraceMs:1050,
+    swinubCollisionRadius:4.0,
+    stunMs:650,
+    hitGraceMs:1250,
     maxStepMs:40,
     giftTargetCount:14,
     maxSwinub:3
@@ -36,9 +36,9 @@
   ]);
 
   const DIFFICULTIES=Object.freeze({
-    easy:Object.freeze({key:'easy',label:'Easy',cpuThinkMs:410,bankThreshold:2,cpuSteerNoise:.13,swinubSpeed:.92}),
-    normal:Object.freeze({key:'normal',label:'Normal',cpuThinkMs:285,bankThreshold:3,cpuSteerNoise:.075,swinubSpeed:1}),
-    hard:Object.freeze({key:'hard',label:'Hard',cpuThinkMs:190,bankThreshold:4,cpuSteerNoise:.035,swinubSpeed:1.08})
+    easy:Object.freeze({key:'easy',label:'Easy',cpuThinkMs:520,bankThreshold:2,cpuSteerNoise:.18,swinubSpeed:.90,hazardAwarenessRadius:6.5,valueFocus:.20,cpuSpeed:.80}),
+    normal:Object.freeze({key:'normal',label:'Normal',cpuThinkMs:390,bankThreshold:3,cpuSteerNoise:.12,swinubSpeed:.98,hazardAwarenessRadius:8.5,valueFocus:.45,cpuSpeed:.86}),
+    hard:Object.freeze({key:'hard',label:'Hard',cpuThinkMs:275,bankThreshold:4,cpuSteerNoise:.065,swinubSpeed:1.05,hazardAwarenessRadius:11,valueFocus:.75,cpuSpeed:.95})
   });
   const REWARDS=Object.freeze({easy:Object.freeze([100,65,40,25]),normal:Object.freeze([135,90,55,30]),hard:Object.freeze([175,115,75,40])});
 
@@ -108,9 +108,9 @@
     if(!best)return false;collectGift(player,best);removeGift(game,best);spawnGift(game,rng);return true;
   }
   function tryBank(player){return player.y<=CONFIG.homeY+5&&Math.abs(player.x-player.homeX)<=CONFIG.bankRadius?bankCarried(player):null;}
-  function movePlayer(player,dt,now){
+  function movePlayer(player,dt,now,speedScale=1){
     if(now<Number(player.stunnedUntil||0))return;
-    const speed=speedForPlayer(player),x=Number(player.inputX)||0,y=Number(player.inputY)||0,mag=Math.hypot(x,y),scale=mag>1?1/mag:1;
+    const speed=speedForPlayer(player)*clamp(speedScale,.5,1),x=Number(player.inputX)||0,y=Number(player.inputY)||0,mag=Math.hypot(x,y),scale=mag>1?1/mag:1;
     player.x=clamp(player.x+x*scale*speed*dt,3,97);player.y=clamp(player.y+y*scale*speed*dt,6,95);
   }
   function chooseCpuTarget(game,cpu,profile,rng,now){
@@ -118,7 +118,7 @@
     if(cpu.carried.length&&(full||cpu.carried.length>=profile.bankThreshold||carriedValue>=900)){cpu.targetGiftId=null;return{x:cpu.homeX,y:CONFIG.homeY};}
     let best=null,bestScore=-Infinity;
     for(const g of game.gifts){
-      const d=Math.max(3,dist(cpu,g)),score=(g.points+70)/d;
+      const d=Math.max(3,dist(cpu,g)),score=(g.points*profile.valueFocus+70)/d;
       if(score>bestScore){best=g;bestScore=score;}
     }
     cpu.targetGiftId=best?.id||null;cpu.nextThinkAt=now+profile.cpuThinkMs;return best||{x:cpu.homeX,y:75};
@@ -131,8 +131,8 @@
     let dx=target.x-cpu.x,dy=target.y-cpu.y,mag=Math.hypot(dx,dy)||1;
     let ix=dx/mag,iy=dy/mag;
     // Lightweight hazard awareness: sidestep a nearby Swinub instead of receiving a hidden speed bonus.
-    for(const s of game.swinub){if(dist(cpu,s)<13){iy+=cpu.y<s.y?-.45:.45;ix+=cpu.x<s.x?-.18:.18;}}
-    ix+=between(rng,-profile.cpuSteerNoise,profile.cpuSteerNoise);iy+=between(rng,-profile.cpuSteerNoise,profile.cpuSteerNoise);setInput(cpu,ix,iy);movePlayer(cpu,dt,now);
+    for(const s of game.swinub){if(dist(cpu,s)<profile.hazardAwarenessRadius){iy+=cpu.y<s.y?-.45:.45;ix+=cpu.x<s.x?-.18:.18;}}
+    ix+=between(rng,-profile.cpuSteerNoise,profile.cpuSteerNoise);iy+=between(rng,-profile.cpuSteerNoise,profile.cpuSteerNoise);setInput(cpu,ix,iy);movePlayer(cpu,dt,now,profile.cpuSpeed);
   }
   function stepSwinub(game,dt){
     for(const s of game.swinub){s.x+=s.vx*dt;if(s.vx>0&&s.x>108)s.x=-8;else if(s.vx<0&&s.x<-8)s.x=108;s.y+=Math.sin(s.phase+s.x*.05)*.025;}
