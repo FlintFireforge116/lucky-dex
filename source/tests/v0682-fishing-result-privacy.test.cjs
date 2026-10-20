@@ -11,8 +11,8 @@ const css=fs.readFileSync(path.join(root,'arcade-fishing.css'),'utf8');
 test('hooked Pokemon stay anonymous until the result modal',()=>{
   assert.match(html,/id="fishingFishTarget"[^>]*aria-label="Unknown hooked catch"/);
   assert.match(js,/fishing-target-hidden/);
-  assert.doesNotMatch(js,/catchItem\.name[^\n]*on the line/,'pre-catch status must not interpolate the Pokemon name');
-  assert.match(js,/Something is on the line/);
+  assert.match(js,/catchItem\.kind==='pokemon'\?'Something is on the line[^']*'/,'Pokemon branch stays anonymous before landing');
+  assert.match(js,/`\$\{catchItem\.name\} is on the line/,'non-Pokemon catches may identify their item before landing');
 });
 
 test('caught result is an input-blocking popup with a dedicated KEEP FISHING action and no close X',()=>{

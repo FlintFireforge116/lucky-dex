@@ -65,3 +65,11 @@
   .fishing-game.is-fishing-play .fishing-message{min-height:34px;padding:4px 7px}
   .fishing-game.is-fishing-play .fishing-action{min-height:48px}
 }
+
+/* v0.68.5 Fishing item silhouettes */
+.fishing-target.is-item{display:block;font-size:0;background-position:center;background-repeat:no-repeat;background-size:contain;image-rendering:auto}
+.fishing-target-item-silhouette{width:64px;height:64px;filter:brightness(0) opacity(.88) drop-shadow(1px 0 #d9edf4) drop-shadow(-1px 0 #d9edf4) drop-shadow(0 1px #d9edf4) drop-shadow(0 -1px #d9edf4) drop-shadow(0 3px 2px #04101bbb)}
+.fishing-book-item-art{width:58px!important;height:58px!important;object-fit:contain;background:#07131e;border-radius:8px;padding:4px;box-sizing:border-box}
+.fishing-book-item-art.is-silhouette{filter:brightness(0) opacity(.64) drop-shadow(1px 0 #8ca2b2) drop-shadow(-1px 0 #8ca2b2) drop-shadow(0 1px #8ca2b2) drop-shadow(0 -1px #8ca2b2)!important}
+.fishing-result-item-art{width:82px!important;height:82px!important;object-fit:contain!important;image-rendering:auto!important}
+@media(max-width:420px){.fishing-result-item-art{width:64px!important;height:64px!important}}
