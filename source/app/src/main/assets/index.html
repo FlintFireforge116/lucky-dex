@@ -73,7 +73,7 @@
     </div>
     <div class="title-partner-row" id="titlePartners"></div>
     <button id="titleContinueBtn" class="title-start">PRESS TO START</button>
-    <div class="title-footer"><span id="titleRankText">TRAINER RANK 1</span><span>v0.68.6</span></div>
+    <div class="title-footer"><span id="titleRankText">TRAINER RANK 1</span><span>v0.69.0</span></div>
   </div>
 
   <div id="starterPanel" class="starter-screen" hidden>
@@ -90,7 +90,7 @@
   <div id="app" class="app-shell">
     <header class="topbar">
       <div class="brand-block">
-        <div class="eyebrow">LUCKY DEX · v0.68.6</div>
+        <div class="eyebrow">LUCKY DEX · v0.69.0</div>
         <h1>Lucky Dex</h1>
       </div>
       <div class="top-resources">
@@ -947,9 +947,9 @@
           <section id="fishingFishView">
             <section id="fishingSetupView" class="fishing-setup-page">
               <div class="fishing-setup-copy"><div class="eyebrow">CHOOSE YOUR WATER</div><h2>Prepare to fish</h2><p class="muted small">Pick a region, fishing spot, rod and optional bait. Your choices stay equipped until you change them.</p></div>
-              <div class="fishing-setup">
-                <label>REGION<select id="fishingRegion"></select></label>
-                <label>AREA<select id="fishingArea"></select></label>
+              <div class="fishing-progression-section"><div class="fishing-progression-title"><span>REGIONS</span><small>Progress from Kanto through Paldea</small></div><div id="fishingRegionProgress" class="fishing-region-progress" aria-label="Fishing regions"></div></div>
+              <div class="fishing-progression-section"><div class="fishing-progression-title"><span>FISHING SPOTS</span><small>Catch 3 distinct local Pokémon to open the next spot</small></div><div id="fishingSpotProgress" class="fishing-spot-progress" aria-label="Fishing spots"></div></div>
+              <div class="fishing-setup fishing-gear-setup">
                 <label>ROD<select id="fishingRod"></select></label>
                 <label>BAIT<select id="fishingBait"></select></label>
                 <p id="fishingAreaMeta" class="fishing-area-meta"></p>
@@ -1362,6 +1362,7 @@
   <script src="arcade-picross-data.js"></script>
   <script src="arcade-picross-core.js"></script>
   <script src="arcade-picross.js"></script>
+  <script src="arcade-fishing-locations.js"></script>
   <script src="arcade-fishing-core.js"></script>
   <script src="arcade-fishing-item-art.js"></script>
   <script src="arcade-fishing.js"></script>

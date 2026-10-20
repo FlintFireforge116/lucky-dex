@@ -48,7 +48,7 @@ test('confusion is a volatile condition rather than an unsupported status move',
   const r=B.act(f,'move',{moveId:109},{});
   assert.ok(f.enemy.confusionTurns>0);
   assert.ok(r.action.events.some(e=>/confused/i.test(e.text)));
-  assert.equal(r.action.events.some(e=>/No battle effect is currently implemented/i.test(e.text)),false);
+  assert.equal(r.action.events.some(e=>/^Confuse Ray: No battle effect is currently implemented/i.test(e.text||'')),false);
 });
 
 test('binding moves trap and deal residual damage',()=>{
@@ -92,7 +92,7 @@ test('Leech Seed drains the target and heals its owner each turn',()=>{
 });
 
 test('Haze resets accumulated battle stat stages on both sides',()=>{
-  const f=fight(mon(1,'1:n',[14,114],{speed:200}),mon(2,null,[43,150],{speed:1}),13);
+  const f=fight(mon(1,'1:n',[14,114],{speed:200}),mon(2,null,[150],{speed:1}),13);
   B.act(f,'move',{moveId:14},{});
   assert.notEqual(f.party[0].stages.attack,0);
   B.act(f,'move',{moveId:114},{});

@@ -177,7 +177,7 @@
 
   function readyMoves(p){return p.moves.filter(id=>(Number(p.pp?.[id])||0)>0&&D.moves[id]&&!(p.disableTurns>0&&Number(id)===Number(p.disabledMoveId)));}
 
-  function canStruggle(p){return !readyMoves(p).some(id=>D.moves[id].damageClass!=='status');}
+  function canStruggle(p){return readyMoves(p).length===0;}
 
   function resolveMove(fight,p,command,args){if(args?.moveId)return Number(args.moveId);if(command==='quick')return p.moves[0];const damage=readyMoves(p).filter(id=>D.moves[id].damageClass!=='status');return damage.sort((a,b)=>(D.moves[b].power||40)-(D.moves[a].power||40))[0]||p.moves[0];}
 
