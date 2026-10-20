@@ -12,8 +12,9 @@ function el(id=''){
 function targetFor(selectorMap){return{closest(sel){return selectorMap[sel]||null}};}
 
 function boot(){
-  const ids=['fishingGame','fishingWalletStrip','fishingLuckyCoins','fishingTokens','fishingFishView','fishingBook','fishingShop','fishingSetupView','fishingPlayView','fishingRegionProgress','fishingSpotProgress','fishingRod','fishingBait','fishingAreaMeta','fishingStartBtn','fishingPlayScene','fishingPlayRegion','fishingPlayArea','fishingPlayGear','fishingPlayRod','fishingPlayBait','fishingChangeSpotBtn','fishingMessage','fishingCountdown','fishingResult','fishingResultOverlay','fishingResultActions','fishingShopWallet','fishingShopNotice','fishingBookGrid','fishingShopGrid','fishingFishTarget','fishingCatchZone','fishingProgressFill','fishingActionBtn','fishingBookSearch','fishingBookRegion','fishingBookCategory','fishingBookStatus','fishingBookSort'];
+  const ids=['fishingGame','fishingWalletStrip','fishingLuckyCoins','fishingTokens','fishingFishView','fishingBook','fishingShop','fishingSetupView','fishingPlayView','fishingRegionProgress','fishingSpotProgress','fishingRod','fishingBait','fishingAreaMeta','fishingStartBtn','fishingPlayScene','fishingPlayRegion','fishingPlayArea','fishingPlayGear','fishingPlayRod','fishingPlayBait','fishingChangeSpotBtn','fishingMessage','fishingCountdown','fishingResult','fishingResultOverlay','fishingResultActions','fishingShopWallet','fishingShopNotice','fishingBookGrid','fishingShopGrid','fishingFishTarget','fishingCatchZone','fishingProgressFill','fishingActionBtn','fishingBookSearch','fishingBookRegion','fishingBookCategory','fishingBookStatus','fishingBookSort','fishingCartDock','fishingCartToggle','fishingCartPanel','fishingCartItems','fishingCartTotal','fishingCartBalance','fishingCartCheckout','fishingCartClear'];
   const map=Object.fromEntries(ids.map(id=>[id,el(id)]));
+  if(map.fishingCartPanel)map.fishingCartPanel.hidden=true;
   const tabs=['fish','book','shop'].map(name=>{const x=el(`tab-${name}`);x.dataset.fishingTab=name;return x;});
   global.window=global;
   global.document={body:{classList:{add(){},remove(){}}},getElementById:id=>map[id]||null,querySelectorAll:sel=>sel==='[data-fishing-tab]'?tabs:[]};
@@ -61,17 +62,20 @@ test('rod can be changed from inside the fishing location between casts',()=>{
   global.LuckyDexFishing.close();
 });
 
-test('successful shop purchase immediately updates wallet, inventory, and visible feedback',()=>{
+test('shop additions remain temporary until cart checkout updates wallet and inventory',()=>{
   const h=boot();
-  h.tabs.find(x=>x.dataset.fishingTab==='shop');
   h.map.fishingGame.listeners.click({target:targetFor({'[data-fishing-tab]':h.tabs.find(x=>x.dataset.fishingTab==='shop')})});
-  const buy={dataset:{fishingBuy:'bait:basic'}};
-  h.map.fishingGame.listeners.click({target:targetFor({'[data-fishing-buy]':buy})});
+  const add={dataset:{fishingCartAdd:'bait:basic'}};
+  h.map.fishingGame.listeners.click({target:targetFor({'[data-fishing-cart-add]':add})});
+  assert.equal(global.state.arcade.fishing.fishingTokens,500);
+  assert.equal(global.state.arcade.fishing.bait.basic,2);
+  assert.match(h.map.fishingCartToggle.textContent,/1 ITEM/);
+  h.map.fishingGame.listeners.click({target:targetFor({'#fishingCartCheckout':h.map.fishingCartCheckout})});
   assert.equal(global.state.arcade.fishing.fishingTokens,490);
   assert.equal(global.state.arcade.fishing.bait.basic,7);
   assert.equal(h.map.fishingShopWallet.textContent,'🎣 490');
   assert.equal(h.map.fishingTokens.textContent,'🎣 490');
-  assert.match(h.map.fishingShopNotice.textContent,/Purchased Basic Bait/i);
+  assert.match(h.map.fishingShopNotice.textContent,/Purchased 1 item/i);
   assert.match(h.map.fishingShopGrid.innerHTML,/OWNED 7/);
   global.LuckyDexFishing.close();
 });

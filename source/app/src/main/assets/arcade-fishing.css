@@ -91,3 +91,11 @@
 .fishing-shop-notice[data-tone=bad]{color:#ff9696;border-color:#ef737366}
 .fishing-game.is-fishing-play .fishing-play-scene{grid-template-rows:auto auto auto minmax(0,1fr) auto}
 @media(max-height:700px){.fishing-play-gear-controls{padding:3px 5px}.fishing-play-gear-controls select{min-height:36px}.fishing-countdown{font-size:25px;padding:12px 18px}}
+
+/* v0.69.8 editable Tackle Shop cart */
+.fishing-cart-dock{position:sticky;bottom:0;z-index:8;margin-top:10px;padding:8px;border:1px solid #ffffff26;border-radius:14px;background:#0b1b29eF;box-shadow:0 -10px 24px #061019cc;backdrop-filter:blur(8px)}
+.fishing-cart-toggle{width:100%;min-height:46px;border:1px solid #e2c46666;border-radius:10px;background:#e2c466;color:#18222c;font-weight:950;letter-spacing:.03em}
+.fishing-cart-panel{display:grid;gap:8px;margin-top:8px}.fishing-cart-panel[hidden]{display:none}
+.fishing-cart-items{display:grid;gap:6px}.fishing-cart-line{display:grid;grid-template-columns:minmax(0,1fr) auto auto;gap:8px;align-items:center;padding:8px;border:1px solid #ffffff20;border-radius:9px;background:#102435}.fishing-cart-line.is-bait{grid-template-columns:minmax(0,1fr) auto auto auto}.fishing-cart-line small,.fishing-cart-line span{display:block;color:#9eb3c4;font-size:10px}.fishing-cart-line>button{border:1px solid #ffffff24;border-radius:8px;background:#172e41;color:#dbe7ef;font-size:10px;font-weight:900;padding:8px}
+.fishing-cart-qty{display:grid;grid-template-columns:34px 28px 34px;align-items:center;text-align:center}.fishing-cart-qty button{height:34px;border:1px solid #ffffff24;background:#172e41;color:#fff;font-size:20px;font-weight:900}.fishing-cart-qty button:first-child{border-radius:8px 0 0 8px}.fishing-cart-qty button:last-child{border-radius:0 8px 8px 0}.fishing-cart-qty b{display:grid;place-items:center;height:34px;background:#091724}
+.fishing-cart-balance{padding:8px 10px;border-radius:9px;background:#071521;color:#c5d5df;font-size:11px;font-weight:850;text-align:center}.fishing-cart-actions{display:grid;grid-template-columns:.7fr 1.6fr;gap:8px}.fishing-cart-actions button{min-height:44px;border-radius:10px;font-weight:950}.fishing-cart-actions .ghost{border:1px solid #ffffff24;background:#172e41;color:#dbe7ef}.fishing-cart-actions .primary{border:0;background:#e2c466;color:#18222c}.fishing-cart-actions button:disabled{opacity:.45}
