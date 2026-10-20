@@ -9,6 +9,7 @@
   let opened=false,selectedArea=0,selectedPuzzleId=null,board=null,tool='fill',timer=null,finished=false;
   const FOCUS_CELL_SIZES=[24,28,32,36,40,44];
   let focusZoomIndex=2;
+  let focusPreviousTool='fill';
   let drag={active:false,pointerId:null,tool:null,mark:null,start:null,last:null,startClient:null,travel:0,tapThresholdPx:6,moved:false,geometry:null,visited:new Set()};
 
   function platform(){return root.LuckyDexArcadePlatform||null;}
@@ -74,8 +75,9 @@
     host.style.gridTemplateRows=`${columnClue}px repeat(${puzzle.height},${cell}px)`;
     const label=$('picrossZoomLabel');if(label)label.textContent=`${cell}px`;const out=$('picrossZoomOut'),inc=$('picrossZoomIn');if(out)out.disabled=focusZoomIndex<=0;if(inc)inc.disabled=focusZoomIndex>=FOCUS_CELL_SIZES.length-1;
   }
-  function openFocusMode(){if(!board)return false;const view=$('picrossPuzzleView'),bar=$('picrossFocusBar');if(!view)return false;resetDrag();view.classList.add('picross-focus-mode');view.classList.toggle('picross-pan-mode',tool==='pan');if(bar)bar.hidden=false;const btn=$('picrossFocusBtn');if(btn)btn.setAttribute('aria-pressed','true');applyBoardGeometry();setTimeout(()=>{$('picrossBoardWrap')?.scrollTo?.({left:0,top:0});},0);return true;}
-  function closeFocusMode(){const view=$('picrossPuzzleView'),bar=$('picrossFocusBar');if(view)view.classList.remove('picross-focus-mode','picross-pan-mode');if(tool==='pan')setTool('fill');if(bar)bar.hidden=true;const btn=$('picrossFocusBtn');if(btn)btn.setAttribute('aria-pressed','false');resetDrag();if(board)applyBoardGeometry();return true;}
+  function resetBoardViewport(){const wrap=$('picrossBoardWrap');if(!wrap)return;const reset=()=>{wrap.scrollLeft=0;wrap.scrollTop=0;try{wrap.scrollTo?.({left:0,top:0,behavior:'auto'});}catch(_){}};reset();if(typeof requestAnimationFrame==='function')requestAnimationFrame(reset);setTimeout(reset,0);}
+  function openFocusMode(){if(!board)return false;const view=$('picrossPuzzleView'),bar=$('picrossFocusBar');if(!view)return false;resetDrag();focusPreviousTool=tool==='x'?'x':'fill';view.classList.add('picross-focus-mode');if(bar)bar.hidden=false;const btn=$('picrossFocusBtn');if(btn)btn.setAttribute('aria-pressed','true');setTool('pan');applyBoardGeometry();resetBoardViewport();return true;}
+  function closeFocusMode(){const view=$('picrossPuzzleView'),bar=$('picrossFocusBar'),wasFocus=focusModeActive();if(view)view.classList.remove('picross-focus-mode','picross-pan-mode');if(wasFocus)setTool(focusPreviousTool);if(bar)bar.hidden=true;const btn=$('picrossFocusBtn');if(btn)btn.setAttribute('aria-pressed','false');resetDrag();if(board){applyBoardGeometry();resetBoardViewport();}return true;}
   function changeFocusZoom(delta){if(!focusModeActive()||!board)return false;focusZoomIndex=Math.max(0,Math.min(FOCUS_CELL_SIZES.length-1,focusZoomIndex+Number(delta||0)));resetDrag();applyBoardGeometry();return true;}
   function renderBoard(){
     if(!board)return;const puzzle=board.puzzle,host=$('picrossBoard');if(!host)return;
