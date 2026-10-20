@@ -61,13 +61,14 @@ const JUNK=[
  {id:'glitched-driftwood',name:'Glitched Driftwood',value:99,easter:true,ultra:true,desc:'Its shape seems to change whenever you stop looking at it.'}
 ];
 const TREASURE=[
- {id:'coin-pouch',name:'Washed-up Coin Pouch',rewardKind:'coins',amount:500,weight:34},
- {id:'stardust',name:'Stardust Cache',rewardKind:'dust',amount:80,weight:28},
- {id:'pack-ticket',name:'Pack Ticket',rewardKind:'tickets',amount:1,weight:20},
- {id:'sealed-pack',name:'Sealed Booster',rewardKind:'pack',amount:1,weight:10},
- {id:'big-dust',name:'Shimmering Dust Tin',rewardKind:'dust',amount:200,weight:5},
- {id:'ticket-pair',name:'Two Pack Tickets',rewardKind:'tickets',amount:2,weight:3}
+ {id:'coin-pouch',name:'Washed-up Coin Pouch',rewardKind:'coins',amount:650,weight:34,payoutTokens:12,payoutCoins:20},
+ {id:'stardust',name:'Stardust Cache',rewardKind:'dust',amount:125,weight:28,payoutTokens:15,payoutCoins:20},
+ {id:'pack-ticket',name:'Pack Ticket',rewardKind:'tickets',amount:1,weight:20,payoutTokens:20,payoutCoins:30},
+ {id:'sealed-pack',name:'Sealed Booster',rewardKind:'pack',amount:1,weight:10,payoutTokens:28,payoutCoins:45},
+ {id:'big-dust',name:'Shimmering Dust Tin',rewardKind:'dust',amount:225,weight:5,payoutTokens:40,payoutCoins:65},
+ {id:'ticket-pair',name:'Two Pack Tickets',rewardKind:'tickets',amount:2,weight:3,payoutTokens:55,payoutCoins:90}
 ];
+const RARITY_COIN_BASE={common:2,uncommon:7,rare:18,'very-rare':40,legendary:90};
 const RARITY_VALUE={common:2,uncommon:4,rare:8,'very-rare':14,legendary:24};
 const RARITY_DIFFICULTY={common:.24,uncommon:.40,rare:.58,'very-rare':.75,legendary:.88};
 const RARITY_WEIGHT={common:1,uncommon:.58,rare:.28,'very-rare':.11,legendary:.025};
@@ -160,7 +161,17 @@ function recordProgressionCatch(save,catalog,area,speciesId){const p=ensureProgr
 function buy(save,type,id){const s=ensureState(save);if(type==='rod'){const row=RODS[id];if(!row)return{ok:false,reason:'unknown'};if(s.rods[id])return{ok:false,reason:'owned'};if(s.fishingTokens<row.price)return{ok:false,reason:'tokens'};s.fishingTokens-=row.price;s.rods[id]=true;return{ok:true,cost:row.price,quantity:1};}if(type==='bait'){const row=BAIT[id];if(!row)return{ok:false,reason:'unknown'};if(s.fishingTokens<row.price)return{ok:false,reason:'tokens'};s.fishingTokens-=row.price;s.bait[id]=(Number(s.bait[id])||0)+row.quantity;return{ok:true,cost:row.price,quantity:row.quantity};}return{ok:false,reason:'type'};}
 function checkoutCart(save,lines){if(!Array.isArray(lines)||!lines.length)return{ok:false,reason:'empty'};const shadow=JSON.parse(JSON.stringify(save||{})),s=ensureState(shadow),normalized=[],seenRods=new Set();let cost=0,itemCount=0;for(const raw of lines){const type=raw?.type,id=raw?.id,quantity=Number(raw?.quantity);if(!Number.isInteger(quantity)||quantity<=0)return{ok:false,reason:'quantity'};if(type==='rod'){const row=RODS[id];if(!row)return{ok:false,reason:'unknown'};if(quantity!==1)return{ok:false,reason:'rod-quantity'};if(seenRods.has(id)||s.rods[id])return{ok:false,reason:'owned'};seenRods.add(id);cost+=row.price;itemCount+=1;normalized.push({type,id,quantity:1,row});}else if(type==='bait'){const row=BAIT[id];if(!row)return{ok:false,reason:'unknown'};cost+=row.price*quantity;itemCount+=quantity;normalized.push({type,id,quantity,row});}else return{ok:false,reason:'type'};}if(s.fishingTokens<cost)return{ok:false,reason:'tokens',cost};s.fishingTokens-=cost;for(const line of normalized){if(line.type==='rod')s.rods[line.id]=true;else s.bait[line.id]=(Number(s.bait[line.id])||0)+line.row.quantity*line.quantity;}const target=ensureState(save);target.fishingTokens=s.fishingTokens;target.rods={...s.rods};target.bait={...s.bait};return{ok:true,cost,itemCount,lineCount:normalized.length};}
 function consumeBait(save,id){if(!id||id==='none')return true;const s=ensureState(save);if((s.bait[id]||0)<=0)return false;s.bait[id]-=1;return true;}
-function catchPayout(c={}){if(c.kind==='treasure')return{fishingTokens:5,luckyCoins:2};if(c.kind==='junk'){const tokens=c.ultra?10:c.easter?3:1;return{fishingTokens:tokens,luckyCoins:1};}const fishingTokens=Math.max(1,Math.round(Number(c.value)||1)),luckyCoins=Math.max(1,Math.min(8,Math.round(fishingTokens*.28)));return{fishingTokens,luckyCoins};}
+function treasureRewardLabel(c={}){const amount=Math.max(0,Math.round(Number(c.amount)||0));if(c.rewardKind==='coins')return`+${amount.toLocaleString('en-GB')} Lucky Coins`;if(c.rewardKind==='dust')return`+${amount.toLocaleString('en-GB')} Card Dust`;if(c.rewardKind==='tickets')return`+${amount.toLocaleString('en-GB')} Pack Ticket${amount===1?'':'s'}`;if(c.rewardKind==='pack')return c.name||'Sealed Booster';return c.name||'Treasure reward';}
+function catchPayout(c={}){
+ if(c.kind==='treasure')return{fishingTokens:Math.max(5,Math.round(Number(c.payoutTokens)||5)),luckyCoins:Math.max(2,Math.round(Number(c.payoutCoins)||2))};
+ if(c.kind==='junk'){
+  const value=Math.max(0,Number(c.value)||0);
+  if(c.ultra)return{fishingTokens:Math.max(75,Math.round(value*.10)),luckyCoins:Math.max(500,Math.round(value))};
+  if(c.easter)return{fishingTokens:Math.max(4,Math.min(20,Math.round(value*.35))),luckyCoins:Math.max(8,Math.min(75,Math.round(value*.75)))};
+  return{fishingTokens:Math.max(1,Math.min(6,Math.round(value*.30))),luckyCoins:Math.max(1,Math.min(10,Math.round(value*.50)))};
+ }
+ const fishingTokens=Math.max(1,Math.round(Number(c.value)||1)),rarity=String(c.rarity||'common'),base=RARITY_COIN_BASE[rarity]||RARITY_COIN_BASE.common,ratio=Math.max(.5,Math.min(1.7,Number(c.sizeRatio)||1)),sizeFactor=Math.max(.72,Math.min(1.2,.85+(ratio-1)*.45)),jumboBonus=c.jumbo?1.35:1,scaledCoins=Math.max(1,Math.round(base*sizeFactor*jumboBonus)),luckyCoins=rarity==='common'?Math.min(fishingTokens,scaledCoins):scaledCoins;return{fishingTokens,luckyCoins};
+}
 function recordCatch(save,c,catalog=null,area=null){const s=ensureState(save);s.catches++;s.totalValue+=Number(c.value)||0;s.bestValue=Math.max(s.bestValue,Number(c.value)||0);if(c.kind==='pokemon'){s.pokemonCaught++;s.biggestRatio=Math.max(s.biggestRatio,Number(c.sizeRatio)||0);if(c.jumbo)s.jumboCaught++;if(c.tiny)s.tinyCaught++;if(['rare','very-rare','legendary'].includes(c.rarity))s.rareCaught++;const key=String(c.speciesId),old=s.book.pokemon[key]||{count:0,largestM:0,heaviestKg:0,bestValue:0};s.book.pokemon[key]={count:old.count+1,largestM:Math.max(old.largestM||0,c.lengthM||0),heaviestKg:Math.max(old.heaviestKg||0,c.weightKg||0),bestValue:Math.max(old.bestValue||0,c.value||0),rarity:c.rarity};}
  else if(c.kind==='junk'){s.junkCaught++;if(c.easter)s.easterJunk++;const old=s.book.junk[c.id]||{count:0};s.book.junk[c.id]={count:old.count+1,bestValue:Math.max(old.bestValue||0,c.value||0)};}
  else if(c.kind==='treasure'){s.treasuresCaught++;const old=s.book.treasure[c.id]||{count:0};s.book.treasure[c.id]={count:old.count+1};}
@@ -176,5 +187,5 @@ function stepFight(run,{hold=false}={},dt=16){if(!run||run.phase!=='playing')ret
  else if(behavior==='erratic'){const seg=Math.floor(t/330),r=behaviorNoise(run.seed,seg),r2=behaviorNoise(run.seed+9176,seg);target=.05+r*.90+Math.sin(t*.021+r2*5)*.055;response=11+d*10;direct=.105+d*.045;damping=.64;}
  target=clamp(target,.035,.965);if(direct)run.fishY=clamp(run.fishY+(target-run.fishY)*direct,.02,.98);run.fishV+=(target-run.fishY)*response*sec;run.fishV*=Math.pow(damping,dt/16);run.fishY=clamp(run.fishY+run.fishV*sec,.02,.98);
  const targetZoneV=hold?-1.05:.92,blend=Math.min(1,sec*30);run.zoneV+=(targetZoneV-run.zoneV)*blend;run.zoneY=clamp(run.zoneY+run.zoneV*sec,run.zoneSize/2,1-run.zoneSize/2);if(run.zoneY===run.zoneSize/2||run.zoneY===1-run.zoneSize/2)run.zoneV=0;const inside=Math.abs(run.fishY-run.zoneY)<=run.zoneSize/2;run.progress=clamp(run.progress+(inside?(0.30-d*.10):-(.145+d*.105))*sec,0,1);if(run.progress>=1)run.phase='caught';else if(run.progress<=0||run.timeMs>45000)run.phase='escaped';return run;}
-return{REGION_DEFS,RODS,BAIT,JUNK,TREASURE,AREA_ART,buildCatalog,rarityFor,regionKeyForId,rodAllowsSpecies,createCatch,rollCatch,ensureState,ensureProgression,isRegionUnlocked,isAreaUnlocked,progressForArea,unlockRequirement,recordProgressionCatch,availableSpecies,buy,checkoutCart,consumeBait,catchPayout,recordCatch,startFight,stepFight};
+return{REGION_DEFS,RODS,BAIT,JUNK,TREASURE,AREA_ART,buildCatalog,rarityFor,regionKeyForId,rodAllowsSpecies,createCatch,rollCatch,ensureState,ensureProgression,isRegionUnlocked,isAreaUnlocked,progressForArea,unlockRequirement,recordProgressionCatch,availableSpecies,buy,checkoutCart,consumeBait,treasureRewardLabel,catchPayout,recordCatch,startFight,stepFight};
 });

@@ -22,5 +22,6 @@ test('landing a Pokemon reveals it only in an input-blocking result modal',async
    ts+=16;const cb=rafCb;assert.equal(typeof cb,'function');cb(ts);await Promise.resolve();
  }
  assert.equal(map.fishingResultOverlay.hidden,false,'successful catch opens modal');assert.match(map.fishingResult.innerHTML,/Tentacool/,'Pokemon is revealed after landing');assert.equal(map.fishingActionBtn.disabled,true,'cast/reel button is blocked behind modal');assert.equal(map.fishingResultActions.hidden,false,'KEEP FISHING is immediately available in the separate popup');
+ assert.equal(global.state.stats?.arcadeCoins,global.state.profile.coins,'Fishing Lucky Coins count toward the shared Arcade earnings stat');
  global.LuckyDexFishing.close();
 });
