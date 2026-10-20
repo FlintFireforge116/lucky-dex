@@ -7,24 +7,24 @@ function harness(badges=0){const timers=new Map();let timerId=0,closed=0,encount
 
 test('cast visibly cycles Gen III ellipses before a no-bite result',()=>{
  const h=harness(),original=Date.now;Date.now=()=>timeFor(h.place.name,0,.30);h.press('data-fish-cast');
- assert.match(h.body.innerHTML,/\./);h.runNext();assert.match(h.body.innerHTML,/\.\./);h.runNext();assert.match(h.body.innerHTML,/\.\.\./);h.runNext();assert.match(h.body.innerHTML,/Not even a nibble/i);Date.now=original;
+ assert.match(h.controls.innerHTML,/\./);h.runNext();assert.match(h.controls.innerHTML,/\.\./);h.runNext();assert.match(h.controls.innerHTML,/\.\.\./);h.runNext();assert.match(h.controls.innerHTML,/Not even a nibble/i);Date.now=original;
 });
 
 test('Oh! A bite! makes the dialog itself tappable and a successful Old Rod press starts one battle',()=>{
  const h=harness(0),original=Date.now;Date.now=()=>timeFor(h.place.name,.44,1);h.press('data-fish-cast');h.runNext();h.runNext();h.runNext();
- assert.match(h.body.innerHTML,/Oh! A bite!/);assert.match(h.body.innerHTML,/data-fish-hook/);assert.match(h.body.innerHTML,/class="adv-fishing-gen3-dialog[^\"]*is-action/);
- h.press('data-fish-hook');h.runNext();assert.match(h.body.innerHTML,/Pokémon(?:'|&#39;)s on the hook!/);h.runNext();Date.now=original;assert.equal(h.encounters.length,1);
+ assert.match(h.controls.innerHTML,/Oh! A bite!/);assert.match(h.controls.innerHTML,/data-fish-hook/);assert.match(h.controls.innerHTML,/class="adv-fishing-gen3-dialog[^\"]*is-action/);
+ h.press('data-fish-hook');h.runNext();assert.match(h.controls.innerHTML,/Pokémon(?:'|&#39;)s on the hook!/);h.runNext();Date.now=original;assert.equal(h.encounters.length,1);
 });
 
 test('missing the bite window produces got away instead of silently returning',()=>{
- const h=harness(),original=Date.now;Date.now=()=>timeFor(h.place.name,.44,1);h.press('data-fish-cast');h.runNext();h.runNext();h.runNext();assert.match(h.body.innerHTML,/Oh! A bite!/);h.runNext();assert.match(h.body.innerHTML,/got away/i);assert.equal(h.encounters.length,0);Date.now=original;
+ const h=harness(),original=Date.now;Date.now=()=>timeFor(h.place.name,.44,1);h.press('data-fish-cast');h.runNext();h.runNext();h.runNext();assert.match(h.controls.innerHTML,/Oh! A bite!/);h.runNext();assert.match(h.controls.innerHTML,/got away/i);assert.equal(h.encounters.length,0);Date.now=original;
 });
 
 test('better rods require multiple successful bite confirmations',()=>{
  const h=harness(8),original=Date.now;Date.now=()=>timeFor(h.place.name,.44,1);h.press('data-fish-rod');
  // choose Super Rod directly through dataset path
  h.shell.config.onInput({dataset:{fishRod:'super'},hasAttribute:()=>false});h.press('data-fish-cast');
- for(let i=0;i<3;i++)h.runNext();assert.match(h.body.innerHTML,/Oh! A bite!/);h.press('data-fish-hook');
- for(let i=0;i<3;i++)h.runNext();assert.match(h.body.innerHTML,/Oh! A bite!/);h.press('data-fish-hook');
- for(let i=0;i<3;i++)h.runNext();assert.match(h.body.innerHTML,/Oh! A bite!/);h.press('data-fish-hook');h.runNext();h.runNext();Date.now=original;assert.equal(h.encounters.length,1);
+ for(let i=0;i<3;i++)h.runNext();assert.match(h.controls.innerHTML,/Oh! A bite!/);h.press('data-fish-hook');
+ for(let i=0;i<3;i++)h.runNext();assert.match(h.controls.innerHTML,/Oh! A bite!/);h.press('data-fish-hook');
+ for(let i=0;i<3;i++)h.runNext();assert.match(h.controls.innerHTML,/Oh! A bite!/);h.press('data-fish-hook');h.runNext();h.runNext();Date.now=original;assert.equal(h.encounters.length,1);
 });
