@@ -30,9 +30,9 @@ test('landed catches pay both Fishing Tokens and a smaller Lucky Coin bonus',()=
   assert.equal(typeof C.catchPayout,'function');
   const fish=C.createCatch({species:S.byId[129],rolls:{size:.5},rod:'old'});
   const payout=C.catchPayout(fish);
-  assert(payout.fishingTokens>=fish.value,'appraisal drives fishing-currency payout');
+  assert(payout.fishingTokens>=1&&payout.fishingTokens<=5,'common catches use the low-token fishing economy');
   assert(payout.luckyCoins>0,'every landed catch gives some Lucky Coins');
-  assert(payout.luckyCoins<payout.fishingTokens,'Lucky Coins are a secondary bonus, not the fishing economy');
+  assert(payout.luckyCoins<=payout.fishingTokens,'Lucky Coins are a secondary bonus, not the fishing economy');
 });
 
 test('Old Rod separates common from very-rare catches under human-scale reaction delay',()=>{

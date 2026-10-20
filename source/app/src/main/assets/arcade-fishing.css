@@ -21,4 +21,45 @@
 .fishing-result-payout{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-top:9px}
 .fishing-result-payout b{margin:0!important;padding:7px 8px;border-radius:8px;background:#0b1a27;font-size:11px}.fishing-result-payout b:first-child{color:#7cd9c4}.fishing-result-payout b:last-child{color:#f5d86e}
 .fishing-result-actions{margin-top:12px}.fishing-result-actions button{width:100%;min-height:54px;border:0;border-radius:12px;background:#e2c466;color:#17202b;font-weight:1000}
-@media(max-width:420px){.fishing-wallet-strip{grid-template-columns:1fr}.fishing-result-payout{grid-template-columns:1fr}}
+@media(max-width:420px){.fishing-wallet-strip{grid-template-columns:1fr 1fr}.fishing-result-payout{grid-template-columns:1fr}}
+
+
+/* v0.68.3 Fishing one-screen play/result polish */
+.fishing-game.is-fishing-play{overflow-y:hidden;gap:5px;padding-bottom:max(8px,env(safe-area-inset-bottom))}
+.fishing-game.is-fishing-play .fishing-tabs{margin:2px 0;gap:4px}
+.fishing-game.is-fishing-play .fishing-tabs button{min-height:40px}
+.fishing-game.is-fishing-play .fishing-wallet-strip{grid-template-columns:1fr 1fr;margin:2px 0 4px;padding:4px;gap:4px}
+.fishing-game.is-fishing-play .fishing-wallet-strip>span{padding:3px 6px;min-height:34px}
+.fishing-game.is-fishing-play .fishing-wallet-strip small{font-size:8px}
+.fishing-game.is-fishing-play #fishingFishView{display:flex;flex:1;min-height:0;overflow:hidden}
+.fishing-game.is-fishing-play .fishing-play-view{display:flex;flex:1;min-height:0;overflow:hidden;width:100%}
+.fishing-game.is-fishing-play .fishing-play-scene{display:grid;grid-template-rows:auto auto minmax(0,1fr) auto;flex:1;width:100%;height:100%;min-height:0;gap:5px;padding:7px}
+.fishing-game.is-fishing-play .fishing-play-head{padding:5px 7px;gap:7px;min-height:54px}
+.fishing-game.is-fishing-play .fishing-play-head h3{font-size:16px}
+.fishing-game.is-fishing-play .fishing-play-head button{min-height:40px;min-width:92px;padding:5px 7px}
+.fishing-game.is-fishing-play .fishing-message{padding:6px 8px;min-height:38px;font-size:11px;display:flex;align-items:center}
+.fishing-game.is-fishing-play .fishing-catch-stage{min-height:0;height:100%;grid-template-columns:minmax(0,1fr) 34px;gap:6px}
+.fishing-game.is-fishing-play .fishing-water-column{min-height:0;height:100%}
+.fishing-game.is-fishing-play .fishing-progress{min-height:0;height:100%}
+.fishing-game.is-fishing-play .fishing-action{min-height:52px;font-size:16px}
+.fishing-target-hidden{background:transparent!important;border:0;border-radius:0;color:transparent;font-size:0;box-shadow:none;filter:drop-shadow(0 2px 2px #04101bbb)}
+.fishing-target-hidden:before{content:"";position:absolute;left:9px;top:18px;width:34px;height:22px;border:3px solid #d9edf4;border-radius:55% 48% 48% 55%;background:#07131d}
+.fishing-target-hidden:after{content:"";position:absolute;right:3px;top:18px;width:18px;height:24px;background:#d9edf4;clip-path:polygon(0 50%,100% 0,100% 100%)}
+.fishing-target-hidden.is-idle{visibility:hidden}
+.fishing-result-fish{position:relative;background:transparent!important;font-size:0}
+.fishing-result-fish:before{content:"";position:absolute;left:13px;top:28px;width:42px;height:27px;border:4px solid #d9edf4;border-radius:55% 48% 48% 55%;background:#07131d}
+.fishing-result-fish:after{content:"";position:absolute;right:5px;top:27px;width:23px;height:30px;background:#d9edf4;clip-path:polygon(0 50%,100% 0,100% 100%)}
+@media(max-width:420px){
+  .fishing-wallet-strip{grid-template-columns:1fr 1fr}
+  .fishing-game.is-fishing-play .fishing-wallet-strip>span{display:grid;gap:0;justify-items:start}
+  .fishing-game.is-fishing-play .fishing-wallet-strip b{font-size:12px}
+  .fishing-game.is-fishing-play .fishing-play-head small,.fishing-game.is-fishing-play .fishing-play-head span{font-size:8px}
+  .fishing-game.is-fishing-play .fishing-catch-stage{grid-template-columns:minmax(0,1fr) 30px}
+}
+@media(max-height:700px){
+  .fishing-game.is-fishing-play .fishing-wallet-strip{margin:0;padding:3px}
+  .fishing-game.is-fishing-play .fishing-wallet-strip>span{min-height:30px;padding:2px 5px}
+  .fishing-game.is-fishing-play .fishing-play-head{min-height:48px}
+  .fishing-game.is-fishing-play .fishing-message{min-height:34px;padding:4px 7px}
+  .fishing-game.is-fishing-play .fishing-action{min-height:48px}
+}

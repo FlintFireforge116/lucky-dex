@@ -1,6 +1,6 @@
 {
   "name": "luckydex-recovery-tests",
-  "version": "0.68.2",
+  "version": "0.68.3",
   "private": true,
   "scripts": {
     "test": "node scripts/run-tests.cjs"

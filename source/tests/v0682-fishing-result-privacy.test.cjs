@@ -15,13 +15,13 @@ test('hooked Pokemon stay anonymous until the result modal',()=>{
   assert.match(js,/Something is on the line/);
 });
 
-test('caught result is an input-blocking popup with delayed controls and no instant close X',()=>{
+test('caught result is an input-blocking popup with a dedicated KEEP FISHING action and no close X',()=>{
   assert.match(html,/id="fishingResultOverlay"[^>]*hidden/);
   assert.match(html,/id="fishingResultActions"[^>]*hidden/);
   assert.match(html,/id="fishingResultContinueBtn"/);
   assert.doesNotMatch(html,/fishingResultClose/);
   assert.match(js,/resultOpen/);
-  assert.match(js,/RESULT_UNLOCK_MS/);
+  assert.doesNotMatch(js,/RESULT_UNLOCK_MS/);
   assert.match(css,/\.fishing-result-overlay\{[^}]*position:fixed/);
 });
 

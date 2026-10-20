@@ -67,7 +67,8 @@ test('help module exposes first-time, info and cleanup lifecycle APIs',()=>{
   assert.match(src,/Tip/);
   const css=read('arcade-help.css');
   assert.match(css,/arcade-game-help-button/);
-  assert.match(css,/position:fixed/);
-  assert.match(css,/env\(safe-area-inset-top\)/);
-  assert.match(css,/z-index:\s*1[2-9]\d{3}/);
+  assert.match(css,/arcade-full-head\.arcade-help-mounted/);
+  assert.match(css,/arcade-help-fallback-slot/);
+  assert.match(css,/\.arcade-game-help-button\{[^}]*position:static/);
+  assert.doesNotMatch(css,/\.arcade-game-help-button\{[^}]*position:fixed/);
 });
