@@ -1,0 +1,15 @@
+LuckyDex v0.65.4 – Egg Emergency overlap + fall timing hotfix
+
+Changes:
+- Raised the three CPU Chanseys so they no longer sit on top of the score tags.
+- Tightened the CPU score tags to reduce visual overlap.
+- Extended the visible fall depth for Eggs and Voltorb so they disappear later, closer to the actual catch zone.
+- Slightly widened the left/right drop positions for clearer lane separation.
+
+Verified:
+- node tests/arcade-egg-emergency.test.cjs
+- node tests/arcade-egg-emergency-polish.test.cjs
+- node tests/arcade-egg-emergency-sim.test.cjs
+- node tests/arcade-egg-emergency-integration.test.cjs
+- node --check app/src/main/assets/arcade-egg-emergency.js
+- node --check app/src/main/assets/arcade-egg-emergency-core.js

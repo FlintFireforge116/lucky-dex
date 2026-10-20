@@ -1,4 +1,11 @@
+.superpowers/
+.worktrees/
 source/.gradle/
 source/**/build/
 source/node_modules/
+source/artifacts/
 *.apk
+LuckyDex-APK-*.zip
+LuckyDex_source_v*.zip
+source/TEST_REPORT_v*.md
+source/V*_REPORT.md

@@ -1,0 +1,14 @@
+LuckyDex v0.66.1 – Eager Eevee layout + easy-timing hotfix
+
+Changes:
+- Moved Aipom to the side of the tray instead of directly above it.
+- Repositioned all four Eevees evenly around the central tray.
+- Standardised the Eevee sprite size so the player and CPUs match.
+- Made Easy mode more forgiving with later reveals, a longer reaction window, slower CPU reactions, and reduced CPU feint pressure.
+
+Verified:
+- node tests/arcade-eager-eevee.test.cjs
+- node tests/arcade-eager-eevee-integration.test.cjs
+- node tests/arcade-eager-eevee-sim.test.cjs
+- node --check app/src/main/assets/arcade-eager-eevee.js
+- node --check app/src/main/assets/arcade-eager-eevee-core.js

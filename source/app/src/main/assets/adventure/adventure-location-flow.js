@@ -1,6 +1,7 @@
 /* Place presentation and optional services; authored battle/reward IDs stay in the engine. */
 (function(root){'use strict';
 const E=root.LuckyDexRegionalEngine||(typeof require==='function'?require('./adventure-regional-engine.js'):null);
+const Activities=root.LuckyDexAdventureActivities||(typeof require==='function'?require('./adventure-location-activities.js'):null);
 const slug=s=>String(s).normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'');
 const towns={
  kanto:['Pallet Town','Viridian City','Pewter City','Cerulean City','Vermilion City','Lavender Town','Celadon City','Fuchsia City','Saffron City','Cinnabar Island','Indigo Plateau'],
@@ -43,7 +44,7 @@ function notice(j,text){const p=describe(j),f=local(j);f.feedback={placeId:p.id,
 function feedbackFor(j){const f=j?.locationFlow,p=describe(j),nodeId=j?.backtrack?.name?`backtrack:${j.backtrack.name}`:p?.nodeId;return f?.nodeId===nodeId&&f.traversal===(j.traversal||0)&&f.feedback?.placeId===p?.id?f.feedback.text:'';}
 function dismiss(j){if(!j?.locationFlow?.feedback)return false;j.locationFlow.feedback=null;return true;}
 function actionsFor(save,j=save?.adventureRegional?.active){const p=describe(j),current=E.current(j);if(!p||j.recovery||['node','battle','complete'].includes(j.phase)||j.phase==='result'&&(current?.optional||milestone(current)))return [];const n=mainNode(j),last=stepFor(j,n)===path(j,n).length-1,done=j.phase==='result'&&current?.id===n.id,available=E.available(j),out=[],add=(key,label,extra={})=>out.push({key,label,...extra});
- if(j.backtrack){if(p.services.talk)add('talk','TALK TO LOCALS');if(p.services.center)add('center','POKÉMON CENTER');if(p.services.mart)add('mart',p.services.martLabel,{screen:'mart'});if(E.hasEncounterPool?.(j,p.name))add('hunt-local','LOOK FOR POKÉMON');add('return-story','RETURN TO STORY');return out.slice(0,6);}
+ if(j.backtrack){if(p.services.talk)add('talk','TALK TO LOCALS');if(p.services.center)add('center','POKÉMON CENTER');if(p.services.mart)add('mart',p.services.martLabel,{screen:'mart'});if(E.hasEncounterPool?.(j,p.name))add('hunt-local','LOOK FOR POKÉMON');add('return-story','RETURN TO STORY');return [...out.slice(0,6),...(Activities?.actionsFor(save,p)||[])].slice(0,7);}
  if(p.services.talk)add('talk','TALK TO LOCALS');
  if(p.services.center)add('center','POKÉMON CENTER');
  if(p.services.home&&last&&n.type==='event'&&!j.claims[n.id]&&j.phase==='map')add('heal','REST AT HOME',{nodeId:n.id});
@@ -62,10 +63,11 @@ function actionsFor(save,j=save?.adventureRegional?.active){const p=describe(j),
  if(last&&n.type==='gym'&&!done&&j.phase==='map'&&path(j,n).length>1)add('leave-gym','LEAVE GYM',{destinationId:destinationId(j,path(j,n)[0])});
  const next=j.nodes.find(v=>!v.optional&&v.depth===n.depth+1);if(last&&n.type==='camp'&&next?.type==='gym')add('gym',`ENTER ${p.nextLabel.toUpperCase()}`,{nodeId:next.id,destinationId:p.nextId});
  for(const d of available.filter(v=>v.optional&&!['cache','rare','wild-hunt'].includes(v.type))){if(d.type==='shop'&&!p.services.mart)add('merchant','TRAVELLING MERCHANT',{nodeId:d.id,screen:'mart',context:'merchant'});}
- return out.slice(0,6);
+ return [...out.slice(0,6),...(Activities?.actionsFor(save,p)||[])].slice(0,7);
 }
 function outcome(applied,extra={}){return {applied:!!applied,...extra};}
 function perform(save,key){const j=E.ensureSave(save).active;if(!j)return outcome(false);const action=actionsFor(save,j).find(a=>a.key===key);if(!action)return outcome(false);const p=describe(j),n=mainNode(j);local(j);dismiss(j);
+ if(key==='fish')return outcome(true,{activity:'fish',place:p});
  if(key==='hunt-local')return outcome(E.enterLocalWild?.(save,p.name));
  if(key==='return-story')return outcome(returnToStory(save),{destination:describe(j)?.name});
  if(key==='leave-gym'){const f=local(j);f.step=0;f.gymCityReturn=true;j.location=path(j,n)[0];return outcome(true,{destination:j.location})}

@@ -86,10 +86,22 @@
     const key = typeof id === 'string' ? id : id && id.id;
     return owns(DESTINATIONS,key) ? DESTINATIONS[key] : DESTINATIONS.meadow;
   }
+  function normalizeHunt(hunt) {
+    if(!isObject(hunt))hunt={};
+    const target=Number(hunt.targetId);
+    hunt.targetId=Number.isInteger(target)&&target>0?target:null;
+    hunt.chain=count(hunt.chain);
+    if(!isObject(hunt.bestBySpecies))hunt.bestBySpecies={};
+    for(const [id,value] of Object.entries(hunt.bestBySpecies)){const numeric=Number(id);if(!Number.isInteger(numeric)||numeric<=0)delete hunt.bestBySpecies[id];else hunt.bestBySpecies[String(numeric)]=count(value);}
+    hunt.startedAt=Number.isFinite(hunt.startedAt)&&hunt.startedAt>0?hunt.startedAt:null;
+    if(hunt.targetId){const key=String(hunt.targetId);hunt.bestBySpecies[key]=Math.max(count(hunt.bestBySpecies[key]),hunt.chain);}
+    return hunt;
+  }
   function normalizeRecord(record) {
     if(!isObject(record))record={};
     for(const key of ['encounters','shiny','clears','chain'])record[key]=count(record[key]);
     for(const key of ['seen','caught','rare'])if(!isObject(record[key]))record[key]={};
+    record.huntV2=normalizeHunt(record.huntV2);
     if(!owns(record,'boss'))record.boss=false;
     return record;
   }
@@ -101,6 +113,8 @@
     if(!isObject(v2.destinations))v2.destinations={};
     for(const id of Object.keys(DESTINATIONS))v2.destinations[id]=normalizeRecord(v2.destinations[id]);
     if(!owns(DESTINATIONS,v2.lastDestination))v2.lastDestination='meadow';
+    if(!owns(DESTINATIONS,v2.activeTargetHuntDestination))v2.activeTargetHuntDestination=null;
+    else if(!fieldRecord(v2,v2.activeTargetHuntDestination).huntV2.targetId)v2.activeTargetHuntDestination=null;
     if(!isObject(v2.activeRoam)||!owns(DESTINATIONS,v2.activeRoam.destination))v2.activeRoam=null;
     else {
       const record=fieldRecord(v2,v2.activeRoam.destination);
@@ -115,6 +129,38 @@
   function fieldRecord(v2,destination) {
     if(!isObject(v2.destinations))v2.destinations={};const id=destinationFor(destination).id;
     return v2.destinations[id]=normalizeRecord(v2.destinations[id]);
+  }
+  function huntState(v2,destination) {
+    return fieldRecord(v2,destination).huntV2=normalizeHunt(fieldRecord(v2,destination).huntV2);
+  }
+  function preserveBest(hunt) {
+    if(hunt.targetId){const key=String(hunt.targetId);hunt.bestBySpecies[key]=Math.max(count(hunt.bestBySpecies[key]),count(hunt.chain));}
+    return hunt;
+  }
+  function startTargetHunt(v2,destination,targetId) {
+    const dest=destinationFor(destination).id,target=Number(targetId);
+    if(!Number.isInteger(target)||target<=0)throw new TypeError('Target hunt requires a valid species id.');
+    if(v2.activeTargetHuntDestination&&v2.activeTargetHuntDestination!==dest){const previous=huntState(v2,v2.activeTargetHuntDestination);preserveBest(previous);previous.targetId=null;previous.chain=0;previous.startedAt=null;}
+    const hunt=huntState(v2,dest);
+    if(hunt.targetId!==target){preserveBest(hunt);hunt.targetId=target;hunt.chain=0;hunt.startedAt=Date.now();}
+    else if(!hunt.startedAt)hunt.startedAt=Date.now();
+    v2.activeTargetHuntDestination=dest;preserveBest(hunt);return hunt;
+  }
+  function updateTargetHunt(v2,destination,outcome={}) {
+    const hunt=huntState(v2,destination);if(!hunt.targetId)return hunt;
+    const id=Number(isObject(outcome)?(outcome.speciesId??outcome.id):null),target=id===hunt.targetId,kind=String(outcome?.kind||'');
+    if(target&&kind==='capture'){hunt.chain=count(hunt.chain)+1;preserveBest(hunt);}
+    else if(target&&['fled','loss'].includes(kind)&&outcome.committed!==false){preserveBest(hunt);hunt.chain=0;}
+    return hunt;
+  }
+  function targetChainInfo(v2,destination) {
+    const hunt=huntState(v2,destination),chain=count(hunt.chain),best=hunt.targetId?Math.max(count(hunt.bestBySpecies[String(hunt.targetId)]),chain):0;
+    let milestone={targetWeight:1,clueTier:0,rareBonus:0,itemBonus:0,shinyMultiplier:1,nextThreshold:3};
+    if(chain>=20)milestone={targetWeight:4,clueTier:4,rareBonus:2,itemBonus:3,shinyMultiplier:2,nextThreshold:null};
+    else if(chain>=10)milestone={targetWeight:3,clueTier:3,rareBonus:1.5,itemBonus:2,shinyMultiplier:1.5,nextThreshold:20};
+    else if(chain>=5)milestone={targetWeight:2,clueTier:2,rareBonus:1,itemBonus:1.5,shinyMultiplier:1.25,nextThreshold:10};
+    else if(chain>=3)milestone={targetWeight:1.5,clueTier:1,rareBonus:.5,itemBonus:1,shinyMultiplier:1,nextThreshold:5};
+    return {targetId:hunt.targetId,chain,best,...milestone};
   }
   function fieldChain(v2,destination) {
     return count(fieldRecord(v2,destination).chain);
@@ -146,6 +192,15 @@
     const unique=key=>isObject(record[key])?Object.keys(record[key]).filter(id=>record[key][id]>0).length:0;
     return Math.min(5,(count(record.encounters)>0?1:0)+(unique('seen')>=5?1:0)+(unique('caught')>=3?1:0)+(unique('rare')>0||count(record.shiny)>0?1:0)+(count(record.clears)>0||record.boss?1:0));
   }
+  function knownTargetIds(v2,destination) {
+    const id=destinationFor(destination).id,record=fieldRecord(v2,id),pool=ENCOUNTER_POOLS[id]||ENCOUNTER_POOLS.meadow,allowed=new Set([...pool.normal,...pool.rare,...pool.legendary].map(Number));
+    return [...new Set([...Object.keys(record.seen||{}),...Object.keys(record.caught||{})].map(Number).filter(n=>Number.isInteger(n)&&n>0&&allowed.has(n)))].sort((a,b)=>a-b);
+  }
+  function weightedPick(ids,targetId,targetWeight=1,randomValue=0) {
+    if(!Array.isArray(ids)||!ids.length)return null;const target=Number(targetId),weight=Math.max(1,Number(targetWeight)||1),r=Math.max(0,Math.min(.999999999,Number(randomValue)||0));
+    const weights=ids.map(id=>Number(id)===target?weight:1),total=weights.reduce((a,b)=>a+b,0);let cursor=r*total;
+    for(let i=0;i<ids.length;i++){cursor-=weights[i];if(cursor<0)return ids[i];}return ids[ids.length-1];
+  }
   function chainInfo(v2,id){const chain=fieldChain(v2,id);return {chain,rareBonus:Math.round(Math.min(.02,chain*.002)*1000)/10,itemBonus:Math.round(Math.min(.03,chain*.003)*1000)/10,nextThreshold:chain>=10?null:chain<5?5:10};}
-  return {DESTINATIONS,HOTSPOT_BLUEPRINTS,ENCOUNTER_POOLS,ensureState,mastery,recordEncounter,recordCatch,fieldChain,updateFieldChain,chainInfo};
+  return {DESTINATIONS,HOTSPOT_BLUEPRINTS,ENCOUNTER_POOLS,ensureState,mastery,recordEncounter,recordCatch,huntState,startTargetHunt,updateTargetHunt,targetChainInfo,knownTargetIds,weightedPick,fieldChain,updateFieldChain,chainInfo};
 });

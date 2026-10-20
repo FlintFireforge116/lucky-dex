@@ -52,7 +52,7 @@ test('journey MAP is wired to an active-region journey map rather than region se
   const src=fs.readFileSync(path.join(__dirname,'../app/src/main/assets/adventure/adventure-regional-ui.js'),'utf8');
   assert.match(src,/button\('journey-map','MAP'\)/);
   assert.match(src,/function journeyMap\(/);
-  assert.match(src,/r\.region==='kanto'/);
+  assert.match(src,/\['kanto','johto','hoenn'\]\.includes\(r\.region\)/);
   assert.match(src,/adv3-journey-map-stops/);
   assert.doesNotMatch(src,/function locationTools\(\).*button\('regions','MAP'/s);
 });

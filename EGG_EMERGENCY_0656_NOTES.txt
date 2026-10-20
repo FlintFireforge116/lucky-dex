@@ -1,0 +1,14 @@
+LuckyDex v0.65.6 – Egg Emergency no-overlap CPU staging hotfix
+
+Changes:
+- Moved the three CPU Chanseys much higher in the arena.
+- Reduced CPU Chansey size again so they stay visually separate from the score bars.
+- Preserved the previous drop-depth and player-lane improvements.
+
+Verified:
+- node tests/arcade-egg-emergency.test.cjs
+- node tests/arcade-egg-emergency-polish.test.cjs
+- node tests/arcade-egg-emergency-sim.test.cjs
+- node tests/arcade-egg-emergency-integration.test.cjs
+- node --check app/src/main/assets/arcade-egg-emergency.js
+- node --check app/src/main/assets/arcade-egg-emergency-core.js

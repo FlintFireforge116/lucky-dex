@@ -1,3 +1,13 @@
+# v0.67.0 — Adventure world overhaul foundations
+
+- Brought Johto and Hoenn Adventure presentation up to the Kanto model with named canonical location scene mappings and regional maps, while retaining local fallback art when canonical images cannot load.
+- Added a reusable Adventure location-activity framework so routes and landmarks can host real interactions without replacing the existing journey, battle, checkpoint or reward systems.
+- Added the first activity, **Fishing**: Old/Good/Super Rod progression, two-stage casting, bite reaction, hold/release tension control, deterministic species/level selection and ordinary regional battle/capture handoff. Fishing records persist additively with existing saves.
+- Reworked Wild Hunt into **Catch Chain v2** around a chosen local species. Known local Pokémon can be tracked, catches advance the chain, KOs preserve it without falsely counting as catches, untouched non-target leave is safe, and failed committed target encounters reset the active chain while preserving best-chain history.
+- Target chains now expose capped, visible encounter-weight, clue, rare/item and target shiny bonuses. The old habitat chain remains preserved as legacy Field Guide history rather than being silently rewritten.
+- Cleaned historical/generated repository clutter and normalized package, runtime and Android release identity to `0.67.0` / `6700` while preserving `com.example.luckydex` and the bundled LuckyDex development signer.
+- Added focused migration, Fishing, regional-visual and Catch Chain v2 regressions plus deterministic stress coverage. Playwright browser verification remains environment-dependent and is reported separately when unavailable.
+
 # v0.53.0 — Pikachu’s Beach Classic + DX
 
 - Replaced the v0.52 Classic approximation with a deterministic Pokémon Yellow-derived surfing core using the documented 6000 HP / 24-section state flow, source-faithful speed and landing penalties, and original Radness scoring.
