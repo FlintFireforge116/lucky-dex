@@ -10,17 +10,19 @@ const ui=fs.readFileSync(path.join(root,'app/src/main/assets/arcade-fishing.js')
 const html=fs.readFileSync(path.join(root,'app/src/main/assets/index.html'),'utf8');
 const css=fs.readFileSync(path.join(root,'app/src/main/assets/arcade-fishing.css'),'utf8');
 
-test('every junk and treasure catch has a dedicated local Fishing item asset',()=>{
+test('every junk and treasure catch resolves authentic existing/official item art',()=>{
   assert.equal(typeof Art.pathFor,'function','Fishing item art catalogue should exist');
+  assert.equal(typeof Art.fallbackFor,'function','Fishing item art should expose local fallbacks');
   const rows=[...Core.JUNK,...Core.TREASURE];
   assert.equal(rows.length,42);
-  const paths=rows.map(row=>Art.pathFor(row));
-  assert.equal(new Set(paths).size,rows.length,'each catch gets its own asset path');
-  for(let i=0;i<rows.length;i++){
-    const p=paths[i];
-    assert.match(p,/^arcade\/fishing-items-v0685\/.+\.svg$/);
-    assert.ok(fs.existsSync(path.join(root,'app/src/main/assets',p)),`${rows[i].id} asset exists`);
+  for(const row of rows){
+    const art=Art.pathFor(row),fallback=Art.fallbackFor(row);
+    assert.ok(art,`${row.id} has art`);
+    assert.doesNotMatch(art,/fishing-items-v0685|\.svg$/i,`${row.id} must not use hand-drawn Fishing SVG art`);
+    assert.ok(fallback,`${row.id} has fallback art`);
+    if(!/^https?:/.test(fallback))assert.ok(fs.existsSync(path.join(root,'app/src/main/assets',fallback)),`${row.id} fallback exists`);
   }
+  assert.equal(Art.pathFor('stardust'),'arcade/sprites/items/stardust.png');
 });
 
 test('Fishing UI uses item art rather than toolbox/gift emoji placeholders',()=>{
