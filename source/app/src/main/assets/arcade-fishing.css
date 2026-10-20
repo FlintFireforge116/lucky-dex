@@ -77,3 +77,17 @@
 /* v0.69.0 Fishing Lodge progression */
 .fishing-progression-section{display:grid;gap:6px}.fishing-progression-title{display:flex;align-items:end;justify-content:space-between;gap:10px}.fishing-progression-title>span{font-size:10px;font-weight:1000;letter-spacing:.09em;color:#f0d369}.fishing-progression-title>small{color:#89a5b9;font-size:9px;text-align:right}.fishing-region-progress,.fishing-spot-progress{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px}.fishing-progression-card{display:grid;gap:3px;min-height:58px;padding:9px 10px;text-align:left;border:1px solid #ffffff20;border-radius:10px;background:#102638;color:#f4f8fb}.fishing-progression-card span{font-weight:1000}.fishing-progression-card small{color:#9eb4c5;font-size:9px;line-height:1.25}.fishing-progression-card.is-current{border-color:#e4c85f;box-shadow:inset 0 0 0 2px #e4c85f33}.fishing-progression-card.is-unlocked:not(.is-current){border-color:#5d8eaa66}.fishing-progression-card.is-locked{background:#0a1824;color:#657c8e;border-color:#ffffff10;opacity:.78}.fishing-progression-card.is-locked small{color:#667d8e}.fishing-gear-setup{grid-template-columns:1fr 1fr}.fishing-gear-setup .fishing-area-meta{grid-column:1/-1}.fishing-start{margin-top:2px}
 @media(max-width:420px){.fishing-region-progress,.fishing-spot-progress{grid-template-columns:1fr 1fr}.fishing-progression-card{min-height:54px;padding:8px}.fishing-progression-title>small{max-width:54%}.fishing-gear-setup{grid-template-columns:1fr 1fr}}
+
+/* v0.69.7 Fishing start countdown, live gear, and shop feedback */
+.fishing-play-scene{position:relative}
+.fishing-play-gear-controls{display:grid;grid-template-columns:1fr 1fr;gap:6px;padding:5px 7px;border:1px solid #ffffff20;border-radius:10px;background:#071521dc;backdrop-filter:blur(3px)}
+.fishing-play-gear-controls label{display:grid;grid-template-columns:auto minmax(0,1fr);align-items:center;gap:6px;color:#9db5c8;font-size:8px;font-weight:1000;letter-spacing:.08em}
+.fishing-play-gear-controls select{width:100%;min-width:0;min-height:40px;border:1px solid #ffffff25;border-radius:8px;background:#0e1e2c;color:#f7fbff;padding:5px 7px;font-weight:800}
+.fishing-play-gear-controls select:disabled{opacity:.55}
+.fishing-countdown{position:absolute;z-index:20;left:50%;top:58%;transform:translate(-50%,-50%);min-width:118px;padding:15px 20px;border:3px solid #f4e4a0;border-radius:16px;background:#071521ee;color:#f8dc70;text-align:center;font-size:30px;font-weight:1000;letter-spacing:.08em;box-shadow:0 10px 32px #000a,inset 0 0 0 2px #ffffff18;pointer-events:none}
+.fishing-shop-notice{min-height:0;margin:0;padding:0;color:#9eb3c4;font-size:11px;font-weight:800;transition:.15s}
+.fishing-shop-notice:not(:empty){padding:8px 10px;border:1px solid #ffffff20;border-radius:9px;background:#102435}
+.fishing-shop-notice[data-tone=good]{color:#87df9e;border-color:#71c98966}
+.fishing-shop-notice[data-tone=bad]{color:#ff9696;border-color:#ef737366}
+.fishing-game.is-fishing-play .fishing-play-scene{grid-template-rows:auto auto auto minmax(0,1fr) auto}
+@media(max-height:700px){.fishing-play-gear-controls{padding:3px 5px}.fishing-play-gear-controls select{min-height:36px}.fishing-countdown{font-size:25px;padding:12px 18px}}

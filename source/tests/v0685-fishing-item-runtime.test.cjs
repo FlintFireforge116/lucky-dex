@@ -17,15 +17,15 @@ function setup(catchRow){
 
 test('hooked junk uses its own silhouette art and result popup reveals the same item art',async()=>{
  const junk={...Base.JUNK.find(x=>x.id==='rotten-leftovers'),kind:'junk',difficulty:.14};const {map,getRaf}=setup(junk);
- map.fishingGame.listeners.click({target:clickTarget('fishingStartBtn',map)});map.fishingGame.listeners.click({target:clickTarget('fishingActionBtn',map)});
+ map.fishingGame.listeners.click({target:clickTarget('fishingStartBtn',map)});await new Promise(r=>setTimeout(r,1450));map.fishingGame.listeners.click({target:clickTarget('fishingActionBtn',map)});
  assert.match(map.fishingFishTarget.style.backgroundImage,/leftovers\.png/,'hooked target gets the real Leftovers item sprite');
  assert.match(map.fishingMessage.textContent,/Rotten Leftovers/,'non-Pokemon catch may reveal its identity before landing');
  getRaf()(16);await Promise.resolve();
  assert.equal(map.fishingResultOverlay.hidden,false);assert.match(map.fishingResult.innerHTML,/fishing-result-item-art/);assert.match(map.fishingResult.innerHTML,/leftovers\.png/);assert.doesNotMatch(map.fishingResult.innerHTML,/🧰|🎁/);global.LuckyDexFishing.close();
 });
 
-test('hooked treasure uses its own silhouette art',()=>{
+test('hooked treasure uses its own silhouette art',async()=>{
  const treasure={...Base.TREASURE.find(x=>x.id==='sealed-pack'),kind:'treasure',difficulty:.2};const {map}=setup(treasure);
- map.fishingGame.listeners.click({target:clickTarget('fishingStartBtn',map)});map.fishingGame.listeners.click({target:clickTarget('fishingActionBtn',map)});
+ map.fishingGame.listeners.click({target:clickTarget('fishingStartBtn',map)});await new Promise(r=>setTimeout(r,1450));map.fishingGame.listeners.click({target:clickTarget('fishingActionBtn',map)});
  assert.match(map.fishingFishTarget.style.backgroundImage,/booster-mini-v0266\/base1\.webp/);assert.match(map.fishingMessage.textContent,/Sealed Booster/);global.LuckyDexFishing.close();
 });

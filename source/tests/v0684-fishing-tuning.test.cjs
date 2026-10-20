@@ -50,11 +50,10 @@ test('Old Rod catch zone is slim and visually shorter than the whole pond',()=>{
   assert.match(CSS,/\.fishing-catch-zone\{[^}]*left:\s*(?:1[89]|2\d)%[^}]*right:\s*(?:1[89]|2\d)%/,'catch zone should only cover roughly half to two-thirds of the pond width');
 });
 
-test('hidden Pokemon use size proxy silhouettes instead of one generic fish',()=>{
-  assert.match(JS,/Wishiwashi|746\.png/,'small proxy should use Wishiwashi');
-  assert.match(JS,/Finneon|456\.png/,'medium proxy should use a generic mid-size fish');
-  assert.match(JS,/Dondozo|977\.png/,'large proxy should use Dondozo');
-  assert.match(JS,/fishing-target-size-(?:small|medium|large)/,'runtime should attach a size silhouette class');
+test('hidden Pokemon use location-specific water silhouettes while preserving size classes',()=>{
+  assert.match(JS,/silhouetteSpeciesId/,'runtime should read the selected fishing spot silhouette');
+  assert.match(JS,/silhouetteForCatch\(run\.catchItem,areaFor\(fishingState\(\)\)\)/,'hooked Pokemon should use the current spot proxy');
+  assert.match(JS,/fishing-target-size-(?:small|medium|large)/,'runtime should still scale the local silhouette by catch size');
 });
 
 test('every fishing spot carries its own backdrop instead of only a region-wide image',()=>{

@@ -16,13 +16,13 @@ function setup(overrides={}){
 
 test('landed Pokemon actually credits and renders Fishing Tokens in the wallet',async()=>{
  const fixed=Base.createCatch({species:Species.byId[129],rolls:{size:.5},rod:'old'}),{map,getRaf}=setup({rollCatch:()=>fixed});
- map.fishingGame.listeners.click({target:clickTarget('fishingStartBtn',map)});map.fishingGame.listeners.click({target:clickTarget('fishingActionBtn',map)});
+ map.fishingGame.listeners.click({target:clickTarget('fishingStartBtn',map)});await new Promise(r=>setTimeout(r,1450));map.fishingGame.listeners.click({target:clickTarget('fishingActionBtn',map)});
  let ts=0,holding=false;for(let i=0;i<5000&&map.fishingResultOverlay.hidden;i++){const fish=parseFloat(map.fishingFishTarget.style.top)||50,zone=parseFloat(map.fishingCatchZone.style.top)||50,want=zone>fish;if(want!==holding){holding=want;(want?map.fishingActionBtn.listeners.pointerdown:map.fishingActionBtn.listeners.pointerup)?.({target:map.fishingActionBtn,preventDefault(){}});}ts+=16;getRaf()(ts);await Promise.resolve();}
  const payout=Base.catchPayout(fixed);assert.equal(global.state.arcade.fishing.fishingTokens,payout.fishingTokens,'saved wallet gets credited');assert.match(map.fishingTokens.textContent,new RegExp(String(payout.fishingTokens)),'visible wallet refreshes with credited tokens');assert.equal(map.fishingResultActions.hidden,false,'KEEP FISHING is available immediately in the separate popup');global.LuckyDexFishing.close();
 });
 
 test('escaped catch opens the same blocking popup with KEEP FISHING',async()=>{
  const fixed=Base.createCatch({species:Species.byId[129],rolls:{size:.5},rod:'old'}),{map,getRaf}=setup({rollCatch:()=>fixed,stepFight(run){run.phase='escaped';return run;}});
- map.fishingGame.listeners.click({target:clickTarget('fishingStartBtn',map)});map.fishingGame.listeners.click({target:clickTarget('fishingActionBtn',map)});getRaf()(16);await Promise.resolve();
+ map.fishingGame.listeners.click({target:clickTarget('fishingStartBtn',map)});await new Promise(r=>setTimeout(r,1450));map.fishingGame.listeners.click({target:clickTarget('fishingActionBtn',map)});getRaf()(16);await Promise.resolve();
  assert.equal(map.fishingResultOverlay.hidden,false,'escape opens result overlay');assert.match(map.fishingResult.innerHTML,/got away/i);assert.equal(map.fishingResultActions.hidden,false,'KEEP FISHING is immediately available');assert.equal(map.fishingActionBtn.disabled,true,'underlying cast button stays blocked');global.LuckyDexFishing.close();
 });

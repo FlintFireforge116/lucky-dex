@@ -5,7 +5,18 @@ const REGION_RANGES={kanto:[1,151],johto:[152,251],hoenn:[252,386],sinnoh:[387,4
 const ARCHIVE_BASE='https://archives.bulbagarden.net/wiki/Special:Redirect/file/';
 const remote=file=>ARCHIVE_BASE+encodeURIComponent(String(file).replace(/ /g,'_'));
 const p=(speciesId,minRod='old',weight=1,extra={})=>({speciesId,minRod,weight,...extra});
-const a=(id,name,file,fallbackBackdrop,backdropPosition,pool)=>({id,name,scene:remote(file),fallbackBackdrop,backdropPosition,pool});
+const SILHOUETTE_BY_AREA={
+ 'kanto-cerulean-waters':118,'kanto-vermilion-harbour':72,'kanto-safari-pond':118,'kanto-seafoam-coast':72,
+ 'johto-cherrygrove-shore':170,'johto-lake-of-rage':129,'johto-olivine-harbour':170,'johto-whirl-islands':170,
+ 'hoenn-dewford-shore':320,'hoenn-slateport-harbour':318,'hoenn-route-119':339,'hoenn-sootopolis-depths':320,
+ 'sinnoh-valley-windworks':456,'sinnoh-pastoria-marsh':339,'sinnoh-canalave-harbour':456,'sinnoh-league-coast':456,
+ 'unova-driftveil-waters':550,'unova-undella-bay':592,'unova-village-bridge':550,'unova-seaside-cave':592,
+ 'kalos-ambrette-coast':690,'kalos-cyllage-shore':692,'kalos-azure-bay':690,'kalos-couriway-river':118,
+ 'alola-melemele-sea':746,'alola-brooklet-hill':746,'alola-akala-coast':746,'alola-poni-wilds':746,
+ 'galar-hulbury-harbour':846,'galar-motostoke-riverbank':833,'galar-lake-of-outrage':846,'galar-crown-tundra':846,
+ 'paldea-south-province-coast':963,'paldea-casseroya-lake':976,'paldea-porto-marinada':963,'paldea-north-sea':976
+};
+const a=(id,name,file,fallbackBackdrop,backdropPosition,pool)=>({id,name,scene:remote(file),fallbackBackdrop,backdropPosition,silhouetteSpeciesId:SILHOUETTE_BY_AREA[id]||129,pool});
 const REGIONS={
  kanto:{id:'kanto',name:'Kanto',regionalTarget:10,areas:[
   a('kanto-cerulean-waters','Cerulean Waters','Cerulean City FRLG.png','adventure/location-scenes/kanto-city.png','66% 36%',[p(129),p(118),p(54),p(60),p(7,'good'),p(55,'good'),p(61,'good'),p(119,'good'),p(8,'super'),p(62,'super'),p(130,'super'),p(134,'deep'),p(9,'deep')]),
@@ -65,5 +76,5 @@ const REGIONS={
 function clone(v){return JSON.parse(JSON.stringify(v));}
 function buildCatalog(speciesById={}){const regions={};for(const regionId of REGION_ORDER){const src=REGIONS[regionId];const areas=src.areas.map((area,order)=>{const pool=area.pool.filter(row=>speciesById[row.speciesId]).map(row=>({...row}));const species=[...new Set(pool.map(row=>row.speciesId))];return{...clone(area),region:regionId,order,regionalTarget:src.regionalTarget,pool,species,backdrop:area.scene};});const range=REGION_RANGES[regionId]||[1,1025],species=Object.values(speciesById).filter(row=>row&&row.id>=range[0]&&row.id<=range[1]&&Array.isArray(row.types)&&row.types.includes('water')).map(row=>row.id).sort((x,y)=>x-y);regions[regionId]={id:src.id,name:src.name,regionalTarget:src.regionalTarget,species,areas};}return{regions};}
 function minRodTier(minRod){return ROD_TIER[minRod]??0;}
-return{REGION_ORDER,REGIONS,REGION_RANGES,ROD_TIER,buildCatalog,minRodTier};
+return{REGION_ORDER,REGIONS,REGION_RANGES,ROD_TIER,SILHOUETTE_BY_AREA,buildCatalog,minRodTier};
 });
