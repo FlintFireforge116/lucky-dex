@@ -356,6 +356,17 @@
     push('pikachubeach_dx_flawless','🌊','Untouchable DX','Clear a DX course without taking damage.','arcade',{coins:1700,dust:110,tickets:1},()=>[nonNeg(s().arcade?.pikachuBeach?.dx?.flawlessClears),1]);
     push('secret_pikachubeach_dx_lucky_wave','?','DX Golden Break','Land the rare Lucky Wave in DX.','arcade',{coins:2000,dust:140,tickets:1},()=>[nonNeg(s().arcade?.pikachuBeach?.dx?.luckyWavesLanded),1],{hidden:true});
 
+    // Fishing Lodge.
+    push('fishing_first_catch','🎣','First Bite','Land your first catch in Fishing.','arcade',{coins:300},()=>[nonNeg(s().arcade?.fishing?.catches),1]);
+    push('fishing_species_20','🐟','Angler’s Log','Record 20 different Water Pokémon species.','arcade',{coins:900,dust:60},()=>[Object.keys(s().arcade?.fishing?.book?.pokemon||{}).length,20]);
+    push('fishing_catches_100','🌊','Seasoned Angler','Land 100 catches.','arcade',{coins:1600,dust:100,tickets:1},()=>[nonNeg(s().arcade?.fishing?.catches),100]);
+    push('fishing_jumbo','📏','That’s a Big One','Land a Jumbo-size Pokémon.','arcade',{coins:1000,dust:75},()=>[nonNeg(s().arcade?.fishing?.jumboCaught),1]);
+    push('fishing_treasure','🎁','Something Shiny','Fish up a treasure prize.','arcade',{coins:800,dust:50},()=>[nonNeg(s().arcade?.fishing?.treasurePrizes),1]);
+    push('fishing_junk_10','🧰','Ocean Cleanup','Discover 10 different pieces of fishing junk.','arcade',{coins:1200,dust:80},()=>[Object.keys(s().arcade?.fishing?.book?.junk||{}).length,10]);
+    push('secret_fishing_slowpoke_tail','?','A Suspicious Delicacy','Fish up a Slowpoke Tail.','arcade',{coins:1800,dust:120,tickets:1},()=>[nonNeg(s().arcade?.fishing?.book?.junk?.['slowpoke-tail']?.count),1],{hidden:true});
+    push('secret_fishing_eon_ticket','?','The Other Half','Fish up a Torn Eon Ticket.','arcade',{coins:2200,dust:150,tickets:2},()=>[nonNeg(s().arcade?.fishing?.book?.junk?.['torn-eon-ticket']?.count),1],{hidden:true});
+
+
     // Museum / excavation display progression.
     for(const [n,reward] of [[1,250],[5,600],[10,1200],[20,2500]])push(`museum_exhibits_${n}`,'🏛',n===1?'First Exhibit':`${n} Museum Exhibits`,`Discover ${n} different museum exhibits.`,'museum',{coins:reward,dust:n*5,tickets:n>=20?2:n>=10?1:0},()=>[museumCount(s()),n]);
     push('museum_repeat_10','⛏','Favourite Exhibit','Excavate the same museum item 10 times.','museum',{coins:700,dust:75},()=>[museumMaxDuplicates(s()),10],{hidden:true});

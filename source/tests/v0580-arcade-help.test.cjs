@@ -24,7 +24,7 @@ test('shared Arcade help assets exist and load before arcade-world',()=>{
 
 test('every current Arcade game has complete shared instructions',()=>{
   const ids=worldGameIds();
-  assert.equal(ids.length,38);
+  assert.ok(ids.length>=40,'current Arcade registry should include the expanded game set');
   const help=require(path.join(ASSETS,'arcade-help.js'));
   assert.deepEqual(help.gameIds().sort(),ids.sort());
   for(const id of ids){

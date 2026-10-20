@@ -15,6 +15,7 @@
   <link rel="stylesheet" href="trade-browser-v0169.css" />
   <link rel="stylesheet" href="arcade.css" />
   <link rel="stylesheet" href="arcade-help.css" />
+  <link rel="stylesheet" href="arcade-fishing.css" />
   <link rel="stylesheet" href="arcade-records.css" />
   <link rel="stylesheet" href="arcade-amie.css" />
   <link rel="stylesheet" href="arcade-dash.css" />
@@ -72,7 +73,7 @@
     </div>
     <div class="title-partner-row" id="titlePartners"></div>
     <button id="titleContinueBtn" class="title-start">PRESS TO START</button>
-    <div class="title-footer"><span id="titleRankText">TRAINER RANK 1</span><span>v0.67.2</span></div>
+    <div class="title-footer"><span id="titleRankText">TRAINER RANK 1</span><span>v0.68.0</span></div>
   </div>
 
   <div id="starterPanel" class="starter-screen" hidden>
@@ -89,7 +90,7 @@
   <div id="app" class="app-shell">
     <header class="topbar">
       <div class="brand-block">
-        <div class="eyebrow">LUCKY DEX · v0.67.2</div>
+        <div class="eyebrow">LUCKY DEX · v0.68.0</div>
         <h1>Lucky Dex</h1>
       </div>
       <div class="top-resources">
@@ -939,6 +940,29 @@
           </div>
         </div>
 
+        <div id="fishingGame" class="panel arcade-game fishing-game" hidden>
+          <div class="arcade-full-head"><button class="game-exit" data-exit-game>‹ ARCADE</button><div class="arcade-mascot"><img src="arcade/sprites/actors/pokemon/129.png" alt="Magikarp" /><span>FISHING LODGE</span></div><b class="fishing-wallet" id="fishingWallet">◉ 0</b></div>
+          <div class="fishing-tabs" role="tablist"><button type="button" class="active" data-fishing-tab="fish">FISH</button><button type="button" data-fishing-tab="book">ANGLER’S LOG</button><button type="button" data-fishing-tab="shop">TACKLE SHOP</button></div>
+          <section id="fishingFishView">
+            <div class="fishing-setup">
+              <label>REGION<select id="fishingRegion"></select></label>
+              <label>AREA<select id="fishingArea"></select></label>
+              <label>ROD<select id="fishingRod"></select></label>
+              <label>BAIT<select id="fishingBait"></select></label>
+              <p id="fishingAreaMeta" class="fishing-area-meta"></p>
+            </div>
+            <div id="fishingMessage" class="fishing-message" aria-live="polite">Choose a fishing spot.</div>
+            <div class="fishing-catch-stage">
+              <div class="fishing-water-column" aria-label="Fishing catch meter"><div id="fishingCatchZone" class="fishing-catch-zone"></div><div id="fishingFishTarget" class="fishing-target"></div></div>
+              <div class="fishing-gameplay-side"><h3>LAND THE CATCH</h3><div class="fishing-progress" aria-label="Catch progress"><i id="fishingProgressFill"></i></div><p class="muted small">Hold REEL to raise the catch zone. Release to let it fall. Keep the hooked target inside the green zone.</p><button type="button" id="fishingReelBtn" class="fishing-reel">HOLD TO REEL</button></div>
+            </div>
+            <button type="button" id="fishingCastBtn" class="primary fishing-cast">CAST LINE</button>
+            <div id="fishingResult" class="fishing-result" hidden></div>
+          </section>
+          <section id="fishingBook" class="fishing-book" hidden><div id="fishingBookGrid"></div></section>
+          <section id="fishingShop" class="fishing-shop" hidden><div class="section-head"><div><div class="eyebrow">TACKLE SHOP</div><h2>Rods &amp; Bait</h2></div><b id="fishingShopWallet" class="fishing-shop-wallet">◉ 0</b></div><div id="fishingShopGrid"></div></section>
+        </div>
+
       </section>
 
       <section class="page app-page packs-page" data-page="packs">
@@ -1138,6 +1162,10 @@
       <label>Rainbow Dream Ball · Wailord<select id="rareWailordRainbowBallOddsSelect"><option value="0">Off</option><option value="0.02">Vanilla · 2%</option><option value="0.25">Test · 25%</option><option value="1">Always · 100%</option></select></label>
       <label>Dream Sparkle · Pokémon Seek<select id="rarePokemonSeekDreamSparkleOddsSelect"><option value="0">Off</option><option value="0.02">Vanilla · 2%</option><option value="0.25">Test · 25%</option><option value="1">Always · 100%</option></select></label>
       <label>Lucky Wave · Pikachu’s Beach<select id="rarePikachuBeachLuckyWaveOddsSelect"><option value="0">Off</option><option value="0.02">Vanilla · 2%</option><option value="0.25">Test · 25%</option><option value="1">Always · 100%</option></select></label>
+      <label>Fishing Treasure<select id="rareFishingTreasureOddsSelect"><option value="0">Off</option><option value="0.02">Vanilla · 2%</option><option value="0.25">Test · 25%</option><option value="1">Always · 100%</option></select></label>
+      <label>Fishing Easter Junk<select id="rareFishingEasterJunkOddsSelect"><option value="0">Off</option><option value="0.01">Vanilla · 1%</option><option value="0.25">Test · 25%</option><option value="1">Always · 100%</option></select></label>
+      <label>Fishing Jumbo Pokémon<select id="rareFishingJumboOddsSelect"><option value="0">Off</option><option value="0.015">Vanilla · 1.5%</option><option value="0.25">Test · 25%</option><option value="1">Always · 100%</option></select></label>
+      <label>Fishing Rare Pokémon<select id="rareFishingRarePokemonOddsSelect"><option value="0">Natural</option><option value="0.25">Test · 25%</option><option value="1">Force rare class · 100%</option></select></label>
       <label>Gold Rock<select id="rareGoldRockOddsSelect"><option value="0">Off</option><option value="0.10">Vanilla · 10%</option><option value="0.50">Test · 50%</option><option value="1">Always · 100%</option></select></label>
       <label>Fossil Dig card<select id="rareFossilCardOddsSelect"><option value="0">Off</option><option value="0.15">Vanilla · 15%</option><option value="0.50">Test · 50%</option><option value="1">Always · 100%</option></select></label>
       <label>Fossil Dig booster<select id="rareFossilPackOddsSelect"><option value="0">Off</option><option value="0.04">Vanilla · 4%</option><option value="0.25">Test · 25%</option><option value="1">Always · 100%</option></select></label>
@@ -1308,6 +1336,8 @@
   <script src="arcade-picross-data.js"></script>
   <script src="arcade-picross-core.js"></script>
   <script src="arcade-picross.js"></script>
+  <script src="arcade-fishing-core.js"></script>
+  <script src="arcade-fishing.js"></script>
   <script src="arcade-world.js"></script>
 </body>
 </html>

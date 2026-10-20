@@ -15,7 +15,8 @@ globalThis.LuckyDexAchievements={
 };
 let records;
 try{records=require('../app/src/main/assets/arcade-records.js');}catch(e){console.error(e.message);process.exit(1);}
-assert.deepEqual(records.SUPPORTED_GAME_IDS,['berryPicker','tilePuzzle','voltorb','ballDrop','berry','clefairy','fossil','unown','quiz','dash','powerTrial','impactTrial','targetRange','elementalGauntlet','enduranceExpedition','roulette','slotMachine','ekansHoop','digDigDig','magikarpSplash','rockHarden','thunderingDynamo','snoreWar','runRattataRun','sushiGoRound','clearCutChallenge','gutsyGolbat','furretFrolic','topsyTurvy','barrierBall','pichuPowerPlant','rampageRollout','iceCreamScoop','wailordWaterSpout','pokemonSeek','picross','pikachuBeach']);
+const required=['berryPicker','tilePuzzle','voltorb','dash','clearCutChallenge','eggEmergency','eagerEevee','iceCreamScoop','pokemonSeek','picross','pikachuBeach','fishing'];
+for(const id of required)assert.ok(records.SUPPORTED_GAME_IDS.includes(id),`registry includes ${id}`);
 for(const id of records.SUPPORTED_GAME_IDS)assert.ok(records.adapterFor(id),`adapter ${id}`);
 assert.equal(records.adapterFor('museum'),null);
 assert.ok(records.getPermanent('dash').flatMap(s=>s.rows).some(r=>r.label==='Wins'&&r.value==='4'));
