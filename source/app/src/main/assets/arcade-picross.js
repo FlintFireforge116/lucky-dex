@@ -65,19 +65,21 @@
     }
     host.innerHTML=html;
   }
-  function cellSizeFor(puzzle){const w=Math.max(1,puzzle.width),h=Math.max(1,puzzle.height),vw=Math.max(300,Math.min(760,(typeof window!=='undefined'?window.innerWidth:480)-36));return Math.max(15,Math.min(27,Math.floor((vw-88)/w),Math.floor(480/h)));}
+  function normalBoardAvailableWidth(){const wrap=$('picrossBoardWrap');const measured=Number(wrap?.clientWidth)||Number(wrap?.getBoundingClientRect?.().width)||0;const fallback=Math.max(280,(typeof window!=='undefined'?Number(window.innerWidth)||360:360)-16);return Math.max(240,Math.floor((measured||fallback)-4));}
   function focusModeActive(){return !!$('picrossPuzzleView')?.classList?.contains('picross-focus-mode');}
   function applyBoardGeometry(){
     if(!board)return;const puzzle=board.puzzle,host=$('picrossBoard');if(!host)return;
-    const focus=focusModeActive(),cell=focus?FOCUS_CELL_SIZES[focusZoomIndex]:cellSizeFor(puzzle),rowClue=Math.max(focus?64:48,Math.min(focus?112:84,Math.max(...puzzle.row_clues.map(c=>c.length),1)*(focus?16:14)+10)),columnClue=Math.max(focus?58:44,Math.max(...puzzle.column_clues.map(c=>c.length),1)*(focus?14:12)+8);
+    const focus=focusModeActive(),maxRowClues=Math.max(...puzzle.row_clues.map(c=>c.length),1),normal=focus?null:core.normalBoardGeometry(puzzle.width,maxRowClues,normalBoardAvailableWidth()),cell=focus?FOCUS_CELL_SIZES[focusZoomIndex]:normal.cell,rowClue=focus?Math.max(64,Math.min(112,maxRowClues*16+10)):normal.rowClue,columnClue=Math.max(focus?58:44,Math.max(...puzzle.column_clues.map(c=>c.length),1)*(focus?14:12)+8);
     host.style.setProperty('--picross-cell',`${cell}px`);host.style.setProperty('--picross-row-clue',`${rowClue}px`);
     host.style.gridTemplateColumns=`${rowClue}px repeat(${puzzle.width},${cell}px)`;
     host.style.gridTemplateRows=`${columnClue}px repeat(${puzzle.height},${cell}px)`;
     const label=$('picrossZoomLabel');if(label)label.textContent=`${cell}px`;const out=$('picrossZoomOut'),inc=$('picrossZoomIn');if(out)out.disabled=focusZoomIndex<=0;if(inc)inc.disabled=focusZoomIndex>=FOCUS_CELL_SIZES.length-1;
   }
   function resetBoardViewport(){const wrap=$('picrossBoardWrap');if(!wrap)return;const reset=()=>{wrap.scrollLeft=0;wrap.scrollTop=0;try{wrap.scrollTo?.({left:0,top:0,behavior:'auto'});}catch(_){}};reset();if(typeof requestAnimationFrame==='function')requestAnimationFrame(reset);setTimeout(reset,0);}
+  function centerBoardViewport(){const wrap=$('picrossBoardWrap');if(!wrap)return;const maxX=Math.max(0,(Number(wrap.scrollWidth)||0)-(Number(wrap.clientWidth)||0));wrap.scrollLeft=Math.round(maxX/2);wrap.scrollTop=0;}
+  function settleNormalBoardLayout(){const settle=()=>{if(focusModeActive()||!board)return;applyBoardGeometry();centerBoardViewport();};settle();if(typeof requestAnimationFrame==='function')requestAnimationFrame(settle);setTimeout(settle,0);}
   function openFocusMode(){if(!board)return false;const view=$('picrossPuzzleView'),bar=$('picrossFocusBar');if(!view)return false;resetDrag();focusPreviousTool=tool==='x'?'x':'fill';view.classList.add('picross-focus-mode');if(bar)bar.hidden=false;const btn=$('picrossFocusBtn');if(btn)btn.setAttribute('aria-pressed','true');setTool('pan');applyBoardGeometry();resetBoardViewport();return true;}
-  function closeFocusMode(){const view=$('picrossPuzzleView'),bar=$('picrossFocusBar'),wasFocus=focusModeActive();if(view)view.classList.remove('picross-focus-mode','picross-pan-mode');if(wasFocus)setTool(focusPreviousTool);if(bar)bar.hidden=true;const btn=$('picrossFocusBtn');if(btn)btn.setAttribute('aria-pressed','false');resetDrag();if(board){applyBoardGeometry();resetBoardViewport();}return true;}
+  function closeFocusMode(){const view=$('picrossPuzzleView'),bar=$('picrossFocusBar'),wasFocus=focusModeActive();if(view)view.classList.remove('picross-focus-mode','picross-pan-mode');if(wasFocus)setTool(focusPreviousTool);if(bar)bar.hidden=true;const btn=$('picrossFocusBtn');if(btn)btn.setAttribute('aria-pressed','false');resetDrag();if(board)settleNormalBoardLayout();return true;}
   function changeFocusZoom(delta){if(!focusModeActive()||!board)return false;focusZoomIndex=Math.max(0,Math.min(FOCUS_CELL_SIZES.length-1,focusZoomIndex+Number(delta||0)));resetDrag();applyBoardGeometry();return true;}
   function renderBoard(){
     if(!board)return;const puzzle=board.puzzle,host=$('picrossBoard');if(!host)return;
@@ -87,7 +89,7 @@
       html+=`<div class="picross-row-clue" data-picross-row-clue="${y}" style="grid-column:1;grid-row:${y+2}">${puzzle.row_clues[y].map(n=>`<span>${n}</span>`).join('')}</div>`;
       for(let x=0;x<puzzle.width;x++)html+=`<button type="button" class="picross-cell" aria-label="Row ${y+1}, column ${x+1}" data-picross-cell data-x="${x}" data-y="${y}" data-x5="${(x+1)%5===0&&x<puzzle.width-1}" data-y5="${(y+1)%5===0&&y<puzzle.height-1}" style="grid-column:${x+2};grid-row:${y+2}"></button>`;
     }
-    host.innerHTML=html;applyBoardGeometry();renderBoardState();
+    host.innerHTML=html;settleNormalBoardLayout();renderBoardState();
   }
   function renderBoardState(){
     if(!board)return;

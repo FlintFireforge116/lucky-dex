@@ -17,9 +17,8 @@ test('Picross restores the previous drawing tool when DONE closes Magnify',()=>{
   assert.match(js,/function\s+closeFocusMode\s*\([^)]*\)[\s\S]{0,900}setTool\(focusPreviousTool\)/);
 });
 
-test('Picross resets the normal board viewport after Magnify geometry is restored',()=>{
-  assert.match(js,/function\s+resetBoardViewport\s*\(/);
-  assert.match(js,/resetBoardViewport[\s\S]{0,500}scrollLeft\s*=\s*0/);
-  assert.match(js,/resetBoardViewport[\s\S]{0,650}scrollTop\s*=\s*0/);
-  assert.match(js,/function\s+closeFocusMode\s*\([^)]*\)[\s\S]{0,1200}applyBoardGeometry\(\)[\s\S]{0,500}resetBoardViewport\(\)/);
+test('Picross restores a settled normal board layout after Magnify geometry is removed',()=>{
+  assert.match(js,/function\s+settleNormalBoardLayout\s*\(/);
+  assert.match(js,/function\s+centerBoardViewport\s*\(/);
+  assert.match(js,/function\s+closeFocusMode\s*\([^)]*\)[\s\S]{0,1200}settleNormalBoardLayout\(\)/);
 });

@@ -148,6 +148,20 @@
     return mark===tool&&cell==='blank';
   }
 
+  function normalBoardGeometry(width,maxRowClues,availableWidth){
+    const columns=Math.max(1,Math.trunc(Number(width)||1));
+    const clueCount=Math.max(1,Math.trunc(Number(maxRowClues)||1));
+    const available=Math.max(240,Math.trunc(Number(availableWidth)||360));
+    const border=6,minCell=12,maxCell=27,minRowClue=36;
+    let rowClue=Math.max(44,Math.min(72,clueCount*8+12));
+    let cell=Math.floor((available-border-rowClue)/columns);
+    if(cell<minCell){cell=minCell;rowClue=Math.max(minRowClue,available-border-(columns*cell));}
+    if(rowClue+(columns*cell)+border>available)cell=Math.max(8,Math.floor((available-border-rowClue)/columns));
+    cell=Math.max(8,Math.min(maxCell,cell));
+    const totalWidth=rowClue+(columns*cell)+border;
+    return {cell,rowClue,totalWidth,availableWidth:available};
+  }
+
   function gridCellAtPoint(xSegments,ySegments,clientX,clientY){
     const xs=Array.isArray(xSegments)?xSegments:[],ys=Array.isArray(ySegments)?ySegments:[];
     const px=Number(clientX),py=Number(clientY);if(!Number.isFinite(px)||!Number.isFinite(py))return null;
@@ -157,5 +171,5 @@
   function formatTime(ms){const total=Math.max(0,Math.round((Number(ms)||0)/1000));const min=Math.floor(total/60),sec=total%60;return `${min}:${String(sec).padStart(2,'0')}`;}
   function stageNumber(area,slotIndex){return `S${String(Number(area)||0).padStart(2,'0')}-${String(Number(slotIndex)+1).padStart(2,'0')}`;}
 
-  return {MARKS,clamp,cluesForLine,cluesForRows,cluesForColumns,normalizePuzzle,createBoard,createSolvedBoard,applyMark,setMark,undo,reset,isSolved,rowSolved,columnSolved,resolvedCluesForLine,elapsedMs,progressSummary,firstClearCoins,cellsBetween,dragMarkAllowed,gridCellAtPoint,formatTime,stageNumber};
+  return {MARKS,clamp,cluesForLine,cluesForRows,cluesForColumns,normalizePuzzle,createBoard,createSolvedBoard,applyMark,setMark,undo,reset,isSolved,rowSolved,columnSolved,resolvedCluesForLine,elapsedMs,progressSummary,firstClearCoins,cellsBetween,dragMarkAllowed,normalBoardGeometry,gridCellAtPoint,formatTime,stageNumber};
 });
