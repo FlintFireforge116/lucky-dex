@@ -22,11 +22,11 @@ test('generated Pokemon catches have actual scaled size, rarity, difficulty and 
   assert(large.lengthM>small.lengthM);assert(large.weightKg>small.weightKg);assert(large.value>small.value);
 });
 
-test('Fishing state migrates additively and shop purchases rods/bait with Lucky Coins',()=>{
+test('Fishing state migrates additively and shop purchases rods/bait with Fishing Tokens',()=>{
   assert.equal(typeof Core.ensureState,'function');assert.equal(typeof Core.buy,'function');
-  const save={profile:{coins:10000},arcade:{keep:'yes'}};const s=Core.ensureState(save);
+  const save={profile:{coins:10000},arcade:{keep:'yes',fishing:{fishingTokens:5000}}};const s=Core.ensureState(save);
   assert.equal(save.arcade.keep,'yes');assert(s.rods.old);assert.equal(s.rods.good,false);assert.equal(s.bait.basic,0);
-  const buyRod=Core.buy(save,'rod','good');assert.equal(buyRod.ok,true);assert.equal(Core.ensureState(save).rods.good,true);assert(save.profile.coins<10000);
+  const buyRod=Core.buy(save,'rod','good');assert.equal(buyRod.ok,true);assert.equal(Core.ensureState(save).rods.good,true);assert.equal(save.profile.coins,10000);assert(Core.ensureState(save).fishingTokens<5000);
   const before=Core.ensureState(save).bait.honey||0;const buyBait=Core.buy(save,'bait','honey');assert.equal(buyBait.ok,true);assert.equal(Core.ensureState(save).bait.honey,before+buyBait.quantity);
 });
 

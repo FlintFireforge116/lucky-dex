@@ -8,3 +8,17 @@
 @media(max-width:680px){.fishing-book-tools{grid-template-columns:1fr 1fr}.fishing-book-search{grid-column:1/-1}.fishing-book-grid-inner{grid-template-columns:1fr}.fishing-setup{grid-template-columns:1fr 1fr}.fishing-water-column{min-height:350px}.fishing-play-scene{min-height:calc(100dvh - 200px)}}
 @media(max-width:420px){.fishing-play-head{grid-template-columns:1fr auto}.fishing-play-head button{min-width:96px;padding-inline:8px}.fishing-setup{grid-template-columns:1fr}.fishing-area-meta{grid-column:auto}.fishing-catch-stage{grid-template-columns:minmax(0,1fr) 34px}.fishing-water-column{min-height:330px}.fishing-action{min-height:64px}.fishing-result{grid-template-columns:68px 1fr}.fishing-result img,.fishing-result-icon{width:64px;height:64px}}
 @media(max-height:700px){.fishing-play-scene{gap:7px;padding:8px;min-height:calc(100dvh - 180px)}.fishing-water-column{min-height:250px}.fishing-message{padding:7px 9px;font-size:12px}.fishing-play-head{padding:7px 8px}.fishing-action{min-height:58px}.fishing-tabs{margin:5px 0}.fishing-progress{min-height:150px}}
+
+/* v0.68.2 fishing balance/economy/result pass */
+.fishing-wallet-strip{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:8px 0 10px;padding:8px;border:1px solid #ffffff1c;border-radius:12px;background:#0d2030}
+.fishing-wallet-strip>span{display:flex;align-items:center;justify-content:space-between;gap:8px;min-width:0;padding:7px 9px;border-radius:9px;background:#132b3f}
+.fishing-wallet-strip small{color:#9db4c6;font-size:9px;font-weight:900;letter-spacing:.08em}
+.fishing-wallet-strip b{white-space:nowrap;color:#f5d86e}.fishing-wallet-strip span+span b{color:#7cd9c4}
+.fishing-target-hidden{display:grid;place-items:center;background:#07131dcc!important;border:3px solid #d9edf4;border-radius:50%;color:#f5fbff;font-size:22px;font-weight:1000;filter:drop-shadow(0 2px 1px #1238)}
+.fishing-result-overlay{position:fixed;inset:0;z-index:14000;display:grid;place-items:center;padding:18px;background:#02070ddd;backdrop-filter:blur(5px)}
+.fishing-result-modal{width:min(560px,100%);max-height:calc(100dvh - 36px);overflow:auto;padding:14px;border:3px solid #d9edf4;border-radius:18px;background:#0c1d2c;box-shadow:0 22px 70px #000c,inset 0 0 0 2px #244c69}
+.fishing-result-modal .fishing-result{margin:0;background:#142a3d}
+.fishing-result-payout{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-top:9px}
+.fishing-result-payout b{margin:0!important;padding:7px 8px;border-radius:8px;background:#0b1a27;font-size:11px}.fishing-result-payout b:first-child{color:#7cd9c4}.fishing-result-payout b:last-child{color:#f5d86e}
+.fishing-result-actions{margin-top:12px}.fishing-result-actions button{width:100%;min-height:54px;border:0;border-radius:12px;background:#e2c466;color:#17202b;font-weight:1000}
+@media(max-width:420px){.fishing-wallet-strip{grid-template-columns:1fr}.fishing-result-payout{grid-template-columns:1fr}}

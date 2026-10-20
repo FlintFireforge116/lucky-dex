@@ -17,7 +17,7 @@ test('Fishing has persistent records, achievements, book silhouettes and Develop
  for(const key of ['fishingTreasure','fishingEasterJunk','fishingJumbo','fishingRarePokemon'])assert.match(app,new RegExp(key+':'));
  for(const id of ['rareFishingTreasureOddsSelect','rareFishingEasterJunkOddsSelect','rareFishingJumboOddsSelect','rareFishingRarePokemonOddsSelect'])assert.match(index,new RegExp(id));
  assert.match(css,/\.fishing-book-entry\.is-unknown img\{[^}]*filter:/);assert.match(css,/min-height:\s*44px/);
- const fishing=read('arcade-fishing.js');assert.match(fishing,/fish\.textContent=''[^;]*;/,'Pokemon renders clear any previous junk/treasure emoji');assert.match(css,/@media\(max-height:700px\)/,'short phones receive a compact gameplay layout');
+ const fishing=read('arcade-fishing.js');assert.match(fishing,/fish\.textContent='\?'/,'Pokemon remains anonymous in the fight and clears any previous item icon');assert.match(fishing,/fishing-target-hidden/);assert.match(css,/@media\(max-height:700px\)/,'short phones receive a compact gameplay layout');
 });
 
 test('Adventure fishing is a lightweight Gen III-style message flow rather than the Arcade reeling minigame',()=>{

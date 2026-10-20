@@ -73,7 +73,7 @@
     </div>
     <div class="title-partner-row" id="titlePartners"></div>
     <button id="titleContinueBtn" class="title-start">PRESS TO START</button>
-    <div class="title-footer"><span id="titleRankText">TRAINER RANK 1</span><span>v0.68.1</span></div>
+    <div class="title-footer"><span id="titleRankText">TRAINER RANK 1</span><span>v0.68.2</span></div>
   </div>
 
   <div id="starterPanel" class="starter-screen" hidden>
@@ -90,7 +90,7 @@
   <div id="app" class="app-shell">
     <header class="topbar">
       <div class="brand-block">
-        <div class="eyebrow">LUCKY DEX · v0.68.1</div>
+        <div class="eyebrow">LUCKY DEX · v0.68.2</div>
         <h1>Lucky Dex</h1>
       </div>
       <div class="top-resources">
@@ -941,8 +941,9 @@
         </div>
 
         <div id="fishingGame" class="panel arcade-game fishing-game" hidden>
-          <div class="arcade-full-head"><button class="game-exit" data-exit-game>‹ ARCADE</button><div class="arcade-mascot"><img src="arcade/sprites/actors/pokemon/129.png" alt="Magikarp" /><span>FISHING LODGE</span></div><b class="fishing-wallet" id="fishingWallet">◉ 0</b></div>
+          <div class="arcade-full-head"><button class="game-exit" data-exit-game>‹ ARCADE</button><div class="arcade-mascot"><img src="arcade/sprites/actors/pokemon/129.png" alt="Magikarp" /><span>FISHING LODGE</span></div></div>
           <div class="fishing-tabs" role="tablist"><button type="button" class="active" data-fishing-tab="fish">FISH</button><button type="button" data-fishing-tab="book">ANGLER’S LOG</button><button type="button" data-fishing-tab="shop">TACKLE SHOP</button></div>
+          <div id="fishingWalletStrip" class="fishing-wallet-strip" aria-label="Fishing currencies"><span><small>LUCKY COINS</small><b id="fishingLuckyCoins">◉ 0</b></span><span><small>FISHING TOKENS</small><b id="fishingTokens">🎣 0</b></span></div>
           <section id="fishingFishView">
             <section id="fishingSetupView" class="fishing-setup-page">
               <div class="fishing-setup-copy"><div class="eyebrow">CHOOSE YOUR WATER</div><h2>Prepare to fish</h2><p class="muted small">Pick a region, fishing spot, rod and optional bait. Your choices stay equipped until you change them.</p></div>
@@ -960,12 +961,19 @@
                 <div class="fishing-play-head"><div><small id="fishingPlayRegion">REGION</small><h3 id="fishingPlayArea">Fishing spot</h3><span id="fishingPlayGear">Old Rod · No Bait</span></div><button type="button" id="fishingChangeSpotBtn" class="secondary">CHANGE SPOT</button></div>
                 <div id="fishingMessage" class="fishing-message" aria-live="polite">Cast when you are ready.</div>
                 <div class="fishing-catch-stage">
-                  <div class="fishing-water-column" aria-label="Fishing catch lane"><div id="fishingCatchZone" class="fishing-catch-zone"></div><div id="fishingFishTarget" class="fishing-target"></div></div>
+                  <div class="fishing-water-column" aria-label="Fishing catch lane"><div id="fishingCatchZone" class="fishing-catch-zone"></div><div id="fishingFishTarget" class="fishing-target fishing-target-hidden" aria-label="Unknown hooked catch">?</div></div>
                   <div class="fishing-progress-wrap" aria-label="Land the catch"><span>LAND</span><div class="fishing-progress"><i id="fishingProgressFill"></i></div></div>
                 </div>
                 <button type="button" id="fishingActionBtn" class="fishing-action">CAST LINE</button>
               </div>
-              <div id="fishingResult" class="fishing-result" hidden></div>
+              <div id="fishingResultOverlay" class="fishing-result-overlay" role="dialog" aria-modal="true" aria-labelledby="fishingResultTitle" hidden>
+                <div class="fishing-result-modal">
+                  <div id="fishingResult" class="fishing-result"></div>
+                  <div id="fishingResultActions" class="fishing-result-actions" hidden>
+                    <button type="button" id="fishingResultContinueBtn" class="primary">KEEP FISHING</button>
+                  </div>
+                </div>
+              </div>
             </section>
           </section>
           <section id="fishingBook" class="fishing-book" hidden>
@@ -978,7 +986,7 @@
             </div>
             <div id="fishingBookGrid"></div>
           </section>
-          <section id="fishingShop" class="fishing-shop" hidden><div class="section-head"><div><div class="eyebrow">TACKLE SHOP</div><h2>Rods &amp; Bait</h2></div><b id="fishingShopWallet" class="fishing-shop-wallet">◉ 0</b></div><div id="fishingShopGrid"></div></section>
+          <section id="fishingShop" class="fishing-shop" hidden><div class="section-head"><div><div class="eyebrow">TACKLE SHOP</div><h2>Rods &amp; Bait</h2></div><b id="fishingShopWallet" class="fishing-shop-wallet">🎣 0</b></div><div id="fishingShopGrid"></div></section>
         </div>
 
       </section>
