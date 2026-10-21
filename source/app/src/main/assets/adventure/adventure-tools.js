@@ -79,8 +79,8 @@ function markup(save,screen,options={}){
   name='Moves & TM Case';const tab=options.moveTab||'moves';body=learner(row)+moveTabs(tab);
   if(tab==='moves')body+=knownMoves(row,options);
   else if(tab==='learn'){
-   const candidates=row?[...(row.p.pendingMoves||[]).map(id=>({id,scope:'owned'})),...(row.journey?.pendingMoves||[]).map(id=>({id,scope:'journey'}))]:[],page=paged(candidates,options.pendingPage,2);
-   body+=`<div class="a3-pending-list">${page.rows.map(x=>btn('learn',moveView().compact(x.id)+`<small>${x.scope==='journey'?'Journey':'Collection'} level-up move · Learn ›</small>`,`class="adv-move-slot" data-key="${esc(row.key)}" data-id="${x.id}" data-scope="${x.scope}" ${disabled}`)).join('')||'<p class="a3-empty">No moves waiting to be learned.</p>'}</div>${candidates.length?pager('pending',page):''}`;
+   const scope=options.scope==='journey'&&row?.journey?'journey':'owned',source=scope==='journey'?row?.journey:row?.p,candidates=(source?.pendingMoves||[]).map(id=>({id,scope})),page=paged(candidates,options.pendingPage,2);
+   body+=`${scopeButtons(row,scope)}<div class="a3-pending-list">${page.rows.map(x=>btn('learn',moveView().compact(x.id)+`<small>${x.scope==='journey'?'Journey':'Collection'} level-up move · Learn ›</small>`,`class="adv-move-slot" data-key="${esc(row.key)}" data-id="${x.id}" data-scope="${x.scope}" ${disabled}`)).join('')||`<p class="a3-empty">No ${scope==='journey'?'Journey':'Collection'} moves waiting to be learned.</p>`}</div>${candidates.length?pager('pending',page):''}`;
   }else{
    const query=(options.tmQuery||options.query||'').toLowerCase(),ids=D.tmIds.filter(id=>num(save.tmInventory?.[id])>0&&(!query||[D.moves[id].name,D.moves[id].type].join(' ').toLowerCase().includes(query))),page=paged(ids,options.tmPage);
    body+=`${search(options.tmQuery||options.query,'Find TM')}<div class="a3-tm-grid">${page.rows.map(id=>{
@@ -138,7 +138,7 @@ function mount(host,services,screen='party',options={}){
   if(action==='tab')return render('detail',{...opts,tab:el.dataset.tab});
   if(action==='moves')return render('moves',{key,moveTab:el.dataset.tab||'moves'});
   if(action==='move-tab')return render('moves',{...opts,moveTab:el.dataset.tab});
-  if(action==='scope')return render(current,{...opts,scope:el.dataset.scope,moveId:null});
+  if(action==='scope')return render(current,{...opts,scope:el.dataset.scope,moveId:null,pendingPage:0});
   if(action==='preview-move')return render(current,{...opts,moveId:id});
   if(action==='choose-pokemon')return render(current,{...opts,picker:'pokemon',ownedQuery:'',ownedPage:0});
   if(action==='pick-pokemon'){delete opts.picker;return render(current,{...opts,key,moveId:null,scope:'owned'});}
