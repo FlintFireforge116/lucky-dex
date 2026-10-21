@@ -36,15 +36,15 @@
   const allSame=(line,id)=>line.length===3&&line.every(x=>x===id);
   function payoutForLine(line){
     const l=Array.isArray(line)?line:[];
-    if(allSame(l,'red7'))return {coins:300*BET_UNIT,label:'JACKPOT',multiplier:100,replay:false,power:0,jackpotTone:'red'};
-    if(allSame(l,'blue7'))return {coins:300*BET_UNIT,label:'JACKPOT',multiplier:100,replay:false,power:0,jackpotTone:'blue'};
-    if(l.length===3&&l.every(x=>x==='red7'||x==='blue7'))return {coins:90*BET_UNIT,label:'MIXED 7s',multiplier:30,replay:false,power:0};
-    if(allSame(l,'azurill'))return {coins:12*BET_UNIT,label:'AZURILL',multiplier:4,replay:false,power:0};
-    if(allSame(l,'lotad'))return {coins:6*BET_UNIT,label:'LOTAD',multiplier:2,replay:false,power:0};
-    if(allSame(l,'pikachu'))return {coins:3*BET_UNIT,label:'PIKACHU',multiplier:1,replay:false,power:1};
-    if(allSame(l,'lightning'))return {coins:3*BET_UNIT,label:'PIKA POWER',multiplier:1,replay:false,power:3};
+    if(allSame(l,'red7'))return {coins:120*BET_UNIT,label:'JACKPOT',multiplier:120,replay:false,power:0,jackpotTone:'red'};
+    if(allSame(l,'blue7'))return {coins:120*BET_UNIT,label:'JACKPOT',multiplier:120,replay:false,power:0,jackpotTone:'blue'};
+    if(l.length===3&&l.every(x=>x==='red7'||x==='blue7'))return {coins:36*BET_UNIT,label:'MIXED 7s',multiplier:36,replay:false,power:0};
+    if(allSame(l,'azurill'))return {coins:5*BET_UNIT,label:'AZURILL',multiplier:5,replay:false,power:0};
+    if(allSame(l,'lotad'))return {coins:2*BET_UNIT,label:'LOTAD',multiplier:2,replay:false,power:0};
+    if(allSame(l,'pikachu'))return {coins:BET_UNIT,label:'PIKACHU',multiplier:1,replay:false,power:1};
+    if(allSame(l,'lightning'))return {coins:BET_UNIT,label:'PIKA POWER',multiplier:1,replay:false,power:3};
     if(allSame(l,'replay'))return {coins:0,label:'REPLAY',multiplier:0,replay:true,power:0};
-    if(l[0]==='cherry')return {coins:2*BET_UNIT,label:'CHERRY',multiplier:0,replay:false,power:0};
+    if(l[0]==='cherry')return {coins:BET_UNIT,label:'CHERRY',multiplier:1,replay:false,power:0};
     return {coins:0,label:'',multiplier:0,replay:false,power:0};
   }
   function lineSymbols(window,lineName){

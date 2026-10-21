@@ -37,7 +37,7 @@
     if(kind==='color')return avail.filter(s=>s.color===String(bet?.color||'').toLowerCase());
     return [];
   }
-  function multiplierFor(round,bet){const count=matchingSlots(round,bet).length;return count>0?12/count:0;}
+  function multiplierFor(round,bet){const avail=availableSlots(round),count=matchingSlots(round,bet).length;return count>0?avail.length/count:0;}
   function betMatches(slot,bet){
     if(!slot||!bet)return false;
     if(bet.kind==='slot')return slot.key===bet.slotKey;

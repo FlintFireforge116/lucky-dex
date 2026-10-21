@@ -260,8 +260,8 @@
   }
 
   function rewardForResult({place=4,score=0,difficulty='normal'}={}){
-    const base=[0,460,310,210,140][clamp(Math.floor(place),1,4)]||140,mult={easy:.85,normal:1,hard:1.25}[difficulty]||1;
-    return Math.max(0,Math.round((base+Math.max(0,Number(score)||0)*16)*mult));
+    const base=[0,105,70,45,25][clamp(Math.floor(place),1,4)]||25,mult={easy:.9,normal:1,hard:1.2}[difficulty]||1;
+    return Math.max(20,Math.round((base+Math.max(0,Number(score)||0)*6)*mult));
   }
 
   return {CONFIG,BALL_TYPES,DIFFICULTIES,PLAYER_META,ZONE_VECTORS,difficultyProfile,inputZone,zonePosition,nearestZoneForPoint,availableBallKinds,createMatch,spawnBall,hit,stepMatch,finishMatch,rewardForResult,goalOwner,scoreBall};

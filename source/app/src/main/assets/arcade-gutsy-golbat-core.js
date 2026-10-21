@@ -459,11 +459,11 @@
   }
 
   function rewardForResult({place=4,hearts=0,difficulty='normal',goldenHearts=0}={}){
-    const placement=[0,500,320,220,150][clamp(Math.round(place),1,4)]||150;
-    const mult={easy:.85,normal:1,hard:1.25}[difficulty]||1;
-    const heartBonus=Math.max(0,Math.floor(Number(hearts)||0))*6;
+    const placement=[0,110,75,50,30][clamp(Math.round(place),1,4)]||30;
+    const mult={easy:.9,normal:1,hard:1.15}[difficulty]||1;
+    const heartBonus=Math.max(0,Math.floor(Number(hearts)||0))*2;
     const goldBonus=Math.max(0,Math.floor(Number(goldenHearts)||0))*75;
-    return Math.max(100,Math.round((placement+heartBonus+goldBonus)*mult));
+    return Math.max(25,Math.round((placement+heartBonus+goldBonus)*mult));
   }
 
   return Object.freeze({CAVE_FLIERS,caveFlier,CONFIG,DIFFICULTIES,AI_PERSONALITIES,difficultyProfile,aiPersonalityProfile,chooseBrawlerIntent,generateCourse,createRun,flap,collectEntity,bumpPlayer,finishLinePct,stepRun,finishRun,rewardForResult});

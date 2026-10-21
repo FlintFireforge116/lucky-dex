@@ -82,7 +82,7 @@ test('course finish ranks all four Golbat by hearts',()=>{
 test('winner reward is meaningful and scales with difficulty and hearts',()=>{
   const normal=core.rewardForResult({place:1,hearts:25,difficulty:'normal',goldenHearts:0});
   const hard=core.rewardForResult({place:1,hearts:25,difficulty:'hard',goldenHearts:0});
-  assert.ok(normal>=350);
-  assert.ok(hard>normal);
+  assert.ok(normal>=100&&normal<=250);
+  assert.ok(hard>normal&&hard<=300);
   assert.ok(core.rewardForResult({place:1,hearts:40,difficulty:'normal',goldenHearts:1})>normal);
 });

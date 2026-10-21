@@ -14,7 +14,7 @@ test('roulette core exposes the faithful 4 Pokémon x 3 colour wheel',()=>{
   assert.equal(new Set(core.SLOTS.map(x=>x.key)).size,12);
 });
 
-test('roulette payout multiplier is 12 divided by remaining matching slots',()=>{
+test('roulette payout multiplier follows the remaining live wheel',()=>{
   assert.ok(core);
   const empty=core.createRound();
   assert.equal(core.multiplierFor(empty,{kind:'slot',slotKey:'makuhita:yellow'}),12);
@@ -22,9 +22,9 @@ test('roulette payout multiplier is 12 divided by remaining matching slots',()=>
   assert.equal(core.multiplierFor(empty,{kind:'color',color:'yellow'}),3);
 
   const reduced=core.createRound({occupied:['wynaut:yellow']});
-  assert.equal(core.multiplierFor(reduced,{kind:'pokemon',pokemon:'Wynaut'}),6);
+  assert.equal(core.multiplierFor(reduced,{kind:'pokemon',pokemon:'Wynaut'}),11/2);
   const oneLeft=core.createRound({occupied:['skitty:yellow','skitty:green']});
-  assert.equal(core.multiplierFor(oneLeft,{kind:'pokemon',pokemon:'Skitty'}),12);
+  assert.equal(core.multiplierFor(oneLeft,{kind:'pokemon',pokemon:'Skitty'}),10);
 });
 
 test('occupied slots cannot receive another ball and wheel resets after six balls',()=>{

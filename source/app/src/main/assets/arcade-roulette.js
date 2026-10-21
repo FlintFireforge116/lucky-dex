@@ -7,7 +7,7 @@
   let opened=false,spinning=false,selectedBet=null,lastResult=null,ballTurns=4,wheelTurns=2,spinTimer=null,resultTimer=null;
 
   function state(){return root.state||globalThis.state;}
-  function odds(){return {service:.02,rescue:.02,golden:.02,...((state()?.settings?.rareOdds)||{})};}
+  function odds(){return {service:.02,rescue:.02,golden:.004,...((state()?.settings?.rareOdds)||{})};}
   function rec(){
     const s=state(),p=platform();if(!s||!p)return null;s.arcade=p.ensureArcadeState(s.arcade);return s.arcade.roulette;
   }
@@ -42,7 +42,7 @@
   function renderBetBoard(r){
     const host=$('rouletteBetBoard');if(!host)return;const occupied=new Set(r.occupied||[]),selected=betKey(selectedBet);
     const colorHeads=core.COLORS.map(color=>{const bet={kind:'color',color},m=core.multiplierFor(r,bet),disabled=!m;return`<button type="button" data-rbet-color="${color}" class="roulette-board-head roulette-${color}${selected===betKey(bet)?' selected':''}" ${disabled?'disabled':''}><b>${title(color)}</b><small>×${m||'—'}</small></button>`;}).join('');
-    const rows=core.POKEMON.map(p=>{const pbet={kind:'pokemon',pokemon:p.name},m=core.multiplierFor(r,pbet);return`<div class="roulette-board-row"><button type="button" class="roulette-pokemon-bet${selected===betKey(pbet)?' selected':''}" data-rbet-pokemon="${p.name}" ${m?'':'disabled'}><img src="${sprite(p.id)}" alt=""><span>${p.name}<small>×${m||'—'}</small></span></button>${core.COLORS.map(color=>{const key=`${p.key}:${color}`,sbet={kind:'slot',slotKey:key},isOcc=occupied.has(key),slot=core.SLOTS.find(s=>s.key===key),covered=isCovered(slot,isOcc),winning=!!lastResult?.won&&lastResult.slotKey===key;return`<button type="button" class="roulette-cell roulette-${color}${isOcc?' occupied':''}${selected===betKey(sbet)?' selected':''}${covered?' bet-covered':''}${winning?' winning':''}" data-rbet-slot="${key}" ${isOcc?'disabled':''}><img src="${sprite(p.id)}" alt=""><small>${isOcc?'BALL':'×12'}</small></button>`;}).join('')}</div>`;}).join('');
+    const rows=core.POKEMON.map(p=>{const pbet={kind:'pokemon',pokemon:p.name},m=core.multiplierFor(r,pbet);return`<div class="roulette-board-row"><button type="button" class="roulette-pokemon-bet${selected===betKey(pbet)?' selected':''}" data-rbet-pokemon="${p.name}" ${m?'':'disabled'}><img src="${sprite(p.id)}" alt=""><span>${p.name}<small>×${m||'—'}</small></span></button>${core.COLORS.map(color=>{const key=`${p.key}:${color}`,sbet={kind:'slot',slotKey:key},isOcc=occupied.has(key),slot=core.SLOTS.find(s=>s.key===key),covered=isCovered(slot,isOcc),winning=!!lastResult?.won&&lastResult.slotKey===key;return`<button type="button" class="roulette-cell roulette-${color}${isOcc?' occupied':''}${selected===betKey(sbet)?' selected':''}${covered?' bet-covered':''}${winning?' winning':''}" data-rbet-slot="${key}" ${isOcc?'disabled':''}><img src="${sprite(p.id)}" alt=""><small>${isOcc?'BALL':`×${core.multiplierFor(r,sbet)}`}</small></button>`;}).join('')}</div>`;}).join('');
     host.innerHTML=`<div class="roulette-board-grid"><div class="roulette-board-corner">BET</div>${colorHeads}${rows}</div>`;
   }
   function render(){
@@ -54,7 +54,7 @@
     renderWheel(r);renderBetBoard(r);
     const sel=$('rouletteSelection');if(sel)sel.innerHTML=selectedBet?`<small>YOUR BET</small><b>${core.describeBet(selectedBet)}</b><span>${stake} coins · ×${mult} · returns ${potential}</span>`:`<small>YOUR BET</small><b>Choose a slot, Pokémon or colour</b><span>${stake} coins per spin</span>`;
     const spin=$('rouletteSpinBtn');if(spin){spin.disabled=spinning||!selectedBet||money()<stake||r.complete;spin.textContent=spinning?'SPINNING…':money()<stake?`NEED ${stake} COINS`:`SPIN · ${stake}`;}
-    session()?.update?.('roulette',{runText:'6 balls · occupied slots stay blocked · odds improve as the wheel fills',rewardText:'×12 slot · dynamic Pokémon/colour multipliers · rare Golden Ball',liveLabel:'BALLS',liveValue:`${r.occupied.length}/6`});
+    session()?.update?.('roulette',{runText:'6 balls · occupied slots stay blocked · hit chances improve as the wheel fills',rewardText:'live fair multipliers · rare Golden Ball jackpot',liveLabel:'BALLS',liveValue:`${r.occupied.length}/6`});
   }
 
   function showRescue(kind){const box=$('rouletteRescue');if(!box)return;const id=kind==='shroomish'?285:276,name=kind==='shroomish'?'SHROOMISH BOUNCE!':'TAILLOW RESCUE!';box.innerHTML=`<img src="${sprite(id)}" alt=""><b>${name}</b><span>The stuck ball is back in play.</span>`;box.hidden=false;setTimeout(()=>{if(box)box.hidden=true;},1200);}
@@ -86,7 +86,7 @@
     a.bestPayout=Math.max(Number(a.bestPayout||0),payout);a.biggestMultiplier=Math.max(Number(a.biggestMultiplier||0),result.won?mult:0);
     r.spins=Number(r.spins||0)+1;r.coinsWagered=Number(r.coinsWagered||0)+stake;
     if(result.won){r.wins=Number(r.wins||0)+1;r.biggestMultiplier=Math.max(Number(r.biggestMultiplier||0),mult);r.betKindsWon={slot:0,pokemon:0,color:0,...(r.betKindsWon||{})};r.betKindsWon[settledBet.kind]=Number(r.betKindsWon[settledBet.kind]||0)+1;if(settledBet.kind==='slot')r.exactWins=Number(r.exactWins||0)+1;if(settledBet.kind==='pokemon')r.pokemonWins=Number(r.pokemonWins||0)+1;if(settledBet.kind==='color')r.colorWins=Number(r.colorWins||0)+1;}
-    if(payout>0){r.coinsWon=Number(r.coinsWon||0)+payout;r.bestPayout=Math.max(Number(r.bestPayout||0),payout);applyWallet(payout);state().stats.arcadeCoins=Number(state().stats.arcadeCoins||0)+payout;}
+    if(payout>0){r.coinsWon=Number(r.coinsWon||0)+payout;r.bestPayout=Math.max(Number(r.bestPayout||0),payout);applyWallet(payout);}const wager=stake;const earned=Math.max(0,payout-wager);if(earned>0){const s=state();s.stats=s.stats||{};s.stats.arcadeCoins=Number(s.stats.arcadeCoins||0)+earned;root.bumpDaily?.('arcadeCoins',earned);}
     if(result.golden){a.goldenBalls=Number(a.goldenBalls||0)+1;a.goldenSlots=[...(Array.isArray(a.goldenSlots)?a.goldenSlots:[]),result.slot.key];r.goldenBalls=Number(r.goldenBalls||0)+1;r.goldenBallCoins=Number(r.goldenBallCoins||0)+goldenBonus;}
     if(result.rescue){r.rescueEvents=Number(r.rescueEvents||0)+1;r[`${result.rescue}Rescues`]=Number(r[`${result.rescue}Rescues`]||0)+1;showRescue(result.rescue);}
     if(a.round.serviceDay)r.serviceDaySpins=Number(r.serviceDaySpins||0)+1;

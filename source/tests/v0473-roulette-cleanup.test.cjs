@@ -6,14 +6,14 @@ const ROOT=path.join(__dirname,'..');
 const read=p=>fs.readFileSync(path.join(ROOT,p),'utf8');
 const core=require(path.join(ROOT,'app/src/main/assets/arcade-roulette-core.js'));
 
-test('roulette live multiplier remains 12 divided by empty matching slots',()=>{
+test('roulette live multiplier follows remaining pockets and matching slots',()=>{
   const round=core.createRound({occupied:['wynaut:yellow','makuhita:yellow']});
   assert.equal(core.matchingSlots(round,{kind:'pokemon',pokemon:'Wynaut'}).length,2);
-  assert.equal(core.multiplierFor(round,{kind:'pokemon',pokemon:'Wynaut'}),6);
+  assert.equal(core.multiplierFor(round,{kind:'pokemon',pokemon:'Wynaut'}),5);
   assert.equal(core.matchingSlots(round,{kind:'color',color:'yellow'}).length,2);
-  assert.equal(core.multiplierFor(round,{kind:'color',color:'yellow'}),6);
+  assert.equal(core.multiplierFor(round,{kind:'color',color:'yellow'}),5);
   const last=core.createRound({occupied:['wynaut:yellow','wynaut:green']});
-  assert.equal(core.multiplierFor(last,{kind:'pokemon',pokemon:'Wynaut'}),12);
+  assert.equal(core.multiplierFor(last,{kind:'pokemon',pokemon:'Wynaut'}),10);
 });
 
 test('roulette career payout records survive repeated state normalization',()=>{
@@ -49,7 +49,7 @@ test('roulette career payout records survive repeated state normalization',()=>{
     assert.equal(rec.wins,6);
     assert.equal(rec.bestPayout,300);
     assert.equal(rec.biggestMultiplier,12);
-    assert.equal(rec.coinsWon,1800);
+    assert.equal(rec.coinsWon,1425);
   }finally{
     Math.random=saved.MathRandom;global.setTimeout=saved.setTimeout;
     for(const [k,v] of Object.entries(saved)){

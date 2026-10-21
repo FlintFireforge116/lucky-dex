@@ -108,7 +108,7 @@ const ACHIEVEMENTS = [
 
 const defaultState = {
   saveVersion:7,
-  settings:{shinyOdds:2048,vibration:true,zone:'meadow',ball:'pokeball',gutsyGolbatLeftHanded:false,barrierBallLeftHanded:false,rareOdds:{powerTrialGolden:.02,impactTrialGolden:.02,targetRangeGolden:.02,elementalGauntletPrismatic:.02,enduranceExpeditionCache:.02,rouletteServiceDay:.02,rouletteRescue:.02,rouletteGoldenBall:.02,slotReelTime:.02,iceCreamDreamScoop:.02,wailordRainbowBall:.02,pokemonSeekDreamSparkle:.02,pikachuBeachLuckyWave:.02,fishingTreasure:.02,fishingEasterJunk:.01,fishingJumbo:.015,fishingRarePokemon:0,gutsyGolbatGoldenHeart:.02,furretFrolicMasterBall:.08,berry:.03,unown:.004,tileCard:.004,tilePack:.004,tilePresent:.018,voltorbGift:.02,goldRock:.10,fossilCard:.15,fossilPack:.04}},
+  settings:{shinyOdds:2048,vibration:true,zone:'meadow',ball:'pokeball',gutsyGolbatLeftHanded:false,barrierBallLeftHanded:false,rareOdds:{powerTrialGolden:.02,impactTrialGolden:.02,targetRangeGolden:.02,elementalGauntletPrismatic:.02,enduranceExpeditionCache:.02,rouletteServiceDay:.02,rouletteRescue:.02,rouletteGoldenBall:.004,slotReelTime:.02,iceCreamDreamScoop:.02,wailordRainbowBall:.02,pokemonSeekDreamSparkle:.02,pikachuBeachLuckyWave:.02,fishingTreasure:.02,fishingEasterJunk:.01,fishingJumbo:.015,fishingRarePokemon:0,gutsyGolbatGoldenHeart:.02,furretFrolicMasterBall:.08,berry:.03,unown:.004,tileCard:.004,tilePack:.004,tilePresent:.018,voltorbGift:.02,goldRock:.10,fossilCard:.15,fossilPack:.04}},
   stats:{encounters:0,catches:0,shinies:0,packs:0,cardsPulled:0,zonesExplored:{},visitedLocations:{},battlesWon:0,ballsThrown:0,arcadeGames:0,arcadeCoins:0,adventureClears:0,expeditionRetreats:0,failedCatches:0,maxZubatStreak:0,zubatStreak:0,perfectBerryRounds:0,goldCards:0,maxBigHitsInPack:0,godPacks:0},
   profile:{xp:0,coins:750,tickets:1,dust:0,lastDailyPack:'',firstClears:{},rankRewards:[],achievementClaims:[],pendingCardRewards:[],shinyCharmFragments:0},
   cosmetics:{unlockedSleeves:['luckydex-default'],activeSleeve:'luckydex-default',discoveredSecrets:[],claimedCosmeticRewards:[]},
@@ -163,6 +163,9 @@ function loadState(){
       arcade:{...base.arcade,...(raw.arcade||{}),dailyRewards:{...base.arcade.dailyRewards,...(raw.arcade?.dailyRewards||{})},bestBerryPicker:{...base.arcade.bestBerryPicker,...(raw.arcade?.bestBerryPicker||{})},bestHeadIt:{...base.arcade.bestHeadIt,...(raw.arcade?.bestHeadIt||{})},bestTilePuzzle:{...base.arcade.bestTilePuzzle,...(raw.arcade?.bestTilePuzzle||{})},museum:{...(raw.arcade?.museum||{}),exhibits:{...((raw.arcade?.museum?.exhibits&&typeof raw.arcade.museum.exhibits==='object')?raw.arcade.museum.exhibits:{})}},dash:{...base.arcade.dash,...(raw.arcade?.dash||{})}},daily:{...base.daily,...(raw.daily||{})},
       ui:{...base.ui,...(raw.ui||{}),packBrowser:{...base.ui.packBrowser,...(raw.ui?.packBrowser||{})},packMetrics:{...(raw.ui?.packMetrics||{})},dustExchange:{...base.ui.dustExchange,...(raw.ui?.dustExchange||{})}}
     };
+    // v0.69.14 economy audit: the old Golden Ball vanilla rate was too common for a 10× stake bonus.
+    // Only migrate the former vanilla value; explicit Off/Test/Always developer choices remain untouched.
+    if(Number(raw.settings?.rareOdds?.rouletteGoldenBall)===.02)migrated.settings.rareOdds={...(migrated.settings.rareOdds||{}),rouletteGoldenBall:.004};
     if(!raw.arcade?.lastArcadeVenue){const venueMap={amie:'amieGarden',gameCorner:'goldenrod',discovery:'oreburghMuseum',performance:'lilycoveContest'};migrated.arcade.lastArcadeVenue=venueMap[raw.arcade?.lastArcadeZone]||'amieGarden';}
     if(!raw.saveVersion){
       if(Number(migrated.settings.shinyOdds)===512) migrated.settings.shinyOdds=2048;
@@ -1963,7 +1966,7 @@ renderCollection=function(){const grid=document.getElementById('collectionGrid')
    before the app could finish wiring. That single runtime exception explained
    the frozen starter, Wild Search/Expedition stalls and permanent Loading sets.
 */
-window.__LUCKYDEX_BUILD='0.69.13';
+window.__LUCKYDEX_BUILD='0.69.14';
 window.addEventListener('error',event=>{
   try{localStorage.setItem('luckyDexLastRuntimeError',JSON.stringify({build:window.__LUCKYDEX_BUILD,message:String(event?.message||'Unknown error'),source:String(event?.filename||''),line:Number(event?.lineno||0),at:Date.now()}));}catch(_){ }
 });

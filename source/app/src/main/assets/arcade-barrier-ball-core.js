@@ -169,5 +169,12 @@
     }
     return run;
   }
-  return {CONFIG,DIFFICULTIES,SIDE_NAMES,createMatch,spawnBall,smash,stepMatch,rankPlayers};
+  function rewardForResult({place=4,score=0,knockouts=null,difficulty='normal'}={}){
+    const rank=clamp(Math.floor(Number(place)||4),1,4);
+    const performance=Math.max(0,Number(knockouts==null?score:knockouts)||0);
+    const base=[0,90,55,30,15][rank]||15;
+    const mult={easy:.9,normal:1,hard:1.15}[difficulty]||1;
+    return Math.max(15,Math.round((base+performance*18)*mult));
+  }
+  return {CONFIG,DIFFICULTIES,SIDE_NAMES,createMatch,spawnBall,smash,stepMatch,rankPlayers,rewardForResult};
 });

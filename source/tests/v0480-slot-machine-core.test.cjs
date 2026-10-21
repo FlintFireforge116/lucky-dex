@@ -13,14 +13,14 @@ test('slot machine core exposes faithful Gen III symbols and 1-3 coin paylines',
   for(const id of ['red7','blue7','azurill','lotad','pikachu','cherry','replay','lightning']) assert.ok(core.SYMBOLS[id],id);
 });
 
-test('slot payouts preserve Gen III coin ratios scaled by 25 Lucky Coins',()=>{
+test('slot payouts use LuckyDex-scaled rewards while preserving symbol hierarchy',()=>{
   assert.ok(core);
-  assert.equal(core.payoutForLine(['red7','red7','red7']).coins,7500);
-  assert.equal(core.payoutForLine(['blue7','blue7','blue7']).coins,7500);
-  assert.equal(core.payoutForLine(['red7','blue7','red7']).coins,2250);
-  assert.equal(core.payoutForLine(['azurill','azurill','azurill']).coins,300);
-  assert.equal(core.payoutForLine(['lotad','lotad','lotad']).coins,150);
-  assert.equal(core.payoutForLine(['cherry','lotad','pikachu']).coins,50);
+  assert.equal(core.payoutForLine(['red7','red7','red7']).coins,3000);
+  assert.equal(core.payoutForLine(['blue7','blue7','blue7']).coins,3000);
+  assert.equal(core.payoutForLine(['red7','blue7','red7']).coins,900);
+  assert.equal(core.payoutForLine(['azurill','azurill','azurill']).coins,125);
+  assert.equal(core.payoutForLine(['lotad','lotad','lotad']).coins,50);
+  assert.equal(core.payoutForLine(['cherry','lotad','pikachu']).coins,25);
   assert.equal(core.payoutForLine(['replay','replay','replay']).replay,true);
   assert.equal(core.payoutForLine(['lightning','lightning','lightning']).power,3);
 });
@@ -34,11 +34,11 @@ test('evaluateWindow only pays active lines and returns the best multiplier/payo
   ];
   const one=core.evaluateWindow(window,1);
   assert.equal(one.lines.length,1);
-  assert.equal(one.coins,7500);
+  assert.equal(one.coins,3000);
   const three=core.evaluateWindow(window,3);
   assert.equal(three.lines.length,5);
-  assert.ok(three.coins>=7500);
-  assert.equal(three.bestLine.coins,7500);
+  assert.ok(three.coins>=3000);
+  assert.equal(three.bestLine.coins,3000);
 });
 
 test('reel time visibly slows reels and gives a finite precision spin allowance',()=>{

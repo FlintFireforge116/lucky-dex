@@ -73,7 +73,7 @@
     </div>
     <div class="title-partner-row" id="titlePartners"></div>
     <button id="titleContinueBtn" class="title-start">PRESS TO START</button>
-    <div class="title-footer"><span id="titleRankText">TRAINER RANK 1</span><span>v0.69.13</span></div>
+    <div class="title-footer"><span id="titleRankText">TRAINER RANK 1</span><span>v0.69.14</span></div>
   </div>
 
   <div id="starterPanel" class="starter-screen" hidden>
@@ -90,7 +90,7 @@
   <div id="app" class="app-shell">
     <header class="topbar">
       <div class="brand-block">
-        <div class="eyebrow">LUCKY DEX · v0.69.13</div>
+        <div class="eyebrow">LUCKY DEX · v0.69.14</div>
         <h1>Lucky Dex</h1>
       </div>
       <div class="top-resources">
@@ -801,14 +801,14 @@
               <div class="slot-controls"><div class="slot-bets" aria-label="Lucky Coins wagered"><button type="button" data-slot-bet="1"><b>25</b><small>LUCKY COINS</small></button><button type="button" data-slot-bet="2"><b>50</b><small>LUCKY COINS</small></button><button type="button" data-slot-bet="3" class="active"><b>75</b><small>LUCKY COINS</small></button></div><button id="slotSpinBtn" type="button" class="primary slot-spin-btn">SPIN · 75</button></div>
               <div id="slotOutcome" class="slot-outcome" hidden aria-live="polite"></div>
               <div class="slot-paytable">
-                <span><img class="slot-pay-icon" src="arcade/ui/slot-icons/red7.svg" alt=""><b>777</b> 7,500</span>
-                <span><img class="slot-pay-icon" src="arcade/ui/slot-icons/blue7.svg" alt=""><b>MIX 7</b> 2,250</span>
-                <span><img class="slot-pay-icon" src="arcade/sprites/actors/pokemon/298.png" alt=""><b>AZURILL</b> 300</span>
-                <span><img class="slot-pay-icon" src="arcade/sprites/actors/pokemon/270.png" alt=""><b>LOTAD</b> 150</span>
-                <span><img class="slot-pay-icon" src="arcade/sprites/actors/pokemon/25.png" alt=""><b>PIKACHU</b> 75</span>
-                <span><img class="slot-pay-icon" src="arcade/ui/slot-icons/cherry.svg" alt=""><b>CHERRY</b> 50</span>
+                <span><img class="slot-pay-icon" src="arcade/ui/slot-icons/red7.svg" alt=""><b>777</b> 3,000</span>
+                <span><img class="slot-pay-icon" src="arcade/ui/slot-icons/blue7.svg" alt=""><b>MIX 7</b> 900</span>
+                <span><img class="slot-pay-icon" src="arcade/sprites/actors/pokemon/298.png" alt=""><b>AZURILL</b> 125</span>
+                <span><img class="slot-pay-icon" src="arcade/sprites/actors/pokemon/270.png" alt=""><b>LOTAD</b> 50</span>
+                <span><img class="slot-pay-icon" src="arcade/sprites/actors/pokemon/25.png" alt=""><b>PIKACHU</b> 25</span>
+                <span><img class="slot-pay-icon" src="arcade/ui/slot-icons/cherry.svg" alt=""><b>CHERRY</b> 25</span>
                 <span><img class="slot-pay-icon" src="arcade/ui/slot-icons/replay.svg" alt=""><b>REPLAY</b> FREE</span>
-                <span><img class="slot-pay-icon" src="arcade/ui/slot-icons/lightning.svg" alt=""><b>POWER</b> CHARGE</span>
+                <span><img class="slot-pay-icon" src="arcade/ui/slot-icons/lightning.svg" alt=""><b>POWER</b> 25 + CHARGE</span>
               </div>
             </div>
           </div>
@@ -1125,7 +1125,7 @@
           <div class="panel daily-panel">
             <div class="section-head"><div><div class="eyebrow">DAILY BOARD</div><h2>Today's goals</h2></div><span class="pill" id="dailyStatusPill">0/3</span></div>
             <div id="dailyChallenges" class="daily-challenges"></div>
-            <button class="primary full" id="dailyClaimBtn" disabled>COMPLETE ALL 3 · CLAIM 🎟 + 250 COINS</button>
+            <button class="primary full" id="dailyClaimBtn" disabled>COMPLETE ALL 3 · CLAIM 🎟 + 300 COINS</button>
           </div>
           <button id="achievementSummaryCard" class="panel achievement-summary-card" type="button"><span><small>CHALLENGE LOG</small><b>Achievements</b><em id="achievementSummaryText">0 / 0 earned</em></span><strong>VIEW ›</strong></button>
           <button id="customiseSummaryCard" class="panel customise-summary-card" type="button"><span id="customiseSummaryPreview" class="customise-summary-preview"></span><span class="customise-summary-copy"><small>TRAINER STYLE</small><b>Customise</b><em id="customiseSummaryName">LuckyDex Default</em></span><strong>VIEW ›</strong></button>
@@ -1185,7 +1185,7 @@
       <label>Voltorb Gift<select id="rareVoltorbGiftOddsSelect"><option value="0">Off</option><option value="0.02">Vanilla · 2%</option><option value="0.20">Test · 20%</option><option value="1">Always · 100%</option></select></label>
       <label>Roulette Service Day<select id="rareRouletteServiceDayOddsSelect"><option value="0">Off</option><option value="0.02">Vanilla · 2%</option><option value="0.25">Test · 25%</option><option value="1">Always · 100%</option></select></label>
       <label>Roulette Stuck-Ball Rescue<select id="rareRouletteRescueOddsSelect"><option value="0">Off</option><option value="0.02">Vanilla · 2%</option><option value="0.25">Test · 25%</option><option value="1">Always · 100%</option></select></label>
-          <label>Roulette Golden Ball<select id="rareRouletteGoldenBallOddsSelect"><option value="0">Off</option><option value="0.02">Vanilla · 2%</option><option value="0.25">Test · 25%</option><option value="1">Always · 100%</option></select></label>
+          <label>Roulette Golden Ball<select id="rareRouletteGoldenBallOddsSelect"><option value="0">Off</option><option value="0.004">Vanilla · 1/250 (0.4%)</option><option value="0.25">Test · 25%</option><option value="1">Always · 100%</option></select></label>
       <label>Slot Machine Reel Time<select id="rareSlotReelTimeOddsSelect"><option value="0">Off</option><option value="0.02">Vanilla · 2%</option><option value="0.25">Test · 25%</option><option value="1">Always · 100%</option></select></label>
       <label>Golden Heart · Gutsy Golbat<select id="rareGutsyGolbatGoldenHeartOddsSelect"><option value="0">Off</option><option value="0.02">Vanilla · 2%</option><option value="0.25">Test · 25%</option><option value="1">Always · 100%</option></select></label>
       <label>Master Ball · Furret’s Frolic<select id="rareFurretFrolicMasterBallOddsSelect"><option value="0">Off</option><option value="0.08">Natural · late match</option><option value="0.40">Test · frequent</option><option value="1">Always when unlocked</option></select></label>
