@@ -73,7 +73,7 @@
     </div>
     <div class="title-partner-row" id="titlePartners"></div>
     <button id="titleContinueBtn" class="title-start">PRESS TO START</button>
-    <div class="title-footer"><span id="titleRankText">TRAINER RANK 1</span><span>v0.69.14</span></div>
+    <div class="title-footer"><span id="titleRankText">TRAINER RANK 1</span><span>v0.69.15</span></div>
   </div>
 
   <div id="starterPanel" class="starter-screen" hidden>
@@ -90,7 +90,7 @@
   <div id="app" class="app-shell">
     <header class="topbar">
       <div class="brand-block">
-        <div class="eyebrow">LUCKY DEX · v0.69.14</div>
+        <div class="eyebrow">LUCKY DEX · v0.69.15</div>
         <h1>Lucky Dex</h1>
       </div>
       <div class="top-resources">
@@ -947,7 +947,7 @@
           <section id="fishingFishView">
             <section id="fishingSetupView" class="fishing-setup-page">
               <div class="fishing-setup-copy"><div class="eyebrow">CHOOSE YOUR WATER</div><h2>Prepare to fish</h2><p class="muted small">Pick a region, fishing spot, rod, and optional bait. Your choices stay equipped until you change them.</p></div>
-              <div class="fishing-progression-section"><div class="fishing-progression-title"><span>REGIONS</span><small>Progress from Kanto through Paldea</small></div><div id="fishingRegionProgress" class="fishing-region-progress" aria-label="Fishing regions"></div></div>
+              <div class="fishing-progression-section"><div class="fishing-progression-title"><span>REGIONS</span><small>Regional totals count each species once</small></div><div id="fishingRegionProgress" class="fishing-region-progress" aria-label="Fishing regions"></div></div>
               <div class="fishing-progression-section"><div class="fishing-progression-title"><span>FISHING SPOTS</span><small>Catch 3 distinct local Pokémon to open the next spot</small></div><div id="fishingSpotProgress" class="fishing-spot-progress" aria-label="Fishing spots"></div></div>
               <div class="fishing-setup fishing-gear-setup">
                 <label>ROD<select id="fishingRod"></select></label>
@@ -958,7 +958,7 @@
             </section>
             <section id="fishingPlayView" class="fishing-play-view" hidden>
               <div id="fishingPlayScene" class="fishing-play-scene">
-                <div class="fishing-play-head"><div><small id="fishingPlayRegion">REGION</small><h3 id="fishingPlayArea">Fishing spot</h3><span id="fishingPlayGear">Old Rod · No Bait</span></div><button type="button" id="fishingChangeSpotBtn" class="secondary">CHANGE SPOT</button></div>
+                <div class="fishing-play-head"><div><small id="fishingPlayRegion">REGION</small><h3 id="fishingPlayArea">Fishing spot</h3><span id="fishingPlayGear">Old Rod · No Bait</span><span id="fishingPlayProgress" class="fishing-play-progress">0/0 local species</span></div><button type="button" id="fishingChangeSpotBtn" class="secondary">CHANGE SPOT</button></div>
                 <div class="fishing-play-gear-controls" aria-label="Fishing gear">
                   <label>ROD<select id="fishingPlayRod"></select></label>
                   <label>BAIT<select id="fishingPlayBait"></select></label>
@@ -1061,8 +1061,7 @@
           </div>
           <div class="trade-browser" aria-label="Trade market filters">
             <div class="trade-browser-line"><span class="trade-browser-label">SHOW</span><div class="trade-view-tabs" id="tradeViewTabs">
-              <button class="active" data-trade-view="featured">FEATURED <b id="tradeFeaturedCount">0</b></button>
-              <button data-trade-view="all">ALL <b id="tradeAllCount">—</b></button>
+              <button class="active" data-trade-view="all">ALL <b id="tradeAllCount">—</b></button>
               <button data-trade-view="tradeable">CAN TRADE <b id="tradeReadyCount">—</b></button>
               <button data-trade-view="spares">SPARES <b id="tradeSpareCount">—</b></button>
             </div></div>

@@ -1,14 +1,13 @@
 /* Lucky Dex v0.16.13 — strict set-mode Global Link Trade marketplace.
    The market is deterministic for each real-world one-hour window and only
    reveals cards from sets the player has actually opened/discovered. The
-   default board shows five featured listings; filters/search inspect the wider
-   marketplace rather than only those five rows. */
+   Default board shows the full live market; filters/search narrow that
+   market to cards the player can actually act on. */
 (() => {
   'use strict';
 
   const REFRESH_HOURS = 1;
   const MARKET_SIZE = 24;
-  const FEATURED_COUNT = 5;
   const MARKET_RETRY_MS = 15000;
   const MARKET_VERSION = 'v0405-exact-physical-rarity';
   const TRAINERS = [
@@ -20,7 +19,7 @@
   ];
   let tradeMode = 'same';
   let tradeSource = 'all';
-  let tradeView = 'featured';
+  let tradeView = 'all';
   let marketBuildPromise = null;
   let lastMarketAttemptAt = 0;
   let tradeClockTimer = null;
@@ -387,12 +386,10 @@
         if(!offer){bucket.dead=true;continue;}
         offer.source=bucket.source;
         offer.sameSet=bucket.mode==='same';
-        offer.featured=false;
         offers.push(offer);bucket.produced++;
       }
     }
     if(!offers.length||bucketState.some(bucket=>bucket.produced===0))return {valid:false,fingerprint,listings:[]};
-    offers.forEach((row,index)=>{row.featured=index<FEATURED_COUNT;});
     return {valid:true,fingerprint,listings:offers};
   }
 
@@ -415,7 +412,6 @@
       rows=rows.filter(row=>[row.trainer,row.offer?.name,row.request?.name,row.offer?.setName,row.request?.setName,row.offer?.rarity,row.request?.rarity]
         .some(value=>String(value||'').toLowerCase().includes(query)));
     }
-    if(view==='featured')rows=rows.slice(0,FEATURED_COUNT);
     return rows;
   }
 
@@ -468,7 +464,7 @@
       for(let attempt=0;attempt<36&&acceptedForMode<2;attempt++){
         const row=await generateOffer(market.listings.length+added.length,mode,source,rng,usedRequests,usedOffers);
         if(!row)continue;
-        row.source=source;row.sameSet=mode==='same';row.featured=false;
+        row.source=source;row.sameSet=mode==='same';
         const involvesNew=setIdentity(row.request)===setIdentityWanted||setIdentity(row.offer)===setIdentityWanted;
         if(!involvesNew||existingIds.has(row.id)||added.some(x=>x.id===row.id))continue;
         added.push(row);acceptedForMode++;
@@ -705,7 +701,6 @@
   function tradeCounts(offers){
     const rows=(offers||[]).filter(row=>!row.accepted);
     return {
-      featured:Math.min(FEATURED_COUNT,rows.length),
       all:rows.length,
       ready:rows.filter(row=>countOf(ownedEntry(row.request)?.card)>0).length,
       spares:rows.filter(row=>countOf(ownedEntry(row.request)?.card)>1).length
@@ -714,8 +709,8 @@
 
   function updateTradeBrowser(offers){
     const counts=tradeCounts(offers);
-    const featured=$('tradeFeaturedCount'),all=$('tradeAllCount'),ready=$('tradeReadyCount'),spares=$('tradeSpareCount');
-    if(featured)featured.textContent=counts.featured;if(all)all.textContent=counts.all;if(ready)ready.textContent=counts.ready;if(spares)spares.textContent=counts.spares;
+    const all=$('tradeAllCount'),ready=$('tradeReadyCount'),spares=$('tradeSpareCount');
+    if(all)all.textContent=counts.all;if(ready)ready.textContent=counts.ready;if(spares)spares.textContent=counts.spares;
     document.querySelectorAll('[data-trade-view]').forEach(btn=>btn.classList.toggle('active',btn.dataset.tradeView===tradeView));
     document.querySelectorAll('[data-trade-source]').forEach(btn=>btn.classList.toggle('active',btn.dataset.tradeSource===tradeSource));
     const clear=$('tradeSearchClear'),query=String($('tradeSearch')?.value||'').trim();if(clear)clear.hidden=!query;
@@ -803,7 +798,7 @@
   function renderDiscoveryText(){
     const el=$('tradeDiscoveryText');if(!el)return;
     const current=currentBoard(),counts=tradeCounts(current);
-    el.textContent=`${current.length} live · ${counts.featured} featured · ${counts.ready} ready`;
+    el.textContent=`${current.length} live · ${counts.ready} ready · ${counts.spares} spares`;
   }
 
   let tradeSection='market';
@@ -849,7 +844,7 @@
       document.querySelectorAll('[data-trade-source]').forEach(x=>x.classList.toggle('active',x===btn));renderCurrentTrade();
     });
     document.querySelectorAll('[data-trade-view]').forEach(btn=>btn.onclick=()=>{
-      tradeView=['all','tradeable','spares'].includes(btn.dataset.tradeView)?btn.dataset.tradeView:'featured';
+      tradeView=['all','tradeable','spares'].includes(btn.dataset.tradeView)?btn.dataset.tradeView:'all';
       document.querySelectorAll('[data-trade-view]').forEach(x=>x.classList.toggle('active',x===btn));renderCurrentTrade();
     });
     const search=$('tradeSearch');if(search)search.oninput=()=>renderCurrentTrade();

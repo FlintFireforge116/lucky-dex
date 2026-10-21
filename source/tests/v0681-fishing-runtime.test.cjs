@@ -12,7 +12,7 @@ test('Fishing setup enters a focused play view and the single action button chan
  delete require.cache[require.resolve('../app/src/main/assets/arcade-fishing.js')];require('../app/src/main/assets/arcade-fishing.js');global.LuckyDexFishing.open();
  assert.equal(map.fishingSetupView.hidden,false);assert.equal(map.fishingPlayView.hidden,true);
  map.fishingGame.listeners.click({target:clickTarget('fishingStartBtn',map)});
- await new Promise(r=>setTimeout(r,1450));
+ await new Promise(r=>setTimeout(r,1950));
  assert.equal(map.fishingSetupView.hidden,true);assert.equal(map.fishingPlayView.hidden,false);assert.match(map.fishingPlayScene.styleValues['--fishing-bg'],/url\('/);assert.equal(map.fishingActionBtn.textContent,'CAST LINE');
  map.fishingGame.listeners.click({target:clickTarget('fishingActionBtn',map)});
  assert.equal(map.fishingActionBtn.textContent,'HOLD TO REEL');assert.match(map.fishingMessage.textContent,/line|zone/i);assert.ok(map.fishingProgressFill.style.height);

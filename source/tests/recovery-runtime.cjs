@@ -19,7 +19,7 @@ for(const viewport of viewports){
  const nav=async id=>{if(await page.evaluate(()=>document.body.classList.contains('arcade-mode')))await page.locator('[data-world-home]').tap();await page.locator('.bottom-nav [data-nav="'+id+'"]').tap();assert.equal(await page.locator('.page.active').getAttribute('data-page'),id);assert.deepEqual(errors,[],'uncaught error at '+id);};
  for(let cycle=0;cycle<3;cycle++)for(const id of ['collection','adventure','trade','profile','adventure','arcade'])await nav(id);
  await nav('trade');await snap('trade');
- for(const selector of ['[data-trade-mode="global"]','[data-trade-mode="same"]','[data-trade-source="tcgp"]','[data-trade-source="all"]','[data-trade-view="spares"]','[data-trade-view="featured"]'])await page.locator(selector).tap();
+ for(const selector of ['[data-trade-mode="global"]','[data-trade-mode="same"]','[data-trade-source="tcgp"]','[data-trade-source="all"]','[data-trade-view="spares"]','[data-trade-view="tradeable"]'])await page.locator(selector).tap();
  await page.locator('#tradeSearch').fill('Pikachu');await page.locator('#tradeSearchClear').tap();await nav('adventure');await nav('trade');await page.evaluate(()=>handleLuckyBack());assert.equal(await page.locator('.page.active').getAttribute('data-page'),'adventure');
  await nav('arcade');await snap('world');
  const venues=await page.evaluate(()=>LuckyDexArcadeWorld.VENUES.map(v=>({id:v.id,games:v.games})));
