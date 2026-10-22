@@ -2,6 +2,8 @@
 (function(root){'use strict';
 const E=root.LuckyDexRegionalEngine||(typeof require==='function'?require('./adventure-regional-engine.js'):null);
 const Activities=root.LuckyDexAdventureActivities||(typeof require==='function'?require('./adventure-location-activities.js'):null);
+const Authored=root.LuckyDexKantoAuthored||(typeof require==='function'?require('./adventure-kanto-events.js'):null);
+const AuthoredCore=root.LuckyDexAdventureAuthored||(typeof require==='function'?require('./adventure-authored-events.js'):null);
 const slug=s=>String(s).normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'');
 const towns={
  kanto:['Pallet Town','Viridian City','Pewter City','Cerulean City','Vermilion City','Lavender Town','Celadon City','Fuchsia City','Saffron City','Cinnabar Island','Indigo Plateau'],
@@ -43,7 +45,8 @@ function local(j){const n=mainNode(j),nodeId=j.backtrack?.name?`backtrack:${j.ba
 function notice(j,text){const p=describe(j),f=local(j);f.feedback={placeId:p.id,text};return text;}
 function feedbackFor(j){const f=j?.locationFlow,p=describe(j),nodeId=j?.backtrack?.name?`backtrack:${j.backtrack.name}`:p?.nodeId;return f?.nodeId===nodeId&&f.traversal===(j.traversal||0)&&f.feedback?.placeId===p?.id?f.feedback.text:'';}
 function dismiss(j){if(!j?.locationFlow?.feedback)return false;j.locationFlow.feedback=null;return true;}
-function actionsFor(save,j=save?.adventureRegional?.active){const p=describe(j),current=E.current(j);if(!p||j.recovery||['node','battle','complete'].includes(j.phase)||j.phase==='result'&&(current?.optional||milestone(current)))return [];const n=mainNode(j),last=stepFor(j,n)===path(j,n).length-1,done=j.phase==='result'&&current?.id===n.id,available=E.available(j),out=[],add=(key,label,extra={})=>out.push({key,label,...extra});
+function actionsFor(save,j=save?.adventureRegional?.active){const p=describe(j),current=E.current(j);if(!p||j.recovery||['node','battle','complete'].includes(j.phase)||j.phase==='result'&&(current?.optional||milestone(current)))return [];const n=mainNode(j),last=stepFor(j,n)===path(j,n).length-1,done=j.phase==='result'&&current?.id===n.id,available=E.available(j),out=[],add=(key,label,extra={})=>out.push({key,label,...extra}),authoredRows=Authored?.eligible?.(save,j,p)||[];
+ for(const e of authoredRows)add(`authored:${e.id}`,e.label,{authoredEventId:e.id,authoredKind:e.kind});
  if(j.backtrack){if(p.services.talk)add('talk','TALK TO LOCALS');if(p.services.center)add('center','POKÉMON CENTER');if(p.services.mart)add('mart',p.services.martLabel,{screen:'mart'});if(E.hasEncounterPool?.(j,p.name))add('hunt-local','LOOK FOR POKÉMON');add('return-story','RETURN TO STORY');return [...out.slice(0,6),...(Activities?.actionsFor(save,p)||[])].slice(0,7);}
  if(p.services.talk)add('talk','TALK TO LOCALS');
  if(p.services.center)add('center','POKÉMON CENTER');
@@ -51,10 +54,10 @@ function actionsFor(save,j=save?.adventureRegional?.active){const p=describe(j),
  if(p.services.home&&last&&n.type==='camp'&&!done&&j.phase==='map')add('heal','REST AT HOME',{nodeId:n.id});
  if(p.services.mart)add('mart',p.services.martLabel,{screen:'mart'});
  if(last&&!done&&['trainer','victory-road','gym','trial','elite-four','league-round','champion'].includes(n.type))add('battle',['gym','trial'].includes(n.type)?`CHALLENGE ${p.name.toUpperCase()}`:['elite-four','league-round','champion'].includes(n.type)?'LEAGUE CHALLENGE':'TRAINER',{nodeId:n.id});
- const cache=last&&available.find(v=>v.optional&&v.type==='cache');
+ const cache=!authoredRows.length&&last&&available.find(v=>v.optional&&v.type==='cache');
  const requiredEncounter=last&&!done&&['wild','rare'].includes(n.type)?n:null;
  const optionalRare=!requiredEncounter&&last&&available.find(v=>v.optional&&v.type==='rare');
- const authoredEvent=!requiredEncounter&&!cache&&!optionalRare&&last&&!done&&n.type==='event'&&!j.claims[n.id]?n:null;
+ const authoredEvent=!requiredEncounter&&!cache&&!optionalRare&&!authoredRows.length&&last&&!done&&n.type==='event'&&!j.claims[n.id]?n:null;
  const exploreTarget=requiredEncounter||cache||optionalRare||authoredEvent;
  if(exploreTarget)add('explore','EXPLORE AREA',{nodeId:exploreTarget.id,exploreKind:['wild','rare'].includes(exploreTarget.type)?'battle':exploreTarget.type==='event'?'event':'safe'});
  else if(!last&&p.kind==='route'&&!local(j).exploredPlaces?.[p.id])add('explore-local','EXPLORE AREA');
@@ -67,6 +70,7 @@ function actionsFor(save,j=save?.adventureRegional?.active){const p=describe(j),
 }
 function outcome(applied,extra={}){return {applied:!!applied,...extra};}
 function perform(save,key){const j=E.ensureSave(save).active;if(!j)return outcome(false);const action=actionsFor(save,j).find(a=>a.key===key);if(!action)return outcome(false);const p=describe(j),n=mainNode(j);local(j);dismiss(j);
+ if(action.authoredEventId){const opened=Authored?.open?.(save,j,action.authoredEventId);return opened?.applied?outcome(true,{authoredEvent:opened,place:p}):outcome(false,{reason:opened?.reason||'That event is unavailable.'});}
  if(key==='fish')return outcome(true,{activity:'fish',place:p});
  if(key==='hunt-local')return outcome(E.enterLocalWild?.(save,p.name));
  if(key==='return-story')return outcome(returnToStory(save),{destination:describe(j)?.name});
@@ -81,6 +85,12 @@ function perform(save,key){const j=E.ensureSave(save).active;if(!j)return outcom
  if(key==='explore-local'){const f=local(j);f.exploredPlaces=f.exploredPlaces||{};if(f.exploredPlaces[p.id])return outcome(false);const seed=String(`${p.id}:${n?.seed||0}:${j.traversal||0}`),roll=[...seed].reduce((v,ch)=>(v*33+ch.charCodeAt(0))>>>0,5381)%4;save.inventory=save.inventory||{};let text;if(roll===0){save.profile.coins=(save.profile.coins||0)+20;text='Found 20 Lucky Coins.';}else if(roll===1){save.inventory.pokeball=(save.inventory.pokeball||0)+1;text='Found 1 Poké Ball.';}else if(roll===2){save.inventory.berry=(save.inventory.berry||0)+1;text='Found 1 Berry.';}else{save.inventory.potion=(save.inventory.potion||0)+1;text='Found 1 Potion.';}f.exploredPlaces[p.id]=true;notice(j,text);return outcome(true);}
  if(key==='battle'){dismiss(j);return outcome(E.enter(save,action.nodeId));}return outcome(false);
 }
+
+
+const AUTHORED_DISCOVERIES={'Route 1':['route-1-trail-marker'],'Viridian Forest':['viridian-forest-keepsake']};
+function authoredSummary(save,j=save?.adventureRegional?.active,place=describe(j)){if(!j||!place||place.region!=='kanto'||!AuthoredCore)return{available:0,discoveriesFound:0,discoveriesTotal:0,requestStatus:null,stats:{completedEvents:0,discoveries:0,requestsCompleted:0,partyAssists:0}};const state=AuthoredCore.ensureState(save),ids=AUTHORED_DISCOVERIES[place.name]||[],found=ids.filter(id=>state.discoveries[id]).length,completedElsewhere=Array.isArray(j.completedLocations)&&j.completedLocations.includes(place.name),currentName=describe(j)?.name,queryJourney=completedElsewhere&&place.name!==currentName?{...j,backtrack:{name:place.name,returnName:currentName||j.location}}:j,available=(Authored?.eligible?.(save,queryJourney,place)||[]).length,requestStatus=place.name==='Viridian City'?state.requests['viridian-lost-tag']?.status||null:null;return{available,discoveriesFound:found,discoveriesTotal:ids.length,requestStatus,stats:AuthoredCore.stats(save)};}
+function chooseAuthored(save,eventId,choiceId){const j=E.ensureSave(save).active;if(!j)return outcome(false);const out=Authored?.choose?.(save,j,eventId,choiceId);if(out?.applied&&out.text)notice(j,out.text);return out||outcome(false);}
+function closeAuthored(save,eventId){return !!Authored?.close?.(save,eventId);}
 function visit(save,name){const j=E.ensureSave(save).active;if(!j||j.phase!=='map'||j.recovery||!j.completedLocations?.includes(name))return false;const n=j.nodes.find(v=>!v.optional&&v.name===name);if(!n)return false;const origin=describe(j)?.name||j.location;j.backtrack={name,returnName:origin};j.location=name;j.locationFlow=null;return true;}
 function returnToStory(save){const j=E.ensureSave(save).active;if(!j?.backtrack||j.phase!=='map')return false;delete j.backtrack;j.locationFlow=null;j.location=describe(j)?.name||j.checkpoint?.name;return true;}
 function routineText(j,n){const text=j.resolutions[j.current]?.text||'';if(n.type==='camp')return describe(j).services.home?'Party restored at home.':'Party restored.';if(n.type==='shop')return 'Purchases saved.';if(n.type==='wild-hunt')return 'Wild Hunt ready.';if(n.type==='tm')return text;if(/already claimed|already explored/.test(text))return 'Already explored. Supplies kept.';if(n.type==='cache')return 'Found Lucky Coins, 1 Potion and 2 Poké Balls.';if(j.battle?.result?.kind==='capture')return 'Companion caught.';if(['trainer','victory-road'].includes(n.type))return 'Trainer defeated.';if(['wild','rare'].includes(n.type))return 'Encounter cleared.';if(/12%/.test(text))return 'Rough ground: party lost 12% HP.';if(/supply purse/.test(text))return 'Found a supply purse.';return 'Your party recovered a little.';}
@@ -91,5 +101,5 @@ function continueTravel(save){const j=E.ensureSave(save).active;if(!j)return out
 }
 function travelFor(save,j=save?.adventureRegional?.active,actions=actionsFor(save,j)){const p=describe(j);if(!p)return null;if(actions.some(a=>a.destinationId===p.nextId))return null;return {label:p.continueLabel,destinationId:p.nextId,enabled:p.canContinue};}
 function sceneFor(place,assets={},habitatAssets=assets){if(!place)return habitatAssets.destinations?.meadow?.scene||null;if(place.scene)return place.scene;const named=assets.named?.[place.region]?.[place.name],exact=assets.places?.[place.id]||named,category=assets.categories?.[place.region]?.[place.kind]||assets.categories?.[place.kind],resolve=key=>typeof key==='object'&&key?key.path:key&&assets.scenes?.[key]?.path||(/\.(png|webp|jpe?g)$/i.test(key||'')?key:null);return resolve(exact)||resolve(category)||habitatAssets.destinations?.[place.habitat]?.scene||habitatAssets.destinations?.meadow?.scene||null;}
-const api={describe,actionsFor,perform,visit,returnToStory,continue:continueTravel,settleRoutine,feedbackFor,dismiss,sceneFor,travelFor};root.LuckyDexLocationFlow=api;if(typeof module==='object'&&module.exports)module.exports=api;
+const api={describe,actionsFor,perform,authoredSummary,chooseAuthored,closeAuthored,visit,returnToStory,continue:continueTravel,settleRoutine,feedbackFor,dismiss,sceneFor,travelFor};root.LuckyDexLocationFlow=api;if(typeof module==='object'&&module.exports)module.exports=api;
 })(typeof window!=='undefined'?window:globalThis);
