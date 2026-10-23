@@ -362,6 +362,38 @@
     if(descriptor.id==='pocket-4')return [weighted([['uncommon',.70],['rare',.22],['double-rare',.06],['illustration',.018],['special-illustration',.002]],random)];
     return (descriptor.allowedClasses||[]).slice();
   }
+  const PHYSICAL_JACKPOT_SECRET_SHARE=1/6;
+  function classifyForTarget(card,set,classifier){
+    const fn=typeof classifier==='function'?classifier:(typeof globalThis==='object'&&typeof globalThis.LuckyDexCardRarity?.classify==='function'?globalThis.LuckyDexCardRarity.classify:null);
+    return fn?fn(card,set):null;
+  }
+  function isJackpotSecret(card,set=null,classifier=null){
+    const c=classifyForTarget(card,set,classifier);
+    return !!c&&c.rarityClass==='secret'&&(Number(c.revealRank)>=8||/jackpot/i.test(String(c.revealLabel||'')));
+  }
+  function refinePhysicalTargetPlan(set,descriptor,cards,targets,classifier=null,random=Math.random){
+    const base=Array.isArray(targets)?targets.slice():[];
+    const plain=mode=>Object.freeze({targets:Object.freeze(base.slice()),secretMode:mode||'any'});
+    if(base.length!==1||base[0]!=='secret'||!Array.isArray(cards)||!cards.length)return plain('any');
+    const classify=card=>classifyForTarget(card,set,classifier);
+    const eligible=cards.filter(card=>cardMatchesDescriptor(card,descriptor,set,'tcg',classifier)&&classify(card)?.rarityClass==='secret');
+    const jackpots=eligible.filter(card=>isJackpotSecret(card,set,classifier));
+    if(!jackpots.length)return plain('any');
+    if(Math.max(0,Math.min(.999999999,Number(random())||0))<PHYSICAL_JACKPOT_SECRET_SHARE)return Object.freeze({targets:Object.freeze(['secret']),secretMode:'jackpot'});
+    const ordinary=eligible.filter(card=>!isJackpotSecret(card,set,classifier));
+    if(ordinary.length)return Object.freeze({targets:Object.freeze(['secret']),secretMode:'ordinary'});
+    for(const rarityClass of ['special-illustration','illustration','ultra','double-rare','rare']){
+      if(cards.some(card=>cardMatchesDescriptor(card,descriptor,set,'tcg',classifier)&&classify(card)?.rarityClass===rarityClass))return Object.freeze({targets:Object.freeze([rarityClass]),secretMode:'downgraded'});
+    }
+    return Object.freeze({targets:Object.freeze(['secret']),secretMode:'jackpot'});
+  }
+  function targetPlanMatches(card,plan,set=null,classifier=null){
+    const c=classifyForTarget(card,set,classifier);if(!c)return false;
+    if(plan?.secretMode==='jackpot')return c.rarityClass==='secret'&&isJackpotSecret(card,set,classifier);
+    if(plan?.secretMode==='ordinary')return c.rarityClass==='secret'&&!isJackpotSecret(card,set,classifier);
+    return (plan?.targets||[]).includes(c.rarityClass);
+  }
+
   function targetClassesFor(set,descriptor,source='tcg',random=Math.random){
     if(source==='tcgp'){
       if(descriptor?.rarePackGreatHit)return [weighted([['ultra',.18],['illustration',.42],['special-illustration',.30],['secret',.10]],random)];
@@ -409,5 +441,5 @@
     }
     return rows;
   }
-  return Object.freeze({resolve,packSizeFor:(set,source='tcg')=>resolve(set,source).cardCount,priceFor:(set,source='tcg')=>resolve(set,source).price,slotPlan,targetClassesFor,upgradePocketRareClass,cardMatchesDescriptor,validatePack,specialPoolCards,isPurchasable:(set,source='tcg')=>resolve(set,source).purchasable,parentFor:set=>subsetParent(set),rateFamilyFor:(set,source='tcg')=>resolve(set,source).rateFamily,diagnostics,flexibleSpecialProduct,SUBSETS,PARENT_SUBSETS,POCKET_BONUS_PROFILES,pocketBonusProfile});
+  return Object.freeze({resolve,packSizeFor:(set,source='tcg')=>resolve(set,source).cardCount,priceFor:(set,source='tcg')=>resolve(set,source).price,slotPlan,targetClassesFor,refinePhysicalTargetPlan,targetPlanMatches,isJackpotSecret,PHYSICAL_JACKPOT_SECRET_SHARE,upgradePocketRareClass,cardMatchesDescriptor,validatePack,specialPoolCards,isPurchasable:(set,source='tcg')=>resolve(set,source).purchasable,parentFor:set=>subsetParent(set),rateFamilyFor:(set,source='tcg')=>resolve(set,source).rateFamily,diagnostics,flexibleSpecialProduct,SUBSETS,PARENT_SUBSETS,POCKET_BONUS_PROFILES,pocketBonusProfile});
 });

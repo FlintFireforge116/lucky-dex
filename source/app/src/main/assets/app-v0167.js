@@ -1468,17 +1468,18 @@ async function pickCardForDescriptorV0343(briefs,descriptor,chosen=[],signal=nul
   if(signal?.aborted)throw new DOMException('Cancelled','AbortError');
   if(!Array.isArray(briefs)||!briefs.length)throw new Error(`No eligible cards for ${descriptor?.id||'slot'}`);
   const target=window.LuckyDexPackPolicy?.targetClassesFor?.(set,descriptor,source,Math.random)||descriptor?.allowedClasses||[];
-  const allowed=new Set(descriptor?.rarePackAllowedClasses||descriptor?.allowedClasses||[]),targets=new Set(target||[]);
+  const targetPlan=source==='tcg'&&window.LuckyDexPackPolicy?.refinePhysicalTargetPlan?window.LuckyDexPackPolicy.refinePhysicalTargetPlan(set,descriptor,briefs,target,window.LuckyDexCardRarity?.classify,Math.random):{targets:target,secretMode:'any'};
+  const allowed=new Set(descriptor?.rarePackAllowedClasses||descriptor?.allowedClasses||[]),targets=new Set(targetPlan?.targets||target||[]);
   const policyMatch=card=>{const result=window.LuckyDexPackPolicy?.cardMatchesDescriptor?.(card,descriptor,set,source,window.LuckyDexCardRarity?.classify);return result===undefined?true:result;};
   const cardClass=card=>window.LuckyDexCardRarity?.classify?.(card,set)||{rarityClass:'unknown',tier:rarityTier(card?.rarity)};
+  const targetMatch=card=>window.LuckyDexPackPolicy?.targetPlanMatches?window.LuckyDexPackPolicy.targetPlanMatches(card,targetPlan,set,window.LuckyDexCardRarity?.classify):targets.has(cardClass(card).rarityClass);
   const hardMatch=card=>{if(!policyMatch(card))return false;const c=cardClass(card);if(allowed.size&&!allowed.has(c.rarityClass))return false;if(descriptor?.rareOrHigher&&Number(c.tier)<2)return false;return true;};
-  const rank=brief=>{const c=cardClass(brief);let score=hardMatch(brief)?0:1000;if(targets.size&&!targets.has(c.rarityClass))score+=30;return score;};
+  const rank=brief=>{let score=hardMatch(brief)?0:1000;if(targets.size&&!targetMatch(brief))score+=30;return score;};
   const ordered=[...briefs].sort((a,b)=>rank(a)-rank(b)||Math.random()-.5);
   for(const brief of ordered.slice(0,Math.min(ordered.length,80))){
     let card=await getCardDetail(brief,signal);if(source==='tcg'&&!card?._libraryNative)card=await enrichPhysicalCardV151(card,set,signal);
     const foil=finishLabelV0343(descriptor,card);if(!canUseDescriptorCardV0343(card,descriptor,chosen,foil)||!hardMatch(card))continue;
-    const klass=cardClass(card);
-    if(!targets.size||targets.has(klass.rarityClass)){card._foil=foil;return card;}
+    if(!targets.size||targetMatch(card)){card._foil=foil;return card;}
   }
   for(const brief of ordered){
     let card=await getCardDetail(brief,signal);if(source==='tcg'&&!card?._libraryNative)card=await enrichPhysicalCardV151(card,set,signal);const foil=finishLabelV0343(descriptor,card);
@@ -1966,7 +1967,7 @@ renderCollection=function(){const grid=document.getElementById('collectionGrid')
    before the app could finish wiring. That single runtime exception explained
    the frozen starter, Wild Search/Expedition stalls and permanent Loading sets.
 */
-window.__LUCKYDEX_BUILD='0.69.17';
+window.__LUCKYDEX_BUILD='0.69.19';
 window.addEventListener('error',event=>{
   try{localStorage.setItem('luckyDexLastRuntimeError',JSON.stringify({build:window.__LUCKYDEX_BUILD,message:String(event?.message||'Unknown error'),source:String(event?.filename||''),line:Number(event?.lineno||0),at:Date.now()}));}catch(_){ }
 });
