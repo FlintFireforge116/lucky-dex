@@ -24,21 +24,22 @@ test('single-screen board keeps opponent, active lane, bench and hand on the boa
   assert.match(ui,/tcgp-live-player-active/);
   assert.match(ui,/tcgp-live-player-bench/);
   assert.match(ui,/tcgp-live-hand/);
-  assert.match(ui,/data-tcgp-action="open-actions"/);
+  assert.match(ui,/data-tcgp-action="open-context-actions"|data-tcgp-action="battle-action"/);
   assert.match(ui,/tcgp-live-overlay/);
   assert.match(ui,/data-tcgp-action="close-overlay"/);
   assert.doesNotMatch(ui,/tcgp-pocket-center-note">Tap any card to inspect/);
 });
 
-test('v0.69.24 single-screen battle release metadata stays aligned',()=>{
+test('v0.69.24+ single-screen battle release metadata stays aligned',()=>{
   const pkg=JSON.parse(read('package.json'));
   const gradle=read('app/build.gradle');
   const app=read('app/src/main/assets/app-v0167.js');
   const html=read('app/src/main/assets/index.html');
-  assert.equal(pkg.version,'0.69.24');
-  assert.match(gradle,/versionCode\s+7005/);
-  assert.match(gradle,/versionName '0\.69\.24'/);
-  assert.ok(gradle.includes('LuckyDex-asset-builder/0.69.24'));
-  assert.ok(app.includes("__LUCKYDEX_BUILD='0.69.24'"));
-  assert.ok((html.match(/v0\.69\.24/g)||[]).length>=2);
+  const version=pkg.version.replace(/\./g,'\\.');
+  assert.ok(pkg.version.localeCompare('0.69.24',undefined,{numeric:true})>=0);
+  assert.ok(Number(gradle.match(/versionCode\s+(\d+)/)?.[1]||0)>=7005);
+  assert.match(gradle,new RegExp("versionName '"+version+"'"));
+  assert.ok(gradle.includes('LuckyDex-asset-builder/'+pkg.version));
+  assert.ok(app.includes("__LUCKYDEX_BUILD='"+pkg.version+"'"));
+  assert.ok((html.match(new RegExp('v'+version,'g'))||[]).length>=2);
 });
