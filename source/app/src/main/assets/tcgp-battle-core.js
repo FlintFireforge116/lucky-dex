@@ -71,10 +71,15 @@
     return card;
   }
 
-  function autoSetup(state, side){
+  function prepareOpeningHand(state, side){
     const s = state.sides[side];
     for (let i=0;i<5;i++) drawCard(s);
     ensureOpeningBasic(state,s);
+  }
+
+  function autoSetup(state, side){
+    const s = state.sides[side];
+    prepareOpeningHand(state,side);
     const activeIndex = s.hand.findIndex(isBasic);
     const [activeRef] = s.hand.splice(activeIndex,1);
     s.active = makePokemonSlot(activeRef.cardId,0,activeRef.uid);
@@ -100,10 +105,12 @@
     const opponentDeck = Array.isArray(opts.opponentDeck) ? opts.opponentDeck.slice() : [];
     if (playerDeck.length !== 20 || opponentDeck.length !== 20) throw new Error('Pocket battles require 20-card decks.');
     const firstSide = opts.firstSide === 'opponent' ? 'opponent' : 'player';
+    const manualPlayerSetup = !!opts.manualPlayerSetup;
     const state = {
       schema:1,
       rngState:seedValue(opts.seed),
-      phase:'battle', winner:null, reason:null,
+      phase:manualPlayerSetup?'setup':'battle', winner:null, reason:null,
+      setupSide:manualPlayerSetup?'player':null,
       firstSide,
       activeSide:firstSide,
       turnNumber:1,
@@ -115,9 +122,10 @@
     };
     shuffle(state,state.sides.player.deck);
     shuffle(state,state.sides.opponent.deck);
-    autoSetup(state,'player');
+    if (manualPlayerSetup) prepareOpeningHand(state,'player');
+    else autoSetup(state,'player');
     autoSetup(state,'opponent');
-    beginTurn(state,firstSide);
+    if (!manualPlayerSetup) beginTurn(state,firstSide);
     return state;
   }
 
@@ -155,8 +163,29 @@
     return actions;
   }
 
+  function setupActions(state, side){
+    if (!state || state.phase !== 'setup' || state.setupSide !== side) return [];
+    const s = state.sides[side];
+    const actions = [];
+    if (!s.active){
+      s.hand.forEach((ref,handIndex)=>{
+        if (isBasic(ref)) actions.push({type:'setupActive',handIndex,cardId:ref.cardId,target:'active'});
+      });
+      return actions;
+    }
+    if (s.bench.length < 3){
+      s.hand.forEach((ref,handIndex)=>{
+        if (isBasic(ref)) actions.push({type:'setupBench',handIndex,cardId:ref.cardId,target:'bench'});
+      });
+    }
+    actions.push({type:'setupReady'});
+    return actions;
+  }
+
   function legalActions(state, side){
-    if (!state || state.phase !== 'battle' || state.activeSide !== side) return [];
+    if (!state) return [];
+    if (state.phase === 'setup') return setupActions(state,side);
+    if (state.phase !== 'battle' || state.activeSide !== side) return [];
     const s = state.sides[side];
     const actions = [];
     if (s.bench.length < 3){
@@ -250,8 +279,9 @@
   }
 
   function applyAction(state, side, action){
-    if (!state || state.phase !== 'battle') throw new Error('Battle is not active.');
-    if (state.activeSide !== side) throw new Error(`It is not ${side}'s turn.`);
+    if (!state || !['setup','battle'].includes(state.phase)) throw new Error('Battle is not active.');
+    if (state.phase === 'battle' && state.activeSide !== side) throw new Error(`It is not ${side}'s turn.`);
+    if (state.phase === 'setup' && state.setupSide !== side) throw new Error(`It is not ${side}'s setup.`);
     const legal = legalActions(state,side);
     const matched = legal.find(item => actionMatches(item,action));
     if (!matched){
@@ -259,6 +289,25 @@
       throw new Error(`Illegal Pocket action: ${action && action.type || 'unknown'}.`);
     }
     const s = state.sides[side];
+    if (matched.type === 'setupActive'){
+      const [ref] = s.hand.splice(matched.handIndex,1);
+      s.active = makePokemonSlot(ref.cardId,0,ref.uid);
+      return state;
+    }
+    if (matched.type === 'setupBench'){
+      const [ref] = s.hand.splice(matched.handIndex,1);
+      s.bench.push(makePokemonSlot(ref.cardId,0,ref.uid));
+      return state;
+    }
+    if (matched.type === 'setupReady'){
+      if (!s.active) throw new Error('Choose an Active Pokémon first.');
+      state.phase = 'battle';
+      state.setupSide = null;
+      state.activeSide = state.firstSide;
+      state.turnNumber = 1;
+      beginTurn(state,state.firstSide);
+      return state;
+    }
     const foeSide = side === 'player' ? 'opponent' : 'player';
     const foe = state.sides[foeSide];
 
