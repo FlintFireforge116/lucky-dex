@@ -30,6 +30,11 @@ test('battle modules and stylesheet are wired in dependency order', () => {
   for(let i=1;i<positions.length;i++)assert.ok(positions[i]>positions[i-1],`${names[i]} must load after ${names[i-1]}`);
 });
 
+test('opening Battle Lab can actually hide the Pack home beneath it', () => {
+  const appCss=fs.readFileSync(path.join(root,'styles-v013.css'),'utf8');
+  assert.match(appCss,/\.pack-home\[hidden\]\s*\{[^}]*display\s*:\s*none\s*!important/s);
+});
+
 test('mobile battle CSS keeps core controls touchable and battle content above navigation', () => {
   const css=fs.readFileSync(cssPath,'utf8');
   assert.match(css,/\.tcgp-battle-action[^}]*min-height:\s*44px/s);
