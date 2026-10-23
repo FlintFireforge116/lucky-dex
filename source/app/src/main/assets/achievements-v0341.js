@@ -442,6 +442,7 @@
     function annotateExisting(){for(const a of ACHIEVEMENTS){if(!a.category)a.category=categoryById[a.id]||(a.hidden?'collection':'collection');}}
     function addCore(){const existing=new Set(ACHIEVEMENTS.map(a=>a.id));for(const a of buildCoreAchievements(()=>state)){if(!existing.has(a.id)){ACHIEVEMENTS.push(a);existing.add(a.id);}}}
     function addV0413(){const build=root.LuckyDexAchievementExpansionV0413?.build;if(typeof build!=='function')return;const existing=new Set(ACHIEVEMENTS.map(a=>a.id));for(const a of build(()=>state)){if(!existing.has(a.id)){ACHIEVEMENTS.push(a);existing.add(a.id);}}}
+    function addV06920(){const build=root.LuckyDexTCGPBattleAchievementsV06920?.build;if(typeof build!=='function')return;const existing=new Set(ACHIEVEMENTS.map(a=>a.id));for(const a of build(()=>state)){if(!existing.has(a.id)){ACHIEVEMENTS.push(a);existing.add(a.id);}}}
     function bindSleeves(){for(const sleeve of root.LuckyDexCosmeticsV0413?.catalogue||[]){const id=sleeve?.sourceAchievementId;if(!id)continue;const a=ACHIEVEMENTS.find(x=>x.id===id);if(a){a.reward=a.reward||{};if(!a.reward.sleeve)a.reward.sleeve=sleeve.id;}}}
     function physicalSets(){try{return [...(setCache?.tcg||[])];}catch(_){return [];}}
     function pocketSets(){try{return [...(root.LuckyDexPocket?.BUILTIN_SETS||[])];}catch(_){return [];}}
@@ -450,7 +451,7 @@
       const generated=buildSetAchievements(physicalSets(),pocketSets(),()=>state.cards||{});
       for(const a of generated){if(a.category==='tcg'&&norm(a.setDescriptor?.name)==='celestial storm'&&ACHIEVEMENTS.some(x=>x.id==='celestial_storm'))continue;ACHIEVEMENTS.push(a);}
     }
-    function sync(){annotateExisting();addCore();addV0413();syncSets();bindSleeves();annotateExisting();const rec=root.LuckyDexCosmeticsV0413?.reconcile?.(state,ACHIEVEMENTS);if(rec&&(rec.unlockedSleeves.length||rec.discoveredSecrets.length||rec.claimTokens.length))save();}
+    function sync(){annotateExisting();addCore();addV0413();addV06920();syncSets();bindSleeves();annotateExisting();const rec=root.LuckyDexCosmeticsV0413?.reconcile?.(state,ACHIEVEMENTS);if(rec&&(rec.unlockedSleeves.length||rec.discoveredSecrets.length||rec.claimTokens.length))save();}
     function render(){
       sync();const list=document.getElementById('achievementList');if(!list)return;
       const rows=ACHIEVEMENTS.map(a=>({a,p:achievementProgress(a)})),counts=achievementSummary(rows),earned=counts.earned,pill=document.getElementById('achievementCountPill'),summary=document.getElementById('achievementSummaryText');if(pill)pill.textContent=`${earned}/${counts.total} earned`;if(summary)summary.textContent=`${earned} / ${counts.total} earned`;
