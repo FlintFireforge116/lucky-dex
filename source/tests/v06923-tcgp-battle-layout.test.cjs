@@ -5,15 +5,15 @@ const path=require('node:path');
 const root=path.join(__dirname,'..');
 const read=p=>fs.readFileSync(path.join(root,p),'utf8');
 
-test('Pocket-style battle layout exposes inspectable cards, central score lane and sticky action dock',()=>{
+test('Pocket-style battle layout keeps inspectable cards, score state and accessible legal actions',()=>{
   const css=read('app/src/main/assets/tcgp-battle.css');
   const ui=read('app/src/main/assets/tcgp-battle-ui.js');
   assert.match(css,/\.tcgp-pocket-table\s*\{/);
   assert.match(css,/\.tcgp-pocket-side\s*\{/);
-  assert.match(css,/\.tcgp-battle-action-dock\s*\{[^}]*position\s*:\s*sticky/s);
+  assert.ok(/\.tcgp-battle-action-dock\s*\{[^}]*position\s*:\s*sticky/s.test(css)||/\.tcgp-live-actions-button\s*\{/.test(css));
   assert.match(css,/\.tcgp-hand-card\.selected/);
   assert.match(ui,/data-tcgp-action=\"inspect-card\"/);
-  assert.match(ui,/tcgp-pocket-scoreline/);
+  assert.ok(/tcgp-pocket-scoreline/.test(ui)||/tcgp-live-score/.test(ui));
   assert.match(ui,/function inspectPanelHtml\(/);
 });
 

@@ -22,7 +22,7 @@
 
   const CHALLENGE_ID='genetic-apex-beginner-ivysaur';
   let screen='home',builderCards=[],builderName='My Pocket Deck',builderMessage='';
-  let currentBattle=null,currentChallenge=null,currentPractice=false,currentPlayerDeck=null,resultInfo=null,cpuPending=false,cpuTimer=null,battleActionCache=[],battleInspect=null;
+  let currentBattle=null,currentChallenge=null,currentPractice=false,currentPlayerDeck=null,resultInfo=null,cpuPending=false,cpuTimer=null,battleActionCache=[],battleInspect=null,battleOverlay=null;
 
   const esc=value=>String(value==null?'':value).replace(/[&<>"']/g,ch=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));
   const el=id=>root&&root.document?root.document.getElementById(id):null;
@@ -78,9 +78,10 @@
   function setScreen(next){screen=next;updateBackLabel();}
   function updateBackLabel(){const back=el('tcgpBattleBack');if(back)back.textContent=screen==='home'?'‹ CARD SHOP':'‹ BATTLE HOME';}
   function setContent(html){const content=el('tcgpBattleContent');if(content)content.innerHTML=html;}
+  function setBattleLive(on){if(!root?.document?.body)return;if(on)root.document.body.classList.add('tcgp-battle-live');else root.document.body.classList.remove('tcgp-battle-live');}
 
   function renderHome(){
-    setScreen('home');
+    setBattleLive(false);battleOverlay=null;battleInspect=null;setScreen('home');
     const state=battleSave(),stats=state.stats,owned=enabledOwnedRows(),deck=activeDeck(),challenge=solo.challengeById(CHALLENGE_ID),cleared=!!state.firstClears[challenge.id];
     const coverage=coverageForOwnedCards(root.state?.cards||{}),copies=owned.reduce((sum,row)=>sum+Math.min(2,row.quantity),0);
     setContent(`
@@ -103,7 +104,7 @@
   function supportRow(){const count=selectedCount('BASIC-POKE-BALL');return `<div class="tcgp-deck-card tcgp-battle-support"><div>🔴</div><div class="tcgp-deck-card-copy"><b>Poke Ball</b><small>Battle Basics · 2 supplied · Searches a random Basic Pokémon</small></div><div class="tcgp-deck-stepper"><button type="button" data-tcgp-action="remove-card" data-card-id="BASIC-POKE-BALL" ${count?'':'disabled'}>−</button><b>${count}</b><button type="button" data-tcgp-action="add-card" data-card-id="BASIC-POKE-BALL" ${count<2&&builderCards.length<20?'':'disabled'}>+</button></div></div>`;}
 
   function renderBuilder(){
-    setScreen('builder');
+    setBattleLive(false);setScreen('builder');
     const rows=enabledOwnedRows(),validation=decks.validateDeck(builderCards,ownedRows());
     setContent(`<section class="tcgp-battle-panel"><div class="eyebrow">20-CARD DECK</div><h3>Deck Builder</h3><p>Alternate artworks count as the same gameplay card. Pocket's two-copy limit is enforced across every print.</p><div class="tcgp-deck-summary"><span><small>DECK SIZE</small><br><b>${builderCards.length}/20</b></span><span><small>ENERGY ZONE</small><br><b>GRASS</b></span></div><input id="tcgpDeckName" class="tcgp-deck-name" maxlength="40" value="${esc(builderName)}" aria-label="Deck name"><div class="tcgp-battle-actions-row"><button class="tcgp-battle-action secondary" data-tcgp-action="quick">QUICK BUILD</button><button class="tcgp-battle-action" data-tcgp-action="save-deck" ${validation.ok?'':'disabled'}>SAVE DECK</button></div>${builderMessage?`<div class="tcgp-battle-error">${esc(builderMessage)}</div>`:''}${!validation.ok&&builderCards.length?`<div class="tcgp-battle-note">${esc(validation.errors[0])}</div>`:''}</section><section class="tcgp-battle-panel"><h3>Battle Basics</h3><div class="tcgp-deck-list">${supportRow()}</div></section><section class="tcgp-battle-panel"><h3>Your battle-enabled pulls</h3>${rows.length?`<div class="tcgp-deck-list">${rows.map(deckCardRow).join('')}</div>`:'<p>No supported owned cards yet. Use the Lab Loaner to test the battle engine while coverage expands.</p>'}</section>`);
     const input=el('tcgpDeckName');if(input)input.addEventListener('input',event=>{builderName=event.target.value||'My Pocket Deck';});
@@ -211,14 +212,47 @@
     return'';
   }
 
+  function liveCardHtml(slot,opts){
+    const settings=opts||{},compact=!!settings.compact,side=settings.side||'player',zone=settings.zone||'active',index=Number(settings.index||0);
+    if(!slot)return `<button type="button" class="tcgp-live-card ${compact?'compact ':''}empty" ${inspectAttrs(side,zone,index)}><span>EMPTY</span></button>`;
+    const info=hpInfo(slot),card=info.card,art=cardArtUrl(slot.cardId);
+    return `<button type="button" class="tcgp-live-card ${compact?'compact':''}" ${inspectAttrs(side,zone,index)}>${art?`<img src="${art}" alt="${esc(card?.name||slot.cardId)}">`:''}<span class="tcgp-live-hp">${info.left}</span><span class="tcgp-live-energy">⚡${info.energy}</span><span class="tcgp-live-name">${esc(card?.name||slot.cardId)}</span></button>`;
+  }
+  function liveBenchHtml(sideName,bench){
+    const slots=[];
+    for(let i=0;i<3;i++)slots.push(liveCardHtml(bench?.[i]||null,{compact:true,side:sideName,zone:'bench',index:i}));
+    return slots.join('');
+  }
+  function liveOpponentHandHtml(side){
+    const visible=Math.min(5,side.hand.length),backs=Array.from({length:visible},(_,i)=>`<i style="--i:${i}"></i>`).join('');
+    return `<div class="tcgp-live-hand-backs" aria-label="Opponent hand ${side.hand.length} cards">${backs}<b>${side.hand.length}</b></div>`;
+  }
+  function livePlayerHandHtml(side){
+    return side.hand.map((ref,index)=>{
+      const card=data.cardById(ref.cardId),art=cardArtUrl(ref.cardId);
+      return `<button type="button" class="tcgp-live-hand-card" style="--hand-i:${index}" ${inspectAttrs('player','hand',index)}>${art?`<img src="${art}" alt="${esc(card?.name||ref.cardId)}">`:`<span>${esc(card?.name||ref.cardId)}</span>`}</button>`;
+    }).join('')||'<span class="tcgp-live-hand-empty">No cards</span>';
+  }
+  function liveInspectOverlayHtml(){
+    if(battleOverlay!=='inspect'||!battleInspect)return'';
+    const info=resolveInspect(currentBattle,battleInspect);if(!info?.card)return'';
+    const card=info.card,art=cardArtUrl(card.id),health=info.slot?hpInfo(info.slot):null,attacks=card.attacks||[];
+    return `<div class="tcgp-live-overlay"><button class="tcgp-live-overlay-scrim" type="button" data-tcgp-action="close-overlay" aria-label="Close card detail"></button><section class="tcgp-live-sheet tcgp-live-card-sheet"><button class="tcgp-live-sheet-close" type="button" data-tcgp-action="close-overlay">×</button><div class="tcgp-live-sheet-card">${art?`<img src="${art}" alt="${esc(card.name)}">`:''}<div><div class="eyebrow">${esc(info.subtitle)}</div><h3>${esc(card.name)}</h3><div class="tcgp-live-tags"><span>${esc(typeLabel(card))}</span>${card.kind==='pokemon'?`<span>HP ${health?.left??card.hp}/${card.hp}</span><span>⚡ ${health?.energy||0}</span><span>Retreat ${Number(card.retreat||0)}</span><span>Weak ${esc(card.weakness||'—')}</span>`:''}</div></div></div><div class="tcgp-live-sheet-attacks">${attacks.length?attacks.map(a=>`<article><div><b>${esc(a.name)}</b><strong>${Number(a.damage||0)}</strong></div>${energyCostHtml(a.cost)}${a.effect?`<p>${esc(summarizeEffect(a.effect))}</p>`:''}</article>`).join(''):`<article><div><b>${esc(card.name)}</b><strong>${esc(card.trainerType||'Trainer')}</strong></div><p>${esc(summarizeEffect(card.effect)||'Playable Trainer card.')}</p></article>`}</div></section></div>`;
+  }
+  function liveActionOverlayHtml(actions){
+    if(battleOverlay!=='actions')return'';
+    const buttons=actions.map((action,index)=>`<button class="tcgp-battle-action" type="button" data-tcgp-action="battle-action" data-action-index="${index}">${esc(actionLabel(action,currentBattle,'player'))}</button>`).join('');
+    return `<div class="tcgp-live-overlay"><button class="tcgp-live-overlay-scrim" type="button" data-tcgp-action="close-overlay" aria-label="Close actions"></button><section class="tcgp-live-sheet tcgp-live-action-sheet"><div class="tcgp-live-sheet-head"><div><small>YOUR TURN</small><h3>Choose an action</h3></div><button class="tcgp-live-sheet-close" type="button" data-tcgp-action="close-overlay">×</button></div><div class="tcgp-live-actions">${buttons||'<span class="tcgp-battle-note">No legal actions.</span>'}</div></section></div>`;
+  }
+
   function renderBattle(){
     if(!currentBattle)return renderHome();
-    setScreen('battle');
-    const p=currentBattle.sides.player,o=currentBattle.sides.opponent,selectedInfo=ensureBattleInspect(currentBattle);
+    setBattleLive(true);setScreen('battle');
+    const p=currentBattle.sides.player,o=currentBattle.sides.opponent;
     battleActionCache=currentBattle.phase==='battle'&&currentBattle.activeSide==='player'&&!cpuPending?core.legalActions(currentBattle,'player'):[];
-    const actions=battleActionCache.map((action,index)=>`<button class="tcgp-battle-action" type="button" data-tcgp-action="battle-action" data-action-index="${index}">${esc(actionLabel(action,currentBattle,'player'))}</button>`).join('');
-    const logs=currentBattle.log.slice(-6).map(entry=>`<span>${esc(logText(entry))}</span>`).filter(x=>!x.endsWith('></span>')).join('');
-    setContent(`<div class="tcgp-turn-banner"><b>TURN ${currentBattle.turnNumber}/50</b><span>${currentBattle.activeSide==='player'?'YOUR TURN':cpuPending?'CPU THINKING…':'CPU TURN'}${p.energyAvailable&&!p.energyUsed?' · GRASS ENERGY READY':''}</span></div><section class="tcgp-pocket-table">${sidePanelHtml('opponent',o,'Ivysaur Solo Deck',selectedInfo)}<section class="tcgp-pocket-center"><div class="tcgp-pocket-scoreline"><div class="tcgp-pocket-score ${currentBattle.activeSide==='opponent'?'active':''}"><small>CPU</small><b>${o.points}</b></div><div class="tcgp-pocket-versus">VS</div><div class="tcgp-pocket-score ${currentBattle.activeSide==='player'?'active':''}"><small>YOU</small><b>${p.points}</b></div></div><div class="tcgp-pocket-energy-lane"><i class="orb ${o.energyAvailable&&!o.energyUsed?'ready':''}"></i><span>Energy Zone</span><i class="orb ${p.energyAvailable&&!p.energyUsed?'ready mine':''}"></i></div><p class="tcgp-pocket-center-note">Tap any card to inspect attacks and effects. The active Pokémon now lead the battlefield, with Bench and hand supporting from around them.</p></section>${sidePanelHtml('player',p,'Your Deck',selectedInfo)}</section>${inspectPanelHtml(selectedInfo)}<section class="tcgp-battle-panel tcgp-battle-action-dock${cpuPending?' tcgp-battle-thinking':''}"><div class="tcgp-battle-action-head"><h3>${currentBattle.activeSide==='player'?'Available plays':'Waiting for CPU'}</h3><span>${currentBattle.activeSide==='player'?'Only legal actions are shown.':'The opponent is resolving its turn.'}</span></div><div class="tcgp-battle-action-list">${actions||'<span class="tcgp-battle-note">The opponent is taking its turn.</span>'}</div></section><section class="tcgp-battle-panel"><h3>Your hand</h3><div class="tcgp-battle-hand">${handHtml(p,selectedInfo)}</div></section><section class="tcgp-battle-panel"><h3>Battle log</h3><div class="tcgp-battle-log">${logs||'<span>Battle started.</span>'}</div></section>`);
+    const turnText=currentBattle.activeSide==='player'?'YOUR TURN':cpuPending?'CPU THINKING…':'CPU TURN';
+    const lastLog=[...currentBattle.log].reverse().map(logText).find(Boolean)||'Battle started';
+    setContent(`<section class="tcgp-live-arena"><div class="tcgp-live-turn"><span>TURN ${currentBattle.turnNumber}/50</span><b>${turnText}</b><em>${esc(lastLog)}</em></div><section class="tcgp-live-opponent"><div class="tcgp-live-opponent-top">${liveOpponentHandHtml(o)}<div class="tcgp-live-deck-stack"><i></i><b>${o.deck.length}</b></div></div><div class="tcgp-live-opponent-bench">${liveBenchHtml('opponent',o.bench)}</div><div class="tcgp-live-opponent-active">${liveCardHtml(o.active,{side:'opponent',zone:'active'})}</div></section><section class="tcgp-live-mid"><div class="tcgp-live-score"><span>CPU <b>${o.points}</b>/3</span><i>VS</i><span>YOU <b>${p.points}</b>/3</span></div><div class="tcgp-live-energy-zone"><span class="${o.energyAvailable&&!o.energyUsed?'ready':''}">●</span><b>ENERGY</b><span class="${p.energyAvailable&&!p.energyUsed?'ready mine':''}">●</span></div></section><section class="tcgp-live-player"><div class="tcgp-live-player-active">${liveCardHtml(p.active,{side:'player',zone:'active'})}</div><div class="tcgp-live-player-bench">${liveBenchHtml('player',p.bench)}</div><div class="tcgp-live-player-bottom"><div class="tcgp-live-deck-stack mine"><i></i><b>${p.deck.length}</b></div><div class="tcgp-live-hand">${livePlayerHandHtml(p)}</div><button type="button" class="tcgp-live-actions-button" data-tcgp-action="open-actions" ${currentBattle.activeSide==='player'&&!cpuPending?'':'disabled'}><span>${battleActionCache.length}</span>PLAY</button></div></section>${liveInspectOverlayHtml()}${liveActionOverlayHtml(battleActionCache)}</section>`);
   }
 
   function finishBattle(){
@@ -228,13 +262,13 @@
     saveNow();renderResult();
   }
   function renderResult(){
-    setScreen('result');
+    setBattleLive(false);battleOverlay=null;battleInspect=null;setScreen('result');
     const won=currentBattle?.winner==='player',practice=!!resultInfo?.practice,reward=resultInfo?.reward||{coins:0,dust:0};
     setContent(`<section class="tcgp-battle-result"><div class="eyebrow">SOLO BATTLE</div><h2>${won?'VICTORY':'DEFEAT'}</h2><p>${won?'You reached 3 points first.':currentBattle?.reason==='turn-limit'?'The 50-turn Solo limit expired.':'The CPU won the match.'}</p><div class="tcgp-battle-stat-grid"><div class="tcgp-battle-stat"><small>YOU</small><b>${currentBattle?.sides.player.points||0}</b></div><div class="tcgp-battle-stat"><small>CPU</small><b>${currentBattle?.sides.opponent.points||0}</b></div><div class="tcgp-battle-stat"><small>TURN</small><b>${currentBattle?.turnNumber||0}</b></div></div><div class="tcgp-battle-reward">${practice?'PRACTICE · NO REWARDS':won?(resultInfo.firstClear?`FIRST CLEAR · ◉ ${reward.coins} + ✦ ${reward.dust}`:'REPEAT CLEAR · NO CURRENCY FARMING'):'NO REWARD'}</div><div class="tcgp-battle-actions-row"><button class="tcgp-battle-action" data-tcgp-action="rematch">REMATCH</button><button class="tcgp-battle-action secondary" data-tcgp-action="home">BATTLE HOME</button></div></section>`);
   }
 
   function startBattle(cards,practice){
-    currentChallenge=solo.challengeById(CHALLENGE_ID);currentPractice=!!practice;currentPlayerDeck=cards.slice();resultInfo=null;cpuPending=false;battleInspect=buildInspectSpec('player','active',0);
+    currentChallenge=solo.challengeById(CHALLENGE_ID);currentPractice=!!practice;currentPlayerDeck=cards.slice();resultInfo=null;cpuPending=false;battleInspect=null;battleOverlay=null;setBattleLive(true);
     currentBattle=solo.createBattle({challengeId:CHALLENGE_ID,playerDeck:cards,seed:Date.now()>>>0,playerEnergyType:'Grass'});
     renderBattle();maybeCpu();
   }
@@ -248,14 +282,14 @@
     if(home)home.hidden=true;if(stage)stage.hidden=true;view.hidden=false;renderHome();
     const state=battleSave();if(!state.helpSeen){state.helpSeen=true;saveNow();showHelp();}
   }
-  function close(){const view=el('tcgpBattleView'),home=el('packHome');if(view)view.hidden=true;if(home)home.hidden=false;battleInspect=null;setScreen('home');}
+  function close(){const view=el('tcgpBattleView'),home=el('packHome');if(view)view.hidden=true;if(home)home.hidden=false;battleInspect=null;battleOverlay=null;setBattleLive(false);setScreen('home');}
   function showHelp(){const help=el('tcgpBattleHelp');if(help)help.hidden=false;}
   function hideHelp(){const help=el('tcgpBattleHelp');if(help)help.hidden=true;}
   function back(){
     if(screen==='home')return close();
     if(screen==='battle'&&currentBattle?.phase==='battle'){
       if(root&&typeof root.confirm==='function'&&!root.confirm('Leave this battle? The current match will be abandoned.'))return;
-      clearTimeout(cpuTimer);currentBattle=null;cpuPending=false;battleInspect=null;
+      clearTimeout(cpuTimer);currentBattle=null;cpuPending=false;battleInspect=null;battleOverlay=null;
     }
     renderHome();
   }
@@ -288,12 +322,14 @@
       if(!result.ok){builderMessage=result.errors[0]||'Deck is not legal.';return renderBuilder();}saveNow();toast('Pocket deck saved.');return renderHome();
     }
     if(action==='inspect-card'){
-      battleInspect=buildInspectSpec(btn.dataset.side,btn.dataset.zone,btn.dataset.index);
+      battleInspect=buildInspectSpec(btn.dataset.side,btn.dataset.zone,btn.dataset.index);battleOverlay='inspect';
       return renderBattle();
     }
+    if(action==='open-actions'){battleOverlay='actions';battleInspect=null;return renderBattle();}
+    if(action==='close-overlay'){battleOverlay=null;battleInspect=null;return renderBattle();}
     if(action==='battle-action'){
       if(!currentBattle||currentBattle.activeSide!=='player')return;const chosen=battleActionCache[Number(btn.dataset.actionIndex)];if(!chosen)return;
-      try{core.applyAction(currentBattle,'player',chosen);}catch(error){console.error('[TCGP Battle] action error',error);toast(error.message||'That play is not legal.');}
+      battleOverlay=null;battleInspect=null;try{core.applyAction(currentBattle,'player',chosen);}catch(error){console.error('[TCGP Battle] action error',error);toast(error.message||'That play is not legal.');}
       if(currentBattle.phase==='finished')return finishBattle();renderBattle();maybeCpu();
     }
   }
