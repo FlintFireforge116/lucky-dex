@@ -108,3 +108,36 @@ body.tcgp-card-dragging [data-card-drop-zone="1"]{box-shadow:0 0 0 3px rgba(104,
 body.tcgp-card-dragging .tcgp-live-hand{overflow:visible}
 @media (max-height:720px){.tcgp-live-opponent{top:3px;height:41.5%;grid-template-rows:54px 54px minmax(0,1fr)}.tcgp-live-mid{top:42%;height:9%}.tcgp-live-player{top:51.5%;grid-template-rows:minmax(0,1fr) 54px 94px}.tcgp-live-pile{width:46px;flex-basis:46px}.tcgp-live-mid-controls>em{display:none}.tcgp-live-mid-controls{grid-template-columns:auto auto 1fr}.tcgp-live-end-turn{justify-self:end}}
 @media (max-height:720px){.tcgp-live-pile{width:50px;flex-basis:50px}}
+
+/* v0.69.27 centre-play hand and expanded player field */
+.tcgp-live-arena:before{background:linear-gradient(180deg,rgba(112,58,111,.16) 0 40%,rgba(255,255,255,.035) 40% 47.5%,rgba(54,119,160,.13) 47.5% 100%)}
+.tcgp-live-arena:after{top:40%;height:7.5%}
+.tcgp-live-opponent{top:3px;height:39.5%;grid-template-rows:62px 60px minmax(0,1fr)}
+.tcgp-live-mid{top:40%;height:7.5%;grid-template-columns:.78fr 1.22fr;gap:5px}
+.tcgp-live-mid-controls{position:relative;height:100%;display:grid;grid-template-columns:auto auto minmax(0,1fr) auto;align-items:center;gap:5px;padding:2px 3px;border-radius:0;background:transparent;border:0;min-width:0;color:#9aabc0}
+.tcgp-live-mid-controls.setup{background:transparent;border:0}
+.tcgp-live-mid-controls>span{font-size:7px}.tcgp-live-mid-controls>b{font-size:8px}.tcgp-live-mid-controls>em{font-size:6.5px}
+.tcgp-live-center-play{position:absolute;inset:1px;display:grid;place-items:center;border-radius:12px;border:1px dashed rgba(120,228,151,.7);background:rgba(40,130,73,.22);color:#dfffe6;font-style:normal;font-size:8px;font-weight:1000;letter-spacing:.1em;opacity:0;pointer-events:none;transition:opacity .12s ease}
+body.tcgp-card-dragging .tcgp-live-center-play{opacity:1}
+body.tcgp-card-dragging .tcgp-live-mid-controls>span,body.tcgp-card-dragging .tcgp-live-mid-controls>b,body.tcgp-card-dragging .tcgp-live-mid-controls>em,body.tcgp-card-dragging .tcgp-live-mid-controls>.tcgp-live-end-turn{opacity:.18}
+body.tcgp-card-dragging .tcgp-live-mid-controls{outline:2px solid rgba(104,207,131,.32);outline-offset:-2px;border-radius:12px}
+.tcgp-live-end-turn{min-height:24px;padding:3px 9px}
+.tcgp-live-player{top:47.5%;grid-template-rows:minmax(0,1fr) 62px 126px;gap:3px}
+.tcgp-live-player-bottom{grid-template-columns:auto minmax(0,1fr) 58px;gap:5px;align-items:end}
+.tcgp-live-hand{display:flex;align-items:flex-end;justify-content:center;gap:0;height:100%;min-width:0;overflow-x:auto;overflow-y:visible;padding:0 2px;background:transparent;border:0;box-shadow:none}
+.tcgp-live-hand-fan{display:flex;align-items:flex-end;justify-content:center;min-width:100%;width:max-content;height:100%;padding:0 5px 2px}
+.tcgp-live-hand-wrap{position:relative;flex:0 0 clamp(58px,17vw,76px);height:clamp(92px,24vw,112px);margin-left:-9px;transform-origin:50% 100%;transform:rotate(calc((var(--hand-i,0) - 2) * 1.1deg));transition:transform .12s ease}
+.tcgp-live-hand-wrap:first-child{margin-left:0}
+.tcgp-live-hand-wrap.playable{z-index:2}
+.tcgp-live-hand-wrap.playable:active{transform:translateY(-4px) rotate(0deg)}
+.tcgp-live-hand-wrap .tcgp-live-hand-card{width:clamp(66px,19vw,82px);height:auto;aspect-ratio:2.5/3.5;margin-left:0;transform:none;border-radius:8px}
+.tcgp-live-hand-card[data-tcgp-hand-drag]{box-shadow:0 5px 13px rgba(0,0,0,.35)}
+body.tcgp-card-dragging .tcgp-live-hand{overflow:visible}
+@media (max-height:720px){
+  .tcgp-live-opponent{top:2px;height:39%;grid-template-rows:52px 50px minmax(0,1fr)}
+  .tcgp-live-mid{top:39.5%;height:7%}
+  .tcgp-live-player{top:46.5%;grid-template-rows:minmax(0,1fr) 52px 110px}
+  .tcgp-live-hand-wrap{flex-basis:clamp(52px,16vw,68px);height:92px}
+  .tcgp-live-hand-wrap .tcgp-live-hand-card{width:clamp(58px,18vw,74px)}
+  .tcgp-live-mid-controls>em{display:none}
+}
