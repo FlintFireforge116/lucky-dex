@@ -122,3 +122,12 @@ body.tcgp-card-dragging [data-card-drop-zone="1"]{outline:2px solid #64a477;outl
 .tcgp-live-discard-card img{width:100%;aspect-ratio:2.5/3.5;object-fit:cover;border-radius:6px}
 .tcgp-live-discard-card span{font-size:9px;line-height:1.3;color:#c2d5e2;text-align:center}
 @media(prefers-reduced-motion:reduce){.tcgp-live-arena *{scroll-behavior:auto!important}}
+
+/* v0.69.30: physical hand drag + per-card legal/illegal target feedback */
+.tcgp-live-hand-wrap.tcgp-drag-origin .tcgp-live-hand-card{visibility:hidden}
+body.tcgp-card-dragging [data-card-drop-zone="1"]{outline:none;box-shadow:none}
+body.tcgp-card-dragging [data-card-drop-zone="1"][data-tcgp-drop-state="valid"]{outline:2px solid #55a66d;outline-offset:2px;box-shadow:0 0 0 3px #8acb9233,0 0 12px #4b9d6255}
+body.tcgp-card-dragging [data-card-drop-zone="1"][data-tcgp-drop-state="invalid"]{outline:2px solid #c85b61;outline-offset:2px;box-shadow:0 0 0 3px #e47a7f33,0 0 12px #a53d4550}
+body.tcgp-card-dragging [data-card-drop-zone="1"][data-tcgp-drop-state="invalid"]::after{content:"×";position:absolute;inset:0;z-index:5;display:grid;place-items:center;border-radius:inherit;background:#a8283548;color:#fff;font-size:clamp(26px,9vw,42px);font-weight:900;text-shadow:0 1px 3px #5f1822;pointer-events:none}
+body.tcgp-card-dragging [data-card-play-zone="1"][data-tcgp-drop-state="valid"] .tcgp-live-center-play{border-color:#4b9e68;background:#e3f7dfeb;color:#286642}
+body.tcgp-card-dragging [data-card-play-zone="1"][data-tcgp-drop-state="invalid"] .tcgp-live-center-play{border-color:#c85b61;background:#f8dfe1ef;color:#8b3037}
