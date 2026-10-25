@@ -8,13 +8,15 @@ const read=p=>fs.readFileSync(path.join(root,p),'utf8');
 test('Pocket-style battle layout keeps inspectable cards, score state and accessible legal actions',()=>{
   const css=read('app/src/main/assets/tcgp-battle.css');
   const ui=read('app/src/main/assets/tcgp-battle-ui.js');
-  assert.match(css,/\.tcgp-pocket-table\s*\{/);
-  assert.match(css,/\.tcgp-pocket-side\s*\{/);
-  assert.ok(/\.tcgp-battle-action-dock\s*\{[^}]*position\s*:\s*sticky/s.test(css)||/\.tcgp-live-actions-button\s*\{/.test(css));
-  assert.match(css,/\.tcgp-hand-card\.selected/);
+  // Obsolete scrolling Pocket renderer retired in v0.69.29. The real-browser
+  // geometry/interaction suites verify these live anchors and accessible actions.
+  assert.match(css,/\.tcgp-live-arena\s*\{[^}]*display:grid/s);
+  assert.match(css,/\.tcgp-live-opponent\s*\{/);
+  assert.match(css,/\.tcgp-live-context-action\s*\{/);
+  assert.match(css,/\.tcgp-live-hand-card:active/);
   assert.match(ui,/data-tcgp-action=\"inspect-card\"/);
   assert.ok(/tcgp-pocket-scoreline/.test(ui)||/tcgp-live-score/.test(ui));
-  assert.match(ui,/function inspectPanelHtml\(/);
+  assert.match(ui,/function liveInspectOverlayHtml\(/);
 });
 
 test('v0.69.23+ battle layout patch keeps release metadata aligned',()=>{

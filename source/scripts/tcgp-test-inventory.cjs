@@ -1,0 +1,5 @@
+const fs=require('node:fs'),path=require('node:path'),{spawnSync}=require('node:child_process');
+const root=path.resolve(__dirname,'..'),tag=process.argv[2]||'final',out=path.join(root,'artifacts/v06929');fs.mkdirSync(out,{recursive:true});
+const files=fs.readdirSync(path.join(root,'tests')).filter(f=>/^v0692\d-tcgp.*\.cjs$/.test(f));const results=[];
+for(const file of files){const run=spawnSync(process.execPath,[path.join(root,'tests',file)],{cwd:root,encoding:'utf8',timeout:180000,maxBuffer:20*1024*1024});results.push({file,status:run.status,error:run.error?.message,stdout:run.stdout,stderr:run.stderr});console.log((run.status===0?'PASS ':'FAIL ')+file);}
+const report={tag,programs:results.length,passed:results.filter(x=>x.status===0).length,failed:results.filter(x=>x.status!==0).length,results};fs.writeFileSync(path.join(out,tag+'-tests.json'),JSON.stringify(report,null,2));console.log(JSON.stringify({programs:report.programs,passed:report.passed,failed:report.failed}));process.exitCode=report.failed?1:0;

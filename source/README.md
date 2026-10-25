@@ -1,25 +1,19 @@
-LuckyDex v0.69.28 – TCG Pocket board layout rebuild
+# LuckyDex v0.69.29 — TCG Pocket Battlefield Refactor
 
-What changed
-- Reworked Battle Lab board CSS to feel much closer to a single-screen TCG Pocket battlefield.
-- Reduced the sense of floating/stacked widgets by integrating the centre status strip into the board.
-- Re-anchored opponent hand and pile placement so the top area reads as a deliberate layout instead of overlapping pieces.
-- Enlarged and aligned deck/discard piles so they sit in clearer board homes.
-- Expanded the player play area and rebalanced the vertical space split.
-- Increased hand space and cleaned up the fan so the bottom cards have more room and are less obscured.
-- Added active spot halo/pad styling to reinforce the active field visually.
+The supplied v0.69.28 source is the authoritative baseline. Battle Lab now has one fixed, responsive battlefield grid: opponent hand/piles, three Bench anchors, centred Active, compact score/turn lane, player Active, three Bench anchors, and a bottom hand between dedicated piles and Energy. Only hand cards intentionally overlap.
 
-Files touched
-- app/src/main/assets/tcgp-battle.css
-- package.json
-- package-lock.json
-- app/build.gradle
-- app/src/main/assets/app-v0167.js
-- app/src/main/assets/index.html
+A pure count-aware hand model provides generous small-hand spacing, progressively compressed fans and a horizontal span for large hands. Touch swipe scrolls a long hand; a vertical gesture drags a playable card. Card-native attacks/retreat and existing legal-action dispatch remain. Setup still requires a manually placed Active and leaves the Bench optional. Empty discard piles are outlines; the player deck uses the equipped sleeve. Temporary details/target/discard sheets scroll internally, not the live battlefield.
 
-Verification
-- Targeted Node test suites passed:
-  - adventure-battle-v0404.test.cjs
-  - adventure-battle-v0411.test.cjs
-  - adventure-battle.test.cjs
-- Full browser-backed suite could not be completed in this container because Playwright is not installed here.
+Superseded battlefield CSS and unused renderers are removed rather than overridden. Core, AI, data, deck legality, effects, Solo rules, progression, rewards, achievements and saves are unchanged.
+
+## Canonical source and delivery
+
+The repository tracks real unpacked files under `source/`. Build from that directory; GitHub Actions continues using it directly. This release is distributed as `LuckyDex_patch_v0.69.29.zip`, containing changed/new source-relative files only. Apply it over `~/lucky-dex/source/`; do not replace the source tree or commit a full source archive. No source file is deleted, so no deletion list is needed.
+
+Android identity/signing stay unchanged: `com.example.luckydex`, versionName `0.69.29`, versionCode `7010`.
+
+## Verification
+
+`node scripts/tcgp-test-inventory.cjs final` runs the existing TCG core/data/deck/Solo/progression/UI programs plus the new geometry, gesture, interaction, release and 500-match deterministic stress tests. Browser tests require Playwright and a local browser; set `LUCKYDEX_BROWSER` if needed. `node scripts/tcgp-visual-qa.cjs` captures all requested portrait sizes; `LUCKYDEX_TCGP_QA_ART` may point to a temporary cache of the existing public card-art URLs for offline screenshots. QA images/cache are not release assets.
+
+The full project runner remains `npm test`. Exact results, unchanged-baseline audit, screenshots inspected, build verification and known limitations are in `docs/TCGP_BATTLEFIELD_v0.69.29.md`. Do not interpret focused TCG success as a claim that all historical project tests pass.

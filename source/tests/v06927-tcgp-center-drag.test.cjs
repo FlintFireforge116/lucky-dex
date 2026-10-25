@@ -29,8 +29,8 @@ test('live battlefield exposes a centre card drop target and keeps direct board 
 test('hand is a larger free-floating fan and the middle controls are integrated into the centre strip',()=>{
   const css=read('app/src/main/assets/tcgp-battle.css');
   assert.match(css,/\.tcgp-live-hand\s*\{[^}]*background\s*:\s*transparent/s);
-  assert.match(css,/\.tcgp-live-hand-wrap\s*\{[^}]*flex-basis\s*:\s*clamp\(/s);
-  assert.match(css,/\.tcgp-live-hand-wrap \.tcgp-live-hand-card\s*\{[^}]*width\s*:\s*clamp\(/s);
+  assert.match(css,/\.tcgp-live-hand-wrap\s*\{[^}]*width\s*:\s*var\(--card-width/s);
+  assert.match(css,/\.tcgp-live-hand-wrap \.tcgp-live-hand-card\s*\{[^}]*width\s*:\s*100%/s);
   assert.match(css,/\.tcgp-live-mid-controls\s*\{[^}]*background\s*:\s*transparent[^}]*border\s*:\s*0/s);
   assert.match(css,/\.tcgp-live-center-play\s*\{/);
 });
