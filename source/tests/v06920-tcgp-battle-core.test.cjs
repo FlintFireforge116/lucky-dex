@@ -54,7 +54,7 @@ test('a Pokémon cannot evolve on its first turn in play but can evolve on a lat
   assert.deepEqual(battle.sides.player.active.stack,['A1-001','A1-002']);
 });
 
-test('attack damage, self-heal, KO points and automatic promotion resolve correctly', () => {
+test('attack damage, self-heal, KO points and chosen promotion resolve correctly', () => {
   const battle = core.createBattle({playerDeck:loaner,opponentDeck:loaner,seed:22,firstSide:'player'});
   battle.sides.player.active = core.makePokemonSlot('A1-029',0);
   battle.sides.player.active.damage = 20;
@@ -62,14 +62,18 @@ test('attack damage, self-heal, KO points and automatic promotion resolve correc
   battle.sides.player.energyAvailable = false;
   battle.sides.opponent.active = core.makePokemonSlot('A1-021',0);
   battle.sides.opponent.active.damage = 45;
-  battle.sides.opponent.bench = [core.makePokemonSlot('A1-014',0)];
+  const benched=core.makePokemonSlot('A1-014',0);benched.benchSlot=2;
+  battle.sides.opponent.bench = [benched];
   const attack = core.legalActions(battle,'player').find(a => a.type==='attack' && a.attackIndex===0);
   assert.ok(attack);
   core.applyAction(battle,'player',attack);
   assert.equal(battle.sides.player.points,1);
   assert.equal(battle.sides.player.active.damage,10,'Blot heals 10 after attacking');
-  assert.equal(battle.sides.opponent.active.cardId,'A1-014','first Benched Pokémon is promoted after KO in slice 1');
-  assert.equal(battle.activeSide,'opponent','attacking ends the turn');
+  assert.equal(battle.phase,'promote');
+  assert.equal(battle.sides.opponent.active,null);
+  core.applyAction(battle,'opponent',{type:'promote',benchIndex:2});
+  assert.equal(battle.sides.opponent.active.cardId,'A1-014');
+  assert.equal(battle.activeSide,'opponent','promotion completes the attacking turn');
 });
 
 test('three points wins immediately and Solo turn 50 ends as a player loss', () => {

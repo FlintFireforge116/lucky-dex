@@ -131,3 +131,14 @@ body.tcgp-card-dragging [data-card-drop-zone="1"][data-tcgp-drop-state="invalid"
 body.tcgp-card-dragging [data-card-drop-zone="1"][data-tcgp-drop-state="invalid"]::after{content:"×";position:absolute;inset:0;z-index:5;display:grid;place-items:center;border-radius:inherit;background:#a8283548;color:#fff;font-size:clamp(26px,9vw,42px);font-weight:900;text-shadow:0 1px 3px #5f1822;pointer-events:none}
 body.tcgp-card-dragging [data-card-play-zone="1"][data-tcgp-drop-state="valid"] .tcgp-live-center-play{border-color:#4b9e68;background:#e3f7dfeb;color:#286642}
 body.tcgp-card-dragging [data-card-play-zone="1"][data-tcgp-drop-state="invalid"] .tcgp-live-center-play{border-color:#c85b61;background:#f8dfe1ef;color:#8b3037}
+
+/* v0.69.31 battle-flow readability */
+.tcgp-live-action-event{position:absolute;left:50%;top:44.6%;z-index:18;transform:translate(-50%,-50%);width:min(76%,330px);min-height:34px;display:flex;align-items:center;justify-content:center;text-align:center;padding:7px 12px;border-radius:999px;background:rgba(6,19,32,.92);border:1px solid rgba(255,255,255,.38);box-shadow:0 7px 22px rgba(0,0,0,.28);color:#fff;font-size:11px;font-weight:950;letter-spacing:.02em;pointer-events:none}
+.tcgp-live-card-actions{max-width:190px;gap:5px;flex-wrap:wrap}
+.tcgp-live-context-action.attack{min-width:118px;min-height:38px;padding:5px 8px;border-radius:11px;display:grid;grid-template-columns:minmax(0,1fr) auto;grid-template-areas:"name damage" "cost damage";column-gap:8px;row-gap:1px;text-align:left;font-size:8px}
+.tcgp-live-context-action.attack b{grid-area:name;font-size:9px;overflow:hidden;text-overflow:ellipsis}
+.tcgp-live-context-action.attack small{grid-area:cost;font-size:6px;color:#bfe9ca;letter-spacing:.06em}
+.tcgp-live-context-action.attack strong{grid-area:damage;align-self:center;font-size:10px;color:#e4ffe9}
+.tcgp-live-context-action.promote{min-height:28px;padding:5px 9px;background:rgba(31,112,181,.96);border-color:rgba(159,216,255,.55);font-size:7px}
+.tcgp-live-mid-controls.promote{grid-template-columns:auto auto 1fr;background:rgba(116,48,48,.2)}
+@media(max-height:720px){.tcgp-live-action-event{top:44.2%;min-height:30px;padding:5px 10px;font-size:9px}.tcgp-live-context-action.attack{min-width:104px;min-height:34px}}

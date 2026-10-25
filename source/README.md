@@ -1,19 +1,18 @@
-# LuckyDex v0.69.29 — TCG Pocket Battlefield Refactor
+# LuckyDex v0.69.31 — TCG Pocket Battle Flow UX
 
-The supplied v0.69.28 source is the authoritative baseline. Battle Lab now has one fixed, responsive battlefield grid: opponent hand/piles, three Bench anchors, centred Active, compact score/turn lane, player Active, three Bench anchors, and a bottom hand between dedicated piles and Energy. Only hand cards intentionally overlap.
+This release builds on the v0.69.30 free-drag battlefield and makes battle flow readable and player-directed. Benched Pokémon now retain a stable physical Bench slot (1–3), so the player can place a Basic into any open Bench position instead of being forced into the next compact slot. After a Knock Out, the defending side must choose which Benched Pokémon becomes Active; the player gets explicit PROMOTE controls and the CPU chooses through its normal AI legality path.
 
-A pure count-aware hand model provides generous small-hand spacing, progressively compressed fans and a horizontal span for large hands. Touch swipe scrolls a long hand; a vertical gesture drags a playable card. Card-native attacks/retreat and existing legal-action dispatch remain. Setup still requires a manually placed Active and leaves the Bench optional. Empty discard piles are outlines; the player deck uses the equipped sleeve. Temporary details/target/discard sheets scroll internally, not the live battlefield.
+Battle actions are now narrated visibly. CPU turns resolve one action at a time instead of completing the entire turn invisibly in one engine call, and the battlefield shows a readable action banner for placements, Trainer cards, Energy attachments, retreats, attacks and promotions. Player attack controls also show move name, Energy requirement and damage together.
 
-Superseded battlefield CSS and unused renderers are removed rather than overridden. Core, AI, data, deck legality, effects, Solo rules, progression, rewards, achievements and saves are unchanged.
+The compact internal Bench array is preserved for compatibility; a `benchSlot` field provides stable physical board positions without introducing sparse-array assumptions into existing battle logic.
 
-## Canonical source and delivery
+## Release
 
-The repository tracks real unpacked files under `source/`. Build from that directory; GitHub Actions continues using it directly. This release is distributed as `LuckyDex_patch_v0.69.29.zip`, containing changed/new source-relative files only. Apply it over `~/lucky-dex/source/`; do not replace the source tree or commit a full source archive. No source file is deleted, so no deletion list is needed.
-
-Android identity/signing stay unchanged: `com.example.luckydex`, versionName `0.69.29`, versionCode `7010`.
+- versionName: `0.69.31`
+- versionCode: `7012`
+- canonical GitHub source remains `source/`
+- delivery is a changed-files-only patch ZIP
 
 ## Verification
 
-`node scripts/tcgp-test-inventory.cjs final` runs the existing TCG core/data/deck/Solo/progression/UI programs plus the new geometry, gesture, interaction, release and 500-match deterministic stress tests. Browser tests require Playwright and a local browser; set `LUCKYDEX_BROWSER` if needed. `node scripts/tcgp-visual-qa.cjs` captures all requested portrait sizes; `LUCKYDEX_TCGP_QA_ART` may point to a temporary cache of the existing public card-art URLs for offline screenshots. QA images/cache are not release assets.
-
-The full project runner remains `npm test`. Exact results, unchanged-baseline audit, screenshots inspected, build verification and known limitations are in `docs/TCGP_BATTLEFIELD_v0.69.29.md`. Do not interpret focused TCG success as a claim that all historical project tests pass.
+Focused TCG Battle core/UI/regression tests and JavaScript syntax checks are run before packaging. Browser-backed Playwright tests are not claimed in environments where Playwright is unavailable.

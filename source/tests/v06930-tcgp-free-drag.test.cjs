@@ -15,23 +15,24 @@ test('direct hand target legality is specific to the dragged card and exact boar
   const ui=require('../app/src/main/assets/tcgp-battle-ui.js');
   assert.equal(typeof ui.directHandDropActionIndex,'function');
   const setup={phase:'setup',setupSide:'player',sides:{player:{active:null,bench:[]}}};
-  const setupActions=[{type:'setupActive',handIndex:0},{type:'setupBench',handIndex:0}];
+  const setupActions=[{type:'setupActive',handIndex:0},{type:'setupBench',handIndex:0,benchIndex:0},{type:'setupBench',handIndex:0,benchIndex:2}];
   assert.equal(ui.directHandDropActionIndex(setupActions,setup,0,'active',0),0);
   assert.equal(ui.directHandDropActionIndex(setupActions,setup,0,'bench',0),1);
-  assert.equal(ui.directHandDropActionIndex(setupActions,setup,0,'bench',2),-1);
+  assert.equal(ui.directHandDropActionIndex(setupActions,setup,0,'bench',2),2);
   assert.equal(ui.directHandDropActionIndex(setupActions,setup,1,'active',0),-1);
 
   const battle={phase:'battle',activeSide:'player',sides:{player:{active:{cardId:'A1-001'},bench:[{cardId:'A1-001'}]}}};
   const actions=[
-    {type:'bench',handIndex:0},
+    {type:'bench',handIndex:0,benchIndex:1},
+    {type:'bench',handIndex:0,benchIndex:2},
     {type:'evolve',handIndex:1,target:'active'},
     {type:'evolve',handIndex:1,target:'bench',benchIndex:0},
     {type:'trainer',handIndex:2}
   ];
   assert.equal(ui.directHandDropActionIndex(actions,battle,0,'bench',1),0);
-  assert.equal(ui.directHandDropActionIndex(actions,battle,0,'bench',2),-1);
-  assert.equal(ui.directHandDropActionIndex(actions,battle,1,'active',0),1);
-  assert.equal(ui.directHandDropActionIndex(actions,battle,1,'bench',0),2);
+  assert.equal(ui.directHandDropActionIndex(actions,battle,0,'bench',2),1);
+  assert.equal(ui.directHandDropActionIndex(actions,battle,1,'active',0),2);
+  assert.equal(ui.directHandDropActionIndex(actions,battle,1,'bench',0),3);
   assert.equal(ui.directHandDropActionIndex(actions,battle,2,'active',0),-1);
   assert.equal(ui.directHandDropActionIndex(actions,battle,2,'bench',1),-1);
 });

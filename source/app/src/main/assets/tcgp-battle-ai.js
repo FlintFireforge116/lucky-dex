@@ -30,7 +30,7 @@
       const minNeed=Math.min(...attacks.map(a=>String(a.cost||'').length).filter(Boolean),99);
       return total<minNeed?100:30;
     }
-    const slot=s.bench[action.benchIndex];
+    const slot=core.benchSlotAt?core.benchSlotAt(s,action.benchIndex):s.bench[action.benchIndex];
     const card=slot&&data.cardById(slot.cardId);
     if(!card)return 0;
     const total=Object.values(slot.energy||{}).reduce((a,b)=>a+Number(b||0),0);
@@ -43,6 +43,9 @@
     if(level!=='Beginner') throw new Error(`AI difficulty not implemented yet: ${level}`);
     const legal=core.legalActions(state,side);
     if(!legal.length)return null;
+
+    const promote=legal.find(a=>a.type==='promote');
+    if(promote)return promote;
 
     const evolve=legal.find(a=>a.type==='evolve');
     if(evolve)return evolve;
@@ -68,7 +71,16 @@
   function runTurn(state,side,difficulty){
     const startSide=side;
     let actions=0;
-    while(state.phase==='battle'&&state.activeSide===startSide&&actions<30){
+    while(actions<30){
+      if(state.phase==='promote'){
+        const promotionSide=state.promotionSide;
+        const action=chooseAction(state,promotionSide,difficulty);
+        if(!action)break;
+        core.applyAction(state,promotionSide,action);
+        actions+=1;
+        continue;
+      }
+      if(state.phase!=='battle'||state.activeSide!==startSide)break;
       const action=chooseAction(state,startSide,difficulty);
       if(!action)break;
       core.applyAction(state,startSide,action);

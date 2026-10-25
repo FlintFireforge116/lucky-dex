@@ -42,8 +42,51 @@
       stack:[card.id],
       damage:0,
       energy:{},
-      playedOnSideTurn:Math.max(0,Number(playedOnSideTurn || 0))
+      playedOnSideTurn:Math.max(0,Number(playedOnSideTurn || 0)),
+      benchSlot:null
     };
+  }
+
+
+  function normalizeBenchSlots(sideState){
+    const used=new Set();
+    (sideState?.bench||[]).forEach((slot,index)=>{
+      if(!slot)return;
+      let physical=Number(slot.benchSlot);
+      if(!Number.isInteger(physical)||physical<0||physical>2||used.has(physical)){
+        physical=[0,1,2].find(i=>!used.has(i));
+      }
+      slot.benchSlot=physical;
+      used.add(physical);
+    });
+    return sideState?.bench||[];
+  }
+
+  function benchArrayIndex(sideState,benchIndex){
+    normalizeBenchSlots(sideState);
+    const physical=Number(benchIndex);
+    return (sideState?.bench||[]).findIndex(slot=>slot&&Number(slot.benchSlot)===physical);
+  }
+
+  function benchSlotAt(sideState,benchIndex){
+    const index=benchArrayIndex(sideState,benchIndex);
+    return index>=0?sideState.bench[index]:null;
+  }
+
+  function emptyBenchSlots(sideState){
+    normalizeBenchSlots(sideState);
+    const used=new Set((sideState?.bench||[]).filter(Boolean).map(slot=>Number(slot.benchSlot)));
+    return [0,1,2].filter(i=>!used.has(i));
+  }
+
+  function placeOnBench(sideState,slot,benchIndex){
+    const physical=Number(benchIndex);
+    if(!Number.isInteger(physical)||physical<0||physical>2)throw new Error('Invalid Bench slot.');
+    if(benchSlotAt(sideState,physical))throw new Error(`Bench ${physical+1} is already occupied.`);
+    slot.benchSlot=physical;
+    sideState.bench.push(slot);
+    normalizeBenchSlots(sideState);
+    return slot;
   }
 
   function makeDeck(side, ids){
@@ -86,7 +129,8 @@
     for (let i=s.hand.length-1;i>=0 && s.bench.length<3;i--){
       if (!isBasic(s.hand[i])) continue;
       const [ref] = s.hand.splice(i,1);
-      s.bench.unshift(makePokemonSlot(ref.cardId,0,ref.uid));
+      const slot=makePokemonSlot(ref.cardId,0,ref.uid);
+      placeOnBench(s,slot,emptyBenchSlots(s)[0]);
     }
   }
 
@@ -141,7 +185,7 @@
 
   function slotForTarget(s,target,benchIndex){
     if (target === 'active') return s.active;
-    if (target === 'bench') return s.bench[Number(benchIndex)];
+    if (target === 'bench') return benchSlotAt(s,benchIndex);
     return null;
   }
 
@@ -154,7 +198,10 @@
       if (s.active && data.cardById(s.active.cardId).name === evo.evolvesFrom && s.active.playedOnSideTurn < s.turnCount){
         actions.push({type:'evolve',handIndex,cardId:evo.id,target:'active'});
       }
-      s.bench.forEach((slot,benchIndex)=>{
+      normalizeBenchSlots(s);
+      s.bench.forEach((slot,index)=>{
+        if (!slot) return;
+        const benchIndex=Number(slot.benchSlot ?? index);
         if (data.cardById(slot.cardId).name === evo.evolvesFrom && slot.playedOnSideTurn < s.turnCount){
           actions.push({type:'evolve',handIndex,cardId:evo.id,target:'bench',benchIndex});
         }
@@ -174,8 +221,10 @@
       return actions;
     }
     if (s.bench.length < 3){
+      const empty=emptyBenchSlots(s);
       s.hand.forEach((ref,handIndex)=>{
-        if (isBasic(ref)) actions.push({type:'setupBench',handIndex,cardId:ref.cardId,target:'bench'});
+        if (!isBasic(ref)) return;
+        empty.forEach(benchIndex=>actions.push({type:'setupBench',handIndex,cardId:ref.cardId,target:'bench',benchIndex}));
       });
     }
     actions.push({type:'setupReady'});
@@ -185,14 +234,20 @@
   function legalActions(state, side){
     if (!state) return [];
     if (state.phase === 'setup') return setupActions(state,side);
+    if (state.phase === 'promote') {
+      if (state.promotionSide !== side) return [];
+      normalizeBenchSlots(state.sides[side]);
+      return state.sides[side].bench.filter(Boolean).map(slot=>({type:'promote',benchIndex:Number(slot.benchSlot)}));
+    }
     if (state.phase !== 'battle' || state.activeSide !== side) return [];
     const s = state.sides[side];
     const actions = [];
     if (s.bench.length < 3){
+      const empty=emptyBenchSlots(s);
       s.hand.forEach((ref,handIndex)=>{
         const card = data.cardById(ref.cardId);
         if (card && card.kind === 'pokemon' && card.stage === 'Basic' && card.battleEnabled){
-          actions.push({type:'bench',handIndex,cardId:card.id});
+          empty.forEach(benchIndex=>actions.push({type:'bench',handIndex,cardId:card.id,benchIndex}));
         }
       });
     }
@@ -203,12 +258,14 @@
     });
     if (s.energyAvailable && !s.energyUsed){
       if (s.active) actions.push({type:'attach',target:'active'});
-      s.bench.forEach((slot,benchIndex)=>actions.push({type:'attach',target:'bench',benchIndex}));
+      normalizeBenchSlots(s);
+      s.bench.forEach((slot,index)=>{if(slot)actions.push({type:'attach',target:'bench',benchIndex:Number(slot.benchSlot ?? index)});});
     }
     if (!s.retreated && s.active && s.bench.length){
       const card = data.cardById(s.active.cardId);
       if (effects.totalEnergy(s.active.energy) >= Number(card.retreat || 0)){
-        s.bench.forEach((slot,benchIndex)=>actions.push({type:'retreat',benchIndex}));
+        normalizeBenchSlots(s);
+        s.bench.forEach((slot,index)=>{if(slot)actions.push({type:'retreat',benchIndex:Number(slot.benchSlot ?? index)});});
       }
     }
     if (s.active){
@@ -252,11 +309,14 @@
     if (Number(defender.active.damage || 0) < Number(card.hp || 0)) return;
     const knocked = defender.active;
     discardKnockedOut(defender,knocked);
-    defender.active = defender.bench.length ? defender.bench.shift() : null;
+    defender.active = null;
     attacker.points += Math.max(1,Number(card.points || 1));
     state.log.push({type:'ko',side:defenderSide,cardId:card.id,points:attacker.points});
     if (attacker.points >= 3){ finish(state,attackerSide,'points'); return; }
-    if (!defender.active){ finish(state,attackerSide,'no-pokemon'); }
+    if (!defender.bench.length){ finish(state,attackerSide,'no-pokemon'); return; }
+    normalizeBenchSlots(defender);
+    state.phase='promote';
+    state.promotionSide=defenderSide;
   }
 
   function playTrainer(state,side,action){
@@ -264,6 +324,7 @@
     const [ref] = s.hand.splice(action.handIndex,1);
     const card = data.cardById(ref.cardId);
     s.discard.push(ref);
+    state.log.push({type:'trainer',side,cardId:card.id});
     if (card.effect && card.effect.type === 'searchRandomBasic'){
       if (s.hand.length >= 10) return;
       const candidates=[];
@@ -279,9 +340,10 @@
   }
 
   function applyAction(state, side, action){
-    if (!state || !['setup','battle'].includes(state.phase)) throw new Error('Battle is not active.');
+    if (!state || !['setup','battle','promote'].includes(state.phase)) throw new Error('Battle is not active.');
     if (state.phase === 'battle' && state.activeSide !== side) throw new Error(`It is not ${side}'s turn.`);
     if (state.phase === 'setup' && state.setupSide !== side) throw new Error(`It is not ${side}'s setup.`);
+    if (state.phase === 'promote' && state.promotionSide !== side) throw new Error(`It is not ${side}'s promotion.`);
     const legal = legalActions(state,side);
     const matched = legal.find(item => actionMatches(item,action));
     if (!matched){
@@ -289,14 +351,29 @@
       throw new Error(`Illegal Pocket action: ${action && action.type || 'unknown'}.`);
     }
     const s = state.sides[side];
+    if (matched.type === 'promote'){
+      const index=benchArrayIndex(s,matched.benchIndex);
+      if(index<0)throw new Error('That Bench slot is empty.');
+      const [incoming]=s.bench.splice(index,1);
+      const fromBench=Number(incoming.benchSlot);
+      incoming.benchSlot=null;
+      s.active=incoming;
+      state.log.push({type:'promote',side,cardId:incoming.cardId,benchIndex:fromBench});
+      state.phase='battle';
+      state.promotionSide=null;
+      endTurn(state);
+      return state;
+    }
     if (matched.type === 'setupActive'){
       const [ref] = s.hand.splice(matched.handIndex,1);
       s.active = makePokemonSlot(ref.cardId,0,ref.uid);
+      state.log.push({type:'setupActive',side,cardId:ref.cardId,target:'active'});
       return state;
     }
     if (matched.type === 'setupBench'){
       const [ref] = s.hand.splice(matched.handIndex,1);
-      s.bench.push(makePokemonSlot(ref.cardId,0,ref.uid));
+      placeOnBench(s,makePokemonSlot(ref.cardId,0,ref.uid),matched.benchIndex);
+      state.log.push({type:'setupBench',side,cardId:ref.cardId,target:'bench',benchIndex:matched.benchIndex});
       return state;
     }
     if (matched.type === 'setupReady'){
@@ -313,7 +390,8 @@
 
     if (matched.type === 'bench'){
       const [ref] = s.hand.splice(matched.handIndex,1);
-      s.bench.push(makePokemonSlot(ref.cardId,s.turnCount,ref.uid));
+      placeOnBench(s,makePokemonSlot(ref.cardId,s.turnCount,ref.uid),matched.benchIndex);
+      state.log.push({type:'bench',side,cardId:ref.cardId,benchIndex:matched.benchIndex});
       return state;
     }
     if (matched.type === 'evolve'){
@@ -321,6 +399,7 @@
       const target = slotForTarget(s,matched.target,matched.benchIndex);
       target.cardId = ref.cardId;
       target.stack.push(ref.cardId);
+      state.log.push({type:'evolve',side,cardId:ref.cardId,target:matched.target,benchIndex:matched.benchIndex});
       return state;
     }
     if (matched.type === 'trainer'){
@@ -332,6 +411,7 @@
       const type = s.energyType;
       target.energy[type] = Number(target.energy[type] || 0) + 1;
       s.energyUsed = true;
+      state.log.push({type:'attach',side,target:matched.target,benchIndex:matched.benchIndex,cardId:target.cardId,energyType:type});
       return state;
     }
     if (matched.type === 'retreat'){
@@ -339,10 +419,17 @@
       const paid = effects.spendGenericEnergy(s.active.energy,activeCard.retreat);
       if (!paid) throw new Error('Not enough Energy to retreat.');
       s.active.energy = paid;
-      const incoming = s.bench[matched.benchIndex];
-      s.bench[matched.benchIndex] = s.active;
-      s.active = incoming;
+      const benchArray=benchArrayIndex(s,matched.benchIndex);
+      if(benchArray<0)throw new Error('That Bench slot is empty.');
+      const incoming=s.bench[benchArray];
+      const outgoing=s.active;
+      const physical=Number(incoming.benchSlot);
+      incoming.benchSlot=null;
+      outgoing.benchSlot=physical;
+      s.bench[benchArray]=outgoing;
+      s.active=incoming;
       s.retreated = true;
+      state.log.push({type:'retreat',side,cardId:outgoing.cardId,toCardId:incoming.cardId,benchIndex:physical});
       return state;
     }
     if (matched.type === 'attack'){
@@ -366,5 +453,5 @@
 
   function publicSnapshot(state){ return JSON.parse(JSON.stringify(state)); }
 
-  return {createBattle,makePokemonSlot,legalActions,applyAction,publicSnapshot,drawCard,endTurn};
+  return {createBattle,makePokemonSlot,legalActions,applyAction,publicSnapshot,drawCard,endTurn,benchSlotAt,benchArrayIndex,normalizeBenchSlots};
 });
