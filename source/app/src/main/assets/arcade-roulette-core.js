@@ -38,6 +38,7 @@
     return [];
   }
   function multiplierFor(round,bet){const avail=availableSlots(round),count=matchingSlots(round,bet).length;return count>0?avail.length/count:0;}
+  function formatMultiplier(value){const n=Number(value);if(!Number.isFinite(n)||n<=0)return '—';return String(Math.round(n*100)/100);}
   function betMatches(slot,bet){
     if(!slot||!bet)return false;
     if(bet.kind==='slot')return slot.key===bet.slotKey;
@@ -68,5 +69,5 @@
     if(bet?.kind==='color')return String(bet.color||'Colour').replace(/^./,c=>c.toUpperCase());
     return 'Bet';
   }
-  return {POKEMON,COLORS,SLOTS,WHEEL_SLOTS,createRound,tableStakes,availableSlots,matchingSlots,multiplierFor,betMatches,resolveSpin,goldenPrizeForStake,nextRound,describeBet};
+  return {POKEMON,COLORS,SLOTS,WHEEL_SLOTS,createRound,tableStakes,availableSlots,matchingSlots,multiplierFor,formatMultiplier,betMatches,resolveSpin,goldenPrizeForStake,nextRound,describeBet};
 });

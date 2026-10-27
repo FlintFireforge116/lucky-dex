@@ -71,11 +71,11 @@ function renderVenue(id){const v=VENUES.find(v=>v.id===id);if(!v)return false;
  else $('arcadeVenueGames').innerHTML=v.games.map(g=>`<button type="button" class="arcade-venue-game" data-venue-game="${g}"><b>${GAME_NAMES[g]}</b><span>${GAME_OBJECTIVES[g]}</span><em>PLAY ›</em></button>`).join('');return true;
 }
 function openVenue(id){if(!VENUES.some(v=>v.id===id))return false;cleanup();document.body.classList.add('arcade-mode');selectVenue(id);gameCornerLocation=null;renderVenue(id);$('arcadeWorldView').hidden=true;$('arcadeVenueView').hidden=false;if($('arcadeRecordsView'))$('arcadeRecordsView').hidden=true;document.body.classList.add('arcade-venue-open');return true;}
-function openGame(id){if(!owners[id])return false;const corner=gameCornerLocationForGame(id);cleanup();document.body.classList.add('arcade-mode');selectVenue(venueForGame(id));if(corner)gameCornerLocation=corner.id;active=id;activeStarted=false;
+function openGame(id,options={}){if(!owners[id])return false;const corner=gameCornerLocationForGame(id);cleanup();document.body.classList.add('arcade-mode');selectVenue(venueForGame(id));if(corner)gameCornerLocation=corner.id;active=id;activeStarted=false;
  $('arcadeWorldView').hidden=true;$('arcadeVenueView').hidden=true;if($('arcadeRecordsView'))$('arcadeRecordsView').hidden=true;
  const panelId=id==='clearCutChallenge'?'clearCutGame':`${id}Game`,panel=$(panelId);if(!panel){active=null;return false;}panel.hidden=false;document.body.classList.add('arcade-open');
  const exit=panel.querySelector('[data-exit-game]');if(exit)exit.textContent='‹ '+returnLabelForGame(id);
- function startGame(){if(active!==id||activeStarted)return false;owners[id]()?.open?.(id);activeStarted=true;window.LuckyDexArcadeHelp?.activate?.(id);return true;}
+ function startGame(){if(active!==id||activeStarted)return false;const owner=owners[id]?.(),opened=owner?.open?.(id);if(opened===false)return false;activeStarted=true;window.LuckyDexArcadeHelp?.activate?.(id);if(typeof options.onReady==='function'){const out=options.onReady(owner);return out===undefined?true:out;}return true;}
  const help=window.LuckyDexArcadeHelp;if(help&&!help.isSeen?.(id)&&help.showFirstTime?.(id,startGame))return true;return startGame();
 }
 function showGameHelp(){if(!active||!activeStarted)return false;const id=active,owner=owners[id]?.(),paused=owner?.pause?.()===true,help=window.LuckyDexArcadeHelp;if(!help?.showInfo)return false;const shown=help.showInfo?.(active,{onClose:()=>{if(paused&&active===id&&activeStarted)owner?.resume?.();}});if(!shown&&paused)owner?.resume?.();return !!shown;}
@@ -112,6 +112,6 @@ $('arcadeWorldNext').onclick=()=>{const n=VENUES.findIndex(v=>v.id===selected);i
 $('arcadeWorldBack').onclick=backFromVenue;
 document.addEventListener('visibilitychange',()=>{if(document.hidden)suspend();else if(document.querySelector('[data-page="trade"].active'))window.LuckyDexTrade?.enter();});
 window.addEventListener('pagehide',suspend);
-window.LuckyDexArcadeWorld={VENUES,GAME_CORNER_LOCATIONS,GAME_NAMES,GAME_OBJECTIVES,openWorld,openVenue,openGameCornerLocation,openGame,showGameHelp,backFromGame,backFromVenue,leave,suspend,activeGame:()=>active,selectedVenue,selectVenue,venueForGame,gameCornerLocationForGame,returnLabelForGame,migrateLegacyVenue,renderWorld,renderVenue};
+window.LuckyDexArcadeWorld={VENUES,GAME_CORNER_LOCATIONS,GAME_NAMES,GAME_OBJECTIVES,openWorld,openVenue,openGameCornerLocation,openGame,supportsReadyHandoff:true,showGameHelp,backFromGame,backFromVenue,leave,suspend,activeGame:()=>active,selectedVenue,selectVenue,venueForGame,gameCornerLocationForGame,returnLabelForGame,migrateLegacyVenue,renderWorld,renderVenue};
 openWorld({activateMode:false});
 })();

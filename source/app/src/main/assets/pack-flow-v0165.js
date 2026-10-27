@@ -608,6 +608,11 @@ async function packCachedBlob(id) {
     return await new Promise((resolve,reject)=>{const tx=db.transaction('images','readonly'),request=tx.objectStore('images').get(id);request.onsuccess=()=>resolve(request.result||null);request.onerror=()=>reject(request.error);});
   }catch(_){return null;}
 }
+async function offlineCardArtworkUrlV06932(cardId){
+  const id=String(cardId||'');if(!id||typeof URL==='undefined'||typeof URL.createObjectURL!=='function')return '';
+  const blob=await packCachedBlob(id);return blob?.size?URL.createObjectURL(blob):'';
+}
+window.LuckyDexOfflineCardArt=Object.assign(window.LuckyDexOfflineCardArt||{},{blobForCard:packCachedBlob,urlForCard:offlineCardArtworkUrlV06932});
 async function packArtworkIsUsable(card,blob) {
   if(!blob?.size)return /^data:/i.test(card.image||'')?LuckyDexPack.decodeImage(card.image):false;
   let fingerprint=null;

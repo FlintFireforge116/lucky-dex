@@ -1,3 +1,7 @@
+if(typeof window!=='undefined'&&typeof document!=='undefined'&&window.Android){
+  document.documentElement?.classList.add('android-native-inset');
+}
+
 const API = {
   pokeSpecies: 'https://pokeapi.co/api/v2/pokemon-species?limit=2000',
   pokemon: id => `https://pokeapi.co/api/v2/pokemon/${id}`,
@@ -1969,7 +1973,7 @@ renderCollection=function(){const grid=document.getElementById('collectionGrid')
    before the app could finish wiring. That single runtime exception explained
    the frozen starter, Wild Search/Expedition stalls and permanent Loading sets.
 */
-window.__LUCKYDEX_BUILD='0.69.31';
+window.__LUCKYDEX_BUILD='0.69.32';
 window.addEventListener('error',event=>{
   try{localStorage.setItem('luckyDexLastRuntimeError',JSON.stringify({build:window.__LUCKYDEX_BUILD,message:String(event?.message||'Unknown error'),source:String(event?.filename||''),line:Number(event?.lineno||0),at:Date.now()}));}catch(_){ }
 });

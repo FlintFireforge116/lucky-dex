@@ -534,6 +534,8 @@
     row.recoveryTried=true;
     const card=row.card;let recovered='';
     try{
+      const offline=await window.LuckyDexOfflineCardArt?.urlForCard?.(card?.id);
+      if(offline){row.candidates.push(offline);row.index=row.candidates.length-1;img.parentElement?.classList.remove('broken');img.src=offline;return true;}
       if(typeof window.resolveCardArtwork==='function')recovered=await window.resolveCardArtwork(card,null,sourceOf(card));
       else if(sourceOf(card)==='tcgp'&&window.LuckyDexPocket?.resolveCard){
         const exact=await window.LuckyDexPocket.resolveCard(card);

@@ -238,6 +238,11 @@ main{height: calc(100dvh - var(--chrome-h) - var(--nav-h) - env(safe-area-inset-
 .page, .page.active{height: 100%; min-height: 0px;}
 .page.active{display: block; overflow: hidden;}
 .bottom-nav{height: calc(var(--nav-h) + env(safe-area-inset-bottom)); padding-bottom: env(safe-area-inset-bottom);}
+/* Android native already shrinks the WebView to the usable system-bar viewport.
+   Do not reserve the same bottom inset a second time in web chrome. */
+html.android-native-inset main{height: calc(100dvh - var(--chrome-h) - var(--nav-h));}
+html.android-native-inset .bottom-nav{height: var(--nav-h); padding-bottom: 0;}
+html.android-native-inset .topbar{padding-top: 8px;}
 .screen-view{height: 100%; min-height: 0px; padding: 14px; overflow: hidden;}
 .screen-title{display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 12px;}
 .screen-title h2{margin: 2px 0px 0px; font-size: 24px; line-height: 1;}

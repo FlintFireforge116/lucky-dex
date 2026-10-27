@@ -240,6 +240,13 @@
     const key=dateKey||todayKey();
     return s.arcade.dailyRewards[String(gameId)]!==key;
   }
+  const ITEM_LABELS=Object.freeze({berry:['Berry','Berries'],potion:['Potion','Potions'],pokeball:['Poké Ball','Poké Balls'],greatball:['Great Ball','Great Balls'],ultraball:['Ultra Ball','Ultra Balls']});
+  function formatItemAward(item){
+    const amount=Math.max(0,Math.round(Number(item?.amount)||0));if(!item||!amount)return '';
+    const key=String(item.key||'item'),names=ITEM_LABELS[key];
+    const label=names?names[amount===1?0:1]:key.replace(/[-_]/g,' ').replace(/\b\w/g,c=>c.toUpperCase())+(amount===1?'':'s');
+    return `${amount} ${label}`;
+  }
   function awardRun({gameId,label,score=0,coins=0,dailyEligible=false,dailyReward=null,dateKey=null}={}){
     const s=getState();
     if(!s)throw new Error('LuckyDex state unavailable');
@@ -332,7 +339,7 @@
     return {ordinaryCoins,jackpotCoins,totalCoins:ordinaryCoins+jackpotCoins};
   }
 
-  const api={ZONES,ensureArcadeState,normalizeArcadeRecords,todayKey,dailyClaimAvailable,awardRun,caughtParticipants,dashRacers,challengeParticipants,ballDropPayout};
+  const api={ZONES,ensureArcadeState,normalizeArcadeRecords,todayKey,dailyClaimAvailable,awardRun,formatItemAward,caughtParticipants,dashRacers,challengeParticipants,ballDropPayout};
   root.LuckyDexArcadePlatform=api;
   if(root.state)root.state.arcade=ensureArcadeState(root.state.arcade);
   if(typeof module!=='undefined'&&module.exports)module.exports=api;

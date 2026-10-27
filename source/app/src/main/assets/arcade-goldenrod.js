@@ -164,24 +164,26 @@
   }
   function close(){if(!cup){ui.screen='events';ui.eventId=null;ui.mode=null;ui.difficulty='normal';ui.type=null;ui.participantKey=null;ui.attackType=null;ui.participantQuery='';ui.participantSort='stat-desc';}return true;}
 
+  function openGameReady(world,eventId,launch){
+    if(!world?.openGame)return launch();
+    if(world.supportsReadyHandoff===true)return world.openGame(eventId,{onReady:launch});
+    const opened=world.openGame(eventId);if(opened===false)return false;return launch();
+  }
   function startExhibition({eventId,difficulty='normal',participantKey,attackType=null}={}){
     const adapter=adapters()?.get?.(eventId);if(!adapter)return false;
     const participant=adapter.participants().find(p=>String(p.key)===String(participantKey));if(!participant)return false;
     let chosenAttackType=attackType;
     if(eventId==='targetRange'){const owned=adapter.attackTypes?.(participant)||[];chosenAttackType=String(chosenAttackType||owned[0]||'').toLowerCase();if(!owned.includes(chosenAttackType))return false;}
-    const world=root.LuckyDexArcadeWorld;if(world?.openGame)world.openGame(eventId);
-    const api=gameApi(eventId);
-    if(api?.startExhibition)return api.startExhibition({difficulty,participant,attackType:chosenAttackType});
-    return {eventId,difficulty,participant,attackType:chosenAttackType};
+    const world=root.LuckyDexArcadeWorld,api=gameApi(eventId);
+    const launch=()=>api?.startExhibition?api.startExhibition({difficulty,participant,attackType:chosenAttackType}):{eventId,difficulty,participant,attackType:chosenAttackType};
+    return openGameReady(world,eventId,launch);
   }
   function normalizeCupEntrant(row,isPlayer=false){return {...row,id:isPlayer?'player':String(row.key??row.id),key:String(row.key??row.id),isPlayer};}
   function launchRound(){
     if(!cup||cup.abandoned||cup.rounds.length>=3)return false;
     const ctx=cup._goldenrod,roundIndex=cup.rounds.length,token=`${cup.id}:round-${roundIndex+1}`;ctx.activeRoundToken=token;ctx.roundHandled=false;
-    const api=gameApi(cup.eventId),world=root.LuckyDexArcadeWorld;
-    world?.openGame?.(cup.eventId);
-    if(api?.startGoldenrodRound)return api.startGoldenrodRound({cupId:cup.id,mode:cup.mode,divisionId:cup.divisionId,type:cup.type,roundIndex,seed:cup.seed+roundIndex*9973,player:ctx.player,aiEntrants:ctx.aiEntrants,attackType:ctx.attackType,onComplete:result=>acceptRoundResult({...result,_cupToken:token})});
-    return {pending:true,eventId:cup.eventId,roundIndex};
+    const api=gameApi(cup.eventId),world=root.LuckyDexArcadeWorld,launch=()=>api?.startGoldenrodRound?api.startGoldenrodRound({cupId:cup.id,mode:cup.mode,divisionId:cup.divisionId,type:cup.type,roundIndex,seed:cup.seed+roundIndex*9973,player:ctx.player,aiEntrants:ctx.aiEntrants,attackType:ctx.attackType,onComplete:result=>acceptRoundResult({...result,_cupToken:token})}):{pending:true,eventId:cup.eventId,roundIndex};
+    return openGameReady(world,cup.eventId,launch);
   }
   function startCup({eventId,mode='division',divisionId='rookie',type=null,participantKey,attackType=null}={}){
     if(cup&&!cup.completed&&!cup.abandoned)return false;
