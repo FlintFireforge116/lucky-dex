@@ -1,0 +1,100 @@
+{
+  "schema": 1,
+  "retrievedDate": "2026-10-27",
+  "cutoff": "2026-10-27",
+  "sources": [
+    {
+      "name": "PocketDecks legacy v4",
+      "repository": "https://github.com/PocketDecks/pokemon-tcg-pocket-cards",
+      "commit": "ec444f849be468d0104977906b4e1f14b42a5d47",
+      "license": "MIT",
+      "copyright": "Copyright (c) 2024 Chase Manning",
+      "noticeFile": "PocketDecks-LICENSE-MIT.txt",
+      "upstreamPaths": [
+        "data/v4/cards.json"
+      ],
+      "scope": "Print inventory, artwork URL metadata, set/collector identity, rarity, name, HP and elemental/category summary. Entire legacy JSON bundled verbatim. v5 and its projections/expansions are excluded.",
+      "files": [
+        {
+          "path": "pocketdecks-v4-cards.json",
+          "sha256": "15bbc27feace58d1d522ed2b543a9a01faf4501d2196d388a0968d5ef535711e",
+          "bytes": 1499647
+        }
+      ]
+    },
+    {
+      "name": "flibustier print and set metadata",
+      "repository": "https://github.com/flibustier/pokemon-tcg-pocket-database",
+      "commit": "746566d75408c04fe35210c503351dc87aee00c5",
+      "license": "MIT",
+      "copyright": "Copyright (c) 2025 Jon (flibustier)",
+      "noticeFile": "flibustier-LICENSE-MIT.txt",
+      "upstreamPaths": [
+        "dist/cards.json",
+        "dist/sets.json"
+      ],
+      "scope": "Full basic print and release metadata bundled verbatim. Internal card-design identity derived from asset filenames. cards.extra.json not imported: inspected combat defaults are unreliable and it contains no attacks.",
+      "files": [
+        {
+          "path": "flibustier-cards.json",
+          "sha256": "f90d2eccb02d04292d9b367454f0d97eeb42fa2fb21ced170a24c7d56b6d9742",
+          "bytes": 723156
+        },
+        {
+          "path": "flibustier-sets.json",
+          "sha256": "4cd2b3592fee1c22bb18ec0deb1e7df858577bdb6d03f54734cd09ce2f6ed644",
+          "bytes": 7045
+        }
+      ]
+    },
+    {
+      "name": "TCGdex main Pocket mechanics",
+      "repository": "https://github.com/tcgdex/cards-database",
+      "commit": "cbddf7e54033b1b58e44af1049c88832e55b94d0",
+      "license": "MIT",
+      "copyright": "Copyright (c) 2021 TCGdex",
+      "noticeFile": "TCGdex-LICENSE-MIT.txt",
+      "upstreamPaths": [
+        "data/Pokémon TCG Pocket/"
+      ],
+      "scope": "English values extracted from 2,480 card data literals and 15 set data literals. Only data fields retained; each card retains sourcePath/sourceSha256. No source/application code or images bundled.",
+      "files": [
+        {
+          "path": "tcgdex-pocket-cards.json",
+          "sha256": "2423b1a826bdf3a12bb9073d7e01b5fd45ddd04b39ef0b9bcd45a7fc0b31f78f",
+          "bytes": 2295001
+        },
+        {
+          "path": "tcgdex-pocket-sets.json",
+          "sha256": "86d55724c33c5df3f2efd8112b7c782e0ee76e812bddb1e44ae1fcee78e2d9ba",
+          "bytes": 4817
+        }
+      ]
+    },
+    {
+      "name": "TCGdex pending Deluxe Pack ex data",
+      "repository": "https://github.com/tcgdex/cards-database/tree/feat/add-A4b",
+      "commit": "00eb8499ed1526bf4df8d5b1c724ba02ba081507",
+      "license": "MIT",
+      "copyright": "Copyright (c) 2021 TCGdex",
+      "noticeFile": "TCGdex-LICENSE-MIT.txt",
+      "upstreamPaths": [
+        "data/Pokémon TCG Pocket/Deluxe Pack: ex/"
+      ],
+      "scope": "English values extracted from 288 card data literals. Partial branch export; gaps filled only by verified asset identity to known MIT rules. No source/application code or images bundled.",
+      "files": [
+        {
+          "path": "tcgdex-A4b-cards.json",
+          "sha256": "869327ab84a4beac2e6b344bb889601c66e10a3ba76589179374e8bc81011d39",
+          "bytes": 242126
+        }
+      ]
+    }
+  ],
+  "derivedFiles": [
+    "identity-evidence.json",
+    "cutoff.json",
+    "data-quality-overrides.json"
+  ],
+  "policy": "No PocketDecks v5 cards/gameplay/collection/expansions or third-party application code incorporated. Existing LuckyDex collection feed is unchanged by this acquisition task. MIT notices must accompany redistribution. Artwork/trademarks remain with their owners."
+}

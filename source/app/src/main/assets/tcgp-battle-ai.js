@@ -11,7 +11,7 @@
 })(typeof globalThis !== 'undefined' ? globalThis : this, function(core,data){
   'use strict';
 
-  const ACTION_KEYS = ['type','handIndex','cardId','target','benchIndex','attackIndex'];
+  const ACTION_KEYS = ['type','handIndex','cardId','target','benchIndex','attackIndex','abilityIndex','effectTarget','effectBenchIndex'];
   function sameAction(a,b){ return !!a && !!b && ACTION_KEYS.every(key => (a[key] == null && b[key] == null) || a[key] === b[key]); }
 
   function attackScore(action, state, side){
@@ -38,7 +38,23 @@
     return 20-Math.min(10,total)+(minNeed<99?Math.max(0,5-minNeed):0);
   }
 
-  function chooseAction(state,side,difficulty){
+  function utilityScore(action,state,side){
+    const s=state.sides[side],source=action.target==='bench'?(core.benchSlotAt?core.benchSlotAt(s,action.benchIndex):s.bench[action.benchIndex]):s.active;
+    const card=data.cardById(action.cardId||source?.cardId);
+    const abilities=card?.abilities?.length?card.abilities:Array.isArray(card?.ability)?card.ability:[card?.ability];
+    const ability=abilities[Number(action.abilityIndex||0)];
+    const effect=action.type==='ability'?ability?.effect:card?.effect;
+    if(effect?.type==='discardSelf')return -Infinity;
+    const target=action.effectTarget||action.target,index=action.effectTarget?action.effectBenchIndex:action.benchIndex;
+    const ownTarget=target==='active'?s.active:target==='bench'?(core.benchSlotAt?core.benchSlotAt(s,index):s.bench[index]):null;
+    const subtype=card?.trainerSubtype||card?.trainerType;
+    let score=({Supporter:20,Tool:15,Stadium:10,Item:5}[subtype]||0);
+    if(effect&&/heal/i.test(effect.type))score+=Math.min(Number(effect.amount||0),Number(ownTarget?.damage||0));
+    if(effect&&/attachEnergy/i.test(effect.type)&&ownTarget)score+=attachScore({target,benchIndex:index},state,side);
+    return score;
+  }
+
+  function chooseAction(state,side,difficulty,actionCount){
     const level=String(difficulty||'Beginner');
     if(level!=='Beginner') throw new Error(`AI difficulty not implemented yet: ${level}`);
     const legal=core.legalActions(state,side);
@@ -46,11 +62,15 @@
 
     const promote=legal.find(a=>a.type==='promote');
     if(promote)return promote;
+    if(Number(actionCount||0)>=30)return legal.find(a=>a.type==='endTurn')||null;
 
     const evolve=legal.find(a=>a.type==='evolve');
     if(evolve)return evolve;
 
-    const trainer=legal.find(a=>a.type==='trainer');
+    const ability=legal.filter(a=>a.type==='ability'&&utilityScore(a,state,side)>-Infinity).sort((a,b)=>utilityScore(b,state,side)-utilityScore(a,state,side))[0];
+    if(ability)return ability;
+
+    const trainer=legal.filter(a=>a.type==='trainer').sort((a,b)=>utilityScore(b,state,side)-utilityScore(a,state,side))[0];
     if(trainer)return trainer;
 
     const bench=legal.find(a=>a.type==='bench');
@@ -81,7 +101,7 @@
         continue;
       }
       if(state.phase!=='battle'||state.activeSide!==startSide)break;
-      const action=chooseAction(state,startSide,difficulty);
+      const action=chooseAction(state,startSide,difficulty,actions);
       if(!action)break;
       core.applyAction(state,startSide,action);
       actions+=1;

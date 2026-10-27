@@ -41,7 +41,9 @@
       seed:opts.seed,
       firstSide:opts.firstSide||defaultFirstSide(opts.seed),
       playerEnergyType:opts.playerEnergyType||'Grass',
+      playerEnergyTypes:opts.playerEnergyTypes,
       opponentEnergyType:challenge.energyType,
+      opponentEnergyTypes:opts.opponentEnergyTypes,
       manualPlayerSetup:!!opts.manualPlayerSetup
     });
   }

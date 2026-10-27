@@ -1,8 +1,9 @@
 (function(root, factory){
-  const api = factory();
+  const generated = typeof module === 'object' && module.exports ? require('./tcgp/generated/catalogue.js') : root.LuckyDexTCGPCatalogue;
+  const api = factory(generated);
   if (typeof module === 'object' && module.exports) module.exports = api;
   if (root) root.LuckyDexTCGPBattleData = api;
-})(typeof globalThis !== 'undefined' ? globalThis : this, function(){
+})(typeof globalThis !== 'undefined' ? globalThis : this, function(generated){
   'use strict';
 
   function pokemon(id, name, subtype, stage, hp, retreat, weakness, attacks, extra){
@@ -12,7 +13,7 @@
     }, extra || {});
   }
 
-  const CARDS = [
+  const LEGACY_CARDS = [
     pokemon('A1-001','Bulbasaur','Grass','Basic',70,1,'Fire',[
       { name:'Vine Whip', cost:'GC', damage:40, effect:null }
     ]),
@@ -82,29 +83,25 @@
     }
   ];
 
-  const CARD_BY_ID = Object.create(null);
-  const CARD_BY_SET_NAME = Object.create(null);
-  for (const card of CARDS){
-    CARD_BY_ID[card.id] = card;
-    const key = setNameKey(card.setId, card.name);
-    if (!CARD_BY_SET_NAME[key]) CARD_BY_SET_NAME[key] = card.id;
-    else CARD_BY_SET_NAME[key] = null;
-  }
-
+  if (!generated || !Array.isArray(generated.cards)) throw new Error('Local Pocket gameplay catalogue is missing.');
+  const CARDS = [...generated.cards, LEGACY_CARDS.find(card=>card.id==='BASIC-POKE-BALL')];
+  const PRINTS = generated.prints;
+  const CARD_BY_ID = Object.create(null), PRINT_BY_ID = Object.create(null);
+  for (const card of CARDS) CARD_BY_ID[normId(card.id)] = card;
+  for (const print of PRINTS) PRINT_BY_ID[normId(print.id)] = print;
   function normSet(value){ return String(value || '').trim().toUpperCase(); }
-  function normId(value){ return String(value || '').trim().toUpperCase(); }
-  function normName(value){ return String(value || '').trim().toLowerCase().replace(/[’]/g, "'").replace(/\s+/g, ' '); }
-  function setNameKey(setId, name){ return normSet(setId) + '|' + normName(name); }
-
-  function cardById(id){ return CARD_BY_ID[normId(id)] || null; }
-
+  function normId(value){ return String(value || '').trim().toUpperCase().replace(/^PROMO-([AB])-/, 'P-$1-').replace(/^P([AB])-/, 'P-$1-'); }
+  function normName(value){ return String(value || '').normalize('NFKD').replace(/[\u0300-\u036f]/g,'').trim().toLowerCase().replace(/[’]/g, "'").replace(/\s+/g, ' '); }
+  function cardById(id){ const key=normId(id),print=PRINT_BY_ID[key]; return CARD_BY_ID[print?normId(print.gameplayId):key] || null; }
   function gameplayIdForOwned(owned){
     if (!owned || String(owned.source || '').toLowerCase() !== 'tcgp') return null;
-    const exact = cardById(owned.id);
-    if (exact && exact.setId !== 'BASIC') return exact.id;
-    const setId = normSet(owned.setId || String(owned.id || '').split('-')[0]);
-    const fallback = CARD_BY_SET_NAME[setNameKey(setId, owned.name)];
-    return fallback || null;
+    const exact=cardById(owned.id);
+    if(exact && exact.id!=='BASIC-POKE-BALL')return exact.id;
+    // Collector metadata may recover an opaque legacy print ID. Never infer
+    // gameplay from a name: same-name cards can have entirely different rules.
+    const number=String(owned.localId ?? owned.number ?? '');
+    if(/^\d+$/.test(number)&&owned.setId){const card=cardById(owned.setId+'-'+number.padStart(3,'0'));if(card)return card.id;}
+    return null;
   }
 
   function resolveOwnedCard(owned){
@@ -154,6 +151,9 @@
 
   return {
     CARDS,
+    PRINTS,
+    SETS:generated.sets,
+    COVERAGE:generated.summary,
     BEGINNER_IVYSAUR_DECK,
     cardById,
     gameplayIdForOwned,

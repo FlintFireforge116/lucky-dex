@@ -19,6 +19,8 @@
   });
 
   const LOANER_PLAYER_DECK = data.BEGINNER_IVYSAUR_DECK.slice();
+  const ENERGY_TYPES = Object.freeze(['Grass','Fire','Water','Lightning','Psychic','Fighting','Darkness','Metal']);
+  function deckEnergyTypes(deck){return Array.isArray(deck?.energyTypes)?deck.energyTypes.slice():[String(deck?.energyType||'Grass')];}
 
   function ensureBattleState(state){
     if (!state || typeof state !== 'object') throw new TypeError('LuckyDex state is required');
@@ -38,13 +40,16 @@
 
   function ownershipMap(rows){
     const map = new Map();
-    for (const row of rows || []) map.set(row.gameplayId, Math.max(0, Number(row.quantity || 0)));
+    for (const row of rows || []){
+      const id = data.cardById(row?.gameplayId)?.id;
+      if (id) map.set(id, (map.get(id) || 0) + Math.max(0, Number(row.quantity || 0) || 0));
+    }
     return map;
   }
 
   function copyLimitKey(card){
     if (!card) return '';
-    const name = typeof card.name === 'string' ? data.normalizeName(card.name) : '';
+    const name = typeof card.name === 'string' ? data.normalizeName(card.name).normalize('NFD').replace(/[\u0300-\u036f]/g,'') : '';
     return name || String(card.id || '').toLowerCase();
   }
 
@@ -59,7 +64,7 @@
     for (const id of list){
       const card = data.cardById(id);
       if (!card){ errors.push(`Unknown battle card: ${id}.`); continue; }
-      if (!card.battleEnabled){ errors.push(`${card.name} is not battle-enabled yet.`); continue; }
+      if (!card.battleEnabled){ errors.push(`${card.name} is not battle-enabled yet.${card.support?.reasons?.length ? ' ' + card.support.reasons.join(' ') : ''}`); continue; }
       const count = (counts.get(card.id) || 0) + 1;
       counts.set(card.id, count);
       const limitKey = copyLimitKey(card);
@@ -116,13 +121,15 @@
     const cards = Array.isArray(deck && deck.cards) ? deck.cards.slice() : [];
     const validation = validateDeck(cards, ownedRows);
     if (!validation.ok) return validation;
+    const energyTypes=deckEnergyTypes(deck);
+    if(!energyTypes.length||energyTypes.length>3||new Set(energyTypes).size!==energyTypes.length||energyTypes.some(type=>!ENERGY_TYPES.includes(type)))return {ok:false,errors:['Choose 1 to 3 different Energy types for the Energy Zone.']};
     const id = String(deck.id || `deck-${Date.now()}`);
-    const saved = {id,name:String(deck.name || 'Pocket Deck').slice(0,40),cards,energyType:String(deck.energyType || 'Grass')};
+    const saved = {id,name:String(deck.name || 'Pocket Deck').slice(0,40),cards,energyType:energyTypes[0],energyTypes};
     const idx = battle.decks.findIndex(item => item && item.id === id);
     if (idx >= 0) battle.decks[idx] = saved; else battle.decks.push(saved);
     battle.activeDeckId = id;
     return {ok:true,errors:[],deck:saved};
   }
 
-  return {BATTLE_DEFAULTS,LOANER_PLAYER_DECK,ensureBattleState,copyLimitKey,validateDeck,validateLoanerDeck,buildQuickDeck,saveDeck};
+  return {BATTLE_DEFAULTS,LOANER_PLAYER_DECK,ENERGY_TYPES,deckEnergyTypes,ensureBattleState,copyLimitKey,validateDeck,validateLoanerDeck,buildQuickDeck,saveDeck};
 });

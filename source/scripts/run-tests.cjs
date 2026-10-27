@@ -18,4 +18,6 @@ const fossilMuseum=spawnSync(python,['scripts/verify_fossil_museum_v0250_assets.
 if(fossilMuseum.status!==0)process.exit(fossilMuseum.status||1);
 const sleeves=spawnSync(python,['scripts/verify-sleeves-v0440.py'],{cwd:root,stdio:'inherit'});
 if(sleeves.status!==0)process.exit(sleeves.status||1);
+const tcgp=spawnSync(process.execPath,['scripts/verify-tcgp-catalogue.cjs'],{cwd:root,stdio:'inherit'});
+if(tcgp.status!==0)process.exit(tcgp.status||1);
 console.log('\nPASS entire active suite: '+tests.length+' test programs plus offline asset integrity');

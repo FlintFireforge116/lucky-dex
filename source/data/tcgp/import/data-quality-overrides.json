@@ -1,0 +1,535 @@
+{
+  "schema": 1,
+  "reviewDate": "2026-10-27",
+  "purpose": "Small reviewed corrections to immutable MIT raw mechanics. Apply before comparing gameplay fingerprints or propagating by asset identity. No unlicensed dataset incorporated.",
+  "corrections": [
+    {
+      "printId": "A1-055",
+      "path": [
+        "attacks",
+        0,
+        "cost"
+      ],
+      "value": [
+        "Water",
+        "Water",
+        "Colorless"
+      ],
+      "expectedBefore": [
+        "Water",
+        "Colorless"
+      ],
+      "evidence": {
+        "kind": "MIT same-gameplay-asset record",
+        "sourcePrintId": "A3-217",
+        "sourceField": "attacks[0].cost",
+        "sourcePath": "data/Pokémon TCG Pocket/Celestial Guardians/217.ts",
+        "referenceUrl": "https://pocket.limitlesstcg.com/cards/A1/55",
+        "finding": "WWC, not WC"
+      }
+    },
+    {
+      "printId": "A4b-268",
+      "path": [
+        "weaknesses"
+      ],
+      "value": [],
+      "expectedBefore": [
+        {
+          "type": "Colorless",
+          "value": "+20"
+        }
+      ],
+      "evidence": {
+        "kind": "MIT same-gameplay-asset record",
+        "sourcePrintId": "A3b-051",
+        "sourceField": "weaknesses",
+        "sourcePath": "data/Pokémon TCG Pocket/Eevee Grove/051.ts",
+        "referenceUrl": "https://pocket.limitlesstcg.com/cards/A3b/51",
+        "finding": "Dragon cards have no weakness; Colorless is a source placeholder error."
+      }
+    },
+    {
+      "printId": "A4b-269",
+      "path": [
+        "weaknesses"
+      ],
+      "value": [],
+      "expectedBefore": [
+        {
+          "type": "Colorless",
+          "value": "+20"
+        }
+      ],
+      "evidence": {
+        "kind": "MIT same-gameplay-asset record",
+        "sourcePrintId": "A3b-052",
+        "sourceField": "weaknesses",
+        "sourcePath": "data/Pokémon TCG Pocket/Eevee Grove/052.ts",
+        "referenceUrl": "https://pocket.limitlesstcg.com/cards/A3b/52",
+        "finding": "Dragon cards have no weakness; Colorless is a source placeholder error."
+      }
+    },
+    {
+      "printId": "A4b-270",
+      "path": [
+        "weaknesses"
+      ],
+      "value": [],
+      "expectedBefore": [
+        {
+          "type": "Colorless",
+          "value": "+20"
+        }
+      ],
+      "evidence": {
+        "kind": "MIT same-gameplay-asset record",
+        "sourcePrintId": "A3b-052",
+        "sourceField": "weaknesses",
+        "sourcePath": "data/Pokémon TCG Pocket/Eevee Grove/052.ts",
+        "referenceUrl": "https://pocket.limitlesstcg.com/cards/A3b/52",
+        "finding": "Dragon cards have no weakness; Colorless is a source placeholder error."
+      }
+    },
+    {
+      "printId": "A4b-271",
+      "path": [
+        "weaknesses"
+      ],
+      "value": [],
+      "expectedBefore": [
+        {
+          "type": "Colorless",
+          "value": "+20"
+        }
+      ],
+      "evidence": {
+        "kind": "MIT same-gameplay-asset record",
+        "sourcePrintId": "A3b-053",
+        "sourceField": "weaknesses",
+        "sourcePath": "data/Pokémon TCG Pocket/Eevee Grove/053.ts",
+        "referenceUrl": "https://pocket.limitlesstcg.com/cards/A3b/53",
+        "finding": "Dragon cards have no weakness; Colorless is a source placeholder error."
+      }
+    },
+    {
+      "printId": "A1-132",
+      "path": [
+        "abilities",
+        0,
+        "effect"
+      ],
+      "value": "Once during your turn, you may take a {P} Energy from your Energy Zone and attach it to the {P} Pokémon in the Active Spot.",
+      "expectedBefore": "Once during your turn, you may take 1 {P} Energy from your Energy Zone and attach it to the {P} Pokémon in the Active Spot.",
+      "evidence": {
+        "kind": "MIT same-gameplay-asset record",
+        "sourcePrintId": "A3b-099",
+        "sourceField": "abilities[0].effect",
+        "sourcePath": "data/Pokémon TCG Pocket/Eevee Grove/099.ts",
+        "finding": "Equivalent Energy quantity wording: 1 versus a. Standardize to the other MIT print wording."
+      }
+    },
+    {
+      "printId": "A1a-060",
+      "path": [
+        "attacks",
+        0,
+        "effect"
+      ],
+      "value": "If your opponent's Active Pokémon is a Pokémon ex, this attack does 80 more damage.",
+      "expectedBefore": "If your opponent’s Active Pokémon is a Pokémon {ex}, this attack does 80 more damage.",
+      "evidence": {
+        "kind": "MIT same-gameplay-asset record",
+        "sourcePrintId": "B2-224",
+        "sourceField": "attacks[0].effect",
+        "sourcePath": "data/Pokémon TCG Pocket/Fantastical Parade/224.ts",
+        "finding": "Equivalent Pokémon ex annotation: {ex} versus ex. Standardize typography."
+      }
+    },
+    {
+      "printId": "B2a-118",
+      "path": [
+        "attacks",
+        0,
+        "effect"
+      ],
+      "value": "If your opponent's Active Pokémon is a Pokémon ex, this attack does 70 more damage.",
+      "expectedBefore": "If your opponent’s Active Pokémon is a Pokémon {ex}, this attack does 70 more damage.",
+      "evidence": {
+        "kind": "MIT same-gameplay-asset record",
+        "sourcePrintId": "A2b-007",
+        "sourceField": "attacks[0].effect",
+        "sourcePath": "data/Pokémon TCG Pocket/Shining Revelry/007.ts",
+        "finding": "Equivalent Pokémon ex annotation: {ex} versus ex. Standardize typography."
+      }
+    },
+    {
+      "printId": "A2a-036",
+      "path": [
+        "attacks",
+        0,
+        "effect"
+      ],
+      "value": "If your opponent's Active Pokémon is a Pokémon ex, this attack does 30 more damage.",
+      "expectedBefore": "If your opponent's Active Pokémon is a Pokémon {ex}, this attack does 30 more damage.",
+      "evidence": {
+        "kind": "MIT same-gameplay-asset record",
+        "sourcePrintId": "A2a-079",
+        "sourceField": "attacks[0].effect",
+        "sourcePath": "data/Pokémon TCG Pocket/Triumphant Light/079.ts",
+        "finding": "Equivalent Pokémon ex annotation: {ex} versus ex. Standardize typography."
+      }
+    },
+    {
+      "printId": "B2a-130",
+      "path": [
+        "hp"
+      ],
+      "value": 140,
+      "expectedBefore": 170,
+      "evidence": {
+        "kind": "MIT same-gameplay-asset record",
+        "sourcePrintId": "B2a-036",
+        "sourceField": "hp",
+        "sourcePath": "data/Pokémon TCG Pocket/Paldean Wonders/036.ts",
+        "referenceUrl": "https://pocket.limitlesstcg.com/cards/B2a/36",
+        "finding": "Baxcalibur is 140 HP in both prints."
+      }
+    },
+    {
+      "printId": "B2a-099",
+      "path": [
+        "evolveFrom"
+      ],
+      "value": "Tandemaus",
+      "expectedBefore": null,
+      "evidence": {
+        "kind": "MIT same-gameplay-asset record",
+        "sourcePrintId": "B2a-082",
+        "sourceField": "evolveFrom",
+        "sourcePath": "data/Pokémon TCG Pocket/Paldean Wonders/082.ts",
+        "referenceUrl": "https://pocket.limitlesstcg.com/cards/B2a/99",
+        "finding": "Alternate art Maushold has the same pre-evolution."
+      }
+    },
+    {
+      "printId": "B2a-125",
+      "path": [
+        "retreat"
+      ],
+      "value": 2,
+      "expectedBefore": 1,
+      "evidence": {
+        "kind": "MIT same-gameplay-asset record",
+        "sourcePrintId": "A2b-057",
+        "sourceField": "retreat",
+        "sourcePath": "data/Pokémon TCG Pocket/Shining Revelry/057.ts",
+        "referenceUrl": "https://pocket.limitlesstcg.com/cards/B2a/125",
+        "finding": "Alternate art Gholdengo has retreat two."
+      }
+    },
+    {
+      "printId": "B2a-126",
+      "path": [
+        "name"
+      ],
+      "value": "Entei ex",
+      "expectedBefore": "Entei",
+      "evidence": {
+        "kind": "MIT print metadata",
+        "source": "flibustier-cards.json",
+        "finding": "TCGdex separates EX suffix from name; preserve printed name for copy limits."
+      }
+    },
+    {
+      "printId": "B2a-127",
+      "path": [
+        "name"
+      ],
+      "value": "Suicune ex",
+      "expectedBefore": "Suicune",
+      "evidence": {
+        "kind": "MIT print metadata",
+        "source": "flibustier-cards.json",
+        "finding": "TCGdex separates EX suffix from name; preserve printed name for copy limits."
+      }
+    },
+    {
+      "printId": "B2a-128",
+      "path": [
+        "name"
+      ],
+      "value": "Raikou ex",
+      "expectedBefore": "Raikou",
+      "evidence": {
+        "kind": "MIT print metadata",
+        "source": "flibustier-cards.json",
+        "finding": "TCGdex separates EX suffix from name; preserve printed name for copy limits."
+      }
+    },
+    {
+      "printId": "B2a-129",
+      "path": [
+        "name"
+      ],
+      "value": "Tinkaton ex",
+      "expectedBefore": "Tinkaton",
+      "evidence": {
+        "kind": "MIT print metadata",
+        "source": "flibustier-cards.json",
+        "finding": "TCGdex separates EX suffix from name; preserve printed name for copy limits."
+      }
+    },
+    {
+      "printId": "B2a-129",
+      "path": [
+        "evolveFrom"
+      ],
+      "value": "Tinkatuff",
+      "expectedBefore": null,
+      "evidence": {
+        "kind": "MIT same-gameplay-asset record",
+        "sourcePrintId": "A2b-054",
+        "sourceField": "evolveFrom",
+        "sourcePath": "data/Pokémon TCG Pocket/Shining Revelry/054.ts"
+      }
+    },
+    {
+      "printId": "A2b-025",
+      "path": [
+        "attacks",
+        0,
+        "effect"
+      ],
+      "value": "Take a {L} Energy from your Energy Zone and attach it to 1 of your Benched {L} Pokémon.",
+      "expectedBefore": "Take a {L} Energy from your Energy Zone and attach it to 1 of your Benched  Pokémon.",
+      "evidence": {
+        "kind": "MIT same-gameplay-asset record",
+        "sourcePrintId": "P-A-058",
+        "sourceField": "attacks[0].effect",
+        "sourcePath": "data/Pokémon TCG Pocket/Promos-A/058.ts",
+        "referenceUrl": "https://pocket.limitlesstcg.com/cards/A2b/25",
+        "finding": "Plasma attaches to a Benched Lightning Pokémon, not any Benched Pokémon."
+      }
+    },
+    {
+      "printId": "A2b-103",
+      "path": [
+        "attacks",
+        0,
+        "effect"
+      ],
+      "value": "Take a {L} Energy from your Energy Zone and attach it to 1 of your Benched {L} Pokémon.",
+      "expectedBefore": "Take a {L} Energy from your Energy Zone and attach it to 1 of your Benched  Pokémon.",
+      "evidence": {
+        "kind": "MIT same-gameplay-asset record",
+        "sourcePrintId": "P-A-058",
+        "sourceField": "attacks[0].effect",
+        "sourcePath": "data/Pokémon TCG Pocket/Promos-A/058.ts",
+        "referenceUrl": "https://pocket.limitlesstcg.com/cards/A2b/25",
+        "finding": "Plasma attaches to a Benched Lightning Pokémon, not any Benched Pokémon."
+      }
+    },
+    {
+      "printId": "B2a-003",
+      "path": [
+        "name"
+      ],
+      "value": "Meowscarada ex",
+      "expectedBefore": "Meowscarada",
+      "evidence": {
+        "kind": "MIT print metadata and TCGdex EX suffix",
+        "source": "flibustier-cards.json",
+        "finding": "Restore printed ex suffix to display and copy-limit name."
+      }
+    },
+    {
+      "printId": "B2a-020",
+      "path": [
+        "name"
+      ],
+      "value": "Armarouge ex",
+      "expectedBefore": "Armarouge",
+      "evidence": {
+        "kind": "MIT print metadata and TCGdex EX suffix",
+        "source": "flibustier-cards.json",
+        "finding": "Restore printed ex suffix to display and copy-limit name."
+      }
+    },
+    {
+      "printId": "B2a-037",
+      "path": [
+        "name"
+      ],
+      "value": "Chien-Pao ex",
+      "expectedBefore": "Chien-Pao",
+      "evidence": {
+        "kind": "MIT print metadata and TCGdex EX suffix",
+        "source": "flibustier-cards.json",
+        "finding": "Restore printed ex suffix to display and copy-limit name."
+      }
+    },
+    {
+      "printId": "B2a-042",
+      "path": [
+        "name"
+      ],
+      "value": "Bellibolt ex",
+      "expectedBefore": "Bellibolt",
+      "evidence": {
+        "kind": "MIT print metadata and TCGdex EX suffix",
+        "source": "flibustier-cards.json",
+        "finding": "Restore printed ex suffix to display and copy-limit name."
+      }
+    },
+    {
+      "printId": "B2a-078",
+      "path": [
+        "name"
+      ],
+      "value": "Gholdengo ex",
+      "expectedBefore": "Gholdengo",
+      "evidence": {
+        "kind": "MIT print metadata and TCGdex EX suffix",
+        "source": "flibustier-cards.json",
+        "finding": "Restore printed ex suffix to display and copy-limit name."
+      }
+    },
+    {
+      "printId": "B2a-100",
+      "path": [
+        "name"
+      ],
+      "value": "Meowscarada ex",
+      "expectedBefore": "Meowscarada",
+      "evidence": {
+        "kind": "MIT print metadata and TCGdex EX suffix",
+        "source": "flibustier-cards.json",
+        "finding": "Restore printed ex suffix to display and copy-limit name."
+      }
+    },
+    {
+      "printId": "B2a-101",
+      "path": [
+        "name"
+      ],
+      "value": "Armarouge ex",
+      "expectedBefore": "Armarouge",
+      "evidence": {
+        "kind": "MIT print metadata and TCGdex EX suffix",
+        "source": "flibustier-cards.json",
+        "finding": "Restore printed ex suffix to display and copy-limit name."
+      }
+    },
+    {
+      "printId": "B2a-102",
+      "path": [
+        "name"
+      ],
+      "value": "Chien-Pao ex",
+      "expectedBefore": "Chien-Pao",
+      "evidence": {
+        "kind": "MIT print metadata and TCGdex EX suffix",
+        "source": "flibustier-cards.json",
+        "finding": "Restore printed ex suffix to display and copy-limit name."
+      }
+    },
+    {
+      "printId": "B2a-103",
+      "path": [
+        "name"
+      ],
+      "value": "Bellibolt ex",
+      "expectedBefore": "Bellibolt",
+      "evidence": {
+        "kind": "MIT print metadata and TCGdex EX suffix",
+        "source": "flibustier-cards.json",
+        "finding": "Restore printed ex suffix to display and copy-limit name."
+      }
+    },
+    {
+      "printId": "B2a-104",
+      "path": [
+        "name"
+      ],
+      "value": "Gholdengo ex",
+      "expectedBefore": "Gholdengo",
+      "evidence": {
+        "kind": "MIT print metadata and TCGdex EX suffix",
+        "source": "flibustier-cards.json",
+        "finding": "Restore printed ex suffix to display and copy-limit name."
+      }
+    },
+    {
+      "printId": "B2a-110",
+      "path": [
+        "name"
+      ],
+      "value": "Meowscarada ex",
+      "expectedBefore": "Meowscarada",
+      "evidence": {
+        "kind": "MIT print metadata and TCGdex EX suffix",
+        "source": "flibustier-cards.json",
+        "finding": "Restore printed ex suffix to display and copy-limit name."
+      }
+    },
+    {
+      "printId": "B2a-111",
+      "path": [
+        "name"
+      ],
+      "value": "Armarouge ex",
+      "expectedBefore": "Armarouge",
+      "evidence": {
+        "kind": "MIT print metadata and TCGdex EX suffix",
+        "source": "flibustier-cards.json",
+        "finding": "Restore printed ex suffix to display and copy-limit name."
+      }
+    },
+    {
+      "printId": "B2a-112",
+      "path": [
+        "name"
+      ],
+      "value": "Chien-Pao ex",
+      "expectedBefore": "Chien-Pao",
+      "evidence": {
+        "kind": "MIT print metadata and TCGdex EX suffix",
+        "source": "flibustier-cards.json",
+        "finding": "Restore printed ex suffix to display and copy-limit name."
+      }
+    },
+    {
+      "printId": "B2a-113",
+      "path": [
+        "name"
+      ],
+      "value": "Bellibolt ex",
+      "expectedBefore": "Bellibolt",
+      "evidence": {
+        "kind": "MIT print metadata and TCGdex EX suffix",
+        "source": "flibustier-cards.json",
+        "finding": "Restore printed ex suffix to display and copy-limit name."
+      }
+    },
+    {
+      "printId": "B2a-114",
+      "path": [
+        "name"
+      ],
+      "value": "Gholdengo ex",
+      "expectedBefore": "Gholdengo",
+      "evidence": {
+        "kind": "MIT print metadata and TCGdex EX suffix",
+        "source": "flibustier-cards.json",
+        "finding": "Restore printed ex suffix to display and copy-limit name."
+      }
+    }
+  ],
+  "blockedGameplayKeys": [],
+  "audit": {
+    "originalConflictKeys": 16,
+    "correctedConflictKeys": 16,
+    "remainingConflicts": []
+  }
+}

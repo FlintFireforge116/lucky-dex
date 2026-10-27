@@ -25,17 +25,17 @@ test('projects owned alternate arts into one playable quantity while preserving 
   assert.equal(projected.length, 2);
 });
 
-test('catalogue contains the supported Genetic Apex beginner slice and marks complex cards deliberately', () => {
+test('catalogue preserves the Genetic Apex beginner definitions and explicitly classifies expanded mechanics', () => {
   const bulbasaur = data.cardById('A1-001');
   assert.deepEqual(
     { name: bulbasaur.name, stage: bulbasaur.stage, hp: bulbasaur.hp, weakness: bulbasaur.weakness, retreat: bulbasaur.retreat },
     { name: 'Bulbasaur', stage: 'Basic', hp: 70, weakness: 'Fire', retreat: 1 }
   );
-  assert.deepEqual(bulbasaur.attacks[0], { name: 'Vine Whip', cost: 'GC', damage: 40, effect: null });
+  assert.deepEqual(bulbasaur.attacks[0], { name: 'Vine Whip', cost: 'GC', damage: 40, text: '', effect: null });
   assert.equal(data.cardById('A1-029').attacks[0].effect.type, 'healSelf');
   assert.equal(data.cardById('A1-030').battleEnabled, false, 'Lilligant energy acceleration is outside the first effect slice');
   assert.equal(data.cardById('A1-188').battleEnabled, false, 'Pidgeot switch ability is outside the first effect slice');
-  assert.equal(data.cardById('A1-192').battleEnabled, false, 'Fearow coin-flip discard is outside the first effect slice');
+  assert.equal(data.cardById('A1-192').battleEnabled, true, 'Fearow uses the tested seeded coin-flip discard primitive');
 });
 
 test('unknown or unsupported owned prints do not masquerade as battle-enabled cards', () => {

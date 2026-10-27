@@ -11,7 +11,7 @@
     stats.matches=Math.max(0,Number(stats.matches||0))+1;
     stats.totalTurns=Math.max(0,Number(stats.totalTurns||0))+Math.max(0,Number(battle.turnNumber||0));
     const playerWon=battle.winner==='player';
-    const draw=!battle.winner;
+    const draw=!battle.winner||battle.winner==='draw';
     if(playerWon){
       stats.wins=Math.max(0,Number(stats.wins||0))+1;
       const turns=Math.max(1,Number(battle.turnNumber||1));

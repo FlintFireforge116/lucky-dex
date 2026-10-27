@@ -1,0 +1,176 @@
+{
+  "cutoff": "2026-10-27",
+  "timezone": "Europe/London",
+  "sets": [
+    {
+      "id": "A1",
+      "name": "Genetic Apex",
+      "releaseDate": "2024-10-30",
+      "printCount": 286
+    },
+    {
+      "id": "A1a",
+      "name": "Mythical Island",
+      "releaseDate": "2024-12-17",
+      "printCount": 86
+    },
+    {
+      "id": "A2",
+      "name": "Space-Time Smackdown",
+      "releaseDate": "2025-01-29",
+      "printCount": 207
+    },
+    {
+      "id": "A2a",
+      "name": "Triumphant Light",
+      "releaseDate": "2025-02-28",
+      "printCount": 96
+    },
+    {
+      "id": "A2b",
+      "name": "Shining Revelry",
+      "releaseDate": "2025-03-27",
+      "printCount": 111
+    },
+    {
+      "id": "A3",
+      "name": "Celestial Guardians",
+      "releaseDate": "2025-04-30",
+      "printCount": 239
+    },
+    {
+      "id": "A3a",
+      "name": "Extradimensional Crisis",
+      "releaseDate": "2025-05-29",
+      "printCount": 103
+    },
+    {
+      "id": "A3b",
+      "name": "Eevee Grove",
+      "releaseDate": "2025-06-26",
+      "printCount": 107
+    },
+    {
+      "id": "A4",
+      "name": "Wisdom of Sea and Sky",
+      "releaseDate": "2025-07-30",
+      "printCount": 241
+    },
+    {
+      "id": "A4a",
+      "name": "Secluded Springs",
+      "releaseDate": "2025-08-28",
+      "printCount": 105
+    },
+    {
+      "id": "A4b",
+      "name": "Deluxe Pack: ex",
+      "releaseDate": "2025-09-30",
+      "printCount": 379
+    },
+    {
+      "id": "P-A",
+      "name": "Promo A",
+      "releaseDate": "2024-10-30",
+      "printCount": 117
+    },
+    {
+      "id": "B1",
+      "name": "Mega Rising",
+      "releaseDate": "2025-10-30",
+      "printCount": 331
+    },
+    {
+      "id": "B1a",
+      "name": "Crimson Blaze",
+      "releaseDate": "2025-12-17",
+      "printCount": 103
+    },
+    {
+      "id": "B2",
+      "name": "Fantastical Parade",
+      "releaseDate": "2026-01-29",
+      "printCount": 234
+    },
+    {
+      "id": "B2a",
+      "name": "Paldean Wonders",
+      "releaseDate": "2026-02-26",
+      "printCount": 131
+    },
+    {
+      "id": "B2b",
+      "name": "Mega Shine",
+      "releaseDate": "2026-03-26",
+      "printCount": 117
+    },
+    {
+      "id": "B3",
+      "name": "Pulsing Aura",
+      "releaseDate": "2026-04-28",
+      "printCount": 234
+    },
+    {
+      "id": "B3a",
+      "name": "Paradox Drive",
+      "releaseDate": "2026-05-28",
+      "printCount": 109
+    },
+    {
+      "id": "B3b",
+      "name": "Everyday Wonders",
+      "releaseDate": "2026-06-30",
+      "printCount": 106
+    },
+    {
+      "id": "B4",
+      "name": "Ruler of the Skies",
+      "releaseDate": "2026-07-30",
+      "printCount": 233
+    },
+    {
+      "id": "B4a",
+      "name": "Team Rocket’s Ambition",
+      "releaseDate": "2026-08-27",
+      "printCount": 110
+    },
+    {
+      "id": "B4b",
+      "name": "Deluxe Pack: Mega",
+      "releaseDate": "2026-09-30",
+      "printCount": 429
+    },
+    {
+      "id": "P-B",
+      "name": "Promo B",
+      "releaseDate": "2025-10-30",
+      "printCount": 103
+    }
+  ],
+  "excludedPrintIds": [
+    "P-B-103"
+  ],
+  "knownPrintCount": 4317,
+  "releasedPrintCount": 4316,
+  "notes": [
+    {
+      "printId": "P-B-103",
+      "reason": "Pika Pika! Pikachu missions began 2026-10-20 13:00 UTC and require ten login days. Earliest obtainable date is 2026-10-29, after this cutoff. Print remains known/mapped.",
+      "source": "https://www.pokemon.com/us/news/complete-special-pika-pika-pikachu-missions-in-pokemon-tcg-pocket"
+    }
+  ],
+  "excludedSets": [
+    {
+      "name": "Dual Fusion",
+      "releaseDate": "2026-10-29",
+      "releaseUtc": "2026-10-29T01:00:00Z",
+      "source": "https://www.pokemon.com/us/news/pokemon-tcg-pocket-dual-fusion-expansion-coming-soon"
+    },
+    {
+      "name": "Special Pack: First Partners",
+      "releaseDate": "2026-10-31",
+      "source": "https://www.pokemon.com/us/pokemon-news/read-the-pokemon-tcg-pocket-october-2026-producer-letter"
+    }
+  ],
+  "releaseDateConvention": "Set roster uses UTC/international calendar dates from MIT flibustier sets export; announcements may state previous day 18:00 PDT. Promo series releaseDate is series opening date, not release date of every card."
+}

@@ -1,0 +1,270 @@
+[
+  {
+    "path": "Celestial Guardians.ts",
+    "id": "A3",
+    "name": "Celestial Guardians",
+    "serie": null,
+    "cardCount": {
+      "official": 155
+    },
+    "boosters": {
+      "solgaleo": {
+        "name": "Solgaleo"
+      },
+      "lunala": {
+        "name": "Lunala"
+      }
+    },
+    "releaseDate": "2025-04-30"
+  },
+  {
+    "path": "Crimson Blaze.ts",
+    "id": "B1a",
+    "name": "Crimson Blaze",
+    "serie": null,
+    "cardCount": {
+      "official": 69
+    },
+    "releaseDate": "2025-12-17"
+  },
+  {
+    "path": "Eevee Grove.ts",
+    "id": "A3b",
+    "name": "Eevee Grove",
+    "serie": null,
+    "cardCount": {
+      "official": 69
+    },
+    "boosters": {
+      "eevee": {
+        "name": "Eevee"
+      }
+    },
+    "releaseDate": "2025-06-26"
+  },
+  {
+    "path": "Extradimensional Crisis.ts",
+    "id": "A3a",
+    "name": "Extradimensional Crisis",
+    "serie": null,
+    "cardCount": {
+      "official": 69
+    },
+    "boosters": {
+      "extradimensional": {
+        "name": "Extradimensional"
+      }
+    },
+    "releaseDate": "2025-05-29"
+  },
+  {
+    "path": "Fantastical Parade.ts",
+    "id": "B2",
+    "name": "Fantastical Parade",
+    "serie": null,
+    "cardCount": {
+      "official": 155
+    },
+    "boosters": {
+      "booster": {
+        "name": "Booster"
+      }
+    },
+    "releaseDate": "2026-01-29"
+  },
+  {
+    "path": "Genetic Apex.ts",
+    "id": "A1",
+    "name": "Genetic Apex",
+    "serie": null,
+    "cardCount": {
+      "official": 226
+    },
+    "boosters": {
+      "mewtwo": {
+        "name": "Mewtwo"
+      },
+      "charizard": {
+        "name": "Charizard"
+      },
+      "pikachu": {
+        "name": "Pikachu"
+      }
+    },
+    "releaseDate": "2024-10-30"
+  },
+  {
+    "path": "Mega Rising.ts",
+    "id": "B1",
+    "name": "Mega Rising",
+    "serie": null,
+    "cardCount": {
+      "official": 226
+    },
+    "releaseDate": "2025-10-30",
+    "boosters": {
+      "mega-gyarados": {
+        "name": "Mega Gyarados"
+      },
+      "mega-blaziken": {
+        "name": "Mega Blaziken"
+      },
+      "mega-altaria": {
+        "name": "Mega Altaria"
+      }
+    }
+  },
+  {
+    "path": "Mythical Island.ts",
+    "id": "A1a",
+    "name": "Mythical Island",
+    "serie": null,
+    "cardCount": {
+      "official": 68
+    },
+    "boosters": {
+      "mew": {
+        "name": "Mew"
+      }
+    },
+    "releaseDate": "2024-12-17"
+  },
+  {
+    "path": "Paldean Wonders.ts",
+    "id": "B2a",
+    "name": "Paldean Wonders",
+    "serie": null,
+    "cardCount": {
+      "official": 93
+    },
+    "boosters": {
+      "paldea": {
+        "name": "Paldea"
+      }
+    },
+    "releaseDate": "2026-02-26"
+  },
+  {
+    "path": "Promos-A.ts",
+    "id": "P-A",
+    "name": "Promos-A",
+    "serie": null,
+    "cardCount": {
+      "official": 0
+    },
+    "boosters": {
+      "vol1": {
+        "name": "Vol. 1"
+      },
+      "vol2": {
+        "name": "Vol. 2"
+      },
+      "vol3": {
+        "name": "Vol. 3"
+      },
+      "vol4": {
+        "name": "Vol. 4"
+      },
+      "vol5": {
+        "name": "Vol. 5"
+      },
+      "vol6": {
+        "name": "Vol. 6"
+      },
+      "vol7": {
+        "name": "Vol. 7"
+      },
+      "vol8": {
+        "name": "Vol. 8"
+      },
+      "vol9": {
+        "name": "Vol. 9"
+      },
+      "vol10": {
+        "name": "Vol. 10"
+      }
+    },
+    "releaseDate": "2024-10-30"
+  },
+  {
+    "path": "Secluded Springs.ts",
+    "id": "A4a",
+    "name": "Secluded Springs",
+    "serie": null,
+    "cardCount": {
+      "official": 71
+    },
+    "boosters": {
+      "suicune": {
+        "name": "Suicune themed booster pack"
+      }
+    },
+    "releaseDate": "2025-08-28"
+  },
+  {
+    "path": "Shining Revelry.ts",
+    "id": "A2b",
+    "name": "Shining Revelry",
+    "serie": null,
+    "cardCount": {
+      "official": 72
+    },
+    "boosters": {
+      "shining": {
+        "name": "Shining"
+      }
+    },
+    "releaseDate": "2025-03-27"
+  },
+  {
+    "path": "Space-Time Smackdown.ts",
+    "id": "A2",
+    "name": "Space-Time Smackdown",
+    "serie": null,
+    "cardCount": {
+      "official": 140
+    },
+    "boosters": {
+      "palkia": {
+        "name": "Palkia"
+      },
+      "dialga": {
+        "name": "Dialga"
+      }
+    },
+    "releaseDate": "2025-01-30"
+  },
+  {
+    "path": "Triumphant Light.ts",
+    "id": "A2a",
+    "name": "Triumphant Light",
+    "serie": null,
+    "cardCount": {
+      "official": 75
+    },
+    "boosters": {
+      "arceus": {
+        "name": "Arceus"
+      }
+    },
+    "releaseDate": "2025-02-28"
+  },
+  {
+    "path": "Wisdom of Sea and Sky.ts",
+    "id": "A4",
+    "name": "Wisdom of Sea and Sky",
+    "serie": null,
+    "cardCount": {
+      "official": 161
+    },
+    "releaseDate": "2025-07-30",
+    "boosters": {
+      "lugia": {
+        "name": "Lugia"
+      },
+      "ho-oh": {
+        "name": "Ho-Oh"
+      }
+    }
+  }
+]

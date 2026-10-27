@@ -1687,7 +1687,7 @@ rebuildCollectionControls = function(){
   }
   if([...filter.options].some(o=>o.value===oldFilter))filter.value=oldFilter;
   if([...group.options].some(o=>o.value===oldGroup))group.value=oldGroup;
-  
+
   const quick=document.getElementById('binderQuickFilters');if(quick)quick.hidden=collectionMode!=='cards';const dc=document.getElementById('binderDuplicateCount');if(dc)dc.textContent=Object.values(state.cards||{}).filter(c=>Number(c.count||0)>1).length;
 };
 
@@ -1973,7 +1973,7 @@ renderCollection=function(){const grid=document.getElementById('collectionGrid')
    before the app could finish wiring. That single runtime exception explained
    the frozen starter, Wild Search/Expedition stalls and permanent Loading sets.
 */
-window.__LUCKYDEX_BUILD='0.69.32';
+window.__LUCKYDEX_BUILD='0.69.33';
 window.addEventListener('error',event=>{
   try{localStorage.setItem('luckyDexLastRuntimeError',JSON.stringify({build:window.__LUCKYDEX_BUILD,message:String(event?.message||'Unknown error'),source:String(event?.filename||''),line:Number(event?.lineno||0),at:Date.now()}));}catch(_){ }
 });
