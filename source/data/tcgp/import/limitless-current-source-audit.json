@@ -1,0 +1,12 @@
+{
+  "records": 231,
+  "C1Prints": 217,
+  "PromoCKnownPrints": 13,
+  "C1GameplayGroups": 144,
+  "newC1GameplayGroups": 131,
+  "alternateMechanicsConflicts": [],
+  "rawHtmlSha256": {
+    "limitless-C1-full.html": "8b9f773135df0926b9542e87b89fe740e6be06ac1151b2194fa3963cc046cf58",
+    "limitless-P-C-full.html": "4b05b53799d02f6e84f51fa08d2e901fae06436a2814e059ef577ede0ba32465"
+  }
+}

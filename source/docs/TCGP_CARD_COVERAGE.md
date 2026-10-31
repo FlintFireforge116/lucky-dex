@@ -1,23 +1,23 @@
 # Pokémon TCG Pocket card coverage
 
-Cutoff: **2026-10-27 (Europe/London)**. Generated offline from reviewed MIT imports. This report does **not** claim every card is fully implemented. Unsupported cards are excluded from legal battle decks.
+Cutoff: **2026-10-30 (Europe/London)**. Generated offline from reviewed MIT imports plus independently transcribed current card facts. This report does **not** claim every card is fully implemented. Unsupported cards are excluded from legal battle decks.
 
 | Measure | Count |
 | --- | ---: |
-| Included expansion/promo namespaces | 24 |
-| Known collectible prints | 4317 |
-| Released/obtainable prints | 4316 |
-| Canonical gameplay identities | 2319 |
-| FULL | 1605 |
-| PARTIAL | 714 |
+| Included expansion/promo namespaces | 26 |
+| Known collectible prints | 4547 |
+| Released/obtainable prints | 4534 |
+| Canonical gameplay identities | 2450 |
+| FULL | 1707 |
+| PARTIAL | 743 |
 | UNSUPPORTED | 0 |
 | Unmapped released prints | 0 |
 | Unknown effect references | 0 |
 | Schema errors | 0 |
 
-FULL means every recorded mechanic compiles to a validated handler. PARTIAL means detailed rules exist but at least one mechanic or data-quality check remains unsupported; those cards are not enabled. UNSUPPORTED means detailed licensed combat data is unavailable. External asset keys identify exact prints/reprints, but never invent missing rules. Each classification applies to the entire card, not merely its simplest attack.
+FULL means every recorded mechanic compiles to a validated handler. PARTIAL means detailed rules exist but at least one mechanic or data-quality check remains unsupported; those cards are not enabled. UNSUPPORTED means detailed combat data is unavailable. External asset keys identify exact prints/reprints, but never invent missing rules. Each classification applies to the entire card, not merely its simplest attack.
 
-Released print status: FULL 2687, PARTIAL 1629, UNSUPPORTED 0.
+Released print status: FULL 2843, PARTIAL 1691, UNSUPPORTED 0.
 
 ## Included sets
 
@@ -45,10 +45,24 @@ Released print status: FULL 2687, PARTIAL 1629, UNSUPPORTED 0.
 - B4a: Team Rocket’s Ambition (2026-08-27)
 - B4b: Deluxe Pack: Mega (2026-09-30)
 - P-B: Promo B (2025-10-30)
+- C1: Dual Fusion (2026-10-29)
+- P-C: Promo C (2026-10-29)
 
 ## Excluded previews
 
-- P-B-103: Not obtainable by cutoff
+- P-C-001: Not obtainable by cutoff
+- P-C-002: Not obtainable by cutoff
+- P-C-003: Not obtainable by cutoff
+- P-C-004: Not obtainable by cutoff
+- P-C-005: Not obtainable by cutoff
+- P-C-006: Not obtainable by cutoff
+- P-C-007: Not obtainable by cutoff
+- P-C-008: Not obtainable by cutoff
+- P-C-009: Not obtainable by cutoff
+- P-C-010: Not obtainable by cutoff
+- P-C-011: Not obtainable by cutoff
+- P-C-012: Not obtainable by cutoff
+- P-C-013: Not obtainable by cutoff
 
 ## Missing or unsupported mechanic families
 
@@ -60,11 +74,9 @@ Released print status: FULL 2687, PARTIAL 1629, UNSUPPORTED 0.
 - 4 identities: Unimplemented attack text: If any of your Pokémon were Knocked Out by damage from an attack during your opponent's last turn, this attack does 60 more damage.
 - 4 identities: Unimplemented attack text: Before doing damage, discard all Pokémon Tools from your opponent's Active Pokémon.
 - 4 identities: Unimplemented attack text: During your opponent's next turn, they can't play any Item cards from their hand.
-- 3 identities: Unimplemented attack text: Flip a coin. If heads, the Defending Pokémon can't attack during your opponent's next turn.
 - 3 identities: Unimplemented attack text: Your opponent can't use any Supporter cards from their hand during their next turn.
 - 3 identities: Unimplemented attack text: Discard a random Energy from among the Energy attached to all Pokémon (both yours and your opponent's).
 - 3 identities: Unimplemented attack text: Put 1 random Basic Pokémon from your deck onto your Bench.
-- 3 identities: Unimplemented attack text: Discard 2 random Energy from this Pokémon.
 - 3 identities: Unimplemented attack text: This attack does 20 damage to each of your opponent's Pokémon.
 - 3 identities: Unimplemented attack text: Flip a coin. If tails, this attack does nothing. If heads, during your opponent's next turn, prevent all damage from—and effects of—attacks done to this Pokémon.
 - 3 identities: Unimplemented attack text: This attack's damage isn't affected by Weakness or by any effects on your opponent's Active Pokémon.
@@ -73,6 +85,7 @@ Released print status: FULL 2687, PARTIAL 1629, UNSUPPORTED 0.
 - 2 identities: Unimplemented attack text: Discard a random card from your opponent's hand.
 - 2 identities: Unimplemented ability text: If your opponent's Pokémon is Knocked Out by damage from this Pokémon's attacks, during your opponent's next turn, prevent all damage from—and effects of—attacks done to this Pokémon.
 - 2 identities: Unimplemented attack text: Flip a coin. If heads, choose 1 of your opponent's Active Pokémon's attacks and use it as this attack.
+- 2 identities: Unimplemented attack text: Choose 1 of your opponent's Active Pokémon's attacks and use it as this attack.
 - 2 identities: Unimplemented attack text: Shuffle your hand into your deck. Draw a card for each card in your opponent's hand.
 - 2 identities: Unimplemented ability text: This Pokémon takes −30 damage from attacks from {R} or {W} Pokémon.
 - 2 identities: Unimplemented attack text: During your next turn, this Pokémon's Overdrive Smash attack does +60 damage.
@@ -108,10 +121,13 @@ Released print status: FULL 2687, PARTIAL 1629, UNSUPPORTED 0.
 - 2 identities: Unimplemented attack text: Discard a Stadium in play.
 - 2 identities: Missing or invalid retreat
 - 2 identities: Unimplemented attack text: Take a {W} Energy from your Energy Zone and attach it to 1 of your Benched {W} Pokémon.
+- 2 identities: Unimplemented attack text: This attack does 30 more damage for each point you have gotten.
 - 2 identities: Unimplemented ability text: Once during your turn, when you put this Pokémon from your hand onto your Bench, you may switch it with your Active Pokémon. If you do, move all of your Energy in play to this Pokémon.
 - 2 identities: Unimplemented attack text: If any of your Pokémon were Knocked Out by damage from an attack during your opponent's last turn, this attack does 50 more damage.
 - 2 identities: Unimplemented attack text: Switch in 1 of your opponent's Benched Pokémon to the Active Spot. If you do, this attack does 50 damage to the new Active Pokémon.
+- 2 identities: Unimplemented ability text: Once during your turn, you may take a {W} Energy from your Energy Zone and attach it to this Pokémon.
 - 2 identities: Unimplemented attack text: Put 3 random cards from among Silcoon and Cascoon from your deck onto your Bench.
+- 2 identities: Unimplemented attack text: Flip 2 coins. If both of them are heads, this attack does 100 more damage.
 - 1 identities: Unimplemented ability text: Once during your turn, you may heal 20 damage from each of your Pokémon.
 - 1 identities: Unimplemented ability text: If this Pokémon is in the Active Spot, once during your turn, you may switch in 1 of your opponent's Benched Basic Pokémon to the Active Spot.
 - 1 identities: Unimplemented attack text: Take a {G} Energy from your Energy Zone and attach it to 1 of your Benched {G} Pokémon.
@@ -165,7 +181,6 @@ Released print status: FULL 2687, PARTIAL 1629, UNSUPPORTED 0.
 - 1 identities: Unimplemented attack text: Flip a coin for each Energy attached to this Pokémon. This attack does 50 damage for each heads.
 - 1 identities: Unimplemented ability text: Each {G} Energy attached to your {G} Pokémon provides 2 {G} Energy. This effect doesn't stack.
 - 1 identities: Unimplemented ability text: As often as you like during your turn, you may move a {W} Energy from 1 of your Benched {W} Pokémon to your Active {W} Pokémon.
-- 1 identities: Unimplemented attack text: Choose 1 of your opponent's Active Pokémon's attacks and use it as this attack.
 - 1 identities: Unimplemented ability text: Your opponent can't play any Pokémon from their hand to evolve their Active Pokémon.
 - 1 identities: Unimplemented attack text: Put 1 random Koffing from your deck onto your Bench.
 - 1 identities: Unimplemented trainer text: Put a Basic Pokémon from your opponent's discard pile onto their Bench.
@@ -295,7 +310,6 @@ Released print status: FULL 2687, PARTIAL 1629, UNSUPPORTED 0.
 - 1 identities: Unimplemented ability text: Once during your turn, you may make your opponent's Active Pokémon Burned.
 - 1 identities: Unimplemented attack text: 1 other Pokémon (either yours or your opponent's) is chosen at random 3 times. For each time a Pokémon was chosen, do 50 damage to it.
 - 1 identities: Unimplemented attack text: Take a {R} Energy from your Energy Zone and attach it to 1 of your Benched Basic Pokémon.
-- 1 identities: Unimplemented attack text: Flip a coin. If tails, discard 2 random Energy from this Pokémon.
 - 1 identities: Unimplemented attack text: Take a {R}, {W}, and {L} Energy from your Energy Zone and attach them to your Benched Basic Pokémon in any way you like.
 - 1 identities: Unimplemented ability text: As long as this Pokémon is on your Bench, attacks used by your Pokémon that evolve from Poliwhirl do +40 damage to your opponent's Active Pokémon.
 - 1 identities: Unimplemented attack text: You may discard any number of your Benched {W} Pokémon. This attack does 40 more damage for each Benched Pokémon you discarded in this way.
@@ -405,7 +419,6 @@ Released print status: FULL 2687, PARTIAL 1629, UNSUPPORTED 0.
 - 1 identities: Unimplemented attack text: Choose 1 of your Benched Pokémon's attacks, except any Pokémon ex, and use it as this attack. If this Pokémon doesn't have the necessary Energy to use that attack, this attack does nothing.
 - 1 identities: Unimplemented attack text: Flip 2 coins. If both of them are heads, this attack does 20 more damage.
 - 1 identities: Unimplemented attack text: If this Pokémon has any {P} Energy attached, this attack does 40 more damage. This attack's damage isn't affected by any effects on your opponent's Active Pokémon.
-- 1 identities: Unimplemented attack text: If a Stadium is in play, this attack does 40 more damage.
 - 1 identities: Unimplemented attack text: Flip a coin. If heads, during your opponent's next turn, prevent all damage from and effects of attacks done to this Pokémon.
 - 1 identities: Unimplemented attack text: Discard all Water Energy from this Pokémon. This attack does 130 damage to 1 of your opponent's Pokémon.
 - 1 identities: Unimplemented attack text: This attack does 20 more damage for each Benched Pokémon (both yours and your opponent's).
@@ -413,7 +426,6 @@ Released print status: FULL 2687, PARTIAL 1629, UNSUPPORTED 0.
 - 1 identities: Unimplemented ability text: At the beginning of your turn, if this Pokémon is in the Active Spot, put a random {P} Pokémon from your deck into your hand.
 - 1 identities: Unimplemented attack text: If a Stadium is in play, your opponent's Active Pokémon is now Burned.
 - 1 identities: Unimplemented attack text: If any of your {D} Pokémon were Knocked Out by damage from an attack during your opponent's last turn, this attack does 80 more damage.
-- 1 identities: Unimplemented attack text: If a Stadium is in play, this attack does 70 more damage.
 - 1 identities: Unimplemented attack text: Choose a spot from among your opponent's Active Spot and Bench. At the end of your opponent's next turn, do 70 damage to the Pokémon in the spot you chose.
 - 1 identities: Unimplemented attack text: If this Pokémon evolved from Dunsparce during this turn, discard 2 random Energy from your opponent's Active Pokémon.
 - 1 identities: Unimplemented attack text: Take a random Energy from among {G}, {R}, {W}, {L}, {P}, {F}, {D}, and {M} Energy from your Energy Zone and attach it to 1 of your Benched Pokémon.
@@ -519,7 +531,6 @@ Released print status: FULL 2687, PARTIAL 1629, UNSUPPORTED 0.
 - 1 identities: Unimplemented attack text: If any of your Pokémon were Knocked Out by damage from an attack during your opponent's last turn, your opponent's Active Pokémon is now Paralyzed.
 - 1 identities: Unimplemented attack text: If your opponent's Active Pokémon has more remaining HP than this Pokémon, this attack does 60 more damage.
 - 1 identities: Unimplemented attack text: If Magmortar is on your Bench, this attack does 70 more damage.
-- 1 identities: Unimplemented attack text: This attack does 30 more damage for each point you have gotten.
 - 1 identities: Unimplemented attack text: 1 attack from among the Pokémon in your opponent's hand and deck is chosen at random, and you use the chosen attack as this attack.
 - 1 identities: Unimplemented attack text: If your opponent has exactly 2, 4, or 6 cards in their hand, this attack does 40 more damage.
 - 1 identities: Unimplemented attack text: Discard 2 random Energy from among the Energy attached to all of your Pokémon.
@@ -567,7 +578,6 @@ Released print status: FULL 2687, PARTIAL 1629, UNSUPPORTED 0.
 - 1 identities: Unimplemented attack text: If your opponent has any {P} Pokémon in play, this attack does 50 more damage.
 - 1 identities: Unimplemented ability text: During Pokémon Checkup, if this Pokémon is in the Active Spot, do 10 damage to each of your opponent's Pokémon.
 - 1 identities: Unimplemented ability text: Once during your turn, you may remove a random Special Condition from your Active Pokémon.
-- 1 identities: Unimplemented attack text: If a Stadium is in play, this attack does 20 more damage.
 - 1 identities: Unimplemented ability text: If you don't have Regirock, Regice, and Registeel on your Bench, this Pokémon can't attack.
 - 1 identities: Unimplemented attack text: During your next turn, this Pokémon's Psych Up attack does +30 damage.
 - 1 identities: Unimplemented trainer text: Discard a Pokémon Tool card from a Pokémon (yours or your opponent's), or discard a Stadium card in play.
@@ -600,7 +610,6 @@ Released print status: FULL 2687, PARTIAL 1629, UNSUPPORTED 0.
 - 1 identities: Unimplemented trainer text: Shuffle 1 of your Future Pokémon in play into your deck.
 - 1 identities: Unimplemented trainer text: Once during each player's turn, that player may shuffle a Basic Pokémon from their hand into their deck. If they do, they draw a card.
 - 1 identities: Unimplemented ability text: At the end of your opponent's turn, if this Pokémon is in the Active Spot, put a random card from your deck that evolves from this Pokémon onto this Pokémon to evolve it.
-- 1 identities: Unimplemented ability text: Once during your turn, you may take a {W} Energy from your Energy Zone and attach it to this Pokémon.
 - 1 identities: Unimplemented attack text: This attack does 40 damage for each Pokémon Tool attached to all of your Pokémon.
 - 1 identities: Unimplemented ability text: Once during your turn, if this Pokémon has a Pokémon Tool attached, you may heal 30 damage from 1 of your Pokémon.
 - 1 identities: Unimplemented attack text: Choose 2 of your Benched Pokémon. For each of those Pokémon, take a {P} Energy from your Energy Zone and attach it to that Pokémon.
@@ -644,7 +653,6 @@ Released print status: FULL 2687, PARTIAL 1629, UNSUPPORTED 0.
 - 1 identities: Unimplemented ability text: This Pokémon may have up to 2 Pokémon Tool cards attached to it.
 - 1 identities: Unimplemented ability text: Once during your turn, if this Pokémon is on your Bench, you may attach an Energy from your discard pile to your Active [Dragon] Pokémon.
 - 1 identities: Unimplemented attack text: Discard all {R} and {L} Energy from this Pokémon, and this attack does 50 damage for each Energy you discarded in this way.
-- 1 identities: Unimplemented attack text: Flip 2 coins. If both of them are heads, this attack does 100 more damage.
 - 1 identities: Unimplemented ability text: Once during your turn, when you play this Pokémon from your hand to evolve 1 of your Pokémon, you may look at the top 4 cards of your deck and put all Item cards you find there into your hand. Shuffle the other cards back into your deck.
 - 1 identities: Unimplemented attack text: If this Pokémon and your opponent's Active Pokémon have 1 or more of the same type of Energy attached, this attack does 30 more damage.
 - 1 identities: Unimplemented trainer text: Flip a coin. If heads, put a random Item card from your deck into your hand.
@@ -682,6 +690,41 @@ Released print status: FULL 2687, PARTIAL 1629, UNSUPPORTED 0.
 - 1 identities: Unimplemented trainer text: Your opponent's Active Pokémon is now Confused. Flip a coin. If tails, your Active Pokémon is now also Confused.
 - 1 identities: Unimplemented trainer text: Look at your opponent's hand and put any number of Basic Pokémon you find there onto your opponent's Bench.
 - 1 identities: Unimplemented trainer text: Once during each player's turn, that player may flip 3 coins. If all of them are heads, that player draws cards until they have 7 cards in their hand.
+- 1 identities: Unimplemented attack text: 1 of your opponent's Benched Pokémon is chosen at random. This attack also does 50 damage to it.
+- 1 identities: Unimplemented attack text: Reveal all of the Sweet Honey in your hand, and this attack does 50 damage for each card you revealed in this way.
+- 1 identities: Unimplemented attack text: Look at a random card from your opponent's hand and shuffle it into their deck.
+- 1 identities: Unimplemented ability text: Once during your turn, you may use this Ability. Put a Sweet Honey rental card into your hand.
+- 1 identities: Unimplemented ability text: Whenever you attach a {R} Energy from your Energy Zone to this Pokémon, do 30 damage to your opponent's Active Pokémon.
+- 1 identities: Unimplemented ability text: As long as this Pokémon is in play, flip 3 more coins for the Rabbit Jumping attack used by your Pokémon.
+- 1 identities: Unimplemented attack text: If any of your Pokémon were Knocked Out by damage from an attack during your opponent's last turn, this attack does 70 more damage.
+- 1 identities: Unimplemented attack text: Discard 2 {W} Energy from this Pokémon, and this attack does 60 damage to 2 of your opponent's Pokémon.
+- 1 identities: Unimplemented attack text: If your opponent has a Stadium in play, discard it.
+- 1 identities: Unimplemented ability text: Once during your turn, when you play this card from your hand to evolve 1 of your Pokémon, you may use this Ability. Put a random Frogadier from your deck onto your Bench.
+- 1 identities: Unimplemented ability text: Once during your turn, you may take a {L} Energy from your Energy Zone and attach it to the {L} Pokémon in the Active Spot.
+- 1 identities: Unimplemented attack text: Your opponent's Active Pokémon is now Asleep. Your opponent flips 2 coins for this Special Condition, and if either of them is tails, that Pokémon is still Asleep.
+- 1 identities: Unimplemented attack text: Flip 3 coins. Take an amount of {P} Energy from your Energy Zone equal to the number of heads and attach it to your Benched {P} Pokémon in any way you like.
+- 1 identities: Unimplemented attack text: During your next turn, this Pokémon's Psycho Boost does −50 damage.
+- 1 identities: Unimplemented attack text: Move all Energy from this Pokémon to your Benched Pokémon in any way you like.
+- 1 identities: Unimplemented attack text: If your opponent's Active Pokémon is a Basic Pokémon, this attack does 50 more damage.
+- 1 identities: Unimplemented ability text: As long as this Pokémon is in play, all of your {M} Pokémon take −20 damage from attacks from your opponent's Pokémon. This effect doesn't stack.
+- 1 identities: Unimplemented attack text: 1 of your opponent's Pokémon is chosen at random. Do 250 damage to it.
+- 1 identities: Unimplemented attack text: Put 1 random {C} Pokémon from your deck into your hand.
+- 1 identities: Unimplemented attack text: If your opponent's Active Pokémon is an Evolution Pokémon, this attack does 80 more damage.
+- 1 identities: Unimplemented attack text: Put a random card that evolves from Eevee from your deck into your hand.
+- 1 identities: Unimplemented attack text: During your next turn, this Pokémon's Overdrive Smash attack does +50 damage.
+- 1 identities: Unimplemented trainer text: Choose 1 of your Pokémon, and then flip a coin until you get tails. For each heads, heal 20 damage from that Pokémon.
+- 1 identities: Unimplemented trainer text: Heal 40 damage from 1 of your Pokémon that has any Energy attached. If you healed any damage in this way, discard a random Energy from that Pokémon.
+- 1 identities: Unimplemented trainer text: Switch out your opponent's Active Stage 2 Pokémon to the Bench. (Your opponent chooses the new Active Pokémon.)
+- 1 identities: Unimplemented trainer text: Your Active Pokémon recovers from all Special Conditions.
+- 1 identities: Unimplemented trainer text: The Basic Pokémon this card is attached to takes −20 damage from attacks from your opponent's Pokémon.
+- 1 identities: Unimplemented trainer text: Attacks used by the Pikachu ex this card is attached to do +30 damage to your opponent's Active Pokémon.
+- 1 identities: Unimplemented trainer text: During this turn, attacks used by your Dewgong, Cloyster, or Lapras do +30 damage to your opponent's Pokémon.
+- 1 identities: Unimplemented trainer text: You can use this card only if you have Venusaur, Charizard, Blastoise, or Pidgeot in play.Switch in 1 of your opponent's Benched Pokémon to the Active Spot.
+- 1 identities: Unimplemented trainer text: Look at the top 3 cards of your deck and put 1 of them into your hand. Shuffle back into your deck.
+- 1 identities: Unimplemented trainer text: Produce 2 {F} Energy from your Energy Zone, and attach it to 1 of your Whiscash or Paldean Clodsire.
+- 1 identities: Unimplemented trainer text: Put 2 random cards from among Super Potion, Max Repel, and Full Heal from your deck into your hand.
+- 1 identities: Unimplemented trainer text: You can use this card only if you have 3 or more different Pokémon types in play.Switch your Active Pokémon with 1 of your Benched Pokémon.
+- 1 identities: Unimplemented trainer text: Once during each player's turn, that player may use this effect. Flip a coin. If heads, draw a card.
 
 ## Every non-FULL gameplay identity
 
@@ -690,7 +733,6 @@ Released print status: FULL 2687, PARTIAL 1629, UNSUPPORTED 0.
 | A1-007 | Butterfree | PARTIAL | Unimplemented ability text: Once during your turn, you may heal 20 damage from each of your Pokémon. |
 | A1-020 | Victreebel | PARTIAL | Unimplemented ability text: If this Pokémon is in the Active Spot, once during your turn, you may switch in 1 of your opponent's Benched Basic Pokémon to the Active Spot. |
 | A1-030 | Lilligant | PARTIAL | Unimplemented attack text: Take a {G} Energy from your Energy Zone and attach it to 1 of your Benched {G} Pokémon. |
-| A1-037 | Vulpix | PARTIAL | Unimplemented attack text: Flip a coin. If heads, the Defending Pokémon can't attack during your opponent's next turn. |
 | A1-047 | Moltres ex | PARTIAL | Unimplemented attack text: Flip 3 coins. Take an amount of {R} Energy from your Energy Zone equal to the number of heads and attach it to your Benched {R} Pokémon in any way you like. |
 | A1-057 | Psyduck | PARTIAL | Unimplemented attack text: Your opponent can't use any Supporter cards from their hand during their next turn. |
 | A1-069 | Kingler | PARTIAL | Unimplemented attack text: Flip 2 coins. If both of them are heads, this attack does 80 more damage. |
@@ -809,7 +851,6 @@ Released print status: FULL 2687, PARTIAL 1629, UNSUPPORTED 0.
 | A2a-052 | Toxicroak | PARTIAL | Unimplemented attack text: Your opponent's Active Pokémon is now Poisoned. Do 20 damage to this Pokémon instead of the usual amount for this Special Condition. |
 | A2a-055 | Magnezone | PARTIAL | Unimplemented ability text: If you have Arceus or Arceus ex in play, this Pokémon takes −30 damage from attacks. |
 | A2a-056 | Mawile | PARTIAL | Unimplemented attack text: If your opponent's Active Pokémon is a {M} Pokémon, this attack does 30 more damage. |
-| A2a-061 | Giratina | PARTIAL | Unimplemented attack text: Discard 2 random Energy from this Pokémon. |
 | A2a-065 | Noctowl | PARTIAL | Unimplemented attack text: Your opponent reveals their hand. |
 | A2a-069 | Shaymin | PARTIAL | Unimplemented ability text: As long as this Pokémon is on your Bench, your Active Basic Pokémon's Retreat Cost is 1 less. |
 | A2a-072 | Irida | PARTIAL | Unimplemented trainer text: Heal 40 damage from each of your Pokémon that has any {W} Energy attached. |
@@ -828,7 +869,6 @@ Released print status: FULL 2687, PARTIAL 1629, UNSUPPORTED 0.
 | A2b-070 | Pokémon Center Lady | PARTIAL | Unimplemented trainer text: Heal 30 damage from 1 of your Pokémon, and it recovers from all Special Conditions. |
 | A2b-071 | Red | PARTIAL | Unimplemented trainer text: During this turn, attacks used by your Pokémon do +20 damage to your opponent's Active Pokémon ex. |
 | A3-015 | Lurantis | PARTIAL | Unimplemented attack text: This attack does 20 damage to each of your opponent's Pokémon. |
-| A3-017 | Shiinotic | PARTIAL | Unimplemented attack text: Flip a coin. If heads, the Defending Pokémon can't attack during your opponent's next turn. |
 | A3-021 | Wimpod | PARTIAL | Unimplemented ability text: During your first turn, this Pokémon has no Retreat Cost. |
 | A3-022 | Golisopod | PARTIAL | Unimplemented attack text: If this Pokémon moved from your Bench to the Active Spot this turn, this attack does 60 more damage. |
 | A3-027 | Alolan Marowak | PARTIAL | Unimplemented attack text: Flip 2 coins. This attack does 70 damage for each heads. If at least 1 of them is heads, your opponent's Active Pokémon is now Burned. |
@@ -919,7 +959,6 @@ Released print status: FULL 2687, PARTIAL 1629, UNSUPPORTED 0.
 | A4-029 | Typhlosion | PARTIAL | Unimplemented ability text: Once during your turn, you may make your opponent's Active Pokémon Burned. |
 | A4-031 | Magcargo | PARTIAL | Unimplemented attack text: 1 other Pokémon (either yours or your opponent's) is chosen at random 3 times. For each time a Pokémon was chosen, do 50 damage to it. |
 | A4-032 | Magby | PARTIAL | Unimplemented attack text: Take a {R} Energy from your Energy Zone and attach it to 1 of your Benched Basic Pokémon. |
-| A4-033 | Entei | PARTIAL | Unimplemented attack text: Flip a coin. If tails, discard 2 random Energy from this Pokémon. |
 | A4-034 | Ho-Oh ex | PARTIAL | Unimplemented attack text: Take a {R}, {W}, and {L} Energy from your Energy Zone and attach them to your Benched Basic Pokémon in any way you like. |
 | A4-040 | Politoed | PARTIAL | Unimplemented ability text: As long as this Pokémon is on your Bench, attacks used by your Pokémon that evolve from Poliwhirl do +40 damage to your opponent's Active Pokémon. |
 | A4-045 | Gyarados | PARTIAL | Unimplemented attack text: You may discard any number of your Benched {W} Pokémon. This attack does 40 more damage for each Benched Pokémon you discarded in this way. |
@@ -1052,7 +1091,6 @@ Released print status: FULL 2687, PARTIAL 1629, UNSUPPORTED 0.
 | P-B-014 | Magikarp | PARTIAL | Unimplemented attack text: Flip 2 coins. If both of them are heads, this attack does 20 more damage. |
 | B1a-012 | Charmeleon | PARTIAL | Unimplemented ability text: Once during your turn, when you play this Pokémon from your hand to evolve 1 of your Pokémon, you may take a {R} Energy from your Energy Zone and attach it to your Active {R} Pokémon. |
 | P-B-029 | Mega Medicham ex | PARTIAL | Unimplemented attack text: If this Pokémon has any {P} Energy attached, this attack does 40 more damage. This attack's damage isn't affected by any effects on your opponent's Active Pokémon. |
-| B2-138 | Tornadus | PARTIAL | Unimplemented attack text: If a Stadium is in play, this attack does 40 more damage. |
 | B2a-022 | Quaxly | PARTIAL | Unimplemented attack text: Flip a coin. If heads, during your opponent's next turn, prevent all damage from and effects of attacks done to this Pokémon. |
 | B2a-033 | Tatsugiri | PARTIAL | Unimplemented attack text: If any of your Pokémon were Knocked Out by damage from an attack during your opponent's last turn, this attack does 60 more damage. |
 | B2a-037 | Chien-Pao ex | PARTIAL | Unimplemented attack text: Discard all Water Energy from this Pokémon. This attack does 130 damage to 1 of your opponent's Pokémon. |
@@ -1061,7 +1099,6 @@ Released print status: FULL 2687, PARTIAL 1629, UNSUPPORTED 0.
 | B2-070 | Meloetta | PARTIAL | Unimplemented ability text: At the beginning of your turn, if this Pokémon is in the Active Spot, put a random {P} Pokémon from your deck into your hand. |
 | P-B-057 | Castform Sunny Form | PARTIAL | Unimplemented attack text: If a Stadium is in play, your opponent's Active Pokémon is now Burned. |
 | P-B-060 | Zarude | PARTIAL | Unimplemented attack text: If any of your {D} Pokémon were Knocked Out by damage from an attack during your opponent's last turn, this attack does 80 more damage. |
-| P-B-062 | Gallade | PARTIAL | Unimplemented attack text: If a Stadium is in play, this attack does 70 more damage. |
 | B2a-003 | Meowscarada ex | PARTIAL | Unimplemented attack text: Choose a spot from among your opponent's Active Spot and Bench. At the end of your opponent's next turn, do 70 damage to the Pokémon in the spot you chose. |
 | P-B-066 | Ceruledge ex | PARTIAL | Unimplemented attack text: Discard a random Energy from among the Energy attached to all Pokémon (both yours and your opponent's). |
 | P-B-067 | Pawniard | PARTIAL | Unimplemented attack text: Put 1 random Basic Pokémon from your deck onto your Bench. |
@@ -1080,7 +1117,6 @@ Released print status: FULL 2687, PARTIAL 1629, UNSUPPORTED 0.
 | P-B-092 | Marowak | PARTIAL | Unimplemented attack text: If your opponent's Active Pokémon has “Team Rocket” in its name, this attack does 70 more damage. |
 | P-B-095 | Darkrai | PARTIAL | Unimplemented ability text: At the end of each turn, if your opponent's Active Pokémon is Asleep, do 20 damage to that Pokémon. |
 | B2-092 | Falinks | PARTIAL | Unimplemented ability text: If you have another Falinks in play, this Pokémon's attacks do +20 damage to your opponent's Active Pokémon, and this Pokémon takes −20 damage from attacks from your opponent's Pokémon. |
-| P-B-099 | Mega Garchomp ex | PARTIAL | Unimplemented attack text: Discard 2 random Energy from this Pokémon. |
 | P-B-100 | Delcatty | PARTIAL | Unimplemented attack text: You may move any amount of Energy from your Pokémon in play to your other Pokémon in any way you like. |
 | B1a-006 | Ariados | PARTIAL | Unimplemented ability text: Your opponent's Active Pokémon's Retreat Cost is 1 more. |
 | B1a-008 | Sunflora | PARTIAL | Unimplemented attack text: If Quick-Grow Extract is in your discard pile, this attack does 30 more damage. |
@@ -1254,7 +1290,6 @@ Released print status: FULL 2687, PARTIAL 1629, UNSUPPORTED 0.
 | B3-126 | Flygon ex | PARTIAL | Unimplemented ability text: During Pokémon Checkup, if this Pokémon is in the Active Spot, do 10 damage to each of your opponent's Pokémon. |
 | B3-128 | Blissey | PARTIAL | Unimplemented ability text: Once during your turn, you may remove a random Special Condition from your Active Pokémon. |
 | B3-130 | Dunsparce | PARTIAL | Unimplemented attack text: You may shuffle this Pokémon and all attached cards into your deck. |
-| B3-133 | Castform | PARTIAL | Unimplemented attack text: If a Stadium is in play, this attack does 20 more damage. |
 | B3-134 | Regigigas | PARTIAL | Unimplemented attack text: Take a {C} Energy from your Energy Zone and attach it to 1 of your Benched Pokémon.; Unimplemented ability text: If you don't have Regirock, Regice, and Registeel on your Bench, this Pokémon can't attack. |
 | B3-136 | Watchog | PARTIAL | Unimplemented attack text: During your next turn, this Pokémon's Psych Up attack does +30 damage. |
 | B3-137 | Lillipup | PARTIAL | Unimplemented attack text: Reveal all of your Pokémon in play and in your hand that have the Puppy Pile attack, and this attack does 20 damage for each Pokémon you revealed in this way. |
@@ -1288,7 +1323,6 @@ Released print status: FULL 2687, PARTIAL 1629, UNSUPPORTED 0.
 | B3a-053 | Walking Wake | PARTIAL | Unimplemented attack text: Discard an Energy from this Pokémon, and this attack also does 20 damage to each of your opponent's Benched Pokémon. |
 | B3a-054 | Gouging Fire | PARTIAL | Unimplemented attack text: Discard 2 Energy from this Pokémon. During your opponent's next turn, this Pokémon takes −30 damage from attacks. |
 | B3a-055 | Raging Bolt | PARTIAL | Unimplemented attack text: Discard all Energy from this Pokémon. Knock Out your opponent's Active Pokémon. |
-| B3a-056 | Eevee | PARTIAL | Unimplemented attack text: Flip a coin. If heads, the Defending Pokémon can't attack during your opponent's next turn. |
 | B3a-068 | Terapagos ex | PARTIAL | Unimplemented attack text: This attack does 20 more damage for each type of Energy attached to this Pokémon. |
 | B3a-069 | Ancient Booster Energy Capsule | PARTIAL | Unimplemented trainer text: The Ancient Pokémon this card is attached to gets +40 HP. |
 | B3a-070 | Future Booster Energy Capsule | PARTIAL | Unimplemented trainer text: Attacks used by the Future Pokémon this card is attached to do +20 damage to your opponent's Active Pokémon. |
@@ -1358,7 +1392,6 @@ Released print status: FULL 2687, PARTIAL 1629, UNSUPPORTED 0.
 | B4-099 | Swalot | PARTIAL | Unimplemented attack text: If your opponent's Active Pokémon has less remaining HP than this Pokémon, this attack does 80 more damage. |
 | B4-115 | Revavroom | PARTIAL | Unimplemented attack text: During your next turn, this Pokémon's Overacceleration attack does +70 damage.; Unimplemented ability text: This Pokémon may have up to 2 Pokémon Tool cards attached to it. |
 | B4-117 | Dragonair | PARTIAL | Unimplemented ability text: Once during your turn, if this Pokémon is on your Bench, you may attach an Energy from your discard pile to your Active [Dragon] Pokémon. |
-| B4-119 | Rayquaza | PARTIAL | Unimplemented attack text: Discard 2 random Energy from this Pokémon. |
 | B4-120 | Mega Rayquaza ex | PARTIAL | Unimplemented attack text: Discard all {R} and {L} Energy from this Pokémon, and this attack does 50 damage for each Energy you discarded in this way. |
 | B4-127 | Hydrapple | PARTIAL | Unimplemented attack text: Flip 2 coins. If both of them are heads, this attack does 100 more damage. |
 | B4-130 | Raticate | PARTIAL | Unimplemented ability text: Once during your turn, when you play this Pokémon from your hand to evolve 1 of your Pokémon, you may look at the top 4 cards of your deck and put all Item cards you find there into your hand. Shuffle the other cards back into your deck. |
@@ -1401,5 +1434,44 @@ Released print status: FULL 2687, PARTIAL 1629, UNSUPPORTED 0.
 | B4a-070 | Team Rocket's Master Plan | PARTIAL | Unimplemented trainer text: Your opponent's Active Pokémon is now Confused. Flip a coin. If tails, your Active Pokémon is now also Confused. |
 | B4a-071 | Team Rocket's Boss | PARTIAL | Unimplemented trainer text: Look at your opponent's hand and put any number of Basic Pokémon you find there onto your opponent's Bench. |
 | B4a-072 | Arcade | PARTIAL | Unimplemented trainer text: Once during each player's turn, that player may flip 3 coins. If all of them are heads, that player draws cards until they have 7 cards in their hand. |
+| C1-005 | Alolan Exeggutor ex | PARTIAL | Unimplemented attack text: 1 of your opponent's Benched Pokémon is chosen at random. This attack also does 50 damage to it. |
+| C1-008 | Vespiquen | PARTIAL | Unimplemented attack text: Reveal all of the Sweet Honey in your hand, and this attack does 50 damage for each card you revealed in this way. |
+| C1-012 | Amoonguss | PARTIAL | Unimplemented attack text: Look at a random card from your opponent's hand and shuffle it into their deck. |
+| C1-015 | Ribombee | PARTIAL | Unimplemented ability text: Once during your turn, you may use this Ability. Put a Sweet Honey rental card into your hand. |
+| C1-018 | Charizard | PARTIAL | Unimplemented ability text: Whenever you attach a {R} Energy from your Energy Zone to this Pokémon, do 30 damage to your opponent's Active Pokémon. |
+| C1-023 | Raboot | PARTIAL | Unimplemented ability text: As long as this Pokémon is in play, flip 3 more coins for the Rabbit Jumping attack used by your Pokémon. |
+| C1-028 | Ceruledge | PARTIAL | Unimplemented attack text: If any of your Pokémon were Knocked Out by damage from an attack during your opponent's last turn, this attack does 70 more damage. |
+| C1-031 | Blastoise | PARTIAL | Unimplemented ability text: Once during your turn, you may take a {W} Energy from your Energy Zone and attach it to this Pokémon. |
+| C1-033 | Dewgong | PARTIAL | Unimplemented attack text: Discard 2 {W} Energy from this Pokémon, and this attack does 60 damage to 2 of your opponent's Pokémon. |
+| C1-038 | Palkia | PARTIAL | Unimplemented attack text: If your opponent has a Stadium in play, discard it. |
+| C1-041 | Frogadier | PARTIAL | Unimplemented ability text: Once during your turn, when you play this card from your hand to evolve 1 of your Pokémon, you may use this Ability. Put a random Frogadier from your deck onto your Bench. |
+| C1-050 | Pawmot | PARTIAL | Unimplemented ability text: Once during your turn, you may take a {L} Energy from your Energy Zone and attach it to the {L} Pokémon in the Active Spot. |
+| C1-051 | Jigglypuff | PARTIAL | Unimplemented attack text: Your opponent's Active Pokémon is now Asleep. Your opponent flips 2 coins for this Special Condition, and if either of them is tails, that Pokémon is still Asleep. |
+| C1-057 | Mew ex | PARTIAL | Unimplemented attack text: Flip 3 coins. Take an amount of {P} Energy from your Energy Zone equal to the number of heads and attach it to your Benched {P} Pokémon in any way you like. |
+| C1-062 | Deoxys | PARTIAL | Unimplemented attack text: During your next turn, this Pokémon's Psycho Boost does −50 damage. |
+| C1-066 | Lunala | PARTIAL | Unimplemented attack text: Move all Energy from this Pokémon to your Benched Pokémon in any way you like. |
+| C1-084 | Umbreon | PARTIAL | Unimplemented attack text: If your opponent's Active Pokémon is a Basic Pokémon, this attack does 50 more damage. |
+| C1-088 | Zoroark | PARTIAL | Unimplemented attack text: Choose 1 of your opponent's Active Pokémon's attacks and use it as this attack. |
+| C1-095 | Solgaleo | PARTIAL | Unimplemented attack text: This attack does 30 more damage for each point you have gotten. |
+| C1-097 | Melmetal | PARTIAL | Unimplemented ability text: As long as this Pokémon is in play, all of your {M} Pokémon take −20 damage from attacks from your opponent's Pokémon. This effect doesn't stack. |
+| C1-100 | Mega Dragonite ex | PARTIAL | Unimplemented attack text: 1 of your opponent's Pokémon is chosen at random. Do 250 damage to it. |
+| C1-102 | Pidgey | PARTIAL | Unimplemented attack text: Put 1 random {C} Pokémon from your deck into your hand. |
+| C1-104 | Pidgeot | PARTIAL | Unimplemented attack text: If your opponent's Active Pokémon is an Evolution Pokémon, this attack does 80 more damage. |
+| C1-107 | Eevee | PARTIAL | Unimplemented attack text: Put a random card that evolves from Eevee from your deck into your hand. |
+| C1-110 | Porygon-Z | PARTIAL | Unimplemented attack text: During your next turn, this Pokémon's Overdrive Smash attack does +50 damage. |
+| C1-118 | Bewear ex | PARTIAL | Unimplemented attack text: Flip 2 coins. If both of them are heads, this attack does 100 more damage. |
+| C1-119 | Sweet Honey | PARTIAL | Unimplemented trainer text: Choose 1 of your Pokémon, and then flip a coin until you get tails. For each heads, heal 20 damage from that Pokémon. |
+| C1-120 | Super Potion | PARTIAL | Unimplemented trainer text: Heal 40 damage from 1 of your Pokémon that has any Energy attached. If you healed any damage in this way, discard a random Energy from that Pokémon. |
+| C1-121 | Max Repel | PARTIAL | Unimplemented trainer text: Switch out your opponent's Active Stage 2 Pokémon to the Bench. (Your opponent chooses the new Active Pokémon.) |
+| C1-122 | Full Heal | PARTIAL | Unimplemented trainer text: Your Active Pokémon recovers from all Special Conditions. |
+| C1-123 | Eviolite | PARTIAL | Unimplemented trainer text: The Basic Pokémon this card is attached to takes −20 damage from attacks from your opponent's Pokémon. |
+| C1-124 | Light Ball | PARTIAL | Unimplemented trainer text: Attacks used by the Pikachu ex this card is attached to do +30 damage to your opponent's Active Pokémon. |
+| C1-125 | Lorelei | PARTIAL | Unimplemented trainer text: During this turn, attacks used by your Dewgong, Cloyster, or Lapras do +30 damage to your opponent's Pokémon. |
+| C1-126 | Blue's Provocation | PARTIAL | Unimplemented trainer text: You can use this card only if you have Venusaur, Charizard, Blastoise, or Pidgeot in play.Switch in 1 of your opponent's Benched Pokémon to the Active Spot. |
+| C1-127 | Serena's Choice | PARTIAL | Unimplemented trainer text: Look at the top 3 cards of your deck and put 1 of them into your hand. Shuffle back into your deck. |
+| C1-128 | Rika | PARTIAL | Unimplemented trainer text: Produce 2 {F} Energy from your Energy Zone, and attach it to 1 of your Whiscash or Paldean Clodsire. |
+| C1-129 | Poké Mart Guy | PARTIAL | Unimplemented trainer text: Put 2 random cards from among Super Potion, Max Repel, and Full Heal from your deck into your hand. |
+| C1-130 | Rising Star | PARTIAL | Unimplemented trainer text: You can use this card only if you have 3 or more different Pokémon types in play.Switch your Active Pokémon with 1 of your Benched Pokémon. |
+| C1-131 | Abandoned Station | PARTIAL | Unimplemented trainer text: Once during each player's turn, that player may use this effect. Flip a coin. If heads, draw a card. |
 
 See `TCGP_CARD_DATABASE.md` for source licences, update commands, validation and limitations. Machine-readable card/print lists are in `generated/tcgp-card-coverage.json`.

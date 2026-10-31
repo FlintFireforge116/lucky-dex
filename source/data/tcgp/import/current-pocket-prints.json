@@ -1,0 +1,1850 @@
+[
+  {
+    "id": "C1-001",
+    "name": "Bulbasaur",
+    "type": "Grass",
+    "health": 70,
+    "rarity": "◊",
+    "image": "https://limitlesstcg.nyc3.cdn.digitaloceanspaces.com/pocket/C1/C1_001_EN_SM.webp"
+  },
+  {
+    "id": "C1-002",
+    "name": "Ivysaur",
+    "type": "Grass",
+    "health": 100,
+    "rarity": "◊",
+    "image": "https://limitlesstcg.nyc3.cdn.digitaloceanspaces.com/pocket/C1/C1_002_EN_SM.webp"
+  },
+  {
+    "id": "C1-003",
+    "name": "Venusaur",
+    "type": "Grass",
+    "health": 150,
+    "rarity": "◊◊◊",
+    "image": "https://limitlesstcg.nyc3.cdn.digitaloceanspaces.com/pocket/C1/C1_003_EN_SM.webp"
+  },
+  {
+    "id": "C1-004",
+    "name": "Exeggcute",
+    "type": "Grass",
+    "health": 60,
+    "rarity": "◊",
+    "image": "https://limitlesstcg.nyc3.cdn.digitaloceanspaces.com/pocket/C1/C1_004_EN_SM.webp"
+  },
+  {
+    "id": "C1-005",
+    "name": "Alolan Exeggutor ex",
+    "type": "Grass",
+    "health": 180,
+    "rarity": "◊◊◊◊",
+    "image": "https://limitlesstcg.nyc3.cdn.digitaloceanspaces.com/pocket/C1/C1_005_EN_SM.webp"
+  },
+  {
+    "id": "C1-006",
+    "name": "Pinsir",
+    "type": "Grass",
+    "health": 90,
+    "rarity": "◊",
+    "image": "https://limitlesstcg.nyc3.cdn.digitaloceanspaces.com/pocket/C1/C1_006_EN_SM.webp"
+  },
+  {
+    "id": "C1-007",
+    "name": "Combee",
+    "type": "Grass",
+    "health": 50,
+    "rarity": "◊",
+    "image": "https://limitlesstcg.nyc3.cdn.digitaloceanspaces.com/pocket/C1/C1_007_EN_SM.webp"
+  },
+  {
+    "id": "C1-008",
+    "name": "Vespiquen",
+    "type": "Grass",
+    "health": 80,
+    "rarity": "◊◊",
+    "image": "https://limitlesstcg.nyc3.cdn.digitaloceanspaces.com/pocket/C1/C1_008_EN_SM.webp"
+  },
+  {
+    "id": "C1-009",
+    "name": "Deerling",
+    "type": "Grass",
+    "health": 60,
+    "rarity": "◊",
+    "image": "https://limitlesstcg.nyc3.cdn.digitaloceanspaces.com/pocket/C1/C1_009_EN_SM.webp"
+  },
+  {
+    "id": "C1-010",
+    "name": "Sawsbuck",
+    "type": "Grass",
+    "health": 120,
+    "rarity": "◊◊",
+    "image": "https://limitlesstcg.nyc3.cdn.digitaloceanspaces.com/pocket/C1/C1_010_EN_SM.webp"
+  },
+  {
+    "id": "C1-011",
+    "name": "Foongus",
+    "type": "Grass",
+    "health": 60,
+    "rarity": "◊",
+    "image": "https://limitlesstcg.nyc3.cdn.digitaloceanspaces.com/pocket/C1/C1_011_EN_SM.webp"
+  },
+  {
+    "id": "C1-012",
+    "name": "Amoonguss",
+    "type": "Grass",
+    "health": 100,
+    "rarity": "◊◊",
+    "image": "https://limitlesstcg.nyc3.cdn.digitaloceanspaces.com/pocket/C1/C1_012_EN_SM.webp"
+  },
+  {
+    "id": "C1-013",
+    "name": "Genesect",
+    "type": "Grass",
+    "health": 110,
+    "rarity": "◊◊",
+    "image": "https://limitlesstcg.nyc3.cdn.digitaloceanspaces.com/pocket/C1/C1_013_EN_SM.webp"
+  },
+  {
+    "id": "C1-014",
+    "name": "Cutiefly",
+    "type": "Grass",
+    "health": 30,
+    "rarity": "◊",
+    "image": "https://limitlesstcg.nyc3.cdn.digitaloceanspaces.com/pocket/C1/C1_014_EN_SM.webp"
+  },
+  {
+    "id": "C1-015",
+    "name": "Ribombee",
+    "type": "Grass",
+    "health": 70,
+    "rarity": "◊◊◊",
+    "image": "https://limitlesstcg.nyc3.cdn.digitaloceanspaces.com/pocket/C1/C1_015_EN_SM.webp"
+  },
+  {
+    "id": "C1-016",
+    "name": "Charmander",
+    "type": "Fire",
+    "health": 60,
+    "rarity": "◊",
+    "image": "https://limitlesstcg.nyc3.cdn.digitaloceanspaces.com/pocket/C1/C1_016_EN_SM.webp"
+  },
+  {
+    "id": "C1-017",
+    "name": "Charmeleon",
+    "type": "Fire",
+    "health": 80,
+    "rarity": "◊",
+    "image": "https://limitlesstcg.nyc3.cdn.digitaloceanspaces.com/pocket/C1/C1_017_EN_SM.webp"
+  },
+  {
+    "id": "C1-018",
+    "name": "Charizard",
+    "type": "Fire",
+    "health": 150,
+    "rarity": "◊◊◊",
+    "image": "https://limitlesstcg.nyc3.cdn.digitaloceanspaces.com/pocket/C1/C1_018_EN_SM.webp"
+  },
+  {
+    "id": "C1-019",
+    "name": "Volcanion",
+    "type": "Fire",
+    "health": 120,
+    "rarity": "◊◊◊",
+    "image": "https://limitlesstcg.nyc3.cdn.digitaloceanspaces.com/pocket/C1/C1_019_EN_SM.webp"
+  },
+  {
+    "id": "C1-020",
+    "name": "Salandit",
+    "type": "Fire",
+    "health": 50,
+    "rarity": "◊",
+    "image": "https://limitlesstcg.nyc3.cdn.digitaloceanspaces.com/pocket/C1/C1_020_EN_SM.webp"
+  },
+  {
+    "id": "C1-021",
+    "name": "Salazzle",
+    "type": "Fire",
+    "health": 90,
+    "rarity": "◊◊",
+    "image": "https://limitlesstcg.nyc3.cdn.digitaloceanspaces.com/pocket/C1/C1_021_EN_SM.webp"
+  },
+  {
+    "id": "C1-022",
+    "name": "Scorbunny",
+    "type": "Fire",
+    "health": 50,
+    "rarity": "◊",
+    "image": "https://limitlesstcg.nyc3.cdn.digitaloceanspaces.com/pocket/C1/C1_022_EN_SM.webp"
+  },
+  {
+    "id": "C1-023",
+    "name": "Raboot",
+    "type": "Fire",
+    "health": 70,
+    "rarity": "◊◊",
+    "image": "https://limitlesstcg.nyc3.cdn.digitaloceanspaces.com/pocket/C1/C1_023_EN_SM.webp"
+  },
+  {
+    "id": "C1-024",
+    "name": "Cinderace",
+    "type": "Fire",
+    "health": 140,
+    "rarity": "◊◊◊",
+    "image": "https://limitlesstcg.nyc3.cdn.digitaloceanspaces.com/pocket/C1/C1_024_EN_SM.webp"
+  },
+  {
+    "id": "C1-025",
+    "name": "Fuecoco ex",
+    "type": "Fire",
+    "health": 130,
+    "rarity": "◊◊◊◊",
+    "image": "https://limitlesstcg.nyc3.cdn.digitaloceanspaces.com/pocket/C1/C1_025_EN_SM.webp"
+  },
+  {
+    "id": "C1-026",
+    "name": "Charcadet",
+    "type": "Fire",
+    "health": 60,
+    "rarity": "◊",
+    "image": "https://limitlesstcg.nyc3.cdn.digitaloceanspaces.com/pocket/C1/C1_026_EN_SM.webp"
+  },
+  {
+    "id": "C1-027",
+    "name": "Armarouge",
+    "type": "Fire",
+    "health": 120,
+    "rarity": "◊◊",
+    "image": "https://limitlesstcg.nyc3.cdn.digitaloceanspaces.com/pocket/C1/C1_027_EN_SM.webp"
+  },
+  {
+    "id": "C1-028",
+    "name": "Ceruledge",
+    "type": "Fire",
+    "health": 120,
+    "rarity": "◊◊",
+    "image": "https://limitlesstcg.nyc3.cdn.digitaloceanspaces.com/pocket/C1/C1_028_EN_SM.webp"
+  },
+  {
+    "id": "C1-029",
+    "name": "Squirtle",
+    "type": "Water",
+    "health": 60,
+    "rarity": "◊",
+    "image": "https://limitlesstcg.nyc3.cdn.digitaloceanspaces.com/pocket/C1/C1_029_EN_SM.webp"
+  },
+  {
+    "id": "C1-030",
+    "name": "Wartortle",
+    "type": "Water",
+    "health": 90,
+    "rarity": "◊",
+    "image": "https://limitlesstcg.nyc3.cdn.digitaloceanspaces.com/pocket/C1/C1_030_EN_SM.webp"
+  },
+  {
+    "id": "C1-031",
+    "name": "Blastoise",
+    "type": "Water",
+    "health": 150,
+    "rarity": "◊◊◊",
+    "image": "https://limitlesstcg.nyc3.cdn.digitaloceanspaces.com/pocket/C1/C1_031_EN_SM.webp"
+  },
+  {
+    "id": "C1-032",
+    "name": "Seel",
+    "type": "Water",
+    "health": 70,
+    "rarity": "◊",
+    "image": "https://limitlesstcg.nyc3.cdn.digitaloceanspaces.com/pocket/C1/C1_032_EN_SM.webp"
+  },
+  {
+    "id": "C1-033",
+    "name": "Dewgong",
+    "type": "Water",
+    "health": 120,
+    "rarity": "◊◊",
+    "image": "https://limitlesstcg.nyc3.cdn.digitaloceanspaces.com/pocket/C1/C1_033_EN_SM.webp"
+  },
+  {
+    "id": "C1-034",
+    "name": "Shellder",
+    "type": "Water",
+    "health": 60,
+    "rarity": "◊",
+    "image": "https://limitlesstcg.nyc3.cdn.digitaloceanspaces.com/pocket/C1/C1_034_EN_SM.webp"
+  },
+  {
+    "id": "C1-035",
+    "name": "Cloyster",
+    "type": "Water",
+    "health": 120,
+    "rarity": "◊◊",
+    "image": "https://limitlesstcg.nyc3.cdn.digitaloceanspaces.com/pocket/C1/C1_035_EN_SM.webp"
+  },
+  {
+    "id": "C1-036",
+    "name": "Jynx",
+    "type": "Water",
+    "health": 80,
+    "rarity": "◊",
+    "image": "https://limitlesstcg.nyc3.cdn.digitaloceanspaces.com/pocket/C1/C1_036_EN_SM.webp"
+  },
+  {
+    "id": "C1-037",
+    "name": "Lapras",
+    "type": "Water",
+    "health": 100,
+    "rarity": "◊◊",
+    "image": "https://limitlesstcg.nyc3.cdn.digitaloceanspaces.com/pocket/C1/C1_037_EN_SM.webp"
+  },
+  {
+    "id": "C1-038",
+    "name": "Palkia",
+    "type": "Water",
+    "health": 120,
+    "rarity": "◊◊◊",
+    "image": "https://limitlesstcg.nyc3.cdn.digitaloceanspaces.com/pocket/C1/C1_038_EN_SM.webp"
+  },
+  {
+    "id": "C1-039",
+    "name": "Basculin",
+    "type": "Water",
+    "health": 70,
+    "rarity": "◊",
+    "image": "https://limitlesstcg.nyc3.cdn.digitaloceanspaces.com/pocket/C1/C1_039_EN_SM.webp"
+  },
+  {
+    "id": "C1-040",
+    "name": "Froakie",
+    "type": "Water",
+    "health": 60,
+    "rarity": "◊",
+    "image": "https://limitlesstcg.nyc3.cdn.digitaloceanspaces.com/pocket/C1/C1_040_EN_SM.webp"
+  },
+  {
+    "id": "C1-041",
+    "name": "Frogadier",
+    "type": "Water",
+    "health": 70,
+    "rarity": "◊◊",
+    "image": "https://limitlesstcg.nyc3.cdn.digitaloceanspaces.com/pocket/C1/C1_041_EN_SM.webp"
+  },
+  {
+    "id": "C1-042",
+    "name": "Mega Greninja ex",
+    "type": "Water",
+    "health": 200,
+    "rarity": "◊◊◊◊",
+    "image": "https://limitlesstcg.nyc3.cdn.digitaloceanspaces.com/pocket/C1/C1_042_EN_SM.webp"
+  },
+  {
+    "id": "C1-043",
+    "name": "Pikachu ex",
+    "type": "Lightning",
+    "health": 120,
+    "rarity": "◊◊◊◊",
+    "image": "https://limitlesstcg.nyc3.cdn.digitaloceanspaces.com/pocket/C1/C1_043_EN_SM.webp"
+  },
+  {
+    "id": "C1-044",
+    "name": "Voltorb",
+    "type": "Lightning",
+    "health": 60,
+    "rarity": "◊",
+    "image": "https://limitlesstcg.nyc3.cdn.digitaloceanspaces.com/pocket/C1/C1_044_EN_SM.webp"
+  },
+  {
+    "id": "C1-045",
+    "name": "Electrode",
+    "type": "Lightning",
+    "health": 90,
+    "rarity": "◊◊",
+    "image": "https://limitlesstcg.nyc3.cdn.digitaloceanspaces.com/pocket/C1/C1_045_EN_SM.webp"
+  },
+  {
+    "id": "C1-046",
+    "name": "Stunfisk",
+    "type": "Lightning",
+    "health": 100,
+    "rarity": "◊",
+    "image": "https://limitlesstcg.nyc3.cdn.digitaloceanspaces.com/pocket/C1/C1_046_EN_SM.webp"
+  },
+  {
+    "id": "C1-047",
+    "name": "Zeraora",
+    "type": "Lightning",
+    "health": 90,
+    "rarity": "◊◊◊",
+    "image": "https://limitlesstcg.nyc3.cdn.digitaloceanspaces.com/pocket/C1/C1_047_EN_SM.webp"
+  },
+  {
+    "id": "C1-048",
+    "name": "Pawmi",
+    "type": "Lightning",
+    "health": 40,
+    "rarity": "◊",
+    "image": "https://limitlesstcg.nyc3.cdn.digitaloceanspaces.com/pocket/C1/C1_048_EN_SM.webp"
+  },
+  {
+    "id": "C1-049",
+    "name": "Pawmo",
+    "type": "Lightning",
+    "health": 80,
+    "rarity": "◊",
+    "image": "https://limitlesstcg.nyc3.cdn.digitaloceanspaces.com/pocket/C1/C1_049_EN_SM.webp"
+  },
+  {
+    "id": "C1-050",
+    "name": "Pawmot",
+    "type": "Lightning",
+    "health": 120,
+    "rarity": "◊◊◊",
+    "image": "https://limitlesstcg.nyc3.cdn.digitaloceanspaces.com/pocket/C1/C1_050_EN_SM.webp"
+  },
+  {
+    "id": "C1-051",
+    "name": "Jigglypuff",
+    "type": "Psychic",
+    "health": 50,
+    "rarity": "◊",
+    "image": "https://limitlesstcg.nyc3.cdn.digitaloceanspaces.com/pocket/C1/C1_051_EN_SM.webp"
+  },
+  {
+    "id": "C1-052",
+    "name": "Wigglytuff",
+    "type": "Psychic",
+    "health": 100,
+    "rarity": "◊◊",
+    "image": "https://limitlesstcg.nyc3.cdn.digitaloceanspaces.com/pocket/C1/C1_052_EN_SM.webp"
+  },
+  {
+    "id": "C1-053",
+    "name": "Abra",
+    "type": "Psychic",
+    "health": 50,
+    "rarity": "◊",
+    "image": "https://limitlesstcg.nyc3.cdn.digitaloceanspaces.com/pocket/C1/C1_053_EN_SM.webp"
+  },
+  {
+    "id": "C1-054",
+    "name": "Kadabra",
+    "type": "Psychic",
+    "health": 80,
+    "rarity": "◊",
+    "image": "https://limitlesstcg.nyc3.cdn.digitaloceanspaces.com/pocket/C1/C1_054_EN_SM.webp"
+  },
+  {
+    "id": "C1-055",
+    "name": "Alakazam",
+    "type": "Psychic",
+    "health": 130,
+    "rarity": "◊◊",
+    "image": "https://limitlesstcg.nyc3.cdn.digitaloceanspaces.com/pocket/C1/C1_055_EN_SM.webp"
+  },
+  {
+    "id": "C1-056",
+    "name": "Mega Mewtwo X ex",
+    "type": "Psychic",
+    "health": 180,
+    "rarity": "◊◊◊◊",
+    "image": "https://limitlesstcg.nyc3.cdn.digitaloceanspaces.com/pocket/C1/C1_056_EN_SM.webp"
+  },
+  {
+    "id": "C1-057",
+    "name": "Mew ex",
+    "type": "Psychic",
+    "health": 130,
+    "rarity": "◊◊◊◊",
+    "image": "https://limitlesstcg.nyc3.cdn.digitaloceanspaces.com/pocket/C1/C1_057_EN_SM.webp"
+  },
+  {
+    "id": "C1-058",
+    "name": "Marill",
+    "type": "Psychic",
+    "health": 60,
+    "rarity": "◊",
+    "image": "https://limitlesstcg.nyc3.cdn.digitaloceanspaces.com/pocket/C1/C1_058_EN_SM.webp"
+  },
+  {
+    "id": "C1-059",
+    "name": "Azumarill",
+    "type": "Psychic",
+    "health": 120,
+    "rarity": "◊◊",
+    "image": "https://limitlesstcg.nyc3.cdn.digitaloceanspaces.com/pocket/C1/C1_059_EN_SM.webp"
+  },
+  {
+    "id": "C1-060",
+    "name": "Espeon",
+    "type": "Psychic",
+    "health": 90,
+    "rarity": "◊◊",
+    "image": "https://limitlesstcg.nyc3.cdn.digitaloceanspaces.com/pocket/C1/C1_060_EN_SM.webp"
+  },
+  {
+    "id": "C1-061",
+    "name": "Wobbuffet",
+    "type": "Psychic",
+    "health": 90,
+    "rarity": "◊",
+    "image": "https://limitlesstcg.nyc3.cdn.digitaloceanspaces.com/pocket/C1/C1_061_EN_SM.webp"
+  },
+  {
+    "id": "C1-062",
+    "name": "Deoxys",
+    "type": "Psychic",
+    "health": 100,
+    "rarity": "◊◊◊",
+    "image": "https://limitlesstcg.nyc3.cdn.digitaloceanspaces.com/pocket/C1/C1_062_EN_SM.webp"
+  },
+  {
+    "id": "C1-063",
+    "name": "Mimikyu",
+    "type": "Psychic",
+    "health": 70,
+    "rarity": "◊",
+    "image": "https://limitlesstcg.nyc3.cdn.digitaloceanspaces.com/pocket/C1/C1_063_EN_SM.webp"
+  },
+  {
+    "id": "C1-064",
+    "name": "Cosmog",
+    "type": "Psychic",
+    "health": 60,
+    "rarity": "◊",
+    "image": "https://limitlesstcg.nyc3.cdn.digitaloceanspaces.com/pocket/C1/C1_064_EN_SM.webp"
+  },
+  {
+    "id": "C1-065",
+    "name": "Cosmoem",
+    "type": "Psychic",
+    "health": 100,
+    "rarity": "◊◊",
+    "image": "https://limitlesstcg.nyc3.cdn.digitaloceanspaces.com/pocket/C1/C1_065_EN_SM.webp"
+  },
+  {
+    "id": "C1-066",
+    "name": "Lunala",
+    "type": "Psychic",
+    "health": 150,
+    "rarity": "◊◊◊",
+    "image": "https://limitlesstcg.nyc3.cdn.digitaloceanspaces.com/pocket/C1/C1_066_EN_SM.webp"
+  },
+  {
+    "id": "C1-067",
+    "name": "Diglett",
+    "type": "Fighting",
+    "health": 50,
+    "rarity": "◊",
+    "image": "https://limitlesstcg.nyc3.cdn.digitaloceanspaces.com/pocket/C1/C1_067_EN_SM.webp"
+  },
+  {
+    "id": "C1-068",
+    "name": "Dugtrio",
+    "type": "Fighting",
+    "health": 90,
+    "rarity": "◊◊",
+    "image": "https://limitlesstcg.nyc3.cdn.digitaloceanspaces.com/pocket/C1/C1_068_EN_SM.webp"
+  },
+  {
+    "id": "C1-069",
+    "name": "Rhyhorn",
+    "type": "Fighting",
+    "health": 80,
+    "rarity": "◊",
+    "image": "https://limitlesstcg.nyc3.cdn.digitaloceanspaces.com/pocket/C1/C1_069_EN_SM.webp"
+  },
+  {
+    "id": "C1-070",
+    "name": "Rhydon",
+    "type": "Fighting",
+    "health": 110,
+    "rarity": "◊",
+    "image": "https://limitlesstcg.nyc3.cdn.digitaloceanspaces.com/pocket/C1/C1_070_EN_SM.webp"
+  },
+  {
+    "id": "C1-071",
+    "name": "Rhyperior",
+    "type": "Fighting",
+    "health": 160,
+    "rarity": "◊◊◊",
+    "image": "https://limitlesstcg.nyc3.cdn.digitaloceanspaces.com/pocket/C1/C1_071_EN_SM.webp"
+  },
+  {
+    "id": "C1-072",
+    "name": "Sudowoodo",
+    "type": "Fighting",
+    "health": 100,
+    "rarity": "◊",
+    "image": "https://limitlesstcg.nyc3.cdn.digitaloceanspaces.com/pocket/C1/C1_072_EN_SM.webp"
+  },
+  {
+    "id": "C1-073",
+    "name": "Paldean Wooper",
+    "type": "Fighting",
+    "health": 60,
+    "rarity": "◊",
+    "image": "https://limitlesstcg.nyc3.cdn.digitaloceanspaces.com/pocket/C1/C1_073_EN_SM.webp"
+  },
+  {
+    "id": "C1-074",
+    "name": "Paldean Clodsire",
+    "type": "Fighting",
+    "health": 130,
+    "rarity": "◊◊◊",
+    "image": "https://limitlesstcg.nyc3.cdn.digitaloceanspaces.com/pocket/C1/C1_074_EN_SM.webp"
+  },
+  {
+    "id": "C1-075",
+    "name": "Larvitar",
+    "type": "Fighting",
+    "health": 50,
+    "rarity": "◊",
+    "image": "https://limitlesstcg.nyc3.cdn.digitaloceanspaces.com/pocket/C1/C1_075_EN_SM.webp"
+  },
+  {
+    "id": "C1-076",
+    "name": "Pupitar",
+    "type": "Fighting",
+    "health": 100,
+    "rarity": "◊◊",
+    "image": "https://limitlesstcg.nyc3.cdn.digitaloceanspaces.com/pocket/C1/C1_076_EN_SM.webp"
+  },
+  {
+    "id": "C1-077",
+    "name": "Barboach",
+    "type": "Fighting",
+    "health": 60,
+    "rarity": "◊",
+    "image": "https://limitlesstcg.nyc3.cdn.digitaloceanspaces.com/pocket/C1/C1_077_EN_SM.webp"
+  },
+  {
+    "id": "C1-078",
+    "name": "Whiscash",
+    "type": "Fighting",
+    "health": 120,
+    "rarity": "◊◊",
+    "image": "https://limitlesstcg.nyc3.cdn.digitaloceanspaces.com/pocket/C1/C1_078_EN_SM.webp"
+  },
+  {
+    "id": "C1-079",
+    "name": "Rockruff",
+    "type": "Fighting",
+    "health": 70,
+    "rarity": "◊",
+    "image": "https://limitlesstcg.nyc3.cdn.digitaloceanspaces.com/pocket/C1/C1_079_EN_SM.webp"
+  },
+  {
+    "id": "C1-080",
+    "name": "Lycanroc ex",
+    "type": "Fighting",
+    "health": 150,
+    "rarity": "◊◊◊◊",
+    "image": "https://limitlesstcg.nyc3.cdn.digitaloceanspaces.com/pocket/C1/C1_080_EN_SM.webp"
+  },
+  {
+    "id": "C1-081",
+    "name": "Gastly",
+    "type": "Darkness",
+    "health": 60,
+    "rarity": "◊",
+    "image": "https://limitlesstcg.nyc3.cdn.digitaloceanspaces.com/pocket/C1/C1_081_EN_SM.webp"
+  },
+  {
+    "id": "C1-082",
+    "name": "Haunter",
+    "type": "Darkness",
+    "health": 80,
+    "rarity": "◊",
+    "image": "https://limitlesstcg.nyc3.cdn.digitaloceanspaces.com/pocket/C1/C1_082_EN_SM.webp"
+  },
+  {
+    "id": "C1-083",
+    "name": "Gengar",
+    "type": "Darkness",
+    "health": 130,
+    "rarity": "◊◊◊",
+    "image": "https://limitlesstcg.nyc3.cdn.digitaloceanspaces.com/pocket/C1/C1_083_EN_SM.webp"
+  },
+  {
+    "id": "C1-084",
+    "name": "Umbreon",
+    "type": "Darkness",
+    "health": 90,
+    "rarity": "◊◊",
+    "image": "https://limitlesstcg.nyc3.cdn.digitaloceanspaces.com/pocket/C1/C1_084_EN_SM.webp"
+  },
+  {
+    "id": "C1-085",
+    "name": "Mega Tyranitar ex",
+    "type": "Darkness",
+    "health": 240,
+    "rarity": "◊◊◊◊",
+    "image": "https://limitlesstcg.nyc3.cdn.digitaloceanspaces.com/pocket/C1/C1_085_EN_SM.webp"
+  },
+  {
+    "id": "C1-086",
+    "name": "Seviper",
+    "type": "Darkness",
+    "health": 80,
+    "rarity": "◊",
+    "image": "https://limitlesstcg.nyc3.cdn.digitaloceanspaces.com/pocket/C1/C1_086_EN_SM.webp"
+  },
+  {
+    "id": "C1-087",
+    "name": "Zorua",
+    "type": "Darkness",
+    "health": 60,
+    "rarity": "◊",
+    "image": "https://limitlesstcg.nyc3.cdn.digitaloceanspaces.com/pocket/C1/C1_087_EN_SM.webp"
+  },
+  {
+    "id": "C1-088",
+    "name": "Zoroark",
+    "type": "Darkness",
+    "health": 100,
+    "rarity": "◊◊◊",
+    "image": "https://limitlesstcg.nyc3.cdn.digitaloceanspaces.com/pocket/C1/C1_088_EN_SM.webp"
+  },
+  {
+    "id": "C1-089",
+    "name": "Nickit",
+    "type": "Darkness",
+    "health": 60,
+    "rarity": "◊",
+    "image": "https://limitlesstcg.nyc3.cdn.digitaloceanspaces.com/pocket/C1/C1_089_EN_SM.webp"
+  },
+  {
+    "id": "C1-090",
+    "name": "Thievul",
+    "type": "Darkness",
+    "health": 100,
+    "rarity": "◊◊",
+    "image": "https://limitlesstcg.nyc3.cdn.digitaloceanspaces.com/pocket/C1/C1_090_EN_SM.webp"
+  },
+  {
+    "id": "C1-091",
+    "name": "Mega Skarmory ex",
+    "type": "Metal",
+    "health": 170,
+    "rarity": "◊◊◊◊",
+    "image": "https://limitlesstcg.nyc3.cdn.digitaloceanspaces.com/pocket/C1/C1_091_EN_SM.webp"
+  },
+  {
+    "id": "C1-092",
+    "name": "Dialga",
+    "type": "Metal",
+    "health": 120,
+    "rarity": "◊◊◊",
+    "image": "https://limitlesstcg.nyc3.cdn.digitaloceanspaces.com/pocket/C1/C1_092_EN_SM.webp"
+  },
+  {
+    "id": "C1-093",
+    "name": "Ferroseed",
+    "type": "Metal",
+    "health": 70,
+    "rarity": "◊",
+    "image": "https://limitlesstcg.nyc3.cdn.digitaloceanspaces.com/pocket/C1/C1_093_EN_SM.webp"
+  },
+  {
+    "id": "C1-094",
+    "name": "Ferrothorn",
+    "type": "Metal",
+    "health": 120,
+    "rarity": "◊◊",
+    "image": "https://limitlesstcg.nyc3.cdn.digitaloceanspaces.com/pocket/C1/C1_094_EN_SM.webp"
+  },
+  {
+    "id": "C1-095",
+    "name": "Solgaleo",
+    "type": "Metal",
+    "health": 160,
+    "rarity": "◊◊◊",
+    "image": "https://limitlesstcg.nyc3.cdn.digitaloceanspaces.com/pocket/C1/C1_095_EN_SM.webp"
+  },
+  {
+    "id": "C1-096",
+    "name": "Meltan",
+    "type": "Metal",
+    "health": 60,
+    "rarity": "◊",
+    "image": "https://limitlesstcg.nyc3.cdn.digitaloceanspaces.com/pocket/C1/C1_096_EN_SM.webp"
+  },
+  {
+    "id": "C1-097",
+    "name": "Melmetal",
+    "type": "Metal",
+    "health": 120,
+    "rarity": "◊◊◊",
+    "image": "https://limitlesstcg.nyc3.cdn.digitaloceanspaces.com/pocket/C1/C1_097_EN_SM.webp"
+  },
+  {
+    "id": "C1-098",
+    "name": "Dratini",
+    "type": "Dragon",
+    "health": 70,
+    "rarity": "◊",
+    "image": "https://limitlesstcg.nyc3.cdn.digitaloceanspaces.com/pocket/C1/C1_098_EN_SM.webp"
+  },
+  {
+    "id": "C1-099",
+    "name": "Dragonair",
+    "type": "Dragon",
+    "health": 100,
+    "rarity": "◊",
+    "image": "https://limitlesstcg.nyc3.cdn.digitaloceanspaces.com/pocket/C1/C1_099_EN_SM.webp"
+  },
+  {
+    "id": "C1-100",
+    "name": "Mega Dragonite ex",
+    "type": "Dragon",
+    "health": 240,
+    "rarity": "◊◊◊◊",
+    "image": "https://limitlesstcg.nyc3.cdn.digitaloceanspaces.com/pocket/C1/C1_100_EN_SM.webp"
+  },
+  {
+    "id": "C1-101",
+    "name": "Giratina ex",
+    "type": "Dragon",
+    "health": 150,
+    "rarity": "◊◊◊◊",
+    "image": "https://limitlesstcg.nyc3.cdn.digitaloceanspaces.com/pocket/C1/C1_101_EN_SM.webp"
+  },
+  {
+    "id": "C1-102",
+    "name": "Pidgey",
+    "type": "Colorless",
+    "health": 60,
+    "rarity": "◊",
+    "image": "https://limitlesstcg.nyc3.cdn.digitaloceanspaces.com/pocket/C1/C1_102_EN_SM.webp"
+  },
+  {
+    "id": "C1-103",
+    "name": "Pidgeotto",
+    "type": "Colorless",
+    "health": 70,
+    "rarity": "◊",
+    "image": "https://limitlesstcg.nyc3.cdn.digitaloceanspaces.com/pocket/C1/C1_103_EN_SM.webp"
+  },
+  {
+    "id": "C1-104",
+    "name": "Pidgeot",
+    "type": "Colorless",
+    "health": 130,
+    "rarity": "◊◊◊",
+    "image": "https://limitlesstcg.nyc3.cdn.digitaloceanspaces.com/pocket/C1/C1_104_EN_SM.webp"
+  },
+  {
+    "id": "C1-105",
+    "name": "Spearow",
+    "type": "Colorless",
+    "health": 60,
+    "rarity": "◊",
+    "image": "https://limitlesstcg.nyc3.cdn.digitaloceanspaces.com/pocket/C1/C1_105_EN_SM.webp"
+  },
+  {
+    "id": "C1-106",
+    "name": "Fearow",
+    "type": "Colorless",
+    "health": 90,
+    "rarity": "◊◊",
+    "image": "https://limitlesstcg.nyc3.cdn.digitaloceanspaces.com/pocket/C1/C1_106_EN_SM.webp"
+  },
+  {
+    "id": "C1-107",
+    "name": "Eevee",
+    "type": "Colorless",
+    "health": 60,
+    "rarity": "◊",
+    "image": "https://limitlesstcg.nyc3.cdn.digitaloceanspaces.com/pocket/C1/C1_107_EN_SM.webp"
+  },
+  {
+    "id": "C1-108",
+    "name": "Porygon",
+    "type": "Colorless",
+    "health": 60,
+    "rarity": "◊",
+    "image": "https://limitlesstcg.nyc3.cdn.digitaloceanspaces.com/pocket/C1/C1_108_EN_SM.webp"
+  },
+  {
+    "id": "C1-109",
+    "name": "Porygon2",
+    "type": "Colorless",
+    "health": 90,
+    "rarity": "◊◊",
+    "image": "https://limitlesstcg.nyc3.cdn.digitaloceanspaces.com/pocket/C1/C1_109_EN_SM.webp"
+  },
+  {
+    "id": "C1-110",
+    "name": "Porygon-Z",
+    "type": "Colorless",
+    "health": 130,
+    "rarity": "◊◊◊",
+    "image": "https://limitlesstcg.nyc3.cdn.digitaloceanspaces.com/pocket/C1/C1_110_EN_SM.webp"
+  },
+  {
+    "id": "C1-111",
+    "name": "Snorlax",
+    "type": "Colorless",
+    "health": 130,
+    "rarity": "◊◊",
+    "image": "https://limitlesstcg.nyc3.cdn.digitaloceanspaces.com/pocket/C1/C1_111_EN_SM.webp"
+  },
+  {
+    "id": "C1-112",
+    "name": "Zangoose",
+    "type": "Colorless",
+    "health": 80,
+    "rarity": "◊",
+    "image": "https://limitlesstcg.nyc3.cdn.digitaloceanspaces.com/pocket/C1/C1_112_EN_SM.webp"
+  },
+  {
+    "id": "C1-113",
+    "name": "Bidoof",
+    "type": "Colorless",
+    "health": 60,
+    "rarity": "◊",
+    "image": "https://limitlesstcg.nyc3.cdn.digitaloceanspaces.com/pocket/C1/C1_113_EN_SM.webp"
+  },
+  {
+    "id": "C1-114",
+    "name": "Bibarel",
+    "type": "Colorless",
+    "health": 120,
+    "rarity": "◊◊",
+    "image": "https://limitlesstcg.nyc3.cdn.digitaloceanspaces.com/pocket/C1/C1_114_EN_SM.webp"
+  },
+  {
+    "id": "C1-115",
+    "name": "Buneary",
+    "type": "Colorless",
+    "health": 50,
+    "rarity": "◊",
+    "image": "https://limitlesstcg.nyc3.cdn.digitaloceanspaces.com/pocket/C1/C1_115_EN_SM.webp"
+  },
+  {
+    "id": "C1-116",
+    "name": "Lopunny",
+    "type": "Colorless",
+    "health": 100,
+    "rarity": "◊◊",
+    "image": "https://limitlesstcg.nyc3.cdn.digitaloceanspaces.com/pocket/C1/C1_116_EN_SM.webp"
+  },
+  {
+    "id": "C1-117",
+    "name": "Stufful",
+    "type": "Colorless",
+    "health": 70,
+    "rarity": "◊",
+    "image": "https://limitlesstcg.nyc3.cdn.digitaloceanspaces.com/pocket/C1/C1_117_EN_SM.webp"
+  },
+  {
+    "id": "C1-118",
+    "name": "Bewear ex",
+    "type": "Colorless",
+    "health": 160,
+    "rarity": "◊◊◊◊",
+    "image": "https://limitlesstcg.nyc3.cdn.digitaloceanspaces.com/pocket/C1/C1_118_EN_SM.webp"
+  },
+  {
+    "id": "C1-119",
+    "name": "Sweet Honey",
+    "type": "Trainer",
+    "health": null,
+    "rarity": "◊◊",
+    "image": "https://limitlesstcg.nyc3.cdn.digitaloceanspaces.com/pocket/C1/C1_119_EN_SM.webp"
+  },
+  {
+    "id": "C1-120",
+    "name": "Super Potion",
+    "type": "Trainer",
+    "health": null,
+    "rarity": "◊◊",
+    "image": "https://limitlesstcg.nyc3.cdn.digitaloceanspaces.com/pocket/C1/C1_120_EN_SM.webp"
+  },
+  {
+    "id": "C1-121",
+    "name": "Max Repel",
+    "type": "Trainer",
+    "health": null,
+    "rarity": "◊◊",
+    "image": "https://limitlesstcg.nyc3.cdn.digitaloceanspaces.com/pocket/C1/C1_121_EN_SM.webp"
+  },
+  {
+    "id": "C1-122",
+    "name": "Full Heal",
+    "type": "Trainer",
+    "health": null,
+    "rarity": "◊◊",
+    "image": "https://limitlesstcg.nyc3.cdn.digitaloceanspaces.com/pocket/C1/C1_122_EN_SM.webp"
+  },
+  {
+    "id": "C1-123",
+    "name": "Eviolite",
+    "type": "Trainer",
+    "health": null,
+    "rarity": "◊◊",
+    "image": "https://limitlesstcg.nyc3.cdn.digitaloceanspaces.com/pocket/C1/C1_123_EN_SM.webp"
+  },
+  {
+    "id": "C1-124",
+    "name": "Light Ball",
+    "type": "Trainer",
+    "health": null,
+    "rarity": "◊◊",
+    "image": "https://limitlesstcg.nyc3.cdn.digitaloceanspaces.com/pocket/C1/C1_124_EN_SM.webp"
+  },
+  {
+    "id": "C1-125",
+    "name": "Lorelei",
+    "type": "Trainer",
+    "health": null,
+    "rarity": "◊◊",
+    "image": "https://limitlesstcg.nyc3.cdn.digitaloceanspaces.com/pocket/C1/C1_125_EN_SM.webp"
+  },
+  {
+    "id": "C1-126",
+    "name": "Blue's Provocation",
+    "type": "Trainer",
+    "health": null,
+    "rarity": "◊◊",
+    "image": "https://limitlesstcg.nyc3.cdn.digitaloceanspaces.com/pocket/C1/C1_126_EN_SM.webp"
+  },
+  {
+    "id": "C1-127",
+    "name": "Serena's Choice",
+    "type": "Trainer",
+    "health": null,
+    "rarity": "◊◊",
+    "image": "https://limitlesstcg.nyc3.cdn.digitaloceanspaces.com/pocket/C1/C1_127_EN_SM.webp"
+  },
+  {
+    "id": "C1-128",
+    "name": "Rika",
+    "type": "Trainer",
+    "health": null,
+    "rarity": "◊◊",
+    "image": "https://limitlesstcg.nyc3.cdn.digitaloceanspaces.com/pocket/C1/C1_128_EN_SM.webp"
+  },
+  {
+    "id": "C1-129",
+    "name": "Poké Mart Guy",
+    "type": "Trainer",
+    "health": null,
+    "rarity": "◊◊",
+    "image": "https://limitlesstcg.nyc3.cdn.digitaloceanspaces.com/pocket/C1/C1_129_EN_SM.webp"
+  },
+  {
+    "id": "C1-130",
+    "name": "Rising Star",
+    "type": "Trainer",
+    "health": null,
+    "rarity": "◊◊",
+    "image": "https://limitlesstcg.nyc3.cdn.digitaloceanspaces.com/pocket/C1/C1_130_EN_SM.webp"
+  },
+  {
+    "id": "C1-131",
+    "name": "Abandoned Station",
+    "type": "Trainer",
+    "health": null,
+    "rarity": "◊◊",
+    "image": "https://limitlesstcg.nyc3.cdn.digitaloceanspaces.com/pocket/C1/C1_131_EN_SM.webp"
+  },
+  {
+    "id": "C1-132",
+    "name": "Venusaur",
+    "type": "Grass",
+    "health": 150,
+    "rarity": "☆",
+    "image": "https://limitlesstcg.nyc3.cdn.digitaloceanspaces.com/pocket/C1/C1_132_EN_SM.webp"
+  },
+  {
+    "id": "C1-133",
+    "name": "Exeggcute",
+    "type": "Grass",
+    "health": 60,
+    "rarity": "☆",
+    "image": "https://limitlesstcg.nyc3.cdn.digitaloceanspaces.com/pocket/C1/C1_133_EN_SM.webp"
+  },
+  {
+    "id": "C1-134",
+    "name": "Deerling",
+    "type": "Grass",
+    "health": 60,
+    "rarity": "☆",
+    "image": "https://limitlesstcg.nyc3.cdn.digitaloceanspaces.com/pocket/C1/C1_134_EN_SM.webp"
+  },
+  {
+    "id": "C1-135",
+    "name": "Ribombee",
+    "type": "Grass",
+    "health": 70,
+    "rarity": "☆",
+    "image": "https://limitlesstcg.nyc3.cdn.digitaloceanspaces.com/pocket/C1/C1_135_EN_SM.webp"
+  },
+  {
+    "id": "C1-136",
+    "name": "Charizard",
+    "type": "Fire",
+    "health": 150,
+    "rarity": "☆",
+    "image": "https://limitlesstcg.nyc3.cdn.digitaloceanspaces.com/pocket/C1/C1_136_EN_SM.webp"
+  },
+  {
+    "id": "C1-137",
+    "name": "Raboot",
+    "type": "Fire",
+    "health": 70,
+    "rarity": "☆",
+    "image": "https://limitlesstcg.nyc3.cdn.digitaloceanspaces.com/pocket/C1/C1_137_EN_SM.webp"
+  },
+  {
+    "id": "C1-138",
+    "name": "Ceruledge",
+    "type": "Fire",
+    "health": 120,
+    "rarity": "☆",
+    "image": "https://limitlesstcg.nyc3.cdn.digitaloceanspaces.com/pocket/C1/C1_138_EN_SM.webp"
+  },
+  {
+    "id": "C1-139",
+    "name": "Blastoise",
+    "type": "Water",
+    "health": 150,
+    "rarity": "☆",
+    "image": "https://limitlesstcg.nyc3.cdn.digitaloceanspaces.com/pocket/C1/C1_139_EN_SM.webp"
+  },
+  {
+    "id": "C1-140",
+    "name": "Palkia",
+    "type": "Water",
+    "health": 120,
+    "rarity": "☆",
+    "image": "https://limitlesstcg.nyc3.cdn.digitaloceanspaces.com/pocket/C1/C1_140_EN_SM.webp"
+  },
+  {
+    "id": "C1-141",
+    "name": "Frogadier",
+    "type": "Water",
+    "health": 70,
+    "rarity": "☆",
+    "image": "https://limitlesstcg.nyc3.cdn.digitaloceanspaces.com/pocket/C1/C1_141_EN_SM.webp"
+  },
+  {
+    "id": "C1-142",
+    "name": "Pawmot",
+    "type": "Lightning",
+    "health": 120,
+    "rarity": "☆",
+    "image": "https://limitlesstcg.nyc3.cdn.digitaloceanspaces.com/pocket/C1/C1_142_EN_SM.webp"
+  },
+  {
+    "id": "C1-143",
+    "name": "Mimikyu",
+    "type": "Psychic",
+    "health": 70,
+    "rarity": "☆",
+    "image": "https://limitlesstcg.nyc3.cdn.digitaloceanspaces.com/pocket/C1/C1_143_EN_SM.webp"
+  },
+  {
+    "id": "C1-144",
+    "name": "Cosmoem",
+    "type": "Psychic",
+    "health": 100,
+    "rarity": "☆",
+    "image": "https://limitlesstcg.nyc3.cdn.digitaloceanspaces.com/pocket/C1/C1_144_EN_SM.webp"
+  },
+  {
+    "id": "C1-145",
+    "name": "Larvitar",
+    "type": "Fighting",
+    "health": 50,
+    "rarity": "☆",
+    "image": "https://limitlesstcg.nyc3.cdn.digitaloceanspaces.com/pocket/C1/C1_145_EN_SM.webp"
+  },
+  {
+    "id": "C1-146",
+    "name": "Pupitar",
+    "type": "Fighting",
+    "health": 100,
+    "rarity": "☆",
+    "image": "https://limitlesstcg.nyc3.cdn.digitaloceanspaces.com/pocket/C1/C1_146_EN_SM.webp"
+  },
+  {
+    "id": "C1-147",
+    "name": "Paldean Clodsire",
+    "type": "Fighting",
+    "health": 130,
+    "rarity": "☆",
+    "image": "https://limitlesstcg.nyc3.cdn.digitaloceanspaces.com/pocket/C1/C1_147_EN_SM.webp"
+  },
+  {
+    "id": "C1-148",
+    "name": "Gengar",
+    "type": "Darkness",
+    "health": 130,
+    "rarity": "☆",
+    "image": "https://limitlesstcg.nyc3.cdn.digitaloceanspaces.com/pocket/C1/C1_148_EN_SM.webp"
+  },
+  {
+    "id": "C1-149",
+    "name": "Dialga",
+    "type": "Metal",
+    "health": 120,
+    "rarity": "☆",
+    "image": "https://limitlesstcg.nyc3.cdn.digitaloceanspaces.com/pocket/C1/C1_149_EN_SM.webp"
+  },
+  {
+    "id": "C1-150",
+    "name": "Melmetal",
+    "type": "Metal",
+    "health": 120,
+    "rarity": "☆",
+    "image": "https://limitlesstcg.nyc3.cdn.digitaloceanspaces.com/pocket/C1/C1_150_EN_SM.webp"
+  },
+  {
+    "id": "C1-151",
+    "name": "Bidoof",
+    "type": "Colorless",
+    "health": 60,
+    "rarity": "☆",
+    "image": "https://limitlesstcg.nyc3.cdn.digitaloceanspaces.com/pocket/C1/C1_151_EN_SM.webp"
+  },
+  {
+    "id": "C1-152",
+    "name": "Sweet Honey",
+    "type": "Trainer",
+    "health": null,
+    "rarity": "☆",
+    "image": "https://limitlesstcg.nyc3.cdn.digitaloceanspaces.com/pocket/C1/C1_152_EN_SM.webp"
+  },
+  {
+    "id": "C1-153",
+    "name": "Alolan Exeggutor ex",
+    "type": "Grass",
+    "health": 180,
+    "rarity": "☆☆",
+    "image": "https://limitlesstcg.nyc3.cdn.digitaloceanspaces.com/pocket/C1/C1_153_EN_SM.webp"
+  },
+  {
+    "id": "C1-154",
+    "name": "Fuecoco ex",
+    "type": "Fire",
+    "health": 130,
+    "rarity": "☆☆",
+    "image": "https://limitlesstcg.nyc3.cdn.digitaloceanspaces.com/pocket/C1/C1_154_EN_SM.webp"
+  },
+  {
+    "id": "C1-155",
+    "name": "Mega Greninja ex",
+    "type": "Water",
+    "health": 200,
+    "rarity": "☆☆",
+    "image": "https://limitlesstcg.nyc3.cdn.digitaloceanspaces.com/pocket/C1/C1_155_EN_SM.webp"
+  },
+  {
+    "id": "C1-156",
+    "name": "Pikachu ex",
+    "type": "Lightning",
+    "health": 120,
+    "rarity": "☆☆",
+    "image": "https://limitlesstcg.nyc3.cdn.digitaloceanspaces.com/pocket/C1/C1_156_EN_SM.webp"
+  },
+  {
+    "id": "C1-157",
+    "name": "Mega Mewtwo X ex",
+    "type": "Psychic",
+    "health": 180,
+    "rarity": "☆☆",
+    "image": "https://limitlesstcg.nyc3.cdn.digitaloceanspaces.com/pocket/C1/C1_157_EN_SM.webp"
+  },
+  {
+    "id": "C1-158",
+    "name": "Mew ex",
+    "type": "Psychic",
+    "health": 130,
+    "rarity": "☆☆",
+    "image": "https://limitlesstcg.nyc3.cdn.digitaloceanspaces.com/pocket/C1/C1_158_EN_SM.webp"
+  },
+  {
+    "id": "C1-159",
+    "name": "Lycanroc ex",
+    "type": "Fighting",
+    "health": 150,
+    "rarity": "☆☆",
+    "image": "https://limitlesstcg.nyc3.cdn.digitaloceanspaces.com/pocket/C1/C1_159_EN_SM.webp"
+  },
+  {
+    "id": "C1-160",
+    "name": "Mega Tyranitar ex",
+    "type": "Darkness",
+    "health": 240,
+    "rarity": "☆☆",
+    "image": "https://limitlesstcg.nyc3.cdn.digitaloceanspaces.com/pocket/C1/C1_160_EN_SM.webp"
+  },
+  {
+    "id": "C1-161",
+    "name": "Mega Skarmory ex",
+    "type": "Metal",
+    "health": 170,
+    "rarity": "☆☆",
+    "image": "https://limitlesstcg.nyc3.cdn.digitaloceanspaces.com/pocket/C1/C1_161_EN_SM.webp"
+  },
+  {
+    "id": "C1-162",
+    "name": "Mega Dragonite ex",
+    "type": "Dragon",
+    "health": 240,
+    "rarity": "☆☆",
+    "image": "https://limitlesstcg.nyc3.cdn.digitaloceanspaces.com/pocket/C1/C1_162_EN_SM.webp"
+  },
+  {
+    "id": "C1-163",
+    "name": "Giratina ex",
+    "type": "Dragon",
+    "health": 150,
+    "rarity": "☆☆",
+    "image": "https://limitlesstcg.nyc3.cdn.digitaloceanspaces.com/pocket/C1/C1_163_EN_SM.webp"
+  },
+  {
+    "id": "C1-164",
+    "name": "Bewear ex",
+    "type": "Colorless",
+    "health": 160,
+    "rarity": "☆☆",
+    "image": "https://limitlesstcg.nyc3.cdn.digitaloceanspaces.com/pocket/C1/C1_164_EN_SM.webp"
+  },
+  {
+    "id": "C1-165",
+    "name": "Lorelei",
+    "type": "Trainer",
+    "health": null,
+    "rarity": "☆☆",
+    "image": "https://limitlesstcg.nyc3.cdn.digitaloceanspaces.com/pocket/C1/C1_165_EN_SM.webp"
+  },
+  {
+    "id": "C1-166",
+    "name": "Blue's Provocation",
+    "type": "Trainer",
+    "health": null,
+    "rarity": "☆☆",
+    "image": "https://limitlesstcg.nyc3.cdn.digitaloceanspaces.com/pocket/C1/C1_166_EN_SM.webp"
+  },
+  {
+    "id": "C1-167",
+    "name": "Serena's Choice",
+    "type": "Trainer",
+    "health": null,
+    "rarity": "☆☆",
+    "image": "https://limitlesstcg.nyc3.cdn.digitaloceanspaces.com/pocket/C1/C1_167_EN_SM.webp"
+  },
+  {
+    "id": "C1-168",
+    "name": "Rika",
+    "type": "Trainer",
+    "health": null,
+    "rarity": "☆☆",
+    "image": "https://limitlesstcg.nyc3.cdn.digitaloceanspaces.com/pocket/C1/C1_168_EN_SM.webp"
+  },
+  {
+    "id": "C1-169",
+    "name": "Poké Mart Guy",
+    "type": "Trainer",
+    "health": null,
+    "rarity": "☆☆",
+    "image": "https://limitlesstcg.nyc3.cdn.digitaloceanspaces.com/pocket/C1/C1_169_EN_SM.webp"
+  },
+  {
+    "id": "C1-170",
+    "name": "Rising Star",
+    "type": "Trainer",
+    "health": null,
+    "rarity": "☆☆",
+    "image": "https://limitlesstcg.nyc3.cdn.digitaloceanspaces.com/pocket/C1/C1_170_EN_SM.webp"
+  },
+  {
+    "id": "C1-171",
+    "name": "Alolan Exeggutor ex",
+    "type": "Grass",
+    "health": 180,
+    "rarity": "☆☆",
+    "image": "https://limitlesstcg.nyc3.cdn.digitaloceanspaces.com/pocket/C1/C1_171_EN_SM.webp"
+  },
+  {
+    "id": "C1-172",
+    "name": "Fuecoco ex",
+    "type": "Fire",
+    "health": 130,
+    "rarity": "☆☆",
+    "image": "https://limitlesstcg.nyc3.cdn.digitaloceanspaces.com/pocket/C1/C1_172_EN_SM.webp"
+  },
+  {
+    "id": "C1-173",
+    "name": "Mega Greninja ex",
+    "type": "Water",
+    "health": 200,
+    "rarity": "☆☆",
+    "image": "https://limitlesstcg.nyc3.cdn.digitaloceanspaces.com/pocket/C1/C1_173_EN_SM.webp"
+  },
+  {
+    "id": "C1-174",
+    "name": "Pikachu ex",
+    "type": "Lightning",
+    "health": 120,
+    "rarity": "☆☆",
+    "image": "https://limitlesstcg.nyc3.cdn.digitaloceanspaces.com/pocket/C1/C1_174_EN_SM.webp"
+  },
+  {
+    "id": "C1-175",
+    "name": "Mega Mewtwo X ex",
+    "type": "Psychic",
+    "health": 180,
+    "rarity": "☆☆",
+    "image": "https://limitlesstcg.nyc3.cdn.digitaloceanspaces.com/pocket/C1/C1_175_EN_SM.webp"
+  },
+  {
+    "id": "C1-176",
+    "name": "Mew ex",
+    "type": "Psychic",
+    "health": 130,
+    "rarity": "☆☆",
+    "image": "https://limitlesstcg.nyc3.cdn.digitaloceanspaces.com/pocket/C1/C1_176_EN_SM.webp"
+  },
+  {
+    "id": "C1-177",
+    "name": "Lycanroc ex",
+    "type": "Fighting",
+    "health": 150,
+    "rarity": "☆☆",
+    "image": "https://limitlesstcg.nyc3.cdn.digitaloceanspaces.com/pocket/C1/C1_177_EN_SM.webp"
+  },
+  {
+    "id": "C1-178",
+    "name": "Mega Tyranitar ex",
+    "type": "Darkness",
+    "health": 240,
+    "rarity": "☆☆",
+    "image": "https://limitlesstcg.nyc3.cdn.digitaloceanspaces.com/pocket/C1/C1_178_EN_SM.webp"
+  },
+  {
+    "id": "C1-179",
+    "name": "Mega Skarmory ex",
+    "type": "Metal",
+    "health": 170,
+    "rarity": "☆☆",
+    "image": "https://limitlesstcg.nyc3.cdn.digitaloceanspaces.com/pocket/C1/C1_179_EN_SM.webp"
+  },
+  {
+    "id": "C1-180",
+    "name": "Mega Dragonite ex",
+    "type": "Dragon",
+    "health": 240,
+    "rarity": "☆☆",
+    "image": "https://limitlesstcg.nyc3.cdn.digitaloceanspaces.com/pocket/C1/C1_180_EN_SM.webp"
+  },
+  {
+    "id": "C1-181",
+    "name": "Giratina ex",
+    "type": "Dragon",
+    "health": 150,
+    "rarity": "☆☆",
+    "image": "https://limitlesstcg.nyc3.cdn.digitaloceanspaces.com/pocket/C1/C1_181_EN_SM.webp"
+  },
+  {
+    "id": "C1-182",
+    "name": "Bewear ex",
+    "type": "Colorless",
+    "health": 160,
+    "rarity": "☆☆",
+    "image": "https://limitlesstcg.nyc3.cdn.digitaloceanspaces.com/pocket/C1/C1_182_EN_SM.webp"
+  },
+  {
+    "id": "C1-183",
+    "name": "Pikachu ex",
+    "type": "Lightning",
+    "health": 120,
+    "rarity": "☆☆☆",
+    "image": "https://limitlesstcg.nyc3.cdn.digitaloceanspaces.com/pocket/C1/C1_183_EN_SM.webp"
+  },
+  {
+    "id": "C1-184",
+    "name": "Jigglypuff",
+    "type": "Psychic",
+    "health": 50,
+    "rarity": "☆☆☆",
+    "image": "https://limitlesstcg.nyc3.cdn.digitaloceanspaces.com/pocket/C1/C1_184_EN_SM.webp"
+  },
+  {
+    "id": "C1-185",
+    "name": "Mega Mewtwo X ex",
+    "type": "Psychic",
+    "health": 180,
+    "rarity": "☆☆☆",
+    "image": "https://limitlesstcg.nyc3.cdn.digitaloceanspaces.com/pocket/C1/C1_185_EN_SM.webp"
+  },
+  {
+    "id": "C1-186",
+    "name": "Umbreon",
+    "type": "Darkness",
+    "health": 90,
+    "rarity": "☆☆☆",
+    "image": "https://limitlesstcg.nyc3.cdn.digitaloceanspaces.com/pocket/C1/C1_186_EN_SM.webp"
+  },
+  {
+    "id": "C1-187",
+    "name": "Celebi",
+    "type": "Grass",
+    "health": 70,
+    "rarity": "☆",
+    "image": "https://limitlesstcg.nyc3.cdn.digitaloceanspaces.com/pocket/C1/C1_187_EN_SM.webp"
+  },
+  {
+    "id": "C1-188",
+    "name": "Treecko",
+    "type": "Grass",
+    "health": 60,
+    "rarity": "☆",
+    "image": "https://limitlesstcg.nyc3.cdn.digitaloceanspaces.com/pocket/C1/C1_188_EN_SM.webp"
+  },
+  {
+    "id": "C1-189",
+    "name": "Grovyle",
+    "type": "Grass",
+    "health": 80,
+    "rarity": "☆",
+    "image": "https://limitlesstcg.nyc3.cdn.digitaloceanspaces.com/pocket/C1/C1_189_EN_SM.webp"
+  },
+  {
+    "id": "C1-190",
+    "name": "Cyndaquil",
+    "type": "Fire",
+    "health": 60,
+    "rarity": "☆",
+    "image": "https://limitlesstcg.nyc3.cdn.digitaloceanspaces.com/pocket/C1/C1_190_EN_SM.webp"
+  },
+  {
+    "id": "C1-191",
+    "name": "Quilava",
+    "type": "Fire",
+    "health": 80,
+    "rarity": "☆",
+    "image": "https://limitlesstcg.nyc3.cdn.digitaloceanspaces.com/pocket/C1/C1_191_EN_SM.webp"
+  },
+  {
+    "id": "C1-192",
+    "name": "Seel",
+    "type": "Water",
+    "health": 70,
+    "rarity": "☆",
+    "image": "https://limitlesstcg.nyc3.cdn.digitaloceanspaces.com/pocket/C1/C1_192_EN_SM.webp"
+  },
+  {
+    "id": "C1-193",
+    "name": "Dewgong",
+    "type": "Water",
+    "health": 120,
+    "rarity": "☆",
+    "image": "https://limitlesstcg.nyc3.cdn.digitaloceanspaces.com/pocket/C1/C1_193_EN_SM.webp"
+  },
+  {
+    "id": "C1-194",
+    "name": "Pachirisu",
+    "type": "Lightning",
+    "health": 70,
+    "rarity": "☆",
+    "image": "https://limitlesstcg.nyc3.cdn.digitaloceanspaces.com/pocket/C1/C1_194_EN_SM.webp"
+  },
+  {
+    "id": "C1-195",
+    "name": "Abra",
+    "type": "Psychic",
+    "health": 50,
+    "rarity": "☆",
+    "image": "https://limitlesstcg.nyc3.cdn.digitaloceanspaces.com/pocket/C1/C1_195_EN_SM.webp"
+  },
+  {
+    "id": "C1-196",
+    "name": "Kadabra",
+    "type": "Psychic",
+    "health": 80,
+    "rarity": "☆",
+    "image": "https://limitlesstcg.nyc3.cdn.digitaloceanspaces.com/pocket/C1/C1_196_EN_SM.webp"
+  },
+  {
+    "id": "C1-197",
+    "name": "Alakazam",
+    "type": "Psychic",
+    "health": 130,
+    "rarity": "☆",
+    "image": "https://limitlesstcg.nyc3.cdn.digitaloceanspaces.com/pocket/C1/C1_197_EN_SM.webp"
+  },
+  {
+    "id": "C1-198",
+    "name": "Lunala",
+    "type": "Psychic",
+    "health": 150,
+    "rarity": "☆",
+    "image": "https://limitlesstcg.nyc3.cdn.digitaloceanspaces.com/pocket/C1/C1_198_EN_SM.webp"
+  },
+  {
+    "id": "C1-199",
+    "name": "Rhyhorn",
+    "type": "Fighting",
+    "health": 80,
+    "rarity": "☆",
+    "image": "https://limitlesstcg.nyc3.cdn.digitaloceanspaces.com/pocket/C1/C1_199_EN_SM.webp"
+  },
+  {
+    "id": "C1-200",
+    "name": "Rhydon",
+    "type": "Fighting",
+    "health": 110,
+    "rarity": "☆",
+    "image": "https://limitlesstcg.nyc3.cdn.digitaloceanspaces.com/pocket/C1/C1_200_EN_SM.webp"
+  },
+  {
+    "id": "C1-201",
+    "name": "Morpeko",
+    "type": "Darkness",
+    "health": 70,
+    "rarity": "☆",
+    "image": "https://limitlesstcg.nyc3.cdn.digitaloceanspaces.com/pocket/C1/C1_201_EN_SM.webp"
+  },
+  {
+    "id": "C1-202",
+    "name": "Solgaleo",
+    "type": "Metal",
+    "health": 160,
+    "rarity": "☆",
+    "image": "https://limitlesstcg.nyc3.cdn.digitaloceanspaces.com/pocket/C1/C1_202_EN_SM.webp"
+  },
+  {
+    "id": "C1-203",
+    "name": "Spearow",
+    "type": "Colorless",
+    "health": 60,
+    "rarity": "☆",
+    "image": "https://limitlesstcg.nyc3.cdn.digitaloceanspaces.com/pocket/C1/C1_203_EN_SM.webp"
+  },
+  {
+    "id": "C1-204",
+    "name": "Fearow",
+    "type": "Colorless",
+    "health": 90,
+    "rarity": "☆",
+    "image": "https://limitlesstcg.nyc3.cdn.digitaloceanspaces.com/pocket/C1/C1_204_EN_SM.webp"
+  },
+  {
+    "id": "C1-205",
+    "name": "Hisuian Zorua",
+    "type": "Colorless",
+    "health": 60,
+    "rarity": "☆",
+    "image": "https://limitlesstcg.nyc3.cdn.digitaloceanspaces.com/pocket/C1/C1_205_EN_SM.webp"
+  },
+  {
+    "id": "C1-206",
+    "name": "Stufful",
+    "type": "Colorless",
+    "health": 70,
+    "rarity": "☆",
+    "image": "https://limitlesstcg.nyc3.cdn.digitaloceanspaces.com/pocket/C1/C1_206_EN_SM.webp"
+  },
+  {
+    "id": "C1-207",
+    "name": "Mega Sceptile ex",
+    "type": "Grass",
+    "health": 210,
+    "rarity": "☆☆",
+    "image": "https://limitlesstcg.nyc3.cdn.digitaloceanspaces.com/pocket/C1/C1_207_EN_SM.webp"
+  },
+  {
+    "id": "C1-208",
+    "name": "Typhlosion ex",
+    "type": "Fire",
+    "health": 180,
+    "rarity": "☆☆",
+    "image": "https://limitlesstcg.nyc3.cdn.digitaloceanspaces.com/pocket/C1/C1_208_EN_SM.webp"
+  },
+  {
+    "id": "C1-209",
+    "name": "Mega Gallade ex",
+    "type": "Fighting",
+    "health": 220,
+    "rarity": "☆☆",
+    "image": "https://limitlesstcg.nyc3.cdn.digitaloceanspaces.com/pocket/C1/C1_209_EN_SM.webp"
+  },
+  {
+    "id": "C1-210",
+    "name": "Lycanroc ex",
+    "type": "Fighting",
+    "health": 150,
+    "rarity": "☆☆",
+    "image": "https://limitlesstcg.nyc3.cdn.digitaloceanspaces.com/pocket/C1/C1_210_EN_SM.webp"
+  },
+  {
+    "id": "C1-211",
+    "name": "Mega Dragonite ex",
+    "type": "Dragon",
+    "health": 240,
+    "rarity": "☆☆",
+    "image": "https://limitlesstcg.nyc3.cdn.digitaloceanspaces.com/pocket/C1/C1_211_EN_SM.webp"
+  },
+  {
+    "id": "C1-212",
+    "name": "Mega Audino ex",
+    "type": "Colorless",
+    "health": 180,
+    "rarity": "☆☆",
+    "image": "https://limitlesstcg.nyc3.cdn.digitaloceanspaces.com/pocket/C1/C1_212_EN_SM.webp"
+  },
+  {
+    "id": "C1-213",
+    "name": "Hisuian Zoroark ex",
+    "type": "Colorless",
+    "health": 150,
+    "rarity": "☆☆",
+    "image": "https://limitlesstcg.nyc3.cdn.digitaloceanspaces.com/pocket/C1/C1_213_EN_SM.webp"
+  },
+  {
+    "id": "C1-214",
+    "name": "Bewear ex",
+    "type": "Colorless",
+    "health": 160,
+    "rarity": "☆☆",
+    "image": "https://limitlesstcg.nyc3.cdn.digitaloceanspaces.com/pocket/C1/C1_214_EN_SM.webp"
+  },
+  {
+    "id": "C1-215",
+    "name": "Fuecoco ex",
+    "type": "Fire",
+    "health": 130,
+    "rarity": "Crown Rare",
+    "image": "https://limitlesstcg.nyc3.cdn.digitaloceanspaces.com/pocket/C1/C1_215_EN_SM.webp"
+  },
+  {
+    "id": "C1-216",
+    "name": "Pawmot",
+    "type": "Lightning",
+    "health": 120,
+    "rarity": "Crown Rare",
+    "image": "https://limitlesstcg.nyc3.cdn.digitaloceanspaces.com/pocket/C1/C1_216_EN_SM.webp"
+  },
+  {
+    "id": "C1-217",
+    "name": "Giratina ex",
+    "type": "Dragon",
+    "health": 150,
+    "rarity": "Crown Rare",
+    "image": "https://limitlesstcg.nyc3.cdn.digitaloceanspaces.com/pocket/C1/C1_217_EN_SM.webp"
+  },
+  {
+    "id": "P-C-001",
+    "name": "Pikachu",
+    "type": "Lightning",
+    "health": 60,
+    "rarity": "",
+    "image": "https://limitlesstcg.nyc3.cdn.digitaloceanspaces.com/pocket/P-C/P-C_001_EN_SM.webp"
+  },
+  {
+    "id": "P-C-002",
+    "name": "Mega Mewtwo Y ex",
+    "type": "Psychic",
+    "health": 170,
+    "rarity": "",
+    "image": "https://limitlesstcg.nyc3.cdn.digitaloceanspaces.com/pocket/P-C/P-C_002_EN_SM.webp"
+  },
+  {
+    "id": "P-C-003",
+    "name": "Deoxys",
+    "type": "Psychic",
+    "health": 100,
+    "rarity": "",
+    "image": "https://limitlesstcg.nyc3.cdn.digitaloceanspaces.com/pocket/P-C/P-C_003_EN_SM.webp"
+  },
+  {
+    "id": "P-C-004",
+    "name": "Inkay",
+    "type": "Psychic",
+    "health": 60,
+    "rarity": "",
+    "image": "https://limitlesstcg.nyc3.cdn.digitaloceanspaces.com/pocket/P-C/P-C_004_EN_SM.webp"
+  },
+  {
+    "id": "P-C-005",
+    "name": "Malamar",
+    "type": "Psychic",
+    "health": 90,
+    "rarity": "",
+    "image": "https://limitlesstcg.nyc3.cdn.digitaloceanspaces.com/pocket/P-C/P-C_005_EN_SM.webp"
+  },
+  {
+    "id": "P-C-006",
+    "name": "Cosmog",
+    "type": "Psychic",
+    "health": 60,
+    "rarity": "",
+    "image": "https://limitlesstcg.nyc3.cdn.digitaloceanspaces.com/pocket/P-C/P-C_006_EN_SM.webp"
+  },
+  {
+    "id": "P-C-007",
+    "name": "Cosmoem",
+    "type": "Psychic",
+    "health": 100,
+    "rarity": "",
+    "image": "https://limitlesstcg.nyc3.cdn.digitaloceanspaces.com/pocket/P-C/P-C_007_EN_SM.webp"
+  },
+  {
+    "id": "P-C-008",
+    "name": "Lunala",
+    "type": "Psychic",
+    "health": 150,
+    "rarity": "",
+    "image": "https://limitlesstcg.nyc3.cdn.digitaloceanspaces.com/pocket/P-C/P-C_008_EN_SM.webp"
+  },
+  {
+    "id": "P-C-009",
+    "name": "Genome Converter Y",
+    "type": "Trainer",
+    "health": null,
+    "rarity": "",
+    "image": "https://limitlesstcg.nyc3.cdn.digitaloceanspaces.com/pocket/P-C/P-C_009_EN_SM.webp"
+  },
+  {
+    "id": "P-C-010",
+    "name": "Stantler",
+    "type": "Colorless",
+    "health": 80,
+    "rarity": "",
+    "image": "https://limitlesstcg.nyc3.cdn.digitaloceanspaces.com/pocket/P-C/P-C_010_EN_SM.webp"
+  },
+  {
+    "id": "P-C-011",
+    "name": "Alcremie",
+    "type": "Psychic",
+    "health": 80,
+    "rarity": "",
+    "image": "https://limitlesstcg.nyc3.cdn.digitaloceanspaces.com/pocket/P-C/P-C_011_EN_SM.webp"
+  },
+  {
+    "id": "P-C-012",
+    "name": "Delibird",
+    "type": "Water",
+    "health": 80,
+    "rarity": "",
+    "image": "https://limitlesstcg.nyc3.cdn.digitaloceanspaces.com/pocket/P-C/P-C_012_EN_SM.webp"
+  },
+  {
+    "id": "P-C-013",
+    "name": "Mega Dragonite ex",
+    "type": "Dragon",
+    "health": 240,
+    "rarity": "",
+    "image": "https://limitlesstcg.nyc3.cdn.digitaloceanspaces.com/pocket/P-C/P-C_013_EN_SM.webp"
+  },
+  {
+    "id": "P-B-103",
+    "name": "Pikachu ex",
+    "type": "Lightning",
+    "health": 120,
+    "rarity": "",
+    "image": "https://limitlesstcg.nyc3.cdn.digitaloceanspaces.com/pocket/P-B/P-B_103_EN_SM.webp"
+  }
+]

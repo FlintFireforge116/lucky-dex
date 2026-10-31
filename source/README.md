@@ -1,4 +1,14 @@
-# LuckyDex v0.69.35 — executable cards and coherent decks
+# LuckyDex v0.69.36 — visual Pocket decks and Dual Fusion
+
+Continues the actual current v0.69.35 source; Android7017, unchanged application ID and permanent signer. No older baseline is restored.
+
+The portrait deck workspace has a persistent illustrated My Deck tray, independent collection scrolling, combined filters/search/sorts, pagination, card inspection, automatic/manual Energy, multiple saved decks/drafts and local ownership-aware recipes. Autobuild compares Energy/evolution archetypes, complete family cores and contextual support; it can build around a card/type or repair an existing deck without replacing key cards. Candidate work yields between attempts so editing and cancellation remain responsive. Developer setups show exact PARTIAL blockers, select owned evolution versions and include supported conditional prerequisites and paired practice opponents, without granting cards or rewards.
+
+Cutoff2026-10-30: **4534 obtainable prints /2450 gameplay identities;1707 FULL,743 PARTIAL,0 UNSUPPORTED**. All217 C1 prints and newly obtainable P-B-103 are mapped. Future Promo-C prints and October31 First Partners remain excluded. Genuine type arrays drive effects, weakness, filters and display; Energy still follows actual attack costs. All1605 prior FULL identities remain FULL, ten prior PARTIAL identities are resolved, and92 new identities are FULL. This is not a100%-coverage claim.
+
+Verification commands: `node scripts/verify-pass-v06936.cjs --tag=verified` for all focused Pocket regressions, `node scripts/verify-pass-v06936.cjs --all --tag=all` to record every historical test program, and the unchanged standard `node scripts/run-tests.cjs`. The full historical suite is not green; see `docs/TCGP_TEST_RESULTS_v06936.md` for every failure, and `docs/TCGP_CURRENT_POOL_v06936.md` for source/release gates and the v034/v035 baseline mismatch. Delivery is a changed-only patch applied **inside canonical source/**, not a replacement full repository ZIP.
+
+## Historical v0.69.35 pass
 
 This pass uses only the supplied `EGG_EMERGENCY_0654_NOTES.zip`. Its actual version was v0.69.33/7014, despite the prompt referring to v0.69.34; no unavailable intermediate code was restored. Release v0.69.35 uses Android7016, the same application ID and permanent signer.
 

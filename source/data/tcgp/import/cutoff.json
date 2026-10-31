@@ -1,5 +1,5 @@
 {
-  "cutoff": "2026-10-27",
+  "cutoff": "2026-10-30",
   "timezone": "Europe/London",
   "sets": [
     {
@@ -145,27 +145,63 @@
       "name": "Promo B",
       "releaseDate": "2025-10-30",
       "printCount": 103
+    },
+    {
+      "id": "C1",
+      "name": "Dual Fusion",
+      "releaseDate": "2026-10-29",
+      "printCount": 217
+    },
+    {
+      "id": "P-C",
+      "name": "Promo C",
+      "releaseDate": "2026-10-29",
+      "printCount": 13
     }
   ],
   "excludedPrintIds": [
-    "P-B-103"
+    "P-C-001",
+    "P-C-002",
+    "P-C-003",
+    "P-C-004",
+    "P-C-005",
+    "P-C-006",
+    "P-C-007",
+    "P-C-008",
+    "P-C-009",
+    "P-C-010",
+    "P-C-011",
+    "P-C-012",
+    "P-C-013"
   ],
-  "knownPrintCount": 4317,
-  "releasedPrintCount": 4316,
+  "knownPrintCount": 4547,
+  "releasedPrintCount": 4534,
   "notes": [
     {
       "printId": "P-B-103",
-      "reason": "Pika Pika! Pikachu missions began 2026-10-20 13:00 UTC and require ten login days. Earliest obtainable date is 2026-10-29, after this cutoff. Print remains known/mapped.",
+      "reason": "Earliest ten-login-day reward now obtainable October29; included.",
       "source": "https://www.pokemon.com/us/news/complete-special-pika-pika-pikachu-missions-in-pokemon-tcg-pocket"
+    },
+    {
+      "printIds": [
+        "P-C-001",
+        "P-C-002",
+        "P-C-003",
+        "P-C-004",
+        "P-C-005",
+        "P-C-006",
+        "P-C-007",
+        "P-C-008",
+        "P-C-009",
+        "P-C-010",
+        "P-C-011",
+        "P-C-012",
+        "P-C-013"
+      ],
+      "reason": "Individual Promo C acquisition events are future. Series start is not print availability; see current-pocket-provenance.json."
     }
   ],
   "excludedSets": [
-    {
-      "name": "Dual Fusion",
-      "releaseDate": "2026-10-29",
-      "releaseUtc": "2026-10-29T01:00:00Z",
-      "source": "https://www.pokemon.com/us/news/pokemon-tcg-pocket-dual-fusion-expansion-coming-soon"
-    },
     {
       "name": "Special Pack: First Partners",
       "releaseDate": "2026-10-31",

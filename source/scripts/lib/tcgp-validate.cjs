@@ -15,6 +15,7 @@ function validateCatalogue(data){
   if(c.kind==='pokemon'&&c.support?.status==='FULL'){
    if(!Number.isInteger(c.hp)||c.hp<=0)errors.push(label+' invalid HP');
    if(!TYPES.includes(c.subtype))errors.push(label+' invalid Pokémon type');
+   if(c.types!=null&&(!Array.isArray(c.types)||c.types.length<1||c.types.length>2||new Set(c.types).size!==c.types.length||c.types.some(t=>!TYPES.includes(t))||c.subtype!==c.types[0]))errors.push(label+' invalid Pokémon type list');
    if(!['Basic','Stage 1','Stage 2'].includes(c.stage))errors.push(label+' invalid stage');
    if(c.stage!=='Basic'&&(!c.evolvesFrom||!names.has(clean(c.evolvesFrom).toLowerCase())))errors.push(label+' invalid evolution reference '+c.evolvesFrom);
    if(!Number.isInteger(c.retreat)||c.retreat<0)errors.push(label+' invalid retreat');

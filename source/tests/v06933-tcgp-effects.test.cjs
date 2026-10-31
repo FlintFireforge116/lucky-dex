@@ -201,7 +201,7 @@ test('Stadium global modifiers filter each beneficiary on both sides and replace
 
 test('Stadium stage and type filters apply bonus damage and retreat costs to both sides',()=>patchCard('BASIC-POKE-BALL',{trainerType:'Stadium',effect:{type:'sequence',effects:[{type:'modifier',stat:'attackDamage',scope:'both',filter:{stage:'Stage 1'},amount:10,duration:'whileInPlay'},{type:'modifier',stat:'retreatCost',scope:'both',filter:{subtype:'Psychic'},amount:-2,duration:'whileInPlay'}]}},()=>{
  const s=fixture();s.stadium={cardId:'BASIC-POKE-BALL',ownerSide:'player'};s.sides.opponent.active=core.makePokemonSlot('A1-002',0,'evolved');assert.equal(effects.modifierAmount(s,'opponent',s.sides.opponent.active,'attackDamage',data.cardById),10);assert.equal(effects.modifierAmount(s,'player',s.sides.player.active,'attackDamage',data.cardById),0);
- patchCard('A1-001',{subtype:'Psychic'},()=>assert.equal(effects.modifierAmount(s,'player',s.sides.player.active,'retreatCost',data.cardById),-2));
+ patchCard('A1-001',{subtype:'Psychic',types:['Psychic']},()=>assert.equal(effects.modifierAmount(s,'player',s.sides.player.active,'retreatCost',data.cardById),-2));
 }));
 
 test('Fossil Items enter chosen physical Bench slot but never satisfy opening Basic or retreat',()=>patchCard('BASIC-POKE-BALL',{trainerType:'Item',hp:40,subtype:'Colorless',stage:'Basic',points:1,retreat:0,attacks:[],effect:{type:'playFossil',hp:40,subtype:'Colorless',canRetreat:false},ability:{name:'Discard',type:'activated',effect:{type:'discardSelf'}}},()=>{

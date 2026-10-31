@@ -1,5 +1,5 @@
 {
-  "cutoff": "2026-10-27",
+  "cutoff": "2026-10-30",
   "includedSets": [
     {
       "id": "A1",
@@ -144,25 +144,85 @@
       "name": "Promo B",
       "releaseDate": "2025-10-30",
       "printCount": 103
+    },
+    {
+      "id": "C1",
+      "name": "Dual Fusion",
+      "releaseDate": "2026-10-29",
+      "printCount": 217
+    },
+    {
+      "id": "P-C",
+      "name": "Promo C",
+      "releaseDate": "2026-10-29",
+      "printCount": 13
     }
   ],
-  "knownPrints": 4317,
-  "releasedPrints": 4316,
+  "knownPrints": 4547,
+  "releasedPrints": 4534,
   "excludedPrints": [
     {
-      "id": "P-B-103",
+      "id": "P-C-001",
+      "reason": "Not obtainable by cutoff"
+    },
+    {
+      "id": "P-C-002",
+      "reason": "Not obtainable by cutoff"
+    },
+    {
+      "id": "P-C-003",
+      "reason": "Not obtainable by cutoff"
+    },
+    {
+      "id": "P-C-004",
+      "reason": "Not obtainable by cutoff"
+    },
+    {
+      "id": "P-C-005",
+      "reason": "Not obtainable by cutoff"
+    },
+    {
+      "id": "P-C-006",
+      "reason": "Not obtainable by cutoff"
+    },
+    {
+      "id": "P-C-007",
+      "reason": "Not obtainable by cutoff"
+    },
+    {
+      "id": "P-C-008",
+      "reason": "Not obtainable by cutoff"
+    },
+    {
+      "id": "P-C-009",
+      "reason": "Not obtainable by cutoff"
+    },
+    {
+      "id": "P-C-010",
+      "reason": "Not obtainable by cutoff"
+    },
+    {
+      "id": "P-C-011",
+      "reason": "Not obtainable by cutoff"
+    },
+    {
+      "id": "P-C-012",
+      "reason": "Not obtainable by cutoff"
+    },
+    {
+      "id": "P-C-013",
       "reason": "Not obtainable by cutoff"
     }
   ],
-  "gameplayIdentities": 2319,
+  "gameplayIdentities": 2450,
   "statusCounts": {
-    "FULL": 1605,
-    "PARTIAL": 714,
+    "FULL": 1707,
+    "PARTIAL": 743,
     "UNSUPPORTED": 0
   },
   "printStatusCounts": {
-    "FULL": 2687,
-    "PARTIAL": 1629,
+    "FULL": 2843,
+    "PARTIAL": 1691,
     "UNSUPPORTED": 0
   },
   "schemaErrors": 0,
@@ -258,15 +318,6 @@
       ]
     },
     {
-      "reason": "Unimplemented attack text: Flip a coin. If heads, the Defending Pokémon can't attack during your opponent's next turn.",
-      "count": 3,
-      "cardIds": [
-        "A1-037",
-        "A3-017",
-        "B3a-056"
-      ]
-    },
-    {
       "reason": "Unimplemented attack text: Your opponent can't use any Supporter cards from their hand during their next turn.",
       "count": 3,
       "cardIds": [
@@ -291,15 +342,6 @@
         "A2-017",
         "P-B-067",
         "B2a-016"
-      ]
-    },
-    {
-      "reason": "Unimplemented attack text: Discard 2 random Energy from this Pokémon.",
-      "count": 3,
-      "cardIds": [
-        "A2a-061",
-        "P-B-099",
-        "B4-119"
       ]
     },
     {
@@ -367,6 +409,14 @@
       "cardIds": [
         "A3b-035",
         "B4-064"
+      ]
+    },
+    {
+      "reason": "Unimplemented attack text: Choose 1 of your opponent's Active Pokémon's attacks and use it as this attack.",
+      "count": 2,
+      "cardIds": [
+        "A1a-032",
+        "C1-088"
       ]
     },
     {
@@ -650,6 +700,14 @@
       ]
     },
     {
+      "reason": "Unimplemented attack text: This attack does 30 more damage for each point you have gotten.",
+      "count": 2,
+      "cardIds": [
+        "B2b-027",
+        "C1-095"
+      ]
+    },
+    {
       "reason": "Unimplemented ability text: Once during your turn, when you put this Pokémon from your hand onto your Bench, you may switch it with your Active Pokémon. If you do, move all of your Energy in play to this Pokémon.",
       "count": 2,
       "cardIds": [
@@ -674,11 +732,27 @@
       ]
     },
     {
+      "reason": "Unimplemented ability text: Once during your turn, you may take a {W} Energy from your Energy Zone and attach it to this Pokémon.",
+      "count": 2,
+      "cardIds": [
+        "B3b-015",
+        "C1-031"
+      ]
+    },
+    {
       "reason": "Unimplemented attack text: Put 3 random cards from among Silcoon and Cascoon from your deck onto your Bench.",
       "count": 2,
       "cardIds": [
         "B4-002",
         "B4-004"
+      ]
+    },
+    {
+      "reason": "Unimplemented attack text: Flip 2 coins. If both of them are heads, this attack does 100 more damage.",
+      "count": 2,
+      "cardIds": [
+        "B4-127",
+        "C1-118"
       ]
     },
     {
@@ -1050,13 +1124,6 @@
       "count": 1,
       "cardIds": [
         "A1a-019"
-      ]
-    },
-    {
-      "reason": "Unimplemented attack text: Choose 1 of your opponent's Active Pokémon's attacks and use it as this attack.",
-      "count": 1,
-      "cardIds": [
-        "A1a-032"
       ]
     },
     {
@@ -1963,13 +2030,6 @@
       ]
     },
     {
-      "reason": "Unimplemented attack text: Flip a coin. If tails, discard 2 random Energy from this Pokémon.",
-      "count": 1,
-      "cardIds": [
-        "A4-033"
-      ]
-    },
-    {
       "reason": "Unimplemented attack text: Take a {R}, {W}, and {L} Energy from your Energy Zone and attach them to your Benched Basic Pokémon in any way you like.",
       "count": 1,
       "cardIds": [
@@ -2733,13 +2793,6 @@
       ]
     },
     {
-      "reason": "Unimplemented attack text: If a Stadium is in play, this attack does 40 more damage.",
-      "count": 1,
-      "cardIds": [
-        "B2-138"
-      ]
-    },
-    {
       "reason": "Unimplemented attack text: Flip a coin. If heads, during your opponent's next turn, prevent all damage from and effects of attacks done to this Pokémon.",
       "count": 1,
       "cardIds": [
@@ -2786,13 +2839,6 @@
       "count": 1,
       "cardIds": [
         "P-B-060"
-      ]
-    },
-    {
-      "reason": "Unimplemented attack text: If a Stadium is in play, this attack does 70 more damage.",
-      "count": 1,
-      "cardIds": [
-        "P-B-062"
       ]
     },
     {
@@ -3531,13 +3577,6 @@
       ]
     },
     {
-      "reason": "Unimplemented attack text: This attack does 30 more damage for each point you have gotten.",
-      "count": 1,
-      "cardIds": [
-        "B2b-027"
-      ]
-    },
-    {
       "reason": "Unimplemented attack text: 1 attack from among the Pokémon in your opponent's hand and deck is chosen at random, and you use the chosen attack as this attack.",
       "count": 1,
       "cardIds": [
@@ -3867,13 +3906,6 @@
       ]
     },
     {
-      "reason": "Unimplemented attack text: If a Stadium is in play, this attack does 20 more damage.",
-      "count": 1,
-      "cardIds": [
-        "B3-133"
-      ]
-    },
-    {
       "reason": "Unimplemented ability text: If you don't have Regirock, Regice, and Registeel on your Bench, this Pokémon can't attack.",
       "count": 1,
       "cardIds": [
@@ -4095,13 +4127,6 @@
       "count": 1,
       "cardIds": [
         "B3b-001"
-      ]
-    },
-    {
-      "reason": "Unimplemented ability text: Once during your turn, you may take a {W} Energy from your Energy Zone and attach it to this Pokémon.",
-      "count": 1,
-      "cardIds": [
-        "B3b-015"
       ]
     },
     {
@@ -4406,13 +4431,6 @@
       ]
     },
     {
-      "reason": "Unimplemented attack text: Flip 2 coins. If both of them are heads, this attack does 100 more damage.",
-      "count": 1,
-      "cardIds": [
-        "B4-127"
-      ]
-    },
-    {
       "reason": "Unimplemented ability text: Once during your turn, when you play this Pokémon from your hand to evolve 1 of your Pokémon, you may look at the top 4 cards of your deck and put all Item cards you find there into your hand. Shuffle the other cards back into your deck.",
       "count": 1,
       "cardIds": [
@@ -4669,6 +4687,251 @@
       "count": 1,
       "cardIds": [
         "B4a-072"
+      ]
+    },
+    {
+      "reason": "Unimplemented attack text: 1 of your opponent's Benched Pokémon is chosen at random. This attack also does 50 damage to it.",
+      "count": 1,
+      "cardIds": [
+        "C1-005"
+      ]
+    },
+    {
+      "reason": "Unimplemented attack text: Reveal all of the Sweet Honey in your hand, and this attack does 50 damage for each card you revealed in this way.",
+      "count": 1,
+      "cardIds": [
+        "C1-008"
+      ]
+    },
+    {
+      "reason": "Unimplemented attack text: Look at a random card from your opponent's hand and shuffle it into their deck.",
+      "count": 1,
+      "cardIds": [
+        "C1-012"
+      ]
+    },
+    {
+      "reason": "Unimplemented ability text: Once during your turn, you may use this Ability. Put a Sweet Honey rental card into your hand.",
+      "count": 1,
+      "cardIds": [
+        "C1-015"
+      ]
+    },
+    {
+      "reason": "Unimplemented ability text: Whenever you attach a {R} Energy from your Energy Zone to this Pokémon, do 30 damage to your opponent's Active Pokémon.",
+      "count": 1,
+      "cardIds": [
+        "C1-018"
+      ]
+    },
+    {
+      "reason": "Unimplemented ability text: As long as this Pokémon is in play, flip 3 more coins for the Rabbit Jumping attack used by your Pokémon.",
+      "count": 1,
+      "cardIds": [
+        "C1-023"
+      ]
+    },
+    {
+      "reason": "Unimplemented attack text: If any of your Pokémon were Knocked Out by damage from an attack during your opponent's last turn, this attack does 70 more damage.",
+      "count": 1,
+      "cardIds": [
+        "C1-028"
+      ]
+    },
+    {
+      "reason": "Unimplemented attack text: Discard 2 {W} Energy from this Pokémon, and this attack does 60 damage to 2 of your opponent's Pokémon.",
+      "count": 1,
+      "cardIds": [
+        "C1-033"
+      ]
+    },
+    {
+      "reason": "Unimplemented attack text: If your opponent has a Stadium in play, discard it.",
+      "count": 1,
+      "cardIds": [
+        "C1-038"
+      ]
+    },
+    {
+      "reason": "Unimplemented ability text: Once during your turn, when you play this card from your hand to evolve 1 of your Pokémon, you may use this Ability. Put a random Frogadier from your deck onto your Bench.",
+      "count": 1,
+      "cardIds": [
+        "C1-041"
+      ]
+    },
+    {
+      "reason": "Unimplemented ability text: Once during your turn, you may take a {L} Energy from your Energy Zone and attach it to the {L} Pokémon in the Active Spot.",
+      "count": 1,
+      "cardIds": [
+        "C1-050"
+      ]
+    },
+    {
+      "reason": "Unimplemented attack text: Your opponent's Active Pokémon is now Asleep. Your opponent flips 2 coins for this Special Condition, and if either of them is tails, that Pokémon is still Asleep.",
+      "count": 1,
+      "cardIds": [
+        "C1-051"
+      ]
+    },
+    {
+      "reason": "Unimplemented attack text: Flip 3 coins. Take an amount of {P} Energy from your Energy Zone equal to the number of heads and attach it to your Benched {P} Pokémon in any way you like.",
+      "count": 1,
+      "cardIds": [
+        "C1-057"
+      ]
+    },
+    {
+      "reason": "Unimplemented attack text: During your next turn, this Pokémon's Psycho Boost does −50 damage.",
+      "count": 1,
+      "cardIds": [
+        "C1-062"
+      ]
+    },
+    {
+      "reason": "Unimplemented attack text: Move all Energy from this Pokémon to your Benched Pokémon in any way you like.",
+      "count": 1,
+      "cardIds": [
+        "C1-066"
+      ]
+    },
+    {
+      "reason": "Unimplemented attack text: If your opponent's Active Pokémon is a Basic Pokémon, this attack does 50 more damage.",
+      "count": 1,
+      "cardIds": [
+        "C1-084"
+      ]
+    },
+    {
+      "reason": "Unimplemented ability text: As long as this Pokémon is in play, all of your {M} Pokémon take −20 damage from attacks from your opponent's Pokémon. This effect doesn't stack.",
+      "count": 1,
+      "cardIds": [
+        "C1-097"
+      ]
+    },
+    {
+      "reason": "Unimplemented attack text: 1 of your opponent's Pokémon is chosen at random. Do 250 damage to it.",
+      "count": 1,
+      "cardIds": [
+        "C1-100"
+      ]
+    },
+    {
+      "reason": "Unimplemented attack text: Put 1 random {C} Pokémon from your deck into your hand.",
+      "count": 1,
+      "cardIds": [
+        "C1-102"
+      ]
+    },
+    {
+      "reason": "Unimplemented attack text: If your opponent's Active Pokémon is an Evolution Pokémon, this attack does 80 more damage.",
+      "count": 1,
+      "cardIds": [
+        "C1-104"
+      ]
+    },
+    {
+      "reason": "Unimplemented attack text: Put a random card that evolves from Eevee from your deck into your hand.",
+      "count": 1,
+      "cardIds": [
+        "C1-107"
+      ]
+    },
+    {
+      "reason": "Unimplemented attack text: During your next turn, this Pokémon's Overdrive Smash attack does +50 damage.",
+      "count": 1,
+      "cardIds": [
+        "C1-110"
+      ]
+    },
+    {
+      "reason": "Unimplemented trainer text: Choose 1 of your Pokémon, and then flip a coin until you get tails. For each heads, heal 20 damage from that Pokémon.",
+      "count": 1,
+      "cardIds": [
+        "C1-119"
+      ]
+    },
+    {
+      "reason": "Unimplemented trainer text: Heal 40 damage from 1 of your Pokémon that has any Energy attached. If you healed any damage in this way, discard a random Energy from that Pokémon.",
+      "count": 1,
+      "cardIds": [
+        "C1-120"
+      ]
+    },
+    {
+      "reason": "Unimplemented trainer text: Switch out your opponent's Active Stage 2 Pokémon to the Bench. (Your opponent chooses the new Active Pokémon.)",
+      "count": 1,
+      "cardIds": [
+        "C1-121"
+      ]
+    },
+    {
+      "reason": "Unimplemented trainer text: Your Active Pokémon recovers from all Special Conditions.",
+      "count": 1,
+      "cardIds": [
+        "C1-122"
+      ]
+    },
+    {
+      "reason": "Unimplemented trainer text: The Basic Pokémon this card is attached to takes −20 damage from attacks from your opponent's Pokémon.",
+      "count": 1,
+      "cardIds": [
+        "C1-123"
+      ]
+    },
+    {
+      "reason": "Unimplemented trainer text: Attacks used by the Pikachu ex this card is attached to do +30 damage to your opponent's Active Pokémon.",
+      "count": 1,
+      "cardIds": [
+        "C1-124"
+      ]
+    },
+    {
+      "reason": "Unimplemented trainer text: During this turn, attacks used by your Dewgong, Cloyster, or Lapras do +30 damage to your opponent's Pokémon.",
+      "count": 1,
+      "cardIds": [
+        "C1-125"
+      ]
+    },
+    {
+      "reason": "Unimplemented trainer text: You can use this card only if you have Venusaur, Charizard, Blastoise, or Pidgeot in play.Switch in 1 of your opponent's Benched Pokémon to the Active Spot.",
+      "count": 1,
+      "cardIds": [
+        "C1-126"
+      ]
+    },
+    {
+      "reason": "Unimplemented trainer text: Look at the top 3 cards of your deck and put 1 of them into your hand. Shuffle back into your deck.",
+      "count": 1,
+      "cardIds": [
+        "C1-127"
+      ]
+    },
+    {
+      "reason": "Unimplemented trainer text: Produce 2 {F} Energy from your Energy Zone, and attach it to 1 of your Whiscash or Paldean Clodsire.",
+      "count": 1,
+      "cardIds": [
+        "C1-128"
+      ]
+    },
+    {
+      "reason": "Unimplemented trainer text: Put 2 random cards from among Super Potion, Max Repel, and Full Heal from your deck into your hand.",
+      "count": 1,
+      "cardIds": [
+        "C1-129"
+      ]
+    },
+    {
+      "reason": "Unimplemented trainer text: You can use this card only if you have 3 or more different Pokémon types in play.Switch your Active Pokémon with 1 of your Benched Pokémon.",
+      "count": 1,
+      "cardIds": [
+        "C1-130"
+      ]
+    },
+    {
+      "reason": "Unimplemented trainer text: Once during each player's turn, that player may use this effect. Flip a coin. If heads, draw a card.",
+      "count": 1,
+      "cardIds": [
+        "C1-131"
       ]
     }
   ],
@@ -5078,10 +5341,8 @@
     {
       "id": "A1-037",
       "name": "Vulpix",
-      "status": "PARTIAL",
-      "reasons": [
-        "Unimplemented attack text: Flip a coin. If heads, the Defending Pokémon can't attack during your opponent's next turn."
-      ],
+      "status": "FULL",
+      "reasons": [],
       "sourceGameplayKey": "cPK:000370",
       "prints": [
         "A1-037"
@@ -11322,10 +11583,8 @@
     {
       "id": "A2a-061",
       "name": "Giratina",
-      "status": "PARTIAL",
-      "reasons": [
-        "Unimplemented attack text: Discard 2 random Energy from this Pokémon."
-      ],
+      "status": "FULL",
+      "reasons": [],
       "sourceGameplayKey": "cPK:004850",
       "prints": [
         "A2a-061"
@@ -11740,7 +11999,8 @@
         "A2b-082",
         "A2b-092",
         "A4b-132",
-        "B1-321"
+        "B1-321",
+        "P-B-103"
       ]
     },
     {
@@ -12405,10 +12665,8 @@
     {
       "id": "A3-017",
       "name": "Shiinotic",
-      "status": "PARTIAL",
-      "reasons": [
-        "Unimplemented attack text: Flip a coin. If heads, the Defending Pokémon can't attack during your opponent's next turn."
-      ],
+      "status": "FULL",
+      "reasons": [],
       "sourceGameplayKey": "cPK:005980",
       "prints": [
         "A3-017"
@@ -15716,10 +15974,8 @@
     {
       "id": "A4-033",
       "name": "Entei",
-      "status": "PARTIAL",
-      "reasons": [
-        "Unimplemented attack text: Flip a coin. If tails, discard 2 random Energy from this Pokémon."
-      ],
+      "status": "FULL",
+      "reasons": [],
       "sourceGameplayKey": "cPK:008890",
       "prints": [
         "A4-033"
@@ -20558,10 +20814,8 @@
     {
       "id": "B2-138",
       "name": "Tornadus",
-      "status": "PARTIAL",
-      "reasons": [
-        "Unimplemented attack text: If a Stadium is in play, this attack does 40 more damage."
-      ],
+      "status": "FULL",
+      "reasons": [],
       "sourceGameplayKey": "cPK:015040",
       "prints": [
         "P-B-030",
@@ -20921,16 +21175,15 @@
         "B3-005",
         "B3-156",
         "B4b-010",
-        "B4b-244"
+        "B4b-244",
+        "C1-188"
       ]
     },
     {
       "id": "P-B-062",
       "name": "Gallade",
-      "status": "PARTIAL",
-      "reasons": [
-        "Unimplemented attack text: If a Stadium is in play, this attack does 70 more damage."
-      ],
+      "status": "FULL",
+      "reasons": [],
       "sourceGameplayKey": "cPK:017490",
       "prints": [
         "P-B-062",
@@ -21106,7 +21359,8 @@
         "P-B-076",
         "B3b-059",
         "B4b-191",
-        "B4b-360"
+        "B4b-360",
+        "C1-205"
       ]
     },
     {
@@ -21150,7 +21404,8 @@
         "B3-004",
         "B3-233",
         "B4b-009",
-        "B4b-243"
+        "B4b-243",
+        "C1-187"
       ]
     },
     {
@@ -21220,7 +21475,8 @@
       "sourceGameplayKey": "cPK:020150",
       "prints": [
         "P-B-085",
-        "B4-054"
+        "B4-054",
+        "C1-194"
       ]
     },
     {
@@ -21250,7 +21506,8 @@
         "B3-180",
         "B3-194",
         "B4b-012",
-        "B4b-410"
+        "B4b-410",
+        "C1-207"
       ]
     },
     {
@@ -21391,10 +21648,8 @@
     {
       "id": "P-B-099",
       "name": "Mega Garchomp ex",
-      "status": "PARTIAL",
-      "reasons": [
-        "Unimplemented attack text: Discard 2 random Energy from this Pokémon."
-      ],
+      "status": "FULL",
+      "reasons": [],
       "sourceGameplayKey": "cPK:021160",
       "prints": [
         "P-B-099"
@@ -25339,7 +25594,8 @@
       "sourceGameplayKey": "cPK:016490",
       "prints": [
         "B2b-045",
-        "B2b-073"
+        "B2b-073",
+        "C1-201"
       ]
     },
     {
@@ -25638,7 +25894,8 @@
         "B3-006",
         "B3-157",
         "B4b-011",
-        "B4b-245"
+        "B4b-245",
+        "C1-189"
       ]
     },
     {
@@ -27017,10 +27274,8 @@
     {
       "id": "B3-133",
       "name": "Castform",
-      "status": "PARTIAL",
-      "reasons": [
-        "Unimplemented attack text: If a Stadium is in play, this attack does 20 more damage."
-      ],
+      "status": "FULL",
+      "reasons": [],
       "sourceGameplayKey": "cPK:017980",
       "prints": [
         "B3-133",
@@ -27116,7 +27371,8 @@
         "B3-141",
         "B3-189",
         "B3-202",
-        "B4b-190"
+        "B4b-190",
+        "C1-212"
       ]
     },
     {
@@ -27898,10 +28154,8 @@
     {
       "id": "B3a-056",
       "name": "Eevee",
-      "status": "PARTIAL",
-      "reasons": [
-        "Unimplemented attack text: Flip a coin. If heads, the Defending Pokémon can't attack during your opponent's next turn."
-      ],
+      "status": "FULL",
+      "reasons": [],
       "sourceGameplayKey": "cPK:018710",
       "prints": [
         "B3a-056"
@@ -28730,7 +28984,8 @@
         "B3b-060",
         "B3b-082",
         "B3b-089",
-        "B4b-192"
+        "B4b-192",
+        "C1-213"
       ]
     },
     {
@@ -29122,7 +29377,8 @@
       "prints": [
         "B4-024",
         "B4b-036",
-        "B4b-262"
+        "B4b-262",
+        "C1-190"
       ]
     },
     {
@@ -29135,7 +29391,8 @@
         "B4-025",
         "B4-161",
         "B4b-037",
-        "B4b-263"
+        "B4b-263",
+        "C1-191"
       ]
     },
     {
@@ -29148,7 +29405,8 @@
         "B4-026",
         "B4-181",
         "B4-195",
-        "B4b-038"
+        "B4b-038",
+        "C1-208"
       ]
     },
     {
@@ -29794,7 +30052,8 @@
         "B4-084",
         "B4-185",
         "B4-198",
-        "B4b-128"
+        "B4b-128",
+        "C1-209"
       ]
     },
     {
@@ -30162,10 +30421,8 @@
     {
       "id": "B4-119",
       "name": "Rayquaza",
-      "status": "PARTIAL",
-      "reasons": [
-        "Unimplemented attack text: Discard 2 random Energy from this Pokémon."
-      ],
+      "status": "FULL",
+      "reasons": [],
       "sourceGameplayKey": "cPK:020800",
       "prints": [
         "B4-119"
@@ -31293,6 +31550,1467 @@
       "sourceGameplayKey": "cTR:001650",
       "prints": [
         "B4a-072"
+      ]
+    },
+    {
+      "id": "C1-001",
+      "name": "Bulbasaur",
+      "status": "FULL",
+      "reasons": [],
+      "sourceGameplayKey": "limitless:C1-001",
+      "prints": [
+        "C1-001"
+      ]
+    },
+    {
+      "id": "C1-002",
+      "name": "Ivysaur",
+      "status": "FULL",
+      "reasons": [],
+      "sourceGameplayKey": "limitless:C1-002",
+      "prints": [
+        "C1-002"
+      ]
+    },
+    {
+      "id": "C1-003",
+      "name": "Venusaur",
+      "status": "FULL",
+      "reasons": [],
+      "sourceGameplayKey": "limitless:C1-003",
+      "prints": [
+        "C1-003",
+        "C1-132"
+      ]
+    },
+    {
+      "id": "C1-004",
+      "name": "Exeggcute",
+      "status": "FULL",
+      "reasons": [],
+      "sourceGameplayKey": "limitless:C1-004",
+      "prints": [
+        "C1-004",
+        "C1-133"
+      ]
+    },
+    {
+      "id": "C1-005",
+      "name": "Alolan Exeggutor ex",
+      "status": "PARTIAL",
+      "reasons": [
+        "Unimplemented attack text: 1 of your opponent's Benched Pokémon is chosen at random. This attack also does 50 damage to it."
+      ],
+      "sourceGameplayKey": "limitless:C1-005",
+      "prints": [
+        "C1-005",
+        "C1-153",
+        "C1-171"
+      ]
+    },
+    {
+      "id": "C1-006",
+      "name": "Pinsir",
+      "status": "FULL",
+      "reasons": [],
+      "sourceGameplayKey": "limitless:C1-006",
+      "prints": [
+        "C1-006"
+      ]
+    },
+    {
+      "id": "C1-007",
+      "name": "Combee",
+      "status": "FULL",
+      "reasons": [],
+      "sourceGameplayKey": "limitless:C1-007",
+      "prints": [
+        "C1-007"
+      ]
+    },
+    {
+      "id": "C1-008",
+      "name": "Vespiquen",
+      "status": "PARTIAL",
+      "reasons": [
+        "Unimplemented attack text: Reveal all of the Sweet Honey in your hand, and this attack does 50 damage for each card you revealed in this way."
+      ],
+      "sourceGameplayKey": "limitless:C1-008",
+      "prints": [
+        "C1-008"
+      ]
+    },
+    {
+      "id": "C1-009",
+      "name": "Deerling",
+      "status": "FULL",
+      "reasons": [],
+      "sourceGameplayKey": "limitless:C1-009",
+      "prints": [
+        "C1-009",
+        "C1-134"
+      ]
+    },
+    {
+      "id": "C1-010",
+      "name": "Sawsbuck",
+      "status": "FULL",
+      "reasons": [],
+      "sourceGameplayKey": "limitless:C1-010",
+      "prints": [
+        "C1-010"
+      ]
+    },
+    {
+      "id": "C1-011",
+      "name": "Foongus",
+      "status": "FULL",
+      "reasons": [],
+      "sourceGameplayKey": "limitless:C1-011",
+      "prints": [
+        "C1-011"
+      ]
+    },
+    {
+      "id": "C1-012",
+      "name": "Amoonguss",
+      "status": "PARTIAL",
+      "reasons": [
+        "Unimplemented attack text: Look at a random card from your opponent's hand and shuffle it into their deck."
+      ],
+      "sourceGameplayKey": "limitless:C1-012",
+      "prints": [
+        "C1-012"
+      ]
+    },
+    {
+      "id": "C1-013",
+      "name": "Genesect",
+      "status": "FULL",
+      "reasons": [],
+      "sourceGameplayKey": "limitless:C1-013",
+      "prints": [
+        "C1-013"
+      ]
+    },
+    {
+      "id": "C1-014",
+      "name": "Cutiefly",
+      "status": "FULL",
+      "reasons": [],
+      "sourceGameplayKey": "limitless:C1-014",
+      "prints": [
+        "C1-014"
+      ]
+    },
+    {
+      "id": "C1-015",
+      "name": "Ribombee",
+      "status": "PARTIAL",
+      "reasons": [
+        "Unimplemented ability text: Once during your turn, you may use this Ability. Put a Sweet Honey rental card into your hand."
+      ],
+      "sourceGameplayKey": "limitless:C1-015",
+      "prints": [
+        "C1-015",
+        "C1-135"
+      ]
+    },
+    {
+      "id": "C1-016",
+      "name": "Charmander",
+      "status": "FULL",
+      "reasons": [],
+      "sourceGameplayKey": "limitless:C1-016",
+      "prints": [
+        "C1-016"
+      ]
+    },
+    {
+      "id": "C1-017",
+      "name": "Charmeleon",
+      "status": "FULL",
+      "reasons": [],
+      "sourceGameplayKey": "limitless:C1-017",
+      "prints": [
+        "C1-017"
+      ]
+    },
+    {
+      "id": "C1-018",
+      "name": "Charizard",
+      "status": "PARTIAL",
+      "reasons": [
+        "Unimplemented ability text: Whenever you attach a {R} Energy from your Energy Zone to this Pokémon, do 30 damage to your opponent's Active Pokémon."
+      ],
+      "sourceGameplayKey": "limitless:C1-018",
+      "prints": [
+        "C1-018",
+        "C1-136"
+      ]
+    },
+    {
+      "id": "C1-019",
+      "name": "Volcanion",
+      "status": "FULL",
+      "reasons": [],
+      "sourceGameplayKey": "limitless:C1-019",
+      "prints": [
+        "C1-019"
+      ]
+    },
+    {
+      "id": "C1-020",
+      "name": "Salandit",
+      "status": "FULL",
+      "reasons": [],
+      "sourceGameplayKey": "limitless:C1-020",
+      "prints": [
+        "C1-020"
+      ]
+    },
+    {
+      "id": "C1-021",
+      "name": "Salazzle",
+      "status": "FULL",
+      "reasons": [],
+      "sourceGameplayKey": "limitless:C1-021",
+      "prints": [
+        "C1-021"
+      ]
+    },
+    {
+      "id": "C1-022",
+      "name": "Scorbunny",
+      "status": "FULL",
+      "reasons": [],
+      "sourceGameplayKey": "limitless:C1-022",
+      "prints": [
+        "C1-022"
+      ]
+    },
+    {
+      "id": "C1-023",
+      "name": "Raboot",
+      "status": "PARTIAL",
+      "reasons": [
+        "Unimplemented ability text: As long as this Pokémon is in play, flip 3 more coins for the Rabbit Jumping attack used by your Pokémon."
+      ],
+      "sourceGameplayKey": "limitless:C1-023",
+      "prints": [
+        "C1-023",
+        "C1-137"
+      ]
+    },
+    {
+      "id": "C1-024",
+      "name": "Cinderace",
+      "status": "FULL",
+      "reasons": [],
+      "sourceGameplayKey": "limitless:C1-024",
+      "prints": [
+        "C1-024"
+      ]
+    },
+    {
+      "id": "C1-025",
+      "name": "Fuecoco ex",
+      "status": "FULL",
+      "reasons": [],
+      "sourceGameplayKey": "limitless:C1-025",
+      "prints": [
+        "C1-025",
+        "C1-154",
+        "C1-172",
+        "C1-215"
+      ]
+    },
+    {
+      "id": "C1-026",
+      "name": "Charcadet",
+      "status": "FULL",
+      "reasons": [],
+      "sourceGameplayKey": "limitless:C1-026",
+      "prints": [
+        "C1-026"
+      ]
+    },
+    {
+      "id": "C1-027",
+      "name": "Armarouge",
+      "status": "FULL",
+      "reasons": [],
+      "sourceGameplayKey": "limitless:C1-027",
+      "prints": [
+        "C1-027"
+      ]
+    },
+    {
+      "id": "C1-028",
+      "name": "Ceruledge",
+      "status": "PARTIAL",
+      "reasons": [
+        "Unimplemented attack text: If any of your Pokémon were Knocked Out by damage from an attack during your opponent's last turn, this attack does 70 more damage."
+      ],
+      "sourceGameplayKey": "limitless:C1-028",
+      "prints": [
+        "C1-028",
+        "C1-138"
+      ]
+    },
+    {
+      "id": "C1-029",
+      "name": "Squirtle",
+      "status": "FULL",
+      "reasons": [],
+      "sourceGameplayKey": "limitless:C1-029",
+      "prints": [
+        "C1-029"
+      ]
+    },
+    {
+      "id": "C1-030",
+      "name": "Wartortle",
+      "status": "FULL",
+      "reasons": [],
+      "sourceGameplayKey": "limitless:C1-030",
+      "prints": [
+        "C1-030"
+      ]
+    },
+    {
+      "id": "C1-031",
+      "name": "Blastoise",
+      "status": "PARTIAL",
+      "reasons": [
+        "Unimplemented ability text: Once during your turn, you may take a {W} Energy from your Energy Zone and attach it to this Pokémon."
+      ],
+      "sourceGameplayKey": "limitless:C1-031",
+      "prints": [
+        "C1-031",
+        "C1-139"
+      ]
+    },
+    {
+      "id": "C1-032",
+      "name": "Seel",
+      "status": "FULL",
+      "reasons": [],
+      "sourceGameplayKey": "limitless:C1-032",
+      "prints": [
+        "C1-032",
+        "C1-192"
+      ]
+    },
+    {
+      "id": "C1-033",
+      "name": "Dewgong",
+      "status": "PARTIAL",
+      "reasons": [
+        "Unimplemented attack text: Discard 2 {W} Energy from this Pokémon, and this attack does 60 damage to 2 of your opponent's Pokémon."
+      ],
+      "sourceGameplayKey": "limitless:C1-033",
+      "prints": [
+        "C1-033",
+        "C1-193"
+      ]
+    },
+    {
+      "id": "C1-034",
+      "name": "Shellder",
+      "status": "FULL",
+      "reasons": [],
+      "sourceGameplayKey": "limitless:C1-034",
+      "prints": [
+        "C1-034"
+      ]
+    },
+    {
+      "id": "C1-035",
+      "name": "Cloyster",
+      "status": "FULL",
+      "reasons": [],
+      "sourceGameplayKey": "limitless:C1-035",
+      "prints": [
+        "C1-035"
+      ]
+    },
+    {
+      "id": "C1-036",
+      "name": "Jynx",
+      "status": "FULL",
+      "reasons": [],
+      "sourceGameplayKey": "limitless:C1-036",
+      "prints": [
+        "C1-036"
+      ]
+    },
+    {
+      "id": "C1-037",
+      "name": "Lapras",
+      "status": "FULL",
+      "reasons": [],
+      "sourceGameplayKey": "limitless:C1-037",
+      "prints": [
+        "C1-037"
+      ]
+    },
+    {
+      "id": "C1-038",
+      "name": "Palkia",
+      "status": "PARTIAL",
+      "reasons": [
+        "Unimplemented attack text: If your opponent has a Stadium in play, discard it."
+      ],
+      "sourceGameplayKey": "limitless:C1-038",
+      "prints": [
+        "C1-038",
+        "C1-140"
+      ]
+    },
+    {
+      "id": "C1-039",
+      "name": "Basculin",
+      "status": "FULL",
+      "reasons": [],
+      "sourceGameplayKey": "limitless:C1-039",
+      "prints": [
+        "C1-039"
+      ]
+    },
+    {
+      "id": "C1-040",
+      "name": "Froakie",
+      "status": "FULL",
+      "reasons": [],
+      "sourceGameplayKey": "limitless:C1-040",
+      "prints": [
+        "C1-040"
+      ]
+    },
+    {
+      "id": "C1-041",
+      "name": "Frogadier",
+      "status": "PARTIAL",
+      "reasons": [
+        "Unimplemented ability text: Once during your turn, when you play this card from your hand to evolve 1 of your Pokémon, you may use this Ability. Put a random Frogadier from your deck onto your Bench."
+      ],
+      "sourceGameplayKey": "limitless:C1-041",
+      "prints": [
+        "C1-041",
+        "C1-141"
+      ]
+    },
+    {
+      "id": "C1-042",
+      "name": "Mega Greninja ex",
+      "status": "FULL",
+      "reasons": [],
+      "sourceGameplayKey": "limitless:C1-042",
+      "prints": [
+        "C1-042",
+        "C1-155",
+        "C1-173"
+      ]
+    },
+    {
+      "id": "C1-043",
+      "name": "Pikachu ex",
+      "status": "FULL",
+      "reasons": [],
+      "sourceGameplayKey": "limitless:C1-043",
+      "prints": [
+        "C1-043",
+        "C1-156",
+        "C1-174",
+        "C1-183"
+      ]
+    },
+    {
+      "id": "C1-044",
+      "name": "Voltorb",
+      "status": "FULL",
+      "reasons": [],
+      "sourceGameplayKey": "limitless:C1-044",
+      "prints": [
+        "C1-044"
+      ]
+    },
+    {
+      "id": "C1-045",
+      "name": "Electrode",
+      "status": "FULL",
+      "reasons": [],
+      "sourceGameplayKey": "limitless:C1-045",
+      "prints": [
+        "C1-045"
+      ]
+    },
+    {
+      "id": "C1-046",
+      "name": "Stunfisk",
+      "status": "FULL",
+      "reasons": [],
+      "sourceGameplayKey": "limitless:C1-046",
+      "prints": [
+        "C1-046"
+      ]
+    },
+    {
+      "id": "C1-047",
+      "name": "Zeraora",
+      "status": "FULL",
+      "reasons": [],
+      "sourceGameplayKey": "limitless:C1-047",
+      "prints": [
+        "C1-047"
+      ]
+    },
+    {
+      "id": "C1-048",
+      "name": "Pawmi",
+      "status": "FULL",
+      "reasons": [],
+      "sourceGameplayKey": "limitless:C1-048",
+      "prints": [
+        "C1-048"
+      ]
+    },
+    {
+      "id": "C1-049",
+      "name": "Pawmo",
+      "status": "FULL",
+      "reasons": [],
+      "sourceGameplayKey": "limitless:C1-049",
+      "prints": [
+        "C1-049"
+      ]
+    },
+    {
+      "id": "C1-050",
+      "name": "Pawmot",
+      "status": "PARTIAL",
+      "reasons": [
+        "Unimplemented ability text: Once during your turn, you may take a {L} Energy from your Energy Zone and attach it to the {L} Pokémon in the Active Spot."
+      ],
+      "sourceGameplayKey": "limitless:C1-050",
+      "prints": [
+        "C1-050",
+        "C1-142",
+        "C1-216"
+      ]
+    },
+    {
+      "id": "C1-051",
+      "name": "Jigglypuff",
+      "status": "PARTIAL",
+      "reasons": [
+        "Unimplemented attack text: Your opponent's Active Pokémon is now Asleep. Your opponent flips 2 coins for this Special Condition, and if either of them is tails, that Pokémon is still Asleep."
+      ],
+      "sourceGameplayKey": "limitless:C1-051",
+      "prints": [
+        "C1-051",
+        "C1-184"
+      ]
+    },
+    {
+      "id": "C1-052",
+      "name": "Wigglytuff",
+      "status": "FULL",
+      "reasons": [],
+      "sourceGameplayKey": "limitless:C1-052",
+      "prints": [
+        "C1-052"
+      ]
+    },
+    {
+      "id": "C1-053",
+      "name": "Abra",
+      "status": "FULL",
+      "reasons": [],
+      "sourceGameplayKey": "limitless:C1-053",
+      "prints": [
+        "C1-053",
+        "C1-195"
+      ]
+    },
+    {
+      "id": "C1-054",
+      "name": "Kadabra",
+      "status": "FULL",
+      "reasons": [],
+      "sourceGameplayKey": "limitless:C1-054",
+      "prints": [
+        "C1-054",
+        "C1-196"
+      ]
+    },
+    {
+      "id": "C1-055",
+      "name": "Alakazam",
+      "status": "FULL",
+      "reasons": [],
+      "sourceGameplayKey": "limitless:C1-055",
+      "prints": [
+        "C1-055",
+        "C1-197"
+      ]
+    },
+    {
+      "id": "C1-056",
+      "name": "Mega Mewtwo X ex",
+      "status": "FULL",
+      "reasons": [],
+      "sourceGameplayKey": "limitless:C1-056",
+      "prints": [
+        "C1-056",
+        "C1-157",
+        "C1-175",
+        "C1-185"
+      ]
+    },
+    {
+      "id": "C1-057",
+      "name": "Mew ex",
+      "status": "PARTIAL",
+      "reasons": [
+        "Unimplemented attack text: Flip 3 coins. Take an amount of {P} Energy from your Energy Zone equal to the number of heads and attach it to your Benched {P} Pokémon in any way you like."
+      ],
+      "sourceGameplayKey": "limitless:C1-057",
+      "prints": [
+        "C1-057",
+        "C1-158",
+        "C1-176"
+      ]
+    },
+    {
+      "id": "C1-058",
+      "name": "Marill",
+      "status": "FULL",
+      "reasons": [],
+      "sourceGameplayKey": "limitless:C1-058",
+      "prints": [
+        "C1-058"
+      ]
+    },
+    {
+      "id": "C1-059",
+      "name": "Azumarill",
+      "status": "FULL",
+      "reasons": [],
+      "sourceGameplayKey": "limitless:C1-059",
+      "prints": [
+        "C1-059"
+      ]
+    },
+    {
+      "id": "C1-060",
+      "name": "Espeon",
+      "status": "FULL",
+      "reasons": [],
+      "sourceGameplayKey": "limitless:C1-060",
+      "prints": [
+        "C1-060"
+      ]
+    },
+    {
+      "id": "C1-061",
+      "name": "Wobbuffet",
+      "status": "FULL",
+      "reasons": [],
+      "sourceGameplayKey": "limitless:C1-061",
+      "prints": [
+        "C1-061"
+      ]
+    },
+    {
+      "id": "C1-062",
+      "name": "Deoxys",
+      "status": "PARTIAL",
+      "reasons": [
+        "Unimplemented attack text: During your next turn, this Pokémon's Psycho Boost does −50 damage."
+      ],
+      "sourceGameplayKey": "limitless:C1-062",
+      "prints": [
+        "C1-062"
+      ]
+    },
+    {
+      "id": "C1-063",
+      "name": "Mimikyu",
+      "status": "FULL",
+      "reasons": [],
+      "sourceGameplayKey": "limitless:C1-063",
+      "prints": [
+        "C1-063",
+        "C1-143"
+      ]
+    },
+    {
+      "id": "C1-064",
+      "name": "Cosmog",
+      "status": "FULL",
+      "reasons": [],
+      "sourceGameplayKey": "limitless:C1-064",
+      "prints": [
+        "C1-064"
+      ]
+    },
+    {
+      "id": "C1-065",
+      "name": "Cosmoem",
+      "status": "FULL",
+      "reasons": [],
+      "sourceGameplayKey": "limitless:C1-065",
+      "prints": [
+        "C1-065",
+        "C1-144"
+      ]
+    },
+    {
+      "id": "C1-066",
+      "name": "Lunala",
+      "status": "PARTIAL",
+      "reasons": [
+        "Unimplemented attack text: Move all Energy from this Pokémon to your Benched Pokémon in any way you like."
+      ],
+      "sourceGameplayKey": "limitless:C1-066",
+      "prints": [
+        "C1-066",
+        "C1-198"
+      ]
+    },
+    {
+      "id": "C1-067",
+      "name": "Diglett",
+      "status": "FULL",
+      "reasons": [],
+      "sourceGameplayKey": "limitless:C1-067",
+      "prints": [
+        "C1-067"
+      ]
+    },
+    {
+      "id": "C1-068",
+      "name": "Dugtrio",
+      "status": "FULL",
+      "reasons": [],
+      "sourceGameplayKey": "limitless:C1-068",
+      "prints": [
+        "C1-068"
+      ]
+    },
+    {
+      "id": "C1-069",
+      "name": "Rhyhorn",
+      "status": "FULL",
+      "reasons": [],
+      "sourceGameplayKey": "limitless:C1-069",
+      "prints": [
+        "C1-069",
+        "C1-199"
+      ]
+    },
+    {
+      "id": "C1-070",
+      "name": "Rhydon",
+      "status": "FULL",
+      "reasons": [],
+      "sourceGameplayKey": "limitless:C1-070",
+      "prints": [
+        "C1-070",
+        "C1-200"
+      ]
+    },
+    {
+      "id": "C1-071",
+      "name": "Rhyperior",
+      "status": "FULL",
+      "reasons": [],
+      "sourceGameplayKey": "limitless:C1-071",
+      "prints": [
+        "C1-071"
+      ]
+    },
+    {
+      "id": "C1-072",
+      "name": "Sudowoodo",
+      "status": "FULL",
+      "reasons": [],
+      "sourceGameplayKey": "limitless:C1-072",
+      "prints": [
+        "C1-072"
+      ]
+    },
+    {
+      "id": "C1-073",
+      "name": "Paldean Wooper",
+      "status": "FULL",
+      "reasons": [],
+      "sourceGameplayKey": "limitless:C1-073",
+      "prints": [
+        "C1-073"
+      ]
+    },
+    {
+      "id": "C1-074",
+      "name": "Paldean Clodsire",
+      "status": "FULL",
+      "reasons": [],
+      "sourceGameplayKey": "limitless:C1-074",
+      "prints": [
+        "C1-074",
+        "C1-147"
+      ]
+    },
+    {
+      "id": "C1-075",
+      "name": "Larvitar",
+      "status": "FULL",
+      "reasons": [],
+      "sourceGameplayKey": "limitless:C1-075",
+      "prints": [
+        "C1-075",
+        "C1-145"
+      ]
+    },
+    {
+      "id": "C1-076",
+      "name": "Pupitar",
+      "status": "FULL",
+      "reasons": [],
+      "sourceGameplayKey": "limitless:C1-076",
+      "prints": [
+        "C1-076",
+        "C1-146"
+      ]
+    },
+    {
+      "id": "C1-077",
+      "name": "Barboach",
+      "status": "FULL",
+      "reasons": [],
+      "sourceGameplayKey": "limitless:C1-077",
+      "prints": [
+        "C1-077"
+      ]
+    },
+    {
+      "id": "C1-078",
+      "name": "Whiscash",
+      "status": "FULL",
+      "reasons": [],
+      "sourceGameplayKey": "limitless:C1-078",
+      "prints": [
+        "C1-078"
+      ]
+    },
+    {
+      "id": "C1-079",
+      "name": "Rockruff",
+      "status": "FULL",
+      "reasons": [],
+      "sourceGameplayKey": "limitless:C1-079",
+      "prints": [
+        "C1-079"
+      ]
+    },
+    {
+      "id": "C1-080",
+      "name": "Lycanroc ex",
+      "status": "FULL",
+      "reasons": [],
+      "sourceGameplayKey": "limitless:C1-080",
+      "prints": [
+        "C1-080",
+        "C1-159",
+        "C1-177",
+        "C1-210"
+      ]
+    },
+    {
+      "id": "C1-081",
+      "name": "Gastly",
+      "status": "FULL",
+      "reasons": [],
+      "sourceGameplayKey": "limitless:C1-081",
+      "prints": [
+        "C1-081"
+      ]
+    },
+    {
+      "id": "C1-082",
+      "name": "Haunter",
+      "status": "FULL",
+      "reasons": [],
+      "sourceGameplayKey": "limitless:C1-082",
+      "prints": [
+        "C1-082"
+      ]
+    },
+    {
+      "id": "C1-083",
+      "name": "Gengar",
+      "status": "FULL",
+      "reasons": [],
+      "sourceGameplayKey": "limitless:C1-083",
+      "prints": [
+        "C1-083",
+        "C1-148"
+      ]
+    },
+    {
+      "id": "C1-084",
+      "name": "Umbreon",
+      "status": "PARTIAL",
+      "reasons": [
+        "Unimplemented attack text: If your opponent's Active Pokémon is a Basic Pokémon, this attack does 50 more damage."
+      ],
+      "sourceGameplayKey": "limitless:C1-084",
+      "prints": [
+        "C1-084",
+        "C1-186"
+      ]
+    },
+    {
+      "id": "C1-085",
+      "name": "Mega Tyranitar ex",
+      "status": "FULL",
+      "reasons": [],
+      "sourceGameplayKey": "limitless:C1-085",
+      "prints": [
+        "C1-085",
+        "C1-160",
+        "C1-178"
+      ]
+    },
+    {
+      "id": "C1-086",
+      "name": "Seviper",
+      "status": "FULL",
+      "reasons": [],
+      "sourceGameplayKey": "limitless:C1-086",
+      "prints": [
+        "C1-086"
+      ]
+    },
+    {
+      "id": "C1-087",
+      "name": "Zorua",
+      "status": "FULL",
+      "reasons": [],
+      "sourceGameplayKey": "limitless:C1-087",
+      "prints": [
+        "C1-087"
+      ]
+    },
+    {
+      "id": "C1-088",
+      "name": "Zoroark",
+      "status": "PARTIAL",
+      "reasons": [
+        "Unimplemented attack text: Choose 1 of your opponent's Active Pokémon's attacks and use it as this attack."
+      ],
+      "sourceGameplayKey": "limitless:C1-088",
+      "prints": [
+        "C1-088"
+      ]
+    },
+    {
+      "id": "C1-089",
+      "name": "Nickit",
+      "status": "FULL",
+      "reasons": [],
+      "sourceGameplayKey": "limitless:C1-089",
+      "prints": [
+        "C1-089"
+      ]
+    },
+    {
+      "id": "C1-090",
+      "name": "Thievul",
+      "status": "FULL",
+      "reasons": [],
+      "sourceGameplayKey": "limitless:C1-090",
+      "prints": [
+        "C1-090"
+      ]
+    },
+    {
+      "id": "C1-091",
+      "name": "Mega Skarmory ex",
+      "status": "FULL",
+      "reasons": [],
+      "sourceGameplayKey": "limitless:C1-091",
+      "prints": [
+        "C1-091",
+        "C1-161",
+        "C1-179"
+      ]
+    },
+    {
+      "id": "C1-092",
+      "name": "Dialga",
+      "status": "FULL",
+      "reasons": [],
+      "sourceGameplayKey": "limitless:C1-092",
+      "prints": [
+        "C1-092",
+        "C1-149"
+      ]
+    },
+    {
+      "id": "C1-093",
+      "name": "Ferroseed",
+      "status": "FULL",
+      "reasons": [],
+      "sourceGameplayKey": "limitless:C1-093",
+      "prints": [
+        "C1-093"
+      ]
+    },
+    {
+      "id": "C1-094",
+      "name": "Ferrothorn",
+      "status": "FULL",
+      "reasons": [],
+      "sourceGameplayKey": "limitless:C1-094",
+      "prints": [
+        "C1-094"
+      ]
+    },
+    {
+      "id": "C1-095",
+      "name": "Solgaleo",
+      "status": "PARTIAL",
+      "reasons": [
+        "Unimplemented attack text: This attack does 30 more damage for each point you have gotten."
+      ],
+      "sourceGameplayKey": "limitless:C1-095",
+      "prints": [
+        "C1-095",
+        "C1-202"
+      ]
+    },
+    {
+      "id": "C1-096",
+      "name": "Meltan",
+      "status": "FULL",
+      "reasons": [],
+      "sourceGameplayKey": "limitless:C1-096",
+      "prints": [
+        "C1-096"
+      ]
+    },
+    {
+      "id": "C1-097",
+      "name": "Melmetal",
+      "status": "PARTIAL",
+      "reasons": [
+        "Unimplemented ability text: As long as this Pokémon is in play, all of your {M} Pokémon take −20 damage from attacks from your opponent's Pokémon. This effect doesn't stack."
+      ],
+      "sourceGameplayKey": "limitless:C1-097",
+      "prints": [
+        "C1-097",
+        "C1-150"
+      ]
+    },
+    {
+      "id": "C1-098",
+      "name": "Dratini",
+      "status": "FULL",
+      "reasons": [],
+      "sourceGameplayKey": "limitless:C1-098",
+      "prints": [
+        "C1-098"
+      ]
+    },
+    {
+      "id": "C1-099",
+      "name": "Dragonair",
+      "status": "FULL",
+      "reasons": [],
+      "sourceGameplayKey": "limitless:C1-099",
+      "prints": [
+        "C1-099"
+      ]
+    },
+    {
+      "id": "C1-100",
+      "name": "Mega Dragonite ex",
+      "status": "PARTIAL",
+      "reasons": [
+        "Unimplemented attack text: 1 of your opponent's Pokémon is chosen at random. Do 250 damage to it."
+      ],
+      "sourceGameplayKey": "limitless:C1-100",
+      "prints": [
+        "C1-100",
+        "C1-162",
+        "C1-180",
+        "C1-211"
+      ]
+    },
+    {
+      "id": "C1-101",
+      "name": "Giratina ex",
+      "status": "FULL",
+      "reasons": [],
+      "sourceGameplayKey": "limitless:C1-101",
+      "prints": [
+        "C1-101",
+        "C1-163",
+        "C1-181",
+        "C1-217"
+      ]
+    },
+    {
+      "id": "C1-102",
+      "name": "Pidgey",
+      "status": "PARTIAL",
+      "reasons": [
+        "Unimplemented attack text: Put 1 random {C} Pokémon from your deck into your hand."
+      ],
+      "sourceGameplayKey": "limitless:C1-102",
+      "prints": [
+        "C1-102"
+      ]
+    },
+    {
+      "id": "C1-103",
+      "name": "Pidgeotto",
+      "status": "FULL",
+      "reasons": [],
+      "sourceGameplayKey": "limitless:C1-103",
+      "prints": [
+        "C1-103"
+      ]
+    },
+    {
+      "id": "C1-104",
+      "name": "Pidgeot",
+      "status": "PARTIAL",
+      "reasons": [
+        "Unimplemented attack text: If your opponent's Active Pokémon is an Evolution Pokémon, this attack does 80 more damage."
+      ],
+      "sourceGameplayKey": "limitless:C1-104",
+      "prints": [
+        "C1-104"
+      ]
+    },
+    {
+      "id": "C1-105",
+      "name": "Spearow",
+      "status": "FULL",
+      "reasons": [],
+      "sourceGameplayKey": "limitless:C1-105",
+      "prints": [
+        "C1-105",
+        "C1-203"
+      ]
+    },
+    {
+      "id": "C1-106",
+      "name": "Fearow",
+      "status": "FULL",
+      "reasons": [],
+      "sourceGameplayKey": "limitless:C1-106",
+      "prints": [
+        "C1-106",
+        "C1-204"
+      ]
+    },
+    {
+      "id": "C1-107",
+      "name": "Eevee",
+      "status": "PARTIAL",
+      "reasons": [
+        "Unimplemented attack text: Put a random card that evolves from Eevee from your deck into your hand."
+      ],
+      "sourceGameplayKey": "limitless:C1-107",
+      "prints": [
+        "C1-107"
+      ]
+    },
+    {
+      "id": "C1-108",
+      "name": "Porygon",
+      "status": "FULL",
+      "reasons": [],
+      "sourceGameplayKey": "limitless:C1-108",
+      "prints": [
+        "C1-108"
+      ]
+    },
+    {
+      "id": "C1-109",
+      "name": "Porygon2",
+      "status": "FULL",
+      "reasons": [],
+      "sourceGameplayKey": "limitless:C1-109",
+      "prints": [
+        "C1-109"
+      ]
+    },
+    {
+      "id": "C1-110",
+      "name": "Porygon-Z",
+      "status": "PARTIAL",
+      "reasons": [
+        "Unimplemented attack text: During your next turn, this Pokémon's Overdrive Smash attack does +50 damage."
+      ],
+      "sourceGameplayKey": "limitless:C1-110",
+      "prints": [
+        "C1-110"
+      ]
+    },
+    {
+      "id": "C1-111",
+      "name": "Snorlax",
+      "status": "FULL",
+      "reasons": [],
+      "sourceGameplayKey": "limitless:C1-111",
+      "prints": [
+        "C1-111"
+      ]
+    },
+    {
+      "id": "C1-112",
+      "name": "Zangoose",
+      "status": "FULL",
+      "reasons": [],
+      "sourceGameplayKey": "limitless:C1-112",
+      "prints": [
+        "C1-112"
+      ]
+    },
+    {
+      "id": "C1-113",
+      "name": "Bidoof",
+      "status": "FULL",
+      "reasons": [],
+      "sourceGameplayKey": "limitless:C1-113",
+      "prints": [
+        "C1-113",
+        "C1-151"
+      ]
+    },
+    {
+      "id": "C1-114",
+      "name": "Bibarel",
+      "status": "FULL",
+      "reasons": [],
+      "sourceGameplayKey": "limitless:C1-114",
+      "prints": [
+        "C1-114"
+      ]
+    },
+    {
+      "id": "C1-115",
+      "name": "Buneary",
+      "status": "FULL",
+      "reasons": [],
+      "sourceGameplayKey": "limitless:C1-115",
+      "prints": [
+        "C1-115"
+      ]
+    },
+    {
+      "id": "C1-116",
+      "name": "Lopunny",
+      "status": "FULL",
+      "reasons": [],
+      "sourceGameplayKey": "limitless:C1-116",
+      "prints": [
+        "C1-116"
+      ]
+    },
+    {
+      "id": "C1-117",
+      "name": "Stufful",
+      "status": "FULL",
+      "reasons": [],
+      "sourceGameplayKey": "limitless:C1-117",
+      "prints": [
+        "C1-117",
+        "C1-206"
+      ]
+    },
+    {
+      "id": "C1-118",
+      "name": "Bewear ex",
+      "status": "PARTIAL",
+      "reasons": [
+        "Unimplemented attack text: Flip 2 coins. If both of them are heads, this attack does 100 more damage."
+      ],
+      "sourceGameplayKey": "limitless:C1-118",
+      "prints": [
+        "C1-118",
+        "C1-164",
+        "C1-182",
+        "C1-214"
+      ]
+    },
+    {
+      "id": "C1-119",
+      "name": "Sweet Honey",
+      "status": "PARTIAL",
+      "reasons": [
+        "Unimplemented trainer text: Choose 1 of your Pokémon, and then flip a coin until you get tails. For each heads, heal 20 damage from that Pokémon."
+      ],
+      "sourceGameplayKey": "limitless:C1-119",
+      "prints": [
+        "C1-119",
+        "C1-152"
+      ]
+    },
+    {
+      "id": "C1-120",
+      "name": "Super Potion",
+      "status": "PARTIAL",
+      "reasons": [
+        "Unimplemented trainer text: Heal 40 damage from 1 of your Pokémon that has any Energy attached. If you healed any damage in this way, discard a random Energy from that Pokémon."
+      ],
+      "sourceGameplayKey": "limitless:C1-120",
+      "prints": [
+        "C1-120"
+      ]
+    },
+    {
+      "id": "C1-121",
+      "name": "Max Repel",
+      "status": "PARTIAL",
+      "reasons": [
+        "Unimplemented trainer text: Switch out your opponent's Active Stage 2 Pokémon to the Bench. (Your opponent chooses the new Active Pokémon.)"
+      ],
+      "sourceGameplayKey": "limitless:C1-121",
+      "prints": [
+        "C1-121"
+      ]
+    },
+    {
+      "id": "C1-122",
+      "name": "Full Heal",
+      "status": "PARTIAL",
+      "reasons": [
+        "Unimplemented trainer text: Your Active Pokémon recovers from all Special Conditions."
+      ],
+      "sourceGameplayKey": "limitless:C1-122",
+      "prints": [
+        "C1-122"
+      ]
+    },
+    {
+      "id": "C1-123",
+      "name": "Eviolite",
+      "status": "PARTIAL",
+      "reasons": [
+        "Unimplemented trainer text: The Basic Pokémon this card is attached to takes −20 damage from attacks from your opponent's Pokémon."
+      ],
+      "sourceGameplayKey": "limitless:C1-123",
+      "prints": [
+        "C1-123"
+      ]
+    },
+    {
+      "id": "C1-124",
+      "name": "Light Ball",
+      "status": "PARTIAL",
+      "reasons": [
+        "Unimplemented trainer text: Attacks used by the Pikachu ex this card is attached to do +30 damage to your opponent's Active Pokémon."
+      ],
+      "sourceGameplayKey": "limitless:C1-124",
+      "prints": [
+        "C1-124"
+      ]
+    },
+    {
+      "id": "C1-125",
+      "name": "Lorelei",
+      "status": "PARTIAL",
+      "reasons": [
+        "Unimplemented trainer text: During this turn, attacks used by your Dewgong, Cloyster, or Lapras do +30 damage to your opponent's Pokémon."
+      ],
+      "sourceGameplayKey": "limitless:C1-125",
+      "prints": [
+        "C1-125",
+        "C1-165"
+      ]
+    },
+    {
+      "id": "C1-126",
+      "name": "Blue's Provocation",
+      "status": "PARTIAL",
+      "reasons": [
+        "Unimplemented trainer text: You can use this card only if you have Venusaur, Charizard, Blastoise, or Pidgeot in play.Switch in 1 of your opponent's Benched Pokémon to the Active Spot."
+      ],
+      "sourceGameplayKey": "limitless:C1-126",
+      "prints": [
+        "C1-126",
+        "C1-166"
+      ]
+    },
+    {
+      "id": "C1-127",
+      "name": "Serena's Choice",
+      "status": "PARTIAL",
+      "reasons": [
+        "Unimplemented trainer text: Look at the top 3 cards of your deck and put 1 of them into your hand. Shuffle back into your deck."
+      ],
+      "sourceGameplayKey": "limitless:C1-127",
+      "prints": [
+        "C1-127",
+        "C1-167"
+      ]
+    },
+    {
+      "id": "C1-128",
+      "name": "Rika",
+      "status": "PARTIAL",
+      "reasons": [
+        "Unimplemented trainer text: Produce 2 {F} Energy from your Energy Zone, and attach it to 1 of your Whiscash or Paldean Clodsire."
+      ],
+      "sourceGameplayKey": "limitless:C1-128",
+      "prints": [
+        "C1-128",
+        "C1-168"
+      ]
+    },
+    {
+      "id": "C1-129",
+      "name": "Poké Mart Guy",
+      "status": "PARTIAL",
+      "reasons": [
+        "Unimplemented trainer text: Put 2 random cards from among Super Potion, Max Repel, and Full Heal from your deck into your hand."
+      ],
+      "sourceGameplayKey": "limitless:C1-129",
+      "prints": [
+        "C1-129",
+        "C1-169"
+      ]
+    },
+    {
+      "id": "C1-130",
+      "name": "Rising Star",
+      "status": "PARTIAL",
+      "reasons": [
+        "Unimplemented trainer text: You can use this card only if you have 3 or more different Pokémon types in play.Switch your Active Pokémon with 1 of your Benched Pokémon."
+      ],
+      "sourceGameplayKey": "limitless:C1-130",
+      "prints": [
+        "C1-130",
+        "C1-170"
+      ]
+    },
+    {
+      "id": "C1-131",
+      "name": "Abandoned Station",
+      "status": "PARTIAL",
+      "reasons": [
+        "Unimplemented trainer text: Once during each player's turn, that player may use this effect. Flip a coin. If heads, draw a card."
+      ],
+      "sourceGameplayKey": "limitless:C1-131",
+      "prints": [
+        "C1-131"
       ]
     }
   ]

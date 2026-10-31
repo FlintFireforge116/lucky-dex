@@ -1,0 +1,94 @@
+{
+  "cutoff": "2026-10-30",
+  "before": {
+    "identities": 2319,
+    "FULL": 1605,
+    "PARTIAL": 714,
+    "UNSUPPORTED": 0,
+    "prints": 4316
+  },
+  "after": {
+    "identities": 2450,
+    "FULL": 1707,
+    "PARTIAL": 743,
+    "UNSUPPORTED": 0,
+    "prints": 4534
+  },
+  "resolvedOld": [
+    {
+      "id": "A1-037",
+      "name": "Vulpix",
+      "previousReasons": [
+        "Unimplemented attack text: Flip a coin. If heads, the Defending Pokémon can't attack during your opponent's next turn."
+      ]
+    },
+    {
+      "id": "A2a-061",
+      "name": "Giratina",
+      "previousReasons": [
+        "Unimplemented attack text: Discard 2 random Energy from this Pokémon."
+      ]
+    },
+    {
+      "id": "A3-017",
+      "name": "Shiinotic",
+      "previousReasons": [
+        "Unimplemented attack text: Flip a coin. If heads, the Defending Pokémon can't attack during your opponent's next turn."
+      ]
+    },
+    {
+      "id": "A4-033",
+      "name": "Entei",
+      "previousReasons": [
+        "Unimplemented attack text: Flip a coin. If tails, discard 2 random Energy from this Pokémon."
+      ]
+    },
+    {
+      "id": "B2-138",
+      "name": "Tornadus",
+      "previousReasons": [
+        "Unimplemented attack text: If a Stadium is in play, this attack does 40 more damage."
+      ]
+    },
+    {
+      "id": "P-B-062",
+      "name": "Gallade",
+      "previousReasons": [
+        "Unimplemented attack text: If a Stadium is in play, this attack does 70 more damage."
+      ]
+    },
+    {
+      "id": "P-B-099",
+      "name": "Mega Garchomp ex",
+      "previousReasons": [
+        "Unimplemented attack text: Discard 2 random Energy from this Pokémon."
+      ]
+    },
+    {
+      "id": "B3-133",
+      "name": "Castform",
+      "previousReasons": [
+        "Unimplemented attack text: If a Stadium is in play, this attack does 20 more damage."
+      ]
+    },
+    {
+      "id": "B3a-056",
+      "name": "Eevee",
+      "previousReasons": [
+        "Unimplemented attack text: Flip a coin. If heads, the Defending Pokémon can't attack during your opponent's next turn."
+      ]
+    },
+    {
+      "id": "B4-119",
+      "name": "Rayquaza",
+      "previousReasons": [
+        "Unimplemented attack text: Discard 2 random Energy from this Pokémon."
+      ]
+    }
+  ],
+  "regressedOldFull": [],
+  "newFull": 92,
+  "newPartial": 39,
+  "remainingPartialReviewCount": 743,
+  "humanCertification": false
+}

@@ -84,3 +84,21 @@ CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
 OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR
 IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 DEALINGS IN THE SOFTWARE.
+
+
+SOURCE NOTICE: CURRENT_POCKET_NOTICE.txt
+Current Pocket factual supplement
+
+The C1 / Promo-C / P-B-103 factual capture was independently extracted from
+public primary community card pages at https://pocket.limitlesstcg.com on
+2026-10-30. Source page URLs and SHA256 hashes accompany every raw record.
+No upstream scraper implementation or AGPL dataset is incorporated.
+
+This supplement is not represented as MIT-licensed data. Pokemon card names,
+rules and artwork belong to their respective rights holders, including The
+Pokemon Company, Nintendo, Creatures and GAME FREAK. LuckyDex is an unofficial
+fan project and does not acquire ownership of those materials.
+
+Earlier MIT software/data source notices remain included separately and apply
+only to their corresponding imported material. See current-pocket-provenance.json
+and docs/TCGP_CURRENT_POOL_v06936.md for acquisition gates and source scope.

@@ -7,7 +7,7 @@
   const ENERGY_CODE = Object.freeze({G:'Grass',R:'Fire',W:'Water',L:'Lightning',P:'Psychic',F:'Fighting',D:'Darkness',M:'Metal'});
   const ENERGY_TYPES=Object.values(ENERGY_CODE);
   const TARGETS=['self','selfActive','selfBench','selfPokemon','opponentActive','opponentBench','opponentPokemon','selfAll'];
-  const CONDITIONS=['selfDamaged','opponentDamaged','opponentStatus','selfStatus','opponentEx','selfEnergyAtLeast','opponentEnergyAtLeast','benchAtLeast','selfHasTool','selfExtraEnergyAtLeast','supporterPlayed'];
+  const CONDITIONS=['selfDamaged','opponentDamaged','opponentStatus','selfStatus','opponentEx','selfEnergyAtLeast','opponentEnergyAtLeast','benchAtLeast','selfHasTool','selfExtraEnergyAtLeast','supporterPlayed','stadiumInPlay'];
   const STATUSES=['poison','burn','sleep','paralysis','confusion'];
   const STATS=['attackDamage','damageReduction','retreatCost','attackCost','maxHp'];
   const effectTypes=Object.freeze(['noop','sequence','healSelf','heal','damage','bonusDamage','coinDamage','energyDamage','benchCountDamage','statusDamage','damageFromDamage','discardTop','benchDamage','selfDamage','attachEnergy','discardEnergy','draw','search','searchRandomBasic','switch','status','coinFlip','modifier','removeStatus','lock','preventDamage','selectedDamage','coinUntilTails','playFossil','discardSelf','moveEnergy','handShuffle','preventStatus']);
@@ -58,7 +58,8 @@
   function totalEnergy(energy){return Object.values(energy||{}).reduce((n,v)=>n+Math.max(0,Number(v)||0),0);}
   function canPayCost(energy,cost){const pool={...(energy||{})};const symbols=String(cost||'').split('').filter(Boolean);for(const symbol of symbols){if(symbol==='C')continue;const type=ENERGY_CODE[symbol];if(!type||Number(pool[type]||0)<=0)return false;pool[type]-=1;}return totalEnergy(pool)>=symbols.filter(s=>s==='C').length;}
   function spendGenericEnergy(energy,amount){let left=Math.max(0,Number(amount||0));const next={...(energy||{})};for(const type of Object.keys(next).sort((a,b)=>Number(next[b]||0)-Number(next[a]||0))){const n=Math.min(left,Math.max(0,Number(next[type]||0)));next[type]-=n;left-=n;if(!left)break;}return left?null:next;}
-  function attackDamage(attackerCard,attack,defenderCard){let n=Math.max(0,Number(attack&&attack.damage||0));if(n>0&&attackerCard&&defenderCard&&defenderCard.weakness===attackerCard.subtype)n+=20;return n;}
+  const hasType=(card,type)=>(Array.isArray(card?.types)&&card.types.length?card.types:[card?.subtype]).includes(type);
+  function attackDamage(attackerCard,attack,defenderCard){let n=Math.max(0,Number(attack&&attack.damage||0));if(n>0&&attackerCard&&defenderCard&&hasType(attackerCard,defenderCard.weakness))n+=20;return n;}
   function own(ctx){return ctx.state.sides[ctx.side];}
   function other(ctx){return ctx.state.sides[ctx.foeSide];}
   function pokemonOn(side){return [side.active,...side.bench].filter(Boolean);}
@@ -66,6 +67,7 @@
     if(!c)return true;
     const a=ctx.attacker,d=ctx.defender;
     switch(c.type){
+      case 'stadiumInPlay':return !!ctx.state.stadium;
       case 'selfHasTool':return !!a?.tool;
       case 'supporterPlayed':return !!own(ctx).supporterUsed;
       case 'selfExtraEnergyAtLeast':{const e=a?.energy||{},cost=String(ctx.attack?.cost||'');const required=c.energyType?cost.split('').filter(k=>ENERGY_CODE[k]===c.energyType).length:cost.length;return (c.energyType?Number(e[c.energyType]||0):totalEnergy(e))-required>=Number(c.amount||0)&&totalEnergy(e)-cost.length>=Number(c.amount||0);}
@@ -94,7 +96,7 @@
       default:throw new Error(`Unsupported target: ${selector}`);
     }
   }
-  function matchesFilter(card,filter,slot){return !!card&&Object.entries(filter||{}).every(([k,v])=>k==='damaged'?(Number(slot?.damage)>0)===v:k==='isEx'?!!(card.isEx||card.points===2||/ ex$/.test(card.name))===v:card[k]===v);}
+  function matchesFilter(card,filter,slot){return !!card&&Object.entries(filter||{}).every(([k,v])=>k==='subtype'?hasType(card,v):k==='damaged'?(Number(slot?.damage)>0)===v:k==='isEx'?!!(card.isEx||card.points>=2||/ ex$/.test(card.name))===v:card[k]===v);}
   function clearConditions(slot){if(slot)slot.conditions={};}
   function clearTemporaryEffects(state,slot){if(!slot)return;clearConditions(slot);delete slot.locks;delete slot.attackGuard;delete slot.statusGuard;if(state)state.modifiers=(state.modifiers||[]).filter(m=>m.targetUid!==slot.uid||m.scope==='team'||m.scope==='active');}
   function switchPokemon(side,benchIndex,state){const index=side.bench.findIndex(s=>s&&Number(s.benchSlot)===Number(benchIndex));if(index<0||!side.active)return false;const incoming=side.bench[index],outgoing=side.active;outgoing.benchSlot=Number(incoming.benchSlot);incoming.benchSlot=null;side.bench[index]=outgoing;side.active=incoming;clearTemporaryEffects(state,outgoing);return true;}
@@ -146,7 +148,7 @@
       if(e.type==='bonusDamage')amount=e.amount;
       else if(e.type==='coinDamage'){let heads=0;if(e.coins==='untilTails')heads=repeatHeads(ctx,()=>{});else for(let i=0;i<e.coins;i++)if(coin(ctx))heads++;ctx.state.log.push({type:'coin',side:ctx.side,heads,coins:e.coins});amount=heads*e.amount;}
       else if(e.type==='energyDamage'){const energy=(e.source==='opponent'?ctx.defender:ctx.attacker)?.energy||{};amount=Math.max(0,(e.energyType?Number(energy[e.energyType]||0):totalEnergy(energy))-Number(e.extraAbove||0))*e.amount;}
-      else if(e.type==='benchCountDamage')amount=(e.side==='opponent'?other(ctx):own(ctx)).bench.filter(s=>s&&(!e.pokemonType||ctx.cardById(s.cardId)?.subtype===e.pokemonType)).length*e.amount;
+      else if(e.type==='benchCountDamage')amount=(e.side==='opponent'?other(ctx):own(ctx)).bench.filter(s=>s&&(!e.pokemonType||hasType(ctx.cardById(s.cardId),e.pokemonType))).length*e.amount;
       else if(e.type==='damageFromDamage')amount=Number((e.source==='self'?ctx.attacker:ctx.defender)?.damage||0)*e.amount;
       else if(e.type==='statusDamage')amount=ctx.defender?.conditions?.[e.status]?e.amount:0;
       else{pending.push(e);return;}

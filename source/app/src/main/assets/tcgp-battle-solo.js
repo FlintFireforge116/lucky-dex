@@ -36,19 +36,20 @@
     const opts=options||{};
     const challenge=challengeById(opts.challengeId||CHALLENGES[0].id);
     if(!challenge)throw new Error('Unknown Pocket Solo challenge.');
-    const cpuEnergy=opts.opponentEnergyTypes||challenge.energyTypes||[challenge.energyType];
-    const cpuCheck=decks.validateLoanerDeck(challenge.deck,cpuEnergy);
+    const cpuDeck=opts.testMode===true&&Array.isArray(opts.opponentDeck)?opts.opponentDeck:challenge.deck;
+    const cpuEnergy=opts.opponentEnergyTypes|| (opts.testMode===true?decks.analyzeDeck(cpuDeck).recommendedEnergyTypes:challenge.energyTypes||[challenge.energyType]);
+    const cpuCheck=decks.validateLoanerDeck(cpuDeck,cpuEnergy);
     if(!cpuCheck.ok||!cpuCheck.energyValid||cpuCheck.unpowerable.length||cpuCheck.missingEnergyTypes.length||cpuCheck.warnings.some(w=>w.code==='orphan'))throw new Error('CPU deck has illegal cards, incomplete evolution lines or incompatible Energy.');
     const playerDeck=Array.isArray(opts.playerDeck)?opts.playerDeck.slice():data.BEGINNER_IVYSAUR_DECK.slice();
     return core.createBattle({
       playerDeck,
-      opponentDeck:challenge.deck,
+      opponentDeck:cpuDeck,
       seed:opts.seed,
       firstSide:opts.firstSide||defaultFirstSide(opts.seed),
       playerEnergyType:opts.playerEnergyType,
       playerEnergyTypes:opts.playerEnergyTypes,
       opponentEnergyType:challenge.energyType,
-      opponentEnergyTypes:opts.opponentEnergyTypes,
+      opponentEnergyTypes:cpuEnergy,
       manualPlayerSetup:!!opts.manualPlayerSetup
     });
   }

@@ -90,7 +90,9 @@
   for (const card of CARDS) CARD_BY_ID[normId(card.id)] = card;
   for (const print of PRINTS) PRINT_BY_ID[normId(print.id)] = print;
   function normSet(value){ return String(value || '').trim().toUpperCase(); }
-  function normId(value){ return String(value || '').trim().toUpperCase().replace(/^PROMO-([AB])-/, 'P-$1-').replace(/^P([AB])-/, 'P-$1-'); }
+  function normId(value){ return String(value || '').trim().toUpperCase().replace(/^PROMO-([ABC])-/, 'P-$1-').replace(/^P([ABC])-/, 'P-$1-'); }
+  function typesOf(card){return Array.isArray(card?.types)&&card.types.length?card.types:[card?.subtype].filter(Boolean);}
+  function hasType(card,type){return typesOf(card).includes(type);}
   function normName(value){ return String(value || '').normalize('NFKD').replace(/[\u0300-\u036f]/g,'').trim().toLowerCase().replace(/[’]/g, "'").replace(/\s+/g, ' '); }
   function cardById(id){ const key=normId(id),print=PRINT_BY_ID[key]; return CARD_BY_ID[print?normId(print.gameplayId):key] || null; }
   function gameplayIdForOwned(owned){
@@ -156,6 +158,7 @@
     COVERAGE:generated.summary,
     BEGINNER_IVYSAUR_DECK,
     cardById,
+    typesOf,hasType,
     gameplayIdForOwned,
     resolveOwnedCard,
     projectOwnedCards,

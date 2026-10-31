@@ -1,0 +1,9 @@
+'use strict';
+const fs=require('node:fs'),path=require('node:path'),{spawn}=require('node:child_process');
+const root=path.resolve(__dirname,'..'),args=process.argv.slice(2),all=args.includes('--all'),jobs=Number(args.find(a=>a.startsWith('--jobs='))?.split('=')[1]||2),tag=args.find(a=>a.startsWith('--tag='))?.split('=')[1]||'focused',out=path.join(root,'artifacts/v06936');fs.mkdirSync(out,{recursive:true});
+const selected=args.find(a=>a.startsWith('--files='))?.slice(8).split(',');
+const files=fs.readdirSync(path.join(root,'tests')).filter(f=>f.endsWith('.cjs')&&(selected?selected.includes(f):all||/^v069\d+-tcgp/.test(f))).sort(),results=[];let next=0;
+if(selected&&selected.some(f=>!files.includes(f)))throw Error('Unknown test program in --files.');
+function checkpoint(){const report={tag,attempted:results.length,planned:files.length,passed:results.filter(r=>r.status===0).length,failed:results.filter(r=>r.status!==0).length,results};fs.writeFileSync(path.join(out,tag+'.json'),JSON.stringify(report,null,2));return report;}
+async function worker(){while(next<files.length){const file=files[next++];await new Promise(resolve=>{const child=spawn(process.execPath,[path.join(root,'tests',file)],{cwd:root,env:process.env,windowsHide:true});let stdout='',stderr='',error;const timer=setTimeout(()=>{error='240s verification timeout';child.kill();},240000);child.stdout.on('data',s=>stdout+=s);child.stderr.on('data',s=>stderr+=s);child.on('error',e=>error=e.message);child.on('close',status=>{clearTimeout(timer);results.push({file,status,error,stdout,stderr});checkpoint();console.log((status===0?'PASS ':'FAIL ')+file);resolve();});});}}
+Promise.all(Array.from({length:Math.max(1,Math.min(4,jobs))},worker)).then(()=>{const r=checkpoint();console.log(JSON.stringify({programs:r.attempted,passed:r.passed,failed:r.failed}));process.exitCode=r.failed?1:0;});
