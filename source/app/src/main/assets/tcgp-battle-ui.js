@@ -23,6 +23,7 @@
   const {layout,data,decks,core,ai,solo,progress}=deps;
 
   const CHALLENGE_ID='genetic-apex-beginner-ivysaur';
+  let selectedChallengeId=CHALLENGE_ID,selectedDifficulty='Beginner',currentDeckAppearance=null;
   const PRINT_ART_BY_ID=new Map((data.PRINTS||[]).map(print=>[String(print.id).toUpperCase(),print]));
   let cancelGesture=null;
   let screen='home',currentPlayerEnergyTypes=[];
@@ -36,7 +37,8 @@
   function clearBattleEvent(){clearTimeout(battleEventTimer);battleEventTimer=null;battleEvent='';battleEventSerial++;}
   function setBattleEvent(message){clearBattleEvent();battleEvent=message;const serial=battleEventSerial;battleEventTimer=setTimeout(()=>{if(serial!==battleEventSerial)return;battleEvent='';battleEventTimer=null;el('tcgpBattleContent')?.querySelector('.tcgp-live-action-event')?.remove();},1600);}
 
-  function cardArtUrl(cardId){
+  function cardArtUrl(cardId,sideName){
+    if(sideName==='player'&&currentDeckAppearance&&deps.workspace.selectedPrint){const selected=deps.workspace.selectedPrint(currentDeckAppearance,data.cardById(cardId)?.id||cardId,currentDeckAppearance._ownedRows||ownedRows());if(selected&&selected!==cardId)return cardArtUrl(selected);}
     const id=String(cardId||'').toUpperCase(),match=/^([A-Z0-9]+(?:-[A-Z])?)-(\d+)$/.exec(id);
     if(!match||match[1]==='BASIC')return'';
     const rows=root?.state?.cards?Object.values(root.state.cards):[],canonical=data.cardById(cardId)?.id;
@@ -50,11 +52,8 @@
   function sleeveArtPath(sideName){
     const cosmetics=root&&root.LuckyDexCosmeticsV0413;
     if(!cosmetics)return'';
-    if(sideName==='player'){
-      const entry=cosmetics.activeSleeve?.(root.state||{})||cosmetics.registry?.[root.state?.cosmetics?.activeSleeve];
-      return String(entry?.artPath||'');
-    }
-    return String(cosmetics.registry?.['luckydex-default']?.artPath||'cosmetics/sleeves/luckydex-default.webp');
+    const entry=cosmetics.activeSleeve?.(root.state||{})||cosmetics.registry?.[root.state?.cosmetics?.activeSleeve]||cosmetics.registry?.['luckydex-default'];
+    return String(entry?.artPath||'cosmetics/sleeves/luckydex-default.webp');
   }
   function cardName(id){return data.cardById(id)?.name||id||'Card';}
   function cardAbilities(card){return card?.abilities?.length?card.abilities:Array.isArray(card?.ability)?card.ability:card?.ability?[card.ability]:[];}
@@ -144,21 +143,26 @@
   function setContent(html){const content=el('tcgpBattleContent');if(content)content.innerHTML=html;}
   function setBattleLive(on){if(!root?.document?.body)return;root.LuckyDexTCGPDeckEditor?.close();root.document.body.classList.remove('tcgp-deck-editing');if(on)root.document.body.classList.add('tcgp-battle-live');else root.document.body.classList.remove('tcgp-battle-live');}
 
-  function renderHome(){
+  function renderHome(skipGuard){
+    if(screen==='builder'&&skipGuard!==true)return requestLeave(()=>renderHome(true));
     clearBattleEvent();
     cancelGesture?.();clearTimeout(cpuTimer);cpuTimer=null;cpuPending=false;
     setBattleLive(false);battleOverlay=null;battleInspect=null;setScreen('home');
-    const state=battleSave(),stats=state.stats,owned=enabledOwnedRows(),deck=activeDeck(),challenge=solo.challengeById(CHALLENGE_ID),cleared=!!state.firstClears[challenge.id];
+    const state=battleSave(),stats=state.stats,owned=enabledOwnedRows(),deck=activeDeck(),challenge=solo.challengeById(selectedChallengeId)||solo.challengeById(CHALLENGE_ID),cleared=!!state.firstClears[challenge.id];
     const coverage=coverageForOwnedCards(root.state?.cards||{}),copies=owned.reduce((sum,row)=>sum+Math.min(2,row.quantity),0);
+    const levels=(solo.DIFFICULTIES||['Beginner']).map(level=>{const p=solo.difficultyProgress?.(level,root.state)||{cleared:0,total:1};return `<button class="tcgp-battle-action ${selectedDifficulty===level?'':'secondary'}" data-tcgp-action="solo-difficulty" data-difficulty="${esc(level)}" aria-pressed="${selectedDifficulty===level}">${esc(level)} · ${p.cleared}/${p.total}</button>`;}).join('');
+    const challenges=solo.CHALLENGES.filter(c=>c.difficulty===selectedDifficulty).map(c=>{const unlocked=solo.isUnlocked?.(c,root.state)!==false,p=solo.getChallengeProgress?.(c,root.state)||{cleared:!!state.firstClears[c.id],wins:0};return `<article class="tcgp-battle-challenge" data-solo-challenge="${esc(c.id)}"><h3>${esc(c.name)}</h3><p>${esc(c.description)}</p><small>${esc((c.energyTypes||[c.energyType]).join(' / '))} Energy · ${p.cleared?'Cleared':'Not cleared'} · ${Number(p.wins||0)} wins</small><div class="tcgp-battle-actions-row"><button class="tcgp-battle-action ${selectedChallengeId===c.id?'':'secondary'}" data-tcgp-action="select-challenge" data-challenge-id="${esc(c.id)}" ${unlocked?'':'disabled'}>${unlocked?(selectedChallengeId===c.id?'SELECTED':'SELECT'):'LOCKED'}</button></div>${unlocked?'':'<p>Clear two different challenges in the previous difficulty to unlock.</p>'}</article>`;}).join('');
     setContent(`
-      <section class="tcgp-battle-hero"><div class="eyebrow">PLAY YOUR COLLECTION</div><h2>TCG Pocket Battle</h2><p>Your Pocket pulls are becoming playable cards. This first slice proves the real battle engine against a fixed Solo deck while card-effect coverage expands.</p>
+      <section class="tcgp-battle-hero"><div class="eyebrow">PLAY YOUR COLLECTION</div><h2>TCG Pocket Battle</h2><p>Build a deck from your collection, practise your strategy and progress through Solo challenges.</p>
         <div class="tcgp-battle-stat-grid"><div class="tcgp-battle-stat"><small>MATCHES</small><b>${Number(stats.matches||0)}</b></div><div class="tcgp-battle-stat"><small>WINS</small><b>${Number(stats.wins||0)}</b></div><div class="tcgp-battle-stat"><small>BATTLE READY</small><b>${coverage.supportedGameplay}</b></div></div>
       </section>
-      <section class="tcgp-battle-challenge"><div class="tcgp-battle-challenge-head"><div><div class="eyebrow">GENETIC APEX · SOLO</div><h3>${esc(challenge.name)}</h3></div><span class="tcgp-battle-difficulty">${esc(challenge.difficulty)}</span></div><p>${esc(challenge.description)}</p><div class="tcgp-battle-reward">${cleared?'✓ FIRST CLEAR COMPLETE':'FIRST CLEAR · ◉ 100 + ✦ 50'}</div>
+      <section class="tcgp-battle-challenge"><div class="tcgp-battle-challenge-head"><div><div class="eyebrow">SOLO CHALLENGE</div><h3>${esc(challenge.name)}</h3></div><span class="tcgp-battle-difficulty">${esc(challenge.difficulty)}</span></div><p>${esc(challenge.description)}</p><div class="tcgp-battle-reward">${cleared?'✓ FIRST CLEAR COMPLETE':`FIRST CLEAR · ◉ ${challenge.firstClear.coins} + ✦ ${challenge.firstClear.dust}`}</div>
         <div class="tcgp-battle-actions-row"><button class="tcgp-battle-action" data-tcgp-action="battle-owned" ${deck?'':'disabled'}>${deck?`BATTLE · ${esc(deck.name)}`:'BUILD AN OWNED DECK'}</button><button class="tcgp-battle-action secondary" data-tcgp-action="practice">PRACTICE · LAB LOANER</button></div>
         <div class="tcgp-battle-note">Lab Loaner is practice only and does not award first-clear rewards. Your saved deck must use cards you actually own; two Poke Balls are supplied as Battle Basics.</div>
       </section>
-      <section class="tcgp-battle-panel"><h3>Deck Lab</h3><p>${copies>=18?`You have at least ${copies} supported owned copies ready for this prototype.`:`You currently have ${copies}/18 supported owned copies needed for a full deck plus two Battle Basics.`} <strong>${coverage.supportedGameplay}</strong> gameplay cards are battle-enabled from <strong>${coverage.pocketPrints}</strong> Pocket card prints you own; more effects will unlock as coverage expands.</p><div class="tcgp-battle-actions-row"><button class="tcgp-battle-action" data-tcgp-action="build">${deck?'EDIT DECK':'BUILD DECK'}</button><button class="tcgp-battle-action secondary" data-tcgp-action="quick">QUICK BUILD</button></div></section>`);
+      <section class="tcgp-battle-panel"><h3>My decks</h3><p>${copies>=18?`${copies} usable owned copies available.`:`${copies}/18 owned copies available, plus two supplied Poké Balls.`} Browse your collection, choose a recipe or build around a favourite card.</p><div class="tcgp-battle-actions-row"><button class="tcgp-battle-action" data-tcgp-action="build">${deck?'EDIT DECK':'BUILD DECK'}</button><button class="tcgp-battle-action secondary" data-tcgp-action="quick">QUICK BUILD</button></div></section>
+      <section class="tcgp-battle-panel"><h3>Solo progression</h3><div class="tcgp-battle-actions-row">${levels}</div>${challenges}</section>
+      <details class="tcgp-battle-panel"><summary>Battle records</summary><p>Wins ${Number(stats.wins||0)} · Losses ${Number(stats.losses||0)} · Draws ${Number(stats.draws||0)} · Solo clears ${Number(stats.soloClears||0)}</p><p>Attacks ${Number(stats.attacks||0)} · Pokémon knocked out ${Number(stats.knockouts||0)} · Energy attached ${Number(stats.energyAttached||0)} · Trainers played ${Number(stats.trainersPlayed||0)}</p>${stats.favoriteDeck?`<p>Most-used deck: ${esc(stats.favoriteDeck.name||stats.favoriteDeck)}</p>`:''}</details>`);
   }
 
   function supportText(card){return card?.battleEnabled?'':(card?.support?.status||'UNSUPPORTED')+' · '+(card?.support?.reasons||[]).join(' ');}
@@ -209,6 +213,11 @@
     const sideName=probe.side==='opponent'?'opponent':'player';
     const side=state.sides?.[sideName];
     if(!side)return null;
+    if(['discard','stadium','tool-active','tool-bench'].includes(probe.zone)){
+      const slot=probe.zone==='tool-active'?side.active:probe.zone==='tool-bench'?(core.benchSlotAt?core.benchSlotAt(side,probe.index):side.bench?.[probe.index]):null;
+      const ref=probe.zone==='discard'?side.discard?.[probe.index]:probe.zone==='stadium'?state.stadium:slot?.tool;
+      if(!ref)return null;const card=data.cardById(ref.cardId);return {spec:probe,sideName,zone:probe.zone,slot:null,ref,card,title:card?.name||ref.cardId,subtitle:probe.zone==='stadium'?'Stadium in play':slot?'Attached Pokémon Tool':`${sideName==='player'?'Your':'CPU'} discard pile`};
+    }
     if(probe.zone==='hand'){
       const ref=side.hand?.[Number(probe.index)||0];
       if(!ref)return null;
@@ -216,7 +225,7 @@
       return { spec:probe, sideName, zone:'hand', slot:null, ref, card, title:card?.name||ref.cardId, subtitle:`${sideName==='player'?'Your':'CPU'} hand card` };
     }
     if(probe.zone==='bench'){
-      const slot=side.bench?.[Number(probe.index)||0];
+      const slot=core.benchSlotAt?core.benchSlotAt(side,Number(probe.index)||0):side.bench?.[Number(probe.index)||0];
       if(!slot)return null;
       const card=data.cardById(slot.cardId);
       return { spec:probe, sideName, zone:'bench', slot, ref:null, card, title:card?.name||slot.cardId, subtitle:`${sideName==='player'?'Your':'CPU'} Bench` };
@@ -270,8 +279,8 @@
       const card=data.cardById(currentBattle?.sides?.player?.active?.cardId);
       (card?.attacks||[]).forEach((attack,attackIndex)=>{
         const indices=attackGroups.get(attackIndex)||[],actionIndex=indices[0],availability=core.attackAvailability(currentBattle,'player',attackIndex),cost=core.energyCostLabel(availability.cost);
-        const attrs=indices.length>1?`data-tcgp-action="open-context-actions" data-action-indices="${indices.join(',')}"`:`data-tcgp-action="battle-action" data-action-index="${actionIndex}"`;
-        parts.push(`<button type="button" class="tcgp-live-context-action attack" ${indices.length?'':'disabled'} title="${esc(availability.reason)}" ${attrs}><b>${esc(attack?.name||'ATTACK')}</b><small>${indices.length?esc(cost):'Needs '+esc(cost)}${indices.length>1?' · CHOOSE TARGET':''}</small><strong>${esc(attack?.damageText??attack?.damage??0)} DMG</strong></button>`);
+        const attrs=!indices.length?`data-tcgp-action="explain-unavailable" data-reason="${esc(availability.reason)}" aria-disabled="true"`:indices.length>1?`data-tcgp-action="open-context-actions" data-action-indices="${indices.join(',')}"`:`data-tcgp-action="battle-action" data-action-index="${actionIndex}"`;
+        parts.push(`<button type="button" class="tcgp-live-context-action attack" title="${esc(availability.reason)}" ${attrs}><b>${esc(attack?.name||'ATTACK')}</b><small>${indices.length?esc(cost):'Needs '+esc(cost)}${indices.length>1?' · CHOOSE TARGET':''}</small><strong>${esc(attack?.damageText??attack?.damage??0)} DMG</strong></button>`);
       });
       const retreats=actionIndicesFor(action=>action.type==='retreat');
       if(retreats.length)parts.push(contextActionButton(retreats,'RETREAT','retreat'));
@@ -292,7 +301,7 @@
   function liveCardHtml(slot,opts){
     const settings=opts||{},compact=!!settings.compact,side=settings.side||'player',zone=settings.zone||'active',index=Number(settings.index||0),targetAttrs=[energyTargetAttrs(side,zone,index),cardDropAttrs(side,zone,index)].filter(Boolean).join(' ');
     if(!slot)return `<div data-board-slot="${side}-${zone}-${index}" class="tcgp-live-card-wrap ${compact?'compact':''}"><button type="button" class="tcgp-live-card ${compact?'compact ':''}empty" ${inspectAttrs(side,zone,index)} ${targetAttrs}><span>${zone==='active'?'ACTIVE':'BENCH '+(index+1)}</span></button></div>`;
-    const info=hpInfo(slot,side),card=info.card,art=cardArtUrl(slot.cardId);
+    const info=hpInfo(slot,side),card=info.card,art=cardArtUrl(slot.cardId,side);
     return `<div class="tcgp-live-card-wrap ${compact?'compact':''}"><button type="button" class="tcgp-live-card ${compact?'compact':''}" ${inspectAttrs(side,zone,index)} ${targetAttrs}>${art?`<img src="${esc(art)}" alt="${esc(card?.name||slot.cardId)}">`:''}<span class="tcgp-live-hp">${info.left}</span>${liveAttachedEnergyHtml(info)}<span class="tcgp-live-name">${esc(card?.name||slot.cardId)}</span></button>${livePokemonActionsHtml(side,zone,index)}</div>`;
   }
   function liveBenchHtml(sideName,bench){
@@ -333,7 +342,7 @@
   function livePlayerHandHtml(side){
     const handCount=Math.max(1,side.hand.length);
     return `<div class="tcgp-live-hand-fan" style="--hand-count:${handCount}">${side.hand.map((ref,index)=>{
-      const card=data.cardById(ref.cardId),art=cardArtUrl(ref.cardId),usable=centerHandActionIndices(battleActionCache,index).length>0;
+      const card=data.cardById(ref.cardId),art=cardArtUrl(ref.cardId,'player'),usable=centerHandActionIndices(battleActionCache,index).length>0;
       return `<div class="tcgp-live-hand-wrap ${usable?'playable':''}" style="--hand-i:${index}"><button type="button" class="tcgp-live-hand-card" ${inspectAttrs('player','hand',index)} data-tcgp-hand-drag="${index}">${art?`<img src="${esc(art)}" alt="${esc(card?.name||ref.cardId)}">`:`<span>${esc(card?.name||ref.cardId)}</span>`}</button></div>`;
     }).join('')||'<span class="tcgp-live-hand-empty">No cards</span>'}</div>`;
   }
@@ -345,7 +354,7 @@
   }
   function livePileHtml(sideName,side,kind){
     const isDiscard=kind==='discard',count=isDiscard?side.discard.length:side.deck.length,top=isDiscard&&count?side.discard[count-1]:null,emptyDiscard=isDiscard&&!count;
-    const topArt=top?cardArtUrl(top.cardId):'',sleeve=sleeveArtPath(sideName),backStyle=!isDiscard&&sleeve?`background-image:url('${esc(sleeve)}');`:'';
+    const topArt=top?cardArtUrl(top.cardId,sideName):'',sleeve=sleeveArtPath(sideName),backStyle=!isDiscard&&sleeve?`background-image:url('${esc(sleeve)}');`:'';
     const attrs=isDiscard?`data-tcgp-action="open-discard" data-side="${esc(sideName)}"`:'';
     const fallbackText=isDiscard&&top&&!topArt?esc(cardName(top.cardId).slice(0,2).toUpperCase()):(!topArt&&!sleeve&&!isDiscard?'◆':'');
     return `<button type="button" class="tcgp-live-pile ${isDiscard?'discard':'deck'} ${sideName==='player'?'mine':''}" ${attrs} ${isDiscard?'':'disabled'} aria-label="${isDiscard?'View discard pile':'Deck'} ${count} cards"><span class="tcgp-live-pile-card${emptyDiscard?' empty':''}" style="${topArt?`background-image:url('${esc(topArt)}');`:backStyle}">${fallbackText}</span><b>${count}</b><small>${isDiscard?'DISCARD':'DECK'}</small></button>`;
@@ -358,8 +367,9 @@
   function liveInspectOverlayHtml(){
     if(battleOverlay!=='inspect'||!battleInspect)return'';
     const info=resolveInspect(currentBattle,battleInspect);if(!info?.card)return'';
-    const card=info.card,art=cardArtUrl(card.id),health=info.slot?hpInfo(info.slot,battleInspect.side):null;
-    return `<div class="tcgp-live-overlay"><button class="tcgp-live-overlay-scrim" type="button" data-tcgp-action="close-overlay" aria-label="Close card detail"></button><section class="tcgp-live-sheet tcgp-live-card-sheet"><button class="tcgp-live-sheet-close" type="button" data-tcgp-action="close-overlay">×</button><div class="tcgp-live-sheet-card">${art?`<img src="${esc(art)}" alt="${esc(card.name)}">`:''}<div><div class="eyebrow">${esc(info.subtitle)}</div><h3>${esc(card.name)}</h3><div class="tcgp-live-tags"><span>${esc(typeLabel(card))}</span>${card.kind==='pokemon'||info.slot?`<span>HP ${health?.left??card.hp}/${health?.hp??card.hp}</span><span>⚡ ${health?.energy||0}</span><span>Retreat ${Number(card.retreat||0)}</span><span>Weak ${esc(card.weakness||'—')}</span>`:''}</div></div></div><div class="tcgp-live-sheet-attacks">${cardRulesHtml(card,info.zone==='active'?(card.attacks||[]).map((_,i)=>core.attackAvailability(currentBattle,info.sideName,i)):null)}</div></section></div>`;
+    const card=info.card,art=cardArtUrl(info.ref?.cardId||card.id,info.sideName),health=info.slot?hpInfo(info.slot,battleInspect.side):null;
+    const links=(info.slot?.tool?`<button class="tcgp-battle-action secondary" ${inspectAttrs(info.sideName,'tool-'+info.zone,battleInspect.index)}>Inspect attached Tool</button>`:'')+(currentBattle.stadium&&info.zone!=='stadium'?`<button class="tcgp-battle-action secondary" ${inspectAttrs('player','stadium',0)}>Inspect Stadium</button>`:'');
+    return `<div class="tcgp-live-overlay"><button class="tcgp-live-overlay-scrim" type="button" data-tcgp-action="close-overlay" aria-label="Close card detail"></button><section class="tcgp-live-sheet tcgp-live-card-sheet"><button class="tcgp-live-sheet-close" type="button" data-tcgp-action="close-overlay">×</button><div class="tcgp-live-sheet-card">${art?`<img src="${esc(art)}" alt="${esc(card.name)}">`:''}<div><div class="eyebrow">${esc(info.subtitle)}</div><h3>${esc(card.name)}</h3><div class="tcgp-live-tags"><span>${esc(typeLabel(card))}</span>${card.kind==='pokemon'||info.slot?`<span>HP ${health?.left??card.hp}/${health?.hp??card.hp}</span><span>⚡ ${health?.energy||0}</span><span>Retreat ${Number(card.retreat||0)}</span><span>Weak ${esc(card.weakness||'—')}</span>`:''}</div></div></div><div class="tcgp-live-sheet-attacks">${cardRulesHtml(card,info.zone==='active'?(card.attacks||[]).map((_,i)=>core.attackAvailability(currentBattle,info.sideName,i)):null)}</div>${links?`<div class="tcgp-battle-actions-row">${links}</div>`:''}</section></div>`;
   }
   function liveContextActionsOverlayHtml(){
     if(battleOverlay!=='context-actions')return'';
@@ -369,7 +379,8 @@
   function liveDiscardOverlayHtml(){
     if(battleOverlay!=='discard')return'';
     const side=currentBattle?.sides?.[battleDiscardSide],label=battleDiscardSide==='player'?'Your':'CPU',cards=side?.discard||[];
-    return `<div class="tcgp-live-overlay"><button class="tcgp-live-overlay-scrim" type="button" data-tcgp-action="close-overlay" aria-label="Close discard pile"></button><section class="tcgp-live-sheet tcgp-live-discard-sheet"><div class="tcgp-live-sheet-head"><div><small>${label.toUpperCase()}</small><h3>Discard pile · ${cards.length}</h3></div><button class="tcgp-live-sheet-close" type="button" data-tcgp-action="close-overlay">×</button></div><div class="tcgp-live-discard-grid">${cards.length?cards.map(ref=>{const card=data.cardById(ref.cardId),art=cardArtUrl(ref.cardId);return `<div class="tcgp-live-discard-card">${art?`<img src="${esc(art)}" alt="${esc(card?.name||ref.cardId)}">`:''}<span>${esc(card?.name||ref.cardId)}</span></div>`;}).join(''):'<p class="tcgp-battle-note">Discard pile is empty.</p>'}</div></section></div>`;
+    const cardsHtml=cards.map((ref,index)=>{const card=data.cardById(ref.cardId),art=cardArtUrl(ref.cardId,battleDiscardSide);return `<button type="button" class="tcgp-live-discard-card" ${inspectAttrs(battleDiscardSide,'discard',index)}>${art?`<img src="${esc(art)}" alt="${esc(card?.name||ref.cardId)}">`:''}<span>${esc(card?.name||ref.cardId)}</span></button>`;}).join('');
+    return `<div class="tcgp-live-overlay"><button class="tcgp-live-overlay-scrim" type="button" data-tcgp-action="close-overlay" aria-label="Close discard pile"></button><section class="tcgp-live-sheet tcgp-live-discard-sheet"><div class="tcgp-live-sheet-head"><div><small>${label.toUpperCase()}</small><h3>Discard pile · ${cards.length}</h3></div><button class="tcgp-live-sheet-close" type="button" data-tcgp-action="close-overlay">×</button></div><div class="tcgp-live-discard-grid">${cardsHtml||'<p class="tcgp-battle-note">Discard pile is empty.</p>'}</div></section></div>`;
   }
   function liveMidControlsHtml(turnText,lastLog){
     if(currentBattle?.phase==='setup'){
@@ -436,10 +447,10 @@
   function startBattle(cards,practice,energyTypes,testSetup){
     clearBattleEvent();
     cancelGesture?.();clearTimeout(cpuTimer);cpuTimer=null;
-    currentChallenge=solo.challengeById(CHALLENGE_ID);currentPractice=!!practice;currentPlayerDeck=cards.slice();resultInfo=null;cpuPending=false;battleInspect=null;battleOverlay=null;battleEvent='';setBattleLive(true);
+    currentChallenge=solo.challengeById(selectedChallengeId)||solo.challengeById(CHALLENGE_ID);currentPractice=!!practice;currentPlayerDeck=cards.slice();resultInfo=null;cpuPending=false;battleInspect=null;battleOverlay=null;battleEvent='';setBattleLive(true);
     currentPlayerEnergyTypes=Array.isArray(energyTypes)?energyTypes.slice():decks.analyzeDeck(cards).recommendedEnergyTypes;
     currentTestSetup=practice&&testSetup?testSetup:null;
-    currentBattle=solo.createBattle({challengeId:CHALLENGE_ID,playerDeck:cards,seed:Date.now()>>>0,playerEnergyType:currentPlayerEnergyTypes[0],playerEnergyTypes:currentPlayerEnergyTypes,manualPlayerSetup:true,...(practice&&testSetup?{testMode:true,opponentDeck:testSetup.opponentCards,opponentEnergyTypes:testSetup.opponentEnergyTypes}:{})});
+    currentBattle=solo.createBattle({challengeId:currentChallenge.id,playerDeck:cards,playerDeckId:currentDeckAppearance?.id,playerDeckName:currentDeckAppearance?.name,seed:Date.now()>>>0,playerEnergyType:currentPlayerEnergyTypes[0],playerEnergyTypes:currentPlayerEnergyTypes,manualPlayerSetup:true,testMode:!!practice,...(practice&&testSetup?{opponentDeck:testSetup.opponentCards,opponentEnergyTypes:testSetup.opponentEnergyTypes}:{})});
     renderBattle();maybeCpu();
   }
   function cpuOwnsNextAction(){
@@ -454,7 +465,7 @@
     if(!currentBattle||!cpuOwnsNextAction()){cpuPending=false;renderBattle();return;}
     const before=currentBattle.log.length;
     try{
-      const chosen=ai.chooseAction(currentBattle,'opponent','Beginner',cpuActions);
+      const chosen=ai.chooseAction(currentBattle,'opponent',currentChallenge?.difficulty||'Beginner',cpuActions);
       if(!chosen){cpuPending=false;renderBattle();return;}
       core.applyAction(currentBattle,'opponent',chosen);
       cpuActions+=1;
@@ -472,10 +483,12 @@
     if(home)home.hidden=true;if(stage)stage.hidden=true;view.hidden=false;renderHome();
     const state=battleSave();if(!state.helpSeen){state.helpSeen=true;saveNow();showHelp();}
   }
-  function close(){clearBattleEvent();cancelGesture?.();clearTimeout(cpuTimer);cpuTimer=null;cpuPending=false;currentBattle=null;const view=el('tcgpBattleView'),home=el('packHome');if(view)view.hidden=true;if(home)home.hidden=false;battleInspect=null;battleOverlay=null;setBattleLive(false);setScreen('home');}
+  function requestLeave(callback){if(screen==='builder'&&root?.LuckyDexTCGPDeckEditor?.requestLeave)return root.LuckyDexTCGPDeckEditor.requestLeave(callback);callback();return true;}
+  function close(force){if(force!==true&&screen==='builder')return requestLeave(()=>close(true));clearBattleEvent();cancelGesture?.();clearTimeout(cpuTimer);cpuTimer=null;cpuPending=false;currentBattle=null;const view=el('tcgpBattleView'),home=el('packHome');if(view)view.hidden=true;if(home)home.hidden=false;battleInspect=null;battleOverlay=null;setBattleLive(false);setScreen('home');}
   function showHelp(){const help=el('tcgpBattleHelp');if(help)help.hidden=false;}
   function hideHelp(){const help=el('tcgpBattleHelp');if(help)help.hidden=true;}
   function back(){
+    if(screen==='builder')return requestLeave(()=>renderHome(true));
     if(screen==='home')return close();
     if(screen==='battle'&&['setup','battle','promote'].includes(currentBattle?.phase)){
       if(root&&typeof root.confirm==='function'&&!root.confirm('Leave this battle? The current match will be abandoned.'))return;
@@ -484,7 +497,7 @@
     renderHome();
   }
 
-  function startOwned(){const deck=activeDeck();if(!deck){toast('Build and save a legal owned deck first.');return;}startBattle(deck.cards,false,decks.deckEnergyTypes(deck));}
+  function startOwned(){const deck=activeDeck();if(!deck){toast('Build and save a legal owned deck first.');return;}currentDeckAppearance={...deck,preferredPrints:{...deck.preferredPrints},_ownedRows:ownedRows()};startBattle(deck.cards,false,decks.deckEnergyTypes(deck));}
   function openBuilder(prefill){
     setBattleLive(false);setScreen('builder');
     root.document.body.classList.add('tcgp-deck-editing');
@@ -494,10 +507,13 @@
   function contentClick(event){
     const btn=event.target.closest?.('[data-tcgp-action]');if(!btn)return;const action=btn.dataset.tcgpAction;
     if(Date.now()<handDragSuppressUntil&&btn.closest?.('[data-tcgp-hand-drag]'))return;
+    if(action==='explain-unavailable')return toast(btn.dataset.reason||'This action is currently unavailable.');
+    if(action==='solo-difficulty'){selectedDifficulty=btn.dataset.difficulty;return renderHome();}
+    if(action==='select-challenge'){const c=solo.challengeById(btn.dataset.challengeId);if(c&&solo.isUnlocked?.(c,root.state)!==false){selectedChallengeId=c.id;selectedDifficulty=c.difficulty;}return renderHome();}
     if(action==='build')return openBuilder();
     if(action==='quick')return openBuilder('quick');
     if(action==='battle-owned')return startOwned();
-    if(action==='practice')return startBattle(decks.LOANER_PLAYER_DECK,true);
+    if(action==='practice'){currentDeckAppearance=null;return startBattle(decks.LOANER_PLAYER_DECK,true);}
     if(action==='home')return renderHome();
     if(action==='rematch')return startBattle(currentPlayerDeck,currentPractice,currentPlayerEnergyTypes,currentTestSetup);
     if(action==='inspect-card'){
@@ -578,7 +594,7 @@
     if(!source||!root?.document||event.isPrimary===false)return;
     const handIndex=Number(source.dataset.tcgpHandDrag);if(!Number.isInteger(handIndex))return;
     cancelGesture?.();event.preventDefault();
-    const captured=currentBattle,ref=captured?.sides?.player?.hand?.[handIndex],art=ref?cardArtUrl(ref.cardId):'',originWrap=source.closest('.tcgp-live-hand-wrap');
+    const captured=currentBattle,ref=captured?.sides?.player?.hand?.[handIndex],art=ref?cardArtUrl(ref.cardId,'player'):'',originWrap=source.closest('.tcgp-live-hand-wrap');
     const host=source.closest('.tcgp-live-hand'),scrollStart=host?.scrollLeft||0,sx=event.clientX,sy=event.clientY;
     let ghost=null,moved=false,mode=event.pointerType==='touch'&&host?.scrollWidth>host?.clientWidth?'pending':'drag';
     function makeGhost(){
@@ -635,9 +651,10 @@
   function init(){
     const entry=el('tcgpBattleEntry'),content=el('tcgpBattleContent');if(!entry||!content)return;
     entry.addEventListener('click',open);el('tcgpBattleBack')?.addEventListener('click',back);el('tcgpBattleInfo')?.addEventListener('click',showHelp);el('tcgpBattleHelpClose')?.addEventListener('click',hideHelp);el('tcgpBattleHelpDone')?.addEventListener('click',hideHelp);content.addEventListener('click',contentClick);content.addEventListener('pointerdown',energyPointerDown);content.addEventListener('pointerdown',handPointerDown);
+    root.addEventListener?.('beforeunload',event=>{if(screen==='builder'&&root.LuckyDexTCGPDeckEditor?.isDirty?.()){event.preventDefault();event.returnValue='';}});
     if(root.ResizeObserver)new root.ResizeObserver(()=>{cancelGesture?.();layoutPlayerHand();}).observe(content);else root.addEventListener?.('resize',()=>{cancelGesture?.();layoutPlayerHand();});
   }
   if(root&&root.document){if(root.document.readyState==='loading')root.document.addEventListener('DOMContentLoaded',init,{once:true});else init();}
 
-  return{actionLabel,actionEventText,cardArtUrl,cardRulesHtml,supportText,filterBuilderRows,resultSummary,coverageForOwnedCards,centerHandActionIndices,directHandDropActionIndex,open,close,renderHome};
+  return{actionLabel,actionEventText,cardArtUrl,cardRulesHtml,supportText,filterBuilderRows,resultSummary,coverageForOwnedCards,centerHandActionIndices,directHandDropActionIndex,open,close,renderHome,requestLeave,isEditing:()=>screen==='builder'};
 });

@@ -35,7 +35,7 @@ test('Articuno inferred Water can generate and pay Ice Beam; wrong Grass cannot;
  a=C.attackAvailability(b,'player',0);assert.equal(a.usable,true);const action=C.legalActions(b,'player').find(a=>a.type==='attack'&&a.attackIndex===0);C.applyAction(b,'player',action);assert.ok(b.log.some(e=>e.type==='attack'&&e.attack==='Ice Beam'));
 });
 test('CPU validation rejects an Energy configuration that cannot power its fixed deck',()=>{
- assert.throws(()=>S.createBattle({playerDeck:D.BEGINNER_IVYSAUR_DECK,opponentEnergyTypes:['Fire']}),/CPU.*Energy/i);
+ assert.throws(()=>S.createBattle({playerDeck:D.BEGINNER_IVYSAUR_DECK,testMode:true,opponentEnergyTypes:['Fire']}),/CPU.*Energy/i);
 });
 test('saving an experimental deck preserves explicit Energy and returns warnings rather than blocking legality',()=>{
  const state={};const r=K.saveDeck(state,{cards:D.BEGINNER_IVYSAUR_DECK,energyTypes:['Fire']},owned);assert.equal(r.ok,true);assert.deepEqual(r.deck.energyTypes,['Fire']);assert.ok(r.warnings.some(w=>w.code==='unpowerable'));

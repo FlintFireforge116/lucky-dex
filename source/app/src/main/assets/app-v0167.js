@@ -1357,7 +1357,8 @@ function renderGlobalHud(){
   renderTitlePartners();renderAdventurePartyMini();updatePackButton();renderDaily();
 }
 function showAdventureHub(){window.LuckyDexAdventure?.enter?.();}
-function navigate(page){
+function navigate(page,skipPocketGuard=false){
+  if(!skipPocketGuard&&page!=='packs'&&window.LuckyDexTCGPBattleUI?.isEditing?.()){window.LuckyDexTCGPBattleUI.requestLeave(()=>{window.LuckyDexTCGPBattleUI.close(true);navigate(page,true);});return;}
   // Navigation must remain available even if one feature's enter/leave hook fails.
   // A game-specific runtime error should never strand the user on the current tab.
   const safe=(label,fn)=>{try{return fn?.();}catch(error){console.error(`[LuckyDex] navigation hook failed (${label})`,error);return undefined;}};
@@ -1973,7 +1974,7 @@ renderCollection=function(){const grid=document.getElementById('collectionGrid')
    before the app could finish wiring. That single runtime exception explained
    the frozen starter, Wild Search/Expedition stalls and permanent Loading sets.
 */
-window.__LUCKYDEX_BUILD='0.69.35';
+window.__LUCKYDEX_BUILD='0.69.37';
 window.addEventListener('error',event=>{
   try{localStorage.setItem('luckyDexLastRuntimeError',JSON.stringify({build:window.__LUCKYDEX_BUILD,message:String(event?.message||'Unknown error'),source:String(event?.filename||''),line:Number(event?.lineno||0),at:Date.now()}));}catch(_){ }
 });

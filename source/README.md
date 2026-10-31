@@ -1,3 +1,21 @@
+# LuckyDex v0.69.37 — Pocket QA, decks and Solo progression
+
+Built only from the supplied `lucky-dex-main.zip` (SHA256 `40bbd6a980e3a8bd64cd4ce7af87abbfc9dcff8ec34635bc2a4a507ad7ef4e70`). The user confirmed its v0.69.36 features despite stale v0.69.35/7016 labels. This release uses Android **7018**, the existing application ID and permanent signer.
+
+The existing portrait workspace now protects unsaved edits with Save/Discard/Cancel, supports rename/duplicate/delete/active-deck previews and owned artwork selection, and provides 16 coherent ownership-aware recipes. Filter clearing retains the Owned setting and dual-type filters accept at most two types. Selected artwork remains cosmetic throughout battle.
+
+Solo has 16 challenges across Beginner, Intermediate, Advanced and Expert, using the same legal engine with progressively stronger public-information evaluation. Two distinct clears unlock the next tier. First-clear rewards, persistent replay protection, expanded records and 15 normal achievements integrate with the existing save/economy. Developer test battles do not award progression. Battle inspection covers physical Bench slots, both discard piles, Tools and Stadiums; both decks use the selected sleeve.
+
+Reviewed cutoff **2026-10-30**: **4,534 released prints / 2,450 identities; 1,833 FULL, 617 PARTIAL, 0 UNSUPPORTED**. This resolves 126 previously PARTIAL identities with no FULL regressions. First Partners launched October 31, beyond the reviewed inventory; its card-by-card source is not supplied or imported. This build does not claim complete latest-release coverage or 100% mechanics.
+
+Run `node scripts/verify-pass-v06937.cjs --tag=verified` for the 58 relevant regression programs, `node scripts/verify-tcgp-catalogue.cjs` for source/schema/coverage integrity, and `node scripts/benchmark-tcgp-v06937.cjs` for host browser timings (Playwright and Chrome required). The unchanged `node scripts/run-tests.cjs` runs the whole historical repository suite; it is not claimed green by this pass. See [implementation and QA report](docs/TCGP_IMPLEMENTATION_REPORT_v06937.md), [database guide](docs/TCGP_CARD_DATABASE.md), and [generated coverage](docs/TCGP_CARD_COVERAGE.md).
+
+Apply the changed-files patch inside canonical `source/`; retain all existing assets and the permanent keystore. The accompanying APK is a recovery/testing candidate: no Android device was available for installation testing.
+
+---
+
+## Historical release notes (not the current source or coverage)
+
 # LuckyDex v0.69.36 â€” visual Pocket decks and Dual Fusion
 
 Continues the actual current v0.69.35 source; Android7017, unchanged application ID and permanent signer. No older baseline is restored.

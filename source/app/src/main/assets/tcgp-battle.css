@@ -152,3 +152,5 @@ body.tcgp-card-dragging [data-card-play-zone="1"][data-tcgp-drop-state="invalid"
 .tcgp-live-context-action.promote{min-height:28px;padding:5px 9px;background:rgba(31,112,181,.96);border-color:rgba(159,216,255,.55);font-size:7px}
 .tcgp-live-mid-controls.promote{grid-template-columns:auto auto 1fr;background:rgba(116,48,48,.2)}
 @media(max-height:720px){.tcgp-live-action-event{min-height:28px;padding:4px 8px;font-size:9px}.tcgp-live-context-action.attack{min-width:104px;min-height:34px}}
+
+.tcgp-live-context-action.attack[aria-disabled="true"]{opacity:.8;background:#dbe4e9;color:#465d69;border-color:#8fa2ad;cursor:help}

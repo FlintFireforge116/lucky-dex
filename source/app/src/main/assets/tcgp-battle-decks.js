@@ -51,6 +51,7 @@
     const current = state.tcgpBattle && typeof state.tcgpBattle === 'object' ? state.tcgpBattle : {};
     const stats = current.stats && typeof current.stats === 'object' ? current.stats : {};
     const battle = {
+      ...current,
       schema:Number(current.schema || BATTLE_DEFAULTS.schema),
       helpSeen:current.helpSeen === true,
       decks:Array.isArray(current.decks) ? current.decks : [],

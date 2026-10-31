@@ -216,13 +216,13 @@
   ],
   "gameplayIdentities": 2450,
   "statusCounts": {
-    "FULL": 1707,
-    "PARTIAL": 743,
+    "FULL": 1833,
+    "PARTIAL": 617,
     "UNSUPPORTED": 0
   },
   "printStatusCounts": {
-    "FULL": 2843,
-    "PARTIAL": 1691,
+    "FULL": 3136,
+    "PARTIAL": 1398,
     "UNSUPPORTED": 0
   },
   "schemaErrors": 0,
@@ -380,14 +380,6 @@
       ]
     },
     {
-      "reason": "Unimplemented ability text: If you have Arceus or Arceus ex in play, this Pokémon takes −30 damage from attacks.",
-      "count": 2,
-      "cardIds": [
-        "P-A-044",
-        "A2a-055"
-      ]
-    },
-    {
       "reason": "Unimplemented attack text: Discard a random card from your opponent's hand.",
       "count": 2,
       "cardIds": [
@@ -428,14 +420,6 @@
       ]
     },
     {
-      "reason": "Unimplemented ability text: This Pokémon takes −30 damage from attacks from {R} or {W} Pokémon.",
-      "count": 2,
-      "cardIds": [
-        "A2-033",
-        "A4-050"
-      ]
-    },
-    {
       "reason": "Unimplemented attack text: During your next turn, this Pokémon's Overdrive Smash attack does +60 damage.",
       "count": 2,
       "cardIds": [
@@ -449,14 +433,6 @@
       "cardIds": [
         "A2-104",
         "B3-125"
-      ]
-    },
-    {
-      "reason": "Unimplemented ability text: If you have Arceus or Arceus ex in play, attacks used by this Pokémon do +30 damage to your opponent's Active Pokémon.",
-      "count": 2,
-      "cardIds": [
-        "A2a-009",
-        "A2a-041"
       ]
     },
     {
@@ -484,14 +460,6 @@
       ]
     },
     {
-      "reason": "Unimplemented attack text: Discard a random Energy from both Active Pokémon.",
-      "count": 2,
-      "cardIds": [
-        "A3-034",
-        "B2-108"
-      ]
-    },
-    {
       "reason": "Unimplemented attack text: During your opponent's next turn, if this Pokémon is damaged by an attack, do 40 damage to the Attacking Pokémon.",
       "count": 2,
       "cardIds": [
@@ -513,14 +481,6 @@
       "cardIds": [
         "A3-096",
         "B3b-058"
-      ]
-    },
-    {
-      "reason": "Unimplemented attack text: If your opponent's Active Pokémon has an Ability, this attack does 40 more damage.",
-      "count": 2,
-      "cardIds": [
-        "A3-123",
-        "B4-090"
       ]
     },
     {
@@ -548,27 +508,11 @@
       ]
     },
     {
-      "reason": "Unimplemented attack text: This attack does 20 damage for each Energy attached to all of your opponent's Pokémon.",
-      "count": 2,
-      "cardIds": [
-        "A3b-028",
-        "B2b-044"
-      ]
-    },
-    {
       "reason": "Unimplemented attack text: If 1 of your Pokémon used Sweets Relay during your last turn, this attack does 60 more damage.",
       "count": 2,
       "cardIds": [
         "A3b-032",
         "B2-039"
-      ]
-    },
-    {
-      "reason": "Unimplemented attack text: This attack does 30 more damage for each Evolution Pokémon on your Bench.",
-      "count": 2,
-      "cardIds": [
-        "A3b-033",
-        "B4-003"
       ]
     },
     {
@@ -636,27 +580,11 @@
       ]
     },
     {
-      "reason": "Unimplemented attack text: Both Active Pokémon are now Confused.",
-      "count": 2,
-      "cardIds": [
-        "B1-195",
-        "P-B-071"
-      ]
-    },
-    {
       "reason": "Unimplemented ability text: Once during your turn, when you play this Pokémon from your hand to evolve 1 of your Pokémon, you may take a {R} Energy from your Energy Zone and attach it to your Active {R} Pokémon.",
       "count": 2,
       "cardIds": [
         "B1a-012",
         "B2b-008"
-      ]
-    },
-    {
-      "reason": "Unimplemented attack text: Put a random Supporter card from your deck into your hand.",
-      "count": 2,
-      "cardIds": [
-        "B1a-030",
-        "B4-071"
       ]
     },
     {
@@ -692,14 +620,6 @@
       ]
     },
     {
-      "reason": "Unimplemented attack text: Take a {W} Energy from your Energy Zone and attach it to 1 of your Benched {W} Pokémon.",
-      "count": 2,
-      "cardIds": [
-        "B2b-021",
-        "B4-035"
-      ]
-    },
-    {
       "reason": "Unimplemented attack text: This attack does 30 more damage for each point you have gotten.",
       "count": 2,
       "cardIds": [
@@ -732,14 +652,6 @@
       ]
     },
     {
-      "reason": "Unimplemented ability text: Once during your turn, you may take a {W} Energy from your Energy Zone and attach it to this Pokémon.",
-      "count": 2,
-      "cardIds": [
-        "B3b-015",
-        "C1-031"
-      ]
-    },
-    {
       "reason": "Unimplemented attack text: Put 3 random cards from among Silcoon and Cascoon from your deck onto your Bench.",
       "count": 2,
       "cardIds": [
@@ -756,24 +668,10 @@
       ]
     },
     {
-      "reason": "Unimplemented ability text: Once during your turn, you may heal 20 damage from each of your Pokémon.",
-      "count": 1,
-      "cardIds": [
-        "A1-007"
-      ]
-    },
-    {
       "reason": "Unimplemented ability text: If this Pokémon is in the Active Spot, once during your turn, you may switch in 1 of your opponent's Benched Basic Pokémon to the Active Spot.",
       "count": 1,
       "cardIds": [
         "A1-020"
-      ]
-    },
-    {
-      "reason": "Unimplemented attack text: Take a {G} Energy from your Energy Zone and attach it to 1 of your Benched {G} Pokémon.",
-      "count": 1,
-      "cardIds": [
-        "A1-030"
       ]
     },
     {
@@ -791,38 +689,10 @@
       ]
     },
     {
-      "reason": "Unimplemented ability text: Once during your turn, you may do 20 damage to 1 of your opponent's Pokémon.",
-      "count": 1,
-      "cardIds": [
-        "A1-089"
-      ]
-    },
-    {
-      "reason": "Unimplemented ability text: Once during your turn, you may take a {L} Energy from your Energy Zone and attach it to this Pokémon.",
-      "count": 1,
-      "cardIds": [
-        "A1-098"
-      ]
-    },
-    {
       "reason": "Unimplemented ability text: As long as this Pokémon is in the Active Spot, your opponent can't use any Supporter cards from their hand.",
       "count": 1,
       "cardIds": [
         "A1-123"
-      ]
-    },
-    {
-      "reason": "Unimplemented ability text: Once during your turn, you may flip a coin. If heads, your opponent's Active Pokémon is now Asleep.",
-      "count": 1,
-      "cardIds": [
-        "A1-125"
-      ]
-    },
-    {
-      "reason": "Unimplemented ability text: Once during your turn, you may take a {P} Energy from your Energy Zone and attach it to the {P} Pokémon in the Active Spot.",
-      "count": 1,
-      "cardIds": [
-        "A1-132"
       ]
     },
     {
@@ -837,20 +707,6 @@
       "count": 1,
       "cardIds": [
         "A1-166"
-      ]
-    },
-    {
-      "reason": "Unimplemented attack text: This attack does 50 more damage for each of your Benched Nidoking.",
-      "count": 1,
-      "cardIds": [
-        "A1-168"
-      ]
-    },
-    {
-      "reason": "Unimplemented ability text: Once during your turn, if this Pokémon is in the Active Spot, you may make your opponent's Active Pokémon Poisoned.",
-      "count": 1,
-      "cardIds": [
-        "A1-177"
       ]
     },
     {
@@ -893,13 +749,6 @@
       "count": 1,
       "cardIds": [
         "A1-210"
-      ]
-    },
-    {
-      "reason": "Unimplemented trainer text: Heal 50 damage from 1 of your {G} Pokémon.",
-      "count": 1,
-      "cardIds": [
-        "A1-219"
       ]
     },
     {
@@ -973,13 +822,6 @@
       ]
     },
     {
-      "reason": "Unimplemented ability text: This Pokémon takes −30 damage from attacks from {F} Pokémon.",
-      "count": 1,
-      "cardIds": [
-        "P-A-047"
-      ]
-    },
-    {
       "reason": "Unimplemented attack text: Choose 2 of your Benched Pokémon. For each of those Pokémon, take a {W} Energy from your Energy Zone and attach it to that Pokémon.",
       "count": 1,
       "cardIds": [
@@ -991,13 +833,6 @@
       "count": 1,
       "cardIds": [
         "P-A-051"
-      ]
-    },
-    {
-      "reason": "Unimplemented attack text: Take a {L} Energy from your Energy Zone and attach it to 1 of your Benched {L} Pokémon.",
-      "count": 1,
-      "cardIds": [
-        "P-A-058"
       ]
     },
     {
@@ -1022,13 +857,6 @@
       ]
     },
     {
-      "reason": "Unimplemented attack text: Discard the top 5 cards of each player's deck.",
-      "count": 1,
-      "cardIds": [
-        "P-A-081"
-      ]
-    },
-    {
       "reason": "Unimplemented attack text: If this Pokémon evolved during this turn, this attack does 20 more damage.",
       "count": 1,
       "cardIds": [
@@ -1050,27 +878,6 @@
       ]
     },
     {
-      "reason": "Unimplemented attack text: Flip a coin. If heads, switch in 1 of your opponent's Benched Pokémon to the Active Spot.",
-      "count": 1,
-      "cardIds": [
-        "P-A-095"
-      ]
-    },
-    {
-      "reason": "Unimplemented attack text: If your opponent's Active Pokémon is an Evolution Pokémon, this attack does 40 more damage.",
-      "count": 1,
-      "cardIds": [
-        "P-A-097"
-      ]
-    },
-    {
-      "reason": "Unimplemented attack text: If Latios is on your Bench, this attack does 20 more damage.",
-      "count": 1,
-      "cardIds": [
-        "A4a-036"
-      ]
-    },
-    {
       "reason": "Unimplemented ability text: Once during your turn, when you play this Pokémon from your hand to evolve 1 of your Pokémon, you may heal 60 damage from 1 of your {W} Pokémon.",
       "count": 1,
       "cardIds": [
@@ -1085,24 +892,10 @@
       ]
     },
     {
-      "reason": "Unimplemented attack text: This attack does damage to your opponent's Active Pokémon equal to the damage this Pokémon has on it.",
-      "count": 1,
-      "cardIds": [
-        "A4a-043"
-      ]
-    },
-    {
       "reason": "Unimplemented ability text: This Pokémon can evolve into any Pokémon that evolves from Eevee if you play it from your hand onto this Pokémon. (This Pokémon can't evolve during your first turn or the turn you play it.)",
       "count": 1,
       "cardIds": [
         "A3b-056"
-      ]
-    },
-    {
-      "reason": "Unimplemented ability text: Once during your turn, you may heal 10 damage from each of your Pokémon.",
-      "count": 1,
-      "cardIds": [
-        "A2-022"
       ]
     },
     {
@@ -1162,38 +955,10 @@
       ]
     },
     {
-      "reason": "Unimplemented trainer text: During your opponent's next turn, all of your Pokémon take −10 damage from attacks from your opponent's Pokémon.",
-      "count": 1,
-      "cardIds": [
-        "A1a-067"
-      ]
-    },
-    {
-      "reason": "Unimplemented ability text: This Pokémon takes −20 damage from attacks from {R} or {W} Pokémon.",
-      "count": 1,
-      "cardIds": [
-        "A2-032"
-      ]
-    },
-    {
       "reason": "Unimplemented ability text: Prevent all effects of attacks used by your opponent's Pokémon done to this Pokémon.",
       "count": 1,
       "cardIds": [
         "A2-034"
-      ]
-    },
-    {
-      "reason": "Unimplemented attack text: If your opponent's Active Pokémon is a {F} Pokémon, this attack does 30 more damage.",
-      "count": 1,
-      "cardIds": [
-        "A2-044"
-      ]
-    },
-    {
-      "reason": "Unimplemented attack text: If your opponent's Active Pokémon has a Pokémon Tool attached, this attack does 30 more damage.",
-      "count": 1,
-      "cardIds": [
-        "A2-062"
       ]
     },
     {
@@ -1229,13 +994,6 @@
       "count": 1,
       "cardIds": [
         "A2-089"
-      ]
-    },
-    {
-      "reason": "Unimplemented ability text: Attacks used by your {F} Pokémon do +20 damage to your opponent's Active Pokémon.",
-      "count": 1,
-      "cardIds": [
-        "A2-092"
       ]
     },
     {
@@ -1323,24 +1081,10 @@
       ]
     },
     {
-      "reason": "Unimplemented trainer text: Switch in 1 of your opponent's Benched Pokémon that has damage on it to the Active Spot.",
-      "count": 1,
-      "cardIds": [
-        "A2-150"
-      ]
-    },
-    {
       "reason": "Unimplemented trainer text: Put 1 random Glameow, Stunky, or Croagunk from your deck into your hand.",
       "count": 1,
       "cardIds": [
         "A2-151"
-      ]
-    },
-    {
-      "reason": "Unimplemented trainer text: During this turn, attacks used by your Garchomp or Togekiss do +50 damage to your opponent's Active Pokémon.",
-      "count": 1,
-      "cardIds": [
-        "A2-152"
       ]
     },
     {
@@ -1372,13 +1116,6 @@
       ]
     },
     {
-      "reason": "Unimplemented ability text: If you have Arceus or Arceus ex in play, attacks used by this Pokémon cost 1 less {C} Energy.",
-      "count": 1,
-      "cardIds": [
-        "A2a-021"
-      ]
-    },
-    {
       "reason": "Unimplemented ability text: During Pokémon Checkup, if this Pokémon is in the Active Spot, do 10 damage to your opponent's Active Pokémon.",
       "count": 1,
       "cardIds": [
@@ -1400,31 +1137,10 @@
       ]
     },
     {
-      "reason": "Unimplemented ability text: Once during your turn, if you have Arceus or Arceus ex in play, you may do 30 damage to your opponent's Active Pokémon.",
-      "count": 1,
-      "cardIds": [
-        "A2a-050"
-      ]
-    },
-    {
       "reason": "Unimplemented attack text: Your opponent's Active Pokémon is now Poisoned. Do 20 damage to this Pokémon instead of the usual amount for this Special Condition.",
       "count": 1,
       "cardIds": [
         "A2a-052"
-      ]
-    },
-    {
-      "reason": "Unimplemented attack text: If your opponent's Active Pokémon is a {M} Pokémon, this attack does 30 more damage.",
-      "count": 1,
-      "cardIds": [
-        "A2a-056"
-      ]
-    },
-    {
-      "reason": "Unimplemented ability text: As long as this Pokémon is on your Bench, your Active Basic Pokémon's Retreat Cost is 1 less.",
-      "count": 1,
-      "cardIds": [
-        "A2a-069"
       ]
     },
     {
@@ -1435,24 +1151,10 @@
       ]
     },
     {
-      "reason": "Unimplemented trainer text: Put 1 random Basic Pokémon from your discard pile into your hand.",
-      "count": 1,
-      "cardIds": [
-        "A2a-073"
-      ]
-    },
-    {
       "reason": "Unimplemented trainer text: During this turn, attacks used by your Snorlax, Heracross, and Staraptor cost 2 less {C} Energy.",
       "count": 1,
       "cardIds": [
         "A2a-074"
-      ]
-    },
-    {
-      "reason": "Unimplemented trainer text: During your opponent's next turn, all of your {M} Pokémon take −20 damage from attacks from your opponent's Pokémon.",
-      "count": 1,
-      "cardIds": [
-        "A2a-075"
       ]
     },
     {
@@ -1498,13 +1200,6 @@
       ]
     },
     {
-      "reason": "Unimplemented ability text: Once during your turn, you may flip a coin. If heads, your opponent's Active Pokémon is now Poisoned.",
-      "count": 1,
-      "cardIds": [
-        "A2b-051"
-      ]
-    },
-    {
       "reason": "Unimplemented attack text: Flip a coin for each {M} Energy attached to this Pokémon. This attack does 50 damage for each heads.",
       "count": 1,
       "cardIds": [
@@ -1516,13 +1211,6 @@
       "count": 1,
       "cardIds": [
         "A2b-070"
-      ]
-    },
-    {
-      "reason": "Unimplemented trainer text: During this turn, attacks used by your Pokémon do +20 damage to your opponent's Active Pokémon ex.",
-      "count": 1,
-      "cardIds": [
-        "A2b-071"
       ]
     },
     {
@@ -1540,13 +1228,6 @@
       ]
     },
     {
-      "reason": "Unimplemented ability text: Once during your turn, you may heal 30 damage from each of your {W} Pokémon.",
-      "count": 1,
-      "cardIds": [
-        "A3-048"
-      ]
-    },
-    {
       "reason": "Unimplemented attack text: During your next turn, this Pokémon's Insatiable Striking attack does +40 damage.",
       "count": 1,
       "cardIds": [
@@ -1558,20 +1239,6 @@
       "count": 1,
       "cardIds": [
         "A3-050"
-      ]
-    },
-    {
-      "reason": "Unimplemented attack text: This attack does 40 more damage for each of your Benched Wishiwashi and Wishiwashi ex.",
-      "count": 1,
-      "cardIds": [
-        "A3-051"
-      ]
-    },
-    {
-      "reason": "Unimplemented attack text: If your opponent's Active Pokémon is a Basic Pokémon, this attack does 60 more damage.",
-      "count": 1,
-      "cardIds": [
-        "A3-053"
       ]
     },
     {
@@ -1645,24 +1312,10 @@
       ]
     },
     {
-      "reason": "Unimplemented attack text: If any of your Benched Pokémon have damage on them, this attack does 50 more damage.",
-      "count": 1,
-      "cardIds": [
-        "A3-124"
-      ]
-    },
-    {
       "reason": "Unimplemented attack text: During your opponent's next turn, this Pokémon takes +30 damage from attacks.",
       "count": 1,
       "cardIds": [
         "A3-127"
-      ]
-    },
-    {
-      "reason": "Unimplemented attack text: If your opponent's Active Pokémon is a {D} Pokémon, this attack does 30 more damage.",
-      "count": 1,
-      "cardIds": [
-        "A3-132"
       ]
     },
     {
@@ -1698,13 +1351,6 @@
       "count": 1,
       "cardIds": [
         "A3-146"
-      ]
-    },
-    {
-      "reason": "Unimplemented trainer text: The {G} Pokémon this card is attached to gets +30 HP.",
-      "count": 1,
-      "cardIds": [
-        "A3-147"
       ]
     },
     {
@@ -1757,13 +1403,6 @@
       ]
     },
     {
-      "reason": "Unimplemented trainer text: Heal 60 damage from 1 of your Stage 2 Pokémon.",
-      "count": 1,
-      "cardIds": [
-        "A3-155"
-      ]
-    },
-    {
       "reason": "Unimplemented ability text: As long as this Pokémon is in the Active Spot, attacks used by your opponent's Active Pokémon do −20 damage.",
       "count": 1,
       "cardIds": [
@@ -1771,24 +1410,10 @@
       ]
     },
     {
-      "reason": "Unimplemented ability text: Once during your turn, you may put a random Pokémon from your deck into your hand.",
-      "count": 1,
-      "cardIds": [
-        "A3a-027"
-      ]
-    },
-    {
       "reason": "Unimplemented ability text: Pokémon (both yours and your opponent's) can't be healed.",
       "count": 1,
       "cardIds": [
         "A3a-031"
-      ]
-    },
-    {
-      "reason": "Unimplemented attack text: If Passimian is on your Bench, this attack does 40 more damage.",
-      "count": 1,
-      "cardIds": [
-        "A3a-034"
       ]
     },
     {
@@ -1932,20 +1557,6 @@
       ]
     },
     {
-      "reason": "Unimplemented ability text: At the end of your turn, if this Pokémon is in the Active Spot, heal 20 damage from it.",
-      "count": 1,
-      "cardIds": [
-        "A3b-057"
-      ]
-    },
-    {
-      "reason": "Unimplemented ability text: Once during your turn, you may put a random Pokémon Tool card from your deck into your hand.",
-      "count": 1,
-      "cardIds": [
-        "A3b-059"
-      ]
-    },
-    {
       "reason": "Unimplemented trainer text: Choose 1: During this turn, attacks used by your Pokémon that evolve from Eevee do +10 damage to your opponent's Active Pokémon. Heal 20 damage from each of your Pokémon that evolves from Eevee.",
       "count": 1,
       "cardIds": [
@@ -1995,24 +1606,10 @@
       ]
     },
     {
-      "reason": "Unimplemented attack text: If this Pokémon has no damage on it, this attack does 40 more damage.",
-      "count": 1,
-      "cardIds": [
-        "A4-022"
-      ]
-    },
-    {
       "reason": "Unimplemented ability text: If this Pokémon has a Pokémon Tool attached, attacks used by this Pokémon cost 1 less {G} Energy.",
       "count": 1,
       "cardIds": [
         "A4-023"
-      ]
-    },
-    {
-      "reason": "Unimplemented ability text: Once during your turn, you may make your opponent's Active Pokémon Burned.",
-      "count": 1,
-      "cardIds": [
-        "A4-029"
       ]
     },
     {
@@ -2065,24 +1662,10 @@
       ]
     },
     {
-      "reason": "Unimplemented attack text: Move all Energy from this Pokémon to 1 of your Benched Pokémon.",
-      "count": 1,
-      "cardIds": [
-        "A4-063"
-      ]
-    },
-    {
       "reason": "Unimplemented attack text: Take a {L} Energy from your Energy Zone and attach it to 1 of your Benched Basic Pokémon.",
       "count": 1,
       "cardIds": [
         "A4-066"
-      ]
-    },
-    {
-      "reason": "Unimplemented attack text: This Pokémon is now Asleep. Heal 30 damage from it.",
-      "count": 1,
-      "cardIds": [
-        "A4-073"
       ]
     },
     {
@@ -2097,13 +1680,6 @@
       "count": 1,
       "cardIds": [
         "A4-082"
-      ]
-    },
-    {
-      "reason": "Unimplemented ability text: Once during your turn, if this Pokémon is in the Active Spot, you may heal 30 damage from 1 of your Pokémon.",
-      "count": 1,
-      "cardIds": [
-        "A4-083"
       ]
     },
     {
@@ -2128,20 +1704,6 @@
       ]
     },
     {
-      "reason": "Unimplemented attack text: Both Active Pokémon are now Asleep.",
-      "count": 1,
-      "cardIds": [
-        "A4-091"
-      ]
-    },
-    {
-      "reason": "Unimplemented ability text: Once during your turn, if this Pokémon is in the Active Spot, you may switch in 1 of your opponent's Benched Pokémon that has damage on it to the Active Spot.",
-      "count": 1,
-      "cardIds": [
-        "A4-112"
-      ]
-    },
-    {
       "reason": "Unimplemented ability text: Once during your turn, you may move all {D} Energy from each of your Pokémon to this Pokémon.",
       "count": 1,
       "cardIds": [
@@ -2153,13 +1715,6 @@
       "count": 1,
       "cardIds": [
         "A4-128"
-      ]
-    },
-    {
-      "reason": "Unimplemented attack text: If your opponent's Active Pokémon is a {G} Pokémon, this attack does 40 more damage.",
-      "count": 1,
-      "cardIds": [
-        "A4-130"
       ]
     },
     {
@@ -2195,13 +1750,6 @@
       "count": 1,
       "cardIds": [
         "A4-151"
-      ]
-    },
-    {
-      "reason": "Unimplemented trainer text: Discard a {R} Energy from your opponent's Active Pokémon.",
-      "count": 1,
-      "cardIds": [
-        "A4-152"
       ]
     },
     {
@@ -2254,13 +1802,6 @@
       ]
     },
     {
-      "reason": "Unimplemented trainer text: During your opponent's next turn, all of your Steelix and Skarmory ex take −50 damage from attacks from your opponent's Pokémon.",
-      "count": 1,
-      "cardIds": [
-        "A4-160"
-      ]
-    },
-    {
       "reason": "Unimplemented trainer text: For each of your {F} Pokémon in play, look at that many cards from the top of your deck and put them back in any order.",
       "count": 1,
       "cardIds": [
@@ -2293,13 +1834,6 @@
       "count": 1,
       "cardIds": [
         "A4a-018"
-      ]
-    },
-    {
-      "reason": "Unimplemented attack text: This attack does 20 damage for each Benched Pokémon (both yours and your opponent's).",
-      "count": 1,
-      "cardIds": [
-        "A4a-020"
       ]
     },
     {
@@ -2373,20 +1907,6 @@
       ]
     },
     {
-      "reason": "Unimplemented attack text: Heal 50 damage from 1 of your Benched Pokémon.",
-      "count": 1,
-      "cardIds": [
-        "A4a-063"
-      ]
-    },
-    {
-      "reason": "Unimplemented trainer text: The Retreat Cost of the {W} Pokémon this card is attached to is 1 less.",
-      "count": 1,
-      "cardIds": [
-        "A4a-067"
-      ]
-    },
-    {
       "reason": "Unimplemented trainer text: The Pokémon this card is attached to can use any attack from its previous Evolutions. (You still need the necessary Energy to use each attack.)",
       "count": 1,
       "cardIds": [
@@ -2426,34 +1946,6 @@
       "count": 1,
       "cardIds": [
         "B1-016"
-      ]
-    },
-    {
-      "reason": "Unimplemented ability text: Each of your {G} Pokémon gets +20 HP.",
-      "count": 1,
-      "cardIds": [
-        "B1-018"
-      ]
-    },
-    {
-      "reason": "Unimplemented ability text: Once during your turn, you may flip a coin. If heads, switch in 1 of your opponent's Benched Pokémon to the Active Spot.",
-      "count": 1,
-      "cardIds": [
-        "B1-027"
-      ]
-    },
-    {
-      "reason": "Unimplemented attack text: Heal 30 damage from each of your Benched Basic Pokémon.",
-      "count": 1,
-      "cardIds": [
-        "B1-032"
-      ]
-    },
-    {
-      "reason": "Unimplemented ability text: Once during your turn, you may discard the top card of your opponent's deck.",
-      "count": 1,
-      "cardIds": [
-        "B1-043"
       ]
     },
     {
@@ -2499,13 +1991,6 @@
       ]
     },
     {
-      "reason": "Unimplemented ability text: If this Pokémon has full HP, it takes −40 damage from attacks from your opponent's Pokémon.",
-      "count": 1,
-      "cardIds": [
-        "B1-080"
-      ]
-    },
-    {
       "reason": "Unimplemented ability text: As long as this Pokémon is in the Active Spot, whenever your opponent attaches an Energy from their Energy Zone to 1 of their Pokémon, do 20 damage to that Pokémon.",
       "count": 1,
       "cardIds": [
@@ -2524,13 +2009,6 @@
       "count": 1,
       "cardIds": [
         "B1-085"
-      ]
-    },
-    {
-      "reason": "Unimplemented attack text: Discard a {L} Energy from your opponent's Active Pokémon.",
-      "count": 1,
-      "cardIds": [
-        "B1-094"
       ]
     },
     {
@@ -2583,13 +2061,6 @@
       ]
     },
     {
-      "reason": "Unimplemented attack text: If your opponent's Active Pokémon is a {G} Pokémon, this attack does 50 more damage.",
-      "count": 1,
-      "cardIds": [
-        "B1-147"
-      ]
-    },
-    {
       "reason": "Unimplemented attack text: This attack does 40 more damage for each of your opponent's Pokémon in play that has an Ability.",
       "count": 1,
       "cardIds": [
@@ -2625,20 +2096,6 @@
       ]
     },
     {
-      "reason": "Unimplemented attack text: If Durant is on your Bench, this attack does 40 more damage.",
-      "count": 1,
-      "cardIds": [
-        "B1-168"
-      ]
-    },
-    {
-      "reason": "Unimplemented ability text: Attacks used by your {P} Pokémon and {M} Pokémon do +30 damage to your opponent's Active Pokémon.",
-      "count": 1,
-      "cardIds": [
-        "B1-172"
-      ]
-    },
-    {
       "reason": "Unimplemented attack text: Flip 2 coins. If both of them are tails, this attack does nothing.",
       "count": 1,
       "cardIds": [
@@ -2671,13 +2128,6 @@
       "count": 1,
       "cardIds": [
         "B1-194"
-      ]
-    },
-    {
-      "reason": "Unimplemented attack text: If your opponent's Active Pokémon is a Basic Pokémon, this attack does 70 more damage.",
-      "count": 1,
-      "cardIds": [
-        "B1-203"
       ]
     },
     {
@@ -2807,13 +2257,6 @@
       ]
     },
     {
-      "reason": "Unimplemented attack text: This attack does 20 more damage for each Benched Pokémon (both yours and your opponent's).",
-      "count": 1,
-      "cardIds": [
-        "P-B-045"
-      ]
-    },
-    {
       "reason": "Unimplemented ability text: Once during your turn, after you flip any coins for an attack of 1 of your {R} Pokémon, you may ignore all results of those coin flips and begin flipping those coins again. You can't use more than 1 Victory Star Ability each turn.",
       "count": 1,
       "cardIds": [
@@ -2825,13 +2268,6 @@
       "count": 1,
       "cardIds": [
         "B2-070"
-      ]
-    },
-    {
-      "reason": "Unimplemented attack text: If a Stadium is in play, your opponent's Active Pokémon is now Burned.",
-      "count": 1,
-      "cardIds": [
-        "P-B-057"
       ]
     },
     {
@@ -3150,31 +2586,10 @@
       ]
     },
     {
-      "reason": "Unimplemented attack text: If Plusle is on your Bench, this attack also does 10 damage to each of your opponent's Benched Pokémon.",
-      "count": 1,
-      "cardIds": [
-        "B2-053"
-      ]
-    },
-    {
-      "reason": "Unimplemented attack text: This attack also does 30 damage to each of your opponent's Benched Pokémon that has damage on it.",
-      "count": 1,
-      "cardIds": [
-        "B2-055"
-      ]
-    },
-    {
       "reason": "Unimplemented attack text: If you have 5 or more {P} Energy in play, this attack does 60 more damage.",
       "count": 1,
       "cardIds": [
         "B2-059"
-      ]
-    },
-    {
-      "reason": "Unimplemented attack text: Take 2 {P} Energy from your Energy Zone and attach it to 1 of your Benched {P} Pokémon.",
-      "count": 1,
-      "cardIds": [
-        "B2-065"
       ]
     },
     {
@@ -3395,13 +2810,6 @@
       ]
     },
     {
-      "reason": "Unimplemented ability text: This Pokémon takes –30 damage from attacks.",
-      "count": 1,
-      "cardIds": [
-        "B2a-020"
-      ]
-    },
-    {
       "reason": "Unimplemented ability text: If this Pokémon's remaining HP is 50 or less, attacks used by this Pokémon do +60 damage to your opponent's Active Pokémon.",
       "count": 1,
       "cardIds": [
@@ -3420,13 +2828,6 @@
       "count": 1,
       "cardIds": [
         "B2a-031"
-      ]
-    },
-    {
-      "reason": "Unimplemented ability text: Once during your turn, you may take a Water Energy from your Energy Zone and attach it to the Water Pokémon in the Active Spot.",
-      "count": 1,
-      "cardIds": [
-        "B2a-036"
       ]
     },
     {
@@ -3493,13 +2894,6 @@
       ]
     },
     {
-      "reason": "Unimplemented trainer text: Flip a coin. If heads, take a Lightning Energy from your Energy Zone and attach it to 1 of your Benched Lightning Pokémon.",
-      "count": 1,
-      "cardIds": [
-        "B2a-086"
-      ]
-    },
-    {
       "reason": "Unimplemented trainer text: The Stage 2 Pokémon this card is attached to has no Retreat Cost.",
       "count": 1,
       "cardIds": [
@@ -3514,20 +2908,6 @@
       ]
     },
     {
-      "reason": "Unimplemented trainer text: During this turn, attacks used by your Pawmot do +80 damage to your opponent's Active Pokémon ex.",
-      "count": 1,
-      "cardIds": [
-        "B2a-090"
-      ]
-    },
-    {
-      "reason": "Unimplemented trainer text: Flip a coin. If heads, put a random Item card from your deck into your hand. If tails, put a random Pokémon Tool card from your deck into your hand.",
-      "count": 1,
-      "cardIds": [
-        "B2a-091"
-      ]
-    },
-    {
       "reason": "Unimplemented trainer text: Once during each player's turn, that player may flip a coin. If heads, that player puts a random Pokémon from their deck into their hand. You may play only 1 Stadium card during your turn. Put it next to the Active Spot, and discard it if another Stadium comes into play. A Stadium with the same name can't be played.",
       "count": 1,
       "cardIds": [
@@ -3539,13 +2919,6 @@
       "count": 1,
       "cardIds": [
         "B2b-009"
-      ]
-    },
-    {
-      "reason": "Unimplemented attack text: If Electivire is on your Bench, this attack also does 20 damage to each of your opponent's Benched Pokémon.",
-      "count": 1,
-      "cardIds": [
-        "B2b-013"
       ]
     },
     {
@@ -3567,13 +2940,6 @@
       "count": 1,
       "cardIds": [
         "B2b-020"
-      ]
-    },
-    {
-      "reason": "Unimplemented attack text: If Magmortar is on your Bench, this attack does 70 more damage.",
-      "count": 1,
-      "cardIds": [
-        "B2b-025"
       ]
     },
     {
@@ -3602,13 +2968,6 @@
       "count": 1,
       "cardIds": [
         "B2b-039"
-      ]
-    },
-    {
-      "reason": "Unimplemented attack text: Move 2 {D} Energy from this Pokémon to 1 of your Benched Pokémon.",
-      "count": 1,
-      "cardIds": [
-        "B2b-045"
       ]
     },
     {
@@ -3675,38 +3034,10 @@
       ]
     },
     {
-      "reason": "Unimplemented attack text: If you have any Stage 2 Pokémon on your Bench, this attack does 50 more damage.",
-      "count": 1,
-      "cardIds": [
-        "B3-003"
-      ]
-    },
-    {
-      "reason": "Unimplemented attack text: Discard a {R} Energy from your opponent's Active Pokémon.",
-      "count": 1,
-      "cardIds": [
-        "B3-009"
-      ]
-    },
-    {
       "reason": "Unimplemented attack text: The Defending Pokémon loses all Abilities. This effect lasts until the Defending Pokémon leaves the Active Spot.",
       "count": 1,
       "cardIds": [
         "B3-013"
-      ]
-    },
-    {
-      "reason": "Unimplemented attack text: If Durant is on your Bench, this attack does 30 more damage.",
-      "count": 1,
-      "cardIds": [
-        "B3-018"
-      ]
-    },
-    {
-      "reason": "Unimplemented attack text: Heal 30 damage from 1 of your Benched Pokémon.",
-      "count": 1,
-      "cardIds": [
-        "B3-019"
       ]
     },
     {
@@ -3752,20 +3083,6 @@
       ]
     },
     {
-      "reason": "Unimplemented attack text: If a Stadium is in play, heal 20 damage from this Pokémon.",
-      "count": 1,
-      "cardIds": [
-        "B3-040"
-      ]
-    },
-    {
-      "reason": "Unimplemented attack text: If a Stadium is in play, your opponent's Active Pokémon is now Asleep.",
-      "count": 1,
-      "cardIds": [
-        "B3-041"
-      ]
-    },
-    {
       "reason": "Unimplemented attack text: Move 2 random Energy from this Pokémon to 1 of your Benched Pokémon.",
       "count": 1,
       "cardIds": [
@@ -3805,27 +3122,6 @@
       "count": 1,
       "cardIds": [
         "B3-061"
-      ]
-    },
-    {
-      "reason": "Unimplemented attack text: If this Pokémon has no damage on it, this attack does 30 more damage.",
-      "count": 1,
-      "cardIds": [
-        "B3-062"
-      ]
-    },
-    {
-      "reason": "Unimplemented ability text: Once during your turn, if this Pokémon is in the Active Spot, you may make your opponent's Active Pokémon Confused.",
-      "count": 1,
-      "cardIds": [
-        "B3-066"
-      ]
-    },
-    {
-      "reason": "Unimplemented attack text: Heal 20 damage from each of your {P} Pokémon.",
-      "count": 1,
-      "cardIds": [
-        "B3-067"
       ]
     },
     {
@@ -3878,13 +3174,6 @@
       ]
     },
     {
-      "reason": "Unimplemented ability text: As long as this Pokémon is on your Bench, your Active {D} Pokémon's Retreat Cost is 1 less.",
-      "count": 1,
-      "cardIds": [
-        "B3-115"
-      ]
-    },
-    {
       "reason": "Unimplemented attack text: If your opponent has any {P} Pokémon in play, this attack does 50 more damage.",
       "count": 1,
       "cardIds": [
@@ -3931,20 +3220,6 @@
       "count": 1,
       "cardIds": [
         "B3-148"
-      ]
-    },
-    {
-      "reason": "Unimplemented trainer text: During this turn, attacks used by your {F} Pokémon do +30 damage to your opponent's Active Pokémon ex.",
-      "count": 1,
-      "cardIds": [
-        "B3-149"
-      ]
-    },
-    {
-      "reason": "Unimplemented trainer text: Put a random Stadium card from your deck into your hand.",
-      "count": 1,
-      "cardIds": [
-        "B3-150"
       ]
     },
     {
@@ -4095,13 +3370,6 @@
       ]
     },
     {
-      "reason": "Unimplemented trainer text: Put a random Stage 2 Pokémon from your deck into your hand.",
-      "count": 1,
-      "cardIds": [
-        "B3a-071"
-      ]
-    },
-    {
       "reason": "Unimplemented trainer text: Attach 3 different types of Energy from your discard pile to your Ancient Pokémon in any way you like.",
       "count": 1,
       "cardIds": [
@@ -4207,20 +3475,6 @@
       ]
     },
     {
-      "reason": "Unimplemented trainer text: The Retreat Cost of the Basic Pokémon this card is attached to is 1 less.",
-      "count": 1,
-      "cardIds": [
-        "B3b-064"
-      ]
-    },
-    {
-      "reason": "Unimplemented trainer text: The Stage 1 Pokémon this card is attached to gets +30 HP.",
-      "count": 1,
-      "cardIds": [
-        "B3b-065"
-      ]
-    },
-    {
       "reason": "Unimplemented trainer text: Return all Pokémon Tools attached to each Pokémon (both yours and your opponent's) to their owner's hand.",
       "count": 1,
       "cardIds": [
@@ -4298,13 +3552,6 @@
       ]
     },
     {
-      "reason": "Unimplemented attack text: If your opponent's Active Pokémon is a {F} Pokémon, this attack does 70 more damage.",
-      "count": 1,
-      "cardIds": [
-        "B4-039"
-      ]
-    },
-    {
       "reason": "Unimplemented attack text: Discard 3 {W} Energy from this Pokémon, and this attack does 50 damage to each of your opponent's Pokémon.",
       "count": 1,
       "cardIds": [
@@ -4316,13 +3563,6 @@
       "count": 1,
       "cardIds": [
         "B4-044"
-      ]
-    },
-    {
-      "reason": "Unimplemented attack text: Heal 10 damage from each of your Benched Pokémon.",
-      "count": 1,
-      "cardIds": [
-        "B4-045"
       ]
     },
     {
@@ -4344,13 +3584,6 @@
       "count": 1,
       "cardIds": [
         "B4-055"
-      ]
-    },
-    {
-      "reason": "Unimplemented attack text: This attack does 20 more damage for each Energy attached to all of your opponent's Pokémon.",
-      "count": 1,
-      "cardIds": [
-        "B4-058"
       ]
     },
     {
@@ -4442,13 +3675,6 @@
       "count": 1,
       "cardIds": [
         "B4-136"
-      ]
-    },
-    {
-      "reason": "Unimplemented trainer text: Flip a coin. If heads, put a random Item card from your deck into your hand.",
-      "count": 1,
-      "cardIds": [
-        "B4-145"
       ]
     },
     {
@@ -4550,28 +3776,7 @@
       ]
     },
     {
-      "reason": "Unimplemented attack text: This attack also does 50 damage to 1 of your opponent's Benched Pokémon that has damage on it.",
-      "count": 1,
-      "cardIds": [
-        "B4a-021"
-      ]
-    },
-    {
-      "reason": "Unimplemented attack text: Put a random Item card from your discard pile into your hand.",
-      "count": 1,
-      "cardIds": [
-        "B4a-025"
-      ]
-    },
-    {
       "reason": "Unimplemented attack text: This attack does 20 damage for each card in your hand.",
-      "count": 1,
-      "cardIds": [
-        "B4a-026"
-      ]
-    },
-    {
-      "reason": "Unimplemented ability text: Once during your turn, if this Pokémon is in the Active Spot, you may draw a card.",
       "count": 1,
       "cardIds": [
         "B4a-026"
@@ -4760,13 +3965,6 @@
       ]
     },
     {
-      "reason": "Unimplemented ability text: Once during your turn, you may take a {L} Energy from your Energy Zone and attach it to the {L} Pokémon in the Active Spot.",
-      "count": 1,
-      "cardIds": [
-        "C1-050"
-      ]
-    },
-    {
       "reason": "Unimplemented attack text: Your opponent's Active Pokémon is now Asleep. Your opponent flips 2 coins for this Special Condition, and if either of them is tails, that Pokémon is still Asleep.",
       "count": 1,
       "cardIds": [
@@ -4795,13 +3993,6 @@
       ]
     },
     {
-      "reason": "Unimplemented attack text: If your opponent's Active Pokémon is a Basic Pokémon, this attack does 50 more damage.",
-      "count": 1,
-      "cardIds": [
-        "C1-084"
-      ]
-    },
-    {
       "reason": "Unimplemented ability text: As long as this Pokémon is in play, all of your {M} Pokémon take −20 damage from attacks from your opponent's Pokémon. This effect doesn't stack.",
       "count": 1,
       "cardIds": [
@@ -4820,13 +4011,6 @@
       "count": 1,
       "cardIds": [
         "C1-102"
-      ]
-    },
-    {
-      "reason": "Unimplemented attack text: If your opponent's Active Pokémon is an Evolution Pokémon, this attack does 80 more damage.",
-      "count": 1,
-      "cardIds": [
-        "C1-104"
       ]
     },
     {
@@ -4862,13 +4046,6 @@
       "count": 1,
       "cardIds": [
         "C1-121"
-      ]
-    },
-    {
-      "reason": "Unimplemented trainer text: Your Active Pokémon recovers from all Special Conditions.",
-      "count": 1,
-      "cardIds": [
-        "C1-122"
       ]
     },
     {
@@ -5012,10 +4189,8 @@
     {
       "id": "A1-007",
       "name": "Butterfree",
-      "status": "PARTIAL",
-      "reasons": [
-        "Unimplemented ability text: Once during your turn, you may heal 20 damage from each of your Pokémon."
-      ],
+      "status": "FULL",
+      "reasons": [],
       "sourceGameplayKey": "cPK:000070",
       "prints": [
         "A1-007",
@@ -5258,10 +4433,8 @@
     {
       "id": "A1-030",
       "name": "Lilligant",
-      "status": "PARTIAL",
-      "reasons": [
-        "Unimplemented attack text: Take a {G} Energy from your Energy Zone and attach it to 1 of your Benched {G} Pokémon."
-      ],
+      "status": "FULL",
+      "reasons": [],
       "sourceGameplayKey": "cPK:000300",
       "prints": [
         "A1-030"
@@ -5925,10 +5098,8 @@
     {
       "id": "A1-089",
       "name": "Greninja",
-      "status": "PARTIAL",
-      "reasons": [
-        "Unimplemented ability text: Once during your turn, you may do 20 damage to 1 of your opponent's Pokémon."
-      ],
+      "status": "FULL",
+      "reasons": [],
       "sourceGameplayKey": "cPK:000890",
       "prints": [
         "A1-089",
@@ -6037,10 +5208,8 @@
     {
       "id": "A1-098",
       "name": "Magneton",
-      "status": "PARTIAL",
-      "reasons": [
-        "Unimplemented ability text: Once during your turn, you may take a {L} Energy from your Energy Zone and attach it to this Pokémon."
-      ],
+      "status": "FULL",
+      "reasons": [],
       "sourceGameplayKey": "cPK:000980",
       "prints": [
         "A1-098",
@@ -6338,10 +5507,8 @@
     {
       "id": "A1-125",
       "name": "Hypno",
-      "status": "PARTIAL",
-      "reasons": [
-        "Unimplemented ability text: Once during your turn, you may flip a coin. If heads, your opponent's Active Pokémon is now Asleep."
-      ],
+      "status": "FULL",
+      "reasons": [],
       "sourceGameplayKey": "cPK:001250",
       "prints": [
         "A1-125",
@@ -6421,10 +5588,8 @@
     {
       "id": "A1-132",
       "name": "Gardevoir",
-      "status": "PARTIAL",
-      "reasons": [
-        "Unimplemented ability text: Once during your turn, you may take a {P} Energy from your Energy Zone and attach it to the {P} Pokémon in the Active Spot."
-      ],
+      "status": "FULL",
+      "reasons": [],
       "sourceGameplayKey": "cPK:001320",
       "prints": [
         "A1-132",
@@ -6823,10 +5988,8 @@
     {
       "id": "A1-168",
       "name": "Nidoqueen",
-      "status": "PARTIAL",
-      "reasons": [
-        "Unimplemented attack text: This attack does 50 more damage for each of your Benched Nidoking."
-      ],
+      "status": "FULL",
+      "reasons": [],
       "sourceGameplayKey": "cPK:001680",
       "prints": [
         "A1-168",
@@ -6922,10 +6085,8 @@
     {
       "id": "A1-177",
       "name": "Weezing",
-      "status": "PARTIAL",
-      "reasons": [
-        "Unimplemented ability text: Once during your turn, if this Pokémon is in the Active Spot, you may make your opponent's Active Pokémon Poisoned."
-      ],
+      "status": "FULL",
+      "reasons": [],
       "sourceGameplayKey": "cPK:001770",
       "prints": [
         "A1-177",
@@ -7372,10 +6533,8 @@
     {
       "id": "A1-219",
       "name": "Erika",
-      "status": "PARTIAL",
-      "reasons": [
-        "Unimplemented trainer text: Heal 50 damage from 1 of your {G} Pokémon."
-      ],
+      "status": "FULL",
+      "reasons": [],
       "sourceGameplayKey": "cTR:000110",
       "prints": [
         "A1-219",
@@ -7760,10 +6919,8 @@
     {
       "id": "P-A-044",
       "name": "Raichu",
-      "status": "PARTIAL",
-      "reasons": [
-        "Unimplemented ability text: If you have Arceus or Arceus ex in play, this Pokémon takes −30 damage from attacks."
-      ],
+      "status": "FULL",
+      "reasons": [],
       "sourceGameplayKey": "cPK:004500",
       "prints": [
         "P-A-044",
@@ -7797,10 +6954,8 @@
     {
       "id": "P-A-047",
       "name": "Staraptor",
-      "status": "PARTIAL",
-      "reasons": [
-        "Unimplemented ability text: This Pokémon takes −30 damage from attacks from {F} Pokémon."
-      ],
+      "status": "FULL",
+      "reasons": [],
       "sourceGameplayKey": "cPK:004990",
       "prints": [
         "P-A-047"
@@ -7921,10 +7076,8 @@
     {
       "id": "P-A-058",
       "name": "Pachirisu",
-      "status": "PARTIAL",
-      "reasons": [
-        "Unimplemented attack text: Take a {L} Energy from your Energy Zone and attach it to 1 of your Benched {L} Pokémon."
-      ],
+      "status": "FULL",
+      "reasons": [],
       "sourceGameplayKey": "cPK:005060",
       "prints": [
         "P-A-058",
@@ -8162,10 +7315,8 @@
     {
       "id": "P-A-081",
       "name": "Ultra Necrozma ex",
-      "status": "PARTIAL",
-      "reasons": [
-        "Unimplemented attack text: Discard the top 5 cards of each player's deck."
-      ],
+      "status": "FULL",
+      "reasons": [],
       "sourceGameplayKey": "cPK:007310",
       "prints": [
         "P-A-081"
@@ -8319,10 +7470,8 @@
     {
       "id": "P-A-095",
       "name": "Chinchou",
-      "status": "PARTIAL",
-      "reasons": [
-        "Unimplemented attack text: Flip a coin. If heads, switch in 1 of your opponent's Benched Pokémon to the Active Spot."
-      ],
+      "status": "FULL",
+      "reasons": [],
       "sourceGameplayKey": "cPK:010080",
       "prints": [
         "P-A-095"
@@ -8344,10 +7493,8 @@
     {
       "id": "P-A-097",
       "name": "Kangaskhan",
-      "status": "PARTIAL",
-      "reasons": [
-        "Unimplemented attack text: If your opponent's Active Pokémon is an Evolution Pokémon, this attack does 40 more damage."
-      ],
+      "status": "FULL",
+      "reasons": [],
       "sourceGameplayKey": "cPK:009890",
       "prints": [
         "P-A-097",
@@ -8389,10 +7536,8 @@
     {
       "id": "A4a-036",
       "name": "Latias",
-      "status": "PARTIAL",
-      "reasons": [
-        "Unimplemented attack text: If Latios is on your Bench, this attack does 20 more damage."
-      ],
+      "status": "FULL",
+      "reasons": [],
       "sourceGameplayKey": "cPK:010200",
       "prints": [
         "P-A-101",
@@ -8474,10 +7619,8 @@
     {
       "id": "A4a-043",
       "name": "Phanpy",
-      "status": "PARTIAL",
-      "reasons": [
-        "Unimplemented attack text: This attack does damage to your opponent's Active Pokémon equal to the damage this Pokémon has on it."
-      ],
+      "status": "FULL",
+      "reasons": [],
       "sourceGameplayKey": "cPK:010190",
       "prints": [
         "P-A-108",
@@ -8574,10 +7717,8 @@
     {
       "id": "A2-022",
       "name": "Shaymin",
-      "status": "PARTIAL",
-      "reasons": [
-        "Unimplemented ability text: Once during your turn, you may heal 10 damage from each of your Pokémon."
-      ],
+      "status": "FULL",
+      "reasons": [],
       "sourceGameplayKey": "cPK:003030",
       "prints": [
         "P-A-116",
@@ -9296,10 +8437,8 @@
     {
       "id": "A1a-067",
       "name": "Blue",
-      "status": "PARTIAL",
-      "reasons": [
-        "Unimplemented trainer text: During your opponent's next turn, all of your Pokémon take −10 damage from attacks from your opponent's Pokémon."
-      ],
+      "status": "FULL",
+      "reasons": [],
       "sourceGameplayKey": "cTR:000210",
       "prints": [
         "A1a-067",
@@ -9621,10 +8760,8 @@
     {
       "id": "A2-032",
       "name": "Piloswine",
-      "status": "PARTIAL",
-      "reasons": [
-        "Unimplemented ability text: This Pokémon takes −20 damage from attacks from {R} or {W} Pokémon."
-      ],
+      "status": "FULL",
+      "reasons": [],
       "sourceGameplayKey": "cPK:003130",
       "prints": [
         "A2-032"
@@ -9633,10 +8770,8 @@
     {
       "id": "A2-033",
       "name": "Mamoswine",
-      "status": "PARTIAL",
-      "reasons": [
-        "Unimplemented ability text: This Pokémon takes −30 damage from attacks from {R} or {W} Pokémon."
-      ],
+      "status": "FULL",
+      "reasons": [],
       "sourceGameplayKey": "cPK:003140",
       "prints": [
         "A2-033",
@@ -9739,10 +8874,8 @@
     {
       "id": "A2-044",
       "name": "Snover",
-      "status": "PARTIAL",
-      "reasons": [
-        "Unimplemented attack text: If your opponent's Active Pokémon is a {F} Pokémon, this attack does 30 more damage."
-      ],
+      "status": "FULL",
+      "reasons": [],
       "sourceGameplayKey": "cPK:003250",
       "prints": [
         "A2-044"
@@ -9916,10 +9049,8 @@
     {
       "id": "A2-062",
       "name": "Rotom",
-      "status": "PARTIAL",
-      "reasons": [
-        "Unimplemented attack text: If your opponent's Active Pokémon has a Pokémon Tool attached, this attack does 30 more damage."
-      ],
+      "status": "FULL",
+      "reasons": [],
       "sourceGameplayKey": "cPK:003430",
       "prints": [
         "A2-062",
@@ -10241,10 +9372,8 @@
     {
       "id": "A2-092",
       "name": "Lucario",
-      "status": "PARTIAL",
-      "reasons": [
-        "Unimplemented ability text: Attacks used by your {F} Pokémon do +20 damage to your opponent's Active Pokémon."
-      ],
+      "status": "FULL",
+      "reasons": [],
       "sourceGameplayKey": "cPK:003730",
       "prints": [
         "A2-092",
@@ -10862,10 +9991,8 @@
     {
       "id": "A2-150",
       "name": "Cyrus",
-      "status": "PARTIAL",
-      "reasons": [
-        "Unimplemented trainer text: Switch in 1 of your opponent's Benched Pokémon that has damage on it to the Active Spot."
-      ],
+      "status": "FULL",
+      "reasons": [],
       "sourceGameplayKey": "cTR:000320",
       "prints": [
         "A2-150",
@@ -10890,10 +10017,8 @@
     {
       "id": "A2-152",
       "name": "Cynthia",
-      "status": "PARTIAL",
-      "reasons": [
-        "Unimplemented trainer text: During this turn, attacks used by your Garchomp or Togekiss do +50 damage to your opponent's Active Pokémon."
-      ],
+      "status": "FULL",
+      "reasons": [],
       "sourceGameplayKey": "cTR:000340",
       "prints": [
         "A2-152",
@@ -11016,10 +10141,8 @@
     {
       "id": "A2a-009",
       "name": "Carnivine",
-      "status": "PARTIAL",
-      "reasons": [
-        "Unimplemented ability text: If you have Arceus or Arceus ex in play, attacks used by this Pokémon do +30 damage to your opponent's Active Pokémon."
-      ],
+      "status": "FULL",
+      "reasons": [],
       "sourceGameplayKey": "cPK:004330",
       "prints": [
         "A2a-009"
@@ -11150,10 +10273,8 @@
     {
       "id": "A2a-021",
       "name": "Abomasnow",
-      "status": "PARTIAL",
-      "reasons": [
-        "Unimplemented ability text: If you have Arceus or Arceus ex in play, attacks used by this Pokémon cost 1 less {C} Energy."
-      ],
+      "status": "FULL",
+      "reasons": [],
       "sourceGameplayKey": "cPK:004450",
       "prints": [
         "A2a-021"
@@ -11364,10 +10485,8 @@
     {
       "id": "A2a-041",
       "name": "Tyranitar",
-      "status": "PARTIAL",
-      "reasons": [
-        "Unimplemented ability text: If you have Arceus or Arceus ex in play, attacks used by this Pokémon do +30 damage to your opponent's Active Pokémon."
-      ],
+      "status": "FULL",
+      "reasons": [],
       "sourceGameplayKey": "cPK:004650",
       "prints": [
         "A2a-041"
@@ -11459,10 +10578,8 @@
     {
       "id": "A2a-050",
       "name": "Crobat",
-      "status": "PARTIAL",
-      "reasons": [
-        "Unimplemented ability text: Once during your turn, if you have Arceus or Arceus ex in play, you may do 30 damage to your opponent's Active Pokémon."
-      ],
+      "status": "FULL",
+      "reasons": [],
       "sourceGameplayKey": "cPK:004740",
       "prints": [
         "A2a-050",
@@ -11516,10 +10633,8 @@
     {
       "id": "A2a-055",
       "name": "Magnezone",
-      "status": "PARTIAL",
-      "reasons": [
-        "Unimplemented ability text: If you have Arceus or Arceus ex in play, this Pokémon takes −30 damage from attacks."
-      ],
+      "status": "FULL",
+      "reasons": [],
       "sourceGameplayKey": "cPK:004790",
       "prints": [
         "A2a-055"
@@ -11528,10 +10643,8 @@
     {
       "id": "A2a-056",
       "name": "Mawile",
-      "status": "PARTIAL",
-      "reasons": [
-        "Unimplemented attack text: If your opponent's Active Pokémon is a {M} Pokémon, this attack does 30 more damage."
-      ],
+      "status": "FULL",
+      "reasons": [],
       "sourceGameplayKey": "cPK:004800",
       "prints": [
         "A2a-056"
@@ -11655,10 +10768,8 @@
     {
       "id": "A2a-069",
       "name": "Shaymin",
-      "status": "PARTIAL",
-      "reasons": [
-        "Unimplemented ability text: As long as this Pokémon is on your Bench, your Active Basic Pokémon's Retreat Cost is 1 less."
-      ],
+      "status": "FULL",
+      "reasons": [],
       "sourceGameplayKey": "cPK:004930",
       "prints": [
         "A2a-069",
@@ -11711,10 +10822,8 @@
     {
       "id": "A2a-073",
       "name": "Celestic Town Elder",
-      "status": "PARTIAL",
-      "reasons": [
-        "Unimplemented trainer text: Put 1 random Basic Pokémon from your discard pile into your hand."
-      ],
+      "status": "FULL",
+      "reasons": [],
       "sourceGameplayKey": "cTR:000390",
       "prints": [
         "A2a-073",
@@ -11737,10 +10846,8 @@
     {
       "id": "A2a-075",
       "name": "Adaman",
-      "status": "PARTIAL",
-      "reasons": [
-        "Unimplemented trainer text: During your opponent's next turn, all of your {M} Pokémon take −20 damage from attacks from your opponent's Pokémon."
-      ],
+      "status": "FULL",
+      "reasons": [],
       "sourceGameplayKey": "cTR:000410",
       "prints": [
         "A2a-075",
@@ -12264,10 +11371,8 @@
     {
       "id": "A2b-051",
       "name": "Grafaiai",
-      "status": "PARTIAL",
-      "reasons": [
-        "Unimplemented ability text: Once during your turn, you may flip a coin. If heads, your opponent's Active Pokémon is now Poisoned."
-      ],
+      "status": "FULL",
+      "reasons": [],
       "sourceGameplayKey": "cPK:005660",
       "prints": [
         "A2b-051",
@@ -12476,10 +11581,8 @@
     {
       "id": "A2b-071",
       "name": "Red",
-      "status": "PARTIAL",
-      "reasons": [
-        "Unimplemented trainer text: During this turn, attacks used by your Pokémon do +20 damage to your opponent's Active Pokémon ex."
-      ],
+      "status": "FULL",
+      "reasons": [],
       "sourceGameplayKey": "cTR:000440",
       "prints": [
         "A2b-071",
@@ -12857,10 +11960,8 @@
     {
       "id": "A3-034",
       "name": "Oricorio",
-      "status": "PARTIAL",
-      "reasons": [
-        "Unimplemented attack text: Discard a random Energy from both Active Pokémon."
-      ],
+      "status": "FULL",
+      "reasons": [],
       "sourceGameplayKey": "cPK:006150",
       "prints": [
         "A3-034"
@@ -12996,10 +12097,8 @@
     {
       "id": "A3-048",
       "name": "Primarina",
-      "status": "PARTIAL",
-      "reasons": [
-        "Unimplemented ability text: Once during your turn, you may heal 30 damage from each of your {W} Pokémon."
-      ],
+      "status": "FULL",
+      "reasons": [],
       "sourceGameplayKey": "cPK:006290",
       "prints": [
         "A3-048"
@@ -13037,10 +12136,8 @@
     {
       "id": "A3-051",
       "name": "Wishiwashi ex",
-      "status": "PARTIAL",
-      "reasons": [
-        "Unimplemented attack text: This attack does 40 more damage for each of your Benched Wishiwashi and Wishiwashi ex."
-      ],
+      "status": "FULL",
+      "reasons": [],
       "sourceGameplayKey": "cPK:006320",
       "prints": [
         "A3-051",
@@ -13062,10 +12159,8 @@
     {
       "id": "A3-053",
       "name": "Araquanid",
-      "status": "PARTIAL",
-      "reasons": [
-        "Unimplemented attack text: If your opponent's Active Pokémon is a Basic Pokémon, this attack does 60 more damage."
-      ],
+      "status": "FULL",
+      "reasons": [],
       "sourceGameplayKey": "cPK:006340",
       "prints": [
         "A3-053"
@@ -13805,10 +12900,8 @@
     {
       "id": "A3-123",
       "name": "Magearna",
-      "status": "PARTIAL",
-      "reasons": [
-        "Unimplemented attack text: If your opponent's Active Pokémon has an Ability, this attack does 40 more damage."
-      ],
+      "status": "FULL",
+      "reasons": [],
       "sourceGameplayKey": "cPK:007040",
       "prints": [
         "A3-123",
@@ -13820,10 +12913,8 @@
     {
       "id": "A3-124",
       "name": "Drampa",
-      "status": "PARTIAL",
-      "reasons": [
-        "Unimplemented attack text: If any of your Benched Pokémon have damage on them, this attack does 50 more damage."
-      ],
+      "status": "FULL",
+      "reasons": [],
       "sourceGameplayKey": "cPK:007050",
       "prints": [
         "A3-124",
@@ -13911,10 +13002,8 @@
     {
       "id": "A3-132",
       "name": "Hawlucha",
-      "status": "PARTIAL",
-      "reasons": [
-        "Unimplemented attack text: If your opponent's Active Pokémon is a {D} Pokémon, this attack does 30 more damage."
-      ],
+      "status": "FULL",
+      "reasons": [],
       "sourceGameplayKey": "cPK:007130",
       "prints": [
         "A3-132"
@@ -14081,10 +13170,8 @@
     {
       "id": "A3-147",
       "name": "Leaf Cape",
-      "status": "PARTIAL",
-      "reasons": [
-        "Unimplemented trainer text: The {G} Pokémon this card is attached to gets +30 HP."
-      ],
+      "status": "FULL",
+      "reasons": [],
       "sourceGameplayKey": "cTR:000510",
       "prints": [
         "A3-147",
@@ -14187,10 +13274,8 @@
     {
       "id": "A3-155",
       "name": "Lillie",
-      "status": "PARTIAL",
-      "reasons": [
-        "Unimplemented trainer text: Heal 60 damage from 1 of your Stage 2 Pokémon."
-      ],
+      "status": "FULL",
+      "reasons": [],
       "sourceGameplayKey": "cTR:000590",
       "prints": [
         "A3-155",
@@ -14426,10 +13511,8 @@
     {
       "id": "A3a-027",
       "name": "Shiinotic",
-      "status": "PARTIAL",
-      "reasons": [
-        "Unimplemented ability text: Once during your turn, you may put a random Pokémon from your deck into your hand."
-      ],
+      "status": "FULL",
+      "reasons": [],
       "sourceGameplayKey": "cPK:007640",
       "prints": [
         "A3a-027"
@@ -14506,10 +13589,8 @@
     {
       "id": "A3a-034",
       "name": "Passimian",
-      "status": "PARTIAL",
-      "reasons": [
-        "Unimplemented attack text: If Passimian is on your Bench, this attack does 40 more damage."
-      ],
+      "status": "FULL",
+      "reasons": [],
       "sourceGameplayKey": "cPK:007710",
       "prints": [
         "A3a-034"
@@ -15178,10 +14259,8 @@
     {
       "id": "A3b-028",
       "name": "Espeon",
-      "status": "PARTIAL",
-      "reasons": [
-        "Unimplemented attack text: This attack does 20 damage for each Energy attached to all of your opponent's Pokémon."
-      ],
+      "status": "FULL",
+      "reasons": [],
       "sourceGameplayKey": "cPK:008220",
       "prints": [
         "A3b-028",
@@ -15240,10 +14319,8 @@
     {
       "id": "A3b-033",
       "name": "Sylveon",
-      "status": "PARTIAL",
-      "reasons": [
-        "Unimplemented attack text: This attack does 30 more damage for each Evolution Pokémon on your Bench."
-      ],
+      "status": "FULL",
+      "reasons": [],
       "sourceGameplayKey": "cPK:008270",
       "prints": [
         "A3b-033",
@@ -15472,10 +14549,8 @@
     {
       "id": "A3b-057",
       "name": "Snorlax ex",
-      "status": "PARTIAL",
-      "reasons": [
-        "Unimplemented ability text: At the end of your turn, if this Pokémon is in the Active Spot, heal 20 damage from it."
-      ],
+      "status": "FULL",
+      "reasons": [],
       "sourceGameplayKey": "cPK:008490",
       "prints": [
         "A3b-057",
@@ -15497,10 +14572,8 @@
     {
       "id": "A3b-059",
       "name": "Ambipom",
-      "status": "PARTIAL",
-      "reasons": [
-        "Unimplemented ability text: Once during your turn, you may put a random Pokémon Tool card from your deck into your hand."
-      ],
+      "status": "FULL",
+      "reasons": [],
       "sourceGameplayKey": "cPK:008510",
       "prints": [
         "A3b-059"
@@ -15845,10 +14918,8 @@
     {
       "id": "A4-022",
       "name": "Heracross",
-      "status": "PARTIAL",
-      "reasons": [
-        "Unimplemented attack text: If this Pokémon has no damage on it, this attack does 40 more damage."
-      ],
+      "status": "FULL",
+      "reasons": [],
       "sourceGameplayKey": "cPK:008780",
       "prints": [
         "A4-022",
@@ -15926,10 +14997,8 @@
     {
       "id": "A4-029",
       "name": "Typhlosion",
-      "status": "PARTIAL",
-      "reasons": [
-        "Unimplemented ability text: Once during your turn, you may make your opponent's Active Pokémon Burned."
-      ],
+      "status": "FULL",
+      "reasons": [],
       "sourceGameplayKey": "cPK:008850",
       "prints": [
         "A4-029"
@@ -16158,10 +15227,8 @@
     {
       "id": "A4-050",
       "name": "Azumarill",
-      "status": "PARTIAL",
-      "reasons": [
-        "Unimplemented ability text: This Pokémon takes −30 damage from attacks from {R} or {W} Pokémon."
-      ],
+      "status": "FULL",
+      "reasons": [],
       "sourceGameplayKey": "cPK:009060",
       "prints": [
         "A4-050"
@@ -16302,10 +15369,8 @@
     {
       "id": "A4-063",
       "name": "Swanna",
-      "status": "PARTIAL",
-      "reasons": [
-        "Unimplemented attack text: Move all Energy from this Pokémon to 1 of your Benched Pokémon."
-      ],
+      "status": "FULL",
+      "reasons": [],
       "sourceGameplayKey": "cPK:009190",
       "prints": [
         "A4-063"
@@ -16414,10 +15479,8 @@
     {
       "id": "A4-073",
       "name": "Slowpoke",
-      "status": "PARTIAL",
-      "reasons": [
-        "Unimplemented attack text: This Pokémon is now Asleep. Heal 30 damage from it."
-      ],
+      "status": "FULL",
+      "reasons": [],
       "sourceGameplayKey": "cPK:009290",
       "prints": [
         "A4-073"
@@ -16514,10 +15577,8 @@
     {
       "id": "A4-083",
       "name": "Espeon ex",
-      "status": "PARTIAL",
-      "reasons": [
-        "Unimplemented ability text: Once during your turn, if this Pokémon is in the Active Spot, you may heal 30 damage from 1 of your Pokémon."
-      ],
+      "status": "FULL",
+      "reasons": [],
       "sourceGameplayKey": "cPK:009390",
       "prints": [
         "A4-083",
@@ -16607,10 +15668,8 @@
     {
       "id": "A4-091",
       "name": "Musharna",
-      "status": "PARTIAL",
-      "reasons": [
-        "Unimplemented attack text: Both Active Pokémon are now Asleep."
-      ],
+      "status": "FULL",
+      "reasons": [],
       "sourceGameplayKey": "cPK:009470",
       "prints": [
         "A4-091"
@@ -16832,10 +15891,8 @@
     {
       "id": "A4-112",
       "name": "Umbreon ex",
-      "status": "PARTIAL",
-      "reasons": [
-        "Unimplemented ability text: Once during your turn, if this Pokémon is in the Active Spot, you may switch in 1 of your opponent's Benched Pokémon that has damage on it to the Active Spot."
-      ],
+      "status": "FULL",
+      "reasons": [],
       "sourceGameplayKey": "cPK:009680",
       "prints": [
         "A4-112",
@@ -17003,10 +16060,8 @@
     {
       "id": "A4-130",
       "name": "Fearow",
-      "status": "PARTIAL",
-      "reasons": [
-        "Unimplemented attack text: If your opponent's Active Pokémon is a {G} Pokémon, this attack does 40 more damage."
-      ],
+      "status": "FULL",
+      "reasons": [],
       "sourceGameplayKey": "cPK:009860",
       "prints": [
         "A4-130"
@@ -17241,10 +16296,8 @@
     {
       "id": "A4-152",
       "name": "Squirt Bottle",
-      "status": "PARTIAL",
-      "reasons": [
-        "Unimplemented trainer text: Discard a {R} Energy from your opponent's Active Pokémon."
-      ],
+      "status": "FULL",
+      "reasons": [],
       "sourceGameplayKey": "cTR:000720",
       "prints": [
         "A4-152"
@@ -17345,10 +16398,8 @@
     {
       "id": "A4-160",
       "name": "Jasmine",
-      "status": "PARTIAL",
-      "reasons": [
-        "Unimplemented trainer text: During your opponent's next turn, all of your Steelix and Skarmory ex take −50 damage from attacks from your opponent's Pokémon."
-      ],
+      "status": "FULL",
+      "reasons": [],
       "sourceGameplayKey": "cTR:000800",
       "prints": [
         "A4-160",
@@ -17562,10 +16613,8 @@
     {
       "id": "A4a-020",
       "name": "Suicune ex",
-      "status": "PARTIAL",
-      "reasons": [
-        "Unimplemented attack text: This attack does 20 damage for each Benched Pokémon (both yours and your opponent's)."
-      ],
+      "status": "FULL",
+      "reasons": [],
       "sourceGameplayKey": "cPK:010400",
       "prints": [
         "A4a-020",
@@ -17970,10 +17019,8 @@
     {
       "id": "A4a-063",
       "name": "Azurill",
-      "status": "PARTIAL",
-      "reasons": [
-        "Unimplemented attack text: Heal 50 damage from 1 of your Benched Pokémon."
-      ],
+      "status": "FULL",
+      "reasons": [],
       "sourceGameplayKey": "cPK:010770",
       "prints": [
         "A4a-063",
@@ -18013,10 +17060,8 @@
     {
       "id": "A4a-067",
       "name": "Inflatable Boat",
-      "status": "PARTIAL",
-      "reasons": [
-        "Unimplemented trainer text: The Retreat Cost of the {W} Pokémon this card is attached to is 1 less."
-      ],
+      "status": "FULL",
+      "reasons": [],
       "sourceGameplayKey": "cTR:000820",
       "prints": [
         "A4a-067"
@@ -18269,10 +17314,8 @@
     {
       "id": "B1-018",
       "name": "Lilligant",
-      "status": "PARTIAL",
-      "reasons": [
-        "Unimplemented ability text: Each of your {G} Pokémon gets +20 HP."
-      ],
+      "status": "FULL",
+      "reasons": [],
       "sourceGameplayKey": "cPK:011000",
       "prints": [
         "B1-018",
@@ -18365,10 +17408,8 @@
     {
       "id": "B1-027",
       "name": "Rillaboom",
-      "status": "PARTIAL",
-      "reasons": [
-        "Unimplemented ability text: Once during your turn, you may flip a coin. If heads, switch in 1 of your opponent's Benched Pokémon to the Active Spot."
-      ],
+      "status": "FULL",
+      "reasons": [],
       "sourceGameplayKey": "cPK:011090",
       "prints": [
         "B1-027",
@@ -18423,10 +17464,8 @@
     {
       "id": "B1-032",
       "name": "Ho-Oh",
-      "status": "PARTIAL",
-      "reasons": [
-        "Unimplemented attack text: Heal 30 damage from each of your Benched Basic Pokémon."
-      ],
+      "status": "FULL",
+      "reasons": [],
       "sourceGameplayKey": "cPK:011140",
       "prints": [
         "B1-032"
@@ -18550,10 +17589,8 @@
     {
       "id": "B1-043",
       "name": "Chandelure",
-      "status": "PARTIAL",
-      "reasons": [
-        "Unimplemented ability text: Once during your turn, you may discard the top card of your opponent's deck."
-      ],
+      "status": "FULL",
+      "reasons": [],
       "sourceGameplayKey": "cPK:011250",
       "prints": [
         "B1-043",
@@ -18959,10 +17996,8 @@
     {
       "id": "B1-080",
       "name": "Eiscue",
-      "status": "PARTIAL",
-      "reasons": [
-        "Unimplemented ability text: If this Pokémon has full HP, it takes −40 damage from attacks from your opponent's Pokémon."
-      ],
+      "status": "FULL",
+      "reasons": [],
       "sourceGameplayKey": "cPK:011620",
       "prints": [
         "B1-080",
@@ -19126,10 +18161,8 @@
     {
       "id": "B1-094",
       "name": "Dedenne",
-      "status": "PARTIAL",
-      "reasons": [
-        "Unimplemented attack text: Discard a {L} Energy from your opponent's Active Pokémon."
-      ],
+      "status": "FULL",
+      "reasons": [],
       "sourceGameplayKey": "cPK:011760",
       "prints": [
         "B1-094"
@@ -19713,10 +18746,8 @@
     {
       "id": "B1-147",
       "name": "Coalossal",
-      "status": "PARTIAL",
-      "reasons": [
-        "Unimplemented attack text: If your opponent's Active Pokémon is a {G} Pokémon, this attack does 50 more damage."
-      ],
+      "status": "FULL",
+      "reasons": [],
       "sourceGameplayKey": "cPK:012290",
       "prints": [
         "B1-147"
@@ -19954,10 +18985,8 @@
     {
       "id": "B1-168",
       "name": "Durant",
-      "status": "PARTIAL",
-      "reasons": [
-        "Unimplemented attack text: If Durant is on your Bench, this attack does 40 more damage."
-      ],
+      "status": "FULL",
+      "reasons": [],
       "sourceGameplayKey": "cPK:012500",
       "prints": [
         "B1-168"
@@ -20000,10 +19029,8 @@
     {
       "id": "B1-172",
       "name": "Aegislash",
-      "status": "PARTIAL",
-      "reasons": [
-        "Unimplemented ability text: Attacks used by your {P} Pokémon and {M} Pokémon do +30 damage to your opponent's Active Pokémon."
-      ],
+      "status": "FULL",
+      "reasons": [],
       "sourceGameplayKey": "cPK:012540",
       "prints": [
         "B1-172",
@@ -20270,10 +19297,8 @@
     {
       "id": "B1-195",
       "name": "Spinda",
-      "status": "PARTIAL",
-      "reasons": [
-        "Unimplemented attack text: Both Active Pokémon are now Confused."
-      ],
+      "status": "FULL",
+      "reasons": [],
       "sourceGameplayKey": "cPK:012770",
       "prints": [
         "B1-195"
@@ -20356,10 +19381,8 @@
     {
       "id": "B1-203",
       "name": "Stoutland",
-      "status": "PARTIAL",
-      "reasons": [
-        "Unimplemented attack text: If your opponent's Active Pokémon is a Basic Pokémon, this attack does 70 more damage."
-      ],
+      "status": "FULL",
+      "reasons": [],
       "sourceGameplayKey": "cPK:012850",
       "prints": [
         "B1-203",
@@ -20994,10 +20017,8 @@
     {
       "id": "P-B-045",
       "name": "Haxorus",
-      "status": "PARTIAL",
-      "reasons": [
-        "Unimplemented attack text: This attack does 20 more damage for each Benched Pokémon (both yours and your opponent's)."
-      ],
+      "status": "FULL",
+      "reasons": [],
       "sourceGameplayKey": "cPK:016030",
       "prints": [
         "P-B-045",
@@ -21119,10 +20140,8 @@
     {
       "id": "P-B-057",
       "name": "Castform Sunny Form",
-      "status": "PARTIAL",
-      "reasons": [
-        "Unimplemented attack text: If a Stadium is in play, your opponent's Active Pokémon is now Burned."
-      ],
+      "status": "FULL",
+      "reasons": [],
       "sourceGameplayKey": "cPK:016890",
       "prints": [
         "P-B-057",
@@ -21295,10 +20314,8 @@
     {
       "id": "P-B-071",
       "name": "Psyduck",
-      "status": "PARTIAL",
-      "reasons": [
-        "Unimplemented attack text: Both Active Pokémon are now Confused."
-      ],
+      "status": "FULL",
+      "reasons": [],
       "sourceGameplayKey": "cPK:019030",
       "prints": [
         "P-B-071",
@@ -22014,10 +21031,8 @@
     {
       "id": "B1a-030",
       "name": "Misdreavus",
-      "status": "PARTIAL",
-      "reasons": [
-        "Unimplemented attack text: Put a random Supporter card from your deck into your hand."
-      ],
+      "status": "FULL",
+      "reasons": [],
       "sourceGameplayKey": "cPK:013340",
       "prints": [
         "B1a-030"
@@ -22999,10 +22014,8 @@
     {
       "id": "B2-053",
       "name": "Minun",
-      "status": "PARTIAL",
-      "reasons": [
-        "Unimplemented attack text: If Plusle is on your Bench, this attack also does 10 damage to each of your opponent's Benched Pokémon."
-      ],
+      "status": "FULL",
+      "reasons": [],
       "sourceGameplayKey": "cPK:014190",
       "prints": [
         "B2-053",
@@ -23027,10 +22040,8 @@
     {
       "id": "B2-055",
       "name": "Toxtricity ex",
-      "status": "PARTIAL",
-      "reasons": [
-        "Unimplemented attack text: This attack also does 30 damage to each of your opponent's Benched Pokémon that has damage on it."
-      ],
+      "status": "FULL",
+      "reasons": [],
       "sourceGameplayKey": "cPK:014210",
       "prints": [
         "B2-055",
@@ -23140,10 +22151,8 @@
     {
       "id": "B2-065",
       "name": "Gardevoir",
-      "status": "PARTIAL",
-      "reasons": [
-        "Unimplemented attack text: Take 2 {P} Energy from your Energy Zone and attach it to 1 of your Benched {P} Pokémon."
-      ],
+      "status": "FULL",
+      "reasons": [],
       "sourceGameplayKey": "cPK:014310",
       "prints": [
         "B2-065"
@@ -23609,10 +22618,8 @@
     {
       "id": "B2-108",
       "name": "Yveltal",
-      "status": "PARTIAL",
-      "reasons": [
-        "Unimplemented attack text: Discard a random Energy from both Active Pokémon."
-      ],
+      "status": "FULL",
+      "reasons": [],
       "sourceGameplayKey": "cPK:014740",
       "prints": [
         "B2-108",
@@ -24355,10 +23362,8 @@
     {
       "id": "B2a-020",
       "name": "Armarouge ex",
-      "status": "PARTIAL",
-      "reasons": [
-        "Unimplemented ability text: This Pokémon takes –30 damage from attacks."
-      ],
+      "status": "FULL",
+      "reasons": [],
       "sourceGameplayKey": "cPK:015290",
       "prints": [
         "B2a-020",
@@ -24513,10 +23518,8 @@
     {
       "id": "B2a-036",
       "name": "Baxcalibur",
-      "status": "PARTIAL",
-      "reasons": [
-        "Unimplemented ability text: Once during your turn, you may take a Water Energy from your Energy Zone and attach it to the Water Pokémon in the Active Spot."
-      ],
+      "status": "FULL",
+      "reasons": [],
       "sourceGameplayKey": "cPK:015450",
       "prints": [
         "B2a-036",
@@ -25025,10 +24028,8 @@
     {
       "id": "B2a-086",
       "name": "Electric Generator",
-      "status": "PARTIAL",
-      "reasons": [
-        "Unimplemented trainer text: Flip a coin. If heads, take a Lightning Energy from your Energy Zone and attach it to 1 of your Benched Lightning Pokémon."
-      ],
+      "status": "FULL",
+      "reasons": [],
       "sourceGameplayKey": "cTR:001170",
       "prints": [
         "B2a-086",
@@ -25065,10 +24066,8 @@
     {
       "id": "B2a-090",
       "name": "Nemona",
-      "status": "PARTIAL",
-      "reasons": [
-        "Unimplemented trainer text: During this turn, attacks used by your Pawmot do +80 damage to your opponent's Active Pokémon ex."
-      ],
+      "status": "FULL",
+      "reasons": [],
       "sourceGameplayKey": "cTR:001200",
       "prints": [
         "B2a-090",
@@ -25078,10 +24077,8 @@
     {
       "id": "B2a-091",
       "name": "Arven",
-      "status": "PARTIAL",
-      "reasons": [
-        "Unimplemented trainer text: Flip a coin. If heads, put a random Item card from your deck into your hand. If tails, put a random Pokémon Tool card from your deck into your hand."
-      ],
+      "status": "FULL",
+      "reasons": [],
       "sourceGameplayKey": "cTR:001210",
       "prints": [
         "B2a-091",
@@ -25242,10 +24239,8 @@
     {
       "id": "B2b-013",
       "name": "Magmortar",
-      "status": "PARTIAL",
-      "reasons": [
-        "Unimplemented attack text: If Electivire is on your Bench, this attack also does 20 damage to each of your opponent's Benched Pokémon."
-      ],
+      "status": "FULL",
+      "reasons": [],
       "sourceGameplayKey": "cPK:016190",
       "prints": [
         "B2b-013"
@@ -25326,10 +24321,8 @@
     {
       "id": "B2b-021",
       "name": "Phione",
-      "status": "PARTIAL",
-      "reasons": [
-        "Unimplemented attack text: Take a {W} Energy from your Energy Zone and attach it to 1 of your Benched {W} Pokémon."
-      ],
+      "status": "FULL",
+      "reasons": [],
       "sourceGameplayKey": "cPK:016260",
       "prints": [
         "B2b-021"
@@ -25371,10 +24364,8 @@
     {
       "id": "B2b-025",
       "name": "Electivire",
-      "status": "PARTIAL",
-      "reasons": [
-        "Unimplemented attack text: If Magmortar is on your Bench, this attack does 70 more damage."
-      ],
+      "status": "FULL",
+      "reasons": [],
       "sourceGameplayKey": "cPK:016300",
       "prints": [
         "B2b-025"
@@ -25574,10 +24565,8 @@
     {
       "id": "B2b-044",
       "name": "Zoroark",
-      "status": "PARTIAL",
-      "reasons": [
-        "Unimplemented attack text: This attack does 20 damage for each Energy attached to all of your opponent's Pokémon."
-      ],
+      "status": "FULL",
+      "reasons": [],
       "sourceGameplayKey": "cPK:016480",
       "prints": [
         "B2b-044",
@@ -25587,10 +24576,8 @@
     {
       "id": "B2b-045",
       "name": "Morpeko",
-      "status": "PARTIAL",
-      "reasons": [
-        "Unimplemented attack text: Move 2 {D} Energy from this Pokémon to 1 of your Benched Pokémon."
-      ],
+      "status": "FULL",
+      "reasons": [],
       "sourceGameplayKey": "cPK:016490",
       "prints": [
         "B2b-045",
@@ -25875,10 +24862,8 @@
     {
       "id": "B3-003",
       "name": "Heracross",
-      "status": "PARTIAL",
-      "reasons": [
-        "Unimplemented attack text: If you have any Stage 2 Pokémon on your Bench, this attack does 50 more damage."
-      ],
+      "status": "FULL",
+      "reasons": [],
       "sourceGameplayKey": "cPK:016680",
       "prints": [
         "B3-003"
@@ -25911,10 +24896,8 @@
     {
       "id": "B3-009",
       "name": "Surskit",
-      "status": "PARTIAL",
-      "reasons": [
-        "Unimplemented attack text: Discard a {R} Energy from your opponent's Active Pokémon."
-      ],
+      "status": "FULL",
+      "reasons": [],
       "sourceGameplayKey": "cPK:016740",
       "prints": [
         "B3-009"
@@ -26009,10 +24992,8 @@
     {
       "id": "B3-018",
       "name": "Durant",
-      "status": "PARTIAL",
-      "reasons": [
-        "Unimplemented attack text: If Durant is on your Bench, this attack does 30 more damage."
-      ],
+      "status": "FULL",
+      "reasons": [],
       "sourceGameplayKey": "cPK:016830",
       "prints": [
         "B3-018",
@@ -26023,10 +25004,8 @@
     {
       "id": "B3-019",
       "name": "Applin",
-      "status": "PARTIAL",
-      "reasons": [
-        "Unimplemented attack text: Heal 30 damage from 1 of your Benched Pokémon."
-      ],
+      "status": "FULL",
+      "reasons": [],
       "sourceGameplayKey": "cPK:016840",
       "prints": [
         "B3-019"
@@ -26239,10 +25218,8 @@
     {
       "id": "B3-040",
       "name": "Castform Rainy Form",
-      "status": "PARTIAL",
-      "reasons": [
-        "Unimplemented attack text: If a Stadium is in play, heal 20 damage from this Pokémon."
-      ],
+      "status": "FULL",
+      "reasons": [],
       "sourceGameplayKey": "cPK:017050",
       "prints": [
         "B3-040"
@@ -26251,10 +25228,8 @@
     {
       "id": "B3-041",
       "name": "Castform Snowy Form",
-      "status": "PARTIAL",
-      "reasons": [
-        "Unimplemented attack text: If a Stadium is in play, your opponent's Active Pokémon is now Asleep."
-      ],
+      "status": "FULL",
+      "reasons": [],
       "sourceGameplayKey": "cPK:017060",
       "prints": [
         "B3-041"
@@ -26485,10 +25460,8 @@
     {
       "id": "B3-062",
       "name": "Morpeko",
-      "status": "PARTIAL",
-      "reasons": [
-        "Unimplemented attack text: If this Pokémon has no damage on it, this attack does 30 more damage."
-      ],
+      "status": "FULL",
+      "reasons": [],
       "sourceGameplayKey": "cPK:017270",
       "prints": [
         "B3-062",
@@ -26528,10 +25501,8 @@
     {
       "id": "B3-066",
       "name": "Meowstic",
-      "status": "PARTIAL",
-      "reasons": [
-        "Unimplemented ability text: Once during your turn, if this Pokémon is in the Active Spot, you may make your opponent's Active Pokémon Confused."
-      ],
+      "status": "FULL",
+      "reasons": [],
       "sourceGameplayKey": "cPK:017310",
       "prints": [
         "B3-066",
@@ -26541,10 +25512,8 @@
     {
       "id": "B3-067",
       "name": "Diancie",
-      "status": "PARTIAL",
-      "reasons": [
-        "Unimplemented attack text: Heal 20 damage from each of your {P} Pokémon."
-      ],
+      "status": "FULL",
+      "reasons": [],
       "sourceGameplayKey": "cPK:017320",
       "prints": [
         "B3-067"
@@ -27065,10 +26034,8 @@
     {
       "id": "B3-115",
       "name": "Bombirdier",
-      "status": "PARTIAL",
-      "reasons": [
-        "Unimplemented ability text: As long as this Pokémon is on your Bench, your Active {D} Pokémon's Retreat Cost is 1 less."
-      ],
+      "status": "FULL",
+      "reasons": [],
       "sourceGameplayKey": "cPK:017800",
       "prints": [
         "B3-115",
@@ -27465,10 +26432,8 @@
     {
       "id": "B3-149",
       "name": "Korrina",
-      "status": "PARTIAL",
-      "reasons": [
-        "Unimplemented trainer text: During this turn, attacks used by your {F} Pokémon do +30 damage to your opponent's Active Pokémon ex."
-      ],
+      "status": "FULL",
+      "reasons": [],
       "sourceGameplayKey": "cTR:001300",
       "prints": [
         "B3-149",
@@ -27480,10 +26445,8 @@
     {
       "id": "B3-150",
       "name": "Cabbie",
-      "status": "PARTIAL",
-      "reasons": [
-        "Unimplemented trainer text: Put a random Stadium card from your deck into your hand."
-      ],
+      "status": "FULL",
+      "reasons": [],
       "sourceGameplayKey": "cTR:001310",
       "prints": [
         "B3-150",
@@ -28308,10 +27271,8 @@
     {
       "id": "B3a-071",
       "name": "Juliana",
-      "status": "PARTIAL",
-      "reasons": [
-        "Unimplemented trainer text: Put a random Stage 2 Pokémon from your deck into your hand."
-      ],
+      "status": "FULL",
+      "reasons": [],
       "sourceGameplayKey": "cTR:001390",
       "prints": [
         "B3a-071",
@@ -28499,10 +27460,8 @@
     {
       "id": "B3b-015",
       "name": "Milotic ex",
-      "status": "PARTIAL",
-      "reasons": [
-        "Unimplemented ability text: Once during your turn, you may take a {W} Energy from your Energy Zone and attach it to this Pokémon."
-      ],
+      "status": "FULL",
+      "reasons": [],
       "sourceGameplayKey": "cPK:019160",
       "prints": [
         "B3b-015",
@@ -29022,10 +27981,8 @@
     {
       "id": "B3b-064",
       "name": "Small Balloon",
-      "status": "PARTIAL",
-      "reasons": [
-        "Unimplemented trainer text: The Retreat Cost of the Basic Pokémon this card is attached to is 1 less."
-      ],
+      "status": "FULL",
+      "reasons": [],
       "sourceGameplayKey": "cTR:001430",
       "prints": [
         "B3b-064",
@@ -29037,10 +27994,8 @@
     {
       "id": "B3b-065",
       "name": "Elegant Cape",
-      "status": "PARTIAL",
-      "reasons": [
-        "Unimplemented trainer text: The Stage 1 Pokémon this card is attached to gets +30 HP."
-      ],
+      "status": "FULL",
+      "reasons": [],
       "sourceGameplayKey": "cTR:001440",
       "prints": [
         "B3b-065",
@@ -29130,10 +28085,8 @@
     {
       "id": "B4-003",
       "name": "Beautifly",
-      "status": "PARTIAL",
-      "reasons": [
-        "Unimplemented attack text: This attack does 30 more damage for each Evolution Pokémon on your Bench."
-      ],
+      "status": "FULL",
+      "reasons": [],
       "sourceGameplayKey": "cPK:019640",
       "prints": [
         "B4-003"
@@ -29498,10 +28451,8 @@
     {
       "id": "B4-035",
       "name": "Mega Sharpedo ex",
-      "status": "PARTIAL",
-      "reasons": [
-        "Unimplemented attack text: Take a {W} Energy from your Energy Zone and attach it to 1 of your Benched {W} Pokémon."
-      ],
+      "status": "FULL",
+      "reasons": [],
       "sourceGameplayKey": "cPK:019960",
       "prints": [
         "B4-035",
@@ -29550,10 +28501,8 @@
     {
       "id": "B4-039",
       "name": "Sealeo",
-      "status": "PARTIAL",
-      "reasons": [
-        "Unimplemented attack text: If your opponent's Active Pokémon is a {F} Pokémon, this attack does 70 more damage."
-      ],
+      "status": "FULL",
+      "reasons": [],
       "sourceGameplayKey": "cPK:020000",
       "prints": [
         "B4-039"
@@ -29620,10 +28569,8 @@
     {
       "id": "B4-045",
       "name": "Alomomola",
-      "status": "PARTIAL",
-      "reasons": [
-        "Unimplemented attack text: Heal 10 damage from each of your Benched Pokémon."
-      ],
+      "status": "FULL",
+      "reasons": [],
       "sourceGameplayKey": "cPK:020060",
       "prints": [
         "B4-045"
@@ -29745,10 +28692,8 @@
     {
       "id": "B4-058",
       "name": "Eelektross",
-      "status": "PARTIAL",
-      "reasons": [
-        "Unimplemented attack text: This attack does 20 more damage for each Energy attached to all of your opponent's Pokémon."
-      ],
+      "status": "FULL",
+      "reasons": [],
       "sourceGameplayKey": "cPK:020190",
       "prints": [
         "B4-058"
@@ -29893,10 +28838,8 @@
     {
       "id": "B4-071",
       "name": "Ralts",
-      "status": "PARTIAL",
-      "reasons": [
-        "Unimplemented attack text: Put a random Supporter card from your deck into your hand."
-      ],
+      "status": "FULL",
+      "reasons": [],
       "sourceGameplayKey": "cPK:020320",
       "prints": [
         "B4-071",
@@ -30111,10 +29054,8 @@
     {
       "id": "B4-090",
       "name": "Minior",
-      "status": "PARTIAL",
-      "reasons": [
-        "Unimplemented attack text: If your opponent's Active Pokémon has an Ability, this attack does 40 more damage."
-      ],
+      "status": "FULL",
+      "reasons": [],
       "sourceGameplayKey": "cPK:020510",
       "prints": [
         "B4-090"
@@ -30681,10 +29622,8 @@
     {
       "id": "B4-145",
       "name": "Order Pad",
-      "status": "PARTIAL",
-      "reasons": [
-        "Unimplemented trainer text: Flip a coin. If heads, put a random Item card from your deck into your hand."
-      ],
+      "status": "FULL",
+      "reasons": [],
       "sourceGameplayKey": "cTR:001490",
       "prints": [
         "B4-145",
@@ -31012,10 +29951,8 @@
     {
       "id": "B4a-021",
       "name": "Team Rocket's Zapdos ex",
-      "status": "PARTIAL",
-      "reasons": [
-        "Unimplemented attack text: This attack also does 50 damage to 1 of your opponent's Benched Pokémon that has damage on it."
-      ],
+      "status": "FULL",
+      "reasons": [],
       "sourceGameplayKey": "cPK:021360",
       "prints": [
         "B4a-021",
@@ -31056,10 +29993,8 @@
     {
       "id": "B4a-025",
       "name": "Team Rocket's Slowpoke",
-      "status": "PARTIAL",
-      "reasons": [
-        "Unimplemented attack text: Put a random Item card from your discard pile into your hand."
-      ],
+      "status": "FULL",
+      "reasons": [],
       "sourceGameplayKey": "cPK:021400",
       "prints": [
         "B4a-025"
@@ -31070,8 +30005,7 @@
       "name": "Team Rocket's Slowking ex",
       "status": "PARTIAL",
       "reasons": [
-        "Unimplemented attack text: This attack does 20 damage for each card in your hand.",
-        "Unimplemented ability text: Once during your turn, if this Pokémon is in the Active Spot, you may draw a card."
+        "Unimplemented attack text: This attack does 20 damage for each card in your hand."
       ],
       "sourceGameplayKey": "cPK:021410",
       "prints": [
@@ -31881,10 +30815,8 @@
     {
       "id": "C1-031",
       "name": "Blastoise",
-      "status": "PARTIAL",
-      "reasons": [
-        "Unimplemented ability text: Once during your turn, you may take a {W} Energy from your Energy Zone and attach it to this Pokémon."
-      ],
+      "status": "FULL",
+      "reasons": [],
       "sourceGameplayKey": "limitless:C1-031",
       "prints": [
         "C1-031",
@@ -32089,10 +31021,8 @@
     {
       "id": "C1-050",
       "name": "Pawmot",
-      "status": "PARTIAL",
-      "reasons": [
-        "Unimplemented ability text: Once during your turn, you may take a {L} Energy from your Energy Zone and attach it to the {L} Pokémon in the Active Spot."
-      ],
+      "status": "FULL",
+      "reasons": [],
       "sourceGameplayKey": "limitless:C1-050",
       "prints": [
         "C1-050",
@@ -32462,10 +31392,8 @@
     {
       "id": "C1-084",
       "name": "Umbreon",
-      "status": "PARTIAL",
-      "reasons": [
-        "Unimplemented attack text: If your opponent's Active Pokémon is a Basic Pokémon, this attack does 50 more damage."
-      ],
+      "status": "FULL",
+      "reasons": [],
       "sourceGameplayKey": "limitless:C1-084",
       "prints": [
         "C1-084",
@@ -32688,10 +31616,8 @@
     {
       "id": "C1-104",
       "name": "Pidgeot",
-      "status": "PARTIAL",
-      "reasons": [
-        "Unimplemented attack text: If your opponent's Active Pokémon is an Evolution Pokémon, this attack does 80 more damage."
-      ],
+      "status": "FULL",
+      "reasons": [],
       "sourceGameplayKey": "limitless:C1-104",
       "prints": [
         "C1-104"
@@ -32890,10 +31816,8 @@
     {
       "id": "C1-122",
       "name": "Full Heal",
-      "status": "PARTIAL",
-      "reasons": [
-        "Unimplemented trainer text: Your Active Pokémon recovers from all Special Conditions."
-      ],
+      "status": "FULL",
+      "reasons": [],
       "sourceGameplayKey": "limitless:C1-122",
       "prints": [
         "C1-122"
@@ -33013,5 +31937,1103 @@
         "C1-131"
       ]
     }
-  ]
+  ],
+  "battleEnabled": 1833,
+  "perSet": [
+    {
+      "id": "A1",
+      "name": "Genetic Apex",
+      "prints": 286,
+      "canonicalIdentities": 225,
+      "FULL": 203,
+      "PARTIAL": 22,
+      "UNSUPPORTED": 0,
+      "battleEnabled": 203
+    },
+    {
+      "id": "A1a",
+      "name": "Mythical Island",
+      "prints": 86,
+      "canonicalIdentities": 68,
+      "FULL": 54,
+      "PARTIAL": 14,
+      "UNSUPPORTED": 0,
+      "battleEnabled": 54
+    },
+    {
+      "id": "A2",
+      "name": "Space-Time Smackdown",
+      "prints": 207,
+      "canonicalIdentities": 155,
+      "FULL": 128,
+      "PARTIAL": 27,
+      "UNSUPPORTED": 0,
+      "battleEnabled": 128
+    },
+    {
+      "id": "A2a",
+      "name": "Triumphant Light",
+      "prints": 96,
+      "canonicalIdentities": 75,
+      "FULL": 62,
+      "PARTIAL": 13,
+      "UNSUPPORTED": 0,
+      "battleEnabled": 62
+    },
+    {
+      "id": "A2b",
+      "name": "Shining Revelry",
+      "prints": 111,
+      "canonicalIdentities": 73,
+      "FULL": 63,
+      "PARTIAL": 10,
+      "UNSUPPORTED": 0,
+      "battleEnabled": 63
+    },
+    {
+      "id": "A3",
+      "name": "Celestial Guardians",
+      "prints": 239,
+      "canonicalIdentities": 182,
+      "FULL": 141,
+      "PARTIAL": 41,
+      "UNSUPPORTED": 0,
+      "battleEnabled": 141
+    },
+    {
+      "id": "A3a",
+      "name": "Extradimensional Crisis",
+      "prints": 103,
+      "canonicalIdentities": 83,
+      "FULL": 63,
+      "PARTIAL": 20,
+      "UNSUPPORTED": 0,
+      "battleEnabled": 63
+    },
+    {
+      "id": "A3b",
+      "name": "Eevee Grove",
+      "prints": 107,
+      "canonicalIdentities": 83,
+      "FULL": 60,
+      "PARTIAL": 23,
+      "UNSUPPORTED": 0,
+      "battleEnabled": 60
+    },
+    {
+      "id": "A4",
+      "name": "Wisdom of Sea and Sky",
+      "prints": 241,
+      "canonicalIdentities": 185,
+      "FULL": 143,
+      "PARTIAL": 42,
+      "UNSUPPORTED": 0,
+      "battleEnabled": 143
+    },
+    {
+      "id": "A4a",
+      "name": "Secluded Springs",
+      "prints": 105,
+      "canonicalIdentities": 85,
+      "FULL": 59,
+      "PARTIAL": 26,
+      "UNSUPPORTED": 0,
+      "battleEnabled": 59
+    },
+    {
+      "id": "A4b",
+      "name": "Deluxe Pack: ex",
+      "prints": 379,
+      "canonicalIdentities": 215,
+      "FULL": 161,
+      "PARTIAL": 54,
+      "UNSUPPORTED": 0,
+      "battleEnabled": 161
+    },
+    {
+      "id": "P-A",
+      "name": "Promo A",
+      "prints": 117,
+      "canonicalIdentities": 113,
+      "FULL": 93,
+      "PARTIAL": 20,
+      "UNSUPPORTED": 0,
+      "battleEnabled": 93
+    },
+    {
+      "id": "B1",
+      "name": "Mega Rising",
+      "prints": 331,
+      "canonicalIdentities": 266,
+      "FULL": 202,
+      "PARTIAL": 64,
+      "UNSUPPORTED": 0,
+      "battleEnabled": 202
+    },
+    {
+      "id": "B1a",
+      "name": "Crimson Blaze",
+      "prints": 103,
+      "canonicalIdentities": 83,
+      "FULL": 59,
+      "PARTIAL": 24,
+      "UNSUPPORTED": 0,
+      "battleEnabled": 59
+    },
+    {
+      "id": "B2",
+      "name": "Fantastical Parade",
+      "prints": 234,
+      "canonicalIdentities": 183,
+      "FULL": 123,
+      "PARTIAL": 60,
+      "UNSUPPORTED": 0,
+      "battleEnabled": 123
+    },
+    {
+      "id": "B2a",
+      "name": "Paldean Wonders",
+      "prints": 131,
+      "canonicalIdentities": 99,
+      "FULL": 69,
+      "PARTIAL": 30,
+      "UNSUPPORTED": 0,
+      "battleEnabled": 69
+    },
+    {
+      "id": "B2b",
+      "name": "Mega Shine",
+      "prints": 117,
+      "canonicalIdentities": 71,
+      "FULL": 47,
+      "PARTIAL": 24,
+      "UNSUPPORTED": 0,
+      "battleEnabled": 47
+    },
+    {
+      "id": "B3",
+      "name": "Pulsing Aura",
+      "prints": 234,
+      "canonicalIdentities": 178,
+      "FULL": 121,
+      "PARTIAL": 57,
+      "UNSUPPORTED": 0,
+      "battleEnabled": 121
+    },
+    {
+      "id": "B3a",
+      "name": "Paradox Drive",
+      "prints": 109,
+      "canonicalIdentities": 88,
+      "FULL": 58,
+      "PARTIAL": 30,
+      "UNSUPPORTED": 0,
+      "battleEnabled": 58
+    },
+    {
+      "id": "B3b",
+      "name": "Everyday Wonders",
+      "prints": 106,
+      "canonicalIdentities": 78,
+      "FULL": 50,
+      "PARTIAL": 28,
+      "UNSUPPORTED": 0,
+      "battleEnabled": 50
+    },
+    {
+      "id": "B4",
+      "name": "Ruler of the Skies",
+      "prints": 233,
+      "canonicalIdentities": 179,
+      "FULL": 121,
+      "PARTIAL": 58,
+      "UNSUPPORTED": 0,
+      "battleEnabled": 121
+    },
+    {
+      "id": "B4a",
+      "name": "Team Rocket’s Ambition",
+      "prints": 110,
+      "canonicalIdentities": 86,
+      "FULL": 55,
+      "PARTIAL": 31,
+      "UNSUPPORTED": 0,
+      "battleEnabled": 55
+    },
+    {
+      "id": "B4b",
+      "name": "Deluxe Pack: Mega",
+      "prints": 429,
+      "canonicalIdentities": 237,
+      "FULL": 122,
+      "PARTIAL": 115,
+      "UNSUPPORTED": 0,
+      "battleEnabled": 122
+    },
+    {
+      "id": "P-B",
+      "name": "Promo B",
+      "prints": 103,
+      "canonicalIdentities": 101,
+      "FULL": 70,
+      "PARTIAL": 31,
+      "UNSUPPORTED": 0,
+      "battleEnabled": 70
+    },
+    {
+      "id": "C1",
+      "name": "Dual Fusion",
+      "prints": 217,
+      "canonicalIdentities": 144,
+      "FULL": 107,
+      "PARTIAL": 37,
+      "UNSUPPORTED": 0,
+      "battleEnabled": 107
+    },
+    {
+      "id": "P-C",
+      "name": "Promo C",
+      "prints": 0,
+      "canonicalIdentities": 0,
+      "FULL": 0,
+      "PARTIAL": 0,
+      "UNSUPPORTED": 0,
+      "battleEnabled": 0
+    }
+  ],
+  "previousBuild": {
+    "version": "0.69.36",
+    "cutoff": "2026-10-30",
+    "gameplayIdentities": 2450,
+    "statusCounts": {
+      "FULL": 1707,
+      "PARTIAL": 743,
+      "UNSUPPORTED": 0
+    },
+    "releasedPrints": 4534,
+    "sourceArchiveSha256": "40bbd6a980e3a8bd64cd4ce7af87abbfc9dcff8ec34635bc2a4a507ad7ef4e70"
+  },
+  "change": {
+    "resolvedIdentities": [
+      "A1-007",
+      "A1-030",
+      "A1-089",
+      "A1-098",
+      "A1-125",
+      "A1-132",
+      "A1-168",
+      "A1-177",
+      "A1-219",
+      "P-A-044",
+      "P-A-047",
+      "P-A-058",
+      "P-A-081",
+      "P-A-095",
+      "P-A-097",
+      "A4a-036",
+      "A4a-043",
+      "A2-022",
+      "A1a-067",
+      "A2-032",
+      "A2-033",
+      "A2-044",
+      "A2-062",
+      "A2-092",
+      "A2-150",
+      "A2-152",
+      "A2a-009",
+      "A2a-021",
+      "A2a-041",
+      "A2a-050",
+      "A2a-055",
+      "A2a-056",
+      "A2a-069",
+      "A2a-073",
+      "A2a-075",
+      "A2b-051",
+      "A2b-071",
+      "A3-034",
+      "A3-048",
+      "A3-051",
+      "A3-053",
+      "A3-123",
+      "A3-124",
+      "A3-132",
+      "A3-147",
+      "A3-155",
+      "A3a-027",
+      "A3a-034",
+      "A3b-028",
+      "A3b-033",
+      "A3b-057",
+      "A3b-059",
+      "A4-022",
+      "A4-029",
+      "A4-050",
+      "A4-063",
+      "A4-073",
+      "A4-083",
+      "A4-091",
+      "A4-112",
+      "A4-130",
+      "A4-152",
+      "A4-160",
+      "A4a-020",
+      "A4a-063",
+      "A4a-067",
+      "B1-018",
+      "B1-027",
+      "B1-032",
+      "B1-043",
+      "B1-080",
+      "B1-094",
+      "B1-147",
+      "B1-168",
+      "B1-172",
+      "B1-195",
+      "B1-203",
+      "P-B-045",
+      "P-B-057",
+      "P-B-071",
+      "B1a-030",
+      "B2-053",
+      "B2-055",
+      "B2-065",
+      "B2-108",
+      "B2a-020",
+      "B2a-036",
+      "B2a-086",
+      "B2a-090",
+      "B2a-091",
+      "B2b-013",
+      "B2b-021",
+      "B2b-025",
+      "B2b-044",
+      "B2b-045",
+      "B3-003",
+      "B3-009",
+      "B3-018",
+      "B3-019",
+      "B3-040",
+      "B3-041",
+      "B3-062",
+      "B3-066",
+      "B3-067",
+      "B3-115",
+      "B3-149",
+      "B3-150",
+      "B3a-071",
+      "B3b-015",
+      "B3b-064",
+      "B3b-065",
+      "B4-003",
+      "B4-035",
+      "B4-039",
+      "B4-045",
+      "B4-058",
+      "B4-071",
+      "B4-090",
+      "B4-145",
+      "B4a-021",
+      "B4a-025",
+      "C1-031",
+      "C1-050",
+      "C1-084",
+      "C1-104",
+      "C1-122"
+    ],
+    "regressedFull": [],
+    "newIdentities": []
+  },
+  "remainingEffectFamilies": [
+    {
+      "family": "Energy distribution/recovery",
+      "count": 140,
+      "cardIds": [
+        "A1-047",
+        "A1-220",
+        "A1-224",
+        "A1-226",
+        "A1a-003",
+        "A1a-006",
+        "A1a-018",
+        "A1a-019",
+        "A2-075",
+        "A2-076",
+        "A2-078",
+        "A2-129",
+        "A2-153",
+        "A2a-010",
+        "A2a-072",
+        "A2a-074",
+        "A2b-031",
+        "A2b-035",
+        "A2b-057",
+        "A3-075",
+        "A3-080",
+        "A3-084",
+        "A3-104",
+        "A3-130",
+        "A3-141",
+        "A3-150",
+        "A3-154",
+        "A3a-065",
+        "A3a-069",
+        "A3b-009",
+        "A3b-027",
+        "A4-005",
+        "A4-023",
+        "A4-032",
+        "A4-034",
+        "A4-061",
+        "A4-066",
+        "A4-075",
+        "A4-119",
+        "A4-136",
+        "A4-148",
+        "A4-151",
+        "A4a-023",
+        "A4a-031",
+        "A4a-042",
+        "A4a-055",
+        "A4a-068",
+        "B1-016",
+        "B1-036",
+        "B1-069",
+        "B1-081",
+        "B1-114",
+        "B1-157",
+        "B1-182",
+        "B1-215",
+        "B1-217",
+        "B1-224",
+        "B1a-012",
+        "B1a-019",
+        "B1a-020",
+        "B1a-034",
+        "B2-017",
+        "B2-029",
+        "B2-035",
+        "B2-036",
+        "B2-042",
+        "B2-059",
+        "B2-066",
+        "B2-084",
+        "B2-107",
+        "B2-136",
+        "B2-149",
+        "B2-151",
+        "B2-152",
+        "B2a-009",
+        "B2a-018",
+        "B2a-031",
+        "B2a-037",
+        "B2a-040",
+        "B2a-042",
+        "B2a-070",
+        "B2a-077",
+        "B2a-078",
+        "B2a-082",
+        "B2a-088",
+        "B2b-008",
+        "B2b-035",
+        "B2b-052",
+        "B2b-053",
+        "B3-022",
+        "B3-028",
+        "B3-039",
+        "B3-045",
+        "B3-051",
+        "B3-097",
+        "B3-134",
+        "B3a-019",
+        "B3a-027",
+        "B3a-036",
+        "B3a-053",
+        "B3a-054",
+        "B3a-055",
+        "B3a-068",
+        "B3a-072",
+        "B3b-031",
+        "B3b-032",
+        "B3b-033",
+        "B4-022",
+        "B4-041",
+        "B4-069",
+        "B4-082",
+        "B4-117",
+        "B4-120",
+        "B4-136",
+        "B4-150",
+        "B4-153",
+        "B4-154",
+        "B4-155",
+        "B4a-005",
+        "B4a-007",
+        "B4a-039",
+        "B4a-059",
+        "C1-018",
+        "C1-033",
+        "C1-057",
+        "C1-066",
+        "C1-120",
+        "C1-128",
+        "P-A-037",
+        "P-A-042",
+        "P-A-048",
+        "P-A-074",
+        "P-B-006",
+        "P-B-029",
+        "P-B-066",
+        "P-B-068",
+        "P-B-070",
+        "P-B-079",
+        "P-B-089",
+        "P-B-100"
+      ]
+    },
+    {
+      "family": "Timing/prevention/locks",
+      "count": 128,
+      "cardIds": [
+        "A1-020",
+        "A1-057",
+        "A1-122",
+        "A1-123",
+        "A1-188",
+        "A1-221",
+        "A1a-047",
+        "A2-034",
+        "A2-065",
+        "A2-072",
+        "A2-123",
+        "A2-149",
+        "A2a-038",
+        "A3-021",
+        "A3-022",
+        "A3-039",
+        "A3-049",
+        "A3-065",
+        "A3-066",
+        "A3-077",
+        "A3-127",
+        "A3-140",
+        "A3-153",
+        "A3a-031",
+        "A3a-062",
+        "A3a-063",
+        "A3b-007",
+        "A3b-019",
+        "A3b-031",
+        "A3b-032",
+        "A3b-036",
+        "A3b-043",
+        "A3b-067",
+        "A3b-068",
+        "A4-023",
+        "A4-086",
+        "A4-123",
+        "A4-128",
+        "A4-140",
+        "A4-153",
+        "A4a-033",
+        "A4a-050",
+        "B1-004",
+        "B1-006",
+        "B1-047",
+        "B1-067",
+        "B1-073",
+        "B1-101",
+        "B1-109",
+        "B1-111",
+        "B1-134",
+        "B1-158",
+        "B1-192",
+        "B1-218",
+        "B1-222",
+        "B1a-018",
+        "B1a-021",
+        "B1a-051",
+        "B1a-052",
+        "B1a-064",
+        "B1a-066",
+        "B2-005",
+        "B2-010",
+        "B2-022",
+        "B2-039",
+        "B2-040",
+        "B2-072",
+        "B2-073",
+        "B2-117",
+        "B2-120",
+        "B2-133",
+        "B2-147",
+        "B2-148",
+        "B2a-003",
+        "B2a-015",
+        "B2a-021",
+        "B2a-033",
+        "B2a-052",
+        "B2b-011",
+        "B2b-017",
+        "B2b-039",
+        "B2b-047",
+        "B2b-050",
+        "B2b-066",
+        "B2b-067",
+        "B2b-069",
+        "B3-037",
+        "B3-061",
+        "B3-073",
+        "B3-080",
+        "B3-089",
+        "B3-100",
+        "B3-123",
+        "B3-134",
+        "B3-136",
+        "B3-151",
+        "B3a-022",
+        "B3a-026",
+        "B3a-028",
+        "B3a-047",
+        "B3a-074",
+        "B3b-035",
+        "B3b-041",
+        "B4-017",
+        "B4-040",
+        "B4-078",
+        "B4-080",
+        "B4-115",
+        "B4-142",
+        "B4-148",
+        "B4-149",
+        "B4-151",
+        "B4a-018",
+        "B4a-050",
+        "B4a-054",
+        "B4a-063",
+        "B4a-068",
+        "C1-015",
+        "C1-028",
+        "C1-062",
+        "C1-110",
+        "C1-125",
+        "P-A-051",
+        "P-A-085",
+        "P-A-090",
+        "P-B-060",
+        "P-B-073",
+        "P-B-095"
+      ]
+    },
+    {
+      "family": "Coin/random selection",
+      "count": 104,
+      "cardIds": [
+        "A1-069",
+        "A1-166",
+        "A1-185",
+        "A1-197",
+        "A1-210",
+        "A1a-049",
+        "A1a-050",
+        "A2-017",
+        "A2-106",
+        "A2-107",
+        "A2-108",
+        "A2-114",
+        "A2-142",
+        "A2-151",
+        "A2a-001",
+        "A2a-028",
+        "A2b-001",
+        "A2b-012",
+        "A2b-018",
+        "A2b-019",
+        "A3-027",
+        "A3-050",
+        "A3-096",
+        "A3-107",
+        "A3-111",
+        "A3-142",
+        "A3a-058",
+        "A3a-067",
+        "A3b-054",
+        "A4-003",
+        "A4-031",
+        "A4-056",
+        "A4-080",
+        "A4-082",
+        "A4-141",
+        "A4-156",
+        "A4-159",
+        "A4a-013",
+        "A4a-035",
+        "B1-010",
+        "B1-084",
+        "B1-085",
+        "B1-105",
+        "B1-143",
+        "B1-176",
+        "B1-186",
+        "B1-226",
+        "B1a-026",
+        "B1a-042",
+        "B1a-059",
+        "B1a-068",
+        "B2-032",
+        "B2-051",
+        "B2-070",
+        "B2-102",
+        "B2-109",
+        "B2-124",
+        "B2-142",
+        "B2-143",
+        "B2-145",
+        "B2a-016",
+        "B2a-022",
+        "B2a-030",
+        "B2a-071",
+        "B2b-016",
+        "B2b-030",
+        "B3-023",
+        "B3-094",
+        "B3-096",
+        "B3-128",
+        "B3-153",
+        "B3a-005",
+        "B3a-025",
+        "B3a-045",
+        "B3a-052",
+        "B3b-037",
+        "B3b-050",
+        "B3b-058",
+        "B4-002",
+        "B4-004",
+        "B4-005",
+        "B4-127",
+        "B4-139",
+        "B4a-044",
+        "B4a-051",
+        "B4a-067",
+        "B4a-069",
+        "B4a-070",
+        "B4a-072",
+        "C1-005",
+        "C1-023",
+        "C1-051",
+        "C1-100",
+        "C1-102",
+        "C1-118",
+        "C1-119",
+        "C1-129",
+        "C1-131",
+        "P-A-064",
+        "P-A-096",
+        "P-B-014",
+        "P-B-049",
+        "P-B-067",
+        "P-B-083"
+      ]
+    },
+    {
+      "family": "Damage/state conditions",
+      "count": 97,
+      "cardIds": [
+        "A1-159",
+        "A2-089",
+        "A2-104",
+        "A2-135",
+        "A2-148",
+        "A2-155",
+        "A2a-022",
+        "A2a-052",
+        "A2b-070",
+        "A3-015",
+        "A3-054",
+        "A3-101",
+        "A3-146",
+        "A3-148",
+        "A3-149",
+        "A3a-015",
+        "A3a-042",
+        "A3a-066",
+        "A4-045",
+        "A4-084",
+        "A4-085",
+        "A4-155",
+        "A4-157",
+        "A4a-041",
+        "A4a-048",
+        "A4a-052",
+        "A4a-062",
+        "A4a-069",
+        "B1-055",
+        "B1-060",
+        "B1-124",
+        "B1-140",
+        "B1-149",
+        "B1-160",
+        "B1-164",
+        "B1-219",
+        "B1-220",
+        "B1-221",
+        "B1a-008",
+        "B1a-023",
+        "B1a-037",
+        "B1a-058",
+        "B2-002",
+        "B2-014",
+        "B2-069",
+        "B2-090",
+        "B2-092",
+        "B2-103",
+        "B2-113",
+        "B2-127",
+        "B2a-013",
+        "B2a-024",
+        "B2a-053",
+        "B2a-062",
+        "B2b-009",
+        "B2b-020",
+        "B2b-027",
+        "B2b-032",
+        "B2b-046",
+        "B3-086",
+        "B3-118",
+        "B3-125",
+        "B3-126",
+        "B3-148",
+        "B3-154",
+        "B3a-013",
+        "B3a-033",
+        "B3a-035",
+        "B3a-043",
+        "B3a-069",
+        "B3a-070",
+        "B3b-047",
+        "B3b-060",
+        "B4-011",
+        "B4-016",
+        "B4-019",
+        "B4-032",
+        "B4-033",
+        "B4-053",
+        "B4-055",
+        "B4-073",
+        "B4-099",
+        "B4a-002",
+        "B4a-006",
+        "B4a-020",
+        "B4a-026",
+        "B4a-028",
+        "B4a-041",
+        "B4a-057",
+        "C1-095",
+        "C1-097",
+        "C1-123",
+        "C1-124",
+        "P-A-066",
+        "P-A-087",
+        "P-B-085",
+        "P-B-092"
+      ]
+    },
+    {
+      "family": "Copy/inspection/private-zone selection",
+      "count": 52,
+      "cardIds": [
+        "A1-205",
+        "A1-209",
+        "A1-283",
+        "A1a-032",
+        "A1a-065",
+        "A2-140",
+        "A2-146",
+        "A2a-031",
+        "A2a-034",
+        "A2a-065",
+        "A3-144",
+        "A3-145",
+        "A3a-041",
+        "A3a-068",
+        "A3b-005",
+        "A3b-035",
+        "A3b-069",
+        "A4-113",
+        "A4-154",
+        "A4-158",
+        "A4-161",
+        "A4a-032",
+        "A4a-070",
+        "A4a-071",
+        "B1-136",
+        "B1-150",
+        "B1-151",
+        "B1-213",
+        "B1-223",
+        "B1a-048",
+        "B1a-055",
+        "B2-104",
+        "B2-130",
+        "B2-150",
+        "B3-137",
+        "B3b-025",
+        "B3b-034",
+        "B3b-038",
+        "B3b-067",
+        "B3b-069",
+        "B4-064",
+        "B4-130",
+        "B4a-062",
+        "B4a-071",
+        "C1-008",
+        "C1-012",
+        "C1-088",
+        "C1-127",
+        "P-A-003",
+        "P-A-004",
+        "P-B-077",
+        "P-B-091"
+      ]
+    },
+    {
+      "family": "Other exact printed clause",
+      "count": 43,
+      "cardIds": [
+        "A1-163",
+        "A1-222",
+        "A1-225",
+        "A1a-062",
+        "A1a-064",
+        "A1a-066",
+        "A2a-013",
+        "A2a-035",
+        "A2b-021",
+        "A3-068",
+        "A3-091",
+        "A3-152",
+        "A3a-056",
+        "A3a-064",
+        "A4-015",
+        "A4-142",
+        "A4a-003",
+        "A4a-037",
+        "B1-007",
+        "B1-095",
+        "B1-177",
+        "B1-225",
+        "B1a-006",
+        "B1a-015",
+        "B2-016",
+        "B2-097",
+        "B2a-044",
+        "B2a-081",
+        "B2b-065",
+        "B3-013",
+        "B3-051",
+        "B3-085",
+        "B3-113",
+        "B3-130",
+        "B3-152",
+        "B3a-073",
+        "B4-014",
+        "B4-037",
+        "B4-068",
+        "B4-093",
+        "C1-126",
+        "C1-130",
+        "P-B-086"
+      ]
+    },
+    {
+      "family": "Evolution/rule boxes",
+      "count": 35,
+      "cardIds": [
+        "A1a-046",
+        "A3-098",
+        "A3b-034",
+        "A3b-056",
+        "A3b-066",
+        "A4-040",
+        "A4a-006",
+        "A4a-022",
+        "B1-050",
+        "B1-184",
+        "B1-194",
+        "B1a-067",
+        "B1a-069",
+        "B2-012",
+        "B2-075",
+        "B2-111",
+        "B2a-087",
+        "B2b-068",
+        "B3-035",
+        "B3-049",
+        "B3-050",
+        "B3-105",
+        "B3-112",
+        "B3-155",
+        "B3a-039",
+        "B3b-001",
+        "B3b-068",
+        "B4-044",
+        "B4-050",
+        "B4-152",
+        "B4a-043",
+        "C1-041",
+        "C1-107",
+        "C1-121",
+        "P-A-086"
+      ]
+    },
+    {
+      "family": "Tool/Stadium interactions",
+      "count": 22,
+      "cardIds": [
+        "A2-132",
+        "A3-151",
+        "A3a-037",
+        "A3b-045",
+        "A4a-018",
+        "B1-120",
+        "B1-127",
+        "B2-050",
+        "B2-079",
+        "B2a-093",
+        "B3-145",
+        "B3-146",
+        "B3-147",
+        "B3b-024",
+        "B3b-030",
+        "B3b-055",
+        "B3b-066",
+        "B4-077",
+        "B4-089",
+        "B4-115",
+        "C1-038",
+        "P-B-078"
+      ]
+    }
+  ],
+  "releaseAudit": {
+    "asOf": "2026-10-31",
+    "catalogueCutoff": "2026-10-30",
+    "dualFusion": {
+      "setId": "C1",
+      "releaseDate": "2026-10-29",
+      "reviewedPrints": 217,
+      "source": "https://pokemon.gamespress.com/en-GB/Dual-type-Cards-to-Debut-in-Pokemon-TCG-Pocket-with-new-Dual-Fusion-Ex"
+    },
+    "releasedBeyondCatalogue": [
+      {
+        "name": "Special Pack: First Partners",
+        "releaseDate": "2026-10-31",
+        "reviewedCardInventory": false,
+        "source": "https://pokemon.gamespress.com/en-GB/Dual-type-Cards-to-Debut-in-Pokemon-TCG-Pocket-with-new-Dual-Fusion-Ex",
+        "reason": "Official release date checked; the supplied catalogue contains no reviewed card-by-card inventory or exact gameplay joins for this new special pack. Keep this source gap explicit and do not invent print IDs, rules or ownership."
+      }
+    ],
+    "futurePromoC": "Individual acquisition events remain excluded before their recorded dates; first premium card no earlier than2026-11-01."
+  }
 }

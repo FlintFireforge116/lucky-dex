@@ -27,5 +27,7 @@ test('main save schema owns TCG Battle progress with nested backwards-compatible
 test('achievement catalogue recognises winning a Pocket Solo battle',()=>{
   const expansion=read('app/src/main/assets/achievements-tcgp-battle-v06920.js');
   assert.match(expansion,/v06920_tcgp_first_win/);
-  assert.match(expansion,/s\(\)\.tcgpBattle\?\.stats\?\.wins/);
+  const state={tcgpBattle:{stats:{wins:0}}};
+  const first=require('../app/src/main/assets/achievements-tcgp-battle-v06920.js').build(()=>state).find(a=>a.id==='v06920_tcgp_first_win');
+  assert.deepEqual(first.progress(),[0,1]);state.tcgpBattle.stats.wins=1;assert.deepEqual(first.progress(),[1,1]);
 });

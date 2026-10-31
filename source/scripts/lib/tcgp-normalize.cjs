@@ -8,6 +8,63 @@ function setId(s){s=String(s||'').toUpperCase();if(['PA','PROMO-A','P-A'].includ
 function printId(id){const m=String(id||'').match(/^(.*?)[-\/](\d+)$/);if(!m)throw Error('Invalid print ID: '+id);return setId(m[1])+'-'+m[2].padStart(3,'0');}
 function sequence(effects){const list=effects.filter(Boolean);return list.length===0?null:list.length===1?list[0]:{type:'sequence',effects:list};}
 function selections(e){if(!e)return 0;if(e.type==='sequence')return e.effects.reduce((n,e)=>n+selections(e),0);if(e.type==='coinFlip')return Math.max(selections(e.heads),selections(e.tails));return Number(e.type==='selectedDamage'||e.type==='switch'&&!e.source||e.type==='benchDamage'&&!e.all||['selfBench','selfPokemon','opponentBench','opponentPokemon'].includes(e.target)||e.type==='moveEnergy'&&(e.source==='selfBench'||e.target==='selfBench'));}
+const statusNames={Poisoned:'poison',Burned:'burn',Asleep:'sleep',Paralyzed:'paralysis',Confused:'confusion'};
+const energyName=s=>Object.keys(ENERGY).find(k=>ENERGY[k]===s)||null;
+const namesIn=s=>s.replace(/, (?:and|or) /g,', ').split(/, | (?:and|or) /);
+function subjectFilter(s){
+ let m;if((m=s.match(/^\{([GRWLPFDMC])\} Pokémon(?: and \{([GRWLPFDMC])\} Pokémon)?$/)))return {subtype:m[2]?[energyName(m[1]),energyName(m[2])]:energyName(m[1])};
+ if((m=s.match(/^(Basic|Stage 1|Stage 2) Pokémon$/)))return {stage:m[1]};
+ if(s==='Evolution Pokémon')return {evolved:true};
+ if(s==='Pokémon')return {};
+ if(/Pokémon|Ultra Beast|Ancient|Future/.test(s))return null;
+ if(/^[A-Z][A-Za-zé♀♂:' -]*(?:(?:, | or | and )[A-Z][A-Za-zé♀♂:' -]*)*$/.test(s))return {name:namesIn(s).length===1?s:namesIn(s)};
+ return null;
+}
+function textCondition(text){
+ let m;if(text==='this Pokémon has no damage on it'||text==='this Pokémon has full HP')return {type:'selfUndamaged'};
+ if(text==='a Stadium is in play')return {type:'stadiumInPlay'};
+ if(text==="your opponent's Active Pokémon has a Pokémon Tool attached")return {type:'opponentHasTool'};
+ if(text==="your opponent's Active Pokémon has an Ability")return {type:'opponentMatches',filter:{hasAbility:true}};
+ if((m=text.match(/^your opponent's Active Pokémon is (?:a|an) (.+)$/))){const filter=subjectFilter(m[1]);if(filter)return {type:'opponentMatches',filter};}
+ if((m=text.match(/^(.+) is on your Bench$/))){const filter=subjectFilter(m[1]);if(filter?.name)return {type:'pokemonPresent',zone:'bench',filter};}
+ if((m=text.match(/^you have another (.+) in play$/))){const filter=subjectFilter(m[1]);if(filter?.name)return {type:'pokemonPresent',zone:'inPlay',filter,excludeSelf:true};}
+ if((m=text.match(/^you have (.+) in play$/))){const filter=subjectFilter(m[1]);if(filter?.name)return {type:'pokemonPresent',zone:'inPlay',filter};}
+ if((m=text.match(/^any of your Benched Pokémon have damage on them$/)))return {type:'pokemonPresent',zone:'bench',filter:{damaged:true}};
+ if((m=text.match(/^you have any (Stage 2) Pokémon on your Bench$/)))return {type:'pokemonPresent',zone:'bench',filter:{stage:m[1]}};
+ return null;
+}
+// Reusable, fully anchored translations. Conditions, selectors and the complete
+// suffix must each compile; an understood prefix never consumes unknown text.
+function compileReusable(text,kind,baseDamage){
+ let m;const ok=effect=>({supported:true,effect});
+ if((m=text.match(/^Both Active Pokémon are now (Poisoned|Burned|Asleep|Paralyzed|Confused)\.$/)))return ok(sequence(['selfActive','opponentActive'].map(target=>({type:'status',target,status:statusNames[m[1]]}))));
+ if(/^Discard a random Energy from both Active Pokémon\.$/.test(text))return ok(sequence(['selfActive','opponentActive'].map(target=>({type:'discardEnergy',target,amount:1,random:true}))));
+ if((m=text.match(/^Discard the top (\d+) cards of each player's deck\.$/)))return ok(sequence(['self','opponent'].map(side=>({type:'discardTop',side,amount:+m[1]}))));
+ if(/^Move all Energy from this Pokémon to 1 of your Benched Pokémon\.$/.test(text))return ok({type:'moveEnergy',source:'self',target:'selfBench',amount:'all'});
+ if((m=text.match(/^Move (\d+) \{([GRWLPFDM])\} Energy from this Pokémon to 1 of your Benched Pokémon\.$/)))return ok({type:'moveEnergy',source:'self',target:'selfBench',amount:+m[1],energyType:energyName(m[2])});
+ if((m=text.match(/^This Pokémon is now (Poisoned|Burned|Asleep|Paralyzed|Confused)\. Heal (\d+) damage from it\.$/)))return ok(sequence([{type:'status',target:'self',status:statusNames[m[1]]},{type:'healSelf',amount:+m[2]}]));
+ if((m=text.match(/^If (.+?), (.+)$/))){const condition=textCondition(m[1]);if(condition){const result=compileEffect(m[2][0].toUpperCase()+m[2].slice(1),kind,baseDamage);if(result.supported&&result.effect&&!result.effect.condition)return ok({...result.effect,condition});}}
+ if((m=text.match(/^Heal (\d+) damage from (1 of|each of) your (Benched )?(\{[GRWLPFDMC]\} Pokémon|Basic Pokémon|Stage 2 Pokémon|Pokémon)(?:\.)$/))){const filter=subjectFilter(m[4]);return ok({type:'heal',amount:+m[1],target:m[2]==='each of'?(m[3]?'selfBenchAll':'selfAll'):(m[3]?'selfBench':'selfPokemon'),...(Object.keys(filter).length?{filter}:{})});}
+ if((m=text.match(/^Take (a|an|\d+) (?:\{([GRWLPFDM])\}|(Grass|Fire|Water|Lightning|Psychic|Fighting|Darkness|Metal)) Energy from your Energy Zone and attach (?:it|them) to (1 of your Benched|the) (?:\{([GRWLPFDMC])\}|(Grass|Fire|Water|Lightning|Psychic|Fighting|Darkness|Metal)) Pokémon(?: in the Active Spot)?\.$/)))return ok({type:'attachEnergy',target:m[4]==='the'?'selfActive':'selfBench',amount:/^a/.test(m[1])?1:+m[1],energyType:m[2]?energyName(m[2]):m[3],filter:{subtype:m[5]?energyName(m[5]):m[6]}});
+ if(kind!=='attack'&&(m=text.match(/^Do (\d+) damage to (1 of your opponent's Pokémon|your opponent's Active Pokémon)\.$/)))return ok({type:'damage',target:m[2].startsWith('1')?'opponentPokemon':'opponentActive',amount:+m[1]});
+ if((m=text.match(/^Make your opponent's Active Pokémon (Poisoned|Burned|Asleep|Paralyzed|Confused)\.$/)))return ok({type:'status',target:'opponentActive',status:statusNames[m[1]]});
+ if((m=text.match(/^Switch in 1 of your opponent's Benched (Basic Pokémon|Pokémon that has damage on it|Pokémon) to the Active Spot\.$/)))return ok({type:'switch',side:'opponent',...(m[1]==='Basic Pokémon'?{filter:{stage:'Basic'}}:m[1].includes('damage')?{filter:{damaged:true}}:{})});
+ if((m=text.match(/^This attack also does (\d+) damage to (1 of|each of) your opponent's Benched Pokémon that has damage on it\.$/)))return ok({type:'benchDamage',side:'opponent',amount:+m[1],all:m[2]==='each of',filter:{damaged:true}});
+ if((m=text.match(/^This attack does (\d+) (more )?damage for each Evolution Pokémon on your Bench\.$/)))return ok({type:'benchCountDamage',side:'self',amount:+m[1],mode:m[2]?'add':'replace',filter:{evolved:true}});
+ if((m=text.match(/^This attack does (\d+) (more )?damage for each of your Benched (.+)\.$/))){const filter=subjectFilter(m[3]);if(filter)return ok({type:'benchCountDamage',side:'self',amount:+m[1],mode:m[2]?'add':'replace',filter});}
+ if((m=text.match(/^This attack does (\d+) (more )?damage for each Benched Pokémon \(both yours and your opponent's\)\.$/)))return ok({type:'benchCountDamage',side:'both',amount:+m[1],mode:m[2]?'add':'replace'});
+ if((m=text.match(/^This attack does (\d+) (more )?damage for each Energy attached to all of your opponent's Pokémon\.$/)))return ok({type:'energyDamage',source:'opponent',all:true,amount:+m[1],mode:m[2]?'add':'replace'});
+ if(/^This attack does damage to your opponent's Active Pokémon equal to the damage this Pokémon has on it\.$/.test(text))return ok({type:'damageFromDamage',source:'self',amount:1,mode:'replace'});
+ if((m=text.match(/^Discard a \{([GRWLPFDM])\} Energy from your opponent's Active Pokémon\.$/)))return ok({type:'discardEnergy',target:'opponentActive',energyType:energyName(m[1]),amount:1});
+ if((m=text.match(/^Put (a|an|\d+) random (Basic Pokémon|Stage 2 Pokémon|Pokémon Tool card|Supporter card|Stadium card|Item card) from your (deck|discard pile) into your hand\.$/))){const filters={'Basic Pokémon':{kind:'pokemon',stage:'Basic'},'Stage 2 Pokémon':{kind:'pokemon',stage:'Stage 2'},'Pokémon Tool card':{kind:'trainer',trainerType:'Tool'},'Supporter card':{kind:'trainer',trainerType:'Supporter'},'Stadium card':{kind:'trainer',trainerType:'Stadium'},'Item card':{kind:'trainer',trainerType:'Item'}};return ok({type:'search',source:m[3]==='deck'?'deck':'discard',random:true,amount:/^a/.test(m[1])?1:+m[1],filter:filters[m[2]]});}
+ if((m=text.match(/^During this turn, attacks used by your (.+) do \+(\d+) damage to your opponent's Active Pokémon( ex)?\.$/))){const filter=subjectFilter(m[1]);if(filter)return ok({type:'modifier',stat:'attackDamage',amount:+m[2],duration:'turn',scope:'team',filter,...(m[3]?{opponentFilter:{isEx:true}}:{})});}
+ if((m=text.match(/^During this turn, attacks used by your (.+) cost (\d+) less \{C\} Energy\.$/))){const filter=subjectFilter(m[1]);if(filter)return ok({type:'modifier',stat:'attackCost',amount:-Number(m[2]),duration:'turn',scope:'team',filter});}
+ if((m=text.match(/^During your opponent's next turn, all of your (.+) take [−-](\d+) damage from attacks from your opponent's Pokémon\.$/))){const filter=subjectFilter(m[1]);if(filter)return ok({type:'modifier',stat:'damageReduction',amount:+m[2],duration:'opponentTurn',scope:'team',filter});}
+ if((m=text.match(/^The (\{[GRWLPFDMC]\} Pokémon|Basic Pokémon|Stage 1 Pokémon) this card is attached to gets \+(\d+) HP\.$/)))return ok({type:'modifier',stat:'maxHp',amount:+m[2],duration:'whileInPlay',filter:subjectFilter(m[1])});
+ if((m=text.match(/^The Retreat Cost of the (\{[GRWLPFDMC]\} Pokémon|Basic Pokémon) this card is attached to is (\d+) less\.$/)))return ok({type:'modifier',stat:'retreatCost',amount:-Number(m[2]),duration:'whileInPlay',filter:subjectFilter(m[1])});
+ if(/^Your Active Pokémon recovers from all Special Conditions\.$/.test(text))return ok({type:'removeStatus',target:'selfActive'});
+ return null;
+}
 function compileEffect(raw,kind='attack',baseDamage=0){
  const text=clean(raw);if(!text)return {supported:true,effect:null};let m;
  const ok=effect=>({supported:true,effect}),fail=()=>({supported:false,effect:null,reason:'Unimplemented '+kind+' text: '+text});
@@ -65,7 +122,7 @@ function compileEffect(raw,kind='attack',baseDamage=0){
  if((m=text.match(/^The Retreat Cost of each \{([GRWLPFDM])\} Pokémon in play \(both yours and your opponent's\) is (\d+) less\.$/)))return ok({type:'modifier',stat:'retreatCost',amount:-Number(m[2]),duration:'whileInPlay',scope:'both',filter:{subtype:Object.keys(ENERGY).find(k=>ENERGY[k]===m[1])}});
  if((m=text.match(/^During this turn, the Retreat Cost of your Active Pokémon is (\d+) less\.$/)))return ok({type:'modifier',stat:'retreatCost',amount:-Number(m[1]),duration:'turn',scope:'active'});
  if((m=text.match(/^During this turn, attacks used by your Pokémon do \+(\d+) damage to your opponent's Active Pokémon\.$/)))return ok({type:'modifier',stat:'attackDamage',amount:+m[1],duration:'turn',scope:'team'});
- const additional=compileAdditional(text,kind,baseDamage,compileEffect);if(additional){
+ const additional=compileReusable(text,kind,baseDamage)||compileAdditional(text,kind,baseDamage,compileEffect);if(additional){
   const selectors=new Set();function visit(e){if(!e)return;if(['selfBench','selfPokemon','opponentBench','opponentPokemon'].includes(e.target))selectors.add(e.target);if(e.type==='benchDamage'&&!e.all)selectors.add(e.side==='self'?'selfBench':'opponentBench');if(e.type==='switch'&&!e.source)selectors.add(e.side==='opponent'?'opponentBench':'selfBench');if(e.type==='moveEnergy')selectors.add(e.source==='selfBench'?'selfBench':e.target);for(const c of e.effects||[])visit(c);visit(e.heads);visit(e.tails);}visit(additional.effect);
   return selectors.size>1?fail():additional;
  }
@@ -75,6 +132,20 @@ function compileEffect(raw,kind='attack',baseDamage=0){
 }
 function compileAbility(a){
  const text=clean(a.effect);let m;
+ if((m=text.match(/^At the end of your turn, if this Pokémon is in the Active Spot, heal (\d+) damage from it\.$/)))return {supported:true,ability:{name:clean(a.name),text,type:'triggered',event:'endTurn',activeOnly:true,effect:{type:'healSelf',amount:+m[1]}}};
+ if((m=text.match(/^This Pokémon takes [−–-](\d+) damage from attacks from \{([GRWLPFDMC])\}(?: or \{([GRWLPFDMC])\})? Pokémon\.$/)))return {supported:true,ability:{name:clean(a.name),text,type:'passive',effect:{type:'modifier',stat:'damageReduction',amount:+m[1],duration:'whileInPlay',condition:{type:'opponentMatches',filter:{subtype:m[3]?[energyName(m[2]),energyName(m[3])]:energyName(m[2])}}}}};
+ if((m=text.match(/^If this Pokémon has full HP, it takes [−–-](\d+) damage from attacks from your opponent's Pokémon\.$/)))return {supported:true,ability:{name:clean(a.name),text,type:'passive',effect:{type:'modifier',stat:'damageReduction',amount:+m[1],duration:'whileInPlay',condition:{type:'selfUndamaged'}}}};
+ if((m=text.match(/^As long as this Pokémon is on your Bench, your Active (Basic Pokémon|\{[GRWLPFDMC]\} Pokémon)'s Retreat Cost is (\d+) less\.$/)))return {supported:true,ability:{name:clean(a.name),text,type:'passive',benchOnly:true,effect:{type:'modifier',stat:'retreatCost',amount:-Number(m[2]),duration:'whileInPlay',scope:'active',filter:subjectFilter(m[1])}}};
+ if((m=text.match(/^This Pokémon takes –(\d+) damage from attacks\.$/)))return {supported:true,ability:{name:clean(a.name),text,type:'passive',effect:{type:'modifier',stat:'damageReduction',amount:+m[1],duration:'whileInPlay'}}};
+ const activated=text.match(/^Once during your turn, (?:if this Pokémon is (in the Active Spot|on your Bench), )?you may (.+)$/);
+ if(activated){const effectText=activated[2][0].toUpperCase()+activated[2].slice(1),compiled=compileEffect(effectText,'ability');
+  const executable=e=>e&&!['bonusDamage','coinDamage','energyDamage','benchCountDamage','statusDamage','damageFromDamage','selectedDamage','playFossil'].includes(e.type)&&(e.type!=='sequence'||e.effects.every(executable))&&(e.type!=='coinFlip'||executable(e.heads)&&(!e.tails||executable(e.tails)));
+  if(compiled.supported&&executable(compiled.effect))return {supported:true,ability:{name:clean(a.name),text,type:'activated',oncePerTurn:true,...(activated[1]?{[activated[1]==='on your Bench'?'benchOnly':'activeOnly']:true}:{}),effect:compiled.effect}};
+ }
+ if((m=text.match(/^Once during your turn, if you have (.+) in play, you may (.+)$/))){const filter=subjectFilter(m[1]),compiled=compileEffect(m[2][0].toUpperCase()+m[2].slice(1),'ability');if(filter?.name&&compiled.supported&&compiled.effect?.type==='damage')return {supported:true,ability:{name:clean(a.name),text,type:'activated',oncePerTurn:true,effect:{...compiled.effect,condition:{type:'pokemonPresent',zone:'inPlay',filter}}}};}
+ if((m=text.match(/^Attacks used by your (.+) do \+(\d+) damage to your opponent's Active Pokémon\.$/))){const filter=subjectFilter(m[1]);if(filter)return {supported:true,ability:{name:clean(a.name),text,type:'passive',effect:{type:'modifier',stat:'attackDamage',amount:+m[2],duration:'whileInPlay',scope:'team',filter}}};}
+ if((m=text.match(/^Each of your (.+) gets \+(\d+) HP\.$/))){const filter=subjectFilter(m[1]);if(filter)return {supported:true,ability:{name:clean(a.name),text,type:'passive',effect:{type:'modifier',stat:'maxHp',amount:+m[2],duration:'whileInPlay',scope:'team',filter}}};}
+ if((m=text.match(/^If you have (.+) in play, (this Pokémon takes [−-](\d+) damage from attacks|attacks used by this Pokémon do \+(\d+) damage to your opponent's Active Pokémon|attacks used by this Pokémon cost (\d+) less \{C\} Energy)\.$/))){const filter=subjectFilter(m[1]);if(filter?.name)return {supported:true,ability:{name:clean(a.name),text,type:'passive',effect:{type:'modifier',stat:m[3]?'damageReduction':m[4]?'attackDamage':'attackCost',amount:m[3]?+m[3]:m[4]?+m[4]:-Number(m[5]),duration:'whileInPlay',condition:{type:'pokemonPresent',zone:'inPlay',filter}}}};}
  if((m=text.match(/^Once during your turn, you may heal (\d+) damage from your Active Pokémon\.$/)))return {supported:true,ability:{name:clean(a.name),text,type:'activated',oncePerTurn:true,effect:{type:'heal',target:'selfActive',amount:+m[1]}}};
  if((m=text.match(/^This Pokémon takes [−-](\d+) damage from attacks\.$/)))return {supported:true,ability:{name:clean(a.name),text,type:'passive',effect:{type:'modifier',stat:'damageReduction',amount:+m[1],duration:'whileInPlay'}}};
  if(/^At the end of your turn, if this Pokémon is in the Active Spot, draw a card\.$/.test(text))return {supported:true,ability:{name:clean(a.name),text,type:'triggered',event:'endTurn',activeOnly:true,effect:{type:'draw',amount:1}}};

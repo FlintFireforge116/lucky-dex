@@ -15,7 +15,7 @@ test('owned catalogue searches unsupported cards, explains rules gaps, and keeps
   await page.click('[data-tcgp-action="build"]');
   await page.fill('#tcgpDeckSearch','Pidgeot');
   await page.click('[data-deck="developer"]');await page.locator('#tcgpDeckResults [data-deck="inspect"]').click();
-  assert.match(await page.locator('.tcgp-editor-sheet').innerText(),/PARTIAL.*Target selection awaits implementation/);await page.click('[data-deck="close-sheet"]');
+  assert.match(await page.locator('.tcgp-editor-sheet').innerText(),/PARTIAL[\s\S]*Target selection awaits implementation/);await page.click('[data-deck="close-sheet"]');
   assert.equal(await page.locator('#tcgpDeckResults [data-deck="add"]').isDisabled(),true);
   await page.fill('#tcgpDeckSearch','Paras');
   // The full app may asynchronously repair the deliberately missing owned

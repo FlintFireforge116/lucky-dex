@@ -25,3 +25,18 @@ body.tcgp-deck-editing #tcgpDeckResults{overflow:auto;min-height:0;flex:1;oversc
 .tcgp-editor-inspect article>div{display:flex;justify-content:space-between;align-items:center;gap:12px}
 @media(min-width:650px){.tcgp-editor-grid{grid-template-columns:repeat(5,minmax(0,1fr))}}
 @media(max-height:740px){.tcgp-editor-deck-grid{max-height:121px}.in-deck .tcgp-editor-art{max-height:52px}}
+/* Keep full-size print art and management controls inside narrow portrait sheets. */
+.tcgp-editor-tools>div{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px}
+.tcgp-editor-tools>div button{min-width:0;padding:6px 4px;font-size:11px}
+.tcgp-editor-tools [data-deck="clear-filters"]{grid-column:1/-1;order:5;min-height:32px}
+.tcgp-editor-tools [hidden]{display:none}
+.tcgp-editor-inspect>div{min-width:0}
+.tcgp-editor-inspect pre{max-width:100%;white-space:pre-wrap;overflow-wrap:anywhere;font-size:10px;background:#dde9ee;padding:8px;border-radius:8px}
+.tcgp-editor-prints{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:7px}
+.tcgp-editor-prints button{min-width:0;padding:4px;font-size:9px;overflow-wrap:anywhere}
+.tcgp-editor-prints img{display:block;width:100%;height:110px;object-fit:contain;margin-bottom:4px}
+.tcgp-editor-saved nav{display:grid;grid-template-columns:repeat(3,minmax(0,1fr))}
+.tcgp-editor-saved nav button{min-width:0;padding:6px 4px;font-size:11px}
+.tcgp-editor-saved article{padding:8px;border-radius:10px;margin-bottom:8px}
+.tcgp-editor-saved .active-deck{border:2px solid #215f80;background:#e0edf3}
+.tcgp-editor-recipe{border-bottom:1px solid var(--line);padding-bottom:12px}

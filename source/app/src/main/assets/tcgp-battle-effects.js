@@ -6,8 +6,9 @@
   'use strict';
   const ENERGY_CODE = Object.freeze({G:'Grass',R:'Fire',W:'Water',L:'Lightning',P:'Psychic',F:'Fighting',D:'Darkness',M:'Metal'});
   const ENERGY_TYPES=Object.values(ENERGY_CODE);
-  const TARGETS=['self','selfActive','selfBench','selfPokemon','opponentActive','opponentBench','opponentPokemon','selfAll'];
-  const CONDITIONS=['selfDamaged','opponentDamaged','opponentStatus','selfStatus','opponentEx','selfEnergyAtLeast','opponentEnergyAtLeast','benchAtLeast','selfHasTool','selfExtraEnergyAtLeast','supporterPlayed','stadiumInPlay'];
+  const TARGETS=['self','selfActive','selfBench','selfPokemon','opponentActive','opponentBench','opponentPokemon','selfAll','selfBenchAll'];
+  const CONDITIONS=['selfDamaged','selfUndamaged','opponentDamaged','opponentStatus','selfStatus','opponentEx','selfEnergyAtLeast','opponentEnergyAtLeast','benchAtLeast','selfHasTool','opponentHasTool','selfExtraEnergyAtLeast','supporterPlayed','stadiumInPlay','opponentMatches','pokemonPresent'];
+  const FILTER_KEYS=['kind','stage','subtype','name','trainerType','isEx','damaged','evolved','hasAbility','evolvesFrom'];
   const STATUSES=['poison','burn','sleep','paralysis','confusion'];
   const STATS=['attackDamage','damageReduction','retreatCost','attackCost','maxHp'];
   const effectTypes=Object.freeze(['noop','sequence','healSelf','heal','damage','bonusDamage','coinDamage','energyDamage','benchCountDamage','statusDamage','damageFromDamage','discardTop','benchDamage','selfDamage','attachEnergy','discardEnergy','draw','search','searchRandomBasic','switch','status','coinFlip','modifier','removeStatus','lock','preventDamage','selectedDamage','coinUntilTails','playFossil','discardSelf','moveEnergy','handShuffle','preventStatus']);
@@ -19,9 +20,9 @@
     if(!effect||typeof effect!=='object'||Array.isArray(effect)||!effectTypes.includes(effect.type))return [`${at}: Unsupported battle effect: ${effect&&effect.type}`];
     const need=(ok,text)=>{if(!ok)errors.push(`${at}: ${text}`);};
     if(effect.target!=null)need(TARGETS.includes(effect.target),'invalid target selector');
-    if(effect.condition!=null){const c=effect.condition;need(c&&CONDITIONS.includes(c.type),'invalid condition');if(c&&c.energyType!=null)need(ENERGY_TYPES.includes(c.energyType),'invalid condition Energy type');if(c&&c.status!=null)need(STATUSES.includes(c.status),'invalid condition status');if(c&&c.amount!=null)need(nonnegative(c.amount),'invalid condition amount');}
+    if(effect.condition!=null){const c=effect.condition;need(c&&CONDITIONS.includes(c.type),'invalid condition');if(c&&c.energyType!=null)need(ENERGY_TYPES.includes(c.energyType),'invalid condition Energy type');if(c&&c.status!=null)need(STATUSES.includes(c.status),'invalid condition status');if(c&&c.amount!=null)need(nonnegative(c.amount),'invalid condition amount');if(c&&c.filter!=null){need(c.filter&&typeof c.filter==='object'&&!Array.isArray(c.filter),'invalid condition filter');for(const key of Object.keys(c.filter||{}))need(FILTER_KEYS.includes(key),'invalid condition filter key');}if(c?.type==='pokemonPresent')need(['bench','inPlay'].includes(c.zone),'invalid condition zone');}
     if(effect.energyType!=null)need(ENERGY_TYPES.includes(effect.energyType),'invalid Energy type');
-    if(effect.side!=null)need((effect.type==='handShuffle'?['self','opponent','both']:['self','opponent']).includes(effect.side),'invalid side');
+    if(effect.side!=null)need((['handShuffle','benchCountDamage'].includes(effect.type)?['self','opponent','both']:['self','opponent']).includes(effect.side),'invalid side');
     if(effect.mode!=null)need(['add','replace'].includes(effect.mode),'invalid damage mode');
     switch(effect.type){
       case 'sequence':need(Array.isArray(effect.effects)&&effect.effects.length>0,'sequence requires effects');for(const [i,e] of (Array.isArray(effect.effects)?effect.effects:[]).entries()){need(e!=null,'sequence cannot contain null');errors.push(...validateEffect(e,`${at}.effects[${i}]`));}break;
@@ -32,14 +33,14 @@
       case 'lock':need(['attack','retreat'].includes(effect.action),'invalid locked action');need(['nextOwnTurn','opponentTurn','whileInPlay'].includes(effect.duration),'invalid lock duration');break;
       case 'preventDamage':need(['opponentTurn','whileInPlay','whileActive'].includes(effect.duration),'invalid prevention duration');break;
       case 'coinFlip':need(!!effect.heads,'coinFlip requires heads effect');errors.push(...validateEffect(effect.heads,`${at}.heads`),...validateEffect(effect.tails,`${at}.tails`));break;
-      case 'status':need(!['selfAll','selfBench','opponentBench','selfPokemon','opponentPokemon'].includes(effect.target),'special conditions require Active Pokemon');need(STATUSES.includes(effect.status),'invalid special condition');if(effect.amount!=null)need(nonnegative(effect.amount),'invalid status damage');break;
+      case 'status':need(!['selfAll','selfBenchAll','selfBench','opponentBench','selfPokemon','opponentPokemon'].includes(effect.target),'special conditions require Active Pokemon');need(STATUSES.includes(effect.status),'invalid special condition');if(effect.amount!=null)need(nonnegative(effect.amount),'invalid status damage');break;
       case 'noop':case 'removeStatus':case 'switch':case 'discardSelf':break;
       case 'playFossil':need(nonnegative(effect.hp)&&effect.hp>0,'invalid Fossil HP');need(effect.subtype==='Colorless','invalid Fossil type');need(effect.canRetreat===false,'Fossil cannot retreat');break;
       case 'modifier':need(STATS.includes(effect.stat),'invalid modifier stat');need(typeof effect.amount==='number'&&Number.isFinite(effect.amount),'invalid modifier amount');need(['turn','opponentTurn','whileActive','whileInPlay'].includes(effect.duration),'invalid duration');if(effect.scope!=null)need(['self','team','active','both'].includes(effect.scope),'invalid modifier scope');break;
       case 'discardTop':need(integer(effect.amount),'invalid discarded card count');break;
       case 'damageFromDamage':need(['self','opponent'].includes(effect.source),'invalid damage source');need(nonnegative(effect.amount),'invalid damage multiplier');break;
       case 'discardEnergy':need(effect.amount==='all'||integer(effect.amount),'invalid discarded Energy amount');break;
-      case 'search':need(['deck','discard'].includes(effect.source||'deck'),'invalid search source');need(effect.random===true,'only random filtered searches are supported');need(integer(effect.amount),'invalid search amount');need(effect.filter&&typeof effect.filter==='object'&&!Array.isArray(effect.filter),'search requires filter');for(const key of Object.keys(effect.filter||{}))need(['kind','stage','subtype','name','trainerType','isEx'].includes(key),'invalid search filter');break;
+      case 'search':need(['deck','discard'].includes(effect.source||'deck'),'invalid search source');need(effect.random===true,'only random filtered searches are supported');need(integer(effect.amount),'invalid search amount');need(effect.filter&&typeof effect.filter==='object'&&!Array.isArray(effect.filter),'search requires filter');for(const key of Object.keys(effect.filter||{}))need(FILTER_KEYS.includes(key),'invalid search filter');break;
       default:need(nonnegative(effect.amount),'invalid amount');
     }
     if(effect.type==='statusDamage')need(STATUSES.includes(effect.status),'invalid damage status');
@@ -49,7 +50,8 @@
     if(['draw','searchRandomBasic'].includes(effect.type))need(integer(effect.amount),'invalid card count');
     if(effect.type==='selectedDamage')need(['opponentPokemon','opponentBench'].includes(effect.target),'invalid selected attack target');
     if(effect.sourceFilter!=null){need(effect.sourceFilter&&typeof effect.sourceFilter==='object'&&!Array.isArray(effect.sourceFilter),'invalid source filter');for(const key of Object.keys(effect.sourceFilter||{}))need(['kind','stage','subtype','name','trainerType','isEx','damaged'].includes(key),'invalid source filter key');}
-    if(effect.filter!=null){need(effect.filter&&typeof effect.filter==='object'&&!Array.isArray(effect.filter),'invalid target filter');for(const key of Object.keys(effect.filter||{}))need(['kind','stage','subtype','name','trainerType','isEx','damaged'].includes(key),'invalid target filter key');}
+    if(effect.filter!=null){need(effect.filter&&typeof effect.filter==='object'&&!Array.isArray(effect.filter),'invalid target filter');for(const key of Object.keys(effect.filter||{}))need(FILTER_KEYS.includes(key),'invalid target filter key');}
+    if(effect.opponentFilter!=null){need(effect.type==='modifier','opponent filter requires modifier');need(effect.opponentFilter&&typeof effect.opponentFilter==='object'&&!Array.isArray(effect.opponentFilter),'invalid opposing Pokemon filter');for(const key of Object.keys(effect.opponentFilter||{}))need(FILTER_KEYS.includes(key),'invalid opposing Pokemon filter key');}
     if(effect.pokemonType!=null)need([...ENERGY_TYPES,'Colorless','Dragon'].includes(effect.pokemonType),'invalid Pokemon type');
     return errors;
   }
@@ -69,6 +71,10 @@
     switch(c.type){
       case 'stadiumInPlay':return !!ctx.state.stadium;
       case 'selfHasTool':return !!a?.tool;
+      case 'opponentHasTool':return !!d?.tool;
+      case 'selfUndamaged':return !!a&&Number(a.damage||0)===0;
+      case 'opponentMatches':return !!d&&matchesFilter(ctx.cardById(d.cardId),c.filter,d);
+      case 'pokemonPresent':return (c.zone==='bench'?own(ctx).bench:pokemonOn(own(ctx))).some(s=>s&&(!c.excludeSelf||s!==a)&&matchesFilter(ctx.cardById(s.cardId),c.filter,s));
       case 'supporterPlayed':return !!own(ctx).supporterUsed;
       case 'selfExtraEnergyAtLeast':{const e=a?.energy||{},cost=String(ctx.attack?.cost||'');const required=c.energyType?cost.split('').filter(k=>ENERGY_CODE[k]===c.energyType).length:cost.length;return (c.energyType?Number(e[c.energyType]||0):totalEnergy(e))-required>=Number(c.amount||0)&&totalEnergy(e)-cost.length>=Number(c.amount||0);}
       case 'selfDamaged':return Number(a&&a.damage)>0;
@@ -88,6 +94,7 @@
       case 'self':return ctx.attacker?[ctx.attacker]:[];
       case 'selfActive':return own(ctx).active?[own(ctx).active]:[];
       case 'selfAll':return pokemonOn(own(ctx));
+      case 'selfBenchAll':return own(ctx).bench.filter(Boolean);
       case 'opponentActive':return other(ctx).active?[other(ctx).active]:[];
       case 'selfBench':{const s=selected(ctx,own(ctx));return s&&own(ctx).bench.includes(s)?[s]:[];}
       case 'opponentBench':{const s=selected(ctx,other(ctx));return s&&other(ctx).bench.includes(s)?[s]:[];}
@@ -96,7 +103,7 @@
       default:throw new Error(`Unsupported target: ${selector}`);
     }
   }
-  function matchesFilter(card,filter,slot){return !!card&&Object.entries(filter||{}).every(([k,v])=>k==='subtype'?hasType(card,v):k==='damaged'?(Number(slot?.damage)>0)===v:k==='isEx'?!!(card.isEx||card.points>=2||/ ex$/.test(card.name))===v:card[k]===v);}
+  function matchesFilter(card,filter,slot){const match=(k,v)=>k==='subtype'?hasType(card,v):k==='damaged'?(Number(slot?.damage)>0)===v:k==='isEx'?!!(card.isEx||card.points>=2||/ ex$/.test(card.name))===v:k==='evolved'?['Stage 1','Stage 2'].includes(card.stage)===v:k==='hasAbility'?!!(card.abilities?.length||card.ability)===v:card[k]===v;return !!card&&Object.entries(filter||{}).every(([k,v])=>Array.isArray(v)?v.some(x=>match(k,x)):match(k,v));}
   function clearConditions(slot){if(slot)slot.conditions={};}
   function clearTemporaryEffects(state,slot){if(!slot)return;clearConditions(slot);delete slot.locks;delete slot.attackGuard;delete slot.statusGuard;if(state)state.modifiers=(state.modifiers||[]).filter(m=>m.targetUid!==slot.uid||m.scope==='team'||m.scope==='active');}
   function switchPokemon(side,benchIndex,state){const index=side.bench.findIndex(s=>s&&Number(s.benchSlot)===Number(benchIndex));if(index<0||!side.active)return false;const incoming=side.bench[index],outgoing=side.active;outgoing.benchSlot=Number(incoming.benchSlot);incoming.benchSlot=null;side.bench[index]=outgoing;side.active=incoming;clearTemporaryEffects(state,outgoing);return true;}
@@ -117,8 +124,8 @@
       case 'heal':for(const s of affected())s.damage=Math.max(0,Number(s.damage||0)-effect.amount);log({type:'heal',amount:effect.amount});break;
       case 'selfDamage':if(ctx.attacker)ctx.attacker.damage=Number(ctx.attacker.damage||0)+effect.amount;break;
       case 'damage':for(const s of affected())s.damage=Number(s.damage||0)+effect.amount;break;
-      case 'benchDamage':{const ss=effect.side==='self'?own(ctx):other(ctx);const list=effect.all?ss.bench:targets(effect.side==='self'?'selfBench':'opponentBench',ctx);for(const s of list.filter(Boolean)){const side=effect.side==='self'?ctx.side:ctx.foeSide;const guard=ctx.isAttack&&attackIsPrevented(ctx.state,side,s,ctx.attacker,ctx.cardById);const amount=guard?0:Math.max(0,effect.amount-(ctx.isAttack?modifierAmount(ctx.state,side,s,'damageReduction',ctx.cardById):0));s.damage=Number(s.damage||0)+amount;}break;}
-      case 'attachEnergy':for(const s of affected())s.energy[effect.energyType]=Number(s.energy[effect.energyType]||0)+effect.amount;log({type:'effectEnergy',amount:effect.amount,energyType:effect.energyType});break;
+      case 'benchDamage':{const ss=effect.side==='self'?own(ctx):other(ctx);const list=effect.all?ss.bench:targets(effect.side==='self'?'selfBench':'opponentBench',ctx);for(const s of list.filter(s=>s&&matchesFilter(ctx.cardById(s.cardId),effect.filter,s))){const side=effect.side==='self'?ctx.side:ctx.foeSide;const guard=ctx.isAttack&&attackIsPrevented(ctx.state,side,s,ctx.attacker,ctx.cardById);const amount=guard?0:Math.max(0,effect.amount-(ctx.isAttack?modifierAmount(ctx.state,side,s,'damageReduction',ctx.cardById):0));s.damage=Number(s.damage||0)+amount;}break;}
+      case 'attachEnergy':{const recipients=affected(),attachedBySide={player:0,opponent:0};for(const s of recipients){s.energy[effect.energyType]=Number(s.energy[effect.energyType]||0)+effect.amount;const side=pokemonOn(own(ctx)).includes(s)?ctx.side:ctx.foeSide;attachedBySide[side]+=effect.amount;}log({type:'effectEnergy',amount:effect.amount,totalAmount:recipients.length*effect.amount,attachedBySide,energyType:effect.energyType});break;}
       case 'discardEnergy':for(const s of affected()){if(effect.random){const count=effect.amount==='all'?totalEnergy(s.energy):effect.amount;for(let i=0;i<count;i++){const units=Object.entries(s.energy).flatMap(([type,n])=>Array(Math.max(0,Math.floor(n))).fill(type));if(!units.length)break;const type=units[Math.floor(ctx.random(ctx.state)*units.length)];s.energy[type]--;}}else if(effect.energyType)s.energy[effect.energyType]=effect.amount==='all'?0:Math.max(0,Number(s.energy[effect.energyType]||0)-effect.amount);else s.energy=effect.amount==='all'?{}:spendGenericEnergy(s.energy,Math.min(effect.amount,totalEnergy(s.energy)));}break;
       case 'moveEnergy':{const source=targets(effect.source,ctx).filter(s=>matchesFilter(ctx.cardById(s.cardId),effect.sourceFilter,s))[0],destination=targets(effect.target,ctx)[0];if(!source||!destination||source===destination)break;let remaining=effect.amount==='all'?Infinity:effect.amount;for(const type of Object.keys(source.energy)){if(effect.energyType&&type!==effect.energyType)continue;const amount=Math.min(remaining,Number(source.energy[type]||0));source.energy[type]-=amount;destination.energy[type]=Number(destination.energy[type]||0)+amount;remaining-=amount;}break;}
       case 'handShuffle':{const sides=effect.side==='both'?[own(ctx),other(ctx)]:[effect.side==='opponent'?other(ctx):own(ctx)];const counts=sides.map(s=>effect.draw==='same'?s.hand.length:effect.draw);for(const ss of sides){ss.deck.push(...ss.hand.splice(0));ctx.shuffle(ctx.state,ss.deck);}sides.forEach((ss,index)=>{for(let i=0;i<counts[index];i++)ctx.drawCard(ss);});break;}
@@ -126,7 +133,7 @@
       case 'draw':{const ss=effect.side==='opponent'?other(ctx):own(ctx);for(let i=0;i<effect.amount;i++)ctx.drawCard(ss);log({type:'draw',amount:effect.amount});break;}
       case 'searchRandomBasic':case 'search':{const ss=own(ctx),source=ss[effect.source||'deck'];for(let i=0;i<effect.amount&&ss.hand.length<10;i++){const candidates=source.map((r,index)=>({r,index})).filter(({r})=>matchesFilter(ctx.cardById(r.cardId),effect.type==='searchRandomBasic'?{kind:'pokemon',stage:'Basic'}:effect.filter));if(!candidates.length)break;const hit=candidates[Math.floor(ctx.random(ctx.state)*candidates.length)];const [found]=source.splice(hit.index,1);ss.hand.push(found);log({type:'search',cardId:found.cardId});}if((effect.source||'deck')==='deck'&&ctx.shuffle)ctx.shuffle(ctx.state,ss.deck);break;}
       case 'switch':{const a=ctx.action||{},side=effect.side==='opponent'?other(ctx):own(ctx);switchPokemon(side,effect.source?ctx.attacker?.benchSlot:a.effectBenchIndex==null?a.benchIndex:a.effectBenchIndex,ctx.state);log({type:'switch'});break;}
-      case 'status':for(const s of targets(effect.target||'opponentActive',ctx).filter(s=>(s===own(ctx).active||s===other(ctx).active)&&!protectedFromEffects(s,ctx)&&!statusIsPrevented(ctx.state,s,ctx.cardById))){s.conditions=s.conditions||{};if(['sleep','paralysis','confusion'].includes(effect.status))for(const k of ['sleep','paralysis','confusion'])delete s.conditions[k];s.conditions[effect.status]=effect.status==='poison'?{amount:effect.amount==null?10:effect.amount}:effect.status==='paralysis'?{appliedTurn:ctx.state.turnNumber}:true;}log({type:'status',status:effect.status});break;
+      case 'status':{const recipients=targets(effect.target||'opponentActive',ctx).filter(s=>(s===own(ctx).active||s===other(ctx).active)&&!protectedFromEffects(s,ctx)&&!statusIsPrevented(ctx.state,s,ctx.cardById)),affectedBySide={player:0,opponent:0};for(const s of recipients){s.conditions=s.conditions||{};if(['sleep','paralysis','confusion'].includes(effect.status))for(const k of ['sleep','paralysis','confusion'])delete s.conditions[k];s.conditions[effect.status]=effect.status==='poison'?{amount:effect.amount==null?10:effect.amount}:effect.status==='paralysis'?{appliedTurn:ctx.state.turnNumber}:true;affectedBySide[s===own(ctx).active?ctx.side:ctx.foeSide]++;}log({type:'status',status:effect.status,affectedCount:recipients.length,affectedBySide});break;}
       case 'playFossil':throw new Error('playFossil must resolve as a Trainer placement.');
       case 'discardSelf':{const slot=ctx.attacker,ss=own(ctx);if(!slot)break;for(let i=slot.stack.length-1;i>=0;i--)ss.discard.push({uid:slot.uid+'-stack-'+i,cardId:slot.stack[i]});if(slot.tool)ss.discard.push(slot.tool);if(ss.active===slot)ss.active=null;else{const index=ss.bench.indexOf(slot);if(index>=0)ss.bench.splice(index,1);}log({type:'discardPokemon',cardId:slot.cardId});break;}
       case 'lock':for(const s of affected()){s.locks=s.locks||[];s.locks.push({...effect,expiresTurn:effect.duration==='whileInPlay'?null:ctx.state.turnNumber+(effect.duration==='nextOwnTurn'?2:1)});}break;
@@ -147,8 +154,8 @@
       if(e.type==='selectedDamage'){damage=e.amount;damageTarget=targets(e.target,ctx).filter(s=>matchesFilter(ctx.cardById(s.cardId),e.filter,s))[0]||null;if(!damageTarget)damage=0;return;}
       if(e.type==='bonusDamage')amount=e.amount;
       else if(e.type==='coinDamage'){let heads=0;if(e.coins==='untilTails')heads=repeatHeads(ctx,()=>{});else for(let i=0;i<e.coins;i++)if(coin(ctx))heads++;ctx.state.log.push({type:'coin',side:ctx.side,heads,coins:e.coins});amount=heads*e.amount;}
-      else if(e.type==='energyDamage'){const energy=(e.source==='opponent'?ctx.defender:ctx.attacker)?.energy||{};amount=Math.max(0,(e.energyType?Number(energy[e.energyType]||0):totalEnergy(energy))-Number(e.extraAbove||0))*e.amount;}
-      else if(e.type==='benchCountDamage')amount=(e.side==='opponent'?other(ctx):own(ctx)).bench.filter(s=>s&&(!e.pokemonType||hasType(ctx.cardById(s.cardId),e.pokemonType))).length*e.amount;
+      else if(e.type==='energyDamage'){const list=e.all?pokemonOn(e.source==='opponent'?other(ctx):own(ctx)):[e.source==='opponent'?ctx.defender:ctx.attacker].filter(Boolean);amount=Math.max(0,list.reduce((n,s)=>n+(e.energyType?Number(s.energy?.[e.energyType]||0):totalEnergy(s.energy)),0)-Number(e.extraAbove||0))*e.amount;}
+      else if(e.type==='benchCountDamage'){const list=e.side==='both'?[...own(ctx).bench,...other(ctx).bench]:(e.side==='opponent'?other(ctx):own(ctx)).bench;amount=list.filter(s=>s&&(!e.pokemonType||hasType(ctx.cardById(s.cardId),e.pokemonType))&&matchesFilter(ctx.cardById(s.cardId),e.filter,s)).length*e.amount;}
       else if(e.type==='damageFromDamage')amount=Number((e.source==='self'?ctx.attacker:ctx.defender)?.damage||0)*e.amount;
       else if(e.type==='statusDamage')amount=ctx.defender?.conditions?.[e.status]?e.amount:0;
       else{pending.push(e);return;}
@@ -166,7 +173,7 @@
     return [{}];
   }
   function choicesForEffect(effect,ctx){
-    assertEffect(effect);if(!effect)return [{}];
+    assertEffect(effect);if(!effect)return [{}];if(!conditionMatches(effect.condition,ctx))return ctx.isAttack?[{}]:[];
     if(effect.type==='coinUntilTails')return choicesForEffect(effect.effect,ctx);
     if(effect.type==='moveEnergy'){const selector=effect.source==='selfBench'?'selfBench':effect.target;const choices=targetChoices(selector,ctx).filter(action=>targets(effect.source,{...ctx,action}).some(s=>matchesFilter(ctx.cardById(s.cardId),effect.sourceFilter,s)&&(effect.energyType?Number(s.energy[effect.energyType]||0):totalEnergy(s.energy))>0));return choices.length?choices:ctx.isAttack?[{}]:[];}
     if(effect.type==='switch'&&effect.source)return ctx.attacker&&own(ctx).bench.includes(ctx.attacker)?[{}]:[];
@@ -176,12 +183,14 @@
     }
     const selector=effect.type==='switch'?(effect.side==='opponent'?'opponentBench':'selfBench'):effect.type==='benchDamage'&&!effect.all?(effect.side==='self'?'selfBench':'opponentBench'):effect.target;
     const choices=targetChoices(selector,ctx);if(!choices.length&&ctx.isAttack&&effect.type!=='selectedDamage')return [{}];
-    return choices.filter(action=>{const list=targets(selector,{...ctx,action}).filter(s=>matchesFilter(ctx.cardById(s.cardId),effect.filter,s));if((effect.type==='heal'||effect.type==='healSelf')&&!ctx.isAttack)return list.some(s=>Number(s.damage)>0);if(effect.type==='discardEnergy'&&!ctx.isAttack)return list.some(s=>effect.energyType?Number(s.energy[effect.energyType])>0:totalEnergy(s.energy)>0);if(effect.type==='switch')return (effect.side==='opponent'?other(ctx):own(ctx)).active!=null;return !selector||list.length>0;});
+    const valid=choices.filter(action=>{const list=targets(selector,{...ctx,action}).filter(s=>matchesFilter(ctx.cardById(s.cardId),effect.filter,s));if((effect.type==='heal'||effect.type==='healSelf')&&!ctx.isAttack)return list.some(s=>Number(s.damage)>0);if(effect.type==='discardEnergy'&&!ctx.isAttack)return list.some(s=>effect.energyType?Number(s.energy[effect.energyType])>0:totalEnergy(s.energy)>0);if(effect.type==='switch')return (effect.side==='opponent'?other(ctx):own(ctx)).active!=null&&list.length>0;return !selector||list.length>0;});
+    return valid.length||!ctx.isAttack||effect.type==='selectedDamage'?valid:[{}];
   }
   function passiveModifiers(effect,source,side,state,slot,stat,out,cardById){
     if(!effect)return;
     if(effect.type==='sequence'){effect.effects.forEach(e=>passiveModifiers(e,source,side,state,slot,stat,out,cardById));return;}
     if(effect.type!=='modifier'||effect.stat!==stat||!matchesFilter(cardById(slot.cardId),effect.filter,slot))return;
+    const opposingActive=state.sides[side==='player'?'opponent':'player'].active;if(effect.opponentFilter&&(!opposingActive||!matchesFilter(cardById(opposingActive.cardId),effect.opponentFilter,opposingActive)))return;
     if(!conditionMatches(effect.condition,{state,side,foeSide:side==='player'?'opponent':'player',attacker:source,defender:state.sides[side==='player'?'opponent':'player'].active,cardById}))return;
     const ss=state.sides[side];if(effect.duration==='whileActive'&&ss.active!==source)return;
     if(effect.scope==='both'||effect.scope==='team'||effect.scope==='active'&&ss.active===slot||(!effect.scope||effect.scope==='self')&&source===slot)out.push(effect.amount);
@@ -189,11 +198,11 @@
   function modifierAmount(state,side,slot,stat,cardById){
     if(!slot)return 0;const values=[];
     for(const source of pokemonOn(state.sides[side])){
-      const card=cardById(source.cardId);for(const a of (card?.abilities?.length?card.abilities:Array.isArray(card?.ability)?card.ability:[card?.ability]).filter(Boolean))if(a.type==='passive')passiveModifiers(a.effect,source,side,state,slot,stat,values,cardById);
+      const card=cardById(source.cardId);for(const a of (card?.abilities?.length?card.abilities:Array.isArray(card?.ability)?card.ability:[card?.ability]).filter(Boolean))if(a.type==='passive'&&(!a.activeOnly||state.sides[side].active===source)&&(!a.benchOnly||state.sides[side].active!==source))passiveModifiers(a.effect,source,side,state,slot,stat,values,cardById);
       if(source.tool)passiveModifiers(cardById(source.tool.cardId)?.effect,source,side,state,slot,stat,values,cardById);
     }
     if(state.stadium){const stadium=cardById(state.stadium.cardId);passiveModifiers(stadium?.effect,state.sides[side].active,side,state,slot,stat,values,cardById);}
-    for(const m of state.modifiers||[]){if(m.stat!==stat||(m.scope!=='both'&&m.ownerSide!==side)||(m.scope==='active'?state.sides[side].active!==slot:m.scope==='both'||m.scope==='team'?false:m.targetUid!==slot.uid)||m.expiresTurn!=null&&state.turnNumber>m.expiresTurn)continue;const ss=state.sides[side];if(m.duration==='whileActive'&&ss.active?.uid!==m.sourceUid)continue;if(m.duration==='whileInPlay'&&!pokemonOn(ss).some(s=>s.uid===m.sourceUid))continue;if(matchesFilter(cardById(slot.cardId),m.filter,slot))values.push(m.amount);}
+    for(const m of state.modifiers||[]){if(m.stat!==stat||(m.scope!=='both'&&m.ownerSide!==side)||(m.scope==='active'?state.sides[side].active!==slot:m.scope==='both'||m.scope==='team'?false:m.targetUid!==slot.uid)||m.expiresTurn!=null&&state.turnNumber>m.expiresTurn)continue;const ss=state.sides[side];if(m.duration==='whileActive'&&ss.active?.uid!==m.sourceUid)continue;if(m.duration==='whileInPlay'&&!pokemonOn(ss).some(s=>s.uid===m.sourceUid))continue;const opposingActive=state.sides[side==='player'?'opponent':'player'].active;if(m.opponentFilter&&(!opposingActive||!matchesFilter(cardById(opposingActive.cardId),m.opponentFilter,opposingActive)))continue;if(matchesFilter(cardById(slot.cardId),m.filter,slot))values.push(m.amount);}
     return values.reduce((a,b)=>a+b,0);
   }
   function passiveProtection(effect,type,ctx,slot){

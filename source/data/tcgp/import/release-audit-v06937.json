@@ -1,0 +1,20 @@
+{
+  "asOf": "2026-10-31",
+  "catalogueCutoff": "2026-10-30",
+  "dualFusion": {
+    "setId": "C1",
+    "releaseDate": "2026-10-29",
+    "reviewedPrints": 217,
+    "source": "https://pokemon.gamespress.com/en-GB/Dual-type-Cards-to-Debut-in-Pokemon-TCG-Pocket-with-new-Dual-Fusion-Ex"
+  },
+  "releasedBeyondCatalogue": [
+    {
+      "name": "Special Pack: First Partners",
+      "releaseDate": "2026-10-31",
+      "reviewedCardInventory": false,
+      "source": "https://pokemon.gamespress.com/en-GB/Dual-type-Cards-to-Debut-in-Pokemon-TCG-Pocket-with-new-Dual-Fusion-Ex",
+      "reason": "Official release date checked; the supplied catalogue contains no reviewed card-by-card inventory or exact gameplay joins for this new special pack. Keep this source gap explicit and do not invent print IDs, rules or ownership."
+    }
+  ],
+  "futurePromoC": "Individual acquisition events remain excluded before their recorded dates; first premium card no earlier than2026-11-01."
+}
