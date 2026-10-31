@@ -89,6 +89,16 @@
           "bytes": 242126
         }
       ]
+    },
+    {
+      "name": "Vociferix Pocket detailed mechanics supplement",
+      "repository": "https://github.com/Vociferix/ptcgp-data",
+      "commit": "2ab3fbb5c606dc6a5ca7fbb8e190c2a051505f69",
+      "license": "MIT",
+      "noticeFile": "Vociferix-LICENSE-MIT.txt",
+      "usage": "Exact missing prints only: 1140 records /631 previously unknown identities. Reviewed TCGdex unchanged.",
+      "auditFile": "vociferix-provenance.json",
+      "archiveSha256": "22e894079516360ff97b15bc4839b351a105d8446985e9a8ed70919cca1e65fd"
     }
   ],
   "derivedFiles": [

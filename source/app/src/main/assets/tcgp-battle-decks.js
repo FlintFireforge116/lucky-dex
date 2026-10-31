@@ -20,7 +20,27 @@
 
   const LOANER_PLAYER_DECK = data.BEGINNER_IVYSAUR_DECK.slice();
   const ENERGY_TYPES = Object.freeze(['Grass','Fire','Water','Lightning','Psychic','Fighting','Darkness','Metal']);
-  function deckEnergyTypes(deck){return Array.isArray(deck?.energyTypes)?deck.energyTypes.slice():[String(deck?.energyType||'Grass')];}
+  const ENERGY_CODE={G:'Grass',R:'Fire',W:'Water',L:'Lightning',P:'Psychic',F:'Fighting',D:'Darkness',M:'Metal'};
+  function deckEnergyTypes(deck){return deck?.energyMode==='auto'?analyzeDeck(deck.cards||[]).recommendedEnergyTypes:Array.isArray(deck?.energyTypes)?deck.energyTypes.slice():deck?.energyType?[String(deck.energyType)]:analyzeDeck(deck?.cards||[]).recommendedEnergyTypes;}
+  function walkEffects(effect,fn){if(!effect||typeof effect!=='object')return;fn(effect);for(const e of Array.isArray(effect.effects)?effect.effects:[])walkEffects(e,fn);for(const key of ['heads','tails','effect'])if(effect[key]&&typeof effect[key]==='object')walkEffects(effect[key],fn);}
+  function selfGeneratedTypes(card){const found=new Set();for(const a of card?.abilities||[card?.ability].filter(Boolean))if(a.type==='activated'&&!a.benchOnly)walkEffects(a.effect,e=>{if(e.type==='attachEnergy'&&['self','selfActive'].includes(e.target)&&!e.condition)found.add(e.energyType);});return found;}
+  function analyzeDeck(cards,configured){
+    const pokemon=(cards||[]).map(data.cardById).filter(c=>c?.kind==='pokemon'),required=new Set(),warnings=[],unpowerable=[];
+    for(const c of pokemon)for(const a of c.attacks||[])for(const symbol of a.cost||'')if(ENERGY_CODE[symbol])required.add(ENERGY_CODE[symbol]);
+    const recommendedEnergyTypes=ENERGY_TYPES.filter(t=>required.has(t));
+    if(pokemon.length&&!recommendedEnergyTypes.length)recommendedEnergyTypes.push('Water'); // Any real Energy pays Colourless; no inherited Grass preference.
+    const types=configured==null?recommendedEnergyTypes:configured,energyValid=Array.isArray(types)&&types.length>=1&&types.length<=3&&new Set(types).size===types.length&&types.every(t=>ENERGY_TYPES.includes(t));
+    const available=new Set(Array.isArray(types)?types:[]),names=new Set(pokemon.map(c=>data.normalizeName(c.name)));
+    const missingEnergyTypes=ENERGY_TYPES.filter(t=>required.has(t)&&!available.has(t));
+    for(const c of new Map(pokemon.map(c=>[c.id,c])).values()){
+      const generated=selfGeneratedTypes(c),payable=(c.attacks||[]).some(a=>[...(a.cost||'')].every(s=>s==='C'||available.has(ENERGY_CODE[s])||generated.has(ENERGY_CODE[s])));
+      if(!payable){unpowerable.push(c.id);warnings.push({code:'unpowerable',cardId:c.id,message:`${c.name} cannot power any attack with ${[...available].join(' / ')||'no configured Energy'}.`});}
+      if(c.stage!=='Basic'&&c.evolvesFrom&&!names.has(data.normalizeName(c.evolvesFrom)))warnings.push({code:'orphan',cardId:c.id,message:`${c.name} is missing ${c.evolvesFrom} in this deck.`});
+    }
+    if(missingEnergyTypes.length)warnings.push({code:'missing-energy',message:`Attack costs require ${missingEnergyTypes.join(' / ')} Energy not configured in the Zone.`});
+    for(const type of available)if(required.size&&!required.has(type))warnings.push({code:'unused-energy',energyType:type,message:`No attack specifically requires ${type} Energy (it can still pay Colourless).`});
+    return {recommendedEnergyTypes,configuredEnergyTypes:[...available],energyValid,missingEnergyTypes,unpowerable,warnings};
+  }
 
   function ensureBattleState(state){
     if (!state || typeof state !== 'object') throw new TypeError('LuckyDex state is required');
@@ -85,35 +105,51 @@
     return {ok:errors.length === 0,errors};
   }
 
-  function validateDeck(cards, ownedRows){ return validateCore(cards, ownedRows, true); }
-  function validateLoanerDeck(cards){ return validateCore(cards, [], false); }
+  function validateDeck(cards, ownedRows, energyTypes){ const legal=validateCore(cards,ownedRows,true);return energyTypes==null?legal:{...legal,...analyzeDeck(cards,energyTypes)}; }
+  function validateLoanerDeck(cards,energyTypes){ const legal=validateCore(cards,[],false);return energyTypes==null?legal:{...legal,...analyzeDeck(cards,energyTypes)}; }
 
-  function buildQuickDeck(ownedRows){
-    const enabled = (ownedRows || []).filter(row => row && row.battleEnabled && data.cardById(row.gameplayId));
-    const sorted = enabled.slice().sort((a,b) => {
-      const ac = data.cardById(a.gameplayId), bc = data.cardById(b.gameplayId);
-      const aBasic = ac.kind === 'pokemon' && ac.stage === 'Basic' ? 0 : 1;
-      const bBasic = bc.kind === 'pokemon' && bc.stage === 'Basic' ? 0 : 1;
-      return aBasic - bBasic || ac.name.localeCompare(bc.name);
-    });
-    const cards = ['BASIC-POKE-BALL','BASIC-POKE-BALL'];
-    const nameCounts = new Map([[copyLimitKey(data.cardById('BASIC-POKE-BALL')), 2]]);
-    for (const row of sorted){
-      const card = data.cardById(row.gameplayId);
-      const limitKey = copyLimitKey(card);
-      const room = Math.max(0, 2 - (nameCounts.get(limitKey) || 0));
-      const amount = Math.min(room, Math.max(0, Number(row.quantity || 0)));
-      for (let i=0;i<amount && cards.length<20;i++){
-        cards.push(row.gameplayId);
-        nameCounts.set(limitKey, (nameCounts.get(limitKey) || 0) + 1);
+  function buildQuickDeck(ownedRows,options){
+    const opts=options||{},owned=ownershipMap(ownedRows),pool=[...owned].map(([id,n])=>({card:data.cardById(id),n:Math.min(2,n)})).filter(r=>r.n>0&&r.card?.battleEnabled&&!r.card.loaner);
+    const fail=message=>({ok:false,cards:[],energyTypes:[],errors:[message]});
+    const hasMechanic=(c,type)=>{let found=false;for(const e of [c.effect,...(c.attacks||[]).map(a=>a.effect),...(c.abilities||[]).map(a=>a.effect)])walkEffects(e,e=>{if(e.type===type)found=true;});return found;};
+    const focus=opts.cardId?data.cardById(opts.cardId):null;
+    if(opts.cardId&&(!focus?.battleEnabled||!owned.get(focus.id)))return fail('The focus card must be owned and FULL. Non-FULL rules remain available for review, not silently enabled.');
+    let seeds=pool.filter(r=>r.card.kind==='pokemon'&&r.card.stage==='Basic');
+    const match=c=>(!opts.type||c.subtype===opts.type)&&(!opts.setId||c.setId===opts.setId)&&(!opts.mechanic||hasMechanic(c,opts.mechanic))&&(!opts.status||c.support?.status===opts.status);
+    if(!focus&&(opts.type||opts.setId||opts.mechanic||opts.status))seeds=pool.filter(r=>match(r.card));
+    if(focus)seeds=[{card:focus}];
+    const value=c=>c.kind==='pokemon'?Math.max(0,...c.attacks.map(a=>Number(a.damage)/(Math.max(1,a.cost.length))))+Number(c.hp)/10:0;
+    seeds.sort((a,b)=>value(b.card)-value(a.card)||a.card.id.localeCompare(b.card.id));
+    let best=null;
+    const profiles=[...new Map(pool.filter(r=>r.card.kind==='pokemon').map(r=>analyzeDeck([r.card.id]).recommendedEnergyTypes).filter(p=>p.length&&p.length<=3).map(p=>[p.join('/'),p])).values()].sort((a,b)=>a.join('/').localeCompare(b.join('/')));
+    const attempts=seeds.slice(0,50).flatMap(seed=>seed.card.kind==='pokemon'?[seed]:(opts.type?[[opts.type]]:profiles).map(profile=>({...seed,profile})));
+    for(const seed of attempts){
+      const primary=seed.profile||analyzeDeck([seed.card.id]).recommendedEnergyTypes;
+      if(primary.length>3)continue;
+      const cards=['BASIC-POKE-BALL','BASIC-POKE-BALL'],counts=new Map([[copyLimitKey(data.cardById('BASIC-POKE-BALL')),2]]),idCounts=new Map();
+      const room=c=>Math.min((owned.get(c.id)||0)-(idCounts.get(c.id)||0),2-(counts.get(copyLimitKey(c))||0));
+      const compatible=c=>c.kind!=='pokemon'||c.attacks.every(a=>[...a.cost].every(s=>s==='C'||primary.includes(ENERGY_CODE[s])||selfGeneratedTypes(c).has(ENERGY_CODE[s])));
+      function add(c){if(cards.length>=20||room(c)<1)return false;cards.push(c.id);idCounts.set(c.id,(idCounts.get(c.id)||0)+1);counts.set(copyLimitKey(c),(counts.get(copyLimitKey(c))||0)+1);return true;}
+      function line(c,seen=new Set()){
+        if(seen.has(c.id)||!compatible(c))return null;seen.add(c.id);
+        if(c.stage==='Basic'||c.kind!=='pokemon')return [c];
+        const bases=pool.filter(r=>r.card.name===c.evolvesFrom&&r.card.kind==='pokemon'&&compatible(r.card)).sort((a,b)=>value(b.card)-value(a.card)||a.card.id.localeCompare(b.card.id));
+        for(const base of bases){const prior=line(base.card,new Set(seen));if(prior)return [...prior,c];}return null;
       }
-      if (cards.length >= 20) break;
+      function addLine(c){const bundle=line(c);if(!bundle)return false;const needed=bundle.filter(x=>!cards.includes(x.id));if(needed.some(x=>room(x)<1)||cards.length+needed.length>20)return false;for(const x of needed)add(x);return cards.includes(c.id);}
+      if(!addLine(seed.card))continue;
+      const pokemon=pool.filter(r=>r.card.kind==='pokemon'&&compatible(r.card)).sort((a,b)=>value(b.card)-value(a.card)||a.card.id.localeCompare(b.card.id));
+      // Complete useful families before extra copies, with a bounded Pokémon budget.
+      for(const r of pokemon){if(cards.filter(id=>data.cardById(id).kind==='pokemon').length>=10)break;addLine(r.card);}
+      const trainers=pool.filter(r=>r.card.kind==='trainer'&&r.card.effect?.type!=='playFossil').sort((a,b)=>({draw:5,searchRandomBasic:4,heal:3,modifier:2}[b.card.effect?.type]||1)-({draw:5,searchRandomBasic:4,heal:3,modifier:2}[a.card.effect?.type]||1)||a.card.id.localeCompare(b.card.id));
+      for(const r of trainers){let relevant=true;walkEffects(r.card.effect,e=>{if(e.filter?.subtype&&!primary.includes(e.filter.subtype))relevant=false;if(e.filter?.name&&!cards.some(id=>data.cardById(id).name===e.filter.name))relevant=false;});if(relevant)while(add(r.card)){} }
+      for(const r of pokemon){if(cards.length>=20)break;if(addLine(r.card))while(add(r.card)){} }
+      const analysis=analyzeDeck(cards,primary),valid=validateDeck(cards,ownedRows,primary);
+      if(!valid.ok||analysis.unpowerable.length||analysis.missingEnergyTypes.length||analysis.warnings.some(w=>w.code==='orphan'))continue;
+      const score=cards.reduce((s,id)=>s+value(data.cardById(id)),0)-primary.length*30;
+      if(!best||score>best.score)best={ok:true,cards,energyTypes:primary,errors:[],warnings:analysis.warnings,strategy:`${primary.join(' / ')} · built around ${seed.card.name}`,focusCardId:seed.card.id,score};
     }
-    if (cards.length !== 20){
-      return {ok:false,cards,errors:[`You need at least 18 battle-enabled owned card copies to quick-build a deck (${cards.length - 2}/18).`]};
-    }
-    const checked = validateDeck(cards, ownedRows);
-    return checked.ok ? {ok:true,cards,errors:[]} : {ok:false,cards,errors:checked.errors};
+    return best||fail('Not enough compatible owned copies to build a coherent 20-card deck with complete evolution lines. Add suitable Pokémon/Trainers or use a manual experimental deck.');
   }
 
   function saveDeck(state, deck, ownedRows){
@@ -124,12 +160,12 @@
     const energyTypes=deckEnergyTypes(deck);
     if(!energyTypes.length||energyTypes.length>3||new Set(energyTypes).size!==energyTypes.length||energyTypes.some(type=>!ENERGY_TYPES.includes(type)))return {ok:false,errors:['Choose 1 to 3 different Energy types for the Energy Zone.']};
     const id = String(deck.id || `deck-${Date.now()}`);
-    const saved = {id,name:String(deck.name || 'Pocket Deck').slice(0,40),cards,energyType:energyTypes[0],energyTypes};
+    const saved = {id,name:String(deck.name || 'Pocket Deck').slice(0,40),cards,energyType:energyTypes[0],energyTypes,energyMode:deck.energyMode==='auto'?'auto':'manual'};
     const idx = battle.decks.findIndex(item => item && item.id === id);
     if (idx >= 0) battle.decks[idx] = saved; else battle.decks.push(saved);
     battle.activeDeckId = id;
-    return {ok:true,errors:[],deck:saved};
+    return {ok:true,errors:[],warnings:analyzeDeck(cards,energyTypes).warnings,deck:saved};
   }
 
-  return {BATTLE_DEFAULTS,LOANER_PLAYER_DECK,ENERGY_TYPES,deckEnergyTypes,ensureBattleState,copyLimitKey,validateDeck,validateLoanerDeck,buildQuickDeck,saveDeck};
+  return {BATTLE_DEFAULTS,LOANER_PLAYER_DECK,ENERGY_TYPES,deckEnergyTypes,analyzeDeck,ensureBattleState,copyLimitKey,validateDeck,validateLoanerDeck,buildQuickDeck,saveDeck};
 });

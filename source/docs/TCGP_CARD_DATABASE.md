@@ -1,14 +1,22 @@
 # Pocket gameplay database and update procedure
 
-Cutoff: **27 October 2026, Europe/London**. The source is the supplied unpacked LuckyDex v0.69.32 / 7013 checkout, with canonical application files under `source/`. The next release is v0.69.33 / 7014. No older LuckyDex archive or Battle Lab implementation was used.
+Cutoff: **27 October 2026, Europe/London** (unchanged in this pass). The authoritative baseline is the supplied `EGG_EMERGENCY_0654_NOTES.zip`, actually v0.69.33/7014. Release is v0.69.35/7016. The prompt's v0.69.34 counts were not present in that ZIP and no older/different archive was substituted. Canonical application files remain under `source/`.
 
 ## What is covered
 
 The inventory spans **24 expansion/promo namespaces**, **4,317 known prints**, **4,316 obtainable by cutoff**, and **2,319 distinct gameplay identities**. P-B-103 is a known collectible preview; its ten-login-day mission makes October 29 its first obtainable date, after this cutoff. Dual Fusion and First Partners are future releases and excluded. The existing collection feed and ownership records are untouched.
 
-Current support is **1,145 FULL, 543 PARTIAL, 631 UNSUPPORTED**. This is a substantial expansion, **not a claim of full gameplay support for every released card**. Every non-FULL identity is named with its exact reason in [TCGP_CARD_COVERAGE.md](TCGP_CARD_COVERAGE.md), with all affected print IDs in `generated/tcgp-card-coverage.json`. Non-FULL cards remain visible in owned deck browsing, with reasons, but cannot enter a legal playable deck.
+Current support is **1,605 FULL, 714 PARTIAL, 0 UNSUPPORTED**, an increase of460 FULL over the supplied baseline. This is **not a claim of full gameplay support for every released card**. Every non-FULL identity is named with its exact reason in [TCGP_CARD_COVERAGE.md](TCGP_CARD_COVERAGE.md), with all affected print IDs in `generated/tcgp-card-coverage.json`. The per-pass `generated/tcgp-implementation-audit-v06935.json` accounts for every one of the1,174 initially non-FULL identities, with original reasons, current text/mechanics, resolution category and final validation status. Non-FULL cards remain visible in owned deck browsing, with reasons, but cannot enter a legal playable deck.
 
-FULL requires complete recorded mechanics and context-appropriate structured handlers. PARTIAL has detailed licensed rules but at least one unsupported mechanic or unresolved data-quality restriction. UNSUPPORTED means detailed compatible combat data is unavailable: **631 identities representing 1,140 released prints**, mainly newer B-series cards. The only complete detailed source found was AGPL; it was not incorporated without permission. No missing attack, stage, ability or rules text is guessed from a same-name card.
+FULL requires complete recorded mechanics and context-appropriate structured handlers. PARTIAL has detailed rules but at least one unsupported mechanic or unresolved data-quality restriction. UNSUPPORTED means detailed compatible combat data is unavailable; it is now zero. The new pinned MIT Vociferix supplement resolves all631 previous source-data gaps using exact print/design joins, not same-name inference, and preserves reviewed TCGdex mechanics. See the source audit for complete notice, provenance and reproducible importer. The originally rejected AGPL dataset was not incorporated.
+
+## v0.69.35 mechanics and deck tooling
+
+Offline anchored translations compose statuses, Energy damage, filtered search, Bench counts, movement and single shared coin branches. Unknown clauses, ambiguous multi-sentence coin scope and independent target selections fail closed. New generic primitives cover top-deck discard, own-team healing via an all-own selector, and damage-based attack bonuses; an explicit no-op supports empty coin branches. Mismagius's secondary movement can do nothing without blocking its base attack. No runtime natural-language interpreter or per-card special handler was added.
+
+Deck analysis separates illegal decks from strategy warnings, detects missing coloured Energy and unpowerable attackers, missing lower stages and unused typed Energy. Quick Build searches compatible owned Pokémon profiles, completes evolution chains, respects name-based two-copy limits and ownership, selects Trainers and reports its strategy. Colourless and free costs are not inferred from Pokémon type. Manual Energy is preserved with warnings; automatic Energy follows card edits and is saved as such. Old saved explicit Energy remains manual. CPU challenge configurations pass the same powerability checks.
+
+Developer card/Pokémon, type, set and mechanic focus operate on owned FULL cards. PARTIAL focus currently reports blockers rather than generating a playable PARTIAL-card fixture; that part of the requested testing workflow remains unfinished. The UI does not mislabel incomplete cards as FULL or silently enable them.
 
 ## Identity and compatibility
 

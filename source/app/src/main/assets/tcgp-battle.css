@@ -47,9 +47,19 @@ body.tcgp-battle-live .tcgp-battle-content{display:block;flex:1 1 0;min-height:0
 .tcgp-live-card.compact .tcgp-live-hp{font-size:8px;padding:1px 3px}
 .tcgp-live-name{display:none}
 .tcgp-live-card[data-energy-target="1"]{outline:1px solid #73ad76;outline-offset:1px}
-.tcgp-live-attached-energy{position:absolute;left:2px;bottom:2px;display:flex;align-items:center;gap:2px;padding:2px;border-radius:10px;background:#f4fff1dc}
-.tcgp-live-attached-energy i{width:10px;height:10px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#efffc9 10%,#66b971 45%,#2b713b 85%);border:1px solid #2e7739}
-.tcgp-live-attached-energy b{font-size:8px;color:#285b35}
+.tcgp-live-attached-energy{position:absolute;left:2px;bottom:2px;display:flex;flex-wrap:wrap;max-width:96%;align-items:center;gap:2px;padding:2px;border-radius:10px;background:#f4fff1ed}
+.tcgp-live-attached-energy i{min-width:13px;height:13px;padding:0 2px;display:flex;align-items:center;justify-content:center;border-radius:50%;font:800 8px/1 sans-serif;background:var(--energy-color,#688197);color:#fff;border:1px solid #ffffffa0;text-shadow:0 1px 1px #0008}
+.tcgp-live-attached-energy b{font-size:8px;margin-left:1px;color:inherit}
+.tcgp-live-arena [data-energy="Grass"],.tcgp-cost [data-energy="Grass"]{--energy-color:#338145}
+.tcgp-live-arena [data-energy="Fire"],.tcgp-cost [data-energy="Fire"]{--energy-color:#c44028}
+.tcgp-live-arena [data-energy="Water"],.tcgp-cost [data-energy="Water"]{--energy-color:#226fc0}
+.tcgp-live-arena [data-energy="Lightning"],.tcgp-cost [data-energy="Lightning"]{--energy-color:#987400}
+.tcgp-live-arena [data-energy="Psychic"],.tcgp-cost [data-energy="Psychic"]{--energy-color:#8752ae}
+.tcgp-live-arena [data-energy="Fighting"],.tcgp-cost [data-energy="Fighting"]{--energy-color:#9d5934}
+.tcgp-live-arena [data-energy="Darkness"],.tcgp-cost [data-energy="Darkness"]{--energy-color:#24394f}
+.tcgp-live-arena [data-energy="Metal"],.tcgp-cost [data-energy="Metal"]{--energy-color:#5a6e79}
+.tcgp-cost [data-energy]{background:var(--energy-color,#697e8a);color:#fff}
+.tcgp-deck-warnings{font-size:12px;line-height:1.4;color:#ffd987}
 .tcgp-live-card-actions{display:flex;justify-content:center;gap:4px;max-width:100%;min-height:32px}
 .tcgp-live-context-action{min-height:32px;min-width:44px;padding:4px 8px;border-radius:8px;border:1px solid #89a9b4;background:#eaf4f4;color:#244654;font-size:9px;font-weight:750;line-height:1.15;touch-action:manipulation}
 .tcgp-live-context-action.attack{background:#e0f0dc;color:#325d3b;border-color:#91b98a}
@@ -82,7 +92,7 @@ body.tcgp-card-dragging .tcgp-live-center-play{opacity:1}
 .tcgp-live-energy-source>span{display:grid;place-items:center;width:31px;height:31px;border-radius:50%;background:#c8d9d1;font-size:14px;font-weight:850}
 .tcgp-live-energy-source>small{font-size:7px;letter-spacing:.05em;font-weight:800}
 .tcgp-live-energy-source.ready{background:#e6f5d8;border-color:#74a56c;color:#346846;box-shadow:0 0 0 3px #92c67b22}
-.tcgp-live-energy-source.ready>span{background:radial-gradient(circle at 35% 30%,#f1ffb9,#6fba70 65%,#39834b);color:#faffdf;border:1px solid #5d9f56}
+.tcgp-live-energy-source[data-energy]>span{background:var(--energy-color,#688197);color:#fff;border:1px solid #fff8}
 .tcgp-live-energy-source:disabled{opacity:.7}
 .tcgp-live-hand{position:relative;align-self:stretch;height:100%;min-height:0;min-width:0;padding:0;overflow-x:auto;overflow-y:hidden;background:transparent;border:0;box-shadow:none;overscroll-behavior-x:contain;scrollbar-width:thin;scrollbar-color:#8baab9 transparent;touch-action:pan-x}
 .tcgp-live-hand-fan{position:relative;height:100%;min-width:100%;background:none}
@@ -133,12 +143,13 @@ body.tcgp-card-dragging [data-card-play-zone="1"][data-tcgp-drop-state="valid"] 
 body.tcgp-card-dragging [data-card-play-zone="1"][data-tcgp-drop-state="invalid"] .tcgp-live-center-play{border-color:#c85b61;background:#f8dfe1ef;color:#8b3037}
 
 /* v0.69.31 battle-flow readability */
-.tcgp-live-action-event{position:absolute;left:50%;top:44.6%;z-index:18;transform:translate(-50%,-50%);width:min(76%,330px);min-height:34px;display:flex;align-items:center;justify-content:center;text-align:center;padding:7px 12px;border-radius:999px;background:rgba(6,19,32,.92);border:1px solid rgba(255,255,255,.38);box-shadow:0 7px 22px rgba(0,0,0,.28);color:#fff;font-size:11px;font-weight:950;letter-spacing:.02em;pointer-events:none}
+.tcgp-live-action-event{position:absolute;left:50%;top:4px;z-index:18;transform:translateX(-50%);width:min(68%,280px);min-height:30px;display:flex;align-items:center;justify-content:center;text-align:center;padding:5px 10px;border-radius:12px;background:#244e68f2;border:1px solid #ffffff61;box-shadow:0 3px 10px #0003;color:#fff;font-size:10px;font-weight:850;pointer-events:none}
 .tcgp-live-card-actions{max-width:190px;gap:5px;flex-wrap:wrap}
 .tcgp-live-context-action.attack{min-width:118px;min-height:38px;padding:5px 8px;border-radius:11px;display:grid;grid-template-columns:minmax(0,1fr) auto;grid-template-areas:"name damage" "cost damage";column-gap:8px;row-gap:1px;text-align:left;font-size:8px}
 .tcgp-live-context-action.attack b{grid-area:name;font-size:9px;overflow:hidden;text-overflow:ellipsis}
-.tcgp-live-context-action.attack small{grid-area:cost;font-size:6px;color:#bfe9ca;letter-spacing:.06em}
-.tcgp-live-context-action.attack strong{grid-area:damage;align-self:center;font-size:10px;color:#e4ffe9}
+.tcgp-live-context-action.attack small{grid-area:cost;font-size:7px;color:inherit;letter-spacing:0}
+.tcgp-live-context-action.attack strong{grid-area:damage;align-self:center;font-size:10px;color:inherit}
+.tcgp-live-context-action.attack:disabled{opacity:.8;background:#dbe4e9;color:#465d69;border-color:#8fa2ad;cursor:help}
 .tcgp-live-context-action.promote{min-height:28px;padding:5px 9px;background:rgba(31,112,181,.96);border-color:rgba(159,216,255,.55);font-size:7px}
 .tcgp-live-mid-controls.promote{grid-template-columns:auto auto 1fr;background:rgba(116,48,48,.2)}
-@media(max-height:720px){.tcgp-live-action-event{top:44.2%;min-height:30px;padding:5px 10px;font-size:9px}.tcgp-live-context-action.attack{min-width:104px;min-height:34px}}
+@media(max-height:720px){.tcgp-live-action-event{min-height:28px;padding:4px 8px;font-size:9px}.tcgp-live-context-action.attack{min-width:104px;min-height:34px}}

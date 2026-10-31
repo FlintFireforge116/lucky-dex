@@ -6,11 +6,11 @@
   'use strict';
   const ENERGY_CODE = Object.freeze({G:'Grass',R:'Fire',W:'Water',L:'Lightning',P:'Psychic',F:'Fighting',D:'Darkness',M:'Metal'});
   const ENERGY_TYPES=Object.values(ENERGY_CODE);
-  const TARGETS=['self','selfActive','selfBench','selfPokemon','opponentActive','opponentBench','opponentPokemon'];
+  const TARGETS=['self','selfActive','selfBench','selfPokemon','opponentActive','opponentBench','opponentPokemon','selfAll'];
   const CONDITIONS=['selfDamaged','opponentDamaged','opponentStatus','selfStatus','opponentEx','selfEnergyAtLeast','opponentEnergyAtLeast','benchAtLeast','selfHasTool','selfExtraEnergyAtLeast','supporterPlayed'];
   const STATUSES=['poison','burn','sleep','paralysis','confusion'];
   const STATS=['attackDamage','damageReduction','retreatCost','attackCost','maxHp'];
-  const effectTypes=Object.freeze(['sequence','healSelf','heal','damage','bonusDamage','coinDamage','energyDamage','benchCountDamage','statusDamage','benchDamage','selfDamage','attachEnergy','discardEnergy','draw','search','searchRandomBasic','switch','status','coinFlip','modifier','removeStatus','lock','preventDamage','selectedDamage','coinUntilTails','playFossil','discardSelf','moveEnergy','handShuffle','preventStatus']);
+  const effectTypes=Object.freeze(['noop','sequence','healSelf','heal','damage','bonusDamage','coinDamage','energyDamage','benchCountDamage','statusDamage','damageFromDamage','discardTop','benchDamage','selfDamage','attachEnergy','discardEnergy','draw','search','searchRandomBasic','switch','status','coinFlip','modifier','removeStatus','lock','preventDamage','selectedDamage','coinUntilTails','playFossil','discardSelf','moveEnergy','handShuffle','preventStatus']);
   const nonnegative=n=>typeof n==='number'&&Number.isFinite(n)&&n>=0;
   const integer=n=>nonnegative(n)&&Number.isInteger(n);
   function validateEffect(effect,path){
@@ -32,10 +32,12 @@
       case 'lock':need(['attack','retreat'].includes(effect.action),'invalid locked action');need(['nextOwnTurn','opponentTurn','whileInPlay'].includes(effect.duration),'invalid lock duration');break;
       case 'preventDamage':need(['opponentTurn','whileInPlay','whileActive'].includes(effect.duration),'invalid prevention duration');break;
       case 'coinFlip':need(!!effect.heads,'coinFlip requires heads effect');errors.push(...validateEffect(effect.heads,`${at}.heads`),...validateEffect(effect.tails,`${at}.tails`));break;
-      case 'status':need(!['selfBench','opponentBench','selfPokemon','opponentPokemon'].includes(effect.target),'special conditions require Active Pokemon');need(STATUSES.includes(effect.status),'invalid special condition');if(effect.amount!=null)need(nonnegative(effect.amount),'invalid status damage');break;
-      case 'removeStatus':case 'switch':case 'discardSelf':break;
+      case 'status':need(!['selfAll','selfBench','opponentBench','selfPokemon','opponentPokemon'].includes(effect.target),'special conditions require Active Pokemon');need(STATUSES.includes(effect.status),'invalid special condition');if(effect.amount!=null)need(nonnegative(effect.amount),'invalid status damage');break;
+      case 'noop':case 'removeStatus':case 'switch':case 'discardSelf':break;
       case 'playFossil':need(nonnegative(effect.hp)&&effect.hp>0,'invalid Fossil HP');need(effect.subtype==='Colorless','invalid Fossil type');need(effect.canRetreat===false,'Fossil cannot retreat');break;
       case 'modifier':need(STATS.includes(effect.stat),'invalid modifier stat');need(typeof effect.amount==='number'&&Number.isFinite(effect.amount),'invalid modifier amount');need(['turn','opponentTurn','whileActive','whileInPlay'].includes(effect.duration),'invalid duration');if(effect.scope!=null)need(['self','team','active','both'].includes(effect.scope),'invalid modifier scope');break;
+      case 'discardTop':need(integer(effect.amount),'invalid discarded card count');break;
+      case 'damageFromDamage':need(['self','opponent'].includes(effect.source),'invalid damage source');need(nonnegative(effect.amount),'invalid damage multiplier');break;
       case 'discardEnergy':need(effect.amount==='all'||integer(effect.amount),'invalid discarded Energy amount');break;
       case 'search':need(['deck','discard'].includes(effect.source||'deck'),'invalid search source');need(effect.random===true,'only random filtered searches are supported');need(integer(effect.amount),'invalid search amount');need(effect.filter&&typeof effect.filter==='object'&&!Array.isArray(effect.filter),'search requires filter');for(const key of Object.keys(effect.filter||{}))need(['kind','stage','subtype','name','trainerType','isEx'].includes(key),'invalid search filter');break;
       default:need(nonnegative(effect.amount),'invalid amount');
@@ -83,6 +85,7 @@
     switch(selector||'self'){
       case 'self':return ctx.attacker?[ctx.attacker]:[];
       case 'selfActive':return own(ctx).active?[own(ctx).active]:[];
+      case 'selfAll':return pokemonOn(own(ctx));
       case 'opponentActive':return other(ctx).active?[other(ctx).active]:[];
       case 'selfBench':{const s=selected(ctx,own(ctx));return s&&own(ctx).bench.includes(s)?[s]:[];}
       case 'opponentBench':{const s=selected(ctx,other(ctx));return s&&other(ctx).bench.includes(s)?[s]:[];}
@@ -103,6 +106,8 @@
     if(!conditionMatches(effect.condition,ctx))return;
     const affected=()=>targets(effect.target,ctx).filter(s=>!protectedFromEffects(s,ctx)&&matchesFilter(ctx.cardById(s.cardId),effect.filter,s)),log=entry=>ctx.state.log.push(Object.assign({side:ctx.side},entry));
     switch(effect.type){
+      case 'noop':break;
+      case 'discardTop':{const ss=effect.side==='opponent'?other(ctx):own(ctx);const discarded=ss.deck.splice(0,effect.amount);ss.discard.push(...discarded);log({type:'discardDeck',count:discarded.length});break;}
       case 'coinUntilTails':repeatHeads(ctx,()=>applyEffect(effect.effect,ctx));break;
       case 'sequence':for(const child of effect.effects)applyEffect(child,ctx);break;
       case 'coinFlip':{const heads=coin(ctx);log({type:'coin',heads});applyEffect(heads?effect.heads:effect.tails,ctx);break;}
@@ -127,7 +132,7 @@
       case 'selectedDamage':throw new Error('selectedDamage must resolve as part of an attack.');
       case 'removeStatus':for(const s of affected())clearConditions(s);break;
       case 'modifier':{const list=effect.scope==='both'||effect.scope==='team'||effect.scope==='active'?[ctx.attacker]:affected();ctx.state.modifiers=ctx.state.modifiers||[];for(const s of list)ctx.state.modifiers.push({...effect,ownerSide:own(ctx).active===s||own(ctx).bench.includes(s)?ctx.side:ctx.foeSide,sourceSide:ctx.side,sourceUid:ctx.attacker&&ctx.attacker.uid,targetUid:effect.scope==='both'||effect.scope==='team'||effect.scope==='active'?null:s.uid,expiresTurn:effect.duration==='turn'?ctx.state.turnNumber:effect.duration==='opponentTurn'?ctx.state.turnNumber+1:null});break;}
-      case 'bonusDamage':case 'coinDamage':case 'energyDamage':case 'benchCountDamage':case 'statusDamage':throw new Error(`${effect.type} must resolve as part of an attack.`);
+      case 'damageFromDamage':case 'bonusDamage':case 'coinDamage':case 'energyDamage':case 'benchCountDamage':case 'statusDamage':throw new Error(`${effect.type} must resolve as part of an attack.`);
     }
   }
   function resolveAttack(attack,ctx){
@@ -142,6 +147,7 @@
       else if(e.type==='coinDamage'){let heads=0;if(e.coins==='untilTails')heads=repeatHeads(ctx,()=>{});else for(let i=0;i<e.coins;i++)if(coin(ctx))heads++;ctx.state.log.push({type:'coin',side:ctx.side,heads,coins:e.coins});amount=heads*e.amount;}
       else if(e.type==='energyDamage'){const energy=(e.source==='opponent'?ctx.defender:ctx.attacker)?.energy||{};amount=Math.max(0,(e.energyType?Number(energy[e.energyType]||0):totalEnergy(energy))-Number(e.extraAbove||0))*e.amount;}
       else if(e.type==='benchCountDamage')amount=(e.side==='opponent'?other(ctx):own(ctx)).bench.filter(s=>s&&(!e.pokemonType||ctx.cardById(s.cardId)?.subtype===e.pokemonType)).length*e.amount;
+      else if(e.type==='damageFromDamage')amount=Number((e.source==='self'?ctx.attacker:ctx.defender)?.damage||0)*e.amount;
       else if(e.type==='statusDamage')amount=ctx.defender?.conditions?.[e.status]?e.amount:0;
       else{pending.push(e);return;}
       damage=e.mode==='replace'?amount:damage+amount;
@@ -160,7 +166,7 @@
   function choicesForEffect(effect,ctx){
     assertEffect(effect);if(!effect)return [{}];
     if(effect.type==='coinUntilTails')return choicesForEffect(effect.effect,ctx);
-    if(effect.type==='moveEnergy'){const selector=effect.source==='selfBench'?'selfBench':effect.target;return targetChoices(selector,ctx).filter(action=>targets(effect.source,{...ctx,action}).some(s=>matchesFilter(ctx.cardById(s.cardId),effect.sourceFilter,s)&&(effect.energyType?Number(s.energy[effect.energyType]||0):totalEnergy(s.energy))>0));}
+    if(effect.type==='moveEnergy'){const selector=effect.source==='selfBench'?'selfBench':effect.target;const choices=targetChoices(selector,ctx).filter(action=>targets(effect.source,{...ctx,action}).some(s=>matchesFilter(ctx.cardById(s.cardId),effect.sourceFilter,s)&&(effect.energyType?Number(s.energy[effect.energyType]||0):totalEnergy(s.energy))>0));return choices.length?choices:ctx.isAttack?[{}]:[];}
     if(effect.type==='switch'&&effect.source)return ctx.attacker&&own(ctx).bench.includes(ctx.attacker)?[{}]:[];
     if(effect.type==='sequence'||effect.type==='coinFlip'){
       const children=effect.type==='sequence'?effect.effects:[effect.heads,effect.tails].filter(Boolean);let result=[{}];

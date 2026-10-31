@@ -1,5 +1,6 @@
 'use strict';
 const crypto=require('node:crypto');
+const {compileAdditional}=require('./tcgp-text-compositions.cjs');
 const ENERGY={Grass:'G',Fire:'R',Water:'W',Lightning:'L',Psychic:'P',Fighting:'F',Darkness:'D',Metal:'M',Colorless:'C'};
 const TYPES=[...Object.keys(ENERGY),'Dragon'];
 const clean=s=>String(s??'').normalize('NFKC').replace(/[’]/g,"'").replace(/\s+/g,' ').trim();
@@ -64,6 +65,10 @@ function compileEffect(raw,kind='attack',baseDamage=0){
  if((m=text.match(/^The Retreat Cost of each \{([GRWLPFDM])\} Pokémon in play \(both yours and your opponent's\) is (\d+) less\.$/)))return ok({type:'modifier',stat:'retreatCost',amount:-Number(m[2]),duration:'whileInPlay',scope:'both',filter:{subtype:Object.keys(ENERGY).find(k=>ENERGY[k]===m[1])}});
  if((m=text.match(/^During this turn, the Retreat Cost of your Active Pokémon is (\d+) less\.$/)))return ok({type:'modifier',stat:'retreatCost',amount:-Number(m[1]),duration:'turn',scope:'active'});
  if((m=text.match(/^During this turn, attacks used by your Pokémon do \+(\d+) damage to your opponent's Active Pokémon\.$/)))return ok({type:'modifier',stat:'attackDamage',amount:+m[1],duration:'turn',scope:'team'});
+ const additional=compileAdditional(text,kind,baseDamage,compileEffect);if(additional){
+  const selectors=new Set();function visit(e){if(!e)return;if(['selfBench','selfPokemon','opponentBench','opponentPokemon'].includes(e.target))selectors.add(e.target);if(e.type==='benchDamage'&&!e.all)selectors.add(e.side==='self'?'selfBench':'opponentBench');if(e.type==='switch'&&!e.source)selectors.add(e.side==='opponent'?'opponentBench':'selfBench');if(e.type==='moveEnergy')selectors.add(e.source==='selfBench'?'selfBench':e.target);for(const c of e.effects||[])visit(c);visit(e.heads);visit(e.tails);}visit(additional.effect);
+  return selectors.size>1?fail():additional;
+ }
  // Compound effects are accepted only when every full sentence is understood.
  const parts=text.split(/(?<=\.) (?=[A-Z])/);if(parts.length>1&&!text.startsWith('Flip ')){const values=parts.map(p=>compileEffect(p,kind,baseDamage));if(values.every(v=>v.supported)){const effect=sequence(values.map(v=>v.effect));if(selections(effect)<=1)return ok(effect);}}
  return fail();

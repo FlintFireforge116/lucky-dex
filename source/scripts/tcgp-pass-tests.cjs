@@ -1,0 +1,5 @@
+const fs=require('node:fs'),path=require('node:path'),{spawnSync}=require('node:child_process');
+const root=path.resolve(__dirname,'..'),all=process.argv.includes('--all'),tag=process.argv.find(x=>x.startsWith('--tag='))?.slice(6)||'final',out=path.join(root,'artifacts/v06935');fs.mkdirSync(out,{recursive:true});
+const files=fs.readdirSync(path.join(root,'tests')).filter(f=>f.endsWith('.cjs')&&(all||/^v069\d+-tcgp/.test(f))).sort();const results=[];
+for(const file of files){const r=spawnSync(process.execPath,[path.join(root,'tests',file)],{cwd:root,env:process.env,encoding:'utf8',timeout:240000,maxBuffer:20*1024*1024});results.push({file,status:r.status,error:r.error?.message,stdout:r.stdout,stderr:r.stderr});console.log((r.status===0?'PASS ':'FAIL ')+file);}
+const report={tag,programs:results.length,passed:results.filter(r=>r.status===0).length,failed:results.filter(r=>r.status!==0).length,results};fs.writeFileSync(path.join(out,tag+'.json'),JSON.stringify(report,null,2));console.log(JSON.stringify({programs:report.programs,passed:report.passed,failed:report.failed}));process.exitCode=report.failed?1:0;

@@ -1,5 +1,13 @@
 # Pocket card source audit — 2026-10-27
 
+## v0.69.35 source supplement (2026-10-30)
+
+The cutoff and released print inventory are unchanged. A fourth MIT source, [Vociferix/ptcgp-data at2ab3fbb5c606dc6a5ca7fbb8e190c2a051505f69](https://github.com/Vociferix/ptcgp-data/tree/2ab3fbb5c606dc6a5ca7fbb8e190c2a051505f69), supplies detailed mechanics only for previously missing identities. Its exact set/collector-number versions join all4,317 known prints to abstract cards and agree with the existing design-key evidence, with zero conflicts. P-B-103 stays excluded. Source acquisition does not itself imply engine support.
+
+Only1,140 released print records covering631 previously unknown identities are added; reviewed TCGdex records and existing errata are retained. The pinned archive SHA-256 is `22e894079516360ff97b15bc4839b351a105d8446985e9a8ed70919cca1e65fd`. Per-record source paths/hashes, complete upstream MIT notice and audit are in `data/tcgp/import/vociferix-*` and `Vociferix-LICENSE-MIT.txt`. The notice is included in runtime third-party notices. No upstream application code or image binaries are copied. Its mechanics data is transcribed from Limitless TCG per the upstream scraper; translations remain validated and fail closed.
+
+Reproduce with `python scripts/import-vociferix-pocket.py /path/to/pinned-archive.zip`, then `node scripts/build-tcgp-catalogue.cjs` and `node scripts/verify-tcgp-catalogue.cjs`. The importer independently verifies archive hash, exact version references, set counts, exclusion boundary and all design joins. It performs no network request or name-based identity inference.
+
 The card-data cutoff is **2026-10-27 (Europe/London)**. The compatible inventory contains **4,317 known prints** in **24 set/promo-series namespaces**: 22 expansions and two promo series. Of these, **4,316 prints were obtainable by the cutoff**. P-B-103 is retained as a known collectible print but excluded from released-card coverage: its missions started October 20 and the card requires ten daily logins, making October 29 the earliest obtainable date. Do not remove its print identity from the collection system.
 
 ## Release boundary

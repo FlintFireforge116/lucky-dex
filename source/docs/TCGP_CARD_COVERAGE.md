@@ -8,16 +8,16 @@ Cutoff: **2026-10-27 (Europe/London)**. Generated offline from reviewed MIT impo
 | Known collectible prints | 4317 |
 | Released/obtainable prints | 4316 |
 | Canonical gameplay identities | 2319 |
-| FULL | 1145 |
-| PARTIAL | 543 |
-| UNSUPPORTED | 631 |
+| FULL | 1605 |
+| PARTIAL | 714 |
+| UNSUPPORTED | 0 |
 | Unmapped released prints | 0 |
 | Unknown effect references | 0 |
 | Schema errors | 0 |
 
 FULL means every recorded mechanic compiles to a validated handler. PARTIAL means detailed rules exist but at least one mechanic or data-quality check remains unsupported; those cards are not enabled. UNSUPPORTED means detailed licensed combat data is unavailable. External asset keys identify exact prints/reprints, but never invent missing rules. Each classification applies to the entire card, not merely its simplest attack.
 
-Released print status: FULL 1959, PARTIAL 1217, UNSUPPORTED 1140.
+Released print status: FULL 2687, PARTIAL 1629, UNSUPPORTED 0.
 
 ## Included sets
 
@@ -52,58 +52,73 @@ Released print status: FULL 1959, PARTIAL 1217, UNSUPPORTED 1140.
 
 ## Missing or unsupported mechanic families
 
-- 631 identities: Missing licensed detailed mechanics data for this print; no same-name inference
-- 6 identities: Unimplemented attack text: During your opponent's next turn, if the Defending Pokémon tries to use an attack, your opponent flips a coin. If tails, that attack doesn't happen.
+- 7 identities: Unimplemented attack text: During your opponent's next turn, if the Defending Pokémon tries to use an attack, your opponent flips a coin. If tails, that attack doesn't happen.
+- 5 identities: Unimplemented attack text: Switch out your opponent's Active Pokémon to the Bench. (Your opponent chooses the new Active Pokémon.)
 - 5 identities: Unimplemented attack text: If 1 of your Pokémon used Sweets Relay during your last turn, this attack does 20 more damage.
-- 4 identities: Unimplemented attack text: Switch out your opponent's Active Pokémon to the Bench. (Your opponent chooses the new Active Pokémon.)
+- 5 identities: Unimplemented attack text: Discard a card from your hand. If you can't, this attack does nothing.
+- 5 identities: Unimplemented attack text: Reveal all of your Pokémon in play and in your hand that have the Puppy Pile attack, and this attack does 20 damage for each Pokémon you revealed in this way.
 - 4 identities: Unimplemented attack text: If any of your Pokémon were Knocked Out by damage from an attack during your opponent's last turn, this attack does 60 more damage.
+- 4 identities: Unimplemented attack text: Before doing damage, discard all Pokémon Tools from your opponent's Active Pokémon.
 - 4 identities: Unimplemented attack text: During your opponent's next turn, they can't play any Item cards from their hand.
-- 4 identities: Unimplemented attack text: Discard the top card of your opponent's deck.
-- 3 identities: Unimplemented attack text: Flip a coin. If tails, during your next turn, this Pokémon can't attack.
+- 3 identities: Unimplemented attack text: Flip a coin. If heads, the Defending Pokémon can't attack during your opponent's next turn.
+- 3 identities: Unimplemented attack text: Your opponent can't use any Supporter cards from their hand during their next turn.
+- 3 identities: Unimplemented attack text: Discard a random Energy from among the Energy attached to all Pokémon (both yours and your opponent's).
+- 3 identities: Unimplemented attack text: Put 1 random Basic Pokémon from your deck onto your Bench.
+- 3 identities: Unimplemented attack text: Discard 2 random Energy from this Pokémon.
 - 3 identities: Unimplemented attack text: This attack does 20 damage to each of your opponent's Pokémon.
-- 3 identities: Unimplemented attack text: Discard a card from your hand. If you can't, this attack does nothing.
-- 2 identities: Unimplemented attack text: Put 1 random {G} Pokémon from your deck into your hand.
-- 2 identities: Unimplemented attack text: Flip a coin. If heads, the Defending Pokémon can't attack during your opponent's next turn.
-- 2 identities: Unimplemented attack text: Your opponent can't use any Supporter cards from their hand during their next turn.
-- 2 identities: Unimplemented attack text: Flip a coin. If heads, this attack does 40 more damage. If tails, this Pokémon also does 20 damage to itself.
-- 2 identities: Unimplemented attack text: If your opponent's Active Pokémon is Poisoned, this attack does 50 more damage.
+- 3 identities: Unimplemented attack text: Flip a coin. If tails, this attack does nothing. If heads, during your opponent's next turn, prevent all damage from—and effects of—attacks done to this Pokémon.
+- 3 identities: Unimplemented attack text: This attack's damage isn't affected by Weakness or by any effects on your opponent's Active Pokémon.
 - 2 identities: Unimplemented attack text: Your opponent reveals their hand.
 - 2 identities: Unimplemented ability text: If you have Arceus or Arceus ex in play, this Pokémon takes −30 damage from attacks.
-- 2 identities: Unimplemented attack text: Flip a coin. If heads, during your opponent's next turn, prevent all damage done to this Pokémon by attacks.
 - 2 identities: Unimplemented attack text: Discard a random card from your opponent's hand.
-- 2 identities: Unimplemented attack text: This attack does more damage equal to the damage this Pokémon has on it.
-- 2 identities: Unimplemented attack text: Discard a random Energy from among the Energy attached to all Pokémon (both yours and your opponent's).
-- 2 identities: Unimplemented attack text: This attack does 20 more damage for each of your opponent's Benched Pokémon.
-- 2 identities: Unimplemented attack text: Heal 20 damage from each of your Pokémon.
-- 2 identities: Unimplemented attack text: Put 1 random Basic Pokémon from your deck onto your Bench.
+- 2 identities: Unimplemented ability text: If your opponent's Pokémon is Knocked Out by damage from this Pokémon's attacks, during your opponent's next turn, prevent all damage from—and effects of—attacks done to this Pokémon.
+- 2 identities: Unimplemented attack text: Flip a coin. If heads, choose 1 of your opponent's Active Pokémon's attacks and use it as this attack.
+- 2 identities: Unimplemented attack text: Shuffle your hand into your deck. Draw a card for each card in your opponent's hand.
 - 2 identities: Unimplemented ability text: This Pokémon takes −30 damage from attacks from {R} or {W} Pokémon.
-- 2 identities: Unimplemented attack text: Flip 2 coins. This attack does 20 more damage for each heads.
-- 2 identities: Unimplemented attack text: Before doing damage, discard all Pokémon Tools from your opponent's Active Pokémon.
+- 2 identities: Unimplemented attack text: During your next turn, this Pokémon's Overdrive Smash attack does +60 damage.
+- 2 identities: Unimplemented attack text: This attack does 10 damage to each of your opponent's Pokémon.
 - 2 identities: Unimplemented ability text: If you have Arceus or Arceus ex in play, attacks used by this Pokémon do +30 damage to your opponent's Active Pokémon.
 - 2 identities: Unimplemented ability text: If you have Arceus or Arceus ex in play, this Pokémon has no Retreat Cost.
 - 2 identities: Unimplemented attack text: Flip a coin. If heads, your opponent reveals a random card from their hand and shuffles it into their deck.
-- 2 identities: Unimplemented attack text: If your opponent's Active Pokémon is a Pokémon ex, this attack does 70 more damage.
+- 2 identities: Unimplemented attack text: If this Pokémon moved from your Bench to the Active Spot this turn, this attack does 60 more damage.
 - 2 identities: Unimplemented attack text: Discard a random Energy from both Active Pokémon.
+- 2 identities: Unimplemented attack text: During your opponent's next turn, if this Pokémon is damaged by an attack, do 40 damage to the Attacking Pokémon.
 - 2 identities: Unimplemented attack text: During your opponent's next turn, they can't take any Energy from their Energy Zone to attach to their Active Pokémon.
+- 2 identities: Unimplemented ability text: If this Pokémon would be Knocked Out by damage from an attack, flip a coin. If heads, this Pokémon is not Knocked Out, and its remaining HP becomes 10.
+- 2 identities: Unimplemented attack text: If your opponent's Active Pokémon has an Ability, this attack does 40 more damage.
+- 2 identities: Unimplemented attack text: Take a {C} Energy from your Energy Zone and attach it to 1 of your Benched Pokémon.
 - 2 identities: Unimplemented ability text: As long as this Pokémon is in the Active Spot, whenever you attach an Energy from your Energy Zone to it, it is now Asleep.
 - 2 identities: Unimplemented ability text: As long as this Pokémon is in the Active Spot, attacks used by your opponent's Active Pokémon cost 1 {C} more.
+- 2 identities: Unimplemented attack text: This attack does 20 damage for each Energy attached to all of your opponent's Pokémon.
 - 2 identities: Unimplemented attack text: If 1 of your Pokémon used Sweets Relay during your last turn, this attack does 60 more damage.
-- 2 identities: Unimplemented attack text: This attack also does 10 damage to each of your Benched Pokémon.
+- 2 identities: Unimplemented attack text: This attack does 30 more damage for each Evolution Pokémon on your Bench.
 - 2 identities: Unimplemented ability text: If any damage is done to this Pokémon by attacks, flip a coin. If heads, prevent that damage.
-- 2 identities: Unimplemented attack text: This attack does 20 more damage for each Energy attached to this Pokémon.
-- 2 identities: Unimplemented attack text: During your opponent's next turn, attacks used by the Defending Pokémon cost 1 {C} more.
-- 2 identities: Unimplemented attack text: Flip a coin. If heads, your opponent's Active Pokémon is now Poisoned and Paralyzed.
+- 2 identities: Unimplemented attack text: If this Pokémon moved from your Bench to the Active Spot this turn, this attack does 50 more damage.
 - 2 identities: Unimplemented attack text: During your opponent's next turn, prevent all damage done to this Pokémon by attacks if that damage is 40 or less.
+- 2 identities: Unimplemented attack text: Discard Fire{R} Energy from this Pokémon. Your opponent's Active Pokémon is now Burned.
+- 2 identities: Unimplemented attack text: Put a random card from your deck that evolves from this Pokémon onto this Pokémon to evolve it.
+- 2 identities: Unimplemented ability text: When this Pokémon is Knocked Out, flip a coin. If heads, your opponent can't get any points for it.
+- 2 identities: Unimplemented attack text: During your next turn, this Pokémon's Overdrive Smash attack does +30 damage.
+- 2 identities: Unimplemented attack text: This attack's damage isn't affected by any effects on your opponent's Active Pokémon.
+- 2 identities: Unimplemented attack text: Both Active Pokémon are now Confused.
+- 2 identities: Unimplemented ability text: Once during your turn, when you play this Pokémon from your hand to evolve 1 of your Pokémon, you may take a {R} Energy from your Energy Zone and attach it to your Active {R} Pokémon.
+- 2 identities: Unimplemented attack text: Put a random Supporter card from your deck into your hand.
+- 2 identities: Unimplemented attack text: You may shuffle this Pokémon and all attached cards into your deck.
+- 2 identities: Unimplemented attack text: During your next turn, attacks used by your Pokémon do +20 damage to your opponent's Active Pokémon.
+- 2 identities: Unimplemented attack text: Discard a Stadium in play.
 - 2 identities: Missing or invalid retreat
+- 2 identities: Unimplemented attack text: Take a {W} Energy from your Energy Zone and attach it to 1 of your Benched {W} Pokémon.
+- 2 identities: Unimplemented ability text: Once during your turn, when you put this Pokémon from your hand onto your Bench, you may switch it with your Active Pokémon. If you do, move all of your Energy in play to this Pokémon.
+- 2 identities: Unimplemented attack text: If any of your Pokémon were Knocked Out by damage from an attack during your opponent's last turn, this attack does 50 more damage.
+- 2 identities: Unimplemented attack text: Switch in 1 of your opponent's Benched Pokémon to the Active Spot. If you do, this attack does 50 damage to the new Active Pokémon.
+- 2 identities: Unimplemented attack text: Put 3 random cards from among Silcoon and Cascoon from your deck onto your Bench.
 - 1 identities: Unimplemented ability text: Once during your turn, you may heal 20 damage from each of your Pokémon.
 - 1 identities: Unimplemented ability text: If this Pokémon is in the Active Spot, once during your turn, you may switch in 1 of your opponent's Benched Basic Pokémon to the Active Spot.
 - 1 identities: Unimplemented attack text: Take a {G} Energy from your Energy Zone and attach it to 1 of your Benched {G} Pokémon.
 - 1 identities: Unimplemented attack text: Flip 3 coins. Take an amount of {R} Energy from your Energy Zone equal to the number of heads and attach it to your Benched {R} Pokémon in any way you like.
 - 1 identities: Unimplemented attack text: Flip 2 coins. If both of them are heads, this attack does 80 more damage.
-- 1 identities: Unimplemented attack text: During your opponent's next turn, the Defending Pokémon can't attack.
 - 1 identities: Unimplemented ability text: Once during your turn, you may do 20 damage to 1 of your opponent's Pokémon.
 - 1 identities: Unimplemented ability text: Once during your turn, you may take a {L} Energy from your Energy Zone and attach it to this Pokémon.
-- 1 identities: Unimplemented attack text: This attack also does 30 damage to 1 of your Benched Pokémon.
 - 1 identities: Unimplemented ability text: As long as this Pokémon is in the Active Spot, your opponent can't use any Supporter cards from their hand.
 - 1 identities: Unimplemented ability text: Once during your turn, you may flip a coin. If heads, your opponent's Active Pokémon is now Asleep.
 - 1 identities: Unimplemented ability text: Once during your turn, you may take a {P} Energy from your Energy Zone and attach it to the {P} Pokémon in the Active Spot.
@@ -117,7 +132,6 @@ Released print status: FULL 1959, PARTIAL 1217, UNSUPPORTED 1140.
 - 1 identities: Unimplemented attack text: Choose 1 of your opponent's Pokémon's attacks and use it as this attack. If this Pokémon doesn't have the necessary Energy to use that attack, this attack does nothing.
 - 1 identities: Unimplemented ability text: Once during your turn, you may look at the top card of your deck.
 - 1 identities: Unimplemented attack text: Flip a coin. If heads, your opponent shuffles their Active Pokémon into their deck.
-- 1 identities: Unimplemented attack text: This attack does 30 damage for each of your Benched Pokémon.
 - 1 identities: Unimplemented trainer text: Heal 50 damage from 1 of your {G} Pokémon.
 - 1 identities: Unimplemented trainer text: Choose 1 of your {W} Pokémon, and flip a coin until you get tails. For each heads, take a {W} Energy from your Energy Zone and attach it to that Pokémon.
 - 1 identities: Unimplemented trainer text: During this turn, attacks used by your Ninetales, Rapidash, or Magmar do +30 damage to your opponent's Active Pokémon.
@@ -142,48 +156,36 @@ Released print status: FULL 1959, PARTIAL 1217, UNSUPPORTED 1140.
 - 1 identities: Unimplemented attack text: During your opponent's next turn, if this Pokémon is damaged by an attack, do 30 damage to the Attacking Pokémon.
 - 1 identities: Unimplemented attack text: Flip a coin. If heads, switch in 1 of your opponent's Benched Pokémon to the Active Spot.
 - 1 identities: Unimplemented attack text: If your opponent's Active Pokémon is an Evolution Pokémon, this attack does 40 more damage.
-- 1 identities: Unimplemented attack text: Flip a coin. If heads, heal 60 damage from this Pokémon.
 - 1 identities: Unimplemented attack text: If Latios is on your Bench, this attack does 20 more damage.
 - 1 identities: Unimplemented ability text: Once during your turn, when you play this Pokémon from your hand to evolve 1 of your Pokémon, you may heal 60 damage from 1 of your {W} Pokémon.
-- 1 identities: Unimplemented ability text: If your opponent's Pokémon is Knocked Out by damage from this Pokémon's attacks, during your opponent's next turn, prevent all damage from—and effects of—attacks done to this Pokémon.
 - 1 identities: Unimplemented attack text: Until this Pokémon leaves the Active Spot, this Pokémon's Rolling Frenzy attack does +30 damage. This effect stacks.
 - 1 identities: Unimplemented attack text: This attack does damage to your opponent's Active Pokémon equal to the damage this Pokémon has on it.
 - 1 identities: Unimplemented ability text: This Pokémon can evolve into any Pokémon that evolves from Eevee if you play it from your hand onto this Pokémon. (This Pokémon can't evolve during your first turn or the turn you play it.)
-- 1 identities: Unimplemented attack text: Flip a coin. If heads, choose 1 of your opponent's Active Pokémon's attacks and use it as this attack.
 - 1 identities: Unimplemented ability text: Once during your turn, you may heal 10 damage from each of your Pokémon.
 - 1 identities: Unimplemented attack text: Flip a coin for each Energy attached to this Pokémon. This attack does 50 damage for each heads.
 - 1 identities: Unimplemented ability text: Each {G} Energy attached to your {G} Pokémon provides 2 {G} Energy. This effect doesn't stack.
-- 1 identities: Unimplemented attack text: If your opponent's Active Pokémon is Poisoned, this attack does 40 more damage.
 - 1 identities: Unimplemented ability text: As often as you like during your turn, you may move a {W} Energy from 1 of your Benched {W} Pokémon to your Active {W} Pokémon.
 - 1 identities: Unimplemented attack text: Choose 1 of your opponent's Active Pokémon's attacks and use it as this attack.
 - 1 identities: Unimplemented ability text: Your opponent can't play any Pokémon from their hand to evolve their Active Pokémon.
 - 1 identities: Unimplemented attack text: Put 1 random Koffing from your deck onto your Bench.
-- 1 identities: Unimplemented attack text: If your opponent's Active Pokémon is a Pokémon ex, this attack does 80 more damage.
-- 1 identities: Unimplemented attack text: Shuffle your hand into your deck. Draw a card for each card in your opponent's hand.
 - 1 identities: Unimplemented trainer text: Put a Basic Pokémon from your opponent's discard pile onto their Bench.
 - 1 identities: Unimplemented trainer text: Look at the top card of your deck. If that card is a {P} Pokémon, put it into your hand. If it is not a {P} Pokémon, put it on the bottom of your deck.
 - 1 identities: Unimplemented trainer text: Put your Mew ex in the Active Spot into your hand.
 - 1 identities: Unimplemented trainer text: During your opponent's next turn, all of your Pokémon take −10 damage from attacks from your opponent's Pokémon.
-- 1 identities: Unimplemented attack text: Discard all {R} Energy from this Pokémon.
 - 1 identities: Unimplemented ability text: This Pokémon takes −20 damage from attacks from {R} or {W} Pokémon.
 - 1 identities: Unimplemented ability text: Prevent all effects of attacks used by your opponent's Pokémon done to this Pokémon.
 - 1 identities: Unimplemented attack text: If your opponent's Active Pokémon is a {F} Pokémon, this attack does 30 more damage.
-- 1 identities: Unimplemented attack text: Discard all {L} Energy from this Pokémon. This attack does 120 damage to 1 of your opponent's Pokémon.
 - 1 identities: Unimplemented attack text: If your opponent's Active Pokémon has a Pokémon Tool attached, this attack does 30 more damage.
-- 1 identities: Unimplemented attack text: During your next turn, this Pokémon's Overdrive Smash attack does +60 damage.
 - 1 identities: Unimplemented ability text: As often as you like during your turn, you may choose 1 of your Pokémon that has damage on it, and move all of its damage to this Pokémon.
 - 1 identities: Unimplemented attack text: Take a {P} Energy from your Energy Zone and attach it to Mesprit or Azelf.
 - 1 identities: Unimplemented attack text: You can use this attack only if you have Uxie and Azelf on your Bench. Discard all Energy from this Pokémon.
 - 1 identities: Unimplemented ability text: If this Pokémon has any Energy attached, it has no Retreat Cost.
-- 1 identities: Unimplemented attack text: Discard the top 3 cards of your deck.
 - 1 identities: Unimplemented attack text: If your opponent's Pokémon is Knocked Out by damage from this attack, this Pokémon also does 50 damage to itself.
 - 1 identities: Unimplemented ability text: Attacks used by your {F} Pokémon do +20 damage to your opponent's Active Pokémon.
-- 1 identities: Unimplemented attack text: This attack does 10 damage to each of your opponent's Pokémon.
 - 1 identities: Unimplemented attack text: Flip 4 coins. This attack does 40 damage for each heads. If at least 2 of them are heads, your opponent's Active Pokémon is now Poisoned.
 - 1 identities: Unimplemented attack text: Flip a coin for each Pokémon you have in play. This attack does 20 damage for each heads.
 - 1 identities: Unimplemented attack text: Flip a coin for each Pokémon you have in play. This attack does 40 damage for each heads.
 - 1 identities: Unimplemented ability text: If any damage is done to this Pokémon by attacks, flip a coin. If heads, this Pokémon takes −100 damage from that attack.
-- 1 identities: Unimplemented attack text: Flip 3 coins. This attack does 50 more damage for each heads.
 - 1 identities: Unimplemented ability text: You must discard a card from your hand in order to use this Ability. Once during your turn, you may draw a card.
 - 1 identities: Unimplemented attack text: Change the type of the next Energy that will be generated for your opponent to 1 of the following at random: {G}, {R}, {W}, {L}, {P}, {F}, {D}, or {M}.
 - 1 identities: Unimplemented attack text: Halve your opponent's Active Pokémon's remaining HP, rounded down.
@@ -196,20 +198,16 @@ Released print status: FULL 1959, PARTIAL 1217, UNSUPPORTED 1140.
 - 1 identities: Unimplemented trainer text: Put 1 random Glameow, Stunky, or Croagunk from your deck into your hand.
 - 1 identities: Unimplemented trainer text: During this turn, attacks used by your Garchomp or Togekiss do +50 damage to your opponent's Active Pokémon.
 - 1 identities: Unimplemented trainer text: Choose 1 of your Electivire or Luxray. Attach 2 {L} Energy from your discard pile to that Pokémon.
-- 1 identities: Unimplemented trainer text: Move an Energy from 1 of your Benched Pokémon to your Active Pokémon.
 - 1 identities: Unimplemented trainer text: Your opponent shuffles their hand into their deck and draws a card for each of their remaining points needed to win.
 - 1 identities: Unimplemented attack text: Flip 2 coins. If both of them are heads, this attack does 70 more damage.
 - 1 identities: Unimplemented ability text: Once during your turn, if this Pokémon is in the Active Spot, you may take a {G} Energy from your Energy Zone and attach it to 1 of your {G} Pokémon.
-- 1 identities: Unimplemented attack text: Flip a coin. If heads, this attack does 60 more damage. If tails, this Pokémon also does 20 damage to itself.
 - 1 identities: Unimplemented ability text: If you have Arceus or Arceus ex in play, attacks used by this Pokémon cost 1 less {C} Energy.
 - 1 identities: Unimplemented ability text: During Pokémon Checkup, if this Pokémon is in the Active Spot, do 10 damage to your opponent's Active Pokémon.
 - 1 identities: Unimplemented ability text: Once during your turn, you may choose either player. Look at the top card of that player's deck.
-- 1 identities: Unimplemented attack text: If your opponent's Active Pokémon is a Pokémon ex, this attack does 30 more damage.
 - 1 identities: Unimplemented attack text: During your next turn, this Pokémon's Rolling Spin attack does +60 damage.
 - 1 identities: Unimplemented ability text: Once during your turn, if you have Arceus or Arceus ex in play, you may do 30 damage to your opponent's Active Pokémon.
 - 1 identities: Unimplemented attack text: Your opponent's Active Pokémon is now Poisoned. Do 20 damage to this Pokémon instead of the usual amount for this Special Condition.
 - 1 identities: Unimplemented attack text: If your opponent's Active Pokémon is a {M} Pokémon, this attack does 30 more damage.
-- 1 identities: Unimplemented attack text: Discard 2 random Energy from this Pokémon.
 - 1 identities: Unimplemented ability text: As long as this Pokémon is on your Bench, your Active Basic Pokémon's Retreat Cost is 1 less.
 - 1 identities: Unimplemented trainer text: Heal 40 damage from each of your Pokémon that has any {W} Energy attached.
 - 1 identities: Unimplemented trainer text: Put 1 random Basic Pokémon from your discard pile into your hand.
@@ -221,16 +219,12 @@ Released print status: FULL 1959, PARTIAL 1217, UNSUPPORTED 1140.
 - 1 identities: Unimplemented ability text: Your Active Dondozo has no Retreat Cost.
 - 1 identities: Unimplemented attack text: This attack also does 20 damage to each of your opponent's Benched Pokémon that has any Energy attached.
 - 1 identities: Unimplemented ability text: Once during your turn, you may take a {P} Energy from your Energy Zone and attach it to this Pokémon. If you use this Ability, your turn ends.
-- 1 identities: Unimplemented attack text: If your opponent's Active Pokémon is Poisoned, this attack does 60 more damage.
 - 1 identities: Unimplemented ability text: Once during your turn, you may flip a coin. If heads, your opponent's Active Pokémon is now Poisoned.
 - 1 identities: Unimplemented attack text: Flip a coin for each {M} Energy attached to this Pokémon. This attack does 50 damage for each heads.
 - 1 identities: Unimplemented trainer text: Heal 30 damage from 1 of your Pokémon, and it recovers from all Special Conditions.
 - 1 identities: Unimplemented trainer text: During this turn, attacks used by your Pokémon do +20 damage to your opponent's Active Pokémon ex.
 - 1 identities: Unimplemented ability text: During your first turn, this Pokémon has no Retreat Cost.
-- 1 identities: Unimplemented attack text: If this Pokémon moved from your Bench to the Active Spot this turn, this attack does 60 more damage.
-- 1 identities: Unimplemented attack text: Flip a coin. If tails, this Pokémon also does 20 damage to itself.
 - 1 identities: Unimplemented attack text: Flip 2 coins. This attack does 70 damage for each heads. If at least 1 of them is heads, your opponent's Active Pokémon is now Burned.
-- 1 identities: Unimplemented attack text: During your opponent's next turn, if this Pokémon is damaged by an attack, do 40 damage to the Attacking Pokémon.
 - 1 identities: Unimplemented ability text: Once during your turn, you may heal 30 damage from each of your {W} Pokémon.
 - 1 identities: Unimplemented attack text: During your next turn, this Pokémon's Insatiable Striking attack does +40 damage.
 - 1 identities: Unimplemented attack text: Put 1 random Wishiwashi or Wishiwashi ex from your deck onto your Bench.
@@ -241,17 +235,13 @@ Released print status: FULL 1959, PARTIAL 1217, UNSUPPORTED 1140.
 - 1 identities: Unimplemented attack text: Switch this Pokémon with 1 of your Benched {L} Pokémon.
 - 1 identities: Unimplemented ability text: Each of your Pokémon that has any {P} Energy attached recovers from all Special Conditions and can't be affected by any Special Conditions.
 - 1 identities: Unimplemented attack text: This attack does 20 damage to 1 of your opponent's Pokémon for each Energy attached to that Pokémon.
-- 1 identities: Unimplemented ability text: If this Pokémon would be Knocked Out by damage from an attack, flip a coin. If heads, this Pokémon is not Knocked Out, and its remaining HP becomes 10.
 - 1 identities: Unimplemented attack text: Put a random card that evolves from Rockruff from your deck into your hand.
 - 1 identities: Unimplemented attack text: If your opponent's Active Pokémon has more remaining HP than this Pokémon, this attack does 50 more damage.
 - 1 identities: Unimplemented ability text: If this Pokémon is in the Active Spot and is Knocked Out by damage from an attack from your opponent's Pokémon, move all {F} Energy from this Pokémon to 1 of your Benched Pokémon.
 - 1 identities: Unimplemented attack text: Discard a random Item card from your opponent's hand.
 - 1 identities: Unimplemented attack text: 1 Special Condition from among Asleep, Burned, Confused, Paralyzed, and Poisoned is chosen at random, and your opponent's Active Pokémon is now affected by that Special Condition. Any Special Conditions already affecting that Pokémon will not be chosen.
-- 1 identities: Unimplemented attack text: If your opponent's Active Pokémon is affected by a Special Condition, this attack does 60 more damage.
-- 1 identities: Unimplemented attack text: If your opponent's Active Pokémon has an Ability, this attack does 40 more damage.
 - 1 identities: Unimplemented attack text: If any of your Benched Pokémon have damage on them, this attack does 50 more damage.
 - 1 identities: Unimplemented attack text: During your opponent's next turn, this Pokémon takes +30 damage from attacks.
-- 1 identities: Unimplemented attack text: Take a {C} Energy from your Energy Zone and attach it to 1 of your Benched Pokémon.
 - 1 identities: Unimplemented attack text: If your opponent's Active Pokémon is a {D} Pokémon, this attack does 30 more damage.
 - 1 identities: Unimplemented attack text: During your opponent's next turn, attacks used by the Defending Pokémon cost 1 {C} more, and its Retreat Cost is 1 {C} more.
 - 1 identities: Unimplemented trainer text: Heal 10 damage and remove a random Special Condition from your Active Pokémon.
@@ -283,20 +273,16 @@ Released print status: FULL 1959, PARTIAL 1217, UNSUPPORTED 1140.
 - 1 identities: Unimplemented trainer text: Put 1 random Type: Null or Silvally from your deck into your hand.
 - 1 identities: Unimplemented trainer text: Your opponent reveals all of the Supporter cards in their deck.
 - 1 identities: Unimplemented trainer text: You can use this card only if your opponent has gotten at least 1 point. Choose 1 of your Ultra Beasts. Attach 2 random Energy from your discard pile to that Pokémon.
-- 1 identities: Unimplemented attack text: This attack does 20 more damage for each {G} Energy attached to this Pokémon.
 - 1 identities: Unimplemented attack text: Your opponent reveals a random card from their hand and shuffles it into their deck.
 - 1 identities: Unimplemented attack text: If 1 of your Pokémon used Sweets Relay during your last turn, this attack does 30 more damage.
 - 1 identities: Unimplemented ability text: Once during your turn, you may attach a {R} Energy from your discard pile to this Pokémon. If you do, do 20 damage to this Pokémon.
 - 1 identities: Unimplemented attack text: Discard all Energy attached to this Pokémon. Your opponent's Active Pokémon is now Paralyzed.
-- 1 identities: Unimplemented attack text: This attack does 20 damage for each Energy attached to all of your opponent's Pokémon.
-- 1 identities: Unimplemented attack text: This attack does 30 more damage for each Evolution Pokémon on your Bench.
 - 1 identities: Unimplemented ability text: Once during your turn, when you play this Pokémon from your hand to evolve 1 of your Pokémon, you may draw 2 cards.
 - 1 identities: Unimplemented attack text: If the Defending Pokémon is a Basic Pokémon, it can't attack during your opponent's next turn.
 - 1 identities: Unimplemented attack text: Discard all Pokémon Tools from your opponent's Active Pokémon.
 - 1 identities: Unimplemented attack text: Flip a coin. If tails, this attack does nothing. If heads, your opponent's Active Pokémon is now Paralyzed.
 - 1 identities: Unimplemented ability text: At the end of your turn, if this Pokémon is in the Active Spot, heal 20 damage from it.
 - 1 identities: Unimplemented ability text: Once during your turn, you may put a random Pokémon Tool card from your deck into your hand.
-- 1 identities: Unimplemented attack text: This attack does 20 damage for each of your Benched Pokémon.
 - 1 identities: Unimplemented trainer text: Choose 1: During this turn, attacks used by your Pokémon that evolve from Eevee do +10 damage to your opponent's Active Pokémon. Heal 20 damage from each of your Pokémon that evolves from Eevee.
 - 1 identities: Unimplemented trainer text: At the end of your turn, if the Pokémon this card is attached to is in the Active Spot, heal 10 damage from that Pokémon.
 - 1 identities: Unimplemented trainer text: During this turn, attacks used by your Decidueye ex, Incineroar ex, or Primarina ex do +30 damage to your opponent's Active Pokémon.
@@ -311,15 +297,12 @@ Released print status: FULL 1959, PARTIAL 1217, UNSUPPORTED 1140.
 - 1 identities: Unimplemented attack text: Take a {R} Energy from your Energy Zone and attach it to 1 of your Benched Basic Pokémon.
 - 1 identities: Unimplemented attack text: Flip a coin. If tails, discard 2 random Energy from this Pokémon.
 - 1 identities: Unimplemented attack text: Take a {R}, {W}, and {L} Energy from your Energy Zone and attach them to your Benched Basic Pokémon in any way you like.
-- 1 identities: Unimplemented attack text: If your opponent's Active Pokémon is Burned, this attack does 60 more damage.
 - 1 identities: Unimplemented ability text: As long as this Pokémon is on your Bench, attacks used by your Pokémon that evolve from Poliwhirl do +40 damage to your opponent's Active Pokémon.
 - 1 identities: Unimplemented attack text: You may discard any number of your Benched {W} Pokémon. This attack does 40 more damage for each Benched Pokémon you discarded in this way.
 - 1 identities: Unimplemented attack text: If the Defending Pokémon tries to use an attack, your opponent flips a coin. If tails, that attack doesn't happen. This effect lasts until the Defending Pokémon leaves the Active Spot, and it doesn't stack.
 - 1 identities: Unimplemented ability text: Once during your turn, when you play this Pokémon from your hand to evolve 1 of your Pokémon, you may discard a random Energy from your opponent's Active Pokémon.
 - 1 identities: Unimplemented attack text: Move all Energy from this Pokémon to 1 of your Benched Pokémon.
-- 1 identities: Unimplemented attack text: Flip a coin. If heads, your opponent's Active Pokémon is now Paralyzed. If tails, your opponent's Active Pokémon is now Confused.
 - 1 identities: Unimplemented attack text: Take a {L} Energy from your Energy Zone and attach it to 1 of your Benched Basic Pokémon.
-- 1 identities: Unimplemented attack text: This attack also does 10 damage to 1 of your Benched Pokémon.
 - 1 identities: Unimplemented attack text: This Pokémon is now Asleep. Heal 30 damage from it.
 - 1 identities: Unimplemented attack text: This attack does 20 damage for each Energy attached to your opponent's Active Pokémon.
 - 1 identities: Unimplemented attack text: Flip a coin. If heads, your opponent's Active Pokémon's remaining HP is now 10.
@@ -328,15 +311,12 @@ Released print status: FULL 1959, PARTIAL 1217, UNSUPPORTED 1140.
 - 1 identities: Unimplemented ability text: This Ability works if you have any Unown in play with an Ability other than . Attacks used by your Pokémon do +10 damage to your opponent's Active Pokémon.
 - 1 identities: Unimplemented attack text: If this Pokémon was damaged by an attack during your opponent's last turn while it was in the Active Spot, this attack does 50 more damage.
 - 1 identities: Unimplemented attack text: Both Active Pokémon are now Asleep.
-- 1 identities: Unimplemented attack text: This attack also does 20 damage to each of your Benched Pokémon.
 - 1 identities: Unimplemented ability text: Once during your turn, if this Pokémon is in the Active Spot, you may switch in 1 of your opponent's Benched Pokémon that has damage on it to the Active Spot.
 - 1 identities: Unimplemented ability text: Once during your turn, you may move all {D} Energy from each of your Pokémon to this Pokémon.
-- 1 identities: Unimplemented attack text: If this Pokémon moved from your Bench to the Active Spot this turn, this attack does 50 more damage.
 - 1 identities: Unimplemented attack text: During your next turn, this Pokémon's Gear Spinner attack does +70 damage.
 - 1 identities: Unimplemented attack text: If your opponent's Active Pokémon is a {G} Pokémon, this attack does 40 more damage.
 - 1 identities: Unimplemented ability text: Whenever you attach an Energy from your Energy Zone to this Pokémon, put a random card from your deck that evolves from this Pokémon onto this Pokémon to evolve it.
 - 1 identities: Unimplemented ability text: This Pokémon can't be Asleep.
-- 1 identities: Unimplemented attack text: Flip a coin. If tails, this attack does nothing. If heads, during your opponent's next turn, prevent all damage from—and effects of—attacks done to this Pokémon.
 - 1 identities: Unimplemented attack text: Draw cards until you have the same number of cards in your hand as your opponent.
 - 1 identities: Unimplemented attack text: Change the type of a random Energy attached to your opponent's Active Pokémon to 1 of the following at random: {G}, {R}, {W}, {L}, {P}, {F}, {D}, or {M}.
 - 1 identities: Unimplemented trainer text: Move a {R}, {W}, or {L} Energy from 1 of your Benched Pokémon to your Active Pokémon.
@@ -376,14 +356,9 @@ Released print status: FULL 1959, PARTIAL 1217, UNSUPPORTED 1140.
 - 1 identities: Unimplemented ability text: Each of your {G} Pokémon gets +20 HP.
 - 1 identities: Unimplemented ability text: Once during your turn, you may flip a coin. If heads, switch in 1 of your opponent's Benched Pokémon to the Active Spot.
 - 1 identities: Unimplemented attack text: Heal 30 damage from each of your Benched Basic Pokémon.
-- 1 identities: Unimplemented attack text: Discard Fire{R} Energy from this Pokémon. Your opponent's Active Pokémon is now Burned.
-- 1 identities: Unimplemented attack text: Flip 2 coins. This attack does 30 more damage for each heads.
 - 1 identities: Unimplemented ability text: Once during your turn, you may discard the top card of your opponent's deck.
 - 1 identities: Unimplemented attack text: During your opponent's next turn, if this Pokémon is damaged by an attack, do 20 damage to the Attacking Pokémon.
-- 1 identities: Unimplemented attack text: Put a random card from your deck that evolves from this Pokémon onto this Pokémon to evolve it.
-- 1 identities: Unimplemented attack text: Discard the top 3 cards of your opponent's deck.
 - 1 identities: Unimplemented attack text: If you have exactly 1, 3, or 5 cards in your hand, this attack does 60 more damage.
-- 1 identities: Unimplemented attack text: This attack does 10 more damage for each {W} Energy attached to this Pokémon.
 - 1 identities: Unimplemented attack text: If you have exactly 2, 4, or 6 cards in your hand, this attack does 30 more damage.
 - 1 identities: Unimplemented attack text: Prevent all damage done to this Pokémon by attacks from Basic Pokémon during your opponent's next turn.
 - 1 identities: Unimplemented ability text: If this Pokémon is in the Active Spot and is damaged by an attack from your opponent's Pokémon, take a {W} Energy from your Energy Zone and attach it to 1 of your Benched Pokémon.
@@ -392,9 +367,7 @@ Released print status: FULL 1959, PARTIAL 1217, UNSUPPORTED 1140.
 - 1 identities: Unimplemented ability text: As long as this Pokémon is in the Active Spot, whenever your opponent attaches an Energy from their Energy Zone to 1 of their Pokémon, do 20 damage to that Pokémon.
 - 1 identities: Unimplemented attack text: 1 of your opponent's Benched Pokémon is chosen at random. This attack also does 20 damage to it.
 - 1 identities: Unimplemented attack text: 1 of your opponent's Benched Pokémon is chosen at random 3 times. For each time a Pokémon was chosen, also do 20 damage to it.
-- 1 identities: Unimplemented attack text: This attack also does 20 damage to 1 of your Benched Pokémon.
 - 1 identities: Unimplemented attack text: Discard a {L} Energy from your opponent's Active Pokémon.
-- 1 identities: Unimplemented ability text: When this Pokémon is Knocked Out, flip a coin. If heads, your opponent can't get any points for it.
 - 1 identities: Unimplemented attack text: Discard 2 cards from your hand. If you can't discard 2 cards, this attack does nothing.
 - 1 identities: Unimplemented attack text: During your opponent's next turn, if they attach Energy from their Energy Zone to the Defending Pokémon, that Pokémon will be Asleep.
 - 1 identities: Unimplemented ability text: Once during your turn, if this Pokémon is on your Bench, you may discard all Pokémon Tools from your opponent's Active Pokémon. If you do, discard this Pokémon.
@@ -407,19 +380,14 @@ Released print status: FULL 1959, PARTIAL 1217, UNSUPPORTED 1140.
 - 1 identities: Unimplemented attack text: Flip a coin. If heads, your opponent reveals their hand. Choose a Supporter card you find there and discard it.
 - 1 identities: Unimplemented attack text: Your opponent reveals their hand. Choose a Supporter card you find there and discard it.
 - 1 identities: Unimplemented ability text: Once during your turn, you may take 2 {D} Energy from your Energy Zone and attach it to this Pokémon. If you do, do 30 damage to this Pokémon.
-- 1 identities: Unimplemented attack text: During your next turn, this Pokémon's Overdrive Smash attack does +30 damage.
 - 1 identities: Unimplemented ability text: If this Pokémon is in the Active Spot and is damaged by an attack from your opponent's Pokémon, the Attacking Pokémon is now Poisoned.
-- 1 identities: Unimplemented attack text: If your opponent's Active Pokémon is Poisoned, this attack does 70 more damage.
-- 1 identities: Unimplemented attack text: This attack's damage isn't affected by any effects on your opponent's Active Pokémon.
 - 1 identities: Unimplemented attack text: If Durant is on your Bench, this attack does 40 more damage.
 - 1 identities: Unimplemented ability text: Attacks used by your {P} Pokémon and {M} Pokémon do +30 damage to your opponent's Active Pokémon.
 - 1 identities: Unimplemented attack text: Flip 2 coins. If both of them are tails, this attack does nothing.
 - 1 identities: Unimplemented attack text: Flip 2 coins. For each heads, discard a random Energy from your opponent's Active Pokémon. If both of them are tails, this attack does nothing.
-- 1 identities: Unimplemented attack text: Flip a coin. If tails, this Pokémon also does 30 damage to itself.
 - 1 identities: Unimplemented ability text: As long as this Pokémon is in the Active Spot, it can evolve during your first turn or the turn you play it.
 - 1 identities: Unimplemented attack text: Flip 2 coins. This attack does 30 damage for each heads. If this Pokémon has Lucky Mittens attached, flip 4 coins instead.
 - 1 identities: Unimplemented ability text: Once during your turn, when you play this Pokémon from your hand to evolve 1 of your Pokémon, you may put a Supporter card from your discard pile into your hand.
-- 1 identities: Unimplemented attack text: Both Active Pokémon are now Confused.
 - 1 identities: Unimplemented attack text: If your opponent's Active Pokémon is a Basic Pokémon, this attack does 70 more damage.
 - 1 identities: Unimplemented trainer text: A card from among both player's hands is chosen at random, revealed to the other player, and shuffled into its owner's deck.
 - 1 identities: Unimplemented trainer text: Flip 2 coins. If both of them are heads, discard a random Energy from your opponent's Active Pokémon.
@@ -433,23 +401,39 @@ Released print status: FULL 1959, PARTIAL 1217, UNSUPPORTED 1140.
 - 1 identities: Unimplemented trainer text: Take a {P} Energy from your Energy Zone and attach it to each of your Drifblim and Mismagius.
 - 1 identities: Unimplemented trainer text: Shuffle your hand into your deck. Draw a card for each card in your opponent's hand.
 - 1 identities: Unimplemented trainer text: Put 2 random Basic Pokémon with 50 HP or less from your deck into your hand.
+- 1 identities: Unimplemented attack text: Flip 3 coins. For each heads, discard a random Energy from your opponent's Active Pokémon. If all of them are tails, this attack does nothing.
 - 1 identities: Unimplemented attack text: Choose 1 of your Benched Pokémon's attacks, except any Pokémon ex, and use it as this attack. If this Pokémon doesn't have the necessary Energy to use that attack, this attack does nothing.
-- 1 identities: Unimplemented ability text: Once during your turn, when you play this Pokémon from your hand to evolve 1 of your Pokémon, you may take a {R} Energy from your Energy Zone and attach it to your Active {R} Pokémon.
-- 1 identities: Unimplemented attack text: This attack does 20 more damage for each {M} Energy attached to this Pokémon.
+- 1 identities: Unimplemented attack text: Flip 2 coins. If both of them are heads, this attack does 20 more damage.
+- 1 identities: Unimplemented attack text: If this Pokémon has any {P} Energy attached, this attack does 40 more damage. This attack's damage isn't affected by any effects on your opponent's Active Pokémon.
 - 1 identities: Unimplemented attack text: If a Stadium is in play, this attack does 40 more damage.
 - 1 identities: Unimplemented attack text: Flip a coin. If heads, during your opponent's next turn, prevent all damage from and effects of attacks done to this Pokémon.
 - 1 identities: Unimplemented attack text: Discard all Water Energy from this Pokémon. This attack does 130 damage to 1 of your opponent's Pokémon.
+- 1 identities: Unimplemented attack text: This attack does 20 more damage for each Benched Pokémon (both yours and your opponent's).
+- 1 identities: Unimplemented ability text: Once during your turn, after you flip any coins for an attack of 1 of your {R} Pokémon, you may ignore all results of those coin flips and begin flipping those coins again. You can't use more than 1 Victory Star Ability each turn.
 - 1 identities: Unimplemented ability text: At the beginning of your turn, if this Pokémon is in the Active Spot, put a random {P} Pokémon from your deck into your hand.
+- 1 identities: Unimplemented attack text: If a Stadium is in play, your opponent's Active Pokémon is now Burned.
+- 1 identities: Unimplemented attack text: If any of your {D} Pokémon were Knocked Out by damage from an attack during your opponent's last turn, this attack does 80 more damage.
+- 1 identities: Unimplemented attack text: If a Stadium is in play, this attack does 70 more damage.
 - 1 identities: Unimplemented attack text: Choose a spot from among your opponent's Active Spot and Bench. At the end of your opponent's next turn, do 70 damage to the Pokémon in the spot you chose.
+- 1 identities: Unimplemented attack text: If this Pokémon evolved from Dunsparce during this turn, discard 2 random Energy from your opponent's Active Pokémon.
+- 1 identities: Unimplemented attack text: Take a random Energy from among {G}, {R}, {W}, {L}, {P}, {F}, {D}, and {M} Energy from your Energy Zone and attach it to 1 of your Benched Pokémon.
+- 1 identities: Unimplemented attack text: This attack does 30 damage for each Pokémon Tool attached to all of your Pokémon.
+- 1 identities: Unimplemented ability text: Each of your evolved Pokémon can use any attack from its previous Evolutions. (You still need the necessary Energy to use each attack.)
+- 1 identities: Unimplemented attack text: 1 of your opponent's Pokémon is chosen at random 3 times. For each time a Pokémon was chosen, do 60 damage to it.
+- 1 identities: Unimplemented attack text: Discard the top card of your deck, and if that card is an Item, this attack does 20 more damage.
+- 1 identities: Unimplemented ability text: If you have another Beldum in play, this Pokémon's Retreat Cost is 2 less.
+- 1 identities: Unimplemented attack text: If this Pokémon has more Energy attached than your opponent's Active Pokémon, this attack does 40 more damage.
+- 1 identities: Unimplemented attack text: Reveal the top 6 cards of your deck. This attack does 30 damage for each Pokémon you find there that has “Team Rocket” in its name. Shuffle the revealed cards back into your deck.
+- 1 identities: Unimplemented attack text: If your opponent's Active Pokémon has “Team Rocket” in its name, this attack does 70 more damage.
+- 1 identities: Unimplemented ability text: At the end of each turn, if your opponent's Active Pokémon is Asleep, do 20 damage to that Pokémon.
 - 1 identities: Unimplemented ability text: If you have another Falinks in play, this Pokémon's attacks do +20 damage to your opponent's Active Pokémon, and this Pokémon takes −20 damage from attacks from your opponent's Pokémon.
+- 1 identities: Unimplemented attack text: You may move any amount of Energy from your Pokémon in play to your other Pokémon in any way you like.
 - 1 identities: Unimplemented ability text: Your opponent's Active Pokémon's Retreat Cost is 1 more.
 - 1 identities: Unimplemented attack text: If Quick-Grow Extract is in your discard pile, this attack does 30 more damage.
 - 1 identities: Unimplemented ability text: As long as this Pokémon is on your Bench, prevent all damage done to this Pokémon by attacks.
 - 1 identities: Unimplemented attack text: If this Pokémon has at least 2 extra {W} Energy attached, this attack also does 50 damage to 1 of your opponent's Benched Pokémon.
 - 1 identities: Unimplemented attack text: If this Pokémon has at least 3 extra {W} Energy attached, this attack also does 50 damage to 2 of your opponent's Benched Pokémon.
 - 1 identities: Unimplemented attack text: If this Pokémon moved from your Bench to the Active Spot this turn, this attack does 40 more damage.
-- 1 identities: Unimplemented attack text: Put a random Supporter card from your deck into your hand.
-- 1 identities: Unimplemented attack text: Move all {P} Energy from this Pokémon to 1 of your Benched Pokémon.
 - 1 identities: Unimplemented ability text: This Pokémon gets +30 HP for each {P} Energy attached to it.
 - 1 identities: Unimplemented attack text: This attack's damage is reduced by the amount of damage this Pokémon has on it.
 - 1 identities: Unimplemented attack text: Flip 2 coins. This attack does 90 damage for each heads. Your opponent's Active Pokémon is now Confused.
@@ -463,20 +447,15 @@ Released print status: FULL 1959, PARTIAL 1217, UNSUPPORTED 1140.
 - 1 identities: Unimplemented trainer text: Choose 1 of your {G} Pokémon in play. Put a random {G} Pokémon from your deck that evolves from that Pokémon onto that Pokémon to evolve it. You can't use this card during your first turn or on a Pokémon that was put into play this turn.
 - 1 identities: Unimplemented trainer text: Put 2 random cards from among Magneton, Heliolisk, and Clemont's Backpack from your deck into your hand.
 - 1 identities: Unimplemented trainer text: Put a random Mega Evolution Pokémon ex from your deck into your hand.
-- 1 identities: Unimplemented attack text: This attack's damage isn't affected by Weakness or by any effects on your opponent's Active Pokémon.
 - 1 identities: Unimplemented attack text: Your opponent's Active Pokémon is now Poisoned. During your opponent's next turn, that Pokémon can't retreat.
 - 1 identities: Unimplemented attack text: During your opponent's next turn, if this Pokémon is damaged by an attack, do 80 damage to the Attacking Pokémon.
 - 1 identities: Unimplemented attack text: Put a random card that evolves from Spewpa from your deck into your hand.
 - 1 identities: Unimplemented attack text: If your opponent has gotten exactly 1 points, this attack does 40 more damage.
-- 1 identities: Unimplemented attack text: You may shuffle this Pokémon and all attached cards into your deck.
 - 1 identities: Unimplemented attack text: If the amount of Energy attached to both Active Pokémon is 5 or more, this attack does 60 more damage.
 - 1 identities: Unimplemented ability text: Each of your Pokémon that has any Energy attached recovers from all Special Conditions and can't be affected by any Special Conditions.
-- 1 identities: Unimplemented attack text: During your next turn, attacks used by your Pokémon do +20 damage to your opponent's Active Pokémon.
-- 1 identities: Unimplemented attack text: Flip a coin. If heads, take 2 {R} Energy from your Energy Zone and attach it to 1 of your Benched Pokémon.
 - 1 identities: Unimplemented attack text: Flip a coin. If heads, this attack does 70 damage to your opponent's Active Pokémon. If tails, heal 30 damage from your opponent's Active Pokémon.
 - 1 identities: Unimplemented attack text: Discard 2 random Energy from among the Energy attached to all Pokémon (both yours and your opponent's).
 - 1 identities: Unimplemented attack text: Discard Water2 {W} Energy from this Pokémon. Your opponent's Active Pokémon is now Paralyzed.
-- 1 identities: Unimplemented attack text: Flip a coin. If heads, this attack also does 40 damage to 1 of your opponent's Benched Pokémon.
 - 1 identities: Unimplemented ability text: If a Stadium is in play, this Pokémon has no Retreat Cost.
 - 1 identities: Unimplemented attack text: 1 other Pokémon (either yours or your opponent's) is chosen at random 1 time. Do 100 damage to the chosen Pokémon.
 - 1 identities: Unimplemented attack text: If Plusle is on your Bench, this attack also does 10 damage to each of your opponent's Benched Pokémon.
@@ -487,10 +466,8 @@ Released print status: FULL 1959, PARTIAL 1217, UNSUPPORTED 1140.
 - 1 identities: Unimplemented attack text: This attack does 20 more damage for each Supporter card in your discard pile.
 - 1 identities: Unimplemented ability text: When this Pokémon is first damaged by an attack after coming into play, prevent that damage.
 - 1 identities: Unimplemented ability text: Once during your turn, when you play this Pokémon from your hand to evolve 1 of your Pokémon, you may have your opponent shuffle their hand into their deck. For each remaining point that your opponent needs to win, they draw a card.
-- 1 identities: Unimplemented attack text: Discard a Stadium in play.
 - 1 identities: Unimplemented attack text: If this Pokémon has any {P} Energy attached, this attack does 50 more damage.
 - 1 identities: Unimplemented attack text: If you have fewer Pokémon in play than your opponent, this attack does 80 more damage.
-- 1 identities: Unimplemented attack text: Flip a coin. If heads, during your opponent's next turn, this Pokémon takes −100 damage from attacks.
 - 1 identities: Unimplemented ability text: Basic Pokémon in play (both yours and your opponent's) have no Abilities.
 - 1 identities: Unimplemented ability text: If this Pokémon is in the Active Spot and is Knocked Out by damage from an attack from your opponent's Pokémon, do 10 damage to each of your opponent's Pokémon.
 - 1 identities: Unimplemented attack text: Flip a coin. If heads, look at a random card from your opponent's hand and shuffle it into their deck.
@@ -500,10 +477,8 @@ Released print status: FULL 1959, PARTIAL 1217, UNSUPPORTED 1140.
 - 1 identities: Unimplemented attack text: Until this Pokémon leaves the Active Spot, this Pokémon's Heat-Up Crunch attack does +30 damage. This effect stacks.
 - 1 identities: Unimplemented attack text: During your opponent's next turn, if this Pokémon is in the Active Spot when your opponent's Active Pokémon retreats, this attack does 40 damage to the new Active Pokémon.
 - 1 identities: Unimplemented attack text: During your opponent's next turn, this Pokémon takes −80 damage from attacks from your opponent's Pokémon ex.
-- 1 identities: Unimplemented attack text: Flip a coin. If tails, this Pokémon also does 50 damage to itself.
 - 1 identities: Unimplemented attack text: This attack is used twice in a row. The second attack does 40 damage. (If the first attack Knocks Out your opponent's Active Pokémon, the second attack is used after your opponent chooses a new Active Pokémon.)
 - 1 identities: Unimplemented ability text: Once during your turn, if this Pokémon is in the Active Spot, you may look at a random Supporter card from your opponent's hand. Use the effect of that card as the effect of this Ability.
-- 1 identities: Unimplemented attack text: Flip 2 coins. This attack does 40 more damage for each heads.
 - 1 identities: Unimplemented ability text: Once during your turn, you may switch out your opponent's Active Basic Pokémon to the Bench. (Your opponent chooses the new Active Pokémon.)
 - 1 identities: Unimplemented attack text: Put 3 random cards from among Tandemaus and Maushold from your deck onto your Bench.
 - 1 identities: Unimplemented attack text: Flip a coin for each Tandemaus and Maushold you have in play. This attack does 60 damage for each heads.
@@ -538,12 +513,180 @@ Released print status: FULL 1959, PARTIAL 1217, UNSUPPORTED 1140.
 - 1 identities: Unimplemented trainer text: During this turn, attacks used by your Pawmot do +80 damage to your opponent's Active Pokémon ex.
 - 1 identities: Unimplemented trainer text: Flip a coin. If heads, put a random Item card from your deck into your hand. If tails, put a random Pokémon Tool card from your deck into your hand.
 - 1 identities: Unimplemented trainer text: Once during each player's turn, that player may flip a coin. If heads, that player puts a random Pokémon from their deck into their hand. You may play only 1 Stadium card during your turn. Put it next to the Active Spot, and discard it if another Stadium comes into play. A Stadium with the same name can't be played.
+- 1 identities: Unimplemented attack text: If this Pokémon's remaining HP is 110 or less, this attack does 80 more damage.
+- 1 identities: Unimplemented attack text: If Electivire is on your Bench, this attack also does 20 damage to each of your opponent's Benched Pokémon.
+- 1 identities: Unimplemented attack text: Flip 3 coins. This attack also does 20 damage for each heads to each of your opponent's Benched Pokémon.
+- 1 identities: Unimplemented attack text: If any of your Pokémon were Knocked Out by damage from an attack during your opponent's last turn, your opponent's Active Pokémon is now Paralyzed.
+- 1 identities: Unimplemented attack text: If your opponent's Active Pokémon has more remaining HP than this Pokémon, this attack does 60 more damage.
+- 1 identities: Unimplemented attack text: If Magmortar is on your Bench, this attack does 70 more damage.
+- 1 identities: Unimplemented attack text: This attack does 30 more damage for each point you have gotten.
+- 1 identities: Unimplemented attack text: 1 attack from among the Pokémon in your opponent's hand and deck is chosen at random, and you use the chosen attack as this attack.
+- 1 identities: Unimplemented attack text: If your opponent has exactly 2, 4, or 6 cards in their hand, this attack does 40 more damage.
+- 1 identities: Unimplemented attack text: Discard 2 random Energy from among the Energy attached to all of your Pokémon.
+- 1 identities: Unimplemented attack text: During your opponent's next turn, they can't play any Trainer cards from their hand.
+- 1 identities: Unimplemented attack text: Move 2 {D} Energy from this Pokémon to 1 of your Benched Pokémon.
+- 1 identities: Unimplemented attack text: This Pokémon also does 100 damage to itself and 50 damage to all Benched Pokémon (both yours and your opponent's).
+- 1 identities: Unimplemented ability text: Once during your turn, you may switch your Active {M} Pokémon with 1 of your Benched Pokémon.
+- 1 identities: Unimplemented attack text: Take a {W} and a {L} Energy from your Energy Zone and attach them to this Pokémon.
+- 1 identities: Unimplemented attack text: Discard a {W} and a {L} Energy from this Pokémon.
+- 1 identities: Unimplemented trainer text: Your opponent discards cards from their hand until they have 4 cards in their hand.
+- 1 identities: Unimplemented trainer text: Shuffle 2 cards from your hand into your deck. Draw a card. If you can't shuffle in 2 cards, you can't use this card.
+- 1 identities: Unimplemented trainer text: During this turn, if your opponent's Active Pokémon is Knocked Out by damage from an attack used by your Haxorus, you get 1 more point.
+- 1 identities: Unimplemented trainer text: Draw a card for each Mega Evolution Pokémon ex in play (both yours and your opponent's).
+- 1 identities: Unimplemented trainer text: At the end of each player's turn, that player draws cards until they have 3 cards in their hand.
+- 1 identities: Unimplemented attack text: If you have any Stage 2 Pokémon on your Bench, this attack does 50 more damage.
+- 1 identities: Unimplemented attack text: Discard a {R} Energy from your opponent's Active Pokémon.
+- 1 identities: Unimplemented attack text: The Defending Pokémon loses all Abilities. This effect lasts until the Defending Pokémon leaves the Active Spot.
+- 1 identities: Unimplemented attack text: If Durant is on your Bench, this attack does 30 more damage.
+- 1 identities: Unimplemented attack text: Heal 30 damage from 1 of your Benched Pokémon.
+- 1 identities: Unimplemented attack text: Flip 3 coins. For each heads, discard a {R} Energy from this Pokémon. This attack does 30 more damage for each {R} Energy you discarded in this way.
+- 1 identities: Unimplemented attack text: 1 of your opponent's Pokémon is chosen at random. Do 160 damage to it.
+- 1 identities: Unimplemented attack text: Flip a coin for each {R} Energy attached to this Pokémon. This attack does 30 more damage for each heads.
+- 1 identities: Unimplemented attack text: If this Pokémon evolved from Poliwhirl during this turn, this attack does 50 more damage.
+- 1 identities: Unimplemented ability text: Once during your turn, if this Pokémon is in the Active Spot, you may switch out your opponent's Active Pokémon to the Bench. (Your opponent chooses the new Active Pokémon.)
+- 1 identities: Unimplemented attack text: If this Pokémon has any {F} Energy attached, this attack does 60 more damage.
+- 1 identities: Unimplemented attack text: If a Stadium is in play, heal 20 damage from this Pokémon.
+- 1 identities: Unimplemented attack text: If a Stadium is in play, your opponent's Active Pokémon is now Asleep.
+- 1 identities: Unimplemented attack text: Move 2 random Energy from this Pokémon to 1 of your Benched Pokémon.
+- 1 identities: Unimplemented ability text: Once during your turn, when you play this Pokémon from your hand to evolve 1 of your Pokémon, you may do 20 damage to your opponent's Active Pokémon.
+- 1 identities: Unimplemented ability text: Once during your turn, when you play this Pokémon from your hand to evolve 1 of your Pokémon, you may do 30 damage to your opponent's Active Pokémon.
+- 1 identities: Unimplemented attack text: Discard a {W} Energy from this Pokémon, and this attack also does 40 damage to 1 of your opponent's Benched Pokémon.
+- 1 identities: Unimplemented ability text: As long as this Pokémon is in play, it is {W} and {F} type.
+- 1 identities: Unimplemented attack text: If any of your Pokémon were Knocked Out by damage from an attack during your opponent's last turn, this attack does 60 more damage, and your opponent's Active Pokémon is now Paralyzed.
+- 1 identities: Unimplemented attack text: If this Pokémon has no damage on it, this attack does 30 more damage.
+- 1 identities: Unimplemented ability text: Once during your turn, if this Pokémon is in the Active Spot, you may make your opponent's Active Pokémon Confused.
+- 1 identities: Unimplemented attack text: Heal 20 damage from each of your {P} Pokémon.
+- 1 identities: Unimplemented ability text: Once during your turn, if this Pokémon is on your Bench, you may move 30 damage that your Active Pokémon has on it to this Pokémon.
+- 1 identities: Unimplemented attack text: During your opponent's next turn, this Pokémon takes +20 damage from attacks.
+- 1 identities: Unimplemented attack text: During your next turn, attacks used by your {F} Pokémon do +30 damage to your opponent's Active Pokémon.
+- 1 identities: Unimplemented attack text: Flip a coin until you get tails. For each heads, discard the top card of your opponent's deck.
+- 1 identities: Unimplemented attack text: Take a {C} Energy from your Energy Zone and attach it to this Pokémon.
+- 1 identities: Unimplemented attack text: During your opponent's next turn, they can't play any Pokémon from their hand to evolve their Pokémon.
+- 1 identities: Unimplemented ability text: As long as this Pokémon is in play, it is {F} and {D} type.
+- 1 identities: Unimplemented ability text: As long as this Pokémon is on your Bench, your Active {D} Pokémon's Retreat Cost is 1 less.
+- 1 identities: Unimplemented attack text: If your opponent has any {P} Pokémon in play, this attack does 50 more damage.
+- 1 identities: Unimplemented ability text: During Pokémon Checkup, if this Pokémon is in the Active Spot, do 10 damage to each of your opponent's Pokémon.
+- 1 identities: Unimplemented ability text: Once during your turn, you may remove a random Special Condition from your Active Pokémon.
+- 1 identities: Unimplemented attack text: If a Stadium is in play, this attack does 20 more damage.
+- 1 identities: Unimplemented ability text: If you don't have Regirock, Regice, and Registeel on your Bench, this Pokémon can't attack.
+- 1 identities: Unimplemented attack text: During your next turn, this Pokémon's Psych Up attack does +30 damage.
+- 1 identities: Unimplemented trainer text: Discard a Pokémon Tool card from a Pokémon (yours or your opponent's), or discard a Stadium card in play.
+- 1 identities: Unimplemented trainer text: If the Pokémon this card is attached to is Knocked Out by damage from an attack from your opponent's Pokémon, draw cards until you have 5 cards in your hand.
+- 1 identities: Unimplemented trainer text: During this turn, attacks used by your {F} Pokémon do +30 damage to your opponent's Active Pokémon ex.
+- 1 identities: Unimplemented trainer text: Put a random Stadium card from your deck into your hand.
+- 1 identities: Unimplemented trainer text: During your opponent's next turn, all of your Watchog and Stoutland take −100 damage from attacks from your opponent's Pokémon ex.
+- 1 identities: Unimplemented trainer text: Put 1 of your {W} Pokémon in play, except any Pokémon ex, into your hand.
+- 1 identities: Unimplemented trainer text: Once during each player's turn, that player may put a random Basic {G} Pokémon from their deck into their hand.
+- 1 identities: Unimplemented trainer text: Attacks used by each {F} Pokémon in play (both yours and your opponent's) do +20 damage to the opponent's Active Pokémon ex.
+- 1 identities: Unimplemented trainer text: When applying the opponent's Active Pokémon's Weakness to damage from attacks used by Pokémon in play (both yours and your opponent's) that aren't Mega Evolution Pokémon ex, apply Weakness as ×2.
+- 1 identities: Unimplemented attack text: Flip 3 coins. If 1 of them is heads, this attack does 20 more damage. If 2 of them are heads, this attack does 50 more damage. If all of them are heads, this attack does 120 more damage.
+- 1 identities: Unimplemented attack text: If this is the first time this Pokémon has used an attack after coming into play, this attack does 20 more damage, and your opponent's Active Pokémon is now Paralyzed.
+- 1 identities: Unimplemented attack text: During your next turn, the Defending Pokémon takes +50 damage from attacks.
+- 1 identities: Unimplemented attack text: Flip 2 coins. If both of them are heads, discard your opponent's Active Pokémon.
+- 1 identities: Unimplemented attack text: If this is the first time this Pokémon has used an attack after coming into play, during your opponent's next turn, they can't use any Trainer cards from their hand.
+- 1 identities: Unimplemented ability text: Attacks used by your Future Pokémon cost 1 less {C} Energy.
+- 1 identities: Unimplemented ability text: During Pokémon Checkup, heal 10 damage from each of your Pokémon.
+- 1 identities: Unimplemented attack text: If this Pokémon evolved from Sneasel during this turn, this attack does 20 more damage.
+- 1 identities: Unimplemented attack text: This attack does 40 more damage for each time your Pokémon have been Knocked Out during this game.
+- 1 identities: Unimplemented ability text: Once during your turn, when you put this Pokémon from your hand onto your Bench, you may switch out your opponent's Active Pokémon to the Bench. (Your opponent chooses the new Active Pokémon.)
+- 1 identities: Unimplemented attack text: Discard an Energy from this Pokémon, and this attack also does 20 damage to each of your opponent's Benched Pokémon.
+- 1 identities: Unimplemented attack text: Discard 2 Energy from this Pokémon. During your opponent's next turn, this Pokémon takes −30 damage from attacks.
+- 1 identities: Unimplemented attack text: Discard all Energy from this Pokémon. Knock Out your opponent's Active Pokémon.
+- 1 identities: Unimplemented attack text: This attack does 20 more damage for each type of Energy attached to this Pokémon.
+- 1 identities: Unimplemented trainer text: The Ancient Pokémon this card is attached to gets +40 HP.
+- 1 identities: Unimplemented trainer text: Attacks used by the Future Pokémon this card is attached to do +20 damage to your opponent's Active Pokémon.
+- 1 identities: Unimplemented trainer text: Put a random Stage 2 Pokémon from your deck into your hand.
+- 1 identities: Unimplemented trainer text: Attach 3 different types of Energy from your discard pile to your Ancient Pokémon in any way you like.
+- 1 identities: Unimplemented trainer text: Shuffle 1 of your Future Pokémon in play into your deck.
+- 1 identities: Unimplemented trainer text: Once during each player's turn, that player may shuffle a Basic Pokémon from their hand into their deck. If they do, they draw a card.
+- 1 identities: Unimplemented ability text: At the end of your opponent's turn, if this Pokémon is in the Active Spot, put a random card from your deck that evolves from this Pokémon onto this Pokémon to evolve it.
+- 1 identities: Unimplemented ability text: Once during your turn, you may take a {W} Energy from your Energy Zone and attach it to this Pokémon.
+- 1 identities: Unimplemented attack text: This attack does 40 damage for each Pokémon Tool attached to all of your Pokémon.
+- 1 identities: Unimplemented ability text: Once during your turn, if this Pokémon has a Pokémon Tool attached, you may heal 30 damage from 1 of your Pokémon.
+- 1 identities: Unimplemented attack text: Choose 2 of your Benched Pokémon. For each of those Pokémon, take a {P} Energy from your Energy Zone and attach it to that Pokémon.
+- 1 identities: Unimplemented attack text: This attack does 20 more damage for each {P} Energy attached to all of your Pokémon.
+- 1 identities: Unimplemented attack text: If this Pokémon and your opponent's Active Pokémon have 1 or more of the same type of Energy attached, this attack does 60 more damage.
+- 1 identities: Unimplemented attack text: If this Pokémon didn't move from the Bench to the Active Spot this turn, this attack does nothing.
+- 1 identities: Unimplemented attack text: 1 of your opponent's Active Pokémon's attacks is chosen at random. During your opponent's next turn, that Pokémon can't use the chosen attack.
+- 1 identities: Unimplemented attack text: Your opponent's Active Pokémon is now Poisoned. Do 40 damage to this Pokémon instead of the usual amount for this Special Condition.
+- 1 identities: Unimplemented ability text: If any damage is done to this Pokémon by attacks, flip a coin. If heads, this Pokémon takes −80 damage from that attack.
+- 1 identities: Unimplemented ability text: As long as this Pokémon is in the Active Spot, your opponent can't play any Stadium cards from their hand.
+- 1 identities: Unimplemented attack text: This attack does 20 more damage for each Pokémon in your discard pile.
+- 1 identities: Unimplemented trainer text: The Retreat Cost of the Basic Pokémon this card is attached to is 1 less.
+- 1 identities: Unimplemented trainer text: The Stage 1 Pokémon this card is attached to gets +30 HP.
+- 1 identities: Unimplemented trainer text: Return all Pokémon Tools attached to each Pokémon (both yours and your opponent's) to their owner's hand.
+- 1 identities: Unimplemented trainer text: Look at the top 4 cards of your deck. Put all Pokémon you find there that have the Puppy Pile attack into your hand. Shuffle the other cards back into your deck.
+- 1 identities: Unimplemented trainer text: Choose 1 of your {W} Pokémon in play with a maximum HP of 50 or less. Put a random {W} Pokémon from your deck that evolves from that Pokémon onto that Pokémon to evolve it.
+- 1 identities: Unimplemented trainer text: Once during each player's turn, that player may choose a card in their hand and switch it with a random Pokémon Tool card in their deck.
+- 1 identities: Unimplemented ability text: Once during your turn, you may use this Ability. 1 Special Condition from among Burned, Confused, and Poisoned is chosen at random, and your opponent's Active Pokémon is now affected by that Special Condition. Any Special Conditions already affecting that Pokémon will not be chosen.
+- 1 identities: Unimplemented attack text: You may discard 1 of your Benched Basic {G} Pokémon. If you do, this attack does 70 more damage.
+- 1 identities: Unimplemented attack text: Your opponent's Active Pokémon is now Poisoned and Paralyzed. Shuffle this Pokémon and all attached cards into your deck.
+- 1 identities: Unimplemented attack text: If you haven't gotten any points, this attack does 60 more damage.
+- 1 identities: Unimplemented ability text: Once during your turn, when you put this Pokémon from your hand onto your Bench, you may heal 20 damage from your Active {G} Pokémon.
+- 1 identities: Unimplemented attack text: This attack does damage to your opponent's Active Pokémon equal to this Pokémon's remaining HP.
+- 1 identities: Unimplemented attack text: This Pokémon recovers from all Special Conditions.
+- 1 identities: Unimplemented attack text: If your opponent's Active Pokémon is a {F} Pokémon, this attack does 70 more damage.
+- 1 identities: Unimplemented attack text: Discard 3 {W} Energy from this Pokémon, and this attack does 50 damage to each of your opponent's Pokémon.
+- 1 identities: Unimplemented ability text: Once during your turn, when you play this Pokémon from your hand to evolve 1 of your Pokémon, you may prevent all damage from—and effects of—attacks from your opponent's Pokémon done to this Pokémon until the end of your opponent's next turn.
+- 1 identities: Unimplemented attack text: Heal 10 damage from each of your Benched Pokémon.
+- 1 identities: Unimplemented ability text: Once during your turn, when you play this Pokémon from your hand to evolve 1 of your Pokémon, you may flip a coin. If heads, your opponent's Active Pokémon is now Paralyzed.
+- 1 identities: Unimplemented attack text: This attack does 50 more damage for each point your opponent has gotten.
+- 1 identities: Unimplemented attack text: This attack does 10 more damage for each Item card in your discard pile.
+- 1 identities: Unimplemented attack text: This attack does 20 more damage for each Energy attached to all of your opponent's Pokémon.
+- 1 identities: Unimplemented attack text: If this Pokémon and your opponent's Active Pokémon have the same amount of Energy attached, this attack does 40 more damage.
+- 1 identities: Unimplemented attack text: If you have the same number of cards in your hand as your opponent, this attack does 40 more damage.
+- 1 identities: Unimplemented attack text: Before doing damage, shuffle all Pokémon Tools from each of your opponent's Pokémon into their deck.
+- 1 identities: Unimplemented attack text: During your opponent's next turn, this Pokémon takes +50 damage from attacks.
+- 1 identities: Unimplemented attack text: Discard all Energy from this Pokémon. Choose a spot from among your opponent's Active Spot and Bench. At the end of your opponent's next turn, Knock Out the Pokémon in the spot you chose.
+- 1 identities: Unimplemented attack text: Draw a card for each Poochyena you have in play.
+- 1 identities: Unimplemented attack text: If your opponent's Active Pokémon has less remaining HP than this Pokémon, this attack does 80 more damage.
+- 1 identities: Unimplemented attack text: During your next turn, this Pokémon's Overacceleration attack does +70 damage.
+- 1 identities: Unimplemented ability text: This Pokémon may have up to 2 Pokémon Tool cards attached to it.
+- 1 identities: Unimplemented ability text: Once during your turn, if this Pokémon is on your Bench, you may attach an Energy from your discard pile to your Active [Dragon] Pokémon.
+- 1 identities: Unimplemented attack text: Discard all {R} and {L} Energy from this Pokémon, and this attack does 50 damage for each Energy you discarded in this way.
+- 1 identities: Unimplemented attack text: Flip 2 coins. If both of them are heads, this attack does 100 more damage.
+- 1 identities: Unimplemented ability text: Once during your turn, when you play this Pokémon from your hand to evolve 1 of your Pokémon, you may look at the top 4 cards of your deck and put all Item cards you find there into your hand. Shuffle the other cards back into your deck.
+- 1 identities: Unimplemented attack text: If this Pokémon and your opponent's Active Pokémon have 1 or more of the same type of Energy attached, this attack does 30 more damage.
+- 1 identities: Unimplemented trainer text: Flip a coin. If heads, put a random Item card from your deck into your hand.
+- 1 identities: Unimplemented trainer text: At the end of your turn, if the {D} Pokémon this card is attached to is in the Active Spot, do 10 damage to your opponent's Active Pokémon.
+- 1 identities: Unimplemented trainer text: Prevent all effects of attacks used by your opponent's Pokémon done to the Pokémon this card is attached to. (Existing effects are not removed.)
+- 1 identities: Unimplemented trainer text: You can use this card only if your Pokémon in the Active Spot has the Psychic attack. Choose 1 of your opponent's Benched Pokémon and move a random Energy from it to your opponent's Active Pokémon.
+- 1 identities: Unimplemented trainer text: During this turn, 1 of your opponent's Pokémon is chosen 1 more time for the Draco Meteor attack used by your Pokémon.
+- 1 identities: Unimplemented trainer text: Switch your Active Stage 1 Pokémon with 1 of your Benched Pokémon.
+- 1 identities: Unimplemented trainer text: Take a {C} Energy from your Energy Zone and attach it to 1 of your Stage 2 Pokémon.
+- 1 identities: Unimplemented trainer text: At the end of each player's turn, that player heals 20 damage from each of their Pokémon that has any {W} Energy attached.
+- 1 identities: Unimplemented trainer text: Once during each player's turn, that player may discard the Energy that has been generated in their Energy Zone. If they do, the next Energy is produced.
+- 1 identities: Unimplemented attack text: If Volbeat is in your discard pile, this attack does 60 more damage.
+- 1 identities: Unimplemented ability text: This Pokémon gets +30 HP for each {G} Energy attached to it.
+- 1 identities: Unimplemented attack text: This attack does 50 more damage for each Special Condition affecting your opponent's Active Pokémon.
+- 1 identities: Unimplemented attack text: Flip 3 coins. For each heads, produce a {R} Energy from your Energy Zone and attach it to this Pokémon.
+- 1 identities: Unimplemented attack text: This attack does 50 more damage for each point your opponent got during their last turn.
+- 1 identities: Unimplemented ability text: If this Pokémon is in the Active Spot and is Knocked Out by damage from an attack from your opponent's Pokémon, do 70 damage to the Attacking Pokémon.
+- 1 identities: Unimplemented attack text: This attack also does 50 damage to 1 of your opponent's Benched Pokémon that has damage on it.
+- 1 identities: Unimplemented attack text: Put a random Item card from your discard pile into your hand.
+- 1 identities: Unimplemented attack text: This attack does 20 damage for each card in your hand.
+- 1 identities: Unimplemented ability text: Once during your turn, if this Pokémon is in the Active Spot, you may draw a card.
+- 1 identities: Unimplemented attack text: This attack does 10 more damage for each Energy in your opponent's Active Pokémon's Retreat Cost.
+- 1 identities: Unimplemented attack text: If your opponent's Active Pokémon is Poisoned, heal 60 damage from this Pokémon.
+- 1 identities: Unimplemented ability text: Once during your turn, when you play this Pokémon from your hand to evolve 1 of your Pokémon, you may make your opponent's Active Pokémon Poisoned and Burned.
+- 1 identities: Unimplemented attack text: Flip a coin for each Pokémon you have in play. This attack does 30 damage for each heads.
+- 1 identities: Unimplemented attack text: During your opponent's next turn, attacks used by the Defending Pokémon cost 2 {C} more, and its Retreat Cost is 2 {C} more.
+- 1 identities: Unimplemented ability text: Once during your turn, when you flip any coins for an effect of your Trainer cards, you may ignore all results of those coin flips and begin flipping those coins again. You can't use more than 1 Luxury Coin Ability each turn.
+- 1 identities: Invalid damage: 140-
+- 1 identities: Unimplemented attack text: If this Pokémon has damage on it, this attack does −100 damage.
+- 1 identities: Unimplemented ability text: Once during your turn, when you play this Pokémon from your hand to evolve 1 of your Pokémon, you may move a random Energy from your opponent's Active Pokémon to this Pokémon.
+- 1 identities: Unimplemented ability text: Once during your turn, you may look at a random card from your opponent's hand.
+- 1 identities: Unimplemented trainer text: Put a random Item card, except any Team Rocket's Thieving Machine, from your opponent's discard pile into your hand.
+- 1 identities: Unimplemented trainer text: Until the end of your opponent's next turn, your opponent's Active Pokémon's Retreat Cost is 1 more.
+- 1 identities: Unimplemented trainer text: Flip a coin until you get tails. For each heads, put a random Pokémon that has “Team Rocket” in its name from your deck into your hand.
+- 1 identities: Unimplemented trainer text: Your opponent's Active Pokémon is now Confused. Flip a coin. If tails, your Active Pokémon is now also Confused.
+- 1 identities: Unimplemented trainer text: Look at your opponent's hand and put any number of Basic Pokémon you find there onto your opponent's Bench.
+- 1 identities: Unimplemented trainer text: Once during each player's turn, that player may flip 3 coins. If all of them are heads, that player draws cards until they have 7 cards in their hand.
 
 ## Every non-FULL gameplay identity
 
 | ID | Card | Status | Exact reason |
 | --- | --- | --- | --- |
-| A1-005 | Caterpie | PARTIAL | Unimplemented attack text: Put 1 random {G} Pokémon from your deck into your hand. |
 | A1-007 | Butterfree | PARTIAL | Unimplemented ability text: Once during your turn, you may heal 20 damage from each of your Pokémon. |
 | A1-020 | Victreebel | PARTIAL | Unimplemented ability text: If this Pokémon is in the Active Spot, once during your turn, you may switch in 1 of your opponent's Benched Basic Pokémon to the Active Spot. |
 | A1-030 | Lilligant | PARTIAL | Unimplemented attack text: Take a {G} Energy from your Energy Zone and attach it to 1 of your Benched {G} Pokémon. |
@@ -551,11 +694,8 @@ Released print status: FULL 1959, PARTIAL 1217, UNSUPPORTED 1140.
 | A1-047 | Moltres ex | PARTIAL | Unimplemented attack text: Flip 3 coins. Take an amount of {R} Energy from your Energy Zone equal to the number of heads and attach it to your Benched {R} Pokémon in any way you like. |
 | A1-057 | Psyduck | PARTIAL | Unimplemented attack text: Your opponent can't use any Supporter cards from their hand during their next turn. |
 | A1-069 | Kingler | PARTIAL | Unimplemented attack text: Flip 2 coins. If both of them are heads, this attack does 80 more damage. |
-| A1-082 | Omastar | PARTIAL | Unimplemented attack text: During your opponent's next turn, the Defending Pokémon can't attack. |
 | A1-089 | Greninja | PARTIAL | Unimplemented ability text: Once during your turn, you may do 20 damage to 1 of your opponent's Pokémon. |
 | A1-098 | Magneton | PARTIAL | Unimplemented ability text: Once during your turn, you may take a {L} Energy from your Energy Zone and attach it to this Pokémon. |
-| A1-101 | Electabuzz | PARTIAL | Unimplemented attack text: Flip a coin. If heads, this attack does 40 more damage. If tails, this Pokémon also does 20 damage to itself. |
-| A1-103 | Zapdos | PARTIAL | Unimplemented attack text: This attack also does 30 damage to 1 of your Benched Pokémon. |
 | A1-122 | Gengar | PARTIAL | Unimplemented attack text: Your opponent can't use any Supporter cards from their hand during their next turn. |
 | A1-123 | Gengar ex | PARTIAL | Unimplemented ability text: As long as this Pokémon is in the Active Spot, your opponent can't use any Supporter cards from their hand. |
 | A1-125 | Hypno | PARTIAL | Unimplemented ability text: Once during your turn, you may flip a coin. If heads, your opponent's Active Pokémon is now Asleep. |
@@ -564,7 +704,6 @@ Released print status: FULL 1959, PARTIAL 1217, UNSUPPORTED 1140.
 | A1-163 | Grapploct | PARTIAL | Unimplemented attack text: Switch out your opponent's Active Pokémon to the Bench. (Your opponent chooses the new Active Pokémon.) |
 | A1-166 | Nidoran♀ | PARTIAL | Unimplemented attack text: Put 1 random Nidoran♂ from your deck onto your Bench. |
 | A1-168 | Nidoqueen | PARTIAL | Unimplemented attack text: This attack does 50 more damage for each of your Benched Nidoking. |
-| A1-175 | Muk | PARTIAL | Unimplemented attack text: If your opponent's Active Pokémon is Poisoned, this attack does 50 more damage. |
 | A1-177 | Weezing | PARTIAL | Unimplemented ability text: Once during your turn, if this Pokémon is in the Active Spot, you may make your opponent's Active Pokémon Poisoned. |
 | A1-185 | Dragonite | PARTIAL | Unimplemented attack text: 1 of your opponent's Pokémon is chosen at random 4 times. For each time a Pokémon was chosen, do 50 damage to it. |
 | A1-188 | Pidgeot | PARTIAL | Unimplemented ability text: Once during your turn, you may switch out your opponent's Active Pokémon to the Bench. (Your opponent chooses the new Active Pokémon.) |
@@ -572,7 +711,6 @@ Released print status: FULL 1959, PARTIAL 1217, UNSUPPORTED 1140.
 | A1-205 | Ditto | PARTIAL | Unimplemented attack text: Choose 1 of your opponent's Pokémon's attacks and use it as this attack. If this Pokémon doesn't have the necessary Energy to use that attack, this attack does nothing. |
 | A1-209 | Porygon | PARTIAL | Unimplemented ability text: Once during your turn, you may look at the top card of your deck. |
 | A1-210 | Aerodactyl | PARTIAL | Unimplemented attack text: Flip a coin. If heads, your opponent shuffles their Active Pokémon into their deck. |
-| A1-213 | Cinccino | PARTIAL | Unimplemented attack text: This attack does 30 damage for each of your Benched Pokémon. |
 | A1-219 | Erika | PARTIAL | Unimplemented trainer text: Heal 50 damage from 1 of your {G} Pokémon. |
 | A1-220 | Misty | PARTIAL | Unimplemented trainer text: Choose 1 of your {W} Pokémon, and flip a coin until you get tails. For each heads, take a {W} Energy from your Energy Zone and attach it to that Pokémon. |
 | A1-221 | Blaine | PARTIAL | Unimplemented trainer text: During this turn, attacks used by your Ninetales, Rapidash, or Magmar do +30 damage to your opponent's Active Pokémon. |
@@ -586,11 +724,9 @@ Released print status: FULL 1959, PARTIAL 1217, UNSUPPORTED 1140.
 | P-A-037 | Cresselia ex | PARTIAL | Unimplemented ability text: Whenever you attach a {P} Energy from your Energy Zone to this Pokémon, heal 20 damage from this Pokémon. |
 | P-A-042 | Darkrai ex | PARTIAL | Unimplemented ability text: Whenever you attach a {D} Energy from your Energy Zone to this Pokémon, do 20 damage to your opponent's Active Pokémon. |
 | P-A-044 | Raichu | PARTIAL | Unimplemented ability text: If you have Arceus or Arceus ex in play, this Pokémon takes −30 damage from attacks. |
-| P-A-045 | Nosepass | PARTIAL | Unimplemented attack text: Flip a coin. If heads, during your opponent's next turn, prevent all damage done to this Pokémon by attacks. |
 | P-A-047 | Staraptor | PARTIAL | Unimplemented ability text: This Pokémon takes −30 damage from attacks from {F} Pokémon. |
 | P-A-048 | Manaphy | PARTIAL | Unimplemented attack text: Choose 2 of your Benched Pokémon. For each of those Pokémon, take a {W} Energy from your Energy Zone and attach it to that Pokémon. |
 | P-A-051 | Cyclizar | PARTIAL | Unimplemented attack text: During your next turn, this Pokémon's Overacceleration attack does +20 damage. |
-| P-A-052 | Sprigatito | PARTIAL | Unimplemented attack text: Put 1 random {G} Pokémon from your deck into your hand. |
 | P-A-058 | Pachirisu | PARTIAL | Unimplemented attack text: Take a {L} Energy from your Energy Zone and attach it to 1 of your Benched {L} Pokémon. |
 | P-A-064 | Rayquaza ex | PARTIAL | Unimplemented attack text: 1 of your opponent's Pokémon is chosen at random 4 times. For each time a Pokémon was chosen, do 40 damage to it. |
 | P-A-066 | Mimikyu | PARTIAL | Unimplemented attack text: This attack also does 20 damage to 1 of your Pokémon. |
@@ -603,56 +739,39 @@ Released print status: FULL 1959, PARTIAL 1217, UNSUPPORTED 1140.
 | P-A-095 | Chinchou | PARTIAL | Unimplemented attack text: Flip a coin. If heads, switch in 1 of your opponent's Benched Pokémon to the Active Spot. |
 | P-A-096 | Houndoom | PARTIAL | Unimplemented attack text: Discard a random card from your opponent's hand. |
 | P-A-097 | Kangaskhan | PARTIAL | Unimplemented attack text: If your opponent's Active Pokémon is an Evolution Pokémon, this attack does 40 more damage. |
-| P-A-098 | Blissey ex | PARTIAL | Unimplemented attack text: Flip a coin. If heads, heal 60 damage from this Pokémon. |
 | A4a-036 | Latias | PARTIAL | Unimplemented attack text: If Latios is on your Bench, this attack does 20 more damage. |
-| P-A-102 | Tropius | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| P-A-103 | Poliwag | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
 | A4a-022 | Milotic | PARTIAL | Unimplemented ability text: Once during your turn, when you play this Pokémon from your hand to evolve 1 of your Pokémon, you may heal 60 damage from 1 of your {W} Pokémon. |
 | A4a-050 | Zoroark | PARTIAL | Unimplemented ability text: If your opponent's Pokémon is Knocked Out by damage from this Pokémon's attacks, during your opponent's next turn, prevent all damage from—and effects of—attacks done to this Pokémon. |
 | A4a-062 | Miltank | PARTIAL | Unimplemented attack text: Until this Pokémon leaves the Active Spot, this Pokémon's Rolling Frenzy attack does +30 damage. This effect stacks. |
 | A4a-043 | Phanpy | PARTIAL | Unimplemented attack text: This attack does damage to your opponent's Active Pokémon equal to the damage this Pokémon has on it. |
 | A3b-056 | Eevee ex | PARTIAL | Unimplemented ability text: This Pokémon can evolve into any Pokémon that evolves from Eevee if you play it from your hand onto this Pokémon. (This Pokémon can't evolve during your first turn or the turn you play it.) |
-| P-A-111 | Pikachu | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| P-A-112 | Raichu ex | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
 | A3b-035 | Mimikyu | PARTIAL | Unimplemented attack text: Flip a coin. If heads, choose 1 of your opponent's Active Pokémon's attacks and use it as this attack. |
-| P-A-114 | Machamp | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| A2-143 | Regigigas | PARTIAL | Unimplemented attack text: This attack does more damage equal to the damage this Pokémon has on it. |
 | A2-022 | Shaymin | PARTIAL | Unimplemented ability text: Once during your turn, you may heal 10 damage from each of your Pokémon. |
 | A1a-003 | Celebi ex | PARTIAL | Unimplemented attack text: Flip a coin for each Energy attached to this Pokémon. This attack does 50 damage for each heads. |
 | A1a-006 | Serperior | PARTIAL | Unimplemented ability text: Each {G} Energy attached to your {G} Pokémon provides 2 {G} Energy. This effect doesn't stack. |
-| A1a-015 | Salandit | PARTIAL | Unimplemented attack text: If your opponent's Active Pokémon is Poisoned, this attack does 40 more damage. |
 | A1a-018 | Gyarados ex | PARTIAL | Unimplemented attack text: Discard a random Energy from among the Energy attached to all Pokémon (both yours and your opponent's). |
 | A1a-019 | Vaporeon | PARTIAL | Unimplemented ability text: As often as you like during your turn, you may move a {W} Energy from 1 of your Benched {W} Pokémon to your Active {W} Pokémon. |
 | A1a-032 | Mew ex | PARTIAL | Unimplemented attack text: Choose 1 of your opponent's Active Pokémon's attacks and use it as this attack. |
-| A1a-035 | Beheeyem | PARTIAL | Unimplemented attack text: This attack does 20 more damage for each of your opponent's Benched Pokémon. |
-| A1a-038 | Florges | PARTIAL | Unimplemented attack text: Heal 20 damage from each of your Pokémon. |
 | A1a-046 | Aerodactyl ex | PARTIAL | Unimplemented ability text: Your opponent can't play any Pokémon from their hand to evolve their Active Pokémon. |
 | A1a-047 | Marshadow | PARTIAL | Unimplemented attack text: If any of your Pokémon were Knocked Out by damage from an attack during your opponent's last turn, this attack does 60 more damage. |
 | A1a-049 | Koffing | PARTIAL | Unimplemented attack text: Put 1 random Koffing from your deck onto your Bench. |
 | A1a-050 | Weezing | PARTIAL | Unimplemented attack text: During your opponent's next turn, if the Defending Pokémon tries to use an attack, your opponent flips a coin. If tails, that attack doesn't happen. |
-| A1a-055 | Scolipede | PARTIAL | Unimplemented attack text: If your opponent's Active Pokémon is Poisoned, this attack does 50 more damage. |
-| A1a-059 | Pidgeot ex | PARTIAL | Unimplemented attack text: This attack does 20 more damage for each of your opponent's Benched Pokémon. |
-| A1a-060 | Tauros | PARTIAL | Unimplemented attack text: If your opponent's Active Pokémon is a Pokémon ex, this attack does 80 more damage. |
 | A1a-062 | Chatot | PARTIAL | Unimplemented attack text: Shuffle your hand into your deck. Draw a card for each card in your opponent's hand. |
 | A1a-064 | Pokémon Flute | PARTIAL | Unimplemented trainer text: Put a Basic Pokémon from your opponent's discard pile onto their Bench. |
 | A1a-065 | Mythical Slab | PARTIAL | Unimplemented trainer text: Look at the top card of your deck. If that card is a {P} Pokémon, put it into your hand. If it is not a {P} Pokémon, put it on the bottom of your deck. |
 | A1a-066 | Budding Expeditioner | PARTIAL | Unimplemented trainer text: Put your Mew ex in the Active Spot into your hand. |
 | A1a-067 | Blue | PARTIAL | Unimplemented trainer text: During your opponent's next turn, all of your Pokémon take −10 damage from attacks from your opponent's Pokémon. |
 | A2-017 | Combee | PARTIAL | Unimplemented attack text: Put 1 random Basic Pokémon from your deck onto your Bench. |
-| A2-029 | Infernape ex | PARTIAL | Unimplemented attack text: Discard all {R} Energy from this Pokémon. |
 | A2-032 | Piloswine | PARTIAL | Unimplemented ability text: This Pokémon takes −20 damage from attacks from {R} or {W} Pokémon. |
 | A2-033 | Mamoswine | PARTIAL | Unimplemented ability text: This Pokémon takes −30 damage from attacks from {R} or {W} Pokémon. |
 | A2-034 | Regice | PARTIAL | Unimplemented ability text: Prevent all effects of attacks used by your opponent's Pokémon done to this Pokémon. |
 | A2-044 | Snover | PARTIAL | Unimplemented attack text: If your opponent's Active Pokémon is a {F} Pokémon, this attack does 30 more damage. |
-| A2-060 | Luxray | PARTIAL | Unimplemented attack text: Discard all {L} Energy from this Pokémon. This attack does 120 damage to 1 of your opponent's Pokémon. |
 | A2-062 | Rotom | PARTIAL | Unimplemented attack text: If your opponent's Active Pokémon has a Pokémon Tool attached, this attack does 30 more damage. |
 | A2-065 | Togekiss | PARTIAL | Unimplemented attack text: During your next turn, this Pokémon's Overdrive Smash attack does +60 damage. |
 | A2-072 | Dusknoir | PARTIAL | Unimplemented ability text: As often as you like during your turn, you may choose 1 of your Pokémon that has damage on it, and move all of its damage to this Pokémon. |
 | A2-075 | Uxie | PARTIAL | Unimplemented attack text: Take a {P} Energy from your Energy Zone and attach it to Mesprit or Azelf. |
 | A2-076 | Mesprit | PARTIAL | Unimplemented attack text: You can use this attack only if you have Uxie and Azelf on your Bench. Discard all Energy from this Pokémon. |
 | A2-078 | Giratina | PARTIAL | Unimplemented ability text: If this Pokémon has any Energy attached, it has no Retreat Cost. |
-| A2-082 | Rhyperior | PARTIAL | Unimplemented attack text: Discard the top 3 cards of your deck. |
-| A2-084 | Gliscor | PARTIAL | Unimplemented attack text: Flip 2 coins. This attack does 20 more damage for each heads. |
 | A2-089 | Rampardos | PARTIAL | Unimplemented attack text: If your opponent's Pokémon is Knocked Out by damage from this attack, this Pokémon also does 50 damage to itself. |
 | A2-092 | Lucario | PARTIAL | Unimplemented ability text: Attacks used by your {F} Pokémon do +20 damage to your opponent's Active Pokémon. |
 | A2-104 | Spiritomb | PARTIAL | Unimplemented attack text: This attack does 10 damage to each of your opponent's Pokémon. |
@@ -660,7 +779,6 @@ Released print status: FULL 1959, PARTIAL 1217, UNSUPPORTED 1140.
 | A2-107 | Croagunk | PARTIAL | Unimplemented attack text: Flip a coin for each Pokémon you have in play. This attack does 20 damage for each heads. |
 | A2-108 | Toxicroak | PARTIAL | Unimplemented attack text: Flip a coin for each Pokémon you have in play. This attack does 40 damage for each heads. |
 | A2-114 | Bastiodon | PARTIAL | Unimplemented ability text: If any damage is done to this Pokémon by attacks, flip a coin. If heads, this Pokémon takes −100 damage from that attack. |
-| A2-118 | Probopass | PARTIAL | Unimplemented attack text: Flip 3 coins. This attack does 50 more damage for each heads. |
 | A2-123 | Garchomp | PARTIAL | Unimplemented ability text: You must discard a card from your hand in order to use this Ability. Once during your turn, you may draw a card. |
 | A2-129 | Porygon-Z | PARTIAL | Unimplemented attack text: Change the type of the next Energy that will be generated for your opponent to 1 of the following at random: {G}, {R}, {W}, {L}, {P}, {F}, {D}, or {M}. |
 | A2-132 | Starly | PARTIAL | Unimplemented attack text: Before doing damage, discard all Pokémon Tools from your opponent's Active Pokémon. |
@@ -674,27 +792,23 @@ Released print status: FULL 1959, PARTIAL 1217, UNSUPPORTED 1140.
 | A2-151 | Team Galactic Grunt | PARTIAL | Unimplemented trainer text: Put 1 random Glameow, Stunky, or Croagunk from your deck into your hand. |
 | A2-152 | Cynthia | PARTIAL | Unimplemented trainer text: During this turn, attacks used by your Garchomp or Togekiss do +50 damage to your opponent's Active Pokémon. |
 | A2-153 | Volkner | PARTIAL | Unimplemented trainer text: Choose 1 of your Electivire or Luxray. Attach 2 {L} Energy from your discard pile to that Pokémon. |
-| A2-154 | Dawn | PARTIAL | Unimplemented trainer text: Move an Energy from 1 of your Benched Pokémon to your Active Pokémon. |
 | A2-155 | Mars | PARTIAL | Unimplemented trainer text: Your opponent shuffles their hand into their deck and draws a card for each of their remaining points needed to win. |
 | A2a-001 | Heracross | PARTIAL | Unimplemented attack text: Flip 2 coins. If both of them are heads, this attack does 70 more damage. |
 | A2a-009 | Carnivine | PARTIAL | Unimplemented ability text: If you have Arceus or Arceus ex in play, attacks used by this Pokémon do +30 damage to your opponent's Active Pokémon. |
 | A2a-010 | Leafeon ex | PARTIAL | Unimplemented ability text: Once during your turn, if this Pokémon is in the Active Spot, you may take a {G} Energy from your Energy Zone and attach it to 1 of your {G} Pokémon. |
 | A2a-013 | Heatran | PARTIAL | Unimplemented ability text: If you have Arceus or Arceus ex in play, this Pokémon has no Retreat Cost. |
-| A2a-017 | Whiscash | PARTIAL | Unimplemented attack text: Flip a coin. If heads, this attack does 60 more damage. If tails, this Pokémon also does 20 damage to itself. |
 | A2a-021 | Abomasnow | PARTIAL | Unimplemented ability text: If you have Arceus or Arceus ex in play, attacks used by this Pokémon cost 1 less {C} Energy. |
 | A2a-022 | Glaceon ex | PARTIAL | Unimplemented ability text: During Pokémon Checkup, if this Pokémon is in the Active Spot, do 10 damage to your opponent's Active Pokémon. |
 | A2a-028 | Manectric | PARTIAL | Unimplemented attack text: During your opponent's next turn, if the Defending Pokémon tries to use an attack, your opponent flips a coin. If tails, that attack doesn't happen. |
 | A2a-031 | Gastly | PARTIAL | Unimplemented attack text: Flip a coin. If heads, your opponent reveals a random card from their hand and shuffles it into their deck. |
 | A2a-034 | Unown | PARTIAL | Unimplemented ability text: Once during your turn, you may choose either player. Look at the top card of that player's deck. |
 | A2a-035 | Rotom | PARTIAL | Unimplemented ability text: If you have Arceus or Arceus ex in play, this Pokémon has no Retreat Cost. |
-| A2a-036 | Sudowoodo | PARTIAL | Unimplemented attack text: If your opponent's Active Pokémon is a Pokémon ex, this attack does 30 more damage. |
 | A2a-038 | Donphan | PARTIAL | Unimplemented attack text: During your next turn, this Pokémon's Rolling Spin attack does +60 damage. |
 | A2a-041 | Tyranitar | PARTIAL | Unimplemented ability text: If you have Arceus or Arceus ex in play, attacks used by this Pokémon do +30 damage to your opponent's Active Pokémon. |
 | A2a-050 | Crobat | PARTIAL | Unimplemented ability text: Once during your turn, if you have Arceus or Arceus ex in play, you may do 30 damage to your opponent's Active Pokémon. |
 | A2a-052 | Toxicroak | PARTIAL | Unimplemented attack text: Your opponent's Active Pokémon is now Poisoned. Do 20 damage to this Pokémon instead of the usual amount for this Special Condition. |
 | A2a-055 | Magnezone | PARTIAL | Unimplemented ability text: If you have Arceus or Arceus ex in play, this Pokémon takes −30 damage from attacks. |
 | A2a-056 | Mawile | PARTIAL | Unimplemented attack text: If your opponent's Active Pokémon is a {M} Pokémon, this attack does 30 more damage. |
-| A2a-060 | Origin Forme Dialga | PARTIAL | Unimplemented attack text: Flip a coin. If tails, during your next turn, this Pokémon can't attack. |
 | A2a-061 | Giratina | PARTIAL | Unimplemented attack text: Discard 2 random Energy from this Pokémon. |
 | A2a-065 | Noctowl | PARTIAL | Unimplemented attack text: Your opponent reveals their hand. |
 | A2a-069 | Shaymin | PARTIAL | Unimplemented ability text: As long as this Pokémon is on your Bench, your Active Basic Pokémon's Retreat Cost is 1 less. |
@@ -703,14 +817,12 @@ Released print status: FULL 1959, PARTIAL 1217, UNSUPPORTED 1140.
 | A2a-074 | Barry | PARTIAL | Unimplemented trainer text: During this turn, attacks used by your Snorlax, Heracross, and Staraptor cost 2 less {C} Energy. |
 | A2a-075 | Adaman | PARTIAL | Unimplemented trainer text: During your opponent's next turn, all of your {M} Pokémon take −20 damage from attacks from your opponent's Pokémon. |
 | A2b-001 | Weedle | PARTIAL | Unimplemented attack text: Put 1 random Weedle from your deck onto your Bench. |
-| A2b-007 | Meowscarada | PARTIAL | Unimplemented attack text: If your opponent's Active Pokémon is a Pokémon ex, this attack does 70 more damage. |
 | A2b-012 | Magmortar | PARTIAL | Unimplemented attack text: During your opponent's next turn, if the Defending Pokémon tries to use an attack, your opponent flips a coin. If tails, that attack doesn't happen. |
 | A2b-018 | Wiglett | PARTIAL | Unimplemented attack text: 1 of your opponent's Pokémon is chosen at random. Do 30 damage to it. |
 | A2b-019 | Wugtrio ex | PARTIAL | Unimplemented attack text: 1 of your opponent's Pokémon is chosen at random 3 times. For each time a Pokémon was chosen, do 50 damage to it. |
 | A2b-021 | Tatsugiri | PARTIAL | Unimplemented ability text: Your Active Dondozo has no Retreat Cost. |
 | A2b-031 | Alakazam | PARTIAL | Unimplemented attack text: This attack also does 20 damage to each of your opponent's Benched Pokémon that has any Energy attached. |
 | A2b-035 | Giratina ex | PARTIAL | Unimplemented ability text: Once during your turn, you may take a {P} Energy from your Energy Zone and attach it to this Pokémon. If you use this Ability, your turn ends. |
-| A2b-048 | Paldean Clodsire ex | PARTIAL | Unimplemented attack text: If your opponent's Active Pokémon is Poisoned, this attack does 60 more damage. |
 | A2b-051 | Grafaiai | PARTIAL | Unimplemented ability text: Once during your turn, you may flip a coin. If heads, your opponent's Active Pokémon is now Poisoned. |
 | A2b-057 | Gholdengo | PARTIAL | Unimplemented attack text: Flip a coin for each {M} Energy attached to this Pokémon. This attack does 50 damage for each heads. |
 | A2b-070 | Pokémon Center Lady | PARTIAL | Unimplemented trainer text: Heal 30 damage from 1 of your Pokémon, and it recovers from all Special Conditions. |
@@ -719,7 +831,6 @@ Released print status: FULL 1959, PARTIAL 1217, UNSUPPORTED 1140.
 | A3-017 | Shiinotic | PARTIAL | Unimplemented attack text: Flip a coin. If heads, the Defending Pokémon can't attack during your opponent's next turn. |
 | A3-021 | Wimpod | PARTIAL | Unimplemented ability text: During your first turn, this Pokémon has no Retreat Cost. |
 | A3-022 | Golisopod | PARTIAL | Unimplemented attack text: If this Pokémon moved from your Bench to the Active Spot this turn, this attack does 60 more damage. |
-| A3-024 | Tapu Bulu | PARTIAL | Unimplemented attack text: Flip a coin. If tails, this Pokémon also does 20 damage to itself. |
 | A3-027 | Alolan Marowak | PARTIAL | Unimplemented attack text: Flip 2 coins. This attack does 70 damage for each heads. If at least 1 of them is heads, your opponent's Active Pokémon is now Burned. |
 | A3-034 | Oricorio | PARTIAL | Unimplemented attack text: Discard a random Energy from both Active Pokémon. |
 | A3-039 | Alolan Sandslash | PARTIAL | Unimplemented attack text: During your opponent's next turn, if this Pokémon is damaged by an attack, do 40 damage to the Attacking Pokémon. |
@@ -743,7 +854,6 @@ Released print status: FULL 1959, PARTIAL 1217, UNSUPPORTED 1140.
 | A3-104 | Passimian ex | PARTIAL | Unimplemented ability text: If this Pokémon is in the Active Spot and is Knocked Out by damage from an attack from your opponent's Pokémon, move all {F} Energy from this Pokémon to 1 of your Benched Pokémon. |
 | A3-107 | Alolan Raticate | PARTIAL | Unimplemented attack text: Discard a random Item card from your opponent's hand. |
 | A3-111 | Alolan Muk ex | PARTIAL | Unimplemented attack text: 1 Special Condition from among Asleep, Burned, Confused, Paralyzed, and Poisoned is chosen at random, and your opponent's Active Pokémon is now affected by that Special Condition. Any Special Conditions already affecting that Pokémon will not be chosen. |
-| A3-112 | Absol | PARTIAL | Unimplemented attack text: If your opponent's Active Pokémon is affected by a Special Condition, this attack does 60 more damage. |
 | A3-123 | Magearna | PARTIAL | Unimplemented attack text: If your opponent's Active Pokémon has an Ability, this attack does 40 more damage. |
 | A3-124 | Drampa | PARTIAL | Unimplemented attack text: If any of your Benched Pokémon have damage on them, this attack does 50 more damage. |
 | A3-127 | Kommo-o | PARTIAL | Unimplemented attack text: During your opponent's next turn, this Pokémon takes +30 damage from attacks. |
@@ -781,7 +891,6 @@ Released print status: FULL 1959, PARTIAL 1217, UNSUPPORTED 1140.
 | A3a-067 | Gladion | PARTIAL | Unimplemented trainer text: Put 1 random Type: Null or Silvally from your deck into your hand. |
 | A3a-068 | Looker | PARTIAL | Unimplemented trainer text: Your opponent reveals all of the Supporter cards in their deck. |
 | A3a-069 | Lusamine | PARTIAL | Unimplemented trainer text: You can use this card only if your opponent has gotten at least 1 point. Choose 1 of your Ultra Beasts. Attach 2 random Energy from your discard pile to that Pokémon. |
-| A3b-002 | Leafeon | PARTIAL | Unimplemented attack text: This attack does 20 more damage for each {G} Energy attached to this Pokémon. |
 | A3b-005 | Tsareena | PARTIAL | Unimplemented attack text: Your opponent reveals a random card from their hand and shuffles it into their deck. |
 | A3b-007 | Appletun | PARTIAL | Unimplemented attack text: If 1 of your Pokémon used Sweets Relay during your last turn, this attack does 30 more damage. |
 | A3b-009 | Flareon ex | PARTIAL | Unimplemented ability text: Once during your turn, you may attach a {R} Energy from your discard pile to this Pokémon. If you do, do 20 damage to this Pokémon. |
@@ -793,20 +902,17 @@ Released print status: FULL 1959, PARTIAL 1217, UNSUPPORTED 1140.
 | A3b-033 | Sylveon | PARTIAL | Unimplemented attack text: This attack does 30 more damage for each Evolution Pokémon on your Bench. |
 | A3b-034 | Sylveon ex | PARTIAL | Unimplemented ability text: Once during your turn, when you play this Pokémon from your hand to evolve 1 of your Pokémon, you may draw 2 cards. |
 | A3b-036 | Milcery | PARTIAL | Unimplemented attack text: If 1 of your Pokémon used Sweets Relay during your last turn, this attack does 20 more damage. |
-| A3b-039 | Whiscash | PARTIAL | Unimplemented attack text: This attack also does 10 damage to each of your Benched Pokémon. |
 | A3b-043 | Umbreon | PARTIAL | Unimplemented attack text: If the Defending Pokémon is a Basic Pokémon, it can't attack during your opponent's next turn. |
 | A3b-045 | Purrloin | PARTIAL | Unimplemented attack text: Discard all Pokémon Tools from your opponent's Active Pokémon. |
 | A3b-054 | Drampa | PARTIAL | Unimplemented attack text: Flip a coin. If tails, this attack does nothing. If heads, your opponent's Active Pokémon is now Paralyzed. |
 | A3b-057 | Snorlax ex | PARTIAL | Unimplemented ability text: At the end of your turn, if this Pokémon is in the Active Spot, heal 20 damage from it. |
 | A3b-059 | Ambipom | PARTIAL | Unimplemented ability text: Once during your turn, you may put a random Pokémon Tool card from your deck into your hand. |
-| A3b-061 | Audino | PARTIAL | Unimplemented attack text: This attack does 20 damage for each of your Benched Pokémon. |
 | A3b-066 | Eevee Bag | PARTIAL | Unimplemented trainer text: Choose 1: During this turn, attacks used by your Pokémon that evolve from Eevee do +10 damage to your opponent's Active Pokémon. Heal 20 damage from each of your Pokémon that evolves from Eevee. |
 | A3b-067 | Leftovers | PARTIAL | Unimplemented trainer text: At the end of your turn, if the Pokémon this card is attached to is in the Active Spot, heal 10 damage from that Pokémon. |
 | A3b-068 | Hau | PARTIAL | Unimplemented trainer text: During this turn, attacks used by your Decidueye ex, Incineroar ex, or Primarina ex do +30 damage to your opponent's Active Pokémon. |
 | A3b-069 | Penny | PARTIAL | Unimplemented trainer text: Look at a random Supporter card that's not Penny from your opponent's deck and shuffle it back into their deck. Use the effect of that card as the effect of this card. |
 | A4-003 | Bellossom | PARTIAL | Unimplemented attack text: Flip 3 coins. This attack does 60 damage for each heads. This Pokémon is now Confused. |
 | A4-005 | Tangrowth | PARTIAL | Unimplemented attack text: This attack does 40 more damage for each Energy in your opponent's Active Pokémon's Retreat Cost. |
-| A4-010 | Meganium | PARTIAL | Unimplemented attack text: Heal 20 damage from each of your Pokémon. |
 | A4-015 | Jumpluff | PARTIAL | Unimplemented ability text: Your Active Pokémon has no Retreat Cost. |
 | A4-022 | Heracross | PARTIAL | Unimplemented attack text: If this Pokémon has no damage on it, this attack does 40 more damage. |
 | A4-023 | Cherubi | PARTIAL | Unimplemented attack text: If 1 of your Pokémon used Sweets Relay during your last turn, this attack does 20 more damage.; Unimplemented ability text: If this Pokémon has a Pokémon Tool attached, attacks used by this Pokémon cost 1 less {G} Energy. |
@@ -815,17 +921,13 @@ Released print status: FULL 1959, PARTIAL 1217, UNSUPPORTED 1140.
 | A4-032 | Magby | PARTIAL | Unimplemented attack text: Take a {R} Energy from your Energy Zone and attach it to 1 of your Benched Basic Pokémon. |
 | A4-033 | Entei | PARTIAL | Unimplemented attack text: Flip a coin. If tails, discard 2 random Energy from this Pokémon. |
 | A4-034 | Ho-Oh ex | PARTIAL | Unimplemented attack text: Take a {R}, {W}, and {L} Energy from your Energy Zone and attach them to your Benched Basic Pokémon in any way you like. |
-| A4-037 | Heatmor | PARTIAL | Unimplemented attack text: If your opponent's Active Pokémon is Burned, this attack does 60 more damage. |
 | A4-040 | Politoed | PARTIAL | Unimplemented ability text: As long as this Pokémon is on your Bench, attacks used by your Pokémon that evolve from Poliwhirl do +40 damage to your opponent's Active Pokémon. |
 | A4-045 | Gyarados | PARTIAL | Unimplemented attack text: You may discard any number of your Benched {W} Pokémon. This attack does 40 more damage for each Benched Pokémon you discarded in this way. |
 | A4-050 | Azumarill | PARTIAL | Unimplemented ability text: This Pokémon takes −30 damage from attacks from {R} or {W} Pokémon. |
 | A4-056 | Octillery | PARTIAL | Unimplemented attack text: If the Defending Pokémon tries to use an attack, your opponent flips a coin. If tails, that attack doesn't happen. This effect lasts until the Defending Pokémon leaves the Active Spot, and it doesn't stack. |
 | A4-061 | Crawdaunt | PARTIAL | Unimplemented ability text: Once during your turn, when you play this Pokémon from your hand to evolve 1 of your Pokémon, you may discard a random Energy from your opponent's Active Pokémon. |
 | A4-063 | Swanna | PARTIAL | Unimplemented attack text: Move all Energy from this Pokémon to 1 of your Benched Pokémon. |
-| A4-065 | Lanturn ex | PARTIAL | Unimplemented attack text: Flip a coin. If heads, your opponent's Active Pokémon is now Paralyzed. If tails, your opponent's Active Pokémon is now Confused. |
 | A4-066 | Pichu | PARTIAL | Unimplemented attack text: Take a {L} Energy from your Energy Zone and attach it to 1 of your Benched Basic Pokémon. |
-| A4-069 | Ampharos | PARTIAL | Unimplemented attack text: Flip a coin. If heads, this attack does 40 more damage. If tails, this Pokémon also does 20 damage to itself. |
-| A4-072 | Emolga | PARTIAL | Unimplemented attack text: This attack also does 10 damage to 1 of your Benched Pokémon. |
 | A4-073 | Slowpoke | PARTIAL | Unimplemented attack text: This Pokémon is now Asleep. Heal 30 damage from it. |
 | A4-075 | Smoochum | PARTIAL | Unimplemented attack text: This attack does 20 damage for each Energy attached to your opponent's Active Pokémon. |
 | A4-080 | Togekiss | PARTIAL | Unimplemented ability text: If any damage is done to this Pokémon by attacks, flip a coin. If heads, prevent that damage. |
@@ -835,21 +937,16 @@ Released print status: FULL 1959, PARTIAL 1217, UNSUPPORTED 1140.
 | A4-085 | Unown | PARTIAL | Unimplemented ability text: This Ability works if you have any Unown in play with an Ability other than . Attacks used by your Pokémon do +10 damage to your opponent's Active Pokémon. |
 | A4-086 | Wobbuffet | PARTIAL | Unimplemented attack text: If this Pokémon was damaged by an attack during your opponent's last turn while it was in the Active Spot, this attack does 50 more damage. |
 | A4-091 | Musharna | PARTIAL | Unimplemented attack text: Both Active Pokémon are now Asleep. |
-| A4-098 | Mamoswine | PARTIAL | Unimplemented attack text: This attack also does 20 damage to each of your Benched Pokémon. |
 | A4-112 | Umbreon ex | PARTIAL | Unimplemented ability text: Once during your turn, if this Pokémon is in the Active Spot, you may switch in 1 of your opponent's Benched Pokémon that has damage on it to the Active Spot. |
 | A4-113 | Murkrow | PARTIAL | Unimplemented attack text: Flip a coin. If heads, your opponent reveals a random card from their hand and shuffles it into their deck. |
 | A4-119 | Tyranitar | PARTIAL | Unimplemented ability text: Once during your turn, you may move all {D} Energy from each of your Pokémon to this Pokémon. |
 | A4-123 | Scizor | PARTIAL | Unimplemented attack text: If this Pokémon moved from your Bench to the Active Spot this turn, this attack does 50 more damage. |
 | A4-128 | Klinklang | PARTIAL | Unimplemented attack text: During your next turn, this Pokémon's Gear Spinner attack does +70 damage. |
 | A4-130 | Fearow | PARTIAL | Unimplemented attack text: If your opponent's Active Pokémon is a {G} Pokémon, this attack does 40 more damage. |
-| A4-131 | Chansey | PARTIAL | Unimplemented attack text: Flip a coin. If heads, during your opponent's next turn, prevent all damage done to this Pokémon by attacks. |
-| A4-132 | Blissey | PARTIAL | Unimplemented attack text: This attack does 20 more damage for each Energy attached to this Pokémon. |
 | A4-136 | Porygon2 | PARTIAL | Unimplemented ability text: Whenever you attach an Energy from your Energy Zone to this Pokémon, put a random card from your deck that evolves from this Pokémon onto this Pokémon to evolve it. |
-| A4-137 | Porygon-Z | PARTIAL | Unimplemented attack text: During your opponent's next turn, attacks used by the Defending Pokémon cost 1 {C} more. |
 | A4-140 | Hoothoot | PARTIAL | Unimplemented ability text: This Pokémon can't be Asleep. |
 | A4-141 | Noctowl | PARTIAL | Unimplemented attack text: Flip a coin. If tails, this attack does nothing. If heads, during your opponent's next turn, prevent all damage from—and effects of—attacks done to this Pokémon. |
 | A4-142 | Aipom | PARTIAL | Unimplemented attack text: Draw cards until you have the same number of cards in your hand as your opponent. |
-| A4-146 | Ursaring | PARTIAL | Unimplemented attack text: Flip 2 coins. This attack does 20 more damage for each heads. |
 | A4-148 | Smeargle | PARTIAL | Unimplemented attack text: Change the type of a random Energy attached to your opponent's Active Pokémon to 1 of the following at random: {G}, {R}, {W}, {L}, {P}, {F}, {D}, or {M}. |
 | A4-151 | Elemental Switch | PARTIAL | Unimplemented trainer text: Move a {R}, {W}, or {L} Energy from 1 of your Benched Pokémon to your Active Pokémon. |
 | A4-152 | Squirt Bottle | PARTIAL | Unimplemented trainer text: Discard a {R} Energy from your opponent's Active Pokémon. |
@@ -864,9 +961,7 @@ Released print status: FULL 1959, PARTIAL 1217, UNSUPPORTED 1140.
 | A4-161 | Hiker | PARTIAL | Unimplemented trainer text: For each of your {F} Pokémon in play, look at that many cards from the top of your deck and put them back in any order. |
 | A4a-003 | Jumpluff ex | PARTIAL | Unimplemented attack text: You may switch this Pokémon with 1 of your Benched Pokémon. |
 | A4a-006 | Celebi | PARTIAL | Unimplemented attack text: If your opponent's Active Pokémon is an evolved Pokémon, devolve it by putting the highest Stage Evolution card on it into your opponent's hand. |
-| A4a-007 | Durant | PARTIAL | Unimplemented attack text: Discard the top card of your opponent's deck. |
 | A4a-013 | Poliwag | PARTIAL | Unimplemented attack text: Put 1 random Poliwag from your deck onto your Bench. |
-| A4a-016 | Tentacruel | PARTIAL | Unimplemented attack text: Flip a coin. If heads, your opponent's Active Pokémon is now Poisoned and Paralyzed. |
 | A4a-018 | Slowking | PARTIAL | Unimplemented attack text: Discard up to 2 Pokémon Tool cards from your hand. This attack does 50 damage for each card you discarded in this way. |
 | A4a-020 | Suicune ex | PARTIAL | Unimplemented attack text: This attack does 20 damage for each Benched Pokémon (both yours and your opponent's). |
 | A4a-023 | Mantyke | PARTIAL | Unimplemented attack text: Take a {W} Energy from your Energy Zone and attach it to 1 of your Benched Basic Pokémon. |
@@ -895,14 +990,10 @@ Released print status: FULL 1959, PARTIAL 1217, UNSUPPORTED 1140.
 | B1-027 | Rillaboom | PARTIAL | Unimplemented ability text: Once during your turn, you may flip a coin. If heads, switch in 1 of your opponent's Benched Pokémon to the Active Spot. |
 | B1-032 | Ho-Oh | PARTIAL | Unimplemented attack text: Heal 30 damage from each of your Benched Basic Pokémon. |
 | B1-036 | Mega Blaziken ex | PARTIAL | Unimplemented attack text: Discard Fire{R} Energy from this Pokémon. Your opponent's Active Pokémon is now Burned. |
-| B1-040 | Darmanitan | PARTIAL | Unimplemented attack text: Flip 2 coins. This attack does 30 more damage for each heads. |
 | B1-043 | Chandelure | PARTIAL | Unimplemented ability text: Once during your turn, you may discard the top card of your opponent's deck. |
 | B1-047 | Turtonator | PARTIAL | Unimplemented attack text: During your opponent's next turn, if this Pokémon is damaged by an attack, do 20 damage to the Attacking Pokémon. |
 | B1-050 | Magikarp | PARTIAL | Unimplemented attack text: Put a random card from your deck that evolves from this Pokémon onto this Pokémon to evolve it. |
-| B1-051 | Gyarados | PARTIAL | Unimplemented attack text: Discard the top card of your opponent's deck. |
-| B1-052 | Mega Gyarados ex | PARTIAL | Unimplemented attack text: Discard the top 3 cards of your opponent's deck. |
 | B1-055 | Ludicolo | PARTIAL | Unimplemented attack text: If you have exactly 1, 3, or 5 cards in your hand, this attack does 60 more damage. |
-| B1-057 | Wailord | PARTIAL | Unimplemented attack text: This attack does 10 more damage for each {W} Energy attached to this Pokémon. |
 | B1-060 | Luvdisc | PARTIAL | Unimplemented attack text: If you have exactly 2, 4, or 6 cards in your hand, this attack does 30 more damage. |
 | B1-067 | Carracosta | PARTIAL | Unimplemented attack text: Prevent all damage done to this Pokémon by attacks from Basic Pokémon during your opponent's next turn. |
 | B1-069 | Jellicent | PARTIAL | Unimplemented ability text: If this Pokémon is in the Active Spot and is damaged by an attack from your opponent's Pokémon, take a {W} Energy from your Energy Zone and attach it to 1 of your Benched Pokémon. |
@@ -911,19 +1002,16 @@ Released print status: FULL 1959, PARTIAL 1217, UNSUPPORTED 1140.
 | B1-081 | Jolteon ex | PARTIAL | Unimplemented ability text: As long as this Pokémon is in the Active Spot, whenever your opponent attaches an Energy from their Energy Zone to 1 of their Pokémon, do 20 damage to that Pokémon. |
 | B1-084 | Ampharos | PARTIAL | Unimplemented attack text: 1 of your opponent's Benched Pokémon is chosen at random. This attack also does 20 damage to it. |
 | B1-085 | Mega Ampharos ex | PARTIAL | Unimplemented attack text: 1 of your opponent's Benched Pokémon is chosen at random 3 times. For each time a Pokémon was chosen, also do 20 damage to it. |
-| B1-088 | Luxray | PARTIAL | Unimplemented attack text: This attack also does 20 damage to 1 of your Benched Pokémon. |
 | B1-094 | Dedenne | PARTIAL | Unimplemented attack text: Discard a {L} Energy from your opponent's Active Pokémon. |
 | B1-095 | Yamper | PARTIAL | Unimplemented attack text: Switch out your opponent's Active Pokémon to the Bench. (Your opponent chooses the new Active Pokémon.) |
 | B1-101 | Sableye | PARTIAL | Unimplemented attack text: Discard a card from your hand. If you can't, this attack does nothing. |
 | B1-105 | Dusknoir | PARTIAL | Unimplemented ability text: When this Pokémon is Knocked Out, flip a coin. If heads, your opponent can't get any points for it. |
-| B1-108 | Drifblim | PARTIAL | Unimplemented attack text: This attack does 20 more damage for each Energy attached to this Pokémon. |
 | B1-109 | Chingling | PARTIAL | Unimplemented attack text: During your opponent's next turn, they can't play any Item cards from their hand. |
 | B1-111 | Cofagrigus | PARTIAL | Unimplemented attack text: Discard 2 cards from your hand. If you can't discard 2 cards, this attack does nothing. |
 | B1-114 | Gothitelle | PARTIAL | Unimplemented attack text: During your opponent's next turn, if they attach Energy from their Energy Zone to the Defending Pokémon, that Pokémon will be Asleep. |
 | B1-120 | Klefki | PARTIAL | Unimplemented ability text: Once during your turn, if this Pokémon is on your Bench, you may discard all Pokémon Tools from your opponent's Active Pokémon. If you do, discard this Pokémon. |
 | B1-124 | Hitmonchan ex | PARTIAL | Unimplemented attack text: This attack's damage isn't affected by Weakness. |
 | B1-127 | Hariyama | PARTIAL | Unimplemented attack text: Before doing damage, discard all Pokémon Tools from your opponent's Active Pokémon. |
-| B1-129 | Hippowdon | PARTIAL | Unimplemented attack text: Flip a coin. If tails, during your next turn, this Pokémon can't attack. |
 | B1-134 | Archeops | PARTIAL | Unimplemented attack text: This attack does 20 damage to each of your opponent's Pokémon. During your next turn, this Pokémon's Wild Spin attack does +20 damage to each of your opponent's Pokémon. |
 | B1-136 | Golurk | PARTIAL | Unimplemented attack text: Reveal the top 3 cards of your deck. This attack does 60 damage for each Pokémon with a Retreat Cost of 3 or more you find there. Shuffle the revealed cards back into your deck. |
 | B1-140 | Crabominable | PARTIAL | Unimplemented attack text: If this Pokémon's remaining HP is 30 or less, this attack does 60 more damage. |
@@ -932,18 +1020,15 @@ Released print status: FULL 1959, PARTIAL 1217, UNSUPPORTED 1140.
 | B1-149 | Honchkrow | PARTIAL | Unimplemented attack text: This attack does 40 more damage for each of your opponent's Pokémon in play that has an Ability. |
 | B1-150 | Absol | PARTIAL | Unimplemented attack text: Flip a coin. If heads, your opponent reveals their hand. Choose a Supporter card you find there and discard it. |
 | B1-151 | Mega Absol ex | PARTIAL | Unimplemented attack text: Your opponent reveals their hand. Choose a Supporter card you find there and discard it. |
-| B1-153 | Drapion | PARTIAL | Unimplemented attack text: Flip a coin. If heads, your opponent's Active Pokémon is now Poisoned and Paralyzed. |
 | B1-157 | Hydreigon | PARTIAL | Unimplemented ability text: Once during your turn, you may take 2 {D} Energy from your Energy Zone and attach it to this Pokémon. If you do, do 30 damage to this Pokémon. |
 | B1-158 | Pangoro | PARTIAL | Unimplemented attack text: During your next turn, this Pokémon's Overdrive Smash attack does +30 damage. |
 | B1-160 | Dragalge ex | PARTIAL | Unimplemented ability text: If this Pokémon is in the Active Spot and is damaged by an attack from your opponent's Pokémon, the Attacking Pokémon is now Poisoned. |
-| B1-162 | Toxapex | PARTIAL | Unimplemented attack text: If your opponent's Active Pokémon is Poisoned, this attack does 70 more damage. |
 | B1-164 | Morgrem | PARTIAL | Unimplemented attack text: This attack's damage isn't affected by any effects on your opponent's Active Pokémon. |
 | B1-168 | Durant | PARTIAL | Unimplemented attack text: If Durant is on your Bench, this attack does 40 more damage. |
 | B1-172 | Aegislash | PARTIAL | Unimplemented ability text: Attacks used by your {P} Pokémon and {M} Pokémon do +30 damage to your opponent's Active Pokémon. |
 | B1-176 | Druddigon | PARTIAL | Unimplemented attack text: Flip 2 coins. If both of them are tails, this attack does nothing. |
 | B1-177 | Goomy | PARTIAL | Unimplemented ability text: As long as this Pokémon is in the Active Spot, attacks used by your opponent's Active Pokémon cost 1 {C} more. |
 | B1-182 | Pidgeot | PARTIAL | Unimplemented attack text: Flip 2 coins. For each heads, discard a random Energy from your opponent's Active Pokémon. If both of them are tails, this attack does nothing. |
-| B1-183 | Tauros ex | PARTIAL | Unimplemented attack text: Flip a coin. If tails, this Pokémon also does 30 damage to itself. |
 | B1-184 | Eevee | PARTIAL | Unimplemented ability text: As long as this Pokémon is in the Active Spot, it can evolve during your first turn or the turn you play it. |
 | B1-186 | Ambipom | PARTIAL | Unimplemented attack text: Flip 2 coins. This attack does 30 damage for each heads. If this Pokémon has Lucky Mittens attached, flip 4 coins instead. |
 | B1-192 | Exploud | PARTIAL | Unimplemented attack text: During your opponent's next turn, they can't play any Item cards from their hand. |
@@ -962,85 +1047,41 @@ Released print status: FULL 1959, PARTIAL 1217, UNSUPPORTED 1140.
 | B1-224 | Fantina | PARTIAL | Unimplemented trainer text: Take a {P} Energy from your Energy Zone and attach it to each of your Drifblim and Mismagius. |
 | B1-225 | Copycat | PARTIAL | Unimplemented trainer text: Shuffle your hand into your deck. Draw a card for each card in your opponent's hand. |
 | B1-226 | Lisia | PARTIAL | Unimplemented trainer text: Put 2 random Basic Pokémon with 50 HP or less from your deck into your hand. |
-| P-B-002 | Petilil | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| P-B-003 | Froakie | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| P-B-006 | Mega Pidgeot ex | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
+| P-B-006 | Mega Pidgeot ex | PARTIAL | Unimplemented attack text: Flip 3 coins. For each heads, discard a random Energy from your opponent's Active Pokémon. If all of them are tails, this attack does nothing. |
 | B1a-055 | Ditto | PARTIAL | Unimplemented attack text: Choose 1 of your Benched Pokémon's attacks, except any Pokémon ex, and use it as this attack. If this Pokémon doesn't have the necessary Energy to use that attack, this attack does nothing. |
-| P-B-014 | Magikarp | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| P-B-017 | Swablu | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
+| P-B-014 | Magikarp | PARTIAL | Unimplemented attack text: Flip 2 coins. If both of them are heads, this attack does 20 more damage. |
 | B1a-012 | Charmeleon | PARTIAL | Unimplemented ability text: Once during your turn, when you play this Pokémon from your hand to evolve 1 of your Pokémon, you may take a {R} Energy from your Energy Zone and attach it to your Active {R} Pokémon. |
-| P-B-021 | Onix | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| P-B-022 | Hawlucha | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B1a-054 | Genesect | PARTIAL | Unimplemented attack text: This attack does 20 more damage for each {M} Energy attached to this Pokémon. |
-| P-B-024 | Mega Latios ex | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| P-B-026 | Mudkip | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| P-B-028 | Ralts | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| P-B-029 | Mega Medicham ex | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
+| P-B-029 | Mega Medicham ex | PARTIAL | Unimplemented attack text: If this Pokémon has any {P} Energy attached, this attack does 40 more damage. This attack's damage isn't affected by any effects on your opponent's Active Pokémon. |
 | B2-138 | Tornadus | PARTIAL | Unimplemented attack text: If a Stadium is in play, this attack does 40 more damage. |
 | B2a-022 | Quaxly | PARTIAL | Unimplemented attack text: Flip a coin. If heads, during your opponent's next turn, prevent all damage from and effects of attacks done to this Pokémon. |
-| P-B-034 | Smoliv | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
 | B2a-033 | Tatsugiri | PARTIAL | Unimplemented attack text: If any of your Pokémon were Knocked Out by damage from an attack during your opponent's last turn, this attack does 60 more damage. |
-| P-B-037 | Frigibax | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B2a-065 | Paldean Clodsire | PARTIAL | Unimplemented attack text: Discard the top card of your opponent's deck. |
 | B2a-037 | Chien-Pao ex | PARTIAL | Unimplemented attack text: Discard all Water Energy from this Pokémon. This attack does 130 damage to 1 of your opponent's Pokémon. |
-| P-B-042 | Slowpoke | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| P-B-043 | Electrike | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| P-B-044 | Varoom | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| P-B-045 | Haxorus | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| P-B-046 | Chatot | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| P-B-047 | Gastly | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| P-B-048 | Wigglytuff | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| P-B-049 | Victini | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
+| P-B-045 | Haxorus | PARTIAL | Unimplemented attack text: This attack does 20 more damage for each Benched Pokémon (both yours and your opponent's). |
+| P-B-049 | Victini | PARTIAL | Unimplemented ability text: Once during your turn, after you flip any coins for an attack of 1 of your {R} Pokémon, you may ignore all results of those coin flips and begin flipping those coins again. You can't use more than 1 Victory Star Ability each turn. |
 | B2-070 | Meloetta | PARTIAL | Unimplemented ability text: At the beginning of your turn, if this Pokémon is in the Active Spot, put a random {P} Pokémon from your deck into your hand. |
-| P-B-051 | Zygarde | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| P-B-052 | Zygarde | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| P-B-053 | Zygarde ex | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| P-B-056 | Mega Heracross ex | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| P-B-057 | Castform Sunny Form | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| P-B-058 | Tepig | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| P-B-059 | Dwebble | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| P-B-060 | Zarude | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| P-B-061 | Treecko | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| P-B-062 | Gallade | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
+| P-B-057 | Castform Sunny Form | PARTIAL | Unimplemented attack text: If a Stadium is in play, your opponent's Active Pokémon is now Burned. |
+| P-B-060 | Zarude | PARTIAL | Unimplemented attack text: If any of your {D} Pokémon were Knocked Out by damage from an attack during your opponent's last turn, this attack does 80 more damage. |
+| P-B-062 | Gallade | PARTIAL | Unimplemented attack text: If a Stadium is in play, this attack does 70 more damage. |
 | B2a-003 | Meowscarada ex | PARTIAL | Unimplemented attack text: Choose a spot from among your opponent's Active Spot and Bench. At the end of your opponent's next turn, do 70 damage to the Pokémon in the spot you chose. |
-| P-B-064 | Charcadet | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| P-B-065 | Vaporeon | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| P-B-066 | Ceruledge ex | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| P-B-067 | Pawniard | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| P-B-068 | Dudunsparce | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| P-B-070 | Sableye | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| P-B-071 | Psyduck | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| P-B-072 | Feebas | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| P-B-073 | Froslass | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| P-B-074 | Raichu | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| P-B-075 | Quagsire | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| P-B-076 | Hisuian Zorua | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| P-B-077 | Growlithe | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| P-B-078 | Emolga | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| P-B-079 | Celebi | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| P-B-080 | Mega Houndoom ex | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| P-B-081 | Carvanha | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| P-B-082 | Pikachu | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| P-B-083 | Noivern | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| P-B-084 | Skitty | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| P-B-085 | Pachirisu | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| P-B-086 | Beldum | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| P-B-087 | Mega Sceptile ex | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| P-B-088 | Team Rocket's Scyther | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| P-B-089 | Team Rocket's Lapras | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| P-B-090 | Wingull | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| P-B-091 | Team Rocket's Wobbuffet | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| P-B-092 | Marowak | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| P-B-093 | Fennekin | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| P-B-094 | Meowstic | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| P-B-095 | Darkrai | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
+| P-B-066 | Ceruledge ex | PARTIAL | Unimplemented attack text: Discard a random Energy from among the Energy attached to all Pokémon (both yours and your opponent's). |
+| P-B-067 | Pawniard | PARTIAL | Unimplemented attack text: Put 1 random Basic Pokémon from your deck onto your Bench. |
+| P-B-068 | Dudunsparce | PARTIAL | Unimplemented attack text: If this Pokémon evolved from Dunsparce during this turn, discard 2 random Energy from your opponent's Active Pokémon. |
+| P-B-070 | Sableye | PARTIAL | Unimplemented attack text: Take a random Energy from among {G}, {R}, {W}, {L}, {P}, {F}, {D}, and {M} Energy from your Energy Zone and attach it to 1 of your Benched Pokémon. |
+| P-B-071 | Psyduck | PARTIAL | Unimplemented attack text: Both Active Pokémon are now Confused. |
+| P-B-073 | Froslass | PARTIAL | Unimplemented attack text: Discard a card from your hand. If you can't, this attack does nothing. |
+| P-B-077 | Growlithe | PARTIAL | Unimplemented attack text: Reveal all of your Pokémon in play and in your hand that have the Puppy Pile attack, and this attack does 20 damage for each Pokémon you revealed in this way. |
+| P-B-078 | Emolga | PARTIAL | Unimplemented attack text: This attack does 30 damage for each Pokémon Tool attached to all of your Pokémon. |
+| P-B-079 | Celebi | PARTIAL | Unimplemented ability text: Each of your evolved Pokémon can use any attack from its previous Evolutions. (You still need the necessary Energy to use each attack.) |
+| P-B-083 | Noivern | PARTIAL | Unimplemented attack text: 1 of your opponent's Pokémon is chosen at random 3 times. For each time a Pokémon was chosen, do 60 damage to it. |
+| P-B-085 | Pachirisu | PARTIAL | Unimplemented attack text: Discard the top card of your deck, and if that card is an Item, this attack does 20 more damage. |
+| P-B-086 | Beldum | PARTIAL | Unimplemented ability text: If you have another Beldum in play, this Pokémon's Retreat Cost is 2 less. |
+| P-B-089 | Team Rocket's Lapras | PARTIAL | Unimplemented attack text: If this Pokémon has more Energy attached than your opponent's Active Pokémon, this attack does 40 more damage. |
+| P-B-091 | Team Rocket's Wobbuffet | PARTIAL | Unimplemented attack text: Reveal the top 6 cards of your deck. This attack does 30 damage for each Pokémon you find there that has “Team Rocket” in its name. Shuffle the revealed cards back into your deck. |
+| P-B-092 | Marowak | PARTIAL | Unimplemented attack text: If your opponent's Active Pokémon has “Team Rocket” in its name, this attack does 70 more damage. |
+| P-B-095 | Darkrai | PARTIAL | Unimplemented ability text: At the end of each turn, if your opponent's Active Pokémon is Asleep, do 20 damage to that Pokémon. |
 | B2-092 | Falinks | PARTIAL | Unimplemented ability text: If you have another Falinks in play, this Pokémon's attacks do +20 damage to your opponent's Active Pokémon, and this Pokémon takes −20 damage from attacks from your opponent's Pokémon. |
-| P-B-097 | Gible | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| P-B-098 | Gabite | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| P-B-099 | Mega Garchomp ex | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| P-B-100 | Delcatty | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| P-B-101 | Charmander | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| P-B-102 | Drampa | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
+| P-B-099 | Mega Garchomp ex | PARTIAL | Unimplemented attack text: Discard 2 random Energy from this Pokémon. |
+| P-B-100 | Delcatty | PARTIAL | Unimplemented attack text: You may move any amount of Energy from your Pokémon in play to your other Pokémon in any way you like. |
 | B1a-006 | Ariados | PARTIAL | Unimplemented ability text: Your opponent's Active Pokémon's Retreat Cost is 1 more. |
 | B1a-008 | Sunflora | PARTIAL | Unimplemented attack text: If Quick-Grow Extract is in your discard pile, this attack does 30 more damage. |
 | B1a-015 | Houndour | PARTIAL | Unimplemented attack text: Switch out your opponent's Active Pokémon to the Bench. (Your opponent chooses the new Active Pokémon.) |
@@ -1051,9 +1092,7 @@ Released print status: FULL 1959, PARTIAL 1217, UNSUPPORTED 1140.
 | B1a-023 | Clawitzer | PARTIAL | Unimplemented attack text: This attack does 20 damage to each of your opponent's Pokémon. |
 | B1a-026 | Magnezone | PARTIAL | Unimplemented attack text: During your opponent's next turn, if the Defending Pokémon tries to use an attack, your opponent flips a coin. If tails, that attack doesn't happen. |
 | B1a-030 | Misdreavus | PARTIAL | Unimplemented attack text: Put a random Supporter card from your deck into your hand. |
-| B1a-031 | Mismagius | PARTIAL | Unimplemented attack text: Move all {P} Energy from this Pokémon to 1 of your Benched Pokémon. |
 | B1a-034 | Reuniclus | PARTIAL | Unimplemented ability text: This Pokémon gets +30 HP for each {P} Energy attached to it. |
-| B1a-036 | Aromatisse | PARTIAL | Unimplemented attack text: During your opponent's next turn, attacks used by the Defending Pokémon cost 1 {C} more. |
 | B1a-037 | Xerneas | PARTIAL | Unimplemented attack text: This attack's damage is reduced by the amount of damage this Pokémon has on it. |
 | B1a-042 | Mega Lopunny ex | PARTIAL | Unimplemented attack text: Flip 2 coins. This attack does 90 damage for each heads. Your opponent's Active Pokémon is now Confused. |
 | B1a-048 | Liepard | PARTIAL | Unimplemented attack text: Your opponent reveals a random card from their hand and shuffles it into their deck. Shuffle this Pokémon into your deck. |
@@ -1074,7 +1113,6 @@ Released print status: FULL 1959, PARTIAL 1217, UNSUPPORTED 1140.
 | B2-016 | Eldegoss | PARTIAL | Unimplemented attack text: You may shuffle this Pokémon and all attached cards into your deck. |
 | B2-017 | Teal Mask Ogerpon ex | PARTIAL | Unimplemented attack text: If the amount of Energy attached to both Active Pokémon is 5 or more, this attack does 60 more damage.; Unimplemented ability text: Each of your Pokémon that has any Energy attached recovers from all Special Conditions and can't be affected by any Special Conditions. |
 | B2-022 | Oricorio | PARTIAL | Unimplemented attack text: During your next turn, attacks used by your Pokémon do +20 damage to your opponent's Active Pokémon. |
-| B2-027 | Hearthflame Mask Ogerpon | PARTIAL | Unimplemented attack text: Flip a coin. If heads, take 2 {R} Energy from your Energy Zone and attach it to 1 of your Benched Pokémon. |
 | B2-029 | Alolan Ninetales ex | PARTIAL | Unimplemented attack text: During your opponent's next turn, they can't take any Energy from their Energy Zone to attach to their Active Pokémon. |
 | B2-032 | Delibird | PARTIAL | Unimplemented attack text: Flip a coin. If heads, this attack does 70 damage to your opponent's Active Pokémon. If tails, heal 30 damage from your opponent's Active Pokémon. |
 | B2-035 | Swampert | PARTIAL | Unimplemented attack text: Discard a random Energy from among the Energy attached to all Pokémon (both yours and your opponent's). |
@@ -1082,7 +1120,6 @@ Released print status: FULL 1959, PARTIAL 1217, UNSUPPORTED 1140.
 | B2-039 | Vanilluxe | PARTIAL | Unimplemented attack text: If 1 of your Pokémon used Sweets Relay during your last turn, this attack does 60 more damage. |
 | B2-040 | Cryogonal | PARTIAL | Unimplemented attack text: During your opponent's next turn, they can't play any Item cards from their hand. |
 | B2-042 | Aurorus | PARTIAL | Unimplemented attack text: Discard Water2 {W} Energy from this Pokémon. Your opponent's Active Pokémon is now Paralyzed. |
-| B2-048 | Wellspring Mask Ogerpon | PARTIAL | Unimplemented attack text: Flip a coin. If heads, this attack also does 40 damage to 1 of your opponent's Benched Pokémon. |
 | B2-050 | Alolan Raichu | PARTIAL | Unimplemented ability text: If a Stadium is in play, this Pokémon has no Retreat Cost. |
 | B2-051 | Zapdos | PARTIAL | Unimplemented attack text: 1 other Pokémon (either yours or your opponent's) is chosen at random 1 time. Do 100 damage to the chosen Pokémon. |
 | B2-053 | Minun | PARTIAL | Unimplemented attack text: If Plusle is on your Bench, this attack also does 10 damage to each of your opponent's Benched Pokémon. |
@@ -1095,10 +1132,8 @@ Released print status: FULL 1959, PARTIAL 1217, UNSUPPORTED 1140.
 | B2-073 | Mimikyu ex | PARTIAL | Unimplemented ability text: When this Pokémon is first damaged by an attack after coming into play, prevent that damage. |
 | B2-075 | Polteageist | PARTIAL | Unimplemented ability text: Once during your turn, when you play this Pokémon from your hand to evolve 1 of your Pokémon, you may have your opponent shuffle their hand into their deck. For each remaining point that your opponent needs to win, they draw a card. |
 | B2-079 | Machop | PARTIAL | Unimplemented attack text: Discard a Stadium in play. |
-| B2-081 | Machamp | PARTIAL | Unimplemented attack text: Discard the top card of your opponent's deck. |
 | B2-084 | Medicham | PARTIAL | Unimplemented attack text: If this Pokémon has any {P} Energy attached, this attack does 50 more damage. |
 | B2-090 | Tyrantrum | PARTIAL | Unimplemented attack text: If you have fewer Pokémon in play than your opponent, this attack does 80 more damage. |
-| B2-093 | Cornerstone Mask Ogerpon | PARTIAL | Unimplemented attack text: Flip a coin. If heads, during your opponent's next turn, this Pokémon takes −100 damage from attacks. |
 | B2-097 | Alolan Muk | PARTIAL | Unimplemented ability text: Basic Pokémon in play (both yours and your opponent's) have no Abilities. |
 | B2-102 | Skuntank | PARTIAL | Unimplemented attack text: During your opponent's next turn, if the Defending Pokémon tries to use an attack, your opponent flips a coin. If tails, that attack doesn't happen. |
 | B2-103 | Spiritomb | PARTIAL | Unimplemented ability text: If this Pokémon is in the Active Spot and is Knocked Out by damage from an attack from your opponent's Pokémon, do 10 damage to each of your opponent's Pokémon. |
@@ -1110,14 +1145,11 @@ Released print status: FULL 1959, PARTIAL 1217, UNSUPPORTED 1140.
 | B2-113 | Mega Mawile ex | PARTIAL | Unimplemented attack text: Until this Pokémon leaves the Active Spot, this Pokémon's Heat-Up Crunch attack does +30 damage. This effect stacks. |
 | B2-117 | Galarian Stunfisk | PARTIAL | Unimplemented attack text: During your opponent's next turn, if this Pokémon is in the Active Spot when your opponent's Active Pokémon retreats, this attack does 40 damage to the new Active Pokémon. |
 | B2-120 | Aegislash | PARTIAL | Unimplemented attack text: During your opponent's next turn, this Pokémon takes −80 damage from attacks from your opponent's Pokémon ex. |
-| B2-123 | Salamence | PARTIAL | Unimplemented attack text: Flip a coin. If tails, this Pokémon also does 50 damage to itself. |
 | B2-124 | Meowth | PARTIAL | Unimplemented ability text: If any damage is done to this Pokémon by attacks, flip a coin. If heads, prevent that damage. |
 | B2-127 | Mega Kangaskhan ex | PARTIAL | Unimplemented attack text: This attack is used twice in a row. The second attack does 40 damage. (If the first attack Knocks Out your opponent's Active Pokémon, the second attack is used after your opponent chooses a new Active Pokémon.) |
 | B2-130 | Smeargle | PARTIAL | Unimplemented ability text: Once during your turn, if this Pokémon is in the Active Spot, you may look at a random Supporter card from your opponent's hand. Use the effect of that card as the effect of this Ability. |
-| B2-131 | Lugia | PARTIAL | Unimplemented attack text: Flip 2 coins. This attack does 40 more damage for each heads. |
 | B2-133 | Swellow | PARTIAL | Unimplemented ability text: Once during your turn, you may switch out your opponent's Active Basic Pokémon to the Bench. (Your opponent chooses the new Active Pokémon.) |
 | B2-136 | Slaking | PARTIAL | Unimplemented ability text: As long as this Pokémon is in the Active Spot, whenever you attach an Energy from your Energy Zone to it, it is now Asleep. |
-| B2-140 | Diggersby | PARTIAL | Unimplemented attack text: This attack also does 10 damage to each of your Benched Pokémon. |
 | B2-142 | Tandemaus | PARTIAL | Unimplemented attack text: Put 3 random cards from among Tandemaus and Maushold from your deck onto your Bench. |
 | B2-143 | Maushold | PARTIAL | Unimplemented attack text: Flip a coin for each Tandemaus and Maushold you have in play. This attack does 60 damage for each heads. |
 | B2-145 | Lucky Ice Pop | PARTIAL | Unimplemented trainer text: Heal 20 damage from your Active Pokémon. If you healed any damage in this way, flip a coin. If heads, put this Lucky Ice Pop into your hand instead of the discard pile. |
@@ -1141,16 +1173,13 @@ Released print status: FULL 1959, PARTIAL 1217, UNSUPPORTED 1140.
 | B2a-040 | Pawmot | PARTIAL | Unimplemented attack text: Discard a Lightning Energy from this Pokémon. |
 | B2a-042 | Bellibolt ex | PARTIAL | Unimplemented attack text: If you have 4 or more Lightning Energy in play, this attack does 70 more damage. |
 | B2a-044 | Kilowattrel | PARTIAL | Missing or invalid retreat |
-| B2a-048 | Ceruledge | PARTIAL | Unimplemented attack text: If your opponent's Active Pokémon is a Pokémon ex, this attack does 70 more damage. |
 | B2a-052 | Greavard | PARTIAL | Unimplemented attack text: Discard a card from your hand. If you can't, this attack does nothing. |
 | B2a-053 | Houndstone | PARTIAL | Unimplemented attack text: This attack does 20 more damage for each Psychic Pokémon in your discard pile. |
-| B2a-056 | Primeape | PARTIAL | Unimplemented attack text: This attack does more damage equal to the damage this Pokémon has on it. |
 | B2a-062 | Ting-Lu | PARTIAL | Unimplemented attack text: If this Pokémon's remaining HP is 60 or less, this attack does nothing. |
 | B2a-070 | Grafaiai | PARTIAL | Unimplemented attack text: If your Pokémon in play have 3 or more different types of Energy attached, this attack does 60 more damage. |
 | B2a-071 | Bombirdier | PARTIAL | Unimplemented attack text: Flip a coin. If tails, this attack does nothing. If heads, during your opponent's next turn, prevent all damage from and effects of attacks done to this Pokémon. |
 | B2a-077 | Orthworm | PARTIAL | Unimplemented attack text: Take a Metal Energy from your Energy Zone and attach it to 1 of your Benched Pokémon. |
 | B2a-078 | Gholdengo ex | PARTIAL | Unimplemented attack text: 1 of your opponent's Pokémon is chosen at random for each Metal Energy attached to this Pokémon. For each time a Pokémon was chosen, do 40 damage to it. |
-| B2a-080 | Oinkologne | PARTIAL | Unimplemented attack text: Flip a coin. If tails, during your next turn, this Pokémon can't attack. |
 | B2a-081 | Tandemaus | PARTIAL | Missing or invalid retreat |
 | B2a-082 | Maushold | PARTIAL | Unimplemented attack text: Flip 3 coins. For each heads, discard a random Energy from your opponent's Active Pokémon. |
 | B2a-086 | Electric Generator | PARTIAL | Unimplemented trainer text: Flip a coin. If heads, take a Lightning Energy from your Energy Zone and attach it to 1 of your Benched Lightning Pokémon. |
@@ -1159,563 +1188,218 @@ Released print status: FULL 1959, PARTIAL 1217, UNSUPPORTED 1140.
 | B2a-090 | Nemona | PARTIAL | Unimplemented trainer text: During this turn, attacks used by your Pawmot do +80 damage to your opponent's Active Pokémon ex. |
 | B2a-091 | Arven | PARTIAL | Unimplemented trainer text: Flip a coin. If heads, put a random Item card from your deck into your hand. If tails, put a random Pokémon Tool card from your deck into your hand. |
 | B2a-093 | Mesagoza | PARTIAL | Unimplemented trainer text: Once during each player's turn, that player may flip a coin. If heads, that player puts a random Pokémon from their deck into their hand. You may play only 1 Stadium card during your turn. Put it next to the Active Spot, and discard it if another Stadium comes into play. A Stadium with the same name can't be played. |
-| B2b-001 | Scyther | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B2b-002 | Pineco | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B2b-003 | Volbeat | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B2b-004 | Illumise | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B2b-005 | Phantump | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B2b-006 | Trevenant | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B2b-008 | Charmeleon | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B2b-009 | Mega Charizard X ex | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B2b-010 | Ponyta | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B2b-011 | Rapidash | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B2b-012 | Magmar | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B2b-013 | Magmortar | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B2b-014 | Paldean Tauros | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B2b-016 | Mega Slowbro ex | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B2b-017 | Lapras | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B2b-018 | Piplup | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B2b-019 | Prinplup | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B2b-020 | Empoleon | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B2b-021 | Phione | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B2b-022 | Pikachu | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B2b-023 | Raichu | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B2b-024 | Electabuzz | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B2b-025 | Electivire | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B2b-026 | Electrike | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B2b-027 | Mega Manectric ex | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B2b-028 | Drowzee | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B2b-029 | Hypno | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B2b-030 | Mew | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B2b-031 | Spoink | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B2b-032 | Grumpig | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B2b-033 | Diglett | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B2b-034 | Dugtrio | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B2b-035 | Groudon | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B2b-036 | Hawlucha | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B2b-038 | Haunter | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B2b-039 | Mega Gengar ex | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B2b-041 | Trubbish | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B2b-042 | Garbodor | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B2b-043 | Zorua | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B2b-044 | Zoroark | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B2b-045 | Morpeko | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B2b-046 | Forretress | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B2b-047 | Mega Scizor ex | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B2b-048 | Kartana | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B2b-049 | Varoom | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B2b-050 | Revavroom | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B2b-051 | Dratini | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B2b-052 | Dragonair | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B2b-053 | Dragonite | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B2b-054 | Axew | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B2b-055 | Fraxure | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B2b-057 | Druddigon | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B2b-058 | Jigglypuff | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B2b-060 | Miltank | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B2b-062 | Minccino | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B2b-063 | Cinccino | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B2b-064 | Furfrou | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B2b-065 | Nasty Notice | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B2b-066 | Maintenance | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B2b-067 | Iris | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B2b-068 | Calem | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B2b-069 | Hiking Trail | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B3-001 | Tangela | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B3-002 | Tangrowth | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B3-003 | Heracross | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B3-006 | Grovyle | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B3-007 | Sceptile | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B3-009 | Surskit | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B3-010 | Masquerain | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B3-011 | Shroomish | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B3-012 | Breloom | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B3-013 | Budew | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B3-014 | Carnivine | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B3-015 | Sewaddle | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B3-016 | Swadloon | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B3-017 | Leavanny | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B3-018 | Durant | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B3-019 | Applin | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B3-020 | Flapple | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B3-021 | Numel | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B3-022 | Camerupt | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B3-023 | Mega Camerupt ex | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B3-026 | Tepig | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B3-027 | Pignite | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B3-028 | Emboar | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B3-029 | Darumaka | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B3-030 | Darmanitan | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B3-031 | Larvesta | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B3-032 | Volcarona | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B3-033 | Poliwag | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B3-034 | Poliwhirl | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B3-035 | Politoed | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B3-036 | Paldean Tauros | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B3-037 | Vaporeon ex | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B3-038 | Wooper | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B3-039 | Quagsire | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B3-040 | Castform Rainy Form | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B3-041 | Castform Snowy Form | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B3-042 | Clamperl | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B3-043 | Huntail | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B3-044 | Gorebyss | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B3-045 | Regice | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B3-046 | Cubchoo | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B3-047 | Beartic | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B3-048 | Sobble | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B3-049 | Drizzile | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B3-050 | Inteleon | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B3-051 | Rapid Strike Urshifu | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B3-052 | Magnemite | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B3-053 | Magneton | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B3-054 | Magnezone ex | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B3-055 | Voltorb | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B3-056 | Electrode | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B3-057 | Chinchou | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B3-058 | Lanturn | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B3-059 | Zekrom | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B3-060 | Toxel | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B3-061 | Toxtricity | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B3-062 | Morpeko | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B3-063 | Ralts | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B3-064 | Kirlia | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B3-065 | Espurr | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B3-066 | Meowstic | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B3-067 | Diancie | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B3-068 | Oricorio | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B3-069 | Hatenna | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B3-070 | Hattrem | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B3-071 | Hatterene | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B3-072 | Bramblin | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B3-073 | Brambleghast | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B3-074 | Gligar | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B3-075 | Gliscor | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B3-076 | Trapinch | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B3-077 | Regirock | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B3-078 | Bonsly | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B3-079 | Riolu | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B3-080 | Lucario | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B3-081 | Mega Lucario ex | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B3-082 | Croagunk | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B3-083 | Toxicroak | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B3-085 | Throh | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B3-086 | Sawk | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B3-087 | Dwebble | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B3-088 | Crustle ex | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B3-089 | Meloetta | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B3-090 | Stufful | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B3-091 | Bewear | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B3-092 | Rolycoly | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B3-093 | Carkol | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B3-094 | Coalossal | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B3-095 | Silicobra | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B3-096 | Sandaconda | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B3-097 | Kubfu | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B3-098 | Zubat | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B3-099 | Golbat | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B3-100 | Crobat | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B3-101 | Koffing | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B3-102 | Weezing | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B3-103 | Qwilfish | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B3-104 | Seviper | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B3-105 | Zorua | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B3-106 | Zoroark ex | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B3-107 | Foongus | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B3-108 | Amoonguss | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B3-109 | Vullaby | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B3-110 | Mandibuzz | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B3-111 | Inkay | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B3-112 | Malamar | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B3-113 | Single Strike Urshifu | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B3-115 | Bombirdier | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B3-116 | Registeel | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B3-117 | Bronzor | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B3-118 | Bronzong | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B3-119 | Pawniard | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B3-120 | Bisharp | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B3-121 | Magearna | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B3-122 | Meltan | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B3-123 | Melmetal | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B3-124 | Corviknight ex | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B3-125 | Vibrava | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B3-126 | Flygon ex | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B3-127 | Chansey | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B3-128 | Blissey | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B3-129 | Eevee | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B3-130 | Dunsparce | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B3-131 | Teddiursa | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B3-132 | Ursaring | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B3-133 | Castform | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B3-134 | Regigigas | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B3-135 | Patrat | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B3-136 | Watchog | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B3-137 | Lillipup | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B3-138 | Herdier | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B3-139 | Stoutland | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B3-140 | Audino | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B3-141 | Mega Audino ex | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B3-142 | Minccino | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B3-143 | Cinccino | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B3-144 | Furfrou | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B3-145 | Rookidee | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B3-146 | Corvisquire | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B3-147 | Field Blower | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B3-148 | Lucky Egg | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B3-149 | Korrina | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B3-150 | Cabbie | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B3-151 | Cheren | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B3-152 | Parasol Lady | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B3-153 | Fragrant Forest | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B3-154 | Arena of Antiquity | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B3-155 | Bounded Field | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B3a-001 | Surskit | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B3a-002 | Masquerain | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B3a-003 | Brute Bonnet | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B3a-004 | Slither Wing | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B3a-005 | Iron Moth | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B3a-006 | Psyduck | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B3a-007 | Golduck | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B3a-009 | Buizel | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B3a-010 | Floatzel | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B3a-011 | Snom | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B3a-012 | Frosmoth | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B3a-013 | Iron Bundle ex | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B3a-014 | Pawmi | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B3a-015 | Pawmo | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B3a-016 | Pawmot | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B3a-017 | Iron Hands | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B3a-018 | Iron Thorns | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B3a-019 | Miraidon ex | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B3a-020 | Espeon | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B3a-021 | Flittle | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B3a-022 | Espathra | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B3a-023 | Greavard | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B3a-024 | Houndstone | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B3a-025 | Scream Tail | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B3a-026 | Flutter Mane ex | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B3a-027 | Iron Valiant | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B3a-028 | Iron Leaves | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B3a-029 | Iron Boulder | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B3a-030 | Iron Crown | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B3a-031 | Nacli | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B3a-032 | Naclstack | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B3a-033 | Garganacl | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B3a-034 | Great Tusk | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B3a-035 | Sandy Shocks | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B3a-036 | Koraidon ex | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B3a-037 | Umbreon | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B3a-038 | Sneasel | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B3a-039 | Weavile | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B3a-041 | Pawniard | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B3a-042 | Bisharp | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B3a-043 | Kingambit | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B3a-044 | Glimmet | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B3a-045 | Glimmora | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B3a-046 | Iron Jugulis | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B3a-047 | Roaring Moon | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B3a-048 | Corviknight | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B3a-049 | Cufant | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B3a-050 | Copperajah | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B3a-051 | Iron Treads | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B3a-052 | Altaria | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B3a-053 | Walking Wake | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B3a-054 | Gouging Fire | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B3a-055 | Raging Bolt | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B3a-056 | Eevee | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B3a-057 | Girafarig | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B3a-058 | Farigiraf | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B3a-059 | Dunsparce | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B3a-061 | Swablu | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B3a-062 | Rufflet | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B3a-063 | Braviary | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B3a-064 | Hawlucha | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B3a-065 | Rookidee | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B3a-066 | Corvisquire | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B3a-067 | Flamigo | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B3a-068 | Terapagos ex | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B3a-069 | Ancient Booster Energy Capsule | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B3a-070 | Future Booster Energy Capsule | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B3a-071 | Juliana | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B3a-072 | Professor Sada | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B3a-073 | Professor Turo | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B3a-074 | Area Zero | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B3b-001 | Caterpie | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B3b-002 | Metapod | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B3b-003 | Butterfree | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B3b-004 | Cacnea | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B3b-005 | Tropius | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B3b-006 | Petilil | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B3b-007 | Hisuian Lilligant | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B3b-008 | Vulpix | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B3b-009 | Ninetales | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B3b-012 | Goldeen | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B3b-013 | Seaking | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B3b-014 | Feebas | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B3b-015 | Milotic ex | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B3b-016 | Snorunt | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B3b-018 | Luvdisc | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B3b-019 | Piplup | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B3b-020 | Iron Bundle | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B3b-021 | Pikachu | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B3b-024 | Dedenne ex | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B3b-025 | Yamper | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B3b-026 | Slowpoke | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B3b-027 | Slowbro | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B3b-028 | Munna | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B3b-029 | Musharna | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B3b-030 | Sylveon | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B3b-031 | Carbink | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B3b-032 | Mega Diancie ex | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B3b-033 | Enamorus | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B3b-034 | Fidough | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B3b-035 | Flutter Mane | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B3b-036 | Wooper | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B3b-037 | Quagsire | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B3b-038 | Rockruff | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B3b-039 | Sandygast | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B3b-040 | Palossand | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B3b-041 | Mega Sableye ex | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B3b-042 | Cacturne | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B3b-043 | Spiritomb | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B3b-044 | Scraggy | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B3b-045 | Scrafty | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B3b-046 | Mareanie | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B3b-047 | Toxapex | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B3b-048 | Goomy | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B3b-049 | Hisuian Sliggoo | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B3b-050 | Hisuian Goodra | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B3b-051 | Jigglypuff | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B3b-052 | Wigglytuff | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B3b-053 | Eevee | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B3b-054 | Munchlax | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B3b-055 | Snorlax | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B3b-056 | Teddiursa | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B3b-057 | Ursaring | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B3b-058 | Ursaluna | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B3b-060 | Hisuian Zoroark ex | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B3b-061 | Furfrou | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B3b-062 | Skwovet | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B3b-063 | Greedent | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B3b-064 | Small Balloon | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B3b-065 | Elegant Cape | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B3b-066 | Elesa | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B3b-067 | Puppy-Loving Girl | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B3b-068 | Wallace | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B3b-069 | Kid's Room | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B4-001 | Wurmple | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B4-002 | Silcoon | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B4-003 | Beautifly | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B4-004 | Cascoon | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B4-005 | Dustox | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B4-006 | Lileep | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B4-007 | Cradily | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B4-008 | Kricketot | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B4-009 | Kricketune | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B4-010 | Combee | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B4-011 | Vespiquen ex | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B4-012 | Karrablast | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B4-013 | Shelmet | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B4-014 | Accelgor | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B4-015 | Dhelmise | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B4-016 | Pheromosa | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B4-017 | Poltchageist | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B4-018 | Sinistcha | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B4-019 | Teal MaskOgerpon | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B4-020 | Ponyta | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B4-021 | Rapidash | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B4-022 | Flareon | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B4-023 | Moltres | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B4-024 | Cyndaquil | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B4-025 | Quilava | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B4-026 | Typhlosion ex | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B4-027 | Houndour | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B4-028 | Houndoom | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B4-029 | Heatmor | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B4-030 | Psyduck | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B4-031 | Golduck | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B4-032 | Staryu | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B4-033 | Starmie | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B4-034 | Carvanha | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B4-035 | Mega Sharpedo ex | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B4-036 | Wailmer | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B4-037 | Wailord ex | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B4-038 | Spheal | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B4-039 | Sealeo | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B4-040 | Walrein | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B4-041 | Kyogre | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B4-042 | Oshawott | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B4-043 | Dewott | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B4-044 | Samurott | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B4-045 | Alomomola | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B4-046 | Dewpider | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B4-047 | Araquanid | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B4-048 | Bruxish | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B4-050 | Raichu | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B4-051 | Shinx | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B4-052 | Luxio | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B4-053 | Luxray | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B4-055 | Rotom ex | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B4-056 | Tynamo | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B4-057 | Eelektrik | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B4-058 | Eelektross | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B4-059 | Thundurus | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B4-060 | Helioptile | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B4-061 | Heliolisk | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B4-062 | Wattrel | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B4-063 | Kilowattrel | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B4-064 | Clefairy | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B4-065 | Clefable | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B4-066 | Drowzee | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B4-067 | Hypno | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B4-068 | Mime Jr. | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B4-069 | Mr. Mime | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B4-070 | Mewtwo | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B4-071 | Ralts | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B4-072 | Kirlia | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B4-073 | Chimecho | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B4-074 | Wynaut | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B4-075 | Woobat | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B4-076 | Swoobat | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B4-077 | Hoopa | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B4-078 | Oricorio | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B4-079 | Makuhita | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B4-080 | Hariyama | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B4-081 | Anorith | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B4-082 | Armaldo | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B4-083 | Groudon | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B4-084 | Mega Gallade ex | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B4-085 | Drilbur | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B4-086 | Excadrill | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B4-087 | Timburr | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B4-088 | Gurdurr | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B4-089 | Conkeldurr | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B4-090 | Minior | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B4-091 | Grimer | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B4-092 | Muk | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B4-093 | Poochyena | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B4-094 | Mightyena | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B4-095 | Galarian Zigzagoon | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B4-096 | Galarian Linoone | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B4-097 | Galarian Obstagoon | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B4-098 | Gulpin | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B4-099 | Swalot | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B4-100 | Absol | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B4-101 | Vullaby | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B4-102 | Mandibuzz | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B4-103 | Hoopa ex | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B4-104 | Skarmory | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B4-105 | Mawile | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B4-107 | Metang | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B4-108 | Metagross | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B4-109 | Mega Metagross ex | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B4-110 | Escavalier | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B4-111 | Genesect | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B4-112 | Duraludon | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B4-113 | Archaludon | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B4-114 | Varoom | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B4-115 | Revavroom | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B4-116 | Dratini | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B4-117 | Dragonair | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B4-118 | Dragonite | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B4-119 | Rayquaza | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B4-120 | Mega Rayquaza ex | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B4-121 | Noibat | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B4-123 | Turtonator | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B4-125 | Applin | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B4-126 | Dipplin | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B4-127 | Hydrapple | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B4-128 | Cyclizar | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B4-129 | Rattata | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B4-130 | Raticate | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B4-131 | Eevee | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B4-132 | Aipom | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B4-133 | Ambipom | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B4-134 | Skitty | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B4-136 | Kecleon | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B4-137 | Pidove | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B4-138 | Tranquill | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B4-139 | Unfezant | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B4-140 | Ducklett | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B4-141 | Swanna ex | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B4-142 | Furfrou | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B4-143 | Type: Null | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B4-144 | Silvally | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B4-145 | Order Pad | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B4-146 | Claw Fossil | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B4-147 | Root Fossil | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B4-148 | Deceptive Needle | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B4-149 | Clear Veil | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B4-150 | Psychic | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B4-151 | Drayden | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B4-152 | Skyla | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B4-153 | Wally | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B4-154 | Soothing Shore | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B4-155 | Rainbow Cave | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B4a-001 | Volbeat | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B4a-002 | Illumise | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B4a-003 | Snivy | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B4a-004 | Servine | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B4a-005 | Serperior | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B4a-006 | Team Rocket's Magmar | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B4a-007 | Team Rocket's Moltres ex | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B4a-008 | Team Rocket's Houndour | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B4a-009 | Team Rocket's Houndoom | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B4a-011 | Braixen | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B4a-012 | Delphox | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B4a-014 | Team Rocket's Articuno ex | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B4a-016 | Pelipper | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B4a-017 | Hisuian Basculin | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B4a-018 | Hisuian Basculegion | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B4a-019 | Team Rocket's Voltorb | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B4a-020 | Team Rocket's Electrode | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B4a-021 | Team Rocket's Zapdos ex | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B4a-022 | Blitzle | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B4a-023 | Zebstrika | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B4a-024 | Team Rocket's Pincurchin | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B4a-025 | Team Rocket's Slowpoke | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B4a-026 | Team Rocket's Slowking ex | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B4a-027 | Team Rocket's Drowzee | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B4a-028 | Team Rocket's Hypno | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B4a-029 | Team Rocket's Mr. Mime | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B4a-030 | Team Rocket's Mewtwo | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B4a-031 | Espurr | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B4a-033 | Oranguru | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B4a-034 | Gimmighoul | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B4a-035 | Cubone | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B4a-037 | Landorus | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B4a-038 | Team Rocket's Ekans | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B4a-039 | Team Rocket's Arbok | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B4a-040 | Team Rocket's Grimer | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B4a-041 | Team Rocket's Muk | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B4a-042 | Team Rocket's Koffing | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B4a-043 | Team Rocket's Weezing ex | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B4a-044 | Team Rocket's Sneasel | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B4a-045 | Togedemaru | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B4a-046 | Cufant | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B4a-047 | Copperajah | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B4a-048 | Team Rocket's Tinkatink | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B4a-049 | Team Rocket's Tinkatuff | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B4a-050 | Team Rocket's Tinkaton | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B4a-051 | Gholdengo | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B4a-054 | Garchomp | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B4a-055 | Duraludon | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B4a-056 | Archaludon | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B4a-057 | Regidrago | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B4a-058 | Team Rocket's Rattata | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B4a-059 | Team Rocket's Raticate ex | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B4a-060 | Team Rocket's Meowth | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B4a-061 | Team Rocket's Persian | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B4a-062 | Team Rocket's Kecleon | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B4a-063 | Happiny | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B4a-064 | Furfrou | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B4a-065 | Lechonk | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B4a-066 | Oinkologne | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B4a-067 | Team Rocket's Thieving Machine | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B4a-068 | Team Rocket's Goo-zooka | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B4a-069 | Team Rocket's Researcher | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B4a-070 | Team Rocket's Master Plan | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B4a-071 | Team Rocket's Boss | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
-| B4a-072 | Arcade | UNSUPPORTED | Missing licensed detailed mechanics data for this print; no same-name inference |
+| B2b-008 | Charmeleon | PARTIAL | Unimplemented ability text: Once during your turn, when you play this Pokémon from your hand to evolve 1 of your Pokémon, you may take a {R} Energy from your Energy Zone and attach it to your Active {R} Pokémon. |
+| B2b-009 | Mega Charizard X ex | PARTIAL | Unimplemented attack text: If this Pokémon's remaining HP is 110 or less, this attack does 80 more damage. |
+| B2b-011 | Rapidash | PARTIAL | Unimplemented attack text: During your next turn, this Pokémon's Overdrive Smash attack does +30 damage. |
+| B2b-013 | Magmortar | PARTIAL | Unimplemented attack text: If Electivire is on your Bench, this attack also does 20 damage to each of your opponent's Benched Pokémon. |
+| B2b-016 | Mega Slowbro ex | PARTIAL | Unimplemented attack text: Flip 3 coins. This attack also does 20 damage for each heads to each of your opponent's Benched Pokémon. |
+| B2b-017 | Lapras | PARTIAL | Unimplemented attack text: If any of your Pokémon were Knocked Out by damage from an attack during your opponent's last turn, your opponent's Active Pokémon is now Paralyzed. |
+| B2b-020 | Empoleon | PARTIAL | Unimplemented attack text: If your opponent's Active Pokémon has more remaining HP than this Pokémon, this attack does 60 more damage. |
+| B2b-021 | Phione | PARTIAL | Unimplemented attack text: Take a {W} Energy from your Energy Zone and attach it to 1 of your Benched {W} Pokémon. |
+| B2b-025 | Electivire | PARTIAL | Unimplemented attack text: If Magmortar is on your Bench, this attack does 70 more damage. |
+| B2b-027 | Mega Manectric ex | PARTIAL | Unimplemented attack text: This attack does 30 more damage for each point you have gotten. |
+| B2b-030 | Mew | PARTIAL | Unimplemented attack text: 1 attack from among the Pokémon in your opponent's hand and deck is chosen at random, and you use the chosen attack as this attack. |
+| B2b-032 | Grumpig | PARTIAL | Unimplemented attack text: If your opponent has exactly 2, 4, or 6 cards in their hand, this attack does 40 more damage. |
+| B2b-035 | Groudon | PARTIAL | Unimplemented attack text: Discard 2 random Energy from among the Energy attached to all of your Pokémon. |
+| B2b-039 | Mega Gengar ex | PARTIAL | Unimplemented attack text: During your opponent's next turn, they can't play any Trainer cards from their hand. |
+| B2b-044 | Zoroark | PARTIAL | Unimplemented attack text: This attack does 20 damage for each Energy attached to all of your opponent's Pokémon. |
+| B2b-045 | Morpeko | PARTIAL | Unimplemented attack text: Move 2 {D} Energy from this Pokémon to 1 of your Benched Pokémon. |
+| B2b-046 | Forretress | PARTIAL | Unimplemented attack text: This Pokémon also does 100 damage to itself and 50 damage to all Benched Pokémon (both yours and your opponent's). |
+| B2b-047 | Mega Scizor ex | PARTIAL | Unimplemented attack text: If this Pokémon moved from your Bench to the Active Spot this turn, this attack does 50 more damage. |
+| B2b-050 | Revavroom | PARTIAL | Unimplemented ability text: Once during your turn, you may switch your Active {M} Pokémon with 1 of your Benched Pokémon. |
+| B2b-052 | Dragonair | PARTIAL | Unimplemented attack text: Take a {W} and a {L} Energy from your Energy Zone and attach them to this Pokémon. |
+| B2b-053 | Dragonite | PARTIAL | Unimplemented attack text: Discard a {W} and a {L} Energy from this Pokémon. |
+| B2b-065 | Nasty Notice | PARTIAL | Unimplemented trainer text: Your opponent discards cards from their hand until they have 4 cards in their hand. |
+| B2b-066 | Maintenance | PARTIAL | Unimplemented trainer text: Shuffle 2 cards from your hand into your deck. Draw a card. If you can't shuffle in 2 cards, you can't use this card. |
+| B2b-067 | Iris | PARTIAL | Unimplemented trainer text: During this turn, if your opponent's Active Pokémon is Knocked Out by damage from an attack used by your Haxorus, you get 1 more point. |
+| B2b-068 | Calem | PARTIAL | Unimplemented trainer text: Draw a card for each Mega Evolution Pokémon ex in play (both yours and your opponent's). |
+| B2b-069 | Hiking Trail | PARTIAL | Unimplemented trainer text: At the end of each player's turn, that player draws cards until they have 3 cards in their hand. |
+| B3-003 | Heracross | PARTIAL | Unimplemented attack text: If you have any Stage 2 Pokémon on your Bench, this attack does 50 more damage. |
+| B3-009 | Surskit | PARTIAL | Unimplemented attack text: Discard a {R} Energy from your opponent's Active Pokémon. |
+| B3-013 | Budew | PARTIAL | Unimplemented attack text: The Defending Pokémon loses all Abilities. This effect lasts until the Defending Pokémon leaves the Active Spot. |
+| B3-018 | Durant | PARTIAL | Unimplemented attack text: If Durant is on your Bench, this attack does 30 more damage. |
+| B3-019 | Applin | PARTIAL | Unimplemented attack text: Heal 30 damage from 1 of your Benched Pokémon. |
+| B3-022 | Camerupt | PARTIAL | Unimplemented attack text: Flip 3 coins. For each heads, discard a {R} Energy from this Pokémon. This attack does 30 more damage for each {R} Energy you discarded in this way. |
+| B3-023 | Mega Camerupt ex | PARTIAL | Unimplemented attack text: 1 of your opponent's Pokémon is chosen at random. Do 160 damage to it. |
+| B3-028 | Emboar | PARTIAL | Unimplemented attack text: Flip a coin for each {R} Energy attached to this Pokémon. This attack does 30 more damage for each heads. |
+| B3-035 | Politoed | PARTIAL | Unimplemented attack text: If this Pokémon evolved from Poliwhirl during this turn, this attack does 50 more damage. |
+| B3-037 | Vaporeon ex | PARTIAL | Unimplemented ability text: Once during your turn, if this Pokémon is in the Active Spot, you may switch out your opponent's Active Pokémon to the Bench. (Your opponent chooses the new Active Pokémon.) |
+| B3-039 | Quagsire | PARTIAL | Unimplemented attack text: If this Pokémon has any {F} Energy attached, this attack does 60 more damage. |
+| B3-040 | Castform Rainy Form | PARTIAL | Unimplemented attack text: If a Stadium is in play, heal 20 damage from this Pokémon. |
+| B3-041 | Castform Snowy Form | PARTIAL | Unimplemented attack text: If a Stadium is in play, your opponent's Active Pokémon is now Asleep. |
+| B3-045 | Regice | PARTIAL | Unimplemented attack text: Move 2 random Energy from this Pokémon to 1 of your Benched Pokémon. |
+| B3-049 | Drizzile | PARTIAL | Unimplemented ability text: Once during your turn, when you play this Pokémon from your hand to evolve 1 of your Pokémon, you may do 20 damage to your opponent's Active Pokémon. |
+| B3-050 | Inteleon | PARTIAL | Unimplemented ability text: Once during your turn, when you play this Pokémon from your hand to evolve 1 of your Pokémon, you may do 30 damage to your opponent's Active Pokémon. |
+| B3-051 | Rapid Strike Urshifu | PARTIAL | Unimplemented attack text: Discard a {W} Energy from this Pokémon, and this attack also does 40 damage to 1 of your opponent's Benched Pokémon.; Unimplemented ability text: As long as this Pokémon is in play, it is {W} and {F} type. |
+| B3-061 | Toxtricity | PARTIAL | Unimplemented attack text: If any of your Pokémon were Knocked Out by damage from an attack during your opponent's last turn, this attack does 60 more damage, and your opponent's Active Pokémon is now Paralyzed. |
+| B3-062 | Morpeko | PARTIAL | Unimplemented attack text: If this Pokémon has no damage on it, this attack does 30 more damage. |
+| B3-066 | Meowstic | PARTIAL | Unimplemented ability text: Once during your turn, if this Pokémon is in the Active Spot, you may make your opponent's Active Pokémon Confused. |
+| B3-067 | Diancie | PARTIAL | Unimplemented attack text: Heal 20 damage from each of your {P} Pokémon. |
+| B3-073 | Brambleghast | PARTIAL | Unimplemented ability text: Once during your turn, if this Pokémon is on your Bench, you may move 30 damage that your Active Pokémon has on it to this Pokémon. |
+| B3-080 | Lucario | PARTIAL | Unimplemented attack text: During your opponent's next turn, this Pokémon takes +20 damage from attacks. |
+| B3-085 | Throh | PARTIAL | Unimplemented attack text: Switch out your opponent's Active Pokémon to the Bench. (Your opponent chooses the new Active Pokémon.) |
+| B3-086 | Sawk | PARTIAL | Unimplemented attack text: This attack's damage isn't affected by any effects on your opponent's Active Pokémon. |
+| B3-089 | Meloetta | PARTIAL | Unimplemented attack text: During your next turn, attacks used by your {F} Pokémon do +30 damage to your opponent's Active Pokémon. |
+| B3-094 | Coalossal | PARTIAL | Unimplemented attack text: Flip a coin until you get tails. For each heads, discard the top card of your opponent's deck. |
+| B3-096 | Sandaconda | PARTIAL | Unimplemented attack text: During your opponent's next turn, if the Defending Pokémon tries to use an attack, your opponent flips a coin. If tails, that attack doesn't happen. |
+| B3-097 | Kubfu | PARTIAL | Unimplemented attack text: Take a {C} Energy from your Energy Zone and attach it to this Pokémon. |
+| B3-100 | Crobat | PARTIAL | Unimplemented attack text: If this Pokémon moved from your Bench to the Active Spot this turn, this attack does 60 more damage. |
+| B3-105 | Zorua | PARTIAL | Unimplemented attack text: Put a random card from your deck that evolves from this Pokémon onto this Pokémon to evolve it. |
+| B3-112 | Malamar | PARTIAL | Unimplemented attack text: During your opponent's next turn, they can't play any Pokémon from their hand to evolve their Pokémon. |
+| B3-113 | Single Strike Urshifu | PARTIAL | Unimplemented ability text: As long as this Pokémon is in play, it is {F} and {D} type. |
+| B3-115 | Bombirdier | PARTIAL | Unimplemented ability text: As long as this Pokémon is on your Bench, your Active {D} Pokémon's Retreat Cost is 1 less. |
+| B3-118 | Bronzong | PARTIAL | Unimplemented attack text: If your opponent has any {P} Pokémon in play, this attack does 50 more damage. |
+| B3-123 | Melmetal | PARTIAL | Unimplemented attack text: During your next turn, this Pokémon's Overdrive Smash attack does +60 damage. |
+| B3-125 | Vibrava | PARTIAL | Unimplemented attack text: This attack does 10 damage to each of your opponent's Pokémon. |
+| B3-126 | Flygon ex | PARTIAL | Unimplemented ability text: During Pokémon Checkup, if this Pokémon is in the Active Spot, do 10 damage to each of your opponent's Pokémon. |
+| B3-128 | Blissey | PARTIAL | Unimplemented ability text: Once during your turn, you may remove a random Special Condition from your Active Pokémon. |
+| B3-130 | Dunsparce | PARTIAL | Unimplemented attack text: You may shuffle this Pokémon and all attached cards into your deck. |
+| B3-133 | Castform | PARTIAL | Unimplemented attack text: If a Stadium is in play, this attack does 20 more damage. |
+| B3-134 | Regigigas | PARTIAL | Unimplemented attack text: Take a {C} Energy from your Energy Zone and attach it to 1 of your Benched Pokémon.; Unimplemented ability text: If you don't have Regirock, Regice, and Registeel on your Bench, this Pokémon can't attack. |
+| B3-136 | Watchog | PARTIAL | Unimplemented attack text: During your next turn, this Pokémon's Psych Up attack does +30 damage. |
+| B3-137 | Lillipup | PARTIAL | Unimplemented attack text: Reveal all of your Pokémon in play and in your hand that have the Puppy Pile attack, and this attack does 20 damage for each Pokémon you revealed in this way. |
+| B3-145 | Rookidee | PARTIAL | Unimplemented attack text: Before doing damage, discard all Pokémon Tools from your opponent's Active Pokémon. |
+| B3-146 | Corvisquire | PARTIAL | Unimplemented attack text: Before doing damage, discard all Pokémon Tools from your opponent's Active Pokémon. |
+| B3-147 | Field Blower | PARTIAL | Unimplemented trainer text: Discard a Pokémon Tool card from a Pokémon (yours or your opponent's), or discard a Stadium card in play. |
+| B3-148 | Lucky Egg | PARTIAL | Unimplemented trainer text: If the Pokémon this card is attached to is Knocked Out by damage from an attack from your opponent's Pokémon, draw cards until you have 5 cards in your hand. |
+| B3-149 | Korrina | PARTIAL | Unimplemented trainer text: During this turn, attacks used by your {F} Pokémon do +30 damage to your opponent's Active Pokémon ex. |
+| B3-150 | Cabbie | PARTIAL | Unimplemented trainer text: Put a random Stadium card from your deck into your hand. |
+| B3-151 | Cheren | PARTIAL | Unimplemented trainer text: During your opponent's next turn, all of your Watchog and Stoutland take −100 damage from attacks from your opponent's Pokémon ex. |
+| B3-152 | Parasol Lady | PARTIAL | Unimplemented trainer text: Put 1 of your {W} Pokémon in play, except any Pokémon ex, into your hand. |
+| B3-153 | Fragrant Forest | PARTIAL | Unimplemented trainer text: Once during each player's turn, that player may put a random Basic {G} Pokémon from their deck into their hand. |
+| B3-154 | Arena of Antiquity | PARTIAL | Unimplemented trainer text: Attacks used by each {F} Pokémon in play (both yours and your opponent's) do +20 damage to the opponent's Active Pokémon ex. |
+| B3-155 | Bounded Field | PARTIAL | Unimplemented trainer text: When applying the opponent's Active Pokémon's Weakness to damage from attacks used by Pokémon in play (both yours and your opponent's) that aren't Mega Evolution Pokémon ex, apply Weakness as ×2. |
+| B3a-005 | Iron Moth | PARTIAL | Unimplemented attack text: Flip 3 coins. If 1 of them is heads, this attack does 20 more damage. If 2 of them are heads, this attack does 50 more damage. If all of them are heads, this attack does 120 more damage. |
+| B3a-013 | Iron Bundle ex | PARTIAL | Unimplemented attack text: If this is the first time this Pokémon has used an attack after coming into play, this attack does 20 more damage, and your opponent's Active Pokémon is now Paralyzed. |
+| B3a-019 | Miraidon ex | PARTIAL | Unimplemented ability text: Once during your turn, when you put this Pokémon from your hand onto your Bench, you may switch it with your Active Pokémon. If you do, move all of your Energy in play to this Pokémon. |
+| B3a-022 | Espathra | PARTIAL | Unimplemented attack text: During your next turn, the Defending Pokémon takes +50 damage from attacks. |
+| B3a-025 | Scream Tail | PARTIAL | Unimplemented attack text: Flip 2 coins. If both of them are heads, discard your opponent's Active Pokémon. |
+| B3a-026 | Flutter Mane ex | PARTIAL | Unimplemented attack text: If this is the first time this Pokémon has used an attack after coming into play, during your opponent's next turn, they can't use any Trainer cards from their hand. |
+| B3a-027 | Iron Valiant | PARTIAL | Unimplemented ability text: Attacks used by your Future Pokémon cost 1 less {C} Energy. |
+| B3a-028 | Iron Leaves | PARTIAL | Unimplemented attack text: If any of your Pokémon were Knocked Out by damage from an attack during your opponent's last turn, this attack does 50 more damage. |
+| B3a-033 | Garganacl | PARTIAL | Unimplemented ability text: During Pokémon Checkup, heal 10 damage from each of your Pokémon. |
+| B3a-035 | Sandy Shocks | PARTIAL | Unimplemented attack text: Switch in 1 of your opponent's Benched Pokémon to the Active Spot. If you do, this attack does 50 damage to the new Active Pokémon. |
+| B3a-036 | Koraidon ex | PARTIAL | Unimplemented ability text: Once during your turn, when you put this Pokémon from your hand onto your Bench, you may switch it with your Active Pokémon. If you do, move all of your Energy in play to this Pokémon. |
+| B3a-039 | Weavile | PARTIAL | Unimplemented attack text: If this Pokémon evolved from Sneasel during this turn, this attack does 20 more damage. |
+| B3a-043 | Kingambit | PARTIAL | Unimplemented attack text: This attack does 40 more damage for each time your Pokémon have been Knocked Out during this game. |
+| B3a-045 | Glimmora | PARTIAL | Unimplemented ability text: When this Pokémon is Knocked Out, flip a coin. If heads, your opponent can't get any points for it. |
+| B3a-047 | Roaring Moon | PARTIAL | Unimplemented ability text: Once during your turn, when you put this Pokémon from your hand onto your Bench, you may switch out your opponent's Active Pokémon to the Bench. (Your opponent chooses the new Active Pokémon.) |
+| B3a-052 | Altaria | PARTIAL | Unimplemented attack text: Flip a coin. If tails, this attack does nothing. If heads, during your opponent's next turn, prevent all damage from—and effects of—attacks done to this Pokémon. |
+| B3a-053 | Walking Wake | PARTIAL | Unimplemented attack text: Discard an Energy from this Pokémon, and this attack also does 20 damage to each of your opponent's Benched Pokémon. |
+| B3a-054 | Gouging Fire | PARTIAL | Unimplemented attack text: Discard 2 Energy from this Pokémon. During your opponent's next turn, this Pokémon takes −30 damage from attacks. |
+| B3a-055 | Raging Bolt | PARTIAL | Unimplemented attack text: Discard all Energy from this Pokémon. Knock Out your opponent's Active Pokémon. |
+| B3a-056 | Eevee | PARTIAL | Unimplemented attack text: Flip a coin. If heads, the Defending Pokémon can't attack during your opponent's next turn. |
+| B3a-068 | Terapagos ex | PARTIAL | Unimplemented attack text: This attack does 20 more damage for each type of Energy attached to this Pokémon. |
+| B3a-069 | Ancient Booster Energy Capsule | PARTIAL | Unimplemented trainer text: The Ancient Pokémon this card is attached to gets +40 HP. |
+| B3a-070 | Future Booster Energy Capsule | PARTIAL | Unimplemented trainer text: Attacks used by the Future Pokémon this card is attached to do +20 damage to your opponent's Active Pokémon. |
+| B3a-071 | Juliana | PARTIAL | Unimplemented trainer text: Put a random Stage 2 Pokémon from your deck into your hand. |
+| B3a-072 | Professor Sada | PARTIAL | Unimplemented trainer text: Attach 3 different types of Energy from your discard pile to your Ancient Pokémon in any way you like. |
+| B3a-073 | Professor Turo | PARTIAL | Unimplemented trainer text: Shuffle 1 of your Future Pokémon in play into your deck. |
+| B3a-074 | Area Zero | PARTIAL | Unimplemented trainer text: Once during each player's turn, that player may shuffle a Basic Pokémon from their hand into their deck. If they do, they draw a card. |
+| B3b-001 | Caterpie | PARTIAL | Unimplemented ability text: At the end of your opponent's turn, if this Pokémon is in the Active Spot, put a random card from your deck that evolves from this Pokémon onto this Pokémon to evolve it. |
+| B3b-015 | Milotic ex | PARTIAL | Unimplemented ability text: Once during your turn, you may take a {W} Energy from your Energy Zone and attach it to this Pokémon. |
+| B3b-024 | Dedenne ex | PARTIAL | Unimplemented attack text: This attack does 40 damage for each Pokémon Tool attached to all of your Pokémon. |
+| B3b-025 | Yamper | PARTIAL | Unimplemented attack text: Reveal all of your Pokémon in play and in your hand that have the Puppy Pile attack, and this attack does 20 damage for each Pokémon you revealed in this way. |
+| B3b-030 | Sylveon | PARTIAL | Unimplemented ability text: Once during your turn, if this Pokémon has a Pokémon Tool attached, you may heal 30 damage from 1 of your Pokémon. |
+| B3b-031 | Carbink | PARTIAL | Unimplemented attack text: Choose 2 of your Benched Pokémon. For each of those Pokémon, take a {P} Energy from your Energy Zone and attach it to that Pokémon. |
+| B3b-032 | Mega Diancie ex | PARTIAL | Unimplemented attack text: This attack does 20 more damage for each {P} Energy attached to all of your Pokémon. |
+| B3b-033 | Enamorus | PARTIAL | Unimplemented attack text: If this Pokémon and your opponent's Active Pokémon have 1 or more of the same type of Energy attached, this attack does 60 more damage. |
+| B3b-034 | Fidough | PARTIAL | Unimplemented attack text: Reveal all of your Pokémon in play and in your hand that have the Puppy Pile attack, and this attack does 20 damage for each Pokémon you revealed in this way. |
+| B3b-035 | Flutter Mane | PARTIAL | Unimplemented attack text: If this Pokémon didn't move from the Bench to the Active Spot this turn, this attack does nothing. |
+| B3b-037 | Quagsire | PARTIAL | Unimplemented attack text: 1 of your opponent's Active Pokémon's attacks is chosen at random. During your opponent's next turn, that Pokémon can't use the chosen attack. |
+| B3b-038 | Rockruff | PARTIAL | Unimplemented attack text: Reveal all of your Pokémon in play and in your hand that have the Puppy Pile attack, and this attack does 20 damage for each Pokémon you revealed in this way. |
+| B3b-041 | Mega Sableye ex | PARTIAL | Unimplemented attack text: During your opponent's next turn, if this Pokémon is damaged by an attack, do 40 damage to the Attacking Pokémon. |
+| B3b-047 | Toxapex | PARTIAL | Unimplemented attack text: Your opponent's Active Pokémon is now Poisoned. Do 40 damage to this Pokémon instead of the usual amount for this Special Condition. |
+| B3b-050 | Hisuian Goodra | PARTIAL | Unimplemented ability text: If any damage is done to this Pokémon by attacks, flip a coin. If heads, this Pokémon takes −80 damage from that attack. |
+| B3b-055 | Snorlax | PARTIAL | Unimplemented ability text: As long as this Pokémon is in the Active Spot, your opponent can't play any Stadium cards from their hand. |
+| B3b-058 | Ursaluna | PARTIAL | Unimplemented ability text: If this Pokémon would be Knocked Out by damage from an attack, flip a coin. If heads, this Pokémon is not Knocked Out, and its remaining HP becomes 10. |
+| B3b-060 | Hisuian Zoroark ex | PARTIAL | Unimplemented attack text: This attack does 20 more damage for each Pokémon in your discard pile. |
+| B3b-064 | Small Balloon | PARTIAL | Unimplemented trainer text: The Retreat Cost of the Basic Pokémon this card is attached to is 1 less. |
+| B3b-065 | Elegant Cape | PARTIAL | Unimplemented trainer text: The Stage 1 Pokémon this card is attached to gets +30 HP. |
+| B3b-066 | Elesa | PARTIAL | Unimplemented trainer text: Return all Pokémon Tools attached to each Pokémon (both yours and your opponent's) to their owner's hand. |
+| B3b-067 | Puppy-Loving Girl | PARTIAL | Unimplemented trainer text: Look at the top 4 cards of your deck. Put all Pokémon you find there that have the Puppy Pile attack into your hand. Shuffle the other cards back into your deck. |
+| B3b-068 | Wallace | PARTIAL | Unimplemented trainer text: Choose 1 of your {W} Pokémon in play with a maximum HP of 50 or less. Put a random {W} Pokémon from your deck that evolves from that Pokémon onto that Pokémon to evolve it. |
+| B3b-069 | Kid's Room | PARTIAL | Unimplemented trainer text: Once during each player's turn, that player may choose a card in their hand and switch it with a random Pokémon Tool card in their deck. |
+| B4-002 | Silcoon | PARTIAL | Unimplemented attack text: Put 3 random cards from among Silcoon and Cascoon from your deck onto your Bench. |
+| B4-003 | Beautifly | PARTIAL | Unimplemented attack text: This attack does 30 more damage for each Evolution Pokémon on your Bench. |
+| B4-004 | Cascoon | PARTIAL | Unimplemented attack text: Put 3 random cards from among Silcoon and Cascoon from your deck onto your Bench. |
+| B4-005 | Dustox | PARTIAL | Unimplemented ability text: Once during your turn, you may use this Ability. 1 Special Condition from among Burned, Confused, and Poisoned is chosen at random, and your opponent's Active Pokémon is now affected by that Special Condition. Any Special Conditions already affecting that Pokémon will not be chosen. |
+| B4-011 | Vespiquen ex | PARTIAL | Unimplemented attack text: You may discard 1 of your Benched Basic {G} Pokémon. If you do, this attack does 70 more damage. |
+| B4-014 | Accelgor | PARTIAL | Unimplemented attack text: Your opponent's Active Pokémon is now Poisoned and Paralyzed. Shuffle this Pokémon and all attached cards into your deck. |
+| B4-016 | Pheromosa | PARTIAL | Unimplemented attack text: If you haven't gotten any points, this attack does 60 more damage. |
+| B4-017 | Poltchageist | PARTIAL | Unimplemented ability text: Once during your turn, when you put this Pokémon from your hand onto your Bench, you may heal 20 damage from your Active {G} Pokémon. |
+| B4-019 | Teal Mask Ogerpon | PARTIAL | Unimplemented attack text: This attack does damage to your opponent's Active Pokémon equal to this Pokémon's remaining HP. |
+| B4-022 | Flareon | PARTIAL | Unimplemented attack text: Discard Fire{R} Energy from this Pokémon. Your opponent's Active Pokémon is now Burned. |
+| B4-032 | Staryu | PARTIAL | Unimplemented attack text: This attack's damage isn't affected by Weakness or by any effects on your opponent's Active Pokémon. |
+| B4-033 | Starmie | PARTIAL | Unimplemented attack text: This attack's damage isn't affected by Weakness or by any effects on your opponent's Active Pokémon. |
+| B4-035 | Mega Sharpedo ex | PARTIAL | Unimplemented attack text: Take a {W} Energy from your Energy Zone and attach it to 1 of your Benched {W} Pokémon. |
+| B4-037 | Wailord ex | PARTIAL | Unimplemented attack text: This Pokémon recovers from all Special Conditions. |
+| B4-039 | Sealeo | PARTIAL | Unimplemented attack text: If your opponent's Active Pokémon is a {F} Pokémon, this attack does 70 more damage. |
+| B4-040 | Walrein | PARTIAL | Unimplemented attack text: Your opponent can't use any Supporter cards from their hand during their next turn. |
+| B4-041 | Kyogre | PARTIAL | Unimplemented attack text: Discard 3 {W} Energy from this Pokémon, and this attack does 50 damage to each of your opponent's Pokémon. |
+| B4-044 | Samurott | PARTIAL | Unimplemented ability text: Once during your turn, when you play this Pokémon from your hand to evolve 1 of your Pokémon, you may prevent all damage from—and effects of—attacks from your opponent's Pokémon done to this Pokémon until the end of your opponent's next turn. |
+| B4-045 | Alomomola | PARTIAL | Unimplemented attack text: Heal 10 damage from each of your Benched Pokémon. |
+| B4-050 | Raichu | PARTIAL | Unimplemented ability text: Once during your turn, when you play this Pokémon from your hand to evolve 1 of your Pokémon, you may flip a coin. If heads, your opponent's Active Pokémon is now Paralyzed. |
+| B4-053 | Luxray | PARTIAL | Unimplemented attack text: This attack does 50 more damage for each point your opponent has gotten. |
+| B4-055 | Rotom ex | PARTIAL | Unimplemented attack text: This attack does 10 more damage for each Item card in your discard pile. |
+| B4-058 | Eelektross | PARTIAL | Unimplemented attack text: This attack does 20 more damage for each Energy attached to all of your opponent's Pokémon. |
+| B4-064 | Clefairy | PARTIAL | Unimplemented attack text: Flip a coin. If heads, choose 1 of your opponent's Active Pokémon's attacks and use it as this attack. |
+| B4-068 | Mime Jr. | PARTIAL | Unimplemented attack text: Shuffle your hand into your deck. Draw a card for each card in your opponent's hand. |
+| B4-069 | Mr. Mime | PARTIAL | Unimplemented attack text: If this Pokémon and your opponent's Active Pokémon have the same amount of Energy attached, this attack does 40 more damage. |
+| B4-071 | Ralts | PARTIAL | Unimplemented attack text: Put a random Supporter card from your deck into your hand. |
+| B4-073 | Chimecho | PARTIAL | Unimplemented attack text: If you have the same number of cards in your hand as your opponent, this attack does 40 more damage. |
+| B4-077 | Hoopa | PARTIAL | Unimplemented attack text: Before doing damage, shuffle all Pokémon Tools from each of your opponent's Pokémon into their deck. |
+| B4-078 | Oricorio | PARTIAL | Unimplemented attack text: Discard a card from your hand. If you can't, this attack does nothing. |
+| B4-080 | Hariyama | PARTIAL | Unimplemented attack text: During your opponent's next turn, this Pokémon takes +50 damage from attacks. |
+| B4-082 | Armaldo | PARTIAL | Unimplemented attack text: Discard all Energy from this Pokémon. Choose a spot from among your opponent's Active Spot and Bench. At the end of your opponent's next turn, Knock Out the Pokémon in the spot you chose. |
+| B4-089 | Conkeldurr | PARTIAL | Unimplemented attack text: Discard a Stadium in play. |
+| B4-090 | Minior | PARTIAL | Unimplemented attack text: If your opponent's Active Pokémon has an Ability, this attack does 40 more damage. |
+| B4-093 | Poochyena | PARTIAL | Unimplemented attack text: Draw a card for each Poochyena you have in play. |
+| B4-099 | Swalot | PARTIAL | Unimplemented attack text: If your opponent's Active Pokémon has less remaining HP than this Pokémon, this attack does 80 more damage. |
+| B4-115 | Revavroom | PARTIAL | Unimplemented attack text: During your next turn, this Pokémon's Overacceleration attack does +70 damage.; Unimplemented ability text: This Pokémon may have up to 2 Pokémon Tool cards attached to it. |
+| B4-117 | Dragonair | PARTIAL | Unimplemented ability text: Once during your turn, if this Pokémon is on your Bench, you may attach an Energy from your discard pile to your Active [Dragon] Pokémon. |
+| B4-119 | Rayquaza | PARTIAL | Unimplemented attack text: Discard 2 random Energy from this Pokémon. |
+| B4-120 | Mega Rayquaza ex | PARTIAL | Unimplemented attack text: Discard all {R} and {L} Energy from this Pokémon, and this attack does 50 damage for each Energy you discarded in this way. |
+| B4-127 | Hydrapple | PARTIAL | Unimplemented attack text: Flip 2 coins. If both of them are heads, this attack does 100 more damage. |
+| B4-130 | Raticate | PARTIAL | Unimplemented ability text: Once during your turn, when you play this Pokémon from your hand to evolve 1 of your Pokémon, you may look at the top 4 cards of your deck and put all Item cards you find there into your hand. Shuffle the other cards back into your deck. |
+| B4-136 | Kecleon | PARTIAL | Unimplemented attack text: If this Pokémon and your opponent's Active Pokémon have 1 or more of the same type of Energy attached, this attack does 30 more damage. |
+| B4-139 | Unfezant | PARTIAL | Unimplemented attack text: Flip a coin. If tails, this attack does nothing. If heads, during your opponent's next turn, prevent all damage from—and effects of—attacks done to this Pokémon. |
+| B4-142 | Furfrou | PARTIAL | Unimplemented attack text: If any of your Pokémon were Knocked Out by damage from an attack during your opponent's last turn, this attack does 50 more damage. |
+| B4-145 | Order Pad | PARTIAL | Unimplemented trainer text: Flip a coin. If heads, put a random Item card from your deck into your hand. |
+| B4-148 | Deceptive Needle | PARTIAL | Unimplemented trainer text: At the end of your turn, if the {D} Pokémon this card is attached to is in the Active Spot, do 10 damage to your opponent's Active Pokémon. |
+| B4-149 | Clear Veil | PARTIAL | Unimplemented trainer text: Prevent all effects of attacks used by your opponent's Pokémon done to the Pokémon this card is attached to. (Existing effects are not removed.) |
+| B4-150 | Psychic | PARTIAL | Unimplemented trainer text: You can use this card only if your Pokémon in the Active Spot has the Psychic attack. Choose 1 of your opponent's Benched Pokémon and move a random Energy from it to your opponent's Active Pokémon. |
+| B4-151 | Drayden | PARTIAL | Unimplemented trainer text: During this turn, 1 of your opponent's Pokémon is chosen 1 more time for the Draco Meteor attack used by your Pokémon. |
+| B4-152 | Skyla | PARTIAL | Unimplemented trainer text: Switch your Active Stage 1 Pokémon with 1 of your Benched Pokémon. |
+| B4-153 | Wally | PARTIAL | Unimplemented trainer text: Take a {C} Energy from your Energy Zone and attach it to 1 of your Stage 2 Pokémon. |
+| B4-154 | Soothing Shore | PARTIAL | Unimplemented trainer text: At the end of each player's turn, that player heals 20 damage from each of their Pokémon that has any {W} Energy attached. |
+| B4-155 | Rainbow Cave | PARTIAL | Unimplemented trainer text: Once during each player's turn, that player may discard the Energy that has been generated in their Energy Zone. If they do, the next Energy is produced. |
+| B4a-002 | Illumise | PARTIAL | Unimplemented attack text: If Volbeat is in your discard pile, this attack does 60 more damage. |
+| B4a-005 | Serperior | PARTIAL | Unimplemented ability text: This Pokémon gets +30 HP for each {G} Energy attached to it. |
+| B4a-006 | Team Rocket's Magmar | PARTIAL | Unimplemented attack text: This attack does 50 more damage for each Special Condition affecting your opponent's Active Pokémon. |
+| B4a-007 | Team Rocket's Moltres ex | PARTIAL | Unimplemented attack text: Flip 3 coins. For each heads, produce a {R} Energy from your Energy Zone and attach it to this Pokémon. |
+| B4a-018 | Hisuian Basculegion | PARTIAL | Unimplemented attack text: This attack does 50 more damage for each point your opponent got during their last turn. |
+| B4a-020 | Team Rocket's Electrode | PARTIAL | Unimplemented ability text: If this Pokémon is in the Active Spot and is Knocked Out by damage from an attack from your opponent's Pokémon, do 70 damage to the Attacking Pokémon. |
+| B4a-021 | Team Rocket's Zapdos ex | PARTIAL | Unimplemented attack text: This attack also does 50 damage to 1 of your opponent's Benched Pokémon that has damage on it. |
+| B4a-025 | Team Rocket's Slowpoke | PARTIAL | Unimplemented attack text: Put a random Item card from your discard pile into your hand. |
+| B4a-026 | Team Rocket's Slowking ex | PARTIAL | Unimplemented attack text: This attack does 20 damage for each card in your hand.; Unimplemented ability text: Once during your turn, if this Pokémon is in the Active Spot, you may draw a card. |
+| B4a-028 | Team Rocket's Hypno | PARTIAL | Unimplemented attack text: Switch in 1 of your opponent's Benched Pokémon to the Active Spot. If you do, this attack does 50 damage to the new Active Pokémon. |
+| B4a-039 | Team Rocket's Arbok | PARTIAL | Unimplemented attack text: This attack does 10 more damage for each Energy in your opponent's Active Pokémon's Retreat Cost. |
+| B4a-041 | Team Rocket's Muk | PARTIAL | Unimplemented attack text: If your opponent's Active Pokémon is Poisoned, heal 60 damage from this Pokémon. |
+| B4a-043 | Team Rocket's Weezing ex | PARTIAL | Unimplemented ability text: Once during your turn, when you play this Pokémon from your hand to evolve 1 of your Pokémon, you may make your opponent's Active Pokémon Poisoned and Burned. |
+| B4a-044 | Team Rocket's Sneasel | PARTIAL | Unimplemented attack text: Flip a coin for each Pokémon you have in play. This attack does 30 damage for each heads. |
+| B4a-050 | Team Rocket's Tinkaton | PARTIAL | Unimplemented attack text: During your opponent's next turn, attacks used by the Defending Pokémon cost 2 {C} more, and its Retreat Cost is 2 {C} more. |
+| B4a-051 | Gholdengo | PARTIAL | Unimplemented ability text: Once during your turn, when you flip any coins for an effect of your Trainer cards, you may ignore all results of those coin flips and begin flipping those coins again. You can't use more than 1 Luxury Coin Ability each turn. |
+| B4a-054 | Garchomp | PARTIAL | Unimplemented ability text: If your opponent's Pokémon is Knocked Out by damage from this Pokémon's attacks, during your opponent's next turn, prevent all damage from—and effects of—attacks done to this Pokémon. |
+| B4a-057 | Regidrago | PARTIAL | Invalid damage: 140-; Unimplemented attack text: If this Pokémon has damage on it, this attack does −100 damage. |
+| B4a-059 | Team Rocket's Raticate ex | PARTIAL | Unimplemented ability text: Once during your turn, when you play this Pokémon from your hand to evolve 1 of your Pokémon, you may move a random Energy from your opponent's Active Pokémon to this Pokémon. |
+| B4a-062 | Team Rocket's Kecleon | PARTIAL | Unimplemented ability text: Once during your turn, you may look at a random card from your opponent's hand. |
+| B4a-063 | Happiny | PARTIAL | Unimplemented attack text: During your next turn, attacks used by your Pokémon do +20 damage to your opponent's Active Pokémon. |
+| B4a-067 | Team Rocket's Thieving Machine | PARTIAL | Unimplemented trainer text: Put a random Item card, except any Team Rocket's Thieving Machine, from your opponent's discard pile into your hand. |
+| B4a-068 | Team Rocket's Goo-zooka | PARTIAL | Unimplemented trainer text: Until the end of your opponent's next turn, your opponent's Active Pokémon's Retreat Cost is 1 more. |
+| B4a-069 | Team Rocket's Researcher | PARTIAL | Unimplemented trainer text: Flip a coin until you get tails. For each heads, put a random Pokémon that has “Team Rocket” in its name from your deck into your hand. |
+| B4a-070 | Team Rocket's Master Plan | PARTIAL | Unimplemented trainer text: Your opponent's Active Pokémon is now Confused. Flip a coin. If tails, your Active Pokémon is now also Confused. |
+| B4a-071 | Team Rocket's Boss | PARTIAL | Unimplemented trainer text: Look at your opponent's hand and put any number of Basic Pokémon you find there onto your opponent's Bench. |
+| B4a-072 | Arcade | PARTIAL | Unimplemented trainer text: Once during each player's turn, that player may flip 3 coins. If all of them are heads, that player draws cards until they have 7 cards in their hand. |
 
 See `TCGP_CARD_DATABASE.md` for source licences, update commands, validation and limitations. Machine-readable card/print lists are in `generated/tcgp-card-coverage.json`.

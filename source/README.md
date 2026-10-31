@@ -1,3 +1,17 @@
+# LuckyDex v0.69.35 — executable cards and coherent decks
+
+This pass uses only the supplied `EGG_EMERGENCY_0654_NOTES.zip`. Its actual version was v0.69.33/7014, despite the prompt referring to v0.69.34; no unavailable intermediate code was restored. Release v0.69.35 uses Android7016, the same application ID and permanent signer.
+
+The reviewed catalogue now has **1,605 FULL, 714 PARTIAL, 0 UNSUPPORTED** gameplay identities at the existing2026-10-27 cutoff: **460 more FULL** than this supplied baseline. A pinned MIT source fills all631 missing detailed identities via exact collector-number/design-key joins, without replacing reviewed TCGdex records. Unknown text is not guessed, and714 identities remain disabled pending complete mechanics.
+
+Quick Build selects owned compatible attackers, complete evolution chains, Trainers and cost-based Energy rather than alphabetical cards/Grass. Manual Energy choices persist with strategic warnings; automatic mode follows edits. Developer controls focus FULL owned decks by card/Pokémon ID, type, set or mechanic. PARTIAL focus exposes blockers but does not yet produce a playable PARTIAL-card test deck. Attacks remain inspectable when unpaid, show needs versus attached Energy, and become actionable through the real engine. Attached/current/next Energy are typed. Routine battle narration expires after1.6seconds.
+
+Run `node scripts/tcgp-pass-tests.cjs --tag=verified` for focused regressions; `node scripts/run-tests.cjs` remains the standard complete runner. `--all` on the pass runner continues across failures and records every program. See `docs/TCGP_IMPLEMENTATION_REPORT_v06935.md`, `generated/tcgp-implementation-audit-v06935.json` (every initial non-FULL identity), and `generated/tcgp-human-review-v06935.json` (every remaining non-FULL card). This is an implemented progress release, not a100%-completion claim.
+
+Delivery is a source-relative changed-only patch over canonical `source/`. Do not replace the tree or commit a full source ZIP. Older release notes below are history, not the current baseline.
+
+---
+
 # LuckyDex v0.69.33 — expanded Pocket battle catalogue
 
 Based solely on the newly supplied canonical v0.69.32 source. Android versionCode 7014; application ID and signer unchanged. This release maps 4,316 currently obtainable Pocket prints across 24 set/promo namespaces to 2,319 gameplay identities, retaining print ownership and alternate art. Support is explicit: **1,145 FULL, 543 PARTIAL, 631 UNSUPPORTED**. Non-FULL cards are visible with exact reasons and excluded from legal decks; this is not an all-cards-implemented claim.

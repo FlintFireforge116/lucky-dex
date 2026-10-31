@@ -1,14 +1,16 @@
 (function(root, factory){
   let data = root && root.LuckyDexTCGPBattleData;
   let effects = root && root.LuckyDexTCGPBattleEffects;
+  let decks = root && root.LuckyDexTCGPBattleDecks;
   if (typeof module === 'object' && module.exports){
     data = require('./tcgp-battle-data.js');
     effects = require('./tcgp-battle-effects.js');
-    module.exports = factory(data,effects);
+    decks = require('./tcgp-battle-decks.js');
+    module.exports = factory(data,effects,decks);
   } else if (root){
-    root.LuckyDexTCGPBattleCore = factory(data,effects);
+    root.LuckyDexTCGPBattleCore = factory(data,effects,decks);
   }
-})(typeof globalThis !== 'undefined' ? globalThis : this, function(data,effects){
+})(typeof globalThis !== 'undefined' ? globalThis : this, function(data,effects,decks){
   'use strict';
 
   function seedValue(seed){
@@ -136,12 +138,12 @@
   }
 
   function createSide(side, ids, energyType, energyTypes){
-    const types=energyTypes==null?[energyType||'Grass']:energyTypes;
+    const types=energyTypes==null?(energyType?[energyType]:decks.analyzeDeck(ids).recommendedEnergyTypes):energyTypes;
     if(!Array.isArray(types)||types.length<1||types.length>3||new Set(types).size!==types.length||types.some(t=>!Object.values(effects.ENERGY_CODE).includes(t)))throw new Error('Energy Zone requires one to three distinct valid Energy types.');
     return {
       id:side,
       deck:makeDeck(side,ids), hand:[], discard:[], active:null, bench:[], points:0,
-      energyTypes:types.slice(), energyType:types[0], energyAvailable:false, energyUsed:false, retreated:false,
+      energyTypes:types.slice(), energyType:types[0], nextEnergyType:types[0], energyAvailable:false, energyUsed:false, retreated:false,
       turnCount:0
     };
   }
@@ -151,6 +153,7 @@
     const playerDeck = Array.isArray(opts.playerDeck) ? opts.playerDeck.slice() : [];
     const opponentDeck = Array.isArray(opts.opponentDeck) ? opts.opponentDeck.slice() : [];
     if (playerDeck.length !== 20 || opponentDeck.length !== 20) throw new Error('Pocket battles require 20-card decks.');
+    if([playerDeck,opponentDeck].some(deck=>!deck.some(id=>{const c=data.cardById(id);return c?.kind==='pokemon'&&c.stage==='Basic';})))throw new Error('Each deck requires at least one Basic Pokémon.');
     const firstSide = opts.firstSide === 'opponent' ? 'opponent' : 'player';
     const manualPlayerSetup = !!opts.manualPlayerSetup;
     const state = {
@@ -163,8 +166,8 @@
       turnNumber:1,
       log:[],
       sides:{
-        player:createSide('player',playerDeck,opts.playerEnergyType || 'Grass',opts.playerEnergyTypes),
-        opponent:createSide('opponent',opponentDeck,opts.opponentEnergyType || 'Grass',opts.opponentEnergyTypes)
+        player:createSide('player',playerDeck,opts.playerEnergyType,opts.playerEnergyTypes),
+        opponent:createSide('opponent',opponentDeck,opts.opponentEnergyType,opts.opponentEnergyTypes)
       }
     };
     shuffle(state,state.sides.player.deck);
@@ -185,7 +188,7 @@
     s.stadiumUsed = false;
     s.abilityUsed = s.abilityUsed || {};
     s.energyAvailable = !(state.turnNumber === 1 && side === state.firstSide);
-    if(s.energyAvailable&&(s.energyTypes||[]).length>1)s.energyType=s.energyTypes[Math.floor(random(state)*s.energyTypes.length)];
+    if(s.energyAvailable){s.energyType=s.nextEnergyType||s.energyTypes[0];s.nextEnergyType=s.energyTypes.length>1?s.energyTypes[Math.floor(random(state)*s.energyTypes.length)]:s.energyTypes[0];}
     drawCard(s);
     state.log.push({type:'turn',side,turnNumber:state.turnNumber});
   }
@@ -259,6 +262,15 @@
   function trainerType(card){return card.trainerType||card.subtype||'Item';}
   function effectChoices(effect,ctx){return effects.supportsEffect(effect)?effects.choicesForEffect(effect,ctx):[];}
 
+  function energyCostLabel(cost){const names={...effects.ENERGY_CODE,C:'Colourless'},counts={};for(const c of cost||'')counts[c]=(counts[c]||0)+1;return Object.entries(counts).map(([c,n])=>`${n} ${names[c]||c}`).join(' + ')||'No Energy';}
+  function attackAvailability(state,side,attackIndex){
+    const s=state.sides[side],slot=s?.active,attack=data.cardById(slot?.cardId)?.attacks?.[attackIndex];
+    if(!attack)return {usable:false,cost:'',reason:'No attack in this position.',actions:[]};
+    const cost=attackCost(state,side,attack),actions=legalActions(state,side).filter(a=>a.type==='attack'&&a.attackIndex===attackIndex);
+    const attached=Object.entries(slot.energy||{}).filter(([,n])=>n>0).map(([t,n])=>`${n} ${t}`).join(' + ')||'none';
+    let reason=actions.length?'Ready':!effects.canPayCost(slot.energy,cost)?`Needs ${energyCostLabel(cost)}. Attached: ${attached}.`:effects.isLocked(state,slot,'attack',attack.name)?'This attack is restricted this turn.':state.phase!=='battle'||state.activeSide!==side?'Not your attack turn.':slot.conditions?.sleep?'Asleep.':slot.conditions?.paralysis?'Paralyzed.':'No legal attack target.';
+    return {usable:actions.length>0,cost,reason,actions};
+  }
   function legalActions(state, side){
     if (!state) return [];
     if (state.phase === 'setup') return setupActions(state,side);
@@ -541,5 +553,5 @@
 
   function publicSnapshot(state){ return JSON.parse(JSON.stringify(state)); }
 
-  return {createBattle,makePokemonSlot,legalActions,applyAction,publicSnapshot,drawCard,endTurn,benchSlotAt,benchArrayIndex,normalizeBenchSlots,random,shuffle,checkup,effectContext,maxHp};
+  return {createBattle,makePokemonSlot,legalActions,attackAvailability,energyCostLabel,applyAction,publicSnapshot,drawCard,endTurn,benchSlotAt,benchArrayIndex,normalizeBenchSlots,random,shuffle,checkup,effectContext,maxHp};
 });

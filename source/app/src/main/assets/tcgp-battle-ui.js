@@ -24,13 +24,16 @@
   const CHALLENGE_ID='genetic-apex-beginner-ivysaur';
   const PRINT_ART_BY_ID=new Map((data.PRINTS||[]).map(print=>[String(print.id).toUpperCase(),print]));
   let cancelGesture=null;
-  let screen='home',builderCards=[],builderName='My Pocket Deck',builderMessage='',builderFilter='',builderEnergyTypes=['Grass'],currentPlayerEnergyTypes=['Grass'];
+  let screen='home',builderCards=[],builderName='My Pocket Deck',builderMessage='',builderFilter='',builderEnergyTypes=[],builderEnergyMode='auto',currentPlayerEnergyTypes=[];
   let currentBattle=null,currentChallenge=null,currentPractice=false,currentPlayerDeck=null,resultInfo=null,cpuPending=false,cpuTimer=null,cpuActions=0,battleActionCache=[],battleInspect=null,battleOverlay=null,battleContextActionIndices=[],battleDiscardSide='player',handDragSuppressUntil=0,battleEvent='';
 
   const esc=value=>String(value==null?'':value).replace(/[&<>"']/g,ch=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));
   const el=id=>root&&root.document?root.document.getElementById(id):null;
   const saveNow=()=>{try{if(root&&typeof root.save==='function')root.save();}catch(error){console.error('[TCGP Battle] save failed',error);}};
   const toast=msg=>{try{if(root&&typeof root.showToast==='function')root.showToast(msg,2400);}catch(_){}};
+  let battleEventTimer=null,battleEventSerial=0;
+  function clearBattleEvent(){clearTimeout(battleEventTimer);battleEventTimer=null;battleEvent='';battleEventSerial++;}
+  function setBattleEvent(message){clearBattleEvent();battleEvent=message;const serial=battleEventSerial;battleEventTimer=setTimeout(()=>{if(serial!==battleEventSerial)return;battleEvent='';battleEventTimer=null;el('tcgpBattleContent')?.querySelector('.tcgp-live-action-event')?.remove();},1600);}
 
   function cardArtUrl(cardId){
     const id=String(cardId||'').toUpperCase(),match=/^([A-Z0-9]+(?:-[A-Z])?)-(\d+)$/.exec(id);
@@ -140,6 +143,7 @@
   function setBattleLive(on){if(!root?.document?.body)return;if(on)root.document.body.classList.add('tcgp-battle-live');else root.document.body.classList.remove('tcgp-battle-live');}
 
   function renderHome(){
+    clearBattleEvent();
     cancelGesture?.();clearTimeout(cpuTimer);cpuTimer=null;cpuPending=false;
     setBattleLive(false);battleOverlay=null;battleInspect=null;setScreen('home');
     const state=battleSave(),stats=state.stats,owned=enabledOwnedRows(),deck=activeDeck(),challenge=solo.challengeById(CHALLENGE_ID),cleared=!!state.firstClears[challenge.id];
@@ -178,19 +182,22 @@
 
   function renderBuilder(){
     setBattleLive(false);setScreen('builder');
-    const validation=decks.validateDeck(builderCards,ownedRows());
+    if(builderEnergyMode==='auto')builderEnergyTypes=decks.analyzeDeck(builderCards).recommendedEnergyTypes;
+    const validation=decks.validateDeck(builderCards,ownedRows(),builderEnergyTypes);
     setContent(`<section class="tcgp-battle-panel"><div class="eyebrow">20-CARD DECK</div><h3>Deck Builder</h3><p>Alternate artworks count as the same gameplay card. Pocket's two-copy limit is enforced across every print.</p><div class="tcgp-deck-summary"><span><small>DECK SIZE</small><br><b>${builderCards.length}/20</b></span><span><small>ENERGY ZONE</small><br><b>GRASS</b></span></div><input id="tcgpDeckName" class="tcgp-deck-name" maxlength="40" value="${esc(builderName)}" aria-label="Deck name"><div class="tcgp-battle-actions-row"><button class="tcgp-battle-action secondary" data-tcgp-action="quick">QUICK BUILD</button><button class="tcgp-battle-action" data-tcgp-action="save-deck" ${validation.ok?'':'disabled'}>SAVE DECK</button></div>${builderMessage?`<div class="tcgp-battle-error">${esc(builderMessage)}</div>`:''}${!validation.ok&&builderCards.length?`<div class="tcgp-battle-note">${esc(validation.errors[0])}</div>`:''}</section><section class="tcgp-battle-panel"><h3>Battle Basics</h3><div class="tcgp-deck-list">${supportRow()}</div></section><section class="tcgp-battle-panel"><h3>Your Pocket cards</h3><input id="tcgpDeckSearch" class="tcgp-deck-name" type="search" value="${esc(builderFilter)}" placeholder="Search name, set, type or support status" aria-label="Search owned Pocket cards"><div id="tcgpDeckCatalogue"></div></section>`);
     const input=el('tcgpDeckName');if(input)input.addEventListener('input',event=>{builderName=event.target.value||'My Pocket Deck';});
-    input?.insertAdjacentHTML('beforebegin',`<label for="tcgpDeckEnergy">Energy Zone · choose 1 to 3 types</label><select id="tcgpDeckEnergy" class="tcgp-deck-name" aria-label="Energy types" multiple size="3">${decks.ENERGY_TYPES.map(type=>`<option value="${type}" ${builderEnergyTypes.includes(type)?'selected':''}>${type}</option>`).join('')}</select>`);
+    input?.insertAdjacentHTML('beforebegin',`<label for="tcgpDeckEnergyMode">Energy selection</label><select id="tcgpDeckEnergyMode" class="tcgp-deck-name"><option value="auto" ${builderEnergyMode==='auto'?'selected':''}>Automatic · follows attack costs</option><option value="manual" ${builderEnergyMode==='manual'?'selected':''}>Manual · preserve my choices</option></select><label for="tcgpDeckEnergy">Energy Zone · choose 1 to 3 types</label><select id="tcgpDeckEnergy" class="tcgp-deck-name" aria-label="Energy types" multiple size="3">${decks.ENERGY_TYPES.map(type=>`<option value="${type}" ${builderEnergyTypes.includes(type)?'selected':''}>${type}</option>`).join('')}</select><div class="tcgp-deck-warnings" role="status">${validation.warnings.map(w=>`<p>${esc(w.message)}</p>`).join('')}${builderEnergyTypes.length>3?'<p>More than three required Energy types: simplify the deck or choose an experimental configuration.</p>':''}</div>`);
+    el('tcgpDeckEnergyMode')?.addEventListener('change',event=>{builderEnergyMode=event.target.value==='manual'?'manual':'auto';renderBuilder();});
     const energySummary=el('tcgpBattleContent')?.querySelector('.tcgp-deck-summary span:last-child b');
     if(energySummary)energySummary.textContent=builderEnergyTypes.join(' / ').toUpperCase();
     el('tcgpDeckEnergy')?.addEventListener('change',event=>{
       const selected=Array.from(event.target.selectedOptions,option=>option.value);
       if(!selected.length||selected.length>3){for(const option of event.target.options)option.selected=builderEnergyTypes.includes(option.value);toast('Choose 1 to 3 different Energy types.');return;}
-      builderEnergyTypes=selected;if(energySummary)energySummary.textContent=selected.join(' / ').toUpperCase();
+      builderEnergyTypes=selected;builderEnergyMode='manual';renderBuilder();
     });
     el('tcgpDeckSearch')?.addEventListener('input',event=>{builderFilter=event.target.value;renderBuilderCatalogue();});
     renderBuilderCatalogue();
+    el('tcgpBattleContent')?.insertAdjacentHTML('beforeend',`<details class="tcgp-battle-panel"><summary>Developer / Testing · focused deck</summary><p>Build from owned FULL cards. Non-FULL focus cards show their review blockers; they are never silently enabled.</p><select id="tcgpTestKind" class="tcgp-deck-name" aria-label="Test deck focus"><option value="card">Card / Pokémon ID</option><option value="type">Type</option><option value="setId">Set</option><option value="mechanic">Effect / mechanic</option><option value="status">Support status (e.g. PARTIAL)</option></select><input id="tcgpTestValue" class="tcgp-deck-name" placeholder="A1-083, Water, A1, coinFlip or PARTIAL" aria-label="Test focus value"><button type="button" class="tcgp-battle-action" data-tcgp-action="test-build">BUILD FOCUSED TEST DECK</button></details>`);
   }
   function renderBuilderCatalogue(){
     const container=el('tcgpDeckCatalogue');if(!container)return;
@@ -201,7 +208,7 @@
   function hpInfo(slot,side){
     if(!slot)return{card:null,hp:0,left:0,pct:0,energy:0};
     const card=data.cardById(slot.cardId),hp=currentBattle&&core.maxHp?core.maxHp(currentBattle,side||'player',slot):Number(card?.hp||0),left=Math.max(0,hp-Number(slot.damage||0)),energy=Object.values(slot.energy||{}).reduce((a,b)=>a+Number(b||0),0);
-    return{card,hp,left,pct:hp?Math.max(0,Math.min(100,left/hp*100)):0,energy};
+    return{card,hp,left,pct:hp?Math.max(0,Math.min(100,left/hp*100)):0,energy,energyPool:slot.energy||{}};
   }
   function typeLabel(card){
     if(!card)return'Card';
@@ -217,12 +224,12 @@
     if(effect.type==='forceOpponentSwitch')return 'Force your opponent to switch their Active Pokémon.';
     return'Special effect.';
   }
-  function cardRulesHtml(card){
+  function cardRulesHtml(card,availability){
     const text=value=>typeof value==='string'?value:Array.isArray(value)?value.filter(v=>typeof v==='string').join(' '):'';
     const paragraph=value=>value?`<p>${esc(value)}</p>`:'';
     const abilities=cardAbilities(card);
     const abilityHtml=abilities.map(ability=>`<article><div><b>Ability · ${esc(ability.name||'Ability')}</b></div>${paragraph(text(ability.text)||summarizeEffect(ability.effect))}${paragraph(text(ability.timing))}</article>`).join('');
-    const attacks=(card.attacks||[]).map(attack=>`<article><div><b>${esc(attack.name)}</b><strong>${esc(attack.damageText??attack.damage??0)}</strong></div>${energyCostHtml(attack.cost)}${paragraph(text(attack.text)||summarizeEffect(attack.effect))}</article>`).join('');
+    const attacks=(card.attacks||[]).map((attack,i)=>`<article><div><b>${esc(attack.name)}</b><strong>${esc(attack.damageText??attack.damage??0)}</strong></div>${energyCostHtml(availability?.[i]?.cost??attack.cost)}${paragraph(text(attack.text)||summarizeEffect(attack.effect))}${paragraph(availability?.[i]?.reason)}</article>`).join('');
     const subtype=card.trainerSubtype||card.trainerType||'Trainer';
     const defaultTiming=subtype==='Supporter'?'You may play only 1 Supporter during your turn.':subtype==='Tool'?'Attach to 1 of your Pokémon that does not already have a Tool.':subtype==='Stadium'?'Only 1 Stadium may be in play.':'';
     const trainer=card.kind==='trainer'?`<article><div><b>${esc(card.name)}</b><strong>${esc(subtype)}</strong></div>${paragraph(text(card.text)||summarizeEffect(card.effect))}${paragraph(text(card.timing)||defaultTiming)}</article>`:'';
@@ -232,7 +239,7 @@
     const letters=String(cost||'').split('').filter(Boolean);
     if(!letters.length)return '<span class="tcgp-cost-empty">No Energy</span>';
     const labelFor=letter=>({G:'Grass',R:'Fire',W:'Water',L:'Lightning',P:'Psychic',F:'Fighting',D:'Darkness',M:'Metal',C:'Colorless',N:'Dragon'}[letter]||letter);
-    return `<span class="tcgp-cost">${letters.map(letter=>`<i class="${letter==='G'?'grass':'colorless'}">${esc(labelFor(letter))}</i>`).join('')}</span>`;
+    return `<span class="tcgp-cost">${letters.map(letter=>`<i data-energy="${esc(labelFor(letter))}">${esc(labelFor(letter))}</i>`).join('')}</span>`;
   }
   function buildInspectSpec(side,zone,index){
     return { side:side||'player', zone:zone||'active', index:Number(index||0) };
@@ -289,23 +296,23 @@
     return `data-card-drop-zone="1" data-card-zone="${esc(target)}" data-card-index="${benchIndex}"`;
   }
   function livePokemonActionsHtml(side,zone,index){
-    if(side!=='player'||cpuPending)return'';
+    if(side!=='player')return'';
     const parts=[];
     if(currentBattle?.phase==='promote'&&currentBattle?.promotionSide==='player'&&zone==='bench'){
       const promoteIndex=battleActionCache.findIndex(action=>action.type==='promote'&&Number(action.benchIndex)===Number(index||0));
       if(promoteIndex>=0)parts.push(`<button type="button" class="tcgp-live-context-action promote" data-tcgp-action="battle-action" data-action-index="${promoteIndex}">PROMOTE TO ACTIVE</button>`);
       return parts.length?`<div class="tcgp-live-card-actions">${parts.join('')}</div>`:'';
     }
-    if(currentBattle?.phase!=='battle'||currentBattle?.activeSide!=='player')return'';
+    if(currentBattle?.phase!=='battle')return'';
     if(zone==='active'){
       const attacks=actionIndicesFor(action=>action.type==='attack');
       const attackGroups=new Map();
       attacks.forEach(actionIndex=>{const attackIndex=battleActionCache[actionIndex].attackIndex;if(!attackGroups.has(attackIndex))attackGroups.set(attackIndex,[]);attackGroups.get(attackIndex).push(actionIndex);});
-      attackGroups.forEach(indices=>{
-        const actionIndex=indices[0];
-        const action=battleActionCache[actionIndex],card=data.cardById(currentBattle?.sides?.player?.active?.cardId),attack=card?.attacks?.[action.attackIndex],cost=String(attack?.cost||'—');
+      const card=data.cardById(currentBattle?.sides?.player?.active?.cardId);
+      (card?.attacks||[]).forEach((attack,attackIndex)=>{
+        const indices=attackGroups.get(attackIndex)||[],actionIndex=indices[0],availability=core.attackAvailability(currentBattle,'player',attackIndex),cost=core.energyCostLabel(availability.cost);
         const attrs=indices.length>1?`data-tcgp-action="open-context-actions" data-action-indices="${indices.join(',')}"`:`data-tcgp-action="battle-action" data-action-index="${actionIndex}"`;
-        parts.push(`<button type="button" class="tcgp-live-context-action attack" ${attrs}><b>${esc(attack?.name||'ATTACK')}</b><small>${esc(cost)} ENERGY${indices.length>1?' · CHOOSE TARGET':''}</small><strong>${esc(attack?.damageText??attack?.damage??0)} DMG</strong></button>`);
+        parts.push(`<button type="button" class="tcgp-live-context-action attack" ${indices.length?'':'disabled'} title="${esc(availability.reason)}" ${attrs}><b>${esc(attack?.name||'ATTACK')}</b><small>${indices.length?esc(cost):'Needs '+esc(cost)}${indices.length>1?' · CHOOSE TARGET':''}</small><strong>${esc(attack?.damageText??attack?.damage??0)} DMG</strong></button>`);
       });
       const retreats=actionIndicesFor(action=>action.type==='retreat');
       if(retreats.length)parts.push(contextActionButton(retreats,'RETREAT','retreat'));
@@ -319,8 +326,9 @@
   }
   function liveAttachedEnergyHtml(info){
     if(!info?.energy)return'';
-    const shown=Math.min(3,Number(info.energy||0)),dots=Array.from({length:shown},()=>'<i></i>').join('');
-    return `<span class="tcgp-live-attached-energy" aria-label="${info.energy} attached Energy">${dots}${info.energy>3?`<b>+${info.energy-3}</b>`:''}</span>`;
+    const codes={Grass:'G',Fire:'R',Water:'W',Lightning:'L',Psychic:'P',Fighting:'F',Darkness:'D',Metal:'M'};
+    const entries=Object.entries(info.energyPool||{}).filter(([,n])=>n>0),label=entries.map(([type,n])=>`${n} ${type}`).join(' + ');
+    return `<span class="tcgp-live-attached-energy" aria-label="${esc(label)} attached Energy">${entries.map(([type,n])=>`<i data-energy="${esc(type)}" title="${esc(type)}">${codes[type]||'?'}${n>1?`<b>${n}</b>`:''}</i>`).join('')}</span>`;
   }
   function liveCardHtml(slot,opts){
     const settings=opts||{},compact=!!settings.compact,side=settings.side||'player',zone=settings.zone||'active',index=Number(settings.index||0),targetAttrs=[energyTargetAttrs(side,zone,index),cardDropAttrs(side,zone,index)].filter(Boolean).join(' ');
@@ -386,13 +394,13 @@
   function liveEnergySourceHtml(side){
     const available=currentBattle?.phase==='battle'&&currentBattle?.activeSide==='player'&&!cpuPending&&side.energyAvailable&&!side.energyUsed;
     const energyType=side.energyType||'Grass',symbol={Grass:'G',Fire:'R',Water:'W',Lightning:'L',Psychic:'P',Fighting:'F',Darkness:'D',Metal:'M'}[energyType]||'?';
-    return `<button type="button" class="tcgp-live-energy-source ${available?'ready':''}" data-tcgp-energy-source="1" ${available?'':'disabled'} aria-label="${available?`Drag ${esc(energyType)} Energy to a Pokémon`:'Energy unavailable'}"><span>${symbol}</span><small>ENERGY</small></button>`;
+    return `<button type="button" class="tcgp-live-energy-source ${available?'ready':''}" data-energy="${esc(energyType)}" data-tcgp-energy-source="1" ${available?'':'disabled'} aria-label="${available?`Drag ${esc(energyType)} Energy to a Pokémon`:`${esc(energyType)} Energy unavailable`} · Next ${esc(side.nextEnergyType||energyType)}"><span>${symbol}</span><small>${esc(energyType).toUpperCase()}<br>NEXT ${esc(side.nextEnergyType||energyType).toUpperCase()}</small></button>`;
   }
   function liveInspectOverlayHtml(){
     if(battleOverlay!=='inspect'||!battleInspect)return'';
     const info=resolveInspect(currentBattle,battleInspect);if(!info?.card)return'';
     const card=info.card,art=cardArtUrl(card.id),health=info.slot?hpInfo(info.slot,battleInspect.side):null;
-    return `<div class="tcgp-live-overlay"><button class="tcgp-live-overlay-scrim" type="button" data-tcgp-action="close-overlay" aria-label="Close card detail"></button><section class="tcgp-live-sheet tcgp-live-card-sheet"><button class="tcgp-live-sheet-close" type="button" data-tcgp-action="close-overlay">×</button><div class="tcgp-live-sheet-card">${art?`<img src="${esc(art)}" alt="${esc(card.name)}">`:''}<div><div class="eyebrow">${esc(info.subtitle)}</div><h3>${esc(card.name)}</h3><div class="tcgp-live-tags"><span>${esc(typeLabel(card))}</span>${card.kind==='pokemon'||info.slot?`<span>HP ${health?.left??card.hp}/${health?.hp??card.hp}</span><span>⚡ ${health?.energy||0}</span><span>Retreat ${Number(card.retreat||0)}</span><span>Weak ${esc(card.weakness||'—')}</span>`:''}</div></div></div><div class="tcgp-live-sheet-attacks">${cardRulesHtml(card)}</div></section></div>`;
+    return `<div class="tcgp-live-overlay"><button class="tcgp-live-overlay-scrim" type="button" data-tcgp-action="close-overlay" aria-label="Close card detail"></button><section class="tcgp-live-sheet tcgp-live-card-sheet"><button class="tcgp-live-sheet-close" type="button" data-tcgp-action="close-overlay">×</button><div class="tcgp-live-sheet-card">${art?`<img src="${esc(art)}" alt="${esc(card.name)}">`:''}<div><div class="eyebrow">${esc(info.subtitle)}</div><h3>${esc(card.name)}</h3><div class="tcgp-live-tags"><span>${esc(typeLabel(card))}</span>${card.kind==='pokemon'||info.slot?`<span>HP ${health?.left??card.hp}/${health?.hp??card.hp}</span><span>⚡ ${health?.energy||0}</span><span>Retreat ${Number(card.retreat||0)}</span><span>Weak ${esc(card.weakness||'—')}</span>`:''}</div></div></div><div class="tcgp-live-sheet-attacks">${cardRulesHtml(card,info.zone==='active'?(card.attacks||[]).map((_,i)=>core.attackAvailability(currentBattle,info.sideName,i)):null)}</div></section></div>`;
   }
   function liveContextActionsOverlayHtml(){
     if(battleOverlay!=='context-actions')return'';
@@ -459,15 +467,17 @@
     return {title:'DEFEAT',message:battle?.reason==='turn-limit'?'The 50-turn Solo limit expired.':'The CPU won the match.'};
   }
   function renderResult(){
+    clearBattleEvent();
     setBattleLive(false);battleOverlay=null;battleInspect=null;setScreen('result');
     const won=currentBattle?.winner==='player',practice=!!resultInfo?.practice,reward=resultInfo?.reward||{coins:0,dust:0};
     setContent(`<section class="tcgp-battle-result"><div class="eyebrow">SOLO BATTLE</div><h2>${esc(resultSummary(currentBattle).title)}</h2><p>${esc(resultSummary(currentBattle).message)}</p><div class="tcgp-battle-stat-grid"><div class="tcgp-battle-stat"><small>YOU</small><b>${currentBattle?.sides.player.points||0}</b></div><div class="tcgp-battle-stat"><small>CPU</small><b>${currentBattle?.sides.opponent.points||0}</b></div><div class="tcgp-battle-stat"><small>TURN</small><b>${currentBattle?.turnNumber||0}</b></div></div><div class="tcgp-battle-reward">${practice?'PRACTICE · NO REWARDS':won?(resultInfo.firstClear?`FIRST CLEAR · ◉ ${reward.coins} + ✦ ${reward.dust}`:'REPEAT CLEAR · NO CURRENCY FARMING'):'NO REWARD'}</div><div class="tcgp-battle-actions-row"><button class="tcgp-battle-action" data-tcgp-action="rematch">REMATCH</button><button class="tcgp-battle-action secondary" data-tcgp-action="home">BATTLE HOME</button></div></section>`);
   }
 
   function startBattle(cards,practice,energyTypes){
+    clearBattleEvent();
     cancelGesture?.();clearTimeout(cpuTimer);cpuTimer=null;
     currentChallenge=solo.challengeById(CHALLENGE_ID);currentPractice=!!practice;currentPlayerDeck=cards.slice();resultInfo=null;cpuPending=false;battleInspect=null;battleOverlay=null;battleEvent='';setBattleLive(true);
-    currentPlayerEnergyTypes=Array.isArray(energyTypes)?energyTypes.slice():['Grass'];
+    currentPlayerEnergyTypes=Array.isArray(energyTypes)?energyTypes.slice():decks.analyzeDeck(cards).recommendedEnergyTypes;
     currentBattle=solo.createBattle({challengeId:CHALLENGE_ID,playerDeck:cards,seed:Date.now()>>>0,playerEnergyType:currentPlayerEnergyTypes[0],playerEnergyTypes:currentPlayerEnergyTypes,manualPlayerSetup:true});
     renderBattle();maybeCpu();
   }
@@ -487,7 +497,7 @@
       if(!chosen){cpuPending=false;renderBattle();return;}
       core.applyAction(currentBattle,'opponent',chosen);
       cpuActions+=1;
-      battleEvent=eventForAction(chosen,'opponent',before);
+      setBattleEvent(eventForAction(chosen,'opponent',before));
     }catch(error){console.error('[TCGP Battle] CPU error',error);cpuPending=false;toast('Battle engine error.');renderBattle();return;}
     if(currentBattle?.phase==='finished'){
       cpuPending=false;renderBattle();clearTimeout(cpuTimer);cpuTimer=setTimeout(finishBattle,700);return;
@@ -501,7 +511,7 @@
     if(home)home.hidden=true;if(stage)stage.hidden=true;view.hidden=false;renderHome();
     const state=battleSave();if(!state.helpSeen){state.helpSeen=true;saveNow();showHelp();}
   }
-  function close(){cancelGesture?.();clearTimeout(cpuTimer);cpuTimer=null;cpuPending=false;currentBattle=null;const view=el('tcgpBattleView'),home=el('packHome');if(view)view.hidden=true;if(home)home.hidden=false;battleInspect=null;battleOverlay=null;setBattleLive(false);setScreen('home');}
+  function close(){clearBattleEvent();cancelGesture?.();clearTimeout(cpuTimer);cpuTimer=null;cpuPending=false;currentBattle=null;const view=el('tcgpBattleView'),home=el('packHome');if(view)view.hidden=true;if(home)home.hidden=false;battleInspect=null;battleOverlay=null;setBattleLive(false);setScreen('home');}
   function showHelp(){const help=el('tcgpBattleHelp');if(help)help.hidden=false;}
   function hideHelp(){const help=el('tcgpBattleHelp');if(help)help.hidden=true;}
   function back(){
@@ -515,9 +525,9 @@
 
   function startOwned(){const deck=activeDeck();if(!deck){toast('Build and save a legal owned deck first.');return;}startBattle(deck.cards,false,decks.deckEnergyTypes(deck));}
   function openBuilder(prefill){
-    const deck=activeDeck();builderName=deck?.name||'My Pocket Deck';builderMessage='';builderEnergyTypes=decks.deckEnergyTypes(deck);
+    const deck=activeDeck();builderName=deck?.name||'My Pocket Deck';builderMessage='';builderEnergyTypes=decks.deckEnergyTypes(deck);builderEnergyMode=deck?(deck.energyMode||'manual'):'auto';
     if(prefill==='quick'){
-      const quick=decks.buildQuickDeck(ownedRows());builderCards=quick.cards.slice();if(!quick.ok)builderMessage=quick.errors[0]||'Not enough supported cards yet.';
+      const quick=decks.buildQuickDeck(ownedRows());builderCards=quick.cards.slice();builderEnergyTypes=quick.energyTypes;builderEnergyMode='auto';builderMessage=quick.ok?quick.strategy:quick.errors[0]||'Not enough supported cards yet.';
     }else builderCards=deck?.cards?.slice()||[];
     renderBuilder();
   }
@@ -527,6 +537,13 @@
     if(Date.now()<handDragSuppressUntil&&btn.closest?.('[data-tcgp-hand-drag]'))return;
     if(action==='build')return openBuilder();
     if(action==='quick')return openBuilder('quick');
+    if(action==='test-build'){
+      const kind=el('tcgpTestKind')?.value,value=el('tcgpTestValue')?.value.trim(),options=kind==='card'?{cardId:value}:{[kind]:value};
+      const result=decks.buildQuickDeck(ownedRows(),options);builderMessage=result.ok?result.strategy:result.errors.join(' ');
+      if(result.ok){builderCards=result.cards;builderEnergyTypes=result.energyTypes;builderEnergyMode='auto';}
+      else if(kind==='card'){const card=data.cardById(value);if(card&&!card.battleEnabled)builderMessage+=' '+supportText(card);}
+      return renderBuilder();
+    }
     if(action==='battle-owned')return startOwned();
     if(action==='practice')return startBattle(decks.LOANER_PLAYER_DECK,true);
     if(action==='home')return renderHome();
@@ -538,7 +555,7 @@
       builderMessage='';return renderBuilder();
     }
     if(action==='save-deck'){
-      const result=decks.saveDeck(root.state,{id:activeDeck()?.id||'tcgp-main',name:builderName,cards:builderCards,energyTypes:builderEnergyTypes},ownedRows());
+      const result=decks.saveDeck(root.state,{id:activeDeck()?.id||'tcgp-main',name:builderName,cards:builderCards,energyTypes:builderEnergyTypes,energyMode:builderEnergyMode},ownedRows());
       if(!result.ok){builderMessage=result.errors[0]||'Deck is not legal.';return renderBuilder();}saveNow();toast('Pocket deck saved.');return renderHome();
     }
     if(action==='inspect-card'){
@@ -567,7 +584,7 @@
     battleOverlay=null;battleInspect=null;battleContextActionIndices=[];
     const before=currentBattle.log.length;
     try{core.applyAction(currentBattle,'player',chosen);}catch(error){console.error('[TCGP Battle] action error',error);toast(error.message||'That play is not legal.');return false;}
-    battleEvent=eventForAction(chosen,'player',before);
+    setBattleEvent(eventForAction(chosen,'player',before));
     if(currentBattle.phase==='finished')finishBattle();else{renderBattle();maybeCpu();}
     return true;
   }
@@ -590,7 +607,7 @@
     if(!action)return false;
     const before=currentBattle.log.length;
     try{core.applyAction(currentBattle,'player',action);}catch(error){console.error('[TCGP Battle] card drop error',error);toast(error.message||'That card cannot be placed there.');return false;}
-    battleEvent=eventForAction(action,'player',before);
+    setBattleEvent(eventForAction(action,'player',before));
     if(currentBattle.phase==='finished')finishBattle();else{renderBattle();maybeCpu();}
     return true;
   }
@@ -653,7 +670,7 @@
     if(!action)return false;
     const before=currentBattle.log.length;
     try{core.applyAction(currentBattle,'player',action);}catch(error){console.error('[TCGP Battle] energy drop error',error);toast(error.message||'That Energy attachment is not legal.');return false;}
-    battleEvent=eventForAction(action,'player',before);
+    setBattleEvent(eventForAction(action,'player',before));
     if(currentBattle.phase==='finished')finishBattle();else{renderBattle();maybeCpu();}
     return true;
   }
