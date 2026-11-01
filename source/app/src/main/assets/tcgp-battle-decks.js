@@ -120,11 +120,17 @@
     const opts=options||{},requestedTypes=[...new Set((Array.isArray(opts.types)?opts.types:opts.type?[opts.type]:[]).filter(t=>ENERGY_TYPES.includes(t)))].slice(0,2),style=opts.style==='random'?'random':'competitive',maxRarityRank=Math.max(0,Number(opts.maxRarityRank)||0);
     const eligibleRows=(ownedRows||[]).map(row=>({...row,quantity:eligibleOwnedQuantity(row,maxRarityRank)})).filter(row=>row.quantity>0);
     const owned=ownershipMap(eligibleRows),pool=[...owned].map(([id,n])=>({card:data.cardById(id),n:Math.min(2,n)})).filter(r=>r.n>0&&r.card?.battleEnabled&&!r.card.loaner);
+    const globalFamilyRoot=c=>{let current=c,guard=0;while(current?.kind==='pokemon'&&current.stage!=='Basic'&&current.evolvesFrom&&guard++<4){const prior=data.CARDS.find(x=>x?.kind==='pokemon'&&x.name===current.evolvesFrom);if(!prior)break;current=prior;}return data.normalizeName(current?.name||c?.name||'');};
+    const ownedEvolvedRoots=new Set(pool.filter(r=>r.card.kind==='pokemon'&&r.card.stage!=='Basic').map(r=>globalFamilyRoot(r.card)));
+    const knownEvolvedRoots=new Set(data.CARDS.filter(c=>c?.battleEnabled&&c.kind==='pokemon'&&c.stage!=='Basic').map(globalFamilyRoot));
+    const isStrandedBasic=c=>c?.kind==='pokemon'&&c.stage==='Basic'&&(c.points||1)<=1&&knownEvolvedRoots.has(globalFamilyRoot(c))&&!ownedEvolvedRoots.has(globalFamilyRoot(c));
+    const coherentCapacity=2+pool.filter(r=>!isStrandedBasic(r.card)).reduce((sum,r)=>sum+Math.min(2,r.n),0),avoidStrandedBasics=coherentCapacity>=20;
+    const strandedBasic=c=>avoidStrandedBasics&&isStrandedBasic(c);
     const fail=message=>({ok:false,cards:[],energyTypes:[],errors:[message]});
     const hasMechanic=(c,type)=>{let found=false;for(const e of [c.effect,...(c.attacks||[]).map(a=>a.effect),...(c.abilities||[]).map(a=>a.effect)])walkEffects(e,e=>{if(e.type===type)found=true;});return found;};
     const focus=opts.cardId?data.cardById(opts.cardId):null;
     if(opts.cardId&&(!focus?.battleEnabled||!owned.get(focus.id)))return fail('The focus card must be owned and FULL. Non-FULL rules remain available for review, not silently enabled.');
-    let seeds=pool.filter(r=>r.card.kind==='pokemon');
+    let seeds=pool.filter(r=>r.card.kind==='pokemon'&&!strandedBasic(r.card));
     const preMatch=c=>(!requestedTypes.length||requestedTypes.some(t=>data.hasType(c,t)))&&(!opts.setId||c.setId===opts.setId)&&(!opts.mechanic||hasMechanic(c,opts.mechanic))&&(!opts.status||c.support?.status===opts.status);
     if(!focus&&(requestedTypes.length||opts.setId||opts.mechanic||opts.status))seeds=pool.filter(r=>preMatch(r.card));
     if(focus)seeds=[{card:focus}];
@@ -174,6 +180,7 @@
         for(const base of bases){const prior=line(base.card,new Set(seen));if(prior)return [...prior,c];}return null;
       }
       function addLine(c){const bundle=line(c);if(!bundle)return false;const needed=bundle.filter(x=>!cards.includes(x.id));if(needed.some(x=>room(x)<1)||cards.length+needed.length>20)return false;for(const x of needed)add(x);return cards.includes(c.id);}
+      const lineMissingCount=c=>{const bundle=line(c);return bundle?bundle.filter(x=>!cards.includes(x.id)).length:Infinity;};
       const familyRoot=c=>{const bundle=line(c);return data.normalizeName((bundle?.[0]||c)?.name||'');};
       const representedEnergy=()=>new Set(cards.map(data.cardById).filter(c=>c?.kind==='pokemon').flatMap(c=>profilesByCard.get(c.id)||[]));
       let preservedOk=true;for(const id of preserved){const c=data.cardById(id);if(!c?.battleEnabled||!add(c)){preservedOk=false;break;}}if(!preservedOk)continue;
@@ -198,7 +205,7 @@
       }
       const coreNames=new Set(core.map(c=>data.normalizeName(c.name)));
       const affinity=c=>coreNames.has(data.normalizeName(c.name))?100:coreNames.has(data.normalizeName(c.evolvesFrom))?55:(profilesByCard.get(c.id)||[]).some(t=>primary.includes(t))?24:types(c).some(t=>types(seed.card).includes(t))?16:types(c).includes('Colorless')?2:0;
-      const pokemon=pool.filter(r=>r.card.kind==='pokemon'&&compatible(r.card)).sort((a,b)=>affinity(b.card)-affinity(a.card)||value(b.card)-value(a.card)||a.card.id.localeCompare(b.card.id));
+      const pokemon=pool.filter(r=>r.card.kind==='pokemon'&&compatible(r.card)&&!strandedBasic(r.card)).sort((a,b)=>affinity(b.card)-affinity(a.card)||value(b.card)-value(a.card)||a.card.id.localeCompare(b.card.id));
       const pokemonTotal=()=>cards.map(data.cardById).filter(c=>c?.kind==='pokemon').length;
       const familyKeys=()=>new Set(cards.map(data.cardById).filter(c=>c?.kind==='pokemon').map(familyRoot));
       // For a requested dual-Energy deck, deliberately add one compact partner package
@@ -206,8 +213,9 @@
       for(const wanted of requestedTypes){if(representedEnergy().has(wanted)||pokemonTotal()>=seed.budget)continue;const families=familyKeys();const partner=pokemon.find(r=>(profilesByCard.get(r.card.id)||[]).includes(wanted)&&(families.has(familyRoot(r.card))||families.size<2)&&line(r.card)?.length<=Math.max(1,seed.budget-pokemonTotal()));if(partner){addLine(partner.card);while(pokemonTotal()<seed.budget&&(idCounts.get(partner.card.id)||0)<2&&add(partner.card)){} }}
       // Competitive Pocket lists are compact: one main engine and, at most, one
       // complementary Pokémon family. Fill the rest with consistency Trainers.
-      for(const r of pokemon){if(pokemonTotal()>=seed.budget)break;const families=familyKeys(),family=familyRoot(r.card);if(!families.has(family)&&families.size>=2)continue;if(affinity(r.card)>0&&addLine(r.card))while(pokemonTotal()<seed.budget&&add(r.card)){} }
+      for(const r of pokemon){if(pokemonTotal()>=seed.budget)break;const families=familyKeys(),family=familyRoot(r.card);if(!families.has(family)&&families.size>=2)continue;if(pokemonTotal()+lineMissingCount(r.card)>seed.budget)continue;if(affinity(r.card)>0&&addLine(r.card))while(pokemonTotal()<seed.budget&&add(r.card)){} }
       const pokemonCards=cards.map(data.cardById).filter(c=>c.kind==='pokemon'),evolutions=pokemonCards.filter(c=>c.stage!=='Basic').length,expensive=pokemonCards.some(c=>c.attacks.some(a=>a.cost.length>=3)),retreatHeavy=pokemonCards.some(c=>c.retreat>=2);
+      const rareCandy=data.cardById('A3-144');if(pokemonCards.some(c=>c.stage==='Stage 2')&&rareCandy?.battleEnabled&&owned.get(rareCandy.id))while(add(rareCandy)){}
       const featureSet=new Set();for(const c of pokemonCards)for(const e of [...c.attacks.map(a=>a.effect),...([].concat(c.abilities||c.ability||[])).map(a=>a.effect)])walkEffects(e,e=>featureSet.add(e.type));
       const matches=(c,f)=>!f||Object.entries(f).every(([k,v])=>{
         if(k==='subtype')return types(c).includes(v);if(k==='isEx')return (c.points>=2)===v;
@@ -268,12 +276,15 @@
       // Small collections may need a second copy of generic utility to reach 20;
       // only use this after the diversified competitive shell has been exhausted.
       for(const r of optionalTrainers){if(cards.length>=20)break;if(r.card.trainerType==='Stadium'&&trainerCount('Stadium')>=Math.max(stadiumLimit,2))continue;while(cards.length<20&&add(r.card)){if(r.card.trainerType==='Stadium'&&trainerCount('Stadium')>=Math.max(stadiumLimit,2))break;} }
-      for(const r of pokemon){if(cards.length>=20)break;const families=familyKeys(),family=familyRoot(r.card);if(!families.has(family)&&families.size>=2)continue;if(addLine(r.card))while(cards.length<20&&pokemonTotal()<10&&add(r.card)){} }
+      for(const r of pokemon){if(cards.length>=20)break;const families=familyKeys(),family=familyRoot(r.card);if(!families.has(family)&&families.size>=2)continue;if(pokemonTotal()+lineMissingCount(r.card)>10)continue;if(addLine(r.card))while(cards.length<20&&pokemonTotal()<10&&add(r.card)){} }
       // Collection-scarcity fallback: competitive composition is the goal, not a
       // reason to refuse a legal deck when the player simply does not own enough
       // FULL Trainers. Only after the compact shell is exhausted may extra
       // compatible Pokémon/families fill the remaining slots.
-      if(cards.length<20){for(const r of pokemon){if(cards.length>=20)break;if(addLine(r.card))while(cards.length<20&&add(r.card)){} }}
+      if(cards.length<20){for(const r of pokemon){if(cards.length>=20||style==='random'&&pokemonTotal()>=10)break;if(style==='random'&&pokemonTotal()+lineMissingCount(r.card)>10)continue;if(addLine(r.card))while(cards.length<20&&(style!=='random'||pokemonTotal()<10)&&add(r.card)){} }}
+      const selectedPokemon=cards.map(data.cardById).filter(c=>c?.kind==='pokemon'),selectedRoots=new Map();for(const c of selectedPokemon){const root=globalFamilyRoot(c);if(!selectedRoots.has(root))selectedRoots.set(root,[]);selectedRoots.get(root).push(c);}
+      const strandedPreEvolution=[...selectedRoots.entries()].some(([root,members])=>members.every(c=>c.stage==='Basic'&&(c.points||1)<=1)&&knownEvolvedRoots.has(root));
+      if(!focus&&avoidStrandedBasics&&strandedPreEvolution)continue;
       const analysis=analyzeDeck(cards,primary),valid=validateDeck(cards,eligibleRows,primary),represented=representedEnergy();
       if(!valid.ok||analysis.unpowerable.length||analysis.missingEnergyTypes.length||analysis.warnings.some(w=>w.code==='orphan')||requestedTypes.some(t=>!represented.has(t)))continue;
       candidatesEvaluated++;

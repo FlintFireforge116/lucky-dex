@@ -56,7 +56,7 @@ function fixture(card,effect,ability){
   if(e.type==='playFossil')p.bench=[];
   if(Array.isArray(e.effects))e.effects.forEach(visit);visit(e.heads);visit(e.tails);visit(e.effect);
  }
- visit(effect);if(card.kind==='trainer'&&!ability)p.hand=[{uid:'trainer',cardId:card.id}];return {b,source,unavailablePositivePreconditions};
+ visit(effect);if(card.kind==='trainer'&&!ability){if(card.effect?.type==='rareCandy'){p.active=slot('A1-001','rare-candy-basic');p.active.playedOnSideTurn=0;p.hand=[{uid:'trainer',cardId:card.id},{uid:'rare-candy-stage2',cardId:'A1-003'}];}else p.hand=[{uid:'trainer',cardId:card.id}];}return {b,source,unavailablePositivePreconditions};
 }
 function sane(b){assert.ok(Number.isFinite(b.turnNumber));for(const ss of Object.values(b.sides)){assert.ok(ss.points>=0);assert.ok(ss.bench.length<=3);assert.ok(ss.hand.length<=10);const physical=new Set();for(const s of ss.bench){assert.ok(Number.isInteger(s.benchSlot)&&s.benchSlot>=0&&s.benchSlot<3);assert.ok(!physical.has(s.benchSlot));physical.add(s.benchSlot);}for(const s of [ss.active,...ss.bench].filter(Boolean)){assert.ok(Number.isFinite(s.damage)&&s.damage>=0);for(const n of Object.values(s.energy||{}))assert.ok(Number.isInteger(n)&&n>=0);}}}
 function perform(b,side,predicate,label){const action=C.legalActions(b,side).find(predicate);assert.ok(action,label+' has an actual legal action');C.applyAction(b,side,action);sane(b);return action;}

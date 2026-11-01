@@ -84,7 +84,12 @@
   ];
 
   if (!generated || !Array.isArray(generated.cards)) throw new Error('Local Pocket gameplay catalogue is missing.');
-  const CARDS = [...generated.cards, LEGACY_CARDS.find(card=>card.id==='BASIC-POKE-BALL')];
+  const RUNTIME_CARD_OVERRIDES = Object.freeze({
+    'A3-144':{battleEnabled:true,support:{status:'FULL',reasons:[]},effect:{type:'rareCandy'}}
+  });
+  const CARDS = [...generated.cards.map(card=>RUNTIME_CARD_OVERRIDES[card.id]?{...card,...RUNTIME_CARD_OVERRIDES[card.id]}:card), LEGACY_CARDS.find(card=>card.id==='BASIC-POKE-BALL')];
+  const promotedRuntimeCards=generated.cards.filter(card=>!card.battleEnabled&&RUNTIME_CARD_OVERRIDES[card.id]?.battleEnabled).length;
+  const COVERAGE={...generated.summary,FULL:Number(generated.summary?.FULL||0)+promotedRuntimeCards,PARTIAL:Math.max(0,Number(generated.summary?.PARTIAL||0)-promotedRuntimeCards)};
   const PRINTS = generated.prints;
   const CARD_BY_ID = Object.create(null), PRINT_BY_ID = Object.create(null);
   for (const card of CARDS) CARD_BY_ID[normId(card.id)] = card;
@@ -155,7 +160,7 @@
     CARDS,
     PRINTS,
     SETS:generated.sets,
-    COVERAGE:generated.summary,
+    COVERAGE,
     BEGINNER_IVYSAUR_DECK,
     cardById,
     typesOf,hasType,

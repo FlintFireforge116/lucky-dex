@@ -260,6 +260,10 @@
   function attackCost(state,side,attack){const slot=state.sides[side].active;const amount=effects.modifierAmount(state,side,slot,'attackCost',data.cardById);let cost=attack.cost||'';if(amount>=0)return cost+'C'.repeat(Math.floor(amount));let remove=-Math.floor(amount);for(let i=cost.length-1;i>=0&&remove;i--)if(cost[i]==='C'){cost=cost.slice(0,i)+cost.slice(i+1);remove--;}return cost;}
   function abilitiesFor(card){return (card?.abilities?.length?card.abilities:Array.isArray(card?.ability)?card.ability:[card?.ability]).filter(Boolean);}
   function trainerType(card){return card.trainerType||card.subtype||'Item';}
+  function rareCandyMatches(stage2,basic){
+    if(!stage2||stage2.kind!=='pokemon'||stage2.stage!=='Stage 2'||!basic||basic.kind!=='pokemon'||basic.stage!=='Basic')return false;
+    return data.CARDS.some(stage1=>stage1?.kind==='pokemon'&&stage1.name===stage2.evolvesFrom&&stage1.evolvesFrom===basic.name);
+  }
   function effectChoices(effect,ctx){return effects.supportsEffect(effect)?effects.choicesForEffect(effect,ctx):[];}
 
   function energyCostLabel(cost){const names={...effects.ENERGY_CODE,C:'Colourless'},counts={};for(const c of cost||'')counts[c]=(counts[c]||0)+1;return Object.entries(counts).map(([c,n])=>`${n} ${names[c]||c}`).join(' + ')||'No Energy';}
@@ -308,6 +312,13 @@
       if(!card||card.kind!=='trainer'||!card.battleEnabled)return;
       const type=trainerType(card),base={type:'trainer',handIndex,cardId:card.id};
       if(card.effect?.type==='playFossil'){for(const benchIndex of emptyBenchSlots(s))actions.push({...base,target:'bench',benchIndex});return;}
+      if(card.effect?.type==='rareCandy'){
+        if(s.turnCount<=1)return;
+        const stage2Refs=s.hand.map((candidate,evolutionHandIndex)=>({candidate,evolutionHandIndex,card:data.cardById(candidate.cardId)})).filter(x=>x.evolutionHandIndex!==handIndex&&x.card?.battleEnabled&&x.card.kind==='pokemon'&&x.card.stage==='Stage 2');
+        const targets=[];if(s.active)targets.push({target:'active',slot:s.active});for(const slot of s.bench)if(slot)targets.push({target:'bench',benchIndex:Number(slot.benchSlot),slot});
+        for(const evo of stage2Refs)for(const target of targets){const basic=data.cardById(target.slot.cardId);if(target.slot.playedOnSideTurn<s.turnCount&&rareCandyMatches(evo.card,basic))actions.push({...base,target:target.target,benchIndex:target.benchIndex,evolutionCardId:evo.card.id});}
+        return;
+      }
       if(type==='Supporter'&&s.supporterUsed)return;
       if(type==='Tool'){
         if(!effects.supportsEffect(card.effect)||!effects.supportsEffect(card.onAttach))return;
@@ -348,7 +359,7 @@
 
   function actionMatches(legal, action){
     if (!legal || !action || legal.type !== action.type) return false;
-    const keys = ['handIndex','cardId','target','benchIndex','attackIndex','abilityIndex','effectTarget','effectBenchIndex'];
+    const keys = ['handIndex','cardId','target','benchIndex','attackIndex','abilityIndex','effectTarget','effectBenchIndex','evolutionCardId'];
     return keys.every(key => action[key] == null || legal[key] === action[key]);
   }
 
@@ -423,6 +434,12 @@
     const s=state.sides[side];const [ref]=s.hand.splice(action.handIndex,1);const card=data.cardById(ref.cardId),type=trainerType(card);
     state.log.push({type:'trainer',side,cardId:card.id,target:action.target,benchIndex:action.benchIndex});
     if(card.effect?.type==='playFossil'){placeOnBench(s,makePokemonSlot(card.id,s.turnCount,ref.uid),action.benchIndex);return;}
+    if(card.effect?.type==='rareCandy'){
+      const evoIndex=s.hand.findIndex(candidate=>candidate.cardId===action.evolutionCardId);if(evoIndex<0)throw new Error('Rare Candy Stage 2 is no longer in hand.');
+      const [evoRef]=s.hand.splice(evoIndex,1),target=slotForTarget(s,action.target,action.benchIndex);if(!target)throw new Error('Rare Candy target is no longer in play.');
+      target.cardId=evoRef.cardId;target.stack.push(evoRef.cardId);effects.clearTemporaryEffects(state,target);target.playedOnSideTurn=s.turnCount;s.discard.push(ref);
+      state.log.push({type:'evolve',side,cardId:evoRef.cardId,target:action.target,benchIndex:action.benchIndex,viaRareCandy:true});return;
+    }
     if(type==='Supporter')s.supporterUsed=true;
     if(type==='Tool'){const target=slotForTarget(s,action.target,action.benchIndex);target.tool=ref;effects.applyEffect(card.onAttach,effectContext(state,side,action,target));resolveKnockOut(state,null);return;}
     if(type==='Stadium'){if(state.stadium)state.sides[state.stadium.ownerSide].discard.push({uid:state.stadium.uid,cardId:state.stadium.cardId});state.stadium={...ref,ownerSide:side};s.stadiumUsed=true;resolveKnockOut(state,null);return;}

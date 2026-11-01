@@ -75,7 +75,7 @@
     if(action.type==='promote')return`PROMOTE · ${slotName(state,side,'bench',action.benchIndex)}`;
     if(action.type==='bench')return`BENCH · ${cardName(action.cardId)}`;
     if(action.type==='evolve')return`EVOLVE ${slotName(state,side,action.target,action.benchIndex)} → ${cardName(action.cardId)}`;
-    if(action.type==='trainer')return (action.cardId==='BASIC-POKE-BALL'?'PLAY POKE BALL':`PLAY ${cardName(action.cardId)}`)+targetLabel(action,state,side);
+    if(action.type==='trainer'){if(action.cardId==='A3-144')return `PLAY RARE CANDY · ${slotName(state,side,action.target,action.benchIndex)} → ${cardName(action.evolutionCardId)}`;return (action.cardId==='BASIC-POKE-BALL'?'PLAY POKE BALL':`PLAY ${cardName(action.cardId)}`)+targetLabel(action,state,side);}
     if(action.type==='ability'){
       const s=state?.sides?.[side],slot=action.target==='bench'?(core.benchSlotAt?core.benchSlotAt(s,action.benchIndex):s?.bench?.[action.benchIndex]):s?.active,card=data.cardById(slot?.cardId);
       const ability=cardAbilities(card)[Number(action.abilityIndex||0)];
