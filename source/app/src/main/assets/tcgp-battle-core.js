@@ -263,6 +263,16 @@
   function effectChoices(effect,ctx){return effects.supportsEffect(effect)?effects.choicesForEffect(effect,ctx):[];}
 
   function energyCostLabel(cost){const names={...effects.ENERGY_CODE,C:'Colourless'},counts={};for(const c of cost||'')counts[c]=(counts[c]||0)+1;return Object.entries(counts).map(([c,n])=>`${n} ${names[c]||c}`).join(' + ')||'No Energy';}
+  function attackHasRandom(effect){if(!effect||typeof effect!=='object')return false;if(['coinFlip','coinDamage','coinUntilTails'].includes(effect.type))return true;if((effect.effects||[]).some(attackHasRandom))return true;return ['heads','tails','effect'].some(key=>attackHasRandom(effect[key]));}
+  function attackDamagePreview(state,side,attackIndex){
+    const source=state?.sides?.[side]?.active,attack=data.cardById(source?.cardId)?.attacks?.[attackIndex];
+    if(!source||!attack)return {damage:0,text:'0',variable:false};
+    if(attackHasRandom(attack.effect))return {damage:Math.max(0,Number(attack.damage)||0),text:String(attack.damageText??attack.damage??0),variable:true};
+    const snapshot=publicSnapshot(state),foeSide=side==='player'?'opponent':'player',attacker=snapshot.sides[side].active,context={...effectContext(snapshot,side,{},attacker),isAttack:true};
+    const result=effects.resolveAttack(attack,context),defender=result.damageTarget===undefined?snapshot.sides[foeSide].active:result.damageTarget,isActive=defender===snapshot.sides[foeSide].active;
+    let damage=Math.max(0,Number(result.damage)||0);if(isActive&&damage>0)damage+=effects.modifierAmount(snapshot,side,attacker,'attackDamage',data.cardById);
+    return {damage:Math.max(0,damage),text:String(Math.max(0,damage)),variable:false};
+  }
   function attackAvailability(state,side,attackIndex){
     const s=state.sides[side],slot=s?.active,attack=data.cardById(slot?.cardId)?.attacks?.[attackIndex];
     if(!attack)return {usable:false,cost:'',reason:'No attack in this position.',actions:[]};
@@ -553,5 +563,5 @@
 
   function publicSnapshot(state){ return JSON.parse(JSON.stringify(state)); }
 
-  return {createBattle,makePokemonSlot,legalActions,attackAvailability,energyCostLabel,applyAction,publicSnapshot,drawCard,endTurn,benchSlotAt,benchArrayIndex,normalizeBenchSlots,random,shuffle,checkup,effectContext,maxHp};
+  return {createBattle,makePokemonSlot,legalActions,attackAvailability,attackDamagePreview,energyCostLabel,applyAction,publicSnapshot,drawCard,endTurn,benchSlotAt,benchArrayIndex,normalizeBenchSlots,random,shuffle,checkup,effectContext,maxHp};
 });

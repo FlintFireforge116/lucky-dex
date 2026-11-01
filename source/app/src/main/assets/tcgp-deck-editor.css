@@ -40,3 +40,6 @@ body.tcgp-deck-editing #tcgpDeckResults{overflow:auto;min-height:0;flex:1;oversc
 .tcgp-editor-saved article{padding:8px;border-radius:10px;margin-bottom:8px}
 .tcgp-editor-saved .active-deck{border:2px solid #215f80;background:#e0edf3}
 .tcgp-editor-recipe{border-bottom:1px solid var(--line);padding-bottom:12px}
+
+/* v0.69.38: give deck controls room instead of four crushed phone buttons. */
+@media(max-width:540px){.tcgp-editor-tools>div{grid-template-columns:repeat(2,minmax(0,1fr));gap:7px}.tcgp-editor-tools>div button{min-height:38px;font-size:11px}.tcgp-editor-tools [data-deck="clear-filters"]{grid-column:1/-1}.tcgp-editor-grid{gap:9px;padding:0 10px}.tcgp-editor-card{gap:4px;padding:5px}}

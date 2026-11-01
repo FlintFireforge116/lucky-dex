@@ -39,7 +39,7 @@
 
   function cardArtUrl(cardId,sideName){
     if(sideName==='player'&&currentDeckAppearance&&deps.workspace.selectedPrint){const selected=deps.workspace.selectedPrint(currentDeckAppearance,data.cardById(cardId)?.id||cardId,currentDeckAppearance._ownedRows||ownedRows());if(selected&&selected!==cardId)return cardArtUrl(selected);}
-    const id=String(cardId||'').toUpperCase(),match=/^([A-Z0-9]+(?:-[A-Z])?)-(\d+)$/.exec(id);
+    let id=String(cardId||'').toUpperCase();if(id==='BASIC-POKE-BALL')id='P-A-005';const match=/^([A-Z0-9]+(?:-[A-Z])?)-(\d+)$/.exec(id);
     if(!match||match[1]==='BASIC')return'';
     const rows=root?.state?.cards?Object.values(root.state.cards):[],canonical=data.cardById(cardId)?.id;
     const owned=rows.find(row=>String(row?.id||'').toUpperCase()===id)||rows.find(row=>canonical&&data.gameplayIdForOwned(row)===canonical&&(row.image||row.imageUrl));
@@ -85,7 +85,7 @@
     if(action.type==='retreat')return`RETREAT → ${slotName(state,side,'bench',action.benchIndex)}`;
     if(action.type==='attack'){
       const active=state?.sides?.[side]?.active,card=data.cardById(active?.cardId),attack=card?.attacks?.[action.attackIndex];
-      return `${attack?.name||'ATTACK'} · ${Number(attack?.damage||0)} DMG${targetLabel(action,state,side)}`;
+      const preview=core.attackDamagePreview?.(state,side,action.attackIndex);return `${attack?.name||'ATTACK'} · ${preview?.text??attack?.damageText??attack?.damage??0} DMG${targetLabel(action,state,side)}`;
     }
     if(action.type==='endTurn')return'END TURN';
     return String(action.type||'PLAY').toUpperCase();
@@ -153,15 +153,16 @@
     const levels=(solo.DIFFICULTIES||['Beginner']).map(level=>{const p=solo.difficultyProgress?.(level,root.state)||{cleared:0,total:1};return `<button class="tcgp-battle-action ${selectedDifficulty===level?'':'secondary'}" data-tcgp-action="solo-difficulty" data-difficulty="${esc(level)}" aria-pressed="${selectedDifficulty===level}">${esc(level)} · ${p.cleared}/${p.total}</button>`;}).join('');
     const challenges=solo.CHALLENGES.filter(c=>c.difficulty===selectedDifficulty).map(c=>{const unlocked=solo.isUnlocked?.(c,root.state)!==false,p=solo.getChallengeProgress?.(c,root.state)||{cleared:!!state.firstClears[c.id],wins:0};return `<article class="tcgp-battle-challenge" data-solo-challenge="${esc(c.id)}"><h3>${esc(c.name)}</h3><p>${esc(c.description)}</p><small>${esc((c.energyTypes||[c.energyType]).join(' / '))} Energy · ${p.cleared?'Cleared':'Not cleared'} · ${Number(p.wins||0)} wins</small><div class="tcgp-battle-actions-row"><button class="tcgp-battle-action ${selectedChallengeId===c.id?'':'secondary'}" data-tcgp-action="select-challenge" data-challenge-id="${esc(c.id)}" ${unlocked?'':'disabled'}>${unlocked?(selectedChallengeId===c.id?'SELECTED':'SELECT'):'LOCKED'}</button></div>${unlocked?'':'<p>Clear two different challenges in the previous difficulty to unlock.</p>'}</article>`;}).join('');
     setContent(`
-      <section class="tcgp-battle-hero"><div class="eyebrow">PLAY YOUR COLLECTION</div><h2>TCG Pocket Battle</h2><p>Build a deck from your collection, practise your strategy and progress through Solo challenges.</p>
-        <div class="tcgp-battle-stat-grid"><div class="tcgp-battle-stat"><small>MATCHES</small><b>${Number(stats.matches||0)}</b></div><div class="tcgp-battle-stat"><small>WINS</small><b>${Number(stats.wins||0)}</b></div><div class="tcgp-battle-stat"><small>BATTLE READY</small><b>${coverage.supportedGameplay}</b></div></div>
+      <section class="tcgp-battle-hero tcgp-battle-hero-compact"><div><div class="eyebrow">PLAY YOUR COLLECTION</div><h2>TCG Pocket Battle</h2></div>
+        <div class="tcgp-battle-stat-grid"><div class="tcgp-battle-stat"><small>MATCHES</small><b>${Number(stats.matches||0)}</b></div><div class="tcgp-battle-stat"><small>WINS</small><b>${Number(stats.wins||0)}</b></div><div class="tcgp-battle-stat"><small>READY</small><b>${coverage.supportedGameplay}</b></div></div>
       </section>
-      <section class="tcgp-battle-challenge"><div class="tcgp-battle-challenge-head"><div><div class="eyebrow">SOLO CHALLENGE</div><h3>${esc(challenge.name)}</h3></div><span class="tcgp-battle-difficulty">${esc(challenge.difficulty)}</span></div><p>${esc(challenge.description)}</p><div class="tcgp-battle-reward">${cleared?'✓ FIRST CLEAR COMPLETE':`FIRST CLEAR · ◉ ${challenge.firstClear.coins} + ✦ ${challenge.firstClear.dust}`}</div>
-        <div class="tcgp-battle-actions-row"><button class="tcgp-battle-action" data-tcgp-action="battle-owned" ${deck?'':'disabled'}>${deck?`BATTLE · ${esc(deck.name)}`:'BUILD AN OWNED DECK'}</button><button class="tcgp-battle-action secondary" data-tcgp-action="practice">PRACTICE · LAB LOANER</button></div>
-        <div class="tcgp-battle-note">Lab Loaner is practice only and does not award first-clear rewards. Your saved deck must use cards you actually own; two Poke Balls are supplied as Battle Basics.</div>
+      <section class="tcgp-battle-challenge tcgp-battle-ready-card"><div class="tcgp-battle-challenge-head"><div><div class="eyebrow">NEXT BATTLE</div><h3>${esc(challenge.name)}</h3></div><span class="tcgp-battle-difficulty">${esc(challenge.difficulty)}</span></div><p>${esc(challenge.description)}</p>
+        <div class="tcgp-battle-ready-deck"><small>YOUR DECK</small><b>${deck?esc(deck.name):'No battle-ready deck selected'}</b><button class="tcgp-battle-link" data-tcgp-action="build">${deck?'EDIT':'BUILD'}</button></div>
+        <div class="tcgp-battle-reward">${cleared?'✓ FIRST CLEAR COMPLETE':`FIRST CLEAR · ◉ ${challenge.firstClear.coins} + ✦ ${challenge.firstClear.dust}`}</div>
+        <div class="tcgp-battle-actions-row tcgp-battle-start-actions"><button class="tcgp-battle-action" data-tcgp-action="battle-owned" ${deck?'':'disabled'}>${deck?'BATTLE NOW':'BUILD A DECK TO BATTLE'}</button><button class="tcgp-battle-action secondary" data-tcgp-action="practice">PRACTICE</button></div>
       </section>
-      <section class="tcgp-battle-panel"><h3>My decks</h3><p>${copies>=18?`${copies} usable owned copies available.`:`${copies}/18 owned copies available, plus two supplied Poké Balls.`} Browse your collection, choose a recipe or build around a favourite card.</p><div class="tcgp-battle-actions-row"><button class="tcgp-battle-action" data-tcgp-action="build">${deck?'EDIT DECK':'BUILD DECK'}</button><button class="tcgp-battle-action secondary" data-tcgp-action="quick">QUICK BUILD</button></div></section>
-      <section class="tcgp-battle-panel"><h3>Solo progression</h3><div class="tcgp-battle-actions-row">${levels}</div>${challenges}</section>
+      <details class="tcgp-battle-panel tcgp-battle-picker"><summary>Choose Solo challenge · ${esc(selectedDifficulty)}</summary><div class="tcgp-battle-actions-row tcgp-battle-levels">${levels}</div>${challenges}</details>
+      <details class="tcgp-battle-panel"><summary>Decks & auto-build</summary><p>${copies>=18?`${copies} usable owned copies available.`:`${copies}/18 owned copies available, plus two supplied Poké Balls.`}</p><div class="tcgp-battle-actions-row"><button class="tcgp-battle-action" data-tcgp-action="build">${deck?'EDIT DECK':'BUILD DECK'}</button><button class="tcgp-battle-action secondary" data-tcgp-action="quick">AUTO BUILD</button></div><div class="tcgp-battle-note">Only owned, battle-ready cards are offered by default. Lab practice uses a loaner and does not award first-clear rewards.</div></details>
       <details class="tcgp-battle-panel"><summary>Battle records</summary><p>Wins ${Number(stats.wins||0)} · Losses ${Number(stats.losses||0)} · Draws ${Number(stats.draws||0)} · Solo clears ${Number(stats.soloClears||0)}</p><p>Attacks ${Number(stats.attacks||0)} · Pokémon knocked out ${Number(stats.knockouts||0)} · Energy attached ${Number(stats.energyAttached||0)} · Trainers played ${Number(stats.trainersPlayed||0)}</p>${stats.favoriteDeck?`<p>Most-used deck: ${esc(stats.favoriteDeck.name||stats.favoriteDeck)}</p>`:''}</details>`);
   }
 
@@ -278,9 +279,10 @@
       attacks.forEach(actionIndex=>{const attackIndex=battleActionCache[actionIndex].attackIndex;if(!attackGroups.has(attackIndex))attackGroups.set(attackIndex,[]);attackGroups.get(attackIndex).push(actionIndex);});
       const card=data.cardById(currentBattle?.sides?.player?.active?.cardId);
       (card?.attacks||[]).forEach((attack,attackIndex)=>{
-        const indices=attackGroups.get(attackIndex)||[],actionIndex=indices[0],availability=core.attackAvailability(currentBattle,'player',attackIndex),cost=core.energyCostLabel(availability.cost);
+        const indices=attackGroups.get(attackIndex)||[],actionIndex=indices[0],availability=core.attackAvailability(currentBattle,'player',attackIndex),cost=core.energyCostLabel(availability.cost),preview=core.attackDamagePreview?.(currentBattle,'player',attackIndex);
         const attrs=!indices.length?`data-tcgp-action="explain-unavailable" data-reason="${esc(availability.reason)}" aria-disabled="true"`:indices.length>1?`data-tcgp-action="open-context-actions" data-action-indices="${indices.join(',')}"`:`data-tcgp-action="battle-action" data-action-index="${actionIndex}"`;
-        parts.push(`<button type="button" class="tcgp-live-context-action attack" title="${esc(availability.reason)}" ${attrs}><b>${esc(attack?.name||'ATTACK')}</b><small>${indices.length?esc(cost):'Needs '+esc(cost)}${indices.length>1?' · CHOOSE TARGET':''}</small><strong>${esc(attack?.damageText??attack?.damage??0)} DMG</strong></button>`);
+        const blocker=indices.length?cost:(/^Needs /i.test(availability.reason)?availability.reason.replace(/\. Attached:.*$/,'').replace(/\.$/,''):availability.reason.replace(/\.$/,''));
+        parts.push(`<button type="button" class="tcgp-live-context-action attack" title="${esc(availability.reason)}" ${attrs}><b>${esc(attack?.name||'ATTACK')}</b><small>${esc(blocker)}${indices.length>1?' · CHOOSE TARGET':''}</small><strong>${esc(preview?.text??attack?.damageText??attack?.damage??0)} DMG</strong></button>`);
       });
       const retreats=actionIndicesFor(action=>action.type==='retreat');
       if(retreats.length)parts.push(contextActionButton(retreats,'RETREAT','retreat'));
@@ -301,8 +303,8 @@
   function liveCardHtml(slot,opts){
     const settings=opts||{},compact=!!settings.compact,side=settings.side||'player',zone=settings.zone||'active',index=Number(settings.index||0),targetAttrs=[energyTargetAttrs(side,zone,index),cardDropAttrs(side,zone,index)].filter(Boolean).join(' ');
     if(!slot)return `<div data-board-slot="${side}-${zone}-${index}" class="tcgp-live-card-wrap ${compact?'compact':''}"><button type="button" class="tcgp-live-card ${compact?'compact ':''}empty" ${inspectAttrs(side,zone,index)} ${targetAttrs}><span>${zone==='active'?'ACTIVE':'BENCH '+(index+1)}</span></button></div>`;
-    const info=hpInfo(slot,side),card=info.card,art=cardArtUrl(slot.cardId,side);
-    return `<div class="tcgp-live-card-wrap ${compact?'compact':''}"><button type="button" class="tcgp-live-card ${compact?'compact':''}" ${inspectAttrs(side,zone,index)} ${targetAttrs}>${art?`<img src="${esc(art)}" alt="${esc(card?.name||slot.cardId)}">`:''}<span class="tcgp-live-hp">${info.left}</span>${liveAttachedEnergyHtml(info)}<span class="tcgp-live-name">${esc(card?.name||slot.cardId)}</span></button>${livePokemonActionsHtml(side,zone,index)}</div>`;
+    const info=hpInfo(slot,side),card=info.card,art=cardArtUrl(slot.cardId,side),conditions=Object.keys(slot.conditions||{}).filter(key=>slot.conditions[key]).map(key=>key.toUpperCase()).join(' · ');
+    return `<div class="tcgp-live-card-wrap ${compact?'compact':''}"><button type="button" class="tcgp-live-card ${compact?'compact':''}" ${inspectAttrs(side,zone,index)} ${targetAttrs}>${art?`<img src="${esc(art)}" alt="${esc(card?.name||slot.cardId)}">`:''}<span class="tcgp-live-hp">${info.left}</span>${conditions?`<span class="tcgp-live-condition">${esc(conditions)}</span>`:''}${liveAttachedEnergyHtml(info)}<span class="tcgp-live-name">${esc(card?.name||slot.cardId)}</span></button>${livePokemonActionsHtml(side,zone,index)}</div>`;
   }
   function liveBenchHtml(sideName,bench){
     const slots=[],sideState={bench:bench||[]};

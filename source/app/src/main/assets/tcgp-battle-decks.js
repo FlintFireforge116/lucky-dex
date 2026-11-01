@@ -128,7 +128,7 @@
     for(const r of pool){const c=r.card;values.set(c.id,c.kind==='pokemon'?Math.max(0,...c.attacks.map(a=>Number(a.damage)/(Math.max(1,a.cost.length))))+Number(c.hp)/10:0);profilesByCard.set(c.id,analyzeDeck([c.id]).recommendedEnergyTypes);generatedByCard.set(c.id,selfGeneratedTypes(c));if(!byName.has(c.name))byName.set(c.name,[]);byName.get(c.name).push(r);}
     const value=c=>values.get(c.id)||0;
     seeds.sort((a,b)=>value(b.card)-value(a.card)||a.card.id.localeCompare(b.card.id));
-    let best=null;
+    const candidates=[];
     const profiles=[...new Map(pool.filter(r=>r.card.kind==='pokemon').map(r=>profilesByCard.get(r.card.id)).filter(p=>p.length&&p.length<=3).map(p=>[p.join('/'),p])).values()].sort((a,b)=>a.length-b.length||a.join('/').localeCompare(b.join('/')));
     // Compare distinct Energy/evolution archetypes instead of spending most of
     // the phone's budget on dozens of near-identical Basic seeds.
@@ -158,6 +158,9 @@
       if(!addLine(seed.card))continue;
       // A family is a setup unit, not three independent high-stat picks.
       const core=line(seed.card)||[];for(const c of core)while((idCounts.get(c.id)||0)<2&&add(c)){}
+      // Professor's Research is Pocket's baseline draw engine. Keep two when owned
+      // rather than letting niche higher-scored Trainers crowd both copies out.
+      const research=data.cardById('P-A-007');if(research&&owned.get(research.id))while(add(research)){}
       const strategyWarnings=[];
       for(const condition of cardConditions(seed.card)){
         const type=({selfHasTool:'Tool',stadiumInPlay:'Stadium',supporterPlayed:'Supporter'})[condition.type];if(!type||cards.some(id=>data.cardById(id).trainerType===type))continue;
@@ -176,21 +179,59 @@
       for(const r of pokemon){if(cards.filter(id=>data.cardById(id).kind==='pokemon').length>=seed.budget)break;if(affinity(r.card)>0&&addLine(r.card))while(cards.filter(id=>data.cardById(id).kind==='pokemon').length<seed.budget&&add(r.card)){} }
       const pokemonCards=cards.map(data.cardById).filter(c=>c.kind==='pokemon'),evolutions=pokemonCards.filter(c=>c.stage!=='Basic').length,expensive=pokemonCards.some(c=>c.attacks.some(a=>a.cost.length>=3)),retreatHeavy=pokemonCards.some(c=>c.retreat>=2);
       const featureSet=new Set();for(const c of pokemonCards)for(const e of [...c.attacks.map(a=>a.effect),...([].concat(c.abilities||c.ability||[])).map(a=>a.effect)])walkEffects(e,e=>featureSet.add(e.type));
-      const matches=(c,f)=>!f||Object.entries(f).every(([k,v])=>k==='subtype'?types(c).includes(v):k==='isEx'?(c.points>=2)===v:c[k]===v);
-      function trainerValue(c){let score=0,dead=false;walkEffects(c.effect,e=>{
-        if(e.filter&&!pokemonCards.some(p=>matches(p,e.filter)))dead=true;
-        if(e.type==='draw')score+=12+e.amount*3+evolutions;
-        else if(e.type==='searchRandomBasic'||e.type==='search')score+=10+(evolutions?8:0)+(e.source==='discard'&&featureSet.has('discardEnergy')?4:0);
-        else if(e.type==='attachEnergy'||e.type==='moveEnergy')score+=expensive?18:6;
-        else if(e.type==='heal'||e.type==='healSelf')score+=featureSet.has('damageFromDamage')?1:6+Math.max(...pokemonCards.map(c=>c.hp||0))/40;
-        else if(e.type==='switch'||e.stat==='retreatCost')score+=retreatHeavy?14:4;
-        else if(e.stat==='attackDamage')score+=10+(e.filter?4:0);
-        else if(e.stat==='maxHp')score+=10;
-        else if(['lock','status','discardEnergy','handShuffle','preventDamage'].includes(e.type))score+=7+(featureSet.has('statusDamage')&&e.type==='status'?8:0);
-        else score+=3;
-      });return dead?-100:score;}
+      const matches=(c,f)=>!f||Object.entries(f).every(([k,v])=>{
+        if(k==='subtype')return types(c).includes(v);if(k==='isEx')return (c.points>=2)===v;
+        if(Array.isArray(v))return v.some(x=>data.normalizeName(c[k])===data.normalizeName(x));return c[k]===v;
+      });
+      function trainerValue(c){let dead=false;
+        function scoreEffect(e,weight=1){
+          if(!e||typeof e!=='object')return 0;
+          // Coin branches are alternatives, not cumulative effects. Score their
+          // expected value so coin-flip search cards do not swamp every build.
+          if(e.type==='coinFlip')return scoreEffect(e.heads,weight*.5)+scoreEffect(e.tails,weight*.5);
+          if(e.type==='coinUntilTails')return scoreEffect(e.effect,weight);
+          const specific=!!(e.filter&&Object.keys(e.filter).length),amount=Math.abs(Number(e.amount)||0);
+          if(specific&&!pokemonCards.some(p=>matches(p,e.filter))&&e.filter.kind!=='trainer')dead=true;
+          let score=0;
+          if(e.type==='draw')score=12+amount*3+evolutions;
+          else if(e.type==='searchRandomBasic')score=12+(evolutions?8:0);
+          else if(e.type==='search'){
+            const searchesPokemon=!e.filter||e.filter.kind==='pokemon',setupBonus=searchesPokemon&&evolutions?8:0;
+            // Deck search improves setup. Discard recovery is useful later, but it
+            // should not crowd archetype-specific support out of every auto-build.
+            if(e.source==='deck')score=10+setupBonus+(specific?3:0);
+            else if(e.source==='discard')score=4+(featureSet.has('discardEnergy')?5:0)+(specific?1:0);
+            else score=7;
+          }
+          else if(e.type==='attachEnergy'||e.type==='moveEnergy')score=(expensive?18:8)+(specific?4:0);
+          else if(e.type==='heal'||e.type==='healSelf')score=featureSet.has('damageFromDamage')?1:4+amount/8+(specific?4:0);
+          else if(e.type==='switch'||e.stat==='retreatCost')score=(retreatHeavy?14:5)+(specific?4:0);
+          else if(e.stat==='attackDamage')score=8+amount/2+(specific?6:0)+(e.opponentFilter?2:0);
+          else if(e.stat==='damageReduction')score=5+amount/3+(specific?4:0);
+          else if(e.stat==='maxHp')score=5+amount/3+(specific?4:0);
+          else if(e.type==='removeStatus')score=4;
+          else if(['lock','status','discardEnergy','handShuffle','preventDamage'].includes(e.type))score=7+(featureSet.has('statusDamage')&&e.type==='status'?8:0);
+          else score=3;
+          let total=score*weight;for(const child of Array.isArray(e.effects)?e.effects:[])total+=scoreEffect(child,weight);
+          if(e.effect&&typeof e.effect==='object')total+=scoreEffect(e.effect,weight);return total;
+        }
+        let score=scoreEffect(c.effect);if(c.trainerType==='Stadium')score-=4;return dead?-100:score;
+      }
       const trainers=pool.filter(r=>r.card.kind==='trainer'&&r.card.effect?.type!=='playFossil').map(r=>({...r,utility:trainerValue(r.card)})).filter(r=>r.utility>0).sort((a,b)=>b.utility-a.utility||a.card.id.localeCompare(b.card.id));
-      for(const r of trainers)while(add(r.card)){}
+      const trainerCount=type=>cards.map(data.cardById).filter(c=>c?.kind==='trainer'&&(!type||c.trainerType===type)).length;
+      const optionalTrainers=trainers.filter(r=>r.card.id!=='P-A-007');
+      // Give the best few distinct support roles one slot before duplicating them.
+      // This keeps staples consistent without every archetype collapsing into the
+      // same pair of generic Supporters.
+      let distinctSupport=0;for(const r of optionalTrainers){
+        if(cards.length>=20||distinctSupport>=3)break;
+        if(r.card.trainerType==='Stadium'&&trainerCount('Stadium')>=2)continue;
+        if(add(r.card))distinctSupport++;
+      }
+      for(const r of optionalTrainers){
+        if(r.card.trainerType==='Stadium'&&trainerCount('Stadium')>=2)continue;
+        while(add(r.card)){if(r.card.trainerType==='Stadium'&&trainerCount('Stadium')>=2)break;}
+      }
       for(const r of pokemon){if(cards.length>=20)break;if(addLine(r.card))while(add(r.card)){} }
       const analysis=analyzeDeck(cards,primary),valid=validateDeck(cards,ownedRows,primary);
       if(!valid.ok||analysis.unpowerable.length||analysis.missingEnergyTypes.length||analysis.warnings.some(w=>w.code==='orphan'))continue;
@@ -199,9 +240,13 @@
       const evaluation={legality:1,energyViability:1,evolutionCompleteness:1,setupConsistency:Math.min(6,basics)*5+evolutions*2,synergy:selected.filter(c=>c.kind==='pokemon').reduce((s,c)=>s+affinity(c),0)/10,attackerAvailability:selected.filter(c=>c.kind==='pokemon').reduce((s,c)=>s+value(c),0),trainerSupport,deadCardRisk:Math.max(0,basics-6)*12};
       const score=evaluation.setupConsistency+evaluation.synergy+evaluation.attackerAvailability+trainerSupport-evaluation.deadCardRisk-primary.length*30;
       const finalScore=score-strategyWarnings.length*80;
-      if(!best||finalScore>best.score)best={ok:true,cards,energyTypes:primary,errors:[],warnings:[...analysis.warnings,...strategyWarnings],strategy:`${primary.join(' / ')} · ${seed.card.name} core · ${selected.filter(c=>c.kind==='pokemon').length} Pokémon / ${selected.filter(c=>c.kind==='trainer').length} Trainers`,focusCardId:seed.card.id,score:finalScore,evaluation};
+      candidates.push({ok:true,cards,energyTypes:primary,errors:[],warnings:[...analysis.warnings,...strategyWarnings],strategy:`${primary.join(' / ')} · ${seed.card.name} core · ${selected.filter(c=>c.kind==='pokemon').length} Pokémon / ${selected.filter(c=>c.kind==='trainer').length} Trainers`,focusCardId:seed.card.id,archetypeKey:data.normalizeName(core[0]?.name||seed.card.name),score:finalScore,evaluation});
     }
-    if(best){best.candidatesEvaluated=candidatesEvaluated;return best;}return fail('Not enough compatible owned copies to build a coherent 20-card deck with complete evolution lines. Add suitable Pokémon/Trainers or use a manual experimental deck.');
+    if(candidates.length){
+      const sorted=candidates.sort((a,b)=>b.score-a.score||a.focusCardId.localeCompare(b.focusCardId)),unique=[],seen=new Set();
+      for(const candidate of sorted){const key=focus?'focus':opts.type?candidate.archetypeKey:candidate.energyTypes.join('/');if(seen.has(key))continue;seen.add(key);unique.push(candidate);}
+      const variant=Math.max(0,Math.floor(Number(opts.variant)||0)),picked=unique[variant%unique.length]||sorted[0];picked.candidatesEvaluated=candidatesEvaluated;picked.alternativesAvailable=unique.length;return picked;
+    }return fail('Not enough compatible owned copies to build a coherent 20-card deck with complete evolution lines. Add suitable Pokémon/Trainers or use a manual experimental deck.');
   }
   function buildQuickDeck(rows,options){const work=deckCandidates(rows,options);let step;do{step=work.next();}while(!step.done);return step.value;}
   function buildDeckAsync(rows,options,control={}){return new Promise((resolve,reject)=>{const work=deckCandidates(rows,options);function next(){if(control.isCancelled?.())return resolve(null);try{const step=work.next();if(step.done)return resolve(step.value);setTimeout(next,0);}catch(error){reject(error);}}next();});}

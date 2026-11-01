@@ -30,7 +30,7 @@ test('copy limits normalize accented and unaccented Trainer names',()=>{
 test('art URL fallback preserves mini-set and Promo print identities',()=>{
   assert.match(ui.cardArtUrl('A1a-001'),/\/A1a\/A1a_001_EN\.webp$/);
   assert.match(ui.cardArtUrl('P-A-005'),/\/P-A\/P-A_005_EN\.webp$/);
-  assert.equal(ui.cardArtUrl('BASIC-POKE-BALL'),'');
+  assert.match(ui.cardArtUrl('BASIC-POKE-BALL'),/\/P-A\/P-A_005_EN\.webp$/);
 });
 
 test('deck save preserves up to three Energy types and rejects impossible Energy zones',()=>{
