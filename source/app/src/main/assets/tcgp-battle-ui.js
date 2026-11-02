@@ -566,9 +566,9 @@
   }
   function liveStadiumSlotHtml(){
     const model=stadiumSlotModel(currentBattle,battleActionCache,'player');
-    if(!model.cardId)return `<div class="tcgp-live-stadium-slot empty" data-stadium-slot="1"><div class="tcgp-live-stadium-card empty"><span>STADIUM</span><small>SHARED FIELD</small></div></div>`;
-    const card=data.cardById(model.cardId),art=cardArtUrl(model.cardId,model.ownerSide),owner=model.ownerSide==='player'?'YOU':'CPU';
-    return `<div class="tcgp-live-stadium-slot" data-stadium-slot="1"><button type="button" class="tcgp-live-stadium-card" ${inspectAttrs(model.ownerSide||'player','stadium',0)}>${art?`<img src="${esc(art)}" alt="${esc(card?.name||model.cardId)}">`:''}<span>${esc(card?.name||model.cardId)}</span><small>${owner} · STADIUM</small></button>${model.canActivate?`<button type="button" class="tcgp-live-stadium-activate" data-tcgp-action="battle-action" data-action-index="${model.actionIndex}">ACTIVATE</button>`:`<span class="tcgp-live-stadium-status">${esc(model.status)}</span>`}</div>`;
+    if(!model.cardId)return '';
+    const card=data.cardById(model.cardId),art=cardArtUrl(model.cardId,model.ownerSide),used=model.status==='USED';
+    return `<div class="tcgp-live-stadium-slot" data-stadium-slot="1"><button type="button" class="tcgp-live-stadium-card${used?' used':''}" ${inspectAttrs(model.ownerSide||'player','stadium',0)} aria-label="Inspect Stadium ${esc(card?.name||model.cardId)}">${art?`<img src="${esc(art)}" alt="${esc(card?.name||model.cardId)}">`:`<span>${esc(String(card?.name||model.cardId).slice(0,1))}</span>`}</button>${model.canActivate?`<button type="button" class="tcgp-live-stadium-activate" data-tcgp-action="battle-action" data-action-index="${model.actionIndex}">ACTIVATE</button>`:''}</div>`;
   }
   function liveMidControlsHtml(turnText,lastLog){
     if(currentBattle?.phase==='setup'){
@@ -604,9 +604,9 @@
         <div class="tcgp-live-opponent-bench" aria-label="Opponent Bench">${liveBenchHtml('opponent',o.bench)}</div>
         <div class="tcgp-live-opponent-active" aria-label="Opponent Active">${liveCardHtml(o.active,{side:'opponent',zone:'active'})}</div>
       </section>
-      <section class="tcgp-live-mid" aria-label="Score, Stadium, turn and play lane"><div class="tcgp-live-score"><span>CPU <b>${o.points}</b>/3</span><i>·</i><span>YOU <b>${p.points}</b>/3</span></div>${liveStadiumSlotHtml()}${liveMidControlsHtml(turnText,lastLog)}</section>
+      <section class="tcgp-live-mid" aria-label="Score, turn and play lane"><div class="tcgp-live-score"><span>CPU <b>${o.points}</b>/3</span><i>·</i><span>YOU <b>${p.points}</b>/3</span></div>${liveMidControlsHtml(turnText,lastLog)}</section>
       <section class="tcgp-live-player" aria-label="Player half">
-        <div class="tcgp-live-player-active" aria-label="Your Active">${liveCardHtml(p.active,{side:'player',zone:'active'})}</div>
+        <div class="tcgp-live-player-active" aria-label="Your Active">${liveCardHtml(p.active,{side:'player',zone:'active'})}${liveStadiumSlotHtml()}</div>
         <div class="tcgp-live-player-bench" aria-label="Your Bench">${liveBenchHtml('player',p.bench)}</div>
         <div class="tcgp-live-player-bottom"><div class="tcgp-live-piles mine" aria-label="Your card piles">${livePileHtml('player',p,'discard')}${livePileHtml('player',p,'deck')}</div><div class="tcgp-live-hand" aria-label="Your hand · swipe for more cards">${livePlayerHandHtml(p)}</div>${liveEnergySourceHtml(p)}</div>
       </section>
