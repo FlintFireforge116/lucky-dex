@@ -230,6 +230,11 @@
       const core=line(seed.card)||[],mainEndpoint=core[core.length-1]||seed.card,primaryFamily=familyRoot(seed.card),randomPartnerMaxLine=style==='random'?(core.length>=3?2:1):Infinity;
       const isOwnedFamilyEndpoint=c=>!pool.some(r=>r.card.kind==='pokemon'&&globalFamilyRoot(r.card)===globalFamilyRoot(c)&&data.normalizeName(r.card.evolvesFrom||'')===data.normalizeName(c.name));
       const randomPartnerAllowed=c=>style!=='random'||familyRoot(c)===primaryFamily||(isOwnedFamilyEndpoint(c)&&(line(c)?.length||Infinity)<=randomPartnerMaxLine);
+      // Build Around Card is stricter than a general competitive build: the
+      // chosen family is the deck identity. A secondary family may be a Basic
+      // or one-step support package, but never another full Stage 2/Mega engine.
+      const focusPartnerAllowed=c=>!focus||focus.kind!=='pokemon'||familyRoot(c)===primaryFamily||(isOwnedFamilyEndpoint(c)&&(line(c)?.length||Infinity)<=2);
+      const partnerAllowed=c=>randomPartnerAllowed(c)&&focusPartnerAllowed(c);
       for(const c of core)while((idCounts.get(c.id)||0)<2&&add(c)){}
       // Professor's Research is Pocket's baseline draw engine. Keep two when owned
       // rather than letting niche higher-scored Trainers crowd both copies out.
@@ -252,10 +257,10 @@
       const familyKeys=()=>new Set(cards.map(data.cardById).filter(c=>c?.kind==='pokemon').map(familyRoot));
       // For a requested dual-Energy deck, deliberately add one compact partner package
       // that makes the second Energy type meaningful instead of merely configuring it.
-      for(const wanted of requestedTypes){if(representedEnergy().has(wanted)||pokemonTotal()>=seed.budget)continue;const families=familyKeys();const partner=pokemon.find(r=>(profilesByCard.get(r.card.id)||[]).includes(wanted)&&randomPartnerAllowed(r.card)&&(families.has(familyRoot(r.card))||families.size<2)&&line(r.card)?.length<=Math.max(1,seed.budget-pokemonTotal()));if(partner){addLine(partner.card);while(pokemonTotal()<seed.budget&&(idCounts.get(partner.card.id)||0)<2&&add(partner.card)){} }}
+      for(const wanted of requestedTypes){if(representedEnergy().has(wanted)||pokemonTotal()>=seed.budget)continue;const families=familyKeys();const partner=pokemon.find(r=>(profilesByCard.get(r.card.id)||[]).includes(wanted)&&partnerAllowed(r.card)&&(families.has(familyRoot(r.card))||families.size<2)&&line(r.card)?.length<=Math.max(1,seed.budget-pokemonTotal()));if(partner){addLine(partner.card);while(pokemonTotal()<seed.budget&&(idCounts.get(partner.card.id)||0)<2&&add(partner.card)){} }}
       // Competitive Pocket lists are compact: one main engine and, at most, one
       // complementary Pokémon family. Fill the rest with consistency Trainers.
-      for(const r of pokemon){if(pokemonTotal()>=seed.budget)break;const families=familyKeys(),family=familyRoot(r.card);if(!families.has(family)&&families.size>=2)continue;if(pokemonTotal()+lineMissingCount(r.card)>seed.budget)continue;if(affinity(r.card)>0&&randomPartnerAllowed(r.card)&&addLine(r.card))while(pokemonTotal()<seed.budget&&add(r.card)){} }
+      for(const r of pokemon){if(pokemonTotal()>=seed.budget)break;const families=familyKeys(),family=familyRoot(r.card);if(!families.has(family)&&families.size>=2)continue;if(pokemonTotal()+lineMissingCount(r.card)>seed.budget)continue;if(affinity(r.card)>0&&partnerAllowed(r.card)&&addLine(r.card))while(pokemonTotal()<seed.budget&&add(r.card)){} }
       const pokemonCards=cards.map(data.cardById).filter(c=>c.kind==='pokemon'),evolutions=pokemonCards.filter(c=>c.stage!=='Basic').length,expensive=pokemonCards.some(c=>c.attacks.some(a=>a.cost.length>=3)),retreatHeavy=pokemonCards.some(c=>c.retreat>=2);
       const rareCandy=data.cardById('A3-144'),stage2Plan=style==='random'?mainEndpoint.stage==='Stage 2':pokemonCards.some(c=>c.stage==='Stage 2');if(stage2Plan&&rareCandy?.battleEnabled&&owned.get(rareCandy.id))while(add(rareCandy)){}
       const featureSet=new Set();for(const c of pokemonCards)for(const e of [...c.attacks.map(a=>a.effect),...([].concat(c.abilities||c.ability||[])).map(a=>a.effect)])walkEffects(e,e=>featureSet.add(e.type));
@@ -326,12 +331,12 @@
       // Small collections may need a second copy of generic utility to reach 20;
       // only use this after the diversified competitive shell has been exhausted.
       for(const r of optionalTrainers){if(cards.length>=20)break;if(r.card.trainerType==='Stadium'&&trainerCount('Stadium')>=Math.max(stadiumLimit,2))continue;while(cards.length<20&&add(r.card)){if(r.card.trainerType==='Stadium'&&trainerCount('Stadium')>=Math.max(stadiumLimit,2))break;} }
-      for(const r of pokemon){if(cards.length>=20)break;const families=familyKeys(),family=familyRoot(r.card);if(!families.has(family)&&families.size>=2)continue;if(!randomPartnerAllowed(r.card))continue;if(pokemonTotal()+lineMissingCount(r.card)>10)continue;if(addLine(r.card))while(cards.length<20&&pokemonTotal()<10&&add(r.card)){} }
+      for(const r of pokemon){if(cards.length>=20)break;const families=familyKeys(),family=familyRoot(r.card);if(!families.has(family)&&families.size>=2)continue;if(!partnerAllowed(r.card))continue;if(pokemonTotal()+lineMissingCount(r.card)>10)continue;if(addLine(r.card))while(cards.length<20&&pokemonTotal()<10&&add(r.card)){} }
       // Collection-scarcity fallback: competitive composition is the goal, not a
       // reason to refuse a legal deck when the player simply does not own enough
       // FULL Trainers. Only after the compact shell is exhausted may extra
       // compatible Pokémon/families fill the remaining slots.
-      if(cards.length<20){for(const r of pokemon){if(cards.length>=20||style==='random'&&pokemonTotal()>=10)break;if(style==='random'&&(!randomPartnerAllowed(r.card)||pokemonTotal()+lineMissingCount(r.card)>10))continue;if(addLine(r.card))while(cards.length<20&&(style!=='random'||pokemonTotal()<10)&&add(r.card)){} }}
+      if(cards.length<20){for(const r of pokemon){if(cards.length>=20||style==='random'&&pokemonTotal()>=10)break;if((style==='random'||focus?.kind==='pokemon')&&(!partnerAllowed(r.card)||pokemonTotal()+lineMissingCount(r.card)>10))continue;if(addLine(r.card))while(cards.length<20&&(style!=='random'||pokemonTotal()<10)&&add(r.card)){} }}
       // Last-resort collection fallback: relevance is a quality rule, not a
       // reason to refuse a legal deck when the player owns too few useful
       // Trainers/Pokémon. Only after coherent options are exhausted may a
