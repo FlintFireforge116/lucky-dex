@@ -278,3 +278,25 @@ body.tcgp-battle-live .tcgp-battle-topbar>div b{font-size:11px}
 .tcgp-present-stadium-replace{animation-name:tcgpPresentKo}.tcgp-present-stadium-play{box-shadow:0 0 0 2px #d9ebc2,0 6px 16px #17334b55}
 .tcgp-present-stadium-active{animation:tcgpStadiumPulse .56s ease-out}
 @keyframes tcgpStadiumPulse{0%,100%{transform:scale(1);box-shadow:0 1px 3px #31526425}42%{transform:scale(1.11);box-shadow:0 0 0 4px #9ed18466,0 0 15px #76a86777}}
+
+/* v0.69.55: right-side Stadium utility, attached Tool mini-cards, wider play field. */
+.tcgp-live-arena{grid-template-rows:minmax(0,.36fr) 30px minmax(0,.64fr)}
+.tcgp-live-opponent-bench,.tcgp-live-player-bench{width:88%;max-width:330px;gap:10px}
+.tcgp-live-mid{grid-template-columns:auto minmax(0,1fr);gap:6px;padding:0 52px 0 2px}
+.tcgp-live-mid-controls{min-height:26px;padding:0}
+.tcgp-live-mid-controls>span{font-size:7px}.tcgp-live-mid-controls>b{font-size:8px}
+.tcgp-live-end-turn{min-height:30px;padding:3px 8px;font-size:8px}
+.tcgp-live-stadium-slot{position:absolute;right:2px;top:50%;transform:translateY(-50%);z-index:6;width:44px;height:58px;display:grid;place-items:center;padding:0;overflow:visible}
+.tcgp-live-stadium-card{width:38px;height:53px;aspect-ratio:2.5/3.5;border-radius:6px}
+.tcgp-live-stadium-card>span{bottom:8px;font-size:5px}.tcgp-live-stadium-card>small{bottom:1px;font-size:4px}
+.tcgp-live-stadium-card.empty{width:36px;height:50px}.tcgp-live-stadium-card.empty>span{font-size:6px;writing-mode:vertical-rl;transform:rotate(180deg);letter-spacing:.05em}
+.tcgp-live-stadium-activate{right:-2px;bottom:-4px;min-height:18px;padding:1px 4px;font-size:5px}
+.tcgp-live-stadium-status{right:-1px;bottom:-3px;font-size:4px}
+.tcgp-live-tool-stack{position:absolute;z-index:7;left:calc(50% + clamp(27px,6.2vw,42px));top:7%;width:30px;height:52px;pointer-events:none}
+.tcgp-live-tool-stack.compact{left:calc(50% + clamp(18px,4.4vw,27px));top:5%;width:20px;height:38px}
+.tcgp-live-tool-mini{position:absolute;left:0;top:calc(var(--tool-i,0)*11px);width:27px;height:38px;aspect-ratio:2.5/3.5;padding:0;overflow:hidden;border:1px solid #f4f7ef;border-radius:4px;background:#e8efeb;color:#274d61;box-shadow:0 2px 5px #17384f66;transform:rotate(calc((var(--tool-i,0) - .5)*3deg));pointer-events:auto;touch-action:manipulation}
+.tcgp-live-tool-stack.compact .tcgp-live-tool-mini{top:calc(var(--tool-i,0)*8px);width:19px;height:27px;border-radius:3px}
+.tcgp-live-tool-mini img{display:block;width:100%;height:100%;object-fit:cover;pointer-events:none}
+.tcgp-live-tool-mini>span{display:grid;place-items:center;width:100%;height:100%;font-size:8px;font-weight:900}
+.tcgp-live-tool-mini:focus-visible{outline:2px solid #2f729a;outline-offset:1px}
+@media(max-width:380px){.tcgp-live-mid{padding-right:48px}.tcgp-live-stadium-slot{right:0}.tcgp-live-opponent-bench,.tcgp-live-player-bench{width:91%;gap:8px}}
