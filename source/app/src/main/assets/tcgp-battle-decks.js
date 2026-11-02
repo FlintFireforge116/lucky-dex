@@ -178,18 +178,33 @@
         for(const r of seeds){const profile=profilesByCard.get(r.card.id)||[];if(profile.length>3)continue;if(requestedTypes.length&&!profile.some(t=>requestedTypes.includes(t))&&!requestedTypes.some(t=>data.hasType(r.card,t)))continue;if(!requestedTypes.length&&!profile.length)continue;const key=globalFamilyRoot(r.card);if(!groups.has(key))groups.set(key,[]);groups.get(key).push(r);}
         seeds=[...groups.values()].map(group=>{const terminal=group.filter(r=>!group.some(other=>other!==r&&data.normalizeName(other.card.evolvesFrom||'')===data.normalizeName(r.card.name)));const choices=terminal.length?terminal:group;return choices.sort((a,b)=>(stageRank[b.card.stage]||0)-(stageRank[a.card.stage]||0)||value(b.card)-value(a.card)||a.card.id.localeCompare(b.card.id))[0];}).filter(Boolean).sort((a,b)=>globalFamilyRoot(a.card).localeCompare(globalFamilyRoot(b.card))).slice(0,80);
       }else{
-        const groups=new Map();for(const r of seeds){const profile=profilesByCard.get(r.card.id);if(!profile||profile.length>3)continue;if(requestedTypes.length&&!profile.some(t=>requestedTypes.includes(t))&&!requestedTypes.some(t=>data.hasType(r.card,t)))continue;const key=profile.join('/')+':'+(r.card.stage||r.card.kind);if(!groups.has(key))groups.set(key,r);}seeds=[...groups.values()].sort((a,b)=>profilesByCard.get(a.card.id).length-profilesByCard.get(b.card.id).length||value(b.card)-value(a.card)).slice(0,40);
+        // Competitive mode used to keep only one card for each Energy/stage
+        // shape. That made whole archetypes invisible before synergy and Trainer
+        // support were even scored. Keep several distinct families per shape so
+        // the final evaluator, rather than raw attack value, decides the winner.
+        const groups=new Map();
+        for(const r of seeds){
+          const profile=profilesByCard.get(r.card.id);if(!profile||profile.length>3)continue;
+          if(requestedTypes.length&&!profile.some(t=>requestedTypes.includes(t))&&!requestedTypes.some(t=>data.hasType(r.card,t)))continue;
+          const key=profile.join('/')+':'+(r.card.stage||r.card.kind),family=globalFamilyRoot(r.card),group=groups.get(key)||[];
+          if(!group.some(x=>globalFamilyRoot(x.card)===family)&&group.length<4)group.push(r);
+          groups.set(key,group);
+        }
+        seeds=[...groups.values()].flat().sort((a,b)=>profilesByCard.get(a.card.id).length-profilesByCard.get(b.card.id).length||value(b.card)-value(a.card)).slice(0,96);
       }
     }
     const variant=Math.max(0,Math.floor(Number(opts.variant)||0));
+    const hash=text=>{let h=2166136261;for(const ch of String(text||'')){h^=ch.charCodeAt(0);h=Math.imul(h,16777619);}return h>>>0;};
+    let randomFloat=null;
     if(style==='random'&&seeds.length){
       const excluded=new Set((opts.excludeArchetypes||[]).map(data.normalizeName));
       if(Number.isFinite(Number(opts.randomSeed))){
         let state=(Math.floor(Number(opts.randomSeed))>>>0)||0x9e3779b9;
-        const rand=()=>{state^=state<<13;state^=state>>>17;state^=state<<5;return (state>>>0)/4294967296;};
-        seeds=seeds.slice();for(let i=seeds.length-1;i>0;i--){const j=Math.floor(rand()*(i+1));[seeds[i],seeds[j]]=[seeds[j],seeds[i]];}
+        randomFloat=()=>{state^=state<<13;state^=state>>>17;state^=state<<5;return (state>>>0)/4294967296;};
+        seeds=seeds.slice();for(let i=seeds.length-1;i>0;i--){const j=Math.floor(randomFloat()*(i+1));[seeds[i],seeds[j]]=[seeds[j],seeds[i]];}
       }else{
-        const hash=text=>{let h=2166136261;for(const ch of String(text||'')){h^=ch.charCodeAt(0);h=Math.imul(h,16777619);}return h>>>0;};
+        let state=(hash(requestedTypes.join('/')||'any')^variant^0x9e3779b9)>>>0;
+        randomFloat=()=>{state^=state<<13;state^=state>>>17;state^=state<<5;return (state>>>0)/4294967296;};
         seeds=seeds.slice().sort((a,b)=>hash(globalFamilyRoot(a.card))-hash(globalFamilyRoot(b.card))||globalFamilyRoot(a.card).localeCompare(globalFamilyRoot(b.card)));const start=variant%seeds.length;seeds=[...seeds.slice(start),...seeds.slice(0,start)];
       }
       // Random history is based on successful archetypes, not raw candidates.
@@ -212,11 +227,14 @@
       const room=c=>Math.min((c.loaner?2:owned.get(c.id)||0)-(idCounts.get(c.id)||0),2-(counts.get(copyLimitKey(c))||0));
       const compatible=c=>c.kind!=='pokemon'||c.attacks.every(a=>[...a.cost].every(s=>s==='C'||primary.includes(ENERGY_CODE[s])||generatedByCard.get(c.id)?.has(ENERGY_CODE[s])));
       function add(c){if(cards.length>=20||room(c)<1)return false;cards.push(c.id);idCounts.set(c.id,(idCounts.get(c.id)||0)+1);counts.set(copyLimitKey(c),(counts.get(copyLimitKey(c))||0)+1);return true;}
+      const lineCache=new Map();
       function line(c,seen=new Set()){
-        if(seen.has(c.id)||!compatible(c))return null;seen.add(c.id);
-        if(c.stage==='Basic'||c.kind!=='pokemon')return [c];
+        const top=seen.size===0;if(top&&lineCache.has(c.id))return lineCache.get(c.id);
+        if(seen.has(c.id)||!compatible(c)){if(top)lineCache.set(c.id,null);return null;}seen.add(c.id);
+        if(c.stage==='Basic'||c.kind!=='pokemon'){const result=[c];if(top)lineCache.set(c.id,result);return result;}
         const bases=(byName.get(c.evolvesFrom)||[]).filter(r=>r.card.kind==='pokemon'&&compatible(r.card)).sort((a,b)=>value(b.card)-value(a.card)||a.card.id.localeCompare(b.card.id));
-        for(const base of bases){const prior=line(base.card,new Set(seen));if(prior)return [...prior,c];}return null;
+        for(const base of bases){const prior=line(base.card,new Set(seen));if(prior){const result=[...prior,c];if(top)lineCache.set(c.id,result);return result;}}
+        if(top)lineCache.set(c.id,null);return null;
       }
       function addLine(c){const bundle=line(c);if(!bundle)return false;const needed=bundle.filter(x=>!cards.includes(x.id));if(needed.some(x=>room(x)<1)||cards.length+needed.length>20)return false;for(const x of needed)add(x);return cards.includes(c.id);}
       const lineMissingCount=c=>{const bundle=line(c);return bundle?bundle.filter(x=>!cards.includes(x.id)).length:Infinity;};
@@ -228,12 +246,14 @@
       if(!addLine(seed.card))continue;
       // A family is a setup unit, not three independent high-stat picks.
       const core=line(seed.card)||[],mainEndpoint=core[core.length-1]||seed.card,primaryFamily=familyRoot(seed.card),randomPartnerMaxLine=style==='random'?(core.length>=3?2:1):Infinity;
+      const coreNamedAttackSynergies=new Set();for(const c of core)for(const a of c.attacks||[])walkEffects(a.effect,e=>{if(e.type==='namedAttackCountDamage'&&e.attackName)coreNamedAttackSynergies.add(data.normalizeName(e.attackName));});
+      const directNamedAttackPartner=c=>coreNamedAttackSynergies.size&&(c.attacks||[]).some(a=>coreNamedAttackSynergies.has(data.normalizeName(a.name)));
       const isOwnedFamilyEndpoint=c=>!pool.some(r=>r.card.kind==='pokemon'&&globalFamilyRoot(r.card)===globalFamilyRoot(c)&&data.normalizeName(r.card.evolvesFrom||'')===data.normalizeName(c.name));
-      const randomPartnerAllowed=c=>style!=='random'||familyRoot(c)===primaryFamily||(isOwnedFamilyEndpoint(c)&&(line(c)?.length||Infinity)<=randomPartnerMaxLine);
+      const randomPartnerAllowed=c=>style!=='random'||familyRoot(c)===primaryFamily||((isOwnedFamilyEndpoint(c)||directNamedAttackPartner(c))&&(line(c)?.length||Infinity)<=randomPartnerMaxLine);
       // Build Around Card is stricter than a general competitive build: the
       // chosen family is the deck identity. A secondary family may be a Basic
       // or one-step support package, but never another full Stage 2/Mega engine.
-      const focusPartnerAllowed=c=>!focus||focus.kind!=='pokemon'||familyRoot(c)===primaryFamily||(isOwnedFamilyEndpoint(c)&&(line(c)?.length||Infinity)<=2);
+      const focusPartnerAllowed=c=>!focus||focus.kind!=='pokemon'||familyRoot(c)===primaryFamily||((isOwnedFamilyEndpoint(c)||directNamedAttackPartner(c))&&(line(c)?.length||Infinity)<=2);
       const partnerAllowed=c=>randomPartnerAllowed(c)&&focusPartnerAllowed(c);
       for(const c of core)while((idCounts.get(c.id)||0)<2&&add(c)){}
       // Professor's Research is Pocket's baseline draw engine. Keep two when owned
@@ -251,22 +271,85 @@
         const enabler=enablers.find(r=>addLine(r.card));if(enabler){while((idCounts.get(enabler.card.id)||0)<2&&add(enabler.card)){} }else strategyWarnings.push({code:'conditional-support',message:`No owned compatible ${condition.status||'Special Condition'} enabler for ${seed.card.name}.`});
       }
       const coreNames=new Set(core.map(c=>data.normalizeName(c.name)));
-      const affinity=c=>coreNames.has(data.normalizeName(c.name))?100:coreNames.has(data.normalizeName(c.evolvesFrom))?55:(profilesByCard.get(c.id)||[]).some(t=>primary.includes(t))?24:types(c).some(t=>types(seed.card).includes(t))?16:types(c).includes('Colorless')?2:0;
+      const namedAttackSynergies=coreNamedAttackSynergies,suppliedEnergyTypes=new Set();
+      for(const c of core){
+        for(const a of c.attacks||[])walkEffects(a.effect,e=>{
+          if(['attachEnergy','attachEnergyFromDiscard','distributeEnergy','moveEnergy'].includes(e.type)&&ENERGY_TYPES.includes(e.energyType)&&(e.target==='selfBench'||e.target==='bench'||e.target==='selfPokemon'||e.type!=='attachEnergy'))suppliedEnergyTypes.add(e.energyType);
+        });
+        for(const a of [].concat(c.abilities||c.ability||[]))walkEffects(a?.effect,e=>{if(['attachEnergy','attachEnergyFromDiscard','distributeEnergy','moveEnergy'].includes(e.type)&&ENERGY_TYPES.includes(e.energyType))suppliedEnergyTypes.add(e.energyType);});
+      }
+      const namedAttackAffinity=c=>namedAttackSynergies.size&&(c.attacks||[]).some(a=>namedAttackSynergies.has(data.normalizeName(a.name)))?90:0;
+      const energyPayoffAffinity=c=>{
+        let bonus=0;
+        for(const a of c.attacks||[]){
+          const typed=(profilesByCard.get(c.id)||[]).filter(t=>suppliedEnergyTypes.has(t));
+          if(typed.length&&String(a.cost||'').length>=3)bonus=Math.max(bonus,28);
+          walkEffects(a.effect,e=>{
+            const t=e.energyType||e.perEnergyType||e.condition?.energyType;
+            if(t&&suppliedEnergyTypes.has(t)&&['energyDamage','coinDamageByEnergy','selectedEnergyDamage','randomPokemonDamage','bonusDamage'].includes(e.type))bonus=Math.max(bonus,80);
+            if(e.condition?.type==='selfExtraEnergyAtLeast'&&suppliedEnergyTypes.has(e.condition.energyType))bonus=Math.max(bonus,70);
+          });
+        }
+        return bonus;
+      };
+      const affinityCache=new Map();
+      const affinity=c=>{if(affinityCache.has(c.id))return affinityCache.get(c.id);const structural=coreNames.has(data.normalizeName(c.name))?100:coreNames.has(data.normalizeName(c.evolvesFrom))?55:(profilesByCard.get(c.id)||[]).some(t=>primary.includes(t))?24:types(c).some(t=>types(seed.card).includes(t))?16:types(c).includes('Colorless')?2:0,result=structural+namedAttackAffinity(c)+energyPayoffAffinity(c);affinityCache.set(c.id,result);return result;};
       const pokemon=pool.filter(r=>r.card.kind==='pokemon'&&compatible(r.card)&&!strandedBasic(r.card)).sort((a,b)=>affinity(b.card)-affinity(a.card)||value(b.card)-value(a.card)||a.card.id.localeCompare(b.card.id));
       const pokemonTotal=()=>cards.map(data.cardById).filter(c=>c?.kind==='pokemon').length;
       const familyKeys=()=>new Set(cards.map(data.cardById).filter(c=>c?.kind==='pokemon').map(familyRoot));
+      // Pick one gameplay endpoint per family and copy the whole evolution line
+      // coherently. The old filler could create e.g. 1 Gimmighoul + 2 Gholdengo ex
+      // + 2 Gholdengo because every endpoint in the same species family looked
+      // independently attractive.
+      const familyEndpointChoice=new Map([[primaryFamily,mainEndpoint.id]]);
+      function addCoherentLine(c,maxPokemon=seed.budget){
+        const family=familyRoot(c),chosen=familyEndpointChoice.get(family);if(chosen&&chosen!==c.id)return false;
+        const bundle=line(c);if(!bundle)return false;let added=false;
+        for(let target=1;target<=2;target++){
+          const missing=bundle.filter(x=>(idCounts.get(x.id)||0)<target);
+          if(!missing.length){added=cards.includes(c.id);continue;}
+          if(cards.length+missing.length>20||pokemonTotal()+missing.filter(x=>x.kind==='pokemon').length>maxPokemon||missing.some(x=>room(x)<1))break;
+          for(const x of missing)add(x);added=cards.includes(c.id);
+        }
+        if(added&&!chosen)familyEndpointChoice.set(family,c.id);return added;
+      }
       // For a requested dual-Energy deck, deliberately add one compact partner package
       // that makes the second Energy type meaningful instead of merely configuring it.
-      for(const wanted of requestedTypes){if(representedEnergy().has(wanted)||pokemonTotal()>=seed.budget)continue;const families=familyKeys();const partner=pokemon.find(r=>(profilesByCard.get(r.card.id)||[]).includes(wanted)&&partnerAllowed(r.card)&&(families.has(familyRoot(r.card))||families.size<2)&&line(r.card)?.length<=Math.max(1,seed.budget-pokemonTotal()));if(partner){addLine(partner.card);while(pokemonTotal()<seed.budget&&(idCounts.get(partner.card.id)||0)<2&&add(partner.card)){} }}
+      for(const wanted of requestedTypes){if(representedEnergy().has(wanted)||pokemonTotal()>=seed.budget)continue;const families=familyKeys();const partner=pokemon.find(r=>(profilesByCard.get(r.card.id)||[]).includes(wanted)&&partnerAllowed(r.card)&&(families.has(familyRoot(r.card))||families.size<2)&&line(r.card)?.length<=Math.max(1,seed.budget-pokemonTotal()));if(partner)addCoherentLine(partner.card,seed.budget);}
+      // Random mode randomises the secondary engine too. Previously only the
+      // lead family was shuffled, while the partner was always the highest raw
+      // value card (notably Pikachu ex in Lightning). Choose among genuinely
+      // viable families in a quality band, then let normal filling stay inside
+      // the selected two-family shell.
+      if(style==='random'&&randomFloat&&familyKeys().size<2&&pokemonTotal()<seed.budget){
+        const reps=new Map();
+        for(const r of pokemon.slice(0,64)){const family=familyRoot(r.card);if(family===primaryFamily||!partnerAllowed(r.card)||affinity(r.card)<=0||pokemonTotal()+lineMissingCount(r.card)>seed.budget)continue;const score=affinity(r.card)*2+value(r.card),prev=reps.get(family);if(!prev||score>prev.score)reps.set(family,{r,score});}
+        const ranked=[...reps.values()].sort((a,b)=>b.score-a.score),best=ranked[0]?.score||0,viable=ranked.filter(x=>x.score>=best*.58);
+        if(viable.length){const picked=viable[Math.floor(randomFloat()*viable.length)].r;addCoherentLine(picked.card,seed.budget);}
+      }
       // Competitive Pocket lists are compact: one main engine and, at most, one
       // complementary Pokémon family. Fill the rest with consistency Trainers.
-      for(const r of pokemon){if(pokemonTotal()>=seed.budget)break;const families=familyKeys(),family=familyRoot(r.card);if(!families.has(family)&&families.size>=2)continue;if(pokemonTotal()+lineMissingCount(r.card)>seed.budget)continue;if(affinity(r.card)>0&&partnerAllowed(r.card)&&addLine(r.card))while(pokemonTotal()<seed.budget&&add(r.card)){} }
+      for(const r of pokemon){if(pokemonTotal()>=seed.budget)break;const families=familyKeys(),family=familyRoot(r.card);if(!families.has(family)&&families.size>=2)continue;if(pokemonTotal()+lineMissingCount(r.card)>seed.budget)continue;if(affinity(r.card)>0&&partnerAllowed(r.card))addCoherentLine(r.card,seed.budget);}
       const pokemonCards=cards.map(data.cardById).filter(c=>c.kind==='pokemon'),evolutions=pokemonCards.filter(c=>c.stage!=='Basic').length,expensive=pokemonCards.some(c=>c.attacks.some(a=>a.cost.length>=3)),retreatHeavy=pokemonCards.some(c=>c.retreat>=2);
       const rareCandy=data.cardById('A3-144'),stage2Plan=style==='random'?mainEndpoint.stage==='Stage 2':pokemonCards.some(c=>c.stage==='Stage 2');if(stage2Plan&&rareCandy?.battleEnabled&&owned.get(rareCandy.id))while(add(rareCandy)){}
       const featureSet=new Set();for(const c of pokemonCards)for(const e of [...c.attacks.map(a=>a.effect),...([].concat(c.abilities||c.ability||[])).map(a=>a.effect)])walkEffects(e,e=>featureSet.add(e.type));
       const matches=(c,f)=>!f||Object.entries(f).every(([k,v])=>{
-        if(k==='subtype')return types(c).includes(v);if(k==='isEx')return (c.points>=2)===v;
-        if(Array.isArray(v))return v.some(x=>data.normalizeName(c[k])===data.normalizeName(x));return c[k]===v;
+        if(k==='subtype')return types(c).includes(v);
+        if(k==='isEx')return ((c.tags||[]).includes('ex')||Number(c.points||1)>=2)===v;
+        if(k==='name'){const wanted=[].concat(v).map(data.normalizeName);return wanted.includes(data.normalizeName(c.name));}
+        if(k==='tag')return [].concat(v).some(tag=>(c.tags||[]).map(data.normalizeName).includes(data.normalizeName(tag)));
+        if(k==='attackName'){const wanted=[].concat(v).map(data.normalizeName);return (c.attacks||[]).some(a=>wanted.includes(data.normalizeName(a.name)));}
+        if(k==='nameContains')return data.normalizeName(c.name).includes(data.normalizeName(v));
+        if(k==='hasAbility')return (!!([].concat(c.abilities||c.ability||[]).filter(Boolean).length))===!!v;
+        if(k==='hpAtMost')return Number(c.hp||0)<=Number(v);
+        // These are board-state filters, not card-identity filters. A Pokémon in
+        // the deck can satisfy them during play, so they must not make otherwise
+        // relevant support look dead at build time.
+        if(k==='damaged'||k==='hasAnyEnergy')return c.kind==='pokemon';
+        if(k==='hasEnergyType'){const t=String(v||'');return c.kind==='pokemon'&&primary.includes(t)&&(types(c).includes(t)||(profilesByCard.get(c.id)||[]).includes(t));}
+        if(k==='energyTypeAtLeast'){const t=String(v?.type||'');return c.kind==='pokemon'&&primary.includes(t)&&(types(c).includes(t)||(profilesByCard.get(c.id)||[]).includes(t));}
+        if(Array.isArray(v))return v.some(x=>data.normalizeName(c[k])===data.normalizeName(x));
+        return c[k]===v;
       });
       // Stage-specific support should serve a real board role, not merely a
       // pre-evolution that the deck intends to evolve past. A Machoke in a
@@ -296,6 +379,8 @@
           let score=0;
           if(e.type==='rareCandy'){if(!stage2Plan){dead=true;return 0;}score=24;}
           else if(e.type==='draw')score=12+amount*3+evolutions;
+          else if(e.type==='drawToHandSize'||e.type==='fieldCountDraw')score=12+evolutions;
+          else if(e.type==='takeTopMatching')score=10+(specific?5:0)+(e.filter?.attackName?12:0);
           else if(e.type==='searchRandomBasic')score=12+(evolutions?8:0);
           else if(e.type==='search'){
             const searchesPokemon=!e.filter||e.filter.kind==='pokemon',setupBonus=searchesPokemon&&evolutions?8:0;
@@ -305,22 +390,30 @@
             else if(e.source==='discard')score=4+(featureSet.has('discardEnergy')?5:0)+(specific?1:0);
             else score=7;
           }
-          else if(e.type==='attachEnergy'||e.type==='moveEnergy')score=(expensive?18:8)+(specific?4:0);
+          else if(['attachEnergy','moveEnergy','attachEnergyFromDiscard','attachRandomEnergyFromDiscard','distributeDiscardEnergyDistinct'].includes(e.type))score=(expensive?18:10)+(specific?4:0)+(featureSet.has('discardEnergy')&&String(e.type).includes('Discard')?5:0);
           else if(e.type==='heal'||e.type==='healSelf')score=featureSet.has('damageFromDamage')?1:4+amount/8+(specific?4:0);
           else if(e.type==='switch')score=(e.side==='opponent'||String(e.target||'').startsWith('opponent')?12:(retreatHeavy?14:5))+(specific?2:0);
           else if(e.stat==='retreatCost')score=(retreatHeavy?14:5)+(specific?4:0);
           else if(e.stat==='attackDamage')score=8+amount/2+(specific?6:0)+(e.opponentFilter?2:0);
           else if(e.stat==='damageReduction')score=5+amount/3+(specific?4:0);
           else if(e.stat==='maxHp')score=5+amount/3+(specific?4:0);
-          else if(e.type==='removeStatus')score=4;
-          else if(['lock','status','discardEnergy','handShuffle','preventDamage'].includes(e.type))score=7+(featureSet.has('statusDamage')&&e.type==='status'?8:0);
+          else if(e.type==='removeStatus'||e.type==='removeStatuses'||e.type==='removeRandomStatus')score=4;
+          else if(['searchThenShuffleChosen','topDeckFilter','selectTopToHand','evolveTargetFromDeck','benchFromDeck','benchFromDiscard'].includes(e.type))score=9+(specific?4:0)+(e.type==='evolveTargetFromDeck'&&evolutions?8:0);
+          else if(e.type==='returnToHand')score=7+(specific?5:0);
+          else if(['lock','status','discardEnergy','handShuffle','preventDamage','preventEffects','koGuard'].includes(e.type))score=7+(featureSet.has('statusDamage')&&e.type==='status'?8:0);
           else score=3;
           let total=score*weight;for(const child of Array.isArray(e.effects)?e.effects:[])total+=scoreEffect(child,weight);
           if(e.effect&&typeof e.effect==='object')total+=scoreEffect(e.effect,weight);return total;
         }
         let score=scoreEffect(c.effect);if(c.trainerType==='Stadium')score-=4;return dead?-1000:score;
       }
-      const scoredTrainers=pool.filter(r=>r.card.kind==='trainer'&&r.card.effect?.type!=='playFossil').map(r=>({...r,utility:trainerValue(r.card)})).sort((a,b)=>b.utility-a.utility||a.card.id.localeCompare(b.card.id));
+      let scoredTrainers=pool.filter(r=>r.card.kind==='trainer'&&r.card.effect?.type!=='playFossil').map(r=>({...r,utility:trainerValue(r.card)})).sort((a,b)=>b.utility-a.utility||a.card.id.localeCompare(b.card.id));
+      if(style==='random'&&randomFloat){
+        // Random viable decks should still prefer good support, but cards with
+        // similar utility should not always appear in exactly the same order.
+        const bands=new Map();for(const r of scoredTrainers){const band=Math.floor(r.utility/6);if(!bands.has(band))bands.set(band,[]);bands.get(band).push(r);}
+        scoredTrainers=[...bands.entries()].sort((a,b)=>b[0]-a[0]).flatMap(([,group])=>{group=group.slice();for(let i=group.length-1;i>0;i--){const j=Math.floor(randomFloat()*(i+1));[group[i],group[j]]=[group[j],group[i]];}return group;});
+      }
       const trainers=scoredTrainers.filter(r=>r.utility>0),scarcityTrainers=scoredTrainers.filter(r=>r.utility<=0&&r.utility>-1000);
       const trainerCount=type=>cards.map(data.cardById).filter(c=>c?.kind==='trainer'&&(!type||c.trainerType===type)).length;
       const optionalTrainers=trainers.filter(r=>r.card.id!=='P-A-007'),needsStadium=cardConditions(seed.card).some(c=>c.type==='stadiumInPlay'),stadiumLimit=needsStadium?2:1;
@@ -341,12 +434,12 @@
       // Small collections may need a second copy of generic utility to reach 20;
       // only use this after the diversified competitive shell has been exhausted.
       for(const r of optionalTrainers){if(cards.length>=20)break;if(r.card.trainerType==='Stadium'&&trainerCount('Stadium')>=Math.max(stadiumLimit,2))continue;while(cards.length<20&&add(r.card)){if(r.card.trainerType==='Stadium'&&trainerCount('Stadium')>=Math.max(stadiumLimit,2))break;} }
-      for(const r of pokemon){if(cards.length>=20)break;const families=familyKeys(),family=familyRoot(r.card);if(!families.has(family)&&families.size>=2)continue;if(!partnerAllowed(r.card))continue;if(pokemonTotal()+lineMissingCount(r.card)>10)continue;if(addLine(r.card))while(cards.length<20&&pokemonTotal()<10&&add(r.card)){} }
+      for(const r of pokemon){if(cards.length>=20)break;const families=familyKeys(),family=familyRoot(r.card);if(!families.has(family)&&families.size>=2)continue;if(!partnerAllowed(r.card))continue;if(pokemonTotal()+lineMissingCount(r.card)>10)continue;addCoherentLine(r.card,10);}
       // Collection-scarcity fallback: competitive composition is the goal, not a
       // reason to refuse a legal deck when the player simply does not own enough
       // FULL Trainers. Only after the compact shell is exhausted may extra
       // compatible Pokémon/families fill the remaining slots.
-      if(cards.length<20){for(const r of pokemon){if(cards.length>=20||style==='random'&&pokemonTotal()>=10)break;if((style==='random'||focus?.kind==='pokemon')&&(!partnerAllowed(r.card)||pokemonTotal()+lineMissingCount(r.card)>10))continue;if(addLine(r.card))while(cards.length<20&&(style!=='random'||pokemonTotal()<10)&&add(r.card)){} }}
+      if(cards.length<20){for(const r of pokemon){if(cards.length>=20||style==='random'&&pokemonTotal()>=10)break;if((style==='random'||focus?.kind==='pokemon')&&(!partnerAllowed(r.card)||pokemonTotal()+lineMissingCount(r.card)>10))continue;addCoherentLine(r.card,style==='random'?10:20);}}
       // Last-resort collection fallback: relevance is a quality rule, not a
       // reason to refuse a legal deck when the player owns too few useful
       // Trainers/Pokémon. Only after coherent options are exhausted may a
