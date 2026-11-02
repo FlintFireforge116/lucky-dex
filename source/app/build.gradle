@@ -8,8 +8,8 @@ android {
         applicationId 'com.example.luckydex'
         minSdk 26
         targetSdk 35
-        versionCode 7024
-        versionName '0.69.43'
+        versionCode 7025
+        versionName '0.69.44'
     }
 
     signingConfigs {
@@ -110,7 +110,7 @@ tasks.register('materializeAuthenticPackArt') {
             for (int attempt : 1..3) {
                 try {
                     def connection = new URL(sourceUrl).openConnection()
-                    connection.setRequestProperty('User-Agent', 'LuckyDex-asset-builder/0.69.43')
+                    connection.setRequestProperty('User-Agent', 'LuckyDex-asset-builder/0.69.44')
                     connection.connectTimeout = 20000
                     connection.readTimeout = 45000
                     byte[] candidate = connection.inputStream.withCloseable { input -> input.bytes }

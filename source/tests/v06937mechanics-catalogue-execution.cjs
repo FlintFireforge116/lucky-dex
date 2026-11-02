@@ -5,7 +5,7 @@ const TYPES=['Grass','Fire','Water','Lightning','Psychic','Fighting','Darkness',
 const fullCards=()=>D.CARDS.filter(c=>c.battleEnabled&&!c.loaner);
 const abilitiesFor=c=>c.abilities?.length?c.abilities:[c.ability].filter(Boolean);
 function matches(c,filter={}){return c&&Object.entries(filter).every(([key,value])=>{
- const one=v=>key==='subtype'?D.hasType(c,v):key==='evolved'?['Stage 1','Stage 2'].includes(c.stage)===v:key==='hasAbility'?!!abilitiesFor(c).length===v:key==='isEx'?(c.points>=2||/ ex$/.test(c.name))===v:key==='damaged'?true:key==='hasEnergyType'||key==='hasAnyEnergy'?true:key==='nameContains'?String(c.name||'').includes(v):c[key]===v;
+ const one=v=>key==='subtype'?D.hasType(c,v):key==='evolved'?['Stage 1','Stage 2'].includes(c.stage)===v:key==='hasAbility'?!!abilitiesFor(c).length===v:key==='isEx'?(c.points>=2||/ ex$/.test(c.name))===v:key==='damaged'?true:key==='hasEnergyType'||key==='hasAnyEnergy'?true:key==='nameContains'?String(c.name||'').includes(v):key==='hpAtMost'?Number(c.hp||0)<=Number(v):c[key]===v;
  return Array.isArray(value)?value.some(one):one(value);
 });}
 function pick(filter={},flat=false){const candidates=fullCards().filter(c=>c.kind==='pokemon'&&matches(c,filter));const preferred=c=>!abilitiesFor(c).some(a=>a.type==='passive')&&(!flat||c.attacks[0]?.damage>0&&!c.attacks[0].effect);const found=candidates.find(c=>c.stage==='Basic'&&preferred(c))||candidates.find(preferred)||candidates[0];assert.ok(found,'No actual FULL fixture Pokémon for '+JSON.stringify(filter));return found;}
@@ -37,6 +37,7 @@ function fixture(card,effect,ability){
   case 'opponentHasTool':assert.ok(tool);o.active.tool={uid:'foe-tool',cardId:tool.id};break;
   case 'opponentEx':setSlot(o,'active',pick({isEx:true},true),'ex-target');break;
   case 'opponentMatches':{const dependency=prerequisite(c.filter,'opponent condition');if(dependency)setSlot(o,'active',dependency,'matching-foe');break;}
+  case 'selfMatches':{const dependency=prerequisite(c.filter,'self condition');if(dependency)source=setSlot(p,'active',dependency,'matching-self');break;}
   case 'pokemonPresent':{const dependency=prerequisite(c.filter,'condition');if(dependency){const ss=c.side==='opponent'?o:p;setSlot(ss,1,dependency,'condition-pokemon');}break;}
   case 'supporterPlayed':p.supporterUsed=true;break;
   case 'stadiumInPlay':{const stadium=fullCards().find(c=>c.kind==='trainer'&&c.trainerType==='Stadium');assert.ok(stadium);b.stadium={cardId:stadium.id,ownerSide:'player'};break;}
@@ -75,7 +76,11 @@ function fixture(card,effect,ability){
   if(e.type==='moveEnergy'&&e.source==='selfBench')setSlot(p,2,pick(e.sourceFilter),'energy-source');
   if(e.type==='benchCountDamage'&&e.filter)setSlot(e.side==='opponent'?o:p,2,pick(e.filter),'counted-bench');
   if(e.type==='search'||e.type==='searchRandomBasic'){const filter=e.type==='searchRandomBasic'?{kind:'pokemon',stage:'Basic'}:e.filter,found=fullCards().find(c=>matches(c,filter));assert.ok(found,'Actual FULL card for zone search '+JSON.stringify(filter));const refs=Array.from({length:Math.max(1,e.amount)},(_,i)=>({uid:'search-ref-'+i,cardId:found.id}));p[e.source||'deck'].unshift(...refs);}
-  if(e.type==='removeStatus')p.active.conditions={poison:{amount:10}};
+  if(e.type==='attachEnergyFromDiscard'){p.energyDiscard=p.energyDiscard||{};p.energyDiscard[e.energyType]=Math.max(Number(p.energyDiscard[e.energyType]||0),Number(e.amount||1));}
+  if(e.type==='topDeckFilter'){const found=fullCards().find(c=>matches(c,e.filter));assert.ok(found,'Actual FULL card for top-deck filter '+JSON.stringify(e.filter));p.deck.unshift({uid:'top-filter',cardId:found.id});}
+  if(e.type==='fieldCountDraw'){const found=fullCards().find(c=>c.kind==='pokemon'&&matches(c,e.filter));assert.ok(found,'Actual FULL card for field-count filter '+JSON.stringify(e.filter));if(!matches(D.cardById(p.active.cardId),e.filter))setSlot(p,1,found,'field-count');}
+
+  if(e.type==='removeStatus'||e.type==='removeRandomStatus')p.active.conditions={poison:{amount:10}};
   if(e.type==='playFossil')p.bench=[];
   if(Array.isArray(e.effects))e.effects.forEach(visit);visit(e.heads);visit(e.tails);visit(e.effect);
  }
@@ -89,13 +94,14 @@ function exerciseAbility(card,ability,index){
  else if(ability.type==='triggered'){
   if(ability.event==='endTurn'){if(ability.firstTurnOnly)p.turnCount=1;perform(b,'player',a=>a.type==='endTurn',card.id+' end-turn trigger');}
   else if(ability.event==='energyAttached'){p.energyType=ability.energyType||'Grass';p.energyAvailable=true;p.energyUsed=false;perform(b,'player',a=>a.type==='attach'&&(source===p.active?a.target==='active':a.target==='bench'&&a.benchIndex===source.benchSlot),card.id+' Energy attachment trigger');}
+  else if(ability.event==='evolved'){const pre=fullCards().find(c=>c.kind==='pokemon'&&c.name===card.evolvesFrom);assert.ok(pre,card.id+' needs a FULL pre-evolution fixture '+card.evolvesFrom);source.cardId=pre.id;source.stack=[pre.id];source.playedOnSideTurn=0;source.evolvedOnTurn=null;p.hand=[{uid:'evolution-card',cardId:card.id}];perform(b,'player',a=>a.type==='evolve'&&a.cardId===card.id&&(source===p.active?a.target==='active':a.target==='bench'&&a.benchIndex===source.benchSlot),card.id+' evolved trigger');}
   else if(ability.event==='checkup'){C.checkup(b);sane(b);}
   else if(ability.event==='damagedByAttack'){b.activeSide='opponent';perform(b,'opponent',a=>a.type==='attack'&&a.attackIndex===0,card.id+' damaged-by-attack trigger');}
   else assert.fail('Unverified trigger event '+ability.event);
   assert.ok(b.log.some(x=>x.type==='ability'&&x.cardId===card.id&&x.event===ability.event),card.id+' should log '+ability.event+' trigger');
  }else if(ability.type==='passive'){
   function verifyPassive(e){if(!e)return;if(e.type==='sequence'){e.effects.forEach(verifyPassive);return;}
-   if(e.type==='preventStatus'){assert.equal(E.statusIsPrevented(b,source,D.cardById),true,card.id+' should prevent status');return;}
+   if(e.type==='preventStatus'){assert.equal(E.statusIsPrevented(b,source,D.cardById,e.status||'poison'),true,card.id+' should prevent status');return;}
    if(e.type==='preventDamage'){let attacker=o.active;if(e.attackerFilter&&!matches(D.cardById(attacker.cardId),e.attackerFilter)){attacker=setSlot(o,'active',pick(e.attackerFilter,true),'guard-attacker');}assert.ok(E.attackIsPrevented(b,'player',source,attacker,D.cardById),card.id+' should prevent matching attack damage');return;}
    if(e.type==='actionLock'){const targetSide=e.side==='opponent'?'opponent':'player';assert.equal(E.isActionLocked(b,targetSide,e.cardType,D.cardById),true,card.id+' should lock '+e.cardType);return;}
    if(e.type==='modifier'){const targetSide=e.scope==='opponentActive'?'opponent':'player',target=e.scope==='opponentActive'?o.active:(e.scope==='active'||e.scope==='team'?p.active:source);let expected=e.amount;if(e.perEnergy)expected*=e.energyType?Number(target.energy?.[e.energyType]||0):E.totalEnergy(target.energy);assert.equal(E.modifierAmount(b,targetSide,target,e.stat,D.cardById),expected,card.id+' satisfied passive modifier '+e.stat);return;}

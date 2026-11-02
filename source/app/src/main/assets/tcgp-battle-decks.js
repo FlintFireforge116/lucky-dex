@@ -171,7 +171,21 @@
       }
     }
     const variant=Math.max(0,Math.floor(Number(opts.variant)||0));
-    if(style==='random'&&seeds.length){const hash=text=>{let h=2166136261;for(const ch of String(text||'')){h^=ch.charCodeAt(0);h=Math.imul(h,16777619);}return h>>>0;};seeds=seeds.slice().sort((a,b)=>hash(globalFamilyRoot(a.card))-hash(globalFamilyRoot(b.card))||globalFamilyRoot(a.card).localeCompare(globalFamilyRoot(b.card)));const start=variant%seeds.length;seeds=[...seeds.slice(start),...seeds.slice(0,start)];}
+    if(style==='random'&&seeds.length){
+      const excluded=new Set((opts.excludeArchetypes||[]).map(data.normalizeName));
+      if(Number.isFinite(Number(opts.randomSeed))){
+        let state=(Math.floor(Number(opts.randomSeed))>>>0)||0x9e3779b9;
+        const rand=()=>{state^=state<<13;state^=state>>>17;state^=state<<5;return (state>>>0)/4294967296;};
+        seeds=seeds.slice();for(let i=seeds.length-1;i>0;i--){const j=Math.floor(rand()*(i+1));[seeds[i],seeds[j]]=[seeds[j],seeds[i]];}
+      }else{
+        const hash=text=>{let h=2166136261;for(const ch of String(text||'')){h^=ch.charCodeAt(0);h=Math.imul(h,16777619);}return h>>>0;};
+        seeds=seeds.slice().sort((a,b)=>hash(globalFamilyRoot(a.card))-hash(globalFamilyRoot(b.card))||globalFamilyRoot(a.card).localeCompare(globalFamilyRoot(b.card)));const start=variant%seeds.length;seeds=[...seeds.slice(start),...seeds.slice(0,start)];
+      }
+      // Random history is based on successful archetypes, not raw candidates.
+      // Put already-served families at the back so failed candidates cannot make
+      // two consecutive button presses collapse onto the same viable deck.
+      seeds=[...seeds.filter(r=>!excluded.has(globalFamilyRoot(r.card))),...seeds.filter(r=>excluded.has(globalFamilyRoot(r.card)))];
+    }
     const budgets=style==='random'?[8]:[7,8,9];
     const attempts=seeds.flatMap(seed=>seed.card.kind==='pokemon'?budgets.map(budget=>({...seed,budget})):(requestedTypes.length?[requestedTypes]:profiles).flatMap(profile=>budgets.map(budget=>({...seed,profile,budget}))));
     let candidatesEvaluated=0;

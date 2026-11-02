@@ -144,7 +144,7 @@
     if(!Array.isArray(types)||types.length<1||types.length>3||new Set(types).size!==types.length||types.some(t=>!Object.values(effects.ENERGY_CODE).includes(t)))throw new Error('Energy Zone requires one to three distinct valid Energy types.');
     return {
       id:side,
-      deck:makeDeck(side,ids), hand:[], discard:[], active:null, bench:[], points:0,
+      deck:makeDeck(side,ids), hand:[], discard:[], energyDiscard:{}, active:null, bench:[], points:0,
       energyTypes:types.slice(), energyType:types[0], nextEnergyType:types[0], energyAvailable:false, energyUsed:false, retreated:false,
       turnCount:0
     };
@@ -245,7 +245,7 @@
 
   function effectContext(state,side,action,attacker){
     const foeSide=side==='player'?'opponent':'player';
-    return {state,side,foeSide,attacker:attacker||state.sides[side].active,defender:state.sides[foeSide].active,action:action||{},cardById:data.cardById,random,shuffle,drawCard,maxHp:(which,slot)=>maxHp(state,which,slot),retreatCost:which=>retreatCost(state,which),benchCard:(ss,ref)=>{const slot=emptyBenchSlots(ss)[0];if(slot==null)return null;placeOnBench(ss,makePokemonSlot(ref.cardId,ss.turnCount,ref.uid),slot);return slot;},onEnergyAttached:(target,energyType,amount)=>{const targetSide=pokemonOn(state.sides.player).includes(target)?'player':'opponent';for(let i=0;i<Number(amount||1);i++)triggerAbilities(state,'energyAttached',targetSide,target,{energyType,fromZone:true});},evolveFromDeck:target=>{const targetSide=pokemonOn(state.sides.player).includes(target)?'player':'opponent',ss=state.sides[targetSide],base=data.cardById(target.cardId),candidates=ss.deck.map((r,index)=>({r,index,card:data.cardById(r.cardId)})).filter(x=>x.card?.battleEnabled&&x.card.kind==='pokemon'&&x.card.evolvesFrom===base?.name);if(!candidates.length)return false;const hit=candidates[Math.floor(random(state)*candidates.length)],[ref]=ss.deck.splice(hit.index,1);target.cardId=ref.cardId;target.stack.push(ref.cardId);target.playedOnSideTurn=ss.turnCount;target.evolvedOnTurn=state.turnNumber;shuffle(state,ss.deck);state.log.push({type:'evolve',side:targetSide,cardId:ref.cardId,fromDeck:true});triggerAbilities(state,'evolved',targetSide,target,{fromDeck:true});return true;}};
+    return {state,side,foeSide,attacker:attacker||state.sides[side].active,defender:state.sides[foeSide].active,action:action||{},cardById:data.cardById,random,shuffle,drawCard,maxHp:(which,slot)=>maxHp(state,which,slot),retreatCost:which=>retreatCost(state,which),endTurn:()=>endTurn(state),benchCard:(ss,ref)=>{const slot=emptyBenchSlots(ss)[0];if(slot==null)return null;placeOnBench(ss,makePokemonSlot(ref.cardId,ss.turnCount,ref.uid),slot);return slot;},onEnergyAttached:(target,energyType,amount)=>{const targetSide=pokemonOn(state.sides.player).includes(target)?'player':'opponent';for(let i=0;i<Number(amount||1);i++)triggerAbilities(state,'energyAttached',targetSide,target,{energyType,fromZone:true});},evolveFromDeck:target=>{const targetSide=pokemonOn(state.sides.player).includes(target)?'player':'opponent',ss=state.sides[targetSide],base=data.cardById(target.cardId),candidates=ss.deck.map((r,index)=>({r,index,card:data.cardById(r.cardId)})).filter(x=>x.card?.battleEnabled&&x.card.kind==='pokemon'&&x.card.evolvesFrom===base?.name);if(!candidates.length)return false;const hit=candidates[Math.floor(random(state)*candidates.length)],[ref]=ss.deck.splice(hit.index,1);target.cardId=ref.cardId;target.stack.push(ref.cardId);target.playedOnSideTurn=ss.turnCount;target.evolvedOnTurn=state.turnNumber;shuffle(state,ss.deck);state.log.push({type:'evolve',side:targetSide,cardId:ref.cardId,fromDeck:true});triggerAbilities(state,'evolved',targetSide,target,{fromDeck:true});return true;}};
   }
 
   function maxHp(state,side,slot){return Math.max(1,Number(data.cardById(slot.cardId).hp||0)+effects.modifierAmount(state,side,slot,'maxHp',data.cardById));}
@@ -310,11 +310,11 @@
         }
       });
     }
-    actions.push(...evolutionActions(s));
+    {const evolutionLocked=effects.isActionLocked(state,side,'Evolution',data.cardById),activeEvolutionLocked=effects.isActionLocked(state,side,'EvolutionActive',data.cardById);if(!evolutionLocked)actions.push(...evolutionActions(s).filter(x=>!activeEvolutionLocked||x.target!=='active'));}
     s.hand.forEach((ref,handIndex)=>{
       const card = data.cardById(ref.cardId);
       if(!card||card.kind!=='trainer'||!card.battleEnabled)return;
-      const type=trainerType(card),base={type:'trainer',handIndex,cardId:card.id};if(effects.isActionLocked(state,side,type,data.cardById))return;
+      const type=trainerType(card),base={type:'trainer',handIndex,cardId:card.id};if(effects.isActionLocked(state,side,'Trainer',data.cardById)||effects.isActionLocked(state,side,type,data.cardById))return;
       if(card.effect?.type==='playFossil'){for(const benchIndex of emptyBenchSlots(s))actions.push({...base,target:'bench',benchIndex});return;}
       if(card.effect?.type==='rareCandy'){
         if(s.turnCount<=1)return;
@@ -354,7 +354,7 @@
     if (s.active&&!conditions.sleep&&!conditions.paralysis){
       const card = data.cardById(s.active.cardId);
       (card.attacks || []).forEach((attack,attackIndex)=>{
-        if (!effects.isLocked(state,s.active,'attack',attack.name)&&effects.canPayCost(effectiveEnergy(state,side,s.active),attackCost(state,side,attack)))for(const target of effectChoices(attack.effect,{...effectContext(state,side),isAttack:true}))actions.push({type:'attack',attackIndex,cardId:card.id,...target});
+        if (!effects.isLocked(state,s.active,'attack',attack.name)&&effects.canPayCost(effectiveEnergy(state,side,s.active),attackCost(state,side,attack)))for(const target of effectChoices(attack.effect,{...effectContext(state,side),isAttack:true,attack}))actions.push({type:'attack',attackIndex,cardId:card.id,...target});
       });
     }
     actions.push({type:'endTurn'});
@@ -386,7 +386,7 @@
     for(const side of [first,second]){
       const slot=state.sides[side].active;if(!slot)continue;
       const c=slot.conditions||{};
-      if(c.poison){const amount=typeof c.poison==='object'?Number(c.poison.amount??10):10;slot.damage+=amount;state.log.push({type:'statusDamage',side,status:'poison',amount});}
+      if(c.poison){const base=typeof c.poison==='object'?Number(c.poison.amount??10):10,amount=Math.max(0,base+effects.modifierAmount(state,side,slot,'poisonDamageBonus',data.cardById));slot.damage+=amount;state.log.push({type:'statusDamage',side,status:'poison',amount});}
       if(c.burn){slot.damage+=20;state.log.push({type:'statusDamage',side,status:'burn',amount:20});if(random(state)<0.5)delete c.burn;}
       if(c.sleep&&random(state)<0.5)delete c.sleep;
       if(c.paralysis&&side===state.activeSide&&Number(c.paralysis.appliedTurn??-1)<state.turnNumber)delete c.paralysis;
@@ -538,8 +538,9 @@
     }
     if (matched.type === 'retreat'){
       const activeCard = data.cardById(s.active.cardId);
-      const paid = effects.spendGenericEnergyWithValue(s.active.energy,retreatCost(state,side),energyValues(state,side,s.active));
+      const beforeEnergy={...(s.active.energy||{})},paid = effects.spendGenericEnergyWithValue(s.active.energy,retreatCost(state,side),energyValues(state,side,s.active));
       if (!paid) throw new Error('Not enough Energy to retreat.');
+      s.energyDiscard=s.energyDiscard||{};for(const [type,n] of Object.entries(beforeEnergy)){const spent=Number(n||0)-Number(paid[type]||0);if(spent>0)s.energyDiscard[type]=Number(s.energyDiscard[type]||0)+spent;}
       s.active.energy = paid;
       const benchArray=benchArrayIndex(s,matched.benchIndex);
       if(benchArray<0)throw new Error('That Bench slot is empty.');
