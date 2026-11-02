@@ -121,6 +121,12 @@
     const eligibleRows=(ownedRows||[]).map(row=>({...row,quantity:eligibleOwnedQuantity(row,maxRarityRank)})).filter(row=>row.quantity>0);
     const owned=ownershipMap(eligibleRows),pool=[...owned].map(([id,n])=>({card:data.cardById(id),n:Math.min(2,n)})).filter(r=>r.n>0&&r.card?.battleEnabled&&!r.card.loaner);
     const globalFamilyRoot=c=>{let current=c,guard=0;while(current?.kind==='pokemon'&&current.stage!=='Basic'&&current.evolvesFrom&&guard++<4){const prior=data.CARDS.find(x=>x?.kind==='pokemon'&&x.name===current.evolvesFrom);if(!prior)break;current=prior;}return data.normalizeName(current?.name||c?.name||'');};
+    const knownEvolutionParents=new Set(data.CARDS.filter(next=>next?.battleEnabled&&next.kind==='pokemon'&&next.evolvesFrom).map(next=>data.normalizeName(next.evolvesFrom)));
+    const hasKnownBattleEvolution=c=>c?.kind==='pokemon'&&knownEvolutionParents.has(data.normalizeName(c.name));
+    // Stage 1 cards with a known Stage 2 are evolution bridges, not automatic
+    // archetype endpoints. They can still appear inside the complete line, and
+    // explicit Build Around Card / named-attack synergy may intentionally use one.
+    const truncatedAutoEndpoint=c=>c?.kind==='pokemon'&&c.stage!=='Basic'&&hasKnownBattleEvolution(c);
     const ownedEvolvedRoots=new Set(pool.filter(r=>r.card.kind==='pokemon'&&r.card.stage!=='Basic').map(r=>globalFamilyRoot(r.card)));
     const knownEvolvedRoots=new Set(data.CARDS.filter(c=>c?.battleEnabled&&c.kind==='pokemon'&&c.stage!=='Basic').map(globalFamilyRoot));
     const isStrandedBasic=c=>c?.kind==='pokemon'&&c.stage==='Basic'&&(c.points||1)<=1&&knownEvolvedRoots.has(globalFamilyRoot(c))&&!ownedEvolvedRoots.has(globalFamilyRoot(c));
@@ -130,7 +136,7 @@
     const hasMechanic=(c,type)=>{let found=false;for(const e of [c.effect,...(c.attacks||[]).map(a=>a.effect),...(c.abilities||[]).map(a=>a.effect)])walkEffects(e,e=>{if(e.type===type)found=true;});return found;};
     const focus=opts.cardId?data.cardById(opts.cardId):null;
     if(opts.cardId&&(!focus?.battleEnabled||!owned.get(focus.id)))return fail('The focus card must be owned and FULL. Non-FULL rules remain available for review, not silently enabled.');
-    let seeds=pool.filter(r=>r.card.kind==='pokemon'&&!strandedBasic(r.card));
+    let seeds=pool.filter(r=>r.card.kind==='pokemon'&&!strandedBasic(r.card)&&!hasKnownBattleEvolution(r.card));
     const preMatch=c=>(!requestedTypes.length||requestedTypes.some(t=>data.hasType(c,t)))&&(!opts.setId||c.setId===opts.setId)&&(!opts.mechanic||hasMechanic(c,opts.mechanic))&&(!opts.status||c.support?.status===opts.status);
     if(!focus&&(requestedTypes.length||opts.setId||opts.mechanic||opts.status))seeds=pool.filter(r=>preMatch(r.card));
     if(focus)seeds=[{card:focus}];
@@ -248,12 +254,11 @@
       const core=line(seed.card)||[],mainEndpoint=core[core.length-1]||seed.card,primaryFamily=familyRoot(seed.card),randomPartnerMaxLine=style==='random'?(core.length>=3?2:1):Infinity;
       const coreNamedAttackSynergies=new Set();for(const c of core)for(const a of c.attacks||[])walkEffects(a.effect,e=>{if(e.type==='namedAttackCountDamage'&&e.attackName)coreNamedAttackSynergies.add(data.normalizeName(e.attackName));});
       const directNamedAttackPartner=c=>coreNamedAttackSynergies.size&&(c.attacks||[]).some(a=>coreNamedAttackSynergies.has(data.normalizeName(a.name)));
-      const isOwnedFamilyEndpoint=c=>!pool.some(r=>r.card.kind==='pokemon'&&globalFamilyRoot(r.card)===globalFamilyRoot(c)&&data.normalizeName(r.card.evolvesFrom||'')===data.normalizeName(c.name));
-      const randomPartnerAllowed=c=>style!=='random'||familyRoot(c)===primaryFamily||((isOwnedFamilyEndpoint(c)||directNamedAttackPartner(c))&&(line(c)?.length||Infinity)<=randomPartnerMaxLine);
+      const randomPartnerAllowed=c=>style!=='random'||familyRoot(c)===primaryFamily||((!truncatedAutoEndpoint(c)||directNamedAttackPartner(c))&&(line(c)?.length||Infinity)<=randomPartnerMaxLine);
       // Build Around Card is stricter than a general competitive build: the
       // chosen family is the deck identity. A secondary family may be a Basic
       // or one-step support package, but never another full Stage 2/Mega engine.
-      const focusPartnerAllowed=c=>!focus||focus.kind!=='pokemon'||familyRoot(c)===primaryFamily||((isOwnedFamilyEndpoint(c)||directNamedAttackPartner(c))&&(line(c)?.length||Infinity)<=2);
+      const focusPartnerAllowed=c=>!focus||focus.kind!=='pokemon'||familyRoot(c)===primaryFamily||((!truncatedAutoEndpoint(c)||directNamedAttackPartner(c))&&(line(c)?.length||Infinity)<=2);
       const partnerAllowed=c=>randomPartnerAllowed(c)&&focusPartnerAllowed(c);
       for(const c of core)while((idCounts.get(c.id)||0)<2&&add(c)){}
       // Professor's Research is Pocket's baseline draw engine. Keep two when owned
@@ -294,7 +299,7 @@
       };
       const affinityCache=new Map();
       const affinity=c=>{if(affinityCache.has(c.id))return affinityCache.get(c.id);const structural=coreNames.has(data.normalizeName(c.name))?100:coreNames.has(data.normalizeName(c.evolvesFrom))?55:(profilesByCard.get(c.id)||[]).some(t=>primary.includes(t))?24:types(c).some(t=>types(seed.card).includes(t))?16:types(c).includes('Colorless')?2:0,result=structural+namedAttackAffinity(c)+energyPayoffAffinity(c);affinityCache.set(c.id,result);return result;};
-      const pokemon=pool.filter(r=>r.card.kind==='pokemon'&&compatible(r.card)&&!strandedBasic(r.card)).sort((a,b)=>affinity(b.card)-affinity(a.card)||value(b.card)-value(a.card)||a.card.id.localeCompare(b.card.id));
+      const pokemon=pool.filter(r=>r.card.kind==='pokemon'&&compatible(r.card)&&!strandedBasic(r.card)&&(familyRoot(r.card)===primaryFamily||!truncatedAutoEndpoint(r.card)||directNamedAttackPartner(r.card))).sort((a,b)=>affinity(b.card)-affinity(a.card)||value(b.card)-value(a.card)||a.card.id.localeCompare(b.card.id));
       const pokemonTotal=()=>cards.map(data.cardById).filter(c=>c?.kind==='pokemon').length;
       const familyKeys=()=>new Set(cards.map(data.cardById).filter(c=>c?.kind==='pokemon').map(familyRoot));
       // Pick one gameplay endpoint per family and copy the whole evolution line
