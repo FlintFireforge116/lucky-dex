@@ -183,3 +183,83 @@ body.tcgp-battle-live .tcgp-battle-topbar>div b{font-size:11px}
 .tcgp-live-card-actions{min-height:34px}
 .tcgp-live-context-action.attack{min-height:34px}
 @media(max-height:760px){.tcgp-live-player{grid-template-rows:minmax(126px,2fr) minmax(66px,.8fr) clamp(108px,15dvh,126px)}.tcgp-live-player-active{min-height:126px}.tcgp-live-player-active .tcgp-live-card:not(.compact){min-height:82px;max-height:118px}.tcgp-live-context-action.attack{min-height:32px}}
+
+/* v0.69.48 · TCG battle presentation layer */
+.tcgp-present-layer{position:absolute;inset:0;z-index:32;overflow:hidden;pointer-events:auto;isolation:isolate}
+.tcgp-present-skip{position:absolute;inset:0;z-index:1;width:100%;height:100%;padding:0;border:0;background:transparent;cursor:pointer;-webkit-tap-highlight-color:transparent}
+.tcgp-present-stage{position:absolute;inset:0;z-index:2;overflow:hidden;pointer-events:none}
+.tcgp-present-card-ghost{position:absolute;z-index:8;display:grid;place-items:center;aspect-ratio:2.5/3.5;border:1px solid #e9f4ef;border-radius:7px;background:#e8efe7 center/cover no-repeat;color:#284d62;font-size:8px;font-weight:850;text-align:center;box-shadow:0 8px 18px #102b3f66;transform-origin:center;animation:tcgpPresentCardMove .31s cubic-bezier(.22,.78,.3,1) forwards}
+.tcgp-present-card-ghost.tcgp-present-evolve{animation-duration:.38s;box-shadow:0 0 0 3px #fff8,0 8px 22px #102b3f66}
+.tcgp-present-card-ghost.tcgp-present-trainer{animation-duration:.34s;filter:saturate(1.15)}
+.tcgp-present-card-ghost.tcgp-present-draw{background:#24455f radial-gradient(circle at 52% 44%,#6f95ab 0 18%,#345f78 19% 42%,#17384f 43% 100%);border-color:#aac4d2;box-shadow:inset 0 0 0 3px #ffffff18,0 8px 18px #102b3f66;animation-duration:.27s}
+.tcgp-present-card-ghost.tcgp-present-swap{animation-duration:.42s}
+.tcgp-present-card-ghost.tcgp-present-promote{animation-duration:.36s}
+.tcgp-present-card-ghost.tcgp-present-ko{z-index:11;animation-name:tcgpPresentKo;animation-duration:.43s;filter:grayscale(.2)}
+.tcgp-present-energy-ghost{position:absolute;z-index:10;width:36px;height:36px;display:grid;place-items:center;border-radius:50%;border:2px solid #fff9;background:radial-gradient(circle at 34% 28%,#fff,#82b783 34%,#397257 76%);color:#fff;font-size:14px;font-weight:950;box-shadow:0 4px 13px #132d4055;animation:tcgpPresentEnergy .28s cubic-bezier(.2,.8,.25,1) forwards}
+.tcgp-present-energy-ghost[data-energy="Fire"]{background:radial-gradient(circle at 34% 28%,#fff1d2,#f39b48 35%,#b94b35 76%)}
+.tcgp-present-energy-ghost[data-energy="Water"]{background:radial-gradient(circle at 34% 28%,#effcff,#64b8e8 35%,#316aa8 76%)}
+.tcgp-present-energy-ghost[data-energy="Lightning"]{background:radial-gradient(circle at 34% 28%,#fffbd7,#e8ce45 35%,#9c7a18 76%)}
+.tcgp-present-energy-ghost[data-energy="Psychic"]{background:radial-gradient(circle at 34% 28%,#fff0ff,#c27bd6 35%,#75428f 76%)}
+.tcgp-present-energy-ghost[data-energy="Fighting"]{background:radial-gradient(circle at 34% 28%,#fff1df,#d98a5e 35%,#8a4830 76%)}
+.tcgp-present-energy-ghost[data-energy="Darkness"]{background:radial-gradient(circle at 34% 28%,#d8d7e5,#5e5879 38%,#29273a 78%)}
+.tcgp-present-energy-ghost[data-energy="Metal"]{background:radial-gradient(circle at 34% 28%,#fff,#b9c7ce 38%,#637984 78%)}
+.tcgp-present-attack{--fx1:#e9f6ff;--fx2:#7594a8;position:absolute;z-index:6;height:5px;border-radius:999px;transform-origin:0 50%;transform:rotate(var(--tcgp-attack-angle)) scaleX(0);background:linear-gradient(90deg,transparent,var(--fx1) 18%,var(--fx2) 68%,#fff 94%);box-shadow:0 0 8px var(--fx2);animation:tcgpAttackTravel .42s cubic-bezier(.18,.72,.22,1) forwards}
+.tcgp-present-attack::before{content:"";position:absolute;right:-10px;top:50%;width:20px;height:20px;border-radius:50%;background:radial-gradient(circle,#fff 0 18%,var(--fx1) 23% 46%,var(--fx2) 54%,transparent 72%);transform:translateY(-50%) scale(.2);animation:tcgpAttackImpact .34s .18s ease-out forwards}
+.tcgp-present-attack::after{content:"";position:absolute;inset:-6px 0;background:repeating-linear-gradient(90deg,transparent 0 14px,var(--fx1) 15px 17px,transparent 18px 29px);opacity:.38;filter:blur(1px)}
+.tcgp-present-attack.type-grass{--fx1:#d9f58a;--fx2:#4f9d56}
+.tcgp-present-attack.type-fire{--fx1:#ffd06a;--fx2:#ef5b35}
+.tcgp-present-attack.type-water{--fx1:#b8efff;--fx2:#398bd7}
+.tcgp-present-attack.type-lightning{--fx1:#fff58c;--fx2:#d2a918;clip-path:polygon(0 35%,38% 35%,47% 0,55% 70%,67% 28%,100% 28%,100% 72%,70% 72%,56% 100%,47% 42%,40% 68%,0 68%)}
+.tcgp-present-attack.type-psychic{--fx1:#f7b4ff;--fx2:#8d55d9;filter:drop-shadow(0 0 7px #9b61d8)}
+.tcgp-present-attack.type-fighting{--fx1:#ffd0a2;--fx2:#b95d3c;height:7px}
+.tcgp-present-attack.type-darkness{--fx1:#9e96c4;--fx2:#3c355e;filter:drop-shadow(0 0 9px #27213f)}
+.tcgp-present-attack.type-metal{--fx1:#f4fbff;--fx2:#7e929d}
+.tcgp-present-attack.type-dragon{--fx1:#8fe2ff;--fx2:#9a58df;box-shadow:0 0 10px #8a5cc9}
+.tcgp-present-attack.type-colorless{--fx1:#fff;--fx2:#9baeb7}
+/* Type motifs deliberately alter texture/shape, not just colour. */
+.tcgp-present-attack.type-grass::after{inset:-10px 0;background:repeating-radial-gradient(ellipse at 25% 50%,#dff59a 0 3px,transparent 4px 18px);opacity:.7;filter:none}
+.tcgp-present-attack.type-fire::after{inset:-12px 0;background:radial-gradient(circle at 18% 60%,#fff2a8 0 2px,transparent 3px),radial-gradient(circle at 45% 25%,#ff9b42 0 3px,transparent 4px),radial-gradient(circle at 76% 65%,#ff633d 0 4px,transparent 5px);background-size:38px 24px;opacity:.9;filter:blur(.2px)}
+.tcgp-present-attack.type-water::after{inset:-8px 0;background:repeating-radial-gradient(ellipse at 20% 65%,transparent 0 7px,#d8f7ff 8px 10px,transparent 11px 22px);opacity:.72;filter:none}
+.tcgp-present-attack.type-psychic::after{inset:-14px 0;background:repeating-radial-gradient(circle at 40% 50%,transparent 0 5px,#f5c5ff 6px 8px,transparent 9px 18px);opacity:.65;filter:blur(.5px)}
+.tcgp-present-attack.type-fighting::after{inset:-13px 0;background:repeating-linear-gradient(112deg,transparent 0 18px,#ffe1b7 19px 22px,transparent 23px 36px);opacity:.85;filter:none}
+.tcgp-present-attack.type-darkness::after{inset:-14px 0;background:radial-gradient(ellipse at 20% 50%,#786d9d99 0 9px,transparent 10px),radial-gradient(ellipse at 55% 40%,#393052bb 0 12px,transparent 13px),radial-gradient(ellipse at 82% 58%,#5c527caa 0 10px,transparent 11px);background-size:70px 30px;opacity:.8;filter:blur(2px)}
+.tcgp-present-attack.type-metal::after{inset:-6px 0;background:repeating-linear-gradient(100deg,transparent 0 19px,#ffffffcc 20px 23px,#8399a4 24px 27px,transparent 28px 46px);opacity:.76;filter:none}
+.tcgp-present-attack.type-dragon::after{inset:-12px 0;background:repeating-conic-gradient(from 35deg at 50% 50%,#8fe2ff 0 10deg,transparent 11deg 27deg,#c78cff 28deg 38deg,transparent 39deg 58deg);background-size:34px 34px;opacity:.58;filter:blur(.6px)}
+.tcgp-present-attack.type-colorless::after{inset:-10px 0;background:repeating-linear-gradient(170deg,transparent 0 14px,#ffffffc9 15px 17px,transparent 18px 31px);opacity:.65;filter:none}
+.tcgp-present-attack.intensity-medium{height:7px}
+.tcgp-present-attack.intensity-big{height:10px;box-shadow:0 0 12px var(--fx2),0 0 22px var(--fx2)}
+.tcgp-present-attack.intensity-finisher{height:14px;animation-duration:.52s;box-shadow:0 0 15px var(--fx2),0 0 30px var(--fx2)}
+.tcgp-present-damage{position:absolute;z-index:15;min-width:52px;transform:translate(-50%,-50%);padding:5px 9px;border-radius:12px;background:#142a3ee8;border:1px solid #ffffff77;color:#fff;font-size:17px;font-weight:950;text-align:center;text-shadow:0 2px 3px #0008;box-shadow:0 5px 14px #0d263a55;animation:tcgpDamagePop .48s ease-out forwards}
+.tcgp-present-damage.intensity-big{font-size:21px}.tcgp-present-damage.intensity-finisher{font-size:25px;padding:7px 12px}
+.tcgp-present-coins{position:absolute;left:50%;top:50%;z-index:18;transform:translate(-50%,-50%);max-width:min(86%,420px);display:flex;justify-content:center;align-items:center;gap:6px;flex-wrap:wrap;padding:10px 12px 30px;border-radius:18px;background:#142b40e8;border:1px solid #ffffff55;box-shadow:0 9px 26px #071b2d66}
+.tcgp-present-coin{width:38px;height:38px;display:grid;place-items:center;border-radius:50%;border:2px solid #f8edbf;background:radial-gradient(circle at 34% 27%,#fff7c9,#d7a93d 45%,#8d6521 78%);color:#4e3816;font-size:13px;font-weight:950;box-shadow:inset 0 0 0 2px #7b571e55,0 3px 7px #071b2d55;opacity:0;transform:rotateY(0) scale(.4);animation:tcgpCoinFlip .44s var(--tcgp-coin-delay,0ms) cubic-bezier(.18,.75,.28,1) forwards}
+.tcgp-present-coin.tails{background:radial-gradient(circle at 34% 27%,#f2f6f6,#a7bcc5 45%,#627a86 78%);border-color:#d8e4e8;color:#2f4854}
+.tcgp-present-coin-more{align-self:center;font-size:10px;font-weight:900;color:#d2e1e8}
+.tcgp-present-coin-label{position:absolute;left:0;right:0;bottom:7px;text-align:center;font-size:9px;letter-spacing:.08em;font-weight:900;color:#e7f3f8}
+.tcgp-present-ko-label,.tcgp-present-status,.tcgp-present-heal{position:absolute;left:50%;top:48%;z-index:20;transform:translate(-50%,-50%);padding:7px 12px;border-radius:12px;background:#7d3138ed;border:1px solid #ffc0c4;color:#fff;font-size:11px;font-weight:950;letter-spacing:.08em;box-shadow:0 5px 15px #10283e66;animation:tcgpBadgePop .42s ease-out forwards}
+.tcgp-present-status{background:#5d3973ed;border-color:#e9c5ff}.tcgp-present-heal{background:#39754bed;border-color:#c5f2c9}
+.tcgp-present-lunge{animation:tcgpCardLunge .34s ease-out}.tcgp-present-hit{animation:tcgpCardHit .36s linear}
+.tcgp-live-arena.tcgp-present-shake{animation:tcgpArenaShake .26s linear 1}
+@keyframes tcgpPresentCardMove{0%{opacity:.4;transform:translate(0,0) scale(.86)}25%{opacity:1;transform:translate(calc(var(--tcgp-present-tx)*.2),calc(var(--tcgp-present-ty)*.2 - 12px)) scale(1.06)}100%{opacity:0;transform:translate(var(--tcgp-present-tx),var(--tcgp-present-ty)) scale(var(--tcgp-present-scale,1))}}
+@keyframes tcgpPresentKo{0%{opacity:1;transform:translate(0,0) rotate(0) scale(1)}35%{opacity:.9;transform:translate(calc(var(--tcgp-present-tx)*.2),calc(var(--tcgp-present-ty)*.2)) rotate(-6deg) scale(1.05)}100%{opacity:.12;transform:translate(var(--tcgp-present-tx),var(--tcgp-present-ty)) rotate(13deg) scale(.58)}}
+@keyframes tcgpPresentEnergy{0%{opacity:.45;transform:translate(0,0) scale(.55) rotate(-40deg)}55%{opacity:1;transform:translate(calc(var(--tcgp-present-tx)*.65),calc(var(--tcgp-present-ty)*.65)) scale(1.16) rotate(180deg)}100%{opacity:0;transform:translate(var(--tcgp-present-tx),var(--tcgp-present-ty)) scale(.7) rotate(300deg)}}
+@keyframes tcgpAttackTravel{0%{opacity:.15;transform:rotate(var(--tcgp-attack-angle)) scaleX(.04)}68%{opacity:1;transform:rotate(var(--tcgp-attack-angle)) scaleX(1)}100%{opacity:0;transform:rotate(var(--tcgp-attack-angle)) scaleX(1)}}
+@keyframes tcgpAttackImpact{0%{opacity:0;transform:translateY(-50%) scale(.15)}55%{opacity:1;transform:translateY(-50%) scale(1.55)}100%{opacity:0;transform:translateY(-50%) scale(2.25)}}
+@keyframes tcgpDamagePop{0%{opacity:0;transform:translate(-50%,-25%) scale(.6)}32%{opacity:1;transform:translate(-50%,-72%) scale(1.12)}100%{opacity:0;transform:translate(-50%,-130%) scale(.96)}}
+@keyframes tcgpCoinFlip{0%{opacity:0;transform:rotateY(0) translateY(18px) scale(.45)}60%{opacity:1;transform:rotateY(540deg) translateY(-5px) scale(1.12)}100%{opacity:1;transform:rotateY(720deg) translateY(0) scale(1)}}
+@keyframes tcgpBadgePop{0%{opacity:0;transform:translate(-50%,-30%) scale(.72)}35%{opacity:1;transform:translate(-50%,-58%) scale(1.08)}100%{opacity:0;transform:translate(-50%,-90%) scale(.96)}}
+@keyframes tcgpCardLunge{0%,100%{transform:scale(1)}50%{transform:translateY(-6px) scale(1.045)}}
+@keyframes tcgpCardHit{0%,100%{transform:translateX(0)}25%{transform:translateX(-4px) rotate(-1deg)}55%{transform:translateX(5px) rotate(1deg)}75%{transform:translateX(-2px)}}
+@keyframes tcgpArenaShake{0%,100%{transform:translate(0)}20%{transform:translate(-2px,1px)}40%{transform:translate(3px,-1px)}60%{transform:translate(-2px,-1px)}80%{transform:translate(2px,1px)}}
+@media(max-width:420px){.tcgp-present-coins{gap:4px;padding:8px 9px 28px}.tcgp-present-coin{width:32px;height:32px;font-size:11px}.tcgp-present-damage{font-size:15px}.tcgp-present-damage.intensity-finisher{font-size:21px}}
+@media(prefers-reduced-motion:reduce){.tcgp-present-layer *,.tcgp-present-lunge,.tcgp-present-hit,.tcgp-live-arena.tcgp-present-shake{animation-duration:.01ms!important;animation-delay:0ms!important;transition-duration:.01ms!important}.tcgp-present-attack{opacity:.85;transform:rotate(var(--tcgp-attack-angle)) scaleX(1)}.tcgp-present-card-ghost,.tcgp-present-energy-ghost{display:none}}
+.tcgp-battle-result-detailed{display:grid;gap:10px}
+.tcgp-battle-result-detailed>h2,.tcgp-battle-result-detailed>p{margin-top:0;margin-bottom:0}
+.tcgp-battle-score-grid{margin-top:2px}
+.tcgp-battle-summary-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:7px;margin-top:2px}
+.tcgp-battle-summary-grid .tcgp-battle-stat{min-width:0;padding:8px 5px}
+.tcgp-battle-summary-grid .tcgp-battle-stat small{font-size:7px;line-height:1.2;white-space:normal}
+.tcgp-battle-summary-grid .tcgp-battle-stat b{display:block;margin-top:3px;font-size:15px;overflow-wrap:anywhere}
+.tcgp-battle-highlight{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:9px 11px;border-radius:13px;background:rgba(113,180,255,.08);border:1px solid rgba(113,180,255,.16)}
+.tcgp-battle-highlight small{font-size:8px;font-weight:900;letter-spacing:.09em;color:#8da2bc}.tcgp-battle-highlight b{font-size:11px;text-align:right;color:#e5effa}
+@media(max-width:460px){.tcgp-battle-summary-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.tcgp-battle-highlight{align-items:flex-start;flex-direction:column;gap:3px}.tcgp-battle-highlight b{text-align:left}}

@@ -27,7 +27,7 @@
   const PRINT_ART_BY_ID=new Map((data.PRINTS||[]).map(print=>[String(print.id).toUpperCase(),print]));
   let cancelGesture=null;
   let screen='home',currentPlayerEnergyTypes=[];
-  let currentBattle=null,currentChallenge=null,currentPractice=false,currentPlayerDeck=null,resultInfo=null,cpuPending=false,cpuTimer=null,cpuActions=0,battleActionCache=[],battleInspect=null,battleOverlay=null,battleContextActionIndices=[],battleDiscardSide='player',handDragSuppressUntil=0,battleEvent='';
+  let currentBattle=null,currentChallenge=null,currentPractice=false,currentPlayerDeck=null,resultInfo=null,cpuPending=false,cpuTimer=null,cpuActions=0,battleActionCache=[],battleInspect=null,battleOverlay=null,battleContextActionIndices=[],battleDiscardSide='player',handDragSuppressUntil=0,battleEvent='',battlePresentationBusy=false,battlePresentationTimers=[],battlePresentationDone=null,battlePresentationSerial=0;
 
   const esc=value=>String(value==null?'':value).replace(/[&<>"']/g,ch=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));
   const el=id=>root&&root.document?root.document.getElementById(id):null;
@@ -121,6 +121,144 @@
     return actionEventText({...action,side});
   }
 
+  function attackPresentationMeta(entry){
+    const card=data.cardById(entry?.cardId),rawType=String((card?.types||[])[0]||card?.subtype||'Colorless').toLowerCase();
+    const allowed=new Set(['grass','fire','water','lightning','psychic','fighting','darkness','metal','dragon','colorless']);
+    const type=allowed.has(rawType)?rawType:'colorless',damage=Math.max(0,Number(entry?.damage||0));
+    const intensity=damage>=180?'finisher':damage>=120?'big':damage>=60?'medium':'small';
+    return {type,intensity,damage,attack:String(entry?.attack||'Attack')};
+  }
+
+  function coinSequence(entry){
+    if(Array.isArray(entry?.results)&&entry.results.length)return entry.results.map(Boolean);
+    if(typeof entry?.heads==='boolean')return [entry.heads];
+    const coins=Math.max(0,Number(entry?.coins||0)),heads=Math.max(0,Math.min(coins,Number(entry?.heads||0)));
+    return Array.from({length:coins},(_,index)=>index<heads);
+  }
+
+  function battleSummaryStats(battle){
+    const log=Array.isArray(battle?.log)?battle.log:[];
+    let damageDealt=0,damageTaken=0,attacksUsed=0,knockouts=0,trainersPlayed=0,energyAttached=0,coinHeads=0,coinTails=0,biggestHit=0,biggestAttack='',biggestAttacker='';
+    for(const entry of log){
+      if(entry?.type==='attack'){
+        const damage=Math.max(0,Number(entry.damage||0));
+        if(entry.side==='player'){damageDealt+=damage;attacksUsed++;if(damage>biggestHit){biggestHit=damage;biggestAttack=String(entry.attack||'Attack');biggestAttacker=cardName(entry.cardId);}}
+        else if(entry.side==='opponent')damageTaken+=damage;
+      }else if(entry?.type==='ko'&&entry.side==='opponent')knockouts++;
+      else if(entry?.type==='trainer'&&entry.side==='player')trainersPlayed++;
+      else if(entry?.type==='attach'&&entry.side==='player')energyAttached++;
+      else if(entry?.type==='coin'&&entry.side==='player'){const seq=coinSequence(entry);coinHeads+=seq.filter(Boolean).length;coinTails+=seq.filter(v=>!v).length;}
+    }
+    return {turns:Math.max(0,Number(battle?.turnNumber||0)),playerPoints:Math.max(0,Number(battle?.sides?.player?.points||0)),opponentPoints:Math.max(0,Number(battle?.sides?.opponent?.points||0)),damageDealt,damageTaken,attacksUsed,knockouts,trainersPlayed,energyAttached,coinHeads,coinTails,coinTotal:coinHeads+coinTails,biggestHit,biggestAttack,biggestAttacker};
+  }
+
+  function presentationRect(node){
+    if(!node?.getBoundingClientRect)return null;const r=node.getBoundingClientRect();
+    return {left:r.left,top:r.top,width:r.width,height:r.height,right:r.right,bottom:r.bottom};
+  }
+  function boardSlotKey(side,zone,index){return `${side}-${zone}-${Number(index||0)}`;}
+  function boardSlotSelector(side,zone,index){return `[data-board-slot="${boardSlotKey(side,zone,index)}"] .tcgp-live-card`;}
+  function capturePresentationAnchors(action,side){
+    const content=el('tcgpBattleContent'),arena=content?.querySelector('.tcgp-live-arena');if(!content||!arena)return null;
+    const slots={};
+    for(const sideName of ['player','opponent']){
+      const stateSide=currentBattle?.sides?.[sideName];
+      const activeNode=content.querySelector(boardSlotSelector(sideName,'active',0));
+      slots[boardSlotKey(sideName,'active',0)]={rect:presentationRect(activeNode),cardId:stateSide?.active?.cardId||null,zone:'active',index:0,side:sideName};
+      for(let i=0;i<3;i++){
+        const node=content.querySelector(boardSlotSelector(sideName,'bench',i)),slot=core?.benchSlotAt?core.benchSlotAt(stateSide,i):stateSide?.bench?.[i];
+        slots[boardSlotKey(sideName,'bench',i)]={rect:presentationRect(node),cardId:slot?.cardId||null,zone:'bench',index:i,side:sideName};
+      }
+    }
+    const hand=side==='player'&&action?.handIndex!=null?content.querySelector(`[data-hand-index="${Number(action.handIndex)}"] .tcgp-live-hand-card`):side==='opponent'?content.querySelector('[data-hand-side="opponent"]'):null;
+    const energy=content.querySelector(`[data-energy-side="${side}"]`),center=content.querySelector('.tcgp-live-mid-controls');
+    const piles={};for(const sideName of ['player','opponent'])for(const kind of ['deck','discard'])piles[`${sideName}-${kind}`]=presentationRect(content.querySelector(`[data-pile-side="${sideName}"][data-pile-kind="${kind}"]`));
+    const energyRect=presentationRect(energy)||(side==='opponent'?slots[boardSlotKey('opponent','active',0)]?.rect:null);
+    return {arena:presentationRect(arena),slots,hand:presentationRect(hand),energy:energyRect,center:presentationRect(center),piles,action:action?JSON.parse(JSON.stringify(action)):null,side};
+  }
+  function localBox(rect,layerRect){if(!rect||!layerRect)return null;return {x:rect.left-layerRect.left,y:rect.top-layerRect.top,width:rect.width,height:rect.height,cx:rect.left-layerRect.left+rect.width/2,cy:rect.top-layerRect.top+rect.height/2};}
+  function targetKeyForAction(action,side){
+    if(!action)return boardSlotKey(side,'active',0);
+    if(action.type==='setupActive')return boardSlotKey(side,'active',0);
+    if(action.type==='setupBench'||action.type==='bench')return boardSlotKey(side,'bench',action.benchIndex);
+    if(action.type==='evolve'||action.type==='attach'||action.type==='ability'||action.type==='trainer'){
+      let target=action.effectTarget||action.target||'active',index=action.effectTarget?action.effectBenchIndex:action.benchIndex,targetSide=side;
+      if(String(target).startsWith('opponent')){targetSide=side==='player'?'opponent':'player';target=String(target).toLowerCase().includes('bench')?'bench':'active';}
+      return boardSlotKey(targetSide,target==='bench'?'bench':'active',target==='bench'?index:0);
+    }
+    return boardSlotKey(side,'active',0);
+  }
+  function presentationCardArt(cardId,side){try{return cardId?cardArtUrl(cardId,side):'';}catch(_){return'';}}
+  function appendPresentationNode(stage,className){const node=root?.document?.createElement?.('div');if(!node)return null;node.className=className;stage.appendChild(node);return node;}
+  function spawnCardGhost(stage,layerRect,cardId,side,fromRect,toRect,extraClass){
+    const from=localBox(fromRect,layerRect),to=localBox(toRect,layerRect);if(!from||!to)return null;
+    const node=appendPresentationNode(stage,`tcgp-present-card-ghost ${extraClass||''}`);if(!node)return null;
+    node.style.left=from.x+'px';node.style.top=from.y+'px';node.style.width=Math.max(28,from.width)+'px';node.style.height=Math.max(39,from.height)+'px';node.style.setProperty('--tcgp-present-tx',(to.cx-from.cx)+'px');node.style.setProperty('--tcgp-present-ty',(to.cy-from.cy)+'px');node.style.setProperty('--tcgp-present-scale',String(Math.max(.5,Math.min(1.35,to.width/Math.max(1,from.width)))));
+    const art=presentationCardArt(cardId,side);if(art)node.style.backgroundImage=`url("${art.replace(/"/g,'&quot;')}")`;else node.textContent=cardName(cardId).slice(0,10);
+    return node;
+  }
+  function spawnDrawGhost(stage,layerRect,entry,fromRect,toRect){
+    const from=localBox(fromRect,layerRect),to=localBox(toRect,layerRect);if(!from||!to)return null;
+    const node=appendPresentationNode(stage,'tcgp-present-card-ghost tcgp-present-draw');if(!node)return null;
+    node.style.left=from.x+'px';node.style.top=from.y+'px';node.style.width=Math.max(28,Math.min(58,from.width||42))+'px';node.style.height=Math.max(39,Math.min(82,from.height||59))+'px';node.style.setProperty('--tcgp-present-tx',(to.cx-from.cx)+'px');node.style.setProperty('--tcgp-present-ty',(to.cy-from.cy)+'px');node.style.setProperty('--tcgp-present-scale','.72');
+    if(entry?.side==='player'&&entry?.cardId){const art=presentationCardArt(entry.cardId,'player');if(art)node.style.backgroundImage=`url("${art.replace(/"/g,'&quot;')}")`;}
+    return node;
+  }
+  function spawnEnergyGhost(stage,layerRect,entry,fromRect,toRect){
+    const from=localBox(fromRect,layerRect),to=localBox(toRect,layerRect);if(!from||!to)return null;const node=appendPresentationNode(stage,'tcgp-present-energy-ghost');if(!node)return null;
+    const codes={Grass:'G',Fire:'R',Water:'W',Lightning:'L',Psychic:'P',Fighting:'F',Darkness:'D',Metal:'M'};node.textContent=codes[entry?.energyType]||'✦';node.dataset.energy=entry?.energyType||'Colorless';node.style.left=(from.cx-18)+'px';node.style.top=(from.cy-18)+'px';node.style.setProperty('--tcgp-present-tx',(to.cx-from.cx)+'px');node.style.setProperty('--tcgp-present-ty',(to.cy-from.cy)+'px');return node;
+  }
+  function spawnCoinRow(stage,entry){
+    const results=coinSequence(entry),shown=results.slice(0,20),row=appendPresentationNode(stage,'tcgp-present-coins');if(!row)return 0;
+    shown.forEach((heads,index)=>{const coin=appendPresentationNode(row,`tcgp-present-coin ${heads?'heads':'tails'}`);coin.textContent=heads?'H':'T';coin.style.setProperty('--tcgp-coin-delay',(index*70)+'ms');});
+    if(results.length>shown.length){const more=appendPresentationNode(row,'tcgp-present-coin-more');more.textContent=`+${results.length-shown.length}`;}
+    const heads=results.filter(Boolean).length,tails=results.length-heads,label=appendPresentationNode(row,'tcgp-present-coin-label');label.textContent=results.length===1?(results[0]?'HEADS':'TAILS'):`${heads} HEADS · ${tails} TAILS`;
+    return Math.min(1050,320+shown.length*70);
+  }
+  function attackTargetAnchor(anchors,entry){const foe=entry?.side==='player'?'opponent':'player',zone=entry?.target==='bench'?'bench':'active',index=zone==='bench'?Number(entry?.benchIndex||0):0;return anchors?.slots?.[boardSlotKey(foe,zone,index)]||null;}
+  function spawnAttackFx(stage,layerRect,anchors,entry){
+    const source=anchors?.slots?.[boardSlotKey(entry.side,'active',0)]?.rect,targetInfo=attackTargetAnchor(anchors,entry),target=targetInfo?.rect,from=localBox(source,layerRect),to=localBox(target,layerRect);if(!from||!to)return;
+    const meta=attackPresentationMeta(entry),dx=to.cx-from.cx,dy=to.cy-from.cy,distance=Math.max(18,Math.hypot(dx,dy)),angle=Math.atan2(dy,dx)*180/Math.PI;
+    const fx=appendPresentationNode(stage,`tcgp-present-attack type-${meta.type} intensity-${meta.intensity}`);fx.style.left=from.cx+'px';fx.style.top=from.cy+'px';fx.style.width=distance+'px';fx.style.setProperty('--tcgp-attack-angle',angle+'deg');
+    const damage=appendPresentationNode(stage,`tcgp-present-damage intensity-${meta.intensity}`);damage.textContent=meta.damage>0?`−${meta.damage}`:'BLOCKED';damage.style.left=to.cx+'px';damage.style.top=to.cy+'px';
+    const content=el('tcgpBattleContent'),attackerNode=content?.querySelector(boardSlotSelector(entry.side,'active',0)),targetNode=content?.querySelector(boardSlotSelector(targetInfo?.side||'',targetInfo?.zone||'active',targetInfo?.index||0));attackerNode?.classList.add('tcgp-present-lunge');targetNode?.classList.add('tcgp-present-hit');
+    const remove=()=>{attackerNode?.classList.remove('tcgp-present-lunge');targetNode?.classList.remove('tcgp-present-hit');};battlePresentationTimers.push(setTimeout(remove,680));
+    if(meta.intensity==='big'||meta.intensity==='finisher')content?.querySelector('.tcgp-live-arena')?.classList.add('tcgp-present-shake');
+  }
+  function findKoAnchor(anchors,entry,used){
+    const candidates=Object.values(anchors?.slots||{}).filter(info=>info.side===entry.side&&info.cardId===entry.cardId&&info.rect&&!used.has(boardSlotKey(info.side,info.zone,info.index)));
+    const hit=candidates[0]||null;if(hit)used.add(boardSlotKey(hit.side,hit.zone,hit.index));return hit;
+  }
+  function finishBattlePresentation(runCallback=true){
+    battlePresentationSerial++;for(const timer of battlePresentationTimers)clearTimeout(timer);battlePresentationTimers=[];
+    const layer=el('tcgpBattleContent')?.querySelector('.tcgp-present-layer');layer?.remove();el('tcgpBattleContent')?.querySelector('.tcgp-live-arena')?.classList.remove('tcgp-present-shake');
+    const done=battlePresentationDone;battlePresentationDone=null;battlePresentationBusy=false;if(runCallback&&typeof done==='function')done();
+  }
+  function playBattlePresentation(action,side,anchors,logs,done){
+    finishBattlePresentation(false);const entries=Array.isArray(logs)?logs:[];if(!root?.document||!anchors||!entries.length){if(typeof done==='function')done();return 0;}
+    const arena=el('tcgpBattleContent')?.querySelector('.tcgp-live-arena');if(!arena){if(typeof done==='function')done();return 0;}
+    battlePresentationBusy=true;battlePresentationDone=done;const serial=++battlePresentationSerial,layer=root.document.createElement('div');layer.className='tcgp-present-layer';layer.innerHTML='<button type="button" class="tcgp-present-skip" data-tcgp-action="skip-presentation" aria-label="Finish battle animation"></button><div class="tcgp-present-stage" aria-hidden="true"></div>';arena.appendChild(layer);const stage=layer.querySelector('.tcgp-present-stage'),layerRect=presentationRect(layer),reduced=!!root.matchMedia?.('(prefers-reduced-motion: reduce)')?.matches;
+    const later=(delay,fn)=>{const timer=setTimeout(()=>{if(serial===battlePresentationSerial&&battlePresentationBusy)fn();},Math.max(0,delay));battlePresentationTimers.push(timer);};
+    let t=0;
+    const movement=entries.find(e=>['setupActive','setupBench','bench','evolve','trainer','attach','retreat','promote'].includes(e.type));
+    if(movement&&!reduced){
+      later(t,()=>{
+        if(movement.type==='attach'){const target=anchors.slots[targetKeyForAction(action,side)]?.rect||anchors.slots[boardSlotKey(side,'active',0)]?.rect;spawnEnergyGhost(stage,layerRect,movement,anchors.energy,target);return;}
+        if(movement.type==='retreat'){const active=anchors.slots[boardSlotKey(side,'active',0)],bench=anchors.slots[boardSlotKey(side,'bench',movement.benchIndex)];const postActive=presentationRect(el('tcgpBattleContent')?.querySelector(boardSlotSelector(side,'active',0))),postBench=presentationRect(el('tcgpBattleContent')?.querySelector(boardSlotSelector(side,'bench',movement.benchIndex)));spawnCardGhost(stage,layerRect,active?.cardId,side,active?.rect,postBench,'tcgp-present-swap');spawnCardGhost(stage,layerRect,bench?.cardId,side,bench?.rect,postActive,'tcgp-present-swap');return;}
+        if(movement.type==='promote'){const bench=anchors.slots[boardSlotKey(side,'bench',movement.benchIndex)],postActive=presentationRect(el('tcgpBattleContent')?.querySelector(boardSlotSelector(side,'active',0)));spawnCardGhost(stage,layerRect,movement.cardId||bench?.cardId,side,bench?.rect,postActive,'tcgp-present-promote');return;}
+        const targetKey=targetKeyForAction(action,side),postTarget=presentationRect(el('tcgpBattleContent')?.querySelector(`[data-board-slot="${targetKey}"] .tcgp-live-card`)),to=movement.type==='trainer'?(anchors.center||anchors.piles?.[`${side}-discard`]):postTarget,from=anchors.hand||anchors.slots[boardSlotKey(side,'active',0)]?.rect;spawnCardGhost(stage,layerRect,movement.cardId||action?.cardId,side,from,to,movement.type==='evolve'?'tcgp-present-evolve':movement.type==='trainer'?'tcgp-present-trainer':'tcgp-present-play');
+      });t+=movement.type==='retreat'?430:310;
+    }
+    for(const coinEntry of entries.filter(e=>e.type==='coin')){later(t,()=>spawnCoinRow(stage,coinEntry));t+=reduced?60:Math.max(300,Math.min(850,280+coinSequence(coinEntry).length*70));}
+    const attack=entries.find(e=>e.type==='attack');if(attack){later(t,()=>spawnAttackFx(stage,layerRect,anchors,attack));t+=reduced?80:(attackPresentationMeta(attack).intensity==='finisher'?650:attackPresentationMeta(attack).intensity==='big'?560:450);}
+    for(const status of entries.filter(e=>e.type==='status'&&Number(e.affectedCount||0)>0)){later(t,()=>{const node=appendPresentationNode(stage,`tcgp-present-status status-${String(status.status||'effect').toLowerCase()}`);node.textContent=String(status.status||'STATUS').toUpperCase();});t+=reduced?40:220;}
+    for(const heal of entries.filter(e=>e.type==='heal')){later(t,()=>{const node=appendPresentationNode(stage,'tcgp-present-heal');node.textContent=`+${Number(heal.amount||0)} HP`;});t+=reduced?40:220;}
+    const used=new Set();for(const ko of entries.filter(e=>e.type==='ko')){later(t,()=>{const info=findKoAnchor(anchors,ko,used),discard=presentationRect(el('tcgpBattleContent')?.querySelector(`[data-pile-side="${ko.side}"][data-pile-kind="discard"]`))||anchors.piles?.[`${ko.side}-discard`];spawnCardGhost(stage,layerRect,ko.cardId,ko.side,info?.rect,discard,'tcgp-present-ko');const badge=appendPresentationNode(stage,'tcgp-present-ko-label');badge.textContent='KNOCKED OUT';});t+=reduced?80:440;}
+    for(const draw of entries.filter(e=>e.type==='draw')){later(t,()=>{const content=el('tcgpBattleContent'),from=presentationRect(content?.querySelector(`[data-pile-side="${draw.side}"][data-pile-kind="deck"]`))||anchors.piles?.[`${draw.side}-deck`],to=presentationRect(draw.side==='player'?content?.querySelector('.tcgp-live-hand'):content?.querySelector('[data-hand-side="opponent"]'));spawnDrawGhost(stage,layerRect,draw,from,to);});t+=reduced?40:230;}
+    if(t===0){finishBattlePresentation(true);return 0;}
+    battlePresentationTimers.push(setTimeout(()=>{if(serial===battlePresentationSerial)finishBattlePresentation(true);},Math.max(60,t+60)));return t;
+  }
+
   function coverageForOwnedCards(cards){
     const rows=Array.isArray(cards)?cards:Object.values(cards||{});
     const pocketPrints=new Set();
@@ -147,7 +285,7 @@
 
   function renderHome(skipGuard){
     if(screen==='builder'&&skipGuard!==true)return requestLeave(()=>renderHome(true));
-    clearBattleEvent();
+    clearBattleEvent();finishBattlePresentation(false);
     cancelGesture?.();clearTimeout(cpuTimer);cpuTimer=null;cpuPending=false;
     setBattleLive(false);battleOverlay=null;battleInspect=null;setScreen('home');
     const state=battleSave(),stats=state.stats,owned=enabledOwnedRows(),deck=activeDeck(),challenge=solo.challengeById(selectedChallengeId)||solo.challengeById(CHALLENGE_ID),cleared=!!state.firstClears[challenge.id];
@@ -320,7 +458,7 @@
     const settings=opts||{},compact=!!settings.compact,side=settings.side||'player',zone=settings.zone||'active',index=Number(settings.index||0),targetAttrs=[energyTargetAttrs(side,zone,index),cardDropAttrs(side,zone,index)].filter(Boolean).join(' ');
     if(!slot)return `<div data-board-slot="${side}-${zone}-${index}" class="tcgp-live-card-wrap ${compact?'compact':''}"><button type="button" class="tcgp-live-card ${compact?'compact ':''}empty" ${inspectAttrs(side,zone,index)} ${targetAttrs}><span>${zone==='active'?'ACTIVE':'BENCH '+(index+1)}</span></button></div>`;
     const info=hpInfo(slot,side),card=info.card,art=cardArtUrl(slot.cardId,side),conditions=Object.keys(slot.conditions||{}).filter(key=>slot.conditions[key]).map(key=>key.toUpperCase()).join(' · '),tools=slotTools(slot);
-    return `<div class="tcgp-live-card-wrap ${compact?'compact':''}"><button type="button" class="tcgp-live-card ${compact?'compact':''}" ${inspectAttrs(side,zone,index)} ${targetAttrs}>${art?`<img src="${esc(art)}" alt="${esc(card?.name||slot.cardId)}">`:''}<span class="tcgp-live-hp">${info.left}</span>${tools.length?`<span class="tcgp-live-tools">${tools.length>1?`TOOLS ${tools.length}`:'TOOL'}</span>`:''}${conditions?`<span class="tcgp-live-condition">${esc(conditions)}</span>`:''}${liveAttachedEnergyHtml(info)}<span class="tcgp-live-name">${esc(card?.name||slot.cardId)}</span></button>${livePokemonActionsHtml(side,zone,index)}</div>`;
+    return `<div data-board-slot="${boardSlotKey(side,zone,index)}" class="tcgp-live-card-wrap ${compact?'compact':''}"><button type="button" class="tcgp-live-card ${compact?'compact':''}" ${inspectAttrs(side,zone,index)} ${targetAttrs}>${art?`<img src="${esc(art)}" alt="${esc(card?.name||slot.cardId)}">`:''}<span class="tcgp-live-hp">${info.left}</span>${tools.length?`<span class="tcgp-live-tools">${tools.length>1?`TOOLS ${tools.length}`:'TOOL'}</span>`:''}${conditions?`<span class="tcgp-live-condition">${esc(conditions)}</span>`:''}${liveAttachedEnergyHtml(info)}<span class="tcgp-live-name">${esc(card?.name||slot.cardId)}</span></button>${livePokemonActionsHtml(side,zone,index)}</div>`;
   }
   function liveBenchHtml(sideName,bench){
     const slots=[],sideState={bench:bench||[]};
@@ -330,7 +468,7 @@
   function liveOpponentHandHtml(side){
     const sleeve=sleeveArtPath('opponent'),style=sleeve?`style="background-image:url('${esc(sleeve)}')"`:'';
     const visible=Math.min(5,side.hand.length),backs=Array.from({length:visible},(_,i)=>`<i style="--i:${i};${sleeve?`background-image:url('${esc(sleeve)}');`:''}"></i>`).join('');
-    return `<div class="tcgp-live-hand-backs" style="--back-count:${visible}" aria-label="Opponent hand ${side.hand.length} cards">${backs}<b>${side.hand.length}</b></div>`;
+    return `<div data-hand-side="opponent" class="tcgp-live-hand-backs" style="--back-count:${visible}" aria-label="Opponent hand ${side.hand.length} cards">${backs}<b>${side.hand.length}</b></div>`;
   }
   function centerHandActionIndices(actions,handIndex){
     const allowed=new Set(['setupActive','setupBench','bench','evolve','trainer']);
@@ -361,7 +499,7 @@
     const handCount=Math.max(1,side.hand.length);
     return `<div class="tcgp-live-hand-fan" style="--hand-count:${handCount}">${side.hand.map((ref,index)=>{
       const card=data.cardById(ref.cardId),art=cardArtUrl(ref.cardId,'player'),usable=centerHandActionIndices(battleActionCache,index).length>0;
-      return `<div class="tcgp-live-hand-wrap ${usable?'playable':''}" style="--hand-i:${index}"><button type="button" class="tcgp-live-hand-card" ${inspectAttrs('player','hand',index)} data-tcgp-hand-drag="${index}">${art?`<img src="${esc(art)}" alt="${esc(card?.name||ref.cardId)}">`:`<span>${esc(card?.name||ref.cardId)}</span>`}</button></div>`;
+      return `<div data-hand-index="${index}" class="tcgp-live-hand-wrap ${usable?'playable':''}" style="--hand-i:${index}"><button type="button" class="tcgp-live-hand-card" ${inspectAttrs('player','hand',index)} data-tcgp-hand-drag="${index}">${art?`<img src="${esc(art)}" alt="${esc(card?.name||ref.cardId)}">`:`<span>${esc(card?.name||ref.cardId)}</span>`}</button></div>`;
     }).join('')||'<span class="tcgp-live-hand-empty">No cards</span>'}</div>`;
   }
   function layoutPlayerHand(){
@@ -375,12 +513,12 @@
     const topArt=top?cardArtUrl(top.cardId,sideName):'',sleeve=sleeveArtPath(sideName),backStyle=!isDiscard&&sleeve?`background-image:url('${esc(sleeve)}');`:'';
     const attrs=isDiscard?`data-tcgp-action="open-discard" data-side="${esc(sideName)}"`:'';
     const fallbackText=isDiscard&&top&&!topArt?esc(cardName(top.cardId).slice(0,2).toUpperCase()):(!topArt&&!sleeve&&!isDiscard?'◆':'');
-    return `<button type="button" class="tcgp-live-pile ${isDiscard?'discard':'deck'} ${sideName==='player'?'mine':''}" ${attrs} ${isDiscard?'':'disabled'} aria-label="${isDiscard?'View discard pile':'Deck'} ${count} cards"><span class="tcgp-live-pile-card${emptyDiscard?' empty':''}" style="${topArt?`background-image:url('${esc(topArt)}');`:backStyle}">${fallbackText}</span><b>${count}</b><small>${isDiscard?'DISCARD':'DECK'}</small></button>`;
+    return `<button type="button" data-pile-side="${esc(sideName)}" data-pile-kind="${esc(kind)}" class="tcgp-live-pile ${isDiscard?'discard':'deck'} ${sideName==='player'?'mine':''}" ${attrs} ${isDiscard?'':'disabled'} aria-label="${isDiscard?'View discard pile':'Deck'} ${count} cards"><span class="tcgp-live-pile-card${emptyDiscard?' empty':''}" style="${topArt?`background-image:url('${esc(topArt)}');`:backStyle}">${fallbackText}</span><b>${count}</b><small>${isDiscard?'DISCARD':'DECK'}</small></button>`;
   }
   function liveEnergySourceHtml(side){
     const available=currentBattle?.phase==='battle'&&currentBattle?.activeSide==='player'&&!cpuPending&&side.energyAvailable&&!side.energyUsed;
     const energyType=side.energyType||'Grass',symbol={Grass:'G',Fire:'R',Water:'W',Lightning:'L',Psychic:'P',Fighting:'F',Darkness:'D',Metal:'M'}[energyType]||'?';
-    return `<button type="button" class="tcgp-live-energy-source ${available?'ready':''}" data-energy="${esc(energyType)}" data-tcgp-energy-source="1" ${available?'':'disabled'} aria-label="${available?`Drag ${esc(energyType)} Energy to a Pokémon`:`${esc(energyType)} Energy unavailable`} · Next ${esc(side.nextEnergyType||energyType)}"><span>${symbol}</span><small>${esc(energyType).toUpperCase()}<br>NEXT ${esc(side.nextEnergyType||energyType).toUpperCase()}</small></button>`;
+    return `<button type="button" data-energy-side="player" class="tcgp-live-energy-source ${available?'ready':''}" data-energy="${esc(energyType)}" data-tcgp-energy-source="1" ${available?'':'disabled'} aria-label="${available?`Drag ${esc(energyType)} Energy to a Pokémon`:`${esc(energyType)} Energy unavailable`} · Next ${esc(side.nextEnergyType||energyType)}"><span>${symbol}</span><small>${esc(energyType).toUpperCase()}<br>NEXT ${esc(side.nextEnergyType||energyType).toUpperCase()}</small></button>`;
   }
   function liveInspectOverlayHtml(){
     if(battleOverlay!=='inspect'||!battleInspect)return'';
@@ -459,15 +597,15 @@
     return {title:'DEFEAT',message:battle?.reason==='turn-limit'?'The 50-turn Solo limit expired.':'The CPU won the match.'};
   }
   function renderResult(){
-    clearBattleEvent();
+    clearBattleEvent();finishBattlePresentation(false);
     setBattleLive(false);battleOverlay=null;battleInspect=null;setScreen('result');
-    const won=currentBattle?.winner==='player',practice=!!resultInfo?.practice,reward=resultInfo?.reward||{coins:0,dust:0};
-    setContent(`<section class="tcgp-battle-result"><div class="eyebrow">SOLO BATTLE</div><h2>${esc(resultSummary(currentBattle).title)}</h2><p>${esc(resultSummary(currentBattle).message)}</p><div class="tcgp-battle-stat-grid"><div class="tcgp-battle-stat"><small>YOU</small><b>${currentBattle?.sides.player.points||0}</b></div><div class="tcgp-battle-stat"><small>CPU</small><b>${currentBattle?.sides.opponent.points||0}</b></div><div class="tcgp-battle-stat"><small>TURN</small><b>${currentBattle?.turnNumber||0}</b></div></div><div class="tcgp-battle-reward">${practice?'PRACTICE · NO REWARDS':won?(resultInfo.firstClear?`FIRST CLEAR · ◉ ${reward.coins} + ✦ ${reward.dust}`:'REPEAT CLEAR'):'NO REWARD'}</div><div class="tcgp-battle-actions-row"><button class="tcgp-battle-action" data-tcgp-action="rematch">REMATCH</button><button class="tcgp-battle-action secondary" data-tcgp-action="home">BATTLE HOME</button></div></section>`);
+    const won=currentBattle?.winner==='player',practice=!!resultInfo?.practice,reward=resultInfo?.reward||{coins:0,dust:0},stats=battleSummaryStats(currentBattle),coinText=stats.coinTotal?`${stats.coinHeads}H · ${stats.coinTails}T`:'—',bigHit=stats.biggestHit?`${stats.biggestHit}`:'—',bigHitDetail=stats.biggestHit?`${stats.biggestAttacker} · ${stats.biggestAttack}`:'No damaging attack recorded';
+    setContent(`<section class="tcgp-battle-result tcgp-battle-result-detailed"><div class="eyebrow">SOLO BATTLE · SUMMARY</div><h2>${esc(resultSummary(currentBattle).title)}</h2><p>${esc(resultSummary(currentBattle).message)}</p><div class="tcgp-battle-stat-grid tcgp-battle-score-grid"><div class="tcgp-battle-stat"><small>YOU</small><b>${stats.playerPoints}</b></div><div class="tcgp-battle-stat"><small>CPU</small><b>${stats.opponentPoints}</b></div><div class="tcgp-battle-stat"><small>TURNS</small><b>${stats.turns}</b></div></div><div class="tcgp-battle-summary-grid"><div class="tcgp-battle-stat"><small>DAMAGE DEALT</small><b>${stats.damageDealt}</b></div><div class="tcgp-battle-stat"><small>DAMAGE TAKEN</small><b>${stats.damageTaken}</b></div><div class="tcgp-battle-stat"><small>BIGGEST HIT</small><b>${bigHit}</b></div><div class="tcgp-battle-stat"><small>KNOCKOUTS</small><b>${stats.knockouts}</b></div><div class="tcgp-battle-stat"><small>ATTACKS</small><b>${stats.attacksUsed}</b></div><div class="tcgp-battle-stat"><small>TRAINERS</small><b>${stats.trainersPlayed}</b></div><div class="tcgp-battle-stat"><small>ENERGY</small><b>${stats.energyAttached}</b></div><div class="tcgp-battle-stat"><small>COIN FLIPS</small><b>${esc(coinText)}</b></div></div><div class="tcgp-battle-highlight"><small>BIGGEST ATTACK</small><b>${esc(bigHitDetail)}</b></div><div class="tcgp-battle-reward">${practice?'PRACTICE · NO REWARDS':won?(resultInfo.firstClear?`FIRST CLEAR · ◉ ${reward.coins} + ✦ ${reward.dust}`:'REPEAT CLEAR'):'NO REWARD'}</div><div class="tcgp-battle-actions-row"><button class="tcgp-battle-action" data-tcgp-action="rematch">REMATCH</button><button class="tcgp-battle-action secondary" data-tcgp-action="home">BATTLE HOME</button></div></section>`);
   }
 
   let currentTestSetup=null;
   function startBattle(cards,practice,energyTypes,testSetup){
-    clearBattleEvent();
+    clearBattleEvent();finishBattlePresentation(false);
     cancelGesture?.();clearTimeout(cpuTimer);cpuTimer=null;
     currentChallenge=solo.challengeById(selectedChallengeId)||solo.challengeById(CHALLENGE_ID);currentPractice=!!practice;currentPlayerDeck=cards.slice();resultInfo=null;cpuPending=false;battleInspect=null;battleOverlay=null;battleEvent='';setBattleLive(true);
     currentPlayerEnergyTypes=Array.isArray(energyTypes)?energyTypes.slice():decks.analyzeDeck(cards).recommendedEnergyTypes;
@@ -479,25 +617,22 @@
     return !!currentBattle&&((currentBattle.phase==='battle'&&currentBattle.activeSide==='opponent')||(currentBattle.phase==='promote'&&currentBattle.promotionSide==='opponent')||(currentBattle.phase==='effectChoice'&&currentBattle.choiceSide==='opponent'));
   }
   function maybeCpu(){
-    if(!cpuOwnsNextAction()||cpuPending)return;
-    cpuActions=0;cpuPending=true;renderBattle();clearTimeout(cpuTimer);
-    cpuTimer=setTimeout(cpuStep,520);
+    if(!cpuOwnsNextAction()||cpuPending||battlePresentationBusy)return;
+    cpuActions=0;cpuPending=true;renderBattle();clearTimeout(cpuTimer);cpuTimer=setTimeout(cpuStep,260);
   }
   function cpuStep(){
     if(!currentBattle||!cpuOwnsNextAction()){cpuPending=false;renderBattle();return;}
-    const before=currentBattle.log.length;
+    let chosen=null,anchors=null,before=currentBattle.log.length;
     try{
-      const chosen=ai.chooseAction(currentBattle,'opponent',currentChallenge?.difficulty||'Beginner',cpuActions);
+      chosen=ai.chooseAction(currentBattle,'opponent',currentChallenge?.difficulty||'Beginner',cpuActions);
       if(!chosen){cpuPending=false;renderBattle();return;}
-      core.applyAction(currentBattle,'opponent',chosen);
-      cpuActions+=1;
-      setBattleEvent(eventForAction(chosen,'opponent',before));
+      anchors=capturePresentationAnchors(chosen,'opponent');core.applyAction(currentBattle,'opponent',chosen);cpuActions+=1;setBattleEvent(eventForAction(chosen,'opponent',before));
     }catch(error){console.error('[TCGP Battle] CPU error',error);cpuPending=false;toast('Battle engine error.');renderBattle();return;}
-    if(currentBattle?.phase==='finished'){
-      cpuPending=false;renderBattle();clearTimeout(cpuTimer);cpuTimer=setTimeout(finishBattle,700);return;
-    }
-    const again=cpuOwnsNextAction();cpuPending=again;renderBattle();
-    if(again){clearTimeout(cpuTimer);cpuTimer=setTimeout(cpuStep,780);}
+    const added=currentBattle.log.slice(before),finished=currentBattle?.phase==='finished',again=!finished&&cpuOwnsNextAction();cpuPending=again;renderBattle();
+    playBattlePresentation(chosen,'opponent',anchors,added,()=>{
+      if(currentBattle?.phase==='finished'){cpuPending=false;finishBattle();return;}
+      if(again){clearTimeout(cpuTimer);cpuTimer=setTimeout(cpuStep,220);}
+    });
   }
 
   function open(){
@@ -506,7 +641,7 @@
     const state=battleSave();if(!state.helpSeen){state.helpSeen=true;saveNow();showHelp();}
   }
   function requestLeave(callback){if(screen==='builder'&&root?.LuckyDexTCGPDeckEditor?.requestLeave)return root.LuckyDexTCGPDeckEditor.requestLeave(callback);callback();return true;}
-  function close(force){if(force!==true&&screen==='builder')return requestLeave(()=>close(true));clearBattleEvent();cancelGesture?.();clearTimeout(cpuTimer);cpuTimer=null;cpuPending=false;currentBattle=null;const view=el('tcgpBattleView'),home=el('packHome');if(view)view.hidden=true;if(home)home.hidden=false;battleInspect=null;battleOverlay=null;setBattleLive(false);setScreen('home');}
+  function close(force){if(force!==true&&screen==='builder')return requestLeave(()=>close(true));clearBattleEvent();finishBattlePresentation(false);cancelGesture?.();clearTimeout(cpuTimer);cpuTimer=null;cpuPending=false;currentBattle=null;const view=el('tcgpBattleView'),home=el('packHome');if(view)view.hidden=true;if(home)home.hidden=false;battleInspect=null;battleOverlay=null;setBattleLive(false);setScreen('home');}
   function showHelp(){const help=el('tcgpBattleHelp');if(help)help.hidden=false;}
   function hideHelp(){const help=el('tcgpBattleHelp');if(help)help.hidden=true;}
   function back(){
@@ -529,6 +664,8 @@
   function contentClick(event){
     const btn=event.target.closest?.('[data-tcgp-action]');if(!btn)return;const action=btn.dataset.tcgpAction;
     if(Date.now()<handDragSuppressUntil&&btn.closest?.('[data-tcgp-hand-drag]'))return;
+    if(action==='skip-presentation')return finishBattlePresentation(true);
+    if(battlePresentationBusy)return;
     if(action==='explain-unavailable')return toast(btn.dataset.reason||'This action is currently unavailable.');
     if(action==='solo-difficulty'){selectedDifficulty=btn.dataset.difficulty;return renderHome();}
     if(action==='select-challenge'){const c=solo.challengeById(btn.dataset.challengeId);if(c&&solo.isUnlocked?.(c,root.state)!==false){selectedChallengeId=c.id;selectedDifficulty=c.difficulty;}return renderHome();}
@@ -560,12 +697,12 @@
   }
 
   function applyActionIndex(actionIndex){
-    const chosen=battleActionCache[Number(actionIndex)];if(!chosen)return false;
+    const chosen=battleActionCache[Number(actionIndex)];if(!chosen||battlePresentationBusy)return false;
     battleOverlay=null;battleInspect=null;battleContextActionIndices=[];
-    const before=currentBattle.log.length;
+    const anchors=capturePresentationAnchors(chosen,'player'),before=currentBattle.log.length;
     try{core.applyAction(currentBattle,'player',chosen);}catch(error){console.error('[TCGP Battle] action error',error);toast(error.message||'That play is not legal.');return false;}
-    setBattleEvent(eventForAction(chosen,'player',before));
-    if(currentBattle.phase==='finished')finishBattle();else{renderBattle();maybeCpu();}
+    const added=currentBattle.log.slice(before);setBattleEvent(eventForAction(chosen,'player',before));renderBattle();
+    playBattlePresentation(chosen,'player',anchors,added,()=>{if(currentBattle?.phase==='finished')finishBattle();else maybeCpu();});
     return true;
   }
   function applyHandCenterDrop(handIndex){
@@ -584,11 +721,11 @@
   function applyHandDrop(handIndex,zone,index){
     if(!currentBattle||cpuPending)return false;
     const actionIndex=directHandDropActionIndex(battleActionCache,currentBattle,handIndex,zone,index),action=battleActionCache[actionIndex];
-    if(!action)return false;
-    const before=currentBattle.log.length;
+    if(!action||battlePresentationBusy)return false;
+    const anchors=capturePresentationAnchors(action,'player'),before=currentBattle.log.length;
     try{core.applyAction(currentBattle,'player',action);}catch(error){console.error('[TCGP Battle] card drop error',error);toast(error.message||'That card cannot be placed there.');return false;}
-    setBattleEvent(eventForAction(action,'player',before));
-    if(currentBattle.phase==='finished')finishBattle();else{renderBattle();maybeCpu();}
+    const added=currentBattle.log.slice(before);setBattleEvent(eventForAction(action,'player',before));renderBattle();
+    playBattlePresentation(action,'player',anchors,added,()=>{if(currentBattle?.phase==='finished')finishBattle();else maybeCpu();});
     return true;
   }
   function clearHandDragFeedback(){
@@ -613,7 +750,7 @@
 
   function handPointerDown(event){
     const source=event.target.closest?.('[data-tcgp-hand-drag]');
-    if(!source||!root?.document||event.isPrimary===false)return;
+    if(!source||battlePresentationBusy||!root?.document||event.isPrimary===false)return;
     const handIndex=Number(source.dataset.tcgpHandDrag);if(!Number.isInteger(handIndex))return;
     cancelGesture?.();event.preventDefault();
     const captured=currentBattle,ref=captured?.sides?.player?.hand?.[handIndex],art=ref?cardArtUrl(ref.cardId,'player'):'',originWrap=source.closest('.tcgp-live-hand-wrap');
@@ -647,16 +784,16 @@
   function applyEnergyDrop(zone,index){
     if(!currentBattle||currentBattle.activeSide!=='player'||cpuPending)return false;
     const action=battleActionCache.find(item=>item.type==='attach'&&item.target===zone&&(zone!=='bench'||Number(item.benchIndex)===Number(index||0)));
-    if(!action)return false;
-    const before=currentBattle.log.length;
+    if(!action||battlePresentationBusy)return false;
+    const anchors=capturePresentationAnchors(action,'player'),before=currentBattle.log.length;
     try{core.applyAction(currentBattle,'player',action);}catch(error){console.error('[TCGP Battle] energy drop error',error);toast(error.message||'That Energy attachment is not legal.');return false;}
-    setBattleEvent(eventForAction(action,'player',before));
-    if(currentBattle.phase==='finished')finishBattle();else{renderBattle();maybeCpu();}
+    const added=currentBattle.log.slice(before);setBattleEvent(eventForAction(action,'player',before));renderBattle();
+    playBattlePresentation(action,'player',anchors,added,()=>{if(currentBattle?.phase==='finished')finishBattle();else maybeCpu();});
     return true;
   }
   function energyPointerDown(event){
     const source=event.target.closest?.('[data-tcgp-energy-source="1"]');
-    if(!source||source.disabled||!root?.document||event.isPrimary===false)return;
+    if(!source||battlePresentationBusy||source.disabled||!root?.document||event.isPrimary===false)return;
     cancelGesture?.();event.preventDefault();const captured=currentBattle;
     const ghost=root.document.createElement('div');ghost.className='tcgp-live-energy-drag';ghost.textContent=source.querySelector('span')?.textContent||'G';root.document.body.appendChild(ghost);
     function move(e){ghost.style.transform='translate('+(e.clientX-21)+'px,'+(e.clientY-21)+'px)';}
@@ -678,5 +815,5 @@
   }
   if(root&&root.document){if(root.document.readyState==='loading')root.document.addEventListener('DOMContentLoaded',init,{once:true});else init();}
 
-  return{actionLabel,actionEventText,cardArtUrl,cardRulesHtml,supportText,filterBuilderRows,resultSummary,coverageForOwnedCards,centerHandActionIndices,directHandDropActionIndex,open,close,renderHome,requestLeave,isEditing:()=>screen==='builder',_test:{slotTools,buildInspectSpec,resolveInspect,attachedToolLinksHtml,liveCardHtml}};
+  return{actionLabel,actionEventText,cardArtUrl,cardRulesHtml,supportText,filterBuilderRows,resultSummary,coverageForOwnedCards,centerHandActionIndices,directHandDropActionIndex,open,close,renderHome,requestLeave,isEditing:()=>screen==='builder',_test:{slotTools,buildInspectSpec,resolveInspect,attachedToolLinksHtml,liveCardHtml,attackPresentationMeta,coinSequence,battleSummaryStats,capturePresentationAnchors,targetKeyForAction}};
 });
