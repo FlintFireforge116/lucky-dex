@@ -51,6 +51,8 @@
   }
 
 
+  function pokemonOn(sideState){ return [sideState?.active,...(sideState?.bench||[])].filter(Boolean); }
+
   function normalizeBenchSlots(sideState){
     const used=new Set();
     (sideState?.bench||[]).forEach((slot,index)=>{
@@ -243,14 +245,14 @@
 
   function effectContext(state,side,action,attacker){
     const foeSide=side==='player'?'opponent':'player';
-    return {state,side,foeSide,attacker:attacker||state.sides[side].active,defender:state.sides[foeSide].active,action:action||{},cardById:data.cardById,random,shuffle,drawCard};
+    return {state,side,foeSide,attacker:attacker||state.sides[side].active,defender:state.sides[foeSide].active,action:action||{},cardById:data.cardById,random,shuffle,drawCard,maxHp:(which,slot)=>maxHp(state,which,slot),retreatCost:which=>retreatCost(state,which),benchCard:(ss,ref)=>{const slot=emptyBenchSlots(ss)[0];if(slot==null)return null;placeOnBench(ss,makePokemonSlot(ref.cardId,ss.turnCount,ref.uid),slot);return slot;},onEnergyAttached:(target,energyType,amount)=>{const targetSide=pokemonOn(state.sides.player).includes(target)?'player':'opponent';for(let i=0;i<Number(amount||1);i++)triggerAbilities(state,'energyAttached',targetSide,target,{energyType,fromZone:true});},evolveFromDeck:target=>{const targetSide=pokemonOn(state.sides.player).includes(target)?'player':'opponent',ss=state.sides[targetSide],base=data.cardById(target.cardId),candidates=ss.deck.map((r,index)=>({r,index,card:data.cardById(r.cardId)})).filter(x=>x.card?.battleEnabled&&x.card.kind==='pokemon'&&x.card.evolvesFrom===base?.name);if(!candidates.length)return false;const hit=candidates[Math.floor(random(state)*candidates.length)],[ref]=ss.deck.splice(hit.index,1);target.cardId=ref.cardId;target.stack.push(ref.cardId);target.playedOnSideTurn=ss.turnCount;target.evolvedOnTurn=state.turnNumber;shuffle(state,ss.deck);state.log.push({type:'evolve',side:targetSide,cardId:ref.cardId,fromDeck:true});triggerAbilities(state,'evolved',targetSide,target,{fromDeck:true});return true;}};
   }
 
   function maxHp(state,side,slot){return Math.max(1,Number(data.cardById(slot.cardId).hp||0)+effects.modifierAmount(state,side,slot,'maxHp',data.cardById));}
-  function triggerAbilities(state,event,side,onlySource){
-    const ss=state.sides[side];
+  function triggerAbilities(state,event,side,onlySource,eventData){
+    const ss=state.sides[side],meta=eventData||{};
     for(const source of [ss.active,...ss.bench].filter(Boolean)){if(onlySource&&source!==onlySource)continue;
-      for(const ability of abilitiesFor(data.cardById(source.cardId))){if(ability.type!=='triggered'||ability.event!==event||ability.activeOnly&&ss.active!==source||ability.benchOnly&&ss.active===source)continue;
+      for(const ability of abilitiesFor(data.cardById(source.cardId))){if(ability.type!=='triggered'||ability.event!==event||ability.activeOnly&&ss.active!==source||ability.benchOnly&&ss.active===source)continue;if(ability.energyType&&ability.energyType!==meta.energyType)continue;if(ability.firstTurnOnly&&ss.turnCount!==1)continue;
         effects.applyEffect(ability.effect,effectContext(state,side,{},source));state.log.push({type:'ability',side,cardId:source.cardId,ability:ability.name,event});
       }
     }
@@ -258,6 +260,8 @@
 
   function retreatCost(state,side){const slot=state.sides[side].active;return Math.max(0,Number(data.cardById(slot.cardId).retreat||0)+effects.modifierAmount(state,side,slot,'retreatCost',data.cardById));}
   function attackCost(state,side,attack){const slot=state.sides[side].active;const amount=effects.modifierAmount(state,side,slot,'attackCost',data.cardById);let cost=attack.cost||'';if(amount>=0)return cost+'C'.repeat(Math.floor(amount));let remove=-Math.floor(amount);for(let i=cost.length-1;i>=0&&remove;i--)if(cost[i]==='C'){cost=cost.slice(0,i)+cost.slice(i+1);remove--;}return cost;}
+  function energyValues(state,side,slot){const values={};for(const type of Object.keys(slot?.energy||{})){const mult=effects.modifierAmount(state,side,slot,'energyMultiplier',data.cardById);values[type]=Math.max(1,type==='Grass'?mult||1:1);}return values;}
+  function effectiveEnergy(state,side,slot){const next={...(slot?.energy||{})},values=energyValues(state,side,slot);for(const [type,n] of Object.entries(next))next[type]=Number(n||0)*Number(values[type]||1);return next;}
   function abilitiesFor(card){return (card?.abilities?.length?card.abilities:Array.isArray(card?.ability)?card.ability:[card?.ability]).filter(Boolean);}
   function trainerType(card){return card.trainerType||card.subtype||'Item';}
   function rareCandyMatches(stage2,basic){
@@ -282,7 +286,7 @@
     if(!attack)return {usable:false,cost:'',reason:'No attack in this position.',actions:[]};
     const cost=attackCost(state,side,attack),actions=legalActions(state,side).filter(a=>a.type==='attack'&&a.attackIndex===attackIndex);
     const attached=Object.entries(slot.energy||{}).filter(([,n])=>n>0).map(([t,n])=>`${n} ${t}`).join(' + ')||'none';
-    let reason=actions.length?'Ready':!effects.canPayCost(slot.energy,cost)?`Needs ${energyCostLabel(cost)}. Attached: ${attached}.`:effects.isLocked(state,slot,'attack',attack.name)?'This attack is restricted this turn.':state.phase!=='battle'||state.activeSide!==side?'Not your attack turn.':slot.conditions?.sleep?'Asleep.':slot.conditions?.paralysis?'Paralyzed.':'No legal attack target.';
+    let reason=actions.length?'Ready':!effects.canPayCost(effectiveEnergy(state,side,slot),cost)?`Needs ${energyCostLabel(cost)}. Attached: ${attached}.`:effects.isLocked(state,slot,'attack',attack.name)?'This attack is restricted this turn.':state.phase!=='battle'||state.activeSide!==side?'Not your attack turn.':slot.conditions?.sleep?'Asleep.':slot.conditions?.paralysis?'Paralyzed.':'No legal attack target.';
     return {usable:actions.length>0,cost,reason,actions};
   }
   function legalActions(state, side){
@@ -310,7 +314,7 @@
     s.hand.forEach((ref,handIndex)=>{
       const card = data.cardById(ref.cardId);
       if(!card||card.kind!=='trainer'||!card.battleEnabled)return;
-      const type=trainerType(card),base={type:'trainer',handIndex,cardId:card.id};
+      const type=trainerType(card),base={type:'trainer',handIndex,cardId:card.id};if(effects.isActionLocked(state,side,type,data.cardById))return;
       if(card.effect?.type==='playFossil'){for(const benchIndex of emptyBenchSlots(s))actions.push({...base,target:'bench',benchIndex});return;}
       if(card.effect?.type==='rareCandy'){
         if(s.turnCount<=1)return;
@@ -329,7 +333,7 @@
       }else for(const target of effectChoices(card.effect,effectContext(state,side)))actions.push({...base,...target});
     });
     if (s.energyAvailable && !s.energyUsed){
-      if (s.active) actions.push({type:'attach',target:'active'});
+      if (s.active&&!effects.isActionLocked(state,side,'EnergyActive',data.cardById)) actions.push({type:'attach',target:'active'});
       s.bench.forEach(slot=>{if(slot)actions.push({type:'attach',target:'bench',benchIndex:Number(slot.benchSlot)});});
     }
     const conditions=s.active?.conditions||{};
@@ -350,7 +354,7 @@
     if (s.active&&!conditions.sleep&&!conditions.paralysis){
       const card = data.cardById(s.active.cardId);
       (card.attacks || []).forEach((attack,attackIndex)=>{
-        if (!effects.isLocked(state,s.active,'attack',attack.name)&&effects.canPayCost(s.active.energy,attackCost(state,side,attack)))for(const target of effectChoices(attack.effect,{...effectContext(state,side),isAttack:true}))actions.push({type:'attack',attackIndex,cardId:card.id,...target});
+        if (!effects.isLocked(state,s.active,'attack',attack.name)&&effects.canPayCost(effectiveEnergy(state,side,s.active),attackCost(state,side,attack)))for(const target of effectChoices(attack.effect,{...effectContext(state,side),isAttack:true}))actions.push({type:'attack',attackIndex,cardId:card.id,...target});
       });
     }
     actions.push({type:'endTurn'});
@@ -417,7 +421,7 @@
       if(!knocked.length)break;
       for(const {side,slot} of knocked){
         const s=state.sides[side],foe=state.sides[side==='player'?'opponent':'player'],card=data.cardById(slot.cardId);
-        any=true;discardKnockedOut(s,slot);if(slot===s.active)s.active=null;else s.bench.splice(s.bench.indexOf(slot),1);
+        any=true;s.lastKnockoutTurn=state.turnNumber;discardKnockedOut(s,slot);if(slot===s.active)s.active=null;else s.bench.splice(s.bench.indexOf(slot),1);
         foe.points+=Math.max(1,Number(card.points||1));state.log.push({type:'ko',side,cardId:card.id,points:foe.points});
       }
     }
@@ -437,8 +441,8 @@
     if(card.effect?.type==='rareCandy'){
       const evoIndex=s.hand.findIndex(candidate=>candidate.cardId===action.evolutionCardId);if(evoIndex<0)throw new Error('Rare Candy Stage 2 is no longer in hand.');
       const [evoRef]=s.hand.splice(evoIndex,1),target=slotForTarget(s,action.target,action.benchIndex);if(!target)throw new Error('Rare Candy target is no longer in play.');
-      target.cardId=evoRef.cardId;target.stack.push(evoRef.cardId);effects.clearTemporaryEffects(state,target);target.playedOnSideTurn=s.turnCount;s.discard.push(ref);
-      state.log.push({type:'evolve',side,cardId:evoRef.cardId,target:action.target,benchIndex:action.benchIndex,viaRareCandy:true});return;
+      target.cardId=evoRef.cardId;target.stack.push(evoRef.cardId);effects.clearTemporaryEffects(state,target);target.playedOnSideTurn=s.turnCount;target.evolvedOnTurn=state.turnNumber;s.discard.push(ref);
+      state.log.push({type:'evolve',side,cardId:evoRef.cardId,target:action.target,benchIndex:action.benchIndex,viaRareCandy:true});triggerAbilities(state,'evolved',side,target,{fromHand:true,viaRareCandy:true});resolveKnockOut(state,null);return;
     }
     if(type==='Supporter')s.supporterUsed=true;
     if(type==='Tool'){const target=slotForTarget(s,action.target,action.benchIndex);target.tool=ref;effects.applyEffect(card.onAttach,effectContext(state,side,action,target));resolveKnockOut(state,null);return;}
@@ -466,6 +470,7 @@
       const [incoming]=s.bench.splice(index,1);
       const fromBench=Number(incoming.benchSlot);
       incoming.benchSlot=null;
+      incoming.movedToActiveTurn=state.turnNumber;
       s.active=incoming;
       state.log.push({type:'promote',side,cardId:incoming.cardId,benchIndex:fromBench});
       resumeAfterPromotion(state);
@@ -507,8 +512,8 @@
       target.cardId = ref.cardId;
       target.stack.push(ref.cardId);
       effects.clearTemporaryEffects(state,target);
-      target.playedOnSideTurn=s.turnCount;
-      state.log.push({type:'evolve',side,cardId:ref.cardId,target:matched.target,benchIndex:matched.benchIndex});
+      target.playedOnSideTurn=s.turnCount;target.evolvedOnTurn=state.turnNumber;
+      state.log.push({type:'evolve',side,cardId:ref.cardId,target:matched.target,benchIndex:matched.benchIndex});triggerAbilities(state,'evolved',side,target,{fromHand:true});resolveKnockOut(state,null);
       return state;
     }
     if (matched.type === 'trainer'){
@@ -528,12 +533,12 @@
       const type = s.energyType;
       target.energy[type] = Number(target.energy[type] || 0) + 1;
       s.energyUsed = true;
-      state.log.push({type:'attach',side,target:matched.target,benchIndex:matched.benchIndex,cardId:target.cardId,energyType:type});
+      state.log.push({type:'attach',side,target:matched.target,benchIndex:matched.benchIndex,cardId:target.cardId,energyType:type});triggerAbilities(state,'energyAttached',side,target,{energyType:type,fromZone:true});resolveKnockOut(state,null);
       return state;
     }
     if (matched.type === 'retreat'){
       const activeCard = data.cardById(s.active.cardId);
-      const paid = effects.spendGenericEnergy(s.active.energy,retreatCost(state,side));
+      const paid = effects.spendGenericEnergyWithValue(s.active.energy,retreatCost(state,side),energyValues(state,side,s.active));
       if (!paid) throw new Error('Not enough Energy to retreat.');
       s.active.energy = paid;
       const benchArray=benchArrayIndex(s,matched.benchIndex);
@@ -542,6 +547,7 @@
       const outgoing=s.active;
       const physical=Number(incoming.benchSlot);
       incoming.benchSlot=null;
+      incoming.movedToActiveTurn=state.turnNumber;
       outgoing.benchSlot=physical;
       effects.clearTemporaryEffects(state,outgoing);
       s.bench[benchArray]=outgoing;
@@ -552,20 +558,22 @@
     }
     if (matched.type === 'attack'){
       const attackerCard=data.cardById(s.active.cardId),attack=attackerCard.attacks[matched.attackIndex];
+      if(s.active.attackGate&&(s.active.attackGate.expiresTurn==null||state.turnNumber<=s.active.attackGate.expiresTurn)){const heads=random(state)<0.5;state.log.push({type:'coin',side,heads,reason:'attackGate'});if(!heads){state.log.push({type:'attackFailed',side,reason:'attackGate'});endTurn(state);return state;}}
       if(s.active.conditions?.confusion){const heads=random(state)<0.5;state.log.push({type:'coin',side,heads,status:'confusion'});if(!heads){state.log.push({type:'attackFailed',side,reason:'confusion'});endTurn(state);return state;}}
       const context={...effectContext(state,side,matched),isAttack:true},result=effects.resolveAttack(attack,context);
       const defender=result.damageTarget===undefined?foe.active:result.damageTarget;
       if(!defender)throw new Error('No legal target remains for this attack.');
       const isActive=defender===foe.active;
       let damage=result.damage;
-      if(isActive&&damage>0)damage+=effects.modifierAmount(state,side,s.active,'attackDamage',data.cardById);
-      if(isActive)damage=effects.attackDamage(attackerCard,{damage},data.cardById(defender.cardId));
-      const guard=effects.attackIsPrevented(state,foeSide,defender,s.active,data.cardById);
-      damage=guard?0:Math.max(0,damage-effects.modifierAmount(state,foeSide,defender,'damageReduction',data.cardById));
+      if(isActive&&damage>0){damage+=effects.modifierAmount(state,side,s.active,'attackDamage',data.cardById);for(const boost of s.active.nextAttackBonuses||[])if(Number(boost.turn)===state.turnNumber&&boost.attackName===attack.name)damage+=Number(boost.amount||0);}
+      if(isActive&&!result.damageRules?.ignoreWeakness)damage=effects.attackDamage(attackerCard,{damage},data.cardById(defender.cardId));
+      let guard=result.damageRules?.ignoreEffects?null:effects.attackIsPrevented(state,foeSide,defender,s.active,data.cardById);if(guard?.maxDamage!=null&&damage>Number(guard.maxDamage))guard=null;
+      damage=guard?0:Math.max(0,damage-(result.damageRules?.ignoreEffects?0:effects.modifierAmount(state,foeSide,defender,'damageReduction',data.cardById)));
       defender.damage=Number(defender.damage||0)+damage;
-      state.log.push({type:'attack',side,cardId:attackerCard.id,attack:attack.name,damage,target:isActive?'active':'bench',benchIndex:defender.benchSlot});
+      if(damage>0&&defender.retaliate&&(defender.retaliate.expiresTurn==null||state.turnNumber<=defender.retaliate.expiresTurn)){const amount=Number(defender.retaliate.amount||0);s.active.damage=Number(s.active.damage||0)+amount;state.log.push({type:'retaliate',side:foeSide,amount,cardId:defender.cardId});}
+      state.log.push({type:'attack',side,cardId:attackerCard.id,attack:attack.name,damage,target:isActive?'active':'bench',benchIndex:defender.benchSlot});s.lastAttackName=attack.name;s.lastAttackTurn=state.turnNumber;s.attackCounts=s.attackCounts||{};s.attackCounts[attack.name]=Number(s.attackCounts[attack.name]||0)+1;
       if(damage>0)triggerAbilities(state,'damagedByAttack',foeSide,defender);
-      if(guard?.effects)context.preventedTargets=new Set([defender.uid]);
+      if(guard?.effects)context.preventedTargets=new Set([defender.uid]);context.dealtDamage=damage;
       for(const effect of result.pendingEffects)effects.applyEffect(effect,context);
       const paused=resolveKnockOut(state,'endTurn');
       if(!paused&&state.phase==='battle')endTurn(state);
