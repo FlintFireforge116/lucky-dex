@@ -123,10 +123,11 @@
     const globalFamilyRoot=c=>{let current=c,guard=0;while(current?.kind==='pokemon'&&current.stage!=='Basic'&&current.evolvesFrom&&guard++<4){const prior=data.CARDS.find(x=>x?.kind==='pokemon'&&x.name===current.evolvesFrom);if(!prior)break;current=prior;}return data.normalizeName(current?.name||c?.name||'');};
     const knownEvolutionParents=new Set(data.CARDS.filter(next=>next?.battleEnabled&&next.kind==='pokemon'&&next.evolvesFrom).map(next=>data.normalizeName(next.evolvesFrom)));
     const hasKnownBattleEvolution=c=>c?.kind==='pokemon'&&knownEvolutionParents.has(data.normalizeName(c.name));
-    // Stage 1 cards with a known Stage 2 are evolution bridges, not automatic
-    // archetype endpoints. They can still appear inside the complete line, and
-    // explicit Build Around Card / named-attack synergy may intentionally use one.
-    const truncatedAutoEndpoint=c=>c?.kind==='pokemon'&&c.stage!=='Basic'&&hasKnownBattleEvolution(c);
+    // Any Pokémon with a known later battle-enabled evolution is an evolution
+    // bridge, not an automatic family endpoint. Automatic builds may still use
+    // it inside a complete line; explicit Build Around / named-attack synergy
+    // can intentionally choose one when the user actually wants that card.
+    const truncatedAutoEndpoint=c=>c?.kind==='pokemon'&&hasKnownBattleEvolution(c);
     const ownedEvolvedRoots=new Set(pool.filter(r=>r.card.kind==='pokemon'&&r.card.stage!=='Basic').map(r=>globalFamilyRoot(r.card)));
     const knownEvolvedRoots=new Set(data.CARDS.filter(c=>c?.battleEnabled&&c.kind==='pokemon'&&c.stage!=='Basic').map(globalFamilyRoot));
     const isStrandedBasic=c=>c?.kind==='pokemon'&&c.stage==='Basic'&&(c.points||1)<=1&&knownEvolvedRoots.has(globalFamilyRoot(c))&&!ownedEvolvedRoots.has(globalFamilyRoot(c));
@@ -138,7 +139,7 @@
     if(opts.cardId&&(!focus?.battleEnabled||!owned.get(focus.id)))return fail('The focus card must be owned and FULL. Non-FULL rules remain available for review, not silently enabled.');
     let seeds=pool.filter(r=>r.card.kind==='pokemon'&&!strandedBasic(r.card)&&!hasKnownBattleEvolution(r.card));
     const preMatch=c=>(!requestedTypes.length||requestedTypes.some(t=>data.hasType(c,t)))&&(!opts.setId||c.setId===opts.setId)&&(!opts.mechanic||hasMechanic(c,opts.mechanic))&&(!opts.status||c.support?.status===opts.status);
-    if(!focus&&(requestedTypes.length||opts.setId||opts.mechanic||opts.status))seeds=pool.filter(r=>preMatch(r.card));
+    if(!focus&&(requestedTypes.length||opts.setId||opts.mechanic||opts.status))seeds=seeds.filter(r=>preMatch(r.card));
     if(focus)seeds=[{card:focus}];
     const types=c=>Array.isArray(c?.types)?c.types:[c?.subtype].filter(Boolean);
     const values=new Map(),profilesByCard=new Map(),byName=new Map(),generatedByCard=new Map();
@@ -238,7 +239,7 @@
         const top=seen.size===0;if(top&&lineCache.has(c.id))return lineCache.get(c.id);
         if(seen.has(c.id)||!compatible(c)){if(top)lineCache.set(c.id,null);return null;}seen.add(c.id);
         if(c.stage==='Basic'||c.kind!=='pokemon'){const result=[c];if(top)lineCache.set(c.id,result);return result;}
-        const bases=(byName.get(c.evolvesFrom)||[]).filter(r=>r.card.kind==='pokemon'&&compatible(r.card)).sort((a,b)=>value(b.card)-value(a.card)||a.card.id.localeCompare(b.card.id));
+        const bases=(byName.get(c.evolvesFrom)||[]).filter(r=>r.card.kind==='pokemon'&&compatible(r.card)).sort((a,b)=>b.n-a.n||value(b.card)-value(a.card)||a.card.id.localeCompare(b.card.id));
         for(const base of bases){const prior=line(base.card,new Set(seen));if(prior){const result=[...prior,c];if(top)lineCache.set(c.id,result);return result;}}
         if(top)lineCache.set(c.id,null);return null;
       }
@@ -250,8 +251,17 @@
       for(const id of preserved){const c=data.cardById(id);if(c.kind==='pokemon'&&!addLine(c))preservedOk=false;}if(!preservedOk)continue;
       while(add(data.cardById('BASIC-POKE-BALL'))){}
       if(!addLine(seed.card))continue;
-      // A family is a setup unit, not three independent high-stat picks.
-      const core=line(seed.card)||[],mainEndpoint=core[core.length-1]||seed.card,primaryFamily=familyRoot(seed.card),randomPartnerMaxLine=style==='random'?(core.length>=3?2:1):Infinity;
+      // A family is a setup unit, not independent card slots. Duplicate the
+      // primary line only when every prerequisite can be duplicated too; this
+      // prevents nonsense such as 1 Tynamo / 2 Eelektrik.
+      const core=line(seed.card)||[];
+      for(let target=2;target<=2;target++){
+        const missing=core.filter(x=>(idCounts.get(x.id)||0)<target);
+        if(!missing.length)continue;
+        if(cards.length+missing.length>20||missing.some(x=>room(x)<1))break;
+        for(const x of missing)add(x);
+      }
+      const mainEndpoint=core[core.length-1]||seed.card,primaryFamily=familyRoot(seed.card),randomPartnerMaxLine=style==='random'?(core.length>=3?2:1):Infinity;
       const coreNamedAttackSynergies=new Set();for(const c of core)for(const a of c.attacks||[])walkEffects(a.effect,e=>{if(e.type==='namedAttackCountDamage'&&e.attackName)coreNamedAttackSynergies.add(data.normalizeName(e.attackName));});
       const directNamedAttackPartner=c=>coreNamedAttackSynergies.size&&(c.attacks||[]).some(a=>coreNamedAttackSynergies.has(data.normalizeName(a.name)));
       const randomPartnerAllowed=c=>style!=='random'||familyRoot(c)===primaryFamily||((!truncatedAutoEndpoint(c)||directNamedAttackPartner(c))&&(line(c)?.length||Infinity)<=randomPartnerMaxLine);
@@ -260,7 +270,6 @@
       // or one-step support package, but never another full Stage 2/Mega engine.
       const focusPartnerAllowed=c=>!focus||focus.kind!=='pokemon'||familyRoot(c)===primaryFamily||((!truncatedAutoEndpoint(c)||directNamedAttackPartner(c))&&(line(c)?.length||Infinity)<=2);
       const partnerAllowed=c=>randomPartnerAllowed(c)&&focusPartnerAllowed(c);
-      for(const c of core)while((idCounts.get(c.id)||0)<2&&add(c)){}
       // Professor's Research is Pocket's baseline draw engine. Keep two when owned
       // rather than letting niche higher-scored Trainers crowd both copies out.
       const research=data.cardById('P-A-007');if(research&&owned.get(research.id))while(add(research)){}
@@ -299,6 +308,15 @@
       };
       const affinityCache=new Map();
       const affinity=c=>{if(affinityCache.has(c.id))return affinityCache.get(c.id);const structural=coreNames.has(data.normalizeName(c.name))?100:coreNames.has(data.normalizeName(c.evolvesFrom))?55:(profilesByCard.get(c.id)||[]).some(t=>primary.includes(t))?24:types(c).some(t=>types(seed.card).includes(t))?16:types(c).includes('Colorless')?2:0,result=structural+namedAttackAffinity(c)+energyPayoffAffinity(c);affinityCache.set(c.id,result);return result;};
+      // Competitive filler must earn the setup cost of a second evolution line.
+      // Generic same-Energy partners may be standalone Basics, but Stage 1/2
+      // packages are reserved for explicit mechanic/energy synergy. This keeps
+      // strong-but-unrelated three-stage lines from being bolted onto every deck.
+      const competitivePartnerUseful=c=>{
+        if(style!=='competitive'||familyRoot(c)===primaryFamily)return true;
+        if(namedAttackAffinity(c)>0||energyPayoffAffinity(c)>0)return true;
+        const bundle=line(c);return !!bundle&&bundle.length===1;
+      };
       const pokemon=pool.filter(r=>r.card.kind==='pokemon'&&compatible(r.card)&&!strandedBasic(r.card)&&(familyRoot(r.card)===primaryFamily||!truncatedAutoEndpoint(r.card)||directNamedAttackPartner(r.card))).sort((a,b)=>affinity(b.card)-affinity(a.card)||value(b.card)-value(a.card)||a.card.id.localeCompare(b.card.id));
       const pokemonTotal=()=>cards.map(data.cardById).filter(c=>c?.kind==='pokemon').length;
       const familyKeys=()=>new Set(cards.map(data.cardById).filter(c=>c?.kind==='pokemon').map(familyRoot));
@@ -320,7 +338,7 @@
       }
       // For a requested dual-Energy deck, deliberately add one compact partner package
       // that makes the second Energy type meaningful instead of merely configuring it.
-      for(const wanted of requestedTypes){if(representedEnergy().has(wanted)||pokemonTotal()>=seed.budget)continue;const families=familyKeys();const partner=pokemon.find(r=>(profilesByCard.get(r.card.id)||[]).includes(wanted)&&partnerAllowed(r.card)&&(families.has(familyRoot(r.card))||families.size<2)&&line(r.card)?.length<=Math.max(1,seed.budget-pokemonTotal()));if(partner)addCoherentLine(partner.card,seed.budget);}
+      if(requestedTypes.length>1)for(const wanted of requestedTypes){if(representedEnergy().has(wanted)||pokemonTotal()>=seed.budget)continue;const families=familyKeys();const partner=pokemon.find(r=>(profilesByCard.get(r.card.id)||[]).includes(wanted)&&partnerAllowed(r.card)&&(families.has(familyRoot(r.card))||families.size<2)&&line(r.card)?.length<=Math.max(1,seed.budget-pokemonTotal()));if(partner)addCoherentLine(partner.card,seed.budget);}
       // Random mode randomises the secondary engine too. Previously only the
       // lead family was shuffled, while the partner was always the highest raw
       // value card (notably Pikachu ex in Lightning). Choose among genuinely
@@ -334,7 +352,7 @@
       }
       // Competitive Pocket lists are compact: one main engine and, at most, one
       // complementary Pokémon family. Fill the rest with consistency Trainers.
-      for(const r of pokemon){if(pokemonTotal()>=seed.budget)break;const families=familyKeys(),family=familyRoot(r.card);if(!families.has(family)&&families.size>=2)continue;if(pokemonTotal()+lineMissingCount(r.card)>seed.budget)continue;if(affinity(r.card)>0&&partnerAllowed(r.card))addCoherentLine(r.card,seed.budget);}
+      for(const r of pokemon){if(pokemonTotal()>=seed.budget)break;const families=familyKeys(),family=familyRoot(r.card);if(!families.has(family)&&families.size>=2)continue;if(pokemonTotal()+lineMissingCount(r.card)>seed.budget)continue;if(affinity(r.card)>0&&partnerAllowed(r.card)&&competitivePartnerUseful(r.card))addCoherentLine(r.card,seed.budget);}
       const pokemonCards=cards.map(data.cardById).filter(c=>c.kind==='pokemon'),evolutions=pokemonCards.filter(c=>c.stage!=='Basic').length,expensive=pokemonCards.some(c=>c.attacks.some(a=>a.cost.length>=3)),retreatHeavy=pokemonCards.some(c=>c.retreat>=2);
       const rareCandy=data.cardById('A3-144'),stage2Plan=style==='random'?mainEndpoint.stage==='Stage 2':pokemonCards.some(c=>c.stage==='Stage 2');if(stage2Plan&&rareCandy?.battleEnabled&&owned.get(rareCandy.id))while(add(rareCandy)){}
       const featureSet=new Set();for(const c of pokemonCards)for(const e of [...c.attacks.map(a=>a.effect),...([].concat(c.abilities||c.ability||[])).map(a=>a.effect)])walkEffects(e,e=>featureSet.add(e.type));
@@ -439,25 +457,35 @@
       // Small collections may need a second copy of generic utility to reach 20;
       // only use this after the diversified competitive shell has been exhausted.
       for(const r of optionalTrainers){if(cards.length>=20)break;if(r.card.trainerType==='Stadium'&&trainerCount('Stadium')>=Math.max(stadiumLimit,2))continue;while(cards.length<20&&add(r.card)){if(r.card.trainerType==='Stadium'&&trainerCount('Stadium')>=Math.max(stadiumLimit,2))break;} }
-      for(const r of pokemon){if(cards.length>=20)break;const families=familyKeys(),family=familyRoot(r.card);if(!families.has(family)&&families.size>=2)continue;if(!partnerAllowed(r.card))continue;if(pokemonTotal()+lineMissingCount(r.card)>10)continue;addCoherentLine(r.card,10);}
+      for(const r of pokemon){if(cards.length>=20)break;const families=familyKeys(),family=familyRoot(r.card);if(!families.has(family)&&families.size>=2)continue;if(!partnerAllowed(r.card)||!competitivePartnerUseful(r.card))continue;if(pokemonTotal()+lineMissingCount(r.card)>10)continue;addCoherentLine(r.card,10);}
       // Collection-scarcity fallback: competitive composition is the goal, not a
       // reason to refuse a legal deck when the player simply does not own enough
       // FULL Trainers. Only after the compact shell is exhausted may extra
       // compatible Pokémon/families fill the remaining slots.
-      if(cards.length<20){for(const r of pokemon){if(cards.length>=20||style==='random'&&pokemonTotal()>=10)break;if((style==='random'||focus?.kind==='pokemon')&&(!partnerAllowed(r.card)||pokemonTotal()+lineMissingCount(r.card)>10))continue;addCoherentLine(r.card,style==='random'?10:20);}}
+      if(cards.length<20){for(const r of pokemon){if(cards.length>=20||style==='random'&&pokemonTotal()>=10)break;if((style==='random'||focus?.kind==='pokemon')&&(!partnerAllowed(r.card)||pokemonTotal()+lineMissingCount(r.card)>10))continue;if(style==='competitive'&&!competitivePartnerUseful(r.card))continue;addCoherentLine(r.card,style==='random'?10:20);}}
       // Last-resort collection fallback: relevance is a quality rule, not a
       // reason to refuse a legal deck when the player owns too few useful
       // Trainers/Pokémon. Only after coherent options are exhausted may a
       // low-synergy Trainer fill the final slots, with Stadium clutter capped.
       if(cards.length<20){for(const r of scarcityTrainers){if(cards.length>=20)break;if(r.card.trainerType==='Stadium'&&trainerCount('Stadium')>=Math.max(stadiumLimit,2))continue;const cap=trainerCopyCap(r.card);while(cards.length<20&&(idCounts.get(r.card.id)||0)<cap&&add(r.card)){if(r.card.trainerType==='Stadium'&&trainerCount('Stadium')>=Math.max(stadiumLimit,2))break;}}}
       const selectedPokemon=cards.map(data.cardById).filter(c=>c?.kind==='pokemon'),selectedRoots=new Map();for(const c of selectedPokemon){const root=globalFamilyRoot(c);if(!selectedRoots.has(root))selectedRoots.set(root,[]);selectedRoots.get(root).push(c);}
+      const selectedNameCounts=new Map();for(const c of selectedPokemon)selectedNameCounts.set(data.normalizeName(c.name),(selectedNameCounts.get(data.normalizeName(c.name))||0)+1);
+      const unbalancedEvolution=selectedPokemon.some(c=>c.stage!=='Basic'&&c.evolvesFrom&&(selectedNameCounts.get(data.normalizeName(c.name))||0)>(selectedNameCounts.get(data.normalizeName(c.evolvesFrom))||0));
+      if(unbalancedEvolution)continue;
       const strandedPreEvolution=[...selectedRoots.entries()].some(([root,members])=>members.every(c=>c.stage==='Basic'&&(c.points||1)<=1)&&knownEvolvedRoots.has(root));
       if(!focus&&avoidStrandedBasics&&strandedPreEvolution)continue;
       const analysis=analyzeDeck(cards,primary),valid=validateDeck(cards,eligibleRows,primary),represented=representedEnergy();
       if(!valid.ok||analysis.unpowerable.length||analysis.missingEnergyTypes.length||analysis.warnings.some(w=>w.code==='orphan')||requestedTypes.some(t=>!represented.has(t)))continue;
-      candidatesEvaluated++;
       const selected=cards.map(data.cardById),trainerSupport=selected.filter(c=>c.kind==='trainer').reduce((s,c)=>s+trainerValue(c),0),basics=selected.filter(c=>c.kind==='pokemon'&&c.stage==='Basic').length;
-      const pokemonN=selected.filter(c=>c.kind==='pokemon').length,trainerN=20-pokemonN,families=familyKeys().size,compositionBonus=(pokemonN>=7&&pokemonN<=9?45:pokemonN===6?25:-Math.abs(pokemonN-8)*18)+(trainerN>=11?20:0)-(families>2?(families-2)*80:0);
+      // A competitive auto-build needs at least two opening Pokémon copies. One
+      // Basic plus nineteen Trainers may be legal, but it is not a serious list.
+      if(style==='competitive'&&!focus&&basics<2)continue;
+      candidatesEvaluated++;
+      const pokemonN=selected.filter(c=>c.kind==='pokemon').length,trainerN=20-pokemonN,families=familyKeys().size;
+      const basicsShape=basics>=2&&basics<=4?30:basics===1?-80:Math.max(0,30-(basics-4)*10);
+      const trainerShape=trainerN>=12&&trainerN<=16?20:trainerN>=10?10:Math.max(-30,10-(10-trainerN)*8);
+      const familyShape=families===1?20:families===2?15:-(families-2)*80;
+      const compositionBonus=basicsShape+trainerShape+familyShape;
       const evaluation={legality:1,energyViability:1,evolutionCompleteness:1,setupConsistency:Math.min(5,basics)*5+evolutions*2,synergy:value(seed.card),attackerAvailability:selected.filter(c=>c.kind==='pokemon').reduce((s,c)=>s+value(c),0),trainerSupport,compositionBonus,deadCardRisk:Math.max(0,basics-5)*14};
       const score=evaluation.setupConsistency+evaluation.synergy+evaluation.attackerAvailability+trainerSupport+compositionBonus-evaluation.deadCardRisk-primary.length*18;
       const finalScore=score-strategyWarnings.length*80;
