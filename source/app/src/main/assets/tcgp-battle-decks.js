@@ -137,6 +137,17 @@
     const types=c=>Array.isArray(c?.types)?c.types:[c?.subtype].filter(Boolean);
     const values=new Map(),profilesByCard=new Map(),byName=new Map(),generatedByCard=new Map();
     const actualEnergyProfile=c=>ENERGY_TYPES.filter(t=>(c.attacks||[]).some(a=>[...(a.cost||'')].some(s=>ENERGY_CODE[s]===t)));
+    function focusEnergyProfile(card,seen=new Set()){
+      if(!card||seen.has(card.id))return [];seen.add(card.id);
+      const found=new Set(actualEnergyProfile(card));
+      for(const effect of cardEffects(card))walkEffects(effect,e=>{if(ENERGY_TYPES.includes(e.energyType))found.add(e.energyType);});
+      for(const type of types(card))if(ENERGY_TYPES.includes(type))found.add(type);
+      if(found.size)return ENERGY_TYPES.filter(type=>found.has(type));
+      if(card.stage!=='Basic'&&card.evolvesFrom){
+        for(const prior of byName.get(card.evolvesFrom)||[])for(const type of focusEnergyProfile(prior.card,new Set(seen)))found.add(type);
+      }
+      return ENERGY_TYPES.filter(type=>found.has(type));
+    }
     function expectedAttackValue(a){
       const cost=Math.max(1,(a.cost||'').length);let damage=Math.max(0,Number(a.damage)||0),bonus=0,penalty=0;
       function scoreEffect(e){if(!e||typeof e!=='object')return;
@@ -192,7 +203,9 @@
     for(const seed of attempts){
       yield candidatesEvaluated;
       const preserved=opts.mode==='existing'?(opts.cards||[]).map(id=>data.cardById(id)?.id||id):[];
-      const primary=requestedTypes.length?requestedTypes.slice():(analyzeDeck([...preserved,seed.card.id]).recommendedEnergyTypes.length?analyzeDeck([...preserved,seed.card.id]).recommendedEnergyTypes:seed.profile);
+      const focusProfile=focus?focusEnergyProfile(seed.card):[];
+      const analyzedProfile=analyzeDeck([...preserved,seed.card.id]).recommendedEnergyTypes;
+      const primary=requestedTypes.length?requestedTypes.slice():(focusProfile.length?focusProfile.slice():(analyzedProfile.length?analyzedProfile:seed.profile));
       if(seed.profile&&!requestedTypes.length)primary.splice(0,primary.length,...seed.profile);
       if(primary.length>3)continue;
       const cards=[],counts=new Map(),idCounts=new Map();
