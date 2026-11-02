@@ -1,12 +1,13 @@
 (function(root, factory){
-  let data = root && root.LuckyDexTCGPBattleData;
+  let data = root && root.LuckyDexTCGPBattleData, library = root && root.LuckyDexTCGPDeckLibrary;
   if (typeof module === 'object' && module.exports){
     data = require('./tcgp-battle-data.js');
-    module.exports = factory(data);
+    library = require('./tcgp-deck-library.js');
+    module.exports = factory(data,library);
   } else if (root){
-    root.LuckyDexTCGPBattleDecks = factory(data);
+    root.LuckyDexTCGPBattleDecks = factory(data,library);
   }
-})(typeof globalThis !== 'undefined' ? globalThis : this, function(data){
+})(typeof globalThis !== 'undefined' ? globalThis : this, function(data,library){
   'use strict';
 
   const BATTLE_DEFAULTS = Object.freeze({
@@ -488,8 +489,9 @@
       const compositionBonus=basicsShape+trainerShape+familyShape;
       const evaluation={legality:1,energyViability:1,evolutionCompleteness:1,setupConsistency:Math.min(5,basics)*5+evolutions*2,synergy:value(seed.card),attackerAvailability:selected.filter(c=>c.kind==='pokemon').reduce((s,c)=>s+value(c),0),trainerSupport,compositionBonus,deadCardRisk:Math.max(0,basics-5)*14};
       const score=evaluation.setupConsistency+evaluation.synergy+evaluation.attackerAvailability+trainerSupport+compositionBonus-evaluation.deadCardRisk-primary.length*18;
-      const finalScore=score-strategyWarnings.length*80;
-      const candidate={ok:true,cards,energyTypes:primary,errors:[],warnings:[...analysis.warnings,...strategyWarnings],strategy:`${style==='random'?'Random viable':'Competitive'} · ${primary.join(' / ')} · ${seed.card.name} core · ${selected.filter(c=>c.kind==='pokemon').length} Pokémon / ${selected.filter(c=>c.kind==='trainer').length} Trainers`,focusCardId:seed.card.id,archetypeKey:data.normalizeName(core[0]?.name||seed.card.name),score:finalScore,evaluation};
+      const baseScore=score-strategyWarnings.length*80,officialArchetypePrior=style==='competitive'?Math.max(0,Math.min(60,Number(library?.archetypePrior?.(cards,primary))||0)):0;
+      const finalScore=baseScore+officialArchetypePrior;
+      const candidate={ok:true,cards,energyTypes:primary,errors:[],warnings:[...analysis.warnings,...strategyWarnings],strategy:`${style==='random'?'Random viable':'Competitive'} · ${primary.join(' / ')} · ${seed.card.name} core · ${selected.filter(c=>c.kind==='pokemon').length} Pokémon / ${selected.filter(c=>c.kind==='trainer').length} Trainers`,focusCardId:seed.card.id,archetypeKey:data.normalizeName(core[0]?.name||seed.card.name),score:finalScore,baseScore,officialArchetypePrior,evaluation};
       if(style==='random'){candidate.candidatesEvaluated=candidatesEvaluated;candidate.alternativesAvailable=seeds.length;candidate.buildStyle=style;return candidate;}
       candidates.push(candidate);
     }

@@ -29,9 +29,9 @@
     const records=save.challengeRecords=save.challengeRecords||{},record=records[known.id]=records[known.id]||{matches:0,wins:0,losses:0,draws:0};
     inc(record,'matches');inc(record,won?'wins':draw?'draws':'losses');record.lastResult=won?'win':draw?'draw':'loss';
     if(won)record.bestTurns=record.bestTurns==null?turns:Math.min(num(record.bestTurns),turns);
-    const firstClear=won&&!save.firstClears[known.id];if(firstClear)save.firstClears[known.id]=true;
-    stats.soloClears=solo.CHALLENGES.filter(c=>save.firstClears[c.id]).length;
-    save.difficultyClears=Object.fromEntries(solo.DIFFICULTIES.map(level=>[level,solo.CHALLENGES.filter(c=>c.difficulty===level).every(c=>save.firstClears[c.id])]));
+    const firstClear=won&&!known.repeatable&&!save.firstClears[known.id];if(firstClear)save.firstClears[known.id]=true;
+    stats.soloClears=solo.CHALLENGES.filter(c=>c.countsForCompletion!==false&&save.firstClears[c.id]).length;
+    save.difficultyClears=Object.fromEntries(solo.DIFFICULTIES.map(level=>{const required=solo.CHALLENGES.filter(c=>c.difficulty===level&&c.countsForCompletion!==false);return [level,required.length>0&&required.every(c=>save.firstClears[c.id])];}));
     stats.difficultyWins=stats.difficultyWins||{};if(won)inc(stats.difficultyWins,known.difficulty);
     const logs=Array.isArray(battle.log)?battle.log:[],own=logs.filter(e=>e.side==='player');
     inc(stats,'attacks',own.filter(e=>e.type==='attack'||e.type==='attackFailed').length);

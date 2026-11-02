@@ -1,7 +1,7 @@
 (function(root,factory){
-  if(typeof module==='object'&&module.exports)module.exports=factory(require('./tcgp-battle-data.js'),require('./tcgp-battle-decks.js'));
-  else root.LuckyDexTCGPDeckWorkspace=factory(root.LuckyDexTCGPBattleData,root.LuckyDexTCGPBattleDecks);
-})(typeof globalThis!=='undefined'?globalThis:this,function(data,decks){
+  if(typeof module==='object'&&module.exports)module.exports=factory(require('./tcgp-battle-data.js'),require('./tcgp-battle-decks.js'),require('./tcgp-deck-library.js'));
+  else root.LuckyDexTCGPDeckWorkspace=factory(root.LuckyDexTCGPBattleData,root.LuckyDexTCGPBattleDecks,root.LuckyDexTCGPDeckLibrary);
+})(typeof globalThis!=='undefined'?globalThis:this,function(data,decks,library){
   'use strict';
   const TYPES=['Grass','Fire','Water','Lightning','Psychic','Fighting','Darkness','Metal','Dragon','Colorless'];
   const typesOf=c=>Array.isArray(c?.types)&&c.types.length?c.types:[c?.subtype].filter(Boolean);
@@ -79,9 +79,9 @@
   function makeRecipe(id,name,description,core,energyTypes,extras=[]){
     const supports=[...extras,'P-A-007','P-A-005','P-A-001','P-A-002','A1-223','A2-147','A1a-068','P-A-006'];
     const unique=[...new Set([...core,...supports])].slice(0,10);
-    return Object.freeze({id,name,description,keyPokemon:core.filter(cid=>data.cardById(cid)?.kind==='pokemon'),cards:Object.freeze(unique.flatMap(cid=>[cid,cid])),energyMode:'manual',energyTypes:Object.freeze(energyTypes)});
+    return Object.freeze({id,name,description,keyPokemon:Object.freeze(core.filter(cid=>data.cardById(cid)?.kind==='pokemon')),cards:Object.freeze(unique.flatMap(cid=>[cid,cid])),energyMode:'manual',energyTypes:Object.freeze(energyTypes),source:'LuckyDex',historical:false,immutable:false});
   }
-  const RECIPES=Object.freeze([
+  const LOCAL_RECIPES=Object.freeze([
     makeRecipe('grass-swarm','Grass swarm','Beedrill attacks for one Grass Energy while Venomoth applies poison; healing and retreat keep the swarm moving.',['A1-008','A1-009','A1-010','A1-016','A1-017'],['Grass']),
     makeRecipe('fire-pressure','Fire pressure','Vulpix disrupts early attacks, then Ninetales converts two Fire Energy into steady pressure with Entei providing draw support.',['A1-037','A1-038','A4a-010'],['Fire']),
     makeRecipe('water-sleep','Water sleep','Frosmoth buys setup turns with sleep while Lapras banks Water Energy for its larger Hydro Pump.',['A1-092','A1-093','A1-079'],['Water']),
@@ -99,5 +99,13 @@
     makeRecipe('dual-mega','Dual Mega stadium','Mega Mewtwo X ex gains damage with a Stadium in play; Jynx punishes built-up opponents while Training Area enables Dual Impact.',['C1-056','A1-127'],['Psychic'],['B2-153']),
     makeRecipe('greninja-mega','Mega Greninja evolution','A full Froakie family leads into dual-type Mega Greninja ex; Frosmoth buys evolution turns with guaranteed sleep.',['A1-087','A1-088','C1-042','A1-092','A1-093'],['Water'])
   ]);
-  return {RECIPES,selectedPrint,ownedPrints,rename,TYPES,typesOf,counts,catalogue,query,edit,recipe,readiness,saveDraft,duplicate,remove,activate};
+  const OFFICIAL_RECIPES=library?.OFFICIAL_RECIPES||Object.freeze([]);
+  const RECIPES=Object.freeze([...OFFICIAL_RECIPES,...LOCAL_RECIPES]);
+  function recipeSeed(recipeDef,rows){
+    const source=recipeDef||{cards:[]},pool=(rows||[]).filter(r=>Number(r.quantity)>0&&data.cardById(r.gameplayId)?.battleEnabled).map(r=>data.cardById(r.gameplayId)),cache=new Map();
+    function complete(c,seen=new Set()){if(!c)return false;if(c.kind!=='pokemon'||c.stage==='Basic')return true;if(seen.has(c.id))return false;if(cache.has(c.id))return cache.get(c.id);seen.add(c.id);const ok=pool.some(p=>p.name===c.evolvesFrom&&complete(p,new Set(seen)));cache.set(c.id,ok);return ok;}
+    const cards=[];for(const id of source.cards||[]){const c=data.cardById(id);if(!c||!complete(c))continue;const result=edit(cards,id,1,rows);if(result.ok)cards.push(c.id);}
+    const status=recipe(source.cards||[],rows);return {cards,missing:status.missing,complete:status.missing.length===0};
+  }
+  return {RECIPES,LOCAL_RECIPES,OFFICIAL_RECIPES,recipeSeed,selectedPrint,ownedPrints,rename,TYPES,typesOf,counts,catalogue,query,edit,recipe,readiness,saveDraft,duplicate,remove,activate};
 });
