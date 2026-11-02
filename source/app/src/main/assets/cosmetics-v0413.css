@@ -12,3 +12,9 @@
 .lucky-sleeve-back-inner{position:absolute;inset:0;display:grid;place-items:center;overflow:hidden;border-radius:inherit;z-index:1}.lucky-sleeve-back-inner>img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block;z-index:2}.lucky-sleeve-fallback{position:absolute;inset:0;display:grid;place-items:center;background:radial-gradient(ellipse at center,#407cd3 0%,#17458b 47%,#081f4b 78%);z-index:1}.lucky-sleeve-fallback:before{content:"";width:42%;aspect-ratio:1;border-radius:50%;border:6px solid #f2f7ff;background:linear-gradient(#ef5657 0 43%,#243452 43% 56%,#e9f0fa 56%);box-shadow:0 0 0 4px #1b315c,0 0 25px #7bc2fa85}.lucky-sleeve-fallback i{position:absolute;width:11%;aspect-ratio:1;border-radius:50%;background:#f2f6fb;border:5px solid #273956}.pack-face-back>.lucky-sleeve-back-inner,.pack-unrevealed-cover>.lucky-sleeve-back-inner,.trade-fx-back>.lucky-sleeve-back-inner{inset:0}
 
 .pack-face-back::after,.pack-unrevealed-cover::after{content:"";position:absolute;inset:0;border-radius:inherit;background-image:var(--luckydex-active-sleeve,none);background-size:cover;background-position:center;background-repeat:no-repeat;z-index:20;pointer-events:none}
+/* v0.69.58: playmat catalogue alongside sleeves. */
+.customise-kind-tabs{grid-template-columns:repeat(2,minmax(0,1fr))!important}
+.customise-playmat-art{aspect-ratio:1/1;background:#122039}
+.customise-playmat-art img,.customise-playmat-detail img{object-fit:cover}
+.customise-playmat-detail{width:min(300px,82vw);aspect-ratio:1/1}
+.customise-playmat-tile b{min-height:15px;height:auto;-webkit-line-clamp:1}

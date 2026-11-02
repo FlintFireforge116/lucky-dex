@@ -7,12 +7,15 @@
     ai:root&&root.LuckyDexTCGPBattleAI,
     solo:root&&root.LuckyDexTCGPBattleSolo,
     progress:root&&root.LuckyDexTCGPBattleProgress,
-    workspace:root&&root.LuckyDexTCGPDeckWorkspace
+    workspace:root&&root.LuckyDexTCGPDeckWorkspace,
+    cosmetics:root&&root.LuckyDexCosmeticsV0413,
+    uiAssets:root&&root.LuckyDexTCGPUIAssets
   };
   if(typeof module==='object'&&module.exports){
     deps={
       layout:require('./tcgp-battle-layout.js'),data:require('./tcgp-battle-data.js'),decks:require('./tcgp-battle-decks.js'),core:require('./tcgp-battle-core.js'),
-      ai:require('./tcgp-battle-ai.js'),solo:require('./tcgp-battle-solo.js'),progress:require('./tcgp-battle-progress.js'),workspace:require('./tcgp-deck-workspace.js')
+      ai:require('./tcgp-battle-ai.js'),solo:require('./tcgp-battle-solo.js'),progress:require('./tcgp-battle-progress.js'),workspace:require('./tcgp-deck-workspace.js'),
+      cosmetics:require('./cosmetics-core-v0413.js'),uiAssets:require('./tcgp-ui-assets.js')
     };
     module.exports=factory(null,deps);
   }else if(root){
@@ -20,7 +23,8 @@
   }
 })(typeof globalThis!=='undefined'?globalThis:this,function(root,deps){
   'use strict';
-  const {layout,data,decks,core,ai,solo,progress}=deps;
+  const {layout,data,decks,core,ai,solo,progress,cosmetics,uiAssets}=deps;
+  const energyIconHtml=(type,options)=>uiAssets?.energyIconHtml?.(type,options)||`<span class="tcgp-energy-icon" data-energy="${esc(type)}"><i>${esc(String(type||'?').slice(0,1))}</i></span>`;
 
   const CHALLENGE_ID='genetic-apex-beginner-ivysaur';
   let selectedChallengeId=CHALLENGE_ID,selectedDifficulty='Beginner',currentDeckAppearance=null;
@@ -50,11 +54,21 @@
     return `https://limitlesstcg.nyc3.cdn.digitaloceanspaces.com/pocket/${set}/${set}_${number}_EN.webp`;
   }
   function sleeveArtPath(sideName){
-    const cosmetics=root&&root.LuckyDexCosmeticsV0413;
-    if(!cosmetics)return'';
-    const entry=cosmetics.activeSleeve?.(root.state||{})||cosmetics.registry?.[root.state?.cosmetics?.activeSleeve]||cosmetics.registry?.['luckydex-default'];
+    const cosmeticsApi=cosmetics||(root&&root.LuckyDexCosmeticsV0413);
+    if(!cosmeticsApi)return'';
+    const entry=cosmeticsApi.activeSleeve?.(root?.state||{})||cosmeticsApi.registry?.[root?.state?.cosmetics?.activeSleeve]||cosmeticsApi.registry?.['luckydex-default'];
     return String(entry?.artPath||'cosmetics/sleeves/luckydex-default.webp');
   }
+  function playmatArtPath(sideName,stateOverride,challengeOverride){
+    const cosmeticsApi=cosmetics||(root&&root.LuckyDexCosmeticsV0413),state=stateOverride||root?.state||{};
+    if(!cosmeticsApi)return'';
+    if(sideName==='player')return String(cosmeticsApi.activePlaymat?.(state)?.artPath||cosmeticsApi.playmatRegistry?.['pocket-eevee']?.artPath||'');
+    const mats=(cosmeticsApi.playmatCatalogue||[]).filter(entry=>entry?.artPath);if(!mats.length)return'';
+    const seed=String(challengeOverride?.id||currentChallenge?.id||'opponent');let hash=2166136261;
+    for(let i=0;i<seed.length;i++){hash^=seed.charCodeAt(i);hash=Math.imul(hash,16777619);}
+    return String(mats[Math.abs(hash)%mats.length]?.artPath||mats[0]?.artPath||'');
+  }
+  function playmatStyle(sideName){const url=playmatArtPath(sideName,root?.state,currentChallenge);return url?`style="--tcgp-mat-image:url('${esc(url)}')"`:'';}
   function cardName(id){return data.cardById(id)?.name||id||'Card';}
   function cardAbilities(card){return card?.abilities?.length?card.abilities:Array.isArray(card?.ability)?card.ability:card?.ability?[card.ability]:[];}
   function slotName(state,side,target,benchIndex){
@@ -209,7 +223,7 @@
   }
   function spawnEnergyGhost(stage,layerRect,entry,fromRect,toRect){
     const from=localBox(fromRect,layerRect),to=localBox(toRect,layerRect);if(!from||!to)return null;const node=appendPresentationNode(stage,'tcgp-present-energy-ghost');if(!node)return null;
-    const codes={Grass:'G',Fire:'R',Water:'W',Lightning:'L',Psychic:'P',Fighting:'F',Darkness:'D',Metal:'M'};node.textContent=codes[entry?.energyType]||'✦';node.dataset.energy=entry?.energyType||'Colorless';node.style.left=(from.cx-18)+'px';node.style.top=(from.cy-18)+'px';node.style.setProperty('--tcgp-present-tx',(to.cx-from.cx)+'px');node.style.setProperty('--tcgp-present-ty',(to.cy-from.cy)+'px');return node;
+    node.innerHTML=energyIconHtml(entry?.energyType||'Colorless',{className:'presentation'});node.dataset.energy=entry?.energyType||'Colorless';node.style.left=(from.cx-18)+'px';node.style.top=(from.cy-18)+'px';node.style.setProperty('--tcgp-present-tx',(to.cx-from.cx)+'px');node.style.setProperty('--tcgp-present-ty',(to.cy-from.cy)+'px');return node;
   }
   function spawnCoinRow(stage,entry){
     const results=coinSequence(entry),shown=results.slice(0,20),row=appendPresentationNode(stage,'tcgp-present-coins');if(!row)return 0;
@@ -355,7 +369,7 @@
     const letters=String(cost||'').split('').filter(Boolean);
     if(!letters.length)return '<span class="tcgp-cost-empty">No Energy</span>';
     const labelFor=letter=>({G:'Grass',R:'Fire',W:'Water',L:'Lightning',P:'Psychic',F:'Fighting',D:'Darkness',M:'Metal',C:'Colorless',N:'Dragon'}[letter]||letter);
-    return `<span class="tcgp-cost">${letters.map(letter=>`<i data-energy="${esc(labelFor(letter))}">${esc(labelFor(letter))}</i>`).join('')}</span>`;
+    return `<span class="tcgp-cost">${letters.map(letter=>energyIconHtml(labelFor(letter),{className:'cost'})).join('')}</span>`;
   }
   function slotTools(slot){
     return slot?[slot.tool,...(slot.extraTools||[])].filter(Boolean):[];
@@ -462,9 +476,8 @@
   }
   function liveAttachedEnergyHtml(info){
     if(!info?.energy)return'';
-    const codes={Grass:'G',Fire:'R',Water:'W',Lightning:'L',Psychic:'P',Fighting:'F',Darkness:'D',Metal:'M'};
     const entries=Object.entries(info.energyPool||{}).filter(([,n])=>n>0),label=entries.map(([type,n])=>`${n} ${type}`).join(' + ');
-    return `<span class="tcgp-live-attached-energy" aria-label="${esc(label)} attached Energy">${entries.map(([type,n])=>`<i data-energy="${esc(type)}" title="${esc(type)}">${codes[type]||'?'}${n>1?`<b>${n}</b>`:''}</i>`).join('')}</span>`;
+    return `<span class="tcgp-live-attached-energy" aria-label="${esc(label)} attached Energy">${entries.map(([type,n])=>energyIconHtml(type,{className:'attached',count:n,title:`${n} ${type} Energy`})).join('')}</span>`;
   }
   function liveToolMiniCardsHtml(side,zone,index,slot,compact){
     const tools=slotTools(slot);
@@ -541,9 +554,8 @@
     return `<button type="button" data-pile-side="${esc(sideName)}" data-pile-kind="${esc(kind)}" class="tcgp-live-pile ${isDiscard?'discard':'deck'} ${sideName==='player'?'mine':''}" ${attrs} ${isDiscard?'':'disabled'} aria-label="${isDiscard?'View discard pile':'Deck'} ${count} cards"><span class="tcgp-live-pile-card${emptyDiscard?' empty':''}" style="${topArt?`background-image:url('${esc(topArt)}');`:backStyle}">${fallbackText}</span><b>${count}</b><small>${isDiscard?'DISCARD':'DECK'}</small></button>`;
   }
   function liveEnergySourceHtml(side){
-    const available=currentBattle?.phase==='battle'&&currentBattle?.activeSide==='player'&&!cpuPending&&side.energyAvailable&&!side.energyUsed;
-    const energyType=side.energyType||'Grass',symbol={Grass:'G',Fire:'R',Water:'W',Lightning:'L',Psychic:'P',Fighting:'F',Darkness:'D',Metal:'M'}[energyType]||'?';
-    return `<button type="button" data-energy-side="player" class="tcgp-live-energy-source ${available?'ready':''}" data-energy="${esc(energyType)}" data-tcgp-energy-source="1" ${available?'':'disabled'} aria-label="${available?`Drag ${esc(energyType)} Energy to a Pokémon`:`${esc(energyType)} Energy unavailable`} · Next ${esc(side.nextEnergyType||energyType)}"><span>${symbol}</span><small>${esc(energyType).toUpperCase()}<br>NEXT ${esc(side.nextEnergyType||energyType).toUpperCase()}</small></button>`;
+    const available=currentBattle?.phase==='battle'&&currentBattle?.activeSide==='player'&&!cpuPending&&side.energyAvailable&&!side.energyUsed,energyType=side.energyType||'Grass',next=side.nextEnergyType||energyType;
+    return `<button type="button" data-energy-side="player" class="tcgp-live-energy-source ${available?'ready':''}" data-energy="${esc(energyType)}" data-tcgp-energy-source="1" ${available?'':'disabled'} aria-label="${available?`Drag ${esc(energyType)} Energy to a Pokémon`:`${esc(energyType)} Energy unavailable`} · Next ${esc(next)}"><span>${energyIconHtml(energyType,{className:'current'})}</span><small aria-hidden="true">→</small><span class="tcgp-live-next-energy">${energyIconHtml(next,{className:'next'})}</span></button>`;
   }
   function liveInspectOverlayHtml(){
     if(battleOverlay!=='inspect'||!battleInspect)return'';
@@ -604,13 +616,13 @@
     const lastLog=[...currentBattle.log].reverse().map(logText).find(Boolean)||(currentBattle.phase==='setup'?'Choose an Active Pokémon.':'Battle started');
     const handScroll=el('tcgpBattleContent')?.querySelector('.tcgp-live-hand')?.scrollLeft||0;
     setContent(`<section class="tcgp-live-arena" aria-label="TCG Pocket battlefield">
-      <section class="tcgp-live-opponent" aria-label="Opponent half">
+      <section class="tcgp-live-opponent tcgp-live-mat-half" data-mat-side="opponent" ${playmatStyle('opponent')} aria-label="Opponent half">
         <div class="tcgp-live-opponent-top">${livePileHtml('opponent',o,'discard')}${liveOpponentHandHtml(o)}${livePileHtml('opponent',o,'deck')}</div>
         <div class="tcgp-live-opponent-bench" aria-label="Opponent Bench">${liveBenchHtml('opponent',o.bench)}</div>
         <div class="tcgp-live-opponent-active" aria-label="Opponent Active">${liveCardHtml(o.active,{side:'opponent',zone:'active'})}</div>
       </section>
       <section class="tcgp-live-mid" aria-label="Score, turn and play lane"><div class="tcgp-live-score"><span>CPU <b>${o.points}</b>/3</span><i>·</i><span>YOU <b>${p.points}</b>/3</span></div>${liveMidControlsHtml(turnText,lastLog)}</section>
-      <section class="tcgp-live-player" aria-label="Player half">
+      <section class="tcgp-live-player tcgp-live-mat-half" data-mat-side="player" ${playmatStyle('player')} aria-label="Player half">
         <div class="tcgp-live-player-active" aria-label="Your Active">${liveCardHtml(p.active,{side:'player',zone:'active'})}${liveStadiumSlotHtml()}</div>
         <div class="tcgp-live-player-bench" aria-label="Your Bench">${liveBenchHtml('player',p.bench)}</div>
         <div class="tcgp-live-player-bottom"><div class="tcgp-live-piles mine" aria-label="Your card piles">${livePileHtml('player',p,'discard')}${livePileHtml('player',p,'deck')}</div><div class="tcgp-live-hand" aria-label="Your hand · swipe for more cards">${livePlayerHandHtml(p)}</div>${liveEnergySourceHtml(p)}</div>
@@ -834,7 +846,7 @@
     const source=event.target.closest?.('[data-tcgp-energy-source="1"]');
     if(!source||battlePresentationBusy||source.disabled||!root?.document||event.isPrimary===false)return;
     cancelGesture?.();event.preventDefault();const captured=currentBattle;
-    const ghost=root.document.createElement('div');ghost.className='tcgp-live-energy-drag';ghost.textContent=source.querySelector('span')?.textContent||'G';root.document.body.appendChild(ghost);
+    const ghost=root.document.createElement('div');ghost.className='tcgp-live-energy-drag';ghost.innerHTML=source.querySelector('.tcgp-energy-icon')?.outerHTML||energyIconHtml(source.dataset.energy||'Grass');root.document.body.appendChild(ghost);
     function move(e){ghost.style.transform='translate('+(e.clientX-21)+'px,'+(e.clientY-21)+'px)';}
     function cleanup(){root.document.removeEventListener('pointermove',move,true);root.document.removeEventListener('pointerup',end,true);root.document.removeEventListener('pointercancel',cancel,true);ghost.remove();if(cancelGesture===cancel)cancelGesture=null;}
     function end(e){
@@ -854,5 +866,5 @@
   }
   if(root&&root.document){if(root.document.readyState==='loading')root.document.addEventListener('DOMContentLoaded',init,{once:true});else init();}
 
-  return{actionLabel,actionEventText,cardArtUrl,cardRulesHtml,supportText,filterBuilderRows,resultSummary,coverageForOwnedCards,centerHandActionIndices,directHandDropActionIndex,open,close,renderHome,requestLeave,isEditing:()=>screen==='builder',_test:{slotTools,buildInspectSpec,resolveInspect,attachedToolLinksHtml,liveToolMiniCardsHtml,liveCardHtml,attackPresentationMeta,coinSequence,battleSummaryStats,capturePresentationAnchors,targetKeyForAction,benchDamagePresentationEntry,stadiumSlotModel,resultActionsModel}};
+  return{actionLabel,actionEventText,cardArtUrl,cardRulesHtml,supportText,filterBuilderRows,resultSummary,coverageForOwnedCards,centerHandActionIndices,directHandDropActionIndex,open,close,renderHome,requestLeave,isEditing:()=>screen==='builder',_test:{slotTools,buildInspectSpec,resolveInspect,attachedToolLinksHtml,liveToolMiniCardsHtml,liveCardHtml,attackPresentationMeta,coinSequence,battleSummaryStats,capturePresentationAnchors,targetKeyForAction,benchDamagePresentationEntry,stadiumSlotModel,resultActionsModel,playmatArtPath,energyCostHtml,liveAttachedEnergyHtml,liveEnergySourceHtml}};
 });

@@ -465,7 +465,7 @@
     renderAchievements=render;
     const select=document.getElementById('achievementCategoryFilter');if(select){select.value='all';select.addEventListener('change',()=>{category=select.value||'all';renderAchievements();});}
     sync();
-    const recognition=root.LuckyDexCosmeticsV0413?.consumeRecognitionSummary?.();if(recognition&&(recognition.sleeves.length||recognition.achievements.length)){const sleeveCount=recognition.sleeves.length,achievementCount=recognition.achievements.length;showToast(`Previous accomplishments recognised · ${sleeveCount} sleeve${sleeveCount===1?'':'s'} unlocked · ${achievementCount} achievement${achievementCount===1?'':'s'}`,3600);}
+    const recognition=root.LuckyDexCosmeticsV0413?.consumeRecognitionSummary?.();if(recognition&&(recognition.sleeves.length||(recognition.playmats||[]).length||recognition.achievements.length)){const sleeveCount=recognition.sleeves.length,playmatCount=(recognition.playmats||[]).length,achievementCount=recognition.achievements.length;showToast(`Previous accomplishments recognised · ${sleeveCount} sleeve${sleeveCount===1?'':'s'} · ${playmatCount} playmat${playmatCount===1?'':'s'} unlocked · ${achievementCount} achievement${achievementCount===1?'':'s'}`,3600);}
     return true;
   }
 

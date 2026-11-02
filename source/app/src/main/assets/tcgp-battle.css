@@ -323,3 +323,40 @@ body.tcgp-battle-live .tcgp-battle-topbar>div b{font-size:11px}
 body.tcgp-card-dragging .tcgp-live-card-wrap[data-card-drop-zone="1"]{border-radius:12px}
 body.tcgp-card-dragging .tcgp-live-player-active .tcgp-live-card-wrap[data-card-drop-zone="1"][data-tcgp-drop-state="valid"]{background:#8acb9218}
 .tcgp-live-center-play{display:none!important}
+
+/* v0.69.58: official Pocket playmat geometry, energy art, anchored Tools and compact turn HUD. */
+.tcgp-live-mat-half{position:relative;overflow:visible;background-color:#dcebed;background-image:linear-gradient(#eff7f122,#eff7f122),var(--tcgp-mat-image);background-repeat:no-repeat;background-size:110% auto;background-position:center top;border-radius:8px}
+.tcgp-live-mat-half.tcgp-live-player{background-position:center bottom}
+.tcgp-live-mat-half.tcgp-live-opponent{background-position:center top}
+.tcgp-live-mat-half.tcgp-live-player,.tcgp-live-mat-half.tcgp-live-opponent{display:block}
+.tcgp-live-mat-half .tcgp-live-card.empty{border-color:transparent;background:transparent;box-shadow:none}
+.tcgp-live-mat-half .tcgp-live-card.empty>span{visibility:hidden}
+.tcgp-live-opponent-top{position:absolute;left:0;right:0;top:1%;height:22%;z-index:4}
+.tcgp-live-opponent-bench{position:absolute;left:50%;top:40%;transform:translate(-50%,-50%);width:46%;max-width:340px;height:29%;z-index:3}
+.tcgp-live-opponent-active{position:absolute;left:50%;top:76%;transform:translate(-50%,-50%);width:18%;height:36%;z-index:3}
+.tcgp-live-player-active{position:absolute;left:50%;top:22%;transform:translate(-50%,-50%);width:19%;height:34%;z-index:3;overflow:visible}
+.tcgp-live-player-bench{position:absolute;left:50%;top:57%;transform:translate(-50%,-50%);width:48%;max-width:350px;height:27%;z-index:3}
+.tcgp-live-player-bottom{position:absolute;left:0;right:0;bottom:0;height:31%;z-index:4}
+.tcgp-live-mat-half .tcgp-live-card-wrap{min-width:0;min-height:0}
+.tcgp-live-mat-half .tcgp-live-card-wrap.compact{max-height:none}
+.tcgp-live-mat-half .tcgp-live-card{max-height:100%}
+.tcgp-live-card-wrap .tcgp-live-tool-stack{left:auto!important;right:-27px;top:auto!important;bottom:8px;width:28px;height:54px}
+.tcgp-live-card-wrap .tcgp-live-tool-stack.compact{left:auto!important;right:-18px;top:auto!important;bottom:3px;width:20px;height:39px}
+.tcgp-live-stadium-slot{right:-82px}
+.tcgp-energy-icon{position:relative;display:inline-grid;place-items:center;width:22px;height:22px;flex:none;vertical-align:middle}
+.tcgp-energy-icon img{display:block!important;width:100%;height:100%;object-fit:contain;pointer-events:none}
+.tcgp-energy-icon>i{display:grid;place-items:center;width:100%;height:100%;border-radius:50%;background:var(--energy-color,#688197);color:white;font:900 9px/1 sans-serif}
+.tcgp-energy-icon>b{position:absolute;right:-4px;bottom:-3px;min-width:12px;height:12px;padding:1px 3px;border-radius:7px;background:#f8fff4;color:#24475b;border:1px solid #9db6b4;font:900 7px/1 sans-serif}
+.tcgp-energy-icon.attached{width:15px;height:15px}.tcgp-energy-icon.cost{width:20px;height:20px}.tcgp-energy-icon.presentation{width:30px;height:30px}
+.tcgp-cost{gap:3px}.tcgp-cost .tcgp-energy-icon{padding:0;border:0;background:none;min-height:0}
+.tcgp-live-attached-energy{gap:2px;padding:2px}.tcgp-live-attached-energy .tcgp-energy-icon{min-width:15px;padding:0;background:none;border:0}
+.tcgp-live-energy-source{width:52px;height:54px;grid-template-columns:1fr auto;grid-template-rows:1fr;gap:1px;padding:4px 3px;border-radius:15px}
+.tcgp-live-energy-source>span{display:grid;place-items:center;width:auto;height:auto;border:0;background:none!important}.tcgp-live-energy-source>small{font-size:10px;line-height:1;color:#5e7e76}.tcgp-live-energy-source .tcgp-live-next-energy{opacity:.58}.tcgp-live-energy-source .tcgp-energy-icon{width:27px;height:27px}
+.tcgp-live-energy-drag{background:#f3fbf2;border-color:#9cc5a0}.tcgp-live-energy-drag .tcgp-energy-icon{width:36px;height:36px}
+.tcgp-live-mid{grid-template-columns:auto minmax(0,1fr);padding-right:58px}
+.tcgp-live-mid-controls{display:block;padding:0 2px}.tcgp-live-mid-controls>span,.tcgp-live-mid-controls>b{display:block;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.tcgp-live-mid-controls>b{font-size:7px}
+.tcgp-live-end-turn{position:absolute;right:-56px;top:50%;transform:translateY(-50%);width:54px;max-width:54px;min-width:0;min-height:28px;padding:3px 4px;font-size:6px;line-height:1.05;white-space:normal;text-align:center}
+body.tcgp-card-dragging .tcgp-live-mat-half .tcgp-live-card-wrap[data-card-drop-zone="1"][data-tcgp-drop-state="valid"]{outline:2px solid #64a477;outline-offset:3px;background:#d8f6d435;border-radius:10px}
+@media(max-width:380px){.tcgp-live-opponent-bench{width:50%}.tcgp-live-player-bench{width:52%}.tcgp-live-player-active{width:21%}.tcgp-live-opponent-active{width:20%}.tcgp-live-card-wrap .tcgp-live-tool-stack{right:-23px}.tcgp-live-stadium-slot{right:-67px}.tcgp-live-mid{padding-right:52px}.tcgp-live-end-turn{right:-50px;width:48px;max-width:48px;font-size:5.5px}}
+.tcgp-live-mat-half.tcgp-live-player{background-size:110% auto;background-position:center bottom}
+.tcgp-live-mat-half.tcgp-live-opponent{background-size:110% auto;background-position:center top}
