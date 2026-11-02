@@ -83,13 +83,13 @@ test('battle action flow is wired through the queued presentation controller',()
   assert.ok(js.includes("data-tcgp-action=\"skip-presentation\""),'presentation layer should be tappable to finish immediately');
 });
 
-test('result screen exposes the expanded battle summary and v0.69.48 runtime marker',()=>{
+test('result screen exposes the expanded battle summary and a runtime build marker',()=>{
   const js=fs.readFileSync(path.join(assets,'tcgp-battle-ui.js'),'utf8');
   for(const label of ['DAMAGE DEALT','DAMAGE TAKEN','BIGGEST HIT','KNOCKOUTS','TRAINERS','ENERGY','COIN FLIPS']){
     assert.ok(js.includes(label),`missing result label ${label}`);
   }
   const app=fs.readFileSync(path.join(assets,'app-v0167.js'),'utf8');
-  assert.ok(app.includes("window.__LUCKYDEX_BUILD='0.69.48'"),'runtime build marker should be 0.69.48');
+  assert.match(app,/window\.__LUCKYDEX_BUILD='0\.69\.\d+'/,'runtime build marker should be present');
 });
 
 test('turn draws participate in card movement presentation',()=>{

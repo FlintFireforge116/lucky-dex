@@ -264,3 +264,17 @@ body.tcgp-battle-live .tcgp-battle-topbar>div b{font-size:11px}
 .tcgp-battle-highlight{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:9px 11px;border-radius:13px;background:rgba(113,180,255,.08);border:1px solid rgba(113,180,255,.16)}
 .tcgp-battle-highlight small{font-size:8px;font-weight:900;letter-spacing:.09em;color:#8da2bc}.tcgp-battle-highlight b{font-size:11px;text-align:right;color:#e5effa}
 @media(max-width:460px){.tcgp-battle-summary-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.tcgp-battle-highlight{align-items:flex-start;flex-direction:column;gap:3px}.tcgp-battle-highlight b{text-align:left}}
+
+/* v0.69.54: shared Stadium zone lives in the centre lane. */
+.tcgp-live-mid{grid-template-columns:auto clamp(54px,15vw,68px) minmax(0,1fr)}
+.tcgp-live-stadium-slot{position:relative;align-self:stretch;display:grid;place-items:center;min-width:0;padding:2px 0}
+.tcgp-live-stadium-card{position:relative;appearance:none;width:clamp(48px,13vw,58px);height:40px;overflow:hidden;padding:0;border:1px solid #7d9dac;border-radius:7px;background:#dbe8e8;color:#2c5063;box-shadow:0 1px 3px #31526425;touch-action:manipulation}
+.tcgp-live-stadium-card img{display:block;width:100%;height:100%;object-fit:cover}
+.tcgp-live-stadium-card>span,.tcgp-live-stadium-card>small{position:absolute;left:1px;right:1px;z-index:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;text-align:center;background:#e7f0f0e8;color:#244a5d;font-weight:850}
+.tcgp-live-stadium-card>span{bottom:9px;font-size:6px}.tcgp-live-stadium-card>small{bottom:1px;font-size:5px;letter-spacing:.04em}
+.tcgp-live-stadium-card.empty{display:grid;place-items:center;height:34px;border-style:dashed;background:#edf5f3;color:#6f8b96}.tcgp-live-stadium-card.empty>span{position:static;background:none;font-size:7px}.tcgp-live-stadium-card.empty>small{display:none}
+.tcgp-live-stadium-activate{position:absolute;z-index:3;right:-4px;bottom:-3px;min-height:20px;padding:2px 5px;border:1px solid #5f8d67;border-radius:7px;background:#e3f3d8;color:#315f39;font-size:6px;font-weight:950;letter-spacing:.02em}
+.tcgp-live-stadium-status{position:absolute;right:-2px;bottom:-2px;padding:1px 4px;border-radius:6px;background:#dce7e9dd;color:#5e7884;font-size:5px;font-weight:900}
+.tcgp-present-stadium-replace{animation-name:tcgpPresentKo}.tcgp-present-stadium-play{box-shadow:0 0 0 2px #d9ebc2,0 6px 16px #17334b55}
+.tcgp-present-stadium-active{animation:tcgpStadiumPulse .56s ease-out}
+@keyframes tcgpStadiumPulse{0%,100%{transform:scale(1);box-shadow:0 1px 3px #31526425}42%{transform:scale(1.11);box-shadow:0 0 0 4px #9ed18466,0 0 15px #76a86777}}

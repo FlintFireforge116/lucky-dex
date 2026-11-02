@@ -84,8 +84,10 @@ test('single-type competitive builds do not force an unrelated evolution engine 
   assert.equal(secondaryStage2.length,0,`single-type helper forced an unrelated Stage 2 line: ${secondaryStage2.map(c=>c.name).join(', ')}`);
 });
 
-test('runtime marker is v0.69.52',()=>{
+test('runtime marker remains at or beyond v0.69.52',()=>{
   const fs=require('node:fs');
   const app=fs.readFileSync(path.join(assets,'app-v0167.js'),'utf8');
-  assert.match(app,/window\.__LUCKYDEX_BUILD='0\.69\.52'/);
+  const match=app.match(/window\.__LUCKYDEX_BUILD='0\.69\.(\d+)'/);
+  assert.ok(match,'runtime marker should be present');
+  assert.ok(Number(match[1])>=52,`runtime marker regressed to ${match[0]}`);
 });
