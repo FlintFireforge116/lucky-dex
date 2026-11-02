@@ -398,7 +398,14 @@
           // expected value so coin-flip search cards do not swamp every build.
           if(e.type==='coinFlip')return scoreEffect(e.heads,weight*.5)+scoreEffect(e.tails,weight*.5);
           if(e.type==='coinUntilTails')return scoreEffect(e.effect,weight);
-          const specific=!!(e.filter&&Object.keys(e.filter).length),amount=Math.abs(Number(e.amount)||0),opponentScoped=e.side==='opponent'||String(e.target||'').startsWith('opponent');
+          // Delayed triggers are materially less consistent than effects you can
+          // choose to use now. KO-triggered Tools such as Lucky Egg remain viable,
+          // but do not masquerade as immediate draw engines in every shell.
+          if(e.type==='triggeredEffect')return scoreEffect(e.effect,weight*(e.event==='knockedOut'?.3:.55));
+          // A sequence is the net of its clauses, not a bonus simply for being a
+          // sequence. This lets costs in later clauses offset the benefit.
+          if(e.type==='sequence')return (e.effects||[]).reduce((sum,child)=>sum+scoreEffect(child,weight),0);
+          const specific=!!(e.filter&&Object.keys(e.filter).length),amount=Math.abs(Number(e.amount)||0),opponentScoped=e.side==='opponent'||String(e.target||'').startsWith('opponent'),selfScoped=e.side==='self'||String(e.target||'').startsWith('self');
           if(specific&&!opponentScoped&&!pokemonCards.some(p=>supportMatches(p,e.filter))&&e.filter.kind!=='trainer')dead=true;
           let score=0;
           if(e.type==='rareCandy'){if(!stage2Plan){dead=true;return 0;}score=24;}
@@ -416,6 +423,9 @@
           }
           else if(['attachEnergy','moveEnergy','attachEnergyFromDiscard','attachRandomEnergyFromDiscard','distributeDiscardEnergyDistinct'].includes(e.type))score=(expensive?18:10)+(specific?4:0)+(featureSet.has('discardEnergy')&&String(e.type).includes('Discard')?5:0);
           else if(e.type==='heal'||e.type==='healSelf')score=featureSet.has('damageFromDamage')?1:4+amount/8+(specific?4:0);
+          // Discarding the opponent's Energy is disruption; discarding your own
+          // is a real tempo cost (for example Super Potion) and must subtract.
+          else if(e.type==='discardEnergy')score=opponentScoped?7+amount*2:selfScoped?-(8+amount*4):2;
           else if(e.type==='switch')score=(e.side==='opponent'||String(e.target||'').startsWith('opponent')?12:(retreatHeavy?14:5))+(specific?2:0);
           else if(e.stat==='retreatCost')score=(retreatHeavy?14:5)+(specific?4:0);
           else if(e.stat==='attackDamage')score=8+amount/2+(specific?6:0)+(e.opponentFilter?2:0);

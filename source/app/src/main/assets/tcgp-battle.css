@@ -316,3 +316,10 @@ body.tcgp-battle-live .tcgp-battle-topbar>div b{font-size:11px}
 .tcgp-present-stadium-active{animation:tcgpStadiumPulseField .56s ease-out}
 @keyframes tcgpStadiumPulseField{0%,100%{transform:rotate(90deg) scale(1);box-shadow:0 3px 7px #17384f55}42%{transform:rotate(90deg) scale(1.1);box-shadow:0 0 0 4px #9ed18466,0 0 15px #76a86777}}
 @media(max-width:380px){.tcgp-live-mid{padding-right:2px}.tcgp-live-stadium-slot{right:4px}.tcgp-live-opponent-bench,.tcgp-live-player-bench{width:91%;gap:8px}}
+
+/* v0.69.57: board-first card drops and Tool thumbnails clear of the HP badge. */
+.tcgp-live-tool-stack{top:44%}
+.tcgp-live-tool-stack.compact{top:36%}
+body.tcgp-card-dragging .tcgp-live-card-wrap[data-card-drop-zone="1"]{border-radius:12px}
+body.tcgp-card-dragging .tcgp-live-player-active .tcgp-live-card-wrap[data-card-drop-zone="1"][data-tcgp-drop-state="valid"]{background:#8acb9218}
+.tcgp-live-center-play{display:none!important}
