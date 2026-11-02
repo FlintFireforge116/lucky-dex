@@ -11,9 +11,9 @@ t('repair existing preserves every selected key card and finishes a legal cohere
  const r=K.buildQuickDeck(owned,{mode:'existing',cards:['A1-083','A1-083','A1-074']});a.equal(r.ok,true,JSON.stringify(r.errors));
  a.equal(r.cards.filter(x=>x==='A1-083').length,2);a.ok(r.cards.includes('A1-074'));a.equal(r.cards.length,20);a.ok(K.validateDeck(r.cards,owned).ok);
 });
-t('test setup explains Stage2 prerequisites and preserves PARTIAL blockers without claiming legal readiness',()=>{
+t('test setup explains Stage2 prerequisites and rejects an unknown focus without inventing compatibility',()=>{
  a.equal(typeof K.buildTestSetup,'function');const r=K.buildTestSetup(owned,{cardId:'A1-055'});a.equal(r.ready,true);a.ok(r.prerequisites.some(p=>p.includes('Wartortle')));a.ok(r.cards.includes('A1-053'));a.deepEqual(r.energyTypes,['Water']);
- const partial=D.CARDS.find(c=>c.support?.status==='PARTIAL'),review=K.buildTestSetup(owned,{cardId:partial.id});a.equal(review.ready,false);a.ok(review.blockers.length);a.ok(review.attemptedCards.includes(partial.id));a.equal(K.validateLoanerDeck(review.attemptedCards).ok,false);
+ const review=K.buildTestSetup(owned,{cardId:'ZZ-999'});a.equal(review.ready,false);a.ok(review.blockers.some(x=>/Unknown focus card/i.test(x)));a.deepEqual(review.attemptedCards,[]);
 });
 t('opponent-dependent test pair supplies an actual Pokémon ex target instead of a generic Grass opponent',()=>{
  const all=D.CARDS.filter(c=>c.battleEnabled&&!c.loaner).map(c=>({gameplayId:c.id,quantity:2,battleEnabled:true}));

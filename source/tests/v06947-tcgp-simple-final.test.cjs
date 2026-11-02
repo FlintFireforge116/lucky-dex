@@ -1,0 +1,14 @@
+const test=require('node:test');const assert=require('node:assert/strict');
+const C=require('../app/src/main/assets/tcgp-battle-core.js');const D=require('../app/src/main/assets/tcgp-battle-data.js');const E=require('../app/src/main/assets/tcgp-battle-effects.js');const N=require('../scripts/lib/tcgp-normalize.cjs');
+const dir='../data/tcgp/import/';const all=[...require(dir+'tcgdex-pocket-cards.json'),...require(dir+'tcgdex-A4b-cards.json'),...require(dir+'vociferix-missing-mechanics.json'),...require(dir+'current-pocket-mechanics.json')];const raw=id=>all.find(x=>N.printId(x.id)===N.printId(id));
+function battle(){const b=C.createBattle({playerDeck:D.BEGINNER_IVYSAUR_DECK,opponentDeck:D.BEGINNER_IVYSAUR_DECK,seed:4710,firstSide:'player'});b.phase='battle';b.activeSide='player';b.turnNumber=5;b.sides.player.turnCount=3;b.sides.opponent.turnCount=3;b.sides.player.hand=[];b.sides.opponent.hand=[];b.sides.player.bench=[];b.sides.opponent.bench=[];b.sides.player.active=C.makePokemonSlot('A1-001',1,'p');b.sides.opponent.active=C.makePokemonSlot('A1-001',1,'o');return b;}
+
+test('discardPokemon removes a Pokemon without awarding points',()=>{const b=battle();const before=b.sides.player.points;E.applyEffect({type:'discardPokemon',target:'opponentActive'},C.effectContext(b,'player'));assert.equal(b.sides.opponent.active,null);assert.equal(b.sides.player.points,before);assert.equal(b.sides.opponent.discard.length>0,true);});
+
+test('knockOut marks the selected Pokemon for normal KO resolution',()=>{const b=battle();E.applyEffect({type:'knockOut',target:'opponentActive'},C.effectContext(b,'player'));assert.ok(b.sides.opponent.active.damage>=C.maxHp(b,'opponent',b.sides.opponent.active));});
+
+test('random Pokemon damage can use attached Energy as its hit count',()=>{const b=battle();b.sides.player.active.energy={Metal:3};b.sides.opponent.bench=[C.makePokemonSlot('A1-001',1,'b')];b.sides.opponent.bench[0].benchSlot=0;E.applyEffect({type:'randomPokemonDamage',perEnergyType:'Metal',amount:40},C.effectContext(b,'player',{},b.sides.player.active));const total=b.sides.opponent.active.damage+b.sides.opponent.bench[0].damage;assert.equal(total,120);});
+
+test('random attack lock chooses one printed attack and locks it for the next opponent turn',()=>{const b=battle();E.applyEffect({type:'randomAttackLock',target:'opponentActive',duration:'opponentTurn'},C.effectContext(b,'player'));assert.equal(b.sides.opponent.active.locks?.length,1);assert.equal(b.sides.opponent.active.locks[0].action,'attack');});
+
+test('the remaining simple cards compile to executable effects',()=>{const ids=['A4a-035','B2-109','B2a-078','B2b-067','B3a-022','B3a-025','B3b-037','B4-011','B4-150','B4-151','B1a-066'];for(const id of ids){const c=N.normalizeMechanics(raw(id));assert.equal(c.support.status,'FULL',`${id}: ${c.support.reasons.join(' | ')}`);}});

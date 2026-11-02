@@ -44,6 +44,8 @@ body.tcgp-battle-live .tcgp-battle-content{display:block;flex:1 1 0;min-height:0
 .tcgp-live-card.empty span{font-size:8px;letter-spacing:.06em;font-weight:750;color:#648996}
 .tcgp-live-card .tcgp-live-hp{position:absolute;right:2px;top:2px;padding:2px 4px;border-radius:10px;background:#f9fff2ed;color:#2d593f;font-size:10px;font-weight:850;box-shadow:0 1px 2px #23493255}
 .tcgp-live-card.compact .tcgp-live-hp{font-size:8px;padding:1px 3px}
+.tcgp-live-tools{position:absolute;left:2px;top:2px;z-index:2;padding:2px 4px;border-radius:8px;background:#253d55e8;color:#f4fbff;font-size:7px;font-weight:900;letter-spacing:.04em;box-shadow:0 1px 2px #0005}
+.tcgp-live-card.compact .tcgp-live-tools{font-size:6px;padding:1px 3px}
 .tcgp-live-name{display:none}
 .tcgp-live-card[data-energy-target="1"]{outline:1px solid #73ad76;outline-offset:1px}
 .tcgp-live-attached-energy{position:absolute;left:2px;bottom:2px;display:flex;flex-wrap:wrap;max-width:96%;align-items:center;gap:2px;padding:2px;border-radius:10px;background:#f4fff1ed}

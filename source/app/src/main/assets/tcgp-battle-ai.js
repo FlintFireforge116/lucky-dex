@@ -4,7 +4,7 @@
 })(typeof globalThis!=='undefined'?globalThis:this,function(core,data,effects){
   'use strict';
   const DIFFICULTIES=['Beginner','Intermediate','Advanced','Expert'];
-  const ACTION_KEYS=['type','handIndex','cardId','target','benchIndex','attackIndex','abilityIndex','effectTarget','effectBenchIndex'];
+  const ACTION_KEYS=['type','handIndex','cardId','target','benchIndex','attackIndex','attackCardId','abilityIndex','effectTarget','effectBenchIndex','choiceTarget','choiceBenchIndex','choiceHandIndex','choiceDiscardIndex','choiceDeckIndex','choiceCardId','choiceAttackIndex','choiceOption','choiceSkip','effectEnergyType'];
   const sameAction=(a,b)=>!!a&&!!b&&ACTION_KEYS.every(k=>a[k]===b[k]||(a[k]==null&&b[k]==null));
   const foeOf=side=>side==='player'?'opponent':'player';
   const clone=value=>JSON.parse(JSON.stringify(value));
@@ -26,6 +26,7 @@
   function dangerous(effect){return effect?.type==='discardSelf'||effect?.effects?.some(dangerous);}
   function beginner(action,state,side){
     const source=slotFor(state.sides[side],action.target,action.benchIndex),card=data.cardById(action.cardId||source?.cardId);
+    if(action.type==='effectChoice')return 980;
     if(action.type==='promote'||action.type==='setupActive')return 1000+Number(card?.hp||0);
     if(action.type==='setupBench')return 950;
     if(action.type==='setupReady')return 1;
@@ -34,7 +35,7 @@
     if(action.type==='trainer')return dangerous(card?.effect)?-100:700;
     if(action.type==='bench')return 600;
     if(action.type==='attach')return 400+attachScore(action,state,side);
-    if(action.type==='attack')return 200+Number(data.cardById(state.sides[side].active.cardId)?.attacks[action.attackIndex]?.damage||0);
+    if(action.type==='attack')return 200+Number(data.cardById(action.attackCardId||state.sides[side].active.cardId)?.attacks[action.attackIndex]?.damage||0);
     if(action.type==='retreat')return -10;
     return 0;
   }
@@ -112,7 +113,7 @@
   function runTurn(state,side,difficulty){
     let count=0;
     while(count<48){
-      const acting=state.phase==='promote'?state.promotionSide:state.phase==='setup'?state.setupSide:state.activeSide;
+      const acting=state.phase==='effectChoice'?state.choiceSide:state.phase==='promote'?state.promotionSide:state.phase==='setup'?state.setupSide:state.activeSide;
       if(state.phase==='finished'||state.phase==='battle'&&acting!==side)break;
       const action=chooseAction(state,acting,difficulty,count);if(!action)break;core.applyAction(state,acting,action);count++;
     }

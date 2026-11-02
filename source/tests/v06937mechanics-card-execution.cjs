@@ -23,7 +23,7 @@ function fixture(card,effect,ability){
  if(ability?.benchOnly){p.bench[0]={...C.makePokemonSlot(card.id,0,'subject-bench'),damage:Math.min(20,card.hp-1),energy:{...energy},benchSlot:0};if(p.active.cardId===card.id)p.active={...C.makePokemonSlot('A1-001',0,'other-active'),damage:20,energy:{...energy}};}
  if(card.kind==='trainer')p.hand=[{uid:'trainer',cardId:card.id}];return b;
 }
-function sane(b){a.ok(['battle','promote','finished'].includes(b.phase));for(const ss of Object.values(b.sides)){a.ok(ss.bench.length<=3);a.ok(ss.hand.length<=10);for(const s of [ss.active,...ss.bench].filter(Boolean)){a.ok(Number.isFinite(s.damage)&&s.damage>=0);for(const n of Object.values(s.energy||{}))a.ok(Number.isInteger(n)&&n>=0);}}}
+function sane(b){a.ok(['battle','promote','effectChoice','finished'].includes(b.phase));for(const ss of Object.values(b.sides)){a.ok(ss.bench.length<=3);a.ok(ss.hand.length<=10);for(const s of [ss.active,...ss.bench].filter(Boolean)){a.ok(Number.isFinite(s.damage)&&s.damage>=0);for(const n of Object.values(s.energy||{}))a.ok(Number.isInteger(n)&&n>=0);}}}
 t('126 actual newly supported identities execute every attack, Trainer and activated ability through the shared legal engine',context=>{
  const previous=D.cardById;D.cardById=id=>byId.get(id)||previous(id);let attacks=0,trainers=0,abilities=0,passives=0;
  try{for(const id of COHORT){const card=byId.get(id);a.ok(card,id);a.equal(card.support.status,'FULL',id+': '+card.support.reasons.join('; '));

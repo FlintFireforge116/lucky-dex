@@ -72,10 +72,10 @@ t('named and Evolution Bench counts use matching Pokémon only, with positive an
  a.equal(E.resolveAttack({damage:10,effect:count.effect},C.effectContext(b,'player')).damage,40);
  const bonus=N.compileEffect('If Latios is on your Bench, this attack does 20 more damage.');a.equal(bonus.supported,true);a.equal(E.resolveAttack({damage:10,effect:bonus.effect},C.effectContext(b,'player')).damage,10);
 });
-t('numeric Energy requirements cannot be consumed as names and unknown in-play restrictions stay partial',()=>{
- a.equal(N.compileEffect('If you have 5 or more {P} Energy in play, this attack does 60 more damage.').supported,false);
+t('numeric Energy requirements and tagged cost reduction compile without consuming numbers as Pokémon names',()=>{
+ const energy=N.compileEffect('If you have 5 or more {P} Energy in play, this attack does 60 more damage.');a.equal(energy.supported,true);a.equal(energy.effect.condition.type,'teamEnergyAtLeast');a.equal(energy.effect.condition.amount,5);
  a.equal(N.compileEffect('If you have an undocumented restriction in play, this attack does 60 more damage.').supported,false);
- a.equal(N.compileEffect('During this turn, attacks used by your Future Pokémon cost 2 less {C} Energy.','trainer').supported,false);
+ const future=N.compileEffect('During this turn, attacks used by your Future Pokémon cost 2 less {C} Energy.','trainer');a.equal(future.supported,true);a.equal(future.effect.filter.tag,'Future');
 });
 t('Red bonus is checked against the current defender when damage occurs, including after switching',()=>{
  const card=normalized('A2b-071');withCards([card],()=>{const b=board(),p=b.sides.player,o=b.sides.opponent;p.hand=[{uid:'red',cardId:card.id}];C.applyAction(b,'player',action(b,'trainer'));
@@ -89,7 +89,7 @@ t('both-Active status and random discard compositions preserve each side and typ
  const b=board(),p=b.sides.player,o=b.sides.opponent,ctx={...C.effectContext(b,'player'),random:()=>0.1};p.active.energy={Water:2};o.active.energy={Grass:1};
  const status=N.compileEffect('Both Active Pokémon are now Confused.');a.equal(status.supported,true);E.applyEffect(status.effect,ctx);a.ok(p.active.conditions.confusion);a.ok(o.active.conditions.confusion);
  const discard=N.compileEffect('Discard a random Energy from both Active Pokémon.');a.equal(discard.supported,true);E.applyEffect(discard.effect,ctx);a.equal(p.active.energy.Water,1);a.equal(o.active.energy.Grass,0);
- const move=N.compileEffect('Move all Energy from this Pokémon to 1 of your Benched Pokémon.');a.equal(move.supported,true);p.bench=[{...C.makePokemonSlot('A1-001',0,'destination'),benchSlot:2}];E.applyEffect(move.effect,{...ctx,action:{target:'bench',benchIndex:2}});a.equal(p.active.energy.Water,0);a.equal(p.bench[0].energy.Water,1);
+ const move=N.compileEffect('Move all Energy from this Pokémon to 1 of your Benched Pokémon.');a.equal(move.supported,true);p.bench=[{...C.makePokemonSlot('A1-001',0,'destination'),benchSlot:2}];E.applyEffect(move.effect,{...ctx,resolvingChoice:true,action:{target:'bench',benchIndex:2}});a.equal(p.active.energy.Water,0);a.equal(p.bench[0].energy.Water,1);
 });
 t('typed attack reduction checks the actual attacker including its second type',()=>{
  const compiled=N.compileAbility({name:'Water armor',effect:'This Pokémon takes −30 damage from attacks from {R} or {W} Pokémon.'});a.equal(compiled.supported,true);

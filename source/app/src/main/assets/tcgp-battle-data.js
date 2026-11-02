@@ -92,14 +92,15 @@
   const COVERAGE={...generated.summary,FULL:Number(generated.summary?.FULL||0)+promotedRuntimeCards,PARTIAL:Math.max(0,Number(generated.summary?.PARTIAL||0)-promotedRuntimeCards)};
   const PRINTS = generated.prints;
   const CARD_BY_ID = Object.create(null), PRINT_BY_ID = Object.create(null);
+  const NORM_ID_CACHE = new Map();
   for (const card of CARDS) CARD_BY_ID[normId(card.id)] = card;
   for (const print of PRINTS) PRINT_BY_ID[normId(print.id)] = print;
   function normSet(value){ return String(value || '').trim().toUpperCase(); }
-  function normId(value){ return String(value || '').trim().toUpperCase().replace(/^PROMO-([ABC])-/, 'P-$1-').replace(/^P([ABC])-/, 'P-$1-'); }
+  function normId(value){ const raw=String(value || '');const cached=NORM_ID_CACHE.get(raw);if(cached!=null)return cached;const normalized=raw.trim().toUpperCase().replace(/^PROMO-([ABC])-/, 'P-$1-').replace(/^P([ABC])-/, 'P-$1-');NORM_ID_CACHE.set(raw,normalized);return normalized; }
   function typesOf(card){return Array.isArray(card?.types)&&card.types.length?card.types:[card?.subtype].filter(Boolean);}
   function hasType(card,type){return typesOf(card).includes(type);}
   function normName(value){ return String(value || '').normalize('NFKD').replace(/[\u0300-\u036f]/g,'').trim().toLowerCase().replace(/[’]/g, "'").replace(/\s+/g, ' '); }
-  function cardById(id){ const key=normId(id),print=PRINT_BY_ID[key]; return CARD_BY_ID[print?normId(print.gameplayId):key] || null; }
+  function cardById(id){ if(typeof id==='string'){const exact=CARD_BY_ID[id];if(exact)return exact;const exactPrint=PRINT_BY_ID[id];if(exactPrint)return CARD_BY_ID[exactPrint.gameplayId]||CARD_BY_ID[normId(exactPrint.gameplayId)]||null;}const key=normId(id),print=PRINT_BY_ID[key]; return CARD_BY_ID[print?normId(print.gameplayId):key] || null; }
   function gameplayIdForOwned(owned){
     if (!owned || String(owned.source || '').toLowerCase() !== 'tcgp') return null;
     const exact=cardById(owned.id);

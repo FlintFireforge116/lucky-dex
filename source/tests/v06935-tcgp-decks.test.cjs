@@ -25,7 +25,7 @@ test('type/set/mechanic test-build options focus actual owned cards and never fa
  for(const options of [{type:'Water'},{setId:'A1'},{mechanic:'coinFlip'}]){const r=K.buildQuickDeck(owned,options);assert.equal(r.ok,true,JSON.stringify(r.errors));assert.ok(r.focusCardId);}
  assert.equal(K.buildQuickDeck([{gameplayId:'A1-083',quantity:1,battleEnabled:true}],{cardId:'A1-083'}).ok,false);
  assert.equal(K.buildQuickDeck(owned,{cardId:'not-a-card'}).ok,false);
- const partial=D.CARDS.find(c=>c.support?.status==='PARTIAL');assert.equal(K.buildQuickDeck(owned,{cardId:partial.id}).ok,false);
+ const partial=D.CARDS.find(c=>c.support?.status==='PARTIAL');if(partial)assert.equal(K.buildQuickDeck(owned,{cardId:partial.id}).ok,false);else assert.equal(D.CARDS.filter(c=>c.support?.status==='PARTIAL').length,0);
 });
 test('Articuno inferred Water can generate and pay Ice Beam; wrong Grass cannot; attack availability explains both',()=>{
  const deck=K.buildQuickDeck(owned,{cardId:'A1-083'});assert.ok(deck.ok);const b=C.createBattle({playerDeck:deck.cards,opponentDeck:D.BEGINNER_IVYSAUR_DECK,seed:2,firstSide:'opponent'});assert.deepEqual(b.sides.player.energyTypes,['Water']);

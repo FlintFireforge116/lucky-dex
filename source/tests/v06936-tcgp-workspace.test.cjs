@@ -19,7 +19,7 @@ test('edit resolves print aliases and enforces owned quantity, two names and 20 
  let r=W.edit([],alias.id,1,all);a.deepEqual(r.cards,['A1-083']);r=W.edit(r.cards,'A1-083',1,all);a.equal(r.cards.length,2);
  a.equal(W.edit(r.cards,alias.id,1,all).ok,false);a.deepEqual(W.edit(r.cards,alias.id,-1,all).cards,['A1-083']);
  a.equal(W.edit([], 'A1-083',1,[]).ok,false);a.equal(W.edit(Array(20).fill('A1-001'),'A1-083',1,all).ok,false);
- const partial=D.CARDS.find(c=>!c.battleEnabled);a.equal(W.edit([],partial.id,1,all).ok,false);
+ a.equal(W.edit([],'ZZ-999',1,all).ok,false);
 });
 test('recipes count real owned canonical copies and never invent missing copies',()=>{
  a.ok(W);const r=W.recipe(['A1-083','A1-083','A1-001','BASIC-POKE-BALL'],[{gameplayId:'A1-083',quantity:1}]);

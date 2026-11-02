@@ -34,12 +34,12 @@ test('catalogue preserves the Genetic Apex beginner definitions and explicitly c
   assert.deepEqual(bulbasaur.attacks[0], { name: 'Vine Whip', cost: 'GC', damage: 40, text: '', effect: null });
   assert.equal(data.cardById('A1-029').attacks[0].effect.type, 'healSelf');
   assert.equal(data.cardById('A1-030').battleEnabled, true, 'Lilligant uses the supported typed Energy acceleration primitive');
-  assert.equal(data.cardById('A1-188').battleEnabled, false, 'Pidgeot opponent-choice switching remains PARTIAL');
+  assert.equal(data.cardById('A1-188').battleEnabled, true, 'Pidgeot opponent-choice switching is battle-ready through the effect-choice engine');
   assert.equal(data.cardById('A1-192').battleEnabled, true, 'Fearow uses the tested seeded coin-flip discard primitive');
 });
 
-test('unknown or unsupported owned prints do not masquerade as battle-enabled cards', () => {
+test('unknown owned prints do not masquerade as battle-enabled cards while released cards remain playable', () => {
   assert.equal(data.gameplayIdForOwned({ source: 'tcgp', id: 'ZZ-999', setId: 'ZZ', name: 'Missingno' }), null);
-  assert.equal(data.isBattleEnabled({ source: 'tcgp', id: 'A1-188', setId: 'A1', name: 'Pidgeot' }), false);
+  assert.equal(data.isBattleEnabled({ source: 'tcgp', id: 'A1-188', setId: 'A1', name: 'Pidgeot' }), true);
   assert.equal(data.isBattleEnabled({ source: 'tcgp', id: 'A1-227', setId: 'A1', name: 'Bulbasaur' }), true);
 });

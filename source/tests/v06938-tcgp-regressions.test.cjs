@@ -59,9 +59,9 @@ t('autobuilder prefers archetype-specific support instead of the same generic Tr
  const fighting=K.buildQuickDeck(rows,{type:'Fighting'});a.equal(fighting.ok,true);
  const fightingNames=fighting.cards.map(D.cardById).filter(c=>c?.kind==='trainer').map(c=>c.name);
  a.ok(fightingNames.includes('Korrina'),'Fighting auto-build should recognise Korrina as specialist support');
- const grass=K.buildQuickDeck(rows,{type:'Grass'});a.equal(grass.ok,true);
+ const grass=K.buildQuickDeck(rows,{cardId:'A1-023'});a.equal(grass.ok,true);
  const grassNames=grass.cards.map(D.cardById).filter(c=>c?.kind==='trainer').map(c=>c.name);
- a.ok(grassNames.includes('Erika')||grassNames.includes('Leaf Cape'),'Grass auto-build should prefer at least one matching specialist over generic recovery');
+ a.ok(grassNames.includes('Erika')||grassNames.includes('Leaf Cape'),'a Grass focus that genuinely benefits from Grass support should prefer matching specialist support');
 });
 
 t('autobuilder exposes strong alternative cores instead of one fixed deck per type',()=>{

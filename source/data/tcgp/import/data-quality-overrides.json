@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "reviewDate": "2026-10-27",
+  "reviewDate": "2026-11-02",
   "purpose": "Small reviewed corrections to immutable MIT raw mechanics. Apply before comparing gameplay fingerprints or propagating by asset identity. No unlicensed dataset incorporated.",
   "corrections": [
     {
@@ -523,6 +523,32 @@
         "kind": "MIT print metadata and TCGdex EX suffix",
         "source": "flibustier-cards.json",
         "finding": "Restore printed ex suffix to display and copy-limit name."
+      }
+    },
+    {
+      "printId": "B2a-044",
+      "path": [
+        "retreat"
+      ],
+      "value": 0,
+      "expectedBefore": null,
+      "evidence": {
+        "kind": "reviewed external card reference",
+        "referenceUrl": "https://tcgpocketmeta.com/cards/b2a-044-kilowattrel",
+        "finding": "Kilowattrel B2a-044 has Retreat 0."
+      }
+    },
+    {
+      "printId": "B2a-081",
+      "path": [
+        "retreat"
+      ],
+      "value": 0,
+      "expectedBefore": null,
+      "evidence": {
+        "kind": "reviewed external card reference",
+        "referenceUrl": "https://pokemontcgpocket.app/en/card/B2a-081",
+        "finding": "Tandemaus B2a-081 has Free Retreat (0)."
       }
     }
   ],
