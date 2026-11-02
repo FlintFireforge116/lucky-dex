@@ -144,6 +144,8 @@
         const damage=Math.max(0,Number(entry.damage||0));
         if(entry.side==='player'){damageDealt+=damage;attacksUsed++;if(damage>biggestHit){biggestHit=damage;biggestAttack=String(entry.attack||'Attack');biggestAttacker=cardName(entry.cardId);}}
         else if(entry.side==='opponent')damageTaken+=damage;
+      }else if(entry?.type==='benchDamage'){
+        const damage=Math.max(0,Number(entry.amount||0));if(entry.side==='player')damageDealt+=damage;else if(entry.side==='opponent')damageTaken+=damage;
       }else if(entry?.type==='ko'&&entry.side==='opponent')knockouts++;
       else if(entry?.type==='trainer'&&entry.side==='player')trainersPlayed++;
       else if(entry?.type==='attach'&&entry.side==='player')energyAttached++;
@@ -215,13 +217,14 @@
     const heads=results.filter(Boolean).length,tails=results.length-heads,label=appendPresentationNode(row,'tcgp-present-coin-label');label.textContent=results.length===1?(results[0]?'HEADS':'TAILS'):`${heads} HEADS · ${tails} TAILS`;
     return Math.min(1050,320+shown.length*70);
   }
-  function attackTargetAnchor(anchors,entry){const foe=entry?.side==='player'?'opponent':'player',zone=entry?.target==='bench'?'bench':'active',index=zone==='bench'?Number(entry?.benchIndex||0):0;return anchors?.slots?.[boardSlotKey(foe,zone,index)]||null;}
+  function benchDamagePresentationEntry(entry){return {type:'attack',side:entry?.side,targetSide:entry?.targetSide||((entry?.side==='player')?'opponent':'player'),cardId:entry?.sourceCardId,attack:String(entry?.attack||'Attack'),damage:Math.max(0,Number(entry?.amount||0)),target:'bench',benchIndex:Number(entry?.benchIndex||0),secondary:true};}
+  function attackTargetAnchor(anchors,entry){const foe=entry?.targetSide||(entry?.side==='player'?'opponent':'player'),zone=entry?.target==='bench'?'bench':'active',index=zone==='bench'?Number(entry?.benchIndex||0):0;return anchors?.slots?.[boardSlotKey(foe,zone,index)]||null;}
   function spawnAttackFx(stage,layerRect,anchors,entry){
     const source=anchors?.slots?.[boardSlotKey(entry.side,'active',0)]?.rect,targetInfo=attackTargetAnchor(anchors,entry),target=targetInfo?.rect,from=localBox(source,layerRect),to=localBox(target,layerRect);if(!from||!to)return;
     const meta=attackPresentationMeta(entry),dx=to.cx-from.cx,dy=to.cy-from.cy,distance=Math.max(18,Math.hypot(dx,dy)),angle=Math.atan2(dy,dx)*180/Math.PI;
-    const fx=appendPresentationNode(stage,`tcgp-present-attack type-${meta.type} intensity-${meta.intensity}`);fx.style.left=from.cx+'px';fx.style.top=from.cy+'px';fx.style.width=distance+'px';fx.style.setProperty('--tcgp-attack-angle',angle+'deg');
-    const damage=appendPresentationNode(stage,`tcgp-present-damage intensity-${meta.intensity}`);damage.textContent=meta.damage>0?`−${meta.damage}`:'BLOCKED';damage.style.left=to.cx+'px';damage.style.top=to.cy+'px';
-    const content=el('tcgpBattleContent'),attackerNode=content?.querySelector(boardSlotSelector(entry.side,'active',0)),targetNode=content?.querySelector(boardSlotSelector(targetInfo?.side||'',targetInfo?.zone||'active',targetInfo?.index||0));attackerNode?.classList.add('tcgp-present-lunge');targetNode?.classList.add('tcgp-present-hit');
+    const fx=appendPresentationNode(stage,`tcgp-present-attack type-${meta.type} intensity-${meta.intensity}${entry?.secondary?' secondary':''}`);fx.style.left=from.cx+'px';fx.style.top=from.cy+'px';fx.style.width=distance+'px';fx.style.setProperty('--tcgp-attack-angle',angle+'deg');
+    const damage=appendPresentationNode(stage,`tcgp-present-damage intensity-${meta.intensity}${entry?.secondary?' secondary':''}`);damage.textContent=meta.damage>0?`−${meta.damage}`:'BLOCKED';damage.style.left=to.cx+'px';damage.style.top=to.cy+'px';
+    const content=el('tcgpBattleContent'),attackerNode=content?.querySelector(boardSlotSelector(entry.side,'active',0)),targetNode=content?.querySelector(boardSlotSelector(targetInfo?.side||'',targetInfo?.zone||'active',targetInfo?.index||0));if(!entry?.secondary)attackerNode?.classList.add('tcgp-present-lunge');targetNode?.classList.add('tcgp-present-hit');
     const remove=()=>{attackerNode?.classList.remove('tcgp-present-lunge');targetNode?.classList.remove('tcgp-present-hit');};battlePresentationTimers.push(setTimeout(remove,680));
     if(meta.intensity==='big'||meta.intensity==='finisher')content?.querySelector('.tcgp-live-arena')?.classList.add('tcgp-present-shake');
   }
@@ -251,6 +254,7 @@
     }
     for(const coinEntry of entries.filter(e=>e.type==='coin')){later(t,()=>spawnCoinRow(stage,coinEntry));t+=reduced?60:Math.max(300,Math.min(850,280+coinSequence(coinEntry).length*70));}
     const attack=entries.find(e=>e.type==='attack');if(attack){later(t,()=>spawnAttackFx(stage,layerRect,anchors,attack));t+=reduced?80:(attackPresentationMeta(attack).intensity==='finisher'?650:attackPresentationMeta(attack).intensity==='big'?560:450);}
+    for(const benchHit of entries.filter(e=>e.type==='benchDamage'&&Number(e.amount||0)>0)){const visual=benchDamagePresentationEntry(benchHit);later(t,()=>spawnAttackFx(stage,layerRect,anchors,visual));t+=reduced?40:210;}
     for(const status of entries.filter(e=>e.type==='status'&&Number(e.affectedCount||0)>0)){later(t,()=>{const node=appendPresentationNode(stage,`tcgp-present-status status-${String(status.status||'effect').toLowerCase()}`);node.textContent=String(status.status||'STATUS').toUpperCase();});t+=reduced?40:220;}
     for(const heal of entries.filter(e=>e.type==='heal')){later(t,()=>{const node=appendPresentationNode(stage,'tcgp-present-heal');node.textContent=`+${Number(heal.amount||0)} HP`;});t+=reduced?40:220;}
     const used=new Set();for(const ko of entries.filter(e=>e.type==='ko')){later(t,()=>{const info=findKoAnchor(anchors,ko,used),discard=presentationRect(el('tcgpBattleContent')?.querySelector(`[data-pile-side="${ko.side}"][data-pile-kind="discard"]`))||anchors.piles?.[`${ko.side}-discard`];spawnCardGhost(stage,layerRect,ko.cardId,ko.side,info?.rect,discard,'tcgp-present-ko');const badge=appendPresentationNode(stage,'tcgp-present-ko-label');badge.textContent='KNOCKED OUT';});t+=reduced?80:440;}
@@ -815,5 +819,5 @@
   }
   if(root&&root.document){if(root.document.readyState==='loading')root.document.addEventListener('DOMContentLoaded',init,{once:true});else init();}
 
-  return{actionLabel,actionEventText,cardArtUrl,cardRulesHtml,supportText,filterBuilderRows,resultSummary,coverageForOwnedCards,centerHandActionIndices,directHandDropActionIndex,open,close,renderHome,requestLeave,isEditing:()=>screen==='builder',_test:{slotTools,buildInspectSpec,resolveInspect,attachedToolLinksHtml,liveCardHtml,attackPresentationMeta,coinSequence,battleSummaryStats,capturePresentationAnchors,targetKeyForAction}};
+  return{actionLabel,actionEventText,cardArtUrl,cardRulesHtml,supportText,filterBuilderRows,resultSummary,coverageForOwnedCards,centerHandActionIndices,directHandDropActionIndex,open,close,renderHome,requestLeave,isEditing:()=>screen==='builder',_test:{slotTools,buildInspectSpec,resolveInspect,attachedToolLinksHtml,liveCardHtml,attackPresentationMeta,coinSequence,battleSummaryStats,capturePresentationAnchors,targetKeyForAction,benchDamagePresentationEntry}};
 });

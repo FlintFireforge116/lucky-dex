@@ -275,8 +275,18 @@
       const isTerminalPokemon=c=>!pokemonCards.some(next=>next!==c&&next.stage!=='Basic'&&data.normalizeName(next.evolvesFrom)===data.normalizeName(c.name));
       const supportMatches=(c,f)=>{if(!matches(c,f))return false;if(!f?.stage)return true;if(style==='random')return mainEndpoint.stage===f.stage&&matches(mainEndpoint,f);return isTerminalPokemon(c);};
       function trainerValue(c){let dead=false;
+        const conditionFilterMatches=(card,filter)=>{if(!filter)return true;if(filter.attackName){const wanted=[].concat(filter.attackName).map(data.normalizeName);if(!(card.attacks||[]).some(a=>wanted.includes(data.normalizeName(a.name))))return false;}const rest={...filter};delete rest.attackName;return matches(card,rest);};
+        const conditionSupported=condition=>{
+          if(!condition||typeof condition!=='object')return true;
+          if(['selfMatches','activeMatches','pokemonPresent'].includes(condition.type))return pokemonCards.some(card=>conditionFilterMatches(card,condition.filter));
+          if(condition.type==='selfRetreatCostAtLeast')return pokemonCards.some(card=>Number(card.retreat||0)>=Number(condition.amount||0));
+          if(condition.type==='teamDistinctTypesAtLeast')return new Set(pokemonCards.flatMap(types)).size>=Number(condition.amount||0);
+          if(condition.type==='teamDistinctEnergyTypesAtLeast')return representedEnergy().size>=Number(condition.amount||0);
+          return true;
+        };
         function scoreEffect(e,weight=1){
           if(!e||typeof e!=='object')return 0;
+          if(e.condition&&!conditionSupported(e.condition)){dead=true;return 0;}
           // Coin branches are alternatives, not cumulative effects. Score their
           // expected value so coin-flip search cards do not swamp every build.
           if(e.type==='coinFlip')return scoreEffect(e.heads,weight*.5)+scoreEffect(e.tails,weight*.5);
@@ -308,10 +318,10 @@
           let total=score*weight;for(const child of Array.isArray(e.effects)?e.effects:[])total+=scoreEffect(child,weight);
           if(e.effect&&typeof e.effect==='object')total+=scoreEffect(e.effect,weight);return total;
         }
-        let score=scoreEffect(c.effect);if(c.trainerType==='Stadium')score-=4;return dead?-100:score;
+        let score=scoreEffect(c.effect);if(c.trainerType==='Stadium')score-=4;return dead?-1000:score;
       }
       const scoredTrainers=pool.filter(r=>r.card.kind==='trainer'&&r.card.effect?.type!=='playFossil').map(r=>({...r,utility:trainerValue(r.card)})).sort((a,b)=>b.utility-a.utility||a.card.id.localeCompare(b.card.id));
-      const trainers=scoredTrainers.filter(r=>r.utility>0),scarcityTrainers=scoredTrainers.filter(r=>r.utility<=0);
+      const trainers=scoredTrainers.filter(r=>r.utility>0),scarcityTrainers=scoredTrainers.filter(r=>r.utility<=0&&r.utility>-1000);
       const trainerCount=type=>cards.map(data.cardById).filter(c=>c?.kind==='trainer'&&(!type||c.trainerType===type)).length;
       const optionalTrainers=trainers.filter(r=>r.card.id!=='P-A-007'),needsStadium=cardConditions(seed.card).some(c=>c.type==='stadiumInPlay'),stadiumLimit=needsStadium?2:1;
       function trainerCopyCap(c){if(c.id==='P-A-007')return 2;if(c.trainerType==='Stadium')return stadiumLimit;const e=c.effect||{},specific=!!(e.filter&&Object.keys(e.filter).length)&&!(e.side==='opponent'||String(e.target||'').startsWith('opponent'));if(c.trainerType==='Supporter')return specific||['draw','search','attachEnergy','moveEnergy'].includes(e.type)?2:1;if(c.trainerType==='Tool')return specific?2:1;if(['draw','search','searchRandomBasic','attachEnergy'].includes(e.type))return 2;return 1;}
