@@ -221,6 +221,12 @@
         if(k==='subtype')return types(c).includes(v);if(k==='isEx')return (c.points>=2)===v;
         if(Array.isArray(v))return v.some(x=>data.normalizeName(c[k])===data.normalizeName(x));return c[k]===v;
       });
+      // Stage-specific support should serve a real board role, not merely a
+      // pre-evolution that the deck intends to evolve past. A Machoke in a
+      // Machamp/Rare Candy list is an evolution bridge; it does not justify
+      // spending competitive slots on Training Area or Elegant Cape.
+      const isTerminalPokemon=c=>!pokemonCards.some(next=>next!==c&&next.stage!=='Basic'&&data.normalizeName(next.evolvesFrom)===data.normalizeName(c.name));
+      const supportMatches=(c,f)=>matches(c,f)&&(!f?.stage||isTerminalPokemon(c));
       function trainerValue(c){let dead=false;
         function scoreEffect(e,weight=1){
           if(!e||typeof e!=='object')return 0;
@@ -229,7 +235,7 @@
           if(e.type==='coinFlip')return scoreEffect(e.heads,weight*.5)+scoreEffect(e.tails,weight*.5);
           if(e.type==='coinUntilTails')return scoreEffect(e.effect,weight);
           const specific=!!(e.filter&&Object.keys(e.filter).length),amount=Math.abs(Number(e.amount)||0),opponentScoped=e.side==='opponent'||String(e.target||'').startsWith('opponent');
-          if(specific&&!opponentScoped&&!pokemonCards.some(p=>matches(p,e.filter))&&e.filter.kind!=='trainer')dead=true;
+          if(specific&&!opponentScoped&&!pokemonCards.some(p=>supportMatches(p,e.filter))&&e.filter.kind!=='trainer')dead=true;
           let score=0;
           if(e.type==='draw')score=12+amount*3+evolutions;
           else if(e.type==='searchRandomBasic')score=12+(evolutions?8:0);
@@ -256,7 +262,8 @@
         }
         let score=scoreEffect(c.effect);if(c.trainerType==='Stadium')score-=4;return dead?-100:score;
       }
-      const trainers=pool.filter(r=>r.card.kind==='trainer'&&r.card.effect?.type!=='playFossil').map(r=>({...r,utility:trainerValue(r.card)})).filter(r=>r.utility>0).sort((a,b)=>b.utility-a.utility||a.card.id.localeCompare(b.card.id));
+      const scoredTrainers=pool.filter(r=>r.card.kind==='trainer'&&r.card.effect?.type!=='playFossil').map(r=>({...r,utility:trainerValue(r.card)})).sort((a,b)=>b.utility-a.utility||a.card.id.localeCompare(b.card.id));
+      const trainers=scoredTrainers.filter(r=>r.utility>0),scarcityTrainers=scoredTrainers.filter(r=>r.utility<=0);
       const trainerCount=type=>cards.map(data.cardById).filter(c=>c?.kind==='trainer'&&(!type||c.trainerType===type)).length;
       const optionalTrainers=trainers.filter(r=>r.card.id!=='P-A-007'),needsStadium=cardConditions(seed.card).some(c=>c.type==='stadiumInPlay'),stadiumLimit=needsStadium?2:1;
       function trainerCopyCap(c){if(c.id==='P-A-007')return 2;if(c.trainerType==='Stadium')return stadiumLimit;const e=c.effect||{},specific=!!(e.filter&&Object.keys(e.filter).length)&&!(e.side==='opponent'||String(e.target||'').startsWith('opponent'));if(c.trainerType==='Supporter')return specific||['draw','search','attachEnergy','moveEnergy'].includes(e.type)?2:1;if(c.trainerType==='Tool')return specific?2:1;if(['draw','search','searchRandomBasic','attachEnergy'].includes(e.type))return 2;return 1;}
@@ -282,6 +289,11 @@
       // FULL Trainers. Only after the compact shell is exhausted may extra
       // compatible Pokémon/families fill the remaining slots.
       if(cards.length<20){for(const r of pokemon){if(cards.length>=20||style==='random'&&pokemonTotal()>=10)break;if(style==='random'&&pokemonTotal()+lineMissingCount(r.card)>10)continue;if(addLine(r.card))while(cards.length<20&&(style!=='random'||pokemonTotal()<10)&&add(r.card)){} }}
+      // Last-resort collection fallback: relevance is a quality rule, not a
+      // reason to refuse a legal deck when the player owns too few useful
+      // Trainers/Pokémon. Only after coherent options are exhausted may a
+      // low-synergy Trainer fill the final slots, with Stadium clutter capped.
+      if(cards.length<20){for(const r of scarcityTrainers){if(cards.length>=20)break;if(r.card.trainerType==='Stadium'&&trainerCount('Stadium')>=Math.max(stadiumLimit,2))continue;const cap=trainerCopyCap(r.card);while(cards.length<20&&(idCounts.get(r.card.id)||0)<cap&&add(r.card)){if(r.card.trainerType==='Stadium'&&trainerCount('Stadium')>=Math.max(stadiumLimit,2))break;}}}
       const selectedPokemon=cards.map(data.cardById).filter(c=>c?.kind==='pokemon'),selectedRoots=new Map();for(const c of selectedPokemon){const root=globalFamilyRoot(c);if(!selectedRoots.has(root))selectedRoots.set(root,[]);selectedRoots.get(root).push(c);}
       const strandedPreEvolution=[...selectedRoots.entries()].some(([root,members])=>members.every(c=>c.stage==='Basic'&&(c.points||1)<=1)&&knownEvolvedRoots.has(root));
       if(!focus&&avoidStrandedBasics&&strandedPreEvolution)continue;
