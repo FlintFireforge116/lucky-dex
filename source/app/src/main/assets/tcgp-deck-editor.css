@@ -8,7 +8,7 @@ body.tcgp-deck-editing .tcgp-battle-content{display:block;flex:1;min-height:0;ov
 body.tcgp-deck-editing .tcgp-editor{height:100%;display:flex;flex-direction:column;border-radius:0;border:0}
 body.tcgp-deck-editing .tcgp-editor-mydeck{position:relative;top:auto;flex:none}
 body.tcgp-deck-editing .tcgp-editor-top,body.tcgp-deck-editing .tcgp-editor-tools{flex:none}
-body.tcgp-deck-editing #tcgpDeckResults{overflow:auto;min-height:0;flex:1;overscroll-behavior:contain;padding-bottom:env(safe-area-inset-bottom)}
+body.tcgp-deck-editing #tcgpDeckResults,body.tcgp-deck-editing #classicDeckResults{overflow:auto;min-height:0;flex:1;overscroll-behavior:contain;padding-bottom:env(safe-area-inset-bottom);-webkit-overflow-scrolling:touch}
 .tcgp-editor{--ink:#163b50;--muted:#526f80;--line:#b5cbd5;color:var(--ink);background:#e7eff1;border:1px solid var(--line);border-radius:18px;overflow:clip;font-family:system-ui,sans-serif}
 .tcgp-editor button{font:700 12px system-ui;min-height:42px;border:1px solid #a9c6d2;border-radius:10px;padding:7px 11px;background:#f7fafb;color:var(--ink);touch-action:manipulation}
 .tcgp-editor button:disabled{opacity:.4}.tcgp-editor button[aria-pressed=true]{background:#215f80;color:#fff;border-color:#215f80}

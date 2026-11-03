@@ -87,12 +87,9 @@ test('Classic deck editor mirrors the Pocket workspace structure and is wired in
   assert.match(ui,/classic-quick/);
 });
 
-test('v0.69.66 release markers agree',()=>{
+test('v0.69.66 Classic builder remains present in later releases',()=>{
   const gradle=fs.readFileSync(path.join(root,'app/build.gradle'),'utf8');
-  const runtime=fs.readFileSync(path.join(assets,'app-v0167.js'),'utf8');
-  const html=fs.readFileSync(path.join(assets,'index.html'),'utf8');
-  assert.match(gradle,/versionCode 7046/);
-  assert.match(gradle,/versionName '0\.69\.66'/);
-  assert.match(runtime,/window\.__LUCKYDEX_BUILD='0\.69\.66'/);
-  assert.match(html,/LUCKY DEX · v0\.69\.66/);
+  const code=Number(gradle.match(/versionCode\s+(\d+)/)?.[1]||0);
+  assert.ok(code>=7046);
+  assert.match(fs.readFileSync(path.join(assets,'tcg-classic-deck-editor.js'),'utf8'),/Auto build/);
 });

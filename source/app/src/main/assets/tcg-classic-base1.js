@@ -272,10 +272,21 @@ function registerDetails(detail){
  const next=detail.supertype==='Pokémon'||detail.supertype==='Pokemon'?normalizePokemon(detail,base):detail.supertype==='Trainer'?normalizeTrainer(detail,base):{...base,printed:detail};
  Object.assign(base,next);return base;
 }
+function ownedBaseSetCard(owned){
+ if(!owned||typeof owned!=='object')return null;
+ const source=String(owned.source||'').toLowerCase();if(source&&source!=='tcg')return null;
+ const setId=String(owned.setId||owned.set?.id||'').toLowerCase(),libraryKey=String(owned._librarySetKey||'').toLowerCase(),setName=String(owned.setName||owned.set?.name||'').trim().toLowerCase(),setTotal=Number(owned.setTotal||owned.set?.cardCount?.total||0);
+ const isBaseSet=setId==='base1'||setId==='library:bs'||libraryKey==='bs'||(setName==='base set'&&setTotal===102);if(!isBaseSet)return null;
+ const direct=cardById(owned.id);if(direct)return direct;
+ for(const value of [owned.localId,owned.number,owned._libraryCanonicalId,owned.id]){
+  const raw=String(value??'').trim(),match=raw.match(/^(?:base1|bs)?[-_:]?0*(\d{1,3})$/i);if(!match)continue;const number=Number(match[1]);if(number>=1&&number<=SET.cardCount)return cardById(`base1-${number}`);
+ }
+ return null;
+}
 function projectOwnedCards(cards){
- const rows=Array.isArray(cards)?cards:Object.values(cards||{}),out=[];
- for(const owned of rows){if(String(owned?.source||'').toLowerCase()!=='tcg'||String(owned?.setId||owned?.set?.id||'').toLowerCase()!=='base1')continue;const card=cardById(owned.id);if(!card)continue;out.push({gameplayId:card.id,name:card.name,card,quantity:Math.max(0,Number(owned.count==null?1:owned.count)||0),battleEnabled:!!card.battleEnabled,variants:[{id:owned.id,quantity:Math.max(0,Number(owned.count==null?1:owned.count)||0),image:owned.image||null,rarity:owned.rarity||null,row:owned}]});}
- return out.sort((a,b)=>Number(a.card.number)-Number(b.card.number));
+ const rows=Array.isArray(cards)?cards:Object.values(cards||{}),grouped=new Map();
+ for(const owned of rows){const card=ownedBaseSetCard(owned);if(!card)continue;const quantity=Math.max(0,Number(owned.count==null?1:owned.count)||0),variant={id:owned.id||card.id,quantity,image:owned.image||owned.imageUrl||null,rarity:owned.rarity||null,row:owned},current=grouped.get(card.id);if(current){current.quantity+=quantity;current.variants.push(variant);}else grouped.set(card.id,{gameplayId:card.id,name:card.name,card,quantity,battleEnabled:!!card.battleEnabled,variants:[variant]});}
+ return [...grouped.values()].sort((a,b)=>Number(a.card.number)-Number(b.card.number));
 }
 function coverage(){const counts={FULL:0,PARTIAL:0,UNSUPPORTED:0};for(const c of CARDS)counts[c.support.status]=(counts[c.support.status]||0)+1;return {...counts,total:CARDS.length,battleEnabled:CARDS.filter(c=>c.battleEnabled).length,deckEligible:CARDS.filter(c=>c.deckEligible).length};}
 return {SET,CARDS,ENERGY_CODE,CLASSIC30_LOANER_DECK,cardById,registerDetails,projectOwnedCards,coverage};
