@@ -54,11 +54,13 @@ test('Classic Battle Lab uses five Prize cards and summary scoring reads prizes 
   assert.equal(summary.playerPoints,2);
 });
 
-test('v0.69.65 release markers agree for Android and runtime',()=>{
+test('v0.69.65 Classic integration remains present in later releases',()=>{
   const gradle=fs.readFileSync(path.join(root,'app/build.gradle'),'utf8');
   const runtime=fs.readFileSync(path.join(assets,'app-v0167.js'),'utf8');
-  assert.match(gradle,/versionCode 7045/);
-  assert.match(gradle,/versionName '0\.69\.65'/);
-  assert.match(runtime,/window\.__LUCKYDEX_BUILD='0\.69\.65'/);
-  assert.match(html,/LUCKY DEX · v0\.69\.65/);
+  const code=Number((gradle.match(/versionCode\s+(\d+)/)||[])[1]);
+  const name=(gradle.match(/versionName\s+'([^']+)'/)||[])[1];
+  assert.ok(code>=7045);
+  assert.ok(name&&name.localeCompare('0.69.65',undefined,{numeric:true})>=0);
+  assert.ok(runtime.includes(`window.__LUCKYDEX_BUILD='${name}'`));
+  assert.ok(html.includes(`LUCKY DEX · v${name}`));
 });
