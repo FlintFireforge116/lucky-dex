@@ -19,10 +19,10 @@ test('battlefield markup applies playmat backgrounds to both halves',()=>{
   assert.match(src,/--tcgp-mat-image/);
 });
 
-test('playmat layout snaps active and bench wrappers to printed slot geometry and hides custom empty outlines',()=>{
+test('playmat layout snaps active and bench wrappers to Pocket slot geometry while keeping visible slot outlines',()=>{
   const css=fs.readFileSync(path.join(assets,'tcgp-battle.css'),'utf8');
   assert.match(css,/\.tcgp-live-mat-half\.tcgp-live-player[^}]*background-size:/s);
-  assert.match(css,/\.tcgp-live-mat-half \.tcgp-live-card\.empty[^}]*border-color:transparent/s);
+  assert.match(css,/\.tcgp-live-mat-half \.tcgp-live-card\.empty\{[^}]*border:1\.5px solid rgba\(255,255,255/s);
   assert.match(css,/\.tcgp-live-player-bench[^}]*position:absolute/s);
   assert.match(css,/\.tcgp-live-opponent-bench[^}]*position:absolute/s);
 });

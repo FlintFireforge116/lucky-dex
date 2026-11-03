@@ -555,7 +555,7 @@
   }
   function liveEnergySourceHtml(side){
     const available=currentBattle?.phase==='battle'&&currentBattle?.activeSide==='player'&&!cpuPending&&side.energyAvailable&&!side.energyUsed,energyType=side.energyType||'Grass',next=side.nextEnergyType||energyType;
-    return `<button type="button" data-energy-side="player" class="tcgp-live-energy-source ${available?'ready':''}" data-energy="${esc(energyType)}" data-tcgp-energy-source="1" ${available?'':'disabled'} aria-label="${available?`Drag ${esc(energyType)} Energy to a Pokémon`:`${esc(energyType)} Energy unavailable`} · Next ${esc(next)}"><span>${energyIconHtml(energyType,{className:'current'})}</span><small aria-hidden="true">→</small><span class="tcgp-live-next-energy">${energyIconHtml(next,{className:'next'})}</span></button>`;
+    return `<button type="button" data-energy-side="player" class="tcgp-live-energy-source ${available?'ready':''}" data-energy="${esc(energyType)}" data-tcgp-energy-source="1" ${available?'':'disabled'} aria-label="${available?`Drag ${esc(energyType)} Energy to a Pokémon`:`${esc(energyType)} Energy unavailable`} · Next ${esc(next)}"><span class="tcgp-live-current-energy">${energyIconHtml(energyType,{className:'current'})}</span><span class="tcgp-live-next-energy">${energyIconHtml(next,{className:'next'})}</span></button>`;
   }
   function liveInspectOverlayHtml(){
     if(battleOverlay!=='inspect'||!battleInspect)return'';
@@ -623,7 +623,7 @@
       </section>
       <section class="tcgp-live-mid" aria-label="Score, turn and play lane"><div class="tcgp-live-score"><span>CPU <b>${o.points}</b>/3</span><i>·</i><span>YOU <b>${p.points}</b>/3</span></div>${liveMidControlsHtml(turnText,lastLog)}</section>
       <section class="tcgp-live-player tcgp-live-mat-half" data-mat-side="player" ${playmatStyle('player')} aria-label="Player half">
-        <div class="tcgp-live-player-active" aria-label="Your Active">${liveCardHtml(p.active,{side:'player',zone:'active'})}${liveStadiumSlotHtml()}</div>
+        <div class="tcgp-live-player-active" aria-label="Your Active">${liveCardHtml(p.active,{side:'player',zone:'active'})}</div>${liveStadiumSlotHtml()}
         <div class="tcgp-live-player-bench" aria-label="Your Bench">${liveBenchHtml('player',p.bench)}</div>
         <div class="tcgp-live-player-bottom"><div class="tcgp-live-piles mine" aria-label="Your card piles">${livePileHtml('player',p,'discard')}${livePileHtml('player',p,'deck')}</div><div class="tcgp-live-hand" aria-label="Your hand · swipe for more cards">${livePlayerHandHtml(p)}</div>${liveEnergySourceHtml(p)}</div>
       </section>

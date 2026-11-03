@@ -443,7 +443,8 @@
       }
       case 'drawToHandSize':{const ss=own(ctx),match=(effect.matchSide||'opponent')==='self'?own(ctx):other(ctx),goal=effect.size!=null?Number(effect.size):match.hand.length;while(ss.hand.length<goal&&ss.deck.length)ctx.drawCard(ss);break;}
       case 'chooseTarget':{
-        if(ctx.resolvingChoice){applyEffect(effect.effect,ctx);break;}
+        const actionTarget=ctx.action?.choiceTarget||ctx.action?.effectTarget||ctx.action?.target;
+        if(ctx.resolvingChoice||actionTarget){applyEffect(effect.effect,ctx);break;}
         if(typeof ctx.requestChoice==='function'){const opponent=effect.target.startsWith('opponent'),bench=effect.target.endsWith('Bench');ctx.requestChoice({kind:'pokemon',side:opponent?'opponent':'self',includeActive:!bench,filter:effect.filter,effect,optional:!!effect.optional});}break;
       }
       case 'coinUntilTails':{const results=[],heads=repeatHeads(ctx,()=>applyEffect(effect.effect,ctx),results);log({type:'coin',heads,coins:'untilTails',results});break;}
@@ -608,7 +609,10 @@
       if(out.length)return out;
       return effect.requiresCopiedCost?[]:(ctx.isAttack?[{}]:[]);
     }
-    if(['forceOpponentSwitch','discardChosenHand','shuffleChosenHand','searchChosen','selectTopToHand','swapHandWithRandomDeck','discardBenchPokemon','chooseTarget','chooseOption'].includes(effect.type))return [{}];
+    if(effect.type==='chooseTarget'){
+      return targetChoices(effect.target,ctx).filter(action=>targets(effect.target,{...ctx,action}).some(slot=>matchesFilter(ctx.cardById(slot.cardId),effect.filter,slot)));
+    }
+    if(['forceOpponentSwitch','discardChosenHand','shuffleChosenHand','searchChosen','selectTopToHand','swapHandWithRandomDeck','discardBenchPokemon','chooseOption'].includes(effect.type))return [{}];
     if(effect.type==='coinUntilTails'||effect.type==='coinRepeatEffect')return choicesForEffect(effect.effect,ctx);
     if(effect.type==='discardEnergy'&&!effect.energyType&&!effect.random){const selector=effect.target||'self';return targetChoices(selector,ctx).flatMap(action=>{const list=targets(selector,{...ctx,action}).filter(s=>matchesFilter(ctx.cardById(s.cardId),effect.filter,s)),types=new Set();for(const slot of list)for(const [type,n] of Object.entries(slot.energy||{}))if(Number(n)>0)types.add(type);return [...types].map(type=>({...action,effectEnergyType:type}));});}
     if(effect.type==='attachEnergyFromDiscard'&&!effect.energyType){const selector=effect.target||'self';return targetChoices(selector,ctx).flatMap(action=>{const list=targets(selector,{...ctx,action}).filter(s=>matchesFilter(ctx.cardById(s.cardId),effect.filter,s));if(!list.length)return[];const owner=own(ctx),types=Object.entries(owner.energyDiscard||{}).filter(([,n])=>Number(n)>=Number(effect.amount||1)).map(([type])=>type);return types.map(type=>({...action,effectEnergyType:type}));});}

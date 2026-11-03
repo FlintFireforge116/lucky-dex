@@ -17,9 +17,8 @@ test('empty Stadium state renders no battlefield placeholder',()=>{
 test('occupied Stadium is rendered beside the player Active rather than in the middle control strip',()=>{
   const js=uiJs();
   const mid=js.match(/<section class="tcgp-live-mid"[\s\S]*?<\/section>/)?.[0]||'';
-  const playerActive=js.match(/<div class="tcgp-live-player-active"[\s\S]*?<\/div>/)?.[0]||'';
   assert.ok(!mid.includes('liveStadiumSlotHtml()'),'middle strip must not own the Stadium');
-  assert.ok(playerActive.includes('liveStadiumSlotHtml()'),'Stadium should live beside the player Active');
+  assert.match(js,/tcgp-live-player-active[^`]*<\/div>\$\{liveStadiumSlotHtml\(\)\}/s,'Stadium should be a player-mat sibling beside the Active, not anchored inside it');
 });
 
 test('Stadium presentation is landscape card art only with no STADIUM/owner caption',()=>{

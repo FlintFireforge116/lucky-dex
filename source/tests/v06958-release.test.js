@@ -10,6 +10,7 @@ test('v0.69.58 modules are loaded before battle UI and visible/runtime versions 
   const app=fs.readFileSync(path.join(assets,'app-v0167.js'),'utf8');
   assert.match(html,/cosmetics-playmats-v06958\.js[\s\S]*cosmetics-core-v0413\.js/);
   assert.match(html,/tcgp-ui-assets\.js[\s\S]*tcgp-battle-ui\.js/);
-  assert.match(app,/window\.__LUCKYDEX_BUILD='0\.69\.58'/);
-  assert.match(html,/v0\.69\.58/);
+  const build=app.match(/window\.__LUCKYDEX_BUILD='(0\.69\.\d+)'/)?.[1];
+  assert.ok(build,'runtime build marker exists');
+  assert.match(html,new RegExp('v'+build.replaceAll('.', '\\.')));
 });
