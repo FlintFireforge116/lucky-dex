@@ -3,7 +3,7 @@ const test=require('node:test'),assert=require('node:assert/strict'),path=requir
 const assets=path.resolve(__dirname,'../app/src/main/assets');
 const req=s=>require(path.join(assets,s));
 test('Fossil has 62 numbered playable cards and existing Base/Jungle survive',()=>{
- const data=req('tcg-classic-battle-data.js');assert.deepEqual(Object.entries(Object.groupBy(data.CARDS,c=>c.setId)).map(([id,cards])=>[id,cards.length]),[['base1',102],['base2',64],['base3',62]]);
+ const data=req('tcg-classic-battle-data.js');assert.deepEqual(Object.entries(Object.groupBy(data.CARDS.filter(c=>['base1','base2','base3'].includes(c.setId)),c=>c.setId)).map(([id,cards])=>[id,cards.length]),[['base1',102],['base2',64],['base3',62]]);
  assert.equal(data.cardById('base3-45').name,'Weezing');assert.equal(data.cardById('base3-62').name,'Mysterious Fossil');
 });
 test('Fossil binder collection ownership maps and separates holo/non-holo prints',()=>{

@@ -26,7 +26,7 @@ const STAPLES=Object.freeze([
  ['base1-83',1], // Maintenance
  ['base1-87',1]  // Pokedex
 ]);
-const SET_IDS=Object.freeze(['base1','base2','base3','base5']);
+const SET_IDS=Object.freeze(['base1','base2','base3','base5','gym1']);
 const ARCHETYPE_TYPES=Object.freeze([...decks.ENERGY_TYPES,'Colorless']);
 const STAGE_RANK=Object.freeze({'Basic':0,'Stage 1':1,'Stage 2':2});
 const norm=s=>String(s||'').toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'');
@@ -85,6 +85,10 @@ function buildDeck(rows,options={}){
  if(!selectedTypes.length){const ownType=(main.types||[]).find(t=>decks.ENERGY_TYPES.includes(t));if(ownType)selectedTypes.push(ownType);}
  if(!selectedTypes.length)selectedTypes.push('Fighting');
  const cards=[],counts=new Map();
+ function trainerIsUseful(card){
+   if(card.name==="Brock's Training Method")return cards.some(id=>{const pokemon=classic.cardById(id);return pokemon?.kind==='pokemon'&&pokemon.name.startsWith("Brock's ");});
+   return true;
+ }
  function room(card){const copiesOfName=[...counts].filter(([id])=>classic.cardById(id)?.name===card.name).reduce((sum,[,count])=>sum+count,0);return Math.max(0,Math.min(4-copiesOfName,Number(owned.get(card.id)||0)-(counts.get(card.id)||0)));}
  function add(card,n=1){let added=0;while(added<n&&cards.length<30&&room(card)>0){cards.push(card.id);counts.set(card.id,(counts.get(card.id)||0)+1);added++;}return added;}
  function addLine(line,copies){if(!line.length||line.some(c=>Number(owned.get(c.id)||0)<1))return false;for(let copy=0;copy<copies;copy++){if(line.some(c=>room(c)<1)||cards.length+line.length>30)break;for(const c of line)add(c,1);}return line.every(c=>(counts.get(c.id)||0)>0);}
@@ -143,13 +147,13 @@ function buildDeck(rows,options={}){
  const hasColorless=cards.map(classic.cardById).filter(c=>c?.kind==='pokemon').some(c=>(c.attacks||[]).some(a=>String(a.cost||'').includes('C'))),dce=classic.cardById('base1-96');if(hasColorless&&dce&&scope.includes(dce.setId))add(dce,Math.min(2,room(dce)));
  for(const [id,want] of STAPLES){const card=classic.cardById(id);if(card&&scope.includes(card.setId))add(card,Math.min(want,room(card)));if(cards.length>=30)break;}
  // Fallback through remaining owned Trainers first, then compatible Basics. This remains legal but avoids stranded evolutions.
- const trainerFallback=pool.filter(c=>c.kind==='trainer'||c.specialEnergy).sort((a,b)=>Number(a.number)-Number(b.number));
+ const trainerFallback=pool.filter(c=>(c.kind==='trainer'||c.specialEnergy)&&trainerIsUseful(c)).sort((a,b)=>Number(a.number)-Number(b.number));
  for(const c of trainerFallback){while(cards.length<30&&room(c)>0)add(c,1);if(cards.length>=30)break;}
  const fallbackBasics=pokemonPool.filter(c=>c.stage==='Basic'&&canFitEnergy(c)).sort((a,b)=>standaloneScore(b)-standaloneScore(a));
  for(const c of fallbackBasics){while(cards.length<30&&room(c)>0)add(c,1);if(cards.length>=30)break;}
  if(cards.length<30&&!requestedEnergy.length){for(const c of pokemonPool.filter(c=>c.stage==='Basic')){const next=[...new Set([...selectedTypes,...attackTypes(c)])];if(next.length>2)continue;while(cards.length<30&&room(c)>0)add(c,1);for(const type of attackTypes(c))if(!selectedTypes.includes(type)&&selectedTypes.length<2)selectedTypes.push(type);if(cards.length>=30)break;}}
  // Final conservative fill: only Trainers, Special Energy, and Basics whose actual deck Energy profile stays at two types or fewer.
- if(cards.length<30){for(const c of pool.filter(c=>c.kind==='trainer'||c.specialEnergy||c.stage==='Basic')){while(cards.length<30&&room(c)>0){const trial=[...cards,c.id],profile=decks.analyzeDeck(trial).recommendedEnergyTypes;if(requestedEnergy.length&&!profile.every(t=>requestedEnergy.includes(t)))break;if(!requestedEnergy.length&&profile.length>2)break;add(c,1);}if(cards.length>=30)break;}}
+ if(cards.length<30){for(const c of pool.filter(c=>(c.kind==='trainer'||c.specialEnergy||c.stage==='Basic')&&trainerIsUseful(c))){while(cards.length<30&&room(c)>0){const trial=[...cards,c.id],profile=decks.analyzeDeck(trial).recommendedEnergyTypes;if(requestedEnergy.length&&!profile.every(t=>requestedEnergy.includes(t)))break;if(!requestedEnergy.length&&profile.length>2)break;add(c,1);}if(cards.length>=30)break;}}
  if(cards.length!==30)return fail(`Could only assemble ${cards.length}/30 compatible owned cards. Add more Classic TCG cards or widen the Energy type filter.`);
  const legal=decks.validateDraft(cards,rows,{requireFull:true});if(!legal.ok)return {ok:false,cards,energyTypes:selectedTypes,errors:legal.errors,warnings:[],strategy:''};
  const analysis=decks.analyzeDeck(cards),energyTypes=requestedEnergy.length?requestedEnergy:analysis.recommendedEnergyTypes.slice(0,2);

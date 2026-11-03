@@ -21,7 +21,7 @@ test('Team Rocket is available in Classic set pools and does not displace older 
  const data=require(path.join(assets,'tcg-classic-battle-data.js'));
  const builder=require(path.join(assets,'tcg-classic-deck-builder.js'));
  const opponents=require(path.join(assets,'tcg-classic-opponents.js'));
- assert.deepEqual(data.SETS.map(s=>s.id),['base1','base2','base3','base5']);
+ assert.deepEqual(data.SETS.slice(0,4).map(s=>s.id),['base1','base2','base3','base5']);
  assert.ok(builder.SET_IDS.includes('base5'));
  assert.ok(opponents.SETS.includes('base5'));
  assert.ok(data.cardById('base3-45'));
