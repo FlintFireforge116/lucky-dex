@@ -11,10 +11,11 @@ const html = read('app/src/main/assets/index.html');
 const ui = read('app/src/main/assets/tcgp-battle-ui.js');
 const css = read('app/src/main/assets/tcgp-battle.css');
 
-test('release markers are v0.69.60', () => {
-  assert.match(app, /window\.__LUCKYDEX_BUILD='0\.69\.60'/);
-  assert.match(html, /v0\.69\.60/);
-  assert.doesNotMatch(html, /v0\.69\.59/);
+test('runtime remains at or beyond v0.69.60 and visible/runtime markers agree', () => {
+  const runtime=app.match(/window\.__LUCKYDEX_BUILD='(0\.69\.\d+)'/)?.[1];
+  assert.ok(runtime);
+  assert.ok(Number(runtime.split('.').at(-1))>=60);
+  assert.match(html,new RegExp(`v${runtime.replace(/\./g,'\\.')}`));
 });
 
 test('battle no longer exposes the generic centre card drop target', () => {
