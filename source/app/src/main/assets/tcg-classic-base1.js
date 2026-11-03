@@ -309,7 +309,7 @@ const BASE1_TRAINER_RULES={
   74:'Discard 2 other cards from your hand. Choose a Trainer card in your discard pile and put it into your hand, excluding the Item Finder you just played.',
   75:'Both players shuffle all Trainer cards from their hands into their decks.',
   76:'Evolve a Basic Pokémon directly into its matching Stage 2 Pokémon from your hand without needing its Stage 1.',
-  77:'Shuffle a Pokémon from your hand into your deck, then search the deck for a Pokémon and add it to your hand.',
+  77:'Trade 1 Basic or Evolution Pokémon from your hand for 1 Basic or Evolution Pokémon from your deck. Show both cards to your opponent, then shuffle your deck afterward.',
   78:'Return one of your Pokémon and all its attached cards to your hand, removing it from play.',
   79:'Discard 1 Energy card attached to one of your Pokémon to remove up to 2 Energy cards from one of your opponent’s Pokémon.',
   80:'Attach to one of your Pokémon. During your opponent’s next turn, attacks deal 20 less damage to that Pokémon. Discard Defender afterward.',

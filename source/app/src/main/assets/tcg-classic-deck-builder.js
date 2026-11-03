@@ -71,6 +71,10 @@ function buildDeck(rows,options={}){
  candidates.sort((a,b)=>coreScore(b)-coreScore(a)||Number(a.number)-Number(b.number));
  if(!candidates.length)return fail('No complete owned evolution family matches the selected Classic Energy types.');
  if(style==='random'){
+   // A requested type defines the featured evolution family, not merely an
+   // Energy Zone option. Colorless staples remain valid as supporting cards.
+   const typed=requested.length?candidates.filter(c=>(c.types||[]).some(t=>requested.includes(t))):[];
+   if(typed.length)candidates=typed;
    const viable=candidates.filter(c=>!excluded.has(norm(familyRoot(c,pokemonPool))));if(viable.length)candidates=viable;
    const band=candidates.slice(0,Math.min(14,candidates.length));const pick=band[Math.floor(random()*band.length)]||candidates[0];candidates=[pick,...candidates.filter(c=>c!==pick)];
  }

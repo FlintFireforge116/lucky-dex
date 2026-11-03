@@ -693,3 +693,8 @@ body.tcgp-card-dragging .tcgp-live-mat-half .tcgp-live-card-wrap[data-card-drop-
 .tcgp-live-card.compact .tcgp-live-special-energy{padding:1px;font-size:6px}
 .tcgp-live-card.compact .tcgp-live-special-energy>b{font-size:6px}
 .tcgp-classic-end-reason{font-size:12px;font-weight:800;letter-spacing:.08em;opacity:.7}
+
+/* Classic random CPU archetype label, kept within the narrow score lane. */
+.tcgp-live-score.tcgp-classic-score{display:flex;flex-direction:column;align-items:flex-start;justify-content:center;gap:0;min-width:0}
+.tcgp-classic-score-numbers{display:flex;align-items:center;gap:7px}
+.tcgp-live-score .tcgp-classic-score-label{display:block;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:8px;font-weight:800;letter-spacing:.015em;color:#49718c}

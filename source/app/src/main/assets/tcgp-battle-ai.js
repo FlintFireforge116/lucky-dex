@@ -93,8 +93,18 @@
   }
   function chooseAction(state,side,difficulty,actionCount){
     const level=DIFFICULTIES.indexOf(String(difficulty||'Beginner'));if(level<0)throw new Error('Unknown AI difficulty: '+difficulty);
-    const legal=core.legalActions(state,side);if(!legal.length)return null;
-    if(Number(actionCount||0)>=30)return legal.find(a=>a.type==='attack')||legal.find(a=>a.type==='endTurn')||legal[0];
+    const legal=core.legalActions(state,side).filter(action=>{
+      if(state.format!=='classic'||action.type!=='ability')return true;
+      const source=slotFor(state.sides[side],action.target,action.benchIndex),card=data.cardById(source?.cardId),index=Number(action.abilityIndex||0),power=(card?.abilities||[])[index];
+      // Powers remain freely repeatable for the human. The CPU may use them
+      // once per turn so it cannot oscillate Energy/Damage forever.
+      return !(power?.oncePerTurn===false&&state.sides[side].abilityUsed?.[source.uid+':'+index]===state.sides[side].turnCount);
+    });
+    if(!legal.length)return null;
+    if(state.format==='classic'&&state.phase==='effectChoice'&&state.pendingChoice?.effect?.type==='redistributeEnergy'&&state.pendingChoice.effect.phase==='continue'){
+      const done=legal.find(action=>action.choiceLabel==='Done');if(done)return done;
+    }
+    if(Number(actionCount||0)>=30)return legal.find(a=>a.type==='attack')||legal.find(a=>a.type==='endTurn')||legal.find(a=>a.choiceLabel==='Done')||legal[0];
     if(level===0)return legal.map((action,index)=>({action,index,score:beginner(action,state,side)})).sort((a,b)=>b.score-a.score||a.index-b.index)[0].action;
     const position=publicPosition(state,side),ranked=legal.map(action=>evaluate(position,action,side,level)).sort((a,b)=>b.score-a.score);
     // Expert scores short sequences with the real action engine: e.g. damage boost

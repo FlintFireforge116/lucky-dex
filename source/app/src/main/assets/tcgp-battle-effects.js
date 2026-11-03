@@ -317,7 +317,7 @@
       }
       case 'tradeHandForDeck':{
         const ss=own(ctx);
-        if(ctx.resolvingChoice&&effect.handUid){const deckIndex=Number(ctx.action?.choiceDeckIndex),handIndex=ss.hand.findIndex(r=>r.uid===effect.handUid),incoming=ss.deck[deckIndex];if(handIndex>=0&&incoming&&matchesFilter(ctx.cardById(incoming.cardId),effect.deckFilter)){const [inRef]=ss.deck.splice(deckIndex,1),[outRef]=ss.hand.splice(handIndex,1,inRef);ss.deck.push(outRef);ctx.shuffle?.(ctx.state,ss.deck);}break;}
+        if(ctx.resolvingChoice&&effect.handUid){const deckIndex=Number(ctx.action?.choiceDeckIndex),handIndex=ss.hand.findIndex(r=>r.uid===effect.handUid),incoming=ss.deck[deckIndex];if(handIndex>=0&&incoming&&matchesFilter(ctx.cardById(incoming.cardId),effect.deckFilter)){const [inRef]=ss.deck.splice(deckIndex,1),[outRef]=ss.hand.splice(handIndex,1,inRef);log({type:'pokemonTraderReveal',side:ctx.side,fromHand:outRef.cardId,fromDeck:inRef.cardId});ss.deck.push(outRef);ctx.shuffle?.(ctx.state,ss.deck);}break;}
         if(ctx.resolvingChoice&&Number.isInteger(ctx.action?.choiceHandIndex)){const ref=ss.hand[ctx.action.choiceHandIndex];if(ref&&matchesFilter(ctx.cardById(ref.cardId),effect.handFilter)&&ss.deck.some(r=>matchesFilter(ctx.cardById(r.cardId),effect.deckFilter))&&typeof ctx.requestChoice==='function')ctx.requestChoice({kind:'deckCard',side:'self',filter:effect.deckFilter,effect:{...effect,handUid:ref.uid}});break;}
         if(ss.hand.some(r=>matchesFilter(ctx.cardById(r.cardId),effect.handFilter))&&ss.deck.some(r=>matchesFilter(ctx.cardById(r.cardId),effect.deckFilter))&&typeof ctx.requestChoice==='function')ctx.requestChoice({kind:'handCard',side:'self',filter:effect.handFilter,effect});break;
       }
