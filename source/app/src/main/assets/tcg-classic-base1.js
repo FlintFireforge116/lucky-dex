@@ -236,6 +236,116 @@ fullTrainer(93,{effect:{type:'switch',side:'opponent'}});
 fullTrainer(94,{effect:{type:'heal',target:'selfPokemon',amount:20}});
 fullTrainer(95,{effect:{type:'switch',side:'self'}});
 
+// Human-readable explanations for every playable Base Set effect. These are
+// concise descriptions of the implemented card mechanics, not UI guesses based
+// on a generic effect.type. They follow the card identity across deck/battle UI.
+// Printed cards without an effect deliberately have no extra rules paragraph.
+const BASE1_POKEMON_RULES={
+  1:{powers:{'Damage Swap':'During your turn, move one damage counter between your Pokémon as often as you like, but not if the move would Knock Out the receiving Pokémon. This power cannot be used while Alakazam has a Special Condition.'},attacks:{'Confuse Ray':'Flip a coin. On heads, the Defending Pokémon becomes Confused.'}},
+  2:{powers:{'Rain Dance':'During your turn, you may attach extra Water Energy from your hand to your Water Pokémon. You may repeat this while Blastoise is able to use its power.'},attacks:{'Hydro Pump':'Deals 10 more damage for each extra Water Energy attached beyond the first three, up to 20 extra damage.'}},
+  3:{attacks:{'Scrunch':'Flip a coin. On heads, Chansey takes no attack damage during your opponent’s next turn, although other attack effects still apply.','Double-edge':'Chansey also deals 80 damage to itself.'}},
+  4:{powers:{'Energy Burn':'During your turn, you can make all Energy attached to Charizard count as Fire Energy until the turn ends. This power is unavailable while Charizard has a Special Condition.'},attacks:{'Fire Spin':'Discard 2 Energy cards attached to Charizard to use this attack.'}},
+  5:{attacks:{'Sing':'Flip a coin. On heads, the Defending Pokémon falls Asleep.','Metronome':'Choose an attack on the Defending Pokémon. Metronome copies that attack without paying its usual Energy or discard costs.'}},
+  6:{attacks:{'Bubblebeam':'Flip a coin. On heads, the Defending Pokémon becomes Paralyzed.'}},
+  8:{powers:{'Strikes Back':'When Machamp is damaged by an opponent’s attack while Active, deal 10 damage back to the attacking Pokémon.'}},
+  9:{attacks:{'Thunder Wave':'Flip a coin. On heads, the Defending Pokémon becomes Paralyzed.','Selfdestruct':'Also deal 20 damage to every Benched Pokémon on both sides and 80 damage to Magneton itself.'}},
+  10:{attacks:{'Psychic':'Adds 10 damage for every Energy card attached to the Defending Pokémon.','Barrier':'Discard 1 Psychic Energy attached to Mewtwo. Prevent attack damage and effects against it during your opponent’s next turn.'}},
+  11:{attacks:{'Thrash':'Flip a coin. On heads, add 10 damage to this attack; on tails, Nidoking takes 10 damage.','Toxic':'Poison the Defending Pokémon. This stronger Poison places two damage counters between turns.'}},
+  12:{attacks:{'Lure':'Your opponent must switch their Active Pokémon with a Benched Pokémon.','Fire Blast':'Discard 1 Fire Energy attached to Ninetales to use this attack.'}},
+  13:{attacks:{'Water Gun':'Adds 10 damage for each Water Energy beyond the first two, up to 20 bonus damage.','Whirlpool':'Discard one Energy card attached to the Defending Pokémon.'}},
+  14:{attacks:{'Agility':'Flip a coin. On heads, prevent all damage and effects of attacks against Raichu during your opponent’s next turn.','Thunder':'Flip a coin. On tails, Raichu also takes 30 damage.'}},
+  15:{powers:{'Energy Trans':'During your turn, move Grass Energy between your Pokémon as often as you like. This power is unavailable while Venusaur has a Special Condition.'}},
+  16:{attacks:{'Thunder':'Flip a coin. On tails, Zapdos takes 30 damage.','Thunderbolt':'Discard all Energy cards attached to Zapdos to use this attack.'}},
+  17:{attacks:{'Twineedle':'Flip two coins. Deal 30 damage for each heads.','Poison Sting':'Flip a coin. On heads, the Defending Pokémon becomes Poisoned.'}},
+  18:{attacks:{'Slam':'Flip two coins. Deal 30 damage for each heads.','Hyper Beam':'Discard one Energy card attached to the Defending Pokémon.'}},
+  19:{attacks:{'Earthquake':'Also deal 10 damage to each of your own Benched Pokémon.'}},
+  20:{attacks:{'Thundershock':'Flip a coin. On heads, the Defending Pokémon becomes Paralyzed.','Thunderpunch':'Flip a coin. On heads, add 10 damage; on tails, Electabuzz takes 10 damage.'}},
+  21:{powers:{'Buzzap':'Knock Out Electrode and attach it to another of your Pokémon as a Special Energy card providing two Energy of a chosen basic type.'},attacks:{'Electric Shock':'Flip a coin. On tails, Electrode takes 10 damage.'}},
+  22:{attacks:{'Whirlwind':'After the damage, your opponent must switch their Active Pokémon with one from their Bench.','Mirror Move':'Copy the effects of the last attack that damaged Pidgeotto during your opponent’s previous turn.'}},
+  23:{attacks:{'Flamethrower':'Discard 1 Fire Energy attached to Arcanine to use this attack.','Take Down':'Arcanine also takes 30 damage.'}},
+  24:{attacks:{'Flamethrower':'Discard 1 Fire Energy attached to Charmeleon to use this attack.'}},
+  25:{attacks:{'Ice Beam':'Flip a coin. On heads, the Defending Pokémon becomes Paralyzed.'}},
+  27:{attacks:{'Leek Slap':'Flip a coin. On tails, this attack fails. Farfetch’d can use Leek Slap only once while it remains in play.'}},
+  29:{attacks:{'Hypnosis':'The Defending Pokémon becomes Asleep.','Dream Eater':'This attack only works when the Defending Pokémon is Asleep.'}},
+  30:{attacks:{'Poisonpowder':'The Defending Pokémon becomes Poisoned.'}},
+  31:{attacks:{'Doubleslap':'Flip two coins. Deal 10 damage for each heads.','Meditate':'Deals 10 extra damage for each damage counter already on the Defending Pokémon.'}},
+  32:{attacks:{'Recover':'Discard 1 Psychic Energy attached to Kadabra, then remove all damage counters from Kadabra.'}},
+  33:{attacks:{'Stiffen':'Flip a coin. On heads, prevent attack damage to Kakuna during your opponent’s next turn.','Poisonpowder':'Flip a coin. On heads, the Defending Pokémon becomes Poisoned.'}},
+  34:{attacks:{'Karate Chop':'This attack deals 10 less damage for each damage counter on Machoke.','Submission':'Machoke also takes 20 damage.'}},
+  35:{attacks:{'Flail':'Deals 10 damage for each damage counter on Magikarp.'}},
+  36:{attacks:{'Flamethrower':'Discard 1 Fire Energy attached to Magmar to use this attack.'}},
+  37:{attacks:{'Double Kick':'Flip two coins. Deal 30 damage for each heads.'}},
+  38:{attacks:{'Amnesia':'Choose one attack on the Defending Pokémon. It cannot use that attack during your opponent’s next turn.','Doubleslap':'Flip two coins. Deal 30 damage for each heads.'}},
+  39:{attacks:{'Conversion 1':'Choose a type. The Defending Pokémon’s Weakness becomes that type until its next change or it leaves play.','Conversion 2':'Choose a type. Porygon’s Resistance becomes that type until its next change or it leaves play.'}},
+  40:{attacks:{'Super Fang':'Deal damage equal to half the Defending Pokémon’s remaining HP, rounded up to the nearest 10.'}},
+  42:{attacks:{'Withdraw':'Flip a coin. On heads, prevent all damage to Wartortle from attacks during your opponent’s next turn.'}},
+  43:{attacks:{'Psyshock':'Flip a coin. On heads, the Defending Pokémon becomes Paralyzed.'}},
+  44:{attacks:{'Leech Seed':'If this attack deals damage, heal 10 damage from Bulbasaur.'}},
+  45:{attacks:{'String Shot':'Flip a coin. On heads, the Defending Pokémon becomes Paralyzed.'}},
+  46:{attacks:{'Ember':'Discard 1 Fire Energy attached to Charmander to use this attack.'}},
+  48:{attacks:{'Fury Attack':'Flip two coins. Deal 10 damage for each heads.'}},
+  49:{attacks:{'Confuse Ray':'Flip a coin. On heads, the Defending Pokémon becomes Confused.'}},
+  50:{attacks:{'Sleeping Gas':'Flip a coin. On heads, the Defending Pokémon becomes Asleep.','Destiny Bond':'Discard 1 Psychic Energy from Gastly. If Gastly is knocked out by an attack on your opponent’s next turn, the attacking Pokémon is also knocked out.'}},
+  51:{attacks:{'Foul Gas':'Flip a coin. On heads, the Defending Pokémon becomes Poisoned; on tails, it becomes Confused.'}},
+  53:{attacks:{'Thunder Wave':'Flip a coin. On heads, the Defending Pokémon becomes Paralyzed.','Selfdestruct':'Also deal 10 damage to every Benched Pokémon on both sides and 40 damage to Magnemite itself.'}},
+  54:{attacks:{'Stiffen':'Flip a coin. On heads, prevent attack damage to Metapod during your opponent’s next turn.','Stun Spore':'Flip a coin. On heads, the Defending Pokémon becomes Paralyzed.'}},
+  55:{attacks:{'Horn Hazard':'Flip a coin. On tails, the attack does nothing.'}},
+  56:{attacks:{'Harden':'During your opponent’s next turn, prevent attack damage of 30 or less against Onix.'}},
+  57:{attacks:{'Whirlwind':'After dealing damage, your opponent must switch their Active Pokémon with a Benched Pokémon.'}},
+  58:{attacks:{'Thunder Jolt':'Flip a coin. On tails, Pikachu takes 10 damage.'}},
+  59:{attacks:{'Water Gun':'Deals 10 more damage for each extra Water Energy attached beyond the first, up to 20 extra damage.'}},
+  62:{attacks:{'Sand-attack':'If the Defending Pokémon tries to attack during your opponent’s next turn, they must flip a coin. On tails, the attack fails.'}},
+  63:{attacks:{'Bubble':'Flip a coin. On heads, the Defending Pokémon becomes Paralyzed.','Withdraw':'Flip a coin. On heads, prevent attack damage to Squirtle during your opponent’s next turn.'}},
+  64:{attacks:{'Recover':'Discard 1 Water Energy attached to Starmie, then heal all damage from Starmie.','Star Freeze':'Flip a coin. On heads, the Defending Pokémon becomes Paralyzed.'}},
+  66:{attacks:{'Bind':'Flip a coin. On heads, the Defending Pokémon becomes Paralyzed.','Poisonpowder':'The Defending Pokémon becomes Poisoned.'}},
+  68:{attacks:{'Confuse Ray':'Flip a coin. On heads, the Defending Pokémon becomes Confused.'}},
+  69:{attacks:{'Poison Sting':'Flip a coin. On heads, the Defending Pokémon becomes Poisoned.'}}
+};
+const BASE1_TRAINER_RULES={
+  70:'Play Clefairy Doll as a 10 HP Basic Pokémon. It cannot retreat, has no Special Conditions and gives up no Prize if knocked out. You may discard it during your turn.',
+  71:'Discard 2 other cards from your hand, then search your deck for any 1 card and put it into your hand.',
+  72:'Remove an Evolution card from one of your Pokémon and return it to your hand, reverting that Pokémon to its previous stage.',
+  73:'Your opponent shuffles their hand into their deck, then draws 7 cards.',
+  74:'Discard 2 other cards from your hand. Choose a Trainer card in your discard pile and put it into your hand, excluding the Item Finder you just played.',
+  75:'Both players shuffle all Trainer cards from their hands into their decks.',
+  76:'Evolve a Basic Pokémon directly into its matching Stage 2 Pokémon from your hand without needing its Stage 1.',
+  77:'Shuffle a Pokémon from your hand into your deck, then search the deck for a Pokémon and add it to your hand.',
+  78:'Return one of your Pokémon and all its attached cards to your hand, removing it from play.',
+  79:'Discard 1 Energy card attached to one of your Pokémon to remove up to 2 Energy cards from one of your opponent’s Pokémon.',
+  80:'Attach to one of your Pokémon. During your opponent’s next turn, attacks deal 20 less damage to that Pokémon. Discard Defender afterward.',
+  81:'Discard a card from your hand to recover up to 2 Basic Energy cards from your discard pile.',
+  82:'Remove all Special Conditions from your Active Pokémon.',
+  83:'Shuffle 2 cards from your hand into your deck, then draw 1 card.',
+  84:'Attach to one of your Pokémon. Its attacks deal 10 more damage to your opponent’s Active Pokémon this turn. Discard PlusPower afterward.',
+  85:'Remove all damage counters from each of your Pokémon, then discard all Energy cards attached to any Pokémon healed this way.',
+  86:'Choose a Basic Pokémon from your opponent’s discard pile and put it onto their Bench.',
+  87:'Look at the top 5 cards of your deck and put them back in any order.',
+  88:'Discard your hand, then draw 7 cards.',
+  89:'Put a Basic Pokémon from your discard pile onto your Bench with damage counters equal to half its HP.',
+  90:'Discard 1 Energy card attached to one of your Pokémon, then heal up to 40 damage from that Pokémon.',
+  91:'Draw 2 cards.',
+  92:'Choose an Energy card attached to one of your opponent’s Pokémon and discard it.',
+  93:'Choose one of your opponent’s Benched Pokémon to replace their Active Pokémon.',
+  94:'Heal 20 damage from one of your Pokémon.',
+  95:'Switch your Active Pokémon with one of your Benched Pokémon.'
+};
+function applyBase1RulesText(){
+  for(const [number,rules] of Object.entries(BASE1_POKEMON_RULES)){
+    const card=cardById(`base1-${number}`);
+    for(const attack of card?.attacks||[])if(rules.attacks?.[attack.name])attack.text=rules.attacks[attack.name];
+    for(const power of card?.abilities||[])if(rules.powers?.[power.name])power.text=rules.powers[power.name];
+  }
+  for(const [number,description] of Object.entries(BASE1_TRAINER_RULES)){
+    const card=cardById(`base1-${number}`);if(card)card.text=description;
+  }
+  const doll=cardById('base1-70');if(doll?.abilities?.[0])doll.abilities[0].text='Discard Clefairy Doll from play during your turn without giving up a Prize.';
+  const dce=cardById('base1-96');if(dce)dce.text='Provides 2 Colorless Energy while attached to a Pokémon. In LuckyDex Classic, this card attaches separately from the once-per-turn Basic Energy Zone placement.';
+  for(const [number,type] of Object.entries(BASIC_ENERGY)){
+    const card=cardById(`base1-${number}`);if(card)card.text=`Provides 1 ${type} Energy. LuckyDex Classic supplies Basic Energy through the Energy Zone rather than as deck cards.`;
+  }
+}
+applyBase1RulesText();
+
 const CLASSIC30_LOANER_DECK=Object.freeze([
  ...Array(4).fill('base1-7'), ...Array(4).fill('base1-52'),
  ...Array(4).fill('base1-26'), ...Array(4).fill('base1-61'),

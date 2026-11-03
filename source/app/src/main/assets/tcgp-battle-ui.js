@@ -383,12 +383,14 @@
     const text=value=>typeof value==='string'?value:Array.isArray(value)?value.filter(v=>typeof v==='string').join(' '):'';
     const paragraph=value=>value?`<p>${esc(value)}</p>`:'';
     const abilities=cardAbilities(card);
-    const abilityHtml=abilities.map(ability=>`<article><div><b>Ability · ${esc(ability.name||'Ability')}</b></div>${paragraph(text(ability.text)||summarizeEffect(ability.effect))}${paragraph(text(ability.timing))}</article>`).join('');
-    const attacks=(card.attacks||[]).map((attack,i)=>`<article><div><b>${esc(attack.name)}</b><strong>${esc(attack.damageText??attack.damage??0)}</strong></div>${energyCostHtml(availability?.[i]?.cost??attack.cost)}${paragraph(text(attack.text)||summarizeEffect(attack.effect))}${paragraph(availability?.[i]?.reason)}</article>`).join('');
+    const abilityName=card.source==='tcg'?'Pokémon Power':'Ability';
+    const abilityHtml=abilities.map(ability=>`<article><div><b>${esc(abilityName)} · ${esc(ability.name||'Ability')}</b></div>${paragraph(text(ability.text)||summarizeEffect(ability.effect))}${paragraph(text(ability.timing))}</article>`).join('');
+    const attacks=(card.attacks||[]).map((attack,i)=>`<article><div><b>${esc(attack.name)}</b><strong>${esc(attack.damageText??attack.damage??0)}</strong></div>${energyCostHtml(availability?.[i]?.cost??attack.cost)}${paragraph(text(attack.text)||text(attack.printedText)||summarizeEffect(attack.effect))}${paragraph(availability?.[i]?.reason)}</article>`).join('');
     const subtype=card.trainerSubtype||card.trainerType||'Trainer';
     const defaultTiming=subtype==='Supporter'?'You may play only 1 Supporter during your turn.':subtype==='Tool'?'Attach to 1 of your Pokémon that does not already have a Tool.':subtype==='Stadium'?'Only 1 Stadium may be in play.':'';
     const trainer=card.kind==='trainer'?`<article><div><b>${esc(card.name)}</b><strong>${esc(subtype)}</strong></div>${paragraph(text(card.text)||summarizeEffect(card.effect))}${paragraph(text(card.timing)||defaultTiming)}</article>`:'';
-    return abilityHtml+attacks+trainer+(options?.developer?paragraph(supportText(card)):'');
+    const energy=card.kind==='energy'?`<article><div><b>${esc(card.name)}</b><strong>${card.specialEnergy?'Special Energy':'Basic Energy'}</strong></div>${paragraph(text(card.text)||summarizeEffect(card.effect))}</article>`:'';
+    return abilityHtml+attacks+trainer+energy+(options?.developer?paragraph(supportText(card)):'');
   }
   function energyCostHtml(cost){
     const letters=String(cost||'').split('').filter(Boolean);

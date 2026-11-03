@@ -122,7 +122,7 @@ body.tcgp-card-dragging [data-card-drop-zone="1"]{outline:2px solid #64a477;outl
 .tcgp-live-sheet-attacks article{padding:10px 11px;border-radius:12px;background:#ffffff0c;border:1px solid #ffffff16}
 .tcgp-live-sheet-attacks article>div{display:flex;justify-content:space-between;gap:8px}
 .tcgp-live-sheet-attacks strong{color:#ffd56d}
-.tcgp-live-sheet-attacks p{margin:7px 0 0;font-size:11px;color:#b7cbd8;line-height:1.4}
+.tcgp-live-sheet-attacks p{margin:8px 0 0;font-size:13px;color:#e2edf4;line-height:1.55;overflow-wrap:anywhere}
 .tcgp-live-sheet-head{display:flex;justify-content:space-between;gap:12px;padding-right:42px}
 .tcgp-live-sheet-head small{font-size:9px;color:#8fd7ff;letter-spacing:.1em;font-weight:850}
 .tcgp-live-sheet-head h3{margin:3px 0 12px}

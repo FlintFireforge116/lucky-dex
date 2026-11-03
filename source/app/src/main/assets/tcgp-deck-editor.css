@@ -53,3 +53,7 @@ body.tcgp-deck-editing #tcgpDeckResults,body.tcgp-deck-editing #classicDeckResul
  .tcgp-editor-tools{padding:6px 8px;gap:5px}.tcgp-editor-tools>input{min-height:36px}.tcgp-editor-tools>div{display:flex;overflow-x:auto;justify-content:flex-start;gap:6px;padding-bottom:2px;scrollbar-width:none}.tcgp-editor-tools>div::-webkit-scrollbar{display:none}.tcgp-editor-tools>div button{flex:0 0 auto;min-width:82px;min-height:32px;padding:4px 8px}.tcgp-editor-tools [data-deck="clear-filters"]{grid-column:auto;order:0}.tcgp-editor-tools p{font-size:10px}
  .tcgp-editor-result-bar{padding:3px 9px 5px}.tcgp-editor-grid{gap:7px;padding:0 8px}.tcgp-editor-card{padding:4px}.tcgp-editor-stepper button{min-height:34px;width:34px}
 }
+
+/* Readable rules on the light Classic/Pocket deck-inspection sheet. */
+.tcgp-editor-inspect .tcgp-live-sheet-attacks p{color:var(--ink);font-size:13px;line-height:1.55}
+.tcgp-editor-inspect .tcgp-live-sheet-attacks article{background:#ffffff95;border:1px solid var(--line);border-radius:10px;padding:10px}
