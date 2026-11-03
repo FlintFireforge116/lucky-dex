@@ -768,7 +768,18 @@
       state.pendingAttackResult={defenderSide:foeSide,defenderUid:defender.uid,turn:state.turnNumber,before:attackResultSnapshot(defender)};
       let damage=result.damage;
       if(isActive&&damage>0){damage+=effects.modifierAmount(state,side,s.active,'attackDamage',data.cardById)+effects.modifierAmount(state,side,s.active,'attackDamageAllTargets',data.cardById)+effects.attackSpecificBonus(s.active,attack.name,state.turnNumber);for(const boost of s.active.nextAttackBonuses||[])if(Number(boost.turn)===state.turnNumber&&boost.attackName===attack.name)damage+=Number(boost.amount||0);}
-      if(isActive){damage+=effects.modifierAmount(state,foeSide,defender,'damageTaken',data.cardById);if(!result.damageRules?.ignoreWeakness)damage=effects.attackDamageWithState(state,side,s.active,foeSide,defender,damage,data.cardById);if(damage>0)damage+=effects.modifierAmount(state,side,s.active,'postWeaknessAttackDamage',data.cardById);}
+      let resistanceReason='';
+      if(isActive){
+        damage+=effects.modifierAmount(state,foeSide,defender,'damageTaken',data.cardById);
+        if(!result.damageRules?.ignoreWeakness){
+          const beforeMatchup=damage,defCard=data.cardById(defender.cardId),resistance=defender.resistanceOverride||defCard?.resistance;
+          if(state.format==='classic'&&beforeMatchup>0&&resistance&&effects.effectiveTypes(state,side,s.active,data.cardById).includes(resistance)){
+            resistanceReason=`${resistance} resistance (${defCard?.resistanceValue||'-30'})`;
+          }
+          damage=effects.attackDamageWithState(state,side,s.active,foeSide,defender,damage,data.cardById);
+        }
+        if(damage>0)damage+=effects.modifierAmount(state,side,s.active,'postWeaknessAttackDamage',data.cardById);
+      }
       // Fossil Haunter's Transparency is a passive coin flip on every incoming
       // attack (including status-only attacks). A heads prevents all effects.
       const transparency=result.damageRules?.ignoreEffects?null:effects.findPassiveRule(state,foeSide,defender,'fossilTransparency',data.cardById);
@@ -781,7 +792,7 @@
       defender.damage=Number(defender.damage||0)+damage;
       if(damage>0)defender.lastDamageSource={side,uid:s.active.uid,cardId:s.active.cardId,attack:true,turn:state.turnNumber};
       if(damage>0&&defender.retaliate&&(defender.retaliate.expiresTurn==null||state.turnNumber<=defender.retaliate.expiresTurn)){const amount=Number(defender.retaliate.amount||0);s.active.damage=Number(s.active.damage||0)+amount;state.log.push({type:'retaliate',side:foeSide,amount,cardId:defender.cardId});}
-      state.log.push({type:'attack',side,cardId:attackerCard.id,attack:attack.name,damage,target:isActive?'active':'bench',benchIndex:defender.benchSlot});s.lastAttackName=attack.name;s.lastAttackTurn=state.turnNumber;s.attackCounts=s.attackCounts||{};s.attackCounts[attack.name]=Number(s.attackCounts[attack.name]||0)+1;s.active.attackUseCount=Number(s.active.attackUseCount||0)+1;
+      state.log.push({type:'attack',side,cardId:attackerCard.id,attack:attack.name,damage,damageReason:damage===0?resistanceReason:'',target:isActive?'active':'bench',benchIndex:defender.benchSlot});s.lastAttackName=attack.name;s.lastAttackTurn=state.turnNumber;s.attackCounts=s.attackCounts||{};s.attackCounts[attack.name]=Number(s.attackCounts[attack.name]||0)+1;s.active.attackUseCount=Number(s.active.attackUseCount||0)+1;
       if(damage>0){triggerAbilities(state,'damagedByAttack',foeSide,defender);triggerPersistent(state,'damagedByAttack',foeSide,defender,{attacker:s.active,damage});}
       if(guard?.effects||effects.attackEffectsPrevented(state,foeSide,defender,s.active,data.cardById))context.preventedTargets=new Set([defender.uid]);context.dealtDamage=damage;
       for(let i=0;i<result.pendingEffects.length;i++){effects.applyEffect(result.pendingEffects[i],context);if(state.phase==='effectChoice'){state.pendingChoice.afterEffects=[...(state.pendingChoice.afterEffects||[]),...result.pendingEffects.slice(i+1)];state.pendingChoice.resume='attack';state.pendingChoice.isAttack=true;return state;}}

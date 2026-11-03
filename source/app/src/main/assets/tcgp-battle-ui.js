@@ -136,7 +136,7 @@
     if(entry.type==='attach')return`${who} attached ${entry.energyType||'Energy'} to ${cardName(entry.cardId)}`;
     if(entry.type==='attachSpecial')return`${who} attached ${cardName(entry.energyCardId||entry.cardId)}`;
     if(entry.type==='retreat')return`${who} retreated ${cardName(entry.cardId)} → ${cardName(entry.toCardId)}`;
-    if(entry.type==='attack')return`${who} used ${entry.attack} · ${Number(entry.damage||0)} damage`;
+    if(entry.type==='attack')return`${who} used ${entry.attack} · ${Number(entry.damage||0)} damage${entry.damageReason?` · ${entry.damageReason}`:''}`;
     if(entry.type==='ko')return`${cardName(entry.cardId)} was Knocked Out`;
     if(entry.type==='promote')return`${who} promoted ${cardName(entry.cardId)} to Active`;
     if(entry.type==='endTurn')return`${who} ended the turn`;
@@ -461,7 +461,7 @@
   }
   function logText(entry){
     if(entry.type==='turn')return`Turn ${entry.turnNumber}: ${entry.side==='player'?'Your':'CPU'} turn`;
-    if(entry.type==='attack')return`${entry.side==='player'?'You':'CPU'} used ${entry.attack} for ${entry.damage}`;
+    if(entry.type==='attack')return`${entry.side==='player'?'You':'CPU'} used ${entry.attack} for ${entry.damage}${entry.damageReason?` (${entry.damageReason})`:''}`;
     if(entry.type==='ko')return`${cardName(entry.cardId)} was Knocked Out`;
     if(entry.type==='search')return`${entry.side==='player'?'You':'CPU'} found ${cardName(entry.cardId)}`;
     if(entry.type==='pokemonTraderReveal')return`${entry.side==='player'?'You':'CPU'} traded ${cardName(entry.fromHand)} for ${cardName(entry.fromDeck)}`;

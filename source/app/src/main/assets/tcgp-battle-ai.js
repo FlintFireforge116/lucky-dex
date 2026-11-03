@@ -22,6 +22,52 @@
     const gain=before-Math.min(...attacks.map(a=>deficit(after,a)),99);
     return gain*50+(action.target==='active'?15:5)-effects.totalEnergy(slot.energy)*2;
   }
+  // Classic trainers with no legal benefit should stay in the CPU hand. The
+  // generic battle action list intentionally lets human players experiment;
+  // CPU utility must not interpret every legal Trainer as useful.
+  const attachedCount=slot=>slot?effects.totalEnergy(slot.energy)+(slot.specialEnergy||[]).length:0;
+  function usefulClassicTrainer(state,side,action){
+    const card=data.cardById(action.cardId),s=state.sides[side],foe=state.sides[foeOf(side)];
+    if(!card)return false;
+    if(card.name==='Super Energy Removal')return slots(s).some(x=>attachedCount(x)>0)&&slots(foe).some(x=>attachedCount(x)>=2);
+    if(card.name==='Energy Removal')return slots(foe).some(x=>attachedCount(x)>0);
+    if(card.name==='Energy Retrieval')return Object.values(s.energyDiscard||{}).some(n=>Number(n)>0)||(s.discard||[]).some(ref=>data.cardById(ref.cardId)?.basicEnergy);
+    if(card.name==='Pokémon Center')return slots(s).some(x=>Number(x.damage||0)>0);
+    if(card.name==='Full Heal')return !!s.active&&Object.values(s.active.conditions||{}).some(Boolean);
+    if(card.name==='Recycle')return (s.discard||[]).length>0;
+    if(card.name==='Pokédex')return (s.deck||[]).length>1;
+    return true;
+  }
+  // Damage must be scored *after* Weakness/Resistance; a 30-damage Fighting
+  // Wing Attack against Fossil Aerodactyl is actually zero damage.
+  function matchupDamage(state,side,slot,attack,attackIndex,attackCardId){
+    const foeSide=foeOf(side),target=state.sides[foeSide]?.active;
+    if(!slot||!target||!attack)return 0;
+    const active=state.sides[side].active===slot;
+    const raw=active?Number(core.attackDamagePreview(state,side,attackIndex,attackCardId)?.damage||0):Number(attack.damage||0);
+    return effects.attackDamageWithState(state,side,slot,foeSide,target,Math.max(0,raw),data.cardById);
+  }
+  function benchAttackValue(state,side,slot){
+    const card=data.cardById(slot?.cardId);if(!card)return 0;
+    const energy={...(slot.energy||{})};
+    for(const ref of slot.specialEnergy||[]){const provides=data.cardById(ref.cardId)?.effect?.provides||ref.provides||{};for(const [type,amount] of Object.entries(provides))energy[type]=Number(energy[type]||0)+Number(amount||0);}
+    return Math.max(0,...(card.attacks||[]).map((attack,index)=>effects.canPayCost(energy,attack.cost)?matchupDamage(state,side,slot,attack,index,card.id):0));
+  }
+  function usefulRetreatFromResistance(state,side,legal){
+    if(state.format!=='classic'||state.phase!=='battle')return null;
+    const attacks=legal.filter(a=>a.type==='attack'),retreats=legal.filter(a=>a.type==='retreat');
+    if(!attacks.length||!retreats.length)return null;
+    // Don't force a retreat from an attack that still has an important
+    // effect (e.g. paralysis, healing or switching) despite zero damage.
+    const harmless=attacks.every(a=>{
+      const card=data.cardById(a.attackCardId||state.sides[side].active?.cardId),attack=card?.attacks?.[a.attackIndex];
+      return attack&&!attack.effect&&matchupDamage(state,side,state.sides[side].active,attack,a.attackIndex,card.id)===0;
+    });
+    if(!harmless)return null;
+    const candidates=retreats.map(a=>({action:a,score:benchAttackValue(state,side,slotFor(state.sides[side],'bench',a.benchIndex))})).filter(x=>x.score>0);
+    candidates.sort((a,b)=>b.score-a.score);
+    return candidates[0]?.action||null;
+  }
   function abilityEffect(card,index){return (card?.abilities?.length?card.abilities:[].concat(card?.ability||[]))[Number(index||0)]?.effect;}
   function dangerous(effect){return effect?.type==='discardSelf'||effect?.effects?.some(dangerous);}
   function beginner(action,state,side){
@@ -94,6 +140,7 @@
   function chooseAction(state,side,difficulty,actionCount){
     const level=DIFFICULTIES.indexOf(String(difficulty||'Beginner'));if(level<0)throw new Error('Unknown AI difficulty: '+difficulty);
     const legal=core.legalActions(state,side).filter(action=>{
+      if(state.format==='classic'&&action.type==='trainer'&&!usefulClassicTrainer(state,side,action))return false;
       if(state.format!=='classic'||action.type!=='ability')return true;
       const source=slotFor(state.sides[side],action.target,action.benchIndex),card=data.cardById(source?.cardId),index=Number(action.abilityIndex||0),power=(card?.abilities||[])[index];
       // Powers remain freely repeatable for the human. The CPU may use them
@@ -101,6 +148,16 @@
       return !(power?.oncePerTurn===false&&state.sides[side].abilityUsed?.[source.uid+':'+index]===state.sides[side].turnCount);
     });
     if(!legal.length)return null;
+    // Super Energy Removal has two sequential target choices. Beginners used
+    // to select the first listed Active target, even if it had no Energy.
+    if(state.format==='classic'&&state.phase==='effectChoice'&&state.pendingChoice?.effect?.type==='multiEnergyRemoval'){
+      const pending=state.pendingChoice,origin=pending.originSide||side,isOpponent=pending.effect.stage==='opponent';
+      const owner=isOpponent?foeOf(origin):origin,candidates=legal.filter(a=>a.type==='effectChoice').map(a=>({action:a,count:attachedCount(slotFor(state.sides[owner],a.choiceTarget,a.choiceBenchIndex))})).filter(x=>x.count>0);
+      candidates.sort((a,b)=>isOpponent?b.count-a.count:a.count-b.count);
+      if(candidates.length)return candidates[0].action;
+    }
+    // Escape resistance stalemates before scoring another futile attack.
+    const rescue=usefulRetreatFromResistance(state,side,legal);if(rescue)return rescue;
     if(state.format==='classic'&&state.phase==='effectChoice'&&state.pendingChoice?.effect?.type==='redistributeEnergy'&&state.pendingChoice.effect.phase==='continue'){
       const done=legal.find(action=>action.choiceLabel==='Done');if(done)return done;
     }
