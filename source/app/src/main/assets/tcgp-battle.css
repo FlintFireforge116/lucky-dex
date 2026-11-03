@@ -684,3 +684,12 @@ body.tcgp-card-dragging .tcgp-live-mat-half .tcgp-live-card-wrap[data-card-drop-
   .tcg-classic-card-stepper{grid-template-columns:30px 20px 30px}
   .tcg-classic-card-stepper button{width:30px;height:30px}
 }
+
+/* Classic attachment overlay: identify physical Special Energy cards separately
+   from generated Energy Zone tokens, without obscuring the card artwork. */
+.tcgp-live-attached-energy .tcgp-live-special-energy{display:inline-flex;align-items:center;gap:1px;border:1px solid #afc3a0;border-radius:5px;padding:1px 2px;background:#fffbe9;color:#2b4a39;font:800 7px/1.1 sans-serif;white-space:nowrap;max-width:70px}
+.tcgp-live-special-energy>b{font:800 7px/1 sans-serif;margin:0 1px 0 0}
+.tcgp-live-special-energy .tcgp-energy-icon{width:14px!important;height:14px!important;min-width:14px!important}
+.tcgp-live-card.compact .tcgp-live-special-energy{padding:1px;font-size:6px}
+.tcgp-live-card.compact .tcgp-live-special-energy>b{font-size:6px}
+.tcgp-classic-end-reason{font-size:12px;font-weight:800;letter-spacing:.08em;opacity:.7}

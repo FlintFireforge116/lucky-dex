@@ -417,7 +417,9 @@
         if(!s.stadiumUsed&&effects.supportsEffect(card.effect)&&(!state.stadium||data.cardById(state.stadium.cardId).name!==card.name))actions.push(base);
       }else for(const target of effectChoices(card.effect,effectContext(state,side)))actions.push({...base,...target});
     });
-    if(state.format==='classic'&&!s.energyUsed){s.hand.forEach((ref,handIndex)=>{const card=data.cardById(ref.cardId);if(!(card?.specialEnergy||card?.basicEnergy)||card.battleEnabled===false&& !card.basicEnergy)return;if(s.active)actions.push({type:'attachSpecial',handIndex,cardId:card.id,target:'active'});for(const slot of s.bench)if(slot)actions.push({type:'attachSpecial',handIndex,cardId:card.id,target:'bench',benchIndex:Number(slot.benchSlot)});});}
+    // Classic's Energy Zone is the one-per-turn placement. Special Energy
+    // cards are extra attachments and can be stacked before or after it.
+    if(state.format==='classic'){s.hand.forEach((ref,handIndex)=>{const card=data.cardById(ref.cardId);if(!(card?.specialEnergy||card?.basicEnergy)||card.battleEnabled===false&& !card.basicEnergy)return;if(card.basicEnergy&&s.energyUsed)return;if(s.active)actions.push({type:'attachSpecial',handIndex,cardId:card.id,target:'active'});for(const slot of s.bench)if(slot)actions.push({type:'attachSpecial',handIndex,cardId:card.id,target:'bench',benchIndex:Number(slot.benchSlot)});});}
     if(state.stadium){const stadium=data.cardById(state.stadium.cardId),actionEffect=stadium?.effect?.type==='stadiumAction'?stadium.effect.effect:null,used=s.stadiumActionUsedTurn===state.turnNumber&&s.stadiumActionUsedUid===state.stadium.uid;if(actionEffect&&!used&&effectChoices(actionEffect,effectContext(state,side)).length)actions.push({type:'stadiumAction',cardId:stadium.id});}
     if (s.energyAvailable && !s.energyUsed){
       if (s.active&&!effects.isActionLocked(state,side,'EnergyActive',data.cardById)) actions.push({type:'attach',target:'active'});
@@ -441,7 +443,15 @@
     if (s.active&&!conditions.sleep&&!conditions.paralysis){
       for(const entry of attackOptions(state,side)){
         const {cardId:attackCardId,attackIndex,attack}=entry;
-        if (effects.passiveAttackAllowed(state,side,s.active,data.cardById)&&!effects.isLocked(state,s.active,'attack',attack.name)&&effects.canPayCost(effectiveEnergy(state,side,s.active),attackCost(state,side,attack)))for(const target of effectChoices(attack.effect,{...effectContext(state,side),isAttack:true,attack}))actions.push({type:'attack',attackIndex,attackCardId,cardId:s.active.cardId,...target});
+        if (effects.passiveAttackAllowed(state,side,s.active,data.cardById)&&!effects.isLocked(state,s.active,'attack',attack.name)&&effects.canPayCost(effectiveEnergy(state,side,s.active),attackCost(state,side,attack))){
+          const choices=effectChoices(attack.effect,{...effectContext(state,side),isAttack:true,attack});
+          // Fire Spin's two-Energy use cost used to create one *attack* action
+          // per attached Energy type. That produced duplicate Fire Spin choices.
+          // Classic resolves this use cost as one attack, discarding two Energy
+          // in the effect resolver's normal deterministic order.
+          const automaticCost=state.format==='classic'&&attack.effect?.type==='discardEnergyCard'&&attack.effect?.target==='self'&&attack.effect?.useCost;
+          for(const target of automaticCost?(choices.length?[{}]:[]):choices)actions.push({type:'attack',attackIndex,attackCardId,cardId:s.active.cardId,...target});
+        }
       }
     }
     actions.push({type:'endTurn'});
@@ -608,7 +618,7 @@
     const legal = legalActions(state,side);
     const matched = legal.find(item => actionMatches(item,action));
     if (!matched){
-      if (action && (action.type === 'attach'||action.type==='attachSpecial') && state.sides[side].energyUsed) throw new Error('Energy can only be attached once per turn.');
+      if (action && (action.type === 'attach'||(action.type==='attachSpecial'&&!data.cardById(action.cardId)?.specialEnergy)) && state.sides[side].energyUsed) throw new Error('Energy Zone can only be attached once per turn.');
       throw new Error(`Illegal Pocket action: ${action && action.type || 'unknown'}.`);
     }
     if(matched.type==='effectChoice'){
@@ -702,7 +712,7 @@
     if (matched.type === 'attachSpecial'){
       const target=slotForTarget(s,matched.target,matched.benchIndex),[ref]=s.hand.splice(matched.handIndex,1),card=data.cardById(ref?.cardId);
       if(!target||!ref||!(card?.specialEnergy||card?.basicEnergy))throw new Error('That Energy card attachment is no longer legal.');
-      let provides={};if(card.basicEnergy){target.energy[card.subtype]=Number(target.energy[card.subtype]||0)+1;provides={[card.subtype]:1};}else{target.specialEnergy=target.specialEnergy||[];target.specialEnergy.push(ref);provides={...specialEnergyProvides(ref)};}s.energyUsed=true;
+      let provides={};if(card.basicEnergy){target.energy[card.subtype]=Number(target.energy[card.subtype]||0)+1;provides={[card.subtype]:1};}else{target.specialEnergy=target.specialEnergy||[];target.specialEnergy.push(ref);provides={...specialEnergyProvides(ref)};}if(card.basicEnergy)s.energyUsed=true;
       state.log.push({type:'attachSpecial',side,target:matched.target,benchIndex:matched.benchIndex,cardId:target.cardId,energyCardId:card.id,provides});
       triggerAbilities(state,'energyAttached',side,target,{energyType:Object.keys(provides)[0]||'Colorless',fromZone:false,specialEnergy:!!card.specialEnergy});resolveKnockOut(state,null);return state;
     }

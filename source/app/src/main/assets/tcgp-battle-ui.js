@@ -363,7 +363,7 @@
   function hpInfo(slot,side){
     if(!slot)return{card:null,hp:0,left:0,pct:0,energy:0};
     const card=data.cardById(slot.cardId),hp=currentBattle&&core.maxHp?core.maxHp(currentBattle,side||'player',slot):Number(card?.hp||0),left=Math.max(0,hp-Number(slot.damage||0)),energy=Object.values(slot.energy||{}).reduce((a,b)=>a+Number(b||0),0);
-    return{card,hp,left,pct:hp?Math.max(0,Math.min(100,left/hp*100)):0,energy,energyPool:slot.energy||{}};
+    return{card,hp,left,pct:hp?Math.max(0,Math.min(100,left/hp*100)):0,energy,energyPool:slot.energy||{},specialEnergy:slot.specialEnergy||[]};
   }
   function typeLabel(card){
     if(!card)return'Card';
@@ -515,9 +515,19 @@
     return parts.length?`<div class="tcgp-live-card-actions">${parts.join('')}</div>`:'';
   }
   function liveAttachedEnergyHtml(info){
-    if(!info?.energy)return'';
-    const entries=Object.entries(info.energyPool||{}).filter(([,n])=>n>0),label=entries.map(([type,n])=>`${n} ${type}`).join(' + ');
-    return `<span class="tcgp-live-attached-energy" aria-label="${esc(label)} attached Energy">${entries.map(([type,n])=>energyIconHtml(type,{className:'attached',count:n,title:`${n} ${type} Energy`})).join('')}</span>`;
+    if(!info)return'';
+    const entries=Object.entries(info.energyPool||{}).filter(([,n])=>n>0);
+    const specialRefs=info.specialEnergy||[];
+    const specials=specialRefs.map(ref=>{
+      const card=data.cardById(ref.cardId),provides=ref.provides||card?.effect?.provides||{};
+      const units=Object.entries(provides).filter(([,n])=>Number(n)>0);
+      const name=card?.name||'Special Energy',short=name==='Double Colorless Energy'?'DCE':name.replace(/ Energy$/,'');
+      const benefit=units.map(([type,n])=>`${n} ${type}`).join(' + ')||'special';
+      return `<span class="tcgp-live-special-energy" title="${esc(`${name} · provides ${benefit} Energy`)}" aria-label="${esc(`${name} provides ${benefit} Energy`)}"><b>${esc(short)}</b>${units.map(([type,n])=>energyIconHtml(type,{className:'attached',count:n,title:`${n} ${type} Energy`})).join('')}</span>`;
+    });
+    if(!entries.length&&!specials.length)return'';
+    const label=[...entries.map(([type,n])=>`${n} ${type}`),...specialRefs.map(ref=>`${data.cardById(ref.cardId)?.name||'Special Energy'}`)].join(' + ');
+    return `<span class="tcgp-live-attached-energy" aria-label="${esc(label)} attached Energy">${entries.map(([type,n])=>energyIconHtml(type,{className:'attached',count:n,title:`${n} ${type} Energy`})).join('')}${specials.join('')}</span>`;
   }
   function liveToolMiniCardsHtml(side,zone,index,slot,compact){
     const tools=slotTools(slot);
@@ -691,16 +701,21 @@
     saveNow();renderResult();
   }
   function resultSummary(battle){
-    if(battle?.winner==='draw')return {title:'DRAW',message:'Both sides reached a winning condition at the same time.'};
-    if(battle?.winner==='player')return {title:'VICTORY',message:'You won the match.'};
-    return {title:'DEFEAT',message:battle?.reason==='turn-limit'?'The 50-turn Solo limit expired.':'The CPU won the match.'};
+    const won=battle?.winner==='player',title=battle?.winner==='draw'?'DRAW':won?'VICTORY':'DEFEAT';
+    if(title==='DRAW')return {title,message:'Both sides reached a winning condition at the same time.'};
+    const classic=battle?.format==='classic';
+    if(battle?.reason==='deck-out')return {title,message:won?"The CPU couldn't draw a card at the start of its turn — its deck ran out.":"You couldn't draw a card at the start of your turn — your deck ran out. Your Bench may still have Pokémon, but deck exhaustion is a separate loss condition."};
+    if(battle?.reason==='no-pokemon')return {title,message:won?'The CPU had no Pokémon left in play.':'You had no Active or Benched Pokémon left in play.'};
+    if(battle?.reason==='prizes')return {title,message:won?'You claimed all 5 Prize cards.':'The CPU claimed all 5 Prize cards.'};
+    if(battle?.reason==='turn-limit')return {title,message:'The 50-turn Solo limit expired.'};
+    return {title,message:won?'You won the match.':'The CPU won the match.'};
   }
   function resultActionsModel(challenge,practice){return {canRematch:!(challenge?.randomPool===true),canHome:true,practice:!!practice};}
   function renderResult(){
     clearBattleEvent();finishBattlePresentation(false);
     setBattleLive(false);battleOverlay=null;battleInspect=null;setScreen('result');
     const won=currentBattle?.winner==='player',practice=!!resultInfo?.practice,classic=currentBattle?.format==='classic',reward=resultInfo?.reward||{coins:0,dust:0},stats=battleSummaryStats(currentBattle),coinText=stats.coinTotal?`${stats.coinHeads}H · ${stats.coinTails}T`:'—',bigHit=stats.biggestHit?`${stats.biggestHit}`:'—',bigHitDetail=stats.biggestHit?`${stats.biggestAttacker} · ${stats.biggestAttack}`:'No damaging attack recorded',resultActions=resultActionsModel(currentChallenge,practice),scoreLabel=classic?'PRIZES':'POINTS',rewardText=classic?(practice?'CLASSIC PRACTICE · NO REWARDS':'CLASSIC TCG · NO REWARDS'):(practice?'PRACTICE · NO REWARDS':won?(resultInfo.firstClear?`FIRST CLEAR · ◉ ${reward.coins} + ✦ ${reward.dust}`:'REPEAT CLEAR'):'NO REWARD');
-    setContent(`<section class="tcgp-battle-result tcgp-battle-result-detailed ${classic?'format-classic':''}"><div class="eyebrow">${classic?'CLASSIC TCG':'SOLO BATTLE'} · SUMMARY</div><h2>${esc(resultSummary(currentBattle).title)}</h2><p>${esc(resultSummary(currentBattle).message)}</p><div class="tcgp-battle-stat-grid tcgp-battle-score-grid"><div class="tcgp-battle-stat"><small>YOU · ${scoreLabel}</small><b>${stats.playerPoints}${classic?'/5':''}</b></div><div class="tcgp-battle-stat"><small>CPU · ${scoreLabel}</small><b>${stats.opponentPoints}${classic?'/5':''}</b></div><div class="tcgp-battle-stat"><small>TURNS</small><b>${stats.turns}</b></div></div><div class="tcgp-battle-summary-grid"><div class="tcgp-battle-stat"><small>DAMAGE DEALT</small><b>${stats.damageDealt}</b></div><div class="tcgp-battle-stat"><small>DAMAGE TAKEN</small><b>${stats.damageTaken}</b></div><div class="tcgp-battle-stat"><small>BIGGEST HIT</small><b>${bigHit}</b></div><div class="tcgp-battle-stat"><small>KNOCKOUTS</small><b>${stats.knockouts}</b></div><div class="tcgp-battle-stat"><small>ATTACKS</small><b>${stats.attacksUsed}</b></div><div class="tcgp-battle-stat"><small>TRAINERS</small><b>${stats.trainersPlayed}</b></div><div class="tcgp-battle-stat"><small>ENERGY</small><b>${stats.energyAttached}</b></div><div class="tcgp-battle-stat"><small>COIN FLIPS</small><b>${esc(coinText)}</b></div></div><div class="tcgp-battle-highlight"><small>BIGGEST ATTACK</small><b>${esc(bigHitDetail)}</b></div><div class="tcgp-battle-reward">${rewardText}</div><div class="tcgp-battle-actions-row">${resultActions.canRematch?'<button class="tcgp-battle-action" data-tcgp-action="rematch">REMATCH</button>':''}<button class="tcgp-battle-action secondary" data-tcgp-action="home">BATTLE HOME</button></div></section>`);
+    setContent(`<section class="tcgp-battle-result tcgp-battle-result-detailed ${classic?'format-classic':''}"><div class="eyebrow">${classic?'CLASSIC TCG':'SOLO BATTLE'} · SUMMARY</div><h2>${esc(resultSummary(currentBattle).title)}</h2><p>${esc(resultSummary(currentBattle).message)}</p>${classic&&currentBattle?.reason?`<p class="tcgp-classic-end-reason">END CONDITION · ${esc(String(currentBattle.reason).replace(/-/g,' ').toUpperCase())}</p>`:''}<div class="tcgp-battle-stat-grid tcgp-battle-score-grid"><div class="tcgp-battle-stat"><small>YOU · ${scoreLabel}</small><b>${stats.playerPoints}${classic?'/5':''}</b></div><div class="tcgp-battle-stat"><small>CPU · ${scoreLabel}</small><b>${stats.opponentPoints}${classic?'/5':''}</b></div><div class="tcgp-battle-stat"><small>TURNS</small><b>${stats.turns}</b></div></div><div class="tcgp-battle-summary-grid"><div class="tcgp-battle-stat"><small>DAMAGE DEALT</small><b>${stats.damageDealt}</b></div><div class="tcgp-battle-stat"><small>DAMAGE TAKEN</small><b>${stats.damageTaken}</b></div><div class="tcgp-battle-stat"><small>BIGGEST HIT</small><b>${bigHit}</b></div><div class="tcgp-battle-stat"><small>KNOCKOUTS</small><b>${stats.knockouts}</b></div><div class="tcgp-battle-stat"><small>ATTACKS</small><b>${stats.attacksUsed}</b></div><div class="tcgp-battle-stat"><small>TRAINERS</small><b>${stats.trainersPlayed}</b></div><div class="tcgp-battle-stat"><small>ENERGY</small><b>${stats.energyAttached}</b></div><div class="tcgp-battle-stat"><small>COIN FLIPS</small><b>${esc(coinText)}</b></div></div><div class="tcgp-battle-highlight"><small>BIGGEST ATTACK</small><b>${esc(bigHitDetail)}</b></div><div class="tcgp-battle-reward">${rewardText}</div><div class="tcgp-battle-actions-row">${resultActions.canRematch?'<button class="tcgp-battle-action" data-tcgp-action="rematch">REMATCH</button>':''}<button class="tcgp-battle-action secondary" data-tcgp-action="home">BATTLE HOME</button></div></section>`);
   }
 
   let currentTestSetup=null;

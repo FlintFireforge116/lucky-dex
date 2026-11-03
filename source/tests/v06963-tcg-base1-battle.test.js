@@ -34,7 +34,7 @@ assert.equal(battle.sides.player.prizes.length,5);
 assert.equal(battle.sides.player.energyAvailable,true);
 
 // Pull one DCE from wherever setup placed it and prove it is a real hand card,
-// consumes the manual attachment, and provides two Colorless Energy at once.
+// leaves the once-per-turn Energy Zone placement available, and provides two Colorless Energy at once.
 let dce=null;
 for(const zone of ['hand','deck','prizes']){const i=battle.sides.player[zone].findIndex(x=>x.cardId==='base1-96');if(i>=0){[dce]=battle.sides.player[zone].splice(i,1);break;}}
 assert.ok(dce,'test deck should contain Double Colorless Energy');
@@ -46,10 +46,12 @@ const dceIndex=battle.sides.player.hand.findIndex(x=>x.uid===dce.uid);
 const dceAction=core.legalActions(battle,'player').find(x=>x.type==='attachSpecial'&&x.handIndex===dceIndex&&x.target==='active');
 assert.ok(dceAction,'DCE should be attachable from hand');
 core.applyAction(battle,'player',dceAction);
-assert.equal(battle.sides.player.energyUsed,true,'Special Energy uses the one manual attachment for the turn');
+assert.equal(battle.sides.player.energyUsed,false,'Special Energy must not consume the generated Energy Zone placement');
 assert.equal(battle.sides.player.active.specialEnergy.length,1);
 const smash=core.attackAvailability(battle,'player',0);
 assert.equal(smash.usable,true,'DCE must satisfy Ponyta Smash Kick CC cost');
+core.applyAction(battle,'player',{type:'attach',target:'active'});
+assert.equal(battle.sides.player.energyUsed,true,'the generated Energy placement still counts once');
 assert.throws(()=>core.applyAction(battle,'player',{type:'attach',target:'active'}),/once per turn/i);
 
 // Classic weakness is ×2 and resistance is -30 rather than Pocket +20.

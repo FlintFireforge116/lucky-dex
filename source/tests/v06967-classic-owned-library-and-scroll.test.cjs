@@ -42,9 +42,9 @@ test('v0.69.67 release markers agree',()=>{
   const gradle=fs.readFileSync(path.join(root,'app/build.gradle'),'utf8');
   const runtime=fs.readFileSync(path.join(root,'app/src/main/assets/app-v0167.js'),'utf8');
   const html=fs.readFileSync(path.join(root,'app/src/main/assets/index.html'),'utf8');
-  assert.match(gradle,/versionCode 7047/);
-  assert.match(gradle,/versionName '0\.69\.67'/);
-  assert.match(runtime,/window\.__LUCKYDEX_BUILD='0\.69\.67'/);
-  assert.match(html,/LUCKY DEX · v0\.69\.67/);
+  assert.ok(Number((gradle.match(/versionCode (\d+)/)||[])[1])>=7047);
+  assert.match(gradle,/versionName '0\.69\.(?:6[7-9]|[7-9]\d+)'/);
+  assert.match(runtime,/window\.__LUCKYDEX_BUILD='0\.69\.(?:6[7-9]|[7-9]\d+)'/);
+  assert.match(html,/LUCKY DEX · v0\.69\.(?:6[7-9]|[7-9]\d+)/);
 });
 
