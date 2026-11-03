@@ -619,3 +619,37 @@ body.tcgp-card-dragging .tcgp-live-mat-half .tcgp-live-card-wrap[data-card-drop-
   .tcgp-live-player-bottom .tcgp-live-piles.mine{height:104px!important}
   .tcgp-live-player>.tcgp-live-stadium-slot{right:1%!important}
 }
+
+/* v0.69.62 Pocket-style card focus: player cards are the interaction surface. */
+.tcgp-live-arena{
+  grid-template-rows:56px var(--tcgp-mat-h) 34px var(--tcgp-mat-h) minmax(118px,1fr)!important;
+}
+.tcgp-live-arena>.tcgp-live-player-bottom{grid-row:5!important}
+.tcgp-live-player-actions{display:none!important}
+
+/* Opponent field stays compact; your field is deliberately larger/readable. */
+.tcgp-live-opponent-active{width:11.5%!important;top:54%!important}
+.tcgp-live-opponent-bench{width:39%!important;top:8%!important;gap:6px!important}
+.tcgp-live-player-active{width:15.5%!important;top:2.5%!important}
+.tcgp-live-player-bench{width:49%!important;top:auto!important;bottom:4%!important;gap:7px!important}
+.tcgp-live-player .tcgp-live-hp{font-size:9px!important;padding:1px 3px!important}
+.tcgp-live-player .tcgp-live-card.compact .tcgp-live-hp{font-size:7px!important;padding:1px 2px!important}
+.tcgp-live-player .tcgp-live-attached-energy .tcgp-energy-icon{width:14px!important;height:14px!important;min-width:14px!important}
+.tcgp-live-player .tcgp-live-card.compact .tcgp-live-attached-energy .tcgp-energy-icon{width:12px!important;height:12px!important;min-width:12px!important}
+
+/* The card-action sheet only exists while a Pokemon is tapped. */
+.tcgp-live-pokemon-action-sheet{max-height:64%!important;padding-top:12px!important}
+.tcgp-live-pokemon-actions{display:grid;gap:7px;margin-top:4px}
+.tcgp-live-pokemon-actions>.tcgp-live-card-actions{position:static!important;display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:7px!important;width:100%!important;max-width:none!important}
+.tcgp-live-pokemon-actions .tcgp-live-context-action{width:100%!important;max-width:none!important;min-height:42px!important}
+.tcgp-live-pokemon-actions .tcgp-live-context-action.attack{min-height:48px!important}
+.tcgp-live-pokemon-actions .tcgp-live-context-action.retreat,.tcgp-live-pokemon-actions .tcgp-live-context-action.ability,.tcgp-live-pokemon-actions .tcgp-live-context-action.promote{min-height:42px!important}
+.tcgp-live-card-info-action{width:100%;margin-top:9px}
+
+@media(max-width:380px){
+  .tcgp-live-arena{grid-template-rows:52px var(--tcgp-mat-h) 32px var(--tcgp-mat-h) minmax(108px,1fr)!important}
+  .tcgp-live-opponent-active{width:12%!important}
+  .tcgp-live-opponent-bench{width:40%!important;gap:5px!important}
+  .tcgp-live-player-active{width:16%!important}
+  .tcgp-live-player-bench{width:50%!important;gap:5px!important}
+}

@@ -8,10 +8,11 @@ const app=read('app/src/main/assets/app-v0167.js');
 const html=read('app/src/main/assets/index.html');
 const css=read('app/src/main/assets/tcgp-battle.css');
 
-test('release markers are v0.69.61',()=>{
-  assert.match(app,/window\.__LUCKYDEX_BUILD='0\.69\.61'/);
-  assert.match(html,/v0\.69\.61/);
-  assert.doesNotMatch(html,/v0\.69\.60/);
+test('release markers remain aligned at or beyond v0.69.61',()=>{
+  const runtime=app.match(/window\.__LUCKYDEX_BUILD='(0\.69\.\d+)'/)?.[1];
+  assert.ok(runtime);
+  assert.ok(Number(runtime.split('.').at(-1))>=61);
+  assert.match(html,new RegExp(`v${runtime.replace(/\./g,'\\.')}`));
 });
 
 test('v06961 is a hard battlefield reset rather than another legacy position layer',()=>{

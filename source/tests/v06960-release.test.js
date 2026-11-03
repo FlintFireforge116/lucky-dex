@@ -27,7 +27,8 @@ test('battle layout uses a fixed 2:1 playmat coordinate system', () => {
   assert.match(css, /background-size:\s*100%\s+200%/);
 });
 
-test('active actions are rendered outside the player mat card slot', () => {
-  assert.match(ui, /tcgp-live-player-actions/);
-  assert.match(ui, /showActions:\s*false/);
+test('active actions are temporary and no longer embedded in the player mat card slot', () => {
+  assert.match(ui, /open-pokemon-actions/);
+  assert.match(ui, /tcgp-live-pokemon-action-sheet/);
+  assert.doesNotMatch(ui, /<section class="tcgp-live-player-actions"/);
 });

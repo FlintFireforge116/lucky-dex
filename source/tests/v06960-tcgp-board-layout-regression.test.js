@@ -22,7 +22,7 @@ test('playmat halves use an undistorted 2:1 crop coordinate system',()=>{
 
 test('hand piles and energy live outside the player playmat',()=>{
   const source=js();
-  assert.match(source,/<section class="tcgp-live-player tcgp-live-mat-half"[^`]*<\/section>\s*<section class="tcgp-live-player-actions"[^`]*<\/section>\s*<section class="tcgp-live-player-bottom"/s);
+  assert.match(source,/<section class="tcgp-live-player tcgp-live-mat-half"[^`]*<\/section>\s*<section class="tcgp-live-player-bottom"/s);
 });
 
 test('opponent hand and piles live outside the opponent playmat',()=>{
@@ -38,11 +38,12 @@ test('mat slot geometry uses fixed normalized positions and card-sized wrappers'
   assert.match(styles,/\.tcgp-live-player-bench\{[^}]*top:67%[^}]*width:44%[^}]*height:32%/s);
 });
 
-test('active battle controls are rendered in a dedicated dock, not inside the Pokemon slot',()=>{
+test('active battle controls are temporary and not embedded in the Pokemon slot',()=>{
   const html=ui._test.liveCardHtml({uid:'p1',cardId:'A1-001',damage:0,energy:{},conditions:{}},{side:'player',zone:'active',showActions:false});
   assert.doesNotMatch(html,/tcgp-live-card-actions/);
   const source=js();
-  assert.match(source,/class="tcgp-live-player-actions"[^`]*livePokemonActionsHtml\('player','active',0\)/s);
+  assert.match(source,/livePokemonActionsOverlayHtml/);
+  assert.doesNotMatch(source,/<section class="tcgp-live-player-actions"/);
 });
 
 test('Tool mini-cards anchor to the Pokemon side edge away from HP and action controls',()=>{

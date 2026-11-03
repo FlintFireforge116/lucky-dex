@@ -47,8 +47,9 @@ test('stadium is detached at far right and does not share active card coordinate
   assert.match(s,/\.tcgp-live-player>\.tcgp-live-stadium-slot\{[^}]*right:2%[^}]*top:8%/s);
 });
 
-test('active controls remain outside mat and centre drop fallback remains absent',()=>{
+test('active controls are temporary overlays and centre drop fallback remains absent',()=>{
   const source=ui();
-  assert.match(source,/class="tcgp-live-player-actions"/);
+  assert.match(source,/tcgp-live-pokemon-action-sheet/);
+  assert.doesNotMatch(source,/<section class="tcgp-live-player-actions"/);
   assert.doesNotMatch(source,/data-card-play-zone=["']1["']/);
 });
