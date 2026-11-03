@@ -26,14 +26,15 @@ const STAPLES=Object.freeze([
  ['base1-83',1], // Maintenance
  ['base1-87',1]  // Pokedex
 ]);
-const SET_IDS=Object.freeze(['base1','base2']);
+const SET_IDS=Object.freeze(['base1','base2','base3']);
 const ARCHETYPE_TYPES=Object.freeze([...decks.ENERGY_TYPES,'Colorless']);
 const STAGE_RANK=Object.freeze({'Basic':0,'Stage 1':1,'Stage 2':2});
 const norm=s=>String(s||'').toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'');
 function ownedMap(rows){const map=new Map();for(const row of rows||[]){const id=classic.cardById(row.gameplayId)?.id;if(id)map.set(id,(map.get(id)||0)+Math.max(0,Number(row.quantity)||0));}return map;}
 function attackTypes(card){const out=new Set();for(const attack of card?.attacks||[])for(const symbol of String(attack.cost||'')){const type=CODE_TO_TYPE[symbol];if(type&&decks.ENERGY_TYPES.includes(type))out.add(type);}return [...out];}
-function familyLine(card,pool){if(!card||card.kind!=='pokemon')return [];const line=[card],seen=new Set([card.id]);let cur=card;while(cur.evolvesFrom){const prior=pool.find(c=>c.kind==='pokemon'&&c.name===cur.evolvesFrom);if(!prior||seen.has(prior.id))return [];line.unshift(prior);seen.add(prior.id);cur=prior;}return line;}
+function familyLine(card,pool){if(!card||card.kind!=='pokemon')return [];const line=[card],seen=new Set([card.id]);let cur=card;while(cur.evolvesFrom){const prior=pool.find(c=>(c.kind==='pokemon'||c.effect?.type==='playFossil')&&c.name===cur.evolvesFrom);if(!prior||seen.has(prior.id))return [];line.unshift(prior);seen.add(prior.id);cur=prior;}return line;}
 function familyRoot(card,pool){const line=familyLine(card,pool);return line[0]?.name||card?.name||card?.id||'';}
+function archetypeName(card,pool){const root=familyRoot(card,pool);return ['Mysterious Fossil','Eevee'].includes(root)?card?.name||root:root;}
 function endpointCards(pool){const parents=new Set(pool.filter(c=>c.kind==='pokemon'&&c.evolvesFrom).map(c=>c.evolvesFrom));return pool.filter(c=>c.kind==='pokemon'&&!parents.has(c.name));}
 function damageValue(card){let best=0;for(const a of card?.attacks||[]){
   const raw=Number(a.damage||0);
@@ -58,17 +59,17 @@ function typeCompatible(card,types){if(!types?.length)return true;const needs=at
 function rng(seed){let x=(Number(seed)||0x6d2b79f5)>>>0;return()=>{x^=x<<13;x^=x>>>17;x^=x<<5;return(x>>>0)/4294967296;};}
 function fail(message){return {ok:false,cards:[],energyTypes:[],errors:[message],warnings:[],strategy:''};}
 function buildDeck(rows,options={}){
- const style=options.style==='random'?'random':'competitive',owned=ownedMap(rows),allowedSets=(options.sets||SET_IDS).filter(s=>SET_IDS.includes(s)),scope=allowedSets.length?allowedSets:SET_IDS,pool=classic.CARDS.filter(c=>scope.includes(c.setId)&&c.battleEnabled&&c.deckEligible!==false&&Number(owned.get(c.id)||0)>0),pokemonPool=pool.filter(c=>c.kind==='pokemon');
+ const style=options.style==='random'?'random':'competitive',owned=ownedMap(rows),allowedSets=(options.sets||SET_IDS).filter(s=>SET_IDS.includes(s)),scope=allowedSets.length?allowedSets:SET_IDS,pool=classic.CARDS.filter(c=>scope.includes(c.setId)&&c.battleEnabled&&c.deckEligible!==false&&Number(owned.get(c.id)||0)>0),pokemonPool=pool.filter(c=>c.kind==='pokemon'),evolutionPool=pool.filter(c=>c.kind==='pokemon'||c.effect?.type==='playFossil');
  if([...pool].reduce((sum,c)=>sum+Math.min(4,owned.get(c.id)||0),0)<30)return fail('Not enough owned battle-ready Classic card copies to build a 30-card deck.');
  if(!pokemonPool.some(c=>c.stage==='Basic'))return fail('No owned battle-ready Basic Pokémon are available.');
  const requested=[...new Set((options.types||[]).filter(t=>ARCHETYPE_TYPES.includes(t)))].slice(0,2),requestedEnergy=requested.filter(t=>t!=='Colorless'),existing=Array.isArray(options.cards)?options.cards:[],focus=classic.cardById(options.focusCardId),random=rng(options.randomSeed),excluded=new Set(options.excludeArchetypes||[]);
- let candidates=endpointCards(pokemonPool).filter(c=>familyLine(c,pokemonPool).length&&typeCompatible(c,requestedEnergy)&&(!requested.length||(c.types||[]).some(t=>requested.includes(t))));
+ let candidates=endpointCards(pokemonPool).filter(c=>familyLine(c,evolutionPool).length&&typeCompatible(c,requestedEnergy)&&(!requested.length||(c.types||[]).some(t=>requested.includes(t))));
  if(focus?.kind==='pokemon'){
-   const root=familyRoot(focus,pokemonPool);const focused=candidates.filter(c=>familyRoot(c,pokemonPool)===root);if(focused.length)candidates=focused;
+   const focused=candidates.filter(c=>familyLine(c,evolutionPool).some(member=>member.name===focus.name));if(focused.length)candidates=focused;
  }
  // When the player requests Grass, a generic Colorless wall must not become
  // the supposed Grass archetype. Colorless cards remain eligible as support.
- const coreScore=c=>pokemonScore(c,pokemonPool)+
+ const coreScore=c=>pokemonScore(c,evolutionPool)+
    (requested.length?(c.types||[]).includes(requested[0])?240:(c.types||[]).some(t=>requested.includes(t))?120:0:0);
  candidates.sort((a,b)=>coreScore(b)-coreScore(a)||Number(a.number)-Number(b.number));
  if(!candidates.length)return fail('No complete owned evolution family matches the selected Classic Energy types.');
@@ -77,10 +78,10 @@ function buildDeck(rows,options={}){
    // Energy Zone option. Colorless staples remain valid as supporting cards.
    const typed=requested.length?candidates.filter(c=>(c.types||[]).some(t=>requested.includes(t))):[];
    if(typed.length)candidates=typed;
-   const viable=candidates.filter(c=>!excluded.has(norm(familyRoot(c,pokemonPool))));if(viable.length)candidates=viable;
+   const viable=candidates.filter(c=>!excluded.has(norm(archetypeName(c,evolutionPool))));if(viable.length)candidates=viable;
    const band=candidates.slice(0,Math.min(14,candidates.length));const pick=band[Math.floor(random()*band.length)]||candidates[0];candidates=[pick,...candidates.filter(c=>c!==pick)];
  }
- const main=candidates[0],mainLine=familyLine(main,pokemonPool),mainRoot=familyRoot(main,pokemonPool),selectedTypes=requestedEnergy.length?requestedEnergy.slice():attackTypes(main).slice(0,2);
+ const main=candidates[0],mainLine=familyLine(main,evolutionPool),mainRoot=familyRoot(main,evolutionPool),selectedTypes=requestedEnergy.length?requestedEnergy.slice():attackTypes(main).slice(0,2);
  if(!selectedTypes.length){const ownType=(main.types||[]).find(t=>decks.ENERGY_TYPES.includes(t));if(ownType)selectedTypes.push(ownType);}
  if(!selectedTypes.length)selectedTypes.push('Fighting');
  const cards=[],counts=new Map();
@@ -90,7 +91,7 @@ function buildDeck(rows,options={}){
  // Preserve legal existing cards first for Fill / repair, but never exceed ownership/copy limits.
  for(const id of existing){const c=classic.cardById(id);if(c&&scope.includes(c.setId)&&c.battleEnabled&&c.deckEligible!==false)add(c,1);}
  // Ensure any preserved evolutions gain their missing prerequisites.
- for(const id of [...cards]){const c=classic.cardById(id);if(c?.kind==='pokemon'&&c.stage!=='Basic'){const line=familyLine(c,pokemonPool);if(line.length)for(const member of line.slice(0,-1))if(!(counts.get(member.id)||0))add(member,1);}}
+ for(const id of [...cards]){const c=classic.cardById(id);if(c?.kind==='pokemon'&&c.stage!=='Basic'){const line=familyLine(c,evolutionPool);if(line.length)for(const member of line.slice(0,-1))if(!(counts.get(member.id)||0))add(member,1);}}
  const mainCopies=mainLine.length>=2?3:4;addLine(mainLine,mainCopies);
  // A stage-two engine wants one more opening Basic than evolution cards.
  if(mainLine.length>=2)add(mainLine[0],1);
@@ -107,27 +108,27 @@ function buildDeck(rows,options={}){
  // Prefer an entire compatible evolution partner; never add an isolated Basic
  // whose strength depends upon an unavailable evolution (e.g. Base Set Koffing).
  const partnerCandidates=endpointCards(pokemonPool).filter(c=>
-   familyRoot(c,pokemonPool)!==mainRoot&&familyLine(c,pokemonPool).length===2&&canFitEnergy(c)
+   familyRoot(c,evolutionPool)!==mainRoot&&familyLine(c,evolutionPool).length===2&&canFitEnergy(c)
  ).sort((a,b)=>{
    const newA=attackTypes(a).filter(t=>!selectedTypes.includes(t)).length;
    const newB=attackTypes(b).filter(t=>!selectedTypes.includes(t)).length;
-   return newA-newB||pokemonScore(b,pokemonPool)-pokemonScore(a,pokemonPool)||Number(a.number)-Number(b.number);
+   return newA-newB||pokemonScore(b,evolutionPool)-pokemonScore(a,evolutionPool)||Number(a.number)-Number(b.number);
  });
  if(pokemonCount()<=11){
    // A named synergy in a printed attack is stronger evidence of a partner
    // than general HP/type scoring (Jungle Nidoqueen's Boyfriends / Nidoking).
    const namedEffects=[...(main.attacks||[]),...(main.abilities||[])].map(x=>String(x.text||'')).join(' ').toLowerCase();
    const namedPartners=endpointCards(pokemonPool).filter(c=>c.id!==main.id&&c.stage!=='Basic'&&
-      namedEffects.includes(c.name.toLowerCase())&&familyLine(c,pokemonPool).length>=2&&canFitEnergy(c));
+      namedEffects.includes(c.name.toLowerCase())&&familyLine(c,evolutionPool).length>=2&&canFitEnergy(c));
    const partner=chooseCandidate(namedPartners.length?namedPartners:partnerCandidates);
-   if(partner&&addLine(familyLine(partner,pokemonPool),namedPartners.length?1:2)&&!requested.length)
+   if(partner&&addLine(familyLine(partner,evolutionPool),namedPartners.length?1:2)&&!requested.length)
      for(const type of attackTypes(partner))if(!selectedTypes.includes(type)&&selectedTypes.length<2)selectedTypes.push(type);
  }
  // Supplement only when there is room and a genuinely useful independent role.
  // No arbitrary 14-Pokémon quota: extra Trainers are often more valuable.
  const evolvingNames=new Set(pokemonPool.filter(c=>c.evolvesFrom).map(c=>c.evolvesFrom));
  const usefulBasics=pokemonPool.filter(c=>c.stage==='Basic'&&
-   !evolvingNames.has(c.name)&&familyRoot(c,pokemonPool)!==mainRoot&&canFitEnergy(c)&&standaloneScore(c)>=70
+   !evolvingNames.has(c.name)&&familyRoot(c,evolutionPool)!==mainRoot&&canFitEnergy(c)&&standaloneScore(c)>=70
  ).sort((a,b)=>standaloneScore(b)-standaloneScore(a)||Number(a.number)-Number(b.number));
  if(pokemonCount()<12){
    const support=chooseCandidate(usefulBasics);
@@ -153,7 +154,7 @@ function buildDeck(rows,options={}){
  const legal=decks.validateDraft(cards,rows,{requireFull:true});if(!legal.ok)return {ok:false,cards,energyTypes:selectedTypes,errors:legal.errors,warnings:[],strategy:''};
  const analysis=decks.analyzeDeck(cards),energyTypes=requestedEnergy.length?requestedEnergy:analysis.recommendedEnergyTypes.slice(0,2);
  const finalEnergy=energyTypes.length?energyTypes:selectedTypes.slice(0,2);
- return {ok:true,cards,energyTypes:finalEnergy,errors:[],warnings:[],style,archetypeKey:norm(mainRoot),focusCardId:focus?.id||main.id,strategy:`${style==='random'?'Random viable':'Competitive'} · ${requested.includes('Colorless')?'Colorless / ':''}${finalEnergy.join(' / ')} · ${mainRoot} core · ${pokemonCount()} Pokémon / ${30-pokemonCount()} Trainers & Special Energy`};
+ return {ok:true,cards,energyTypes:finalEnergy,errors:[],warnings:[],style,archetypeKey:norm(archetypeName(main,evolutionPool)),focusCardId:focus?.id||main.id,strategy:`${style==='random'?'Random viable':'Competitive'} · ${requested.includes('Colorless')?'Colorless / ':''}${finalEnergy.join(' / ')} · ${archetypeName(main,evolutionPool)} core · ${pokemonCount()} Pokémon / ${30-pokemonCount()} Trainers & Special Energy`};
 }
 function buildDeckAsync(rows,options,control={}){return new Promise(resolve=>{setTimeout(()=>{if(control.isCancelled?.())return resolve(null);resolve(buildDeck(rows,options));},0);});}
 return {buildDeck,buildDeckAsync,familyLine,familyRoot,attackTypes,ARCHETYPE_TYPES,SET_IDS};
