@@ -214,7 +214,10 @@
     s.energyAvailable = !!state.rules?.firstTurnEnergy || !(state.turnNumber === 1 && side === state.firstSide);
     if(s.energyAvailable){s.energyType=s.nextEnergyType||s.energyTypes[0];s.nextEnergyType=s.energyTypes.length>1?s.energyTypes[Math.floor(random(state)*s.energyTypes.length)]:s.energyTypes[0];}
     const hadCardToDraw=s.deck.length>0,drawn=drawCard(s);
-    if(!drawn&&state.rules?.winMode==='prizes'&&!hadCardToDraw){finish(state,side==='player'?'opponent':'player','deck-out');return;}
+    // The compact Classic hybrid uses Pocket's no-deck-out rule: losing
+    // 5 Prize cards plus the 7-card opening hand from a 30-card deck would
+    // otherwise turn normal draw Trainers into premature match losses.
+    if(!drawn&&state.format==='classic'&&!hadCardToDraw)state.log.push({type:'drawSkipped',side,reason:'empty-deck',turnNumber:state.turnNumber});
     if(drawn)state.log.push({type:'draw',side,amount:1,cardId:drawn.cardId,reason:'turn'});
     state.log.push({type:'turn',side,turnNumber:state.turnNumber});
     triggerAbilities(state,'beginTurn',side);
@@ -470,7 +473,16 @@
   }
 
   function advanceTurn(state){
-    if (state.turnNumber >= 50){ finish(state,'opponent','turn-limit'); return; }
+    const maxTurns=state.format==='classic'?100:50;
+    if(state.turnNumber>=maxTurns){
+      if(state.format==='classic'){
+        // A longer cap keeps stalled hybrid matches finite; a timeout is
+        // decided by Prize progress instead of arbitrarily favouring the CPU.
+        const ours=Number(state.sides.player.prizesTaken||0),theirs=Number(state.sides.opponent.prizesTaken||0);
+        finish(state,ours===theirs?'draw':ours>theirs?'player':'opponent','turn-limit');
+      }else finish(state,'opponent','turn-limit');
+      return;
+    }
     const ended=state.sides[state.activeSide];ended.pointsGainedLastTurn=Number(ended.pointsGainedThisTurn||0);ended.pointsGainedThisTurn=0;
     state.activeSide=state.activeSide==='player'?'opponent':'player';
     state.turnNumber+=1;

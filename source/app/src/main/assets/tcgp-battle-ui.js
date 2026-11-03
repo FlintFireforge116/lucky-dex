@@ -702,12 +702,12 @@
   }
   function resultSummary(battle){
     const won=battle?.winner==='player',title=battle?.winner==='draw'?'DRAW':won?'VICTORY':'DEFEAT';
-    if(title==='DRAW')return {title,message:'Both sides reached a winning condition at the same time.'};
     const classic=battle?.format==='classic';
+    if(title==='DRAW')return {title,message:classic&&battle?.reason==='turn-limit'?'The 100-turn Classic safety limit was reached with both trainers tied on Prize cards.':'Both sides reached a winning condition at the same time.'};
     if(battle?.reason==='deck-out')return {title,message:won?"The CPU couldn't draw a card at the start of its turn — its deck ran out.":"You couldn't draw a card at the start of your turn — your deck ran out. Your Bench may still have Pokémon, but deck exhaustion is a separate loss condition."};
     if(battle?.reason==='no-pokemon')return {title,message:won?'The CPU had no Pokémon left in play.':'You had no Active or Benched Pokémon left in play.'};
     if(battle?.reason==='prizes')return {title,message:won?'You claimed all 5 Prize cards.':'The CPU claimed all 5 Prize cards.'};
-    if(battle?.reason==='turn-limit')return {title,message:'The 50-turn Solo limit expired.'};
+    if(battle?.reason==='turn-limit')return {title,message:classic?(won?'The 100-turn Classic safety limit was reached. You were ahead on Prize cards.':'The 100-turn Classic safety limit was reached. The CPU was ahead on Prize cards.'):'The 50-turn Solo limit expired.'};
     return {title,message:won?'You won the match.':'The CPU won the match.'};
   }
   function resultActionsModel(challenge,practice){return {canRematch:!(challenge?.randomPool===true),canHome:true,practice:!!practice};}

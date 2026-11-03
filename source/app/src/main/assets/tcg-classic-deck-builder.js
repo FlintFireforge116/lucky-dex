@@ -7,9 +7,9 @@
 if(!classic||!decks)throw new Error('Classic TCG deck builder dependencies are missing.');
 const CODE_TO_TYPE=Object.freeze(Object.fromEntries(Object.entries(classic.ENERGY_CODE||{}).map(([type,code])=>[code,type])));
 const STAPLES=Object.freeze([
- ['base1-91',4], // Bill
- ['base1-88',3], // Professor Oak
- ['base1-71',2], // Computer Search
+ ['base1-91',2], // Bill — conservative in compact 30-card decks
+ ['base1-88',1], // Professor Oak — draw 7 is extremely costly in 30 cards
+ ['base1-71',1], // Computer Search
  ['base1-77',2], // Pokemon Trader
  ['base1-95',2], // Switch
  ['base1-93',2], // Gust of Wind

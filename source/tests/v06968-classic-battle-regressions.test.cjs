@@ -30,13 +30,12 @@ test('knocking out Charizard with Arcanine and Chansey on bench prompts promotio
  assert.equal(b.sides.player.active.cardId,'base1-3');assert.notEqual(b.phase,'finished');
 });
 
-test('Classic deck exhaustion has an explicit loss reason even when Bench survives',()=>{
+test('a saved legacy Classic deck-out result has an explicit loss reason even when Bench survives',()=>{
  const b=match(69);b.sides.player.active=core.makePokemonSlot('base1-4',0,'charizard');
  b.sides.player.bench=[core.makePokemonSlot('base1-3',0,'chansey')];b.sides.player.bench[0].benchSlot=0;
  b.sides.player.deck=[];b.phase='battle';b.activeSide='player';b.sides.player.prizesTaken=2;
- // beginTurn is entered by setupReady/endTurn, so make the opponent end a turn.
- b.activeSide='opponent';b.turnNumber=16;b.sides.opponent.active=core.makePokemonSlot('base1-65',0,'staryu');
- const action=core.legalActions(b,'opponent').find(a=>a.type==='endTurn');core.applyAction(b,'opponent',action);
+ // v0.69.68 could save a completed deck-out loss; older summaries must still explain it.
+ b.phase='finished';b.winner='opponent';b.reason='deck-out';
  assert.equal(b.phase,'finished');assert.equal(b.winner,'opponent');assert.equal(b.reason,'deck-out');
  assert.equal(b.sides.player.bench.length,1);
  assert.match(ui.resultSummary(b).message,/deck|draw/i,'the result must say the loss was deck exhaustion');
