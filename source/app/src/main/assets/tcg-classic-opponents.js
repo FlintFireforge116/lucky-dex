@@ -1,4 +1,4 @@
-// Random Base Set CPU opponents use the same legal deck-building rules as players,
+// Random Classic CPU opponents use the same legal deck-building rules as players,
 // but have access to the complete playable catalogue rather than the player's pulls.
 (function(root,factory){
  const api=factory(
@@ -34,10 +34,10 @@
      const legal=classic.validateDeck(result.cards);
      const energy=decks.analyzeDeck(result.cards).recommendedEnergyTypes;
      if(!legal.ok||energy.some(t=>t!==type)||!result.cards.some(id=>classic.cardById(id)?.types?.includes(type)))continue;
-     const archetype=String(result.strategy.match(/· ([^·]+) core/)?.[1]||'Base Set').trim();
+     const archetype=String(result.strategy.match(/· ([^·]+) core/)?.[1]||'Classic TCG').trim();
      return {ok:true,type,cards:result.cards.slice(),energyTypes:[type],archetype,archetypeKey:result.archetypeKey,name:`${type} · ${archetype}`};
    }
-   return {ok:false,error:'Could not build a legal random Base Set opponent deck.'};
+   return {ok:false,error:'Could not build a legal random Classic TCG opponent deck.'};
  }
  return {generate,pickType,TYPES};
 });

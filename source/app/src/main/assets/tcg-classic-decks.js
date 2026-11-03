@@ -30,7 +30,7 @@ function validateDraft(cards,rows,{requireFull=false}={}){
  const list=Array.isArray(cards)?cards.slice():[],errors=[],have=ownedMap(rows),counts=countCards(list);
  if(requireFull){const core=classic.validateDeck(list);errors.push(...core.errors);}else{
    if(list.length>30)errors.push(`Classic TCG decks contain 30 cards (${list.length}/30).`);
-   for(const [id,count] of counts){const card=classic.cardById(id);if(!card){errors.push(`Unknown Base Set card: ${id}.`);continue;}if(card.basicEnergy||card.deckEligible===false)errors.push(`${card.name} cannot occupy a Classic deck slot.`);if(!card.battleEnabled)errors.push(`${card.name} is not battle-ready.`);if(count>4)errors.push(`${card.name} exceeds the four-copy limit (${count}).`);}
+   for(const [id,count] of counts){const card=classic.cardById(id);if(!card){errors.push(`Unknown Classic TCG card: ${id}.`);continue;}if(card.basicEnergy||card.deckEligible===false)errors.push(`${card.name} cannot occupy a Classic deck slot.`);if(!card.battleEnabled)errors.push(`${card.name} is not battle-ready.`);if([...counts].filter(([x])=>classic.cardById(x)?.name===card.name).reduce((n,[,v])=>n+v,0)>4)errors.push(`${card.name} exceeds the four-copy limit across its prints.`);}
  }
  for(const [id,count] of counts){const card=classic.cardById(id);if(!card)continue;const quantity=Number(have.get(id)||0);if(count>quantity)errors.push(`Not enough owned copies of ${card.name}: need ${count}, own ${quantity}.`);}
  return {ok:errors.length===0,errors};
@@ -40,13 +40,13 @@ function edit(cards,id,delta,rows){
  const list=(cards||[]).map(x=>classic.cardById(x)?.id||String(x||'')),card=classic.cardById(id),fail=error=>({ok:false,cards:list,error});if(!card)return fail('Unknown Base Set card.');
  const count=list.filter(x=>x===card.id).length;if(delta<0){const index=list.lastIndexOf(card.id);if(index>=0)list.splice(index,1);return {ok:true,cards:list};}
  if(card.basicEnergy||card.deckEligible===false)return fail('Basic Energy comes from the Energy Zone and is not placed in the 30-card deck.');
- if(!card.battleEnabled)return fail('This Base Set card is not battle-ready.');if(list.length>=30)return fail('Your Classic deck already has 30 cards.');if(count>=4)return fail('Maximum four copies of the same Base Set card.');
+ if(!card.battleEnabled)return fail('This Classic card is not battle-ready.');if(list.length>=30)return fail('Your Classic deck already has 30 cards.');if(list.filter(id=>classic.cardById(id)?.name===card.name).length>=4)return fail('Maximum four copies of the same Pokémon or Trainer card across all prints.');
  const have=Number(ownedMap(rows).get(card.id)||0);if(count>=have)return fail('No more owned copies available.');list.push(card.id);return {ok:true,cards:list};
 }
 function newId(battle){let n=1;while(battle.decks.some(deck=>deck.id===`classic-${n}`))n++;return `classic-${n}`;}
 function saveDraft(state,draft,rows){
  const check=validateDraft(draft?.cards||[],rows,{requireFull:false});if(!check.ok)return {ok:false,errors:check.errors};const battle=ensureState(state),id=draft.id||newId(battle),cards=(draft.cards||[]).map(x=>classic.cardById(x)?.id||String(x||'')),energyMode=draft.energyMode==='manual'?'manual':'auto',energyTypes=energyMode==='manual'?analyzeDeck(cards,draft.energyTypes||[]).configuredEnergyTypes:analyzeDeck(cards).recommendedEnergyTypes;
- const saved={id,name:String(draft.name||'Base Set Deck').trim().slice(0,40)||'Base Set Deck',cards,energyMode,energyTypes,energyType:energyTypes[0]};const ready=readiness(saved,rows);saved.draft=!ready.ok;const index=battle.decks.findIndex(deck=>deck.id===id);if(index>=0)battle.decks[index]=saved;else battle.decks.push(saved);battle.activeDeckId=id;return {ok:true,deck:saved,readiness:ready};
+ const saved={id,name:String(draft.name||'Classic Deck').trim().slice(0,40)||'Classic Deck',cards,energyMode,energyTypes,energyType:energyTypes[0]};const ready=readiness(saved,rows);saved.draft=!ready.ok;const index=battle.decks.findIndex(deck=>deck.id===id);if(index>=0)battle.decks[index]=saved;else battle.decks.push(saved);battle.activeDeckId=id;return {ok:true,deck:saved,readiness:ready};
 }
 function activeDeck(state,rows){const battle=ensureState(state),deck=battle.decks.find(item=>item?.id===battle.activeDeckId)||null;return deck&&readiness(deck,rows).ok?deck:null;}
 function recordResult(state,battle){const classicState=ensureState(state),stats=classicState.stats;stats.matches+=1;stats.totalTurns+=Math.max(0,Number(battle?.turnNumber||0));if(battle?.winner==='player'){stats.wins+=1;stats.bestWinTurns=stats.bestWinTurns==null?Number(battle?.turnNumber||0):Math.min(stats.bestWinTurns,Number(battle?.turnNumber||0));}else if(battle?.winner==='opponent')stats.losses+=1;else stats.draws+=1;return stats;}

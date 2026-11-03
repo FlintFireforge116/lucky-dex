@@ -1,11 +1,13 @@
 (function(root,factory){
   const base=typeof module==='object'&&module.exports?require('./tcg-classic-base1.js'):root.LuckyDexClassicTCGBase1;
-  const api=factory(base);
+  const jungle=typeof module==='object'&&module.exports?require('./tcg-classic-jungle.js'):root.LuckyDexClassicTCGJungle;
+  const api=factory(base,jungle);
   if(typeof module==='object'&&module.exports)module.exports=api;
   if(root)root.LuckyDexClassicTCGBattleData=api;
-})(typeof globalThis!=='undefined'?globalThis:this,function(base){
+})(typeof globalThis!=='undefined'?globalThis:this,function(base,jungle){
 'use strict';
-if(!base||!Array.isArray(base.CARDS))throw new Error('Classic Base Set catalogue is missing.');
+if(!base||!Array.isArray(base.CARDS)||!jungle||!Array.isArray(jungle.CARDS))throw new Error('Classic Base Set/Jungle catalogues are missing.');
+const CARDS=[...base.CARDS,...jungle.CARDS];
 
 // Legacy v0.69.63 seed details retained as provenance fixtures. v0.69.64's
 // complete Base Set mechanics live in tcg-classic-base1.js; registering these
@@ -23,20 +25,54 @@ const VERIFIED_DETAILS=[
 for(const detail of VERIFIED_DETAILS)base.registerDetails(detail);
 for(const card of base.CARDS){card.battleFormat='classic';card.source='tcg';}
 
-function cardById(id){return base.cardById(id);}
+function cardById(id){return base.cardById(id)||jungle.cardById(id);}
 function typesOf(card){return Array.isArray(card?.types)&&card.types.length?card.types:[card?.subtype].filter(Boolean);}
 function hasType(card,type){return typesOf(card).includes(type);}
 function isBattleEnabled(value){const card=typeof value==='string'?cardById(value):cardById(value?.id);return !!(card&&card.battleEnabled&&card.deckEligible!==false);}
+function ownedJungleCard(owned){
+ if(!owned||typeof owned!=='object')return null;
+ const src=String(owned.source||'').toLowerCase();if(src&&src!=='tcg')return null;
+ const setId=String(owned.setId||owned.set?.id||'').toLowerCase();
+ const libraryKey=String(owned._librarySetKey||'').toLowerCase();
+ const setName=String(owned.setName||owned.set?.name||'').trim().toLowerCase();
+ const total=Number(owned.setTotal||owned.set?.cardCount?.total||0);
+ if(!(['base2','library:ju','ju'].includes(setId)||libraryKey==='ju'||(setName==='jungle'&&total===64)))return null;
+ const direct=jungle.cardById(owned.id);if(direct)return direct;
+ for(const value of [owned.localId,owned.number,owned._libraryCanonicalId,owned.id]){
+  const m=String(value??'').trim().match(/^(?:base2|ju)?[-_:]?0*(\d{1,2})$/i);
+  if(m){const n=Number(m[1]);if(n>=1&&n<=64)return jungle.cardById(`base2-${n}`);}
+ }
+ return null;
+}
+function projectOwnedCards(cards){
+ const rows=Array.isArray(cards)?cards:Object.values(cards||{});
+ const projected=base.projectOwnedCards(rows);
+ const grouped=new Map();
+ for(const owned of rows){const card=ownedJungleCard(owned);if(!card)continue;
+  const quantity=Math.max(0,Number(owned.count==null?1:owned.count)||0);
+  const variant={id:owned.id||card.id,quantity,image:owned.image||owned.imageUrl||null,rarity:owned.rarity||null,row:owned};
+  const current=grouped.get(card.id);
+  if(current){current.quantity+=quantity;current.variants.push(variant);}
+  else grouped.set(card.id,{gameplayId:card.id,name:card.name,card,quantity,battleEnabled:!!card.battleEnabled,variants:[variant]});
+ }
+ return [...projected,...grouped.values()].sort((a,b)=>(a.card.setId==='base1'?0:1)-(b.card.setId==='base1'?0:1)||Number(a.card.number)-Number(b.card.number));
+}
 function validateDeck(ids,options){
  const deck=Array.isArray(ids)?ids:[],owned=options?.owned||null,errors=[];
  if(deck.length!==30)errors.push(`Classic TCG decks require exactly 30 cards (${deck.length}/30).`);
- const counts=new Map();
- for(const id of deck){const card=cardById(id);counts.set(id,Number(counts.get(id)||0)+1);if(!card)errors.push(`Unknown Base Set card: ${id}.`);else if(card.basicEnergy||card.deckEligible===false)errors.push(`${card.name} is supplied by the Energy Zone and cannot occupy a Classic30 deck slot.`);else if(!card.battleEnabled)errors.push(`${card.name} is not battle-ready: ${(card.support?.reasons||['unsupported mechanics']).join('; ')}`);}
- for(const [id,count] of counts)if(count>4)errors.push(`${cardById(id)?.name||id} exceeds the four-copy limit (${count}).`);
+ const byId=new Map(),byName=new Map();
+ for(const id of deck){
+  const card=cardById(id);if(!card){errors.push(`Unknown Classic TCG card: ${id}.`);continue;}
+  byId.set(card.id,(byId.get(card.id)||0)+1);
+  byName.set(card.name,(byName.get(card.name)||0)+1);
+  if(card.basicEnergy||card.deckEligible===false)errors.push(`${card.name} cannot occupy a Classic30 deck slot.`);
+  else if(!card.battleEnabled)errors.push(`${card.name} is not battle-ready: ${(card.support?.reasons||['unsupported mechanics']).join('; ')}`);
+ }
+ for(const [name,count] of byName)if(count>4)errors.push(`${name} exceeds the four-copy limit across all prints (${count}).`);
  if(!deck.some(id=>{const c=cardById(id);return c?.kind==='pokemon'&&c.stage==='Basic'&&c.battleEnabled;}))errors.push('Classic TCG decks require at least one battle-ready Basic Pokémon.');
- if(owned){const projected=new Map(base.projectOwnedCards(owned).map(row=>[row.gameplayId,row.quantity]));for(const [id,count] of counts)if(count>Number(projected.get(id)||0))errors.push(`Not enough owned copies of ${cardById(id)?.name||id}: need ${count}, own ${Number(projected.get(id)||0)}.`);}
+ if(owned){const map=new Map(projectOwnedCards(owned).map(row=>[row.gameplayId,row.quantity]));for(const [id,count] of byId)if(count>Number(map.get(id)||0))errors.push(`Not enough owned copies of ${cardById(id)?.name||id}: need ${count}, own ${Number(map.get(id)||0)}.`);}
  return {ok:errors.length===0,errors};
 }
-function coverage(){return {...base.coverage(),verifiedBattleSlice:base.CARDS.filter(c=>c.support?.status==='FULL').map(c=>c.id),set:base.SET};}
-return {SET:base.SET,CARDS:base.CARDS,ENERGY_CODE:base.ENERGY_CODE,CLASSIC30_LOANER_DECK:base.CLASSIC30_LOANER_DECK,VERIFIED_DETAILS,cardById,typesOf,hasType,isBattleEnabled,projectOwnedCards:base.projectOwnedCards,validateDeck,coverage};
+function coverage(){return {...base.coverage(),jungle:jungle.coverage(),verifiedBattleSlice:CARDS.filter(c=>c.support?.status==='FULL').map(c=>c.id),set:base.SET,sets:[base.SET,jungle.SET]};}
+return {SET:base.SET,SETS:[base.SET,jungle.SET],CARDS,ENERGY_CODE:base.ENERGY_CODE,CLASSIC30_LOANER_DECK:base.CLASSIC30_LOANER_DECK,VERIFIED_DETAILS,cardById,typesOf,hasType,isBattleEnabled,projectOwnedCards,validateDeck,coverage};
 });
