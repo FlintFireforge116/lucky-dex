@@ -1,9 +1,10 @@
 (function(root, factory){
   const generated = typeof module === 'object' && module.exports ? require('./tcgp/generated/catalogue.js') : root.LuckyDexTCGPCatalogue;
-  const api = factory(generated);
+  const classic = typeof module === 'object' && module.exports ? require('./tcg-classic-battle-data.js') : root.LuckyDexClassicTCGBattleData;
+  const api = factory(generated,classic);
   if (typeof module === 'object' && module.exports) module.exports = api;
   if (root) root.LuckyDexTCGPBattleData = api;
-})(typeof globalThis !== 'undefined' ? globalThis : this, function(generated){
+})(typeof globalThis !== 'undefined' ? globalThis : this, function(generated,classic){
   'use strict';
 
   function pokemon(id, name, subtype, stage, hp, retreat, weakness, attacks, extra){
@@ -100,7 +101,7 @@
   function typesOf(card){return Array.isArray(card?.types)&&card.types.length?card.types:[card?.subtype].filter(Boolean);}
   function hasType(card,type){return typesOf(card).includes(type);}
   function normName(value){ return String(value || '').normalize('NFKD').replace(/[\u0300-\u036f]/g,'').trim().toLowerCase().replace(/[’]/g, "'").replace(/\s+/g, ' '); }
-  function cardById(id){ if(typeof id==='string'){const exact=CARD_BY_ID[id];if(exact)return exact;const exactPrint=PRINT_BY_ID[id];if(exactPrint)return CARD_BY_ID[exactPrint.gameplayId]||CARD_BY_ID[normId(exactPrint.gameplayId)]||null;}const key=normId(id),print=PRINT_BY_ID[key]; return CARD_BY_ID[print?normId(print.gameplayId):key] || null; }
+  function cardById(id){ if(typeof id==='string'){const exact=CARD_BY_ID[id];if(exact)return exact;const exactPrint=PRINT_BY_ID[id];if(exactPrint)return CARD_BY_ID[exactPrint.gameplayId]||CARD_BY_ID[normId(exactPrint.gameplayId)]||null;}const key=normId(id),print=PRINT_BY_ID[key],pocket=CARD_BY_ID[print?normId(print.gameplayId):key]; return pocket || classic?.cardById?.(id) || null; }
   function gameplayIdForOwned(owned){
     if (!owned || String(owned.source || '').toLowerCase() !== 'tcgp') return null;
     const exact=cardById(owned.id);
@@ -162,6 +163,7 @@
     PRINTS,
     SETS:generated.sets,
     COVERAGE,
+    CLASSIC:classic||null,
     BEGINNER_IVYSAUR_DECK,
     cardById,
     typesOf,hasType,

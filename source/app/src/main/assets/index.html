@@ -75,7 +75,7 @@
     </div>
     <div class="title-partner-row" id="titlePartners"></div>
     <button id="titleContinueBtn" class="title-start">PRESS TO START</button>
-    <div class="title-footer"><span id="titleRankText">TRAINER RANK 1</span><span>v0.69.64</span></div>
+    <div class="title-footer"><span id="titleRankText">TRAINER RANK 1</span><span>v0.69.65</span></div>
   </div>
 
   <div id="starterPanel" class="starter-screen" hidden>
@@ -92,7 +92,7 @@
   <div id="app" class="app-shell">
     <header class="topbar">
       <div class="brand-block">
-        <div class="eyebrow">LUCKY DEX · v0.69.64</div>
+        <div class="eyebrow">LUCKY DEX · v0.69.65</div>
         <h1>Lucky Dex</h1>
       </div>
       <div class="top-resources">
@@ -1043,7 +1043,7 @@
             </div>
           </div>
           <button class="promo-vault-entry" id="promoVaultBtn" type="button" hidden><span><small>PROMOS</small><b>Promo Vault</b><em id="promoVaultCount">Promo series sync with the physical catalogue</em></span><i>›</i></button>
-          <button class="tcgp-battle-entry" id="tcgpBattleEntry" type="button"><span><small>TCG POCKET</small><b>TCG Battle Lab</b><em>Build with cards you pulled and take on Solo Battle decks.</em></span><i>›</i></button>
+          <button class="tcgp-battle-entry" id="tcgpBattleEntry" type="button"><span><small>CARD BATTLES</small><b>Battle Lab</b><em>Build Pocket or Classic TCG decks from your collection and battle the CPU.</em></span><i>›</i></button>
         </div>
         <div id="tcgpBattleView" class="tcgp-battle-view screen-view" hidden>
           <div class="tcgp-battle-topbar">
@@ -1055,12 +1055,12 @@
           <div id="tcgpBattleHelp" class="tcgp-battle-help" role="dialog" aria-modal="true" aria-labelledby="tcgpBattleHelpTitle" hidden>
             <div class="tcgp-battle-help-card">
               <button id="tcgpBattleHelpClose" class="tcgp-battle-help-close" type="button" aria-label="Close instructions">×</button>
-              <div class="eyebrow">HOW TO PLAY</div><h2 id="tcgpBattleHelpTitle">TCG Pocket Battle</h2>
-              <section><b>Goal</b><p>Score 3 points before the CPU. Knocking Out a normal Pokémon scores 1 point; higher-value cards will score their Pocket value as support expands.</p></section>
-              <section><b>Controls</b><p>Set up your own board by dragging a Basic Pokémon from your opening hand into the Active spot, then optionally onto the Bench. During battle, drag any playable card from your hand into the centre to use it. You can also drag Basics to the next empty Bench slot and Evolutions directly onto the Pokémon they evolve from. Use attacks and retreat on your Active Pokémon, drag Energy from the bottom-right Energy Zone onto a Pokémon, and tap either discard pile to inspect it.</p></section>
-              <section><b>Important rules</b><p>Decks contain 20 cards with at most 2 copies of a gameplay card. Your Bench holds up to 3 Pokémon. The first player gets no Energy on turn 1. Weakness adds 20 damage. Solo battles end at turn 50.</p></section>
-              <section><b>Current slice</b><p>Opening setup is now manual: choose your Active Pokémon and any starting Bench before pressing READY. Battle-enabled cards are expanding from Genetic Apex as the reusable effect engine grows; unsupported cards remain collectible and are never simulated incorrectly.</p></section>
-              <section><b>Tip</b><p>Your Bench starts empty, so only place the Basics you actually want in play. The centre is the universal play zone for hand cards; direct board drops are still available when you want precise placement. Drag Energy onto the Pokémon you want to prepare, and remember you can inspect either discard pile at any time.</p></section>
+              <div class="eyebrow">HOW TO PLAY</div><h2 id="tcgpBattleHelpTitle">Battle Lab</h2>
+              <section><b>Choose a format</b><p>TCG Pocket uses your Pocket collection and Solo Battle decks. Classic TCG uses physical Base Set cards you own and the original card effects adapted to LuckyDex's 30-card format.</p></section>
+              <section><b>Goal</b><p>Pocket: score 3 points before the CPU. Classic: take all 5 Prize cards before the CPU, or win when your opponent has no Pokémon left in play.</p></section>
+              <section><b>Controls</b><p>Set up your board by dragging a Basic Pokémon from your opening hand into the Active spot, then optionally onto the Bench. During battle, drag playable cards from your hand onto the centre or their target. Tap a Pokémon to use attacks, abilities or retreat, and drag Energy from the Energy Zone onto the Pokémon you want to prepare.</p></section>
+              <section><b>Important rules</b><p>Pocket decks contain 20 cards with at most 2 copies of a gameplay card; the first player gets no Energy on turn 1. Classic decks contain 30 cards with at most 4 copies of a card, use a 7-card opening hand and 5 Prize cards, and the first player can generate Energy on turn 1. Basic Energy comes from the separate Energy Zone; special Energy remains in the deck.</p></section>
+              <section><b>Tip</b><p>Your Bench starts empty in both formats. Direct board drops are available for precise placement, and you can inspect either discard pile during a match.</p></section>
               <button id="tcgpBattleHelpDone" class="primary tcgp-battle-action" type="button">GOT IT</button>
             </div>
           </div>

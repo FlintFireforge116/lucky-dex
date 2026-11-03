@@ -152,7 +152,8 @@
   function battleRules(format){return RULE_PROFILES[String(format||'pocket').toLowerCase()]||RULE_PROFILES.pocket;}
   function createSide(side, ids, energyType, energyTypes, rules){
     const types=energyTypes==null?(energyType?[energyType]:decks.analyzeDeck(ids).recommendedEnergyTypes):energyTypes;
-    if(!Array.isArray(types)||types.length<1||types.length>3||new Set(types).size!==types.length||types.some(t=>!Object.values(effects.ENERGY_CODE).includes(t)))throw new Error('Energy Zone requires one to three distinct valid Energy types.');
+    const maxEnergyTypes=rules?.id==='classic'?6:3;
+    if(!Array.isArray(types)||types.length<1||types.length>maxEnergyTypes||new Set(types).size!==types.length||types.some(t=>!Object.values(effects.ENERGY_CODE).includes(t)))throw new Error(`Energy Zone requires one to ${maxEnergyTypes} distinct valid Energy types.`);
     return {
       id:side,
       deck:makeDeck(side,ids), hand:[], discard:[], energyDiscard:{}, active:null, bench:[], points:0,

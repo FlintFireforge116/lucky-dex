@@ -653,3 +653,34 @@ body.tcgp-card-dragging .tcgp-live-mat-half .tcgp-live-card-wrap[data-card-drop-
   .tcgp-live-player-active{width:16%!important}
   .tcgp-live-player-bench{width:50%!important;gap:5px!important}
 }
+
+/* v0.69.65 Classic TCG access: format switch and Base Set deck builder. */
+.tcgp-battle-format-switch{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:0 0 12px}
+.tcgp-battle-format-switch .tcgp-battle-action{min-height:38px}
+.format-classic .tcgp-battle-hero p{margin:.35rem 0 0;max-width:48rem}
+.tcg-classic-builder-tools{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:10px;align-items:end}
+.tcg-classic-builder-tools label{display:grid;gap:5px;font-size:10px;font-weight:800;letter-spacing:.08em}
+.tcg-classic-builder-tools input{width:100%;min-height:38px;border:1px solid var(--border,#d9e0e3);border-radius:10px;padding:8px 10px;background:var(--surface,#fff);color:inherit;font:inherit;letter-spacing:0}
+.tcg-classic-builder-tools .tcgp-battle-note{grid-column:1/-1;margin:0}
+.tcg-classic-builder-tools .tcgp-battle-note.ready{font-weight:800}
+.tcg-classic-card-list{display:grid;gap:8px;margin-top:10px}
+.tcg-classic-card-row{display:grid;grid-template-columns:58px minmax(0,1fr) auto;gap:10px;align-items:center;padding:8px;border:1px solid var(--border,#d9e0e3);border-radius:12px;background:var(--surface,#fff)}
+.tcg-classic-card-art{width:58px;aspect-ratio:2.5/3.5;border:0;border-radius:6px;padding:0;overflow:hidden;background:rgba(0,0,0,.06);cursor:pointer}
+.tcg-classic-card-art img{display:block;width:100%;height:100%;object-fit:cover}
+.tcg-classic-card-art span{display:grid;place-items:center;width:100%;height:100%;padding:4px;font-size:8px}
+.tcg-classic-card-copy{display:grid;gap:2px;min-width:0}
+.tcg-classic-card-copy small,.tcg-classic-card-copy span{font-size:9px;opacity:.72}
+.tcg-classic-card-copy b{font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tcg-classic-card-stepper{display:grid;grid-template-columns:32px 24px 32px;align-items:center;text-align:center}
+.tcg-classic-card-stepper button{width:32px;height:32px;border-radius:9px;border:1px solid var(--border,#d9e0e3);background:var(--surface,#fff);font-size:20px;line-height:1}
+.tcg-classic-card-stepper button:disabled{opacity:.32}
+.tcg-classic-card-stepper b{font-size:13px}
+.tcgp-live-arena.format-classic .tcgp-live-score{font-size:8px;letter-spacing:.02em}
+@media(max-width:520px){
+  .tcg-classic-builder-tools{grid-template-columns:1fr}
+  .tcg-classic-builder-tools .tcgp-battle-note{grid-column:auto}
+  .tcg-classic-card-row{grid-template-columns:52px minmax(0,1fr) auto;gap:7px}
+  .tcg-classic-card-art{width:52px}
+  .tcg-classic-card-stepper{grid-template-columns:30px 20px 30px}
+  .tcg-classic-card-stepper button{width:30px;height:30px}
+}
