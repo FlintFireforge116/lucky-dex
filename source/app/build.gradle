@@ -8,7 +8,7 @@ android {
         applicationId 'com.example.luckydex'
         minSdk 26
         targetSdk 35
-        versionCode 7043
+        versionCode 7044
         versionName '0.69.62'
     }
 

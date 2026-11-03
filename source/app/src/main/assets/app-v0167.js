@@ -124,6 +124,7 @@ const defaultState = {
   daily:{date:'',tasks:[],progress:{},claimed:false},
   adventureV2:{schema:1,destinations:{},activeRoam:null,activeExpedition:null,lastDestination:'meadow'},
   tcgpBattle:{schema:1,helpSeen:false,decks:[],activeDeckId:null,firstClears:{},stats:{matches:0,wins:0,losses:0,draws:0,bestWinTurns:null,totalTurns:0}},
+  tcgClassicBattle:{schema:1,helpSeen:false,activeDeck:null,stats:{matches:0,wins:0,losses:0,draws:0,totalTurns:0}},
   ui:{packBrowser:{sortKey:'releaseDate',sortDir:'desc'},packMetrics:{},dustExchange:{keepCopies:3}}
 };
 
@@ -167,6 +168,7 @@ function loadState(){
       claimedMilestones:{dex:[...(raw.claimedMilestones?.dex||[])],cards:[...(raw.claimedMilestones?.cards||[])]},
       arcade:{...base.arcade,...(raw.arcade||{}),dailyRewards:{...base.arcade.dailyRewards,...(raw.arcade?.dailyRewards||{})},bestBerryPicker:{...base.arcade.bestBerryPicker,...(raw.arcade?.bestBerryPicker||{})},bestHeadIt:{...base.arcade.bestHeadIt,...(raw.arcade?.bestHeadIt||{})},bestTilePuzzle:{...base.arcade.bestTilePuzzle,...(raw.arcade?.bestTilePuzzle||{})},museum:{...(raw.arcade?.museum||{}),exhibits:{...((raw.arcade?.museum?.exhibits&&typeof raw.arcade.museum.exhibits==='object')?raw.arcade.museum.exhibits:{})}},dash:{...base.arcade.dash,...(raw.arcade?.dash||{})}},daily:{...base.daily,...(raw.daily||{})},
       tcgpBattle:{...base.tcgpBattle,...(raw.tcgpBattle||{}),decks:[...(raw.tcgpBattle?.decks||[])],firstClears:{...(raw.tcgpBattle?.firstClears||{})},stats:{...base.tcgpBattle.stats,...(raw.tcgpBattle?.stats||{})}},
+      tcgClassicBattle:{...base.tcgClassicBattle,...(raw.tcgClassicBattle||{}),activeDeck:raw.tcgClassicBattle?.activeDeck?{...raw.tcgClassicBattle.activeDeck,cards:[...(raw.tcgClassicBattle.activeDeck.cards||[])],energyTypes:[...(raw.tcgClassicBattle.activeDeck.energyTypes||[])]}:null,stats:{...base.tcgClassicBattle.stats,...(raw.tcgClassicBattle?.stats||{})}},
       ui:{...base.ui,...(raw.ui||{}),packBrowser:{...base.ui.packBrowser,...(raw.ui?.packBrowser||{})},packMetrics:{...(raw.ui?.packMetrics||{})},dustExchange:{...base.ui.dustExchange,...(raw.ui?.dustExchange||{})}}
     };
     // v0.69.14 economy audit: the old Golden Ball vanilla rate was too common for a 10× stake bonus.
@@ -1974,7 +1976,7 @@ renderCollection=function(){const grid=document.getElementById('collectionGrid')
    before the app could finish wiring. That single runtime exception explained
    the frozen starter, Wild Search/Expedition stalls and permanent Loading sets.
 */
-window.__LUCKYDEX_BUILD='0.69.62';
+window.__LUCKYDEX_BUILD='0.69.64';
 window.addEventListener('error',event=>{
   try{localStorage.setItem('luckyDexLastRuntimeError',JSON.stringify({build:window.__LUCKYDEX_BUILD,message:String(event?.message||'Unknown error'),source:String(event?.filename||''),line:Number(event?.lineno||0),at:Date.now()}));}catch(_){ }
 });
