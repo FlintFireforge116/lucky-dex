@@ -698,3 +698,36 @@ body.tcgp-card-dragging .tcgp-live-mat-half .tcgp-live-card-wrap[data-card-drop-
 .tcgp-live-score.tcgp-classic-score{display:flex;flex-direction:column;align-items:flex-start;justify-content:center;gap:0;min-width:0}
 .tcgp-classic-score-numbers{display:flex;align-items:center;gap:7px}
 .tcgp-live-score .tcgp-classic-score-label{display:block;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:8px;font-weight:800;letter-spacing:.015em;color:#49718c}
+
+/* v0.69.73 Classic mobile readability. Keep Pocket board geometry unchanged.
+   The active/bench regions stay within the existing 2:1 playmat footprint. */
+.tcgp-live-arena.format-classic .tcgp-live-player-active{width:19%!important;top:0!important}
+.tcgp-live-arena.format-classic .tcgp-live-player-bench{width:55%!important;bottom:0!important;gap:5px!important}
+.tcgp-live-arena.format-classic .tcgp-live-opponent-active{width:16%!important}
+.tcgp-live-arena.format-classic .tcgp-live-opponent-bench{width:48%!important;gap:6px!important}
+.tcgp-live-arena.format-classic .tcgp-live-player .tcgp-live-card{border-radius:6px!important}
+/* Tight, non-interactive Energy labels: the artwork remains the tap target. */
+.tcgp-live-arena.format-classic .tcgp-live-attached-energy{
+  max-width:calc(100% - 4px);left:2px!important;bottom:2px!important;
+  display:flex;flex-wrap:nowrap;gap:2px;padding:1px 2px;
+  border-radius:5px;background:#f8fff4e8;overflow:hidden;pointer-events:none;
+}
+.tcgp-live-arena.format-classic .tcgp-live-attached-energy>.tcgp-energy-icon{
+  width:11px!important;height:11px!important;min-width:11px!important;flex:0 0 11px!important;
+}
+.tcgp-live-arena.format-classic .tcgp-live-special-energy{
+  display:inline-flex;flex:0 0 auto;align-items:center;gap:1px;
+  max-width:none;padding:0 1px;border-radius:3px;
+  font-size:6px;line-height:1.1;white-space:nowrap;
+}
+.tcgp-live-arena.format-classic .tcgp-live-special-energy>b{margin:0;font-size:6px;line-height:1}
+.tcgp-live-arena.format-classic .tcgp-live-special-energy .tcgp-energy-icon{
+  width:10px!important;height:10px!important;min-width:10px!important;flex:0 0 10px!important;
+}
+.tcgp-live-special-energy-count{font-size:7px;font-weight:900;line-height:1;white-space:nowrap}
+.tcgp-live-bench-note{margin:9px 0;padding:11px 12px;border:1px solid #47758f;border-radius:10px;background:#23435b;color:#e2f4ff;font-size:12px;line-height:1.4}
+.tcgp-live-bench-note b{display:block;margin-bottom:3px;color:#ffe18b;font-size:13px}
+.tcgp-live-bench-moves{display:grid;gap:6px;padding:5px 0 0}
+.tcgp-live-bench-moves>small{font-size:10px;font-weight:900;letter-spacing:.06em;color:#9fd7f7}
+.tcgp-live-bench-move{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:7px 10px;border:1px solid #46677d;border-radius:10px;background:#1b344a;color:#eef8fc;font-size:13px}
+.tcgp-live-bench-move .tcgp-cost .tcgp-energy-icon{width:17px;height:17px;min-height:0}

@@ -478,7 +478,10 @@
   function pokemonInteractionAttrs(side,zone,index,slot){
     if(side!=='player'||!slot)return inspectAttrs(side,zone,index);
     const indices=pokemonActionIndices(side,zone,index),activeAttackSurface=currentBattle?.phase==='battle'&&currentBattle?.activeSide==='player'&&zone==='active'&&!cpuPending;
-    if(!indices.length&&!activeAttackSurface)return inspectAttrs(side,zone,index);
+    // A tapped Benched Pokemon should explain why its attacks cannot be used,
+    // not silently open a read-only inspector that looks like a broken attack menu.
+    const benchActionView=currentBattle?.phase==='battle'&&currentBattle?.activeSide==='player'&&zone==='bench'&&!cpuPending;
+    if(!indices.length&&!activeAttackSurface&&!benchActionView)return inspectAttrs(side,zone,index);
     return `data-tcgp-action="open-pokemon-actions" data-side="${esc(side)}" data-zone="${esc(zone)}" data-index="${Number(index||0)}"`;
   }
   function cardDropAttrs(side,zone,index){
@@ -518,6 +521,11 @@
     }
     return parts.length?`<div class="tcgp-live-card-actions">${parts.join('')}</div>`:'';
   }
+  function liveBenchReadOnlyMovesHtml(card){
+    if(!card?.attacks?.length)return '<p class="tcgp-live-bench-note">This Benched Pokémon has no attacks.</p>';
+    const attacks=card.attacks.map(attack=>`<div class="tcgp-live-bench-move"><b>${esc(attack.name||'Attack')}</b>${energyCostHtml(attack.cost)}</div>`).join('');
+    return `<div class="tcgp-live-bench-note" role="note"><b>Benched Pokémon cannot attack.</b> Use Switch or retreat your Active Pokémon to bring this Pokémon Active. Once Active, its moves will be selectable if the required Energy is attached.</div><div class="tcgp-live-bench-moves"><small>ATTACKS · ACTIVE ONLY</small>${attacks}</div>`;
+  }
   function liveAttachedEnergyHtml(info){
     if(!info)return'';
     const entries=Object.entries(info.energyPool||{}).filter(([,n])=>n>0);
@@ -527,7 +535,9 @@
       const units=Object.entries(provides).filter(([,n])=>Number(n)>0);
       const name=card?.name||'Special Energy',short=name==='Double Colorless Energy'?'DCE':name.replace(/ Energy$/,'');
       const benefit=units.map(([type,n])=>`${n} ${type}`).join(' + ')||'special';
-      return `<span class="tcgp-live-special-energy" title="${esc(`${name} · provides ${benefit} Energy`)}" aria-label="${esc(`${name} provides ${benefit} Energy`)}"><b>${esc(short)}</b>${units.map(([type,n])=>energyIconHtml(type,{className:'attached',count:n,title:`${n} ${type} Energy`})).join('')}</span>`;
+      // Show just one small type symbol and a number: a full-size Energy
+      // icon + its count badge hid most of the artwork on compact cards.
+      return `<span class="tcgp-live-special-energy" title="${esc(`${name} · provides ${benefit} Energy`)}" aria-label="${esc(`${name} provides ${benefit} Energy`)}"><b>${esc(short)}</b>${units.map(([type,n])=>`${energyIconHtml(type,{className:'attached',title:`${n} ${type} Energy`})}<span class="tcgp-live-special-energy-count">×${Number(n)}</span>`).join('')}</span>`;
     });
     if(!entries.length&&!specials.length)return'';
     const label=[...entries.map(([type,n])=>`${n} ${type}`),...specialRefs.map(ref=>`${data.cardById(ref.cardId)?.name||'Special Energy'}`)].join(' + ');
@@ -629,7 +639,8 @@
     if(battleOverlay!=='pokemon-actions'||!battlePokemonActionSpec)return'';
     const spec=battlePokemonActionSpec,info=resolveInspect(currentBattle,spec);if(!info?.slot||!info?.card)return'';
     const actions=livePokemonActionsHtml('player',info.zone,spec.index),zoneLabel=info.zone==='active'?'ACTIVE POKÉMON':`BENCH ${Number(spec.index||0)+1}`;
-    return `<div class="tcgp-live-overlay"><button class="tcgp-live-overlay-scrim" type="button" data-tcgp-action="close-overlay" aria-label="Close Pokémon actions"></button><section class="tcgp-live-sheet tcgp-live-pokemon-action-sheet"><div class="tcgp-live-sheet-head"><div><small>${esc(zoneLabel)}</small><h3>${esc(info.card.name||info.slot.cardId)}</h3></div><button class="tcgp-live-sheet-close" type="button" data-tcgp-action="close-overlay">×</button></div><div class="tcgp-live-pokemon-actions">${actions||'<p class="tcgp-battle-note">No battle action is available right now.</p>'}</div><button type="button" class="tcgp-battle-action secondary tcgp-live-card-info-action" data-tcgp-action="inspect-pokemon-from-actions" data-side="player" data-zone="${esc(info.zone)}" data-index="${Number(spec.index||0)}">CARD INFO</button></section></div>`;
+    const benchNote=info.zone==='bench'&&currentBattle?.phase==='battle'?liveBenchReadOnlyMovesHtml(info.card):'';
+    return `<div class="tcgp-live-overlay"><button class="tcgp-live-overlay-scrim" type="button" data-tcgp-action="close-overlay" aria-label="Close Pokémon actions"></button><section class="tcgp-live-sheet tcgp-live-pokemon-action-sheet"><div class="tcgp-live-sheet-head"><div><small>${esc(zoneLabel)}</small><h3>${esc(info.card.name||info.slot.cardId)}</h3></div><button class="tcgp-live-sheet-close" type="button" data-tcgp-action="close-overlay">×</button></div>${benchNote}<div class="tcgp-live-pokemon-actions">${actions||(benchNote?'':'<p class="tcgp-battle-note">No battle action is available right now.</p>')}</div><button type="button" class="tcgp-battle-action secondary tcgp-live-card-info-action" data-tcgp-action="inspect-pokemon-from-actions" data-side="player" data-zone="${esc(info.zone)}" data-index="${Number(spec.index||0)}">CARD INFO</button></section></div>`;
   }
   function liveDiscardOverlayHtml(){
     if(battleOverlay!=='discard')return'';
@@ -983,5 +994,5 @@
   }
   if(root&&root.document){if(root.document.readyState==='loading')root.document.addEventListener('DOMContentLoaded',init,{once:true});else init();}
 
-  return{actionLabel,actionEventText,cardArtUrl,cardRulesHtml,supportText,filterBuilderRows,resultSummary,coverageForOwnedCards,centerHandActionIndices,directHandDropActionIndex,open,close,renderHome,requestLeave,isEditing:()=>screen==='builder',_test:{slotTools,buildInspectSpec,resolveInspect,attachedToolLinksHtml,liveToolMiniCardsHtml,liveCardHtml,attackPresentationMeta,coinSequence,battleSummaryStats,capturePresentationAnchors,targetKeyForAction,benchDamagePresentationEntry,stadiumSlotModel,resultActionsModel,playmatArtPath,energyCostHtml,liveAttachedEnergyHtml,liveEnergySourceHtml,pokemonActionIndices,pokemonInteractionAttrs}};
+  return{actionLabel,actionEventText,cardArtUrl,cardRulesHtml,supportText,filterBuilderRows,resultSummary,coverageForOwnedCards,centerHandActionIndices,directHandDropActionIndex,open,close,renderHome,requestLeave,isEditing:()=>screen==='builder',_test:{slotTools,buildInspectSpec,resolveInspect,attachedToolLinksHtml,liveToolMiniCardsHtml,liveCardHtml,attackPresentationMeta,coinSequence,battleSummaryStats,capturePresentationAnchors,targetKeyForAction,benchDamagePresentationEntry,stadiumSlotModel,resultActionsModel,playmatArtPath,energyCostHtml,liveAttachedEnergyHtml,liveEnergySourceHtml,liveBenchReadOnlyMovesHtml,pokemonActionIndices,pokemonInteractionAttrs}};
 });
