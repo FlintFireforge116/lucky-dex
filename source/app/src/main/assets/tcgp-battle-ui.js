@@ -33,7 +33,7 @@
   let cancelGesture=null;
   let screen='home',battleFormat='pocket',currentPlayerEnergyTypes=[],classicDraft=null,classicSearch='',currentClassicOpponent=null;
   const recentClassicOpponentTypes=[];
-  const CLASSIC_SETS=['base1','base2','base3'];
+  const CLASSIC_SETS=['base1','base2','base3','base5'];
   const CLASSIC_TYPES=['random',...classicOpponents.TYPES];
   function classicOpponentConfig(){
     const cfg=root?.state?.tcgClassicBattle||{};
@@ -42,7 +42,7 @@
   }
   function classicOpponentPickerHtml(){
     const cfg=classicOpponentConfig();
-    const pools=CLASSIC_SETS.map(id=>`<button type="button" data-tcgp-action="classic-opponent-set" data-id="${id}" aria-pressed="${cfg.sets.includes(id)}">${id==='base1'?'Base Set':id==='base2'?'Jungle':'Fossil'}</button>`).join('');
+    const pools=CLASSIC_SETS.map(id=>`<button type="button" data-tcgp-action="classic-opponent-set" data-id="${id}" aria-pressed="${cfg.sets.includes(id)}">${id==='base1'?'Base Set':id==='base2'?'Jungle':id==='base3'?'Fossil':'Team Rocket'}</button>`).join('');
     const types=CLASSIC_TYPES.map(t=>`<button type="button" data-tcgp-action="classic-opponent-type" data-id="${t}" aria-pressed="${cfg.type===t}">${t==='random'?'🎲 Random':t}</button>`).join('');
     return `<section class="tcgp-classic-match-settings" aria-label="Random opponent settings"><h3>Random opponent decks</h3><p>Choose which sets the CPU can build from and its Pokémon archetype. Select multiple sets for mixed decks.</p><div class="tcgp-classic-choice-label">Allowed sets</div><div class="tcgp-classic-match-chips">${pools}</div><div class="tcgp-classic-choice-label">Opponent archetype</div><div class="tcgp-classic-match-chips">${types}</div></section>`;
   }
@@ -246,7 +246,7 @@
     node.innerHTML=energyIconHtml(entry?.energyType||'Colorless',{className:'presentation'});node.dataset.energy=entry?.energyType||'Colorless';node.style.left=(from.cx-18)+'px';node.style.top=(from.cy-18)+'px';node.style.setProperty('--tcgp-present-tx',(to.cx-from.cx)+'px');node.style.setProperty('--tcgp-present-ty',(to.cy-from.cy)+'px');return node;
   }
   function spawnCoinRow(stage,entry){
-    const results=coinSequence(entry),shown=results.slice(0,20),row=appendPresentationNode(stage,'tcgp-present-coins');if(!row)return 0;
+    const results=coinSequence(entry),shown=results.slice(0,20),row=appendPresentationNode(stage,`tcgp-present-coins ${entry?.side==='opponent'?'is-opponent':'is-player'}`);if(!row)return 0;
     shown.forEach((heads,index)=>{const coin=appendPresentationNode(row,`tcgp-present-coin ${heads?'heads':'tails'}`);coin.textContent=heads?'H':'T';coin.style.setProperty('--tcgp-coin-delay',(index*70)+'ms');});
     if(results.length>shown.length){const more=appendPresentationNode(row,'tcgp-present-coin-more');more.textContent=`+${results.length-shown.length}`;}
     const heads=results.filter(Boolean).length,tails=results.length-heads,label=appendPresentationNode(row,'tcgp-present-coin-label');label.textContent=results.length===1?(results[0]?'HEADS':'TAILS'):`${heads} HEADS · ${tails} TAILS`;
