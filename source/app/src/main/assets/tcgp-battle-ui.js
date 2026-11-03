@@ -33,6 +33,19 @@
   let cancelGesture=null;
   let screen='home',battleFormat='pocket',currentPlayerEnergyTypes=[],classicDraft=null,classicSearch='',currentClassicOpponent=null;
   const recentClassicOpponentTypes=[];
+  const CLASSIC_SETS=['base1','base2'];
+  const CLASSIC_TYPES=['random',...classicOpponents.TYPES];
+  function classicOpponentConfig(){
+    const cfg=root?.state?.tcgClassicBattle||{};
+    const sets=Array.isArray(cfg.opponentSets)?CLASSIC_SETS.filter(s=>cfg.opponentSets.includes(s)):CLASSIC_SETS.slice();
+    return {sets:sets.length?sets:CLASSIC_SETS.slice(),type:CLASSIC_TYPES.includes(cfg.opponentType)?cfg.opponentType:'random'};
+  }
+  function classicOpponentPickerHtml(){
+    const cfg=classicOpponentConfig();
+    const pools=CLASSIC_SETS.map(id=>`<button type="button" data-tcgp-action="classic-opponent-set" data-id="${id}" aria-pressed="${cfg.sets.includes(id)}">${id==='base1'?'Base Set':'Jungle'}</button>`).join('');
+    const types=CLASSIC_TYPES.map(t=>`<button type="button" data-tcgp-action="classic-opponent-type" data-id="${t}" aria-pressed="${cfg.type===t}">${t==='random'?'🎲 Random':t}</button>`).join('');
+    return `<section class="tcgp-classic-match-settings" aria-label="Random opponent settings"><h3>Random opponent decks</h3><p>Choose which sets the CPU can build from and its Pokémon archetype. Select both sets for mixed decks.</p><div class="tcgp-classic-choice-label">Allowed sets</div><div class="tcgp-classic-match-chips">${pools}</div><div class="tcgp-classic-choice-label">Opponent archetype</div><div class="tcgp-classic-match-chips">${types}</div></section>`;
+  }
   let currentBattle=null,currentChallenge=null,currentPractice=false,currentClassic=false,currentPlayerDeck=null,resultInfo=null,cpuPending=false,cpuTimer=null,cpuActions=0,battleActionCache=[],battleInspect=null,battleOverlay=null,battleContextActionIndices=[],battlePokemonActionSpec=null,battleDiscardSide='player',handDragSuppressUntil=0,battleEvent='',battlePresentationBusy=false,battlePresentationTimers=[],battlePresentationDone=null,battlePresentationSerial=0;
 
   const esc=value=>String(value==null?'':value).replace(/[&<>"']/g,ch=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));
@@ -314,7 +327,7 @@
   function classicSavedDeck(){const state=classicState();return state.decks.find(item=>item?.id===state.activeDeckId)||state.decks[0]||null;}
   function renderClassicHome(){
     const state=classicState(),stats=state.stats,rows=classicOwnedRows().filter(row=>row.card?.deckEligible!==false),saved=classicSavedDeck(),ready=saved?classicDecks.readiness(saved,classicOwnedRows()):null,deck=ready?.ok?saved:null,totalCopies=rows.reduce((n,row)=>n+Math.min(4,Number(row.quantity||0)),0);
-    setContent(`<div class="format-classic">${formatSwitchHtml()}<section class="tcgp-battle-hero tcgp-battle-hero-compact"><div><div class="eyebrow">BASE SET · 1999</div><h2>Classic TCG Battle</h2><p>Build a 30-card Base Set deck and face a different random CPU Energy type each match. Basic Energy comes from the Energy Zone; Double Colorless remains a deck card.</p></div><div class="tcgp-battle-stat-grid"><div class="tcgp-battle-stat"><small>MATCHES</small><b>${Number(stats.matches||0)}</b></div><div class="tcgp-battle-stat"><small>WINS</small><b>${Number(stats.wins||0)}</b></div><div class="tcgp-battle-stat"><small>OWNED</small><b>${totalCopies}</b></div></div></section><section class="tcgp-battle-challenge tcgp-battle-ready-card"><div class="tcgp-battle-challenge-head"><div><div class="eyebrow">YOUR CLASSIC DECK</div><h3>${saved?esc(saved.name):'No Base Set deck saved'}</h3></div><span class="tcgp-battle-difficulty">${saved?`${saved.cards.length}/30`:'30 CARDS'}</span></div><p>${deck?'Battle-ready.':saved?(ready?.errors?.[0]||'Finish the deck to battle.'):'Use cards pulled from physical Base Set packs.'}</p><div class="tcgp-battle-actions-row tcgp-battle-start-actions"><button class="tcgp-battle-action" data-tcgp-action="classic-build">${saved?'EDIT CLASSIC DECK':'BUILD CLASSIC DECK'}</button><button class="tcgp-battle-action secondary" data-tcgp-action="classic-quick">AUTO BUILD</button><button class="tcgp-battle-action ${deck?'':'secondary'}" data-tcgp-action="classic-battle" ${deck?'':'disabled'}>${deck?'BATTLE RANDOM TYPE':'DECK NOT READY'}</button><button class="tcgp-battle-action secondary" data-tcgp-action="classic-practice">PRACTICE WITH LOANER</button></div></section><details class="tcgp-battle-panel" open><summary>Classic rules in LuckyDex</summary><p>30 deck cards · maximum 4 copies of a card · 7-card opening hand · 5 Prize cards · first player can generate Energy on turn one.</p><p>The Base Set has 102 cards. The six Basic Energy cards are supplied by the Energy Zone and therefore do not occupy deck slots.</p></details></div>`);
+    setContent(`<div class="format-classic">${formatSwitchHtml()}<section class="tcgp-battle-hero tcgp-battle-hero-compact"><div><div class="eyebrow">BASE SET + JUNGLE · 1999</div><h2>Classic TCG Battle</h2><p>Build a 30-card deck using Base Set and Jungle, then face a CPU deck from the sets and archetype you select. Basic Energy comes from the Energy Zone; Double Colorless remains a deck card.</p></div><div class="tcgp-battle-stat-grid"><div class="tcgp-battle-stat"><small>MATCHES</small><b>${Number(stats.matches||0)}</b></div><div class="tcgp-battle-stat"><small>WINS</small><b>${Number(stats.wins||0)}</b></div><div class="tcgp-battle-stat"><small>OWNED</small><b>${totalCopies}</b></div></div></section><section class="tcgp-battle-challenge tcgp-battle-ready-card"><div class="tcgp-battle-challenge-head"><div><div class="eyebrow">YOUR CLASSIC DECK</div><h3>${saved?esc(saved.name):'No Classic deck saved'}</h3></div><span class="tcgp-battle-difficulty">${saved?`${saved.cards.length}/30`:'30 CARDS'}</span></div><p>${deck?'Battle-ready.':saved?(ready?.errors?.[0]||'Finish the deck to battle.'):'Use cards pulled from your physical Base Set and Jungle packs.'}</p><div class="tcgp-battle-actions-row tcgp-battle-start-actions"><button class="tcgp-battle-action" data-tcgp-action="classic-build">${saved?'EDIT CLASSIC DECK':'BUILD CLASSIC DECK'}</button><button class="tcgp-battle-action secondary" data-tcgp-action="classic-quick">AUTO BUILD</button><button class="tcgp-battle-action ${deck?'':'secondary'}" data-tcgp-action="classic-battle" ${deck?'':'disabled'}>${deck?(classicOpponentConfig().type==='random'?'BATTLE RANDOM TYPE':'BATTLE '+classicOpponentConfig().type.toUpperCase()):'DECK NOT READY'}</button><button class="tcgp-battle-action secondary" data-tcgp-action="classic-practice">PRACTICE WITH LOANER</button></div></section>${classicOpponentPickerHtml()}<details class="tcgp-battle-panel" open><summary>Classic rules in LuckyDex</summary><p>30 deck cards · maximum 4 copies of a card · 7-card opening hand · 5 Prize cards · first player can generate Energy on turn one.</p><p>Base Set and Jungle are compatible. The six Basic Energy cards are supplied by the Energy Zone and therefore do not occupy deck slots.</p></details></div>`);
   }
   function renderClassicBuilder(){
     setBattleLive(false);setScreen('classic-builder');
@@ -466,6 +479,13 @@
     const hit=battleActionCache.find(action=>action.type==='attach'&&action.target===zone&&(zone!=='bench'||Number(action.benchIndex)===Number(index||0)));
     return hit?`data-energy-target="1" data-energy-zone="${esc(zone)}" data-energy-index="${Number(index||0)}"`:'';
   }
+  function benchSwitchActionIndices(actions,benchIndex){
+    return (actions||[]).map((action,i)=>({action,i})).filter(({action})=>
+      Number(action?.benchIndex)===Number(benchIndex)&&(
+        action.type==='retreat'||action.type==='promote'||
+        (action.type==='trainer'&&action.target==='bench'&&data.cardById(action.cardId)?.name==='Switch')
+      )).map(({i})=>i);
+  }
   function pokemonActionIndices(side,zone,index){
     if(side!=='player'||!currentBattle)return[];
     const benchIndex=Number(index||0);
@@ -481,6 +501,10 @@
     // A tapped Benched Pokemon should explain why its attacks cannot be used,
     // not silently open a read-only inspector that looks like a broken attack menu.
     const benchActionView=currentBattle?.phase==='battle'&&currentBattle?.activeSide==='player'&&zone==='bench'&&!cpuPending;
+    // Classic's compact board must let the user select *any* of their
+    // Pokémon, including a Benched Mewtwo without a currently legal attack.
+    if(currentBattle?.format==='classic'&&['bench','active'].includes(zone))
+      return `data-tcgp-action="open-pokemon-actions" data-side="${esc(side)}" data-zone="${esc(zone)}" data-index="${Number(index||0)}" aria-label="Select ${esc(cardName(slot.cardId))}, ${zone==='bench'?'Benched':'Active'} Pokémon"`;
     if(!indices.length&&!activeAttackSurface&&!benchActionView)return inspectAttrs(side,zone,index);
     return `data-tcgp-action="open-pokemon-actions" data-side="${esc(side)}" data-zone="${esc(zone)}" data-index="${Number(index||0)}"`;
   }
@@ -518,6 +542,13 @@
     }else if(zone==='bench'){
       const abilities=actionIndicesFor(action=>action.type==='ability'&&action.target==='bench'&&Number(action.benchIndex)===Number(index||0));
       if(abilities.length){const slot=core?.benchSlotAt?core.benchSlotAt(currentBattle?.sides?.player,index):currentBattle?.sides?.player?.bench?.[Number(index||0)],first=battleActionCache[abilities[0]],card=data.cardById(slot?.cardId),ability=cardAbilities(card)[Number(first?.abilityIndex||0)];parts.push(contextActionButton(abilities,ability?.name||'ABILITY','ability'));}
+      if(currentBattle?.format==='classic'){
+        for(const actionIndex of benchSwitchActionIndices(battleActionCache,index)){
+          const action=battleActionCache[actionIndex];
+          const label=action.type==='promote'?'PROMOTE TO ACTIVE':action.type==='retreat'?'RETREAT ACTIVE → HERE':'PLAY SWITCH → ACTIVE';
+          parts.push(`<button type="button" class="tcgp-live-context-action promote" data-tcgp-action="battle-action" data-action-index="${actionIndex}">${label}</button>`);
+        }
+      }
     }
     return parts.length?`<div class="tcgp-live-card-actions">${parts.join('')}</div>`:'';
   }
@@ -559,7 +590,7 @@
   }
   function liveBenchHtml(sideName,bench){
     const slots=[],sideState={bench:bench||[]};
-    for(let i=0;i<3;i++){const slot=core?.benchSlotAt?core.benchSlotAt(sideState,i):(bench?.[i]||null);slots.push(liveCardHtml(slot,{compact:true,side:sideName,zone:'bench',index:i}));}
+    for(let i=0;i<3;i++){const slot=core?.benchSlotAt?core.benchSlotAt(sideState,i):(bench?.[i]||null);slots.push(liveCardHtml(slot,{compact:true,side:sideName,zone:'bench',index:i,showActions:false}));}
     return slots.join('');
   }
   function liveOpponentHandHtml(side){
@@ -640,7 +671,7 @@
     const spec=battlePokemonActionSpec,info=resolveInspect(currentBattle,spec);if(!info?.slot||!info?.card)return'';
     const actions=livePokemonActionsHtml('player',info.zone,spec.index),zoneLabel=info.zone==='active'?'ACTIVE POKÉMON':`BENCH ${Number(spec.index||0)+1}`;
     const benchNote=info.zone==='bench'&&currentBattle?.phase==='battle'?liveBenchReadOnlyMovesHtml(info.card):'';
-    return `<div class="tcgp-live-overlay"><button class="tcgp-live-overlay-scrim" type="button" data-tcgp-action="close-overlay" aria-label="Close Pokémon actions"></button><section class="tcgp-live-sheet tcgp-live-pokemon-action-sheet"><div class="tcgp-live-sheet-head"><div><small>${esc(zoneLabel)}</small><h3>${esc(info.card.name||info.slot.cardId)}</h3></div><button class="tcgp-live-sheet-close" type="button" data-tcgp-action="close-overlay">×</button></div>${benchNote}<div class="tcgp-live-pokemon-actions">${actions||(benchNote?'':'<p class="tcgp-battle-note">No battle action is available right now.</p>')}</div><button type="button" class="tcgp-battle-action secondary tcgp-live-card-info-action" data-tcgp-action="inspect-pokemon-from-actions" data-side="player" data-zone="${esc(info.zone)}" data-index="${Number(spec.index||0)}">CARD INFO</button></section></div>`;
+    return `<div class="tcgp-live-overlay"><button class="tcgp-live-overlay-scrim" type="button" data-tcgp-action="close-overlay" aria-label="Close Pokémon actions"></button><section class="tcgp-live-sheet tcgp-live-pokemon-action-sheet"><div class="tcgp-live-sheet-head"><div><small>${esc(zoneLabel)}</small><h3>${esc(info.card.name||info.slot.cardId)}</h3></div><button class="tcgp-live-sheet-close" type="button" data-tcgp-action="close-overlay">×</button></div>${benchNote}${currentBattle?.phase==='battle'&&currentBattle.activeSide!=='player'?'<p class="tcgp-live-bench-note">It is the CPU turn. You can inspect this Pokémon now, and act on your next turn.</p>':''}<div class="tcgp-live-pokemon-actions">${actions||(benchNote?'':'<p class="tcgp-battle-note">No battle action is available right now.</p>')}</div><button type="button" class="tcgp-battle-action secondary tcgp-live-card-info-action" data-tcgp-action="inspect-pokemon-from-actions" data-side="player" data-zone="${esc(info.zone)}" data-index="${Number(spec.index||0)}">CARD INFO</button></section></div>`;
   }
   function liveDiscardOverlayHtml(){
     if(battleOverlay!=='discard')return'';
@@ -674,7 +705,7 @@
       return `<div class="tcgp-live-mid-controls promote"><span>KO</span><b>${mine?'CHOOSE NEW ACTIVE':'CPU CHOOSING ACTIVE'}</b><em>${mine?'Tap PROMOTE beneath the Bench Pokémon you want.':'Opponent must promote before play continues.'}</em></div>`;
     }
     const endIndex=battleActionCache.findIndex(action=>action.type==='endTurn');
-    return `<div class="tcgp-live-mid-controls"><span>TURN ${currentBattle?.turnNumber||1}/50</span><b>${esc(turnText)}</b><em>${esc(lastLog)}</em>${endIndex>=0?`<button type="button" class="tcgp-live-end-turn" data-tcgp-action="battle-action" data-action-index="${endIndex}">END TURN</button>`:''}</div>`;
+    return `<div class="tcgp-live-mid-controls"><span>TURN ${currentBattle?.turnNumber||1}/${currentBattle?.format==='classic'?100:50}</span><b>${esc(turnText)}</b><em>${esc(lastLog)}</em>${endIndex>=0?`<button type="button" class="tcgp-live-end-turn" data-tcgp-action="battle-action" data-action-index="${endIndex}">END TURN</button>`:''}</div>`;
   }
 
 
@@ -748,7 +779,8 @@
     const playerCards=Array.isArray(cards)?cards.slice():[];
     // Real Classic matches rotate through all six CPU Energy types. Practice
     // retains the original fixed loaner for predictable testing.
-    const opponent=practice?null:classicOpponents.generate({seed:((Date.now()>>>0)^((Math.random()*0x100000000)>>>0))>>>0,excludeTypes:recentClassicOpponentTypes});
+    const preferences=classicOpponentConfig();
+    const opponent=practice?null:classicOpponents.generate({seed:((Date.now()>>>0)^((Math.random()*0x100000000)>>>0))>>>0,excludeTypes:preferences.type==='random'?recentClassicOpponentTypes:[],sets:preferences.sets,includeColorless:true,type:preferences.type==='random'?null:preferences.type});
     if(!practice&&!opponent?.ok){toast(opponent?.error||'Could not generate a Classic opponent.');return renderClassicHome();}
     const opponentCards=practice?classicDecks.LOANER_DECK.slice():opponent.cards.slice();
     currentClassicOpponent=practice?{name:'Base Set loaner',type:'Fighting'}:opponent;
@@ -757,8 +789,8 @@
     currentPlayerEnergyTypes=classicDecks.analyzeDeck(playerCards).recommendedEnergyTypes;
     const opponentEnergyTypes=practice?classicDecks.analyzeDeck(opponentCards).recommendedEnergyTypes:opponent.energyTypes.slice();
     currentBattle=core.createBattle({format:'classic',playerDeck:playerCards,opponentDeck:opponentCards,seed:Date.now()>>>0,firstSide:Math.random()<.5?'player':'opponent',playerEnergyTypes:currentPlayerEnergyTypes,opponentEnergyTypes,manualPlayerSetup:true});
-    currentBattle.classicOpponent={name:currentClassicOpponent.name,type:currentClassicOpponent.type,archetypeKey:opponent?.archetypeKey||null};
-    if(!practice){recentClassicOpponentTypes.push(opponent.type);if(recentClassicOpponentTypes.length>=classicDecks.ENERGY_TYPES.length)recentClassicOpponentTypes.length=0;}
+    currentBattle.classicOpponent={name:currentClassicOpponent.name,type:currentClassicOpponent.type,sets:opponent?.sets||['base1'],archetypeKey:opponent?.archetypeKey||null};
+    if(!practice){recentClassicOpponentTypes.push(opponent.type);if(recentClassicOpponentTypes.length>=classicOpponents.TYPES.length)recentClassicOpponentTypes.length=0;}
     renderBattle();maybeCpu();
   }
   function cpuOwnsNextAction(){
@@ -824,6 +856,15 @@
     if(action==='explain-unavailable')return toast(btn.dataset.reason||'This action is currently unavailable.');
     if(action==='format-pocket'){battleFormat='pocket';classicDraft=null;return renderHome(true);}
     if(action==='format-classic'){battleFormat='classic';return renderHome(true);}
+    if(action==='classic-opponent-set'||action==='classic-opponent-type'){
+      const cfg=classicDecks.ensureState(root.state),current=classicOpponentConfig(),id=btn.dataset.id;
+      if(action==='classic-opponent-set'&&CLASSIC_SETS.includes(id)){
+        const selected=new Set(current.sets);if(selected.has(id)){if(selected.size===1){toast('At least one opponent set is required.');return;}selected.delete(id);}else selected.add(id);
+        cfg.opponentSets=CLASSIC_SETS.filter(s=>selected.has(s));
+      }else if(action==='classic-opponent-type'&&CLASSIC_TYPES.includes(id))cfg.opponentType=id;
+      else return;
+      recentClassicOpponentTypes.length=0;saveNow();return renderClassicHome();
+    }
     if(action==='classic-build')return openClassicBuilder();
     if(action==='classic-quick')return openClassicBuilder('quick');
     if(action==='classic-add'||action==='classic-remove'){
@@ -994,5 +1035,5 @@
   }
   if(root&&root.document){if(root.document.readyState==='loading')root.document.addEventListener('DOMContentLoaded',init,{once:true});else init();}
 
-  return{actionLabel,actionEventText,cardArtUrl,cardRulesHtml,supportText,filterBuilderRows,resultSummary,coverageForOwnedCards,centerHandActionIndices,directHandDropActionIndex,open,close,renderHome,requestLeave,isEditing:()=>screen==='builder',_test:{slotTools,buildInspectSpec,resolveInspect,attachedToolLinksHtml,liveToolMiniCardsHtml,liveCardHtml,attackPresentationMeta,coinSequence,battleSummaryStats,capturePresentationAnchors,targetKeyForAction,benchDamagePresentationEntry,stadiumSlotModel,resultActionsModel,playmatArtPath,energyCostHtml,liveAttachedEnergyHtml,liveEnergySourceHtml,liveBenchReadOnlyMovesHtml,pokemonActionIndices,pokemonInteractionAttrs}};
+  return{actionLabel,actionEventText,cardArtUrl,cardRulesHtml,supportText,filterBuilderRows,resultSummary,coverageForOwnedCards,centerHandActionIndices,directHandDropActionIndex,open,close,renderHome,requestLeave,isEditing:()=>screen==='builder',_test:{slotTools,buildInspectSpec,resolveInspect,attachedToolLinksHtml,liveToolMiniCardsHtml,liveCardHtml,attackPresentationMeta,coinSequence,battleSummaryStats,capturePresentationAnchors,targetKeyForAction,benchDamagePresentationEntry,stadiumSlotModel,resultActionsModel,playmatArtPath,energyCostHtml,liveAttachedEnergyHtml,liveEnergySourceHtml,liveBenchReadOnlyMovesHtml,pokemonActionIndices,pokemonInteractionAttrs,benchSwitchActionIndices,classicOpponentConfig,classicOpponentPickerHtml}};
 });

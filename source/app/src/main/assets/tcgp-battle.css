@@ -731,3 +731,19 @@ body.tcgp-card-dragging .tcgp-live-mat-half .tcgp-live-card-wrap[data-card-drop-
 .tcgp-live-bench-moves>small{font-size:10px;font-weight:900;letter-spacing:.06em;color:#9fd7f7}
 .tcgp-live-bench-move{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:7px 10px;border:1px solid #46677d;border-radius:10px;background:#1b344a;color:#eef8fc;font-size:13px}
 .tcgp-live-bench-move .tcgp-cost .tcgp-energy-icon{width:17px;height:17px;min-height:0}
+
+/* v0.69.75 Classic: reliable Pokémon hit surfaces and opponent pool controls. */
+.tcgp-classic-match-settings{margin:10px 0 14px;padding:13px 15px;border:1px solid #9ebbc9;border-radius:16px;background:#ecf4f7;color:#183849}
+.tcgp-classic-match-settings h3{font-size:15px;margin:0 0 5px;color:#17384d}
+.tcgp-classic-match-settings p{margin:0 0 10px;font-size:12px;line-height:1.35;color:#476272}
+.tcgp-classic-choice-label{margin:10px 0 5px;font-size:11px;font-weight:850;letter-spacing:.045em;text-transform:uppercase}
+.tcgp-classic-match-chips{display:flex;flex-wrap:wrap;gap:6px}
+.tcgp-classic-match-chips>button{min-height:36px;padding:6px 12px;border:1px solid #9ab8c6;border-radius:10px;background:#fff;color:#24475c;font-size:12px;font-weight:850;touch-action:manipulation}
+.tcgp-classic-match-chips>button[aria-pressed="true"]{background:#1a597a;color:#fff;border-color:#155479}
+.tcgp-live-arena.format-classic .tcgp-live-player-active,
+.tcgp-live-arena.format-classic .tcgp-live-player-bench{pointer-events:auto!important;z-index:12!important}
+.tcgp-live-arena.format-classic .tcgp-live-player .tcgp-live-card{cursor:pointer;touch-action:manipulation!important;-webkit-tap-highlight-color:#b5e1ff80}
+.tcgp-live-arena.format-classic .tcgp-live-player .tcgp-live-card img,
+.tcgp-live-arena.format-classic .tcgp-live-player .tcgp-live-hp,
+.tcgp-live-arena.format-classic .tcgp-live-player .tcgp-live-condition,
+.tcgp-live-arena.format-classic .tcgp-live-player .tcgp-live-name{pointer-events:none!important}
