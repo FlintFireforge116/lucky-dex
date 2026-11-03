@@ -391,3 +391,96 @@ body.tcgp-card-dragging .tcgp-live-mat-half .tcgp-live-card-wrap[data-card-drop-
   .tcgp-live-player-active,.tcgp-live-opponent-active{width:14%}
   .tcgp-live-player>.tcgp-live-stadium-slot{right:4px}
 }
+
+/* v0.69.60: fixed playmat coordinate system. Mat art, Pokémon slots, action controls,
+   and hand/piles are separate layers so none can stretch or displace another. */
+.tcgp-live-arena{
+  grid-template-rows:64px auto 34px auto minmax(38px,auto) minmax(138px,1fr);
+  gap:4px;
+  align-content:start;
+  padding:6px 10px calc(6px + env(safe-area-inset-bottom));
+}
+.tcgp-live-opponent-top{
+  position:relative;left:auto;right:auto;top:auto;height:64px;z-index:4;
+  display:grid;grid-template-columns:44px minmax(0,1fr) 44px;gap:10px;
+  align-items:center;justify-items:center;padding:0 2px;
+}
+.tcgp-live-opponent-top .tcgp-live-pile{width:42px}
+.tcgp-live-opponent-top .tcgp-live-hand-backs{height:50px}
+.tcgp-live-mat-half{
+  position:relative;display:block!important;width:100%;height:auto!important;
+  aspect-ratio:2 / 1;min-height:0;overflow:hidden;border-radius:8px;
+  background-color:#dcebed;background-image:linear-gradient(#eff7f112,#eff7f112),var(--tcgp-mat-image);
+  background-repeat:no-repeat;background-size:100% 200%;
+}
+.tcgp-live-mat-half.tcgp-live-opponent{background-position:center top}
+.tcgp-live-mat-half.tcgp-live-player{background-position:center bottom}
+.tcgp-live-opponent-bench{position:absolute;left:50%;top:30%;transform:translate(-50%,-50%);width:44%;max-width:none;height:32%;gap:7px;z-index:3}
+.tcgp-live-opponent-active{position:absolute;left:50%;top:70%;transform:translate(-50%,-50%);width:12%;height:32%;z-index:3}
+.tcgp-live-player-active{position:absolute;left:50%;top:24%;transform:translate(-50%,-50%);width:12%;height:32%;z-index:3;overflow:visible}
+.tcgp-live-player-bench{position:absolute;left:50%;top:67%;transform:translate(-50%,-50%);width:44%;max-width:none;height:32%;gap:7px;z-index:3}
+.tcgp-live-opponent-active:before,.tcgp-live-player-active:before{display:none}
+.tcgp-live-mat-half .tcgp-live-card-wrap{position:relative;display:block;width:100%;height:100%;min-width:0;min-height:0;max-height:none}
+.tcgp-live-mat-half .tcgp-live-card{
+  position:absolute;inset:0;margin:auto;width:auto!important;height:100%!important;
+  min-height:0!important;max-height:100%!important;max-width:100%!important;aspect-ratio:2.5/3.5;
+}
+.tcgp-live-mat-half .tcgp-live-card.empty{border:1.5px solid rgba(255,255,255,.86);background:rgba(255,255,255,.08);box-shadow:0 1px 5px rgba(20,54,71,.16),inset 0 0 0 1px rgba(41,78,91,.15)}
+.tcgp-live-mat-half .tcgp-live-card.empty>span{visibility:hidden}
+.tcgp-live-card-wrap .tcgp-live-tool-stack{
+  left:100%!important;right:auto!important;top:58%!important;bottom:auto!important;
+  transform:translate(4px,-50%);width:24px;height:46px;z-index:8;
+}
+.tcgp-live-card-wrap .tcgp-live-tool-stack.compact{
+  left:72%!important;right:auto!important;top:62%!important;bottom:auto!important;
+  transform:none;width:17px;height:34px;
+}
+.tcgp-live-tool-mini{width:22px;height:31px;top:calc(var(--tool-i,0)*9px)}
+.tcgp-live-tool-stack.compact .tcgp-live-tool-mini{width:16px;height:23px;top:calc(var(--tool-i,0)*7px)}
+.tcgp-live-player>.tcgp-live-stadium-slot{
+  position:absolute;right:3%;top:24%;transform:translateY(-50%);z-index:8;
+  width:86px;height:62px;display:grid;place-items:center;padding:0;overflow:visible;pointer-events:none;
+}
+.tcgp-live-player>.tcgp-live-stadium-slot .tcgp-live-stadium-card{
+  position:relative;width:58px;height:82px;aspect-ratio:2.5/3.5;transform:rotate(90deg);
+  transform-origin:center;border-radius:6px;pointer-events:auto;
+}
+.tcgp-live-player>.tcgp-live-stadium-slot .tcgp-live-stadium-activate{right:-4px;bottom:-6px;min-height:20px;padding:2px 5px;font-size:6px;pointer-events:auto}
+.tcgp-live-player-actions{
+  position:relative;z-index:9;display:flex;align-items:center;justify-content:center;
+  min-width:0;min-height:38px;padding:2px 4px;background:#eef5f4;border-radius:7px;
+}
+.tcgp-live-player-actions:empty{display:none}
+.tcgp-live-player-actions .tcgp-live-card-actions{position:static;display:flex;align-items:stretch;justify-content:center;gap:5px;width:100%;max-width:100%;min-height:0}
+.tcgp-live-player-actions .tcgp-live-context-action{min-height:34px;max-height:40px;min-width:0;padding:4px 7px;font-size:8px;flex:0 1 auto}
+.tcgp-live-player-actions .tcgp-live-context-action.attack{min-width:0;flex:1 1 150px;max-width:210px;min-height:36px;padding:4px 7px}
+.tcgp-live-player-actions .tcgp-live-context-action.retreat,.tcgp-live-player-actions .tcgp-live-context-action.ability{flex:0 0 auto}
+.tcgp-live-player-bottom{
+  position:relative;left:auto;right:auto;bottom:auto;z-index:4;height:auto;min-height:138px;
+  display:grid;grid-template-columns:var(--pile-width) minmax(0,1fr) 46px;gap:8px;
+  min-width:0;align-items:end;padding-top:2px;
+}
+.tcgp-live-player-bottom .tcgp-live-hand{height:132px;align-self:end}
+.tcgp-live-mid{grid-template-columns:auto minmax(0,1fr);gap:6px;padding:0 2px;height:34px}
+.tcgp-live-mid-controls{display:grid;grid-template-columns:minmax(0,1fr) auto;grid-template-rows:auto auto;padding:0;min-height:30px}
+.tcgp-live-mid-controls>span,.tcgp-live-mid-controls>b{display:block;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.tcgp-live-mid-controls>b{font-size:8px}
+.tcgp-live-end-turn{
+  position:static;right:auto;top:auto;transform:none;grid-column:2;grid-row:1/3;
+  width:auto;max-width:none;min-width:54px;min-height:30px;padding:3px 7px;font-size:7px;line-height:1.05;white-space:normal;text-align:center;
+}
+.tcgp-live-energy-source{align-self:end;margin:0 0 4px 0}
+@media(max-width:380px){
+  .tcgp-live-arena{grid-template-rows:58px auto 32px auto minmax(36px,auto) minmax(126px,1fr)}
+  .tcgp-live-opponent-bench,.tcgp-live-player-bench{width:46%;gap:5px}
+  .tcgp-live-opponent-active,.tcgp-live-player-active{width:12.5%}
+  .tcgp-live-player>.tcgp-live-stadium-slot{right:2%}
+  .tcgp-live-player-bottom{min-height:126px}
+  .tcgp-live-player-bottom .tcgp-live-hand{height:120px}
+}
+
+/* v0.69.60 small-card overlays stay inside the slot footprint. */
+.tcgp-live-mat-half .tcgp-live-hp{font-size:7px;padding:1px 3px}
+.tcgp-live-mat-half .tcgp-live-card.compact .tcgp-live-hp{font-size:6px;padding:1px 2px}
+.tcgp-live-mat-half .tcgp-live-attached-energy{left:1px;bottom:1px;padding:1px;gap:1px}
+.tcgp-live-mat-half .tcgp-live-attached-energy .tcgp-energy-icon{width:12px;height:12px;min-width:12px}
