@@ -156,6 +156,7 @@ set(70,0,{type:'coinAttackGate',heads:par('poison')},'Heads: 20 damage and Poiso
 set(71,0,rule('slime'),'Next turn, opponent flips to see whether attack damage is prevented.');
 // Ability names are retained for all prints. Their battle effects execute in
 // the Classic engine; cards whose rules are incomplete are explicitly PARTIAL.
+const ABILITY_DESCRIPTIONS={spikes:'When an opposing Benched Pokémon becomes Active during its owner’s turn, deal 10 damage to it.',frogSong:'If more than three Poliwag-family Pokémon are in play, Politoed’s damaging attacks deal 40 more damage.',anger:'Hidden Power gets 10 more damage per damage counter on one Unown [A].',energyEvolution:'When attaching Energy to Eevee, flip heads to evolve it from your deck into a matching Energy type.',gaze:'Choose one opposing Benched Pokémon: suppress its Pokémon Power until the end of this turn.',unownDarkness:'Reduce by 30 damage done to your Pokémon by Darkness Pokémon, if exactly one Unown [D] is in play.',unownFind:'Search your deck for a Trainer when Unown [F], [I], [N] and [D] are in play.',unownMetal:'Reduce by 30 damage done to your Pokémon by Metal Pokémon, if exactly one Unown [M] is in play.',unownNormal:'Reduce by 30 damage done to your Pokémon by Colorless Pokémon, if exactly one Unown [N] is in play.',unownUndo:'Return your Active Pokémon and attachments to hand when Unown [U], [N], [D] and [O] are in play.',reviveFriends:'Flip a coin to put a Kabuto from your deck onto your Bench as a Basic Pokémon.',reviveFossil:'Flip a coin to put an Evolution of Mysterious Fossil onto your Bench as a Basic Pokémon.',unownEngage:'When played from hand, each player may shuffle hand into deck and draw four.',unownIncrease:'When played from hand, search for an Unown in your deck and Bench it.',unownObserve:'Look at the top five cards of your opponent’s deck without rearranging them.'};
 const ABILITIES={
  2:['Spikes','passive','spikes'],8:['Frog Song','passive','frogSong'],14:['[Anger]','passive','anger'],
  38:['Energy Evolution','triggered','energyEvolution','energyAttached'],
@@ -178,7 +179,7 @@ const TRAINERS={
 const PLAIN=new Set('71:1 1:0 6:0 9:0 13:0 14:0 38:0 39:0 45:0 52:1 55:0 57:0 62:0 63:1 65:0 67:0 68:0 69:0 71:1 47:0 48:0 49:0 50:0 51:0'.split(' '));
 const EXTRA_PLAIN=new Set('2:0 3:0 3:1 4:0 4:1 5:0 5:1 6:1 7:0 7:1 8:0 9:1 10:0 10:1 11:0 12:0 12:1 13:1 15:0 15:1 16:0 17:0 17:1 18:0 18:1 19:0 19:1 20:0 20:1 32:0 32:1 37:0 37:1 39:1 41:0 42:0 42:1 43:0 43:1 44:0 44:1 45:1 46:0 52:0 53:0 54:0 56:0 58:0 59:0 60:0 61:0 62:1 63:0 64:0 65:1 66:0 70:0 71:0'.split(' '));
 const BABIES=new Set([40,66]);
-const DISCOVERY_RULES_READY=new Set(['trample','falseSwipe','hydrocutter','collectFire','spikeBarrage','workTogether','dustDevil','energyEvolution']);
+const DISCOVERY_RULES_READY=new Set('trample falseSwipe hydrocutter collectFire spikeBarrage workTogether dustDevil energyEvolution lockOn electricBolt sketch counter shockwave magicDust hyperReverse pursuit plunder secretePoison hatch bellyDrum energyCycle burst slime fossilEgg hyperDevolution ruinWall energyArk spikes frogSong anger gaze unownDarkness unownFind unownMetal unownNormal unownUndo reviveFriends reviveFossil unownEngage unownIncrease unownObserve'.split(' '));
 function implemented(effect){
  if(!effect)return true;
  if(effect.type==='neoRule'&&String(effect.rule||'').startsWith('discovery:'))return DISCOVERY_RULES_READY.has(String(effect.rule).slice(10));
@@ -198,7 +199,7 @@ const CARDS=DATA.map(line=>{
   return {name:title,cost,damage,damageText:variable?printed:null,effect:ATTACK[key]||null,text:DESCRIPTIONS[key]||'',unimplemented:!implemented};
  });
  const abilityDef=ABILITIES[SHARED_POWERS[n]||base];
- const abilities=abilityDef?[{name:abilityDef[0],type:abilityDef[1],event:abilityDef[3],oncePerTurn:abilityDef[1]==='activated',disabledByStatus:!abilityDef[0].startsWith('[Darkness]')&&!['[Metal]','[Normal]'].includes(abilityDef[0]),effect:rule(abilityDef[2]),text:'Original '+abilityDef[0]+' Pokémon Power.'}]:[];
+ const abilities=abilityDef?[{name:abilityDef[0],type:abilityDef[1],event:abilityDef[3],fromHandOnly:['unownEngage','unownIncrease'].includes(abilityDef[2]),oncePerTurn:abilityDef[1]==='activated',disabledByStatus:!abilityDef[0].startsWith('[Darkness]')&&!['[Metal]','[Normal]'].includes(abilityDef[0]),effect:rule(abilityDef[2]),text:ABILITY_DESCRIPTIONS[abilityDef[2]]||abilityDef[0]}]:[];
  const reasons=[];if(kind==='pokemon'){
   for(const atk of attacks){if(atk.unimplemented)reasons.push('Printed '+atk.name+' effect not implemented');else if(atk.effect&&!implemented(atk.effect))reasons.push('Unsupported effect '+atk.name);}
   for(const ability of abilities)if(!implemented(ability.effect))reasons.push('Unsupported Pokémon Power '+ability.name);

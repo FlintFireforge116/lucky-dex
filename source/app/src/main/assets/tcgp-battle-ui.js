@@ -420,9 +420,10 @@
     // Keep the printed Trainer effect intact, but explain the Classic Energy
     // Zone adaptation next to it when the original assumes Energy in deck.
     const classicAdaptation=card.id==='gym2-124'?'<p><b>Classic 30 adaptation:</b> Basic Energy is not in your deck. Discard up to three cards from the top of your deck and add one Fire Energy card from the Energy Zone to your hand. You can attach it to a Pokémon without using your normal Energy Zone attachment.</p>':'';
+    const discoveryAdaptation=card.id==='neo2-48'||card.id==='neo2-51'?'<p><b>Classic compact-board adaptation:</b> This game has three Bench slots. Count the four named Unown across your Active Pokémon and Bench rather than requiring four Benched Unown.</p>':card.id==='neo2-44'||card.id==='neo2-75'?'<p><b>Classic Energy Zone adaptation:</b> Basic Energy is generated separately, so this effect supplies the corresponding Basic Energy directly from the Energy Zone.</p>':'';
     const trainer=card.kind==='trainer'?`<article><div><b>${esc(card.name)}</b><strong>${esc(subtype)}</strong></div>${paragraph(text(card.text)||summarizeEffect(card.effect))}${classicAdaptation}${paragraph(text(card.timing)||defaultTiming)}</article>`:'';
     const energy=card.kind==='energy'?`<article><div><b>${esc(card.name)}</b><strong>${card.specialEnergy?'Special Energy':'Basic Energy'}</strong></div>${paragraph(text(card.text)||summarizeEffect(card.effect))}</article>`:'';
-    return abilityHtml+attacks+trainer+energy+(options?.developer?paragraph(supportText(card)):'');
+    return abilityHtml+attacks+trainer+energy+discoveryAdaptation+(options?.developer?paragraph(supportText(card)):'');
   }
   function energyCostHtml(cost){
     const letters=String(cost||'').split('').filter(Boolean);

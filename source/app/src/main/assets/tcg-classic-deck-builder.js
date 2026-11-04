@@ -121,7 +121,7 @@ function buildDeck(rows,options={}){
      const viable=selectable.filter(c=>coreScore(c)>=Math.max(145,highest*0.42));
      const shortlist=viable.length?viable:selectable;
      main=shortlist[Math.min(shortlist.length-1,Math.floor(Math.pow(random(),1.6)*shortlist.length))];
-   }else main=selectable[0];
+   }else main=(focus&&selectable.find(c=>c.id===focus.id))||selectable[0];
    mainLine=familyLine(main,evolutionPool);
  }
  const mainRoot=familyRoot(main,evolutionPool),lineEnergy=[...new Set(mainLine.flatMap(attackTypes))],selectedTypes=requestedEnergy.length?requestedEnergy.slice():lineEnergy.slice(0,2);

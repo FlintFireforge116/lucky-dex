@@ -1,9 +1,18 @@
-LuckyDex v0.69.99 — Neo Discovery first pass
+LuckyDex v0.69.100 — Neo Discovery completion
 
-- Neo Discovery: all 75 numbered prints included in Classic TCG card catalogue.
-- 37 cards currently battle-ready, 38 shown as partial/unsupported until their full printed effects are implemented.
-- Neo Genesis Darkness Energy (#104) and Metal Energy (#19) are genuine Special Energy deck cards, not Basic Energy Zone types.
-- Neo Discovery-only auto-building can use those two owned Neo Genesis Special Energy prints as an explicit Energy exception to set filtering; normal ownership and maximum-four-copy rules apply.
-- CPU can choose Darkness and Metal archetypes while generating only supported Basic Energy Zone types.
-- Test file: tests/v06999-neo-discovery-energy.test.cjs.
-- No new Basic Energy prints are introduced by Neo Discovery.
+- All 75 Neo Discovery numbered card prints are registered and battle-enabled.
+- Added the remaining 38 cards' rule handlers, including Forretress Spikes,
+  Wobbuffet Counter, Politoed Frog Song, Smeargle Sketch, Eevee/Unown powers,
+  persistent attack effects and all four Neo Discovery Trainers.
+- Darkness and Metal Energy remain real Neo Genesis Special Energy cards;
+  the standard Basic Energy Zone still generates six standard types.
+- Fossil Egg can bench a qualifying Fossil Evolution from deck or hand.
+- For compatibility with the fixed 3-slot Classic Bench, Unown [F] and
+  Unown [U] count their four named Unown across Active + Bench. This gameplay
+  adaptation is explained alongside their printed powers in the card inspector.
+- Belly Drum and Energy Ark generate standard Basic Energy through the Zone
+  (not through Basic Energy cards inserted into the 30-card deck).
+- Competitive auto-build respects the explicitly selected printed Pokemon.
+- Confirmed 40 completed simulated Expert vs Expert battles, with 1,802 AI actions.
+- Added v07000-neo-discovery-completion.test.cjs with card-specific mechanics tests.
+- New release identity: versionName 0.69.100, versionCode 7080.

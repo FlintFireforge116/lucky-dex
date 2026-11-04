@@ -912,6 +912,12 @@
       return state;
     }
     if (matched.type === 'retreat'){
+      if(state.format==='classic'&&s.active?.neoPursuit&&state.turnNumber<=s.active.neoPursuit.until){
+        const source=state.sides[foeSide].active;
+        if(source?.uid===s.active.neoPursuit.sourceUid){s.active.damage=Number(s.active.damage||0)+10;state.log.push({type:'retaliate',side:foeSide,reason:'Neo Discovery Pursuit',amount:10});
+          if(resolveKnockOut(state,null,'effect'))return state;if(!s.active)return state;
+        }
+      }
       const activeCard = data.cardById(s.active.cardId);
       const beforeEnergy={...(s.active.energy||{})},paid=spendRetreatEnergy(state,side,s.active,retreatCost(state,side));
       if (!paid) throw new Error('Not enough Energy to retreat.');
@@ -958,6 +964,13 @@
       const isActive=defender===foe.active;
       state.pendingAttackResult={defenderSide:foeSide,defenderUid:defender.uid,turn:state.turnNumber,before:attackResultSnapshot(defender)};
       let damage=result.damage;
+      if(state.format==='classic'&&damage>0){
+        // Unown [A]: at most one Anger Power modifies each Hidden Power.
+        if(attackerCard.name.startsWith('Unown [')&&attack.name==='Hidden Power'){
+          const support=pokemonOn(s).find(slot=>['neo2-14','neo2-33'].includes(slot.cardId)&&!effects.abilitiesSuppressed(state,side,slot,data.cardById));
+          if(support)damage+=10*Math.floor(Number(support.damage||0)/10);
+        }
+      }
       // Neo Genesis Heracross #6: Final Blow changes Megahorn's base to 120
       // only while Heracross has 20 HP or less and its Power is functioning.
       if(state.format==='classic'&&attackerCard.id==='neo1-6'&&attack.name==='Megahorn'&&
@@ -981,6 +994,13 @@
           if(state.stadium?.cardId==='gym2-109'&&defender.resistanceOverride!==null&&data.cardById(defender.cardId)?.resistance&&attackerCard.types?.includes(data.cardById(defender.cardId).resistance))damage+=20;if(result.damageRules?.ignoreResistance&&damage>0){const card=data.cardById(defender.cardId),res=defender.resistanceOverride||card?.resistance;if(res&&effects.effectiveTypes(state,side,s.active,data.cardById).includes(res))damage+=30;}if(state.format==='classic'&&state.stadium?.cardId==='gym1-115'&&attackerCard.name?.startsWith("Brock's")&&damage>0){const defenderRes=data.cardById(defender.cardId)?.resistance;if(defenderRes&&attackerCard.types?.includes(defenderRes))damage+=30;}if(state.format==='classic'&&state.stadium?.cardId==='gym1-120'&&attackerCard.name?.startsWith("Lt. Surge's")){const heads=random(state)<0.5;state.log.push({type:'coin',side,reason:'Vermilion City Gym',heads,results:[heads]});if(heads&&damage>0)damage+=10;else if(!heads)s.active.damage=Number(s.active.damage||0)+10;}
         }
         if(damage>0){
+          // Frog Song adds 40 *after* Weakness and Resistance when the attack
+          // actually damaged the Defending Pokémon, rather than multiplying
+          // the bonus through the matchup calculation.
+          if(state.format==='classic'&&['neo2-8','neo2-27'].includes(attackerCard.id)&&
+            !effects.abilitiesSuppressed(state,side,s.active,data.cardById)&&
+            !s.active.conditions?.sleep&&!s.active.conditions?.confusion&&!s.active.conditions?.paralysis&&
+            [s,foe].flatMap(board=>pokemonOn(board)).filter(slot=>['Poliwag','Poliwhirl','Poliwrath','Politoed'].includes(data.cardById(slot.cardId)?.name)).length>3)damage+=40;
           damage+=effects.modifierAmount(state,side,s.active,'postWeaknessAttackDamage',data.cardById);
           if(state.format==='classic'){
             const dark=(s.active.specialEnergy||[]).filter(r=>r.cardId==='neo1-104').length;
@@ -1003,11 +1023,22 @@
         if(state.stadium?.cardId==='neo1-97'&&attackerCard.types?.includes('Colorless'))damage=Math.max(0,damage-30);
       }
       if(damage>0&&!result.damageRules?.ignoreEffects){const coinGuard=effects.findPassiveRule(state,foeSide,defender,'coinDamageGuard',data.cardById);if(coinGuard){const heads=random(state)<0.5;state.log.push({type:'coin',side:foeSide,heads,reason:'coinDamageGuard',results:[heads]});if(heads)damage=coinGuard.preventAll?0:Math.max(0,damage-Number(coinGuard.reduction||0));}}
+      if(state.format==='classic'&&damage>0&&!result.damageRules?.ignoreEffects){
+        damage=effects.neoDiscoveryReduction(state,foeSide,side,s.active,damage,data.cardById);
+        if(defender.neoSlime&&state.turnNumber<=defender.neoSlime.until){const heads=random(state)<.5;state.log.push({type:'coin',side:foeSide,reason:'Neo Discovery Slime',heads,results:[heads]});if(!heads)damage=0;}
+      }
       defender.damage=Number(defender.damage||0)+damage;
+      if(state.format==='classic'&&damage>0){
+        // Resolve reactive attacks before KO; Wobbuffet can counter even when
+        // the incoming blow knocks it out.
+        if(defender.neoCounter&&state.turnNumber<=defender.neoCounter.until){const heads=random(state)<.5;state.log.push({type:'coin',side:foeSide,reason:'Neo Discovery Counter',heads,results:[heads]});if(heads){const reflected=effects.attackDamageWithState(state,foeSide,defender,side,s.active,damage,data.cardById);s.active.damage=Number(s.active.damage||0)+Math.max(0,reflected);}}
+        if(defender.neoSecretePoison&&state.turnNumber<=defender.neoSecretePoison.until){s.active.conditions={...(s.active.conditions||{}),poison:true};for(const b of s.bench)b.damage=Number(b.damage||0)+effects.neoDiscoveryReduction(state,side,foeSide,defender,10,data.cardById);}
+      }
       if(damage>0&&s.gym2KogaPoisonTurn===state.turnNumber&&attackerCard.name?.startsWith("Koga's"))defender.conditions={...(defender.conditions||{}),poison:true};
       gymReactiveDamage(state,foeSide,defender,side,s.active,damage);
       if(damage>0)defender.lastDamageSource={side,uid:s.active.uid,cardId:s.active.cardId,attack:true,turn:state.turnNumber};
       if(damage>0&&defender.retaliate&&(defender.retaliate.expiresTurn==null||state.turnNumber<=defender.retaliate.expiresTurn)){const amount=Number(defender.retaliate.amount||0);s.active.damage=Number(s.active.damage||0)+amount;state.log.push({type:'retaliate',side:foeSide,amount,cardId:defender.cardId});}
+      if(state.format==='classic')foe.neoObservedAttack={turn:state.turnNumber,cardId:attackSourceCard.id,attackIndex:matched.attackIndex,witnesses:pokemonOn(foe).map(x=>x.uid)};
       state.log.push({type:'attack',side,cardId:attackerCard.id,attack:attack.name,damage,damageReason:damage===0?resistanceReason:'',target:isActive?'active':'bench',benchIndex:defender.benchSlot});s.lastAttackName=attack.name;s.lastAttackTurn=state.turnNumber;s.attackCounts=s.attackCounts||{};s.attackCounts[attack.name]=Number(s.attackCounts[attack.name]||0)+1;s.active.attackUseCount=Number(s.active.attackUseCount||0)+1;
       if(damage>0){triggerAbilities(state,'damagedByAttack',foeSide,defender);triggerPersistent(state,'damagedByAttack',foeSide,defender,{attacker:s.active,damage});}
       if(guard?.effects||effects.attackEffectsPrevented(state,foeSide,defender,s.active,data.cardById)||state.sides[foeSide].active!==defender)context.preventedTargets=new Set([defender.uid,...[state.sides[foeSide].active?.uid].filter(Boolean)]);context.dealtDamage=damage;
@@ -1043,10 +1074,29 @@
     }
     return null;
   }
+  // Neo Discovery Spikes reacts to a Benched Pokemon becoming Active on its
+  // own turn. Observe the state transition for all switch and promotion paths.
+  function neoSpikesAfterAction(state,before){
+    if(state.format!=='classic')return;
+    let hit=false;
+    for(const side of ['player','opponent']){
+      const ss=state.sides[side],old=before[side];if(!old||state.activeSide!==side||!ss.active||ss.active.uid===old.uid||!old.bench.has(ss.active.uid))continue;
+      const foe=state.sides[side==='player'?'opponent':'player'];
+      for(const slot of pokemonOn(foe)){
+        if(!['neo2-2','neo2-21'].includes(slot.cardId)||effects.abilitiesSuppressed(state,foe.id,slot,data.cardById)||slot.conditions?.sleep||slot.conditions?.confusion||slot.conditions?.paralysis)continue;
+        ss.active.damage=Number(ss.active.damage||0)+10;state.log.push({type:'neoEffect',side:foe.id,rule:'Spikes',targetCardId:ss.active.cardId,amount:10});hit=true;
+      }
+    }
+    if(hit)resolveKnockOut(state,null,'effect');
+  }
+  function neoMonitoredAction(state,side,action){
+    const before=Object.fromEntries(['player','opponent'].map(who=>[who,{uid:state.sides[who].active?.uid,bench:new Set((state.sides[who].bench||[]).map(p=>p.uid))}]));
+    const result=applyActionRaw(state,side,action);neoSpikesAfterAction(state,before);return result;
+  }
   function applyAction(state,side,action){
     const rc=rerollContext(state,side,action),source=rc&&effects.coinRerollSource?.(state,rc.ownerSide,rc.scope,rc.subject,data.cardById);
-    if(!source)return applyActionRaw(state,side,action);
-    const snapshot=cloneState(state),logStart=state.log?.length||0,result=applyActionRaw(state,side,action),newLogs=(state.log||[]).slice(logStart),flipped=newLogs.some(x=>x?.type==='coin');
+    if(!source)return neoMonitoredAction(state,side,action);
+    const snapshot=cloneState(state),logStart=state.log?.length||0,result=neoMonitoredAction(state,side,action),newLogs=(state.log||[]).slice(logStart),flipped=newLogs.some(x=>x?.type==='coin');
     if(!flipped)return result;
     const keepState=cloneState(state),rngAfter=state.rngState;state.phase='effectChoice';state.choiceSide=rc.ownerSide;delete state.winner;delete state.reason;
     state.pendingChoice={kind:'option',options:['Keep results','Reroll'],side:rc.ownerSide,originSide:rc.ownerSide,sourceUid:source.sourceUid,special:'coinReroll',keepState,snapshot,originalAction:cloneState(action),actionSide:side,rerollRngState:rngAfter,rerollOwnerSide:rc.ownerSide,rerollScope:rc.scope};

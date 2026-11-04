@@ -10,12 +10,12 @@ const core=require(path.join(A,'tcgp-battle-core.js'));
 const ai=require(path.join(A,'tcgp-battle-ai.js'));
 const full=classic.CARDS.filter(c=>c.battleEnabled&&c.deckEligible!==false).map(c=>({gameplayId:c.id,quantity:4}));
 
-test('Neo Discovery has 75 numbered prints and reserves nonimplemented rule text',()=>{
+test('Neo Discovery has 75 numbered prints with full battle coverage',()=>{
  assert.equal(discovery.CARDS.length,75);
  assert.equal(new Set(discovery.CARDS.map(c=>c.id)).size,75);
  assert.equal(classic.SETS.at(-1).id,'neo2');
  assert.ok(discovery.CARDS.filter(c=>c.battleEnabled).length>=35);
- assert.ok(discovery.CARDS.some(c=>!c.battleEnabled));
+ assert.equal(discovery.CARDS.filter(c=>c.battleEnabled).length,75);
  for(const card of discovery.CARDS)if(card.battleEnabled){
    assert.equal(card.support.status,'FULL',card.name);
    for(const a of card.attacks||[])assert.equal(a.unimplemented,false,card.name+' / '+a.name);
