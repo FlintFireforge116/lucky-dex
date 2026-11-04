@@ -189,6 +189,56 @@ const MOVES=`
 14|Juxtapose~P~0~juxtapose~Flip a coin. On heads, swap the number of damage counters on Rocket's Mewtwo and the defender.;Hypnoblast~PP~20~coinSleep~Flip a coin. On heads, put the defender Asleep.;Psyburn~PPPC~60~~
 31|Fire Claws~RR~30~~;Bonfire~RRR~0~bonfire~Flip three coins. For each heads, discard one Fire Energy attached to Blaine's Charmeleon and deal 10 damage to every opposing Pokémon, ignoring Weakness and Resistance. If insufficient Fire Energy, the attack does nothing.
 `.trim().split('\n');
+const EXTRA_MOVES=`
+3|Will-o'-the-wisp~RR~30~~Deal 30 damage.
+4|Growth~G~0~growth~Flip heads to attach up to two Grass Energy from your hand.;Wide Solarbeam~GGGG~20~wideSolarbeam~Deal 20 damage to up to two opposing Benched Pokémon.
+5|Summon Storm~W~0~summonStorm~On two heads, deal 20 to all other Pokémon on both sides.;Dragon Tornado~WWCC~40~dragonTornado~After damage, switch opponent’s Active with one of their Bench unless knocked out.
+6|Hurricane Punch~FFFC~30×~coin4x30~Flip four coins; 30 damage per heads.
+7|Intimidate~G~0~intimidate~The defender cannot attack Giovanni’s Nidoking next turn if its printed HP is 50 or lower.;Tumbling Attack~GGGC~40+~coinBonus30~Flip heads to add 30 damage.
+8|Ambush~CCC~20+~bonus20~Flip heads to add 20 damage.
+9|Nerve Poison~GG~20~coinPoisonPara~Flip heads to Paralyze and Poison.;Hyper Needle~CCC~70~hyperNeedle~Flip tails to miss; this attack may only be used once while Koga’s Beedrill remains in play.
+10|Giant Growth~C~0~giantGrowth~Flip heads to raise Koga’s Ditto’s HP to 80 and Pound damage to 30 until it leaves Active.;Pound~C~10~dittoPound~Deal 10 damage, or 30 after a successful Giant Growth.
+11|Kerzap~LL~20+~kerzap~Flip heads to add 30 damage and discard all attached Lightning Energy.;Thundertackle~LLCC~40~thundertackle~Flip heads to Paralyze; tails deals 20 self-damage.
+12|Electro Beam~WC~40~electroBeam~Flip tails to discard all attached Energy.;Super Removal~PC~0~superRemoval~Flip heads to discard an attached Energy card from every opposing Pokémon.
+13|Tidal Wave~WWWW~70~~Deal 70 damage.
+15|Plasma~L~20~plasma~Attach a Lightning Energy from discard if possible.;Electroburn~LLLC~70~electroburn~Self-damage 10 times attached Lightning Energy.
+16|Mega Burn~PCCC~60~noNextTurn~Cannot use this attack next turn.
+21|Burn Up~RR~50~burnUp~Flip tails to discard all attached Fire Energy.
+22|Lie Low~F~0~lieLow~Reduce incoming damage by 20 next turn.;Earthdrill~FFC~60~earthdrill~Only usable after Lie Low last turn.
+23|Mega Kick~GGC~40~~Deal 40 damage.;Love Lariat~GGCC~50+~loveLariat~Flip heads to add 50 when Giovanni’s Nidoking is on your Bench; tails misses.
+24|Snapping Pincers~GC~10+~bonus10~Flip heads to add 10 damage.;Overhead Toss~GCC~40~overheadToss~Flip tails to deal 20 to one of your own Benched Pokémon.
+25|Poison Buildup~G~0~selfPoison~Koga’s Arbok becomes Poisoned.;Poison Power~GG~20~poisonPower~If Koga’s Arbok is Poisoned, deal 40 damage and Poison defender.
+26|Sludge Whirlpool~GGC~40~~Deal 40 damage.
+29|Dark Wave~PP~20~suppressPower~Disable all Pokémon Powers through opponent’s next turn.;Shadow Bind~PPP~40~lockRetreat~Prevent retreat next turn.
+30|Damage Shift~PP~0~damageShift~Move one damage counter from each of your damaged Pokémon to defender.;Water Spray~WCC~20+~bonus20~Flip heads to add 20 damage.
+35|Mega Thrash~FFF~60~megaThrash~Deal 20 self-damage and discard Stadium.
+38|Stretch Vine~G~0~stretchVine~Deal 10 damage to one opposing Benched Pokémon.
+40|Lunar Power~C~0~lunarPower~Flip heads to evolve one of your Benched Pokémon from deck.;Moon Kick~CC~20~~Deal 20 damage.
+41|Double Razor Leaf~GGG~40×~coin2x40~Flip two coins, 40 per heads.
+42|Risky Attack~F~60~riskyAttack~Flip tails to miss and deal 100 self-damage.;Headlock~FFC~20+~headlock~Flip heads to add 20 and Paralyze defender.
+43|False Charity~C~0~falseCharity~Flip heads to look at opponent’s top deck card; discard it if Trainer, otherwise put in their hand.;Double Scratch~CC~20×~coin2x20~Flip two coins; deal 20 damage per heads.
+47|Toxic Secretion~G~0~toxicSecretion~Flip heads to Poison defender for 20 damage between turns.
+49|Messenger~C~0~messenger~Return Koga’s Pidgey to the top of your deck and search a different Pokémon.;Wing Attack~CC~20~~Deal 20 damage.
+50|Spontaneous Explosion~GG~10+~spontaneousExplosion~Flip heads to add 30 and deal 30 self-damage.;Toxic Cloud~GGC~20~toxicCloud~Flip heads to Poison defender for 20 damage between turns.
+52|Power Ball~LLC~30+~powerBall~Flip 3 coins; add 10 damage per heads.
+53|Focus Energy~C~0~focusDoubleEdge~Double your next Double-edge attack’s damage and self-damage.;Double-edge~CC~40~doubleEdge~Deal 20 self-damage (doubled after Focus Energy).
+56|Invigorate~P~0~invigorate~Put a Basic Pokémon from either discard onto its owner’s Bench with half its HP in damage.;Pendulum Curse~PP~20×~pendulumCurse~Flip once per defender’s damage counter; deal 20 per heads.
+57|Helping Hand~P~0~helpingHand~Heal any number of damage counters from an opposing Pokémon and draw as many cards.;Hug~PC~20~coinLockRetreat~Flip heads to prevent defender retreating next turn.
+59|Magic Darts~PC~0~magicDarts~Choose an opposing Pokémon and flip three coins; deal 10 damage per heads.
+63|Pranks~C~0~pranks~Flip heads to move one card from opponent’s discard to top of deck.;Fury Swipes~F~10×~coin3x10~Flip three coins; 10 damage per heads.
+66|Bite~C~10~~Deal 10 damage.;Call Will-o'-the-wisp~R~0~callFire~Flip three coins and recover one Fire Energy from discard per heads.
+69|Group Therapy~C~0~groupTherapy~Heal 10 damage from each damaged Pokémon on both sides.;Pulled Punch~CC~40-~pulledPunch~Deal 40 if defender has no damage, otherwise 10.
+72|Chop~C~10~~Deal 10 damage.;Fury Punch~FF~20×~furyPunch~Flip heads to deal 20 damage per self damage counter.
+73|Ancestral Memory~W~40~ancestralMemory~Flip tails to miss; may only use once while Giovanni’s Magikarp remains in play.;Flail Around~WC~10×~coin3x10~Flip three coins; deal 10 damage per heads.
+78|Sludge Grip~G~0~sludgeGrip~Flip heads to switch in one opposing Benched Pokémon and Poison it.;Sludge Toss~GC~20~~Deal 20 damage.
+83|Group Attack~GC~10×~groupAttack~Search your deck for Koga’s Zubat to fill free Bench slots, then deal 10 per Koga’s Zubat in play.
+87|Ink Spurt~WW~20~inkSpurt~Flip heads to make defender flip for every attack until evolved or Benched.
+89|Bubbles~W~20~bubbles~Flip tails to prevent Bubbles next turn.;Amnesia~WW~0~amnesia~Choose one defender attack and prevent it next turn.
+90|ESP~P~0~mistyESP~Flip three coins; one heads draws one, two heads deals 20, three heads copies defender’s attack.
+95|Energy Support~P~0~energySupport~Search deck for Psychic Energy; LuckyDex Energy Zone adaptation returns generated Psychic Energy to hand.;Mind Shock~PC~20~swift~Ignore Weakness and Resistance.
+97|Suffocating Gas~PP~30~~Deal 30 damage.
+99|Scratch~C~10~~Deal 10 damage.;Random ESP~P~20~randomESP~Flip heads to Confuse defender; tails misses and Confuses Sabrina’s Psyduck.
+`.trim().split('\n');
 const E={noop:{type:'noop'}};
 const S=(status,target='opponentActive')=>({type:'status',status,target});
 const coin=(heads,tails)=>({type:'coinFlip',heads,tails});
@@ -245,14 +295,85 @@ Object.assign(E,{
  flameJet:coin(seq({type:'selectedDamage',target:'opponentPokemon',amount:40},{type:'damageRule',ignoreWeakness:true,ignoreResistance:true})),
  juxtapose:{type:'gymRule',rule:'challengeJuxtapose'},bonfire:{type:'gymRule',rule:'challengeBonfire'}
 });
-const ATTACKS=new Map(MOVES.map(row=>{const [num,moves]=row.split('|');const attacks=moves.split(/;(?=[^;~]{1,55}~[GRWLPCF]*~)/).map(record=>{const [name,cost,damage,key='',text='']=record.split('~');if(key&&!E[key])throw new Error('Unknown Gym Challenge effect: '+key);const variable=/[+×?]/.test(damage);return {name,cost,damage:Number(damage.replace(/[^0-9]/g,''))||0,damageText:variable?damage:null,effect:key?E[key]:null,text};});return [Number(num),attacks];}));
+
+// Gym Challenge attack adapters. A descriptive rule is never a substitute for
+// the engine implementation: special choices and passives are tested below.
+const rule=name=>({type:'gymRule',rule:'challenge:'+name});
+const add=(a)=>({type:'bonusDamage',amount:a});
+const flip=(heads,tails)=>({type:'coinFlip',heads,tails});
+const damageCount=(coins,amount)=>({type:'coinDamage',coins,amount,mode:'replace'});
+Object.assign(E,{
+ growth:rule('growth'),wideSolarbeam:{type:'multiTargetDamage',target:'opponentBench',count:2,amount:20},summonStorm:rule('summonStorm'),dragonTornado:rule('dragonTornado'),coin4x30:damageCount(4,30),
+ intimidate:rule('intimidate'),coinBonus30:flip(add(30)),bonus20:flip(add(20)),coinPoisonPara:flip(seq(S('poison'),S('paralysis'))),hyperNeedle:rule('hyperNeedle'),
+ giantGrowth:rule('giantGrowth'),dittoPound:rule('dittoPound'),kerzap:flip(seq(add(30),{type:'discardEnergyCard',target:'self',energyType:'Lightning',amount:'all'})),thundertackle:flip(S('paralysis'),{type:'selfDamage',amount:20}),
+ electroBeam:flip(E.noop,{type:'discardEnergyCard',target:'self',amount:'all'}),superRemoval:rule('superRemoval'),plasma:{type:'attachEnergyFromDiscard',target:'self',amount:1,energyType:'Lightning'},electroburn:rule('electroburn'),
+ noNextTurn:rule('noNextTurn'),burnUp:flip(E.noop,{type:'discardEnergyCard',target:'self',energyType:'Fire',amount:'all'}),lieLow:{type:'modifier',stat:'damageReduction',amount:20,duration:'opponentTurn',scope:'self'},earthdrill:rule('earthdrill'),
+ loveLariat:rule('loveLariat'),bonus10:flip(add(10)),overheadToss:rule('overheadToss'),selfPoison:S('poison','self'),poisonPower:rule('poisonPower'),suppressPower:rule('suppressPower'),
+ damageShift:rule('damageShift'),megaThrash:seq({type:'selfDamage',amount:20},{type:'discardStadium'}),stretchVine:{type:'selectedDamage',target:'opponentBench',amount:10},lunarPower:rule('lunarPower'),coin2x40:damageCount(2,40),
+ riskyAttack:rule('riskyAttack'),headlock:flip(seq(add(20),S('paralysis'))),falseCharity:rule('falseCharity'),coin2x20:damageCount(2,20),toxicSecretion:rule('toxicSecretion'),
+ messenger:rule('messenger'),spontaneousExplosion:flip(seq(add(30),{type:'selfDamage',amount:30})),toxicCloud:rule('toxicCloud'),powerBall:rule('powerBall'),
+ focusDoubleEdge:rule('focusDoubleEdge'),doubleEdge:rule('doubleEdge'),invigorate:rule('invigorate'),pendulumCurse:rule('pendulumCurse'),helpingHand:rule('helpingHand'),coinLockRetreat:flip({type:'lock',action:'retreat',duration:'opponentTurn'}),
+ magicDarts:rule('magicDarts'),pranks:rule('pranks'),coin3x10:damageCount(3,10),callFire:rule('callFire'),groupTherapy:seq({type:'heal',target:'selfAll',amount:10},{type:'heal',target:'opponentAll',amount:10}),
+ pulledPunch:rule('pulledPunch'),furyPunch:rule('furyPunch'),ancestralMemory:rule('ancestralMemory'),sludgeGrip:flip(seq({type:'forceOpponentSwitch'},S('poison'))),groupAttack:rule('groupAttack'),inkSpurt:flip({type:'attackCoinGate',target:'opponentActive',duration:'opponentTurn'}),
+ bubbles:rule('bubbles'),amnesia:rule('amnesia'),mistyESP:rule('mistyESP'),energySupport:rule('energySupport'),randomESP:rule('randomESP')
+});
+const ATTACKS=new Map([...MOVES,...EXTRA_MOVES].map(row=>{const [num,moves]=row.split('|');const attacks=moves.split(/;(?=[^;~]{1,55}~[GRWLPCF]*~)/).map(record=>{const [name,cost,damage,key='',text='']=record.split('~');if(key&&!E[key])throw new Error('Unknown Gym Challenge effect: '+key);const variable=/[+×?]/.test(damage);return {name,cost,damage:Number(damage.replace(/[^0-9]/g,''))||0,damageText:variable?damage:null,effect:key?E[key]:null,text};});return [Number(num),attacks];}));
 // Only verified, fully implemented Trainers may enter the 30-card deck.
 const TRAINERS={
  103:{text:'Heal 20 damage from every Pokémon in play, yours and your opponent’s.',effect:seq({type:'heal',target:'selfAll',amount:20},{type:'heal',target:'opponentAll',amount:20})},
  125:{text:'Until the end of your opponent’s next turn, prevent all attack damage to your Benched Pokémon; other attack effects still apply.',effect:{type:'preventDamage',target:'selfBenchAll',duration:'opponentTurn'}}
 };
+
+// The two holo and regular printings of Gym Leader cards share their rules.
+Object.assign(TRAINERS,{
+ 17:{text:'Instead of your normal Energy Zone attachment this turn, attach two Fire Energy to one Blaine Pokémon.',effect:rule('blaine')},
+ 100:{text:'Instead of your normal Energy Zone attachment this turn, attach two Fire Energy to one Blaine Pokémon.',effect:rule('blaine')},
+ 18:{text:'This turn Giovanni Pokémon may evolve immediately, including on the first turn.',effect:rule('giovanni')},
+ 104:{text:'This turn Giovanni Pokémon may evolve immediately, including on the first turn.',effect:rule('giovanni')},
+ 19:{text:'Attacks from Koga Pokémon that deal damage Poison the defender this turn.',effect:rule('koga')},
+ 106:{text:'Attacks from Koga Pokémon that deal damage Poison the defender this turn.',effect:rule('koga')},
+ 20:{text:'Move all Energy from one Sabrina Pokémon to another Sabrina Pokémon.',effect:rule('sabrina')},
+ 110:{text:'Move all Energy from one Sabrina Pokémon to another Sabrina Pokémon.',effect:rule('sabrina')},
+ 101:{text:'Attach to a Brock Pokémon. The opponent cannot discard that Pokémon’s Energy with attacks or Trainers.',effect:rule('brockProtection')},
+ 102:{text:'Stadium. Flip for each non-Stadium Trainer; on tails opponent may play its effects instead.',effect:rule('chaosGym')},
+ 105:{text:'Heal all damage from a Giovanni Pokémon, then discard your hand.',effect:rule('giovanniLastResort')},
+ 107:{text:'Place a face-down hand card on your Bench as a Basic Pokémon; reveal it when it acts or is affected.',effect:rule('surgeSecretPlan')},
+ 108:{text:'Look at one Prize. Opponent may allow exchanging it with a hand card; otherwise draw one.',effect:rule('mistyWish')},
+ 109:{text:'Stadium. Each Pokémon Resistance is reduced by 20.',effect:rule('resistanceGym')},
+ 111:{text:'Show a hand card. Opponent guesses Pokémon/Trainer/Energy; correct guesses draw two for opponent, otherwise you.',effect:rule('blainesQuiz2')},
+ 112:{text:'Show a Pokémon from hand and name an attack. Opponent guesses its name; correct guesses draw three for opponent, otherwise you.',effect:rule('blainesQuiz3')},
+ 113:{text:'Stadium. Water damage to Blaine Pokémon does not gain Weakness.',effect:rule('cinnabarGym')},
+ 114:{text:'Stadium. Once per turn, flip heads to return a Koga Pokémon and attachments to its owner’s deck.',effect:{type:'stadiumAction',effect:rule('fuchsiaGym')}},
+ 115:{text:'Attach to Active Koga Pokémon. When attacked, you may switch it before damage. Discard if it goes to Bench.',effect:rule('ninjaTrick')},
+ 116:{text:'Look at the top seven cards of your deck and take one Pokémon; shuffle the rest back.',effect:rule('masterBall')},
+ 117:{text:'Discard two Energy cards from hand and Bench a Basic Pokémon from discard.',effect:rule('maxRevive')},
+ 118:{text:'Discard one other hand card to take up to two Water Energy cards into your hand.',effect:rule('mistyTears')},
+ 119:{text:'Stadium. Benching a Basic Pokémon from hand triggers a coin flip; tails damages that Pokémon.',effect:rule('minefieldGym')},
+ 120:{text:'Flip heads to search your deck for any card. Tails locks your Trainers until next turn ends.',effect:flip({type:'searchChosen',source:'deck',amount:1}, {type:'actionLock',side:'self',cardType:'Trainer',duration:'opponentTurn'})},
+ 121:{text:'Flip heads to play the effect of a Trainer in your opponent’s discard (without moving it).',effect:rule('psychicControl')},
+ 122:{text:'Stadium. During your turn you may return Basic Energy attached to Sabrina Pokémon to hand.',effect:{type:'stadiumAction',effect:rule('saffronGym')}},
+ 123:{text:'Stadium. Whenever a Giovanni Pokémon evolves, heal 20 damage from it.',effect:rule('viridianGym')},
+ 124:{text:'Reveal the top three cards of your deck; take Fire Energy, discard the rest.',effect:rule('fervor')},
+ 126:{text:'Opponent switches their Active with a Benched Pokémon, then you do the same.',effect:rule('warpPoint')}
+});
+
+const POWERS={
+ 3:{name:'Shapeshift',text:'Attach an Evolution card from hand and treat Brock’s Ninetales as that Pokémon without its Power. Discard that Evolution on status or choice.',type:'activated',disabledByStatus:true,oncePerTurn:false,effect:rule('shapeshift')},
+ 6:{name:'Fortitude',text:'If an opponent attack would Knock Out Giovanni’s Machamp, flip heads to survive with 10 HP.',type:'passive',disabledByStatus:true,effect:{type:'koGuard',mode:'surviveCoin',remainingHp:10,attackOnly:true}},
+ 8:{name:'Call the Boss',text:'When Giovanni’s Persian evolves, search the deck for Giovanni Trainer and put it in hand.',type:'triggered',event:'evolved',effect:{type:'searchChosen',source:'deck',amount:1,filter:{kind:'trainer',name:'Giovanni'}}},
+ 13:{name:'Rebellion',text:'Flip two coins before attacking; if both tails, shuffle Misty’s Gyarados and attachments into deck instead.',type:'passive',effect:rule('rebellion')},
+ 16:{name:'Psylink',text:'Sabrina’s Alakazam may use attacks of all your other Psychic Pokémon in play with their Energy costs.',type:'passive',disabledByStatus:true,effect:rule('psylink')},
+ 21:{name:'Healing Fire',text:'Attaching Fire Energy from hand heals one damage counter on Blaine’s Ninetales.',type:'triggered',event:'energyAttached',energyType:'Fire',disabledByStatus:true,effect:{type:'healSelf',amount:10}},
+ 26:{name:'Energy Drain',text:'After an opponent’s attack damages Koga’s Muk, flip heads to discard Energy from the attacker.',type:'triggered',event:'damagedByAttack',disabledByStatus:true,effect:rule('energyDrain')},
+ 35:{name:'Scram',text:'If Brock’s Primeape has exactly 10 HP left, shuffle it and its attachments into deck.',type:'triggered',event:'damagedByAttack',disabledByStatus:true,effect:rule('scram')},
+ 38:{name:'Soak Up',text:'Move up to two Grass Energy from your other Pokémon to Erika’s Bellsprout.',type:'activated',disabledByStatus:true,oncePerTurn:true,effect:rule('soakUp')},
+ 41:{name:'Relaxing Scent',text:'While Erika’s Ivysaur is Active, damage done by attacks to any Pokémon is halved (rounded up to ten).',type:'passive',activeOnly:true,disabledByStatus:true,effect:rule('relaxingScent')},
+ 47:{name:'Emerge',text:'Flip heads to evolve Koga’s Kakuna into Koga’s Beedrill from deck.',type:'activated',disabledByStatus:true,oncePerTurn:true,effect:rule('emerge')},
+ 52:{name:'Shock Blast',text:'When Lt. Surge’s Electrode is Active and damaged, flip tails to deal 20 to each Active Pokémon.',type:'triggered',event:'damagedByAttack',activeOnly:true,disabledByStatus:false,effect:rule('shockBlast')},
+ 97:{name:'Gaseous Form',text:'Sabrina’s Gastly gains 10 maximum HP per Psychic Energy attached.',type:'passive',disabledByStatus:false,effect:rule('gaseousForm')}
+};
 const STADIUM_NUMBERS=new Set([102,109,113,114,119,122,123]);
-const CARDS=DATA.map(row=>{const [raw,name,type,stage,hp,ret,weak,res,evolvesFrom,rarity]=row.split('|');const number=Number(raw),basicEnergy=number>=127,kind=basicEnergy?'energy':(number>=100||number>=17&&number<=20)?'trainer':'pokemon';const attacks=ATTACKS.get(number)||[],reasons=[];
+const CARDS=DATA.map(row=>{const [raw,name,type,stage,hp,ret,weak,res,evolvesFrom,rarity]=row.split('|');const number=Number(raw),basicEnergy=number>=127,kind=basicEnergy?'energy':(number>=100||number>=17&&number<=20)?'trainer':'pokemon';const attacks=ATTACKS.get(number)||[],abilities=POWERS[number]?[POWERS[number]]:[],reasons=[];
  if(kind==='pokemon'&&!attacks.length)reasons.push('Printed attack or Pokémon Power not yet implemented');
  if(kind==='trainer'&&!TRAINERS[number])reasons.push('Printed Trainer or Stadium effect not yet implemented');
  if(basicEnergy)reasons.push('Basic Energy is supplied by the separate Energy Zone');
@@ -260,8 +381,8 @@ const CARDS=DATA.map(row=>{const [raw,name,type,stage,hp,ret,weak,res,evolvesFro
  if(kind==='trainer'&&TRAINERS[number]&&!fx?.supportsEffect?.(TRAINERS[number].effect))reasons.push('Trainer effect unsupported');
  const battleEnabled=!reasons.length;
  return {id:`gym2-${number}`,setId:'gym2',number:String(number),name,source:'tcg',battleFormat:'classic',kind,
-  ...(kind==='pokemon'?{stage:stage==='0'?'Basic':`Stage ${stage}`,hp:Number(hp),retreat:Number(ret),types:[TYPE[type]],subtype:TYPE[type],evolvesFrom:evolvesFrom||null,weakness:TYPE[weak]||null,weaknessValue:weak?'×2':null,resistance:TYPE[res]||null,resistanceValue:res?'-30':null,attacks,abilities:[]}:{}),
-  ...(kind==='trainer'?{trainerType:STADIUM_NUMBERS.has(number)?'Stadium':'Item',text:TRAINERS[number]?.text||'',effect:TRAINERS[number]?.effect||null}:{}),
+  ...(kind==='pokemon'?{stage:stage==='0'?'Basic':`Stage ${stage}`,hp:Number(hp),retreat:Number(ret),types:[TYPE[type]],subtype:TYPE[type],evolvesFrom:evolvesFrom||null,weakness:TYPE[weak]||null,weaknessValue:weak?'×2':null,resistance:TYPE[res]||null,resistanceValue:res?'-30':null,attacks,abilities}:{}),
+  ...(kind==='trainer'?{trainerType:STADIUM_NUMBERS.has(number)?'Stadium':number===101||number===115?'AttachedTrainer':'Item',text:TRAINERS[number]?.text||'',effect:TRAINERS[number]?.effect||null}:{}),
   ...(basicEnergy?{basicEnergy:true,subtype:TYPE[type],types:[TYPE[type]]}:{}),
   battleEnabled,deckEligible:battleEnabled,support:{status:battleEnabled?'FULL':'PARTIAL',reasons},rarity,
   image:`https://images.pokemontcg.io/gym2/${number}.png`,imageLarge:`https://images.pokemontcg.io/gym2/${number}_hires.png`};

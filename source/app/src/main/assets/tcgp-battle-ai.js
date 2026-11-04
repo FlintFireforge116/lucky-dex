@@ -186,6 +186,11 @@
       const done=legal.find(action=>action.choiceLabel==='Done');if(done)return done;
     }
     if(Number(actionCount||0)>=30)return legal.find(a=>a.type==='attack')||legal.find(a=>a.type==='endTurn')||legal.find(a=>a.choiceLabel==='Done')||legal[0];
+    // Effect choices may expose private deck/hand cards. Advanced search works
+    // on a redacted public projection, where those card UIDs/positions are not
+    // available; simulating a choice there is both invalid and information
+    // leakage. Choose from the actual legal set instead.
+    if(state.format==='classic'&&state.phase==='effectChoice')return legal.find(a=>a.choiceSkip===true&&state.pendingChoice?.optional===true)||legal[0];
     if(level===0)return legal.map((action,index)=>({action,index,score:beginner(action,state,side)})).sort((a,b)=>b.score-a.score||a.index-b.index)[0].action;
     const position=publicPosition(state,side),ranked=legal.map(action=>evaluate(position,action,side,level)).sort((a,b)=>b.score-a.score);
     // Expert scores short sequences with the real action engine: e.g. damage boost

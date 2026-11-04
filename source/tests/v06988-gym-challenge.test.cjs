@@ -12,9 +12,9 @@ test('Gym Challenge all prints indexed, no Basic Energy in 30-card deck',()=>{
  assert.equal(D.cardById('gym2-14').name,"Rocket's Mewtwo");assert.equal(D.cardById('gym2-2').name,"Blaine's Charizard");
  assert.ok(D.SETS.some(s=>s.id==='gym2'));assert.ok(D.cardById('gym1-1'));
 });
-test('Gym Challenge cards with incomplete forced-switch sequences stay view-only',()=>{
- assert.equal(G.cardById('gym2-126').battleEnabled,false);
- assert.equal(G.cardById('gym2-126').deckEligible,false);
+test('Gym Challenge Warp Point can enter the deck after forced-switch sequence support',()=>{
+ assert.equal(G.cardById('gym2-126').battleEnabled,true);
+ assert.equal(G.cardById('gym2-126').deckEligible,true);
 });
 test('Star Boomerang and Fade Out return generated Basic and Special Energy to hand',()=>{
  for(const [id,move,energy,seed] of [['gym2-92','Star Boomerang',{Water:1},882],['gym2-96','Fade Out',{Psychic:2},881]]){
@@ -80,6 +80,7 @@ test('Every enabled Gym Challenge Pokémon attack is executable with its require
    const s=act(state(9000+Number(card.number)),card.id,{Grass:5,Fire:5,Water:5,Lightning:5,Psychic:5,Fighting:5,Colorless:5},'base1-3');
    if(move.name==='Roaring Flames')s.sides.opponent.active=Core.makePokemonSlot('base1-3',0,'foe');
    if(move.name==='Retaliation')s.sides.player.active.damage=20;
+   if(move.name==='Earthdrill')s.sides.player.active.gym2LieLowTurn=s.turnNumber-2;
    if(move.name==='Synchronize')s.sides.opponent.active.energy={Grass:5,Fire:5,Water:5,Lightning:5,Psychic:5,Fighting:5,Colorless:5};
    const action=Core.legalActions(s,'player').find(x=>x.type==='attack'&&card.attacks[x.attackIndex]?.name===move.name);
    assert.ok(action,`${card.id} ${move.name} unavailable`);Core.applyAction(s,'player',action);assert.ok(s.phase,['battle','effectChoice','promote','finished'].includes(s.phase));count++;
