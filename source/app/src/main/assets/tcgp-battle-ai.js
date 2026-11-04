@@ -53,6 +53,29 @@
     for(const ref of slot.specialEnergy||[]){const provides=data.cardById(ref.cardId)?.effect?.provides||ref.provides||{};for(const [type,amount] of Object.entries(provides))energy[type]=Number(energy[type]||0)+Number(amount||0);}
     return Math.max(0,...(card.attacks||[]).map((attack,index)=>effects.canPayCost(energy,attack.cost)?matchupDamage(state,side,slot,attack,index,card.id):0));
   }
+  // Gym Heroes Lt. Surge's Electabuzz has a free recovery attack (Charge)
+  // followed by Discharge, whose damage is "30×" rather than a fixed number.
+  // Fixed-damage AI scores otherwise rate both as zero and keep taking the
+  // first option, even after banking ten Lightning Energy. Prefer the actual
+  // damage attack once charged, while allowing Charge to recover real Energy.
+  function chargedCoinAttack(state,side,legal){
+    if(state?.format!=='classic'||state?.phase!=='battle')return null;
+    const ss=state.sides[side],slot=ss?.active,card=data.cardById(slot?.cardId);
+    if(!card)return null;
+    const findNested=(effect,type)=>effect?.type===type?effect:(Array.isArray(effect?.effects)?effect.effects.map(x=>findNested(x,type)).find(Boolean):null);
+    for(const attackAction of legal.filter(a=>a.type==='attack')){
+      const attack=data.cardById(attackAction.attackCardId||slot.cardId)?.attacks?.[attackAction.attackIndex];
+      const flip=findNested(attack?.effect,'coinDamageByEnergy');
+      if(!flip?.energyType||!flip?.amount)continue;
+      const attached=Number(slot.energy?.[flip.energyType]||0);
+      const expected=Math.max(0,attached)*Number(flip.amount)*0.5;
+      const recovery=Number(ss.energyDiscard?.[flip.energyType]||0);
+      // At one attached Energy, recover before attacking if a discarded
+      // Energy is available. Otherwise an idle Charge changes nothing.
+      if(attached>=2&&expected>=Number(flip.amount)||attached>=1&&recovery===0)return attackAction;
+    }
+    return null;
+  }
   function usefulRetreatFromResistance(state,side,legal){
     if(state.format!=='classic'||state.phase!=='battle')return null;
     const attacks=legal.filter(a=>a.type==='attack'),retreats=legal.filter(a=>a.type==='retreat');
@@ -158,6 +181,7 @@
     }
     // Escape resistance stalemates before scoring another futile attack.
     const rescue=usefulRetreatFromResistance(state,side,legal);if(rescue)return rescue;
+    const chargedAttack=chargedCoinAttack(state,side,legal);if(chargedAttack)return chargedAttack;
     if(state.format==='classic'&&state.phase==='effectChoice'&&state.pendingChoice?.effect?.type==='redistributeEnergy'&&state.pendingChoice.effect.phase==='continue'){
       const done=legal.find(action=>action.choiceLabel==='Done');if(done)return done;
     }

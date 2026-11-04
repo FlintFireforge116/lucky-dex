@@ -57,17 +57,26 @@
   function attachTool(slot,ref){ if(!slot.tool)slot.tool=ref;else{slot.extraTools=slot.extraTools||[];slot.extraTools.push(ref);} }
 
   function normalizeBenchSlots(sideState){
-    const used=new Set();
-    (sideState?.bench||[]).forEach((slot,index)=>{
+    const bench=sideState?.bench||[],cap=Math.max(0,Math.min(3,Number(sideState?.benchLimit??3)));
+    // A newly played Narrow Gym may temporarily leave three Pokémon on the
+    // Bench pending a return-to-hand choice. Keep all three visible until the
+    // player has chosen one. Afterwards, no Pokémon may remain in hidden slot 2.
+    const visible=bench.filter(Boolean).length>cap?3:cap;
+    const used=new Set(),unplaced=[];
+    // Reserve valid physical slots first. Otherwise an off-screen Pokémon at
+    // slot 2 could steal slot 0 from a Pokémon already displayed there.
+    bench.forEach(slot=>{
       if(!slot)return;
-      let physical=Number(slot.benchSlot);
-      if(!Number.isInteger(physical)||physical<0||physical>2||used.has(physical)){
-        physical=[0,1,2].find(i=>!used.has(i));
-      }
-      slot.benchSlot=physical;
-      used.add(physical);
+      const physical=Number(slot.benchSlot);
+      if(Number.isInteger(physical)&&physical>=0&&physical<visible&&!used.has(physical))used.add(physical);
+      else unplaced.push(slot);
     });
-    return sideState?.bench||[];
+    for(const slot of unplaced){
+      const physical=[0,1,2].slice(0,visible).find(i=>!used.has(i));
+      if(physical===undefined)continue;
+      slot.benchSlot=physical;used.add(physical);
+    }
+    return bench;
   }
 
   function benchArrayIndex(sideState,benchIndex){
@@ -691,7 +700,7 @@
     if(type==='Supporter')s.supporterUsed=true;
     if(type==='AttachedTrainer'){const target=slotForTarget(s,action.target,action.benchIndex);if(!target)throw new Error('Attached Trainer target is no longer in play.');target.temporaryTrainers=target.temporaryTrainers||[];target.temporaryTrainers.push({...ref,ownerSide:side,attachedTurn:state.turnNumber});resolveKnockOut(state,null);return;}
     if(type==='Tool'){const target=slotForTarget(s,action.target,action.benchIndex);attachTool(target,ref);const ctx=effectContext(state,side,action,target);effects.applyEffect(card.onAttach,ctx);effects.applyPersistentEvent(card.effect,'onAttach',ctx);resolveKnockOut(state,null);return;}
-    if(type==='Stadium'){if(state.stadium)state.sides[state.stadium.ownerSide].discard.push({uid:state.stadium.uid,cardId:state.stadium.cardId});state.stadium={...ref,ownerSide:side};s.stadiumUsed=true;for(const which of ['player','opponent'])state.sides[which].benchLimit=card.id==='gym1-124'?2:3;if(checkNarrowGymOverflow(state))return;resolveKnockOut(state,null);return;}
+    if(type==='Stadium'){if(state.stadium)state.sides[state.stadium.ownerSide].discard.push({uid:state.stadium.uid,cardId:state.stadium.cardId});state.stadium={...ref,ownerSide:side};s.stadiumUsed=true;for(const which of ['player','opponent']){state.sides[which].benchLimit=card.id==='gym1-124'?2:3;normalizeBenchSlots(state.sides[which]);}if(checkNarrowGymOverflow(state))return;resolveKnockOut(state,null);return;}
     s.discard.push(ref);
     effects.applyEffect(card.effect,{...effectContext(state,side,{...action,trainerRef:ref}),trainerRef:ref});
     if(state.phase==='effectChoice'){state.pendingChoice.resume=state.pendingChoice.resume||'trainer';return;}

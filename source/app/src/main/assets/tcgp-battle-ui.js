@@ -593,8 +593,12 @@
     return `<div data-board-slot="${boardSlotKey(side,zone,index)}" class="tcgp-live-card-wrap ${compact?'compact':''}" ${dropAttrs}><button type="button" class="tcgp-live-card ${compact?'compact':''}" ${interactionAttrs} ${energyAttrs}>${art?`<img src="${esc(art)}" alt="${esc(card?.name||slot.cardId)}">`:''}<span class="tcgp-live-hp">${info.left}</span>${conditions?`<span class="tcgp-live-condition">${esc(conditions)}</span>`:''}${liveAttachedEnergyHtml(info)}<span class="tcgp-live-name">${esc(card?.name||slot.cardId)}</span></button>${liveToolMiniCardsHtml(side,zone,index,slot,compact)}${showActions?livePokemonActionsHtml(side,zone,index):''}</div>`;
   }
   function liveBenchHtml(sideName,bench){
-    const slots=[],sideState={bench:bench||[]};
+    const slots=[];
     const limited=currentBattle?.format==='classic'&&currentBattle?.stadium?.cardId==='gym1-124'&&currentBattle?.pendingChoice?.special!=='narrowGymReturn';
+    const sideState={bench:bench||[],benchLimit:limited?2:3};
+    // A knockout can leave an old physical slot 2 populated. Normalize here
+    // as well as in the engine so no occupied Pokémon becomes invisible.
+    core?.normalizeBenchSlots?.(sideState);
     for(let i=0;i<(limited?2:3);i++){const slot=core?.benchSlotAt?core.benchSlotAt(sideState,i):(bench?.[i]||null);slots.push(liveCardHtml(slot,{compact:true,side:sideName,zone:'bench',index:i,showActions:false}));}
     return slots.join('');
   }
@@ -985,6 +989,13 @@
     });
   }
 
+  function handDropErrorMessage(handIndex){
+    const card=data.cardById(currentBattle?.sides?.player?.hand?.[Number(handIndex)]?.cardId);
+    if(currentBattle?.format==='classic'&&currentBattle?.stadium?.cardId==='gym1-124'&&card?.kind==='pokemon'&&card?.stage==='Basic'&&currentBattle?.sides?.player?.bench?.filter(Boolean).length>=2){
+      return 'Narrow Gym limits your Bench to two Pokémon. Replace the Stadium or free a Bench space.';
+    }
+    return currentBattle?.phase==='setup'?'Drag a Basic Pokémon onto Active or Bench.':'Drop that card onto a legal Pokémon slot.';
+  }
   function handPointerDown(event){
     const source=event.target.closest?.('[data-tcgp-hand-drag]');
     if(!source||battlePresentationBusy||!root?.document||event.isPrimary===false)return;
@@ -1010,8 +1021,8 @@
       const point=moved&&mode==='drag'?root.document.elementFromPoint?.(e.clientX,e.clientY):null,target=point?.closest?.('[data-card-drop-zone="1"]');
       cleanup();handDragSuppressUntil=Date.now()+350;if(mode==='scroll'||captured!==currentBattle)return;
       if(!moved){battleInspect=buildInspectSpec('player','hand',handIndex);battleOverlay='inspect';renderBattle();return;}
-      if(target){if(!applyHandDrop(handIndex,target.dataset.cardZone,Number(target.dataset.cardIndex||0)))toast(currentBattle?.phase==='setup'?'Drag a Basic Pokémon onto Active or Bench.':'Drop that card onto a legal Pokémon.');return;}
-      if(!target||!applyHandDrop(handIndex,target.dataset.cardZone,Number(target.dataset.cardIndex||0)))toast(currentBattle?.phase==='setup'?'Drag a Basic Pokémon onto Active or Bench.':'Drop that card onto a legal Pokémon slot.');
+      if(target){if(!applyHandDrop(handIndex,target.dataset.cardZone,Number(target.dataset.cardIndex||0)))toast(handDropErrorMessage(handIndex));return;}
+      if(!target||!applyHandDrop(handIndex,target.dataset.cardZone,Number(target.dataset.cardIndex||0)))toast(handDropErrorMessage(handIndex));
     }
     function cancel(){cleanup();handDragSuppressUntil=Date.now()+250;}
     cancelGesture=cancel;move(event);
@@ -1052,5 +1063,5 @@
   }
   if(root&&root.document){if(root.document.readyState==='loading')root.document.addEventListener('DOMContentLoaded',init,{once:true});else init();}
 
-  return{actionLabel,actionEventText,cardArtUrl,cardRulesHtml,supportText,filterBuilderRows,resultSummary,coverageForOwnedCards,centerHandActionIndices,directHandDropActionIndex,open,close,renderHome,requestLeave,isEditing:()=>screen==='builder',_test:{slotTools,buildInspectSpec,resolveInspect,attachedToolLinksHtml,liveToolMiniCardsHtml,liveCardHtml,attackPresentationMeta,coinSequence,battleSummaryStats,capturePresentationAnchors,targetKeyForAction,benchDamagePresentationEntry,stadiumSlotModel,resultActionsModel,playmatArtPath,energyCostHtml,liveAttachedEnergyHtml,liveEnergySourceHtml,liveBenchReadOnlyMovesHtml,pokemonActionIndices,pokemonInteractionAttrs,benchSwitchActionIndices,classicOpponentConfig,classicOpponentPickerHtml,classicOpponentHandRevealed}};
+  return{actionLabel,actionEventText,cardArtUrl,cardRulesHtml,supportText,filterBuilderRows,resultSummary,coverageForOwnedCards,centerHandActionIndices,directHandDropActionIndex,open,close,renderHome,requestLeave,isEditing:()=>screen==='builder',_test:{slotTools,buildInspectSpec,resolveInspect,attachedToolLinksHtml,liveToolMiniCardsHtml,liveCardHtml,attackPresentationMeta,coinSequence,battleSummaryStats,capturePresentationAnchors,targetKeyForAction,benchDamagePresentationEntry,stadiumSlotModel,resultActionsModel,playmatArtPath,energyCostHtml,liveAttachedEnergyHtml,liveEnergySourceHtml,liveBenchReadOnlyMovesHtml,pokemonActionIndices,pokemonInteractionAttrs,benchSwitchActionIndices,classicOpponentConfig,classicOpponentPickerHtml,classicOpponentHandRevealed,handDropErrorMessage}};
 });
