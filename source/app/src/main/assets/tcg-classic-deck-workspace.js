@@ -9,7 +9,7 @@ const canonical=id=>data.cardById(id)?.id||String(id||'');
 const typesOf=c=>Array.isArray(c?.types)&&c.types.length?c.types:[c?.subtype].filter(Boolean);
 function counts(cards){const out=new Map();for(const id of cards||[]){const key=canonical(id);out.set(key,(out.get(key)||0)+1);}return out;}
 function ownedMap(rows){const map=new Map();for(const row of rows||[]){const id=canonical(row.gameplayId);map.set(id,(map.get(id)||0)+Math.max(0,Number(row.quantity)||0));}return map;}
-function catalogue(rows){const owned=ownedMap(rows),byId=new Map((rows||[]).map(r=>[canonical(r.gameplayId),r]));return data.CARDS.filter(c=>c.deckEligible!==false).map(card=>({...byId.get(card.id),gameplayId:card.id,card,name:card.name,quantity:owned.get(card.id)||0,battleEnabled:!!card.battleEnabled,variants:byId.get(card.id)?.variants||[]}));}
+function catalogue(rows){const owned=ownedMap(rows),byId=new Map((rows||[]).map(r=>[canonical(r.gameplayId),r]));return data.CARDS.map(card=>({...byId.get(card.id),gameplayId:card.id,card,name:card.name,quantity:owned.get(card.id)||0,battleEnabled:!!card.battleEnabled,variants:byId.get(card.id)?.variants||[]}));}
 function query(rows,opts={}){
  const f=opts.filters||{},selected=counts(opts.cards),tokens=norm(opts.search).split(/\s+/).filter(Boolean),stages={'Basic':0,'Stage 1':1,'Stage 2':2};
  const results=(rows||[]).filter(row=>{const c=row.card||data.cardById(row.gameplayId);if(!c)return false;const category=c.kind==='pokemon'?'Pokémon':c.specialEnergy?'Special Energy':'Trainer';

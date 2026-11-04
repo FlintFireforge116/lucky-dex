@@ -80,12 +80,14 @@ function ownedGymHeroesCard(owned){
  if(!owned||typeof owned!=='object')return null;
  const src=String(owned.source||'').toLowerCase();if(src&&src!=='tcg')return null;
  const setId=String(owned.setId||owned.set?.id||'').toLowerCase(),key=String(owned._librarySetKey||'').toLowerCase();
- const name=String(owned.setName||owned.set?.name||'').trim().toLowerCase(),total=Number(owned.setTotal||owned.set?.cardCount?.total||0);
- if(!(['gym1','library:gh','gh','library:g1','g1'].includes(setId)||['gh','g1'].includes(key)||name==='gym heroes'&&total===132))return null;
+ const name=String(owned.setName||owned.set?.name||'').trim().toLowerCase();
+ const isGym=['gym1','library:gh','gh','library:g1','g1','library:gym1','library:gym','gym'].includes(setId)||['gh','g1','gym1','gym'].includes(key)||name==='gym heroes';
+ if(!isGym)return null;
  const direct=gym.cardById(owned.id);if(direct)return direct;
  for(const value of [owned.localId,owned.number,owned._libraryCanonicalId,owned.id]){
-  const match=String(value??'').trim().match(/^(?:gym1|gh|g1)?[-_:]?0*(\d{1,3})$/i);
-  if(match){const num=Number(match[1]);if(num>=1&&num<=132)return gym.cardById(`gym1-${num}`);}
+  const raw=String(value??'').trim();
+  const match=raw.match(/^(?:0*(\d{1,3})(?:\s*\/\s*132)?|(?:library[:_-])?(?:gym1|gym|gh|g1)[-_:]0*(\d{1,3})(?:\s*\/\s*132)?)$/i);
+  if(match){const num=Number(match[1]||match[2]);if(num>=1&&num<=132)return gym.cardById(`gym1-${num}`);}
  }
  return null;
 }
