@@ -810,3 +810,11 @@ body.tcgp-card-dragging .tcgp-live-mat-half .tcgp-live-card-wrap[data-card-drop-
 html.android-native-inset body.tcgp-battle-live .tcgp-live-arena.format-classic{
   padding-bottom:6px!important;
 }
+
+/* v0.69.86: the Classic player mat is taller than the original 2:1 half.
+   Use aspect-preserving cropping of the art rather than stretching it with
+   the half-mat 100% 200% rule. Keep Pocket/opponent art unchanged. */
+.tcgp-live-arena.format-classic>.tcgp-live-player.tcgp-live-mat-half{
+  background-size:cover!important;
+  background-position:center bottom!important;
+}
