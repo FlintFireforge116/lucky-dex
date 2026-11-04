@@ -736,14 +736,15 @@
     }
     if(currentBattle?.phase==='effectChoice'){
       const mine=currentBattle.choiceSide==='player',indices=battleActionCache.map((_,i)=>i),attrs=indices.length===1?`data-tcgp-action="battle-action" data-action-index="${indices[0]}"`:`data-tcgp-action="open-context-actions" data-action-indices="${indices.join(',')}"`;
-      return `<div class="tcgp-live-mid-controls promote"><span>EFFECT</span><b>${mine?'MAKE A CHOICE':'CPU CHOOSING'}</b><em>${esc(currentBattle.pendingChoice?.prompt||(mine?'Choose how the card effect resolves.':'Opponent is resolving the card effect.'))}</em>${mine&&indices.length?`<button type="button" class="tcgp-live-end-turn" ${attrs}>CHOOSE</button>`:''}</div>`;
+      return `<div class="tcgp-live-mid-controls promote"><span>EFFECT</span><b>${mine?'MAKE A CHOICE':'CPU CHOOSING'}</b><em>${esc(currentBattle.pendingChoice?.prompt||(mine?'Choose how the card effect resolves.':'Opponent is resolving the card effect.'))}</em>${mine&&indices.length?`<button type="button" class="tcgp-live-end-turn" ${attrs}>CHOOSE</button>`:''}${!mine&&!cpuPending&&!battlePresentationBusy?'<button type="button" class="tcgp-live-end-turn" data-tcgp-action="resume-cpu">RESUME CPU</button>':''}</div>`;
     }
     if(currentBattle?.phase==='promote'){
       const mine=currentBattle.promotionSide==='player';
-      return `<div class="tcgp-live-mid-controls promote"><span>KO</span><b>${mine?'CHOOSE NEW ACTIVE':'CPU CHOOSING ACTIVE'}</b><em>${mine?'Tap PROMOTE beneath the Bench Pokémon you want.':'Opponent must promote before play continues.'}</em></div>`;
+      return `<div class="tcgp-live-mid-controls promote"><span>KO</span><b>${mine?'CHOOSE NEW ACTIVE':'CPU CHOOSING ACTIVE'}</b><em>${mine?'Tap PROMOTE beneath the Bench Pokémon you want.':'Opponent must promote before play continues.'}</em>${!mine&&!cpuPending&&!battlePresentationBusy?'<button type="button" class="tcgp-live-end-turn" data-tcgp-action="resume-cpu">RESUME CPU</button>':''}</div>`;
     }
     const endIndex=battleActionCache.findIndex(action=>action.type==='endTurn');
-    return `<div class="tcgp-live-mid-controls"><span>TURN ${currentBattle?.turnNumber||1}/${currentBattle?.format==='classic'?100:50}</span><b>${esc(turnText)}</b><em>${esc(lastLog)}</em>${endIndex>=0?`<button type="button" class="tcgp-live-end-turn" data-tcgp-action="battle-action" data-action-index="${endIndex}">END TURN</button>`:''}</div>`;
+    const resumeCpu=cpuOwnsNextAction()&&!cpuPending&&!battlePresentationBusy;
+    return `<div class="tcgp-live-mid-controls"><span>TURN ${currentBattle?.turnNumber||1}/${currentBattle?.format==='classic'?100:50}</span><b>${esc(turnText)}</b><em>${esc(lastLog)}</em>${endIndex>=0?`<button type="button" class="tcgp-live-end-turn" data-tcgp-action="battle-action" data-action-index="${endIndex}">END TURN</button>`:''}${resumeCpu?'<button type="button" class="tcgp-live-end-turn" data-tcgp-action="resume-cpu">RESUME CPU</button>':''}</div>`;
   }
 
 
@@ -853,19 +854,48 @@
     if(!cpuOwnsNextAction()||cpuPending||battlePresentationBusy)return;
     cpuActions=0;cpuPending=true;renderBattle();clearTimeout(cpuTimer);cpuTimer=setTimeout(cpuStep,480);
   }
+  // A failed AI search must not maroon an otherwise legal match on CPU TURN.
+  // The fallback only uses actions legal in the *actual* position; the search
+  // engine remains responsible for all legality checks and card effects.
+  function cpuSafeAction(){
+    const legal=core.legalActions(currentBattle,'opponent');
+    if(!legal.length)return null;
+    if(currentBattle.phase==='battle')return legal.find(a=>a.type==='endTurn')||legal[0];
+    if(currentBattle.phase==='effectChoice')return legal.find(a=>a.choiceSkip===true&&currentBattle.pendingChoice?.optional===true)||legal[0];
+    return legal[0];
+  }
   function cpuStep(){
     if(!currentBattle||!cpuOwnsNextAction()){cpuPending=false;renderBattle();return;}
     let chosen=null,anchors=null,before=currentBattle.log.length;const started=Date.now();
-    try{
-      chosen=ai.chooseAction(currentBattle,'opponent',currentChallenge?.difficulty||'Beginner',cpuActions);
-      if(!chosen){cpuPending=false;renderBattle();return;}
-      anchors=capturePresentationAnchors(chosen,'opponent');core.applyAction(currentBattle,'opponent',chosen);cpuActions+=1;setBattleEvent(eventForAction(chosen,'opponent',before));
-    }catch(error){console.error('[TCGP Battle] CPU error',error);cpuPending=false;toast('Battle engine error.');renderBattle();return;}
+    try{chosen=ai.chooseAction(currentBattle,'opponent',currentChallenge?.difficulty||'Beginner',cpuActions);}
+    catch(error){
+      console.warn('[TCGP Battle] CPU search failed; using legal fallback',error);
+      try{chosen=ai.chooseAction(currentBattle,'opponent','Beginner',99);}catch(_){chosen=null;}
+    }
+    if(!chosen){
+      try{chosen=cpuSafeAction();}catch(error){console.error('[TCGP Battle] no recovery action',error);}
+    }
+    if(!chosen){cpuPending=false;setBattleEvent('CPU cannot select an action · tap Resume CPU');renderBattle();return;}
+    // Restore the state if executing a chosen action unexpectedly throws, then
+    // end the turn or resolve the mandatory effect choice. Do not repeat an
+    // errored Trainer until a new CPU decision is made.
+    const snapshot=JSON.parse(JSON.stringify(currentBattle));
+    try{anchors=capturePresentationAnchors(chosen,'opponent');}catch(error){console.warn('[TCGP Battle] CPU animation unavailable',error);}
+    try{core.applyAction(currentBattle,'opponent',chosen);}
+    catch(error){
+      console.error('[TCGP Battle] CPU action failed; recovering',error);
+      Object.keys(currentBattle).forEach(key=>delete currentBattle[key]);Object.assign(currentBattle,snapshot);
+      try{chosen=cpuSafeAction();if(!chosen)throw new Error('No legal fallback');try{anchors=capturePresentationAnchors(chosen,'opponent');}catch(_){anchors=null;}core.applyAction(currentBattle,'opponent',chosen);}
+      catch(recoveryError){console.error('[TCGP Battle] recovery failed',recoveryError);cpuPending=false;setBattleEvent('CPU action failed · tap Resume CPU');renderBattle();return;}
+    }
+    cpuActions+=1;setBattleEvent(eventForAction(chosen,'opponent',before));
     const added=currentBattle.log.slice(before),finished=currentBattle?.phase==='finished',again=!finished&&cpuOwnsNextAction();cpuPending=again;renderBattle();
-    playBattlePresentation(chosen,'opponent',anchors,added,()=>{
+    const continueCpu=()=>{
       if(currentBattle?.phase==='finished'){cpuPending=false;finishBattle();return;}
       if(again){clearTimeout(cpuTimer);cpuTimer=setTimeout(cpuStep,cpuRemainingDwellMs(chosen,added,Date.now()-started));}
-    });
+    };
+    try{playBattlePresentation(chosen,'opponent',anchors,added,continueCpu);}
+    catch(error){console.warn('[TCGP Battle] CPU presentation failed; continuing turn',error);finishBattlePresentation(false);continueCpu();}
   }
 
   function open(){
@@ -905,6 +935,7 @@
     const btn=event.target.closest?.('[data-tcgp-action]');if(!btn)return;const action=btn.dataset.tcgpAction;
     if(Date.now()<handDragSuppressUntil&&btn.closest?.('[data-tcgp-hand-drag]'))return;
     if(action==='skip-presentation')return finishBattlePresentation(true);
+    if(action==='resume-cpu')return maybeCpu();
     if(battlePresentationBusy)return;
     if(action==='explain-unavailable')return toast(btn.dataset.reason||'This action is currently unavailable.');
     if(action==='format-pocket'){battleFormat='pocket';classicDraft=null;return renderHome(true);}

@@ -147,17 +147,34 @@
     if(['search','searchRandomBasic'].includes(effect.type)&&(!effect.source||effect.source==='deck'))return Math.min(s.deck.length,Number(effect.amount||1))*(s.bench.length===0?24:s.bench.length<3?16:6);
     return 0;
   }
+  // The AI cannot see hidden deck order. This projected state replaces both
+  // decks with anonymous cards. Certain *legal* actions (e.g. Gym Heroes Good
+  // Manners searching for a Basic) therefore cannot be replayed on the
+  // projection: the anonymous deck contains no searchable Basic Pokémon.
+  // Those actions need a heuristic, not an exception that freezes the CPU.
+  // Do not inspect the hidden real deck as a workaround.
+  function actionBonus(action,position,side,level){
+    let bonus=0;
+    if(action.type==='attach')bonus+=attachScore(action,position,side)*.12;
+    if(action.type==='evolve')bonus+=4;
+    if(action.type==='trainer')bonus+=2+searchOpportunity(data.cardById(action.cardId)?.effect,position.sides[side]);
+    if(action.type==='ability')bonus+=searchOpportunity(abilityEffect(data.cardById(action.cardId),action.abilityIndex),position.sides[side]);
+    if(action.type==='endTurn')bonus-=4;
+    if(action.type==='retreat')bonus-=level>=2?7:12;
+    return bonus;
+  }
   function evaluate(position,action,side,level){
-    const next=clone(position);core.applyAction(next,side,action);
-    let score=value(next,side,level);
-    if(action.type==='attach')score+=attachScore(action,position,side)*.12;
-    if(action.type==='evolve')score+=4;
-    if(action.type==='trainer')score+=2+searchOpportunity(data.cardById(action.cardId)?.effect,position.sides[side]);
-    if(action.type==='ability')score+=searchOpportunity(abilityEffect(data.cardById(action.cardId),action.abilityIndex),position.sides[side]);
-    if(action.type==='endTurn')score-=4;
-    // Avoid gratuitous retreat loops and spending an attacker's last Energy.
-    if(action.type==='retreat')score-=level>=2?7:12;
-    return {action,score,next};
+    let next=null;
+    try{
+      next=clone(position);
+      core.applyAction(next,side,action);
+      return {action,score:value(next,side,level)+actionBonus(action,position,side,level),next};
+    }catch(error){
+      // Only the hypothetical branch failed. The original action was obtained
+      // from legalActions on the real state, so it remains playable. Retain a
+      // conservative score without an invalid follow-up state.
+      return {action,score:value(position,side,level)+actionBonus(action,position,side,level),next:null,projectionUnavailable:true};
+    }
   }
   function chooseAction(state,side,difficulty,actionCount){
     const level=DIFFICULTIES.indexOf(String(difficulty||'Beginner'));if(level<0)throw new Error('Unknown AI difficulty: '+difficulty);
@@ -196,7 +213,7 @@
     // before the winning attack, draw before attachment, switch before a useful KO.
     if(level===3&&ranked[0].score<1000000){
       for(const candidate of ranked.slice(0,8)){
-        const next=candidate.next;if(next.phase!=='battle'||next.activeSide!==side)continue;
+        const next=candidate.next;if(!next||next.phase!=='battle'||next.activeSide!==side)continue;
         const follow=core.legalActions(next,side);let best=candidate.score;
         for(const action of follow){const future=evaluate(next,action,side,level);best=Math.max(best,future.score-1);}
         candidate.score=best;
