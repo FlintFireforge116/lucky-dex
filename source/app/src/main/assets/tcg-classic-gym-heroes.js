@@ -221,6 +221,30 @@ const MORE_MOVES=`
 31|Water Ring~WWCC~30~mistyWaterRing~Deal 10 damage to every non-Water Pokémon on either player's Bench, ignoring Weakness and Resistance.
 45|Healing Pollen~G~0~erikaGloomHeal~Flip a coin; on heads heal 40 damage from Erika's Gloom.;Magic Pollen~GGG~30~erikaMagicPollen~Choose Sleep, Confusion, Paralysis or Poison for the Defending Pokémon.
 `.trim().split('\n');
+const FINAL_MOVES=`
+2|Lariat~FFCC~70~gate~Flip a coin. On tails, this attack does no damage.
+3|Fairy Power~C~0~fairyPower~Flip a coin. On heads you may return any number of your Pokémon and attached cards to your hand.;Moon Impact~CCC~30~~
+10|Jellyfish Poison~WWCC~30~jellyPoison~Flip a coin. Heads Poisons the defender; tails Confuses it.
+11|Crosscounter~F~0~crosscounter~If damaged by an attack during the opponent's next turn, flip a coin. On heads, deal double that damage to the attacking Pokémon.;Magnum Punch~FFC~50~~
+12|Fire Wall~RRR~40~fireWall~If an attack damages Rocket's Moltres next turn, deal 10 damage to the attacker, applying Weakness and Resistance.
+13|Shadow Images~G~0~shadowImages~Until Rocket's Scyther takes damage, evolves or leaves Active, opposing attacks flip a coin; tails prevents damage, but not other effects.;Blinding Scythe~GCC~40~~
+14|Pain Amplifier~P~0~painAmplifier~Place one damage counter on every opposing Pokémon that already has damage.;Call of the Night~PPP~40~callNight~Unless the defender is Knocked Out, flip two coins; two heads shuffles it and its attachments into the owner's deck.
+25|Moonwatching~C~0~energyToHand~Search your separate Basic Energy Zone for a basic Energy card and put it in your hand.;Comet Slap~CC~10×~coin3x10~Flip three coins. Deal 10 damage per heads.
+32|Mysterious Light~C~0~coinSleep~Flip a coin. On heads, put the defender Asleep.;Jellyfish Pod~WC~0~jellyfishPod~Search for any number of Tentacool and Tentacruel cards from your deck, reveal them and put them into hand, then shuffle.
+37|Firebreathing~R~10+~bonus10~Flip a coin. On heads, deal 10 extra damage.;Lava Burst~RRR~20×~lavaBurst~Discard the top five cards of your deck; deal 20 damage for each Fire Energy card discarded.
+42|Tail Strike~CC~10+~bonus20~Flip a coin. On heads, deal 20 additional damage.
+43|Deflector~P~0~deflector~During your opponent's next turn, halve damage done to this Pokémon, rounding down to the nearest 10.;Egg Bomb~GC~40~eggBomb~Flip a coin; on tails, this attack deals no damage to the defender and Erika's Exeggcute takes 20 damage.
+47|Poisonpowder~GG~20~coinPoison~Flip a coin; on heads Poison the defender.
+48|Drool~G~10~~;Flytrap~GG~20~flytrap~Switch one opposing Benched Pokémon Active before dealing the damage. Requires an opposing Benched Pokémon.
+54|Scratch~C~10~~;Call for Friend~W~0~mistyCallFriend~Flip a coin. On heads, search for a Basic Misty's Pokémon and put it on the Bench; shuffle afterward.
+57|Crystal Beam~WC~20~crystalBeam~On heads, the opponent cannot attach Energy to the Defending Pokémon on their next turn.
+61|Kindle~R~10~kindle~Discard one attached Energy to attack. Then discard one from the defending Pokémon if possible.;Slash~CC~20~~
+64|3-Pronged Tail~C~10×~coin3x10~Flip three coins; deal 10 per heads.;Full Speed Charge~CCC~20×~fullSpeedCharge~Flip four coins: deal 20 damage per heads to the defender and 20 per tails to Blaine's Tauros.
+66|Call for Friend~F~0~brockCallFriend~Flip a coin. On heads, search for a Basic Brock Pokémon and Bench it, then shuffle.;Hook Shot~FC~20~ignoreResistance~Ignore Resistance for this attack.
+68|Fidget~C~0~shuffleOwn~Shuffle your deck.;Karate Chop~FC~40-~karateChop~Deal 40 minus 10 per damage counter on Brock's Mankey.
+91|Energy Loop~P~20~energyLoop~Return a Psychic Energy attached to Sabrina's Abra to your hand to use this attack.
+94|Sleight of Hand~C~0~sleightHand~Put up to three cards from hand on top of your deck and search for the same number of Basic Energy cards.;Slap~PC~20~~
+`.trim().split('\n');
 const nop={type:'noop'};
 const status=(status,target='opponentActive')=>({type:'status',target,status});
 const flip=(heads,tails)=>({type:'coinFlip',heads,tails});
@@ -279,6 +303,21 @@ const effects={
  erikaMagicPollen:{type:'chooseOption',options:[{label:'Sleep',effect:status('sleep')},{label:'Confuse',effect:status('confusion')},{label:'Paralyse',effect:status('paralysis')},{label:'Poison',effect:status('poison')}]},
 
 
+  fairyPower:{type:'gymRule',rule:'fairyPower'},jellyPoison:flip(status('poison'),status('confusion')),
+  crosscounter:{type:'gymRule',rule:'crosscounter'},fireWall:{type:'gymRule',rule:'fireWall'},
+  shadowImages:{type:'gymRule',rule:'shadowImages'},painAmplifier:{type:'gymRule',rule:'painAmplifier'},
+  callNight:{type:'gymRule',rule:'callNight'},energyToHand:{type:'gymRule',rule:'energyToHand'},
+  coin3x10:coinDamage(3,10),coinSleep:flip(status('sleep')),jellyfishPod:{type:'gymRule',rule:'jellyfishPod'},
+  lavaBurst:{type:'gymRule',rule:'lavaBurst'},deflector:{type:'gymRule',rule:'deflector'},
+  eggBomb:{type:'gymRule',rule:'eggBomb'},flytrap:{type:'gymRule',rule:'flytrap'},
+  mistyCallFriend:flip({type:'gymRule',rule:'mistyCallFriend'}),
+  crystalBeam:{type:'gymRule',rule:'crystalBeam'},kindle:{type:'gymRule',rule:'kindle'},
+  fullSpeedCharge:{type:'gymRule',rule:'fullSpeedCharge'},
+  brockCallFriend:flip({type:'gymRule',rule:'brockCallFriend'}),
+  ignoreResistance:{type:'damageRule',ignoreResistance:true},shuffleOwn:{type:'shuffleDeck',side:'self'},
+  karateChop:{type:'selfDamagePenalty',mode:'add'},energyLoop:{type:'gymRule',rule:'energyLoop'},
+  sleightHand:{type:'gymRule',rule:'sleightHand'},
+
  coinClamp:{type:'coinAttackGate',heads:status('paralysis')},
  coinAttackLock:flip({type:'lock',action:'attack',duration:'opponentTurn'}),
  selfSleep:status('sleep','self'),poison:status('poison'),
@@ -287,7 +326,7 @@ const effects={
  nightSpirits:{type:'coinDamageByPokemon',filter:{name:["Sabrina's Gastly","Sabrina's Haunter","Sabrina's Gengar"]},amount:30},
  swift:{type:'damageRule',ignoreWeakness:true,ignoreEffects:true}
 };
-const ATTACKS=new Map([...MOVES,...MORE_MOVES].filter(Boolean).map(row=>{const [num,moves]=row.split('|');return [Number(num),moves.split(/;(?=[A-Z][^;~]{0,70}~[GRWLPCF]*~)/).map(move=>{
+const ATTACKS=new Map([...MOVES,...MORE_MOVES,...FINAL_MOVES].filter(Boolean).map(row=>{const [num,moves]=row.split('|');return [Number(num),moves.split(/;(?=[A-Z][^;~]{0,70}~[GRWLPCF]*~)/).map(move=>{
  const [name,cost,rawDamage,key='',text='']=move.split('~');const effect=key?(effects[key]||{type:'notImplemented',key}):null;
  const variable=rawDamage.includes('×')||rawDamage.includes('+')||rawDamage==='?';
  return {name,cost,damage:variable?(/\+/.test(rawDamage)?Number(rawDamage.replace('+',''))||0:0):Number(rawDamage)||0,damageText:variable?rawDamage:null,effect,text};
@@ -302,7 +341,15 @@ const POWER={
  33:{name:'Restless Sleep',text:'When an attack damages Rocket’s Snorlax while it is already Asleep, deal 20 damage to the attacker.',type:'triggered',event:'damagedByAttack',disabledByStatus:false,effect:{type:'damage',target:'opponentActive',amount:20,condition:{type:'selfStatus',status:'sleep'}}},
  65:{name:'Natural Healing',text:'Once during your turn, remove one damage counter from Blaine’s Vulpix.',type:'activated',disabledByStatus:true,oncePerTurn:true,effect:{type:'healSelf',amount:10}}
 };
-const UNIMPLEMENTED_POWERS=new Set([2,10,12,14,42,47]);
+
+Object.assign(POWER,{
+  2:{name:'Bench Guard',text:'Whenever one of your Benched Pokémon takes damage, you may redirect 10 of that damage to Brock’s Rhydon on the Bench.',type:'passive',benchOnly:true,disabledByStatus:false,effect:{type:'gymRule',rule:'benchGuard'}},
+  10:{name:'Flee',text:'After an attack damages Misty’s Tentacruel while Active, you may switch it with a Benched Pokémon, preventing other effects of that attack.',type:'triggered',event:'damagedByAttack',activeOnly:true,disabledByStatus:true,effect:{type:'gymRule',rule:'flee'}},
+  12:{name:'Rebirth',text:'When Rocket’s Moltres is Knocked Out, you may return that card to hand after discarding its attachments.',type:'passive',disabledByStatus:true,effect:{type:'koGuard',mode:'returnToHand'}},
+  42:{name:'Strange Barrier',text:'When damaged by a Basic Pokémon for 20 or more, reduce the damage to 10.',type:'passive',disabledByStatus:true,effect:{type:'gymRule',rule:'strangeBarrier'}},
+  47:{name:'Photosynthesis',text:'All Energy attached to Erika’s Oddish provides Grass Energy while this Power is active.',type:'passive',disabledByStatus:false,effect:{type:'gymRule',rule:'photosynthesis'}}
+});
+const UNIMPLEMENTED_POWERS=new Set();
 const TRAINERS={
  15:{text:'Remove one damage counter from each of your damaged Pokémon.',effect:{type:'heal',target:'selfAll',amount:10}},
  98:{text:'Remove one damage counter from each of your damaged Pokémon.',effect:{type:'heal',target:'selfAll',amount:10}},
@@ -312,13 +359,46 @@ const TRAINERS={
 };
 // Rules summaries remain available for every print, even if the underlying
 // battle mechanic is not yet ready. They are not used to grant playability.
+
+Object.assign(TRAINERS,{
+  16:{text:'Each player may draw up to three cards.',effect:{type:'gymRule',rule:'erikaDraw'}},
+  17:{text:'Put a Basic Pokémon from hand Active and Bench your old Active Pokémon; requires Bench space.',effect:{type:'gymRule',rule:'surgeSwap'}},
+  18:{text:'Discard two other cards to boost Misty Pokémon attacks by 20 this turn.',effect:{type:'gymRule',rule:'mistyBoost'}},
+  19:{text:'Flip a coin; on heads, your opponent shuffles their hand into their deck and draws four.',effect:flip({type:'handShuffle',side:'opponent',draw:4})},
+  97:{text:'LuckyDex adaptation: reveal a Pokémon from your hand and flip a coin instead of guessing its height. Heads: opponent draws two cards. Tails: you draw two cards.',effect:{type:'gymRule',rule:'blainesQuiz'}},
+  99:{text:'Attach to your Active Pokémon until end of turn; may voluntarily reduce its attack damage in steps of 10.',effect:{type:'gymRule',rule:'charity'}},
+  100:{text:'Each player may draw up to three cards.',effect:{type:'gymRule',rule:'erikaDraw'}},
+  101:{text:'Put a Basic Pokémon from hand Active and Bench your old Active Pokémon; requires Bench space.',effect:{type:'gymRule',rule:'surgeSwap'}},
+  102:{text:'Discard two cards and boost Misty Pokémon attack damage by 20 this turn.',effect:{type:'gymRule',rule:'mistyBoost'}},
+  103:{text:'Stadium. Energy Removal and Super Energy Removal cost two extra cards from hand.',effect:{type:'gymRule',rule:'noRemovalGym'}},
+  104:{text:'Stadium. Both players pay one extra Colorless Energy to retreat.',effect:{type:'gymRule',rule:'rocketGym'}},
+  105:{text:'If the only card in your hand, draw five cards.',effect:{type:'gymRule',rule:'lastResort'}},
+  107:{text:'Stadium. Once per turn, discard an Energy from one Erika Pokémon to clear its Special Conditions.',effect:{type:'stadiumAction',effect:{type:'gymRule',rule:'celadonCure'}}},
+  108:{text:'Stadium. Misty Pokémon retreat for one less Colorless Energy.',effect:{type:'gymRule',rule:'ceruleanGym'}},
+  109:{text:'Trade two hand cards to search the deck for up to two Erika Pokémon.',effect:{type:'gymRule',rule:'erikasMaids'}},
+  111:{text:'If you have no Basic Pokémon in hand, reveal your hand and search the deck for a Basic Pokémon.',effect:{type:'gymRule',rule:'goodManners'}},
+  112:{text:'Opponent chooses between both players taking one Prize or you drawing one card.',effect:{type:'gymRule',rule:'surgeTreaty'}},
+  113:{text:'Flip two coins: if both heads return an opposing Benched Pokémon and attachments to hand; otherwise end your turn.',effect:{type:'gymRule',rule:'rocketMinion'}},
+  114:{text:'Look at the top seven cards of your deck; put two into your hand and discard the rest.',effect:{type:'gymRule',rule:'mistysWrath'}},
+  115:{text:'Stadium. Brock Pokémon ignore Resistance when attacking.',effect:{type:'gymRule',rule:'pewterGym'}},
+  116:{text:'Your Active may use an attack from its earlier Evolution cards for this turn.',effect:{type:'gymRule',rule:'recall'}},
+  117:{text:'Attach to a Sabrina Pokémon; may re-flip all coins for that Pokémon’s attack this turn.',effect:{type:'gymRule',rule:'sabrinasEsp'}},
+  118:{text:'Reveal the opponent’s hand; discard any number of other cards from your hand and draw that many.',effect:{type:'gymRule',rule:'secretMission'}},
+  119:{text:'Flip a coin: heads hides opponent’s hand until their next turn ends; tails ends your turn.',effect:{type:'gymRule',rule:'ticklingMachine'}},
+  120:{text:'Stadium. Lt. Surge Pokémon can flip: heads +10 attack damage, tails 10 self-damage.',effect:{type:'gymRule',rule:'vermilionGym'}},
+  121:{text:'Discard any number of other cards from hand; on heads draw twice that many.',effect:{type:'gymRule',rule:'blainesGamble'}},
+  122:{text:'Return any number of basic Energy attachments from your Pokémon to hand.',effect:{type:'gymRule',rule:'energyFlow'}},
+  123:{text:'Play Rock Paper Scissors; winner shuffles hand into deck and draws five.',effect:{type:'gymRule',rule:'mistysDuel'}},
+  124:{text:'Stadium. Both players may have at most four Benched Pokémon.',effect:{type:'gymRule',rule:'narrowGym'}},
+  126:{text:'Shuffle all cards from your discard pile into your deck, then discard the same number from the top.',effect:{type:'gymRule',rule:'trashExchange'}}
+});
 const TRAINER_DESCRIPTIONS={
  15:'Heal 10 damage from each of your Pokémon that has damage counters.',
  16:'Each player may draw up to three cards, beginning with you.',
  17:'Put a Basic Pokémon from your hand into the Active position; move your previous Active to the Bench. Requires free Bench space.',
  18:'Discard two other cards from your hand to give attacks by your Misty Pokémon 20 additional damage this turn.',
  19:'Flip a coin. If heads, the opponent shuffles their hand into the deck and draws a new hand of four.',
- 97:'Present a Pokémon from your hand. Your opponent guesses its length; the correct guess rewards them with two draws, otherwise you draw two.',
+ 97:'LuckyDex adaptation: reveal a Pokémon from hand, then flip a coin in place of the printed height guess. Heads: opponent draws two; tails: you draw two.',
  98:'Remove one damage counter from each of your damaged Pokémon.',
  99:'Attach this to your Active Pokémon for the turn. You may reduce damage it deals to the defender in increments of 10.',
  100:'Each player may draw up to three cards, beginning with you.',
@@ -365,7 +445,7 @@ const CARDS=DATA.map(row=>{
  return {id:`gym1-${number}`,setId:'gym1',number:String(number),name,source:'tcg',battleFormat:'classic',kind,
    ...(kind==='pokemon'?{stage:stage==='0'?'Basic':`Stage ${stage}`,hp:Number(hp),retreat:Number(ret),types:[TYPE[type]],subtype:TYPE[type],evolvesFrom:evolvesFrom||null,
     weakness:TYPE[weak]||null,weaknessValue:weak?'×2':null,resistance:TYPE[res]||null,resistanceValue:res?'-30':null,attacks,abilities}:{}),
-   ...(kind==='trainer'?{trainerType:STADIUM_NUMBERS.has(number)?'Stadium':'Item',text:TRAINERS[number]?.text||TRAINER_DESCRIPTIONS[number]||'',effect:TRAINERS[number]?.effect||null}:{}),...(basicEnergy?{basicEnergy:true,subtype:TYPE[type],types:[TYPE[type]]}:{}),
+   ...(kind==='trainer'?{trainerType:STADIUM_NUMBERS.has(number)?'Stadium':'Item',text:TRAINERS[number]?.text||TRAINER_DESCRIPTIONS[number]||'',effect:TRAINERS[number]?.effect||null,...(number===117?{expires:'endOwnTurn'}:{})}:{}),...(basicEnergy?{basicEnergy:true,subtype:TYPE[type],types:[TYPE[type]]}:{}),
    battleEnabled,deckEligible:battleEnabled,support:{status:battleEnabled?'FULL':'PARTIAL',reasons},
    rarity:number<=19?'Rare Holo':number<=34?'Rare':number<=60?'Uncommon':number<=96?'Common':number<=104?'Rare':number<=120?'Uncommon':'Common',
    image:`https://images.pokemontcg.io/gym1/${number}.png`,imageLarge:`https://images.pokemontcg.io/gym1/${number}_hires.png`};

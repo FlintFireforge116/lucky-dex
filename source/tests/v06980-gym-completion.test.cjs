@@ -5,7 +5,7 @@ test('disabling battle-ready filter exposes complete Gym Heroes catalogue',()=>{
  const D=read('tcg-classic-battle-data.js'),W=read('tcg-classic-deck-workspace.js');
  const rows=W.catalogue([]);
  const all=W.query(rows,{filters:{set:'gym1',owned:false,enabled:false},pageSize:200});
- assert.equal(all.total,132);assert.ok(all.rows.some(r=>r.gameplayId==='gym1-2'&&!r.card.battleEnabled));
+ assert.equal(all.total,132);assert.ok(all.rows.some(r=>r.gameplayId==='gym1-2'&&r.card.battleEnabled));
  assert.equal(W.query(rows,{filters:{set:'gym1',owned:false,enabled:true},pageSize:200}).total,D.CARDS.filter(c=>c.setId==='gym1'&&c.battleEnabled).length);
 });
 test('Gym Heroes ownership recognises library cards even without setTotal and with slash-number formats',()=>{

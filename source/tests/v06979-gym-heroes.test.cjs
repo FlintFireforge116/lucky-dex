@@ -30,8 +30,8 @@ test('Gym Heroes is visible as set option in Auto Builder, card filter and CPU o
 });
 test('Gym Heroes does not enable printed attacks and powers without implemented effects',()=>{
  const G=read('tcg-classic-gym-heroes.js');
- assert.equal(G.cardById('gym1-2').battleEnabled,false,'Brock Rhydon needs Bench Guard');
- assert.equal(G.cardById('gym1-14').battleEnabled,false,'Sabrina Gengar requires tricky effects');
+ assert.equal(G.cardById('gym1-2').battleEnabled,true,'Brock Rhydon includes Bench Guard');
+ assert.equal(G.cardById('gym1-14').battleEnabled,true,'Sabrina Gengar attacks available');
  assert.equal(G.cardById('gym1-89').battleEnabled,true,'Misty Shellder has ordinary coin-gated attack');
  assert.equal(G.cardById('gym1-127').deckEligible,false,'basic Energy supplied by zone');
 });

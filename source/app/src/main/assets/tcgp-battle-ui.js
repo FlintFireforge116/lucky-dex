@@ -709,7 +709,7 @@
     }
     if(currentBattle?.phase==='effectChoice'){
       const mine=currentBattle.choiceSide==='player',indices=battleActionCache.map((_,i)=>i),attrs=indices.length===1?`data-tcgp-action="battle-action" data-action-index="${indices[0]}"`:`data-tcgp-action="open-context-actions" data-action-indices="${indices.join(',')}"`;
-      return `<div class="tcgp-live-mid-controls promote"><span>EFFECT</span><b>${mine?'MAKE A CHOICE':'CPU CHOOSING'}</b><em>${mine?'Choose how the card effect resolves.':'Opponent is resolving the card effect.'}</em>${mine&&indices.length?`<button type="button" class="tcgp-live-end-turn" ${attrs}>CHOOSE</button>`:''}</div>`;
+      return `<div class="tcgp-live-mid-controls promote"><span>EFFECT</span><b>${mine?'MAKE A CHOICE':'CPU CHOOSING'}</b><em>${esc(currentBattle.pendingChoice?.prompt||(mine?'Choose how the card effect resolves.':'Opponent is resolving the card effect.'))}</em>${mine&&indices.length?`<button type="button" class="tcgp-live-end-turn" ${attrs}>CHOOSE</button>`:''}</div>`;
     }
     if(currentBattle?.phase==='promote'){
       const mine=currentBattle.promotionSide==='player';
