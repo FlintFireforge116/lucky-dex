@@ -738,7 +738,29 @@
         if(slots.some(s=>s.damage>=10&&(effect.side==='opponent'?slots.some(t=>t!==s):destination!==s))&&typeof ctx.requestChoice==='function')ctx.requestChoice({kind:'pokemon',side:'self',selectionSide:effect.side==='opponent'?ctx.foeSide:ctx.side,includeActive:true,effect});break;
       }
       case 'returnIfSurvives':{const slot=other(ctx).active;if(slot&&slot===ctx.defender&&Number(slot.damage||0)<Number(ctx.cardById(slot.cardId)?.hp||0))applyEffect({type:'returnToHand',target:'opponentActive'},ctx);break;}
-      case 'returnToHand':{for(const slot of affected()){const ss=energyOwner(ctx,slot);if(!ss)continue;const refs=slot.stack.map((cardId,i)=>({uid:`${slot.uid}-return-${i}`,cardId}));if(effect.discardAttached){ss.discard.push(...toolsOf(slot),...temporaryTrainersOf(slot),...(slot.specialEnergy||[]));for(const [type,n] of Object.entries(slot.energy||{}))recordDiscardedEnergy(ss,type,n);}else refs.push(...toolsOf(slot),...temporaryTrainersOf(slot),...(slot.specialEnergy||[]));if(ss.handLimit!=null&&ss.hand.length+refs.length>ss.handLimit){log({type:'returnToHandBlocked',cardId:slot.cardId,reason:'hand-full'});continue;}ss.hand.push(...refs);if(ss.active===slot)ss.active=null;else ss.bench.splice(ss.bench.indexOf(slot),1);log({type:'returnToHand',cardId:slot.cardId});}break;}
+      case 'returnToHand':{for(const slot of affected()){
+        const ss=energyOwner(ctx,slot);if(!ss)continue;
+        const refs=slot.stack.map((cardId,i)=>({uid:`${slot.uid}-return-${i}`,cardId}));
+        const tools=[...toolsOf(slot),...temporaryTrainersOf(slot)],special=(slot.specialEnergy||[]).slice();
+        if(effect.returnBasicEnergy){
+          const ids={Fighting:127,Fire:128,Grass:129,Lightning:130,Psychic:131,Water:132};
+          for(const [type,n] of Object.entries(slot.energy||{}))for(let i=0;i<Number(n||0);i++){
+            if(ids[type])refs.push({uid:`${slot.uid}-basic-${type}-${i}`,cardId:`gym1-${ids[type]}`,zoneGenerated:true});
+          }
+          refs.push(...special);
+          if(!effect.discardTools)refs.push(...tools);
+        }else if(effect.discardAttached){
+          // Discard attachment effects will commit only after hand-capacity checks.
+        }else refs.push(...tools,...special);
+        if(ss.handLimit!=null&&ss.hand.length+refs.length>ss.handLimit){
+          log({type:'returnToHandBlocked',cardId:slot.cardId,reason:'hand-full'});continue;
+        }
+        if(effect.returnBasicEnergy&&effect.discardTools)ss.discard.push(...tools);
+        else if(effect.discardAttached){ss.discard.push(...tools,...special);for(const [type,n] of Object.entries(slot.energy||{}))recordDiscardedEnergy(ss,type,n);}
+        ss.hand.push(...refs);
+        if(ss.active===slot)ss.active=null;else ss.bench.splice(ss.bench.indexOf(slot),1);
+        log({type:'returnToHand',cardId:slot.cardId});
+      }break;}
       case 'shuffleIntoDeck':{for(const slot of affected()){const ss=energyOwner(ctx,slot);if(!ss)continue;const refs=slot.stack.map((cardId,i)=>({uid:`${slot.uid}-shuffle-${i}`,cardId}));if(effect.includeAttached!==false)refs.push(...toolsOf(slot),...temporaryTrainersOf(slot),...(slot.specialEnergy||[]));ss.deck.push(...refs);if(ss.active===slot)ss.active=null;else ss.bench.splice(ss.bench.indexOf(slot),1);if(ctx.shuffle)ctx.shuffle(ctx.state,ss.deck);log({type:'shuffleIntoDeck',cardId:slot.cardId});}break;}
       case 'discardChosenHand':{
         const ss=effect.side==='opponent'?other(ctx):own(ctx),needed=Math.max(1,Number(effect.amount||1));
@@ -865,6 +887,20 @@
       if(e.type==='damageRule'){damageRules={...damageRules,...e};return;}
       if(e.type==='gymRule'){
         const rule=e.rule;
+        if(rule==='challengeJuxtapose'){
+          const heads=coin(ctx);ctx.state.log.push({type:'coin',side:ctx.side,reason:rule,heads,results:[heads]});
+          if(heads&&ctx.attacker&&ctx.defender){const count=Number(ctx.attacker.damage||0);ctx.attacker.damage=Number(ctx.defender.damage||0);ctx.defender.damage=count;}
+          return;
+        }
+        if(rule==='challengeBonfire'){
+          const results=[coin(ctx),coin(ctx),coin(ctx)],heads=results.filter(Boolean).length;
+          ctx.state.log.push({type:'coin',side:ctx.side,reason:rule,heads,coins:3,results});
+          const fire=Math.max(0,Number(ctx.attacker?.energy?.Fire||0));
+          if(fire<heads){damage=0;attackDoesNothing=true;return;}
+          damage=heads*10;damageRules={...damageRules,ignoreWeakness:true,ignoreResistance:true};
+          if(heads){pending.push({type:'discardEnergyCard',target:'self',energyType:'Fire',amount:heads});pending.push({type:'benchDamage',side:'opponent',all:true,amount:heads*10});}
+          return;
+        }
         if(rule==='lavaBurst'){
           const ss=own(ctx),refs=ss.deck.splice(0,Math.min(5,ss.deck.length));ss.discard.push(...refs);
           damage=refs.filter(r=>ctx.cardById(r.cardId)?.basicEnergy&&ctx.cardById(r.cardId)?.subtype==='Fire').length*20;

@@ -12,7 +12,7 @@ test('Gym Heroes catalogue has 132 distinct original print IDs, named Gym evolut
 });
 test('Classic card catalogue, physical ownership and mixed set pools include Gym Heroes',()=>{
  const D=read('tcg-classic-battle-data.js'),B=read('tcg-classic-deck-builder.js'),O=read('tcg-classic-opponents.js');
- assert.deepEqual(D.SETS.map(x=>x.id),['base1','base2','base3','base5','gym1']);
+ for(const id of ['base1','base2','base3','base5','gym1'])assert.ok(D.SETS.some(set=>set.id===id),`missing historical set ${id}`);
  assert.ok(B.SET_IDS.includes('gym1'));assert.ok(O.SETS.includes('gym1'));
  const c=D.projectOwnedCards([{id:'GH-56',setId:'library:GH',setName:'Gym Heroes',setTotal:132,source:'tcg',count:3}]).find(c=>c.gameplayId==='gym1-56');
  assert.equal(c?.quantity,3);assert.equal(c?.card.name,"Misty's Starmie");

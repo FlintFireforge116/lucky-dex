@@ -4,13 +4,14 @@
   const fossil=typeof module==='object'&&module.exports?require('./tcg-classic-fossil.js'):root.LuckyDexClassicTCGFossil;
   const rocket=typeof module==='object'&&module.exports?require('./tcg-classic-team-rocket.js'):root.LuckyDexClassicTCGTeamRocket;
   const gym=typeof module==='object'&&module.exports?require('./tcg-classic-gym-heroes.js'):root.LuckyDexClassicTCGGymHeroes;
-  const api=factory(base,jungle,fossil,rocket,gym);
+  const challenge=typeof module==='object'&&module.exports?require('./tcg-classic-gym-challenge.js'):root.LuckyDexClassicTCGGymChallenge;
+  const api=factory(base,jungle,fossil,rocket,gym,challenge);
   if(typeof module==='object'&&module.exports)module.exports=api;
   if(root)root.LuckyDexClassicTCGBattleData=api;
-})(typeof globalThis!=='undefined'?globalThis:this,function(base,jungle,fossil,rocket,gym){
+})(typeof globalThis!=='undefined'?globalThis:this,function(base,jungle,fossil,rocket,gym,challenge){
 'use strict';
-if(!base||!Array.isArray(base.CARDS)||!jungle||!Array.isArray(jungle.CARDS)||!fossil||!Array.isArray(fossil.CARDS)||!rocket||!Array.isArray(rocket.CARDS)||!gym||!Array.isArray(gym.CARDS))throw new Error('Classic TCG set catalogues are missing.');
-const CARDS=[...base.CARDS,...jungle.CARDS,...fossil.CARDS,...rocket.CARDS,...gym.CARDS];
+if(!base||!Array.isArray(base.CARDS)||!jungle||!Array.isArray(jungle.CARDS)||!fossil||!Array.isArray(fossil.CARDS)||!rocket||!Array.isArray(rocket.CARDS)||!gym||!Array.isArray(gym.CARDS)||!challenge||!Array.isArray(challenge.CARDS))throw new Error('Classic TCG set catalogues are missing.');
+const CARDS=[...base.CARDS,...jungle.CARDS,...fossil.CARDS,...rocket.CARDS,...gym.CARDS,...challenge.CARDS];
 
 // Legacy v0.69.63 seed details retained as provenance fixtures. v0.69.64's
 // complete Base Set mechanics live in tcg-classic-base1.js; registering these
@@ -28,7 +29,7 @@ const VERIFIED_DETAILS=[
 for(const detail of VERIFIED_DETAILS)base.registerDetails(detail);
 for(const card of base.CARDS){card.battleFormat='classic';card.source='tcg';}
 
-function cardById(id){return base.cardById(id)||jungle.cardById(id)||fossil.cardById(id)||rocket.cardById(id)||gym.cardById(id);}
+function cardById(id){return base.cardById(id)||jungle.cardById(id)||fossil.cardById(id)||rocket.cardById(id)||gym.cardById(id)||challenge.cardById(id);}
 function typesOf(card){return Array.isArray(card?.types)&&card.types.length?card.types:[card?.subtype].filter(Boolean);}
 function hasType(card,type){return typesOf(card).includes(type);}
 function isBattleEnabled(value){const card=typeof value==='string'?cardById(value):cardById(value?.id);return !!(card&&card.battleEnabled&&card.deckEligible!==false);}
@@ -91,11 +92,24 @@ function ownedGymHeroesCard(owned){
  }
  return null;
 }
+function ownedGymChallengeCard(owned){
+ if(!owned||typeof owned!=='object')return null;
+ const src=String(owned.source||'').toLowerCase();if(src&&src!=='tcg')return null;
+ const setId=String(owned.setId||owned.set?.id||'').toLowerCase(),key=String(owned._librarySetKey||'').toLowerCase(),name=String(owned.setName||owned.set?.name||'').trim().toLowerCase();
+ const isChallenge=['gym2','library:g2','g2','library:gc','gc','library:gym2'].includes(setId)||['g2','gc','gym2'].includes(key)||name==='gym challenge';
+ if(!isChallenge)return null;
+ const direct=challenge.cardById(owned.id);if(direct)return direct;
+ for(const value of [owned.localId,owned.number,owned._libraryCanonicalId,owned.id]){
+  const raw=String(value??'').trim();const match=raw.match(/^(?:0*(\d{1,3})(?:\s*\/\s*132)?|(?:library[:_-])?(?:gym2|gc|g2)[-_:]0*(\d{1,3})(?:\s*\/\s*132)?)$/i);
+  if(match){const n=Number(match[1]||match[2]);if(n>=1&&n<=132)return challenge.cardById(`gym2-${n}`);}
+ }
+ return null;
+}
 function projectOwnedCards(cards){
  const rows=Array.isArray(cards)?cards:Object.values(cards||{});
  const projected=base.projectOwnedCards(rows);
  const grouped=new Map();
- for(const owned of rows){const card=ownedJungleCard(owned)||ownedFossilCard(owned)||ownedRocketCard(owned)||ownedGymHeroesCard(owned);if(!card)continue;
+ for(const owned of rows){const card=ownedJungleCard(owned)||ownedFossilCard(owned)||ownedRocketCard(owned)||ownedGymHeroesCard(owned)||ownedGymChallengeCard(owned);if(!card)continue;
   const quantity=Math.max(0,Number(owned.count==null?1:owned.count)||0);
   const variant={id:owned.id||card.id,quantity,image:owned.image||owned.imageUrl||null,rarity:owned.rarity||null,row:owned};
   const current=grouped.get(card.id);
@@ -120,6 +134,6 @@ function validateDeck(ids,options){
  if(owned){const map=new Map(projectOwnedCards(owned).map(row=>[row.gameplayId,row.quantity]));for(const [id,count] of byId)if(count>Number(map.get(id)||0))errors.push(`Not enough owned copies of ${cardById(id)?.name||id}: need ${count}, own ${Number(map.get(id)||0)}.`);}
  return {ok:errors.length===0,errors};
 }
-function coverage(){return {...base.coverage(),jungle:jungle.coverage(),fossil:fossil.coverage(),teamRocket:rocket.coverage(),gymHeroes:gym.coverage(),verifiedBattleSlice:CARDS.filter(c=>c.support?.status==='FULL').map(c=>c.id),set:base.SET,sets:[base.SET,jungle.SET,fossil.SET,rocket.SET,gym.SET]};}
-return {SET:base.SET,SETS:[base.SET,jungle.SET,fossil.SET,rocket.SET,gym.SET],CARDS,ENERGY_CODE:base.ENERGY_CODE,CLASSIC30_LOANER_DECK:base.CLASSIC30_LOANER_DECK,VERIFIED_DETAILS,cardById,typesOf,hasType,isBattleEnabled,projectOwnedCards,validateDeck,coverage};
+function coverage(){return {...base.coverage(),jungle:jungle.coverage(),fossil:fossil.coverage(),teamRocket:rocket.coverage(),gymHeroes:gym.coverage(),gymChallenge:challenge.coverage(),verifiedBattleSlice:CARDS.filter(c=>c.support?.status==='FULL').map(c=>c.id),set:base.SET,sets:[base.SET,jungle.SET,fossil.SET,rocket.SET,gym.SET,challenge.SET]};}
+return {SET:base.SET,SETS:[base.SET,jungle.SET,fossil.SET,rocket.SET,gym.SET,challenge.SET],CARDS,ENERGY_CODE:base.ENERGY_CODE,CLASSIC30_LOANER_DECK:base.CLASSIC30_LOANER_DECK,VERIFIED_DETAILS,cardById,typesOf,hasType,isBattleEnabled,projectOwnedCards,validateDeck,coverage};
 });
