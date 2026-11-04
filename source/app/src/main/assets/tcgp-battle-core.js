@@ -1055,5 +1055,5 @@
 
   function publicSnapshot(state){ return JSON.parse(JSON.stringify(state)); }
 
-  return {createBattle,makePokemonSlot,legalActions,attackOptions,attackAvailability,attackDamagePreview,energyCostLabel,applyAction,publicSnapshot,drawCard,endTurn,benchSlotAt,benchArrayIndex,normalizeBenchSlots,random,shuffle,checkup,effectContext,maxHp};
+  return {createBattle,makePokemonSlot,legalActions,attackOptions,attackAvailability,attackDamagePreview,effectiveEnergy,energyCostLabel,applyAction,publicSnapshot,drawCard,endTurn,benchSlotAt,benchArrayIndex,normalizeBenchSlots,random,shuffle,checkup,effectContext,maxHp};
 });

@@ -282,6 +282,22 @@ const NEO_ABILITIES={
 
 const PLAIN=new Set('2:0 15:0 32:0 33:0 37:0 40:0 40:1 42:0 43:0 45:0 53:0 54:1 59:1 60:1 61:0 67:0 77:1 80:0'.split(' '));
 const POWERS={4:'Berserk',5:'Downpour',6:'Final Blow',10:'Herbal Scent',11:'Wild Growth',14:'Mind Games',17:'Fire Recharge',18:'Fire Boost',22:'Playful Punch',38:'Hydroelectric Power',42:'Glaring Gaze'};
+// The inspector explains printed Pokémon Powers without replacing the actual
+// card artwork or changing their implemented effects.
+const POWER_RULES={
+ 4:'When played from hand to evolve, flip a coin. Heads: discard the top five cards of the opponent’s deck. Tails: discard the top five of your own deck.',
+ 5:'As often as you like during your turn, discard a Water Energy card from hand. Cannot use while Asleep, Confused or Paralyzed.',
+ 6:'If Heracross has 20 HP or less left, Megahorn’s base damage becomes 120 rather than 60. Stops working under a Special Condition.',
+ 10:'When played from hand to evolve, flip a coin. Heads: heal all damage from all Grass Pokémon in play.',
+ 11:'While active, each Grass Energy attached to your Grass Pokémon provides two Grass Energy. Stops working while Meganium is Asleep, Confused or Paralyzed.',
+ 14:'Whenever your opponent plays a Trainer, flip a coin. Heads: cancel the Trainer and return it to the top of their deck. Stops working under a Special Condition.',
+ 17:'Once during your turn, flip a coin. Heads: attach a Fire Energy card from your discard to one of your Fire Pokémon. Stops working under a Special Condition.',
+ 18:'When played from hand to evolve, flip a coin. Heads: attach up to four Fire Energy to Typhlosion (sourced from the Energy Zone in Classic 30).',
+ 22:'Once during your turn, flip a coin. Heads: deal 20 damage to the opposing Active Pokémon. Your turn ends either way. Cannot use under a Special Condition.',
+ 38:'Floodlight can deal ten extra damage for each additional Water Energy on Lanturn not used for its attack cost. Stops under a Special Condition.',
+ 42:'Once during your turn, flip a coin. Heads: look at your opponent’s hand, choose a Trainer and shuffle it into their deck. Cannot use under a Special Condition.'
+};
+
 const BABIES=new Set([12,20,22,23]);
 const TRAINERS={
  83:{text:'Shuffle deck. Reveal top three; if at least two share a name, put all matching cards into hand and shuffle the rest.',effect:NR('arcadeGame')},
@@ -308,6 +324,12 @@ const TRAINERS={
 };
 const STADIUMS=new Set([84,97]),TOOLS=new Set([86,93,94,99]);
 const SPECIAL_ENERGY={19:{Metal:1},104:{Darkness:1},105:{Colorless:1}};
+const SPECIAL_ENERGY_RULES={
+ 19:'Provides one Metal Energy. Reduce attack damage received by the attached Pokémon by 10. If the Pokémon is not Metal type, its own attacks deal 10 less damage.',
+ 104:'Provides one Darkness Energy. Attacks that damage the Defending Pokémon do 10 extra damage. At the end of each turn, place one damage counter on the attached Pokémon unless it is Darkness-type or has Dark in its name.',
+ 105:'Provides one Colorless Energy. When discarded from play, return Recycle Energy to its owner’s hand instead of the discard pile.'
+};
+
 const BASIC_ENERGY={106:'Fighting',107:'Fire',108:'Grass',109:'Lightning',110:'Psychic',111:'Water'};
 const NEO_BABIES_READY=true,NEO_SPECIAL_READY=true;
 const CARDS=DATA.map(line=>{
@@ -319,7 +341,7 @@ const CARDS=DATA.map(line=>{
    const variable=/[+×?]/.test(printedDamage),damage=/×/.test(printedDamage)?0:Number((printedDamage||'').replace(/[^0-9]/g,''))||0;
    return {name,cost,damage,damageText:variable?printedDamage:null,effect,text:TEXT[key]||(!PLAIN.has(key)&&!Object.hasOwn(EFFECTS,key)?'Printed effect pending full Classic engine support. See original card artwork for exact wording.':''),unimplemented:!PLAIN.has(key)&&!Object.hasOwn(EFFECTS,key)};
  });
- const abilities=NEO_ABILITIES[n]?[{...NEO_ABILITIES[n],text:POWERS[n]}]:[];
+ const abilities=NEO_ABILITIES[n]?[{...NEO_ABILITIES[n],text:POWER_RULES[n]}]:[];
  const reasons=[];
  if(kind==='pokemon'){
    if(BABIES.has(n)&&!NEO_BABIES_READY)reasons.push('Original Baby Pokémon Rule has not yet been implemented');
@@ -339,7 +361,7 @@ const CARDS=DATA.map(line=>{
  const c={id,setId:'neo1',number:String(n),name,source:'tcg',battleFormat:'classic',kind,rarity,
   ...(kind==='pokemon'?{stage:Number(stage)===0?'Basic':'Stage '+stage,hp:Number(hp),retreat:Number(ret||0),types:[TYPE[type]],subtype:TYPE[type],evolvesFrom:evolvesFrom||null,weakness:TYPE[weak]||null,weaknessValue:weak?'×2':null,resistance:TYPE[res]||null,resistanceValue:res?'-30':null,attacks,abilities,baby:BABIES.has(n)}:{}),
   ...(kind==='trainer'?{trainerType:STADIUMS.has(n)?'Stadium':TOOLS.has(n)?'Tool':'Item',text:TRAINERS[n]?.text||'',effect:TRAINERS[n]?.effect||null}:{}),
-  ...(kind==='energy'?{basicEnergy,specialEnergy,subtype:BASIC_ENERGY[n]||Object.keys(SPECIAL_ENERGY[n]||{})[0],types:[BASIC_ENERGY[n]||Object.keys(SPECIAL_ENERGY[n]||{})[0]],effect:specialEnergy?{type:'specialEnergy',provides:SPECIAL_ENERGY[n]}:null}:{}),
+  ...(kind==='energy'?{basicEnergy,specialEnergy,subtype:BASIC_ENERGY[n]||Object.keys(SPECIAL_ENERGY[n]||{})[0],types:[BASIC_ENERGY[n]||Object.keys(SPECIAL_ENERGY[n]||{})[0]],text:SPECIAL_ENERGY_RULES[n]||'',effect:specialEnergy?{type:'specialEnergy',provides:SPECIAL_ENERGY[n]}:null}:{}),
   battleEnabled,deckEligible:battleEnabled&&!basicEnergy,support:{status:battleEnabled?'FULL':'PARTIAL',reasons},
   image:'https://images.pokemontcg.io/neo1/'+n+'.png',imageLarge:'https://images.pokemontcg.io/neo1/'+n+'_hires.png'};
  return c;

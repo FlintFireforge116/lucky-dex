@@ -10,17 +10,17 @@
   const clone=value=>JSON.parse(JSON.stringify(value));
   const slots=s=>[s.active,...s.bench].filter(Boolean);
   function slotFor(s,target,index){return target==='bench'?core.benchSlotAt(s,index):s.active;}
-  function deficit(slot,attack){
-    const cost=String(attack?.cost||''),energy={...slot.energy};let missing=0;
+  function deficit(slot,attack,state,side){
+    const cost=String(attack?.cost||''),energy={...(state&&side?core.effectiveEnergy(state,side,slot):slot.energy||{})};let missing=0;
     for(const c of cost)if(c!=='C'){const type=effects.ENERGY_CODE[c];if(energy[type]>0)energy[type]--;else missing++;}
     return missing+Math.max(0,[...cost].filter(c=>c==='C').length-effects.totalEnergy(energy));
   }
   function attachScore(action,state,side){
     const s=state.sides[side],slot=slotFor(s,action.target,action.benchIndex);if(!slot)return -100;
     const card=data.cardById(slot.cardId),attacks=card?.attacks||[];
-    const before=Math.min(...attacks.map(a=>deficit(slot,a)),99),after={...slot,energy:{...slot.energy,[s.energyType]:Number(slot.energy[s.energyType]||0)+1}};
-    const gain=before-Math.min(...attacks.map(a=>deficit(after,a)),99);
-    return gain*50+(action.target==='active'?15:5)-effects.totalEnergy(slot.energy)*2;
+    const before=Math.min(...attacks.map(a=>deficit(slot,a,state,side)),99),after={...slot,energy:{...slot.energy,[s.energyType]:Number(slot.energy[s.energyType]||0)+1}};
+    const gain=before-Math.min(...attacks.map(a=>deficit(after,a,state,side)),99);
+    return gain*50+(action.target==='active'?15:5)-effects.totalEnergy(core.effectiveEnergy(state,side,slot))*2;
   }
   // Classic trainers with no legal benefit should stay in the CPU hand. The
   // generic battle action list intentionally lets human players experiment;
@@ -49,8 +49,7 @@
   }
   function benchAttackValue(state,side,slot){
     const card=data.cardById(slot?.cardId);if(!card)return 0;
-    const energy={...(slot.energy||{})};
-    for(const ref of slot.specialEnergy||[]){const provides=data.cardById(ref.cardId)?.effect?.provides||ref.provides||{};for(const [type,amount] of Object.entries(provides))energy[type]=Number(energy[type]||0)+Number(amount||0);}
+    const energy=core.effectiveEnergy(state,side,slot);
     return Math.max(0,...(card.attacks||[]).map((attack,index)=>effects.canPayCost(energy,attack.cost)?matchupDamage(state,side,slot,attack,index,card.id):0));
   }
   // Gym Heroes Lt. Surge's Electabuzz has a free recovery attack (Charge)
@@ -118,19 +117,19 @@
     return clone(view);
   }
   function sideValue(state,side,level){
-    const s=state.sides[side];let score=Number(s.points||0)*(level>=2?700:350)+s.hand.length*4;
+    const s=state.sides[side];const progress=Number(state.format==='classic'?s.prizesTaken:s.points)||0;let score=progress*(level>=2?700:350)+s.hand.length*4;
     for(const slot of slots(s)){
       const card=data.cardById(slot.cardId),hp=core.maxHp(state,side,slot),remaining=Math.max(0,hp-Number(slot.damage||0));
-      const attacks=card.attacks||[],need=Math.min(...attacks.map(a=>deficit(slot,a)),99),power=Math.max(0,...attacks.filter(a=>deficit(slot,a)===0).map(a=>Number(a.damage||0)));
+      const attacks=card.attacks||[],need=Math.min(...attacks.map(a=>deficit(slot,a,state,side)),99),power=Math.max(0,...attacks.filter(a=>deficit(slot,a,state,side)===0).map(a=>Number(a.damage||0)));
       const active=slot===s.active,points=Number(card.points||1);
       score+=remaining*.24+remaining/hp*12+Math.min(80,Number(card.hp||0))*.06;
       score+=Math.max(0,35-need*12)+(active?power*.3:power*.12);
       // Energy beyond attack needs has little value; extra Energy attacks are valued
       // through their actual engine result in the action search.
       const maxCost=Math.max(1,...attacks.map(a=>String(a.cost||'').length));
-      score+=Math.min(effects.totalEnergy(slot.energy),maxCost)*9;
+      score+=Math.min(effects.totalEnergy(core.effectiveEnergy(state,side,slot)),maxCost)*9;
       if(slot.tool)score+=8;if(slot.attackGuard)score+=8;
-      if(level>=2){score-=Object.keys(slot.conditions||{}).length*(active?14:2);score-=Number(slot.damage||0)/hp*points*(s.points>=2?24:10);}
+      if(level>=2){score-=Object.keys(slot.conditions||{}).length*(active?14:2);score-=Number(slot.damage||0)/hp*points*(progress>=(state.format==='classic'?4:2)?24:10);}
       if(!active)score+=6;
     }
     if(level>=2)score+=Math.min(30,(state.modifiers||[]).filter(m=>m.ownerSide===side).reduce((n,m)=>n+Number(m.amount||0),0));
@@ -216,5 +215,5 @@
     if(state.phase==='battle'&&state.activeSide===side){const end=core.legalActions(state,side).find(a=>a.type==='endTurn');if(end)core.applyAction(state,side,end);}
     return state;
   }
-  return {DIFFICULTIES,sameAction,chooseAction,runTurn};
+  return {DIFFICULTIES,sameAction,chooseAction,runTurn,_test:{deficit,sideValue}};
 });
