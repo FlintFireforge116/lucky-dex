@@ -802,3 +802,11 @@ body.tcgp-card-dragging .tcgp-live-mat-half .tcgp-live-card-wrap[data-card-drop-
   }
   .tcgp-live-arena.format-classic>.tcgp-live-player-bottom{height:108px!important}
 }
+
+/* v0.69.85: Android's MainActivity already insets the WebView above its
+   system navigation bar. Reserving env(safe-area-inset-bottom) again inside
+   the Classic arena leaves a blank strip below the hand (about 56dp on
+   gesture-navigation devices). Keep safe-area padding for browser/PWA use. */
+html.android-native-inset body.tcgp-battle-live .tcgp-live-arena.format-classic{
+  padding-bottom:6px!important;
+}
