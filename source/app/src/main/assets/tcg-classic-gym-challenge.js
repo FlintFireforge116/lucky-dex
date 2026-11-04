@@ -6,6 +6,9 @@
 (function(root,factory){const fx=typeof module==='object'&&module.exports?require('./tcgp-battle-effects.js'):root.LuckyDexTCGPBattleEffects;const api=factory(fx);if(typeof module==='object'&&module.exports)module.exports=api;else root.LuckyDexClassicTCGGymChallenge=api;})(typeof globalThis!=='undefined'?globalThis:this,function(fx){'use strict';
 const SET=Object.freeze({id:'gym2',name:'Gym Challenge',series:'Gym',releaseDate:'2000-10-16',cardCount:132});
 const TYPE={G:'Grass',R:'Fire',W:'Water',L:'Lightning',P:'Psychic',F:'Fighting',C:'Colorless'};
+// Gym Challenge's printed Basic Energy rows have no type column; resolve their
+// identity by collector number before a generated card is attached from hand.
+const BASIC_ENERGY_TYPES={127:'Fighting',128:'Fire',129:'Grass',130:'Lightning',131:'Psychic',132:'Water'};
 const DATA=`
 1|Blaine's Arcanine|R|1|90|3|W||Blaine's Growlithe|Rare Holo
 2|Blaine's Charizard|R|2|100|3|W|F|Blaine's Charmeleon|Rare Holo
@@ -383,7 +386,7 @@ const CARDS=DATA.map(row=>{const [raw,name,type,stage,hp,ret,weak,res,evolvesFro
  return {id:`gym2-${number}`,setId:'gym2',number:String(number),name,source:'tcg',battleFormat:'classic',kind,
   ...(kind==='pokemon'?{stage:stage==='0'?'Basic':`Stage ${stage}`,hp:Number(hp),retreat:Number(ret),types:[TYPE[type]],subtype:TYPE[type],evolvesFrom:evolvesFrom||null,weakness:TYPE[weak]||null,weaknessValue:weak?'×2':null,resistance:TYPE[res]||null,resistanceValue:res?'-30':null,attacks,abilities}:{}),
   ...(kind==='trainer'?{trainerType:STADIUM_NUMBERS.has(number)?'Stadium':number===101||number===115?'AttachedTrainer':'Item',text:TRAINERS[number]?.text||'',effect:TRAINERS[number]?.effect||null}:{}),
-  ...(basicEnergy?{basicEnergy:true,subtype:TYPE[type],types:[TYPE[type]]}:{}),
+  ...(basicEnergy?{basicEnergy:true,subtype:BASIC_ENERGY_TYPES[number],types:[BASIC_ENERGY_TYPES[number]]}:{}),
   battleEnabled,deckEligible:battleEnabled,support:{status:battleEnabled?'FULL':'PARTIAL',reasons},rarity,
   image:`https://images.pokemontcg.io/gym2/${number}.png`,imageLarge:`https://images.pokemontcg.io/gym2/${number}_hires.png`};
 });

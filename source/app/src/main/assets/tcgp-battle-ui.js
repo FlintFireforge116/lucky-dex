@@ -402,7 +402,10 @@
     const attacks=(card.attacks||[]).map((attack,i)=>`<article><div><b>${esc(attack.name)}</b><strong>${esc(attack.damageText??attack.damage??0)}</strong></div>${energyCostHtml(availability?.[i]?.cost??attack.cost)}${paragraph(text(attack.text)||text(attack.printedText)||summarizeEffect(attack.effect))}${paragraph(availability?.[i]?.reason)}</article>`).join('');
     const subtype=card.trainerSubtype||card.trainerType||'Trainer';
     const defaultTiming=subtype==='Supporter'?'You may play only 1 Supporter during your turn.':subtype==='Tool'?'Attach to 1 of your Pokémon that does not already have a Tool.':subtype==='Stadium'?'Only 1 Stadium may be in play.':'';
-    const trainer=card.kind==='trainer'?`<article><div><b>${esc(card.name)}</b><strong>${esc(subtype)}</strong></div>${paragraph(text(card.text)||summarizeEffect(card.effect))}${paragraph(text(card.timing)||defaultTiming)}</article>`:'';
+    // Keep the printed Trainer effect intact, but explain the Classic Energy
+    // Zone adaptation next to it when the original assumes Energy in deck.
+    const classicAdaptation=card.id==='gym2-124'?'<p><b>Classic 30 adaptation:</b> Basic Energy is not in your deck. Discard up to three cards from the top of your deck and add one Fire Energy card from the Energy Zone to your hand. You can attach it to a Pokémon without using your normal Energy Zone attachment.</p>':'';
+    const trainer=card.kind==='trainer'?`<article><div><b>${esc(card.name)}</b><strong>${esc(subtype)}</strong></div>${paragraph(text(card.text)||summarizeEffect(card.effect))}${classicAdaptation}${paragraph(text(card.timing)||defaultTiming)}</article>`:'';
     const energy=card.kind==='energy'?`<article><div><b>${esc(card.name)}</b><strong>${card.specialEnergy?'Special Energy':'Basic Energy'}</strong></div>${paragraph(text(card.text)||summarizeEffect(card.effect))}</article>`:'';
     return abilityHtml+attacks+trainer+energy+(options?.developer?paragraph(supportText(card)):'');
   }
