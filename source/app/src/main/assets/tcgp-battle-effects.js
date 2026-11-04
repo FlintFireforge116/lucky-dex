@@ -817,6 +817,39 @@
       // Ongoing Trainer and Energy behaviours are enforced by the core hooks.
       case 'ecogym':case 'focusBand':case 'goldBerry':case 'miracleBerry':case 'sproutTower':case 'berry':
       case 'finalBlow':case 'wildGrowth':case 'mindGames':case 'hydroelectricPower':break;
+      case 'discovery:trample':{
+        for(const side of [ctx.side,ctx.foeSide])for(const slot of ctx.state.sides[side].bench||[]){
+          if(neoFlip(ctx,'Trample')){slot.damage=Number(slot.damage||0)+30;ctx.state.log.push({type:'benchDamage',side:ctx.side,targetSide:side,cardId:slot.cardId,amount:30,benchIndex:Number(slot.benchSlot||0)});}
+        }break;
+      }
+      case 'discovery:dustDevil':{
+        for(const side of [ctx.side,ctx.foeSide])for(const slot of neoSlots(ctx,side==='player'?'self':'opponent')){
+          if(ctx.cardById(slot.cardId)?.types?.includes('Fighting'))continue;
+          slot.damage=Number(slot.damage||0)+10;
+          ctx.state.log.push({type:'neoEffect',side:ctx.side,rule:e.rule,targetSide:side,cardId:slot.cardId,amount:10});
+        }break;
+      }
+      case 'discovery:energyEvolution':{
+        const type=String(ctx.eventData?.energyType||'');
+        if(!a||!type||!neoFlip(ctx,'Energy Evolution'))break;
+        const eligible=ss.deck.some(ref=>{const card=ctx.cardById(ref.cardId);return card?.kind==='pokemon'&&card.evolvesFrom==='Eevee'&&card.types?.includes(type);});
+        if(eligible)ctx.requestChoice?.({kind:'deckCard',side:'self',filter:{kind:'pokemon',evolvesFrom:'Eevee',subtype:type},effect:{type:'neoRule',rule:'discovery:energyEvolutionPick',targetUid:a.uid,energyType:type}});
+        break;
+      }
+      case 'discovery:energyEvolutionPick':{
+        const target=neoSlots(ctx,'self').find(s=>s.uid===e.targetUid),idx=Number(ctx.action?.choiceDeckIndex),ref=ss.deck[idx],card=ctx.cardById(ref?.cardId);
+        if(!target||ctx.cardById(target.cardId)?.name!=='Eevee'||!card||card.evolvesFrom!=='Eevee'||!card.types?.includes(e.energyType))break;
+        ss.deck.splice(idx,1);target.cardId=ref.cardId;target.stack.push(ref.cardId);target.playedOnSideTurn=ss.turnCount;target.evolvedOnTurn=turn;ctx.shuffle?.(ctx.state,ss.deck);ctx.onEvolved?.(target);
+        log({evolvedTo:ref.cardId});break;
+      }
+      case 'discovery:collectFire':{
+        if(!a)break;
+        const index=ss.discard.findIndex(ref=>ctx.cardById(ref.cardId)?.basicEnergy&&ctx.cardById(ref.cardId)?.subtype==='Fire');
+        if(index>=0)ss.discard.splice(index,1);
+        else if(Number(ss.energyDiscard?.Fire||0)>0)ss.energyDiscard.Fire--;
+        else break;
+        a.energy.Fire=Number(a.energy.Fire||0)+1;ctx.onEnergyAttached?.(a,'Fire',1);break;
+      }
       case 'riptideReturn':{const count=Number(ss.energyDiscard.Water||0);for(let i=0;i<count;i++)ss.deck.push({uid:`neo-riptide-${turn}-${i}`,cardId:'neo1-111',zoneGenerated:true});ss.energyDiscard.Water=0;for(let i=ss.discard.length-1;i>=0;i--)if(ctx.cardById(ss.discard[i].cardId)?.basicEnergy&&ctx.cardById(ss.discard[i].cardId).subtype==='Water')ss.deck.push(...ss.discard.splice(i,1));ctx.shuffle?.(ctx.state,ss.deck);break;}
       default:break;
     }
@@ -1267,6 +1300,23 @@
         const ss=own(ctx),a=ctx.attacker,foe=other(ctx),r=e.rule;
         const rolls=(n)=>{let heads=0,results=[];for(let i=0;i<Math.min(100,Math.max(0,n));i++){const hit=coin(ctx);results.push(hit);if(hit)heads++;}if(results.length)ctx.state.log.push({type:'coin',side:ctx.side,reason:'Neo Genesis '+r,heads,results});return heads;};
         switch(r){
+          case 'discovery:falseSwipe':{
+            const max=ctx.maxHp?ctx.maxHp(ctx.foeSide,ctx.defender):Number(ctx.cardById(ctx.defender?.cardId)?.hp||0);
+            damage=Math.floor(Math.max(0,max-Number(ctx.defender?.damage||0))/20)*10;return;
+          }
+          case 'discovery:hydrocutter':{
+            const count=Math.min(3,totalEnergy(a?.energy||{})+(a?.specialEnergy||[]).length);
+            damage=40*rolls(count);return;
+          }
+          case 'discovery:spikeBarrage':{
+            const count=Number(a?.energy?.Water||0);
+            damage=20+20*rolls(count);return;
+          }
+          case 'discovery:workTogether':{
+            const family=new Set(['Omanyte','Omastar','Kabuto','Kabutops']);
+            if(rolls(1))damage+=10*(ss.bench||[]).filter(p=>family.has(ctx.cardById(p.cardId)?.name)).length;
+            return;
+          }
           case 'chomp':damage+=10*rolls(Math.floor(Number(a?.damage||0)/10));return;
           case 'riptide':damage=10+10*(Number(ss.energyDiscard?.Water||0)+ss.discard.filter(ref=>ctx.cardById(ref.cardId)?.basicEnergy&&ctx.cardById(ref.cardId)?.subtype==='Water').length);pending.push({type:'neoRule',rule:'riptideReturn'});return;
           case 'discharge':{const n=Number(a?.energy?.Lightning||0);damage=30*rolls(n);if(n){a.energy.Lightning=0;recordDiscardedEnergy(ss,'Lightning',n);}return;}

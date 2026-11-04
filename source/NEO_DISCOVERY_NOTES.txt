@@ -1,0 +1,9 @@
+LuckyDex v0.69.99 — Neo Discovery first pass
+
+- Neo Discovery: all 75 numbered prints included in Classic TCG card catalogue.
+- 37 cards currently battle-ready, 38 shown as partial/unsupported until their full printed effects are implemented.
+- Neo Genesis Darkness Energy (#104) and Metal Energy (#19) are genuine Special Energy deck cards, not Basic Energy Zone types.
+- Neo Discovery-only auto-building can use those two owned Neo Genesis Special Energy prints as an explicit Energy exception to set filtering; normal ownership and maximum-four-copy rules apply.
+- CPU can choose Darkness and Metal archetypes while generating only supported Basic Energy Zone types.
+- Test file: tests/v06999-neo-discovery-energy.test.cjs.
+- No new Basic Energy prints are introduced by Neo Discovery.

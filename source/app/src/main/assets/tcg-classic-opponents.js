@@ -13,10 +13,10 @@
  if(!classic||!decks||!builder)throw new Error('Classic opponent generation dependencies are missing.');
  const ALL_PLAYABLE=Object.freeze(classic.CARDS.filter(card=>card.battleEnabled&&card.deckEligible!==false).map(card=>Object.freeze({gameplayId:card.id,quantity:4})));
  const TYPES=builder.ARCHETYPE_TYPES.slice();
- const SETS=['base1','base2','base3','base5','gym1','gym2','neo1'];
+ const SETS=['base1','base2','base3','base5','gym1','gym2','neo1','neo2'];
  function pick(seed,size){let x=(Number(seed)||0x9e3779b9)>>>0;x^=x<<13;x^=x>>>17;x^=x<<5;return (x>>>0)%size;}
  function pickType({seed=Date.now(),excludeTypes=[],includeColorless=false}={}){
-   const availableTypes=includeColorless?TYPES:decks.ENERGY_TYPES;
+   const availableTypes=includeColorless?TYPES:[...decks.ENERGY_TYPES,'Darkness','Metal'];
    const excluded=new Set(excludeTypes.filter(type=>availableTypes.includes(type)));
    const available=availableTypes.filter(type=>!excluded.has(type));
    const candidates=available.length?available:availableTypes;
@@ -24,8 +24,8 @@
  }
  function generate({seed=Date.now(),excludeTypes=[],excludeArchetypes=[],sets=SETS,type=null,includeColorless=false}={}){
    // A shuffle-bag of Energy types: a new random opponent never repeats a type
-   // until all six have been encountered, then a new cycle begins.
-   const availableTypes=includeColorless||type==='Colorless'?TYPES:decks.ENERGY_TYPES;
+   // until all available types have been encountered, then a new cycle begins.
+   const availableTypes=includeColorless||type==='Colorless'?TYPES:[...decks.ENERGY_TYPES,'Darkness','Metal'];
    const excluded=new Set(excludeTypes.filter(t=>availableTypes.includes(t)));
    const available=availableTypes.filter(t=>!excluded.has(t));
    const candidates=type&&TYPES.includes(type)?[type]:(available.length?available:availableTypes);
@@ -38,10 +38,10 @@
      if(!result.ok)continue;
      const legal=classic.validateDeck(result.cards);
      const energy=decks.analyzeDeck(result.cards).recommendedEnergyTypes;
-     if(!legal.ok||type!=='Colorless'&&decks.analyzeDeck(result.cards,[type]).missingEnergyTypes.length||!result.cards.some(id=>classic.cardById(id)?.types?.includes(type)))continue;
-     if(result.cards.some(id=>!allowed.includes(classic.cardById(id)?.setId)))continue;
+     if(!legal.ok||(!['Colorless','Darkness','Metal'].includes(type)&&decks.analyzeDeck(result.cards,[type]).missingEnergyTypes.length)||!result.cards.some(id=>classic.cardById(id)?.types?.includes(type)))continue;
+     if(result.cards.some(id=>{const card=classic.cardById(id);return !allowed.includes(card?.setId)&&!(allowed.includes('neo2')&&['neo1-104','neo1-19'].includes(id));}))continue;
      const archetype=String(result.strategy.match(/· ([^·]+) core/)?.[1]||'Classic TCG').trim();
-     return {ok:true,type,cards:result.cards.slice(),energyTypes:type==='Colorless'?result.energyTypes.slice():[type],sets:allowed.slice(),archetype,archetypeKey:result.archetypeKey,name:`${type} · ${archetype}`};
+     return {ok:true,type,cards:result.cards.slice(),energyTypes:['Colorless','Darkness','Metal'].includes(type)?result.energyTypes.slice():[type],sets:allowed.slice(),archetype,archetypeKey:result.archetypeKey,name:`${type} · ${archetype}`};
    }
    return {ok:false,error:'Could not build a legal random Classic TCG opponent deck.'};
  }
