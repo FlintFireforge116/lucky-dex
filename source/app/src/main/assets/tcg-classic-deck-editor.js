@@ -38,19 +38,19 @@ function autoSheet(){
  const types=B.ARCHETYPE_TYPES.map(t=>btn('auto-type',t,`data-id="${t}" aria-pressed="${!autoOptions.randomType&&autoOptions.types.includes(t)}"`)).join('');
  const selected=autoOptions.randomType?'Random type':autoOptions.types.length?autoOptions.types.join(' / '):'Any type';
  const sets=B.SET_IDS.map(id=>btn('auto-set',id==='base1'?'Base Set':id==='base2'?'Jungle':id==='base3'?'Fossil':id==='base5'?'Team Rocket':id==='gym1'?'Gym Heroes':'Gym Challenge',`data-id="${id}" aria-pressed="${autoOptions.sets.includes(id)}"`)).join('');
- showSheet('Auto build',`<p>Build with your owned Base Set, Jungle, Fossil, Team Rocket, Gym Heroes and Gym Challenge cards. Evolution lines stay complete and the builder includes useful Trainers and Special Energy.</p><div class="tcgp-auto-section"><h3>Build style</h3><div class="tcgp-editor-chips">${styles}</div><small>${autoOptions.style==='random'?'Random rotates between viable owned Classic archetypes.':'Competitive favours strong, coherent evolution lines and a consistent Trainer shell.'}</small></div><div class="tcgp-auto-section"><h3>Allowed sets</h3><div class="tcgp-editor-chips">${sets}</div><small>Only these sets contribute cards to the generated deck. Selecting multiple sets allows mixed evolution lines.</small></div><div class="tcgp-auto-section"><h3>Pokémon archetype</h3><div class="tcgp-editor-chips">${randomType}${types}</div><small>${esc(selected)} · Colorless chooses a Colorless Pokémon core, using ordinary Basic Energy for any typed partners. Random type rotates archetypes independently of build style.</small></div><div class="tcgp-editor-options tcgp-auto-actions">${btn('run-auto',autoOptions.style==='random'?'BUILD RANDOM VIABLE DECK':'BUILD COMPETITIVE DECK')}${btn('repair','Fill / repair this deck')}</div>`);
+ showSheet('Auto build',`<p>Build with your owned Base Set, Jungle, Fossil, Team Rocket, Gym Heroes and Gym Challenge cards. Evolution lines stay complete and the builder includes useful Trainers and Special Energy.</p><div class="tcgp-auto-section"><h3>Build style</h3><div class="tcgp-editor-chips">${styles}</div><small>${autoOptions.style==='random'?'Random picks a featured Pokémon from every eligible owned Classic card, then builds its evolution family.':'Competitive rotates strong, coherent cores across your enabled sets, with appropriate Trainer support.'}</small></div><div class="tcgp-auto-section"><h3>Allowed sets</h3><div class="tcgp-editor-chips">${sets}</div><small>Only these sets contribute cards to the generated deck. Selecting multiple sets allows mixed evolution lines.</small></div><div class="tcgp-auto-section"><h3>Pokémon archetype</h3><div class="tcgp-editor-chips">${randomType}${types}</div><small>${esc(selected)} · Colorless chooses a Colorless Pokémon core, using ordinary Basic Energy for any typed partners. Random type rotates archetypes independently of build style.</small></div><div class="tcgp-editor-options tcgp-auto-actions">${btn('run-auto',autoOptions.style==='random'?'BUILD RANDOM VIABLE DECK':'BUILD COMPETITIVE DECK')}${btn('repair','Fill / repair this deck')}</div>`);
 }
 function autoBuild(mode,extra={}){
  cancelBuild();
  const serial=buildSerial,owner=host,target=draft;
  const style=extra.style||autoOptions.style,isRandom=style==='random';
  const surprise=!extra.cardId&&(extra.randomType==null?autoOptions.randomType:!!extra.randomType);
- const seed=(isRandom||surprise)?(root.crypto?.getRandomValues?root.crypto.getRandomValues(new Uint32Array(1))[0]:Math.floor(Math.random()*0x100000000)):undefined;
+ const seed=root.crypto?.getRandomValues?root.crypto.getRandomValues(new Uint32Array(1))[0]:Math.floor(Math.random()*0x100000000);
  const chosenType=surprise?root.LuckyDexClassicTCGOpponents.pickType({seed,excludeTypes:randomTypeHistory,includeColorless:true}):null;
  const types=chosenType?[chosenType]:(extra.types||autoOptions.types||[]).slice();
  const sets=(extra.sets||autoOptions.sets||B.SET_IDS).slice();
- const historyKey=`classic:${types.join('+')}`,history=isRandom?(randomHistory.get(historyKey)||[]):[];
- const options={style,types,sets,...(mode==='existing'?{cards:draft.cards.slice()}:{}),...(extra.cardId?{focusCardId:extra.cardId}:{}),...(extra.type?{types:[extra.type]}:{}),...(isRandom?{excludeArchetypes:history.slice(),randomSeed:seed}:{})};
+ const historyKey=`classic:${style}:${types.join('+')||'any'}:${sets.join('+')}`,history=randomHistory.get(historyKey)||[];
+ const options={style,types,sets,...(mode==='existing'?{cards:draft.cards.slice()}:{}),...(extra.cardId?{focusCardId:extra.cardId}:{}),...(extra.type?{types:[extra.type]}:{}),...{excludeArchetypes:history.slice(),randomSeed:seed}};
  closeSheet();message=surprise?`Building a ${chosenType} Classic deck…`:'Building candidate Classic decks…';updateMessage();
  const cancelled=()=>serial!==buildSerial||host!==owner||draft!==target||!el('classicDeckWorkspace');
  buildTimer=root.setTimeout(async()=>{
@@ -70,7 +70,7 @@ function autoBuild(mode,extra={}){
      if(result.ok){
        target.cards=result.cards.slice();target.energyTypes=result.energyTypes.slice();target.energyMode='auto';
        if(surprise){const chosen=chosenType||result.energyTypes[0];if(chosen){randomTypeHistory.push(chosen);if(randomTypeHistory.length>=B.ARCHETYPE_TYPES.length)randomTypeHistory.length=0;}}
-       if(isRandom&&result.archetypeKey){const key=`classic:${result.energyTypes.join('+')}`;let seen=(randomHistory.get(key)||[]).slice();if(seen.includes(result.archetypeKey))seen=[];seen.push(result.archetypeKey);randomHistory.set(key,seen.slice(-40));}
+       if(result.archetypeKey){let seen=(randomHistory.get(historyKey)||[]).slice();if(seen.includes(result.archetypeKey))seen=[];seen.push(result.archetypeKey);randomHistory.set(historyKey,seen.slice(-100));}
      }
      update();
    }catch(error){if(!cancelled()){message='Could not build this Classic deck: '+error.message;updateMessage();}}
