@@ -57,9 +57,9 @@ test('single-set pools never create unsupported third Energy types when filler s
  }
 });
 
-test('competitive Water can use a Water specialist without obligatorily adding Fossil Magmar',()=>{
- const result=builder.buildDeck(full,{style:'competitive',randomSeed:1});ready(result,full);
- assert.equal(result.focusCardId,'base1-25');
+test('competitive Water remains Water-focused without adding unrelated Fossil Magmar after new sets',()=>{
+ const result=builder.buildDeck(full,{style:'competitive',randomSeed:1,types:['Water']});ready(result,full);
+ assert.ok(classic.cardById(result.focusCardId)?.types?.includes('Water'),'chosen main should be Water');
  assert.deepEqual(result.energyTypes,['Water']);
  assert.equal(result.cards.includes('base3-39'),false);
 });

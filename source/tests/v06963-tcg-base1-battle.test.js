@@ -2,7 +2,7 @@
 const assert=require('node:assert/strict');
 const classic=require('../app/src/main/assets/tcg-classic-battle-data.js');
 
-assert.equal(classic.CARDS.length,102);
+assert.equal(classic.CARDS.filter(c=>c.setId==='base1').length,102);
 for(const id of ['base1-7','base1-26','base1-28','base1-52','base1-60','base1-61','base1-65','base1-67']){
   const card=classic.cardById(id);
   assert.equal(card.battleFormat,'classic');

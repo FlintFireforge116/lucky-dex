@@ -24,17 +24,15 @@ test('Neo Genesis catalogue registers 111 unique authentic numbered cards beside
   assert.equal(neo.CARDS.filter(c=>c.kind==='pokemon').length,81);
 });
 
-test('printed Neo rules unavailable to the battle engine do not become silently substituted effects',()=>{
-  for(const n of [12,20,22,23]){const c=classic.cardById(`neo1-${n}`);assert.equal(c.baby,true);assert.equal(c.battleEnabled,false);}
-  for(const n of [19,104,105]){const c=classic.cardById(`neo1-${n}`);assert.equal(c.kind,'energy');assert.equal(c.specialEnergy,true);assert.equal(c.battleEnabled,false);}
+test('all Neo cards have their full catalogued abilities while the six Basic Energy prints stay in the Energy Zone',()=>{
+  for(const n of [12,20,22,23]){const c=classic.cardById(`neo1-${n}`);assert.equal(c.baby,true);assert.equal(c.battleEnabled,true);}
+  for(const n of [19,104,105]){const c=classic.cardById(`neo1-${n}`);assert.equal(c.kind,'energy');assert.equal(c.specialEnergy,true);assert.equal(c.battleEnabled,true);}
   for(let n=106;n<=111;n++){const c=classic.cardById(`neo1-${n}`);assert.equal(c.kind,'energy');assert.equal(c.basicEnergy,true);assert.equal(c.deckEligible,false);}
-  assert.equal(classic.cardById('neo1-17').battleEnabled,false,'Typhlosion power not yet implemented');
-  assert.equal(classic.cardById('neo1-14').battleEnabled,false,'Slowking trainer interruption not yet implemented');
-  assert.equal(classic.cardById('neo1-25').battleEnabled,false,'Darkness Energy required by Sneasel is special Energy');
-  assert.equal(classic.cardById('neo1-70').battleEnabled,true);
-  assert.equal(classic.cardById('neo1-77').battleEnabled,true);
-  assert.ok(neo.coverage().battleEnabled>=35);
-  for(const c of neo.CARDS){assert.equal(c.support?.status,c.battleEnabled?'FULL':'PARTIAL',c.id);if(c.kind==='pokemon')assert.ok(c.attacks.length||c.abilities.length,c.id);}
+  assert.equal(classic.cardById('neo1-17').battleEnabled,true);
+  assert.equal(classic.cardById('neo1-14').battleEnabled,true);
+  assert.equal(classic.cardById('neo1-25').battleEnabled,true);
+  assert.equal(neo.coverage().battleEnabled,111);
+  for(const c of neo.CARDS){assert.equal(c.support?.status,'FULL',c.id);if(c.kind==='pokemon')assert.ok(c.attacks.length||c.abilities.length,c.id);}
 });
 
 test('Neo Genesis owned cards project correctly from LuckyDex N1 collection identifiers',()=>{
@@ -56,8 +54,8 @@ test('Classic deck filter and battle script are loaded in correct order; release
   assert.match(fs.readFileSync(path.join(assets,'tcg-classic-deck-editor.js'),'utf8'),/Neo Genesis/);
   assert.match(fs.readFileSync(path.join(assets,'tcgp-battle-ui.js'),'utf8'),/Neo Genesis/);
   const build=fs.readFileSync(path.join(root,'app/build.gradle'),'utf8');
-  assert.match(build,/versionName '0\.69\.94'/);assert.match(build,/versionCode 7074/);
-  assert.match(fs.readFileSync(path.join(assets,'app-v0167.js'),'utf8'),/window\.__LUCKYDEX_BUILD='0\.69\.94'/);
+  assert.match(build,/versionName '0\.69\.95'/);assert.match(build,/versionCode 7075/);
+  assert.match(fs.readFileSync(path.join(assets,'app-v0167.js'),'utf8'),/window\.__LUCKYDEX_BUILD='0\.69\.95'/);
 });
 
 test('all seven Classic sets can produce legal 30-card seeded auto decks with no missing Energy types',()=>{

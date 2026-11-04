@@ -1,7 +1,8 @@
 /* Neo Genesis (111 original numbered cards), first Johto-era Classic set.
  * Catalogue identity, HP, costs and moves from PokemonTCG/pokemon-tcg-data neo1.
- * Printed-only actions are retained for inspection and are disabled until
- * faithfully implemented. Never substitute a different effect for a printed one.
+ * Neo rules resolve in the Classic 30 battle engine with Basic Energy generated
+ * from the separate zone; special Darkness/Metal/Recycle Energy remains in deck.
+ * Printed card art and the original game data are not rewritten.
  */
 (function(root,factory){
  const fx=typeof module==='object'&&module.exports?require('./tcgp-battle-effects.js'):root.LuckyDexTCGPBattleEffects;
@@ -220,19 +221,95 @@ set(79,0,par('sleep'),'Put the defender Asleep.');
 set(80,1,damaged(10),'Add 10 per damage counter on Totodile.');
 set(81,1,toss(3,10),'Flip three coins, 10 per heads.');
 set(82,1,toss(2,20),'Flip two coins, 20 per heads.');
+
+// v0.69.95: complete Neo Genesis attack declarations, including the Johto rules.
+const NR=name=>({type:'neoRule',rule:name});
+const healPick=(side,amount)=>({type:'chooseTarget',target:side,effect:{type:'heal',target:side,amount}});
+const atkBonus=(name)=>({type:'neoRule',rule:name});
+set(3,0,coin(healPick('selfPokemon',999)),'Flip heads, then heal all damage from one of your Pokémon.');
+set(3,1,{type:'fieldCountDamage',side:'self',filter:{name:'Bellossom'},amount:30,mode:'replace'},'30 for each Bellossom in play.');
+set(4,0,NR('chomp'),'Flip once for each damage counter on Feraligatr, adding 10 per heads.');
+set(5,0,NR('riptide'),'10 + 10 for each Water Energy in discard; return those Energy cards to the deck.');
+set(8,1,NR('dragonTornado'),'After damage, if the defender survives, choose a new opposing Active from its Bench.');
+set(12,0,NR('zzzap'),'Deal 20 to every Pokémon in play with a Pokémon Power, ignoring Weakness and Resistance.');
+set(16,0,coin({type:'copyAttack',source:'opponentPokemon',ignoreUseCosts:false}),'Flip heads to copy one opposing Pokémon attack, ignoring only its Energy cost.');
+set(20,0,{type:'handShuffle',side:'self',draw:7},'Shuffle your hand into your deck, then draw seven cards.');
+set(21,1,NR('rapidSpin'),'Deal damage, then both players choose a Benched Pokémon to switch Active.');
+set(23,0,NR('sputter'),'All Pokémon Powers stop functioning until the end of your next turn.');
+set(24,0,NR('meanLook'),'Defender cannot retreat while Murkrow remains Active.');
+set(24,1,seq({type:'selectedDamage',target:'opponentPokemon',amount:20},{type:'damageRule',ignoreWeakness:true,ignoreResistance:true,ignoreEffects:true}),'Choose any opposing Pokémon and deal 20 unaffected by other effects.');
+set(26,0,NR('pilfer'),'Shuffle Aipom and attached cards into your deck; on heads shuffle a card from discard into it.');
+set(27,0,coin(NR('spiderWeb')),'Heads: defender cannot retreat until it evolves or leaves the Active Spot.');
+set(27,1,NR('poisonBite'),'If damage is dealt, Poison the defender and heal half the damage dealt.');
+set(28,1,NR('pollenShield'),'Prevent Special Conditions on Bayleef during the opponent’s next turn.');
+set(29,0,NR('sweetScent'),'Heads: heal 20 from one of yours; tails: heal 20 from an opposing Pokémon.');
+set(30,1,NR('squaredance'),'Flip once for each Pokémon in play; take up to that many Basic Energy from Energy Zone into hand.');
+set(31,0,NR('screech'),'Attacks damaging the defender get +20 until the end of your next turn.');
+set(31,1,NR('jawClamp'),'Defender cannot retreat or switch out while Croconaw remains Active until the end of the opponent turn.');
+set(34,0,NR('discharge'),'Discard all attached Lightning Energy; flip once per discarded Energy; 30 per heads.');
+set(34,1,NR('electricCurrent'),'Move one attached Lightning Energy to one of your Benched Pokémon, or discard it if there is no Bench.');
+set(36,1,coin(seq(bonus(10),NR('jawClamp'))),'Heads: +10 and defender cannot retreat or switch.');
+set(39,0,NR('batonPass'),'Move all attached Grass Energy to a Benched Grass Pokémon and switch with it.');
+set(44,0,coin(NR('freeze')),'Heads: defender cannot attack until it evolves or leaves Active.');
+set(46,1,NR('fireWind'),'Choose a Benched Pokémon and flip twice, 10 damage per heads.');
+set(47,1,coin(NR('char')),'Heads: put a persistent Char counter on the defender.');
+set(48,1,NR('mudSplash'),'Choose an opposing Benched Pokémon and flip heads for 10 damage.');
+set(52,0,NR('prophecy'),'Choose either player and arrange the top three deck cards.');
+set(53,1,NR('deflector'),'Halve incoming damage to Chikorita, rounded down to nearest 10, next turn.');
+set(56,0,coin(NR('leer')),'Heads: defender cannot attack Cyndaquil next turn.');
+set(62,0,NR('finSlap'),'Add 10 damage if Horsea was damaged by an attack during the opponent’s last turn.');
+set(65,0,NR('staticElectricity'),'For each Mareep in play attach Lightning Energy from Energy Zone to it.');
+set(69,0,NR('screech'),'Attack damage to the defender is increased by 20 until end of your next turn.');
+set(73,1,{type:'energyDamage',source:'self',energyType:'Water',extraAbove:1,maxCount:2,amount:10},'Add 10 per extra Water Energy, up to 20.');
+set(75,0,coin(NR('scaryFace')),'Heads: defender cannot attack or retreat next turn.');
+set(78,0,coin(NR('growth')),'Heads: attach up to two Grass Energy cards from hand to Sunkern.');
+set(81,0,coin(NR('leer')),'Heads: defender cannot attack Totodile next turn.');
+set(82,0,NR('amnesia'),'Choose a defender attack; it cannot use it next turn.');
+// Neo Pokémon Powers have their own timing; do not present them as passive no-ops.
+const NEO_ABILITIES={
+ 4:{name:'Berserk',type:'triggered',event:'evolved',fromHandOnly:true,effect:NR('berserk'),disabledByStatus:false},
+ 5:{name:'Downpour',type:'activated',oncePerTurn:false,effect:NR('downpour'),disabledByStatus:true},
+ 6:{name:'Final Blow',type:'passive',effect:NR('finalBlow'),disabledByStatus:true},
+ 10:{name:'Herbal Scent',type:'triggered',event:'evolved',fromHandOnly:true,effect:NR('herbalScent'),disabledByStatus:false},
+ 11:{name:'Wild Growth',type:'passive',effect:NR('wildGrowth'),disabledByStatus:true},
+ 14:{name:'Mind Games',type:'passive',effect:NR('mindGames'),disabledByStatus:true},
+ 17:{name:'Fire Recharge',type:'activated',oncePerTurn:true,effect:NR('fireRecharge'),disabledByStatus:true},
+ 18:{name:'Fire Boost',type:'triggered',event:'evolved',fromHandOnly:true,effect:NR('fireBoost'),disabledByStatus:false},
+ 22:{name:'Playful Punch',type:'activated',oncePerTurn:true,effect:NR('playfulPunch'),disabledByStatus:true},
+ 38:{name:'Hydroelectric Power',type:'passive',effect:NR('hydroelectricPower'),disabledByStatus:true},
+ 42:{name:'Glaring Gaze',type:'activated',oncePerTurn:true,effect:NR('glaringGaze'),disabledByStatus:true}
+};
+
 const PLAIN=new Set('2:0 15:0 32:0 33:0 37:0 40:0 40:1 42:0 43:0 45:0 53:0 54:1 59:1 60:1 61:0 67:0 77:1 80:0'.split(' '));
 const POWERS={4:'Berserk',5:'Downpour',6:'Final Blow',10:'Herbal Scent',11:'Wild Growth',14:'Mind Games',17:'Fire Recharge',18:'Fire Boost',22:'Playful Punch',38:'Hydroelectric Power',42:'Glaring Gaze'};
 const BABIES=new Set([12,20,22,23]);
 const TRAINERS={
+ 83:{text:'Shuffle deck. Reveal top three; if at least two share a name, put all matching cards into hand and shuffle the rest.',effect:NR('arcadeGame')},
+ 84:{text:'Stadium. When a non-Colorless Energy card is discarded from a Pokémon by an attack, Power or Trainer, return it to its owner’s hand (not on Knock Out).',effect:NR('ecogym')},
+ 85:{text:'Flip heads to return up to two Energy from discard to deck.',effect:NR('energyCharge')},
+ 86:{text:'Pokémon Tool. On attack Knock Out, flip: heads leave 10 HP instead, then discard Focus Band.',effect:NR('focusBand')},
+ 87:{text:'Draw two cards, then choose two cards from your hand to shuffle into your deck.',effect:NR('mary')},
+ 88:{text:'Look at top seven of your deck. Take one Trainer into hand, shuffle deck and do not play any more Trainers this turn.',effect:NR('pokeGear')},
+ 89:{text:'Discard two other cards from hand to take up to four Basic Energy from your discard into hand.',effect:NR('superEnergyRetrieval')},
+ 90:{text:'Opponent may shuffle up to five Pokémon and Basic Energy from discard into deck; then you may do the same. No more Trainers this turn.',effect:NR('timeCapsule')},
  91:{text:'Flip a coin. On heads draw four cards.',effect:coin({type:'draw',amount:4})},
- 95:{text:'Shuffle your deck, then rearrange its top five cards.',effect:{type:'reorderTop',deckSide:'self',count:5}},
- 96:{text:'Shuffle your hand into your deck, draw seven, and play no more Trainers this turn.',effect:seq({type:'handShuffle',side:'self',draw:7},{type:'actionLock',side:'self',cardType:'Trainer',duration:'turn'})},
- 98:{text:'Flip a coin. On heads return one of your Pokémon and its attachments to your hand.',effect:coin({type:'scoopUp'})},
- 100:{text:'Each player switches their Active Pokémon with a Benched Pokémon.',effect:seq({type:'forceOpponentSwitch'},{type:'switch'})}
+ 92:{text:'Guess the type of one opposing Prize card, reveal it; if correct, draw two.',effect:NR('cardFlipGame')},
+ 93:{text:'Pokémon Tool. Heal forty damage and discard between turns when four damage counters are present.',effect:NR('goldBerry')},
+ 94:{text:'Pokémon Tool. Remove all Special Conditions and discard between turns if affected.',effect:NR('miracleBerry')},
+ 95:{text:'Shuffle your deck, then rearrange its top five cards.',effect:{type:'sequence',effects:[{type:'shuffleDeck',side:'self'},{type:'reorderTop',deckSide:'self',count:5}]}},
+ 96:{text:'Shuffle your hand into your deck; draw seven. You cannot play another Trainer this turn.',effect:NR('elm')},
+ 97:{text:'Stadium. Colorless Pokémon deal thirty less attack damage after Weakness and Resistance.',effect:NR('sproutTower')},
+ 98:{text:'Flip a coin. Heads: return a Pokémon and all of its cards to hand.',effect:coin({type:'scoopUp',target:'selfPokemon'})},
+ 99:{text:'Pokémon Tool. Heal twenty damage and discard between turns when two damage counters are present.',effect:NR('berry')},
+ 100:{text:'Each player chooses one of their Benched Pokémon to switch with Active; opponent chooses first.',effect:NR('doubleGust')},
+ 101:{text:'Choose a Pokémon, flip two coins, heal twenty damage for each heads.',effect:NR('mooMooMilk')},
+ 102:{text:'Opponent may search for and Bench one Basic Pokémon, then you may do the same. Shuffle decks.',effect:NR('pokemonMarch')},
+ 103:{text:'Flip a coin. Heads: return one Evolution from discard to hand. Tails: return one Basic Pokémon.',effect:NR('superRod')}
 };
 const STADIUMS=new Set([84,97]),TOOLS=new Set([86,93,94,99]);
 const SPECIAL_ENERGY={19:{Metal:1},104:{Darkness:1},105:{Colorless:1}};
 const BASIC_ENERGY={106:'Fighting',107:'Fire',108:'Grass',109:'Lightning',110:'Psychic',111:'Water'};
+const NEO_BABIES_READY=true,NEO_SPECIAL_READY=true;
 const CARDS=DATA.map(line=>{
  const [raw,name,type,stage,hp,ret,weak,res,evolvesFrom,rarity,moves]=line.split('|'),n=Number(raw),id='neo1-'+n;
  const kind=n>=106||n===19||n===104||n===105?'energy':n>=83?'trainer':'pokemon';
@@ -242,28 +319,28 @@ const CARDS=DATA.map(line=>{
    const variable=/[+×?]/.test(printedDamage),damage=/×/.test(printedDamage)?0:Number((printedDamage||'').replace(/[^0-9]/g,''))||0;
    return {name,cost,damage,damageText:variable?printedDamage:null,effect,text:TEXT[key]||(!PLAIN.has(key)&&!Object.hasOwn(EFFECTS,key)?'Printed effect pending full Classic engine support. See original card artwork for exact wording.':''),unimplemented:!PLAIN.has(key)&&!Object.hasOwn(EFFECTS,key)};
  });
- const abilities=POWERS[n]?[{name:POWERS[n],type:'passive',text:'Original Pokémon Power; not implemented for Classic 30 battles.'}]:[];
+ const abilities=NEO_ABILITIES[n]?[{...NEO_ABILITIES[n],text:POWERS[n]}]:[];
  const reasons=[];
  if(kind==='pokemon'){
-   if(BABIES.has(n))reasons.push('Original Baby Pokémon Rule has not yet been implemented');
-   if(abilities.length)reasons.push('Printed Pokémon Power has not yet been implemented');
+   if(BABIES.has(n)&&!NEO_BABIES_READY)reasons.push('Original Baby Pokémon Rule has not yet been implemented');
+   if(abilities.some(a=>!fx?.supportsEffect?.(a.effect)))reasons.push('Printed Pokémon Power has not yet been implemented');
    for(const attack of attacks){
      if(attack.unimplemented)reasons.push('Printed '+attack.name+' effect not yet implemented');
      if(attack.effect&&!fx?.supportsEffect?.(attack.effect))reasons.push(attack.name+' effect not supported by engine');
-     if(/[DM]/.test(attack.cost))reasons.push('Special Darkness/Metal Energy is not yet resolved faithfully');
+     if(/[DM]/.test(attack.cost)&&!NEO_SPECIAL_READY)reasons.push('Special Darkness/Metal Energy is not yet resolved faithfully');
    }
    if(!attacks.length&&!abilities.length)reasons.push('No printed attacks or Powers');
  }else if(kind==='trainer'){
    if(!TRAINERS[n])reasons.push('Printed Trainer/Tool/Stadium effect not yet implemented');
    else if(!fx?.supportsEffect?.(TRAINERS[n].effect))reasons.push('Trainer effect not supported by engine');
- }else if(basicEnergy)reasons.push('Basic Energy comes from the separate Energy Zone');
- else reasons.push('Special Energy attachment and its printed passive effects not yet implemented');
+ }else if(basicEnergy){/* Six Basic Energy prints are generated by Energy Zone, not legal deck slots. */}
+ else if(!NEO_SPECIAL_READY)reasons.push('Special Energy attachment and its printed passive effects not yet implemented');
  const battleEnabled=!reasons.length;
  const c={id,setId:'neo1',number:String(n),name,source:'tcg',battleFormat:'classic',kind,rarity,
   ...(kind==='pokemon'?{stage:Number(stage)===0?'Basic':'Stage '+stage,hp:Number(hp),retreat:Number(ret||0),types:[TYPE[type]],subtype:TYPE[type],evolvesFrom:evolvesFrom||null,weakness:TYPE[weak]||null,weaknessValue:weak?'×2':null,resistance:TYPE[res]||null,resistanceValue:res?'-30':null,attacks,abilities,baby:BABIES.has(n)}:{}),
-  ...(kind==='trainer'?{trainerType:STADIUMS.has(n)?'Stadium':TOOLS.has(n)?'AttachedTrainer':'Item',text:TRAINERS[n]?.text||'',effect:TRAINERS[n]?.effect||null}:{}),
+  ...(kind==='trainer'?{trainerType:STADIUMS.has(n)?'Stadium':TOOLS.has(n)?'Tool':'Item',text:TRAINERS[n]?.text||'',effect:TRAINERS[n]?.effect||null}:{}),
   ...(kind==='energy'?{basicEnergy,specialEnergy,subtype:BASIC_ENERGY[n]||Object.keys(SPECIAL_ENERGY[n]||{})[0],types:[BASIC_ENERGY[n]||Object.keys(SPECIAL_ENERGY[n]||{})[0]],effect:specialEnergy?{type:'specialEnergy',provides:SPECIAL_ENERGY[n]}:null}:{}),
-  battleEnabled,deckEligible:battleEnabled,support:{status:battleEnabled?'FULL':'PARTIAL',reasons},
+  battleEnabled,deckEligible:battleEnabled&&!basicEnergy,support:{status:battleEnabled?'FULL':'PARTIAL',reasons},
   image:'https://images.pokemontcg.io/neo1/'+n+'.png',imageLarge:'https://images.pokemontcg.io/neo1/'+n+'_hires.png'};
  return c;
 });

@@ -32,6 +32,11 @@ const STAGE_RANK=Object.freeze({'Basic':0,'Stage 1':1,'Stage 2':2});
 const norm=s=>String(s||'').toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'');
 function ownedMap(rows){const map=new Map();for(const row of rows||[]){const id=classic.cardById(row.gameplayId)?.id;if(id)map.set(id,(map.get(id)||0)+Math.max(0,Number(row.quantity)||0));}return map;}
 function attackTypes(card){const out=new Set();for(const attack of card?.attacks||[])for(const symbol of String(attack.cost||'')){const type=CODE_TO_TYPE[symbol];if(type&&decks.ENERGY_TYPES.includes(type))out.add(type);}return [...out];}
+// Darkness and Metal have no Basic Energy Zone source in this hybrid. They must
+// be included as actual owned Neo Genesis Special Energy cards in the 30 slots.
+const SPECIAL_COST_CARDS=Object.freeze({D:'neo1-104',M:'neo1-19'});
+function specialCosts(cards){const required={D:0,M:0};for(const c of cards)for(const a of c?.attacks||[]){const code=String(a.cost||'');for(const sym of ['D','M'])required[sym]=Math.max(required[sym],code.split(sym).length-1);}return required;}
+
 function familyLine(card,pool){if(!card||card.kind!=='pokemon')return [];const line=[card],seen=new Set([card.id]);let cur=card;while(cur.evolvesFrom){const prior=pool.find(c=>(c.kind==='pokemon'||c.effect?.type==='playFossil')&&c.name===cur.evolvesFrom);if(!prior||seen.has(prior.id))return [];line.unshift(prior);seen.add(prior.id);cur=prior;}return line;}
 function familyRoot(card,pool){const line=familyLine(card,pool);return line[0]?.name||card?.name||card?.id||'';}
 function archetypeName(card,pool){const root=familyRoot(card,pool);return ['Mysterious Fossil','Eevee'].includes(root)?card?.name||root:root;}
@@ -77,7 +82,7 @@ function buildDeck(rows,options={}){
  const requested=[...new Set((options.types||[]).filter(t=>ARCHETYPE_TYPES.includes(t)))].slice(0,2),requestedEnergy=requested.filter(t=>t!=='Colorless'),existing=Array.isArray(options.cards)?options.cards:[],focus=classic.cardById(options.focusCardId),random=rng(options.randomSeed),excluded=new Set(options.excludeArchetypes||[]);
  // Competitive considers complete evolution families; Random draws a printed
  // Pokémon from the *entire* owned, battle-ready roster (not the top 14).
- const isEligible=c=>{const line=familyLine(c,evolutionPool);const required=new Set(line.flatMap(attackTypes));return !!line.length&&required.size<=2&&line.every(member=>typeCompatible(member,requestedEnergy))&&(!requested.length||(c.types||[]).some(type=>requested.includes(type)));};
+ const isEligible=c=>{const line=familyLine(c,evolutionPool);const required=new Set(line.flatMap(attackTypes)),special=specialCosts(line);return !!line.length&&required.size<=2&&line.every(member=>typeCompatible(member,requestedEnergy))&&Object.entries(special).every(([sym,n])=>!n||(classic.cardById(SPECIAL_COST_CARDS[sym])?.battleEnabled&&scope.includes('neo1')&&Number(owned.get(SPECIAL_COST_CARDS[sym])||0)>=n))&&(!requested.length||(c.types||[]).some(type=>requested.includes(type)));};
  let candidates=endpointCards(pokemonPool).filter(isEligible);
  if(focus?.kind==='pokemon'){
    const focused=candidates.filter(c=>familyLine(c,evolutionPool).some(member=>member.name===focus.name&&member.stage===focus.stage));
@@ -132,7 +137,7 @@ function buildDeck(rows,options={}){
  if(mainLine.length>=2)add(mainLine[0],1);
  const pokemonCount=()=>cards.map(classic.cardById).filter(c=>c?.kind==='pokemon').length;
  const neededTypes=()=>[...new Set(cards.map(classic.cardById).flatMap(attackTypes))];
- const canFitEnergy=c=>{const needed=[...new Set([...neededTypes(),...attackTypes(c)])];return requestedEnergy.length?needed.every(t=>requestedEnergy.includes(t)):needed.length<=2;};
+ const canFitEnergy=c=>{const line=familyLine(c,evolutionPool),family=line.length?line:[c],needed=[...new Set([...neededTypes(),...family.flatMap(attackTypes)])],special=specialCosts([...cards.map(classic.cardById).filter(Boolean),...family]);return (requestedEnergy.length?needed.every(t=>requestedEnergy.includes(t)):needed.length<=2)&&Object.entries(special).every(([sym,n])=>!n||scope.includes('neo1')&&Number(owned.get(SPECIAL_COST_CARDS[sym])||0)>=n);};
  const chooseCandidate=candidates=>{
    if(!candidates.length)return null;
    if(style==='random'){
@@ -180,6 +185,14 @@ function buildDeck(rows,options={}){
    if(support){add(support,Math.min(2,room(support)));if(!requestedEnergy.length)
      for(const type of attackTypes(support))if(!selectedTypes.includes(type)&&selectedTypes.length<2)selectedTypes.push(type);
    }
+ }
+ // Special Energy is non-negotiable for a Darkness or Metal attacker.
+ // Reserve it ahead of Trainers, otherwise the generated 30-card deck can
+ // contain a Sneasel/Steelix that literally cannot pay for its signature move.
+ const specialNeeds=specialCosts(cards.map(classic.cardById).filter(Boolean));
+ for(const [symbol,needed] of Object.entries(specialNeeds))if(needed){
+   const energyCard=classic.cardById(SPECIAL_COST_CARDS[symbol]);
+   if(energyCard&&scope.includes(energyCard.setId))add(energyCard,Math.min(4,Math.max(needed,2)));
  }
  // Stage 2 decks value Breeder; add it before generic staples when owned.
  if(cards.map(classic.cardById).some(c=>c?.stage==='Stage 2')){const breeder=classic.cardById('base1-76');if(breeder&&scope.includes(breeder.setId))add(breeder,Math.min(2,room(breeder)));}
