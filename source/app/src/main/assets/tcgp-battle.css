@@ -775,3 +775,30 @@ body.tcgp-card-dragging .tcgp-live-mat-half .tcgp-live-card-wrap[data-card-drop-
   grid-template-columns:repeat(2,minmax(0,1fr))!important;
   width:39%!important;
 }
+
+/* v0.69.84: Classic-only full-height player playmat.
+   The old final 1fr hand lane swallowed spare viewport height while both mats
+   were hard-locked to a 2:1 footprint. Give that space to the player mat; keep
+   the hand at the bottom, and separate the Active energy strip from the Bench. */
+.tcgp-live-arena.format-classic{
+  grid-template-rows:56px var(--tcgp-mat-h) 34px minmax(0,1fr) 118px!important;
+  align-content:stretch!important;
+}
+.tcgp-live-arena.format-classic>.tcgp-live-player.tcgp-live-mat-half{
+  height:100%!important;min-height:0!important;max-height:none!important;
+}
+.tcgp-live-arena.format-classic>.tcgp-live-player-bottom{
+  height:118px!important;min-height:0!important;align-self:end!important;
+}
+.tcgp-live-arena.format-classic .tcgp-live-player-active{
+  top:5%!important;
+}
+.tcgp-live-arena.format-classic .tcgp-live-player-bench{
+  top:auto!important;bottom:5%!important;
+}
+@media(max-width:380px){
+  .tcgp-live-arena.format-classic{
+    grid-template-rows:52px var(--tcgp-mat-h) 32px minmax(0,1fr) 108px!important;
+  }
+  .tcgp-live-arena.format-classic>.tcgp-live-player-bottom{height:108px!important}
+}
