@@ -26,7 +26,7 @@ const STAPLES=Object.freeze([
  ['base1-83',1], // Maintenance
  ['base1-87',1]  // Pokedex
 ]);
-const SET_IDS=Object.freeze(['base1','base2','base3','base5','gym1','gym2']);
+const SET_IDS=Object.freeze(['base1','base2','base3','base5','gym1','gym2','neo1']);
 const ARCHETYPE_TYPES=Object.freeze([...decks.ENERGY_TYPES,'Colorless']);
 const STAGE_RANK=Object.freeze({'Basic':0,'Stage 1':1,'Stage 2':2});
 const norm=s=>String(s||'').toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'');
@@ -77,7 +77,7 @@ function buildDeck(rows,options={}){
  const requested=[...new Set((options.types||[]).filter(t=>ARCHETYPE_TYPES.includes(t)))].slice(0,2),requestedEnergy=requested.filter(t=>t!=='Colorless'),existing=Array.isArray(options.cards)?options.cards:[],focus=classic.cardById(options.focusCardId),random=rng(options.randomSeed),excluded=new Set(options.excludeArchetypes||[]);
  // Competitive considers complete evolution families; Random draws a printed
  // Pokémon from the *entire* owned, battle-ready roster (not the top 14).
- const isEligible=c=>{const line=familyLine(c,evolutionPool);return !!line.length&&line.every(member=>typeCompatible(member,requestedEnergy))&&(!requested.length||(c.types||[]).some(type=>requested.includes(type)));};
+ const isEligible=c=>{const line=familyLine(c,evolutionPool);const required=new Set(line.flatMap(attackTypes));return !!line.length&&required.size<=2&&line.every(member=>typeCompatible(member,requestedEnergy))&&(!requested.length||(c.types||[]).some(type=>requested.includes(type)));};
  let candidates=endpointCards(pokemonPool).filter(isEligible);
  if(focus?.kind==='pokemon'){
    const focused=candidates.filter(c=>familyLine(c,evolutionPool).some(member=>member.name===focus.name&&member.stage===focus.stage));
@@ -235,7 +235,17 @@ function buildDeck(rows,options={}){
  if(cards.length<30&&!requestedEnergy.length){for(const c of pokemonPool.filter(c=>c.stage==='Basic')){if(!canFitEnergy(c))continue;while(cards.length<30&&room(c)>0)add(c,1);for(const type of attackTypes(c))if(!selectedTypes.includes(type)&&selectedTypes.length<2)selectedTypes.push(type);if(cards.length>=30)break;}}
  // Final conservative fill: only Trainers, Special Energy, and Basics whose actual deck Energy profile stays at two types or fewer.
  if(cards.length<30){for(const c of pool.filter(c=>(c.kind==='trainer'||c.specialEnergy||c.stage==='Basic')&&trainerIsUseful(c))){while(cards.length<30&&room(c)>0){const trial=[...cards,c.id],profile=decks.analyzeDeck(trial).recommendedEnergyTypes;if(requestedEnergy.length&&!profile.every(t=>requestedEnergy.includes(t)))break;if(!requestedEnergy.length&&profile.length>2)break;add(c,1);}if(cards.length>=30)break;}}
- if(cards.length!==30)return fail(`Could only assemble ${cards.length}/30 compatible owned cards. Add more Classic TCG cards or widen the Energy type filter.`);
+ if(cards.length!==30){
+   // Sparse themed pools can choose an awkward first core that leaves too few
+   // compatible fillers. Retry distinct archetypes rather than handing back an
+   // incomplete deck when other owned families could form a legal deck.
+   const depth=Number(options._retryDepth||0);
+   if(!focus&&depth<6){
+     const next=buildDeck(rows,{...options,_retryDepth:depth+1,randomSeed:Number(options.randomSeed||1)+9973*(depth+1),excludeArchetypes:[...excluded,archetypeKey(featured||main)]});
+     if(next.ok)return next;
+   }
+   return fail(`Could only assemble ${cards.length}/30 compatible owned cards. Add more Classic TCG cards or widen the Energy type filter.`);
+ }
  const legal=decks.validateDraft(cards,rows,{requireFull:true});if(!legal.ok)return {ok:false,cards,energyTypes:selectedTypes,errors:legal.errors,warnings:[],strategy:''};
  const analysis=decks.analyzeDeck(cards),energyTypes=requestedEnergy.length?requestedEnergy:analysis.recommendedEnergyTypes.slice(0,2);
  const finalEnergy=energyTypes.length?energyTypes:selectedTypes.slice(0,2);
