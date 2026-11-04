@@ -818,3 +818,30 @@ html.android-native-inset body.tcgp-battle-live .tcgp-live-arena.format-classic{
   background-size:cover!important;
   background-position:center bottom!important;
 }
+
+/* v0.69.87: bring Pocket battles in line with the full-height Classic board.
+   The compact hand is pinned at the bottom and remaining height belongs to
+   the player playmat. Keep Pocket's existing card and Bench geometry, and
+   crop the playmat proportionally instead of stretching the full artwork. */
+.tcgp-live-arena:not(.format-classic){
+  grid-template-rows:56px var(--tcgp-mat-h) 34px minmax(0,1fr) 118px!important;
+  align-content:stretch!important;
+}
+.tcgp-live-arena:not(.format-classic)>.tcgp-live-player.tcgp-live-mat-half{
+  height:100%!important;min-height:0!important;max-height:none!important;
+  background-size:cover!important;
+  background-position:center bottom!important;
+}
+.tcgp-live-arena:not(.format-classic)>.tcgp-live-player-bottom{
+  height:118px!important;min-height:0!important;align-self:end!important;
+}
+@media(max-width:380px){
+  .tcgp-live-arena:not(.format-classic){
+    grid-template-rows:52px var(--tcgp-mat-h) 32px minmax(0,1fr) 108px!important;
+  }
+  .tcgp-live-arena:not(.format-classic)>.tcgp-live-player-bottom{height:108px!important}
+}
+/* The native Android WebView has already excluded the system navigation bar. */
+html.android-native-inset body.tcgp-battle-live .tcgp-live-arena:not(.format-classic){
+  padding-bottom:6px!important;
+}
