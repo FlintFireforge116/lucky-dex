@@ -387,9 +387,9 @@ Object.assign(TRAINERS,{
   119:{text:'Flip a coin: heads hides opponent’s hand until their next turn ends; tails ends your turn.',effect:{type:'gymRule',rule:'ticklingMachine'}},
   120:{text:'Stadium. Lt. Surge Pokémon can flip: heads +10 attack damage, tails 10 self-damage.',effect:{type:'gymRule',rule:'vermilionGym'}},
   121:{text:'Discard any number of other cards from hand; on heads draw twice that many.',effect:{type:'gymRule',rule:'blainesGamble'}},
-  122:{text:'Return any number of basic Energy attachments from your Pokémon to hand.',effect:{type:'gymRule',rule:'energyFlow'}},
+  122:{text:'Choose any number of Energy cards attached to your Pokémon and return them to your hand. Special Energy returns as its original card; Basic Energy returns as reusable Energy cards from the Energy Zone.',effect:{type:'gymRule',rule:'energyFlow'}},
   123:{text:'Play Rock Paper Scissors; winner shuffles hand into deck and draws five.',effect:{type:'gymRule',rule:'mistysDuel'}},
-  124:{text:'Stadium. Both players may have at most four Benched Pokémon.',effect:{type:'gymRule',rule:'narrowGym'}},
+  124:{text:'Stadium. LuckyDex adaptation: both players may have at most two Benched Pokémon. When played, each player with three chooses one to return to hand (opponent first).',effect:{type:'gymRule',rule:'narrowGym'}},
   126:{text:'Shuffle all cards from your discard pile into your deck, then discard the same number from the top.',effect:{type:'gymRule',rule:'trashExchange'}}
 });
 const TRAINER_DESCRIPTIONS={
@@ -425,7 +425,7 @@ const TRAINER_DESCRIPTIONS={
  121:'Discard as many other cards from your hand as you like; on heads draw twice that many cards.',
  122:'Return any number of attached Energy cards from each of your Pokémon to your hand.',
  123:'Play Rock–Paper–Scissors. The winner reshuffles their hand and draws five cards.',
- 124:'Stadium. Players may have only four Benched Pokémon, returning any extras and attachments to hand.',
+ 124:'Stadium. LuckyDex adaptation: both players may have only two Benched Pokémon. If either has three, choose one to return to hand, opponent first. Generated Basic Energy returns to the Energy discard pool.',
  125:'Each player shuffles their hand into their deck, then draws that same number of cards.',
  126:'Shuffle the discard pile into the deck, then discard that many cards from its top.'
 };

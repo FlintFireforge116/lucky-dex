@@ -81,15 +81,17 @@
     return index>=0?sideState.bench[index]:null;
   }
 
+  function maxBenchSize(sideState){return Math.max(0,Math.min(3,Number(sideState?.benchLimit??3)));}
+
   function emptyBenchSlots(sideState){
     normalizeBenchSlots(sideState);
     const used=new Set((sideState?.bench||[]).filter(Boolean).map(slot=>Number(slot.benchSlot)));
-    return [0,1,2].filter(i=>!used.has(i));
+    return [0,1,2].slice(0,maxBenchSize(sideState)).filter(i=>!used.has(i));
   }
 
   function placeOnBench(sideState,slot,benchIndex){
     const physical=Number(benchIndex);
-    if(!Number.isInteger(physical)||physical<0||physical>2)throw new Error('Invalid Bench slot.');
+    if(!Number.isInteger(physical)||physical<0||physical>=maxBenchSize(sideState))throw new Error('That Bench slot is unavailable.');
     if(benchSlotAt(sideState,physical))throw new Error(`Bench ${physical+1} is already occupied.`);
     slot.benchSlot=physical;
     sideState.bench.push(slot);
@@ -156,7 +158,7 @@
     if(!Array.isArray(types)||types.length<1||types.length>maxEnergyTypes||new Set(types).size!==types.length||types.some(t=>!Object.values(effects.ENERGY_CODE).includes(t)))throw new Error(`Energy Zone requires one to ${maxEnergyTypes} distinct valid Energy types.`);
     return {
       id:side,
-      deck:makeDeck(side,ids), hand:[], discard:[], energyDiscard:{}, active:null, bench:[], points:0,
+      deck:makeDeck(side,ids), hand:[], discard:[], energyDiscard:{}, active:null, bench:[], benchLimit:3, points:0,
       prizes:[],prizesTaken:0,handLimit:rules?.handLimit==null?null:Number(rules.handLimit),
       energyTypes:types.slice(), energyType:types[0], nextEnergyType:types[0], energyAvailable:false, energyUsed:false, retreated:false,
       turnCount:0, pointsGainedThisTurn:0, pointsGainedLastTurn:0, knockoutsTaken:0, lastKnockedOutCardIds:[]
@@ -258,7 +260,7 @@
       });
       return actions;
     }
-    if (s.bench.length < 3){
+    if (s.bench.length < maxBenchSize(s)){
       const empty=emptyBenchSlots(s);
       s.hand.forEach((ref,handIndex)=>{
         if (!isBasic(ref)) return;
@@ -278,7 +280,9 @@
   function effectChoiceActions(state,side){
     const p=state.pendingChoice;if(!p||p.side!==side)return[];const ss=state.sides[side],out=[];
     const filterCard=(slotOrRef)=>{if((p.excludeUids||[]).includes(slotOrRef?.uid))return false;const card=data.cardById(slotOrRef?.cardId);return !p.filter||effects.matchesFilter?effects.matchesFilter(card,p.filter,slotOrRef):true;};
-    if(p.kind==='switchBench'||p.kind==='pokemon'){
+    if(p.kind==='narrowGymReturn'){
+      for(const slot of ss.bench||[])if(slot)out.push({type:'effectChoice',choiceTarget:'bench',choiceBenchIndex:Number(slot.benchSlot),choiceCardId:slot.cardId});
+    }else if(p.kind==='switchBench'||p.kind==='pokemon'){
       const board=state.sides[p.selectionSide||side],eligible=slot=>slot&&filterCard(slot)&&(!p.requireTool||toolsOf(slot).length>0);
       if(p.kind==='pokemon'&&p.includeActive!==false&&eligible(board.active))out.push({type:'effectChoice',choiceTarget:'active',choiceCardId:board.active.cardId});
       for(const slot of board.bench||[])if(eligible(slot))out.push({type:'effectChoice',choiceTarget:'bench',choiceBenchIndex:Number(slot.benchSlot),choiceCardId:slot.cardId});
@@ -298,7 +302,16 @@
     }else if(p.kind==='topDeckCard'){
       const target=state.sides[p.deckSide||side],n=Math.min(Number(p.count||1),target.deck.length),excluded=new Set(p.excludeUids||[]);for(let i=0;i<n;i++){const ref=target.deck[i];if(!excluded.has(ref.uid))out.push({type:'effectChoice',choiceDeckIndex:i,choiceCardId:ref.cardId});}
     }else if(p.kind==='energySource'){
-      for(const slot of [ss.active,...(ss.bench||[])].filter(Boolean)){for(const [energyType,amount] of Object.entries(slot.energy||{})){if(Number(amount)<=0||(p.energyTypes&& !p.energyTypes.includes(energyType)))continue;out.push({type:'effectChoice',choiceTarget:slot===ss.active?'active':'bench',choiceBenchIndex:slot===ss.active?undefined:Number(slot.benchSlot),choiceCardId:slot.cardId,effectEnergyType:energyType});}}
+      for(const slot of [ss.active,...(ss.bench||[])].filter(Boolean)){
+        const target={type:'effectChoice',choiceTarget:slot===ss.active?'active':'bench',choiceBenchIndex:slot===ss.active?undefined:Number(slot.benchSlot),choiceCardId:slot.cardId};
+        for(const [energyType,amount] of Object.entries(slot.energy||{})){
+          if(Number(amount)<=0||(p.energyTypes&&!p.energyTypes.includes(energyType)))continue;
+          out.push({...target,effectEnergyType:energyType});
+        }
+        // Only effects that explicitly opt in can recover attached Special
+        // Energy. Other Energy-source effects continue selecting Basic Energy.
+        if(p.includeSpecial)for(const ref of slot.specialEnergy||[])out.push({...target,effectSpecialEnergyUid:ref.uid});
+      }
     }else if(p.kind==='energyTarget'){
       const energyTypes=(p.energyTypes||[]).filter(Boolean);for(const slot of [ss.active,...(ss.bench||[])].filter(Boolean)){const card=data.cardById(slot.cardId);if(p.filter&&!effects.matchesFilter(card,p.filter,slot))continue;for(const energyType of energyTypes)out.push({type:'effectChoice',choiceTarget:slot===ss.active?'active':'bench',choiceBenchIndex:slot===ss.active?undefined:Number(slot.benchSlot),choiceCardId:slot.cardId,effectEnergyType:energyType});}
     }else if(p.kind==='toolCard'){
@@ -417,7 +430,7 @@
     const s = state.sides[side];
     normalizeBenchSlots(s);
     const actions = [];
-    if (s.bench.length < 3){
+    if (s.bench.length < maxBenchSize(s)){
       const empty=emptyBenchSlots(s);
       s.hand.forEach((ref,handIndex)=>{
         const card = data.cardById(ref.cardId);
@@ -632,6 +645,39 @@
     return false;
   }
 
+  // LuckyDex Classic has three Bench spaces. Narrow Gym therefore limits
+  // both sides to TWO (the printed four-slot rule otherwise has no effect).
+  function narrowGymReturnToHand(state,side,benchIndex){
+    const ss=state.sides[side],index=benchArrayIndex(ss,benchIndex);
+    if(index<0)throw new Error('Choose a Benched Pokémon to return.');
+    const [slot]=ss.bench.splice(index,1);
+    // Evolution cards and printed attachments go back to the player's hand;
+    // generated Basic Energy returns to the separate Energy discard pool.
+    for(const [i,cardId] of (slot.stack||[slot.cardId]).entries()){
+      ss.hand.push({uid:`narrow-${slot.uid}-evo-${i}`,cardId});
+    }
+    for(const ref of [...(slot.specialEnergy||[]),...toolsOf(slot),...temporaryTrainersOf(slot)])ss.hand.push(ref);
+    ss.energyDiscard=ss.energyDiscard||{};
+    for(const [type,count] of Object.entries(slot.energy||{})){
+      if(count>0)ss.energyDiscard[type]=Number(ss.energyDiscard[type]||0)+Number(count);
+    }
+    state.log.push({type:'narrowGymReturn',side,cardId:slot.cardId,benchIndex});
+    // Keep the two remaining Pokémon on visible physical slots 0 and 1.
+    ss.bench.sort((a,b)=>Number(a.benchSlot)-Number(b.benchSlot));
+    ss.bench.forEach((pokemon,i)=>{pokemon.benchSlot=i;});
+  }
+  function checkNarrowGymOverflow(state){
+    if(state.stadium?.cardId!=='gym1-124')return false;
+    // Printed order: the opponent of the Stadium player chooses first.
+    const first=state.stadium.ownerSide==='player'?'opponent':'player',second=state.stadium.ownerSide;
+    const side=[first,second].find(x=>state.sides[x].bench.length>2);
+    if(!side)return false;
+    state.phase='effectChoice';state.choiceSide=side;
+    state.pendingChoice={kind:'narrowGymReturn',special:'narrowGymReturn',side,originSide:state.stadium.ownerSide,
+      prompt:'Narrow Gym: choose a Benched Pokémon to return to your hand (maximum two).'};
+    return true;
+  }
+
   function playTrainer(state,side,action){
     const s=state.sides[side];const [ref]=s.hand.splice(action.handIndex,1);const card=data.cardById(ref.cardId),type=trainerType(card);if(state.format==='classic'&&state.stadium?.cardId==='gym1-103'&&['Energy Removal','Super Energy Removal'].includes(card.name)){for(let n=0;n<2;n++){const index=s.hand.length-1;if(index>=0)s.discard.push(...s.hand.splice(index,1));}}
     state.log.push({type:'trainer',side,cardId:card.id,target:action.target,benchIndex:action.benchIndex});
@@ -645,7 +691,7 @@
     if(type==='Supporter')s.supporterUsed=true;
     if(type==='AttachedTrainer'){const target=slotForTarget(s,action.target,action.benchIndex);if(!target)throw new Error('Attached Trainer target is no longer in play.');target.temporaryTrainers=target.temporaryTrainers||[];target.temporaryTrainers.push({...ref,ownerSide:side,attachedTurn:state.turnNumber});resolveKnockOut(state,null);return;}
     if(type==='Tool'){const target=slotForTarget(s,action.target,action.benchIndex);attachTool(target,ref);const ctx=effectContext(state,side,action,target);effects.applyEffect(card.onAttach,ctx);effects.applyPersistentEvent(card.effect,'onAttach',ctx);resolveKnockOut(state,null);return;}
-    if(type==='Stadium'){if(state.stadium)state.sides[state.stadium.ownerSide].discard.push({uid:state.stadium.uid,cardId:state.stadium.cardId});state.stadium={...ref,ownerSide:side};s.stadiumUsed=true;resolveKnockOut(state,null);return;}
+    if(type==='Stadium'){if(state.stadium)state.sides[state.stadium.ownerSide].discard.push({uid:state.stadium.uid,cardId:state.stadium.cardId});state.stadium={...ref,ownerSide:side};s.stadiumUsed=true;for(const which of ['player','opponent'])state.sides[which].benchLimit=card.id==='gym1-124'?2:3;if(checkNarrowGymOverflow(state))return;resolveKnockOut(state,null);return;}
     s.discard.push(ref);
     effects.applyEffect(card.effect,{...effectContext(state,side,{...action,trainerRef:ref}),trainerRef:ref});
     if(state.phase==='effectChoice'){state.pendingChoice.resume=state.pendingChoice.resume||'trainer';return;}
@@ -666,6 +712,12 @@
     }
     if(matched.type==='effectChoice'){
       const pending=state.pendingChoice;if(!pending)throw new Error('No pending effect choice.');
+      if(pending.special==='narrowGymReturn'){
+        narrowGymReturnToHand(state,side,matched.choiceBenchIndex);
+        state.pendingChoice=null;state.choiceSide=null;state.phase='battle';
+        if(!checkNarrowGymOverflow(state))resolveKnockOut(state,null);
+        return state;
+      }
       if(pending.special==='coinReroll'){
         if(Number(matched.choiceOption)===0){restoreState(state,pending.keepState);return state;}
         const snapshot=pending.snapshot,rngAfter=pending.rerollRngState,ownerSide=pending.rerollOwnerSide,scope=pending.rerollScope,actionSide=pending.actionSide,originalAction=pending.originalAction;

@@ -103,7 +103,7 @@
     if(action.type==='setupActive')return`ACTIVE · ${cardName(action.cardId)}`;
     if(action.type==='setupBench')return`BENCH · ${cardName(action.cardId)}`;
     if(action.type==='setupReady')return'READY';
-    if(action.type==='effectChoice'){const c=action.choiceCardId?cardName(action.choiceCardId):'';if(action.choiceAttackIndex!=null)return `CHOOSE ${c} ATTACK ${Number(action.choiceAttackIndex)+1}`;if(action.choiceTarget==='bench')return `CHOOSE ${c||'BENCH '+(Number(action.choiceBenchIndex)+1)}`;if(action.choiceTarget==='active')return `CHOOSE ${c||'ACTIVE'}`;if(action.choiceHandIndex!=null)return `CHOOSE ${c||'HAND CARD'}`;if(action.choiceDiscardIndex!=null)return `CHOOSE ${c||'DISCARD CARD'}`;if(action.choiceDeckIndex!=null)return `CHOOSE ${c||'DECK CARD'}`;if(action.choiceOption!=null)return action.choiceLabel||`OPTION ${Number(action.choiceOption)+1}`;if(action.choiceSkip)return 'SKIP';return 'CHOOSE';}
+    if(action.type==='effectChoice'){const c=action.choiceCardId?cardName(action.choiceCardId):'';if(state?.pendingChoice?.effect?.rule==='energyFlow'){const slot=action.choiceTarget==='active'?state.sides?.[side]?.active:state.sides?.[side]?.bench?.find(x=>x.benchSlot===Number(action.choiceBenchIndex));const special=slot?.specialEnergy?.find(r=>r.uid===action.effectSpecialEnergyUid);if(special)return `RETURN ${cardName(special.cardId)} · ${c}`;if(action.effectEnergyType)return `RETURN ${action.effectEnergyType} ENERGY · ${c}`;}if(action.choiceAttackIndex!=null)return `CHOOSE ${c} ATTACK ${Number(action.choiceAttackIndex)+1}`;if(action.choiceTarget==='bench')return `CHOOSE ${c||'BENCH '+(Number(action.choiceBenchIndex)+1)}`;if(action.choiceTarget==='active')return `CHOOSE ${c||'ACTIVE'}`;if(action.choiceHandIndex!=null)return `CHOOSE ${c||'HAND CARD'}`;if(action.choiceDiscardIndex!=null)return `CHOOSE ${c||'DISCARD CARD'}`;if(action.choiceDeckIndex!=null)return `CHOOSE ${c||'DECK CARD'}`;if(action.choiceOption!=null)return action.choiceLabel||`OPTION ${Number(action.choiceOption)+1}`;if(action.choiceSkip)return 'SKIP';return 'CHOOSE';}
     if(action.type==='promote')return`PROMOTE · ${slotName(state,side,'bench',action.benchIndex)}`;
     if(action.type==='bench')return`BENCH · ${cardName(action.cardId)}`;
     if(action.type==='evolve')return`EVOLVE ${slotName(state,side,action.target,action.benchIndex)} → ${cardName(action.cardId)}`;
@@ -497,6 +497,10 @@
   }
   function pokemonInteractionAttrs(side,zone,index,slot){
     if(side!=='player'||!slot)return inspectAttrs(side,zone,index);
+    if(zone==='bench'&&currentBattle?.phase==='effectChoice'&&currentBattle?.choiceSide==='player'&&currentBattle?.pendingChoice?.special==='narrowGymReturn'){
+      const actionIndex=battleActionCache.findIndex(action=>action.type==='effectChoice'&&action.choiceTarget==='bench'&&Number(action.choiceBenchIndex)===Number(index));
+      if(actionIndex>=0)return `data-tcgp-action="battle-action" data-action-index="${actionIndex}" aria-label="Return ${esc(cardName(slot.cardId))} to hand for Narrow Gym"`;
+    }
     const indices=pokemonActionIndices(side,zone,index),activeAttackSurface=currentBattle?.phase==='battle'&&currentBattle?.activeSide==='player'&&zone==='active'&&!cpuPending;
     // A tapped Benched Pokemon should explain why its attacks cannot be used,
     // not silently open a read-only inspector that looks like a broken attack menu.
@@ -590,7 +594,8 @@
   }
   function liveBenchHtml(sideName,bench){
     const slots=[],sideState={bench:bench||[]};
-    for(let i=0;i<3;i++){const slot=core?.benchSlotAt?core.benchSlotAt(sideState,i):(bench?.[i]||null);slots.push(liveCardHtml(slot,{compact:true,side:sideName,zone:'bench',index:i,showActions:false}));}
+    const limited=currentBattle?.format==='classic'&&currentBattle?.stadium?.cardId==='gym1-124'&&currentBattle?.pendingChoice?.special!=='narrowGymReturn';
+    for(let i=0;i<(limited?2:3);i++){const slot=core?.benchSlotAt?core.benchSlotAt(sideState,i):(bench?.[i]||null);slots.push(liveCardHtml(slot,{compact:true,side:sideName,zone:'bench',index:i,showActions:false}));}
     return slots.join('');
   }
   function classicOpponentHandRevealed(battle){
@@ -669,7 +674,7 @@
     if(battleOverlay!=='inspect'||!battleInspect)return'';
     const info=resolveInspect(currentBattle,battleInspect);if(!info?.card)return'';
     const card=info.card,art=cardArtUrl(info.ref?.cardId||card.id,info.sideName),health=info.slot?hpInfo(info.slot,battleInspect.side):null;
-    const links=attachedToolLinksHtml(info,battleInspect.index)+(currentBattle.stadium&&info.zone!=='stadium'?`<button class="tcgp-battle-action secondary" ${inspectAttrs('player','stadium',0)}>Inspect Stadium</button>`:'');
+    const links=attachedToolLinksHtml(info,battleInspect.index);
     return `<div class="tcgp-live-overlay"><button class="tcgp-live-overlay-scrim" type="button" data-tcgp-action="close-overlay" aria-label="Close card detail"></button><section class="tcgp-live-sheet tcgp-live-card-sheet"><button class="tcgp-live-sheet-close" type="button" data-tcgp-action="close-overlay">×</button><div class="tcgp-live-sheet-card">${art?`<img src="${esc(art)}" alt="${esc(card.name)}">`:''}<div><div class="eyebrow">${esc(info.subtitle)}</div><h3>${esc(card.name)}</h3><div class="tcgp-live-tags"><span>${esc(typeLabel(card))}</span>${card.kind==='pokemon'||info.slot?`<span>HP ${health?.left??card.hp}/${health?.hp??card.hp}</span><span>⚡ ${health?.energy||0}</span><span>Retreat ${Number(card.retreat||0)}</span><span>Weak ${esc(card.weakness||'—')}</span>`:''}</div></div></div><div class="tcgp-live-sheet-attacks">${cardRulesHtml(card,info.zone==='active'?(card.attacks||[]).map((_,i)=>core.attackAvailability(currentBattle,info.sideName,i)):null)}</div>${links?`<div class="tcgp-battle-actions-row">${links}</div>`:''}</section></div>`;
   }
   function liveContextActionsOverlayHtml(){
@@ -731,7 +736,8 @@
     const lastLog=[...currentBattle.log].reverse().map(logText).find(Boolean)||(currentBattle.phase==='setup'?'Choose an Active Pokémon.':'Battle started');
     const handScroll=el('tcgpBattleContent')?.querySelector('.tcgp-live-hand')?.scrollLeft||0;
     const classic=currentBattle.format==='classic',scoreHtml=classic?`<span>CPU PRIZES <b>${Number(o.prizesTaken||0)}</b>/5</span><i>·</i><span>YOU <b>${Number(p.prizesTaken||0)}</b>/5</span>`:`<span>CPU <b>${o.points}</b>/3</span><i>·</i><span>YOU <b>${p.points}</b>/3</span>`;
-    setContent(`<section class="tcgp-live-arena ${classic?'format-classic':''}" aria-label="${classic?'Classic TCG':'TCG Pocket'} battlefield">
+    const narrowGym=classic&&currentBattle.stadium?.cardId==='gym1-124'&&currentBattle.pendingChoice?.special!=='narrowGymReturn';
+    setContent(`<section class="tcgp-live-arena ${classic?'format-classic':''}${narrowGym?' narrow-gym':''}" aria-label="${classic?'Classic TCG':'TCG Pocket'} battlefield">
       <section class="tcgp-live-opponent-top" aria-label="Opponent hand and piles">${livePileHtml('opponent',o,'discard')}${liveOpponentHandHtml(o)}${livePileHtml('opponent',o,'deck')}</section>
       <section class="tcgp-live-opponent tcgp-live-mat-half" data-mat-side="opponent" ${playmatStyle('opponent')} aria-label="Opponent half">
         <div class="tcgp-live-opponent-bench" aria-label="Opponent Bench">${liveBenchHtml('opponent',o.bench)}</div>

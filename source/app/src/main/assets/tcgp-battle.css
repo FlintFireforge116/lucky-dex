@@ -752,3 +752,26 @@ body.tcgp-card-dragging .tcgp-live-mat-half .tcgp-live-card-wrap[data-card-drop-
 .tcgp-live-arena.format-classic .tcgp-live-player .tcgp-live-hp,
 .tcgp-live-arena.format-classic .tcgp-live-player .tcgp-live-condition,
 .tcgp-live-arena.format-classic .tcgp-live-player .tcgp-live-name{pointer-events:none!important}
+
+
+/* v0.69.82: Classic Stadiums are upright and have their own small hit target.
+   Never let the Stadium's rotated/absolute layer intercept Benched Pokémon taps. */
+.tcgp-live-arena.format-classic .tcgp-live-player>.tcgp-live-stadium-slot{
+  right:1%!important;top:3%!important;left:auto!important;bottom:auto!important;
+  width:42px!important;height:60px!important;transform:none!important;
+  z-index:2!important;pointer-events:none!important;
+}
+.tcgp-live-arena.format-classic .tcgp-live-player>.tcgp-live-stadium-slot .tcgp-live-stadium-card{
+  position:relative!important;width:38px!important;height:53px!important;
+  aspect-ratio:2.5/3.5!important;transform:none!important;
+  z-index:2!important;pointer-events:auto!important;touch-action:manipulation!important;
+}
+.tcgp-live-arena.format-classic .tcgp-live-player>.tcgp-live-stadium-slot .tcgp-live-stadium-card img{pointer-events:none!important}
+.tcgp-live-arena.format-classic .tcgp-live-player>.tcgp-live-stadium-slot .tcgp-live-stadium-activate{right:-4px!important;bottom:-11px!important}
+.tcgp-live-arena.format-classic .tcgp-live-player>.tcgp-live-stadium-slot .tcgp-present-stadium-active{animation:tcgpStadiumPulseUpright .56s ease-out!important}
+@keyframes tcgpStadiumPulseUpright{0%,100%{transform:none;box-shadow:0 3px 7px #17384f55}42%{transform:scale(1.08);box-shadow:0 0 0 3px #9ed18466}}
+.tcgp-live-arena.format-classic.narrow-gym .tcgp-live-player-bench,
+.tcgp-live-arena.format-classic.narrow-gym .tcgp-live-opponent-bench{
+  grid-template-columns:repeat(2,minmax(0,1fr))!important;
+  width:39%!important;
+}
