@@ -7,7 +7,7 @@
   const officialRecipes=workspace.OFFICIAL_RECIPES||[];
   const officialIvysaur=officialRecipes.find(r=>r.id==='official-genetic-apex-beginner-ivysaur');
   const CHALLENGES=[{id:'genetic-apex-beginner-ivysaur',recipeId:officialIvysaur?.id||null,source:'Official',expansion:'Genetic Apex',difficulty:'Beginner',name:'Ivysaur Deck',description:'Build a Grass bench and evolve Ivysaur.',energyType:'Grass',energyTypes:['Grass'],deck:(officialIvysaur?.cards||data.BEGINNER_IVYSAUR_DECK).slice(),firstClear:{coins:100,dust:50},repeat:{coins:0,dust:0},countsForCompletion:true}];
-  const recipeGroups=[['fire-pressure','water-sleep','lightning-bench'],['grass-swarm','fighting-evolution','darkness-poison','psychic-punish'],['metal-acceleration','dragon-dual','charizard-ex','sleep-control'],['blastoise-ex','venusaur-ex','dual-mega','greninja-mega']];
+  const recipeGroups=[['fire-pressure','water-sleep','lightning-bench'],['grass-swarm','fighting-evolution','darkness-poison','psychic-punish'],['metal-acceleration','dragon-dual','charizard-ex','sleep-control'],['blastoise-ex','venusaur-ex','dual-mega','greninja-mega','darkrai-weavile']];
   recipeGroups.forEach((ids,level)=>ids.forEach(id=>{
     const recipe=workspace.LOCAL_RECIPES.find(r=>r.id===id);if(!recipe)throw new Error('Missing Solo deck recipe: '+id);
     const valid=decks.validateLoanerDeck(recipe.cards,recipe.energyTypes);

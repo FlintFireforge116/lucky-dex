@@ -10,7 +10,7 @@ const row=(id,quantity=2)=>({gameplayId:id,quantity,battleEnabled:true,variants:
 
 test('workspace exposes official recipes separately while keeping local recipes',()=>{
   assert.ok(workspace.OFFICIAL_RECIPES.length>=8);
-  assert.ok(workspace.LOCAL_RECIPES.length>=16);
+  assert.ok(workspace.LOCAL_RECIPES.length>=17);
   assert.equal(workspace.RECIPES.length,workspace.OFFICIAL_RECIPES.length+workspace.LOCAL_RECIPES.length);
   assert.ok(workspace.OFFICIAL_RECIPES.every(r=>r.source==='Official'));
   assert.ok(workspace.LOCAL_RECIPES.every(r=>r.source==='LuckyDex'));

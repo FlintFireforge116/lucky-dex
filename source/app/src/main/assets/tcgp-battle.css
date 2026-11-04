@@ -235,13 +235,12 @@ body.tcgp-battle-live .tcgp-battle-topbar>div b{font-size:11px}
 .tcgp-present-damage{position:absolute;z-index:15;min-width:52px;transform:translate(-50%,-50%);padding:5px 9px;border-radius:12px;background:#142a3ee8;border:1px solid #ffffff77;color:#fff;font-size:17px;font-weight:950;text-align:center;text-shadow:0 2px 3px #0008;box-shadow:0 5px 14px #0d263a55;animation:tcgpDamagePop .48s ease-out forwards}
 .tcgp-present-damage.intensity-big{font-size:21px}.tcgp-present-damage.intensity-finisher{font-size:25px;padding:7px 12px}
 .tcgp-present-attack.secondary{opacity:.88;filter:saturate(.92)}.tcgp-present-damage.secondary{font-size:15px;padding:4px 7px}
-.tcgp-present-coins{position:absolute;left:50%;top:50%;z-index:18;transform:translate(-50%,-50%);max-width:min(86%,420px);display:flex;justify-content:center;align-items:center;gap:6px;flex-wrap:wrap;padding:10px 12px 30px;border-radius:18px;background:#142b40e8;border:1px solid #ffffff55;box-shadow:0 9px 26px #071b2d66}
+.tcgp-present-coins{position:absolute;left:50%;top:50%;z-index:18;transform:translate(-50%,-50%);max-width:min(88%,500px);display:flex;justify-content:center;align-items:center;gap:10px;flex-wrap:wrap;padding:14px 16px 34px;border-radius:20px;background:#142b40e8;border:1px solid #ffffff55;box-shadow:0 9px 26px #071b2d66}
 .tcgp-present-coins.is-opponent{top:25%;}
 .tcgp-present-coins.is-player{top:74%;}
-.tcgp-present-coin{width:38px;height:38px;display:grid;place-items:center;border-radius:50%;border:2px solid #f8edbf;background:radial-gradient(circle at 34% 27%,#fff7c9,#d7a93d 45%,#8d6521 78%);color:#4e3816;font-size:13px;font-weight:950;box-shadow:inset 0 0 0 2px #7b571e55,0 3px 7px #071b2d55;opacity:0;transform:rotateY(0) scale(.4);animation:tcgpCoinFlip .44s var(--tcgp-coin-delay,0ms) cubic-bezier(.18,.75,.28,1) forwards}
-.tcgp-present-coin.tails{background:radial-gradient(circle at 34% 27%,#f2f6f6,#a7bcc5 45%,#627a86 78%);border-color:#d8e4e8;color:#2f4854}
-.tcgp-present-coin-more{align-self:center;font-size:10px;font-weight:900;color:#d2e1e8}
-.tcgp-present-coin-label{position:absolute;left:0;right:0;bottom:7px;text-align:center;font-size:9px;letter-spacing:.08em;font-weight:900;color:#e7f3f8}
+.tcgp-present-coin{width:56px;height:56px;display:grid;place-items:center;position:relative;overflow:hidden;padding:0;isolation:isolate;border-radius:50%;border:none;background:transparent;box-shadow:0 6px 16px #071b2d66;opacity:0;transform:rotateY(0) scale(.4);animation:tcgpCoinFlip .52s var(--tcgp-coin-delay,0ms) cubic-bezier(.18,.75,.28,1) forwards}
+.tcgp-present-coin-more{align-self:center;font-size:11px;font-weight:900;color:#d2e1e8}
+.tcgp-present-coin-label{position:absolute;left:0;right:0;bottom:8px;text-align:center;font-size:10px;letter-spacing:.08em;font-weight:900;color:#e7f3f8}
 .tcgp-present-ko-label,.tcgp-present-status,.tcgp-present-heal{position:absolute;left:50%;top:48%;z-index:20;transform:translate(-50%,-50%);padding:7px 12px;border-radius:12px;background:#7d3138ed;border:1px solid #ffc0c4;color:#fff;font-size:11px;font-weight:950;letter-spacing:.08em;box-shadow:0 5px 15px #10283e66;animation:tcgpBadgePop .42s ease-out forwards}
 .tcgp-present-status{background:#5d3973ed;border-color:#e9c5ff}.tcgp-present-heal{background:#39754bed;border-color:#c5f2c9}
 .tcgp-present-lunge{animation:tcgpCardLunge .34s ease-out}.tcgp-present-hit{animation:tcgpCardHit .36s linear}
@@ -257,7 +256,7 @@ body.tcgp-battle-live .tcgp-battle-topbar>div b{font-size:11px}
 @keyframes tcgpCardLunge{0%,100%{transform:scale(1)}50%{transform:translateY(-6px) scale(1.045)}}
 @keyframes tcgpCardHit{0%,100%{transform:translateX(0)}25%{transform:translateX(-4px) rotate(-1deg)}55%{transform:translateX(5px) rotate(1deg)}75%{transform:translateX(-2px)}}
 @keyframes tcgpArenaShake{0%,100%{transform:translate(0)}20%{transform:translate(-2px,1px)}40%{transform:translate(3px,-1px)}60%{transform:translate(-2px,-1px)}80%{transform:translate(2px,1px)}}
-@media(max-width:420px){.tcgp-present-coins{gap:4px;padding:8px 9px 28px}.tcgp-present-coin{width:32px;height:32px;font-size:11px}.tcgp-present-damage{font-size:15px}.tcgp-present-damage.intensity-finisher{font-size:21px}}
+@media(max-width:420px){.tcgp-present-coins{gap:6px;padding:10px 10px 30px}.tcgp-present-coin{width:46px;height:46px}.tcgp-present-damage{font-size:15px}.tcgp-present-damage.intensity-finisher{font-size:21px}}
 @media(prefers-reduced-motion:reduce){.tcgp-present-layer *,.tcgp-present-lunge,.tcgp-present-hit,.tcgp-live-arena.tcgp-present-shake{animation-duration:.01ms!important;animation-delay:0ms!important;transition-duration:.01ms!important}.tcgp-present-attack{opacity:.85;transform:rotate(var(--tcgp-attack-angle)) scaleX(1)}.tcgp-present-card-ghost,.tcgp-present-energy-ghost{display:none}}
 .tcgp-battle-result-detailed{display:grid;gap:10px}
 .tcgp-battle-result-detailed>h2,.tcgp-battle-result-detailed>p{margin-top:0;margin-bottom:0}
@@ -846,9 +845,7 @@ html.android-native-inset body.tcgp-battle-live .tcgp-live-arena:not(.format-cla
   padding-bottom:6px!important;
 }
 
-/* v0.69.92 — real, equipped Pokémon coin faces in both battle formats. */
-.tcgp-present-coin{position:relative;overflow:hidden;padding:0;isolation:isolate}
-.tcgp-present-coin-face{position:absolute;inset:1px;display:grid;place-items:center;border-radius:50%;overflow:hidden}
-.tcgp-present-coin-face img{width:100%;height:100%;object-fit:contain;display:block}
-.tcgp-present-coin.tails .tcgp-present-coin-face{filter:grayscale(.75) brightness(.87)}
-.tcgp-present-coin-side{position:absolute;bottom:-1px;right:-1px;background:#102739e8;color:white;border-radius:8px 0 0 0;padding:1px 4px;font-size:9px;line-height:1.2;text-shadow:0 1px 1px #0008}
+/* v0.69.93 — larger coin flips with the actual coin art as the result face. */
+.tcgp-present-coin-face{position:absolute;inset:0;display:grid;place-items:center;border-radius:50%;overflow:hidden;background:radial-gradient(circle at 32% 22%,#ffffff26,#0e1c2ac2 74%,#09131e)}
+.tcgp-present-coin-face img{width:100%;height:100%;object-fit:contain;display:block;transform:scale(.96)}
+.tcgp-present-coin.tails .tcgp-present-coin-face{filter:saturate(.92) brightness(.96);transform:rotateY(180deg)}

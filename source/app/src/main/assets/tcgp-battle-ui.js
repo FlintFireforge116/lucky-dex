@@ -253,7 +253,7 @@
   }
   function coinPresentationHtml(heads,sideName,stateOverride){
     const image=heads?coinArtPath(sideName,stateOverride):coinArtPath('opponent',stateOverride);
-    return `<span class="tcgp-present-coin-face">${image?`<img src="${esc(image)}" alt="" decoding="async" onerror="this.hidden=true">`:''}</span><span class="tcgp-present-coin-side">${heads?'H':'T'}</span>`;
+    return `<span class="tcgp-present-coin-face">${image?`<img src="${esc(image)}" alt="" decoding="async" onerror="this.hidden=true">`:''}</span>`;
   }
   function spawnCoinRow(stage,entry){
     const results=coinSequence(entry),shown=results.slice(0,20),row=appendPresentationNode(stage,`tcgp-present-coins ${entry?.side==='opponent'?'is-opponent':'is-player'}`);if(!row)return 0;

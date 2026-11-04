@@ -97,7 +97,8 @@
     makeRecipe('sleep-control','Sleep control','Jigglypuff starts the sleep plan, Wigglytuff ex continues it, and Frosmoth offers a lower-cost Water-powered sleep attacker.',['P-A-022','A1-195','A1-092','A1-093'],['Water']),
     makeRecipe('water-counter','Water counter armour','Poliwrath returns attack damage while Cloyster reduces incoming damage; Giant Cape and Potion reinforce both defensive families.',['A1-059','A1-060','A1-061','A1-066','A1-067'],['Water'],['A2-147']),
     makeRecipe('dual-mega','Dual Mega stadium','Mega Mewtwo X ex gains damage with a Stadium in play; Jynx punishes built-up opponents while Training Area enables Dual Impact.',['C1-056','A1-127'],['Psychic'],['B2-153']),
-    makeRecipe('greninja-mega','Mega Greninja evolution','A full Froakie family leads into dual-type Mega Greninja ex; Frosmoth buys evolution turns with guaranteed sleep.',['A1-087','A1-088','C1-042','A1-092','A1-093'],['Water'])
+    makeRecipe('greninja-mega','Mega Greninja evolution','A full Froakie family leads into dual-type Mega Greninja ex; Frosmoth buys evolution turns with guaranteed sleep.',['A1-087','A1-088','C1-042','A1-092','A1-093'],['Water']),
+    makeRecipe('darkrai-weavile','Darkrai and Weavile pressure','Darkrai ex provides the heavy finisher while a full Sneasel line and Honchkrow line keep Darkness pressure on from turn one.',['P-A-042','A2-098','A2-099','A2-096','A2-097'],['Darkness'])
   ]);
   const OFFICIAL_RECIPES=library?.OFFICIAL_RECIPES||Object.freeze([]);
   const RECIPES=Object.freeze([...OFFICIAL_RECIPES,...LOCAL_RECIPES]);
