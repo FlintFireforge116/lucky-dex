@@ -104,20 +104,20 @@ test('Time Capsule restores virtual discarded Basic Energy for each player, then
  fx.applyEffect({type:'neoRule',rule:'timeCapsule'},core.effectContext(s,'player',{},player.active));
  assert.equal(s.phase,'effectChoice');
  let action=core.legalActions(s,'player').find(a=>a.type==='effectChoice'&&a.choiceOption===0);assert.ok(action);
- core.applyAction(s,'player',action);assert.ok(foe.deck.some(r=>r.cardId==='neo1-111'));assert.equal(foe.energyDiscard.Water,0);
+ const foeBefore=foe.energySupply.length;core.applyAction(s,'player',action);assert.equal(foe.energySupply.length,foeBefore+1);assert.ok(foe.energySupply.includes('Water'));assert.equal(foe.energyDiscard.Water,0);
  action=core.legalActions(s,'player').find(a=>a.type==='effectChoice'&&a.choiceOption===0);assert.ok(action);
- core.applyAction(s,'player',action);assert.ok(player.deck.some(r=>r.cardId==='neo1-108'));assert.equal(player.energyDiscard.Grass,0);
+ const playerBefore=player.energySupply.length;core.applyAction(s,'player',action);assert.equal(player.energySupply.length,playerBefore+1);assert.ok(player.energySupply.includes('Grass'));assert.equal(player.energyDiscard.Grass,0);
  assert.equal(player.neoTrainerLockTurn,s.turnNumber);
 });
-test('Energy Charge chooses discarded Basic Energy and shuffles it into the deck',()=>{
+test('Energy Charge chooses discarded Basic Energy and returns it to the Energy supply',()=>{
  let succeeded=false;
  for(let seed=200;seed<250;seed++){
   const s=make(seed),player=s.sides.player;player.energyDiscard={Fire:2};
   fx.applyEffect({type:'neoRule',rule:'energyCharge'},core.effectContext(s,'player',{},player.active));
   if(s.phase!=='effectChoice')continue;
   const action=core.legalActions(s,'player').find(a=>a.type==='effectChoice'&&a.choiceOption===0);assert.ok(action);
-  core.applyAction(s,'player',action);assert.equal(player.energyDiscard.Fire,1);
-  assert.ok(player.deck.some(r=>r.cardId==='neo1-107'));succeeded=true;break;
+  const before=player.energySupply.length;core.applyAction(s,'player',action);assert.equal(player.energyDiscard.Fire,1);
+  assert.equal(player.energySupply.length,before+1);assert.ok(player.energySupply.includes('Fire'));succeeded=true;break;
  }assert.ok(succeeded,'a successful Energy Charge flip must allow a real choice');
 });
 test('Darkness Energy recoil occurs at the end of the turn except on Darkness Pokémon',()=>{

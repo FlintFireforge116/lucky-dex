@@ -3,13 +3,13 @@ const {test}=require('node:test'),assert=require('node:assert/strict'),fs=requir
 const R=path.resolve(__dirname,'..'),A=path.join(R,'app/src/main/assets');
 const data=require(path.join(A,'tcg-classic-battle-data.js'));
 const discovery=require(path.join(A,'tcg-classic-neo-discovery.js'));
-test('v0.69.100 release identifies its Android and browser versions consistently',()=>{
+test('vv0.69.101 release identifies its Android and browser versions consistently',()=>{
  const gradle=fs.readFileSync(path.join(R,'app/build.gradle'),'utf8'),app=fs.readFileSync(path.join(A,'app-v0167.js'),'utf8'),html=fs.readFileSync(path.join(A,'index.html'),'utf8');
- assert.match(gradle,/versionName '0\.69\.100'/);assert.match(gradle,/versionCode 7080/);
- assert.match(app,/window\.__LUCKYDEX_BUILD='0\.69\.100'/);
- assert.match(html,/v0\.69\.100/);
+ assert.match(gradle,/versionName '0\.69\.101'/);assert.match(gradle,/versionCode 7081/);
+ assert.match(app,/window\.__LUCKYDEX_BUILD='0\.69\.101'/);
+ assert.match(html,/v0\.69\.101/);
  const pkg=require(path.join(R,'package.json')),lock=require(path.join(R,'package-lock.json'));
- assert.equal(pkg.version,'0.69.100');assert.equal(lock.version,'0.69.100');
+ assert.equal(pkg.version,'0.69.101');assert.equal(lock.version,'0.69.101');
 });
 test('Neo Discovery loads after effects but before catalogue and exposes exactly 75 supported cards',()=>{
  const html=fs.readFileSync(path.join(A,'index.html'),'utf8');

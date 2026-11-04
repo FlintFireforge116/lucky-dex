@@ -849,3 +849,23 @@ html.android-native-inset body.tcgp-battle-live .tcgp-live-arena:not(.format-cla
 .tcgp-present-coin-face{position:absolute;inset:0;display:grid;place-items:center;border-radius:50%;overflow:hidden;background:radial-gradient(circle at 32% 22%,#ffffff26,#0e1c2ac2 74%,#09131e)}
 .tcgp-present-coin-face img{width:100%;height:100%;object-fit:contain;display:block;transform:scale(.96)}
 .tcgp-present-coin.tails .tcgp-present-coin-face{filter:saturate(.92) brightness(.96);transform:rotateY(180deg)}
+
+/* v0.69.101: readable, physically ordered Energy supply and a separate
+   discard section without taking space from the Android battle playmats. */
+.tcgp-live-energy-source .tcgp-live-current-energy{left:2px;top:8px}
+.tcgp-live-energy-source .tcgp-live-next-energy{right:2px;top:3px;bottom:auto;opacity:.80}
+.tcgp-live-energy-source .tcgp-live-next-energy .tcgp-energy-icon{width:14px;height:14px}
+.tcgp-live-energy-source .tcgp-live-third-energy{position:absolute;right:2px;bottom:3px;display:grid;place-items:center;opacity:.6}
+.tcgp-live-energy-source .tcgp-live-third-energy .tcgp-energy-icon{width:14px;height:14px}
+.tcgp-live-pile-energy-count{position:absolute;right:-6px;bottom:12px;padding:2px 3px;background:#173449;color:#fff5ba;border:1px solid #7ba39d;border-radius:7px;font-size:8px;font-weight:900;z-index:5;box-shadow:0 2px 4px #0005}
+.tcgp-live-discard-sheet{max-height:min(78vh,700px);overflow-y:auto;overscroll-behavior:contain}
+.tcgp-live-discard-section{padding:9px 0 14px;border-top:1px solid #93abb344}
+.tcgp-live-discard-section h4{margin:0 0 9px;font-size:13px}
+.tcgp-live-discard-energy-grid{display:flex;flex-wrap:wrap;gap:9px;align-items:flex-start}
+.tcgp-live-discard-energy-tile{display:flex;flex-direction:column;align-items:center;min-width:67px;gap:3px;padding:10px 7px;background:#e8f1ed;border-radius:12px;color:#173449}
+.tcgp-live-discard-energy-tile .tcgp-energy-icon{width:29px;height:29px}
+.tcgp-live-discard-energy-tile b{font-size:11px}
+.tcgp-live-discard-energy-tile>span{font-size:12px;font-weight:850}
+.tcgp-energy-ark-choice .tcgp-live-actions{display:flex;flex-wrap:wrap;gap:10px}
+.tcgp-energy-choice-button{display:inline-flex;align-items:center;gap:8px;min-width:120px;justify-content:center}
+.tcgp-energy-choice-button .tcgp-energy-icon{width:26px;height:26px}

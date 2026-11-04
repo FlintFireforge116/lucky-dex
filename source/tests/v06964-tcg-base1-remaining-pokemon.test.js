@@ -18,10 +18,11 @@ function prep(s){s.phase='battle';s.activeSide='player';s.turnNumber=3;s.sides.p
 
 // Rain Dance is repeatable and attaches Water without consuming the normal Energy attachment.
 {
-  const s=battle(6491);const blastoise=setActive(s,'player','base1-2',{Water:3},'blast');const target=setBench(s,'player','base1-41','seel',0);setActive(s,'opponent','base1-7',{Fighting:1},'foe');setBench(s,'opponent','base1-26','ob');prep(s);s.sides.player.energyUsed=false;
+  const s=battle(6491);const blastoise=setActive(s,'player','base1-2',{Water:3},'blast');const target=setBench(s,'player','base1-41','seel',0);setActive(s,'opponent','base1-7',{Fighting:1},'foe');setBench(s,'opponent','base1-26','ob');prep(s);s.sides.player.energyUsed=false;s.sides.player.hand.push({uid:'rain-water-1',cardId:'neo1-111'});
   const rain=core.legalActions(s,'player').find(a=>a.type==='ability'&&a.cardId==='base1-2'&&a.effectTarget==='bench');assert.ok(rain,'Rain Dance should target a Water Benched Pokemon');core.applyAction(s,'player',rain);
-  assert.equal(target.energy.Water,1);assert.equal(s.sides.player.energyUsed,false,'Rain Dance must not consume the normal attachment');
-  assert.ok(core.legalActions(s,'player').some(a=>a.type==='ability'&&a.cardId==='base1-2'),'Rain Dance is repeatable');
+  assert.equal(target.energy.Water,1);assert.equal(s.sides.player.hand.some(r=>r.uid==='rain-water-1'),false);assert.equal(s.sides.player.energyUsed,false,'Rain Dance must not consume the normal attachment');
+  assert.equal(core.legalActions(s,'player').some(a=>a.type==='ability'&&a.cardId==='base1-2'),false,'Rain Dance needs an actual Water Energy in hand');
+  s.sides.player.hand.push({uid:'rain-water-2',cardId:'neo1-111'});assert.ok(core.legalActions(s,'player').some(a=>a.type==='ability'&&a.cardId==='base1-2'),'Rain Dance is repeatable when Energy remains in hand');
   blastoise.conditions.sleep=true;assert.equal(core.legalActions(s,'player').some(a=>a.type==='ability'&&a.cardId==='base1-2'),false,'Pokemon Power is disabled by Sleep');
 }
 

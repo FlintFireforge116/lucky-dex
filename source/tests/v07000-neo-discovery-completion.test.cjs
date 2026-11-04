@@ -26,9 +26,9 @@ test('Neo Discovery damage formula: False Swipe rounds half remaining HP to 10s;
  const withLock=effects.resolveAttack(attack,ctx(s,'player',()=>.9));assert.equal(withLock.damage,50);assert.ok(withLock.pendingEffects.some(x=>x.status==='paralysis'));
 });
 test('Belly Drum takes 30 damage and lets a player choose two generated Basic Energy attachments',()=>{
- const s=stateOf();s.sides.player.active=mk('neo2-44','poliwhirl');s.sides.player.energyTypes=['Water'];
+ const s=stateOf();s.sides.player.active=mk('neo2-44','poliwhirl');s.sides.player.energyTypes=['Water'];s.sides.player.energySupply=Array(12).fill('Water');
  effects.applyEffect(rule('bellyDrum'),ctx(s));assert.equal(s.sides.player.active.damage,30);assert.equal(s.phase,'effectChoice');
- choice(s,'energy');assert.equal(s.sides.player.active.energy.Water,1);choice(s,'energy');assert.equal(s.sides.player.active.energy.Water,2);
+ choice(s,'energy');assert.equal(s.sides.player.active.energy.Water,1);choice(s,'energy');assert.equal(s.sides.player.active.energy.Water,2);assert.equal(s.sides.player.energySupply.length,10);
  assert.equal(s.phase,'battle');
 });
 test('Unown [F] and [U] compact-board powers need all four named Unown in play',()=>{

@@ -167,7 +167,7 @@
     if(!Array.isArray(types)||types.length<1||types.length>maxEnergyTypes||new Set(types).size!==types.length||types.some(t=>!Object.values(effects.ENERGY_CODE).includes(t)))throw new Error(`Energy Zone requires one to ${maxEnergyTypes} distinct valid Energy types.`);
     return {
       id:side,
-      deck:makeDeck(side,ids), hand:[], discard:[], energyDiscard:{}, active:null, bench:[], benchLimit:3, points:0,
+      deck:makeDeck(side,ids), hand:[], discard:[], energyDiscard:{}, energySupply:null, active:null, bench:[], benchLimit:3, points:0,
       prizes:[],prizesTaken:0,handLimit:rules?.handLimit==null?null:Number(rules.handLimit),
       energyTypes:types.slice(), energyType:types[0], nextEnergyType:types[0], energyAvailable:false, energyUsed:false, retreated:false,
       turnCount:0, pointsGainedThisTurn:0, pointsGainedLastTurn:0, knockoutsTaken:0, lastKnockedOutCardIds:[]
@@ -204,6 +204,15 @@
     };
     shuffle(state,state.sides.player.deck);
     shuffle(state,state.sides.opponent.deck);
+    // Classic uses a real, ordered Basic Energy supply outside the 30 cards.
+    // 240 cards supports the full 100-turn safety limit and extra searches.
+    // The queue is seeded once and is never rerolled behind the player's back.
+    if(format==='classic')for(const ss of Object.values(state.sides)){
+      ss.energySupply=Array.from({length:240},(_,index)=>ss.energyTypes[index%ss.energyTypes.length]);
+      shuffle(state,ss.energySupply);
+      ss.energyType=ss.energySupply[0];
+      ss.nextEnergyType=ss.energySupply[0];
+    }
     // Opening hands are drawn before Prize cards are set aside. Pocket has no
     // Prizes, so its existing setup order is unchanged in observable play.
     prepareOpeningHand(state,'player');prepareOpeningHand(state,'opponent');
@@ -249,7 +258,18 @@
     s.stadiumUsed = false;
     s.abilityUsed = s.abilityUsed || {};
     s.energyAvailable = !!state.rules?.firstTurnEnergy || !(state.turnNumber === 1 && side === state.firstSide);
-    if(s.energyAvailable){s.energyType=s.nextEnergyType||s.energyTypes[0];s.nextEnergyType=s.energyTypes.length>1?s.energyTypes[Math.floor(random(state)*s.energyTypes.length)]:s.energyTypes[0];}
+    if(s.energyAvailable){
+      if(Array.isArray(s.energySupply)){
+        // This turn consumes the TOP of the supply, not an independent RNG roll.
+        s.energyType=s.energySupply.shift()||null;
+        s.nextEnergyType=s.energySupply[0]||null;
+        if(!s.energyType)s.energyAvailable=false;
+        state.log.push({type:'energySupplyDraw',side,energyType:s.energyType,remaining:s.energySupply.length});
+      }else{
+        s.energyType=s.nextEnergyType||s.energyTypes[0];
+        s.nextEnergyType=s.energyTypes.length>1?s.energyTypes[Math.floor(random(state)*s.energyTypes.length)]:s.energyTypes[0];
+      }
+    }
     neoToolCheck(state,side);
     const hadCardToDraw=s.deck.length>0,drawn=drawCard(s);
     // The compact Classic hybrid uses Pocket's no-deck-out rule: losing

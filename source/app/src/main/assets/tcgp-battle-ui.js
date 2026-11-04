@@ -683,15 +683,18 @@
     wraps.forEach((node,i)=>{const pose=model.cards[i];node.style.setProperty('--hand-x',pose.x+'px');node.style.setProperty('--hand-y',pose.y+'px');node.style.setProperty('--hand-angle',pose.angle+'deg');node.style.zIndex=pose.zIndex;});
   }
   function livePileHtml(sideName,side,kind){
-    const isDiscard=kind==='discard',count=isDiscard?side.discard.length:side.deck.length,top=isDiscard&&count?side.discard[count-1]:null,emptyDiscard=isDiscard&&!count;
+    const isDiscard=kind==='discard',cardDiscard=(side.discard||[]).filter(ref=>data.cardById(ref.cardId)?.kind!=='energy'),energyCount=Object.values(side.energyDiscard||{}).reduce((n,v)=>n+Math.max(0,Number(v||0)),0)+(side.discard||[]).filter(ref=>data.cardById(ref.cardId)?.kind==='energy').length;
+    const count=isDiscard?cardDiscard.length:side.deck.length,top=isDiscard&&count?cardDiscard[count-1]:null,emptyDiscard=isDiscard&&!count;
     const topArt=top?cardArtUrl(top.cardId,sideName):'',sleeve=sleeveArtPath(sideName),backStyle=!isDiscard&&sleeve?`background-image:url('${esc(sleeve)}');`:'';
     const attrs=isDiscard?`data-tcgp-action="open-discard" data-side="${esc(sideName)}"`:'';
     const fallbackText=isDiscard&&top&&!topArt?esc(cardName(top.cardId).slice(0,2).toUpperCase()):(!topArt&&!sleeve&&!isDiscard?'◆':'');
-    return `<button type="button" data-pile-side="${esc(sideName)}" data-pile-kind="${esc(kind)}" class="tcgp-live-pile ${isDiscard?'discard':'deck'} ${sideName==='player'?'mine':''}" ${attrs} ${isDiscard?'':'disabled'} aria-label="${isDiscard?'View discard pile':'Deck'} ${count} cards"><span class="tcgp-live-pile-card${emptyDiscard?' empty':''}" style="${topArt?`background-image:url('${esc(topArt)}');`:backStyle}">${fallbackText}</span><b>${count}</b><small>${isDiscard?'DISCARD':'DECK'}</small></button>`;
+    return `<button type="button" data-pile-side="${esc(sideName)}" data-pile-kind="${esc(kind)}" class="tcgp-live-pile ${isDiscard?'discard':'deck'} ${sideName==='player'?'mine':''}" ${attrs} ${isDiscard?'':'disabled'} aria-label="${isDiscard?'View discard pile':'Deck'} ${count} cards"><span class="tcgp-live-pile-card${emptyDiscard?' empty':''}" style="${topArt?`background-image:url('${esc(topArt)}');`:backStyle}">${fallbackText}</span><b>${count}</b><small>${isDiscard?'DISCARD':'DECK'}</small>${isDiscard?`<span class="tcgp-live-pile-energy-count" aria-label="${energyCount} discarded Energy">⚡${energyCount}</span>`:''}</button>`;
   }
   function liveEnergySourceHtml(side){
-    const available=currentBattle?.phase==='battle'&&currentBattle?.activeSide==='player'&&!cpuPending&&side.energyAvailable&&!side.energyUsed,energyType=side.energyType||'Grass',next=side.nextEnergyType||energyType;
-    return `<button type="button" data-energy-side="player" class="tcgp-live-energy-source ${available?'ready':''}" data-energy="${esc(energyType)}" data-tcgp-energy-source="1" ${available?'':'disabled'} aria-label="${available?`Drag ${esc(energyType)} Energy to a Pokémon`:`${esc(energyType)} Energy unavailable`} · Next ${esc(next)}"><span class="tcgp-live-current-energy">${energyIconHtml(energyType,{className:'current'})}</span><span class="tcgp-live-next-energy">${energyIconHtml(next,{className:'next'})}</span></button>`;
+    const available=currentBattle?.phase==='battle'&&currentBattle?.activeSide==='player'&&!cpuPending&&side.energyAvailable&&!side.energyUsed;
+    const energyType=side.energyType||side.energyTypes?.[0]||'Grass',next=side.nextEnergyType||side.energySupply?.[0]||energyType,third=side.energySupply?.[1]||null;
+    const order=`This turn: ${energyType}. Next: ${next}${third?`; then: ${third}`:''}. ${Array.isArray(side.energySupply)?`${side.energySupply.length} remaining in Energy supply.`:''}`;
+    return `<button type="button" data-energy-side="player" class="tcgp-live-energy-source ${available?'ready':''}" data-energy="${esc(energyType)}" data-tcgp-energy-source="1" ${available?'':'disabled'} title="${esc(order)}" aria-label="${esc(order)} ${available?'Drag current Energy onto a Pokémon.':''}"><span class="tcgp-live-current-energy">${energyIconHtml(energyType,{className:'current'})}</span><span class="tcgp-live-next-energy">${energyIconHtml(next,{className:'next'})}</span>${third?`<span class="tcgp-live-third-energy">${energyIconHtml(third,{className:'following'})}</span>`:''}</button>`;
   }
   function liveInspectOverlayHtml(){
     if(battleOverlay!=='inspect'||!battleInspect)return'';
@@ -713,10 +716,24 @@
     return `<div class="tcgp-live-overlay"><button class="tcgp-live-overlay-scrim" type="button" data-tcgp-action="close-overlay" aria-label="Close Pokémon actions"></button><section class="tcgp-live-sheet tcgp-live-pokemon-action-sheet"><div class="tcgp-live-sheet-head"><div><small>${esc(zoneLabel)}</small><h3>${esc(info.card.name||info.slot.cardId)}</h3></div><button class="tcgp-live-sheet-close" type="button" data-tcgp-action="close-overlay">×</button></div>${benchNote}${currentBattle?.phase==='battle'&&currentBattle.activeSide!=='player'?'<p class="tcgp-live-bench-note">It is the CPU turn. You can inspect this Pokémon now, and act on your next turn.</p>':''}<div class="tcgp-live-pokemon-actions">${actions||(benchNote?'':'<p class="tcgp-battle-note">No battle action is available right now.</p>')}</div><button type="button" class="tcgp-battle-action secondary tcgp-live-card-info-action" data-tcgp-action="inspect-pokemon-from-actions" data-side="player" data-zone="${esc(info.zone)}" data-index="${Number(spec.index||0)}">CARD INFO</button></section></div>`;
   }
   function liveDiscardOverlayHtml(){
-    if(battleOverlay!=='discard')return'';
-    const side=currentBattle?.sides?.[battleDiscardSide],label=battleDiscardSide==='player'?'Your':'CPU',cards=side?.discard||[];
-    const cardsHtml=cards.map((ref,index)=>{const card=data.cardById(ref.cardId),art=cardArtUrl(ref.cardId,battleDiscardSide);return `<button type="button" class="tcgp-live-discard-card" ${inspectAttrs(battleDiscardSide,'discard',index)}>${art?`<img src="${esc(art)}" alt="${esc(card?.name||ref.cardId)}">`:''}<span>${esc(card?.name||ref.cardId)}</span></button>`;}).join('');
-    return `<div class="tcgp-live-overlay"><button class="tcgp-live-overlay-scrim" type="button" data-tcgp-action="close-overlay" aria-label="Close discard pile"></button><section class="tcgp-live-sheet tcgp-live-discard-sheet"><div class="tcgp-live-sheet-head"><div><small>${label.toUpperCase()}</small><h3>Discard pile · ${cards.length}</h3></div><button class="tcgp-live-sheet-close" type="button" data-tcgp-action="close-overlay">×</button></div><div class="tcgp-live-discard-grid">${cardsHtml||'<p class="tcgp-battle-note">Discard pile is empty.</p>'}</div></section></div>`;
+    if(battleOverlay!=='discard'&&battleOverlay!=='energy-discard')return'';
+    const side=currentBattle?.sides?.[battleDiscardSide],label=battleDiscardSide==='player'?'Your':'CPU',discards=side?.discard||[];
+    const cardRefs=discards.map((ref,index)=>({ref,index})).filter(({ref})=>data.cardById(ref.cardId)?.kind!=='energy');
+    const energyRefs=discards.map((ref,index)=>({ref,index})).filter(({ref})=>data.cardById(ref.cardId)?.kind==='energy');
+    const basic=Object.entries(side?.energyDiscard||{}).filter(([,count])=>Number(count)>0),energyCount=basic.reduce((n,[,c])=>n+Number(c||0),0)+energyRefs.length;
+    const cardsHtml=cardRefs.map(({ref,index})=>{const card=data.cardById(ref.cardId),art=cardArtUrl(ref.cardId,battleDiscardSide);return `<button type="button" class="tcgp-live-discard-card" ${inspectAttrs(battleDiscardSide,'discard',index)}>${art?`<img src="${esc(art)}" alt="${esc(card?.name||ref.cardId)}">`:''}<span>${esc(card?.name||ref.cardId)}</span></button>`;}).join('');
+    const energyIcons=basic.map(([type,count])=>`<div class="tcgp-live-discard-energy-tile">${energyIconHtml(type,{className:'discard'})}<b>${esc(type)}</b><span>×${Number(count)}</span></div>`).join('');
+    const energyCards=energyRefs.map(({ref,index})=>{const card=data.cardById(ref.cardId),art=cardArtUrl(ref.cardId,battleDiscardSide);return `<button type="button" class="tcgp-live-discard-card" ${inspectAttrs(battleDiscardSide,'discard',index)}>${art?`<img src="${esc(art)}" alt="${esc(card?.name||ref.cardId)}">`:''}<span>${esc(card?.name||ref.cardId)}</span></button>`;}).join('');
+    const energyFirst=battleOverlay==='energy-discard';
+    const cardSection=`<section class="tcgp-live-discard-section"><h4>Discarded cards · ${cardRefs.length}</h4><div class="tcgp-live-discard-grid">${cardsHtml||'<p class="tcgp-battle-note">No discarded cards.</p>'}</div></section>`;
+    const energySection=`<section class="tcgp-live-discard-section" id="tcgp-energy-discard-section"><h4>Discarded Energy · ${energyCount}</h4><p class="tcgp-battle-note">Basic Energy lost from Pokémon is held separately here. Energy recovery cards search this pile; Special Energy keeps its printed card identity.</p><div class="tcgp-live-discard-energy-grid">${energyIcons}${energyCards||''}${!energyCount?'<p class="tcgp-battle-note">No discarded Energy.</p>':''}</div></section>`;
+    return `<div class="tcgp-live-overlay"><button class="tcgp-live-overlay-scrim" type="button" data-tcgp-action="close-overlay" aria-label="Close discard pile"></button><section class="tcgp-live-sheet tcgp-live-discard-sheet"><div class="tcgp-live-sheet-head"><div><small>${label.toUpperCase()}</small><h3>Discard piles · ${cardRefs.length} cards / ${energyCount} Energy</h3></div><button class="tcgp-live-sheet-close" type="button" data-tcgp-action="close-overlay">×</button></div>${energyFirst?energySection+cardSection:cardSection+energySection}</section></div>`;
+  }
+  function liveEnergyArkChoiceOverlayHtml(){
+    const pending=currentBattle?.pendingChoice;
+    if(currentBattle?.phase!=='effectChoice'||currentBattle?.choiceSide!=='player'||pending?.effect?.rule!=='discovery:energyArk')return'';
+    const options=battleActionCache.map((action,index)=>action?.type==='effectChoice'&&action.choiceOption!=null?`<button type="button" class="tcgp-battle-action tcgp-energy-choice-button" data-tcgp-action="battle-action" data-action-index="${index}">${energyIconHtml(action.choiceLabel,{className:'current'})} <span>${esc(action.choiceLabel)}</span></button>`:'').filter(Boolean).join('');
+    return `<div class="tcgp-live-overlay tcgp-energy-ark-choice"><div class="tcgp-live-overlay-scrim"></div><section class="tcgp-live-sheet tcgp-live-action-sheet"><div class="tcgp-live-sheet-head"><div><small>ENERGY ARK</small><h3>${esc(pending.prompt||'Choose Energy from the supply')}</h3></div></div><div class="tcgp-live-actions">${options}</div></section></div>`;
   }
   function stadiumSlotModel(state,actions,side){
     const viewer=side||'player',stadium=state?.stadium||null,sideState=state?.sides?.[viewer]||{},actionIndex=(actions||[]).findIndex(action=>action?.type==='stadiumAction');
@@ -774,7 +791,7 @@
       </section>
       <section class="tcgp-live-player-bottom" aria-label="Your hand and piles"><div class="tcgp-live-piles mine" aria-label="Your card piles">${livePileHtml('player',p,'discard')}${livePileHtml('player',p,'deck')}</div><div class="tcgp-live-hand" aria-label="Your hand · swipe for more cards">${livePlayerHandHtml(p)}</div>${liveEnergySourceHtml(p)}</section>
       ${battleEvent?`<div class="tcgp-live-action-event" role="status">${esc(battleEvent)}</div>`:''}
-      ${liveInspectOverlayHtml()}${liveContextActionsOverlayHtml()}${livePokemonActionsOverlayHtml()}${liveDiscardOverlayHtml()}
+      ${liveInspectOverlayHtml()}${liveContextActionsOverlayHtml()}${livePokemonActionsOverlayHtml()}${liveDiscardOverlayHtml()}${liveEnergyArkChoiceOverlayHtml()}
     </section>`);
     layoutPlayerHand();const hand=el('tcgpBattleContent')?.querySelector('.tcgp-live-hand');if(hand)hand.scrollLeft=handScroll;
   }

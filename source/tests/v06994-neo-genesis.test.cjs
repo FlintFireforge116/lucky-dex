@@ -54,8 +54,8 @@ test('Classic deck filter and battle script are loaded in correct order; release
   assert.match(fs.readFileSync(path.join(assets,'tcg-classic-deck-editor.js'),'utf8'),/Neo Genesis/);
   assert.match(fs.readFileSync(path.join(assets,'tcgp-battle-ui.js'),'utf8'),/Neo Genesis/);
   const build=fs.readFileSync(path.join(root,'app/build.gradle'),'utf8');
-  assert.match(build,/versionName '0\.69\.100'/);assert.match(build,/versionCode 7080/);
-  assert.match(fs.readFileSync(path.join(assets,'app-v0167.js'),'utf8'),/window\.__LUCKYDEX_BUILD='0\.69\.100'/);
+  assert.match(build,/versionName '0\.69\.101'/);assert.match(build,/versionCode 7081/);
+  assert.match(fs.readFileSync(path.join(assets,'app-v0167.js'),'utf8'),/window\.__LUCKYDEX_BUILD='0\.69\.101'/);
 });
 
 test('all eight Classic sets can produce legal 30-card seeded auto decks with no missing Energy types',()=>{

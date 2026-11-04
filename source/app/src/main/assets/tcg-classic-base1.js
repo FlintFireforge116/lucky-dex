@@ -163,7 +163,7 @@ fullPokemon(1,{stage:'Stage 2',evolvesFrom:'Kadabra',type:'Psychic',hp:80,retrea
  {name:'Damage Swap',type:'activated',oncePerTurn:false,disabledByStatus:true,effect:{type:'redistributeDamage',amount:10}}
 ],attacks:[{name:'Confuse Ray',cost:'PPP',damage:30,effect:{type:'coinFlip',heads:{type:'status',target:'opponentActive',status:'confusion'}}}]});
 fullPokemon(2,{stage:'Stage 2',evolvesFrom:'Wartortle',type:'Water',hp:100,retreat:3,weakness:'Lightning',weaknessValue:'×2',abilities:[
- {name:'Rain Dance',type:'activated',oncePerTurn:false,disabledByStatus:true,effect:{type:'attachEnergy',target:'selfPokemon',amount:1,energyType:'Water',filter:{subtype:'Water'}}}
+ {name:'Rain Dance',type:'activated',oncePerTurn:false,disabledByStatus:true,effect:{type:'attachEnergy',target:'selfPokemon',source:'hand',amount:1,energyType:'Water',filter:{subtype:'Water'}}}
 ],attacks:[{name:'Hydro Pump',cost:'WWW',damage:40,effect:{type:'energyDamage',source:'self',energyType:'Water',extraAbove:3,maxCount:2,amount:10}}]});
 fullPokemon(4,{stage:'Stage 2',evolvesFrom:'Charmeleon',type:'Fire',hp:120,retreat:3,weakness:'Water',weaknessValue:'×2',resistance:'Fighting',resistanceValue:'-30',abilities:[
  {name:'Energy Burn',type:'activated',oncePerTurn:false,disabledByStatus:true,effect:{type:'energyTypeOverride',energyType:'Fire',duration:'turn'}}

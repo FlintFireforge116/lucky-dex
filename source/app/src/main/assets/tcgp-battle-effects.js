@@ -96,7 +96,7 @@
       case 'preventEffects':need(['whileInPlay','whileActive'].includes(effect.duration),'invalid effect prevention duration');break;
       case 'healingBlock':break;
       case 'stadiumAction':applyEffect(effect.effect,ctx);break;
-      case 'rerollEnergyZone':{const ss=own(ctx);if(!ss.energyAvailable||ss.energyUsed)break;ss.energyType=ss.nextEnergyType||ss.energyTypes[0];ss.nextEnergyType=ss.energyTypes.length>1?ss.energyTypes[Math.floor(ctx.random(ctx.state)*ss.energyTypes.length)]:ss.energyTypes[0];log({type:'energyZoneReroll',energyType:ss.energyType});break;}
+      case 'rerollEnergyZone':{const ss=own(ctx);if(!ss.energyAvailable||ss.energyUsed)break;if(Array.isArray(ss.energySupply)){const pulled=ss.energySupply.shift();if(pulled)ss.energyType=pulled;ss.nextEnergyType=ss.energySupply[0]||null;}else{ss.energyType=ss.nextEnergyType||ss.energyTypes[0];ss.nextEnergyType=ss.energyTypes.length>1?ss.energyTypes[Math.floor(ctx.random(ctx.state)*ss.energyTypes.length)]:ss.energyTypes[0];}log({type:'energyZoneReroll',energyType:ss.energyType});break;}
       case 'setNextEnergyRandom':need(['self','opponent'].includes(effect.side||'opponent'),'invalid next-Energy side');need(Array.isArray(effect.energyTypes)&&effect.energyTypes.length&&effect.energyTypes.every(x=>ENERGY_TYPES.includes(x)&&x!=='Colorless'),'invalid generated Energy types');break;
       case 'changeRandomEnergyType':need(Array.isArray(effect.energyTypes)&&effect.energyTypes.length&&effect.energyTypes.every(x=>ENERGY_TYPES.includes(x)&&x!=='Colorless'),'invalid replacement Energy types');break;
       case 'devolve':break;
@@ -354,18 +354,18 @@
         }break;}
       case 'magicDarts':{if(ctx.resolvingChoice){const p=selected(foe);if(p)p.damage=Number(p.damage||0)+10*Number(e.heads||0);}else chooseTarget(foe,null,'dart');break;}
       case 'pranks':if(foe.discard.length){if(ctx.resolvingChoice){const i=Number(a.choiceDiscardIndex);if(foe.discard[i])foe.deck.unshift(...foe.discard.splice(i,1));}else request({kind:'discardCard',side:'self',discardZone:'opponent'},{stage:'discard'});}break;
-      case 'callFire':{let n=Math.min(Number(e.heads||0),Number(s.energyDiscard?.Fire||0));if(n){s.energyDiscard.Fire-=n;for(let i=0;i<n;i++)s.hand.push({uid:`call-fire-${ctx.state.turnNumber}-${i}`,cardId:'gym2-128',zoneGenerated:true});}break;}
+      case 'callFire':{const n=Math.min(Number(e.heads||0),neoDiscardAvailable(ctx,s,'Fire'));if(n){const recovered=neoTakeDiscard(ctx,s,'Fire',n);neoRecoveredEnergyToHand(ctx,s,'Fire',recovered,'gym2-128');}break;}
       case 'groupAttack':{const space=Number(s.benchLimit||3)-s.bench.length;for(let i=0;i<space;i++){const ix=s.deck.findIndex(r=>card(r)?.name==="Koga's Zubat");if(ix<0)break;ctx.benchCard?.(s,s.deck.splice(ix,1)[0]);}ctx.shuffle?.(ctx.state,s.deck);break;}
       case 'amnesia':{if(!ctx.defender)break;if(ctx.resolvingChoice){ctx.defender.locks=ctx.defender.locks||[];ctx.defender.locks.push({action:'attack',attackName:String(card(ctx.defender)?.attacks?.[Number(a.choiceAttackIndex)]?.name||''),expiresTurn:ctx.state.turnNumber+1});}else request({kind:'attack',side:'self',attackSide:ctx.foeSide,zone:'active'},{stage:'blockAttack'});break;}
       case 'mistyESP':{if(Number(e.heads)===1)draw(s,1);break;}
-      case 'energySupport':{s.hand.push({uid:`gym2-psychic-${ctx.state.turnNumber}-${s.hand.length}`,cardId:'gym2-131',zoneGenerated:true});log({energyType:'Psychic',adaptation:'Energy Zone'});ctx.shuffle?.(ctx.state,s.deck);break;}
+      case 'energySupport':{const n=neoEnergyToHand(ctx,s,'Psychic',1);log({energyType:'Psychic',amount:n,adaptation:'Energy Supply'});ctx.shuffle?.(ctx.state,s.deck);break;}
       case 'blaine':{if(s.energyUsed||!s.energyAvailable)break;if(ctx.resolvingChoice){const p=selected(s);if(p&&card(p)?.name?.startsWith("Blaine's")){addEnergy(p,'Fire',2);s.energyUsed=true;}}else chooseTarget(s,{nameContains:"Blaine's"},'attach');break;}
       case 'giovanni':s.gym2GiovanniEvolutionTurn=ctx.state.turnNumber;break;
       case 'koga':s.gym2KogaPoisonTurn=ctx.state.turnNumber;break;
       case 'sabrina':{if(ctx.resolvingChoice){if(e.stage==='source'){const p=selected(s);if(p)request({kind:'pokemon',side:'self',includeActive:true,filter:{nameContains:"Sabrina's"},excludeUids:[p.uid]},{stage:'target',sourceUid:p.uid});}else{const p=all(s).find(p=>p.uid===e.sourceUid),to=selected(s);if(p&&to&&p!==to){for(const [type,n] of Object.entries(p.energy||{})){addEnergy(to,type,Number(n||0));p.energy[type]=0;}to.specialEnergy=[...(to.specialEnergy||[]),...(p.specialEnergy||[])];p.specialEnergy=[];}}}else chooseTarget(s,{nameContains:"Sabrina's"},'source');break;}
       case 'giovanniLastResort':{if(ctx.resolvingChoice){const p=selected(s);if(p&&card(p)?.name?.startsWith("Giovanni's")){p.damage=0;s.discard.push(...s.hand.splice(0));}}else chooseTarget(s,{nameContains:"Giovanni's"},'heal');break;}
       case 'masterBall':applyEffect({type:'selectTopToHand',count:7,filter:{kind:'pokemon'}},ctx);break;
-      case 'fervor':{const top=s.deck.splice(0,Math.min(3,s.deck.length));let found=0;for(const r of top){if(card(r)?.basicEnergy&&card(r).subtype==='Fire'){s.hand.push(r);found++;}else s.discard.push(r);}if(!found){s.hand.push({uid:`gym2-fervor-${ctx.state.turnNumber}-${s.hand.length}`,cardId:'gym2-128',zoneGenerated:true});log({energyType:'Fire',amount:1,adaptation:'Energy Zone'});}break;}
+      case 'fervor':{const top=s.deck.splice(0,Math.min(3,s.deck.length));let found=0;for(const r of top){if(card(r)?.basicEnergy&&card(r).subtype==='Fire'){s.hand.push(r);found++;}else s.discard.push(r);}if(!found){const n=neoEnergyToHand(ctx,s,'Fire',1,'gym2-128');log({energyType:'Fire',amount:n,adaptation:'Energy Supply'});}break;}
       case 'blainesQuiz2':case 'blainesQuiz3':{
         if(!e.stage){request({kind:'handCard',side:'self',filter:name==='blainesQuiz3'?{kind:'pokemon'}:null},{stage:'reveal'});break;}
         if(e.stage==='reveal'){
@@ -417,14 +417,14 @@
       case 'maxRevive':{
         if(!e.stage){if(s.hand.filter(ref=>card(ref)?.basicEnergy).length<2||s.bench.length>=Number(s.benchLimit||3))break;request({kind:'handCard',side:'self',filter:{kind:'energy'}},{stage:'pay',paid:0});break;}
         if(e.stage==='pay'){
-          const ix=Number(a.choiceHandIndex),ref=s.hand[ix];if(!ref||!card(ref)?.basicEnergy)break;s.discard.push(...s.hand.splice(ix,1));const paid=Number(e.paid||0)+1;
+          const ix=Number(a.choiceHandIndex),ref=s.hand[ix];if(!ref||!card(ref)?.basicEnergy)break;const paidRef=s.hand.splice(ix,1)[0];recordDiscardedEnergy(s,card(paidRef).subtype,1);const paid=Number(e.paid||0)+1;
           if(paid<2)request({kind:'handCard',side:'self',filter:{kind:'energy'}},{stage:'pay',paid});else request({kind:'discardCard',side:'self',filter:{kind:'pokemon',stage:'Basic'}},{stage:'revive'});break;
         }
         if(e.stage==='revive'){const i=Number(a.choiceDiscardIndex),ref=s.discard[i];if(ref&&card(ref)?.stage==='Basic'&&s.bench.length<Number(s.benchLimit||3))ctx.benchCard?.(s,s.discard.splice(i,1)[0]);}break;
       }
       case 'mistyTears':{
         if(!e.stage){if(s.hand.length)request({kind:'handCard',side:'self'},{stage:'discard'});break;}
-        const i=Number(a.choiceHandIndex);if(!Number.isInteger(i)||!s.hand[i])break;s.discard.push(...s.hand.splice(i,1));for(let n=0;n<2;n++)s.hand.push({uid:`gym2-water-${ctx.state.turnNumber}-${s.hand.length}-${n}`,cardId:'gym2-132',zoneGenerated:true});log({energyType:'Water',amount:2,adaptation:'Energy Zone'});ctx.shuffle?.(ctx.state,s.deck);break;
+        const i=Number(a.choiceHandIndex);if(!Number.isInteger(i)||!s.hand[i])break;const discarded=s.hand.splice(i,1)[0],paidCard=card(discarded);if(paidCard?.basicEnergy)recordDiscardedEnergy(s,paidCard.subtype,1);else s.discard.push(discarded);const awarded=neoEnergyToHand(ctx,s,'Water',2,'gym2-132');log({energyType:'Water',amount:awarded,adaptation:'Energy Supply'});ctx.shuffle?.(ctx.state,s.deck);break;
       }
       case 'mistyWish':{
         if(!s.prizes.length)break;
@@ -550,7 +550,7 @@
         if(!e.stage){if(e.rule==='secretMission')applyEffect({type:'revealHand',side:'opponent'},ctx);choose({kind:'handCard',side:'self',optional:needed===Infinity},{stage:'discard',count:0});break;}
         if(a.choiceSkip){if(e.rule==='secretMission')for(let i=0;i<Number(e.count||0);i++)ctx.drawCard(ss);
           if(e.rule==='blainesGamble'&&flip())for(let i=0;i<2*Number(e.count||0);i++)ctx.drawCard(ss);break;}
-        const index=Number(a.choiceHandIndex),ref=ss.hand[index];if(ref)ss.discard.push(...ss.hand.splice(index,1));const count=Number(e.count||0)+1;
+        const index=Number(a.choiceHandIndex),ref=ss.hand[index];if(ref){const [spent]=ss.hand.splice(index,1),c=ctx.cardById(spent.cardId);if(ctx.state.format==='classic'&&c?.basicEnergy)recordDiscardedEnergy(ss,c.subtype,1);else ss.discard.push(spent);}const count=Number(e.count||0)+1;
         if(count>=needed||!ss.hand.length){
           if(e.rule==='mistyBoost'){ss.gymMistyBonusTurn=ctx.state.turnNumber;break;}
           if(e.rule==='erikasMaids'){
@@ -654,9 +654,49 @@
   // Johto mechanics use the same seeded RNG, choices and board as other
   // Classic cards. Basic Energy remains in the separate Energy Zone.
   const neoBasicIds={Fighting:'neo1-106',Fire:'neo1-107',Grass:'neo1-108',Lightning:'neo1-109',Psychic:'neo1-110',Water:'neo1-111'};
-  function neoEnergyToHand(ctx,ss,type,count){
-    if(!neoBasicIds[type])return;
-    for(let i=0;i<count;i++)ss.hand.push({uid:`neo-energy-${type}-${ctx.state.turnNumber}-${ctx.state.rngState}-${ss.hand.length}`,cardId:neoBasicIds[type],zoneGenerated:true});
+  function neoDiscardAvailable(ctx,ss,type){
+    return Math.max(0,Number(ss?.energyDiscard?.[type]||0))+(ss?.discard||[]).filter(ref=>{const c=ctx.cardById(ref.cardId);return c?.basicEnergy&&c.subtype===type;}).length;
+  }
+  function neoTakeDiscard(ctx,ss,type,count=1){
+    if(!ss||!type)return 0;
+    let taken=0;
+    for(let i=0;i<count;i++){
+      if(Number(ss.energyDiscard?.[type]||0)>0){ss.energyDiscard[type]--;taken++;continue;}
+      const idx=(ss.discard||[]).findIndex(ref=>{const c=ctx.cardById(ref.cardId);return c?.basicEnergy&&c.subtype===type;});
+      if(idx<0)break;
+      ss.discard.splice(idx,1);taken++;
+    }
+    return taken;
+  }
+  function neoSupplyTake(ctx,ss,type,amount=1){
+    if(!ss)return 0;
+    if(!Array.isArray(ss.energySupply))return Math.max(0,Number(amount)||0); // Legacy test state / Pocket
+    let taken=0;
+    while(taken<amount){
+      const idx=type?ss.energySupply.indexOf(type):0;
+      if(idx<0||idx>=ss.energySupply.length)break;
+      ss.energySupply.splice(idx,1);taken++;
+    }
+    ss.nextEnergyType=ss.energySupply[0]||null;
+    return taken;
+  }
+  function neoEnergyToHand(ctx,ss,type,count,preferredCardId){
+    if(!neoBasicIds[type])return 0;
+    const amount=neoSupplyTake(ctx,ss,type,count);
+    for(let i=0;i<amount;i++)ss.hand.push({uid:`neo-energy-${type}-${ctx.state.turnNumber}-${ctx.state.rngState}-${ss.hand.length}`,cardId:preferredCardId||neoBasicIds[type],zoneGenerated:true});
+    if(amount)ctx.state.log.push({type:'energyFromSupply',side:ss.id||ctx.side,energyType:type,amount,remaining:ss.energySupply?.length});
+    return amount;
+  }
+  function neoRecoveredEnergyToHand(ctx,ss,type,count,preferredCardId){
+    if(!neoBasicIds[type])return 0;
+    const amount=Math.max(0,Number(count)||0);
+    for(let i=0;i<amount;i++)ss.hand.push({uid:`neo-recovered-${type}-${ctx.state.turnNumber}-${ctx.state.rngState}-${ss.hand.length}`,cardId:preferredCardId||neoBasicIds[type],zoneGenerated:true});
+    return amount;
+  }
+  function neoSupplyAttach(ctx,ss,slot,type,amount){
+    const count=neoSupplyTake(ctx,ss,type,amount);
+    if(count&&slot){slot.energy=slot.energy||{};slot.energy[type]=Number(slot.energy[type]||0)+count;ctx.onEnergyAttached?.(slot,type,count);}
+    return count;
   }
   function neoFlip(ctx,reason){const h=coin(ctx);ctx.state.log.push({type:'coin',side:ctx.side,reason:'Neo Genesis '+reason,heads:h,results:[h]});return h;}
   function neoSlots(ctx,side){return pokemonOn(side==='opponent'?other(ctx):own(ctx));}
@@ -681,11 +721,11 @@
     const log=(details)=>ctx.state.log.push({type:'neoEffect',side:ctx.side,rule:e.rule,...details});
     switch(e.rule){
       case 'berserk':{const victim=neoFlip(ctx,'Berserk')?foe:ss;victim.discard.push(...victim.deck.splice(0,5));break;}
-      case 'downpour':{const index=ss.hand.findIndex(r=>ctx.cardById(r.cardId)?.basicEnergy&&ctx.cardById(r.cardId)?.subtype==='Water');if(index>=0)ss.discard.push(...ss.hand.splice(index,1));break;}
+      case 'downpour':{const index=ss.hand.findIndex(r=>ctx.cardById(r.cardId)?.basicEnergy&&ctx.cardById(r.cardId)?.subtype==='Water');if(index>=0){ss.hand.splice(index,1);recordDiscardedEnergy(ss,'Water',1);}break;}
       case 'herbalScent':if(neoFlip(ctx,'Herbal Scent'))for(const s of [...neoSlots(ctx,'self'),...neoSlots(ctx,'opponent')])if(ctx.cardById(s.cardId)?.types?.includes('Grass'))s.damage=0;break;
       case 'fireRecharge':if(neoFlip(ctx,'Fire Recharge')&&(Number(ss.energyDiscard?.Fire||0)>0||ss.discard.some(r=>ctx.cardById(r.cardId)?.basicEnergy&&ctx.cardById(r.cardId)?.subtype==='Fire'))){const eligible=neoSlots(ctx,'self').filter(s=>ctx.cardById(s.cardId)?.types?.includes('Fire'));if(eligible.length)pick('self','fireRechargeTarget',{filter:{subtype:'Fire'}});}break;
       case 'fireRechargeTarget':{const s=sel('self');if(!s)break;if(Number(ss.energyDiscard?.Fire||0)>0)ss.energyDiscard.Fire--;else{const i=ss.discard.findIndex(r=>ctx.cardById(r.cardId)?.basicEnergy&&ctx.cardById(r.cardId)?.subtype==='Fire');if(i<0)break;ss.discard.splice(i,1);}s.energy.Fire=Number(s.energy.Fire||0)+1;ctx.onEnergyAttached?.(s,'Fire',1);break;}
-      case 'fireBoost':if(neoFlip(ctx,'Fire Boost')&&a){a.energy.Fire=Number(a.energy.Fire||0)+4;ctx.onEnergyAttached?.(a,'Fire',4);log({amount:4});}break;
+      case 'fireBoost':if(neoFlip(ctx,'Fire Boost')&&a){const n=neoSupplyAttach(ctx,ss,a,'Fire',4);log({amount:n});}break;
       case 'playfulPunch':{const h=neoFlip(ctx,'Playful Punch');if(h&&d){const damage=ctx.state.format==='classic'?20:20;d.damage=Number(d.damage||0)+damage;d.lastDamageSource={side:ctx.side,uid:a?.uid,cardId:a?.cardId,attack:false,turn};}ctx.endTurn?.();break;}
       case 'glaringGaze':if(neoFlip(ctx,'Glaring Gaze')&&foe.hand.some(r=>ctx.cardById(r.cardId)?.kind==='trainer'))ctx.requestChoice?.({kind:'opponentHandCard',side:'self',filter:{kind:'trainer'},effect:{type:'neoRule',rule:'glaringGazePick'}});break;
       case 'glaringGazePick':{const i=Number(ctx.action?.choiceHandIndex),ref=foe.hand[i];if(ref&&ctx.cardById(ref.cardId)?.kind==='trainer'){foe.deck.push(...foe.hand.splice(i,1));ctx.shuffle?.(ctx.state,foe.deck);}break;}
@@ -715,8 +755,8 @@
       case 'char':if(d&&!d.neoChar)d.neoChar={sourceUid:a?.uid};break;
       case 'prophecy':if(!ctx.resolvingChoice)ctx.requestChoice?.({kind:'option',side:'self',options:['Your deck','Opponent deck'],effect:e});else applyEffect({type:'reorderTop',deckSide:Number(ctx.action?.choiceOption)===1?'opponent':'self',count:3},ctx);break;
       case 'growth':{const hand=ss.hand.filter(r=>ctx.cardById(r.cardId)?.basicEnergy&&ctx.cardById(r.cardId)?.subtype==='Grass');if(a)for(let i=0;i<2&&i<hand.length;i++){const ref=hand[i],idx=ss.hand.indexOf(ref);if(idx<0)continue;ss.hand.splice(idx,1);a.energy.Grass=Number(a.energy.Grass||0)+1;}break;}
-      case 'staticElectricity':for(const s of neoSlots(ctx,'self'))if(ctx.cardById(s.cardId)?.name==='Mareep'){s.energy.Lightning=Number(s.energy.Lightning||0)+1;ctx.onEnergyAttached?.(s,'Lightning',1);}break;
-      case 'pilfer':{if(!a)break;const refs=(a.stack||[]).map((cardId,i)=>({uid:`neo-pilfer-${turn}-${i}`,cardId}));for(const r of [...(a.specialEnergy||[]),...(a.temporaryTrainers||[]),...toolsOf(a)])refs.push(r);for(const [type,n] of Object.entries(a.energy||{}))for(let i=0;i<Number(n||0);i++)if(neoBasicIds[type])refs.push({uid:`neo-pilfer-${type}-${turn}-${i}`,cardId:neoBasicIds[type],zoneGenerated:true});ss.deck.push(...refs);ctx.shuffle?.(ctx.state,ss.deck);if(ss.active===a)ss.active=null;else ss.bench.splice(ss.bench.indexOf(a),1);if(neoFlip(ctx,'Pilfer')&&ss.discard.length)ctx.requestChoice?.({kind:'discardCard',side:'self',effect:{type:'neoRule',rule:'pilferRecovery'}});break;}
+      case 'staticElectricity':for(const s of neoSlots(ctx,'self'))if(ctx.cardById(s.cardId)?.name==='Mareep')neoSupplyAttach(ctx,ss,s,'Lightning',1);break;
+      case 'pilfer':{if(!a)break;const refs=(a.stack||[]).map((cardId,i)=>({uid:`neo-pilfer-${turn}-${i}`,cardId}));for(const r of [...(a.specialEnergy||[]),...(a.temporaryTrainers||[]),...toolsOf(a)])refs.push(r);for(const [type,n] of Object.entries(a.energy||{}))for(let i=0;i<Number(n||0);i++)if(neoBasicIds[type]){if(Array.isArray(ss.energySupply))ss.energySupply.push(type);else refs.push({uid:`neo-pilfer-${type}-${turn}-${i}`,cardId:neoBasicIds[type],zoneGenerated:true});}ss.nextEnergyType=ss.energySupply?.[0]||ss.nextEnergyType;ss.deck.push(...refs);ctx.shuffle?.(ctx.state,ss.deck);if(ss.active===a)ss.active=null;else ss.bench.splice(ss.bench.indexOf(a),1);if(neoFlip(ctx,'Pilfer')&&ss.discard.length)ctx.requestChoice?.({kind:'discardCard',side:'self',effect:{type:'neoRule',rule:'pilferRecovery'}});break;}
       case 'pilferRecovery':{const i=Number(ctx.action?.choiceDiscardIndex);if(ss.discard[i]){ss.deck.push(...ss.discard.splice(i,1));ctx.shuffle?.(ctx.state,ss.deck);}break;}
       case 'fireWind':case 'mudSplash':{const idx=Number(ctx.action?.benchIndex);const target=foe.bench.find(s=>Number(s.benchSlot)===idx);if(!target)break;let hits=0;for(let i=0;i<(e.rule==='fireWind'?2:1);i++)if(neoFlip(ctx,e.rule))hits++;if(hits)target.damage=Number(target.damage||0)+10*hits;break;}
       case 'amnesia':if(d&&ctx.resolvingChoice)d.neoAmnesia={attackName:ctx.action?.choiceLabel||ctx.cardById(d.cardId)?.attacks?.[Number(ctx.action?.choiceOption)]?.name,expiresTurn:turn+1};else if(d)ctx.requestChoice?.({kind:'option',side:'self',options:(ctx.cardById(d.cardId)?.attacks||[]).map(x=>x.name),effect:e});break;
@@ -733,8 +773,8 @@
         const choices=[...(ss.discard||[]).map((ref,i)=>({label:`Discard: ${ctx.cardById(ref.cardId)?.name}`,index:i,ref})).filter(x=>ctx.cardById(x.ref.cardId)?.kind==='energy'),
           ...Object.entries(ss.energyDiscard||{}).filter(([type,n])=>neoBasicIds[type]&&n>0).map(([type])=>({label:`Discarded ${type} Energy`,type}))];
         if(ctx.resolvingChoice){const selected=choices[Number(ctx.action?.choiceOption)];if(!selected)break;
-          if(selected.ref)ss.deck.push(...ss.discard.splice(selected.index,1));
-          else{ss.energyDiscard[selected.type]--;ss.deck.push({uid:`neo-charge-${turn}-${ss.deck.length}`,cardId:neoBasicIds[selected.type],zoneGenerated:true});}
+          if(selected.ref){const [ref]=ss.discard.splice(selected.index,1),c=ctx.cardById(ref?.cardId);if(c?.basicEnergy&&Array.isArray(ss.energySupply)){ss.energySupply.push(c.subtype);ss.nextEnergyType=ss.energySupply[0]||null;}else if(ref)ss.deck.push(ref);}
+          else{ss.energyDiscard[selected.type]--;if(Array.isArray(ss.energySupply)){ss.energySupply.push(selected.type);ss.nextEnergyType=ss.energySupply[0]||null;}else ss.deck.push({uid:`neo-charge-${turn}-${ss.deck.length}`,cardId:neoBasicIds[selected.type],zoneGenerated:true});}
           ctx.shuffle?.(ctx.state,ss.deck);
           if(Number(e.remaining||1)>1)neoRule({...e,remaining:Number(e.remaining)-1},{...ctx,resolvingChoice:false});
         }else if(choices.length)ctx.requestChoice?.({kind:'option',side:'self',options:[...choices.map(x=>x.label),'Done'],effect:e});
@@ -762,7 +802,7 @@
         ctx.requestChoice?.({kind:'handCard',side:'self',effect:{type:'neoRule',rule:'superEnergyDiscard',remaining:2}});break;
       }
       case 'superEnergyDiscard':{
-        const index=Number(ctx.action?.choiceHandIndex);if(!ss.hand[index])break;ss.discard.push(...ss.hand.splice(index,1));
+        const index=Number(ctx.action?.choiceHandIndex);if(!ss.hand[index])break;const [ref]=ss.hand.splice(index,1);const c=ctx.cardById(ref.cardId);if(c?.basicEnergy)recordDiscardedEnergy(ss,c.subtype,1);else ss.discard.push(ref);
         if(Number(e.remaining||1)>1&&ss.hand.length)ctx.requestChoice?.({kind:'handCard',side:'self',effect:{...e,remaining:Number(e.remaining)-1}});
         else neoRule({type:'neoRule',rule:'superEnergyRetrieve',remaining:4},{...ctx,resolvingChoice:false});
         break;
@@ -774,7 +814,7 @@
         else{
           const type=types[Number(ctx.action?.choiceOption)];if(!type)break;
           const i=ss.discard.findIndex(r=>ctx.cardById(r.cardId)?.basicEnergy&&ctx.cardById(r.cardId)?.subtype===type);
-          if(i>=0)ss.hand.push(...ss.discard.splice(i,1));else if(ss.energyDiscard?.[type]>0){ss.energyDiscard[type]--;neoEnergyToHand(ctx,ss,type,1);}
+          if(i>=0)ss.hand.push(...ss.discard.splice(i,1));else if(ss.energyDiscard?.[type]>0){ss.energyDiscard[type]--;neoRecoveredEnergyToHand(ctx,ss,type,1);}
           if(Number(e.remaining||1)>1)neoRule({...e,remaining:Number(e.remaining)-1,phase:'start'}, {...ctx,resolvingChoice:false});
         }break;
       }
@@ -784,7 +824,7 @@
         const choices=[...(board.discard||[]).map((ref,index)=>({label:ctx.cardById(ref.cardId)?.name||ref.cardId,ref,index})).filter(x=>['pokemon'].includes(ctx.cardById(x.ref.cardId)?.kind)||ctx.cardById(x.ref.cardId)?.basicEnergy),
           ...Object.entries(board.energyDiscard||{}).filter(([type,n])=>neoBasicIds[type]&&n>0).map(([type])=>({label:`${type} Energy from discard`,type}))];
         if(ctx.resolvingChoice){const selected=choices[Number(ctx.action?.choiceOption)];
-          if(selected){if(selected.ref)board.deck.push(...board.discard.splice(selected.index,1));else{board.energyDiscard[selected.type]--;board.deck.push({uid:`neo-capsule-${turn}-${board.deck.length}`,cardId:neoBasicIds[selected.type],zoneGenerated:true});}ctx.shuffle?.(ctx.state,board.deck);}
+          if(selected){if(selected.ref){const [ref]=board.discard.splice(selected.index,1),c=ctx.cardById(ref?.cardId);if(c?.basicEnergy&&Array.isArray(board.energySupply)){board.energySupply.push(c.subtype);board.nextEnergyType=board.energySupply[0]||null;}else if(ref)board.deck.push(ref);}else{board.energyDiscard[selected.type]--;if(Array.isArray(board.energySupply)){board.energySupply.push(selected.type);board.nextEnergyType=board.energySupply[0]||null;}else board.deck.push({uid:`neo-capsule-${turn}-${board.deck.length}`,cardId:neoBasicIds[selected.type],zoneGenerated:true});}ctx.shuffle?.(ctx.state,board.deck);}
           if(selected&&Number(e.remaining||1)>1)neoRule({...e,remaining:Number(e.remaining)-1},{...ctx,resolvingChoice:false});
           else if(e.selectionSide==='opponent')neoRule({...e,selectionSide:'self',remaining:5},{...ctx,resolvingChoice:false});
         }else if(choices.length)ctx.requestChoice?.({kind:'option',side:'self',options:[...choices.map(x=>x.label),'Done'],effect:e});
@@ -859,14 +899,15 @@
       case 'discovery:bellyDrum':{
         if(!a)break;a.damage=Number(a.damage||0)+30;const max=ctx.maxHp?.(ctx.side,a)||ctx.cardById(a.cardId)?.hp||0;
         if(a.damage>=max)break;
-        const types=(ss.energyTypes||[]).filter(t=>neoBasicIds[t]);
+        const types=(ss.energyTypes||[]).filter(t=>neoBasicIds[t]&&(!Array.isArray(ss.energySupply)||ss.energySupply.includes(t)));
         if(types.length)ctx.requestChoice?.({kind:'option',side:'self',options:[...types],effect:{type:'neoRule',rule:'discovery:bellyAttach',remaining:2,uid:a.uid}});
         break;
       }
       case 'discovery:bellyAttach':{
-        const slot=neoSlots(ctx,'self').find(x=>x.uid===e.uid),types=(ss.energyTypes||[]).filter(t=>neoBasicIds[t]),type=types[Number(ctx.action?.choiceOption)];
-        if(!slot||!type)break;slot.energy[type]=Number(slot.energy[type]||0)+1;ctx.onEnergyAttached?.(slot,type,1);
-        if(Number(e.remaining)>1)ctx.requestChoice?.({kind:'option',side:'self',options:types,effect:{...e,remaining:e.remaining-1}});break;
+        const slot=neoSlots(ctx,'self').find(x=>x.uid===e.uid),types=(ss.energyTypes||[]).filter(t=>neoBasicIds[t]&&(!Array.isArray(ss.energySupply)||ss.energySupply.includes(t))),type=types[Number(ctx.action?.choiceOption)];
+        if(!slot||!type)break;const attached=neoSupplyAttach(ctx,ss,slot,type,1);
+        const remaining=types.filter(t=>!Array.isArray(ss.energySupply)||ss.energySupply.includes(t));
+        if(attached&&Number(e.remaining)>1&&remaining.length)ctx.requestChoice?.({kind:'option',side:'self',options:remaining,effect:{...e,remaining:e.remaining-1}});break;
       }
       case 'discovery:energyCycle':{
         if(!d||!foe.bench.length||!neoFlip(ctx,'Energy Cycle'))break;
@@ -957,9 +998,24 @@
         if(ss.bench.length<Number(ss.benchLimit??3)&&ss.deck.some(r=>String(ctx.cardById(r.cardId)?.name||'').startsWith('Unown [')))ctx.requestChoice?.({kind:'deckCard',side:'self',filter:{nameContains:'Unown ['},effect:e});break;
       }
       case 'discovery:energyArk':{
-        if(!ctx.resolvingChoice){let heads=0;for(let i=0;i<2;i++)if(neoFlip(ctx,'Energy Ark'))heads++;if(heads)ctx.requestChoice?.({kind:'option',side:'self',options:(ss.energyTypes||[]).filter(t=>neoBasicIds[t]),effect:{...e,remaining:heads}});break;}
-        const types=(ss.energyTypes||[]).filter(t=>neoBasicIds[t]),type=types[Number(ctx.action?.choiceOption)];if(!type)break;
-        neoEnergyToHand(ctx,ss,type,1);if(Number(e.remaining)>1)ctx.requestChoice?.({kind:'option',side:'self',options:types,effect:{...e,remaining:e.remaining-1}});break;
+        const choices=()=> (ss.energyTypes||[]).filter(t=>neoBasicIds[t]&&(!Array.isArray(ss.energySupply)||ss.energySupply.includes(t)));
+        if(!ctx.resolvingChoice){
+          let heads=0;for(let i=0;i<2;i++)if(neoFlip(ctx,'Energy Ark'))heads++;
+          log({type:'energyArkResult',heads,coins:2});
+          const available=choices();
+          if(heads&&available.length===1){
+            // No choice is necessary in a one-type deck: award Energy at once.
+            neoEnergyToHand(ctx,ss,available[0],heads);
+          }else if(heads&&available.length){
+            ctx.requestChoice?.({kind:'option',side:'self',prompt:`Energy Ark: ${heads} heads. Choose ${heads===1?'an Energy card':'your next Energy card'} from the supply.`,options:available,effect:{...e,remaining:heads}});
+          }
+          return;
+        }
+        const types=choices(),index=Number(ctx.action?.choiceOption),type=types[index];
+        if(!type)return;
+        const taken=neoEnergyToHand(ctx,ss,type,1);
+        if(taken>0&&Number(e.remaining)>1&&choices().length)ctx.requestChoice?.({kind:'option',side:'self',prompt:`Energy Ark: ${Number(e.remaining)-1} Energy remaining. Choose from the supply.`,options:choices(),effect:{...e,remaining:Number(e.remaining)-1}});
+        break;
       }
       case 'discovery:trample':{
         for(const side of [ctx.side,ctx.foeSide])for(const slot of ctx.state.sides[side].bench||[]){
@@ -994,7 +1050,9 @@
         else break;
         a.energy.Fire=Number(a.energy.Fire||0)+1;ctx.onEnergyAttached?.(a,'Fire',1);break;
       }
-      case 'riptideReturn':{const count=Number(ss.energyDiscard.Water||0);for(let i=0;i<count;i++)ss.deck.push({uid:`neo-riptide-${turn}-${i}`,cardId:'neo1-111',zoneGenerated:true});ss.energyDiscard.Water=0;for(let i=ss.discard.length-1;i>=0;i--)if(ctx.cardById(ss.discard[i].cardId)?.basicEnergy&&ctx.cardById(ss.discard[i].cardId).subtype==='Water')ss.deck.push(...ss.discard.splice(i,1));ctx.shuffle?.(ctx.state,ss.deck);break;}
+      case 'riptideReturn':{const count=Number(ss.energyDiscard.Water||0);if(Array.isArray(ss.energySupply)){for(let i=0;i<count;i++)ss.energySupply.push('Water');ss.nextEnergyType=ss.energySupply[0]||null;}else for(let i=0;i<count;i++)ss.deck.push({uid:`neo-riptide-${turn}-${i}`,cardId:'neo1-111',zoneGenerated:true});ss.energyDiscard.Water=0;for(let i=ss.discard.length-1;i>=0;i--)if(ctx.cardById(ss.discard[i].cardId)?.basicEnergy&&ctx.cardById(ss.discard[i].cardId).subtype==='Water'){
+          const [ref]=ss.discard.splice(i,1);if(Array.isArray(ss.energySupply))ss.energySupply.push('Water');else ss.deck.push(ref);
+        }ss.nextEnergyType=ss.energySupply?.[0]||ss.nextEnergyType;ctx.shuffle?.(ctx.state,ss.deck);break;}
       default:break;
     }
   }
@@ -1175,15 +1233,15 @@
       }
       case 'distributeDiscardEnergyDistinct':{
         const ss=own(ctx),usedTypes=Array.isArray(effect.usedTypes)?effect.usedTypes.slice():[],placed=Number(effect.placed||0);
-        const available=Object.entries(ss.energyDiscard||{}).filter(([t,n])=>Number(n)>0&&!usedTypes.includes(t)).map(([t])=>t);
+        const available=[...new Set([...Object.keys(ss.energyDiscard||{}),...(ss.discard||[]).map(ref=>ctx.cardById(ref.cardId)).filter(c=>c?.basicEnergy).map(c=>c.subtype)])].filter(t=>!usedTypes.includes(t)&&neoDiscardAvailable(ctx,ss,t)>0);
         const limit=Math.min(Number(effect.amount||0),usedTypes.length+available.length);
         if(placed>=limit||!available.length)break;
         if(ctx.resolvingChoice){
           const target=selected(ctx,ss),type=ctx.action?.effectEnergyType;
-          if(target&&type&&!usedTypes.includes(type)&&Number(ss.energyDiscard?.[type]||0)>0&&matchesFilter(ctx.cardById(target.cardId),effect.filter,target)){
-            ss.energyDiscard[type]--;target.energy[type]=Number(target.energy[type]||0)+1;ctx.onEnergyAttached?.(target,type,1);usedTypes.push(type);
+          if(target&&type&&!usedTypes.includes(type)&&neoDiscardAvailable(ctx,ss,type)>0&&matchesFilter(ctx.cardById(target.cardId),effect.filter,target)){
+            neoTakeDiscard(ctx,ss,type,1);target.energy[type]=Number(target.energy[type]||0)+1;ctx.onEnergyAttached?.(target,type,1);usedTypes.push(type);
             const next=placed+1;
-            const remain=Object.entries(ss.energyDiscard||{}).filter(([t,n])=>Number(n)>0&&!usedTypes.includes(t)).map(([t])=>t);
+            const remain=[...new Set([...Object.keys(ss.energyDiscard||{}),...(ss.discard||[]).map(ref=>ctx.cardById(ref.cardId)).filter(c=>c?.basicEnergy).map(c=>c.subtype)])].filter(t=>!usedTypes.includes(t)&&neoDiscardAvailable(ctx,ss,t)>0);
             if(next<Number(effect.amount||0)&&remain.length&&typeof ctx.requestChoice==='function')ctx.requestChoice({kind:'energyTarget',side:'self',filter:effect.filter,energyTypes:remain,effect:{...effect,usedTypes,placed:next}});
           }
           break;
@@ -1196,21 +1254,21 @@
       case 'retreatRetaliation':for(const target of affected())target.retreatRetaliation={amount:Number(effect.amount||0),expiresTurn:ctx.state.turnNumber+1};break;
       case 'abilitySuppression':for(const target of affected())target.abilitySuppressed={duration:effect.duration||'whileActive'};break;
       case 'knockOut':for(const target of affected()){const which=pokemonOn(own(ctx)).includes(target)?ctx.side:ctx.foeSide,targetMax=ctx.maxHp?ctx.maxHp(which,target):Number(ctx.cardById(target.cardId)?.hp||0);target.damage=Math.max(Number(target.damage||0),targetMax);}break;
-      case 'discardPokemon':for(const target of affected()){const ss=pokemonOn(own(ctx)).includes(target)?own(ctx):other(ctx);for(const cardId of target.stack||[target.cardId])ss.discard.push({uid:`${target.uid}-discard-${cardId}`,cardId});for(const tool of toolsOf(target))ss.discard.push(tool);if(ss.active===target)ss.active=null;else{const i=ss.bench.indexOf(target);if(i>=0)ss.bench.splice(i,1);}log({type:'discardPokemon',cardId:target.cardId});}break;
+      case 'discardPokemon':for(const target of affected()){const ss=pokemonOn(own(ctx)).includes(target)?own(ctx):other(ctx);for(const cardId of target.stack||[target.cardId])ss.discard.push({uid:`${target.uid}-discard-${cardId}`,cardId});for(const tool of [...toolsOf(target),...temporaryTrainersOf(target),...(target.specialEnergy||[])])ss.discard.push(tool);for(const [type,n] of Object.entries(target.energy||{}))recordDiscardedEnergy(ss,type,Number(n||0));if(ss.active===target)ss.active=null;else{const i=ss.bench.indexOf(target);if(i>=0)ss.bench.splice(i,1);}log({type:'discardPokemon',cardId:target.cardId});}break;
       case 'koPointBonus':{const ss=own(ctx);ss.koPointBonuses=ss.koPointBonuses||[];ss.koPointBonuses.push({...effect,expiresTurn:ctx.state.turnNumber});break;}
       case 'randomAttackLock':for(const target of affected()){const attacks=ctx.cardById(target.cardId)?.attacks||[];if(!attacks.length)continue;const attack=attacks[Math.floor(ctx.random(ctx.state)*attacks.length)];target.locks=target.locks||[];target.locks.push({action:'attack',attackName:attack.name,duration:effect.duration,expiresTurn:ctx.state.turnNumber+(effect.duration==='opponentTurn'?1:2)});}break;
       case 'randomHitBonus':{const ss=own(ctx);ss.randomHitBonuses=ss.randomHitBonuses||[];ss.randomHitBonuses.push({...effect,expiresTurn:ctx.state.turnNumber});break;}
       case 'stackAttackBonus':if(ctx.attacker){ctx.attacker.stackedAttackBonuses=ctx.attacker.stackedAttackBonuses||{};ctx.attacker.stackedAttackBonuses[effect.attackName]=Number(ctx.attacker.stackedAttackBonuses[effect.attackName]||0)+Number(effect.amount||0);}break;
       case 'firstDamageGuard':for(const s of affected())s.firstDamageGuard=true;break;
-      case 'attachRandomEnergy':{for(const s of affected()){for(let i=0;i<Number(effect.amount||1);i++){const type=effect.energyTypes[Math.floor(ctx.random(ctx.state)*effect.energyTypes.length)];s.energy[type]=Number(s.energy[type]||0)+1;ctx.onEnergyAttached?.(s,type,1);}}break;}
+      case 'attachRandomEnergy':{for(const s of affected()){const owner=energyOwner(ctx,s);for(let i=0;i<Number(effect.amount||1);i++){const choices=(effect.energyTypes||[]).filter(type=>!Array.isArray(owner?.energySupply)||owner.energySupply.includes(type));if(!choices.length)break;const type=choices[Math.floor(ctx.random(ctx.state)*choices.length)];const taken=neoSupplyTake(ctx,owner,type,1);if(!taken)continue;s.energy[type]=Number(s.energy[type]||0)+taken;ctx.onEnergyAttached?.(s,type,taken);}}break;}
       case 'selfDamageIfDefenderKnockedOut':{if(ctx.attacker&&ctx.defender&&Number(ctx.defender.damage||0)>=(ctx.maxHp?ctx.maxHp(ctx.foeSide,ctx.defender):Number(ctx.cardById(ctx.defender.cardId)?.hp||0)))ctx.attacker.damage=Number(ctx.attacker.damage||0)+Number(effect.amount||0);break;}
       case 'shuffleRandomCombinedHandCard':{const pools=[{side:own(ctx),label:'self'},{side:other(ctx),label:'opponent'}],all=[];for(const p of pools)for(const [index,ref] of p.side.hand.entries())all.push({...p,index,ref});if(all.length){const hit=all[Math.floor(ctx.random(ctx.state)*all.length)];log({type:'revealHand',revealedSide:hit.label,cards:[hit.ref.cardId]});const [ref]=hit.side.hand.splice(hit.index,1);hit.side.deck.push(ref);ctx.shuffle?.(ctx.state,hit.side.deck);}break;}
       case 'createCard':{for(let i=0;i<Number(effect.amount||1)&&own(ctx).hand.length<10;i++)own(ctx).hand.push({uid:`rental-${effect.cardId}-${ctx.state.turnNumber}-${i}`,cardId:effect.cardId});break;}
       case 'searchThenShuffleChosen':{const ss=own(ctx),pool=ss.deck.map((r,index)=>({r,index})).filter(x=>matchesFilter(ctx.cardById(x.r.cardId),effect.filter)),drawn=[];for(let i=0;i<Number(effect.amount||0)&&pool.length&&ss.hand.length<10;i++){const pick=Math.floor(ctx.random(ctx.state)*pool.length),hit=pool.splice(pick,1)[0],idx=ss.deck.indexOf(hit.r);if(idx>=0){const [ref]=ss.deck.splice(idx,1);ss.hand.push(ref);drawn.push(ref);}}ctx.shuffle?.(ctx.state,ss.deck);if(drawn.length&&typeof ctx.requestChoice==='function')ctx.requestChoice({kind:'handCard',side:'self',filter:effect.handFilter||effect.filter,effect:{type:'shuffleChosenHand',side:'self',amount:drawn.length,required:true,filter:effect.handFilter||effect.filter}});break;}
       case 'coinBenchDamage':{let heads=0;const results=[];for(let i=0;i<effect.coins;i++){const hit=coin(ctx);results.push(hit);if(hit)heads++;}log({type:'coin',side:ctx.side,heads,coins:effect.coins,results});if(heads)applyEffect({type:'benchDamage',side:'opponent',all:true,amount:heads*Number(effect.amount||0)},ctx);break;}
       case 'stadiumAction':applyEffect(effect.effect,ctx);break;
-      case 'rerollEnergyZone':{const ss=own(ctx);if(!ss.energyAvailable||ss.energyUsed)break;ss.energyType=ss.nextEnergyType||ss.energyTypes[0];ss.nextEnergyType=ss.energyTypes.length>1?ss.energyTypes[Math.floor(ctx.random(ctx.state)*ss.energyTypes.length)]:ss.energyTypes[0];log({type:'energyZoneReroll',energyType:ss.energyType});break;}
-      case 'setNextEnergyRandom':{const ss=effect.side==='self'?own(ctx):other(ctx),types=effect.energyTypes||[];if(types.length)ss.nextEnergyType=types[Math.floor(ctx.random(ctx.state)*types.length)];break;}
+      case 'rerollEnergyZone':{const ss=own(ctx);if(!ss.energyAvailable||ss.energyUsed)break;if(Array.isArray(ss.energySupply)){const pulled=ss.energySupply.shift();if(pulled)ss.energyType=pulled;ss.nextEnergyType=ss.energySupply[0]||null;}else{ss.energyType=ss.nextEnergyType||ss.energyTypes[0];ss.nextEnergyType=ss.energyTypes.length>1?ss.energyTypes[Math.floor(ctx.random(ctx.state)*ss.energyTypes.length)]:ss.energyTypes[0];}log({type:'energyZoneReroll',energyType:ss.energyType});break;}
+      case 'setNextEnergyRandom':{const ss=effect.side==='self'?own(ctx):other(ctx),types=effect.energyTypes||[];if(types.length){const next=types[Math.floor(ctx.random(ctx.state)*types.length)];if(Array.isArray(ss.energySupply)&&ss.energySupply.length)ss.energySupply[0]=next;ss.nextEnergyType=next;}break;}
       case 'changeRandomEnergyType':{for(const slot of affected()){const units=[];for(const [type,n] of Object.entries(slot.energy||{}))for(let i=0;i<Number(n||0);i++)units.push(type);if(!units.length)continue;const from=units[Math.floor(ctx.random(ctx.state)*units.length)],types=(effect.energyTypes||[]).filter(t=>t!==from);const to=(types.length?types:effect.energyTypes)[Math.floor(ctx.random(ctx.state)*(types.length?types:effect.energyTypes).length)];if(!to)continue;slot.energy[from]=Math.max(0,Number(slot.energy[from]||0)-1);slot.energy[to]=Number(slot.energy[to]||0)+1;}break;}
       case 'devolve':{for(const slot of affected()){if(!slot.stack||slot.stack.length<2)continue;const ss=energyOwner(ctx,slot),top=slot.stack.pop();if(ss&&ss.hand.length<10)ss.hand.push({uid:`${slot.uid}-devolve-${ctx.state.turnNumber}`,cardId:top});else if(ss)ss.discard.push({uid:`${slot.uid}-devolve-${ctx.state.turnNumber}`,cardId:top});slot.cardId=slot.stack[slot.stack.length-1];clearTemporaryEffects(ctx.state,slot);log({type:'devolve',cardId:top,toCardId:slot.cardId});}break;}
       case 'chooseOption':{if(ctx.resolvingChoice){const index=Number(ctx.action?.choiceOption);const opt=effect.options?.[index];if(opt)applyEffect(opt.effect,ctx);}else if(typeof ctx.requestChoice==='function')ctx.requestChoice({kind:'option',side:'self',options:(effect.options||[]).map(o=>o.label),effect,optional:!!effect.optional});break;}
@@ -1234,8 +1292,8 @@
         }break;}
       case 'attackCoinGate':for(const slot of affected())slot.attackGate={...effect,expiresTurn:effect.duration==='opponentTurn'?ctx.state.turnNumber+1:null};break;
       case 'retaliateDamage':for(const slot of affected())slot.retaliate={...effect,expiresTurn:effect.duration==='opponentTurn'?ctx.state.turnNumber+1:null};break;
-      case 'discardHand':{const ss=effect.side==='opponent'?other(ctx):own(ctx);for(let i=0;i<effect.amount&&ss.hand.length;i++){const candidates=ss.hand.map((r,index)=>({r,index})).filter(({r})=>!effect.filter||matchesFilter(ctx.cardById(r.cardId),effect.filter));if(!candidates.length)break;const hit=candidates[Math.floor(ctx.random(ctx.state)*candidates.length)];ss.discard.push(...ss.hand.splice(hit.index,1));}break;}
-      case 'trimHand':{const ss=effect.side==='opponent'?other(ctx):own(ctx);while(ss.hand.length>effect.maxSize){const index=Math.floor(ctx.random(ctx.state)*ss.hand.length);ss.discard.push(...ss.hand.splice(index,1));}break;}
+      case 'discardHand':{const ss=effect.side==='opponent'?other(ctx):own(ctx);for(let i=0;i<effect.amount&&ss.hand.length;i++){const candidates=ss.hand.map((r,index)=>({r,index})).filter(({r})=>!effect.filter||matchesFilter(ctx.cardById(r.cardId),effect.filter));if(!candidates.length)break;const hit=candidates[Math.floor(ctx.random(ctx.state)*candidates.length)];const [ref]=ss.hand.splice(hit.index,1),c=ctx.cardById(ref?.cardId);if(ctx.state.format==='classic'&&c?.basicEnergy)recordDiscardedEnergy(ss,c.subtype,1);else if(ref)ss.discard.push(ref);}break;}
+      case 'trimHand':{const ss=effect.side==='opponent'?other(ctx):own(ctx);while(ss.hand.length>effect.maxSize){const index=Math.floor(ctx.random(ctx.state)*ss.hand.length);const [ref]=ss.hand.splice(index,1),c=ctx.cardById(ref?.cardId);if(ctx.state.format==='classic'&&c?.basicEnergy)recordDiscardedEnergy(ss,c.subtype,1);else if(ref)ss.discard.push(ref);}break;}
       case 'shuffleRandomHandCard':{const ss=effect.side==='opponent'?other(ctx):own(ctx),candidates=ss.hand.map((r,index)=>({r,index})).filter(({r})=>!effect.filter||matchesFilter(ctx.cardById(r.cardId),effect.filter));if(candidates.length){const hit=candidates[Math.floor(ctx.random(ctx.state)*candidates.length)],[ref]=ss.hand.splice(hit.index,1);ss.deck.push(ref);ctx.shuffle(ctx.state,ss.deck);}break;}
       case 'randomPokemonDamage':{let hits=effect.perEnergyType?Number(ctx.attacker?.energy?.[effect.perEnergyType]||0):Number(effect.hits||0);for(const bonus of own(ctx).randomHitBonuses||[])if((bonus.expiresTurn==null||ctx.state.turnNumber<=bonus.expiresTurn)&&bonus.attackName===ctx.attack?.name)hits+=Number(bonus.amount||0);for(let i=0;i<hits;i++){let entries=effect.bothSides?[...pokemonOn(own(ctx)).map(slot=>({slot,side:ctx.side})),...pokemonOn(other(ctx)).map(slot=>({slot,side:ctx.foeSide}))]:(effect.zone==='bench'?other(ctx).bench.filter(Boolean):pokemonOn(other(ctx))).map(slot=>({slot,side:ctx.foeSide}));if(effect.zone==='bench'&&effect.bothSides)entries=entries.filter(x=>x.slot!==own(ctx).active&&x.slot!==other(ctx).active);if(effect.excludeSelf)entries=entries.filter(x=>x.slot!==ctx.attacker);if(!entries.length)break;const hit=entries[Math.floor(ctx.random(ctx.state)*entries.length)],guard=ctx.isAttack&&attackIsPrevented(ctx.state,hit.side,hit.slot,ctx.attacker,ctx.cardById),amount=guard?0:Math.max(0,effect.amount-(ctx.isAttack?modifierAmount(ctx.state,hit.side,hit.slot,'damageReduction',ctx.cardById):0));hit.slot.damage=Number(hit.slot.damage||0)+amount;}break;}
       case 'globalRandomDiscardEnergy':{const count=Math.max(1,Number(effect.amount||1)),sides=effect.side==='self'?[own(ctx)]:effect.side==='opponent'?[other(ctx)]:[own(ctx),other(ctx)];for(let pick=0;pick<count;pick++){const slots=sides.flatMap(ss=>pokemonOn(ss).filter(slot=>!effect.filter||matchesFilter(ctx.cardById(slot.cardId),effect.filter,slot)).map(slot=>({slot,side:ss}))),units=[];for(const x of slots)for(const [type,n] of Object.entries(x.slot.energy||{}))for(let i=0;i<Number(n||0);i++)units.push({...x,type});if(!units.length)break;const hit=units[Math.floor(ctx.random(ctx.state)*units.length)];hit.slot.energy[hit.type]=Math.max(0,Number(hit.slot.energy[hit.type]||0)-1);recordDiscardedEnergy(hit.side,hit.type,1);}break;}
@@ -1316,10 +1374,17 @@
         if(ss.active===slot)ss.active=null;else ss.bench.splice(ss.bench.indexOf(slot),1);
         log({type:'returnToHand',cardId:slot.cardId});
       }break;}
-      case 'shuffleIntoDeck':{for(const slot of affected()){const ss=energyOwner(ctx,slot);if(!ss)continue;const refs=slot.stack.map((cardId,i)=>({uid:`${slot.uid}-shuffle-${i}`,cardId}));if(effect.includeAttached!==false)refs.push(...toolsOf(slot),...temporaryTrainersOf(slot),...(slot.specialEnergy||[]));ss.deck.push(...refs);if(ss.active===slot)ss.active=null;else ss.bench.splice(ss.bench.indexOf(slot),1);if(ctx.shuffle)ctx.shuffle(ctx.state,ss.deck);log({type:'shuffleIntoDeck',cardId:slot.cardId});}break;}
+      case 'shuffleIntoDeck':{for(const slot of affected()){const ss=energyOwner(ctx,slot);if(!ss)continue;const refs=slot.stack.map((cardId,i)=>({uid:`${slot.uid}-shuffle-${i}`,cardId}));
+        if(effect.includeAttached!==false){
+          refs.push(...toolsOf(slot),...temporaryTrainersOf(slot),...(slot.specialEnergy||[]));
+          // Generated Basic Energy cannot enter the 30-card draw deck. Return
+          // attached Basics to the BOTTOM of their owner's ordered supply.
+          if(Array.isArray(ss.energySupply)){for(const [type,n] of Object.entries(slot.energy||{}))for(let i=0;i<Number(n||0);i++)ss.energySupply.push(type);ss.nextEnergyType=ss.energySupply[0]||null;}
+        }else{for(const [type,n] of Object.entries(slot.energy||{}))recordDiscardedEnergy(ss,type,Number(n||0));ss.discard.push(...toolsOf(slot),...temporaryTrainersOf(slot),...(slot.specialEnergy||[]));}
+        ss.deck.push(...refs);if(ss.active===slot)ss.active=null;else ss.bench.splice(ss.bench.indexOf(slot),1);if(ctx.shuffle)ctx.shuffle(ctx.state,ss.deck);log({type:'shuffleIntoDeck',cardId:slot.cardId});}break;}
       case 'discardChosenHand':{
         const ss=effect.side==='opponent'?other(ctx):own(ctx),needed=Math.max(1,Number(effect.amount||1));
-        if(ctx.resolvingChoice&&Number.isInteger(ctx.action?.choiceHandIndex)){const [ref]=ss.hand.splice(ctx.action.choiceHandIndex,1);if(ref)ss.discard.push(ref);const left=Number(effect.remaining||needed)-1;if(left>0&&ss.hand.length&&typeof ctx.requestChoice==='function')ctx.requestChoice({kind:'handCard',side:effect.side||'self',filter:effect.filter,effect:{...effect,remaining:left}});break;}
+        if(ctx.resolvingChoice&&Number.isInteger(ctx.action?.choiceHandIndex)){const [ref]=ss.hand.splice(ctx.action.choiceHandIndex,1);if(ref){const c=ctx.cardById(ref.cardId);if(ctx.state.format==='classic'&&c?.basicEnergy)recordDiscardedEnergy(ss,c.subtype,1);else ss.discard.push(ref);}const left=Number(effect.remaining||needed)-1;if(left>0&&ss.hand.length&&typeof ctx.requestChoice==='function')ctx.requestChoice({kind:'handCard',side:effect.side||'self',filter:effect.filter,effect:{...effect,remaining:left}});break;}
         const candidates=ss.hand.filter(r=>!effect.filter||matchesFilter(ctx.cardById(r.cardId),effect.filter,r));if(candidates.length<needed){if(effect.required)ctx.actionFailed=true;break;}if(typeof ctx.requestChoice==='function')ctx.requestChoice({kind:'handCard',side:effect.side||'self',filter:effect.filter,effect:{...effect,remaining:needed}});break;
       }
       case 'shuffleChosenHand':{
@@ -1348,7 +1413,7 @@
       }
       case 'discardBenchPokemon':{
         const ss=own(ctx);
-        if((ctx.resolvingChoice&&ctx.action?.choiceTarget==='bench')||ctx.action?.target==='bench'){const chosen=ctx.resolvingChoice?ctx.action.choiceBenchIndex:ctx.action.benchIndex,idx=ss.bench.findIndex(x=>x&&Number(x.benchSlot)===Number(chosen));if(idx>=0){const [slot]=ss.bench.splice(idx,1);for(const cardId of slot.stack)ss.discard.push({uid:`${slot.uid}-discard-${cardId}`,cardId});for(const tool of toolsOf(slot))ss.discard.push(tool);}break;}
+        if((ctx.resolvingChoice&&ctx.action?.choiceTarget==='bench')||ctx.action?.target==='bench'){const chosen=ctx.resolvingChoice?ctx.action.choiceBenchIndex:ctx.action.benchIndex,idx=ss.bench.findIndex(x=>x&&Number(x.benchSlot)===Number(chosen));if(idx>=0){const [slot]=ss.bench.splice(idx,1);for(const cardId of slot.stack)ss.discard.push({uid:`${slot.uid}-discard-${cardId}`,cardId});for(const tool of [...toolsOf(slot),...temporaryTrainersOf(slot),...(slot.specialEnergy||[])])ss.discard.push(tool);for(const [type,n] of Object.entries(slot.energy||{}))recordDiscardedEnergy(ss,type,Number(n||0));}break;}
         if(typeof ctx.requestChoice==='function')ctx.requestChoice({kind:'pokemon',side:'self',includeActive:false,filter:effect.filter,effect,optional:!!effect.optional});break;
       }
       case 'drawToHandSize':{const ss=own(ctx),match=(effect.matchSide||'opponent')==='self'?own(ctx):other(ctx),goal=effect.size!=null?Number(effect.size):match.hand.length;while(ss.hand.length<goal&&ss.deck.length)ctx.drawCard(ss);break;}
@@ -1366,8 +1431,8 @@
       case 'damage':for(const s of affected()){if(ctx.isAbility){const targetSide=pokemonOn(own(ctx)).includes(s)?ctx.side:ctx.foeSide;if(findPassiveRule(ctx.state,targetSide,s,'preventAbilityDamage',ctx.cardById))continue;}s.damage=Number(s.damage||0)+effect.amount;}break;
       case 'halveRemainingHp':for(const s of affected()){const which=pokemonOn(own(ctx)).includes(s)?ctx.side:ctx.foeSide,max=Math.max(1,Number(ctx.maxHp?ctx.maxHp(which,s):ctx.cardById(s.cardId)?.hp||0)),remaining=Math.max(0,max-Number(s.damage||0)),next=Math.floor(remaining/2);s.damage=Math.max(Number(s.damage||0),max-next);}break;
       case 'setRemainingHp':for(const s of affected()){const which=pokemonOn(own(ctx)).includes(s)?ctx.side:ctx.foeSide,max=Math.max(1,Number(ctx.maxHp?ctx.maxHp(which,s):ctx.cardById(s.cardId)?.hp||0));s.damage=Math.max(Number(s.damage||0),max-Number(effect.amount||0));}break;
-      case 'attachEnergyFromDiscard':{for(const s of affected()){const owner=energyOwner(ctx,s);if(!owner)continue;owner.energyDiscard=owner.energyDiscard||{};const type=effect.energyType||ctx.action?.effectEnergyType;if(!type)continue;const available=Math.min(Number(effect.amount||0),Number(owner.energyDiscard[type]||0));if(available<=0)continue;owner.energyDiscard[type]-=available;s.energy[type]=Number(s.energy[type]||0)+available;}break;}
-      case 'attachRandomEnergyFromDiscard':{for(const s of affected()){const owner=energyOwner(ctx,s);if(!owner)continue;owner.energyDiscard=owner.energyDiscard||{};for(let i=0;i<Number(effect.amount||1);i++){const units=Object.entries(owner.energyDiscard).flatMap(([type,n])=>Array(Math.max(0,Math.floor(Number(n)||0))).fill(type));if(!units.length)break;const type=units[Math.floor(ctx.random(ctx.state)*units.length)];owner.energyDiscard[type]=Math.max(0,Number(owner.energyDiscard[type]||0)-1);s.energy[type]=Number(s.energy[type]||0)+1;}}break;}
+      case 'attachEnergyFromDiscard':{for(const s of affected()){const owner=energyOwner(ctx,s);if(!owner)continue;const type=effect.energyType||ctx.action?.effectEnergyType;if(!type)continue;const available=neoTakeDiscard(ctx,owner,type,Number(effect.amount||1));if(available<=0)continue;s.energy[type]=Number(s.energy[type]||0)+available;ctx.onEnergyAttached?.(s,type,available);}break;}
+      case 'attachRandomEnergyFromDiscard':{for(const s of affected()){const owner=energyOwner(ctx,s);if(!owner)continue;for(let i=0;i<Number(effect.amount||1);i++){const units=[...Object.entries(owner.energyDiscard||{}).flatMap(([type,n])=>Array(Math.max(0,Math.floor(Number(n)||0))).fill(type)),...(owner.discard||[]).map(ref=>ctx.cardById(ref.cardId)).filter(c=>c?.basicEnergy).map(c=>c.subtype)];if(!units.length)break;const type=units[Math.floor(ctx.random(ctx.state)*units.length)];if(!neoTakeDiscard(ctx,owner,type,1))break;s.energy[type]=Number(s.energy[type]||0)+1;ctx.onEnergyAttached?.(s,type,1);}}break;}
       case 'randomStatus':{for(const s of affected()){const choices=(effect.statuses||STATUSES).filter(status=>!effect.excludeExisting||!s.conditions?.[status]);if(!choices.length)continue;const status=choices[Math.floor(ctx.random(ctx.state)*choices.length)];applyEffect({type:'status',target:effect.target||'opponentActive',status},ctx);}break;}
       case 'allHeadsEffect':{let heads=0;const results=[];for(let i=0;i<effect.coins;i++){const hit=coin(ctx);results.push(hit);if(hit)heads++;}log({type:'coin',heads,coins:effect.coins,results});if(heads===effect.coins)applyEffect(effect.heads,ctx);break;}
       case 'coinRepeatEffect':{let heads=0;const results=[];for(let i=0;i<effect.coins;i++){const hit=coin(ctx);results.push(hit);if(hit)heads++;}log({type:'coin',heads,coins:effect.coins,results});for(let i=0;i<heads;i++)applyEffect(effect.effect,ctx);break;}
@@ -1396,6 +1461,7 @@
           const selectedSlot=targets(effect.target,ctx).filter(s=>matchesFilter(ctx.cardById(s.cardId),effect.filter,s))[0];if(!selectedSlot)break;
           const type=queue.shift();
           if(effect.source==='self'){if(Number(sourceSlot?.energy?.[type]||0)<=0)break;sourceSlot.energy[type]-=1;}
+          else if(!neoSupplyTake(ctx,own(ctx),type,1))break;
           selectedSlot.energy[type]=Number(selectedSlot.energy[type]||0)+1;ctx.onEnergyAttached?.(selectedSlot,type,1);
           const used=[...(effect.usedUids||[])];if(effect.distinctTargets&&!used.includes(selectedSlot.uid))used.push(selectedSlot.uid);
           const excluded=effect.distinctTargets?used:[];
@@ -1406,8 +1472,16 @@
         if(eligibleTargets(excluded).length&&typeof ctx.requestChoice==='function')ctx.requestChoice({kind:'pokemon',side:'self',includeActive:effect.target==='selfPokemon',filter:effect.filter,excludeUids:excluded,effect:{...effect,remainingTypes:queue}});
         break;
       }
-      case 'attachEnergy':{const recipients=affected(),attachedBySide={player:0,opponent:0};for(const s of recipients){s.energy[effect.energyType]=Number(s.energy[effect.energyType]||0)+effect.amount;const side=pokemonOn(own(ctx)).includes(s)?ctx.side:ctx.foeSide;attachedBySide[side]+=effect.amount;if(typeof ctx.onEnergyAttached==='function')ctx.onEnergyAttached(s,effect.energyType,effect.amount);}log({type:'effectEnergy',amount:effect.amount,totalAmount:recipients.length*effect.amount,attachedBySide,energyType:effect.energyType});break;}
-      case 'discardEnergyCard':for(const s of affected()){const owner=energyOwner(ctx,s);if(!owner)continue;const protectedByBrock=(s.temporaryTrainers||[]).some(r=>ctx.cardById(r.cardId)?.id==='gym2-101');if(protectedByBrock&&owner!==own(ctx))continue;let left=effect.amount==='all'?Object.values(s.energy||{}).reduce((n,x)=>n+Number(x||0),0)+(s.specialEnergy||[]).length:Number(effect.amount||1);while(left>0){const special=s.specialEnergy||[];const chosenUid=ctx.action?.effectSpecialEnergyUid;if(chosenUid){const index=special.findIndex(r=>r.uid===chosenUid);if(index>=0){const [ref]=special.splice(index,1);if(ref.cardId==='neo1-105'||ctx.state.stadium?.cardId==='neo1-84'&&owner!==own(ctx)&&ctx.cardById(ref.cardId)?.subtype!=='Colorless')owner.hand.push(ref);else owner.discard.push(ref);left--;continue;}}const chosenType=effect.energyType||ctx.action?.effectEnergyType;if(chosenType&&Number(s.energy?.[chosenType]||0)>0){s.energy[chosenType]--;if(ctx.state.stadium?.cardId==='neo1-84'&&owner!==own(ctx)&&chosenType!=='Colorless')neoEnergyToHand(ctx,owner,chosenType,1);else recordDiscardedEnergy(owner,chosenType,1);left--;continue;}const generated=Object.entries(s.energy||{}).find(([,n])=>Number(n)>0);if(generated){s.energy[generated[0]]--;if(ctx.state.stadium?.cardId==='neo1-84'&&owner!==own(ctx)&&generated[0]!=='Colorless')neoEnergyToHand(ctx,owner,generated[0],1);else recordDiscardedEnergy(owner,generated[0],1);left--;continue;}if(special.length){const ref=special.shift();if(ref.cardId==='neo1-105'||ctx.state.stadium?.cardId==='neo1-84'&&owner!==own(ctx)&&ctx.cardById(ref.cardId)?.subtype!=='Colorless')owner.hand.push(ref);else owner.discard.push(ref);left--;continue;}break;}}break;
+      case 'attachEnergy':{const recipients=affected(),attachedBySide={player:0,opponent:0};for(const s of recipients){const side=pokemonOn(own(ctx)).includes(s)?ctx.side:ctx.foeSide,owner=ctx.state.sides[side];let amount=Number(effect.amount||0);
+          if(effect.source==='hand'){
+            amount=0;for(let i=0;i<Number(effect.amount||0);i++){
+              const idx=owner.hand.findIndex(ref=>{const c=ctx.cardById(ref.cardId);return c?.basicEnergy&&c.subtype===effect.energyType;});
+              if(idx<0)break;
+              owner.hand.splice(idx,1);amount++;
+            }
+          }else if(Array.isArray(owner.energySupply))amount=neoSupplyTake(ctx,owner,effect.energyType,effect.amount);
+          if(!amount)continue;s.energy[effect.energyType]=Number(s.energy[effect.energyType]||0)+amount;attachedBySide[side]+=amount;if(typeof ctx.onEnergyAttached==='function')ctx.onEnergyAttached(s,effect.energyType,amount);}log({type:'effectEnergy',amount:effect.amount,totalAmount:attachedBySide.player+attachedBySide.opponent,attachedBySide,energyType:effect.energyType});break;}
+      case 'discardEnergyCard':for(const s of affected()){const owner=energyOwner(ctx,s);if(!owner)continue;const protectedByBrock=(s.temporaryTrainers||[]).some(r=>ctx.cardById(r.cardId)?.id==='gym2-101');if(protectedByBrock&&owner!==own(ctx))continue;let left=effect.amount==='all'?Object.values(s.energy||{}).reduce((n,x)=>n+Number(x||0),0)+(s.specialEnergy||[]).length:Number(effect.amount||1);while(left>0){const special=s.specialEnergy||[];const chosenUid=ctx.action?.effectSpecialEnergyUid;if(chosenUid){const index=special.findIndex(r=>r.uid===chosenUid);if(index>=0){const [ref]=special.splice(index,1);if(ref.cardId==='neo1-105'||ctx.state.stadium?.cardId==='neo1-84'&&owner!==own(ctx)&&ctx.cardById(ref.cardId)?.subtype!=='Colorless')owner.hand.push(ref);else owner.discard.push(ref);left--;continue;}}const chosenType=effect.energyType||ctx.action?.effectEnergyType;if(chosenType&&Number(s.energy?.[chosenType]||0)>0){s.energy[chosenType]--;if(ctx.state.stadium?.cardId==='neo1-84'&&owner!==own(ctx)&&chosenType!=='Colorless')neoRecoveredEnergyToHand(ctx,owner,chosenType,1);else recordDiscardedEnergy(owner,chosenType,1);left--;continue;}const generated=Object.entries(s.energy||{}).find(([,n])=>Number(n)>0);if(generated){s.energy[generated[0]]--;if(ctx.state.stadium?.cardId==='neo1-84'&&owner!==own(ctx)&&generated[0]!=='Colorless')neoRecoveredEnergyToHand(ctx,owner,generated[0],1);else recordDiscardedEnergy(owner,generated[0],1);left--;continue;}if(special.length){const ref=special.shift();if(ref.cardId==='neo1-105'||ctx.state.stadium?.cardId==='neo1-84'&&owner!==own(ctx)&&ctx.cardById(ref.cardId)?.subtype!=='Colorless')owner.hand.push(ref);else owner.discard.push(ref);left--;continue;}break;}}break;
       case 'discardEnergy':for(const s of affected()){const owner=energyOwner(ctx,s);if(effect.random){const count=effect.amount==='all'?totalEnergy(s.energy):effect.amount;for(let i=0;i<count;i++){const units=Object.entries(s.energy).flatMap(([type,n])=>Array(Math.max(0,Math.floor(n))).fill(type));if(!units.length)break;const type=units[Math.floor(ctx.random(ctx.state)*units.length)];s.energy[type]--;recordDiscardedEnergy(owner,type,1);}}else if(effect.energyType){const before=Number(s.energy[effect.energyType]||0),after=effect.amount==='all'?0:Math.max(0,before-effect.amount);s.energy[effect.energyType]=after;recordDiscardedEnergy(owner,effect.energyType,before-after);}else if(ctx.action?.effectEnergyType){const type=ctx.action.effectEnergyType,before=Number(s.energy[type]||0),after=effect.amount==='all'?0:Math.max(0,before-Number(effect.amount||0));s.energy[type]=after;recordDiscardedEnergy(owner,type,before-after);}else{const before={...(s.energy||{})};s.energy=effect.amount==='all'?{}:spendGenericEnergy(s.energy,Math.min(effect.amount,totalEnergy(s.energy)));for(const [type,n] of Object.entries(before))recordDiscardedEnergy(owner,type,Number(n||0)-Number(s.energy?.[type]||0));}}break;
       case 'moveEnergy':{if(!ctx.resolvingChoice&&typeof ctx.requestChoice==='function'&&(effect.source==='selfBench'||effect.target==='selfBench')){const selector=effect.source==='selfBench'?effect.source:effect.target;ctx.requestChoice({kind:'pokemon',side:'self',includeActive:false,filter:effect.source==='selfBench'?effect.sourceFilter:effect.filter,effect});break;}const sources=targets(effect.source,ctx).filter(s=>matchesFilter(ctx.cardById(s.cardId),effect.sourceFilter,s)),destination=targets(effect.target,ctx)[0];if(!sources.length||!destination)break;let remaining=effect.amount==='all'?Infinity:effect.amount;for(const source of sources){if(source===destination)continue;for(const type of Object.keys(source.energy)){const chosenType=ctx.action?.effectEnergyType||effect.energyType;if(chosenType&&type!==chosenType)continue;if(effect.allowedEnergyTypes&&!effect.allowedEnergyTypes.includes(type))continue;const amount=Math.min(remaining,Number(source.energy[type]||0));source.energy[type]-=amount;destination.energy[type]=Number(destination.energy[type]||0)+amount;remaining-=amount;if(remaining<=0)break;}if(remaining<=0)break;}break;}
       case 'handShuffle':{const sides=effect.side==='both'?[own(ctx),other(ctx)]:[effect.side==='opponent'?other(ctx):own(ctx)];const opponentCount=other(ctx).hand.length,counts=sides.map(s=>effect.draw==='same'?s.hand.length:effect.draw==='opponentHandCount'?opponentCount:effect.draw==='pointsRemaining'?Math.max(0,3-Number(s.points||0)):effect.draw);for(const ss of sides){ss.deck.push(...ss.hand.splice(0));ctx.shuffle(ctx.state,ss.deck);}sides.forEach((ss,index)=>{for(let i=0;i<counts[index];i++)ctx.drawCard(ss);});break;}
@@ -1719,7 +1793,7 @@ if(r==='lastResort')return ss.hand.length===0?[{}]:[];if(r==='surgeSwap')return 
     if(effect.type==='coinUntilTails'||effect.type==='coinRepeatEffect')return choicesForEffect(effect.effect,ctx);
     if(effect.type==='discardEnergyCard'){const selector=effect.target||'self';return targetChoices(selector,ctx).flatMap(action=>{const list=targets(selector,{...ctx,action}).filter(s=>matchesFilter(ctx.cardById(s.cardId),effect.filter,s)),out=[];for(const slot of list){const count=Object.values(slot.energy||{}).reduce((n,x)=>n+Number(x||0),0)+(slot.specialEnergy||[]).length,needed=effect.amount==='all'?1:Number(effect.amount||1);if(count<needed)continue;for(const [type,n] of Object.entries(slot.energy||{}))if(Number(n)>0&&(!effect.energyType||type===effect.energyType))out.push({...action,effectEnergyType:type});for(const ref of slot.specialEnergy||[]){const card=ctx.cardById(ref.cardId),provides=ref?.provides||card?.effect?.provides||{};if(!effect.energyType||Number(provides[effect.energyType]||0)>0)out.push({...action,effectSpecialEnergyUid:ref.uid});}}return out;});}
     if(effect.type==='discardEnergy'&&!effect.energyType&&!effect.random){const selector=effect.target||'self';return targetChoices(selector,ctx).flatMap(action=>{const list=targets(selector,{...ctx,action}).filter(s=>matchesFilter(ctx.cardById(s.cardId),effect.filter,s)),types=new Set();for(const slot of list)for(const [type,n] of Object.entries(slot.energy||{}))if(Number(n)>0)types.add(type);return [...types].map(type=>({...action,effectEnergyType:type}));});}
-    if(effect.type==='attachEnergyFromDiscard'&&!effect.energyType){const selector=effect.target||'self';return targetChoices(selector,ctx).flatMap(action=>{const list=targets(selector,{...ctx,action}).filter(s=>matchesFilter(ctx.cardById(s.cardId),effect.filter,s));if(!list.length)return[];const owner=own(ctx),types=Object.entries(owner.energyDiscard||{}).filter(([,n])=>Number(n)>=Number(effect.amount||1)).map(([type])=>type);return types.map(type=>({...action,effectEnergyType:type}));});}
+    if(effect.type==='attachEnergyFromDiscard'&&!effect.energyType){const selector=effect.target||'self';return targetChoices(selector,ctx).flatMap(action=>{const list=targets(selector,{...ctx,action}).filter(s=>matchesFilter(ctx.cardById(s.cardId),effect.filter,s));if(!list.length)return[];const owner=own(ctx),types=[...new Set([...Object.keys(owner.energyDiscard||{}),...(owner.discard||[]).map(ref=>ctx.cardById(ref.cardId)).filter(c=>c?.basicEnergy).map(c=>c.subtype)])].filter(type=>neoDiscardAvailable(ctx,owner,type)>=Number(effect.amount||1));return types.map(type=>({...action,effectEnergyType:type}));});}
     if(effect.type==='moveEnergy'){const selector=effect.source==='selfBench'?'selfBench':effect.target;let choices=targetChoices(selector,ctx).flatMap(action=>{const slots=targets(effect.source,{...ctx,action}).filter(s=>matchesFilter(ctx.cardById(s.cardId),effect.sourceFilter,s));const types=new Set();for(const slot of slots)for(const [type,n] of Object.entries(slot.energy||{}))if(Number(n)>0&&(!effect.energyType||type===effect.energyType)&&(!effect.allowedEnergyTypes||effect.allowedEnergyTypes.includes(type)))types.add(type);if(effect.energyType)return slots.some(s=>Number(s.energy?.[effect.energyType]||0)>0)?[action]:[];if(effect.allowedEnergyTypes)return [...types].map(type=>({...action,effectEnergyType:type}));return slots.some(s=>totalEnergy(s.energy)>0)?[action]:[];});return choices.length?choices:ctx.isAttack?[{}]:[];}
     if(effect.type==='switch'&&effect.source)return ctx.attacker&&own(ctx).bench.includes(ctx.attacker)?[{}]:[];
     if(effect.requirePlayedBeforeTurn&&ctx.attacker&&Number(ctx.attacker.playedOnSideTurn)>=Number(own(ctx).turnCount))return [];
@@ -1729,7 +1803,8 @@ if(r==='lastResort')return ss.hand.length===0?[{}]:[];if(r==='surgeSwap')return 
     }
     const selector=effect.type==='switch'?(effect.side==='opponent'?'opponentBench':'selfBench'):effect.type==='benchDamage'&&!effect.all?(effect.side==='self'?'selfBench':'opponentBench'):effect.target;
     const choices=targetChoices(selector,ctx);if(!choices.length&&ctx.isAttack&&effect.type!=='selectedDamage')return [{}];
-    const valid=choices.filter(action=>{const list=targets(selector,{...ctx,action}).filter(s=>(!effect.excludeSelf||s!==ctx.attacker)&&(!effect.requirePlayedBeforeTurn||Number(s.playedOnSideTurn)<Number(own(ctx).turnCount))&&matchesFilter(ctx.cardById(s.cardId),effect.filter,s));if((effect.type==='heal'||effect.type==='healSelf')&&!ctx.isAttack)return list.some(s=>Number(s.damage)>0);if(effect.type==='discardEnergy'&&!ctx.isAttack){const needed=effect.amount==='all'?1:Number(effect.amount||0);return list.some(s=>effect.energyType?Number(s.energy[effect.energyType]||0)>=needed:totalEnergy(s.energy)>=needed);}if(effect.type==='attachEnergyFromDiscard'&&!ctx.isAttack)return list.length>0&&Number(own(ctx).energyDiscard?.[effect.energyType]||0)>=(effect.upTo?1:Number(effect.amount||1));if(effect.type==='switch')return (effect.side==='opponent'?other(ctx):own(ctx)).active!=null&&list.length>0;return !selector||list.length>0;});
+    const valid=choices.filter(action=>{const list=targets(selector,{...ctx,action}).filter(s=>(!effect.excludeSelf||s!==ctx.attacker)&&(!effect.requirePlayedBeforeTurn||Number(s.playedOnSideTurn)<Number(own(ctx).turnCount))&&matchesFilter(ctx.cardById(s.cardId),effect.filter,s));if((effect.type==='heal'||effect.type==='healSelf')&&!ctx.isAttack)return list.some(s=>Number(s.damage)>0);if(effect.type==='discardEnergy'&&!ctx.isAttack){const needed=effect.amount==='all'?1:Number(effect.amount||0);return list.some(s=>effect.energyType?Number(s.energy[effect.energyType]||0)>=needed:totalEnergy(s.energy)>=needed);}if(effect.type==='attachEnergy'&&!ctx.isAttack){const owner=own(ctx),needed=Number(effect.amount||1);if(effect.source==='hand')return list.length>0&&owner.hand.filter(ref=>{const c=ctx.cardById(ref.cardId);return c?.basicEnergy&&c.subtype===effect.energyType;}).length>=needed;if(Array.isArray(owner.energySupply))return list.length>0&&owner.energySupply.filter(t=>t===effect.energyType).length>=needed;}
+      if(effect.type==='attachEnergyFromDiscard'&&!ctx.isAttack)return list.length>0&&neoDiscardAvailable(ctx,own(ctx),effect.energyType)>=(effect.upTo?1:Number(effect.amount||1));if(effect.type==='switch')return (effect.side==='opponent'?other(ctx):own(ctx)).active!=null&&list.length>0;return !selector||list.length>0;});
     return valid.length||!ctx.isAttack||effect.type==='selectedDamage'?valid:[{}];
   }
   function toolCapacity(state,side,slot,cardById){if(!slot)return 1;if(Number(slot.syntheticToolCapacity)>0)return Number(slot.syntheticToolCapacity);let cap=1;if(abilitiesSuppressed(state,side,slot,cardById))return cap;const card=cardById(slot.cardId),abilities=(card?.abilities?.length?card.abilities:Array.isArray(card?.ability)?card.ability:[card?.ability]).filter(Boolean),ctx={state,side,foeSide:side==='player'?'opponent':'player',attacker:slot,defender:state.sides[side==='player'?'opponent':'player'].active,cardById};const scan=e=>{if(!e)return;if(e.type==='sequence'){for(const x of e.effects||[])scan(x);return;}if(e.type==='toolCapacity'&&conditionMatches(e.condition,ctx))cap=Math.max(cap,Number(e.amount||1));};for(const ability of abilities)if(ability.type==='passive')scan(ability.effect);return cap;}
