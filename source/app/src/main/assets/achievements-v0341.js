@@ -428,7 +428,7 @@
     const categoryById={first_shiny:'pokemon',ghost10:'pokemon',kanto_all:'pokemon',celestial_storm:'tcg',gold_card:'tcgp',haunted_visit:'adventure',haunted_clear:'adventure',packs25:'collection',packs100:'collection',arcade10k:'arcade',five_shiny:'pokemon',zubat3:'pokemon',fails3:'pokemon',loaded_pack:'collection',quiz_endless_20:'arcade',ball_drop_jackpot:'arcade',unown_perfect:'arcade',safari_ten:'arcade'};
     let category='all';
     const baseRewardText=rewardText;
-    rewardText=function(r={}){const base=baseRewardText(r),dust=Number(r?.dust||0),fixed=String(r?.fixedProductName||'').trim(),sleeveId=String(r?.sleeve||'').trim(),sleeve=root.LuckyDexCosmeticsV0413?.registry?.[sleeveId];const extra=`✦ ${fmt(dust)} Dust`;let out=dust?(base?`${base} · ${extra}`:extra):base;if(fixed)out=out?`${out} · ${fixed}`:fixed;if(sleeveId&&sleeve)out=out?`${out} · Sleeve · ${sleeve.realName||sleeve.name}`:`Sleeve · ${sleeve.realName||sleeve.name}`;return out;};
+    rewardText=function(r={}){const base=baseRewardText(r),dust=Number(r?.dust||0),fixed=String(r?.fixedProductName||'').trim(),sleeveId=String(r?.sleeve||'').trim(),sleeve=root.LuckyDexCosmeticsV0413?.registry?.[sleeveId];const extra=`✦ ${fmt(dust)} Dust`;let out=dust?(base?`${base} · ${extra}`:extra):base;if(fixed)out=out?`${out} · ${fixed}`:fixed;if(sleeveId&&sleeve)out=out?`${out} · Sleeve · ${sleeve.realName||sleeve.name}`:`Sleeve · ${sleeve.realName||sleeve.name}`;if(r?.playmats)out+=(out?' · ':'')+`🎨 ${r.playmats} mat${r.playmats===1?'':'s'}`;if(r?.battleCoins)out+=(out?' · ':'')+`🪙 ${r.battleCoins} coin${r.battleCoins===1?'':'s'}`;return out;};
     const fixedRewardClaims=new Set();
     claimAchievement=async function(id){
       const a=ACHIEVEMENTS.find(x=>x.id===id);if(!a)return;const p=achievementProgress(a);if(!p.complete||p.claimed||fixedRewardClaims.has(id))return;
@@ -442,7 +442,15 @@
     function annotateExisting(){for(const a of ACHIEVEMENTS){if(!a.category)a.category=categoryById[a.id]||(a.hidden?'collection':'collection');}}
     function addCore(){const existing=new Set(ACHIEVEMENTS.map(a=>a.id));for(const a of buildCoreAchievements(()=>state)){if(!existing.has(a.id)){ACHIEVEMENTS.push(a);existing.add(a.id);}}}
     function addV0413(){const build=root.LuckyDexAchievementExpansionV0413?.build;if(typeof build!=='function')return;const existing=new Set(ACHIEVEMENTS.map(a=>a.id));for(const a of build(()=>state)){if(!existing.has(a.id)){ACHIEVEMENTS.push(a);existing.add(a.id);}}}
+    function addV06992(){const build=root.LuckyDexCosmeticAchievementsV06992?.build;if(typeof build!=='function')return;const existing=new Set(ACHIEVEMENTS.map(a=>a.id));for(const a of build(()=>state)){if(!existing.has(a.id)){ACHIEVEMENTS.push(a);existing.add(a.id);}}}
     function addV06920(){const build=root.LuckyDexTCGPBattleAchievementsV06920?.build;if(typeof build!=='function')return;const existing=new Set(ACHIEVEMENTS.map(a=>a.id));for(const a of build(()=>state)){if(!existing.has(a.id)){ACHIEVEMENTS.push(a);existing.add(a.id);}}}
+    function bindCosmeticRewards(){
+      const cosmetics=root.LuckyDexCosmeticsV0413,byId=new Map(ACHIEVEMENTS.map(a=>[a.id,a]));
+      const mats=cosmetics?.playmatCatalogue||[],coins=cosmetics?.coinCatalogue||[];
+      for(const a of ACHIEVEMENTS){const matCount=mats.filter(x=>x.sourceAchievementId===a.id).length,coinCount=coins.filter(x=>x.sourceAchievementId===a.id).length;
+        if(matCount||coinCount){a.reward=a.reward||{};a.reward.playmats=matCount;a.reward.battleCoins=coinCount;}
+      }
+    }
     function bindSleeves(){for(const sleeve of root.LuckyDexCosmeticsV0413?.catalogue||[]){const id=sleeve?.sourceAchievementId;if(!id)continue;const a=ACHIEVEMENTS.find(x=>x.id===id);if(a){a.reward=a.reward||{};if(!a.reward.sleeve)a.reward.sleeve=sleeve.id;}}}
     function physicalSets(){try{return [...(setCache?.tcg||[])];}catch(_){return [];}}
     function pocketSets(){try{return [...(root.LuckyDexPocket?.BUILTIN_SETS||[])];}catch(_){return [];}}
@@ -451,7 +459,7 @@
       const generated=buildSetAchievements(physicalSets(),pocketSets(),()=>state.cards||{});
       for(const a of generated){if(a.category==='tcg'&&norm(a.setDescriptor?.name)==='celestial storm'&&ACHIEVEMENTS.some(x=>x.id==='celestial_storm'))continue;ACHIEVEMENTS.push(a);}
     }
-    function sync(){annotateExisting();addCore();addV0413();addV06920();syncSets();bindSleeves();annotateExisting();const rec=root.LuckyDexCosmeticsV0413?.reconcile?.(state,ACHIEVEMENTS);if(rec&&(rec.unlockedSleeves.length||rec.discoveredSecrets.length||rec.claimTokens.length))save();}
+    function sync(){annotateExisting();addCore();addV0413();addV06920();addV06992();syncSets();bindSleeves();bindCosmeticRewards();annotateExisting();const rec=root.LuckyDexCosmeticsV0413?.reconcile?.(state,ACHIEVEMENTS);if(rec&&(rec.unlockedSleeves.length||rec.unlockedPlaymats.length||rec.unlockedCoins.length||rec.discoveredSecrets.length||rec.claimTokens.length))save();}
     function render(){
       sync();const list=document.getElementById('achievementList');if(!list)return;
       const rows=ACHIEVEMENTS.map(a=>({a,p:achievementProgress(a)})),counts=achievementSummary(rows),earned=counts.earned,pill=document.getElementById('achievementCountPill'),summary=document.getElementById('achievementSummaryText');if(pill)pill.textContent=`${earned}/${counts.total} earned`;if(summary)summary.textContent=`${earned} / ${counts.total} earned`;
@@ -465,7 +473,7 @@
     renderAchievements=render;
     const select=document.getElementById('achievementCategoryFilter');if(select){select.value='all';select.addEventListener('change',()=>{category=select.value||'all';renderAchievements();});}
     sync();
-    const recognition=root.LuckyDexCosmeticsV0413?.consumeRecognitionSummary?.();if(recognition&&(recognition.sleeves.length||(recognition.playmats||[]).length||recognition.achievements.length)){const sleeveCount=recognition.sleeves.length,playmatCount=(recognition.playmats||[]).length,achievementCount=recognition.achievements.length;showToast(`Previous accomplishments recognised · ${sleeveCount} sleeve${sleeveCount===1?'':'s'} · ${playmatCount} playmat${playmatCount===1?'':'s'} unlocked · ${achievementCount} achievement${achievementCount===1?'':'s'}`,3600);}
+    const recognition=root.LuckyDexCosmeticsV0413?.consumeRecognitionSummary?.();if(recognition&&(recognition.sleeves.length||(recognition.playmats||[]).length||(recognition.coins||[]).length||recognition.achievements.length)){const sleeveCount=recognition.sleeves.length,playmatCount=(recognition.playmats||[]).length,achievementCount=recognition.achievements.length;showToast(`Previous accomplishments recognised · ${sleeveCount} sleeve${sleeveCount===1?'':'s'} · ${playmatCount} playmat${playmatCount===1?'':'s'} · ${(recognition.coins||[]).length} battle coins unlocked · ${achievementCount} achievement${achievementCount===1?'':'s'}`,3600);}
     return true;
   }
 

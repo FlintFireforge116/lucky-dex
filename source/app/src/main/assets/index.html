@@ -75,7 +75,7 @@
     </div>
     <div class="title-partner-row" id="titlePartners"></div>
     <button id="titleContinueBtn" class="title-start">PRESS TO START</button>
-    <div class="title-footer"><span id="titleRankText">TRAINER RANK 1</span><span>v0.69.85</span></div>
+    <div class="title-footer"><span id="titleRankText">TRAINER RANK 1</span><span>v0.69.92</span></div>
   </div>
 
   <div id="starterPanel" class="starter-screen" hidden>
@@ -92,7 +92,7 @@
   <div id="app" class="app-shell">
     <header class="topbar">
       <div class="brand-block">
-        <div class="eyebrow">LUCKY DEX · v0.69.85</div>
+        <div class="eyebrow">LUCKY DEX · v0.69.92</div>
         <h1>Lucky Dex</h1>
       </div>
       <div class="top-resources">
@@ -1162,7 +1162,7 @@
         </div>
         <div id="profileCustomiseView" class="profile-customise-view" hidden>
           <div class="profile-subscreen-head"><button id="customiseBackBtn" class="secondary" type="button">‹ PROFILE</button><div><div class="eyebrow">TRAINER STYLE</div><h2>Customise</h2></div></div>
-          <div class="panel"><div class="customise-toolbar"><div class="segmented mini-tabs customise-kind-tabs"><button class="active" data-cosmetic-kind="sleeves" type="button">Sleeves</button><button data-cosmetic-kind="playmats" type="button">Playmats</button></div><label class="customise-search"><span>SEARCH SLEEVES</span><input id="customiseSleeveSearch" type="search" placeholder="Pokémon, trainer or sleeve name" autocomplete="off" maxlength="100"></label><div class="segmented mini-tabs" id="customiseOwnershipFilter"><button class="active" data-cosmetic-filter="all">All</button><button data-cosmetic-filter="owned">Owned</button><button data-cosmetic-filter="locked">Locked</button></div><div class="customise-filter-row"><label class="customise-category"><span>SOURCE</span><select id="customiseSourceFilter"><option value="all">All sources</option><option value="LuckyDex">LuckyDex</option><option value="Physical TCG">Physical TCG</option><option value="TCG Pocket">TCG Pocket</option></select></label><label class="customise-category"><span>THEME</span><select id="customiseCategoryFilter"><option value="all">All themes</option></select></label></div><p id="customiseCatalogueCount" class="customise-count" role="status"></p></div><div class="customise-shell"><div id="customiseSleeveGrid" class="customise-sleeve-grid"></div></div></div>
+          <div class="panel"><div class="customise-toolbar"><div class="segmented mini-tabs customise-kind-tabs"><button class="active" data-cosmetic-kind="sleeves" type="button">Sleeves</button><button data-cosmetic-kind="playmats" type="button">Playmats</button><button data-cosmetic-kind="coins" type="button">Coins</button></div><label class="customise-search"><span>SEARCH SLEEVES</span><input id="customiseSleeveSearch" type="search" placeholder="Pokémon, trainer or sleeve name" autocomplete="off" maxlength="100"></label><div class="segmented mini-tabs" id="customiseOwnershipFilter"><button class="active" data-cosmetic-filter="all">All</button><button data-cosmetic-filter="owned">Owned</button><button data-cosmetic-filter="locked">Locked</button></div><div class="customise-filter-row"><label class="customise-category"><span>SOURCE</span><select id="customiseSourceFilter"><option value="all">All sources</option><option value="LuckyDex">LuckyDex</option><option value="Physical TCG">Physical TCG</option><option value="TCG Pocket">TCG Pocket</option></select></label><label class="customise-category"><span>THEME</span><select id="customiseCategoryFilter"><option value="all">All themes</option></select></label></div><p id="customiseCatalogueCount" class="customise-count" role="status"></p></div><div class="customise-shell"><div id="customiseSleeveGrid" class="customise-sleeve-grid"></div></div></div>
           <dialog id="customisePreviewDialog" aria-label="Sleeve preview"><button id="customisePreviewClose" type="button" class="secondary">‹ CATALOGUE</button><div id="customiseSleeveDetail" class="customise-detail"></div></dialog>
         </div>
       </section>
@@ -1279,13 +1279,13 @@
   <script src="retired-achievement-migrations-v0410.js"></script>
   <script src="cosmetics-catalog-v0413.js"></script>
   <script src="cosmetics-playmats-v06958.js"></script>
+  <script src="cosmetics-coins-v06992.js"></script>
   <script src="cosmetics-core-v0413.js"></script>
   <script src="cosmetics-customise-v0413.js"></script>
   <script src="achievement-telemetry-v0413.js"></script>
   <script src="arcade-goldenrod-core.js"></script>
   <script src="arcade-goldenrod-state.js"></script>
   <script src="tcgp/generated/catalogue.js"></script>
-  <script src="tcgp-battle-effects.js"></script>
   <script src="tcg-classic-base1.js"></script>
   <script src="tcg-classic-jungle.js"></script>
   <script src="tcg-classic-fossil.js"></script>
@@ -1301,6 +1301,7 @@
   <script src="tcgp-battle-data.js"></script>
   <script src="tcgp-deck-library.js"></script>
   <script src="tcgp-battle-decks.js"></script>
+  <script src="tcgp-battle-effects.js"></script>
   <script src="tcgp-deck-workspace.js"></script>
   <script src="tcgp-deck-editor.js"></script>
   <script src="tcgp-battle-core.js"></script>
@@ -1322,6 +1323,7 @@
   <script src="collection-browser-v0280.js"></script>
   <script src="achievements-expansion-v0413.js"></script>
   <script src="achievements-tcgp-battle-v06920.js"></script>
+  <script src="achievements-cosmetics-v06992.js"></script>
   <script src="achievements-v0341.js"></script>
   <script src="arcade-records.js"></script>
   <script src="arcade-rare-rewards.js"></script>

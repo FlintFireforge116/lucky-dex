@@ -245,9 +245,19 @@
     const from=localBox(fromRect,layerRect),to=localBox(toRect,layerRect);if(!from||!to)return null;const node=appendPresentationNode(stage,'tcgp-present-energy-ghost');if(!node)return null;
     node.innerHTML=energyIconHtml(entry?.energyType||'Colorless',{className:'presentation'});node.dataset.energy=entry?.energyType||'Colorless';node.style.left=(from.cx-18)+'px';node.style.top=(from.cy-18)+'px';node.style.setProperty('--tcgp-present-tx',(to.cx-from.cx)+'px');node.style.setProperty('--tcgp-present-ty',(to.cy-from.cy)+'px');return node;
   }
+  function coinArtPath(sideName,stateOverride){
+    const api=cosmetics||(root&&root.LuckyDexCosmeticsV0413),state=stateOverride||root?.state||{};
+    // CPU flips use a neutral Poké Ball coin, not the player's unlocked design.
+    const entry=sideName==='player'?api?.activeCoin?.(state):api?.coinRegistry?.['pocket-coin-poke-ball'];
+    return String(entry?.artPath||'');
+  }
+  function coinPresentationHtml(heads,sideName,stateOverride){
+    const image=heads?coinArtPath(sideName,stateOverride):coinArtPath('opponent',stateOverride);
+    return `<span class="tcgp-present-coin-face">${image?`<img src="${esc(image)}" alt="" decoding="async" onerror="this.hidden=true">`:''}</span><span class="tcgp-present-coin-side">${heads?'H':'T'}</span>`;
+  }
   function spawnCoinRow(stage,entry){
     const results=coinSequence(entry),shown=results.slice(0,20),row=appendPresentationNode(stage,`tcgp-present-coins ${entry?.side==='opponent'?'is-opponent':'is-player'}`);if(!row)return 0;
-    shown.forEach((heads,index)=>{const coin=appendPresentationNode(row,`tcgp-present-coin ${heads?'heads':'tails'}`);coin.textContent=heads?'H':'T';coin.style.setProperty('--tcgp-coin-delay',(index*70)+'ms');});
+    shown.forEach((heads,index)=>{const coin=appendPresentationNode(row,`tcgp-present-coin ${heads?'heads':'tails'}`);coin.innerHTML=coinPresentationHtml(heads,entry?.side||'player');coin.title=heads?'Heads':'Tails';coin.setAttribute('aria-label',heads?'Heads':'Tails');coin.style.setProperty('--tcgp-coin-delay',(index*70)+'ms');});
     if(results.length>shown.length){const more=appendPresentationNode(row,'tcgp-present-coin-more');more.textContent=`+${results.length-shown.length}`;}
     const heads=results.filter(Boolean).length,tails=results.length-heads,label=appendPresentationNode(row,'tcgp-present-coin-label');label.textContent=results.length===1?(results[0]?'HEADS':'TAILS'):`${heads} HEADS · ${tails} TAILS`;
     return Math.min(1050,320+shown.length*70);
@@ -1066,5 +1076,5 @@
   }
   if(root&&root.document){if(root.document.readyState==='loading')root.document.addEventListener('DOMContentLoaded',init,{once:true});else init();}
 
-  return{actionLabel,actionEventText,cardArtUrl,cardRulesHtml,supportText,filterBuilderRows,resultSummary,coverageForOwnedCards,centerHandActionIndices,directHandDropActionIndex,open,close,renderHome,requestLeave,isEditing:()=>screen==='builder',_test:{slotTools,buildInspectSpec,resolveInspect,attachedToolLinksHtml,liveToolMiniCardsHtml,liveCardHtml,attackPresentationMeta,coinSequence,battleSummaryStats,capturePresentationAnchors,targetKeyForAction,benchDamagePresentationEntry,stadiumSlotModel,resultActionsModel,playmatArtPath,energyCostHtml,liveAttachedEnergyHtml,liveEnergySourceHtml,liveBenchReadOnlyMovesHtml,pokemonActionIndices,pokemonInteractionAttrs,benchSwitchActionIndices,classicOpponentConfig,classicOpponentPickerHtml,classicOpponentHandRevealed,handDropErrorMessage}};
+  return{actionLabel,actionEventText,cardArtUrl,cardRulesHtml,supportText,filterBuilderRows,resultSummary,coverageForOwnedCards,centerHandActionIndices,directHandDropActionIndex,open,close,renderHome,requestLeave,isEditing:()=>screen==='builder',_test:{slotTools,buildInspectSpec,resolveInspect,attachedToolLinksHtml,liveToolMiniCardsHtml,liveCardHtml,attackPresentationMeta,coinSequence,battleSummaryStats,capturePresentationAnchors,targetKeyForAction,benchDamagePresentationEntry,stadiumSlotModel,resultActionsModel,playmatArtPath,coinArtPath,coinPresentationHtml,energyCostHtml,liveAttachedEnergyHtml,liveEnergySourceHtml,liveBenchReadOnlyMovesHtml,pokemonActionIndices,pokemonInteractionAttrs,benchSwitchActionIndices,classicOpponentConfig,classicOpponentPickerHtml,classicOpponentHandRevealed,handDropErrorMessage}};
 });

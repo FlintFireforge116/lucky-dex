@@ -18,3 +18,11 @@
 .customise-playmat-art img,.customise-playmat-detail img{object-fit:cover}
 .customise-playmat-detail{width:min(300px,82vw);aspect-ratio:1/1}
 .customise-playmat-tile b{min-height:15px;height:auto;-webkit-line-clamp:1}
+
+/* v0.69.92: genuine Pocket coins beside playmats and sleeves. */
+.customise-kind-tabs{grid-template-columns:repeat(3,minmax(0,1fr))!important}
+.customise-coin-art{aspect-ratio:1 / 1;background:#122039;border-radius:50%;padding:5px;box-sizing:border-box}
+.customise-coin-art img{object-fit:contain}
+.customise-coin-detail{aspect-ratio:1 / 1;width:min(250px,75vw);border-radius:50%}
+.customise-coin-detail img{object-fit:contain}
+.customise-coin-tile b{min-height:15px;height:auto;-webkit-line-clamp:1}

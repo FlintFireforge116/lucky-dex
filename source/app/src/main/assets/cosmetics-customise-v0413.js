@@ -1,35 +1,36 @@
 (function(root,factory){
   const sleeves=(typeof module==='object'&&module.exports)?require('./cosmetics-catalog-v0413.js'):root.LuckyDexCosmeticsCatalogV0413;
   const playmats=(typeof module==='object'&&module.exports)?require('./cosmetics-playmats-v06958.js'):root.LuckyDexPlaymatCatalogV06958;
+  const coins=(typeof module==='object'&&module.exports)?require('./cosmetics-coins-v06992.js'):root.LuckyDexCoinCatalogV06992;
   const core=(typeof module==='object'&&module.exports)?require('./cosmetics-core-v0413.js'):root.LuckyDexCosmeticsV0413;
-  const api=factory(sleeves||{CATALOGUE:[]},playmats||{CATALOGUE:[]},core);
+  const api=factory(sleeves||{CATALOGUE:[]},playmats||{CATALOGUE:[]},coins||{CATALOGUE:[]},core);
   if(typeof module==='object'&&module.exports){module.exports=api;return;}
   root.LuckyDexCustomiseV0413=api;
-})(typeof globalThis!=='undefined'?globalThis:this,function(sleeves,playmats,defaultCore){
+})(typeof globalThis!=='undefined'?globalThis:this,function(sleeves,playmats,coins,defaultCore){
   'use strict';
   let deps=null,kind='sleeves',ownership='all',category='all',source='all',query='',selectedId='luckydex-default',installed=false;
   const esc=s=>String(s??'').replace(/[&<>'"]/g,ch=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[ch]));
-  const currentCatalogue=()=>kind==='playmats'?(playmats.CATALOGUE||[]):(sleeves.CATALOGUE||[]);
-  const defaultId=()=>kind==='playmats'?'pocket-eevee':'luckydex-default';
+  const currentCatalogue=()=>kind==='playmats'?(playmats.CATALOGUE||[]):kind==='coins'?(coins.CATALOGUE||[]):(sleeves.CATALOGUE||[]);
+  const defaultId=()=>kind==='playmats'?'pocket-eevee':kind==='coins'?'pocket-coin-poke-ball':'luckydex-default';
   function presentation(entry,state,core=defaultCore){
     if(!entry)return null;
-    const discovered=kind==='playmats'||!entry.hidden||core?.isDiscovered?.(state,entry.sourceAchievementId)||false;
+    const discovered=kind==='playmats'||kind==='coins'||!entry.hidden||core?.isDiscovered?.(state,entry.sourceAchievementId)||false;
     if(entry.hidden&&!discovered)return {id:entry.id,name:'???',artPath:'',requirement:'',action:'LOCKED',hidden:true,owned:false,category:entry.category,tier:entry.tier,sourceFamily:'',themes:['Secrets'],searchText:'???',kind};
-    const owned=kind==='playmats'?!!core?.isPlaymatOwned?.(state,entry.id):!!core?.isOwned?.(state,entry.id);
-    const active=kind==='playmats'?core?.activePlaymat?.(state)?.id===entry.id:core?.activeSleeve?.(state)?.id===entry.id;
+    const owned=kind==='playmats'?!!core?.isPlaymatOwned?.(state,entry.id):kind==='coins'?!!core?.isCoinOwned?.(state,entry.id):!!core?.isOwned?.(state,entry.id);
+    const active=kind==='playmats'?core?.activePlaymat?.(state)?.id===entry.id:kind==='coins'?core?.activeCoin?.(state)?.id===entry.id:core?.activeSleeve?.(state)?.id===entry.id;
     const name=entry.hidden?(entry.realName||entry.name):entry.name;
-    return {id:entry.id,name,artPath:entry.artPath,requirement:owned?'':entry.unlockText,action:active?'EQUIPPED':owned?'EQUIP':'LOCKED',hidden:!!entry.hidden,owned,category:entry.category||'Playmat',tier:entry.tier,sourceFamily:entry.sourceFamily||'LuckyDex',themes:entry.themes||[entry.category||'Playmat'],searchText:[name,...(entry.searchTerms||[])].join(' '),kind};
+    return {id:entry.id,name,artPath:entry.artPath,requirement:owned?'':entry.unlockText,action:active?'EQUIPPED':owned?'EQUIP':'LOCKED',hidden:!!entry.hidden,owned,category:entry.category||(kind==='coins'?'Battle coin':kind==='playmats'?'Playmat':'Sleeve'),tier:entry.tier,sourceFamily:entry.sourceFamily||'LuckyDex',themes:entry.themes||[entry.category||'Playmat'],searchText:[name,...(entry.searchTerms||[])].join(' '),kind};
   }
   function current(){return deps?.getState?.()||{};}
   function rowHtml(p){
-    const noun=kind==='playmats'?'playmat':'sleeve',art=p.artPath?`<img src="${esc(p.artPath)}" alt="${esc(p.name)} ${noun}" loading="lazy" decoding="async" onerror="this.hidden=true;this.parentElement.classList.add('art-failed')">`:'<div class="customise-secret-art">?</div>';
-    return `<button class="customise-sleeve-tile ${kind==='playmats'?'customise-playmat-tile ':''}${p.owned?'owned':'locked'}" type="button" data-cosmetic-id="${esc(p.id)}"><span class="customise-sleeve-art ${kind==='playmats'?'customise-playmat-art':''}">${art}</span><b>${esc(p.name)}</b><small>${p.action==='EQUIPPED'?'EQUIPPED':p.owned?'OWNED':'LOCKED'}</small></button>`;
+    const noun=kind==='playmats'?'playmat':kind==='coins'?'coin':'sleeve',art=p.artPath?`<img src="${esc(p.artPath)}" alt="${esc(p.name)} ${noun}" loading="lazy" decoding="async" onerror="this.hidden=true;this.parentElement.classList.add('art-failed')">`:'<div class="customise-secret-art">?</div>';
+    return `<button class="customise-sleeve-tile ${kind==='playmats'?'customise-playmat-tile ':kind==='coins'?'customise-coin-tile ':''}${p.owned?'owned':'locked'}" type="button" data-cosmetic-id="${esc(p.id)}"><span class="customise-sleeve-art ${kind==='playmats'?'customise-playmat-art':kind==='coins'?'customise-coin-art':''}">${art}</span><b>${esc(p.name)}</b><small>${p.action==='EQUIPPED'?'EQUIPPED':p.owned?'OWNED':'LOCKED'}</small></button>`;
   }
   function detailHtml(p){
-    const noun=kind==='playmats'?'playmat':'sleeve',art=p.artPath?`<img src="${esc(p.artPath)}" alt="${esc(p.name)} ${noun}" onerror="this.hidden=true;this.parentElement.classList.add('art-failed')">`:'<div class="customise-secret-art large">?</div>';
+    const noun=kind==='playmats'?'playmat':kind==='coins'?'coin':'sleeve',art=p.artPath?`<img src="${esc(p.artPath)}" alt="${esc(p.name)} ${noun}" onerror="this.hidden=true;this.parentElement.classList.add('art-failed')">`:'<div class="customise-secret-art large">?</div>';
     const req=p.requirement?`<p>${esc(p.requirement)}</p>`:(p.hidden&&p.name==='???'?`<p>Keep exploring Lucky Dex to uncover this secret ${noun}.</p>`:'');
-    const attr=kind==='playmats'?'data-equip-playmat':'data-equip-sleeve',action=p.action==='EQUIP'?`<button class="primary full" type="button" ${attr}="${esc(p.id)}">EQUIP</button>`:`<button class="secondary full" type="button" disabled>${esc(p.action)}</button>`;
-    return `<div class="customise-detail-art ${kind==='playmats'?'customise-playmat-detail':''}">${art}</div><div class="customise-detail-copy"><div class="eyebrow">${esc(p.sourceFamily||('UNDISCOVERED '+noun.toUpperCase()))}</div><h3>${esc(p.name)}</h3>${req}${action}</div>`;
+    const attr=kind==='playmats'?'data-equip-playmat':kind==='coins'?'data-equip-coin':'data-equip-sleeve',action=p.action==='EQUIP'?`<button class="primary full" type="button" ${attr}="${esc(p.id)}">EQUIP</button>`:`<button class="secondary full" type="button" disabled>${esc(p.action)}</button>`;
+    return `<div class="customise-detail-art ${kind==='playmats'?'customise-playmat-detail':kind==='coins'?'customise-coin-detail':''}">${art}</div><div class="customise-detail-copy"><div class="eyebrow">${esc(p.sourceFamily||('UNDISCOVERED '+noun.toUpperCase()))}</div><h3>${esc(p.name)}</h3>${req}${action}</div>`;
   }
   function visibleRows(){
     const state=current(),core=deps?.core||defaultCore,search=query.normalize('NFKD').replace(/[\u0300-\u036f]/g,'').toLowerCase().trim();
@@ -42,26 +43,27 @@
   }
   function refreshSummary(){
     if(typeof document==='undefined'||!deps)return;
-    const state=current(),core=deps.core||defaultCore,sleeve=core?.activeSleeve?.(state),mat=core?.activePlaymat?.(state);
+    const state=current(),core=deps.core||defaultCore,sleeve=core?.activeSleeve?.(state),mat=core?.activePlaymat?.(state),coin=core?.activeCoin?.(state);
     const name=document.getElementById('customiseSummaryName'),preview=document.getElementById('customiseSummaryPreview');
-    if(name)name.textContent=`${sleeve?.realName||sleeve?.name||'LuckyDex Default'} · ${mat?.name||'Eevee'}`;
+    if(name)name.textContent=`${sleeve?.realName||sleeve?.name||'LuckyDex Default'} · ${mat?.name||'Eevee'} · ${coin?.name||'Poké Ball'} coin`;
     if(preview)preview.innerHTML=sleeve?.artPath?`<img src="${esc(sleeve.artPath)}" alt="" onerror="this.remove()">`:'';
   }
   function render(){
     if(typeof document==='undefined'||!deps)return;refreshSummary();
     const grid=document.getElementById('customiseSleeveGrid'),detail=document.getElementById('customiseSleeveDetail');if(!grid||!detail)return;
     document.querySelectorAll('[data-cosmetic-kind]').forEach(btn=>btn.classList.toggle('active',btn.dataset.cosmeticKind===kind));
-    const label=document.querySelector('.customise-search>span'),input=document.getElementById('customiseSleeveSearch');if(label)label.textContent=kind==='playmats'?'SEARCH PLAYMATS':'SEARCH SLEEVES';if(input)input.placeholder=kind==='playmats'?'Pokémon, trainer or playmat name':'Pokémon, trainer or sleeve name';
+    const label=document.querySelector('.customise-search>span'),input=document.getElementById('customiseSleeveSearch');if(label)label.textContent=kind==='playmats'?'SEARCH PLAYMATS':kind==='coins'?'SEARCH COINS':'SEARCH SLEEVES';if(input)input.placeholder=kind==='playmats'?'Pokémon, trainer or playmat name':kind==='coins'?'Pokémon or trainer coin name':'Pokémon, trainer or sleeve name';
     const rows=visibleRows(),cat=currentCatalogue(),count=document.getElementById('customiseCatalogueCount');if(count)count.textContent=`${rows.length} of ${cat.length} ${kind}`;
     if(!rows.some(x=>x.id===selectedId))selectedId=rows[0]?.id||defaultId();
     grid.innerHTML=rows.length?rows.map(rowHtml).join(''):`<div class="empty compact-empty customise-empty">No ${kind} in this filter.</div>`;
     const selected=rows.find(x=>x.id===selectedId)||presentation(cat.find(x=>x.id===selectedId),current(),deps.core||defaultCore);detail.innerHTML=selected?detailHtml(selected):'';
     grid.querySelectorAll('[data-cosmetic-id]').forEach(btn=>btn.onclick=()=>{selectedId=btn.dataset.cosmeticId;render();const dialog=document.getElementById('customisePreviewDialog');if(dialog&&!dialog.open)dialog.showModal();});
-    detail.querySelector('[data-equip-sleeve]')?.addEventListener('click',e=>equip(e.currentTarget.dataset.equipSleeve,false));
-    detail.querySelector('[data-equip-playmat]')?.addEventListener('click',e=>equip(e.currentTarget.dataset.equipPlaymat,true));
+    detail.querySelector('[data-equip-sleeve]')?.addEventListener('click',e=>equip(e.currentTarget.dataset.equipSleeve,'sleeves'));
+    detail.querySelector('[data-equip-playmat]')?.addEventListener('click',e=>equip(e.currentTarget.dataset.equipPlaymat,'playmats'));
+    detail.querySelector('[data-equip-coin]')?.addEventListener('click',e=>equip(e.currentTarget.dataset.equipCoin,'coins'));
   }
-  function equip(id,isPlaymat){const state=current(),core=deps.core||defaultCore,result=isPlaymat?core.equipPlaymat(state,id):core.equipSleeve(state,id);if(!result.ok){deps.showToast?.(`That ${isPlaymat?'playmat':'sleeve'} is still locked.`);return;}deps.save?.();deps.onChange?.();render();}
-  function switchKind(next){kind=next==='playmats'?'playmats':'sleeves';selectedId=defaultId();category='all';rebuildThemeOptions();render();}
+  function equip(id,cosmeticKind){const state=current(),core=deps.core||defaultCore,result=cosmeticKind==='playmats'?core.equipPlaymat(state,id):cosmeticKind==='coins'?core.equipCoin(state,id):core.equipSleeve(state,id);if(!result.ok){deps.showToast?.(`That ${cosmeticKind==='playmats'?'playmat':cosmeticKind==='coins'?'coin':'sleeve'} is still locked.`);return;}deps.save?.();deps.onChange?.();render();}
+  function switchKind(next){kind=['playmats','coins'].includes(next)?next:'sleeves';selectedId=defaultId();category='all';rebuildThemeOptions();render();}
   function show(){if(typeof document==='undefined')return;const main=document.getElementById('profileMainView'),ach=document.getElementById('profileAchievementsView'),view=document.getElementById('profileCustomiseView');if(main)main.hidden=true;if(ach)ach.hidden=true;if(view)view.hidden=false;render();const page=document.querySelector('.page[data-page="profile"]');if(page)page.scrollTop=0;}
   function hide(){if(typeof document==='undefined')return;const main=document.getElementById('profileMainView'),view=document.getElementById('profileCustomiseView');if(view)view.hidden=true;if(main)main.hidden=false;refreshSummary();document.getElementById('customisePreviewDialog')?.close();}
   function install(options={}){

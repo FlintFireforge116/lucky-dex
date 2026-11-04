@@ -1,16 +1,19 @@
 (function(root,factory){
   const catalogue=(typeof module==='object'&&module.exports)?require('./cosmetics-catalog-v0413.js'):root.LuckyDexCosmeticsCatalogV0413;
   const playmats=(typeof module==='object'&&module.exports)?require('./cosmetics-playmats-v06958.js'):root.LuckyDexPlaymatCatalogV06958;
-  const api=factory(catalogue||{CATALOGUE:[],BY_ID:{}},playmats||{CATALOGUE:[],BY_ID:{}});
+  const coins=(typeof module==='object'&&module.exports)?require('./cosmetics-coins-v06992.js'):root.LuckyDexCoinCatalogV06992;
+  const api=factory(catalogue||{CATALOGUE:[],BY_ID:{}},playmats||{CATALOGUE:[],BY_ID:{}},coins||{CATALOGUE:[],BY_ID:{}});
   if(typeof module==='object'&&module.exports){module.exports=api;return;}
   root.LuckyDexCosmeticsV0413=api;
-})(typeof globalThis!=='undefined'?globalThis:this,function(catalogue,playmats){
+})(typeof globalThis!=='undefined'?globalThis:this,function(catalogue,playmats,coins){
   'use strict';
-  const DEFAULT_SLEEVE_ID='luckydex-default',DEFAULT_PLAYMAT_ID='pocket-eevee';
+  const DEFAULT_SLEEVE_ID='luckydex-default',DEFAULT_PLAYMAT_ID='pocket-eevee',DEFAULT_COIN_ID='pocket-coin-poke-ball';
   const registry=catalogue.BY_ID||Object.fromEntries((catalogue.CATALOGUE||[]).map(x=>[x.id,x]));
   const playmatRegistry=playmats.BY_ID||Object.fromEntries((playmats.CATALOGUE||[]).map(x=>[x.id,x]));
+  const coinRegistry=coins.BY_ID||Object.fromEntries((coins.CATALOGUE||[]).map(x=>[x.id,x]));
   const ALWAYS_UNLOCKED_IDS=(catalogue.CATALOGUE||[]).filter(x=>!x.hidden&&(x.alwaysUnlocked===true||(!x.sourceAchievementId&&!x.rewardGroup))).map(x=>x.id);
   const ALWAYS_UNLOCKED_PLAYMAT_IDS=(playmats.CATALOGUE||[]).filter(x=>x.alwaysUnlocked===true||(!x.sourceAchievementId&&!x.rewardGroup)).map(x=>x.id);
+  const ALWAYS_UNLOCKED_COIN_IDS=(coins.CATALOGUE||[]).filter(x=>x.alwaysUnlocked===true||(!x.sourceAchievementId&&!x.rewardGroup)).map(x=>x.id);
   let bridge={getState:null,save:null,showToast:null,onChange:null};
   let sessionUnlockAll=false;
   let pendingRecognition=null;
@@ -28,7 +31,12 @@
     if(playmatRegistry[DEFAULT_PLAYMAT_ID]&&!basePlaymats.includes(DEFAULT_PLAYMAT_ID))basePlaymats.unshift(DEFAULT_PLAYMAT_ID);
     const unlockedPlaymats=[...basePlaymats,...savedPlaymats.filter(id=>!basePlaymats.includes(id))];
     const activePlaymat=(typeof src.activePlaymat==='string'&&unlockedPlaymats.includes(src.activePlaymat)&&playmatRegistry[src.activePlaymat])?src.activePlaymat:DEFAULT_PLAYMAT_ID;
-    return {...src,unlockedSleeves:unlocked,activeSleeve:active,unlockedPlaymats,activePlaymat,discoveredSecrets:strings(src.discoveredSecrets),claimedCosmeticRewards:strings(src.claimedCosmeticRewards)};
+    const savedCoins=strings(src.unlockedCoins).filter(id=>!!coinRegistry[id]);
+    const baseCoins=ALWAYS_UNLOCKED_COIN_IDS.filter(id=>!!coinRegistry[id]);
+    if(coinRegistry[DEFAULT_COIN_ID]&&!baseCoins.includes(DEFAULT_COIN_ID))baseCoins.unshift(DEFAULT_COIN_ID);
+    const unlockedCoins=[...baseCoins,...savedCoins.filter(id=>!baseCoins.includes(id))];
+    const activeCoin=(typeof src.activeCoin==='string'&&unlockedCoins.includes(src.activeCoin)&&coinRegistry[src.activeCoin])?src.activeCoin:DEFAULT_COIN_ID;
+    return {...src,unlockedSleeves:unlocked,activeSleeve:active,unlockedPlaymats,activePlaymat,unlockedCoins,activeCoin,discoveredSecrets:strings(src.discoveredSecrets),claimedCosmeticRewards:strings(src.claimedCosmeticRewards)};
   }
   function ensureState(state){if(!state||typeof state!=='object')return normaliseCosmetics(null);state.cosmetics=normaliseCosmetics(state.cosmetics);return state.cosmetics;}
   function unlockSleeve(state,id,claimToken){
@@ -61,6 +69,18 @@
     const changed=c.activePlaymat!==id;c.activePlaymat=id;return {ok:true,changed};
   }
   function activePlaymat(state){const c=ensureState(state||bridge.getState?.()||{});return playmatRegistry[c.activePlaymat]||playmatRegistry[DEFAULT_PLAYMAT_ID]||{id:DEFAULT_PLAYMAT_ID,name:'Eevee',artPath:''};}
+  function unlockCoin(state,id,claimToken){
+    const c=ensureState(state);id=String(id||'');if(!coinRegistry[id])return {ok:false,changed:false,id};
+    let changed=false;if(!c.unlockedCoins.includes(id)){c.unlockedCoins.push(id);changed=true;}
+    if(claimToken&&!c.claimedCosmeticRewards.includes(String(claimToken))){c.claimedCosmeticRewards.push(String(claimToken));changed=true;}
+    return {ok:true,changed,id};
+  }
+  function equipCoin(state,id){
+    const c=ensureState(state);id=String(id||'');if(!coinRegistry[id])return {ok:false,changed:false,reason:'unknown'};
+    if(!c.unlockedCoins.includes(id)&&!sessionUnlockAll)return {ok:false,changed:false,reason:'locked'};
+    const changed=c.activeCoin!==id;c.activeCoin=id;return {ok:true,changed};
+  }
+  function activeCoin(state){const c=ensureState(state||bridge.getState?.()||{});return coinRegistry[c.activeCoin]||coinRegistry[DEFAULT_COIN_ID]||{id:DEFAULT_COIN_ID,name:'Poké Ball',artPath:''};}
   function discoverSecret(state,secretId){const c=ensureState(state);secretId=String(secretId||'');if(!secretId||c.discoveredSecrets.includes(secretId))return false;c.discoveredSecrets.push(secretId);return true;}
   function isDiscovered(state,secretId){return ensureState(state).discoveredSecrets.includes(String(secretId||''));}
   function installBridge(next={}){bridge={...bridge,...next};applyActiveSleeveCss(bridge.getState?.());return api;}
@@ -150,7 +170,7 @@
   }
 
   function reconcile(state,achievements=[]){
-    ensureState(state);const byId=Object.fromEntries((achievements||[]).map(a=>[String(a?.id||''),a])),unlockedSleeves=[],unlockedPlaymats=[],discoveredSecrets=[],claimTokens=[],recognisedAchievements=[];
+    ensureState(state);const byId=Object.fromEntries((achievements||[]).map(a=>[String(a?.id||''),a])),unlockedSleeves=[],unlockedPlaymats=[],unlockedCoins=[],discoveredSecrets=[],claimTokens=[],recognisedAchievements=[];
     const bindings=[];
     for(const entry of catalogue.CATALOGUE||[])if(entry.sourceAchievementId)bindings.push({achievementId:entry.sourceAchievementId,sleeveId:entry.id,hidden:!!entry.hidden});
     for(const a of achievements||[])if(a?.reward?.sleeve&&!bindings.some(b=>b.achievementId===a.id&&b.sleeveId===a.reward.sleeve))bindings.push({achievementId:a.id,sleeveId:a.reward.sleeve,hidden:!!a.hidden});
@@ -178,6 +198,19 @@
       if(result.ok&&!hadToken)claimTokens.push(token);
       if(entry.hidden&&discoverSecret(state,secretId)){discoveredSecrets.push(secretId);if(!recognisedAchievements.includes(secretId))recognisedAchievements.push(secretId);}
     }
+    // The original twelve mats retain their existing collection rewards.
+    // Newly registered mats and coins are tied to named, claimable achievements.
+    for(const entry of [...(playmats.CATALOGUE||[]),...(coins.CATALOGUE||[])]){
+      if(!entry.sourceAchievementId)continue;
+      const a=byId[entry.sourceAchievementId];if(!a)continue;
+      const complete=!!state?.profile?.achievementClaims?.includes?.(a.id);
+      if(!complete)continue;
+      const isCoin=entry.kind==='coin',token=`achievement:${a.id}:${isCoin?'coin':'playmat'}:${entry.id}`;
+      const c=ensureState(state),had=isCoin?c.unlockedCoins.includes(entry.id):c.unlockedPlaymats.includes(entry.id),hadToken=c.claimedCosmeticRewards.includes(token);
+      const r=isCoin?unlockCoin(state,entry.id,token):unlockPlaymat(state,entry.id,token);
+      if(r.ok&&!had){(isCoin?unlockedCoins:unlockedPlaymats).push(entry.id);if(!recognisedAchievements.includes(a.id))recognisedAchievements.push(a.id);}
+      if(r.ok&&!hadToken)claimTokens.push(token);
+    }
     for(const entry of playmats.CATALOGUE||[]){
       if(!entry.rewardGroup)continue;
       if(!completedGroups.has(entry.rewardGroup))completedGroups.set(entry.rewardGroup,evidence.complete(entry.rewardGroup));
@@ -187,17 +220,18 @@
       if(result.ok&&!had)unlockedPlaymats.push(entry.id);
       if(result.ok&&!hadToken)claimTokens.push(token);
     }
-    if(unlockedSleeves.length||unlockedPlaymats.length||recognisedAchievements.length){pendingRecognition=pendingRecognition||{sleeves:[],playmats:[],achievements:[]};for(const id of unlockedSleeves)if(!pendingRecognition.sleeves.includes(id))pendingRecognition.sleeves.push(id);for(const id of unlockedPlaymats)if(!pendingRecognition.playmats.includes(id))pendingRecognition.playmats.push(id);for(const id of recognisedAchievements)if(!pendingRecognition.achievements.includes(id))pendingRecognition.achievements.push(id);}
-    return {unlockedSleeves,unlockedPlaymats,discoveredSecrets,claimTokens};
+    if(unlockedSleeves.length||unlockedPlaymats.length||unlockedCoins.length||recognisedAchievements.length){pendingRecognition=pendingRecognition||{sleeves:[],playmats:[],coins:[],achievements:[]};for(const id of unlockedSleeves)if(!pendingRecognition.sleeves.includes(id))pendingRecognition.sleeves.push(id);for(const id of unlockedPlaymats)if(!pendingRecognition.playmats.includes(id))pendingRecognition.playmats.push(id);for(const id of unlockedCoins)if(!pendingRecognition.coins.includes(id))pendingRecognition.coins.push(id);for(const id of recognisedAchievements)if(!pendingRecognition.achievements.includes(id))pendingRecognition.achievements.push(id);}
+    return {unlockedSleeves,unlockedPlaymats,unlockedCoins,discoveredSecrets,claimTokens};
   }
-  function consumeRecognitionSummary(){if(!pendingRecognition||(!pendingRecognition.sleeves.length&&!pendingRecognition.playmats?.length&&!pendingRecognition.achievements.length))return null;const out={sleeves:[...pendingRecognition.sleeves],playmats:[...(pendingRecognition.playmats||[])],achievements:[...pendingRecognition.achievements]};pendingRecognition=null;return out;}
+  function consumeRecognitionSummary(){if(!pendingRecognition||(!pendingRecognition.sleeves.length&&!pendingRecognition.playmats?.length&&!pendingRecognition.coins?.length&&!pendingRecognition.achievements.length))return null;const out={sleeves:[...pendingRecognition.sleeves],achievements:[...pendingRecognition.achievements]};if(pendingRecognition.playmats?.length)out.playmats=[...pendingRecognition.playmats];if(pendingRecognition.coins?.length)out.coins=[...pendingRecognition.coins];pendingRecognition=null;return out;}
   function devUnlockAll({persist=false}={}){
-    const ids=Object.keys(registry),matIds=Object.keys(playmatRegistry);sessionUnlockAll=true;
-    if(persist&&bridge.getState){const s=bridge.getState();ids.forEach(id=>unlockSleeve(s,id,`dev:${id}`));matIds.forEach(id=>unlockPlaymat(s,id,`dev:playmat:${id}`));bridge.save?.();bridge.onChange?.();}
+    const ids=Object.keys(registry),matIds=Object.keys(playmatRegistry),coinIds=Object.keys(coinRegistry);sessionUnlockAll=true;
+    if(persist&&bridge.getState){const s=bridge.getState();ids.forEach(id=>unlockSleeve(s,id,`dev:${id}`));matIds.forEach(id=>unlockPlaymat(s,id,`dev:playmat:${id}`));coinIds.forEach(id=>unlockCoin(s,id,`dev:coin:${id}`));bridge.save?.();bridge.onChange?.();}
     return ids;
   }
   function isOwned(state,id){return sessionUnlockAll||ensureState(state).unlockedSleeves.includes(id);}
   function isPlaymatOwned(state,id){return sessionUnlockAll||ensureState(state).unlockedPlaymats.includes(id);}
-  const api={DEFAULT_SLEEVE_ID,DEFAULT_PLAYMAT_ID,registry,playmatRegistry,catalogue:catalogue.CATALOGUE||[],playmatCatalogue:playmats.CATALOGUE||[],normaliseCosmetics,ensureState,unlockSleeve,equipSleeve,activeSleeve,unlockPlaymat,equipPlaymat,activePlaymat,discoverSecret,isDiscovered,installBridge,defaultBackInnerHtml,cardBackInnerHtml,applyActiveSleeveCss,reconcile,consumeRecognitionSummary,devUnlockAll,isOwned,isPlaymatOwned};
+  function isCoinOwned(state,id){return sessionUnlockAll||ensureState(state).unlockedCoins.includes(id);}
+  const api={DEFAULT_SLEEVE_ID,DEFAULT_PLAYMAT_ID,DEFAULT_COIN_ID,registry,playmatRegistry,coinRegistry,catalogue:catalogue.CATALOGUE||[],playmatCatalogue:playmats.CATALOGUE||[],coinCatalogue:coins.CATALOGUE||[],normaliseCosmetics,ensureState,unlockSleeve,equipSleeve,activeSleeve,unlockPlaymat,equipPlaymat,activePlaymat,unlockCoin,equipCoin,activeCoin,discoverSecret,isDiscovered,installBridge,defaultBackInnerHtml,cardBackInnerHtml,applyActiveSleeveCss,reconcile,consumeRecognitionSummary,devUnlockAll,isOwned,isPlaymatOwned,isCoinOwned};
   return api;
 });

@@ -35,7 +35,10 @@ test('a regional clear grants a thematic group once and retains a legacy equippe
   assert.equal(first.claimTokens.length,2);
   assert.equal(new Set(state.cosmetics.claimedCosmeticRewards).size,state.cosmetics.claimedCosmeticRewards.length);
   assert.deepEqual(plain(c.consumeRecognitionSummary()),{sleeves:['red-team','blue-team'],achievements:[]});
-  assert.deepEqual(plain(c.reconcile(state)),{unlockedSleeves:[],discoveredSecrets:[],claimTokens:[]});
+  const second=c.reconcile(state);
+  assert.deepEqual(plain({unlockedSleeves:second.unlockedSleeves,discoveredSecrets:second.discoveredSecrets,claimTokens:second.claimTokens}),{unlockedSleeves:[],discoveredSecrets:[],claimTokens:[]});
+  assert.deepEqual(plain(second.unlockedPlaymats),[]);
+  assert.deepEqual(plain(second.unlockedCoins),[]);
   assert.equal(c.consumeRecognitionSummary(),null);
   assert.equal(c.equipSleeve(state,'red-team').ok,true);
 });

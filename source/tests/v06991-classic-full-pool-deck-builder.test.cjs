@@ -78,5 +78,5 @@ test('Classic editor supplies seeds and tracks archetype history for both genera
  assert.match(source,/excludeArchetypes:history\.slice\(\),randomSeed:seed/);
  assert.match(source,/randomHistory\.set\(historyKey/);
  const gradle=fs.readFileSync(path.resolve(__dirname,'../app/build.gradle'),'utf8');
- assert.match(gradle,/versionName '0\.69\.91'/);
+ assert.match(gradle,/versionName '0\.69\.(?:9[1-9]|[1-9][0-9]{2,})'/);
 });
