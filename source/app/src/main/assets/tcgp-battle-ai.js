@@ -26,9 +26,56 @@
   // generic battle action list intentionally lets human players experiment;
   // CPU utility must not interpret every legal Trainer as useful.
   const attachedCount=slot=>slot?effects.totalEnergy(slot.energy)+(slot.specialEnergy||[]).length:0;
+  // Evaluate Stadium cards as persistent board assets, not disposable Trainers.
+  // Playing a different Stadium removes the one already in play. A generic
+  // +2 Trainer bonus made Advanced/Expert repeatedly replace useful Stadiums.
+  // Values are deliberately based only on the public board, not hidden decks.
+  function stadiumUtility(state,side,card,ownerSide){
+    if(!card)return 0;
+    const mine=state.sides[side],foe=state.sides[foeOf(side)];
+    const myActive=mine.active,theirActive=foe.active;
+    const myDamage=Number(myActive?.damage||0),theirDamage=Number(theirActive?.damage||0);
+    if(card.id==='neo3-61'){
+      // Healing Field is symmetrical: both sides can heal. Protect it while
+      // our damaged Active benefits; do not play it to heal only the opponent.
+      return 6+Math.min(40,myDamage)*.8-Math.min(40,theirDamage)*.55;
+    }
+    if(card.id==='neo3-63'){
+      const darkCount=ss=>slots(ss).filter(slot=>/Dark/.test(String(data.cardById(slot.cardId)?.name||''))).length;
+      return (darkCount(mine)-darkCount(foe))*16;
+    }
+    if(card.id==='gym1-124')return (Math.max(0,foe.bench.filter(Boolean).length-2)-Math.max(0,mine.bench.filter(Boolean).length-2))*18;
+    if(card.id==='neo1-97'){
+      const colorless=slot=>data.cardById(slot?.cardId)?.types?.includes('Colorless');
+      return (Number(colorless(theirActive))-Number(colorless(myActive)))*12;
+    }
+    if(card.id==='neo1-84')return 8; // Ecogym benefits both players.
+    // Other Gym cards have situational rules. Keep a Stadium in play rather
+    // than cycling through these blindly; replacement requires an advantage.
+    return ownerSide===side?9:-5;
+  }
+  function stadiumWorthPlaying(state,side,card){
+    if(!card)return false;
+    const current=state.stadium,previous=current?data.cardById(current.cardId):null;
+    const nextScore=stadiumUtility(state,side,card,side);
+    if(!current)return nextScore>=8;
+    const previousScore=stadiumUtility(state,side,previous,current.ownerSide);
+    // A Stadium already owned by this CPU should not be swapped for an
+    // equivalent card. An opponent-owned one may warrant an earlier counter.
+    return nextScore-previousScore>=(current.ownerSide===side?10:5);
+  }
+  function worthwhileStadiumAction(state,side,action){
+    if(action.type!=='stadiumAction')return false;
+    if(action.cardId==='neo3-61')return Number(state.sides[side]?.active?.damage||0)>0;
+    // Other Stadium abilities have their own legal-effect checks. Do not
+    // invoke them blindly when no measurable utility is available.
+    return true;
+  }
   function usefulClassicTrainer(state,side,action){
     const card=data.cardById(action.cardId),s=state.sides[side],foe=state.sides[foeOf(side)];
     if(!card)return false;
+    if((card.trainerType==='Stadium'||card.trainerSubtype==='Stadium'))return stadiumWorthPlaying(state,side,card);
+    if(card.id==='neo3-64')return (s.discard||[]).some(ref=>{const c=data.cardById(ref.cardId);return c?.kind==='trainer'||c?.kind==='pokemon';});
     if(card.name==='Super Energy Removal')return slots(s).some(x=>attachedCount(x)>0)&&slots(foe).some(x=>attachedCount(x)>=2);
     if(card.name==='Energy Removal')return slots(foe).some(x=>attachedCount(x)>0);
     if(card.name==='Energy Retrieval')return Object.values(s.energyDiscard||{}).some(n=>Number(n)>0)||(s.discard||[]).some(ref=>data.cardById(ref.cardId)?.basicEnergy);
@@ -101,6 +148,7 @@
     if(action.type==='evolve')return 900;
     if(action.type==='ability')return dangerous(abilityEffect(card,action.abilityIndex))?-100:800;
     if(action.type==='trainer')return dangerous(card?.effect)?-100:700;
+    if(action.type==='stadiumAction')return worthwhileStadiumAction(state,side,action)?850:-100;
     if(action.type==='bench')return 600;
     if(action.type==='attach')return 400+attachScore(action,state,side);
     if(action.type==='attack')return 200+Number(data.cardById(action.attackCardId||state.sides[side].active.cardId)?.attacks[action.attackIndex]?.damage||0);
@@ -157,7 +205,12 @@
     let bonus=0;
     if(action.type==='attach')bonus+=attachScore(action,position,side)*.12;
     if(action.type==='evolve')bonus+=4;
-    if(action.type==='trainer')bonus+=2+searchOpportunity(data.cardById(action.cardId)?.effect,position.sides[side]);
+    if(action.type==='trainer'){
+      const card=data.cardById(action.cardId);
+      if(card?.trainerType==='Stadium'||card?.trainerSubtype==='Stadium')bonus+=stadiumUtility(position,side,card,side)*.5;
+      else bonus+=2+searchOpportunity(card?.effect,position.sides[side]);
+    }
+    if(action.type==='stadiumAction'&&action.cardId==='neo3-61'&&position.sides[side]?.active?.damage>0)bonus+=32;
     if(action.type==='ability')bonus+=searchOpportunity(abilityEffect(data.cardById(action.cardId),action.abilityIndex),position.sides[side]);
     if(action.type==='endTurn')bonus-=4;
     if(action.type==='retreat')bonus-=level>=2?7:12;
@@ -187,6 +240,13 @@
       return !(power?.oncePerTurn===false&&state.sides[side].abilityUsed?.[source.uid+':'+index]===state.sides[side].turnCount);
     });
     if(!legal.length)return null;
+    // Healing Field is a once-per-turn Stadium action, not a Trainer card.
+    // Resolve it while there is damage to heal; don't leave it unused because
+    // one hidden-RNG simulation happened to turn up tails.
+    if(state.format==='classic'&&state.phase==='battle'){
+      const heal=legal.find(a=>a.type==='stadiumAction'&&a.cardId==='neo3-61');
+      if(heal&&worthwhileStadiumAction(state,side,heal))return heal;
+    }
     // Super Energy Removal has two sequential target choices. Beginners used
     // to select the first listed Active target, even if it had no Energy.
     if(state.format==='classic'&&state.phase==='effectChoice'&&state.pendingChoice?.effect?.type==='multiEnergyRemoval'){
@@ -220,7 +280,19 @@
       }
       ranked.sort((a,b)=>b.score-a.score);
     }
-    return ranked[0].action;
+    const selected=ranked[0].action;
+    // The Classic Basic Energy Zone grants one attachment per turn. There is
+    // no reason to throw that opportunity away while a legal target exists.
+    // Finish draws/evolutions/Trainers first if the search wants them, but
+    // attach before committing to an attack or voluntarily ending the turn.
+    if(state.format==='classic'&&state.phase==='battle'&&['attack','endTurn'].includes(selected.type)){
+      const options=legal.filter(action=>action.type==='attach');
+      if(options.length){
+        options.sort((a,b)=>attachScore(b,state,side)-attachScore(a,state,side));
+        return options[0];
+      }
+    }
+    return selected;
   }
   function runTurn(state,side,difficulty){
     let count=0;

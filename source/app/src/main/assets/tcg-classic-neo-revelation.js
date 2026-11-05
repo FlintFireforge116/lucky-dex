@@ -163,6 +163,93 @@ const TRAINER_EFFECTS={
 63:{type:'modifier',stat:'maxHp',amount:20,scope:'both',duration:'whileInPlay',filter:{nameContains:'Dark'}},
 64:{type:'neoRule',rule:'revelation:oldRod'}
 };
+// Readable paraphrases of the printed Neo Revelation attacks. These also
+// explain cards whose unusual effects are not yet battle-enabled.
+const ATTACK_TEXT={
+  1:[`Flip three coins. For each heads, find a Lightning Energy in the ordered Basic Energy supply and attach it to one of your Lightning Pokémon.`,`Heads: 60 damage. Tails: 40 damage and Paralyze the defender.`],
+  2:[`Flip a coin. On heads, Paralyze the defending Pokémon.`],
+  3:[`Flip three coins. Put one damage counter on the defender for every heads.`],
+  4:[`If your opponent attaches Energy to the defender next turn, Poison that Pokémon.`,`Flip four coins; deal 20 per heads. With at least two heads, also Confuse the defender.`],
+  5:[`Flip three coins: one heads deals 40 damage; two heads heal 30 from the defender; three heads deal 60; three tails heal all the defender's damage.`],
+  6:[`Discard two Fire Energy attached to Entei or this attack does nothing.`],
+  7:[`Attach one Fire Energy from the Basic Energy supply to Ho-oh.`,`Heads: choose any opposing Pokémon and deal 40 damage, ignoring Weakness and Resistance. Tails: no damage.`,`Flip a coin. On tails, this attack misses completely.`],
+  8:[`Discard one attached Fire Energy or this attack fails. Attach a discarded Darkness Energy to Houndoom if available.`,`Flip once for each Darkness Energy attached to Houndoom; deal 10 extra damage per heads.`],
+  9:[`Evolve any number of your Hoppip and Skiploom by finding their matching evolution cards in your deck.`,`Deal 30 damage.`],
+  10:[`Attach one discarded Lightning Energy to Magneton, if available.`],
+  11:[`Put the defender to Sleep and mark it as hit by Night Eyes.`,`Knock out the defender if it is still Asleep and was hit by Night Eyes last turn.`],
+  12:[`Flip a coin. On heads, choose Sleep, Confusion or Paralysis for the defender.`],
+  13:[`Flip a coin. On tails, Raikou damages itself for 20.`],
+  14:[`Flip two coins: two heads Paralyze; exactly one heads puts the defender to Sleep.`],
+  15:[`Heads: prevent all attacks and effects against Aerodactyl next turn. Tails: no damage or effect.`],
+  16:[`Flip a coin for each Energy attached to the defender. Add 10 damage per heads; heal Celebi by the actual damage dealt.`],
+  17:[`Flip two coins. For every tails, discard one of Entei's attached Fire Energy.`],
+  18:[`Add 10 damage for each different Basic Energy type attached to Ho-oh.`],
+  19:[`Use an attack on Kingdra's underlying Basic or Evolution cards without paying its Energy cost.`,`Flip twice. Discard an Energy from the defender for each heads; two tails means no damage.`],
+  20:[`You may flip a coin: heads doubles this attack's damage to 80; tails makes it miss.`],
+  21:[`Flip a coin. Heads: Paralyze the defender.`,`You may discard all attached Lightning Energy. If you do, this attack deals 80 instead of 40 damage.`],
+  22:[`Heads: deal 20 extra damage to one opposing Benched Pokémon, ignoring Weakness and Resistance.`],
+  23:[`Flip two coins; deal 10 damage per heads.`,`Flip a coin. On heads, prevent all damage and other attack effects against Skarmory next turn.`],
+  24:[`Heads: discard all Trainer cards attached to your opponent's Pokémon.`,`Flip a coin. On heads, deal 20 additional damage.`],
+  25:[`Flip a coin. On heads, Confuse the defender.`,`Choose a non-Colorless Energy type. Deal 20 damage to every opposing Pokémon carrying that Energy type, ignoring Weakness and Resistance.`],
+  26:[`Flip two coins; deal 20 damage per heads.`],
+  27:[`Heads: deal 10 extra damage. Tails: after dealing damage, the opponent switches their Active Pokémon with a Benched Pokémon.`],
+  28:[`Deal 20 damage.`,`Heads: deal 10 to each opposing Benched Pokémon as well.`],
+  29:[`Until the end of your next turn, attacks against this defender deal 20 extra damage.`,`Poison the defender and heal Golbat by half the damage actually dealt, rounded up to a damage counter.`],
+  30:[`Deal 10 damage to each of your own Benched Pokémon.`,`Deal 50 damage, ignoring the defender's Resistance.`],
+  31:[`Put the defending Pokémon to Sleep.`,`Heads: deal 20 extra damage and Confuse the defender.`],
+  32:[`Flip a coin. On heads, Confuse the defending Pokémon.`],
+  33:[`You may discard any number of attached Fire Energy. Add 20 damage for each card discarded.`],
+  34:[`Flip a coin. On heads, Paralyze the defender.`,`Heads: the defender must flip a coin whenever it attacks next turn; on tails, that attack fails.`],
+  35:[`Flip a coin. On heads, put the defending Pokémon to Sleep.`],
+  36:[`Remove up to 30 damage from Piloswine.`,`Piloswine damages itself for 30 and cannot use High-Speed Charge next turn.`],
+  37:[`Flip a coin. On heads, add 10 damage.`,`Flip two coins. If both are heads, add 40 damage.`],
+  38:[`Choose one attack on a Basic defender. It cannot use that attack next turn.`,`If you have a Bench, flip a coin. On tails, deal 10 damage to one of your own Benched Pokémon.`],
+  39:[`Deal 10 damage.`],
+  40:[`Deal 10 damage.`],
+  41:[`Choose an attached Trainer card on an opposing Pokémon and shuffle it into your opponent's deck.`,`Deal 20 damage.`],
+  42:[`Flip a coin. On heads, add 10 damage.`,`If the defender attacks Chinchou next turn, its damage is reduced by 10 before Weakness and Resistance.`],
+  43:[`Deal 10 damage.`,`Deal 40 damage. Farfetch'd cannot use Leek Jab next turn unless it leaves the Active spot.`],
+  44:[`Deal 20 damage.`],
+  45:[`Flip two coins; deal 10 damage per heads.`],
+  46:[`Find another Murkrow in your deck and put it on your Bench if there is space.`,`Flip once for each Murkrow on your Bench; add 10 damage per heads.`],
+  47:[`Flip a coin. On heads, put the defender to Sleep.`,`Deal 20 damage.`],
+  48:[`Deal 30 damage.`,`Discard one Energy attached to the defending Pokémon, if it has any.`],
+  49:[`Flip a coin. On heads, Poison the defender.`,`Keep flipping until tails; deal 20 damage for each heads in the streak.`],
+  50:[`Heads: choose any opposing Pokémon and deal 20 damage to it, ignoring Weakness and Resistance.`],
+  51:[`Flip a coin. On heads, Poison the defender for 20 between-turn damage instead of the usual 10.`],
+  52:[`Deal 20 damage.`,`Flip a coin. On heads, Confuse the defender.`],
+  53:[`Deal 10 damage.`,`The defender cannot retreat during its next turn.`],
+  54:[`Heads: shuffle one Special Energy attached to any opposing Pokémon into your opponent's deck.`],
+  55:[`Deal 10 damage.`,`Heads: add 10 damage for every damage counter currently on Snubbull.`],
+  56:[`Deal 10 damage.`,`Flip a coin. On heads, Paralyze the defender.`],
+  57:[`Deal 10 damage.`,`Swinub deals 10 damage to itself.`],
+  58:[`Deal 10 damage.`],
+  59:[`Deal 10 damage.`,`Poison the defending Pokémon.`],
+  65:[`Flip a coin. On heads, add 10 damage for each damage counter on Shining Gyarados; on tails, this attack misses.`,`Discard two attached Fire Energy or this attack fails. Deal 10 to each opposing Benched Pokémon. On heads, also discard one Energy from each opposing Pokémon.`],
+  66:[`The opponent may draw two cards. Whether or not they do, you may draw two cards.`,`Search your deck for Gyarados, Dark Gyarados or Shining Gyarados, reveal it and add it to your hand.`]
+};
+const POWER_TEXT={
+  2:`When you evolve Chansey into Blissey, flip a coin. Heal 80 damage on heads or 40 on tails.`,
+  3:`If an attack would knock out Celebi, flip a coin. On heads, shuffle Celebi and its attached cards into your deck instead. Disabled by status conditions.`,
+  6:`When you play Entei, you may discard five cards from your deck; attach any Fire Energy revealed to Fire Pokémon. Using this Power ends your turn.`,
+  10:`Move an attached Energy between your Magnemite, Magneton or Dark Magneton as often as you like before attacking. Disabled by status conditions.`,
+  12:`Once a turn, temporarily change an attached Basic Energy on one of your Pokémon to a chosen type. Disabled by status conditions.`,
+  13:`When Lightning Energy is attached from hand to Raikou, the opponent must switch their Active Pokémon with a Benched Pokémon if possible.`,
+  14:`Suicune ignores effects of opposing attacks other than damage. This protection stops when Suicune has a status condition.`,
+  15:`Evolved Pokémon may use attacks from their previous Evolution stages, paying the printed Energy costs. Disabled if Aerodactyl has a status condition.`,
+  17:`While Entei is Active, Trainer effects other than Stadiums cannot affect it or its attached Energy. Attached Trainers are discarded.`,
+  22:`While Raikou is Active, Trainer effects other than Stadiums cannot affect it or its attached Energy. Attached Trainers are discarded.`,
+  26:`While Sudowoodo is Active, it can copy the opponent Active Pokémon's attacks and costs. Disabled by status conditions.`,
+  27:`While Suicune is Active, Trainer effects other than Stadiums cannot affect it or its attached Energy. Attached Trainers are discarded.`,
+  32:`Once a turn, Lanturn can become Water type until your turn ends. Disabled by status conditions.`,
+  33:`When Active Magcargo moves to the Bench, transfer one attached Fire Energy to your new Active Pokémon.`,
+  35:`While Parasect is in play, attacks and Pokémon Powers cannot affect cards in either player's discard pile. Disabled by status conditions.`,
+  39:`Once per turn, move one damage counter from another Unown you own onto Unown [B], provided it has more than 10 HP remaining.`,
+  40:`Once per turn, flip a coin. On heads, fetch one Psychic Energy from the supply and attach it to one of your Unown.`,
+  51:`Whenever Shuckle takes 40 or less attack damage after Weakness/Resistance, reduce that damage to 10. Disabled by status conditions.`,
+  58:`Opposing attacks, Pokémon Powers and Trainers cannot discard Energy from your Pokémon with Unown in their names.`
+};
+
 const RULE_TEXT={
 65:'You cannot have more than one Shining Gyarados in your deck.',
 66:'You cannot have more than one Shining Magikarp in your deck.'};
@@ -180,10 +267,10 @@ const CARDS=DATA.map(line=>{
  const attacks=(moves||'').split(';').filter(Boolean).map((move,i)=>{
   const [title,cost,printed]=move.split('~'),effect=ATTACK[n+':'+i],damage=/[×?]/.test(printed||'')?0:Number(String(printed||'').replace(/[^0-9]/g,''))||0;
   const variable=/[+×?]/.test(printed||'');
-  return {name:title,cost,damage,damageText:variable?printed:null,effect:effect||null,unimplemented:!Object.prototype.hasOwnProperty.call(ATTACK,n+':'+i)||!effectSupported(effect)};
+  return {name:title,cost,damage,damageText:variable?printed:null,effect:effect||null,text:ATTACK_TEXT[n]?.[i]||'',unimplemented:!Object.prototype.hasOwnProperty.call(ATTACK,n+':'+i)||!effectSupported(effect)};
  });
  // Retain printed Power identity even if the bespoke effect is not yet executable.
- const abilities=POWER_NAMES[n]?[{name:POWER_NAMES[n],type:POWER_MODE[n],effect:{type:'neoRule',rule:'revelation:'+POWER_NAMES[n].toLowerCase().replace(/[^a-z]/g,'')},text:n===51?'Whenever Shuckle takes attack damage of 40 or less after Weakness/Resistance, reduce that damage to 10. Stops while Asleep, Confused or Paralyzed.':'Original Neo Revelation Pokémon Power; battle implementation pending.'}]:[];
+ const abilities=POWER_NAMES[n]?[{name:POWER_NAMES[n],type:POWER_MODE[n],effect:{type:'neoRule',rule:'revelation:'+POWER_NAMES[n].toLowerCase().replace(/[^a-z]/g,'')},text:POWER_TEXT[n]||'Consult the printed Pokémon Power.'}]:[];
  const reasons=[];
  if(kind==='pokemon'){
    for(const atk of attacks)if(atk.unimplemented)reasons.push('Printed '+atk.name+' effect needs engine support');

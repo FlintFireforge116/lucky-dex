@@ -27,8 +27,8 @@ test('Neo Revelation has correct browser loading order, nine-set picker and buil
  assert.match(fs.readFileSync(path.join(A,'tcg-classic-deck-editor.js'),'utf8'),/Neo Revelation/);
  assert.match(fs.readFileSync(path.join(A,'tcgp-battle-ui.js'),'utf8'),/Neo Revelation/);
  assert.deepEqual(builder.SET_IDS,opponents.SETS);
- assert.match(fs.readFileSync(path.join(R,'app/build.gradle'),'utf8'),/versionName '0\.69\.102'/);
- assert.match(fs.readFileSync(path.join(A,'app-v0167.js'),'utf8'),/window\.__LUCKYDEX_BUILD='0\.69\.102'/);
+ assert.match(fs.readFileSync(path.join(R,'app/build.gradle'),'utf8'),/versionName '0\.69\.103'/);
+ assert.match(fs.readFileSync(path.join(A,'app-v0167.js'),'utf8'),/window\.__LUCKYDEX_BUILD='0\.69\.103'/);
 });
 test('Neo3 physical ownership mappings, non-owned filtering, and Shining copy cap',()=>{
  const owned=classic.projectOwnedCards([
