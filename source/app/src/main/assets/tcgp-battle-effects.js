@@ -1290,7 +1290,7 @@
       for(const tool of [defender.tool,...(defender.extraTools||[])].filter(Boolean))if(tool.cardId==='SNAPFLORIO-121')total+=30;
     }
     if(board.active===defender&&Object.values(defender.conditions||{}).some(Boolean)){
-      if((board.bench||[]).some(source=>source?.cardId==='SNAPFLORIO-031'&&!abilitiesSuppressed(state,defenderSide,source,cardById)))total+=20;
+      if((board.bench||[]).some(source=>source?.cardId==='SNAPFLORIO-031'&&!abilitiesSuppressed(state,defenderSide,source,cardById)))total+=30;
     }
     return total;
   }
@@ -1299,6 +1299,53 @@
     const ss=own(ctx),foe=other(ctx),rule=effect.rule;
     if(LENTAL_108_RULES.has(rule))return lentalRule108(effect,ctx);
     const log=entry=>ctx.state.log.push({side:ctx.side,type:'lentalRule',rule,...entry});
+
+    // Revised Wurmple #14: swapping after Quick March is optional.
+    if(rule==='optionalQuickMarch'){
+      if(ctx.resolvingChoice){
+        if(ctx.action?.choiceSkip)return;
+        const index=Number(ctx.action?.choiceBenchIndex);
+        if(Number.isInteger(index)&&ss.bench.some(p=>Number(p?.benchSlot)===index)){
+          switchPokemon(ss,index,ctx.state);
+          log({switchedTo:index});
+        }
+        return;
+      }
+      if(ss.bench.length&&typeof ctx.requestChoice==='function')
+        ctx.requestChoice({kind:'pokemon',side:'self',includeActive:false,optional:true,effect});
+      return;
+    }
+    // Revised Swanna ex #46: one counter PER attached Basic Water Energy,
+    // on EACH opposing Bench Pokemon; these are attack-effect counters.
+    if(rule==='torrentSpread'){
+      const count=Math.max(0,Number(ctx.attacker?.energy?.Water||0));
+      if(count>0&&foe.bench.length)
+        applyEffect({type:'benchDamage',side:'opponent',all:true,amount:count*10},ctx);
+      log({waterCards:count,opposingBench:foe.bench.length});
+      return;
+    }
+    // Revised Pikachu #50: only Basic Lightning, not all typed Energy.
+    if(rule==='discardAllBasicLightning'){
+      const pokemon=ctx.attacker,count=Math.max(0,Number(pokemon?.energy?.Lightning||0));
+      if(count){pokemon.energy.Lightning=0;ss.energyDiscard=ss.energyDiscard||{};
+        ss.energyDiscard.Lightning=Number(ss.energyDiscard.Lightning||0)+count;}
+      log({discardedBasicLightning:count});
+      return;
+    }
+    // Revised Vivillon #102: a TRAINER card from discard is returned to deck.
+    if(rule==='compoundEyesTrainer'){
+      const filter={kind:'trainer'};
+      if(ctx.resolvingChoice){
+        const index=ctx.action?.choiceDiscardIndex,ref=Number.isInteger(index)?ss.discard[index]:null;
+        if(ref&&matchesFilter(ctx.cardById(ref.cardId),filter)){
+          ss.deck.push(...ss.discard.splice(index,1));ctx.shuffle?.(ctx.state,ss.deck);
+          log({trainerReturned:ref.cardId});
+        }
+      }else if(ss.discard.some(ref=>matchesFilter(ctx.cardById(ref.cardId),filter)))
+        ctx.requestChoice?.({kind:'discardCard',side:'self',filter,effect});
+      return;
+    }
+
     if(rule==='standoffRevised'){
       // Creator print uses >10 Pokemon; the agreed LuckyDex Classic30
       // compact-board adaptation activates with all 8 ordinary positions full.
@@ -2145,6 +2192,7 @@
       if(rule==='retrieveDarkEnergy'&&neoDiscardAvailable(ctx,ss,'Darkness')<1)return [];
       if(rule==='pastureFields'&&!(ss.energySupply||[]).length)return [];
       if(rule==='crystalbloom'&&(ss.bench.length>=Number(ss.benchLimit||3)||!ss.deck.some(ref=>matchesFilter(ctx.cardById(ref.cardId),{kind:'pokemon',stage:'Basic',nameContains:'Illumina'}))))return [];
+      if(rule==='compoundEyesTrainer'&&!ss.discard.some(ref=>ctx.cardById(ref.cardId)?.kind==='trainer'))return [];
       if(rule==='compoundEyes'&&!ss.discard.length)return [];
       if(rule==='fallenBerries'&&!ss.bench.some(s=>s.damage>0))return [];
       return [{}];

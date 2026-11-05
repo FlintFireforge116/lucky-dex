@@ -212,12 +212,58 @@ const FLORIO_REVISED_STADIUM=Object.freeze({
   118:{trainerType:'Stadium',effect:{type:'stadiumAction',effect:{type:'lentalRule',rule:'standoffRevised'}},
     printedRules:'During each player turn with all 8 normal Classic positions occupied, that player may flip a coin: heads puts 1 damage counter on each opposing Benched Pokémon; tails on each of their own Benched Pokémon.'}
 });
+
+// v0.69.110 — reviewed against the creator's *revised* 123 PNGs.
+// Revalidation is explicit: the remaining changed cards must not inherit
+// the old definitions without another printed-text comparison.
+const FLORIO_REAUDITED_110=new Set([3, 6, 7, 12, 13, 14, 17, 19, 22, 24, 31, 32, 33, 40, 43, 45, 46, 50, 58, 63, 65, 68, 81, 82, 84, 86, 87, 90, 93, 94, 102, 104, 107, 117, 123]);
+const FLORIO_REVISED_110=(()=>{
+  const original=n=>FLORIO_108[n]||FLORIO_NEXT[n]||FLORIO_EXTRA[n]||FLORIO_BATTLE[n]||null;
+  const definitions={};
+  const change=(n,edit)=>{
+    const archived=original(n);
+    if(!archived)throw new Error('Florio re-audit has no prior card: '+n);
+    const spec=JSON.parse(JSON.stringify(archived));edit(spec);
+    definitions[n]=Object.freeze(spec);
+  };
+  change(6,s=>{s.abilities=[{name:'Illumina Glow',type:'activated',oncePerTurn:true,effect:{type:'healSelf',amount:20}}];});
+  change(13,s=>{s.attacks[0].damage=30;}); // Startle: 30, but 0 when undamaged
+  change(14,s=>{s.attacks=[
+    {name:'Quick March',cost:'C',damage:10,effect:{type:'lentalRule',rule:'optionalQuickMarch'}},
+    {name:'Tipped Horn',cost:'GC',damage:20,effect:{type:'status',target:'opponentActive',status:'poison'}}
+  ];});
+  change(17,s=>{s.attacks[0].cost='GC';}); // two flips; both tails zero, both heads Poison + Paralysis
+  change(19,s=>{s.attacks[1].cost='GC';});
+  change(22,s=>{s.attacks[1].name='Buzzy Buzz';});
+  change(24,s=>{s.attacks=[
+    {name:'Anger Scent',cost:'G',damage:0,effect:{type:'nextAttackBonus',attackName:'Conduct Assault',amount:80}},
+    {name:'Conduct Assault',cost:'GC',damage:40,effect:{type:'fieldCountDamage',side:'self',filter:{name:'Combee'},amount:20}}
+  ];});
+  change(40,s=>{s.attacks[0].effect={type:'sequence',effects:[
+    {type:'energyDamage',source:'self',energyType:'Fire',extraAbove:1,amount:10},
+    {type:'status',target:'opponentActive',status:'burn'}
+  ]};});
+  change(43,s=>{s.attacks[0].effect={type:'searchChosen',source:'deck',filter:{kind:'pokemon',evolvesFrom:'Ducklett'},amount:1};});
+  change(45,s=>{s.attacks[0].effect.amount=2;s.attacks[1]={
+    name:'River Rush',cost:'WWC',damage:120,effect:{type:'discardEnergy',target:'self',energyType:'Water',amount:1}
+  };});
+  change(46,s=>{s.retreatWaterMinimum=2;s.attacks[1].effect={type:'lentalRule',rule:'torrentSpread'};});
+  change(50,s=>{s.attacks[0].effect={type:'attachEnergy',source:'hand',target:'self',energyType:'Lightning',amount:1};
+    s.attacks[1]={name:'Ion Tackle',cost:'LLC',damage:60,effect:{type:'lentalRule',rule:'discardAllBasicLightning'}};});
+  change(58,s=>{s.attacks[0].effect.amount=30;});
+  change(93,s=>{s.attacks[0]={name:'Hive Buzz',cost:'C',damage:40,effect:{type:'status',target:'opponentActive',status:'burn',condition:{type:'selfEnergyAtLeast',energyType:'Fire',amount:1}}};});
+  change(102,s=>{s.abilities[0].effect={type:'lentalRule',rule:'compoundEyesTrainer'};});
+  change(107,s=>{s.effect={type:'searchChosen',source:'deck',filter:{nameContains:'Illumina'},amount:1};
+    s.printedRules='Search your deck for a card with Illumina in its name, reveal it, and put it into your hand. Then, shuffle your deck.';});
+  return Object.freeze(definitions);
+})();
+
 const PRINTED_RARITY=Object.freeze({C:'Common',U:'Uncommon',R:'Rare',H:'Rare Holo',X:'Ultra Rare'});
 const RARITY_BY_SET=Object.freeze({"SNAPFLORIO":"CCUHURXXXXUXCCUHCCHRRCURXRXRRXCHUXCCHCCHCHCCUXCHXCUHRXXRHRXRXRXXCHCCURXXUUXXCRRXCCHCHCCHCCHCRXCUXURXRRCRUCCCCCUUUCUUURCRURU","SNAPFOUNJA":"UXCUHURURXUURXRXXRRCHCCUCUHCCRRXRXCCRHRXCCHRRRXHUUUXURHCCUHRRRXXRRRCCHRRRURRRURCUCURCR"});
 function printedRarity(key,number){const symbol=RARITY_BY_SET[key]?.[number-1];return PRINTED_RARITY[symbol]||'Unknown';}
 // The creator's PRINTED card names are authoritative; the archival PNG
 // filenames omitted Illumina prefixes on these numbered prints.
-const ILLUMINA_FLORIO=new Set([10,16,23,25,28,30,32,34,37,39,40,48,55,57,59,60,70,71,75,80,85,91,94,97,99,100]);
+const ILLUMINA_FLORIO=new Set([6,10,16,23,25,28,30,32,34,37,39,40,48,55,57,59,60,70,71,75,80,85,91,94,97,99,100]);
 const INTERNAL_BASIC_ENERGY=Object.freeze({
  'lental-basic-darkness':Object.freeze({id:'lental-basic-darkness',name:'Basic Darkness Energy',kind:'energy',subtype:'Darkness',basicEnergy:true,battleEnabled:false,deckEligible:false,battleFormat:'classic',source:'tcg',setId:'lental-energy-only',image:'https://images.pokemontcg.io/sve/7.png'}),
  'lental-basic-metal':Object.freeze({id:'lental-basic-metal',name:'Basic Metal Energy',kind:'energy',subtype:'Metal',basicEnergy:true,battleEnabled:false,deckEligible:false,battleFormat:'classic',source:'tcg',setId:'lental-energy-only',image:'https://images.pokemontcg.io/sve/8.png'})
@@ -227,12 +273,12 @@ for(const [key,meta] of Object.entries(RAW)){
   SETS.push(Object.freeze({id:key,name:meta.name,series:'New Pokémon Snap',cardCount:meta.cards.length,fanMade:true}));
   for(const [number,name,kind] of meta.cards){
     const id=`${key}-${String(number).padStart(3,'0')}`;
-    const spec=key==='SNAPFLORIO'&&!FLORIO_PENDING_REAUDIT.has(number)?(FLORIO_REVISED_STADIUM[number]||FLORIO_108[number]||FLORIO_NEXT[number]||FLORIO_EXTRA[number]||FLORIO_BATTLE[number]||null):null;
+    const spec=key==='SNAPFLORIO'&&(!FLORIO_PENDING_REAUDIT.has(number)||FLORIO_REAUDITED_110.has(number))?(FLORIO_REVISED_110[number]||FLORIO_REVISED_STADIUM[number]||FLORIO_108[number]||FLORIO_NEXT[number]||FLORIO_EXTRA[number]||FLORIO_BATTLE[number]||null):null;
     const displayName=key==='SNAPFLORIO'?(number===12?'Heracross ex':ILLUMINA_FLORIO.has(number)?'Illumina '+name:name):name;
     const card=Object.freeze({id,name:displayName,number:String(number),setId:key,kind,
       source:'tcg',battleFormat:'classic',rarity:printedRarity(key,number),types:spec?.type?[spec.type]:[],
       ...(spec?.trainerType?{trainerType:spec.trainerType,effect:spec.effect,printedRules:spec.printedRules||'',...(spec.onAttach?{onAttach:spec.onAttach}:{})}:{}),
-      ...(spec?.type?{stage:spec.stage||'Basic',subtype:spec.type,hp:spec.hp,retreat:spec.retreat,weakness:spec.weakness,weaknessValue:spec.weakness?'×2':null,resistance:spec.resistance||null,resistanceValue:spec.resistanceValue||null,evolvesFrom:spec.evolvesFrom||null,attacks:spec.attacks||[],abilities:spec.abilities||[],points:spec.prizeCards||1,isEx:!!(spec.prizeCards&&spec.prizeCards>1),...(spec.prizeCards?{prizeCards:spec.prizeCards}:{}),...(spec.retreatZeroWithWater?{retreatZeroWithWater:true}:{})}:{}),
+      ...(spec?.type?{stage:spec.stage||'Basic',subtype:spec.type,hp:spec.hp,retreat:spec.retreat,weakness:spec.weakness,weaknessValue:spec.weakness?'×2':null,resistance:spec.resistance||null,resistanceValue:spec.resistanceValue||null,evolvesFrom:spec.evolvesFrom||null,attacks:spec.attacks||[],abilities:spec.abilities||[],points:spec.prizeCards||1,isEx:!!(spec.prizeCards&&spec.prizeCards>1),...(spec.prizeCards?{prizeCards:spec.prizeCards}:{}),...(spec.retreatZeroWithWater?{retreatZeroWithWater:true,retreatWaterMinimum:Number(spec.retreatWaterMinimum||1)}:{})}:{}),
       image:`https://luckydex.local/card-art/${key}/cards/${String(number).padStart(3,'0')}.webp`,
       battleEnabled:!!spec,deckEligible:!!spec,
       support:spec?{status:'FULL',reasons:[]}:{status:'PARTIAL',reasons:[key==='SNAPFLORIO'&&FLORIO_PENDING_REAUDIT.has(number)?'Creator updated this printed card; gameplay awaits revised-card audit.':'Printed gameplay not fully audited; do not enable placeholder attacks.']}});

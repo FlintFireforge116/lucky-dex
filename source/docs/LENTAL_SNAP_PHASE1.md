@@ -118,3 +118,14 @@ mechanics tests pass.
 * Source ZIP did not include new booster pack artwork; prior pack art is retained.
 * Rarity tiers come from earlier printed symbols and require a follow-up audit
   against the revised prints, not fabricated replacements.
+
+## v0.69.110 — revised Florio card re-audit (first restoration batch)
+
+* 35 previously disabled Florio cards were checked against their v2 printed text
+  and restored with amended attack costs, damage, names, and special effects.
+* Notable updated rules: Wurmple, Vespiquen, Swanna ex, Pikachu, Vivillon,
+  Crystalbloom and Fungal Shield. Optional Quick March uses a choice prompt.
+* Florio 123 and Founja 86 catalogue identities, 10-card booster rates, existing
+  save/ownership IDs and image ZIPs remain unchanged.
+* Cards not in the revised re-audit list remain gated pending full verification.
+* Classic battle behaviours must still be tested in an actual APK.

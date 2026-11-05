@@ -160,7 +160,7 @@
     const c=recordFields(record),key=set._libraryKey,file=record?.file||c.file||'';
     const card=cardFromIndexRecord(record,set);
     if(key==='SNAPFLORIO'){
-      const number=Number(card.number),illumina=new Set([10,16,23,25,28,30,32,34,37,39,40,48,55,57,59,60,70,71,75,80,85,91,94,97,99,100]);
+      const number=Number(card.number),illumina=new Set([6,10,16,23,25,28,30,32,34,37,39,40,48,55,57,59,60,70,71,75,80,85,91,94,97,99,100]);
       if(number===12)card.name='Heracross ex';
       else if(illumina.has(number)&&!/^Illumina\s/i.test(card.name))card.name='Illumina '+card.name;
     }

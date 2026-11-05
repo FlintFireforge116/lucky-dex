@@ -431,7 +431,7 @@
     if(state.stadium){const source=ss.active||ss.bench[0];if(source){const ctx={...effectContext(state,side,{},source),eventData:meta};effects.applyPersistentEvent(data.cardById(state.stadium.cardId)?.effect,event,ctx);}}
   }
   function retreatCost(state,side){const slot=state.sides[side].active;const gym=data.cardById(state.stadium?.cardId)?.id,ownerName=data.cardById(slot.cardId)?.name||'';let stadiumCost=gym==='gym1-104'?1:gym==='gym1-108'&&ownerName.startsWith("Misty's")?-1:0;
-    if(gym==='SNAPFLORIO-111'&&data.cardById(slot.cardId)?.stage==='Basic')stadiumCost-=1;if(data.cardById(slot.cardId)?.retreatZeroWithWater&&(Number(slot.energy?.Water||0)>0||(slot.specialEnergy||[]).some(r=>Number(r.provides?.Water||data.cardById(r.cardId)?.effect?.provides?.Water||0)>0)))return 0;
+    if(gym==='SNAPFLORIO-111'&&data.cardById(slot.cardId)?.stage==='Basic')stadiumCost-=1;if(data.cardById(slot.cardId)?.retreatZeroWithWater&&(Number(slot.energy?.Water||0)+(slot.specialEnergy||[]).reduce((n,r)=>n+Number(r.provides?.Water||data.cardById(r.cardId)?.effect?.provides?.Water||0),0))>=Number(data.cardById(slot.cardId)?.retreatWaterMinimum||1))return 0;
     return Math.max(0,Number(data.cardById(slot.cardId).retreat||0)+effects.modifierAmount(state,side,slot,'retreatCost',data.cardById)+stadiumCost);}
   function attackCost(state,side,attack){const slot=state.sides[side].active;let cost=effects.attackCostOverride(state,side,slot,attack,data.cardById)??attack.cost??'';
     if(state.format==='classic'&&state.stadium?.cardId==='SNAPFLORIO-120'&&data.cardById(slot.cardId)?.types?.some(t=>t==='Grass'||t==='Colorless')){
