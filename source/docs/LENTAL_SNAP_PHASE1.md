@@ -40,3 +40,24 @@ No final packshot or gameplay text was supplied. Do not mark cards FULL or
 create artificial mechanics. When the author supplies the master sheet, replace
 provisional booster collation with exact rarities and enable cards only after
 mechanics tests pass.
+
+## v0.69.105 — printed rarities and audited battle slice
+
+* Blushing Beach (19 unfinished cards) is removed from all in-app Lental
+  catalogues, booster selection and Classic battle card definitions. Its GitHub
+  release ZIP remains archived, and no owned-card saves are deleted.
+* Florio (123) and Founja (86) use the **actual printed rarity symbols**:
+  circle=Common, diamond=Uncommon, star=Rare, gold/bright star=Rare Holo,
+  two stars=Ultra Rare. These are physical card-face rarity annotations, not
+  guessed Pokémon-name rarity or a generic Unknown tier.
+* Five-card Lental booster slots: 2 Common / 2 Uncommon / 1 Rare-or-better,
+  using the existing LuckyDex coin cost, rarity classifier and pack economy.
+* First verified FULL Florio cards in Classic TCG: #001 Caterpie,
+  #004 Caterpie, #006 Pinsir, #018 Shroomish, #019 Shroomish,
+  #035 Grookey, #036 Grookey, #082 Hoothoot, #086 Taillow. Their complete printed attacks, HP, Energy costs, Weakness and
+  Retreat have been transcribed. No moves have placeholder effects.
+* All remaining Florio cards stay PARTIAL and explicitly unplayable until
+  their entire original printed gameplay is audited, including the agreed
+  Crystalbloom / Murkrow / Dream Garden / Pichu-Grookey changes. Founja remains
+  collection-only for now.
+* We deliberately have NOT edited the creator's existing artwork ZIPs.

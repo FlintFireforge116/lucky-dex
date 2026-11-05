@@ -91,7 +91,7 @@
   const LENTAL_SETS=Object.freeze([
     ['SNAPFLORIO','New Pokémon Snap — Florio Nature Park',123],
     ['SNAPFOUNJA','New Pokémon Snap — Founja Jungle',86],
-    ['SNAPBEACH','New Pokémon Snap — Blushing Beach',19]
+    /* Blushing Beach is unfinished, intentionally excluded from the catalogue. */
   ].map(([key,name,total])=>Object.freeze({id:`library:${key}`,name,
     releaseDate:'',cardCount:{total,official:total},cards:[],
     _libraryKey:key,_libraryCode:key,_librarySeries:'New Pokémon Snap',
@@ -152,7 +152,7 @@
   }
   function cardFromIndexRecord(record,set){
     const c=recordFields(record),key=set._libraryKey;
-    const rarity=window.LuckyDexCardRarity?.normalizedPrintedRarity?.({rarity:c.rarity,localId:c.number,number:c.number,setId:set.id,setName:set.name},set)||c.rarity||'Unknown';
+    const rarity=set?._lentalSet===true?(window.LuckyDexClassicTCGLental?.cardById(c.id)?.rarity||'Unknown'):(window.LuckyDexCardRarity?.normalizedPrintedRarity?.({rarity:c.rarity,localId:c.number,number:c.number,setId:set.id,setName:set.name},set)||c.rarity||'Unknown');
     return {id:c.id||`${key}-${c.number}`,name:c.name||'Unknown card',localId:c.number,number:c.number,rarity,image:c.url,set:{id:set.id,name:set.name,releaseDate:set.releaseDate,cardCount:{total:set.cardCount?.total||0}},setId:set.id,setName:set.name,source:'tcg',_libraryNative:true,_librarySetKey:key,_libraryCanonicalId:c.id,_libraryExactRemote:true,_libraryVariant:c.variant,_artIdentityVerified:true,_artSource:'luckydex-index-v1'};
   }
   function cardFromInstalledRecord(record,set){

@@ -169,7 +169,7 @@
   function lentalPreviewProfile(){
     return Object.freeze({id:'lental_preview_5',source:'tcg',cardCount:5,price:450,
       rateFamily:'special-flexible',productKind:'booster',purchasable:true,parent:null,
-      slots:Object.freeze(Array.from({length:5},(_,i)=>slot(`lental-${i+1}`,'core',ANY,{specialRule:'lental-preview'})))});
+      slots:Object.freeze([slot('lental-common-1','core',LOW),slot('lental-common-2','core',LOW),slot('lental-uncommon-1','core',MID),slot('lental-uncommon-2','core',MID),slot('lental-rare','core',RARE,{rareOrHigher:true})])});
   }
   function resolve(set={},source='tcg'){
     if(source==='tcgp')return pocketProfile(set);
