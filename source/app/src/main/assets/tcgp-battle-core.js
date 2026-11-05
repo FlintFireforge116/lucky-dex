@@ -368,7 +368,10 @@
         }
         // Only effects that explicitly opt in can recover attached Special
         // Energy. Other Energy-source effects continue selecting Basic Energy.
-        if(p.includeSpecial)for(const ref of slot.specialEnergy||[])out.push({...target,effectSpecialEnergyUid:ref.uid});
+        if(p.includeSpecial)for(const ref of slot.specialEnergy||[]){
+          const provides=specialEnergyProvides(ref);
+          if(!p.energyTypes||p.energyTypes.some(t=>Number(provides[t]||0)>0))out.push({...target,effectSpecialEnergyUid:ref.uid});
+        }
       }
     }else if(p.kind==='energyTarget'){
       const energyTypes=(p.energyTypes||[]).filter(Boolean);for(const slot of [ss.active,...(ss.bench||[])].filter(Boolean)){const card=data.cardById(slot.cardId);if(p.filter&&!effects.matchesFilter(card,p.filter,slot))continue;for(const energyType of energyTypes)out.push({type:'effectChoice',choiceTarget:slot===ss.active?'active':'bench',choiceBenchIndex:slot===ss.active?undefined:Number(slot.benchSlot),choiceCardId:slot.cardId,effectEnergyType:energyType});}
@@ -552,7 +555,7 @@
     });
     // Classic's Energy Zone is the one-per-turn placement. Special Energy
     // cards are extra attachments and can be stacked before or after it.
-    if(state.format==='classic'){s.hand.forEach((ref,handIndex)=>{const card=data.cardById(ref.cardId);if(!(card?.specialEnergy||card?.basicEnergy)||card.battleEnabled===false&& !card.basicEnergy)return;if(card.basicEnergy&&s.energyUsed&&!ref.zoneGenerated)return;if(s.active&&!s.active.gymEnergyLock)actions.push({type:'attachSpecial',handIndex,cardId:card.id,target:'active'});for(const slot of s.bench)if(slot&&!slot.gymEnergyLock)actions.push({type:'attachSpecial',handIndex,cardId:card.id,target:'bench',benchIndex:Number(slot.benchSlot)});});}
+    if(state.format==='classic'){s.hand.forEach((ref,handIndex)=>{const card=data.cardById(ref.cardId);if(!(card?.specialEnergy||card?.basicEnergy)||card.battleEnabled===false&& !card.basicEnergy)return;if(card?.specialEnergy&&effects.isActionLocked(state,side,'SpecialEnergy',data.cardById))return;if(card.basicEnergy&&s.energyUsed&&!ref.zoneGenerated)return;if(s.active&&!s.active.gymEnergyLock)actions.push({type:'attachSpecial',handIndex,cardId:card.id,target:'active'});for(const slot of s.bench)if(slot&&!slot.gymEnergyLock)actions.push({type:'attachSpecial',handIndex,cardId:card.id,target:'bench',benchIndex:Number(slot.benchSlot)});});}
     if(state.stadium){const stadium=data.cardById(state.stadium.cardId),actionEffect=stadium?.effect?.type==='stadiumAction'?stadium.effect.effect:null,used=s.stadiumActionUsedTurn===state.turnNumber&&s.stadiumActionUsedUid===state.stadium.uid;if(actionEffect&&!used&&effectChoices(actionEffect,effectContext(state,side)).length)actions.push({type:'stadiumAction',cardId:stadium.id});}
     if (s.energyAvailable && !s.energyUsed){
       if (s.active&&!s.active.gymEnergyLock&&!effects.isActionLocked(state,side,'EnergyActive',data.cardById)) actions.push({type:'attach',target:'active'});
@@ -666,7 +669,7 @@
         state.sides[foeSide].discard.push(fruit);damage=0;
         state.log.push({type:'toolGuard',side:foeSide,toolId:fruit.cardId,prevented:true});}
     }
-    defender.damage=Number(defender.damage||0)+damage;if(damage>0)defender.lastDamageSource={side,uid:attacker.uid,cardId:attacker.cardId,attack:true,turn:state.turnNumber};
+    defender.damage=Number(defender.damage||0)+damage;if(damage>0)effects.florioReactToAttackDamage?.(state,foeSide,defender,side,attacker,damage,data.cardById,random);if(damage>0)defender.lastDamageSource={side,uid:attacker.uid,cardId:attacker.cardId,attack:true,turn:state.turnNumber};
     if(damage>0&&defender.retaliate&&(defender.retaliate.expiresTurn==null||state.turnNumber<=defender.retaliate.expiresTurn)){const amount=Number(defender.retaliate.amount||0);attacker.damage=Number(attacker.damage||0)+amount;state.log.push({type:'retaliate',side:foeSide,amount,cardId:defender.cardId});}
     state.log.push({type:'attack',side,cardId:attacker.cardId,attack:attackName,damage,target:'active',repeat:true});ss.lastAttackName=attackName;ss.lastAttackTurn=state.turnNumber;ss.attackCounts=ss.attackCounts||{};ss.attackCounts[attackName]=Number(ss.attackCounts[attackName]||0)+1;attacker.attackUseCount=Number(attacker.attackUseCount||0)+1;
     if(damage>0){triggerAbilities(state,'damagedByAttack',foeSide,defender);triggerPersistent(state,'damagedByAttack',foeSide,defender,{attacker,damage});}
@@ -1124,7 +1127,7 @@
         state.sides[foeSide].discard.push(fruit);damage=0;
         state.log.push({type:'toolGuard',side:foeSide,toolId:fruit.cardId,prevented:true});}
     }
-    defender.damage=Number(defender.damage||0)+damage;
+    defender.damage=Number(defender.damage||0)+damage;if(damage>0)effects.florioReactToAttackDamage?.(state,foeSide,defender,side,attacker,damage,data.cardById,random);
       if(state.format==='classic'&&damage>0){
         // Resolve reactive attacks before KO; Wobbuffet can counter even when
         // the incoming blow knocks it out.

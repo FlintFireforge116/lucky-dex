@@ -356,6 +356,62 @@ const FLORIO_112=Object.freeze({
   115:{trainerType:'Tool',effect:{type:'noop'},onAttach:{type:'noop'},printedRules:'If the Active Pokémon this Tool is attached to would be damaged by an opponent Pokémon attack, prevent the damage and discard this Tool.'}
 });
 
+
+// v0.69.113: checked against the author's revised Florio v2 card PNGs.
+// Cards still unlisted here remain PARTIAL and cannot enter Classic decks.
+const FLORIO_VERIFIED_113=new Set([16,25,53,54,61,64,67,71,78,80,92,100,106,108,112,121]);
+const FLORIO_113=Object.freeze({
+  16:{type:'Grass',hp:50,retreat:1,weakness:'Fire',resistance:'Fighting',resistanceValue:'-30',abilities:[
+    {name:'Illumina Glow',type:'activated',oncePerTurn:true,effect:{type:'healSelf',amount:10}}],attacks:[
+    {name:'Poison Spray',cost:'GC',damage:20,effect:{type:'lentalRule',rule:'poisonSpray113'}}]},
+  25:{type:'Grass',hp:200,retreat:3,weakness:'Fighting',resistance:'Grass',resistanceValue:'-30',prizeCards:2,abilities:[
+    {name:'Illumina Glow',type:'activated',oncePerTurn:true,effect:{type:'healSelf',amount:30}}],attacks:[
+    {name:'Honey Soak',cost:'G',damage:30},
+    {name:'Majesty Waltz',cost:'GGC',damage:120,effect:{type:'lentalRule',rule:'majestyWaltz113'}}]},
+  53:{type:'Psychic',hp:130,retreat:1,weakness:'Metal',attacks:[
+    {name:'Healing Circle',cost:'PCC',damage:0,effect:{type:'lentalRule',rule:'florgesHealing113'}},
+    {name:'Petal Shower',cost:'PPPC',damage:130}]},
+  54:{type:'Psychic',hp:210,retreat:3,weakness:'Metal',prizeCards:2,abilities:[
+    {name:'Energy Transfer',type:'activated',oncePerTurn:false,effect:{type:'lentalRule',rule:'florgesTransfer113'}}],attacks:[
+    {name:'Pollen Burst',cost:'PPC',damage:140,effect:{type:'coinFlip',heads:{type:'lentalRule',rule:'healBench113',amount:50}}}]},
+  61:{type:'Fighting',hp:220,retreat:3,weakness:'Psychic',prizeCards:2,abilities:[
+    {name:'Counter Strike',type:'passive',effect:{type:'noop'}}],attacks:[
+    {name:'Submission Press',cost:'FFC',damage:200,effect:{type:'selfDamage',amount:30}}]},
+  // The corrected artwork names #64 Torterra VSTAR, Stage 1 from Torterra V;
+  // it awards 2 Prizes, NOT VMAX's 3. Chasm Crash is a VSTAR Power.
+  64:{type:'Fighting',stage:'Stage 1',evolvesFrom:'Torterra V',hp:300,retreat:4,weakness:'Water',prizeCards:2,attacks:[
+    {name:'Break Through',cost:'FC',damage:180,effect:{type:'damageRule',ignoreWeakness:true,ignoreResistance:true}},
+    {name:'Chasm Crash',cost:'FFFC',damage:250,vstarPower:true,effect:{type:'lentalRule',rule:'chasmCrash113'}}]},
+  67:{type:'Darkness',hp:50,retreat:1,weakness:'Psychic',abilities:[
+    {name:'Stun Shock',type:'passive',effect:{type:'noop'}}],attacks:[
+    {name:'Cap Slap',cost:'DC',damage:30}]},
+  71:{type:'Colorless',hp:190,retreat:2,weakness:'Lightning',resistance:'Fighting',resistanceValue:'-30',prizeCards:2,abilities:[
+    {name:'Illumina Glow',type:'activated',oncePerTurn:true,effect:{type:'healSelf',amount:30}}],attacks:[
+    {name:'Spread Wings',cost:'C',damage:40,effect:{type:'sequence',effects:[
+      {type:'actionLock',side:'opponent',cardType:'Tool',duration:'opponentTurn'},
+      {type:'actionLock',side:'opponent',cardType:'SpecialEnergy',duration:'opponentTurn'}]}},
+    {name:'Echoing Call',cost:'C',damage:100,effect:{type:'nextAttackBonus',attackName:'Echoing Call',amount:100}}]},
+  78:{type:'Colorless',hp:180,retreat:3,weakness:'Fighting',attacks:[
+    {name:'Tremendous Yawn',cost:'C',damage:0,effect:{type:'sequence',effects:[
+      {type:'status',target:'opponentActive',status:'sleep'},
+      {type:'status',target:'self',status:'sleep'}]}},
+    {name:'Startling Snore',cost:'CCCC',damage:100,allowAsleep:true,requiresAsleep:true,effect:{type:'lentalRule',rule:'startlingSnore113'}}]},
+  80:{type:'Colorless',hp:230,retreat:4,weakness:'Fighting',resistance:'Psychic',resistanceValue:'-30',prizeCards:2,abilities:[
+    {name:'Illumina Glow',type:'activated',oncePerTurn:true,effect:{type:'healSelf',amount:40}}],attacks:[
+    {name:'Food Rush',cost:'CC',damage:0,effect:{type:'lentalRule',rule:'foodRush113'}},
+    {name:'Stampede',cost:'CCCC',damage:150,effect:{type:'benchDamage',side:'opponent',all:true,amount:30}}]},
+  92:{type:'Colorless',hp:40,retreat:2,weakness:'Lightning',attacks:[
+    {name:'Busy Buzz',cost:'CC',damage:20,effect:{type:'lentalRule',rule:'exactSixPrizes113'}}]},
+  100:{type:'Colorless',hp:220,retreat:1,weakness:'Fighting',resistance:'Psychic',resistanceValue:'-30',prizeCards:2,abilities:[
+    {name:'Illumina Glow',type:'activated',oncePerTurn:true,effect:{type:'healSelf',amount:30}}],attacks:[
+    {name:'Rear Up',cost:'C',damage:0,effect:{type:'lentalRule',rule:'rearUp113'}},
+    {name:'Heavy Hooves',cost:'CCC',damage:160}]},
+  106:{trainerType:'Stadium',effect:{type:'noop'},printedRules:'Whenever a Basic Pokémon is put from the hand onto a Bench, put 2 damage counters on it.'},
+  108:{trainerType:'Stadium',effect:{type:'noop'},printedRules:'Florio Dam expands both Benches to five in LuckyDex Classic30. Excess Pokémon must be discarded when it leaves play.'},
+  112:{trainerType:'Stadium',effect:{type:'noop'},printedRules:'Prevent all damage and effects of attacks done to Benched Pokémon on both sides.'},
+  121:{trainerType:'Tool',effect:{type:'noop'},onAttach:{type:'noop'},printedRules:'Attached Pokémon takes 30 less damage from attacks by Rule Box Pokémon, after Weakness and Resistance.'}
+});
+
 const PRINTED_RARITY=Object.freeze({C:'Common',U:'Uncommon',R:'Rare',H:'Rare Holo',X:'Ultra Rare'});
 const RARITY_BY_SET=Object.freeze({"SNAPFLORIO":"CCUHURXXXXUXCCUHCCHRRCURXRXRRXCHUXCCHCCHCHCCUXCHXCUHRXXRHRXRXRXXCHCCURXXUUXXCRRXCCHCHCCHCCHCRXCUXURXRRCRUCCCCCUUUCUUURCRURU","SNAPFOUNJA":"UXCUHURURXUURXRXXRRCHCCUCUHCCRRXRXCCRHRXCCHRRRXHUUUXURHCCUHRRRXXRRRCCHRRRURRRURCUCURCR"});
 function printedRarity(key,number){const symbol=RARITY_BY_SET[key]?.[number-1];return PRINTED_RARITY[symbol]||'Unknown';}
@@ -371,8 +427,8 @@ for(const [key,meta] of Object.entries(RAW)){
   SETS.push(Object.freeze({id:key,name:meta.name,series:'New Pokémon Snap',cardCount:meta.cards.length,fanMade:true}));
   for(const [number,name,kind] of meta.cards){
     const id=`${key}-${String(number).padStart(3,'0')}`;
-    const spec=key==='SNAPFLORIO'&&(!FLORIO_PENDING_REAUDIT.has(number)||FLORIO_REAUDITED_110.has(number)||FLORIO_VERIFIED_111.has(number)||FLORIO_VERIFIED_112.has(number))?(FLORIO_112[number]||FLORIO_111[number]||FLORIO_REVISED_110[number]||FLORIO_REVISED_STADIUM[number]||FLORIO_108[number]||FLORIO_NEXT[number]||FLORIO_EXTRA[number]||FLORIO_BATTLE[number]||null):null;
-    const displayName=key==='SNAPFLORIO'?(number===12?'Heracross ex':ILLUMINA_FLORIO.has(number)?'Illumina '+name:name):name;
+    const spec=key==='SNAPFLORIO'&&(!FLORIO_PENDING_REAUDIT.has(number)||FLORIO_REAUDITED_110.has(number)||FLORIO_VERIFIED_111.has(number)||FLORIO_VERIFIED_112.has(number)||FLORIO_VERIFIED_113.has(number))?(FLORIO_113[number]||FLORIO_112[number]||FLORIO_111[number]||FLORIO_REVISED_110[number]||FLORIO_REVISED_STADIUM[number]||FLORIO_108[number]||FLORIO_NEXT[number]||FLORIO_EXTRA[number]||FLORIO_BATTLE[number]||null):null;
+    const displayName=key==='SNAPFLORIO'?(number===12?'Heracross ex':number===64?'Torterra VSTAR':ILLUMINA_FLORIO.has(number)?'Illumina '+name:name):name;
     const card=Object.freeze({id,name:displayName,number:String(number),setId:key,kind,
       source:'tcg',battleFormat:'classic',rarity:printedRarity(key,number),types:spec?.type?[spec.type]:[],
       ...(spec?.trainerType?{trainerType:spec.trainerType,effect:spec.effect,printedRules:spec.printedRules||'',...(spec.onAttach?{onAttach:spec.onAttach}:{})}:{}),

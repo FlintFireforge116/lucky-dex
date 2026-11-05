@@ -153,3 +153,18 @@ mechanics tests pass.
   mentions six; no artificial six-Prize starting state was added.
 * Florio art v2, shop booster art, 10-card boosters, ownership IDs, Founja and
   excluded Blushing Beach remain unchanged. In-app playtesting is still needed.
+
+## v0.69.113 — revised Florio playable slice
+
+* 16 revised-card definitions supplied (13 newly enabled, 3 existing corrected): #16, 25, 53, 54, 61, 64,
+  67, 71, 78, 80, 92, 100, 106, 108, 112 and 121 (100/123 overall).
+* Correctly identify #64 as Torterra VSTAR, a Stage 1 worth two Prizes; its
+  Chasm Crash VSTAR Power uses the shared once-per-game limit.
+* Damage-triggered reactions, choice-driven Energy transfer/recovery, Sleep
+  attacks, Stadium protections, Tool locks and the printed six-Prize condition
+  are supported. Energy Transfer can move ANY attached Energy, including
+  Special Energy, as printed. In five-Prize Classic30, Combee #92's exact-six
+  bonus intentionally cannot activate; its base attack is usable.
+* Keep older Florio ownership IDs, existing pack art, ten-card booster rates,
+  Founja catalogue and the exclusion of unfinished Blushing Beach.
+* Still requires Android battle playtesting; unsupported Florio cards stay PARTIAL.
