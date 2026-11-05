@@ -932,8 +932,13 @@
       const [ref] = s.hand.splice(matched.handIndex,1);
       const placed=placeOnBench(s,makePokemonSlot(ref.cardId,s.turnCount,ref.uid),matched.benchIndex);
       state.log.push({type:'bench',side,cardId:ref.cardId,benchIndex:matched.benchIndex});
+      if(state.stadium?.cardId==='SNAPFLORIO-106'&&data.cardById(placed.cardId)?.stage==='Basic'){
+        placed.damage=Number(placed.damage||0)+20;
+        state.log.push({type:'stadiumDamage',side,cardId:placed.cardId,stadium:'SNAPFLORIO-106',amount:20});
+      }
       if(state.stadium?.cardId==='gym2-119'){const heads=random(state)<0.5;state.log.push({type:'coin',side,reason:'Rocket Minefield Gym',heads,results:[heads]});if(!heads)placed.damage=Number(placed.damage||0)+20;}
       triggerAbilities(state,'benched',side,placed,{fromHand:true});
+      if(state.stadium?.cardId==='SNAPFLORIO-106')resolveKnockOut(state,null);
       return state;
     }
     if (matched.type === 'evolve'){

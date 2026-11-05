@@ -129,3 +129,16 @@ mechanics tests pass.
   save/ownership IDs and image ZIPs remain unchanged.
 * Cards not in the revised re-audit list remain gated pending full verification.
 * Classic battle behaviours must still be tested in an actual APK.
+
+## v0.69.111 — more revised Florio Classic30 cards
+
+* 16 further Florio cards revalidated and enabled. 73/123 are now enabled,
+  with 50 still restricted for a later revision.
+* Corrected Wicked Flock's 4 counters for each Murkrow, Dodrio's conditional
+  Fury Jab flips, Water Fountain's shared once-per-turn use, Hoothoot's
+  top-three card choice, and Burrow Mound's on-Bench-from-hand trigger.
+* New cards follow the existing separate Basic Energy discard and Classic30
+  five-Prize hybrid rules; Fun with Friends returns recovered Basic Fire Energy
+  to the main deck exactly as its printed text specifies.
+* Florio artwork v2, 10-card packs, collection save IDs, Founja and excluded
+  Blushing Beach are unchanged. The APK still needs on-device battle tests.

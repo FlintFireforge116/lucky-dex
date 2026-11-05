@@ -258,12 +258,56 @@ const FLORIO_REVISED_110=(()=>{
   return Object.freeze(definitions);
 })();
 
+
+// v0.69.111: 16 revised creator cards verified from Florio Nature Park v2.
+// Where a card previously had a spec, clone it and apply reviewed corrections.
+// No card that still depends on unsupported rules is enabled by this batch.
+const FLORIO_VERIFIED_111=new Set([4,21,39,41,44,53,57,62,74,79,83,85,89,101,106,121]);
+const FLORIO_111=(()=>{
+  const original=n=>FLORIO_REVISED_110[n]||FLORIO_108[n]||FLORIO_NEXT[n]||FLORIO_EXTRA[n]||FLORIO_BATTLE[n]||null;
+  const out={};
+  const revised=(n,edit)=>{const prev=original(n);if(!prev)throw new Error('No prior Florio definition: '+n);const s=JSON.parse(JSON.stringify(prev));edit(s);out[n]=s;};
+  revised(4,s=>{s.abilities=[{name:'Illumina Glow',type:'activated',oncePerTurn:true,effect:{type:'healSelf',amount:10}}];});
+  out[21]={type:'Grass',hp:180,retreat:3,weakness:'Fire',abilities:[
+    {name:'Hibernate',type:'activated',oncePerTurn:true,effect:{type:'attachEnergyFromDiscard',target:'self',amount:1}}],attacks:[
+    {name:'Land Crush',cost:'GGCC',damage:180,effect:{type:'discardEnergyCard',target:'self',energyType:'Grass',amount:2,useCost:true}}]};
+  out[39]={type:'Fire',hp:50,retreat:1,weakness:'Water',resistance:'Grass',resistanceValue:'-30',abilities:[
+    {name:'Illumina Glow',type:'activated',oncePerTurn:true,effect:{type:'healSelf',amount:10}}],attacks:[
+    {name:'Fun with Friends',cost:'CC',damage:0,effect:{type:'lentalRule',rule:'friendsFireRecovery111'}}]};
+  revised(41,s=>{});
+  out[44]={type:'Water',hp:60,retreat:1,weakness:'Lightning',abilities:[
+    {name:'Water Fountain',type:'activated',oncePerTurn:true,effect:{type:'lentalRule',rule:'waterFountain111'}}],attacks:[
+    {name:'Dribble Beak',cost:'WC',damage:20}]};
+  out[53]={type:'Psychic',hp:130,retreat:1,weakness:'Metal',attacks:[
+    {name:'Healing Circle',cost:'PCC',damage:0,effect:{type:'lentalRule',rule:'healingCircle111'}},
+    {name:'Petal Shower',cost:'PPPC',damage:130}]};
+  revised(57,s=>{});
+  revised(62,s=>{s.attacks[0].damage=40;});
+  out[74]={type:'Colorless',hp:110,retreat:1,weakness:'Lightning',attacks:[
+    {name:'Scavenge',cost:'CC',damage:0,effect:{type:'lentalRule',rule:'scavengeItems111'}},
+    {name:'Furious Jab',cost:'CCC',damage:0,damageText:'20×',effect:{type:'lentalRule',rule:'furiousJab111'}}]};
+  out[79]={type:'Colorless',hp:160,retreat:4,weakness:'Fighting',abilities:[
+    {name:'Slumber Party',type:'activated',oncePerTurn:true,effect:{type:'lentalRule',rule:'slumberParty111'}}],attacks:[
+    {name:'Belly Bounce',cost:'CCCC',damage:130}]};
+  out[83]={type:'Colorless',hp:60,retreat:1,weakness:'Lightning',abilities:[
+    {name:"Mind's Eye",type:'activated',oncePerTurn:true,effect:{type:'lentalRule',rule:'mindsEye111'}}],attacks:[
+    {name:'Tumble Down',cost:'CC',damage:20,effect:{type:'damageFromDamage',source:'self',amount:1}}]};
+  revised(85,s=>{s.attacks=[{name:'Wicked Flock',cost:'DC',damage:0,effect:{type:'lentalRule',rule:'wickedFlock111'}}];});
+  out[89]={type:'Colorless',hp:50,retreat:2,weakness:'Fighting',abilities:[
+    {name:'Oblivious',type:'passive',activeOnly:true,effect:{type:'noop'}}],attacks:[
+    {name:'Gnaw',cost:'CC',damage:20,effect:{type:'lentalRule',rule:'bidoofGnaw111'}}]};
+  revised(101,s=>{});
+  out[106]={trainerType:'Stadium',effect:{type:'noop'},printedRules:'Whenever a player puts a Basic Pokemon from hand onto the Bench, put 2 damage counters on that Pokemon.'};
+  revised(121,s=>{});
+  return Object.freeze(out);
+})();
+
 const PRINTED_RARITY=Object.freeze({C:'Common',U:'Uncommon',R:'Rare',H:'Rare Holo',X:'Ultra Rare'});
 const RARITY_BY_SET=Object.freeze({"SNAPFLORIO":"CCUHURXXXXUXCCUHCCHRRCURXRXRRXCHUXCCHCCHCHCCUXCHXCUHRXXRHRXRXRXXCHCCURXXUUXXCRRXCCHCHCCHCCHCRXCUXURXRRCRUCCCCCUUUCUUURCRURU","SNAPFOUNJA":"UXCUHURURXUURXRXXRRCHCCUCUHCCRRXRXCCRHRXCCHRRRXHUUUXURHCCUHRRRXXRRRCCHRRRURRRURCUCURCR"});
 function printedRarity(key,number){const symbol=RARITY_BY_SET[key]?.[number-1];return PRINTED_RARITY[symbol]||'Unknown';}
 // The creator's PRINTED card names are authoritative; the archival PNG
 // filenames omitted Illumina prefixes on these numbered prints.
-const ILLUMINA_FLORIO=new Set([6,10,16,23,25,28,30,32,34,37,39,40,48,55,57,59,60,70,71,75,80,85,91,94,97,99,100]);
+const ILLUMINA_FLORIO=new Set([4,6,10,16,23,25,28,30,32,34,37,39,40,48,55,57,59,60,70,71,75,80,85,91,94,97,99,100]);
 const INTERNAL_BASIC_ENERGY=Object.freeze({
  'lental-basic-darkness':Object.freeze({id:'lental-basic-darkness',name:'Basic Darkness Energy',kind:'energy',subtype:'Darkness',basicEnergy:true,battleEnabled:false,deckEligible:false,battleFormat:'classic',source:'tcg',setId:'lental-energy-only',image:'https://images.pokemontcg.io/sve/7.png'}),
  'lental-basic-metal':Object.freeze({id:'lental-basic-metal',name:'Basic Metal Energy',kind:'energy',subtype:'Metal',basicEnergy:true,battleEnabled:false,deckEligible:false,battleFormat:'classic',source:'tcg',setId:'lental-energy-only',image:'https://images.pokemontcg.io/sve/8.png'})
@@ -273,7 +317,7 @@ for(const [key,meta] of Object.entries(RAW)){
   SETS.push(Object.freeze({id:key,name:meta.name,series:'New Pokémon Snap',cardCount:meta.cards.length,fanMade:true}));
   for(const [number,name,kind] of meta.cards){
     const id=`${key}-${String(number).padStart(3,'0')}`;
-    const spec=key==='SNAPFLORIO'&&(!FLORIO_PENDING_REAUDIT.has(number)||FLORIO_REAUDITED_110.has(number))?(FLORIO_REVISED_110[number]||FLORIO_REVISED_STADIUM[number]||FLORIO_108[number]||FLORIO_NEXT[number]||FLORIO_EXTRA[number]||FLORIO_BATTLE[number]||null):null;
+    const spec=key==='SNAPFLORIO'&&(!FLORIO_PENDING_REAUDIT.has(number)||FLORIO_REAUDITED_110.has(number)||FLORIO_VERIFIED_111.has(number))?(FLORIO_111[number]||FLORIO_REVISED_110[number]||FLORIO_REVISED_STADIUM[number]||FLORIO_108[number]||FLORIO_NEXT[number]||FLORIO_EXTRA[number]||FLORIO_BATTLE[number]||null):null;
     const displayName=key==='SNAPFLORIO'?(number===12?'Heracross ex':ILLUMINA_FLORIO.has(number)?'Illumina '+name:name):name;
     const card=Object.freeze({id,name:displayName,number:String(number),setId:key,kind,
       source:'tcg',battleFormat:'classic',rarity:printedRarity(key,number),types:spec?.type?[spec.type]:[],
