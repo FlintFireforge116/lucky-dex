@@ -550,8 +550,11 @@
         if(card.id!=='gym2-115')for(const slot of s.bench)if(slot&&valid(slot))actions.push({...base,target:'bench',benchIndex:Number(slot.benchSlot)});
       }else if(type==='Tool'){
         if(!effects.supportsEffect(card.effect)||!effects.supportsEffect(card.onAttach))return;
-        if(s.active&&toolsOf(s.active).length<effects.toolCapacity(state,side,s.active,data.cardById))actions.push({...base,target:'active'});
-        for(const slot of s.bench)if(toolsOf(slot).length<effects.toolCapacity(state,side,slot,data.cardById))actions.push({...base,target:'bench',benchIndex:Number(slot.benchSlot)});
+        // Battle Stick's printed Bidoof condition is also a placement rule.
+        // Enforce it here for player, CPU and test harness alike.
+        const validToolTarget=slot=>card.id!=='SNAPFLORIO-103'||/\bBidoof\b/i.test(data.cardById(slot?.cardId)?.name||'');
+        if(s.active&&validToolTarget(s.active)&&toolsOf(s.active).length<effects.toolCapacity(state,side,s.active,data.cardById))actions.push({...base,target:'active'});
+        for(const slot of s.bench)if(validToolTarget(slot)&&toolsOf(slot).length<effects.toolCapacity(state,side,slot,data.cardById))actions.push({...base,target:'bench',benchIndex:Number(slot.benchSlot)});
       }else if(type==='Stadium'){
         if(!s.stadiumUsed&&effects.supportsEffect(card.effect)&&(!state.stadium||data.cardById(state.stadium.cardId).name!==card.name))actions.push(base);
       }else for(const target of effectChoices(card.effect,effectContext(state,side)))actions.push({...base,...target});
@@ -646,7 +649,7 @@
       if(slot.gym2ShapeshiftSource&&(c.sleep||c.confusion||c.paralysis))effects.revertShapeshift(state,slot);
       if(c.poison){const base=typeof c.poison==='object'?Number(c.poison.amount??10):10,amount=Math.max(0,base+effects.modifierAmount(state,side,slot,'poisonDamageBonus',data.cardById));slot.damage+=amount;state.log.push({type:'statusDamage',side,status:'poison',amount});}
       if(c.burn){slot.damage+=20;state.log.push({type:'statusDamage',side,status:'burn',amount:20});const heads=random(state)<0.5;state.log.push({type:'coin',side,heads,status:'burn',results:[heads]});if(heads)delete c.burn;}
-      if(c.sleep){const coins=state.format==='classic'&&state.stadium?.cardId==='SNAPFLORIO-109'?2:typeof c.sleep==='object'?Math.max(1,Number(c.sleep.recoveryCoins||1)):1;let allHeads=true;for(let i=0;i<coins;i++){const heads=random(state)<0.5;state.log.push({type:'coin',side,heads,status:'sleep',results:[heads]});if(!heads)allHeads=false;}if(allHeads)delete c.sleep;}
+      if(c.sleep){const coins=state.format==='classic'&&state.stadium?.cardId==='SNAPFLORIO-109'?2:typeof c.sleep==='object'?Math.max(1,Number(c.sleep.recoveryCoins||1)):1;let allHeads=true;for(let i=0;i<coins;i++){const heads=random(state)<0.5;state.log.push({type:'coin',side,heads,status:'sleep',results:[heads]});if(!heads)allHeads=false;}if(allHeads)delete c.sleep;state.log.push({type:'sleepCheck',side,woke:allHeads,coins});}
       if(c.paralysis&&side===state.activeSide&&Number(c.paralysis.appliedTurn??-1)<state.turnNumber)delete c.paralysis;
     }
   }

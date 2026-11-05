@@ -878,3 +878,13 @@ html.android-native-inset body.tcgp-battle-live .tcgp-live-arena:not(.format-cla
   width:76%!important;max-width:none!important;gap:3px!important;
 }
 .tcgp-live-arena.format-classic.lental-wide-bench .tcgp-live-card-wrap{min-width:0!important}
+
+/* v0.69.117: readable Classic attacks and touch-friendly hand/Energy controls. */
+.tcgp-live-pokemon-actions .tcgp-live-context-action.attack{grid-template-areas:"name damage" "cost damage" "description description";row-gap:4px;height:auto;align-items:start}
+.tcgp-live-context-action.attack .tcgp-live-attack-description{grid-area:description;display:block;margin-top:2px;font-size:11px;line-height:1.35;letter-spacing:0;font-style:normal;font-weight:500;white-space:normal;overflow-wrap:anywhere;color:inherit}
+.tcgp-live-hand-action-sheet .tcgp-live-sheet-card{margin:7px 0 14px}
+.tcgp-live-hand-action-sheet .tcgp-live-actions{margin-top:12px}
+.tcgp-live-play-hint{color:#d3e2e9;font-size:12px;line-height:1.45}
+.tcgp-live-bench-move small{display:block;font-size:11px;line-height:1.4;margin-top:3px}
+.tcgp-live-hand-wrap.playable .tcgp-live-hand-card{border-color:#7bbc87}
+.tcgp-live-energy-source.ready{cursor:pointer}

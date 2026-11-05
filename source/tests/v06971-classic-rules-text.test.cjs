@@ -9,9 +9,11 @@ const ui=require(path.join(dir,'tcgp-battle-ui.js'));
 const forbidden=/^\s*(special effect\.?|effect|see card|unknown|n\/a)\s*$/i;
 
 function hasMeaningfulText(text){return typeof text==='string' && text.trim().length>=12 && !forbidden.test(text);}
-test('every effect-bearing playable Base Set attack, Pokémon Power and Trainer describes its mechanics',()=>{
+test('every effect-bearing pre-Florio Classic attack, Pokémon Power and Trainer has source rules text',()=>{
  const missing=[];
- for(const card of classic.CARDS.filter(c=>c.battleEnabled&&c.deckEligible!==false)){
+ // Florio has engine-derived in-game descriptions rather than source-transcribed text;
+ // its complete attack presentation is audited by v069117-classic-main-combat-mobile.
+ for(const card of classic.CARDS.filter(c=>c.setId!=='SNAPFLORIO'&&c.battleEnabled&&c.deckEligible!==false)){
   for(const attack of card.attacks||[]) if(attack.effect&&!hasMeaningfulText(attack.text||attack.printedText))missing.push(`${card.name}: ${attack.name}`);
   for(const ability of card.abilities||[]) if(ability.effect&&!hasMeaningfulText(ability.text))missing.push(`${card.name}: ${ability.name}`);
   if(card.kind==='trainer'&&card.effect&&!hasMeaningfulText(card.text))missing.push(`Trainer ${card.name}`);

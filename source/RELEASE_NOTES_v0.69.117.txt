@@ -1,0 +1,22 @@
+LuckyDex v0.69.117 — Classic TCG main combat corrections
+Base: install v0.69.116 or merge the earlier patch first.
+Version code: 7097
+
+Main Classic combat (NOT the Substitute Battle Lab):
+- Restrict Florio Nature Park Battle Stick (SNAPFLORIO-103) to Bidoof and Illumina Bidoof when attached, for both human and CPU legal actions.
+- Tap a card in your hand to see its legal plays and an inspect option. Dragging remains supported; dropping appropriate hand cards on the centre lane is now accepted.
+- Tap the Energy Zone for a legal attachment picker. Dragging the Energy onto a Pokémon remains supported. One generated Basic Energy attachment per turn still applies.
+- Render card/attack effect summaries for all 159 attacks across the 123 Florio battle-enabled cards, including descriptions on the active Pokémon action sheet. Summaries reflect implemented logic, not verbatim original printed text.
+- Display the end-turn Asleep coin-flip outcome (woke up / still Asleep) rather than leaving the result ambiguous. A tails can legitimately leave Pokémon Asleep into the next turn.
+- Correctly label the main combat view to distinguish it from the separate Substitute Test Lab.
+- Update rules-text audit to keep the older source-transcribed sets distinct from Florio's dynamic descriptions; new tests cover the Florio descriptions and mobile controls.
+
+Tests: 58 targeted regression tests passed; syntax checks for battle core/UI passed. Headless Chromium mobile smoke verified tapping a hand card opens legal play choices. Physical Android touch behavior has not been verified in-app.
+
+Termux:
+cd ~/lucky-dex
+git pull --rebase origin main
+unzip -o /sdcard/Download/LuckyDex_patch_v0.69.117.zip -d source
+git add source
+git commit -m "v0.69.117 Classic battle interactions and Florio card rules"
+git push origin main
