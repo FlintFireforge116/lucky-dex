@@ -1,0 +1,25 @@
+LuckyDex v0.69.118 — Florio move audit and main Classic TCG mobile interactions
+Base required: v0.69.117 already applied. Version code: 7098.
+
+MAIN CLASSIC COMBAT (not the Substitute Test Lab)
+- Florio Predator Plunge GX: make failure explicit ("NO EFFECT" with logged condition) instead of falsely showing "BLOCKED". The current card-effect data requires DARKNESS Energy attached to the opponent's Active Pokemon; two Water Energy do not satisfy it. Original custom card art/printed text is not bundled with this patch and this rule remains pending source-card confirmation. Darkness Basic and compatible Darkness Special Energy successfully produce the knockout.
+- Pichu & Scorbunny's Surprise!: adapt 'Basic Energy from hand' to the hybrid Classic Energy Zone. Take each player's next Basic Energy from their own ordered Zone and attach to that player's Active Pokemon; do not consume normal once-per-turn attachment. Retain fallback for Basic Energy genuinely held in a player's hand.
+- Illumina Florges VSTAR Garden Flourish: draw Grass Energy from the next Energy Zone entry for eligible Bench targets when the Stadium condition is satisfied. Do not search past a non-Grass next entry; retain genuine held Basic Energy fallback.
+- Florio Pikachu Charge and other source:'hand' Energy-attach effects: adapt to the next matching Energy Zone entry for Classic, otherwise an actual Basic Energy in hand. Never skip an off-type Zone top card or fabricate Energy. Describe the hybrid rule in card details.
+- Classic Active/Bench card taps open their action menus even without enough Energy to attack; make the player Active hit target larger. Active action sheet includes PLAY FROM HAND and ENERGY ZONE buttons; the hand picker lists available cards and legal plays. Cards remain inspectable without legal actions.
+- Mobile drag: prevent ResizeObserver from silently cancelling an in-progress gesture. Preserve visible held-card preview with card-title fallback if artwork fails; give held Energy a high-contrast outline and position previews above/right of the finger. Tapping remains an alternative to drag-and-drop.
+
+TESTING
+- 159 Florio attacks exercised under populated and sparse Classic battle states: 318 resolved attack scenarios with no unhandled exceptions, plus representative Florio activated Powers and Trainers.
+- Targeted regression tests cover Predator Plunge Darkness vs Water and Special Energy, Surprise! both ordered Zones and empty supplies, Garden Flourish Zone order, Pikachu Charge matching/mismatching top and genuine hand fallback, Active/hand control paths and drag-surface code, and prior Classic deck/energy/regression behavior.
+- All 39 targeted Node regression tests passed, JS syntax checks passed.
+- Physical Android touch input/visual sizing has NOT been verified in a device runtime; the gesture repairs must still be smoke-tested in the actual Android app.
+- These tests establish engine behavior and stability against encoded card effects. They do NOT independently verify all custom printed rules against their original creator PNGs.
+
+TERMUX
+cd ~/lucky-dex
+git pull --rebase origin main
+unzip -o /sdcard/Download/LuckyDex_patch_v0.69.118.zip -d source
+git add source
+git commit -m "v0.69.118 Florio moves and Classic touch fixes"
+git push origin main

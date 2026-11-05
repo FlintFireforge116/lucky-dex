@@ -274,7 +274,7 @@
     const source=anchors?.slots?.[boardSlotKey(entry.side,'active',0)]?.rect,targetInfo=attackTargetAnchor(anchors,entry),target=targetInfo?.rect,from=localBox(source,layerRect),to=localBox(target,layerRect);if(!from||!to)return;
     const meta=attackPresentationMeta(entry),dx=to.cx-from.cx,dy=to.cy-from.cy,distance=Math.max(18,Math.hypot(dx,dy)),angle=Math.atan2(dy,dx)*180/Math.PI;
     const fx=appendPresentationNode(stage,`tcgp-present-attack type-${meta.type} intensity-${meta.intensity}${entry?.secondary?' secondary':''}`);fx.style.left=from.cx+'px';fx.style.top=from.cy+'px';fx.style.width=distance+'px';fx.style.setProperty('--tcgp-attack-angle',angle+'deg');
-    const damage=appendPresentationNode(stage,`tcgp-present-damage intensity-${meta.intensity}${entry?.secondary?' secondary':''}`);damage.textContent=meta.damage>0?`−${meta.damage}`:'BLOCKED';damage.style.left=to.cx+'px';damage.style.top=to.cy+'px';
+    const damage=appendPresentationNode(stage,`tcgp-present-damage intensity-${meta.intensity}${entry?.secondary?' secondary':''}`);damage.textContent=meta.damage>0?`−${meta.damage}`:(entry?.displayOutcome||(entry?.damageReason?'BLOCKED':'EFFECT'));damage.style.left=to.cx+'px';damage.style.top=to.cy+'px';
     const content=el('tcgpBattleContent'),attackerNode=content?.querySelector(boardSlotSelector(entry.side,'active',0)),targetNode=content?.querySelector(boardSlotSelector(targetInfo?.side||'',targetInfo?.zone||'active',targetInfo?.index||0));if(!entry?.secondary)attackerNode?.classList.add('tcgp-present-lunge');targetNode?.classList.add('tcgp-present-hit');
     const remove=()=>{attackerNode?.classList.remove('tcgp-present-lunge');targetNode?.classList.remove('tcgp-present-hit');};battlePresentationTimers.push(setTimeout(remove,680));
     if(meta.intensity==='big'||meta.intensity==='finisher')content?.querySelector('.tcgp-live-arena')?.classList.add('tcgp-present-shake');
@@ -312,7 +312,7 @@
     }
     for(const entry of entries.filter(entry=>entry.type==='stadiumAction')){later(t,()=>{const node=el('tcgpBattleContent')?.querySelector('[data-stadium-slot="1"] .tcgp-live-stadium-card');node?.classList.add('tcgp-present-stadium-active');const clear=()=>node?.classList.remove('tcgp-present-stadium-active');battlePresentationTimers.push(setTimeout(clear,620));});t+=reduced?40:280;}
     for(const coinEntry of entries.filter(e=>e.type==='coin')){later(t,()=>spawnCoinRow(stage,coinEntry));t+=reduced?60:Math.max(300,Math.min(850,280+coinSequence(coinEntry).length*70));}
-    const attack=entries.find(e=>e.type==='attack');if(attack){later(t,()=>spawnAttackFx(stage,layerRect,anchors,attack));t+=reduced?80:(attackPresentationMeta(attack).intensity==='finisher'?650:attackPresentationMeta(attack).intensity==='big'?560:450);}
+    const attack=entries.find(e=>e.type==='attack');if(attack){const zeroOutcome=Number(attack.damage||0)===0?(entries.some(e=>e.type==='ko'&&e.side!==(attack.side))?'KNOCK OUT':entries.some(e=>e.type==='lentalRule'&&e.rule==='predatorPlunge114'&&e.conditionFailed)?'NO EFFECT':null):null;const visualAttack=zeroOutcome?{...attack,displayOutcome:zeroOutcome}:attack;later(t,()=>spawnAttackFx(stage,layerRect,anchors,visualAttack));t+=reduced?80:(attackPresentationMeta(attack).intensity==='finisher'?650:attackPresentationMeta(attack).intensity==='big'?560:450);}
     for(const benchHit of entries.filter(e=>e.type==='benchDamage'&&Number(e.amount||0)>0)){const visual=benchDamagePresentationEntry(benchHit);later(t,()=>spawnAttackFx(stage,layerRect,anchors,visual));t+=reduced?40:210;}
     for(const status of entries.filter(e=>e.type==='status'&&Number(e.affectedCount||0)>0)){later(t,()=>{const node=appendPresentationNode(stage,`tcgp-present-status status-${String(status.status||'effect').toLowerCase()}`);node.textContent=String(status.status||'STATUS').toUpperCase();});t+=reduced?40:220;}
     for(const heal of entries.filter(e=>e.type==='heal')){later(t,()=>{const node=appendPresentationNode(stage,'tcgp-present-heal');node.textContent=`+${Number(heal.amount||0)} HP`;});t+=reduced?40:220;}
@@ -434,7 +434,7 @@
     forage114:'Search for cards using Forage.',
     chargedRoast114:'Discard or recover Energy using Charged Roast’s bonus effect.',
     florgesHealing113:'Remove all damage from one of your Benched Pokémon, then discard all Psychic Energy attached to this Pokémon.',
-    florgesGarden114:'If a Stadium is in play, you may attach a Basic Grass Energy from your hand to one of your Benched Pokémon.',
+    florgesGarden114:'If a Stadium is in play, attach the next Grass Energy from your Energy Zone to a Benched Pokémon (or use Grass Energy already in hand).',
     natureStorm114:'Use the once-per-game Nature Storm VSTAR Power.',
     combatDance112:'Place 2 damage counters on each Pokémon in play (yours and your opponent’s) with Fighting Energy attached.',
     rejuvenate:'Heal one of your Pokémon.',
@@ -480,7 +480,7 @@
     if(effect.type==='selfDamage')return `This Pokémon also takes ${n} damage.`;
     if(effect.type==='draw')return `Draw ${n||1} card${n===1?'':'s'}.`;
     if(effect.type==='discardEnergyCard'||effect.type==='discardEnergy')return `Discard ${effect.amount==='all'?'all':n||1} attached ${effect.energyType||'Energy'} ${effect.amount==='all'?'cards':'card(s)'} from ${target==='self'?'this Pokémon':'the selected Pokémon'}.`;
-    if(effect.type==='attachEnergy')return `Attach ${n||1} ${effect.energyType||'Energy'} Energy from ${effect.source||'the Energy Zone'} to ${target==='self'?'this Pokémon':'a Pokémon'}.`;
+    if(effect.type==='attachEnergy')return `Attach ${n||1} ${effect.energyType||'Energy'} Energy from ${effect.source==='hand'?'your hand (or the matching next Energy Zone card in Classic)':effect.source||'the Energy Zone'} to ${target==='self'?'this Pokémon':'a Pokémon'}.`;
     if(effect.type==='benchDamage')return `Deal ${n} damage to ${effect.all?'each ':''}${effect.side==='self'?'your':'the opponent’s'} Benched Pokémon.`;
     if(effect.type==='benchCountDamage')return `Deal ${n} additional damage per qualifying ${effect.pokemonType||''} Benched Pokémon.`;
     if(effect.type==='energyDamage')return `Damage scales by ${Number(effect.amount||10)} for each qualifying attached Energy.`;
@@ -512,9 +512,10 @@
     const defaultTiming=subtype==='Supporter'?'You may play only 1 Supporter during your turn.':subtype==='Tool'?'Attach to 1 of your Pokémon that does not already have a Tool.':subtype==='Stadium'?'Only 1 Stadium may be in play.':'';
     // Keep the printed Trainer effect intact, but explain the Classic Energy
     // Zone adaptation next to it when the original assumes Energy in deck.
+    const florioAdaptation=card.id==='SNAPFLORIO-119'?'<p><b>Classic Energy Zone adaptation:</b> Each player attaches the next Basic Energy from their ordered Energy Zone to their Active Pokémon (in addition to their normal once-per-turn Energy attachment). If a supply is empty, generated Basic Energy already in hand can be used instead.</p>':'';
     const classicAdaptation=card.id==='gym2-124'?'<p><b>Classic 30 adaptation:</b> Basic Energy is not in your deck. Discard up to three cards from the top of your deck and add one Fire Energy card from the Energy Zone to your hand. You can attach it to a Pokémon without using your normal Energy Zone attachment.</p>':'';
     const discoveryAdaptation=card.id==='neo2-48'||card.id==='neo2-51'?'<p><b>Classic compact-board adaptation:</b> This game has three Bench slots. Count the four named Unown across your Active Pokémon and Bench rather than requiring four Benched Unown.</p>':card.id==='neo2-44'||card.id==='neo2-75'?'<p><b>Classic Energy Zone adaptation:</b> Basic Energy is generated separately, so this effect supplies the corresponding Basic Energy directly from the Energy Zone.</p>':'';
-    const trainer=card.kind==='trainer'?`<article><div><b>${esc(card.name)}</b><strong>${esc(subtype)}</strong></div>${paragraph(text(card.text)||text(card.printedRules)||summarizeEffect(card.effect))}${classicAdaptation}${paragraph(text(card.timing)||defaultTiming)}</article>`:'';
+    const trainer=card.kind==='trainer'?`<article><div><b>${esc(card.name)}</b><strong>${esc(subtype)}</strong></div>${paragraph(text(card.text)||text(card.printedRules)||summarizeEffect(card.effect))}${classicAdaptation}${florioAdaptation}${paragraph(text(card.timing)||defaultTiming)}</article>`:'';
     const energy=card.kind==='energy'?`<article><div><b>${esc(card.name)}</b><strong>${card.specialEnergy?'Special Energy':'Basic Energy'}</strong></div>${paragraph(text(card.text)||summarizeEffect(card.effect))}</article>`:'';
     return abilityHtml+attacks+trainer+energy+discoveryAdaptation+(options?.developer?paragraph(supportText(card)):'');
   }
@@ -806,6 +807,10 @@
     if(!currentBattle?.sides?.player?.hand?.[handIndex]||battlePresentationBusy)return;
     battleHandIndex=Number(handIndex);battleInspect=null;battleOverlay='hand-actions';renderBattle();
   }
+  function openHandPicker(){
+    if(!currentBattle||battlePresentationBusy)return;
+    battleInspect=null;battleOverlay='hand-picker';renderBattle();
+  }
   function openEnergyActions(){
     if(!currentBattle||battlePresentationBusy)return;
     const options=actionIndicesFor(action=>action.type==='attach');
@@ -814,6 +819,10 @@
     battleInspect=null;battleOverlay='energy-actions';renderBattle();
   }
   function liveHandAndEnergyOverlayHtml(){
+    if(battleOverlay==='hand-picker'){
+      const hand=currentBattle?.sides?.player?.hand||[];
+      return `<div class="tcgp-live-overlay"><button type="button" class="tcgp-live-overlay-scrim" data-tcgp-action="close-overlay"></button><section class="tcgp-live-sheet tcgp-live-action-sheet"><div class="tcgp-live-sheet-head"><div><small>YOUR HAND</small><h3>Choose a card to play</h3></div><button type="button" class="tcgp-live-sheet-close" data-tcgp-action="close-overlay">×</button></div><div class="tcgp-live-actions">${hand.map((ref,i)=>{const card=data.cardById(ref.cardId),legal=handActionIndices(i).length;return `<button type="button" class="tcgp-battle-action ${legal?'':'secondary'}" data-tcgp-action="open-hand-actions" data-index="${i}">${esc(card?.name||ref.cardId)} · ${legal?`${legal} play${legal===1?'':'s'}`:'Read / no legal plays'}</button>`;}).join('')||'<p class="tcgp-live-play-hint">No cards in hand.</p>'}</div></section></div>`;
+    }
     if(battleOverlay==='energy-actions'){
       const indices=actionIndicesFor(action=>action.type==='attach');
       return `<div class="tcgp-live-overlay"><button type="button" class="tcgp-live-overlay-scrim" data-tcgp-action="close-overlay"></button><section class="tcgp-live-sheet tcgp-live-action-sheet"><div class="tcgp-live-sheet-head"><div><small>ENERGY ZONE</small><h3>Attach Energy</h3></div><button type="button" class="tcgp-live-sheet-close" data-tcgp-action="close-overlay">×</button></div><p class="tcgp-live-play-hint">Choose a Pokémon, or drag the Energy icon onto its card.</p><div class="tcgp-live-actions">${indices.map(i=>`<button type="button" class="tcgp-battle-action" data-tcgp-action="battle-action" data-action-index="${i}">${esc(actionLabel(battleActionCache[i],currentBattle,'player'))}</button>`).join('')}</div></section></div>`;
@@ -828,7 +837,9 @@
     const spec=battlePokemonActionSpec,info=resolveInspect(currentBattle,spec);if(!info?.slot||!info?.card)return'';
     const actions=livePokemonActionsHtml('player',info.zone,spec.index),zoneLabel=info.zone==='active'?'ACTIVE POKÉMON':`BENCH ${Number(spec.index||0)+1}`;
     const benchNote=info.zone==='bench'&&currentBattle?.phase==='battle'?liveBenchReadOnlyMovesHtml(info.card):'';
-    return `<div class="tcgp-live-overlay"><button class="tcgp-live-overlay-scrim" type="button" data-tcgp-action="close-overlay" aria-label="Close Pokémon actions"></button><section class="tcgp-live-sheet tcgp-live-pokemon-action-sheet"><div class="tcgp-live-sheet-head"><div><small>${esc(zoneLabel)}</small><h3>${esc(info.card.name||info.slot.cardId)}</h3></div><button class="tcgp-live-sheet-close" type="button" data-tcgp-action="close-overlay">×</button></div>${benchNote}${currentBattle?.phase==='battle'&&currentBattle.activeSide!=='player'?'<p class="tcgp-live-bench-note">It is the CPU turn. You can inspect this Pokémon now, and act on your next turn.</p>':''}<div class="tcgp-live-pokemon-actions">${actions||(benchNote?'':'<p class="tcgp-battle-note">No battle action is available right now.</p>')}</div><button type="button" class="tcgp-battle-action secondary tcgp-live-card-info-action" data-tcgp-action="inspect-pokemon-from-actions" data-side="player" data-zone="${esc(info.zone)}" data-index="${Number(spec.index||0)}">CARD INFO</button></section></div>`;
+    const yourTurn=currentBattle?.phase==='battle'&&currentBattle?.activeSide==='player'&&!cpuPending;
+    const quickActions=yourTurn?`<div class="tcgp-live-quick-actions"><button type="button" class="tcgp-battle-action secondary" data-tcgp-action="open-hand-picker">PLAY FROM HAND</button><button type="button" class="tcgp-battle-action secondary" data-tcgp-action="open-energy-actions">ENERGY ZONE</button></div>`:'';
+    return `<div class="tcgp-live-overlay"><button class="tcgp-live-overlay-scrim" type="button" data-tcgp-action="close-overlay" aria-label="Close Pokémon actions"></button><section class="tcgp-live-sheet tcgp-live-pokemon-action-sheet"><div class="tcgp-live-sheet-head"><div><small>${esc(zoneLabel)}</small><h3>${esc(info.card.name||info.slot.cardId)}</h3></div><button class="tcgp-live-sheet-close" type="button" data-tcgp-action="close-overlay">×</button></div>${benchNote}${currentBattle?.phase==='battle'&&currentBattle.activeSide!=='player'?'<p class="tcgp-live-bench-note">It is the CPU turn. You can inspect this Pokémon now, and act on your next turn.</p>':''}<div class="tcgp-live-pokemon-actions">${actions||(benchNote?'':'<p class="tcgp-battle-note">No battle action is available right now.</p>')}</div>${quickActions}<button type="button" class="tcgp-battle-action secondary tcgp-live-card-info-action" data-tcgp-action="inspect-pokemon-from-actions" data-side="player" data-zone="${esc(info.zone)}" data-index="${Number(spec.index||0)}">CARD INFO</button></section></div>`;
   }
   function liveDiscardOverlayHtml(){
     if(battleOverlay!=='discard'&&battleOverlay!=='energy-discard')return'';
@@ -1083,6 +1094,7 @@
     if(battlePresentationBusy)return;
     if(action==='explain-unavailable')return toast(btn.dataset.reason||'This action is currently unavailable.');
     if(action==='open-hand-actions')return openHandActions(Number(btn.dataset.index));
+    if(action==='open-hand-picker')return openHandPicker();
     if(action==='open-energy-actions')return openEnergyActions();
     if(action==='inspect-hand-card'){battleInspect=buildInspectSpec('player','hand',Number(btn.dataset.index));battleOverlay='inspect';return renderBattle();}
     if(action==='format-pocket'){battleFormat='pocket';classicDraft=null;return renderHome(true);}
@@ -1219,7 +1231,8 @@
     let ghost=null,moved=false,mode=event.pointerType==='touch'&&host?.scrollWidth>host?.clientWidth?'pending':'drag';
     function makeGhost(){
       ghost=root.document.createElement('div');ghost.className='tcgp-live-hand-drag';
-      if(art)ghost.style.backgroundImage="url('"+art+"')";else ghost.textContent=cardName(ref?.cardId);
+      ghost.textContent=cardName(ref?.cardId);
+      if(art){const img=root.document.createElement('img');img.src=art;img.alt='';img.onerror=()=>img.remove();ghost.appendChild(img);}
       originWrap?.classList.add('tcgp-drag-origin');setHandDragFeedback(handIndex);
       root.document.body.appendChild(ghost);root.document.body.classList.add('tcgp-card-dragging');
     }
@@ -1227,7 +1240,7 @@
       const dx=e.clientX-sx,dy=e.clientY-sy;if(Math.hypot(dx,dy)>6)moved=true;
       if(mode==='pending'&&moved)mode=Math.abs(dx)>Math.abs(dy)*1.2?'scroll':'drag';
       if(mode==='scroll'){host.scrollLeft=scrollStart-dx;return;}
-      if(mode==='drag'&&moved){if(!ghost)makeGhost();ghost.style.transform='translate('+(e.clientX-38)+'px,'+(e.clientY-50)+'px)';}
+      if(mode==='drag'&&moved){if(!ghost)makeGhost();const x=Math.min((root.innerWidth||800)-80,Math.max(0,e.clientX+15)),y=Math.max(0,e.clientY-126);ghost.style.transform='translate('+x+'px,'+y+'px)';}
     }
     function cleanup(){root.document.removeEventListener('pointermove',move,true);root.document.removeEventListener('pointerup',end,true);root.document.removeEventListener('pointercancel',cancel,true);root.document.body.classList.remove('tcgp-card-dragging');originWrap?.classList.remove('tcgp-drag-origin');clearHandDragFeedback();ghost?.remove();if(cancelGesture===cancel)cancelGesture=null;}
     function end(e){
@@ -1239,6 +1252,7 @@
     }
     function cancel(){cleanup();handDragSuppressUntil=Date.now()+250;}
     cancelGesture=cancel;move(event);
+    try{source.setPointerCapture?.(event.pointerId);}catch(_){}
     root.document.addEventListener('pointermove',move,true);root.document.addEventListener('pointerup',end,true);root.document.addEventListener('pointercancel',cancel,true);
   }
 
@@ -1261,7 +1275,7 @@
       if(Math.hypot(e.clientX-sx,e.clientY-sy)>7)moved=true;
       if(!moved)return;
       if(!ghost){ghost=root.document.createElement('div');ghost.className='tcgp-live-energy-drag';ghost.innerHTML=source.querySelector('.tcgp-energy-icon')?.outerHTML||energyIconHtml(source.dataset.energy||'Grass');root.document.body.appendChild(ghost);}
-      ghost.style.transform='translate('+(e.clientX-21)+'px,'+(e.clientY-21)+'px)';
+      const x=Math.min((root.innerWidth||800)-44,Math.max(0,e.clientX+16)),y=Math.max(0,e.clientY-68);ghost.style.transform='translate('+x+'px,'+y+'px)';
     }
     function cleanup(){root.document.removeEventListener('pointermove',move,true);root.document.removeEventListener('pointerup',end,true);root.document.removeEventListener('pointercancel',cancel,true);ghost?.remove();if(cancelGesture===cancel)cancelGesture=null;}
     function end(e){
@@ -1271,14 +1285,17 @@
       applyEnergyDrop(target.dataset.energyZone,Number(target.dataset.energyIndex||0));
     }
     function cancel(){cleanup();}
-    cancelGesture=cancel;root.document.addEventListener('pointermove',move,true);root.document.addEventListener('pointerup',end,true);root.document.addEventListener('pointercancel',cancel,true);
+    cancelGesture=cancel;try{source.setPointerCapture?.(event.pointerId);}catch(_){}root.document.addEventListener('pointermove',move,true);root.document.addEventListener('pointerup',end,true);root.document.addEventListener('pointercancel',cancel,true);
   }
 
   function init(){
     const entry=el('tcgpBattleEntry'),content=el('tcgpBattleContent');if(!entry||!content)return;
     entry.addEventListener('click',open);el('tcgpBattleBack')?.addEventListener('click',back);el('tcgpBattleInfo')?.addEventListener('click',showHelp);el('tcgpBattleHelpClose')?.addEventListener('click',hideHelp);el('tcgpBattleHelpDone')?.addEventListener('click',hideHelp);content.addEventListener('click',contentClick);content.addEventListener('input',contentInput);content.addEventListener('pointerdown',energyPointerDown);content.addEventListener('pointerdown',handPointerDown);
     root.addEventListener?.('beforeunload',event=>{if(screen==='builder'&&root.LuckyDexTCGPDeckEditor?.isDirty?.()){event.preventDefault();event.returnValue='';}});
-    if(root.ResizeObserver)new root.ResizeObserver(()=>{cancelGesture?.();layoutPlayerHand();}).observe(content);else root.addEventListener?.('resize',()=>{cancelGesture?.();layoutPlayerHand();});
+    // A ResizeObserver callback is not a user cancellation. A reflow of the
+    // fan can happen during an Android drag; cancelling here drops the preview
+    // and swallows the tap/pointerup that should have played the card.
+    if(root.ResizeObserver)new root.ResizeObserver(()=>layoutPlayerHand()).observe(content);else root.addEventListener?.('resize',()=>layoutPlayerHand());
   }
   if(root&&root.document){if(root.document.readyState==='loading')root.document.addEventListener('DOMContentLoaded',init,{once:true});else init();}
 

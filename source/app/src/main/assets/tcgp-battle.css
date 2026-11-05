@@ -888,3 +888,15 @@ html.android-native-inset body.tcgp-battle-live .tcgp-live-arena:not(.format-cla
 .tcgp-live-bench-move small{display:block;font-size:11px;line-height:1.4;margin-top:3px}
 .tcgp-live-hand-wrap.playable .tcgp-live-hand-card{border-color:#7bbc87}
 .tcgp-live-energy-source.ready{cursor:pointer}
+
+/* v0.69.118: keep Classic actions touchable regardless of attack eligibility.
+   Larger hit surface is limited to the Classic player Active, not Pocket. */
+.tcgp-live-arena.format-classic .tcgp-live-player-active{width:clamp(62px,16%,76px)!important;top:5%!important;z-index:14!important}
+.tcgp-live-arena.format-classic .tcgp-live-player-active .tcgp-live-card{min-height:76px!important;touch-action:manipulation!important}
+.tcgp-live-quick-actions{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:12px 0 8px}
+.tcgp-live-quick-actions .tcgp-battle-action{min-height:44px;font-size:11px}
+/* Drag imagery is positioned above/right of the finger: show a text fallback
+   while the art loads (or if optional local art is unavailable). */
+.tcgp-live-hand-drag{overflow:hidden;background:#edf6f0!important;font-weight:900;line-height:1.15;overflow-wrap:anywhere;padding:10px 4px;align-content:center}
+.tcgp-live-hand-drag>img{position:absolute;inset:0;display:block;width:100%;height:100%;object-fit:cover;pointer-events:none}
+.tcgp-live-energy-drag{box-shadow:0 3px 0 2px #12354788,0 9px 22px #152e4388;outline:2px solid #fff}

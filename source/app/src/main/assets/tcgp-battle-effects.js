@@ -1651,6 +1651,23 @@
     target.energy[card.subtype]=Number(target.energy[card.subtype]||0)+1;
     ctx.onEnergyAttached?.(target,card.subtype,1);return true;
   }
+  // In Classic30 the Basic Energy deck is the *ordered* Energy Zone, not
+  // a shuffleable collection of Basic Energy cards in hand. Card text which
+  // says "from hand" can consume its next zone card as an extra attachment.
+  // Never search further into the supply for a type: the visible top stays
+  // the same card that the effect actually takes.
+  function florio114AttachZone(ctx,owner,target,requiredType=null){
+    if(!target||!Array.isArray(owner?.energySupply)||!owner.energySupply.length)return null;
+    const type=owner.energySupply[0];
+    if(!type||requiredType&&requiredType!==type)return null;
+    if(neoSupplyTake(ctx,owner,type,1)!==1)return null;
+    target.energy=target.energy||{};
+    target.energy[type]=Number(target.energy[type]||0)+1;
+    ctx.onEnergyAttached?.(target,type,1);
+    ctx.state.log.push({type:'energyFromSupply',side:owner.id||ctx.side,energyType:type,amount:1,
+      remaining:owner.energySupply.length,reason:'Florio Energy Zone attachment'});
+    return type;
+  }
   function florio114ReturnPokemonToHand(ctx,owner,slot,excludeToolId,removeFromBoard=true){
     if(!owner||!slot)return false;
     for(const [i,cardId] of (slot.stack||[slot.cardId]).entries())
@@ -1877,11 +1894,15 @@
       return;
     }
     if(rule==='florgesGarden114'){
-      if(ctx.state.stadium==null||!ss.bench.length||!ss.hand.some(ref=>ctx.cardById(ref.cardId)?.basicEnergy&&ctx.cardById(ref.cardId)?.subtype==='Grass'))return;
+      const handGrass=ss.hand.find(ref=>ctx.cardById(ref.cardId)?.basicEnergy&&ctx.cardById(ref.cardId)?.subtype==='Grass');
+      const zoneGrass=ss.energySupply?.[0]==='Grass';
+      if(ctx.state.stadium==null||!ss.bench.length||(!zoneGrass&&!handGrass))return;
       if(ctx.resolvingChoice&&e.phase==='target'){
+        if(a.choiceSkip)return;
         const slot=ss.bench.find(s=>Number(s.benchSlot)===Number(a.choiceBenchIndex));
-        if(slot){const ref=ss.hand.find(r=>ctx.cardById(r.cardId)?.basicEnergy&&ctx.cardById(r.cardId)?.subtype==='Grass');
-          if(ref)florio114AttachHand(ctx,ss,slot,ref);}
+        if(slot){const attached=zoneGrass?florio114AttachZone(ctx,ss,slot,'Grass'):null;
+          if(attached||handGrass&&florio114AttachHand(ctx,ss,slot,handGrass))
+            log({attachedEnergy:'Grass',to:slot.cardId,source:attached?'Energy Zone':'hand'});}
       }else ask({side:'self',kind:'pokemon',includeActive:false,optional:true,effect:{...e,phase:'target'}});
       return;
     }
@@ -1944,7 +1965,10 @@
       const defender=foe.active;
       const basic=Number(defender?.energy?.Darkness||0)>0;
       const special=(defender?.specialEnergy||[]).some(ref=>Number(ref.provides?.Darkness||ctx.cardById(ref.cardId)?.effect?.provides?.Darkness||0)>0);
-      if(defender&&(basic||special)){defender.damage=Math.max(Number(defender.damage||0),Number(ctx.maxHp?.(ctx.foeSide,defender)||ctx.cardById(defender.cardId)?.hp||0));log({knockedOut:defender.cardId});}
+      if(defender&&(basic||special)){
+        defender.damage=Math.max(Number(defender.damage||0),Number(ctx.maxHp?.(ctx.foeSide,defender)||ctx.cardById(defender.cardId)?.hp||0));
+        log({knockedOut:defender.cardId});
+      }else log({conditionFailed:true,reason:'The opponent’s Active Pokémon needs attached Darkness Energy.'});
       return;
     }
     if(rule==='slumberTime114'){
@@ -2025,22 +2049,18 @@
       ask({side:'self',kind:'pokemon',includeActive:true,optional:true,effect:{...e,phase:'target',left}});return;
     }
     if(rule==='surprise114'){
-      const stage=e.phase||'self',owner=stage==='opponent'?foe:ss;
-      const target=owner.active;
-      if(!target){if(stage==='self'&&foe.active&&basicHand(foe))
-        ask({side:'opponent',kind:'handCard',filter:{basicEnergy:true},effect:{...e,phase:'opponent'}});
-        return;}
-      if(ctx.resolvingChoice){
-        const ref=owner.hand[Number(a.choiceHandIndex)];if(ref&&hasEnergy(ref)){
-          florio114AttachHand(ctx,owner,target,ref);log({attachedEnergy:ref.cardId,owner:stage});}
-        if(stage==='self'&&foe.active&&basicHand(foe))
-          ask({side:'opponent',kind:'handCard',filter:{basicEnergy:true},effect:{...e,phase:'opponent'}});
-        return;
+      // Pichu & Scorbunny's Surprise!: "from hand" means the *next* Basic
+      // Energy in each player's separate supply in our hybrid format.
+      // The effect is in addition to each player's normal turn attachment.
+      for(const owner of [ss,foe]){
+        const target=owner.active;if(!target)continue;
+        const type=florio114AttachZone(ctx,owner,target);
+        if(type){log({owner:owner.id,attachedEnergy:type,source:'Energy Zone'});continue;}
+        // Energy returned to hand by another card is still usable if the
+        // ordered supply is genuinely empty; don't silently discard it.
+        if(!owner.energySupply?.length){const ref=owner.hand.find(hasEnergy);
+          if(ref&&florio114AttachHand(ctx,owner,target,ref))log({owner:owner.id,attachedEnergy:ctx.cardById(ref.cardId).subtype,source:'hand'});}
       }
-      if(basicHand(owner))ask({side:stage==='opponent'?'opponent':'self',kind:'handCard',filter:{basicEnergy:true},
-        effect:{...e,phase:stage}});
-      else if(stage==='self'&&foe.active&&basicHand(foe))
-        ask({side:'opponent',kind:'handCard',filter:{basicEnergy:true},effect:{...e,phase:'opponent'}});
       return;
     }
     throw new Error('Unimplemented revised Florio v114 rule: '+rule);
@@ -2615,6 +2635,12 @@
       case 'attachEnergy':{const recipients=affected(),attachedBySide={player:0,opponent:0};for(const s of recipients){const side=pokemonOn(own(ctx)).includes(s)?ctx.side:ctx.foeSide,owner=ctx.state.sides[side];let amount=Number(effect.amount||0);
           if(effect.source==='hand'){
             amount=0;for(let i=0;i<Number(effect.amount||0);i++){
+              // Hybrid Classic: Basic Energy normally lives in the *ordered*
+              // Energy Zone rather than the deck/hand. An effect requiring
+              // Energy from hand takes the visible next card of the right type
+              // instead. Never search deeper in the zone or skip its top.
+              if(ctx.state.format==='classic'&&owner.energySupply?.[0]===effect.energyType&&neoSupplyTake(ctx,owner,effect.energyType,1)===1){amount++;continue;}
+              // Cards genuinely returned to hand by effects remain usable.
               const idx=owner.hand.findIndex(ref=>{const c=ctx.cardById(ref.cardId);return c?.basicEnergy&&c.subtype===effect.energyType;});
               if(idx<0)break;
               owner.hand.splice(idx,1);amount++;
@@ -3113,7 +3139,7 @@ if(r==='lastResort')return ss.hand.length===0?[{}]:[];if(r==='surgeSwap')return 
     }
     const selector=effect.type==='switch'?(effect.side==='opponent'?'opponentBench':'selfBench'):effect.type==='benchDamage'&&!effect.all?(effect.side==='self'?'selfBench':'opponentBench'):effect.target;
     const choices=targetChoices(selector,ctx);if(!choices.length&&ctx.isAttack&&effect.type!=='selectedDamage')return [{}];
-    const valid=choices.filter(action=>{const list=targets(selector,{...ctx,action}).filter(s=>(!effect.excludeSelf||s!==ctx.attacker)&&(!effect.requirePlayedBeforeTurn||Number(s.playedOnSideTurn)<Number(own(ctx).turnCount))&&matchesFilter(ctx.cardById(s.cardId),effect.filter,s));if((effect.type==='heal'||effect.type==='healSelf')&&!ctx.isAttack)return list.some(s=>Number(s.damage)>0);if(effect.type==='discardEnergy'&&!ctx.isAttack){const needed=effect.amount==='all'?1:Number(effect.amount||0);return list.some(s=>effect.energyType?Number(s.energy[effect.energyType]||0)>=needed:totalEnergy(s.energy)>=needed);}if(effect.type==='attachEnergy'&&!ctx.isAttack){const owner=own(ctx),needed=Number(effect.amount||1);if(effect.source==='hand')return list.length>0&&owner.hand.filter(ref=>{const c=ctx.cardById(ref.cardId);return c?.basicEnergy&&c.subtype===effect.energyType;}).length>=needed;if(Array.isArray(owner.energySupply))return list.length>0&&owner.energySupply.filter(t=>t===effect.energyType).length>=needed;}
+    const valid=choices.filter(action=>{const list=targets(selector,{...ctx,action}).filter(s=>(!effect.excludeSelf||s!==ctx.attacker)&&(!effect.requirePlayedBeforeTurn||Number(s.playedOnSideTurn)<Number(own(ctx).turnCount))&&matchesFilter(ctx.cardById(s.cardId),effect.filter,s));if((effect.type==='heal'||effect.type==='healSelf')&&!ctx.isAttack)return list.some(s=>Number(s.damage)>0);if(effect.type==='discardEnergy'&&!ctx.isAttack){const needed=effect.amount==='all'?1:Number(effect.amount||0);return list.some(s=>effect.energyType?Number(s.energy[effect.energyType]||0)>=needed:totalEnergy(s.energy)>=needed);}if(effect.type==='attachEnergy'&&!ctx.isAttack){const owner=own(ctx),needed=Number(effect.amount||1);if(effect.source==='hand'){const actualHand=owner.hand.filter(ref=>{const c=ctx.cardById(ref.cardId);return c?.basicEnergy&&c.subtype===effect.energyType;}).length;const zone=ctx.state.format==='classic'?(owner.energySupply||[]):[];let zoneTop=0;while(zone[zoneTop]===effect.energyType)zoneTop++;return list.length>0&&(actualHand+zoneTop)>=needed;}if(Array.isArray(owner.energySupply))return list.length>0&&owner.energySupply.filter(t=>t===effect.energyType).length>=needed;}
       if(effect.type==='attachEnergyFromDiscard'&&!ctx.isAttack)return list.length>0&&neoDiscardAvailable(ctx,own(ctx),effect.energyType)>=(effect.upTo?1:Number(effect.amount||1));if(effect.type==='switch')return (effect.side==='opponent'?other(ctx):own(ctx)).active!=null&&list.length>0;return !selector||list.length>0;});
     return valid.length||!ctx.isAttack||effect.type==='selectedDamage'?valid:[{}];
   }
