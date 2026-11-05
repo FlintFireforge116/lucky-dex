@@ -489,10 +489,26 @@
     const source=state?.sides?.[side]?.active,attack=data.cardById(attackCardId||source?.cardId)?.attacks?.[attackIndex];
     if(!source||!attack)return {damage:0,text:'0',variable:false};
     if(attackHasRandom(attack.effect))return {damage:Math.max(0,Number(attack.damage)||0),text:String(attack.damageText??attack.damage??0),variable:true};
-    const snapshot=publicSnapshot(state),foeSide=side==='player'?'opponent':'player',attacker=snapshot.sides[side].active,context={...effectContext(snapshot,side,{},attacker),isAttack:true};
-    const result=effects.resolveAttack(attack,context),defender=result.damageTarget===undefined?snapshot.sides[foeSide].active:result.damageTarget,isActive=defender===snapshot.sides[foeSide].active;
-    let damage=Math.max(0,Number(result.damage)||0);if(isActive&&damage>0)damage+=effects.modifierAmount(snapshot,side,attacker,'attackDamage',data.cardById);
-    return {damage:Math.max(0,damage),text:String(Math.max(0,damage)),variable:false};
+    // Beak Invasion requires a 0-5 card choice before it can resolve. A
+    // damage PREVIEW must never run that choice-dependent effect as though
+    // the player had already selected an option: that threw and made Dodrio ex
+    // (and the entire Active-Pokemon action sheet) unselectable.
+    if(attack.effect?.rule==='beakInvasion112'){
+      const base=Math.max(0,Number(attack.damage)||0),foe=state.sides[side==='player'?'opponent':'player'];
+      const maxCards=Math.min(5,foe?.deck?.length||0);
+      return {damage:base,text:maxCards?`${Math.max(0,base-20*maxCards)}–${base}`:String(base),variable:!!maxCards};
+    }
+    // All other previews are speculative. Some moves require choices or are
+    // unsupported in the current format; they must never break inspection,
+    // attacking, retreating or hand actions. Battle execution is unaffected.
+    try{
+      const snapshot=publicSnapshot(state),foeSide=side==='player'?'opponent':'player',attacker=snapshot.sides[side].active,context={...effectContext(snapshot,side,{},attacker),isAttack:true};
+      const result=effects.resolveAttack(attack,context),defender=result.damageTarget===undefined?snapshot.sides[foeSide].active:result.damageTarget,isActive=defender===snapshot.sides[foeSide].active;
+      let damage=Math.max(0,Number(result.damage)||0);if(isActive&&damage>0)damage+=effects.modifierAmount(snapshot,side,attacker,'attackDamage',data.cardById);
+      return {damage:Math.max(0,damage),text:String(Math.max(0,damage)),variable:false};
+    }catch(_previewError){
+      return {damage:Math.max(0,Number(attack.damage)||0),text:String(attack.damageText??attack.damage??0),variable:true};
+    }
   }
   function attackAvailability(state,side,attackIndex,attackCardId){
     const s=state.sides[side],slot=s?.active,sourceCardId=attackCardId||slot?.cardId,attack=data.cardById(sourceCardId)?.attacks?.[attackIndex];

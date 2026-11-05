@@ -1,0 +1,12 @@
+LuckyDex v0.69.121 - Classic TCG Dodrio ex selection fix
+
+Root cause: The combat action menu calls core.attackDamagePreview for every move even when no Energy is attached. Dodrio ex / Beak Invasion requires a 0-5 card selection, so its preview previously threw "Choose 0-5 cards for Beak Invasion", aborting rendering of the entire action menu. This is NOT a touch hitbox issue.
+
+Changes:
+- A choice-aware preview for Beak Invasion now reports its actual possible 100-200 damage range (depending on opponent deck size); does not execute the effect.
+- All other speculative attack previews now fail safely if an effect needs input or is not supported, without disrupting the battle or masking errors when the actual attack is used.
+- Actual Beak Invasion gameplay and required choice remain unchanged.
+
+Regression: Dodrio ex with 0 Energy, Beak Invasion with sufficient Energy (including all six real choiceOption actions), state/RNG preserved, all 1243 Classic card attack previews.
+
+Patch applies on top of v0.69.120. Extract to source/; do not replace canonical source with a ZIP.
