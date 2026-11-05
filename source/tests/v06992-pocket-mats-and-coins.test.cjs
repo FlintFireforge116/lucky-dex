@@ -76,7 +76,7 @@ test('equipped coin displays on player heads and neutral reverse on tails / oppo
  assert.equal(first,coins.BY_ID['pocket-coin-mewtwo'].artPath);
  assert.equal(cpu,coins.BY_ID['pocket-coin-poke-ball'].artPath);
  assert.match(ui._test.coinPresentationHtml(true,'player',state),/TCGP_Coin_Mewtwo\.png/);
- assert.match(ui._test.coinPresentationHtml(false,'player',state),/TCGP_Coin_Pok%C3%A9_Ball\.png/);
+ assert.match(ui._test.coinPresentationHtml(false,'player',state),/tcgp-present-coin-reverse.*TAILS/);
  assert.deepEqual(ui._test.coinSequence({results:[false,true,false],heads:1,coins:3}),[false,true,false]);
  const html=fs.readFileSync(path.join(A,'index.html'),'utf8');
  assert.match(html,/data-cosmetic-kind="coins"/);

@@ -1,0 +1,18 @@
+LuckyDex v0.69.120 - Classic combat stability patch
+Applies AFTER v0.69.119. Unzip to source/ in the LuckyDex Git repo.
+
+- Main Classic combat: tap target on player's active Pokemon, including after retreat; inspect during attack animation now terminates animation rather than swallowing the tap.
+- Coin visuals: distinct labeled reverse for Tails, normal selected coin for Heads, and only one current coin-flip presentation row.
+- Pidgeot & Magikarp GX: Predator Plunge GX checks defending Active Pokemon for attached Water Energy (Basic or qualifying Special) instead of Darkness.
+- Retreat diagnostics: event log now displays Energy actually spent or free retreat.
+- Stadium/retreat engine regression tests: playing Florio Park Night or Florio Nature Park did not remove existing Energy. The user's observed disappearing Energy on Stadium play was NOT reproduced/fixed; record exact Stadium and sequence if it recurs.
+- No independent testing on an Android device; synthetic mobile Chrome click checks passed.
+- Regression test suite (8 selected test files): 43/43 passing. JS syntax checks passed.
+
+Termux:
+cd ~/lucky-dex
+git pull --rebase origin main
+unzip -o /sdcard/Download/LuckyDex_patch_v0.69.120.zip -d source
+git add source
+git commit -m "v0.69.120 Classic combat stability"
+git push origin main

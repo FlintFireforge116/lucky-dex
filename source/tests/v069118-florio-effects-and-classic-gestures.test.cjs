@@ -12,19 +12,19 @@ function battle(){
  state.phase='battle';state.activeSide='player';state.sides.player.turnCount=3;return state;
 }
 function slot(id,uid){return core.makePokemonSlot(id,0,uid);}
-test('Predator Plunge condition depends on attached Darkness Energy, not generic Water Energy',()=>{
+test('Predator Plunge condition depends on attached Water Energy, not Darkness Energy',()=>{
  const water=battle();water.sides.player.active=slot('SNAPFLORIO-072','hunter');water.sides.player.active.energy={Colorless:3};
  water.sides.opponent.active=slot('SNAPFLORIO-041','magikarp');water.sides.opponent.active.energy={Water:2};
  const action=core.legalActions(water,'player').find(a=>a.type==='attack'&&a.attackIndex===1);
  assert.ok(action,'attack is legal with 3 Colorless requirements');
  core.applyAction(water,'player',action);
- assert.equal(water.log.some(l=>l.rule==='predatorPlunge114'&&l.conditionFailed),true);
- assert.equal(water.log.some(l=>l.type==='ko'&&l.side==='opponent'),false);
+ assert.equal(water.log.some(l=>l.rule==='predatorPlunge114'&&l.conditionFailed),false);
+ assert.equal(water.log.some(l=>l.type==='ko'&&l.side==='opponent'),true);
  const dark=battle();dark.sides.player.active=slot('SNAPFLORIO-072','hunter');dark.sides.player.active.energy={Colorless:3};
- dark.sides.opponent.active=slot('SNAPFLORIO-041','magikarp');dark.sides.opponent.active.energy={Water:2,Darkness:1};
+ dark.sides.opponent.active=slot('SNAPFLORIO-041','magikarp');dark.sides.opponent.active.energy={Darkness:1};
  const attack=core.legalActions(dark,'player').find(a=>a.type==='attack'&&a.attackIndex===1);
  assert.ok(attack);core.applyAction(dark,'player',attack);
- assert.equal(dark.log.some(l=>l.type==='ko'&&l.side==='opponent'),true);
+ assert.equal(dark.log.some(l=>l.type==='ko'&&l.side==='opponent'),false);assert.ok(dark.log.some(l=>l.conditionFailed));
 });
 test('Pichu & Scorbunny Surprise consumes each side ordered Energy Zone top and preserves normal attachment',()=>{
  const st=battle(),p=st.sides.player,o=st.sides.opponent;

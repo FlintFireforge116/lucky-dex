@@ -1963,12 +1963,12 @@
     }
     if(rule==='predatorPlunge114'){
       const defender=foe.active;
-      const basic=Number(defender?.energy?.Darkness||0)>0;
-      const special=(defender?.specialEnergy||[]).some(ref=>Number(ref.provides?.Darkness||ctx.cardById(ref.cardId)?.effect?.provides?.Darkness||0)>0);
+      const basic=Number(defender?.energy?.Water||0)>0;
+      const special=(defender?.specialEnergy||[]).some(ref=>Number(ref.provides?.Water||ctx.cardById(ref.cardId)?.effect?.provides?.Water||0)>0);
       if(defender&&(basic||special)){
         defender.damage=Math.max(Number(defender.damage||0),Number(ctx.maxHp?.(ctx.foeSide,defender)||ctx.cardById(defender.cardId)?.hp||0));
         log({knockedOut:defender.cardId});
-      }else log({conditionFailed:true,reason:'The opponent’s Active Pokémon needs attached Darkness Energy.'});
+      }else log({conditionFailed:true,reason:'The opponent’s Active Pokémon needs attached Water Energy.'});
       return;
     }
     if(rule==='slumberTime114'){

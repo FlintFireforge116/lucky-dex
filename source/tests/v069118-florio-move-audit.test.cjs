@@ -40,20 +40,20 @@ function resolveChoices(st){let count=0;while(st.phase==='effectChoice'){
  core.applyAction(st,side,pick);
  }return count;
 }
-test('Predator Plunge GX: Water does not satisfy currently coded Darkness condition; Darkness Basic and Special work',()=>{
+test('Predator Plunge GX: Water Basic or Special qualifies; Darkness alone does not',()=>{
  for(const config of ['water','darkness','special']){
   const st=configureActive(newBattle(),'SNAPFLORIO-072','SNAPFLORIO-041'),op=st.sides.opponent.active;
   st.sides.player.active.energy={Colorless:3};
-  if(config==='darkness')op.energy.Darkness=1;
-  if(config==='special')op.specialEnergy=[{uid:'dark-special',cardId:'neo1-104'}];
+  if(config==='darkness')op.energy={Darkness:2};
+  if(config==='special'){op.energy={};op.specialEnergy=[{uid:'water-special',cardId:'neo1-104',provides:{Water:1}}];}
   const action=firstAttack(st,1);assert.ok(action,'GX attack available for '+config);
   core.applyAction(st,'player',action);resolveChoices(st);
   const log=st.log.filter(e=>e.rule==='predatorPlunge114');
-  if(config==='water'){
-   assert.ok(log.some(x=>x.conditionFailed), 'Water-only Active reports failed requirement');
+  if(config==='darkness'){
+   assert.ok(log.some(x=>x.conditionFailed), 'Darkness-only Active reports failed requirement');
    assert.equal(st.sides.opponent.prizesTaken,0);assert.equal(op.damage,0);
   }else{
-   assert.ok(log.some(x=>x.knockedOut==='SNAPFLORIO-041'),'Darkness triggers knockout');
+   assert.ok(log.some(x=>x.knockedOut==='SNAPFLORIO-041'),'Water triggers knockout');
    assert.ok(st.log.some(x=>x.type==='ko'&&x.side==='opponent'),'KO fully resolved');
   }
  }
@@ -115,7 +115,7 @@ test('all 159 Florio attacks execute in populated and sparse Classic battle stat
 });
 test('card descriptions distinguish the Predator condition and explain the hybrid Surprise adaptation',()=>{
  const predator=ui.cardRulesHtml(classic.cardById('SNAPFLORIO-072'));
- assert.match(predator,/Darkness Energy/i);
+ assert.match(predator,/Water Energy/i);
  const surprise=ui.cardRulesHtml(classic.cardById('SNAPFLORIO-119'));
  assert.match(surprise,/Energy Zone adaptation/i);assert.match(surprise,/next Basic Energy/i);
  const garden=ui.cardRulesHtml(classic.cardById('SNAPFLORIO-055'));

@@ -138,7 +138,7 @@
     if(entry.type==='attach')return`${who} attached ${entry.energyType||'Energy'} to ${cardName(entry.cardId)}`;
     if(entry.type==='attachSpecial')return`${who} attached ${cardName(entry.energyCardId||entry.cardId)} to ${cardName(entry.cardId)}`;
     if(entry.type==='effectChoice')return`${who} resolved a card effect`;
-    if(entry.type==='retreat')return`${who} retreated ${cardName(entry.cardId)} → ${cardName(entry.toCardId)}`;
+    if(entry.type==='retreat'){const count=Object.values(entry.spentEnergy||{}).reduce((n,v)=>n+Number(v||0),0)+Number(entry.spentSpecialEnergy||0);return`${who} retreated ${cardName(entry.cardId)} → ${cardName(entry.toCardId)} · ${count?`discarded ${count} Energy for Retreat`:'free Retreat (no Energy discarded)'}`;}
     if(entry.type==='attack')return`${who} used ${entry.attack} · ${Number(entry.damage||0)} damage${entry.damageReason?` · ${entry.damageReason}`:''}`;
     if(entry.type==='ko')return`${cardName(entry.cardId)} was Knocked Out`;
     if(entry.type==='promote')return`${who} promoted ${cardName(entry.cardId)} to Active`;
@@ -258,10 +258,18 @@
     return String(entry?.artPath||'');
   }
   function coinPresentationHtml(heads,sideName,stateOverride){
-    const image=heads?coinArtPath(sideName,stateOverride):coinArtPath('opponent',stateOverride);
-    return `<span class="tcgp-present-coin-face">${image?`<img src="${esc(image)}" alt="" decoding="async" onerror="this.hidden=true">`:''}</span>`;
+    const image=coinArtPath(sideName,stateOverride);
+    // The selected coin art is the HEADS face. The reverse must be a clearly
+    // different BACK, not the face of another coin or a mirrored Poké Ball.
+    return heads
+      ?`<span class="tcgp-present-coin-face is-heads">${image?`<img src="${esc(image)}" alt="" decoding="async" onerror="this.hidden=true">`:''}</span>`
+      :'<span class="tcgp-present-coin-face is-tails"><span class="tcgp-present-coin-reverse">TAILS</span></span>'; 
   }
   function spawnCoinRow(stage,entry){
+    // Coin flips in a single action play sequentially: displaying every
+    // previous result row until the animation ends made it look like both
+    // players had flipped simultaneously.
+    for(const previous of stage.querySelectorAll('.tcgp-present-coins'))previous.remove();
     const results=coinSequence(entry),shown=results.slice(0,20),row=appendPresentationNode(stage,`tcgp-present-coins ${entry?.side==='opponent'?'is-opponent':'is-player'}`);if(!row)return 0;
     shown.forEach((heads,index)=>{const coin=appendPresentationNode(row,`tcgp-present-coin ${heads?'heads':'tails'}`);coin.innerHTML=coinPresentationHtml(heads,entry?.side||'player');coin.title=heads?'Heads':'Tails';coin.setAttribute('aria-label',heads?'Heads':'Tails');coin.style.setProperty('--tcgp-coin-delay',(index*70)+'ms');});
     if(results.length>shown.length){const more=appendPresentationNode(row,'tcgp-present-coin-more');more.textContent=`+${results.length-shown.length}`;}
@@ -291,7 +299,7 @@
   function playBattlePresentation(action,side,anchors,logs,done){
     finishBattlePresentation(false);const entries=Array.isArray(logs)?logs:[];if(!root?.document||!anchors||!entries.length){if(typeof done==='function')done();return 0;}
     const arena=el('tcgpBattleContent')?.querySelector('.tcgp-live-arena');if(!arena){if(typeof done==='function')done();return 0;}
-    battlePresentationBusy=true;battlePresentationDone=done;const serial=++battlePresentationSerial,layer=root.document.createElement('div');layer.className='tcgp-present-layer';layer.innerHTML='<button type="button" class="tcgp-present-skip" data-tcgp-action="skip-presentation" aria-label="Finish battle animation"></button><div class="tcgp-present-stage" aria-hidden="true"></div>';arena.appendChild(layer);const stage=layer.querySelector('.tcgp-present-stage'),layerRect=presentationRect(layer),reduced=!!root.matchMedia?.('(prefers-reduced-motion: reduce)')?.matches;
+    battlePresentationBusy=true;battlePresentationDone=done;const serial=++battlePresentationSerial,layer=root.document.createElement('div');layer.className='tcgp-present-layer';layer.innerHTML='<button type="button" class="tcgp-present-skip" data-tcgp-action="skip-presentation" aria-label="Skip battle animation">SKIP</button><div class="tcgp-present-stage" aria-hidden="true"></div>';arena.appendChild(layer);const stage=layer.querySelector('.tcgp-present-stage'),layerRect=presentationRect(layer),reduced=!!root.matchMedia?.('(prefers-reduced-motion: reduce)')?.matches;
     const later=(delay,fn)=>{const timer=setTimeout(()=>{if(serial===battlePresentationSerial&&battlePresentationBusy)fn();},Math.max(0,delay));battlePresentationTimers.push(timer);};
     let t=0;
     const movement=entries.find(e=>['setupActive','setupBench','bench','evolve','trainer','attach','attachSpecial','retreat','promote'].includes(e.type));
@@ -444,7 +452,7 @@
     chasmCrash113:'If at least 8 Energy are attached, discard the opponent’s hand.',
     shadowPeck112:'If this Pokémon has room for a Tool, take 1 Tool attached to the opponent’s Active Pokémon and attach it to this Pokémon.',
     captivate114:'You may repeatedly discard 1 attached Energy from this Pokémon to choose and discard up to 2 cards from your opponent’s hand each time.',
-    predatorPlunge114:'Knock Out the opponent’s Active Pokémon if it has Darkness Energy attached.',
+    predatorPlunge114:'Knock Out the opponent’s Active Pokémon if it has at least 1 Water Energy attached (Basic or Special). Other Energy types do not count.',
     scavengeItems111:'Choose up to 2 Item cards from your discard pile and put them into your hand.',
     furiousJab111:'Flip 3 coins, or 6 if this Pokémon has 60 HP or less remaining. Deal 20 damage per heads.',
     endeavorousFlight112:'This attack does 10 damage plus 10 for each card in your discard pile. If your discard pile has more than 20 cards, it does no damage.',
@@ -703,7 +711,7 @@
     const settings=opts||{},compact=!!settings.compact,side=settings.side||'player',zone=settings.zone||'active',index=Number(settings.index||0),showActions=settings.showActions!==false,energyAttrs=energyTargetAttrs(side,zone,index),dropAttrs=cardDropAttrs(side,zone,index);
     if(!slot)return `<div data-board-slot="${side}-${zone}-${index}" class="tcgp-live-card-wrap ${compact?'compact':''}" ${dropAttrs}><button type="button" class="tcgp-live-card ${compact?'compact ':''}empty" ${inspectAttrs(side,zone,index)} ${energyAttrs}><span>${zone==='active'?'ACTIVE':'BENCH '+(index+1)}</span></button></div>`;
     const info=hpInfo(slot,side),card=info.card,art=cardArtUrl(slot.cardId,side),conditions=Object.keys(slot.conditions||{}).filter(key=>slot.conditions[key]).map(key=>key.toUpperCase()).join(' · '),interactionAttrs=pokemonInteractionAttrs(side,zone,index,slot);
-    return `<div data-board-slot="${boardSlotKey(side,zone,index)}" class="tcgp-live-card-wrap ${compact?'compact':''}" ${dropAttrs}><button type="button" class="tcgp-live-card ${compact?'compact':''}" ${interactionAttrs} ${energyAttrs}>${art?`<img src="${esc(art)}" alt="${esc(card?.name||slot.cardId)}">`:''}<span class="tcgp-live-hp">${info.left}</span>${conditions?`<span class="tcgp-live-condition">${esc(conditions)}</span>`:''}${liveAttachedEnergyHtml(info)}<span class="tcgp-live-name">${esc(card?.name||slot.cardId)}</span></button>${liveToolMiniCardsHtml(side,zone,index,slot,compact)}${showActions?livePokemonActionsHtml(side,zone,index):''}</div>`;
+    return `<div data-board-slot="${boardSlotKey(side,zone,index)}" class="tcgp-live-card-wrap ${compact?'compact':''}" ${dropAttrs} ${side==='player'&&currentBattle?.format==='classic'?interactionAttrs:''}><button type="button" class="tcgp-live-card ${compact?'compact':''}" ${interactionAttrs} ${energyAttrs}>${art?`<img src="${esc(art)}" alt="${esc(card?.name||slot.cardId)}">`:''}<span class="tcgp-live-hp">${info.left}</span>${conditions?`<span class="tcgp-live-condition">${esc(conditions)}</span>`:''}${liveAttachedEnergyHtml(info)}<span class="tcgp-live-name">${esc(card?.name||slot.cardId)}</span></button>${liveToolMiniCardsHtml(side,zone,index,slot,compact)}${showActions?livePokemonActionsHtml(side,zone,index):''}</div>`;
   }
   function liveBenchHtml(sideName,bench){
     const slots=[];
@@ -920,7 +928,7 @@
       </section>
       <section class="tcgp-live-mid" aria-label="Score, turn and play lane"><div class="tcgp-live-score${classic?' tcgp-classic-score':''}">${classic?`<div class="tcgp-classic-score-numbers">${scoreHtml}</div><small class="tcgp-classic-score-label">CPU · ${esc(currentClassicOpponent?.name||'Base Set')}${florioPrizeReveal?` · Face-up Prize: ${florioPrizeReveal}`:''}</small>`:scoreHtml}</div>${liveMidControlsHtml(turnText,lastLog)}</section>
       <section class="tcgp-live-player tcgp-live-mat-half" data-mat-side="player" ${playmatStyle('player')} aria-label="Player half">
-        <div class="tcgp-live-player-active" aria-label="Your Active">${liveCardHtml(p.active,{side:'player',zone:'active',showActions:false})}</div>${liveStadiumSlotHtml()}
+        <div class="tcgp-live-player-active" aria-label="Your Active" ${classic&&p.active?'data-tcgp-action="open-pokemon-actions" data-side="player" data-zone="active" data-index="0"':''}>${liveCardHtml(p.active,{side:'player',zone:'active',showActions:false})}</div>${liveStadiumSlotHtml()}
         <div class="tcgp-live-player-bench" aria-label="Your Bench">${liveBenchHtml('player',p.bench)}</div>
       </section>
       <section class="tcgp-live-player-bottom" aria-label="Your hand and piles"><div class="tcgp-live-piles mine" aria-label="Your card piles">${livePileHtml('player',p,'discard')}${livePileHtml('player',p,'deck')}</div><div class="tcgp-live-hand" aria-label="Your hand · swipe for more cards">${livePlayerHandHtml(p)}</div>${liveEnergySourceHtml(p)}</section>
@@ -1107,7 +1115,13 @@
     }
     if(action==='skip-presentation')return finishBattlePresentation(true);
     if(action==='resume-cpu')return maybeCpu();
-    if(battlePresentationBusy)return;
+    if(battlePresentationBusy){
+      // A player should never lose the ability to inspect/select their Active
+      // Pokémon because an animation layer is still on screen. Finish safely
+      // and let the original click perform its intended inspection.
+      if(['open-pokemon-actions','inspect-card','inspect-pokemon-from-actions','open-hand-actions','open-hand-picker','open-energy-actions','open-discard'].includes(action))finishBattlePresentation(true);
+      else return;
+    }
     if(action==='explain-unavailable')return toast(btn.dataset.reason||'This action is currently unavailable.');
     if(action==='open-hand-actions')return openHandActions(Number(btn.dataset.index));
     if(action==='open-hand-picker')return openHandPicker();
