@@ -89,3 +89,14 @@ mechanics tests pass.
 * Both Lental sets keep 10-card pack collation (4 Common, 3 Uncommon, 3 Rare+).
 * All remaining unverified cards stay PARTIAL and cannot be added to legal decks.
 * Founja stays collection-only and unfinished Blushing Beach stays hidden.
+
+## v0.69.108 — continued Florio Classic30 integration
+
+* Added 19 verified Florio cards including Pinsir V, Heracross ex, Vespiquen,
+  Torterra V, Illumina Murkrow, Florio Blossom Tree, Pasture Fields and Crystalbloom.
+* Fixed creator-printed Illumina names in the gameplay and installed artwork catalogues.
+* Added rule-box damage reductions, coin-based Knock Outs, chosen Energy search,
+  Basic Darkness/Metal Energy hand tokens for the Classic30 separate supply,
+  optional Grass-Pokémon search, conditional attack damage and Stadium actions.
+* Every still-unsupported print remains PARTIAL, not silently vanilla.
+* Blushing Beach is still excluded; Founja is still a collection-only set.

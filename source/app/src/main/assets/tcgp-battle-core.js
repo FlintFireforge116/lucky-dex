@@ -849,6 +849,7 @@
       state.lentalDamOverflow=state.stadium?.cardId==='SNAPFLORIO-108';
       if(state.stadium)state.sides[state.stadium.ownerSide].discard.push({uid:state.stadium.uid,cardId:state.stadium.cardId});
       state.stadium={...ref,ownerSide:side};s.stadiumUsed=true;
+      if(card.id==='SNAPFLORIO-104')for(const who of ['player','opponent'])for(const slot of [state.sides[who].active,...state.sides[who].bench].filter(Boolean))if(data.cardById(slot.cardId)?.types?.some(t=>t==='Grass'||t==='Psychic'))slot.conditions={};
       for(const which of ['player','opponent']){
         state.sides[which].benchLimit=card.id==='gym1-124'?2:card.id==='SNAPFLORIO-108'?5:3;
         normalizeBenchSlots(state.sides[which]);
@@ -1110,6 +1111,8 @@
         if(defender.neoSlime&&state.turnNumber<=defender.neoSlime.until){const heads=random(state)<.5;state.log.push({type:'coin',side:foeSide,reason:'Neo Discovery Slime',heads,results:[heads]});if(!heads)damage=0;}
       }
       if(state.stadium?.cardId==='SNAPFLORIO-112'&&!isActive)damage=0;
+      // Apply printed Lental protection after Weakness, Resistance and ordinary modifiers.
+      if(!result.damageRules?.ignoreEffects)damage=Math.max(0,damage-effects.lentalDefenseReduction(state,foeSide,defender,attackerCard,data.cardById));
       defender.damage=Number(defender.damage||0)+damage;
       if(state.format==='classic'&&damage>0){
         // Resolve reactive attacks before KO; Wobbuffet can counter even when
