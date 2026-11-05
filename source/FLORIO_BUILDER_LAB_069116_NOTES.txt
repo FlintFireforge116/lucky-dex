@@ -1,0 +1,19 @@
+LuckyDex v0.69.116 — Florio / Classic Deck Builder / Substitute Lab
+
+- Added correct Florio Nature Park label to Classic Auto Build's set chips.
+  All 123 Florio cards are registered, playable (if owned) and filterable;
+  this fixes the display/access issue without bypassing normal ownership.
+- Deduplicated the Classic builder's Darkness and Metal Energy archetypes.
+  Basic Darkness and Metal still come from the Energy Zone; printed Neo
+  Genesis Special Energy remains a distinct deck card (unchanged rules).
+- Replaced the Substitute Test Lab's two-column board with the actual Classic
+  battlefield structure: opponent top row, playmat, turn lane, player mat,
+  bottom piles, hand and energy. Card selection and all manual sandbox setup
+  tools remain; no CPU, currency, achievements or results are recorded.
+- Preserve scroll position when using controls under the playmat.
+- Fixed an undefined `attacker` reference in the classic attack resolution
+  path which crashed on attack damage; passes combat regression tests.
+- Version name 0.69.116, Android versionCode 7096.
+
+Testing: `node --test tests/v069116-florio-deck-and-lab-ui.test.cjs
+ tests/v06997-battle-lab-mot.test.cjs` (10 passing).

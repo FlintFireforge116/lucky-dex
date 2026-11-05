@@ -27,7 +27,9 @@ const STAPLES=Object.freeze([
  ['base1-87',1]  // Pokedex
 ]);
 const SET_IDS=Object.freeze(['base1','base2','base3','base5','gym1','gym2','neo1','neo2','neo3','SNAPFLORIO']);
-const ARCHETYPE_TYPES=Object.freeze([...decks.ENERGY_TYPES,'Darkness','Metal','Colorless']);
+// Darkness and Metal are already Basic Energy types. Deduplicate before rendering
+// archetype chips so each energy type has exactly one toggle.
+const ARCHETYPE_TYPES=Object.freeze([...new Set([...decks.ENERGY_TYPES,'Colorless'])]);
 const STAGE_RANK=Object.freeze({'Basic':0,'Stage 1':1,'Stage 2':2});
 const norm=s=>String(s||'').toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'');
 function ownedMap(rows){const map=new Map();for(const row of rows||[]){const id=classic.cardById(row.gameplayId)?.id;if(id)map.set(id,(map.get(id)||0)+Math.max(0,Number(row.quantity)||0));}return map;}
