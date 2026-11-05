@@ -1,0 +1,21 @@
+LuckyDex 0.69.119 (Android versionCode 7099)
+Source patch, apply over 0.69.118 in the canonical source/ directory.
+
+Classic TCG combat / Florio Nature Park:
+- Corrects Illumina Comfey's Rejuvenate on-screen summary: returns one discarded card to the deck per damage counter on Comfey, then shuffles. It does NOT heal.
+- Replaces 41 abbreviated/vague Lental attack summaries with detailed, rule-specific descriptions of implemented actions, costs, conditions and targets.
+- Tapping the thumbnail of an inspected card (or card in hand's action sheet) opens enlarged full-card artwork; close returns to the same details without altering the battle.
+- Repositions both held hand-card and Energy drag previews so their visual centres match the actual touch coordinates and release hit-test. Previously hand cards showed 126px above the touch point and Energy 68px above it, confusing Bench target selection. Targets can still be tapped instead of dragged.
+
+Validation:
+- All 44 selected Classic/Florio regression tests pass, including code-based touch positioning, Rejuvenate effect, enlarged-card markup/controls, and related prior Classic controls.
+- JavaScript syntax check passes.
+- Not verified on a physical Android device. Card-summary correctness describes the implemented effects and has not been independently checked card-by-card against original printed images.
+
+Changed files relative to v0.69.118:
+  app/build.gradle
+  app/src/main/assets/app-v0167.js
+  app/src/main/assets/index.html
+  app/src/main/assets/tcgp-battle-ui.js
+  app/src/main/assets/tcgp-battle.css
+  tests/v069119-classic-card-zoom-and-florio-move-text.test.cjs

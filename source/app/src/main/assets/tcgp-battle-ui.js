@@ -404,65 +404,65 @@
   const florioRuleSummary=Object.freeze({
     surpriseAttack:'Flip a coin. On heads, this attack does no damage.',
     guillotine:'Flip 2 coins. If both are heads, Knock Out the opponent’s Active Pokémon.',
-    vicePincers114:'Damage changes according to the Energy attached to the opponent’s Active Pokémon.',
-    faceUpPrize114:'Turn over a Prize card and resolve the attack’s face-up Prize effect.',
+    vicePincers114:'Choose Basic Energy to discard from the opponent’s Active Pokémon. This attack does 300 damage minus 20 for each Energy discarded.',
+    faceUpPrize114:'Choose 1 of your remaining Prize cards and turn it face up. The card stays in the Prize area.',
     unhingeHorn:'Flip a coin. On heads, discard a Tool attached to the opponent’s Active Pokémon.',
-    herculesGlide:'Move Energy or Pokémon as directed by this attack.',
-    wurmpleStartle:'The damage depends on this Pokémon already having damage counters.',
+    herculesGlide:'If available, return 1 Grass Energy from your Energy discard pile to your hand.',
+    wurmpleStartle:'This attack does no damage unless this Pokémon already has at least 1 damage counter on it.',
     optionalQuickMarch:'Flip a coin. On heads, you may switch this Pokémon with a Benched Pokémon.',
-    grassBackup:'Search for a Grass Pokémon from your deck.',
-    poisonSpray113:'If this Pokémon takes attack damage on the next turn, its attacker becomes Poisoned.',
-    fungalFever:'The damage depends on a coin flip and this Pokémon’s status.',
-    nectarOrder114:'Choose the card effect and resolve the Nectar Order search.',
+    grassBackup:'Search your deck for up to 3 Basic Grass Pokémon, put them into your hand, then shuffle your deck.',
+    poisonSpray113:'If this Pokémon takes attack damage on your opponent’s next turn, make the attacking Pokémon Poisoned.',
+    fungalFever:'Flip 2 coins. If both are tails, this attack does no damage. If both are heads, the opponent’s Active Pokémon becomes Paralyzed and Poisoned.',
+    nectarOrder114:'Flip a coin. On heads, the opponent’s Active Pokémon becomes Asleep. If it was already Asleep before the flip, return this Pokémon and its attached cards to your hand.',
     majestyWaltz113:'You may shuffle up to 2 Combee or 1 Vespiquen from your discard pile into your deck.',
-    tangledFruit114:'Choose to heal this Pokémon or place damage counters on the opponent.',
-    energyThrash114:'You may discard up to 2 of this Pokémon’s Energy to increase damage.',
-    herbalShower114:'Heal your Pokémon using this attack’s recovery effect.',
-    fertilize114:'Move or attach Energy using the Fertilize GX effect.',
-    wildPollen112:'Apply a Special Condition using the Wild Pollen effect.',
-    toolDiscardBonus114:'You may discard an attached Tool to increase the attack’s damage.',
-    friendsFireRecovery111:'Recover Fire Energy as directed by this attack.',
-    shallowSplash:'Deal damage according to the Shallow Splash condition.',
-    magikarpSoak:'Apply the Soak effect to this Pokémon.',
-    majesticLeap112:'Damage changes according to the attack’s special condition.',
-    motherBird:'Search for up to 3 Pokémon or cards as specified by Mother Bird.',
+    tangledFruit114:'Choose one: put 3 damage counters on the opponent’s Active Pokémon, or heal 30 damage from this Pokémon.',
+    energyThrash114:'You may discard up to 2 Basic Energy from this Pokémon. If you discard exactly 2, reveal your opponent’s hand and do 40 extra damage for each Energy card in that hand.',
+    herbalShower114:'If this attack Knocks Out the opponent’s Active Pokémon, heal up to 50 damage from one of your Benched Pokémon.',
+    fertilize114:'Choose any eligible Benched Grass Pokémon and evolve them using matching Evolution cards in your discard pile. You may repeat this for other eligible Pokémon.',
+    wildPollen112:'Check the opponent’s Active Pokémon’s attached Energy: Fighting causes Confusion, Fire causes Burn, and Psychic causes Poison. More than one condition can apply.',
+    toolDiscardBonus114:'You may discard one Tool attached to this Pokémon. If you do, this attack does 50 more damage.',
+    friendsFireRecovery111:'Flip 1 coin for each Basic Pokémon on your Bench. For each heads, shuffle 1 Fire Energy from your Energy discard pile into your deck, if available.',
+    shallowSplash:'This attack does no damage if this Pokémon has more than 1 Energy attached.',
+    magikarpSoak:'Change the opponent’s Active Pokémon’s Weakness to Water.',
+    majesticLeap112:'Flip 2 coins. If both are heads, deal 100 damage. Otherwise deal no damage and put 40 damage on this Pokémon.',
+    motherBird:'Search your deck for up to 3 Basic Pokémon and put them directly onto your Bench, as space allows. Then shuffle your deck.',
     torrentSpread:'Place 1 damage counter on each opposing Benched Pokémon for each Basic Water Energy attached to this Pokémon.',
     jolt114:'Attach a Lightning Energy to this Pokémon from your Energy supply, then place 1 damage counter on it.',
-    friendshipSurge114:'Use Friendship Surge GX to resolve its combined Pokémon effect.',
+    friendshipSurge114:'For each opponent’s Benched Pokémon, you may discard some of its attached Energy. Maximum 3 per Pokémon, limited by the number of Grass and Lightning Energy on this Pokémon beyond 2.',
     discardAllBasicLightning:'Discard all Basic Lightning Energy attached to this Pokémon.',
-    shortCircuit112:'Damage increases if the opponent’s Active Pokémon has a Tool.',
-    forage114:'Search for cards using Forage.',
-    chargedRoast114:'Discard or recover Energy using Charged Roast’s bonus effect.',
-    florgesHealing113:'Remove all damage from one of your Benched Pokémon, then discard all Psychic Energy attached to this Pokémon.',
+    shortCircuit112:'Discard every Tool attached to the opponent’s Active Pokémon.',
+    forage114:'Draw 3 cards. If you draw Zapped Fluffruit, you may immediately play one to heal 60 damage from a Lightning Pokémon or 20 from another Pokémon.',
+    chargedRoast114:'Discard 1 Basic Energy from your Active Pokémon, if possible. Then discard 1 Basic Energy from the opponent’s Active Pokémon, if possible.',
+    florgesHealing113:'Remove all damage from one of your Benched Pokémon. Then discard all Psychic Energy attached to this Pokémon.',
     florgesGarden114:'If a Stadium is in play, attach the next Grass Energy from your Energy Zone to a Benched Pokémon (or use Grass Energy already in hand).',
-    natureStorm114:'Use the once-per-game Nature Storm VSTAR Power.',
+    natureStorm114:'Once per game, move up to 10 damage counters from your Benched Pokémon to the opponent’s Benched Pokémon, one counter at a time (if Flower Garden is not protecting the Bench).',
     combatDance112:'Place 2 damage counters on each Pokémon in play (yours and your opponent’s) with Fighting Energy attached.',
-    rejuvenate:'Heal one of your Pokémon.',
-    extraEnergyDraw:'Draw cards for Energy attached beyond the attack cost.',
-    mountainDance:'Move cards or Pokémon according to Mountain Dance.',
+    rejuvenate:'For each damage counter on this Comfey, move 1 card from the top of your discard pile into your deck, then shuffle your deck. This attack does not heal damage. If fewer cards are discarded, move only those available.',
+    extraEnergyDraw:'Draw 1 card for every Energy attached to this Pokémon beyond this attack’s Energy cost.',
+    mountainDance:'If you have fewer Prize cards remaining than your opponent, draw cards equal to the number of Prize cards your opponent has remaining. Otherwise, draw nothing.',
     terrainStomp:'If a Stadium is in play, this attack does 130 more damage and discards it.',
     chasmCrash113:'If at least 8 Energy are attached, discard the opponent’s hand.',
-    shadowPeck112:'Apply the Shadow Peck extra effect.',
-    captivate114:'Choose the target of the Captivate effect.',
+    shadowPeck112:'If this Pokémon has room for a Tool, take 1 Tool attached to the opponent’s Active Pokémon and attach it to this Pokémon.',
+    captivate114:'You may repeatedly discard 1 attached Energy from this Pokémon to choose and discard up to 2 cards from your opponent’s hand each time.',
     predatorPlunge114:'Knock Out the opponent’s Active Pokémon if it has Darkness Energy attached.',
-    scavengeItems111:'Recover Item cards using Scavenge.',
+    scavengeItems111:'Choose up to 2 Item cards from your discard pile and put them into your hand.',
     furiousJab111:'Flip 3 coins, or 6 if this Pokémon has 60 HP or less remaining. Deal 20 damage per heads.',
-    endeavorousFlight112:'Damage changes according to this Pokémon’s condition.',
-    unfairFight112:'Damage increases when the opponent has taken more Prize cards.',
+    endeavorousFlight112:'This attack does 10 damage plus 10 for each card in your discard pile. If your discard pile has more than 20 cards, it does no damage.',
+    unfairFight112:'This attack does 100 extra damage if your opponent has more Pokémon in play than you.',
     beakInvasion112:'Choose 0–5 cards to discard from the top of the opponent’s deck. The attack loses 20 damage per discarded card.',
-    goodDreams114:'This move can be used while this Pokémon is Asleep.',
+    goodDreams114:'You can use this move while Asleep. Choose up to 3 Basic Energy from your Energy supply and attach them one at a time to your Benched Pokémon.',
     startlingSnore113:'If the target has a Special Condition, do 100 more damage; then remove its Special Conditions.',
     foodRush113:'Look at the top 3 cards of your deck. Put any Item cards among them into your hand; shuffle the others into your deck.',
-    leadTheWay:'Search your deck for a Pokémon or card using Lead the Way.',
-    wickedFlock111:'Choose an opponent’s Pokémon to hit with Wicked Flock.',
+    leadTheWay:'Your opponent draws 1 card. If it is a Basic Pokémon, discard it from their hand.',
+    wickedFlock111:'Choose 1 opposing Pokémon. Put 4 damage counters on it for each Murkrow you have in play (including your Active Pokémon).',
     bidoofGnaw111:'This attack does 40 more damage if the opponent’s Active Pokémon is Fighting type.',
     hibernate114:'If this Pokémon has at least 3 Energy attached, prevent attack damage to it during your opponent’s next turn; discard its Energy when the protection expires.',
     exactSixPrizes113:'This attack does 80 more damage when exactly 6 Prize cards remain.',
-    flyOff114:'You may switch your Active Pokémon with one of your Benched Pokémon, then attach 1 Energy from your Energy supply to the new Active Pokémon.',
-    windStorm114:'Discard up to 2 Energy attached to this Pokémon.',
-    voltSwitch112:'Switch your Active Pokémon after the attack.',
-    herding114:'Move the opponent’s Pokémon with Herding.',
-    rearUp113:'Flip a coin to apply Rear Up’s extra effect.'
+    flyOff114:'You may switch this Pokémon with one of your Benched Pokémon. If you switch, attach 1 Basic Energy from your Energy supply to the new Active Pokémon.',
+    windStorm114:'Discard up to 2 attached Energy from this Pokémon, choosing each one separately.',
+    voltSwitch112:'If this Pokémon has Lightning Energy attached, you may switch it with one of your Benched Pokémon.',
+    herding114:'For each Bouffalant you have in play, you may attach 1 Basic Energy from your discard pile to one of your Pokémon.',
+    rearUp113:'If this Pokémon is damaged by an attack on the opponent’s next turn, discard 1 Energy from the attacker.'
   });
   function summarizeEffect(effect){
     if(!effect||effect.type==='noop')return '';
@@ -485,7 +485,7 @@
     if(effect.type==='benchCountDamage')return `Deal ${n} additional damage per qualifying ${effect.pokemonType||''} Benched Pokémon.`;
     if(effect.type==='energyDamage')return `Damage scales by ${Number(effect.amount||10)} for each qualifying attached Energy.`;
     if(effect.type==='coinDamage')return `Flip ${effect.coins||1} coins; deal ${effect.amount||10} damage per heads.`;
-    if(effect.type==='bonusDamage')return `Deal ${n} additional damage when the condition is met.`;
+    if(effect.type==='bonusDamage')return `Deal ${n} additional damage when the condition is met${effect.condition?.type==='opponentMatches'&&effect.condition.filter?.subtype?' (opponent has '+effect.condition.filter.subtype+' type)':''}.`;
     if(effect.type==='switch')return `Switch ${effect.side==='opponent'?'your opponent’s':'your'} Active Pokémon with a Benched Pokémon.`;
     if(effect.type==='lock')return `Prevent ${effect.target==='self'?'this Pokémon':'the target'} from ${effect.action||'acting'} for the specified turn.`;
     if(effect.type==='searchChosen')return `Search your ${effect.source||'deck'} for ${effect.amount||1} matching card(s).`;
@@ -790,12 +790,18 @@
     const order=`This turn: ${energyType}. Next: ${next}${third?`; then: ${third}`:''}. ${Array.isArray(side.energySupply)?`${side.energySupply.length} remaining in Energy supply.`:''}`;
     return `<button type="button" data-energy-side="player" class="tcgp-live-energy-source ${available?'ready':''}" data-energy="${esc(energyType)}" data-tcgp-energy-source="1" data-tcgp-action="open-energy-actions" ${available?'':'disabled'} title="${esc(order)}" aria-label="${esc(order)} ${available?'Drag current Energy onto a Pokémon.':''}"><span class="tcgp-live-current-energy">${energyIconHtml(energyType,{className:'current'})}</span><span class="tcgp-live-next-energy">${energyIconHtml(next,{className:'next'})}</span>${third?`<span class="tcgp-live-third-energy">${energyIconHtml(third,{className:'following'})}</span>`:''}</button>`;
   }
+  function zoomArtworkButtonHtml(art,cardName){
+    return art?`<button type="button" class="tcgp-live-card-art-zoom-trigger" data-tcgp-action="zoom-card" aria-label="View ${esc(cardName)} full-screen"><img src="${esc(art)}" alt="${esc(cardName)}"><span>ENLARGE</span></button>`:'';
+  }
+  function cardZoomOverlayHtml(art,cardName){
+    return art?`<div class="tcgp-live-card-zoom" hidden role="dialog" aria-modal="true" aria-label="${esc(cardName)} full-screen card"><button type="button" class="tcgp-live-card-zoom-scrim" data-tcgp-action="close-card-zoom" aria-label="Return to card details"></button><div class="tcgp-live-card-zoom-panel"><button type="button" class="tcgp-live-card-zoom-close" data-tcgp-action="close-card-zoom" aria-label="Close enlarged card">×</button><img src="${esc(art)}" alt="${esc(cardName)} full card artwork" draggable="false"><span>${esc(cardName)} · Tap outside to return</span></div></div>`:'';
+  }
   function liveInspectOverlayHtml(){
     if(battleOverlay!=='inspect'||!battleInspect)return'';
     const info=resolveInspect(currentBattle,battleInspect);if(!info?.card)return'';
     const card=info.card,art=cardArtUrl(info.ref?.cardId||card.id,info.sideName),health=info.slot?hpInfo(info.slot,battleInspect.side):null;
     const links=attachedToolLinksHtml(info,battleInspect.index);
-    return `<div class="tcgp-live-overlay"><button class="tcgp-live-overlay-scrim" type="button" data-tcgp-action="close-overlay" aria-label="Close card detail"></button><section class="tcgp-live-sheet tcgp-live-card-sheet"><button class="tcgp-live-sheet-close" type="button" data-tcgp-action="close-overlay">×</button><div class="tcgp-live-sheet-card">${art?`<img src="${esc(art)}" alt="${esc(card.name)}">`:''}<div><div class="eyebrow">${esc(info.subtitle)}</div><h3>${esc(card.name)}</h3><div class="tcgp-live-tags"><span>${esc(typeLabel(card))}</span>${card.kind==='pokemon'||info.slot?`<span>HP ${health?.left??card.hp}/${health?.hp??card.hp}</span><span>⚡ ${health?.energy||0}</span><span>Retreat ${Number(card.retreat||0)}</span><span>Weak ${esc(card.weakness||'—')}</span>`:''}</div></div></div><div class="tcgp-live-sheet-attacks">${cardRulesHtml(card,info.zone==='active'?(card.attacks||[]).map((_,i)=>core.attackAvailability(currentBattle,info.sideName,i)):null)}</div>${links?`<div class="tcgp-battle-actions-row">${links}</div>`:''}</section></div>`;
+    return `<div class="tcgp-live-overlay"><button class="tcgp-live-overlay-scrim" type="button" data-tcgp-action="close-overlay" aria-label="Close card detail"></button><section class="tcgp-live-sheet tcgp-live-card-sheet"><button class="tcgp-live-sheet-close" type="button" data-tcgp-action="close-overlay">×</button><div class="tcgp-live-sheet-card">${zoomArtworkButtonHtml(art,card.name)}<div><div class="eyebrow">${esc(info.subtitle)}</div><h3>${esc(card.name)}</h3><div class="tcgp-live-tags"><span>${esc(typeLabel(card))}</span>${card.kind==='pokemon'||info.slot?`<span>HP ${health?.left??card.hp}/${health?.hp??card.hp}</span><span>⚡ ${health?.energy||0}</span><span>Retreat ${Number(card.retreat||0)}</span><span>Weak ${esc(card.weakness||'—')}</span>`:''}</div></div></div><div class="tcgp-live-sheet-attacks">${cardRulesHtml(card,info.zone==='active'?(card.attacks||[]).map((_,i)=>core.attackAvailability(currentBattle,info.sideName,i)):null)}</div>${links?`<div class="tcgp-battle-actions-row">${links}</div>`:''}</section>${cardZoomOverlayHtml(art,card.name)}</div>`;
   }
   function liveContextActionsOverlayHtml(){
     if(battleOverlay!=='context-actions')return'';
@@ -830,7 +836,7 @@
     if(battleOverlay!=='hand-actions')return '';
     const ref=currentBattle?.sides?.player?.hand?.[battleHandIndex],card=data.cardById(ref?.cardId);if(!card)return '';
     const options=handActionIndices(battleHandIndex),art=cardArtUrl(card.id,'player');
-    return `<div class="tcgp-live-overlay"><button type="button" class="tcgp-live-overlay-scrim" data-tcgp-action="close-overlay"></button><section class="tcgp-live-sheet tcgp-live-action-sheet tcgp-live-hand-action-sheet"><div class="tcgp-live-sheet-head"><div><small>YOUR HAND</small><h3>${esc(card.name)}</h3></div><button type="button" class="tcgp-live-sheet-close" data-tcgp-action="close-overlay">×</button></div><div class="tcgp-live-sheet-card">${art?`<img src="${esc(art)}" alt="${esc(card.name)}">`:''}<div><b>${esc(typeLabel(card))}</b><p class="tcgp-live-play-hint">Tap a legal action below to play this card. You can also drag it onto the board.</p></div></div><div class="tcgp-live-actions">${options.map(i=>`<button type="button" class="tcgp-battle-action" data-tcgp-action="battle-action" data-action-index="${i}">${esc(actionLabel(battleActionCache[i],currentBattle,'player'))}</button>`).join('')||'<p class="tcgp-live-play-hint">No legal play for this card right now.</p>'}<button type="button" class="tcgp-battle-action secondary" data-tcgp-action="inspect-hand-card" data-index="${battleHandIndex}">READ CARD / ATTACK DETAILS</button></div></section></div>`;
+    return `<div class="tcgp-live-overlay"><button type="button" class="tcgp-live-overlay-scrim" data-tcgp-action="close-overlay"></button><section class="tcgp-live-sheet tcgp-live-action-sheet tcgp-live-hand-action-sheet"><div class="tcgp-live-sheet-head"><div><small>YOUR HAND</small><h3>${esc(card.name)}</h3></div><button type="button" class="tcgp-live-sheet-close" data-tcgp-action="close-overlay">×</button></div><div class="tcgp-live-sheet-card">${zoomArtworkButtonHtml(art,card.name)}<div><b>${esc(typeLabel(card))}</b><p class="tcgp-live-play-hint">Tap a legal action below to play this card. You can also drag it onto the board.</p></div></div><div class="tcgp-live-actions">${options.map(i=>`<button type="button" class="tcgp-battle-action" data-tcgp-action="battle-action" data-action-index="${i}">${esc(actionLabel(battleActionCache[i],currentBattle,'player'))}</button>`).join('')||'<p class="tcgp-live-play-hint">No legal play for this card right now.</p>'}<button type="button" class="tcgp-battle-action secondary" data-tcgp-action="inspect-hand-card" data-index="${battleHandIndex}">READ CARD / ATTACK DETAILS</button></div></section>${cardZoomOverlayHtml(art,card.name)}</div>`;
   }
   function livePokemonActionsOverlayHtml(){
     if(battleOverlay!=='pokemon-actions'||!battlePokemonActionSpec)return'';
@@ -1089,6 +1095,16 @@
   function contentClick(event){
     const btn=event.target.closest?.('[data-tcgp-action]');if(!btn)return;const action=btn.dataset.tcgpAction;
     if(Date.now()<handDragSuppressUntil&&(btn.closest?.('[data-tcgp-hand-drag]')||btn.closest?.('[data-tcgp-energy-source]')))return;
+    if(action==='zoom-card'){
+      const layer=btn.closest('.tcgp-live-overlay')?.querySelector('.tcgp-live-card-zoom');
+      if(layer){layer.hidden=false;layer.querySelector('.tcgp-live-card-zoom-close')?.focus();}
+      return;
+    }
+    if(action==='close-card-zoom'){
+      const layer=btn.closest('.tcgp-live-card-zoom');
+      if(layer){layer.hidden=true;layer.closest('.tcgp-live-overlay')?.querySelector('.tcgp-live-card-art-zoom-trigger')?.focus();}
+      return;
+    }
     if(action==='skip-presentation')return finishBattlePresentation(true);
     if(action==='resume-cpu')return maybeCpu();
     if(battlePresentationBusy)return;
@@ -1221,6 +1237,14 @@
     }
     return currentBattle?.phase==='setup'?'Drag a Basic Pokémon onto Active or Bench.':'Drop that card onto a legal Pokémon slot.';
   }
+  // Keep the visual preview centred on the *actual* touch/pointer location.
+  // A large upward offset makes a dragged card appear above another Bench slot,
+  // while the release hit-test still uses the finger position.
+  function dragPreviewTransform(pointerX,pointerY,previewWidth,previewHeight){
+    const x=Number(pointerX)||0,y=Number(pointerY)||0;
+    const w=Math.max(0,Number(previewWidth)||0),h=Math.max(0,Number(previewHeight)||0);
+    return `translate(${Math.round(x-w/2)}px,${Math.round(y-h/2)}px)`;
+  }
   function handPointerDown(event){
     const source=event.target.closest?.('[data-tcgp-hand-drag]');
     if(!source||battlePresentationBusy||!root?.document||event.isPrimary===false)return;
@@ -1240,7 +1264,7 @@
       const dx=e.clientX-sx,dy=e.clientY-sy;if(Math.hypot(dx,dy)>6)moved=true;
       if(mode==='pending'&&moved)mode=Math.abs(dx)>Math.abs(dy)*1.2?'scroll':'drag';
       if(mode==='scroll'){host.scrollLeft=scrollStart-dx;return;}
-      if(mode==='drag'&&moved){if(!ghost)makeGhost();const x=Math.min((root.innerWidth||800)-80,Math.max(0,e.clientX+15)),y=Math.max(0,e.clientY-126);ghost.style.transform='translate('+x+'px,'+y+'px)';}
+      if(mode==='drag'&&moved){if(!ghost)makeGhost();ghost.style.transform=dragPreviewTransform(e.clientX,e.clientY,ghost.offsetWidth||76,ghost.offsetHeight||106);}
     }
     function cleanup(){root.document.removeEventListener('pointermove',move,true);root.document.removeEventListener('pointerup',end,true);root.document.removeEventListener('pointercancel',cancel,true);root.document.body.classList.remove('tcgp-card-dragging');originWrap?.classList.remove('tcgp-drag-origin');clearHandDragFeedback();ghost?.remove();if(cancelGesture===cancel)cancelGesture=null;}
     function end(e){
@@ -1275,7 +1299,7 @@
       if(Math.hypot(e.clientX-sx,e.clientY-sy)>7)moved=true;
       if(!moved)return;
       if(!ghost){ghost=root.document.createElement('div');ghost.className='tcgp-live-energy-drag';ghost.innerHTML=source.querySelector('.tcgp-energy-icon')?.outerHTML||energyIconHtml(source.dataset.energy||'Grass');root.document.body.appendChild(ghost);}
-      const x=Math.min((root.innerWidth||800)-44,Math.max(0,e.clientX+16)),y=Math.max(0,e.clientY-68);ghost.style.transform='translate('+x+'px,'+y+'px)';
+      ghost.style.transform=dragPreviewTransform(e.clientX,e.clientY,ghost.offsetWidth||42,ghost.offsetHeight||42);
     }
     function cleanup(){root.document.removeEventListener('pointermove',move,true);root.document.removeEventListener('pointerup',end,true);root.document.removeEventListener('pointercancel',cancel,true);ghost?.remove();if(cancelGesture===cancel)cancelGesture=null;}
     function end(e){
@@ -1291,6 +1315,13 @@
   function init(){
     const entry=el('tcgpBattleEntry'),content=el('tcgpBattleContent');if(!entry||!content)return;
     entry.addEventListener('click',open);el('tcgpBattleBack')?.addEventListener('click',back);el('tcgpBattleInfo')?.addEventListener('click',showHelp);el('tcgpBattleHelpClose')?.addEventListener('click',hideHelp);el('tcgpBattleHelpDone')?.addEventListener('click',hideHelp);content.addEventListener('click',contentClick);content.addEventListener('input',contentInput);content.addEventListener('pointerdown',energyPointerDown);content.addEventListener('pointerdown',handPointerDown);
+    content.addEventListener('keydown',event=>{
+      if(event.key!=='Escape')return;
+      const layer=content.querySelector('.tcgp-live-card-zoom:not([hidden])');
+      if(!layer)return;
+      event.stopPropagation();event.preventDefault();layer.hidden=true;
+      layer.closest('.tcgp-live-overlay')?.querySelector('.tcgp-live-card-art-zoom-trigger')?.focus();
+    });
     root.addEventListener?.('beforeunload',event=>{if(screen==='builder'&&root.LuckyDexTCGPDeckEditor?.isDirty?.()){event.preventDefault();event.returnValue='';}});
     // A ResizeObserver callback is not a user cancellation. A reflow of the
     // fan can happen during an Android drag; cancelling here drops the preview
@@ -1299,5 +1330,5 @@
   }
   if(root&&root.document){if(root.document.readyState==='loading')root.document.addEventListener('DOMContentLoaded',init,{once:true});else init();}
 
-  return{actionLabel,actionEventText,cardArtUrl,cardRulesHtml,supportText,filterBuilderRows,resultSummary,coverageForOwnedCards,centerHandActionIndices,directHandDropActionIndex,open,close,renderHome,requestLeave,isEditing:()=>screen==='builder',_test:{cpuActionDwellMs,cpuRemainingDwellMs,slotTools,buildInspectSpec,resolveInspect,attachedToolLinksHtml,liveToolMiniCardsHtml,liveCardHtml,attackPresentationMeta,coinSequence,battleSummaryStats,capturePresentationAnchors,targetKeyForAction,benchDamagePresentationEntry,stadiumSlotModel,resultActionsModel,playmatArtPath,coinArtPath,coinPresentationHtml,energyCostHtml,liveAttachedEnergyHtml,liveEnergySourceHtml,liveBenchReadOnlyMovesHtml,handActionIndices,attackDescription,openHandActions,openEnergyActions,pokemonActionIndices,pokemonInteractionAttrs,benchSwitchActionIndices,classicOpponentConfig,classicOpponentPickerHtml,classicOpponentHandRevealed,handDropErrorMessage}};
+  return{actionLabel,actionEventText,cardArtUrl,cardRulesHtml,supportText,filterBuilderRows,resultSummary,coverageForOwnedCards,centerHandActionIndices,directHandDropActionIndex,open,close,renderHome,requestLeave,isEditing:()=>screen==='builder',_test:{cpuActionDwellMs,cpuRemainingDwellMs,slotTools,buildInspectSpec,resolveInspect,attachedToolLinksHtml,liveToolMiniCardsHtml,liveCardHtml,attackPresentationMeta,coinSequence,battleSummaryStats,capturePresentationAnchors,targetKeyForAction,benchDamagePresentationEntry,stadiumSlotModel,resultActionsModel,playmatArtPath,coinArtPath,coinPresentationHtml,energyCostHtml,liveAttachedEnergyHtml,liveEnergySourceHtml,liveBenchReadOnlyMovesHtml,handActionIndices,attackDescription,zoomArtworkButtonHtml,cardZoomOverlayHtml,openHandActions,openEnergyActions,pokemonActionIndices,pokemonInteractionAttrs,benchSwitchActionIndices,classicOpponentConfig,classicOpponentPickerHtml,classicOpponentHandRevealed,handDropErrorMessage,dragPreviewTransform}};
 });
