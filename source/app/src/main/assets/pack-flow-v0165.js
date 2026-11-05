@@ -827,7 +827,8 @@ async function preparePack() {
       if(fixedBuilt){
         set=fixedBuilt.set;cards=fixedBuilt.cards;
       }else{
-        godPack=window.LuckyDexGodPack.shouldRoll()===true;luckyPack=!godPack&&Math.random()<1/500;
+        godPack=!set._lentalSet&&window.LuckyDexGodPack.shouldRoll()===true;
+        luckyPack=!set._lentalSet&&!godPack&&Math.random()<1/500;
         cards=await buildBalancedPackWithRetry(set,source,luckyPack,run.abort.signal,godPack);
       }
       const catalogueOnly={...set,cards:[]};cacheSetV13(catalogueOnly,source);

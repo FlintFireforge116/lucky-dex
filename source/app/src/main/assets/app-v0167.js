@@ -1551,6 +1551,7 @@ function updatePackFormatV5(){
   if(t)t.textContent=physical?(fixedHalfDeck?'30-card Half Deck':`${physicalSize}-card booster`):pocketSize===4?'4-card Deluxe Pocket pack':'5-card Pocket pack';
   if(c)c.textContent=physical?(fixedHalfDeck?`Fixed preconstructed deck · ${fmt(profile?.price||600)} Lucky Coins`:`${physicalSize} collectible cards · ${fmt(profile?.price||600)} Lucky Coins`):pocketSize===4?'Deluxe format · position-specific rarity':'Pocket-style position-specific rarity';
   if(b)b.textContent=physical?String(physicalSize):String(pocketSize);
+  if(physical&&set?._lentalSet&&c)c.textContent='Fan-made preview · 5 random cards · exact printed rarities pending the creator sheet';
 }
 function updatePackButton(){
   const btn=document.getElementById('openPackBtn');if(!btn)return;const e=packEntitlement();btn.textContent=e.label;btn.disabled=e.mode==='coins'&&state.profile.coins<e.cost;
@@ -1976,7 +1977,7 @@ renderCollection=function(){const grid=document.getElementById('collectionGrid')
    before the app could finish wiring. That single runtime exception explained
    the frozen starter, Wild Search/Expedition stalls and permanent Loading sets.
 */
-window.__LUCKYDEX_BUILD='0.69.103';
+window.__LUCKYDEX_BUILD='0.69.104';
 window.addEventListener('error',event=>{
   try{localStorage.setItem('luckyDexLastRuntimeError',JSON.stringify({build:window.__LUCKYDEX_BUILD,message:String(event?.message||'Unknown error'),source:String(event?.filename||''),line:Number(event?.lineno||0),at:Date.now()}));}catch(_){ }
 });

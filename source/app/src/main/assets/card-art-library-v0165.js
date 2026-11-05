@@ -85,10 +85,22 @@
     const key=setKey(row),cards=setCards(row),total=cards.length||Number(row?.total||row?.downloaded||0)||0;
     return {id:`library:${key}`,name:setName(row),releaseDate:setDate(row),cardCount:{total,official:total},cards:[],_libraryKey:key,_libraryCode:key,_librarySeries:setSeries(row),_libraryNative:true,_source:'library-index-v1',_catalogOrder:Number(catalogOrder)||0};
   }
+  // Region-specific artwork ZIPs are hosted on the existing GitHub Release.
+  // Their manifest is the collection identity authority until the author supplies
+  // a final card spreadsheet; no unverified gameplay text is invented.
+  const LENTAL_SETS=Object.freeze([
+    ['SNAPFLORIO','New Pokémon Snap — Florio Nature Park',123],
+    ['SNAPFOUNJA','New Pokémon Snap — Founja Jungle',86],
+    ['SNAPBEACH','New Pokémon Snap — Blushing Beach',19]
+  ].map(([key,name,total])=>Object.freeze({id:`library:${key}`,name,
+    releaseDate:'',cardCount:{total,official:total},cards:[],
+    _libraryKey:key,_libraryCode:key,_librarySeries:'New Pokémon Snap',
+    _libraryNative:true,_lentalSet:true,
+    _libraryAssetName:`luckydex-set-${key}-v1.zip`})));
   async function catalog(options={}){
     const index=await getIndex(options);
-    if(!validIndex(index))return [];
-    return index.sets.map((row,indexOrder)=>({row,indexOrder})).filter(item=>setKey(item.row)&&setCards(item.row).length).map(item=>appSet(item.row,item.indexOrder));
+    const official=validIndex(index)?index.sets.map((row,indexOrder)=>({row,indexOrder})).filter(item=>setKey(item.row)&&setCards(item.row).length).map(item=>appSet(item.row,item.indexOrder)):[];
+    return [...LENTAL_SETS,...official];
   }
   function findIndexSet(index,key){return index?.sets?.find(row=>setKey(row)===String(key||''))||null;}
   function normalizeSetIdentity(value=''){return normalizeName(value);}
@@ -149,6 +161,9 @@
   }
   async function hydrateSet(set){
     if(!set?._libraryKey)return set;
+    // Snap artwork is deliberately not bundled or reachable through remote
+    // individual card URLs: the existing Android installer fetches the ZIP.
+    if(set._lentalSet&&!isInstalled(set._libraryKey))await ensureInstalled(set);
     const manifest=installedManifest(set._libraryKey);
     if(manifest?.cards?.length){
       const cards=manifest.cards.filter(row=>row?.id&&row?.file).map(row=>cardFromInstalledRecord(row,set));
@@ -201,7 +216,7 @@
   // the current draft Release stays private while the app uses exact original
   // source URLs from the index. If a public/private authenticated asset host is
   // configured later, the same native installer can provide complete offline sets.
-  function installAssetUrl(set){const ep=endpoint(),asset=set?._libraryAssetName||`luckydex-set-${set?._libraryKey}-v1.zip`;return `${ep.assetBase}/${encodeURIComponent(asset)}`;}
+  function installAssetUrl(set){const ep=endpoint(),asset=set?._libraryAssetName||`luckydex-set-${set?._libraryKey}-v1.zip`;const base=set?._lentalSet?'https://github.com/FlintFireforge116/lucky-dex/releases/download/luckydex-lental-v1':ep.assetBase;return `${base}/${encodeURIComponent(asset)}`;}
   function ensureInstalled(set,signal=null){
     if(!set?._libraryKey)return Promise.reject(new Error('not a LuckyDex library set'));
     if(isInstalled(set._libraryKey))return Promise.resolve(true);

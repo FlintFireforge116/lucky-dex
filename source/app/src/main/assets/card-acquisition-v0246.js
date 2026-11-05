@@ -106,6 +106,9 @@
     if(typeof resolver!=='function')return false;
     const profile=resolver(set,source);
     if(!profile||profile.purchasable===false||profile.productKind!=='booster')return false;
+    // Lental has a generic sealed pack until creator packshots are supplied.
+    // Official product art requirements remain strictly unchanged.
+    if(set?._lentalSet===true)return true;
     // Physical Pack Shop entries must have an audited bundled packshot. This
     // prevents fixed decks/collections and unknown catalogue products from
     // being silently treated as ordinary boosters by the date fallback.

@@ -165,8 +165,15 @@
     ];
     return Object.freeze({id:deluxe?'pocket_deluxe_4':'pocket_standard_5',source:'tcgp',cardCount:count,price:450,rateFamily:deluxe?'pocket-deluxe':'pocket-standard',productKind:'booster',purchasable:true,parent:null,slots:Object.freeze(slots)});
   }
+  // Image-only fan sets: five random cards, no fabricated rarity guarantees.
+  function lentalPreviewProfile(){
+    return Object.freeze({id:'lental_preview_5',source:'tcg',cardCount:5,price:450,
+      rateFamily:'special-flexible',productKind:'booster',purchasable:true,parent:null,
+      slots:Object.freeze(Array.from({length:5},(_,i)=>slot(`lental-${i+1}`,'core',ANY,{specialRule:'lental-preview'})))});
+  }
   function resolve(set={},source='tcg'){
     if(source==='tcgp')return pocketProfile(set);
+    if(set?._lentalSet===true)return lentalPreviewProfile();
     const parent=subsetParent(set);if(parent)return Object.freeze({id:'subset',source:'tcg',cardCount:0,price:0,rateFamily:'subset',productKind:'subset',purchasable:false,parent,slots:Object.freeze([])});
     const fixed=fixedSpecialProduct(set);if(fixed)return Object.freeze({...fixed,source:'tcg',purchasable:false,parent:null,slots:Object.freeze([])});
     const special=specialFor(set);if(special)return Object.freeze({...special,source:'tcg',productKind:'booster',purchasable:true,parent:null,slots:Object.freeze(special.slots.slice())});
