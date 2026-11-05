@@ -430,7 +430,9 @@
     for(const source of [ss.active,...ss.bench].filter(Boolean)){if(onlySource&&source!==onlySource)continue;for(const tool of toolsOf(source)){const ctx={...effectContext(state,side,{},source),eventData:meta,sourceTool:tool};effects.applyPersistentEvent(data.cardById(tool.cardId)?.effect,event,ctx);}for(const ref of temporaryTrainersOf(source)){const ctx={...effectContext(state,side,{},source),eventData:meta,sourceTool:ref};effects.applyPersistentEvent(data.cardById(ref.cardId)?.effect,event,ctx);}}
     if(state.stadium){const source=ss.active||ss.bench[0];if(source){const ctx={...effectContext(state,side,{},source),eventData:meta};effects.applyPersistentEvent(data.cardById(state.stadium.cardId)?.effect,event,ctx);}}
   }
-  function retreatCost(state,side){const slot=state.sides[side].active;const gym=data.cardById(state.stadium?.cardId)?.id,ownerName=data.cardById(slot.cardId)?.name||'';let stadiumCost=gym==='gym1-104'?1:gym==='gym1-108'&&ownerName.startsWith("Misty's")?-1:0;
+  function retreatCost(state,side){const slot=state.sides[side].active;
+    if(state.format==='classic'&&slot?.cardId==='SNAPFLORIO-002'&&slot.lastDamageSource?.attack&&
+       slot.lastDamageSource.side!==side&&Number(slot.lastDamageSource.turn)===Number(state.turnNumber)-1)return 0;const gym=data.cardById(state.stadium?.cardId)?.id,ownerName=data.cardById(slot.cardId)?.name||'';let stadiumCost=gym==='gym1-104'?1:gym==='gym1-108'&&ownerName.startsWith("Misty's")?-1:0;
     if(gym==='SNAPFLORIO-111'&&data.cardById(slot.cardId)?.stage==='Basic')stadiumCost-=1;if(data.cardById(slot.cardId)?.retreatZeroWithWater&&(Number(slot.energy?.Water||0)+(slot.specialEnergy||[]).reduce((n,r)=>n+Number(r.provides?.Water||data.cardById(r.cardId)?.effect?.provides?.Water||0),0))>=Number(data.cardById(slot.cardId)?.retreatWaterMinimum||1))return 0;
     return Math.max(0,Number(data.cardById(slot.cardId).retreat||0)+effects.modifierAmount(state,side,slot,'retreatCost',data.cardById)+stadiumCost);}
   function attackCost(state,side,attack){const slot=state.sides[side].active;let cost=effects.attackCostOverride(state,side,slot,attack,data.cardById)??attack.cost??'';
@@ -557,7 +559,7 @@
       s.bench.forEach(slot=>{if(slot&&!slot.gymEnergyLock)actions.push({type:'attach',target:'bench',benchIndex:Number(slot.benchSlot)});});
     }
     const conditions=s.active?.conditions||{};
-    if (!s.retreated && s.active && s.bench.length&&!neoTrapActive(state,side,s.active,'retreat')&&!conditions.sleep&&!conditions.paralysis&&!effects.isLocked(state,s.active,'retreat')&&data.cardById(s.active.cardId).effect?.type!=='playFossil'){
+    if (!s.retreated && s.active && s.bench.length&&(s.active.cardId==='SNAPFLORIO-073'||!neoTrapActive(state,side,s.active,'retreat'))&&!conditions.sleep&&!conditions.paralysis&&(s.active.cardId==='SNAPFLORIO-073'||!effects.isLocked(state,s.active,'retreat'))&&data.cardById(s.active.cardId).effect?.type!=='playFossil'){
       if (effects.totalEnergy(effectiveEnergy(state,side,s.active)) >= retreatCost(state,side)){
         s.bench.forEach(slot=>{if(slot)actions.push({type:'retreat',benchIndex:Number(slot.benchSlot)});});
       }
@@ -657,6 +659,13 @@
     let guard=effects.attackIsPrevented(state,foeSide,defender,attacker,data.cardById);if(guard?.maxDamage!=null&&damage>Number(guard.maxDamage))guard=null;if(guard?.minDamage!=null&&Math.max(0,damage-effects.modifierAmount(state,foeSide,defender,'damageReduction',data.cardById))<Number(guard.minDamage))guard=null;const preGuardDamage=damage;if(guard?.firstDamage&&preGuardDamage>0)effects.consumeDamageGuard(defender,'firstDamage');
     damage=guard?0:Math.max(0,damage-effects.modifierAmount(state,foeSide,defender,'damageReduction',data.cardById));
     if(damage>0){const coinGuard=effects.findPassiveRule(state,foeSide,defender,'coinDamageGuard',data.cardById);if(coinGuard){const heads=random(state)<0.5;state.log.push({type:'coin',side:foeSide,heads,reason:'coinDamageGuard',results:[heads]});if(heads)damage=coinGuard.preventAll?0:Math.max(0,damage-Number(coinGuard.reduction||0));}}
+    if(state.format==='classic'&&damage>0&&defender===state.sides[foeSide].active){
+      const refs=[defender.tool,...(defender.extraTools||[])].filter(Boolean),fruit=refs.find(ref=>ref.cardId==='SNAPFLORIO-115');
+      if(fruit){if(defender.tool?.uid===fruit.uid)defender.tool=defender.extraTools?.shift()||null;
+        else defender.extraTools=(defender.extraTools||[]).filter(ref=>ref.uid!==fruit.uid);
+        state.sides[foeSide].discard.push(fruit);damage=0;
+        state.log.push({type:'toolGuard',side:foeSide,toolId:fruit.cardId,prevented:true});}
+    }
     defender.damage=Number(defender.damage||0)+damage;if(damage>0)defender.lastDamageSource={side,uid:attacker.uid,cardId:attacker.cardId,attack:true,turn:state.turnNumber};
     if(damage>0&&defender.retaliate&&(defender.retaliate.expiresTurn==null||state.turnNumber<=defender.retaliate.expiresTurn)){const amount=Number(defender.retaliate.amount||0);attacker.damage=Number(attacker.damage||0)+amount;state.log.push({type:'retaliate',side:foeSide,amount,cardId:defender.cardId});}
     state.log.push({type:'attack',side,cardId:attacker.cardId,attack:attackName,damage,target:'active',repeat:true});ss.lastAttackName=attackName;ss.lastAttackTurn=state.turnNumber;ss.attackCounts=ss.attackCounts||{};ss.attackCounts[attackName]=Number(ss.attackCounts[attackName]||0)+1;attacker.attackUseCount=Number(attacker.attackUseCount||0)+1;
@@ -1108,7 +1117,14 @@
       if(state.stadium?.cardId==='SNAPFLORIO-112'&&!isActive)damage=0;
       // Apply printed Lental protection after Weakness, Resistance and ordinary modifiers.
       if(!result.damageRules?.ignoreEffects)damage=Math.max(0,damage-effects.lentalDefenseReduction(state,foeSide,defender,attackerCard,data.cardById));
-      defender.damage=Number(defender.damage||0)+damage;
+      if(state.format==='classic'&&damage>0&&defender===state.sides[foeSide].active){
+      const refs=[defender.tool,...(defender.extraTools||[])].filter(Boolean),fruit=refs.find(ref=>ref.cardId==='SNAPFLORIO-115');
+      if(fruit){if(defender.tool?.uid===fruit.uid)defender.tool=defender.extraTools?.shift()||null;
+        else defender.extraTools=(defender.extraTools||[]).filter(ref=>ref.uid!==fruit.uid);
+        state.sides[foeSide].discard.push(fruit);damage=0;
+        state.log.push({type:'toolGuard',side:foeSide,toolId:fruit.cardId,prevented:true});}
+    }
+    defender.damage=Number(defender.damage||0)+damage;
       if(state.format==='classic'&&damage>0){
         // Resolve reactive attacks before KO; Wobbuffet can counter even when
         // the incoming blow knocks it out.

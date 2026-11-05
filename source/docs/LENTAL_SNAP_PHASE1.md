@@ -142,3 +142,14 @@ mechanics tests pass.
   to the main deck exactly as its printed text specifies.
 * Florio artwork v2, 10-card packs, collection save IDs, Founja and excluded
   Blushing Beach are unchanged. The APK still needs on-device battle tests.
+
+## v0.69.112 — revised Florio expansion
+
+* 14 additional Florio cards enabled from the corrected v2 printing. Total: 87 of 123 playable; 36 remain restricted.
+* Includes conditional Energy and coin attacks, optional opponent-deck discard,
+  owner-chosen hand disruption, Tool transfers, Special Condition immunities,
+  Rule Box and V-card Prize values, and Hanging Fruit's single-use prevention.
+* Both sides retain five Prize cards, including while a card's printed text
+  mentions six; no artificial six-Prize starting state was added.
+* Florio art v2, shop booster art, 10-card boosters, ownership IDs, Founja and
+  excluded Blushing Beach remain unchanged. In-app playtesting is still needed.

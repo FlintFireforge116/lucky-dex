@@ -302,6 +302,60 @@ const FLORIO_111=(()=>{
   return Object.freeze(out);
 })();
 
+
+// v0.69.112: revised authoritative Florio v2 printed-card integration.
+// These numbers were inspected against the original cards, not inferred from filenames.
+const FLORIO_VERIFIED_112=new Set([2,34,42,48,51,56,59,66,69,73,75,76,97,115]);
+const FLORIO_112=Object.freeze({
+  2:{type:'Grass',hp:40,retreat:1,weakness:'Fire',abilities:[
+    {name:'Crawl Away',type:'passive',activeOnly:true,effect:{type:'noop'}}],attacks:[
+    {name:'Headbutt',cost:'GC',damage:20}]},
+  34:{type:'Grass',hp:190,retreat:2,weakness:'Fire',resistance:'Metal',resistanceValue:'-30',prizeCards:2,abilities:[
+    {name:'Illumina Glow',type:'activated',oncePerTurn:true,effect:{type:'healSelf',amount:30}}],attacks:[
+    {name:'Flutter Dust',cost:'G',damage:30},
+    {name:'Wild Pollen',cost:'GGC',damage:80,effect:{type:'lentalRule',rule:'wildPollen112'}}]},
+  42:{type:'Water',hp:50,retreat:1,weakness:'Lightning',attacks:[
+    {name:'Splash Assist',cost:'WC',damage:10,effect:{type:'coinFlip',heads:{type:'lentalRule',rule:'splashAssist112'}}},
+    {name:'Majestic Leap',cost:'WWC',damage:0,effect:{type:'lentalRule',rule:'majesticLeap112'}}]},
+  48:{type:'Lightning',hp:40,retreat:1,weakness:'Fighting',resistance:'Metal',resistanceValue:'-30',abilities:[
+    {name:'Illumina Glow',type:'activated',oncePerTurn:true,effect:{type:'healSelf',amount:10}},
+    {name:'Floral Crown',type:'passive',effect:{type:'noop'}}],attacks:[
+    {name:'Surprise Spark',cost:'LC',damage:30}]},
+  51:{type:'Lightning',hp:70,retreat:1,weakness:'Fighting',attacks:[
+    {name:'Jump for Joy',cost:'C',damage:0,effect:{type:'reorderTop',count:5}},
+    {name:'Short Circuit',cost:'LLC',damage:40,effect:{type:'lentalRule',rule:'shortCircuit112'}}]},
+  56:{type:'Psychic',hp:70,retreat:2,weakness:'Metal',abilities:[
+    {name:'Daisy Chain',type:'passive',effect:{type:'noop'}}],attacks:[
+    {name:'Combat Dance',cost:'',damage:0,effect:{type:'lentalRule',rule:'combatDance112'}}]},
+  59:{type:'Psychic',hp:210,retreat:3,weakness:'Metal',resistance:'Fighting',resistanceValue:'-30',prizeCards:2,abilities:[
+    {name:'Illumina Glow',type:'activated',oncePerTurn:true,effect:{type:'healSelf',amount:30}}],attacks:[
+    {name:'Ribbon Whip',cost:'C',damage:40},
+    {name:'Miracle Sight',cost:'PPPC',damage:150,effect:{type:'coinFlip',heads:{type:'lentalRule',rule:'miracleSight112'}}}]},
+  66:{type:'Darkness',hp:70,retreat:1,weakness:'Fighting',abilities:[
+    {name:'Dark Disdain',type:'passive',effect:{type:'noop'}}],attacks:[
+    {name:'Shadow Peck',cost:'DC',damage:30,effect:{type:'lentalRule',rule:'shadowPeck112'}}]},
+  69:{type:'Colorless',hp:120,retreat:3,weakness:'Lightning',attacks:[
+    {name:'Wing Beat',cost:'C',damage:30},
+    {name:'Downward Draft',cost:'CCC',damage:120,effect:{type:'sequence',effects:[
+      {type:'actionLock',side:'opponent',cardType:'Trainer',duration:'opponentTurn'},
+      {type:'lock',target:'self',action:'attack',attackName:'Downward Draft',duration:'nextOwnTurn'}]}}]},
+  73:{type:'Colorless',hp:120,retreat:2,weakness:'Lightning',abilities:[
+    {name:'Desperate Dash',type:'passive',activeOnly:true,effect:{type:'noop'}}],attacks:[
+    {name:'Massive Kick',cost:'CCC',damage:120,effect:{type:'discardEnergyCard',target:'self',amount:1,useCost:true}}]},
+  75:{type:'Colorless',hp:190,retreat:2,weakness:'Lightning',resistance:'Metal',resistanceValue:'-30',prizeCards:2,abilities:[
+    {name:'Illumina Glow',type:'activated',oncePerTurn:true,effect:{type:'healSelf',amount:20}}],attacks:[
+    {name:'Body Slam',cost:'C',damage:60},
+    {name:'Endeavorous Flight',cost:'CC',damage:10,effect:{type:'lentalRule',rule:'endeavorousFlight112'}}]},
+  76:{type:'Colorless',hp:230,retreat:3,weakness:'Lightning',prizeCards:2,attacks:[
+    {name:'Unfair Fight',cost:'CC',damage:50,effect:{type:'lentalRule',rule:'unfairFight112'}},
+    {name:'Beak Invasion',cost:'CCC',damage:200,effect:{type:'lentalRule',rule:'beakInvasion112'}}]},
+  97:{type:'Colorless',hp:180,retreat:3,weakness:'Fighting',resistance:'Grass',resistanceValue:'-30',prizeCards:2,abilities:[
+    {name:'Illumina Glow',type:'activated',oncePerTurn:true,effect:{type:'healSelf',amount:30}}],attacks:[
+    {name:'Glide',cost:'C',damage:30},
+    {name:'Volt Switch',cost:'CCC',damage:140,effect:{type:'lentalRule',rule:'voltSwitch112'}}]},
+  115:{trainerType:'Tool',effect:{type:'noop'},onAttach:{type:'noop'},printedRules:'If the Active Pokémon this Tool is attached to would be damaged by an opponent Pokémon attack, prevent the damage and discard this Tool.'}
+});
+
 const PRINTED_RARITY=Object.freeze({C:'Common',U:'Uncommon',R:'Rare',H:'Rare Holo',X:'Ultra Rare'});
 const RARITY_BY_SET=Object.freeze({"SNAPFLORIO":"CCUHURXXXXUXCCUHCCHRRCURXRXRRXCHUXCCHCCHCHCCUXCHXCUHRXXRHRXRXRXXCHCCURXXUUXXCRRXCCHCHCCHCCHCRXCUXURXRRCRUCCCCCUUUCUUURCRURU","SNAPFOUNJA":"UXCUHURURXUURXRXXRRCHCCUCUHCCRRXRXCCRHRXCCHRRRXHUUUXURHCCUHRRRXXRRRCCHRRRURRRURCUCURCR"});
 function printedRarity(key,number){const symbol=RARITY_BY_SET[key]?.[number-1];return PRINTED_RARITY[symbol]||'Unknown';}
@@ -317,7 +371,7 @@ for(const [key,meta] of Object.entries(RAW)){
   SETS.push(Object.freeze({id:key,name:meta.name,series:'New Pokémon Snap',cardCount:meta.cards.length,fanMade:true}));
   for(const [number,name,kind] of meta.cards){
     const id=`${key}-${String(number).padStart(3,'0')}`;
-    const spec=key==='SNAPFLORIO'&&(!FLORIO_PENDING_REAUDIT.has(number)||FLORIO_REAUDITED_110.has(number)||FLORIO_VERIFIED_111.has(number))?(FLORIO_111[number]||FLORIO_REVISED_110[number]||FLORIO_REVISED_STADIUM[number]||FLORIO_108[number]||FLORIO_NEXT[number]||FLORIO_EXTRA[number]||FLORIO_BATTLE[number]||null):null;
+    const spec=key==='SNAPFLORIO'&&(!FLORIO_PENDING_REAUDIT.has(number)||FLORIO_REAUDITED_110.has(number)||FLORIO_VERIFIED_111.has(number)||FLORIO_VERIFIED_112.has(number))?(FLORIO_112[number]||FLORIO_111[number]||FLORIO_REVISED_110[number]||FLORIO_REVISED_STADIUM[number]||FLORIO_108[number]||FLORIO_NEXT[number]||FLORIO_EXTRA[number]||FLORIO_BATTLE[number]||null):null;
     const displayName=key==='SNAPFLORIO'?(number===12?'Heracross ex':ILLUMINA_FLORIO.has(number)?'Illumina '+name:name):name;
     const card=Object.freeze({id,name:displayName,number:String(number),setId:key,kind,
       source:'tcg',battleFormat:'classic',rarity:printedRarity(key,number),types:spec?.type?[spec.type]:[],
