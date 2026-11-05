@@ -777,6 +777,7 @@
     const lastLog=[...currentBattle.log].reverse().map(logText).find(Boolean)||(currentBattle.phase==='setup'?'Choose an Active Pokémon.':'Battle started');
     const handScroll=el('tcgpBattleContent')?.querySelector('.tcgp-live-hand')?.scrollLeft||0;
     const classic=currentBattle.format==='classic',scoreHtml=classic?`<span>CPU PRIZES <b>${Number(o.prizesTaken||0)}</b>/5</span><i>·</i><span>YOU <b>${Number(p.prizesTaken||0)}</b>/5</span>`:`<span>CPU <b>${o.points}</b>/3</span><i>·</i><span>YOU <b>${p.points}</b>/3</span>`;
+    const florioPrizeReveal=classic?[['YOU',p],['CPU',o]].flatMap(([label,ss])=>(ss.prizes||[]).filter(ref=>ref.faceUp).map(ref=>`${label}: ${esc(data.cardById(ref.cardId)?.name||ref.cardId)}`)).join(' · '):'';
     const narrowGym=classic&&currentBattle.stadium?.cardId==='gym1-124'&&currentBattle.pendingChoice?.special!=='narrowGymReturn';
     const lentalWide=classic&&[p,o].some(ss=>Number(ss.benchLimit||3)>3||(ss.bench||[]).length>3);
     setContent(`<section class="tcgp-live-arena ${classic?'format-classic':''}${narrowGym?' narrow-gym':''}${lentalWide?' lental-wide-bench':''}" aria-label="${classic?'Classic TCG':'TCG Pocket'} battlefield">
@@ -785,7 +786,7 @@
         <div class="tcgp-live-opponent-bench" aria-label="Opponent Bench">${liveBenchHtml('opponent',o.bench)}</div>
         <div class="tcgp-live-opponent-active" aria-label="Opponent Active">${liveCardHtml(o.active,{side:'opponent',zone:'active'})}</div>
       </section>
-      <section class="tcgp-live-mid" aria-label="Score, turn and play lane"><div class="tcgp-live-score${classic?' tcgp-classic-score':''}">${classic?`<div class="tcgp-classic-score-numbers">${scoreHtml}</div><small class="tcgp-classic-score-label">CPU · ${esc(currentClassicOpponent?.name||'Base Set')}</small>`:scoreHtml}</div>${liveMidControlsHtml(turnText,lastLog)}</section>
+      <section class="tcgp-live-mid" aria-label="Score, turn and play lane"><div class="tcgp-live-score${classic?' tcgp-classic-score':''}">${classic?`<div class="tcgp-classic-score-numbers">${scoreHtml}</div><small class="tcgp-classic-score-label">CPU · ${esc(currentClassicOpponent?.name||'Base Set')}${florioPrizeReveal?` · Face-up Prize: ${florioPrizeReveal}`:''}</small>`:scoreHtml}</div>${liveMidControlsHtml(turnText,lastLog)}</section>
       <section class="tcgp-live-player tcgp-live-mat-half" data-mat-side="player" ${playmatStyle('player')} aria-label="Player half">
         <div class="tcgp-live-player-active" aria-label="Your Active">${liveCardHtml(p.active,{side:'player',zone:'active',showActions:false})}</div>${liveStadiumSlotHtml()}
         <div class="tcgp-live-player-bench" aria-label="Your Bench">${liveBenchHtml('player',p.bench)}</div>

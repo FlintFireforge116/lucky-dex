@@ -412,6 +412,84 @@ const FLORIO_113=Object.freeze({
   121:{trainerType:'Tool',effect:{type:'noop'},onAttach:{type:'noop'},printedRules:'Attached Pokémon takes 30 less damage from attacks by Rule Box Pokémon, after Weakness and Resistance.'}
 });
 
+
+// v0.69.114 — the final 23 Florio Nature Park cards, revised creator PNGs.
+const FLORIO_VERIFIED_114=new Set([5,8,9,10,23,27,28,29,30,37,47,49,52,55,70,72,77,91,95,96,98,119,122]);
+const FLORIO_114=Object.freeze({
+  5:{type:'Grass',hp:110,retreat:2,weakness:'Fire',abilities:[
+    {name:'Wait',type:'passive',effect:{type:'noop'}}],attacks:[
+    {name:'Head Charge',cost:'GCC',damage:100,effect:{type:'selfDamage',amount:20}}]},
+  8:{type:'Grass',hp:270,retreat:2,weakness:'Fire',prizeCards:3,attacks:[
+    {name:'Horn Swipe',cost:'GC',damage:60},
+    {name:'Vice Pincers GX',cost:'GGC',damage:300,gxAttack:true,effect:{type:'lentalRule',rule:'vicePincers114'}}]},
+  9:{type:'Grass',hp:210,retreat:2,weakness:'Fire',prizeCards:2,abilities:[
+    {name:'Petal Glow',type:'activated',oncePerTurn:true,effect:{type:'lentalRule',rule:'petalGlow114'}}],attacks:[
+    {name:'Nature Whip',cost:'GGC',damage:160}]},
+  10:{type:'Grass',hp:320,stage:'Stage 1',evolvesFrom:'Meganium V',retreat:3,weakness:'Fire',prizeCards:3,abilities:[
+    {name:'Illumina Glow',type:'activated',oncePerTurn:true,effect:{type:'healSelf',amount:50}}],attacks:[
+    {name:'Floral Surge',cost:'GC',damage:70,effect:{type:'healSelf',amount:40}},
+    {name:'Max Bioluminescence',cost:'GGC',damage:180,effect:{type:'lentalRule',rule:'faceUpPrize114'}}]},
+  23:{type:'Grass',hp:60,retreat:1,weakness:'Fire',resistance:'Metal',resistanceValue:'-30',abilities:[
+    {name:'Illumina Glow',type:'activated',oncePerTurn:true,effect:{type:'healSelf',amount:10}}],attacks:[
+    {name:'Nectar Order',cost:'GC',damage:20,effect:{type:'lentalRule',rule:'nectarOrder114'}}]},
+  27:{type:'Grass',hp:300,retreat:4,weakness:'Fire',prizeCards:2,attacks:[
+    {name:'Tangled Fruit',cost:'G',damage:0,effect:{type:'lentalRule',rule:'tangledFruit114'}},
+    {name:'Energy Thrash',cost:'GGC',damage:40,effect:{type:'lentalRule',rule:'energyThrash114'}}]},
+  28:{type:'Grass',hp:80,retreat:2,weakness:'Fire',resistance:'Lightning',resistanceValue:'-30',abilities:[
+    {name:'Illumina Glow',type:'activated',oncePerTurn:true,effect:{type:'healSelf',amount:20}}],attacks:[
+    {name:'Herbal Shower',cost:'GC',damage:50,effect:{type:'lentalRule',rule:'herbalShower114'}}]},
+  29:{type:'Grass',hp:100,retreat:3,weakness:'Fire',prismStar:true,attacks:[
+    {name:'Garden Flourish',cost:'GGGC',damage:130}]},
+  30:{type:'Grass',hp:270,retreat:4,weakness:'Fire',prizeCards:3,abilities:[
+    {name:'Illumina Glow',type:'activated',oncePerTurn:true,effect:{type:'healSelf',amount:50}}],attacks:[
+    {name:'Petal Blade',cost:'GG',damage:140},
+    {name:'Fertilize GX',cost:'GGGGC',damage:100,gxAttack:true,effect:{type:'lentalRule',rule:'fertilize114'}}]},
+  37:{type:'Grass',hp:60,retreat:1,weakness:'Fire',resistance:'Metal',resistanceValue:'-30',abilities:[
+    {name:'Illumina Glow',type:'activated',oncePerTurn:true,effect:{type:'healSelf',amount:10}}],attacks:[
+    {name:'Acrobatic Grace',cost:'GC',damage:30,effect:{type:'lentalRule',rule:'toolDiscardBonus114'}}]},
+  47:{type:'Lightning',hp:30,retreat:1,weakness:'Fighting',abilities:[
+    {name:'Baby Evolution',type:'activated',oncePerTurn:true,effect:{type:'lentalRule',rule:'babyEvolution114'}}],attacks:[
+    {name:'Jolt',cost:'L',damage:0,effect:{type:'lentalRule',rule:'jolt114'}}]},
+  49:{type:'Lightning',types:['Lightning','Grass'],hp:180,retreat:2,weakness:'Fighting',prizeCards:3,abilities:[
+    {name:'Double Type',type:'passive',effect:{type:'noop'}}],attacks:[
+    {name:'Stick Shock',cost:'LC',damage:50,effect:{type:'status',target:'opponentActive',status:'paralysis'}},
+    {name:'Friendship Surge GX',cost:'GL',damage:100,gxAttack:true,effect:{type:'lentalRule',rule:'friendshipSurge114'}}]},
+  52:{type:'Lightning',hp:80,retreat:3,weakness:'Fighting',attacks:[
+    {name:'Forage',cost:'C',damage:0,effect:{type:'lentalRule',rule:'forage114'}},
+    {name:'Charged Roast',cost:'LC',damage:90,effect:{type:'lentalRule',rule:'chargedRoast114'}}]},
+  55:{type:'Psychic',hp:280,stage:'Stage 1',evolvesFrom:'Florges V',retreat:4,weakness:'Metal',resistance:'Darkness',resistanceValue:'-30',prizeCards:2,abilities:[
+    {name:'Illumina Glow',type:'activated',oncePerTurn:true,effect:{type:'healSelf',amount:50}}],attacks:[
+    {name:'Garden Flourish',cost:'PC',damage:120,effect:{type:'lentalRule',rule:'florgesGarden114'}},
+    {name:'Nature Storm',cost:'GPC',damage:0,vstarPower:true,effect:{type:'lentalRule',rule:'natureStorm114'}}]},
+  70:{type:'Colorless',hp:110,retreat:2,weakness:'Lightning',resistance:'Fighting',resistanceValue:'-30',abilities:[
+    {name:'Illumina Glow',type:'activated',oncePerTurn:true,effect:{type:'healSelf',amount:10}}],attacks:[
+    {name:'Captivate',cost:'CC',damage:0,effect:{type:'lentalRule',rule:'captivate114'}},
+    {name:'Mega Peck',cost:'CCC',damage:130}]},
+  72:{type:'Colorless',types:['Colorless','Water'],hp:250,retreat:3,weakness:'Lightning',prizeCards:3,abilities:[
+    {name:'Double Type',type:'passive',effect:{type:'noop'}},
+    {name:'Dinner Time',type:'activated',oncePerTurn:true,effect:{type:'lentalRule',rule:'dinnerTime114'}}],attacks:[
+    {name:'Piercing Talons',cost:'CC',damage:160},
+    {name:'Predator Plunge GX',cost:'CCC',damage:0,gxAttack:true,effect:{type:'lentalRule',rule:'predatorPlunge114'}}]},
+  77:{type:'Colorless',hp:60,retreat:1,weakness:'Fighting',abilities:[
+    {name:'Slumber Time',type:'activated',oncePerTurn:true,effect:{type:'lentalRule',rule:'slumberTime114'}}],attacks:[
+    {name:'Good Dreams',cost:'CC',damage:0,allowAsleep:true,effect:{type:'lentalRule',rule:'goodDreams114'}}]},
+  91:{type:'Colorless',hp:60,retreat:1,weakness:'Fighting',resistance:'Psychic',resistanceValue:'-30',abilities:[
+    {name:'Illumina Glow',type:'activated',oncePerTurn:true,effect:{type:'healSelf',amount:10}}],attacks:[
+    {name:'Hibernate',cost:'C',damage:30,effect:{type:'lentalRule',rule:'hibernate114'}}]},
+  95:{type:'Colorless',hp:50,retreat:1,weakness:'Lightning',attacks:[
+    {name:'Fly Off',cost:'C',damage:0,effect:{type:'lentalRule',rule:'flyOff114'}}]},
+  96:{type:'Colorless',hp:110,stage:'Stage 1',evolvesFrom:'Ducklett',retreat:2,weakness:'Lightning',abilities:[
+    {name:'Circle Soar',type:'passive',activeOnly:true,effect:{type:'noop'}}],attacks:[
+    {name:'Wind Storm',cost:'CCCC',damage:140,effect:{type:'lentalRule',rule:'windStorm114'}}]},
+  98:{type:'Colorless',hp:120,retreat:3,weakness:'Fighting',attacks:[
+    {name:'Herding',cost:'CCC',damage:0,effect:{type:'lentalRule',rule:'herding114'}},
+    {name:'Dynamic Horn',cost:'CCCC',damage:130}]},
+  119:{trainerType:'Supporter',effect:{type:'lentalRule',rule:'surprise114'},
+    printedRules:'Each player puts a Basic Energy card from their hand onto their Active Pokémon.'},
+  122:{trainerType:'Tool',effect:{type:'noop'},onAttach:{type:'noop'},
+    printedRules:'If the attached Pokémon is KO’d by damage from an opponent’s attack, return it and all attached cards to hand; discard Teleport Point. Opponent still takes Prizes.'}
+});
+
 const PRINTED_RARITY=Object.freeze({C:'Common',U:'Uncommon',R:'Rare',H:'Rare Holo',X:'Ultra Rare'});
 const RARITY_BY_SET=Object.freeze({"SNAPFLORIO":"CCUHURXXXXUXCCUHCCHRRCURXRXRRXCHUXCCHCCHCHCCUXCHXCUHRXXRHRXRXRXXCHCCURXXUUXXCRRXCCHCHCCHCCHCRXCUXURXRRCRUCCCCCUUUCUUURCRURU","SNAPFOUNJA":"UXCUHURURXUURXRXXRRCHCCUCUHCCRRXRXCCRHRXCCHRRRXHUUUXURHCCUHRRRXXRRRCCHRRRURRRURCUCURCR"});
 function printedRarity(key,number){const symbol=RARITY_BY_SET[key]?.[number-1];return PRINTED_RARITY[symbol]||'Unknown';}
@@ -427,12 +505,12 @@ for(const [key,meta] of Object.entries(RAW)){
   SETS.push(Object.freeze({id:key,name:meta.name,series:'New Pokémon Snap',cardCount:meta.cards.length,fanMade:true}));
   for(const [number,name,kind] of meta.cards){
     const id=`${key}-${String(number).padStart(3,'0')}`;
-    const spec=key==='SNAPFLORIO'&&(!FLORIO_PENDING_REAUDIT.has(number)||FLORIO_REAUDITED_110.has(number)||FLORIO_VERIFIED_111.has(number)||FLORIO_VERIFIED_112.has(number)||FLORIO_VERIFIED_113.has(number))?(FLORIO_113[number]||FLORIO_112[number]||FLORIO_111[number]||FLORIO_REVISED_110[number]||FLORIO_REVISED_STADIUM[number]||FLORIO_108[number]||FLORIO_NEXT[number]||FLORIO_EXTRA[number]||FLORIO_BATTLE[number]||null):null;
-    const displayName=key==='SNAPFLORIO'?(number===12?'Heracross ex':number===64?'Torterra VSTAR':ILLUMINA_FLORIO.has(number)?'Illumina '+name:name):name;
+    const spec=key==='SNAPFLORIO'&&(!FLORIO_PENDING_REAUDIT.has(number)||FLORIO_REAUDITED_110.has(number)||FLORIO_VERIFIED_111.has(number)||FLORIO_VERIFIED_112.has(number)||FLORIO_VERIFIED_113.has(number)||FLORIO_VERIFIED_114.has(number))?(FLORIO_114[number]||FLORIO_113[number]||FLORIO_112[number]||FLORIO_111[number]||FLORIO_REVISED_110[number]||FLORIO_REVISED_STADIUM[number]||FLORIO_108[number]||FLORIO_NEXT[number]||FLORIO_EXTRA[number]||FLORIO_BATTLE[number]||null):null;
+    const displayName=key==='SNAPFLORIO'?(number===12?'Heracross ex':number===64?'Torterra VSTAR':number===55?'Illumina Florges VSTAR':number===49?'Pichu&Grookey GX':number===72?'Pidgeot&Magikarp GX':number===29?'Shaymin Prism Star':number===119?"Pichu & Scorbunny's Surprise!":ILLUMINA_FLORIO.has(number)?'Illumina '+name:name):name;
     const card=Object.freeze({id,name:displayName,number:String(number),setId:key,kind,
-      source:'tcg',battleFormat:'classic',rarity:printedRarity(key,number),types:spec?.type?[spec.type]:[],
+      source:'tcg',battleFormat:'classic',rarity:printedRarity(key,number),types:Array.isArray(spec?.types)?spec.types:spec?.type?[spec.type]:[],
       ...(spec?.trainerType?{trainerType:spec.trainerType,effect:spec.effect,printedRules:spec.printedRules||'',...(spec.onAttach?{onAttach:spec.onAttach}:{})}:{}),
-      ...(spec?.type?{stage:spec.stage||'Basic',subtype:spec.type,hp:spec.hp,retreat:spec.retreat,weakness:spec.weakness,weaknessValue:spec.weakness?'×2':null,resistance:spec.resistance||null,resistanceValue:spec.resistanceValue||null,evolvesFrom:spec.evolvesFrom||null,attacks:spec.attacks||[],abilities:spec.abilities||[],points:spec.prizeCards||1,isEx:!!(spec.prizeCards&&spec.prizeCards>1),...(spec.prizeCards?{prizeCards:spec.prizeCards}:{}),...(spec.retreatZeroWithWater?{retreatZeroWithWater:true,retreatWaterMinimum:Number(spec.retreatWaterMinimum||1)}:{})}:{}),
+      ...(spec?.type?{stage:spec.stage||'Basic',subtype:spec.type,hp:spec.hp,retreat:spec.retreat,weakness:spec.weakness,weaknessValue:spec.weakness?'×2':null,resistance:spec.resistance||null,resistanceValue:spec.resistanceValue||null,evolvesFrom:spec.evolvesFrom||null,attacks:spec.attacks||[],abilities:spec.abilities||[],points:spec.prizeCards||1,isEx:!!(spec.prizeCards&&spec.prizeCards>1),...(spec.prizeCards?{prizeCards:spec.prizeCards}:{}),...(spec.retreatZeroWithWater?{retreatZeroWithWater:true,retreatWaterMinimum:Number(spec.retreatWaterMinimum||1)}:{}),...(spec.prismStar?{prismStar:true}:{})}:{}),
       image:`https://luckydex.local/card-art/${key}/cards/${String(number).padStart(3,'0')}.webp`,
       battleEnabled:!!spec,deckEligible:!!spec,
       support:spec?{status:'FULL',reasons:[]}:{status:'PARTIAL',reasons:[key==='SNAPFLORIO'&&FLORIO_PENDING_REAUDIT.has(number)?'Creator updated this printed card; gameplay awaits revised-card audit.':'Printed gameplay not fully audited; do not enable placeholder attacks.']}});

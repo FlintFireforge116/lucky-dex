@@ -168,3 +168,20 @@ mechanics tests pass.
 * Keep older Florio ownership IDs, existing pack art, ten-card booster rates,
   Founja catalogue and the exclusion of unfinished Blushing Beach.
 * Still requires Android battle playtesting; unsupported Florio cards stay PARTIAL.
+
+## v0.69.114 — complete revised Florio card registration
+
+* The final 23 revised Florio cards (IDs 005, 008, 009, 010, 023, 027,
+  028, 029, 030, 037, 047, 049, 052, 055, 070, 072, 077, 091,
+  095, 096, 098, 119, 122) have printed battle definitions. 123/123
+  Florio cards are now battle-enabled in Classic30. Founja remains art-only.
+* GX/Tag Team three-Prize rule, VMAX and VSTAR differentiation, Lost Zone,
+  once-per-game powers, Energy-discard options, KO recovery, typed Energy
+  supply searches, active/bench movement and staged choice flows are wired
+  into the existing Classic engine. Existing ownership IDs remain unchanged.
+* In LuckyDex, Basic Energy searches read the dedicated ordered Energy
+  supply, not the main 30-card deck. The existing five-Prize adaptation,
+  10-card booster policy, pack art and official sets are unchanged.
+* Source and synthetic effect tests are not Android battle certification.
+  Verify representative multi-choice situations on device in the future
+  Substitute-based Test Lab before treating gameplay as fully regression-free.

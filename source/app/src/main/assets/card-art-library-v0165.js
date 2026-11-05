@@ -163,6 +163,11 @@
       const number=Number(card.number),illumina=new Set([4,6,10,16,23,25,28,30,32,34,37,39,40,48,55,57,59,60,70,71,75,80,85,91,94,97,99,100]);
       if(number===12)card.name='Heracross ex';
       else if(number===64)card.name='Torterra VSTAR';
+      else if(number===55)card.name='Illumina Florges VSTAR';
+      else if(number===49)card.name='Pichu&Grookey GX';
+      else if(number===72)card.name='Pidgeot&Magikarp GX';
+      else if(number===29)card.name='Shaymin Prism Star';
+      else if(number===119)card.name="Pichu & Scorbunny's Surprise!";
       else if(illumina.has(number)&&!/^Illumina\s/i.test(card.name))card.name='Illumina '+card.name;
     }
     card.image=localPath(key,file);card._libraryExactRemote=false;card._artSource='luckydex-library-pack-v1';return card;
