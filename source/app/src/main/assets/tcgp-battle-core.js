@@ -278,16 +278,6 @@
     if(!drawn&&state.format==='classic'&&!hadCardToDraw)state.log.push({type:'drawSkipped',side,reason:'empty-deck',turnNumber:state.turnNumber});
     if(drawn)state.log.push({type:'draw',side,amount:1,cardId:drawn.cardId,reason:'turn'});
     state.log.push({type:'turn',side,turnNumber:state.turnNumber});
-    if(state.format==='classic'&&state.stadium?.cardId==='SNAPFLORIO-109'&&s.active){
-      const heads=random(state)<.5;state.log.push({type:'coin',side,heads,reason:'Dream Garden',results:[heads]});
-      if(!heads)s.active.conditions={...(s.active.conditions||{}),sleep:true};
-    }
-    if(state.format==='classic'&&state.stadium?.cardId==='SNAPFLORIO-118'&&
-       ['player','opponent'].every(w=>state.sides[w].active&&state.sides[w].bench.length===3)){
-      const heads=random(state)<.5,which=heads?(side==='player'?'opponent':'player'):side;
-      state.log.push({type:'coin',side,heads,reason:'Standoff Battleground',results:[heads]});
-      for(const pokemon of state.sides[which].bench){pokemon.damage=Number(pokemon.damage||0)+10;}
-    }
     triggerAbilities(state,'beginTurn',side);
     triggerPersistent(state,'beginTurn',side);
     if(state.format==='classic'&&state.stadium?.cardId==='SNAPFLORIO-118')resolveKnockOut(state,null);
@@ -648,7 +638,7 @@
       if(slot.gym2ShapeshiftSource&&(c.sleep||c.confusion||c.paralysis))effects.revertShapeshift(state,slot);
       if(c.poison){const base=typeof c.poison==='object'?Number(c.poison.amount??10):10,amount=Math.max(0,base+effects.modifierAmount(state,side,slot,'poisonDamageBonus',data.cardById));slot.damage+=amount;state.log.push({type:'statusDamage',side,status:'poison',amount});}
       if(c.burn){slot.damage+=20;state.log.push({type:'statusDamage',side,status:'burn',amount:20});const heads=random(state)<0.5;state.log.push({type:'coin',side,heads,status:'burn',results:[heads]});if(heads)delete c.burn;}
-      if(c.sleep){const coins=typeof c.sleep==='object'?Math.max(1,Number(c.sleep.recoveryCoins||1)):1;let allHeads=true;for(let i=0;i<coins;i++){const heads=random(state)<0.5;state.log.push({type:'coin',side,heads,status:'sleep',results:[heads]});if(!heads)allHeads=false;}if(allHeads)delete c.sleep;}
+      if(c.sleep){const coins=state.format==='classic'&&state.stadium?.cardId==='SNAPFLORIO-109'?2:typeof c.sleep==='object'?Math.max(1,Number(c.sleep.recoveryCoins||1)):1;let allHeads=true;for(let i=0;i<coins;i++){const heads=random(state)<0.5;state.log.push({type:'coin',side,heads,status:'sleep',results:[heads]});if(!heads)allHeads=false;}if(allHeads)delete c.sleep;}
       if(c.paralysis&&side===state.activeSide&&Number(c.paralysis.appliedTurn??-1)<state.turnNumber)delete c.paralysis;
     }
   }

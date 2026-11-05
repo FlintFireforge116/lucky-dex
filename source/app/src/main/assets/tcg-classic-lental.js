@@ -203,6 +203,15 @@ const FLORIO_108=Object.freeze({
   123:{trainerType:'Item',effect:{type:'lentalRule',rule:'zappedFluffruit'},printedRules:'Heal 20 damage from one of your Pokémon, or 60 if that Pokémon is Lightning type.'}
 });
 
+// v0.69.109 safety gate: the creator supplied revised, authoritative PNGs.
+// Cards with changed or uncertain printed-text regions are not allowed to resolve using
+// their previously transcribed attack definitions until re-audited. Existing
+// collection IDs remain unchanged; these IDs can be re-enabled incrementally.
+const FLORIO_PENDING_REAUDIT=new Set([3, 4, 6, 7, 12, 13, 14, 17, 19, 22, 24, 31, 32, 33, 37, 40, 41, 43, 45, 46, 50, 51, 57, 58, 62, 63, 65, 68, 77, 78, 81, 82, 84, 85, 86, 87, 90, 92, 93, 94, 97, 101, 102, 104, 107, 108, 112, 117, 121, 123]);
+const FLORIO_REVISED_STADIUM=Object.freeze({
+  118:{trainerType:'Stadium',effect:{type:'stadiumAction',effect:{type:'lentalRule',rule:'standoffRevised'}},
+    printedRules:'During each player turn with all 8 normal Classic positions occupied, that player may flip a coin: heads puts 1 damage counter on each opposing Benched Pokémon; tails on each of their own Benched Pokémon.'}
+});
 const PRINTED_RARITY=Object.freeze({C:'Common',U:'Uncommon',R:'Rare',H:'Rare Holo',X:'Ultra Rare'});
 const RARITY_BY_SET=Object.freeze({"SNAPFLORIO":"CCUHURXXXXUXCCUHCCHRRCURXRXRRXCHUXCCHCCHCHCCUXCHXCUHRXXRHRXRXRXXCHCCURXXUUXXCRRXCCHCHCCHCCHCRXCUXURXRRCRUCCCCCUUUCUUURCRURU","SNAPFOUNJA":"UXCUHURURXUURXRXXRRCHCCUCUHCCRRXRXCCRHRXCCHRRRXHUUUXURHCCUHRRRXXRRRCCHRRRURRRURCUCURCR"});
 function printedRarity(key,number){const symbol=RARITY_BY_SET[key]?.[number-1];return PRINTED_RARITY[symbol]||'Unknown';}
@@ -218,7 +227,7 @@ for(const [key,meta] of Object.entries(RAW)){
   SETS.push(Object.freeze({id:key,name:meta.name,series:'New Pokémon Snap',cardCount:meta.cards.length,fanMade:true}));
   for(const [number,name,kind] of meta.cards){
     const id=`${key}-${String(number).padStart(3,'0')}`;
-    const spec=key==='SNAPFLORIO'?(FLORIO_108[number]||FLORIO_NEXT[number]||FLORIO_EXTRA[number]||FLORIO_BATTLE[number]||null):null;
+    const spec=key==='SNAPFLORIO'&&!FLORIO_PENDING_REAUDIT.has(number)?(FLORIO_REVISED_STADIUM[number]||FLORIO_108[number]||FLORIO_NEXT[number]||FLORIO_EXTRA[number]||FLORIO_BATTLE[number]||null):null;
     const displayName=key==='SNAPFLORIO'?(number===12?'Heracross ex':ILLUMINA_FLORIO.has(number)?'Illumina '+name:name):name;
     const card=Object.freeze({id,name:displayName,number:String(number),setId:key,kind,
       source:'tcg',battleFormat:'classic',rarity:printedRarity(key,number),types:spec?.type?[spec.type]:[],
@@ -226,7 +235,7 @@ for(const [key,meta] of Object.entries(RAW)){
       ...(spec?.type?{stage:spec.stage||'Basic',subtype:spec.type,hp:spec.hp,retreat:spec.retreat,weakness:spec.weakness,weaknessValue:spec.weakness?'×2':null,resistance:spec.resistance||null,resistanceValue:spec.resistanceValue||null,evolvesFrom:spec.evolvesFrom||null,attacks:spec.attacks||[],abilities:spec.abilities||[],points:spec.prizeCards||1,isEx:!!(spec.prizeCards&&spec.prizeCards>1),...(spec.prizeCards?{prizeCards:spec.prizeCards}:{}),...(spec.retreatZeroWithWater?{retreatZeroWithWater:true}:{})}:{}),
       image:`https://luckydex.local/card-art/${key}/cards/${String(number).padStart(3,'0')}.webp`,
       battleEnabled:!!spec,deckEligible:!!spec,
-      support:spec?{status:'FULL',reasons:[]}:{status:'PARTIAL',reasons:["Printed gameplay not fully audited; do not enable placeholder attacks."]}});
+      support:spec?{status:'FULL',reasons:[]}:{status:'PARTIAL',reasons:[key==='SNAPFLORIO'&&FLORIO_PENDING_REAUDIT.has(number)?'Creator updated this printed card; gameplay awaits revised-card audit.':'Printed gameplay not fully audited; do not enable placeholder attacks.']}});
     CARDS.push(card);byId.set(id.toLowerCase(),card);
   }
 }

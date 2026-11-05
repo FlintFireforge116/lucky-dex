@@ -1299,6 +1299,17 @@
     const ss=own(ctx),foe=other(ctx),rule=effect.rule;
     if(LENTAL_108_RULES.has(rule))return lentalRule108(effect,ctx);
     const log=entry=>ctx.state.log.push({side:ctx.side,type:'lentalRule',rule,...entry});
+    if(rule==='standoffRevised'){
+      // Creator print uses >10 Pokemon; the agreed LuckyDex Classic30
+      // compact-board adaptation activates with all 8 ordinary positions full.
+      const occupied=['player','opponent'].every(w=>ctx.state.sides[w].active&&ctx.state.sides[w].bench.length>=3);
+      if(!occupied)return;
+      const heads=coin(ctx),target=heads?foe:ss;
+      for(const slot of target.bench)slot.damage=Number(slot.damage||0)+10;
+      log({heads,results:[heads],damagedSide:heads?ctx.foeSide:ctx.side,affected:target.bench.length});
+      return;
+    }
+
     const ask=(spec)=>{if(typeof ctx.requestChoice==='function')ctx.requestChoice({...spec,effect:spec.effect||effect});};
     const bench=ss.bench||[];
     if(rule==='magikarpSoak'){
@@ -2126,6 +2137,7 @@
     if(effect.type==='chooseDiscardForBonus'){const items=effect.zone==='bench'?(own(ctx).bench||[]).filter(s=>s&&matchesFilter(ctx.cardById(s.cardId),effect.filter,s)):(own(ctx).hand||[]).filter(r=>matchesFilter(ctx.cardById(r.cardId),effect.filter,r));const max=Math.min(Number(effect.max||items.length),items.length),out=[];for(let mask=0;mask<(1<<items.length);mask++){const picked=[];for(let i=0;i<items.length;i++)if(mask&(1<<i))picked.push(items[i].uid);if(picked.length<=max)out.push({effectSelection:picked.join(','),choiceLabel:`Discard ${picked.length}`});}return out;}
     if(effect.type==='lentalRule'){
       const rule=effect.rule,ss=own(ctx);
+      if(rule==='standoffRevised')return ['player','opponent'].every(w=>ctx.state.sides[w].active&&ctx.state.sides[w].bench.length>=3)?[{}]:[];
       if(rule==='wickedFlock')return targetChoices('opponentPokemon',ctx);
       if(rule==='zappedFluffruit')return targetChoices('selfPokemon',ctx).filter(option=>{
         const slot=option.target==='active'?ss.active:ss.bench.find(x=>Number(x.benchSlot)===Number(option.benchIndex));return Number(slot?.damage||0)>0;

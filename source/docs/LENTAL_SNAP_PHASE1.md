@@ -100,3 +100,21 @@ mechanics tests pass.
   optional Grass-Pokémon search, conditional attack damage and Stadium actions.
 * Every still-unsupported print remains PARTIAL, not silently vanilla.
 * Blushing Beach is still excluded; Founja is still a collection-only set.
+
+## v0.69.109 — new creator revision, original identities retained
+
+* Original numbered 123-card Florio archive has been replaced by 123 creator-supplied
+  unnumbered PNGs; every one mapped back to the same `SNAPFLORIO-###` ID.
+* Publish `luckydex-set-SNAPFLORIO-v2.zip` to the existing public release; it has `artRevision: 2`,
+  revised artwork and checksum verification. Old installations update on
+  Florio access via the native installer's atomic replacement routine.
+* Dream Garden #109 NOW makes Sleep recovery require 2 heads between turns;
+  it does not inflict Sleep at the start of each turn.
+* Standoff Battleground #118 is now OPTIONAL once per player turn, using the
+  existing agreed 8-position Classic30 adaptation of its printed >10 threshold.
+* Existing battles using cards whose printed text materially changed cannot
+  safely continue under old attacks. Such cards are PARTIAL until re-audited.
+  No collection IDs, ownership records or booster pack size have been changed.
+* Source ZIP did not include new booster pack artwork; prior pack art is retained.
+* Rarity tiers come from earlier printed symbols and require a follow-up audit
+  against the revised prints, not fabricated replacements.

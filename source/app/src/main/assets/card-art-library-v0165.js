@@ -96,7 +96,8 @@
     releaseDate:'',cardCount:{total,official:total},cards:[],
     _libraryKey:key,_libraryCode:key,_librarySeries:'New Pokémon Snap',
     _libraryNative:true,_lentalSet:true,
-    _libraryAssetName:`luckydex-set-${key}-v1.zip`})));
+    _libraryAssetName:key==='SNAPFLORIO'?'luckydex-set-SNAPFLORIO-v2.zip':`luckydex-set-${key}-v1.zip`,
+    _libraryAssetSha256:key==='SNAPFLORIO'?'7ce3a624a909f2847e3ed5fa16e1853e7283570e13cc4f9dfd9ba85f4a28b1f2':''})));
   async function catalog(options={}){
     const index=await getIndex(options);
     const official=validIndex(index)?index.sets.map((row,indexOrder)=>({row,indexOrder})).filter(item=>setKey(item.row)&&setCards(item.row).length).map(item=>appSet(item.row,item.indexOrder)):[];
@@ -169,7 +170,13 @@
     if(!set?._libraryKey)return set;
     // Snap artwork is deliberately not bundled or reachable through remote
     // individual card URLs: the existing Android installer fetches the ZIP.
-    if(set._lentalSet&&!isInstalled(set._libraryKey))await ensureInstalled(set);
+    if(set._lentalSet){
+      if(!isInstalled(set._libraryKey))await ensureInstalled(set);
+      else if(set._libraryKey==='SNAPFLORIO'&&Number(installedManifest(set._libraryKey)?.artRevision||0)<2){
+        // Native installer atomically replaces the existing folder AFTER ZIP validation.
+        await ensureInstalled(set,null,true);
+      }
+    }
     const manifest=installedManifest(set._libraryKey);
     if(manifest?.cards?.length){
       const cards=manifest.cards.filter(row=>row?.id&&row?.file).map(row=>cardFromInstalledRecord(row,set));
@@ -223,9 +230,9 @@
   // source URLs from the index. If a public/private authenticated asset host is
   // configured later, the same native installer can provide complete offline sets.
   function installAssetUrl(set){const ep=endpoint(),asset=set?._libraryAssetName||`luckydex-set-${set?._libraryKey}-v1.zip`;const base=set?._lentalSet?'https://github.com/FlintFireforge116/lucky-dex/releases/download/luckydex-lental-v1':ep.assetBase;return `${base}/${encodeURIComponent(asset)}`;}
-  function ensureInstalled(set,signal=null){
+  function ensureInstalled(set,signal=null,force=false){
     if(!set?._libraryKey)return Promise.reject(new Error('not a LuckyDex library set'));
-    if(isInstalled(set._libraryKey))return Promise.resolve(true);
+    if(isInstalled(set._libraryKey)&&!force)return Promise.resolve(true);
     if(!nativeAvailable()||typeof Android.installCardArtPack!=='function')return Promise.reject(new Error('native card-art installer unavailable'));
     const token=`art-${Date.now()}-${Math.random().toString(36).slice(2)}`;
     const base=new Promise((resolve,reject)=>{pending.set(token,{resolve,reject});try{Android.installCardArtPack(String(set._libraryKey),installAssetUrl(set),String(set._libraryAssetSha256||''),token);}catch(error){pending.delete(token);reject(error);}});
