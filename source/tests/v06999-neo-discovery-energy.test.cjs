@@ -13,7 +13,7 @@ const full=classic.CARDS.filter(c=>c.battleEnabled&&c.deckEligible!==false).map(
 test('Neo Discovery has 75 numbered prints with full battle coverage',()=>{
  assert.equal(discovery.CARDS.length,75);
  assert.equal(new Set(discovery.CARDS.map(c=>c.id)).size,75);
- assert.equal(classic.SETS.at(-1).id,'neo2');
+ assert.equal(classic.SETS.at(-2).id,'neo2');
  assert.ok(discovery.CARDS.filter(c=>c.battleEnabled).length>=35);
  assert.equal(discovery.CARDS.filter(c=>c.battleEnabled).length,75);
  for(const card of discovery.CARDS)if(card.battleEnabled){

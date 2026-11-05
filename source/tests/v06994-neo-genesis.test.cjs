@@ -12,8 +12,8 @@ const owned=classic.CARDS.filter(c=>c.battleEnabled&&c.deckEligible!==false).map
 
 test('Neo Genesis catalogue registers 111 unique authentic numbered cards beside the earlier sets',()=>{
   assert.equal(neo.SET.cardCount,111);assert.equal(neo.CARDS.length,111);
-  assert.equal(classic.SETS.length,8);assert.equal(classic.SETS.at(-2).id,'neo1');assert.equal(classic.SETS.at(-1).id,'neo2');
-  assert.equal(builder.SET_IDS.at(-2),'neo1');assert.equal(builder.SET_IDS.at(-1),'neo2');assert.equal(opponents.SETS.at(-2),'neo1');assert.equal(opponents.SETS.at(-1),'neo2');
+  assert.equal(classic.SETS.length,9);assert.equal(classic.SETS.at(-3).id,'neo1');assert.equal(classic.SETS.at(-2).id,'neo2');assert.equal(classic.SETS.at(-1).id,'neo3');
+  assert.equal(builder.SET_IDS.at(-3),'neo1');assert.equal(builder.SET_IDS.at(-2),'neo2');assert.equal(builder.SET_IDS.at(-1),'neo3');assert.equal(opponents.SETS.at(-3),'neo1');assert.equal(opponents.SETS.at(-2),'neo2');assert.equal(opponents.SETS.at(-1),'neo3');
   for(let num=1;num<=111;num++)assert.equal(classic.cardById(`neo1-${num}`),neo.CARDS[num-1]);
   assert.equal(classic.cardById('neo1-9').name,'Lugia');
   assert.equal(classic.cardById('neo1-15').name,'Steelix');
@@ -54,16 +54,16 @@ test('Classic deck filter and battle script are loaded in correct order; release
   assert.match(fs.readFileSync(path.join(assets,'tcg-classic-deck-editor.js'),'utf8'),/Neo Genesis/);
   assert.match(fs.readFileSync(path.join(assets,'tcgp-battle-ui.js'),'utf8'),/Neo Genesis/);
   const build=fs.readFileSync(path.join(root,'app/build.gradle'),'utf8');
-  assert.match(build,/versionName '0\.69\.101'/);assert.match(build,/versionCode 7081/);
-  assert.match(fs.readFileSync(path.join(assets,'app-v0167.js'),'utf8'),/window\.__LUCKYDEX_BUILD='0\.69\.101'/);
+  assert.match(build,/versionName '0\.69\.102'/);assert.match(build,/versionCode 7082/);
+  assert.match(fs.readFileSync(path.join(assets,'app-v0167.js'),'utf8'),/window\.__LUCKYDEX_BUILD='0\.69\.102'/);
 });
 
-test('all eight Classic sets can produce legal 30-card seeded auto decks with no missing Energy types',()=>{
+test('all nine Classic sets can produce legal 30-card seeded auto decks with no missing Energy types',()=>{
  for(const setId of builder.SET_IDS)for(const style of ['random','competitive'])for(let seed=1;seed<=12;seed++){
   const result=builder.buildDeck(owned,{style,sets:[setId],randomSeed:seed});
   assert.equal(result.ok,true,`${setId} ${style} ${seed}: ${(result.errors||[]).join('; ')}`);
   assert.equal(result.cards.length,30);
-  assert.ok(result.cards.every(id=>classic.cardById(id)?.setId===setId||(setId==='neo2'&&['neo1-104','neo1-19'].includes(id))));
+  assert.ok(result.cards.every(id=>classic.cardById(id)?.setId===setId||(['neo2','neo3'].includes(setId)&&['neo1-104','neo1-19'].includes(id))));
   assert.equal(decks.readiness({cards:result.cards,energyMode:'manual',energyTypes:result.energyTypes},owned).ok,true);
   assert.ok(result.energyTypes.length<=2);
  }

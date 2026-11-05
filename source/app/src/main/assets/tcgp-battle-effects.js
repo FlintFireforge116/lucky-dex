@@ -720,6 +720,95 @@
     const sel=(which)=>{const board=which==='opponent'?foe:ss,target=ctx.action?.choiceTarget,index=Number(ctx.action?.choiceBenchIndex);return target==='active'?board.active:(board.bench||[]).find(x=>Number(x.benchSlot)===index);};
     const log=(details)=>ctx.state.log.push({type:'neoEffect',side:ctx.side,rule:e.rule,...details});
     switch(e.rule){
+      // Neo Revelation: the optional Fire search draws from the same ordered
+      // Basic Energy supply as the Classic Energy Zone (not the 30-card deck).
+      case 'revelation:nightEyes':{
+        if(d)d.neoRevNightEyes={turn,side:ctx.side};
+        break;
+      }
+      case 'revelation:perishSong':{
+        // Night Eyes on the user's previous turn, still Asleep and same defender.
+        if(d?.conditions?.sleep&&d.neoRevNightEyes?.side===ctx.side&&d.neoRevNightEyes.turn===turn-2){
+          d.damage=Math.max(Number(d.damage||0),ctx.maxHp?ctx.maxHp(ctx.foeSide,d):Number(ctx.cardById(d.cardId)?.hp||0));
+          log({knockout:d.cardId});
+        }
+        break;
+      }
+      case 'revelation:callMurkrow':{
+        if(ss.bench.length<Math.min(3,Number(ss.benchLimit??3))&&ss.deck.some(ref=>ctx.cardById(ref.cardId)?.name==='Murkrow'))
+          ctx.requestChoice?.({kind:'deckCard',side:'self',filter:{kind:'pokemon',name:'Murkrow'},effect:{type:'neoRule',rule:'revelation:callMurkrowPick'}});
+        break;
+      }
+      case 'revelation:callMurkrowPick':{
+        const i=Number(ctx.action?.choiceDeckIndex),ref=ss.deck[i];
+        if(ref&&ctx.cardById(ref.cardId)?.name==='Murkrow'&&ss.bench.length<Math.min(3,Number(ss.benchLimit??3))){
+          const [picked]=ss.deck.splice(i,1);ctx.benchCard?.(ss,picked);ctx.shuffle?.(ctx.state,ss.deck);log({benched:picked.cardId});
+        }
+        break;
+      }
+      case 'revelation:oldRod':{
+        const heads=(neoFlip(ctx,'Old Rod')?1:0)+(neoFlip(ctx,'Old Rod')?1:0);
+        const filter=heads===2?{kind:'pokemon'}:heads===0?{kind:'trainer'}:null;
+        if(filter&&ss.discard.some(ref=>ctx.cardById(ref.cardId)?.kind===filter.kind))
+          ctx.requestChoice?.({kind:'discardCard',side:'self',filter,effect:{type:'neoRule',rule:'revelation:oldRodPick',kind:filter.kind}});
+        break;
+      }
+      case 'revelation:oldRodPick':{
+        const i=Number(ctx.action?.choiceDiscardIndex),ref=ss.discard[i];
+        if(ref&&ctx.cardById(ref.cardId)?.kind===e.kind&&ss.hand.length<10){ss.hand.push(...ss.discard.splice(i,1));log({recovered:ref.cardId});}
+        break;
+      }
+      case 'revelation:attractCurrent':{
+        let heads=0;for(let i=0;i<3;i++)if(neoFlip(ctx,'Attract Current'))heads++;
+        const targets=neoSlots(ctx,'self').filter(slot=>ctx.cardById(slot.cardId)?.types?.includes('Lightning'));
+        if(heads&&targets.length&&(!Array.isArray(ss.energySupply)||ss.energySupply.includes('Lightning')))
+          ctx.requestChoice?.({kind:'pokemon',side:'self',includeActive:true,optional:true,filter:{subtype:'Lightning'},effect:{type:'neoRule',rule:'revelation:attractCurrentPick',remaining:heads}});
+        break;
+      }
+      case 'revelation:attractCurrentPick':{
+        if(ctx.action?.choiceSkip)break;
+        const target=sel('self');if(!target||!ctx.cardById(target.cardId)?.types?.includes('Lightning'))break;
+        const taken=neoSupplyAttach(ctx,ss,target,'Lightning',1);
+        log({energyType:'Lightning',amount:taken});
+        if(taken&&Number(e.remaining)>1&&(!Array.isArray(ss.energySupply)||ss.energySupply.includes('Lightning')))
+          ctx.requestChoice?.({kind:'pokemon',side:'self',includeActive:true,optional:true,filter:{subtype:'Lightning'},effect:{...e,remaining:Number(e.remaining)-1}});
+        break;
+      }
+      case 'revelation:goldScale':{
+        // The defending player may draw two, but either decision lets the
+        // attacking player draw two. Never silently deny the opponent's choice.
+        ctx.requestChoice?.({kind:'option',side:'opponent',options:['Draw two cards','Do not draw'],effect:{type:'neoRule',rule:'revelation:goldScalePick'}});
+        break;
+      }
+      case 'revelation:goldScalePick':{
+        if(Number(ctx.action?.choiceOption)===0)for(let i=0;i<2;i++)ctx.drawCard(foe);
+        for(let i=0;i<2;i++)ctx.drawCard(ss);
+        break;
+      }
+      case 'revelation:dragonBond':{
+        const names=['Gyarados','Dark Gyarados','Shining Gyarados'];
+        if(ss.deck.some(ref=>names.includes(ctx.cardById(ref.cardId)?.name)))
+          ctx.requestChoice?.({kind:'deckCard',side:'self',filter:{name:names},effect:{type:'neoRule',rule:'revelation:dragonBondPick'}});
+        break;
+      }
+      case 'revelation:dragonBondPick':{
+        const i=Number(ctx.action?.choiceDeckIndex),ref=ss.deck[i];
+        if(ref&&['Gyarados','Dark Gyarados','Shining Gyarados'].includes(ctx.cardById(ref.cardId)?.name)){
+          ss.hand.push(...ss.deck.splice(i,1));ctx.shuffle?.(ctx.state,ss.deck);log({searched:ref.cardId});
+        }
+        break;
+      }
+      case 'revelation:stoke':{
+        if(!a||!Array.isArray(ss.energySupply)||!ss.energySupply.includes('Fire'))break;
+        ctx.requestChoice?.({kind:'option',side:'self',options:['Attach Fire Energy','Do not attach'],effect:{type:'neoRule',rule:'revelation:stokePick',uid:a.uid}});
+        break;
+      }
+      case 'revelation:stokePick':{
+        if(Number(ctx.action?.choiceOption)!==0)break;
+        const target=neoSlots(ctx,'self').find(s=>s.uid===e.uid);
+        if(target){const n=neoSupplyAttach(ctx,ss,target,'Fire',1);log({amount:n,energyType:'Fire'});}
+        break;
+      }
       case 'berserk':{const victim=neoFlip(ctx,'Berserk')?foe:ss;victim.discard.push(...victim.deck.splice(0,5));break;}
       case 'downpour':{const index=ss.hand.findIndex(r=>ctx.cardById(r.cardId)?.basicEnergy&&ctx.cardById(r.cardId)?.subtype==='Water');if(index>=0){ss.hand.splice(index,1);recordDiscardedEnergy(ss,'Water',1);}break;}
       case 'herbalScent':if(neoFlip(ctx,'Herbal Scent'))for(const s of [...neoSlots(ctx,'self'),...neoSlots(ctx,'opponent')])if(ctx.cardById(s.cardId)?.types?.includes('Grass'))s.damage=0;break;
@@ -1518,6 +1607,28 @@
         const ss=own(ctx),a=ctx.attacker,foe=other(ctx),r=e.rule;
         const rolls=(n)=>{let heads=0,results=[];for(let i=0;i<Math.min(100,Math.max(0,n));i++){const hit=coin(ctx);results.push(hit);if(hit)heads++;}if(results.length)ctx.state.log.push({type:'coin',side:ctx.side,reason:'Neo Genesis '+r,heads,results});return heads;};
         switch(r){
+          case 'revelation:psychicLeaf':{
+            const amount=totalEnergy(ctx.defender?.energy||{})+(ctx.defender?.specialEnergy||[]).length;
+            damage=10+10*rolls(amount);
+            // Drain is based on the *actual* damage dealt after Weakness,
+            // Resistance and modifiers, not on the printed attack value.
+            pending.push({type:'drain'});
+            return;
+          }
+          case 'revelation:present':{
+            const heads=rolls(3);
+            if(heads===1)damage=40;
+            else if(heads===3)damage=60;
+            else {damage=0;pending.push({type:'heal',target:'opponentActive',amount:heads===2?30:999});}
+            return;
+          }
+          case 'revelation:needleStorm':{
+            let heads=0,results=[];
+            for(let i=0;i<100;i++){const hit=coin(ctx);results.push(hit);if(!hit)break;heads++;}
+            ctx.state.log.push({type:'coin',side:ctx.side,reason:'Needle Storm',heads,results});
+            damage=heads*20;
+            return;
+          }
           case 'discovery:electricBolt':{
             const locked=!!a?.neoLockOn&&a.neoLockOn.uid===a.uid&&a.neoLockOn.turn===ctx.state.turnNumber;
             const heads=rolls(2);if(heads===2||locked){pending.push({type:'status',target:'opponentActive',status:'paralysis'});}else{damage=0;attackDoesNothing=true;pending.length=0;}
@@ -1705,7 +1816,7 @@
       else if(e.type==='pointDamage')amount=Number((e.side==='opponent'?other(ctx):own(ctx)).points||0)*e.amount;
       else if(e.type==='namedAttackCountDamage'){const cards=[...pokemonOn(own(ctx)).map(s=>ctx.cardById(s.cardId)),...(own(ctx).hand||[]).map(r=>ctx.cardById(r.cardId))];amount=cards.filter(c=>(c?.attacks||[]).some(a=>a.name===e.attackName)).length*e.amount;}
       else if(e.type==='usedAttackCountDamage')amount=Number(own(ctx).attackCounts?.[e.attackName]||0)*e.amount;
-      else if(e.type==='coinDamageByPokemon'){const count=pokemonOn(own(ctx)).filter(s=>!e.filter||matchesFilter(ctx.cardById(s.cardId),e.filter,s)).length;let heads=0;const results=[];for(let i=0;i<count;i++){const hit=coin(ctx);results.push(hit);if(hit)heads++;}ctx.state.log.push({type:'coin',side:ctx.side,heads,coins:count,results});amount=heads*e.amount;}
+      else if(e.type==='coinDamageByPokemon'){const count=(e.benchOnly?own(ctx).bench:pokemonOn(own(ctx))).filter(s=>!e.filter||matchesFilter(ctx.cardById(s.cardId),e.filter,s)).length;let heads=0;const results=[];for(let i=0;i<count;i++){const hit=coin(ctx);results.push(hit);if(hit)heads++;}ctx.state.log.push({type:'coin',side:ctx.side,heads,coins:count,results});amount=heads*e.amount;}
       else if(e.type==='retreatCostDamage')amount=(ctx.retreatCost?ctx.retreatCost(ctx.foeSide):Number(ctx.cardById(ctx.defender?.cardId)?.retreat||0))*e.amount;
       else if(e.type==='toolCountDamage')amount=pokemonOn(own(ctx)).reduce((n,s)=>n+toolsOf(s).length,0)*e.amount;
       else if(e.type==='coinDamageByEnergy'){const count=e.countCards?totalEnergy(ctx.attacker?.energy)+(ctx.attacker?.specialEnergy||[]).length:e.energyType?Number(ctx.attacker?.energy?.[e.energyType]||0):totalEnergy(ctx.attacker?.energy),results=Array.from({length:count},()=>coin(ctx)),heads=results.filter(Boolean).length;ctx.state.log.push({type:'coin',side:ctx.side,heads,coins:count,results});if(e.discardHeads&&e.energyType&&heads){const available=Number(ctx.attacker?.energy?.[e.energyType]||0),spent=Math.min(available,heads);ctx.attacker.energy[e.energyType]=available-spent;recordDiscardedEnergy(own(ctx),e.energyType,spent);}amount=heads*e.amount;}
@@ -1976,6 +2087,7 @@ if(r==='lastResort')return ss.hand.length===0?[{}]:[];if(r==='surgeSwap')return 
       if(weakness&&types.includes(weakness)&&!(guard&&(guard.expiresTurn==null||state.turnNumber<=guard.expiresTurn))){const raw=String(defender?.weaknessValue||'×2'),m=raw.match(/[x×]\s*(\d+(?:\.\d+)?)/i);n=m?n*Number(m[1]):n*2;}
       if(resistance&&types.includes(resistance)){const raw=String(defender?.resistanceValue||'-30'),m=raw.match(/-\s*(\d+)/);n=Math.max(0,n-Number(m?.[1]||30));}
       if(!abilitiesSuppressed(state,defenderSide,defenderSlot,cardById)&&findPassiveRule(state,defenderSide,defenderSlot,'fossilArmor',cardById))n=Math.floor(n/20)*10;
+      if(defender?.id==='neo3-51'&&n>0&&n<=40&&!abilitiesSuppressed(state,defenderSide,defenderSlot,cardById))n=10;
       return Math.max(0,n);
     }
     if(!weakness||!types.includes(weakness))return n;

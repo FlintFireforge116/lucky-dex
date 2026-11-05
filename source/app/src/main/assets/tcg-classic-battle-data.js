@@ -7,13 +7,14 @@
   const challenge=typeof module==='object'&&module.exports?require('./tcg-classic-gym-challenge.js'):root.LuckyDexClassicTCGGymChallenge;
   const neo=typeof module==='object'&&module.exports?require('./tcg-classic-neo-genesis.js'):root.LuckyDexClassicTCGNeoGenesis;
   const discovery=typeof module==='object'&&module.exports?require('./tcg-classic-neo-discovery.js'):root.LuckyDexClassicTCGNeoDiscovery;
-  const api=factory(base,jungle,fossil,rocket,gym,challenge,neo,discovery);
+  const revelation=typeof module==='object'&&module.exports?require('./tcg-classic-neo-revelation.js'):root.LuckyDexClassicTCGNeoRevelation;
+  const api=factory(base,jungle,fossil,rocket,gym,challenge,neo,discovery,revelation);
   if(typeof module==='object'&&module.exports)module.exports=api;
   if(root)root.LuckyDexClassicTCGBattleData=api;
-})(typeof globalThis!=='undefined'?globalThis:this,function(base,jungle,fossil,rocket,gym,challenge,neo,discovery){
+})(typeof globalThis!=='undefined'?globalThis:this,function(base,jungle,fossil,rocket,gym,challenge,neo,discovery,revelation){
 'use strict';
-if(!base||!Array.isArray(base.CARDS)||!jungle||!Array.isArray(jungle.CARDS)||!fossil||!Array.isArray(fossil.CARDS)||!rocket||!Array.isArray(rocket.CARDS)||!gym||!Array.isArray(gym.CARDS)||!challenge||!Array.isArray(challenge.CARDS)||!neo||!Array.isArray(neo.CARDS)||!discovery||!Array.isArray(discovery.CARDS))throw new Error('Classic TCG set catalogues are missing.');
-const CARDS=[...base.CARDS,...jungle.CARDS,...fossil.CARDS,...rocket.CARDS,...gym.CARDS,...challenge.CARDS,...neo.CARDS,...discovery.CARDS];
+if(!base||!Array.isArray(base.CARDS)||!jungle||!Array.isArray(jungle.CARDS)||!fossil||!Array.isArray(fossil.CARDS)||!rocket||!Array.isArray(rocket.CARDS)||!gym||!Array.isArray(gym.CARDS)||!challenge||!Array.isArray(challenge.CARDS)||!neo||!Array.isArray(neo.CARDS)||!discovery||!Array.isArray(discovery.CARDS)||!revelation||!Array.isArray(revelation.CARDS))throw new Error('Classic TCG set catalogues are missing.');
+const CARDS=[...base.CARDS,...jungle.CARDS,...fossil.CARDS,...rocket.CARDS,...gym.CARDS,...challenge.CARDS,...neo.CARDS,...discovery.CARDS,...revelation.CARDS];
 
 // Legacy v0.69.63 seed details retained as provenance fixtures. v0.69.64's
 // complete Base Set mechanics live in tcg-classic-base1.js; registering these
@@ -31,7 +32,7 @@ const VERIFIED_DETAILS=[
 for(const detail of VERIFIED_DETAILS)base.registerDetails(detail);
 for(const card of base.CARDS){card.battleFormat='classic';card.source='tcg';}
 
-function cardById(id){return base.cardById(id)||jungle.cardById(id)||fossil.cardById(id)||rocket.cardById(id)||gym.cardById(id)||challenge.cardById(id)||neo.cardById(id)||discovery.cardById(id);}
+function cardById(id){return base.cardById(id)||jungle.cardById(id)||fossil.cardById(id)||rocket.cardById(id)||gym.cardById(id)||challenge.cardById(id)||neo.cardById(id)||discovery.cardById(id)||revelation.cardById(id);}
 function typesOf(card){return Array.isArray(card?.types)&&card.types.length?card.types:[card?.subtype].filter(Boolean);}
 function hasType(card,type){return typesOf(card).includes(type);}
 function isBattleEnabled(value){const card=typeof value==='string'?cardById(value):cardById(value?.id);return !!(card&&card.battleEnabled&&card.deckEligible!==false);}
@@ -133,11 +134,23 @@ function ownedNeoDiscoveryCard(owned){
  }
  return null;
 }
+function ownedNeoRevelationCard(owned){
+ if(!owned||typeof owned!=='object')return null;
+ const src=String(owned.source||'').toLowerCase();if(src&&src!=='tcg')return null;
+ const setId=String(owned.setId||owned.set?.id||'').toLowerCase(),key=String(owned._librarySetKey||'').toLowerCase(),name=String(owned.setName||owned.set?.name||'').trim().toLowerCase();
+ if(!(['neo3','n3','library:n3','library:neo3'].includes(setId)||['neo3','n3'].includes(key)||name==='neo revelation'))return null;
+ const direct=revelation.cardById(owned.id);if(direct)return direct;
+ for(const value of [owned.localId,owned.number,owned._libraryCanonicalId,owned.id]){
+  const match=String(value??'').trim().match(/^(?:0*(\d{1,2})(?:\s*\/\s*66)?|(?:library[:_-])?(?:neo3|n3)[-_:]0*(\d{1,2})(?:\s*\/\s*66)?)$/i);
+  if(match){const n=Number(match[1]||match[2]);if(n>=1&&n<=66)return revelation.cardById('neo3-'+n);}
+ }
+ return null;
+}
 function projectOwnedCards(cards){
  const rows=Array.isArray(cards)?cards:Object.values(cards||{});
  const projected=base.projectOwnedCards(rows);
  const grouped=new Map();
- for(const owned of rows){const card=ownedJungleCard(owned)||ownedFossilCard(owned)||ownedRocketCard(owned)||ownedGymHeroesCard(owned)||ownedGymChallengeCard(owned)||ownedNeoGenesisCard(owned)||ownedNeoDiscoveryCard(owned);if(!card)continue;
+ for(const owned of rows){const card=ownedJungleCard(owned)||ownedFossilCard(owned)||ownedRocketCard(owned)||ownedGymHeroesCard(owned)||ownedGymChallengeCard(owned)||ownedNeoGenesisCard(owned)||ownedNeoDiscoveryCard(owned)||ownedNeoRevelationCard(owned);if(!card)continue;
   const quantity=Math.max(0,Number(owned.count==null?1:owned.count)||0);
   const variant={id:owned.id||card.id,quantity,image:owned.image||owned.imageUrl||null,rarity:owned.rarity||null,row:owned};
   const current=grouped.get(card.id);
@@ -157,11 +170,11 @@ function validateDeck(ids,options){
   if(card.basicEnergy||card.deckEligible===false)errors.push(`${card.name} cannot occupy a Classic30 deck slot.`);
   else if(!card.battleEnabled)errors.push(`${card.name} is not battle-ready: ${(card.support?.reasons||['unsupported mechanics']).join('; ')}`);
  }
- for(const [name,count] of byName)if(count>4)errors.push(`${name} exceeds the four-copy limit across all prints (${count}).`);
+ for(const [name,count] of byName){if(count>4)errors.push(`${name} exceeds the four-copy limit across all prints (${count}).`);if(name.startsWith('Shining ')&&count>1)errors.push(`${name} is limited to one card per deck.`);}
  if(!deck.some(id=>{const c=cardById(id);return c?.kind==='pokemon'&&c.stage==='Basic'&&c.battleEnabled;}))errors.push('Classic TCG decks require at least one battle-ready Basic Pokémon.');
  if(owned){const map=new Map(projectOwnedCards(owned).map(row=>[row.gameplayId,row.quantity]));for(const [id,count] of byId)if(count>Number(map.get(id)||0))errors.push(`Not enough owned copies of ${cardById(id)?.name||id}: need ${count}, own ${Number(map.get(id)||0)}.`);}
  return {ok:errors.length===0,errors};
 }
-function coverage(){return {...base.coverage(),jungle:jungle.coverage(),fossil:fossil.coverage(),teamRocket:rocket.coverage(),gymHeroes:gym.coverage(),gymChallenge:challenge.coverage(),neoGenesis:neo.coverage(),neoDiscovery:discovery.coverage(),verifiedBattleSlice:CARDS.filter(c=>c.support?.status==='FULL').map(c=>c.id),set:base.SET,sets:[base.SET,jungle.SET,fossil.SET,rocket.SET,gym.SET,challenge.SET,neo.SET,discovery.SET]};}
-return {SET:base.SET,SETS:[base.SET,jungle.SET,fossil.SET,rocket.SET,gym.SET,challenge.SET,neo.SET,discovery.SET],CARDS,ENERGY_CODE:base.ENERGY_CODE,CLASSIC30_LOANER_DECK:base.CLASSIC30_LOANER_DECK,VERIFIED_DETAILS,cardById,typesOf,hasType,isBattleEnabled,projectOwnedCards,validateDeck,coverage};
+function coverage(){return {...base.coverage(),jungle:jungle.coverage(),fossil:fossil.coverage(),teamRocket:rocket.coverage(),gymHeroes:gym.coverage(),gymChallenge:challenge.coverage(),neoGenesis:neo.coverage(),neoDiscovery:discovery.coverage(),neoRevelation:revelation.coverage(),verifiedBattleSlice:CARDS.filter(c=>c.support?.status==='FULL').map(c=>c.id),set:base.SET,sets:[base.SET,jungle.SET,fossil.SET,rocket.SET,gym.SET,challenge.SET,neo.SET,discovery.SET,revelation.SET]};}
+return {SET:base.SET,SETS:[base.SET,jungle.SET,fossil.SET,rocket.SET,gym.SET,challenge.SET,neo.SET,discovery.SET,revelation.SET],CARDS,ENERGY_CODE:base.ENERGY_CODE,CLASSIC30_LOANER_DECK:base.CLASSIC30_LOANER_DECK,VERIFIED_DETAILS,cardById,typesOf,hasType,isBattleEnabled,projectOwnedCards,validateDeck,coverage};
 });

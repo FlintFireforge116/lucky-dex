@@ -33,13 +33,14 @@ function playCpuActions(state,side='opponent',difficulty='Expert',limit=35){
 test('Expert does not crash evaluating Gym Heroes Good Manners on a redacted deck',()=>{
  for(const seed of [8,10]){
   const state=classicMatch(seed);
-  assert.ok(state.sides.opponent.hand.some(x=>x.cardId==='gym1-111'),`repro seed ${seed} should have Good Manners`);
+  // Fixture explicitly supplies Good Manners: adding later sets changes seeded CPU decks.
+  if(!state.sides.opponent.hand.some(x=>x.cardId==='gym1-111'))state.sides.opponent.hand.push({uid:'regression-good-manners-'+seed,cardId:'gym1-111'});
   assert.ok(core.legalActions(state,'opponent').some(a=>a.cardId==='gym1-111'));
   playCpuActions(state);
  }
 });
 
-test('Expert Classic CPU progresses through seven-set random Fire matches without unhandled AI evaluation errors',()=>{
+test('Expert Classic CPU progresses through nine-set random Fire matches without unhandled AI evaluation errors',()=>{
  let actions=0;
  for(let seed=1;seed<=45;seed++){
   const state=classicMatch(seed);

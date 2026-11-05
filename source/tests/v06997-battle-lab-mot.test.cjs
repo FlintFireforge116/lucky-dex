@@ -41,7 +41,7 @@ test('Classic AI difficulty is selectable, stored per save and defaults to previ
  assert.match(src,/data-tcgp-action=\\?"classic-opponent-difficulty/);
  assert.match(src,/cfg\.opponentDifficulty=id/);
  assert.match(src,/difficulty:preferences\.difficulty/);
- assert.match(src,/All eight Classic sets through Neo Discovery/);
+ assert.match(src,/All nine Classic sets through Neo Revelation/);
 });
 
 test('Classic AI values actual Prize progress, while Pocket still scores Points',()=>{

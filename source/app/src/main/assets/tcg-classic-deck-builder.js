@@ -26,7 +26,7 @@ const STAPLES=Object.freeze([
  ['base1-83',1], // Maintenance
  ['base1-87',1]  // Pokedex
 ]);
-const SET_IDS=Object.freeze(['base1','base2','base3','base5','gym1','gym2','neo1','neo2']);
+const SET_IDS=Object.freeze(['base1','base2','base3','base5','gym1','gym2','neo1','neo2','neo3']);
 const ARCHETYPE_TYPES=Object.freeze([...decks.ENERGY_TYPES,'Darkness','Metal','Colorless']);
 const STAGE_RANK=Object.freeze({'Basic':0,'Stage 1':1,'Stage 2':2});
 const norm=s=>String(s||'').toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'');
@@ -38,7 +38,7 @@ const SPECIAL_COST_CARDS=Object.freeze({D:'neo1-104',M:'neo1-19'});
 // Neo Discovery has Darkness and Metal attackers but no Energy prints.  Treat
 // the relevant Neo Genesis Special Energy as a cross-set energy supply, not as
 // an off-set Pokémon/Trainer. Ownership and four-copy limits still apply.
-const isDiscoveryEnergySupply=(card,sets)=>sets.includes('neo2')&&Object.values(SPECIAL_COST_CARDS).includes(card?.id);
+const isDiscoveryEnergySupply=(card,sets)=>(sets.includes('neo2')||sets.includes('neo3'))&&Object.values(SPECIAL_COST_CARDS).includes(card?.id);
 const allowedInSetPool=(card,sets)=>sets.includes(card.setId)||isDiscoveryEnergySupply(card,sets);
 function specialCosts(cards){const required={D:0,M:0};for(const c of cards)for(const a of c?.attacks||[]){const code=String(a.cost||'');for(const sym of ['D','M'])required[sym]=Math.max(required[sym],code.split(sym).length-1);}return required;}
 
@@ -92,7 +92,7 @@ function buildDeck(rows,options={}){
  if(focus?.kind==='pokemon'){
    const focused=candidates.filter(c=>familyLine(c,evolutionPool).some(member=>member.name===focus.name&&member.stage===focus.stage));
    if(focused.length)candidates=focused;
-   else if(scope.includes('neo2')&&['Darkness','Metal'].some(t=>(focus.types||[]).includes(t)))return fail(`Cannot build around ${focus.name}: a full evolution family and the required owned Neo Genesis Darkness/Metal Special Energy are needed.`);
+   else if((scope.includes('neo2')||scope.includes('neo3'))&&['Darkness','Metal'].some(t=>(focus.types||[]).includes(t)))return fail(`Cannot build around ${focus.name}: a full evolution family and the required owned Neo Genesis Darkness/Metal Special Energy are needed.`);
    else return fail(`Cannot build around ${focus.name} with the selected owned cards and sets.`);
  }
  // Type selection applies to the featured family, not its Colorless supports.
@@ -132,7 +132,7 @@ function buildDeck(rows,options={}){
    if(card.name==="Brock's Training Method")return cards.some(id=>{const pokemon=classic.cardById(id);return pokemon?.kind==='pokemon'&&pokemon.name.startsWith("Brock's ");});
    return true;
  }
- function room(card){const copiesOfName=[...counts].filter(([id])=>classic.cardById(id)?.name===card.name).reduce((sum,[,count])=>sum+count,0);return Math.max(0,Math.min(4-copiesOfName,Number(owned.get(card.id)||0)-(counts.get(card.id)||0)));}
+ function room(card){const copiesOfName=[...counts].filter(([id])=>classic.cardById(id)?.name===card.name).reduce((sum,[,count])=>sum+count,0);return Math.max(0,Math.min((card.name.startsWith('Shining ')?1:4)-copiesOfName,Number(owned.get(card.id)||0)-(counts.get(card.id)||0)));}
  function add(card,n=1){let added=0;while(added<n&&cards.length<30&&room(card)>0){cards.push(card.id);counts.set(card.id,(counts.get(card.id)||0)+1);added++;}return added;}
  function addLine(line,copies){if(!line.length||line.some(c=>Number(owned.get(c.id)||0)<1))return false;for(let copy=0;copy<copies;copy++){if(line.some(c=>room(c)<1)||cards.length+line.length>30)break;for(const c of line)add(c,1);}return line.every(c=>(counts.get(c.id)||0)>0);}
  // Preserve legal existing cards first for Fill / repair, but never exceed ownership/copy limits.
