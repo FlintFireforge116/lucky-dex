@@ -13,10 +13,10 @@
  if(!classic||!decks||!builder)throw new Error('Classic opponent generation dependencies are missing.');
  const ALL_PLAYABLE=Object.freeze(classic.CARDS.filter(card=>card.battleEnabled&&card.deckEligible!==false).map(card=>Object.freeze({gameplayId:card.id,quantity:4})));
  const TYPES=builder.ARCHETYPE_TYPES.slice();
- const SETS=['base1','base2','base3','base5','gym1','gym2','neo1','neo2','neo3'];
+ const SETS=['base1','base2','base3','base5','gym1','gym2','neo1','neo2','neo3','SNAPFLORIO'];
  function pick(seed,size){let x=(Number(seed)||0x9e3779b9)>>>0;x^=x<<13;x^=x>>>17;x^=x<<5;return (x>>>0)%size;}
  function pickType({seed=Date.now(),excludeTypes=[],includeColorless=false}={}){
-   const availableTypes=includeColorless?TYPES:[...decks.ENERGY_TYPES,'Darkness','Metal'];
+   const availableTypes=includeColorless?TYPES:decks.ENERGY_TYPES.slice();
    const excluded=new Set(excludeTypes.filter(type=>availableTypes.includes(type)));
    const available=availableTypes.filter(type=>!excluded.has(type));
    const candidates=available.length?available:availableTypes;
@@ -25,7 +25,7 @@
  function generate({seed=Date.now(),excludeTypes=[],excludeArchetypes=[],sets=SETS,type=null,includeColorless=false}={}){
    // A shuffle-bag of Energy types: a new random opponent never repeats a type
    // until all available types have been encountered, then a new cycle begins.
-   const availableTypes=includeColorless||type==='Colorless'?TYPES:[...decks.ENERGY_TYPES,'Darkness','Metal'];
+   const availableTypes=includeColorless||type==='Colorless'?TYPES:decks.ENERGY_TYPES.slice();
    const excluded=new Set(excludeTypes.filter(t=>availableTypes.includes(t)));
    const available=availableTypes.filter(t=>!excluded.has(t));
    const candidates=type&&TYPES.includes(type)?[type]:(available.length?available:availableTypes);

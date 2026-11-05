@@ -3,7 +3,7 @@
  else root.LuckyDexClassicTCGDeckWorkspace=factory(root.LuckyDexClassicTCGBattleData,root.LuckyDexClassicTCGDecks);
 })(typeof globalThis!=='undefined'?globalThis:this,function(data,decks){
 'use strict';
-const TYPES=Object.freeze(['Grass','Fire','Water','Lightning','Psychic','Fighting','Colorless']);
+const TYPES=Object.freeze(['Grass','Fire','Water','Lightning','Psychic','Fighting','Darkness','Metal','Colorless']);
 const norm=s=>String(s||'').toLowerCase().replace(/[^a-z0-9]+/g,' ');
 const canonical=id=>data.cardById(id)?.id||String(id||'');
 const typesOf=c=>Array.isArray(c?.types)&&c.types.length?c.types:[c?.subtype].filter(Boolean);

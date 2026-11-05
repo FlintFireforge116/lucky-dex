@@ -6,8 +6,8 @@
 })(typeof globalThis!=='undefined'?globalThis:this,function(classic){
 'use strict';
 if(!classic)throw new Error('Classic TCG battle data is missing.');
-const ENERGY_TYPES=Object.freeze(['Grass','Fire','Water','Lightning','Psychic','Fighting']);
-const ENERGY_CODE=Object.freeze({G:'Grass',R:'Fire',W:'Water',L:'Lightning',P:'Psychic',F:'Fighting'});
+const ENERGY_TYPES=Object.freeze(['Grass','Fire','Water','Lightning','Psychic','Fighting','Darkness','Metal']);
+const ENERGY_CODE=Object.freeze({G:'Grass',R:'Fire',W:'Water',L:'Lightning',P:'Psychic',F:'Fighting',D:'Darkness',M:'Metal'});
 const DEFAULTS=Object.freeze({schema:1,decks:[],activeDeckId:null,stats:{matches:0,wins:0,losses:0,draws:0,totalTurns:0,bestWinTurns:null}});
 const LOANER_DECK=Object.freeze(classic.CLASSIC30_LOANER_DECK.slice());
 function ensureState(state){
@@ -23,7 +23,7 @@ function analyzeDeck(cards,configured){
  const required=new Set();for(const id of cards||[]){const card=classic.cardById(id);if(!card)continue;for(const attack of card.attacks||[])for(const symbol of String(attack.cost||''))if(ENERGY_CODE[symbol])required.add(ENERGY_CODE[symbol]);}
  const recommended=ENERGY_TYPES.filter(type=>required.has(type));if(!recommended.length)recommended.push('Fighting');
  const types=configured==null?recommended:[...new Set((Array.isArray(configured)?configured:[]).filter(type=>ENERGY_TYPES.includes(type)))];
- return {recommendedEnergyTypes:recommended,configuredEnergyTypes:types,energyValid:types.length>=1&&types.length<=6,missingEnergyTypes:ENERGY_TYPES.filter(type=>required.has(type)&&!types.includes(type))};
+ return {recommendedEnergyTypes:recommended,configuredEnergyTypes:types,energyValid:types.length>=1&&types.length<=8,missingEnergyTypes:ENERGY_TYPES.filter(type=>required.has(type)&&!types.includes(type))};
 }
 function deckEnergyTypes(deck){return deck?.energyMode==='manual'?analyzeDeck(deck.cards||[],deck.energyTypes||[]).configuredEnergyTypes:analyzeDeck(deck?.cards||[]).recommendedEnergyTypes;}
 function validateDraft(cards,rows,{requireFull=false}={}){
@@ -35,7 +35,7 @@ function validateDraft(cards,rows,{requireFull=false}={}){
  for(const [id,count] of counts){const card=classic.cardById(id);if(!card)continue;const quantity=Number(have.get(id)||0);if(count>quantity)errors.push(`Not enough owned copies of ${card.name}: need ${count}, own ${quantity}.`);}
  return {ok:errors.length===0,errors};
 }
-function readiness(deck,rows){const legal=validateDraft(deck?.cards||[],rows,{requireFull:true}),analysis=analyzeDeck(deck?.cards||[],deckEnergyTypes(deck));const errors=[...legal.errors];if(!analysis.energyValid)errors.push('Classic Energy Zone requires one to six Basic Energy types.');if(analysis.missingEnergyTypes.length)errors.push(`Energy Zone is missing ${analysis.missingEnergyTypes.join(' / ')}.`);return {ok:errors.length===0,errors,analysis};}
+function readiness(deck,rows){const legal=validateDraft(deck?.cards||[],rows,{requireFull:true}),analysis=analyzeDeck(deck?.cards||[],deckEnergyTypes(deck));const errors=[...legal.errors];if(!analysis.energyValid)errors.push('Classic Energy Zone requires one to eight Basic Energy types.');if(analysis.missingEnergyTypes.length)errors.push(`Energy Zone is missing ${analysis.missingEnergyTypes.join(' / ')}.`);return {ok:errors.length===0,errors,analysis};}
 function edit(cards,id,delta,rows){
  const list=(cards||[]).map(x=>classic.cardById(x)?.id||String(x||'')),card=classic.cardById(id),fail=error=>({ok:false,cards:list,error});if(!card)return fail('Unknown Base Set card.');
  const count=list.filter(x=>x===card.id).length;if(delta<0){const index=list.lastIndexOf(card.id);if(index>=0)list.splice(index,1);return {ok:true,cards:list};}

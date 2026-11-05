@@ -1,0 +1,55 @@
+/* The Substitute Test Lab is a self-contained, non-persistent Classic30 sandbox. */
+.tcgp-substitute-lab{--lab-border:rgba(135,160,138,.28);max-width:1140px;margin:0 auto;padding:clamp(10px,2.5vw,24px);color:var(--text,#273329)}
+.tcgp-substitute-lab button,.tcgp-substitute-lab input,.tcgp-substitute-lab select{font:inherit}
+.tcgp-substitute-lab button{cursor:pointer;touch-action:manipulation}
+.tcgp-substitute-lab button:disabled{opacity:.4;cursor:not-allowed}
+.tcgp-lab-hero{display:flex;justify-content:space-between;align-items:center;gap:16px;margin:0 0 15px}
+.tcgp-lab-hero small{font-weight:800;letter-spacing:.1em;color:#34735b}
+.tcgp-lab-hero h2{font-size:clamp(1.4rem,3vw,2.2rem);margin:3px 0}
+.tcgp-lab-hero p{font-size:.9rem;line-height:1.45;max-width:650px;margin:5px 0}
+.tcgp-lab-exit,.tcgp-lab-chips button,.tcgp-lab-picker-target button{border:1px solid var(--lab-border);border-radius:9px;padding:8px 11px;background:var(--panel,#f5f7f4);color:inherit;font-size:.85rem}
+.tcgp-lab-exit{white-space:nowrap}
+.tcgp-lab-board{display:grid;grid-template-columns:1fr 1fr;gap:12px;align-items:stretch;margin-bottom:14px}
+.tcgp-lab-side{background:var(--panel,#f4f7f2);border:1px solid var(--lab-border);border-radius:14px;padding:10px;min-width:0}
+.tcgp-lab-side header{display:flex;justify-content:space-between;flex-wrap:wrap;gap:5px;margin-bottom:9px;align-items:center}
+.tcgp-lab-side header b{font-size:.82rem;letter-spacing:.04em}
+.tcgp-lab-side header small{font-size:.7rem;opacity:.8}
+.tcgp-lab-active{max-width:135px;margin:0 auto 9px}
+.tcgp-lab-bench{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:5px}
+.tcgp-lab-slot{min-width:0;width:100%;display:flex;flex-direction:column;align-items:center;text-align:center;gap:3px;padding:4px;border:2px solid transparent;border-radius:10px;background:rgba(110,140,112,.07);color:inherit}
+.tcgp-lab-slot.selected,.tcgp-lab-card-choice.selected{border-color:#29856a;background:rgba(41,133,106,.13)}
+.tcgp-lab-slot-art{position:relative;width:100%;aspect-ratio:0.71;max-height:166px;overflow:hidden;border-radius:7px;background:#e1ede2;display:grid;place-items:center}
+.tcgp-lab-slot-art img,.tcgp-lab-card-choice img{width:100%;height:100%;object-fit:contain}
+.tcgp-lab-slot-label{font-size:.61rem;font-weight:800;letter-spacing:.035em;color:#337358}
+.tcgp-lab-slot b{font-size:clamp(.6rem,.85vw,.76rem);line-height:1.1;overflow-wrap:anywhere}
+.tcgp-lab-slot small{font-size:clamp(.55rem,.75vw,.68rem);line-height:1.2;opacity:.8;overflow-wrap:anywhere}
+.tcgp-lab-empty{font-size:1.5rem;color:#789c7b}
+.tcgp-lab-sub-art{width:88%;aspect-ratio:.74;border:4px solid #eef9df;border-radius:9px;background:linear-gradient(150deg,#f6fbdd 4%,#a9d69a 55%,#50795f 100%);box-shadow:inset 0 0 0 3px #87ba87;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;color:#1d684d;text-shadow:0 1px #fff;transform:rotate(-2deg)}
+.tcgp-lab-sub-head{border-radius:55% 55% 45% 45%;background:#85bc80;width:72%;height:30%;display:grid;place-items:center;font-size:clamp(.55rem,1vw,.9rem);font-weight:900}
+.tcgp-lab-sub-body{width:52%;height:32%;background:#548c76;border-radius:45%;display:grid;place-items:center;font-size:1rem}
+.tcgp-lab-art-fallback{display:grid;place-items:center;text-align:center;width:100%;height:100%;padding:4px;font-size:.68rem;background:linear-gradient(145deg,#d3ead8,#b5d1c7);overflow-wrap:anywhere}
+.tcgp-lab-meta,.tcgp-lab-feedback{padding:9px 12px;border-radius:9px;background:rgba(63,136,96,.1);font-size:.85rem;margin:10px 0}
+.tcgp-lab-actions,.tcgp-lab-controls,.tcgp-lab-card-picker,.tcgp-lab-history{border-radius:13px;border:1px solid var(--lab-border);padding:15px;margin:12px 0;background:var(--panel,#fbfcfa)}
+.tcgp-lab-actions h3,.tcgp-lab-controls h3,.tcgp-lab-card-picker h3{margin:0 0 8px;font-size:1.05rem}
+.tcgp-lab-actions>small,.tcgp-lab-controls>small{display:block;opacity:.8;margin-bottom:8px;line-height:1.4}
+.tcgp-lab-chips{display:flex;align-items:center;gap:7px;flex-wrap:wrap;margin:8px 0}
+.tcgp-lab-chips button:hover,.tcgp-lab-chips button:focus-visible,.tcgp-lab-picker-target button[aria-pressed=true],.tcgp-lab-chips button[aria-pressed=true]{border-color:#25876a;background:rgba(40,139,93,.15)}
+.tcgp-lab-chips select,.tcgp-lab-search select,.tcgp-lab-search input{min-width:0;border:1px solid var(--lab-border);border-radius:9px;background:var(--panel,#fff);color:inherit;padding:9px}
+.tcgp-lab-rule{margin-top:15px;border-top:1px solid var(--lab-border);padding-top:10px}
+.tcgp-lab-rule>strong{font-size:.83rem}
+.tcgp-lab-picker-target{display:flex;align-items:center;gap:9px;flex-wrap:wrap;margin:12px 0}
+.tcgp-lab-picker-target span{font-size:.83rem}
+.tcgp-lab-autofund{display:flex;gap:7px;align-items:center;margin-top:12px;font-size:.83rem}
+.tcgp-lab-card-picker h3 small{font-weight:400;opacity:.7;font-size:.7rem}
+.tcgp-lab-search{display:flex;gap:8px;margin:9px 0}
+.tcgp-lab-search input{flex:1;min-width:100px}
+.tcgp-lab-search select{max-width:38%}
+.tcgp-lab-results{display:grid;grid-template-columns:repeat(auto-fill,minmax(96px,1fr));gap:7px;max-height:380px;overflow:auto;padding:3px}
+.tcgp-lab-card-choice{border:2px solid transparent;min-width:0;border-radius:9px;text-align:left;display:flex;flex-direction:column;align-items:stretch;gap:3px;padding:4px;background:rgba(110,140,112,.07);color:inherit}
+.tcgp-lab-card-choice>div{aspect-ratio:.71;background:#e0eee4;border-radius:5px;overflow:hidden;display:grid;place-items:center}
+.tcgp-lab-card-choice span{font-size:.74rem;font-weight:700;overflow-wrap:anywhere}
+.tcgp-lab-card-choice small{font-size:.62rem;opacity:.75;overflow-wrap:anywhere}
+.tcgp-lab-history li{font-size:.79rem;margin:4px 0}
+.tcgp-lab-error{color:#b74135}
+@media(max-width:760px){.tcgp-lab-board{grid-template-columns:1fr}.tcgp-lab-slot b{font-size:.67rem}.tcgp-lab-slot small{font-size:.6rem}.tcgp-lab-side{padding:7px}.tcgp-lab-bench{gap:3px}.tcgp-lab-hero{align-items:flex-start}.tcgp-lab-hero p{font-size:.78rem}}
+@media(max-width:470px){.tcgp-lab-hero{flex-wrap:wrap}.tcgp-lab-active{max-width:120px}.tcgp-lab-slot{padding:2px}.tcgp-lab-slot-label{font-size:.55rem}.tcgp-lab-card-picker,.tcgp-lab-controls,.tcgp-lab-actions{padding:10px}.tcgp-lab-search{flex-direction:column}.tcgp-lab-search select{max-width:none}}

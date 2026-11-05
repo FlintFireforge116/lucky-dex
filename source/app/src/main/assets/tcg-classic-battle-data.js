@@ -33,7 +33,10 @@ const VERIFIED_DETAILS=[
 for(const detail of VERIFIED_DETAILS)base.registerDetails(detail);
 for(const card of base.CARDS){card.battleFormat='classic';card.source='tcg';}
 
-function cardById(id){return base.cardById(id)||jungle.cardById(id)||fossil.cardById(id)||rocket.cardById(id)||gym.cardById(id)||challenge.cardById(id)||neo.cardById(id)||discovery.cardById(id)||revelation.cardById(id)||lental.cardById(id);}
+const LAB_SUBSTITUTE=Object.freeze({id:'LAB-SUBSTITUTE',name:'Substitute',setId:'LAB',kind:'pokemon',stage:'Basic',
+  types:['Colorless'],subtype:'Colorless',hp:1000,retreat:0,weakness:null,attacks:[],abilities:[],
+  battleEnabled:true,deckEligible:false,noPrize:true,points:0,labDummy:true});
+function cardById(id){if(id==='LAB-SUBSTITUTE')return LAB_SUBSTITUTE;return base.cardById(id)||jungle.cardById(id)||fossil.cardById(id)||rocket.cardById(id)||gym.cardById(id)||challenge.cardById(id)||neo.cardById(id)||discovery.cardById(id)||revelation.cardById(id)||lental.cardById(id);}
 function typesOf(card){return Array.isArray(card?.types)&&card.types.length?card.types:[card?.subtype].filter(Boolean);}
 function hasType(card,type){return typesOf(card).includes(type);}
 function isBattleEnabled(value){const card=typeof value==='string'?cardById(value):cardById(value?.id);return !!(card&&card.battleEnabled&&card.deckEligible!==false);}
@@ -147,11 +150,28 @@ function ownedNeoRevelationCard(owned){
  }
  return null;
 }
+function ownedLentalCard(owned){
+ if(!owned||typeof owned!=='object')return null;
+ const source=String(owned.source||'tcg').toLowerCase();if(source!=='tcg')return null;
+ for(const id of [owned.id,owned._libraryCanonicalId,owned.gameplayId,owned.cardId]){
+   const direct=lental.cardById(id);if(direct)return direct;
+ }
+ const key=String(owned._librarySetKey||'').toUpperCase(),set=String(owned.setId||owned.set?.id||'').toUpperCase();
+ const name=String(owned.setName||owned.set?.name||'').toLowerCase();
+ const florio=key==='SNAPFLORIO'||['SNAPFLORIO','LIBRARY:SNAPFLORIO'].includes(set)||name.includes('florio nature park');
+ const founja=key==='SNAPFOUNJA'||['SNAPFOUNJA','LIBRARY:SNAPFOUNJA'].includes(set)||name.includes('founja jungle');
+ if(!florio&&!founja)return null;
+ for(const raw of [owned.localId,owned.number,owned._libraryCanonicalId,owned.id]){
+  const match=String(raw??'').trim().match(/(?:^|[-_:])0*(\d{1,3})(?:\/\d+)?$/);
+  if(match){const number=Number(match[1]);if(number>=1&&number<=(florio?123:86))return lental.cardById(`${florio?'SNAPFLORIO':'SNAPFOUNJA'}-${String(number).padStart(3,'0')}`);}
+ }
+ return null;
+}
 function projectOwnedCards(cards){
  const rows=Array.isArray(cards)?cards:Object.values(cards||{});
  const projected=base.projectOwnedCards(rows);
  const grouped=new Map();
- for(const owned of rows){const card=ownedJungleCard(owned)||ownedFossilCard(owned)||ownedRocketCard(owned)||ownedGymHeroesCard(owned)||ownedGymChallengeCard(owned)||ownedNeoGenesisCard(owned)||ownedNeoDiscoveryCard(owned)||ownedNeoRevelationCard(owned)||((owned?.source||'tcg')==='tcg'?(lental.cardById(owned.id)||lental.cardById(owned._libraryCanonicalId)):null);if(!card)continue;
+ for(const owned of rows){const card=ownedJungleCard(owned)||ownedFossilCard(owned)||ownedRocketCard(owned)||ownedGymHeroesCard(owned)||ownedGymChallengeCard(owned)||ownedNeoGenesisCard(owned)||ownedNeoDiscoveryCard(owned)||ownedNeoRevelationCard(owned)||ownedLentalCard(owned);if(!card)continue;
   const quantity=Math.max(0,Number(owned.count==null?1:owned.count)||0);
   const variant={id:owned.id||card.id,quantity,image:owned.image||owned.imageUrl||null,rarity:owned.rarity||null,row:owned};
   const current=grouped.get(card.id);
@@ -177,5 +197,5 @@ function validateDeck(ids,options){
  return {ok:errors.length===0,errors};
 }
 function coverage(){return {...base.coverage(),jungle:jungle.coverage(),fossil:fossil.coverage(),teamRocket:rocket.coverage(),gymHeroes:gym.coverage(),gymChallenge:challenge.coverage(),neoGenesis:neo.coverage(),neoDiscovery:discovery.coverage(),neoRevelation:revelation.coverage(),lental:lental.coverage(),verifiedBattleSlice:CARDS.filter(c=>c.support?.status==='FULL').map(c=>c.id),set:base.SET,sets:[base.SET,jungle.SET,fossil.SET,rocket.SET,gym.SET,challenge.SET,neo.SET,discovery.SET,revelation.SET,...lental.SETS]};}
-return {SET:base.SET,SETS:[base.SET,jungle.SET,fossil.SET,rocket.SET,gym.SET,challenge.SET,neo.SET,discovery.SET,revelation.SET,...lental.SETS],CARDS,ENERGY_CODE:base.ENERGY_CODE,CLASSIC30_LOANER_DECK:base.CLASSIC30_LOANER_DECK,VERIFIED_DETAILS,cardById,typesOf,hasType,isBattleEnabled,projectOwnedCards,validateDeck,coverage};
+return {SET:base.SET,SETS:[base.SET,jungle.SET,fossil.SET,rocket.SET,gym.SET,challenge.SET,neo.SET,discovery.SET,revelation.SET,...lental.SETS],CARDS,ENERGY_CODE:{...base.ENERGY_CODE,Darkness:'D',Metal:'M'},CLASSIC30_LOANER_DECK:base.CLASSIC30_LOANER_DECK,VERIFIED_DETAILS,cardById,typesOf,hasType,isBattleEnabled,projectOwnedCards,validateDeck,coverage};
 });

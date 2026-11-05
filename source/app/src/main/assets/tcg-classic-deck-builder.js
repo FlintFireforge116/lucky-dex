@@ -26,21 +26,21 @@ const STAPLES=Object.freeze([
  ['base1-83',1], // Maintenance
  ['base1-87',1]  // Pokedex
 ]);
-const SET_IDS=Object.freeze(['base1','base2','base3','base5','gym1','gym2','neo1','neo2','neo3']);
+const SET_IDS=Object.freeze(['base1','base2','base3','base5','gym1','gym2','neo1','neo2','neo3','SNAPFLORIO']);
 const ARCHETYPE_TYPES=Object.freeze([...decks.ENERGY_TYPES,'Darkness','Metal','Colorless']);
 const STAGE_RANK=Object.freeze({'Basic':0,'Stage 1':1,'Stage 2':2});
 const norm=s=>String(s||'').toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'');
 function ownedMap(rows){const map=new Map();for(const row of rows||[]){const id=classic.cardById(row.gameplayId)?.id;if(id)map.set(id,(map.get(id)||0)+Math.max(0,Number(row.quantity)||0));}return map;}
 function attackTypes(card){const out=new Set();for(const attack of card?.attacks||[])for(const symbol of String(attack.cost||'')){const type=CODE_TO_TYPE[symbol];if(type&&decks.ENERGY_TYPES.includes(type))out.add(type);}return [...out];}
-// Darkness and Metal have no Basic Energy Zone source in this hybrid. They must
-// be included as actual owned Neo Genesis Special Energy cards in the 30 slots.
+// The hybrid Energy Zone supplies Basic Darkness and Metal too.
+// Neo Genesis Special Energy remains optional and occupies actual deck slots.
 const SPECIAL_COST_CARDS=Object.freeze({D:'neo1-104',M:'neo1-19'});
 // Neo Discovery has Darkness and Metal attackers but no Energy prints.  Treat
 // the relevant Neo Genesis Special Energy as a cross-set energy supply, not as
 // an off-set Pokémon/Trainer. Ownership and four-copy limits still apply.
 const isDiscoveryEnergySupply=(card,sets)=>(sets.includes('neo2')||sets.includes('neo3'))&&Object.values(SPECIAL_COST_CARDS).includes(card?.id);
 const allowedInSetPool=(card,sets)=>sets.includes(card.setId)||isDiscoveryEnergySupply(card,sets);
-function specialCosts(cards){const required={D:0,M:0};for(const c of cards)for(const a of c?.attacks||[]){const code=String(a.cost||'');for(const sym of ['D','M'])required[sym]=Math.max(required[sym],code.split(sym).length-1);}return required;}
+function specialCosts(_cards){return {D:0,M:0};} // Basic Darkness/Metal satisfies typed attack costs; Special Energy is optional.
 
 function familyLine(card,pool){if(!card||card.kind!=='pokemon')return [];const line=[card],seen=new Set([card.id]);let cur=card;while(cur.evolvesFrom){const prior=pool.find(c=>(c.kind==='pokemon'||c.effect?.type==='playFossil')&&c.name===cur.evolvesFrom);if(!prior||seen.has(prior.id))return [];line.unshift(prior);seen.add(prior.id);cur=prior;}return line;}
 function familyRoot(card,pool){const line=familyLine(card,pool);return line[0]?.name||card?.name||card?.id||'';}
