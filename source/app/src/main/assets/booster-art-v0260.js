@@ -45,7 +45,7 @@
   const AUTHENTIC_OVERRIDES=Object.freeze({
     dv1:'authentic-pack-art/dragon-vault-ray.webp'
   });
-  function localPath(set){return lookupManifest(EMBEDDED,set);}
+  function localPath(set){if(setKey(set).toUpperCase()==='SNAPFLORIO')return 'lental-pack-art/florio-nature-park.webp';return lookupManifest(EMBEDDED,set);}
   function authenticOverride(set){
     const key=setKey(set).toLowerCase();if(AUTHENTIC_OVERRIDES[key])return AUTHENTIC_OVERRIDES[key];
     const local=localPath(set),match=String(local||'').match(/booster-art-v0260\/([^/.]+)\.[a-z0-9]+$/i);

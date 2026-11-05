@@ -77,3 +77,15 @@ mechanics tests pass.
 * Other unverified Florio cards stay PARTIAL, not silently enabled.
 * Creator artwork files and ZIPs were not modified; remaining manual rules
   await exact audit against the printed cards.
+
+## v0.69.107 — Florio print art and battle expansion
+
+* Creator-supplied Florio Nature Park artwork is bundled in `lental-pack-art/florio-nature-park.webp`.
+  Shop boosters and sealed pack opening resolve the same local image directly.
+* Expanded Florio Classic30 with 19 additional fully transcribed gameplay cards.
+  Effects include selected Basic search-and-Bench, Prize-based damage counters,
+  targeted discarded-card recovery, three-target healing, coin outcomes,
+  Stadium-based Colorless cost changes, and Bidoof-only Battle Stick damage.
+* Both Lental sets keep 10-card pack collation (4 Common, 3 Uncommon, 3 Rare+).
+* All remaining unverified cards stay PARTIAL and cannot be added to legal decks.
+* Founja stays collection-only and unfinished Blushing Beach stays hidden.

@@ -99,6 +99,57 @@ const FLORIO_EXTRA=Object.freeze({
   118:{trainerType:'Stadium',effect:{type:'noop'},printedRules:'When all 8 normal Pokémon spaces are occupied, each player flips a coin at the start of their turn: heads places 1 damage counter on each opposing Benched Pokémon; tails places 1 on each of their own.'}
 });
 
+// v0.69.107 — transcribed and checked against creator's printed Florio cards.
+// Every card here includes its full attacks/abilities; do not enable incomplete
+// cards solely to improve a numerical coverage count.
+const FLORIO_NEXT=Object.freeze({
+  3:{type:'Grass',hp:50,retreat:1,weakness:'Fire',attacks:[
+    {name:'Group Together',cost:'C',damage:0,effect:{type:'searchChosen',source:'deck',filter:{name:'Caterpie'},amount:1}},
+    {name:'Surprise Attack',cost:'C',damage:20,effect:{type:'lentalRule',rule:'surpriseAttack'}}]},
+  13:{type:'Grass',hp:40,retreat:1,weakness:'Fighting',attacks:[
+    {name:'Startle',cost:'C',damage:20,effect:{type:'lentalRule',rule:'wurmpleStartle'}}]},
+  17:{type:'Grass',hp:60,retreat:1,weakness:'Fire',attacks:[
+    {name:'Fungal Fever',cost:'GG',damage:10,effect:{type:'lentalRule',rule:'fungalFever'}}]},
+  26:{type:'Grass',hp:180,retreat:3,weakness:'Fire',attacks:[
+    {name:'Wrap Up',cost:'C',damage:30,effect:{type:'sequence',effects:[
+      {type:'lock',target:'opponentActive',action:'retreat',duration:'opponentTurn'},
+      {type:'nextAttackBonus',attackName:'Wrap Up',amount:30}]}},
+    {name:'Impact Vines',cost:'GGGG',damage:150,effect:{type:'lock',target:'self',action:'attack',attackName:'Impact Vines',duration:'nextOwnTurn'}}]},
+  41:{type:'Water',hp:40,retreat:1,weakness:'Lightning',attacks:[
+    {name:'Shallow Splash',cost:'W',damage:10,effect:{type:'lentalRule',rule:'shallowSplash'}},
+    {name:'Soak',cost:'WC',damage:0,effect:{type:'lentalRule',rule:'magikarpSoak'}}]},
+  43:{type:'Water',hp:60,retreat:1,weakness:'Lightning',attacks:[
+    {name:'Cry',cost:'C',damage:0,effect:{type:'searchChosen',source:'deck',filter:{name:'Swanna'},amount:1}},
+    {name:'Water Wings',cost:'WC',damage:30}]},
+  45:{type:'Water',stage:'Stage 1',evolvesFrom:'Ducklett',hp:110,retreat:2,weakness:'Lightning',attacks:[
+    {name:'Mother Bird',cost:'C',damage:0,effect:{type:'lentalRule',rule:'motherBird',amount:3}},
+    {name:'River Rush',cost:'WC',damage:60,effect:{type:'discardEnergyCard',target:'self',amount:1}}]},
+  46:{type:'Water',stage:'Stage 1',evolvesFrom:'Ducklett',hp:230,retreat:3,weakness:'Lightning',prizeCards:2,retreatZeroWithWater:true,
+    attacks:[{name:'Wing Wave',cost:'W',damage:50},
+      {name:'Torrent Corkscrew',cost:'WCC',damage:120,effect:{type:'lentalRule',rule:'torrentCorkscrew'}}]},
+  58:{type:'Psychic',hp:110,retreat:3,weakness:'Metal',attacks:[
+    {name:'Moonlight',cost:'PC',damage:0,effect:{type:'healSelf',amount:50}},
+    {name:'Magical Meadow',cost:'PPC',damage:80,effect:{type:'lentalRule',rule:'extraEnergyDraw',attackEnergyCost:3}}]},
+  62:{type:'Fighting',hp:180,retreat:4,weakness:'Water',attacks:[
+    {name:'Natural Guardian',cost:'FC',damage:50,effect:{type:'coinFlip',heads:{type:'lentalRule',rule:'naturalGuardian'}}},
+    {name:'Crushing Landmass',cost:'FFFF',damage:180,effect:{type:'sequence',effects:[
+      {type:'benchDamage',side:'self',all:true,amount:20},
+      {type:'benchDamage',side:'opponent',all:true,amount:20}]}}]},
+  90:{type:'Colorless',hp:50,retreat:1,weakness:'Fighting',retreatZeroWithWater:true,attacks:[
+    {name:'Twin Twig',cost:'CC',damage:20,effect:{type:'coinFlip',heads:{type:'bonusDamage',amount:20}}}]},
+  92:{type:'Colorless',hp:40,retreat:2,weakness:'Lightning',attacks:[
+    {name:'Busy Buzz',cost:'CC',damage:0,effect:{type:'lentalRule',rule:'busyBuzz'}}]},
+  102:{type:'Colorless',hp:120,retreat:2,weakness:'Fighting',abilities:[
+    {name:'Compound Eyes',type:'activated',oncePerTurn:true,effect:{type:'lentalRule',rule:'compoundEyes'}}],attacks:[
+    {name:'Garden Flutter',cost:'CCC',damage:30,effect:{type:'benchCountDamage',side:'self',pokemonType:'Grass',amount:30}}]},
+  103:{trainerType:'Tool',effect:{type:'noop'},onAttach:{type:'noop'},printedRules:'The attacks of the Bidoof this Tool is attached to do 20 more damage before Weakness and Resistance.'},
+  110:{trainerType:'Item',effect:{type:'lentalRule',rule:'fallenBerries'},printedRules:'Heal 10 damage each from up to 3 of your Benched Pokémon.'},
+  114:{trainerType:'Item',effect:{type:'heal',target:'selfPokemon',amount:20}},
+  116:{trainerType:'Item',effect:{type:'removeStatus',target:'selfActive'}},
+  117:{trainerType:'Item',effect:{type:'searchChosen',source:'deck',filter:{kind:'trainer',trainerType:'Supporter'},amount:1}},
+  120:{trainerType:'Stadium',effect:{type:'noop'},printedRules:'All Grass and Colorless Pokémon attacks cost one Colorless Energy less.'}
+});
+
 const PRINTED_RARITY=Object.freeze({C:'Common',U:'Uncommon',R:'Rare',H:'Rare Holo',X:'Ultra Rare'});
 const RARITY_BY_SET=Object.freeze({"SNAPFLORIO":"CCUHURXXXXUXCCUHCCHRRCURXRXRRXCHUXCCHCCHCHCCUXCHXCUHRXXRHRXRXRXXCHCCURXXUUXXCRRXCCHCHCCHCCHCRXCUXURXRRCRUCCCCCUUUCUUURCRURU","SNAPFOUNJA":"UXCUHURURXUURXRXXRRCHCCUCUHCCRRXRXCCRHRXCCHRRRXHUUUXURHCCUHRRRXXRRRCCHRRRURRRURCUCURCR"});
 function printedRarity(key,number){const symbol=RARITY_BY_SET[key]?.[number-1];return PRINTED_RARITY[symbol]||'Unknown';}
@@ -107,11 +158,11 @@ for(const [key,meta] of Object.entries(RAW)){
   SETS.push(Object.freeze({id:key,name:meta.name,series:'New Pokémon Snap',cardCount:meta.cards.length,fanMade:true}));
   for(const [number,name,kind] of meta.cards){
     const id=`${key}-${String(number).padStart(3,'0')}`;
-    const spec=key==='SNAPFLORIO'?(FLORIO_EXTRA[number]||FLORIO_BATTLE[number]||null):null;
+    const spec=key==='SNAPFLORIO'?(FLORIO_NEXT[number]||FLORIO_EXTRA[number]||FLORIO_BATTLE[number]||null):null;
     const card=Object.freeze({id,name,number:String(number),setId:key,kind,
       source:'tcg',battleFormat:'classic',rarity:printedRarity(key,number),types:spec?.type?[spec.type]:[],
-      ...(spec?.trainerType?{trainerType:spec.trainerType,effect:spec.effect,printedRules:spec.printedRules||''}:{}),
-      ...(spec?.type?{stage:spec.stage||'Basic',subtype:spec.type,hp:spec.hp,retreat:spec.retreat,weakness:spec.weakness,weaknessValue:spec.weakness?'×2':null,resistance:spec.resistance||null,resistanceValue:spec.resistanceValue||null,evolvesFrom:spec.evolvesFrom||null,attacks:spec.attacks||[],abilities:spec.abilities||[],points:spec.prizeCards||1,isEx:!!(spec.prizeCards&&spec.prizeCards>1),...(spec.prizeCards?{prizeCards:spec.prizeCards}:{})}:{}),
+      ...(spec?.trainerType?{trainerType:spec.trainerType,effect:spec.effect,printedRules:spec.printedRules||'',...(spec.onAttach?{onAttach:spec.onAttach}:{})}:{}),
+      ...(spec?.type?{stage:spec.stage||'Basic',subtype:spec.type,hp:spec.hp,retreat:spec.retreat,weakness:spec.weakness,weaknessValue:spec.weakness?'×2':null,resistance:spec.resistance||null,resistanceValue:spec.resistanceValue||null,evolvesFrom:spec.evolvesFrom||null,attacks:spec.attacks||[],abilities:spec.abilities||[],points:spec.prizeCards||1,isEx:!!(spec.prizeCards&&spec.prizeCards>1),...(spec.prizeCards?{prizeCards:spec.prizeCards}:{}),...(spec.retreatZeroWithWater?{retreatZeroWithWater:true}:{})}:{}),
       image:`https://luckydex.local/card-art/${key}/cards/${String(number).padStart(3,'0')}.webp`,
       battleEnabled:!!spec,deckEligible:!!spec,
       support:spec?{status:'FULL',reasons:[]}:{status:'PARTIAL',reasons:["Printed gameplay not fully audited; do not enable placeholder attacks."]}});
