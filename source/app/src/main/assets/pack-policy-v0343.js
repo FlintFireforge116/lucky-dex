@@ -165,11 +165,18 @@
     ];
     return Object.freeze({id:deluxe?'pocket_deluxe_4':'pocket_standard_5',source:'tcgp',cardCount:count,price:450,rateFamily:deluxe?'pocket-deluxe':'pocket-standard',productKind:'booster',purchasable:true,parent:null,slots:Object.freeze(slots)});
   }
-  // Image-only fan sets: five random cards, no fabricated rarity guarantees.
+  // Lental printed rarity proportions: 4 Common / 3 Uncommon / 3 Rare+.
+  // The last three slots roll independent chase tiers, not guaranteed ultras.
   function lentalPreviewProfile(){
-    return Object.freeze({id:'lental_preview_5',source:'tcg',cardCount:5,price:450,
+    return Object.freeze({id:'lental_booster_10',source:'tcg',cardCount:10,price:650,
       rateFamily:'special-flexible',productKind:'booster',purchasable:true,parent:null,
-      slots:Object.freeze([slot('lental-common-1','core',LOW),slot('lental-common-2','core',LOW),slot('lental-uncommon-1','core',MID),slot('lental-uncommon-2','core',MID),slot('lental-rare','core',RARE,{rareOrHigher:true})])});
+      slots:Object.freeze([
+        ...Array.from({length:4},(_,i)=>slot(`lental-common-${i+1}`,'core',LOW)),
+        ...Array.from({length:3},(_,i)=>slot(`lental-uncommon-${i+1}`,'core',MID)),
+        slot('lental-hit-1','core',RARE,{rareOrHigher:true}),
+        slot('lental-hit-2','core',RARE,{rareOrHigher:true}),
+        slot('lental-hit-3','core',RARE,{rareOrHigher:true})
+      ])});
   }
   function resolve(set={},source='tcg'){
     if(source==='tcgp')return pocketProfile(set);
@@ -402,6 +409,10 @@
   }
 
   function targetClassesFor(set,descriptor,source='tcg',random=Math.random){
+    if(source==='tcg'&&set?._lentalSet&&/^lental-hit-[123]$/.test(descriptor?.id||'')){
+      const chances={'lental-hit-1':.06,'lental-hit-2':.16,'lental-hit-3':.35};
+      return [random()<chances[descriptor.id]?'ultra':'rare'];
+    }
     if(source==='tcgp'){
       if(descriptor?.rarePackGreatHit)return [weighted([['ultra',.18],['illustration',.42],['special-illustration',.30],['secret',.10]],random)];
       const base=pocketBaseTargetClasses(descriptor,random);

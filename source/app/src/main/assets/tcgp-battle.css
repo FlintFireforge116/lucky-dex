@@ -869,3 +869,12 @@ html.android-native-inset body.tcgp-battle-live .tcgp-live-arena:not(.format-cla
 .tcgp-energy-ark-choice .tcgp-live-actions{display:flex;flex-wrap:wrap;gap:10px}
 .tcgp-energy-choice-button{display:inline-flex;align-items:center;gap:8px;min-width:120px;justify-content:center}
 .tcgp-energy-choice-button .tcgp-energy-icon{width:26px;height:26px}
+
+/* v0.69.106: only when Florio Dam expands Classic's Bench to five.
+   Keep all five cards visible, touchable and in the same mat region. */
+.tcgp-live-arena.format-classic.lental-wide-bench .tcgp-live-player-bench,
+.tcgp-live-arena.format-classic.lental-wide-bench .tcgp-live-opponent-bench{
+  grid-template-columns:repeat(5,minmax(0,1fr))!important;
+  width:76%!important;max-width:none!important;gap:3px!important;
+}
+.tcgp-live-arena.format-classic.lental-wide-bench .tcgp-live-card-wrap{min-width:0!important}

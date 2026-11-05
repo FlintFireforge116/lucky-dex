@@ -532,7 +532,7 @@
       case 'erikaDraw':{
         const options=['Draw 0 cards','Draw 1 card','Draw 2 cards','Draw 3 cards'];
         if(!e.stage){choose({kind:'option',side:'self',options,prompt:'Erika: choose how many cards to draw'}, {stage:'self'});break;}
-        const count=Math.max(0,Math.min(3,Number(a.choiceOption)||0));
+        const count=Math.max(0,Math.min(5,Number(a.choiceOption)||0));
         if(e.stage==='self'){for(let i=0;i<count;i++)ctx.drawCard(ss);
           choose({kind:'option',side:'opponent',options,prompt:'Erika: opponent chooses how many cards to draw'},{stage:'opponent'});
         }else if(e.stage==='opponent'){for(let i=0;i<count;i++)ctx.drawCard(foe);}
@@ -735,13 +735,13 @@
         break;
       }
       case 'revelation:callMurkrow':{
-        if(ss.bench.length<Math.min(3,Number(ss.benchLimit??3))&&ss.deck.some(ref=>ctx.cardById(ref.cardId)?.name==='Murkrow'))
+        if(ss.bench.length<Math.min(5,Number(ss.benchLimit??3))&&ss.deck.some(ref=>ctx.cardById(ref.cardId)?.name==='Murkrow'))
           ctx.requestChoice?.({kind:'deckCard',side:'self',filter:{kind:'pokemon',name:'Murkrow'},effect:{type:'neoRule',rule:'revelation:callMurkrowPick'}});
         break;
       }
       case 'revelation:callMurkrowPick':{
         const i=Number(ctx.action?.choiceDeckIndex),ref=ss.deck[i];
-        if(ref&&ctx.cardById(ref.cardId)?.name==='Murkrow'&&ss.bench.length<Math.min(3,Number(ss.benchLimit??3))){
+        if(ref&&ctx.cardById(ref.cardId)?.name==='Murkrow'&&ss.bench.length<Math.min(5,Number(ss.benchLimit??3))){
           const [picked]=ss.deck.splice(i,1);ctx.benchCard?.(ss,picked);ctx.shuffle?.(ctx.state,ss.deck);log({benched:picked.cardId});
         }
         break;
@@ -936,16 +936,16 @@
       case 'mooMooMilk':pick('self','mooMooPick');break;
       case 'mooMooPick':{const slot=sel('self');if(!slot)break;let heads=0;for(let i=0;i<2;i++)if(neoFlip(ctx,'Moo-Moo Milk'))heads++;slot.damage=Math.max(0,Number(slot.damage||0)-heads*20);break;}
       case 'pokemonMarch':{
-        const hasBasics=board=>board.deck.some(r=>ctx.cardById(r.cardId)?.stage==='Basic'&&ctx.cardById(r.cardId)?.kind==='pokemon')&&board.bench.length<Math.min(3,Number(board.benchLimit??3));
+        const hasBasics=board=>board.deck.some(r=>ctx.cardById(r.cardId)?.stage==='Basic'&&ctx.cardById(r.cardId)?.kind==='pokemon')&&board.bench.length<Math.min(5,Number(board.benchLimit??3));
         if(hasBasics(foe))ctx.requestChoice?.({kind:'deckCard',side:'opponent',filter:{kind:'pokemon',stage:'Basic'},optional:true,effect:{type:'neoRule',rule:'pokemonMarchFoe'}});
         else if(hasBasics(ss))ctx.requestChoice?.({kind:'deckCard',side:'self',filter:{kind:'pokemon',stage:'Basic'},optional:true,effect:{type:'neoRule',rule:'pokemonMarchSelf'}});
         break;
       }
       case 'pokemonMarchFoe':case 'pokemonMarchSelf':{
         const board=e.rule==='pokemonMarchFoe'?foe:ss;
-        if(!ctx.action?.choiceSkip){const index=Number(ctx.action?.choiceDeckIndex),ref=board.deck[index];if(ref&&ctx.cardById(ref.cardId)?.kind==='pokemon'&&ctx.cardById(ref.cardId)?.stage==='Basic'&&board.bench.length<Math.min(3,Number(board.benchLimit??3))){board.deck.splice(index,1);ctx.benchCard?.(board,ref);}}
+        if(!ctx.action?.choiceSkip){const index=Number(ctx.action?.choiceDeckIndex),ref=board.deck[index];if(ref&&ctx.cardById(ref.cardId)?.kind==='pokemon'&&ctx.cardById(ref.cardId)?.stage==='Basic'&&board.bench.length<Math.min(5,Number(board.benchLimit??3))){board.deck.splice(index,1);ctx.benchCard?.(board,ref);}}
         ctx.shuffle?.(ctx.state,board.deck);
-        if(e.rule==='pokemonMarchFoe'&&ss.deck.some(r=>ctx.cardById(r.cardId)?.kind==='pokemon'&&ctx.cardById(r.cardId)?.stage==='Basic')&&ss.bench.length<Math.min(3,Number(ss.benchLimit??3)))ctx.requestChoice?.({kind:'deckCard',side:'self',filter:{kind:'pokemon',stage:'Basic'},optional:true,effect:{type:'neoRule',rule:'pokemonMarchSelf'}});
+        if(e.rule==='pokemonMarchFoe'&&ss.deck.some(r=>ctx.cardById(r.cardId)?.kind==='pokemon'&&ctx.cardById(r.cardId)?.stage==='Basic')&&ss.bench.length<Math.min(5,Number(ss.benchLimit??3)))ctx.requestChoice?.({kind:'deckCard',side:'self',filter:{kind:'pokemon',stage:'Basic'},optional:true,effect:{type:'neoRule',rule:'pokemonMarchSelf'}});
         break;
       }
       case 'superRod':{
@@ -1386,7 +1386,14 @@
       case 'shuffleRandomHandCard':{const ss=effect.side==='opponent'?other(ctx):own(ctx),candidates=ss.hand.map((r,index)=>({r,index})).filter(({r})=>!effect.filter||matchesFilter(ctx.cardById(r.cardId),effect.filter));if(candidates.length){const hit=candidates[Math.floor(ctx.random(ctx.state)*candidates.length)],[ref]=ss.hand.splice(hit.index,1);ss.deck.push(ref);ctx.shuffle(ctx.state,ss.deck);}break;}
       case 'randomPokemonDamage':{let hits=effect.perEnergyType?Number(ctx.attacker?.energy?.[effect.perEnergyType]||0):Number(effect.hits||0);for(const bonus of own(ctx).randomHitBonuses||[])if((bonus.expiresTurn==null||ctx.state.turnNumber<=bonus.expiresTurn)&&bonus.attackName===ctx.attack?.name)hits+=Number(bonus.amount||0);for(let i=0;i<hits;i++){let entries=effect.bothSides?[...pokemonOn(own(ctx)).map(slot=>({slot,side:ctx.side})),...pokemonOn(other(ctx)).map(slot=>({slot,side:ctx.foeSide}))]:(effect.zone==='bench'?other(ctx).bench.filter(Boolean):pokemonOn(other(ctx))).map(slot=>({slot,side:ctx.foeSide}));if(effect.zone==='bench'&&effect.bothSides)entries=entries.filter(x=>x.slot!==own(ctx).active&&x.slot!==other(ctx).active);if(effect.excludeSelf)entries=entries.filter(x=>x.slot!==ctx.attacker);if(!entries.length)break;const hit=entries[Math.floor(ctx.random(ctx.state)*entries.length)],guard=ctx.isAttack&&attackIsPrevented(ctx.state,hit.side,hit.slot,ctx.attacker,ctx.cardById),amount=guard?0:Math.max(0,effect.amount-(ctx.isAttack?modifierAmount(ctx.state,hit.side,hit.slot,'damageReduction',ctx.cardById):0));hit.slot.damage=Number(hit.slot.damage||0)+amount;}break;}
       case 'globalRandomDiscardEnergy':{const count=Math.max(1,Number(effect.amount||1)),sides=effect.side==='self'?[own(ctx)]:effect.side==='opponent'?[other(ctx)]:[own(ctx),other(ctx)];for(let pick=0;pick<count;pick++){const slots=sides.flatMap(ss=>pokemonOn(ss).filter(slot=>!effect.filter||matchesFilter(ctx.cardById(slot.cardId),effect.filter,slot)).map(slot=>({slot,side:ss}))),units=[];for(const x of slots)for(const [type,n] of Object.entries(x.slot.energy||{}))for(let i=0;i<Number(n||0);i++)units.push({...x,type});if(!units.length)break;const hit=units[Math.floor(ctx.random(ctx.state)*units.length)];hit.slot.energy[hit.type]=Math.max(0,Number(hit.slot.energy[hit.type]||0)-1);recordDiscardedEnergy(hit.side,hit.type,1);}break;}
-      case 'discardStadium':if(ctx.state.stadium){const st=ctx.state.stadium,ss=ctx.state.sides[st.ownerSide];ss.discard.push({uid:st.uid,cardId:st.cardId});ctx.state.stadium=null;}break;
+      case 'discardStadium':if(ctx.state.stadium){
+        const st=ctx.state.stadium,ss=ctx.state.sides[st.ownerSide];
+        ss.discard.push({uid:st.uid,cardId:st.cardId});ctx.state.stadium=null;
+        if(st.cardId==='SNAPFLORIO-108'){
+          ctx.state.lentalDamOverflow=true;
+          for(const which of ['player','opponent'])ctx.state.sides[which].benchLimit=3;
+        }
+      }break;
       case 'drain':if(ctx.attacker&&Number(ctx.dealtDamage||0)>0){const amount=effect.fraction!=null?Math.ceil(Number(ctx.dealtDamage||0)*Number(effect.fraction)/10)*10:effect.amount==null?Number(ctx.dealtDamage||0):Math.min(Number(ctx.dealtDamage||0),Number(effect.amount||0));ctx.attacker.damage=Math.max(0,Number(ctx.attacker.damage||0)-Math.max(0,amount));}break;
       case 'nextAttackBonus':if(ctx.attacker){ctx.attacker.nextAttackBonuses=ctx.attacker.nextAttackBonuses||[];ctx.attacker.nextAttackBonuses.push({attackName:effect.attackName,amount:effect.amount,turn:ctx.state.turnNumber+2});}break;
       case 'evolveFromDeck':if(ctx.attacker&&typeof ctx.evolveFromDeck==='function')ctx.evolveFromDeck(ctx.attacker);break;
@@ -1527,8 +1534,8 @@
       case 'coinRepeatEffect':{let heads=0;const results=[];for(let i=0;i<effect.coins;i++){const hit=coin(ctx);results.push(hit);if(hit)heads++;}log({type:'coin',heads,coins:effect.coins,results});for(let i=0;i<heads;i++)applyEffect(effect.effect,ctx);break;}
       case 'endTurn':if(typeof ctx.endTurn==='function')ctx.endTurn();break;
       case 'removeRandomStatus':for(const s of affected()){const keys=Object.keys(s.conditions||{});if(!keys.length)continue;const key=keys[Math.floor(ctx.random(ctx.state)*keys.length)];delete s.conditions[key];}break;
-      case 'chainLightning':{const defenderType=ctx.cardById(ctx.defender?.cardId)?.types?.[0];if(!defenderType||defenderType==='Colorless')break;for(const side of [ctx.side,ctx.foeSide]){for(const slot of ctx.state.sides[side].bench||[]){if(!slot||!ctx.cardById(slot.cardId)?.types?.includes(defenderType))continue;const reduced=modifierAmount(ctx.state,side,slot,'damageReduction',ctx.cardById);const guard=attackIsPrevented(ctx.state,side,slot,ctx.attacker,ctx.cardById)||fossilTransparencyBlocks(ctx,side,slot);let amount=guard?0:Math.max(0,Number(effect.amount||10)-reduced);if(amount>0)amount=ctx.gymBenchRedirect?.(side,slot,amount)??amount;slot.damage=Number(slot.damage||0)+amount;if(amount)log({type:'benchDamage',targetSide:side,targetCardId:slot.cardId,sourceCardId:ctx.attacker?.cardId,amount,attack:ctx.attack?.name});}}break;}
-      case 'benchDamage':{const ss=effect.side==='self'?own(ctx):other(ctx);const list=effect.all?ss.bench:targets(effect.side==='self'?'selfBench':'opponentBench',ctx);for(const s of list.filter(s=>s&&matchesFilter(ctx.cardById(s.cardId),effect.filter,s))){const side=effect.side==='self'?ctx.side:ctx.foeSide;const guard=ctx.isAttack&&attackIsPrevented(ctx.state,side,s,ctx.attacker,ctx.cardById)||fossilTransparencyBlocks(ctx,side,s);const bonus=ctx.isAttack&&ctx.attacker?modifierAmount(ctx.state,ctx.side,ctx.attacker,'attackDamageAllTargets',ctx.cardById):0,amount=guard?0:Math.max(0,Number(effect.amount||0)+bonus-(ctx.isAttack?modifierAmount(ctx.state,side,s,'damageReduction',ctx.cardById):0));s.damage=Number(s.damage||0)+amount;if(ctx.isAttack&&amount>0)log({type:'benchDamage',targetSide:side,sourceCardId:ctx.attacker?.cardId||null,targetCardId:s.cardId,benchIndex:Number(s.benchSlot||0),amount,attack:ctx.attack?.name||'Attack'});}break;}
+      case 'chainLightning':{if(ctx.isAttack&&ctx.state.stadium?.cardId==='SNAPFLORIO-112')break;const defenderType=ctx.cardById(ctx.defender?.cardId)?.types?.[0];if(!defenderType||defenderType==='Colorless')break;for(const side of [ctx.side,ctx.foeSide]){for(const slot of ctx.state.sides[side].bench||[]){if(!slot||!ctx.cardById(slot.cardId)?.types?.includes(defenderType))continue;const reduced=modifierAmount(ctx.state,side,slot,'damageReduction',ctx.cardById);const guard=attackIsPrevented(ctx.state,side,slot,ctx.attacker,ctx.cardById)||fossilTransparencyBlocks(ctx,side,slot);let amount=guard?0:Math.max(0,Number(effect.amount||10)-reduced);if(amount>0)amount=ctx.gymBenchRedirect?.(side,slot,amount)??amount;slot.damage=Number(slot.damage||0)+amount;if(amount)log({type:'benchDamage',targetSide:side,targetCardId:slot.cardId,sourceCardId:ctx.attacker?.cardId,amount,attack:ctx.attack?.name});}}break;}
+      case 'benchDamage':{if(ctx.isAttack&&ctx.state.stadium?.cardId==='SNAPFLORIO-112')break;const ss=effect.side==='self'?own(ctx):other(ctx);const list=effect.all?ss.bench:targets(effect.side==='self'?'selfBench':'opponentBench',ctx);for(const s of list.filter(s=>s&&matchesFilter(ctx.cardById(s.cardId),effect.filter,s))){const side=effect.side==='self'?ctx.side:ctx.foeSide;const guard=ctx.isAttack&&attackIsPrevented(ctx.state,side,s,ctx.attacker,ctx.cardById)||fossilTransparencyBlocks(ctx,side,s);const bonus=ctx.isAttack&&ctx.attacker?modifierAmount(ctx.state,ctx.side,ctx.attacker,'attackDamageAllTargets',ctx.cardById):0,amount=guard?0:Math.max(0,Number(effect.amount||0)+bonus-(ctx.isAttack?modifierAmount(ctx.state,side,s,'damageReduction',ctx.cardById):0));s.damage=Number(s.damage||0)+amount;if(ctx.isAttack&&amount>0)log({type:'benchDamage',targetSide:side,sourceCardId:ctx.attacker?.cardId||null,targetCardId:s.cardId,benchIndex:Number(s.benchSlot||0),amount,attack:ctx.attack?.name||'Attack'});}break;}
       case 'distributeEnergy':{
         const sourceSlot=ctx.attacker;
         let queue=Array.isArray(effect.remainingTypes)?effect.remainingTypes.slice():null;

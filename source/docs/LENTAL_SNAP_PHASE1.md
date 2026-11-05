@@ -61,3 +61,19 @@ mechanics tests pass.
   Crystalbloom / Murkrow / Dream Garden / Pichu-Grookey changes. Founja remains
   collection-only for now.
 * We deliberately have NOT edited the creator's existing artwork ZIPs.
+
+## v0.69.106 — 10-card Lental and expanded Florio battle rules
+
+* Snap packs: 10 cards (4 Common, 3 Uncommon, 3 Rare or higher), 650 coins.
+  Last three slots have distinct rare/ultra weights; no fabricated rarities.
+* Added fully printed Florio Basic and Stage 1 attacks, Illumina healing,
+  Scavenge one-use-per-side-turn, Dream Garden tails-to-Sleep, Florio Dam 5
+  Bench slots, Standoff Battleground 8 spots, Flower Garden, Park Night and
+  Nature Park. Original official-set mechanics and Energy Zone preserved.
+* Classic physical TCG global GX-attack/VSTAR-power guards; KO awards 1/2/3
+  prizes using printed rule-box type (five Prize win condition unchanged).
+* Snorlax Starting Snore may attack while Asleep and consumes opponent Sleep
+  after damage. Wider Bench renderer is scoped to Classic Florio Dam only.
+* Other unverified Florio cards stay PARTIAL, not silently enabled.
+* Creator artwork files and ZIPs were not modified; remaining manual rules
+  await exact audit against the printed cards.

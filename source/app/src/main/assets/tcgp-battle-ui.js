@@ -206,7 +206,7 @@
       const stateSide=currentBattle?.sides?.[sideName];
       const activeNode=content.querySelector(boardSlotSelector(sideName,'active',0));
       slots[boardSlotKey(sideName,'active',0)]={rect:presentationRect(activeNode),cardId:stateSide?.active?.cardId||null,zone:'active',index:0,side:sideName};
-      for(let i=0;i<3;i++){
+      for(let i=0;i<Math.max(3,Math.min(5,Number(stateSide?.benchLimit||3)));i++){
         const node=content.querySelector(boardSlotSelector(sideName,'bench',i)),slot=core?.benchSlotAt?core.benchSlotAt(stateSide,i):stateSide?.bench?.[i];
         slots[boardSlotKey(sideName,'bench',i)]={rect:presentationRect(node),cardId:slot?.cardId||null,zone:'bench',index:i,side:sideName};
       }
@@ -614,11 +614,11 @@
   function liveBenchHtml(sideName,bench){
     const slots=[];
     const limited=currentBattle?.format==='classic'&&currentBattle?.stadium?.cardId==='gym1-124'&&currentBattle?.pendingChoice?.special!=='narrowGymReturn';
-    const sideState={bench:bench||[],benchLimit:limited?2:3};
+    const sideState=currentBattle?.sides?.[sideName]||{bench:bench||[],benchLimit:limited?2:3};
     // A knockout can leave an old physical slot 2 populated. Normalize here
     // as well as in the engine so no occupied Pokémon becomes invisible.
     core?.normalizeBenchSlots?.(sideState);
-    for(let i=0;i<(limited?2:3);i++){const slot=core?.benchSlotAt?core.benchSlotAt(sideState,i):(bench?.[i]||null);slots.push(liveCardHtml(slot,{compact:true,side:sideName,zone:'bench',index:i,showActions:false}));}
+    for(let i=0;i<Math.min(5,Math.max(Number(sideState.benchLimit??3),sideState.bench?.length||0));i++){const slot=core?.benchSlotAt?core.benchSlotAt(sideState,i):(bench?.[i]||null);slots.push(liveCardHtml(slot,{compact:true,side:sideName,zone:'bench',index:i,showActions:false}));}
     return slots.join('');
   }
   function classicOpponentHandRevealed(battle){
@@ -778,7 +778,8 @@
     const handScroll=el('tcgpBattleContent')?.querySelector('.tcgp-live-hand')?.scrollLeft||0;
     const classic=currentBattle.format==='classic',scoreHtml=classic?`<span>CPU PRIZES <b>${Number(o.prizesTaken||0)}</b>/5</span><i>·</i><span>YOU <b>${Number(p.prizesTaken||0)}</b>/5</span>`:`<span>CPU <b>${o.points}</b>/3</span><i>·</i><span>YOU <b>${p.points}</b>/3</span>`;
     const narrowGym=classic&&currentBattle.stadium?.cardId==='gym1-124'&&currentBattle.pendingChoice?.special!=='narrowGymReturn';
-    setContent(`<section class="tcgp-live-arena ${classic?'format-classic':''}${narrowGym?' narrow-gym':''}" aria-label="${classic?'Classic TCG':'TCG Pocket'} battlefield">
+    const lentalWide=classic&&[p,o].some(ss=>Number(ss.benchLimit||3)>3||(ss.bench||[]).length>3);
+    setContent(`<section class="tcgp-live-arena ${classic?'format-classic':''}${narrowGym?' narrow-gym':''}${lentalWide?' lental-wide-bench':''}" aria-label="${classic?'Classic TCG':'TCG Pocket'} battlefield">
       <section class="tcgp-live-opponent-top" aria-label="Opponent hand and piles">${livePileHtml('opponent',o,'discard')}${liveOpponentHandHtml(o)}${livePileHtml('opponent',o,'deck')}</section>
       <section class="tcgp-live-opponent tcgp-live-mat-half" data-mat-side="opponent" ${playmatStyle('opponent')} aria-label="Opponent half">
         <div class="tcgp-live-opponent-bench" aria-label="Opponent Bench">${liveBenchHtml('opponent',o.bench)}</div>
