@@ -347,7 +347,7 @@
   function classicOwnedRows(){return classicDecks.ownedRows(root.state?.cards||{});}
   function classicActiveDeck(){return classicDecks.activeDeck(root.state,classicOwnedRows());}
   function formatSwitchHtml(){return `<div class="tcgp-battle-format-switch" role="tablist" aria-label="Battle format"><button type="button" class="tcgp-battle-action ${battleFormat==='pocket'?'':'secondary'}" data-tcgp-action="format-pocket" role="tab" aria-selected="${battleFormat==='pocket'}">TCG POCKET</button><button type="button" class="tcgp-battle-action ${battleFormat==='classic'?'':'secondary'}" data-tcgp-action="format-classic" role="tab" aria-selected="${battleFormat==='classic'}">CLASSIC TCG</button></div>`;}
-  function updateBattleHeader(){const top=el('tcgpBattleView')?.querySelector('.tcgp-battle-topbar > div');if(!top)return;const small=top.querySelector('small'),bold=top.querySelector('b');if(small)small.textContent=battleFormat==='classic'?'CLASSIC TCG':'TCG POCKET';if(bold)bold.textContent=battleFormat==='classic'?'Classic TCG Battle':'TCG Pocket Battle';}
+  function updateBattleHeader(){const top=el('tcgpBattleView')?.querySelector('.tcgp-battle-topbar > div');if(!top)return;const small=top.querySelector('small'),bold=top.querySelector('b');if(small)small.textContent=screen==='substitute-lab'?'CLASSIC TCG · SANDBOX':battleFormat==='classic'?'CLASSIC TCG':'TCG POCKET';if(bold)bold.textContent=screen==='substitute-lab'?'Substitute Test Lab':battleFormat==='classic'?'Classic TCG Battle':'TCG Pocket Battle';}
   function classicSavedDeck(){const state=classicState();return state.decks.find(item=>item?.id===state.activeDeckId)||state.decks[0]||null;}
   function renderClassicHome(){
     const state=classicState(),stats=state.stats,rows=classicOwnedRows().filter(row=>row.card?.deckEligible!==false),saved=classicSavedDeck(),ready=saved?classicDecks.readiness(saved,classicOwnedRows()):null,deck=ready?.ok?saved:null,totalCopies=rows.reduce((n,row)=>n+Math.min(4,Number(row.quantity||0)),0);
@@ -1067,7 +1067,7 @@
     const lab=root?.LuckyDexSubstituteLab;
     if(!lab)return toast('Substitute Test Lab is not installed.');
     clearTimeout(cpuTimer);cpuTimer=null;cpuPending=false;currentBattle=null;currentClassic=false;
-    finishBattlePresentation(false);setBattleLive(false);setScreen('substitute-lab');
+    finishBattlePresentation(false);setBattleLive(true);setScreen('substitute-lab');
     try{lab.open({container:el('tcgpBattleContent'),art:cardArtUrl,onBack:()=>renderHome(true)});}
     catch(error){console.error('[LuckyDex Test Lab] failed',error);toast(error.message||'Could not open lab');renderHome(true);}
   }
@@ -1076,15 +1076,16 @@
   function showHelp(){const help=el('tcgpBattleHelp');if(help)help.hidden=false;}
   function hideHelp(){const help=el('tcgpBattleHelp');if(help)help.hidden=true;}
   function back(){
-    if(screen==='substitute-lab'){root?.LuckyDexSubstituteLab?.close?.();return renderHome(true);}
+    if(screen==='substitute-lab'){if(root?.LuckyDexSubstituteLab?.handleBack?.())return true;root?.LuckyDexSubstituteLab?.close?.();renderHome(true);return true;}
+    if(screen==='battle'&&battleOverlay){battleOverlay=null;renderBattle();return true;}
     if(screen==='builder')return requestLeave(()=>renderHome(true));
     if(screen==='classic-builder')return requestLeave(()=>renderHome(true));
-    if(screen==='home')return close();
+    if(screen==='home'){close();return true;}
     if(screen==='battle'&&['setup','battle','promote'].includes(currentBattle?.phase)){
       if(root&&typeof root.confirm==='function'&&!root.confirm('Leave this battle? The current match will be abandoned.'))return;
       clearTimeout(cpuTimer);currentBattle=null;cpuPending=false;battleInspect=null;battleOverlay=null;
     }
-    renderHome();
+    renderHome();return true;
   }
 
   function startOwned(){const deck=activeDeck();if(!deck){toast('Build and save a legal owned deck first.');return;}currentDeckAppearance={...deck,preferredPrints:{...deck.preferredPrints},_ownedRows:ownedRows()};startBattle(deck.cards,false,decks.deckEnergyTypes(deck));}
@@ -1344,5 +1345,5 @@
   }
   if(root&&root.document){if(root.document.readyState==='loading')root.document.addEventListener('DOMContentLoaded',init,{once:true});else init();}
 
-  return{actionLabel,actionEventText,cardArtUrl,cardRulesHtml,supportText,filterBuilderRows,resultSummary,coverageForOwnedCards,centerHandActionIndices,directHandDropActionIndex,open,close,renderHome,requestLeave,isEditing:()=>screen==='builder',_test:{cpuActionDwellMs,cpuRemainingDwellMs,slotTools,buildInspectSpec,resolveInspect,attachedToolLinksHtml,liveToolMiniCardsHtml,liveCardHtml,attackPresentationMeta,coinSequence,battleSummaryStats,capturePresentationAnchors,targetKeyForAction,benchDamagePresentationEntry,stadiumSlotModel,resultActionsModel,playmatArtPath,coinArtPath,coinPresentationHtml,energyCostHtml,liveAttachedEnergyHtml,liveEnergySourceHtml,liveBenchReadOnlyMovesHtml,handActionIndices,attackDescription,zoomArtworkButtonHtml,cardZoomOverlayHtml,openHandActions,openEnergyActions,pokemonActionIndices,pokemonInteractionAttrs,benchSwitchActionIndices,classicOpponentConfig,classicOpponentPickerHtml,classicOpponentHandRevealed,handDropErrorMessage,dragPreviewTransform}};
+  return{actionLabel,actionEventText,cardArtUrl,cardRulesHtml,supportText,filterBuilderRows,resultSummary,coverageForOwnedCards,centerHandActionIndices,directHandDropActionIndex,open,close,renderHome,requestLeave,isEditing:()=>screen==='builder',_test:{cpuActionDwellMs,cpuRemainingDwellMs,slotTools,buildInspectSpec,resolveInspect,attachedToolLinksHtml,liveToolMiniCardsHtml,liveCardHtml,attackPresentationMeta,coinSequence,battleSummaryStats,capturePresentationAnchors,targetKeyForAction,benchDamagePresentationEntry,stadiumSlotModel,resultActionsModel,playmatArtPath,coinArtPath,coinPresentationHtml,energyCostHtml,liveAttachedEnergyHtml,liveEnergySourceHtml,liveBenchReadOnlyMovesHtml,handActionIndices,attackDescription,zoomArtworkButtonHtml,cardZoomOverlayHtml,openHandActions,openEnergyActions,pokemonActionIndices,pokemonInteractionAttrs,benchSwitchActionIndices,classicOpponentConfig,classicOpponentPickerHtml,classicOpponentHandRevealed,handDropErrorMessage,dragPreviewTransform},back};
 });

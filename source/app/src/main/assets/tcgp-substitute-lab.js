@@ -16,7 +16,7 @@
   const esc=v=>String(v??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
   const fmt=s=>String(s||'').replace(/([a-z])([A-Z])/g,'$1 $2');
   const catalogue=(data.CLASSIC?.CARDS||[]).filter(c=>c?.id&&c.kind&&(c.kind==='pokemon'||c.kind==='trainer'||c.specialEnergy));
-  let host=null,container=null,state=null,art=null,onBack=null,query='',setFilter='',selectedCard='',selectedSide='player',selectedZone='active',selectedIndex=0,energyType='Grass',message='',listener=null,sequence=0,autoFund=true;
+  let host=null,container=null,state=null,art=null,onBack=null,query='',setFilter='',selectedCard='',selectedSide='player',selectedZone='active',selectedIndex=0,energyType='Grass',message='',listener=null,sequence=0,autoFund=true,panel='',pileSide='player',pileKind='deck',pickerZone='hand',selectedUid='';
   const has=()=>!!state;
   const card=id=>data.cardById(id);
   const uid=()=>`lab-${++sequence}`;
@@ -34,7 +34,7 @@
     st.labMode=true;st.phase='battle';st.activeSide='player';
     for(const side of ['player','opponent']){
       const ss=st.sides[side];ss.active=core.makePokemonSlot('LAB-SUBSTITUTE',Math.max(1,ss.turnCount),uid());ss.bench=[];ss.benchLimit=5;
-      ss.hand=[];ss.discard=[];ss.energyDiscard={};ss.prizesTaken=0;
+      ss.hand=[];ss.discard=[];ss.removed=[];ss.energyDiscard={};ss.prizesTaken=0;
       // Keep a normal 30-card deck and Prize pool for search, discard and Prize interactions.
       ss.energyAvailable=true;ss.energyUsed=false;ss.retreated=false;
     }
@@ -61,8 +61,21 @@
     else if(zone==='discard')ss.discard.push(ref);
     else if(zone==='deck')ss.deck.unshift(ref);
     else if(zone==='prizes')ss.prizes.push(ref);
+    else if(zone==='stadium'){if(c.trainerType!=='Stadium')throw new Error('Choose a Stadium Trainer.');state.stadium={cardId:c.id,ownerSide:side};}
     else throw new Error('Unknown zone.');
     appendLog('labGive',{cardId:c.id,zone,side});
+  }
+  const pileKinds=['deck','discard','hand','prizes','removed'];
+  function refsAt(side,kind){if(!['player','opponent'].includes(side)||!pileKinds.includes(kind))throw new Error('Unknown card zone.');return board(side)?.[kind]||[];}
+  function moveRef(side,kind,refUid,to='removed'){
+    if(!pileKinds.includes(to))throw new Error('Unknown destination.');
+    const from=refsAt(side,kind),idx=from.findIndex(ref=>String(ref.uid)===String(refUid));
+    if(idx<0)throw new Error('That card is no longer in this pile.');
+    if(to===kind)return;
+    const [ref]=from.splice(idx,1);board(side)[to]=board(side)[to]||[];
+    if(to==='deck')board(side)[to].unshift(ref);else board(side)[to].push(ref);
+    appendLog('labMoveCard',{side,cardId:ref.cardId,from:kind,to});
+    message=`${labelCard(ref.cardId)} moved to ${to==='removed'?'out of game':to}.`;
   }
   function adjustDamage(side,zone,index,delta){const s=slotAt(side,zone,index);if(!s)throw new Error('Select an occupied Pokémon slot.');s.damage=Math.max(0,Number(s.damage||0)+Number(delta||0));appendLog('labDamage',{cardId:s.cardId,damage:s.damage});}
   function adjustEnergy(side,zone,index,type,delta){
@@ -160,25 +173,25 @@
   }
   function stadiumHtml(){
     const id=state?.stadium?.cardId,info=id?card(id):null;
-    return `<div class="tcgp-live-stadium-slot tcgp-lab-stadium"><small>STADIUM</small>${id?`<div class="tcgp-lab-stadium-card">${artHtml(id)}<span>${esc(info?.name||id)}</span></div>`:'<span class="tcgp-lab-stadium-empty">No Stadium</span>'}</div>`;
+    return `<button type="button" class="tcgp-live-stadium-slot tcgp-lab-stadium" data-lab-action="open-cards" data-zone="stadium" aria-label="${id?`Replace Stadium ${esc(info?.name||id)}`:'Choose a Stadium card'}"><small>STADIUM</small>${id?`<div class="tcgp-lab-stadium-card">${artHtml(id)}<span>${esc(info?.name||id)}</span></div>`:'<span class="tcgp-lab-stadium-empty">No Stadium</span>'}</button>`;
   }
   function pileHtml(side,kind){
     const ss=board(side),discard=kind==='discard',list=ss?.[kind]||[],top=discard?list[list.length-1]:null;
     const discardedEnergy=Object.values(ss?.energyDiscard||{}).reduce((n,v)=>n+Number(v||0),0);
-    return `<div class="tcgp-live-pile ${kind} ${side==='player'?'mine':''}" aria-label="${side} ${kind}, ${list.length} cards"><span class="tcgp-live-pile-card ${discard&&!top?'empty':''}">${top?artHtml(top.cardId):discard?'':'◆'}</span><b>${list.length}</b><small>${kind.toUpperCase()}</small>${discard&&discardedEnergy?`<span class="tcgp-live-pile-energy-count">⚡${discardedEnergy}</span>`:''}</div>`;
+    return `<button type="button" data-lab-action="open-pile" data-side="${side}" data-kind="${kind}" class="tcgp-live-pile ${kind} ${side==='player'?'mine':''}" aria-label="Open ${side==='player'?'your':'opponent'} ${kind}, ${list.length} cards"><span class="tcgp-live-pile-card ${discard&&!top?'empty':''}">${top?artHtml(top.cardId):discard?'':'◆'}</span><b>${list.length}</b><small>${kind.toUpperCase()}</small>${discard&&discardedEnergy?`<span class="tcgp-live-pile-energy-count">⚡${discardedEnergy}</span>`:''}</button>`;
   }
   function opponentHandHtml(){
     const n=board('opponent')?.hand?.length||0,shown=Math.min(5,n);
-    return `<div class="tcgp-live-hand-backs" style="--back-count:${shown}" aria-label="Opponent hand ${n} cards">${Array.from({length:shown},(_,i)=>`<i style="--i:${i}"></i>`).join('')}<b>${n}</b></div>`;
+    return `<button type="button" data-lab-action="open-hand" data-side="opponent" class="tcgp-live-hand-backs tcgp-lab-opponent-hand" style="--back-count:${shown}" aria-label="Open opponent hand, ${n} cards">${Array.from({length:shown},(_,i)=>`<i style="--i:${i}"></i>`).join('')}<b>${n}</b></button>`;
   }
   function playerHandHtml(){
-    const hand=board('player')?.hand||[];
-    return `<div class="tcgp-live-hand tcgp-lab-hand" aria-label="Your hand"><div class="tcgp-lab-hand-strip">${hand.map((ref,i)=>`<button type="button" class="tcgp-lab-hand-card" data-lab-action="select-card" data-id="${esc(ref.cardId)}" aria-label="Select ${esc(labelCard(ref.cardId))} from hand" title="${esc(labelCard(ref.cardId))}">${artHtml(ref.cardId)}</button>`).join('')||'<span class="tcgp-live-hand-empty">No cards in hand</span>'}</div></div>`;
+    const hand=board('player')?.hand||[],shown=hand.slice(-5);
+    return `<div class="tcgp-live-hand tcgp-lab-hand" aria-label="Your hand"><div class="tcgp-lab-hand-strip">${shown.map(ref=>`<button type="button" class="tcgp-lab-hand-card" data-lab-action="select-card" data-side="player" data-ref-uid="${esc(ref.uid)}" data-id="${esc(ref.cardId)}" aria-label="Open ${esc(labelCard(ref.cardId))} in hand">${artHtml(ref.cardId)}</button>`).join('')||'<span class="tcgp-live-hand-empty">Hand empty</span>'}</div><button type="button" class="tcgp-lab-hand-open" data-lab-action="open-hand" data-side="player">HAND ${hand.length} · VIEW ALL</button></div>`;
   }
   function battlefieldHtml(){
     const p=board('player'),o=board('opponent'),pending=state.phase==='effectChoice';
     const turnLabel=pending?'CARD CHOICE':selectedSide==='player'?'TEST YOUR TURN':'TEST CPU SIDE';
-    return `<div class="tcgp-lab-board"><section class="tcgp-live-arena format-classic lental-wide-bench tcgp-lab-arena" aria-label="Classic TCG test battlefield"><section class="tcgp-live-opponent-top" aria-label="Opponent hand and piles">${pileHtml('opponent','discard')}${opponentHandHtml()}${pileHtml('opponent','deck')}</section>${playmatHtml('opponent')}<section class="tcgp-live-mid"><div class="tcgp-live-score tcgp-classic-score"><div class="tcgp-classic-score-numbers"><span>CPU PRIZES <b>${o.prizesTaken||0}</b>/5</span><i>·</i><span>YOU <b>${p.prizesTaken||0}</b>/5</span></div><small class="tcgp-classic-score-label">SANDBOX · NO REWARDS</small></div><div class="tcgp-live-mid-controls"><span>TURN ${Number(state.turnNumber||1)}</span><b>${esc(turnLabel)}</b><button type="button" class="tcgp-live-end-turn" data-lab-action="next-turn" ${pending?'disabled':''}>NEXT TURN</button></div></section>${playmatHtml('player')}<section class="tcgp-live-player-bottom" aria-label="Player hand and piles"><div class="tcgp-live-piles mine">${pileHtml('player','discard')}${pileHtml('player','deck')}</div>${playerHandHtml()}<div class="tcgp-live-energy-source" data-energy="${esc(energyType)}" aria-label="Setup Energy ${esc(energyType)}"><span>${energyIcon(energyType)}</span><small>TEST ENERGY</small></div></section></section></div>`;
+    return `<div class="tcgp-lab-board"><section class="tcgp-live-arena format-classic lental-wide-bench tcgp-lab-arena" aria-label="Classic TCG test battlefield"><section class="tcgp-live-opponent-top" aria-label="Opponent hand and piles">${pileHtml('opponent','discard')}${opponentHandHtml()}${pileHtml('opponent','deck')}</section>${playmatHtml('opponent')}<section class="tcgp-live-mid"><div class="tcgp-live-score tcgp-classic-score"><div class="tcgp-classic-score-numbers"><span>CPU PRIZES <b>${o.prizesTaken||0}</b>/5</span><i>·</i><span>YOU <b>${p.prizesTaken||0}</b>/5</span></div><small class="tcgp-classic-score-label">SANDBOX · NO REWARDS</small></div><div class="tcgp-live-mid-controls"><span>TURN ${Number(state.turnNumber||1)}</span><b>${esc(turnLabel)}</b><button type="button" class="tcgp-live-end-turn" data-lab-action="next-turn" ${pending?'disabled':''}>NEXT TURN</button></div></section>${playmatHtml('player')}<section class="tcgp-live-player-bottom" aria-label="Player hand and piles"><div class="tcgp-live-piles mine">${pileHtml('player','discard')}${pileHtml('player','deck')}</div>${playerHandHtml()}<button type="button" data-lab-action="open-tools" class="tcgp-live-energy-source" data-energy="${esc(energyType)}" aria-label="Open Energy setup tools, ${esc(energyType)}"><span>${energyIcon(energyType)}</span><small>ENERGY</small></button></section></section></div>`;
   }
   function catalogueHtml(){
     const tokens=query.toLowerCase().trim().split(/\s+/).filter(Boolean);
@@ -191,49 +204,87 @@
   function actionsHtml(){const choosing=state.phase==='effectChoice',who=choosing?state.choiceSide:selectedSide;let acts=[],error='';try{acts=listActions(who)}catch(e){error=e.message;}const relevant=choosing?acts:acts.filter(a=>['attack','ability','trainer','stadiumAction','attachSpecial','endTurn'].includes(a.type));
     const prepared=!choosing&&board(who)?.active?.cardId!=='LAB-SUBSTITUTE'?(core.attackOptions?.(state,who)||[]):[];return `<section class="tcgp-lab-actions"><h3>${choosing?'Resolve printed card choice':`Trigger actual effects · ${who==='player'?'You':'Opponent'}`}</h3><small>${choosing?'Choose an option to let the real effect continue.':'No CPU actions or rewards. Use either side and attach enough Energy for attacks.'}</small>${error?`<p class="tcgp-lab-error">${esc(error)}</p>`:''}<div class="tcgp-lab-chips">${relevant.slice(0,65).map(a=>{const idx=acts.indexOf(a);return `<button data-lab-action="perform" data-index="${idx}" ${state.phase==='finished'?'disabled':''}>${esc(actionName(a))}</button>`;}).join('')||'<span>No legal actions. Set up an Active Pokémon, Energy or Trainer; or resolve the pending choice.</span>'}</div>${!choosing?`<div class="tcgp-lab-rule"><strong>Prepare an attack (add required Basic Energy if needed)</strong><div class="tcgp-lab-chips">${prepared.map(a=>`<button data-lab-action="prepare-attack" data-index="${Number(a.attackIndex)}" data-card="${esc(a.cardId)}">${esc(a.attack.name)}</button>`).join('')||'<small>Place a real attacking Pokémon to see its printed attacks.</small>'}</div></div><label class="tcgp-lab-autofund"><input type="checkbox" id="tcgpLabAutoFund" ${autoFund?'checked':''}> Automatically fund an attack when selected</label>`:''}</section>`;}
   function historyHtml(){return `<details class="tcgp-lab-history"><summary>Latest effects and rolls · ${state.log.length}</summary><ol>${(state.log||[]).slice(-20).reverse().map(e=>`<li>${esc(e.type)} · ${esc(e.rule||e.attack||e.reason||e.cardId||e.message||e.status||e.energyType||'')}${e.damage!=null?` · ${e.damage} damage`:''}${e.heads!=null?` · ${JSON.stringify(e.heads)}`:''}</li>`).join('')}</ol></details>`;}
+  function zoneCardsHtml(side,kind){
+    const cards=refsAt(side,kind);
+    return `<div class="tcgp-lab-zone-grid">${cards.map(ref=>`<article class="tcgp-lab-zone-card" data-ref-uid="${esc(ref.uid)}"><div class="tcgp-lab-zone-art">${artHtml(ref.cardId)}${kind==='removed'?'':`<button type="button" class="tcgp-lab-remove-ref" data-lab-action="remove-ref" data-side="${side}" data-kind="${kind}" data-ref-uid="${esc(ref.uid)}" aria-label="Remove ${esc(labelCard(ref.cardId))} from the game" title="Remove from game">×</button>`}</div><b>${esc(labelCard(ref.cardId))}</b><div class="tcgp-lab-zone-moves">${kind!=='removed'&&kind!=='hand'?`<button type="button" data-lab-action="move-ref" data-side="${side}" data-kind="${kind}" data-ref-uid="${esc(ref.uid)}" data-to="hand">To hand</button>`:''}${kind==='removed'?`<button type="button" data-lab-action="move-ref" data-side="${side}" data-kind="removed" data-ref-uid="${esc(ref.uid)}" data-to="deck">Restore</button>`:''}</div></article>`).join('')||'<p class="tcgp-lab-empty-zone">No cards in this zone.</p>'}</div>`;
+  }
+  function panelContents(){
+    const c=card(selectedCard),slot=selectedSlot(),who=pileSide==='player'?'Your':'Opponent';
+    if(panel==='pile'||panel==='hand'){
+      const kind=panel==='hand'?'hand':pileKind,side=panel==='hand'?pileSide:pileSide;
+      const choices=['deck','discard','hand','prizes','removed'].map(k=>`<button type="button" data-lab-action="open-pile" data-side="${side}" data-kind="${k}" class="${kind===k?'selected':''}">${fmt(k)} ${refsAt(side,k).length}</button>`).join('');
+      return `<div class="tcgp-lab-zone-tabs">${choices}</div>${zoneCardsHtml(side,kind)}<button type="button" data-lab-action="open-cards" data-zone="${kind==='removed'?'deck':kind}" data-side="${side}" class="tcgp-lab-sheet-primary">+ Add a card to ${kind==='removed'?'deck':kind}</button>`;
+    }
+    if(panel==='cards')return `<div class="tcgp-lab-picker-target"><span>Give to</span>${['player','opponent'].map(side=>`<button data-lab-action="side" data-side="${side}" aria-pressed="${selectedSide===side}">${side==='player'?'YOU':'CPU'}</button>`).join('')}</div>${c?`<div class="tcgp-lab-picker-commit"><strong>${esc(c.name)}</strong><small>Tap a destination below; ownership is ignored</small><div class="tcgp-lab-chips">${['active','bench','hand','deck','discard','prizes'].map(zone=>`<button type="button" data-lab-action="place" data-zone="${zone}" ${((zone==='active'||zone==='bench')&&c.kind!=='pokemon')?'disabled':''}>${zone==='active'?'Active':zone==='bench'?'Bench':fmt(zone)}</button>`).join('')}${c.trainerType==='Stadium'?'<button data-lab-action="place" data-zone="stadium">Stadium</button>':''}</div></div>`:''}${pickerZone==='stadium'?`<p class="tcgp-lab-picker-note">Choose a Stadium card, then tap Stadium to place it.</p>`:''}${state.stadium?.cardId?`<button type="button" data-lab-action="clear-stadium">Remove current Stadium</button>`:''}${catalogueHtml()}`;
+    if(panel==='slot')return `<div class="tcgp-lab-selected-card">${slot?artHtml(slot.cardId):''}<div><strong>${esc(slot?labelCard(slot.cardId):'Empty position')}</strong><small>${esc(targetLabel(selectedSide,selectedZone,selectedIndex))}</small><small>${slot?`${Number(slot.damage||0)} damage · ${esc(energyOf(slot))}`:'Tap Cards to place a Pokémon'}</small></div></div><div class="tcgp-lab-chips"><button type="button" data-lab-action="open-cards" data-zone="${selectedZone}" data-side="${selectedSide}">+ Set Pokémon</button><button data-lab-action="dummy">Substitute</button><button data-lab-action="clear">Clear slot</button></div><div class="tcgp-lab-rule"><strong>Damage</strong><div class="tcgp-lab-chips">${[-100,-10,10,100].map(n=>`<button data-lab-action="damage" data-value="${n}" ${slot?'':'disabled'}>${n>0?'+':''}${n}</button>`).join('')}</div></div><div class="tcgp-lab-rule"><strong>Basic Energy</strong><div class="tcgp-lab-chips"><select id="tcgpLabEnergy">${ALL_ENERGY.map(t=>`<option ${energyType===t?'selected':''}>${t}</option>`).join('')}</select><button data-lab-action="energy" data-value="1" ${slot?'':'disabled'}>+1</button><button data-lab-action="energy" data-value="-1" ${slot?'':'disabled'}>−1</button></div></div><div class="tcgp-lab-rule"><strong>Conditions</strong><div class="tcgp-lab-chips">${STATUSES.map(t=>`<button data-lab-action="status" data-status="${t}" aria-pressed="${!!slot?.conditions?.[t]}" ${slot?'':'disabled'}>${esc(fmt(t))}</button>`).join('')}</div></div><button type="button" class="tcgp-lab-sheet-primary" data-lab-action="open-actions">Test printed attacks / effects</button>`;
+    if(panel==='actions')return actionsHtml();
+    if(panel==='tools')return `<div class="tcgp-lab-selected-card"><div><strong>${esc(targetLabel(selectedSide,selectedZone,selectedIndex))}</strong><small>Advanced experiment setup</small></div></div>${controlsHtml()}`;
+    if(panel==='log')return `<div class="tcgp-lab-rule">${historyHtml()}</div>`;
+    return '';
+  }
+  function panelHtml(){
+    if(!panel)return '';
+    const titles={pile:`${pileSide==='player'?'Your':'CPU'} ${fmt(pileKind)}`,hand:`${pileSide==='player'?'Your':'CPU'} hand`,cards:'All Classic Cards',slot:targetLabel(selectedSide,selectedZone,selectedIndex),actions:'Test actions',tools:'Experiment tools',log:'Effect history'};
+    return `<div class="tcgp-lab-modal" role="presentation"><button type="button" class="tcgp-lab-modal-scrim" data-lab-action="close-panel" aria-label="Close panel"></button><section class="tcgp-lab-sheet" role="dialog" aria-modal="true" aria-label="${esc(titles[panel]||'Test Lab panel')}"><header><b>${esc(titles[panel]||'Test Lab')}</b><button type="button" data-lab-action="close-panel" aria-label="Close menu">×</button></header><div class="tcgp-lab-sheet-scroll">${panelContents()}</div></section></div>`;
+  }
   function render(){
     if(!container||!state)return;
     const pending=state.phase==='effectChoice',winner=state.phase==='finished';
-    // Manual setup is below the full battle mat: do not jump back to the top
-    // whenever a slot, damage counter, or Energy token is changed.
-    const scrollHost=container.closest?.('.tcgp-battle-view')||null,scrollTop=scrollHost?.scrollTop;
-    container.innerHTML=`<div class="tcgp-substitute-lab format-classic"><header class="tcgp-lab-hero"><div><small>CLASSIC30 · SANDBOX</small><h2>Substitute Test Lab</h2><p>Build any board and trigger real card effects. All cards are accessible, regardless of ownership. No CPU, coins, achievements or saved match records.</p></div><button data-lab-action="exit" class="tcgp-lab-exit">Back to battles</button></header>${message?`<div class="tcgp-lab-feedback" role="status">${esc(message)}</div>`:''}${winner?`<p class="tcgp-lab-feedback">Battle ended (${esc(state.winner||'draw')}). Use Reset turn actions to keep experimenting with this board.</p>`:''}${battlefieldHtml()}<div class="tcgp-lab-meta"><small>Turn ${Number(state.turnNumber||1)} · ${pending?`Choice: ${esc(state.choiceSide)}`:`Acting: ${esc(state.activeSide)}`} · ${selectedSide==='player'?'Your':'Opponent'} slot selected</small></div>${actionsHtml()}${controlsHtml()}${catalogueHtml()}${historyHtml()}</div>`;
-    if(scrollHost&&scrollTop!=null)scrollHost.scrollTop=scrollTop;
+    container.innerHTML=`<div class="tcgp-substitute-lab format-classic"><header class="tcgp-lab-compact-header"><b>SUBSTITUTE LAB</b><span>${winner?'ENDED':pending?'CHOICE':`TURN ${Number(state.turnNumber||1)}`}</span><button type="button" data-lab-action="reset" aria-label="Reset lab">↻ Reset</button></header>${battlefieldHtml()}<nav class="tcgp-lab-dock" aria-label="Test Lab tools"><button type="button" data-lab-action="open-cards" data-zone="hand">＋ Cards</button><button type="button" data-lab-action="open-actions">⚔ Actions</button><button type="button" data-lab-action="open-tools">⚙ Tools</button><button type="button" data-lab-action="open-log">☷ Log</button></nav>${message?`<div class="tcgp-lab-toast" role="status" aria-live="polite">${esc(message)}</div>`:''}${panelHtml()}</div>`;
   }
-  function onClick(event){const btn=event.target.closest?.('[data-lab-action]');if(!btn||!container?.contains(btn))return;const a=btn.dataset.labAction;try{
-    if(a==='exit'){const cb=onBack;close();cb?.();return;}
-    if(a==='slot'){selectedSide=btn.dataset.side;selectedZone=btn.dataset.zone;selectedIndex=Number(btn.dataset.index)||0;}
-    if(a==='side')selectedSide=btn.dataset.side;
-    if(a==='select-card')selectedCard=btn.dataset.id;
-    if(a==='place'){
-      const zone=btn.dataset.zone;if(!selectedCard)throw new Error('Select a card first.');
-      if(zone==='active'||zone==='bench')setSlot(selectedSide,zone,selectedIndex,selectedCard);
-      else giveCard(selectedSide,selectedCard,zone);
-    }
-    if(a==='dummy')setSlot(selectedSide,selectedZone,selectedIndex,'LAB-SUBSTITUTE');
-    if(a==='clear')emptySlot(selectedSide,selectedZone,selectedIndex);
-    if(a==='damage')adjustDamage(selectedSide,selectedZone,selectedIndex,Number(btn.dataset.value));
-    if(a==='energy')adjustEnergy(selectedSide,selectedZone,selectedIndex,energyType,Number(btn.dataset.value));
-    if(a==='discard-energy'){const ss=board(selectedSide);ss.energyDiscard[energyType]=Number(ss.energyDiscard[energyType]||0)+1;}
-    if(a==='status')toggleStatus(selectedSide,selectedZone,selectedIndex,btn.dataset.status);
-    if(a==='perform')apply(btn.dataset.index);
-    if(a==='prepare-attack'){const side=selectedSide;activeSide(side);const attack=card(btn.dataset.card)?.attacks?.[Number(btn.dataset.index)];if(!attack)throw new Error('Attack no longer exists.');fundAttack(side,attack);message=`Prepared ${attack.name}: select its legal action above to trigger it.`;}
-    if(a==='next-turn')nextTurn();
-    if(a==='checkup')doCheckup();
-    if(a==='clear-hand')board(selectedSide).hand=[];
-    if(a==='fund'){const s=board(selectedSide)?.active,c=card(s?.cardId);for(const attack of c?.attacks||[])fundAttack(selectedSide,attack);}
-    if(a==='reset'){state=create();message='New isolated experiment';}
-    render();
-  }catch(error){message=error.message||String(error);render();}}
+  function onClick(event){
+    const btn=event.target.closest?.('[data-lab-action]');if(!btn||!container?.contains(btn))return;
+    const a=btn.dataset.labAction;
+    try{
+      if(a==='exit'){const cb=onBack;close();cb?.();return;}
+      if(a==='close-panel'){panel='';render();return;}
+      if(a==='open-pile'){pileSide=btn.dataset.side;pileKind=btn.dataset.kind;selectedSide=pileSide;panel='pile';}
+      if(a==='open-hand'){pileSide=btn.dataset.side;selectedSide=pileSide;panel='hand';}
+      if(a==='open-cards'){if(btn.dataset.side)selectedSide=btn.dataset.side;pickerZone=btn.dataset.zone||'hand';panel='cards';}
+      if(a==='open-tools')panel='tools';
+      if(a==='open-actions')panel='actions';
+      if(a==='open-log')panel='log';
+      if(a==='slot'){selectedSide=btn.dataset.side;selectedZone=btn.dataset.zone;selectedIndex=Number(btn.dataset.index)||0;panel='slot';}
+      if(a==='side')selectedSide=btn.dataset.side;
+      if(a==='select-card'){
+        selectedCard=btn.dataset.id;
+        if(btn.dataset.refUid){selectedUid=btn.dataset.refUid;pileSide=btn.dataset.side||'player';selectedSide=pileSide;panel='hand';}
+      }
+      if(a==='remove-ref')moveRef(btn.dataset.side,btn.dataset.kind,btn.dataset.refUid,'removed');
+      if(a==='move-ref')moveRef(btn.dataset.side,btn.dataset.kind,btn.dataset.refUid,btn.dataset.to);
+      if(a==='place'){
+        const zone=btn.dataset.zone;if(!selectedCard)throw new Error('Select a card first.');
+        if(zone==='active'||zone==='bench')setSlot(selectedSide,zone,selectedIndex,selectedCard);
+        else giveCard(selectedSide,selectedCard,zone);
+        message=`Added ${labelCard(selectedCard)} to ${selectedSide==='player'?'your':'CPU'} ${zone}.`;
+      }
+      if(a==='clear-stadium'){state.stadium=null;message='Removed Stadium from this experiment.';}
+      if(a==='dummy')setSlot(selectedSide,selectedZone,selectedIndex,'LAB-SUBSTITUTE');
+      if(a==='clear')emptySlot(selectedSide,selectedZone,selectedIndex);
+      if(a==='damage')adjustDamage(selectedSide,selectedZone,selectedIndex,Number(btn.dataset.value));
+      if(a==='energy')adjustEnergy(selectedSide,selectedZone,selectedIndex,energyType,Number(btn.dataset.value));
+      if(a==='discard-energy'){const ss=board(selectedSide);ss.energyDiscard[energyType]=Number(ss.energyDiscard[energyType]||0)+1;}
+      if(a==='status')toggleStatus(selectedSide,selectedZone,selectedIndex,btn.dataset.status);
+      if(a==='perform')apply(btn.dataset.index);
+      if(a==='prepare-attack'){const side=selectedSide;activeSide(side);const attack=card(btn.dataset.card)?.attacks?.[Number(btn.dataset.index)];if(!attack)throw new Error('Attack no longer exists.');fundAttack(side,attack);message=`Prepared ${attack.name}: choose its action to trigger.`;}
+      if(a==='next-turn')nextTurn();
+      if(a==='checkup')doCheckup();
+      if(a==='clear-hand')board(selectedSide).hand=[];
+      if(a==='fund'){const s=board(selectedSide)?.active,c=card(s?.cardId);for(const attack of c?.attacks||[])fundAttack(selectedSide,attack);}
+      if(a==='reset'){state=create();panel='';message='New isolated experiment';}
+      render();
+    }catch(error){message=error.message||String(error);render();}
+  }
   function onInput(event){const t=event.target;if(t.id==='tcgpLabAutoFund'){autoFund=!!t.checked;return;}if(t.id==='tcgpLabEnergy'){energyType=t.value;return;}if(t.id==='tcgpLabSearch'||t.id==='tcgpLabSet'){
     if(t.id==='tcgpLabSearch')query=t.value;else setFilter=t.value;
     const focused=t.id==='tcgpLabSearch',pos=focused?t.selectionStart:null;render();if(focused){const input=container?.querySelector('#tcgpLabSearch');input?.focus();try{input?.setSelectionRange(pos,pos);}catch(_){}}
   }}
   function open(options={}){
-    close();host=options;container=options.container;art=options.art||null;onBack=options.onBack||null;query='';setFilter='';selectedCard='';selectedSide='player';selectedZone='active';selectedIndex=0;message='';autoFund=true;sequence=0;state=create();
+    close();host=options;container=options.container;art=options.art||null;onBack=options.onBack||null;query='';setFilter='';selectedCard='';selectedUid='';selectedSide='player';selectedZone='active';selectedIndex=0;panel='';pileSide='player';pileKind='deck';pickerZone='hand';message='';autoFund=true;sequence=0;state=create();
     if(!container)throw new Error('The Test Lab needs a battle container.');
     listener={click:onClick,input:onInput,change:onInput};container.addEventListener('click',listener.click);container.addEventListener('input',listener.input);container.addEventListener('change',listener.change);render();
   }
+  function handleBack(){if(panel){panel='';render();return true;}return false;}
   function close(){if(container&&listener){container.removeEventListener('click',listener.click);container.removeEventListener('input',listener.input);container.removeEventListener('change',listener.change);}listener=null;container=null;host=null;state=null;onBack=null;}
-  return {open,close,getState:()=>state,catalogue,create,setSlot,emptySlot,giveCard,adjustDamage,adjustEnergy,toggleStatus,activeSide,fundAttack,listActions,apply,nextTurn};
+  return {open,close,handleBack,moveRef,getState:()=>state,catalogue,create,setSlot,emptySlot,giveCard,adjustDamage,adjustEnergy,toggleStatus,activeSide,fundAttack,listActions,apply,nextTurn};
 });

@@ -1,0 +1,17 @@
+LuckyDex v0.69.122 — Android Back + mobile Substitute Lab
+Requires installed source at v0.69.121.
+
+1. Corrects stale v0.69.119 title/introduction/header labels; updates the runtime build to 0.69.122 (versionCode 7102).
+2. Native Android Back routes through TCG battle navigation instead of WebView history. An open battle exits to the TCG battle screen, then Back returns to the card shop; panel overlays close first. Prevents a hidden shell/navigation state.
+3. Test Lab now uses the normal compact mobile battle screen with no page-level scrolling. The battlefield stays onscreen; the full catalogue, attack effects, Pokémon setup controls, and log open as context sheets.
+4. Tapping a player's or CPU's deck or discard pile opens every card in that side's zone. Hand and prizes are also available via zone tabs. Each non-removed card has a red X to remove it from the game; Removed cards can be restored to deck. A quick 'To hand' action moves cards from deck/discard/prizes for experiments.
+5. Tap Pokémon slots for damage, conditions, energy and replacement. Tap Cards to use any Classic card regardless of ownership. Tap Stadium to place an eligible Stadium Trainer. No CPU, rewards, or saved match record.
+6. 27 relevant regression tests passed and a fixed-height mobile browser fixture was checked at 393x852 and 360x640; real Android touch tests remain recommended.
+
+Install with the file placed in /sdcard/Download/ and run:
+cd ~/lucky-dex
+git pull --rebase origin main
+unzip -o /sdcard/Download/LuckyDex_patch_v0.69.122.zip -d source
+git add source
+git commit -m "v0.69.122 mobile test lab and Android back navigation"
+git push origin main

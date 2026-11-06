@@ -105,3 +105,148 @@
   .tcgp-substitute-lab .tcgp-lab-arena .tcgp-live-mid-controls>span{font-size:7px}
   .tcgp-substitute-lab .tcgp-lab-arena .tcgp-live-mid-controls>b{font-size:7px}
 }
+
+/* v0.69.122: Mobile-first, single-screen Classic laboratory.
+   The field never scrolls; lengthy card libraries live inside temporary sheets. */
+body.tcgp-battle-live .tcgp-substitute-lab{
+  position:relative;display:flex;flex-direction:column;box-sizing:border-box;
+  height:100%;min-height:0;width:100%;max-width:540px;margin:auto;
+  overflow:hidden;padding:4px 5px 3px;
+  background:#d8e8ec;color:#203d4c;font-family:system-ui,-apple-system,"Segoe UI",sans-serif;
+}
+.tcgp-substitute-lab .tcgp-lab-compact-header{
+  flex:0 0 31px;display:flex;align-items:center;justify-content:space-between;gap:7px;
+  padding:0 6px;background:#eef7f5;border:1px solid #a4c0c9;border-radius:7px 7px 0 0;
+  font-size:10px;letter-spacing:.03em;color:#244c62;
+}
+.tcgp-substitute-lab .tcgp-lab-compact-header>b{font-weight:900}
+.tcgp-substitute-lab .tcgp-lab-compact-header>span{font-size:9px;color:#4c7180}
+.tcgp-substitute-lab .tcgp-lab-compact-header>button{border:1px solid #9ebbc4;border-radius:6px;background:#fafdff;color:#325266;font-size:10px;min-height:25px;padding:3px 8px}
+.tcgp-substitute-lab .tcgp-lab-board{display:block;flex:1 1 0;min-height:0;max-width:none;width:100%;margin:0;overflow:hidden}
+.tcgp-substitute-lab .tcgp-lab-arena{
+  --tcgp-board-w:calc(100vw - 22px);--tcgp-mat-h:auto;
+  box-sizing:border-box;width:100%;max-height:none!important;min-height:0!important;
+  height:100%!important;grid-template-rows:40px minmax(0,1fr) 30px minmax(0,1fr) 83px!important;
+  gap:3px!important;align-content:stretch!important;margin:0;padding:3px 5px!important;
+  border-radius:0;border:1px solid #a4c0c9;border-top:0;border-bottom:0;box-shadow:none;
+}
+.tcgp-substitute-lab .tcgp-lab-arena>.tcgp-live-opponent-top{height:40px!important;min-height:0!important;grid-row:1!important}
+.tcgp-substitute-lab .tcgp-lab-arena>.tcgp-live-opponent.tcgp-live-mat-half{grid-row:2!important}
+.tcgp-substitute-lab .tcgp-lab-arena>.tcgp-live-mid{grid-row:3!important;height:30px!important;min-height:30px!important}
+.tcgp-substitute-lab .tcgp-lab-arena>.tcgp-live-player.tcgp-live-mat-half{grid-row:4!important}
+.tcgp-substitute-lab .tcgp-lab-arena>.tcgp-live-player-bottom{
+  grid-row:5!important;height:83px!important;min-height:0!important;max-height:83px!important;
+  padding:1px 2px!important;grid-template-columns:36px minmax(0,1fr) 39px!important;gap:5px!important;
+}
+.tcgp-substitute-lab .tcgp-lab-arena>.tcgp-live-mat-half{
+  position:relative!important;height:100%!important;min-height:0!important;max-height:none!important;
+  aspect-ratio:auto!important;background-size:cover!important;
+}
+.tcgp-substitute-lab .tcgp-lab-arena>.tcgp-live-opponent{background-position:center top!important}
+.tcgp-substitute-lab .tcgp-lab-arena>.tcgp-live-player{background-position:center bottom!important}
+.tcgp-substitute-lab .tcgp-lab-arena .tcgp-live-opponent-bench,
+.tcgp-substitute-lab .tcgp-lab-arena .tcgp-live-player-bench{
+  grid-template-columns:repeat(5,minmax(0,1fr))!important;width:78%!important;
+  gap:3px!important;max-width:none!important;
+}
+.tcgp-substitute-lab .tcgp-lab-arena .tcgp-live-opponent-bench{top:4%!important}
+.tcgp-substitute-lab .tcgp-lab-arena .tcgp-live-player-bench{bottom:4%!important}
+.tcgp-substitute-lab .tcgp-lab-arena .tcgp-live-opponent-active{top:55%!important;width:17%!important}
+.tcgp-substitute-lab .tcgp-lab-arena .tcgp-live-player-active{top:3%!important;width:17%!important}
+.tcgp-substitute-lab .tcgp-lab-arena .tcgp-lab-position-name{display:none}
+.tcgp-substitute-lab .tcgp-lab-arena .tcgp-live-card{touch-action:manipulation!important}
+.tcgp-substitute-lab .tcgp-lab-arena .tcgp-live-card.empty>span{visibility:visible!important;font-size:6px;color:#2e6676;background:#d5e8eabb;border-radius:4px}
+.tcgp-substitute-lab .tcgp-lab-arena .tcgp-live-opponent-top .tcgp-live-pile{width:35px!important;height:38px!important}
+.tcgp-substitute-lab .tcgp-lab-arena .tcgp-live-opponent-top .tcgp-live-hand-backs{height:37px}
+.tcgp-substitute-lab .tcgp-lab-arena .tcgp-live-hand-backs i{width:23px;height:32px;margin-left:-8px}
+.tcgp-substitute-lab .tcgp-lab-arena .tcgp-live-pile{pointer-events:auto!important;touch-action:manipulation;cursor:pointer;appearance:none;padding:0}
+.tcgp-substitute-lab .tcgp-lab-arena .tcgp-live-player-bottom .tcgp-live-piles.mine{height:79px!important;min-height:0!important;gap:2px!important}
+.tcgp-substitute-lab .tcgp-lab-arena .tcgp-live-player-bottom .tcgp-live-pile{width:35px!important;min-height:0}
+.tcgp-substitute-lab .tcgp-lab-arena .tcgp-live-player-bottom .tcgp-live-hand{height:79px!important;min-height:0!important;overflow:hidden!important}
+.tcgp-substitute-lab .tcgp-lab-arena .tcgp-live-player-bottom .tcgp-live-energy-source{width:37px!important;height:40px!important;pointer-events:auto!important;cursor:pointer}
+.tcgp-substitute-lab .tcgp-lab-hand{position:relative}
+.tcgp-substitute-lab .tcgp-lab-hand-strip{display:flex;align-items:flex-start;justify-content:center;gap:2px;height:61px;overflow:hidden;padding:1px 1px 0}
+.tcgp-substitute-lab .tcgp-lab-hand-card{flex:0 1 20%;width:20%;min-width:0;height:57px;aspect-ratio:2.5 / 3.5;box-shadow:0 1px 3px #254c6075}
+.tcgp-substitute-lab .tcgp-lab-hand-card img{object-fit:cover}
+.tcgp-substitute-lab .tcgp-lab-hand-open{
+  position:absolute;left:0;right:0;bottom:0;width:100%;height:19px;min-height:0;
+  font-size:8px;font-weight:900;border:1px solid #9db4c0;border-radius:4px;
+  background:#f3fafaed;color:#275269;touch-action:manipulation;
+}
+.tcgp-substitute-lab .tcgp-lab-dock{
+  flex:0 0 43px;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:3px;
+  background:#d8e8ec;border:1px solid #a4c0c9;border-radius:0 0 8px 8px;padding:3px;
+}
+.tcgp-substitute-lab .tcgp-lab-dock button{min-width:0;border:1px solid #92b0c0;border-radius:8px;background:#f3f9f8;color:#254b5d;font-size:11px;font-weight:850;touch-action:manipulation}
+.tcgp-substitute-lab .tcgp-lab-dock button:active{background:#c3e0e7}
+.tcgp-substitute-lab .tcgp-lab-toast{
+  pointer-events:none;position:absolute;z-index:23;left:12px;right:12px;bottom:51px;
+  padding:4px 7px;border:1px solid #7397a4;border-radius:7px;background:#ecf8f4ed;
+  text-align:center;font-size:10px;line-height:1.15;max-height:32px;overflow:hidden;
+}
+.tcgp-substitute-lab .tcgp-lab-modal{position:absolute;z-index:40;inset:0;display:block}
+.tcgp-substitute-lab .tcgp-lab-modal-scrim{position:absolute;inset:0;border:0;background:rgba(5,19,34,.52);border-radius:0}
+.tcgp-substitute-lab .tcgp-lab-sheet{
+  position:absolute;left:5px;right:5px;bottom:4px;z-index:2;
+  display:flex;flex-direction:column;max-height:calc(100% - 32px);min-height:0;
+  border:1px solid #8dabb9;border-radius:16px 16px 8px 8px;
+  background:#edf5f5;box-shadow:0 -8px 25px #0a263d80;overflow:hidden;
+}
+.tcgp-substitute-lab .tcgp-lab-sheet>header{flex:0 0 44px;display:flex;align-items:center;justify-content:space-between;padding:5px 10px;background:#173951;color:#f1fafc}
+.tcgp-substitute-lab .tcgp-lab-sheet>header b{font-size:14px}
+.tcgp-substitute-lab .tcgp-lab-sheet>header button{width:36px;height:36px;border:0;border-radius:50%;background:#34596f;color:white;font-size:24px}
+.tcgp-substitute-lab .tcgp-lab-sheet-scroll{min-height:0;overflow-y:auto;overscroll-behavior:contain;padding:10px;scrollbar-width:thin;touch-action:pan-y}
+.tcgp-substitute-lab .tcgp-lab-sheet-scroll .tcgp-lab-card-picker,
+.tcgp-substitute-lab .tcgp-lab-sheet-scroll .tcgp-lab-controls,
+.tcgp-substitute-lab .tcgp-lab-sheet-scroll .tcgp-lab-actions{margin:0;border:0;padding:2px;background:transparent;box-shadow:none}
+.tcgp-substitute-lab .tcgp-lab-sheet-scroll .tcgp-lab-chips{display:flex;flex-wrap:wrap;gap:5px;margin:7px 0}
+.tcgp-substitute-lab .tcgp-lab-sheet-scroll button:not(.tcgp-lab-card-choice):not(.tcgp-lab-remove-ref):not(.tcgp-lab-sheet-primary){min-height:35px;border-radius:8px;padding:6px 10px;border:1px solid #9bb7be;background:#f8fcfb;color:#1c425a;font-size:11px;font-weight:750}
+.tcgp-substitute-lab .tcgp-lab-sheet-scroll button[aria-pressed=true],
+.tcgp-substitute-lab .tcgp-lab-sheet-scroll button.selected{background:#cae5d9!important;border-color:#2e8b72!important}
+.tcgp-substitute-lab .tcgp-lab-sheet-scroll .tcgp-lab-results{grid-template-columns:repeat(3,minmax(0,1fr));gap:7px;max-height:none;overflow:visible}
+.tcgp-substitute-lab .tcgp-lab-sheet-scroll .tcgp-lab-card-choice{min-width:0;padding:4px;gap:3px}
+.tcgp-substitute-lab .tcgp-lab-sheet-scroll .tcgp-lab-card-choice>div{aspect-ratio:2.5/3.5}
+.tcgp-substitute-lab .tcgp-lab-sheet-scroll .tcgp-lab-card-choice span{font-size:10px;line-height:1.18}
+.tcgp-substitute-lab .tcgp-lab-sheet-scroll .tcgp-lab-card-choice small{font-size:8px;line-height:1.2}
+.tcgp-substitute-lab .tcgp-lab-sheet-scroll .tcgp-lab-search{flex-direction:row;gap:4px}
+.tcgp-substitute-lab .tcgp-lab-sheet-scroll .tcgp-lab-search select{max-width:43%;min-width:0;font-size:11px;padding:4px}
+.tcgp-substitute-lab .tcgp-lab-sheet-scroll .tcgp-lab-search input{min-width:0;font-size:13px;padding:7px}
+.tcgp-substitute-lab .tcgp-lab-picker-commit{position:sticky;bottom:0;z-index:4;padding:8px;margin:10px -4px -8px;border:1px solid #93b3bf;border-radius:10px;background:#dcececec;backdrop-filter:blur(8px);box-shadow:0 -4px 10px #213e5140}
+.tcgp-substitute-lab .tcgp-lab-picker-commit strong{display:block;font-size:12px}
+.tcgp-substitute-lab .tcgp-lab-picker-commit small{font-size:10px}
+.tcgp-substitute-lab .tcgp-lab-selected-card{display:flex;align-items:center;gap:11px;padding:7px;border:1px solid #c6d7db;border-radius:8px;background:#fff}
+.tcgp-substitute-lab .tcgp-lab-selected-card img,.tcgp-substitute-lab .tcgp-lab-selected-card .tcgp-lab-sub-art{width:60px;height:84px;object-fit:contain;flex:none}
+.tcgp-substitute-lab .tcgp-lab-selected-card>div{display:grid;gap:5px;min-width:0}
+.tcgp-substitute-lab .tcgp-lab-selected-card strong{font-size:15px;line-height:1.2}
+.tcgp-substitute-lab .tcgp-lab-selected-card small{font-size:11px;overflow-wrap:anywhere}
+.tcgp-substitute-lab .tcgp-lab-rule{margin-top:10px;padding-top:8px}
+.tcgp-substitute-lab .tcgp-lab-rule>strong{font-size:12px}
+.tcgp-substitute-lab .tcgp-lab-zone-tabs{display:flex;flex-wrap:wrap;gap:4px;margin-bottom:10px}
+.tcgp-substitute-lab .tcgp-lab-zone-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:9px;padding:2px}
+.tcgp-substitute-lab .tcgp-lab-zone-card{min-width:0;padding:5px;border:1px solid #b7cdd2;border-radius:8px;background:#fdfefe;display:flex;flex-direction:column;gap:3px}
+.tcgp-substitute-lab .tcgp-lab-zone-card b{font-size:10px;line-height:1.18;overflow-wrap:anywhere}
+.tcgp-substitute-lab .tcgp-lab-zone-art{position:relative;width:100%;aspect-ratio:2.5/3.5;display:grid;place-items:center;border-radius:5px;background:#dce9ea}
+.tcgp-substitute-lab .tcgp-lab-zone-art>img{width:100%;height:100%;object-fit:contain;border-radius:4px}
+.tcgp-substitute-lab .tcgp-lab-remove-ref{
+  position:absolute;z-index:4;right:-6px;top:-6px;display:grid;place-items:center;
+  width:28px;height:28px;min-height:28px;padding:0;border:2px solid #fff;border-radius:50%;
+  background:#b5303e;color:white;font-size:21px;font-weight:900;box-shadow:0 2px 4px #0005;
+}
+.tcgp-substitute-lab .tcgp-lab-zone-moves{display:flex;flex-wrap:wrap;gap:3px;margin-top:auto}
+.tcgp-substitute-lab .tcgp-lab-zone-moves button{flex:1;min-height:27px!important;padding:4px!important;font-size:10px!important}
+.tcgp-substitute-lab .tcgp-lab-empty-zone{grid-column:1 / -1;padding:10px;text-align:center;font-size:12px}
+.tcgp-substitute-lab .tcgp-lab-sheet-primary{display:block;width:100%;margin:12px 0 3px;min-height:40px;border:0;border-radius:8px;background:#256684;color:#fff;font-size:12px;font-weight:850}
+@media (max-height:680px){
+  .tcgp-substitute-lab .tcgp-lab-arena{grid-template-rows:34px minmax(0,1fr) 28px minmax(0,1fr) 66px!important}
+  .tcgp-substitute-lab .tcgp-lab-arena>.tcgp-live-opponent-top{height:34px!important}
+  .tcgp-substitute-lab .tcgp-lab-arena>.tcgp-live-player-bottom{height:66px!important;max-height:66px!important}
+  .tcgp-substitute-lab .tcgp-lab-arena .tcgp-live-player-bottom .tcgp-live-hand{height:62px!important}
+  .tcgp-substitute-lab .tcgp-lab-arena .tcgp-live-player-bottom .tcgp-live-piles.mine{height:62px!important}
+  .tcgp-substitute-lab .tcgp-lab-hand-strip{height:44px}
+  .tcgp-substitute-lab .tcgp-lab-hand-card{height:43px}
+}
+/* The normal battle's second score line is redundant inside the 30px lab strip. */
+.tcgp-substitute-lab .tcgp-classic-score-label{display:none!important}
+.tcgp-substitute-lab .tcgp-lab-picker-commit{position:sticky;top:0;bottom:auto;margin:0 0 8px}
+.tcgp-substitute-lab .tcgp-lab-arena .tcgp-live-stadium-slot.tcgp-lab-stadium{pointer-events:auto!important;cursor:pointer;touch-action:manipulation;padding:2px}
+.tcgp-substitute-lab .tcgp-lab-picker-note{font-size:11px;margin:5px 2px 9px;line-height:1.3;color:#3b6371}

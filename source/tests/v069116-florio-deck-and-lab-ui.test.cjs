@@ -36,8 +36,11 @@ test('Sandbox presents Classic combat playmats, piles, hand and Energy Zone in n
   assert.match(html,/tcgp-live-hand/);
   assert.match(html,/data-lab-action="slot"/);
   assert.match(html,/data-lab-action="next-turn"/);
-  assert.match(html,/data-lab-action="perform"|No legal actions/);
-  assert.match(html,/Florio Nature Park/);
+  assert.match(html,/data-lab-action="open-actions"/);
+  assert.match(html,/data-lab-action="open-cards"/);
+  const button={dataset:{labAction:'open-cards',zone:'hand'}};
+  listeners.click({target:{closest:()=>button}});
+  assert.match(container.innerHTML,/Florio Nature Park/);
   assert.ok(listeners.click);
   lab.close();
 });
@@ -48,7 +51,7 @@ test('Tapping bench cards keeps selection and manual setup controls working',()=
   const button={dataset:{labAction:'slot',side:'player',zone:'bench',index:'4'}};
   listeners.click({target:{closest:()=>button}});
   assert.match(container.innerHTML,/You · Bench 5/);
-  assert.match(container.innerHTML,/SNAPFLORIO-001/);
+  assert.equal(lab.getState().sides.player.bench.find(p=>p.benchSlot===4).cardId,'SNAPFLORIO-001');
   assert.match(container.innerHTML,/data-lab-action="damage"/);
   assert.match(container.innerHTML,/data-lab-action="energy"/);
   lab.close();

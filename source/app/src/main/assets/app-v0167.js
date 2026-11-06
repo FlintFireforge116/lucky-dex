@@ -1630,6 +1630,13 @@ async function openCardModal(card){
 /* Back handling + startup wiring */
 window.handleLuckyBack=function(){
   const openDialog=document.querySelector('dialog[open]');if(openDialog){openDialog.close();return true;}
+  // The native Android Back button must use the battle router, not WebView history.
+  // WebView.goBack can restore a half-hidden Packs screen with no navigation.
+  const battleView=document.getElementById('tcgpBattleView');
+  if(battleView&&!battleView.hidden){
+    window.LuckyDexTCGPBattleUI?.back?.();
+    return true;
+  }
   if(document.body.classList.contains('pack-opening')){closePackOpening();return true;}
   if(document.body.classList.contains('arcade-open')){window.LuckyDexArcadeWorld?.backFromGame(true);return true;}
   const starter=document.getElementById('starterPanel');if(starter&&!starter.hidden){starter.hidden=true;document.getElementById('titleScreen').classList.remove('hidden-title');window.luckyTitleDismissed=false;return true;}
@@ -1977,7 +1984,7 @@ renderCollection=function(){const grid=document.getElementById('collectionGrid')
    before the app could finish wiring. That single runtime exception explained
    the frozen starter, Wild Search/Expedition stalls and permanent Loading sets.
 */
-window.__LUCKYDEX_BUILD='0.69.121';
+window.__LUCKYDEX_BUILD='0.69.122';
 window.addEventListener('error',event=>{
   try{localStorage.setItem('luckyDexLastRuntimeError',JSON.stringify({build:window.__LUCKYDEX_BUILD,message:String(event?.message||'Unknown error'),source:String(event?.filename||''),line:Number(event?.lineno||0),at:Date.now()}));}catch(_){ }
 });
