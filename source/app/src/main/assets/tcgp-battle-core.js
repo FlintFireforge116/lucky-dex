@@ -261,6 +261,18 @@
     s.stadiumUsed = false;
     s.abilityUsed = s.abilityUsed || {};
     s.energyAvailable = !!state.rules?.firstTurnEnergy || !(state.turnNumber === 1 && side === state.firstSide);
+    // Dream Garden's printed Stadium effect occurs at the start of EACH
+    // player's turn, not during the end-of-turn Sleep recovery check. A tails
+    // puts that player's current Active Pokémon to Sleep; heads does nothing.
+    // Only one flip is made, and the effect stops immediately if replaced.
+    if(state.format==='classic'&&state.stadium?.cardId==='SNAPFLORIO-109'&&s.active){
+      const heads=random(state)<0.5;
+      state.log.push({type:'coin',side,reason:'Dream Garden',heads,results:[heads]});
+      if(!heads){
+        s.active.conditions={...(s.active.conditions||{}),sleep:true};
+        state.log.push({type:'status',side,status:'sleep',reason:'Dream Garden',cardId:s.active.cardId});
+      }
+    }
     if(s.energyAvailable){
       if(Array.isArray(s.energySupply)){
         // This turn consumes the TOP of the supply, not an independent RNG roll.
@@ -497,6 +509,17 @@
   function attackDamagePreview(state,side,attackIndex,attackCardId){
     const source=state?.sides?.[side]?.active,attack=data.cardById(attackCardId||source?.cardId)?.attacks?.[attackIndex];
     if(!source||!attack)return {damage:0,text:'0',variable:false};
+    // Spore Storm is 40 PLUS 40 for each Heads. Never execute a random
+    // attack in the inspection preview: that shows a phantom dice result which
+    // may disagree with the coins rolled on the actual attack. Include Energy
+    // on both the opposing Active and Bench (Special Energy counts as a card).
+    if(attack.effect?.rule==='founja:sporeStorm'){
+      const foe=state.sides[side==='player'?'opponent':'player'];
+      const count=[foe?.active,...(foe?.bench||[])].filter(Boolean).reduce((total,slot)=>
+        total+Object.values(slot.energy||{}).reduce((n,value)=>n+Math.max(0,Number(value)||0),0)+(slot.specialEnergy||[]).length,0);
+      const base=Math.max(0,Number(attack.damage)||0);
+      return {damage:base,text:count?`${base}–${base+40*count}`:String(base),variable:count>0};
+    }
     if(attackHasRandom(attack.effect))return {damage:Math.max(0,Number(attack.damage)||0),text:String(attack.damageText??attack.damage??0),variable:true};
     // Beak Invasion requires a 0-5 card choice before it can resolve. A
     // damage PREVIEW must never run that choice-dependent effect as though
@@ -679,7 +702,7 @@
       if(slot.gym2ShapeshiftSource&&(c.sleep||c.confusion||c.paralysis))effects.revertShapeshift(state,slot);
       if(c.poison){const base=typeof c.poison==='object'?Number(c.poison.amount??10):10,amount=Math.max(0,base+effects.modifierAmount(state,side,slot,'poisonDamageBonus',data.cardById));slot.damage+=amount;state.log.push({type:'statusDamage',side,status:'poison',amount});}
       if(c.burn){slot.damage+=20;state.log.push({type:'statusDamage',side,status:'burn',amount:20});const heads=random(state)<0.5;state.log.push({type:'coin',side,heads,status:'burn',results:[heads]});if(heads)delete c.burn;}
-      if(c.sleep){const opp=side==='player'?'opponent':'player',lull=state.format==='classic'&&state.sides[opp].active?.cardId==='SNAPFOUNJA-041'&&state.sides[opp].active?.conditions?.sleep;const coins=lull||state.format==='classic'&&state.stadium?.cardId==='SNAPFLORIO-109'?2:typeof c.sleep==='object'?Math.max(1,Number(c.sleep.recoveryCoins||1)):1;let allHeads=true;for(let i=0;i<coins;i++){const heads=random(state)<0.5;state.log.push({type:'coin',side,heads,status:'sleep',results:[heads]});if(!heads)allHeads=false;}if(allHeads)delete c.sleep;state.log.push({type:'sleepCheck',side,woke:allHeads,coins});}
+      if(c.sleep){const opp=side==='player'?'opponent':'player',lull=state.format==='classic'&&state.sides[opp].active?.cardId==='SNAPFOUNJA-041'&&state.sides[opp].active?.conditions?.sleep;const coins=lull?2:typeof c.sleep==='object'?Math.max(1,Number(c.sleep.recoveryCoins||1)):1;let allHeads=true;for(let i=0;i<coins;i++){const heads=random(state)<0.5;state.log.push({type:'coin',side,heads,status:'sleep',results:[heads]});if(!heads)allHeads=false;}if(allHeads)delete c.sleep;state.log.push({type:'sleepCheck',side,woke:allHeads,coins});}
       if(c.paralysis&&side===state.activeSide&&Number(c.paralysis.appliedTurn??-1)<state.turnNumber)delete c.paralysis;
     }
   }

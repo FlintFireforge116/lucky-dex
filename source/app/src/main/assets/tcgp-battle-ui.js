@@ -145,6 +145,7 @@
     if(entry.type==='ko')return`${cardName(entry.cardId)} was Knocked Out`;
     if(entry.type==='promote')return`${who} promoted ${cardName(entry.cardId)} to Active`;
     if(entry.type==='sleepCheck')return`${who==='You'?'Your':'CPU'} Pokémon ${entry.woke?'woke up':'is still Asleep'} after the Sleep coin flip`;
+    if(entry.type==='coin'&&entry.reason==='Dream Garden')return`Dream Garden · ${entry.heads?'HEADS — no new Sleep':'TAILS — Active Pokémon fell Asleep'}`;
     if(entry.type==='endTurn')return`${who} ended the turn`;
     return'';
   }
@@ -153,10 +154,21 @@
     if(!action||!currentBattle)return'';
     const added=currentBattle.log.slice(Number(beforeLogLength||0));
     const attack=added.find(entry=>entry.type==='attack');
-    if(attack){const ko=added.find(entry=>entry.type==='ko');return actionEventText(attack)+(ko?` · KO ${cardName(ko.cardId)}`:'');}
+    if(attack){
+      const ko=added.find(entry=>entry.type==='ko');
+      const storm=attack.cardId==='SNAPFOUNJA-010'&&attack.attack==='Spore Storm'
+        ?[...added].reverse().find(entry=>entry.type==='coin'&&entry.reason==='Founja sporeStorm'):null;
+      const flips=storm?` · ${storm.results?.filter(Boolean).length||0}/${storm.results?.length||0} Heads`:'';
+      return actionEventText(attack)+flips+(ko?` · KO ${cardName(ko.cardId)}`:'');
+    }
     const preferred=[...added].reverse().find(entry=>['setupActive','setupBench','bench','evolve','trainer','ability','attach','attachSpecial','retreat','promote'].includes(entry.type));
     if(preferred)return actionEventText(preferred);
-    if(action.type==='endTurn'){const checks=added.filter(entry=>entry.type==='sleepCheck');return checks.length?checks.map(actionEventText).join(' · '):actionEventText({type:'endTurn',side});}
+    if(action.type==='endTurn'){
+      const checks=added.filter(entry=>entry.type==='sleepCheck');
+      const garden=added.find(entry=>entry.type==='coin'&&entry.reason==='Dream Garden');
+      const notices=[...checks.map(actionEventText),...(garden?[actionEventText(garden)]:[])];
+      return notices.length?notices.join(' · '):actionEventText({type:'endTurn',side});
+    }
     if(action.type==='effectChoice')return actionEventText({type:'effectChoice',side});
     if(action.type==='setupReady')return side==='player'?'You finished setting up':'CPU finished setting up';
     return actionEventText({...action,side});

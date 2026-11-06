@@ -1,0 +1,18 @@
+LuckyDex v0.69.129 — Dream Garden and Ledian ex audit
+Base: v0.69.128 (apply cumulatively after all earlier patches)
+
+- Dream Garden (SNAPFLORIO-109) now flips one coin at the beginning of
+  each player's turn. Tails puts that player's Active Pokemon Asleep.
+- Removed accidental two-heads-to-wake requirement while Dream Garden
+  is active; ordinary Sleep recovery rules are unchanged.
+- Illumina Ledian ex (SNAPFOUNJA-010) Spore Storm damage remains 40 base
+  plus 40 per Heads, as printed (40+). A 30-seed real-battle test confirms
+  varied outcomes and proper counting of opponent Active and Bench Energy.
+- Fixed misleading Spore Storm inspection damage preview: it displays the
+  possible damage range without consuming a fake random result.
+- Battle notices now mention Dream Garden flip outcomes and Spore Storm
+  real Head counts.
+- No booster, collection, or printed card-text modifications.
+
+Tests: 58 focused regression tests passed across 8 suites/groups.
+Physical Android touch/rendering is not directly device-tested.
