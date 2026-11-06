@@ -18,16 +18,25 @@
     return tail?Number(tail[1]):NaN;
   }
   function legacyWotcRarity(card,set){
-    const identity=norm([set?.id,set?.name,set?._libraryKey,card?.setId,card?.setName,card?.set?.id,card?.set?.name].filter(Boolean).join(' '));
+    // These collector-number bands belong ONLY to the original WotC Jungle
+    // (JU/base2) and Fossil (FO/base3) products. A substring match against
+    // the set name also matched "Founja Jungle" and silently overwrote 51 of
+    // that fan-made set's 86 printed rarities during booster collation.
+    const ids=[set?.id,set?._libraryKey,card?.setId,card?._librarySetKey,card?.set?.id]
+      .filter(Boolean).map(value=>norm(value).replace(/^library\s*:\s*/,'').replace(/^library\s+/,''));
+    const names=[set?.name,card?.setName,card?.set?.name].filter(Boolean).map(norm);
+    const known=(codes,exactName)=>ids.some(id=>codes.includes(id))||
+      (!ids.length&&names.includes(exactName));
     const n=collectorNumber(card);if(!Number.isFinite(n))return '';
-    if(/(?:^|\s)(?:base2|ju|jungle)(?:\s|$)/.test(identity)){
+    if(known(['base2','ju','jungle'],'jungle')){
       if(n>=1&&n<=16)return 'Rare Holo';if(n<=32)return 'Rare';if(n<=48)return 'Uncommon';if(n<=64)return 'Common';
     }
-    if(/(?:^|\s)(?:base3|fo|fossil)(?:\s|$)/.test(identity)){
+    if(known(['base3','fo','fossil'],'fossil')){
       if(n>=1&&n<=15)return 'Rare Holo';if(n<=30)return 'Rare';if(n<=45)return 'Uncommon';if(n<=62)return 'Common';
     }
     return '';
   }
+
   function cardSetIdentity(card={},set=null){
     return norm([set?.id,set?.name,set?.series,set?._libraryKey,set?._librarySeries,card?.setId,card?.setName,card?.set?.id,card?.set?.name,card?.set?.series].filter(Boolean).join(' '));
   }

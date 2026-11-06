@@ -1,0 +1,28 @@
+LuckyDex v0.69.124 — Founja Jungle pack rarity fix
+
+Problem
+- The original 1999 WotC Jungle/Fossil collector-number rarity override matched
+  any set name containing Jungle or Fossil.
+- New Pokémon Snap — Founja Jungle was therefore treated as the original Jungle:
+  51/86 cards were assigned an incorrect rarity class at pack selection time.
+- The Founja card definitions and art already hold their intended printed rarities.
+
+Fix
+- Limit historical numbering to actual original WotC Jungle identifiers
+  (base2 / JU / Jungle exactly), and Fossil (base3 / FO / Fossil exactly).
+- Preserve printed Founja rarities in both online and offline pack generation.
+- Keep the established 10-card Lental pack plan: 4 Commons, 3 Uncommons,
+  3 Rare-or-better; the three hit slots independently target Ultra Rare with
+  probabilities 6%, 16%, and 35% respectively.
+- Update version to 0.69.124 / code 7104.
+
+Verification
+- 41 targeted tests passing, including 24 complete simulated Founja packs
+  through the production picker, deterministic high and low chase cases,
+  60,000 weighted rarity-slot target samples, original Jungle and Fossil rarity
+  regression checks, and existing Founja combat checks.
+- A separate existing Classic Jungle deck-builder test that asks to build
+  around Scyther fails in v0.69.123 as well as v0.69.124; no code from that
+  deck-building path is changed by this patch.
+
+Use on top of v0.69.123. Patch paths are relative to canonical source/.
