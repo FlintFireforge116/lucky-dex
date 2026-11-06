@@ -128,7 +128,21 @@ const defaultState = {
   ui:{packBrowser:{sortKey:'releaseDate',sortDir:'desc'},packMetrics:{},dustExchange:{keepCopies:3}}
 };
 
+// v0.69.127: Lental printed rarities are canonical. Old saves keep card counts
+// and pull history, but cached Common/Rare labels must not override the artwork.
+function canonicalLentalRarityV069127(card){
+  const id=String(card?.id||'');
+  if(!/^SNAP(?:FLORIO|FOUNJA)-\d{3}$/i.test(id))return '';
+  return window.LuckyDexClassicTCGLental?.cardById?.(id)?.rarity||'';
+}
+function reconcileLentalRarityV069127(card){
+  if(!card||typeof card!=='object')return false;
+  const rarity=canonicalLentalRarityV069127(card);
+  if(!rarity||card.rarity===rarity)return false;
+  card.rarity=rarity;return true;
+}
 let state = loadState();
+for(const card of Object.values(state.cards||{}))reconcileLentalRarityV069127(card);
 window.LuckyDexCosmeticsV0413?.ensureState(state);
 window.LuckyDexAchievementTelemetryV0413?.ensure?.(state);
 window.LuckyDexCosmeticsV0413?.applyActiveSleeveCss?.(state);
@@ -282,7 +296,7 @@ function humanCardText(value,fallback='Card'){
   return raw.length>60?raw.slice(0,57)+'…':raw;
 }
 function cardDisplayRarityV03515(card){
-  const rarity=humanCardText(card?.rarity||'','');
+  const rarity=humanCardText(canonicalLentalRarityV069127(card)||card?.rarity||'','');
   if(/^no rarity$/i.test(rarity)){
     const classified=cardClassify(card||{});
     if(classified?.finish==='reverse-holo')return 'Reverse Holo';
@@ -318,7 +332,9 @@ function cardImageFallback(img){ const base=img.dataset.cardBase||'';const step=
 window.cardImageFallback=cardImageFallback;
 
 function cardClassify(cardOrRarity={}){
-  const card=typeof cardOrRarity==='string'?{rarity:cardOrRarity}:(cardOrRarity||{});
+  const raw=typeof cardOrRarity==='string'?{rarity:cardOrRarity}:(cardOrRarity||{});
+  const fixed=canonicalLentalRarityV069127(raw);
+  const card=fixed?{...raw,rarity:fixed}:raw;
   if(window.LuckyDexCardRarity?.classify)return window.LuckyDexCardRarity.classify(card);
   const fallback=window.LuckyDexPack?.profileFor?.(card);
   const tier=fallback?.level??1;
@@ -783,10 +799,10 @@ function renderCollection(){
   if(collectionMode==='pokemon'){
     if(group.startsWith('gen:')){const g=GENERATIONS.find(x=>x.id===Number(group.split(':')[1]));items=items.filter(x=>x.id>=g.min&&x.id<=g.max);}if(filter==='shiny')items=items.filter(x=>x.shiny);if(filter==='team')items=items.filter(x=>state.team.includes(`${x.id}:${x.shiny?'s':'n'}`));if(filter==='duplicates')items=items.filter(x=>x.count>1);items.sort((a,b)=>group==='all'?(b.firstSeen||0)-(a.firstSeen||0):a.id-b.id||Number(b.shiny)-Number(a.shiny));
   }else{
-    if(group.startsWith('set:')){const key=group.slice(4);items=items.filter(x=>cardSetKey(x)===key);}if(filter==='rare')items=items.filter(x=>looksRare(x.rarity));if(filter==='duplicates')items=items.filter(x=>Number(x.count||0)>1);items.sort((a,b)=>group==='all'?(b.firstPulled||0)-(a.firstPulled||0):numericLocalId(a.localId)-numericLocalId(b.localId)||a.name.localeCompare(b.name));
+    if(group.startsWith('set:')){const key=group.slice(4);items=items.filter(x=>cardSetKey(x)===key);}if(filter==='rare')items=items.filter(x=>looksRare(x));if(filter==='duplicates')items=items.filter(x=>Number(x.count||0)>1);items.sort((a,b)=>group==='all'?(b.firstPulled||0)-(a.firstPulled||0):numericLocalId(a.localId)-numericLocalId(b.localId)||a.name.localeCompare(b.name));
   }
   renderCollectionProgress(items,allItems);if(!items.length){grid.innerHTML=`<div class="empty">${collectionMode==='cards'&&filter==='duplicates'?'No spare card copies yet.':'Nothing here yet.'}</div>`;return;}
-  grid.innerHTML=items.map(x=>collectionMode==='pokemon'?(()=>{const key=`${x.id}:${x.shiny?'s':'n'}`;return `<button class="collection-item ${x.shiny?'shiny-glow':''}" data-pokemon-key="${key}">${state.team.includes(key)?'<span class="team-badge">TEAM</span>':''}<span class="count-badge">×${x.count}</span><img src="${API.sprite(x.id,x.shiny)}"><b>${x.shiny?'★ ':''}${escapeHtml(titleCase(x.name))}</b><span>#${x.id} · Lv.${x.level||1} · Gen ${generationForId(x.id).id}</span></button>`;})():`<button class="collection-item card ${looksRare(x.rarity||'')?'rare-card':''}" data-card-id="${escapeHtml(x.id)}"><span class="count-badge">×${x.count}</span>${cardArtHtml(x.image,x.name,x)}<div class="card-tile-copy"><b>${escapeHtml(humanCardText(x.name,'Unknown card'))}</b><span>${escapeHtml(cardDisplayMeta(x))}</span></div></button>`).join('');
+  grid.innerHTML=items.map(x=>collectionMode==='pokemon'?(()=>{const key=`${x.id}:${x.shiny?'s':'n'}`;return `<button class="collection-item ${x.shiny?'shiny-glow':''}" data-pokemon-key="${key}">${state.team.includes(key)?'<span class="team-badge">TEAM</span>':''}<span class="count-badge">×${x.count}</span><img src="${API.sprite(x.id,x.shiny)}"><b>${x.shiny?'★ ':''}${escapeHtml(titleCase(x.name))}</b><span>#${x.id} · Lv.${x.level||1} · Gen ${generationForId(x.id).id}</span></button>`;})():`<button class="collection-item card ${looksRare(x)?'rare-card':''}" data-card-id="${escapeHtml(x.id)}"><span class="count-badge">×${x.count}</span>${cardArtHtml(x.image,x.name,x)}<div class="card-tile-copy"><b>${escapeHtml(humanCardText(x.name,'Unknown card'))}</b><span>${escapeHtml(cardDisplayMeta(x))}</span></div></button>`).join('');
   grid.querySelectorAll('[data-card-id]').forEach(b=>b.onclick=()=>openCardModal(state.cards[b.dataset.cardId]));grid.querySelectorAll('[data-pokemon-key]').forEach(b=>b.onclick=()=>openPokemonModal(b.dataset.pokemonKey));
 }
 function renderTeamPanel(){/* Party editing belongs to Adventure. */}
@@ -1779,6 +1795,8 @@ const SET_CATALOG_KEY_V13='luckyDexSetCatalogV13';
 let packCacheV13={sets:{},cards:{}};
 try{packCacheV13=JSON.parse(localStorage.getItem(PACK_CACHE_KEY_V13)||'null')||{sets:{},cards:{}};}catch(e){packCacheV13={sets:{},cards:{}};}
 if(!packCacheV13.sets)packCacheV13.sets={};if(!packCacheV13.cards)packCacheV13.cards={};
+for(const card of Object.values(packCacheV13.cards))reconcileLentalRarityV069127(card);
+for(const set of Object.values(packCacheV13.sets))for(const card of set?.cards||[])reconcileLentalRarityV069127(card);
 function savePackCacheV13(){
   try{localStorage.setItem(PACK_CACHE_KEY_V13,JSON.stringify(packCacheV13));}catch(e){
     // Keep the newest 220 card details if WebView storage is tight.
@@ -1984,7 +2002,7 @@ renderCollection=function(){const grid=document.getElementById('collectionGrid')
    before the app could finish wiring. That single runtime exception explained
    the frozen starter, Wild Search/Expedition stalls and permanent Loading sets.
 */
-window.__LUCKYDEX_BUILD='0.69.126';
+window.__LUCKYDEX_BUILD='0.69.127';
 window.addEventListener('error',event=>{
   try{localStorage.setItem('luckyDexLastRuntimeError',JSON.stringify({build:window.__LUCKYDEX_BUILD,message:String(event?.message||'Unknown error'),source:String(event?.filename||''),line:Number(event?.lineno||0),at:Date.now()}));}catch(_){ }
 });

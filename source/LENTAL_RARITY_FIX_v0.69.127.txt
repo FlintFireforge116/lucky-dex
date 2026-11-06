@@ -1,0 +1,12 @@
+LuckyDex v0.69.127 — verified printed-rarity corrections
+
+Florio Nature Park:
+ - #068 Foongus: Common -> Rare Holo (printed gold star on user image).
+
+Founja Jungle:
+ - #073 Illumina Toucannon ex: Rare -> Ultra Rare (two stars on uploaded art).
+ - Reviewed 86 card footer crops against the catalogue symbol sequence; remaining visible symbols match their assigned rarity classes. Some variants use pale/foil printing that is hard to see at thumbnail size.
+
+Existing collection is preserved. Saved and cached Lental card rarity values are reconciled against the canonical catalogue on app startup; binder labels and rare filters use canonical values. New pack-opening classifications inherit the corrected rarities. No packs or coin balances are rerolled/changed.
+
+Limit: original Florio card image archive is not present in this session; the entire 123-card Florio artwork set was not independently re-audited. The source code contains 123 rarity assignments; the screenshot establishes the #068 correction. To finish an image-by-image Florio audit, supply the Florio v2 artwork ZIP.

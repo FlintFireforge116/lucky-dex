@@ -15,7 +15,7 @@ const counts=rows=>rows.reduce((m,card)=>{const c=R.classify(card,set).rarityCla
 
 test('Founja printed rarity is never overridden by original Jungle numbering',()=>{
  assert.equal(cards.length,86);
- assert.deepEqual(counts(cards),{uncommon:17,ultra:12,common:18,rare:39});
+ assert.deepEqual(counts(cards),{uncommon:17,ultra:13,common:18,rare:38});
  for(const card of cards){
    assert.equal(R.classify(card,set).rarityClass,R.classify(card).rarityClass,`${card.id} ${card.name}`);
    assert.equal(R.classify(card,set).originalRarity,card.rarity,`${card.id} printed rarity`);
