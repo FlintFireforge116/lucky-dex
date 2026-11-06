@@ -2186,9 +2186,20 @@
         if(ss.bench.length>=Number(ss.benchLimit||3)||!ss.deck.some(r=>card(r)?.kind==='pokemon'&&card(r)?.stage==='Basic'))return;
         ss.founjaVstarUsed=true;ask({kind:'deckCard',side:'self',filter:{kind:'pokemon',stage:'Basic'}},{phase:'basic'});return;
       }
-      case 'flightPath':{
-        const key=String(a.effectSelection||''),[uid,num]=key.split('|'),slot=ss.bench.find(s=>s.uid===uid),attack=card(slot)?.attacks?.[Number(num)];
-        if(attack&&slot&&String(attack.cost||'').length<=2&&Number(ctx.copyDepth||0)<3){const result=resolveAttack(attack,{...ctx,attack,copyDepth:Number(ctx.copyDepth||0)+1,ignoreUseCosts:true});if(foe.active)foe.active.damage=Number(foe.active.damage||0)+Math.max(0,result.damage);for(const nested of result.pendingEffects)applyEffect(nested,ctx);switchPokemon(ss,slot.benchSlot,ctx.state);note({copied:attack.name});}return;
+      case 'flightPathCopyEffect':{
+        // Play the copied attack's deferred effects using its OWN choice
+        // fields, rather than Flight Path's Bench-attacker selector.
+        if(effect.copiedEffect)applyEffect(effect.copiedEffect,{...ctx,action:effect.copiedAction||ctx.action});
+        return;
+      }
+      case 'flightPathSwitch':{
+        // The copied move has already been resolved through the ordinary attack
+        // pipeline (Weakness, Resistance, protection and damage counters).
+        // Only switch after its other effects have finished resolving.
+        const slot=ss.bench.find(s=>s.uid===effect.slotUid);
+        if(slot&&ss.active?.uid===effect.yanmegaUid&&switchPokemon(ss,slot.benchSlot,ctx.state))
+          note({copied:effect.copiedAttackName,switchedTo:slot.cardId});
+        return;
       }
       case 'talonScrape':{if(ctx.resolvingChoice){const target=chosen(foe);if(target&&foe.bench.includes(target))drop(foe,target);return;}
         if(foe.bench.some(s=>Object.values(s.energy||{}).some(n=>n>0)||(s.specialEnergy||[]).length))ask({kind:'pokemon',side:'opponent',includeActive:false,filter:{hasAnyEnergy:true}});return;}
@@ -2867,7 +2878,25 @@
         if(r==='berryBlast'&&def?.damage>0)damage=40;
         if(r==='magicSplash'&&ctx.action?.effectSelection)damage=0;
         if(r==='monkeySwing'&&self?.founjaFreeRetreatNext>ctx.state.turnNumber)damage=20;
-        if(r==='flightPath'){damage=0;}
+        if(r==='flightPath'){
+          const [uid,indexRaw]=String(ctx.action?.effectSelection||'').split('|');
+          const index=Number(indexRaw),slot=ss.bench.find(s=>s.uid===uid);
+          const chosen=Number.isInteger(index)&&indexRaw!==undefined?ctx.cardById(slot?.cardId)?.attacks?.[index]:null;
+          if(!slot||!chosen||String(chosen.cost||'').length>2||Number(ctx.copyDepth||0)>=3){
+            damage=0;attackDoesNothing=true;return;
+          }
+          const copiedAction={...ctx.action,effectSelection:ctx.action?.copiedEffectSelection||''};
+          const copy=resolveAttack(chosen,{...ctx,action:copiedAction,attack:chosen,
+            copyDepth:Number(ctx.copyDepth||0)+1,ignoreUseCosts:true});
+          damage=copy.damage;
+          damageTarget=copy.damageTarget;
+          damageRules={...damageRules,...copy.damageRules};
+          for(const copiedEffect of copy.pendingEffects)pending.push({type:'lentalRule',
+            rule:'founja:flightPathCopyEffect',copiedEffect,copiedAction});
+          pending.push({type:'lentalRule',rule:'founja:flightPathSwitch',slotUid:slot.uid,
+            yanmegaUid:self.uid,copiedAttackName:chosen.name});
+          return;
+        }
         if(r==='jumpSlamGX'&&!ss.gxAttackUsed){/* applied after damage */}
         pending.push(e);return;
       }
@@ -3049,19 +3078,6 @@
 
       if(e.type==='lentalRule'){
         const rule=e.rule;
-        if(rule.startsWith('founja:')){
-        const r=rule.slice(7),self=ctx.attacker,foe=other(ctx);
-        if(r==='sonicBreak')return targetChoices('opponentPokemon',ctx);
-        if(r==='waterFountain')return [{effectSelection:'',choiceLabel:'Keep Water Energy'},...(ss.bench||[]).map(slot=>({target:'bench',benchIndex:Number(slot.benchSlot),choiceLabel:'Move to '+ctx.cardById(slot.cardId)?.name}))];
-        if(r==='fallingStar')return [{effectSelection:'',choiceLabel:'Keep Tool'},...(toolsOf(self).length?[{effectSelection:'tool',choiceLabel:'Discard Tool (+70)'}]:[])];
-        if(r==='flightPath')return (ss.bench||[]).flatMap(slot=>(ctx.cardById(slot.cardId)?.attacks||[]).map((attack,i)=>({slot,attack,i})).filter(x=>String(x.attack.cost||'').length<=2).map(x=>({effectSelection:x.slot.uid+'|'+x.i,choiceLabel:'Copy '+x.attack.name})));
-        if(r==='magicSplash'){const pokemon=pokemonOn(foe);return [{effectSelection:'',choiceLabel:'Deal 20 damage'},...pokemon.flatMap(src=>Object.keys(src.energy||{}).filter(t=>src.energy[t]>0).flatMap(type=>pokemon.filter(dst=>dst!==src).map(dst=>({effectSelection:src.uid+'|'+dst.uid+'|'+type,choiceLabel:'Move '+type+' Energy'}))))];}
-        if(r==='machDart')return Number(self?.movedToActiveTurn)===Number(ctx.state.turnNumber)?[{}]:[];
-        if(r==='jumpSlamGX')return [{}];
-        if(r==='bogTorrent')return [{choiceOption:0,choiceLabel:'Keep Energy'},...(self&&Object.values(self.energy||{}).some(v=>v>0)?[{choiceOption:1,choiceLabel:'Discard an Energy and Poison'}]:[])];
-        if(r==='mudBath')return Array.from({length:Math.min(12,Number(self?.energy?.Fighting||0))+1},(_,i)=>({choiceOption:i,choiceLabel:'Return '+i+' Fighting Energy'}));
-        if(r==='insatiableHunger')return Array.from({length:Math.min(12,ss.hand.filter(ref=>ctx.cardById(ref.cardId)?.trainerType==='Item').length)+1},(_,i)=>({choiceOption:i,choiceLabel:'Discard '+i+' Items'}));
-      }
       if(rule==='vicePincers114'){
           const n=florio114ApplyCombo(ctx,other(ctx),ctx.defender,ctx.action?.effectSelection);
           damage=Math.max(0,300-20*n);return;
@@ -3237,6 +3253,36 @@
     if(effect.type==='chooseDiscardForBonus'){const items=effect.zone==='bench'?(own(ctx).bench||[]).filter(s=>s&&matchesFilter(ctx.cardById(s.cardId),effect.filter,s)):(own(ctx).hand||[]).filter(r=>matchesFilter(ctx.cardById(r.cardId),effect.filter,r));const max=Math.min(Number(effect.max||items.length),items.length),out=[];for(let mask=0;mask<(1<<items.length);mask++){const picked=[];for(let i=0;i<items.length;i++)if(mask&(1<<i))picked.push(items[i].uid);if(picked.length<=max)out.push({effectSelection:picked.join(','),choiceLabel:`Discard ${picked.length}`});}return out;}
     if(effect.type==='lentalRule'){
       const rule=effect.rule,ss=own(ctx);
+      if(rule.startsWith('founja:')){
+        const r=rule.slice(7),self=ctx.attacker,foe=other(ctx);
+        if(r==='sonicBreak')return targetChoices('opponentPokemon',ctx);
+        if(r==='waterFountain')return [{effectSelection:'',choiceLabel:'Keep Water Energy'},...(ss.bench||[]).map(slot=>({target:'bench',benchIndex:Number(slot.benchSlot),choiceLabel:'Move to '+ctx.cardById(slot.cardId)?.name}))];
+        if(r==='fallingStar')return [{effectSelection:'',choiceLabel:'Keep Tool'},...(toolsOf(self).length?[{effectSelection:'tool',choiceLabel:'Discard Tool (+70)'}]:[])];
+        if(r==='flightPath')return (ss.bench||[]).flatMap(slot=>
+          (ctx.cardById(slot.cardId)?.attacks||[]).map((attack,i)=>({attack,i}))
+            .filter(({attack})=>String(attack.cost||'').length<=2)
+            .flatMap(({attack,i})=>{
+              const depth=Number(ctx.choiceDepth||0);
+              // Prevent an endless recursive menu if another Yanmega uses
+              // Flight Path. All concrete attacks remain available.
+              const nested=depth>=2&&attack.effect?.rule==='founja:flightPath'?[]:
+                choicesForEffect(attack.effect,{...ctx,attack,choiceDepth:depth+1});
+              return nested.map(sub=>{
+                const {effectSelection:copiedEffectSelection,...rest}=sub;
+                const details=sub.choiceLabel?` · ${sub.choiceLabel}`:
+                  sub.target?` · ${sub.target}${sub.benchIndex!=null?' '+(sub.benchIndex+1):''}`:'';
+                return {...rest,effectSelection:slot.uid+'|'+i,
+                  ...(copiedEffectSelection!=null?{copiedEffectSelection}:{}),
+                  choiceLabel:'Copy '+attack.name+' ('+(ctx.cardById(slot.cardId)?.name||'Bench Pokémon')+')'+details+' then switch'};
+              });
+            }));
+        if(r==='magicSplash'){const pokemon=pokemonOn(foe);return [{effectSelection:'',choiceLabel:'Deal 20 damage'},...pokemon.flatMap(src=>Object.keys(src.energy||{}).filter(t=>src.energy[t]>0).flatMap(type=>pokemon.filter(dst=>dst!==src).map(dst=>({effectSelection:src.uid+'|'+dst.uid+'|'+type,choiceLabel:'Move '+type+' Energy'}))))];}
+        if(r==='machDart')return Number(self?.movedToActiveTurn)===Number(ctx.state.turnNumber)?[{}]:[];
+        if(r==='jumpSlamGX')return [{}];
+        if(r==='bogTorrent')return [{choiceOption:0,choiceLabel:'Keep Energy'},...(self&&Object.values(self.energy||{}).some(v=>v>0)?[{choiceOption:1,choiceLabel:'Discard an Energy and Poison'}]:[])];
+        if(r==='mudBath')return Array.from({length:Math.min(12,Number(self?.energy?.Fighting||0))+1},(_,i)=>({choiceOption:i,choiceLabel:'Return '+i+' Fighting Energy'}));
+        if(r==='insatiableHunger')return Array.from({length:Math.min(12,ss.hand.filter(ref=>ctx.cardById(ref.cardId)?.trainerType==='Item').length)+1},(_,i)=>({choiceOption:i,choiceLabel:'Discard '+i+' Items'}));
+      }
       if(rule==='vicePincers114')return florio114Combos(other(ctx).active?.energy||{});
       if(rule==='energyThrash114')return [
         {effectSelection:'',choiceLabel:'Keep both Energy'},

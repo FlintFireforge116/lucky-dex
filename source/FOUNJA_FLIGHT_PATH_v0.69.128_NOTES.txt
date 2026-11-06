@@ -1,0 +1,19 @@
+LuckyDex v0.69.128 — Yanmega Flight Path and Founja attack-choice corrections
+Base version: v0.69.127 (versionCode 7107)
+New version: v0.69.128 (versionCode 7108)
+
+- Fixes Founja Jungle's misplaced attack-choice handlers: the legal-action generator
+  now gives Yanmega's Flight Path a selectable Bench Pokemon + attack choice.
+- The copied attack resolves through the normal damage pipeline, preserving
+  weaknesses, resistances and damage prevention rather than directly adding HP damage.
+- Flight Path switches Yanmega with the chosen Benched Pokemon AFTER the copied
+  attack and its follow-up effects and choices resolve.
+- Optional copied attack choices and Bench targets are retained, including
+  copied status effects, Tool bonuses and opponent's Bench targets.
+- Restores the proper legal-action choices for other affected Founja attacks.
+- Improved menu labels when Flight Path offers multiple possible copied moves.
+
+No change to card acquisition, pack probabilities, packs, art or existing saves.
+
+QA: 44 targeted regression tests passed across Flight Path, Founja, pack rarities
+and Classic combat. In-app Android gesture/UX remains to be verified on-device.

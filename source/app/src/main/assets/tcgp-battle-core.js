@@ -637,7 +637,7 @@
 
   function actionMatches(legal, action){
     if (!legal || !action || legal.type !== action.type) return false;
-    const keys = ['handIndex','cardId','target','benchIndex','attackIndex','attackCardId','abilityIndex','effectTarget','effectBenchIndex','evolutionCardId','choiceTarget','choiceBenchIndex','choiceHandIndex','choiceDiscardIndex','choiceDeckIndex','choiceCardId','choiceAttackIndex','choiceToolIndex','choiceOption','choiceSkip','effectEnergyType','effectSpecialEnergyUid','effectSelection'];
+    const keys = ['handIndex','cardId','target','benchIndex','attackIndex','attackCardId','abilityIndex','effectTarget','effectBenchIndex','evolutionCardId','choiceTarget','choiceBenchIndex','choiceHandIndex','choiceDiscardIndex','choiceDeckIndex','choiceCardId','choiceAttackIndex','choiceToolIndex','choiceOption','choiceSkip','effectEnergyType','effectSpecialEnergyUid','effectSelection','copiedEffectSelection'];
     return keys.every(key => action[key] == null || legal[key] === action[key]);
   }
 
