@@ -12,8 +12,12 @@
     try{full=require('./booster-art-v0260.js');}catch(_){full=null;}
   }
   function miniFromFull(fullPath=''){
-    const match=String(fullPath||'').match(/(?:^|\/)booster-art-v0260\/([^/]+\.webp)$/i);
-    return match?`booster-mini-v0266/${match[1]}`:'';
+    const raw=String(fullPath||'');
+    const match=raw.match(/(?:^|\/)booster-art-v0260\/([^/]+\.webp)$/i);
+    if(match)return `booster-mini-v0266/${match[1]}`;
+    if(/(?:^|\/)lental-pack-art\/founja-jungle\.webp$/i.test(raw))return 'lental-pack-art/founja-jungle.webp';
+    if(/(?:^|\/)lental-pack-art\/florio-nature-park\.webp$/i.test(raw))return 'lental-pack-art/florio-nature-park.webp';
+    return '';
   }
   // Mini sprites remain deliberately bundled/local even when the full-size
   // resolver has a higher-resolution remote override (Dragon Vault).

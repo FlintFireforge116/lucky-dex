@@ -1,0 +1,3 @@
+LuckyDex v0.69.125
+- Added the user-provided Founja Jungle booster art as the set's bundled local pack image.
+- Founja now resolves this art in the pack-opening scene and smaller booster previews.
