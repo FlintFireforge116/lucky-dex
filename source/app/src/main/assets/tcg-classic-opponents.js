@@ -22,7 +22,7 @@
    const candidates=available.length?available:availableTypes;
    return candidates[pick(seed,candidates.length)];
  }
- function generate({seed=Date.now(),excludeTypes=[],excludeArchetypes=[],sets=SETS,type=null,includeColorless=false}={}){
+ function generate({seed=Date.now(),excludeTypes=[],excludeArchetypes=[],sets=SETS,type=null,includeColorless=false,rarityFocus='any',basicOnly=false}={}){
    // A shuffle-bag of Energy types: a new random opponent never repeats a type
    // until all available types have been encountered, then a new cycle begins.
    const availableTypes=includeColorless||type==='Colorless'?TYPES:decks.ENERGY_TYPES.slice();
@@ -34,16 +34,16 @@
    if(!allowed.length)return {ok:false,error:'Select at least one set for the CPU card pool.'};
    for(let step=0;step<candidates.length;step++){
      const type=candidates[(first+step)%candidates.length];
-     const result=builder.buildDeck(ALL_PLAYABLE,{style:'random',types:[type],sets:allowed,randomSeed:(Number(seed)+step*2654435761)>>>0,excludeArchetypes});
+     const result=builder.buildDeck(ALL_PLAYABLE,{style:'random',types:[type],sets:allowed,rarityFocus,basicOnly,randomSeed:(Number(seed)+step*2654435761)>>>0,excludeArchetypes});
      if(!result.ok)continue;
      const legal=classic.validateDeck(result.cards);
      const energy=decks.analyzeDeck(result.cards).recommendedEnergyTypes;
      if(!legal.ok||(!['Colorless','Darkness','Metal'].includes(type)&&decks.analyzeDeck(result.cards,[type]).missingEnergyTypes.length)||!result.cards.some(id=>classic.cardById(id)?.types?.includes(type)))continue;
      if(result.cards.some(id=>{const card=classic.cardById(id);return !allowed.includes(card?.setId)&&!((allowed.includes('neo2')||allowed.includes('neo3'))&&['neo1-104','neo1-19'].includes(id));}))continue;
      const archetype=String(result.strategy.match(/· ([^·]+) core/)?.[1]||'Classic TCG').trim();
-     return {ok:true,type,cards:result.cards.slice(),energyTypes:['Colorless','Darkness','Metal'].includes(type)?result.energyTypes.slice():[type],sets:allowed.slice(),archetype,archetypeKey:result.archetypeKey,name:`${type} · ${archetype}`};
+     return {ok:true,type,rarityFocus,basicOnly,cards:result.cards.slice(),energyTypes:['Colorless','Darkness','Metal'].includes(type)?result.energyTypes.slice():[type],sets:allowed.slice(),archetype,archetypeKey:result.archetypeKey,name:`${type} · ${archetype}`};
    }
-   return {ok:false,error:'Could not build a legal random Classic TCG opponent deck.'};
+   return {ok:false,error:'No legal Classic CPU deck matches those rarity, evolution and set settings. Try another rarity or more sets.'};
  }
  return {generate,pickType,TYPES,SETS};
 });

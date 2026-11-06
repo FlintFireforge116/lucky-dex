@@ -23,7 +23,12 @@
   const ENERGY_TYPES = Object.freeze(['Grass','Fire','Water','Lightning','Psychic','Fighting','Darkness','Metal']);
   const ENERGY_CODE={G:'Grass',R:'Fire',W:'Water',L:'Lightning',P:'Psychic',F:'Fighting',D:'Darkness',M:'Metal'};
   const POCKET_RARITY_RANK=Object.freeze({'one diamond':1,'two diamond':2,'three diamond':3,'four diamond':4,'one star':5,'two star':6,'three star':7,'one shiny':8,'two shiny':9,'crown':10,'crown rare':10});
-  function pocketRarityRank(value){const key=String(value||'').trim().toLowerCase().replace(/[◇◆]/g,'diamond').replace(/[☆★]/g,'star').replace(/\s+/g,' ');if(POCKET_RARITY_RANK[key])return POCKET_RARITY_RANK[key];const diamonds=(String(value||'').match(/[◇◆]/g)||[]).length;if(diamonds)return diamonds;const stars=(String(value||'').match(/[☆★]/g)||[]).length;if(stars)return 4+stars;if(/shiny/i.test(String(value||'')))return /two|2/i.test(String(value||''))?9:8;if(/crown/i.test(String(value||'')))return 10;return 0;}
+  function pocketRarityRank(value){const key=String(value||'').trim().toLowerCase().replace(/[◊◇◆♦]/g,'diamond').replace(/[☆★]/g,'star').replace(/\s+/g,' ');if(POCKET_RARITY_RANK[key])return POCKET_RARITY_RANK[key];const diamonds=(String(value||'').match(/[◊◇◆♦]/g)||[]).length;if(diamonds)return diamonds;const stars=(String(value||'').match(/[☆★]/g)||[]).length;if(stars)return 4+stars;if(/shiny/i.test(String(value||'')))return /two|2/i.test(String(value||''))?9:8;if(/crown/i.test(String(value||'')))return 10;return 0;}
+  const FOCUS_RARITIES=Object.freeze([{rank:0,label:'Any Pokémon'},{rank:1,label:'1◇ · Common'},{rank:2,label:'2◇ · Uncommon'},{rank:3,label:'3◇ · Rare'},{rank:4,label:'4◇ · ex / Mega'}]);
+  const PRINT_RANK=new Map();
+  for(const p of data.PRINTS||[]){const rank=pocketRarityRank(p.rarity);if(rank>=1&&rank<=4){const previous=PRINT_RANK.get(p.gameplayId);if(previous==null||rank<previous)PRINT_RANK.set(p.gameplayId,rank);}}
+  function gameplayRarityRank(card){return PRINT_RANK.get(card?.id)||0;}
+  function preferredPokemon(card,rank,basicOnly=false){return card?.kind==='pokemon'&&(!basicOnly||card.stage==='Basic')&&(!rank||gameplayRarityRank(card)===rank);}
   function eligibleOwnedQuantity(row,maxRank){const quantity=Math.max(0,Number(row?.quantity||0)||0);if(!maxRank||!Array.isArray(row?.variants)||!row.variants.length)return quantity;return row.variants.reduce((sum,v)=>sum+(pocketRarityRank(v?.rarity)<=maxRank?Math.max(0,Number(v?.quantity||0)||0):0),0);}
   function deckEnergyTypes(deck){return deck?.energyMode==='auto'?analyzeDeck(deck.cards||[]).recommendedEnergyTypes:Array.isArray(deck?.energyTypes)?deck.energyTypes.slice():deck?.energyType?[String(deck.energyType)]:analyzeDeck(deck?.cards||[]).recommendedEnergyTypes;}
   function walkEffects(effect,fn){if(!effect||typeof effect!=='object')return;fn(effect);for(const e of Array.isArray(effect.effects)?effect.effects:[])walkEffects(e,fn);for(const key of ['heads','tails','effect'])if(effect[key]&&typeof effect[key]==='object')walkEffects(effect[key],fn);}
@@ -118,7 +123,7 @@
   function validateLoanerDeck(cards,energyTypes){ const legal=validateCore(cards,[],false);return energyTypes==null?legal:{...legal,...analyzeDeck(cards,energyTypes)}; }
 
   function* deckCandidates(ownedRows,options){
-    const opts=options||{},requestedTypes=[...new Set((Array.isArray(opts.types)?opts.types:opts.type?[opts.type]:[]).filter(t=>ENERGY_TYPES.includes(t)))].slice(0,2),style=opts.style==='random'?'random':'competitive',maxRarityRank=Math.max(0,Number(opts.maxRarityRank)||0);
+    const opts=options||{},requestedTypes=[...new Set((Array.isArray(opts.types)?opts.types:opts.type?[opts.type]:[]).filter(t=>ENERGY_TYPES.includes(t)))].slice(0,2),style=opts.style==='random'?'random':'competitive',rarityFocus=Math.max(0,Math.min(4,Number(opts.rarityFocus)||0)),basicOnly=opts.basicOnly===true,maxRarityRank=Math.max(0,Number(opts.maxRarityRank)||0);
     const eligibleRows=(ownedRows||[]).map(row=>({...row,quantity:eligibleOwnedQuantity(row,maxRarityRank)})).filter(row=>row.quantity>0);
     const owned=ownershipMap(eligibleRows),pool=[...owned].map(([id,n])=>({card:data.cardById(id),n:Math.min(2,n)})).filter(r=>r.n>0&&r.card?.battleEnabled&&!r.card.loaner);
     const globalFamilyRoot=c=>{let current=c,guard=0;while(current?.kind==='pokemon'&&current.stage!=='Basic'&&current.evolvesFrom&&guard++<4){const prior=data.CARDS.find(x=>x?.kind==='pokemon'&&x.name===current.evolvesFrom);if(!prior)break;current=prior;}return data.normalizeName(current?.name||c?.name||'');};
@@ -138,10 +143,12 @@
     const hasMechanic=(c,type)=>{let found=false;for(const e of [c.effect,...(c.attacks||[]).map(a=>a.effect),...(c.abilities||[]).map(a=>a.effect)])walkEffects(e,e=>{if(e.type===type)found=true;});return found;};
     const focus=opts.cardId?data.cardById(opts.cardId):null;
     if(opts.cardId&&(!focus?.battleEnabled||!owned.get(focus.id)))return fail('The focus card must be owned and FULL. Non-FULL rules remain available for review, not silently enabled.');
-    let seeds=pool.filter(r=>r.card.kind==='pokemon'&&!strandedBasic(r.card)&&!hasKnownBattleEvolution(r.card));
+    let seeds=pool.filter(r=>r.card.kind==='pokemon'&&(basicOnly?r.card.stage==='Basic':!strandedBasic(r.card)&&!hasKnownBattleEvolution(r.card))); 
     const preMatch=c=>(!requestedTypes.length||requestedTypes.some(t=>data.hasType(c,t)))&&(!opts.setId||c.setId===opts.setId)&&(!opts.mechanic||hasMechanic(c,opts.mechanic))&&(!opts.status||c.support?.status===opts.status);
     if(!focus&&(requestedTypes.length||opts.setId||opts.mechanic||opts.status))seeds=seeds.filter(r=>preMatch(r.card));
     if(focus)seeds=[{card:focus}];
+    else if(rarityFocus||basicOnly)seeds=seeds.filter(r=>preferredPokemon(r.card,rarityFocus,basicOnly));
+    if(!seeds.length)return {ok:false,cards:[],energyTypes:[],errors:['No owned, battle-ready Pokémon matches that rarity and evolution-stage focus.']};
     const types=c=>Array.isArray(c?.types)?c.types:[c?.subtype].filter(Boolean);
     const values=new Map(),profilesByCard=new Map(),byName=new Map(),generatedByCard=new Map();
     const actualEnergyProfile=c=>ENERGY_TYPES.filter(t=>(c.attacks||[]).some(a=>[...(a.cost||'')].some(s=>ENERGY_CODE[s]===t)));
@@ -270,7 +277,7 @@
       // chosen family is the deck identity. A secondary family may be a Basic
       // or one-step support package, but never another full Stage 2/Mega engine.
       const focusPartnerAllowed=c=>!focus||focus.kind!=='pokemon'||familyRoot(c)===primaryFamily||((!truncatedAutoEndpoint(c)||directNamedAttackPartner(c))&&(line(c)?.length||Infinity)<=2);
-      const partnerAllowed=c=>randomPartnerAllowed(c)&&focusPartnerAllowed(c);
+      const partnerAllowed=c=>randomPartnerAllowed(c)&&focusPartnerAllowed(c)&&(!rarityFocus&&!basicOnly||preferredPokemon(c,rarityFocus,basicOnly)||familyRoot(c)===primaryFamily);
       // Professor's Research is Pocket's baseline draw engine. Keep two when owned
       // rather than letting niche higher-scored Trainers crowd both copies out.
       const research=data.cardById('P-A-007');if(research&&owned.get(research.id))while(add(research)){}
@@ -318,7 +325,7 @@
         if(namedAttackAffinity(c)>0||energyPayoffAffinity(c)>0)return true;
         const bundle=line(c);return !!bundle&&bundle.length===1;
       };
-      const pokemon=pool.filter(r=>r.card.kind==='pokemon'&&compatible(r.card)&&!strandedBasic(r.card)&&(familyRoot(r.card)===primaryFamily||!truncatedAutoEndpoint(r.card)||directNamedAttackPartner(r.card))).sort((a,b)=>affinity(b.card)-affinity(a.card)||value(b.card)-value(a.card)||a.card.id.localeCompare(b.card.id));
+      const pokemon=pool.filter(r=>r.card.kind==='pokemon'&&(!rarityFocus&&!basicOnly||preferredPokemon(r.card,rarityFocus,basicOnly)||familyRoot(r.card)===primaryFamily)&&compatible(r.card)&&!strandedBasic(r.card)&&(familyRoot(r.card)===primaryFamily||!truncatedAutoEndpoint(r.card)||directNamedAttackPartner(r.card))).sort((a,b)=>affinity(b.card)-affinity(a.card)||value(b.card)-value(a.card)||a.card.id.localeCompare(b.card.id));
       const pokemonTotal=()=>cards.map(data.cardById).filter(c=>c?.kind==='pokemon').length;
       const familyKeys=()=>new Set(cards.map(data.cardById).filter(c=>c?.kind==='pokemon').map(familyRoot));
       // Pick one gameplay endpoint per family and copy the whole evolution line
@@ -484,7 +491,7 @@
       const unbalancedEvolution=selectedPokemon.some(c=>c.stage!=='Basic'&&c.evolvesFrom&&(selectedNameCounts.get(data.normalizeName(c.name))||0)>(selectedNameCounts.get(data.normalizeName(c.evolvesFrom))||0));
       if(unbalancedEvolution)continue;
       const strandedPreEvolution=[...selectedRoots.entries()].some(([root,members])=>members.every(c=>c.stage==='Basic'&&(c.points||1)<=1)&&knownEvolvedRoots.has(root));
-      if(!focus&&avoidStrandedBasics&&strandedPreEvolution)continue;
+      if(!focus&&!basicOnly&&avoidStrandedBasics&&strandedPreEvolution)continue;
       const analysis=analyzeDeck(cards,primary),valid=validateDeck(cards,eligibleRows,primary),represented=representedEnergy();
       if(!valid.ok||analysis.unpowerable.length||analysis.missingEnergyTypes.length||analysis.warnings.some(w=>w.code==='orphan')||requestedTypes.some(t=>!represented.has(t)))continue;
       const selected=cards.map(data.cardById),trainerSupport=selected.filter(c=>c.kind==='trainer').reduce((s,c)=>s+trainerValue(c),0),basics=selected.filter(c=>c.kind==='pokemon'&&c.stage==='Basic').length;
@@ -501,7 +508,7 @@
       const score=evaluation.setupConsistency+evaluation.synergy+evaluation.attackerAvailability+trainerSupport+compositionBonus-evaluation.deadCardRisk-primary.length*18;
       const baseScore=score-strategyWarnings.length*80,officialArchetypePrior=style==='competitive'?Math.max(0,Math.min(60,Number(library?.archetypePrior?.(cards,primary))||0)):0;
       const finalScore=baseScore+officialArchetypePrior;
-      const candidate={ok:true,cards,energyTypes:primary,errors:[],warnings:[...analysis.warnings,...strategyWarnings],strategy:`${style==='random'?'Random viable':'Competitive'} · ${primary.join(' / ')} · ${seed.card.name} core · ${selected.filter(c=>c.kind==='pokemon').length} Pokémon / ${selected.filter(c=>c.kind==='trainer').length} Trainers`,focusCardId:seed.card.id,archetypeKey:data.normalizeName(core[0]?.name||seed.card.name),score:finalScore,baseScore,officialArchetypePrior,evaluation};
+      const candidate={ok:true,cards,energyTypes:primary,errors:[],warnings:[...analysis.warnings,...strategyWarnings],strategy:`${style==='random'?'Random viable':'Competitive'} · ${rarityFocus?FOCUS_RARITIES.find(r=>r.rank===rarityFocus).label+' · ':''}${basicOnly?'Basic-only · ':''}${primary.join(' / ')} · ${seed.card.name} core · ${selected.filter(c=>c.kind==='pokemon').length} Pokémon / ${selected.filter(c=>c.kind==='trainer').length} Trainers`,focusCardId:seed.card.id,archetypeKey:data.normalizeName(core[0]?.name||seed.card.name),score:finalScore,baseScore,officialArchetypePrior,evaluation};
       if(style==='random'){candidate.candidatesEvaluated=candidatesEvaluated;candidate.alternativesAvailable=seeds.length;candidate.buildStyle=style;return candidate;}
       candidates.push(candidate);
     }
@@ -569,5 +576,5 @@
     return {ok:true,errors:[],warnings:analyzeDeck(cards,energyTypes).warnings,deck:saved};
   }
 
-  return {BATTLE_DEFAULTS,LOANER_PLAYER_DECK,ENERGY_TYPES,deckEnergyTypes,analyzeDeck,ensureBattleState,copyLimitKey,validateDeck,validateLoanerDeck,buildQuickDeck,buildDeckAsync,buildTestSetup,saveDeck};
+  return {BATTLE_DEFAULTS,LOANER_PLAYER_DECK,ENERGY_TYPES,FOCUS_RARITIES,gameplayRarityRank,preferredPokemon,deckEnergyTypes,analyzeDeck,ensureBattleState,copyLimitKey,validateDeck,validateLoanerDeck,buildQuickDeck,buildDeckAsync,buildTestSetup,saveDeck};
 });

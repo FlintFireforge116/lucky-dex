@@ -25,7 +25,7 @@
       const cat=c.effect?.type==='playFossil'?'Fossil':c.kind==='pokemon'?'Pokémon':c.trainerSubtype||c.trainerType||'Trainer';
       if(f.category&&!(f.category==='Trainer'?c.kind==='trainer':f.category==='Pokémon'?c.kind==='pokemon':cat===f.category))return false;
       if(f.types?.length&&!f.types.slice(0,2).every(t=>typesOf(c).includes(t)))return false;
-      if(f.stage&&c.stage!==f.stage)return false;
+      if(f.stage&&c.stage!==f.stage)return false;if(f.rarity&&(!(c.kind==='pokemon')||decks.gameplayRarityRank(c)!==Number(f.rarity)))return false;
       if(f.setId&&!(c.setId===f.setId||printSets.get(c.id)?.has(f.setId)))return false;
       if(f.ex&&!(c.points>=2||/ ex$/i.test(c.name)))return false;
       if(f.mega&&!/^Mega /i.test(c.name))return false;

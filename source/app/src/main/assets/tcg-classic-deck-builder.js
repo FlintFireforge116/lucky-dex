@@ -31,6 +31,22 @@ const SET_IDS=Object.freeze(['base1','base2','base3','base5','gym1','gym2','neo1
 // archetype chips so each energy type has exactly one toggle.
 const ARCHETYPE_TYPES=Object.freeze([...new Set([...decks.ENERGY_TYPES,'Colorless'])]);
 const STAGE_RANK=Object.freeze({'Basic':0,'Stage 1':1,'Stage 2':2});
+const RARITY_FOCUS=Object.freeze([{id:'any',label:'Any rarity'},{id:'common',label:'Common'},{id:'uncommon',label:'Uncommon'},{id:'rare',label:'Rare / Holo'},{id:'ultra',label:'Ultra Rare · V / ex / VMAX'}]);
+function rarityTier(card){
+ let raw=String(card?.rarity||'').toLowerCase().trim();
+ // The Base Set battle catalogue predates stored rarity metadata; its 1999
+ // collector numbers are authoritative, but only for that exact original set.
+ if(!raw&&card?.setId==='base1'){
+   const n=Number(card.number);raw=n<=16?'rare holo':n<=22?'rare':n<=42?'uncommon':n<=69?'common':'';
+ }
+ if(/ultra|secret|illustration|double rare|radiant|shiny|vmax|vstar/i.test(raw))return 'ultra';
+ if(/^rare|holo rare|rare holo/i.test(raw))return 'rare';
+ if(/uncommon/.test(raw))return 'uncommon';
+ if(/common/.test(raw))return 'common';
+ return 'unknown';
+}
+function matchesRarity(card,focus='any',basicOnly=false){return card?.kind==='pokemon'&&(!basicOnly||card.stage==='Basic')&&(focus==='any'||rarityTier(card)===focus);}
+
 const norm=s=>String(s||'').toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'');
 function ownedMap(rows){const map=new Map();for(const row of rows||[]){const id=classic.cardById(row.gameplayId)?.id;if(id)map.set(id,(map.get(id)||0)+Math.max(0,Number(row.quantity)||0));}return map;}
 function attackTypes(card){const out=new Set();for(const attack of card?.attacks||[])for(const symbol of String(attack.cost||'')){const type=CODE_TO_TYPE[symbol];if(type&&decks.ENERGY_TYPES.includes(type))out.add(type);}return [...out];}
@@ -83,6 +99,7 @@ function completeLineFor(featured,candidates,pool){
 
 function fail(message){return {ok:false,cards:[],energyTypes:[],errors:[message],warnings:[],strategy:''};}
 function buildDeck(rows,options={}){
+ const rarityFocus=RARITY_FOCUS.some(r=>r.id===options.rarityFocus)?options.rarityFocus:'any',basicOnly=options.basicOnly===true;
  const style=options.style==='random'?'random':'competitive',owned=ownedMap(rows),allowedSets=(options.sets||SET_IDS).filter(s=>SET_IDS.includes(s)),scope=allowedSets.length?allowedSets:SET_IDS,pool=classic.CARDS.filter(c=>allowedInSetPool(c,scope)&&c.battleEnabled&&c.deckEligible!==false&&Number(owned.get(c.id)||0)>0),pokemonPool=pool.filter(c=>c.kind==='pokemon'),evolutionPool=pool.filter(c=>c.kind==='pokemon'||c.effect?.type==='playFossil');
  if([...pool].reduce((sum,c)=>sum+Math.min(4,owned.get(c.id)||0),0)<30)return fail('Not enough owned battle-ready Classic card copies to build a 30-card deck.');
  if(!pokemonPool.some(c=>c.stage==='Basic'))return fail('No owned battle-ready Basic Pokémon are available.');
@@ -90,7 +107,11 @@ function buildDeck(rows,options={}){
  // Competitive considers complete evolution families; Random draws a printed
  // Pokémon from the *entire* owned, battle-ready roster (not the top 14).
  const isEligible=c=>{const line=familyLine(c,evolutionPool);const required=new Set(line.flatMap(attackTypes)),special=specialCosts(line);return !!line.length&&required.size<=2&&line.every(member=>typeCompatible(member,requestedEnergy))&&Object.entries(special).every(([sym,n])=>!n||(classic.cardById(SPECIAL_COST_CARDS[sym])?.battleEnabled&&allowedInSetPool(classic.cardById(SPECIAL_COST_CARDS[sym]),scope)&&Number(owned.get(SPECIAL_COST_CARDS[sym])||0)>=n))&&(!requested.length||(c.types||[]).some(type=>requested.includes(type)));};
- let candidates=endpointCards(pokemonPool).filter(isEligible);
+ let candidates=(basicOnly?pokemonPool.filter(c=>c.stage==='Basic'):endpointCards(pokemonPool)).filter(isEligible);
+ // The selected tier determines the featured Pokémon, not its prerequisites.
+ // An Ultra Rare VMAX can still have the lower-rarity V it evolves from.
+ if(rarityFocus!=='any'||basicOnly)candidates=candidates.filter(c=>matchesRarity(c,rarityFocus,basicOnly));
+
  if(focus?.kind==='pokemon'){
    const focused=candidates.filter(c=>familyLine(c,evolutionPool).some(member=>member.name===focus.name&&member.stage===focus.stage));
    if(focused.length)candidates=focused;
@@ -101,10 +122,10 @@ function buildDeck(rows,options={}){
  const coreScore=c=>pokemonScore(c,evolutionPool)+
    (requested.length?(c.types||[]).includes(requested[0])?240:(c.types||[]).some(type=>requested.includes(type))?120:0:0);
  candidates.sort((a,b)=>coreScore(b)-coreScore(a)||Number(a.number)-Number(b.number));
- if(!candidates.length)return fail('No complete owned evolution family matches the selected Classic Energy types.');
+ if(!candidates.length)return fail('No complete owned evolution family matches the selected rarity, Basic-only and Energy type preferences. Widen the filter or collect the required evolution stages.');
  let featured=null,main=candidates[0],mainLine=[];
  if(style==='random'&&!focus){
-   let roster=pokemonPool.filter(isEligible);
+   let roster=pokemonPool.filter(c=>isEligible(c)&&matchesRarity(c,rarityFocus,basicOnly));
    // Exclusions only affect the *next main Pokémon*, never its legal support.
    const fresh=roster.filter(c=>!excluded.has(archetypeKey(c)));
    if(fresh.length)roster=fresh;
@@ -158,6 +179,7 @@ function buildDeck(rows,options={}){
  // Prefer an entire compatible evolution partner; never add an isolated Basic
  // whose strength depends upon an unavailable evolution (e.g. Base Set Koffing).
  const partnerCandidates=endpointCards(pokemonPool).filter(c=>
+   !basicOnly&&matchesRarity(c,rarityFocus,false)&&
    familyRoot(c,evolutionPool)!==mainRoot&&familyRoot(c,evolutionPool)!=='Koffing'&&familyLine(c,evolutionPool).length===2&&canFitEnergy(c)
  ).sort((a,b)=>{
    const newA=attackTypes(a).filter(t=>!selectedTypes.includes(t)).length;
@@ -179,7 +201,7 @@ function buildDeck(rows,options={}){
  // Supplement only when there is room and a genuinely useful independent role.
  // No arbitrary 14-Pokémon quota: extra Trainers are often more valuable.
  const evolvingNames=new Set(pokemonPool.filter(c=>c.evolvesFrom).map(c=>c.evolvesFrom));
- const usefulBasics=pokemonPool.filter(c=>c.stage==='Basic'&&
+ const usefulBasics=pokemonPool.filter(c=>matchesRarity(c,rarityFocus,true)&&c.stage==='Basic'&&
    !evolvingNames.has(c.name)&&familyRoot(c,evolutionPool)!==mainRoot&&canFitEnergy(c)&&standaloneScore(c)>=70
  ).sort((a,b)=>{
    // Do not splash an unrelated Fire attacker into every Water/Psychic/Fighting
@@ -252,9 +274,9 @@ function buildDeck(rows,options={}){
  // Fallback through remaining owned Trainers first, then compatible Basics. This remains legal but avoids stranded evolutions.
  const trainerFallback=pool.filter(c=>(c.kind==='trainer'||c.specialEnergy&&(!isDiscoveryEnergySupply(c,scope)||specialNeeds[c.id==='neo1-104'?'D':'M']>0))&&trainerIsUseful(c)).sort((a,b)=>Number(a.number)-Number(b.number));
  for(const c of trainerFallback){while(cards.length<30&&room(c)>0)add(c,1);if(cards.length>=30)break;}
- const fallbackBasics=pokemonPool.filter(c=>c.stage==='Basic'&&canFitEnergy(c)).sort((a,b)=>standaloneScore(b)-standaloneScore(a));
+ const fallbackBasics=pokemonPool.filter(c=>c.stage==='Basic'&&canFitEnergy(c)).sort((a,b)=>Number(matchesRarity(b,rarityFocus,basicOnly))-Number(matchesRarity(a,rarityFocus,basicOnly))||standaloneScore(b)-standaloneScore(a));
  for(const c of fallbackBasics){while(cards.length<30&&room(c)>0&&canFitEnergy(c))add(c,1);if(cards.length>=30)break;}
- if(cards.length<30&&!requestedEnergy.length){for(const c of pokemonPool.filter(c=>c.stage==='Basic')){if(!canFitEnergy(c))continue;while(cards.length<30&&room(c)>0)add(c,1);for(const type of attackTypes(c))if(!selectedTypes.includes(type)&&selectedTypes.length<2)selectedTypes.push(type);if(cards.length>=30)break;}}
+ if(cards.length<30&&!requestedEnergy.length){for(const c of pokemonPool.filter(c=>c.stage==='Basic').sort((a,b)=>Number(matchesRarity(b,rarityFocus,basicOnly))-Number(matchesRarity(a,rarityFocus,basicOnly)))){if(!canFitEnergy(c))continue;while(cards.length<30&&room(c)>0)add(c,1);for(const type of attackTypes(c))if(!selectedTypes.includes(type)&&selectedTypes.length<2)selectedTypes.push(type);if(cards.length>=30)break;}}
  // Final conservative fill: only Trainers, Special Energy, and Basics whose actual deck Energy profile stays at two types or fewer.
  if(cards.length<30){for(const c of pool.filter(c=>(c.kind==='trainer'||c.specialEnergy&&(!isDiscoveryEnergySupply(c,scope)||specialNeeds[c.id==='neo1-104'?'D':'M']>0)||c.stage==='Basic')&&trainerIsUseful(c))){while(cards.length<30&&room(c)>0){const trial=[...cards,c.id],profile=decks.analyzeDeck(trial).recommendedEnergyTypes;if(requestedEnergy.length&&!profile.every(t=>requestedEnergy.includes(t)))break;if(!requestedEnergy.length&&profile.length>2)break;add(c,1);}if(cards.length>=30)break;}}
  if(cards.length!==30){
@@ -274,8 +296,8 @@ function buildDeck(rows,options={}){
  const specialist=(main.types||[]).find(t=>t==='Darkness'||t==='Metal');
  const zoneLabel=finalEnergy.join(' / ');
  const label=specialist?`${specialist} · Basic Zone: ${zoneLabel}`:(requested.includes('Colorless')?`Colorless / ${zoneLabel}`:zoneLabel);
- return {ok:true,cards,energyTypes:finalEnergy,errors:[],warnings:[],style,archetypeKey:archetypeKey(featured||main),focusCardId:focus?.id||featured?.id||main.id,strategy:`${style==='random'?'Random featured':'Competitive'} · ${label} · ${featured?featured.name+' featured · ':''}${archetypeName(main,evolutionPool)} core · ${pokemonCount()} Pokémon / ${30-pokemonCount()} Trainers & Special Energy`};
+ return {ok:true,cards,energyTypes:finalEnergy,errors:[],warnings:[],style,archetypeKey:archetypeKey(featured||main),focusCardId:focus?.id||featured?.id||main.id,strategy:`${style==='random'?'Random featured':'Competitive'} · ${rarityFocus!=='any'?RARITY_FOCUS.find(r=>r.id===rarityFocus).label+' · ':''}${basicOnly?'Basic-only · ':''}${label} · ${featured?featured.name+' featured · ':''}${archetypeName(main,evolutionPool)} core · ${pokemonCount()} Pokémon / ${30-pokemonCount()} Trainers & Special Energy`};
 }
 function buildDeckAsync(rows,options,control={}){return new Promise(resolve=>{setTimeout(()=>{if(control.isCancelled?.())return resolve(null);resolve(buildDeck(rows,options));},0);});}
-return {buildDeck,buildDeckAsync,familyLine,familyRoot,attackTypes,ARCHETYPE_TYPES,SET_IDS};
+return {buildDeck,buildDeckAsync,familyLine,familyRoot,attackTypes,ARCHETYPE_TYPES,SET_IDS,RARITY_FOCUS,rarityTier,matchesRarity};
 });

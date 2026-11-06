@@ -1,0 +1,13 @@
+LuckyDex v0.69.130 — Pokémon rarity challenges
+
+- Added a featured Pokémon rarity focus in Classic TCG Auto Build: Any / Common / Uncommon / Rare-Holo / Ultra Rare.
+- Added a featured Pokémon gameplay diamond rarity focus in TCG Pocket Auto Build (1◇ to 4◇), independent of the existing owned-print maximum-rarity cap.
+- Added Basic Pokémon only options to both builders for unevolved challenge decks.
+- Preserved legal evolution prerequisites and Trainer support even when those cards are lower rarity.
+- Added manual catalogue rarity filters to Classic and Pocket deck editors.
+- Added CPU opponent rarity / Basic-only preferences in Classic random battles and Pocket Random Solo battles.
+- Kept Pocket fixed official Solo decks and their difficulty levels unchanged.
+- Corrected Pocket diamond rarity parser to accept the printed ◊ character used by card data.
+- Does not change card ownership, card text, pack rarity or battle rewards.
+
+Verification: new tests in tests/v069130-rarity-focus.test.cjs.

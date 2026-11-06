@@ -1,7 +1,7 @@
 (function(root,factory){
- if(typeof module==='object'&&module.exports)module.exports=factory(require('./tcg-classic-battle-data.js'),require('./tcg-classic-decks.js'));
- else root.LuckyDexClassicTCGDeckWorkspace=factory(root.LuckyDexClassicTCGBattleData,root.LuckyDexClassicTCGDecks);
-})(typeof globalThis!=='undefined'?globalThis:this,function(data,decks){
+ if(typeof module==='object'&&module.exports)module.exports=factory(require('./tcg-classic-battle-data.js'),require('./tcg-classic-decks.js'),require('./tcg-classic-deck-builder.js'));
+ else root.LuckyDexClassicTCGDeckWorkspace=factory(root.LuckyDexClassicTCGBattleData,root.LuckyDexClassicTCGDecks,root.LuckyDexClassicTCGDeckBuilder);
+})(typeof globalThis!=='undefined'?globalThis:this,function(data,decks,builder){
 'use strict';
 const TYPES=Object.freeze(['Grass','Fire','Water','Lightning','Psychic','Fighting','Darkness','Metal','Colorless']);
 const norm=s=>String(s||'').toLowerCase().replace(/[^a-z0-9]+/g,' ');
@@ -13,7 +13,7 @@ function catalogue(rows){const owned=ownedMap(rows),byId=new Map((rows||[]).map(
 function query(rows,opts={}){
  const f=opts.filters||{},selected=counts(opts.cards),tokens=norm(opts.search).split(/\s+/).filter(Boolean),stages={'Basic':0,'Stage 1':1,'Stage 2':2};
  const results=(rows||[]).filter(row=>{const c=row.card||data.cardById(row.gameplayId);if(!c)return false;const category=c.kind==='pokemon'?'Pokémon':c.specialEnergy?'Special Energy':'Trainer';
-  if(f.category&&category!==f.category)return false;if(f.set&&c.setId!==f.set)return false;if(f.types?.length&&!f.types.slice(0,2).every(t=>typesOf(c).includes(t)))return false;if(f.stage&&c.stage!==f.stage)return false;if(f.owned&&!(row.quantity>0))return false;if(f.enabled&&!c.battleEnabled)return false;if(f.minOwned&&row.quantity<Number(f.minOwned))return false;if(f.inDeck==='yes'&&!selected.get(c.id)||f.inDeck==='no'&&selected.get(c.id))return false;if(f.retreat!==undefined&&f.retreat!==''&&Number(c.retreat)!==Number(f.retreat))return false;
+  if(f.rarity&&c.kind==='pokemon'&&builder?.rarityTier?.(c)!==f.rarity)return false;if(f.rarity&&c.kind!=='pokemon')return false;if(f.category&&category!==f.category)return false;if(f.set&&c.setId!==f.set)return false;if(f.types?.length&&!f.types.slice(0,2).every(t=>typesOf(c).includes(t)))return false;if(f.stage&&c.stage!==f.stage)return false;if(f.owned&&!(row.quantity>0))return false;if(f.enabled&&!c.battleEnabled)return false;if(f.minOwned&&row.quantity<Number(f.minOwned))return false;if(f.inDeck==='yes'&&!selected.get(c.id)||f.inDeck==='no'&&selected.get(c.id))return false;if(f.retreat!==undefined&&f.retreat!==''&&Number(c.retreat)!==Number(f.retreat))return false;
   if(!tokens.length)return true;const text=norm([c.name,c.id,c.number,c.kind,c.stage,c.trainerType,...typesOf(c),...(c.attacks||[]).map(a=>`${a.name} ${a.cost} ${a.damageText??a.damage??''}`),JSON.stringify(c.effect||{})].join(' '));return tokens.every(t=>text.includes(t));});
  const compare={name:(a,b)=>a.card.name.localeCompare(b.card.name),type:(a,b)=>typesOf(a.card).join('/').localeCompare(typesOf(b.card).join('/')),hp:(a,b)=>(b.card.hp||0)-(a.card.hp||0),owned:(a,b)=>b.quantity-a.quantity,stage:(a,b)=>(stages[a.card.stage]??3)-(stages[b.card.stage]??3),number:(a,b)=>String(a.card.setId).localeCompare(String(b.card.setId))||Number(a.card.number||0)-Number(b.card.number||0)}[opts.sort||'number'];
  results.sort((a,b)=>(compare?compare(a,b):0)||Number(a.card.number||0)-Number(b.card.number||0));const pageSize=Math.max(1,Math.min(200,Number(opts.pageSize)||48)),pages=Math.max(1,Math.ceil(results.length/pageSize)),page=Math.max(0,Math.min(pages-1,Number(opts.page)||0));return {rows:results.slice(page*pageSize,(page+1)*pageSize),total:results.length,pages,page};

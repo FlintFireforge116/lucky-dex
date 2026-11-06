@@ -25,6 +25,16 @@
     if(pool.length<2)throw new Error('Random Solo needs at least two official decks for '+difficulty);
     CHALLENGES.push({id:'random-'+difficulty.toLowerCase(),source:'Official',expansion:'Official Solo pool',difficulty,name:'Random Battle',description:`Face one of ${pool.length} validated official ${difficulty} decks, chosen each battle.`,energyTypes:[],deck:[],randomPool:true,repeatable:true,countsForCompletion:false,firstClear:{coins:0,dust:0},repeat:{coins:0,dust:0}});
   }
+  const CPU_CARD_POOL=data.CARDS.filter(c=>c.battleEnabled&&!c.loaner&&c.kind!=='energy')
+    .map(c=>({gameplayId:c.id,quantity:2,battleEnabled:true}));
+  function customRandomOpponent(options={}){
+    const rank=Math.max(0,Math.min(4,Number(options.cpuRarityFocus)||0));
+    const basicOnly=options.cpuBasicOnly===true;
+    if(!rank&&!basicOnly)return null;
+    const result=decks.buildQuickDeck(CPU_CARD_POOL,{style:'random',rarityFocus:rank,basicOnly,randomSeed:Number(options.seed)||Date.now()});
+    if(!result?.ok)throw new Error('No valid Pocket CPU deck for that rarity focus. Try another tier or disable Basic-only.');
+    return result;
+  }
   function randomRecipeFor(difficulty,seed){const pool=officialRecipes.filter(r=>r.difficulty===difficulty&&validOfficial(r));if(!pool.length)return null;const n=((((Number(seed)||0)>>>0)*1664525+1013904223)>>>0);return pool[n%pool.length];}
   function challengeById(id){return CHALLENGES.find(c=>c.id===id)||null;}
   function difficultyProgress(difficulty,state){
@@ -40,16 +50,16 @@
   let lastIssued=0;
   function createBattle(options){
     const opts=options||{},challenge=challengeById(opts.challengeId||CHALLENGES[0].id);if(!challenge)throw new Error('Unknown Pocket Solo challenge.');
-    const testMode=opts.testMode===true,opponentRecipe=!testMode&&challenge.randomPool?randomRecipeFor(challenge.difficulty,opts.seed):null;
-    if(challenge.randomPool&&!testMode&&!opponentRecipe)throw new Error('No valid official Random Battle deck for '+challenge.difficulty+'.');
-    const cpuDeck=testMode&&Array.isArray(opts.opponentDeck)?opts.opponentDeck.slice():(opponentRecipe?opponentRecipe.cards.slice():challenge.deck.slice());
-    const cpuEnergy=testMode?(opts.opponentEnergyTypes||decks.analyzeDeck(cpuDeck).recommendedEnergyTypes):(opponentRecipe?opponentRecipe.energyTypes.slice():challenge.energyTypes);
+    const testMode=opts.testMode===true,generatedOpponent=!testMode&&challenge.randomPool?customRandomOpponent(opts):null,opponentRecipe=!testMode&&challenge.randomPool&&!generatedOpponent?randomRecipeFor(challenge.difficulty,opts.seed):null;
+    if(challenge.randomPool&&!testMode&&!opponentRecipe&&!generatedOpponent)throw new Error('No valid official Random Battle deck for '+challenge.difficulty+'.');
+    const cpuDeck=testMode&&Array.isArray(opts.opponentDeck)?opts.opponentDeck.slice():(generatedOpponent?generatedOpponent.cards.slice():opponentRecipe?opponentRecipe.cards.slice():challenge.deck.slice());
+    const cpuEnergy=testMode?(opts.opponentEnergyTypes||decks.analyzeDeck(cpuDeck).recommendedEnergyTypes):(generatedOpponent?generatedOpponent.energyTypes.slice():opponentRecipe?opponentRecipe.energyTypes.slice():challenge.energyTypes);
     const valid=decks.validateLoanerDeck(cpuDeck,cpuEnergy);
     if(!valid.ok||!valid.energyValid||valid.unpowerable.length||valid.missingEnergyTypes.length||valid.warnings.some(w=>w.code==='orphan'))throw new Error('CPU deck has illegal cards, incomplete evolution lines or incompatible Energy.');
     const playerDeck=Array.isArray(opts.playerDeck)?opts.playerDeck.slice():data.BEGINNER_IVYSAUR_DECK.slice();
     const battle=core.createBattle({playerDeck,opponentDeck:cpuDeck,seed:opts.seed,firstSide:opts.firstSide||defaultFirstSide(opts.seed),playerEnergyType:opts.playerEnergyType,playerEnergyTypes:opts.playerEnergyTypes,opponentEnergyType:cpuEnergy[0],opponentEnergyTypes:cpuEnergy,manualPlayerSetup:!!opts.manualPlayerSetup});
     const issuedAt=lastIssued=Math.max(Date.now(),lastIssued+1);
-    return Object.assign(battle,{challengeId:challenge.id,difficulty:challenge.difficulty,battleId:'solo:'+issuedAt+':'+Math.random().toString(36).slice(2,10),issuedAt,testMode,playerDeck,opponentDeck:cpuDeck,opponentRecipeId:opponentRecipe?.id||challenge.recipeId||null,opponentRecipeName:opponentRecipe?.name||challenge.name,deckMetadata:{id:opts.playerDeckId||null,name:opts.playerDeckName||null,energyTypes:battle.sides.player.energyTypes.slice()}});
+    return Object.assign(battle,{challengeId:challenge.id,difficulty:challenge.difficulty,battleId:'solo:'+issuedAt+':'+Math.random().toString(36).slice(2,10),issuedAt,testMode,playerDeck,opponentDeck:cpuDeck,opponentRecipeId:opponentRecipe?.id||challenge.recipeId||null,opponentRecipeName:generatedOpponent?.strategy||opponentRecipe?.name||challenge.name,deckMetadata:{id:opts.playerDeckId||null,name:opts.playerDeckName||null,energyTypes:battle.sides.player.energyTypes.slice()}});
   }
   return {DIFFICULTIES,CHALLENGES,challengeById,difficultyProgress,isUnlocked,getChallengeProgress,createBattle};
 });
