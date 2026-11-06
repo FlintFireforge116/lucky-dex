@@ -1,0 +1,6 @@
+LuckyDex v0.69.126 — Lental booster artwork refresh
+
+- Replaced Florio Nature Park and Founja Jungle local booster images with the user-approved high-clarity designs.
+- Existing asset resolver paths remain unchanged so opened and sealed pack presentations use the refreshed artwork.
+- No card, rarity, battle, deck-builder or pack-distribution logic changes.
+- Apply on top of v0.69.125.
