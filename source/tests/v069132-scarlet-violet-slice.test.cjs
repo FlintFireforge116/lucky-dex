@@ -11,20 +11,20 @@ const builder=require(path.join(A,'tcg-classic-deck-builder.js'));
 const draft=[...Array(4).fill('sv1-30'),...Array(4).fill('sv1-32'),...Array(4).fill('sv1-33'),...Array(4).fill('sv1-36'),...Array(4).fill('sv1-188'),...Array(4).fill('sv1-180'),...Array(4).fill('sv1-189'),...Array(2).fill('sv1-194')];
 test('all 258 original prints have real identities, images and rarity labels',()=>{
  assert.equal(sv.CARDS.length,258);assert.equal(new Set(sv.CARDS.map(x=>x.id)).size,258);
- assert.equal(sv.CARDS.filter(x=>x.battleEnabled).length,101);
+ assert.equal(sv.CARDS.filter(x=>x.battleEnabled).length,256);
  for(const c of sv.CARDS){assert.ok(c.name&&c.rarity&&c.setId==='sv1'&&c.image.includes('/sv1/'));assert.equal(sv.cardById(c.id),c);}
 });
 test('hyper and full-art variants reuse the matching normal print mechanics only',()=>{
  assert.equal(sv.cardById('sv1-224').name,'Arcanine ex');
  assert.deepEqual(sv.cardById('sv1-224').attacks,sv.cardById('sv1-32').attacks);
  assert.equal(sv.cardById('sv1-245').rarity,'Special Illustration Rare');
- assert.equal(sv.cardById('sv1-245').battleEnabled,false); // Gardevoir ex Psychic Embrace not guessed.
+ assert.equal(sv.cardById('sv1-245').battleEnabled,true); // Gardevoir ex is now enabled with its discard-energy Ability.
  assert.equal(sv.cardById('sv1-257').deckEligible,false); // separate Energy Zone
 });
-test('unsupported printed rules are explicitly blocked in deck-building',()=>{
- assert.equal(sv.cardById('sv1-86').battleEnabled,false);
- const invalid=[...Array(29).fill('sv1-33'),'sv1-86'];
- assert.ok(d.validateDeck(invalid).errors.some(x=>/not battle-ready|cannot occupy/.test(x)));
+test('hybrid Basic Energy prints remain outside decks while all SV1 Pokémon are available',()=>{
+ assert.equal(sv.cardById('sv1-86').battleEnabled,true);
+ const invalid=[...Array(29).fill('sv1-33'),'sv1-257'];
+ assert.ok(d.validateDeck(invalid).errors.some(x=>/not battle-ready|cannot occupy|energy/i.test(x)));
  assert.equal(d.cardById('sv1-19').name,'Spidops ex');
 });
 test('supported move, trainer and passive effects pass the Classic engine validator',()=>{

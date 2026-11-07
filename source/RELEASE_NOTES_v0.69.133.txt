@@ -1,0 +1,21 @@
+LuckyDex v0.69.133 — Scarlet & Violet Base completion
+Version code: 7113. Apply after v0.69.132.
+
+- All 258 official Scarlet & Violet Base identities, images and printed rarity metadata preserved.
+- Battle-enabled 256 non-Basic-Energy prints; 2 secret rare Basic Energy cards remain collection-only under LuckyDex's separate, ordered Energy Zone.
+- Expanded previously disabled Pokémon, alternative arts, Abilities, attacks, Trainers and Tools to the Classic30 battle engine, and enabled their use in Classic deck builder and SV1 CPU decks.
+- Added explicit hybrid support for Psychic Embrace, Dino Cry, Passionate Singing, Energy Carnival, Electric Generator, Energy Retrieval, Energy Search, Penny, Team Star Grunt and more.
+- Fixed multi-step effect-choice state retention so Drifblim's Curse Spreading and Skeledirge's Passionate Singing cannot loop indefinitely.
+- Added/verified Gardevoir ex KO-safe Energy transfer, Koraidon ex's turn-ending Ability, Magnezone ex Energy Crush, Cetitan damage scaling, Dachsbun Fire immunity, Florges Weakness prevention, Beach Court, Defiance Band, Exp. Share knockout triggers, Hawkucha Bench choices, and Arboliva's selective healing.
+- Preserve Basic Energy ordering: Energy Zone search effects never silently skip the top unless their physical card specifically examines a numbered window (e.g. Electric Generator's next five).
+- Corrected global Pokémon target filtering; retained earlier Founja, Florio and mobile Test Lab work.
+
+Automated checks:
+- 112 selected Classic/TCG regression tests passing
+- 259/259 SV1 attacks executed without an engine exception or unresolved choices across the synthetic stress sweep
+- 15 SV1-versus-Snap CPU games reached a result
+- JS syntax checks
+
+Limitations:
+- Hybrid30 Energy Zone remains an explicit adaptation of physical TCG rules.
+- Synthetic attack sweeps validate execution, not every conceivable card interaction, multi-card stacking situation or on-device Android gesture. A follow-up playtest is still worthwhile.

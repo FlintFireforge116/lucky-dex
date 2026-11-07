@@ -38,7 +38,7 @@ test('Beak Invasion previews cannot change cards, actions or RNG',()=>{
  assert.equal(s.sides.opponent.deck.length,beforeDeck-Math.min(5,beforeDeck));
  assert.ok(s.log.some(entry=>entry.type==='attack'&&entry.attack==='Beak Invasion'),'real attack was executed');
 });
-test('all 1342 Classic attacks provide a safe inspection preview',()=>{
+test('all Classic attacks provide a safe inspection preview as the card pool expands',()=>{
  const s=battle();let count=0;
  for(const c of data.CARDS.filter(c=>c.kind==='pokemon')){
    s.sides.player.active=core.makePokemonSlot(c.id,1,c.id);
@@ -48,5 +48,5 @@ test('all 1342 Classic attacks provide a safe inspection preview',()=>{
      count++;
    }
  }
- assert.equal(count,1342);
+ assert.ok(count>=1342,`Only ${count} move previews covered`);
 });

@@ -11,9 +11,9 @@ function fixture(){
   return{container,tap};
 }
 test('Build and both prominent version labels are updated',()=>{
- assert.match(source('index.html'),/class="title-footer"[^\n]*v0\.69\.123/);
- assert.match(source('index.html'),/LUCKY DEX · v0\.69\.123/);
- assert.match(source('app-v0167.js'),/__LUCKYDEX_BUILD='0\.69\.123'/);
+ const version=require('node:fs').readFileSync(path.resolve(assets,'../../../build.gradle'),'utf8').match(/versionName '(\d+\.\d+\.\d+)'/)?.[1];assert.ok(version);
+ assert.ok(source('index.html').includes('v'+version));
+ assert.ok(source('app-v0167.js').includes("__LUCKYDEX_BUILD='"+version+"'"));
 });
 test('Android back delegates to active TCG screen before WebView history can break the shell',()=>{
  const app=source('app-v0167.js').split('window.handleLuckyBack=function(){')[1],ui=source('tcgp-battle-ui.js');
