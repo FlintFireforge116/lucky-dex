@@ -1,0 +1,2 @@
+LuckyDex v0.69.131
+- Corrected the card name casing for Mew's Getaway in Founja Jungle.
