@@ -72,9 +72,13 @@ test('Aquapolis CPU decks generate and AI can advance with the complete set',()=
   let steps=0;for(;steps<110&&!['complete','finished','gameOver'].includes(s.phase);steps++){const side=s.choiceSide||s.activeSide||'player',act=ai.chooseAction(s,side);if(!act)break;core.applyAction(s,side,act);}assert.ok(steps>15,`seed ${seed}: ${steps}`);
  }
 });
-test('version identifiers and start screen labels are synchronised for 0.69.146',()=>{
+test('Android, JavaScript and both visible version labels always agree',()=>{
  const gradle=fs.readFileSync(path.resolve(A,'../../../build.gradle'),'utf8'),html=fs.readFileSync(path.join(A,'index.html'),'utf8'),js=fs.readFileSync(path.join(A,'app-v0167.js'),'utf8');
- assert.match(gradle,/versionName '0\.69\.146'/);assert.match(gradle,/versionCode 7126/);assert.match(js,/window\.__LUCKYDEX_BUILD='0\.69\.146'/);assert.equal(html.split('v0.69.146').length-1,2);
+ const version=/versionName '([^']+)'/.exec(gradle)?.[1],code=Number(/versionCode (\d+)/.exec(gradle)?.[1]);
+ assert.match(version||'',/^0\.69\.\d+$/);
+ assert.equal(code,6980+Number(version.split('.').at(-1)),'versionCode sequence must stay in sync');
+ assert.ok(js.includes("window.__LUCKYDEX_BUILD='"+version+"'"));
+ assert.equal(html.split('v'+version).length-1,2);
 });
 test('Weakness Guard removes weakness until end of opponent turn, then expires',()=>{
  const s=field(),p=s.sides.player,foe=s.sides.opponent;p.active=make(69);foe.active=make(91);p.hand=[{uid:'guard',cardId:'ecard2-141'}];

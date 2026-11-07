@@ -69,7 +69,11 @@ test('Flower Supplement requests actual choices only if basic Energy exists in h
 test('Playability filter prevents incomplete Crystal Type and other flagged cards in CPU decks',()=>{
  for(const seed of [17,29]){const r=opponents.generate({sets:['ecard2'],seed});assert.ok(r.ok,r.error);assert.equal(r.cards.length,30);assert.ok(r.cards.every(id=>classic.cardById(id)?.battleEnabled!==false));}
 });
-test('v0.69.145 is consistent in Android, build marker and splash labels',()=>{
- const build=fs.readFileSync(path.resolve(A,'../../../build.gradle'),'utf8'),js=fs.readFileSync(path.join(A,'app-v0167.js'),'utf8'),html=fs.readFileSync(path.join(A,'index.html'),'utf8');
- assert.match(build,/versionCode 7126/);assert.match(build,/versionName '0\.69\.146'/);assert.match(js,/window\.__LUCKYDEX_BUILD='0\.69\.146'/);assert.equal(html.split('v0.69.146').length-1,2);
+test('Android, JavaScript and both visible version labels always agree',()=>{
+ const gradle=fs.readFileSync(path.resolve(A,'../../../build.gradle'),'utf8'),html=fs.readFileSync(path.join(A,'index.html'),'utf8'),js=fs.readFileSync(path.join(A,'app-v0167.js'),'utf8');
+ const version=/versionName '([^']+)'/.exec(gradle)?.[1],code=Number(/versionCode (\d+)/.exec(gradle)?.[1]);
+ assert.match(version||'',/^0\.69\.\d+$/);
+ assert.equal(code,6980+Number(version.split('.').at(-1)),'versionCode sequence must stay in sync');
+ assert.ok(js.includes("window.__LUCKYDEX_BUILD='"+version+"'"));
+ assert.equal(html.split('v'+version).length-1,2);
 });

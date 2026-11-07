@@ -737,6 +737,7 @@
           // Classic resolves this use cost as one attack, discarding two Energy
           // in the effect resolver's normal deterministic order.
           const automaticCost=state.format==='classic'&&attack.effect?.type==='discardEnergyCard'&&attack.effect?.target==='self'&&attack.effect?.useCost;
+          if(automaticCost&&attack.effect.strictEnergyType&&attack.effect.energyType&&!Number(s.active.energy?.[attack.effect.energyType]||0)&&!(s.active.specialEnergy||[]).some(ref=>Number((ref.provides||data.cardById(ref.cardId)?.effect?.provides||{})[attack.effect.energyType]||0)>0))continue;
           for(const target of automaticCost?(choices.length?[{}]:[]):choices)actions.push({type:'attack',attackIndex,attackCardId,cardId:s.active.cardId,...target});
           if(state.format==='classic'&&s.active.cardId==='SNAPFOUNJA-032'&&effects.canPayCost(effectiveEnergy(state,side,s.active),attackCost(state,side,attack)+'C'))for(const b of state.sides[side==='player'?'opponent':'player'].bench){
             actions.push({type:'attack',attackIndex,attackCardId,cardId:s.active.cardId,target:'opponentBench',benchIndex:Number(b.benchSlot)});

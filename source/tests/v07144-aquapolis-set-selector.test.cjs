@@ -57,9 +57,10 @@ test('current version matches Android, JavaScript and both visible labels',()=>{
  const gradle=fs.readFileSync(path.resolve(__dirname,'../app/build.gradle'),'utf8');
  const html=fs.readFileSync(path.join(A,'index.html'),'utf8');
  const js=fs.readFileSync(path.join(A,'app-v0167.js'),'utf8');
- assert.match(gradle,/versionName '0\.69\.146'/);assert.match(gradle,/versionCode 7126/);
- assert.match(js,/window\.__LUCKYDEX_BUILD='0\.69\.146'/);
- assert.equal(html.split('v0.69.146').length-1,2);
+ const version=/versionName '([^']+)'/.exec(gradle)?.[1];assert.match(version||'',/^0\.69\.\d+$/);
+ assert.equal(Number(/versionCode (\d+)/.exec(gradle)?.[1]),6980+Number(version.split('.').at(-1)));
+ assert.ok(js.includes("window.__LUCKYDEX_BUILD='"+version+"'"));
+ assert.equal(html.split('v'+version).length-1,2);
  assert.ok(html.indexOf('tcg-classic-aquapolis.js')<html.indexOf('tcg-classic-battle-data.js'));
  assert.ok(html.indexOf('tcg-classic-set-picker.js')<html.indexOf('tcg-classic-deck-editor.js'));
 });
