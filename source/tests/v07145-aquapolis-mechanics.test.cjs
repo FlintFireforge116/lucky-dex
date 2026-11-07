@@ -10,12 +10,12 @@ const ai=require(path.join(A,'tcgp-battle-ai.js'));
 const C=n=>classic.cardById('ecard2-'+n);
 function field(seed=40){const deck=opponents.generate({sets:['ecard2'],seed});assert.ok(deck.ok,deck.error);const s=core.createBattle({format:'classic',playerDeck:deck.cards,opponentDeck:deck.cards,playerEnergyTypes:['Psychic','Grass','Water','Fire','Lightning','Fighting','Darkness','Metal'],opponentEnergyTypes:['Psychic','Grass','Water','Fire','Lightning','Fighting','Darkness','Metal'],seed,firstSide:'player'});s.phase='battle';s.activeSide='player';s.turnNumber=7;s.sides.player.turnCount=4;s.sides.opponent.turnCount=3;return s;}
 function ctx(s,who='player',action={}){return {...core.effectContext(s,who,action,s.sides[who].active),random:()=>0.1};}
-test('Aquapolis second mechanics pass enables over 120 prints and retains honest Crystal gating',()=>{
+test('Aquapolis second mechanics pass effects remain enabled after full completion',()=>{
  assert.ok(aqua.coverage().battleEnabled>=128,aqua.coverage().battleEnabled);
  for(const id of [13,19,20,34,42,49,54,63,121,122,124,132,140])assert.ok(C(id).battleEnabled,`ecard2-${id}`);
  assert.equal(C('H14').battleEnabled,C(19).battleEnabled,'Kingdra holo 14 must match print 19');
  assert.equal(C('H12').battleEnabled,C(16).battleEnabled,'Hypno holo 12 must match print 16');
- for(const id of [148,149,150])assert.equal(C(id).battleEnabled,false,'Crystal Type stays gated');
+ for(const id of [148,149,150])assert.equal(C(id).battleEnabled,true,'Crystal Type now enabled');
  for(const c of aqua.CARDS.filter(x=>x.battleEnabled))for(const e of [...(c.attacks||[]),...(c.abilities||[])])assert.ok(fx.supportsEffect(e.effect),`${c.id} ${e.name}`);
 });
 test('E-Card Exeggutor variable damage uses attached Energy, including the Bench',()=>{
@@ -71,5 +71,5 @@ test('Playability filter prevents incomplete Crystal Type and other flagged card
 });
 test('v0.69.145 is consistent in Android, build marker and splash labels',()=>{
  const build=fs.readFileSync(path.resolve(A,'../../../build.gradle'),'utf8'),js=fs.readFileSync(path.join(A,'app-v0167.js'),'utf8'),html=fs.readFileSync(path.join(A,'index.html'),'utf8');
- assert.match(build,/versionCode 7125/);assert.match(build,/versionName '0\.69\.145'/);assert.match(js,/window\.__LUCKYDEX_BUILD='0\.69\.145'/);assert.equal(html.split('v0.69.145').length-1,2);
+ assert.match(build,/versionCode 7126/);assert.match(build,/versionName '0\.69\.146'/);assert.match(js,/window\.__LUCKYDEX_BUILD='0\.69\.146'/);assert.equal(html.split('v0.69.146').length-1,2);
 });

@@ -223,6 +223,59 @@ trainers[122]={kind:'tool',effect:noop,attacks:[{name:'Singe',cost:'R',damage:0,
 trainers[124]={kind:'tool',effect:noop,attacks:[{name:'Sleep Poison',cost:'G',damage:0,text:'Defender becomes Asleep and Poisoned.',effect:seq(par('sleep'),par('poison'))}],text:'Grass Pokémon Tool; grants Sleep Poison and expires at the end of this turn.'};
 trainers[132]={kind:'tool',effect:noop,attacks:[{name:'Psy Confuse',cost:'P',damage:0,text:'Defender becomes Confused.',effect:par('confusion')}],text:'Psychic Pokémon Tool; grants Psy Confuse and expires at the end of this turn.'};
 trainers[140]={kind:'tool',effect:noop,attacks:[{name:'Splatter',cost:'W',damage:0,text:'Choose an opposing Pokémon and deal 20 damage ignoring Weakness and Resistance.',effect:{type:'selectedDamage',target:'opponentPokemon',amount:20,ignoreWeakness:true,ignoreResistance:true}}],text:'Water Pokémon Tool; grants Splatter and expires at the end of this turn.'};
+// Aquapolis final pass: retain distinct print IDs, exact effects, and choice rules.
+attack(2,0,aq('fireBlow'),'Discard any number of Fire Energy from Arcanine; +30 per heads when flipping once per discarded card.');
+attack(9,0,aq('energyKick'),'Heads: move one Energy card from opponent Active to one of opponent Bench.');
+attack(10,0,aq('burningFang'),'Optional coin: on heads discard Fire Energy from Entei and Burn the defender.');
+attack(12,0,aq('superEggsplosion'),'Discard Energy from your Pokémon, flip a coin per discarded Energy, 40 damage per heads.');
+attack(12,1,{type:'selectedEnergyDamage',target:'opponentBench',amount:10,energyType:'Grass'},'Choose an opposing Benched Pokémon: 10 damage per Grass Energy attached to Exeggutor.');
+attack(15,0,fl({type:'discardEnergyCard',target:'self',energyType:'Fire',amount:1}), 'Tails: discard one Fire Energy from Houndoom.');
+attack(15,1,aq('darkImpact'), 'Defending Pokémon cannot use Poké-Powers next turn.');
+attack(22,0,aq('steelWave'),'30 damage and 10 to each opposing Benched Pokémon matching defending Pokémon type.');
+attack(23,0,aq('burningSludge'),'Flip for each attached Grass Energy; any heads: opponent Active becomes Poisoned and Burned.');
+attack(32,0,aq('snatch'),'Optionally switch opponent Active with a previously undamaged opposing Benched Pokémon before the 20 damage.');
+attack(32,1,aq('heavyMetal'),'30 plus 20 for each heads when flipping once per attached Metal Energy.');
+powers[6]=activated('Happy Healing',aq('happyHealing'));
+powers[10]=passive('Pure Body',aq('pureBodyFire'));
+powers[11]=activated('Energy Return',aq('energyReturn'),{oncePerTurn:false});
+powers[17]=passive('Fluff',aq('fluff'));
+powers[21]=activated('Ion Coating',aq('ionCoating'));
+powers[22]=activated('Magnetic Flow',aq('magneticFlow'),{activeOnly:true});
+powers[23]=passive('Heavyweight',aq('heavyweight'));
+powers[37]=passive('Pure Body',aq('pureBodyWater'));
+powers[38]=activated('Strange Tentacles',aq('strangeTentacles'));
+powers[39]=activated('Miracle Shift',aq('miracleShift'));
+powers[41]=activated('Dark Moon',aq('darkMoon'),{activeOnly:true});
+powers[44]=passive('Anti-Lightning',aq('antiLightning'));
+powers[48]=activated('Scavenger Hunt',aq('scavengerHunt'));
+trainers[118]={kind:'stadium',effect:{type:'stadiumAction',effect:aq('apricornForest')},text:'Once each turn: flip heads, reveal Basic Energy from hand; bench matching Basic Pokémon from deck.'};
+trainers[119]={kind:'tool',effect:noop,attacks:[{name:'Plunder',cost:'D',damage:10,text:'Discard any attached Trainer cards from the Defending Pokémon before damage.',effect:{type:'discardTool',target:'opponentActive',amount:'all'}}],text:'Darkness Pokémon: grants Plunder, then discard this Technical Machine at end of turn.'};
+trainers[125]={kind:'tool',effect:aq('healingBerryPassive'),text:'End of either turn, at 20 HP or less, heal 30 damage and discard.'};
+trainers[127]={kind:'tool',effect:noop,attacks:[{name:'Discharge',cost:'L',damage:0,damageText:'40×',text:'Discard all attached Lightning Energy; flip for each, 40 damage per heads.',effect:aq('conduction40')}],text:'Lightning Pokémon: temporary Discharge attack.'};
+trainers[128]={kind:'tool',effect:{type:'previousEvolutionAttacks'},text:'May use attacks printed on previous Evolution cards in this Pokémon’s stack; discard when used.'};
+trainers[129]={kind:'tool',effect:noop,attacks:[{name:'Metal Reversal',cost:'M',damage:10,text:'Optionally switch the defender with its Bench before dealing damage.',effect:aq('snatch')}],text:'Metal Pokémon: temporary Metal Reversal attack.'};
+trainers[131]={kind:'stadium',effect:aq('pokemonParkPassive'),text:'When Energy is attached from hand to your Benched Pokémon, heal 10 damage from that Pokémon.'};
+trainers[134]={kind:'item',effect:aq('superEnergyRemoval2'),text:'Two heads: discard all opponent Active Energy; two tails: discard all your Active Energy; mixed: no effect.'};
+trainers[135]={kind:'tool',effect:aq('timeShardPassive'),text:'If knocked out by defending Pokémon attack on opponent turn, return up to 2 attached basic Energy to hand.'};
+trainers[136]={kind:'supporter',effect:aq('townVolunteers'),text:'Shuffle up to five Pokémon or Basic Energy cards from discard into deck.'};
+trainers[138]={kind:'stadium',effect:{type:'stadiumAction',effect:aq('underseaRuins')},text:'Once each turn, flip heads to de-evolve one of your evolved Pokémon; discard top Evolution card.'};
+trainers[139]={kind:'stadium',effect:{type:'stadiumAction',effect:aq('powerPlant')},text:'Once each turn, trade one basic Energy card in hand for one from discard.'};
+trainers[141]={kind:'tool',effect:aq('weaknessGuardPassive'),onAttach:{type:'weaknessGuard',duration:'opponentTurn'},text:'No Weakness; discard at end of next opponent turn.'};
+trainers[144]={kind:'energy',effect:{type:'specialEnergy',provides:{Miracle:1}},text:'One Energy of any type; attaching from hand puts 10 damage on the recipient.'};
+trainers[145]={kind:'energy',effect:{type:'specialEnergy',provides:{Colorless:3}},text:'Attach to Evolved Pokémon only: three Colorless Energy, cannot retreat, expires at end of turn.'};
+trainers[146]={kind:'energy',effect:{type:'specialEnergy',provides:{Colorless:1}},text:'One Energy of any Basic Energy type currently attached to its Pokémon; otherwise Colorless.'};
+trainers[147]={kind:'energy',effect:{type:'specialEnergy',provides:{Colorless:1}},text:'Provides Colorless; attaching from hand to your Active Pokémon lets you switch with Bench.'};
+// Crystal Type changes only while the printed basic Energy type is freshly attached.
+for(const [id,names] of [[148,['Water','Lightning','Psychic']],[149,['Fire','Water','Psychic']],[150,['Grass','Lightning','Fire']]]){
+  powers[id]=passive('Crystal Type',aq('crystalType'),{printedTypes:names});
+}
+attack(148,0,recoil(10),'40 damage; Kingdra takes 10 recoil damage.');
+attack(148,1,aq('dualBurn'),'Flip two coins; for each tails discard one Energy attached to Kingdra.');
+attack(149,0,aq('lugiaPsychic'),'10 damage per Energy attached to defending Pokémon.');
+attack(149,1,{type:'discardEnergyCard',target:'self',amount:1,useCost:true},'Discard one Energy from Lugia to use Steam Blast.');
+attack(150,0,par('poison'),'Poison the defending Pokémon.');
+attack(150,1,aq('rollingThunder'),'Flip: heads 10 to all opposing Bench; tails 10 to own Bench.');
+
 // There are intentionally no fake effects for the Crystal Pokémon and Cubes.
 
 function getAttackRule(n,i){return rules[n+':'+i]||null;}
@@ -251,7 +304,7 @@ function parse(id){const original=holoPairs[id]||id,fields=labels.get(original);
   const isTM=/ Cube 01$/.test(name),tool=['Healing Berry','Memory Berry','Time Shard','Weakness Guard'].includes(name),stadium=['Apricorn Forest','Pokémon Park','Undersea Ruins','Power Plant'].includes(name),supporter=['Forest Guardian','Juggler','Pokémon Fan Club','Seer','Town Volunteers','Traveling Salesman'].includes(name);
   const trainer=trainers[n];
   if(!trainer)reasons.push(`Printed ${isTM?'Technical Machine':tool?'Tool':stadium?'Stadium':supporter?'Supporter':'Trainer'} effect not implemented`);
-  Object.assign(card,{trainerType:isTM||tool?'Tool':stadium?'Stadium':supporter?'Supporter':'Item',technicalMachine:isTM,attacks:trainer?.attacks||[],effect:trainer?.effect||null,text:trainer?.text||'Printed effect is not yet supported in battle.'});
+  Object.assign(card,{trainerType:isTM||tool?'Tool':stadium?'Stadium':supporter?'Supporter':'Item',technicalMachine:isTM,attacks:trainer?.attacks||[],onAttach:trainer?.onAttach||null,effect:trainer?.effect||null,text:trainer?.text||'Printed effect is not yet supported in battle.'});
  }else{
   const special=trainers[n];
   if(!special)reasons.push('Special Energy effect not yet implemented');

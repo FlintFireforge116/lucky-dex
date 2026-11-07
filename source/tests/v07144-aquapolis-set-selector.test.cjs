@@ -18,10 +18,10 @@ test('182 numbered Aquapolis prints including 32 independent H holos',()=>{
  assert.equal(C('H12').name,'Hypno');assert.equal(C(16).name,'Hypno');assert.equal(C('H12').attacks[0].name,C(16).attacks[0].name);
  assert.equal(C(148).name,'Kingdra');assert.equal(C(149).name,'Lugia');assert.equal(C(150).name,'Nidoking');
 });
-test('gates all incomplete mechanics instead of allowing blank effects in CPU decks',()=>{
- const unavailable=aqua.CARDS.filter(c=>!c.battleEnabled);assert.ok(unavailable.length>0);
- assert.equal(C(149).battleEnabled,false,'Crystal Type remains gated');
- assert.equal(C(119).battleEnabled,false,'Technical Machine cube remains gated');
+test('cards are enabled only when their effects are supported',()=>{
+ const unavailable=aqua.CARDS.filter(c=>!c.battleEnabled);
+ assert.equal(C(149).battleEnabled,true,'Crystal Type implemented');
+ assert.equal(C(119).battleEnabled,true,'Technical Machine cube implemented');
  assert.equal(C(101).battleEnabled,true,'two-heads Super Slice is supported');
  for(let c of unavailable){assert.equal(c.deckEligible,false);assert.equal(c.support.status,'PARTIAL');assert.ok(c.support.reasons.length,c.id);}
  for(let c of aqua.CARDS.filter(c=>c.battleEnabled)){
@@ -57,9 +57,9 @@ test('current version matches Android, JavaScript and both visible labels',()=>{
  const gradle=fs.readFileSync(path.resolve(__dirname,'../app/build.gradle'),'utf8');
  const html=fs.readFileSync(path.join(A,'index.html'),'utf8');
  const js=fs.readFileSync(path.join(A,'app-v0167.js'),'utf8');
- assert.match(gradle,/versionName '0\.69\.145'/);assert.match(gradle,/versionCode 7125/);
- assert.match(js,/window\.__LUCKYDEX_BUILD='0\.69\.145'/);
- assert.equal(html.split('v0.69.145').length-1,2);
+ assert.match(gradle,/versionName '0\.69\.146'/);assert.match(gradle,/versionCode 7126/);
+ assert.match(js,/window\.__LUCKYDEX_BUILD='0\.69\.146'/);
+ assert.equal(html.split('v0.69.146').length-1,2);
  assert.ok(html.indexOf('tcg-classic-aquapolis.js')<html.indexOf('tcg-classic-battle-data.js'));
  assert.ok(html.indexOf('tcg-classic-set-picker.js')<html.indexOf('tcg-classic-deck-editor.js'));
 });
