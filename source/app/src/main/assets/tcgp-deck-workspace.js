@@ -1,7 +1,7 @@
 (function(root,factory){
-  if(typeof module==='object'&&module.exports)module.exports=factory(require('./tcgp-battle-data.js'),require('./tcgp-battle-decks.js'),require('./tcgp-deck-library.js'));
-  else root.LuckyDexTCGPDeckWorkspace=factory(root.LuckyDexTCGPBattleData,root.LuckyDexTCGPBattleDecks,root.LuckyDexTCGPDeckLibrary);
-})(typeof globalThis!=='undefined'?globalThis:this,function(data,decks,library){
+  if(typeof module==='object'&&module.exports)module.exports=factory(require('./tcgp-battle-data.js'),require('./tcgp-battle-decks.js'),require('./tcgp-deck-library.js'),require('./tcg-deck-synergy.js'));
+  else root.LuckyDexTCGPDeckWorkspace=factory(root.LuckyDexTCGPBattleData,root.LuckyDexTCGPBattleDecks,root.LuckyDexTCGPDeckLibrary,root.LuckyDexDeckSynergy);
+})(typeof globalThis!=='undefined'?globalThis:this,function(data,decks,library,synergy){
   'use strict';
   const TYPES=['Grass','Fire','Water','Lightning','Psychic','Fighting','Darkness','Metal','Dragon','Colorless'];
   const typesOf=c=>Array.isArray(c?.types)&&c.types.length?c.types:[c?.subtype].filter(Boolean);
@@ -23,6 +23,7 @@
       const c=row.card||data.cardById(row.gameplayId);if(!c)return false;
       if(!opts.developer&&f.status&&f.status!=='FULL')return false;
       const cat=c.effect?.type==='playFossil'?'Fossil':c.kind==='pokemon'?'Pokémon':c.trainerSubtype||c.trainerType||'Trainer';
+      if(f.theme&&!synergy.matchesTheme(c,f.theme))return false;
       if(f.category&&!(f.category==='Trainer'?c.kind==='trainer':f.category==='Pokémon'?c.kind==='pokemon':cat===f.category))return false;
       if(f.types?.length&&!f.types.slice(0,2).every(t=>typesOf(c).includes(t)))return false;
       if(f.stage&&c.stage!==f.stage)return false;if(f.rarity&&(!(c.kind==='pokemon')||decks.gameplayRarityRank(c)!==Number(f.rarity)))return false;

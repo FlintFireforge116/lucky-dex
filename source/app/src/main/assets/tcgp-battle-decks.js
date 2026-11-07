@@ -3,11 +3,11 @@
   if (typeof module === 'object' && module.exports){
     data = require('./tcgp-battle-data.js');
     library = require('./tcgp-deck-library.js');
-    module.exports = factory(data,library);
+    module.exports = factory(data,library,require('./tcg-deck-synergy.js'));
   } else if (root){
-    root.LuckyDexTCGPBattleDecks = factory(data,library);
+    root.LuckyDexTCGPBattleDecks = factory(data,library,root.LuckyDexDeckSynergy);
   }
-})(typeof globalThis !== 'undefined' ? globalThis : this, function(data,library){
+})(typeof globalThis !== 'undefined' ? globalThis : this, function(data,library,synergy){
   'use strict';
 
   const BATTLE_DEFAULTS = Object.freeze({
@@ -24,6 +24,7 @@
   const ENERGY_CODE={G:'Grass',R:'Fire',W:'Water',L:'Lightning',P:'Psychic',F:'Fighting',D:'Darkness',M:'Metal'};
   const POCKET_RARITY_RANK=Object.freeze({'one diamond':1,'two diamond':2,'three diamond':3,'four diamond':4,'one star':5,'two star':6,'three star':7,'one shiny':8,'two shiny':9,'crown':10,'crown rare':10});
   function pocketRarityRank(value){const key=String(value||'').trim().toLowerCase().replace(/[◊◇◆♦]/g,'diamond').replace(/[☆★]/g,'star').replace(/\s+/g,' ');if(POCKET_RARITY_RANK[key])return POCKET_RARITY_RANK[key];const diamonds=(String(value||'').match(/[◊◇◆♦]/g)||[]).length;if(diamonds)return diamonds;const stars=(String(value||'').match(/[☆★]/g)||[]).length;if(stars)return 4+stars;if(/shiny/i.test(String(value||'')))return /two|2/i.test(String(value||''))?9:8;if(/crown/i.test(String(value||'')))return 10;return 0;}
+  const THEMES=synergy.THEMES;
   const FOCUS_RARITIES=Object.freeze([{rank:0,label:'Any Pokémon'},{rank:1,label:'1◇ · Common'},{rank:2,label:'2◇ · Uncommon'},{rank:3,label:'3◇ · Rare'},{rank:4,label:'4◇ · ex / Mega'}]);
   const PRINT_RANK=new Map();
   for(const p of data.PRINTS||[]){const rank=pocketRarityRank(p.rarity);if(rank>=1&&rank<=4){const previous=PRINT_RANK.get(p.gameplayId);if(previous==null||rank<previous)PRINT_RANK.set(p.gameplayId,rank);}}
@@ -123,7 +124,7 @@
   function validateLoanerDeck(cards,energyTypes){ const legal=validateCore(cards,[],false);return energyTypes==null?legal:{...legal,...analyzeDeck(cards,energyTypes)}; }
 
   function* deckCandidates(ownedRows,options){
-    const opts=options||{},requestedTypes=[...new Set((Array.isArray(opts.types)?opts.types:opts.type?[opts.type]:[]).filter(t=>ENERGY_TYPES.includes(t)))].slice(0,2),style=opts.style==='random'?'random':'competitive',rarityFocus=Math.max(0,Math.min(4,Number(opts.rarityFocus)||0)),basicOnly=opts.basicOnly===true,maxRarityRank=Math.max(0,Number(opts.maxRarityRank)||0);
+    const opts=options||{},theme=synergy.THEMES.some(t=>t.id===opts.theme)?opts.theme:'any',requestedTypes=[...new Set((Array.isArray(opts.types)?opts.types:opts.type?[opts.type]:[]).filter(t=>ENERGY_TYPES.includes(t)))].slice(0,2),style=opts.style==='random'?'random':'competitive',rarityFocus=Math.max(0,Math.min(4,Number(opts.rarityFocus)||0)),basicOnly=opts.basicOnly===true,maxRarityRank=Math.max(0,Number(opts.maxRarityRank)||0);
     const eligibleRows=(ownedRows||[]).map(row=>({...row,quantity:eligibleOwnedQuantity(row,maxRarityRank)})).filter(row=>row.quantity>0);
     const owned=ownershipMap(eligibleRows),pool=[...owned].map(([id,n])=>({card:data.cardById(id),n:Math.min(2,n)})).filter(r=>r.n>0&&r.card?.battleEnabled&&!r.card.loaner);
     const globalFamilyRoot=c=>{let current=c,guard=0;while(current?.kind==='pokemon'&&current.stage!=='Basic'&&current.evolvesFrom&&guard++<4){const prior=data.CARDS.find(x=>x?.kind==='pokemon'&&x.name===current.evolvesFrom);if(!prior)break;current=prior;}return data.normalizeName(current?.name||c?.name||'');};
@@ -148,6 +149,7 @@
     if(!focus&&(requestedTypes.length||opts.setId||opts.mechanic||opts.status))seeds=seeds.filter(r=>preMatch(r.card));
     if(focus)seeds=[{card:focus}];
     else if(rarityFocus||basicOnly)seeds=seeds.filter(r=>preferredPokemon(r.card,rarityFocus,basicOnly));
+    if(theme!=='any'&&!focus){const themed=seeds.filter(r=>synergy.pokemonThemeScore(r.card,theme)>0);if(!themed.length)return {ok:false,cards:[],energyTypes:[],errors:[`No battle-ready owned Pokémon can start a ${synergy.THEMES.find(t=>t.id===theme).label} deck under these filters.`]};seeds=themed;}
     if(!seeds.length)return {ok:false,cards:[],energyTypes:[],errors:['No owned, battle-ready Pokémon matches that rarity and evolution-stage focus.']};
     const types=c=>Array.isArray(c?.types)?c.types:[c?.subtype].filter(Boolean);
     const values=new Map(),profilesByCard=new Map(),byName=new Map(),generatedByCard=new Map();
@@ -180,7 +182,7 @@
     }
     for(const r of pool){const c=r.card;const stageBonus=c.stage==='Basic'?5:c.stage==='Stage 2'?-3:0,pointRisk=(c.points||1)>1?5:0;values.set(c.id,c.kind==='pokemon'?Math.max(0,...c.attacks.map(expectedAttackValue))+Number(c.hp)/10+stageBonus-pointRisk:0);profilesByCard.set(c.id,actualEnergyProfile(c));generatedByCard.set(c.id,selfGeneratedTypes(c));if(!byName.has(c.name))byName.set(c.name,[]);byName.get(c.name).push(r);}
     const value=c=>values.get(c.id)||0;
-    seeds.sort((a,b)=>value(b.card)-value(a.card)||a.card.id.localeCompare(b.card.id));
+    seeds.sort((a,b)=>synergy.pokemonThemeScore(b.card,theme)-synergy.pokemonThemeScore(a.card,theme)||value(b.card)-value(a.card)||a.card.id.localeCompare(b.card.id));
     const candidates=[];
     const profiles=[...new Map(pool.filter(r=>r.card.kind==='pokemon').map(r=>profilesByCard.get(r.card.id)).filter(p=>p.length&&p.length<=3).map(p=>[p.join('/'),p])).values()].sort((a,b)=>a.length-b.length||a.join('/').localeCompare(b.join('/')));
     // Competitive mode compares the best representative of each Energy/stage
@@ -315,14 +317,14 @@
         return bonus;
       };
       const affinityCache=new Map();
-      const affinity=c=>{if(affinityCache.has(c.id))return affinityCache.get(c.id);const structural=coreNames.has(data.normalizeName(c.name))?100:coreNames.has(data.normalizeName(c.evolvesFrom))?55:(profilesByCard.get(c.id)||[]).some(t=>primary.includes(t))?24:types(c).some(t=>types(seed.card).includes(t))?16:types(c).includes('Colorless')?2:0,result=structural+namedAttackAffinity(c)+energyPayoffAffinity(c);affinityCache.set(c.id,result);return result;};
+      const affinity=c=>{if(affinityCache.has(c.id))return affinityCache.get(c.id);const structural=coreNames.has(data.normalizeName(c.name))?100:coreNames.has(data.normalizeName(c.evolvesFrom))?55:(profilesByCard.get(c.id)||[]).some(t=>primary.includes(t))?24:types(c).some(t=>types(seed.card).includes(t))?16:types(c).includes('Colorless')?2:0,result=structural+namedAttackAffinity(c)+energyPayoffAffinity(c)+synergy.pokemonThemeScore(c,theme)*1.6;affinityCache.set(c.id,result);return result;};
       // Competitive filler must earn the setup cost of a second evolution line.
       // Generic same-Energy partners may be standalone Basics, but Stage 1/2
       // packages are reserved for explicit mechanic/energy synergy. This keeps
       // strong-but-unrelated three-stage lines from being bolted onto every deck.
       const competitivePartnerUseful=c=>{
         if(style!=='competitive'||familyRoot(c)===primaryFamily)return true;
-        if(namedAttackAffinity(c)>0||energyPayoffAffinity(c)>0)return true;
+        if(namedAttackAffinity(c)>0||energyPayoffAffinity(c)>0||synergy.pokemonThemeScore(c,theme)>0)return true;
         const bundle=line(c);return !!bundle&&bundle.length===1;
       };
       const pokemon=pool.filter(r=>r.card.kind==='pokemon'&&(!rarityFocus&&!basicOnly||preferredPokemon(r.card,rarityFocus,basicOnly)||familyRoot(r.card)===primaryFamily)&&compatible(r.card)&&!strandedBasic(r.card)&&(familyRoot(r.card)===primaryFamily||!truncatedAutoEndpoint(r.card)||directNamedAttackPartner(r.card))).sort((a,b)=>affinity(b.card)-affinity(a.card)||value(b.card)-value(a.card)||a.card.id.localeCompare(b.card.id));
@@ -388,7 +390,7 @@
       // spending competitive slots on Training Area or Elegant Cape.
       const isTerminalPokemon=c=>!pokemonCards.some(next=>next!==c&&next.stage!=='Basic'&&data.normalizeName(next.evolvesFrom)===data.normalizeName(c.name));
       const supportMatches=(c,f)=>{if(!matches(c,f))return false;if(!f?.stage)return true;if(style==='random')return mainEndpoint.stage===f.stage&&matches(mainEndpoint,f);return isTerminalPokemon(c);};
-      function trainerValue(c){let dead=false;
+      function trainerValue(c){let dead=false;const synergyCtx=synergy.context(cards.map(data.cardById).filter(Boolean),primary,theme);const relevance=synergy.trainerScore(c,synergyCtx);if(relevance===-Infinity)return -1000;
         const conditionFilterMatches=(card,filter)=>{if(!filter)return true;if(filter.attackName){const wanted=[].concat(filter.attackName).map(data.normalizeName);if(!(card.attacks||[]).some(a=>wanted.includes(data.normalizeName(a.name))))return false;}const rest={...filter};delete rest.attackName;return matches(card,rest);};
         const conditionSupported=condition=>{
           if(!condition||typeof condition!=='object')return true;
@@ -446,7 +448,7 @@
           let total=score*weight;for(const child of Array.isArray(e.effects)?e.effects:[])total+=scoreEffect(child,weight);
           if(e.effect&&typeof e.effect==='object')total+=scoreEffect(e.effect,weight);return total;
         }
-        let score=scoreEffect(c.effect);if(c.trainerType==='Stadium')score-=4;return dead?-1000:score;
+        let score=scoreEffect(c.effect);if(c.trainerType==='Stadium')score-=4;score+=Math.min(100,Math.max(0,relevance-8))*.42;return dead?-1000:score;
       }
       let scoredTrainers=pool.filter(r=>r.card.kind==='trainer'&&r.card.effect?.type!=='playFossil').map(r=>({...r,utility:trainerValue(r.card)})).sort((a,b)=>b.utility-a.utility||a.card.id.localeCompare(b.card.id));
       if(style==='random'&&randomFloat){
@@ -507,8 +509,11 @@
       const evaluation={legality:1,energyViability:1,evolutionCompleteness:1,setupConsistency:Math.min(5,basics)*5+evolutions*2,synergy:value(seed.card),attackerAvailability:selected.filter(c=>c.kind==='pokemon').reduce((s,c)=>s+value(c),0),trainerSupport,compositionBonus,deadCardRisk:Math.max(0,basics-5)*14};
       const score=evaluation.setupConsistency+evaluation.synergy+evaluation.attackerAvailability+trainerSupport+compositionBonus-evaluation.deadCardRisk-primary.length*18;
       const baseScore=score-strategyWarnings.length*80,officialArchetypePrior=style==='competitive'?Math.max(0,Math.min(60,Number(library?.archetypePrior?.(cards,primary))||0)):0;
-      const finalScore=baseScore+officialArchetypePrior;
-      const candidate={ok:true,cards,energyTypes:primary,errors:[],warnings:[...analysis.warnings,...strategyWarnings],strategy:`${style==='random'?'Random viable':'Competitive'} · ${rarityFocus?FOCUS_RARITIES.find(r=>r.rank===rarityFocus).label+' · ':''}${basicOnly?'Basic-only · ':''}${primary.join(' / ')} · ${seed.card.name} core · ${selected.filter(c=>c.kind==='pokemon').length} Pokémon / ${selected.filter(c=>c.kind==='trainer').length} Trainers`,focusCardId:seed.card.id,archetypeKey:data.normalizeName(core[0]?.name||seed.card.name),score:finalScore,baseScore,officialArchetypePrior,evaluation};
+      const thematicCount=selected.filter(c=>c.kind==='pokemon'&&synergy.pokemonThemeScore(c,theme)>0).length;
+      const thematicSupport=selected.filter(c=>c.kind==='trainer'&&synergy.trainerScore(c,synergy.context(selected.filter(x=>x.kind==='pokemon'),primary,theme))>=55).length;
+      const finalScore=baseScore+officialArchetypePrior+(theme==='any'?0:thematicCount*90+Math.min(3,thematicSupport)*14);
+      const plan=synergy.report(selected,primary,theme);
+      const candidate={ok:true,cards,energyTypes:primary,errors:[],warnings:[...analysis.warnings,...strategyWarnings,...plan.warnings.map(message=>({message}))],plan,strategy:`${style==='random'?'Random viable':'Competitive'} · ${theme!=='any'?synergy.THEMES.find(t=>t.id===theme).label+' · ':''}${rarityFocus?FOCUS_RARITIES.find(r=>r.rank===rarityFocus).label+' · ':''}${basicOnly?'Basic-only · ':''}${primary.join(' / ')} · ${seed.card.name} core · ${selected.filter(c=>c.kind==='pokemon').length} Pokémon / ${selected.filter(c=>c.kind==='trainer').length} Trainers`,focusCardId:seed.card.id,archetypeKey:data.normalizeName(core[0]?.name||seed.card.name),score:finalScore,baseScore,officialArchetypePrior,evaluation};
       if(style==='random'){candidate.candidatesEvaluated=candidatesEvaluated;candidate.alternativesAvailable=seeds.length;candidate.buildStyle=style;return candidate;}
       candidates.push(candidate);
     }
@@ -576,5 +581,5 @@
     return {ok:true,errors:[],warnings:analyzeDeck(cards,energyTypes).warnings,deck:saved};
   }
 
-  return {BATTLE_DEFAULTS,LOANER_PLAYER_DECK,ENERGY_TYPES,FOCUS_RARITIES,gameplayRarityRank,preferredPokemon,deckEnergyTypes,analyzeDeck,ensureBattleState,copyLimitKey,validateDeck,validateLoanerDeck,buildQuickDeck,buildDeckAsync,buildTestSetup,saveDeck};
+  return {BATTLE_DEFAULTS,LOANER_PLAYER_DECK,ENERGY_TYPES,THEMES,FOCUS_RARITIES,gameplayRarityRank,preferredPokemon,deckEnergyTypes,analyzeDeck,ensureBattleState,copyLimitKey,validateDeck,validateLoanerDeck,buildQuickDeck,buildDeckAsync,buildTestSetup,saveDeck};
 });

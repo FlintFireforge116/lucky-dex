@@ -1,0 +1,14 @@
+LuckyDex v0.69.135 — Deck strategy / metadata foundation
+Builds on v0.69.134.
+- Shared role and status metadata inferred from actual card effects and printed text, with targeted rule-hook overrides.
+- Strategy selections: Balanced, Sleep, Poison, Burn, Paralysis, Healing/stall, Energy acceleration, Disruption.
+- Works in Classic and Pocket Auto Build and generated Random CPU decks (official fixed Pocket Solo remains unchanged).
+- Type/stage relevance gates prevent off-type Stadiums and Tools from being indiscriminately added to decks.
+- Sleep enabler / payoff distinction; self-inflicted Sleep does not count as an opponent status engine.
+- Manual card filters for mechanics and strategy on both formats.
+- Build-plan report naming enablers, payoffs, consistency support, and weak or missing synergy.
+- Preserves legality, rarity focus, Basic-only, existing battle rules, cards, collection and packs.
+Known limitations:
+- Metadata heuristics require continuing validation for rare card interactions.
+- Pockets and Classic remain separate card formats; one combined deck cannot currently mix both.
+- This is a rule-derived heuristic planner, not an exhaustive competitive deck search/simulator.

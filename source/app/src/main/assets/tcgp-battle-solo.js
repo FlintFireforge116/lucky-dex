@@ -29,9 +29,9 @@
     .map(c=>({gameplayId:c.id,quantity:2,battleEnabled:true}));
   function customRandomOpponent(options={}){
     const rank=Math.max(0,Math.min(4,Number(options.cpuRarityFocus)||0));
-    const basicOnly=options.cpuBasicOnly===true;
-    if(!rank&&!basicOnly)return null;
-    const result=decks.buildQuickDeck(CPU_CARD_POOL,{style:'random',rarityFocus:rank,basicOnly,randomSeed:Number(options.seed)||Date.now()});
+    const basicOnly=options.cpuBasicOnly===true,theme=decks.THEMES.some(t=>t.id===options.cpuTheme)?options.cpuTheme:'any';
+    if(!rank&&!basicOnly&&theme==='any')return null;
+    const result=decks.buildQuickDeck(CPU_CARD_POOL,{style:'random',rarityFocus:rank,basicOnly,theme,randomSeed:Number(options.seed)||Date.now()});
     if(!result?.ok)throw new Error('No valid Pocket CPU deck for that rarity focus. Try another tier or disable Basic-only.');
     return result;
   }
