@@ -3592,8 +3592,8 @@
       case 'benchFromDeck':{const ss=own(ctx);for(let i=0;i<effect.amount;i++){const candidates=ss.deck.map((r,index)=>({r,index})).filter(({r})=>matchesFilter(ctx.cardById(r.cardId),effect.filter));if(!candidates.length||typeof ctx.benchCard!=='function')break;const hit=candidates[Math.floor(ctx.random(ctx.state)*candidates.length)],[ref]=ss.deck.splice(hit.index,1);if(ctx.benchCard(ss,ref)==null){ss.deck.splice(hit.index,0,ref);break;}log({type:'benchFromDeck',cardId:ref.cardId});}if(ctx.shuffle)ctx.shuffle(ctx.state,ss.deck);break;}
       case 'forceOpponentSwitch':{
         const ss=other(ctx);if(!ss.active||!ss.bench.length)break;
-        if(ctx.resolvingChoice&&ctx.action?.choiceTarget==='bench'){switchPokemon(ss,ctx.action.choiceBenchIndex,ctx.state);log({type:'switch',chosenBy:ctx.foeSide});break;}
-        if(typeof ctx.requestChoice==='function')ctx.requestChoice({kind:'switchBench',side:'opponent',effect});break;
+        if(ctx.resolvingChoice&&ctx.action?.choiceTarget==='bench'){switchPokemon(ss,ctx.action.choiceBenchIndex,ctx.state);log({type:'switch',chosenBy:effect.chooseBy==='attacker'?ctx.side:ctx.foeSide});break;}
+        if(typeof ctx.requestChoice==='function')ctx.requestChoice({kind:'switchBench',side:effect.chooseBy==='attacker'?'self':'opponent',selectionSide:ctx.foeSide,effect});break;
       }
       case 'revealHand':{const ss=effect.side==='self'?own(ctx):other(ctx);let refs=ss.hand.slice();if(effect.random){const n=Math.min(refs.length,Math.max(0,Number(effect.random)||0)),pool=refs.slice();refs=[];for(let i=0;i<n&&pool.length;i++){const index=Math.floor(ctx.random(ctx.state)*pool.length);refs.push(...pool.splice(index,1));}}log({type:'revealHand',revealedSide:effect.side||'opponent',cards:refs.map(r=>r.cardId)});break;}
       case 'peek':{

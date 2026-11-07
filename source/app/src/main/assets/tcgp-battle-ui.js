@@ -44,7 +44,7 @@
   function sandboxClassicCards(){if(!sandboxClassicRows)sandboxClassicRows=(root.LuckyDexClassicTCGBattleData?.CARDS||[]).filter(c=>c.battleEnabled&&c.deckEligible!==false&&!c.basicEnergy).map(c=>({gameplayId:c.id,name:c.name,card:c,quantity:4,battleEnabled:true,variants:[]}));return sandboxClassicRows;}
   function sandboxBanner(){return sandboxMode?'<section class="tcgp-battle-panel" style="margin:8px 0;padding:10px 12px"><strong>TEST LAB · ALL CARDS</strong><p style="margin:4px 0">All battle-ready cards are available in normal deck building and combat. Test decks exist only in this session. No collection changes, rewards or battle records.</p><button type="button" class="tcgp-battle-action secondary" data-tcgp-action="exit-sandbox">EXIT TEST LAB</button></section>':'';}
 
-  const CLASSIC_SETS=['base1','base2','base3','base5','gym1','gym2','neo1','neo2','neo3','neo4','base6','ecard1','ecard2','SNAPFLORIO','SNAPFOUNJA','sv1'];
+  const CLASSIC_SETS=['base1','base2','base3','base5','gym1','gym2','neo1','neo2','neo3','neo4','base6','ecard1','ecard2','ecard3','SNAPFLORIO','SNAPFOUNJA','sv1'];
   let opponentSetUI={search:'',sort:'release',selectedOnly:false};
   const CLASSIC_TYPES=['random',...classicOpponents.TYPES];
   const AI_LEVELS=['Beginner','Intermediate','Advanced','Expert'];

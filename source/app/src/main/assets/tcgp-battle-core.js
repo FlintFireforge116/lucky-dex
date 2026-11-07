@@ -476,6 +476,8 @@
     if(state.format==='classic'&&slot?.cardId==='SNAPFLORIO-002'&&slot.lastDamageSource?.attack&&
        slot.lastDamageSource.side!==side&&Number(slot.lastDamageSource.turn)===Number(state.turnNumber)-1)return 0;const gym=data.cardById(state.stadium?.cardId)?.id,ownerName=data.cardById(slot.cardId)?.name||'';let stadiumCost=gym==='gym1-104'?1:gym==='gym1-108'&&ownerName.startsWith("Misty's")?-1:0;
     if(state.format==='classic'&&slot?.cardId==='SNAPFOUNJA-018'&&(Number(slot.energy?.Water||0)>0))return 0;
+    // Skyridge Abra 46 Psychoflow: Psychic Energy makes its retreat cost zero.
+    if(state.format==='classic'&&slot?.cardId==='ecard3-46'&&!effects.abilitiesSuppressed(state,side,slot,data.cardById)&&Number(effectiveEnergy(state,side,slot).Psychic||0)>0)return 0;
     if(gym==='SNAPFLORIO-111'&&data.cardById(slot.cardId)?.stage==='Basic')stadiumCost-=1;
     if(gym==='sv1-167'&&data.cardById(slot.cardId)?.stage==='Basic')stadiumCost-=1;
     if(state.format==='classic'&&gym==='neo4-92'&&['Basic','Baby'].includes(data.cardById(slot.cardId)?.stage))stadiumCost+=1;
@@ -1221,7 +1223,7 @@
         beginEffectChoice(state,side,target,{kind:'switchBench',side:'self',effect:{type:'neoRule',rule:'aquapolis:warpEnergySwitch'},resume:'trainer'});
       }
       if(card.basicEnergy){
-        const crystal={'ecard2-148':['Water','Lightning','Psychic'],'ecard2-149':['Fire','Water','Psychic'],'ecard2-150':['Grass','Lightning','Fire']}[target.cardId];
+        const crystal={'ecard2-148':['Water','Lightning','Psychic'],'ecard2-149':['Fire','Water','Psychic'],'ecard2-150':['Grass','Lightning','Fire'],'ecard3-145':['Grass','Water','Psychic'],'ecard3-146':['Fire','Lightning','Fighting'],'ecard3-147':['Grass','Fire','Psychic'],'ecard3-148':['Grass','Fire','Fighting'],'ecard3-149':['Fire','Water','Lightning'],'ecard3-150':['Water','Lightning','Fighting']}[target.cardId];
         if(crystal?.includes(card.subtype))target.typeOverride={type:card.subtype,expiresTurn:state.turnNumber};
         if(['ecard2-10','ecard2-H8','ecard2-37','ecard2-H25'].includes(target.cardId)&&
            ((['ecard2-10','ecard2-H8'].includes(target.cardId)&&card.subtype==='Fire')||(['ecard2-37','ecard2-H25'].includes(target.cardId)&&card.subtype==='Water'))){

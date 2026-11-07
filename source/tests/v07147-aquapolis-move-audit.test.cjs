@@ -70,9 +70,11 @@ test('required Fire discard cannot be paid with Water energy for Growlithe Ember
  p.active.energy.Fire=1;assert.ok(core.legalActions(s,'player').some(x=>x.type==='attack'));
 });
 
-test('version numbers and splash labels updated to 0.69.147',()=>{
+test('version numbers and splash labels match the current Android release',()=>{
  const gradle=fs.readFileSync(path.resolve(A,'../../../build.gradle'),'utf8'),html=fs.readFileSync(path.join(A,'index.html'),'utf8'),app=fs.readFileSync(path.join(A,'app-v0167.js'),'utf8');
- assert.match(gradle,/versionCode 7127/);assert.match(gradle,/versionName '0\.69\.147'/);assert.match(app,/window\.__LUCKYDEX_BUILD='0\.69\.147'/);assert.equal(html.split('v0.69.147').length-1,2);
+ const version=/versionName '([^']+)'/.exec(gradle)?.[1];assert.match(version||'',/^0\.69\.\d+$/);
+ assert.equal(Number(/versionCode (\d+)/.exec(gradle)?.[1]),6980+Number(version.split('.').at(-1)));
+ assert.ok(app.includes("window.__LUCKYDEX_BUILD='"+version+"'"));assert.equal(html.split('v'+version).length-1,2);
 });
 test('Elekid Energy Kick can select and move Special Energy without creating or losing it',()=>{
  const s=field();s.sides.player.active=slot(9);s.sides.opponent.active=slot(69);
