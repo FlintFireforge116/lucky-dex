@@ -23,20 +23,23 @@ test('all 111 Neo Genesis cards have registered battle effects; only Basic Energ
  for(let n=106;n<=111;n++)assert.equal(neo.CARDS[n-1].deckEligible,false);
  for(let n of [19,104,105])assert.equal(neo.CARDS[n-1].deckEligible,true);
 });
-test('Special Darkness/Metal energy powers named attackers in Classic auto decks without changing Energy Zone types',()=>{
- for(const [id,special] of [['neo1-25','neo1-104'],['neo1-15','neo1-19'],['neo1-13','neo1-19']]){
+test('Basic Darkness/Metal from the Classic Energy Zone powers named attackers without requiring Special Energy',()=>{
+ for(const [id,type] of [['neo1-25','Darkness'],['neo1-15','Metal'],['neo1-13','Metal']]){
   const result=build.buildDeck(owned,{style:'competitive',sets:['neo1'],focusCardId:id,randomSeed:902});
   assert.equal(result.ok,true,id+': '+result.errors);assert.ok(result.cards.includes(id),id+' featured');
-  assert.ok(result.cards.includes(special),id+' requires '+special);
-  assert.ok(result.energyTypes.every(t=>!['Darkness','Metal'].includes(t)),id+' separate Energy Zone');
+  assert.ok(result.energyTypes.includes(type),id+' requires '+type+' from the separate Energy Zone');
  }
 });
-test('Darkness/Metal cards cannot become unpowerable main builds if the player does not own their Special Energy',()=>{
+test('Darkness/Metal builds remain viable without Special Energy ownership using the separate Basic Energy Zone',()=>{
  const without=owned.filter(row=>!['neo1-104','neo1-19'].includes(row.gameplayId));
  for(let seed=1;seed<=35;seed++){
-  const result=build.buildDeck(without,{style:'random',sets:['neo1'],randomSeed:seed});assert.equal(result.ok,true,'seed '+seed+' '+result.errors);
-  const cards=result.cards.map(classic.cardById).filter(c=>c?.kind==='pokemon');
-  for(const c of cards){for(const a of c.attacks||[]){assert.equal(String(a.cost).includes('D'),false,'Darkness cost missing Special Energy '+c.name);assert.equal(String(a.cost).includes('M'),false,'Metal cost missing Special Energy '+c.name);}}
+  const result=build.buildDeck(without,{style:'random',sets:['neo1'],randomSeed:seed});
+  assert.equal(result.ok,true,'seed '+seed+' '+result.errors);
+  assert.ok(classic.validateDeck(result.cards).ok);
+  assert.equal(result.cards.includes('neo1-104'),false);
+  assert.equal(result.cards.includes('neo1-19'),false);
+  const costs=new Set(result.cards.map(classic.cardById).filter(c=>c?.kind==='pokemon').flatMap(c=>(c.attacks||[]).flatMap(a=>[...String(a.cost)].filter(t=>t==='D'||t==='M'))));
+  for(const sym of costs)assert.ok(result.energyTypes.includes(sym==='D'?'Darkness':'Metal'),'Missing Basic Energy Zone type '+sym);
  }
 });
 test('Final Blow increases Heracross Megahorn from 60 to 120 at 20 remaining HP',()=>{

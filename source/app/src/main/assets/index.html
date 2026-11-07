@@ -75,7 +75,7 @@
     </div>
     <div class="title-partner-row" id="titlePartners"></div>
     <button id="titleContinueBtn" class="title-start">PRESS TO START</button>
-    <div class="title-footer"><span id="titleRankText">TRAINER RANK 1</span><span>v0.69.140</span></div>
+    <div class="title-footer"><span id="titleRankText">TRAINER RANK 1</span><span id="titleBuildVersion">v0.69.142</span></div>
   </div>
 
   <div id="starterPanel" class="starter-screen" hidden>
@@ -92,7 +92,7 @@
   <div id="app" class="app-shell">
     <header class="topbar">
       <div class="brand-block">
-        <div class="eyebrow">LUCKY DEX · v0.69.140</div>
+        <div class="eyebrow" id="appBuildVersion">LUCKY DEX · v0.69.142</div>
         <h1>Lucky Dex</h1>
       </div>
       <div class="top-resources">
@@ -1299,6 +1299,7 @@
   <script src="tcg-classic-neo-revelation.js"></script>
   <script src="tcg-classic-neo-destiny.js"></script>
   <script src="tcg-classic-legendary-collection.js"></script>
+  <script src="tcg-classic-expedition.js"></script>
   <script src="tcg-classic-lental.js"></script>
   <script src="tcg-classic-scarlet-violet.js"></script>
   <script src="tcg-classic-battle-data.js"></script>
@@ -1319,6 +1320,18 @@
   <script src="tcgp-battle-solo.js"></script>
   <script src="tcgp-battle-progress.js"></script>
   <script src="app-v0167.js"></script>
+  <script>
+    // Keep both visible versions synced with the canonical JS build marker.
+    // This also prevents a stale hard-coded HTML label in future patches.
+    (() => {
+      const build = String(window.__LUCKYDEX_BUILD || '').trim();
+      if (!/^\d+\.\d+\.\d+$/.test(build)) return;
+      const title = document.getElementById('titleBuildVersion');
+      const app = document.getElementById('appBuildVersion');
+      if (title) title.textContent = 'v' + build;
+      if (app) app.textContent = 'LUCKY DEX · v' + build;
+    })();
+  </script>
   <script src="tcgp-battle-layout.js"></script>
   <script src="tcgp-ui-assets.js"></script>
   <script src="tcgp-battle-ui.js"></script>

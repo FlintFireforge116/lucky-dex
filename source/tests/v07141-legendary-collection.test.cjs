@@ -22,8 +22,9 @@ test('all 110 numbered Legendary Collection prints are individually registered, 
  assert.deepEqual(builder.SET_IDS,opponents.SETS);
  for(const f of ['tcgp-battle-ui.js','tcg-classic-deck-editor.js'])assert.match(fs.readFileSync(path.join(A,f),'utf8'),/Legendary Collection/);
  const html=fs.readFileSync(path.join(A,'index.html'),'utf8');assert.ok(html.indexOf('tcg-classic-team-rocket.js')<html.indexOf('tcg-classic-legendary-collection.js'));assert.ok(html.indexOf('tcg-classic-legendary-collection.js')<html.indexOf('tcg-classic-battle-data.js'));
- assert.match(fs.readFileSync(path.resolve(__dirname,'../app/build.gradle'),'utf8'),/versionName '0\.69\.141'/);
- assert.match(fs.readFileSync(path.join(A,'app-v0167.js'),'utf8'),/window\.__LUCKYDEX_BUILD='0\.69\.141'/);
+ const gradle=fs.readFileSync(path.resolve(__dirname,'../app/build.gradle'),'utf8');
+ const version=gradle.match(/versionName '([^']+)'/)?.[1];assert.ok(version);
+ assert.ok(fs.readFileSync(path.join(A,'app-v0167.js'),'utf8').includes(`window.__LUCKYDEX_BUILD='${version}'`));
 });
 test('physical ownership projects strictly from Legendary Collection and preserves numbered print copies',()=>{
  const projected=classic.projectOwnedCards([{source:'tcg',setId:'base6',number:5,count:2},{source:'tcg',setName:'Legendary Collection',number:6,count:1},{source:'tcg',setId:'lc',number:10,count:3},{source:'tcgp',setId:'base6',number:18,count:100}]);
