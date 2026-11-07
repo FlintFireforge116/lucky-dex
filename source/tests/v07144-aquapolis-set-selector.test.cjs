@@ -53,13 +53,13 @@ test('player and opponent controls use shared picker with no page rebuild on opt
  assert.match(ui,/function refreshOpponentControls/);assert.match(ui,/refreshOpponentControls\(\);return;/);
  assert.match(editor,/setPicker|LuckyDexClassicSetPicker/);assert.match(ui,/setPicker/);
 });
-test('version 0.69.144 matches Android, JavaScript and both visible labels',()=>{
+test('current version matches Android, JavaScript and both visible labels',()=>{
  const gradle=fs.readFileSync(path.resolve(__dirname,'../app/build.gradle'),'utf8');
  const html=fs.readFileSync(path.join(A,'index.html'),'utf8');
  const js=fs.readFileSync(path.join(A,'app-v0167.js'),'utf8');
- assert.match(gradle,/versionName '0\.69\.144'/);assert.match(gradle,/versionCode 7124/);
- assert.match(js,/window\.__LUCKYDEX_BUILD='0\.69\.144'/);
- assert.equal(html.split('v0.69.144').length-1,2);
+ assert.match(gradle,/versionName '0\.69\.145'/);assert.match(gradle,/versionCode 7125/);
+ assert.match(js,/window\.__LUCKYDEX_BUILD='0\.69\.145'/);
+ assert.equal(html.split('v0.69.145').length-1,2);
  assert.ok(html.indexOf('tcg-classic-aquapolis.js')<html.indexOf('tcg-classic-battle-data.js'));
  assert.ok(html.indexOf('tcg-classic-set-picker.js')<html.indexOf('tcg-classic-deck-editor.js'));
 });

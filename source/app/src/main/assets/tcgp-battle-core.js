@@ -481,7 +481,10 @@
     if(state.format==='classic'&&gym==='neo4-92'&&['Basic','Baby'].includes(data.cardById(slot.cardId)?.stage))stadiumCost+=1;
     if(state.format==='classic'&&Number(slot?.neoDestinyRetreatExtraUntil||0)>=state.turnNumber)stadiumCost+=1;
     if(state.format==='classic'&&data.cardById(slot.cardId)?.name?.startsWith('Unown [')&&pokemonOn(state.sides[side]).some(p=>p!==slot&&p.cardId==='neo4-60'&&state.sides[side].bench.includes(p)&&!effects.abilitiesSuppressed(state,side,p,data.cardById)))return 0;if(data.cardById(slot.cardId)?.retreatZeroWithWater&&(Number(slot.energy?.Water||0)+(slot.specialEnergy||[]).reduce((n,r)=>n+Number(r.provides?.Water||data.cardById(r.cardId)?.effect?.provides?.Water||0),0))>=Number(data.cardById(slot.cardId)?.retreatWaterMinimum||1))return 0;
-    return Math.max(0,Number(data.cardById(slot.cardId).retreat||0)+effects.modifierAmount(state,side,slot,'retreatCost',data.cardById)+stadiumCost);}
+    // Aquapolis Gluey Slime is global and non-stacking, even across both players.
+    const aqGluey=state.format==='classic'&&['player','opponent'].some(w=>pokemonOn(state.sides[w]).some(p=>['ecard2-3','ecard2-H3'].includes(p.cardId)&&!effects.abilitiesSuppressed(state,w,p,data.cardById)));
+    const aqMagnet=state.format==='classic'&&slot?.cardId==='ecard2-91'&&!effects.abilitiesSuppressed(state,side,slot,data.cardById)?state.sides[side].bench.filter(p=>data.cardById(p?.cardId)?.name==='Magnemite').length:0;
+    return Math.max(0,Number(data.cardById(slot.cardId).retreat||0)+effects.modifierAmount(state,side,slot,'retreatCost',data.cardById)+stadiumCost+(aqGluey?1:0)-aqMagnet);}
   function attackCost(state,side,attack){const slot=state.sides[side].active;let cost=effects.attackCostOverride(state,side,slot,attack,data.cardById)??attack.cost??'';
     if(state.format==='classic'&&state.stadium?.cardId==='SNAPFOUNJA-076'&&data.cardById(slot?.cardId)?.types?.some(t=>t==='Grass'||t==='Psychic')){const i=cost.lastIndexOf('C');if(i>=0)cost=cost.slice(0,i)+cost.slice(i+1);}
     if(state.format==='classic'&&state.stadium?.cardId==='SNAPFLORIO-120'&&data.cardById(slot.cardId)?.types?.some(t=>t==='Grass'||t==='Colorless')){
@@ -667,7 +670,14 @@
         if(!effects.supportsEffect(card.effect)||!effects.supportsEffect(card.onAttach))return;
         // Battle Stick's printed Bidoof condition is also a placement rule.
         // Enforce it here for player, CPU and test harness alike.
-        const validToolTarget=slot=>card.id!=='SNAPFLORIO-103'||/\bBidoof\b/i.test(data.cardById(slot?.cardId)?.name||'');
+        const validToolTarget=slot=>{
+          if(card.id==='SNAPFLORIO-103'&&!/\bBidoof\b/i.test(data.cardById(slot?.cardId)?.name||''))return false;
+          // Aquapolis Cube 01 Machines can only attach to a Pokémon of their printed type.
+          const cube=card.id.match(/^ecard2-(119|121|122|124|127|129|132|140)$/);
+          if(cube){const types={'119':'Darkness','121':'Fighting','122':'Fire','124':'Grass','127':'Lightning','129':'Metal','132':'Psychic','140':'Water'};
+            return !!data.cardById(slot?.cardId)?.types?.includes(types[cube[1]]);}
+          return true;
+        };
         if(s.active&&validToolTarget(s.active)&&toolsOf(s.active).length<effects.toolCapacity(state,side,s.active,data.cardById))actions.push({...base,target:'active'});
         for(const slot of s.bench)if(validToolTarget(slot)&&toolsOf(slot).length<effects.toolCapacity(state,side,slot,data.cardById))actions.push({...base,target:'bench',benchIndex:Number(slot.benchSlot)});
       }else if(type==='Stadium'){
@@ -1199,6 +1209,16 @@
       effects.clearTemporaryEffects(state,outgoing);
       s.bench[benchArray]=outgoing;
       s.active=incoming;
+      // Aquapolis Octillery Suction Cups: when Defending Pokémon retreats,
+      // it loses every Energy card after paying the Retreat Cost.
+      if(state.format==='classic'&&['ecard2-26','ecard2-H20'].includes(foe.active?.cardId)&&
+         !effects.abilitiesSuppressed(state,foeSide,foe.active,data.cardById)){
+        const lost={};for(const [type,n] of Object.entries(outgoing.energy||{})){
+          if(Number(n)>0){lost[type]=Number(n);s.energyDiscard[type]=Number(s.energyDiscard[type]||0)+Number(n);}
+        }
+        outgoing.energy={};for(const ref of outgoing.specialEnergy||[])neoRecycleSpecial(s,ref);
+        outgoing.specialEnergy=[];state.log.push({type:'aquapolisSuctionCups',side:foeSide,target:outgoing.cardId,discardedBasic:lost});
+      }
       s.retreated = true;
       state.log.push({type:'retreat',side,cardId:outgoing.cardId,toCardId:incoming.cardId,benchIndex:physical,spentEnergy,spentSpecialEnergy:paid.discardSpecial.length});const foeSide=side==='player'?'opponent':'player',retaliator=state.sides[foeSide].active;if(retaliator?.retreatRetaliation&&(retaliator.retreatRetaliation.expiresTurn==null||state.turnNumber<=retaliator.retreatRetaliation.expiresTurn)){s.active.damage=Number(s.active.damage||0)+Number(retaliator.retreatRetaliation.amount||0);state.log.push({type:'retreatRetaliation',side:foeSide,amount:Number(retaliator.retreatRetaliation.amount||0)});resolveKnockOut(state,null);}return state;
     }
@@ -1304,6 +1324,15 @@
       if(state.format==='classic'){
         const metal=miraculousWindActive(state)?0:(defender.specialEnergy||[]).filter(r=>['neo1-19','ecard1-159','ecard2-143'].includes(r.cardId)).length;
         damage=result.damageRules?.ignoreEffects?damage:Math.max(0,damage-metal*10);
+        // Aquapolis Dense Body / Energy Barrier: actual Basic-stage and
+        // attached Basic Energy counts, not approximate generic modifiers.
+        if(!result.damageRules?.ignoreEffects&&!effects.abilitiesSuppressed(state,foeSide,defender,data.cardById)){
+          if(defender.cardId==='ecard2-33'&&attackerCard.stage==='Basic')damage=Math.max(0,damage-20);
+          if(defender.cardId==='ecard2-95'){
+            const basics=Object.values(defender.energy||{}).reduce((n,x)=>n+Number(x||0),0);
+            damage=Math.max(0,damage-Math.min(20,basics*10));
+          }
+        }
         if(state.stadium?.cardId==='neo1-97'&&attackerCard.types?.includes('Colorless'))damage=Math.max(0,damage-30);
       }
       if(damage>0&&!result.damageRules?.ignoreEffects){const coinGuard=effects.findPassiveRule(state,foeSide,defender,'coinDamageGuard',data.cardById);if(coinGuard){const heads=random(state)<0.5;state.log.push({type:'coin',side:foeSide,heads,reason:'coinDamageGuard',results:[heads]});if(heads)damage=coinGuard.preventAll?0:Math.max(0,damage-Number(coinGuard.reduction||0));}}

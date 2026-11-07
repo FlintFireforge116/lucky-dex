@@ -141,6 +141,90 @@ powers[32]={name:'Poison Resistance',type:'passive',effect:{type:'preventStatus'
 powers[24]={name:'Earth Rage',type:'activated',activeOnly:true,oncePerTurn:true,disabledByStatus:true,expeditionSpecialCondition:true,effect:fl({type:'benchDamage',side:'opponent',amount:10,all:true}),text:'Heads: one damage counter on each opposing Benched Pokémon.'};
 trainers[142]={kind:'energy',effect:{type:'specialEnergy',provides:{Darkness:1}},text:'Provides Darkness; +10 attack damage. Non-Dark Pokémon take 10 between turns.'};
 trainers[143]={kind:'energy',effect:{type:'specialEnergy',provides:{Metal:1}},text:'Provides Metal; reduces incoming attack damage by 10.'};
+// Aquapolis completion pass v0.69.145. All abilities below have either a
+// verified generic engine effect or a dedicated core/neoRule implementation.
+const aq=(rule,extra={})=>({type:'neoRule',rule:'aquapolis:'+rule,...extra});
+const activated=(name,effect,opts={})=>({name,type:'activated',oncePerTurn:true,disabledByStatus:true,...opts,effect});
+const passive=(name,effect,opts={})=>({name,type:'passive',...opts,effect});
+const allDamageIgnores={type:'damageRule',ignoreWeakness:true,ignoreResistance:true,ignoreEffects:true};
+// Only attacks with exact implemented conditions are exposed; no name-only stubs.
+attack(8,0,allDamageIgnores,'Swift ignores Weakness, Resistance, Powers, Bodies and other protection.');
+attack(16,0,aq('spiralAura'),'After damage, if the defender survives, optionally switch it with an opponent Benched Pokémon.');
+attack(21,0,seq({type:'energyDamage',source:'self',energyType:'Lightning',amount:10},aq('electricTackleRecoil')),'+10 per attached Lightning Energy; tails: 10 recoil per Lightning Energy.');
+attack(25,0,fl({type:'chooseOption',options:['Asleep','Burned','Confused','Paralyzed','Poisoned'].map((label,i)=>({label,effect:par(['sleep','burn','confusion','paralysis','poison'][i])}))}),'Heads: choose a Special Condition to inflict.');
+attack(27,0,seq({type:'forceOpponentSwitch'},par('sleep')),'Choose an opposing Benched Pokémon to make Active and Asleep.');
+attack(27,1,fl(par('sleep'),{type:'healSelf',amount:20}),'Heads: Sleep; tails: heal 20.');
+attack(31,1,fl(seq(bonus(20),{type:'discardEnergyCard',target:'self',energyType:'Fire',amount:1}),noop),'Heads: +20 and discard a Fire Energy; tails: 30 damage only.');
+attack(33,0,{type:'energyDamage',source:'self',amount:10,extraAbove:2,maxCount:2},'10 more damage per unused attached Energy, max +20.');
+attack(34,0,{type:'filteredHandCountDamage',side:'opponent',filter:{kind:'energy'},amount:10,mode:'replace'},'10 damage per Energy card in your opponent’s hand.');
+attack(35,0,seq({type:'benchDamage',side:'opponent',all:true,amount:10},fl(noop,{type:'lock',target:'self',action:'attack',duration:'nextOwnTurn'})),'10 to each opposing Bench; tails: cannot use Earth Rift next turn.');
+attack(35,1,{type:'coinTierBonus',coins:2,tiers:{0:-50,1:0,2:20}},'Both heads: 70; one head: 50; both tails: 0.');
+attack(36,0,{type:'copyAttack',source:'opponentActive',requiresCopiedCost:true},'Copy an opposing Active attack only if its Energy cost can be paid.');
+attack(36,1,aq('energyDraw',{basicOnly:true}),'Search deck for a basic Energy and attach to Sudowoodo.');
+attack(46,1,aq('peckAttack'),'Two coins: both tails Confuse, one head 20, both heads 50.');
+attack(57,1,{type:'bonusDamage',amount:20,condition:{type:'opponentMatches',filter:{evolved:true}}},'40 against an Evolved Pokémon, otherwise 20.');
+attack(61,0,aq('energyKiss'),'Flip one coin for each Energy card on the defender; 10 damage per heads.');
+attack(65,0,aq('grassGrowth'),'Attach up to two Grass Energy cards from hand to Weepinbell.');
+attack(67,0,fl({type:'selectedDamage',target:'opponentBench',amount:10,ignoreWeakness:true,ignoreResistance:true}), 'Heads: choose an opposing Benched Pokémon for 10 damage.');
+attack(67,1,aq('skedaddle'),'If Bench exists, return Aipom and its basic Energy to hand.');
+attack(75,0,fl(aq('energyDraw')),'Heads: search deck for an Energy card and attach it to Eevee.');
+attack(76,0,aq('growthFromHand'),'Attach one Energy from hand to Exeggcute.');
+attack(77,1,fl(aq('energySupport')),'Heads: search a Psychic Energy from deck and attach to Bench.');
+attack(82,1,aq('tripleSpin'),'Three coins: 20 per heads, switch Hitmontop if two or more heads.');
+attack(87,0,seq({type:'selectedDamage',target:'opponentPokemon',amount:20,ignoreWeakness:true,ignoreResistance:true},allDamageIgnores),'20 damage to any opponent Pokémon ignoring all defensive effects.');
+attack(92,0,{type:'discardTool',target:'opponentActive',amount:'all'},'Before damage, discard all Tools and Technical Machines from defending Pokémon.');
+attack(92,1,{type:'damageFromDamage',source:'self',amount:1},'+10 for each damage counter on Mankey.');
+attack(99,1,{type:'evolveFromDeck'},'Search for a Pokémon that evolves from Paras; evolve immediately.');
+attack(103,0,fl(aq('dataSort')),'Heads: choose a Trainer from discard and shuffle it into your deck.');
+attack(106,1,allDamageIgnores,'Swift ignores Weakness, Resistance, Powers, Bodies and other effects.');
+attack(108,0,aq('fishingTail'),'Choose a Baby, Basic, Evolution or basic Energy from discard to hand.');
+attack(110,0,{type:'shuffleHandMatching',side:'opponent',filter:{trainerType:'Tool'}},'Shuffle opposing Tools and Technical Machines from hand into their deck.');
+attack(114,0,aq('minorErrand'),'Flip two coins; choose that many basic Energy from deck to hand.');
+attack(115,0,allDamageIgnores,'Swift ignores Weakness, Resistance, Powers, Bodies and other effects.');
+// Pokémon Powers and Bodies, including holo and normal prints automatically.
+powers[2]=passive('Extreme Speed',{type:'modifier',stat:'retreatCost',amount:-1,perEnergyCards:true,duration:'whileInPlay',scope:'self'});
+powers[3]=passive('Gluey Slime',aq('glueySlimePassive'));
+powers[4]=activated('Bubble Turn',fl({type:'returnToHand',target:'self',returnBasicEnergy:true}));
+powers[8]=activated('Super Dynamo',fl({type:'chooseTarget',target:'selfPokemon',effect:{type:'attachEnergyFromDiscard',target:'selfPokemon',energyType:'Lightning',amount:1}}));
+powers[19]=activated('Water Cyclone',{type:'moveEnergy',source:'selfActive',target:'selfBench',energyType:'Water',amount:1}, {oncePerTurn:false});
+powers[26]=passive('Suction Cups',aq('suctionCupsPassive'),{activeOnly:true});
+powers[33]=passive('Dense Body',aq('denseBodyPassive'));
+powers[42]=activated('Fragrance Trap',fl({type:'forceOpponentSwitch'}));
+powers[60]=passive('Lightweight',{type:'modifier',stat:'retreatCost',amount:-1,perEnergyCards:true,energyType:'Grass',duration:'whileInPlay',scope:'self'});
+powers[83]=powers[60];
+powers[91]=passive('Conductive Body',aq('conductiveBodyPassive'));
+powers[95]=passive('Energy Barrier',aq('energyBarrierPassive'));
+// Items and Supporters use normal effect selection instead of bypassing the hand/deck rules.
+trainers[120]={kind:'item',effect:aq('energySwitch'),text:'Move one attached basic Energy between two of your Pokémon.'};
+trainers[126]={kind:'supporter',effect:aq('juggler'),text:'Discard up to two Basic Energy from hand; draw 3 for one or 5 for two.'};
+trainers[130]={kind:'supporter',effect:aq('fanClub'),text:'Search the deck for up to two Basic or Baby Pokémon and put them onto your Bench.'};
+trainers[133]={kind:'supporter',effect:aq('seer'),text:'Reveal top six deck cards, take all Basic Energy, shuffle the rest.'};
+trainers[137]={kind:'supporter',effect:{type:'searchChosen',source:'deck',amount:2,filter:{trainerType:'Tool'}},text:'Search deck for up to two Pokémon Tools / Technical Machines.'};
+// Further Aquapolis exact attacks and Powers, including target and coin outcomes.
+attack(11,0,aq('damageBlast'),'Flip one coin for each damage counter on the opponent; 30 plus 10 for each head.');
+attack(13,0,aq('bigEggsplosion'),'Flip per attached Energy; 20 per heads.');
+attack(13,1,aq('lateralEggsplosion'),'Flip for every Energy attached to your Benched Pokémon; 30 plus 10 per heads.');
+attack(19,0,fl({type:'discardEnergyCard',target:'opponentActive',amount:1}),'Heads: discard an Energy from defending Pokémon.');
+attack(20,1,aq('conduction'),'Discard all attached Lightning Energy; flip per discarded Energy for 40 bonus damage.');
+attack(34,1,aq('shuffleAttack'),'Rearrange top opposing deck cards equal to Energy cards attached to the defender.');
+attack(39,0,fl({type:'copyAttack',source:'opponentActive',ignoreUseCosts:false}),'Heads: copy one attack from opponent Active without paying its Energy cost, but honour other use costs.');
+attack(42,0,fl(par('burn')),'Heads: Burn the defending Pokémon.');
+attack(44,0,aq('plasma'),'Heads: attach a discarded Lightning Energy to Zapdos.');
+attack(44,1,fl(noop,{type:'selfDamage',amount:20}),'Tails: place two damage counters on Zapdos.');
+attack(49,0,seq(par('sleep'),{type:'status',target:'selfActive',status:'sleep'}),'Both Active Pokémon fall Asleep.');
+attack(54,0,aq('tripleBone'),'Choose an opposing Benched Pokémon and flip three coins, 10 damage per heads.');
+attack(63,0,aq('specialEnergyPunch'),'Heads: 10 damage and discard a Special Energy on the defender; tails: attack fails.');
+powers[5]=activated('Flower Supplement',aq('flowerSupplement'));
+powers[49]=passive('Enervating Pollen',aq('enervatingPollenPassive'));
+// Temporary Technical Machine attacks are granted by the shared battle core.
+// Fire/Grass/Psychic Cube effects require no custom attack interpretation.
+trainers[121]={kind:'tool',effect:noop,attacks:[{name:'Violent Rage',cost:'F',damage:0,damageText:'10×',text:'10 damage per damage counter on the attacking Pokémon.',effect:{type:'damageFromDamage',source:'self',amount:1,mode:'replace'}}],text:'Fighting Pokémon Tool; grants Violent Rage and expires at the end of this turn.'};
+trainers[122]={kind:'tool',effect:noop,attacks:[{name:'Singe',cost:'R',damage:0,text:'Defender becomes Burned.',effect:par('burn')}],text:'Fire Pokémon Tool; grants Singe and expires at the end of this turn.'};
+trainers[124]={kind:'tool',effect:noop,attacks:[{name:'Sleep Poison',cost:'G',damage:0,text:'Defender becomes Asleep and Poisoned.',effect:seq(par('sleep'),par('poison'))}],text:'Grass Pokémon Tool; grants Sleep Poison and expires at the end of this turn.'};
+trainers[132]={kind:'tool',effect:noop,attacks:[{name:'Psy Confuse',cost:'P',damage:0,text:'Defender becomes Confused.',effect:par('confusion')}],text:'Psychic Pokémon Tool; grants Psy Confuse and expires at the end of this turn.'};
+trainers[140]={kind:'tool',effect:noop,attacks:[{name:'Splatter',cost:'W',damage:0,text:'Choose an opposing Pokémon and deal 20 damage ignoring Weakness and Resistance.',effect:{type:'selectedDamage',target:'opponentPokemon',amount:20,ignoreWeakness:true,ignoreResistance:true}}],text:'Water Pokémon Tool; grants Splatter and expires at the end of this turn.'};
+// There are intentionally no fake effects for the Crystal Pokémon and Cubes.
+
 function getAttackRule(n,i){return rules[n+':'+i]||null;}
 const labels=new Map();for(const line of RAW.trim().split('\n')){
  const a=line.split('|');if(a.length>2)labels.set(a[0],a);
@@ -167,7 +251,7 @@ function parse(id){const original=holoPairs[id]||id,fields=labels.get(original);
   const isTM=/ Cube 01$/.test(name),tool=['Healing Berry','Memory Berry','Time Shard','Weakness Guard'].includes(name),stadium=['Apricorn Forest','Pokémon Park','Undersea Ruins','Power Plant'].includes(name),supporter=['Forest Guardian','Juggler','Pokémon Fan Club','Seer','Town Volunteers','Traveling Salesman'].includes(name);
   const trainer=trainers[n];
   if(!trainer)reasons.push(`Printed ${isTM?'Technical Machine':tool?'Tool':stadium?'Stadium':supporter?'Supporter':'Trainer'} effect not implemented`);
-  Object.assign(card,{trainerType:isTM||tool?'Tool':stadium?'Stadium':supporter?'Supporter':'Item',technicalMachine:isTM,effect:trainer?.effect||null,text:trainer?.text||'Printed effect is not yet supported in battle.'});
+  Object.assign(card,{trainerType:isTM||tool?'Tool':stadium?'Stadium':supporter?'Supporter':'Item',technicalMachine:isTM,attacks:trainer?.attacks||[],effect:trainer?.effect||null,text:trainer?.text||'Printed effect is not yet supported in battle.'});
  }else{
   const special=trainers[n];
   if(!special)reasons.push('Special Energy effect not yet implemented');
