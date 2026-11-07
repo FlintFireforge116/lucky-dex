@@ -1,0 +1,24 @@
+LuckyDex v0.69.134 — Scarlet & Violet Tools and reactive-attack fixes
+Requires prior v0.69.133.
+
+FIXES
+- Scarlet & Violet Base #169 Defiance Band, #174 Exp. Share, #192 Rock Chestplate,
+  #193 Rocky Helmet and #197 Vitality Band now use the internal Tool classifier,
+  not the display label "Pokémon Tool". They attach to a Pokémon and are not
+  accidentally played/discarded as one-shot Trainers.
+- Defiance Band's +30 is applied only while its owner has MORE Prize cards remaining
+  than the opposing player (equal Prizes => zero bonus); placing the Tool on turn 1
+  is allowed, but it is inactive until its condition is met.
+- Attack-damage reactions receive the actual attack-side source metadata, including
+  when a repeated attack deals damage. This restores Rocky Helmet retaliation and
+  Cacnea/Cacturne Counterattack Quills.
+- Counterattack Quills is Active-only, per printed rules.
+- Arven can find the corrected Tool cards, and Exp. Share can be played normally.
+
+QA
+- 18 newly added targeted audit regressions covering Tool placement, Prize
+  comparisons, damage, removals, active-only reactions, knockouts, Arven, and
+  all 256 battle-ready SV1 print schema definitions.
+- 115 selected Classic/Founja/SV1 regression tests pass.
+- Mobile Android gesture/input and exhaustive cross-card rules fidelity are not
+  independently proven by these automated checks.

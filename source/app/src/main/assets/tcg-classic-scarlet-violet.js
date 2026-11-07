@@ -367,8 +367,8 @@ const ABILITIES={
 
 // Full-print SV1 Abilities. The modern Tera rule is handled separately.
 Object.assign(ABILITIES,{
- 5:[{name:'Counterattack Quills',type:'triggered',event:'damagedByAttack',opponentAttackOnly:true,effect:{type:'damage',target:'opponentActive',amount:30}}],
- 6:[{name:'Counterattack Quills',type:'triggered',event:'damagedByAttack',opponentAttackOnly:true,effect:{type:'damage',target:'opponentActive',amount:30}}],
+ 5:[{name:'Counterattack Quills',type:'triggered',event:'damagedByAttack',activeOnly:true,opponentAttackOnly:true,effect:{type:'damage',target:'opponentActive',amount:30}}],
+ 6:[{name:'Counterattack Quills',type:'triggered',event:'damagedByAttack',activeOnly:true,opponentAttackOnly:true,effect:{type:'damage',target:'opponentActive',amount:30}}],
  8:[{name:'Adaptive Evolution',type:'passive',effect:{type:'evolutionTimingOverride',firstTurn:true,sameTurn:true}}],
  9:[{name:'Adaptive Evolution',type:'passive',effect:{type:'evolutionTimingOverride',firstTurn:true,sameTurn:true}}],
  19:[{name:'Trap Territory',type:'passive',effect:{type:'modifier',stat:'retreatCost',amount:1,scope:'opponentActive',duration:'whileInPlay'}}],
@@ -534,7 +534,7 @@ Object.assign(ATTACK_SUMMARIES,{
  '164:0':'Draw two cards.'
 });
 
-const TRAINER_TYPES={166:'Supporter',167:'Stadium',169:'Pokémon Tool',174:'Pokémon Tool',175:'Supporter',176:'Supporter',177:'Supporter',178:'Stadium',179:'Supporter',180:'Supporter',183:'Supporter',189:'Supporter',190:'Supporter',192:'Pokémon Tool',193:'Pokémon Tool',195:'Supporter',197:'Pokémon Tool',198:'Supporter'};
+const TRAINER_TYPES={166:'Supporter',167:'Stadium',169:'Tool',174:'Tool',175:'Supporter',176:'Supporter',177:'Supporter',178:'Stadium',179:'Supporter',180:'Supporter',183:'Supporter',189:'Supporter',190:'Supporter',192:'Tool',193:'Tool',195:'Supporter',197:'Tool',198:'Supporter'};
 const TRAINERS={
   176:{type:'handShuffle',side:'both',draw:4},
   177:{type:'sequence',effects:[{type:'handShuffle',side:'self',draw:8},{type:'endTurn'}]},
