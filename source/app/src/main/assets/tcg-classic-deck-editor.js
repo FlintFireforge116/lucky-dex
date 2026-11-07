@@ -3,14 +3,14 @@
 const D=root.LuckyDexClassicTCGBattleData,K=root.LuckyDexClassicTCGDecks,W=root.LuckyDexClassicTCGDeckWorkspace,B=root.LuckyDexClassicTCGDeckBuilder;
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const el=id=>root.document.getElementById(id);const btn=(action,label,attrs='')=>`<button type="button" data-classic-deck="${action}" ${attrs}>${label}</button>`;
-let host,draft,baseline,rows=[],ownedRows=[],filters={owned:true,enabled:true},search='',sort='number',page=0,message='',pendingLeave=null,buildSerial=0,buildTimer=null;
+let host,draft,baseline,rows=[],ownedRows=[],filters={owned:true,enabled:true},search='',sort='number',page=0,message='',pendingLeave=null,buildSerial=0,buildTimer=null,buildActive=false;
 let autoOptions={style:'competitive',types:[],randomType:false,rarityFocus:'any',basicOnly:false,theme:'any',compareCandidates:true,playtestCandidates:false,sets:['base1','base2','base3','base5','gym1','gym2','neo1','neo2','neo3','SNAPFLORIO','SNAPFOUNJA','sv1']};const randomHistory=new Map(),randomTypeHistory=[];
 function clone(deck){return {...deck,cards:(deck?.cards||[]).slice(),energyTypes:K.deckEnergyTypes(deck||{cards:[]}),energyMode:deck?.energyMode==='manual'?'manual':'auto'};}
 function signature(deck){if(!deck)return'';const types=deck.energyMode==='manual'?deck.energyTypes:K.analyzeDeck(deck.cards).recommendedEnergyTypes;return JSON.stringify({name:deck.name,cards:deck.cards.slice().sort(),energyMode:deck.energyMode,energyTypes:(types||[]).slice().sort()});}
 function isDirty(){return !!host&&signature(draft)!==signature(baseline);}
 function requestLeave(callback){if(!host||!isDirty()){callback?.();return true;}cancelBuild();pendingLeave=callback;showSheet('Unsaved deck changes',`<p>Save your changes before leaving this deck?</p><footer>${btn('leave-save','Save')}${btn('leave-discard','Discard')}${btn('leave-cancel','Cancel')}</footer>`);return false;}
 function fresh(deck){draft=clone(deck);baseline=clone(draft);pendingLeave=null;}
-function cancelBuild(){buildSerial++;root.clearTimeout(buildTimer);buildTimer=null;}
+function cancelBuild(){buildSerial++;root.clearTimeout(buildTimer);buildTimer=null;buildActive=false;}
 function close(){cancelBuild();host=null;draft=null;baseline=null;pendingLeave=null;}
 function refreshRows(){ownedRows=host.owned();rows=W.catalogue(ownedRows);}
 function counts(){return W.counts(draft.cards);}
@@ -20,7 +20,7 @@ function energy(){if(draft.energyMode!=='manual')draft.energyTypes=K.analyzeDeck
 function deckHtml(){const types=energy(),unique=[...counts()].map(([id])=>D.cardById(id)).filter(Boolean),selected=draft.cards.map(D.cardById).filter(Boolean),pokemon=selected.filter(c=>c.kind==='pokemon').length,special=selected.filter(c=>c.specialEnergy).length,trainers=selected.length-pokemon-special;return `<header><h2>MY DECK <span>· ${draft.cards.length} / 30</span></h2>${btn('energy',`${types.join(' / ')||'Auto Energy'} ▾`,`aria-label="Configure Energy"`)}</header><div class="tcgp-editor-composition">${pokemon} Pokémon · ${trainers} Trainers · ${special} Special Energy · ${draft.energyMode==='manual'?'Manual':'Auto'} Energy Zone</div><div class="tcgp-editor-deck-grid">${unique.length?unique.map(c=>tile(c,true)).join(''):'<p>Choose a Classic TCG card below to start your deck.</p>'}</div>`;}
 function open(options){cancelBuild();host=options;const state=K.ensureState(host.state()),old=options.deck||state.decks.find(d=>d.id===state.activeDeckId);fresh(old||{name:'My Classic Deck',cards:[],energyMode:'auto',energyTypes:[]});filters={owned:false,enabled:true};search='';sort='number';page=0;message='';autoOptions={style:'competitive',types:[],randomType:false,rarityFocus:'any',basicOnly:false,theme:'any',compareCandidates:true,playtestCandidates:false,sets:['base1','base2','base3','base5','gym1','gym2','neo1','neo2','neo3','SNAPFLORIO','SNAPFOUNJA','sv1']};refreshRows();mount();if(options.quick)autoBuild('recommended',autoOptions);}
 function mount(){host.container.innerHTML=`<div id="classicDeckWorkspace" class="tcgp-editor format-classic">${host.sandbox?'<p class="tcgp-battle-note"><strong>TEST LAB</strong> · All battle-ready cards unlocked · no collection changes or rewards</p>':''}<div class="tcgp-editor-top"><input id="classicDeckNameInput" maxlength="40" value="${esc(draft.name)}" aria-label="Deck name"><nav>${btn('manage','Decks')}${btn('auto','Auto build')}${btn('save','Save')}</nav></div><section id="classicMyDeck" class="tcgp-editor-mydeck">${deckHtml()}</section><div class="tcgp-editor-tools"><input id="classicDeckSearchInput" type="search" value="${esc(search)}" placeholder="Search Classic cards, attacks, rules…" aria-label="Search cards"><div>${btn('filters',filterLabel())}${btn('clear-filters','Clear filters','hidden')}${btn('sort','Sort ▾')}</div><p id="classicEditorMessage" role="status"></p></div><section id="classicDeckResults"></section><div id="classicEditorModal"></div></div>`;el('classicDeckWorkspace').addEventListener('click',click);el('classicDeckNameInput').addEventListener('input',e=>draft.name=e.target.value);el('classicDeckSearchInput').addEventListener('input',e=>{search=e.target.value;page=0;renderResults();});renderResults();updateMessage();}
-function updateMessage(){const node=el('classicEditorMessage');if(node)node.textContent=message;}
+function updateMessage(){const node=el('classicEditorMessage');if(node)node.innerHTML=`<span>${esc(message)}</span>${buildActive?` <button type="button" data-classic-deck="cancel-auto" aria-label="Cancel deck build">CANCEL BUILD</button>`:''}`;}
 function update(){const scroller=el('classicMyDeck')?.querySelector('.tcgp-editor-deck-grid'),top=scroller?.scrollTop||0,left=scroller?.scrollLeft||0;el('classicMyDeck').innerHTML=deckHtml();const next=el('classicMyDeck')?.querySelector('.tcgp-editor-deck-grid');if(next){next.scrollTop=top;next.scrollLeft=left;}renderResults();updateMessage();}
 function filterCount(){return Object.entries(filters).reduce((n,[k,v])=>n+((k==='owned'||k==='enabled')?(v===false?1:0):Array.isArray(v)?(v.length?1:0):(v!==''&&v!=null&&v!==false?1:0)),0);}
 function filterLabel(){return filterCount()?`Filter · ${filterCount()}`:'Filter';}
@@ -55,7 +55,7 @@ function autoBuild(mode,extra={}){
  const sets=(extra.sets||autoOptions.sets||B.SET_IDS).slice();
  const historyKey=`classic:${style}:${types.join('+')||'any'}:${sets.join('+')}:${autoOptions.rarityFocus}:${autoOptions.basicOnly}:${autoOptions.theme}`,history=randomHistory.get(historyKey)||[];
  const options={style,types,sets,rarityFocus:extra.rarityFocus||autoOptions.rarityFocus,basicOnly:extra.basicOnly??autoOptions.basicOnly,theme:extra.theme||autoOptions.theme,...(mode==='existing'?{cards:draft.cards.slice()}:{}),...(extra.cardId?{focusCardId:extra.cardId}:{}),...(extra.type?{types:[extra.type]}:{}),...{excludeArchetypes:history.slice(),randomSeed:seed}};
- closeSheet();message=surprise?`Building a ${chosenType} Classic deck…`:'Building candidate Classic decks…';updateMessage();
+ closeSheet();buildActive=true;message=surprise?`Building a ${chosenType} Classic deck…`:'Building candidate Classic decks · 0/4…';updateMessage();
  const cancelled=()=>serial!==buildSerial||host!==owner||draft!==target||!el('classicDeckWorkspace');
  buildTimer=root.setTimeout(async()=>{
    if(cancelled())return;
@@ -71,18 +71,19 @@ function autoBuild(mode,extra={}){
        }
      }
      if(!result||cancelled())return;
-     message=result.ok?(result.strategy+(result.optimisation?' · '+result.optimisation.summary:'')+(result.plan&&result.plan.theme!=='any'?' · '+result.plan.summary:'')):(result.errors||[]).join(' ');
+     buildActive=false;message=result.ok?(result.strategy+(result.optimisation?' · '+result.optimisation.summary:'')+(result.plan&&result.plan.theme!=='any'?' · '+result.plan.summary:'')):(result.errors||[]).join(' ');
      if(result.ok){
        target.cards=result.cards.slice();target.energyTypes=result.energyTypes.slice();target.energyMode='auto';
        if(surprise){const chosen=chosenType||result.energyTypes[0];if(chosen){randomTypeHistory.push(chosen);if(randomTypeHistory.length>=B.ARCHETYPE_TYPES.length)randomTypeHistory.length=0;}}
        if(result.archetypeKey){let seen=(randomHistory.get(historyKey)||[]).slice();if(seen.includes(result.archetypeKey))seen=[];seen.push(result.archetypeKey);randomHistory.set(historyKey,seen.slice(-100));}
      }
      update();
-   }catch(error){if(!cancelled()){message='Could not build this Classic deck: '+error.message;updateMessage();}}
+   }catch(error){if(!cancelled()){buildActive=false;message='Could not build this Classic deck: '+error.message;updateMessage();}}
  },25);
 }
 function energySheet(){showSheet('Energy Zone',`<p>Basic Energy is generated separately and does not occupy the 30-card deck. All eight Basic Energy types, including Darkness and Metal, come from the ordered Energy Zone. Double Colorless and Neo Genesis Special Darkness/Metal still occupy deck slots.</p>${btn('energy-auto','Automatic · follow attack costs')}<div class="tcgp-editor-chips">${K.ENERGY_TYPES.map(t=>btn('energy-type',esc(t),`data-id="${t}" aria-pressed="${energy().includes(t)}"`)).join('')}</div>`);}
 function click(event){const filter=event.target.closest('[data-classic-filter]');if(filter){event.stopPropagation();const k=filter.dataset.classicFilter,v=filter.dataset.value;if(k==='types'){const set=new Set(filters.types||[]);if(set.has(v))set.delete(v);else if(set.size<2)set.add(v);filters.types=[...set];}else if(['owned','enabled'].includes(k))filters[k]=!filters[k];else filters[k]=String(filters[k])===v?'':v;page=0;filterSheet();return;}const node=event.target.closest('[data-classic-deck]');if(!node)return;event.stopPropagation();const action=node.dataset.classicDeck,id=node.dataset.id;
+ if(action==='cancel-auto'){cancelBuild();message='Deck build cancelled; your previous deck is unchanged.';updateMessage();return;}
  if(action==='close-sheet'||action==='leave-cancel'){pendingLeave=null;return closeSheet();}
  if(action==='leave-save'||action==='leave-discard'){const next=pendingLeave;if(action==='leave-save'&&!save()){showSheet('Could not save deck',`<p>${esc(message)}</p>${btn('leave-discard','Discard')}${btn('leave-cancel','Cancel')}`);pendingLeave=next;return;}if(action==='leave-discard')draft=clone(baseline);pendingLeave=null;closeSheet();next?.();return;}
  if(action==='inspect')return inspect(id);if(action==='add'||action==='remove'){cancelBuild();const r=W.edit(draft.cards,id,action==='add'?1:-1,ownedRows);draft.cards=r.cards;message=r.error||'';return update();}

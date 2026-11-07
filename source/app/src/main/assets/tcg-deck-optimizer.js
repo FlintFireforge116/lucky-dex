@@ -48,9 +48,11 @@ async function playtest(format,player,opponent,seed=1,options={}){
  const energyOf=d=>Array.isArray(d?.energyTypes)&&d.energyTypes.length?d.energyTypes:['Fighting'];
  const b=core.createBattle({format,playerDeck:playerCards,opponentDeck:opponentCards,playerEnergyTypes:energyOf(player),opponentEnergyTypes:energyOf(opponent),seed,firstSide:seed%2?'player':'opponent',manualPlayerSetup:false});
  const count={player:0,opponent:0};let actions=0,errors=0;
- const maxActions=clamp(number(options.maxActions,100),15,160);
+ const maxActions=clamp(number(options.maxActions,80),15,160);
+ const deadline=number(options.deadline,0);
  for(;actions<maxActions&&b.phase!=='finished';actions++){
   if(options.isCancelled?.())return null;
+  if(deadline&&Date.now()>=deadline)break;
   const side=b.phase==='promote'?b.promotionSide:b.phase==='effectChoice'?b.choiceSide:b.activeSide;
   if(!side||!b.sides?.[side])break;
   let available;try{available=core.legalActions(b,side);}catch(_){errors++;break;}
@@ -60,7 +62,7 @@ async function playtest(format,player,opponent,seed=1,options={}){
   const matches=a=>available.some(x=>JSON.stringify(x)===JSON.stringify(a));
   if(!next||!matches(next))next=available.find(x=>x.type==='endTurn')||available[0];
   try{core.applyAction(b,side,next);}catch(_){errors++;try{const safe=available.find(x=>x.type==='endTurn'&&x!==next)||available.find(x=>x.type==='effectChoice')||available.find(x=>x!==next);if(!safe)break;core.applyAction(b,side,safe);}catch(__){break;}}
-  if(actions%12===11)await sleep();
+  if(actions%4===3)await sleep();
  }
  return {winRate:winnerScore(b),winner:b.winner||null,actions,turns:number(b.turnNumber),errors,finished:b.phase==='finished'};
 }
@@ -69,8 +71,14 @@ async function playtest(format,player,opponent,seed=1,options={}){
 async function optimise({build,rows,options={},format='classic',maxCandidates=5,simulate=false,onProgress=()=>{},isCancelled=()=>false,seed=1}={}){
  if(typeof build!=='function')throw new TypeError('A legal deck builder is required');
  const variants=[],fingerprints=new Set(),count=clamp(Number(maxCandidates)||5,1,8);
+ // Cooperative budget: check between deck builds and AI actions. A synchronous
+ // builder call cannot be interrupted by a browser timer, so its loops must also
+ // guarantee forward progress (see Classic builder fallback passes).
+ const deadline=Date.now()+clamp(number(options.optimiserBudgetMs,12000),3000,30000);
+ onProgress({stage:'candidates',completed:0,total:count,valid:0});
  for(let i=0;i<count;i++){
   if(isCancelled())return null;
+  if(i>0&&Date.now()>=deadline)break;
   const variant=await build(rows,{...options,randomSeed:(seed+Math.imul(i+1,7919))>>>0,excludeArchetypes:[...(options.excludeArchetypes||[]),...variants.map(v=>v.archetypeKey).filter(Boolean)]});
   if(variant?.ok){const fingerprint=[...variant.cards].sort().join('|');if(!fingerprints.has(fingerprint)){fingerprints.add(fingerprint);variants.push({...variant,assessment:evaluate(variant,options.theme||'any')});}}
   onProgress({stage:'candidates',completed:i+1,total:count,valid:variants.length});
@@ -79,12 +87,14 @@ async function optimise({build,rows,options={},format='classic',maxCandidates=5,
  if(!variants.length)return {ok:false,errors:['No legal candidate decks matched those filters.']};
  // All candidates use the same independent benchmark, including when they
  // belong to different archetypes. The alternative is generated legally too.
- if(simulate&&variants.length){
+ if(simulate&&variants.length&&Date.now()<deadline){
+  onProgress({stage:'matches',completed:0,total:variants.length});
   const benchmark=await build(rows,{...options,style:'random',randomSeed:(seed^0xa31f9d73)>>>0,excludeArchetypes:variants.map(v=>v.archetypeKey).filter(Boolean)})||variants[0];
   const against=benchmark.ok?benchmark:variants[0];
   for(let i=0;i<variants.length;i++){
    if(isCancelled())return null;
-   try{const result=await playtest(format,variants[i],against,((seed+i*31)>>>0)||1,{isCancelled});if(result){variants[i].playtest=result;}}
+   if(Date.now()>=deadline)break;
+   try{const result=await playtest(format,variants[i],against,((seed+i*31)>>>0)||1,{isCancelled,deadline,maxActions:80});if(result){variants[i].playtest=result;}}
    catch(err){variants[i].playtest={error:String(err.message||err)};}
    onProgress({stage:'matches',completed:i+1,total:variants.length});
   }
@@ -105,7 +115,8 @@ async function optimise({build,rows,options={},format='classic',maxCandidates=5,
  if(testedProfiles.size>300)testedProfiles.delete(testedProfiles.keys().next().value);
  const best=ranked[0].ranking,near=ranked.filter(v=>v.ranking>=best-24);
  const selected=near[(seed>>>0)%near.length];
- const summary=`${variants.length} legal candidate${variants.length===1?'':'s'} compared · plan ${selected.assessment.score}`+(selected.playtest&&!selected.playtest.error?` · playtest ${Math.round(selected.playtest.winRate*100)}% score over ${selected.playtest.actions} actions`:'');
+ const budgetReached=Date.now()>=deadline;
+ const summary=`${variants.length} legal candidate${variants.length===1?'':'s'} compared · plan ${selected.assessment.score}`+(selected.playtest&&!selected.playtest.error?` · playtest ${Math.round(selected.playtest.winRate*100)}% score over ${selected.playtest.actions} actions`:'')+(budgetReached?' · time budget reached':'');
  return {...selected,ok:true,rankedCandidates:ranked.length,optimisation:{candidates:variants.length,simulated:!!simulate,summary,score:selected.ranking,assessment:selected.assessment,playtest:selected.playtest||null}};
 }
 return {evaluate,playtest,optimise};

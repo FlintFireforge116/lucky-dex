@@ -1,0 +1,6 @@
+LuckyDex v0.69.137 — deck optimiser freeze repair
+- Fix Classic deck builder infinite loops when a Stadium or otherwise incompatible Trainer is refused while remaining available in the owned pool.
+- Both Classic and Pocket optimise using a cooperative comparison budget and yield during simulated matches.
+- Candidate progress starts at 0/N and both editors display a CANCEL BUILD control.
+- Cancellation leaves previously built decks unchanged.
+- No change to battle rules, cards, collection, rewards, or pack odds.

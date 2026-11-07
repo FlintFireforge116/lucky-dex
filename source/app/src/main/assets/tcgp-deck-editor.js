@@ -6,13 +6,13 @@
  let host,draft,filters={owned:true,enabled:true},search='',sort='number',page=0,developer=false,message='',sheet=null,rows=[],ownedRows=[],recipeView=null;
  const AUTO_RARITIES=Object.freeze([{rank:0,label:'Any'},{rank:2,label:'≤ 2◇'},{rank:3,label:'≤ 3◇'},{rank:4,label:'≤ 4◇'},{rank:5,label:'≤ 1☆'},{rank:6,label:'≤ 2☆'},{rank:7,label:'≤ 3☆'},{rank:8,label:'≤ 1 Shiny'},{rank:9,label:'≤ 2 Shiny'},{rank:10,label:'Crown'}]);
  let autoOptions={style:'competitive',types:[],maxRarityRank:0,rarityFocus:0,basicOnly:false,theme:'any',compareCandidates:true,playtestCandidates:false};
- let buildSerial=0,buildTimer=null,baseline=null,pendingLeave=null;const buildVariants=new Map(),randomHistory=new Map();
+ let buildSerial=0,buildTimer=null,baseline=null,pendingLeave=null,buildActive=false;const buildVariants=new Map(),randomHistory=new Map();
  function clone(deck){return {...deck,cards:(deck.cards||[]).slice(),energyTypes:K.deckEnergyTypes(deck),preferredPrints:{...deck.preferredPrints}};}
  function signature(deck){if(!deck)return '';const types=deck.energyMode==='manual'?deck.energyTypes:K.analyzeDeck(deck.cards).recommendedEnergyTypes;return JSON.stringify({name:deck.name,cards:deck.cards.slice().sort(),energyMode:deck.energyMode==='manual'?'manual':'auto',energyTypes:(types||[]).slice().sort(),preferredPrints:[...new Set(deck.cards)].sort().map(id=>[id,W.selectedPrint(deck,id,ownedRows)])});}
  function isDirty(){return !!host&&signature(draft)!==signature(baseline);}
  function requestLeave(callback){if(!host||!isDirty()){callback?.();return true;}cancelBuild();pendingLeave=callback;showSheet('Unsaved deck changes',`<p>Save your changes before leaving this deck?</p><footer>${btn('leave-save','Save')}${btn('leave-discard','Discard')}${btn('leave-cancel','Cancel')}</footer>`);return false;}
  function fresh(deck){draft=clone(deck);baseline=clone(draft);pendingLeave=null;}
- function cancelBuild(){buildSerial++;root.clearTimeout(buildTimer);buildTimer=null;}
+ function cancelBuild(){buildSerial++;root.clearTimeout(buildTimer);buildTimer=null;buildActive=false;}
  function close(){cancelBuild();host=null;draft=null;baseline=null;pendingLeave=null;}
  const btn=(action,label,attrs='')=>`<button type="button" data-deck="${action}" ${attrs}>${label}</button>`;
  function refreshRows(){ownedRows=host.owned();rows=W.catalogue(ownedRows);}
@@ -40,7 +40,7 @@
   el('tcgpDeckSearch').addEventListener('input',e=>{search=e.target.value;page=0;renderResults();});
   renderResults();updateMessage();
  }
- function updateMessage(){el('tcgpEditorMessage').textContent=message;}
+ function updateMessage(){const node=el('tcgpEditorMessage');if(node)node.innerHTML=`<span>${esc(message)}</span>${buildActive?` <button type="button" data-deck="cancel-auto" aria-label="Cancel deck build">CANCEL BUILD</button>`:''}`;}
  function update(){const scroller=el('tcgpMyDeck')?.querySelector('.tcgp-editor-deck-grid'),scroll=scroller?.scrollTop||0,left=scroller?.scrollLeft||0;el('tcgpMyDeck').innerHTML=deckHtml();const tray=el('tcgpMyDeck').querySelector('.tcgp-editor-deck-grid');tray.scrollTop=scroll;tray.scrollLeft=left;renderResults();updateMessage();}
  function filterCount(){return Object.entries(filters).reduce((n,[k,v])=>n+((k==='owned'||k==='enabled')?(v===false?1:0):Array.isArray(v)?(v.length?1:0):(v!==''&&v!=null&&v!==false?1:0)),0);}
  function filterLabel(){return filterCount()?`Filter · ${filterCount()}`:'Filter';}
@@ -71,11 +71,11 @@
  }
  function autoBuild(mode,extra={}){
   cancelBuild();const serial=buildSerial,owner=host,target=draft,typeKey=Array.isArray(extra.types)?extra.types.join('+'):extra.type||'',key=mode==='recommended'?`recommended:${extra.style||'competitive'}:${typeKey}:${extra.maxRarityRank||0}:${extra.rarityFocus||0}:${!!extra.basicOnly}:${extra.theme||autoOptions.theme}`:mode==='type'?`type:${extra.type}`:'',variant=key?(buildVariants.get(key)||0):0,isRandom=mode==='recommended'&&extra.style==='random',historyKey=isRandom?`random:${typeKey}:${extra.maxRarityRank||0}:${extra.rarityFocus||0}:${!!extra.basicOnly}:${extra.theme||autoOptions.theme}`:'',history=isRandom?(randomHistory.get(historyKey)||[]):[],freshSeed=isRandom?(root.crypto?.getRandomValues?root.crypto.getRandomValues(new Uint32Array(1))[0]:Math.floor(Math.random()*0x100000000)):undefined,options={...(mode==='existing'?{mode,cards:draft.cards.slice()}:{}),...(key?{variant}:{}),...(isRandom?{excludeArchetypes:history.slice(),randomSeed:freshSeed}:{}),theme:autoOptions.theme,...extra};if(key)buildVariants.set(key,variant+1);
-  closeSheet();message='Building candidate decks…';updateMessage();
+  closeSheet();buildActive=true;message='Building candidate decks · 0/4…';updateMessage();
   // Let the feedback paint before bounded CPU work; no game state mutation.
   const cancelled=()=>serial!==buildSerial||host!==owner||draft!==target||!el('tcgpDeckWorkspace');
   buildTimer=root.setTimeout(async()=>{if(cancelled())return;try{const optimiser=root.LuckyDexDeckOptimizer, compare=mode==='recommended'&&autoOptions.compareCandidates&&optimiser;
-    const r=compare?await optimiser.optimise({format:'pocket',rows:owner.owned(),options,seed:(freshSeed??Math.floor(Math.random()*0x100000000))>>>0,maxCandidates:4,simulate:!!autoOptions.playtestCandidates,isCancelled:cancelled,build:(rows,opts)=>K.buildDeckAsync(rows,opts,{isCancelled:cancelled}),onProgress:progress=>{if(!cancelled()){message=progress.stage==='matches'?`Testing candidate ${progress.completed}/${progress.total}…`:`Comparing ${progress.completed}/${progress.total} candidate decks…`;updateMessage();}}}):await K.buildDeckAsync(owner.owned(),options,{isCancelled:cancelled});if(!r||cancelled())return;message=r.ok?(r.strategy+(r.optimisation?' · '+r.optimisation.summary:'')+(r.plan&&r.plan.theme!=='any'?' · '+r.plan.summary:'')):r.errors.join(' ');if(r.ok){target.cards=r.cards;target.energyTypes=r.energyTypes;target.energyMode='auto';if(isRandom&&r.archetypeKey){let seen=(randomHistory.get(historyKey)||[]).slice();if(seen.includes(r.archetypeKey))seen=[];seen.push(r.archetypeKey);randomHistory.set(historyKey,seen.slice(-80));}}update();}catch(error){if(!cancelled()){message='Could not build this deck: '+error.message;updateMessage();}}},25);
+    const r=compare?await optimiser.optimise({format:'pocket',rows:owner.owned(),options,seed:(freshSeed??Math.floor(Math.random()*0x100000000))>>>0,maxCandidates:4,simulate:!!autoOptions.playtestCandidates,isCancelled:cancelled,build:(rows,opts)=>K.buildDeckAsync(rows,opts,{isCancelled:cancelled}),onProgress:progress=>{if(!cancelled()){message=progress.stage==='matches'?`Testing candidate ${progress.completed}/${progress.total}…`:`Comparing ${progress.completed}/${progress.total} candidate decks…`;updateMessage();}}}):await K.buildDeckAsync(owner.owned(),options,{isCancelled:cancelled});if(!r||cancelled())return;buildActive=false;message=r.ok?(r.strategy+(r.optimisation?' · '+r.optimisation.summary:'')+(r.plan&&r.plan.theme!=='any'?' · '+r.plan.summary:'')):r.errors.join(' ');if(r.ok){target.cards=r.cards;target.energyTypes=r.energyTypes;target.energyMode='auto';if(isRandom&&r.archetypeKey){let seen=(randomHistory.get(historyKey)||[]).slice();if(seen.includes(r.archetypeKey))seen=[];seen.push(r.archetypeKey);randomHistory.set(historyKey,seen.slice(-80));}}update();}catch(error){if(!cancelled()){buildActive=false;message='Could not build this deck: '+error.message;updateMessage();}}},25);
  }
  function energySheet(){showSheet('Energy Zone',`<p>Energy is generated separately from the 20-card deck.</p>${btn('energy-auto','Automatic · follow attack costs')}<div class="tcgp-editor-chips">${K.ENERGY_TYPES.map(t=>btn('energy-type',esc(t),`data-id="${t}" aria-pressed="${energy().includes(t)}"`)).join('')}</div><div class="tcgp-deck-warnings">${K.analyzeDeck(draft.cards,energy()).warnings.map(w=>`<p>${esc(w.message)}</p>`).join('')}</div>`);}
  function recipeCard(r,i){
@@ -94,6 +94,7 @@
  function click(event){
   const filter=event.target.closest('[data-filter]');if(filter){event.stopPropagation();const k=filter.dataset.filter,v=filter.dataset.value;if(k==='types'){const set=new Set(filters.types||[]);if(set.has(v))set.delete(v);else if(set.size<2)set.add(v);filters.types=[...set];}else if(['owned','ex','mega','ability','enabled'].includes(k))filters[k]=!filters[k];else filters[k]=String(filters[k])===v?'':v;page=0;const top=el('tcgpEditorModal').querySelector('.tcgp-editor-sheet').scrollTop;filterSheet();el('tcgpEditorModal').querySelector('.tcgp-editor-sheet').scrollTop=top;return;}
   const node=event.target.closest('[data-deck]');if(!node)return;event.stopPropagation();const action=node.dataset.deck,id=node.dataset.id;
+  if(action==='cancel-auto'){cancelBuild();message='Deck build cancelled; your previous deck is unchanged.';updateMessage();return;}
   if(action==='close-sheet'){pendingLeave=null;return closeSheet();}
   if(action==='leave-cancel'){pendingLeave=null;return closeSheet();}
   if(action==='leave-save'||action==='leave-discard'){const next=pendingLeave;if(action==='leave-save'&&!save()){showSheet('Could not save deck',`<p>${esc(message)}</p>${btn('leave-discard','Discard')}${btn('leave-cancel','Cancel')}`);pendingLeave=next;return;}if(action==='leave-discard')draft=clone(baseline);pendingLeave=null;closeSheet();next?.();return;}
