@@ -280,8 +280,8 @@ D(113,1,'destructiveFire','Flip for each attached Fire; discard that many Fire o
 
 // Trainers with a fully compatible printed action.  Others remain catalogued.
 T[104]={trainerType:'Item',text:'Flip a coin. On heads, cure all Special Conditions and heal 20 damage from your Active Pokémon.',effect:coin(seq({type:'removeStatuses',target:'selfActive',statuses:['sleep','confusion','paralysis','poison']},{type:'heal',target:'selfActive',amount:20}))};
-// Real Pokémon Power roles. A Power that requires 4 separate Unown on the Bench
-// is deliberately not marked complete in LuckyDex's three-Bench format.
+// Real Pokémon Power roles. LuckyDex's three-Bench house rule counts required
+// Unown word letters in hand, Active and Bench; the Power owner must be in play.
 const P={};
 const passive=(n,rule,props={})=>P[n]={type:'passive',effect:destiny(rule),...props};
 const activated=(n,rule,props={})=>P[n]={type:'activated',effect:destiny(rule),oncePerTurn:true,disabledByStatus:true,...props};
@@ -298,6 +298,9 @@ triggered(18,'opponentBenched','hotPlate',{activeOnly:true});
 activated(20,'cunning');
 triggered(25,'evolved','tagTeam',{fromHandOnly:true,benchOnly:true});
 triggered(26,'damagedByAttack','fluffyWool',{activeOnly:true,opponentAttackOnly:true});
+activated(27,'unownGive',{text:'[Give]: with G, I, V and E in your hand or in play, flip heads to attach the top Basic Energy from your Energy Zone to one of your Pokémon.'});
+activated(28,'unownHelp',{text:'[Help]: with H, E, L and P in your hand or in play, shuffle your hand into your deck, then draw the same number of cards.'});
+activated(29,'unownWant',{text:'[Want]: with W, A, N and T in your hand or in play, flip heads to return a Trainer from your discard pile to your hand.'});
 passive(30,'unownX');
 passive(57,'unownC',{activeOnly:true});
 passive(58,'unownP',{activeOnly:true});

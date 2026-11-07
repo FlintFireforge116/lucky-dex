@@ -14,8 +14,8 @@ function battle(){const s=core.createBattle({format:'classic',playerDeck:base,op
 function attack(s,id,index=0){const p=s.sides.player;p.active=core.makePokemonSlot(id,1,id+'test');p.active.playedOnSideTurn=1;p.active.energy={Psychic:6,Fire:6,Water:6,Lightning:6,Grass:6,Fighting:6,Darkness:6,Metal:6};const action=core.legalActions(s,'player').find(x=>x.type==='attack'&&x.attackIndex===index);assert.ok(action,id+' attack '+index+' not permitted');core.applyAction(s,'player',action);let guard=0;while(s.phase==='effectChoice'&&guard++<30){const choices=core.legalActions(s,s.choiceSide);assert.ok(choices.length>0,id+' requires choice');core.applyAction(s,s.choiceSide,choices.find(x=>!x.choiceSkip)||choices[0]);}assert.ok(guard<30,'effect choice stuck for '+id);return s;}
 
 test('Neo Destiny print, Shining and Trainer completion gate is explicit',()=>{
- assert.equal(D.CARDS.length,113);assert.equal(D.coverage().battleEnabled,110);
- assert.deepEqual(D.CARDS.filter(c=>!c.battleEnabled).map(c=>c.id),['neo4-27','neo4-28','neo4-29']);
+ assert.equal(D.CARDS.length,113);assert.equal(D.coverage().battleEnabled,113);
+ assert.deepEqual(D.CARDS.filter(c=>!c.battleEnabled).map(c=>c.id),[]);
  for(const n of [6,10,14,16,45,93,95,100,106,107,108,109,110,111,112,113])assert.equal(D.cardById('neo4-'+n).battleEnabled,true,'neo4-'+n);
  for(const c of D.CARDS.filter(c=>c.battleEnabled)){
    if(c.kind==='pokemon')for(const [i,a] of c.attacks.entries())assert.ok(effects.supportsEffect(a.effect),`${c.id} move #${i}`);
@@ -50,7 +50,7 @@ test('All enabled Neo Destiny attacks survive the actual effect resolver and pen
    try{attack(s,c.id,index);}catch(e){throw new Error(`${c.id} ${a.name}: ${e.stack||e}`);}
    total++;
  }
- assert.equal(total,146);
+ assert.equal(total,149);
 });
 test('Neo Destiny decks still build legally across all seven types',()=>{
  for(const type of ['Grass','Fire','Water','Lightning','Psychic','Fighting','Colorless']){

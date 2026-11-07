@@ -705,6 +705,13 @@
   }
   function neoFlip(ctx,reason){const h=coin(ctx);ctx.state.log.push({type:'coin',side:ctx.side,reason:'Neo Genesis '+reason,heads:h,results:[h]});return h;}
   function neoSlots(ctx,side){return pokemonOn(side==='opponent'?other(ctx):own(ctx));}
+  // LuckyDex's three-Bench adaptation for Unown word Powers: required letters
+  // can be split across the player's hand, Active Spot and Bench. The Pokémon
+  // whose Power is activated must still be in play (enforced by legalActions).
+  function neoUnownWordReady(ctx,letters){
+    const ss=own(ctx),available=new Set([...pokemonOn(ss),...(ss.hand||[])].map(ref=>ctx.cardById(ref?.cardId)?.name).filter(Boolean));
+    return [...new Set(String(letters||'').toUpperCase().split(''))].every(letter=>available.has('Unown ['+letter+']'));
+  }
   // Unown [D], [M] and [N] reduce *all* attack damage to their team,
   // including secondary Bench hits from Tyranitar, Yanma and other cards.
   // Duplicate copies of the same Unown letter disable that letter's Power.
@@ -756,6 +763,34 @@
       case 'cunningPick':if(Number(ctx.action?.choiceOption)===0)ctx.shuffle?.(ctx.state,foe.deck);break;
       case 'tagTeam':{if(ss.active===att||!att)return;heal(ss.active,30);switchPokemon(ss,att.benchSlot,ctx.state);break;}
       case 'fluffyWool':{const meta=ctx.eventData;if(meta?.source?.attack&&meta.damage>0&&ss.active===att&&flip())meta.attacker.conditions={...(meta.attacker.conditions||{}),sleep:true};break;}
+      case 'unownGive':{
+        if(!neoUnownWordReady(ctx,'GIVE'))break;
+        const top=Array.isArray(ss.energySupply)?ss.energySupply[0]:ss.energyTypes?.[0];
+        if(neoBasicIds[top]&&flip('Unown [Give]'))request('pokemon',{includeActive:true,effect:{...effect,rule:'destiny:unownGivePick'}});
+        break;
+      }
+      case 'unownGivePick':{
+        if(!neoUnownWordReady(ctx,'GIVE'))break;
+        const slot=selected(ss),type=Array.isArray(ss.energySupply)?ss.energySupply[0]:ss.energyTypes?.[0];
+        if(slot&&neoBasicIds[type])neoSupplyAttach(ctx,ss,slot,type,1);
+        break;
+      }
+      case 'unownHelp':{
+        if(!neoUnownWordReady(ctx,'HELP'))break;
+        const count=ss.hand.length;
+        ss.deck.push(...ss.hand.splice(0));ctx.shuffle?.(ctx.state,ss.deck);draw(ss,count);
+        break;
+      }
+      case 'unownWant':{
+        if(neoUnownWordReady(ctx,'WANT')&&ss.discard.some(ref=>ctx.cardById(ref.cardId)?.kind==='trainer')&&flip('Unown [Want]'))pickDiscard('self',{kind:'trainer'},'unownWantPick');
+        break;
+      }
+      case 'unownWantPick':{
+        if(!neoUnownWordReady(ctx,'WANT'))break;
+        const i=Number(ctx.action?.choiceDiscardIndex),ref=ss.discard[i];
+        if(ref&&ctx.cardById(ref.cardId)?.kind==='trainer')ss.hand.push(...ss.discard.splice(i,1));
+        break;
+      }
       case 'unownP':break;
       case 'unownQ':if(flip())for(const slot of neoSlots(ctx,'self'))if(ctx.cardById(slot.cardId)?.name?.startsWith('Unown ['))slot.attackGuard={type:'preventDamage',target:'self',effects:true,expiresTurn:ctx.state.turnNumber+1};break;
       case 'unownL':if(flip()){ctx.shuffle?.(ctx.state,ss.deck);ctx.shuffle?.(ctx.state,foe.deck);}break;
@@ -1185,14 +1220,12 @@
         if(foe.bench.some(s=>(ctx.cardById(s.cardId)?.abilities||[]).length))pick('opponent','discovery:gaze',{filter:{hasAbility:true},includeActive:false});break;
       }
       case 'discovery:unownFind':{
-        const names=['Unown [F]','Unown [I]','Unown [N]','Unown [D]'],mine=neoSlots(ctx,'self');
-        if(!names.every(name=>mine.some(slot=>ctx.cardById(slot.cardId)?.name===name)))break;
+        if(!neoUnownWordReady(ctx,'FIND'))break;
         if(ctx.resolvingChoice){const i=Number(ctx.action?.choiceDeckIndex),ref=ss.deck[i];if(ctx.cardById(ref?.cardId)?.kind==='trainer'){ss.hand.push(...ss.deck.splice(i,1));ctx.shuffle?.(ctx.state,ss.deck);}}
         else if(ss.deck.some(ref=>ctx.cardById(ref.cardId)?.kind==='trainer'))ctx.requestChoice?.({kind:'deckCard',side:'self',filter:{kind:'trainer'},effect:e});break;
       }
       case 'discovery:unownUndo':{
-        const names=['Unown [U]','Unown [N]','Unown [D]','Unown [O]'],mine=neoSlots(ctx,'self');
-        if(!names.every(name=>mine.some(slot=>ctx.cardById(slot.cardId)?.name===name))||!ss.active)break;
+        if(!neoUnownWordReady(ctx,'UNDO')||!ss.active)break;
         const slot=ss.active;const refs=(slot.stack||[]).map((id,i)=>({uid:`undo-${turn}-${i}-${ss.hand.length}`,cardId:id}));refs.push(...(slot.specialEnergy||[]),...toolsOf(slot),...(slot.temporaryTrainers||[]));
         for(const [type,count] of Object.entries(slot.energy||{}))for(let i=0;i<Number(count||0);i++)if(neoBasicIds[type])refs.push({uid:`undo-energy-${turn}-${type}-${i}`,cardId:neoBasicIds[type],zoneGenerated:true});
         ss.hand.push(...refs);ss.active=null;break;
@@ -3645,6 +3678,13 @@
     return [{}];
   }
   function choicesForEffect(effect,ctx){
+    if(effect?.type==='neoRule'&&String(effect.rule||'').startsWith('destiny:unown')){
+      const r=effect.rule.slice('destiny:unown'.length),ss=own(ctx),word={Give:'GIVE',Help:'HELP',Want:'WANT'}[r];
+      if(word&&!neoUnownWordReady(ctx,word))return [];
+      if(r==='Give'){const top=Array.isArray(ss.energySupply)?ss.energySupply[0]:ss.energyTypes?.[0];return neoBasicIds[top]&&pokemonOn(ss).length?[{}]:[];}
+      if(r==='Want')return ss.discard.some(ref=>ctx.cardById(ref.cardId)?.kind==='trainer')?[{}]:[];
+      if(r==='Help')return [{}];
+    }
     if(effect?.type==='neoRule'&&effect.rule==='destiny:rushingFlames'){const total=pokemonOn(own(ctx)).reduce((n,slot)=>n+Number(slot.energy?.Fire||0),0);return Array.from({length:Math.min(20,total)+1},(_,n)=>({effectSelection:String(n),choiceLabel:'Discard '+n+' Fire Energy for '+n+' coin flips'}));}
     assertEffect(effect);if(!effect)return [{}];if(effect.type==='attackRequirement')return conditionMatches(effect.condition,ctx)?[{}]:[];if(!conditionMatches(effect.condition,ctx))return ctx.isAttack?[{}]:[];
     if(effect.type==='chooseDiscardForBonus'){const items=effect.zone==='bench'?(own(ctx).bench||[]).filter(s=>s&&matchesFilter(ctx.cardById(s.cardId),effect.filter,s)):(own(ctx).hand||[]).filter(r=>matchesFilter(ctx.cardById(r.cardId),effect.filter,r));const max=Math.min(Number(effect.max||items.length),items.length),out=[];for(let mask=0;mask<(1<<items.length);mask++){const picked=[];for(let i=0;i<items.length;i++)if(mask&(1<<i))picked.push(items[i].uid);if(picked.length<=max)out.push({effectSelection:picked.join(','),choiceLabel:`Discard ${picked.length}`});}return out;}
@@ -3730,9 +3770,9 @@
       return [{}];
     }
     if(effect.type==='neoRule'&&effect.rule.startsWith('discovery:')){
-      const r=effect.rule.slice('discovery:'.length),ss=own(ctx),foe=other(ctx),mine=pokemonOn(ss),hasUnown=name=>mine.some(x=>ctx.cardById(x.cardId)?.name===`Unown [${name}]`);
-      if(r==='unownFind')return ['F','I','N','D'].every(hasUnown)&&ss.deck.some(ref=>ctx.cardById(ref.cardId)?.kind==='trainer')?[{}]:[];
-      if(r==='unownUndo')return ['U','N','D','O'].every(hasUnown)&&!!ss.active?[{}]:[];
+      const r=effect.rule.slice('discovery:'.length),ss=own(ctx),foe=other(ctx),mine=pokemonOn(ss);
+      if(r==='unownFind')return neoUnownWordReady(ctx,'FIND')&&ss.deck.some(ref=>ctx.cardById(ref.cardId)?.kind==='trainer')?[{}]:[];
+      if(r==='unownUndo')return neoUnownWordReady(ctx,'UNDO')&&!!ss.active?[{}]:[];
       if(r==='gaze')return foe.bench.some(x=>ctx.cardById(x.cardId)?.abilities?.length)?[{}]:[];
       if(r==='reviveFriends')return ss.bench.length<ss.benchLimit&&ss.deck.some(ref=>ctx.cardById(ref.cardId)?.name==='Kabuto')?[{}]:[];
       if(r==='reviveFossil')return ss.bench.length<ss.benchLimit&&ss.deck.some(ref=>ctx.cardById(ref.cardId)?.evolvesFrom==='Mysterious Fossil')?[{}]:[];

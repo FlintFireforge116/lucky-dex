@@ -1,0 +1,29 @@
+LuckyDex v0.69.140 — Unown word-Power hand + field adaptation
+Version code 7120. Apply after v0.69.139.
+
+Classic TCG's 3-Bench rule makes four-letter Unown word Powers impossible if
+all letters must be Benched at once. For the following word Power requirements,
+recognise a required Unown letter if it is present in your hand, Active Spot,
+or Bench. The Pokémon whose Power is used MUST be in play as normal; copies
+held solely in hand cannot activate Powers. Each different letter is required;
+Unown from an opponent's hand/field never counts.
+
+Neo Destiny:
+  Unown [G] [Give] — G I V E; on heads attach the next ordered Basic Energy
+    from your Energy Zone to a chosen Pokémon (Energy Zone adaptation).
+  Unown [H] [Help] — H E L P; shuffle hand into deck and redraw the same count.
+  Unown [W] [Want] — W A N T; on heads choose Trainer from discard into hand.
+  These three previously disabled cards are now battle-enabled: 113/113.
+
+Neo Discovery:
+  Unown [F] [Find] — F I N D; search your deck for a Trainer card.
+  Unown [U] [Undo] — U N D O; return your Active Pokémon to hand.
+  Both support the same mixed hand/in-play letter requirements.
+
+Other Unown Powers without four-letter requirements are unchanged. This is a
+specific house-rule adaptation to a 3-Bench game, not a printed-card erratum.
+No changes to card ownership, Booster packs, simulation settings or rewards.
+
+Tests: 62 focused regression tests passed, including 9 new targeted Unown tests.
+Existing unrelated Neo Discovery Metal-only CPU recipe test still fails on
+v0.69.139 baseline and is not part of this patch.
