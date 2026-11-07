@@ -27,7 +27,7 @@ const STAPLES=Object.freeze([
  ['base1-83',1], // Maintenance
  ['base1-87',1]  // Pokedex
 ]);
-const SET_IDS=Object.freeze(['base1','base2','base3','base5','gym1','gym2','neo1','neo2','neo3','SNAPFLORIO','SNAPFOUNJA','sv1']);
+const SET_IDS=Object.freeze(['base1','base2','base3','base5','gym1','gym2','neo1','neo2','neo3','neo4','SNAPFLORIO','SNAPFOUNJA','sv1']);
 // Darkness and Metal are already Basic Energy types. Deduplicate before rendering
 // archetype chips so each energy type has exactly one toggle.
 const ARCHETYPE_TYPES=Object.freeze([...new Set([...decks.ENERGY_TYPES,'Colorless'])]);
@@ -57,7 +57,7 @@ const SPECIAL_COST_CARDS=Object.freeze({D:'neo1-104',M:'neo1-19'});
 // Neo Discovery has Darkness and Metal attackers but no Energy prints.  Treat
 // the relevant Neo Genesis Special Energy as a cross-set energy supply, not as
 // an off-set Pokémon/Trainer. Ownership and four-copy limits still apply.
-const isDiscoveryEnergySupply=(card,sets)=>(sets.includes('neo2')||sets.includes('neo3'))&&Object.values(SPECIAL_COST_CARDS).includes(card?.id);
+const isDiscoveryEnergySupply=(card,sets)=>(sets.includes('neo2')||sets.includes('neo3')||sets.includes('neo4'))&&Object.values(SPECIAL_COST_CARDS).includes(card?.id);
 const allowedInSetPool=(card,sets)=>sets.includes(card.setId)||isDiscoveryEnergySupply(card,sets);
 function specialCosts(_cards){return {D:0,M:0};} // Basic Darkness/Metal satisfies typed attack costs; Special Energy is optional.
 
@@ -116,7 +116,7 @@ function buildDeck(rows,options={}){
  if(focus?.kind==='pokemon'){
    const focused=candidates.filter(c=>familyLine(c,evolutionPool).some(member=>member.name===focus.name&&member.stage===focus.stage));
    if(focused.length)candidates=focused;
-   else if((scope.includes('neo2')||scope.includes('neo3'))&&['Darkness','Metal'].some(t=>(focus.types||[]).includes(t)))return fail(`Cannot build around ${focus.name}: a full evolution family and the required owned Neo Genesis Darkness/Metal Special Energy are needed.`);
+   else if((scope.includes('neo2')||scope.includes('neo3')||scope.includes('neo4'))&&['Darkness','Metal'].some(t=>(focus.types||[]).includes(t)))return fail(`Cannot build around ${focus.name}: a full evolution family and the required owned Neo Genesis Darkness/Metal Special Energy are needed.`);
    else return fail(`Cannot build around ${focus.name} with the selected owned cards and sets.`);
  }
  // Type selection applies to the featured family, not its Colorless supports.

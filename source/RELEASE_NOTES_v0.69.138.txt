@@ -1,0 +1,11 @@
+LuckyDex v0.69.138 — Neo Destiny (first verified Classic battle pass)
+Version code 7118; install over v0.69.137.
+
+- Registered all 113 original English Neo Destiny print identities (neo4-1 through neo4-113), official artwork references, HP, weakness, resistance, retreat, rarity, evolutions, and eight Shining variants.
+- 32 prints have fully implemented attack/Trainer effects supported by the current engine and are enabled for Classic battles, Auto Build, and CPU opponents.
+- The other 81 prints remain visible in the catalogue, but are excluded from battle/deck generation until their printed Powers, specialized attacks, Special Energy, or Trainer effects can be implemented and tested. Not a complete Neo Destiny rules release.
+- Neo Destiny is available in the Classic deck editor's set filter, Auto Build choices, and CPU set pool.
+- Recognizes physical ownership under Neo Destiny, neo4/n4 IDs and 105-printed-number references (including Shining cards 106–113).
+- Enforces the one-copy-per-deck limit for each Shining Pokémon.
+- Uses the existing 30-card / 5-Prize / separate Basic Energy Zone rules. TCGP builder, rewards and Test Lab are unchanged.
+- Tested all seven Neo Destiny-only CPU archetypes, basic-only themed builds, attack status/coins/recoil, and three complete CPU battles.

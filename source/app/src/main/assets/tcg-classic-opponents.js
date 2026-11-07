@@ -13,7 +13,7 @@
  if(!classic||!decks||!builder)throw new Error('Classic opponent generation dependencies are missing.');
  const ALL_PLAYABLE=Object.freeze(classic.CARDS.filter(card=>card.battleEnabled&&card.deckEligible!==false).map(card=>Object.freeze({gameplayId:card.id,quantity:4})));
  const TYPES=builder.ARCHETYPE_TYPES.slice();
- const SETS=['base1','base2','base3','base5','gym1','gym2','neo1','neo2','neo3','SNAPFLORIO','SNAPFOUNJA','sv1'];
+ const SETS=['base1','base2','base3','base5','gym1','gym2','neo1','neo2','neo3','neo4','SNAPFLORIO','SNAPFOUNJA','sv1'];
  function pick(seed,size){let x=(Number(seed)||0x9e3779b9)>>>0;x^=x<<13;x^=x>>>17;x^=x<<5;return (x>>>0)%size;}
  function pickType({seed=Date.now(),excludeTypes=[],includeColorless=false}={}){
    const availableTypes=includeColorless?TYPES:decks.ENERGY_TYPES.slice();
@@ -39,7 +39,7 @@
      const legal=classic.validateDeck(result.cards);
      const energy=decks.analyzeDeck(result.cards).recommendedEnergyTypes;
      if(!legal.ok||(!['Colorless','Darkness','Metal'].includes(type)&&decks.analyzeDeck(result.cards,[type]).missingEnergyTypes.length)||!result.cards.some(id=>classic.cardById(id)?.types?.includes(type)))continue;
-     if(result.cards.some(id=>{const card=classic.cardById(id);return !allowed.includes(card?.setId)&&!((allowed.includes('neo2')||allowed.includes('neo3'))&&['neo1-104','neo1-19'].includes(id));}))continue;
+     if(result.cards.some(id=>{const card=classic.cardById(id);return !allowed.includes(card?.setId)&&!((allowed.includes('neo2')||allowed.includes('neo3')||allowed.includes('neo4'))&&['neo1-104','neo1-19'].includes(id));}))continue;
      const archetype=String(result.strategy.match(/· ([^·]+) core/)?.[1]||'Classic TCG').trim();
      return {ok:true,type,rarityFocus,basicOnly,theme,cards:result.cards.slice(),energyTypes:['Colorless','Darkness','Metal'].includes(type)?result.energyTypes.slice():[type],sets:allowed.slice(),archetype,archetypeKey:result.archetypeKey,name:`${type} · ${archetype}`};
    }
