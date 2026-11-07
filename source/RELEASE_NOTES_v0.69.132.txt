@@ -1,0 +1,16 @@
+LuckyDex v0.69.132 — Scarlet & Violet Base Set (2023), first playable slice
+
+Catalogue:
+- All 258 genuine Scarlet & Violet sv1 print identities, including full-art and secret variants, card rarities, HP, evolution stages, Energy costs and image links.
+- 101 fully supported battle-enabled prints; all other SV1 prints remain in the catalogue but are not playable until their effects are accurately implemented. No invented attacks.
+- Supported starter slice includes Arcanine ex, Gyarados ex, Miraidon ex, Great Tusk ex, Oinkologne ex, early evolution lines and Trainers including Professor's Research, Ultra Ball, Poké Ball, Nest Ball, Judge, Katy and Youngster.
+
+Integration:
+- SV1 appears as a standalone set selection in Classic deck builder, manual collection filter, Auto Build and CPU opponent setup. Owned cards and variants use the correct printed sv1 IDs.
+- ex cards and their art variants give up two Prize cards. Basic Energy remains in the Classic ordered Energy Zone, with no change to rules of the 30-card hybrid format.
+- Artwork uses the existing public images.pokemontcg.io image URLs; no card images bundled into this patch.
+- Both Snap custom sets and earlier Classic sets remain unchanged.
+
+Validation:
+- 258/258 identity and rarity checks, 101 enabled prints, 7 SV1-only CPU deck types, ex knockout 2-Prize regression, modern Trainer choices and previous rarity/Snap combat checks. 57 targeted tests passed in assembled source.
+- Not all 258 cards are battle-ready. Complex card effects such as Gardevoir ex's Psychic Embrace, Koraidon ex's Dino Cry and Spidops ex's Trap Territory are disabled, not approximated.
