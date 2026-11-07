@@ -29,17 +29,19 @@ test('165 authentic Expedition prints are registered with exact numbered identit
  assert.equal(by(80).attacks[1].name,'Dream Eater');
  assert.equal(by(109).attacks[0].name,'Bad Dream');
 });
-test('unsupported Poké-Powers / Tools stay out of playable decks, never silently noop',()=>{
- const partial=expedition.coverage().partial;assert.equal(expedition.coverage().battleEnabled,157);assert.equal(partial.length,8);
- for(const n of [1,2,30,33,34,68,144,150]){assert.equal(by(n).battleEnabled,false);assert.equal(by(n).deckEligible,false);assert.equal(by(n).support.status,'PARTIAL');}
- for(const n of [4,5,6,7,13,23,29,80,109,138,139,145,151,158,159])assert.equal(by(n).battleEnabled,true,by(n).name);
+test('all 165 Expedition cards are fully playable after the final mechanics pass',()=>{
+ assert.equal(expedition.coverage().battleEnabled,165);assert.deepEqual(expedition.coverage().partial,[]);
+ for(const n of [1,2,30,33,34,68,144,150]){
+  assert.equal(by(n).battleEnabled,true);assert.equal(by(n).deckEligible,true);
+  assert.equal(by(n).support.status,'FULL');
+ }
 });
-test('build and in-app display versions agree at 0.69.142 (including both start-screen labels)',()=>{
+test('build and in-app display versions agree at 0.69.143 (including both start-screen labels)',()=>{
  const gradle=fs.readFileSync(path.resolve(__dirname,'../app/build.gradle'),'utf8');
  const js=fs.readFileSync(path.join(A,'app-v0167.js'),'utf8');
  const html=fs.readFileSync(path.join(A,'index.html'),'utf8');
  const version=gradle.match(/versionName '([^']+)'/)?.[1];
- assert.equal(version,'0.69.142');assert.match(gradle,/versionCode 7122/);
+ assert.equal(version,'0.69.143');assert.match(gradle,/versionCode 7123/);
  assert.ok(js.includes(`window.__LUCKYDEX_BUILD='${version}'`));
  assert.equal(html.split('v'+version).length-1,2,'both start-screen labels must be updated');
  assert.ok(html.indexOf('tcg-classic-expedition.js')>html.indexOf('tcg-classic-legendary-collection.js'));

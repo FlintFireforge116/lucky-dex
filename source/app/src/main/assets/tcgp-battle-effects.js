@@ -925,6 +925,36 @@
     const energyTotal=board=>slots(board).reduce((sum,slot)=>sum+totalEnergy(slot.energy)+(slot.specialEnergy||[]).length,0);
     const log=extra=>ctx.state.log.push({type:'expeditionEffect',rule,side:ctx.side,...extra});
     switch(rule){
+      case 'psymimic':case 'harvestBounty':break; // handled by attack and Energy attachment paths
+      case 'harvestOffer':{
+        const source=slots(ss).find(slot=>slot.uid===effect.sourceUid);
+        if(!source||!['ecard1-30','ecard1-68'].includes(source.cardId)||
+           source.harvestBountyUsedTurn===ctx.state.turnNumber||
+           (source.conditions?.sleep||source.conditions?.paralysis||source.conditions?.confusion||source.conditions?.poison||source.conditions?.burn)||
+           abilitiesSuppressed(ctx.state,ctx.side,source,ctx.cardById)||!ss.active||!ss.energySupply?.length)break;
+        ctx.requestChoice?.({kind:'option',side:'self',options:['Skip extra Energy','Attach '+ss.energySupply[0]+' Energy'],
+          effect:{type:'neoRule',rule:'expedition:harvestBountyPick',sourceUid:source.uid}});break;
+      }
+      case 'harvestBountyPick':{
+        if(Number(act.choiceOption)!==1||!ss.active||!ss.energySupply?.length)break;
+        const source=slots(ss).find(slot=>slot.uid===effect.sourceUid);
+        if(!source||source.harvestBountyUsedTurn===ctx.state.turnNumber||
+           (source.conditions?.sleep||source.conditions?.paralysis||source.conditions?.confusion||source.conditions?.poison||source.conditions?.burn)||
+           abilitiesSuppressed(ctx.state,ctx.side,source,ctx.cardById))break;
+        const type=ss.energySupply.shift();ss.nextEnergyType=ss.energySupply[0]||null;
+        source.harvestBountyUsedTurn=ctx.state.turnNumber;
+        add(ss.active,type,1);log({sourceCardId:source.cardId,energyType:type,attachedTo:ss.active.cardId});break;
+      }
+      case 'lightningStrikeDiscard':{
+        if(!a)break;
+        drop(a,ss,'Lightning',Number(a.energy?.Lightning||0));
+        for(const ref of [...(a.specialEnergy||[])]){
+          const provides=ref.provides||ctx.cardById(ref.cardId)?.effect?.provides||{};
+          if(Number(provides.Lightning||0)<=0)continue;
+          a.specialEnergy=a.specialEnergy.filter(x=>x.uid!==ref.uid);ss.discard.push(ref);
+        }
+        log({discardedLightning:true});break;
+      }
       // Attack-only damage rules are processed by resolveAttack, and must not be
       // applied again after the damage has resolved.
       case 'syncroblast':case 'energyCannon':case 'rendingJaws':case 'ironFist':
@@ -3482,8 +3512,10 @@
       case 'endTurn':if(typeof ctx.endTurn==='function')ctx.endTurn();break;
       case 'removeRandomStatus':for(const s of affected()){const keys=Object.keys(s.conditions||{});if(!keys.length)continue;const key=keys[Math.floor(ctx.random(ctx.state)*keys.length)];delete s.conditions[key];}break;
       case 'chainLightning':{if(ctx.isAttack&&ctx.state.stadium?.cardId==='SNAPFLORIO-112')break;const defenderType=ctx.cardById(ctx.defender?.cardId)?.types?.[0];if(!defenderType||defenderType==='Colorless')break;for(const side of [ctx.side,ctx.foeSide]){for(const slot of ctx.state.sides[side].bench||[]){if(!slot||!ctx.cardById(slot.cardId)?.types?.includes(defenderType))continue;const reduced=modifierAmount(ctx.state,side,slot,'damageReduction',ctx.cardById);const guard=attackIsPrevented(ctx.state,side,slot,ctx.attacker,ctx.cardById)||fossilTransparencyBlocks(ctx,side,slot);let amount=guard?0:Math.max(0,Number(effect.amount||10)-reduced);if(amount>0)amount=ctx.gymBenchRedirect?.(side,slot,amount)??amount;slot.damage=Number(slot.damage||0)+amount;if(amount)log({type:'benchDamage',targetSide:side,targetCardId:slot.cardId,sourceCardId:ctx.attacker?.cardId,amount,attack:ctx.attack?.name});}}break;}
-      case 'benchDamage':{if(ctx.isAttack&&ctx.state.stadium?.cardId==='SNAPFLORIO-112')break;const ss=effect.side==='self'?own(ctx):other(ctx);const list=effect.all?ss.bench:targets(effect.side==='self'?'selfBench':'opponentBench',ctx);for(const s of list.filter(s=>s&&matchesFilter(ctx.cardById(s.cardId),effect.filter,s))){const side=effect.side==='self'?ctx.side:ctx.foeSide;const guard=ctx.isAttack&&attackIsPrevented(ctx.state,side,s,ctx.attacker,ctx.cardById)||fossilTransparencyBlocks(ctx,side,s);const bonus=ctx.isAttack&&ctx.attacker?modifierAmount(ctx.state,ctx.side,ctx.attacker,'attackDamageAllTargets',ctx.cardById):0,amount=guard?0:Math.max(0,Number(effect.amount||0)+bonus-(ctx.isAttack?modifierAmount(ctx.state,side,s,'damageReduction',ctx.cardById):0));const lentalReduction=ctx.isAttack&&!guard?lentalDefenseReduction(ctx.state,side,s,ctx.cardById(ctx.attacker?.cardId),ctx.cardById):0;
-        s.damage=Number(s.damage||0)+Math.max(0,amount-lentalReduction);if(ctx.isAttack&&ctx.attacker&&amount>lentalReduction)florioReactToAttackDamage(ctx.state,side,s,ctx.side,ctx.attacker,Math.max(0,amount-lentalReduction),ctx.cardById,ctx.random);if(ctx.isAttack&&amount>lentalReduction)log({type:'benchDamage',targetSide:side,sourceCardId:ctx.attacker?.cardId||null,targetCardId:s.cardId,benchIndex:Number(s.benchSlot||0),amount:Math.max(0,amount-lentalReduction),attack:ctx.attack?.name||'Attack'});}break;}
+      case 'benchDamage':{if(ctx.isAttack&&ctx.state.stadium?.cardId==='SNAPFLORIO-112')break;const ss=effect.side==='self'?own(ctx):other(ctx);const list=effect.all?ss.bench:targets(effect.side==='self'?'selfBench':'opponentBench',ctx);for(const s of list.filter(s=>s&&matchesFilter(ctx.cardById(s.cardId),effect.filter,s))){const side=effect.side==='self'?ctx.side:ctx.foeSide;const guard=ctx.isAttack&&attackIsPrevented(ctx.state,side,s,ctx.attacker,ctx.cardById)||fossilTransparencyBlocks(ctx,side,s);const bonus=ctx.isAttack&&ctx.attacker?modifierAmount(ctx.state,ctx.side,ctx.attacker,'attackDamageAllTargets',ctx.cardById):0;
+        const charm=ctx.isAttack&&ctx.attacker&&Number(effect.amount||0)+bonus>0?toolsOf(ctx.attacker).find(r=>r.cardId==='ecard1-150'):null;
+        const amount=guard?0:Math.max(0,Number(effect.amount||0)+bonus+(charm?10:0)-(ctx.isAttack?modifierAmount(ctx.state,side,s,'damageReduction',ctx.cardById):0));const lentalReduction=ctx.isAttack&&!guard?lentalDefenseReduction(ctx.state,side,s,ctx.cardById(ctx.attacker?.cardId),ctx.cardById):0;
+        s.damage=Number(s.damage||0)+Math.max(0,amount-lentalReduction);if(charm&&amount>lentalReduction)charm.strengthCharmUsedTurn=ctx.state.turnNumber;if(ctx.isAttack&&ctx.attacker&&amount>lentalReduction)florioReactToAttackDamage(ctx.state,side,s,ctx.side,ctx.attacker,Math.max(0,amount-lentalReduction),ctx.cardById,ctx.random);if(ctx.isAttack&&amount>lentalReduction)log({type:'benchDamage',targetSide:side,sourceCardId:ctx.attacker?.cardId||null,targetCardId:s.cardId,benchIndex:Number(s.benchSlot||0),amount:Math.max(0,amount-lentalReduction),attack:ctx.attack?.name||'Attack'});}break;}
       case 'distributeEnergy':{
         const sourceSlot=ctx.attacker;
         let queue=Array.isArray(effect.remainingTypes)?effect.remainingTypes.slice():null;
@@ -3646,9 +3678,12 @@
           case 'shockBolt':if(!Number(a?.energy?.Lightning||0)){damage=0;attackDoesNothing=true;pending.length=0;return;}pending.push(e);return;
           case 'mislead':damage=0;pending.push(e);return;
           case 'lightningStrike':{
-            // Optional doubling needs a player choice at attack declaration; this
-            // rule is excluded from playable cards until that interface exists.
-            throw new Error('Expedition Lightning Strike option not implemented');
+            const boosted=ctx.action?.effectSelection==='discard'&&
+              (Number(a?.energy?.Lightning||0)>0||(a?.specialEnergy||[]).some(ref=>
+                Number((ref.provides||ctx.cardById(ref.cardId)?.effect?.provides||{}).Lightning||0)>0));
+            damage=boosted?80:40;
+            if(boosted)pending.push({type:'neoRule',rule:'expedition:lightningStrikeDiscard'});
+            return;
           }
           case 'scorchingWhirlwind':case 'rockSlide':case 'energyCatch':case 'plasma':
           case 'energyDraw':case 'energyRecall':case 'energyPatch':case 'reflectEnergy':
@@ -4048,6 +4083,12 @@
       if(r==='Give'){const top=Array.isArray(ss.energySupply)?ss.energySupply[0]:ss.energyTypes?.[0];return neoBasicIds[top]&&pokemonOn(ss).length?[{}]:[];}
       if(r==='Want')return ss.discard.some(ref=>ctx.cardById(ref.cardId)?.kind==='trainer')?[{}]:[];
       if(r==='Help')return [{}];
+    }
+    if(effect?.type==='neoRule'&&effect.rule==='expedition:lightningStrike'){
+      const a=ctx.attacker,hasLightning=Number(a?.energy?.Lightning||0)>0||
+        (a?.specialEnergy||[]).some(ref=>Number((ref.provides||ctx.cardById(ref.cardId)?.effect?.provides||{}).Lightning||0)>0);
+      return [{effectSelection:'',choiceLabel:'40 damage · keep Lightning Energy'},
+        ...(hasLightning?[{effectSelection:'discard',choiceLabel:'80 damage · discard all Lightning Energy'}]:[])];
     }
     if(effect?.type==='neoRule'&&effect.rule==='destiny:rushingFlames'){const total=pokemonOn(own(ctx)).reduce((n,slot)=>n+Number(slot.energy?.Fire||0),0);return Array.from({length:Math.min(20,total)+1},(_,n)=>({effectSelection:String(n),choiceLabel:'Discard '+n+' Fire Energy for '+n+' coin flips'}));}
     assertEffect(effect);if(!effect)return [{}];if(effect.type==='attackRequirement')return conditionMatches(effect.condition,ctx)?[{}]:[];if(!conditionMatches(effect.condition,ctx))return ctx.isAttack?[{}]:[];

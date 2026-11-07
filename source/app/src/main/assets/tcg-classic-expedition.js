@@ -21,10 +21,10 @@ const exp=rule=>({type:'neoRule',rule:'expedition:'+rule});
 const ATTACKS=Object.create(null),POWERS=Object.create(null),TRAINERS=Object.create(null);
 function attack(n,index,effect,text){ATTACKS[n+':'+index]={effect,text};}
 function plain(n,...indices){for(const i of indices)attack(n,i,noop,'Deals the printed attack damage.');}
-function ability(n,type,effect,{benchOnly=false,oncePerTurn=true,disabledByStatus=true,text=''}={}){POWERS[n]={type,effect,benchOnly,...(type==='activated'?{oncePerTurn}:{}),disabledByStatus,text};}
+function ability(n,type,effect,{benchOnly=false,oncePerTurn=true,disabledByStatus=true,text=''}={}){POWERS[n]={type,effect,benchOnly,...(type==='activated'?{oncePerTurn}:{}),disabledByStatus,expeditionSpecialCondition:true,text};}
 // The first 32 holo cards and their identical non-holo alternate prints.
 attack(1,0,exp('syncroblast'),'80 damage if both Active Pokémon have equal Energy card counts; otherwise 20.');
-ability(1,'activated',exp('psymimic'),{text:'Copy an opposing Pokémon attack including its cost, replacing a normal attack.'});
+ability(1,'passive',exp('psymimic'),{text:'Instead of Alakazam’s normal attack, copy an attack from an opposing Pokémon, paying its printed Energy cost. Unavailable under Special Conditions.'});
 attack(2,0,exp('lightningStrike'),'May discard all attached Lightning Energy to deal 80 instead of 40.');
 ability(2,'activated',exp('energyConnect'),{oncePerTurn:false,text:'Move a basic Energy from your Bench to the Active Pokémon.'});
 attack(3,0,par('poison'),'Poison the Defending Pokémon.');
@@ -79,7 +79,7 @@ ability(28,'activated',exp('heatUp'),{text:'If opponent has more attached Energy
 attack(29,0,flip(seq(bonus(10),{type:'benchDamage',amount:10,all:true,side:'opponent'})),'Heads: +10 and 10 to each opposing Benched Pokémon.');
 ability(29,'passive',{type:'energyTypeOverride',energyType:'Darkness',target:'self'},{text:'All Energy attached to Tyranitar provides Darkness Energy.'});
 attack(30,0,flip(par('paralysis')),'Heads Paralyze.');
-ability(30,'activated',exp('harvestBounty'),{text:'When attaching Energy to your Active, you may attach one additional Energy at the same time.'});
+ability(30,'passive',exp('harvestBounty'),{text:'Once during your turn when you attach Energy to your Active Pokémon, you may attach one additional Energy from the top of your Energy Zone.'});
 attack(31,0,seq(coins(3,30),selfStatus('confusion')),'Three flips for 30 per heads; Vileplume becomes Confused.');
 ability(31,'activated',flip(par('poison')),{text:'Heads: poison the opposing Active Pokémon.'});
 attack(32,0,flip(par('poison'),par('confusion')),'Heads Poison; tails Confuse.');
@@ -153,12 +153,14 @@ TRAINERS[140]={trainerType:'Item',text:'Heads: discard one attached opposing Ene
 TRAINERS[141]={trainerType:'Item',text:'Flip three coins: recover Basic Energy from discard per heads.',effect:exp('energyRestore')};
 TRAINERS[142]={trainerType:'Supporter',text:'Flip until tails; draw two per heads.',effect:{type:'coinUntilTails',effect:{type:'draw',amount:2}}};
 TRAINERS[143]={trainerType:'Item',text:'Look at top seven cards; choose one Pokémon to hand and shuffle the remainder.',effect:exp('masterBall')};
+TRAINERS[144]={trainerType:'Tool',technicalMachine:true,text:'Attach to a Pokémon. It gains Paralyzing Gaze for one Colorless Energy. Discard at end of your turn.',effect:noop,attacks:[{name:'Paralyzing Gaze',cost:'C',damage:0,damageText:null,text:'The Defending Pokémon is now Paralyzed.',effect:par('paralysis')}]};
 // Technical Machine is deliberately excluded pending a verified borrowed-attack implementation.
 TRAINERS[145]={trainerType:'Supporter',text:'Heal one of your Pokémon completely and discard its Energy.',effect:exp('pokemonNurse')};
 TRAINERS[146]={trainerType:'Item',text:'Choose opposing Benched Pokémon; flip heads to switch that Pokémon Active.',effect:exp('pokemonReversal')};
 TRAINERS[147]={trainerType:'Item',text:'Heads: return up to two Energy from discard to the deck.',effect:exp('powerCharge')};
 TRAINERS[148]={trainerType:'Supporter',text:'Search your deck for an Evolution card.',effect:exp('elmsTrainingMethod')};
 TRAINERS[149]={trainerType:'Supporter',text:'Shuffle hand into deck then draw five.',effect:{type:'handShuffle',side:'self',draw:5}};
+TRAINERS[150]={trainerType:'Tool',text:'When attached Pokémon deals attack damage, add 10 after Weakness and Resistance. Discard at the end of that turn.',effect:{type:'modifier',stat:'postWeaknessAttackDamage',amount:10,duration:'whileInPlay',scope:'self'}};
 // Strength Charm needs its temporary attack bonus and discard trigger wired together.
 TRAINERS[151]={trainerType:'Item',text:'Heads: return a Pokémon and all cards attached to it to hand.',effect:exp('superScoopUp')};
 TRAINERS[152]={trainerType:'Item',text:'Opponent switches Active first, then you switch yours.',effect:{type:'neoRule',rule:'doubleGust'}};
@@ -173,6 +175,7 @@ const LABELS=[[1,"Alakazam","Rare Holo"],[2,"Ampharos","Rare Holo"],[3,"Arbok","
 // Holo / non-holo pairs have the exact same printed attacks and Powers.
 const PAIRED={33:1,34:2,35:3,37:4,38:5,40:6,41:7,42:8,43:9,44:10,45:11,47:12,48:13,49:14,50:15,51:16,52:17,54:18,55:19,56:20,57:21,58:22,59:23,60:24,61:25,62:26,63:27,65:28,66:29,68:30,69:31,70:32};
 const SUPPORTED_EXPEDITION=new Set([
+ 'psymimic','harvestBounty','harvestBountyPick','harvestOffer','lightningStrike','lightningStrikeDiscard',
  'syncroblast','energyCannon','rendingJaws','ironFist','dogpile','spiralWave',
  'waterPunch','etherealFlame','shockBolt','mislead','scorchingWhirlwind',
  'rockSlide','energyCatch','plasma','energyDraw','energyRecall','energyPatch',
@@ -216,7 +219,7 @@ function parseNumbered(n){const label=LABELS[n-1],record=variants.get(n)||varian
  }else if(kind==='trainer'){
   const trainer=TRAINERS[n];if(!trainer?.effect)reasons.push('Printed Trainer/Tool effect not yet implemented');
   else if((!fx.supportsEffect(trainer.effect)||!expeditionEffectSupported(trainer.effect)))reasons.push('Trainer effect unsupported by engine');
-  data={...data,trainerType:trainer?.trainerType||(n===144?'Technical Machine':n===150?'Tool':'Item'),text:trainer?.text||'Read original card for the printed effect.',effect:trainer?.effect||null};
+  data={...data,trainerType:trainer?.trainerType||(n===144?'Technical Machine':n===150?'Tool':'Item'),text:trainer?.text||'Read original card for the printed effect.',effect:trainer?.effect||null,...(trainer?.attacks?{attacks:trainer.attacks}:{}),technicalMachine:!!trainer?.technicalMachine};
  }else{
   const basic=n>=160;
   data={...data,basicEnergy:basic,specialEnergy:!basic,subtype:n===158?'Darkness':n===159?'Metal':name.replace(' Energy',''),types:[n===158?'Darkness':n===159?'Metal':name.replace(' Energy','')],text:basic?'Basic Energy provided by the separate Classic Energy Zone.':n===158?'Provides Darkness; adds 10 attack damage and damages non-Dark Pokémon between turns.':'Provides Metal; reduces incoming damage and attack damage from non-Metal Pokémon.',effect:basic?null:{type:'specialEnergy',provides:{[n===158?'Darkness':'Metal']:1}}};

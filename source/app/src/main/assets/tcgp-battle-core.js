@@ -409,6 +409,21 @@
       if(state.sides[otherSide].active?.cardId==='SNAPFLORIO-096')state.log.push({type:'revealDraw',side:from,cardId:ref.cardId,reason:'Circle Soar'});}return ref;},maxHp:(which,slot)=>maxHp(state,which,slot),retreatCost:which=>retreatCost(state,which),effectiveEnergy:slot=>{const which=pokemonOn(state.sides.player).includes(slot)?'player':'opponent';return effectiveEnergy(state,which,slot);},canPayCopiedCost:attack=>effects.canPayCost(effectiveEnergy(state,side,attacker||state.sides[side].active),attackCost(state,side,attack)),endTurn:()=>endTurn(state),requestChoice:spec=>beginEffectChoice(state,side,attacker||state.sides[side].active,{...spec,trainerRef:action?.trainerRef||spec.trainerRef||null}),benchCard:(ss,ref)=>{const slot=emptyBenchSlots(ss)[0];if(slot==null)return null;const placed=placeOnBench(ss,makePokemonSlot(ref.cardId,ss.turnCount,ref.uid),slot),targetSide=ss===state.sides.player?'player':'opponent';triggerAbilities(state,'benched',targetSide,placed,{fromDeck:true});return slot;},onEnergyAttached:(target,energyType,amount)=>{const targetSide=pokemonOn(state.sides.player).includes(target)?'player':'opponent';for(let i=0;i<Number(amount||1);i++)triggerAbilities(state,'energyAttached',targetSide,target,{energyType,fromZone:true});},gymBenchRedirect:(which,slot,amount)=>gymBenchRedirect(state,which,slot,amount),onEvolved:target=>{const targetSide=pokemonOn(state.sides.player).includes(target)?'player':'opponent';triggerAbilities(state,'evolved',targetSide,target,{fromDeck:true});},evolveFromDeck:target=>{const targetSide=pokemonOn(state.sides.player).includes(target)?'player':'opponent',ss=state.sides[targetSide],base=data.cardById(target.cardId),candidates=ss.deck.map((r,index)=>({r,index,card:data.cardById(r.cardId)})).filter(x=>x.card?.battleEnabled&&x.card.kind==='pokemon'&&(state.format==='classic'?classicCardName(x.card.evolvesFrom)===classicCardName(base?.name):x.card.evolvesFrom===base?.name));if(!candidates.length)return false;const hit=candidates[Math.floor(random(state)*candidates.length)],[ref]=ss.deck.splice(hit.index,1);target.cardId=ref.cardId;target.stack.push(ref.cardId);target.playedOnSideTurn=ss.turnCount;target.evolvedOnTurn=state.turnNumber;shuffle(state,ss.deck);state.log.push({type:'evolve',side:targetSide,cardId:ref.cardId,fromDeck:true});triggerAbilities(state,'evolved',targetSide,target,{fromDeck:true});return true;},transformSelfToEnergy:(source,targetUid,energyType,amount)=>{if(!source)return false;const target=pokemonOn(state.sides[side]).find(slot=>slot&&slot.uid===targetUid&&slot!==source);if(!target)return false;source.transformOnKO={targetUid,provides:{[energyType]:Math.max(1,Number(amount||2))}};source.damage=Math.max(Number(source.damage||0),maxHp(state,side,source));return true;}};
   }
 
+  function offerExpeditionHarvestBounty(state,side,target){
+    if(state.format!=='classic'||!target||target!==state.sides[side].active||!state.sides[side].energySupply?.length)return;
+    const ss=state.sides[side],eligible=pokemonOn(ss).filter(source=>
+      ['ecard1-30','ecard1-68'].includes(source.cardId)&&
+      source.harvestBountyUsedTurn!==state.turnNumber&&
+      !(['sleep','paralysis','confusion','poison','burn'].some(x=>source.conditions?.[x]))&&
+      !effects.abilitiesSuppressed(state,side,source,data.cardById)&&
+      Number(source.neoDestinyPowerLockUntil||0)<state.turnNumber);
+    if(!eligible.length)return;
+    beginEffectChoice(state,side,eligible[0],{
+      kind:'option',side:'self',options:['Skip extra Energy','Attach '+ss.energySupply[0]+' Energy'],
+      effect:{type:'neoRule',rule:'expedition:harvestBountyPick',sourceUid:eligible[0].uid},
+      afterEffects:eligible.slice(1).map(source=>({type:'neoRule',rule:'expedition:harvestOffer',sourceUid:source.uid}))
+    });
+  }
   function gymBenchRedirect(state,side,target,amount){
     if(amount<=0||!target||state.format!=='classic'||!state.sides[side]?.bench.includes(target))return amount;
     const rhydon=state.sides[side].bench.find(s=>s&&s.cardId==='gym1-2'&&s!==target&&Number(s.damage||0)+10<Number(data.cardById(s.cardId)?.hp||0));
@@ -503,7 +518,10 @@
     return remaining<=0?{energy:generated,specialEnergy:special,discardSpecial}:null;
   }
   function abilitiesFor(card){return (card?.abilities?.length?card.abilities:Array.isArray(card?.ability)?card.ability:[card?.ability]).filter(Boolean);}
-  function abilityBlockedByStatus(ability,slot){if(!ability?.disabledByStatus||!slot)return false;const c=slot.conditions||{};return !!(c.sleep||c.confusion||c.paralysis);}
+  function abilityBlockedByStatus(ability,slot){if(!ability?.disabledByStatus||!slot)return false;const c=slot.conditions||{};
+    // Expedition's printed Poké-Powers are disabled by ANY Special Condition,
+    // including Poison and Burn; many later card texts only name three.
+    return !!(c.sleep||c.confusion||c.paralysis||(ability.expeditionSpecialCondition&&(c.poison||c.burn)));}
   function trainerType(card){return card.trainerType||card.subtype||'Item';}
   function rareCandyMatches(stage2,basic){
     if(!stage2||stage2.kind!=='pokemon'||stage2.stage!=='Stage 2'||!basic||basic.kind!=='pokemon'||basic.stage!=='Basic')return false;
@@ -524,11 +542,39 @@
         const c=data.cardById(p.cardId);for(const [attackIndex,attack] of (c.attacks||[]).entries())if(!seen.has(c.id+':'+attackIndex)){seen.add(c.id+':'+attackIndex);out.push({cardId:c.id,attackIndex,attack,previous:false,borrowed:true});}
       }
     }
+    if(state.format==='classic'){
+      // Expedition Alakazam's Psymimic replaces a normal attack. It copies the
+      // opponent's printed attack and cost; damage is still dealt as Alakazam.
+      if(['ecard1-1','ecard1-33'].includes(current.id)&&
+         !effects.abilitiesSuppressed(state,side,slot,data.cardById)&&
+         !(['sleep','paralysis','confusion','poison','burn'].some(x=>slot.conditions?.[x]))&&
+         !Number(slot.neoDestinyPowerLockUntil>=state.turnNumber)){
+        const foe=state.sides[side==='player'?'opponent':'player'],seen=new Set(out.map(e=>e.cardId+':'+e.attackIndex));
+        for(const opponent of [foe.active,...foe.bench].filter(Boolean)){
+          const card=data.cardById(opponent.cardId);if(!card?.battleEnabled)continue;
+          for(const [attackIndex,attack] of (card.attacks||[]).entries()){
+            const key=card.id+':'+attackIndex;if(seen.has(key))continue;seen.add(key);
+            out.push({cardId:card.id,attackIndex,attack,psymimic:true});
+          }
+        }
+      }
+      // Technical Machines grant a temporary attack, not a new Pokémon identity.
+      for(const ref of toolsOf(slot)){
+        const tool=data.cardById(ref.cardId);if(!tool?.technicalMachine)continue;
+        for(const [attackIndex,attack] of (tool.attacks||[]).entries())
+          out.push({cardId:tool.id,attackIndex,attack,technicalMachine:true});
+      }
+    }
     return out;
   }
   function attackDamagePreview(state,side,attackIndex,attackCardId){
     const source=state?.sides?.[side]?.active,attack=data.cardById(attackCardId||source?.cardId)?.attacks?.[attackIndex];
     if(!source||!attack)return {damage:0,text:'0',variable:false};
+    if(attack.effect?.rule==='expedition:lightningStrike'){
+      const boosted=Number(source.energy?.Lightning||0)>0||(source.specialEnergy||[]).some(ref=>
+        Number((ref.provides||data.cardById(ref.cardId)?.effect?.provides||{}).Lightning||0)>0);
+      return {damage:40,text:boosted?'40 / 80':'40',variable:boosted};
+    }
     // Spore Storm is 40 PLUS 40 for each Heads. Never execute a random
     // attack in the inspection preview: that shows a phantom dice result which
     // may disagree with the coins rolled on the actual attack. Include Energy
@@ -770,7 +816,13 @@
     triggerAbilities(state,'endTurn','player');triggerAbilities(state,'endTurn','opponent');
     triggerPersistent(state,'endTurn','player');triggerPersistent(state,'endTurn','opponent');
     effects.resolveDelayedEffects?.(state,state.activeSide,data.cardById,(side,source)=>effectContext(state,side,{},source));
-    if(state.format==='classic'){const who=state.activeSide,board=state.sides[who];for(const slot of pokemonOn(board)){for(const ref of toolsOf(slot)){if(ref.cardId!=='neo4-101')continue;if(slot.tool?.uid===ref.uid)slot.tool=slot.extraTools?.shift()||null;else slot.extraTools=(slot.extraTools||[]).filter(r=>r.uid!==ref.uid);board.discard.push(ref);state.log.push({type:'neoDestinyMagnifierExpired',side:who});}}}
+    if(state.format==='classic'){const who=state.activeSide,board=state.sides[who];for(const slot of pokemonOn(board)){for(const ref of [...toolsOf(slot)]){
+      const magnifier=ref.cardId==='neo4-101',technicalMachine=data.cardById(ref.cardId)?.technicalMachine;
+      const strengthCharm=ref.cardId==='ecard1-150'&&ref.strengthCharmUsedTurn===state.turnNumber;
+      if(!magnifier&&!technicalMachine&&!strengthCharm)continue;
+      if(slot.tool?.uid===ref.uid)slot.tool=slot.extraTools?.shift()||null;else slot.extraTools=(slot.extraTools||[]).filter(r=>r.uid!==ref.uid);
+      board.discard.push(ref);state.log.push({type:technicalMachine?'expeditionTechnicalMachineExpired':strengthCharm?'expeditionStrengthCharmExpired':'neoDestinyMagnifierExpired',side:who,cardId:ref.cardId});
+    }}}
     if(state.format==='classic')for(const who of ['player','opponent']){
       const side=state.sides[who];for(const slot of pokemonOn(side)){
         for(const ref of [...(slot.specialEnergy||[])])if(ref.cardId==='neo4-16'&&who===state.activeSide){slot.specialEnergy=slot.specialEnergy.filter(r=>r.uid!==ref.uid);side.discard.push(ref);state.log.push({type:'neoDestinyMiracleDiscard',side:who,cardId:slot.cardId});}
@@ -1110,14 +1162,16 @@
         state.log.push({type:'specialEnergyPotion',side,cardId:target.cardId,healed:before-target.damage});
       }
       state.log.push({type:'attachSpecial',side,target:matched.target,benchIndex:matched.benchIndex,cardId:target.cardId,energyCardId:card.id,provides});
-      triggerAbilities(state,'energyAttached',side,target,{energyType:Object.keys(provides)[0]||'Colorless',fromZone:false,specialEnergy:!!card.specialEnergy});resolveKnockOut(state,null);return state;
+      triggerAbilities(state,'energyAttached',side,target,{energyType:Object.keys(provides)[0]||'Colorless',fromZone:false,specialEnergy:!!card.specialEnergy});
+      offerExpeditionHarvestBounty(state,side,target);if(state.phase!=='effectChoice')resolveKnockOut(state,null);return state;
     }
     if (matched.type === 'attach'){
       const target = slotForTarget(s,matched.target,matched.benchIndex);
       const type = s.energyType;
       target.energy[type] = Number(target.energy[type] || 0) + 1;
       s.energyUsed = true;
-      state.log.push({type:'attach',side,target:matched.target,benchIndex:matched.benchIndex,cardId:target.cardId,energyType:type});triggerAbilities(state,'energyAttached',side,target,{energyType:type,fromZone:true});triggerAbilities(state,'opponentEnergyAttached',side==='player'?'opponent':'player',null,{target,energyType:type,fromZone:true,sourceSide:side});resolveKnockOut(state,null);
+      state.log.push({type:'attach',side,target:matched.target,benchIndex:matched.benchIndex,cardId:target.cardId,energyType:type});triggerAbilities(state,'energyAttached',side,target,{energyType:type,fromZone:true});triggerAbilities(state,'opponentEnergyAttached',side==='player'?'opponent':'player',null,{target,energyType:type,fromZone:true,sourceSide:side});
+      offerExpeditionHarvestBounty(state,side,target);if(state.phase!=='effectChoice')resolveKnockOut(state,null);
       return state;
     }
     if (matched.type === 'retreat'){
@@ -1197,6 +1251,11 @@
          maxHp(state,side,s.active)-Number(s.active.damage||0)<=20&&
          !effects.abilitiesSuppressed(state,side,s.active,data.cardById)&&
          !s.active.conditions?.sleep&&!s.active.conditions?.confusion&&!s.active.conditions?.paralysis&&damage>0){damage=120;}
+      if(!isActive&&damage>0&&state.format==='classic'&&toolsOf(s.active).some(ref=>ref.cardId==='ecard1-150')){
+        // Direct attacks on the Bench have no Weakness/Resistance; Strength
+        // Charm still adds ten to an attack that dealt nonzero damage.
+        damage+=10;
+      }
       if(isActive&&damage>0){
         // The creator's Battle Stick is an attached Tool, not a global buff.
         if(state.format==='classic'&&pokemonOn(s).some(slot=>slot.cardId==='SNAPFOUNJA-036'&&!effects.abilitiesSuppressed(state,side,slot,data.cardById)))damage+=20;
@@ -1263,7 +1322,9 @@
         state.sides[foeSide].discard.push(fruit);damage=0;
         state.log.push({type:'toolGuard',side:foeSide,toolId:fruit.cardId,prevented:true});}
     }
-    defender.damage=Number(defender.damage||0)+damage;if(damage>0)effects.florioReactToAttackDamage?.(state,foeSide,defender,side,s.active,damage,data.cardById,random);
+    defender.damage=Number(defender.damage||0)+damage;
+    if(damage>0&&state.format==='classic')for(const ref of toolsOf(s.active))if(ref.cardId==='ecard1-150')ref.strengthCharmUsedTurn=state.turnNumber;
+    if(damage>0)effects.florioReactToAttackDamage?.(state,foeSide,defender,side,s.active,damage,data.cardById,random);
       if(state.format==='classic'&&damage>0&&s.active){
         if(defender.cardId==='SNAPFOUNJA-003'&&!effects.abilitiesSuppressed(state,foeSide,defender,data.cardById)){const heads=random(state)<.5;state.log.push({type:'coin',side:foeSide,reason:'Swing Back',heads,results:[heads]});if(heads)s.active.damage=Number(s.active.damage||0)+20;}
         if(defender.cardId==='SNAPFOUNJA-020'&&!effects.abilitiesSuppressed(state,foeSide,defender,data.cardById)){const heads=random(state)<.5;state.log.push({type:'coin',side:foeSide,reason:'Fever Spore',heads,results:[heads]});if(heads){defender.conditions={...(defender.conditions||{}),sleep:true};s.active.conditions={...(s.active.conditions||{}),sleep:true};}}

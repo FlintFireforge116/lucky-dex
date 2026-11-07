@@ -136,6 +136,7 @@
       const active=state?.sides?.[side]?.active,sourceCard=data.cardById(action.attackCardId||active?.cardId),attack=sourceCard?.attacks?.[action.attackIndex];
       const preview=core.attackDamagePreview?.(state,side,action.attackIndex,action.attackCardId);
       if(attack?.effect?.rule==='founja:flightPath'&&action.choiceLabel)return `FLIGHT PATH · ${action.choiceLabel}`;
+      if(attack?.effect?.rule==='expedition:lightningStrike'&&action.choiceLabel)return `LIGHTNING STRIKE · ${action.choiceLabel}`;
       return `${attack?.name||'ATTACK'}${action.attackCardId&&action.attackCardId!==active?.cardId?` · ${sourceCard?.name||'PREVIOUS EVOLUTION'}`:''} · ${preview?.text??attack?.damageText??attack?.damage??0} DMG${targetLabel(action,state,side)}`;
     }
     if(action.type==='endTurn')return'END TURN';
@@ -683,11 +684,11 @@
       attacks.forEach(actionIndex=>{const action=battleActionCache[actionIndex],key=`${action.attackCardId||action.cardId}:${action.attackIndex}`;if(!attackGroups.has(key))attackGroups.set(key,[]);attackGroups.get(key).push(actionIndex);});
       const activeCardId=currentBattle?.sides?.player?.active?.cardId;
       const options=core.attackOptions?core.attackOptions(currentBattle,'player'):(data.cardById(activeCardId)?.attacks||[]).map((attack,attackIndex)=>({cardId:activeCardId,attackIndex,attack,previous:false}));
-      options.forEach(({cardId:attackCardId,attackIndex,attack,previous})=>{
+      options.forEach(({cardId:attackCardId,attackIndex,attack,previous,psymimic,technicalMachine})=>{
         const key=`${attackCardId}:${attackIndex}`,indices=attackGroups.get(key)||[],actionIndex=indices[0],availability=core.attackAvailability(currentBattle,'player',attackIndex,attackCardId),cost=core.energyCostLabel(availability.cost),preview=core.attackDamagePreview?.(currentBattle,'player',attackIndex,attackCardId),source=data.cardById(attackCardId);
         const attrs=!indices.length?`data-tcgp-action="explain-unavailable" data-reason="${esc(availability.reason)}" aria-disabled="true"`:indices.length>1?`data-tcgp-action="open-context-actions" data-action-indices="${indices.join(',')}"`:`data-tcgp-action="battle-action" data-action-index="${actionIndex}"`;
-        const blocker=indices.length?cost:(/^Needs /i.test(availability.reason)?availability.reason.replace(/\. Attached:.*$/,'').replace(/\.$/,''):availability.reason.replace(/\.$/,'')),origin=previous?`FROM ${String(source?.name||'PREVIOUS EVOLUTION').toUpperCase()} · `:'';
-        parts.push(`<button type="button" class="tcgp-live-context-action attack" title="${esc(availability.reason)}" ${attrs}><b>${esc(attack?.name||'ATTACK')}</b><small>${esc(origin+blocker)}${indices.length>1?(attack?.effect?.rule==='founja:flightPath'?' · CHOOSE BENCH ATTACK':' · CHOOSE TARGET'):''}</small><em class="tcgp-live-attack-description">${esc(attackDescription(attack))}</em><strong>${esc(preview?.text??attack?.damageText??attack?.damage??0)} DMG</strong></button>`);
+        const blocker=indices.length?cost:(/^Needs /i.test(availability.reason)?availability.reason.replace(/\. Attached:.*$/,'').replace(/\.$/,''):availability.reason.replace(/\.$/,'')),origin=psymimic?`PSYMIMIC · ${String(source?.name||'OPPONENT').toUpperCase()} · `:technicalMachine?'TECHNICAL MACHINE · ':previous?`FROM ${String(source?.name||'PREVIOUS EVOLUTION').toUpperCase()} · `:'';
+        parts.push(`<button type="button" class="tcgp-live-context-action attack" title="${esc(availability.reason)}" ${attrs}><b>${esc(attack?.name||'ATTACK')}</b><small>${esc(origin+blocker)}${indices.length>1?(attack?.effect?.rule==='founja:flightPath'?' · CHOOSE BENCH ATTACK':attack?.effect?.rule==='expedition:lightningStrike'?' · CHOOSE DAMAGE':' · CHOOSE TARGET'):''}</small><em class="tcgp-live-attack-description">${esc(attackDescription(attack))}</em><strong>${esc(preview?.text??attack?.damageText??attack?.damage??0)} DMG</strong></button>`);
       });
       const retreats=actionIndicesFor(action=>action.type==='retreat');
       if(retreats.length)parts.push(contextActionButton(retreats,'RETREAT','retreat'));
