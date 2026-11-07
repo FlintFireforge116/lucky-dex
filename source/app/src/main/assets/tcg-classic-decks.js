@@ -18,6 +18,7 @@ function ensureState(state){
 }
 function ownedRows(cards){return classic.projectOwnedCards(cards||{});}
 function ownedMap(rows){const map=new Map();for(const row of rows||[])map.set(row.gameplayId,(map.get(row.gameplayId)||0)+Math.max(0,Number(row.quantity)||0));return map;}
+function classicCardName(name){return String(name||'').replace(/[’]/g,"'").replace(/\s+(?=[♀♂])/g,'').trim();}
 function countCards(cards){const map=new Map();for(const id of cards||[]){const card=classic.cardById(id);const key=card?.id||String(id||'');map.set(key,(map.get(key)||0)+1);}return map;}
 function analyzeDeck(cards,configured){
  const required=new Set();for(const id of cards||[]){const card=classic.cardById(id);if(!card)continue;for(const attack of card.attacks||[])for(const symbol of String(attack.cost||''))if(ENERGY_CODE[symbol])required.add(ENERGY_CODE[symbol]);}
@@ -30,7 +31,7 @@ function validateDraft(cards,rows,{requireFull=false}={}){
  const list=Array.isArray(cards)?cards.slice():[],errors=[],have=ownedMap(rows),counts=countCards(list);
  if(requireFull){const core=classic.validateDeck(list);errors.push(...core.errors);}else{
    if(list.length>30)errors.push(`Classic TCG decks contain 30 cards (${list.length}/30).`);
-   for(const [id,count] of counts){const card=classic.cardById(id);if(!card){errors.push(`Unknown Classic TCG card: ${id}.`);continue;}if(card.basicEnergy||card.deckEligible===false)errors.push(`${card.name} cannot occupy a Classic deck slot.`);if(!card.battleEnabled)errors.push(`${card.name} is not battle-ready.`);if([...counts].filter(([x])=>classic.cardById(x)?.name===card.name).reduce((n,[,v])=>n+v,0)>(card.name.startsWith('Shining ')?1:4))errors.push(card.name.startsWith('Shining ')?`${card.name} is limited to one card per deck.`:`${card.name} exceeds the four-copy limit across its prints.`);}
+   for(const [id,count] of counts){const card=classic.cardById(id);if(!card){errors.push(`Unknown Classic TCG card: ${id}.`);continue;}if(card.basicEnergy||card.deckEligible===false)errors.push(`${card.name} cannot occupy a Classic deck slot.`);if(!card.battleEnabled)errors.push(`${card.name} is not battle-ready.`);if([...counts].filter(([x])=>classicCardName(classic.cardById(x)?.name)===classicCardName(card.name)).reduce((n,[,v])=>n+v,0)>(card.name.startsWith('Shining ')?1:4))errors.push(card.name.startsWith('Shining ')?`${card.name} is limited to one card per deck.`:`${card.name} exceeds the four-copy limit across its prints.`);}
  }
  for(const [id,count] of counts){const card=classic.cardById(id);if(!card)continue;const quantity=Number(have.get(id)||0);if(count>quantity)errors.push(`Not enough owned copies of ${card.name}: need ${count}, own ${quantity}.`);}
  return {ok:errors.length===0,errors};
@@ -40,7 +41,7 @@ function edit(cards,id,delta,rows){
  const list=(cards||[]).map(x=>classic.cardById(x)?.id||String(x||'')),card=classic.cardById(id),fail=error=>({ok:false,cards:list,error});if(!card)return fail('Unknown Base Set card.');
  const count=list.filter(x=>x===card.id).length;if(delta<0){const index=list.lastIndexOf(card.id);if(index>=0)list.splice(index,1);return {ok:true,cards:list};}
  if(card.basicEnergy||card.deckEligible===false)return fail('Basic Energy comes from the Energy Zone and is not placed in the 30-card deck.');
- if(!card.battleEnabled)return fail('This Classic card is not battle-ready.');if(list.length>=30)return fail('Your Classic deck already has 30 cards.');if(list.filter(id=>classic.cardById(id)?.name===card.name).length>=(card.name.startsWith('Shining ')?1:4))return fail(card.name.startsWith('Shining ')?`Only one ${card.name} may be in a deck.`:'Maximum four copies of the same Pokémon or Trainer card across all prints.');
+ if(!card.battleEnabled)return fail('This Classic card is not battle-ready.');if(list.length>=30)return fail('Your Classic deck already has 30 cards.');if(list.filter(id=>classicCardName(classic.cardById(id)?.name)===classicCardName(card.name)).length>=(card.name.startsWith('Shining ')?1:4))return fail(card.name.startsWith('Shining ')?`Only one ${card.name} may be in a deck.`:'Maximum four copies of the same Pokémon or Trainer card across all prints.');
  const have=Number(ownedMap(rows).get(card.id)||0);if(count>=have)return fail('No more owned copies available.');list.push(card.id);return {ok:true,cards:list};
 }
 function newId(battle){let n=1;while(battle.decks.some(deck=>deck.id===`classic-${n}`))n++;return `classic-${n}`;}

@@ -264,7 +264,7 @@
   }
   function clearTemporaryEffects(state,slot){if(!slot)return;
     revertShapeshift(state,slot);
-    clearConditions(slot);delete slot.locks;delete slot.attackGuard;delete slot.statusGuard;delete slot.attackGate;delete slot.retaliate;delete slot.stackedAttackBonuses;delete slot.abilitySuppressed;delete slot.energyTypeOverride;delete slot.typeOverride;delete slot.weaknessOverride;delete slot.resistanceOverride;delete slot.destinyBond;delete slot.gymShadowImages;delete slot.gymCounterGuard;delete slot.gymFireWall;delete slot.gymDeflector;delete slot.gymEnergyLock;delete slot.gym2Intimidate;delete slot.gym2GiantGrowth;delete slot.gym2PoisonAmount;delete slot.gym2NinjaTrick;delete slot.gym2FaceDown;delete slot.gym2BubblesLockTurn;delete slot.neoMeanLook;delete slot.neoWebLock;delete slot.neoJawClamp;delete slot.neoLeer;delete slot.neoAmnesia;delete slot.neoScaryFace;delete slot.neoAttackLock;delete slot.neoDeflector;delete slot.neoPollenShield;delete slot.neoScreech;delete slot.neoLockOn;delete slot.neoCounter;delete slot.neoPursuit;delete slot.neoSecretePoison;delete slot.neoSlime;delete slot.neoGazeUntil;if(state)state.modifiers=(state.modifiers||[]).filter(m=>m.targetUid!==slot.uid||m.scope==='team'||m.scope==='active'||m.scope==='opponentActive');}
+    clearConditions(slot);delete slot.locks;delete slot.attackGuard;delete slot.statusGuard;delete slot.attackGate;delete slot.retaliate;delete slot.stackedAttackBonuses;delete slot.abilitySuppressed;delete slot.energyTypeOverride;delete slot.typeOverride;delete slot.weaknessOverride;delete slot.resistanceOverride;delete slot.destinyBond;delete slot.gymShadowImages;delete slot.gymCounterGuard;delete slot.gymFireWall;delete slot.gymDeflector;delete slot.gymEnergyLock;delete slot.gym2Intimidate;delete slot.gym2GiantGrowth;delete slot.gym2PoisonAmount;delete slot.gym2NinjaTrick;delete slot.gym2FaceDown;delete slot.gym2BubblesLockTurn;delete slot.legendaryMirrorShellUntil;delete slot.neoMeanLook;delete slot.neoWebLock;delete slot.neoJawClamp;delete slot.neoLeer;delete slot.neoAmnesia;delete slot.neoScaryFace;delete slot.neoAttackLock;delete slot.neoDeflector;delete slot.neoPollenShield;delete slot.neoScreech;delete slot.neoLockOn;delete slot.neoCounter;delete slot.neoPursuit;delete slot.neoSecretePoison;delete slot.neoSlime;delete slot.neoGazeUntil;if(state)state.modifiers=(state.modifiers||[]).filter(m=>m.targetUid!==slot.uid||m.scope==='team'||m.scope==='active'||m.scope==='opponentActive');}
   function switchPokemon(side,benchIndex,state){const index=side.bench.findIndex(s=>s&&Number(s.benchSlot)===Number(benchIndex));if(index<0||!side.active)return false;const incoming=side.bench[index],outgoing=side.active;outgoing.benchSlot=Number(incoming.benchSlot);incoming.benchSlot=null;incoming.movedToActiveTurn=state?.turnNumber;side.bench[index]=outgoing;side.active=incoming;clearTemporaryEffects(state,outgoing);return true;}
   function protectedFromEffects(slot,ctx){
     if(ctx.isAttack&&ctx.state?.format==='classic'&&ctx.state?.stadium?.cardId==='SNAPFLORIO-112'&&
@@ -911,6 +911,87 @@
     const log=(details)=>ctx.state.log.push({type:'neoEffect',side:ctx.side,rule:e.rule,...details});
     if(String(e.rule||'').startsWith('destiny:'))return destinyRule(e,ctx);
     switch(e.rule){
+      // Legendary Collection and its Team Rocket reprints. These are true
+      // Battle Core effect choices, not cosmetic UI prompts or damage stand-ins.
+      case 'legendary:summonMinions':{
+        if(ss.bench.length<Number(ss.benchLimit||3)&&ss.deck.some(ref=>ctx.cardById(ref.cardId)?.kind==='pokemon'&&ctx.cardById(ref.cardId)?.stage==='Basic'))
+          ctx.requestChoice?.({kind:'deckCard',side:'self',filter:{kind:'pokemon',stage:'Basic'},optional:true,effect:{type:'neoRule',rule:'legendary:summonPick',remaining:2}});
+        break;
+      }
+      case 'legendary:summonPick':{
+        if(ctx.action?.choiceSkip){ctx.shuffle?.(ctx.state,ss.deck);break;}
+        const index=Number(ctx.action?.choiceDeckIndex),ref=ss.deck[index];
+        if(ref&&ctx.cardById(ref.cardId)?.kind==='pokemon'&&ctx.cardById(ref.cardId)?.stage==='Basic'&&ss.bench.length<Number(ss.benchLimit||3)){
+          ss.deck.splice(index,1);ctx.benchCard?.(ss,ref);log({benched:ref.cardId});
+        }
+        const left=Number(e.remaining||1)-1;
+        if(left>0&&ss.bench.length<Number(ss.benchLimit||3)&&ss.deck.some(r=>ctx.cardById(r.cardId)?.kind==='pokemon'&&ctx.cardById(r.cardId)?.stage==='Basic'))
+          ctx.requestChoice?.({kind:'deckCard',side:'self',filter:{kind:'pokemon',stage:'Basic'},optional:true,effect:{...e,remaining:left}});
+        else ctx.shuffle?.(ctx.state,ss.deck);
+        break;
+      }
+      case 'legendary:reelIn':{
+        if(ss.discard.some(ref=>ctx.cardById(ref.cardId)?.kind==='pokemon'))
+          ctx.requestChoice?.({kind:'discardCard',side:'self',filter:{kind:'pokemon'},optional:true,effect:{type:'neoRule',rule:'legendary:reelPick',remaining:3}});
+        break;
+      }
+      case 'legendary:reelPick':{
+        if(ctx.action?.choiceSkip)break;
+        const index=Number(ctx.action?.choiceDiscardIndex),ref=ss.discard[index];
+        if(ref&&ctx.cardById(ref.cardId)?.kind==='pokemon'&&ss.hand.length<Number(ss.handLimit||10)){
+          ss.hand.push(...ss.discard.splice(index,1));log({recovered:ref.cardId});
+        }
+        const left=Number(e.remaining||1)-1;
+        if(left>0&&ss.discard.some(ref=>ctx.cardById(ref.cardId)?.kind==='pokemon')&&ss.hand.length<Number(ss.handLimit||10))
+          ctx.requestChoice?.({kind:'discardCard',side:'self',filter:{kind:'pokemon'},optional:true,effect:{...e,remaining:left}});
+        break;
+      }
+      case 'legendary:mirrorShell':if(a)a.legendaryMirrorShellUntil=turn+1;break;
+      case 'legendary:energyControl':{
+        if(foe.bench.length&&[foe.active,...foe.bench].filter(Boolean).some(slot=>Object.values(slot.energy||{}).some(n=>Number(n)>0)))
+          ctx.requestChoice?.({kind:'energySource',side:'self',selectionSide:ctx.foeSide,effect:{type:'neoRule',rule:'legendary:energyControlSource'}});
+        break;
+      }
+      case 'legendary:energyControlSource':{
+        const source=ctx.action?.choiceTarget==='active'?foe.active:foe.bench.find(slot=>Number(slot.benchSlot)===Number(ctx.action?.choiceBenchIndex));
+        const type=ctx.action?.effectEnergyType;
+        if(source&&type&&Number(source.energy?.[type]||0)>0&&[foe.active,...foe.bench].some(slot=>slot&&slot!==source))
+          ctx.requestChoice?.({kind:'pokemon',side:'self',selectionSide:ctx.foeSide,includeActive:true,excludeUids:[source.uid],effect:{type:'neoRule',rule:'legendary:energyControlTarget',sourceUid:source.uid,energyType:type}});
+        break;
+      }
+      case 'legendary:energyControlTarget':{
+        const source=[foe.active,...foe.bench].find(slot=>slot?.uid===e.sourceUid),dest=sel('opponent');
+        if(source&&dest&&source!==dest&&Number(source.energy?.[e.energyType]||0)>0){
+          source.energy[e.energyType]--;dest.energy[e.energyType]=Number(dest.energy[e.energyType]||0)+1;log({movedBasicEnergy:e.energyType,from:source.cardId,to:dest.cardId});
+        }
+        break;
+      }
+      case 'legendary:challenge':{
+        ctx.requestChoice?.({kind:'option',side:'opponent',options:['Accept challenge','Decline challenge'],effect:{type:'neoRule',rule:'legendary:challengeAnswer'}});
+        break;
+      }
+      case 'legendary:challengeAnswer':{
+        if(Number(ctx.action?.choiceOption)!==0||ss.bench.length>=Number(ss.benchLimit||3)&&foe.bench.length>=Number(foe.benchLimit||3)){
+          ctx.drawCard?.(ss);ctx.drawCard?.(ss);log({challengeAccepted:false});break;
+        }
+        log({challengeAccepted:true});
+        neoRule({type:'neoRule',rule:'legendary:challengePick',phase:'self'}, {...ctx,resolvingChoice:false});break;
+      }
+      case 'legendary:challengePick':{
+        const ownPhase=e.phase==='self',board=ownPhase?ss:foe,side=ownPhase?'self':'opponent';
+        if(ctx.resolvingChoice&&!ctx.action?.choiceSkip){
+          const index=Number(ctx.action?.choiceDeckIndex),ref=board.deck[index];
+          if(ref&&ctx.cardById(ref.cardId)?.kind==='pokemon'&&ctx.cardById(ref.cardId)?.stage==='Basic'&&board.bench.length<Number(board.benchLimit||3)){
+            board.deck.splice(index,1);ctx.benchCard?.(board,ref);log({challengeBenched:ref.cardId,phase:e.phase});
+          }
+        }
+        if(board.bench.length<Number(board.benchLimit||3)&&board.deck.some(ref=>ctx.cardById(ref.cardId)?.kind==='pokemon'&&ctx.cardById(ref.cardId)?.stage==='Basic')&&!ctx.action?.choiceSkip){
+          ctx.requestChoice?.({kind:'deckCard',side,filter:{kind:'pokemon',stage:'Basic'},optional:true,effect:{...e}});break;
+        }
+        ctx.shuffle?.(ctx.state,board.deck);
+        if(ownPhase)neoRule({...e,phase:'opponent'},{...ctx,action:{},resolvingChoice:false});
+        break;
+      }
       // Neo Revelation: the optional Fire search draws from the same ordered
       // Basic Energy supply as the Classic Energy Zone (not the 30-card deck).
       case 'revelation:nightEyes':{
@@ -3629,7 +3710,7 @@
         if(Number(ctx.copyDepth||0)>4){damage=0;return;}
         const copied=resolveAttack(chosen,{...ctx,attack:chosen,copyDepth:Number(ctx.copyDepth||0)+1,ignoreUseCosts:!!e.ignoreUseCosts});damage=copied.damage;damageTarget=copied.damageTarget;damageRules={...damageRules,...copied.damageRules};pending.push(...copied.pendingEffects);return;
       }
-      if(e.type==='selectedDamage'){damage=e.amount;damageTarget=targets(e.target,ctx).filter(s=>matchesFilter(ctx.cardById(s.cardId),e.filter,s))[0]||null;if(!damageTarget)damage=0;return;}
+      if(e.type==='selectedDamage'){damage=e.amount;damageTarget=targets(e.target,ctx).filter(s=>matchesFilter(ctx.cardById(s.cardId),e.filter,s))[0]||null;if(e.ignoreWeakness)damageRules.ignoreWeakness=true;if(e.ignoreResistance)damageRules.ignoreResistance=true;if(!damageTarget)damage=0;return;}
       if(e.type==='selectedEnergyDamage'){damageTarget=targets(e.target,ctx).filter(s=>matchesFilter(ctx.cardById(s.cardId),e.filter,s))[0]||null;damage=damageTarget?totalEnergy(damageTarget.energy)*e.amount:0;return;}
       if(e.type==='bonusDamage')amount=e.amount;
       else if(e.type==='coinDamage'){let heads=0,coins=e.coins==='untilTails'?e.coins:Number(e.coins||0)+coinBonusAmount(ctx.state,ctx.side,ctx.attacker,ctx.attack?.name,ctx.cardById),results=[];if(coins!=='untilTails'&&e.extraCoinsIfTool&&toolsOf(ctx.attacker).some(t=>ctx.cardById(t.cardId)?.name===e.extraCoinsIfTool.name))coins+=Number(e.extraCoinsIfTool.amount||0);if(coins==='untilTails')heads=repeatHeads(ctx,()=>{},results);else for(let i=0;i<coins;i++){const hit=coin(ctx);results.push(hit);if(hit)heads++;}ctx.state.log.push({type:'coin',side:ctx.side,heads,coins,results});amount=heads*e.amount;}

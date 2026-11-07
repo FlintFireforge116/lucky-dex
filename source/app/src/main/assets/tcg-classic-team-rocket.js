@@ -87,6 +87,7 @@ const fxByKey={
  fascinate:coin({type:'forceOpponentSwitch'}),
  selfConfuse:statusSelf('confusion'),
  discardEnergy:{type:'discardEnergyCard',target:'opponentActive',amount:1},
+ mirrorShell:{type:'neoRule',rule:'legendary:mirrorShell'},
  coin2x10:{type:'coinDamage',coins:2,amount:10,mode:'replace'},
  conversion:{type:'chooseTypeOverride',target:'opponentActive',stat:'weakness',energyTypes:['Grass','Fire','Water','Lightning','Psychic','Fighting']},
  digUnder:{type:'selectedDamage',target:'opponentPokemon',amount:10},
@@ -165,6 +166,8 @@ const powerText={
  66:['Trickery','Once per turn, exchange a Prize with the top card of your deck.']
 };
 const powerEffect={
+ 5:{type:'neoRule',rule:'legendary:summonMinions'},
+ 12:{type:'neoRule',rule:'legendary:reelIn'},
  33:{type:'searchChosen',source:'deck',amount:1,filter:{kind:'pokemon',stage:['Stage 1','Stage 2']}},
  41:{type:'modifier',stat:'retreatCost',amount:2,duration:'whileInPlay',scope:'opponentActive'},
  36:{type:'coinFlip',heads:status('confusion'),tails:statusSelf('confusion')},
@@ -174,7 +177,7 @@ const power=[5,6,7,8,12,13,33,36,39,41,43,50,54,66];
 const UNIQUE=new Map();
 for(const line of TABLE){const [number,name,type,stage,hp,ret,weak,res,evolvesFrom,moves]=line.split('|');const n=Number(number);
  const attacks=(moves||'').split(';').filter(Boolean).map(raw=>{const [name,cost,rawDamage,key='']=raw.split('~');const effect=key?(fxByKey[key]||{type:'notImplemented',key}):null;return {name,cost,damage:Number(rawDamage)||0,damageText:/coin|surpriseThunder|continuousFireball|petalWhirlwind|massExplosion|benchManipulation/.test(key)?'×':/bonus|hydrocannon|rage|waterGun|stickyHands|magnetism|knockDown/.test(key)?'+':null,effect,text:descriptions[key]||''};});
- const abilities=powerText[n]?[{name:powerText[n][0],text:powerText[n][1],type:n===41?'passive':'activated',...(n===41?{activeOnly:true}:{oncePerTurn:true}),disabledByStatus:true,effect:powerEffect[n]||null}]:[];
+ const abilities=powerText[n]?[{name:powerText[n][0],text:powerText[n][1],type:[5,12].includes(n)?'triggered':n===41?'passive':'activated',...([5,12].includes(n)?{event:'evolved',fromHandOnly:true}:n===41?{activeOnly:true}:{oncePerTurn:true}),disabledByStatus:true,effect:powerEffect[n]||null}]:[];
  const reasons=[...attacks.filter(a=>a.effect?.type==='notImplemented'||a.effect&&!fx?.supportsEffect?.(a.effect)).map(a=>`${a.name}: printed effect not implemented`)];
  if(power.includes(n)&&!powerEffect[n])reasons.push(`${powerText[n][0]}: Pokémon Power not implemented`);
  if(powerEffect[n]&&!fx?.supportsEffect?.(powerEffect[n]))reasons.push('Pokémon Power unsupported');
@@ -201,6 +204,9 @@ for(let n=1;n<=83;n++){
  let card;
  if(isTrainer||isSpecial){const [name,text]=TRAINERS[actual];let effect=null;let reasons=['Printed Trainer or Special Energy mechanic requires engine integration'];
   if(actual===79){effect={type:'coinFlip',heads:status('sleep')};reasons=fx?.supportsEffect?.(effect)?[]:['Sleep! coin-flip effect not supported'];}
+  if(actual===73){effect={type:'searchChosen',source:'deck',amount:1,filter:{kind:'pokemon',stage:['Stage 1','Stage 2'],nameContains:'Dark'}};reasons=[];}
+  if(actual===74){effect={type:'neoRule',rule:'legendary:challenge'};reasons=[];}
+  if(actual===81||actual===82){effect={type:'specialEnergy',provides:{Colorless:1}};reasons=[];}
   card={name,kind:isTrainer?'trainer':'energy',trainerType:isTrainer?'Item':undefined,specialEnergy:isSpecial,subtype:isSpecial?'Colorless':undefined,effect,text,battleEnabled:!reasons.length,deckEligible:!reasons.length,support:{status:reasons.length?'PARTIAL':'FULL',reasons}};
  }else{
   const found=UNIQUE.get(actual);if(!found)throw new Error('Missing Team Rocket card #'+n);card={...found};

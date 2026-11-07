@@ -43,7 +43,7 @@
   function sandboxClassicCards(){if(!sandboxClassicRows)sandboxClassicRows=(root.LuckyDexClassicTCGBattleData?.CARDS||[]).filter(c=>c.battleEnabled&&c.deckEligible!==false&&!c.basicEnergy).map(c=>({gameplayId:c.id,name:c.name,card:c,quantity:4,battleEnabled:true,variants:[]}));return sandboxClassicRows;}
   function sandboxBanner(){return sandboxMode?'<section class="tcgp-battle-panel" style="margin:8px 0;padding:10px 12px"><strong>TEST LAB · ALL CARDS</strong><p style="margin:4px 0">All battle-ready cards are available in normal deck building and combat. Test decks exist only in this session. No collection changes, rewards or battle records.</p><button type="button" class="tcgp-battle-action secondary" data-tcgp-action="exit-sandbox">EXIT TEST LAB</button></section>':'';}
 
-  const CLASSIC_SETS=['base1','base2','base3','base5','gym1','gym2','neo1','neo2','neo3','neo4','SNAPFLORIO','SNAPFOUNJA','sv1'];
+  const CLASSIC_SETS=['base1','base2','base3','base5','gym1','gym2','neo1','neo2','neo3','neo4','base6','SNAPFLORIO','SNAPFOUNJA','sv1'];
   const CLASSIC_TYPES=['random',...classicOpponents.TYPES];
   const AI_LEVELS=['Beginner','Intermediate','Advanced','Expert'];
   function classicOpponentConfig(){
@@ -53,7 +53,7 @@
   }
   function classicOpponentPickerHtml(){
     const cfg=classicOpponentConfig();
-    const pools=CLASSIC_SETS.map(id=>`<button type="button" data-tcgp-action="classic-opponent-set" data-id="${id}" aria-pressed="${cfg.sets.includes(id)}">${id==='base1'?'Base Set':id==='base2'?'Jungle':id==='base3'?'Fossil':id==='base5'?'Team Rocket':id==='gym1'?'Gym Heroes':id==='gym2'?'Gym Challenge':id==='neo1'?'Neo Genesis':id==='neo2'?'Neo Discovery':id==='neo3'?'Neo Revelation':id==='neo4'?'Neo Destiny':id==='SNAPFLORIO'?'Florio Nature Park':id==='SNAPFOUNJA'?'Founja Jungle':id==='sv1'?'Scarlet & Violet':'Unknown'}</button>`).join('');
+    const pools=CLASSIC_SETS.map(id=>`<button type="button" data-tcgp-action="classic-opponent-set" data-id="${id}" aria-pressed="${cfg.sets.includes(id)}">${id==='base1'?'Base Set':id==='base2'?'Jungle':id==='base3'?'Fossil':id==='base5'?'Team Rocket':id==='gym1'?'Gym Heroes':id==='gym2'?'Gym Challenge':id==='neo1'?'Neo Genesis':id==='neo2'?'Neo Discovery':id==='neo3'?'Neo Revelation':id==='neo4'?'Neo Destiny':id==='base6'?'Legendary Collection':id==='SNAPFLORIO'?'Florio Nature Park':id==='SNAPFOUNJA'?'Founja Jungle':id==='sv1'?'Scarlet & Violet':'Unknown'}</button>`).join('');
     const types=CLASSIC_TYPES.map(t=>`<button type="button" data-tcgp-action="classic-opponent-type" data-id="${t}" aria-pressed="${cfg.type===t}">${t==='random'?'🎲 Random':t}</button>`).join('');
     const rarities=[['any','Any'],['common','Common'],['uncommon','Uncommon'],['rare','Rare / Holo'],['ultra','Ultra · V/ex/VMAX']].map(([id,label])=>`<button type="button" data-tcgp-action="classic-opponent-rarity" data-id="${id}" aria-pressed="${cfg.rarityFocus===id}">${label}</button>`).join('');
     const themes=decks.THEMES.map(t=>`<button type="button" data-tcgp-action="classic-opponent-theme" data-id="${t.id}" aria-pressed="${cfg.theme===t.id}">${t.label}</button>`).join('');
