@@ -1,0 +1,17 @@
+LuckyDex v0.69.139 — Neo Destiny completion pass
+
+- 110 of the 113 Neo Destiny cards are now battle-enabled (up from 32).
+- Original Neo Destiny Light/Dark Powers, coin/status attacks, and all eight Shining Pokémon have dedicated effects.
+- Added Miracle Energy to 30-card Classic play: may attach to Light/Shining, counts as two wildcard Energy, one per deck, discarded at the end of its owner's turn.
+- Implemented Battle mechanics including Dark Gengar Deep Sleep, Dark Ampharos Conductivity, Dark Crobat Surprise Bite, Dark Typhlosion Rushing Flames, Dark Feraligatr Scare, Dark Porygon2 Spatial Distortion, Light Dragonite Miraculous Wind, Light Dewgong Ice Pillar, and Neo Destiny Stadium/Tool/Item effects.
+- Finer rules fixes: Shining Celebi flips once per opposing Energy; Dark Exeggutor MAX Burst counts the opposing board; Tusk Toss and Bubble Jump preserve returned Pokémon stacks/attachments and returned Energy; opponent-discard selection targets correct side; evolution and bench protection in battle; Dark Magcargo affects both teams.
+- Preserves original 30-card, 3-Bench, 5-Prize hybrid Energy Zone format; no card ownership bypass outside the existing Test Lab.
+
+Known explicit limitation:
+  Neo Destiny Unown [G] Give (#27), Unown [H] Help (#28), and Unown [W] Want (#29) require four particular Unown on the Bench, but Classic LuckyDex has only three Bench positions. Those three cards remain catalogued but battle-disabled; no silently rewritten card text or Bench-size change.
+  The original physical Energy-in-deck rules require explicit adaptation to LuckyDex's separate Energy Zone.  Some complex edge-case interactions still need manual device verification.
+
+Verification:
+  - 146 supported Pokémon attacks executed by the actual Classic action + pending-choice pipeline.
+  - Neo Destiny deck legality and seven CPU types, Miracle Energy restrictions and expiry, Conductivity, Deep Sleep, Rushing Flames, mixed-set and Neo Destiny CPU matches checked.
+  - Backwards compatibility regression group for synergy, Test Lab/optimizer, and SV1 card/tool mechanics.

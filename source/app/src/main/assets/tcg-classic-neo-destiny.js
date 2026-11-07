@@ -186,8 +186,143 @@ move(84,0,coin(par('paralysis')),'Flip heads to Paralyze.');
 move(90,0,noop,'Deal 10 damage.');
 move(90,1,par('poison'),'Poison the defender.');
 move(91,0,{type:'discardEnergyCard',target:'self',energyType:'Fire',amount:1,useCost:true},'Discard one attached Fire Energy or Ember fails.');
+// Neo Destiny completion: original move costs and intended outcomes.
+const destiny=(rule)=>({type:'neoRule',rule:'destiny:'+rule});
+const D=(n,i,r,t)=>move(n,i,destiny(r),t);
+const both=(a,b)=>seq(a,b);
+D(1,0,'shockBolt','Discard all attached Lightning Energy or this attack fails.');
+D(2,0,'darkDrain','Flip for each opposing Pokémon; 10 damage per heads and heal that much damage.');
+D(3,0,'tuskToss','Flip: heads return the defender to hand with attachments; tails force a switch.');
+move(3,1,noop,'50 damage.');
+move(4,0,coin(bonus(10)),'Flip heads for 10 extra damage.');
+D(4,1,'psysplash','Deal 10 damage per attached Energy to every opposing Pokémon.');
+D(5,0,'crushingBlow','Flip heads to discard one opposing Active Energy.');
+D(6,0,'pullIn','Choose an opposing Benched Pokémon to promote; the target becomes Asleep.');
+D(7,0,'eerieHowl','Put an opposing Basic Pokémon from hand onto their Bench and switch it Active.');
+D(7,1,'darkFire','Discard one Darkness Energy to boost damage by 20.');
+move(8,0,coin(guard(false)),'Flip heads to prevent attack damage during the next opposing turn.');
+D(9,0,'threaten','Flip heads, inspect opponent hand and shuffle one Trainer into their deck.');
+move(9,1,noop,'30 damage.');
+move(10,0,noop,'20 damage.');
+D(10,1,'rushingFlames','Discard Fire Energy from your Pokémon, then 40 damage for each heads.');
+D(11,0,'mountainSmasher','Flip once per attached Fighting Energy, 20 damage and discard deck card per heads.');
+D(11,1,'flingAway','If there is an opposing Bench, deal 30 to Active and 30 to chosen Bench.');
+D(12,0,'gentleFlames','Deal 10 to Babies, 30 to Basics, and 50 to Evolutions.');
+move(13,0,coin(par('paralysis')),'Flip heads to Paralyze the defender.');
+D(13,1,'bubbleJump','Flip heads to move two attached Energy to your Bench and return this Pokémon to hand.');
+move(14,0,{type:'preventEffects',target:'self',duration:'opponentTurn'},'Prevent all non-damage attack effects next opposing turn.');
+D(15,0,'sweetKiss','Defender draws one card optionally.');
+D(17,0,'entangle','Switch an opposing Benched Pokémon to Active; flip heads to Paralyze.');
+D(17,1,'poisonBind','Poison the defender; flip heads to prevent its retreat and switching.');
+D(18,0,'ballOfFlame','Optionally discard attached Fire Energy to deal 20 to an opposing Bench Pokémon.');
+D(19,0,'prehistoricWater','Flip heads to devolve an opposing evolved Pokémon.');
+D(19,1,'darkTentacle','Defender may not evolve during the next turn except via attacks or Powers.');
+move(20,0,{type:'damageRule',ignoreWeakness:true,ignoreResistance:true},'30 damage ignoring Weakness and Resistance.');
+D(21,0,'provoke','Each player may put opposing Basics from hand onto the Bench.');
+D(21,1,'battleFrenzy','Flip for each Pokémon in play and deal 20 to those with heads.');
+D(23,0,'searchlight','Flip heads; each player may take a card from their discard pile into hand.');
+D(23,1,'spark','Deal 30 to Active and 10 damage to an opposing Benched Pokémon.');
+D(24,0,'flashTouch','Switch with a Benched Pokémon, protecting that new Active from Special Conditions.');
+move(24,1,repeat(4,20),'Flip four coins; 20 damage for each heads.');
+D(25,0,'beatdown','Deal 100 on heads versus a Dark-name/Darkness Pokémon, otherwise 50.');
+D(26,0,'knockOver','Optionally discard the Stadium in play.');
+for(const n of [27,28,29,30,57,58,59,60,86,87,88,89])move(n,0,noop,'Hidden Power: 10 damage (20 for Unown [S] and [T]).');
+move(33,0,repeat(3,10),'Flip three coins; 10 damage per heads.');
+D(33,1,'maxBurst','Flip once per Energy on opposing Pokémon; 20 damage per heads.');
+D(34,0,'highVoltage','Flip heads to prevent opponent from playing Trainers next turn.');
+D(34,1,'stunWave','Suppress the defender Pokémon Power until the end of your next turn.');
+D(35,0,'armorUp','Flip heads to survive a fatal attack with 10 HP remaining through next own turn.');
+move(35,1,recoil(60),'60 damage and 60 recoil.');
+D(36,0,'callBack','Put a Basic Pokémon from opposing discard onto their Bench with 10 damage.');
+move(36,1,coin(par('sleep'),lock('retreat')),'Heads: Sleep; tails: opposing Active cannot retreat.');
+D(37,0,'waterCannon','10 damage per attached Water Energy, maximum 30.');
+D(38,1,'explosiveEvolution','Flip heads to deal 10 to all opposing Pokémon and evolve into Dark Tyranitar.');
+D(39,0,'incinerate','Reveal top opposing deck card; discard it if a Trainer.');
+D(39,1,'rushingMagma','Discard top five deck cards; 20 damage per Fire Energy discarded.');
+D(40,1,'slapAwake','Deal 20 extra versus Asleep/Confused, then remove those conditions.');
+D(45,0,'freezingBreath','Heads Paralyzed; tails Asleep.');
+D(45,1,'icePillar','Protect your Bench from attack damage during next opponent turn.');
+D(46,0,'warmUp','Attach one Fire Energy from the ordered Energy supply to Benched Pokémon.');
+D(46,1,'burningFlame','Flip two coins, discard Fire Energy per heads, +20 damage per heads or attack fails.');
+D(47,0,'flipperStroke','Each player may take basic Energy from their top three cards, then shuffle.');
+D(47,1,'coreBlast','20 extra damage per Special Energy on defender.');
+D(48,0,'pulseGuard','Prevent 30+ attack damage during next opponent turn.');
+move(48,1,{type:'coinDamageStatus',coins:3,amount:20,minHeads:2,status:'paralysis',mode:'replace'},'Flip three coins: 20 damage per heads; Paralyze if 2 or more heads.');
+D(49,0,'returnHome','Choose your own Bench Pokémon to shuffle into your deck.');
+D(50,0,'guidingFlame','Bench a Basic Pokémon from your discard.');
+move(50,1,{type:'discardEnergyCard',target:'self',amount:1,energyType:'Fire',useCost:true},'Discard one Fire Energy to attack.');
+D(51,0,'fishOut','Both players may shuffle up to three Pokémon from their discard back into the deck.');
+D(51,1,'splashAbout','20 extra damage if defender has more attached Energy.');
+D(52,0,'washAway','Flip heads to fully heal one Benched Pokémon, discarding all Energy attached.');
+D(52,1,'hypnoshower','Put opposing Active to Sleep and heal 10 from each Benched Pokémon (both sides).');
+D(53,0,'mysteriousWing','Each player may retrieve a Pokémon from their discard into hand.');
+D(53,1,'synchronize','Deal no damage unless own and opposing Active have equal attached Energy counts.');
+D(54,0,'evolutionSong','Each player may evolve one Pokémon from their deck.');
+D(56,0,'charm','Reduce opposing attacks by 10 on the next turn.');
+move(56,1,recoil(10),'20 damage and 10 recoil.');
+D(62,0,'inkBlast','Add up to 20 damage for extra attached Energy beyond cost.');
+D(62,1,'tentacleWrap','Heads Paralyze; tails opposing Active retreat costs one extra Energy.');
+D(72,0,'reflectedSunlight','Attach up to two Grass Energy from hand to a Grass Pokémon.');
+D(83,1,'sunbathe','Flip heads to heal self completely and evolve from deck.');
+D(85,0,'waterGun','10 extra damage for each Water Energy above cost, max 20.');
+D(106,0,'healingWater','Heal a selected Bench Pokémon by 10 per Water Energy attached.');
+D(106,1,'miracleLeaf','Flip per opposing Active Energy; on any heads choose Sleep, Poison, or Confusion.');
+D(107,0,'whiteHotFlame','Discard Fire and Lightning Energy attached. Flip tails for 30 recoil.');
+D(108,0,'lightningCut','Heads: +10 plus 10 to each opposing Bench; tails: 10 recoil.');
+D(108,1,'waterSlash','+10 damage per Water Energy beyond two Water cost; ignore Resistance.');
+D(109,0,'reflectShield','Flip on being hit next turn: heads prevent attack damage and deal 20 to attacker.');
+D(109,1,'psyburst','Discard attached Fire Energy; +10 damage per Energy on opponent Active.');
+D(110,0,'flashingEyes','Three coins: one heads Sleep, two Confusion, three Paralysis.');
+D(111,0,'thundersquall','Deal 10 to chosen opposing Benched Pokémon per attached Water Energy.');
+D(112,0,'crushingEarth','Heads: 10 to all Benched Pokémon; tails: no attack damage. Cannot attack next turn.');
+D(113,0,'mountainCrush','Flip until tails; discard top opponent card for each heads.');
+D(113,1,'destructiveFire','Flip for each attached Fire; discard that many Fire or fail; remove defender Energy per heads.');
+
 // Trainers with a fully compatible printed action.  Others remain catalogued.
 T[104]={trainerType:'Item',text:'Flip a coin. On heads, cure all Special Conditions and heal 20 damage from your Active Pokémon.',effect:coin(seq({type:'removeStatuses',target:'selfActive',statuses:['sleep','confusion','paralysis','poison']},{type:'heal',target:'selfActive',amount:20}))};
+// Real Pokémon Power roles. A Power that requires 4 separate Unown on the Bench
+// is deliberately not marked complete in LuckyDex's three-Bench format.
+const P={};
+const passive=(n,rule,props={})=>P[n]={type:'passive',effect:destiny(rule),...props};
+const activated=(n,rule,props={})=>P[n]={type:'activated',effect:destiny(rule),oncePerTurn:true,disabledByStatus:true,...props};
+const triggered=(n,event,rule,props={})=>P[n]={type:'triggered',event,effect:destiny(rule),disabledByStatus:true,...props};
+triggered(1,'opponentEnergyAttached','conductivity');
+triggered(2,'evolved','surpriseBite',{fromHandOnly:true});
+passive(5,'scare',{activeOnly:true,disabledByStatus:true});
+passive(6,'deepSleep',{disabledByStatus:true});
+activated(8,'spatialDistortion');
+activated(12,'driveOff',{activeOnly:true});
+passive(14,'miraculousWind',{activeOnly:true,disabledByStatus:true});
+triggered(15,'evolved','gift',{fromHandOnly:true});
+triggered(18,'opponentBenched','hotPlate',{activeOnly:true});
+activated(20,'cunning');
+triggered(25,'evolved','tagTeam',{fromHandOnly:true,benchOnly:true});
+triggered(26,'damagedByAttack','fluffyWool',{activeOnly:true,opponentAttackOnly:true});
+passive(30,'unownX');
+passive(57,'unownC',{activeOnly:true});
+passive(58,'unownP',{activeOnly:true});
+activated(59,'unownQ',{disabledByStatus:false});
+passive(60,'unownZ',{benchOnly:true});
+activated(86,'unownL',{disabledByStatus:false});
+activated(87,'unownS',{disabledByStatus:false});
+activated(88,'unownT',{disabledByStatus:false});
+triggered(89,'benched','unownV',{fromHandOnly:true,disabledByStatus:false});
+move(14,0,destiny('lightWave'),'Prevent all attack effects other than damage during the next opposing turn.');
+// Stadiums, tools and Items are separate; normal card play semantics apply.
+T[92]={trainerType:'Stadium',text:'Each player pays one Colorless more to retreat a Baby or Basic Pokémon.',effect:noop};
+T[93]={trainerType:'Tool',text:'On an opponent attack KO, transfer a Basic Energy from your Active to the Pokémon with EXP.ALL; discard EXP.ALL.',effect:{type:'triggeredEffect',event:'knockedOut',effect:destiny('expAll')}};
+T[94]={trainerType:'Item',text:'You may shuffle opponent Prize cards into their deck and replace them from the deck.',effect:destiny('impostorOak')};
+T[95]={trainerType:'Stadium',text:'Once per turn look at the top two cards of your deck and return them in order.',effect:{type:'stadiumAction',effect:destiny('radioTower')}};
+T[96]={trainerType:'Item',text:'Flip until tails; return one opponent Active Energy to hand per heads. Your turn ends.',effect:destiny('thoughtWave')};
+T[97]={trainerType:'Tool',text:'If Active and damaged by an opponent attack, flip heads to return 20 damage to attacker; discard Counterattack Claws.',effect:{type:'triggeredEffect',event:'damagedByAttack',activeOnly:true,opponentAttackOnly:true,effect:destiny('counterattackClaws')}};
+T[98]={trainerType:'Item',text:'Shuffle an Energy from your hand into deck. Flip heads to take up to three Basic Energy from supply.',effect:destiny('energyAmplifier')};
+T[99]={trainerType:'Stadium',text:'Once per turn flip a coin; on heads return Basic Energy from discard to hand.',effect:{type:'stadiumAction',effect:destiny('energyStadium')}};
+T[100]={trainerType:'Stadium',text:'Once per turn flip heads to draw one card.',effect:{type:'stadiumAction',effect:destiny('luckyStadium')}};
+T[101]={trainerType:'Tool',text:'Until the end of this turn, attacks by this Pokémon ignore Resistance. Discard Magnifier at end of turn.',effect:{type:'modifier',stat:'attackDamage',amount:0,duration:'whileInPlay'}};
+T[102]={trainerType:'Item',text:'Show an Evolution secretly; opposing player guesses Light, Dark or neither; correct guess gives opponent three cards, wrong gives you three.',effect:destiny('personalityTest')};
+T[103]={trainerType:'Item',text:'Choose an opponent hand card to shuffle into their deck; opponent may draw up to two cards.',effect:destiny('evilDeeds')};
+T[105]={trainerType:'Item',text:'Only with fewer than five hand cards including Mail from Bill; draw until four cards remain in hand.',effect:{type:'drawToHandSize',size:4}};
+
 // The old card format treats ordinary trainer cards as Items; Stadiums and Tools are explicit.
 const TRAINER_TYPE={92:'Stadium',93:'Tool',95:'Stadium',97:'Tool',99:'Stadium',100:'Stadium'};
 const TRAINER_TEXT={92:'Stadium: Basic/Baby Pokémon have one additional retreat cost.',93:'Tool: transfer one Basic Energy from the Active Pokémon on attack Knock Out; discard this Tool.',94:'May reshuffle your opponent’s Prize cards and replace them from their deck.',95:'Stadium: once per turn look at the top two cards of your deck.',96:'Flip until tails; return opposing Active Energy to hand per heads. Your turn ends.',97:'Tool: on attack damage to this Active, flip heads to return two damage counters, then discard Tool.',98:'Shuffle an Energy from hand into deck; flip heads for up to three Basic Energy.',99:'Stadium: once per turn flip heads to retrieve Basic Energy from discard.',100:'Stadium: once per turn flip heads to draw one card.',101:'Attach until end of turn; ignore Resistance on this Pokémon’s attacks.',102:'Guess whether a hidden Evolution is Light, Dark or neither; winner draws three.',103:'Put a card from the opponent’s hand into their deck; opponent may draw two.',105:'Playable with fewer than five hand cards. Draw up to four.'};
@@ -204,15 +339,15 @@ const CARDS=DATA.map(line=>{
  });
  const reasons=[];if(kind==='pokemon'){
    for(const atk of attacks)if(atk.unimplemented)reasons.push(atk.name+' printed attack effect not implemented');
-   if(power)reasons.push('Pokémon Power '+power+' not yet implemented');
-   if(SHINING.has(n))reasons.push('Shining attack requires dedicated multi-type/target mechanic verification');
+   if(power&&!P[n])reasons.push('Pokémon Power '+power+' not yet implemented');
+   if(SHINING.has(n)&&attacks.some(a=>a.unimplemented))reasons.push('Shining attack needs dedicated validation');
  }else if(kind==='trainer'&&!T[n])reasons.push('Trainer '+name+' effect not yet implemented');
- else if(kind==='energy')reasons.push('Miracle Energy needs a dedicated Special Energy implementation');
+ else if(kind==='energy'&&n!==16)reasons.push('Unsupported Special Energy');
  const battleEnabled=!reasons.length;
  return {id,setId:'neo4',number:String(n),name,kind,rarity,source:'tcg',battleFormat:'classic',
- ...(kind==='pokemon'?{stage:Number(stage)===0?'Basic':'Stage '+stage,hp:Number(hp),retreat:Number(ret),types:[TYPE[type]],subtype:TYPE[type],weakness:TYPE[weak]||null,weaknessValue:weak?'×2':null,resistance:TYPE[res]||null,resistanceValue:res?'-30':null,evolvesFrom:evolvesFrom||null,attacks,abilities:power?[{name:power,type:'passive',effect:{type:'neoRule',rule:'destiny:'+power},text:'See original card Pokémon Power.'}]:[],printedRules:SHINING.has(n)?`You cannot have more than one ${name} in your deck.`:''}:{}),
+ ...(kind==='pokemon'?{stage:Number(stage)===0?'Basic':'Stage '+stage,hp:Number(hp),retreat:Number(ret),types:[TYPE[type]],subtype:TYPE[type],weakness:TYPE[weak]||null,weaknessValue:weak?'×2':null,resistance:TYPE[res]||null,resistanceValue:res?'-30':null,evolvesFrom:evolvesFrom||null,attacks,abilities:power&&P[n]?[{name:power,...P[n],text:'See original card Pokémon Power.'}]:[],printedRules:SHINING.has(n)?`You cannot have more than one ${name} in your deck.`:''}:{}),
  ...(kind==='trainer'?{trainerType:T[n]?.trainerType||TRAINER_TYPE[n]||'Item',text:T[n]?.text||TRAINER_TEXT[n]||'Read the printed Trainer card.',effect:T[n]?.effect||null}:{}),
- ...(kind==='energy'?{specialEnergy:true,subtype:'Colorless',types:['Colorless'],text:'Miracle Energy: Special Energy with evolution/turn restrictions. Under development.',effect:null}:{}),
+ ...(kind==='energy'?{specialEnergy:true,subtype:'Colorless',types:['Colorless'],text:'Attach only to a Light or Shining Pokémon. Counts as any two Energy symbols in total; discarded at the end of your turn.',effect:{type:'specialEnergy',provides:{Miracle:2}}}:{}),
  image:'https://images.pokemontcg.io/neo4/'+n+'.png',imageLarge:'https://images.pokemontcg.io/neo4/'+n+'_hires.png',
  battleEnabled,deckEligible:battleEnabled,support:{status:battleEnabled?'FULL':'PARTIAL',reasons}
  };

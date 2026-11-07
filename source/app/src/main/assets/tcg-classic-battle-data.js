@@ -217,7 +217,7 @@ function validateDeck(ids,options){
   if(card.basicEnergy||card.deckEligible===false)errors.push(`${card.name} cannot occupy a Classic30 deck slot.`);
   else if(!card.battleEnabled)errors.push(`${card.name} is not battle-ready: ${(card.support?.reasons||['unsupported mechanics']).join('; ')}`);
  }
- for(const [name,count] of byName){if(count>4)errors.push(`${name} exceeds the four-copy limit across all prints (${count}).`);if(name.startsWith('Shining ')&&count>1)errors.push(`${name} is limited to one card per deck.`);}
+ for(const [name,count] of byName){if(count>4)errors.push(`${name} exceeds the four-copy limit across all prints (${count}).`);if(name.startsWith('Shining ')&&count>1)errors.push(`${name} is limited to one card per deck.`);if(name==='Miracle Energy'&&count>1)errors.push('Miracle Energy is limited to one copy per deck.');}
  if(!deck.some(id=>{const c=cardById(id);return c?.kind==='pokemon'&&c.stage==='Basic'&&c.battleEnabled;}))errors.push('Classic TCG decks require at least one battle-ready Basic Pokémon.');
  if(owned){const map=new Map(projectOwnedCards(owned).map(row=>[row.gameplayId,row.quantity]));for(const [id,count] of byId)if(count>Number(map.get(id)||0))errors.push(`Not enough owned copies of ${cardById(id)?.name||id}: need ${count}, own ${Number(map.get(id)||0)}.`);}
  return {ok:errors.length===0,errors};

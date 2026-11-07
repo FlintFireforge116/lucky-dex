@@ -19,11 +19,11 @@ test('113 Neo Destiny identities, correct secret rarities and artwork, with an e
  assert.equal(destiny.CARDS.length,113);assert.equal(new Set(destiny.CARDS.map(c=>c.id)).size,113);
  assert.equal(destiny.CARDS[0].name,'Dark Ampharos');assert.equal(destiny.CARDS[105].name,'Shining Celebi');assert.equal(destiny.CARDS[112].name,'Shining Tyranitar');
  assert.equal(destiny.CARDS.filter(c=>c.rarity==='Rare Shining').length,8);
- assert.equal(destiny.CARDS.find(c=>c.id==='neo4-16').kind,'energy');assert.equal(destiny.cardById('neo4-16').battleEnabled,false);
+ assert.equal(destiny.CARDS.find(c=>c.id==='neo4-16').kind,'energy');assert.equal(destiny.cardById('neo4-16').battleEnabled,true);
  assert.ok(destiny.coverage().battleEnabled>=30);
  for(const c of destiny.CARDS){assert.equal(classic.cardById(c.id),c);assert.match(c.image,/images\.pokemontcg\.io\/neo4\/\d+\.png/);if(c.battleEnabled){assert.equal(c.support.status,'FULL');for(const a of c.attacks||[]){assert.equal(a.unimplemented,false,c.id+' '+a.name);assert.ok(fx.supportsEffect(a.effect));}if(c.kind==='trainer')assert.ok(fx.supportsEffect(c.effect));}else assert.equal(c.support.status,'PARTIAL');}
- assert.equal(destiny.cardById('neo4-6').battleEnabled,false,'Dark Gengar Deep Sleep Power needs engine integration');
- assert.equal(destiny.cardById('neo4-107').battleEnabled,false,'Shining multi-type mechanic must not be silent no-op');
+ assert.equal(destiny.cardById('neo4-6').battleEnabled,true,'Dark Gengar Deep Sleep is now integrated');
+ assert.equal(destiny.cardById('neo4-107').battleEnabled,true,'Shining multi-type costs are integrated');
 });
 test('Neo Destiny appears in both manual/auto and CPU filters, and scripts load in safe order',()=>{
  assert.ok(B.SET_IDS.includes('neo4'));assert.ok(O.SETS.includes('neo4'));assert.equal(classic.SETS.find(s=>s.id==='neo4').cardCount,113);
@@ -36,7 +36,7 @@ test('Neo Destiny physical collection variants map without changing other source
  const rows=classic.projectOwnedCards([{source:'tcg',setId:'n4',id:'library:n4:075',number:'75/105',count:2},{source:'tcg',setName:'Neo Destiny',number:75,count:1},{source:'tcg',setId:'neo4',number:'106/105',count:1},{source:'tcgp',setId:'neo4',number:75,count:2}]);
  assert.equal(rows.find(r=>r.gameplayId==='neo4-75')?.quantity,3);assert.equal(rows.find(r=>r.gameplayId==='neo4-106')?.quantity,1);assert.equal(rows.filter(r=>r.gameplayId==='neo4-75').length,1);
 });
-test('Shining rarity copy restrictions are enforced even if Shining attack is currently unavailable',()=>{
+test('Shining rarity copy restrictions remain enforced',()=>{
  const invalid=classic.validateDeck(['neo4-107','neo4-107']);assert.match(invalid.errors.join(' '),/Shining Charizard is limited to one/i);
  const prior=D.edit(['neo4-73'],'neo4-73',1,[{gameplayId:'neo4-73',quantity:4}]);assert.equal(prior.ok,true);
 });
