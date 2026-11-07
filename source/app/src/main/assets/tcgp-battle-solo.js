@@ -50,10 +50,10 @@
   let lastIssued=0;
   function createBattle(options){
     const opts=options||{},challenge=challengeById(opts.challengeId||CHALLENGES[0].id);if(!challenge)throw new Error('Unknown Pocket Solo challenge.');
-    const testMode=opts.testMode===true,generatedOpponent=!testMode&&challenge.randomPool?customRandomOpponent(opts):null,opponentRecipe=!testMode&&challenge.randomPool&&!generatedOpponent?randomRecipeFor(challenge.difficulty,opts.seed):null;
+    const testMode=opts.testMode===true,generatedOpponent=challenge.randomPool&&!Array.isArray(opts.opponentDeck)?customRandomOpponent(opts):null,opponentRecipe=challenge.randomPool&&!Array.isArray(opts.opponentDeck)&&!generatedOpponent?randomRecipeFor(challenge.difficulty,opts.seed):null;
     if(challenge.randomPool&&!testMode&&!opponentRecipe&&!generatedOpponent)throw new Error('No valid official Random Battle deck for '+challenge.difficulty+'.');
     const cpuDeck=testMode&&Array.isArray(opts.opponentDeck)?opts.opponentDeck.slice():(generatedOpponent?generatedOpponent.cards.slice():opponentRecipe?opponentRecipe.cards.slice():challenge.deck.slice());
-    const cpuEnergy=testMode?(opts.opponentEnergyTypes||decks.analyzeDeck(cpuDeck).recommendedEnergyTypes):(generatedOpponent?generatedOpponent.energyTypes.slice():opponentRecipe?opponentRecipe.energyTypes.slice():challenge.energyTypes);
+    const cpuEnergy=testMode&&Array.isArray(opts.opponentDeck)?(opts.opponentEnergyTypes||decks.analyzeDeck(cpuDeck).recommendedEnergyTypes):(generatedOpponent?generatedOpponent.energyTypes.slice():opponentRecipe?opponentRecipe.energyTypes.slice():challenge.energyTypes);
     const valid=decks.validateLoanerDeck(cpuDeck,cpuEnergy);
     if(!valid.ok||!valid.energyValid||valid.unpowerable.length||valid.missingEnergyTypes.length||valid.warnings.some(w=>w.code==='orphan'))throw new Error('CPU deck has illegal cards, incomplete evolution lines or incompatible Energy.');
     const playerDeck=Array.isArray(opts.playerDeck)?opts.playerDeck.slice():data.BEGINNER_IVYSAUR_DECK.slice();

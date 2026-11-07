@@ -1,0 +1,22 @@
+LuckyDex v0.69.136 — Deck Optimisation & All-Card Test Lab
+
+Features
+- Shared bounded candidate search for both Classic TCG and Pocket Auto Build, preserving evolution, rarity, stage, format and Energy constraints.
+- Score decks on theme synergy (enablers versus payoffs), useful support, Energy viability, evolution structure and dead cards. Select from near-best candidates for variety.
+- Optional (off by default) production-engine AI-versus-AI playtests, capped in length, to compare legal candidate builds; in-memory session feedback informs later candidate rankings.
+- Simplified Test Lab: use the normal deck builders and battle screens for Classic TCG and Pocket, with all battle-ready cards available regardless of ownership.
+- Test decks and battle state are isolated in session; leaving Test Lab restores real collection-based deck building. Test matches never award progression, coins or match records.
+- Generated CPU difficulty and opponent strategy/rarity choices remain available in Test Lab.
+
+Limits
+- The all-card pool includes battle-enabled cards; unimplemented effects remain unavailable.
+- Playtests are sampled, bounded matches rather than exhaustive tournament simulations; results are an estimate, not a guarantee of competitiveness.
+- Session learning is ephemeral (not persisted) and optional.
+- Physical Android interaction has not been verified; automated controller tests are synthetic.
+
+Verification
+- 62 selected regressions passed (synergy, rarity, SV1 rules, optimizer and sandbox).
+- A pre-existing long-running Flight Path test stalls separately and is not counted as passed.
+- JavaScript syntax verified.
+
+Apply after v0.69.135: unzip -o /sdcard/Download/LuckyDex_patch_v0.69.136.zip -d source
