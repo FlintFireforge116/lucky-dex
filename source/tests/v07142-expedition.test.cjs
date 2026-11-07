@@ -41,7 +41,7 @@ test('build and in-app display versions agree at 0.69.143 (including both start-
  const js=fs.readFileSync(path.join(A,'app-v0167.js'),'utf8');
  const html=fs.readFileSync(path.join(A,'index.html'),'utf8');
  const version=gradle.match(/versionName '([^']+)'/)?.[1];
- assert.equal(version,'0.69.143');assert.match(gradle,/versionCode 7123/);
+ assert.ok(Number(version.split('.').at(-1))>=143);assert.match(gradle,/versionCode 71\d{2}/);
  assert.ok(js.includes(`window.__LUCKYDEX_BUILD='${version}'`));
  assert.equal(html.split('v'+version).length-1,2,'both start-screen labels must be updated');
  assert.ok(html.indexOf('tcg-classic-expedition.js')>html.indexOf('tcg-classic-legendary-collection.js'));
@@ -50,7 +50,8 @@ test('build and in-app display versions agree at 0.69.143 (including both start-
 test('Expedition ownership projection and set-selector registration',()=>{
  assert.ok(classic.SETS.some(s=>s.id==='ecard1'&&s.cardCount===165));
  assert.deepEqual(builder.SET_IDS,opponents.SETS);
- for(const file of ['tcg-classic-deck-editor.js','tcgp-battle-ui.js'])assert.ok(fs.readFileSync(path.join(A,file),'utf8').includes('Expedition Base Set'));
+ assert.ok(fs.readFileSync(path.join(A,'tcg-classic-set-picker.js'),'utf8').includes('Expedition Base Set'));
+ for(const file of ['tcg-classic-deck-editor.js','tcgp-battle-ui.js'])assert.ok(/setPicker|LuckyDexClassicSetPicker/.test(fs.readFileSync(path.join(A,file),'utf8')));
  const rows=classic.projectOwnedCards([{source:'tcg',setId:'ecard1',number:109,count:2},{source:'tcg',setId:'ex',number:80,count:3},{source:'tcg',setName:'Expedition Base Set',number:29,count:1},{source:'tcgp',setId:'ecard1',number:45,count:999}]);
  assert.equal(rows.find(r=>r.gameplayId==='ecard1-109')?.quantity,2);
  assert.equal(rows.find(r=>r.gameplayId==='ecard1-80')?.quantity,3);

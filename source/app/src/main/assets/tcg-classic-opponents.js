@@ -13,7 +13,7 @@
  if(!classic||!decks||!builder)throw new Error('Classic opponent generation dependencies are missing.');
  const ALL_PLAYABLE=Object.freeze(classic.CARDS.filter(card=>card.battleEnabled&&card.deckEligible!==false).map(card=>Object.freeze({gameplayId:card.id,quantity:4})));
  const TYPES=builder.ARCHETYPE_TYPES.slice();
- const SETS=['base1','base2','base3','base5','gym1','gym2','neo1','neo2','neo3','neo4','base6','ecard1','SNAPFLORIO','SNAPFOUNJA','sv1'];
+ const SETS=['base1','base2','base3','base5','gym1','gym2','neo1','neo2','neo3','neo4','base6','ecard1','ecard2','SNAPFLORIO','SNAPFOUNJA','sv1'];
  function pick(seed,size){let x=(Number(seed)||0x9e3779b9)>>>0;x^=x<<13;x^=x>>>17;x^=x<<5;return (x>>>0)%size;}
  function pickType({seed=Date.now(),excludeTypes=[],includeColorless=false}={}){
    const availableTypes=includeColorless?TYPES:decks.ENERGY_TYPES.slice();

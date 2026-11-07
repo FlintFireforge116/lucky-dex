@@ -1,0 +1,13 @@
+/* Searchable multi-set selection shared by player auto-build and CPU. */
+.tcg-set-selector{margin:8px 0 12px;padding:10px;border:1px solid #a9c5d2;border-radius:14px;background:#f6fafc;color:#173d53}
+.tcg-set-heading{display:flex;align-items:center;justify-content:space-between;gap:12px;font-size:13px}.tcg-set-heading small{white-space:nowrap;font-size:11px;color:#416074}
+.tcg-set-controls{display:grid;grid-template-columns:minmax(0,1fr) minmax(112px,0.5fr);gap:7px;margin:10px 0}
+.tcg-set-controls input,.tcg-set-controls select{width:100%;min-width:0;min-height:38px;border:1px solid #a5bdc8;border-radius:9px;background:white;color:#133c53;font:600 13px system-ui;padding:7px}
+.tcg-set-bulk{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:9px}
+.tcg-set-selector button{min-height:34px;border-radius:9px;border:1px solid #a5bdc8;padding:6px 10px;background:#fff;color:#193e52;font-weight:700;font-size:12px}
+.tcg-set-selector button[aria-pressed=true]{background:#23627f;color:white;border-color:#164f6b}
+.tcg-set-eras{display:grid;gap:6px}.tcg-set-eras details{border:1px solid #cedfe6;border-radius:10px;background:#fff;overflow:hidden}.tcg-set-eras summary{cursor:pointer;padding:9px 10px;font-size:12px;font-weight:800;display:flex;justify-content:space-between;gap:8px}.tcg-set-eras summary small{font-size:11px;color:#537184}
+.tcg-set-choices{padding:4px 8px 9px;display:flex;gap:7px;flex-wrap:wrap}
+.tcg-set-warning{font-size:12px;color:#9f391d;font-weight:700;margin:9px 0 0}
+.tcg-set-selector [hidden]{display:none!important}
+@media(max-width:400px){.tcg-set-controls{grid-template-columns:1fr}.tcg-set-heading{align-items:flex-start}}

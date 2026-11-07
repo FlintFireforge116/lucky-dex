@@ -20,7 +20,8 @@ test('all 110 numbered Legendary Collection prints are individually registered, 
  for(let n=1;n<=110;n++){const c=classic.cardById('base6-'+n);assert.ok(c);assert.equal(c.setId,'base6');assert.equal(Number(c.number),n);assert.equal(c.battleEnabled,true,c.name);assert.equal(c.support.status,'FULL');assert.match(c.image,new RegExp(`/base6/${n}\\.png$`));for(const a of c.attacks||[])assert.ok(a.name&&a.cost!=null&&a.text!=null,c.id);}
  assert.ok(classic.SETS.some(s=>s.id==='base6'&&s.cardCount===110));
  assert.deepEqual(builder.SET_IDS,opponents.SETS);
- for(const f of ['tcgp-battle-ui.js','tcg-classic-deck-editor.js'])assert.match(fs.readFileSync(path.join(A,f),'utf8'),/Legendary Collection/);
+ assert.match(fs.readFileSync(path.join(A,'tcg-classic-set-picker.js'),'utf8'),/Legendary Collection/);
+ for(const f of ['tcgp-battle-ui.js','tcg-classic-deck-editor.js'])assert.match(fs.readFileSync(path.join(A,f),'utf8'),/tcg-set-selector|setPicker/);
  const html=fs.readFileSync(path.join(A,'index.html'),'utf8');assert.ok(html.indexOf('tcg-classic-team-rocket.js')<html.indexOf('tcg-classic-legendary-collection.js'));assert.ok(html.indexOf('tcg-classic-legendary-collection.js')<html.indexOf('tcg-classic-battle-data.js'));
  const gradle=fs.readFileSync(path.resolve(__dirname,'../app/build.gradle'),'utf8');
  const version=gradle.match(/versionName '([^']+)'/)?.[1];assert.ok(version);

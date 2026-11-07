@@ -25,6 +25,7 @@
 })(typeof globalThis!=='undefined'?globalThis:this,function(root,deps){
   'use strict';
   const {layout,data,decks,core,ai,solo,progress,classicDecks,classicOpponents,effects,cosmetics,uiAssets}=deps;
+  const setPicker=root?.LuckyDexClassicSetPicker||(typeof module==='object'&&module.exports?require('./tcg-classic-set-picker.js'):null);
   const energyIconHtml=(type,options)=>uiAssets?.energyIconHtml?.(type,options)||`<span class="tcgp-energy-icon" data-energy="${esc(type)}"><i>${esc(String(type||'?').slice(0,1))}</i></span>`;
 
   const CHALLENGE_ID='genetic-apex-beginner-ivysaur';
@@ -43,23 +44,33 @@
   function sandboxClassicCards(){if(!sandboxClassicRows)sandboxClassicRows=(root.LuckyDexClassicTCGBattleData?.CARDS||[]).filter(c=>c.battleEnabled&&c.deckEligible!==false&&!c.basicEnergy).map(c=>({gameplayId:c.id,name:c.name,card:c,quantity:4,battleEnabled:true,variants:[]}));return sandboxClassicRows;}
   function sandboxBanner(){return sandboxMode?'<section class="tcgp-battle-panel" style="margin:8px 0;padding:10px 12px"><strong>TEST LAB · ALL CARDS</strong><p style="margin:4px 0">All battle-ready cards are available in normal deck building and combat. Test decks exist only in this session. No collection changes, rewards or battle records.</p><button type="button" class="tcgp-battle-action secondary" data-tcgp-action="exit-sandbox">EXIT TEST LAB</button></section>':'';}
 
-  const CLASSIC_SETS=['base1','base2','base3','base5','gym1','gym2','neo1','neo2','neo3','neo4','base6','ecard1','SNAPFLORIO','SNAPFOUNJA','sv1'];
+  const CLASSIC_SETS=['base1','base2','base3','base5','gym1','gym2','neo1','neo2','neo3','neo4','base6','ecard1','ecard2','SNAPFLORIO','SNAPFOUNJA','sv1'];
+  let opponentSetUI={search:'',sort:'release',selectedOnly:false};
   const CLASSIC_TYPES=['random',...classicOpponents.TYPES];
   const AI_LEVELS=['Beginner','Intermediate','Advanced','Expert'];
   function classicOpponentConfig(){
     const cfg=workingState()?.tcgClassicBattle||{};
     const sets=Array.isArray(cfg.opponentSets)?CLASSIC_SETS.filter(s=>cfg.opponentSets.includes(s)):CLASSIC_SETS.slice();
-    return {sets:sets.length?sets:CLASSIC_SETS.slice(),type:CLASSIC_TYPES.includes(cfg.opponentType)?cfg.opponentType:'random',difficulty:AI_LEVELS.includes(cfg.opponentDifficulty)?cfg.opponentDifficulty:'Beginner',rarityFocus:classicOpponents&&['any','common','uncommon','rare','ultra'].includes(cfg.opponentRarityFocus)?cfg.opponentRarityFocus:'any',basicOnly:cfg.opponentBasicOnly===true,theme:decks.THEMES.some(t=>t.id===cfg.opponentTheme)?cfg.opponentTheme:'any'};
+    return {sets,type:CLASSIC_TYPES.includes(cfg.opponentType)?cfg.opponentType:'random',difficulty:AI_LEVELS.includes(cfg.opponentDifficulty)?cfg.opponentDifficulty:'Beginner',rarityFocus:classicOpponents&&['any','common','uncommon','rare','ultra'].includes(cfg.opponentRarityFocus)?cfg.opponentRarityFocus:'any',basicOnly:cfg.opponentBasicOnly===true,theme:decks.THEMES.some(t=>t.id===cfg.opponentTheme)?cfg.opponentTheme:'any'};
   }
   function classicOpponentPickerHtml(){
     const cfg=classicOpponentConfig();
-    const pools=CLASSIC_SETS.map(id=>`<button type="button" data-tcgp-action="classic-opponent-set" data-id="${id}" aria-pressed="${cfg.sets.includes(id)}">${id==='base1'?'Base Set':id==='base2'?'Jungle':id==='base3'?'Fossil':id==='base5'?'Team Rocket':id==='gym1'?'Gym Heroes':id==='gym2'?'Gym Challenge':id==='neo1'?'Neo Genesis':id==='neo2'?'Neo Discovery':id==='neo3'?'Neo Revelation':id==='neo4'?'Neo Destiny':id==='base6'?'Legendary Collection':id==='ecard1'?'Expedition Base Set':id==='SNAPFLORIO'?'Florio Nature Park':id==='SNAPFOUNJA'?'Founja Jungle':id==='sv1'?'Scarlet & Violet':'Unknown'}</button>`).join('');
+    const pools=setPicker.html({ids:CLASSIC_SETS,selected:cfg.sets,mode:'opponent',title:'Allowed opponent expansions',state:opponentSetUI});
     const types=CLASSIC_TYPES.map(t=>`<button type="button" data-tcgp-action="classic-opponent-type" data-id="${t}" aria-pressed="${cfg.type===t}">${t==='random'?'🎲 Random':t}</button>`).join('');
     const rarities=[['any','Any'],['common','Common'],['uncommon','Uncommon'],['rare','Rare / Holo'],['ultra','Ultra · V/ex/VMAX']].map(([id,label])=>`<button type="button" data-tcgp-action="classic-opponent-rarity" data-id="${id}" aria-pressed="${cfg.rarityFocus===id}">${label}</button>`).join('');
     const themes=decks.THEMES.map(t=>`<button type="button" data-tcgp-action="classic-opponent-theme" data-id="${t.id}" aria-pressed="${cfg.theme===t.id}">${t.label}</button>`).join('');
     const basicOnly=`<button type="button" data-tcgp-action="classic-opponent-basic" aria-pressed="${cfg.basicOnly}">Basic Pokémon only</button>`;
     const levels=AI_LEVELS.map(level=>`<button type="button" data-tcgp-action="classic-opponent-difficulty" data-id="${level}" aria-pressed="${cfg.difficulty===level}">${level}</button>`).join('');
-    return `<section class="tcgp-classic-match-settings" aria-label="Random opponent settings"><h3>Random opponent decks</h3><p>Choose which sets the CPU can build from and its Pokémon archetype. Select multiple sets for mixed decks.</p><div class="tcgp-classic-choice-label">Allowed sets</div><div class="tcgp-classic-match-chips">${pools}</div><div class="tcgp-classic-choice-label">Opponent archetype</div><div class="tcgp-classic-match-chips">${types}</div><div class="tcgp-classic-choice-label">CPU Pokémon rarity focus</div><div class="tcgp-classic-match-chips">${rarities}${basicOnly}</div><small>Prefers the chosen rarity; pre-evolutions and Trainer support are allowed when needed. Basic-only produces unevolved opponents.</small><div class="tcgp-classic-choice-label">CPU deck strategy</div><div class="tcgp-classic-match-chips">${themes}</div><div class="tcgp-classic-choice-label">CPU difficulty · same AI levels as Pocket</div><div class="tcgp-classic-match-chips">${levels}</div></section>`;
+    return `<section class="tcgp-classic-match-settings" aria-label="Random opponent settings"><h3>Random opponent decks</h3><p>Choose which sets the CPU can build from and its Pokémon archetype. Select multiple sets for mixed decks.</p>${pools}<div class="tcgp-classic-choice-label">Opponent archetype</div><div class="tcgp-classic-match-chips">${types}</div><div class="tcgp-classic-choice-label">CPU Pokémon rarity focus</div><div class="tcgp-classic-match-chips">${rarities}${basicOnly}</div><small>Prefers the chosen rarity; pre-evolutions and Trainer support are allowed when needed. Basic-only produces unevolved opponents.</small><div class="tcgp-classic-choice-label">CPU deck strategy</div><div class="tcgp-classic-match-chips">${themes}</div><div class="tcgp-classic-choice-label">CPU difficulty · same AI levels as Pocket</div><div class="tcgp-classic-match-chips">${levels}</div></section>`;
+  }
+  function refreshOpponentControls(){
+    const panel=el('tcgpBattleContent')?.querySelector('.tcgp-classic-match-settings');if(!panel)return;
+    const cfg=classicOpponentConfig();setPicker.refresh(panel.querySelector('.tcg-set-selector'),cfg.sets,opponentSetUI);
+    const selectedByAction={'classic-opponent-type':cfg.type,'classic-opponent-difficulty':cfg.difficulty,'classic-opponent-rarity':cfg.rarityFocus,'classic-opponent-theme':cfg.theme};
+    panel.querySelectorAll('[data-tcgp-action]').forEach(button=>{const action=button.dataset.tcgpAction;
+      if(Object.hasOwn(selectedByAction,action))button.setAttribute('aria-pressed',String(button.dataset.id===selectedByAction[action]));
+      if(action==='classic-opponent-basic')button.setAttribute('aria-pressed',String(cfg.basicOnly));
+    });
   }
   let currentBattle=null,currentChallenge=null,currentPractice=false,currentClassic=false,currentPlayerDeck=null,resultInfo=null,cpuPending=false,cpuTimer=null,cpuActions=0,battleActionCache=[],battleInspect=null,battleOverlay=null,battleContextActionIndices=[],battlePokemonActionSpec=null,battleHandIndex=-1,battleDiscardSide='player',handDragSuppressUntil=0,battleEvent='',battlePresentationBusy=false,battlePresentationTimers=[],battlePresentationDone=null,battlePresentationSerial=0;
 
@@ -379,7 +390,7 @@
   function classicSavedDeck(){const state=classicState();return state.decks.find(item=>item?.id===state.activeDeckId)||state.decks[0]||null;}
   function renderClassicHome(){
     const state=classicState(),stats=state.stats,rows=classicOwnedRows().filter(row=>row.card?.deckEligible!==false),saved=classicSavedDeck(),ready=saved?classicDecks.readiness(saved,classicOwnedRows()):null,deck=ready?.ok?saved:null,totalCopies=rows.reduce((n,row)=>n+Math.min(4,Number(row.quantity||0)),0);
-    setContent(`<div class="format-classic">${formatSwitchHtml()}${sandboxBanner()}<section class="tcgp-battle-hero tcgp-battle-hero-compact"><div><div class="eyebrow">BASE • JUNGLE • FOSSIL • ROCKET • GYM • NEO • SNAP • SCARLET & VIOLET</div><h2>Classic TCG Battle</h2><p>Build a 30-card deck using the supported Classic, New Pokémon Snap and Scarlet & Violet cards, then face a CPU deck from the sets, archetype and AI difficulty you select. Basic Energy comes from the Energy Zone; Double Colorless remains a deck card.</p></div><div class="tcgp-battle-stat-grid"><div class="tcgp-battle-stat"><small>MATCHES</small><b>${Number(stats.matches||0)}</b></div><div class="tcgp-battle-stat"><small>WINS</small><b>${Number(stats.wins||0)}</b></div><div class="tcgp-battle-stat"><small>${sandboxMode?'AVAILABLE':'OWNED'}</small><b>${totalCopies}</b></div></div></section><section class="tcgp-battle-challenge tcgp-battle-ready-card"><div class="tcgp-battle-challenge-head"><div><div class="eyebrow">YOUR CLASSIC DECK</div><h3>${saved?esc(saved.name):'No Classic deck saved'}</h3></div><span class="tcgp-battle-difficulty">${saved?`${saved.cards.length}/30`:'30 CARDS'}</span></div><p>${deck?'Battle-ready.':saved?(ready?.errors?.[0]||'Finish the deck to battle.'):'Use cards from your physical Classic sets, including Florio Nature Park.'}</p><div class="tcgp-battle-actions-row tcgp-battle-start-actions"><button class="tcgp-battle-action" data-tcgp-action="classic-build">${saved?'EDIT CLASSIC DECK':'BUILD CLASSIC DECK'}</button><button class="tcgp-battle-action secondary" data-tcgp-action="classic-quick">AUTO BUILD</button><button class="tcgp-battle-action ${deck?'':'secondary'}" data-tcgp-action="classic-battle" ${deck?'':'disabled'}>${deck?(classicOpponentConfig().type==='random'?'BATTLE RANDOM TYPE':'BATTLE '+classicOpponentConfig().type.toUpperCase()):'DECK NOT READY'}</button><button class="tcgp-battle-action secondary" data-tcgp-action="classic-practice">PRACTICE WITH LOANER</button><button class="tcgp-battle-action secondary" data-tcgp-action="open-sandbox">${sandboxMode?'TEST LAB ENABLED':'TEST LAB · ALL CARDS'}</button></div></section>${classicOpponentPickerHtml()}<details class="tcgp-battle-panel" open><summary>Classic rules in LuckyDex</summary><p>30 deck cards · maximum 4 copies of a card · 7-card opening hand · 5 Prize cards · first player can generate Energy on turn one.</p><p>The Classic catalogue includes Base through Neo Destiny, the New Pokémon Snap sets and Scarlet & Violet. Cards with unsupported effects stay unavailable for battle. Basic Energy, including Darkness and Metal, is supplied by the Energy Zone and does not occupy deck slots.</p></details></div>`);
+    setContent(`<div class="format-classic">${formatSwitchHtml()}${sandboxBanner()}<section class="tcgp-battle-hero tcgp-battle-hero-compact"><div><div class="eyebrow">BASE • JUNGLE • FOSSIL • ROCKET • GYM • NEO • E-CARD • SNAP • MODERN</div><h2>Classic TCG Battle</h2><p>Build a 30-card deck using the supported Classic, New Pokémon Snap and Scarlet & Violet cards, then face a CPU deck from the sets, archetype and AI difficulty you select. Basic Energy comes from the Energy Zone; Double Colorless remains a deck card.</p></div><div class="tcgp-battle-stat-grid"><div class="tcgp-battle-stat"><small>MATCHES</small><b>${Number(stats.matches||0)}</b></div><div class="tcgp-battle-stat"><small>WINS</small><b>${Number(stats.wins||0)}</b></div><div class="tcgp-battle-stat"><small>${sandboxMode?'AVAILABLE':'OWNED'}</small><b>${totalCopies}</b></div></div></section><section class="tcgp-battle-challenge tcgp-battle-ready-card"><div class="tcgp-battle-challenge-head"><div><div class="eyebrow">YOUR CLASSIC DECK</div><h3>${saved?esc(saved.name):'No Classic deck saved'}</h3></div><span class="tcgp-battle-difficulty">${saved?`${saved.cards.length}/30`:'30 CARDS'}</span></div><p>${deck?'Battle-ready.':saved?(ready?.errors?.[0]||'Finish the deck to battle.'):'Use cards from your physical Classic sets, including Florio Nature Park.'}</p><div class="tcgp-battle-actions-row tcgp-battle-start-actions"><button class="tcgp-battle-action" data-tcgp-action="classic-build">${saved?'EDIT CLASSIC DECK':'BUILD CLASSIC DECK'}</button><button class="tcgp-battle-action secondary" data-tcgp-action="classic-quick">AUTO BUILD</button><button class="tcgp-battle-action ${deck?'':'secondary'}" data-tcgp-action="classic-battle" ${deck?'':'disabled'}>${deck?(classicOpponentConfig().type==='random'?'BATTLE RANDOM TYPE':'BATTLE '+classicOpponentConfig().type.toUpperCase()):'DECK NOT READY'}</button><button class="tcgp-battle-action secondary" data-tcgp-action="classic-practice">PRACTICE WITH LOANER</button><button class="tcgp-battle-action secondary" data-tcgp-action="open-sandbox">${sandboxMode?'TEST LAB ENABLED':'TEST LAB · ALL CARDS'}</button></div></section>${classicOpponentPickerHtml()}<details class="tcgp-battle-panel" open><summary>Classic rules in LuckyDex</summary><p>30 deck cards · maximum 4 copies of a card · 7-card opening hand · 5 Prize cards · first player can generate Energy on turn one.</p><p>The Classic catalogue includes Base through Neo Destiny, Legendary Collection, Expedition, Aquapolis, New Pokémon Snap and Scarlet & Violet. Cards with unsupported effects stay unavailable for battle. Basic Energy, including Darkness and Metal, is supplied by the Energy Zone and does not occupy deck slots.</p></details></div>`);
   }
   function renderClassicBuilder(){
     setBattleLive(false);setScreen('classic-builder');
@@ -1005,6 +1016,7 @@
     renderBattle();maybeCpu();
   }
   function startClassicBattle(cards,practice){
+    if(!practice&&!classicOpponentConfig().sets.length){toast('Choose at least one opponent expansion first.');return;}
     clearBattleEvent();finishBattlePresentation(false);cancelGesture?.();clearTimeout(cpuTimer);cpuTimer=null;
     const playerCards=Array.isArray(cards)?cards.slice():[];
     // Real Classic matches rotate through all six CPU Energy types. Practice
@@ -1132,6 +1144,14 @@
   }
 
   function contentClick(event){
+    const setButton=event.target.closest?.('.tcgp-classic-match-settings .tcg-set-selector button');
+    if(setButton){const cfg=classicDecks.ensureState(workingState()),current=classicOpponentConfig();const choice=setButton.dataset.setChoice,bulk=setButton.dataset.setBulk;
+      if(choice&&CLASSIC_SETS.includes(choice)){const chosen=new Set(current.sets);if(chosen.has(choice))chosen.delete(choice);else chosen.add(choice);cfg.opponentSets=CLASSIC_SETS.filter(id=>chosen.has(id));}
+      else if(bulk){const chosen=new Set(current.sets);cfg.opponentSets=bulk==='all'?CLASSIC_SETS.slice():bulk==='none'?[]:CLASSIC_SETS.filter(id=>!chosen.has(id));}
+      else if(setButton.hasAttribute('data-set-selected-only'))opponentSetUI.selectedOnly=!opponentSetUI.selectedOnly;
+      else return;
+      recentClassicOpponentTypes.length=0;saveNow();refreshOpponentControls();return;
+    }
     const btn=event.target.closest?.('[data-tcgp-action]');if(!btn)return;const action=btn.dataset.tcgpAction;
     if(Date.now()<handDragSuppressUntil&&(btn.closest?.('[data-tcgp-hand-drag]')||btn.closest?.('[data-tcgp-energy-source]')))return;
     if(action==='zoom-card'){
@@ -1160,18 +1180,15 @@
     if(action==='inspect-hand-card'){battleInspect=buildInspectSpec('player','hand',Number(btn.dataset.index));battleOverlay='inspect';return renderBattle();}
     if(action==='format-pocket'){battleFormat='pocket';classicDraft=null;return renderHome(true);}
     if(action==='format-classic'){battleFormat='classic';return renderHome(true);}
-    if(['classic-opponent-set','classic-opponent-type','classic-opponent-difficulty','classic-opponent-rarity','classic-opponent-basic','classic-opponent-theme'].includes(action)){
+    if(['classic-opponent-type','classic-opponent-difficulty','classic-opponent-rarity','classic-opponent-basic','classic-opponent-theme'].includes(action)){
       const cfg=classicDecks.ensureState(workingState()),current=classicOpponentConfig(),id=btn.dataset.id;
-      if(action==='classic-opponent-set'&&CLASSIC_SETS.includes(id)){
-        const selected=new Set(current.sets);if(selected.has(id)){if(selected.size===1){toast('At least one opponent set is required.');return;}selected.delete(id);}else selected.add(id);
-        cfg.opponentSets=CLASSIC_SETS.filter(s=>selected.has(s));
-      }else if(action==='classic-opponent-type'&&CLASSIC_TYPES.includes(id))cfg.opponentType=id;
+      if(action==='classic-opponent-type'&&CLASSIC_TYPES.includes(id))cfg.opponentType=id;
       else if(action==='classic-opponent-difficulty'&&AI_LEVELS.includes(id))cfg.opponentDifficulty=id;
       else if(action==='classic-opponent-rarity'&&['any','common','uncommon','rare','ultra'].includes(id))cfg.opponentRarityFocus=id;
       else if(action==='classic-opponent-basic')cfg.opponentBasicOnly=!current.basicOnly;
       else if(action==='classic-opponent-theme'&&decks.THEMES.some(t=>t.id===id))cfg.opponentTheme=id;
       else return;
-      recentClassicOpponentTypes.length=0;saveNow();return renderClassicHome();
+      recentClassicOpponentTypes.length=0;saveNow();refreshOpponentControls();return;
     }
     if(action==='classic-build')return openClassicBuilder();
     if(action==='classic-quick')return openClassicBuilder('quick');
@@ -1232,6 +1249,10 @@
   }
 
   function contentInput(event){
+    if(event.target?.matches?.('.tcgp-classic-match-settings [data-set-search]')){
+      opponentSetUI.search=event.target.value;refreshOpponentControls();return;
+    }
+
     if(event.target?.id==='classicDeckName'){if(classicDraft)classicDraft.name=event.target.value;return;}
     if(event.target?.id==='classicDeckSearch'){
       classicSearch=event.target.value||'';const caret=classicSearch.length;renderClassicBuilder();const search=el('classicDeckSearch');search?.focus();try{search?.setSelectionRange(caret,caret);}catch(_){}return;
@@ -1368,7 +1389,7 @@
 
   function init(){
     const entry=el('tcgpBattleEntry'),content=el('tcgpBattleContent');if(!entry||!content)return;
-    entry.addEventListener('click',open);el('tcgpBattleBack')?.addEventListener('click',back);el('tcgpBattleInfo')?.addEventListener('click',showHelp);el('tcgpBattleHelpClose')?.addEventListener('click',hideHelp);el('tcgpBattleHelpDone')?.addEventListener('click',hideHelp);content.addEventListener('click',contentClick);content.addEventListener('input',contentInput);content.addEventListener('pointerdown',energyPointerDown);content.addEventListener('pointerdown',handPointerDown);
+    entry.addEventListener('click',open);el('tcgpBattleBack')?.addEventListener('click',back);el('tcgpBattleInfo')?.addEventListener('click',showHelp);el('tcgpBattleHelpClose')?.addEventListener('click',hideHelp);el('tcgpBattleHelpDone')?.addEventListener('click',hideHelp);content.addEventListener('click',contentClick);content.addEventListener('input',contentInput);content.addEventListener('change',event=>{if(event.target?.matches?.('.tcgp-classic-match-settings [data-set-sort]')){opponentSetUI.sort=event.target.value;const panel=content.querySelector('.tcgp-classic-match-settings'),node=panel?.querySelector('.tcg-set-selector');if(node){const scrollHost=content.closest('.tcgp-battle-content')||content;const scrollTop=scrollHost.scrollTop;const holder=root.document.createElement('div');holder.innerHTML=setPicker.html({ids:CLASSIC_SETS,selected:classicOpponentConfig().sets,mode:'opponent',title:'Allowed opponent expansions',state:opponentSetUI});node.replaceWith(holder.firstElementChild);refreshOpponentControls();scrollHost.scrollTop=scrollTop;}}});content.addEventListener('pointerdown',energyPointerDown);content.addEventListener('pointerdown',handPointerDown);
     content.addEventListener('keydown',event=>{
       if(event.key!=='Escape')return;
       const layer=content.querySelector('.tcgp-live-card-zoom:not([hidden])');

@@ -31,9 +31,9 @@ test('all 165 Expedition cards enabled; holo and non-holo retain independent ide
 test('version synchronized in Android Gradle, app JS and both visible title labels',()=>{
  const html=fs.readFileSync(path.join(A,'index.html'),'utf8'),js=fs.readFileSync(path.join(A,'app-v0167.js'),'utf8');
  const gradle=fs.readFileSync(path.resolve(__dirname,'../app/build.gradle'),'utf8');
- assert.match(gradle,/versionName '0\.69\.143'/);assert.match(gradle,/versionCode 7123/);
- assert.match(js,/window\.__LUCKYDEX_BUILD='0\.69\.143'/);
- assert.equal(html.split('v0.69.143').length-1,2);
+ const version=gradle.match(/versionName '([^']+)'/)?.[1];assert.ok(version&&Number(version.split('.').at(-1))>=143);
+ assert.ok(js.includes(`window.__LUCKYDEX_BUILD='${version}'`));
+ assert.equal(html.split('v'+version).length-1,2);
 });
 test('Lightning Strike normal 40 or optional 80 and loss of attached Lightning energy',()=>{
  for(const boosted of [false,true]){

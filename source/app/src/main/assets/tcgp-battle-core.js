@@ -826,7 +826,7 @@
     if(state.format==='classic')for(const who of ['player','opponent']){
       const side=state.sides[who];for(const slot of pokemonOn(side)){
         for(const ref of [...(slot.specialEnergy||[])])if(ref.cardId==='neo4-16'&&who===state.activeSide){slot.specialEnergy=slot.specialEnergy.filter(r=>r.uid!==ref.uid);side.discard.push(ref);state.log.push({type:'neoDestinyMiracleDiscard',side:who,cardId:slot.cardId});}
-        for(const ref of slot.specialEnergy||[])if(['neo1-104','ecard1-158'].includes(ref.cardId)&&!data.cardById(slot.cardId)?.types?.includes('Darkness')&&!/Dark/i.test(data.cardById(slot.cardId)?.name||''))slot.damage=Number(slot.damage||0)+10;
+        for(const ref of slot.specialEnergy||[])if(['neo1-104','ecard1-158','ecard2-142'].includes(ref.cardId)&&!data.cardById(slot.cardId)?.types?.includes('Darkness')&&!/Dark/i.test(data.cardById(slot.cardId)?.name||''))slot.damage=Number(slot.damage||0)+10;
       }
     }
     if(state.format==='classic')for(const ownerSide of ['player','opponent']){
@@ -1265,7 +1265,7 @@
       let resistanceReason='';
       if(isActive){
         damage+=effects.modifierAmount(state,foeSide,defender,'damageTaken',data.cardById);
-        if(state.format==='classic'&&damage>0){const metal=miraculousWindActive(state)?0:(s.active.specialEnergy||[]).filter(r=>['neo1-19','ecard1-159'].includes(r.cardId)).length;if(metal&&!attackerCard.types?.includes('Metal'))damage=Math.max(0,damage-metal*10);}
+        if(state.format==='classic'&&damage>0){const metal=miraculousWindActive(state)?0:(s.active.specialEnergy||[]).filter(r=>['neo1-19','ecard1-159','ecard2-143'].includes(r.cardId)).length;if(metal&&!attackerCard.types?.includes('Metal'))damage=Math.max(0,damage-metal*10);}
         if(!result.damageRules?.ignoreWeakness){
           const beforeMatchup=damage,defCard=data.cardById(defender.cardId),resistance=defender.resistanceOverride||defCard?.resistance;
           if(state.format==='classic'&&beforeMatchup>0&&resistance&&effects.effectiveTypes(state,side,s.active,data.cardById).includes(resistance)){
@@ -1285,7 +1285,7 @@
             [s,foe].flatMap(board=>pokemonOn(board)).filter(slot=>['Poliwag','Poliwhirl','Poliwrath','Politoed'].includes(data.cardById(slot.cardId)?.name)).length>3)damage+=40;
           damage+=effects.modifierAmount(state,side,s.active,'postWeaknessAttackDamage',data.cardById);
           if(state.format==='classic'){
-            const dark=miraculousWindActive(state)?0:(s.active.specialEnergy||[]).filter(r=>['neo1-104','ecard1-158'].includes(r.cardId)).length;
+            const dark=miraculousWindActive(state)?0:(s.active.specialEnergy||[]).filter(r=>['neo1-104','ecard1-158','ecard2-142'].includes(r.cardId)).length;
             damage+=dark*10;
             if(defender.neoScreech&&state.turnNumber<=defender.neoScreech.expiresTurn)damage+=20;
           }
@@ -1302,7 +1302,7 @@
       if(damage>0&&Number(defender.neoDestinyReflectUntil||0)>=state.turnNumber){const heads=random(state)<.5;state.log.push({type:'coin',side:foeSide,reason:'Neo Destiny Reflect Shield',heads,results:[heads]});if(heads){damage=0;s.active.damage=Number(s.active.damage||0)+20;}}
       damage=gymDamageDefender(state,foeSide,defender,s.active,damage);
       if(state.format==='classic'){
-        const metal=miraculousWindActive(state)?0:(defender.specialEnergy||[]).filter(r=>['neo1-19','ecard1-159'].includes(r.cardId)).length;
+        const metal=miraculousWindActive(state)?0:(defender.specialEnergy||[]).filter(r=>['neo1-19','ecard1-159','ecard2-143'].includes(r.cardId)).length;
         damage=result.damageRules?.ignoreEffects?damage:Math.max(0,damage-metal*10);
         if(state.stadium?.cardId==='neo1-97'&&attackerCard.types?.includes('Colorless'))damage=Math.max(0,damage-30);
       }
