@@ -99,9 +99,12 @@ test('Opponent deck generation, 30-card legality and CPU actions remain valid wi
   assert.ok(actions>10,`CPU seed ${seed}: ${actions}`);assert.ok(!s.log.some(l=>l.type==='battleError'));
  }
 });
-test('Android, splash labels and JS marker are all 0.69.150',()=>{
+test('Android, splash labels and JS marker all use the same current build version',()=>{
  const gradle=fs.readFileSync(path.resolve(A,'../../../build.gradle'),'utf8'),html=fs.readFileSync(path.join(A,'index.html'),'utf8'),app=fs.readFileSync(path.join(A,'app-v0167.js'),'utf8');
- assert.match(gradle,/versionName '0\.69\.150'/);assert.match(gradle,/versionCode 7130/);assert.ok(app.includes("window.__LUCKYDEX_BUILD='0.69.150'"));assert.equal(html.split('v0.69.150').length-1,2);
+ const version=gradle.match(/versionName '([^']+)'/)?.[1];assert.ok(version);
+ assert.ok(Number(gradle.match(/versionCode (\d+)/)?.[1])>=7130);
+ assert.ok(app.includes(`window.__LUCKYDEX_BUILD='${version}'`));
+ assert.equal(html.split(`v${version}`).length-1,2);
 });
 test('Flame Vapor lets the attacker select exact opposing Energy cards for each heads',()=>{
  const s=field(),foe=s.sides.opponent;foe.active.energy={Grass:1,Water:1};foe.active.specialEnergy=[ref('ecard2-144','rainbow-x')];
