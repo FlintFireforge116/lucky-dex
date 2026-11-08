@@ -8,8 +8,8 @@ android {
         applicationId 'com.example.luckydex'
         minSdk 26
         targetSdk 35
-        versionCode 7134
-        versionName '0.69.154'
+        versionCode 7135
+        versionName '0.69.155'
     }
 
     signingConfigs {
@@ -137,3 +137,30 @@ tasks.register('materializeAuthenticPackArt') {
 tasks.named('preBuild').configure {
     dependsOn tasks.named('materializeAuthenticPackArt')
 }
+
+// v0.69.155: never publish an APK that advertises Delta Reign artwork but
+// silently omits its 141 local card scans. The manifest/paths are release inputs.
+tasks.register('validateDeltaReignCardAssets') {
+    def manifest = file("$rootProject.projectDir/scripts/delta-reign-art-download.txt")
+    inputs.file(manifest)
+    doLast {
+        if (!manifest.exists()) throw new GradleException('Missing Delta Reign art file list')
+        def rows = manifest.readLines('UTF-8').findAll { it?.trim() }
+        if (rows.size() != 141) throw new GradleException("Delta Reign expected 141 card images, listed ${rows.size()}")
+        def seen = new HashSet<String>()
+        rows.eachWithIndex { row, i ->
+            def parts = row.split('\\|', -1)
+            def expected = String.format('%03d', i + 1)
+            if (parts.length != 2 || parts[0] != expected || !(parts[1] ==~ /me06-\d{3}_[a-z0-9_]+\.webp/) || !seen.add(parts[1]))
+                throw new GradleException("Invalid Delta Reign card image manifest row ${i + 1}: ${row}")
+            def img = file("$projectDir/src/main/assets/delta-reign-cards/${parts[1]}")
+            if (!img.isFile() || img.length() < 8000)
+                throw new GradleException("Missing Delta Reign bundled image ${parts[1]}")
+            def bytes = img.withInputStream { stream -> byte[] header = new byte[12]; if (stream.read(header) < 12) throw new GradleException("Truncated Delta Reign asset ${parts[1]}"); header }
+            if (new String(bytes, 0, 4, 'US-ASCII') != 'RIFF' || new String(bytes, 8, 4, 'US-ASCII') != 'WEBP')
+                throw new GradleException("Invalid Delta Reign WebP ${parts[1]}")
+        }
+        println 'Validated 141 locally bundled Delta Reign WebP cards for APK'
+    }
+}
+tasks.named('preBuild').configure { dependsOn tasks.named('validateDeltaReignCardAssets') }

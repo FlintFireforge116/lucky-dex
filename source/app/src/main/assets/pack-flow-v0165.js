@@ -712,6 +712,40 @@ function preloadPackCard(card,run=packRun) {
   if(!run||!card)return Promise.resolve(null);
   if(run.art.has(card.id))return run.art.get(card.id);
   const promise=(async()=>{
+    // v0.69.155: Delta Reign's individual card scans are bundled inside the APK,
+    // not an installed card-art ZIP or a network-only image. Resolve the exact
+    // card number + name *before* the generic cache/network pipeline: the old
+    // path skipped relative APK assets offline and could show LOCAL CARD PREVIEW.
+    // Also prefer the verified bundled scan over stale artwork cached for this ID.
+    const deltaRow=preparedPack?.source==='tcg'
+      ? window.LuckyDexDeltaReignArtV069154?.cardRow?.(card,preparedPack?.set)
+      : null;
+    if(deltaRow){
+      const relative=String(deltaRow[4]||'');
+      if(/^delta-reign-cards\/me06-\d{3}_[a-z0-9_]+\.webp$/.test(relative)){
+        const localUrl=window.location?.protocol==='file:'?`file:///android_asset/${relative}`:relative;
+        try{
+          if(await LuckyDexPack.decodeImage(localUrl,run.abort.signal)){
+            card.image=localUrl;card._packArtwork=localUrl;
+            card._artIdentityVerified=true;card._artSource='luckydex-delta-reign-bundled';
+            return {url:localUrl,owned:false,source:'delta-reign-apk'};
+          }
+        }catch(_){ }
+        // A stale APK or a web build might not contain the image yet. The
+        // matching GitHub blob gives online users a safe, exact-identity fallback.
+        if(isOnlineV13()){
+          const remote=`https://raw.githubusercontent.com/FlintFireforge116/lucky-dex/main/source/app/src/main/assets/${relative}`;
+          try{
+            if(await LuckyDexPack.decodeImage(remote,run.abort.signal)){
+              card.image=remote;card._packArtwork=remote;
+              card._artIdentityVerified=true;card._artSource='luckydex-delta-reign-github';
+              cacheRemotePackArtworkV163(card,remote,run);
+              return {url:remote,owned:false,source:'delta-reign-github'};
+            }
+          }catch(_){ }
+        }
+      }
+    }
     // 1) Offline-first: use a previously cached real card image whenever it is
     // available. The resulting object URL is owned by this pack run.
     try{

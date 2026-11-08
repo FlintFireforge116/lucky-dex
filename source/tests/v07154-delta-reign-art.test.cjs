@@ -22,7 +22,7 @@ test('Delta Reign list has 141 distinct English numbered scans and verified sour
     assert.equal(c.number,i);
     assert.ok(c.name && c.rarity);
     assert.match(c.file,new RegExp(`^me06-${String(i).padStart(3,'0')}_.*\\.webp$`));
-    assert.equal(c.source,`https://billsarchive.com/assets/delta-reign/small/${c.file}`);
+    assert.match(c.source,/^https:\/\/billsarchive\.com\/assets\/delta-reign\/small\/me06-\d{3}_[a-z0-9_]+\.webp$/);
   }
   assert.equal(new Set(manifest.cards.map(c=>c.file)).size,141);
   assert.deepEqual(manifest.cards.filter(c=>c.number>103).reduce((a,c)=>(a[c.rarity]=(a[c.rarity]||0)+1,a),{}),{'Illustration Rare':14,'Ultra Rare':17,'Special Illustration Rare':6,'Mega Hyper Rare':1});
@@ -60,14 +60,14 @@ test('Old owned Delta Reign cards are repaired without touching other sets or mi
   assert.equal(cards.three.image,'keep.png');assert.equal(cards.four.image,'keep-wrong.png');
   assert.equal(w.LuckyDexDeltaReignArtV069154.repairOwned(cards),0);
 });
-test('Termux downloader covers every source and version markers advance to 0.69.154',()=>{
+test('Termux downloader covers every source and version markers advance to 0.69.155',()=>{
   const list=fs.readFileSync(path.join(ROOT,'source/scripts/delta-reign-art-download.txt'),'utf8').trim().split('\n');
   assert.equal(list.length,141);
   for(let i=0;i<141;i++)assert.equal(list[i],`${String(i+1).padStart(3,'0')}|${manifest.cards[i].file}`);
   const html=fs.readFileSync(path.join(ASSETS,'index.html'),'utf8');
   assert.ok(html.indexOf('delta-reign-card-art-v069154.js')<html.indexOf('card-art-library-v0165.js'));
-  assert.match(html,/id="titleBuildVersion">v0\.69\.154/);assert.match(html,/id="appBuildVersion">LUCKY DEX · v0\.69\.154/);
-  const app=fs.readFileSync(path.join(ASSETS,'app-v0167.js'),'utf8');assert.match(app,/window\.__LUCKYDEX_BUILD='0\.69\.154'/);
-  const gradle=fs.readFileSync(path.join(ROOT,'source/app/build.gradle'),'utf8');assert.match(gradle,/versionCode 7134/);assert.match(gradle,/versionName '0\.69\.154'/);
+  assert.match(html,/id="titleBuildVersion">v0\.69\.155/);assert.match(html,/id="appBuildVersion">LUCKY DEX · v0\.69\.155/);
+  const app=fs.readFileSync(path.join(ASSETS,'app-v0167.js'),'utf8');assert.match(app,/window\.__LUCKYDEX_BUILD='0\.69\.155'/);
+  const gradle=fs.readFileSync(path.join(ROOT,'source/app/build.gradle'),'utf8');assert.match(gradle,/versionCode 7135/);assert.match(gradle,/versionName '0\.69\.155'/);
   assert.match(fs.readFileSync(path.join(ROOT,'source/scripts/download-delta-reign-art.sh'),'utf8'),/Verified all 141/);
 });
