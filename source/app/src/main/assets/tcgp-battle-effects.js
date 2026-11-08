@@ -1188,6 +1188,94 @@
     }
   }
 
+  // Skyridge e-Card follow-up actions, executed after attack damage through the
+  // same effect-choice pipeline. We deliberately never invent choices or Energy.
+  function skyridgeRule(e,ctx){
+    const rule=e.rule.slice('skyridge:'.length),us=own(ctx),them=other(ctx),self=ctx.attacker;
+    const log=(more={})=>ctx.state.log.push({type:'skyridgeEffect',side:ctx.side,rule,...more});
+    switch(rule){
+      case 'pollenShield':if(self){self.neoPollenShield={expiresTurn:ctx.state.turnNumber+1};log({protectedUntil:self.neoPollenShield.expiresTurn});}break;
+      case 'miraclePowderChoice':{
+        const statuses=['sleep','burn','confusion','paralysis','poison'];
+        if(ctx.resolvingChoice){const status=statuses[Number(ctx.action?.choiceOption)];if(status)applyEffect({type:'status',target:'opponentActive',status},ctx);}
+        else ctx.requestChoice?.({kind:'option',side:'self',options:['Asleep','Burned','Confused','Paralyzed','Poisoned'],effect:e});
+        break;
+      }
+      case 'fastBall':{
+        // Reveal until the first Evolution. No choice, no replacement and shuffle
+        // every non-selected revealed card back into the deck afterwards.
+        const idx=us.deck.findIndex(ref=>{const c=ctx.cardById(ref.cardId);return c?.kind==='pokemon'&&['Stage 1','Stage 2'].includes(c.stage);});
+        if(idx>=0){const [ref]=us.deck.splice(idx,1);us.hand.push(ref);log({found:ref.cardId,revealed:idx+1});}
+        else log({found:null,revealed:us.deck.length});
+        ctx.shuffle?.(ctx.state,us.deck);break;
+      }
+      case 'lureBall':{
+        const results=[coin(ctx),coin(ctx),coin(ctx)],heads=results.filter(Boolean).length;
+        ctx.state.log.push({type:'coin',side:ctx.side,reason:'Skyridge Lure Ball',heads,results});
+        if(heads)applyEffect({type:'searchChosen',source:'discard',amount:heads,filter:{kind:'pokemon',stage:['Stage 1','Stage 2']}},ctx);
+        break;
+      }
+      case 'energyHeal':{
+        const valid=pokemonOn(us).filter(slot=>Number(Object.values(slot.energy||{}).reduce((n,v)=>n+Number(v||0),0))+(slot.specialEnergy||[]).length>0);
+        if(ctx.resolvingChoice){const selectedSlot=selected(ctx,us);if(valid.includes(selectedSlot)&&!healingIsBlocked(ctx.state,selectedSlot,ctx.cardById))selectedSlot.damage=Math.max(0,Number(selectedSlot.damage||0)-10);}
+        else if(valid.length)ctx.requestChoice?.({kind:'pokemon',side:'self',includeActive:true,effect:e});
+        break;
+      }
+      case 'callFriends':case 'callNidoran':{
+        if(us.bench.length>=Number(us.benchLimit||3))break;
+        const filter=rule==='callFriends'?{kind:'pokemon',stage:['Basic','Baby']}:{kind:'pokemon',stage:'Basic',name:['Nidoran ♀','Nidoran ♂']};
+        const allowed=c=>matchesFilter(c,filter);
+        if(ctx.resolvingChoice){if(ctx.action?.choiceSkip)break;const i=Number(ctx.action?.choiceDeckIndex),ref=us.deck[i];
+          if(ref&&allowed(ctx.cardById(ref.cardId))){us.deck.splice(i,1);ctx.benchCard?.(us,ref);}ctx.shuffle?.(ctx.state,us.deck);
+        }else if(us.deck.some(ref=>allowed(ctx.cardById(ref.cardId))))ctx.requestChoice?.({kind:'deckCard',side:'self',filter,effect:e});
+        break;
+      }
+      case 'warpHoleChoose':{
+        if(!ctx.resolvingChoice){if(us.discard.length)ctx.requestChoice?.({kind:'discardCard',side:'self',optional:true,effect:e});break;}
+        if(ctx.action?.choiceSkip)break;
+        const index=Number(ctx.action?.choiceDiscardIndex);
+        if(Number.isInteger(index)&&index>=0&&index<us.discard.length){const [ref]=us.discard.splice(index,1);us.deck.unshift(ref);log({returned:ref.cardId});}
+        break;
+      }
+      case 'strangeSpiral':{
+        if(!self||!them.active)break;
+        const types=Object.entries(self.energy||{}).filter(([,n])=>Number(n)>0).map(([t])=>t);
+        if(ctx.resolvingChoice){
+          const t=e.energyTypes?.[Number(ctx.action?.choiceOption)];
+          if(!t||!Number(self.energy?.[t]||0))break;
+          self.energy[t]--;us.energyDiscard=us.energyDiscard||{};
+          us.energyDiscard[t]=Number(us.energyDiscard[t]||0)+1;
+          applyEffect({type:'status',target:'opponentActive',status:'confusion'},ctx);log({discarded:t});
+        }else if(types.length)ctx.requestChoice?.({kind:'option',side:'self',options:types.map(t=>'Discard '+t+' Energy'),effect:{...e,energyTypes:types}});
+        break;
+      }
+      case 'goodNeighbor':{
+        if(!self||!us.bench.includes(self))break;
+        if(!ctx.resolvingChoice){
+          if(Number(us.skyridgeGoodNeighborTurn)===Number(ctx.state.turnNumber))break;
+          us.skyridgeGoodNeighborTurn=ctx.state.turnNumber;
+          const result=coin(ctx);ctx.state.log.push({type:'coin',side:ctx.side,reason:'Skyridge Good Neighbor',heads:result,results:[result]});
+          if(result)ctx.requestChoice?.({kind:'option',side:'self',options:['Heal 0','Heal 10','Heal 20'],effect:{...e,stage:'self'}});
+        }else{
+          const target=e.stage==='opponent'?them.active:us.active;
+          const amount=Math.min(20,10*Math.max(0,Math.min(2,Number(ctx.action?.choiceOption||0))));
+          if(target&&!healingIsBlocked(ctx.state,target,ctx.cardById))target.damage=Math.max(0,Number(target.damage||0)-amount);
+          log({healAmount:amount,stage:e.stage});
+          if(e.stage==='self')ctx.requestChoice?.({kind:'option',side:'opponent',options:['Heal 0','Heal 10','Heal 20'],effect:{...e,stage:'opponent'}});
+        }
+        break;
+      }
+      case 'empathicHealing':{
+        if(!self)return;const types=effectiveTypes(ctx.state,ctx.side,self,ctx.cardById);
+        for(const side of [ctx.side,ctx.foeSide])for(const slot of pokemonOn(ctx.state.sides[side])){
+          if(slot!==self&&!effectiveTypes(ctx.state,side,slot,ctx.cardById).some(t=>types.includes(t)))continue;
+          if(!healingIsBlocked(ctx.state,slot,ctx.cardById))slot.damage=Math.max(0,Number(slot.damage||0)-20);
+        }log({type:types});break;
+      }
+      default:throw new Error('Unsupported Skyridge follow-up: '+rule);
+    }
+  }
+
   // Aquapolis e-Card exact-effect handlers. Each step uses the same effect-choice
   // UI/CPU state machine as Expedition, with a legal choice rather than random
   // card movement. An action chain never touches the generated Energy Zone.
@@ -1406,6 +1494,7 @@
     const pick=(which,rule,opts={})=>ctx.requestChoice?.({kind:'pokemon',side:'self',selectionSide:which==='opponent'?ctx.foeSide:ctx.side,includeActive:opts.includeActive!==false,filter:opts.filter,effect:{type:'neoRule',rule},optional:!!opts.optional});
     const sel=(which)=>{const board=which==='opponent'?foe:ss,target=ctx.action?.choiceTarget,index=Number(ctx.action?.choiceBenchIndex);return target==='active'?board.active:(board.bench||[]).find(x=>Number(x.benchSlot)===index);};
     const log=(details)=>ctx.state.log.push({type:'neoEffect',side:ctx.side,rule:e.rule,...details});
+    if(String(e.rule||'').startsWith('skyridge:'))return skyridgeRule(e,ctx);
     if(String(e.rule||'').startsWith('aquapolis:'))return aquapolisRule(e,ctx);
     if(String(e.rule||'').startsWith('expedition:'))return expeditionRule(e,ctx);
     if(String(e.rule||'').startsWith('destiny:'))return destinyRule(e,ctx);
@@ -3875,6 +3964,63 @@
         if(r==='jumpSlamGX'&&!ss.gxAttackUsed){/* applied after damage */}
         pending.push(e);return;
       }
+      if(e.type==='neoRule'&&String(e.rule||'').startsWith('skyridge:')){
+        const rule=e.rule.slice('skyridge:'.length),us=own(ctx),them=other(ctx),att=ctx.attacker,def=ctx.defender;
+        const attachedCards=slot=>totalEnergy(slot?.energy||{})+(slot?.specialEnergy||[]).length;
+        const flipSky=()=>{const hit=coin(ctx);ctx.state.log.push({type:'coin',side:ctx.side,reason:'Skyridge '+rule,heads:hit?1:0,results:[hit]});return hit;};
+        const flipN=n=>{const results=Array.from({length:n},()=>coin(ctx)),heads=results.filter(Boolean).length;ctx.state.log.push({type:'coin',side:ctx.side,reason:'Skyridge '+rule,heads,results});return heads;};
+        switch(rule){
+          case 'eruption':{
+            const refs=[us,them].map(board=>{const ref=board.deck.shift();if(ref)board.discard.push(ref);return ref;});
+            damage=20+20*refs.filter(ref=>ctx.cardById(ref?.cardId)?.basicEnergy&&ctx.cardById(ref.cardId).subtype==='Fire').length;
+            return;
+          }
+          case 'trample':{
+            damage=40;for(const board of [us,them])for(const slot of board.bench){if(flipSky())slot.damage=Number(slot.damage||0)+20;}
+            return;
+          }
+          case 'zzzap':{
+            damage=0;for(const board of [us,them])for(const slot of pokemonOn(board)){
+              if((ctx.cardById(slot.cardId)?.abilities||[]).length)slot.damage=Number(slot.damage||0)+20;
+            }return;
+          }
+          case 'maxVoltage':{
+            const types=Number(att?.energy?.Lightning||0);let specials=0;
+            if(att){att.energy.Lightning=0;us.energyDiscard=us.energyDiscard||{};us.energyDiscard.Lightning=Number(us.energyDiscard.Lightning||0)+types;
+              for(const ref of (att.specialEnergy||[]).slice()){
+                const c=ctx.cardById(ref.cardId),provides=ref.provides||c?.effect?.provides||{};
+                if(!Number(provides.Lightning||0))continue;
+                att.specialEnergy.splice(att.specialEnergy.indexOf(ref),1);us.discard.push(ref);specials++;
+              }
+            }damage=20+10*(types+specials);return;
+          }
+          case 'lonelyFang':damage=30+20*(them.bench.length-us.bench.length);return;
+          case 'magneticWave':damage=30+10*(us.bench.length-them.bench.length);return;
+          case 'energyBurst':damage=flipSky()?10*(attachedCards(att)+attachedCards(def)):0;return;
+          case 'doTheWave':damage=flipSky()?10*(us.bench.length+(us.active?1:0)):0;return;
+          case 'giftOfSpite':damage=0;pending.push({type:'damage',target:'opponentActive',amount:10*pokemonOn(us).filter(slot=>Number(slot.damage||0)>0).length});return;
+          case 'continuousCharge':{const heads=flipN(4);damage=30+20*heads;if(heads)pending.push({type:'selfDamage',amount:heads*10});return;}
+          case 'returnAttack':damage=flipN(2)>0?10*Math.floor(Number(att?.damage||0)/10):0;return;
+          case 'syncroblast':damage=attachedCards(att)===attachedCards(def)?40:10;return;
+          case 'angryHorn':damage=Number(att?.damage||0)>=40?50:30;return;
+          case 'energyHealing':damage=0;pending.push({type:'healSelf',amount:20*attachedCards(att)});return;
+          case 'healingDust':{const heads=flipN(2);damage=0;if(heads)pending.push({type:'heal',target:'selfAll',amount:10*heads});return;}
+          case 'miraclePowder':if(flipSky())pending.push({type:'neoRule',rule:'skyridge:miraclePowderChoice'});return;
+          case 'empathicHealing':damage=0;pending.push(e);return;
+          case 'pollenShield':pending.push(e);return;
+          case 'dragOff':{
+            const target=them.bench.find(slot=>slot.uid===ctx.action?.effectSelection);
+            if(target&&switchPokemon(them,target.benchSlot,ctx.state)){
+              damageTarget=target;ctx.defender=target;
+              ctx.state.log.push({type:'skyridgeSwitch',side:ctx.foeSide,cardId:target.cardId,reason:'Drag Off'});
+            }
+            return;
+          }
+          case 'metalTail':damage=ctx.action?.effectSelection==='flip'?(flipSky()?80:0):40;return;
+          case 'warpHole':if(flipSky()&&us.discard.length)pending.push({type:'neoRule',rule:'skyridge:warpHoleChoose'});return;
+          default:pending.push(e);return;
+        }
+      }
       if(e.type==='neoRule'&&String(e.rule||'').startsWith('aquapolis:')){
         const rule=e.rule.slice('aquapolis:'.length),rolls=n=>{const results=Array.from({length:n},()=>coin(ctx));ctx.state.log.push({type:'coin',side:ctx.side,reason:'Aquapolis '+rule,heads:results.filter(Boolean).length,results});return results.filter(Boolean).length;};
         if(rule==='fireBlow'){
@@ -4351,6 +4497,18 @@
     return [{}];
   }
   function choicesForEffect(effect,ctx){
+    if(effect?.type==='neoRule'&&String(effect.rule||'').startsWith('skyridge:')){
+      const rule=effect.rule.slice('skyridge:'.length);
+      if(rule==='dragOff')return other(ctx).bench.length?other(ctx).bench.map(slot=>({effectSelection:slot.uid,choiceLabel:'Switch in '+ctx.cardById(slot.cardId)?.name})):[{}];
+      if(rule==='metalTail')return [{effectSelection:'',choiceLabel:'40 damage · no coin flip'},{effectSelection:'flip',choiceLabel:'Flip coin for 80 damage (tails: 0)'}];
+      if(rule==='energyHeal')return targetChoices('selfPokemon',ctx).filter(a=>{
+        const slot=targets('selfPokemon',{...ctx,action:a})[0];return slot&&(Object.values(slot.energy||{}).some(n=>Number(n)>0)||(slot.specialEnergy||[]).length>0);
+      });
+      if(['callFriends','callNidoran'].includes(rule))return own(ctx).bench.length<Number(own(ctx).benchLimit||3)?[{}]:[];
+      if(rule==='strangeSpiral')return Object.values(ctx.attacker?.energy||{}).some(n=>Number(n)>0)?[{}]:[];
+      if(rule==='goodNeighbor')return Number(own(ctx).skyridgeGoodNeighborTurn)!==Number(ctx.state.turnNumber)?[{}]:[];
+      return [{}];
+    }
     if(effect?.type==='neoRule'&&String(effect.rule||'').startsWith('aquapolis:')){
       const rule=effect.rule.slice(10);
       if(rule==='fireBlow'){

@@ -478,6 +478,7 @@
     if(state.format==='classic'&&slot?.cardId==='SNAPFOUNJA-018'&&(Number(slot.energy?.Water||0)>0))return 0;
     // Skyridge Abra 46 Psychoflow: Psychic Energy makes its retreat cost zero.
     if(state.format==='classic'&&slot?.cardId==='ecard3-46'&&!effects.abilitiesSuppressed(state,side,slot,data.cardById)&&Number(effectiveEnergy(state,side,slot).Psychic||0)>0)return 0;
+    if(state.format==='classic'&&data.cardById(slot?.cardId)?.retreatZeroAgainstEvolution&&!effects.abilitiesSuppressed(state,side,slot,data.cardById)&&['Stage 1','Stage 2'].includes(data.cardById(state.sides[side==='player'?'opponent':'player']?.active?.cardId)?.stage))return 0;
     if(gym==='SNAPFLORIO-111'&&data.cardById(slot.cardId)?.stage==='Basic')stadiumCost-=1;
     if(gym==='sv1-167'&&data.cardById(slot.cardId)?.stage==='Basic')stadiumCost-=1;
     if(state.format==='classic'&&gym==='neo4-92'&&['Basic','Baby'].includes(data.cardById(slot.cardId)?.stage))stadiumCost+=1;
@@ -509,6 +510,13 @@
     if(slot?.expeditionBasicFireUntil===state.turnNumber){
       let basic=0;for(const [type,n] of Object.entries(next)){basic+=Number(n||0);delete next[type];}
       next.Fire=basic;
+    }
+    if(state.format==='classic'&&slot&&!effects.abilitiesSuppressed(state,side,slot,data.cardById)){
+      if(['ecard3-31','ecard3-H29'].includes(slot.cardId)){
+        let n=0;for(const [type,amount] of Object.entries(next)){if(type.startsWith('__'))continue;n+=Number(amount||0);delete next[type];}next.Metal=Number(next.Metal||0)+n;
+      }else if(slot.cardId==='ecard3-51'){
+        let n=0;for(const [type,amount] of Object.entries(slot.energy||{})){if(type.startsWith('__'))continue;n+=Number(amount||0);delete next[type];}next.Miracle=Number(next.Miracle||0)+n;
+      }
     }
     for(const ref of slot?.specialEnergy||[]){
       if(ref.cardId==='ecard2-146'&&!miracleWind){const basicTypes=Object.entries(slot?.energy||{}).filter(([,n])=>Number(n)>0).map(([type])=>type);
@@ -653,7 +661,10 @@
         }
       });
     }
-    {const evolutionLocked=effects.isActionLocked(state,side,'Evolution',data.cardById),activeEvolutionLocked=effects.isActionLocked(state,side,'EvolutionActive',data.cardById);if(!evolutionLocked)actions.push(...evolutionActions(state,side).filter(x=>!activeEvolutionLocked||x.target!=='active'));}
+    {const evolutionLocked=effects.isActionLocked(state,side,'Evolution',data.cardById),activeEvolutionLocked=effects.isActionLocked(state,side,'EvolutionActive',data.cardById);
+      const primalAura=state.format==='classic'&&['player','opponent'].some(w=>['ecard3-14','ecard3-H13'].includes(state.sides[w].active?.cardId)&&!effects.abilitiesSuppressed(state,w,state.sides[w].active,data.cardById));
+      if(!evolutionLocked)actions.push(...evolutionActions(state,side).filter(x=>(!activeEvolutionLocked||x.target!=='active')&&(!primalAura||x.target!=='bench')));}
+
     s.hand.forEach((ref,handIndex)=>{
       const card = data.cardById(ref.cardId);
       if(!card||card.kind!=='trainer'||!card.battleEnabled)return;
@@ -684,6 +695,7 @@
           // Aquapolis Cube 01 Machines can only attach to a Pokémon of their printed type.
           const cube=card.id.match(/^ecard2-(119|121|122|124|127|129|132|140)$/);
           if(cube){const types={'119':'Darkness','121':'Fighting','122':'Fire','124':'Grass','127':'Lightning','129':'Metal','132':'Psychic','140':'Water'};
+            if(['ecard3-35','ecard3-H32'].includes(slot?.cardId)&&!effects.abilitiesSuppressed(state,side,slot,data.cardById))return true;
             return !!data.cardById(slot?.cardId)?.types?.includes(types[cube[1]]);}
           return true;
         };
@@ -699,6 +711,7 @@
        if(card.id==='ecard2-145'&&mon?.stage==='Basic')return false;
        if(card.id==='ecard2-145'&&mon?.stage==='Baby')return false;
        if(['ecard2-44','ecard2-H32'].includes(slot.cardId)&&card.basicEnergy&&energyType==='Lightning')return false;
+       if(card.basicEnergy&&mon?.handEnergyBlocked===energyType&&!effects.abilitiesSuppressed(state,side,slot,data.cardById))return false;
        if(['ecard2-10','ecard2-H8'].includes(slot.cardId)&&card.basicEnergy&&energyType==='Fire'&&Object.values(slot.energy||{}).every(n=>Number(n)===0)&&!(slot.specialEnergy||[]).length)return false;
        if(['ecard2-37','ecard2-H25'].includes(slot.cardId)&&card.basicEnergy&&energyType==='Water'&&Object.values(slot.energy||{}).every(n=>Number(n)===0)&&!(slot.specialEnergy||[]).length)return false;
        return true;};

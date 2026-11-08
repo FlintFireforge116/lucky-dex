@@ -128,9 +128,90 @@ atk(148,1,seq(recoil(20),{type:'benchDamage',side:'self',amount:10,all:true},{ty
 atk(149,1,seq({type:'discardEnergyCard',target:'self',amount:1,useCost:true},flip(status('burn'))),'Discard one Energy; heads: Burn the defender.');
 atk(150,0,{type:'healSelf',amount:10},'Heal 10 damage from Kabutops.');
 atk(150,1,coins(3,30),'Flip three coins, 30 damage per heads.');
+
+// v0.69.149: verified Skyridge attacks. Keep distinct holo/reprint metadata,
+// use explicit battle effects rather than enabling a card from its printed text alone.
+atk(2,0,{type:'energyDamage',source:'opponent',countCards:true,amount:10},'30 damage plus 10 per Energy card attached to the defender.');
+atk(7,0,flip({type:'actionLock',cardType:'EnergyActive',duration:'opponentTurn'}),'Heads: opponent cannot attach Energy from hand to Active next turn.');
+atk(7,1,{type:'retreatCostDamage',amount:10},'40 plus 10 for each unit of the defending Pokémon\'s effective retreat cost.');
+atk(12,1,{type:'neoRule',rule:'skyridge:lonelyFang'},'30 plus 20 for each extra Pokémon on opponent Bench versus yours.');
+atk(15,0,{type:'neoRule',rule:'skyridge:pollenShield'},'Ledian cannot receive Special Conditions during your opponent\'s next turn.');
+atk(15,1,{type:'damageRule',ignoreWeakness:true,ignoreResistance:true,ignoreEffects:true},'Swift: 50 damage unaffected by Weakness, Resistance and protective effects.');
+atk(17,1,seq({type:'discardEnergyCard',target:'self',energyType:'Fire',strictEnergyType:true,amount:1,useCost:true},{type:'benchDamage',side:'opponent',all:true,amount:10}),'Discard one attached Fire Energy; 10 to each opposing Benched Pokémon.');
+atk(20,1,{type:'neoRule',rule:'skyridge:magneticWave'},'30 plus 10 per extra Benched Pokémon you have relative to the opponent.');
+atk(23,0,{type:'lock',target:'opponentActive',action:'retreat',duration:'opponentTurn'},'Defender cannot retreat next turn.');
+atk(25,1,flip(bonus(20)),'Frog Hop: heads adds 20 damage.');
+atk(30,0,{type:'neoRule',rule:'skyridge:energyBurst'},'Heads: 10 damage times the total Energy cards attached to both Active Pokémon.');
+atk(33,0,status('sleep'),'Hypnosplash: put the defender to Sleep.');
+atk(34,0,{type:'neoRule',rule:'skyridge:doTheWave'},'Heads: 10 damage for each of your Pokémon in play; tails: no damage.');
+atk(39,1,{type:'neoRule',rule:'skyridge:giftOfSpite'},'Place one damage counter for each damaged friendly Pokémon in play.');
+atk(40,0,coins(3,10,'add'),'10 damage plus 10 per heads on three flips.');
+atk(43,1,{type:'neoRule',rule:'skyridge:continuousCharge'},'Flip 4 coins: +20 damage per heads and 10 self damage per heads.');
+atk(44,0,{type:'energyDamage',source:'self',energyType:'Water',amount:20,extraAbove:1,maxCount:2},'Water Gun: 10 + up to 40 for Water Energy not used in the cost.');
+atk(44,1,{type:'neoRule',rule:'destiny:coreBlast'},'30 damage plus 20 per Special Energy card attached to the defender.');
+atk(45,0,{type:'neoRule',rule:'skyridge:returnAttack'},'If at least one of two flips is heads, do 10 damage per damage counter on Wobbuffet.');
+atk(49,0,{type:'searchChosen',source:'deck',amount:1,filter:{kind:'trainer',trainerType:['Tool','Technical Machine']}},'Choose a Pokémon Tool or Technical Machine from your deck; shuffle.');
+atk(51,0,{type:'copyAttack',source:'opponentActive',requiresCopiedCost:true},'Copy one opposing Active attack if Ditto can pay its Energy cost.');
+atk(56,0,{type:'benchDamage',side:'opponent',all:true,amount:10},'10 damage to each opponent Benched Pokémon; no Weakness/Resistance.');
+atk(57,0,{type:'damage',target:'opponentActive',amount:10},'Place one damage counter on the defender, not attack damage.');
+atk(58,1,{type:'neoRule',rule:'skyridge:syncroblast'},'40 damage with equal Energy card counts, or 10 otherwise.');
+atk(60,1,{type:'benchCountDamage',side:'self',filter:{name:['Zubat','Golbat','Crobat']},amount:10},'30 plus 10 for each Zubat, Golbat or Crobat on your Bench.');
+atk(64,1,{type:'neoRule',rule:'skyridge:angryHorn'},'50 damage rather than 30 if Heracross has at least 40 damage.');
+atk(69,0,status('sleep'),'Nightmare: Sleep.');
+atk(71,0,{type:'searchChosen',source:'deck',amount:1,filter:{kind:'trainer',trainerType:'Supporter'}},'Choose a Supporter from your deck and shuffle.');
+atk(75,0,flip({type:'searchChosen',source:'deck',amount:1,filter:{kind:'pokemon',evolvesFrom:'Magikarp'}}),'Heads: choose a card that evolves from Magikarp from your deck.');
+atk(76,0,flip(status('paralysis')),'Thunder Wave: heads Paralyze.');
+atk(79,0,{type:'selectedDamage',target:'opponentPokemon',amount:10,ignoreWeakness:true,ignoreResistance:true},'Choose any opposing Pokémon and put one damage counter on it.');
+atk(79,1,{type:'selectedDamage',target:'opponentPokemon',amount:20,filter:{damaged:true},ignoreWeakness:true,ignoreResistance:true},'20 to a damaged opposing Pokémon, ignoring Weakness and Resistance.');
+atk(80,1,flip({type:'discardEnergyCard',target:'opponentActive',amount:1}),'Heads: discard one Energy from the defending Pokémon.');
+atk(89,1,{type:'coinTierBonus',coins:3,tiers:{0:0,1:10,2:30,3:60}},'One / two / three heads adds 10 / 30 / 60 damage respectively.');
+atk(90,1,flip(status('paralysis')),'Body Slam: heads Paralyze.');
+atk(93,1,{type:'coinDamageStatus',coins:3,amount:20,minHeads:1,status:'poison'},'20 damage per heads; if at least one heads, Poison.');
+atk(103,0,{type:'neoRule',rule:'skyridge:energyHealing'},'Remove 20 damage per Energy card attached to Staryu.');
+atk(111,0,{type:'neoRule',rule:'skyridge:healingDust'},'Flip two coins; heal 10 per heads from every friendly Pokémon.');
+atk(111,1,{type:'neoRule',rule:'skyridge:miraclePowder'},'Heads: choose one of five Special Conditions for the defending Pokémon.');
+atk(145,0,{type:'neoRule',rule:'skyridge:empathicHealing'},'Heal 20 from Celebi and each Pokémon matching its current type.');
+atk(145,1,flip(status('confusion')),'Mind Bend: heads Confuse.');
+
+
+// Additional attack resolution paths keep Energy Zone and discard-pile card
+// identities separate, and expose concrete targeting choices.
+atk(17,0,{type:'neoRule',rule:'skyridge:eruption'},'Discard the top card of each deck: 20 extra damage per discarded Fire Energy card.');
+atk(24,1,{type:'neoRule',rule:'skyridge:trample'},'For each Benched Pokémon on both sides, flip: heads deals 20 damage to it.');
+atk(27,0,{type:'neoRule',rule:'skyridge:zzzap'},'Put 20 damage on every Pokémon in play with a Poké-Power or Poké-Body.');
+atk(67,0,{type:'neoRule',rule:'skyridge:energyHeal'},'Choose a Pokémon with Energy attached and heal 10 from it.');
+atk(81,0,{type:'neoRule',rule:'skyridge:callNidoran'},'Bench a Basic Nidoran female or male from your deck and shuffle.');
+atk(84,0,{type:'neoRule',rule:'skyridge:maxVoltage'},'Discard all attached Lightning Energy; 20 plus 10 for each card discarded.');
+atk(90,0,{type:'neoRule',rule:'skyridge:callFriends'},'Bench one Baby or Basic Pokémon from your deck, then shuffle.');
+
+// Functional passive and activated power definitions. Each is backed by the
+// corresponding core legality/energy/recovery hook, rather than a UI-only tag.
+powers[4]=passive('Water Immunity',{type:'neoRule',rule:'skyridge:waterImmunity'});
+powers[21]=passive('Fire Immunity',{type:'neoRule',rule:'skyridge:fireImmunity'});
+powers[14]=passive('Primal Aura',{type:'neoRule',rule:'skyridge:primalAura'});
+powers[16]=passive('Immunity',{type:'sequence',effects:[{type:'preventDamage',duration:'whileInPlay'},{type:'preventEffects',duration:'whileInPlay'}]});
+powers[23]={name:'Primal Stare',type:'passive',activeOnly:true,effect:{type:'actionLock',cardType:'EvolutionActive',side:'opponent',duration:'whileActive'}};
+powers[26]={name:'Strange Spiral',type:'activated',activeOnly:true,oncePerTurn:true,effect:{type:'neoRule',rule:'skyridge:strangeSpiral'}};
+powers[31]=passive('Rare Metal',{type:'neoRule',rule:'skyridge:rareMetal'});
+powers[34]={name:'Good Neighbor',type:'activated',benchOnly:true,oncePerTurn:true,effect:{type:'neoRule',rule:'skyridge:goodNeighbor'}};
+powers[35]=passive('Synchronicity',{type:'neoRule',rule:'skyridge:synchronicity'});
+powers[37]=passive('Thick Shell',{type:'modifier',stat:'damageReduction',amount:10,duration:'whileInPlay',scope:'self',opponentFilter:{evolved:true}});
+powers[51]=passive('Prismatic Body',{type:'neoRule',rule:'skyridge:prismaticBody'});
+powers[53]=passive('Slippery Skin',{type:'neoRule',rule:'skyridge:slipperySkin'});
+// New attack effects with verified legal options/choice timing.
+atk(16,0,{type:'neoRule',rule:'skyridge:dragOff'},'Before 20 damage, choose an opposing Benched Pokémon to switch in.');
+atk(31,1,{type:'neoRule',rule:'skyridge:metalTail'},'Choose 40 damage normally, or flip: heads 80, tails none.');
+atk(35,0,{type:'neoRule',rule:'skyridge:warpHole'},'Heads: choose a card in your discard pile to place on top of your deck.');
+
 const FORCE_PARTIAL=new Set(['38:0','93:0','97:1']);
 trainers[125]={effect:{type:'searchChosen',source:'discard',amount:4,filter:{basicEnergy:true}},text:'Choose up to four basic Energy cards from your discard pile and return them to hand.'};
-const powerUnsafe=new Set([1,3,4,5,6,8,10,11,13,14,16,18,19,21,22,23,26,28,31,32,33,34,35,37,40,45,47,51,53]);
+// Search effects preserve the user's choice instead of taking random cards.
+trainers[120]={effect:{type:'searchChosen',source:'deck',amount:2,filter:{kind:'trainer',trainerType:['Supporter','Stadium']}},text:'Choose up to two Supporter and/or Stadium cards from your deck; shuffle.'};
+trainers[121]={effect:{type:'searchChosen',source:'deck',amount:2,filter:{kind:'trainer',nameContains:'Ball'}},text:'Choose up to two Trainer cards whose names contain Ball; shuffle.'};
+trainers[124]={effect:{type:'neoRule',rule:'skyridge:fastBall'},text:'Reveal cards from your deck until an Evolution card appears; put it in hand and shuffle the rest.'};
+trainers[128]={effect:{type:'neoRule',rule:'skyridge:lureBall'},text:'Flip three coins; choose an Evolution from discard for each heads.'};
+
+const powerUnsafe=new Set([1,3,5,6,8,10,11,13,18,19,22,28,32,33,40,45,47]);
 const fields=new Map(RAW.split('\n').map(line=>line.split('|')).map(a=>[a[0],a]));
 function parse(id){const n=String(id).startsWith('H')?HOLOS[Number(id.slice(1))-1]:Number(id);const f=fields.get(String(n));if(!f)throw new Error('Missing Skyridge print '+id);
  const [_,name,kind,t,st,hp,retreat,w,r,evolves,rarity,moves,power]=f;
@@ -145,7 +226,7 @@ function parse(id){const n=String(id).startsWith('H')?HOLOS[Number(id.slice(1))-
    if(power&&!powers[n])reasons.push(`Poké-Power / Poké-Body pending: ${power}`);
    if(powerUnsafe.has(n))reasons.push(`Complex printed ability requires battle hooks: ${power}`);
    if(powers[n]&&!fx.supportsEffect(powers[n].effect))reasons.push(`Unsupported Poké-Power: ${power}`);
-   Object.assign(card,{stage:st==='0'?'Basic':st==='b'?'Baby':`Stage ${st}`,baby:st==='b',hp:Number(hp),retreat:Number(retreat||0),types:[T[t]],subtype:T[t],weakness:T[w]||null,weaknessValue:w?'×2':null,resistance:T[r]||null,resistanceValue:r?'-30':null,evolvesFrom:evolves||null,attacks,abilities:powers[n]?[powers[n]]:[],retreatZeroWithPsychic:n===46});
+   Object.assign(card,{stage:st==='0'?'Basic':st==='b'?'Baby':`Stage ${st}`,baby:st==='b',hp:Number(hp),retreat:Number(retreat||0),types:[T[t]],subtype:T[t],weakness:T[w]||null,weaknessValue:w?'×2':null,resistance:T[r]||null,resistanceValue:r?'-30':null,evolvesFrom:evolves||null,attacks,abilities:powers[n]?[powers[n]]:[],retreatZeroWithPsychic:n===46,handEnergyBlocked:n===4?'Water':n===21?'Fire':null,retreatZeroAgainstEvolution:n===53});
  }else if(kind==='T'){
    const subtype=/^(Miracle Sphere|Mystery Plate)/.test(name)?'Tool':['Ancient Ruins','Mirage Stadium','Mystery Zone','Underground Lake'].includes(name)?'Stadium':['Relic Hunter','Apricorn Maker','Desert Shaman','Fisherman','Oracle','Underground Expedition'].includes(name)?'Supporter':['Crystal Shard','Star Piece'].includes(name)?'Tool':'Item';
    if(!trainers[n])reasons.push('Printed Trainer interaction requires battle implementation');

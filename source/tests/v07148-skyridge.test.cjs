@@ -36,8 +36,8 @@ test('Skyridge enters collections, auto builder, CPU pool, filter picker and own
 test('battle eligibility is never granted for unsupported printed attack or Poké-Power',()=>{
  for(const c of sky.CARDS){if(!c.battleEnabled){assert.equal(c.deckEligible,false,c.id);assert.equal(c.support.status,'PARTIAL',c.id);assert.ok(c.support.reasons.length,c.id);}
  else {assert.equal(c.support.status,'FULL',c.id);for(const a of [...(c.attacks||[]),...(c.abilities||[])])assert.ok(fx.supportsEffect(a.effect),`${c.id}: ${a.name}`);}}
- for(const id of [2,3,4,5,9,51,78,97,129,133,142,143,144])assert.equal(C(id).battleEnabled,false,`cannot pretend ${id} is fully implemented`);
- for(const id of [29,36,54,69,82,100,146,147,148,149,150,'H27'])assert.equal(C(id).battleEnabled,true,`battle-ready ${id}`);
+ for(const id of [2,3,4,5,9,11,78,97,129,133,142,143,144])assert.equal(C(id).battleEnabled,false,`cannot pretend ${id} is fully implemented`);
+ for(const id of [29,36,51,54,69,82,100,146,147,148,149,150,'H27'])assert.equal(C(id).battleEnabled,true,`battle-ready ${id}`);
  assert.equal(classic.validateDeck(Array(30).fill('ecard3-2')).ok,false,'unimplemented card cannot be used in a deck');
 });
 test('Skyridge-only opponents build legal 30-card decks for multiple energy types',()=>{
@@ -86,9 +86,11 @@ test('Skyridge CPU-vs-CPU matches advance without invalid or unknown actions',()
   assert.ok(steps>12,`seed ${seed}: ${steps}`);assert.ok(!s.log.some(e=>e.type==='battleError'),'battle logged errors');
  }
 });
-test('Android build version, JS marker and two splash labels all match v0.69.148',()=>{
+test('Android build version, JS marker and both splash labels always match',()=>{
  const gradle=fs.readFileSync(path.resolve(A,'../../../build.gradle'),'utf8'),html=fs.readFileSync(path.join(A,'index.html'),'utf8'),app=fs.readFileSync(path.join(A,'app-v0167.js'),'utf8');
- assert.match(gradle,/versionCode 7128/);assert.match(gradle,/versionName '0\.69\.148'/);
- assert.ok(app.includes("window.__LUCKYDEX_BUILD='0.69.148'"));assert.equal(html.split('v0.69.148').length-1,2);
+ const version=gradle.match(/versionName '(\d+\.\d+\.\d+)'/)?.[1];
+ assert.ok(version,'Android versionName');assert.match(gradle,/versionCode 7\d{3}/);
+ assert.ok(app.includes("window.__LUCKYDEX_BUILD='"+version+"'"));
+ assert.equal(html.split('v'+version).length-1,2,'both visible labels must match Android/JS');
  assert.ok(html.indexOf('tcg-classic-skyridge.js')<html.indexOf('tcg-classic-battle-data.js'));
 });
