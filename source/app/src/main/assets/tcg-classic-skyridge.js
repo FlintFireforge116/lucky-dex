@@ -203,7 +203,104 @@ atk(16,0,{type:'neoRule',rule:'skyridge:dragOff'},'Before 20 damage, choose an o
 atk(31,1,{type:'neoRule',rule:'skyridge:metalTail'},'Choose 40 damage normally, or flip: heads 80, tails none.');
 atk(35,0,{type:'neoRule',rule:'skyridge:warpHole'},'Heads: choose a card in your discard pile to place on top of your deck.');
 
-const FORCE_PARTIAL=new Set(['38:0','93:0','97:1']);
+// v0.69.150: remaining Skyridge rules. All rules are dispatched to concrete
+// battle handlers; the same effect applies to the numbered and Holo print.
+const sky=(rule)=>({type:'neoRule',rule:'skyridge:'+rule});
+const skyAttack=(n,i,rule,description)=>atk(n,i,sky(rule),description);
+const skyPower=(n,name,type,rule,extras={})=>powers[n]={name,type,effect:sky(rule),...extras};
+const skyTrainer=(n,rule,text,extra={})=>trainers[n]={effect:sky(rule),text,...extra};
+for(const [n,i,r,text] of [
+ [3,0,'shake','After 10 damage, the opponent chooses a Benched Pokémon to switch Active.'],
+ [3,1,'whiteFlames','70 damage; discard every attached Fire Energy card.'],
+ [4,0,'freezeSolid','10 damage; heads attach one discarded Water Energy to Articuno.'],
+ [4,1,'iceCyclone','50 damage; heads 10 to each opposing Bench, tails 10 to all your Pokémon.'],
+ [5,0,'needleRush','Four coin flips: 10 base, then 10/20/50/90 extra for 1/2/3/4 heads.'],
+ [8,1,'burnBooster','40 damage; discard one attached Energy to attack, plus 10 if it was Fire.'],
+ [9,0,'spinningBlow','Flip two coins for 20 damage each; on two heads switch Forretress with your chosen Bench.'],
+ [9,1,'scatterbomb','Flip two coins; each heads does 10 to all opponent Bench, each tails to all your Bench.'],
+ [11,0,'dragonsVengeance','50 base, 100 if Gyarados already has seven damage counters.'],
+ [13,1,'thunderspark','40 damage and 10 to every Benched Pokémon with attached Energy on both sides.'],
+ [18,0,'crushingLava','Optionally discard attached basic Fire to Burn, or Fighting to deal 20 extra.'],
+ [19,0,'electricBlast','40 damage; optionally discard all Lightning Energy to distribute that many damage counters among enemy Bench.'],
+ [20,0,'bounceOff','20 damage; if unequal Energy card counts, the side with fewer switches an Active.'],
+ [21,0,'collectFire','10 damage; on heads retrieve a discarded Fire Energy to Moltres.'],
+ [21,1,'burningTail','60 damage; on tails discard an attached Fire Energy.'],
+ [25,0,'suddenGrowth','Attach any number of basic Energy cards from hand to Politoed.'],
+ [25,2,'energySplash','70 damage; move two Water Energy cards to one or two of your Benched Pokémon.'],
+ [28,0,'lightningSphere','Optional heads flip: discard all Lightning Energy for 20 additional damage per Energy.'],
+ [30,1,'starBack','40 damage; choose a basic Energy from discard and attach it to one of your Pokémon.'],
+ [33,1,'aquaTrick','40 damage; on heads move an opposing Active Energy to their Bench.'],
+ [38,0,'focusEnergy','Next turn Machoke’s Mega Punch has 80 base damage.'],
+ [41,0,'waterOfEvolution','Choose an Omastar from hand and evolve Omanyte.'],
+ [41,1,'omanyteDragOff','Before 20 damage optionally switch in a chosen opposing Bench.'],
+ [42,0,'surpriseSlash','20 damage; on heads choose one opposing Trainer from hand to shuffle into deck.'],
+ [48,0,'energyRecycle','Shuffle one basic Energy card from discard into your deck.'],
+ [58,0,'energyPatch','Move one basic attached Energy between your Pokémon.'],
+ [63,1,'shadowHand','30 damage; optionally discard up to two hand cards, then draw the same number.'],
+ [76,1,'magneticLines','10 damage; on heads move an opposing basic attached Energy to their Bench.'],
+ [78,0,'suddenSwipe','10 damage; on heads choose one Energy from opponent hand to shuffle into their deck.'],
+ [80,0,'foresight','Look at and reorder top three cards of either player’s deck.'],
+ [93,0,'sandTrap','10 damage; also choose up to two opposing Benched Pokémon for 10 damage each.'],
+ [97,1,'spinningHead','30 damage; on heads switch Skarmory with chosen Benched Pokémon.'],
+ [102,0,'threaten','On heads select a Trainer from opponent hand and shuffle it into their deck.'],
+ [102,1,'antlerSwipe','Heads: 20 to Active ignoring W/R; tails: 20 to a chosen opposing Benched Pokémon.'],
+ [105,0,'energyPlant','Search deck for basic Energy and attach it to one of your Pokémon.']
+])skyAttack(n,i,r,text);
+// This Power is suppressed by a Special Condition where the printed text requires it.
+skyPower(1,'Ancient Wind','activated','ancientWind',{oncePerTurn:true,activeOnly:true,disabledByStatus:true});
+skyPower(2,'Energy Jump','activated','energyJump',{oncePerTurn:true,disabledByStatus:true});
+skyPower(3,'Energy Recharge','triggered','energyRecharge',{event:'evolved',activeOnly:true,fromHandOnly:true});
+skyPower(5,'Venom Spray','triggered','venomSpray',{event:'evolved',activeOnly:true,fromHandOnly:true});
+skyPower(6,'Carry Off','activated','carryOff',{oncePerTurn:true,disabledByStatus:true});
+for(const [n,name,type] of [[8,'Self-healing','Fire'],[13,'Self-healing','Lightning'],[33,'Self-healing','Water']])
+ skyPower(n,name,'triggered','selfHealing',{event:'energyAttached',energyType:type,fromHandOnly:true});
+skyPower(10,'Manipulate','triggered','manipulate',{event:'evolved',activeOnly:true,fromHandOnly:true});
+skyPower(11,'Flame Vapor','triggered','flameVapor',{event:'evolved',activeOnly:true,fromHandOnly:true});
+skyPower(18,'Streaming Mantle','triggered','streamingMantle',{event:'evolved',activeOnly:true,fromHandOnly:true});
+skyPower(19,'Attract Energy','triggered','attractEnergy',{event:'evolved',fromHandOnly:true});
+skyPower(22,'Evolution Helper','activated','evolutionHelper',{oncePerTurn:true,benchOnly:true});
+skyPower(28,'Pure Body','passive','pureBody');
+skyPower(32,'Dark Gaze','passive','darkGaze',{activeOnly:true});
+skyPower(40,'Investigate','activated','investigate',{oncePerTurn:true,disabledByStatus:true});
+skyPower(45,'Mirror Coat','passive','mirrorCoat');
+skyPower(47,'Reconstruction','activated','reconstruction',{oncePerTurn:true});
+for(const [n,r,text] of [
+ [119,'ancientRuins','Reveal a Supporter-free hand to draw a card (once per turn).'],
+ [122,'crystalShard','Attached Pokémon becomes Colorless; discard after it attacks.'],
+ [123,'desertShaman','Both players shuffle their hands into decks, then each draws up to four.'],
+ [126,'friendBall','Choose an opposing Pokémon, then search your deck for same-type Pokémon.'],
+ [127,'hyperPotion','Discard one or two attached basic Energy cards to heal 30 or 50 damage.'],
+ [129,'miracleSphereAlpha','Temporary Fire Force attack for evolved Fire, Lightning or Fighting Pokémon.'],
+ [130,'miracleSphereBeta','Temporary Freezing Force attack for evolved Fire, Water or Psychic Pokémon.'],
+ [131,'miracleSphereGamma','Temporary Thunder Force attack for evolved Grass, Water or Lightning Pokémon.'],
+ [132,'mirageStadium','Retreat requires a heads flip; tails blocks that retreat without spending Energy.'],
+ [133,'mysteryPlateAlpha','Temporary Desert Burn attack with conditional Prize-card effects.'],
+ [134,'mysteryPlateBeta','Temporary Stone Crush attack with conditional Prize-card effects.'],
+ [135,'mysteryPlateGamma','Temporary Retro Cave attack with conditional Prize-card effects.'],
+ [136,'mysteryPlateDelta','Temporary Healing Oasis attack with conditional Prize-card effects.'],
+ [137,'mysteryZone','Once per turn swap an Evolution card from hand for a basic Energy from deck.'],
+ [138,'oracle','Choose two cards from deck and place them on top in a chosen order.'],
+ [139,'starPiece','Between turns, evolve a damaged Benched Pokémon from deck and discard Star Piece.'],
+ [140,'undergroundExpedition','Choose two of the bottom four deck cards to hand and reorder the rest.'],
+ [141,'undergroundLake','Once per turn put a discarded Omanyte or Kabuto directly onto your Bench.']
+])skyTrainer(n,r,text);
+for(const [n,name,move,cost,printed,rule] of [
+ [129,'Miracle Sphere α','Fire Force','RCC',30,'miracleSphereAlphaAttack'],
+ [130,'Miracle Sphere β','Freezing Force','WCC',30,'miracleSphereBetaAttack'],
+ [131,'Miracle Sphere γ','Thunder Force','LCC',30,'miracleSphereGammaAttack'],
+ [133,'Mystery Plate α','Desert Burn','C',0,'mysteryPlateAlphaAttack'],
+ [134,'Mystery Plate β','Stone Crush','C',0,'mysteryPlateBetaAttack'],
+ [135,'Mystery Plate γ','Retro Cave','C',0,'mysteryPlateGammaAttack'],
+ [136,'Mystery Plate δ','Healing Oasis','C',0,'mysteryPlateDeltaAttack']
+])trainers[n].attacks=[{name:move,cost,damage:printed,effect:sky(rule),text:trainers[n].text}];
+// Stadium actions and active Tools are resolved via the standard core interfaces.
+for(const n of [119,137,141])trainers[n].effect={type:'stadiumAction',effect:trainers[n].effect};
+
+// A Poké-Body is continuous, while a Poké-Power is a triggered/activated action.
+// Ancient Wind silences Bodies only; Dark Gaze silences Benched Powers only.
+const bodyNumbers=new Set([4,8,13,14,16,21,23,28,31,32,33,35,37,45,46,51,53,56,70,96,145,146,147,148,149,150]);
+for(const [number,ability] of Object.entries(powers))ability.printedPowerType=bodyNumbers.has(Number(number))?'body':'power';
+const FORCE_PARTIAL=new Set();
 trainers[125]={effect:{type:'searchChosen',source:'discard',amount:4,filter:{basicEnergy:true}},text:'Choose up to four basic Energy cards from your discard pile and return them to hand.'};
 // Search effects preserve the user's choice instead of taking random cards.
 trainers[120]={effect:{type:'searchChosen',source:'deck',amount:2,filter:{kind:'trainer',trainerType:['Supporter','Stadium']}},text:'Choose up to two Supporter and/or Stadium cards from your deck; shuffle.'};
@@ -211,7 +308,7 @@ trainers[121]={effect:{type:'searchChosen',source:'deck',amount:2,filter:{kind:'
 trainers[124]={effect:{type:'neoRule',rule:'skyridge:fastBall'},text:'Reveal cards from your deck until an Evolution card appears; put it in hand and shuffle the rest.'};
 trainers[128]={effect:{type:'neoRule',rule:'skyridge:lureBall'},text:'Flip three coins; choose an Evolution from discard for each heads.'};
 
-const powerUnsafe=new Set([1,3,5,6,8,10,11,13,18,19,22,28,32,33,40,45,47]);
+const powerUnsafe=new Set();
 const fields=new Map(RAW.split('\n').map(line=>line.split('|')).map(a=>[a[0],a]));
 function parse(id){const n=String(id).startsWith('H')?HOLOS[Number(id.slice(1))-1]:Number(id);const f=fields.get(String(n));if(!f)throw new Error('Missing Skyridge print '+id);
  const [_,name,kind,t,st,hp,retreat,w,r,evolves,rarity,moves,power]=f;
@@ -232,8 +329,8 @@ function parse(id){const n=String(id).startsWith('H')?HOLOS[Number(id.slice(1))-
    if(!trainers[n])reasons.push('Printed Trainer interaction requires battle implementation');
    Object.assign(card,{trainerType:subtype,technicalMachine:/^(Miracle Sphere|Mystery Plate)/.test(name),attacks:trainers[n]?.attacks||[],effect:trainers[n]?.effect||null,text:trainers[n]?.text||'Not yet battle-ready.'});
  }else{
-   reasons.push('Printed Special Energy attachment and trigger rules not yet implemented');
-   Object.assign(card,{specialEnergy:true,basicEnergy:false,subtype:name.replace(' Energy',''),types:[name.replace(' Energy','')],effect:null,text:'Special Energy requires its printed rule, not an ordinary Colorless placeholder.'});
+   const specialRules={142:{provides:{Colorless:2},rule:'bounceEnergy',text:'Provides two Colorless; attach only to a Pokémon with basic Energy, returning an attached basic Energy to hand.'},143:{provides:{Colorless:1},rule:'cycloneEnergy',text:'Provides Colorless; when attached from hand to Active, opponent chooses a Bench to promote.'},144:{provides:{Colorless:1},rule:'retroEnergy',text:'Provides Colorless; when attached from hand to an Evolved Pokémon, optionally heal up to 20 and devolve it.'}};
+   const sr=specialRules[n];Object.assign(card,{specialEnergy:true,basicEnergy:false,subtype:name.replace(' Energy',''),types:['Colorless'],effect:{type:'specialEnergy',provides:sr.provides},attachRule:sr.rule,text:sr.text});
  }
  return Object.freeze({...card,battleEnabled:!reasons.length,deckEligible:!reasons.length,support:{status:reasons.length?'PARTIAL':'FULL',reasons}});
 }

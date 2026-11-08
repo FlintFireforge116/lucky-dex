@@ -33,12 +33,12 @@ test('Skyridge enters collections, auto builder, CPU pool, filter picker and own
  assert.equal(result.find(x=>x.gameplayId==='ecard3-62')?.quantity,3);
  assert.ok(!result.some(x=>x.gameplayId==='ecard3-62'&&x.quantity===11));
 });
-test('battle eligibility is never granted for unsupported printed attack or Poké-Power',()=>{
+test('newly completed Skyridge cards are all legal and implemented by the effect dispatcher',()=>{
  for(const c of sky.CARDS){if(!c.battleEnabled){assert.equal(c.deckEligible,false,c.id);assert.equal(c.support.status,'PARTIAL',c.id);assert.ok(c.support.reasons.length,c.id);}
  else {assert.equal(c.support.status,'FULL',c.id);for(const a of [...(c.attacks||[]),...(c.abilities||[])])assert.ok(fx.supportsEffect(a.effect),`${c.id}: ${a.name}`);}}
- for(const id of [2,3,4,5,9,11,78,97,129,133,142,143,144])assert.equal(C(id).battleEnabled,false,`cannot pretend ${id} is fully implemented`);
+ for(const id of [2,3,4,5,9,11,78,97,129,133,142,143,144])assert.equal(C(id).battleEnabled,true,`Skyridge ${id} must be enabled`);
  for(const id of [29,36,51,54,69,82,100,146,147,148,149,150,'H27'])assert.equal(C(id).battleEnabled,true,`battle-ready ${id}`);
- assert.equal(classic.validateDeck(Array(30).fill('ecard3-2')).ok,false,'unimplemented card cannot be used in a deck');
+ assert.equal(sky.coverage().battleEnabled,182,'all 182 Skyridge prints are marked available');
 });
 test('Skyridge-only opponents build legal 30-card decks for multiple energy types',()=>{
  for(const type of ['Grass','Water','Fire','Lightning','Fighting','Psychic']){
