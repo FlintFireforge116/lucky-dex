@@ -17,7 +17,7 @@ function resolve(state,n,index,heads){const ctx=context(state,heads),out=fx.reso
 
 test('EX Ruby & Sapphire has exactly 109 distinct official prints, attacks and artwork identities',()=>{
  assert.equal(set.CARDS.length,109);assert.equal(new Set(set.CARDS.map(c=>c.id)).size,109);
- assert.equal(set.coverage().battleEnabled,57);
+ assert.equal(set.coverage().battleEnabled,109);
  for(let n=1;n<=109;n++){
   const card=C(n);assert.ok(card,'missing '+n);assert.equal(card.setId,'ex1');assert.equal(card.number,String(n));
   assert.equal(card.image,`https://images.pokemontcg.io/ex1/${n}.png`);
@@ -110,13 +110,14 @@ test('Trainer and recovery actions use existing choice UI and enforce the printe
  assert.equal(ball.effect.type,'coinFlip');assert.equal(rev.effect.type,'coinFlip');
 });
 
-test('unsupported EX-era two-Active, Poké-Power and Special Energy effects are gated, not silently simplified',()=>{
+test('previously gated EX-era Powers, Trainers and Special Energy are enabled without deck Basic Energy',()=>{
  for(const n of [3,7,11,12,18,19,20,21,22,23,26,28,46,51,64,70,78,80,81,82,83,84,85,88,90,93,94,95,96,100,101,102]){
-  assert.equal(C(n).battleEnabled,false,`${n} must not be marked full until its complete rules are implemented`);
+  assert.equal(C(n).battleEnabled,true,`${n} must have completed battle effect support`);
+  assert.deepEqual(C(n).support.reasons,[],`${n} must not report missing effects`);
  }
- assert.equal(C(90).battleEnabled,false,'Energy Search cannot search a 30-card deck with no Basic Energy');
+ assert.equal(C(90).battleEnabled,true,'Energy Search receives basic Energy from separate Energy supply');
  assert.equal(C(104).basicEnergy,true);assert.equal(C(104).deckEligible,false);
- assert.equal(C(97).battleEnabled,true);assert.equal(C(98).battleEnabled,true);assert.equal(C(99).battleEnabled,true);
+ for(const n of [97,98,99])assert.equal(C(n).battleEnabled,true);
 });
 test('EX Ruby & Sapphire opponents take legal CPU turns',()=>{
  for(const seed of [23,58]){
@@ -135,9 +136,9 @@ test('Android and splash versions match new ex1 expansion and registration order
  const html=fs.readFileSync(path.join(A,'index.html'),'utf8');
  const gradle=fs.readFileSync(path.resolve(A,'../../../build.gradle'),'utf8');
  const app=fs.readFileSync(path.join(A,'app-v0167.js'),'utf8');
- assert.match(gradle,/versionName '0\.69\.156'/);assert.match(gradle,/versionCode 7136/);
- assert.equal(html.split('v0.69.156').length-1,2);
- assert.match(app,/window\.__LUCKYDEX_BUILD='0\.69\.156'/);
+ assert.match(gradle,/versionName '0\.69\.157'/);assert.match(gradle,/versionCode 7137/);
+ assert.equal(html.split('v0.69.157').length-1,2);
+ assert.match(app,/window\.__LUCKYDEX_BUILD='0\.69\.157'/);
  assert.ok(html.indexOf('tcg-classic-ruby-sapphire.js')>html.indexOf('tcg-classic-skyridge.js'));
  assert.ok(html.indexOf('tcg-classic-ruby-sapphire.js')<html.indexOf('tcg-classic-battle-data.js'));
 });

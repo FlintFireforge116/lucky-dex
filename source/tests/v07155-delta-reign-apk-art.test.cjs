@@ -68,8 +68,8 @@ test('Android preBuild validates all 141 actual bundled WebP assets and build ve
   assert.match(gradle,/validateDeltaReignCardAssets/);
   assert.match(gradle,/dependsOn tasks\.named\('validateDeltaReignCardAssets'\)/);
   assert.match(gradle,/if \(!img\.isFile\(\) \|\| img\.length\(\) < 8000\)/);
-  assert.match(gradle,/versionName '0\.69\.156'/);
-  assert.match(gradle,/versionCode 7136/);
+  assert.match(gradle,/versionName '0\.69\.157'/);
+  assert.match(gradle,/versionCode 7137/);
   const lines=fs.readFileSync(path.join(ROOT,'source/scripts/delta-reign-art-download.txt'),'utf8').trim().split('\n');
   assert.equal(lines.length,141);
   assert.equal(new Set(lines.map(l=>l.split('|')[1])).size,141);

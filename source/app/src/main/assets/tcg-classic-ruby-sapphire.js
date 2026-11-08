@@ -206,6 +206,83 @@ add(57,0,{type:'forceOpponentSwitch'},
 add(103,1,{type:'coinDamageByPokemon',amount:20},
   'Beat Up: flip one coin for each Pokémon in play on your side; 20 per heads.');
 
+
+// v0.69.157: EX-era print-accurate battle effects. More involved choices
+// use named ex1: rules with explicit handlers, never permissive placeholders.
+const ex=rule=>({type:'neoRule',rule:'ex1:'+rule});
+const exAtk=(n,i,rule,note)=>add(n,i,ex(rule),note);
+const pass=(name,effect)=>({name,type:'passive',effect,printedPowerType:'body'});
+const power=(name,rule,opts={})=>({name,type:'activated',effect:ex(rule),printedPowerType:'power',disabledByStatus:true,expeditionSpecialCondition:true,...opts});
+const trig=(name,event,rule,opts={})=>({name,type:'triggered',event,effect:ex(rule),printedPowerType:'power',...opts});
+const ABILITIES={};
+add(2,1,{type:'heal',target:'selfAll',amount:10},'After attacking, heal 10 damage from all friendly Pokemon.');
+exAtk(3,0,'fireStream','Discard a chosen attached Fire Energy; only if discarded deal 10 to each opposing Benched Pokemon.');
+add(4,0,{type:'selectedDamage',target:'opponentBench',amount:10,ignoreWeakness:true,ignoreResistance:true},'Lava Burn: choose an opposing Benched Pokemon for 10 damage.');
+exAtk(4,1,'fireSpin','Discard two basic Energy cards to use Fire Spin or deal no damage.');
+exAtk(5,0,'maxEnergySource','10 damage for every Energy attached to your Active Pokemon.');
+add(6,0,{type:'status',target:'opponentActive',status:'poison',amount:20},'Toxic: apply stronger Poison (20 between turns).');
+exAtk(7,0,'energyBurst','10 damage per Energy attached to both Active Pokemon.');
+add(8,0,{type:'bonusDamage',amount:20},'20 damage to the single Defending Pokemon (Classic single-Active adaptation).');
+exAtk(8,1,'megaThrow','40 extra damage when the opposing Active is a Pokemon-ex.');
+exAtk(9,0,'attractCurrent','Put Lightning Energy from the separate basic Energy supply onto one Pokemon.');
+// Shakedown is conditional: do not always discard.
+add(10,0,flip({type:'discardHand',side:'opponent',amount:1}),'On heads, discard one random card from the opponent hand.');
+exAtk(11,0,'lizardPoison','Status conditions increase with one, two, three, or four Energy.');
+exAtk(12,0,'criticalMove','Requires discarding basic Energy, then locks Slaking next turn.');
+add(13,0,status('sleep'),'Hypno Splash: put the defending Pokemon to Sleep.');
+exAtk(17,0,'rend','20 extra damage if the defending Pokemon is damaged.');
+exAtk(18,0,'invisibleHand','Against an evolved Active Pokemon, choose any card from deck.');
+exAtk(18,1,'repulsion','Heads: return opposing Active and attached cards to opponent hand if Bench exists.');
+exAtk(19,0,'stockpile','Next turn, Spit Up is 70 and Swallow is 60.');
+exAtk(19,2,'swallow','Heal Pelipper by damage actually done to the Defending Pokemon.');
+add(21,0,{type:'selectedDamage',target:'opponentPokemon',amount:20,ignoreWeakness:true,ignoreResistance:true},'Water Arrow: 20 damage to chosen opposing Pokemon, ignoring Weakness/Resistance for Bench.');
+add(21,1,{type:'noop'},'Fast Stream: 30 damage; moving Energy between two Defending Pokemon has no effect in single-Active Classic.');
+exAtk(22,0,'darkSlash','Optionally discard an attached Darkness Energy for +30.');
+add(23,0,{type:'selectedDamage',target:'opponentPokemon',amount:20,ignoreWeakness:true,ignoreResistance:true},'Water Arrow: 20 damage to chosen opposing Pokemon.');
+exAtk(29,0,'energyCall','Attach a chosen discarded Energy to your Active Pokemon.');
+exAtk(29,1,'cannonball','30 + 10 for each Energy not needed for Cannonball cost.');
+exAtk(30,0,'charge','Attach Lightning Energy from discard to Electrike.');
+exAtk(35,1,'lifeDrain','On heads, place damage counters until defender is at 10 remaining HP.');
+add(39,1,{type:'multiTargetDamage',target:'opponentBench',count:2,amount:10},'Gigashock: choose up to two opposing Benched Pokemon for 10 each.');
+exAtk(44,0,'basicSearch2','Put two basic Energy cards from the separate supply into hand.');
+add(49,0,{type:'neoRule',rule:'ex1:tearyEyes'},'Teary Eyes reduces attacks against Aron by 10 next turn.');
+add(62,1,flip(seq({type:'damage',target:'opponentActive',amount:10},status('paralysis'))),'On heads, deal 10 to the defender and Paralyze it.');
+add(64,0,flip({type:'discardHand',side:'opponent',amount:1}),'Knock Off: on heads discard one random opposing hand card.');
+exAtk(68,1,'linkBlast','40 damage if Active Pokemon have the same Energy card count, otherwise 10.');
+exAtk(70,0,'plusEnergy','Choose a Basic Energy from your hand and a Pokemon to attach it to.');
+exAtk(78,0,'signsEvolution','Choose either Wurmple Evolution pair from deck, up to two cards.');
+add(78,1,status('poison'),'Poison Barb: Poison the defending Pokemon.');
+exAtk(96,0,'healingEgg','Heal 20 from every own Pokemon except Chansey ex.');
+exAtk(100,0,'smokescreen','Defender must flip a coin when it attempts to attack next turn.');
+exAtk(101,0,'energyAbsorption','Attach up to two selected discarded Energy cards to Mewtwo ex.');
+add(102,0,flip({type:'preventDamage',target:'self',duration:'opponentTurn',effects:true}), 'Agility: on heads prevent all attacks and effects next turn.');
+
+// Player-facing Powers, on-attachment and damage-response hooks.
+ABILITIES[2]=[pass('Withering Dust',ex('witheringDust'))];
+ABILITIES[3]=[power('Firestarter','firestarter',{oncePerTurn:true})];
+ABILITIES[5]=[power('Energy Draw','energyDraw',{oncePerTurn:true})];
+ABILITIES[6]=[pass('Protective Dust',{type:'preventEffects',duration:'whileInPlay'})];
+ABILITIES[7]=[power('Psy Shadow','psyShadow',{oncePerTurn:true})];
+ABILITIES[10]=[pass('Intimidating Fang',ex('intimidatingFang'))];
+ABILITIES[12]=[pass('Lazy',ex('lazy'))];
+ABILITIES[13]=[power('Water Call','waterCall',{oncePerTurn:true})];
+ABILITIES[20]=[power('Energy Trans','energyTrans',{oncePerTurn:false})];
+ABILITIES[22]=[pass('Rough Skin',ex('roughSkin'))];
+ABILITIES[23]=[{...trig('Natural Remedy','energyAttached','naturalRemedy',{energyType:'Water',fromHandOnly:true}),printedPowerType:'body'}];
+ABILITIES[26]=[pass('Hard Cocoon',ex('hardCocoon'))];
+ABILITIES[28]=[{...trig('Natural Cure','energyAttached','naturalCure',{energyType:'Fire',fromHandOnly:true}),printedPowerType:'body'}];
+ABILITIES[32]=[{...trig('Natural Cure','energyAttached','naturalCure',{energyType:'Grass',fromHandOnly:true}),printedPowerType:'body'}];
+ABILITIES[41]=[{...trig('Natural Cure','energyAttached','naturalCure',{energyType:'Water',fromHandOnly:true}),printedPowerType:'body'}];
+ABILITIES[43]=[pass('Hard Cocoon',ex('hardCocoon'))];
+ABILITIES[46]=[power('Drive Off','driveOff',{activeOnly:true,oncePerTurn:true})];
+ABILITIES[51]=[pass('Rough Skin',ex('roughSkin'))];
+// Ex-era Trainers and energies must have a real effect path or remain gated.
+const SPECIAL={
+ 93:{type:'specialEnergy',provides:{Darkness:1}},
+ 94:{type:'specialEnergy',provides:{Metal:1}},
+ 95:{type:'specialEnergy',provides:{Grass:1,Fire:1,Water:1,Lightning:1,Psychic:1,Fighting:1,Darkness:1,Metal:1}},
+};
+
 // Attacks requiring additional legal choices or timing remain gated, including
 // first-EX-era attacks with double-Active wording or conditional Poké-Powers.
 const TRAINEFFECTS={
@@ -216,6 +293,12 @@ const TRAINEFFECTS={
  91:{type:'heal',target:'selfPokemon',amount:20},
  92:{type:'switch',side:'self'},
 };
+Object.assign(TRAINEFFECTS,{
+ 80:flip(ex('energyRemoval2')),81:ex('energyRestore'),82:ex('energySwitch'),
+ 83:ex('ladyOuting'),84:ex('lumBerry'),85:ex('oranBerry'),
+ 88:ex('pokeNav'),90:ex('basicSearch1'),
+});
+
 const FIELDS=new Map(RAW.split('\n').map(line=>{const parts=line.split('|');return [Number(parts[0]),parts];}));
 function parse(n){const f=FIELDS.get(n);if(!f)throw Error(`Missing EX Ruby & Sapphire card ${n}`);
  const [_,name,kind,t,stage,hp,retreat,weakness,resistance,evolvesFrom,rarity,moves,ability]=f;
@@ -231,11 +314,12 @@ function parse(n){const f=FIELDS.get(n);if(!f)throw Error(`Missing EX Ruby & Sap
    return {name:move,cost,damage:/×/.test(damagePrinted)?0:Number((damagePrinted.match(/^\d+/)||[])[0]||0),damageText:damagePrinted||null,
     text:NOTES.get(key)||(!plain?'Printed effect pending implementation.':`Deal ${Number(damagePrinted||0)} damage.`),effect:effect|| (plain?noop:null)};
   });
-  if(ability)reasons.push(`Poké-Power / Poké-Body pending: ${ability}`);
+  if(ability&&!ABILITIES[n])reasons.push(`Poké-Power / Poké-Body pending: ${ability}`);
+  if(ABILITIES[n]&&!ABILITIES[n].every(a=>fx.supportsEffect(a.effect)))reasons.push(`Unsupported ability: ${ability}`);
   const ex=/\sex$/.test(name);Object.assign(card,{stage:stage==='0'?'Basic':`Stage ${stage}`,evolvesFrom:evolvesFrom||null,
    hp:Number(hp),retreat:Number(retreat||0),types:[T[t]],subtype:T[t],weakness:T[weakness]||null,
    weaknessValue:weakness?'×2':null,resistance:T[resistance]||null,resistanceValue:resistance?'-30':null,
-   pokemonEx:ex,isEx:ex,prizeCards:ex?2:1,attacks,abilities:[]});
+   pokemonEx:ex,isEx:ex,prizeCards:ex?2:1,attacks,abilities:ABILITIES[n]||[]});
  }else if(kind==='T'){
   const tool=[84,85].includes(n),supporter=[83,89].includes(n);
   Object.assign(card,{trainerType:tool?'Tool':supporter?'Supporter':'Item',effect:TRAINEFFECTS[n]||null,
@@ -246,8 +330,8 @@ function parse(n){const f=FIELDS.get(n);if(!f)throw Error(`Missing EX Ruby & Sap
   if(basics[n])Object.assign(card,{basicEnergy:true,specialEnergy:false,subtype:basics[n],types:[basics[n]],deckEligible:false,
     text:'Basic Energy is generated by the separate Classic Energy Zone rather than drawn from the 30-card deck.'});
   else{Object.assign(card,{basicEnergy:false,specialEnergy:true,types:[n===93?'Darkness':n===94?'Metal':'Colorless'],
-    subtype:n===93?'Darkness':n===94?'Metal':'Rainbow',text:'Printed special Energy rules pending full battle integration.'});
-    reasons.push('Special Energy effect pending implementation');}
+    subtype:n===93?'Darkness':n===94?'Metal':'Rainbow',effect:SPECIAL[n]||null,text:'Special Energy with original ex-era attachment and damage rules.'});
+    if(!SPECIAL[n])reasons.push('Special Energy effect pending implementation');}
  }
  return Object.freeze({...card,battleEnabled:reasons.length===0,deckEligible:card.deckEligible===false?false:reasons.length===0,
    support:{status:reasons.length?'PARTIAL':'FULL',reasons}});
