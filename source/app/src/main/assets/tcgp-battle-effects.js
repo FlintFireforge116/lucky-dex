@@ -1326,7 +1326,13 @@
       }
       case 'freezeSolid':case 'collectFire':{
         const type=rule==='freezeSolid'?'Water':'Fire';
-        if(!ctx.resolvingChoice&&!coin(ctx))break;
+        // A rule-specific coin flip must be recorded for the battle presentation.
+        // Don't re-roll while resuming a chosen discarded Energy card.
+        if(!ctx.resolvingChoice){
+          const heads=coin(ctx);
+          ctx.state.log.push({type:'coin',side:ctx.side,reason:rule==='collectFire'?'Skyridge Collect Fire':'Skyridge Freeze Solid',heads,results:[heads]});
+          if(!heads)break;
+        }
         const cards=us.discard.filter(ref=>ctx.cardById(ref.cardId)?.basicEnergy&&ctx.cardById(ref.cardId)?.subtype===type);
         if(cards.length&&!ctx.resolvingChoice)ctx.requestChoice?.({kind:'discardCard',side:'self',filter:{basicEnergy:true,subtype:type},effect:e});
         else if(ctx.resolvingChoice){const idx=Number(ctx.action?.choiceDiscardIndex),ref=us.discard[idx];if(ref&&ctx.cardById(ref.cardId)?.basicEnergy&&ctx.cardById(ref.cardId)?.subtype===type){us.discard.splice(idx,1);self.energy[type]=Number(self.energy?.[type]||0)+1;}}
@@ -1335,7 +1341,13 @@
       }
       case 'whiteFlames':case 'burningTail':{
         const count=Number(self?.energy?.Fire||0);const specials=(self?.specialEnergy||[]).filter(ref=>Number((ref.provides||ctx.cardById(ref.cardId)?.effect?.provides||{}).Fire||0)>0);
-        if(rule==='burningTail'&&coin(ctx))break;
+        if(rule==='burningTail'){
+          // Previously this coin was rolled but never logged, so the central
+          // coin animation and battle record did not show it at all.
+          const heads=coin(ctx);
+          ctx.state.log.push({type:'coin',side:ctx.side,reason:'Skyridge Burning Tail',heads,results:[heads],outcome:heads?'kept':(count||specials.length)?'discarded':'noFireEnergy'});
+          if(heads)break;
+        }
         if(!count&&!specials.length)break;
         if(rule==='burningTail'){
           if(count){self.energy.Fire--;us.energyDiscard.Fire=Number(us.energyDiscard?.Fire||0)+1;}

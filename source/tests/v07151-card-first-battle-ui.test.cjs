@@ -52,7 +52,12 @@ test('Centre rail, CPU reporting, in-place board choices, and version are presen
  assert.match(js,/liveEffectChoiceCenterHtml\(\)/);assert.match(js,/data-tcgp-action="select-choice-card"/);assert.match(js,/data-tcgp-action="confirm-choice-card"/);
  assert.match(js,/tcgp-live-cpu-card-reveal/);assert.match(js,/battleEventSide==='opponent'/);
  assert.match(css,/\.tcgp-live-hand-wrap\.effect-choice-eligible/);assert.match(css,/\.tcgp-live-choice-rail/);assert.match(css,/\.tcgp-live-mid\.is-reporting/);
- const html=fs.readFileSync(path.join(dir,'index.html'),'utf8');assert.match(html,/id="titleBuildVersion">v0\.69\.151/);
- assert.match(fs.readFileSync(path.join(dir,'app-v0167.js'),'utf8'),/__LUCKYDEX_BUILD='0\.69\.151'/);
- assert.match(fs.readFileSync(path.join(dir,'../../../build.gradle'),'utf8'),/versionCode 7131[\s\S]*versionName '0\.69\.151'/);
+ // Check synchronized version metadata rather than freezing this UI test to
+ // the build number at which the UI was introduced.
+ const html=fs.readFileSync(path.join(dir,'index.html'),'utf8'),app=fs.readFileSync(path.join(dir,'app-v0167.js'),'utf8'),gradle=fs.readFileSync(path.join(dir,'../../../build.gradle'),'utf8');
+ const version=app.match(/__LUCKYDEX_BUILD='(0\.69\.\d+)'/)?.[1];
+ assert.ok(version);assert.ok(html.includes('id="titleBuildVersion">v'+version));
+ assert.ok(html.includes('id="appBuildVersion">LUCKY DEX · v'+version));
+ assert.ok(gradle.includes("versionName '"+version+"'"));
+ assert.match(gradle,/versionCode 7\d{3}/);
 });

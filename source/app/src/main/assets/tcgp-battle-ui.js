@@ -197,7 +197,9 @@
       const storm=attack.cardId==='SNAPFOUNJA-010'&&attack.attack==='Spore Storm'
         ?[...added].reverse().find(entry=>entry.type==='coin'&&entry.reason==='Founja sporeStorm'):null;
       const flips=storm?` · ${storm.results?.filter(Boolean).length||0}/${storm.results?.length||0} Heads`:'';
-      return actionEventText(attack)+flips+(ko?` · KO ${cardName(ko.cardId)}`:'');
+      const moltresCoin=attack.attack==='Burning Tail'?added.find(entry=>entry.type==='coin'&&entry.reason==='Skyridge Burning Tail'):null;
+      const moltresResult=moltresCoin?(moltresCoin.results?.[0]?' · HEADS — Fire Energy kept':moltresCoin.outcome==='discarded'?' · TAILS — Fire Energy discarded':' · TAILS — no Fire Energy to discard'):'';
+      return actionEventText(attack)+flips+moltresResult+(ko?` · KO ${cardName(ko.cardId)}`:'');
     }
     const preferred=[...added].reverse().find(entry=>['setupActive','setupBench','bench','evolve','trainer','ability','attach','attachSpecial','retreat','promote'].includes(entry.type));
     if(preferred)return actionEventText(preferred);
