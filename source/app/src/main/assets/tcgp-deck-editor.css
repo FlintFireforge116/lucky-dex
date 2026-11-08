@@ -57,3 +57,11 @@ body.tcgp-deck-editing #tcgpDeckResults,body.tcgp-deck-editing #classicDeckResul
 /* Readable rules on the light Classic/Pocket deck-inspection sheet. */
 .tcgp-editor-inspect .tcgp-live-sheet-attacks p{color:var(--ink);font-size:13px;line-height:1.55}
 .tcgp-editor-inspect .tcgp-live-sheet-attacks article{background:#ffffff95;border:1px solid var(--line);border-radius:10px;padding:10px}
+
+/* v0.69.153: one-tap access to clearing the current draft, with a confirmation sheet. */
+.tcgp-editor-deck-actions{display:flex;align-items:center;justify-content:flex-end;gap:5px;min-width:0;flex:1}
+.tcgp-editor-mydeck header .tcgp-editor-deck-actions button{max-width:none;min-width:0;white-space:nowrap}
+.tcgp-editor-mydeck header .tcgp-editor-deck-actions [data-deck="clear-deck"],
+.tcgp-editor-mydeck header .tcgp-editor-deck-actions [data-classic-deck="clear-deck"]{background:#fff3f0;color:#9a3328;border-color:#deb9b1}
+.tcgp-editor .tcgp-editor-sheet .tcgp-editor-danger{background:#9a3328;color:#fff;border-color:#9a3328}
+@media(max-width:360px){.tcgp-editor-mydeck h2{font-size:12px}.tcgp-editor-mydeck h2 span{font-size:12px}.tcgp-editor-mydeck header .tcgp-editor-deck-actions button{font-size:9px;padding:4px 5px}}

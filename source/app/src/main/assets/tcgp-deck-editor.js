@@ -25,7 +25,7 @@
  function energy(){if(draft.energyMode!=='manual')draft.energyTypes=K.analyzeDeck(draft.cards).recommendedEnergyTypes;return draft.energyTypes||[];}
  function deckHtml(){
   const types=energy(),cards=[...counts()].map(([id])=>D.cardById(id)).filter(Boolean),pokemon=draft.cards.map(D.cardById).filter(c=>c?.kind==='pokemon').length;
-  return `<header><h2>MY DECK <span>· ${draft.cards.length} / 20</span></h2>${btn('energy',`${types.join(' / ')||'Auto Energy'} ▾`,`aria-label="Configure Energy"`)}</header><div class="tcgp-editor-composition">${pokemon} Pokémon · ${draft.cards.length-pokemon} Trainers · ${draft.energyMode==='manual'?'Manual':'Auto'} Energy</div><div class="tcgp-editor-deck-grid">${cards.length?cards.map(c=>tile(c,true)).join(''):'<p>Choose a card below to start your deck.</p>'}</div>`;
+  return `<header><h2>MY DECK <span>· ${draft.cards.length} / 20</span></h2><div class="tcgp-editor-deck-actions">${btn('clear-deck','Clear deck',`aria-label="Clear all cards from this deck" ${draft.cards.length?'':'disabled'}`)}${btn('energy',`${types.join(' / ')||'Auto Energy'} ▾`,`aria-label="Configure Energy"`)}</div></header><div class="tcgp-editor-composition">${pokemon} Pokémon · ${draft.cards.length-pokemon} Trainers · ${draft.energyMode==='manual'?'Manual':'Auto'} Energy</div><div class="tcgp-editor-deck-grid">${cards.length?cards.map(c=>tile(c,true)).join(''):'<p>Choose a card below to start your deck.</p>'}</div>`;
  }
  function open(options){
   cancelBuild();
@@ -106,6 +106,15 @@
   if(action==='next'||action==='previous'){page+=action==='next'?1:-1;return renderResults();}
   if(action==='sort')return showSheet('Sort cards',`<div class="tcgp-editor-options">${[['number','Card number / set'],['name','Name'],['type','Type'],['hp','HP'],['recent','Recently obtained'],['owned','Number owned'],['stage','Evolution stage']].map(([id,label])=>btn('sort-by',label,`data-id="${id}"`)).join('')}</div>`);
   if(action==='sort-by'){sort=id;page=0;closeSheet();return renderResults();}
+  if(action==='clear-deck'){
+   if(!draft.cards.length)return;
+   return showSheet('Clear deck?',`<p>Remove all ${draft.cards.length} cards and reset Energy to automatic? Your collection and other saved decks won't change. This deck is only replaced when you press Save.</p><footer>${btn('confirm-clear-deck','Clear deck','class="tcgp-editor-danger"')}${btn('close-sheet','Cancel')}</footer>`);
+  }
+  if(action==='confirm-clear-deck'){
+   cancelBuild();draft.cards=[];draft.energyMode='auto';draft.energyTypes=[];draft.preferredPrints={};
+   message='Deck cleared. Add cards to start again, then press Save.';
+   closeSheet();return update();
+  }
   if(action==='save')return save();if(action==='manage')return manage();
   if(action==='new'||action==='auto-new')return requestLeave(()=>{cancelBuild();message='';fresh({name:'New Pocket Deck',cards:[],energyMode:'auto',energyTypes:[]});closeSheet();mount();if(action==='auto-new')autoBuild('recommended');});
   if(action==='rename'){const d=K.ensureBattleState(host.state()).decks.find(d=>d.id===id);if(d)showSheet('Rename deck',`<input id="tcgpSavedRename" maxlength="40" value="${esc(d.name)}" aria-label="New deck name">${btn('confirm-rename','Save name',`data-id="${esc(id)}"`)}`);return;}
