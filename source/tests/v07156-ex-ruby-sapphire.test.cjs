@@ -136,9 +136,11 @@ test('Android and splash versions match new ex1 expansion and registration order
  const html=fs.readFileSync(path.join(A,'index.html'),'utf8');
  const gradle=fs.readFileSync(path.resolve(A,'../../../build.gradle'),'utf8');
  const app=fs.readFileSync(path.join(A,'app-v0167.js'),'utf8');
- assert.match(gradle,/versionName '0\.69\.157'/);assert.match(gradle,/versionCode 7137/);
- assert.equal(html.split('v0.69.157').length-1,2);
- assert.match(app,/window\.__LUCKYDEX_BUILD='0\.69\.157'/);
+ const version=gradle.match(/versionName '(\d+\.\d+\.\d+)'/)?.[1];
+ assert.ok(version, 'Android versionName is missing');
+ assert.ok(Number(gradle.match(/versionCode (\d+)/)?.[1]||0)>=7137);
+ assert.equal(html.split('v'+version).length-1,2);
+ assert.ok(app.includes("window.__LUCKYDEX_BUILD='"+version+"'"));
  assert.ok(html.indexOf('tcg-classic-ruby-sapphire.js')>html.indexOf('tcg-classic-skyridge.js'));
  assert.ok(html.indexOf('tcg-classic-ruby-sapphire.js')<html.indexOf('tcg-classic-battle-data.js'));
 });

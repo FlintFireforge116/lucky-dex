@@ -34,6 +34,9 @@ const ARCHETYPE_TYPES=Object.freeze([...new Set([...decks.ENERGY_TYPES,'Colorles
 const STAGE_RANK=Object.freeze({'Basic':0,'Stage 1':1,'Stage 2':2});
 const RARITY_FOCUS=Object.freeze([{id:'any',label:'Any rarity'},{id:'common',label:'Common'},{id:'uncommon',label:'Uncommon'},{id:'rare',label:'Rare / Holo'},{id:'ultra',label:'Ultra Rare · V / ex / VMAX'}]);
 function rarityTier(card){
+ // Original Pokemon-ex prints are Ultra/ex targets even when the printed
+ // 2003 rarity string is 'Rare Holo EX' (rather than 'Ultra Rare').
+ if(card?.pokemonEx||card?.isEx)return 'ultra';
  let raw=String(card?.rarity||'').toLowerCase().trim();
  // The Base Set battle catalogue predates stored rarity metadata; its 1999
  // collector numbers are authoritative, but only for that exact original set.

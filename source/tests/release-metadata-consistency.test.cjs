@@ -12,13 +12,14 @@ test('displayed and packaged release versions stay aligned',()=>{
   const gradle=read('app/build.gradle');
   const html=read('app/src/main/assets/index.html');
   const app=read('app/src/main/assets/app-v0167.js');
-  const version=pkg.version;
+  // package.json is the independently versioned Node regression-test runner.
+  // Android's installed app version comes from Gradle, not the test-runner package.
+  assert.equal(lock.version,pkg.version);
+  assert.equal(lock.packages[''].version,pkg.version);
+  const version=gradle.match(/versionName '(\d+\.\d+\.\d+)'/)?.[1];
+  assert.ok(version, 'Gradle app versionName is missing');
   const escaped=version.replace(/\./g,'\\.');
-
-  assert.equal(lock.version,version);
-  assert.equal(lock.packages[''].version,version);
-  assert.match(gradle,new RegExp(`versionName\\s+'${escaped}'`));
-  assert.match(gradle,new RegExp(`LuckyDex-asset-builder/${escaped}`));
+  assert.match(gradle,new RegExp(`LuckyDex-asset-builder/${pkg.version.replace(/\./g,'\\.')}`));
   assert.match(app,new RegExp(`__LUCKYDEX_BUILD='${escaped}'`));
   assert.ok((html.match(new RegExp(`v${escaped}`,'g'))||[]).length>=2,
     `index.html must display v${version} in both title and app header`);

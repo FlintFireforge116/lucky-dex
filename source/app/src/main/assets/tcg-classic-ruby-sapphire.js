@@ -299,11 +299,60 @@ Object.assign(TRAINEFFECTS,{
  88:ex('pokeNav'),90:ex('basicSearch1'),
 });
 
+// Deck-planning annotations for EX-era rule handlers.  Ordinary attacks are
+// inferred from executable effects by tcg-deck-synergy.js; named ex1: rules
+// and triggered Poké-Powers cannot be classified from their type alone.
+// These are strategy labels only — no gameplay rules are changed here.
+const DECK_META={
+  3:{roles:['energy']},              // Firestarter: Fire from discard -> Bench
+  5:{roles:['draw']},                // Energy Draw
+  6:{roles:['stall']},               // Protective Dust
+  7:{roles:['energy']},              // Psy Shadow
+  9:{roles:['energy']},              // Attract Current
+  10:{roles:['stall','disruption']}, // Intimidating Fang + Shakedown
+  11:{inflicts:['sleep','poison','burn']}, // Lizard Poison varies with Energy
+  12:{roles:['disruption']},        // Lazy suppresses opposing Poké-Powers
+  13:{roles:['energy']},            // Water Call
+  18:{roles:['search','disruption']}, // Invisible Hand / Repulsion
+  20:{roles:['energy']},            // Energy Trans
+  22:{roles:['stall']},             // Rough Skin reactive damage
+  23:{roles:['healing']},           // Natural Remedy
+  26:{roles:['stall']},             // Hard Cocoon
+  28:{roles:['healing']},           // Natural Cure
+  29:{roles:['energy']},            // Energy Call
+  30:{roles:['energy']},            // Charge
+  32:{roles:['healing']},           // Natural Cure
+  41:{roles:['healing']},           // Natural Cure
+  43:{roles:['stall']},             // Hard Cocoon
+  44:{roles:['search']},            // Minor Errand-Running Basic Energy search
+  46:{roles:['disruption']},        // Drive Off
+  49:{roles:['stall']},             // Teary Eyes
+  51:{roles:['stall']},             // Rough Skin
+  70:{roles:['energy']},            // Plus Energy
+  78:{roles:['search']},            // Signs of Evolution
+  80:{roles:['disruption']},        // Energy Removal 2
+  81:{roles:['energy']},            // Energy Restore
+  82:{roles:['energy']},            // Energy Switch
+  83:{roles:['search','energy']},   // Lady Outing
+  84:{roles:['healing']},           // Lum Berry removes conditions
+  85:{roles:['healing']},           // Oran Berry heals damage
+  88:{roles:['search']},            // PokéNav
+  90:{roles:['search','energy']},   // Energy Search
+  93:{roles:['energy'],energyTypes:['Darkness']},
+  94:{roles:['energy'],energyTypes:['Metal']},
+  95:{roles:['energy']},
+  100:{roles:['disruption']},       // Smokescreen attack denial
+  101:{roles:['energy']}           // Energy Absorption
+};
+const DECK_META_EMPTY=Object.freeze({roles:Object.freeze([]),inflicts:Object.freeze([]),payoffs:Object.freeze([]),energyTypes:Object.freeze([]),stages:Object.freeze([])});
+function deckMetadata(n){const details=DECK_META[n];if(!details)return DECK_META_EMPTY;
+ return Object.freeze(Object.fromEntries(['roles','inflicts','payoffs','energyTypes','stages'].map(key=>[key,Object.freeze([...(details[key]||[])])])));
+}
 const FIELDS=new Map(RAW.split('\n').map(line=>{const parts=line.split('|');return [Number(parts[0]),parts];}));
 function parse(n){const f=FIELDS.get(n);if(!f)throw Error(`Missing EX Ruby & Sapphire card ${n}`);
  const [_,name,kind,t,stage,hp,retreat,weakness,resistance,evolvesFrom,rarity,moves,ability]=f;
  const card={id:`ex1-${n}`,setId:'ex1',number:String(n),name,source:'tcg',battleFormat:'classic',
-  rarity,image:`https://images.pokemontcg.io/ex1/${n}.png`,imageLarge:`https://images.pokemontcg.io/ex1/${n}_hires.png`,
+  rarity,deckMeta:deckMetadata(n),image:`https://images.pokemontcg.io/ex1/${n}.png`,imageLarge:`https://images.pokemontcg.io/ex1/${n}_hires.png`,
   kind:kind==='P'?'pokemon':kind==='T'?'trainer':'energy'};
  const reasons=[];
  if(kind==='P'){

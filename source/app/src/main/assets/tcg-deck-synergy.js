@@ -96,12 +96,16 @@
    }
    if(/Basic Pok[eé]mon(?: in play| you control| have)/i.test(texts)&&/retreat|attach|attack|damage|heal/i.test(texts))stages.add('Basic');
   }
-  const override=extra[card.id]||{};
-  for(const x of override.roles||[])roles.add(x);
-  for(const x of override.inflicts||[])inflicts.add(x);
-  for(const x of override.payoffs||[])payoffs.add(x);
-  for(const x of override.energyTypes||[])energyTypes.add(x);
-  for(const x of override.stages||[])stages.add(x);
+  // Set-owned rule annotations supplement generic effect-tree inference.
+  // This is especially important for named legacy effects / triggered Powers.
+  for(const override of [extra[card.id],card.deckMeta]){
+   if(!override)continue;
+   for(const x of override.roles||[])roles.add(x);
+   for(const x of override.inflicts||[])inflicts.add(x);
+   for(const x of override.payoffs||[])payoffs.add(x);
+   for(const x of override.energyTypes||[])energyTypes.add(x);
+   for(const x of override.stages||[])stages.add(x);
+  }
   if(card.kind==='pokemon')for(const t of card.types||[])sources.add(t);
   const result=Object.freeze({roles:[...roles],inflicts:[...inflicts],payoffs:[...payoffs],energyTypes:[...energyTypes],stages:[...stages],sources:[...sources]});
   cache.set(card,result);return result;

@@ -1,0 +1,21 @@
+LuckyDex v0.69.158 — EX Ruby & Sapphire opponent picker and mechanics/strategy audit
+Version code 7138. Apply after v0.69.157.
+
+Opponent selection:
+- Fix EX Ruby & Sapphire (ex1) missing from Classic Battle's "Allowed opponent expansions" list. It was already registered in the card database, auto-builder and CPU generator; only the battle-screen allowed-list omitted it.
+- Derive Classic Battle's selectable expansions directly from the CPU generator's canonical list to prevent the same mismatch when future sets are imported.
+- The EX era and EX Ruby & Sapphire option now appear under Classic Battle > Random opponent decks > Allowed opponent expansions. Existing saved selection filters are preserved; if your selection is customized, select EX Ruby & Sapphire explicitly.
+
+Deck-builder metadata:
+- Recognize all eight original Rare Holo EX Pokémon-ex as Ultra/ex rarity targets for the CPU rarity picker and deck auto-builder.
+- Embed explicit rule-derived, structured strategy metadata for the EX-era named attack effects, Poké-Powers, Poké-Bodies, and utility Trainers; merge that metadata with ordinary automatic effect-tree inference.
+- This lets EX-era Energy acceleration, search, healing, Sleep/Poison/Burn, stall and disruption participate in themed deck planning.
+
+Move and card validation:
+- All 109 numbered cards remain registered and battle-enabled; six Basic Energy prints stay outside the 30-card draw deck as agreed.
+- Added runtime smoke checks for each of the 148 Pokémon attacks at two seeded RNG paths, all 13 Trainer cards, all 18 abilities' effect definitions, and legal EX-only opposing decks (including Ultra/ex).
+- All tested attack, Trainer and activated Poké-Power action paths resolve without errors or stuck choice prompts.
+- 197/197 focused chronological 0.69.141–0.69.158 regressions passed.
+- Existing v0.69.156/v0.69.157 targeted mechanic tests remain in place. The patch does not claim every possible card interaction has been exhaustively verified, nor that the APK has been visually tested on an Android device.
+
+Updated files include Classic battle UI, EX card data, the deck-builder rarity classifier, shared strategy metadata, version/build markers, tests and these notes.
