@@ -63,13 +63,13 @@ test('Wrong card identity never receives Delta Reign artwork',async()=>{
   assert.equal(r.attempts.length,0);
 });
 
-test('Android preBuild validates all 141 actual bundled WebP assets and v0.69.155 version is visible',()=>{
+test('Android preBuild validates all 141 actual bundled WebP assets and build version is valid',()=>{
   const gradle=fs.readFileSync(path.join(ROOT,'source/app/build.gradle'),'utf8');
   assert.match(gradle,/validateDeltaReignCardAssets/);
   assert.match(gradle,/dependsOn tasks\.named\('validateDeltaReignCardAssets'\)/);
   assert.match(gradle,/if \(!img\.isFile\(\) \|\| img\.length\(\) < 8000\)/);
-  assert.match(gradle,/versionName '0\.69\.155'/);
-  assert.match(gradle,/versionCode 7135/);
+  assert.match(gradle,/versionName '0\.69\.156'/);
+  assert.match(gradle,/versionCode 7136/);
   const lines=fs.readFileSync(path.join(ROOT,'source/scripts/delta-reign-art-download.txt'),'utf8').trim().split('\n');
   assert.equal(lines.length,141);
   assert.equal(new Set(lines.map(l=>l.split('|')[1])).size,141);

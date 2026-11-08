@@ -3,11 +3,11 @@
 const rows=[
  ['base1','Base Set','Original'],['base2','Jungle','Original'],['base3','Fossil','Original'],['base5','Team Rocket','Original'],['gym1','Gym Heroes','Gym'],['gym2','Gym Challenge','Gym'],
  ['neo1','Neo Genesis','Neo'],['neo2','Neo Discovery','Neo'],['neo3','Neo Revelation','Neo'],['neo4','Neo Destiny','Neo'],
- ['base6','Legendary Collection','Original'],['ecard1','Expedition Base Set','e-Card'],['ecard2','Aquapolis','e-Card'],['ecard3','Skyridge','e-Card'],
+ ['base6','Legendary Collection','Original'],['ecard1','Expedition Base Set','e-Card'],['ecard2','Aquapolis','e-Card'],['ecard3','Skyridge','e-Card'],['ex1','EX Ruby & Sapphire','EX'],
  ['SNAPFLORIO','Florio Nature Park','New Pokémon Snap'],['SNAPFOUNJA','Founja Jungle','New Pokémon Snap'],['sv1','Scarlet & Violet','Modern']
 ];
 const names=Object.fromEntries(rows.map(([id,name])=>[id,name]));
-const eras=['Original','Gym','Neo','e-Card','New Pokémon Snap','Modern'];
+const eras=['Original','Gym','Neo','e-Card','EX','New Pokémon Snap','Modern'];
 const escape=s=>String(s??'').replace(/[&<>"']/g,ch=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));
 function html({ids,selected,mode='classic',title='Allowed sets',state={}}){
  const allowed=new Set(ids),chosen=new Set(selected),sort=state.sort||'release';
