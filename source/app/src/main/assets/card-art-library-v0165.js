@@ -47,21 +47,31 @@
     try{const db=await openDb();await new Promise((resolve,reject)=>{const tx=db.transaction(DB_STORE,'readwrite');tx.objectStore(DB_STORE).put(value,DB_KEY);tx.oncomplete=resolve;tx.onerror=()=>reject(tx.error);});}catch(_){ }
   }
   function validIndex(index){return !!(index&&Array.isArray(index.sets)&&index.sets.length&&Number(index.schema||0)>=1);}
+  // Delta Reign shipped after the last full external index snapshot. Keep this
+  // 141-card bundle available even while offline, or if the remote index is stale.
+  function withBundledDeltaReign(index){
+    const special=window.LuckyDexDeltaReignArtV069154?.setRow;
+    if(!special)return index;
+    const old=index&&typeof index==='object'?index:{schema:1,sets:[]};
+    const others=(Array.isArray(old.sets)?old.sets:[]).filter(row=>!['me6','me06','dlr'].includes(String(row?.k||row?.key||'').toLowerCase())&&normalizeName(row?.n||row?.name)!=='delta reign');
+    const sets=[...others,special];
+    return {...old,schema:Math.max(1,Number(old.schema)||1),sets,set_count:sets.length,card_count:sets.reduce((sum,row)=>sum+(Array.isArray(row.c)?row.c.length:Array.isArray(row.cards)?row.cards.length:0),0)};
+  }
   async function getIndex(options={}){
     const force=!!options.force;
     if(indexCache&&!force)return indexCache;
     if(indexPromise&&!force)return indexPromise;
     indexPromise=(async()=>{
       let cached=await dbGet();if(!validIndex(cached))cached=null;
-      if(navigator.onLine===false){indexCache=cached;return cached;}
+      if(navigator.onLine===false){indexCache=withBundledDeltaReign(cached);return indexCache;}
       try{
         const response=await fetch(endpoint().indexUrl,{cache:'no-store'});
         if(!response.ok)throw new Error(`card-art index ${response.status}`);
         const index=await response.json();if(!validIndex(index))throw new Error('invalid card-art index');
-        indexCache=index;dbPut(index);return index;
+        indexCache=withBundledDeltaReign(index);dbPut(index);return indexCache;
       }catch(error){
         console.warn('[LuckyDexCardArt] exact index unavailable; retaining safe legacy fallback',error);
-        indexCache=cached;return cached;
+        indexCache=withBundledDeltaReign(cached);return indexCache;
       }finally{indexPromise=null;}
     })();
     return indexPromise;
@@ -225,6 +235,11 @@
           if(local){card._libraryNative=true;card._librarySetKey=key;if(hit?.id)card._libraryCanonicalId=hit.id;card._artIdentityVerified=true;card._artSource='luckydex-library-pack-v1';return local;}
         }catch(_){ }
       }
+    }
+    if(hit?.url&&/^delta-reign-cards\//i.test(hit.url)){
+      card._libraryNative=true;card._librarySetKey=key;card._libraryCanonicalId=hit.id;
+      card._artIdentityVerified=true;card._artSource='luckydex-delta-reign-bundled';
+      return hit.url;
     }
     if(navigator.onLine===false||!hit?.url)return '';
     card._libraryNative=true;card._librarySetKey=key;card._libraryCanonicalId=hit.id;card._artIdentityVerified=true;card._artSource='luckydex-index-v1';

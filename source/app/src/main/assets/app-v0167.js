@@ -852,6 +852,9 @@ document.getElementById('shinyOddsSelect').value=String(state.settings.shinyOdds
 
 
 async function bootLuckyDexV0158(){
+  // Reconnect older owned Delta Reign entries to the actual bundled scans.
+  const repaired=window.LuckyDexDeltaReignArtV069154?.repairOwned?.(state.cards)||0;
+  if(repaired)try{persistLuckyDexSave(JSON.stringify(state));}catch(_){}
   resetDaily();const speciesJob=initSpecies();renderGlobalHud();renderStarter();renderZones();rebuildCollectionControls();renderTeamPanel();renderProfile();
   // Fire background hydration, but never hold Adventure or the title screen on it.
   loadZonePool(state.settings.zone in ZONES?state.settings.zone:'meadow');loadSets('tcg');speciesJob.then(()=>{renderStarter();}).catch(()=>{});
@@ -1300,6 +1303,11 @@ async function getCardDetail(brief,signal=null){
 async function resolveCardArtwork(card,set=null,source=card?.source||'tcg',signal=null){
   if(signal?.aborted)throw new DOMException('Cancelled','AbortError');
   if(!card)return '';
+  // Prefer the exact-number Delta Reign image in APK assets over any stale remote URL.
+  if(source!=='tcgp'&&window.LuckyDexDeltaReignArtV069154?.cardRow?.(card,set)){
+    const local=await window.LuckyDexCardArt?.resolveLocal?.(card,set);
+    if(local){card.image=local;return local;}
+  }
   const identityV0533=window.LuckyDexCardArtIdentityV0533;
   if(card.image&&identityV0533?.isTrusted?.(card,card.image))return normalizeCardBase(card.image);
   if(card.image&&identityV0533&&!identityV0533.isTrusted(card,card.image)){
@@ -2002,7 +2010,7 @@ renderCollection=function(){const grid=document.getElementById('collectionGrid')
    before the app could finish wiring. That single runtime exception explained
    the frozen starter, Wild Search/Expedition stalls and permanent Loading sets.
 */
-window.__LUCKYDEX_BUILD='0.69.153';
+window.__LUCKYDEX_BUILD='0.69.154';
 window.addEventListener('error',event=>{
   try{localStorage.setItem('luckyDexLastRuntimeError',JSON.stringify({build:window.__LUCKYDEX_BUILD,message:String(event?.message||'Unknown error'),source:String(event?.filename||''),line:Number(event?.lineno||0),at:Date.now()}));}catch(_){ }
 });

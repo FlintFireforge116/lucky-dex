@@ -1,0 +1,1001 @@
+{
+  "schema": 1,
+  "set": {
+    "key": "me6",
+    "name": "Delta Reign",
+    "series": "Mega Evolution",
+    "releaseDate": "2026-11-06",
+    "printedTotal": 103,
+    "total": 141
+  },
+  "source": "https://billsarchive.com/delta-reign.html",
+  "cards": [
+    {
+      "number": 1,
+      "name": "Heracross",
+      "rarity": "Common",
+      "file": "me06-001_heracross.webp",
+      "source": "https://billsarchive.com/assets/delta-reign/small/me06-001_heracross.webp"
+    },
+    {
+      "number": 2,
+      "name": "Surskit",
+      "rarity": "Common",
+      "file": "me06-002_surskit.webp",
+      "source": "https://billsarchive.com/assets/delta-reign/small/me06-002_surskit.webp"
+    },
+    {
+      "number": 3,
+      "name": "Masquerain",
+      "rarity": "Common",
+      "file": "me06-003_masquerain.webp",
+      "source": "https://billsarchive.com/assets/delta-reign/small/me06-003_masquerain.webp"
+    },
+    {
+      "number": 4,
+      "name": "Cacnea",
+      "rarity": "Common",
+      "file": "me06-004_cacnea.webp",
+      "source": "https://billsarchive.com/assets/delta-reign/small/me06-004_cacnea.webp"
+    },
+    {
+      "number": 5,
+      "name": "Cacturne",
+      "rarity": "Rare",
+      "file": "me06-005_cacturne.webp",
+      "source": "https://billsarchive.com/assets/delta-reign/small/me06-005_cacturne.webp"
+    },
+    {
+      "number": 6,
+      "name": "Combee",
+      "rarity": "Common",
+      "file": "me06-006_combee.webp",
+      "source": "https://billsarchive.com/assets/delta-reign/small/me06-006_combee.webp"
+    },
+    {
+      "number": 7,
+      "name": "Vespiquen",
+      "rarity": "Common",
+      "file": "me06-007_vespiquen.webp",
+      "source": "https://billsarchive.com/assets/delta-reign/small/me06-007_vespiquen.webp"
+    },
+    {
+      "number": 8,
+      "name": "Shaymin",
+      "rarity": "Uncommon",
+      "file": "me06-008_shaymin.webp",
+      "source": "https://billsarchive.com/assets/delta-reign/small/me06-008_shaymin.webp"
+    },
+    {
+      "number": 9,
+      "name": "Virizion",
+      "rarity": "Uncommon",
+      "file": "me06-009_virizion.webp",
+      "source": "https://billsarchive.com/assets/delta-reign/small/me06-009_virizion.webp"
+    },
+    {
+      "number": 10,
+      "name": "Wimpod",
+      "rarity": "Common",
+      "file": "me06-010_wimpod.webp",
+      "source": "https://billsarchive.com/assets/delta-reign/small/me06-010_wimpod.webp"
+    },
+    {
+      "number": 11,
+      "name": "Mega Golisopod ex",
+      "rarity": "Double Rare",
+      "file": "me06-011_mega_golisopod_ex.webp",
+      "source": "https://billsarchive.com/assets/delta-reign/small/me06-011_mega_golisopod_ex.webp"
+    },
+    {
+      "number": 12,
+      "name": "Sprigatito",
+      "rarity": "Common",
+      "file": "me06-012_sprigatito.webp",
+      "source": "https://billsarchive.com/assets/delta-reign/small/me06-012_sprigatito.webp"
+    },
+    {
+      "number": 13,
+      "name": "Floragato",
+      "rarity": "Uncommon",
+      "file": "me06-013_floragato.webp",
+      "source": "https://billsarchive.com/assets/delta-reign/small/me06-013_floragato.webp"
+    },
+    {
+      "number": 14,
+      "name": "Meowscarada ex",
+      "rarity": "Double Rare",
+      "file": "me06-014_meowscarada_ex.webp",
+      "source": "https://billsarchive.com/assets/delta-reign/small/me06-014_meowscarada_ex.webp"
+    },
+    {
+      "number": 15,
+      "name": "Smoliv",
+      "rarity": "Common",
+      "file": "me06-015_smoliv.webp",
+      "source": "https://billsarchive.com/assets/delta-reign/small/me06-015_smoliv.webp"
+    },
+    {
+      "number": 16,
+      "name": "Dolliv",
+      "rarity": "Common",
+      "file": "me06-016_dolliv.webp",
+      "source": "https://billsarchive.com/assets/delta-reign/small/me06-016_dolliv.webp"
+    },
+    {
+      "number": 17,
+      "name": "Arboliva",
+      "rarity": "Uncommon",
+      "file": "me06-017_arboliva.webp",
+      "source": "https://billsarchive.com/assets/delta-reign/small/me06-017_arboliva.webp"
+    },
+    {
+      "number": 18,
+      "name": "Growlithe",
+      "rarity": "Common",
+      "file": "me06-018_growlithe.webp",
+      "source": "https://billsarchive.com/assets/delta-reign/small/me06-018_growlithe.webp"
+    },
+    {
+      "number": 19,
+      "name": "Arcanine",
+      "rarity": "Rare",
+      "file": "me06-019_arcanine.webp",
+      "source": "https://billsarchive.com/assets/delta-reign/small/me06-019_arcanine.webp"
+    },
+    {
+      "number": 20,
+      "name": "Magmar",
+      "rarity": "Uncommon",
+      "file": "me06-020_magmar.webp",
+      "source": "https://billsarchive.com/assets/delta-reign/small/me06-020_magmar.webp"
+    },
+    {
+      "number": 21,
+      "name": "Magmortar",
+      "rarity": "Rare",
+      "file": "me06-021_magmortar.webp",
+      "source": "https://billsarchive.com/assets/delta-reign/small/me06-021_magmortar.webp"
+    },
+    {
+      "number": 22,
+      "name": "Torkoal",
+      "rarity": "Common",
+      "file": "me06-022_torkoal.webp",
+      "source": "https://billsarchive.com/assets/delta-reign/small/me06-022_torkoal.webp"
+    },
+    {
+      "number": 23,
+      "name": "Heat Rotom ex",
+      "rarity": "Double Rare",
+      "file": "me06-023_heat_rotom_ex.webp",
+      "source": "https://billsarchive.com/assets/delta-reign/small/me06-023_heat_rotom_ex.webp"
+    },
+    {
+      "number": 24,
+      "name": "Heatmor",
+      "rarity": "Common",
+      "file": "me06-024_heatmor.webp",
+      "source": "https://billsarchive.com/assets/delta-reign/small/me06-024_heatmor.webp"
+    },
+    {
+      "number": 25,
+      "name": "Mantine",
+      "rarity": "Common",
+      "file": "me06-025_mantine.webp",
+      "source": "https://billsarchive.com/assets/delta-reign/small/me06-025_mantine.webp"
+    },
+    {
+      "number": 26,
+      "name": "Kyogre",
+      "rarity": "Rare",
+      "file": "me06-026_kyogre.webp",
+      "source": "https://billsarchive.com/assets/delta-reign/small/me06-026_kyogre.webp"
+    },
+    {
+      "number": 27,
+      "name": "Frillish",
+      "rarity": "Common",
+      "file": "me06-027_frillish.webp",
+      "source": "https://billsarchive.com/assets/delta-reign/small/me06-027_frillish.webp"
+    },
+    {
+      "number": 28,
+      "name": "Jellicent",
+      "rarity": "Uncommon",
+      "file": "me06-028_jellicent.webp",
+      "source": "https://billsarchive.com/assets/delta-reign/small/me06-028_jellicent.webp"
+    },
+    {
+      "number": 29,
+      "name": "Wishiwashi ex",
+      "rarity": "Double Rare",
+      "file": "me06-029_wishiwashi_ex.webp",
+      "source": "https://billsarchive.com/assets/delta-reign/small/me06-029_wishiwashi_ex.webp"
+    },
+    {
+      "number": 30,
+      "name": "Electabuzz",
+      "rarity": "Common",
+      "file": "me06-030_electabuzz.webp",
+      "source": "https://billsarchive.com/assets/delta-reign/small/me06-030_electabuzz.webp"
+    },
+    {
+      "number": 31,
+      "name": "Electivire",
+      "rarity": "Uncommon",
+      "file": "me06-031_electivire.webp",
+      "source": "https://billsarchive.com/assets/delta-reign/small/me06-031_electivire.webp"
+    },
+    {
+      "number": 32,
+      "name": "Jolteon",
+      "rarity": "Uncommon",
+      "file": "me06-032_jolteon.webp",
+      "source": "https://billsarchive.com/assets/delta-reign/small/me06-032_jolteon.webp"
+    },
+    {
+      "number": 33,
+      "name": "Raikou ex",
+      "rarity": "Double Rare",
+      "file": "me06-033_raikou_ex.webp",
+      "source": "https://billsarchive.com/assets/delta-reign/small/me06-033_raikou_ex.webp"
+    },
+    {
+      "number": 34,
+      "name": "Rotom",
+      "rarity": "Common",
+      "file": "me06-034_rotom.webp",
+      "source": "https://billsarchive.com/assets/delta-reign/small/me06-034_rotom.webp"
+    },
+    {
+      "number": 35,
+      "name": "Thundurus",
+      "rarity": "Uncommon",
+      "file": "me06-035_thundurus.webp",
+      "source": "https://billsarchive.com/assets/delta-reign/small/me06-035_thundurus.webp"
+    },
+    {
+      "number": 36,
+      "name": "Pincurchin",
+      "rarity": "Common",
+      "file": "me06-036_pincurchin.webp",
+      "source": "https://billsarchive.com/assets/delta-reign/small/me06-036_pincurchin.webp"
+    },
+    {
+      "number": 37,
+      "name": "Pawmi",
+      "rarity": "Common",
+      "file": "me06-037_pawmi.webp",
+      "source": "https://billsarchive.com/assets/delta-reign/small/me06-037_pawmi.webp"
+    },
+    {
+      "number": 38,
+      "name": "Pawmo",
+      "rarity": "Common",
+      "file": "me06-038_pawmo.webp",
+      "source": "https://billsarchive.com/assets/delta-reign/small/me06-038_pawmo.webp"
+    },
+    {
+      "number": 39,
+      "name": "Pawmot",
+      "rarity": "Uncommon",
+      "file": "me06-039_pawmot.webp",
+      "source": "https://billsarchive.com/assets/delta-reign/small/me06-039_pawmot.webp"
+    },
+    {
+      "number": 40,
+      "name": "Wattrel",
+      "rarity": "Common",
+      "file": "me06-040_wattrel.webp",
+      "source": "https://billsarchive.com/assets/delta-reign/small/me06-040_wattrel.webp"
+    },
+    {
+      "number": 41,
+      "name": "Kilowattrel",
+      "rarity": "Uncommon",
+      "file": "me06-041_kilowattrel.webp",
+      "source": "https://billsarchive.com/assets/delta-reign/small/me06-041_kilowattrel.webp"
+    },
+    {
+      "number": 42,
+      "name": "Miraidon",
+      "rarity": "Uncommon",
+      "file": "me06-042_miraidon.webp",
+      "source": "https://billsarchive.com/assets/delta-reign/small/me06-042_miraidon.webp"
+    },
+    {
+      "number": 43,
+      "name": "Drowzee",
+      "rarity": "Common",
+      "file": "me06-043_drowzee.webp",
+      "source": "https://billsarchive.com/assets/delta-reign/small/me06-043_drowzee.webp"
+    },
+    {
+      "number": 44,
+      "name": "Hypno",
+      "rarity": "Common",
+      "file": "me06-044_hypno.webp",
+      "source": "https://billsarchive.com/assets/delta-reign/small/me06-044_hypno.webp"
+    },
+    {
+      "number": 45,
+      "name": "Giratina",
+      "rarity": "Rare",
+      "file": "me06-045_giratina.webp",
+      "source": "https://billsarchive.com/assets/delta-reign/small/me06-045_giratina.webp"
+    },
+    {
+      "number": 46,
+      "name": "Golett",
+      "rarity": "Common",
+      "file": "me06-046_golett.webp",
+      "source": "https://billsarchive.com/assets/delta-reign/small/me06-046_golett.webp"
+    },
+    {
+      "number": 47,
+      "name": "Mega Golurk ex",
+      "rarity": "Double Rare",
+      "file": "me06-047_mega_golurk_ex.webp",
+      "source": "https://billsarchive.com/assets/delta-reign/small/me06-047_mega_golurk_ex.webp"
+    },
+    {
+      "number": 48,
+      "name": "Enamorus",
+      "rarity": "Uncommon",
+      "file": "me06-048_enamorus.webp",
+      "source": "https://billsarchive.com/assets/delta-reign/small/me06-048_enamorus.webp"
+    },
+    {
+      "number": 49,
+      "name": "Sandshrew",
+      "rarity": "Common",
+      "file": "me06-049_sandshrew.webp",
+      "source": "https://billsarchive.com/assets/delta-reign/small/me06-049_sandshrew.webp"
+    },
+    {
+      "number": 50,
+      "name": "Sandslash",
+      "rarity": "Common",
+      "file": "me06-050_sandslash.webp",
+      "source": "https://billsarchive.com/assets/delta-reign/small/me06-050_sandslash.webp"
+    },
+    {
+      "number": 51,
+      "name": "Onix",
+      "rarity": "Common",
+      "file": "me06-051_onix.webp",
+      "source": "https://billsarchive.com/assets/delta-reign/small/me06-051_onix.webp"
+    },
+    {
+      "number": 52,
+      "name": "Steelix",
+      "rarity": "Rare",
+      "file": "me06-052_steelix.webp",
+      "source": "https://billsarchive.com/assets/delta-reign/small/me06-052_steelix.webp"
+    },
+    {
+      "number": 53,
+      "name": "Groudon",
+      "rarity": "Rare",
+      "file": "me06-053_groudon.webp",
+      "source": "https://billsarchive.com/assets/delta-reign/small/me06-053_groudon.webp"
+    },
+    {
+      "number": 54,
+      "name": "Landorus",
+      "rarity": "Uncommon",
+      "file": "me06-054_landorus.webp",
+      "source": "https://billsarchive.com/assets/delta-reign/small/me06-054_landorus.webp"
+    },
+    {
+      "number": 55,
+      "name": "Nidoran ♀",
+      "rarity": "Common",
+      "file": "me06-055_nidoran_f.webp",
+      "source": "https://billsarchive.com/assets/delta-reign/small/me06-055_nidoran_f.webp"
+    },
+    {
+      "number": 56,
+      "name": "Nidorina",
+      "rarity": "Common",
+      "file": "me06-056_nidorina.webp",
+      "source": "https://billsarchive.com/assets/delta-reign/small/me06-056_nidorina.webp"
+    },
+    {
+      "number": 57,
+      "name": "Nidoqueen",
+      "rarity": "Rare",
+      "file": "me06-057_nidoqueen.webp",
+      "source": "https://billsarchive.com/assets/delta-reign/small/me06-057_nidoqueen.webp"
+    },
+    {
+      "number": 58,
+      "name": "Spinarak",
+      "rarity": "Common",
+      "file": "me06-058_spinarak.webp",
+      "source": "https://billsarchive.com/assets/delta-reign/small/me06-058_spinarak.webp"
+    },
+    {
+      "number": 59,
+      "name": "Ariados",
+      "rarity": "Common",
+      "file": "me06-059_ariados.webp",
+      "source": "https://billsarchive.com/assets/delta-reign/small/me06-059_ariados.webp"
+    },
+    {
+      "number": 60,
+      "name": "Sableye",
+      "rarity": "Common",
+      "file": "me06-060_sableye.webp",
+      "source": "https://billsarchive.com/assets/delta-reign/small/me06-060_sableye.webp"
+    },
+    {
+      "number": 61,
+      "name": "Carvanha",
+      "rarity": "Common",
+      "file": "me06-061_carvanha.webp",
+      "source": "https://billsarchive.com/assets/delta-reign/small/me06-061_carvanha.webp"
+    },
+    {
+      "number": 62,
+      "name": "Sharpedo",
+      "rarity": "Common",
+      "file": "me06-062_sharpedo.webp",
+      "source": "https://billsarchive.com/assets/delta-reign/small/me06-062_sharpedo.webp"
+    },
+    {
+      "number": 63,
+      "name": "Darkrai",
+      "rarity": "Uncommon",
+      "file": "me06-063_darkrai.webp",
+      "source": "https://billsarchive.com/assets/delta-reign/small/me06-063_darkrai.webp"
+    },
+    {
+      "number": 64,
+      "name": "Purrloin",
+      "rarity": "Common",
+      "file": "me06-064_purrloin.webp",
+      "source": "https://billsarchive.com/assets/delta-reign/small/me06-064_purrloin.webp"
+    },
+    {
+      "number": 65,
+      "name": "Liepard",
+      "rarity": "Common",
+      "file": "me06-065_liepard.webp",
+      "source": "https://billsarchive.com/assets/delta-reign/small/me06-065_liepard.webp"
+    },
+    {
+      "number": 66,
+      "name": "Zorua",
+      "rarity": "Common",
+      "file": "me06-066_zorua.webp",
+      "source": "https://billsarchive.com/assets/delta-reign/small/me06-066_zorua.webp"
+    },
+    {
+      "number": 67,
+      "name": "Zoroark ex",
+      "rarity": "Double Rare",
+      "file": "me06-067_zoroark_ex.webp",
+      "source": "https://billsarchive.com/assets/delta-reign/small/me06-067_zoroark_ex.webp"
+    },
+    {
+      "number": 68,
+      "name": "Inkay",
+      "rarity": "Common",
+      "file": "me06-068_inkay.webp",
+      "source": "https://billsarchive.com/assets/delta-reign/small/me06-068_inkay.webp"
+    },
+    {
+      "number": 69,
+      "name": "Mega Malamar ex",
+      "rarity": "Double Rare",
+      "file": "me06-069_mega_malamar_ex.webp",
+      "source": "https://billsarchive.com/assets/delta-reign/small/me06-069_mega_malamar_ex.webp"
+    },
+    {
+      "number": 70,
+      "name": "Morpeko",
+      "rarity": "Uncommon",
+      "file": "me06-070_morpeko.webp",
+      "source": "https://billsarchive.com/assets/delta-reign/small/me06-070_morpeko.webp"
+    },
+    {
+      "number": 71,
+      "name": "Zarude",
+      "rarity": "Uncommon",
+      "file": "me06-071_zarude.webp",
+      "source": "https://billsarchive.com/assets/delta-reign/small/me06-071_zarude.webp"
+    },
+    {
+      "number": 72,
+      "name": "Druddigon",
+      "rarity": "Uncommon",
+      "file": "me06-072_druddigon.webp",
+      "source": "https://billsarchive.com/assets/delta-reign/small/me06-072_druddigon.webp"
+    },
+    {
+      "number": 73,
+      "name": "Jangmo-o",
+      "rarity": "Common",
+      "file": "me06-073_jangmo_o.webp",
+      "source": "https://billsarchive.com/assets/delta-reign/small/me06-073_jangmo_o.webp"
+    },
+    {
+      "number": 74,
+      "name": "Hakamo-o",
+      "rarity": "Common",
+      "file": "me06-074_hakamo_o.webp",
+      "source": "https://billsarchive.com/assets/delta-reign/small/me06-074_hakamo_o.webp"
+    },
+    {
+      "number": 75,
+      "name": "Kommo-o",
+      "rarity": "Rare",
+      "file": "me06-075_kommo_o.webp",
+      "source": "https://billsarchive.com/assets/delta-reign/small/me06-075_kommo_o.webp"
+    },
+    {
+      "number": 76,
+      "name": "Cyclizar",
+      "rarity": "Common",
+      "file": "me06-076_cyclizar.webp",
+      "source": "https://billsarchive.com/assets/delta-reign/small/me06-076_cyclizar.webp"
+    },
+    {
+      "number": 77,
+      "name": "Tauros",
+      "rarity": "Common",
+      "file": "me06-077_tauros.webp",
+      "source": "https://billsarchive.com/assets/delta-reign/small/me06-077_tauros.webp"
+    },
+    {
+      "number": 78,
+      "name": "Eevee",
+      "rarity": "Common",
+      "file": "me06-078_eevee.webp",
+      "source": "https://billsarchive.com/assets/delta-reign/small/me06-078_eevee.webp"
+    },
+    {
+      "number": 79,
+      "name": "Delibird",
+      "rarity": "Uncommon",
+      "file": "me06-079_delibird.webp",
+      "source": "https://billsarchive.com/assets/delta-reign/small/me06-079_delibird.webp"
+    },
+    {
+      "number": 80,
+      "name": "Azurill",
+      "rarity": "Common",
+      "file": "me06-080_azurill.webp",
+      "source": "https://billsarchive.com/assets/delta-reign/small/me06-080_azurill.webp"
+    },
+    {
+      "number": 81,
+      "name": "Swablu",
+      "rarity": "Common",
+      "file": "me06-081_swablu.webp",
+      "source": "https://billsarchive.com/assets/delta-reign/small/me06-081_swablu.webp"
+    },
+    {
+      "number": 82,
+      "name": "Altaria",
+      "rarity": "Rare",
+      "file": "me06-082_altaria.webp",
+      "source": "https://billsarchive.com/assets/delta-reign/small/me06-082_altaria.webp"
+    },
+    {
+      "number": 83,
+      "name": "Kecleon",
+      "rarity": "Common",
+      "file": "me06-083_kecleon.webp",
+      "source": "https://billsarchive.com/assets/delta-reign/small/me06-083_kecleon.webp"
+    },
+    {
+      "number": 84,
+      "name": "Mega Rayquaza ex",
+      "rarity": "Double Rare",
+      "file": "me06-084_mega_rayquaza_ex.webp",
+      "source": "https://billsarchive.com/assets/delta-reign/small/me06-084_mega_rayquaza_ex.webp"
+    },
+    {
+      "number": 85,
+      "name": "Tornadus",
+      "rarity": "Uncommon",
+      "file": "me06-085_tornadus.webp",
+      "source": "https://billsarchive.com/assets/delta-reign/small/me06-085_tornadus.webp"
+    },
+    {
+      "number": 86,
+      "name": "Fletchling",
+      "rarity": "Common",
+      "file": "me06-086_fletchling.webp",
+      "source": "https://billsarchive.com/assets/delta-reign/small/me06-086_fletchling.webp"
+    },
+    {
+      "number": 87,
+      "name": "Fletchinder",
+      "rarity": "Common",
+      "file": "me06-087_fletchinder.webp",
+      "source": "https://billsarchive.com/assets/delta-reign/small/me06-087_fletchinder.webp"
+    },
+    {
+      "number": 88,
+      "name": "Talonflame ex",
+      "rarity": "Double Rare",
+      "file": "me06-088_talonflame_ex.webp",
+      "source": "https://billsarchive.com/assets/delta-reign/small/me06-088_talonflame_ex.webp"
+    },
+    {
+      "number": 89,
+      "name": "Aarune",
+      "rarity": "Uncommon",
+      "file": "me06-089_aarune.webp",
+      "source": "https://billsarchive.com/assets/delta-reign/small/me06-089_aarune.webp"
+    },
+    {
+      "number": 90,
+      "name": "Adventure Lantern",
+      "rarity": "Uncommon",
+      "file": "me06-090_adventure_lantern.webp",
+      "source": "https://billsarchive.com/assets/delta-reign/small/me06-090_adventure_lantern.webp"
+    },
+    {
+      "number": 91,
+      "name": "Custom Vest",
+      "rarity": "Uncommon",
+      "file": "me06-091_custom_vest.webp",
+      "source": "https://billsarchive.com/assets/delta-reign/small/me06-091_custom_vest.webp"
+    },
+    {
+      "number": 92,
+      "name": "Emcee's Hype",
+      "rarity": "Common",
+      "file": "me06-092_emcee_s_hype.webp",
+      "source": "https://billsarchive.com/assets/delta-reign/small/me06-092_emcees_hype.webp"
+    },
+    {
+      "number": 93,
+      "name": "Grisham",
+      "rarity": "Uncommon",
+      "file": "me06-093_grisham.webp",
+      "source": "https://billsarchive.com/assets/delta-reign/small/me06-093_grisham.webp"
+    },
+    {
+      "number": 94,
+      "name": "Legendary Pyroduct",
+      "rarity": "Uncommon",
+      "file": "me06-094_legendary_pyroduct_a.webp",
+      "source": "https://billsarchive.com/assets/delta-reign/small/me06-094_legendary_pyroduct_a.webp"
+    },
+    {
+      "number": 95,
+      "name": "Legendary Pyroduct",
+      "rarity": "Uncommon",
+      "file": "me06-095_legendary_pyroduct_b.webp",
+      "source": "https://billsarchive.com/assets/delta-reign/small/me06-095_legendary_pyroduct_b.webp"
+    },
+    {
+      "number": 96,
+      "name": "Legendary Summit",
+      "rarity": "Uncommon",
+      "file": "me06-096_legendary_summit.webp",
+      "source": "https://billsarchive.com/assets/delta-reign/small/me06-096_legendary_summit.webp"
+    },
+    {
+      "number": 97,
+      "name": "Legendary Summit",
+      "rarity": "Uncommon",
+      "file": "me06-097_legendary_summit.webp",
+      "source": "https://billsarchive.com/assets/delta-reign/small/me06-097_legendary_summit.webp"
+    },
+    {
+      "number": 98,
+      "name": "Legendary Trench",
+      "rarity": "Uncommon",
+      "file": "me06-098_legendary_ocean_trench_a.webp",
+      "source": "https://billsarchive.com/assets/delta-reign/small/me06-098_legendary_ocean_trench_a.webp"
+    },
+    {
+      "number": 99,
+      "name": "Legendary Trench",
+      "rarity": "Uncommon",
+      "file": "me06-099_legendary_ocean_trench_b.webp",
+      "source": "https://billsarchive.com/assets/delta-reign/small/me06-099_legendary_ocean_trench_b.webp"
+    },
+    {
+      "number": 100,
+      "name": "Mega Rayquaza Cap",
+      "rarity": "Uncommon",
+      "file": "me06-100_mega_rayquaza_cap.webp",
+      "source": "https://billsarchive.com/assets/delta-reign/small/me06-100_mega_rayquaza_cap.webp"
+    },
+    {
+      "number": 101,
+      "name": "Tasty Rice Ball",
+      "rarity": "Common",
+      "file": "me06-101_tasty_rice_ball.webp",
+      "source": "https://billsarchive.com/assets/delta-reign/small/me06-101_tasty_rice_ball.webp"
+    },
+    {
+      "number": 102,
+      "name": "Tate & Liza's Training",
+      "rarity": "Uncommon",
+      "file": "me06-102_tate_liza_s_training.webp",
+      "source": "https://billsarchive.com/assets/delta-reign/small/me06-102_tate_lizas_training.webp"
+    },
+    {
+      "number": 103,
+      "name": "Zinnia's Trust",
+      "rarity": "Uncommon",
+      "file": "me06-103_zinnia_s_trust.webp",
+      "source": "https://billsarchive.com/assets/delta-reign/small/me06-103_zinnias_trust.webp"
+    },
+    {
+      "number": 104,
+      "name": "Masquerain",
+      "rarity": "Illustration Rare",
+      "file": "me06-104_masquerain_ir.webp",
+      "source": "https://billsarchive.com/assets/delta-reign/small/me06-104_masquerain_ir.webp"
+    },
+    {
+      "number": 105,
+      "name": "Sprigatito",
+      "rarity": "Illustration Rare",
+      "file": "me06-105_sprigatito_ir.webp",
+      "source": "https://billsarchive.com/assets/delta-reign/small/me06-105_sprigatito_ir.webp"
+    },
+    {
+      "number": 106,
+      "name": "Growlithe",
+      "rarity": "Illustration Rare",
+      "file": "me06-106_growlithe_ir.webp",
+      "source": "https://billsarchive.com/assets/delta-reign/small/me06-106_growlithe_ir.webp"
+    },
+    {
+      "number": 107,
+      "name": "Magmortar",
+      "rarity": "Illustration Rare",
+      "file": "me06-107_magmortar_ir.webp",
+      "source": "https://billsarchive.com/assets/delta-reign/small/me06-107_magmortar_ir.webp"
+    },
+    {
+      "number": 108,
+      "name": "Electivire",
+      "rarity": "Illustration Rare",
+      "file": "me06-108_electivire_ir.webp",
+      "source": "https://billsarchive.com/assets/delta-reign/small/me06-108_electivire_ir.webp"
+    },
+    {
+      "number": 109,
+      "name": "Pincurchin",
+      "rarity": "Illustration Rare",
+      "file": "me06-109_pincurchin_ir.webp",
+      "source": "https://billsarchive.com/assets/delta-reign/small/me06-109_pincurchin_ir.webp"
+    },
+    {
+      "number": 110,
+      "name": "Enamorus",
+      "rarity": "Illustration Rare",
+      "file": "me06-110_enamorus_ir.webp",
+      "source": "https://billsarchive.com/assets/delta-reign/small/me06-110_enamorus_ir.webp"
+    },
+    {
+      "number": 111,
+      "name": "Groudon",
+      "rarity": "Illustration Rare",
+      "file": "me06-111_groudon_ir.webp",
+      "source": "https://billsarchive.com/assets/delta-reign/small/me06-111_groudon_ir.webp"
+    },
+    {
+      "number": 112,
+      "name": "Zorua",
+      "rarity": "Illustration Rare",
+      "file": "me06-112_zorua_ir.webp",
+      "source": "https://billsarchive.com/assets/delta-reign/small/me06-112_zorua_ir.webp"
+    },
+    {
+      "number": 113,
+      "name": "Inkay",
+      "rarity": "Illustration Rare",
+      "file": "me06-113_inkay_ir.webp",
+      "source": "https://billsarchive.com/assets/delta-reign/small/me06-113_inkay_ir.webp"
+    },
+    {
+      "number": 114,
+      "name": "Eevee",
+      "rarity": "Illustration Rare",
+      "file": "me06-114_eevee_ir.webp",
+      "source": "https://billsarchive.com/assets/delta-reign/small/me06-114_eevee_ir.webp"
+    },
+    {
+      "number": 115,
+      "name": "Azurill",
+      "rarity": "Illustration Rare",
+      "file": "me06-115_azurill_ir.webp",
+      "source": "https://billsarchive.com/assets/delta-reign/small/me06-115_azurill.webp"
+    },
+    {
+      "number": 116,
+      "name": "Altaria",
+      "rarity": "Illustration Rare",
+      "file": "me06-116_altaria_ir.webp",
+      "source": "https://billsarchive.com/assets/delta-reign/small/me06-116_altaria_ir.webp"
+    },
+    {
+      "number": 117,
+      "name": "Kecleon",
+      "rarity": "Illustration Rare",
+      "file": "me06-117_kecleon_ir.webp",
+      "source": "https://billsarchive.com/assets/delta-reign/small/me06-117_kecleon_ir.webp"
+    },
+    {
+      "number": 118,
+      "name": "Mega Golisopod ex",
+      "rarity": "Ultra Rare",
+      "file": "me06-118_mega_golisopod_ex_ur.webp",
+      "source": "https://billsarchive.com/assets/delta-reign/small/me06-118_mega_golisopod_ex_ur.webp"
+    },
+    {
+      "number": 119,
+      "name": "Heat Rotom ex",
+      "rarity": "Ultra Rare",
+      "file": "me06-119_heat_rotom_ex_ur.webp",
+      "source": "https://billsarchive.com/assets/delta-reign/small/me06-119_heat_rotom_ex_ur.webp"
+    },
+    {
+      "number": 120,
+      "name": "Wishiwashi ex",
+      "rarity": "Ultra Rare",
+      "file": "me06-120_wishiwashi_ex_ur.webp",
+      "source": "https://billsarchive.com/assets/delta-reign/small/me06-120_wishiwashi_ex_ur.webp"
+    },
+    {
+      "number": 121,
+      "name": "Raikou ex",
+      "rarity": "Ultra Rare",
+      "file": "me06-121_raikou_ex_ur.webp",
+      "source": "https://billsarchive.com/assets/delta-reign/small/me06-121_raikou_ex_ur.webp"
+    },
+    {
+      "number": 122,
+      "name": "Mega Golurk ex",
+      "rarity": "Ultra Rare",
+      "file": "me06-122_mega_golurk_ex_ur.webp",
+      "source": "https://billsarchive.com/assets/delta-reign/small/me06-122_mega_golurk_ex_ur.webp"
+    },
+    {
+      "number": 123,
+      "name": "Mega Malamar ex",
+      "rarity": "Ultra Rare",
+      "file": "me06-123_mega_malamar_ex_ur.webp",
+      "source": "https://billsarchive.com/assets/delta-reign/small/me06-123_mega_malamar_ex_ur.webp"
+    },
+    {
+      "number": 124,
+      "name": "Talonflame ex",
+      "rarity": "Ultra Rare",
+      "file": "me06-124_talonflame_ex_ur.webp",
+      "source": "https://billsarchive.com/assets/delta-reign/small/me06-124_talonflame_ex_ur.webp"
+    },
+    {
+      "number": 125,
+      "name": "Aarune",
+      "rarity": "Ultra Rare",
+      "file": "me06-125_aarune_ur.webp",
+      "source": "https://billsarchive.com/assets/delta-reign/small/me06-125_aarune_ur.webp"
+    },
+    {
+      "number": 126,
+      "name": "Adventure Lantern",
+      "rarity": "Ultra Rare",
+      "file": "me06-126_adventure_lantern_ur.webp",
+      "source": "https://billsarchive.com/assets/delta-reign/small/me06-126_adventure_lantern_ur.webp"
+    },
+    {
+      "number": 127,
+      "name": "Custom Vest",
+      "rarity": "Ultra Rare",
+      "file": "me06-127_custom_vest_ur.webp",
+      "source": "https://billsarchive.com/assets/delta-reign/small/me06-127_custom_vest_ur.webp"
+    },
+    {
+      "number": 128,
+      "name": "Emcee's Hype",
+      "rarity": "Ultra Rare",
+      "file": "me06-128_emcee_s_hype_ur.webp",
+      "source": "https://billsarchive.com/assets/delta-reign/small/me06-128_emcees_hype_ur.webp"
+    },
+    {
+      "number": 129,
+      "name": "Pokémon Catcher",
+      "rarity": "Ultra Rare",
+      "file": "me06-129_pokemon_catcher_ur.webp",
+      "source": "https://billsarchive.com/assets/delta-reign/small/me06-129_pokemon_catcher_ur.webp"
+    },
+    {
+      "number": 130,
+      "name": "Tate & Liza's Training",
+      "rarity": "Ultra Rare",
+      "file": "me06-130_tate_liza_s_training_ur.webp",
+      "source": "https://billsarchive.com/assets/delta-reign/small/me06-130_tate_lizas_training_ur.webp"
+    },
+    {
+      "number": 131,
+      "name": "Zinnia's Trust",
+      "rarity": "Ultra Rare",
+      "file": "me06-131_zinnia_s_trust_ur.webp",
+      "source": "https://billsarchive.com/assets/delta-reign/small/me06-131_zinnias_trust_ur.webp"
+    },
+    {
+      "number": 132,
+      "name": "Bubbly Water Energy",
+      "rarity": "Ultra Rare",
+      "file": "me06-132_bubbly_water_energy_ur.webp",
+      "source": "https://billsarchive.com/assets/delta-reign/small/me06-132_bubbly_water_energy_ur.webp"
+    },
+    {
+      "number": 133,
+      "name": "Growing Grass Energy",
+      "rarity": "Ultra Rare",
+      "file": "me06-133_growing_grass_energy_ur.webp",
+      "source": "https://billsarchive.com/assets/delta-reign/small/me06-133_growing_grass_energy_ur.webp"
+    },
+    {
+      "number": 134,
+      "name": "Nitro Fire Energy",
+      "rarity": "Ultra Rare",
+      "file": "me06-134_nitro_fire_energy_ur.webp",
+      "source": "https://billsarchive.com/assets/delta-reign/small/me06-134_nitro_fire_energy_ur.webp"
+    },
+    {
+      "number": 135,
+      "name": "Mega Golisopod ex",
+      "rarity": "Special Illustration Rare",
+      "file": "me06-135_mega_golisopod_ex_sir.webp",
+      "source": "https://billsarchive.com/assets/delta-reign/small/me06-135_mega_golisopod_ex_sir.webp"
+    },
+    {
+      "number": 136,
+      "name": "Raikou ex",
+      "rarity": "Special Illustration Rare",
+      "file": "me06-136_raikou_ex_sir.webp",
+      "source": "https://billsarchive.com/assets/delta-reign/small/me06-136_raikou_ex_sir.webp"
+    },
+    {
+      "number": 137,
+      "name": "Mega Golurk ex",
+      "rarity": "Special Illustration Rare",
+      "file": "me06-137_mega_golurk_ex_sir.webp",
+      "source": "https://billsarchive.com/assets/delta-reign/small/me06-137_mega_golurk_ex_sir.webp"
+    },
+    {
+      "number": 138,
+      "name": "Mega Rayquaza ex",
+      "rarity": "Special Illustration Rare",
+      "file": "me06-138_mega_rayquaza_ex_sir.webp",
+      "source": "https://billsarchive.com/assets/delta-reign/small/me06-138_mega_rayquaza_ex_sir.webp"
+    },
+    {
+      "number": 139,
+      "name": "Aarune",
+      "rarity": "Special Illustration Rare",
+      "file": "me06-139_aarune_sir.webp",
+      "source": "https://billsarchive.com/assets/delta-reign/small/me06-139_aarune_sir.webp"
+    },
+    {
+      "number": 140,
+      "name": "Zinnia's Trust",
+      "rarity": "Special Illustration Rare",
+      "file": "me06-140_zinnia_s_trust_sir.webp",
+      "source": "https://billsarchive.com/assets/delta-reign/small/me06-140_zinnias_trust_sir.webp"
+    },
+    {
+      "number": 141,
+      "name": "Mega Rayquaza ex",
+      "rarity": "Mega Hyper Rare",
+      "file": "me06-141_mega_rayquaza_ex_mhr.webp",
+      "source": "https://billsarchive.com/assets/delta-reign/small/me06-141_mega_rayquaza_ex_mhr.webp"
+    }
+  ]
+}

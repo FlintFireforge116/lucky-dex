@@ -78,7 +78,10 @@ test('Clear deck styling and Android, JS, and visible versions stay in sync',()=
  const html=fs.readFileSync(path.join(assets,'index.html'),'utf8');
  const app=fs.readFileSync(path.join(assets,'app-v0167.js'),'utf8');
  const version=/versionName '([^']+)'/.exec(gradle)?.[1];
- assert.equal(version,'0.69.153');assert.match(gradle,/versionCode 7133/);
+ assert.match(version||'',/^0\.69\.\d+$/);
+ const patch=Number(version.split('.').at(-1));
+ assert.ok(patch>=153);
+ assert.equal(Number(/versionCode (\d+)/.exec(gradle)?.[1]),6980+patch);
  assert.ok(app.includes("window.__LUCKYDEX_BUILD='"+version+"'"));
  assert.ok(html.includes('id="titleBuildVersion">v'+version));
  assert.ok(html.includes('id="appBuildVersion">LUCKY DEX · v'+version));
