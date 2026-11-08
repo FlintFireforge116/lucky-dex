@@ -1,0 +1,9 @@
+LuckyDex v0.69.161 — Restore obvious Test Lab deck filtering
+
+- Both deck builders visibly label their existing card filter control as "Filter cards"; all existing card filter categories remain accessible.
+- The Test Lab home screen includes a direct "CPU DECK FILTERS" button, so allowed Classic opponent expansions and CPU challenges are easy to locate.
+- Pocket CPU filter panel starts expanded in Test Lab.
+- The independent Test Lab save now persists per-format opponent filter choices alongside Test Lab decks, without affecting normal deck libraries, collection, records or rewards.
+- Schema 1 Test Lab saved decks automatically migrate to schema 2 when next saved.
+
+Tests: 14/14 targeted persistence/builder/clear-deck tests passed; 5/5 additional selected set-picker/UI/version assertions passed. Android UI test pending. Apply over v0.69.160.

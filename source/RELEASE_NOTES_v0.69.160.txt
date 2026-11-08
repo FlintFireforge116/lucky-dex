@@ -1,0 +1,19 @@
+LuckyDex v0.69.160 — Persistent, independent Test Lab deck libraries
+
+Fixed:
+- Test Lab Pocket and Classic deck saves now survive leaving Test Lab, app restart and save export/import.
+- The Test Lab has separate Pocket and Classic saved-deck lists, with independent active decks.
+- Test Lab decks continue to unlock every battle-ready card without granting real ownership.
+- Normal owned Pocket and Classic decks, collection, rewards and recorded battle statistics remain separate.
+- Editing, renaming, copying, deleting, activating, and saving drafts use the established deck-management actions in the Test Lab library.
+
+Implementation:
+- The existing temporary sandbox state is used for gameplay and results, but its two deck libraries are snapshotted to state.tcgTestLabDecks (schema 1) whenever saved.
+- Only deck lists and activeDeckId are stored (no Test Lab battles, stats, or pseudo-ownership), then restored on Test Lab entry.
+- Both deck editors now label their library 'Test Lab decks' in Test Lab mode.
+
+Regression checks:
+- Tests: v07160-testlab-persistent-decks.test.cjs, v069136-optimizer-sandbox.test.cjs, v07153-clear-deck.test.cjs.
+- Playwright browser tests unavailable in the packaging environment (dependency not installed); verify Android WebView on device.
+
+Apply over source v0.69.159. Unzip this patch into the canonical source/ directory, then commit/push.

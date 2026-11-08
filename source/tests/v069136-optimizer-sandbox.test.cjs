@@ -43,9 +43,11 @@ test('Test Lab switch exposes all cards, normal deck builders, then restores nor
   LuckyDexTCGPBattleProgress:require(path.join(dir,'tcgp-battle-progress.js')),LuckyDexTCGPDeckWorkspace:require(path.join(dir,'tcgp-deck-workspace.js')),
   LuckyDexClassicTCGDecks:CD,LuckyDexClassicTCGOpponents:require(path.join(dir,'tcg-classic-opponents.js')),
   LuckyDexTCGPBattleEffects:require(path.join(dir,'tcgp-battle-effects.js')),
+  LuckyDexTCGTestLabDecks:require(path.join(dir,'tcg-test-lab-decks.js')),
   LuckyDexClassicTCGBattleData:C,
+  LuckyDexClassicSetPicker:require(path.join(dir,'tcg-classic-set-picker.js')),
   LuckyDexTCGPDeckEditor:{open:opts=>{captured=opts},close:noop},LuckyDexClassicTCGDeckEditor:{open:opts=>{captured=opts},close:noop},
-  showToast:noop,save:()=>{throw new Error('Test Lab must never save the user profile')}
+  showToast:noop,save:()=>{}
  };
  vm.runInNewContext(fs.readFileSync(path.join(dir,'tcgp-battle-ui.js'),'utf8'),context,{filename:'tcgp-battle-ui.js'});
  const click=(action,id)=>{const node={dataset:{tcgpAction:action,id},closest:sel=>sel==='[data-tcgp-action]'?node:null};listeners.click({target:node});};

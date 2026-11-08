@@ -8,6 +8,7 @@
     solo:root&&root.LuckyDexTCGPBattleSolo,
     progress:root&&root.LuckyDexTCGPBattleProgress,
     workspace:root&&root.LuckyDexTCGPDeckWorkspace,
+    labDecks:root&&root.LuckyDexTCGTestLabDecks,
     classicDecks:root&&root.LuckyDexClassicTCGDecks,classicOpponents:root&&root.LuckyDexClassicTCGOpponents,effects:root&&root.LuckyDexTCGPBattleEffects,
     cosmetics:root&&root.LuckyDexCosmeticsV0413,
     uiAssets:root&&root.LuckyDexTCGPUIAssets
@@ -15,7 +16,7 @@
   if(typeof module==='object'&&module.exports){
     deps={
       layout:require('./tcgp-battle-layout.js'),data:require('./tcgp-battle-data.js'),decks:require('./tcgp-battle-decks.js'),core:require('./tcgp-battle-core.js'),
-      ai:require('./tcgp-battle-ai.js'),solo:require('./tcgp-battle-solo.js'),progress:require('./tcgp-battle-progress.js'),workspace:require('./tcgp-deck-workspace.js'),classicDecks:require('./tcg-classic-decks.js'),classicOpponents:require('./tcg-classic-opponents.js'),effects:require('./tcgp-battle-effects.js'),
+      ai:require('./tcgp-battle-ai.js'),solo:require('./tcgp-battle-solo.js'),progress:require('./tcgp-battle-progress.js'),workspace:require('./tcgp-deck-workspace.js'),labDecks:require('./tcg-test-lab-decks.js'),classicDecks:require('./tcg-classic-decks.js'),classicOpponents:require('./tcg-classic-opponents.js'),effects:require('./tcgp-battle-effects.js'),
       cosmetics:require('./cosmetics-core-v0413.js'),uiAssets:require('./tcgp-ui-assets.js')
     };
     module.exports=factory(null,deps);
@@ -24,7 +25,7 @@
   }
 })(typeof globalThis!=='undefined'?globalThis:this,function(root,deps){
   'use strict';
-  const {layout,data,decks,core,ai,solo,progress,classicDecks,classicOpponents,effects,cosmetics,uiAssets}=deps;
+  const {layout,data,decks,core,ai,solo,progress,classicDecks,classicOpponents,effects,cosmetics,uiAssets,labDecks}=deps;
   const setPicker=root?.LuckyDexClassicSetPicker||(typeof module==='object'&&module.exports?require('./tcg-classic-set-picker.js'):null);
   const energyIconHtml=(type,options)=>uiAssets?.energyIconHtml?.(type,options)||`<span class="tcgp-energy-icon" data-energy="${esc(type)}"><i>${esc(String(type||'?').slice(0,1))}</i></span>`;
 
@@ -35,14 +36,16 @@
   let screen='home',battleFormat='pocket',currentPlayerEnergyTypes=[],classicDraft=null,classicSearch='',currentClassicOpponent=null;
   const recentClassicOpponentTypes=[];
   // The simplified Test Lab uses ordinary deck builders and battles. Its
-  // ownership catalogue and saved decks live only in this session.
+  // ownership catalogue is temporary, but deck libraries persist separately.
+  // Normal owned decks, match history and player progression remain untouched.
   let sandboxMode=false;
   const sandboxState={cards:{},tcgpBattle:{decks:[],activeDeckId:null},tcgClassicBattle:{decks:[],activeDeckId:null}};
   let sandboxPocketRows=null,sandboxClassicRows=null;
   function workingState(){return sandboxMode?sandboxState:(root?.state||{});}
+  function enterSandbox(){labDecks.restore(root?.state,sandboxState);sandboxMode=true;}
   function sandboxPocketCards(){if(!sandboxPocketRows)sandboxPocketRows=data.CARDS.filter(c=>c&&c.kind!=='energy'&&c.battleEnabled&&!c.loaner).map(c=>({gameplayId:c.id,name:c.name,card:c,quantity:2,battleEnabled:true,variants:[]}));return sandboxPocketRows;}
   function sandboxClassicCards(){if(!sandboxClassicRows)sandboxClassicRows=(root.LuckyDexClassicTCGBattleData?.CARDS||[]).filter(c=>c.battleEnabled&&c.deckEligible!==false&&!c.basicEnergy).map(c=>({gameplayId:c.id,name:c.name,card:c,quantity:4,battleEnabled:true,variants:[]}));return sandboxClassicRows;}
-  function sandboxBanner(){return sandboxMode?'<section class="tcgp-battle-panel" style="margin:8px 0;padding:10px 12px"><strong>TEST LAB · ALL CARDS</strong><p style="margin:4px 0">All battle-ready cards are available in normal deck building and combat. Test decks exist only in this session. No collection changes, rewards or battle records.</p><button type="button" class="tcgp-battle-action secondary" data-tcgp-action="exit-sandbox">EXIT TEST LAB</button></section>':'';}
+  function sandboxBanner(){return sandboxMode?'<section class="tcgp-battle-panel" style="margin:8px 0;padding:10px 12px"><strong>TEST LAB · ALL CARDS</strong><p style="margin:4px 0">All battle-ready cards are available. Use Build Deck → Filter cards for the card catalogue, or CPU DECK FILTERS below for your opponent. Decks and opponent filters save separately from normal play. No rewards or battle records.</p><div class="tcgp-battle-actions-row"><button type="button" class="tcgp-battle-action" data-tcgp-action="open-opponent-filters">CPU DECK FILTERS</button><button type="button" class="tcgp-battle-action secondary" data-tcgp-action="exit-sandbox">EXIT TEST LAB</button></div></section>':'';}
 
   // One authoritative CPU expansion list: do not hide newly imported sets in the battle UI.
   const CLASSIC_SETS=classicOpponents.SETS.slice();
@@ -77,7 +80,7 @@
 
   const esc=value=>String(value==null?'':value).replace(/[&<>"']/g,ch=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));
   const el=id=>root&&root.document?root.document.getElementById(id):null;
-  const saveNow=()=>{try{if(!sandboxMode&&root&&typeof root.save==='function')root.save();}catch(error){console.error('[TCGP Battle] save failed',error);}};
+  const saveNow=()=>{try{if(sandboxMode)labDecks.persist(root?.state,sandboxState);if(root&&typeof root.save==='function')root.save();}catch(error){console.error('[TCGP Battle] save failed',error);}};
   const toast=msg=>{try{if(root&&typeof root.showToast==='function')root.showToast(msg,2400);}catch(_){}};
   let battleEventTimer=null,battleEventSerial=0;
   function clearBattleEvent(){clearTimeout(battleEventTimer);battleEventTimer=null;battleEvent='';battleEventSide=null;battleEventCardId=null;battleEventKind=null;battleEventSerial++;}
@@ -427,7 +430,7 @@
   function setBattleLive(on){if(!root?.document?.body)return;root.LuckyDexTCGPDeckEditor?.close();root.LuckyDexClassicTCGDeckEditor?.close();root.document.body.classList.remove('tcgp-deck-editing');if(on)root.document.body.classList.add('tcgp-battle-live');else root.document.body.classList.remove('tcgp-battle-live');}
 
   function pocketOpponentConfig(){const cfg=battleSave();return {rarityFocus:Math.max(0,Math.min(4,Number(cfg.opponentRarityFocus)||0)),basicOnly:cfg.opponentBasicOnly===true,theme:decks.THEMES.some(t=>t.id===cfg.opponentTheme)?cfg.opponentTheme:'any'};}
-  function pocketOpponentPickerHtml(){const cfg=pocketOpponentConfig();const themes=decks.THEMES.map(r=>`<button type="button" class="tcgp-battle-action ${cfg.theme===r.id?'':'secondary'}" data-tcgp-action="pocket-opponent-theme" data-id="${r.id}" aria-pressed="${cfg.theme===r.id}">${esc(r.label)}</button>`).join('');const choices=decks.FOCUS_RARITIES.map(r=>`<button type="button" class="tcgp-battle-action ${cfg.rarityFocus===r.rank?'':'secondary'}" data-tcgp-action="pocket-opponent-rarity" data-id="${r.rank}" aria-pressed="${cfg.rarityFocus===r.rank}">${esc(r.label)}</button>`).join('');return `<details class="tcgp-battle-panel"><summary>Random Battle · CPU rarity challenge</summary><p>Choose the Pokémon rarity for <b>Random Battle</b> opponents. Official named Solo decks are unchanged. Evolution prerequisites and Trainers may be lower rarity.</p><div class="tcgp-battle-actions-row">${themes}</div><div class="tcgp-battle-actions-row">${choices}<button type="button" class="tcgp-battle-action ${cfg.basicOnly?'':'secondary'}" data-tcgp-action="pocket-opponent-basic" aria-pressed="${cfg.basicOnly}">Basic Pokémon only</button></div></details>`;}
+  function pocketOpponentPickerHtml(){const cfg=pocketOpponentConfig();const themes=decks.THEMES.map(r=>`<button type="button" class="tcgp-battle-action ${cfg.theme===r.id?'':'secondary'}" data-tcgp-action="pocket-opponent-theme" data-id="${r.id}" aria-pressed="${cfg.theme===r.id}">${esc(r.label)}</button>`).join('');const choices=decks.FOCUS_RARITIES.map(r=>`<button type="button" class="tcgp-battle-action ${cfg.rarityFocus===r.rank?'':'secondary'}" data-tcgp-action="pocket-opponent-rarity" data-id="${r.rank}" aria-pressed="${cfg.rarityFocus===r.rank}">${esc(r.label)}</button>`).join('');return `<details class="tcgp-battle-panel tcgp-pocket-opponent-filters" ${sandboxMode?'open':''}><summary>CPU deck filters · rarity, strategy and Pokémon</summary><p>Choose the Pokémon rarity for <b>Random Battle</b> opponents. Official named Solo decks are unchanged. Evolution prerequisites and Trainers may be lower rarity.</p><div class="tcgp-battle-actions-row">${themes}</div><div class="tcgp-battle-actions-row">${choices}<button type="button" class="tcgp-battle-action ${cfg.basicOnly?'':'secondary'}" data-tcgp-action="pocket-opponent-basic" aria-pressed="${cfg.basicOnly}">Basic Pokémon only</button></div></details>`;}
   function renderHome(skipGuard){
     if((screen==='builder'||screen==='classic-builder')&&skipGuard!==true)return requestLeave(()=>renderHome(true));
     clearBattleEvent();finishBattlePresentation(false);
@@ -1308,6 +1311,13 @@
       else return;
       recentClassicOpponentTypes.length=0;saveNow();refreshOpponentControls();return;
     }
+    if(action==='open-opponent-filters'){
+      const selector=battleFormat==='classic'?'.tcgp-classic-match-settings':'.tcgp-pocket-opponent-filters';
+      const panel=el('tcgpBattleContent')?.querySelector(selector);
+      if(panel?.tagName==='DETAILS')panel.open=true;
+      panel?.scrollIntoView?.({behavior:'smooth',block:'start'});
+      return;
+    }
     if(action==='classic-build')return openClassicBuilder();
     if(action==='classic-quick')return openClassicBuilder('quick');
     if(action==='classic-add'||action==='classic-remove'){
@@ -1319,7 +1329,7 @@
     }
     if(action==='classic-battle')return startClassicOwned();
     if(action==='classic-practice')return startClassicBattle(classicDecks.LOANER_DECK.slice(),true);
-    if(action==='substitute-lab'||action==='open-sandbox'){sandboxMode=true;classicDraft=null;recentClassicOpponentTypes.length=0;return renderHome(true);}
+    if(action==='substitute-lab'||action==='open-sandbox'){if(!sandboxMode)enterSandbox();classicDraft=null;recentClassicOpponentTypes.length=0;return renderHome(true);}
     if(action==='exit-sandbox'){sandboxMode=false;classicDraft=null;currentDeckAppearance=null;return renderHome(true);}
     if(action==='classic-inspect'){
       const row=classicOwnedRows().find(item=>item.gameplayId===btn.dataset.id),owned=row?.variants?.[0]?.row;if(owned&&typeof root?.openCardModal==='function')return root.openCardModal(owned);const card=data.cardById(btn.dataset.id);return toast(card?`${card.name} · ${card.support?.status||'Battle ready'}`:'Base Set card');
