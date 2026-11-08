@@ -1,0 +1,19 @@
+LuckyDex v0.69.159 — Gen 3 damage-counter attack correction
+
+Base version: v0.69.158. Apply this patch to the unpacked source/ tree.
+
+FIXED
+- EX Ruby & Sapphire Vigoroth (ex1-47) Rage now adds 10 damage per counter (rather than 100).
+  The battle engine stores accumulated damage in HP units (10 per counter), so its effect
+  multiplier must be 1. With 10 damage taken, Rage correctly previews and deals 30 (not 120).
+- EX Ruby & Sapphire Goldeen (ex1-55) Flail had the identical data error. Its damage now
+  correctly equals the damage Goldeen has taken (10 per counter).
+- Corrected both previews in the active Pokémon move panel and executed battle damage.
+
+QUALITY CONTROL
+- Added regression coverage for Vigoroth Rage at 0–60 existing damage and Goldeen Flail
+  at 0–40 existing damage, verifying preview, actual attack log and defender damage.
+- Re-ran EX Ruby & Sapphire battle / card audit and release metadata tests.
+- No changes to existing energy zone, prizes, game format, opponent deck choice or other sets.
+
+Updated versionName 0.69.159, versionCode 7139.

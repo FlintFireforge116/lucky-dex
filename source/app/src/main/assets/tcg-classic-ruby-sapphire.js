@@ -179,8 +179,8 @@ add(31,1,{type:'damageRule',ignoreWeakness:true,ignoreResistance:true,ignoreEffe
 add(99,0,{type:'energyDamage',source:'self',extraAbove:1,maxCount:2,amount:10},'Energy Ball: +10 per extra attached Energy beyond first, maximum +20.');
 add(48,1,{type:'energyDamage',source:'self',energyType:'Water',extraAbove:1,maxCount:2,amount:10},'Water Gun: +10 per Water Energy beyond cost, maximum +20.');
 add(16,1,{type:'energyDamage',source:'self',energyType:'Fighting',amount:10},'Battle Blast: +10 per attached Fighting Energy.');
-add(55,0,{type:'damageFromDamage',source:'self',amount:10},'Flail: 10 damage per damage counter on Goldeen.');
-add(47,1,{type:'damageFromDamage',source:'self',amount:10},'Rage: 20 damage plus 10 per counter on Vigoroth.');
+add(55,0,{type:'damageFromDamage',source:'self',amount:1},'Flail: 10 damage per damage counter on Goldeen.');
+add(47,1,{type:'damageFromDamage',source:'self',amount:1},'Rage: 20 damage plus 10 per counter on Vigoroth.');
 // Scyther ex Agility prevents damage AND effects; do not enable a partial guard.
 
 // Reuse verified generic effects for first-generation EX-specific moves.
