@@ -139,9 +139,9 @@ test('Skyridge card passives affect actual Energy payment, retreat and evolution
  assert.ok(!core.legalActions(s,'player').some(x=>x.type==='evolve'&&x.benchIndex===0),'Primal Aura locks Bench evolution');
 });
 
-test('Skyridge Immunity prevents opponent attack damage and status effects until suppressed',()=>{
+test('Skyridge Immunity blocks opponent attack effects, but not attack damage',()=>{
  const s=init(),champ=slot(16);s.sides.player.active=champ;
- assert.ok(fx.attackIsPrevented(s,'player',champ,s.sides.opponent.active,classic.cardById));
+ assert.equal(fx.attackIsPrevented(s,'player',champ,s.sides.opponent.active,classic.cardById),null);
  assert.equal(fx.attackEffectsPrevented(s,'player',champ,s.sides.opponent.active,classic.cardById),true);
 });
 

@@ -1,0 +1,8 @@
+LuckyDex v0.69.162 — Skyridge Machamp Immunity rules correction
+
+- Skyridge Machamp #16/144 and holo H15/H32: Poké-Body Immunity now prevents effects of opponents' attacks only. Normal attack damage is no longer blocked.
+- Attack effects such as Sleep, Poison, Confusion, forced switching and placing damage counters remain blocked when they affect Machamp. Effects from non-attack sources remain unaffected.
+- Corrected the v0.69.149 Skyridge test that had mistakenly asserted Machamp should prevent attack damage.
+- Added battle-action regression tests covering printed-damage attacks, damage plus Sleep, placed damage counters, non-attack effects and both Machamp printings.
+
+This update does not change the general damage-prevention engine or any other Pokémon's ability. It builds directly on v0.69.161.

@@ -189,7 +189,8 @@ atk(90,0,{type:'neoRule',rule:'skyridge:callFriends'},'Bench one Baby or Basic P
 powers[4]=passive('Water Immunity',{type:'neoRule',rule:'skyridge:waterImmunity'});
 powers[21]=passive('Fire Immunity',{type:'neoRule',rule:'skyridge:fireImmunity'});
 powers[14]=passive('Primal Aura',{type:'neoRule',rule:'skyridge:primalAura'});
-powers[16]=passive('Immunity',{type:'sequence',effects:[{type:'preventDamage',duration:'whileInPlay'},{type:'preventEffects',duration:'whileInPlay'}]});
+// Prevent attack effects (including Special Conditions), NOT the printed attack damage.
+powers[16]=passive('Immunity',{type:'preventEffects',duration:'whileInPlay'});
 powers[23]={name:'Primal Stare',type:'passive',activeOnly:true,effect:{type:'actionLock',cardType:'EvolutionActive',side:'opponent',duration:'whileActive'}};
 powers[26]={name:'Strange Spiral',type:'activated',activeOnly:true,oncePerTurn:true,effect:{type:'neoRule',rule:'skyridge:strangeSpiral'}};
 powers[31]=passive('Rare Metal',{type:'neoRule',rule:'skyridge:rareMetal'});
