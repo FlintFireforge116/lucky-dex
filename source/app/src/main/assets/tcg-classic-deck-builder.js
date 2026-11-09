@@ -158,7 +158,7 @@ function buildDeck(rows,options={}){
  // attacker's Energy Zone. Mixed *support* requires an explicit opt-in; a
  // featured family that itself needs two Energy types always keeps both.
  const mainRoot=familyRoot(main,evolutionPool),lineEnergy=[...new Set(mainLine.flatMap(attackTypes))],selectedTypes=requestedEnergy.length===1?requestedEnergy.slice():(allowMixedEnergy&&requestedEnergy.length===2?requestedEnergy.slice():lineEnergy.slice(0,2));
- if(!selectedTypes.length){const ownType=requestedEnergy[0]||(main.types||[]).find(t=>decks.ENERGY_TYPES.includes(t));if(ownType)selectedTypes.push(ownType);}
+ if(!selectedTypes.length){const ownType=requestedEnergy[0]||(main.deckMeta?.preferredEnergyTypes||[]).find(t=>decks.ENERGY_TYPES.includes(t))||(main.types||[]).find(t=>decks.ENERGY_TYPES.includes(t));if(ownType)selectedTypes.push(ownType);}
  if(!selectedTypes.length)selectedTypes.push('Fighting');
  const cards=[],counts=new Map();
  function trainerIsUseful(card){

@@ -234,6 +234,13 @@ const PRINT=`1|Flip a coin for each Water Energy attached to Azumarill. This att
 const FIELDS=new Map(RAW.split('\n').map(line=>{const p=line.split('|');return [Number(p[0]),p]}));
 const TEXT=new Map(PRINT.split('\n').map(line=>{const p=line.split('|');return [Number(p[0]),p]}));
 const noop={type:'noop'},r=name=>({type:'neoRule',rule:'ex7:'+name});
+// Three original 2004 copy attacks require actual copied-attack choices.
+// An executable copyAttack also supports cards from the 2000 Team Rocket set.
+const COPIED_ATTACKS=Object.freeze({
+ '6:0':{type:'coinFlip',heads:{type:'copyAttack',source:'selfBench',allowedNamePrefix:'Dark '}}, // Dark Link: heads, a different Dark Pokemon in play
+ '14:1':{type:'copyAttack',source:'opponentBench'},              // Rainbow Moves: opponent Bench only
+ '50:1':{type:'coinFlip',heads:{type:'copyAttack',source:'opponentActive'}} // Mini-Metronome: heads
+});
 const EX=new Set([96,97,98,99,100,101,102,103,104,105,106]);
 const TM=new Set([]),STADIUM=new Set([87,90]),TOOLS=new Set([]);
 const DARK_DUAL=new Set([2,3,4,5,6,7,8,9,16,18,20,29,30,33,34,35,36,37,38,39,40,41,42]);
@@ -250,7 +257,7 @@ function parse(n){
  if(kind==='P'){
    const attacks=(moves||'').split(';').filter(Boolean).map((str,i)=>{
      const [move,cost,printed='']=str.split('~'),original=attackText[i]==='-'?'':attackText[i]||'';
-     const effect=original?r(n+':'+i):noop;
+     const effect=COPIED_ATTACKS[n+':'+i]||(original?r(n+':'+i):noop);
      if(!fx.supportsEffect(effect))missing.push('Unsupported attack effect: '+move);
      return {name:move,cost,damage:/[×x]/.test(printed)?0:Number((printed.match(/^\d+/)||[])[0]||0),damageText:printed||null,text:original,effect};
    });
@@ -284,15 +291,40 @@ function parse(n){
  for(const [word,tag] of [['poison','poison'],['burn','burn'],['asleep','sleep'],['confus','confusion']])if(new RegExp('if the defending pokémon (?:is|already has).*'+word).test(fullText))payoffs.add(tag);
  for(const attack of card.attacks||[])for(const sym of String(attack.cost||''))if(sym!=='C'&&T[sym])energyTypes.add(T[sym]);
  if(card.kind==='pokemon'&&card.stage!=='Basic')stages.add(card.stage);
+ // Black Beam is an activated Poison power, not a printed attack.
+ if(n===3)inflicts.add('poison');
  if(/^Dark |^Rocket's /.test(name))roles.add('rocket');
  if(rarity==='Rare Holo Star')roles.add('pokemon-star');
  if([94,95].includes(n)&&kind==='E')roles.add('energy');
  if(card.kind==='trainer'&&[87,90].includes(n))roles.add('dark-synergy');
+ // The name-based Rocket family includes the 2000 Team Rocket expansion
+ // (base5), not only the 2004 EX set. Do NOT conflate Dark with Darkness.
+ const isRocketPokemon=card.kind==='pokemon'&&/^(?:Dark |Rocket's )/.test(name);
+ const rocketRequired=card.kind==='trainer'&&[87,89,90].includes(n);
+ const rocketPreferred=card.kind==='trainer'&&[88,91,92].includes(n);
+ if(isRocketPokemon)roles.add('rocket-family');
  if(card.kind==='trainer'&&[83,86,88,111].includes(n))roles.add('draw');
  if(card.kind==='trainer'&&[87,90].includes(n))roles.add('stadium');
  if(card.kind==='trainer'&&[84,85,86,88,89,91,92].includes(n))roles.add('support');
  if(card.kind==='trainer'&&n===84)roles.add('recovery');
- card.deckMeta=Object.freeze({roles:[...roles],inflicts:[...inflicts],payoffs:[...payoffs],energyTypes:[...energyTypes],stages:[...stages],synergy:[]});
+ // Do not recommend prize-reveal or self-discard cards as draw/disruption
+ // engines. The original text matters more than a keyword scan here.
+ if(kind==='T'){
+   if(n===83){roles.delete('disruption');roles.add('draw');}
+   if(n===84){roles.delete('draw');roles.delete('disruption');roles.add('recovery');roles.add('search');}
+   if(n===87){roles.delete('disruption');roles.add('stall');}
+   if(n===88){roles.delete('disruption');roles.add('draw');}
+   if(n===90){roles.delete('disruption');roles.add('damage');}
+   if(n===111){roles.delete('draw');roles.delete('disruption');roles.add('information');}
+ }
+ // Keep printed type separate from the Energy types actually needed for attacks.
+ // Rocket-themed support receives a shared affiliation regardless of expansion.
+ card.deckMeta=Object.freeze({roles:[...roles],inflicts:[...inflicts],payoffs:[...payoffs],energyTypes:[...energyTypes],stages:[...stages],
+   ...(isRocketPokemon?{team:'rocket'}:{}),requiredTeams:rocketRequired?['rocket']:[],
+   preferredTeams:rocketPreferred?['rocket']:[],
+   // The two Rocket's ex Dual Armor cards have only Colorless attack costs,
+   // but need these Basic Energy types to make their Bodies useful.
+   preferredEnergyTypes:n===101?['Metal']:n===102?['Grass']:[],synergy:[]});
  return Object.freeze({...card,battleEnabled:missing.length===0,deckEligible:missing.length===0,support:{status:missing.length?'PARTIAL':'FULL',reasons:missing}});
 }
 const CARDS=Object.freeze(Array.from({length:111},(_,i)=>parse(i+1)));

@@ -8,8 +8,8 @@ android {
         applicationId 'com.example.luckydex'
         minSdk 26
         targetSdk 35
-        versionCode 7158
-        versionName '0.69.178'
+        versionCode 7159
+        versionName '0.69.179'
     }
 
     signingConfigs {

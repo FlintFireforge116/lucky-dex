@@ -116,12 +116,17 @@
   // Restrict inferred roles to what these printed Trainers actually accomplish.
   if(card.id==='ex5-92')roles.delete('disruption');
   if(card.id==='ex5-90')roles.delete('damage');
+  // EX Team Rocket Returns Supporter names contain generic discard/shuffle
+  // words, but these cards do not disrupt an opponent's hand as an effect.
+  if(['ex7-83','ex7-84','ex7-87','ex7-88','ex7-90','ex7-111'].includes(card.id))roles.delete('disruption');
+  if(['ex7-84','ex7-111'].includes(card.id))roles.delete('draw');
+  if(card.id==='ex7-111')roles.delete('search');
   if(card.kind==='pokemon')for(const t of card.types||[])sources.add(t);
   const result=Object.freeze({roles:[...roles],inflicts:[...inflicts],payoffs:[...payoffs],energyTypes:[...energyTypes],stages:[...stages],sources:[...sources],requiredTeams:[...requiredTeams],preferredTeams:[...preferredTeams]});
   cache.set(card,result);return result;
  }
  function context(pokemon=[],energy=[],theme='any'){
-  const mons=pokemon.filter(x=>x?.kind==='pokemon'),profile=mons.map(metadata),teams=new Set(mons.flatMap(c=>{const team=c.deckMeta?.team||(c.name?.startsWith("Team Aqua's")?'aqua':c.name?.startsWith("Team Magma's")?'magma':null);return team?[team]:[];})),statusInflict=new Set(profile.flatMap(p=>p.inflicts)),payoffs=new Set(profile.flatMap(p=>p.payoffs)),types=new Set([...energy,...mons.flatMap(c=>c.types||[])]),stages=new Set(mons.map(c=>c.stage));
+  const mons=pokemon.filter(x=>x?.kind==='pokemon'),profile=mons.map(metadata),teams=new Set(mons.flatMap(c=>{const team=c.deckMeta?.team||(c.name?.startsWith("Team Aqua's")?'aqua':c.name?.startsWith("Team Magma's")?'magma':/^(?:Dark |Rocket's )/.test(c.name||'')?'rocket':null);return team?[team]:[];})),statusInflict=new Set(profile.flatMap(p=>p.inflicts)),payoffs=new Set(profile.flatMap(p=>p.payoffs)),types=new Set([...energy,...mons.flatMap(c=>c.types||[])]),stages=new Set(mons.map(c=>c.stage));
   return {pokemon:mons,energy:new Set(energy),types,stages,teams,statusInflict,payoffs,theme:THEMES.some(t=>t.id===theme)?theme:'any'};
  }
  function trainerScore(card,ctx){
