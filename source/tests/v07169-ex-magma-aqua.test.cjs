@@ -81,7 +81,7 @@ test('Power Saver, Shell Retreat, dual weakness, and stadium modifiers enforce p
  s.sides.player.active=sl(1,'aqua');assert.equal(core.effectContext(s,'player',{},s.sides.player.active).retreatCost('player'),C(1).retreat);
 });
 test('version and script order are consistent',()=>{
- const gradle=fs.readFileSync(path.resolve(__dirname,'../app/build.gradle'),'utf8');assert.match(gradle,/versionName '0\.69\.169'/);
+ const gradle=fs.readFileSync(path.resolve(__dirname,'../app/build.gradle'),'utf8');assert.match(gradle,/versionName '0\.69\.170'/);
  const html=fs.readFileSync(path.join(A,'index.html'),'utf8');assert.match(html,/tcg-classic-team-magma-aqua\.js/);
 });
 

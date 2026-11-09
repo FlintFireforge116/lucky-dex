@@ -1446,6 +1446,16 @@
           state.log.push({type:'gymEffect',side:foeSide,rule:'Ninja Trick',switched:true});
         }
       }
+      // EX Team Aqua's Crawdaunt: Aqua Reverse switches the selected Team
+      // Magma defender *before* damage, so the incoming Active's weakness,
+      // resistance and defensive Bodies are applied to the actual hit.
+      if(state.format==='classic'&&s.active.cardId==='ex4-2'&&attack.name==='Aqua Reverse'&&matched.effectSelection){
+        const incoming=foe.bench.find(p=>p.uid===matched.effectSelection);
+        if(incoming&&data.cardById(incoming.cardId)?.name.startsWith("Team Magma's")){
+          effects.applyEffect({type:'neoRule',rule:'ex4:2:0'},{...effectContext(state,side,matched),isAttack:true});
+          matched.ex4AquaReverseResolved=true;
+        }
+      }
       const context={...effectContext(state,side,matched),isAttack:true},result=effects.resolveAttack(attack,context);
       if(state.format==='classic'&&s.active.cardId==='ex1-19'&&attack.name==='Spit Up'&&Number(s.active.ex1StockpileUntil)===state.turnNumber)result.damage=70;
       if(state.format==='classic'&&toolsOf(s.active).some(ref=>ref.cardId==='ecard3-122'))s.active.skyridgeCrystalShardUsedTurn=state.turnNumber;

@@ -51,7 +51,7 @@
  function metadata(card){
   if(!card||typeof card!=='object')return {roles:[],inflicts:[],payoffs:[],energyTypes:[],stages:[],sources:[]};
   const saved=cache.get(card);if(saved)return saved;
-  const roles=new Set(),inflicts=new Set(),payoffs=new Set(),energyTypes=new Set(),stages=new Set(),sources=new Set();
+  const roles=new Set(),inflicts=new Set(),payoffs=new Set(),energyTypes=new Set(),stages=new Set(),sources=new Set(),requiredTeams=new Set(),preferredTeams=new Set();
   const effects=[card.effect,...(card.attacks||[]).map(a=>a.effect),...(Array.isArray(card.abilities)?card.abilities:card.ability?[card.ability]:[]).map(a=>a.effect)];
   const seen=new Set();
   const walk=(e)=>{
@@ -110,18 +110,23 @@
    for(const x of override.payoffs||[])payoffs.add(x);
    for(const x of override.energyTypes||[])energyTypes.add(x);
    for(const x of override.stages||[])stages.add(x);
+   for(const x of override.requiredTeams||[])requiredTeams.add(x);
+   for(const x of override.preferredTeams||[])preferredTeams.add(x);
   }
   if(card.kind==='pokemon')for(const t of card.types||[])sources.add(t);
-  const result=Object.freeze({roles:[...roles],inflicts:[...inflicts],payoffs:[...payoffs],energyTypes:[...energyTypes],stages:[...stages],sources:[...sources]});
+  const result=Object.freeze({roles:[...roles],inflicts:[...inflicts],payoffs:[...payoffs],energyTypes:[...energyTypes],stages:[...stages],sources:[...sources],requiredTeams:[...requiredTeams],preferredTeams:[...preferredTeams]});
   cache.set(card,result);return result;
  }
  function context(pokemon=[],energy=[],theme='any'){
-  const mons=pokemon.filter(x=>x?.kind==='pokemon'),profile=mons.map(metadata),statusInflict=new Set(profile.flatMap(p=>p.inflicts)),payoffs=new Set(profile.flatMap(p=>p.payoffs)),types=new Set([...energy,...mons.flatMap(c=>c.types||[])]),stages=new Set(mons.map(c=>c.stage));
-  return {pokemon:mons,energy:new Set(energy),types,stages,statusInflict,payoffs,theme:THEMES.some(t=>t.id===theme)?theme:'any'};
+  const mons=pokemon.filter(x=>x?.kind==='pokemon'),profile=mons.map(metadata),teams=new Set(mons.flatMap(c=>{const team=c.deckMeta?.team||(c.name?.startsWith("Team Aqua's")?'aqua':c.name?.startsWith("Team Magma's")?'magma':null);return team?[team]:[];})),statusInflict=new Set(profile.flatMap(p=>p.inflicts)),payoffs=new Set(profile.flatMap(p=>p.payoffs)),types=new Set([...energy,...mons.flatMap(c=>c.types||[])]),stages=new Set(mons.map(c=>c.stage));
+  return {pokemon:mons,energy:new Set(energy),types,stages,teams,statusInflict,payoffs,theme:THEMES.some(t=>t.id===theme)?theme:'any'};
  }
  function trainerScore(card,ctx){
   if(!card||card.kind!=='trainer')return -Infinity;
   const p=metadata(card);
+  // An Archie/Magma Belt/Team-specific TM with no matching Team Pokemon is
+  // a dead card regardless of its generic 'search' or 'disruption' tag.
+  if(p.requiredTeams.length&&!p.requiredTeams.some(t=>ctx.teams?.has(t)))return -Infinity;
   // Exact hard mismatch: never add Stadiums or Tools that only improve Pokémon
   // types and evolution stages absent from the target deck. This is separate
   // from their generic usefulness and does not force a matching type in the
@@ -140,6 +145,7 @@
   if(ctx.theme==='energy'&&p.roles.includes('energy'))score+=42;
   if(ctx.theme==='disruption'&&p.roles.includes('disruption'))score+=42;
   if(p.energyTypes.length)score+=8;
+  if(p.preferredTeams.some(t=>ctx.teams?.has(t)))score+=15;
   return score;
  }
  function pokemonThemeScore(card,theme='any'){

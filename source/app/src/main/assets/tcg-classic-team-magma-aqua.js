@@ -302,7 +302,12 @@ function parse(n){
  if(card.kind==='trainer'&&/Belt|Charm/.test(name))roles.add('support');
  if(card.kind==='energy')roles.add('energy');
  const team=name.startsWith('Team Aqua')?'aqua':name.startsWith('Team Magma')?'magma':null;
- card.deckMeta=Object.freeze({roles:[...roles],inflicts:[...inflicts],payoffs:[...payoffs],energyTypes:[...energyTypes],stages:[...stages],...(team?{team}:{}),synergy:team?[team]:[]});
+ // Team-locked Trainers must not fill dead slots in an unrelated deck.
+ const requiredTeam=kind==='T'&&[71,75,76,77,78,79].includes(n)?'aqua':kind==='T'&&[73,80,81,82,83,84].includes(n)?'magma':null;
+ const preferredTeam=kind==='T'&&n===69?'aqua':kind==='T'&&n===70?'magma':null;
+ if(n===79)for(const x of ['sleep','poison','burn','paralysis','confusion'])inflicts.add(x);
+ if([71,73,75,80].includes(n))roles.add('search');
+ card.deckMeta=Object.freeze({roles:[...roles],inflicts:[...inflicts],payoffs:[...payoffs],energyTypes:[...energyTypes],stages:[...stages],...(team?{team}:{}),...(requiredTeam?{requiredTeams:[requiredTeam]}:{}),...(preferredTeam?{preferredTeams:[preferredTeam]}:{}),synergy:team?[team]:[]});
  return Object.freeze({...card,battleEnabled:missing.length===0,deckEligible:missing.length===0,support:{status:missing.length?'PARTIAL':'FULL',reasons:missing}});
 }
 const CARDS=Object.freeze(Array.from({length:97},(_,i)=>parse(i+1)));
