@@ -1,0 +1,35 @@
+LuckyDex v0.69.166 — EX Sandstorm / EX Dragon review & deck filters
+Base: v0.69.165; do not apply over an older or newer source without checking.
+
+Player and Test Lab Classic TCG deck-editor card filters now populate expansions
+from the canonical Classic set picker. EX Sandstorm (ex2) and EX Dragon (ex3)
+appear alongside EX Ruby & Sapphire in the Set chips.
+
+Player Classic auto-builder now takes its default allowed sets from the shared
+deck builder SET_IDS registry, on startup and on every deck editor open.
+Both EX sets are included automatically; the existing CPU allowed-set picker
+already registered them and is retained.
+
+EX Dragon deck-builder synergy metadata: High Pressure System matches Fire +
+Water rather than only Water; Low Pressure System matches Grass + Lightning
+rather than only Lightning. Balloon Berry has a retreat role and Energy Recycle
+System has an Energy support role. Status effect coin flips no longer count as
+status payoffs merely because their printed text says 'If heads, ...'.
+
+EX Dragon Ninjask #18 Quick Touch: after optionally switching with a Benched
+Pokemon, offer a choice to move 0..N attached Grass Energy from Ninjask to the
+new Active Pokemon. Previously the printed transfer step was absent.
+
+Automated checks: all 100 Sandstorm + 100 Dragon card filters; mixed and
+set-only player/CPU deck generation; two Stadium modifiers and metadata;
+Ninjask move outcome; latest EX/Sandstorm/Dragon/Test Lab regression tests.
+The historical v0.69.165 test now checks version synchronisation instead of
+hardcoding an old version. The splash and title-screen version labels also
+match the Android and runtime versions.
+
+Limitations: tested representative move outcomes and the prior set suites,
+not every possible cross-set interaction or Android touchscreen UI.
+
+Apply to ~/lucky-dex/source using:
+  unzip -o /sdcard/Download/LuckyDex_patch_v0.69.166.zip -d source
+Then git add source; git commit; git push origin main.

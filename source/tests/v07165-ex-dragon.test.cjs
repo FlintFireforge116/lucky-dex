@@ -99,7 +99,8 @@ test('Stadiums adjust retreat and HP while in play; Muk ex suppresses all other 
  s.sides.opponent.active=sl(96,'muk');assert.equal(fx.abilitiesSuppressed(s,'player',sl(11,'shed'),classic.cardById),true);
 });
 test('updated version metadata and Android script ordering',()=>{
- assert.match(fs.readFileSync(path.resolve(__dirname,'../app/build.gradle'),'utf8'),/versionName '0\.69\.165'/);
+ const gradle=fs.readFileSync(path.resolve(__dirname,'../app/build.gradle'),'utf8'),script=fs.readFileSync(path.join(A,'app-v0167.js'),'utf8');
+ const version=gradle.match(/versionName '([^']+)'/)?.[1];assert.ok(version);assert.equal(script.match(/__LUCKYDEX_BUILD='([^']+)'/)?.[1],version);
  const html=fs.readFileSync(path.join(A,'index.html'),'utf8');assert.match(html,/tcg-classic-dragon\.js/);
 });
 test('Balloon Berry grants a free retreat, discards itself and preserves attached Energy',()=>{

@@ -2444,7 +2444,28 @@
       case 'synchronizedSearch':if(count(a)===count(d)){if(ctx.resolvingChoice){if(ctx.action?.choiceSkip)return;const ref=us.deck[Number(ctx.action?.choiceDeckIndex)];if(ref){us.hand.push(...us.deck.splice(us.deck.indexOf(ref),1));ctx.shuffle?.(ctx.state,us.deck);}return;}if(us.deck.length)pickDeck({}, {optional:true});}return;
       case 'quickTouch':case 'bounce':case 'backspin':{
         if(key==='backspin'&&!e.stage){if(ctx.resolvingChoice){if(Number(ctx.action?.choiceOption)!==1)return;discardOne(us,a);ex3Rule({...e,stage:'switch'},{...ctx,resolvingChoice:false});return;}if(count(a)&&us.bench.length)option(['Keep Energy','Discard an Energy and switch']);return;}
-        if(ctx.resolvingChoice){if(ctx.action?.choiceSkip)return;const i=Number(ctx.action?.choiceBenchIndex);if(us.bench.some(s=>s.benchSlot===i))switchPokemon(us,i,ctx.state);return;}
+        // Ninjask #18: after switching, the attacker may move ANY number of
+        // attached Grass Energy to the new Active Pokémon (including zero).
+        // Do not silently drop this second part of Quick Touch.
+        if(key==='quickTouch'&&e.stage==='moveGrass'){
+          if(!ctx.resolvingChoice||ctx.action?.choiceSkip)return;
+          const source=us.bench.find(s=>s.uid===e.sourceUid),target=us.active;
+          if(!source||!target||source===target)return;
+          const available=Math.max(0,Number(source.energy?.Grass||0));
+          const moved=Math.min(available,Math.max(0,Number(ctx.action?.choiceOption)||0));
+          source.energy.Grass=available-moved;target.energy.Grass=Number(target.energy?.Grass||0)+moved;
+          return;
+        }
+        if(ctx.resolvingChoice){
+          if(ctx.action?.choiceSkip)return;
+          const i=Number(ctx.action?.choiceBenchIndex),source=us.active;
+          if(!us.bench.some(s=>s.benchSlot===i)||!switchPokemon(us,i,ctx.state))return;
+          if(key==='quickTouch'&&Number(source?.energy?.Grass||0)>0){
+            const n=Math.floor(Number(source.energy.Grass));
+            option(Array.from({length:n+1},(_,count)=>`Move ${count} Grass Energy`),{effect:{...e,stage:'moveGrass',sourceUid:source.uid}});
+          }
+          return;
+        }
         if(us.bench.length)pickBench(us,{optional:true});return;
       }
       case 'pickOn':{while(them.hand.length>5){const i=Math.floor(ctx.random(ctx.state)*them.hand.length);them.deck.push(...them.hand.splice(i,1));}ctx.shuffle?.(ctx.state,them.deck);return;}

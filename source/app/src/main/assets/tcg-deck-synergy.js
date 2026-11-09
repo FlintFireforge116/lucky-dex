@@ -40,7 +40,12 @@
   'sv1-184':{roles:['healing']},
   'sv1-192':{roles:['stall'],energyTypes:['Fighting']},
   'sv1-195':{roles:['disruption']},
-  'sv1-197':{roles:['disruption']}
+  'sv1-197':{roles:['disruption']},
+  // Both EX Dragon Stadiums support two types, not just the last named type.
+  'ex3-85':{roles:['retreat'],energyTypes:['Fire','Water']},
+  'ex3-86':{roles:['stall'],energyTypes:['Grass','Lightning']},
+  'ex3-82':{roles:['retreat']},
+  'ex3-84':{roles:['energy']}
  };
  const cache=new WeakMap();
  function metadata(card){
@@ -77,7 +82,7 @@
   // Asleep" is neither an inflicter nor a Sleep payoff.
   for(const [phrase,status] of [['asleep','sleep'],['poisoned','poison'],['burned','burn'],['paralyzed','paralysis'],['confused','confusion']]){
    if(new RegExp(`(?:opponent(?:'s)?|defending)[^.]{0,75}(?:is now|becomes|make(?:s)?|put(?:s)?)[^.]{0,35}\\b${phrase}\\b`).test(low))inflicts.add(status);
-   if(new RegExp(`(?:if|while|for each|whenever|when)[^.]{0,90}(?:opponent(?:'s)?|defending)[^.]{0,55}\\b${phrase}\\b`).test(low))payoffs.add(status);
+   if(new RegExp(`(?:if|while|whenever|when)\\s+(?:the\\s+)?(?:defending\\s+pok[eé]mon|opponent(?:'s)?\\s+pok[eé]mon)[^.]{0,65}\\b(?:is|has|was)\\s+(?:already\\s+)?${phrase}\\b`).test(low))payoffs.add(status);
   }
   if(/heal \d|heal all|recover \d|remove \d+ damage/.test(low))roles.add('healing');
   if(/draw \d|draw cards|draw until/.test(low))roles.add('draw');
