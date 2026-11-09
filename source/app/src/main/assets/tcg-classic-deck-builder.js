@@ -27,7 +27,7 @@ const STAPLES=Object.freeze([
  ['base1-83',1], // Maintenance
  ['base1-87',1]  // Pokedex
 ]);
-const SET_IDS=Object.freeze(['base1','base2','base3','base5','gym1','gym2','neo1','neo2','neo3','neo4','base6','ecard1','ecard2','ecard3','ex1','ex2','ex3','ex4','ex5','ex6','SNAPFLORIO','SNAPFOUNJA','sv1']);
+const SET_IDS=Object.freeze(['base1','base2','base3','base5','gym1','gym2','neo1','neo2','neo3','neo4','base6','ecard1','ecard2','ecard3','ex1','ex2','ex3','ex4','ex5','ex6','ex7','SNAPFLORIO','SNAPFOUNJA','sv1']);
 // Darkness and Metal are already Basic Energy types. Deduplicate before rendering
 // archetype chips so each energy type has exactly one toggle.
 const ARCHETYPE_TYPES=Object.freeze([...new Set([...decks.ENERGY_TYPES,'Colorless'])]);
@@ -162,11 +162,13 @@ function buildDeck(rows,options={}){
  if(!selectedTypes.length)selectedTypes.push('Fighting');
  const cards=[],counts=new Map();
  function trainerIsUseful(card){
+   if(card?.id==='ex7-95'&&!cards.some(id=>/^(Dark |Rocket's )/.test(classic.cardById(id)?.name||'')))return false;
+   if(card?.id==='ex7-94'&&!selectedTypes.some(type=>['Darkness','Metal'].includes(type)))return false;
    if(card?.kind==='trainer'){const ctx=synergy.context(cards.map(classic.cardById).filter(Boolean),selectedTypes,theme);if(synergy.trainerScore(card,ctx)===-Infinity)return false;}
    if(card.name==="Brock's Training Method")return cards.some(id=>{const pokemon=classic.cardById(id);return pokemon?.kind==='pokemon'&&pokemon.name.startsWith("Brock's ");});
    return true;
  }
- function room(card){const copiesOfName=[...counts].filter(([id])=>classicCardName(classic.cardById(id)?.name)===classicCardName(card.name)).reduce((sum,[,count])=>sum+count,0);return Math.max(0,Math.min((card.name.startsWith('Shining ')?1:4)-copiesOfName,Number(owned.get(card.id)||0)-(counts.get(card.id)||0)));}
+ function room(card){const copiesOfName=[...counts].filter(([id])=>classicCardName(classic.cardById(id)?.name)===classicCardName(card.name)).reduce((sum,[,count])=>sum+count,0);const starSlots=card.pokemonStar?Math.max(0,1-cards.filter(id=>classic.cardById(id)?.pokemonStar).length):4;return Math.max(0,Math.min(starSlots,(card.name.startsWith('Shining ')?1:4)-copiesOfName,Number(owned.get(card.id)||0)-(counts.get(card.id)||0)));}
  function add(card,n=1){if(card?.kind==='trainer'&&!trainerIsUseful(card))return 0;if(card?.trainerType==='Stadium'&&cards.filter(id=>classic.cardById(id)?.trainerType==='Stadium').length>=1&&!cards.includes(card.id))return 0;let added=0;while(added<n&&cards.length<30&&room(card)>0&&!(card?.trainerType==='Stadium'&&cards.filter(id=>classic.cardById(id)?.trainerType==='Stadium').length>=2)){cards.push(card.id);counts.set(card.id,(counts.get(card.id)||0)+1);added++;}return added;}
  function addLine(line,copies){if(!line.length||line.some(c=>Number(owned.get(c.id)||0)<1))return false;for(let copy=0;copy<copies;copy++){if(line.some(c=>room(c)<1)||cards.length+line.length>30)break;for(const c of line)add(c,1);}return line.every(c=>(counts.get(c.id)||0)>0);}
  // Preserve legal existing cards first for Fill / repair, but never exceed ownership/copy limits.

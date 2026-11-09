@@ -130,6 +130,7 @@
   // An Archie/Magma Belt/Team-specific TM with no matching Team Pokemon is
   // a dead card regardless of its generic 'search' or 'disruption' tag.
   if(p.requiredTeams.length&&!p.requiredTeams.some(t=>ctx.teams?.has(t)))return -Infinity;
+  if(['ex7-87','ex7-89','ex7-90'].includes(card.id)&&!ctx.pokemon.some(p=>/^(Dark |Rocket's )/.test(p.name||'')))return -Infinity;
   // Ancient Technical Machines only attach to non-ex Evolved Pokémon without an owner name.
   // A Stage 1 Pokémon-ex does not make these Tools playable.
   if(['ex5-84','ex5-85','ex5-86'].includes(card.id)&&!ctx.pokemon.some(c=>['Stage 1','Stage 2'].includes(c.stage)&&!c.pokemonEx&&!c.isEx&&!/^(?:Team Aqua's|Team Magma's|Brock's|Misty's|Lt. Surge's|Erika's|Koga's|Blaine's|Sabrina's|Giovanni's|Rocket's)/.test(c.name||'')))return -Infinity;
