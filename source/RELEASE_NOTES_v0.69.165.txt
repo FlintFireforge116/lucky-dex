@@ -1,0 +1,22 @@
+LuckyDex v0.69.165 — Classic TCG: EX Dragon
+Base: v0.69.164; release archive is a patch over the unpacked canonical `source/` files.
+
+Cards and integration
+- All 100 EX Dragon cards (including 9 Pokemon-ex and 3 secret rare Charizard-line cards) are added as original numbered prints, image URLs, names, HP, evolution, type, weakness/resistance, retreat, attacks and original printed rule text.
+- 161 attacks and 17 Poke-Powers/Poke-Bodies represented in the Classic battle catalogue.
+- All seven Trainers, including the two Stadiums, two Tools and Energy Recycle System.
+- EX Dragon appears in Classic deck-builder set filtering and CPU allowed-expansions filtering, plus ownership mapping for collection cards; nine Pokemon-ex are recognised as Ultra/ex cards with 2-Prize knockouts.
+- Card synergy metadata is populated for attack costs, search/draw, status, Energy movement, damage scaling, retreat, healing and control/stall.
+
+Notable attack and rule implementations
+- Dynamic HP-unit damage: Rock Vengeance, Rainbow Burn, Psychic Boom, Prize Count, Meditate, Fury Cutter, Energy-amount bonuses, Water Energy beyond attack costs.
+- Choice and Energy effects: Lava Flow, Dragon Burst, Flame Pillar, Dragon Flame, Energy Recycle System, Loose Shell, Dragonite ex's Call for Power, Ninjask/Shedinja, Recycle Trainer and special conditions.
+- Passive effects and Tools: Shedinja Wonder Guard, Muk ex Toxic Gas, Low/High Pressure System, Ampharos ex Conductivity, Balloon Berry and Buffer Piece.
+- Regression protections: EX Sandstorm, EX Ruby & Sapphire, Skyridge Machamp and Test Lab deck persistence.
+
+Verification
+- Run `node --test tests/v07165-ex-dragon.test.cjs` for the 100/161-card sweep and outcome tests.
+- Final combined regression run reported separately; Android on-device testing remains outstanding.
+
+Rules adaptation
+- LuckyDex Classic uses a 30-card deck, one Active Pokemon per side and a separate Energy Zone. Multi-Active or double-battle interactions such as Minun/Plusle Chain of Events do not trigger in this format. Printing-specific interactions from cross-set combinations still need hands-on checking.
