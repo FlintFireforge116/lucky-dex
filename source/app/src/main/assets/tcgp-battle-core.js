@@ -476,6 +476,7 @@
     if(state.format==='classic'&&((state.stadium?.cardId==='SNAPFOUNJA-078'&&Number(effectiveEnergy(state,side,slot).Water||0)>0)||(Number(slot?.founjaFreeRetreatNext||0)>=Number(state.turnNumber))))return 0;
     if(state.format==='classic'&&slot?.cardId==='SNAPFLORIO-002'&&slot.lastDamageSource?.attack&&
        slot.lastDamageSource.side!==side&&Number(slot.lastDamageSource.turn)===Number(state.turnNumber)-1)return 0;const gym=data.cardById(state.stadium?.cardId)?.id,ownerName=data.cardById(slot.cardId)?.name||'';let stadiumCost=gym==='gym1-104'?1:gym==='gym1-108'&&ownerName.startsWith("Misty's")?-1:0;
+    if(state.format==='classic'&&slot?.cardId==='ex2-53'&&!effects.abilitiesSuppressed(state,side,slot,data.cardById)&&pokemonOn(state.sides[side]).some(s=>s.cardId==='ex2-38'))return 0;
     if(state.format==='classic'&&slot?.cardId==='SNAPFOUNJA-018'&&(Number(slot.energy?.Water||0)>0))return 0;
     // Skyridge Abra 46 Psychoflow: Psychic Energy makes its retreat cost zero.
     if(state.format==='classic'&&slot?.cardId==='ecard3-46'&&!effects.abilitiesSuppressed(state,side,slot,data.cardById)&&Number(effectiveEnergy(state,side,slot).Psychic||0)>0)return 0;
@@ -520,6 +521,7 @@
       }
     }
     for(const ref of slot?.specialEnergy||[]){
+      if(ref.cardId==='ex2-93'&&!miracleWind){const another=(slot.specialEnergy||[]).some(x=>x!==ref&&x.uid!==ref.uid);const t=another?'Colorless':'Miracle';next[t]=Number(next[t]||0)+1;continue;}
       if(ref.cardId==='ex1-95'&&!miracleWind){next.Miracle=Number(next.Miracle||0)+1;continue;}
       if(ref.cardId==='ecard2-146'&&!miracleWind){const basicTypes=Object.entries(slot?.energy||{}).filter(([,n])=>Number(n)>0).map(([type])=>type);
         if(!basicTypes.length)next.Colorless=Number(next.Colorless||0)+1;
@@ -735,7 +737,7 @@
       s.bench.forEach(slot=>{if(slot&&!slot.gymEnergyLock)actions.push({type:'attach',target:'bench',benchIndex:Number(slot.benchSlot)});});
     }
     const conditions=s.active?.conditions||{};
-    if (!s.retreated && s.active && Number(s.skyridgeMirageFailedTurn)!==state.turnNumber && !(s.active.specialEnergy||[]).some(r=>r.cardId==='ecard2-145') && s.bench.length&&(s.active.cardId==='SNAPFLORIO-073'||!neoTrapActive(state,side,s.active,'retreat'))&&!conditions.sleep&&!conditions.paralysis&&(s.active.cardId==='SNAPFLORIO-073'||!effects.isLocked(state,s.active,'retreat'))&&data.cardById(s.active.cardId).effect?.type!=='playFossil'){
+    if (!s.retreated && s.active && !(state.format==='classic'&&state.sides[side==='player'?'opponent':'player'].active?.cardId==='ex2-3'&&!effects.abilitiesSuppressed(state,side==='player'?'opponent':'player',state.sides[side==='player'?'opponent':'player'].active,data.cardById)) && Number(s.skyridgeMirageFailedTurn)!==state.turnNumber && !(s.active.specialEnergy||[]).some(r=>r.cardId==='ecard2-145') && s.bench.length&&(s.active.cardId==='SNAPFLORIO-073'||!neoTrapActive(state,side,s.active,'retreat'))&&!conditions.sleep&&!conditions.paralysis&&(s.active.cardId==='SNAPFLORIO-073'||!effects.isLocked(state,s.active,'retreat'))&&data.cardById(s.active.cardId).effect?.type!=='playFossil'){
       if (effects.totalEnergy(effectiveEnergy(state,side,s.active)) >= retreatCost(state,side)){
         s.bench.forEach(slot=>{if(slot)actions.push({type:'retreat',benchIndex:Number(slot.benchSlot)});});
       }
@@ -808,11 +810,16 @@
   }
 
   function checkup(state){
+    if(state.format==='classic')sandstormToolLock(state);
     if(state.format==='classic'&&state.stadium?.cardId==='SNAPFOUNJA-081')for(const side of ['player','opponent']){const slot=state.sides[side].active;if(slot&&data.cardById(slot.cardId)?.name?.includes('Illumina')&&!effects.healingIsBlocked(state,slot,data.cardById)){const before=Number(slot.damage||0);slot.damage=Math.max(0,before-20);if(before!==slot.damage)state.log.push({type:'founjaTreeHeal',side,amount:before-slot.damage});}}
     effects.applyContinuousRules?.(state,data.cardById);
     for(const side of [state.activeSide,state.activeSide==='player'?'opponent':'player'])triggerAbilities(state,'checkup',side);
     const first=state.activeSide,second=first==='player'?'opponent':'player';
     for(const side of [first,second])neoToolCheck(state,side);
+    if(state.format==='classic')for(const side of ['player','opponent'])for(const slot of pokemonOn(state.sides[side])){
+      if(['ex2-7','ex2-45','ex2-66','ex2-92'].includes(slot.cardId)&&!effects.abilitiesSuppressed(state,side,slot,data.cardById)&&!effects.healingIsBlocked(state,slot,data.cardById))
+        slot.damage=Math.max(0,Number(slot.damage||0)-10);
+    }
     if(state.format==='classic')for(const side of [first,second])for(const slot of pokemonOn(state.sides[side]))if(slot.neoChar){
       const heads=random(state)<.5;state.log.push({type:'coin',side,reason:'Neo Char',heads,results:[heads]});if(!heads)slot.damage=Number(slot.damage||0)+20;
     }
@@ -1530,6 +1537,11 @@
         state.log.push({type:'toolGuard',side:foeSide,toolId:fruit.cardId,prevented:true});}
     }
     defender.damage=Number(defender.damage||0)+damage;
+    if(damage>0&&state.format==='classic'&&defender===foe.active&&!effects.abilitiesSuppressed(state,foeSide,defender,data.cardById)){
+      if(['ex2-2','ex2-57'].includes(defender.cardId))s.active.conditions={...(s.active.conditions||{}),poison:true};
+      if(['ex2-15','ex2-65'].includes(defender.cardId))s.active.conditions={...(s.active.conditions||{}),burn:true};
+      if(defender.cardId==='ex2-90')s.active.damage=Number(s.active.damage||0)+10;
+    }
     if(damage>0&&state.format==='classic')for(const ref of toolsOf(s.active))if(ref.cardId==='ecard1-150')ref.strengthCharmUsedTurn=state.turnNumber;
     if(damage>0)effects.florioReactToAttackDamage?.(state,foeSide,defender,side,s.active,damage,data.cardById,random);
       if(state.format==='classic'&&damage>0&&s.active){
@@ -1605,9 +1617,21 @@
     }
     if(hit)resolveKnockOut(state,null,'effect');
   }
+  // Aerodactyl ex Primal Lock: tools are discarded immediately on entering play.
+  function sandstormToolLock(state){
+    if(state.format!=='classic')return;
+    for(const owner of ['player','opponent']){
+      const holder=pokemonOn(state.sides[owner]).some(p=>p.cardId==='ex2-94'&&!effects.abilitiesSuppressed(state,owner,p,data.cardById));
+      if(!holder)continue;
+      const enemy=state.sides[owner==='player'?'opponent':'player'];
+      for(const slot of pokemonOn(enemy)){
+        const worn=toolsOf(slot);if(worn.length){enemy.discard.push(...worn);slot.tool=null;slot.extraTools=[];state.log.push({type:'ex2PrimalLock',side:owner,removed:worn.map(x=>x.cardId)});}
+      }
+    }
+  }
   function neoMonitoredAction(state,side,action){
     const before=Object.fromEntries(['player','opponent'].map(who=>[who,{uid:state.sides[who].active?.uid,bench:new Set((state.sides[who].bench||[]).map(p=>p.uid))}]));
-    const result=applyActionRaw(state,side,action);neoSpikesAfterAction(state,before);return result;
+    const result=applyActionRaw(state,side,action);neoSpikesAfterAction(state,before);sandstormToolLock(state);return result;
   }
   function applyAction(state,side,action){
     const rc=rerollContext(state,side,action),source=rc&&effects.coinRerollSource?.(state,rc.ownerSide,rc.scope,rc.subject,data.cardById);

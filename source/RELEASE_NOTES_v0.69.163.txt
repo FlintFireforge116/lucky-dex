@@ -1,0 +1,25 @@
+LuckyDex v0.69.163 — EX Sandstorm (Classic TCG)
+
+Base: LuckyDex v0.69.162. Unzip this patch INTO source/.
+
+EX Sandstorm — September 18, 2003
+- Adds all 100 cards: 92 Pokémon, 7 Trainer cards (including three Fossils), and 1 Special Energy.
+- Card artwork, names, numbering, HP, attack costs, evolution data, Weakness/Resistance, retreat, rarity, and card strategy metadata.
+- 154 attacks, 28 printed Poké-Powers/Poké-Bodies (including Fossil Bodies), attack descriptions, and seven Pokémon-ex with two-Prize rules.
+- EX Sandstorm registered for Classic battle, deck-building, Test Lab unrestricted selection, owned-card mapping, and opponent deck expansion filters.
+- CPU restricted to EX Sandstorm can build a legal 30-card Classic hybrid deck.
+- Implements numerous unique attacks, damage scaling, healing, status effects, attack locks, random rolls, Energy rules and active/bench interactions.
+- Sandstorm passives implemented for Armaldo Supporter restrictions, Cradily retreat prevention, Cacturne/Cacnea Poison Payback, Arcanine/Growlithe Fire Veil, Ludicolo/Lombre/Lotad/Root Fossil Rain Dish, Volbeat's retreat discount, Illumise/Arbok/Kabuto damage reduction, Kecleon's types, Aerodactyl ex Primal Lock, Wobbuffet's Safeguard, Zangoose's Poison Resistance and Claw Fossil Jagged Stone.
+- Multi Energy provides one flexible Energy when alone, or one Colorless if another Special Energy is attached; it does not generate eight Energy.
+- Sand Swirl verified to deal 20 actual damage AND apply its retreat lock.
+- Preserves 30-card hybrid Classic rules and Energy Zone, and the previous Test Lab and Skyridge fixes.
+
+Validation:
+- 11 EX Sandstorm test groups, with all 154 attacks exercised through the battle engine on two seeded random paths.
+- Additional cross-expansion regression tests for .158–.162 passed.
+- No Android on-device/touchscreen test in this environment; interactions outside automated scenarios still merit playtesting.
+
+Termux installation (provided separately in chat):
+  unzip -o /sdcard/Download/LuckyDex_patch_v0.69.163.zip -d source
+
+Source of EX Sandstorm printed card metadata: PokemonTCG/pokemon-tcg-data/cards/en/ex2.json.
