@@ -765,6 +765,7 @@
       abilitiesFor(sourceCard).forEach((ability,abilityIndex)=>{
         if(abilityBlockedByStatus(ability,source)||ability.type==='passive'||ability.type==='triggered'||ability.activeOnly&&source!==s.active||ability.benchOnly&&source===s.active)return;
         if(source.cardId==='ex5-16'&&Number(s.ex5HealDanceUsedTurn)===state.turnNumber)return;
+        if(['ex5-23','ex5-25','ex5-26','ex5-30'].includes(source.cardId)&&Number(s.ex5TemperamentalWeatherTurn)===Number(s.turnCount))return;
         if(ability.vstarPower&&s.vstarPowerUsed)return;
         const used=(s.abilityUsed||{})[source.uid+':'+abilityIndex];if(ability.oncePerTurn!==false&&used===s.turnCount)return;
         if(ability.lentalSharedOnce==='scavenge'&&s.lentalScavengeUsedTurn===s.turnCount)return;
@@ -1333,6 +1334,7 @@
       const source=slotForTarget(s,matched.target,matched.benchIndex),ability=abilitiesFor(data.cardById(source.cardId))[matched.abilityIndex||0];
       s.abilityUsed=s.abilityUsed||{};s.abilityUsed[source.uid+':'+(matched.abilityIndex||0)]=s.turnCount;
       if(source.cardId==='ex5-16')s.ex5HealDanceUsedTurn=state.turnNumber;
+      if(['ex5-23','ex5-25','ex5-26','ex5-30'].includes(source.cardId))s.ex5TemperamentalWeatherTurn=s.turnCount;
       if(ability.lentalSharedOnce==='scavenge')s.lentalScavengeUsedTurn=s.turnCount;
       if(ability.vstarPower)s.vstarPowerUsed=true;
       effects.applyEffect(ability.effect,{...effectContext(state,side,matched,source),isAbility:true});

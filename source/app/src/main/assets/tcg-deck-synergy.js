@@ -113,6 +113,9 @@
    for(const x of override.requiredTeams||[])requiredTeams.add(x);
    for(const x of override.preferredTeams||[])preferredTeams.add(x);
   }
+  // Restrict inferred roles to what these printed Trainers actually accomplish.
+  if(card.id==='ex5-92')roles.delete('disruption');
+  if(card.id==='ex5-90')roles.delete('damage');
   if(card.kind==='pokemon')for(const t of card.types||[])sources.add(t);
   const result=Object.freeze({roles:[...roles],inflicts:[...inflicts],payoffs:[...payoffs],energyTypes:[...energyTypes],stages:[...stages],sources:[...sources],requiredTeams:[...requiredTeams],preferredTeams:[...preferredTeams]});
   cache.set(card,result);return result;
@@ -127,6 +130,12 @@
   // An Archie/Magma Belt/Team-specific TM with no matching Team Pokemon is
   // a dead card regardless of its generic 'search' or 'disruption' tag.
   if(p.requiredTeams.length&&!p.requiredTeams.some(t=>ctx.teams?.has(t)))return -Infinity;
+  // Ancient Technical Machines only attach to non-ex Evolved Pokémon without an owner name.
+  // A Stage 1 Pokémon-ex does not make these Tools playable.
+  if(['ex5-84','ex5-85','ex5-86'].includes(card.id)&&!ctx.pokemon.some(c=>['Stage 1','Stage 2'].includes(c.stage)&&!c.pokemonEx&&!c.isEx&&!/^(?:Team Aqua's|Team Magma's|Brock's|Misty's|Lt. Surge's|Erika's|Koga's|Blaine's|Sabrina's|Giovanni's|Rocket's)/.test(c.name||'')))return -Infinity;
+  // Desert Ruins damages every high-HP Pokémon-ex between turns, including yours.
+  // Avoid undermining our own featured ex line during automatic building.
+  if(card.id==='ex5-88'&&ctx.pokemon.some(c=>c.pokemonEx||c.isEx))return -Infinity;
   // Exact hard mismatch: never add Stadiums or Tools that only improve Pokémon
   // types and evolution stages absent from the target deck. This is separate
   // from their generic usefulness and does not force a matching type in the

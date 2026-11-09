@@ -219,7 +219,8 @@ const noop={type:'noop'},r=name=>({type:'neoRule',rule:'ex5:'+name});
 const EX=new Set([93,94,95,96,97,98,99,100,101]);
 const TM=new Set([84,85,86]),STADIUM=new Set([87,88,89,91]);
 const ACTIVATE=new Set([11,15,16,23,25,26,29,30,37]);
-const DISABLED_STATUS=new Set([11,15,16,23,25,26,29,30]);
+// Castform's Temperamental Weather does not have a printed Special-Condition restriction.
+const DISABLED_STATUS=new Set([11,15,16,29]);
 function parse(n){
  const p=FIELDS.get(n);if(!p)throw new Error('Missing EX Hidden Legends '+n);
  const [_,name,kind,t,stage,hp,retreat,weak,resist,from,rarity,moves,printedPower]=p;
