@@ -98,10 +98,10 @@ test('EX Dragon Ninjask Quick Touch optionally transfers an exact count of Grass
  assert.equal(state.sides.player.bench[0].energy.Grass,1);
 });
 
-test('Release version identifiers match and are v0.69.168',()=>{
+test('Release version identifiers match the installed build',()=>{
  const gradle=fs.readFileSync(path.resolve(__dirname,'../app/build.gradle'),'utf8');
  const js=fs.readFileSync(path.join(A,'app-v0167.js'),'utf8');
- assert.match(gradle,/versionName '0\.69\.168'/);
- assert.match(gradle,/versionCode 7148/);
- assert.match(js,/__LUCKYDEX_BUILD='0\.69\.168'/);
+ const version=gradle.match(/versionName '([^']+)'/)?.[1];assert.ok(version);
+ assert.match(gradle,/versionCode \d+/);
+ assert.ok(js.includes(`__LUCKYDEX_BUILD='${version}'`));
 });

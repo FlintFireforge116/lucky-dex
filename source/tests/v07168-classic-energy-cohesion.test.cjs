@@ -55,7 +55,7 @@ test('The user-facing builder exposes an opt-in mixed Energy toggle; all version
  const ui=fs.readFileSync(path.join(A,'tcg-classic-deck-editor.js'),'utf8');
  assert.match(ui,/auto-mixed-energy/);assert.match(ui,/allowMixedEnergy:false/);assert.match(ui,/allowMixedEnergy:!!autoOptions\.allowMixedEnergy/);
  const gradle=fs.readFileSync(path.resolve(__dirname,'../app/build.gradle'),'utf8');
- const version=gradle.match(/versionName '([^']+)'/)?.[1];assert.equal(version,'0.69.168');assert.match(gradle,/versionCode 7148/);
+ const version=gradle.match(/versionName '([^']+)'/)?.[1];assert.ok(version);assert.match(gradle,/versionCode \d+/);
  const app=fs.readFileSync(path.join(A,'app-v0167.js'),'utf8'),html=fs.readFileSync(path.join(A,'index.html'),'utf8');
  assert.ok(app.includes(`__LUCKYDEX_BUILD='${version}'`));assert.ok(html.includes(`id="titleBuildVersion">v${version}`));assert.ok(html.includes(`id="appBuildVersion">LUCKY DEX · v${version}`));
 });

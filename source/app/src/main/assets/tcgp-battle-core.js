@@ -477,6 +477,7 @@
     if(state.format==='classic'&&((state.stadium?.cardId==='SNAPFOUNJA-078'&&Number(effectiveEnergy(state,side,slot).Water||0)>0)||(Number(slot?.founjaFreeRetreatNext||0)>=Number(state.turnNumber))))return 0;
     if(state.format==='classic'&&slot?.cardId==='SNAPFLORIO-002'&&slot.lastDamageSource?.attack&&
        slot.lastDamageSource.side!==side&&Number(slot.lastDamageSource.turn)===Number(state.turnNumber)-1)return 0;const gym=data.cardById(state.stadium?.cardId)?.id,ownerName=data.cardById(slot.cardId)?.name||'';let stadiumCost=gym==='gym1-104'?1:gym==='gym1-108'&&ownerName.startsWith("Misty's")?-1:0;
+    if(state.format==='classic'&&slot?.cardId==='ex4-25'&&!effects.abilitiesSuppressed(state,side,slot,data.cardById)&&Number(effectiveEnergy(state,side,slot).Darkness||0)>0)return 0;
     if(state.format==='classic'&&slot?.cardId==='ex3-46'&&!effects.abilitiesSuppressed(state,side,slot,data.cardById)&&Object.values(slot.energy||{}).some(n=>Number(n)>0))return 0;
     if(state.format==='classic'&&slot?.cardId==='ex2-53'&&!effects.abilitiesSuppressed(state,side,slot,data.cardById)&&pokemonOn(state.sides[side]).some(s=>s.cardId==='ex2-38'))return 0;
     if(state.format==='classic'&&slot?.cardId==='SNAPFOUNJA-018'&&(Number(slot.energy?.Water||0)>0))return 0;
@@ -484,6 +485,7 @@
     if(state.format==='classic'&&slot?.cardId==='ecard3-46'&&!effects.abilitiesSuppressed(state,side,slot,data.cardById)&&Number(effectiveEnergy(state,side,slot).Psychic||0)>0)return 0;
     if(state.format==='classic'&&data.cardById(slot?.cardId)?.retreatZeroAgainstEvolution&&!effects.abilitiesSuppressed(state,side,slot,data.cardById)&&['Stage 1','Stage 2'].includes(data.cardById(state.sides[side==='player'?'opponent':'player']?.active?.cardId)?.stage))return 0;
     if(gym==='SNAPFLORIO-111'&&data.cardById(slot.cardId)?.stage==='Basic')stadiumCost-=1;
+    if(state.format==='classic'&&gym==='ex4-78'&&!ownerName.startsWith("Team Aqua's"))stadiumCost+=1;
     if(state.format==='classic'&&gym==='ex3-85'&&data.cardById(slot.cardId)?.types?.some(t=>['Fire','Water'].includes(t)))stadiumCost-=1;
     if(gym==='sv1-167'&&data.cardById(slot.cardId)?.stage==='Basic')stadiumCost-=1;
     if(state.format==='classic'&&gym==='neo4-92'&&['Basic','Baby'].includes(data.cardById(slot.cardId)?.stage))stadiumCost+=1;
@@ -669,8 +671,9 @@
       });
     }
     {const evolutionLocked=effects.isActionLocked(state,side,'Evolution',data.cardById),activeEvolutionLocked=effects.isActionLocked(state,side,'EvolutionActive',data.cardById);
+      const ex4Cradily=state.format==='classic'&&state.sides[side==='player'?'opponent':'player'].active?.cardId==='ex4-90'&&!effects.abilitiesSuppressed(state,side==='player'?'opponent':'player',state.sides[side==='player'?'opponent':'player'].active,data.cardById);
       const primalAura=state.format==='classic'&&['player','opponent'].some(w=>['ecard3-14','ecard3-H13'].includes(state.sides[w].active?.cardId)&&!effects.abilitiesSuppressed(state,w,state.sides[w].active,data.cardById));
-      if(!evolutionLocked)actions.push(...evolutionActions(state,side).filter(x=>(!activeEvolutionLocked||x.target!=='active')&&(!primalAura||x.target!=='bench')));}
+      if(!evolutionLocked)actions.push(...evolutionActions(state,side).filter(x=>(!activeEvolutionLocked||x.target!=='active')&&(!primalAura||x.target!=='bench')&&(!ex4Cradily||x.target!=='active')));}
 
     s.hand.forEach((ref,handIndex)=>{
       const card = data.cardById(ref.cardId);
@@ -704,6 +707,8 @@
             if(!target||!['Stage 1','Stage 2'].includes(target.stage))return false;
             if(!target.types?.some(t=>allowed.includes(t))&&!(target.id==='ecard3-35'||target.id==='ecard3-H32'))return false;
           }
+          if(['ex4-76','ex4-79'].includes(card.id)&&!data.cardById(slot?.cardId)?.name?.startsWith("Team Aqua's"))return false;
+          if(['ex4-81','ex4-84'].includes(card.id)&&!data.cardById(slot?.cardId)?.name?.startsWith("Team Magma's"))return false;
           if(card.id==='SNAPFLORIO-103'&&!/\bBidoof\b/i.test(data.cardById(slot?.cardId)?.name||''))return false;
           // Aquapolis Cube 01 Machines can only attach to a Pokémon of their printed type.
           const cube=card.id.match(/^ecard2-(119|121|122|124|127|129|132|140)$/);
@@ -721,6 +726,9 @@
     // Classic's Energy Zone is the one-per-turn placement. Special Energy
     // cards are extra attachments and can be stacked before or after it.
     if(state.format==='classic'){s.hand.forEach((ref,handIndex)=>{const card=data.cardById(ref.cardId);if(!(card?.specialEnergy||card?.basicEnergy)||card.battleEnabled===false&& !card.basicEnergy)return;if(card?.specialEnergy&&effects.isActionLocked(state,side,'SpecialEnergy',data.cardById))return;if(card.basicEnergy&&s.energyUsed&&!ref.zoneGenerated)return;const validEnergyTarget=slot=>slot&&!slot.gymEnergyLock&&(card.id!=='neo4-16'||/^(?:Light |Shining )/.test(data.cardById(slot.cardId)?.name||''));const aqValid=(slot)=>{if(!validEnergyTarget(slot))return false;const mon=data.cardById(slot.cardId),energyType=card.basicEnergy?card.subtype:card.effect?.provides&&Object.keys(card.effect.provides)[0];
+       if(card.id==='ex4-86'&&!mon?.name?.startsWith("Team Aqua's"))return false;
+       if(card.id==='ex4-87'&&!mon?.name?.startsWith("Team Magma's"))return false;
+       if(card.id==='ex4-88'&&(!['Stage 1','Stage 2'].includes(mon?.stage)||mon?.pokemonEx))return false;
        if(card.id==='ecard3-142'&&!Object.values(slot.energy||{}).some(n=>Number(n)>0))return false;
        if(card.id==='ecard3-144'&&!['Stage 1','Stage 2'].includes(mon?.stage))return false;
        if(card.id==='ecard2-145'&&mon?.stage==='Basic')return false;
@@ -763,6 +771,10 @@
         if(attack.vstarPower&&s.vstarPowerUsed)continue;
         if(attack.requiresAsleep&&!conditions.sleep)continue;
         if(conditions.sleep&&!attack.allowAsleep)continue;
+        if(state.format==='classic'&&['ex4-3','ex4-9'].includes(s.active.cardId)&&!effects.abilitiesSuppressed(state,side,s.active,data.cardById)){
+          const team=s.active.cardId==='ex4-3'?"Team Aqua's":"Team Magma's";
+          if(['player','opponent'].flatMap(who=>pokemonOn(state.sides[who])).filter(slot=>data.cardById(slot.cardId)?.name?.startsWith(team)).length<=3)continue;
+        }
         if (!(state.format==='classic'&&data.cardById(s.active.cardId)?.stage==='Baby'&&state.sides[side==='player'?'opponent':'player'].active?.cardId==='neo4-5'&&!(state.sides[side==='player'?'opponent':'player'].active?.conditions?.sleep||state.sides[side==='player'?'opponent':'player'].active?.conditions?.confusion||state.sides[side==='player'?'opponent':'player'].active?.conditions?.paralysis)&&!effects.abilitiesSuppressed(state,side==='player'?'opponent':'player',state.sides[side==='player'?'opponent':'player'].active,data.cardById)) && !(s.active.gym2UsedAttacks?.[attack.name]) && !(attack.name==='Bubbles'&&s.active.gym2BubblesLockTurn===state.turnNumber) && !(attack.name==='Earthdrill'&&s.active.cardId==='gym2-22'&&s.active.gym2LieLowTurn!==state.turnNumber-2) && effects.passiveAttackAllowed(state,side,s.active,data.cardById)&&!effects.isLocked(state,s.active,'attack',attack.name)&&!neoAttackLocked(state,side,s.active,attack.name)&&effects.canPayCost(effectiveEnergy(state,side,s.active),attackCost(state,side,attack))){
           const choices=effectChoices(attack.effect,{...effectContext(state,side),isAttack:true,attack});
           // Fire Spin's two-Energy use cost used to create one *attack* action
@@ -816,6 +828,18 @@
     if(state.format==='classic')sandstormToolLock(state);
     if(state.format==='classic'&&state.stadium?.cardId==='SNAPFOUNJA-081')for(const side of ['player','opponent']){const slot=state.sides[side].active;if(slot&&data.cardById(slot.cardId)?.name?.includes('Illumina')&&!effects.healingIsBlocked(state,slot,data.cardById)){const before=Number(slot.damage||0);slot.damage=Math.max(0,before-20);if(before!==slot.damage)state.log.push({type:'founjaTreeHeal',side,amount:before-slot.damage});}}
     effects.applyContinuousRules?.(state,data.cardById);
+    if(state.format==='classic')for(const side of ['player','opponent']){
+      const ss=state.sides[side],slot=ss.active;if(!slot)continue;
+      for(const tool of [...toolsOf(slot)]){
+        const team=tool.cardId==='ex4-76'?'Aqua':tool.cardId==='ex4-81'?'Magma':null;
+        if(!team||!data.cardById(slot.cardId)?.name?.startsWith('Team '+team+"'s"))continue;
+        if(!effectContext(state,side,{},slot).evolveFromDeck(slot))continue;
+        if(slot.tool?.uid===tool.uid)slot.tool=slot.extraTools?.shift()||null;
+        else slot.extraTools=(slot.extraTools||[]).filter(x=>x.uid!==tool.uid);
+        ss.discard.push(tool);state.log.push({type:'ex4TeamBeltEvolve',side,cardId:slot.cardId});
+        break;
+      }
+    }
     for(const side of [state.activeSide,state.activeSide==='player'?'opponent':'player'])triggerAbilities(state,'checkup',side);
     const first=state.activeSide,second=first==='player'?'opponent':'player';
     for(const side of [first,second])neoToolCheck(state,side);
@@ -905,7 +929,7 @@
     effects.resolveDelayedEffects?.(state,state.activeSide,data.cardById,(side,source)=>effectContext(state,side,{},source));
     if(state.format==='classic'){const who=state.activeSide,board=state.sides[who];for(const slot of pokemonOn(board)){for(const ref of [...toolsOf(slot)]){
       const magnifier=ref.cardId==='neo4-101',technicalMachine=data.cardById(ref.cardId)?.technicalMachine;
-      const strengthCharm=ref.cardId==='ecard1-150'&&ref.strengthCharmUsedTurn===state.turnNumber;
+      const strengthCharm=['ecard1-150','ex4-74'].includes(ref.cardId)&&ref.strengthCharmUsedTurn===state.turnNumber;
       const memoryBerry=ref.cardId==='ecard2-128'&&slot.aquapolisMemoryBerryUsedTurn===state.turnNumber;
       const weakGuard=false; // Opponent-turn expiry is handled on both boards below.
       if(!magnifier&&!technicalMachine&&!strengthCharm&&!memoryBerry&&!weakGuard)continue;
@@ -945,6 +969,7 @@
             board.discard.push(ref);delete slot.weaknessGuard;
             state.log.push({type:'aquapolisWeaknessGuardExpired',side:who});
           }
+          for(const ref of [...(slot.specialEnergy||[])])if(['ex4-86','ex4-87'].includes(ref.cardId)&&who===state.activeSide){slot.specialEnergy=slot.specialEnergy.filter(r=>r.uid!==ref.uid);board.discard.push(ref);state.log.push({type:'ex4SpecialEnergyExpired',side:who,cardId:ref.cardId});}
           for(const ref of [...(slot.specialEnergy||[])])if(ref.cardId==='ecard2-145'&&who===state.activeSide){slot.specialEnergy=slot.specialEnergy.filter(r=>r.uid!==ref.uid);board.discard.push(ref);state.log.push({type:'aquapolisBoostExpired',side:who});}
         }
       }
@@ -1258,13 +1283,14 @@
       const [ref] = s.hand.splice(matched.handIndex,1);
       const placed=placeOnBench(s,makePokemonSlot(ref.cardId,s.turnCount,ref.uid),matched.benchIndex);
       state.log.push({type:'bench',side,cardId:ref.cardId,benchIndex:matched.benchIndex});
+      if(state.format==='classic'&&state.stadium?.cardId==='ex4-83'&&data.cardById(placed.cardId)?.stage==='Basic'&&!data.cardById(placed.cardId)?.name?.startsWith("Team Magma's")){placed.damage=Number(placed.damage||0)+10;state.log.push({type:'ex4MagmaHideout',side,cardId:placed.cardId,damage:10});}
       if(state.stadium?.cardId==='SNAPFLORIO-106'&&data.cardById(placed.cardId)?.stage==='Basic'){
         placed.damage=Number(placed.damage||0)+20;
         state.log.push({type:'stadiumDamage',side,cardId:placed.cardId,stadium:'SNAPFLORIO-106',amount:20});
       }
       if(state.stadium?.cardId==='gym2-119'){const heads=random(state)<0.5;state.log.push({type:'coin',side,reason:'Rocket Minefield Gym',heads,results:[heads]});if(!heads)placed.damage=Number(placed.damage||0)+20;}
       triggerAbilities(state,'benched',side,placed,{fromHand:true});triggerAbilities(state,'opponentBenched',foeSide,null,{target:placed,fromHand:true,sourceSide:side});if(state.format==='classic')triggerAbilities(state,'opponentBenched',side,null,{target:placed,fromHand:true,sourceSide:side});
-      if(state.stadium?.cardId==='SNAPFLORIO-106')resolveKnockOut(state,null);
+      if(['SNAPFLORIO-106','ex4-83'].includes(state.stadium?.cardId))resolveKnockOut(state,null);
       return state;
     }
     if (matched.type === 'evolve'){
@@ -1481,6 +1507,10 @@
           if(state.stadium?.cardId==='gym2-113'&&attackerCard.types?.includes('Water')&&data.cardById(defender.cardId)?.name?.startsWith("Blaine's"))result.damageRules={...result.damageRules,ignoreWeakness:true};
           damage=effects.attackDamageWithState(state,side,s.active,foeSide,defender,damage,data.cardById);
           if(state.stadium?.cardId==='gym2-109'&&defender.resistanceOverride!==null&&data.cardById(defender.cardId)?.resistance&&attackerCard.types?.includes(data.cardById(defender.cardId).resistance))damage+=20;if(result.damageRules?.ignoreResistance&&damage>0){const card=data.cardById(defender.cardId),res=defender.resistanceOverride||card?.resistance;if(res&&effects.effectiveTypes(state,side,s.active,data.cardById).includes(res))damage+=30;}if(state.format==='classic'&&state.stadium?.cardId==='gym1-115'&&attackerCard.name?.startsWith("Brock's")&&damage>0){const defenderRes=data.cardById(defender.cardId)?.resistance;if(defenderRes&&attackerCard.types?.includes(defenderRes))damage+=30;}if(state.format==='classic'&&state.stadium?.cardId==='gym1-120'&&attackerCard.name?.startsWith("Lt. Surge's")){const heads=random(state)<0.5;state.log.push({type:'coin',side,reason:'Vermilion City Gym',heads,results:[heads]});if(heads&&damage>0)damage+=10;else if(!heads)s.active.damage=Number(s.active.damage||0)+10;}
+        }
+        if(state.format==='classic'&&damage>0){
+          const rainbowCount=(s.active.specialEnergy||[]).filter(ref=>ref.cardId==='ex4-88').length;damage=Math.max(0,damage-10*rainbowCount);
+          const charms=toolsOf(s.active).filter(ref=>ref.cardId==='ex4-74');if(charms.length){damage+=10;for(const charm of charms)charm.strengthCharmUsedTurn=state.turnNumber;}
         }
         if(damage>0){
           // Frog Song adds 40 *after* Weakness and Resistance when the attack
