@@ -165,6 +165,9 @@
       const preview=core.attackDamagePreview?.(state,side,action.attackIndex,action.attackCardId);
       if(attack?.effect?.rule==='founja:flightPath'&&action.choiceLabel)return `FLIGHT PATH · ${action.choiceLabel}`;
       if(attack?.effect?.rule==='expedition:lightningStrike'&&action.choiceLabel)return `LIGHTNING STRIKE · ${action.choiceLabel}`;
+      // EX Hidden Legends Lanturn: the printed 50 damage is replaced by 90
+      // for the optional all-Lightning discard, before those Energy leave play.
+      if(attack?.effect?.rule==='ex5:38:0'&&action.choiceLabel)return `LIGHTNING STRIKE · ${action.choiceLabel}`;
       return `${attack?.name||'ATTACK'}${action.attackCardId&&action.attackCardId!==active?.cardId?` · ${sourceCard?.name||'PREVIOUS EVOLUTION'}`:''} · ${preview?.text??attack?.damageText??attack?.damage??0} DMG${targetLabel(action,state,side)}`;
     }
     if(action.type==='endTurn')return'END TURN';

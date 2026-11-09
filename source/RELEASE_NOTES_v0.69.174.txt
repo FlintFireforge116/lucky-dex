@@ -1,0 +1,7 @@
+LuckyDex v0.69.174 — EX Hidden Legends Lightning Strike choice display
+
+- Corrected the Classic battle "Choose a play" labels for EX Hidden Legends Lanturn (#38/101): 50 damage when keeping Lightning Energy, or 90 damage when discarding all attached Lightning Energy.
+- Confirmed the 90 base damage applies to the current attack despite the Energy being discarded. The increase is not permanent.
+- No modification to existing decks, EX Hidden Legends card text, AI, collection or Test Lab save libraries.
+- Added tests for the distinct labels, 50 and 90 actual damage outcomes, Energy discard and nonpersistent boost.
+- Updates Android, visible and JS build versions consistently.
