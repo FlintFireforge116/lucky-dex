@@ -1,0 +1,4 @@
+LuckyDex cumulative patch from 0.69.166 to 0.69.168.
+Includes both v0.69.167 and v0.69.168 changes (overlapping files are the newer v0.69.168 version).
+Extract inside the canonical source/ directory: unzip -o ZIP -d source
+Do not extract into ~/lucky-dex or ~/lucky-dex/source/app.

@@ -6,18 +6,19 @@
  const api=factory(typeof module==='object'&&module.exports?require('./tcg-deck-synergy.js'):root.LuckyDexDeckSynergy,
   typeof module==='object'&&module.exports?require('./tcgp-battle-core.js'):root.LuckyDexTCGPBattleCore,
   typeof module==='object'&&module.exports?require('./tcgp-battle-ai.js'):root.LuckyDexTCGPBattleAI,
-  typeof module==='object'&&module.exports?require('./tcgp-battle-data.js'):root.LuckyDexTCGPBattleData);
+  typeof module==='object'&&module.exports?require('./tcgp-battle-data.js'):root.LuckyDexTCGPBattleData,
+  typeof module==='object'&&module.exports?require('./tcg-classic-battle-data.js'):root.LuckyDexClassicTCGBattleData);
  if(typeof module==='object'&&module.exports)module.exports=api;
  else root.LuckyDexDeckOptimizer=api;
-})(typeof globalThis!=='undefined'?globalThis:this,function(synergy,core,ai,data){
+})(typeof globalThis!=='undefined'?globalThis:this,function(synergy,core,ai,data,classicData){
 'use strict';
 const sleep=()=>new Promise(resolve=>setTimeout(resolve,0));
 const testedProfiles=new Map(); // in-memory only; never sent to or stored in the user profile
 const clamp=(v,min,max)=>Math.max(min,Math.min(max,v));
-const toCard=ids=>(ids||[]).map(data.cardById).filter(Boolean);
+const toCard=(ids,format)=>(ids||[]).map(id=>(format==='classic'?classicData:data).cardById(id)).filter(Boolean);
 const number=(v,fallback=0)=>Number.isFinite(Number(v))?Number(v):fallback;
-function evaluate(candidate,theme='any'){
- const cards=toCard(candidate?.cards),mons=cards.filter(c=>c.kind==='pokemon'),trainers=cards.filter(c=>c.kind==='trainer');
+function evaluate(candidate,theme='any',format='pocket'){
+ const cards=toCard(candidate?.cards,format),mons=cards.filter(c=>c.kind==='pokemon'),trainers=cards.filter(c=>c.kind==='trainer');
  const plan=synergy.report(cards,candidate?.energyTypes||[],theme);
  const ctx=synergy.context(mons,candidate?.energyTypes||[],theme);
  const roles=new Set(trainers.flatMap(c=>synergy.metadata(c).roles));
@@ -33,7 +34,11 @@ function evaluate(candidate,theme='any'){
  const themeScore=theme==='any'?0:Math.min(4,enablers)*20+Math.min(3,payoffs)*23+(enablers&&payoffs?35:0)+Math.min(3,mons.filter(c=>synergy.pokemonThemeScore(c,theme)>0).length)*8;
  const dead=plan.dead.length;
  const tempo=Math.min(6,affordable)*9+Math.min(8,paidAttacks.length)*2;
- const score=consistency+themeScore+tempo-Math.max(0,orphan)*80-dead*55-(basics<2?40:0)-(trainers.length<3?15:0);
+ // A second Basic Energy type is a real consistency cost when Energy is
+ // supplied in a shared ordered zone. A dual-cost featured family can still
+ // justify it through attack effectiveness, but arbitrary splashes cannot.
+ const energyDilution=Math.max(0,(candidate?.energyTypes||[]).length-1)*24;
+ const score=consistency+themeScore+tempo-Math.max(0,orphan)*80-dead*55-(basics<2?40:0)-(trainers.length<3?15:0)-energyDilution;
  return {score:Math.round(score),themeScore,consistency,tempo,dead,orphan,plan};
 }
 function winnerScore(state){
@@ -80,7 +85,7 @@ async function optimise({build,rows,options={},format='classic',maxCandidates=5,
   if(isCancelled())return null;
   if(i>0&&Date.now()>=deadline)break;
   const variant=await build(rows,{...options,randomSeed:(seed+Math.imul(i+1,7919))>>>0,excludeArchetypes:[...(options.excludeArchetypes||[]),...variants.map(v=>v.archetypeKey).filter(Boolean)]});
-  if(variant?.ok){const fingerprint=[...variant.cards].sort().join('|');if(!fingerprints.has(fingerprint)){fingerprints.add(fingerprint);variants.push({...variant,assessment:evaluate(variant,options.theme||'any')});}}
+  if(variant?.ok){const fingerprint=[...variant.cards].sort().join('|');if(!fingerprints.has(fingerprint)){fingerprints.add(fingerprint);variants.push({...variant,assessment:evaluate(variant,options.theme||'any',format)});}}
   onProgress({stage:'candidates',completed:i+1,total:count,valid:variants.length});
   await sleep();
  }

@@ -1,0 +1,21 @@
+LuckyDex v0.69.168 — Classic TCG auto-builder Energy cohesion
+Applies over canonical source version 0.69.167.
+
+Fixes:
+- Auto-builder now treats two selected types as eligible main archetypes, not an instruction to splash both into every deck.
+- Single-Energy core families default to one Basic Energy type, with no off-type support added unless the user explicitly enables 'Allow mixed-type support'.
+- Naturally mixed printed attack costs (e.g. EX Dragon Flygon Grass/Lightning) still produce the complete required Energy supply.
+- A failed random build retries its featured mono-type core before falling back to a second Energy type for truly sparse collections.
+- Colorless Pokemon with typed attack costs may match selections for those Energy types.
+- Classic candidate optimiser now assesses actual Classic TCG cards rather than looking their IDs up in the Pocket-only card database; adds a penalty for multiple energy types in the ordered Energy Zone.
+- Saved decks, custom manual Energy preferences, the separate Test Lab library, and CPU deck filtering remain untouched.
+
+Regression coverage:
+- EX Dragon/Sandstorm, 30-card legality, CPU builds, Test Lab storage, base set synergy, exact Golem ex/Volbeat case, deliberate mixed support, mandatory dual-type Flygon, and Android/app version labels.
+
+Installation:
+  cd ~/lucky-dex
+  git pull --rebase origin main
+  # Verify source/app/build.gradle says 0.69.167 before applying.
+  unzip -o /sdcard/Download/LuckyDex_patch_v0.69.168.zip -d source
+  git add source && git commit -m "Fix Classic TCG auto-builder Energy cohesion" && git push origin main

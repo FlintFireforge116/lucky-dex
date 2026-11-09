@@ -1,0 +1,17 @@
+LuckyDex v0.69.167 — Classic TCG mono-Energy deck-building consistency
+
+Patch base: v0.69.166
+
+Fixed:
+- Normal Classic player and CPU auto-builds now favour a single Basic Energy type for the main Pokémon's attack costs. An unrelated off-type support Pokémon can no longer silently add an unnecessary second Energy Zone type (e.g., Grass Illumise in a Water Vaporeon/Wailord deck).
+- Match-type evolution partners and support Basics are favoured before unrelated same-cost off-type Pokémon when the strategy is Balanced / Any.
+- The auto-build type selector describes the mono-type default and explains that selecting two Basic Energy types intentionally enables mixed decks.
+- Deliberate two-type choices, and featured Pokémon with genuinely dual-type attack costs (such as EX Dragon Flygon), remain supported.
+- Small inventories are not stranded: after trying alternative one-type builds, an unrestricted auto-build may use two Energy types only if necessary to complete a legal 30-card deck. An explicitly selected one-type filter is never widened.
+- Test Lab / regular saved decks and manual Energy Zone modes are unchanged.
+
+Checks:
+- New outcome tests reproduce and prevent the EX Vaporeon/Wailord/Illumise Water/Grass problem, and verify ordered Energy Zone output remains Water-only.
+- New tests run 192 Sandstorm/Dragon mono-preference samples, legal chosen single-type samples, deliberate dual-cost builds and CPU builds.
+- Previous mono/small-inventory Classic tests, latest Sandstorm/Dragon card tests and Test Lab filter restoration pass.
+- A legacy source-string UI assertion in v06975 refers to a removed opponent filter control and is unrelated to deck generation.

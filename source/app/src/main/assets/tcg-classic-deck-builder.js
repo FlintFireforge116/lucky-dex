@@ -108,10 +108,10 @@ function buildDeck(rows,options={}){
  const style=options.style==='random'?'random':'competitive',owned=ownedMap(rows),allowedSets=(options.sets||SET_IDS).filter(s=>SET_IDS.includes(s)),scope=allowedSets.length?allowedSets:SET_IDS,pool=classic.CARDS.filter(c=>allowedInSetPool(c,scope)&&c.battleEnabled&&c.deckEligible!==false&&Number(owned.get(c.id)||0)>0),pokemonPool=pool.filter(c=>c.kind==='pokemon'),evolutionPool=pool.filter(c=>c.kind==='pokemon'||c.effect?.type==='playFossil');
  if([...pool].reduce((sum,c)=>sum+Math.min(4,owned.get(c.id)||0),0)<30)return fail('Not enough owned battle-ready Classic card copies to build a 30-card deck.');
  if(!pokemonPool.some(c=>c.stage==='Basic'))return fail('No owned battle-ready Basic Pokémon are available.');
- const requested=[...new Set((options.types||[]).filter(t=>ARCHETYPE_TYPES.includes(t)))].slice(0,2),requestedEnergy=requested.filter(t=>decks.ENERGY_TYPES.includes(t)),existing=Array.isArray(options.cards)?options.cards:[],focus=classic.cardById(options.focusCardId),random=rng(options.randomSeed),excluded=new Set(options.excludeArchetypes||[]);
+ const requested=[...new Set((options.types||[]).filter(t=>ARCHETYPE_TYPES.includes(t)))].slice(0,2),requestedEnergy=requested.filter(t=>decks.ENERGY_TYPES.includes(t)),allowMixedEnergy=options.allowMixedEnergy===true,existing=Array.isArray(options.cards)?options.cards:[],focus=classic.cardById(options.focusCardId),random=rng(options.randomSeed),excluded=new Set(options.excludeArchetypes||[]);
  // Competitive considers complete evolution families; Random draws a printed
  // Pokémon from the *entire* owned, battle-ready roster (not the top 14).
- const isEligible=c=>{const line=familyLine(c,evolutionPool);const required=new Set(line.flatMap(attackTypes)),special=specialCosts(line);return !!line.length&&required.size<=2&&line.every(member=>typeCompatible(member,requestedEnergy))&&Object.entries(special).every(([sym,n])=>!n||(classic.cardById(SPECIAL_COST_CARDS[sym])?.battleEnabled&&allowedInSetPool(classic.cardById(SPECIAL_COST_CARDS[sym]),scope)&&Number(owned.get(SPECIAL_COST_CARDS[sym])||0)>=n))&&(!requested.length||(c.types||[]).some(type=>requested.includes(type)));};
+ const isEligible=c=>{const line=familyLine(c,evolutionPool);const required=new Set(line.flatMap(attackTypes)),special=specialCosts(line);return !!line.length&&required.size<=2&&line.every(member=>typeCompatible(member,requestedEnergy))&&Object.entries(special).every(([sym,n])=>!n||(classic.cardById(SPECIAL_COST_CARDS[sym])?.battleEnabled&&allowedInSetPool(classic.cardById(SPECIAL_COST_CARDS[sym]),scope)&&Number(owned.get(SPECIAL_COST_CARDS[sym])||0)>=n))&&(!requested.length||(c.types||[]).some(type=>requested.includes(type))||((c.types||[]).includes('Colorless')&&line.some(member=>attackTypes(member).some(type=>requestedEnergy.includes(type)))));};
  let candidates=(basicOnly?pokemonPool.filter(c=>c.stage==='Basic'):endpointCards(pokemonPool)).filter(isEligible);
  // The selected tier determines the featured Pokémon, not its prerequisites.
  // An Ultra Rare VMAX can still have the lower-rarity V it evolves from.
@@ -154,8 +154,11 @@ function buildDeck(rows,options={}){
    }else main=(focus&&selectable.find(c=>c.id===focus.id))||selectable[0];
    mainLine=familyLine(main,evolutionPool);
  }
- const mainRoot=familyRoot(main,evolutionPool),lineEnergy=[...new Set(mainLine.flatMap(attackTypes))],selectedTypes=requestedEnergy.length?requestedEnergy.slice():lineEnergy.slice(0,2);
- if(!selectedTypes.length){const ownType=(main.types||[]).find(t=>decks.ENERGY_TYPES.includes(t));if(ownType)selectedTypes.push(ownType);}
+ // Choosing two allowed types is not a request to pollute a single-type
+ // attacker's Energy Zone. Mixed *support* requires an explicit opt-in; a
+ // featured family that itself needs two Energy types always keeps both.
+ const mainRoot=familyRoot(main,evolutionPool),lineEnergy=[...new Set(mainLine.flatMap(attackTypes))],selectedTypes=requestedEnergy.length===1?requestedEnergy.slice():(allowMixedEnergy&&requestedEnergy.length===2?requestedEnergy.slice():lineEnergy.slice(0,2));
+ if(!selectedTypes.length){const ownType=requestedEnergy[0]||(main.types||[]).find(t=>decks.ENERGY_TYPES.includes(t));if(ownType)selectedTypes.push(ownType);}
  if(!selectedTypes.length)selectedTypes.push('Fighting');
  const cards=[],counts=new Map();
  function trainerIsUseful(card){
@@ -175,7 +178,12 @@ function buildDeck(rows,options={}){
  if(mainLine.length>=2)add(mainLine[0],1);
  const pokemonCount=()=>cards.map(classic.cardById).filter(c=>c?.kind==='pokemon').length;
  const neededTypes=()=>[...new Set(cards.map(classic.cardById).flatMap(attackTypes))];
- const canFitEnergy=c=>{const line=familyLine(c,evolutionPool),family=line.length?line:[c],needed=[...new Set([...neededTypes(),...family.flatMap(attackTypes)])],special=specialCosts([...cards.map(classic.cardById).filter(Boolean),...family]);return (requestedEnergy.length?needed.every(t=>requestedEnergy.includes(t)):needed.length<=2)&&Object.entries(special).every(([sym,n])=>!n||allowedInSetPool(classic.cardById(SPECIAL_COST_CARDS[sym]),scope)&&Number(owned.get(SPECIAL_COST_CARDS[sym])||0)>=n);};
+ // Lock support selection to the featured family's actual Energy plan. The
+ // previous <=2-type check splashed unrelated Grass attackers into mono-Water
+ // decks, then the automatic Energy Zone gave them 50% Grass draws. A true
+ // dual-cost featured family (or two explicitly selected types) still works.
+ const plannedEnergy=selectedTypes.slice();
+ const canFitEnergy=c=>{const line=familyLine(c,evolutionPool),family=line.length?line:[c],needed=[...new Set([...neededTypes(),...family.flatMap(attackTypes)])],special=specialCosts([...cards.map(classic.cardById).filter(Boolean),...family]);return (options._allowSecondType===true&&!requestedEnergy.length?needed.length<=2:needed.every(t=>plannedEnergy.includes(t)))&&Object.entries(special).every(([sym,n])=>!n||allowedInSetPool(classic.cardById(SPECIAL_COST_CARDS[sym]),scope)&&Number(owned.get(SPECIAL_COST_CARDS[sym])||0)>=n);};
  const chooseCandidate=candidates=>{
    if(!candidates.length)return null;
    if(style==='random'){
@@ -194,7 +202,10 @@ function buildDeck(rows,options={}){
    const newB=attackTypes(b).filter(t=>!selectedTypes.includes(t)).length;
    const matchingA=(a.types||[]).some(t=>(main.types||[]).includes(t))?1:0;
    const matchingB=(b.types||[]).some(t=>(main.types||[]).includes(t))?1:0;
-   return newA-newB||synergy.pokemonThemeScore(b,theme)-synergy.pokemonThemeScore(a,theme)||matchingB-matchingA||pokemonScore(b,evolutionPool)-pokemonScore(a,evolutionPool)||Number(a.number)-Number(b.number);
+   // Within the same playable Energy type, prefer actual same-type partners
+   // unless the user has explicitly requested a themed synergy deck.
+   const cohesion=theme==='any'?matchingB-matchingA:0;
+   return newA-newB||cohesion||synergy.pokemonThemeScore(b,theme)-synergy.pokemonThemeScore(a,theme)||matchingB-matchingA||pokemonScore(b,evolutionPool)-pokemonScore(a,evolutionPool)||Number(a.number)-Number(b.number);
  });
  if(pokemonCount()<=11){
    // A named synergy in a printed attack is stronger evidence of a partner
@@ -203,8 +214,7 @@ function buildDeck(rows,options={}){
    const namedPartners=endpointCards(pokemonPool).filter(c=>c.id!==main.id&&c.stage!=='Basic'&&
       namedEffects.includes(c.name.toLowerCase())&&familyLine(c,evolutionPool).length>=2&&canFitEnergy(c));
    const partner=chooseCandidate(namedPartners.length?namedPartners:partnerCandidates);
-   if(partner&&addLine(familyLine(partner,evolutionPool),namedPartners.length?1:2)&&!requested.length)
-     for(const type of attackTypes(partner))if(!selectedTypes.includes(type)&&selectedTypes.length<2)selectedTypes.push(type);
+   if(partner)addLine(familyLine(partner,evolutionPool),namedPartners.length?1:2);
  }
  // Supplement only when there is room and a genuinely useful independent role.
  // No arbitrary 14-Pokémon quota: extra Trainers are often more valuable.
@@ -217,13 +227,13 @@ function buildDeck(rows,options={}){
    const required=neededTypes();
    const extraA=attackTypes(a).filter(t=>!required.includes(t)).length;
    const extraB=attackTypes(b).filter(t=>!required.includes(t)).length;
-   return extraA-extraB||synergy.pokemonThemeScore(b,theme)-synergy.pokemonThemeScore(a,theme)||standaloneScore(b)-standaloneScore(a)||Number(a.number)-Number(b.number);
+   const sameTypeA=(a.types||[]).some(t=>(main.types||[]).includes(t))?1:0;
+   const sameTypeB=(b.types||[]).some(t=>(main.types||[]).includes(t))?1:0;
+   return extraA-extraB||(theme==='any'?sameTypeB-sameTypeA:0)||synergy.pokemonThemeScore(b,theme)-synergy.pokemonThemeScore(a,theme)||standaloneScore(b)-standaloneScore(a)||Number(a.number)-Number(b.number);
  });
  if(pokemonCount()<12){
    const support=chooseCandidate(usefulBasics);
-   if(support){add(support,Math.min(2,room(support)));if(!requestedEnergy.length)
-     for(const type of attackTypes(support))if(!selectedTypes.includes(type)&&selectedTypes.length<2)selectedTypes.push(type);
-   }
+   if(support)add(support,Math.min(2,room(support)));
  }
  // Special Energy is non-negotiable for a Darkness or Metal attacker.
  // Reserve it ahead of Trainers, otherwise the generated 30-card deck can
@@ -300,9 +310,10 @@ function buildDeck(rows,options={}){
  for(const c of trainerFallback){while(cards.length<30&&room(c)>0){if(!add(c,1))break;}if(cards.length>=30)break;}
  const fallbackBasics=pokemonPool.filter(c=>c.stage==='Basic'&&canFitEnergy(c)).sort((a,b)=>Number(matchesRarity(b,rarityFocus,basicOnly))-Number(matchesRarity(a,rarityFocus,basicOnly))||standaloneScore(b)-standaloneScore(a));
  for(const c of fallbackBasics){while(cards.length<30&&room(c)>0&&canFitEnergy(c)){if(!add(c,1))break;}if(cards.length>=30)break;}
- if(cards.length<30&&!requestedEnergy.length){for(const c of pokemonPool.filter(c=>c.stage==='Basic').sort((a,b)=>Number(matchesRarity(b,rarityFocus,basicOnly))-Number(matchesRarity(a,rarityFocus,basicOnly)))){if(!canFitEnergy(c))continue;while(cards.length<30&&room(c)>0){if(!add(c,1))break;}for(const type of attackTypes(c))if(!selectedTypes.includes(type)&&selectedTypes.length<2)selectedTypes.push(type);if(cards.length>=30)break;}}
- // Final conservative fill: only Trainers, Special Energy, and Basics whose actual deck Energy profile stays at two types or fewer.
- if(cards.length<30){for(const c of pool.filter(c=>(c.kind==='trainer'||c.specialEnergy&&(!isDiscoveryEnergySupply(c,scope)||specialNeeds[c.id==='neo1-104'?'D':'M']>0)||c.stage==='Basic')&&trainerIsUseful(c))){while(cards.length<30&&room(c)>0){const trial=[...cards,c.id],profile=decks.analyzeDeck(trial).recommendedEnergyTypes;if(requestedEnergy.length&&!profile.every(t=>requestedEnergy.includes(t)))break;if(!requestedEnergy.length&&profile.length>2)break;if(!add(c,1))break;}if(cards.length>=30)break;}}
+ if(cards.length<30&&!requestedEnergy.length){for(const c of pokemonPool.filter(c=>c.stage==='Basic').sort((a,b)=>Number(matchesRarity(b,rarityFocus,basicOnly))-Number(matchesRarity(a,rarityFocus,basicOnly)))){if(!canFitEnergy(c))continue;while(cards.length<30&&room(c)>0){if(!add(c,1))break;}if(cards.length>=30)break;}}
+ // Final conservative fill: respect the planned mono/explicit dual Energy profile;
+ // only the sparse-inventory rescue is allowed a second otherwise unrequested type.
+ if(cards.length<30){for(const c of pool.filter(c=>(c.kind==='trainer'||c.specialEnergy&&(!isDiscoveryEnergySupply(c,scope)||specialNeeds[c.id==='neo1-104'?'D':'M']>0)||c.stage==='Basic')&&trainerIsUseful(c))){while(cards.length<30&&room(c)>0){const trial=[...cards,c.id],profile=decks.analyzeDeck(trial).recommendedEnergyTypes;if(options._allowSecondType===true&&!requestedEnergy.length?profile.length>2:!profile.every(t=>plannedEnergy.includes(t)))break;if(!add(c,1))break;}if(cards.length>=30)break;}}
  if(cards.length!==30){
    // Sparse themed pools can choose an awkward first core that leaves too few
    // compatible fillers. Retry distinct archetypes rather than handing back an
@@ -312,10 +323,25 @@ function buildDeck(rows,options={}){
      const next=buildDeck(rows,{...options,_retryDepth:depth+1,randomSeed:Number(options.randomSeed||1)+9973*(depth+1),excludeArchetypes:[...excluded,archetypeKey(featured||main)]});
      if(next.ok)return next;
    }
+   // Reconsider this same core with an explicit single-type plan before
+   // giving up on it. A random build must not needlessly rescue a perfectly
+   // playable mono-Fighting Golem ex using a Grass Volbeat.
+   if(depth===0&&!focus&&!requestedEnergy.length&&!options._allowSecondType&&lineEnergy.length===1){
+     const sameCore=buildDeck(rows,{...options,focusCardId:main.id,types:[lineEnergy[0]],excludeArchetypes:[],_retryDepth:6});
+     if(sameCore.ok)return sameCore;
+   }
+   // Favour mono-Energy in all normal builds. For a tiny collection that
+   // literally cannot complete 30 cards with any mono core, permit a two-type
+   // rescue as a last resort rather than failing to build a legal deck.
+   // Never override a user-selected Energy type to do this.
+   if(depth===0&&!focus&&!requestedEnergy.length&&!options._allowSecondType){
+     const rescue=buildDeck(rows,{...options,_allowSecondType:true,_retryDepth:0});
+     if(rescue.ok)return rescue;
+   }
    return fail(`Could only assemble ${cards.length}/30 compatible owned cards. Add more Classic TCG cards or widen the Energy type filter.`);
  }
  const legal=decks.validateDraft(cards,rows,{requireFull:true});if(!legal.ok)return {ok:false,cards,energyTypes:selectedTypes,errors:legal.errors,warnings:[],strategy:''};
- const analysis=decks.analyzeDeck(cards),energyTypes=requestedEnergy.length?requestedEnergy:analysis.recommendedEnergyTypes.slice(0,2);
+ const analysis=decks.analyzeDeck(cards),energyTypes=requestedEnergy.length===1?requestedEnergy:(allowMixedEnergy&&requestedEnergy.length===2?requestedEnergy:neededTypes().length?analysis.recommendedEnergyTypes.slice(0,2):selectedTypes.slice(0,2));
  const finalEnergy=energyTypes.length?energyTypes:selectedTypes.slice(0,2);
  const specialist=(main.types||[]).find(t=>t==='Darkness'||t==='Metal');
  const zoneLabel=finalEnergy.join(' / ');
