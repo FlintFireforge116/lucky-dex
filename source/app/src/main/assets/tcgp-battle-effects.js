@@ -2206,18 +2206,41 @@
       return all?n:Number(n>0);
     };
     const handToDeck=(owner,index)=>{const ref=owner.hand[index];if(!ref)return false;owner.deck.push(...owner.hand.splice(index,1));ctx.shuffle?.(ctx.state,owner.deck);return true;};
-    const energyToHand=(type)=>{const ids={Grass:'ex1-104',Fighting:'ex1-105',Water:'ex1-106',Psychic:'ex1-107',Fire:'ex1-108',Lightning:'ex1-109'};if(!ids[type])return false;us.hand.push({uid:'ex2-energy-'+turn+'-'+us.hand.length,cardId:ids[type],zoneGenerated:true});return true;};
+    const energyToHand=(type)=>{const ids={Grass:'ex1-104',Fighting:'ex1-105',Water:'ex1-106',Psychic:'ex1-107',Fire:'ex1-108',Lightning:'ex1-109',Darkness:'lental-basic-darkness',Metal:'lental-basic-metal'};if(!ids[type])return false;us.hand.push({uid:'ex2-energy-'+turn+'-'+us.hand.length,cardId:ids[type],zoneGenerated:true});return true;};
     const selectedTarget=(owner)=>selected(ctx,owner);
     const flip=reason=>{const hit=coin(ctx);ctx.state.log.push({type:'coin',side:ctx.side,reason:'EX Sandstorm '+(reason||key),heads:hit,results:[hit]});return hit;};
     const passiveKeys=['primalVeil','poisonPayback','superSuctionCups','rainDish','fireVeil','energyVariation','intimidatingFang','glowingScreen','exoskeleton','upliftingGlow','primalLock'];
     if(passiveKeys.includes(key))return;
     switch(key){
+      case 'lanetteNetSearch':{
+        // Lanette can only fetch up to three DIFFERENT printed Pokémon types,
+        // excluding Baby Pokémon, from the deck. The original implementation
+        // could pull three copies of the same type, or Baby Pokémon.
+        const babyNames=new Set(['Pichu','Cleffa','Igglybuff','Magby','Elekid','Smoochum','Tyrogue','Azurill','Wynaut']);
+        const seen=Array.isArray(e.seenTypes)?e.seenTypes:[];
+        const valid=ref=>{const c=get(ref),type=c?.types?.[0];return c?.kind==='pokemon'&&c?.stage==='Basic'&&!!type&&!seen.includes(type)&&!babyNames.has(c.name);};
+        if(ctx.resolvingChoice){if(ctx.action?.choiceSkip)return;
+          const index=Number(ctx.action?.choiceDeckIndex),ref=us.deck[index];
+          if(!valid(ref))return;
+          const type=get(ref).types[0];us.hand.push(...us.deck.splice(index,1));ctx.shuffle?.(ctx.state,us.deck);
+          const left=Number(e.remaining??3)-1;
+          if(left>0)ex2Rule({...e,remaining:left,seenTypes:[...seen,type]},{...ctx,resolvingChoice:false});
+          return;
+        }
+        if(us.deck.some(valid))request('deckCard',{filter:{kind:'pokemon',stage:'Basic'},excludeUids:us.deck.filter(ref=>!valid(ref)).map(ref=>ref.uid),optional:true,effect:{...e,seenTypes:seen,remaining:Number(e.remaining??3)}});
+        return;
+      }
       case 'fanAway':{
         if(!d||!count(d))return;
-        if(ctx.resolvingChoice){const type=e.types?.[Number(ctx.action?.choiceOption)];if(type&&Number(d.energy?.[type]||0)>0){d.energy[type]--;them.hand.push({uid:`ex2-fan-${turn}-${them.hand.length}`,cardId:({Grass:'ex1-104',Water:'ex1-106',Fire:'ex1-108',Lightning:'ex1-109',Psychic:'ex1-107',Fighting:'ex1-105'})[type],zoneGenerated:true});}return;}
+        if(ctx.resolvingChoice){const token=e.tokens?.[Number(ctx.action?.choiceOption)];if(!token)return;
+          if(token.startsWith('special:')){const index=(d.specialEnergy||[]).findIndex(ref=>ref.uid===token.slice(8));if(index>=0)them.hand.push(...d.specialEnergy.splice(index,1));}
+          else if(token.startsWith('basic:')){const type=token.slice(6),ids={Grass:'ex1-104',Fighting:'ex1-105',Water:'ex1-106',Psychic:'ex1-107',Fire:'ex1-108',Lightning:'ex1-109',Darkness:'lental-basic-darkness',Metal:'lental-basic-metal'};
+            if(Number(d.energy?.[type]||0)>0&&ids[type]){d.energy[type]--;them.hand.push({uid:`ex2-fan-${turn}-${them.hand.length}`,cardId:ids[type],zoneGenerated:true});}}
+          return;}
         if(!flip())return;
-        const types=Object.entries(d.energy||{}).filter(([,n])=>n>0).map(([t])=>t);
-        if(types.length)request('option',{options:types,effect:{...e,types}});return;
+        const tokens=[...Object.entries(d.energy||{}).filter(([,n])=>Number(n)>0).map(([t])=>'basic:'+t),...(d.specialEnergy||[]).map(ref=>'special:'+ref.uid)];
+        if(tokens.length)request('option',{options:tokens.map(t=>t.startsWith('basic:')?'Return '+t.slice(6)+' Energy':'Return '+(get((d.specialEnergy||[]).find(r=>r.uid===t.slice(8)))?.name||'Special Energy')),effect:{...e,tokens}});
+        return;
       }
       case 'chaosFlash':if(d&&flip())applyEffect({type:'status',target:'opponentActive',status:'confusion'},ctx);return;
       case 'healingWind':if(us.active)us.active.damage=Math.max(0,Number(us.active.damage||0)-10);return;
@@ -2233,8 +2256,11 @@
         if(us.hand.some(ref=>get(ref)?.name===target))request('handCard',{filter:{kind:'pokemon',name:target}});return;
       }
       case 'supernatural':{
-        const supporter=them.hand.find(ref=>get(ref)?.kind==='trainer'&&get(ref)?.trainerType==='Supporter'&&get(ref)?.effect);
-        if(supporter)applyEffect(get(supporter).effect,ctx);return;
+        const eligible=ref=>get(ref)?.kind==='trainer'&&get(ref)?.trainerType==='Supporter'&&get(ref)?.effect;
+        if(ctx.resolvingChoice){const ref=them.hand[Number(ctx.action?.choiceHandIndex)];if(eligible(ref))applyEffect(get(ref).effect,ctx);return;}
+        const targets=them.hand.filter(eligible);if(targets.length===1)applyEffect(get(targets[0]).effect,ctx);
+        else if(targets.length>1)ctx.requestChoice?.({kind:'opponentHandCard',side:'self',filter:{kind:'trainer',trainerType:'Supporter'},effect:e});
+        return;
       }
       case 'scam':{
         if(ctx.resolvingChoice){const i=Number(ctx.action?.choiceHandIndex),ref=them.hand[i];if(get(ref)?.trainerType==='Supporter'&&handToDeck(them,i))ctx.drawCard?.(them);return;}
@@ -4836,6 +4862,18 @@
           case 'rend30':if(Number(d?.damage||0)>0)damage+=30;return;
           case 'targetSlash':if(ctx.cardById(d?.cardId)?.name==='Seviper')damage+=30;return;
           case 'superSlash':if(['Stage 1','Stage 2'].includes(ctx.cardById(d?.cardId)?.stage))damage+=30;return;
+          case 'waterEnergyBeyondCost':{
+            // Printed "Water Energy not used to pay for this attack" counts
+            // only surplus Water, AFTER satisfying both coloured and Colorless
+            // symbols. Two Water attached to a CC attack are NOT two bonuses.
+            const cost=String(ctx.attack?.cost||''),water=Number(a?.energy?.Water||0);
+            const requiredWater=(cost.match(/W/g)||[]).length,colorless=(cost.match(/C/g)||[]).length;
+            const other=Math.max(0,attached(a)-water);
+            const waterUsed=requiredWater+Math.max(0,colorless-other);
+            const extra=Math.min(2,Math.max(0,water-waterUsed));
+            damage+=extra*(rule==='waterEnergyBeyondCost'&&(ctx.attack?.name==='Hydrocannon')?20:10);
+            return;
+          }
           case 'lightTouchThrow':damage=Math.max(0,80-10*attached(d));return;
           case 'energyCrush':damage=20+10*pokemonOn(foe).reduce((n,p)=>n+attached(p),0);return;
           case 'specialBlow':if((d?.specialEnergy||[]).length)damage+=40;return;

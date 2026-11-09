@@ -1,0 +1,24 @@
+LuckyDex v0.69.164 — EX Sandstorm battle and deck-builder correctness audit
+Base: v0.69.163. Unzip into the existing source/ directory.
+
+Move correctness fixes:
+- Water-energy scaling: Hydro Punch, Hydrocannon, and Water Gun now subtract the Water Energy used to satisfy both colored and Colorless attack costs before counting any surplus. The former .163 test incorrectly expected a Hydro Punch bonus from Water Energy already spent.
+- Dark Mind (Murkrow 47 / Duskull 62): preserves printed damage to the Active Pokémon while dealing 10 damage to the selected Bench Pokémon.
+- Sand Swirl (Sandslash 21), Spinning Tail (Steelix 23), and Double Wing Attack (Fearow 37): active damage is now treated as normal attack damage with Weakness/Resistance, rather than being added as untyped damage counters. Sand Swirl keeps its retreat lock and Spinning Tail keeps its separate Bench hits.
+- Fast Evolution (Anorith 27) only searches for Stage 1/Stage 2 Pokémon, never Basic Pokémon.
+- Sableye's Supernatural now lets the player choose among Supporters in the opposing hand, rather than silently copying the first.
+- Shiftry's Fan Away handles Basic Energy of all eight types (including Darkness/Metal) and attached Special Energy, returning the chosen card to its owner's hand.
+- Lanette's Net Search only offers different types of Basic Pokémon and excludes Baby Pokémon, with up to three selections. The card-choice system now respects excludeUids for deck searches.
+
+Deck strategy metadata:
+- Added Poison Payback/Cradily Poison inflicter tags, status payoffs for Illumise/Volbeat Pester, accurate Water dependency for Ludicolo, Basic-only search restriction for Lanette, and removed misleading Ludicolo Energy-acceleration classification.
+- Expanded printed Trainer descriptions in the inspector.
+
+Validation:
+- 100/100 EX Sandstorm cards remain enabled; original card data, expansion selection, seven Pokémon-ex and five-Prize classic rules preserved.
+- Ran all 154 attacks through the battle engine using both seeded coin paths (existing .163 suite).
+- Added numerical/board-state regression tests for Water bonuses, Weakness, split Active+Bench hits, evolution searches, Lanette choices, Fan Away basic/special returns, Supernatural choices, strategy metadata, Fossils, and player/CPU deck generation.
+- 42/42 tests passed across v0.69.158–v0.69.164 relevant test suites (Nov 9, 2026).
+- No Android on-device testing. Uncommon cross-expansion interactions beyond the tested cases remain possible.
+
+Preserves separate Test Lab saved decks, CPU filters, previous Machamp Immunity and Rage/Flail fixes.

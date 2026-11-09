@@ -133,7 +133,7 @@ put('94:0',status('confusion'));
 put('33:0',status('poison'));
 put('29:0',{...status('poison'),amount:20},'Toxic: put 2 damage counters between turns.');
 put('78:1',status('poison'));
-put('82:0',lock);put('21:0',seq({type:'damage',target:'opponentActive',amount:20},lock));put('99:0',seq(status('burn'),lock));
+put('82:0',lock);put('21:0',lock);put('99:0',seq(status('burn'),lock));
 put('41:0',flip(guarded));put('81:0',flip(guarded));
 put('76:0',{type:'coinAttackGate',heads:f});put('49:1',{type:'coinAttackGate',heads:f});
 put('73:0',seq({type:'status',target:'self',status:'confusion'},status('confusion')));
@@ -148,9 +148,9 @@ bulk('28:1',{type:'coinDamage',coins:2,amount:40,mode:'replace'});
 bulk('45:0',{type:'coinDamage',coins:2,amount:30,mode:'replace'});
 bulk('44:1 46:1',{type:'coinDamage',coins:3,amount:20,mode:'replace'});
 put('56:0',flip(bonus(20)));put('48:0',flip(bonus(10)));put('63:1',flip(bonus(10)));
-put('7:0',{type:'energyDamage',source:'self',energyType:'Water',extraAbove:1,maxCount:2,amount:10});
-put('19:1',{type:'energyDamage',source:'self',energyType:'Water',extraAbove:0,maxCount:2,amount:20});
-put('50:0',{type:'energyDamage',source:'self',energyType:'Water',extraAbove:0,maxCount:2,amount:10});
+put('7:0',rule('waterEnergyBeyondCost'));
+put('19:1',rule('waterEnergyBeyondCost'));
+put('50:0',rule('waterEnergyBeyondCost'));
 put('74:1',{type:'energyDamage',source:'opponent',amount:10});
 put('25:1',{type:'damageRule',ignoreResistance:true});
 put('33:1',{type:'damageRule',ignoreResistance:true});
@@ -172,19 +172,19 @@ put('3:1',{type:'healSelf',amount:20});put('97:1',{type:'healSelf',amount:20});p
 put('5:1',{type:'discardEnergyCard',target:'self',energyType:'Fire',strictEnergyType:true,amount:1});
 put('26:0',{type:'selfDamage',amount:10});put('79:1',{type:'selfDamage',amount:10});
 put('21:1',{type:'benchDamage',side:'self',all:true,amount:10});
-put('23:1',seq({type:'damage',target:'opponentActive',amount:20},{type:'benchDamage',side:'opponent',all:true,amount:20}));
-put('37:0',{type:'damage',target:'opponentActive',amount:20});
+put('23:1',{type:'benchDamage',side:'opponent',all:true,amount:20});
+put('37:0',f);
 put('55:0',seq({type:'damage',target:'opponentActive',amount:10},{type:'benchDamage',side:'opponent',all:true,amount:10}));
 put('62:0',{type:'damage',target:'opponentActive',amount:10});
-put('62:1',{type:'selectedDamage',target:'opponentBench',amount:10,ignoreWeakness:true,ignoreResistance:true});
-put('47:1',{type:'selectedDamage',target:'opponentBench',amount:10,ignoreWeakness:true,ignoreResistance:true});
+put('62:1',{type:'benchDamage',side:'opponent',amount:10});
+put('47:1',{type:'benchDamage',side:'opponent',amount:10});
 put('98:1',rule('discardAllEnergy'));
 put('99:1',{type:'discardEnergyCard',target:'self',amount:1});
 put('80:0',delay);
 put('52:0',{type:'nextAttackBonus',attackName:'Slash',amount:50});
 put('43:0',{type:'chooseAttackLock',duration:'opponentTurn'});
 put('85:0',{type:'draw',amount:1});
-put('27:0',{type:'searchChosen',source:'deck',amount:1,filter:{kind:'pokemon'}});
+put('27:0',{type:'searchChosen',source:'deck',amount:1,filter:{kind:'pokemon',stage:['Stage 1','Stage 2']}});
 put('31:0',{type:'searchChosen',source:'deck',amount:1,filter:{kind:'trainer'}});
 put('44:0',{type:'searchChosen',source:'discard',amount:1});
 put('63:0',{type:'searchChosen',source:'deck',amount:3,filter:{kind:'pokemon',evolvesFrom:'Eevee'}});
@@ -218,7 +218,7 @@ put('100:0',rule('superDeepDive'));
 put('6:1',rule('lightningStrike'));
 // 89 Wally's Training requires evolving the Active Pokémon, not choosing any target.
 const TRAINEFFECTS={86:{type:'removeStatuses',statuses:['sleep','poison','burn','confusion','paralysis']},
- 87:{type:'searchChosen',source:'deck',amount:3,filter:{kind:'pokemon',stage:'Basic'}},
+ 87:rule('lanetteNetSearch'),
  88:{type:'rareCandy'},89:{type:'evolveTargetFromDeck',target:'selfActive'},
  90:{type:'playFossil',hp:40,subtype:'Colorless',canRetreat:false},
  91:{type:'playFossil',hp:10,subtype:'Colorless',canRetreat:false},
@@ -259,21 +259,21 @@ const ABILITIES={
 // Cards with a power or attack that needs a specialized rule are tagged so
 // the deck planner recognises their strategy, rather than being treated as vanilla.
 const META={
- 1:{roles:['disruption']},2:{roles:['poison']},3:{roles:['stall','poison','healing']},4:{roles:['disruption']},
- 7:{roles:['healing','energy']},8:{roles:['draw']},9:{roles:['disruption']},10:{roles:['disruption']},
+ 1:{roles:['disruption']},2:{roles:['poison'],inflicts:['poison']},3:{roles:['stall','poison','healing'],inflicts:['poison']},4:{roles:['disruption']},
+ 7:{roles:['healing','damage'],energyTypes:['Water']},8:{roles:['draw']},9:{roles:['disruption']},10:{roles:['disruption']},
  11:{roles:['poison','sleep'],inflicts:['poison','sleep']},12:{roles:['disruption']},13:{roles:['draw']},
  14:{roles:['stall']},15:{roles:['burn'],inflicts:['burn']},17:{roles:['disruption'],inflicts:['confusion']},
  19:{roles:['disruption']},20:{roles:['energy']},21:{roles:['disruption']},22:{roles:['disruption']},
  26:{roles:['stall']},27:{roles:['search']},29:{roles:['stall'],inflicts:['poison']},30:{roles:['energy']},
  31:{roles:['search']},32:{roles:['disruption']},35:{roles:['energy']},36:{roles:['energy']},
- 38:{roles:['stall'],inflicts:['confusion','sleep']},39:{roles:['stall','search']},
+ 38:{roles:['stall'],inflicts:['confusion','sleep'],payoffs:['sleep','poison','burn','paralysis','confusion']},39:{roles:['stall','search']},
  42:{roles:['search','disruption']},43:{roles:['disruption']},44:{roles:['search']},
  45:{roles:['healing']},47:{roles:['disruption']},51:{inflicts:['burn']},52:{roles:['setup']},
- 53:{roles:['stall'],inflicts:['poison','sleep']},54:{roles:['search']},55:{roles:['healing']},
+ 53:{roles:['stall'],inflicts:['poison','sleep'],payoffs:['sleep','poison','burn','paralysis','confusion']},54:{roles:['search']},55:{roles:['healing']},
  57:{roles:['poison'],inflicts:['poison']},60:{roles:['search']},63:{roles:['search']},
  65:{roles:['burn'],inflicts:['burn']},66:{roles:['healing']},68:{inflicts:['paralysis']},
  70:{roles:['search']},78:{roles:['energy'],inflicts:['poison']},79:{roles:['energy']},
- 83:{inflicts:['sleep']},86:{roles:['healing']},87:{roles:['search']},88:{roles:['evolution','search']},
+ 83:{inflicts:['sleep']},86:{roles:['healing']},87:{roles:['search'],stages:['Basic']},88:{roles:['evolution','search']},
  89:{roles:['evolution','search']},90:{roles:['stall']},92:{roles:['healing']},
  93:{roles:['energy']},94:{roles:['disruption']},95:{roles:['damage']},96:{roles:['damage']},
  97:{roles:['healing']},98:{roles:['damage']},99:{roles:['burn'],inflicts:['burn']},100:{roles:['healing']}
@@ -389,7 +389,7 @@ function parse(n){
    const [move,cost,printed='']=spec.split('~'),key=n+':'+i,e=R.get(key);
    if(!e)reasons.push('Attack has no battle effect: '+move);
    else if(!fx.supportsEffect(e))reasons.push('Unsupported attack effect: '+move);
-   return {name:move,cost,damage:/×/.test(printed)?0:Number((printed.match(/^\d+/)||[])[0]||0),damageText:printed||null,
+   return {name:move,cost,damage:/×/.test(printed)?0:({21:0,23:1,37:0}[n]===i?20:Number((printed.match(/^\d+/)||[])[0]||0)),damageText:printed||null,
     text:notes.get(key)||ATTACK_TEXT[n]?.[i]||`Deal ${printed||0} damage.`,effect:e||null};
   });
   if(ability&&!ABILITIES[n])reasons.push('Power/Body missing: '+ability);
@@ -399,7 +399,7 @@ function parse(n){
    weakness:T[weak]||null,weaknessValue:weak?'×2':null,resistance:T[resist]||null,resistanceValue:resist?'-30':null,
    pokemonEx:isEx,isEx,prizeCards:isEx?2:1,attacks,abilities:ABILITIES[n]||[]});
  }else if(k==='T'){
-  Object.assign(card,{trainerType:[87,89].includes(n)?'Supporter':'Item',effect:TRAINEFFECTS[n]||null,text:`EX Sandstorm Trainer: ${name}.`});
+  Object.assign(card,{trainerType:[87,89].includes(n)?'Supporter':'Item',effect:TRAINEFFECTS[n]||null,text:({86:'Remove all Special Conditions from each of your Active Pokémon.',87:'Search your deck for up to three different types of Basic Pokémon, excluding Baby Pokémon. Put them in your hand and shuffle your deck.',88:'Evolve one of your Basic Pokémon straight into a Stage 1 or Stage 2 from your hand.',89:'Search your deck for an Evolution of your Active Pokémon and evolve it, then shuffle your deck.',90:'Play Claw Fossil as a non-retreating 40 HP Colorless Basic Pokémon; it yields no Prize when Knocked Out.',91:'Play Mysterious Fossil as a non-retreating 10 HP Colorless Basic Pokémon; it yields no Prize when Knocked Out.',92:'Play Root Fossil as a non-retreating 40 HP Colorless Basic Pokémon; it yields no Prize when Knocked Out.'})[n]});
   if([90,91,92].includes(n))Object.assign(card,{hp:Number(hp),types:['Colorless'],subtype:'Colorless',stage:'Basic',retreat:0,noPrize:true,countsAsKnockout:false,statusImmune:true,abilities:ABILITIES[n]||[]});
   if(!TRAINEFFECTS[n])reasons.push('Trainer effect not implemented: '+name);
  }else Object.assign(card,{specialEnergy:true,basicEnergy:false,types:['Colorless'],subtype:'Colorless',effect:SPECIAL[n],text:'Multi Energy: all types as a single Energy; Colorless only when another Special Energy is attached.'});

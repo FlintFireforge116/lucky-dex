@@ -87,7 +87,7 @@ test('dynamic EX damage changes with the correct game state',()=>{
  s.sides.player.active=sl(12,'p');s.sides.opponent.active.energy={Water:3};assert.equal(ctx(12,0).damage,50);
  s.sides.player.active=sl(14,'p');s.sides.opponent.active=sl(11,'op');assert.equal(ctx(14,0).damage,40);
  s.sides.opponent.active=sl(72,'op');assert.equal(ctx(14,0).damage,10);
- s.sides.player.active=sl(7,'p');s.sides.player.active.energy={Water:3};assert.equal(ctx(7,0).damage,70);
+ s.sides.player.active=sl(7,'p');s.sides.player.active.energy={Water:3};assert.equal(ctx(7,0).damage,50);
 });
 
 test('Sandstorm passive rules preserve printed damage, retreat, healing, statuses and Supporter locks',()=>{
@@ -152,6 +152,6 @@ test('Sandslash Sand Swirl applies 20 real HP damage as well as retreat lock',()
  const move=core.legalActions(s,'player').find(a=>a.type==='attack'&&a.attackIndex===0);assert.ok(move);
  const before=s.sides.opponent.active.damage;
  core.applyAction(s,'player',move);resolveChoices(s);
- assert.equal(s.sides.opponent.active.damage-before,20);
+ assert.equal(s.sides.opponent.active.damage-before,40); // Pikachu is Fighting-weak
  assert.ok(s.sides.opponent.active.locks?.some(l=>l.action==='retreat'));
 });
