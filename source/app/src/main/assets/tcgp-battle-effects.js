@@ -264,6 +264,10 @@
   }
   function clearTemporaryEffects(state,slot){if(!slot)return;
     revertShapeshift(state,slot);
+    // In Classic TCG, evolving or moving to the Bench clears attack effects on
+    // that Pokémon, including a Special Condition scheduled for a later turn.
+    if(state?.format==='classic'&&Array.isArray(state.delayedEffects))
+      state.delayedEffects=state.delayedEffects.filter(item=>item.targetUid!==slot.uid);
     clearConditions(slot);delete slot.locks;delete slot.attackGuard;delete slot.statusGuard;delete slot.attackGate;delete slot.retaliate;delete slot.stackedAttackBonuses;delete slot.abilitySuppressed;delete slot.energyTypeOverride;delete slot.typeOverride;delete slot.weaknessOverride;delete slot.resistanceOverride;delete slot.destinyBond;delete slot.gymShadowImages;delete slot.gymCounterGuard;delete slot.gymFireWall;delete slot.gymDeflector;delete slot.gymEnergyLock;delete slot.gym2Intimidate;delete slot.gym2GiantGrowth;delete slot.gym2PoisonAmount;delete slot.gym2NinjaTrick;delete slot.gym2FaceDown;delete slot.gym2BubblesLockTurn;delete slot.legendaryMirrorShellUntil;delete slot.neoMeanLook;delete slot.neoWebLock;delete slot.neoJawClamp;delete slot.neoLeer;delete slot.neoAmnesia;delete slot.neoScaryFace;delete slot.neoAttackLock;delete slot.neoDeflector;delete slot.neoPollenShield;delete slot.neoScreech;delete slot.neoLockOn;delete slot.neoCounter;delete slot.neoPursuit;delete slot.neoSecretePoison;delete slot.neoSlime;delete slot.neoGazeUntil;if(state)state.modifiers=(state.modifiers||[]).filter(m=>m.targetUid!==slot.uid||m.scope==='team'||m.scope==='active'||m.scope==='opponentActive');}
   function switchPokemon(side,benchIndex,state){const index=side.bench.findIndex(s=>s&&Number(s.benchSlot)===Number(benchIndex));if(index<0||!side.active)return false;const incoming=side.bench[index],outgoing=side.active;outgoing.benchSlot=Number(incoming.benchSlot);incoming.benchSlot=null;incoming.movedToActiveTurn=state?.turnNumber;side.bench[index]=outgoing;side.active=incoming;clearTemporaryEffects(state,outgoing);return true;}
   function protectedFromEffects(slot,ctx){
@@ -2552,6 +2556,13 @@
     if(key==='2:0'){ // Butterfree Whirlwind: defending player chooses their replacement after damage.
       if(ctx.resolvingChoice){const picked=selectTarget(foe);if(picked&&foe.bench.includes(picked))switchPokemon(foe,picked.benchSlot,ctx.state);}
       else if(foe.bench.length)ask('pokemon',{side:'opponent',selectionSide:ctx.foeSide,includeActive:false,effect:e});
+      return;
+    }
+    // EX FireRed & LeafGreen Gastly #63: Slow Trip Gas is DELAYED.
+    // The original target is affected only at the end of the opponent's next turn;
+    // it must not become Confused when the attack is declared.
+    if(key==='63:0'){
+      if(d)applyEffect({type:'scheduleDelayed',event:'endOpponentNextTurn',targetMode:'defender',effect:{type:'status',status:'confusion'}},ctx);
       return;
     }
     if(choices.includes(key)&&ctx.resolvingChoice)return; // Attack damage has already been applied to the selected target.
