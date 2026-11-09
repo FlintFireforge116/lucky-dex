@@ -261,12 +261,44 @@
     if(state.format==='classic'&&state.phase==='effectChoice'&&state.pendingChoice?.effect?.type==='redistributeEnergy'&&state.pendingChoice.effect.phase==='continue'){
       const done=legal.find(action=>action.choiceLabel==='Done');if(done)return done;
     }
-    if(Number(actionCount||0)>=30)return legal.find(a=>a.type==='attack')||legal.find(a=>a.type==='endTurn')||legal.find(a=>a.choiceLabel==='Done')||legal[0];
+    // A Classic CPU with no Bench must not pass up a Basic already in hand.
+    // This is especially important for EX Team Magma/Aqua Power Saver: a lone
+    // Kyogre/Groudon cannot attack until the team has enough members in play.
+    if(state.format==='classic'&&state.phase==='battle'&&!state.sides[side].bench.filter(Boolean).length){
+      const available=legal.filter(a=>a.type==='bench');
+      if(available.length){
+        available.sort((a,b)=>Number(data.cardById(b.cardId)?.hp||0)-Number(data.cardById(a.cardId)?.hp||0));
+        return available[0];
+      }
+    }
+    if(Number(actionCount||0)>=30)return legal.find(a=>a.type==='bench')||legal.find(a=>a.type==='attack')||legal.find(a=>a.type==='endTurn')||legal.find(a=>a.choiceLabel==='Done')||legal[0];
     // Effect choices may expose private deck/hand cards. Advanced search works
     // on a redacted public projection, where those card UIDs/positions are not
     // available; simulating a choice there is both invalid and information
     // leakage. Choose from the actual legal set instead.
-    if(state.format==='classic'&&state.phase==='effectChoice')return legal.find(a=>a.choiceSkip===true&&state.pendingChoice?.optional===true)||legal[0];
+    if(state.format==='classic'&&state.phase==='effectChoice'){
+      const pending=state.pendingChoice||{},rule=String(pending.effect?.rule||'');
+      // EX4's Team Balls, Conspirators, Archie and Call for Family effects
+      // offer an *optional* deck search. An earlier generic heuristic always
+      // chose Skip, even when a useful Pokémon was actually available. These
+      // are beneficial searches, not costs or mandatory exchanges. The CPU
+      // must actually take the card (including on Beginner difficulty).
+      if(pending.kind==='deckCard'&&rule.startsWith('ex4:')){
+        const available=legal.filter(a=>a.type==='effectChoice'&&!a.choiceSkip);
+        if(available.length){
+          const ss=state.sides[side],empty=!ss.bench.filter(Boolean).length;
+          const score=a=>{
+            const card=data.cardById(a.choiceCardId),basic=card?.kind==='pokemon'&&card.stage==='Basic';
+            // If the Bench is empty, retrieve Basics before evolutions;
+            // otherwise prefer relevant Pokémon to spare Energy cards.
+            return (basic?(empty?1000:500):card?.kind==='pokemon'?200:0)+Number(card?.hp||0)*.01;
+          };
+          available.sort((a,b)=>score(b)-score(a));
+          return available[0];
+        }
+      }
+      return legal.find(a=>a.choiceSkip===true&&pending.optional===true)||legal[0];
+    }
     if(level===0)return legal.map((action,index)=>({action,index,score:beginner(action,state,side)})).sort((a,b)=>b.score-a.score||a.index-b.index)[0].action;
     const position=publicPosition(state,side),ranked=legal.map(action=>evaluate(position,action,side,level)).sort((a,b)=>b.score-a.score);
     // Expert scores short sequences with the real action engine: e.g. damage boost

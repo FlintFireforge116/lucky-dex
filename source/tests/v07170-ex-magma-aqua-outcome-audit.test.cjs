@@ -103,8 +103,8 @@ test('app, Android, and both visible version labels agree',()=>{
  const gradle=fs.readFileSync(path.resolve(__dirname,'../app/build.gradle'),'utf8');
  const index=fs.readFileSync(path.join(A,'index.html'),'utf8');
  const runtime=fs.readFileSync(path.join(A,'app-v0167.js'),'utf8');
- assert.match(gradle,/versionCode 7150/);assert.match(gradle,/versionName '0\.69\.170'/);
- assert.match(runtime,/__LUCKYDEX_BUILD='0\.69\.170'/);
- assert.match(index,/id="titleBuildVersion">v0\.69\.170/);
- assert.match(index,/id="appBuildVersion">LUCKY DEX · v0\.69\.170/);
+ const version=gradle.match(/versionName '([^']+)'/)?.[1];assert.ok(version);assert.match(gradle,/versionCode \d+/);
+ assert.ok(runtime.includes(`__LUCKYDEX_BUILD='${version}'`));
+ assert.ok(index.includes(`id="titleBuildVersion">v${version}`));
+ assert.ok(index.includes(`id="appBuildVersion">LUCKY DEX · v${version}`));
 });
