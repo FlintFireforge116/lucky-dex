@@ -706,6 +706,9 @@
       if(state.format==='classic'&&state.stadium?.cardId==='gym1-103'&&['Energy Removal','Super Energy Removal'].includes(card.name)&&s.hand.length<3)return;
       if(state.format==='classic'&&state.sides[side==='player'?'opponent':'player'].active?.cardId==='ex5-100'&&type!=='Supporter'&&!effects.abilitiesSuppressed(state,side==='player'?'opponent':'player',state.sides[side==='player'?'opponent':'player'].active,data.cardById))return;
       if(card.id==='ex5-92'&&s.hand.length>7)return;
+      // Pow! Hand Extension is playable only while behind on Prizes and with
+      // an opposing Benched Pokémon available for either printed choice.
+      if(card.id==='ex7-85'&&(s.prizes.length<=state.sides[side==='player'?'opponent':'player'].prizes.length||!state.sides[side==='player'?'opponent':'player'].bench.length))return;
       if(type==='Supporter'&&s.supporterUsed)return;
       if(state.format==='classic'&&(s.neoTrainerLockTurn===state.turnNumber||Number(s.neoDestinyTrainerLockUntil||0)>=state.turnNumber))return;
       if(state.format==='classic'&&card.id==='neo4-105'&&s.hand.length>=5)return;

@@ -2434,7 +2434,46 @@
       const n=Number(key.slice(8));switch(n){
         case 83:{const n=foe.hand.length;us.deck.push(...us.hand.splice(0));ctx.shuffle?.(ctx.state,us.deck);draw(us,n);return;}
         case 84:{if(ctx.resolvingChoice){const c=discardCard(us,x=>x?.kind==='pokemon','discard');if(c)us.hand.push(c);}else discardCard(us,x=>x?.kind==='pokemon','discard');return;}
-        case 85:{if((us.prizes||[]).length<=(foe.prizes||[]).length)return;if(ctx.resolvingChoice){if(ctx.action?.choiceOption===1&&foe.bench.length)switchPokemon(foe,foe.bench[0].benchSlot,ctx.state);else if(d&&foe.bench.length){const to=foe.bench[0],t=Object.keys(d.energy||{}).find(k=>d.energy[k]>0);if(t){d.energy[t]--;to.energy[t]=Number(to.energy[t]||0)+1;}}}else choose('option',{options:['Move defending Energy to opponent Bench','Switch opposing Active with Bench']});return;}
+        case 85:{ // Pow! Hand Extension: choose the effect, then the actual Energy/target.
+          if((us.prizes||[]).length<=(foe.prizes||[]).length||!foe.bench.length)return;
+          if(ctx.resolvingChoice){
+            if(e.step==='mode'){
+              const mode=e.modes?.[Number(ctx.action?.choiceOption)];
+              if(mode==='switch')choose('pokemon',{side:'opponent',selectionSide:ctx.foeSide,includeActive:false,effect:{...e,step:'switch'}});
+              if(mode==='energy'){
+                const sources=[...Object.entries(foe.active?.energy||{}).filter(([,n])=>Number(n)>0).map(([type])=>({type:'basic',energyType:type,label:type+' Energy'})),
+                  ...(foe.active?.specialEnergy||[]).map(ref=>({type:'special',uid:ref.uid,label:get(ref)?.name||'Special Energy'}))];
+                if(sources.length)choose('option',{options:sources.map(x=>'Move '+x.label),effect:{...e,step:'energy',sources}});
+              }
+              return;
+            }
+            if(e.step==='energy'){
+              const source=e.sources?.[Number(ctx.action?.choiceOption)];
+              if(source)choose('pokemon',{side:'self',selectionSide:ctx.foeSide,includeActive:false,effect:{...e,step:'destination',source}});
+              return;
+            }
+            if(e.step==='destination'){
+              const to=pickTarget(foe),from=foe.active,source=e.source;
+              if(!to||!foe.bench.includes(to)||!from||to===from||!source)return;
+              if(source.type==='basic'&&Number(from.energy?.[source.energyType]||0)>0){
+                from.energy[source.energyType]--;to.energy[source.energyType]=Number(to.energy?.[source.energyType]||0)+1;
+              }else if(source.type==='special'){
+                const i=(from.specialEnergy||[]).findIndex(ref=>ref.uid===source.uid);
+                if(i>=0){to.specialEnergy=to.specialEnergy||[];to.specialEnergy.push(...from.specialEnergy.splice(i,1));}
+              }
+              return;
+            }
+            if(e.step==='switch'){
+              const chosen=pickTarget(foe);if(chosen&&foe.bench.includes(chosen))switchPokemon(foe,chosen.benchSlot,ctx.state);
+            }
+            return;
+          }
+          const modes=[];
+          if(foe.active&&(Object.values(foe.active.energy||{}).some(n=>Number(n)>0)||(foe.active.specialEnergy||[]).length))modes.push('energy');
+          modes.push('switch');
+          choose('option',{options:modes.map(m=>m==='energy'?'Move a chosen Defending Pokémon Energy to a chosen Bench Pokémon':'Switch the Defending Pokémon (opponent chooses)'),effect:{...e,step:'mode',modes}});
+          return;
+        }
         case 86:{for(const ss of [us,foe]){ss.deck.push(...ss.hand.splice(0));ctx.shuffle?.(ctx.state,ss.deck);draw(ss,Math.max(0,Number(ss.prizes?.length||0)));}return;}
         case 87:case 90:return; // Stadiums are persistent and handled by core.
         case 88:{if(ctx.resolvingChoice){const c=discardCard(us,()=>true);if(c){us.discard.push(c);draw(us,/^(Dark |Rocket's )/.test(get(c)?.name||'')?4:3);}}else discardCard(us,()=>true);return;}
@@ -2453,6 +2492,57 @@
     // Attack effects. The damage resolver has already computed the printed
     // base hit; this pass applies costs, statuses and real card selections.
     const move=get(a)?.attacks?.[idx],original=String(move?.text||''),lo=original.toLowerCase();if(!original)return;
+    // Hoppip #57 and Skiploom #49, Miracle Powder: flip ONCE, then choose
+    // the inflicted Special Condition after heads (never auto-pick a status).
+    if(key==='49:0'||key==='57:0'){
+      if(ctx.resolvingChoice){
+        const conditions=['sleep','confusion','poison','burn','paralysis'];
+        const condition=conditions[Number(ctx.action?.choiceOption)];
+        if(e.step==='condition'&&condition)status(condition);
+      }else if(flip())choose('option',{options:['Asleep','Confused','Poisoned','Burned','Paralyzed'],effect:{...e,step:'condition'}});
+      return;
+    }
+    // The Rocket's birds retrieve a matching Energy from the true discard.
+    // Moltres #100 attaches its selected Fire Energy to ANY of your Pokémon;
+    // Entei #97 may also retrieve a Special Energy, subject to its attachment rules.
+    if(['96:0','97:0','100:0','106:0'].includes(key)){
+      const required={'96:0':'Water','100:0':'Fire','106:0':'Lightning'}[key]||null;
+      const legal=ref=>{
+        const c=get(ref);if(c?.kind!=='energy')return false;
+        if(required)return c.basicEnergy&&c.subtype===required;
+        if(c.id==='ex4-86'||c.id==='ex4-87'||c.id==='ex4-88')return false; // team/evolved-only
+        return c.basicEnergy||c.specialEnergy;
+      };
+      const attach=(target,source)=>{
+        if(!target||!source)return;
+        if(source.kind==='ledger'){
+          if(!neoTakeDiscard(ctx,us,source.energyType,1))return;
+          target.energy=target.energy||{};
+          target.energy[source.energyType]=Number(target.energy[source.energyType]||0)+1;
+          ctx.onEnergyAttached?.(target,source.energyType,1);
+        }else{
+          const i=us.discard.findIndex(ref=>ref.uid===source.uid&&legal(ref));
+          if(i<0)return;
+          const [ref]=us.discard.splice(i,1),c=get(ref);
+          if(c.basicEnergy){target.energy=target.energy||{};target.energy[c.subtype]=Number(target.energy[c.subtype]||0)+1;ctx.onEnergyAttached?.(target,c.subtype,1);}
+          else if(c.specialEnergy){target.specialEnergy=target.specialEnergy||[];target.specialEnergy.push(ref);}
+        }
+      };
+      if(ctx.resolvingChoice){
+        if(e.step==='energy'){
+          const source=e.sources?.[Number(ctx.action?.choiceOption)];if(!source)return;
+          if(key==='100:0')choose('pokemon',{side:'self',includeActive:true,effect:{...e,step:'target',source}});
+          else attach(a,source);
+        }else if(e.step==='target'){
+          const target=pickTarget(us);if(target&&board(us).includes(target))attach(target,e.source);
+        }
+        return;
+      }
+      const sources=[...Object.entries(us.energyDiscard||{}).filter(([type,n])=>Number(n)>0&&(!required||type===required)).map(([type])=>({kind:'ledger',energyType:type,label:type+' Energy (Energy discard)'})),
+        ...us.discard.filter(legal).map(ref=>({kind:'card',uid:ref.uid,label:get(ref)?.name||'Energy card'}))];
+      if(sources.length)choose('option',{options:sources.map(x=>x.label),effect:{...e,step:'energy',sources}});
+      return;
+    }
     if(key==='3:0'){for(const p of foe.bench)p.damage=Number(p.damage||0)+10;heal(a,10*board(foe).length);return;}
     if(key==='19:1'){for(const p of foe.bench)p.damage=Number(p.damage||0)+20;return;}
     if(key==='17:0'){if(d){d.locks=[...(d.locks||[]),{action:'retreat',expiresTurn:turn+1}];applyEffect({type:'scheduleDelayed',event:'endOpponentNextTurn',targetMode:'defender',effect:{type:'damage',amount:50}},ctx);}return;}
@@ -2495,14 +2585,18 @@
       }else for(let i=0;i<(/up to 2/.test(lo)?2:1);i++){const j=us.discard.findIndex(ref=>get(ref)?.basicEnergy&&(!type||get(ref).subtype===type));if(j>=0)us.hand.push(...us.discard.splice(j,1));}return;}
     if(/draw a card/.test(lo))draw(us,1);
     if(/can't retreat/.test(lo)&&d)d.locks=[...(d.locks||[]),{action:'retreat',expiresTurn:turn+1}];
-    if(/can't (?:use|attack).*during (?:your|its) next turn/.test(lo)&&a)a.locks=[...(a.locks||[]),{action:'attack',expiresTurn:turn+2}];
+    if(/can't (?:use|attack).*during (?:your|its) next turn/.test(lo)&&a){
+      const named=original.match(/can't use ([^.]+?) during your next turn/i);
+      const moveName=named?.[1]?.trim(),specific=get(a)?.attacks?.find(x=>x.name.toLowerCase()===moveName?.toLowerCase());
+      a.locks=[...(a.locks||[]),{action:'attack',...(specific?{attackName:specific.name}:{}),expiresTurn:turn+2}];
+    }
     if(/switch .* with 1 of your benched pokémon/.test(lo)&&us.bench.length){if(ctx.resolvingChoice){const p=pickTarget(us);if(p) switchPokemon(us,p.benchSlot,ctx.state);}else selectPokemon(us,{includeActive:false});}
     if(/discard .*energy.*attached to/.test(lo)&&a){const m=lo.match(/discard (?:all )?(?:(\d+) )?(water|fire|grass|lightning|darkness|metal) energy/);if(m){for(let i=0;i<(m[0].includes('all')?qty(a):Number(m[1]||1));i++)expend(us,a,m[2][0].toUpperCase()+m[2].slice(1));}}
     const clause=original.match(/(?:the|each) Defending Pokémon (?:is|are) now ([^.]+)/i)?.[1]||'';
     const statuses=[['Asleep','sleep'],['Paralyzed','paralysis'],['Poisoned','poison'],['Burned','burn'],['Confused','confusion']];
     let works=true;if(/flip a coin/i.test(original)&&(/if heads.*(?:now|is)/i.test(original)||/if tails.*(?:now|is)/i.test(original)))works=typeof e.heads==='boolean'?e.heads:flip();
     if(works)for(const [word,s] of statuses)if(clause.includes(word))status(s);
-    if(key==='97:0'||key==='100:0'||key==='106:0'||key==='96:0'){const type={'97:0':null,'100:0':'Fire','106:0':'Lightning','96:0':'Water'}[key];const j=us.discard.findIndex(ref=>get(ref)?.basicEnergy&&(!type||get(ref).subtype===type));if(j>=0){const ref=us.discard.splice(j,1)[0];a.energy[get(ref).subtype]=Number(a.energy[get(ref).subtype]||0)+1;}}
+
   }
   // EX FireRed & LeafGreen. All card references are keyed by their original ex6 numbers.
   function ex6Rule(e,ctx){
