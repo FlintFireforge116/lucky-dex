@@ -265,7 +265,7 @@ function parse(n){
    });
    const powerText=String(text[2]||'').split(':').slice(1).join(':');
    const abilities=printedPower?[{name:printedPower,type:ACTIVATE.has(n)?'activated':'passive',oncePerTurn:ACTIVATE.has(n)&&![4,14,104,112].includes(n),
-      disabledByStatus:DISABLED_STATUS.has(n),printedPowerType:ACTIVATE.has(n)?'power':'body',text:powerText,effect:r('power:'+n)}]:[];
+      disabledByStatus:DISABLED_STATUS.has(n),benchOnly:[34,52].includes(n),printedPowerType:ACTIVATE.has(n)?'power':'body',text:powerText,effect:r('power:'+n)}]:[];
    if(abilities.some(a=>!fx.supportsEffect(a.effect)))missing.push('Unsupported ability');
    const isEx=EX.has(n);if(isEx&&rarity==='Rare Secret')card.exRarity='Rare Holo EX';
    Object.assign(card,{stage:stage==='0'?'Basic':'Stage '+stage,types:[T[t]],subtype:T[t],hp:Number(hp),retreat:Number(retreat||0),

@@ -2432,10 +2432,22 @@
           if(ctx.resolvingChoice){const ix=Number(ctx.action?.choiceDiscardIndex),ref=us.discard[ix];if(ref&&valid(ref)){const dest=us.active;if(!dest)return;us.discard.splice(ix,1);us.discard.push({uid:'ditto-'+turn,cardId:dest.cardId});dest.cardId=ref.cardId;dest.stack=[ref.cardId];}}
           else if(us.discard.some(valid))ask('discardCard',{optional:true,excludeUids:us.discard.filter(ref=>!valid(ref)).map(ref=>ref.uid)});return;}
         case 10:searchDeck(()=>true);return; // Pidgeot Quick Search
-        case 14:{if(ctx.resolvingChoice){const from=board(us).find(s=>s.uid===e.sourceUid),slow=board(us).find(s=>s.uid===e.targetUid)||a;if(from&&slow&&from!==slow&&from.damage>=10&&Number(slow.damage||0)+10<Number(get(slow)?.hp||0)){from.damage-=10;slow.damage+=10;}}
-          else if(board(us).some(s=>s!==a&&s.damage>=10))chooseTarget(us);return;}
+        case 14:{ // Slowbro Strange Behavior: choose the damaged source.
+          const slow=board(us).find(s=>s.uid===e.slowUid)||a;
+          if(ctx.resolvingChoice){const from=selectTarget(us);
+            if(from&&slow&&from!==slow&&from.damage>=10&&Number(slow.damage||0)+10<Number(get(slow)?.hp||0)){
+              from.damage-=10;slow.damage+=10;
+            }
+          }else if(slow&&Number(slow.damage||0)+10<Number(get(slow)?.hp||0)){
+            const exclude=board(us).filter(s=>s===slow||Number(s.damage||0)<10).map(s=>s.uid);
+            if(board(us).some(s=>!exclude.includes(s.uid)))chooseTarget(us,{excludeUids:exclude,effect:{...e,slowUid:slow.uid}});
+          }return;}
         case 34:if(us.bench.some(s=>s.cardId==='ex6-34')&&us.active)status('confusion','selfActive');return;
-        case 52:if(us.active)us.active.conditions={};return;
+        case 52:{ // Assistance removes ONE chosen condition, not all of them.
+          const conditions=Object.keys(us.active?.conditions||{}).filter(c=>us.active.conditions[c]);
+          if(ctx.resolvingChoice){const chosen=conditions[Number(ctx.action?.choiceOption)];if(chosen)delete us.active.conditions[chosen];}
+          else if(us.bench.some(s=>s.uid===a?.uid)&&conditions.length)ask('option',{options:conditions.map(c=>'Remove '+c),effect:e});
+          return;}
         case 104:{ // Energy Rain: Water Energy must originate in hand.
           if(ctx.resolvingChoice&&e.step==='target'){const target=selectTarget(us),ix=us.hand.findIndex(ref=>ref.uid===e.cardUid),ref=us.hand[ix];if(target&&ref&&isEnergy(ref)&&get(ref).subtype==='Water'){us.hand.splice(ix,1);target.energy.Water=Number(target.energy?.Water||0)+1;target.damage=Number(target.damage||0)+10;}return;}
           if(ctx.resolvingChoice){const ref=us.hand[Number(ctx.action?.choiceHandIndex)];if(ref&&isEnergy(ref)&&get(ref).subtype==='Water')chooseTarget(us,{effect:{...e,step:'target',cardUid:ref.uid}});return;}
@@ -2454,20 +2466,62 @@
       switch(num){
         case 87:{if(ctx.resolvingChoice){const ix=Number(ctx.action?.choiceHandIndex);if(us.hand[ix]){us.deck.push(...us.hand.splice(ix,1));shuffled();draw(3);}}else if(us.hand.length)ask('handCard',{optional:true});return;}
         case 88:searchDeck(c=>c?.kind==='pokemon'&&!c.pokemonEx);return;
-        case 89:if(flip()){const slot=board(foe).find(p=>count(p));if(slot)consumeAny(foe,slot);}return;
-        case 90:{if(ctx.resolvingChoice&&e.step==='to'){const from=board(us).find(x=>x.uid===e.sourceUid),to=selectTarget(us);if(from&&to&&from!==to){const type=energyTypes(from)[0];if(type){from.energy[type]--;to.energy[type]=Number(to.energy[type]||0)+1;}}return;}if(ctx.resolvingChoice){const from=selectTarget(us);if(from&&energyTypes(from).length)chooseTarget(us,{effect:{...e,sourceUid:from.uid,step:'to'}});return;}if(board(us).some(x=>energyTypes(x).length))chooseTarget(us);return;}
+        case 89:{ // Energy Removal 2: one flip, then the player chooses the Energy.
+          if(ctx.resolvingChoice){if(ctx.action?.choiceSkip)return;
+            const target=selectTarget(foe),type=ctx.action?.effectEnergyType,uid=ctx.action?.effectSpecialEnergyUid;
+            if(!target)return;
+            if(type)popEnergy(foe,target,type);
+            else if(uid){const ix=(target.specialEnergy||[]).findIndex(ref=>ref.uid===uid);if(ix>=0)foe.discard.push(...target.specialEnergy.splice(ix,1));}
+            return;
+          }
+          if(board(foe).some(p=>count(p)>0)&&flip())ask('energySource',{selectionSide:ctx.foeSide,includeSpecial:true,effect:e});
+          return;}
+        case 90:{ // Energy Switch: choose source, type, then destination.
+          if(ctx.resolvingChoice&&e.step==='to'){
+            const from=board(us).find(x=>x.uid===e.sourceUid),to=selectTarget(us),type=e.energyType;
+            if(from&&to&&from!==to&&Number(from.energy?.[type]||0)>0){from.energy[type]--;to.energy[type]=Number(to.energy[type]||0)+1;}return;
+          }
+          if(ctx.resolvingChoice){const from=selectTarget(us),type=ctx.action?.effectEnergyType;
+            if(from&&type&&Number(from.energy?.[type]||0)>0)chooseTarget(us,{excludeUids:[from.uid],effect:{...e,sourceUid:from.uid,energyType:type,step:'to'}});
+            return;
+          }
+          if(board(us).some(x=>energyTypes(x).length))ask('energySource',{selectionSide:ctx.side,effect:e});
+          return;}
         case 91:return; // EXP.ALL operates on KO events; attachment is handled by tool pipeline.
         case 92:searchBasic(null,'bench');return;
         case 93:if(ctx.resolvingChoice){const t=selectTarget(us);if(t&&!get(t)?.pokemonEx){heal(t,60);t.conditions={};}return;}if(flip())chooseTarget(us,{excludeUids:board(us).filter(x=>get(x)?.pokemonEx).map(x=>x.uid)});return;
         case 94:return; // Mt. Moon suppression is checked in abilitiesSuppressed.
         case 95:if(ctx.resolvingChoice){searchDeck(c=>c?.kind==='pokemon');return;}if(flip())searchDeck(c=>c?.kind==='pokemon');return;
-        case 96:return; // Top-six deck ordering has no automatic reorder (keeps order intact).
+        case 96:{ // HANDY909: choose the order of the top six cards, top first.
+          const count=Math.min(6,us.deck.length),order=e.order||[];
+          if(ctx.resolvingChoice){
+            const ix=Number(ctx.action?.choiceDeckIndex),ref=us.deck[ix];
+            if(!Number.isInteger(ix)||ix<0||ix>=count||!ref||order.includes(ref.uid))return;
+            const next=[...order,ref.uid];
+            if(next.length<count){ask('topDeckCard',{count,excludeUids:next,effect:{...e,order:next}});return;}
+            const top=us.deck.slice(0,count),byUid=new Map(top.map(card=>[card.uid,card]));
+            us.deck.splice(0,count,...next.map(uid=>byUid.get(uid)));
+          }else if(count>1)ask('topDeckCard',{count,effect:{...e,order:[]}});
+          return;}
         case 97:if(ctx.resolvingChoice){const t=selectTarget(foe);if(t&&t!==foe.active)switchPokemon(foe,t.benchSlot,ctx.state);return;}if(foe.bench.length&&flip())chooseTarget(foe,{includeActive:false});return;
         case 98:{us.deck.push(...us.hand.splice(0));shuffled();draw(5);return;}
-        case 99:if(ctx.resolvingChoice){const t=selectTarget(us);if(t){const refs=[{uid:'scoop-'+turn,cardId:t.cardId},...(t.specialEnergy||[]),...(t.tool?[t.tool]:[])];us.hand.push(...refs);if(us.active===t)us.active=null;else us.bench.splice(us.bench.indexOf(t),1);}return;}if(flip())chooseTarget(us);return;
-        case 100:grabDiscard(ref=>get(ref)?.trainerType==='Supporter');return;
+        case 99:{ // Super Scoop Up returns the entire stack AND all attachments on heads.
+          if(ctx.resolvingChoice){const t=selectTarget(us);
+            if(t)applyEffect({type:'scoopUp',target:'selfPokemon'},{...ctx,trainerRef:{cardId:'ex6-99'}});
+            return;
+          }
+          if(flip())chooseTarget(us);return;
+        }
+        case 100:{ // VS Seeker: choose the actual Supporter from discard.
+          const predicate=ref=>get(ref)?.trainerType==='Supporter';
+          if(ctx.resolvingChoice){const ix=Number(ctx.action?.choiceDiscardIndex),ref=us.discard[ix];if(ref&&predicate(ref))us.hand.push(...us.discard.splice(ix,1));}
+          else if(us.discard.some(predicate))ask('discardCard',{optional:false,filter:{kind:'trainer',trainerType:'Supporter'},excludeUids:us.discard.filter(ref=>!predicate(ref)).map(ref=>ref.uid),effect:e});
+          return;}
         case 101:if(ctx.resolvingChoice)heal(selectTarget(us),20);else chooseTarget(us);return;
-        case 102:if(us.bench.length) switchPokemon(us,0,ctx.state);return;
+        case 102:{
+          if(ctx.resolvingChoice){const target=selectTarget(us);if(target&&us.bench.includes(target))switchPokemon(us,target.benchSlot,ctx.state);}
+          else if(us.bench.length)chooseTarget(us,{includeActive:false,effect:e});
+          return;}
       }
       return;
     }
@@ -2481,6 +2535,25 @@
     const applied=match=>statusTags.filter(([word])=>match.includes(word)).map(([,word])=>word);
     const choices=['1:1','8:1','12:1','23:0','24:0','27:1','30:0','37:1','42:1','59:0','60:1','61:0','63:0','65:0','70:0','72:0','79:0','82:0','86:0','104:0','106:0'];
     // Pick attack targets only from actually occupied slots, never dummy slots.
+    if(key==='12:1'){ // Thunder Reflection: move any chosen number of Lightning Energy to one teammate.
+      if(ctx.resolvingChoice&&e.step==='amount'){
+        const to=board(us).find(p=>p.uid===e.targetUid),amount=Math.max(0,Math.min(Number(ctx.action?.choiceOption||0),Number(a?.energy?.Lightning||0)));
+        if(to&&to!==a&&amount){a.energy.Lightning-=amount;to.energy.Lightning=Number(to.energy.Lightning||0)+amount;}
+      }else if(ctx.resolvingChoice){const target=selectTarget(us),max=Number(a?.energy?.Lightning||0);
+        if(target&&target!==a&&max>0)ask('option',{options:Array.from({length:Math.min(max,20)+1},(_,i)=>'Move '+i+' Lightning Energy to '+get(target).name),effect:{...e,step:'amount',targetUid:target.uid}});
+      }else if(us.bench.length&&Number(a?.energy?.Lightning||0)>0)chooseTarget(us,{includeActive:false,effect:e});
+      return;
+    }
+    if(key==='59:0'||key==='65:0'){ // Attacker chooses opposing Bench Pokémon; Sleep Inducer targets new Active.
+      const target=foe.bench.find(p=>p.uid===ctx.action?.effectSelection);
+      if(target){switchPokemon(foe,target.benchSlot,ctx.state);if(key==='65:0')applyEffect({type:'status',target:'opponentActive',status:'sleep'},{...ctx,defender:foe.active});}
+      return;
+    }
+    if(key==='2:0'){ // Butterfree Whirlwind: defending player chooses their replacement after damage.
+      if(ctx.resolvingChoice){const picked=selectTarget(foe);if(picked&&foe.bench.includes(picked))switchPokemon(foe,picked.benchSlot,ctx.state);}
+      else if(foe.bench.length)ask('pokemon',{side:'opponent',selectionSide:ctx.foeSide,includeActive:false,effect:e});
+      return;
+    }
     if(choices.includes(key)&&ctx.resolvingChoice)return; // Attack damage has already been applied to the selected target.
     if(/search your deck/.test(lower)){
       if(/stage|card that evolves/.test(lower)&&[67,104].includes(number)){searchDeck(c=>c?.evolvesFrom===get(a)?.name,{mode:'evolve',target:a.uid});return;}
@@ -2491,7 +2564,7 @@
     if(/draw (?:a card|cards)/i.test(original)){draw(/up to 8/.test(lower)?8:/up to 4/.test(lower)?4:1);}
     if(/the defending pokémon can't retreat/.test(lower)&&d)d.locks=[...(d.locks||[]),{action:'retreat',expiresTurn:turn+1}];
     if(/can't use .*during your next turn/.test(lower)&&a)a.locks=[...(a.locks||[]),{action:'attack',expiresTurn:turn+2}];
-    if(/switch .*with 1 of (?:your|his or her) benched pokémon/.test(lower)){
+    if(/switch(?:es)? .*with 1 of (?:your|his or her) benched pokémon/.test(lower)){
       const opponent=/your opponent switches|switch 1 of your opponent/.test(lower);
       const who=opponent?foe:us;if(who.bench.length){if(ctx.resolvingChoice){const chosen=selectTarget(who);if(chosen)switchPokemon(who,chosen.benchSlot,ctx.state);}else chooseTarget(who,{includeActive:false});}
     }
@@ -2522,7 +2595,7 @@
     if(number===116&&index===0&&ctx.action?.effectSelection==='discard')consumeAny(us,a);
     if(number===109&&index===0){for(let i=0;i<Number(e.heads||0);i++)consumeAny(foe,d);}
     if((number===110||number===111)&&index===0&&d)d.damage=Number(d.damage||0)+10*foe.hand.length;
-    if(number===24&&index===0&&foe.bench.length){const target=foe.bench[0];target.damage=Number(target.damage||0)+20;}
+    if(number===24&&index===0&&foe.bench.length){const target=foe.bench.find(p=>p.uid===ctx.action?.effectSelection);if(target)target.damage=Number(target.damage||0)+20;}
     if(number===42&&index===1){for(const target of foe.bench.slice(0,2))target.damage=Number(target.damage||0)+10;}
     if(number===28&&index===0){let count=Math.max(0,Math.min(10,Number(ctx.action?.effectSelection||0)));for(let i=us.hand.length-1;i>=0&&count>0;i--){if(tool(us.hand[i])){us.discard.push(...us.hand.splice(i,1));count--;}}}
     if(number===107&&index===0){let count=Math.max(0,Math.min(20,Number(ctx.action?.effectSelection||0)));for(const p of board(us)){for(const type of energyTypes(p)){while(p.energy[type]>0&&count>0){popEnergy(us,p,type);count--;}}}}
@@ -5128,7 +5201,7 @@
       }
       case 'scoopUp':{
         const slot=affected()[0],ss=slot&&energyOwner(ctx,slot);if(!slot||!ss)break;
-        if(ctx.state.format==='classic'&&['neo1-98','ecard1-151'].includes(ctx.trainerRef?.cardId)){
+        if(ctx.state.format==='classic'&&['neo1-98','ecard1-151','ex6-99'].includes(ctx.trainerRef?.cardId)){
           // Unlike Base Set Scoop Up, Super Scoop Up returns the entire evolution
           // stack and every attachment to hand on heads.
           const refs=[...(slot.stack||[slot.cardId]).map((cardId,i)=>({uid:`${slot.uid}-neo-scoop-${i}`,cardId})),...(slot.specialEnergy||[]),...toolsOf(slot),...(slot.temporaryTrainers||[])];
@@ -6551,8 +6624,8 @@
     }
     if(effect?.type==='neoRule'&&String(effect.rule||'').startsWith('ex6:')){
       const key=effect.rule.slice(4),us=own(ctx),foe=other(ctx),a=ctx.attacker;
-      if(['7:0','8:1','24:0','27:1','37:1','60:1','61:0'].includes(key))return [
-        ...(key==='24:0'?[]:[{effectSelection:'',choiceLabel:'Target opposing Active'}]),
+      if(['7:0','8:1','24:0','27:1','37:1','59:0','60:1','61:0','65:0'].includes(key))return [
+        ...(['24:0','59:0','65:0'].includes(key)?[]:[{effectSelection:'',choiceLabel:'Target opposing Active'}]),
         ...foe.bench.map(s=>({effectSelection:s.uid,choiceLabel:'Target '+ctx.cardById(s.cardId)?.name}))];
       if(key==='28:0')return Array.from({length:Math.min(8,us.hand.filter(ref=>ctx.cardById(ref.cardId)?.trainerType==='Tool').length)+1},(_,n)=>({effectSelection:String(n),choiceLabel:'Discard '+n+' Tools · '+n*30+' damage'}));
       if(key==='107:0')return Array.from({length:Math.min(8,pokemonOn(us).reduce((v,p)=>v+totalEnergy(p.energy||{}),0))+1},(_,n)=>({effectSelection:String(n),choiceLabel:'Discard '+n+' Energy · '+(30+n*20)+' damage'}));
