@@ -19,17 +19,18 @@
   const magmaAqua=typeof module==='object'&&module.exports?require('./tcg-classic-team-magma-aqua.js'):root.LuckyDexClassicTCGTeamMagmaAqua;
   const teamRocketReturns=typeof module==='object'&&module.exports?require('./tcg-classic-team-rocket-returns.js'):root.LuckyDexClassicTCGTeamRocketReturns;
   const deoxys=typeof module==='object'&&module.exports?require('./tcg-classic-deoxys.js'):root.LuckyDexClassicTCGDeoxys;
+  const emerald=typeof module==='object'&&module.exports?require('./tcg-classic-emerald.js'):root.LuckyDexClassicTCGEmerald;
   const fireRedLeafGreen=typeof module==='object'&&module.exports?require('./tcg-classic-firered-leafgreen.js'):root.LuckyDexClassicTCGFireRedLeafGreen;
   const hiddenLegends=typeof module==='object'&&module.exports?require('./tcg-classic-hidden-legends.js'):root.LuckyDexClassicTCGHiddenLegends;
   const lental=typeof module==='object'&&module.exports?require('./tcg-classic-lental.js'):root.LuckyDexClassicTCGLental;
   const sv1=typeof module==='object'&&module.exports?require('./tcg-classic-scarlet-violet.js'):root.LuckyDexClassicTCGScarletViolet;
-  const api=factory(base,jungle,fossil,rocket,gym,challenge,neo,discovery,revelation,destiny,legendary,expedition,aquapolis,skyridge,ruby,sandstorm,dragon,magmaAqua,hiddenLegends,fireRedLeafGreen,teamRocketReturns,deoxys,lental,sv1);
+  const api=factory(base,jungle,fossil,rocket,gym,challenge,neo,discovery,revelation,destiny,legendary,expedition,aquapolis,skyridge,ruby,sandstorm,dragon,magmaAqua,hiddenLegends,fireRedLeafGreen,teamRocketReturns,deoxys,emerald,lental,sv1);
   if(typeof module==='object'&&module.exports)module.exports=api;
   if(root)root.LuckyDexClassicTCGBattleData=api;
-})(typeof globalThis!=='undefined'?globalThis:this,function(base,jungle,fossil,rocket,gym,challenge,neo,discovery,revelation,destiny,legendary,expedition,aquapolis,skyridge,ruby,sandstorm,dragon,magmaAqua,hiddenLegends,fireRedLeafGreen,teamRocketReturns,deoxys,lental,sv1){
+})(typeof globalThis!=='undefined'?globalThis:this,function(base,jungle,fossil,rocket,gym,challenge,neo,discovery,revelation,destiny,legendary,expedition,aquapolis,skyridge,ruby,sandstorm,dragon,magmaAqua,hiddenLegends,fireRedLeafGreen,teamRocketReturns,deoxys,emerald,lental,sv1){
 'use strict';
 if(!base||!Array.isArray(base.CARDS)||!jungle||!Array.isArray(jungle.CARDS)||!fossil||!Array.isArray(fossil.CARDS)||!rocket||!Array.isArray(rocket.CARDS)||!gym||!Array.isArray(gym.CARDS)||!challenge||!Array.isArray(challenge.CARDS)||!neo||!Array.isArray(neo.CARDS)||!discovery||!Array.isArray(discovery.CARDS)||!revelation||!Array.isArray(revelation.CARDS)||!destiny||!Array.isArray(destiny.CARDS))throw new Error('Classic TCG set catalogues are missing.');
-const CARDS=[...base.CARDS,...jungle.CARDS,...fossil.CARDS,...rocket.CARDS,...gym.CARDS,...challenge.CARDS,...neo.CARDS,...discovery.CARDS,...revelation.CARDS,...destiny.CARDS,...legendary.CARDS,...expedition.CARDS,...aquapolis.CARDS,...skyridge.CARDS,...ruby.CARDS,...sandstorm.CARDS,...dragon.CARDS,...magmaAqua.CARDS,...hiddenLegends.CARDS,...fireRedLeafGreen.CARDS,...teamRocketReturns.CARDS,...deoxys.CARDS,...lental.CARDS,...sv1.CARDS];
+const CARDS=[...base.CARDS,...jungle.CARDS,...fossil.CARDS,...rocket.CARDS,...gym.CARDS,...challenge.CARDS,...neo.CARDS,...discovery.CARDS,...revelation.CARDS,...destiny.CARDS,...legendary.CARDS,...expedition.CARDS,...aquapolis.CARDS,...skyridge.CARDS,...ruby.CARDS,...sandstorm.CARDS,...dragon.CARDS,...magmaAqua.CARDS,...hiddenLegends.CARDS,...fireRedLeafGreen.CARDS,...teamRocketReturns.CARDS,...deoxys.CARDS,...emerald.CARDS,...lental.CARDS,...sv1.CARDS];
 
 // Legacy v0.69.63 seed details retained as provenance fixtures. v0.69.64's
 // complete Base Set mechanics live in tcg-classic-base1.js; registering these
@@ -50,7 +51,7 @@ for(const card of base.CARDS){card.battleFormat='classic';card.source='tcg';}
 const LAB_SUBSTITUTE=Object.freeze({id:'LAB-SUBSTITUTE',name:'Substitute',setId:'LAB',kind:'pokemon',stage:'Basic',
   types:['Colorless'],subtype:'Colorless',hp:1000,retreat:0,weakness:null,attacks:[],abilities:[],
   battleEnabled:true,deckEligible:false,noPrize:true,points:0,labDummy:true});
-function cardById(id){if(id==='LAB-SUBSTITUTE')return LAB_SUBSTITUTE;return base.cardById(id)||jungle.cardById(id)||fossil.cardById(id)||rocket.cardById(id)||gym.cardById(id)||challenge.cardById(id)||neo.cardById(id)||discovery.cardById(id)||revelation.cardById(id)||destiny.cardById(id)||legendary.cardById(id)||expedition.cardById(id)||aquapolis.cardById(id)||skyridge.cardById(id)||ruby.cardById(id)||sandstorm.cardById(id)||dragon.cardById(id)||magmaAqua.cardById(id)||hiddenLegends.cardById(id)||fireRedLeafGreen.cardById(id)||teamRocketReturns.cardById(id)||deoxys.cardById(id)||lental.cardById(id)||sv1.cardById(id);}
+function cardById(id){if(id==='LAB-SUBSTITUTE')return LAB_SUBSTITUTE;return base.cardById(id)||jungle.cardById(id)||fossil.cardById(id)||rocket.cardById(id)||gym.cardById(id)||challenge.cardById(id)||neo.cardById(id)||discovery.cardById(id)||revelation.cardById(id)||destiny.cardById(id)||legendary.cardById(id)||expedition.cardById(id)||aquapolis.cardById(id)||skyridge.cardById(id)||ruby.cardById(id)||sandstorm.cardById(id)||dragon.cardById(id)||magmaAqua.cardById(id)||hiddenLegends.cardById(id)||fireRedLeafGreen.cardById(id)||teamRocketReturns.cardById(id)||deoxys.cardById(id)||emerald.cardById(id)||lental.cardById(id)||sv1.cardById(id);}
 function typesOf(card){return Array.isArray(card?.types)&&card.types.length?card.types:[card?.subtype].filter(Boolean);}
 function hasType(card,type){return typesOf(card).includes(type);}
 function isBattleEnabled(value){const card=typeof value==='string'?cardById(value):cardById(value?.id);return !!(card&&card.battleEnabled&&card.deckEligible!==false);}
@@ -309,6 +310,17 @@ function ownedDeoxysCard(owned){
  }
  return null;
 }
+function ownedEmeraldCard(owned){
+ if(!owned||typeof owned!=='object'||String(owned.source||'tcg').toLowerCase()!=='tcg')return null;
+ for(const raw of [owned.id,owned.gameplayId,owned.cardId,owned._libraryCanonicalId]){const found=emerald.cardById(raw);if(found)return found;}
+ const set=String(owned.setId||owned.set?.id||'').toLowerCase(),key=String(owned._librarySetKey||'').toLowerCase(),name=String(owned.setName||owned.set?.name||'').toLowerCase();
+ if(!(['ex9','library:ex9','em','library:em'].includes(set)||['ex9','em'].includes(key)||['ex emerald','emerald'].includes(name)))return null;
+ for(const raw of [owned.localId,owned.number,owned._libraryCanonicalId,owned.id]){
+  const match=String(raw??'').trim().match(/^(?:(?:ex9|em)[-_:])?0*(\d{1,3})(?:\s*\/\s*(?:106|107))?$/i);
+  if(match){const n=Number(match[1]);if(n>=1&&n<=107)return emerald.cardById('ex9-'+n);}
+ }
+ return null;
+}
 function ownedLentalCard(owned){
  if(!owned||typeof owned!=='object')return null;
  const source=String(owned.source||'tcg').toLowerCase();if(source!=='tcg')return null;
@@ -343,7 +355,7 @@ function projectOwnedCards(cards){
  const rows=Array.isArray(cards)?cards:Object.values(cards||{});
  const projected=base.projectOwnedCards(rows);
  const grouped=new Map();
- for(const owned of rows){const card=ownedJungleCard(owned)||ownedFossilCard(owned)||ownedRocketCard(owned)||ownedGymHeroesCard(owned)||ownedGymChallengeCard(owned)||ownedNeoGenesisCard(owned)||ownedNeoDiscoveryCard(owned)||ownedNeoRevelationCard(owned)||ownedNeoDestinyCard(owned)||ownedLegendaryCard(owned)||ownedExpeditionCard(owned)||ownedAquapolisCard(owned)||ownedSkyridgeCard(owned)||ownedRubySapphireCard(owned)||ownedSandstormCard(owned)||ownedDragonCard(owned)||ownedMagmaAquaCard(owned)||ownedHiddenLegendsCard(owned)||ownedFireRedLeafGreenCard(owned)||ownedTeamRocketReturnsCard(owned)||ownedDeoxysCard(owned)||ownedLentalCard(owned)||ownedSV1Card(owned);if(!card)continue;
+ for(const owned of rows){const card=ownedJungleCard(owned)||ownedFossilCard(owned)||ownedRocketCard(owned)||ownedGymHeroesCard(owned)||ownedGymChallengeCard(owned)||ownedNeoGenesisCard(owned)||ownedNeoDiscoveryCard(owned)||ownedNeoRevelationCard(owned)||ownedNeoDestinyCard(owned)||ownedLegendaryCard(owned)||ownedExpeditionCard(owned)||ownedAquapolisCard(owned)||ownedSkyridgeCard(owned)||ownedRubySapphireCard(owned)||ownedSandstormCard(owned)||ownedDragonCard(owned)||ownedMagmaAquaCard(owned)||ownedHiddenLegendsCard(owned)||ownedFireRedLeafGreenCard(owned)||ownedTeamRocketReturnsCard(owned)||ownedDeoxysCard(owned)||ownedEmeraldCard(owned)||ownedLentalCard(owned)||ownedSV1Card(owned);if(!card)continue;
   const quantity=Math.max(0,Number(owned.count==null?1:owned.count)||0);
   const variant={id:owned.id||card.id,quantity,image:owned.image||owned.imageUrl||null,rarity:owned.rarity||null,row:owned};
   const current=grouped.get(card.id);
@@ -370,6 +382,6 @@ function validateDeck(ids,options){
  if(owned){const map=new Map(projectOwnedCards(owned).map(row=>[row.gameplayId,row.quantity]));for(const [id,count] of byId)if(count>Number(map.get(id)||0))errors.push(`Not enough owned copies of ${cardById(id)?.name||id}: need ${count}, own ${Number(map.get(id)||0)}.`);}
  return {ok:errors.length===0,errors};
 }
-function coverage(){return {...base.coverage(),jungle:jungle.coverage(),fossil:fossil.coverage(),teamRocket:rocket.coverage(),gymHeroes:gym.coverage(),gymChallenge:challenge.coverage(),neoGenesis:neo.coverage(),neoDiscovery:discovery.coverage(),neoRevelation:revelation.coverage(),neoDestiny:destiny.coverage(),legendaryCollection:legendary.coverage(),expedition:expedition.coverage(),aquapolis:aquapolis.coverage(),skyridge:skyridge.coverage(),rubySapphire:ruby.coverage(),sandstorm:sandstorm.coverage(),dragon:dragon.coverage(),teamMagmaAqua:magmaAqua.coverage(),hiddenLegends:hiddenLegends.coverage(),fireRedLeafGreen:fireRedLeafGreen.coverage(),teamRocketReturns:teamRocketReturns.coverage(),deoxys:deoxys.coverage(),lental:lental.coverage(),scarletViolet:sv1.coverage(),verifiedBattleSlice:CARDS.filter(c=>c.support?.status==='FULL').map(c=>c.id),set:base.SET,sets:[base.SET,jungle.SET,fossil.SET,rocket.SET,gym.SET,challenge.SET,neo.SET,discovery.SET,revelation.SET,destiny.SET,legendary.SET,expedition.SET,aquapolis.SET,skyridge.SET,ruby.SET,sandstorm.SET,dragon.SET,magmaAqua.SET,hiddenLegends.SET,fireRedLeafGreen.SET,teamRocketReturns.SET,deoxys.SET,...lental.SETS,sv1.SET]};}
-return {SET:base.SET,SETS:[base.SET,jungle.SET,fossil.SET,rocket.SET,gym.SET,challenge.SET,neo.SET,discovery.SET,revelation.SET,destiny.SET,legendary.SET,expedition.SET,aquapolis.SET,skyridge.SET,ruby.SET,sandstorm.SET,dragon.SET,magmaAqua.SET,hiddenLegends.SET,fireRedLeafGreen.SET,teamRocketReturns.SET,deoxys.SET,...lental.SETS,sv1.SET],CARDS,ENERGY_CODE:{...base.ENERGY_CODE,Darkness:'D',Metal:'M'},CLASSIC30_LOANER_DECK:base.CLASSIC30_LOANER_DECK,VERIFIED_DETAILS,cardById,typesOf,hasType,isBattleEnabled,projectOwnedCards,validateDeck,coverage};
+function coverage(){return {...base.coverage(),jungle:jungle.coverage(),fossil:fossil.coverage(),teamRocket:rocket.coverage(),gymHeroes:gym.coverage(),gymChallenge:challenge.coverage(),neoGenesis:neo.coverage(),neoDiscovery:discovery.coverage(),neoRevelation:revelation.coverage(),neoDestiny:destiny.coverage(),legendaryCollection:legendary.coverage(),expedition:expedition.coverage(),aquapolis:aquapolis.coverage(),skyridge:skyridge.coverage(),rubySapphire:ruby.coverage(),sandstorm:sandstorm.coverage(),dragon:dragon.coverage(),teamMagmaAqua:magmaAqua.coverage(),hiddenLegends:hiddenLegends.coverage(),fireRedLeafGreen:fireRedLeafGreen.coverage(),teamRocketReturns:teamRocketReturns.coverage(),deoxys:deoxys.coverage(),emerald:emerald.coverage(),lental:lental.coverage(),scarletViolet:sv1.coverage(),verifiedBattleSlice:CARDS.filter(c=>c.support?.status==='FULL').map(c=>c.id),set:base.SET,sets:[base.SET,jungle.SET,fossil.SET,rocket.SET,gym.SET,challenge.SET,neo.SET,discovery.SET,revelation.SET,destiny.SET,legendary.SET,expedition.SET,aquapolis.SET,skyridge.SET,ruby.SET,sandstorm.SET,dragon.SET,magmaAqua.SET,hiddenLegends.SET,fireRedLeafGreen.SET,teamRocketReturns.SET,deoxys.SET,emerald.SET,...lental.SETS,sv1.SET]};}
+return {SET:base.SET,SETS:[base.SET,jungle.SET,fossil.SET,rocket.SET,gym.SET,challenge.SET,neo.SET,discovery.SET,revelation.SET,destiny.SET,legendary.SET,expedition.SET,aquapolis.SET,skyridge.SET,ruby.SET,sandstorm.SET,dragon.SET,magmaAqua.SET,hiddenLegends.SET,fireRedLeafGreen.SET,teamRocketReturns.SET,deoxys.SET,emerald.SET,...lental.SETS,sv1.SET],CARDS,ENERGY_CODE:{...base.ENERGY_CODE,Darkness:'D',Metal:'M'},CLASSIC30_LOANER_DECK:base.CLASSIC30_LOANER_DECK,VERIFIED_DETAILS,cardById,typesOf,hasType,isBattleEnabled,projectOwnedCards,validateDeck,coverage};
 });
