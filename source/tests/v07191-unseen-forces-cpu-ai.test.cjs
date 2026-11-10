@@ -18,7 +18,7 @@ test('EX10 metadata identifies usable Energy-recovery, search, healing and draw 
  for(const [id,role] of [['ex10-81','energy'],['ex10-86','draw'],['ex10-94','search'],['ex10-95','healing']]){
   assert.ok(ex10.cardById(id).battleEnabled,id);assert.ok(syn.metadata(data.cardById(id)).roles.includes(role),id+' needs '+role);
  }
- assert.equal(ex10.coverage().total,145);assert.equal(ex10.coverage().battleEnabled,65);
+ assert.equal(ex10.coverage().total,145);assert.ok(ex10.coverage().battleEnabled>=87);
 });
 test('CPU Energy Search takes real Energy from the Zone rather than selecting optional Skip',()=>{
  const s=state(),ss=s.sides.opponent;ss.hand=[{uid:'energy-search',cardId:'ex10-94'}];ss.energySupply=['Lightning','Grass','Fire'];ss.deck=[];

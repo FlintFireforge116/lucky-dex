@@ -18,13 +18,18 @@ const STAR=new Set([113,114,115]);
 const SUPPORTER=new Set([86,89]), TOOL=new Set([80,83,85,90,91,92]);
 const BASIC_ENERGY=new Set([]);
 const S={Asleep:'sleep',Burned:'burn',Confused:'confusion',Paralyzed:'paralysis',Poisoned:'poison'};
-const CUSTOM=new Set(["!:0", "101:0", "103:0", "103:1", "104:0", "105:0", "106:1", "108:1", "109:0", "10:0", "10:1", "111:0", "111:1", "111:2", "111:3", "116:0", "117:0", "11:0", "11:1", "12:1", "13:0", "14:0", "16:1", "17:1", "1:0", "20:0", "20:1", "21:0", "22:0", "22:1", "24:0", "27:1", "29:0", "2:0", "33:0", "34:0", "38:1", "3:1", "40:0", "43:0", "43:1", "44:1", "46:0", "47:0", "48:0", "49:0", "4:1", "50:0", "50:1", "54:1", "5:0", "5:1", "61:0", "63:0", "65:0", "68:0", "71:0", "76:0", "77:0", "78:0", "7:1", "8:0", "9:0", "A:0", "B:0", "F:0", "G:0", "I:0", "J:0", "K:0", "L:0", "P:0", "Q:0", "T:0", "U:0", "V:0", "W:0", "X:0", "Z:0"]);
-const BODY=new Set([41, 44, 47, 108, 109]);
+const CUSTOM=new Set(["8:1", "19:0", "19:1", "39:0", "41:1", "72:0", "107:0", "107:1", "107:2", "113:0", "113:1", "114:0", "114:1", "115:0", "115:1", "D:0", "O:0", "!:0", "101:0", "103:0", "103:1", "104:0", "105:0", "106:1", "108:1", "109:0", "10:0", "10:1", "111:0", "111:1", "111:2", "111:3", "116:0", "117:0", "11:0", "11:1", "12:1", "13:0", "14:0", "16:1", "17:1", "1:0", "20:0", "20:1", "21:0", "22:0", "22:1", "24:0", "27:1", "29:0", "2:0", "33:0", "34:0", "38:1", "3:1", "40:0", "43:0", "43:1", "44:1", "46:0", "47:0", "48:0", "49:0", "4:1", "50:0", "50:1", "54:1", "5:0", "5:1", "61:0", "63:0", "65:0", "68:0", "71:0", "76:0", "77:0", "78:0", "7:1", "8:0", "9:0", "A:0", "B:0", "F:0", "G:0", "I:0", "J:0", "K:0", "L:0", "P:0", "Q:0", "T:0", "U:0", "V:0", "W:0", "X:0", "Z:0"]);
+const BODY=new Set([10, 13, 39, 41, 44, 47, 57, 108, 109]);
 const POWERS=new Set([]);
-const TRAINERS=new Set([81, 86, 94, 95]);
+const TRAINERS=new Set([81, 82, 84, 86, 87, 89, 94, 95]);
 const SPECIAL=new Set([96, 97]);
 function nativeAttack(desc,attack){
  if(!desc)return noop;
+ if(attack==='Extra Comet Punch')return {type:'nextAttackBonus',attackName:'Extra Comet Punch',amount:30};
+ if(attack==='Smokescreen')return {type:'attackCoinGate',target:'opponentActive',duration:'opponentTurn'};
+ if(attack==='Agility')return {type:'coinFlip',heads:{type:'preventDamage',target:'self',duration:'opponentTurn',preventEffects:true},tails:noop};
+ if(attack==='Steel Wing')return {type:'modifier',target:'self',stat:'damageReduction',amount:20,duration:'opponentTurn'};
+ if(attack==='Crushing Blow')return rule('39:0');
  const x=desc.match(/^The Defending Pokémon is now (Asleep|Burned|Confused|Paralyzed|Poisoned)\.$/);
  if(x)return {type:'status',target:'opponentActive',status:S[x[1]]};
  const y=desc.match(/^Flip a coin\. If heads, the Defending Pokémon is now (Asleep|Burned|Confused|Paralyzed|Poisoned)\.$/);
@@ -64,6 +69,10 @@ function parse(key){
   const n=Number(key),hasAbility=!!powerName,isImplemented=hasAbility&&(isUnown||(typePower?POWERS.has(n):BODY.has(n)));
   if(hasAbility&&!isImplemented)ready=false;
   const passive={
+   10:{type:'noop'}, // Opponent retreat is enforced by the Classic battle action validator.
+   13:{type:'additionalType',types:['Psychic'],condition:{type:'selfHasEnergyType',energyType:'Psychic'}},
+   39:{type:'modifier',stat:'damageReduction',amount:10,duration:'whileActive'},
+   57:{type:'modifier',stat:'retreatCost',amount:-1,condition:{type:'selfNoEnergy'}},
    41:{type:'additionalType',types:['Fighting'],condition:{type:'selfHasEnergyType',energyType:'Fighting'}},
    44:{type:'modifier',stat:'damageReduction',amount:20,opponentFilter:{evolved:true}},
    47:{type:'preventDamage',duration:'whileInPlay',attackerFilter:{isEx:true}},
@@ -107,6 +116,14 @@ function parse(key){
  if(card.id==='ex10-86')roles.add('draw');
  if(card.id==='ex10-94'){roles.add('energy');roles.add('search');}
  if(card.id==='ex10-95')roles.add('healing');
+ if(card.id==='ex10-82'){roles.add('disruption');roles.add('energy-discard');}
+ if(card.id==='ex10-84'){roles.add('energy');roles.add('energy-transfer');}
+ if(card.id==='ex10-87'){roles.add('search');roles.add('pokemon-search');}
+ if(card.id==='ex10-89'){roles.add('search');roles.add('evolution-search');}
+ if(card.id==='ex10-36')roles.add('attack-boost');
+ if(card.id==='ex10-46')roles.add('protection');
+ if(card.id==='ex10-19'){roles.add('energy');roles.add('hand-acceleration');}
+ if(card.id==='ex10-10')roles.add('retreat-lock');
  if(card.kind==='pokemon'){
   if(card.pokemonEx)roles.add('pokemon-ex');if(card.pokemonStar)roles.add('pokemon-star');
   if(card.abilities.some(a=>a.name==='Shuffle'))roles.add('form-change');

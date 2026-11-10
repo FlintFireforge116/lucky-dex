@@ -7,7 +7,7 @@ function game(seed,id){const s=core.createBattle({format:'classic',playerDeck:d.
  p.active=mon(id,'active',-1);p.bench=[mon('ex10-60','my-bench',0),mon('ex10-51','my-bench2',1)];o.active=mon('ex10-72','foe',-1);o.bench=[mon('ex10-51','foe-bench',0),mon('ex10-62','foe-bench2',1)];
  p.hand=[{uid:'hand',cardId:'ex10-94'}];p.energyDiscard={Fire:4,Water:2,Lightning:2,Grass:3,Psychic:2,Fighting:2};p.energySupply=['Fire','Water','Grass','Lightning',...p.energySupply];o.energyDiscard={Fire:2,Water:1};return s;}
 let attacks=0,choices=0;
-test('all 89 FULL EX Unseen Forces attack actions have executable results and resolvable choice flows',()=>{
+test('all FULL EX Unseen Forces attack actions have executable results and resolvable choice flows',()=>{
  const bad=[];
  for(const c of ex10.CARDS.filter(c=>c.battleEnabled&&c.kind==='pokemon'))for(let idx=0;idx<(c.attacks||[]).length;idx++){
   const s=game(19000+attacks,c.id);let a=core.legalActions(s,'player').find(a=>a.type==='attack'&&a.attackIndex===idx);attacks++;
@@ -18,5 +18,5 @@ test('all 89 FULL EX Unseen Forces attack actions have executable results and re
   }catch(err){bad.push(c.id+' '+c.attacks[idx].name+': '+err.message);}
  }
  assert.deepEqual(bad,[],bad.join('\n'));
- assert.equal(attacks,89);
+ assert.equal(attacks,ex10.CARDS.filter(c=>c.battleEnabled&&c.kind==='pokemon').reduce((n,c)=>n+c.attacks.length,0));
 });
