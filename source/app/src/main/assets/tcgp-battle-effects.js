@@ -2439,10 +2439,15 @@
         if(!pokemon)return false;
         if(isBasic){pokemon.energy=pokemon.energy||{};pokemon.energy[type]=Number(pokemon.energy[type]||0)+1;ctx.onEnergyAttached?.(pokemon,type,1);}
         else pokemon.specialEnergy=[...(pokemon.specialEnergy||[]),ref];
-      }else if(isBasic&&Array.isArray(us.energySupply)){
-        us.energySupply.push(type);us.nextEnergyType=us.energySupply[0]||null;
       }else{
-        us.deck.push(ref||{uid:`ex8-energy-recovery-${turn}-${ctx.state.rngState}-${us.deck.length}`,cardId:neoBasicIds[type],zoneGenerated:true});
+        // Energy Charge explicitly shuffles Energy into the *draw deck*.
+        // Basic Energy normally lives in Classic's separate Energy Zone, but
+        // recovered Energy is a real card in this deck (and counts toward its
+        // visible remaining-card total), not a replenishment of Energy Supply.
+        // Mark recovered Basics as ordinary hand attachments when later drawn:
+        // zoneGenerated cards otherwise bypass the one-per-turn restriction.
+        const returned=isBasic?(ref?{...ref,zoneGenerated:false}:{uid:`ex8-energy-recovery-${turn}-${ctx.state.rngState}-${us.deck.length}`,cardId:neoBasicIds[type],zoneGenerated:false}):ref;
+        us.deck.push(returned);
         shuffle(us);
       }
       ctx.state.log.push({type:'ex8EnergyRecovery',side:ctx.side,source:entry.source,energyType:type,destination:mode,cardId:ref?.cardId||null});

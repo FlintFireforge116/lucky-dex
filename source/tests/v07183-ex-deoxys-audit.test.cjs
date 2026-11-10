@@ -41,10 +41,10 @@ function attack(s,n,i){
   core.applyAction(s,'player',action);
   return s;
 }
-test('Energy Charge heads retrieves two basic Energy from separate Classic discard into Energy Supply',()=>{
+test('Energy Charge heads shuffles two basic Energy from Classic discard into draw deck',()=>{
   const s=battle(),p=s.sides.player;
   p.energyDiscard={Fire:2,Water:1};
-  const supplyBefore=p.energySupply.length;
+  const supplyBefore=p.energySupply.length,deckBefore=p.deck.length;
   p.forceFirstCoinHeadTurn=s.turnNumber;
   trainer(s,86);
   assert.equal(s.pendingChoice?.kind,'option');
@@ -53,8 +53,11 @@ test('Energy Charge heads retrieves two basic Energy from separate Classic disca
   choice(s,x=>x.choiceLabel?.includes('Water'));
   assert.equal(s.phase,'battle');
   assert.equal(p.energyDiscard.Fire,1);assert.equal(p.energyDiscard.Water,0);
-  assert.equal(p.energySupply.length,supplyBefore+2);
-  assert.deepEqual(p.energySupply.slice(-2),['Fire','Water']);
+  assert.equal(p.deck.length,deckBefore+2);
+  assert.equal(p.energySupply.length,supplyBefore);
+  const recovered=p.deck.filter(r=>r.uid.startsWith('ex8-energy-recovery-'));
+  assert.deepEqual(new Set(recovered.map(r=>classic.cardById(r.cardId)?.subtype)),new Set(['Fire','Water']));
+  assert.ok(recovered.every(r=>r.zoneGenerated===false));
   assert.equal(s.log.filter(x=>x.type==='ex8EnergyRecovery').length,2);
 });
 test('Energy Charge retrieves a discarded Special Energy card and one discarded basic Energy',()=>{
@@ -68,8 +71,8 @@ test('Energy Charge retrieves a discarded Special Energy card and one discarded 
   choice(s,x=>x.choiceLabel?.includes('Psychic'));
   assert.equal(s.phase,'battle');
   assert.ok(p.deck.some(r=>r.uid==='heal-energy'),'Special Energy returned to draw deck');
-  assert.equal(p.deck.length,deckBefore+1);
-  assert.equal(p.energySupply.length,supplyBefore+1);
+  assert.equal(p.deck.length,deckBefore+2);
+  assert.equal(p.energySupply.length,supplyBefore);
   assert.equal(p.energyDiscard.Psychic,0);
   assert.ok(!p.discard.some(r=>r.uid==='heal-energy'));
 });

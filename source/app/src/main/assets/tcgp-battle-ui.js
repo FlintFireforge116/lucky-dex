@@ -168,7 +168,10 @@
       // EX Hidden Legends Lanturn: the printed 50 damage is replaced by 90
       // for the optional all-Lightning discard, before those Energy leave play.
       if(attack?.effect?.rule==='ex5:38:0'&&action.choiceLabel)return `LIGHTNING STRIKE · ${action.choiceLabel}`;
-      return `${attack?.name||'ATTACK'}${action.attackCardId&&action.attackCardId!==active?.cardId?` · ${sourceCard?.name||'PREVIOUS EVOLUTION'}`:''} · ${preview?.text??attack?.damageText??attack?.damage??0} DMG${targetLabel(action,state,side)}`;
+      // Optional attack outcomes may have identical artwork and damage.
+      // Display the choice made by the rules engine, not just the attack name.
+      const outcome=action.choiceLabel?` — ${action.choiceLabel}`:'';
+      return `${attack?.name||'ATTACK'}${action.attackCardId&&action.attackCardId!==active?.cardId?` · ${sourceCard?.name||'PREVIOUS EVOLUTION'}`:''} · ${preview?.text??attack?.damageText??attack?.damage??0} DMG${outcome}${targetLabel(action,state,side)}`;
     }
     if(action.type==='endTurn')return'END TURN';
     return String(action.type||'PLAY').toUpperCase();
