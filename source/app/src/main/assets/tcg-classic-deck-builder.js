@@ -27,7 +27,7 @@ const STAPLES=Object.freeze([
  ['base1-83',1], // Maintenance
  ['base1-87',1]  // Pokedex
 ]);
-const SET_IDS=Object.freeze(['base1','base2','base3','base5','gym1','gym2','neo1','neo2','neo3','neo4','base6','ecard1','ecard2','ecard3','ex1','ex2','ex3','ex4','ex5','ex6','ex7','ex8','ex9','SNAPFLORIO','SNAPFOUNJA','sv1']);
+const SET_IDS=Object.freeze(['base1','base2','base3','base5','gym1','gym2','neo1','neo2','neo3','neo4','base6','ecard1','ecard2','ecard3','ex1','ex2','ex3','ex4','ex5','ex6','ex7','ex8','ex9','ex10','SNAPFLORIO','SNAPFOUNJA','sv1']);
 // Darkness and Metal are already Basic Energy types. Deduplicate before rendering
 // archetype chips so each energy type has exactly one toggle.
 const ARCHETYPE_TYPES=Object.freeze([...new Set([...decks.ENERGY_TYPES,'Colorless'])]);
@@ -111,8 +111,11 @@ function buildDeck(rows,options={}){
  const requested=[...new Set((options.types||[]).filter(t=>ARCHETYPE_TYPES.includes(t)))].slice(0,2),requestedEnergy=requested.filter(t=>decks.ENERGY_TYPES.includes(t)),allowMixedEnergy=options.allowMixedEnergy===true,existing=Array.isArray(options.cards)?options.cards:[],focus=classic.cardById(options.focusCardId),random=rng(options.randomSeed),excluded=new Set(options.excludeArchetypes||[]);
  // Competitive considers complete evolution families; Random draws a printed
  // Pokémon from the *entire* owned, battle-ready roster (not the top 14).
- const isEligible=c=>{const line=familyLine(c,evolutionPool);const required=new Set(line.flatMap(attackTypes)),special=specialCosts(line);return !!line.length&&required.size<=2&&line.every(member=>typeCompatible(member,requestedEnergy))&&Object.entries(special).every(([sym,n])=>!n||(classic.cardById(SPECIAL_COST_CARDS[sym])?.battleEnabled&&allowedInSetPool(classic.cardById(SPECIAL_COST_CARDS[sym]),scope)&&Number(owned.get(SPECIAL_COST_CARDS[sym])||0)>=n))&&(!requested.length||(c.types||[]).some(type=>requested.includes(type))||((c.types||[]).includes('Colorless')&&line.some(member=>attackTypes(member).some(type=>requestedEnergy.includes(type)))));};
- let candidates=(basicOnly?pokemonPool.filter(c=>c.stage==='Basic'):endpointCards(pokemonPool)).filter(isEligible);
+ const isEligible=c=>{const line=familyLine(c,evolutionPool);const required=new Set(line.flatMap(attackTypes)),special=specialCosts(line);return !!line.length&&required.size<=2&&(requestedEnergy.length===1?[...new Set([...requestedEnergy,...required])].length<=2:line.every(member=>typeCompatible(member,requestedEnergy)))&&Object.entries(special).every(([sym,n])=>!n||(classic.cardById(SPECIAL_COST_CARDS[sym])?.battleEnabled&&allowedInSetPool(classic.cardById(SPECIAL_COST_CARDS[sym]),scope)&&Number(owned.get(SPECIAL_COST_CARDS[sym])||0)>=n))&&(!requested.length||(c.types||[]).some(type=>requested.includes(type))||((c.types||[]).includes('Colorless')&&line.some(member=>attackTypes(member).some(type=>requestedEnergy.includes(type)))));};
+ // An explicitly focused Basic or Stage 1 remains a legal archetype even
+ // when a later evolution exists in a different set (Jungle Scyther/Scizor).
+ const focal=focus?.kind==='pokemon'&&pokemonPool.some(c=>c.id===focus.id)?[focus]:[];
+ let candidates=[...new Map([...(basicOnly?pokemonPool.filter(c=>c.stage==='Basic'):endpointCards(pokemonPool)),...focal].map(c=>[c.id,c])).values()].filter(isEligible);
  // The selected tier determines the featured Pokémon, not its prerequisites.
  // An Ultra Rare VMAX can still have the lower-rarity V it evolves from.
  if(rarityFocus!=='any'||basicOnly)candidates=candidates.filter(c=>matchesRarity(c,rarityFocus,basicOnly));
@@ -120,7 +123,7 @@ function buildDeck(rows,options={}){
  if(focus?.kind==='pokemon'){
    const focused=candidates.filter(c=>familyLine(c,evolutionPool).some(member=>classicCardName(member.name)===classicCardName(focus.name)&&member.stage===focus.stage));
    if(focused.length)candidates=focused;
-   else if((scope.includes('neo2')||scope.includes('neo3')||scope.includes('neo4'))&&['Darkness','Metal'].some(t=>(focus.types||[]).includes(t)))return fail(`Cannot build around ${focus.name}: a full evolution family and the required owned Neo Genesis Darkness/Metal Special Energy are needed.`);
+   else if((scope.includes('neo2')||scope.includes('neo3')||scope.includes('neo4'))&&['Darkness','Metal'].some(t=>(focus.types||[]).includes(t)))return fail(`Cannot build around ${focus.name}: a complete evolution family and at most two supported Basic Energy Zone types are required.`);
    else return fail(`Cannot build around ${focus.name} with the selected owned cards and sets.`);
  }
  // Type selection applies to the featured family, not its Colorless supports.
@@ -157,7 +160,11 @@ function buildDeck(rows,options={}){
  // Choosing two allowed types is not a request to pollute a single-type
  // attacker's Energy Zone. Mixed *support* requires an explicit opt-in; a
  // featured family that itself needs two Energy types always keeps both.
- const mainRoot=familyRoot(main,evolutionPool),lineEnergy=[...new Set(mainLine.flatMap(attackTypes))],selectedTypes=requestedEnergy.length===1?requestedEnergy.slice():(allowMixedEnergy&&requestedEnergy.length===2?requestedEnergy.slice():lineEnergy.slice(0,2));
+ // A focused evolution family may need two genuine Energy types even when
+ // the player filters by the final Pokémon's single displayed type (e.g.
+ // Neo Scyther Grass -> Scizor Metal, Pupitar Fighting -> Tyranitar Darkness).
+ // Never grant that second type to an unrelated support attacker.
+ const mainRoot=familyRoot(main,evolutionPool),lineEnergy=[...new Set(mainLine.flatMap(attackTypes))],selectedTypes=requestedEnergy.length===1?[...new Set([...requestedEnergy,...lineEnergy])].slice(0,2):(allowMixedEnergy&&requestedEnergy.length===2?requestedEnergy.slice():lineEnergy.slice(0,2));
  if(!selectedTypes.length){const ownType=requestedEnergy[0]||(main.deckMeta?.preferredEnergyTypes||[]).find(t=>decks.ENERGY_TYPES.includes(t))||(main.types||[]).find(t=>decks.ENERGY_TYPES.includes(t));if(ownType)selectedTypes.push(ownType);}
  if(!selectedTypes.length)selectedTypes.push('Fighting');
  const cards=[],counts=new Map();
@@ -343,10 +350,21 @@ function buildDeck(rows,options={}){
      const rescue=buildDeck(rows,{...options,_allowSecondType:true,_retryDepth:0});
      if(rescue.ok)return rescue;
    }
+   // A named, colorless-cost core in a single expansion (Fossil Aerodactyl)
+   // may need a second compatible Energy type to reach a legal 30-card deck.
+   // Never override a type explicitly selected by the user.
+   if(focus&&!requestedEnergy.length&&!options._allowSecondType){
+     for(const candidate of decks.ENERGY_TYPES){
+       if(selectedTypes.includes(candidate))continue;
+       const rescue=buildDeck(rows,{...options,types:[...selectedTypes,candidate],allowMixedEnergy:true,
+         _allowSecondType:true,_retryDepth:6});
+       if(rescue.ok)return rescue;
+     }
+   }
    return fail(`Could only assemble ${cards.length}/30 compatible owned cards. Add more Classic TCG cards or widen the Energy type filter.`);
  }
  const legal=decks.validateDraft(cards,rows,{requireFull:true});if(!legal.ok)return {ok:false,cards,energyTypes:selectedTypes,errors:legal.errors,warnings:[],strategy:''};
- const analysis=decks.analyzeDeck(cards),energyTypes=requestedEnergy.length===1?requestedEnergy:(allowMixedEnergy&&requestedEnergy.length===2?requestedEnergy:neededTypes().length?analysis.recommendedEnergyTypes.slice(0,2):selectedTypes.slice(0,2));
+ const analysis=decks.analyzeDeck(cards),energyTypes=requestedEnergy.length===1?[...new Set([...requestedEnergy,...mainLine.flatMap(attackTypes)])].slice(0,2):(allowMixedEnergy&&requestedEnergy.length===2?requestedEnergy:neededTypes().length?analysis.recommendedEnergyTypes.slice(0,2):selectedTypes.slice(0,2));
  const finalEnergy=energyTypes.length?energyTypes:selectedTypes.slice(0,2);
  const specialist=(main.types||[]).find(t=>t==='Darkness'||t==='Metal');
  const zoneLabel=finalEnergy.join(' / ');
