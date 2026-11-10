@@ -660,6 +660,11 @@
       const result=effects.resolveAttack(attack,context),defender=result.damageTarget===undefined?snapshot.sides[foeSide].active:result.damageTarget,isActive=defender===snapshot.sides[foeSide].active;
       let damage=Math.max(0,Number(result.damage)||0);
       if(isActive&&damage>0){
+        const card=data.cardById(attacker.cardId);
+        if(state.format==='classic'&&!miraculousWindActive(snapshot)&&
+          (card?.types?.includes('Darkness')||/Dark/i.test(card?.name||'')))
+          damage+=10*(attacker.specialEnergy||[]).filter(ref=>['ex1-93','ex9-86'].includes(ref.cardId)).length;
+        damage=Math.max(0,damage-10*(attacker.specialEnergy||[]).filter(ref=>ref.cardId==='ex9-87').length);
         if(attacker.cardId==='ex9-1'&&!effects.abilitiesSuppressed(snapshot,side,attacker,data.cardById)&&Number(data.cardById(attacker.cardId).hp||0)-Number(attacker.damage||0)<=40)damage+=40;
         if(Number(snapshot.sides[side]?.ex9DragonDanceUntil||0)===Number(snapshot.turnNumber))damage+=30;
         damage+=effects.modifierAmount(snapshot,side,attacker,'attackDamage',data.cardById)
@@ -674,7 +679,8 @@
         }
       }
       const effectiveDamage=Math.max(0,damage);
-      return {damage:effectiveDamage,text:String(effectiveDamage),variable:false};
+      const neoDarkBonus=isActive&&effectiveDamage>0?10*(attacker.specialEnergy||[]).filter(ref=>['neo1-104','ecard1-158','ecard2-142'].includes(ref.cardId)).length:0;
+      return {damage:effectiveDamage,text:neoDarkBonus?`${effectiveDamage} + ${neoDarkBonus} after W/R`:String(effectiveDamage),variable:neoDarkBonus>0};
     }catch(_previewError){
       return {damage:Math.max(0,Number(attack.damage)||0),text:String(attack.damageText??attack.damage??0),variable:true};
     }
@@ -966,14 +972,13 @@
     const attackName=pending.attackName||'Repeated attack';let damage=Math.max(0,Number(pending.amount||0));
     damage+=effects.modifierAmount(state,side,attacker,'attackDamage',data.cardById)+effects.modifierAmount(state,side,attacker,'attackDamageAllTargets',data.cardById)+effects.attackSpecificBonus(attacker,attackName,state.turnNumber);
     for(const boost of attacker.nextAttackBonuses||[])if(Number(boost.turn)===state.turnNumber&&boost.attackName===attackName)damage+=Number(boost.amount||0);
-    if(state.format==='classic'&&damage>0&&!miraculousWindActive(state)&&
-          (attackerCard.types?.includes('Darkness')||/Dark/i.test(attackerCard.name||'')))
-          damage+=10*(s.active.specialEnergy||[]).filter(r=>r.cardId==='ex1-93').length;
-        if(state.format==='classic'&&damage>0&&!miraculousWindActive(state)&&
-           (attackerCard.types?.includes('Darkness')||/Dark/i.test(attackerCard.name||'')))
-           damage+=10*(s.active.specialEnergy||[]).filter(r=>r.cardId==='ex9-86').length;
-        damage+=effects.modifierAmount(state,foeSide,defender,'damageTaken',data.cardById);
+    const attackerCard=data.cardById(attacker.cardId);
+    if(state.format==='classic'&&damage>0&&!miraculousWindActive(state)&&attackerCard&&
+      (attackerCard.types?.includes('Darkness')||/Dark/i.test(attackerCard.name||'')))
+      damage+=10*(attacker.specialEnergy||[]).filter(r=>['ex1-93','ex9-86'].includes(r.cardId)).length;
+    damage+=effects.modifierAmount(state,foeSide,defender,'damageTaken',data.cardById);
     damage=effects.attackDamageWithState(state,side,attacker,foeSide,defender,damage,data.cardById);
+    if(state.format==='classic'&&damage>0)damage+=10*(attacker.specialEnergy||[]).filter(r=>['neo1-104','ecard1-158','ecard2-142'].includes(r.cardId)).length;
     let guard=effects.attackIsPrevented(state,foeSide,defender,attacker,data.cardById);if(guard?.maxDamage!=null&&damage>Number(guard.maxDamage))guard=null;if(guard?.minDamage!=null&&Math.max(0,damage-effects.modifierAmount(state,foeSide,defender,'damageReduction',data.cardById))<Number(guard.minDamage))guard=null;const preGuardDamage=damage;if(guard?.firstDamage&&preGuardDamage>0)effects.consumeDamageGuard(defender,'firstDamage');
     damage=guard?0:Math.max(0,damage-effects.modifierAmount(state,foeSide,defender,'damageReduction',data.cardById));
     if(damage>0){const coinGuard=effects.findPassiveRule(state,foeSide,defender,'coinDamageGuard',data.cardById);if(coinGuard){const heads=random(state)<0.5;state.log.push({type:'coin',side:foeSide,heads,reason:'coinDamageGuard',results:[heads]});if(heads)damage=coinGuard.preventAll?0:Math.max(0,damage-Number(coinGuard.reduction||0));}}
@@ -1667,16 +1672,16 @@
           !foe.active.conditions?.sleep&&!foe.active.conditions?.paralysis&&!foe.active.conditions?.confusion)damage=Math.max(0,damage-10);
         if(state.format==='classic'&&damage>0&&!miraculousWindActive(state)&&
           (attackerCard.types?.includes('Darkness')||/Dark/i.test(attackerCard.name||'')))
-          damage+=10*(s.active.specialEnergy||[]).filter(r=>r.cardId==='ex1-93').length;
+          damage+=10*(s.active.specialEnergy||[]).filter(r=>['ex1-93','ex9-86'].includes(r.cardId)).length;
         damage+=effects.modifierAmount(state,foeSide,defender,'damageTaken',data.cardById);
         if(state.format==='classic'&&damage>0){const metal=miraculousWindActive(state)?0:(s.active.specialEnergy||[]).filter(r=>['neo1-19','ecard1-159','ecard2-143'].includes(r.cardId)).length;if(metal&&!attackerCard.types?.includes('Metal'))damage=Math.max(0,damage-metal*10);}
+        if(state.format==='classic'&&damage>0)damage=Math.max(0,damage-10*(s.active.specialEnergy||[]).filter(r=>r.cardId==='ex9-87').length);
         if(!result.damageRules?.ignoreWeakness){
           const beforeMatchup=damage,defCard=data.cardById(defender.cardId),resistance=defender.resistanceOverride||defCard?.resistance;
           if(state.format==='classic'&&beforeMatchup>0&&resistance&&effects.effectiveTypes(state,side,s.active,data.cardById).includes(resistance)){
             resistanceReason=`${resistance} resistance (${defCard?.resistanceValue||'-30'})`;
           }
           if(state.stadium?.cardId==='gym2-113'&&attackerCard.types?.includes('Water')&&data.cardById(defender.cardId)?.name?.startsWith("Blaine's"))result.damageRules={...result.damageRules,ignoreWeakness:true};
-          if(state.format==='classic'&&damage>0)damage=Math.max(0,damage-10*(s.active.specialEnergy||[]).filter(r=>r.cardId==='ex9-87').length);
           damage=effects.attackDamageWithState(state,side,s.active,foeSide,defender,damage,data.cardById);
           if(state.stadium?.cardId==='gym2-109'&&defender.resistanceOverride!==null&&data.cardById(defender.cardId)?.resistance&&attackerCard.types?.includes(data.cardById(defender.cardId).resistance))damage+=20;if(result.damageRules?.ignoreResistance&&damage>0){const card=data.cardById(defender.cardId),res=defender.resistanceOverride||card?.resistance;if(res&&effects.effectiveTypes(state,side,s.active,data.cardById).includes(res))damage+=30;}if(state.format==='classic'&&state.stadium?.cardId==='gym1-115'&&attackerCard.name?.startsWith("Brock's")&&damage>0){const defenderRes=data.cardById(defender.cardId)?.resistance;if(defenderRes&&attackerCard.types?.includes(defenderRes))damage+=30;}if(state.format==='classic'&&state.stadium?.cardId==='gym1-120'&&attackerCard.name?.startsWith("Lt. Surge's")){const heads=random(state)<0.5;state.log.push({type:'coin',side,reason:'Vermilion City Gym',heads,results:[heads]});if(heads&&damage>0)damage+=10;else if(!heads)s.active.damage=Number(s.active.damage||0)+10;}
         }
@@ -1694,9 +1699,10 @@
             [s,foe].flatMap(board=>pokemonOn(board)).filter(slot=>['Poliwag','Poliwhirl','Poliwrath','Politoed'].includes(data.cardById(slot.cardId)?.name)).length>3)damage+=40;
           damage+=effects.modifierAmount(state,side,s.active,'postWeaknessAttackDamage',data.cardById);
           if(state.format==='classic'){
-            const dark=miraculousWindActive(state)?0:(s.active.specialEnergy||[]).filter(r=>['neo1-104','ecard1-158','ecard2-142'].includes(r.cardId)||
-              false).length;
-            damage+=dark*10;
+            // Neo/e-Card Darkness Energy adds +10 AFTER Weakness/Resistance,
+            // even on non-Dark attackers; EX-era Darkness Energy adds +10
+            // BEFORE matchup but only on Darkness / 'Dark' named attackers.
+            damage+=10*(s.active.specialEnergy||[]).filter(r=>['neo1-104','ecard1-158','ecard2-142'].includes(r.cardId)).length;
             if(defender.neoScreech&&state.turnNumber<=defender.neoScreech.expiresTurn)damage+=20;
           }
         }if(damage>0&&state.format==='classic'&&s.gymMistyBonusTurn===state.turnNumber&&attackerCard.name?.startsWith("Misty's"))damage+=20;if(damage>0&&state.format==='classic'&&s.gymCharity?.turn===state.turnNumber&&s.gymCharity.activeUid===s.active.uid)damage=Math.max(0,damage-Number(s.gymCharity.reduce||0));

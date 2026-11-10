@@ -18,9 +18,10 @@ const POWER=new Set([2,4,11,59,93]);
 const SUPPORTER=new Set([77,79,82,84,85]),STADIUM=new Set([75]),TOOL=new Set([78,80]);
 const SPENERGY=new Set([86,87,88,89]);
 const TAGS=Object.freeze({
-  healing:[4,40,78,80,99],draw:[3,12,17,32,39,57,59,81,82],search:[2,53,59,77,79,81,84,85,93],
-  stall:[10,15,24,37,49,67,75,90,91,92,94,95,96,97],energy:[11,14,15,22,87,88,89,96,99],
-  disruption:[14,15,17,75,91,94,97,98],retreat:[11,24,26,29,30,96],
+  healing:[4,40,78,80,99],draw:[3,12,17,32,39,57,59,82,107],search:[2,53,59,77,79,81,84,85,93],
+  stall:[10,15,24,37,49,67,90,91,92,94,95,96,97],energy:[11,79,87,88,89,96,99],
+  disruption:[14,15,75,91,98],retreat:[11,24,26,29,96],
+  snipe:[25,30,41,50,52,97],spread:[7,11,13,17,100], 'attack-boost':[9],
   'form-change':[2,93], 'basic-energy-recovery':[79,99]
 });
 function parse(n){

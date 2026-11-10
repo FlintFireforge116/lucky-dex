@@ -162,7 +162,8 @@ function buildDeck(rows,options={}){
  if(!selectedTypes.length)selectedTypes.push('Fighting');
  const cards=[],counts=new Map();
  function trainerIsUseful(card){
-   if(card?.id==='ex8-87')return false; // No basic Energy in Classic's draw deck.
+   // EX Deoxys Lady Outing searches fresh Basic Energy via the Zone in the
+   // approved hybrid format; it must no longer be excluded as a dead card.
    if(['ex8-93','ex8-95'].includes(card?.id)&&!cards.some(id=>{const p=classic.cardById(id);return p?.kind==='pokemon'&&['Stage 1','Stage 2'].includes(p.stage)&&!p.pokemonEx;}))return false;
    if(card?.id==='ex7-95'&&!cards.some(id=>/^(Dark |Rocket's )/.test(classic.cardById(id)?.name||'')))return false;
    if(card?.id==='ex7-94'&&!selectedTypes.some(type=>['Darkness','Metal'].includes(type)))return false;

@@ -150,7 +150,7 @@ test('metadata excludes self-status and immunities from themed attack scores',()
   assert.ok(synergy.pokemonThemeScore(deoxys.cardById('ex8-31'),'paralysis')===0);
   for(const n of [27,82])for(const status of ['sleep','poison','burn','paralysis'])assert.ok(synergy.metadata(deoxys.cardById('ex8-'+n)).inflicts.includes(status));
 });
-test('CPU/player 30-card builds remain legal and never auto-include Lady Outing',()=>{
+test('CPU/player 30-card builds remain legal after Lady Outing gains Classic Energy Zone search support',()=>{
   const owned=deoxys.CARDS.map(c=>({gameplayId:c.id,quantity:4}));
   for(let i=0;i<12;i++){
     const player=builder.buildDeck(owned,{style:i%2?'competitive':'random',sets:['ex8'],randomSeed:i*59+11});
@@ -159,7 +159,7 @@ test('CPU/player 30-card builds remain legal and never auto-include Lady Outing'
       assert.ok(result.ok,result.error);
       assert.equal(result.cards.length,30);
       assert.equal(classic.validateDeck(result.cards).ok,true);
-      assert.ok(!result.cards.includes('ex8-87'),'Separate Energy Zone makes Lady Outing an unsuitable auto-pick');
+      assert.ok(result.cards.every(id=>deoxys.cardById(id)?.battleEnabled),'all cards must be supported by the selected set');
     }
   }
 });

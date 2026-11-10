@@ -121,6 +121,9 @@
   if(['ex7-83','ex7-84','ex7-87','ex7-88','ex7-90','ex7-111'].includes(card.id))roles.delete('disruption');
   if(['ex7-84','ex7-111'].includes(card.id))roles.delete('draw');
   if(card.id==='ex7-111')roles.delete('search');
+  // Lady Outing searches eligible Basic Energy from the Classic Zone since C-ENERGY-002.
+  // Shuffle/discard language in Supporter reminder text does NOT disrupt opponents.
+  if(card.id==='ex8-87')roles.delete('disruption');
   if(card.kind==='pokemon')for(const t of card.types||[])sources.add(t);
   const result=Object.freeze({roles:[...roles],inflicts:[...inflicts],payoffs:[...payoffs],energyTypes:[...energyTypes],stages:[...stages],sources:[...sources],requiredTeams:[...requiredTeams],preferredTeams:[...preferredTeams]});
   cache.set(card,result);return result;
@@ -138,9 +141,6 @@
   if(['ex7-87','ex7-89','ex7-90'].includes(card.id)&&!ctx.pokemon.some(p=>/^(Dark |Rocket's )/.test(p.name||'')))return -Infinity;
   if(['ex8-93','ex8-95'].includes(card.id)&&!ctx.pokemon.some(p=>['Stage 1','Stage 2'].includes(p.stage)&&!p.pokemonEx))return -Infinity;
   if(card.id==='ex8-89'&&!ctx.pokemon.some(p=>['Stage 1','Stage 2'].includes(p.stage)&&!p.pokemonEx))return -Infinity;
-  // Classic uses a separate Energy Zone: Lady Outing cannot find basic Energy
-  // in the 30-card draw deck. Leave it playable manually, but never autobuild it.
-  if(card.id==='ex8-87')return -Infinity;
   // Ancient Technical Machines only attach to non-ex Evolved Pokémon without an owner name.
   // A Stage 1 Pokémon-ex does not make these Tools playable.
   if(['ex5-84','ex5-85','ex5-86'].includes(card.id)&&!ctx.pokemon.some(c=>['Stage 1','Stage 2'].includes(c.stage)&&!c.pokemonEx&&!c.isEx&&!/^(?:Team Aqua's|Team Magma's|Brock's|Misty's|Lt. Surge's|Erika's|Koga's|Blaine's|Sabrina's|Giovanni's|Rocket's)/.test(c.name||'')))return -Infinity;

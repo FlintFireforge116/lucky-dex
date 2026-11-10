@@ -1,6 +1,6 @@
 # EX Emerald (ex9) — v0.69.187 implementation notes
 
-Date: 10 November 2026. For overarching rule precedence, read `LUCKYDEX_MASTER_RULES.txt` v1.2 first. This file is a set-specific record, not a replacement.
+Date: 10 November 2026. For overarching rule precedence, read the current `LUCKYDEX_MASTER_RULES.txt` first. This file is a set-specific record, not a replacement.
 
 ## Source and registration
 
@@ -26,3 +26,13 @@ Date: 10 November 2026. For overarching rule precedence, read `LUCKYDEX_MASTER_R
 - No unrelated overall Bench/Prize-format decision was made: see open issues in the master rules.
 
 Next chronological retail set: EX Unseen Forces (ex10), pending confirmation.
+
+## v0.69.189 secondary audit — printed effects and cross-era Energy
+
+- Combusken ex9-25 **Lava Burn** deals its printed 20 to Active AND 10 to the chosen opposing Bench. If no Bench exists, it still deals 20 to Active.
+- EX Emerald PokéNav ex9-81 selects only from the actual top three, then permits reordering the remaining cards; with no eligible card it can reorder all three.
+- Regice ex9-98 **Iceberg Crush** permits choosing which Basic or Special Energy to discard, rather than discarding an arbitrary first attachment.
+- Double Rainbow ex9-87 reduces attack damage to each individual Active and Bench target, including attacks that ignore Weakness/Resistance.
+- EX-era Special Darkness ex9-86 (and ex1-93) adds +10 before Weakness only to eligible Dark/Darkness attackers. Neo/e-Card prints have different after-Weakness, unrestricted +10 rules and their own drawback; do not unify across eras.
+- Refined `deckMeta` role tags for Energy scaling vs true acceleration, sniping, spread and draw/search. EX Deoxys Lady Outing becomes viable in auto-builder under the updated Classic Zone-search rule.
+- See `tests/v07189-ex9-energy-audit.test.cjs` and master rules C-ENERGY-013/014, C-METADATA-001, C-CHOICE-001. Node regressions cannot prove all Android touchscreen or multi-expansion interactions.

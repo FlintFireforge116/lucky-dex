@@ -1,8 +1,8 @@
 LUCKYDEX — MASTER PROJECT RULES AND DEVELOPMENT CONTRACT
 =========================================================
-Document version: 1.3
+Document version: 1.4
 Compiled: 10 November 2026
-Current source baseline inspected: v0.69.187 (including EX Emerald ex9 and the previously agreed v0.69.186 attack-bonus fix)
+Current source baseline inspected: v0.69.188 (Classic Energy Zone reconciliation) and the EX Emerald/older-set combat audit for v0.69.189
 Recommended repository location: ~/lucky-dex/source/docs/LUCKYDEX_MASTER_RULES.txt
 Project: LuckyDex — Android application/PWA, managed with Termux and GitHub
 
@@ -137,6 +137,36 @@ PART 3 — CLASSIC POKÉMON TCG FORMAT
   [LOCKED] Lanette's Net Search finds up to THREE Basic Pokémon of DIFFERENT types and excludes Baby Pokémon; cannot silently substitute multiple cards of the same type.
   [LOCKED] EX Emerald Rare Candy may evolve an eligible Basic directly to a Stage 2 ONLY when a real compatible Stage 1 chain exists (or Basic to compatible Stage 1); respect the normal evolution timing and the actual chosen hand card. Do not silently auto-pick the first evolution.
   [LOCKED] PokéNav searches ONLY the top three real draw-deck cards, not prizes or Energy Zone, and puts a chosen Basic/Evolution/Energy card into hand with the remaining cards retained in the draw-deck order rules.
+
+3.2a.1 PRINTED SPECIAL DARKNESS ENERGY — DIFFERENT ERA RULES (v0.69.189)
+  [LOCKED] C-ENERGY-013 | Do NOT collapse all Darkness Energy printings into
+    a universal damage modifier. Neo Genesis neo1-104, Expedition ecard1-158,
+    and Aquapolis ecard2-142 add +10 attack damage AFTER Weakness and Resistance
+    (on normal Defending Pokemon damage) and can aid non-Dark Pokemon; retain
+    their separate between-turn self-damage drawback when appropriate.
+    EX Ruby & Sapphire ex1-93 and EX Emerald ex9-86 add +10 BEFORE Weakness
+    and Resistance, ONLY when the attacker is Darkness type or has Dark in its
+    name, and lack the earlier self-damage drawback. Source: the individual
+    printed Special Energy rules. Apply each modifier at the correct stage in
+    both attack resolution and previews, including repeated attacks where legal.
+  [LOCKED] C-ENERGY-014 | Double Rainbow Energy ex9-87's -10 outgoing damage
+    affects the attack damage dealt to EACH target, including Bench targets,
+    and applies to Swift-style attacks that ignore Weakness or Resistance.
+    The -10 is NOT negated by a generic ignore-Weakness check.
+  [LOCKED] C-METADATA-001 | Energy ramp or recovery means movement or creation
+    of Energy, not merely extra attack damage calculated from attached Energy.
+    Do not blacklist otherwise legal Energy-search Supporters from automated
+    decks on the obsolete assumption that Classic has no Basic Energy searches.
+    Example: EX Deoxys Lady Outing ex8-87 can search the Classic Energy Zone,
+    belongs to the search/energy archetypes, and is not opponent disruption.
+  [LOCKED] C-CHOICE-001 | A card naming multiple simultaneous effects must
+    perform all effects on their actual recipients. EX Emerald Combusken
+    ex9-25 Lava Burn deals 20 to Active plus 10 to a CHOSEN opposing Bench;
+    it remains playable without an opposing Bench (base 20). Regice ex Iceberg
+    Crush chooses which attached Energy to discard on a successful heads.
+    PokéNav ex9-81 takes only an eligible card from the physical top three
+    and lets the player reorder the remaining two (or all three if no card
+    was eligible); it does not shuffle or search the infinite Energy Zone.
 
 3.2b GLOBAL CLASSIC ENERGY SOURCE / DESTINATION CONTRACT (v0.69.188)
   DECISION 2026-11-10: The user approved broad Energy-rules alignment and the
@@ -473,6 +503,10 @@ PART 9 — TESTING / REGRESSION / RELEASE QUALITY
   R19 [C-ENERGY-005/006] Base Blastoise Rain Dance requires Water Energy physically in hand. Normal hand Basic/Special uses ONE quota independently of normal Zone quota; effect-based ramp is extra.
   R20 [C-ENERGY-003/008] Normal supply order stays visible. Fresh typed search may consume first matching type; top-N physical deck checks are never converted to free searches.
   R21 [C-ENERGY-004] Aquapolis Power Plant trades an actual Basic hand Energy for selected eligible real discarded Energy, including separate Basic ledger; no fake or self-refilling Zone recovery.
+  R22 [C-ENERGY-013/014] Neo/e-Card Darkness bonus after Weakness vs EX-era before Weakness only on eligible attackers; Double Rainbow -10 on Swift and Bench.
+  R23 [C-CHOICE-001] EX Emerald Lava Burn base+Bench, PokéNav top-three choice and actual reorder even when zero eligible; Regice ex selected Basic/Special Energy discard.
+  R24 [C-METADATA-001] Metadata for real Energy recovery vs damage scaling, Lady Outing legal autobuilder scoring, CPU/player 30-card deck legality.
+
 
 9.3 Honest release notes
   Every patch note should state: baseline version, target version, changed files, exact bugs/decisions, tests actually run (and failures), known untested areas, required previous version, extraction target, Git/Termux commands, and one or two decisive in-app verification scenarios.
@@ -564,6 +598,7 @@ PART 11 — EXPANSION REGISTER / CURRENT AUDIT BASELINE
   [CURRENT] Tests: v07187-ex-emerald.test.cjs and v07187-ex-emerald-audit.test.cjs exercise all attacks through two random seeds, legal CPU/player deck construction, Form Change, Special Energy, discards, damage counters and conditional Powers/Bodies. Recent expansion suite v07172–v07187 passed 210/210 before the final targeting/Rare Candy assertions; final post-change count is in the patch release checks. Node tests do not replace touch-device QA.
   [CHECK] User's Android build, asset fetching, collection save migration, real touch target pickers, deep CPU strategy and unusual three-way card interactions are not proven by Node tests alone. Do not claim all such cases are verified in a phone playthrough.
   [CURRENT] v0.69.188 reconciles Classic Energy sources/destinations across Neo, Expedition, Aquapolis, Skyridge and early EX series. Locked C-ENERGY-001..012; added tests/v07188-classic-energy-routing.test.cjs, updated obsolete source/destination tests. Pocket Energy engine untouched. Exact automated run counts in patch release notes; Android device QA not performed.
+  [CURRENT] v0.69.189 completes additional EX Emerald (ex9) damage, targeting, Energy and metadata audit and cross-expansion Classic Special Darkness Energy correction. Recent-set suite 537/537 passed (two unavailable absolute-path artwork tests omitted). Older Base/Jungle/Fossil/Neo suite 90/105 passed with the SAME 15 failures present in untouched v0.69.188; do not misstate those old baseline failures as repaired. See tests/v07189-ex9-energy-audit.test.cjs and docs/TCG_CLASSIC_ENERGY_AUDIT_v069189.md. Pocket Energy engine unchanged.
   NEXT PLANNED SET: EX Unseen Forces (ex10), pending user direction.
 
 =======================================================================
@@ -592,5 +627,7 @@ CHANGE HISTORY
 2026-11-10 | Document 1.1 -> 1.2 | App v0.69.187 | EX Emerald (ex9, 107 cards) integrated into Classic catalogue, owner mapping, player/CPU deck selection and runtime. New testable rules: EX Emerald Special Darkness/Metal, Double Rainbow/Multi Energy, printed Basic-card source/destination searches, Form Change, Milotic TM suppression, status prevention, damage counters, Bench protection, next-turn bonuses and choice prompts. Added EX Emerald targeted tests (v07187...) and cross-set regression; Android device QA remains unverified. Next proposed set: EX Unseen Forces (ex10).
 
 2026-11-10 | Document 1.2 -> 1.3 | App v0.69.188 | [LOCKED][EXCEPTION] C-ENERGY-001..012. User authorised fresh Basic Energy from Classic 'search deck' effects using the ordered Energy Zone for extra acceleration, without changing the requirements of hand-only or discard-recovery effects. Previous older-code conversions incorrectly diverted discarded/attached Basic Energy into Energy Zone when card text specified shuffle into actual deck. Reconciled Neo Energy Charge, Time Capsule, Feraligatr Riptide, Neo Pilfer, Expedition Power Charge/Beating Wings, Skyridge Energy Recycle/Plant, Aquapolis Power Plant/Town Volunteers, EX Emerald Mr. Stone, selected older EX searches, and shared normal hand-vs-Zone attachment limits. Regression: v07188-classic-energy-routing.test.cjs plus updated historical assertions and cross-set Node suites. This is a shared-engine and targeted card audit, NOT exhaustive proof that every historical card is correct. Pocket mechanics unchanged. Android QA not tested.
+
+2026-11-10 | Document 1.3 -> 1.4 | App v0.69.189 | [LOCKED] C-ENERGY-013/014, C-METADATA-001, C-CHOICE-001. EX Emerald Combusken Lava Burn now applies actual Active and chosen Bench damage, PokéNav maintains meaningful top-deck reordering, Regice ex selects attached Energy. Cross-era printed Darkness Energy splits Neo/e-Card after-Weakness damage from EX pre-Weakness restricted bonus; Double Rainbow decreases Bench and ignore-Weakness attack damage. Lady Outing no longer autobuilder-blocked after v188 Zone-search rule. New v07189 outcome tests and updated historical expectations for legitimate zone-generated Basic Energy identity. Existing older Delta Reign art tests use unavailable absolute paths in this source snapshot, not a verified combat issue. Android QA not performed.
 
 END OF LUCKYDEX MASTER RULES

@@ -56,8 +56,8 @@ test('Energy Restore offers exact discard Energy types rather than picking first
  choose(s,a=>a.choiceLabel==='Water');assert.equal(s.sides.player.energyDiscard.Water,1);
 });
 test('Energy Search supplies one Basic Energy into hand outside the draw deck',()=>{
- const s=state(),before=s.sides.player.deck.length;effect(s,'basicSearch1');choose(s,a=>a.choiceLabel==='Fire');
- assert.ok(s.sides.player.hand.some(ref=>ref.cardId==='ex1-108'));assert.equal(s.sides.player.deck.length,before);
+ const s=state(),before=s.sides.player.deck.length;effect(s,'basicSearch1');choose(s,a=>/Fire/.test(String(a.choiceLabel||'')));
+ assert.ok(s.sides.player.hand.some(ref=>{const card=data.cardById(ref.cardId);return card?.basicEnergy&&card.subtype==='Fire'&&ref.zoneGenerated===true;}),'must add a real Fire Basic Energy hand card from the Zone');assert.equal(s.sides.player.deck.length,before);
 });
 test('Mewtwo ex recovers selected discarded Basic Energy and Special Energy',()=>{
  const s=state();s.sides.player.active=slot(101);s.sides.player.energyDiscard={Psychic:1,Fire:1};
