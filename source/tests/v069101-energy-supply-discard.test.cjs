@@ -75,22 +75,23 @@ test('Expert CPU handles multi-step Energy Ark choices without a frozen turn',()
  let n=0;while(s.phase==='effectChoice'&&n<4){const action=ai.chooseAction(s,'opponent','Expert',n);assert.ok(action);core.applyAction(s,'opponent',action);n++;}
  assert.equal(s.phase,'battle');assert.equal(n,2);
 });
-test('Returning a Pokémon with attached Basic Energy to the deck returns that Energy to the supply, not the 30-card deck',()=>{
+test('Returning a Pokémon with attached Basic Energy to the deck shuffles that Energy into the real draw deck',()=>{
  const s=mk(390,['Grass']),p=s.sides.player;
  p.active=core.makePokemonSlot('neo1-61',3,'return-hoppip');p.active.energy={Grass:2};
  const deckCount=p.deck.length,supplyCount=p.energySupply.length;
  effects.applyEffect({type:'shuffleIntoDeck',target:'self',includeAttached:true},core.effectContext(s,'player',{},p.active));
- assert.equal(p.active,null);assert.equal(p.energySupply.length,supplyCount+2);
- assert.deepEqual(p.energySupply.slice(-2),['Grass','Grass']);
- assert.ok(p.deck.length>deckCount);assert.equal(p.deck.some(ref=>ref.zoneGenerated&&ref.cardId==='neo1-108'),false);
+ assert.equal(p.active,null);assert.equal(p.energySupply.length,supplyCount);
+ assert.equal(p.deck.length,deckCount+3);
+ assert.equal(p.deck.filter(ref=>ref.cardId==='neo1-108').length>=2,true);
 });
-test('Neo Pilfer shuffles a Pokémon back without slipping generated Basic Energy into the draw deck',()=>{
+test('Neo Pilfer returns itself and attached Basic Energy to the actual draw deck',()=>{
  const s=mk(397,['Grass']),p=s.sides.player;
  p.active=core.makePokemonSlot('neo1-26',3,'aipom-pilfer');p.active.energy={Grass:2};
- const before=p.energySupply.length;
+ const before=p.energySupply.length,deckCount=p.deck.length;
  effects.applyEffect({type:'neoRule',rule:'pilfer'},{...core.effectContext(s,'player',{},p.active),random:()=>.95});
- assert.equal(p.active,null);assert.equal(p.energySupply.length,before+2);
- assert.equal(p.deck.some(ref=>ref.zoneGenerated&&ref.cardId==='neo1-108'),false);
+ assert.equal(p.active,null);assert.equal(p.energySupply.length,before);
+ assert.equal(p.deck.length,deckCount+3);
+ assert.equal(p.deck.filter(ref=>ref.cardId==='neo1-108').length>=2,true);
 });
 test('Ecogym returns a discarded Basic Energy from the Pokémon straight to its owner without consuming a new supply copy',()=>{
  const s=mk(331,['Grass','Water']),p=s.sides.player,foe=s.sides.opponent;

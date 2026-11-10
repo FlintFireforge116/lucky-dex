@@ -83,7 +83,7 @@ test('Harvest Bounty allows skip, respects special conditions, and only consumes
  step(s,'attachSpecial',a=>a.target==='active');assert.equal(s.phase,'effectChoice');
  step(s,'effectChoice',a=>a.choiceOption===1);
  assert.equal(me.active.energy.Fire,1);
- me.hand=[{uid:'spec2',cardId:'ecard1-159'}];step(s,'attachSpecial',a=>a.target==='active');assert.equal(s.phase,'battle');
+ me.hand=[{uid:'spec2',cardId:'ecard1-159'}];assert.equal(choices(s).some(a=>a.type==='attachSpecial'),false,'only one normal hand Energy attachment per turn');assert.equal(s.phase,'battle');
  const t=state();t.sides.player.active=slot(93,'abra');t.sides.player.bench=[slot(30,'v')];t.sides.player.bench[0].benchSlot=0;t.sides.player.bench[0].conditions={sleep:true};
  t.sides.player.energyType='Grass';t.sides.player.energyAvailable=true;t.sides.player.energyUsed=false;t.sides.player.energySupply=['Fire'];
  step(t,'attach',a=>a.target==='active');assert.equal(t.phase,'battle');

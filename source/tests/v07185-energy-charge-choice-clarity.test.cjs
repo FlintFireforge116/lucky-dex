@@ -34,7 +34,7 @@ test('EX Deoxys Energy Charge shuffles discarded Basic Energy into DRAW deck (no
   const idx=p.hand.findIndex(ref=>ref.cardId==='neo1-107');assert.ok(idx>=0);
   const attachments=core.legalActions(s,'player').filter(a=>a.type==='attachSpecial'&&a.handIndex===idx);assert.ok(attachments.length);
   core.applyAction(s,'player',attachments.find(a=>a.target==='active'));
-  assert.equal(p.active.energy.Fire,4);assert.equal(p.energyUsed,true);
+  assert.equal(p.active.energy.Fire,4);assert.equal(p.handEnergyUsed,true);assert.equal(p.energyUsed,false);
   assert.ok(!core.legalActions(s,'player').some(a=>a.type==='attachSpecial'&&classic.cardById(a.cardId)?.basicEnergy));
 });
 test('Energy Charge preserves returned Special Energy cards in draw deck',()=>{

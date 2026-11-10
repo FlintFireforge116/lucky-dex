@@ -102,25 +102,25 @@ test('Final Blow does not activate without the HP threshold or while a Special C
   }assert.ok(hit,disabled+' should see a successful attack');
  }
 });
-test('Time Capsule restores virtual discarded Basic Energy for each player, then locks further Trainers',()=>{
+test('Time Capsule returns discarded Basic Energy into actual draw decks for both players, then locks further Trainers',()=>{
  const s=make(),player=s.sides.player,foe=s.sides.opponent;player.energyDiscard={Grass:1};foe.energyDiscard={Water:1};
  fx.applyEffect({type:'neoRule',rule:'timeCapsule'},core.effectContext(s,'player',{},player.active));
  assert.equal(s.phase,'effectChoice');
  let action=core.legalActions(s,'player').find(a=>a.type==='effectChoice'&&a.choiceOption===0);assert.ok(action);
- const foeBefore=foe.energySupply.length;core.applyAction(s,'player',action);assert.equal(foe.energySupply.length,foeBefore+1);assert.ok(foe.energySupply.includes('Water'));assert.equal(foe.energyDiscard.Water,0);
+ const foeBefore=foe.energySupply.length,foeDeckBefore=foe.deck.length;core.applyAction(s,'player',action);assert.equal(foe.energySupply.length,foeBefore);assert.equal(foe.deck.length,foeDeckBefore+1);assert.ok(foe.deck.some(r=>r.cardId==='neo1-111'));assert.equal(foe.energyDiscard.Water,0);
  action=core.legalActions(s,'player').find(a=>a.type==='effectChoice'&&a.choiceOption===0);assert.ok(action);
- const playerBefore=player.energySupply.length;core.applyAction(s,'player',action);assert.equal(player.energySupply.length,playerBefore+1);assert.ok(player.energySupply.includes('Grass'));assert.equal(player.energyDiscard.Grass,0);
+ const playerBefore=player.energySupply.length,playerDeckBefore=player.deck.length;core.applyAction(s,'player',action);assert.equal(player.energySupply.length,playerBefore);assert.equal(player.deck.length,playerDeckBefore+1);assert.ok(player.deck.some(r=>r.cardId==='neo1-108'));assert.equal(player.energyDiscard.Grass,0);
  assert.equal(player.neoTrainerLockTurn,s.turnNumber);
 });
-test('Energy Charge chooses discarded Basic Energy and returns it to the Energy supply',()=>{
+test('Energy Charge chooses discarded Basic Energy and returns it to the actual draw deck',()=>{
  let succeeded=false;
  for(let seed=200;seed<250;seed++){
   const s=make(seed),player=s.sides.player;player.energyDiscard={Fire:2};
   fx.applyEffect({type:'neoRule',rule:'energyCharge'},core.effectContext(s,'player',{},player.active));
   if(s.phase!=='effectChoice')continue;
   const action=core.legalActions(s,'player').find(a=>a.type==='effectChoice'&&a.choiceOption===0);assert.ok(action);
-  const before=player.energySupply.length;core.applyAction(s,'player',action);assert.equal(player.energyDiscard.Fire,1);
-  assert.equal(player.energySupply.length,before+1);assert.ok(player.energySupply.includes('Fire'));succeeded=true;break;
+  const before=player.energySupply.length,deckBefore=player.deck.length;core.applyAction(s,'player',action);assert.equal(player.energyDiscard.Fire,1);
+  assert.equal(player.energySupply.length,before);assert.equal(player.deck.length,deckBefore+1);assert.ok(player.deck.some(r=>r.cardId==='neo1-107'));succeeded=true;break;
  }assert.ok(succeeded,'a successful Energy Charge flip must allow a real choice');
 });
 test('Darkness Energy recoil occurs at the end of the turn except on Darkness Pokémon',()=>{

@@ -172,7 +172,7 @@
       id:side,
       deck:makeDeck(side,ids), hand:[], discard:[], lostZone:[], energyDiscard:{}, energySupply:null, active:null, bench:[], benchLimit:3, points:0,
       prizes:[],prizesTaken:0,handLimit:rules?.handLimit==null?null:Number(rules.handLimit),
-      energyTypes:types.slice(), energyType:types[0], nextEnergyType:types[0], energyAvailable:false, energyUsed:false, retreated:false,
+      energyTypes:types.slice(), energyType:types[0], nextEnergyType:types[0], energyAvailable:false, energyUsed:false, handEnergyUsed:false, retreated:false,
       turnCount:0, pointsGainedThisTurn:0, pointsGainedLastTurn:0, knockoutsTaken:0, lastKnockedOutCardIds:[]
     };
   }
@@ -259,6 +259,7 @@
     const s = state.sides[side];
     s.turnCount += 1;
     s.energyUsed = false;
+    s.handEnergyUsed = false;
     s.retreated = false;
     s.supporterUsed = false;
     s.stadiumUsed = false;
@@ -783,9 +784,10 @@
         if(!s.stadiumUsed&&effects.supportsEffect(card.effect)&&(!state.stadium||data.cardById(state.stadium.cardId).name!==card.name))actions.push(base);
       }else for(const target of effectChoices(card.effect,effectContext(state,side)))actions.push({...base,...target});
     });
-    // Classic's Energy Zone is the one-per-turn placement. Special Energy
-    // cards are extra attachments and can be stacked before or after it.
-    if(state.format==='classic'){s.hand.forEach((ref,handIndex)=>{const card=data.cardById(ref.cardId);if(!(card?.specialEnergy||card?.basicEnergy)||card.battleEnabled===false&& !card.basicEnergy)return;if(card?.specialEnergy&&effects.isActionLocked(state,side,'SpecialEnergy',data.cardById))return;if(card.basicEnergy&&s.energyUsed&&!ref.zoneGenerated)return;const validEnergyTarget=slot=>slot&&!slot.gymEnergyLock&&(card.id!=='neo4-16'||/^(?:Light |Shining )/.test(data.cardById(slot.cardId)?.name||''));const aqValid=(slot)=>{if(!validEnergyTarget(slot))return false;const mon=data.cardById(slot.cardId),energyType=card.basicEnergy?card.subtype:card.effect?.provides&&Object.keys(card.effect.provides)[0];
+    // Classic: normal Energy Zone attachment and once-per-turn hand Energy
+    // attachment are INDEPENDENT. Hand-attached Basic and Special both count
+    // toward the hand attachment; card effects can separately accelerate.
+    if(state.format==='classic'){s.hand.forEach((ref,handIndex)=>{const card=data.cardById(ref.cardId);if(!(card?.specialEnergy||card?.basicEnergy)||card.battleEnabled===false&& !card.basicEnergy)return;if(card?.specialEnergy&&effects.isActionLocked(state,side,'SpecialEnergy',data.cardById))return;if(s.handEnergyUsed)return;const validEnergyTarget=slot=>slot&&!slot.gymEnergyLock&&(card.id!=='neo4-16'||/^(?:Light |Shining )/.test(data.cardById(slot.cardId)?.name||''));const aqValid=(slot)=>{if(!validEnergyTarget(slot))return false;const mon=data.cardById(slot.cardId),energyType=card.basicEnergy?card.subtype:card.effect?.provides&&Object.keys(card.effect.provides)[0];
        if(Number(slot?.ex5NoHandEnergyUntil||0)>=state.turnNumber)return false;
        if(card.id==='ex4-86'&&!mon?.name?.startsWith("Team Aqua's"))return false;
        if(card.id==='ex7-95'&&!/^(?:Dark |Rocket's )/.test(mon?.name||''))return false;
@@ -1321,7 +1323,8 @@
     const legal = legalActions(state,side);
     const matched = legal.find(item => actionMatches(item,action));
     if (!matched){
-      if (action && (action.type === 'attach'||(action.type==='attachSpecial'&&!data.cardById(action.cardId)?.specialEnergy)) && state.sides[side].energyUsed) throw new Error('Energy Zone can only be attached once per turn.');
+      if(action?.type==='attachSpecial'&&state.format==='classic'&&state.sides[side].handEnergyUsed)throw new Error('Only one Energy card may be attached from hand each turn.');
+      if (action?.type === 'attach' && state.sides[side].energyUsed) throw new Error('Energy Zone can only be attached once per turn.');
       throw new Error(`Illegal Pocket action: ${action && action.type || 'unknown'}.`);
     }
     if(matched.type==='effectChoice'){
@@ -1457,7 +1460,7 @@
     if (matched.type === 'attachSpecial'){
       const target=slotForTarget(s,matched.target,matched.benchIndex),[ref]=s.hand.splice(matched.handIndex,1),card=data.cardById(ref?.cardId);
       if(!target||!ref||!(card?.specialEnergy||card?.basicEnergy))throw new Error('That Energy card attachment is no longer legal.');
-      let provides={};if(card.basicEnergy){target.energy[card.subtype]=Number(target.energy[card.subtype]||0)+1;provides={[card.subtype]:1};}else{target.specialEnergy=target.specialEnergy||[];target.specialEnergy.push(ref);provides={...specialEnergyProvides(ref)};}if(card.basicEnergy&&!ref.zoneGenerated)s.energyUsed=true;
+      let provides={};if(card.basicEnergy){target.energy[card.subtype]=Number(target.energy[card.subtype]||0)+1;provides={[card.subtype]:1};}else{target.specialEnergy=target.specialEnergy||[];target.specialEnergy.push(ref);provides={...specialEnergyProvides(ref)};}s.handEnergyUsed=true;
       // Aquapolis hand-attached Energy rules, distinct from the generated
       // one-per-turn Energy Zone.
       if(card.id==='ecard3-142'){

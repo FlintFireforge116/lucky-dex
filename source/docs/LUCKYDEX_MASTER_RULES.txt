@@ -1,6 +1,6 @@
 LUCKYDEX — MASTER PROJECT RULES AND DEVELOPMENT CONTRACT
 =========================================================
-Document version: 1.2
+Document version: 1.3
 Compiled: 10 November 2026
 Current source baseline inspected: v0.69.187 (including EX Emerald ex9 and the previously agreed v0.69.186 attack-bonus fix)
 Recommended repository location: ~/lucky-dex/source/docs/LUCKYDEX_MASTER_RULES.txt
@@ -137,6 +137,116 @@ PART 3 — CLASSIC POKÉMON TCG FORMAT
   [LOCKED] Lanette's Net Search finds up to THREE Basic Pokémon of DIFFERENT types and excludes Baby Pokémon; cannot silently substitute multiple cards of the same type.
   [LOCKED] EX Emerald Rare Candy may evolve an eligible Basic directly to a Stage 2 ONLY when a real compatible Stage 1 chain exists (or Basic to compatible Stage 1); respect the normal evolution timing and the actual chosen hand card. Do not silently auto-pick the first evolution.
   [LOCKED] PokéNav searches ONLY the top three real draw-deck cards, not prizes or Energy Zone, and puts a chosen Basic/Evolution/Energy card into hand with the remaining cards retained in the draw-deck order rules.
+
+3.2b GLOBAL CLASSIC ENERGY SOURCE / DESTINATION CONTRACT (v0.69.188)
+  DECISION 2026-11-10: The user approved broad Energy-rules alignment and the
+  conversion of *fresh Basic Energy from deck searches* to the Classic Energy
+  Zone. This lets Classic use real extra-attachment / energy-ramp moves, like
+  Pocket does, WITHOUT mixing the two formats' mechanics or minting discard
+  recovery cards. The source words matter more than the expansion's age.
+
+  [LOCKED] C-ENERGY-001 | Four zones are DISTINCT: ordered fresh Basic Energy
+    supply; real draw deck; real hand; and real discard (Basic ledger plus
+    physical discard pile). Track exact sources and destinations for each card.
+
+  [EXCEPTION] C-ENERGY-002 | An unrestricted 'search your deck for Basic
+    Energy' effect may use eligible Basic Energy from the Classic Energy Zone,
+    because the normal 30-card draw deck does not contain starting Basic
+    Energy. This covers energy ramp into hand OR directly onto Pokémon as
+    specified by the effect; amounts and target restrictions must stay printed.
+    Search may also use actual Basic Energy cards shuffled into the draw deck.
+    If both sources are legal and relevant, let the player choose, rather than
+    silently consume the physical cards first.
+
+  [LOCKED] C-ENERGY-003 | Ordered-supply requirements are strict: the normal
+    one-per-turn Energy Zone attachment takes the displayed NEXT Energy.
+    An effect specifying a type and explicitly SEARCHING for it may select an
+    eligible matching type from the ordered supply (it is not a normal Zone
+    attachment), consuming that real queue entry. A generic unrestricted
+    search presents the available types. Never conjure an unspecified type or
+    silently alter the displayed preview without changing the actual queue.
+
+  [LOCKED] C-ENERGY-004 | Anything saying 'from your discard pile', 'recover
+    discarded Energy', 'attached Energy discarded', or similar MUST consume
+    eligible Energy that is genuinely discarded. Search both Basic ledger and
+    real discard cards, preserving Special Energy identity. A missing discard
+    source produces no attachment/recovery, even when Energy Zone has supply.
+
+  [LOCKED] C-ENERGY-005 | Anything saying 'from your HAND' (e.g. Base Blastoise
+    Rain Dance) MUST have matching physical/converted Energy cards actually in
+    hand. The engine must NEVER substitute Zone Energy merely because hand is
+    empty. Abilities may attach multiple hand Energy across separate ability
+    uses when printed, without overriding the NORMAL hand-attachment quota.
+
+  [LOCKED] C-ENERGY-006 | TWO INDEPENDENT NORMAL QUOTAS per eligible turn:
+    (A) one Basic Energy placed by normal Energy Zone action, and (B) one
+    Energy CARD attached from hand, Basic or Special. Attaching Basic Energy
+    previously generated into hand also consumes (B). Card-effect energy
+    acceleration is ADDITIONAL if printed, not an unlimited ordinary hand
+    attachment and not a second normal Zone attachment.
+
+  [LOCKED] C-ENERGY-007 | Destination fidelity is non-negotiable. 'Shuffle
+    discarded Energy into your deck' returns selected actual discarded Energy
+    to the DRAW DECK, even if it originated in the Zone. Likewise 'shuffle
+    Pokémon and attached cards into your deck' moves attached Basic Energy
+    into the DRAW DECK as physical drawable cards. 'Return to your hand',
+    'attach to Pokémon' and 'put on Energy Zone' are different destinations.
+    Never divert DRAW DECK returns to the supply simply to preserve 30 cards.
+    The in-battle draw deck may grow above its initial amount.
+
+  [LOCKED] C-ENERGY-008 | Exact 'look at the top N cards of your deck',
+    topdeck manipulation and a specifically drawn physical card refer to the
+    actual ordered DRAW DECK, not an arbitrary or free Zone selection. The
+    generic fresh-Basic search adaptation does not grant an automatic hit in
+    a top-N reveal, replace a discard search or bypass a requirement to pay
+    a card from hand. Evaluate unusual hybrid cards individually.
+
+  [LOCKED] C-ENERGY-009 | Special Energy always remains physical: no generic
+    Special Energy in the Basic supply. Printed restrictions, doubling,
+    duration, discard, search and attached-card identity remain enforced.
+    Do not transform recovered Special Energy into a generic Basic type.
+
+  [LOCKED] C-ENERGY-010 | The CPU and player use identical zone rules, source
+    choices, legal attachments and limits. The CPU is never allowed to create
+    discarded Energy, skip costs or search a type absent from the supply.
+    Both sides must complete multi-stage source/type/target choices.
+
+  [LOCKED] C-ENERGY-011 | This section applies to CLASSIC ONLY. Pocket keeps
+    its own Energy Zone, Moltres/Gardevoir ramp, rules and deck size. Similar
+    design goals are not permission to change Pocket mechanics or import
+    Classic-only Energy discards into Pocket.
+
+  [LOCKED] C-ENERGY-012 | New cards must state, in metadata and tests, the
+    origin (physical deck / Zone / discard / hand), type/count restrictions,
+    choice owner, destination and whether the operation counts as a normal
+    Zone attachment, a normal hand attachment or additional card-effect ramp.
+    Test 0/1/multiple eligible Energy, both player/CPU, type mismatch,
+    generated Basic subsequently drawn from deck, and Special Energy.
+
+  CARD-LEVEL RECONCILIATIONS INCLUDED IN v0.69.188:
+    Neo Genesis Energy Charge / Time Capsule / Feraligatr Riptide: discarded
+      Basic Energy enters the real draw deck, never the supply.
+    Expedition Power Charge: choose up to two eligible discarded Energy
+      (including Special), shuffle into real draw deck after successful flip.
+    Expedition Beating Wings / Neo Pilfer / general shuffled Pokémon:
+      attached Basic Energy becomes physical draw-deck cards.
+    Skyridge Energy Recycle: chosen discarded Basic to draw deck; Energy
+      Plant: fresh Basic from Zone when the draw deck has no physical Basic.
+    Aquapolis Town Volunteers: chosen Pokémon and ledger Basic to draw deck;
+      Power Plant: discard an actual Basic from hand and choose a real Basic
+      from a discard source into hand. The Done button must end cleanly.
+    EX Emerald Mr. Stone's Project: distinguish searching deck (physical
+      cards and eligible fresh Basic Zone) versus recovering from discard.
+    EX Ruby & Sapphire / Sandstorm fresh Basic searches and acceleration:
+      consume eligible real Energy Zone entries; do not invent Energy types.
+    Base Set Blastoise Rain Dance: strictly from actual hand cards.
+    EX Deoxys Energy Charge remains the canonical drawn-from-deck example.
+
+  [CHECK] This patch audited shared engines and representative older/newer
+    cards and added outcome tests. The complete set of all possible unusual
+    historical and cross-set cards is much larger than these scenarios; an
+    isolated old card should not be claimed proven merely because the shared
+    tests passed. Keep auditing newly discovered exceptions as sets expand.
 
 3.3 EX Deoxys Energy Charge — permanent regression example
   [LOCKED] Energy Charge (EX Deoxys ex8-86) flips a coin; on heads, choose up to two eligible Energy cards from discard (or fewer if unavailable) and shuffle them into the user's actual DRAW DECK.
@@ -358,6 +468,11 @@ PART 9 — TESTING / REGRESSION / RELEASE QUALITY
   R14 Test Lab: owned restriction bypass only in sandbox, independent saved decks/filters, no real rewards or stats.
   R15 Full UI: readable mobile cards, landscape Stadium proportion, battle mat size, direct targeting, clear optional outcome labels.
   R16 Card support: no 'special effect' placeholder counted as complete; each included attack/card has actually executed the relevant outcome.
+  R17 [C-ENERGY-001..012] Fresh Basic deck search -> eligible ordered Energy Zone; effect-based ramp can add extra attached Basic; search shows player type choice and never invents absent Energy.
+  R18 [C-ENERGY-004/007] Neo Energy Charge/Time Capsule/Riptide, Expedition Power Charge/Beating Wings, Neo Pilfer, Skyridge Energy Recycle, Aquapolis Town Volunteers always put eligible discarded/attached Basic into actual DRAW DECK.
+  R19 [C-ENERGY-005/006] Base Blastoise Rain Dance requires Water Energy physically in hand. Normal hand Basic/Special uses ONE quota independently of normal Zone quota; effect-based ramp is extra.
+  R20 [C-ENERGY-003/008] Normal supply order stays visible. Fresh typed search may consume first matching type; top-N physical deck checks are never converted to free searches.
+  R21 [C-ENERGY-004] Aquapolis Power Plant trades an actual Basic hand Energy for selected eligible real discarded Energy, including separate Basic ledger; no fake or self-refilling Zone recovery.
 
 9.3 Honest release notes
   Every patch note should state: baseline version, target version, changed files, exact bugs/decisions, tests actually run (and failures), known untested areas, required previous version, extraction target, Git/Termux commands, and one or two decisive in-app verification scenarios.
@@ -448,6 +563,7 @@ PART 11 — EXPANSION REGISTER / CURRENT AUDIT BASELINE
   [CURRENT] v0.69.187 adds EX Emerald (ex9), 107 registered cards including 11 Pokémon-ex, 11 Trainer cards, 4 physical Special Energy, 6 collectible-art Basic Energy cards, and secret Farfetch'd. Both player and CPU deck builders are registered for 30-card EX Emerald decks; direct attack targeting and effect-choice adapters are included. Printed card data source: Pokémon TCG data, cards/en/ex9.json (card text/card numbers checked 10 November 2026).
   [CURRENT] Tests: v07187-ex-emerald.test.cjs and v07187-ex-emerald-audit.test.cjs exercise all attacks through two random seeds, legal CPU/player deck construction, Form Change, Special Energy, discards, damage counters and conditional Powers/Bodies. Recent expansion suite v07172–v07187 passed 210/210 before the final targeting/Rare Candy assertions; final post-change count is in the patch release checks. Node tests do not replace touch-device QA.
   [CHECK] User's Android build, asset fetching, collection save migration, real touch target pickers, deep CPU strategy and unusual three-way card interactions are not proven by Node tests alone. Do not claim all such cases are verified in a phone playthrough.
+  [CURRENT] v0.69.188 reconciles Classic Energy sources/destinations across Neo, Expedition, Aquapolis, Skyridge and early EX series. Locked C-ENERGY-001..012; added tests/v07188-classic-energy-routing.test.cjs, updated obsolete source/destination tests. Pocket Energy engine untouched. Exact automated run counts in patch release notes; Android device QA not performed.
   NEXT PLANNED SET: EX Unseen Forces (ex10), pending user direction.
 
 =======================================================================
@@ -456,7 +572,7 @@ PART 12 — OPEN QUESTIONS / DO NOT SILENTLY DECIDE
 
   [CHECK-01] Classic Bench and victory format: historical approved design was five Bench spaces and four-point victory with prize values; inspected v0.69.185 engine uses three Bench spaces and five physical Prize cards. Requires user decision before an overall-format redesign.
   [CHECK-02] Decide what happens to unusual official rules involving an explicitly second Defending Pokémon, expanded Bench or physical prize placement in this converted format, card by card. Maintain existing documented adaptations until a specific better rule is agreed.
-  [CHECK-03] Confirm exact semantics when generic effects tell Basic Energy to return to 'deck' in the context of the infinite Energy pool. A SPECIFIC effect saying shuffle recovered Energy into the draw deck (e.g., Energy Charge) already has a settled rule and must NOT be treated as unresolved. Record other cards individually rather than imposing a global return-to-pool shortcut.
+  [RESOLVED-03 / C-ENERGY-007] Previously open: any effect that explicitly shuffles eligible Basic Energy into the deck must put REAL DRAWABLE cards in the DRAW DECK. No generic diversion back to Energy Zone; see 3.2b. Check unique card-specific exceptions only when their printed text actually uses a different destination.
   [CHECK-04] Any historical Pocket or Classic bug list needs a current repro before it is claimed to remain open; do not infer unresolved bugs purely from old release notes.
   [CHECK-05] Large custom Stadium Bench limits and varied hand/discard/card-picker UX should be checked on real Android touch hardware even where Node assertions pass.
 
@@ -474,5 +590,7 @@ CHANGE HISTORY
 2026-11-10 | Document 1.0 -> 1.1 | App v0.69.186 | [LOCKED] C-ATTACK-001: next-turn named-attack base-damage boosts must be effective in battle and visible in action previews, not silently lost by an empty printed-effect field. Bug: EX Deoxys Ninjask (ex8-13) Slash was parsed as noop despite the engine having its Swords Dance damage override; Jungle Scyther's generic boost was applied in combat but omitted in preview. Fix: parse EX Deoxys Slash with its registered damage rule and read shared next-attack bonuses in action previews. Tests: tests/v07186-swords-dance-damage-preview.test.cjs (7 checks: Jungle both prints, Ninjask, Vigoroth, weakness, expiry, both sides). Android device QA: not tested. Cross-set checks: Jungle (base2), EX Sandstorm (ex2), EX Deoxys (ex8). No general Energy or deckbuilding rules changed.
 
 2026-11-10 | Document 1.1 -> 1.2 | App v0.69.187 | EX Emerald (ex9, 107 cards) integrated into Classic catalogue, owner mapping, player/CPU deck selection and runtime. New testable rules: EX Emerald Special Darkness/Metal, Double Rainbow/Multi Energy, printed Basic-card source/destination searches, Form Change, Milotic TM suppression, status prevention, damage counters, Bench protection, next-turn bonuses and choice prompts. Added EX Emerald targeted tests (v07187...) and cross-set regression; Android device QA remains unverified. Next proposed set: EX Unseen Forces (ex10).
+
+2026-11-10 | Document 1.2 -> 1.3 | App v0.69.188 | [LOCKED][EXCEPTION] C-ENERGY-001..012. User authorised fresh Basic Energy from Classic 'search deck' effects using the ordered Energy Zone for extra acceleration, without changing the requirements of hand-only or discard-recovery effects. Previous older-code conversions incorrectly diverted discarded/attached Basic Energy into Energy Zone when card text specified shuffle into actual deck. Reconciled Neo Energy Charge, Time Capsule, Feraligatr Riptide, Neo Pilfer, Expedition Power Charge/Beating Wings, Skyridge Energy Recycle/Plant, Aquapolis Power Plant/Town Volunteers, EX Emerald Mr. Stone, selected older EX searches, and shared normal hand-vs-Zone attachment limits. Regression: v07188-classic-energy-routing.test.cjs plus updated historical assertions and cross-set Node suites. This is a shared-engine and targeted card audit, NOT exhaustive proof that every historical card is correct. Pocket mechanics unchanged. Android QA not tested.
 
 END OF LUCKYDEX MASTER RULES
