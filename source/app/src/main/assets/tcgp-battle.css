@@ -1026,3 +1026,14 @@ html.android-native-inset body.tcgp-battle-live .tcgp-live-arena:not(.format-cla
  transform:translate(var(--hand-x,0px),calc(var(--hand-y,0px) - 14px)) rotate(var(--hand-angle,0deg))!important;
  z-index:30!important;transition:transform .2s ease}
 .tcgp-live-hand-wrap.hand-picker-eligible .tcgp-live-hand-card{border:2px solid #f0d377;box-shadow:0 0 0 2px #143c57,0 0 13px #ffe3a299}
+
+/* v0.69.184: concise, visible warning for a printed Trainer/Supporter lock.
+   The normal centre-lane <em> is hidden at mobile sizes, so this must live
+   outside it. It never steals taps from the board. */
+.tcgp-live-trainer-lock-notice{
+  position:absolute;z-index:15;left:2%;right:2%;top:calc(100% + 2px);
+  padding:4px 8px;border:1px solid #c9894d;border-radius:7px;
+  background:rgba(252,238,203,.97);color:#5f3415;
+  text-align:center;font-size:10px;font-weight:850;line-height:1.25;
+  box-shadow:0 2px 5px rgba(39,28,15,.12);pointer-events:none;
+}

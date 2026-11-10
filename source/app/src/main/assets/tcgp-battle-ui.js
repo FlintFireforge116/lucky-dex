@@ -653,10 +653,44 @@
   }
 
   function actionIndicesFor(predicate){const out=[];battleActionCache.forEach((action,index)=>{if(predicate(action))out.push(index);});return out;}
+  // A legal attack/Power option targeting an in-play Pokemon must be chosen
+  // on that Pokemon's physical slot, never from a duplicate-name text list.
+  // The effectSelection UID is the existing battle-engine target contract.
+  function boardTargetForAction(state,action){
+    if(!state||!action)return null;
+    const uid=action.effectSelection;
+    if(typeof uid==='string'&&uid){
+      for(const side of ['player','opponent']){
+        const ss=state.sides?.[side];if(!ss)continue;
+        if(ss.active?.uid===uid)return {side,zone:'active',index:0};
+        for(const slot of ss.bench||[])if(slot?.uid===uid)return {side,zone:'bench',index:Number(slot.benchSlot)};
+      }
+    }
+    // Some selectable attacks offer the defending Active as the empty
+    // effectSelection alternative to UID-backed Bench targets.
+    if(action.type==='attack'&&(uid===''||uid==null)&&/^(?:(?:target|attack) (?:the )?(?:opposing |current )?(?:active|defender|defending pok[eé]mon)|keep current (?:opposing )?active)$/i.test(String(action.choiceLabel||'').trim()))
+      return state.sides?.opponent?.active?{side:'opponent',zone:'active',index:0}:null;
+    if(action.type==='attack'&&action.target==='opponentBench')return {side:'opponent',zone:'bench',index:Number(action.benchIndex)};
+    if(action.type==='attack'&&action.target==='opponentActive')return {side:'opponent',zone:'active',index:0};
+    return null;
+  }
+  function boardTargetOnlyActions(state,actions,indices){
+    if(!Array.isArray(indices)||indices.length<2)return false;
+    const places=indices.map(i=>boardTargetForAction(state,actions[i]));
+    return places.every(Boolean)&&new Set(places.map(p=>`${p.side}:${p.zone}:${p.index}`)).size===places.length;
+  }
+  function classicTrainerRestriction(state,side='player'){
+    if(state?.format!=='classic'||state.phase!=='battle'||state.activeSide!==side)return '';
+    const s=state.sides?.[side]||{},turn=Number(state.turnNumber);
+    if(Number(s.ex8TrainerLockUntil||0)>=turn)return 'TRAINERS BLOCKED · Disconnect or High Voltage: Items, Tools and Stadiums cannot be played this turn. Supporters are allowed.';
+    if(Number(s.ex7TrainerLockedUntil||0)>=turn)return 'TRAINERS BLOCKED · Opponent attack: Items, Tools and Stadiums cannot be played this turn. Supporters are allowed.';
+    if(Number(s.ex8SupporterLockUntil||0)>=turn)return 'SUPPORTERS BLOCKED · Opponent attack: Supporters cannot be played this turn. Other Trainers are allowed.';
+    return '';
+  }
   function contextActionButton(indices,label,extraClass){
     if(!indices.length)return'';
     if(indices.length===1)return `<button type="button" class="tcgp-live-context-action ${extraClass||''}" data-tcgp-action="battle-action" data-action-index="${indices[0]}">${esc(label)}</button>`;
-    return `<button type="button" class="tcgp-live-context-action ${extraClass||''}" data-tcgp-action="open-context-actions" data-action-indices="${indices.join(',')}">${esc(label)}</button>`;
+    return `<button type="button" class="tcgp-live-context-action ${extraClass||''}" data-tcgp-action="open-context-actions" data-action-indices="${indices.join(',')}">${esc(label)}${boardTargetOnlyActions(currentBattle,battleActionCache,indices)?' · TAP TARGET':''}</button>`;
   }
   function energyTargetAttrs(side,zone,index){
     if(side!=='player')return'';
@@ -689,8 +723,12 @@
     return (actions||[]).map((action,i)=>({action,i})).filter(({action})=>action?.type==='effectChoice'&&action.choiceTarget===zone&&(zone!=='bench'||Number(action.choiceBenchIndex)===Number(index||0))).map(({i})=>i);
   }
   function contextualBoardActions(actions,side,zone,index){
-    if(side!=='player'||!['context-actions','energy-actions'].includes(battleOverlay))return [];
-    return battleContextActionIndices.filter(i=>{const a=actions?.[i];return a&&((a.type==='retreat'||a.type==='promote')&&zone==='bench'&&Number(a.benchIndex)===Number(index)||a.type==='trainer'&&a.target===zone&&(zone!=='bench'||Number(a.benchIndex)===Number(index))||a.type==='attach'&&a.target===zone&&(zone!=='bench'||Number(a.benchIndex)===Number(index)));});
+    if(!['context-actions','energy-actions'].includes(battleOverlay))return [];
+    return battleContextActionIndices.filter(i=>{
+      const a=actions?.[i],target=boardTargetForAction(currentBattle,a);
+      if(target)return target.side===side&&target.zone===zone&&(zone!=='bench'||target.index===Number(index));
+      return side==='player'&&a&&((a.type==='retreat'||a.type==='promote')&&zone==='bench'&&Number(a.benchIndex)===Number(index)||a.type==='trainer'&&a.target===zone&&(zone!=='bench'||Number(a.benchIndex)===Number(index))||a.type==='attach'&&a.target===zone&&(zone!=='bench'||Number(a.benchIndex)===Number(index)));
+    });
   }
   function canChooseBoardDirect(state,actions){
     if(state?.phase!=='effectChoice'||state.choiceSide!=='player')return false;
@@ -700,7 +738,7 @@
     const indices=choiceBoardActions(currentBattle,battleActionCache,side,zone,index);
     if(indices.length&&canChooseBoardDirect(currentBattle,battleActionCache))return `data-tcgp-action="choose-board-card" data-side="${esc(side)}" data-zone="${esc(zone)}" data-index="${Number(index||0)}" aria-label="Select ${esc(slotName(currentBattle,side,zone,index))} for this effect"`;
     const context=contextualBoardActions(battleActionCache,side,zone,index);
-    if(context.length)return `data-tcgp-action="choose-board-card" data-side="${esc(side)}" data-zone="${esc(zone)}" data-index="${Number(index||0)}" aria-label="Select this Bench Pokémon"`;
+    if(context.length)return `data-tcgp-action="choose-board-card" data-side="${esc(side)}" data-zone="${esc(zone)}" data-index="${Number(index||0)}" aria-label="Select ${esc(slotName(currentBattle,side,zone,index))} as the target"`;
     return '';
   }
   function activeBoardChoiceMode(){
@@ -754,8 +792,9 @@
       options.forEach(({cardId:attackCardId,attackIndex,attack,previous,psymimic,technicalMachine})=>{
         const key=`${attackCardId}:${attackIndex}`,indices=attackGroups.get(key)||[],actionIndex=indices[0],availability=core.attackAvailability(currentBattle,'player',attackIndex,attackCardId),cost=core.energyCostLabel(availability.cost),preview=core.attackDamagePreview?.(currentBattle,'player',attackIndex,attackCardId),source=data.cardById(attackCardId);
         const attrs=!indices.length?`data-tcgp-action="explain-unavailable" data-reason="${esc(availability.reason)}" aria-disabled="true"`:indices.length>1?`data-tcgp-action="open-context-actions" data-action-indices="${indices.join(',')}"`:`data-tcgp-action="battle-action" data-action-index="${actionIndex}"`;
+        const boardTargetAttack=boardTargetOnlyActions(currentBattle,battleActionCache,indices);
         const blocker=indices.length?cost:(/^Needs /i.test(availability.reason)?availability.reason.replace(/\. Attached:.*$/,'').replace(/\.$/,''):availability.reason.replace(/\.$/,'')),origin=psymimic?`PSYMIMIC · ${String(source?.name||'OPPONENT').toUpperCase()} · `:technicalMachine?'TECHNICAL MACHINE · ':previous?`FROM ${String(source?.name||'PREVIOUS EVOLUTION').toUpperCase()} · `:'';
-        parts.push(`<button type="button" class="tcgp-live-context-action attack" title="${esc(availability.reason)}" ${attrs}><b>${esc(attack?.name||'ATTACK')}</b><small>${esc(origin+blocker)}${indices.length>1?(attack?.effect?.rule==='founja:flightPath'?' · CHOOSE BENCH ATTACK':attack?.effect?.rule==='expedition:lightningStrike'?' · CHOOSE DAMAGE':' · CHOOSE TARGET'):''}</small><em class="tcgp-live-attack-description">${esc(attackDescription(attack))}</em><strong>${esc(preview?.text??attack?.damageText??attack?.damage??0)} DMG</strong></button>`);
+        parts.push(`<button type="button" class="tcgp-live-context-action attack" title="${esc(availability.reason)}" ${attrs}><b>${esc(attack?.name||'ATTACK')}</b><small>${esc(origin+blocker)}${indices.length>1?(attack?.effect?.rule==='founja:flightPath'?' · CHOOSE BENCH ATTACK':attack?.effect?.rule==='expedition:lightningStrike'?' · CHOOSE DAMAGE':' · '+(boardTargetAttack?'TAP TARGET':'CHOOSE TARGET')):''}</small><em class="tcgp-live-attack-description">${esc(attackDescription(attack))}</em><strong>${esc(preview?.text??attack?.damageText??attack?.damage??0)} DMG</strong></button>`);
       });
       const retreats=actionIndicesFor(action=>action.type==='retreat');
       if(retreats.length)parts.push(contextActionButton(retreats,'RETREAT','retreat'));
@@ -949,10 +988,11 @@
     if(battleOverlay!=='context-actions')return'';
     const rows=battleContextActionIndices.map(index=>({index,action:battleActionCache[index]})).filter(({action})=>!!action);
     const boardRows=rows.filter(({action})=>action.type==='retreat'||action.type==='promote'||action.type==='trainer'&&action.target==='bench');
-    const boardOnly=boardRows.length===rows.length&&rows.length>0;
+    const directTargets=boardTargetOnlyActions(currentBattle,battleActionCache,rows.map(row=>row.index));
+    const boardOnly=directTargets||(boardRows.length===rows.length&&rows.length>0);
     // Board-target actions use a non-modal hint; the actual Pokémon is selected
     // in its original slot rather than through duplicate labels in a sheet.
-    if(boardOnly)return `<div class="tcgp-live-board-target-hint"><span>Tap a highlighted Bench Pokémon to ${rows.some(r=>r.action.type==='retreat')?'RETREAT':'SELECT'}.</span><button type="button" data-tcgp-action="close-overlay">CANCEL</button></div>`;
+    if(boardOnly)return `<div class="tcgp-live-board-target-hint" role="status"><span>${directTargets?'Tap the Pokémon you want to target on the board.':`Tap a highlighted Bench Pokémon to ${rows.some(r=>r.action.type==='retreat')?'RETREAT':'SELECT'}.`}</span><button type="button" data-tcgp-action="close-overlay">CANCEL</button></div>`;
     const buttons=rows.map(({index,action})=>{const id=action.cardId||action.choiceCardId||(action.target==='bench'?core.benchSlotAt(currentBattle.sides.player,action.benchIndex)?.cardId:null),art=id?cardArtUrl(id,'player'):'';return `<button class="tcgp-live-context-card" type="button" data-tcgp-action="battle-action" data-action-index="${index}">${art?`<img src="${esc(art)}" alt="">`:''}<span>${esc(actionLabel(action,currentBattle,'player'))}</span></button>`;}).join('');
     return `<div class="tcgp-live-context-centre" role="dialog" aria-label="Choose a play"><div class="tcgp-live-context-head"><b>Choose a play</b><button type="button" data-tcgp-action="close-overlay">×</button></div><div class="tcgp-live-context-rail">${buttons}</div></div>`;
   }
@@ -982,7 +1022,8 @@
     if(battleOverlay!=='hand-actions')return '';
     const ref=currentBattle?.sides?.player?.hand?.[battleHandIndex],card=data.cardById(ref?.cardId);if(!card)return '';
     const options=handActionIndices(battleHandIndex),art=cardArtUrl(card.id,'player');
-    return `<div class="tcgp-live-overlay"><button type="button" class="tcgp-live-overlay-scrim" data-tcgp-action="close-overlay"></button><section class="tcgp-live-sheet tcgp-live-action-sheet tcgp-live-hand-action-sheet"><div class="tcgp-live-sheet-head"><div><small>YOUR HAND</small><h3>${esc(card.name)}</h3></div><button type="button" class="tcgp-live-sheet-close" data-tcgp-action="close-overlay">×</button></div><div class="tcgp-live-sheet-card">${zoomArtworkButtonHtml(art,card.name)}<div><b>${esc(typeLabel(card))}</b><p class="tcgp-live-play-hint">Tap a legal action below to play this card. You can also drag it onto the board.</p></div></div><div class="tcgp-live-actions">${options.map(i=>`<button type="button" class="tcgp-battle-action" data-tcgp-action="battle-action" data-action-index="${i}">${esc(actionLabel(battleActionCache[i],currentBattle,'player'))}</button>`).join('')||'<p class="tcgp-live-play-hint">No legal play for this card right now.</p>'}<button type="button" class="tcgp-battle-action secondary" data-tcgp-action="inspect-hand-card" data-index="${battleHandIndex}">READ CARD / ATTACK DETAILS</button></div></section>${cardZoomOverlayHtml(art,card.name)}</div>`;
+    const restriction=card.kind==='trainer'&&card.trainerType!=='Supporter'?classicTrainerRestriction(currentBattle):'';
+    return `<div class="tcgp-live-overlay"><button type="button" class="tcgp-live-overlay-scrim" data-tcgp-action="close-overlay"></button><section class="tcgp-live-sheet tcgp-live-action-sheet tcgp-live-hand-action-sheet"><div class="tcgp-live-sheet-head"><div><small>YOUR HAND</small><h3>${esc(card.name)}</h3></div><button type="button" class="tcgp-live-sheet-close" data-tcgp-action="close-overlay">×</button></div><div class="tcgp-live-sheet-card">${zoomArtworkButtonHtml(art,card.name)}<div><b>${esc(typeLabel(card))}</b><p class="tcgp-live-play-hint">Tap a legal action below to play this card. You can also drag it onto the board.</p></div></div><div class="tcgp-live-actions">${options.map(i=>`<button type="button" class="tcgp-battle-action" data-tcgp-action="battle-action" data-action-index="${i}">${esc(actionLabel(battleActionCache[i],currentBattle,'player'))}</button>`).join('')||`<p class="tcgp-live-play-hint">${esc(restriction||'No legal play for this card right now.')}</p>`}<button type="button" class="tcgp-battle-action secondary" data-tcgp-action="inspect-hand-card" data-index="${battleHandIndex}">READ CARD / ATTACK DETAILS</button></div></section>${cardZoomOverlayHtml(art,card.name)}</div>`;
   }
   function livePokemonActionsOverlayHtml(){
     if(battleOverlay!=='pokemon-actions'||!battlePokemonActionSpec)return'';
@@ -1065,9 +1106,9 @@
         <div class="tcgp-live-opponent-bench" aria-label="Opponent Bench">${liveBenchHtml('opponent',o.bench)}</div>
         <div class="tcgp-live-opponent-active" aria-label="Opponent Active">${liveCardHtml(o.active,{side:'opponent',zone:'active'})}</div>${battleEventSide==='opponent'&&battleEventCardId?`<div class="tcgp-live-cpu-card-reveal" aria-label="CPU ${esc(battleEventKind||'card')} ${esc(cardName(battleEventCardId))}"><small>CPU ${esc((battleEventKind||'play').toUpperCase())}</small>${cardArtUrl(battleEventCardId,'opponent')?`<img src="${esc(cardArtUrl(battleEventCardId,'opponent'))}" alt="${esc(cardName(battleEventCardId))}">`:`<span>${esc(cardName(battleEventCardId))}</span>`}</div>`:''}
       </section>
-      <section class="tcgp-live-mid ${cpuReporting?'is-reporting':''}" aria-label="Score, turn and play lane"><div class="tcgp-live-score${classic?' tcgp-classic-score':''}">${classic?`<div class="tcgp-classic-score-numbers">${scoreHtml}</div><small class="tcgp-classic-score-label">CPU · ${esc(currentClassicOpponent?.name||'Base Set')}${florioPrizeReveal?` · Face-up Prize: ${florioPrizeReveal}`:''}</small>`:scoreHtml}</div>${liveMidControlsHtml(turnText,lastLog)}${cpuMessageVisible?`<div class="tcgp-live-action-event is-cpu" role="status">${esc(battleEvent)}</div>`:battleEvent?`<div class="tcgp-live-action-event is-player" role="status">${esc(battleEvent)}</div>`:''}</section>
+      <section class="tcgp-live-mid ${cpuReporting?'is-reporting':''}" aria-label="Score, turn and play lane"><div class="tcgp-live-score${classic?' tcgp-classic-score':''}">${classic?`<div class="tcgp-classic-score-numbers">${scoreHtml}</div><small class="tcgp-classic-score-label">CPU · ${esc(currentClassicOpponent?.name||'Base Set')}${florioPrizeReveal?` · Face-up Prize: ${florioPrizeReveal}`:''}</small>`:scoreHtml}</div>${liveMidControlsHtml(turnText,lastLog)}${classicTrainerRestriction(currentBattle)?`<div class="tcgp-live-trainer-lock-notice" role="status">${esc(classicTrainerRestriction(currentBattle))}</div>`:''}${cpuMessageVisible?`<div class="tcgp-live-action-event is-cpu" role="status">${esc(battleEvent)}</div>`:battleEvent?`<div class="tcgp-live-action-event is-player" role="status">${esc(battleEvent)}</div>`:''}</section>
       <section class="tcgp-live-player tcgp-live-mat-half" data-mat-side="player" ${playmatStyle('player')} aria-label="Player half">
-        <div class="tcgp-live-player-active" aria-label="Your Active" ${classic&&p.active?'data-tcgp-action="open-pokemon-actions" data-side="player" data-zone="active" data-index="0"':''}>${liveCardHtml(p.active,{side:'player',zone:'active',showActions:false})}</div>${liveStadiumSlotHtml()}
+        <div class="tcgp-live-player-active" aria-label="Your Active" ${classic&&p.active&&!battleOverlay?'data-tcgp-action="open-pokemon-actions" data-side="player" data-zone="active" data-index="0"':''}>${liveCardHtml(p.active,{side:'player',zone:'active',showActions:false})}</div>${liveStadiumSlotHtml()}
         <div class="tcgp-live-player-bench" aria-label="Your Bench">${liveBenchHtml('player',p.bench)}</div>
       </section>
       <section class="tcgp-live-player-bottom" aria-label="Your hand and piles"><div class="tcgp-live-piles mine" aria-label="Your card piles">${livePileHtml('player',p,'discard')}${livePileHtml('player',p,'deck')}</div><div class="tcgp-live-hand" aria-label="Your hand · swipe for more cards">${livePlayerHandHtml(p)}</div>${liveEnergySourceHtml(p)}</section>
@@ -1536,5 +1577,5 @@
   }
   if(root&&root.document){if(root.document.readyState==='loading')root.document.addEventListener('DOMContentLoaded',init,{once:true});else init();}
 
-  return{actionLabel,actionEventText,cardArtUrl,cardRulesHtml,supportText,filterBuilderRows,resultSummary,coverageForOwnedCards,centerHandActionIndices,directHandDropActionIndex,open,close,renderHome,requestLeave,isEditing:()=>screen==='builder',_test:{cpuActionDwellMs,cpuRemainingDwellMs,slotTools,buildInspectSpec,resolveInspect,attachedToolLinksHtml,liveToolMiniCardsHtml,liveCardHtml,attackPresentationMeta,coinSequence,battleSummaryStats,capturePresentationAnchors,targetKeyForAction,benchDamagePresentationEntry,stadiumSlotModel,resultActionsModel,choiceBoardActions,contextualBoardActions,canChooseBoardDirect,choiceCardModel,handChoiceActionIndices,cpuActionCardId,setCurrentBattleForTests:(state,actions)=>{currentBattle=state;battleActionCache=actions||[];battleChoiceSelectionIndex=-1;battleChoiceBoardFilter=null;},playmatArtPath,coinArtPath,coinPresentationHtml,energyCostHtml,liveAttachedEnergyHtml,liveEnergySourceHtml,liveBenchReadOnlyMovesHtml,handActionIndices,attackDescription,zoomArtworkButtonHtml,cardZoomOverlayHtml,openHandActions,openEnergyActions,pokemonActionIndices,pokemonInteractionAttrs,benchSwitchActionIndices,classicOpponentConfig,classicOpponentPickerHtml,pocketOpponentConfig,pocketOpponentPickerHtml,classicOpponentHandRevealed,handDropErrorMessage,dragPreviewTransform},back};
+  return{actionLabel,actionEventText,cardArtUrl,cardRulesHtml,supportText,filterBuilderRows,resultSummary,coverageForOwnedCards,centerHandActionIndices,directHandDropActionIndex,open,close,renderHome,requestLeave,isEditing:()=>screen==='builder',_test:{cpuActionDwellMs,cpuRemainingDwellMs,slotTools,buildInspectSpec,resolveInspect,attachedToolLinksHtml,liveToolMiniCardsHtml,liveCardHtml,attackPresentationMeta,coinSequence,battleSummaryStats,capturePresentationAnchors,targetKeyForAction,benchDamagePresentationEntry,stadiumSlotModel,resultActionsModel,choiceBoardActions,contextualBoardActions,canChooseBoardDirect,boardTargetForAction,boardTargetOnlyActions,classicTrainerRestriction,liveContextActionsOverlayHtml,liveMidControlsHtml,choiceCardModel,handChoiceActionIndices,cpuActionCardId,setCurrentBattleForTests:(state,actions)=>{currentBattle=state;battleActionCache=actions||[];battleChoiceSelectionIndex=-1;battleChoiceBoardFilter=null;},setBattleOverlayForTests:(overlay,indices)=>{battleOverlay=overlay;battleContextActionIndices=indices||battleActionCache.map((_,i)=>i);},playmatArtPath,coinArtPath,coinPresentationHtml,energyCostHtml,liveAttachedEnergyHtml,liveEnergySourceHtml,liveBenchReadOnlyMovesHtml,handActionIndices,attackDescription,zoomArtworkButtonHtml,cardZoomOverlayHtml,openHandActions,openEnergyActions,pokemonActionIndices,pokemonInteractionAttrs,benchSwitchActionIndices,classicOpponentConfig,classicOpponentPickerHtml,pocketOpponentConfig,pocketOpponentPickerHtml,classicOpponentHandRevealed,handDropErrorMessage,dragPreviewTransform},back};
 });
