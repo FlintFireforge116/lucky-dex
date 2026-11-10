@@ -267,8 +267,22 @@ function parse(n){
  }
  const description=[...(card.attacks||[]).map(x=>x.text),...(card.abilities||[]).map(x=>x.text),card.text||''].join(' ').toLowerCase();
  const roles=new Set(),inflicts=new Set(),payoffs=new Set(),energyTypes=new Set(),stages=new Set();
- for(const [key,tag] of [['poison','poison'],['burn','burn'],['asleep','sleep'],['confus','confusion'],['paralyz','paralysis']])if(description.includes(key))inflicts.add(tag);
- if(/remove (?:all )?\d* damage counters|heal|remove all special conditions/.test(description))roles.add('heal');
+ // Infer offensive conditions from attack text, not defensive Powers or
+ // self-inflicted status. Otherwise immunity cards were falsely being used as
+ // Poison/Sleep/Paralysis attackers by the themed deck builder.
+ for(const attack of card.attacks||[]){
+  const printed=String(attack.text||'').toLowerCase();
+  if(/(?:the|each) defending pok[eé]mon is now affected by that special condition/.test(printed)&&/choose 1 special condition/.test(printed)){
+   for(const tag of ['poison','burn','sleep','confusion','paralysis'])inflicts.add(tag);
+  }
+  for(const [printedName,tag] of [['poisoned','poison'],['burned','burn'],['asleep','sleep'],['confused','confusion'],['paralyzed','paralysis']]){
+   if(new RegExp('(?:the|each) defending pok[eé]mon is now '+printedName).test(printed))inflicts.add(tag);
+   if(new RegExp('(?:if|when|whenever) (?:the )?defending pok[eé]mon[^.]{0,70}(?:is|has) (?:already )?'+printedName).test(printed))payoffs.add(tag);
+  }
+  if(/if the defending pok[eé]mon is affected by a special condition/.test(printed))
+   for(const tag of ['poison','burn','sleep','confusion','paralysis'])payoffs.add(tag);
+ }
+ if(/remove (?:all )?\d* damage counters|heal|remove all special conditions/.test(description))roles.add('healing');
  if(/search your deck|put .* into your hand/.test(description))roles.add('search');
  if(/draw (?:\d+|a) card/.test(description))roles.add('draw');
  if(/discard .*energy|recover .*energy|attach .*energy/.test(description))roles.add('energy');
@@ -282,7 +296,7 @@ function parse(n){
  if(card.kind==='pokemon'&&STAR.has(n))roles.add('pokemon-star');
  if(card.kind==='trainer'&&TOOL.has(n))roles.add('tool');
  if(card.kind==='trainer'&&[84,85,92].includes(n))roles.add('support');
- if(card.kind==='trainer'&&n===86)roles.add('recovery');
+ if(card.kind==='trainer'&&n===86){roles.add('recovery');roles.add('energy');}
  if(card.kind==='trainer'&&n===87)roles.add('energy');
  if(card.kind==='trainer'&&n===88)roles.add('search');
  if(card.kind==='trainer'&&n===90)roles.add('draw');
@@ -290,7 +304,7 @@ function parse(n){
  if(card.kind==='trainer'&&n===91)roles.add('body-suppression');
  const requiredStages=n===93||n===95?['Stage 1','Stage 2']:[];
  card.deckMeta=Object.freeze({roles:[...roles],inflicts:[...inflicts],payoffs:[...payoffs],energyTypes:[...energyTypes],stages:[...stages],
-   requiredStages,preferredEnergyTypes:[],synergy:[...roles].filter(x=>['deoxys-form-change','evolution-synergy','stall','heal'].includes(x))});
+   requiredStages,preferredEnergyTypes:[],synergy:[...roles].filter(x=>['deoxys-form-change','evolution-synergy','stall','healing'].includes(x))});
  return Object.freeze({...card,battleEnabled:missing.length===0,deckEligible:missing.length===0,support:{status:missing.length?'PARTIAL':'FULL',reasons:missing}});
 }
 const CARDS=Object.freeze(Array.from({length:108},(_,i)=>parse(i+1)));

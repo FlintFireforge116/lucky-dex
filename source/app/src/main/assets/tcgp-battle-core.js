@@ -1658,8 +1658,8 @@
       }
       // Fossil Haunter's Transparency is a passive coin flip on every incoming
       // attack (including status-only attacks). A heads prevents all effects.
-      if(state.format==='classic'&&!result.damageRules?.ignoreEffects&&['ecard2-17','ecard2-H13'].includes(defender.cardId)&&Number(defender.damage||0)>0&&!effects.abilitiesSuppressed(state,foeSide,defender,data.cardById)){
-        const heads=random(state)<.5;state.log.push({type:'coin',side:foeSide,reason:'Aquapolis Fluff',heads,results:[heads]});
+      if(state.format==='classic'&&!result.damageRules?.ignoreEffects&&['ecard2-17','ecard2-H13','ex8-79'].includes(defender.cardId)&&Number(defender.damage||0)>0&&!effects.abilitiesSuppressed(state,foeSide,defender,data.cardById)){
+        const heads=random(state)<.5;state.log.push({type:'coin',side:foeSide,reason:defender.cardId==='ex8-79'?'EX Deoxys Fluff':'Aquapolis Fluff',heads,results:[heads]});
         if(heads){result.pendingEffects=[];result.damageRules={...result.damageRules,ignoreEffects:true};damage=0;}
       }
       const transparency=result.damageRules?.ignoreEffects?null:effects.findPassiveRule(state,foeSide,defender,'fossilTransparency',data.cardById);
