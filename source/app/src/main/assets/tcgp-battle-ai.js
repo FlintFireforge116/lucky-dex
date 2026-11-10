@@ -15,12 +15,32 @@
     for(const c of cost)if(c!=='C'){const type=effects.ENERGY_CODE[c];if(energy[type]>0)energy[type]--;else missing++;}
     return missing+Math.max(0,[...cost].filter(c=>c==='C').length-effects.totalEnergy(energy));
   }
+  // The Classic Energy Zone and an Energy card in hand are TWO independent
+  // attachments. An AI that scores only `attach` can draw/recover Basic Energy
+  // repeatedly yet never attach the real cards in its hand.
   function attachScore(action,state,side){
     const s=state.sides[side],slot=slotFor(s,action.target,action.benchIndex);if(!slot)return -100;
     const card=data.cardById(slot.cardId),attacks=card?.attacks||[];
-    const before=Math.min(...attacks.map(a=>deficit(slot,a,state,side)),99),after={...slot,energy:{...slot.energy,[s.energyType]:Number(slot.energy[s.energyType]||0)+1}};
-    const gain=before-Math.min(...attacks.map(a=>deficit(after,a,state,side)),99);
-    return gain*50+(action.target==='active'?15:5)-effects.totalEnergy(core.effectiveEnergy(state,side,slot))*2;
+    const energyType=action.type==='attach'?s.energyType:null;
+    const ref=action.type==='attachSpecial'?s.hand[action.handIndex]:null,handCard=ref?data.cardById(ref.cardId):null;
+    const after={...slot,energy:{...(slot.energy||{})},specialEnergy:[...(slot.specialEnergy||[])]};
+    if(action.type==='attach'&&energyType)after.energy[energyType]=Number(after.energy[energyType]||0)+1;
+    else if(handCard?.basicEnergy)after.energy[handCard.subtype]=Number(after.energy[handCard.subtype]||0)+1;
+    else if(handCard?.specialEnergy)after.specialEnergy.push(ref);
+    else return -100;
+    const beforeEnergy=core.effectiveEnergy(state,side,slot),afterEnergy=core.effectiveEnergy(state,side,after);
+    const missing=pool=>Math.min(99,...attacks.map(attack=>{
+      const energy={...pool};let need=0;
+      for(const code of String(attack.cost||''))if(code!=='C'){
+        const type=effects.ENERGY_CODE[code];if(Number(energy[type]||0)>0)energy[type]--;else if(Number(energy.Miracle||0)>0)energy.Miracle--;else need++;
+      }
+      return need+Math.max(0,[...String(attack.cost||'')].filter(code=>code==='C').length-effects.totalEnergy(energy));
+    }));
+    const gain=missing(beforeEnergy)-missing(afterEnergy);
+    // A slot that already uses its best attack gains little from gratuitous
+    // Energy. Preserve useful Energy for the next attacker when possible.
+    const active=action.target==='active',hasAttack=attacks.length>0;
+    return gain*50+(active?15:5)-effects.totalEnergy(beforeEnergy)*2+(hasAttack?4:-10);
   }
   // Classic trainers with no legal benefit should stay in the CPU hand. The
   // generic battle action list intentionally lets human players experiment;
@@ -80,9 +100,15 @@
     if(card.name==='Energy Removal')return slots(foe).some(x=>attachedCount(x)>0);
     if(card.name==='Energy Retrieval')return Object.values(s.energyDiscard||{}).some(n=>Number(n)>0)||(s.discard||[]).some(ref=>data.cardById(ref.cardId)?.basicEnergy);
     if(card.name==='Pokémon Center')return slots(s).some(x=>Number(x.damage||0)>0);
-    if(card.name==='Full Heal')return !!s.active&&Object.values(s.active.conditions||{}).some(Boolean);
+    if(['Potion','Super Potion','ex10-95'].includes(card.name)||card.id==='ex10-95')return slots(s).some(x=>Number(x.damage||0)>0);
+    if(['Full Heal','Double Full Heal'].includes(card.name))return slots(s).some(x=>Object.values(x.conditions||{}).some(Boolean));
     if(card.name==='Recycle')return (s.discard||[]).length>0;
     if(card.name==='Pokédex')return (s.deck||[]).length>1;
+    if(card.id==='ex10-81')return Object.values(s.energyDiscard||{}).some(n=>Number(n)>0)||(s.discard||[]).some(ref=>data.cardById(ref.cardId)?.basicEnergy);
+    if(card.id==='ex10-94'||card.name==='Energy Search')return (s.energySupply||[]).length>0||(s.deck||[]).some(ref=>data.cardById(ref.cardId)?.basicEnergy);
+    if(card.id==='ex10-86')return (s.deck||[]).length>0;
+    // Do not burn a draw-only Supporter after the draw deck has emptied.
+    if(card.trainerType==='Supporter'&&/^Draw (?:a card|cards|\d+ cards)/i.test(String(card.text||'').trim()))return (s.deck||[]).length>0;
     return true;
   }
   // Damage must be scored *after* Weakness/Resistance; a 30-damage Fighting
@@ -150,7 +176,7 @@
     if(action.type==='trainer')return dangerous(card?.effect)?-100:700;
     if(action.type==='stadiumAction')return worthwhileStadiumAction(state,side,action)?850:-100;
     if(action.type==='bench')return 600;
-    if(action.type==='attach')return 400+attachScore(action,state,side);
+    if(action.type==='attach'||action.type==='attachSpecial')return 400+attachScore(action,state,side);
     if(action.type==='attack')return 200+Number(data.cardById(action.attackCardId||state.sides[side].active.cardId)?.attacks[action.attackIndex]?.damage||0);
     if(action.type==='retreat')return -10;
     return 0;
@@ -203,7 +229,7 @@
   // Do not inspect the hidden real deck as a workaround.
   function actionBonus(action,position,side,level){
     let bonus=0;
-    if(action.type==='attach')bonus+=attachScore(action,position,side)*.12;
+    if(action.type==='attach'||action.type==='attachSpecial')bonus+=attachScore(action,position,side)*.12;
     if(action.type==='evolve')bonus+=4;
     if(action.type==='trainer'){
       const card=data.cardById(action.cardId);
@@ -271,13 +297,75 @@
         return available[0];
       }
     }
-    if(Number(actionCount||0)>=30)return legal.find(a=>a.type==='bench')||legal.find(a=>a.type==='attack')||legal.find(a=>a.type==='endTurn')||legal.find(a=>a.choiceLabel==='Done')||legal[0];
+    if(Number(actionCount||0)>=30)return legal.find(a=>a.type==='attachSpecial')||legal.find(a=>a.type==='attach')||legal.find(a=>a.type==='attack')||legal.find(a=>a.type==='endTurn')||legal.find(a=>a.choiceLabel==='Done')||legal[0];
     // Effect choices may expose private deck/hand cards. Advanced search works
     // on a redacted public projection, where those card UIDs/positions are not
     // available; simulating a choice there is both invalid and information
     // leakage. Choose from the actual legal set instead.
     if(state.format==='classic'&&state.phase==='effectChoice'){
       const pending=state.pendingChoice||{},rule=String(pending.effect?.rule||'');
+      // EX Unseen Forces makes many beneficial effects optional. Choosing
+      // Skip by default wasted Potions, Fire Dance, Jolteon's Energy ramp,
+      // Lanturn's discard recovery, Onix's retrieval and Unown Q's Energy
+      // search even though the player had paid the attack/Trainer cost.
+      const helpfulEx10={
+        'ex10:trainer:95':['pokemon'],
+        'ex10:5:0':['pokemon','option'],
+        'ex10:8:0':['pokemon'],
+        'ex10:40:0':['option'],
+        'ex10:65:0':['option'],
+        'ex10:Q:0':['option'],
+        'ex10:W:0':['option'],
+        'ex10:71:0':['deckCard'],
+        'ex10:46:0':['deckCard']
+      };
+      if(pending.originSide===side&&helpfulEx10[rule]?.includes(pending.kind)){
+        const available=legal.filter(a=>a.type==='effectChoice'&&!a.choiceSkip);
+        if(available.length){
+          if(rule==='ex10:trainer:95'){
+            const ss=state.sides[side],getSlot=a=>slotFor(ss,a.choiceTarget,a.choiceBenchIndex);
+            available.sort((a,b)=>Number(getSlot(b)?.damage||0)-Number(getSlot(a)?.damage||0));
+          }else if(['ex10:5:0','ex10:8:0'].includes(rule)&&pending.kind==='pokemon'){
+            available.sort((a,b)=>attachScore({type:'attach',target:b.choiceTarget,benchIndex:b.choiceBenchIndex},
+              {...state,sides:{...state.sides,[side]:{...state.sides[side],energyType:rule==='ex10:5:0'?'Fire':'Lightning'}}},side)-
+              attachScore({type:'attach',target:a.choiceTarget,benchIndex:a.choiceBenchIndex},
+              {...state,sides:{...state.sides,[side]:{...state.sides[side],energyType:rule==='ex10:5:0'?'Fire':'Lightning'}}},side));
+          }
+          return available[0];
+        }
+      }
+      // Energy Recycle System is a TWO-STAGE choice. Skipping both stages
+      // after using the Trainer used to leave the CPU's recovered Energy
+      // stranded in its discard. Prefer a useful source/destination.
+      if(rule==='ex10:trainer:81'){
+        const available=legal.filter(a=>a.type==='effectChoice'&&!a.choiceSkip);
+        if(available.length){
+          if(!pending.effect?.recoveryMode&&pending.kind==='option'){
+            const handAvailable=!state.sides[side].handEnergyUsed;
+            return available.find(a=>a.choiceOption===(handAvailable?0:1))||available[0];
+          }
+          return available[0];
+        }
+      }
+      // Selecting an actual eligible deck card is better than throwing away
+      // a search effect, provided the engine has offered a legal choice.
+      if(['deckCard','discardCard'].includes(pending.kind)&&legal.some(a=>a.type==='effectChoice'&&!a.choiceSkip)&&
+         ['searchChosen','searchRandomBasic'].includes(pending.effect?.type)){
+        return legal.find(a=>a.type==='effectChoice'&&!a.choiceSkip);
+      }
+      // Energy Search can offer a Zone Energy via an optional option menu.
+      // Previously the generic 'optional => Skip' fallback discarded the
+      // result of a perfectly legal Energy-search Trainer.
+      if(pending.kind==='option'&&pending.effect?.type==='searchChosen'&&
+          (pending.effect.zoneTypes||pending.effect.chooseEnergySource)){
+        const available=legal.filter(a=>a.type==='effectChoice'&&!a.choiceSkip);
+        if(available.length){
+          // If a physical Basic is also in the deck, use a fresh Zone source
+          // by preference; the physical recovered card remains drawable.
+          if(pending.effect.chooseEnergySource)return available.find(a=>a.choiceOption>0)||available[0];
+          return available[0];
+        }
+      }
       // EX4's Team Balls, Conspirators, Archie and Call for Family effects
       // offer an *optional* deck search. An earlier generic heuristic always
       // chose Skip, even when a useful Pokémon was actually available. These
@@ -318,7 +406,7 @@
     // Finish draws/evolutions/Trainers first if the search wants them, but
     // attach before committing to an attack or voluntarily ending the turn.
     if(state.format==='classic'&&state.phase==='battle'&&['attack','endTurn'].includes(selected.type)){
-      const options=legal.filter(action=>action.type==='attach');
+      const options=legal.filter(action=>action.type==='attach'||action.type==='attachSpecial');
       if(options.length){
         options.sort((a,b)=>attachScore(b,state,side)-attachScore(a,state,side));
         return options[0];

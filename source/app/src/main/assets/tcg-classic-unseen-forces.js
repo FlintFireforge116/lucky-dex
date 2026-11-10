@@ -99,11 +99,19 @@ function parse(key){
   for(const [word,tag] of Object.entries(S))if(s.includes('defending pokémon is now '+word.toLowerCase()))inflicts.add(tag);
   for(const word of ['burned','poisoned','asleep','paralyzed','confused'])if(s.includes('if the defending pokémon is '+word))payoffs.add(S[word[0].toUpperCase()+word.slice(1)]);
  }
+ // These Trainer effects are implemented as EX10 neoRules, so their
+ // executable type alone cannot reveal their actual strategy to the builder.
+ // Derive roles from the printed effect, not the generic card kind.
+ if(card.id==='ex10-81'){roles.add('energy');roles.add('recovery');}
+ if(['ex10-Q','ex10-76'].includes(card.id)){roles.add('energy');roles.add('search');}
+ if(card.id==='ex10-86')roles.add('draw');
+ if(card.id==='ex10-94'){roles.add('energy');roles.add('search');}
+ if(card.id==='ex10-95')roles.add('healing');
  if(card.kind==='pokemon'){
   if(card.pokemonEx)roles.add('pokemon-ex');if(card.pokemonStar)roles.add('pokemon-star');
   if(card.abilities.some(a=>a.name==='Shuffle'))roles.add('form-change');
  }else if(card.kind==='trainer')roles.add(card.trainerType.toLowerCase());else roles.add('energy');
- card.deckMeta=Object.freeze({roles:[...roles],inflicts:[...inflicts],payoffs:[...payoffs],energyTypes:[...energyTypes],stages:card.stage?.startsWith('Stage ')?[card.stage]:[],requiredStages:[],synergy:[...roles].filter(s=>['draw','search','energy','healing','disruption'].includes(s))});
+ card.deckMeta=Object.freeze({roles:[...roles],inflicts:[...inflicts],payoffs:[...payoffs],energyTypes:[...energyTypes],stages:card.stage?.startsWith('Stage ')?[card.stage]:[],requiredStages:[],synergy:[...roles].filter(s=>['draw','search','energy','healing','disruption','recovery'].includes(s))});
  // STRICT: cards with incomplete effects are browseable, but cannot be used in legal battles.
  const verified=ready&&(card.attacks||[]).every(a=>effects.supportsEffect(a.effect));
  return Object.freeze({...card,battleEnabled:verified,deckEligible:verified,support:{status:verified?'FULL':'PARTIAL',reasons:verified?[]:['One or more printed effects are not implemented']}});

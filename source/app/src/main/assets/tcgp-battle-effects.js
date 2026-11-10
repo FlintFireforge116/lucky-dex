@@ -4134,16 +4134,16 @@
       if(n===94){applyEffect({type:'searchChosen',source:'deck',amount:1,filter:{kind:'energy',basicEnergy:true}},{...ctx,resolvingChoice:false});return;}
       if(n===95){if(ctx.resolvingChoice){const p=selected(us);if(p)heal(p,20);return;}if(ownBoard.some(p=>p.damage>0))pokemon(us,{filter:{damaged:true}});return;}
       if(n===81){
-        if(!e.mode){if(ctx.resolvingChoice){const count=Number(choice.choiceOption)===0?1:3;
-            ex10Rule({...e,mode:count===1?'hand':'deck',remaining:count},{...ctx,resolvingChoice:false});return;}
+        if(!e.recoveryMode){if(ctx.resolvingChoice){const count=Number(choice.choiceOption)===0?1:3;
+            ex10Rule({...e,recoveryMode:count===1?'hand':'deck',remaining:count},{...ctx,resolvingChoice:false});return;}
           const basics=discarded().filter(x=>x.kind==='basic'||card(x.ref)?.basicEnergy);const count=basics.reduce((n,x)=>n+(x.kind==='basic'?Number(us.energyDiscard?.[x.type]||0):1),0);
           if(count)pick('option',{options:count>=3?['Put 1 discarded Basic Energy into your hand','Shuffle 3 discarded Basic Energy into your deck']:['Put 1 discarded Basic Energy into your hand']});return;}
         const eligible=discarded().filter(x=>x.kind==='basic'||card(x.ref)?.basicEnergy);
         if(ctx.resolvingChoice){if(choice.choiceSkip)return;const entry=eligible[Number(choice.choiceOption)];if(!entry)return;
-          if(recover(entry,e.mode)){const remaining=Number(e.remaining||1)-1;if(remaining>0)ex10Rule({...e,remaining},{...ctx,resolvingChoice:false});}return;}
+          if(recover(entry,e.recoveryMode)){const remaining=Number(e.remaining||1)-1;if(remaining>0)ex10Rule({...e,remaining},{...ctx,resolvingChoice:false});}return;}
         // The deck option requires three actual discarded Basic Energy cards.
         const total=eligible.reduce((n,x)=>n+(x.kind==='basic'?Number(us.energyDiscard?.[x.type]||0):1),0);
-        if(total>=(e.mode==='deck'?Number(e.remaining||3):1))pick('option',{options:eligible.map(x=>'Recover '+x.label)});return;
+        if(total>=(e.recoveryMode==='deck'?Number(e.remaining||3):1))pick('option',{options:eligible.map(x=>'Recover '+x.label)});return;
       }
       return;
     }
