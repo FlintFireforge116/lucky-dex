@@ -243,7 +243,10 @@ function parse(n){
  if(kind==='P'){
   const attacks=(moves||'').split(';').filter(Boolean).map((record,i)=>{
    const [title,cost,printed='']=record.split('~'),text=attackPrint[i]==='-'?'':attackPrint[i]||'';
-   const effect=text?r(n+':'+i):noop;
+   // EX Deoxys Ninjask's Slash has no printed effect text of its own,
+   // but must still resolve the preceding Swords Dance's 80-base-damage
+   // override on the player's next turn. A noop here silently loses the buff.
+   const effect=(text||(n===13&&i===1))?r(n+':'+i):noop;
    if(!fx.supportsEffect(effect))missing.push('Unsupported attack: '+title);
    return {name:title,cost,damage:Number((printed.match(/^\d+/)||[])[0]||0),damageText:printed||null,text,effect};
   });

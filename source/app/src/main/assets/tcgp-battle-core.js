@@ -656,8 +656,21 @@
     try{
       const snapshot=publicSnapshot(state),foeSide=side==='player'?'opponent':'player',attacker=snapshot.sides[side].active,context={...effectContext(snapshot,side,{},attacker),isAttack:true};
       const result=effects.resolveAttack(attack,context),defender=result.damageTarget===undefined?snapshot.sides[foeSide].active:result.damageTarget,isActive=defender===snapshot.sides[foeSide].active;
-      let damage=Math.max(0,Number(result.damage)||0);if(isActive&&damage>0)damage+=effects.modifierAmount(snapshot,side,attacker,'attackDamage',data.cardById);
-      return {damage:Math.max(0,damage),text:String(Math.max(0,damage)),variable:false};
+      let damage=Math.max(0,Number(result.damage)||0);
+      if(isActive&&damage>0){
+        damage+=effects.modifierAmount(snapshot,side,attacker,'attackDamage',data.cardById)
+          +effects.modifierAmount(snapshot,side,attacker,'attackDamageAllTargets',data.cardById)
+          +effects.attackSpecificBonus(attacker,attack.name,snapshot.turnNumber);
+        // Display the same next-turn attack boosts that battle execution
+        // applies. This covers Jungle Scyther's Swords Dance, Sandstorm
+        // Vigoroth's Focus Energy and custom-set next-attack effects.
+        for(const boost of attacker.nextAttackBonuses||[]){
+          if(Number(boost.turn)===Number(snapshot.turnNumber)&&boost.attackName===attack.name)
+            damage+=Number(boost.amount||0);
+        }
+      }
+      const effectiveDamage=Math.max(0,damage);
+      return {damage:effectiveDamage,text:String(effectiveDamage),variable:false};
     }catch(_previewError){
       return {damage:Math.max(0,Number(attack.damage)||0),text:String(attack.damageText??attack.damage??0),variable:true};
     }

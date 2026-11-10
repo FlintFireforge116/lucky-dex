@@ -1,0 +1,454 @@
+LUCKYDEX — MASTER PROJECT RULES AND DEVELOPMENT CONTRACT
+=========================================================
+Document version: 1.1
+Compiled: 10 November 2026
+Current source baseline inspected: v0.69.186 (original v0.69.182 repository ZIP plus the v0.69.183–.185 patches and v0.69.186 Swords Dance fix)
+Recommended repository location: ~/lucky-dex/source/docs/LUCKYDEX_MASTER_RULES.txt
+Project: LuckyDex — Android application/PWA, managed with Termux and GitHub
+
+PURPOSE
+-------
+This file is the long-term source of truth for developing LuckyDex across new ChatGPT conversations and many future Pokémon card expansions. Read it BEFORE implementing features, fixing bugs, changing a game rule, choosing card metadata, or packaging a patch.
+
+This is a living contract, not a claim that every rule is already correctly implemented. It records (A) user-approved design requirements, (B) behaviour observed in the inspected source, (C) known exceptions/bugs, and (D) proposals needing approval. If these conflict, DO NOT quietly assume the existing code wins. Flag the difference, verify the previous decision and printed card text, and ask the user only when a new design choice really is required.
+
+Use these labels consistently:
+  [LOCKED]    Explicitly agreed or repeatedly reinforced. Do not change without permission.
+  [CURRENT]   Observed in the inspected code; not automatically an approved design decision.
+  [EXCEPTION] Documented LuckyDex conversion from official rules; preserve its scope.
+  [CHECK]     Historical disagreement, unverified interpretation or unresolved issue.
+  [PROPOSED] New recommendation; not agreed until user accepts it.
+  [BUG]       Behaviour known to be wrong; do not memorialise as a rule.
+
+RULE PRECEDENCE AND CONFLICT MANAGEMENT
+---------------------------------------
+1. User's latest explicit instruction or approval has highest design authority.
+2. An explicitly documented, previously approved LuckyDex adaptation takes priority over a generic assumption about official TCG mechanics.
+3. For individual cards, authoritative printed text and official errata determine the card's own effect unless a specific LuckyDex conversion is approved.
+4. This file defines shared implementation, UI and testing expectations. The code is the implementation to audit, not the final authority on correctness.
+5. A test confirms intended behaviour only if its expectation agrees with the rules. A passing test based on a wrong assumption is still a bug.
+6. Never infer that an undocumented feature is authorised merely because a similar card or older set did something that way.
+7. When two instructions conflict: preserve existing user experience, document the contradiction as [CHECK], avoid unrelated changes, and seek an explicit decision before altering the game rule.
+8. Date or version every revised rule. Keep a change history; never silently rewrite a historical decision or disguise a bug as a design adaptation.
+
+=======================================================================
+PART 1 — PERMANENT DEVELOPMENT / HANDOFF RULES
+=======================================================================
+
+1.1 Source of truth and delivery
+  [LOCKED] The working source directory is ~/lucky-dex/source/ . Downloaded ZIPs are handoff artefacts, not the canonical editable project.
+  [LOCKED] Continue from the latest supplied/current source. Never overwrite recent features by rebuilding from an old ZIP or by recreating parts of the app unnecessarily.
+  [LOCKED] Do NOT use Codex unless the user specifically requests Codex.
+  [LOCKED] Once an agreed feature/fix is actionable, implement it and provide a testable patch instead of only describing intended work.
+  [LOCKED] Prefer changed-files-only ZIP patches, with a small, clearly stated extraction target. NEVER mix a repository-root ZIP with a source-relative ZIP without explicitly identifying which it is.
+  [LOCKED] Do not overwrite the user's collection, saves, deck libraries, card art, release signing material, app ID or unrelated minigames.
+  [LOCKED] Don't push to the user's GitHub or claim deployment has occurred without actually doing it and being authorised.
+  [LOCKED] Provide a working download link to the created patch and accurate Termux unzip instructions. Avoid release instructions that guess the installation path.
+  [LOCKED] Keep Android versionName, versionCode, JS build labels, on-screen version displays and tests consistent. Every shipped change should have an identifiable version.
+  [LOCKED] Preserve the permanent signing identity and upgrade compatibility for the existing installed app.
+  [LOCKED] Do not claim actual Android device testing unless it really happened. Distinguish Node/unit tests, browser UI tests, simulations and hands-on device QA.
+  [LOCKED] Never pretend a file was created, a script ran, a test passed or a bug was fixed without direct evidence.
+
+1.2 Working on an existing system
+  [LOCKED] Inspect the current code and existing tests before making architectural changes. Reuse common engine paths where appropriate, but keep Classic and Pocket rule differences explicit.
+  [LOCKED] Prefer fixes in shared logic when many cards are affected; add targeted per-card handling when printed effects demand it. Avoid ad-hoc patches that make only the reported screenshot work.
+  [LOCKED] Audit related systems when a foundational mechanism changes: card effects, deck building, AI, Test Lab, save migration, UI and old expansions.
+  [LOCKED] Each minigame includes achievements and persistent statistics. New rare events get developer-controlled test toggles so they can be exercised without grinding.
+  [LOCKED] Gameplay should reward player execution/decision-making, not be a purely passive random result. Preserve each minigame's authentic Pokémon feel.
+  [LOCKED] The CPU must interact with the player and game systems correctly; don't substitute fake turns or random actions merely to simulate activity.
+  [LOCKED] Bugs that stop progress, crash, freeze, softlock or remove legal player choices take priority over new content.
+  [LOCKED] Keep existing functionality (especially saves, ownership, collection, unlocks, rewards, progression, themes, artwork, card filters and Test Lab) unless specifically replacing it.
+
+1.3 Rules maintenance is REQUIRED, not optional
+  [LOCKED] The rules document is a deliverable for every future rule-changing patch and every new expansion. See Part 10 for the exact update protocol.
+  [LOCKED] An agreed rule without an implementation test is incomplete documentation. New rules must have regression tests or an explicitly recorded, justified testing gap.
+  [LOCKED] If a user reports surprising gameplay, compare the observed behaviour with this file AND the printed card before saying 'working as intended'.
+
+=======================================================================
+PART 2 — GAME-WIDE RULES AND FEATURES
+=======================================================================
+
+2.1 Identity and scope
+  [LOCKED] LuckyDex is one integrated Pokémon-themed app with collection, packs, trades, Adventure, Fishing, Arcade/minigames, TCG Pocket battles and Classic TCG battles, plus developer tools.
+  [LOCKED] Preserve recognizable Pokémon mechanics, card names, types, moves, conditions, art/rarity identities and region context. Custom sets and homebrew rules must be labelled as such.
+  [LOCKED] Do not change existing game economies casually. Fishing has a separate currency from general Lucky Coins; card battles should use deliberately balanced rewards, not an uncontrolled farm.
+  [LOCKED] Developer testing, forced rare events, test decks and sandbox matches must not grant ordinary rewards, card ownership or achievements unless a specific testing mechanism is explicitly designed to do so.
+  [LOCKED] Normal purchases, unlocks, achievements and stats should persist across updates. Save compatibility is a release requirement.
+
+2.2 Usability / mobile-first
+  [LOCKED] Android portrait layout is the primary touch target. Avoid PC-only UI patterns, excessive scrolling, tiny hit targets and off-screen controls.
+  [LOCKED] Avoid overlays that cover cards, text, active Energy, the Bench or primary actions. Reduce dead space; enlarge relevant information rather than decorating it.
+  [LOCKED] Card art must not be stretched or cropped so that cards become unreadable. Portrait cards and landscape Stadiums retain correct proportions.
+  [LOCKED] The result of an action must be visible: coin flips, energy attachments/discards, damage, status, CPU actions, rewards, errors and why an action is illegal.
+  [LOCKED] Never display the same ambiguous choice repeatedly when the options have different consequences. Explain the difference at the point of choice.
+  [LOCKED] Prefer touching/dragging actual cards and board slots over text-only menus; still allow a clear accessible fallback for non-board choices.
+  [LOCKED] Do not leave meaningless technical banners or placeholder descriptions on the player-facing battle screen.
+
+2.3 Current subsystems to protect
+  Adventure: area progression, Kanto/other region journeys, area art, encounters and rewards; prevent softlocks after League completion. Future expansion should add area-specific interactions rather than only more screens.
+  Fishing: rod/bait/shop progression, timed catch mechanic, per-location pools/silhouettes, junk/treasure/rare prizes, and separate currency. Difficulty should depend on rod and execution. Rare drops should have developer test toggles. Keep reward balance (particularly low-value Stardust) under review.
+  Arcade: Eager Eevee, Barrier Ball, Pikachu Beach, Streaming Stampede, Tile/Unown puzzles and other established modes. Keep readability/accessibility aids such as Unown magnification where designed. Track scores, milestones and achievements.
+  Pack opening: God Packs, rarity reveal and artwork fallback must coexist with collection data. Don't award the wrong rarity or lose the card image/identity.
+  Trades: keep the complete offering visible; explain duplicate-species quantities honestly rather than inflating the number of unique offerings.
+  Developer settings: allow controlled inspection of rare mechanics without mutating genuine progress.
+
+  These are standing protection requirements, not a claim that every prior backlog item is finished.
+
+=======================================================================
+PART 3 — CLASSIC POKÉMON TCG FORMAT
+=======================================================================
+
+3.1 Core format and rules authority
+  [LOCKED] Classic TCG is a CONVERTED format, not a copy of Pocket and not unmodified tabletop TCG. Use original printed card effects while obeying agreed LuckyDex conversion rules.
+  [LOCKED] Standard Classic battle decks contain 30 cards at construction. Basic Energy supplied through the Energy Zone is not included in those starting 30 cards.
+  [LOCKED] Default copy limit is two copies of the same printed name per deck (unless a stricter printed/card-specific restriction applies). Count same-name print variants together where required.
+  [LOCKED] Evolution requirements and Basic/Stage 1/Stage 2 legality remain real, including compatible prior stages, evolution timing and relevant exceptions (such as Rare Candy where available).
+  [LOCKED] Normal decks use actual owned cards. Test Lab is an explicit exception, not a way to grant real ownership.
+  [LOCKED] Respect printed HP, attack damage, costs, weaknesses/resistances, retreat, Powers, Bodies, Trainer effects, Special Energy and Pokémon identity. Don't rebalance a card numerically without approval.
+  [LOCKED] Preserve legitimate prize exceptions: Pokémon-ex and other cards may yield multiple prizes when their rules say so; effects like Shedinja Empty Shell must override the normal award.
+  [LOCKED] Classic uses genuine opening/mulligan behaviour and legal opening Basics. Prevent illegal starts, hidden replacements and false deck exhaustion.
+  [CURRENT] In v0.69.185 the core config uses 30-card decks, 7 opening cards, 3 Bench slots, 5 physical Prize cards, and a five-Prize win condition.
+  [CHECK] An earlier user-approved design specified FIVE Bench spaces and FOUR points to win with different 1/2/3 prize values. THIS CONFLICTS WITH CURRENT CODE AND SCREENSHOTS (3 Bench, 5 prizes). Do not treat the current numbers as permanently approved. Do not silently change them either. Resolve explicitly when revisiting overall Classic format rules, then update this file and tests.
+  [EXCEPTION] Classic EX-era references to Double Battle / two Defending Pokémon require a documented single-Active adaptation where LuckyDex cannot model two opposing Actives. Do not globally reinterpret multi-target rules; document each converted card.
+
+3.2 Energy Zone — the most important custom rules
+  [LOCKED] Basic Energy normally comes from the SEPARATE Energy Zone / ordered Energy supply, not from the 30-card starting deck.
+  [LOCKED] An Energy Zone Basic Energy attachment is independent from the standard once-per-turn attachment of an Energy card from the HAND. The two allowances must not be conflated. Card effects can attach additional Energy as printed.
+  [LOCKED] If the deck generates more than one chosen type, Energy generation is random but the queue order is real. The next Energy shown must be the next taken: WHAT YOU SEE IS WHAT YOU GET. No silent fishing for a preferred type or reshuffling the next preview behind the player's back.
+  [LOCKED] The normal supply of Energy is effectively unlimited; the visible queue controls the in-battle order, not finite deck ownership. For card text referring to a deck, discard or hand, use the appropriate explicit destination as below.
+  [LOCKED] Darkness and Metal require correct distinction: Basic types may come from the Energy Zone when enabled; old Neo/EX-era Special Darkness and Special Metal are real physical Special Energy cards with their printed special effects.
+  [LOCKED] Special Energy is part of the physical 30-card deck and obeys printed attachment, effect, discard, deck-search and return rules.
+  [LOCKED] Energy attached to Pokémon is represented as actual attached units, with types, source, restrictions and, for Special Energy, card identity/effect information.
+  [LOCKED] A generated Basic Energy that an effect puts into the HAND is a temporary, real hand card for relevant hand-based costs, reveals, discards and hand size. Attaching it from hand obeys the normal hand-attachment allowance unless a printed effect grants an extra attachment.
+  [LOCKED] An effect that explicitly searches a player's Energy Supply/Zone must take from the correct supply and preserve queue semantics as required by that effect. An effect that searches DISCARDED Energy must not search the supply instead.
+  [LOCKED] When Energy is discarded from an attached Pokémon or by a card cost, Basic Energy goes into the owner's separate Basic ENERGY DISCARD, and physical Special Energy goes into the owner's normal card discard (unless printed card text or a properly documented exception says otherwise).
+  [LOCKED] A Knocked Out Pokémon's attached Basic Energy also goes into the separate Basic Energy discard. This is essential for later Energy recovery and must not vanish into the infinite pool.
+  [LOCKED] A card that retrieves discarded Energy searches ALL eligible discard destinations, not just the visible ordinary discard pile or just the Basic Energy counts.
+  [LOCKED] Recovered Energy MUST arrive at the EXACT destination specified: (1) HAND, (2) ACTIVE/BENCH POKÉMON, (3) DRAW DECK, (4) ENERGY ZONE/SUPPLY, or (5) another named zone. These are not interchangeable operations.
+  [LOCKED] If a card says 'choose' Energy, the player selects eligible cards/types/targets and count. Do not silently use the first, newest, most convenient or cheapest candidate.
+  [LOCKED] If a card explicitly shuffles Energy into the draw DECK, that is a real draw-deck operation even when the Energy was originally Basic Energy generated by the Zone. It does NOT merely refill the Energy Zone.
+
+3.3 EX Deoxys Energy Charge — permanent regression example
+  [LOCKED] Energy Charge (EX Deoxys ex8-86) flips a coin; on heads, choose up to two eligible Energy cards from discard (or fewer if unavailable) and shuffle them into the user's actual DRAW DECK.
+  [LOCKED] Basic Energy eligible for recovery must be taken from the Basic Energy discard; Special Energy from the regular discard. If two are recovered, the DRAW DECK count increases by two. The Energy Zone count does not increase because of this effect.
+  [LOCKED] The recovered Basic Energy is represented as a physical card in the draw deck; when drawn it becomes a real hand card and follows ordinary hand attachment/card-play rules, not a free second Energy Zone allowance.
+  [LOCKED] On tails no recovery occurs; if only one eligible Energy exists recover one; if none exist don't display a fake choice or create Energy out of nothing.
+  [BUG / HISTORICAL] v0.69.183 incorrectly returned Basic Energy to energySupply rather than the draw deck. v0.69.185 corrected that. NEVER reintroduce that previous expectation as a passing test.
+  [LOCKED] Regression must check the actual deck size/count, discard decrements, choice identity, later drawability, hand attachment cap, tails and no-eligible cases — not merely that the card action returned success.
+
+3.4 Other Energy card examples and tricky cases
+  Camerupt EX Deoxys Energy Draw: select a legally recoverable Energy and the correct receiving Pokémon; preserve printed attachment requirements.
+  Metagross EX Deoxys Super Connectivity: choose eligible discarded Psychic/Metal Energy from the applicable discard zone(s), attach to a legal target and apply any printed damage counter only when the recovery happens.
+  Energy Flow: where the card returns Energy to hand, it must really appear in hand, not be lost, discarded or added to the supply.
+  Hoppip/Special Condition choices: when text gives a choice of conditions, allow selecting the correct condition, not a forced default.
+  Moltres and other recovery effects: allow choosing eligible Energy from the right discard zone; don't silently pick a type/target.
+  Special Rainbow/Boost/Heal/Scramble Energy and earlier Darkness/Metal: preserve restrictions, effects, number of Energy units provided, duration and expiry. Rainbow should not accidentally count as multiple Energy units when it grants one flexible unit.
+  Energy removed by an attack cost must really be discarded, and the AI must pay the same costs. Electabuzz accumulating 10 Energy without using a discard-requiring attack is an example of behaviour to guard against.
+  Cards that inspect the 'top Energy' must consume the real displayed queue order; do not choose from the infinite conceptual pool instead.
+
+3.5 Prize cards, deck and searches
+  [LOCKED] Prize cards are a separate hidden zone and must never randomly enter the hand or be treated as ordinary draw deck cards without an explicit card effect.
+  [LOCKED] Searching the draw deck cannot retrieve a card currently set aside as a Prize. Deck exhaustion, Prize claim and 'cards drawn' are distinct events.
+  [LOCKED] Pokémon-ex/other prize-changing effects and special no-prize KOs override the standard prize process in their specified cases.
+  [LOCKED] Preserve legitimate actions that look at or manipulate Prize cards; adapt physical-prize mechanics carefully for the converted 30-card format. Document every conversion; do not fake an arbitrary result.
+  [LOCKED] Real deck manipulations (draw, shuffle, recover, look at top N, reorder, choose specific card, send to bottom) must modify the correct ordered zone and allow required choices.
+  [LOCKED] Search effects can find only eligible cards present in the zone searched. Avoid 'search succeeded' messages when the card is actually in a Prize zone or absent.
+  [LOCKED] The draw deck is initially 30 minus opening/prizes/draws, but may later INCREASE after card effects shuffle recovered cards (including converted Basic Energy) into it. Never hard-cap in-battle draw-deck size at 30.
+  [LOCKED] When an item moves a card from draw deck to hand, or vice versa, it must preserve identity and ownership, and deal correctly with generated Basic Energy where applicable.
+
+3.6 Attacks, Powers, Bodies and legal action timing
+  [LOCKED] Implement every printed condition and clause, including optional clauses, thresholds, self-damage, extra damage, prevention, attack locks, targeting, evolution restrictions, hand counts and status conditions.
+  [LOCKED] An effect cannot be treated as plain damage merely because damage is easy to implement. 'Special effect' placeholders are not an acceptable completed result.
+  [LOCKED] Weakness, resistance, retreat modifiers, effects of attached Energy and Stadiums must all apply at the correct stage of resolution.
+  [LOCKED] [C-ATTACK-001, 2026-11-10] A printed next-turn attack boost must persist to the designated following turn, modify ONLY the named attack (with its printed duration), and change real damage before Weakness and Resistance. The attack selection UI must show the same boosted base-damage preview; the artwork/printed card text can stay unchanged. Both player and CPU use the same rule.
+  [LOCKED] [C-ATTACK-001 examples] Jungle Scyther (base2-10/base2-26) Swords Dance makes next-turn Slash 60 base instead of 30; EX Deoxys Ninjask (ex8-13) Swords Dance makes next-turn Slash 80 base instead of 30; EX Sandstorm Vigoroth (ex2-52) Focus Energy makes next-turn Slash 90 base instead of 40. These bonuses expire if the eligible following turn passes unused.
+  [LOCKED] [C-ATTACK-001 coverage] An attack's own printed effect text can be empty yet still depend on a prior effect. Never replace such an attack's runtime rule with a no-op purely because its text field is blank (e.g. ex8-13 Slash depends on Swords Dance). Verify both gameplay damage and visible preview in tests.
+  [LOCKED] A printed inability to use ONE attack must not disable another available attack. Example: Scyther's Slashing Strike restriction must not prevent Bounce merely because Bounce is its only other legal attack.
+  [LOCKED] When an effect suppresses effects of attacks, that does not necessarily prevent damage; and prevention of extra effects must not become damage immunity (historic Machamp bug).
+  [LOCKED] Pokémon Powers, Bodies and Abilities have correct activation conditions, once-per-turn limits, Bench-only/Active-only requirements, status suppression and timing. Do not offer inactive Powers as playable actions.
+  [LOCKED] Stadium actions must check player ownership/turn state, conditions and actual benefit. The AI should not spam Stadium replacements or use healing at full HP.
+  [LOCKED] Status conditions are individually meaningful (Poison, Burn, Asleep, Paralyzed, Confused), including immunities, removals, conditional damage, checks and actual player choices where printed.
+  [LOCKED] Coin flips must happen visibly and use the correct outcomes; moves with several flips must resolve the printed number and result semantics.
+  [LOCKED] Tools, Stadiums, Supporters and ordinary Trainers must be distinguished. Playing a Supporter consumes only the Supporter allowance unless a separate effect restricts Trainers.
+  [LOCKED] Opponent effects can restrict Trainer use on the FOLLOWING turn when printed; they must expire at the correct time and visibly explain the restriction. Example: Manectric ex Disconnect prevents non-Supporter Trainers for the affected next turn; it does not forbid a permitted Supporter or stay locked indefinitely.
+  [LOCKED] If a card is unplayable, show the reason (turn limit, prior Supporter, opponent lock, no valid target, insufficient Energy, etc.) rather than silently swallowing taps.
+
+3.7 Clear and accurate player choices
+  [LOCKED] A decision must show what DIFFERENTLY happens with each selection. Two identical art/attack/damage choices with hidden semantic differences are unacceptable.
+  [LOCKED] Example: EX Deoxys Magcargo's Knock Over should show 'Keep Stadium' versus 'Discard Stadium', rather than two identical 'Knock Over · 10 DMG' cards.
+  [LOCKED] Other optional effects should spell out 'discard Energy for 90 damage' versus 'keep Energy for 50 damage', or equivalent true card-specific outcomes.
+  [LOCKED] Tap actual Pokémon on the board for single-Pokémon targets: Active, Bench, friendly or enemy. Do not require a duplicate-looking popup containing three identical Pokémon pictures.
+  [LOCKED] Identify board targets by unique instance/UID/physical Bench slot, not by Pokémon name alone. Two identical species are separate targets.
+  [LOCKED] When choosing multiple attributes (which Pokémon, which attached Energy, how many Energy, which effect), present the stages clearly and do not silently choose an arbitrary target.
+  [LOCKED] Choosing a discard/deck/hand card should show recognizable card art/names and the relevant source zone, then confirm before irreversible actions when helpful.
+  [LOCKED] If an effect offers skip/cancel/optional choice, preserve it. 'Skip' must not unintentionally consume a card or apply damage.
+  [LOCKED] For switching, promotion, Bench targeting and drag-to-play, highlight valid slots on the arena. Don't replace player-selected outcomes with 'leftmost Bench' defaults.
+  [LOCKED] UI should retain readable optional-effect labels, even where the attack artwork is the same for every alternative.
+
+3.8 Custom/homebrew sets in Classic
+  [LOCKED] Lental Snap / Florio / Founja and other player-created cards are distinct custom sets. Do not describe their effects as official retail card rulings.
+  [LOCKED] Preserve user-approved balance edits and card-specific rules rather than automatically using a broad generic template.
+  Known custom decisions to preserve: Small Room limits Bench to two, Battleground permits eight (not ten), Crystalbloom applies to Basic only, Murkrow once per turn, Dream Garden tails causes Sleep, and approved Pichu/Grookey paralysis handling. Other custom specifics must be checked against their source cards/current code before rewriting.
+  [CHECK] A custom Stadium that changes Bench size beyond the engine's usual physical slots needs explicit state and mobile UI tests. Current core's default is three slots, so do not assume eight can physically display correctly just because a card says eight.
+  [LOCKED] Prevent cross-set card-name collisions, incorrect special tags (e.g., 'Dark' versus Water for custom Magikarp GX), inconsistent descriptions and incorrect attack preconditions.
+
+=======================================================================
+PART 4 — POKÉMON TCG POCKET (TCGP) — SEPARATE RULESET
+=======================================================================
+
+  [LOCKED] Pocket is distinct from converted Classic. Do not spread Classic-only Energy discard, Prize or deck changes into Pocket.
+  [CURRENT] v0.69.185 source Pocket battle profile: 20-card deck, 5 opening cards, 3 Bench slots, 3-point victory target, and Pocket-style Energy generation. Confirm further Pocket-specific limits from current code before any modification.
+  [LOCKED] Pocket card legality is by real gameplay identity and actual owned print/art records; alternate artwork cannot evade copy limits or grant copies.
+  [LOCKED] Energy uses the Pocket Energy Zone and the player's selected one-to-three types where permitted. Multi-type generation is random/seeded, with visible next Energy kept meaningful.
+  [LOCKED] Pocket Confusion, condition checkup, win points, Pokémon-ex points, draw/search effects, Supporters, Trainers, Tools, Stadiums and Fossils follow the applicable Pocket implementation rather than casually inheriting tabletop behaviour.
+  [LOCKED] Coins, retreat, attacks, Ability triggers, Bench damage, healing, exact target selection, weakness and Energy must execute using actual rules, not a simplified approximation.
+  [LOCKED] Cards whose complex mechanics are not fully implemented are marked PARTIAL/UNSUPPORTED and excluded from legal battles. Do not silently downgrade them to generic damage and label them FULL.
+  [LOCKED] The card-data pipeline must preserve canonical gameplay identity, print variants, ownership, provenance, source/errata and release eligibility. New sets require reviewed records, not unverified guesses.
+  [LOCKED] Pocket deck editing needs filters, clear deck, legitimate evolution chains, cards visible on screen, a playable hand and functional manual/automatic Energy choices.
+  [LOCKED] Pocket battle should be card-first, responsive and touch-friendly: tap cards for attacks/abilities, drag cards into play, show attached Energy, place cards on actual open Bench positions, animate readable CPU turns and keep the selected sleeve consistent.
+  [LOCKED] Developers' test decks do not award cards, wins, currency or achievements. Unsupported mechanics must show a clear reason when excluded.
+  [CHECK] Earlier notes describe various implementation gaps for currently PARTIAL Pocket cards; re-evaluate against the actual latest catalogue before claiming the current percentage of FULL cards.
+
+=======================================================================
+PART 5 — ALL DECK BUILDERS / DECK LEGALITY / METADATA
+=======================================================================
+
+5.1 Required deck-building behaviour
+  [LOCKED] Separate Classic and Pocket rules, card pools, copy limits, owned cards, Energy engines and legal deck sizes.
+  [LOCKED] Builder output must be legal under the selected format, not merely 30/20 arbitrary card IDs.
+  [LOCKED] Provide and preserve manual deck editing, automatic build/repair, save/rename/duplicate/delete/clear deck, visible selected deck, filters and card inspection.
+  [LOCKED] Set restrictions, type filters (including dual types), rarity filters, owned filters, gameplay/strategy tags and select all/none are meaningful. Do not silently drop or reset filter state.
+  [LOCKED] Normal builder respects owned quantities. Test Lab deliberately ignores ownership without changing actual collection or normal saved decks.
+  [LOCKED] Player and CPU deck builders must use the same legality checks and correct set/card eligibility; opponent selection must accept every supported added expansion, including Gen 3 sets.
+  [LOCKED] A 'random' deck should actually vary based on its chosen seed/options, and not repeat a fixed rotation of a few prebuilt lists. Preserve reasonable archetype quality while increasing variation.
+  [LOCKED] A focused build around a named Pokémon / card must genuinely revolve around that card's win condition and line. Do not bolt on unrelated multi-stage lines just because they share a type.
+  [LOCKED] Dual-type decks must account for real Energy needs and synergy, not only type labels.
+
+5.2 Evolution / Energy / strategic coherence
+  [LOCKED] Evolution chains must be complete enough to function, respecting allowed copies and current type/set restrictions. No orphan Stage 2s and no nonsensical multiple partially supported lines.
+  [LOCKED] For two-stage evolution decks, consider Rare Candy or equivalent legal accelerator when the relevant set/format supports it.
+  [LOCKED] Hand attachments, Zone Energy, Special Energy, attack costs and energy acceleration must all be modelled accurately in deck construction.
+  [LOCKED] Don't select Stadiums, Energy Tools, healing or retrieval cards whose conditions cannot be met by the deck. Example: a Stadium boosting an Energy type absent from the deck is not strategic synergy.
+  [LOCKED] Synergy tags are causal, not decorative. A sleep-lock deck should combine actual Sleep application with payoffs, condition retention, healing/stall, stadiums and consistency. A high-HP stall deck should favor healing and retreat reduction. An Energy-ramp deck should support an attacker that benefits from extra Energy.
+  [LOCKED] Consider deck roles: main attacker, backup, evolution support, search, draw, Energy acceleration, Energy recovery, healing, status control, disruption, switching/retreat, Stadium/Tool synergy, counterplay and board consistency.
+  [LOCKED] Do not include bad 'filler' simply to hit the deck length. Provide candidate quality and legality diagnostics rather than quietly assembling an ineffective deck.
+  [LOCKED] Avoid CPU autobuild loops that appear frozen for minutes; permit progress, cancellation or bounded work so the application stays responsive.
+  [LOCKED] Keep user-selected focus cards/strategy, opponent set restrictions and existing saved deck preferences when repairing a deck.
+
+5.3 Card metadata standards
+  [LOCKED] Every card entry needs correct identity (set + number), printed name, evolution stage/line, types, HP, weakness/resistance, retreat, rarity/ownership mapping, attack cost/energy, damage, printed text and every attack/Power/Body/Trainer/Special Energy rule.
+  [LOCKED] Preserve alternative print art and ownership separately from gameplay identity. Prevent ID collisions, duplication and wrong imagery.
+  [LOCKED] Role/status tags must be earned by actual gameplay effects. Status immunity does not equal inflicting a status. Self-sleep does not make a Sleep-control deck. Defensive prevention does not count as direct attack damage.
+  [LOCKED] Metadata used by AI/deck building must distinguish healing, protection, Sleep/Poison/Burn/Paralysis/Confusion, Energy ramp, Energy discard/recovery, search/draw, spread/snipe, retreat reduction, disruption, scaling damage and other relevant archetypes.
+  [LOCKED] Multi-condition choice effects should expose all permitted conditions, not a default hardcoded one.
+  [LOCKED] If a card is supported only with an explicit converted interpretation, record that conversion in its set documentation and tests.
+  [LOCKED] All card effect data and metadata must remain consistent with actual engine behavior; don't tag a card as viable if its mechanic is unsupported or incorrect.
+
+=======================================================================
+PART 6 — AI OPPONENT AND BATTLE EXPERIENCE
+=======================================================================
+
+  [LOCKED] CPU obeys the same rules as the player: timing, Energy Zone order, retreat, evolution timing, deck copy limits, discard costs, once-per-turn actions, targeting and Trainer restrictions.
+  [LOCKED] AI should actively evaluate legal choices instead of random spam. It's acceptable to randomize among approximately equal choices, not among obviously harmful and useful actions without reason.
+  [LOCKED] AI should prioritize KOs, effective targets, sensible Energy attachment, evolution, healing damaged Pokémon, retreating vulnerable Actives, status synergies and efficient Trainers.
+  [LOCKED] CPU should not replace a beneficial Stadium with a harmful/irrelevant one simply because it can. Consider existing Stadium and marginal value to both sides.
+  [LOCKED] CPU should not repeatedly use effects with no legal targets (e.g., Super Energy Retrieval with no recoverable Energy).
+  [LOCKED] CPU must pay actual Energy discard requirements. Don't allow it to keep charged Energy while claiming to use a discard-cost attack, or permanently refuse a playable move due to a mistaken cost check.
+  [LOCKED] Difficulty tiers (Beginner/Intermediate/Advanced/Expert where implemented) should reflect real decision quality, not rule-breaking or invented resources.
+  [LOCKED] Opponent deck building must finish in bounded time, observe set/archetype/difficulty filters, and generate actual playable legal decks.
+  [LOCKED] Show CPU actions, coin flips, Trainer use, Energy movements and damage in readable central presentation at human-visible pacing. Don't instantly complete an entire hidden turn and leave the player guessing.
+  [LOCKED] The CPU should make choices for defending side effects when printed ('your opponent chooses'), rather than incorrectly allowing the acting attacker to choose.
+
+=======================================================================
+PART 7 — TEST LAB / DEVELOPER TOOLS
+=======================================================================
+
+  [LOCKED] Test Lab is a separate sandbox for both Classic and Pocket. Its purpose is fast effect/combo testing without collection grinding.
+  [LOCKED] Test Lab can select any existing supported card regardless of normal ownership; normal battles remain ownership-restricted.
+  [LOCKED] Test Lab allows placing real cards on either side's Active/Bench, into hand/deck/discard/Prize zones as appropriate, and staging damage, Energy, status and turn context.
+  [LOCKED] Inert Substitute cards/targets can be used to test effects and damage without adding new collectible cards, Powers or attacks of their own.
+  [LOCKED] Test Lab must use the REAL combat engine and real card selection prompts. It is not a fake scripted animation mode.
+  [LOCKED] Allow clear direct selection of Active/Bench and access to deck/hand/discard card pickers. Keep the UI usable on ONE mobile screen where possible, not a sprawling desktop panel.
+  [LOCKED] Test Lab decks have their OWN saved Pocket and Classic libraries, distinct from normal saved decks and actual collection. Save, rename, delete and reopen them independently.
+  [CURRENT] v0.69.185 lineage includes persistent Test Lab libraries and whitelisted CPU filter preferences (schema 2).
+  [LOCKED] Test Lab card filters and CPU-opponent filters are separate and must remain visible and persistent where designed. Don't fix one by accidentally removing the other.
+  [LOCKED] Test Lab matches grant no coins, packs, new card ownership, achievements, regular battle wins or progression records. Do not save fake damage/board state as a real player's official result.
+  [LOCKED] Normal and Test Lab game modes should not mutate each other's deck selections, collection records, filters or battle statistics.
+
+=======================================================================
+PART 8 — CARDS / EXPANSIONS: CONTENT COMPLETENESS STANDARD
+=======================================================================
+
+  [LOCKED] Add expansions in the agreed chronological/selected order; next planned Classic set after EX Deoxys is EX Emerald (ex9), unless the user changes direction.
+  [LOCKED] New expansion work covers ALL actual cards, not just the headline Pokémon. Include Trainers, Supporters, Stadiums, Tools, Special Energy, evolution chains and Pokémon with non-obvious effects.
+  [LOCKED] Use exact set IDs and card numbers with authoritative card text and errata. Do not invent unreadable text or silently create Pokémon that were not in the released set.
+  [LOCKED] Inspect interactions with older cards: Rocket, Gym, Neo, Delta, EX, Special Energy, existing custom Snap sets, status effects, Stadiums and Tools. Card references to 'Dark Pokémon', 'Rocket's', 'Trainer', 'Pokémon-ex', etc. must recognise compatible older and newer cards when the printed wording intends them to.
+  [LOCKED] Expand the player builder, CPU deck selector, opponent filters, Test Lab and catalogue together. Missing an expansion from opponent selection is an incomplete release.
+  [LOCKED] Every new attack/Power/Body must have an accurate description and a working effect, or an explicit gated/unsupported status. Do not publish 'fully supported' based only on cards loading or two random attacks finishing.
+  [LOCKED] Move metadata and synergy tags are required in the same expansion pass, not a future afterthought.
+  [LOCKED] Card search, movement, prizes, discard, choice and Energy must be validated with both success and failure/edge-case scenarios.
+  [LOCKED] Work can be delivered in staged batches if the user wants, but the whole-set audit and tests must be performed before claiming completion.
+
+Release checklist for EVERY new expansion:
+  [ ] Identify exact set, date, collector numbers, card roster, rarity and identifiers.
+  [ ] Load and map all cards and artwork correctly, retaining existing collection/ownership data.
+  [ ] Implement every attack/Power/Body/Trainer/Stadium/Tool/Special Energy with printed-effect fidelity.
+  [ ] Record LuckyDex-specific conversions/unsupported aspects explicitly.
+  [ ] Verify Energy Zone, physical Basic/Special Energy, hand, discard, deck and prize interactions.
+  [ ] Verify conditions, prevention, status, Weakness, HP/damage and Energy cost calculations.
+  [ ] Verify target selection, optional outcomes and choices on both sides.
+  [ ] Test play vs same expansion, selected earlier expansions and mixed decks.
+  [ ] Player manual builder, autofill/strategy builder, rarity/set filters, CPU decks and Test Lab all recognise the set.
+  [ ] AI chooses meaningful actions, pays costs, uses healing and can complete matches.
+  [ ] Test normal win/lose/draw/exhaustion, saved deck reload and basic Android portrait UI.
+  [ ] Record exact test counts, test failures and testing limitations.
+  [ ] Update this rules file, per-set documentation and change history if any rule/exception was added.
+  [ ] Bump version consistently, package changed files only, give correct Termux instructions.
+
+=======================================================================
+PART 9 — TESTING / REGRESSION / RELEASE QUALITY
+=======================================================================
+
+9.1 Mandatory test matrix
+  [LOCKED] A rule bug requires an outcome-level regression: verify the card, zone, counter, target and final state. 'Effect function ran' is NOT a sufficient assertion.
+  [LOCKED] Test with both sides where it matters: player and CPU use the same effects; opponent-chooses and owner-chooses are different.
+  [LOCKED] Test positive, negative and boundary cases: 0/1/2 eligible cards, heads/tails, no legal target, empty deck, full Bench, two identically named Pokémon, expired lock, no Energy, mixed Basic/Special Energy, prize card unavailable and status already present.
+  [LOCKED] Test normal play and Test Lab. Sandbox-only success is not proof that in-match resource flows work.
+  [LOCKED] After shared-engine changes, run relevant old expansion suites and the broader historical suite where feasible. Describe stale test assertions separately from actual gameplay failures.
+  [LOCKED] Never alter a failing test only to force a pass. If a rule changed with user approval, update its expectation and explain the rule change; preserve a regression for the new intended result.
+  [LOCKED] Check card metadata and decks as well as battle resolution: legality, ownership limits, set/rarity filters, evolution lines, 30/20 card size, energy synergy and AI archetypes.
+  [LOCKED] Check interface decisions: clear labels, one visible legal target, tapped-board selection, correct slot identity, displayed Energy, no overflow/overlaps, coin positions, damage preview and opponent action readability.
+  [LOCKED] Check save migration/backward compatibility, installed app ID/signer and all version labels.
+  [LOCKED] If a check cannot be performed (e.g., no Android device), say so and provide a small user-focused manual test scenario.
+
+9.2 Permanent named regression scenarios
+  R01 Energy Charge: Basic and Special Energy from separate discard zones -> chosen cards shuffle into DRAW DECK -> deck count increases -> Basic Energy can later be drawn -> normal attachment cap still applies.
+  R02 Manectric ex Disconnect: opponent cannot use non-Supporter Trainers on affected next turn; may use allowed Supporter; lock expires on time; clear error text.
+  R03 Magcargo Knock Over: if Stadium relevant, choices display 'Keep Stadium' / 'Discard Stadium', same printed damage, correct outcome after selection.
+  R04 Salamence ex Flame Jet: selecting target happens by tapping the correct opposing board Pokémon, including when two same-name cards share the Bench.
+  R05 Energy Flow: returned Basic Energy appears in the HAND as playable hand cards, no silent loss.
+  R06 Moltres/Metagross/Camerupt recovery: eligible Energy chosen from correct discard zones and attached to chosen targets, preserving costs and side effects.
+  R07 Trainer restrictions: playing a Supporter does not on its own block ordinary Item Trainers; legitimate effect-specific locks are visible.
+  R08 Scyther: an attack-specific next-turn restriction does not disable other legal attacks.
+  R09 Special Energy: Darkness/Metal/Rainbow and set-specific Energy really provide printed quantities/effects; no fake multiple-unit Rainbow payments.
+  R10 Pokémon-ex KOs and prize exceptions: correct multiple-Prize awards and empty-shell/no-Prize effects.
+  R11 Bench: play/target/promote/evolve from correct slot, correct choice owner and no invalid automatic leftmost target.
+  R12 CPU: stadium use, energy-discard costs, heal only when useful, no effect-without-target spam.
+  R13 Autobuilder: random variation, complete evolution lines, genuine strategy focus, no irrelevant Energy Stadiums, 30/20 cards and copy/ownership legality.
+  R14 Test Lab: owned restriction bypass only in sandbox, independent saved decks/filters, no real rewards or stats.
+  R15 Full UI: readable mobile cards, landscape Stadium proportion, battle mat size, direct targeting, clear optional outcome labels.
+  R16 Card support: no 'special effect' placeholder counted as complete; each included attack/card has actually executed the relevant outcome.
+
+9.3 Honest release notes
+  Every patch note should state: baseline version, target version, changed files, exact bugs/decisions, tests actually run (and failures), known untested areas, required previous version, extraction target, Git/Termux commands, and one or two decisive in-app verification scenarios.
+  Never extrapolate 'all cards correct' from an automated attack smoke sweep. Combinatorial card interactions require targeted examples and cross-era tests.
+  Never promise that Android touch has been tested if only Node/browser tests were available.
+
+=======================================================================
+PART 10 — MANDATORY LIVING-DOCUMENT UPDATE PROTOCOL
+=======================================================================
+
+THIS PART APPLIES TO EVERY FUTURE CHAT, EXPANSION, FIX AND AGREED RULE CHANGE.
+
+10.1 At the START of each new LuckyDex development chat
+  1. Read this entire file from the latest ZIP/repository before editing anything.
+  2. Identify the exact app/source version and the patch ZIP extraction convention.
+  3. Read recent set-release notes and relevant existing tests.
+  4. Check the current request against [LOCKED] rules and [CHECK] conflicts.
+  5. Do not depend solely on conversational memory; code, tests and this document must agree.
+  6. If the user reports a bug that contradicts a passing test, first investigate whether the test asserts the WRONG destination, wrong player, wrong version or a missing UI interaction.
+
+10.2 When the user approves or specifies ANY new rule
+  1. Quote/restate the rule in implementation terms: who, when, zone, limits, options, visible UI, and exceptions.
+  2. Assign it a permanent rule ID (for example C-ENERGY-006, C-CHOICE-012, P-ABILITY-004, AI-STRATEGY-008, GAME-ARCADE-003).
+  3. Add/change the appropriate [LOCKED] clause in THIS FILE before final delivery.
+  4. Mark and resolve any superseded rule instead of leaving contradictory instructions.
+  5. Add at least one regression test tied to the rule ID. Add failure and edge cases where relevant.
+  6. Update any set-specific documentation and player-facing explanation made obsolete by the rule.
+  7. Implement the game change and verify it against older sets and both sides of play.
+  8. Bump THIS DOCUMENT version/date and include its updated copy with the patch.
+  9. Describe the new/changed rule and its test in the patch release note.
+ 10. If implementation is intentionally deferred, label the rule [LOCKED — NOT YET IMPLEMENTED], identify the blocker, and do not claim it works.
+
+10.3 When adding a new expansion
+  1. Add a dated entry under the SET REGISTER (Part 11): set code, count, status, baseline/release version, coverage tested and any conversion exceptions.
+  2. Apply the Part 8 expansion checklist to EVERY card family, Trainer, Stadium, Tool and Special Energy.
+  3. Add new effect patterns to a shared rule heading when the mechanic is reusable, not hidden solely in a one-off card handler.
+  4. If the expansion reveals an interaction with older cards, document and test the cross-set interaction with exact card identifiers.
+  5. If the new mechanic contradicts a previously agreed LuckyDex format rule, do not silently reinterpret it. Record [CHECK], propose a faithful adaptation and get user agreement.
+  6. Update per-set notes, the master test matrix and this file in the same patch, even if the rules are unchanged (record 'no global rule change').
+
+10.4 When fixing a bug
+  1. Record observed wrong behaviour, correct expected behaviour, original cause and affected versions.
+  2. Determine if existing rules/tests were wrong (Energy Charge .183 is the model example).
+  3. Add a regression that would have failed BEFORE the fix and passes AFTER.
+  4. Update this file if a rule interpretation changed, a new exception was discovered or a previous rule was expressed ambiguously.
+  5. Avoid writing 'bug is a feature' merely because the current code was designed that way.
+  6. Check other cards sharing the same effect path and previous expansions using that API.
+
+10.5 When rules and implementation disagree
+  A. Preserve evidence of both claims and tag the issue [CHECK].
+  B. State exactly what the running build currently does versus what was agreed.
+  C. Do not silently change balance/rules or falsify tests.
+  D. Resolve based on the latest user decision and printed card accuracy.
+  E. Once resolved, update the actual rule, tests, UI explanation, set notes, version and history.
+
+10.6 Required CHANGELOG entry template (append; don't erase history)
+  Date: YYYY-MM-DD
+  Document revision: x.y -> x.z
+  App version / source baseline: v...
+  Rule IDs changed: ...
+  Status: [LOCKED]/[EXCEPTION]/[CHECK]/[BUG]
+  User decision / verified card wording: ...
+  Previous rule/implementation: ...
+  New requirement / exception: ...
+  Code locations: ...
+  New/updated tests: ...
+  Cross-set regression coverage: ...
+  Android device QA: tested / not tested
+  Known caveats / follow-up: ...
+
+10.7 Single-file upkeep
+  Keep this as one easy-to-read plain TXT file because the user uses new chats and phone uploads. Extra technical/per-set docs may exist, but they MUST link or point back to this file and must not quietly supersede its shared rules.
+  Include this file in EVERY future rules-changing changed-files patch (for example under docs/LUCKYDEX_MASTER_RULES.txt).
+  Do not increment the document revision just because a build number changes with no content change; DO append the expansion register/status note or 'no global rule changes' where needed.
+  If requested, a short project-level prompt can point all future conversations to this file, but the full detail lives here rather than being limited by custom-instruction space.
+
+=======================================================================
+PART 11 — EXPANSION REGISTER / CURRENT AUDIT BASELINE
+=======================================================================
+
+  [CURRENT] Source examined as of v0.69.185 includes Classic expansions across Base/Jungle/Fossil, Gym, Neo, Legendary Collection, Expedition, Aquapolis, Skyridge, several Gen 3 EX expansions and custom Lental Snap sets. Exact individual set availability must be confirmed from the current registry before claiming a full roster.
+  [CURRENT] Recent chronological Gen 3 work includes EX Ruby & Sapphire (ex1), EX Sandstorm (ex2), EX Dragon (ex3), EX Team Magma vs Team Aqua (ex4), EX Hidden Legends (ex5), EX FireRed & LeafGreen (ex6), EX Team Rocket Returns (ex7) and EX Deoxys (ex8).
+  [CURRENT] EX Deoxys (ex8) contains 108 registered cards and 159 attacks in the source audit; late follow-ups corrected targeting, metadata, Energy Charge, optional choices and cross-zone Energy interactions.
+  [CURRENT] v0.69.185 targeted tests for recent EX Deoxys changes were reported as 67 passing; the wider historical run reported 370 passing, 5 obsolete version/UI assertion failures. These are HISTORICAL test outcomes, not guarantees about any later build.
+  [CURRENT] v0.69.186 restores EX Deoxys Ninjask Slash’s missing runtime damage rule and fixes next-turn bonus display for older sets. C-ATTACK-001 regression tests cover actual damage, visible previews, expiry, both players, and Weakness applied after base-power replacement.
+  [CHECK] Recheck source availability and compatibility before claiming any given card/expansion is 'fully correct'; the existence of a card record does not prove every unusual interaction.
+
+  NEXT PLANNED SET: EX Emerald (ex9), pending user direction.
+  When implemented, append a line with date, version, card count, move coverage, remaining exceptions, player/CPU builder inclusion, source references and test summary.
+
+=======================================================================
+PART 12 — OPEN QUESTIONS / DO NOT SILENTLY DECIDE
+=======================================================================
+
+  [CHECK-01] Classic Bench and victory format: historical approved design was five Bench spaces and four-point victory with prize values; inspected v0.69.185 engine uses three Bench spaces and five physical Prize cards. Requires user decision before an overall-format redesign.
+  [CHECK-02] Decide what happens to unusual official rules involving an explicitly second Defending Pokémon, expanded Bench or physical prize placement in this converted format, card by card. Maintain existing documented adaptations until a specific better rule is agreed.
+  [CHECK-03] Confirm exact semantics when generic effects tell Basic Energy to return to 'deck' in the context of the infinite Energy pool. A SPECIFIC effect saying shuffle recovered Energy into the draw deck (e.g., Energy Charge) already has a settled rule and must NOT be treated as unresolved. Record other cards individually rather than imposing a global return-to-pool shortcut.
+  [CHECK-04] Any historical Pocket or Classic bug list needs a current repro before it is claimed to remain open; do not infer unresolved bugs purely from old release notes.
+  [CHECK-05] Large custom Stadium Bench limits and varied hand/discard/card-picker UX should be checked on real Android touch hardware even where Node assertions pass.
+
+=======================================================================
+PART 13 — INSTRUCTIONS TO PASTE INTO ANY NEW CHAT
+=======================================================================
+
+"We are continuing development of LuckyDex. Read source/docs/LUCKYDEX_MASTER_RULES.txt from the latest uploaded source ZIP FIRST. Treat its [LOCKED] rules as binding and its [CHECK] items as unresolved, not automatically resolved by the code. Review the actual current version and card implementation before editing. Preserve saves, ownership, art, achievements, CPU logic, Test Lab, existing gameplay and all prior expansions. Do not use Codex unless I ask. When I add a new rule or we discover an exception, update this TXT, its changelog, the relevant card/engine tests and any set notes in the SAME patch. For new sets, cover every card, move, metadata, player/CPU deck-builder integration, Special Energy, targeting, cross-set rules and regression tests. Deliver a real, versioned changed-files patch with correct Termux installation instructions. Never mistake 'current code behaviour' for an approved design rule."
+
+=======================================================================
+CHANGE HISTORY
+=======================================================================
+
+2026-11-10 | Document 1.0 | First consolidated LuckyDex project contract compiled from prior user-agreed requirements, the v0.69.185 code/docs, EX Deoxys Energy Charge and choice bugs, and established development practices. No gameplay code altered by producing this document. Open Classic format discrepancies documented rather than silently resolved.
+2026-11-10 | Document 1.0 -> 1.1 | App v0.69.186 | [LOCKED] C-ATTACK-001: next-turn named-attack base-damage boosts must be effective in battle and visible in action previews, not silently lost by an empty printed-effect field. Bug: EX Deoxys Ninjask (ex8-13) Slash was parsed as noop despite the engine having its Swords Dance damage override; Jungle Scyther's generic boost was applied in combat but omitted in preview. Fix: parse EX Deoxys Slash with its registered damage rule and read shared next-attack bonuses in action previews. Tests: tests/v07186-swords-dance-damage-preview.test.cjs (7 checks: Jungle both prints, Ninjask, Vigoroth, weakness, expiry, both sides). Android device QA: not tested. Cross-set checks: Jungle (base2), EX Sandstorm (ex2), EX Deoxys (ex8). No general Energy or deckbuilding rules changed.
+
+END OF LUCKYDEX MASTER RULES
