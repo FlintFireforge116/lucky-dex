@@ -65,3 +65,12 @@ body.tcgp-deck-editing #tcgpDeckResults,body.tcgp-deck-editing #classicDeckResul
 .tcgp-editor-mydeck header .tcgp-editor-deck-actions [data-classic-deck="clear-deck"]{background:#fff3f0;color:#9a3328;border-color:#deb9b1}
 .tcgp-editor .tcgp-editor-sheet .tcgp-editor-danger{background:#9a3328;color:#fff;border-color:#9a3328}
 @media(max-width:360px){.tcgp-editor-mydeck h2{font-size:12px}.tcgp-editor-mydeck h2 span{font-size:12px}.tcgp-editor-mydeck header .tcgp-editor-deck-actions button{font-size:9px;padding:4px 5px}}
+
+/* v0.69.203: actual Basic Energy card art, complete eight-type Energy Zone. */
+.tcgp-editor-energy-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin:9px 0 13px}
+.tcgp-editor .tcgp-editor-energy-option{display:flex;flex-direction:column;justify-content:flex-start;align-items:center;min-width:0;min-height:0;padding:4px;gap:3px;border-radius:10px;overflow:hidden}
+.tcgp-editor-energy-option img{display:block;width:100%;aspect-ratio:0.715;max-height:146px;object-fit:contain;border-radius:5px}
+.tcgp-editor-energy-option span{display:block;min-height:18px;font-size:11px;line-height:1.2;white-space:normal;text-align:center}
+.tcgp-editor .tcgp-editor-energy-option[aria-pressed=true]{box-shadow:inset 0 0 0 2px #d2ecff;background:#215f80;color:white;border-color:#215f80}
+.tcgp-auto-section .tcgp-editor-energy-option{flex:0 1 calc(25% - 7px)}
+@media(max-width:380px){.tcgp-editor-energy-grid{gap:5px}.tcgp-editor .tcgp-editor-energy-option{padding:3px}.tcgp-editor-energy-option span{font-size:10px}}

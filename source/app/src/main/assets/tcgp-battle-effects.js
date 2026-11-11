@@ -506,9 +506,9 @@
     const beginHandChoice=(filter,extra={},optional=false)=>{
       if(!ss.hand.some(ref=>matchesFilter(card(ref),filter,ref)))return;
       choose({kind:'handCard',side:'self',filter,optional},extra);};
-    const attachToken=(type)=>{const ids={Fighting:127,Fire:128,Grass:129,Lightning:130,Psychic:131,Water:132};
-      if(ids[type]&&ss.hand.length<10){ss.hand.push({uid:`gym-energy-${ctx.state.turnNumber}-${ctx.side}-${ss.hand.length}`,cardId:`gym1-${ids[type]}`,zoneGenerated:true});log({energyType:type});}};
-    const energyTypes=ss.energyTypes?.filter(x=>x!=='Colorless')||['Grass','Fire','Water','Lightning','Psychic','Fighting'];
+    const attachToken=(type)=>{const ids={Fighting:'gym1-127',Fire:'gym1-128',Grass:'gym1-129',Lightning:'gym1-130',Psychic:'gym1-131',Water:'gym1-132',Darkness:'lental-basic-darkness',Metal:'lental-basic-metal'};
+      if(ids[type]&&ss.hand.length<10){ss.hand.push({uid:`gym-energy-${ctx.state.turnNumber}-${ctx.side}-${ss.hand.length}`,cardId:ids[type],zoneGenerated:true});log({energyType:type});}};
+    const energyTypes=ss.energyTypes?.filter(x=>x!=='Colorless')||['Grass','Fire','Water','Lightning','Psychic','Fighting','Darkness','Metal'];
     const choiceTarget=()=>{if(a.choiceTarget==='active')return ss.active;if(a.choiceTarget==='bench')return ss.bench.find(x=>Number(x?.benchSlot)===Number(a.choiceBenchIndex));return null;};
     switch(e.rule){
       case 'benchGuard':case 'strangeBarrier':case 'photosynthesis':case 'noRemovalGym':case 'rocketGym':case 'ceruleanGym':case 'pewterGym':case 'vermilionGym':case 'narrowGym':break; // Continuous rules resolved by core hooks.
@@ -2215,7 +2215,7 @@
         if(ctx.resolvingChoice){const type=(e.options||[])[Number(ctx.action?.choiceOption)];
           if(type==='Special Energy'){request({kind:'discardCard',side:'self',filter:{specialEnergy:true},effect:{stage:'special'}});return;}
           if(type&&Number(ss.energyDiscard?.[type]||0)>0){ss.energyDiscard[type]--;a.energy[type]=Number(a.energy[type]||0)+1;}return;}
-        const options=Object.entries(ss.energyDiscard||{}).filter(([t,n])=>n>0&&['Grass','Fire','Water','Lightning','Psychic','Fighting'].includes(t)).map(([t])=>t);
+        const options=Object.entries(ss.energyDiscard||{}).filter(([t,n])=>n>0&&['Grass','Fire','Water','Lightning','Psychic','Fighting','Darkness','Metal'].includes(t)).map(([t])=>t);
         if(ss.discard.some(ref=>ctx.cardById(ref.cardId)?.specialEnergy))options.push('Special Energy');
         if(options.length)request({kind:'option',side:'self',options,effect:{options}});return;}
       case 'signsEvolution':{
@@ -2224,13 +2224,13 @@
       case 'energyRestore':{
         if(ctx.resolvingChoice&&ctx.action?.choiceSkip)return;
         if(ctx.resolvingChoice){const type=(e.options||[])[Number(ctx.action?.choiceOption)];if(type&&Number(ss.energyDiscard?.[type]||0)>0){ss.energyDiscard[type]--;energyToHand(type);}
-          const left=Number(e.remaining||0)-1,options=Object.entries(ss.energyDiscard||{}).filter(([t,n])=>n>0&&['Grass','Fire','Water','Lightning','Psychic','Fighting'].includes(t)).map(([t])=>t);
+          const left=Number(e.remaining||0)-1,options=Object.entries(ss.energyDiscard||{}).filter(([t,n])=>n>0&&['Grass','Fire','Water','Lightning','Psychic','Fighting','Darkness','Metal'].includes(t)).map(([t])=>t);
           if(left>0&&options.length)request({kind:'option',side:'self',options,optional:true,effect:{remaining:left,options}});return;}
         let heads=0;const results=[];for(let i=0;i<3;i++){const h=coin(ctx);results.push(h);if(h)heads++;}ctx.state.log.push({type:'coin',side:ctx.side,reason:'Energy Restore',heads,results});
-        const options=Object.entries(ss.energyDiscard||{}).filter(([t,n])=>n>0&&['Grass','Fire','Water','Lightning','Psychic','Fighting'].includes(t)).map(([t])=>t);
+        const options=Object.entries(ss.energyDiscard||{}).filter(([t,n])=>n>0&&['Grass','Fire','Water','Lightning','Psychic','Fighting','Darkness','Metal'].includes(t)).map(([t])=>t);
         if(heads&&options.length)request({kind:'option',side:'self',options,optional:true,effect:{remaining:heads,options}});return;}
       case 'ladyOuting':{
-        const types=['Grass','Fire','Water','Lightning','Psychic','Fighting'];
+        const types=['Grass','Fire','Water','Lightning','Psychic','Fighting','Darkness','Metal'];
         if(ctx.resolvingChoice){const type=(e.options||types)[Number(ctx.action?.choiceOption)];if(type&&!e.taken?.includes(type)&&neoEnergyToHand(ctx,ss,type,1)){const taken=[...(e.taken||[]),type];if(taken.length<3&&ss.hand.length<Number(ss.handLimit||10))request({kind:'option',side:'self',optional:true,options:types.filter(t=>!taken.includes(t)),effect:{taken,options:types.filter(t=>!taken.includes(t))}});}return;}
         request({kind:'option',side:'self',optional:true,options:types});return;}
       case 'pokeNav':{
@@ -2262,7 +2262,7 @@
         if(foe.bench.length)request({kind:'switchBench',side:'opponent',selectionSide:ctx.foeSide});return;}
       case 'energyAbsorption':{
         if(ctx.resolvingChoice&&ctx.action?.choiceSkip)return;
-        const options=Object.entries(ss.energyDiscard||{}).filter(([t,n])=>n>0&&['Grass','Fire','Water','Lightning','Psychic','Fighting'].includes(t)).map(([t])=>t);
+        const options=Object.entries(ss.energyDiscard||{}).filter(([t,n])=>n>0&&['Grass','Fire','Water','Lightning','Psychic','Fighting','Darkness','Metal'].includes(t)).map(([t])=>t);
         const special=ss.discard.filter(ref=>ctx.cardById(ref.cardId)?.specialEnergy);
         const remaining=Number(e.remaining||2);
         if(ctx.resolvingChoice&&e.stage==='special'){

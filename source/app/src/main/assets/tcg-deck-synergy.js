@@ -47,6 +47,36 @@
   'ex3-82':{roles:['retreat']},
   'ex3-84':{roles:['energy']}
  };
+ // Cross-card dependencies are optional deck-builder partners, not mandatory
+ // requirements. Parse printed in-play clauses once for every expansion; named
+ // Pokémon, Fossils and Stadiums use the same schema. Never infer opponent cards.
+ function printedPartners(card){
+  const sources=[...(card.attacks||[]),...(card.abilities||[]),{name:'Card text',text:card.printedRules||card.text||''}];
+  const partners=[],seen=new Set();
+  for(const source of sources){
+   const text=String(source.text||'');
+   const patterns=[
+    /\b(?:if|as long as|while|whenever)\s+you\s+have\s+(.{2,110}?)\s+in\s+play\b/gi,
+    /\b(?:if|as long as|while|whenever)\s+(.{2,110}?)\s+(?:is|are)\s+in\s+play\b/gi,
+    /\b(?:if|as long as|while|whenever)\s+(?:you\s+have\s+)?(.{2,110}?)\s+on\s+your\s+Bench\b/gi
+   ];
+   for(const pattern of patterns)for(const match of text.matchAll(pattern)){
+    const phrase=match[1].trim();
+    if(/\b(?:your opponent|their opponent|the opponent|opponent's)\b/i.test(phrase))continue;
+    for(let name of phrase.split(/\s*(?:,|\bor\b|\band\b)\s*/i)){
+     name=name.replace(/^(?:at least\s+\d+|any|a|an|one|two|three|\d+)\s+/i,'').replace(/\s+(?:is|are)$/i,'').trim();
+     // Filter generic card kinds and self-only effects; these are not named
+     // companions. A false positive must never displace an evolution line.
+     if(!name||!/[A-Z]/.test(name[0])||/\b(?:Pok[eé]mon|Energy|Supporter|Trainer|attached|the only|the Defending|your Active|on your Bench)\b/i.test(name))continue;
+     if(/^(?:the|this|your|each|all|any|one|both|if|as|that|a|an)\b/i.test(name))continue;
+     if(normalize(name)===normalize(card.name)||normalize(name)===normalize(String(card.name||'').replace(/\s*δ$/u,'')))continue;
+     const key=normalize(name);if(!seen.has(key)){seen.add(key);partners.push({name,relation:'in-play',required:false,source:source.name||'Card text'});}
+    }
+   }
+  }
+  for(const name of card.deckMeta?.preferredPartners||[]){const key=normalize(name);if(name&&!seen.has(key)){seen.add(key);partners.push({name,relation:'in-play',required:false,source:'printed synergy metadata'});}}
+  return partners;
+ }
  const cache=new WeakMap();
  function metadata(card){
   if(!card||typeof card!=='object')return {roles:[],inflicts:[],payoffs:[],energyTypes:[],stages:[],sources:[],conditionalTypes:[],activationEnergyTypes:[]};
@@ -179,14 +209,14 @@
   if(conditionalInflicts.size&&!((card.attacks||[]).some(a=>!/technical machine card/i.test(a.text||'')&&/is now (asleep|burned|poisoned|paralyzed|confused)/i.test(a.text||''))))
    for(const status of conditionalInflicts)inflicts.delete(status);
   if(card.kind==='pokemon')for(const t of card.types||[])sources.add(t);
-  const result=Object.freeze({roles:[...roles],inflicts:[...inflicts],payoffs:[...payoffs],energyTypes:[...energyTypes],stages:[...stages],sources:[...sources],conditionalTypes,activationEnergyTypes:[...activationEnergyTypes],conditionalAttackEnergyTypes:[...conditionalAttackEnergyTypes],requiredTeams:[...requiredTeams],preferredTeams:[...preferredTeams],requiresTools:[...requiresTools],conditionalInflicts:[...conditionalInflicts],basicEnergyTriggers:[...basicEnergyTriggers],specialEnergyConditions:card.deckMeta?.specialEnergyConditions||[],specialEnergyPayoffs:[...specialEnergyPayoffs],specialEnergySearches:[...specialEnergySearches]});
+  const result=Object.freeze({roles:[...roles],inflicts:[...inflicts],payoffs:[...payoffs],energyTypes:[...energyTypes],stages:[...stages],sources:[...sources],conditionalTypes,activationEnergyTypes:[...activationEnergyTypes],conditionalAttackEnergyTypes:[...conditionalAttackEnergyTypes],requiredTeams:[...requiredTeams],preferredTeams:[...preferredTeams],requiresTools:[...requiresTools],conditionalInflicts:[...conditionalInflicts],basicEnergyTriggers:[...basicEnergyTriggers],optionalPartners:printedPartners(card),specialEnergyConditions:card.deckMeta?.specialEnergyConditions||[],specialEnergyPayoffs:[...specialEnergyPayoffs],specialEnergySearches:[...specialEnergySearches]});
   cache.set(card,result);return result;
  }
  function context(pokemon=[],energy=[],theme='any',primaryPokemon=null){
   const mons=pokemon.filter(x=>x?.kind==='pokemon'),profile=mons.map(metadata),technicalMachinePresent=pokemon.some(x=>x?.technicalMachine),teams=new Set(mons.flatMap(c=>{const team=c.deckMeta?.team||(c.name?.startsWith("Team Aqua's")?'aqua':c.name?.startsWith("Team Magma's")?'magma':/^(?:Dark |Rocket's )/.test(c.name||'')?'rocket':null);return team?[team]:[];})),statusInflict=new Set(profile.flatMap(p=>[...p.inflicts,...(technicalMachinePresent?p.conditionalInflicts||[]:[])])),payoffs=new Set(profile.flatMap(p=>p.payoffs)),types=new Set([...energy,...mons.flatMap(c=>c.types||[]),...profile.flatMap(m=>m.conditionalTypes.filter(x=>energy.includes(x.requiresEnergy)).map(x=>x.type))]),stages=new Set(mons.map(c=>c.stage));
   return {pokemon:mons,primaryPokemon,energy:new Set(energy),types,stages,teams,statusInflict,payoffs,toolPayoffs:new Set(profile.flatMap(p=>p.requiresTools||[])),
    specialEnergyPayoffs:new Set(profile.flatMap(p=>p.specialEnergyPayoffs||[])),
-   specialEnergySearches:new Set(profile.flatMap(p=>p.specialEnergySearches||[])),
+   specialEnergySearches:new Set(profile.flatMap(p=>p.specialEnergySearches||[])),optionalPartnerNames:new Set(profile.flatMap(p=>(p.optionalPartners||[]).map(x=>normalize(x.name)))),
    theme:THEMES.some(t=>t.id===theme)?theme:'any'};
  }
  // Score Special Energy separately from Trainers. Basic Energy triggers only
@@ -252,6 +282,7 @@
   if(ctx.theme==='disruption'&&p.roles.includes('disruption'))score+=42;
   if(p.energyTypes.length)score+=8;
   if(p.preferredTeams.some(t=>ctx.teams?.has(t)))score+=15;
+  if(ctx.optionalPartnerNames?.has(normalize(card.name)))score+=100; // A named Stadium/Trainer payoff, not generic filler.
   // Attack conditional payoff: Machine Burst becomes Sleep + Burn only while
   // a legal Technical Machine is attached. Prefer compatible Tools in the deck.
   if(card.technicalMachine&&ctx.toolPayoffs?.has('technicalMachine')&&

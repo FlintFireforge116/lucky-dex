@@ -302,6 +302,24 @@ function buildDeck(rows,options={}){
    const partner=chooseCandidate(namedPartners.length?namedPartners:partnerCandidates);
    if(partner)addLine(familyLine(partner,evolutionPool),namedPartners.length?1:2);
  }
+ // Printed in-play partner effects are optional support plans. A Water
+ // Regice ex deck may Bench Regirock ex to unlock Iceberg Crush without
+ // having to dilute its Energy Zone with Fighting. This is an option, never
+ // a mandatory inclusion, and follows selected-set and ownership constraints.
+ const optionalNames=new Set(mainLine.flatMap(c=>(synergy.metadata(c).optionalPartners||[]).map(p=>classicCardName(p.name).toLowerCase())));
+ const optionalInPlay=endpointCards(pokemonPool).filter(c=>
+  optionalNames.has(classicCardName(c.name).toLowerCase())&&c.id!==main.id&&
+  familyRoot(c,evolutionPool)!==mainRoot&&(!basicOnly||c.stage==='Basic')&&
+  familyLine(c,evolutionPool).length>0&&room(c)>0
+ ).sort((a,b)=>{
+  const easyA=a.stage==='Basic'?1:0,easyB=b.stage==='Basic'?1:0;
+  return easyB-easyA||pokemonScore(b,evolutionPool)-pokemonScore(a,evolutionPool);
+ });
+ const partnerRoll=([...String(main.id)].reduce((h,ch)=>Math.imul(h^ch.charCodeAt(0),16777619)>>>0,Math.imul((Number(options.randomSeed)||0)+7,2654435761)>>>0))/4294967296;
+ const tryInPlayPartner=optionalInPlay.length&&pokemonCount()<12&&partnerRoll<(style==='competitive'?0.70:0.40);
+ if(tryInPlayPartner){const partner=optionalInPlay[0],line=familyLine(partner,evolutionPool);
+  if(line.length&&cards.length+line.length<=30&&line.every(c=>room(c)>0))addLine(line,1);
+ }
  // Supplement only when there is room and a genuinely useful independent role.
  // No arbitrary 14-Pokémon quota: extra Trainers are often more valuable.
  const evolvingNames=new Set(classic.CARDS.filter(c=>c.kind==='pokemon'&&c.evolvesFrom).map(c=>classicCardName(c.evolvesFrom)));
