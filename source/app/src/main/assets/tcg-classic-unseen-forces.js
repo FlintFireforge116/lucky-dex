@@ -18,11 +18,11 @@ const STAR=new Set([113,114,115]);
 const SUPPORTER=new Set([86,89]), TOOL=new Set([80,83,85,90,91,92]);
 const BASIC_ENERGY=new Set([]);
 const S={Asleep:'sleep',Burned:'burn',Confused:'confusion',Paralyzed:'paralysis',Poisoned:'poison'};
-const CUSTOM=new Set(["8:1", "19:0", "19:1", "39:0", "41:1", "72:0", "107:0", "107:1", "107:2", "113:0", "113:1", "114:0", "114:1", "115:0", "115:1", "D:0", "O:0", "!:0", "101:0", "103:0", "103:1", "104:0", "105:0", "106:1", "108:1", "109:0", "10:0", "10:1", "111:0", "111:1", "111:2", "111:3", "116:0", "117:0", "11:0", "11:1", "12:1", "13:0", "14:0", "16:1", "17:1", "1:0", "20:0", "20:1", "21:0", "22:0", "22:1", "24:0", "27:1", "29:0", "2:0", "33:0", "34:0", "38:1", "3:1", "40:0", "43:0", "43:1", "44:1", "46:0", "47:0", "48:0", "49:0", "4:1", "50:0", "50:1", "54:1", "5:0", "5:1", "61:0", "63:0", "65:0", "68:0", "71:0", "76:0", "77:0", "78:0", "7:1", "8:0", "9:0", "A:0", "B:0", "F:0", "G:0", "I:0", "J:0", "K:0", "L:0", "P:0", "Q:0", "T:0", "U:0", "V:0", "W:0", "X:0", "Z:0"]);
-const BODY=new Set([10, 13, 39, 41, 44, 47, 57, 108, 109]);
-const POWERS=new Set([]);
-const TRAINERS=new Set([81, 82, 84, 86, 87, 89, 94, 95]);
-const SPECIAL=new Set([96, 97]);
+const CUSTOM=new Set(['!:0', '101:0', '102:0', '102:1', '103:0', '103:1', '104:0', '105:0', '106:1', '107:0', '107:1', '107:2', '108:1', '109:0', '109:1', '10:0', '10:1', '110:0', '111:0', '111:1', '111:2', '111:3', '112:0', '113:0', '113:1', '114:0', '114:1', '115:0', '115:1', '116:0', '117:0', '117:1', '11:0', '11:1', '12:0', '12:1', '13:0', '14:0', '15:0', '15:1', '16:1', '17:1', '18:0', '19:0', '19:1', '1:0', '20:0', '20:1', '21:0', '22:0', '22:1', '23:0', '24:0', '24:1', '25:0', '26:0', '27:1', '28:0', '28:1', '29:0', '2:0', '2:1', '30:0', '30:1', '31:0', '32:0', '32:1', '33:0', '34:0', '37:0', '37:1', '38:1', '39:0', '3:0', '3:1', '40:0', '41:1', '42:0', '43:0', '43:1', '44:1', '46:0', '47:0', '48:0', '49:0', '4:0', '4:1', '50:0', '50:1', '54:1', '5:0', '5:1', '61:0', '63:0', '65:0', '68:0', '6:0', '6:1', '71:0', '72:0', '76:0', '77:0', '78:0', '7:1', '8:0', '8:1', '9:0', '?:0', 'A:0', 'B:0', 'C:0', 'D:0', 'E:0', 'F:0', 'G:0', 'H:0', 'I:0', 'J:0', 'K:0', 'L:0', 'M:0', 'O:0', 'P:0', 'Q:0', 'R:0', 'S:0', 'T:0', 'U:0', 'V:0', 'W:0', 'X:0', 'Z:0']);
+const BODY=new Set([4,7,9,11,17,18,22,24,25,26,28,39,41,42,44,47,57,103,104,105,108,109,10,13]);
+const POWERS=new Set([1,12,14,21,23,31,33,34,48,55,101,102,104,106,110,112,116]);
+const TRAINERS=new Set([80,81,82,83,84,85,86,87,88,89,90,91,92,93,94,95]);
+const SPECIAL=new Set([96,97,98,99,100]);
 function nativeAttack(desc,attack){
  if(!desc)return noop;
  if(attack==='Extra Comet Punch')return {type:'nextAttackBonus',attackName:'Extra Comet Punch',amount:30};
@@ -30,6 +30,10 @@ function nativeAttack(desc,attack){
  if(attack==='Agility')return {type:'coinFlip',heads:{type:'preventDamage',target:'self',duration:'opponentTurn',preventEffects:true},tails:noop};
  if(attack==='Steel Wing')return {type:'modifier',target:'self',stat:'damageReduction',amount:20,duration:'opponentTurn'};
  if(attack==='Crushing Blow')return rule('39:0');
+ if(attack==='Copy')return {type:'copyAttack',source:'opponentActive',requiresCopiedCost:true};
+ if(attack==='Data Retrieval')return {type:'drawToHandSize',size:8,matchSide:'self'};
+ if(attack==='Stretch Kick')return rule('25:0');
+ if(attack==='Upward Kick')return rule('26:0');
  const x=desc.match(/^The Defending Pokémon is now (Asleep|Burned|Confused|Paralyzed|Poisoned)\.$/);
  if(x)return {type:'status',target:'opponentActive',status:S[x[1]]};
  const y=desc.match(/^Flip a coin\. If heads, the Defending Pokémon is now (Asleep|Burned|Confused|Paralyzed|Poisoned)\.$/);
@@ -77,10 +81,19 @@ function parse(key){
    44:{type:'modifier',stat:'damageReduction',amount:20,opponentFilter:{evolved:true}},
    47:{type:'preventDamage',duration:'whileInPlay',attackerFilter:{isEx:true}},
    108:{type:'modifier',stat:'attackDamage',amount:40,condition:{type:'selfRemainingHpAtMost',amount:60}},
-   109:{type:'preventStatus',duration:'whileInPlay',status:'poison'}
+   109:{type:'preventStatus',duration:'whileInPlay',status:'poison'},
+   4:{type:'noop'}, 7:{type:'noop'},
+   9:{type:'noop'}, 11:{type:'noop'}, 17:{type:'noop'}, 18:{type:'noop'},
+   22:{type:'noop'},24:{type:'modifier',stat:'maxHp',amount:30,condition:{type:'selfEvolved'}},
+   25:{type:'modifier',stat:'attackDamage',amount:20,condition:{type:'selfEvolved'}},
+   26:{type:'noop'},28:{type:'noop'},42:{type:'noop'},
+   103:{type:'noop'},104:{type:'noop'},105:{type:'noop'}
   };
   const abilities=hasAbility?[{name:powerName,type:typePower?'activated':'passive',printedPowerType:typePower?'power':'body',oncePerTurn:typePower,
    disabledByStatus:typePower&&!isUnown,text:description,effect:(!typePower&&passive[n])||rule('power:'+key),supportStatus:isImplemented?'FULL':'PARTIAL'}]:[];
+  if(abilities.length&&[55,101,102,110,112].includes(n)){abilities[0].type='triggered';abilities[0].event=n===55?'energyAttached':'evolved';abilities[0].fromHandOnly=n===55;abilities[0].oncePerTurn=false;}
+  if(abilities.length&&[11,104,105].includes(n)){abilities[0].type='triggered';abilities[0].effect=rule('power:'+key);abilities[0].event=n===105?'damaged':'knockedOut';abilities[0].activeOnly=n===11||n===105;abilities[0].oncePerTurn=false;}
+  if(abilities.length&&n===34){abilities[0].benchOnly=true;abilities[0].oncePerTurn=true;}
   const normalType=types.split('').map(s=>T[s]).filter(Boolean);
   Object.assign(card,{stage:stage==='0'?'Basic':'Stage '+stage,types:normalType,subtype:normalType[0]||'Colorless',hp:Number(hp),retreat:Number(retreat||0),
    weakness:T[weak]||null,weaknessValue:weak?'×2':null,resistance:T[resist]||null,resistanceValue:resist?'-30':null,evolvesFrom:from||null,
@@ -88,11 +101,17 @@ function parse(key){
  }else if(kind==='T'){
   const n=Number(key),eligible=TRAINERS.has(n);if(!eligible)ready=false;
   Object.assign(card,{trainerType:SUPPORTER.has(n)?'Supporter':TOOL.has(n)?'Tool':'Item',attacks:[],text:rules.replaceAll('§',' '),effect:rule('trainer:'+key)});
+  if(n===83)card.effect={type:'modifier',stat:'maxHp',amount:20};
+  if(n===85)card.effect={type:'modifier',stat:'retreatCost',amount:-99};
+  if(n===90)card.effect={type:'noop'};
+  if(n===92)card.effect={type:'modifier',stat:'attackDamage',amount:20,ex10SolidRage:true};
+  if(n===80)card.effect={type:'triggeredEffect',event:'knockedOut',activeOnly:true,opponentAttackOnly:true,effect:rule('trainer:80')};
+  if([91].includes(n))card.effect=rule('trainer:'+key);
  }else{
   const n=Number(key),ok=SPECIAL.has(n);if(!ok)ready=false;
   const isDark=n===96,isMetal=n===97;
   Object.assign(card,{specialEnergy:true,basicEnergy:false,subtype:isDark?'Darkness':isMetal?'Metal':'Colorless',types:[isDark?'Darkness':isMetal?'Metal':'Colorless'],
-    effect:{type:'specialEnergy',provides:isDark?{Darkness:1}:isMetal?{Metal:1}:{Colorless:1}},text:rules});
+    effect:{type:'specialEnergy',provides:isDark?{Darkness:1}:isMetal?{Metal:1}:{Colorless:n===98?3:1}},text:rules});
  }
  const roles=new Set(),inflicts=new Set(),payoffs=new Set(),energyTypes=new Set();
  for(const attack of card.attacks||[]){
@@ -124,6 +143,10 @@ function parse(key){
  if(card.id==='ex10-46')roles.add('protection');
  if(card.id==='ex10-19'){roles.add('energy');roles.add('hand-acceleration');}
  if(card.id==='ex10-10')roles.add('retreat-lock');
+ if(['ex10-1','ex10-19','ex10-40','ex10-55','ex10-101','ex10-106','ex10-110','ex10-Q'].includes(card.id))roles.add('energy-acceleration');
+ if(['ex10-6','ex10-102','ex10-109','ex10-Z','ex10-P'].includes(card.id))roles.add('spread');
+ if(['ex10-9','ex10-42','ex10-101','ex10-106','ex10-N','ex10-20'].includes(card.id))roles.add('healing');
+ if(['ex10-7','ex10-18','ex10-30','ex10-103','ex10-112'].includes(card.id))roles.add('disruption');
  if(card.kind==='pokemon'){
   if(card.pokemonEx)roles.add('pokemon-ex');if(card.pokemonStar)roles.add('pokemon-star');
   if(card.abilities.some(a=>a.name==='Shuffle'))roles.add('form-change');

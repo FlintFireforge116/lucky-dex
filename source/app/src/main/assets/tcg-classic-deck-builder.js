@@ -104,7 +104,7 @@ function completeLineFor(featured,candidates,pool){
  // A featured first/middle stage may be the main attacker, but its full legal
  // line is mandatory. Select the furthest supported endpoint and retain the
  // exact featured print at its own stage.
- const descendants=candidates.filter(c=>familyLine(c,pool).some(member=>classicCardName(member.name)===classicCardName(featured.name)&&member.stage===featured.stage));
+ const descendants=pool.filter(c=>c.kind==='pokemon'&&familyLine(c,pool).some(member=>classicCardName(member.name)===classicCardName(featured.name)&&member.stage===featured.stage));
  descendants.sort((a,b)=>(STAGE_RANK[b.stage]||0)-(STAGE_RANK[a.stage]||0));
  const endpoint=descendants[0]||featured;
  const line=familyLine(endpoint,pool);

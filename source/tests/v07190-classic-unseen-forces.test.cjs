@@ -25,10 +25,11 @@ test('EX Unseen Forces registers authentic 145 cards, 117 numbered and 28 symbol
  assert.ok(picker.rows.some(x=>x[0]==='ex10'));
  assert.ok(builder.SET_IDS.includes('ex10'));
 });
-test('Incomplete EX Unseen Forces cards are explicitly PARTIAL and excluded from legal battles',()=>{
- const c=ex10.cardById('ex10-?');assert.equal(c.support.status,'PARTIAL');assert.equal(c.battleEnabled,false);
- assert.ok(!data.isBattleEnabled(c.id));
- for(const card of ex10.CARDS){if(card.battleEnabled)assert.equal(card.support.status,'FULL');else assert.equal(card.deckEligible,false);}
+test('The full EX Unseen Forces set is battle-enabled after completing missing effects',()=>{
+ assert.equal(ex10.coverage().battleEnabled,145);
+ const c=ex10.cardById('ex10-?');assert.equal(c.support.status,'FULL');assert.equal(c.battleEnabled,true);
+ assert.ok(data.isBattleEnabled(c.id));
+ for(const card of ex10.CARDS){assert.equal(card.support.status,'FULL',card.id);assert.equal(card.deckEligible,true,card.id);}
 });
 test('CPU selects EX Unseen Forces and creates a 30-card battle-ready deck',()=>{
  assert.equal(deck.length,30);assert.ok(deck.every(id=>data.cardById(id)?.setId==='ex10'&&data.cardById(id)?.battleEnabled));

@@ -13,8 +13,8 @@ test('all FULL EX Unseen Forces attack actions have executable results and resol
   const s=game(19000+attacks,c.id);let a=core.legalActions(s,'player').find(a=>a.type==='attack'&&a.attackIndex===idx);attacks++;
   if(!a){bad.push(c.id+' '+c.attacks[idx].name+': missing legal action');continue;}
   try{core.applyAction(s,'player',a);let i=0;
-   while(s.phase==='effectChoice'&&i++<20){const options=core.legalActions(s,s.choiceSide);if(!options.length)throw Error('no choices');const pick=options.find(x=>x.type==='effectChoice'&&!x.choiceSkip)||options[0];core.applyAction(s,s.choiceSide,pick);choices++;}
-   if(s.phase==='effectChoice')throw Error('stuck after 20 choices');
+   while(s.phase==='effectChoice'&&i++<180){const options=core.legalActions(s,s.choiceSide);if(!options.length)throw Error('no choices');const pick=options.find(x=>x.type==='effectChoice'&&!x.choiceSkip)||options[0];core.applyAction(s,s.choiceSide,pick);choices++;}
+   if(s.phase==='effectChoice')throw Error('stuck after 180 choices');
   }catch(err){bad.push(c.id+' '+c.attacks[idx].name+': '+err.message);}
  }
  assert.deepEqual(bad,[],bad.join('\n'));

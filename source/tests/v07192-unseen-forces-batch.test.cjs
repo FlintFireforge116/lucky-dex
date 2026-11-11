@@ -17,8 +17,8 @@ function finish(s){let n=0;while(s.phase==='effectChoice'&&n++<20)choose(s);asse
 function attack(s,index=0,match){return action(s,x=>x.type==='attack'&&x.attackIndex===index&&(!match||match(x)));}
 function effect(s,key){fx.applyEffect({type:'neoRule',rule:'ex10:'+key},{...core.effectContext(s,'player',{},s.sides.player.active),random:()=>0.01});}
 
-test('set coverage now has 87 executable cards, while other cards remain gated',()=>{
- assert.equal(ex.CARDS.length,145);assert.equal(ex.coverage().battleEnabled,87);
+test('set coverage has all 145 playable cards after final Unseen Forces pass',()=>{
+ assert.equal(ex.CARDS.length,145);assert.equal(ex.coverage().battleEnabled,145);
  for(const card of ex.CARDS)if(card.battleEnabled){assert.equal(card.support.status,'FULL');for(const a of card.attacks||[])assert.ok(fx.supportsEffect(a.effect),card.id);}
  assert.equal(data.validateDeck(ids).ok,true,JSON.stringify(data.validateDeck(ids).errors));
 });

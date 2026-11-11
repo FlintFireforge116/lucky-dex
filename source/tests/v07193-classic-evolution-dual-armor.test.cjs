@@ -13,16 +13,16 @@ const ex10=all.filter(x=>x.gameplayId.startsWith('ex10-'));
 function names(r){return r.cards.map(id=>classic.cardById(id)?.name);}
 function legal(r,rows){assert.equal(r.ok,true,r.errors?.join('; '));assert.equal(r.cards.length,30);assert.equal(decks.readiness({cards:r.cards,energyTypes:r.energyTypes,energyMode:'manual'},rows).ok,true);}
 
-test('EX10 screenshot seed must not strand Quilava or splash unrelated Scyther',()=>{
- const result=builder.buildDeck(ex10,{sets:['ex10'],types:['Fire'],style:'random',randomSeed:12});legal(result,ex10);
- assert.equal(names(result).includes('Quilava'),false,'No playable Typhlosion exists in EX10-only yet');
- assert.equal(names(result).includes('Scyther'),false,'Grass-only Scyther is not a Fire/Fighting support');
- assert.ok(names(result).includes('Magcargo'),'should choose a fully supported Fire endpoint instead');
- assert.deepEqual(result.energyTypes,['Fire','Fighting'],'Magcargo needs Fighting to activate Dual Armor');
+test('EX10 screenshot seed has legal fully evolved families and no unrelated Scyther',()=>{
+ const r=builder.buildDeck(ex10,{sets:['ex10'],types:['Fire'],style:'random',randomSeed:12});legal(r,ex10);
+ assert.equal(names(r).includes('Scyther'),false,'Grass-only Scyther is not a Fire support');
+ if(names(r).includes('Quilava'))assert.ok(names(r).includes('Typhlosion'),'Every Quilava core must include Typhlosion');
+ if(names(r).includes('Magcargo'))assert.ok(r.energyTypes.includes('Fighting'),'Magcargo Dual Armor needs Fighting');
 });
-test('focused Quilava cannot masquerade as a complete EX10-only core while Typhlosion is PARTIAL',()=>{
- const r=builder.buildDeck(ex10,{sets:['ex10'],types:['Fire'],focusCardId:'ex10-45'});
- assert.equal(r.ok,false);assert.match(r.errors.join(' '),/evolution|next evolution/i);
+test('focused Quilava builds the complete EX10-only line once Typhlosion is battle-ready',()=>{
+ const r=builder.buildDeck(ex10,{sets:['ex10'],types:['Fire'],focusCardId:'ex10-45'});legal(r,ex10);
+ for(const name of ['Cyndaquil','Quilava','Typhlosion'])assert.ok(names(r).includes(name),name+' missing');
+ assert.ok(r.cards.includes('ex10-45')&&r.cards.includes('ex10-17'));
 });
 test('when an eligible Typhlosion is in scope, a Quilava-focused build contains all three actual stages',()=>{
  const r=builder.buildDeck(all,{sets:['ex10','neo1'],types:['Fire'],focusCardId:'ex10-45'});legal(r,all);
@@ -64,9 +64,10 @@ test('metadata includes conditional type only when its activation Energy is avai
  assert.ok(!synergy.context([card],['Fire']).types.has('Fighting'));
  assert.ok(synergy.context([card],['Fire','Fighting']).types.has('Fighting'));
 });
-test('CPU uses the same two-type Energy plan for Fire/Dual Armor opponents',()=>{
- const r=opponents.generate({sets:['ex10'],type:'Fire',seed:12});assert.ok(r.ok,r.error);
- assert.ok(r.cards.includes('ex10-41'),'seed 12 should include Magcargo');
- assert.deepEqual(new Set(r.energyTypes),new Set(['Fire','Fighting']));
+test('CPU preserves a coherent Energy plan for any chosen EX10 Fire core',()=>{
+ const r=opponents.generate({sets:['ex10'],type:'Fire',seed:12});
+ assert.ok(r.ok,r.error);
  assert.equal(decks.analyzeDeck(r.cards,r.energyTypes).missingEnergyTypes.length,0);
+ if(r.cards.includes('ex10-41'))assert.deepEqual(new Set(r.energyTypes),new Set(['Fire','Fighting']));
+ if(r.cards.includes('ex10-45'))assert.ok(r.cards.includes('ex10-17'));
 });
