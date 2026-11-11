@@ -1,0 +1,111 @@
+1|Armaldo δ|P|2|FM|110|Anorith|3|G||Rare Holo|Delta Edge~MC~70;Fossil Charge~FCC~50|
+2|Cradily δ|P|2|DM|100|Lileep|2|F||Rare Holo|Harsh Fluid~DC~20;Poison Tentacles~MCC~50|
+3|Deoxys δ|P|0|D|70||1|P||Rare Holo|Energy Loop~DCC~60|Form Change
+4|Deoxys δ|P|0|M|80||2|P||Rare Holo|Delta Reduction~MC~30|Form Change
+5|Deoxys δ|P|0|C|70||1|P||Rare Holo|Crystal Laser~CC~20|Form Change
+6|Deoxys δ|P|0|L|60||1|P||Rare Holo|Teleportation Burst~L~20|Form Change
+7|Flygon δ|P|2|GM|110|Vibrava|2|C|L|Rare Holo|Swift~GMC~60|Delta Supply
+8|Gyarados δ|P|1|LM|90|Magikarp|2|L||Rare Holo|Hyper Beam~MC~20;Heavy Impact~LMCCC~80|Delta Reactor
+9|Kabutops δ|P|2|L|100|Kabuto|1|G||Rare Holo|Vital Drain~LC~30;Thunderous Blow~CCC~40+|
+10|Kingdra δ|P|2|RM|110|Seadra|2|L||Rare Holo|Extra Flame~RC~30+;Heat Blast~RMCC~80|Dragon Curse
+11|Latias δ|P|0|R|70||1|C|P|Rare Holo|Spearhead~C~;Dragon Claw~RCC~40|Dual Aura
+12|Latios δ|P|0|W|80||1|C|G|Rare Holo|Dive~C~10;Aqua Blast~WCC~50|Dual Aura
+13|Omastar δ|P|2|P|110|Omanyte|2|L||Rare Holo|Bind~PC~30;Vengeful Spikes~PCC~30+|
+14|Pidgeot δ|P|2|LM|100|Pidgeotto|1|L|F|Rare Holo|Rotating Claws~LMC~50|Delta Reserve
+15|Raichu δ|P|1|M|70|Pikachu||F||Rare Holo|Zzzap~C~;Metallic Thunder~MMC~50|
+16|Rayquaza δ|P|0|WM|80||2|C|W|Rare Holo|Delta Search~C~;Ozone Flare~WMCC~60|Hydro Barrier
+17|Vileplume δ|P|2|PM|90|Gloom|1|P||Rare Holo|Poltergeist~PM~30+|Poison Pollen
+18|Absol|P|0|D|70||1|F|P|Rare|Foresight~C~;Overrun~DC~10|
+19|Bellossom δ|P|2|W|100|Gloom|1|F|W|Rare|Aqua Flower~WC~40|Fellowship
+20|Blaziken|P|2|R|100|Combusken|2|W||Rare|Combustion~R~30;Blaze Kick~RRC~40+|
+21|Latias δ|P|0|R|70||1|C|P|Rare|Combustion~RC~20;Super Singe~RRC~40|
+22|Latios δ|P|0|W|80||2|C|G|Rare|Aqua Wave~CC~10+;Dragonbreath~WWC~50|
+23|Mawile|P|0|M|60||1|F|G|Rare|Feint Attack~C~;Surprise~MC~20|
+24|Mewtwo δ|P|0|L|70||1|P||Rare|Psychic Erase~C~;Swift~LLC~40|
+25|Nosepass|P|0|F|60||1|W||Rare|Supersonic~C~10;Rock Slide~FC~20|
+26|Rayquaza δ|P|0|R|80||2|C||Rare|Outrage~RC~10+;Flamethrower~RCC~40|
+27|Regice|P|0|W|80||2|M||Rare|Icy Wind~WWC~40|Clear Body
+28|Regirock|P|0|F|80||2|W||Rare|Rock Slide~FFC~40|Clear Body
+29|Registeel|P|0|M|80||2|F|G|Rare|Hyper Beam~MMC~30|Clear Body
+30|Relicanth|P|0|W|70||1|L||Rare|Knock Away~CC~20+|Aqua Lift
+31|Sableye|P|0|D|60||1||C|Rare|Paralyzing Gaze~C~;Knock Off~DC~10|
+32|Seviper|P|0|G|70||1|P||Rare|Poison Fang~C~;Bite~GCC~40|
+33|Torkoal|P|0|R|80||2|W||Rare|Grind~C~10×;Combustion~RCC~40|
+34|Zangoose|P|0|C|70||1|F||Rare|Scratch~C~10;Fury Cutter~CC~10+|
+35|Aerodactyl δ|P|1|R|70|Mysterious Fossil||L|F|Uncommon|Granite Head~RC~30|Primal Light
+36|Camerupt|P|1|R|90|Numel|2|W||Uncommon|Magnitude~CC~20;Take Down~RCC~60|
+37|Chimecho δ|P|0|M|60||1|P||Uncommon|Hook~CC~20|Delta Support
+38|Claydol|P|1|P|80|Baltoy|1|P||Uncommon|Wide Laser~C~;Hyper Beam~PCC~40|
+39|Combusken|P|1|R|70|Torchic|1|W||Uncommon|Slash~CC~20;Super Singe~RCC~40|
+40|Donphan|P|1|F|80|Phanpy|1|G||Uncommon|Rock Hurl~F~20;Double Spin~CCC~50×|
+41|Exeggutor δ|P|1|F|80|Exeggcute|1|P||Uncommon|Delta Circle~CC~10+;Split Bomb~FCC~|
+42|Gloom δ|P|1|P|70|Oddish|1|P||Uncommon|Drool~C~20;Acid~PC~30|
+43|Golduck δ|P|1|L|70|Psyduck|1|L||Uncommon|Mind Play~LC~30+|Delta Block
+44|Holon's Castform|P|0|C|50||1|F||Uncommon|Delta Draw~C~|
+45|Lairon|P|1|M|80|Aron|2|F|G|Uncommon|Tackle~CC~20;Iron Head~CCC~30×|
+46|Manectric|P|1|L|80|Electrike|1|F|M|Uncommon|Plasma~C~20;Quick Blow~LCC~40+|
+47|Masquerain|P|1|G|70|Surskit||F||Uncommon|Sweet Scent~C~;Quick Attack~GC~30+|
+48|Persian δ|P|1|DM|70|Meowth||F||Uncommon|Scratch and Draw~DC~30;Deceive~MC~|
+49|Pidgeotto δ|P|1|L|70|Pidgey|1|L|F|Uncommon|Whirlwind~LC~30|
+50|Primeape δ|P|1|R|70|Mankey||P||Uncommon|Wreck~RC~30+;Flames of Rage~RCC~10+|
+51|Raichu|P|1|L|80|Pikachu|1|F||Uncommon|Thundershock~CC~20;Pika Bolt~LCC~50|
+52|Seadra δ|P|1|R|70|Horsea|1|L||Uncommon|Searing Flame~CC~10;Combustion~RCC~40|
+53|Sharpedo δ|P|1|F|70|Carvanha||L||Uncommon|Brush Aside~CC~30;Swift Turn~FCC~50+|
+54|Vibrava δ|P|1|G|80|Trapinch|1|C|L|Uncommon|Knock Away~CC~20+;Cutting Wind~GCC~40|
+55|Whiscash|P|1|F|80|Barboach|1|G||Uncommon|Pebble Hurl~C~20;Earthquake~FCC~60|
+56|Wobbuffet|P|0|P|70||2|P||Uncommon|Call for Friends~C~;Retaliate~PC~10×|
+57|Anorith δ|P|1|M|70|Claw Fossil|1|G||Common|Metal Claw~M~20;Rising Lunge~CCC~30+|
+58|Aron|P|0|M|40||1|F|G|Common|Mud Slap~C~10;Metal Claw~MC~20|
+59|Baltoy|P|0|P|50||1|P||Common|Ram~C~10;Doubleslap~PC~20×|
+60|Barboach|P|0|F|50||1|G||Common|Waterfall~C~10;Flail~F~10×|
+61|Carvanha δ|P|0|F|40||1|L||Common|Bite~C~10;Reckless Charge~FC~30|
+62|Corphish|P|0|W|50||1|L||Common|Corkscrew Punch~C~10;Guillotine~CCC~30|
+63|Corphish|P|0|W|40||1|L||Common|Flail~C~10×;Crabhammer~W~10|
+64|Electrike|P|0|L|40||1|F|M|Common|Thundershock~C~10|
+65|Exeggcute δ|P|0|F|50||1|P||Common|Rollout~C~10;Pebble Throw~FC~|
+66|Horsea δ|P|0|R|50||1|L||Common|Ram~C~10;Steady Firebreathing~RC~20|
+67|Kabuto δ|P|1|L|70|Mysterious Fossil|2|G||Common|Eerie Light~L~;Shell Attack~CC~20|
+68|Lileep δ|P|1|D|80|Root Fossil|2|F||Common|Poison Tentacles~D~;Mud Shot~CC~20|
+69|Magikarp δ|P|0|M|30||1|L||Common|Splash~M~10|
+70|Mankey δ|P|0|R|50||1|P||Common|Paralyzing Gaze~C~;Low Kick~RC~20|
+71|Meowth δ|P|0|DM|50||1|F||Common|Slash~D~10;Pay Day~MC~10|
+72|Numel|P|0|R|50||1|W||Common|Singe~C~;Flare~RC~20|
+73|Oddish δ|P|0|W|40||1|F||Common|Tackle~C~10;Blot~W~10|
+74|Omanyte δ|P|1|P|70|Mysterious Fossil|1|L||Common|Collect~P~;Water Arrow~CC~|
+75|Phanpy|P|0|F|50||1|G||Common|Yawn~C~;Mud Slap~F~10|
+76|Pichu δ|P|0|M|50||1|F||Common|Paste~C~|Baby Evolution
+77|Pidgey δ|P|0|L|40||1|L|F|Common|Wing Attack~C~10|
+78|Pikachu|P|0|L|50||1|F||Common|Thunder Wave~C~;Quick Attack~LC~20+|
+79|Pikachu δ|P|0|M|50||1|F||Common|Tail Whap~C~10;Steel Headbutt~MCC~30+|
+80|Poochyena|P|0|D|40||1|F|P|Common|Paralyzing Gaze~C~;Smash Kick~CC~20|
+81|Psyduck δ|P|0|L|50||1|L||Common|Scratch~C~10;Disable~L~|
+82|Surskit|P|0|G|40||1|F||Common|Super Hypno Wave~C~10|
+83|Torchic|P|0|R|40||1|W||Common|Peck~C~10;Flare~RC~20|
+84|Trapinch δ|P|0|G|50||1|G||Common|Big Bite~G~10;Mud Slap~CC~20|
+85|Holon Adventurer|T|0|||||||Uncommon||
+86|Holon Fossil|T|0|||||||Uncommon||
+87|Holon Lake|T|0|||||||Uncommon|Delta Call~C~|
+88|Mr. Stone's Project|T|0|||||||Uncommon||
+89|Professor Cozmo's Discovery|T|0|||||||Uncommon||
+90|Rare Candy|T|0|||||||Uncommon||
+91|Claw Fossil|T|0||40|||||Common||Jagged Stone
+92|Mysterious Fossil|T|0||50|||||Common||
+93|Root Fossil|T|0||40|||||Common||Spongy Stone
+94|Darkness Energy|E|0|||||||Rare||
+95|Metal Energy|E|0|||||||Rare||
+96|Multi Energy|E|0|||||||Rare||
+97|Dark Metal Energy|E|0|||||||Uncommon||
+98|δ Rainbow Energy|E|0|||||||Uncommon||
+99|Crawdaunt ex|P|1|W|110|Corphish|2|L||Rare Holo EX|Power Blow~WC~20×|Splash Back
+100|Mew ex|P|0|P|90||1|P||Rare Holo EX|Super Psy Bolt~CC~30;Devo Crush~PCC~50|Psychic Vision
+101|Mightyena ex|P|1|D|100|Poochyena||F|P|Rare Holo EX|Sharp Fang~CC~30;Hyper Claws~DCC~50+|Driving Howl
+102|Gyarados ★ δ|P|0|R|80||2|L||Rare Holo Star|Spiral Growth~RC~20;All-out Blast~RRRR~50+|
+103|Mewtwo ★|P|0|P|80||1|P||Rare Holo Star|Energy Absorption~C~;Psychic Star~RLP~50+|
+104|Pikachu ★|P|0|L|60||1|F||Rare Holo Star|Thundershock~C~10;Spring Back~LL~20+|
+105|Grass Energy|E|0|||||||Rare Holo||
+106|Fire Energy|E|0|||||||Rare Holo||
+107|Water Energy|E|0|||||||Rare Holo||
+108|Lightning Energy|E|0|||||||Rare Holo||
+109|Psychic Energy|E|0|||||||Rare Holo||
+110|Fighting Energy|E|0|||||||Rare Holo||
+111|Mew|P|0|P|50||1|P||Rare Secret|Super Psywave~PC~|

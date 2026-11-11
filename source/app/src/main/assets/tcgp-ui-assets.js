@@ -18,7 +18,9 @@ const ENERGY_CARD_URLS={
   Grass:'https://images.pokemontcg.io/base1/99.png',Fire:'https://images.pokemontcg.io/base1/98.png',
   Water:'https://images.pokemontcg.io/base1/102.png',Lightning:'https://images.pokemontcg.io/base1/100.png',
   Psychic:'https://images.pokemontcg.io/base1/101.png',Fighting:'https://images.pokemontcg.io/base1/97.png',
-  Darkness:'https://images.pokemontcg.io/sve/7.png',Metal:'https://images.pokemontcg.io/sve/8.png'
+  Darkness:'https://images.pokemontcg.io/sve/7.png',Metal:'https://images.pokemontcg.io/sve/8.png',
+  // No Basic Colorless Energy exists; Double Colorless illustrates the Colorless archetype.
+  Colorless:'https://images.pokemontcg.io/base1/96.png'
 };
 const ENERGY_CARD_IDS={Grass:'base1-99',Fire:'base1-98',Water:'base1-102',Lightning:'base1-100',Psychic:'base1-101',Fighting:'base1-97',Darkness:'lental-basic-darkness',Metal:'lental-basic-metal'};
 const LETTERS={Grass:'G',Fire:'R',Water:'W',Lightning:'L',Psychic:'P',Fighting:'F',Darkness:'D',Metal:'M',Dragon:'N',Colorless:'C'};

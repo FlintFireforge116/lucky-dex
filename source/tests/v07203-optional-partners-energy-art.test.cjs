@@ -80,7 +80,7 @@ test('both Classic and Pocket editors render the eight Energy cards as tappable 
   }
 });
 test('full installed Classic catalogue can be classified without missing metadata fields',()=>{
- assert.equal(data.CARDS.length,3348);
+ assert.equal(data.CARDS.length,3459);
  let ready=0;
  for(const card of data.CARDS){
   const m=synergy.metadata(card);

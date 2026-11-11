@@ -970,7 +970,7 @@
     const match=/^(?:(?:Find|Recover|Take|Attach|Choose|Get|Return|Discard)\s+)?(Grass|Fire|Water|Lightning|Psychic|Fighting|Darkness|Metal)(?: Energy)(?:\s+card)?$/i.exec(label)||/^(Grass|Fire|Water|Lightning|Psychic|Fighting|Darkness|Metal)$/i.exec(label);
     const basicType=match?uiAssets?.normalise?.(match[1])||match[1]:!card&&energy&&uiAssets?.normalise?.(energy);
     const basicPrint=!card&&basicType?data.cardById(uiAssets?.energyCardId?.(basicType)):null;
-    const art=cardId?cardArtUrl(cardId,pending.discardZone==='opponent'||kind==='opponentHandCard'?'opponent':'player'):(basicPrint?.image||uiAssets?.energyCardUrl?.(basicType)||'');
+    const art=cardId?cardArtUrl(cardId,pending.discardZone==='opponent'||kind==='opponentHandCard'?'opponent':'player'):(basicType?(basicPrint?.image||uiAssets?.energyCardUrl?.(basicType)||''):'');
     const special=action.effectSpecialEnergyUid&&currentBattle?.sides?.[pending.selectionSide||'player'];
     const title=card?.name||(basicType?`${basicType} Energy`:null)||action.choiceLabel||energy||actionLabel(action,currentBattle,'player');
     const detail=action.choiceAttackIndex!=null?(card?.attacks||[])[Number(action.choiceAttackIndex)]?.name||`Attack ${Number(action.choiceAttackIndex)+1}`:

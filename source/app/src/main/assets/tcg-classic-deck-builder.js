@@ -27,7 +27,7 @@ const STAPLES=Object.freeze([
  ['base1-83',1], // Maintenance
  ['base1-87',1]  // Pokedex
 ]);
-const SET_IDS=Object.freeze(['base1','base2','base3','base5','gym1','gym2','neo1','neo2','neo3','neo4','base6','ecard1','ecard2','ecard3','ex1','ex2','ex3','ex4','ex5','ex6','ex7','ex8','ex9','ex10','ex11','ex12','SNAPFLORIO','SNAPFOUNJA','sv1']);
+const SET_IDS=Object.freeze(['base1','base2','base3','base5','gym1','gym2','neo1','neo2','neo3','neo4','base6','ecard1','ecard2','ecard3','ex1','ex2','ex3','ex4','ex5','ex6','ex7','ex8','ex9','ex10','ex11','ex12','ex13','SNAPFLORIO','SNAPFOUNJA','sv1']);
 // Darkness and Metal are already Basic Energy types. Deduplicate before rendering
 // archetype chips so each energy type has exactly one toggle.
 const ARCHETYPE_TYPES=Object.freeze([...new Set([...decks.ENERGY_TYPES,'Colorless'])]);
@@ -320,6 +320,15 @@ function buildDeck(rows,options={}){
  if(tryInPlayPartner){const partner=optionalInPlay[0],line=familyLine(partner,evolutionPool);
   if(line.length&&cards.length+line.length<=30&&line.every(c=>room(c)>0))addLine(line,1);
  }
+ // Holon Phantoms Form Change is a real alternate-Pokémon line, not four
+ // identical copies of the same Deoxys print. An off-type form is never
+ // selected unless its required attack symbols fit the chosen Energy plan.
+ const deoxysFormIds=['ex13-3','ex13-4','ex13-5','ex13-6'];
+ if(cards.some(id=>deoxysFormIds.includes(id))&&cards.length<30){
+   const available=deoxysFormIds.filter(id=>!cards.includes(id)).map(classic.cardById).filter(c=>c&&pool.includes(c)&&
+     attackTypes(c).every(t=>selectedTypes.includes(t))&&room(c)>0);
+   if(available.length)add(available[0],1);
+ }
  // Supplement only when there is room and a genuinely useful independent role.
  // No arbitrary 14-Pokémon quota: extra Trainers are often more valuable.
  const evolvingNames=new Set(classic.CARDS.filter(c=>c.kind==='pokemon'&&c.evolvesFrom).map(c=>classicCardName(c.evolvesFrom)));
@@ -371,6 +380,25 @@ function buildDeck(rows,options={}){
  const liveReact=cards.map(classic.cardById).some(c=>c?.kind==='pokemon'&&c.deckMeta?.specialEnergyPayoffs?.includes('react-energy'));
  const reactEnergy=classic.cardById('ex12-82');
  if(liveReact&&reactEnergy&&allowedInSetPool(reactEnergy,scope))add(reactEnergy,Math.min(3,room(reactEnergy)));
+ // EX Holon Phantoms: reserve rule-relevant Special Energy and Holon
+ // Stadium support before generic Trainer filler. δ Rainbow is Colorless on
+ // non-δ Pokémon; do not treat it as an unrestricted rainbow for all decks.
+ const selectedMons=cards.map(classic.cardById).filter(c=>c?.kind==='pokemon');
+ const deltaMons=selectedMons.filter(c=>c.deltaSpecies),deltaMain=deltaMons.length>0;
+ const wantsDeltaRainbow=deltaMons.some(c=>{
+   const symbols=new Set((c.attacks||[]).flatMap(a=>String(a.cost||'').split('').filter(t=>t!=='C')));
+   return symbols.size>=2||symbols.size===1&&!selectedTypes.some(t=>[...symbols].includes(({Grass:'G',Fire:'R',Water:'W',Lightning:'L',Psychic:'P',Fighting:'F',Darkness:'D',Metal:'M'})[t]));
+ });
+ const deltaRainbow=classic.cardById('ex13-98');
+ if(deltaMain&&deltaRainbow&&allowedInSetPool(deltaRainbow,scope))
+   add(deltaRainbow,Math.min(wantsDeltaRainbow?2:1,room(deltaRainbow)));
+ const holonLake=classic.cardById('ex13-87');
+ const holonLakeUseful=deltaMons.some(c=>c.deckMeta?.holonStadiumPayoff)||deltaMons.length>=2;
+ if(holonLakeUseful&&holonLake&&allowedInSetPool(holonLake,scope)&&!
+   cards.some(id=>classic.cardById(id)?.trainerType==='Stadium'))add(holonLake,1);
+ const flexibleDarkMetal=classic.cardById('ex13-97');
+ if(flexibleDarkMetal&&allowedInSetPool(flexibleDarkMetal,scope)&&
+   selectedTypes.includes('Darkness')&&selectedTypes.includes('Metal'))add(flexibleDarkMetal,1);
  // Stage 2 decks value Breeder; add it before generic staples when owned.
  if(cards.map(classic.cardById).some(c=>c?.stage==='Stage 2')){const breeder=classic.cardById('base1-76');if(breeder&&scope.includes(breeder.setId))add(breeder,Math.min(2,room(breeder)));}
  if(focus&&scope.includes(focus.setId)&&focus.kind!=='pokemon')add(focus,Math.min(2,room(focus)));
