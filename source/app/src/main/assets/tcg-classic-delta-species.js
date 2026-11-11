@@ -147,10 +147,19 @@ function parse(n){
  if(n===104){preferredEnergyTypes.add('Fire');preferredEnergyTypes.add('Fighting');}
  if(n===105){preferredEnergyTypes.add('Grass');preferredEnergyTypes.add('Lightning');}
  if(n===106){preferredEnergyTypes.add('Water');preferredEnergyTypes.add('Psychic');}
+ // Psychic Option needs neither type to PAY for its Colorless attack, but
+ // without either trigger the deck only gets a weak 20 damage. The two
+ // alternative enablers must be treated as strategic deck dependencies.
+ if(n===28){preferredEnergyTypes.add('Water');preferredEnergyTypes.add('Psychic');}
+ const conditionalAttackEnergyTypes=n===28?['Water','Psychic']:[];
+ const conditionalAttackPayoffs=n===28?[
+   {energyType:'Water',attack:'Psychic Option',benefit:'damage-bonus'},
+   {energyType:'Psychic',attack:'Psychic Option',benefit:'special-energy-discard'}
+ ]:[];
  if(card.pokemonEx)roles.add('pokemon-ex');
  if(card.pokemonStar)roles.add('pokemon-star');
  card.deckMeta=Object.freeze({roles:[...roles],inflicts:[...inflicts],payoffs:[...payoffs],energyTypes:[...energyTypes],
-  preferredEnergyTypes:[...preferredEnergyTypes],specialEnergyConditions,specialEnergyPayoffs,specialEnergySearches,stages:card.stage?.startsWith('Stage ')?[card.stage]:[],requiredStages:[],
+  preferredEnergyTypes:[...preferredEnergyTypes],conditionalAttackEnergyTypes,conditionalAttackPayoffs,specialEnergyConditions,specialEnergyPayoffs,specialEnergySearches,stages:card.stage?.startsWith('Stage ')?[card.stage]:[],requiredStages:[],
   requiresTools:n===25?['technicalMachine']:[],
   synergy:[...roles].filter(t=>['energy-acceleration','healing','draw','recovery','search','disruption','snipe','delta-species'].includes(t))});
  const implemented=ready&&(card.attacks||[]).every(a=>effects.supportsEffect(a.effect))&&(card.abilities||[]).every(a=>effects.supportsEffect(a.effect))&&effects.supportsEffect(card.effect||noop);

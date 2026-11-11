@@ -97,7 +97,17 @@
   // Conditional type-changing Bodies are not printed attack costs. Record
   // their trigger Energy separately so a themed deck can activate them, and
   // distinguish a *possible* secondary type from a permanently printed type.
-  const conditionalTypes=[],activationEnergyTypes=new Set();
+  const conditionalTypes=[],activationEnergyTypes=new Set(),conditionalAttackEnergyTypes=new Set();
+  // A Colorless-cost move can still rely on a particular Energy for its useful
+  // effect (EX Delta Species Slowking's Psychic Option). Infer the *owner's*
+  // Energy requirements, not opposing Pokémon conditions or regular attack costs.
+  // Per-card overrides may add less regular phrasing without inventing an
+  // obligatory type for every generic Colorless attack.
+  const ownName=String(card.name||'').replace(/\s*δ$/u,'').trim().replace(/[.*+?^${}()|[\]\\]/g,'\\$&');
+  const ownTarget=ownName?ownName+'|this\\s+Pok[eé]mon|it':'this\\s+Pok[eé]mon|it';
+  const ownEnergyPattern=new RegExp('\\b(?:if|as long as|when)\\s+(?:'+ownTarget+')\\s+has\\s+(?:(?:at\\s+least\\s+\\d+|any|an?|one|two|three)\\s+)?(?:(?:basic|special)\\s+)?(Grass|Fire|Water|Lightning|Psychic|Fighting|Darkness|Metal)\\s+Energy(?:\\s+cards?)?\\s+attached','gi');
+  for(const attack of card.attacks||[])for(const match of String(attack.text||'').matchAll(ownEnergyPattern))
+   conditionalAttackEnergyTypes.add(match[1][0].toUpperCase()+match[1].slice(1).toLowerCase());
   for(const ability of card.abilities||[]){
    if(!/^dual armou?r$/i.test(String(ability.name||'')))continue;
    const text=String(ability.text||'');
@@ -144,6 +154,7 @@
    for(const x of override.inflicts||[])inflicts.add(x);
    for(const x of override.payoffs||[])payoffs.add(x);
    for(const x of override.energyTypes||[])energyTypes.add(x);
+   for(const x of override.conditionalAttackEnergyTypes||[])if(TYPES.includes(x)&&x!=='Colorless')conditionalAttackEnergyTypes.add(x);
    for(const x of override.stages||[])stages.add(x);
    for(const x of override.requiredTeams||[])requiredTeams.add(x);
    for(const x of override.preferredTeams||[])preferredTeams.add(x);
@@ -168,7 +179,7 @@
   if(conditionalInflicts.size&&!((card.attacks||[]).some(a=>!/technical machine card/i.test(a.text||'')&&/is now (asleep|burned|poisoned|paralyzed|confused)/i.test(a.text||''))))
    for(const status of conditionalInflicts)inflicts.delete(status);
   if(card.kind==='pokemon')for(const t of card.types||[])sources.add(t);
-  const result=Object.freeze({roles:[...roles],inflicts:[...inflicts],payoffs:[...payoffs],energyTypes:[...energyTypes],stages:[...stages],sources:[...sources],conditionalTypes,activationEnergyTypes:[...activationEnergyTypes],requiredTeams:[...requiredTeams],preferredTeams:[...preferredTeams],requiresTools:[...requiresTools],conditionalInflicts:[...conditionalInflicts],basicEnergyTriggers:[...basicEnergyTriggers],specialEnergyConditions:card.deckMeta?.specialEnergyConditions||[],specialEnergyPayoffs:[...specialEnergyPayoffs],specialEnergySearches:[...specialEnergySearches]});
+  const result=Object.freeze({roles:[...roles],inflicts:[...inflicts],payoffs:[...payoffs],energyTypes:[...energyTypes],stages:[...stages],sources:[...sources],conditionalTypes,activationEnergyTypes:[...activationEnergyTypes],conditionalAttackEnergyTypes:[...conditionalAttackEnergyTypes],requiredTeams:[...requiredTeams],preferredTeams:[...preferredTeams],requiresTools:[...requiresTools],conditionalInflicts:[...conditionalInflicts],basicEnergyTriggers:[...basicEnergyTriggers],specialEnergyConditions:card.deckMeta?.specialEnergyConditions||[],specialEnergyPayoffs:[...specialEnergyPayoffs],specialEnergySearches:[...specialEnergySearches]});
   cache.set(card,result);return result;
  }
  function context(pokemon=[],energy=[],theme='any',primaryPokemon=null){
@@ -273,6 +284,14 @@
   const support=uniq(trainers.filter(c=>metadata(c).roles.some(r=>['draw','search','energy','healing','retreat'].includes(r))).map(c=>c.name)).slice(0,6);
   const dead=uniq(trainers.filter(c=>trainerScore(c,ctx)===-Infinity).map(c=>c.name));
   const warnings=[];if(dead.length)warnings.push('Unsupported support: '+dead.join(', '));
+  // Existing manually assembled decks are still legal without optional attack
+  // triggers, but make the lost payoff visible rather than hiding it behind the
+  // fact that the printed attack can be paid with generic Colorless Energy.
+  for(const card of uniq(pokemon)){
+   const triggers=metadata(card).conditionalAttackEnergyTypes;
+   if(triggers.length&&!triggers.some(type=>energy.includes(type)))
+    warnings.push(card.name+' has an inactive conditional attack bonus (needs '+triggers.join(' or ')+' Energy).');
+  }
   if(['sleep','poison','burn','paralysis'].includes(theme)){
    if(!enablers.length)warnings.push('No '+theme+' inflicter in this deck.');
    if(!payoffs.length)warnings.push('No '+theme+' payoff found; this deck relies on the condition itself.');

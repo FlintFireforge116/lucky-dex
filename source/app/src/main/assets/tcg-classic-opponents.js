@@ -45,7 +45,7 @@
      const matchesChosenType=result.cards.some(id=>{
        const card=classic.cardById(id);
        const dual=decks.dualArmorProfile(card);
-       return card?.kind==='pokemon'&&((card.types||[]).includes(type)||(dual?.types.includes(type)&&energy.includes(dual.energyType)));
+       return card?.kind==='pokemon'&&((card.types||[]).includes(type)||(dual?.types.includes(type)&&energy.includes(dual.energyType))||builder.conditionalAttackTypes(card).includes(type)&&energy.includes(type));
      });
      if(!legal.ok||profile.missingEnergyTypes.length||!matchesChosenType)continue;
      if(result.cards.some(id=>{const card=classic.cardById(id);return !allowed.includes(card?.setId)&&!((allowed.includes('neo2')||allowed.includes('neo3')||allowed.includes('neo4'))&&['neo1-104','neo1-19'].includes(id));}))continue;
