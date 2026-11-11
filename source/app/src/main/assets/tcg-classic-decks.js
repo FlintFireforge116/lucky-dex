@@ -20,11 +20,31 @@ function ownedRows(cards){return classic.projectOwnedCards(cards||{});}
 function ownedMap(rows){const map=new Map();for(const row of rows||[])map.set(row.gameplayId,(map.get(row.gameplayId)||0)+Math.max(0,Number(row.quantity)||0));return map;}
 function classicCardName(name){return String(name||'').replace(/[’]/g,"'").replace(/\s+(?=[♀♂])/g,'').trim();}
 function countCards(cards){const map=new Map();for(const id of cards||[]){const card=classic.cardById(id);const key=card?.id||String(id||'');map.set(key,(map.get(key)||0)+1);}return map;}
+// These four historical Dual Armor prints change TYPE only while their trigger
+// Energy is attached. Their activation type is useful for auto-generation, but
+// it is not an additional printed attack cost or a manual-deck legality rule.
+function dualArmorProfile(card){
+ const ability=(card?.abilities||[]).find(a=>/^dual armou?r$/i.test(String(a.name||'')));
+ const description=String(ability?.text||'');
+ const trigger=/has any (Grass|Fire|Water|Lightning|Psychic|Fighting|Darkness|Metal) Energy attached/i.exec(description);
+ const grant=/is both (Grass|Fire|Water|Lightning|Psychic|Fighting|Darkness|Metal) and (Grass|Fire|Water|Lightning|Psychic|Fighting|Darkness|Metal) type/i.exec(description);
+ if(!trigger||!grant)return null;
+ return {energyType:trigger[1][0].toUpperCase()+trigger[1].slice(1).toLowerCase(),types:[grant[1],grant[2]].map(t=>t[0].toUpperCase()+t.slice(1).toLowerCase())};
+}
 function analyzeDeck(cards,configured){
- const required=new Set();for(const id of cards||[]){const card=classic.cardById(id);if(!card)continue;for(const attack of card.attacks||[])for(const symbol of String(attack.cost||''))if(ENERGY_CODE[symbol])required.add(ENERGY_CODE[symbol]);}
- const recommended=ENERGY_TYPES.filter(type=>required.has(type));if(!recommended.length)recommended.push('Fighting');
+ const pokemon=(cards||[]).map(classic.cardById).filter(c=>c?.kind==='pokemon');
+ const required=new Set();for(const card of pokemon)for(const attack of card.attacks||[])for(const symbol of String(attack.cost||''))if(ENERGY_CODE[symbol])required.add(ENERGY_CODE[symbol]);
+ const recommended=ENERGY_TYPES.filter(type=>required.has(type));
+ // Prioritise later stages: if the endpoint carries Dual Armor, enable it
+ // ahead of an earlier-stage Body when the two-type auto build is tight.
+ const byStage=[...pokemon].sort((a,b)=>({'Stage 2':2,'Stage 1':1,Basic:0}[b.stage]||0)-({'Stage 2':2,'Stage 1':1,Basic:0}[a.stage]||0));
+ const possibleAbilityTypes=[...new Set(byStage.map(dualArmorProfile).filter(Boolean).map(p=>p.energyType))];
+ for(const type of possibleAbilityTypes)if(!recommended.includes(type)&&recommended.length<2)recommended.push(type);
+ if(!recommended.length){const printed=pokemon.flatMap(c=>c.types||[]).find(t=>ENERGY_TYPES.includes(t));recommended.push(printed||'Fighting');}
  const types=configured==null?recommended:[...new Set((Array.isArray(configured)?configured:[]).filter(type=>ENERGY_TYPES.includes(type)))];
- return {recommendedEnergyTypes:recommended,configuredEnergyTypes:types,energyValid:types.length>=1&&types.length<=8,missingEnergyTypes:ENERGY_TYPES.filter(type=>required.has(type)&&!types.includes(type))};
+ return {recommendedEnergyTypes:recommended,configuredEnergyTypes:types,energyValid:types.length>=1&&types.length<=8,
+  missingEnergyTypes:ENERGY_TYPES.filter(type=>required.has(type)&&!types.includes(type)),
+  suggestedAbilityEnergyTypes:possibleAbilityTypes};
 }
 function deckEnergyTypes(deck){return deck?.energyMode==='manual'?analyzeDeck(deck.cards||[],deck.energyTypes||[]).configuredEnergyTypes:analyzeDeck(deck?.cards||[]).recommendedEnergyTypes;}
 function validateDraft(cards,rows,{requireFull=false}={}){
@@ -51,5 +71,5 @@ function saveDraft(state,draft,rows){
 }
 function activeDeck(state,rows){const battle=ensureState(state),deck=battle.decks.find(item=>item?.id===battle.activeDeckId)||null;return deck&&readiness(deck,rows).ok?deck:null;}
 function recordResult(state,battle){const classicState=ensureState(state),stats=classicState.stats;stats.matches+=1;stats.totalTurns+=Math.max(0,Number(battle?.turnNumber||0));if(battle?.winner==='player'){stats.wins+=1;stats.bestWinTurns=stats.bestWinTurns==null?Number(battle?.turnNumber||0):Math.min(stats.bestWinTurns,Number(battle?.turnNumber||0));}else if(battle?.winner==='opponent')stats.losses+=1;else stats.draws+=1;return stats;}
-return {ENERGY_TYPES,LOANER_DECK,ensureState,ownedRows,analyzeDeck,deckEnergyTypes,validateDraft,readiness,edit,saveDraft,activeDeck,recordResult};
+return {ENERGY_TYPES,dualArmorProfile,LOANER_DECK,ensureState,ownedRows,analyzeDeck,deckEnergyTypes,validateDraft,readiness,edit,saveDraft,activeDeck,recordResult};
 });

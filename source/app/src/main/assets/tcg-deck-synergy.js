@@ -49,7 +49,7 @@
  };
  const cache=new WeakMap();
  function metadata(card){
-  if(!card||typeof card!=='object')return {roles:[],inflicts:[],payoffs:[],energyTypes:[],stages:[],sources:[]};
+  if(!card||typeof card!=='object')return {roles:[],inflicts:[],payoffs:[],energyTypes:[],stages:[],sources:[],conditionalTypes:[],activationEnergyTypes:[]};
   const saved=cache.get(card);if(saved)return saved;
   const roles=new Set(),inflicts=new Set(),payoffs=new Set(),energyTypes=new Set(),stages=new Set(),sources=new Set(),requiredTeams=new Set(),preferredTeams=new Set();
   const effects=[card.effect,...(card.attacks||[]).map(a=>a.effect),...(Array.isArray(card.abilities)?card.abilities:card.ability?[card.ability]:[]).map(a=>a.effect)];
@@ -78,6 +78,25 @@
   effects.forEach(walk);
   const texts=[card.printedRules,card.text,...(card.attacks||[]).map(a=>a.text),...(card.abilities||[]).map(a=>a.text)].filter(Boolean).join(' ');
   const low=texts.toLowerCase();
+  // Conditional type-changing Bodies are not printed attack costs. Record
+  // their trigger Energy separately so a themed deck can activate them, and
+  // distinguish a *possible* secondary type from a permanently printed type.
+  const conditionalTypes=[],activationEnergyTypes=new Set();
+  for(const ability of card.abilities||[]){
+   if(!/^dual armou?r$/i.test(String(ability.name||'')))continue;
+   const text=String(ability.text||'');
+   const trigger=/has any (Grass|Fire|Water|Lightning|Psychic|Fighting|Darkness|Metal) Energy attached/i.exec(text);
+   const grant=/is both (Grass|Fire|Water|Lightning|Psychic|Fighting|Darkness|Metal) and (Grass|Fire|Water|Lightning|Psychic|Fighting|Darkness|Metal) type/i.exec(text);
+   if(!trigger||!grant)continue;
+   const req=trigger[1][0].toUpperCase()+trigger[1].slice(1).toLowerCase();
+   activationEnergyTypes.add(req);
+   energyTypes.add(req);
+   for(const t of [grant[1],grant[2]]){
+    const name=t[0].toUpperCase()+t.slice(1).toLowerCase();
+    if(!(card.types||[]).includes(name))conditionalTypes.push({type:name,requiresEnergy:req});
+   }
+  }
+
   // Prefer positive action descriptions. The word "Asleep" in "can't be
   // Asleep" is neither an inflicter nor a Sleep payoff.
   for(const [phrase,status] of [['asleep','sleep'],['poisoned','poison'],['burned','burn'],['paralyzed','paralysis'],['confused','confusion']]){
@@ -125,11 +144,11 @@
   // Shuffle/discard language in Supporter reminder text does NOT disrupt opponents.
   if(card.id==='ex8-87')roles.delete('disruption');
   if(card.kind==='pokemon')for(const t of card.types||[])sources.add(t);
-  const result=Object.freeze({roles:[...roles],inflicts:[...inflicts],payoffs:[...payoffs],energyTypes:[...energyTypes],stages:[...stages],sources:[...sources],requiredTeams:[...requiredTeams],preferredTeams:[...preferredTeams]});
+  const result=Object.freeze({roles:[...roles],inflicts:[...inflicts],payoffs:[...payoffs],energyTypes:[...energyTypes],stages:[...stages],sources:[...sources],conditionalTypes,activationEnergyTypes:[...activationEnergyTypes],requiredTeams:[...requiredTeams],preferredTeams:[...preferredTeams]});
   cache.set(card,result);return result;
  }
  function context(pokemon=[],energy=[],theme='any'){
-  const mons=pokemon.filter(x=>x?.kind==='pokemon'),profile=mons.map(metadata),teams=new Set(mons.flatMap(c=>{const team=c.deckMeta?.team||(c.name?.startsWith("Team Aqua's")?'aqua':c.name?.startsWith("Team Magma's")?'magma':/^(?:Dark |Rocket's )/.test(c.name||'')?'rocket':null);return team?[team]:[];})),statusInflict=new Set(profile.flatMap(p=>p.inflicts)),payoffs=new Set(profile.flatMap(p=>p.payoffs)),types=new Set([...energy,...mons.flatMap(c=>c.types||[])]),stages=new Set(mons.map(c=>c.stage));
+  const mons=pokemon.filter(x=>x?.kind==='pokemon'),profile=mons.map(metadata),teams=new Set(mons.flatMap(c=>{const team=c.deckMeta?.team||(c.name?.startsWith("Team Aqua's")?'aqua':c.name?.startsWith("Team Magma's")?'magma':/^(?:Dark |Rocket's )/.test(c.name||'')?'rocket':null);return team?[team]:[];})),statusInflict=new Set(profile.flatMap(p=>p.inflicts)),payoffs=new Set(profile.flatMap(p=>p.payoffs)),types=new Set([...energy,...mons.flatMap(c=>c.types||[]),...profile.flatMap(m=>m.conditionalTypes.filter(x=>energy.includes(x.requiresEnergy)).map(x=>x.type))]),stages=new Set(mons.map(c=>c.stage));
   return {pokemon:mons,energy:new Set(energy),types,stages,teams,statusInflict,payoffs,theme:THEMES.some(t=>t.id===theme)?theme:'any'};
  }
  function trainerScore(card,ctx){

@@ -102,8 +102,13 @@ test('Mary’s Request draws from deck and exhausts only the Supporter allowance
  assert.equal(ss.handEnergyUsed,false,'Supporter is not a hand Energy attachment');
 });
 test('regression: the EX10 CPU continues through late-game Energy Recycle without a Resume-required exception',()=>{
- const seed=8,player=opp.generate({sets:['ex10'],seed}),enemy=opp.generate({sets:['ex10'],seed:seed+700});
- const s=core.createBattle({format:'classic',playerDeck:player.cards,opponentDeck:enemy.cards,playerEnergyTypes:player.energyTypes,opponentEnergyTypes:enemy.energyTypes,firstSide:'opponent',seed});
+ // Preserve the original long-match reproduction deck IDs. Re-generating
+ // from seed 8 is not a stable fixture when deck-builder rules change: a new
+ // Sunkern mirror can end on turn 19 without exercising late-game recovery.
+ const seed=8;
+ const playerCards=['ex10-51','ex10-35','ex10-51','ex10-35','ex10-51','ex10-35','ex10-51','ex10-53','ex10-36','ex10-53','ex10-36','ex10-46','ex10-46','ex10-94','ex10-89','ex10-81','ex10-86','ex10-87','ex10-84','ex10-94','ex10-94','ex10-94','ex10-89','ex10-89','ex10-89','ex10-81','ex10-81','ex10-81','ex10-86','ex10-86'];
+ const enemyCards=['ex10-76','ex10-16','ex10-76','ex10-16','ex10-76','ex10-16','ex10-76','ex10-59','ex10-43','ex10-59','ex10-43','ex10-46','ex10-46','ex10-94','ex10-89','ex10-81','ex10-86','ex10-87','ex10-84','ex10-94','ex10-94','ex10-94','ex10-89','ex10-89','ex10-89','ex10-81','ex10-81','ex10-81','ex10-86','ex10-86'];
+ const s=core.createBattle({format:'classic',playerDeck:playerCards,opponentDeck:enemyCards,playerEnergyTypes:['Grass'],opponentEnergyTypes:['Grass'],firstSide:'opponent',seed});
  let actions=0;while(s.phase!=='finished'&&actions<170){const side=s.phase==='effectChoice'?s.choiceSide:s.phase==='promote'?s.promotionSide:s.activeSide;const action=ai.chooseAction(s,side,'Intermediate',actions%100);assert.ok(action,'CPU should be able to continue');assert.doesNotThrow(()=>core.applyAction(s,side,action));actions++;}
  assert.ok(actions>75,'the original failure occurred after an extended turn sequence');
 });

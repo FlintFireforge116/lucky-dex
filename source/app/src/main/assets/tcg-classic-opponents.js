@@ -37,11 +37,20 @@
      const result=builder.buildDeck(ALL_PLAYABLE,{style:'random',types:[type],sets:allowed,rarityFocus,basicOnly,theme,randomSeed:(Number(seed)+step*2654435761)>>>0,excludeArchetypes});
      if(!result.ok)continue;
      const legal=classic.validateDeck(result.cards);
-     const energy=decks.analyzeDeck(result.cards).recommendedEnergyTypes;
-     if(!legal.ok||(!['Colorless','Darkness','Metal'].includes(type)&&decks.analyzeDeck(result.cards,[type]).missingEnergyTypes.length)||!result.cards.some(id=>classic.cardById(id)?.types?.includes(type)))continue;
+     // Preserve the exact legal Energy plan selected by the shared builder:
+     // Stage transitions and conditional Dual Armor need a SECOND Basic type.
+     // Do not replace Fire/Fighting Magcargo with a Fire-only CPU supply.
+     const energy=result.energyTypes;
+     const profile=decks.analyzeDeck(result.cards,energy);
+     const matchesChosenType=result.cards.some(id=>{
+       const card=classic.cardById(id);
+       const dual=decks.dualArmorProfile(card);
+       return card?.kind==='pokemon'&&((card.types||[]).includes(type)||(dual?.types.includes(type)&&energy.includes(dual.energyType)));
+     });
+     if(!legal.ok||profile.missingEnergyTypes.length||!matchesChosenType)continue;
      if(result.cards.some(id=>{const card=classic.cardById(id);return !allowed.includes(card?.setId)&&!((allowed.includes('neo2')||allowed.includes('neo3')||allowed.includes('neo4'))&&['neo1-104','neo1-19'].includes(id));}))continue;
      const archetype=String(result.strategy.match(/· ([^·]+) core/)?.[1]||'Classic TCG').trim();
-     return {ok:true,type,rarityFocus,basicOnly,theme,cards:result.cards.slice(),energyTypes:['Colorless','Darkness','Metal'].includes(type)?result.energyTypes.slice():[type],sets:allowed.slice(),archetype,archetypeKey:result.archetypeKey,name:`${type} · ${archetype}`};
+     return {ok:true,type,rarityFocus,basicOnly,theme,cards:result.cards.slice(),energyTypes:energy.slice(),sets:allowed.slice(),archetype,archetypeKey:result.archetypeKey,name:`${type} · ${archetype}`};
    }
    return {ok:false,error:'No legal Classic CPU deck matches those rarity, evolution and set settings. Try another rarity or more sets.'};
  }
