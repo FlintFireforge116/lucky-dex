@@ -965,14 +965,14 @@
     const art=cardId?cardArtUrl(cardId,pending.discardZone==='opponent'||kind==='opponentHandCard'?'opponent':'player'):'';
     const energy=action.effectEnergyType||null;
     const special=action.effectSpecialEnergyUid&&currentBattle?.sides?.[pending.selectionSide||'player'];
-    const title=action.choiceLabel||card?.name||energy||actionLabel(action,currentBattle,'player');
+    const title=card?.name||action.choiceLabel||energy||actionLabel(action,currentBattle,'player');
     const detail=action.choiceAttackIndex!=null?(card?.attacks||[])[Number(action.choiceAttackIndex)]?.name||`Attack ${Number(action.choiceAttackIndex)+1}`:
       energy?`${energy} Energy`:special?'Special Energy':card?.number!=null?`#${card.number}`:sourceLabel;
-    return {index,cardId,title,detail,art,sourceLabel};
+    return {index,cardId,title,detail,art,sourceLabel,optionLabel:card&&action.choiceLabel?action.choiceLabel:null};
   }
   function choiceCardTileHtml(action,index){
     const model=choiceCardModel(action,index),selected=battleChoiceSelectionIndex===index;
-    return `<button type="button" class="tcgp-live-choice-card ${selected?'selected':''}" data-tcgp-action="select-choice-card" data-action-index="${index}" aria-pressed="${selected}" aria-label="${esc(model.title)} ${esc(model.detail)}">${model.art?`<img src="${esc(model.art)}" alt="${esc(model.title)}">`:`<span class="tcgp-live-choice-placeholder">${esc(model.title)}</span>`}<b>${esc(model.title)}</b><small>${esc(model.detail)}</small></button>`;
+    return `<button type="button" class="tcgp-live-choice-card ${selected?'selected':''}" data-tcgp-action="select-choice-card" data-action-index="${index}" aria-pressed="${selected}" aria-label="${esc(model.title)} ${esc(model.detail)}">${model.art?`<img src="${esc(model.art)}" alt="${esc(model.title)}" loading="lazy" onerror="this.hidden=true;this.nextElementSibling.hidden=false"><span class="tcgp-live-choice-placeholder" hidden>${esc(model.title)}</span>`:`<span class="tcgp-live-choice-placeholder">${esc(model.title)}</span>`}<b>${esc(model.title)}</b><small>${esc(model.optionLabel||model.detail)}</small></button>`;
   }
   function liveEffectChoiceCenterHtml(){
     const battle=currentBattle,pending=battle?.pendingChoice;

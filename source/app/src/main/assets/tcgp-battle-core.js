@@ -400,7 +400,7 @@
       const targetSide=state.sides[p.attackSide||side],slots=p.zone==='bench'?(targetSide.bench||[]):p.zone==='all'?[targetSide.active,...(targetSide.bench||[])].filter(Boolean):[targetSide.active].filter(Boolean);
       for(const slot of slots){const card=data.cardById(slot.cardId);for(const [attackIndex,attack] of (card?.attacks||[]).entries())out.push({type:'effectChoice',choiceTarget:slot===targetSide.active?'active':'bench',choiceBenchIndex:slot.benchSlot,choiceCardId:slot.cardId,choiceAttackIndex:attackIndex});}
     }else if(p.kind==='option'){
-      (p.options||[]).forEach((label,index)=>out.push({type:'effectChoice',choiceOption:index,choiceLabel:label}));
+      (p.options||[]).forEach((label,index)=>out.push({type:'effectChoice',choiceOption:index,choiceLabel:label,...(p.optionCardIds?.[index]?{choiceCardId:p.optionCardIds[index]}:{})}));
     }else if(p.kind==='topDeckCard'){
       const target=state.sides[p.deckSide||side],n=Math.min(Number(p.count||1),target.deck.length),excluded=new Set(p.excludeUids||[]);for(let i=0;i<n;i++){const ref=target.deck[i];if(!excluded.has(ref.uid)&&(!p.allowedKinds||p.allowedKinds.includes(data.cardById(ref.cardId)?.kind))&&(!p.filter||effects.matchesFilter(data.cardById(ref.cardId),p.filter,ref)))out.push({type:'effectChoice',choiceDeckIndex:i,choiceCardId:ref.cardId});}
     }else if(p.kind==='energySource'){

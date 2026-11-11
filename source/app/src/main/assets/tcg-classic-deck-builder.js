@@ -210,6 +210,11 @@ function buildDeck(rows,options={}){
  if(!selectedTypes.length)selectedTypes.push('Fighting');
  const cards=[],counts=new Map();
  function trainerIsUseful(card){
+   if(card?.technicalMachine&&cards.some(id=>id==='ex11-25')){
+     const supported=['ecard1-144','ex5-84','ex5-85','ex5-86'];
+     if(!supported.includes(card.id))return false;
+     if(cards.filter(id=>classic.cardById(id)?.technicalMachine).length>=2)return false;
+   }
    // EX Deoxys Lady Outing searches fresh Basic Energy via the Zone in the
    // approved hybrid format; it must no longer be excluded as a dead card.
    if(['ex8-93','ex8-95'].includes(card?.id)&&!cards.some(id=>{const p=classic.cardById(id);return p?.kind==='pokemon'&&['Stage 1','Stage 2'].includes(p.stage)&&!p.pokemonEx;}))return false;

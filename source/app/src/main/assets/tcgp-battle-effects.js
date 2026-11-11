@@ -4302,7 +4302,7 @@
             else{const i=us.discard.findIndex(ref=>ref.uid===x.ref.uid);if(i<0)return;us.deck.push(...us.discard.splice(i,1));}
             ex11Rule({...e,energyCount:Number(e.energyCount||0)+(isEnergy?1:0),pokemonCount:Number(e.pokemonCount||0)+(!isEnergy?1:0)},{...ctx,resolvingChoice:false});return;}
           if(!remaining){if(isEnergy)ex11Rule({...e,energyCount:3},{...ctx,resolvingChoice:false});else shuffle();return;}
-          if(entries.length)pick('option',{options:entries.map(x=>'Return '+x.label+' to deck'),effect:e});
+          if(entries.length)pick('option',{options:entries.map(x=>'Return '+x.label+' to deck'),optionCardIds:entries.map(x=>x.ref?.cardId||null),effect:e});
           else if(isEnergy)ex11Rule({...e,energyCount:3},{...ctx,resolvingChoice:false});else shuffle();return;
         }
         // Holon Lass examines ONLY the original top N; its skipped cards are shuffled.
@@ -4312,7 +4312,7 @@
           const ref=eligible[Number(c.choiceOption)];if(!ref){shuffle();return;}
           us.hand.push(...us.deck.splice(us.deck.indexOf(ref),1));
           ex11Rule(e,{...ctx,resolvingChoice:false});return;}
-        if(eligible.length&&us.hand.length<Number(us.handLimit||8))pick('option',{options:eligible.map(ref=>'Take '+card(ref).name),effect:e});else shuffle();return;
+        if(eligible.length&&us.hand.length<Number(us.handLimit||8))pick('option',{options:eligible.map(ref=>'Take '+card(ref).name),optionCardIds:eligible.map(ref=>ref.cardId),effect:e});else shuffle();return;
       }
       if(id===96){ // Holon Ruins: once per turn, only with δ Pokémon on board.
         if(!ownBoard.some(p=>card(p)?.deltaSpecies)||!us.deck.length||us.hand.length>=Number(us.handLimit||8))return;
@@ -4351,7 +4351,7 @@
       if(id===98){const sources=[...us.deck.filter(ref=>card(ref)?.trainerType==='Supporter'&&/Holon/.test(card(ref)?.name||'')).map(ref=>({zone:'deck',ref,label:card(ref).name+' (deck)'})),
         ...us.discard.filter(ref=>card(ref)?.trainerType==='Supporter'&&/Holon/.test(card(ref)?.name||'')).map(ref=>({zone:'discard',ref,label:card(ref).name+' (discard)'}))];
         if(ctx.resolvingChoice){if(c.choiceSkip)return;const x=sources[Number(c.choiceOption)];if(!x)return;const zone=us[x.zone],i=zone.findIndex(ref=>ref.uid===x.ref.uid);if(i>=0){us.hand.push(...zone.splice(i,1));if(x.zone==='deck')shuffle();}return;}
-        if(sources.length)pick('option',{options:sources.map(x=>'Take '+x.label)});return;
+        if(sources.length)pick('option',{options:sources.map(x=>'Take '+x.label),optionCardIds:sources.map(x=>x.ref.cardId)});return;
       }
       if(id===99){const top=us.deck.slice(0,7),valid=top.map((ref,index)=>({ref,index,c:card(ref)})).filter(x=>x.c?.kind==='pokemon');
         if(ctx.resolvingChoice){if(c.choiceSkip)return;const ent=valid.find(x=>x.index===Number(c.choiceDeckIndex));if(ent){us.hand.push(...us.deck.splice(ent.index,1));shuffle();}return;}

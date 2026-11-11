@@ -51,7 +51,7 @@
  function metadata(card){
   if(!card||typeof card!=='object')return {roles:[],inflicts:[],payoffs:[],energyTypes:[],stages:[],sources:[],conditionalTypes:[],activationEnergyTypes:[]};
   const saved=cache.get(card);if(saved)return saved;
-  const roles=new Set(),inflicts=new Set(),payoffs=new Set(),energyTypes=new Set(),stages=new Set(),sources=new Set(),requiredTeams=new Set(),preferredTeams=new Set();
+  const roles=new Set(),inflicts=new Set(),conditionalInflicts=new Set(),payoffs=new Set(),energyTypes=new Set(),stages=new Set(),sources=new Set(),requiredTeams=new Set(),preferredTeams=new Set(),requiresTools=new Set();
   const effects=[card.effect,...(card.attacks||[]).map(a=>a.effect),...(Array.isArray(card.abilities)?card.abilities:card.ability?[card.ability]:[]).map(a=>a.effect)];
   const seen=new Set();
   const walk=(e)=>{
@@ -78,6 +78,15 @@
   effects.forEach(walk);
   const texts=[card.printedRules,card.text,...(card.attacks||[]).map(a=>a.text),...(card.abilities||[]).map(a=>a.text)].filter(Boolean).join(' ');
   const low=texts.toLowerCase();
+  if(card.kind==='pokemon'&&/if [^.]*has a technical machine card attached/i.test(texts)){
+   requiresTools.add('technicalMachine');
+   // Do not label conditional status as guaranteed. Porygon2's Machine Burst
+   // only inflicts Asleep + Burned if a Technical Machine is actually attached.
+   for(const attack of card.attacks||[]){if(!/if [^.]*has a technical machine card attached/i.test(attack.text||''))continue;
+    for(const [word,status] of Object.entries({asleep:'sleep',burned:'burn',poisoned:'poison',confused:'confusion',paralyzed:'paralysis'}))
+      if(new RegExp('\\b'+word+'\\b','i').test(attack.text||'')){conditionalInflicts.add(status);inflicts.delete(status);}
+   }
+  }
   // Conditional type-changing Bodies are not printed attack costs. Record
   // their trigger Energy separately so a themed deck can activate them, and
   // distinguish a *possible* secondary type from a permanently printed type.
@@ -131,6 +140,7 @@
    for(const x of override.stages||[])stages.add(x);
    for(const x of override.requiredTeams||[])requiredTeams.add(x);
    for(const x of override.preferredTeams||[])preferredTeams.add(x);
+   for(const x of override.requiresTools||[])requiresTools.add(x);
   }
   // Restrict inferred roles to what these printed Trainers actually accomplish.
   if(card.id==='ex5-92')roles.delete('disruption');
@@ -143,13 +153,17 @@
   // Lady Outing searches eligible Basic Energy from the Classic Zone since C-ENERGY-002.
   // Shuffle/discard language in Supporter reminder text does NOT disrupt opponents.
   if(card.id==='ex8-87')roles.delete('disruption');
+  // The generic printed-text scan above sees the condition name, but these
+  // statuses are not inflicted unless the required Tool is actually present.
+  if(conditionalInflicts.size&&!((card.attacks||[]).some(a=>!/technical machine card/i.test(a.text||'')&&/is now (asleep|burned|poisoned|paralyzed|confused)/i.test(a.text||''))))
+   for(const status of conditionalInflicts)inflicts.delete(status);
   if(card.kind==='pokemon')for(const t of card.types||[])sources.add(t);
-  const result=Object.freeze({roles:[...roles],inflicts:[...inflicts],payoffs:[...payoffs],energyTypes:[...energyTypes],stages:[...stages],sources:[...sources],conditionalTypes,activationEnergyTypes:[...activationEnergyTypes],requiredTeams:[...requiredTeams],preferredTeams:[...preferredTeams]});
+  const result=Object.freeze({roles:[...roles],inflicts:[...inflicts],payoffs:[...payoffs],energyTypes:[...energyTypes],stages:[...stages],sources:[...sources],conditionalTypes,activationEnergyTypes:[...activationEnergyTypes],requiredTeams:[...requiredTeams],preferredTeams:[...preferredTeams],requiresTools:[...requiresTools],conditionalInflicts:[...conditionalInflicts]});
   cache.set(card,result);return result;
  }
  function context(pokemon=[],energy=[],theme='any'){
-  const mons=pokemon.filter(x=>x?.kind==='pokemon'),profile=mons.map(metadata),teams=new Set(mons.flatMap(c=>{const team=c.deckMeta?.team||(c.name?.startsWith("Team Aqua's")?'aqua':c.name?.startsWith("Team Magma's")?'magma':/^(?:Dark |Rocket's )/.test(c.name||'')?'rocket':null);return team?[team]:[];})),statusInflict=new Set(profile.flatMap(p=>p.inflicts)),payoffs=new Set(profile.flatMap(p=>p.payoffs)),types=new Set([...energy,...mons.flatMap(c=>c.types||[]),...profile.flatMap(m=>m.conditionalTypes.filter(x=>energy.includes(x.requiresEnergy)).map(x=>x.type))]),stages=new Set(mons.map(c=>c.stage));
-  return {pokemon:mons,energy:new Set(energy),types,stages,teams,statusInflict,payoffs,theme:THEMES.some(t=>t.id===theme)?theme:'any'};
+  const mons=pokemon.filter(x=>x?.kind==='pokemon'),profile=mons.map(metadata),technicalMachinePresent=pokemon.some(x=>x?.technicalMachine),teams=new Set(mons.flatMap(c=>{const team=c.deckMeta?.team||(c.name?.startsWith("Team Aqua's")?'aqua':c.name?.startsWith("Team Magma's")?'magma':/^(?:Dark |Rocket's )/.test(c.name||'')?'rocket':null);return team?[team]:[];})),statusInflict=new Set(profile.flatMap(p=>[...p.inflicts,...(technicalMachinePresent?p.conditionalInflicts||[]:[])])),payoffs=new Set(profile.flatMap(p=>p.payoffs)),types=new Set([...energy,...mons.flatMap(c=>c.types||[]),...profile.flatMap(m=>m.conditionalTypes.filter(x=>energy.includes(x.requiresEnergy)).map(x=>x.type))]),stages=new Set(mons.map(c=>c.stage));
+  return {pokemon:mons,energy:new Set(energy),types,stages,teams,statusInflict,payoffs,toolPayoffs:new Set(profile.flatMap(p=>p.requiresTools||[])),theme:THEMES.some(t=>t.id===theme)?theme:'any'};
  }
  function trainerScore(card,ctx){
   if(!card||card.kind!=='trainer')return -Infinity;
@@ -195,12 +209,16 @@
   if(ctx.theme==='disruption'&&p.roles.includes('disruption'))score+=42;
   if(p.energyTypes.length)score+=8;
   if(p.preferredTeams.some(t=>ctx.teams?.has(t)))score+=15;
+  // Attack conditional payoff: Machine Burst becomes Sleep + Burn only while
+  // a legal Technical Machine is attached. Prefer compatible Tools in the deck.
+  if(card.technicalMachine&&ctx.toolPayoffs?.has('technicalMachine')&&
+     ['ecard1-144','ex5-84','ex5-85','ex5-86'].includes(card.id))score+=95;
   return score;
  }
  function pokemonThemeScore(card,theme='any'){
   if(!card||card.kind!=='pokemon'||theme==='any')return 0;
   const p=metadata(card);
-  if(['sleep','poison','burn','paralysis'].includes(theme))return (p.inflicts.includes(theme)?130:0)+(p.payoffs.includes(theme)?145:0);
+  if(['sleep','poison','burn','paralysis'].includes(theme))return (p.inflicts.includes(theme)?130:0)+(p.conditionalInflicts?.includes(theme)?90:0)+(p.payoffs.includes(theme)?145:0);
   if(theme==='healing')return (p.roles.includes('healing')?85:0)+(p.roles.includes('stall')?65:0);
   if(theme==='energy')return p.roles.includes('energy')?100:0;
   if(theme==='disruption')return p.roles.includes('disruption')?100:0;
@@ -210,16 +228,16 @@
   if(theme==='any')return true;
   if(card.kind==='pokemon')return pokemonThemeScore(card,theme)>0;
   const p=metadata(card);
-  if(['sleep','poison','burn','paralysis'].includes(theme))return p.inflicts.includes(theme)||p.payoffs.includes(theme);
+  if(['sleep','poison','burn','paralysis'].includes(theme))return p.inflicts.includes(theme)||p.conditionalInflicts?.includes(theme)||p.payoffs.includes(theme);
   if(theme==='healing')return p.roles.includes('healing')||p.roles.includes('stall');
   if(theme==='energy')return p.roles.includes('energy');
   if(theme==='disruption')return p.roles.includes('disruption');
   return false;
  }
  function report(cards,energy=[],theme='any'){
-  const selected=(cards||[]).filter(Boolean),pokemon=selected.filter(c=>c.kind==='pokemon'),trainers=selected.filter(c=>c.kind==='trainer'),ctx=context(pokemon,energy,theme);
+  const selected=(cards||[]).filter(Boolean),pokemon=selected.filter(c=>c.kind==='pokemon'),trainers=selected.filter(c=>c.kind==='trainer'),ctx=context(selected,energy,theme);
   const uniq=a=>[...new Set(a)];
-  const enablers=uniq(selected.filter(c=>metadata(c).inflicts.includes(theme)).map(c=>c.name)),payoffs=uniq(selected.filter(c=>metadata(c).payoffs.includes(theme)).map(c=>c.name));
+  const enablers=uniq(selected.filter(c=>metadata(c).inflicts.includes(theme)||(ctx.toolPayoffs.has('technicalMachine')&&selected.some(x=>x.technicalMachine)&&metadata(c).conditionalInflicts?.includes(theme))).map(c=>c.name)),payoffs=uniq(selected.filter(c=>metadata(c).payoffs.includes(theme)).map(c=>c.name));
   const support=uniq(trainers.filter(c=>metadata(c).roles.some(r=>['draw','search','energy','healing','retreat'].includes(r))).map(c=>c.name)).slice(0,6);
   const dead=uniq(trainers.filter(c=>trainerScore(c,ctx)===-Infinity).map(c=>c.name));
   const warnings=[];if(dead.length)warnings.push('Unsupported support: '+dead.join(', '));

@@ -138,6 +138,7 @@ function parse(n){
  if(card.pokemonStar)roles.add('pokemon-star');
  card.deckMeta=Object.freeze({roles:[...roles],inflicts:[...inflicts],payoffs:[...payoffs],energyTypes:[...energyTypes],
   preferredEnergyTypes:[...preferredEnergyTypes],stages:card.stage?.startsWith('Stage ')?[card.stage]:[],requiredStages:[],
+  requiresTools:n===25?['technicalMachine']:[],
   synergy:[...roles].filter(t=>['energy-acceleration','healing','draw','recovery','search','disruption','snipe','delta-species'].includes(t))});
  const implemented=ready&&(card.attacks||[]).every(a=>effects.supportsEffect(a.effect))&&(card.abilities||[]).every(a=>effects.supportsEffect(a.effect))&&effects.supportsEffect(card.effect||noop);
  return Object.freeze({...card,battleEnabled:implemented,deckEligible:implemented,support:{status:implemented?'FULL':'PARTIAL',reasons:implemented?[]:['Unimplemented printed attack, Power, Body, Trainer or Energy rule']}});

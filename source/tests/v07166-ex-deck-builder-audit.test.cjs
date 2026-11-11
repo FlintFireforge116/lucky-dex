@@ -13,7 +13,9 @@ const rows=classic.CARDS.filter(c=>c.battleEnabled&&c.deckEligible!==false).map(
 const c=id=>classic.cardById(id);
 
 test('Normal and Test Lab Classic card-filter menu derives set list from the canonical picker',()=>{
- assert.match(source,/chips\('set',S\.rows\.map\(\(\[value,label\]\)=>\(\{value,label\}\)\)\)/);
+ assert.match(source,/S\.rows\.map\(row=>row\[2\]\)/);
+ assert.match(source,/data-set-era/);
+ assert.match(source,/filter-all-sets/);
  for(const [id,name] of [['ex2','EX Sandstorm'],['ex3','EX Dragon']]){
   assert.ok(picker.rows.some(row=>row[0]===id&&row[1]===name));
   assert.ok(builder.SET_IDS.includes(id)&&opponent.SETS.includes(id));
