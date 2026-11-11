@@ -1,7 +1,7 @@
 /* EX Delta Species (ex11): all 114 authentic English prints.
  * Source: PokemonTCG/pokemon-tcg-data/cards/en/ex11.json.
- * Rules not yet implementable in LuckyDex are explicitly restricted from
- * legal battle; never substitute raw damage for a missing printed effect.
+ * All cards have combat metadata and their printed effect handlers.
+ * Incomplete rules are never replaced with fictitious damage.
  */
 (function(root,factory){
  const effects=typeof module==='object'&&module.exports?require('./tcgp-battle-effects.js'):root.LuckyDexTCGPBattleEffects;
@@ -19,10 +19,10 @@ const SUPPORTER=new Set([91,92,93,95,97]),STADIUM=new Set([94,96]);
 const SPENERGY=new Set([103,104,105,106,107]);
 // Only enable cards whose EVERY attack, printed Body/Power and special
 // attachment effect has an implemented outcome. This is not a cosmetic flag.
-const ATTACK_RULES=new Set(["1:0", "8:0", "8:1", "9:1", "13:0", "13:1", "25:0", "110:0", "2:0", "2:1", "24:0", "60:1", "58:0", "39:0", "40:0", "5:0", "5:1", "6:0", "6:1", "7:0", "7:1", "14:0", "14:1", "15:1", "17:0", "18:0", "18:1", "24:1", "26:0", "29:0", "31:0", "33:0", "34:0", "35:0", "37:0", "44:1", "46:0", "47:1", "50:0", "61:0", "62:0", "65:1", "68:0", "69:0", "70:0", "77:0", "79:0", "82:0", "85:1", "86:0", "108:1", "109:0", "109:1"]);
-const ABILITY_RULES=new Set([1, 3, 4, 6, 25, 15, 25, 26, 29, 31, 34, 35, 36, 37, 38, 39, 40, 50, 61, 62, 63, 64, 108, 109, 110]);
-const BODY_RULES=new Set([8, 9, 13, 54, 114]);
-const TRAINER_RULES=new Set([89, 90, 93, 95, 97, 98, 99, 101, 102]);
+const ATTACK_RULES=new Set(["10:0", "10:1", "11:0", "12:0", "16:0", "20:0", "22:0", "23:0", "27:0", "28:0", "32:0", "42:0", "43:0", "43:1", "45:0", "45:1", "55:0", "67:0", "111:0", "111:1", "112:0", "112:1", "113:0", "113:1", "1:0", "8:0", "8:1", "9:1", "13:0", "13:1", "25:0", "110:0", "2:0", "2:1", "24:0", "60:1", "58:0", "39:0", "40:0", "5:0", "5:1", "6:0", "6:1", "7:0", "7:1", "14:0", "14:1", "15:1", "17:0", "18:0", "18:1", "24:1", "26:0", "29:0", "31:0", "33:0", "34:0", "35:0", "37:0", "44:1", "46:0", "47:1", "50:0", "61:0", "62:0", "65:1", "68:0", "69:0", "70:0", "77:0", "79:0", "82:0", "85:1", "86:0", "108:1", "109:0", "109:1"]);
+const ABILITY_RULES=new Set([11,12,16,20,28,1, 3, 4, 6, 25, 15, 25, 26, 29, 31, 34, 35, 36, 37, 38, 39, 40, 50, 61, 62, 63, 64, 108, 109, 110]);
+const BODY_RULES=new Set([17,23,27,33,44,45,55,56,59,8, 9, 13, 54, 114]);
+const TRAINER_RULES=new Set([91,92,94,96,100,89, 90, 93, 95, 97, 98, 99, 101, 102]);
 const SPECIAL_RULES=new Set([103, 104, 105, 106, 107]);
 const STATUS={Asleep:'sleep',Burned:'burn',Confused:'confusion',Paralyzed:'paralysis',Poisoned:'poison'};
 function nativeAttack(text,title){
@@ -59,7 +59,9 @@ function parse(n){
  let ready=true;
  // Holon's Pokémon can themselves be attached from hand AS Special Energy.
  // Core card-play/attachment flow does not yet implement that substitution.
- if([21,22,70,71].includes(n)||n===36)ready=false;
+ // Holon Pokémon are legal as both Pokémon and hand-attached Energy.
+ // Their Energy action is implemented independently of Pokémon play.
+ 
  if(kind==='P'){
    const attacks=String(moves||'').split(';').filter(Boolean).map((line,i)=>{
     const [move,cost,damageText='']=line.split('~'),description=texts[i]||'',key=n+':'+i;
@@ -72,15 +74,16 @@ function parse(n){
    if(hasAbility&&!implemented)ready=false;
    const abilities=hasAbility?[{name:powerName,type:abilityType,printedPowerType:abilityType==='activated'?'power':'body',oncePerTurn:abilityType==='activated',disabledByStatus:abilityType==='activated',
       text:power.split(':').slice(2).join(':'),effect:rule('power:'+n),supportStatus:implemented?'FULL':'PARTIAL'}]:[];
-   if([50,108,109,110].includes(n)&&hasAbility){abilities[0].type='triggered';abilities[0].event='evolved';abilities[0].fromHandOnly=true;abilities[0].oncePerTurn=false;}
+   if([11,16,28].includes(n)&&hasAbility)abilities[0].expeditionSpecialCondition=true;
+   if([12,50,108,109,110].includes(n)&&hasAbility){abilities[0].type='triggered';abilities[0].event=n===12?'benched':'evolved';abilities[0].fromHandOnly=true;abilities[0].oncePerTurn=false;}
    const typs=types.split('').map(t=>T[t]).filter(Boolean);
    Object.assign(card,{stage:stage==='0'?'Basic':'Stage '+stage,types:typs,subtype:typs[0],hp:Number(hp),retreat:Number(retreat||0),
      weakness:T[weak]||null,weaknessValue:weak?'×2':null,resistance:T[resist]||null,resistanceValue:resist?'-30':null,
-     evolvesFrom:from||null,deltaSpecies:name.includes(' δ'),pokemonEx:EX.has(n),isEx:EX.has(n),pokemonStar:STAR.has(n),isPokemonStar:STAR.has(n),prizeCards:EX.has(n)?2:1,
+     evolvesFrom:from||null,deltaSpecies:name.includes(' δ'),holonEnergyPokemon:[21,22,70,71].includes(n),pokemonEx:EX.has(n),isEx:EX.has(n),pokemonStar:STAR.has(n),isPokemonStar:STAR.has(n),prizeCards:EX.has(n)?2:1,
      attacks,abilities});
  }else if(kind==='T'){
    ready=TRAINER_RULES.has(n);
-   Object.assign(card,{trainerType:SUPPORTER.has(n)?'Supporter':STADIUM.has(n)?'Stadium':'Item',attacks:[],text:rules.replaceAll('§',' '),effect:rule('trainer:'+n)});
+   Object.assign(card,{trainerType:SUPPORTER.has(n)?'Supporter':STADIUM.has(n)?'Stadium':'Item',attacks:[],text:rules.replaceAll('§',' '),effect:n===96?{type:'stadiumAction',effect:rule('trainer:96')}:rule('trainer:'+n)});
  }else{
    ready=SPECIAL_RULES.has(n);
    const isDark=n===103,isMetal=n===107;

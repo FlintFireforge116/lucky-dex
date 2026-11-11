@@ -26,7 +26,7 @@
     const after={...slot,energy:{...(slot.energy||{})},specialEnergy:[...(slot.specialEnergy||[])]};
     if(action.type==='attach'&&energyType)after.energy[energyType]=Number(after.energy[energyType]||0)+1;
     else if(handCard?.basicEnergy)after.energy[handCard.subtype]=Number(after.energy[handCard.subtype]||0)+1;
-    else if(handCard?.specialEnergy)after.specialEnergy.push(ref);
+    else if(handCard?.specialEnergy||handCard?.holonEnergyPokemon)after.specialEnergy.push(handCard?.holonEnergyPokemon?{...ref,provides:['ex11-21','ex11-22'].includes(handCard.id)?{Miracle:2}:{Colorless:1}}:ref);
     else return -100;
     const beforeEnergy=core.effectiveEnergy(state,side,slot),afterEnergy=core.effectiveEnergy(state,side,after);
     const missing=pool=>Math.min(99,...attacks.map(attack=>{
@@ -70,6 +70,8 @@
       return (Number(colorless(theirActive))-Number(colorless(myActive)))*12;
     }
     if(card.id==='neo1-84')return 8; // Ecogym benefits both players.
+    if(card.id==='ex11-94'){const compatible=ss=>slots(ss).filter(p=>data.cardById(p.cardId)?.deltaSpecies&&Object.values(p.energy||{}).some(n=>Number(n)>0)).length;return 9+12*(compatible(mine)-compatible(foe));}
+    if(card.id==='ex11-96'){const hasDelta=ss=>slots(ss).some(p=>data.cardById(p.cardId)?.deltaSpecies);return (hasDelta(mine)?18:0)-(hasDelta(foe)?8:0);}
     // Other Gym cards have situational rules. Keep a Stadium in play rather
     // than cycling through these blindly; replacement requires an advantage.
     return ownerSide===side?9:-5;
@@ -96,6 +98,12 @@
     if(!card)return false;
     if((card.trainerType==='Stadium'||card.trainerSubtype==='Stadium'))return stadiumWorthPlaying(state,side,card);
     if(card.id==='neo3-64')return (s.discard||[]).some(ref=>{const c=data.cardById(ref.cardId);return c?.kind==='trainer'||c?.kind==='pokemon';});
+    if(card.id==='ex11-91')return Object.values(s.energyDiscard||{}).some(n=>Number(n)>0)||(s.discard||[]).some(ref=>data.cardById(ref.cardId)?.kind==='pokemon'||data.cardById(ref.cardId)?.basicEnergy);
+    if(card.id==='ex11-92')return (s.deck||[]).length>0&&s.hand.length<8;
+    if(card.id==='ex11-95')return s.deck.some(ref=>{const c=data.cardById(ref.cardId);return c?.kind==='energy'&&c.subtype==='Metal'||c?.deltaSpecies;});
+    if(card.id==='ex11-97')return foe.hand.length>s.hand.length;
+    if(card.id==='ex11-98')return [...s.deck,...s.discard].some(ref=>data.cardById(ref.cardId)?.name?.startsWith('Holon ')&&data.cardById(ref.cardId)?.trainerType==='Supporter');
+    if(card.id==='ex11-100')return slots(s).length>1;
     if(card.name==='Super Energy Removal')return slots(s).some(x=>attachedCount(x)>0)&&slots(foe).some(x=>attachedCount(x)>=2);
     if(card.name==='Energy Removal')return slots(foe).some(x=>attachedCount(x)>0);
     if(card.name==='Energy Retrieval')return Object.values(s.energyDiscard||{}).some(n=>Number(n)>0)||(s.discard||[]).some(ref=>data.cardById(ref.cardId)?.basicEnergy);
@@ -333,6 +341,15 @@
           }
           return available[0];
         }
+      }
+      // EX Delta Species optional searches and discard recovery should be
+      // completed by the CPU instead of automatically selecting Skip.
+      const usefulEx11=new Set(['ex11:trainer:91','ex11:trainer:92','ex11:trainer:98',
+        'ex11:power:12','ex11:20:0','ex11:45:0','ex11:55:0',
+        'ex11:111:0','ex11:112:0','ex11:113:0']);
+      if(pending.originSide===side&&usefulEx11.has(rule)&&['option','deckCard','pokemon','handCard'].includes(pending.kind)){
+        const available=legal.filter(a=>a.type==='effectChoice'&&!a.choiceSkip);
+        if(available.length)return available[0];
       }
       // Energy Recycle System is a TWO-STAGE choice. Skipping both stages
       // after using the Trainer used to leave the CPU's recovered Energy

@@ -502,6 +502,9 @@
     if(state.format==='classic'&&slot&&toolsOf(slot).some(ref=>['ex3-82','ex8-84'].includes(ref.cardId)))return 0;
     if(state.format==='classic'&&slot&&!data.cardById(slot.cardId)?.pokemonEx&&data.cardById(slot.cardId)?.stage!=='Baby'&&pokemonOn(state.sides[side]).some(p=>p.cardId==='ex8-103'&&!effects.abilitiesSuppressed(state,side,p,data.cardById)))return 0;
     if(state.format==='classic'&&slot&&!data.cardById(slot.cardId)?.pokemonEx&&Number(slot.energy?.Psychic||0)>0&&(slot.specialEnergy||[]).some(r=>r.cardId==='ex11-106'))return 0;
+    if(state.format==='classic'&&slot?.cardId==='ex11-59'&&!effects.abilitiesSuppressed(state,side,slot,data.cardById)){
+      return Math.max(0,Number(data.cardById(slot.cardId)?.retreat||0)-(state.sides[side].bench||[]).filter(p=>data.cardById(p.cardId)?.name==='Beldum δ').length);
+    }
     if(state.format==='classic'&&slot?.cardId==='ex8-26'&&Number(slot.energy?.Metal||0)>0&&!effects.abilitiesSuppressed(state,side,slot,data.cardById))return 0;
     if(state.format==='classic'&&slot?.cardId==='ex8-33'&&Number(slot.energy?.Water||0)>0&&!effects.abilitiesSuppressed(state,side,slot,data.cardById))return 0;
     if(state.format==='classic'&&data.cardById(slot?.cardId)?.name==='Solrock'&&pokemonOn(state.sides[side]).some(p=>p.cardId==='ex8-36'&&!effects.abilitiesSuppressed(state,side,p,data.cardById)))return 0;
@@ -589,6 +592,11 @@
     if(slot?.cardId==='ex6-105'&&!effects.abilitiesSuppressed(state,side,slot,data.cardById)){const total=Object.entries(next).filter(([type])=>!type.startsWith('__')).reduce((n,[,amount])=>n+Number(amount||0),0);return {Fire:total};}
     if(['ecard1-29','ecard1-66'].includes(slot?.cardId)&&!effects.abilitiesSuppressed(state,side,slot,data.cardById)){
       return {Darkness:Object.values(next).reduce((n,x)=>n+Number(x||0),0)};
+    }
+    if(state.format==='classic'&&state.stadium?.cardId==='ex11-94'&&data.cardById(slot?.cardId)?.deltaSpecies){
+      // Every Basic Energy attached to δ Pokémon provides its original type OR
+      // Metal (not both simultaneously). Preserve token identity in cost checks.
+      next.__towerBasics={...slot.energy};
     }
     if(slot?.cardId==='gym1-47'){const count=Object.values(next).reduce((n,x)=>n+Number(x||0),0);return {Grass:count};}const override=slot?.energyTypeOverride;if(override&&(override.expiresTurn==null||state.turnNumber<=override.expiresTurn)){const total=Object.values(next).reduce((a,b)=>a+Number(b||0),0);return {[override.type]:total};}return next;}
   function spendRetreatEnergy(state,side,slot,cost){
@@ -762,7 +770,8 @@
     {const evolutionLocked=effects.isActionLocked(state,side,'Evolution',data.cardById),activeEvolutionLocked=effects.isActionLocked(state,side,'EvolutionActive',data.cardById);
       const ex4Cradily=state.format==='classic'&&state.sides[side==='player'?'opponent':'player'].active?.cardId==='ex4-90'&&!effects.abilitiesSuppressed(state,side==='player'?'opponent':'player',state.sides[side==='player'?'opponent':'player'].active,data.cardById);
       const primalAura=state.format==='classic'&&['player','opponent'].some(w=>['ecard3-14','ecard3-H13'].includes(state.sides[w].active?.cardId)&&!effects.abilitiesSuppressed(state,w,state.sides[w].active,data.cardById));
-      if(!evolutionLocked)actions.push(...evolutionActions(state,side).filter(x=>(!activeEvolutionLocked||x.target!=='active')&&(!primalAura||x.target!=='bench')&&(!ex4Cradily||x.target!=='active')));}
+      const bound=state.format==='classic'&&pokemonOn(state.sides[side==='player'?'opponent':'player']).some(p=>p.cardId==='ex11-23'&&!effects.abilitiesSuppressed(state,side==='player'?'opponent':'player',p,data.cardById));
+      if(!evolutionLocked)actions.push(...evolutionActions(state,side).filter(x=>(!activeEvolutionLocked||x.target!=='active')&&(!primalAura||x.target!=='bench')&&(!ex4Cradily||x.target!=='active')&&(!bound||!slotForTarget(s,x.target,x.benchIndex)?.conditions?.sleep)));}
 
     s.hand.forEach((ref,handIndex)=>{
       const card = data.cardById(ref.cardId);
@@ -780,7 +789,7 @@
       if(state.format==='classic'&&state.stadium?.cardId==='gym1-103'&&['Energy Removal','Super Energy Removal'].includes(card.name)&&s.hand.length<3)return;
       if(state.format==='classic'&&state.sides[side==='player'?'opponent':'player'].active?.cardId==='ex5-100'&&type!=='Supporter'&&!effects.abilitiesSuppressed(state,side==='player'?'opponent':'player',state.sides[side==='player'?'opponent':'player'].active,data.cardById))return;
       // Holon Supporters discard an additional hand card as a mandatory cost.
-      if(state.format==='classic'&&['ex11-93','ex11-95','ex11-97'].includes(card.id)&&s.hand.length<2)return;
+      if(state.format==='classic'&&['ex11-91','ex11-92','ex11-93','ex11-95','ex11-97'].includes(card.id)&&s.hand.length<2)return;
       if(card.id==='ex5-92'&&s.hand.length>7)return;
       // Pow! Hand Extension is playable only while behind on Prizes and with
       // an opposing Benched Pokémon available for either printed choice.
@@ -828,8 +837,13 @@
     // Classic: normal Energy Zone attachment and once-per-turn hand Energy
     // attachment are INDEPENDENT. Hand-attached Basic and Special both count
     // toward the hand attachment; card effects can separately accelerate.
-    if(state.format==='classic'){s.hand.forEach((ref,handIndex)=>{const card=data.cardById(ref.cardId);if(!(card?.specialEnergy||card?.basicEnergy)||card.battleEnabled===false&& !card.basicEnergy)return;if(card?.specialEnergy&&effects.isActionLocked(state,side,'SpecialEnergy',data.cardById))return;if(s.handEnergyUsed)return;const validEnergyTarget=slot=>slot&&!slot.gymEnergyLock&&(card.id!=='neo4-16'||/^(?:Light |Shining )/.test(data.cardById(slot.cardId)?.name||''));const aqValid=(slot)=>{if(!validEnergyTarget(slot))return false;const mon=data.cardById(slot.cardId),energyType=card.basicEnergy?card.subtype:card.effect?.provides&&Object.keys(card.effect.provides)[0];
+    if(state.format==='classic'){s.hand.forEach((ref,handIndex)=>{const card=data.cardById(ref.cardId);if(!(card?.specialEnergy||card?.basicEnergy||card?.holonEnergyPokemon)||card.battleEnabled===false&& !card.basicEnergy)return;if((card?.specialEnergy||card?.holonEnergyPokemon)&&effects.isActionLocked(state,side,'SpecialEnergy',data.cardById))return;if(s.handEnergyUsed)return;const validEnergyTarget=slot=>slot&&!slot.gymEnergyLock&&(card.id!=='neo4-16'||/^(?:Light |Shining )/.test(data.cardById(slot.cardId)?.name||''));const aqValid=(slot)=>{if(!validEnergyTarget(slot))return false;const mon=data.cardById(slot.cardId),energyType=card.basicEnergy?card.subtype:card.effect?.provides&&Object.keys(card.effect.provides)[0];
        if(Number(slot?.ex5NoHandEnergyUntil||0)>=state.turnNumber)return false;
+       // Holon's Stage 1 Pokémon may be attached as Energy only when the
+       // recipient already holds an Energy CARD; one card is returned on attach.
+       if(card.holonEnergyPokemon&&['ex11-21','ex11-22'].includes(card.id)&&!(Object.values(slot.energy||{}).some(n=>Number(n)>0)||(slot.specialEnergy||[]).length))return false;
+       const opposing=side==='player'?'opponent':'player';
+       if(slot.conditions?.sleep&&pokemonOn(state.sides[opposing]).some(p=>p.cardId==='ex11-23'&&!effects.abilitiesSuppressed(state,opposing,p,data.cardById)))return false;
        if(card.id==='ex4-86'&&!mon?.name?.startsWith("Team Aqua's"))return false;
        if(card.id==='ex7-95'&&!/^(?:Dark |Rocket's )/.test(mon?.name||''))return false;
        if(['ex8-93','ex8-95'].includes(card.id)&&!['Stage 1','Stage 2'].includes(mon?.stage))return false;
@@ -851,7 +865,7 @@
        if(['ecard2-37','ecard2-H25'].includes(slot.cardId)&&card.basicEnergy&&energyType==='Water'&&Object.values(slot.energy||{}).every(n=>Number(n)===0)&&!(slot.specialEnergy||[]).length)return false;
        return true;};
        if(aqValid(s.active))actions.push({type:'attachSpecial',handIndex,cardId:card.id,target:'active'});for(const slot of s.bench)if(aqValid(slot))actions.push({type:'attachSpecial',handIndex,cardId:card.id,target:'bench',benchIndex:Number(slot.benchSlot)});});}
-    if(state.stadium){const stadium=data.cardById(state.stadium.cardId),actionEffect=stadium?.effect?.type==='stadiumAction'?stadium.effect.effect:null,used=s.stadiumActionUsedTurn===state.turnNumber&&s.stadiumActionUsedUid===state.stadium.uid;if(actionEffect&&!used&&effectChoices(actionEffect,effectContext(state,side)).length)actions.push({type:'stadiumAction',cardId:stadium.id});}
+    if(state.stadium){const stadium=data.cardById(state.stadium.cardId),actionEffect=stadium?.effect?.type==='stadiumAction'?stadium.effect.effect:null,used=s.stadiumActionUsedTurn===state.turnNumber&&s.stadiumActionUsedUid===state.stadium.uid;if(actionEffect&&!used&&(stadium?.id!=='ex11-96'||s.deck.length&&s.hand.length<Number(s.handLimit||8)&&pokemonOn(s).some(p=>data.cardById(p.cardId)?.deltaSpecies))&&effectChoices(actionEffect,effectContext(state,side)).length)actions.push({type:'stadiumAction',cardId:stadium.id});}
     if (s.energyAvailable && !s.energyUsed){
       if (s.active&&!s.active.gymEnergyLock&&!effects.isActionLocked(state,side,'EnergyActive',data.cardById)) actions.push({type:'attach',target:'active'});
       s.bench.forEach(slot=>{if(slot&&!slot.gymEnergyLock)actions.push({type:'attach',target:'bench',benchIndex:Number(slot.benchSlot)});});
@@ -878,7 +892,7 @@
         for(const target of effectChoices(ability.effect,effectContext(state,side,{},source))){const a={...base};if(target.target)a.effectTarget=target.target;if(target.benchIndex!=null)a.effectBenchIndex=target.benchIndex;actions.push(a);}
       });
     }
-    if (s.active&&!conditions.paralysis){
+    if (s.active&&!conditions.paralysis&&Number(s.active.ex11AttackLockUntil||0)!==Number(state.turnNumber)){
       for(const entry of attackOptions(state,side)){
         const {cardId:attackCardId,attackIndex,attack}=entry;
         if ((attack.gxAttack||/\bGX\b/i.test(attack.name||''))&&s.gxAttackUsed)continue;
@@ -964,6 +978,14 @@
       for(const t of typhlosions)for(const x of actives){x.slot.damage=Number(x.slot.damage||0)+10;state.log.push({type:'ex10BurningAura',side:t.side,target:x.slot.cardId,amount:10});}
       for(const {side,slot} of actives)if(slot.cardId==='ex10-9'&&!effects.abilitiesSuppressed(state,side,slot,data.cardById))for(const player of ['player','opponent'])for(const mon of pokemonOn(state.sides[player])){
         if(data.cardById(mon.cardId)?.pokemonEx||effects.healingIsBlocked(state,mon,data.cardById))continue;mon.damage=Math.max(0,Number(mon.damage||0)-10);
+      }
+    }
+    if(state.format==='classic')for(const who of ['player','opponent']){
+      const board=state.sides[who],opponent=state.sides[who==='player'?'opponent':'player'];
+      for(const p of pokemonOn(board)){
+        if(effects.abilitiesSuppressed(state,who,p,data.cardById)||p!==board.active)continue;
+        if(p.cardId==='ex11-27')for(const target of pokemonOn(opponent).filter(s=>data.cardById(s.cardId)?.pokemonEx))target.damage=Number(target.damage||0)+10;
+        if(p.cardId==='ex11-33')for(const target of pokemonOn(opponent).filter(s=>(data.cardById(s.cardId)?.abilities||[]).some(ab=>ab.printedPowerType==='body')))target.damage=Number(target.damage||0)+10;
       }
     }
     if(state.format==='classic')sandstormToolLock(state);
@@ -1517,8 +1539,24 @@
     if(matched.type==='stadiumAction'){const stadium=data.cardById(state.stadium?.cardId),effect=stadium?.effect?.type==='stadiumAction'?stadium.effect.effect:null;if(!effect)throw new Error('No Stadium action is available.');s.stadiumActionUsedTurn=state.turnNumber;s.stadiumActionUsedUid=state.stadium.uid;effects.applyEffect(effect,{...effectContext(state,side,matched),isStadium:true});if(state.phase==='effectChoice')state.pendingChoice.resume=state.pendingChoice.resume||'stadiumAction';else resolveKnockOut(state,null);state.log.push({type:'stadiumAction',side,cardId:stadium.id});return state;}
     if (matched.type === 'attachSpecial'){
       const target=slotForTarget(s,matched.target,matched.benchIndex),[ref]=s.hand.splice(matched.handIndex,1),card=data.cardById(ref?.cardId);
-      if(!target||!ref||!(card?.specialEnergy||card?.basicEnergy))throw new Error('That Energy card attachment is no longer legal.');
-      let provides={};if(card.basicEnergy){target.energy[card.subtype]=Number(target.energy[card.subtype]||0)+1;provides={[card.subtype]:1};}else{target.specialEnergy=target.specialEnergy||[];target.specialEnergy.push(ref);provides={...specialEnergyProvides(ref)};}s.handEnergyUsed=true;
+      if(!target||!ref||!(card?.specialEnergy||card?.basicEnergy||card?.holonEnergyPokemon))throw new Error('That Energy card attachment is no longer legal.');
+      let provides={};if(card.basicEnergy){target.energy[card.subtype]=Number(target.energy[card.subtype]||0)+1;provides={[card.subtype]:1};}else{
+        // Attached Holon Pokémon remain Pokémon cards in every other zone.
+        // Holon's Voltorb/Magnemite = 1 Colorless; evolutions = 2 of any type.
+        if(card.holonEnergyPokemon)ref.provides=['ex11-21','ex11-22'].includes(card.id)?{Miracle:2}:{Colorless:1};
+        target.specialEnergy=target.specialEnergy||[];target.specialEnergy.push(ref);provides={...specialEnergyProvides(ref)};
+      }s.handEnergyUsed=true;
+      if(card.holonEnergyPokemon&&['ex11-21','ex11-22'].includes(card.id)){
+        const eligible=[...Object.entries(target.energy||{}).filter(([,n])=>Number(n)>0).map(([type])=>({type,label:'Return '+type+' Basic Energy'})),
+          ...(target.specialEnergy||[]).filter(r=>r.uid!==ref.uid).map(r=>({uid:r.uid,label:'Return '+data.cardById(r.cardId)?.name}))];
+        if(eligible.length)beginEffectChoice(state,side,target,{kind:'option',side:'self',options:eligible.map(x=>x.label),optional:false,
+          effect:{type:'neoRule',rule:'ex11:holonReturn',eligible,targetUid:target.uid},resume:'trainer'});
+      }
+      // Umbreon δ Delta Moon affects opponents attaching Special Energy from hand.
+      if(card.specialEnergy||card.holonEnergyPokemon){const owner=foeSide,opponent=state.sides[owner];
+        const hasUmbreon=pokemonOn(opponent).some(p=>p.cardId==='ex11-17'&&!effects.abilitiesSuppressed(state,owner,p,data.cardById));
+        if(hasUmbreon&&opponent.ex11DeltaMoonTurn!==state.turnNumber){target.damage=Number(target.damage||0)+10;opponent.ex11DeltaMoonTurn=state.turnNumber;state.log.push({type:'deltaMoon',side:owner,target:target.cardId,amount:10});}}
+
       // Aquapolis hand-attached Energy rules, distinct from the generated
       // one-per-turn Energy Zone.
       if(card.id==='ecard3-142'){

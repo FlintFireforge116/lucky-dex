@@ -18,13 +18,13 @@ function pick(s,fn){assert.equal(s.phase,'effectChoice',JSON.stringify(s.pending
 function finish(s){let n=0;while(s.phase==='effectChoice'&&n++<90)pick(s);assert.notEqual(s.phase,'effectChoice','choice softlock');}
 function effect(s,r){return fx.applyEffect({type:'neoRule',rule:r},{...core.effectContext(s,'player',{},s.sides.player.active),random:()=>0.02});}
 
-test('All 114 printed identities are registered, with PARTIAL cards strictly barred from legal constructed decks',()=>{
- assert.equal(set.CARDS.length,114);assert.equal(new Set(set.CARDS.map(c=>c.id)).size,114);assert.equal(set.coverage().battleEnabled,82);
- for(const c of set.CARDS){assert.equal(data.cardById(c.id)?.id,c.id);assert.ok(c.name);if(!c.battleEnabled){assert.equal(c.deckEligible,false);assert.equal(c.support.status,'PARTIAL');}}
+test('All 114 printed identities are implemented and eligible for legal constructed decks',()=>{
+ assert.equal(set.CARDS.length,114);assert.equal(new Set(set.CARDS.map(c=>c.id)).size,114);assert.equal(set.coverage().battleEnabled,114);assert.equal(set.coverage().partial.length,0);
+ for(const c of set.CARDS){assert.equal(data.cardById(c.id)?.id,c.id);assert.ok(c.name);assert.equal(c.battleEnabled,true);assert.equal(c.deckEligible,true);assert.equal(c.support.status,'FULL');}
  assert.equal(data.cardById('ex11-14')?.evolvesFrom,'Shelgon');assert.deepEqual(data.cardById('ex11-14')?.types,['Fire','Metal']);
 });
 test('Complete Fire, Grass, Darkness and Water delta evolution decks and matching Energy types',()=>{
- const cores=[['Fire','ex11-58','ex11-53','ex11-14'],['Grass','ex11-87','ex11-46','ex11-1'],['Darkness','ex11-79','ex11-24'],['Water','ex11-84','ex11-15']];
+ const cores=[['Fire','ex11-58','ex11-53','ex11-14'],['Grass','ex11-56','ex11-86','ex11-32'],['Darkness','ex11-79','ex11-24'],['Water','ex11-84','ex11-15']];
  for(const [type,...line] of cores){const d=cpu.generate({sets:['ex11'],type,seed:3});assert.ok(d.ok,type+' '+d.error);assert.equal(d.cards.length,30);assert.ok(data.validateDeck(d.cards).ok,type);for(const card of line)assert.ok(d.cards.includes(card),type+' missing '+card);for(const needed of data.cardById(line.at(-1)).attacks.flatMap(a=>[...(a.cost||'')]).map(x=>({R:'Fire',G:'Grass',L:'Lightning',M:'Metal',W:'Water',D:'Darkness',P:'Psychic',F:'Fighting'})[x]).filter(Boolean))assert.ok(d.energyTypes.includes(needed),`${type} missing ${needed}`);}
 });
 test('Holon Energy FF removes Weakness with a basic Fire Energy, but not without it',()=>{
@@ -73,5 +73,5 @@ test('All supported EX Delta Species Pokémon attacks execute and resolve every 
   try{const a=core.legalActions(s,'player').find(a=>a.type==='attack'&&a.attackIndex===i);assert.ok(a,'attack unavailable');core.applyAction(s,'player',a);finish(s);count++;}
   catch(e){throw new Error(c.id+' '+c.attacks[i].name+': '+e.message);}
  }
- assert.equal(count,107);
+ assert.equal(count,147);
 });
