@@ -105,9 +105,13 @@ function parse(n){
  }
  const powerText=String(p[2]||'').toLowerCase();
  if(/search your deck|search your discard/.test(powerText))roles.add('search');
- if(/attach .*energy|move an energy card/.test(powerText))roles.add('energy-acceleration');
+ if(/attach .*energy/.test(powerText))roles.add('energy-acceleration');
+ if(/move (?:an|any number of|a basic) energy cards?/.test(powerText))roles.add('energy-transfer');
  if(/remove \d+ damage counter/.test(powerText))roles.add('healing');
- if(/draw cards|put it into your hand/.test(powerText))roles.add('draw');
+ if(/\bdraw(?: a| \d+)? cards?\b|\bdraw cards until\b/.test(powerText)&&!/your opponent draws/.test(powerText))roles.add('draw'); // Search or opponent-draw does not equal self draw.
+ if(n===108){inflicts.add('burn');inflicts.add('confusion');}
+ if(n===109)roles.add('spread'); // Evolutionary Thunder hits every opposing Pokémon.
+ if(n===110)roles.add('disruption'); // Evolutionary Swirl changes opponent's hand, not ours.
  if(card.deltaSpecies)roles.add('delta-species');
  if([21,22,70,71].includes(n))roles.add('holon-pokemon-as-energy');
  if(n===35||n===36||n===37||n===38||n===39||n===40||n>=61&&n<=64)roles.add('form-change');
@@ -121,6 +125,12 @@ function parse(n){
   if(n===101)roles.add('healing');
  }
  if(card.kind==='energy')roles.add('energy');
+ // Holon Energy remains Colorless, but a deck needs the corresponding Basic
+ // Energy to enable its optional printed protection. These are synergy
+ // preferences, not attack costs and never override a focused attacker.
+ if(n===104){preferredEnergyTypes.add('Fire');preferredEnergyTypes.add('Fighting');}
+ if(n===105){preferredEnergyTypes.add('Grass');preferredEnergyTypes.add('Lightning');}
+ if(n===106){preferredEnergyTypes.add('Water');preferredEnergyTypes.add('Psychic');}
  if(card.pokemonEx)roles.add('pokemon-ex');
  if(card.pokemonStar)roles.add('pokemon-star');
  card.deckMeta=Object.freeze({roles:[...roles],inflicts:[...inflicts],payoffs:[...payoffs],energyTypes:[...energyTypes],

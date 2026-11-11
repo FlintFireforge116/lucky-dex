@@ -4169,9 +4169,26 @@
       }
       if(id===108){status('burn');status('confusion');return;}
       if(id===109){for(const p of foeBoard)p.damage=Number(p.damage||0)+10;return;}
-      if(id===110){ // Vaporeon ex Evolutionary Swirl: shuffle opposing hand, draw up to four.
-        foe.deck.push(...foe.hand.splice(0));ctx.shuffle?.(ctx.state,foe.deck);
-        for(let i=0;i<4;i++)ctx.drawCard?.(foe);return;
+      if(id===110){ // Vaporeon ex: owner may shuffle; opponent decides how many (0–4) to draw.
+        if(e.step==='opponentDraw'){
+          if(ctx.resolvingChoice){
+            if(c.choiceSkip)return;
+            const n=Math.max(0,Math.min(4,Math.floor(Number(c.choiceOption)||0)));
+            for(let i=0;i<n;i++)ctx.drawCard?.(foe);
+            return;
+          }
+          pick('option',{side:'opponent',optional:false,options:Array.from({length:5},(_,n)=>'Draw '+n+' card'+(n===1?'':'s')),
+            effect:e});
+          return;
+        }
+        if(e.step==='confirm'){
+          if(!ctx.resolvingChoice||c.choiceSkip||Number(c.choiceOption)!==1)return;
+          foe.deck.push(...foe.hand.splice(0));ctx.shuffle?.(ctx.state,foe.deck);
+          return ex11Rule({...e,step:'opponentDraw'},{...ctx,resolvingChoice:false});
+        }
+        pick('option',{optional:false,options:['Keep opponent hand unchanged','Shuffle opponent hand into draw deck'],
+          effect:{...e,step:'confirm'}});
+        return;
       }
       return;
     }
@@ -7498,7 +7515,7 @@
         if(key==='108:1'&&['Stage 1','Stage 2'].includes(defender?.stage))damage+=30;
         if(key==='V:0')damage=20+Math.min(60,10*us.discard.filter(ref=>ctx.cardById(ref.cardId)?.kind==='pokemon').length);
         if(key==='X:0'){damage=20*roll(1);let limit=99;while(damage&&limit--){if(roll(1)===0)break;damage+=20;}}
-        if(key==='B:0'||key==='G:0'||key==='L:0'||key==='P:0'||key==='Q:0'||key==='W:0')damage=0;
+        if(key==='B:0'||key==='G:0'||key==='L:0'||key==='P:0'||key==='Q:0')damage=0; // Unown W retains its printed 20 damage while recovering a card.
         pending.push(e);return;
       }
       if(e.type==='neoRule'&&String(e.rule||'').startsWith('ex9:')&&!e.rule.includes(':power:')&&!e.rule.includes(':trainer:')){
@@ -9251,6 +9268,8 @@ if(r==='lastResort')return ss.hand.length===0?[{}]:[];if(r==='surgeSwap')return 
       if(!abilitiesSuppressed(state,defenderSide,defenderSlot,cardById)){
         if(attacker?.pokemonEx&&!defender?.pokemonEx&&Number(defenderSlot.energy?.Lightning||0)>0&&(defenderSlot.specialEnergy||[]).some(r=>r.cardId==='ex11-105'))n=Math.max(0,n-10);
         if(defender?.id==='ex10-42'&&types.some(t=>['Fire','Water'].includes(t)))n=Math.max(0,n-30);
+        if(defender?.id==='ex11-54')n=Math.max(0,n-10); // EX Delta Species Shelgon δ: Exoskeleton.
+        if(defender?.id==='ex11-114'&&types.some(t=>['Fire','Water'].includes(t)))n=Math.max(0,n-30); // Secret Azumarill: Thick Fat.
         if(defender?.id==='ex10-22'&&Array.isArray(defenderSlot.stack)&&defenderSlot.stack.length>1&&(attackerSlot.specialEnergy||[]).length)n=Math.max(0,n-40);
         if(defender?.id==='ex9-90'&&attacker?.stage==='Stage 2')n=Math.max(0,n-30);
         if(defender?.id==='ex9-97'&&attacker?.pokemonEx)n=Math.max(0,n-30);
