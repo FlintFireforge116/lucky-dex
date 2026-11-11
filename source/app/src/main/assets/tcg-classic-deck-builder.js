@@ -310,6 +310,25 @@ function buildDeck(rows,options={}){
    const energyCard=classic.cardById(SPECIAL_COST_CARDS[symbol]);
    if(energyCard&&allowedInSetPool(energyCard,scope))add(energyCard,Math.min(4,Math.max(needed*2,2)));
  }
+ // Printed Special Energy dependencies must be chosen before generic draw
+ // Trainers fill all 30 card slots. In the hybrid format the Basic Energy
+ // triggers are fulfilled by the separately configured Energy Zone.
+ const energySupportContext=()=>synergy.context(cards.map(classic.cardById).filter(Boolean),selectedTypes,theme,main);
+ const rankedHolon=pool.filter(c=>c.specialEnergy&&/^Holon Energy (?:FF|GL|WP)$/.test(c.name||''))
+   .map(card=>({card,score:synergy.specialEnergyScore(card,energySupportContext())}))
+   .filter(x=>x.score>0).sort((a,b)=>b.score-a.score||a.card.id.localeCompare(b.card.id));
+ if(rankedHolon.length){
+   const strongest=rankedHolon[0],ctx=energySupportContext(),payoff=ctx.specialEnergyPayoffs.has('holon-energy');
+   // Two useful copies for Rayquaza / Castform payoff builds; otherwise one
+   // protective copy. Never pollute a deck with inactive Energy variants.
+   const total=Math.min(payoff?2:1,Math.max(0,2-cards.filter(id=>/^Holon Energy (?:FF|GL|WP)$/.test(classic.cardById(id)?.name||'')).length));
+   let remain=total;
+   for(const {card,score} of rankedHolon){
+     if(!remain)break;
+     if(score<strongest.score-80&&(!ctx.specialEnergyPayoffs.has('holon-energy')||score<150))continue;
+     remain-=add(card,Math.min(remain,room(card)));
+   }
+ }
  // Stage 2 decks value Breeder; add it before generic staples when owned.
  if(cards.map(classic.cardById).some(c=>c?.stage==='Stage 2')){const breeder=classic.cardById('base1-76');if(breeder&&scope.includes(breeder.setId))add(breeder,Math.min(2,room(breeder)));}
  if(focus&&scope.includes(focus.setId)&&focus.kind!=='pokemon')add(focus,Math.min(2,room(focus)));
@@ -373,7 +392,7 @@ function buildDeck(rows,options={}){
  for(const [id] of supports){if(cards.length>=30||gymAdded>=4)break;gymAdded+=add(classic.cardById(id),1);}
  for(const [id,want] of STAPLES){const card=classic.cardById(id);if(card&&scope.includes(card.setId)){const already=cards.filter(cid=>classicCardName(classic.cardById(cid)?.name)===classicCardName(card.name)).length;add(card,Math.min(Math.max(0,want-already),room(card)));}if(cards.length>=30)break;}
  // Fallback through remaining owned Trainers first, then compatible Basics. This remains legal but avoids stranded evolutions.
- const trainerFallback=pool.filter(c=>(c.kind==='trainer'||c.specialEnergy&&(!isDiscoveryEnergySupply(c,scope)||specialNeeds[c.id==='neo1-104'?'D':'M']>0))&&trainerIsUseful(c)).sort((a,b)=>synergy.trainerScore(b,supportContext())-synergy.trainerScore(a,supportContext())||Number(a.number)-Number(b.number));
+ const trainerFallback=pool.filter(c=>(c.kind==='trainer'||c.specialEnergy&&!/^Holon Energy (?:FF|GL|WP)$/.test(c.name||'')&&(!isDiscoveryEnergySupply(c,scope)||specialNeeds[c.id==='neo1-104'?'D':'M']>0))&&trainerIsUseful(c)).sort((a,b)=>synergy.trainerScore(b,supportContext())-synergy.trainerScore(a,supportContext())||Number(a.number)-Number(b.number));
  for(const c of trainerFallback){while(cards.length<30&&room(c)>0){if(!add(c,1))break;}if(cards.length>=30)break;}
  const cohesiveBasic=c=>{
   if(options._allowSecondType===true&&!requestedEnergy.length)return true;
@@ -385,7 +404,7 @@ function buildDeck(rows,options={}){
  if(cards.length<30&&!requestedEnergy.length){for(const c of pokemonPool.filter(c=>c.stage==='Basic').sort((a,b)=>Number(matchesRarity(b,rarityFocus,basicOnly))-Number(matchesRarity(a,rarityFocus,basicOnly)))){if(!canFitEnergy(c)||!cohesiveBasic(c)||(!basicOnly&&familyRoot(c,evolutionPool)!==mainRoot&&hasKnownEvolution(c)))continue;while(cards.length<30&&room(c)>0){if(!add(c,1))break;}if(cards.length>=30)break;}}
  // Final conservative fill: respect the planned mono/explicit dual Energy profile;
  // only the sparse-inventory rescue is allowed a second otherwise unrequested type.
- if(cards.length<30){for(const c of pool.filter(c=>(c.kind==='trainer'||c.specialEnergy&&(!isDiscoveryEnergySupply(c,scope)||specialNeeds[c.id==='neo1-104'?'D':'M']>0)||c.stage==='Basic')&&trainerIsUseful(c))){while(cards.length<30&&room(c)>0){const trial=[...cards,c.id],profile=decks.analyzeDeck(trial).recommendedEnergyTypes;if(options._allowSecondType===true&&!requestedEnergy.length?profile.length>2:!profile.every(t=>plannedEnergy.includes(t)))break;if(!add(c,1))break;}if(cards.length>=30)break;}}
+ if(cards.length<30){for(const c of pool.filter(c=>(c.kind==='trainer'||c.specialEnergy&&!/^Holon Energy (?:FF|GL|WP)$/.test(c.name||'')&&(!isDiscoveryEnergySupply(c,scope)||specialNeeds[c.id==='neo1-104'?'D':'M']>0)||c.stage==='Basic')&&trainerIsUseful(c))){while(cards.length<30&&room(c)>0){const trial=[...cards,c.id],profile=decks.analyzeDeck(trial).recommendedEnergyTypes;if(options._allowSecondType===true&&!requestedEnergy.length?profile.length>2:!profile.every(t=>plannedEnergy.includes(t)))break;if(!add(c,1))break;}if(cards.length>=30)break;}}
  if(cards.length!==30){
    // Sparse themed pools can choose an awkward first core that leaves too few
    // compatible fillers. Retry distinct archetypes rather than handing back an

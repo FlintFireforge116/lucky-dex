@@ -91,6 +91,19 @@ function parse(n){
      effect:{type:'specialEnergy',provides:isDark?{Darkness:1}:isMetal?{Metal:1}:{Colorless:1}},text:rules.replaceAll('§',' ')});
  }
  const roles=new Set(),inflicts=new Set(),payoffs=new Set(),energyTypes=new Set(),preferredEnergyTypes=new Set();
+ // The two printed Basic-Energy triggers on each Holon Special Energy are
+ // independent, do not change its Colorless supply, and never benefit Pokémon-ex.
+ const HOLON_CONDITIONS={
+  104:[['Fire','no-weakness'],['Fighting','ignore-resistance']],
+  105:[['Grass','prevent-special-conditions'],['Lightning','reduce-pokemon-ex-damage-10']],
+  106:[['Water','prevent-opponent-attack-effects'],['Psychic','free-retreat']]
+ };
+ const specialEnergyConditions=(HOLON_CONDITIONS[n]||[]).map(([basicEnergy,benefit])=>({basicEnergy,benefit,excludePokemonEx:true}));
+ const printedHolon=[...(card.attacks||[]).map(a=>a.text||''),...(card.abilities||[]).map(a=>a.text||'')].join(' ');
+ const specialEnergyPayoffs=card.kind==='pokemon'&&/\b(?:as long as|if|for each)[^.]*?Holon Energy\b/i.test(printedHolon)?['holon-energy']:[];
+ const specialEnergySearches=card.kind==='pokemon'&&/search your deck for a Holon Energy card/i.test(printedHolon)?['holon-energy']:[];
+ if(specialEnergyPayoffs.length)roles.add('holon-energy-payoff');
+ if(specialEnergySearches.length)roles.add('holon-energy-search');
  for(const atk of card.attacks||[]){
   for(const ch of atk.cost||'')if(ch!=='C'&&T[ch])energyTypes.add(T[ch]);
   const lower=atk.text.toLowerCase();
@@ -137,7 +150,7 @@ function parse(n){
  if(card.pokemonEx)roles.add('pokemon-ex');
  if(card.pokemonStar)roles.add('pokemon-star');
  card.deckMeta=Object.freeze({roles:[...roles],inflicts:[...inflicts],payoffs:[...payoffs],energyTypes:[...energyTypes],
-  preferredEnergyTypes:[...preferredEnergyTypes],stages:card.stage?.startsWith('Stage ')?[card.stage]:[],requiredStages:[],
+  preferredEnergyTypes:[...preferredEnergyTypes],specialEnergyConditions,specialEnergyPayoffs,specialEnergySearches,stages:card.stage?.startsWith('Stage ')?[card.stage]:[],requiredStages:[],
   requiresTools:n===25?['technicalMachine']:[],
   synergy:[...roles].filter(t=>['energy-acceleration','healing','draw','recovery','search','disruption','snipe','delta-species'].includes(t))});
  const implemented=ready&&(card.attacks||[]).every(a=>effects.supportsEffect(a.effect))&&(card.abilities||[]).every(a=>effects.supportsEffect(a.effect))&&effects.supportsEffect(card.effect||noop);

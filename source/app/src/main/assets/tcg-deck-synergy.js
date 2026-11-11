@@ -51,7 +51,7 @@
  function metadata(card){
   if(!card||typeof card!=='object')return {roles:[],inflicts:[],payoffs:[],energyTypes:[],stages:[],sources:[],conditionalTypes:[],activationEnergyTypes:[]};
   const saved=cache.get(card);if(saved)return saved;
-  const roles=new Set(),inflicts=new Set(),conditionalInflicts=new Set(),payoffs=new Set(),energyTypes=new Set(),stages=new Set(),sources=new Set(),requiredTeams=new Set(),preferredTeams=new Set(),requiresTools=new Set();
+  const roles=new Set(),inflicts=new Set(),conditionalInflicts=new Set(),payoffs=new Set(),energyTypes=new Set(),stages=new Set(),sources=new Set(),requiredTeams=new Set(),preferredTeams=new Set(),requiresTools=new Set(),specialEnergyPayoffs=new Set(),specialEnergySearches=new Set();
   const effects=[card.effect,...(card.attacks||[]).map(a=>a.effect),...(Array.isArray(card.abilities)?card.abilities:card.ability?[card.ability]:[]).map(a=>a.effect)];
   const seen=new Set();
   const walk=(e)=>{
@@ -78,6 +78,13 @@
   effects.forEach(walk);
   const texts=[card.printedRules,card.text,...(card.attacks||[]).map(a=>a.text),...(card.abilities||[]).map(a=>a.text)].filter(Boolean).join(' ');
   const low=texts.toLowerCase();
+  // Any expansion can define Special Energy via its printed type triggers and
+  // named payoffs. The card's own annotations supply exact benefit semantics.
+  const basicEnergyTriggers=new Set();
+  for(const match of texts.matchAll(/\bbasic (Grass|Fire|Water|Lightning|Psychic|Fighting|Darkness|Metal) Energy card attached\b/gi))
+   basicEnergyTriggers.add(match[1][0].toUpperCase()+match[1].slice(1).toLowerCase());
+  if(card.kind==='pokemon'&&/\b(?:as long as|if|for each)[^.]*?Holon Energy\b/i.test(texts))specialEnergyPayoffs.add('holon-energy');
+  if(card.kind==='pokemon'&&/search your deck for a Holon Energy card/i.test(texts))specialEnergySearches.add('holon-energy');
   if(card.kind==='pokemon'&&/if [^.]*has a technical machine card attached/i.test(texts)){
    requiresTools.add('technicalMachine');
    // Do not label conditional status as guaranteed. Porygon2's Machine Burst
@@ -141,6 +148,9 @@
    for(const x of override.requiredTeams||[])requiredTeams.add(x);
    for(const x of override.preferredTeams||[])preferredTeams.add(x);
    for(const x of override.requiresTools||[])requiresTools.add(x);
+   for(const x of override.specialEnergyPayoffs||[])specialEnergyPayoffs.add(x);
+   for(const x of override.specialEnergySearches||[])specialEnergySearches.add(x);
+   for(const condition of override.specialEnergyConditions||[])if(condition.basicEnergy)basicEnergyTriggers.add(condition.basicEnergy);
   }
   // Restrict inferred roles to what these printed Trainers actually accomplish.
   if(card.id==='ex5-92')roles.delete('disruption');
@@ -158,12 +168,34 @@
   if(conditionalInflicts.size&&!((card.attacks||[]).some(a=>!/technical machine card/i.test(a.text||'')&&/is now (asleep|burned|poisoned|paralyzed|confused)/i.test(a.text||''))))
    for(const status of conditionalInflicts)inflicts.delete(status);
   if(card.kind==='pokemon')for(const t of card.types||[])sources.add(t);
-  const result=Object.freeze({roles:[...roles],inflicts:[...inflicts],payoffs:[...payoffs],energyTypes:[...energyTypes],stages:[...stages],sources:[...sources],conditionalTypes,activationEnergyTypes:[...activationEnergyTypes],requiredTeams:[...requiredTeams],preferredTeams:[...preferredTeams],requiresTools:[...requiresTools],conditionalInflicts:[...conditionalInflicts]});
+  const result=Object.freeze({roles:[...roles],inflicts:[...inflicts],payoffs:[...payoffs],energyTypes:[...energyTypes],stages:[...stages],sources:[...sources],conditionalTypes,activationEnergyTypes:[...activationEnergyTypes],requiredTeams:[...requiredTeams],preferredTeams:[...preferredTeams],requiresTools:[...requiresTools],conditionalInflicts:[...conditionalInflicts],basicEnergyTriggers:[...basicEnergyTriggers],specialEnergyConditions:card.deckMeta?.specialEnergyConditions||[],specialEnergyPayoffs:[...specialEnergyPayoffs],specialEnergySearches:[...specialEnergySearches]});
   cache.set(card,result);return result;
  }
- function context(pokemon=[],energy=[],theme='any'){
+ function context(pokemon=[],energy=[],theme='any',primaryPokemon=null){
   const mons=pokemon.filter(x=>x?.kind==='pokemon'),profile=mons.map(metadata),technicalMachinePresent=pokemon.some(x=>x?.technicalMachine),teams=new Set(mons.flatMap(c=>{const team=c.deckMeta?.team||(c.name?.startsWith("Team Aqua's")?'aqua':c.name?.startsWith("Team Magma's")?'magma':/^(?:Dark |Rocket's )/.test(c.name||'')?'rocket':null);return team?[team]:[];})),statusInflict=new Set(profile.flatMap(p=>[...p.inflicts,...(technicalMachinePresent?p.conditionalInflicts||[]:[])])),payoffs=new Set(profile.flatMap(p=>p.payoffs)),types=new Set([...energy,...mons.flatMap(c=>c.types||[]),...profile.flatMap(m=>m.conditionalTypes.filter(x=>energy.includes(x.requiresEnergy)).map(x=>x.type))]),stages=new Set(mons.map(c=>c.stage));
-  return {pokemon:mons,energy:new Set(energy),types,stages,teams,statusInflict,payoffs,toolPayoffs:new Set(profile.flatMap(p=>p.requiresTools||[])),theme:THEMES.some(t=>t.id===theme)?theme:'any'};
+  return {pokemon:mons,primaryPokemon,energy:new Set(energy),types,stages,teams,statusInflict,payoffs,toolPayoffs:new Set(profile.flatMap(p=>p.requiresTools||[])),
+   specialEnergyPayoffs:new Set(profile.flatMap(p=>p.specialEnergyPayoffs||[])),
+   specialEnergySearches:new Set(profile.flatMap(p=>p.specialEnergySearches||[])),
+   theme:THEMES.some(t=>t.id===theme)?theme:'any'};
+ }
+ // Score Special Energy separately from Trainers. Basic Energy triggers only
+ // count if the shared Basic Energy Zone supplies that type; this prevents a
+ // Metal-only deck from pretending it has Grass to activate Holon Energy GL.
+ function specialEnergyScore(card,ctx){
+  if(!card?.specialEnergy)return -Infinity;
+  const meta=metadata(card),eligible=(ctx.pokemon||[]).filter(c=>!c.pokemonEx&&!c.isEx);
+  const conditions=(meta.specialEnergyConditions||[]).filter(c=>ctx.energy.has(c.basicEnergy)&&(!c.excludePokemonEx||eligible.length));
+  const holon=/^Holon Energy (?:FF|GL|WP)$/.test(card.name||'');
+  if(!holon)return -Infinity; // Other Special Energy keeps its own existing rules.
+  // A Basic pre-evolution in a Pokémon-ex core is not a reason to include
+  // protective Energy whose printed effects are disabled on the evolved ex.
+  if(ctx.primaryPokemon?.pokemonEx||ctx.primaryPokemon?.isEx)return -Infinity;
+  const payoff=ctx.specialEnergyPayoffs?.has('holon-energy')&&eligible.length>0;
+  const search=ctx.specialEnergySearches?.has('holon-energy')&&eligible.length>0;
+  if(!conditions.length&&!payoff&&!search)return -Infinity;
+  // Named printed payoff is more important than a generic protective effect.
+  // Extra points reward actual matching Basic types rather than the card's name.
+  return (payoff?150:0)+(search?50:0)+conditions.length*70+(eligible.length?10:0);
  }
  function trainerScore(card,ctx){
   if(!card||card.kind!=='trainer')return -Infinity;
@@ -248,5 +280,5 @@
   return {theme,enablers,payoffs,support,dead,warnings,
     summary:theme==='any'?'Balanced support':THEMES.find(t=>t.id===theme)?.label+' · '+(enablers.length?'Enablers: '+enablers.slice(0,3).join(', '):'Theme role: '+uniq(pokemon.filter(c=>pokemonThemeScore(c,theme)>0).map(c=>c.name)).slice(0,3).join(', '))+(payoffs.length?' · Payoffs: '+payoffs.slice(0,3).join(', '):'')};
  }
- return {THEMES,metadata,context,trainerScore,pokemonThemeScore,matchesTheme,report};
+ return {THEMES,metadata,context,trainerScore,specialEnergyScore,pokemonThemeScore,matchesTheme,report};
 });

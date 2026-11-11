@@ -40,7 +40,20 @@
     // A slot that already uses its best attack gains little from gratuitous
     // Energy. Preserve useful Energy for the next attacker when possible.
     const active=action.target==='active',hasAttack=attacks.length>0;
-    return gain*50+(active?15:5)-effects.totalEnergy(beforeEnergy)*2+(hasAttack?4:-10);
+    let synergyBonus=0;
+    if(handCard?.specialEnergy&&/^Holon Energy (?:FF|GL|WP)$/.test(handCard.name||'')){
+      const conditions=handCard.deckMeta?.specialEnergyConditions||[];
+      const triggers=conditions.filter(rule=>Number(slot.energy?.[rule.basicEnergy]||0)>0);
+      const payoff=card?.deckMeta?.specialEnergyPayoffs?.includes('holon-energy');
+      // This is a real Colorless attachment either way, but protect its
+      // printed benefit: it belongs on an eligible Pokémon, especially a
+      // Rayquaza / Castform whose attack changes when Holon Energy is present.
+      if(card?.pokemonEx||card?.isEx)synergyBonus-=75;
+      else if(payoff)synergyBonus+=110+triggers.length*25;
+      else if(triggers.length)synergyBonus+=40*triggers.length;
+      else synergyBonus-=35;
+    }
+    return gain*50+(active?15:5)-effects.totalEnergy(beforeEnergy)*2+(hasAttack?4:-10)+synergyBonus;
   }
   // Classic trainers with no legal benefit should stay in the CPU hand. The
   // generic battle action list intentionally lets human players experiment;
@@ -428,6 +441,17 @@
         options.sort((a,b)=>attachScore(b,state,side)-attachScore(a,state,side));
         return options[0];
       }
+    }
+    // Expert's two-ply simulation can sometimes pick a legal Holon attachment
+    // solely for its Colorless supply and overlook a printed Body payoff on
+    // another target. Keep the shared attachment evaluation authoritative
+    // whenever that alternative has a clear synergy advantage.
+    if(state.format==='classic'&&selected.type==='attachSpecial'&&
+       /^Holon Energy (?:FF|GL|WP)$/.test(data.cardById(selected.cardId)?.name||'')){
+      const alternatives=legal.filter(a=>a.type==='attachSpecial'&&a.handIndex===selected.handIndex);
+      alternatives.sort((a,b)=>attachScore(b,state,side)-attachScore(a,state,side));
+      if(alternatives.length&&attachScore(alternatives[0],state,side)>attachScore(selected,state,side)+25)
+       return alternatives[0];
     }
     return selected;
   }
