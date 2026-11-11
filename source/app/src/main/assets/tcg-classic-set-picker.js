@@ -3,7 +3,7 @@
 const rows=[
  ['base1','Base Set','Original'],['base2','Jungle','Original'],['base3','Fossil','Original'],['base5','Team Rocket','Original'],['gym1','Gym Heroes','Gym'],['gym2','Gym Challenge','Gym'],
  ['neo1','Neo Genesis','Neo'],['neo2','Neo Discovery','Neo'],['neo3','Neo Revelation','Neo'],['neo4','Neo Destiny','Neo'],
- ['base6','Legendary Collection','Original'],['ecard1','Expedition Base Set','e-Card'],['ecard2','Aquapolis','e-Card'],['ecard3','Skyridge','e-Card'],['ex1','EX Ruby & Sapphire','EX'],['ex2','EX Sandstorm','EX'],['ex3','EX Dragon','EX'],['ex4','EX Team Magma vs Team Aqua','EX'],['ex5','EX Hidden Legends','EX'],['ex6','EX FireRed & LeafGreen','EX'],['ex7','EX Team Rocket Returns','EX'],['ex8','EX Deoxys','EX'],['ex9','EX Emerald','EX'],['ex10','EX Unseen Forces','EX'],['ex11','EX Delta Species','EX'],
+ ['base6','Legendary Collection','Original'],['ecard1','Expedition Base Set','e-Card'],['ecard2','Aquapolis','e-Card'],['ecard3','Skyridge','e-Card'],['ex1','EX Ruby & Sapphire','EX'],['ex2','EX Sandstorm','EX'],['ex3','EX Dragon','EX'],['ex4','EX Team Magma vs Team Aqua','EX'],['ex5','EX Hidden Legends','EX'],['ex6','EX FireRed & LeafGreen','EX'],['ex7','EX Team Rocket Returns','EX'],['ex8','EX Deoxys','EX'],['ex9','EX Emerald','EX'],['ex10','EX Unseen Forces','EX'],['ex11','EX Delta Species','EX'],['ex12','EX Legend Maker','EX'],
  ['SNAPFLORIO','Florio Nature Park','New Pokémon Snap'],['SNAPFOUNJA','Founja Jungle','New Pokémon Snap'],['sv1','Scarlet & Violet','Modern']
 ];
 const names=Object.fromEntries(rows.map(([id,name])=>[id,name]));

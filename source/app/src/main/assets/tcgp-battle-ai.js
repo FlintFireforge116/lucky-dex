@@ -53,6 +53,11 @@
       else if(triggers.length)synergyBonus+=40*triggers.length;
       else synergyBonus-=35;
     }
+    if(handCard?.id==='ex12-82'){
+      const eligible=card?.deckMeta?.specialEnergyPayoffs?.includes('react-energy');
+      const current=(slot.specialEnergy||[]).filter(r=>r.cardId==='ex12-82').length;
+      synergyBonus+=eligible?105-Math.min(2,current)*35:-20;
+    }
     return gain*50+(active?15:5)-effects.totalEnergy(beforeEnergy)*2+(hasAttack?4:-10)+synergyBonus;
   }
   // Classic trainers with no legal benefit should stay in the CPU hand. The
@@ -361,6 +366,22 @@
         'ex11:power:12','ex11:20:0','ex11:45:0','ex11:55:0',
         'ex11:111:0','ex11:112:0','ex11:113:0']);
       if(pending.originSide===side&&usefulEx11.has(rule)&&['option','deckCard','pokemon','handCard'].includes(pending.kind)){
+        const available=legal.filter(a=>a.type==='effectChoice'&&!a.choiceSkip);
+        if(available.length)return available[0];
+      }
+      // Flygon ex Emerge Charge can retrieve two Energy after evolving. React
+      // Energy powers Reactive Blast, so recover it ahead of generic Basic
+      // Energy if the physical special card is in the discard pile.
+      if(pending.originSide===side&&rule==='ex12:power:87'&&pending.kind==='option'){
+        const available=legal.filter(a=>a.type==='effectChoice'&&!a.choiceSkip);
+        const react=available.find(a=>/React Energy/.test(String(pending.options?.[a.choiceOption]||'')));
+        if(react)return react;
+        if(available.length)return available[0];
+      }
+      // EX Legend Maker's printed deck/energy recovery is strategically useful.
+      const usefulEx12=new Set(['ex12:power:8','ex12:power:18','ex12:power:43','ex12:7:0',
+        'ex12:27:0','ex12:29:0','ex12:48:0','ex12:54:0','ex12:61:0','ex12:64:0','ex12:76','ex12:trainer:76','ex12:trainer:77']);
+      if(pending.originSide===side&&usefulEx12.has(rule)){
         const available=legal.filter(a=>a.type==='effectChoice'&&!a.choiceSkip);
         if(available.length)return available[0];
       }

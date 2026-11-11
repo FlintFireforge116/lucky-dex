@@ -33,7 +33,27 @@ function dualArmorProfile(card){
 }
 function analyzeDeck(cards,configured){
  const pokemon=(cards||[]).map(classic.cardById).filter(c=>c?.kind==='pokemon');
- const required=new Set();for(const card of pokemon)for(const attack of card.attacks||[])for(const symbol of String(attack.cost||''))if(ENERGY_CODE[symbol])required.add(ENERGY_CODE[symbol]);
+ // Classify Energy from a viable evolution line, not the union of every
+ // optional move on every stage. Legend Maker Flygon ex needs G/L, while
+ // Trapinch's optional F attack is unnecessary (its C attack still works).
+ // This must agree with the builder, CPU energy validation and saved decks.
+ const normalizeName=x=>classicCardName(x).replace(/\s*δ\s*$/u,'').toLowerCase();
+ const attackCosts=c=>[...new Set((c?.attacks||[]).flatMap(a=>[...String(a.cost||'')].map(sym=>ENERGY_CODE[sym]).filter(Boolean)))];
+ const roots=new Map(pokemon.map(c=>[normalizeName(c.name),c]));
+ const endpoints=pokemon.filter(c=>!pokemon.some(other=>normalizeName(other.evolvesFrom)===normalizeName(c.name)&&
+  Number(other.stage==='Stage 2'?2:other.stage==='Stage 1'?1:0)>Number(c.stage==='Stage 2'?2:c.stage==='Stage 1'?1:0)));
+ const required=new Set();
+ for(const end of endpoints){
+   const line=[end],seen=new Set([end.id]);let prior=end;
+   while(prior.evolvesFrom){const c=roots.get(normalizeName(prior.evolvesFrom));if(!c||seen.has(c.id))break;line.unshift(c);seen.add(c.id);prior=c;}
+   let needs=[...new Set(line.flatMap(attackCosts))];
+   if(needs.length>2){
+     const terminal=attackCosts(end);
+     const viable=terminal.length<=2&&line.every(c=>!(c.attacks||[]).length||c.attacks.some(a=>[...String(a.cost||'')].every(sym=>sym==='C'||!ENERGY_CODE[sym]||terminal.includes(ENERGY_CODE[sym]))));
+     if(viable)needs=terminal;
+   }
+   for(const type of needs)required.add(type);
+ }
  const recommended=ENERGY_TYPES.filter(type=>required.has(type));
  // Prioritise later stages: if the endpoint carries Dual Armor, enable it
  // ahead of an earlier-stage Body when the two-type auto build is tight.

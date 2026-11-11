@@ -27,7 +27,7 @@ const STAPLES=Object.freeze([
  ['base1-83',1], // Maintenance
  ['base1-87',1]  // Pokedex
 ]);
-const SET_IDS=Object.freeze(['base1','base2','base3','base5','gym1','gym2','neo1','neo2','neo3','neo4','base6','ecard1','ecard2','ecard3','ex1','ex2','ex3','ex4','ex5','ex6','ex7','ex8','ex9','ex10','ex11','SNAPFLORIO','SNAPFOUNJA','sv1']);
+const SET_IDS=Object.freeze(['base1','base2','base3','base5','gym1','gym2','neo1','neo2','neo3','neo4','base6','ecard1','ecard2','ecard3','ex1','ex2','ex3','ex4','ex5','ex6','ex7','ex8','ex9','ex10','ex11','ex12','SNAPFLORIO','SNAPFOUNJA','sv1']);
 // Darkness and Metal are already Basic Energy types. Deduplicate before rendering
 // archetype chips so each energy type has exactly one toggle.
 const ARCHETYPE_TYPES=Object.freeze([...new Set([...decks.ENERGY_TYPES,'Colorless'])]);
@@ -77,6 +77,20 @@ function conditionalAttackTypes(card){return synergy.metadata(card)?.conditional
 function conditionalAttackUseful(card,energy){
  const triggers=conditionalAttackTypes(card);
  return !triggers.length||triggers.some(type=>energy.includes(type));
+}
+// Prefer the endpoint attack requirements when early evolutions have optional
+// typed attacks that are not needed to evolve or attack. E.g. Legend Maker
+// Trapinch can use Colorless Pebble Throw until Flygon ex has Grass/Lightning;
+// forcing the stage-one optional Fighting attack adds an impossible 3rd type.
+// Keep all requirements when a 1/2-type union already fits, preserving older
+// mixed-type evolutions and conditional Energy rules.
+function familyEssentialTypes(line){
+ const all=[...new Set((line||[]).flatMap(attackTypes))];
+ if(all.length<=2||!line?.length)return all;
+ const endpoint=attackTypes(line[line.length-1]);
+ if(endpoint.length>2)return all;
+ const canPay=card=>!card.attacks?.length||card.attacks.some(attack=>[...String(attack.cost||'')].every(symbol=>symbol==='C'||!CODE_TO_TYPE[symbol]||endpoint.includes(CODE_TO_TYPE[symbol])));
+ return line.every(canPay)?endpoint:all;
 }
 function familyRoot(card,pool){const line=familyLine(card,pool);return line[0]?.name||card?.name||card?.id||'';}
 function archetypeName(card,pool){const root=familyRoot(card,pool);return ['Mysterious Fossil','Eevee'].includes(root)?card?.name||root:root;}
@@ -137,7 +151,7 @@ function buildDeck(rows,options={}){
  // Competitive considers complete evolution families; Random draws a printed
  // Pokémon from the *entire* owned, battle-ready roster (not the top 14).
  const isEligible=c=>{
-  const line=familyLine(c,evolutionPool),required=[...new Set(line.flatMap(attackTypes))],special=specialCosts(line);
+  const line=familyLine(c,evolutionPool),required=familyEssentialTypes(line),special=specialCosts(line);
   const dual=decks.dualArmorProfile(c),all=[...new Set([...requestedEnergy,...required])];
   if(dual&&!all.includes(dual.energyType)&&all.length<2)all.push(dual.energyType);
   // If the player filters by a type that Dual Armor *grants*, we must be able
@@ -205,7 +219,7 @@ function buildDeck(rows,options={}){
  // the player filters by the final Pokémon's single displayed type (e.g.
  // Neo Scyther Grass -> Scizor Metal, Pupitar Fighting -> Tyranitar Darkness).
  // Never grant that second type to an unrelated support attacker.
- const mainRoot=familyRoot(main,evolutionPool),lineEnergy=[...new Set(mainLine.flatMap(attackTypes))],selectedTypes=[...new Set([...requestedEnergy,...lineEnergy])];
+ const mainRoot=familyRoot(main,evolutionPool),lineEnergy=familyEssentialTypes(mainLine),selectedTypes=[...new Set([...requestedEnergy,...lineEnergy])];
  // A conditional secondary type is useful only if its *actual* activation
  // Energy is available. Add it to the automatic Zone without introducing an
  // irrelevant third type or losing the attack's printed costs.
@@ -249,13 +263,13 @@ function buildDeck(rows,options={}){
  // A stage-two engine wants one more opening Basic than evolution cards.
  if(mainLine.length>=2)add(mainLine[0],1);
  const pokemonCount=()=>cards.map(classic.cardById).filter(c=>c?.kind==='pokemon').length;
- const neededTypes=()=>[...new Set(cards.map(classic.cardById).flatMap(attackTypes))];
+ const neededTypes=()=>[...new Set(cards.map(classic.cardById).flatMap(attackTypes).filter(t=>selectedTypes.includes(t)))];
  // Lock support selection to the featured family's actual Energy plan. The
  // previous <=2-type check splashed unrelated Grass attackers into mono-Water
  // decks, then the automatic Energy Zone gave them 50% Grass draws. A true
  // dual-cost featured family (or two explicitly selected types) still works.
  const plannedEnergy=selectedTypes.slice();
- const canFitEnergy=c=>{const line=familyLine(c,evolutionPool),family=line.length?line:[c],needed=[...new Set([...neededTypes(),...family.flatMap(attackTypes)])],special=specialCosts([...cards.map(classic.cardById).filter(Boolean),...family]);return (options._allowSecondType===true&&!requestedEnergy.length?needed.length<=2:needed.every(t=>plannedEnergy.includes(t)))&&family.every(member=>conditionalAttackUseful(member,plannedEnergy))&&Object.entries(special).every(([sym,n])=>!n||allowedInSetPool(classic.cardById(SPECIAL_COST_CARDS[sym]),scope)&&Number(owned.get(SPECIAL_COST_CARDS[sym])||0)>=n);};
+ const canFitEnergy=c=>{const line=familyLine(c,evolutionPool),family=line.length?line:[c],needed=[...new Set([...neededTypes(),...familyEssentialTypes(family)])],special=specialCosts([...cards.map(classic.cardById).filter(Boolean),...family]);return (options._allowSecondType===true&&!requestedEnergy.length?needed.length<=2:needed.every(t=>plannedEnergy.includes(t)))&&family.every(member=>conditionalAttackUseful(member,plannedEnergy))&&Object.entries(special).every(([sym,n])=>!n||allowedInSetPool(classic.cardById(SPECIAL_COST_CARDS[sym]),scope)&&Number(owned.get(SPECIAL_COST_CARDS[sym])||0)>=n);};
  const chooseCandidate=candidates=>{
    if(!candidates.length)return null;
    if(style==='random'){
@@ -334,6 +348,11 @@ function buildDeck(rows,options={}){
      remain-=add(card,Math.min(remain,room(card)));
    }
  }
+ // EX Legend Maker React Energy supplies Colorless, but printed React bonuses
+ // belong in focused React archetypes, not generic Special Energy filler.
+ const liveReact=cards.map(classic.cardById).some(c=>c?.kind==='pokemon'&&c.deckMeta?.specialEnergyPayoffs?.includes('react-energy'));
+ const reactEnergy=classic.cardById('ex12-82');
+ if(liveReact&&reactEnergy&&allowedInSetPool(reactEnergy,scope))add(reactEnergy,Math.min(3,room(reactEnergy)));
  // Stage 2 decks value Breeder; add it before generic staples when owned.
  if(cards.map(classic.cardById).some(c=>c?.stage==='Stage 2')){const breeder=classic.cardById('base1-76');if(breeder&&scope.includes(breeder.setId))add(breeder,Math.min(2,room(breeder)));}
  if(focus&&scope.includes(focus.setId)&&focus.kind!=='pokemon')add(focus,Math.min(2,room(focus)));
@@ -449,7 +468,7 @@ function buildDeck(rows,options={}){
  }
  const legal=decks.validateDraft(cards,rows,{requireFull:true});if(!legal.ok)return {ok:false,cards,energyTypes:selectedTypes,errors:legal.errors,warnings:[],strategy:''};
  const analysis=decks.analyzeDeck(cards),conditionalDual=requestedEnergy.length===2&&requestedEnergy.every(type=>conditionalAttackTypes(main).includes(type)),
-  energyTypes=requestedEnergy.length===1||conditionalDual?selectedTypes.slice(0,2):(allowMixedEnergy&&requestedEnergy.length===2?requestedEnergy:neededTypes().length?analysis.recommendedEnergyTypes.slice(0,2):selectedTypes.slice(0,2));
+  energyTypes=requestedEnergy.length===1||conditionalDual||lineEnergy.length>=2?selectedTypes.slice(0,2):(allowMixedEnergy&&requestedEnergy.length===2?requestedEnergy:neededTypes().length?analysis.recommendedEnergyTypes.slice(0,2):selectedTypes.slice(0,2));
  const finalEnergy=energyTypes.length?energyTypes:selectedTypes.slice(0,2);
  const specialist=(main.types||[]).find(t=>t==='Darkness'||t==='Metal');
  const zoneLabel=finalEnergy.join(' / ');
