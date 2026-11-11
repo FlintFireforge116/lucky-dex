@@ -215,6 +215,15 @@ function buildDeck(rows,options={}){
    if(['ex8-93','ex8-95'].includes(card?.id)&&!cards.some(id=>{const p=classic.cardById(id);return p?.kind==='pokemon'&&['Stage 1','Stage 2'].includes(p.stage)&&!p.pokemonEx;}))return false;
    if(card?.id==='ex7-95'&&!cards.some(id=>/^(Dark |Rocket's )/.test(classic.cardById(id)?.name||'')))return false;
    if(card?.id==='ex7-94'&&!selectedTypes.some(type=>['Darkness','Metal'].includes(type)))return false;
+   // Energy Root suppresses the wearer's Power/Body. It is legal on such
+   // Pokemon, but an all-abilities deck must not automatically choose it.
+   // Only non-ex, non-Dark, non-owner-named Pokemon are legal wearers.
+   if(card?.id==='ex10-83'){
+     const eligible=cards.map(classic.cardById).filter(p=>p?.kind==='pokemon'&&!p.pokemonEx&&
+       !/^(?:Dark |Rocket's |Team Aqua's |Team Magma's |Brock's |Misty's |Lt\. Surge's |Erika's |Koga's |Blaine's |Sabrina's |Giovanni's )/.test(p.name||''));
+     if(!eligible.length||eligible.every(p=>(p.abilities||[]).length>0))return false;
+   }
+
    if(card?.kind==='trainer'){const ctx=synergy.context(cards.map(classic.cardById).filter(Boolean),selectedTypes,theme);if(synergy.trainerScore(card,ctx)===-Infinity)return false;}
    if(card.name==="Brock's Training Method")return cards.some(id=>{const pokemon=classic.cardById(id);return pokemon?.kind==='pokemon'&&pokemon.name.startsWith("Brock's ");});
    return true;

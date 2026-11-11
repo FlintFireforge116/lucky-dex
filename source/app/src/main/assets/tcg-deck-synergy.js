@@ -166,6 +166,16 @@
   // Desert Ruins damages every high-HP Pokémon-ex between turns, including yours.
   // Avoid undermining our own featured ex line during automatic building.
   if(card.id==='ex5-88'&&ctx.pokemon.some(c=>c.pokemonEx||c.isEx))return -Infinity;
+  // EX Unseen Forces Energy Root trades away the wearer's Poké-Power/Body.
+  // It is legal to equip an ability Pokémon, but not useful in an auto deck
+  // with no legal ability-free holder. Treat it as +HP stall support only
+  // when a recipient actually benefits rather than losing essential synergy.
+  if(card.id==='ex10-83'){
+    const legal=ctx.pokemon.filter(c=>!c.pokemonEx&&!c.isEx&&
+      !/^(?:Dark |Rocket's |Team Aqua's |Team Magma's |Brock's |Misty's |Lt\. Surge's |Erika's |Koga's |Blaine's |Sabrina's |Giovanni's )/.test(c.name||''));
+    if(!legal.some(c=>!((c.abilities||[]).length||c.ability)))return -Infinity;
+  }
+
   // Exact hard mismatch: never add Stadiums or Tools that only improve Pokémon
   // types and evolution stages absent from the target deck. This is separate
   // from their generic usefulness and does not force a matching type in the

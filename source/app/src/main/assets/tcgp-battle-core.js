@@ -137,6 +137,28 @@
     return card;
   }
 
+  // Hard Classic hand cap. drawCard prevents ordinary overflow at source.
+  // Some legacy effects add several cards with direct hand.push/splice, so
+  // enforce it after each real action/choice as a shared safety net. Never
+  // delete an excess card: place it at the bottom of its owner's draw deck,
+  // preserving identity and a visible log of the redirection.
+  function enforceHandLimit(state){
+    if(state?.format!=='classic')return;
+    for(const side of ['player','opponent']){
+      const ss=state.sides[side];
+      // Saved battles from before this rule may still store handLimit=null.
+      ss.handLimit=8;
+      const limit=8;
+      if(!Number.isFinite(limit)||limit<0||ss.hand.length<=limit)continue;
+      // Keep cards newly returned by an effect (such as Unown O), rather
+      // than negating the printed return-to-hand result. Older hand cards
+      // are the overflow sent back to the owner's draw deck.
+      const overflow=ss.hand.splice(0,ss.hand.length-limit);
+      ss.deck.push(...overflow);
+      state.log.push({type:'handLimit',side,limit,amount:overflow.length,cards:overflow.map(r=>r.cardId),reason:'Excess cards put on bottom of draw deck'});
+    }
+  }
+
   function prepareOpeningHand(state, side){
     const s = state.sides[side];
     const opening=Math.max(1,Number(state.rules?.openingHand||5));
@@ -161,7 +183,7 @@
 
   const RULE_PROFILES=Object.freeze({
     pocket:Object.freeze({id:'pocket',deckSize:20,openingHand:5,prizeCount:0,winMode:'points',winPoints:3,handLimit:10,benchSize:3,firstTurnEnergy:false}),
-    classic:Object.freeze({id:'classic',deckSize:30,openingHand:7,prizeCount:5,winMode:'prizes',winPoints:null,handLimit:null,benchSize:3,firstTurnEnergy:true})
+    classic:Object.freeze({id:'classic',deckSize:30,openingHand:7,prizeCount:5,winMode:'prizes',winPoints:null,handLimit:8,benchSize:3,firstTurnEnergy:true})
   });
   function battleRules(format){return RULE_PROFILES[String(format||'pocket').toLowerCase()]||RULE_PROFILES.pocket;}
   function createSide(side, ids, energyType, energyTypes, rules){
@@ -295,6 +317,7 @@
     // 5 Prize cards plus the 7-card opening hand from a 30-card deck would
     // otherwise turn normal draw Trainers into premature match losses.
     if(!drawn&&state.format==='classic'&&!hadCardToDraw)state.log.push({type:'drawSkipped',side,reason:'empty-deck',turnNumber:state.turnNumber});
+    if(!drawn&&state.format==='classic'&&hadCardToDraw&&s.hand.length>=Number(s.handLimit??8))state.log.push({type:'drawSkipped',side,reason:'hand-full',limit:8,turnNumber:state.turnNumber});
     if(drawn)state.log.push({type:'draw',side,amount:1,cardId:drawn.cardId,reason:'turn'});
     if(drawn&&state.format==='classic'&&state.sides[side==='player'?'opponent':'player'].active?.cardId==='SNAPFOUNJA-033'){const idx=s.hand.findIndex(r=>r.uid===drawn.uid);if(idx>=0){s.hand.splice(idx,1);s.deck.push(drawn);state.log.push({type:'founjaLookout',side,cardId:drawn.cardId});}}
     if(drawn&&state.format==='classic'&&state.sides[side==='player'?'opponent':'player'].active?.cardId==='SNAPFLORIO-096')state.log.push({type:'revealDraw',side,cardId:drawn.cardId,reason:'Circle Soar'});
@@ -777,6 +800,9 @@
           if(['ex4-76','ex4-79'].includes(card.id)&&!data.cardById(slot?.cardId)?.name?.startsWith("Team Aqua's"))return false;
           if(['ex4-81','ex4-84'].includes(card.id)&&!data.cardById(slot?.cardId)?.name?.startsWith("Team Magma's"))return false;
           if(card.id==='SNAPFLORIO-103'&&!/\bBidoof\b/i.test(data.cardById(slot?.cardId)?.name||''))return false;
+          const mon=data.cardById(slot?.cardId),named=/^(?:Dark |Rocket's |Team Aqua's |Team Magma's |Brock's |Misty's |Lt\. Surge's |Erika's |Koga's |Blaine's |Sabrina's |Giovanni's )/.test(mon?.name||'');
+          if(['ex10-83','ex10-85','ex10-91'].includes(card.id)&&(mon?.pokemonEx||named))return false;
+          if(['ex10-80','ex10-90','ex10-92'].includes(card.id)&&(!['Stage 1','Stage 2'].includes(mon?.stage)||mon?.pokemonEx))return false;
           // Aquapolis Cube 01 Machines can only attach to a Pokémon of their printed type.
           const cube=card.id.match(/^ecard2-(119|121|122|124|127|129|132|140)$/);
           if(cube){const types={'119':'Darkness','121':'Fighting','122':'Fire','124':'Grass','127':'Lightning','129':'Metal','132':'Psychic','140':'Water'};
@@ -803,9 +829,6 @@
        if(['ex4-88','ex9-87'].includes(card.id)&&(!['Stage 1','Stage 2'].includes(mon?.stage)||mon?.pokemonEx))return false;
        if(card.specialEnergy&&state.sides[side==='player'?'opponent':'player'].active?.cardId==='ex9-91'&&slot===s.active&&!['Darkness Energy','Metal Energy'].includes(card.name))return false;
        if(card.id==='ex10-98'&&!['Stage 1','Stage 2'].includes(mon?.stage))return false;
-       if(card.id==='ex10-83'&&(mon?.pokemonEx||/^(Dark |Rocket's |Brock's |Misty's |Lt. Surge's |Erika's |Koga's |Blaine's |Sabrina's |Giovanni's )/.test(mon?.name||'')))return false;
-       if(['ex10-85','ex10-91'].includes(card.id)&&(mon?.pokemonEx||/^(Dark |Rocket's |Brock's |Misty's |Lt. Surge's |Erika's |Koga's |Blaine's |Sabrina's |Giovanni's )/.test(mon?.name||'')))return false;
-       if(['ex10-80','ex10-90','ex10-92'].includes(card.id)&&(!['Stage 1','Stage 2'].includes(mon?.stage)||mon?.pokemonEx))return false;
        if(card.id==='ecard3-142'&&!Object.values(slot.energy||{}).some(n=>Number(n)>0))return false;
        if(card.id==='ecard3-144'&&!['Stage 1','Stage 2'].includes(mon?.stage))return false;
        if(card.id==='ecard2-145'&&mon?.stage==='Basic')return false;
@@ -1893,7 +1916,7 @@
   }
   function neoMonitoredAction(state,side,action){
     const before=Object.fromEntries(['player','opponent'].map(who=>[who,{uid:state.sides[who].active?.uid,bench:new Set((state.sides[who].bench||[]).map(p=>p.uid))}]));
-    const result=applyActionRaw(state,side,action);neoSpikesAfterAction(state,before);sandstormToolLock(state);return result;
+    const result=applyActionRaw(state,side,action);neoSpikesAfterAction(state,before);sandstormToolLock(state);enforceHandLimit(state);return result;
   }
   function applyAction(state,side,action){
     const rc=rerollContext(state,side,action),source=rc&&effects.coinRerollSource?.(state,rc.ownerSide,rc.scope,rc.subject,data.cardById);

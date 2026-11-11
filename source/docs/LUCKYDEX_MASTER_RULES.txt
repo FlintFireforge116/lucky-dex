@@ -1,8 +1,8 @@
 LUCKYDEX — MASTER PROJECT RULES AND DEVELOPMENT CONTRACT
 =========================================================
-Document version: 1.9
+Document version: 2.0
 Compiled: 11 November 2026
-Current source baseline inspected: v0.69.194 (EX Unseen Forces remaining effects and triggered abilities; 145 currently battle-enabled cards)
+Current source baseline inspected: v0.69.195 (EX Unseen Forces Tools and Classic eight-card hand cap; v0.69.194 baseline)
 Recommended repository location: ~/lucky-dex/source/docs/LUCKYDEX_MASTER_RULES.txt
 Project: LuckyDex — Android application/PWA, managed with Termux and GitHub
 
@@ -296,6 +296,24 @@ PART 3 — CLASSIC POKÉMON TCG FORMAT
   Special Rainbow/Boost/Heal/Scramble Energy and earlier Darkness/Metal: preserve restrictions, effects, number of Energy units provided, duration and expiry. Rainbow should not accidentally count as multiple Energy units when it grants one flexible unit.
   Energy removed by an attack cost must really be discarded, and the AI must pay the same costs. Electabuzz accumulating 10 Energy without using a discard-requiring attack is an example of behaviour to guard against.
   Cards that inspect the 'top Energy' must consume the real displayed queue order; do not choose from the infinite conceptual pool instead.
+
+3.4c CLASSIC MAXIMUM HAND SIZE (introduced v0.69.195)
+  [LOCKED] C-HAND-001 | Classic TCG has a HARD maximum of EIGHT physical cards
+    in each player's hand, including the CPU. Pocket retains its own ten-card
+    cap; do not apply this Classic-only adaptation to Pocket.
+  [LOCKED] C-HAND-002 | Ordinary draws and Energy/deck searches cannot exceed
+    eight cards. If the hand is already full, leave undrawn cards in their
+    source draw deck; never consume a card while reporting no draw.
+  [LOCKED] C-HAND-003 | Multi-card forced returns, prize awards and legacy
+    effects may enter the hand together. After EACH actual battle action,
+    bring both sides down to eight: keep newest returned/awarded cards so
+    their intended effect survives, move the oldest excess cards intact to
+    the BOTTOM of their owner's draw deck, and log their identities and count.
+    Do not silently delete, discard or duplicate excess cards. This is the
+    documented LuckyDex hand-cap conversion for otherwise mandatory effects.
+  [LOCKED] C-HAND-004 | Previously saved Classic battle states with no hand
+    limit migrate to eight when the next action is processed. Test draw cap,
+    attacker/defender, forced-return Unown O, CPU and energy-in-hand paths.
 
 3.5 Prize cards, deck and searches
   [LOCKED] Prize cards are a separate hidden zone and must never randomly enter the hand or be treated as ordinary draw deck cards without an explicit card effect.
@@ -621,6 +639,17 @@ PART 11 — EXPANSION REGISTER / CURRENT AUDIT BASELINE
   [CURRENT] v0.69.194 completes the implementation pass for the remaining EX Unseen Forces subset: the registry now marks 145/145 cards battle-enabled, including 124 Pokémon with 196 printed attacks, 16 Trainers and 5 Special Energy. The previously gated 58 cards have named effect/ability handlers and the all-attacks execution sweep resolves the supported choice flow; this status is NOT a claim every matchup or Android UI path has been exercised. The 28 letter/symbol Unown have distinct attack semantics, same-name copy-limit rules and their shared Shuffle Power. Pokémon ex evolution triggers, Baby Evolution, Energy Evolution, type/attack/Power restrictions and cross-zone Energy remain subject to printed conditions.
   [LOCKED] C-EX10-TRIGGER-001: EX10 triggered Poké-Powers activate only at their printed time (evolution from hand, Energy attached from HAND, damage/KO event) and must have valid source/target ownership. The trigger must not be selectable as an unrestricted once-per-turn button. Extra Energy sourced by a printed DECK search uses the approved Classic Zone conversion; a HAND-only ability requires a real card in hand.
   [LOCKED] C-EX10-TOOLS-002: EX10 Energy Root, Sitrus Berry, Fluffy Berry, Solid Rage, Curse Powder and Protective Orb respect eligibility, timing, return/discard, Bench/Active and exclusion of Pokémon-ex as printed. A Tool's HP bonus does not vanish when its own effect suppresses the attached Pokémon's Poké-Power/Body.
+  [LOCKED] C-EX10-TOOLS-003: Energy Root ex10-83 is ATTACHABLE to an
+    otherwise legal Pokémon even if it currently has Poké-Powers or
+    Poké-Bodies; it suppresses those abilities but gives +20 MAX HP while
+    worn. It cannot stay on Pokémon-ex, Dark-named or owner-named Pokémon.
+    Correctly validate the card in the TOOL targeting path, not the Energy
+    attachment path. Fluffy Berry ex10-85 and Solid Rage ex10-92 are also
+    real persistent Tools and must have a valid while-attached duration.
+  [LOCKED] C-DECK-TOOL-001: An automatic player/CPU deck must not add Energy
+    Root when every otherwise eligible Pokémon relies on a Power or Body;
+    preserving those abilities is better than adding a dead/sabotaging Tool.
+    Manual play may still intentionally use Energy Root to suppress a Power.
   [LOCKED] C-EX10-DECK-003: Auto-builder must include a playable higher evolution in the featured line even after an expansion gains newly FULL cards. A Quilava focus in ex10 now includes ex10 Typhlosion as well as Cyndaquil and Quilava; this supersedes the v193 assumption that the ex10 Typhlosion was still PARTIAL. Genuine dual-type attack/conditional Energy plans remain preserved for both player and CPU.
   [CURRENT] Node regression evidence for v0.69.194: 78/78 EX10/CPU/builder tests, 112/112 EX Deoxys, EX Emerald and hybrid Energy-routing checks, and 34/34 selected older Base/Jungle/Fossil checks. These are NOT hardware/phone touch tests and cannot establish every unusual attack branch. The 145-card status requires continued bug follow-up if live gameplay reveals mismatches.
   NEXT PLANNED SET: EX Delta Species (ex11), following further device feedback for EX Unseen Forces.
@@ -663,5 +692,7 @@ CHANGE HISTORY
 2026-11-11 | Document 1.7 -> 1.8 | App v0.69.193 | [LOCKED] C-DECK-EVO-002, C-DECK-FILL-003, C-DECK-DUAL-004, C-DECK-CPU-005, C-DECK-MANUAL-006. User reported an EX10 Test Lab Fire deck with Cyndaquil/Quilava but no playable Typhlosion and unrelated Scyther, then clarified even a Quilava-focused build must include its evolution. Fixed auto candidate/line selection, unrelated filler, conditional Dual Armor activation/type matching/auto Energy, saved deck Energy analysis, and CPU Energy clobber. Original source seed 12 reproduced and fixed; targeted regressions and selected older-set suites run. No new EX10 cards promoted from PARTIAL. Existing saved/manual decks unchanged. Physical Android QA not performed.
 
 2026-11-11 | Document 1.8 -> 1.9 | App v0.69.194 | C-EX10-TRIGGER-001, C-EX10-TOOLS-002, C-EX10-DECK-003. Implemented all remaining 58 EX Unseen Forces card effect paths and ability triggers and marked 145/145 battle-enabled after targeted effect/choice checks, 196 attacks in registry. Fixed attack/Power dispatch and Energy Root HP self-suppression. Updated Classic builder to include EX10 Typhlosion when featuring Quilava; updated outdated v193 assertions. Recent EX10/CPU/builder 78/78, EX8/EX9/Energy 112/112, selected Base/Jungle/Fossil 34/34 Node tests passed. This is a completed implementation pass, not exhaustive Android QA; Printed-specific and CPU cross-match outcomes still warrant user testing.
+
+2026-11-11 | Document 1.9 -> 2.0 | App v0.69.195 | [LOCKED] C-HAND-001..004, C-EX10-TOOLS-003, C-DECK-TOOL-001. User requested an eight-card maximum Classic hand after seeing 15 cards, plus playable Energy Root on ability Pokémon and appropriate deck-builder avoidance. Set Classic handLimit=8; normal draws stop at cap; forced return overflow preserves newest cards and returns older excess intact to bottom of draw deck with a battle log entry, applying to player and CPU. Fix EX10 Energy Root, Fluffy Berry, Solid Rage missing duration; put printed Tool restrictions in legal Tool targeting; suppress abilities but retain Tool's HP bonus. Re-score Energy Root as unsuitable when every candidate recipient has a Power/Body. Tests: tests/v07195-classic-hand-cap-and-tools.test.cjs, updated v07191 old long-match threshold for changed hand mechanics. No Pocket rules changed; Android hardware QA outstanding.
 
 END OF LUCKYDEX MASTER RULES

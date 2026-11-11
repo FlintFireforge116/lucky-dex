@@ -101,10 +101,10 @@ function parse(key){
  }else if(kind==='T'){
   const n=Number(key),eligible=TRAINERS.has(n);if(!eligible)ready=false;
   Object.assign(card,{trainerType:SUPPORTER.has(n)?'Supporter':TOOL.has(n)?'Tool':'Item',attacks:[],text:rules.replaceAll('§',' '),effect:rule('trainer:'+key)});
-  if(n===83)card.effect={type:'modifier',stat:'maxHp',amount:20};
-  if(n===85)card.effect={type:'modifier',stat:'retreatCost',amount:-99};
+  if(n===83)card.effect={type:'modifier',stat:'maxHp',amount:20,duration:'whileInPlay'};
+  if(n===85)card.effect={type:'modifier',stat:'retreatCost',amount:-99,duration:'whileInPlay'};
   if(n===90)card.effect={type:'noop'};
-  if(n===92)card.effect={type:'modifier',stat:'attackDamage',amount:20,ex10SolidRage:true};
+  if(n===92)card.effect={type:'modifier',stat:'attackDamage',amount:20,ex10SolidRage:true,duration:'whileInPlay'};
   if(n===80)card.effect={type:'triggeredEffect',event:'knockedOut',activeOnly:true,opponentAttackOnly:true,effect:rule('trainer:80')};
   if([91].includes(n))card.effect=rule('trainer:'+key);
  }else{
