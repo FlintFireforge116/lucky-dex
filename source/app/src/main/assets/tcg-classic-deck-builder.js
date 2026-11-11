@@ -239,6 +239,9 @@ function buildDeck(rows,options={}){
    if(['ex8-93','ex8-95'].includes(card?.id)&&!cards.some(id=>{const p=classic.cardById(id);return p?.kind==='pokemon'&&['Stage 1','Stage 2'].includes(p.stage)&&!p.pokemonEx;}))return false;
    if(card?.id==='ex7-95'&&!cards.some(id=>/^(Dark |Rocket's )/.test(classic.cardById(id)?.name||'')))return false;
    if(card?.id==='ex7-94'&&!selectedTypes.some(type=>['Darkness','Metal'].includes(type)))return false;
+   // Holon Fossil only searches playable Fossil evolutions; it is dead filler
+   // without Omanyte/Kabuto/Aerodactyl/Lileep/Anorith in this very deck.
+   if(card?.id==='ex13-86'&&(cards.filter(id=>id==='ex13-86').length>=2||!cards.some(id=>['Omanyte','Kabuto','Aerodactyl','Aerodactyl ex','Lileep','Anorith'].includes(classicCardName(classic.cardById(id)?.name)))))return false;
    // Energy Root suppresses the wearer's Power/Body. It is legal on such
    // Pokemon, but an all-abilities deck must not automatically choose it.
    // Only non-ex, non-Dark, non-owner-named Pokemon are legal wearers.
@@ -253,15 +256,24 @@ function buildDeck(rows,options={}){
    return true;
  }
  function room(card){const copiesOfName=[...counts].filter(([id])=>classicCardName(classic.cardById(id)?.name)===classicCardName(card.name)).reduce((sum,[,count])=>sum+count,0);const starSlots=card.pokemonStar?Math.max(0,1-cards.filter(id=>classic.cardById(id)?.pokemonStar).length):4;return Math.max(0,Math.min(starSlots,(card.name.startsWith('Shining ')?1:4)-copiesOfName,Number(owned.get(card.id)||0)-(counts.get(card.id)||0)));}
- function add(card,n=1){if(card?.kind==='trainer'&&!trainerIsUseful(card))return 0;if(card?.trainerType==='Stadium'&&cards.filter(id=>classic.cardById(id)?.trainerType==='Stadium').length>=1&&!cards.includes(card.id))return 0;let added=0;while(added<n&&cards.length<30&&room(card)>0&&!(card?.trainerType==='Stadium'&&cards.filter(id=>classic.cardById(id)?.trainerType==='Stadium').length>=2)){cards.push(card.id);counts.set(card.id,(counts.get(card.id)||0)+1);added++;}return added;}
- function addLine(line,copies){if(!line.length||line.some(c=>Number(owned.get(c.id)||0)<1))return false;for(let copy=0;copy<copies;copy++){if(line.some(c=>room(c)<1)||cards.length+line.length>30)break;for(const c of line)add(c,1);}return line.every(c=>(counts.get(c.id)||0)>0);}
+ function add(card,n=1,fromEvolutionLine=false){if(card?.kind==='trainer'&&!fromEvolutionLine&&!trainerIsUseful(card))return 0;if(card?.trainerType==='Stadium'&&cards.filter(id=>classic.cardById(id)?.trainerType==='Stadium').length>=1&&!cards.includes(card.id))return 0;let added=0;while(added<n&&cards.length<30&&room(card)>0&&!(card?.trainerType==='Stadium'&&cards.filter(id=>classic.cardById(id)?.trainerType==='Stadium').length>=2)){cards.push(card.id);counts.set(card.id,(counts.get(card.id)||0)+1);added++;}return added;}
+ function addLine(line,copies){if(!line.length||line.some(c=>Number(owned.get(c.id)||0)<1))return false;for(let copy=0;copy<copies;copy++){if(line.some(c=>room(c)<1)||cards.length+line.length>30)break;for(const c of line)add(c,1,true);}return line.every(c=>(counts.get(c.id)||0)>0);}
  // Preserve legal existing cards first for Fill / repair, but never exceed ownership/copy limits.
  for(const id of existing){const c=classic.cardById(id);if(c&&allowedInSetPool(c,scope)&&c.battleEnabled&&c.deckEligible!==false)add(c,1);}
  // Ensure any preserved evolutions gain their missing prerequisites.
- for(const id of [...cards]){const c=classic.cardById(id);if(c?.kind==='pokemon'&&c.stage!=='Basic'){const line=familyLine(c,evolutionPool);if(line.length)for(const member of line.slice(0,-1))if(!(counts.get(member.id)||0))add(member,1);}}
+ for(const id of [...cards]){const c=classic.cardById(id);if(c?.kind==='pokemon'&&c.stage!=='Basic'){const line=familyLine(c,evolutionPool);if(line.length)for(const member of line.slice(0,-1))if(!(counts.get(member.id)||0))add(member,1,member?.effect?.type==='playFossil');}}
  const mainCopies=mainLine.length>=2?3:4;addLine(mainLine,mainCopies);
  // A stage-two engine wants one more opening Basic than evolution cards.
- if(mainLine.length>=2)add(mainLine[0],1);
+ if(mainLine.length>=2)add(mainLine[0],1,true);
+ // Fossil lines need a playable Fossil Basic in the 30-card deck. A normal
+ // Trainer synergy filter can reject these (they are Trainers with Colorless
+ // identity), so addLine deliberately inserts their printed prerequisites.
+ // Holon Fossil is an optional second route to benching those evolutions,
+ // not generic Trainer filler in decks with no valid fossil targets.
+ const holonFossil=classic.cardById('ex13-86');
+ if(holonFossil&&allowedInSetPool(holonFossil,scope)&&
+   cards.some(id=>['Omanyte','Kabuto','Aerodactyl','Aerodactyl ex','Lileep','Anorith'].includes(classicCardName(classic.cardById(id)?.name))))
+   add(holonFossil,1);
  const pokemonCount=()=>cards.map(classic.cardById).filter(c=>c?.kind==='pokemon').length;
  const neededTypes=()=>[...new Set(cards.map(classic.cardById).flatMap(attackTypes).filter(t=>selectedTypes.includes(t)))];
  // Lock support selection to the featured family's actual Energy plan. The

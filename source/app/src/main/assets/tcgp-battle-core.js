@@ -1032,7 +1032,7 @@
         target.damage=Math.max(0,Number(target.damage||0)-10);
     }
     if(state.format==='classic')for(const side of ['player','opponent'])for(const slot of pokemonOn(state.sides[side])){
-      if(slot.cardId==='ex12-80'&&!effects.healingIsBlocked(state,slot,data.cardById))slot.damage=Math.max(0,Number(slot.damage||0)-10);
+      if(['ex12-80','ex13-93'].includes(slot.cardId)&&!effects.healingIsBlocked(state,slot,data.cardById))slot.damage=Math.max(0,Number(slot.damage||0)-10);
       if(state.stadium?.cardId==='ex12-72'&&data.cardById(slot.cardId)?.abilities?.some(a=>a.printedPowerType==='power'))
         slot.damage=Number(slot.damage||0)+10;
 
@@ -1983,7 +1983,7 @@
       }
       if(damage>0){defender.lastDamageSource={side,uid:s.active.uid,cardId:s.active.cardId,attack:true,turn:state.turnNumber};defender.neoDestinyLastHitAmount=damage;}
       if(damage>0&&defender.legendaryMirrorShellUntil>=state.turnNumber&&state.format==='classic'){s.active.damage=Number(s.active.damage||0)+damage;state.log.push({type:'legendaryMirrorShell',side:foeSide,amount:damage,cardId:defender.cardId});}
-      if(damage>0&&state.format==='classic'&&defender===foe.active&&defender.cardId==='ex12-78')s.active.damage=Number(s.active.damage||0)+10;
+      if(damage>0&&state.format==='classic'&&defender===foe.active&&['ex12-78','ex13-91'].includes(defender.cardId))s.active.damage=Number(s.active.damage||0)+10;
       if(damage>0&&state.format==='classic'&&defender===foe.active&&defender.cardId==='ex12-70'&&
          !effects.abilitiesSuppressed(state,foeSide,defender,data.cardById))s.active.conditions={...(s.active.conditions||{}),poison:true};
       if(damage>0&&defender.retaliate&&(defender.retaliate.expiresTurn==null||state.turnNumber<=defender.retaliate.expiresTurn)){const amount=Number(defender.retaliate.amount||0);s.active.damage=Number(s.active.damage||0)+amount;state.log.push({type:'retaliate',side:foeSide,amount,cardId:defender.cardId});}

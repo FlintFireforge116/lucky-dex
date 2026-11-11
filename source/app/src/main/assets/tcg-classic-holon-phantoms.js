@@ -69,7 +69,7 @@ function parse(n){
  card.deckMeta=Object.freeze({roles:[...roles],synergy:[...synergy],energyTypes:[...energyTypes],preferredEnergyTypes:[...preferredEnergyTypes],
    inflicts:[...inflicts],payoffs:[...payoffs],specialEnergyPayoffs:holonPayoff?['holon-energy']:n===7?['delta-rainbow']:[],
    requiresEnergyCards:energySupport,holonStadiumPayoff:holonStadium,preferredPartners,
-   alternateFormCardIds:[3,4,5,6].includes(n)?[3,4,5,6].filter(id=>id!==n).map(id=>'ex13-'+id):[],
+   alternateFormCardIds:[3,4,5,6].includes(n)?['ex8-16','ex8-17','ex8-18','ex9-2',...[3,4,5,6].filter(id=>id!==n).map(id=>'ex13-'+id)]:[],
    conditionalAttackEnergyTypes,conditionalAttackPayoffs:[],stages:card.stage?.startsWith('Stage ')?[card.stage]:[]});
  const ready=SUPPORTED.has(n)&&[...(card.attacks||[]).map(a=>a.effect),...(card.abilities||[]).map(a=>a.effect),card.effect||noop].every(effects.supportsEffect);
  return Object.freeze({...card,battleEnabled:ready,deckEligible:ready&&!card.basicEnergy,

@@ -43,7 +43,21 @@ function analyzeDeck(cards,configured){
  const endpoints=pokemon.filter(c=>!pokemon.some(other=>normalizeName(other.evolvesFrom)===normalizeName(c.name)&&
   Number(other.stage==='Stage 2'?2:other.stage==='Stage 1'?1:0)>Number(c.stage==='Stage 2'?2:c.stage==='Stage 1'?1:0)));
  const required=new Set();
+ // Some printed in-play partners are deliberately Bench-only supports. Do not
+ // require their attack colours in an otherwise mono-type Energy Zone just
+ // because they were included for a partner Poké-Power/Body (Latios/Latias,
+ // Regice/Regirock, etc.). Only a *minority* partner is exempt: two equally
+ // represented attackers must still have their own Energy requirements met.
+ const byId=new Map();for(const c of pokemon)byId.set(c.id,(byId.get(c.id)||0)+1);
+ const optionalPartnerMeta=()=>{try{return typeof module==='object'&&module.exports?require('./tcg-deck-synergy.js'):typeof globalThis!=='undefined'?globalThis.LuckyDexDeckSynergy:null;}catch(_){return null;}};
+ const meta=optionalPartnerMeta();
+ const benchOnly=new Set(endpoints.filter(minor=>endpoints.some(major=>{
+   if(major.id===minor.id||Number(byId.get(major.id)||0)<=Number(byId.get(minor.id)||0))return false;
+   const partners=meta?.metadata?.(major)?.optionalPartners||major.deckMeta?.preferredPartners?.map(name=>({name}))||[];
+   return partners.some(p=>normalizeName(p.name)===normalizeName(minor.name));
+ })).map(c=>c.id));
  for(const end of endpoints){
+   if(benchOnly.has(end.id))continue;
    const line=[end],seen=new Set([end.id]);let prior=end;
    while(prior.evolvesFrom){const c=roots.get(normalizeName(prior.evolvesFrom));if(!c||seen.has(c.id))break;line.unshift(c);seen.add(c.id);prior=c;}
    let needs=[...new Set(line.flatMap(attackCosts))];
