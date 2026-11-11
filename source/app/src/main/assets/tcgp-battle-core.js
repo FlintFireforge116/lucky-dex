@@ -15,7 +15,7 @@
 
   // Reprints can use variant apostrophes or symbol spacing, but are still the
   // same evolution/copy identity in the Classic format.
-  function classicCardName(name){return String(name||'').replace(/[’]/g,"'").replace(/\s+(?=[♀♂])/g,'').trim();}
+  function classicCardName(name){return String(name||'').replace(/[’]/g,"'").replace(/\s+(?=[♀♂])/g,'').replace(/\s*δ\s*$/u,'').trim();}
   function seedValue(seed){
     let n = Number(seed);
     if (!Number.isFinite(n)) n = Date.now();
@@ -501,6 +501,7 @@
   function retreatCost(state,side){const slot=state.sides[side].active;
     if(state.format==='classic'&&slot&&toolsOf(slot).some(ref=>['ex3-82','ex8-84'].includes(ref.cardId)))return 0;
     if(state.format==='classic'&&slot&&!data.cardById(slot.cardId)?.pokemonEx&&data.cardById(slot.cardId)?.stage!=='Baby'&&pokemonOn(state.sides[side]).some(p=>p.cardId==='ex8-103'&&!effects.abilitiesSuppressed(state,side,p,data.cardById)))return 0;
+    if(state.format==='classic'&&slot&&!data.cardById(slot.cardId)?.pokemonEx&&Number(slot.energy?.Psychic||0)>0&&(slot.specialEnergy||[]).some(r=>r.cardId==='ex11-106'))return 0;
     if(state.format==='classic'&&slot?.cardId==='ex8-26'&&Number(slot.energy?.Metal||0)>0&&!effects.abilitiesSuppressed(state,side,slot,data.cardById))return 0;
     if(state.format==='classic'&&slot?.cardId==='ex8-33'&&Number(slot.energy?.Water||0)>0&&!effects.abilitiesSuppressed(state,side,slot,data.cardById))return 0;
     if(state.format==='classic'&&data.cardById(slot?.cardId)?.name==='Solrock'&&pokemonOn(state.sides[side]).some(p=>p.cardId==='ex8-36'&&!effects.abilitiesSuppressed(state,side,p,data.cardById)))return 0;
@@ -534,6 +535,12 @@
     const aqMagnet=state.format==='classic'&&slot?.cardId==='ecard2-91'&&!effects.abilitiesSuppressed(state,side,slot,data.cardById)?state.sides[side].bench.filter(p=>data.cardById(p?.cardId)?.name==='Magnemite').length:0;
     return Math.max(0,Number(data.cardById(slot.cardId).retreat||0)+effects.modifierAmount(state,side,slot,'retreatCost',data.cardById)+stadiumCost+aqHeavy+(aqGluey?1:0)-aqMagnet-ex6Dodrio);}
   function attackCost(state,side,attack){const slot=state.sides[side].active;let cost=effects.attackCostOverride(state,side,slot,attack,data.cardById)??attack.cost??'';
+    if(state.format==='classic'&&['ex11-8','ex11-9'].includes(slot?.cardId)&&!effects.abilitiesSuppressed(state,side,slot,data.cardById)){
+      const partner=slot.cardId==='ex11-8'?/^(Latios|Latios ex)(?: δ)?$/:/^(Latias|Latias ex)(?: δ)?$/;
+      if(pokemonOn(state.sides[side]).some(p=>p!==slot&&partner.test(data.cardById(p.cardId)?.name||''))&&
+         attack.name===(slot.cardId==='ex11-8'?'Extra Crush':'Psychic Force'))cost='LMC';
+    }
+
     if(state.format==='classic'&&['player','opponent'].some(w=>state.sides[w].active?.cardId==='ex5-2'&&!effects.abilitiesSuppressed(state,w,state.sides[w].active,data.cardById))&&['Stage 1','Stage 2'].includes(data.cardById(slot?.cardId)?.stage))cost+='C';
     if(state.format==='classic'&&state.stadium?.cardId==='SNAPFOUNJA-076'&&data.cardById(slot?.cardId)?.types?.some(t=>t==='Grass'||t==='Psychic')){const i=cost.lastIndexOf('C');if(i>=0)cost=cost.slice(0,i)+cost.slice(i+1);}
     if(state.format==='classic'&&state.stadium?.cardId==='SNAPFLORIO-120'&&data.cardById(slot.cardId)?.types?.some(t=>t==='Grass'||t==='Colorless')){
@@ -686,7 +693,7 @@
         const card=data.cardById(attacker.cardId);
         if(state.format==='classic'&&!miraculousWindActive(snapshot)&&
           (card?.types?.includes('Darkness')||/Dark/i.test(card?.name||'')))
-          damage+=10*(attacker.specialEnergy||[]).filter(ref=>['ex1-93','ex9-86','ex10-96'].includes(ref.cardId)).length;
+          damage+=10*(attacker.specialEnergy||[]).filter(ref=>['ex1-93','ex9-86','ex10-96','ex11-103'].includes(ref.cardId)).length;
         damage=Math.max(0,damage-10*(attacker.specialEnergy||[]).filter(ref=>ref.cardId==='ex9-87').length);
         if(attacker.cardId==='ex9-1'&&!effects.abilitiesSuppressed(snapshot,side,attacker,data.cardById)&&Number(data.cardById(attacker.cardId).hp||0)-Number(attacker.damage||0)<=40)damage+=40;
         if(Number(snapshot.sides[side]?.ex9DragonDanceUntil||0)===Number(snapshot.turnNumber))damage+=30;
@@ -772,6 +779,8 @@
       }
       if(state.format==='classic'&&state.stadium?.cardId==='gym1-103'&&['Energy Removal','Super Energy Removal'].includes(card.name)&&s.hand.length<3)return;
       if(state.format==='classic'&&state.sides[side==='player'?'opponent':'player'].active?.cardId==='ex5-100'&&type!=='Supporter'&&!effects.abilitiesSuppressed(state,side==='player'?'opponent':'player',state.sides[side==='player'?'opponent':'player'].active,data.cardById))return;
+      // Holon Supporters discard an additional hand card as a mandatory cost.
+      if(state.format==='classic'&&['ex11-93','ex11-95','ex11-97'].includes(card.id)&&s.hand.length<2)return;
       if(card.id==='ex5-92'&&s.hand.length>7)return;
       // Pow! Hand Extension is playable only while behind on Prizes and with
       // an opposing Benched Pokémon available for either printed choice.
@@ -1019,7 +1028,7 @@
     const attackerCard=data.cardById(attacker.cardId);
     if(state.format==='classic'&&damage>0&&!miraculousWindActive(state)&&attackerCard&&
       (attackerCard.types?.includes('Darkness')||/Dark/i.test(attackerCard.name||'')))
-      damage+=10*(attacker.specialEnergy||[]).filter(r=>['ex1-93','ex9-86','ex10-96'].includes(r.cardId)).length;
+      damage+=10*(attacker.specialEnergy||[]).filter(r=>['ex1-93','ex9-86','ex10-96','ex11-103'].includes(r.cardId)).length;
     damage+=effects.modifierAmount(state,foeSide,defender,'damageTaken',data.cardById);
     damage=effects.attackDamageWithState(state,side,attacker,foeSide,defender,damage,data.cardById);
     if(state.format==='classic'&&damage>0)damage+=10*(attacker.specialEnergy||[]).filter(r=>['neo1-104','ecard1-158','ecard2-142'].includes(r.cardId)).length;
@@ -1722,7 +1731,7 @@
           !foe.active.conditions?.sleep&&!foe.active.conditions?.paralysis&&!foe.active.conditions?.confusion)damage=Math.max(0,damage-10);
         if(state.format==='classic'&&damage>0&&!miraculousWindActive(state)&&
           (attackerCard.types?.includes('Darkness')||/Dark/i.test(attackerCard.name||'')))
-          damage+=10*(s.active.specialEnergy||[]).filter(r=>['ex1-93','ex9-86','ex10-96'].includes(r.cardId)).length;
+          damage+=10*(s.active.specialEnergy||[]).filter(r=>['ex1-93','ex9-86','ex10-96','ex11-103'].includes(r.cardId)).length;
         damage+=effects.modifierAmount(state,foeSide,defender,'damageTaken',data.cardById);
         if(state.format==='classic'&&damage>0){const metal=miraculousWindActive(state)?0:(s.active.specialEnergy||[]).filter(r=>['neo1-19','ecard1-159','ecard2-143'].includes(r.cardId)).length;if(metal&&!attackerCard.types?.includes('Metal'))damage=Math.max(0,damage-metal*10);}
         if(state.format==='classic'&&damage>0)damage=Math.max(0,damage-10*(s.active.specialEnergy||[]).filter(r=>r.cardId==='ex9-87').length);
@@ -1778,7 +1787,7 @@
       }
       if(state.format==='classic'&&damage>0&&Number(defender.ex1TearyEyesUntil||0)>=state.turnNumber)damage=Math.max(0,damage-10);
       if(state.format==='classic'){
-        const metal=miraculousWindActive(state)?0:(defender.specialEnergy||[]).filter(r=>(['neo1-19','ecard1-159','ecard2-143'].includes(r.cardId)||['ex9-88','ex1-94','ex10-97'].includes(r.cardId)&&data.cardById(defender.cardId)?.types?.includes('Metal'))).length;
+        const metal=miraculousWindActive(state)?0:(defender.specialEnergy||[]).filter(r=>(['neo1-19','ecard1-159','ecard2-143'].includes(r.cardId)||['ex9-88','ex1-94','ex10-97','ex11-107'].includes(r.cardId)&&data.cardById(defender.cardId)?.types?.includes('Metal'))).length;
         damage=result.damageRules?.ignoreEffects?damage:Math.max(0,damage-metal*10);
         // Aquapolis Dense Body / Energy Barrier: actual Basic-stage and
         // attached Basic Energy counts, not approximate generic modifiers.

@@ -27,7 +27,7 @@ const STAPLES=Object.freeze([
  ['base1-83',1], // Maintenance
  ['base1-87',1]  // Pokedex
 ]);
-const SET_IDS=Object.freeze(['base1','base2','base3','base5','gym1','gym2','neo1','neo2','neo3','neo4','base6','ecard1','ecard2','ecard3','ex1','ex2','ex3','ex4','ex5','ex6','ex7','ex8','ex9','ex10','SNAPFLORIO','SNAPFOUNJA','sv1']);
+const SET_IDS=Object.freeze(['base1','base2','base3','base5','gym1','gym2','neo1','neo2','neo3','neo4','base6','ecard1','ecard2','ecard3','ex1','ex2','ex3','ex4','ex5','ex6','ex7','ex8','ex9','ex10','ex11','SNAPFLORIO','SNAPFOUNJA','sv1']);
 // Darkness and Metal are already Basic Energy types. Deduplicate before rendering
 // archetype chips so each energy type has exactly one toggle.
 const ARCHETYPE_TYPES=Object.freeze([...new Set([...decks.ENERGY_TYPES,'Colorless'])]);
@@ -64,7 +64,7 @@ const isDiscoveryEnergySupply=(card,sets)=>(sets.includes('neo2')||sets.includes
 const allowedInSetPool=(card,sets)=>sets.includes(card.setId)||isDiscoveryEnergySupply(card,sets);
 function specialCosts(_cards){return {D:0,M:0};} // Basic Darkness/Metal satisfies typed attack costs; Special Energy is optional.
 
-function classicCardName(name){return String(name||'').replace(/[’]/g,"'").replace(/\s+(?=[♀♂])/g,'').trim();}
+function classicCardName(name){return String(name||'').replace(/[’]/g,"'").replace(/\s+(?=[♀♂])/g,'').replace(/\s*δ\s*$/u,'').trim();}
 function familyLine(card,pool){if(!card||card.kind!=='pokemon')return [];const line=[card],seen=new Set([card.id]);let cur=card;while(cur.evolvesFrom){const prior=pool.find(c=>(c.kind==='pokemon'||c.effect?.type==='playFossil')&&classicCardName(c.name)===classicCardName(cur.evolvesFrom));if(!prior||seen.has(prior.id))return [];line.unshift(prior);seen.add(prior.id);cur=prior;}return line;}
 // A visible Stage 1 is not a finished core when a Stage 2 exists but is
 // PARTIAL, unowned or excluded by the selected sets. Check the full catalogue
