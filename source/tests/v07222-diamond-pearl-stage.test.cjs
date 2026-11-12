@@ -21,7 +21,7 @@ function finishChoices(s){for(let n=0;n<12&&s.phase==='effectChoice';n++){const 
 test('DP1 complete collector catalogue: 130 unique identities, exact printed Weakness modifiers and 3 gated LV.X',()=>{
  assert.equal(dp.CARDS.length,130);assert.deepEqual(dp.CARDS.map(x=>Number(x.number)),Array.from({length:130},(_,i)=>i+1));
  assert.equal(dp.CARDS.filter(x=>x.kind==='pokemon').length,107);assert.equal(dp.CARDS.filter(x=>x.kind==='trainer').length,15);assert.equal(dp.CARDS.filter(x=>x.kind==='energy').length,8);
- assert.equal(dp.CARDS.filter(x=>x.battleEnabled).length,29);assert.equal(dp.CARDS.filter(x=>!x.battleEnabled).length,101);
+ assert.equal(dp.CARDS.filter(x=>x.battleEnabled).length,48);assert.equal(dp.CARDS.filter(x=>!x.battleEnabled).length,82);
  for(const id of ['dp1-120','dp1-121','dp1-122']){const c=dp.cardById(id);assert.equal(c.isLevelX,true);assert.equal(c.battleEnabled,false);assert.equal(c.stage,'Level-Up');}
  assert.equal(dp.cardById('dp1-28').weaknessValue,'+20');assert.equal(dp.cardById('dp1-28').retreat,2);
  assert.equal(dp.cardById('dp1-129').subtype,'Darkness');assert.equal(dp.cardById('dp1-130').subtype,'Metal');
@@ -92,7 +92,7 @@ test('Poké Ball heads exposes real deck Pokémon choice (not arbitrary free car
  else assert.equal(s.sides.player.hand.some(r=>r.cardId==='dp1-74'),false,'tails may only skip search');
 });
 
-test('all 30 verified DP1 attacks execute for player and CPU-side actors without unresolved choices',()=>{
+test('all currently enabled DP1 attacks execute for player and CPU-side actors without unresolved choices',()=>{
  let count=0;
  for(const card of dp.CARDS.filter(x=>x.kind==='pokemon'&&x.battleEnabled))for(let attackIndex=0;attackIndex<card.attacks.length;attackIndex++)for(const actor of ['player','opponent']){
   const s=setup(card.id,'dp1-93');s.sides[actor].active=core.makePokemonSlot(card.id,4,'atk-'+actor);
@@ -104,7 +104,7 @@ test('all 30 verified DP1 attacks execute for player and CPU-side actors without
   assert.doesNotThrow(()=>core.applyAction(s,actor,a),`${card.id} ${card.attacks[attackIndex].name} ${actor}`);
   finishChoices(s);count++;
  }
- assert.equal(count,60);
+ assert.equal(count,dp.CARDS.filter(x=>x.kind==='pokemon'&&x.battleEnabled).reduce((n,x)=>n+x.attacks.length*2,0));
 });
 test('set-only builder makes complete 30-card playable focused decks, with no unrequested types',()=>{
  for(const [id,type] of [['dp1-28','Grass'],['dp1-93','Water'],['dp1-94','Fire'],['dp1-86','Fighting'],['dp1-99','Psychic'],['dp1-102','Darkness']]){

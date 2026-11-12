@@ -9282,6 +9282,14 @@
       if(e.type==='topDeckDiscardBonus'){const ss=own(ctx);const ref=ss.deck.shift();if(ref){ss.discard.push(ref);const card=ctx.cardById(ref.cardId);if(matchesFilter(card,e.filter,ref))damage+=Number(e.amount||0);}return;}
       if(e.type==='damageRule'){damageRules={...damageRules,...e};return;}
 
+      // DP Base: Splash About compares actual attached Energy units on both Actives.
+      // It does not reward the attacker when the Energy counts are equal.
+      if(e.type==='neoRule'&&e.rule==='dp1:72:splashAbout'){
+        const ownCount=totalEnergy(ctx.attacker?.energy||{})+(ctx.attacker?.specialEnergy||[]).length;
+        const foeCount=totalEnergy(ctx.defender?.energy||{})+(ctx.defender?.specialEnergy||[]).length;
+        if(ownCount<foeCount)damage+=10;
+        return;
+      }
       if(e.type==='lentalRule'&&String(e.rule||'').startsWith('sv1:')){
         const r=e.rule.slice(4),ss=own(ctx),foe=other(ctx),att=ctx.attacker,def=ctx.defender;
         if(r==='rageFist'){damage=70*Number(foe.prizesTaken||0);return;}

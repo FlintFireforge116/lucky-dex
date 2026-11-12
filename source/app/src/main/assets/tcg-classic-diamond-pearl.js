@@ -151,9 +151,32 @@ const PRINTS={
   99:['Flip a coin. If heads, the Defending Pokémon is now Poisoned.','Flip 4 coins. This attack does 10 damage times the number of heads.'],
   101:['','Flip a coin. If heads, this attack does 10 damage plus 20 more damage.'],
   102:['','The Defending Pokémon is now Poisoned.'],103:['',''],
-  104:['Flip a coin. If heads, this attack does 10 damage plus 10 more damage.','Flip a coin. If heads, the Defending Pokémon is now Paralyzed.']
+  104:['Flip a coin. If heads, this attack does 10 damage plus 10 more damage.','Flip a coin. If heads, the Defending Pokémon is now Paralyzed.'],
+  19:['Your opponent switches the Defending Pokémon with 1 of his or her Benched Pokémon.','After your attack, remove from Beautifly the number of damage counters equal to the damage you did to the Defending Pokémon.'],
+  25:['Flip a coin. If heads, the Defending Pokémon is now Paralyzed.','The Defending Pokémon is now Poisoned. Put 2 damage counters instead of 1 on the Defending Pokémon between turns.'],
+  44:['During your opponent\'s next turn, if Cascoon would be damaged by an attack, prevent that attack\'s damage done to Cascoon if that damage is 30 or less.','The Defending Pokémon can\'t retreat during your opponent\'s next turn.'],
+  45:['Flip a coin. If heads, the Defending Pokémon is now Confused.','Flip a coin. If heads, this attack does 20 damage plus 20 more damage and remove 3 damage counters from Cherrim.'],
+  52:['Flip a coin. If heads, this attack does 10 damage plus 30 more damage.','Flip a coin. If heads, the Defending Pokémon is now Paralyzed.'],
+  56:['Search your discard pile for a Fire Energy card and attach it to Monferno.','Flip 3 coins. This attack does 20 damage times the number of heads.'],
+  59:['Does 10 damage to 1 of your opponent\'s Benched Pokémon. (Don\'t apply Weakness and Resistance for Benched Pokémon.)','Flip a coin. If tails, discard a Fire Energy attached to Rapidash and this attack does 10 damage to each of your opponent\'s Benched Pokémon. (Don\'t apply Weakness and Resistance for Benched Pokémon.)'],
+  62:['Does 10 damage times the number of damage counters on Seaking.',''],
+  63:['During your opponent\'s next turn, if Silcoon would be damaged by an attack, prevent that attack\'s damage done to Silcoon if that damage is 30 or less.','Flip a coin. If heads, the Defending Pokémon can\'t attack during your opponent\'s next turn.'],
+  64:['Your opponent switches the Defending Pokémon with 1 of his or her Benched Pokémon.','The Defending Pokémon can\'t retreat during your opponent\'s next turn.'],
+  73:['','Does 10 damage to 1 of your opponent\'s Benched Pokémon. (Don\'t apply Weakness and Resistance for Benched Pokémon.)'],
+  75:['The Defending Pokémon is now Asleep.','If this attack does any damage to the Defending Pokémon (after applying Weakness and Resistance), remove 1 damage counter from Cherubi.'],
+  83:['During your opponent\'s next turn, any damage done by attacks from the Defending Pokémon is reduced by 20 (before applying Weakness and Resistance).','Flip a coin. If tails, this attack does nothing.'],
+  87:['Flip a coin. If heads, the Defending Pokémon is now Confused.','If the Defending Pokémon is Confused, this attack does 20 damage plus 20 more damage.'],
+  89:['Flip a coin. If heads, prevent all effects of an attack, including damage, done to Meditite during your opponent\'s next turn.','Does 10 damage plus 10 more damage for each damage counter on the Defending Pokémon.'],
+  97:['Flip a coin. If heads, during your opponent\'s next turn, if Seedot would be Knocked Out by damage from an attack, Seedot is not Knocked Out and its remaining HP becomes 10 instead.',''],
+  98:['Does 10 damage to 1 of your opponent\'s Benched Pokémon. (Don\'t apply Weakness and Resistance for Benched Pokémon.)'],
+  72:['If Buizel has less Energy attached to it than the Defending Pokémon, this attack does 10 damage plus 10 more damage.'],
+  82:['Move 1 damage counter from Gastly to 1 of your opponent\'s Pokémon.']
 };
 const noop={type:'noop'},status=s=>({type:'status',target:'opponentActive',status:s});
+const lock=(action,target='opponentActive')=>({type:'lock',target,action,duration:'opponentTurn'});
+const benchHit=(amount)=>({type:'benchDamage',side:'opponent',amount});
+const seq=(...effects)=>({type:'sequence',effects});
+const guard={type:'preventDamage',target:'self',duration:'opponentTurn',maxDamage:30};
 const flip=(heads,tails=noop)=>({type:'coinFlip',heads,tails});
 const extra=n=>({type:'bonusDamage',amount:n});
 const EFFECTS={
@@ -168,7 +191,26 @@ const EFFECTS={
   95:[noop,{type:'selfDamage',amount:10}],
   99:[flip(status('poison')),{type:'coinDamage',coins:4,amount:10,mode:'replace'}],
   101:[noop,flip(extra(20))],102:[noop,status('poison')],103:[noop,noop],
-  104:[flip(extra(10)),flip(status('paralysis'))]
+  104:[flip(extra(10)),flip(status('paralysis'))],
+  19:[{type:'forceOpponentSwitch'},{type:'drain'}],
+  25:[flip(status('paralysis')),{type:'status',target:'opponentActive',status:'poison',amount:20}],
+  44:[guard,lock('retreat')],
+  45:[flip(status('confusion')),flip(seq(extra(20),{type:'healSelf',amount:30}))],
+  52:[flip(extra(30)),flip(status('paralysis'))],
+  56:[{type:'attachEnergyFromDiscard',target:'self',energyType:'Fire',amount:1},{type:'coinDamage',coins:3,amount:20,mode:'replace'}],
+  59:[benchHit(10),flip(noop,seq({type:'discardEnergy',target:'self',amount:1,energyType:'Fire'}, {type:'benchDamage',side:'opponent',amount:10,all:true}))],
+  62:[{type:'damageFromDamage',source:'self',amount:1,mode:'replace'},noop],
+  63:[guard,flip(lock('attack'))],
+  64:[{type:'forceOpponentSwitch'},lock('retreat')],
+  73:[noop,benchHit(10)],
+  75:[status('sleep'),{type:'drain',amount:10}],
+  83:[{type:'modifier',stat:'attackDamage',amount:-20,scope:'opponentActive',duration:'opponentTurn'},{type:'coinAttackGate',heads:noop}],
+  87:[flip(status('confusion')),{type:'statusDamage',status:'confusion',amount:20}],
+  89:[flip({type:'preventDamage',target:'self',duration:'opponentTurn',preventEffects:true}),{type:'damageFromDamage',source:'opponent',amount:1}],
+  97:[flip({type:'koGuard',target:'self',duration:'opponentTurn',mode:'survive',remainingHp:10}),noop],
+  98:[benchHit(10)],
+  72:[{type:'neoRule',rule:'dp1:72:splashAbout'}],
+  82:[{type:'chooseTarget',target:'opponentPokemon',chooser:'owner',effect:{type:'moveDamage',target:'self',destination:'opponentPokemon',amount:10}}]
 };
 // Trainer wording checked against the individual dp1 printed-card records.
 // Rule text below is catalogue data even when an effect is still gated.

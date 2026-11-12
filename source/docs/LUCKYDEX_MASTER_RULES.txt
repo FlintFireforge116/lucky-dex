@@ -1,8 +1,8 @@
 LUCKYDEX — MASTER PROJECT RULES AND DEVELOPMENT CONTRACT
 =========================================================
-Document version: 2.15
+Document version: 2.16
 Compiled: 12 November 2026
-Current source baseline inspected: v0.69.221; v0.69.222 adds DP1 safely gated source catalogue plus first verified playable slice
+Current source baseline inspected: v0.69.222; v0.69.223 expands the verified DP1 battle slice without enabling unfinished LV.X/Power cards
 Recommended repository location: ~/lucky-dex/source/docs/LUCKYDEX_MASTER_RULES.txt
 Project: LuckyDex — Android application/PWA, managed with Termux and GitHub
 
@@ -739,6 +739,32 @@ THIS PART APPLIES TO EVERY FUTURE CHAT, EXPANSION, FIX AND AGREED RULE CHANGE.
   interaction matrix and matchups, full command/output summary, known gaps,
   install block, no false phone-test claim, next gated subset by card ID.
 
+10.14A [LOCKED] C-RELEASE-GATE-008 — SMALL-BATCH OUTCOME AND EVOLUTION CERTIFICATION (v2.16)
+  * Do not count a Stage 1 card as set-only focus-ready when its evolution is
+    required by the complete-family policy but not yet enabled. An attack-smoke
+    pass is NOT a focus-deck pass: independently test each stage in the allowed
+    set/type pool with four owned copies and test the exact reason for failure.
+  * For split evolutionary trees (Wurmple->Silcoon->Beautifly and
+    Wurmple->Cascoon->Dustox) validate each COMPLETE playable branch with all
+    required earlier stages, and never combine incompatible branches as one line.
+  * Write assertions against ATTACK OUTPUT after weakness/resistance and target
+    protection. A printed Bench 10 must not be mistaken for Active 10 when the
+    Active is Lightning-weak (+10), and a defeated Active may be removed before
+    reading its final damage: inspect KO log/discard rather than dereferencing it.
+  * When an attack says '10 for each damage counter', remember battle-state
+    damage is stored as HP units (damage 30 equals 3 counters, so bonus 30), not
+    as a counter tally. Test injured AND uninjured attacker/defender cases.
+  * Test protection on the next actual opponent attack, including a threshold
+    hit and an above-threshold hit, AND with Weakness applied; creating an
+    attackGuard or modifier object alone is not an outcome test.
+  * On-card conditional healing such as Giga Drain/Leech Seed must use the
+    damage actually dealt, not just printed attack damage; test nullified hits.
+  * New attack target choices must be confirmed in the actual effect-choice
+    state, including a Bench-selected path. Coin and status timing must be
+    asserted in the right between-turn phase, never guessed from final status.
+  * Reuse verified shared effects but record if a selected pool cannot produce
+    a complete line; never un-gate a Pokémon just to satisfy a focus builder.
+
 10.15 [CHECK] C-DP1-ERA-001 — PRINTED ERA ISOLATION
   D&P 2007 uses printed ADDITIVE Weakness (+10/+20/+30) and reduction Resistance
   (-20). Apply the printed amount only in applicable era/print; never globally
@@ -1156,5 +1182,7 @@ CHANGE HISTORY
 2026-11-12 | Document 2.13 -> 2.14 | App v0.69.221 | [LOCKED] C-EX16-PRINT-009, C-EX16-OPTIONAL-010, C-EX16-BUILDER-011. Corrected Poison Ring retreat-only lock, attack protection/reduction on Rock Blast, facedown Altaria position selection, optional ex/Star triggers and CPU decisions, copied attack non-Energy costs, Down Draw 8-card limit, poison/sleep metadata, and EX16 single-type builder restrictions without changing older mixed sets. Postrelease all-108 ledger, 128 deterministic attack smokes, 80/81 EX16-only focused builds (Magneton intentionally gated), 64 strict-type builds, 357/357 selected Node regressions. No APK/Android-device QA. Details: docs/EX_POWER_KEEPERS_v0.69.221_FULL_PASS.md.
 
 2026-11-12 | Document 2.14 -> 2.15 | App v0.69.222 | [LOCKED] C-RELEASE-GATE-001..007; [CHECK] C-DP1-ERA-001. Turned Power Keepers lessons (Stadium/Body causality, optional Power choice, face-down selection, damage/protection, copied non-Energy costs, mono-type deck constraints) into explicit source-contract preflight, card-by-card evidence-ledger, dependency tests, 8-type CPU/builder gating and verified patch-handoff standards. Registered dp1 130-card collection with 29 tested-source-enabled and 101 gated. Added additive Weakness while retaining old EX ×2, first batch attacks and Trainer/Basic Energy support, targeted tests and live audit. No APK/Android QA. See docs/DIAMOND_PEARL_v0.69.222_STAGE1_AUDIT.md.
+
+2026-11-12 | Document 2.15 -> 2.16 | App v0.69.223 | [LOCKED] C-RELEASE-GATE-008. Expanded DP1 stage with 19 extra battle-enabled Pokémon (48/130 overall). Found/checked two complete Wurmple branches, Active-vs-Bench additive Weakness timing, damage-counter units, Harden protection threshold, Charm reduction and actual Giga Drain/Leech Seed healing. Expanded regression tests to 395 passing, but LV.X/triggered Powers and unimplemented cards remain gated. No Android device QA. See docs/DIAMOND_PEARL_v0.69.223_STAGE2_AUDIT.md.
 
 END OF LUCKYDEX MASTER RULES
