@@ -21,7 +21,7 @@ function finishChoices(s){for(let n=0;n<12&&s.phase==='effectChoice';n++){const 
 test('DP1 complete collector catalogue: 130 unique identities, exact printed Weakness modifiers and 3 gated LV.X',()=>{
  assert.equal(dp.CARDS.length,130);assert.deepEqual(dp.CARDS.map(x=>Number(x.number)),Array.from({length:130},(_,i)=>i+1));
  assert.equal(dp.CARDS.filter(x=>x.kind==='pokemon').length,107);assert.equal(dp.CARDS.filter(x=>x.kind==='trainer').length,15);assert.equal(dp.CARDS.filter(x=>x.kind==='energy').length,8);
- assert.equal(dp.CARDS.filter(x=>x.battleEnabled).length,48);assert.equal(dp.CARDS.filter(x=>!x.battleEnabled).length,82);
+ assert.equal(dp.CARDS.filter(x=>x.battleEnabled).length,67);assert.equal(dp.CARDS.filter(x=>!x.battleEnabled).length,63);
  for(const id of ['dp1-120','dp1-121','dp1-122']){const c=dp.cardById(id);assert.equal(c.isLevelX,true);assert.equal(c.battleEnabled,false);assert.equal(c.stage,'Level-Up');}
  assert.equal(dp.cardById('dp1-28').weaknessValue,'+20');assert.equal(dp.cardById('dp1-28').retreat,2);
  assert.equal(dp.cardById('dp1-129').subtype,'Darkness');assert.equal(dp.cardById('dp1-130').subtype,'Metal');
@@ -99,6 +99,7 @@ test('all currently enabled DP1 attacks execute for player and CPU-side actors w
   s.sides[actor].active.energy=Object.fromEntries(types.map(type=>[type,6]));
   s.sides[actor].bench=[core.makePokemonSlot('dp1-85',3,'bench-'+actor)];s.sides[actor].bench[0].benchSlot=0;
   s.activeSide=actor;
+  if(card.id==='dp1-58'&&attackIndex===1)s.sides[actor==='player'?'opponent':'player'].active.damage=20; // Brine requires a damaged target.
   const a=core.legalActions(s,actor).find(x=>x.type==='attack'&&x.attackIndex===attackIndex);
   assert.ok(a,`${card.id} attack ${attackIndex} ${actor} legal`);
   assert.doesNotThrow(()=>core.applyAction(s,actor,a),`${card.id} ${card.attacks[attackIndex].name} ${actor}`);

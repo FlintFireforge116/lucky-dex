@@ -6728,6 +6728,40 @@
     const pick=(which,rule,opts={})=>ctx.requestChoice?.({kind:'pokemon',side:'self',selectionSide:which==='opponent'?ctx.foeSide:ctx.side,includeActive:opts.includeActive!==false,filter:opts.filter,effect:{type:'neoRule',rule},optional:!!opts.optional});
     const sel=(which)=>{const board=which==='opponent'?foe:ss,target=ctx.action?.choiceTarget,index=Number(ctx.action?.choiceBenchIndex);return target==='active'?board.active:(board.bench||[]).find(x=>Number(x.benchSlot)===index);};
     const log=(details)=>ctx.state.log.push({type:'neoEffect',side:ctx.side,rule:e.rule,...details});
+    if(e.rule==='dp1:49:synthesis'){
+      const filter={basicEnergy:true,subtype:'Grass'};
+      const deck=ss.deck||[],physical=deck.filter(ref=>matchesFilter(ctx.cardById(ref.cardId),filter));
+      const zone=neoAvailableSupplyTypes(ctx,ss,filter).includes('Grass');
+      if(e.stage==='target'&&ctx.resolvingChoice){
+        const target=sel('self');if(!target)return;
+        if(e.energyUid){
+          const index=ss.deck.findIndex(ref=>ref.uid===e.energyUid);
+          if(index<0||!matchesFilter(ctx.cardById(ss.deck[index].cardId),filter))return;
+          ss.deck.splice(index,1);
+          target.energy.Grass=Number(target.energy?.Grass||0)+1;
+          ctx.onEnergyAttached?.(target,'Grass',1);
+          ctx.shuffle?.(ctx.state,ss.deck);
+        }else if(e.fromZone){neoSupplyAttach(ctx,ss,target,'Grass',1);}
+        log({attached:'Grass',target:target.cardId,source:e.fromZone?'Energy Zone':'deck'});return;
+      }
+      if(e.stage==='deck'&&ctx.resolvingChoice){
+        const ref=ss.deck[Number(ctx.action?.choiceDeckIndex)];
+        // Use same target picker, but retain the selected deck card UID.
+        if(ref&&matchesFilter(ctx.cardById(ref.cardId),filter)){
+          ctx.requestChoice?.({kind:'pokemon',side:'self',includeActive:true,effect:{...e,stage:'target',energyUid:ref.uid}});
+        }
+        return;
+      }
+      if(e.stage==='source'&&ctx.resolvingChoice){
+        if(Number(ctx.action?.choiceOption)===0)ctx.requestChoice?.({kind:'deckCard',side:'self',filter,effect:{...e,stage:'deck'}});
+        else ctx.requestChoice?.({kind:'pokemon',side:'self',includeActive:true,effect:{...e,stage:'target',fromZone:true}});
+        return;
+      }
+      if(physical.length&&zone)ctx.requestChoice?.({kind:'option',side:'self',options:['Search physical draw deck','Search ordered Energy Zone'],effect:{...e,stage:'source'}});
+      else if(physical.length)ctx.requestChoice?.({kind:'deckCard',side:'self',filter,effect:{...e,stage:'deck'}});
+      else if(zone)ctx.requestChoice?.({kind:'pokemon',side:'self',includeActive:true,effect:{...e,stage:'target',fromZone:true}});
+      return;
+    }
     if(String(e.rule||'').startsWith('ex16:'))return ex16Rule(e,ctx);
     if(String(e.rule||'').startsWith('ex15:'))return ex15Rule(e,ctx);
     if(String(e.rule||'').startsWith('ex14:'))return ex14Rule(e,ctx);
@@ -8931,7 +8965,7 @@
         if(typeof ctx.requestChoice==='function')ctx.requestChoice({kind:'energyTarget',side:'self',filter:effect.filter,energyTypes:available,effect:{...effect,usedTypes,placed}});
         break;
       }
-      case 'multiTargetDamage':{const foe=other(ctx),remaining=Math.max(1,Number((effect.remaining??effect.count)||1)),chosen=Array.isArray(effect.chosenUids)?effect.chosenUids.slice():[];if(ctx.resolvingChoice){const target=selected(ctx,foe);if(target&&!chosen.includes(target.uid)){const side=ctx.foeSide,guard=ctx.isAttack&&attackIsPrevented(ctx.state,side,target,ctx.attacker,ctx.cardById)||fossilTransparencyBlocks(ctx,side,target),amount=guard?0:Math.max(0,Number(effect.amount||0)-(ctx.isAttack?modifierAmount(ctx.state,side,target,'damageReduction',ctx.cardById):0));target.damage=Number(target.damage||0)+amount;chosen.push(target.uid);}const left=remaining-1;if(left>0&&(effect.target==='opponentPokemon'?pokemonOn(foe):foe.bench).some(s=>s&&!chosen.includes(s.uid))){if(typeof ctx.requestChoice==='function')ctx.requestChoice({kind:'pokemon',side:'self',selectionSide:ctx.foeSide,includeActive:effect.target==='opponentPokemon',excludeUids:chosen,effect:{...effect,remaining:left,chosenUids:chosen}});}break;}if(typeof ctx.requestChoice==='function'){const candidates=(effect.target==='opponentPokemon'?pokemonOn(foe):foe.bench).filter(s=>s&&!chosen.includes(s.uid));if(candidates.length)ctx.requestChoice({kind:'pokemon',side:'self',selectionSide:ctx.foeSide,includeActive:effect.target==='opponentPokemon',excludeUids:chosen,effect:{...effect,remaining}});}break;}
+      case 'multiTargetDamage':{if(effect.upTo&&ctx.resolvingChoice&&ctx.action?.choiceSkip)break;const foe=other(ctx),remaining=Math.max(1,Number((effect.remaining??effect.count)||1)),chosen=Array.isArray(effect.chosenUids)?effect.chosenUids.slice():[];if(ctx.resolvingChoice){const target=selected(ctx,foe);if(target&&!chosen.includes(target.uid)){const side=ctx.foeSide,guard=ctx.isAttack&&attackIsPrevented(ctx.state,side,target,ctx.attacker,ctx.cardById)||fossilTransparencyBlocks(ctx,side,target),amount=guard?0:Math.max(0,Number(effect.amount||0)-(ctx.isAttack?modifierAmount(ctx.state,side,target,'damageReduction',ctx.cardById):0));target.damage=Number(target.damage||0)+amount;chosen.push(target.uid);}const left=remaining-1;if(left>0&&(effect.target==='opponentPokemon'?pokemonOn(foe):foe.bench).some(s=>s&&!chosen.includes(s.uid))){if(typeof ctx.requestChoice==='function')ctx.requestChoice({kind:'pokemon',side:'self',selectionSide:ctx.foeSide,includeActive:effect.target==='opponentPokemon',excludeUids:chosen,effect:{...effect,remaining:left,chosenUids:chosen},optional:!!effect.upTo});}break;}if(typeof ctx.requestChoice==='function'){const candidates=(effect.target==='opponentPokemon'?pokemonOn(foe):foe.bench).filter(s=>s&&!chosen.includes(s.uid));if(candidates.length)ctx.requestChoice({kind:'pokemon',side:'self',selectionSide:ctx.foeSide,includeActive:effect.target==='opponentPokemon',excludeUids:chosen,effect:{...effect,remaining},optional:!!effect.upTo});}break;}
       case 'scheduleDelayed':{const a=ctx.action||{};let targetUid=null,spot=null;if(effect.targetMode==='defender')targetUid=ctx.defender?.uid||null;else{const t=a.choiceTarget||a.effectTarget||a.target;if(t==='opponentActive'||t==='active')spot={side:ctx.foeSide,active:true};else{const idx=a.choiceBenchIndex??a.effectBenchIndex??a.benchIndex;spot={side:ctx.foeSide,benchIndex:Number(idx)};}}ctx.state.delayedEffects=ctx.state.delayedEffects||[];ctx.state.delayedEffects.push({event:effect.event,dueTurn:ctx.state.turnNumber+1,endingSide:ctx.foeSide,originSide:ctx.side,sourceUid:ctx.attacker?.uid||null,targetUid,spot,effect:effect.effect});break;}
       case 'retreatRetaliation':for(const target of affected())target.retreatRetaliation={amount:Number(effect.amount||0),expiresTurn:ctx.state.turnNumber+1};break;
       case 'abilitySuppression':for(const target of affected())target.abilitySuppressed={duration:effect.duration||'whileActive'};break;
@@ -9282,13 +9316,32 @@
       if(e.type==='topDeckDiscardBonus'){const ss=own(ctx);const ref=ss.deck.shift();if(ref){ss.discard.push(ref);const card=ctx.cardById(ref.cardId);if(matchesFilter(card,e.filter,ref))damage+=Number(e.amount||0);}return;}
       if(e.type==='damageRule'){damageRules={...damageRules,...e};return;}
 
-      // DP Base: Splash About compares actual attached Energy units on both Actives.
-      // It does not reward the attacker when the Energy counts are equal.
-      if(e.type==='neoRule'&&e.rule==='dp1:72:splashAbout'){
-        const ownCount=totalEnergy(ctx.attacker?.energy||{})+(ctx.attacker?.specialEnergy||[]).length;
-        const foeCount=totalEnergy(ctx.defender?.energy||{})+(ctx.defender?.specialEnergy||[]).length;
-        if(ownCount<foeCount)damage+=10;
-        return;
+      // Diamond & Pearl attacking rules, evaluated before Weakness/Resistance.
+      if(e.type==='neoRule'&&String(e.rule||'').startsWith('dp1:')){
+        const rule=e.rule;
+        if(rule==='dp1:72:splashAbout'){
+          const ownCount=totalEnergy(ctx.attacker?.energy||{})+(ctx.attacker?.specialEnergy||[]).length;
+          const foeCount=totalEnergy(ctx.defender?.energy||{})+(ctx.defender?.specialEnergy||[]).length;
+          if(ownCount<foeCount)damage+=10;
+          return;
+        }
+        if(rule==='dp1:58:aquaShower'){
+          damage=10;pending.push({type:'benchDamage',side:'opponent',amount:10,all:true});return;
+        }
+        if(rule==='dp1:50:dreamEater'){
+          if(!ctx.defender?.conditions?.sleep)damage=0;return;
+        }
+        if(rule==='dp1:53:karateChop'){
+          damage=Math.max(0,40-10*Math.floor(Number(ctx.attacker?.damage||0)/10));return;
+        }
+        if(rule==='dp1:60:stormUp'){
+          if(ctx.state.stadium){damage+=20;pending.push({type:'discardStadium'});}return;
+        }
+        if(rule==='dp1:77:moonImpact'){
+          const stack=ctx.attacker?.stack||[];
+          if(stack.some(id=>ctx.cardById(id)?.name==='Cleffa'))damage+=20;return;
+        }
+        pending.push(e);return;
       }
       if(e.type==='lentalRule'&&String(e.rule||'').startsWith('sv1:')){
         const r=e.rule.slice(4),ss=own(ctx),foe=other(ctx),att=ctx.attacker,def=ctx.defender;

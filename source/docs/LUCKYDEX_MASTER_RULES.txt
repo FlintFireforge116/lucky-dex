@@ -1,8 +1,8 @@
 LUCKYDEX — MASTER PROJECT RULES AND DEVELOPMENT CONTRACT
 =========================================================
-Document version: 2.16
+Document version: 2.17
 Compiled: 12 November 2026
-Current source baseline inspected: v0.69.222; v0.69.223 expands the verified DP1 battle slice without enabling unfinished LV.X/Power cards
+Current source baseline inspected: v0.69.223; v0.69.224 expands Diamond & Pearl to 67 source-enabled prints, leaving LV.X and triggered Powers gated
 Recommended repository location: ~/lucky-dex/source/docs/LUCKYDEX_MASTER_RULES.txt
 Project: LuckyDex — Android application/PWA, managed with Termux and GitHub
 
@@ -765,6 +765,46 @@ THIS PART APPLIES TO EVERY FUTURE CHAT, EXPANSION, FIX AND AGREED RULE CHANGE.
   * Reuse verified shared effects but record if a selected pool cannot produce
     a complete line; never un-gate a Pokémon just to satisfy a focus builder.
 
+10.14B [LOCKED] C-RELEASE-GATE-009 — EFFECT DISPATCH AND CONDITIONAL SMOKE INPUTS (v2.17)
+  * All new printed-effect rules must be registered in the correct dispatch
+    chain and dispatch EXACT rule IDs before a broad set-prefix handler.
+    Adding a generic dp1:* handler may silently mask previously working
+    dp1:72:splashAbout or other older cases. Always rerun both preceding
+    batches' specific outcome tests, not just the newest batch.
+  * A 'can legally attack' smoke test must construct the *printed legal*
+    target state first: Prinplup Brine requires an already damaged opposing
+    Pokemon. Similarly, searches need eligible cards and a free Bench space;
+    conditional attacks may require a status, Stadium, hand card or Energy.
+    A missing prerequisite in a smoke test is not evidence of a card bug.
+  * For attacks with an optional number of Bench targets, test selecting zero,
+    one and multiple distinct eligible Pokemon. 'Choose up to two' must show
+    an explicit decline path, never require two available targets, and still
+    apply unrelated next-turn locks if targets are declined.
+  * For deck search/attachment (Grotle Synthesis), separately test a chosen
+    PHYSICAL Basic Energy drawn from the deck and the ordered Energy Zone:
+    exactly one Energy arrives on the chosen target, the actual source loses
+    one, and shuffle/visibility work as printed. CPU must not conjure a new
+    Energy token or accept the wrong source type.
+  * Damage-checkpoints, self-KO recoil, conditional statuses and next-turn
+    restrictions require explicit log/state assertions. In particular, a
+    self-knockout can remove the active slot, so examine the KO log, and an
+    attack that does nothing against a currently awake defender must remain
+    playable unless its printed text forbids announcing the attack.
+
+10.14C [LOCKED] C-RELEASE-GATE-010 — FOCUSED ENERGY PLAN (v2.17)
+  * A single-type focused deck must include a complete permitted evolution
+    line AND at least one payable attack for every included stage. An older
+    pre-evolution's OPTIONAL typed move is not an obligatory Energy type
+    when it has a Colorless/otherwise payable attack. Example: Onix has
+    Colorless Headbutt, so Steelix with Metal Energy alone is usable.
+  * Never generalise this pruning to pre-DP sets without separate tests:
+    older type-dependent partners, attack conditions and dual-type bonuses
+    still require their own plan. Test selected-set filters for every line
+    and give explicit errors if a higher evolution remains battle-gated.
+  * CPU opponent-generation is a SEPARATE release gate from focused player
+    decks. A focused Metal Steelix build does not prove the randomized
+    DP-only Metal CPU generator can find a legal deck. Document both checks.
+
 10.15 [CHECK] C-DP1-ERA-001 — PRINTED ERA ISOLATION
   D&P 2007 uses printed ADDITIVE Weakness (+10/+20/+30) and reduction Resistance
   (-20). Apply the printed amount only in applicable era/print; never globally
@@ -789,7 +829,7 @@ PART 11 — EXPANSION REGISTER / CURRENT AUDIT BASELINE
   [CURRENT] v0.69.185 targeted tests for recent EX Deoxys changes were reported as 67 passing; the wider historical run reported 370 passing, 5 obsolete version/UI assertion failures. These are HISTORICAL test outcomes, not guarantees about any later build.
   [CURRENT] v0.69.186 restores EX Deoxys Ninjask Slash’s missing runtime damage rule and fixes next-turn bonus display for older sets. C-ATTACK-001 regression tests cover actual damage, visible previews, expiry, both players, and Weakness applied after base-power replacement.
   [CHECK] Recheck source availability and compatibility before claiming any given card/expansion is 'fully correct'; the existence of a card record does not prove every unusual interaction.
-  [CURRENT] Diamond & Pearl (dp1) v0.69.222 STAGE — 130 numbered English prints sourced from PokemonTCG/pokemon-tcg-data/cards/en/dp1.json, 107 Pokémon, 15 Trainers, 8 Basic Energies. Only 29/130 source battle-enabled (16 Pokémon, 5 Trainers, 8 Basic Energy prints); all other 101 kept battle-gated, including 3 LV.X. The stage adds additive printed Weakness without altering EX ×2, registers collection/set picker/player builder/CPU, and validates selected attacks, searches, statuses and transfers. The 29 enabled prints are not proof of every interaction. Narrow set-only CPU availability is incomplete, and D&P opening-turn/LV.X mechanics remain [CHECK]. See docs/DIAMOND_PEARL_v0.69.222_STAGE1_AUDIT.md and tests/v07222-diamond-pearl-stage.test.cjs. Android QA not performed.
+  [CURRENT] Diamond & Pearl (dp1) v0.69.224 STAGE 3 — 130 numbered English prints sourced from PokemonTCG/pokemon-tcg-data/cards/en/dp1.json, 107 Pokémon, 15 Trainers, 8 Basic Energies. 67/130 source battle-enabled (54 Pokémon, five Trainers, eight Basic Energy prints), 63 still gated including all three LV.X. Uses printed additive Weakness without changing EX ×2; registered collection/set picker/player builder/CPU. Includes Stage 2 Empoleon, Infernape, Staraptor and Torterra, with two-sided attack sweeps, selected interactions and legal focused decks. DP-only Metal CPU decks remain unavailable even though focused Steelix can be built; opening-turn/LV.X mechanics remain [CHECK]. See docs/DIAMOND_PEARL_v0.69.224_STAGE3_AUDIT.md. Android QA not performed.
   [CURRENT] EX Power Keepers (ex16) — 108 numbered English prints, all 108 source-enabled as of v220. v221 postrelease audit covers 128 attack execution smokes, focused deck legality, eight explicit mono-Energy type filters, conditional/triggered battle outcomes and 357 passing EX-era Node regressions. Cradily Poison Ring, chosen Armaldo Rock Blast protection, optional Pokémon-ex/Star Powers, Shiftry copied use costs, Altaria hidden-hand position choice, Sableye hand limit, Stage-1 status metadata and EX16-only Energy filters were corrected. This is not a proof of every attack/coin state or an Android-device QA pass. See docs/EX_POWER_KEEPERS_v0.69.221_FULL_PASS.md.
 
   [CURRENT] v0.69.187 adds EX Emerald (ex9), 107 registered cards including 11 Pokémon-ex, 11 Trainer cards, 4 physical Special Energy, 6 collectible-art Basic Energy cards, and secret Farfetch'd. Both player and CPU deck builders are registered for 30-card EX Emerald decks; direct attack targeting and effect-choice adapters are included. Printed card data source: Pokémon TCG data, cards/en/ex9.json (card text/card numbers checked 10 November 2026).
@@ -1184,5 +1224,7 @@ CHANGE HISTORY
 2026-11-12 | Document 2.14 -> 2.15 | App v0.69.222 | [LOCKED] C-RELEASE-GATE-001..007; [CHECK] C-DP1-ERA-001. Turned Power Keepers lessons (Stadium/Body causality, optional Power choice, face-down selection, damage/protection, copied non-Energy costs, mono-type deck constraints) into explicit source-contract preflight, card-by-card evidence-ledger, dependency tests, 8-type CPU/builder gating and verified patch-handoff standards. Registered dp1 130-card collection with 29 tested-source-enabled and 101 gated. Added additive Weakness while retaining old EX ×2, first batch attacks and Trainer/Basic Energy support, targeted tests and live audit. No APK/Android QA. See docs/DIAMOND_PEARL_v0.69.222_STAGE1_AUDIT.md.
 
 2026-11-12 | Document 2.15 -> 2.16 | App v0.69.223 | [LOCKED] C-RELEASE-GATE-008. Expanded DP1 stage with 19 extra battle-enabled Pokémon (48/130 overall). Found/checked two complete Wurmple branches, Active-vs-Bench additive Weakness timing, damage-counter units, Harden protection threshold, Charm reduction and actual Giga Drain/Leech Seed healing. Expanded regression tests to 395 passing, but LV.X/triggered Powers and unimplemented cards remain gated. No Android device QA. See docs/DIAMOND_PEARL_v0.69.223_STAGE2_AUDIT.md.
+
+2026-11-12 | Document 2.16 -> 2.17 | App v0.69.224 | [LOCKED] C-RELEASE-GATE-009, C-RELEASE-GATE-010. Stage 3 adds 19 more DP1 battle-enabled Pokémon (67/130), with complete Empoleon/Infernape/Staraptor/Torterra lines. Regression found and fixed newly masked v223 Buizel Splash About in the new broad DP1 dispatcher; exercised Brine damaged-target prerequisite, Grotle physical/zone Energy routing, optional zero/one/multiple Bench targets, self-KO logs and true mono-Metal Steelix focus without unnecessary Onix Fighting Energy. All v072xx suites passing in the v224 packaging run. Outstanding: all three LV.X and other gated cards; DP-only random Metal CPU generation unavailable; no Android device QA. See docs/DIAMOND_PEARL_v0.69.224_STAGE3_AUDIT.md.
 
 END OF LUCKYDEX MASTER RULES

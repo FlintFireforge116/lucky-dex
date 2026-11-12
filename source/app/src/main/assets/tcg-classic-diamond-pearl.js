@@ -170,10 +170,29 @@ const PRINTS={
   97:['Flip a coin. If heads, during your opponent\'s next turn, if Seedot would be Knocked Out by damage from an attack, Seedot is not Knocked Out and its remaining HP becomes 10 instead.',''],
   98:['Does 10 damage to 1 of your opponent\'s Benched Pokémon. (Don\'t apply Weakness and Resistance for Benched Pokémon.)'],
   72:['If Buizel has less Energy attached to it than the Defending Pokémon, this attack does 10 damage plus 10 more damage.'],
-  82:['Move 1 damage counter from Gastly to 1 of your opponent\'s Pokémon.']
+  82:['Move 1 damage counter from Gastly to 1 of your opponent\'s Pokémon.'],
+  4:["Choose 1 of your opponent's Pokémon. This attack does 40 damage to that Pokémon. (Don't apply Weakness and Resistance for Benched Pokémon.)","Flip a coin. If heads, this attack does 20 damage to 1 of your opponent's Benched Pokémon. (Don't apply Weakness and Resistance for Benched Pokémon.)"],
+  5:["Flip a coin until you get tails. This attack does 30 damage times the number of heads.","Discard all Fire Energy attached to Infernape."],
+  9:["Search your deck for a Basic Pokémon and put it onto your Bench. Shuffle your deck afterward.","Switch Manaphy with 1 of your Benched Pokémon."],
+  16:["Flip a coin. If tails, this attack does nothing. If heads, prevent all damage done to Staraptor by attacks (both yours and your opponent's) until the end of your next turn.","Flip a coin. If tails, Staraptor does 100 damage to itself."],
+  17:["Flip a coin. If heads, the Defending Pokémon is now Paralyzed.","Remove 2 damage counters from each of your Grass Pokémon."],
+  20:["Remove all Special Conditions and 4 damage counters from Bibarel. Bibarel is now Asleep.","Bibarel does 10 damage to itself."],
+  35:["Search your deck for a basic Energy card, show it to your opponent, and put it into your hand. Shuffle your deck afterward.","Flip a coin. If tails, Pachirisu does 10 damage to itself."],
+  38:["Flip 2 coins. This attack does 30 damage times the number of heads.","Steelix can't attack during your next turn."],
+  49:["Search your deck for a Grass Energy card and attach it to 1 of your Pokémon. Shuffle your deck afterward.",""],
+  50:["The Defending Pokémon is now Asleep.","If the Defending Pokémon is not Asleep, this attack does nothing."],
+  51:["The Defending Pokémon is now Asleep.","If the Defending Pokémon tries to attack during your opponent's next turn, your opponent flips a coin. If tails, that attack does nothing."],
+  53:["Does 40 damage minus 10 damage for each damage counter on Machoke.",""],
+  55:["Search your deck for a Water Basic Pokémon, show it to your opponent, and put it into your hand. Shuffle your deck afterward."],
+  58:["Does 10 damage to each of your opponent's Pokémon. (Don't apply Weakness and Resistance for Benched Pokémon.)","Choose 1 of your opponent's Pokémon that has any damage counters on it. This attack does 40 damage to that Pokémon. (Don't apply Weakness and Resistance for Benched Pokémon.)"],
+  60:["If there is any Stadium card in play, this attack does 30 damage plus 20 more damage. Discard that Stadium card.","Rhydon does 10 damage to itself. Your opponent switches the Defending Pokémon with 1 of his or her Benched Pokémon, if any."],
+  77:["The Defending Pokémon is now Asleep.","If Clefairy is evolved from Cleffa, this attack does 20 damage plus 20 more damage."],
+  79:["Switch 1 of your opponent's Benched Pokémon with 1 of the Defending Pokémon. The new Defending Pokémon is now Asleep.",""],
+  70:["Choose 1 of the Defending Pokémon's attacks. That Pokémon can't use that attack during your opponent's next turn.","Search your discard pile for a Trainer card, show it to your opponent, and put it into your hand."],
+  92:["Choose up to 2 of your opponent's Benched Pokémon. This attack does 10 damage to each of them. (Don't apply Weakness and Resistance for Benched Pokémon.) Onix can't attack during your next turn.",""],
 };
 const noop={type:'noop'},status=s=>({type:'status',target:'opponentActive',status:s});
-const lock=(action,target='opponentActive')=>({type:'lock',target,action,duration:'opponentTurn'});
+const lock=(action,target='opponentActive',duration='opponentTurn')=>({type:'lock',target,action,duration});
 const benchHit=(amount)=>({type:'benchDamage',side:'opponent',amount});
 const seq=(...effects)=>({type:'sequence',effects});
 const guard={type:'preventDamage',target:'self',duration:'opponentTurn',maxDamage:30};
@@ -210,7 +229,26 @@ const EFFECTS={
   97:[flip({type:'koGuard',target:'self',duration:'opponentTurn',mode:'survive',remainingHp:10}),noop],
   98:[benchHit(10)],
   72:[{type:'neoRule',rule:'dp1:72:splashAbout'}],
-  82:[{type:'chooseTarget',target:'opponentPokemon',chooser:'owner',effect:{type:'moveDamage',target:'self',destination:'opponentPokemon',amount:10}}]
+  82:[{type:'chooseTarget',target:'opponentPokemon',chooser:'owner',effect:{type:'moveDamage',target:'self',destination:'opponentPokemon',amount:10}}],
+  4:[{type:'selectedDamage',target:'opponentPokemon',amount:40},flip(benchHit(20))],
+  5:[{type:'coinDamage',coins:'untilTails',amount:30,mode:'replace'},{type:'discardEnergy',target:'self',energyType:'Fire',amount:'all'}],
+  9:[{type:'benchFromDeck',amount:1,filter:{kind:'pokemon',stage:'Basic'}},{type:'switch',side:'self'}],
+  16:[{type:'coinAttackGate',heads:{type:'preventDamage',target:'self',duration:'opponentTurn'}},flip(noop,{type:'selfDamage',amount:100})],
+  17:[flip(status('paralysis')),{type:'heal',target:'selfAll',filter:{subtype:'Grass'},amount:20}],
+  20:[seq({type:'removeStatuses',target:'self',statuses:['sleep','paralysis','confusion','poison','burn']},{type:'healSelf',amount:40},{type:'status',target:'self',status:'sleep'}),{type:'selfDamage',amount:10}],
+  35:[{type:'searchChosen',source:'deck',amount:1,filter:{basicEnergy:true}},flip(noop,{type:'selfDamage',amount:10})],
+  38:[{type:'coinDamage',coins:2,amount:30,mode:'replace'},lock('attack','self')],
+  49:[{type:'neoRule',rule:'dp1:49:synthesis'},noop],
+  50:[status('sleep'),{type:'neoRule',rule:'dp1:50:dreamEater'}],
+  51:[status('sleep'),{type:'attackCoinGate',target:'opponentActive',duration:'opponentTurn'}],
+  53:[{type:'neoRule',rule:'dp1:53:karateChop'},noop],
+  55:[{type:'searchChosen',source:'deck',amount:1,filter:{kind:'pokemon',stage:'Basic',subtype:'Water'}}],
+  58:[{type:'neoRule',rule:'dp1:58:aquaShower'},{type:'selectedDamage',target:'opponentPokemon',filter:{damaged:true},amount:40}],
+  60:[{type:'neoRule',rule:'dp1:60:stormUp'},seq({type:'selfDamage',amount:10},{type:'forceOpponentSwitch'})],
+  77:[status('sleep'),{type:'neoRule',rule:'dp1:77:moonImpact'}],
+  79:[seq({type:'forceOpponentSwitch'},status('sleep')),noop],
+  70:[{type:'chooseAttackLock',duration:'opponentTurn'},{type:'searchChosen',source:'discard',amount:1,filter:{kind:'trainer'}}],
+  92:[seq({type:'multiTargetDamage',target:'opponentBench',count:2,amount:10,upTo:true},lock('attack','self','nextOwnTurn')),noop],
 };
 // Trainer wording checked against the individual dp1 printed-card records.
 // Rule text below is catalogue data even when an effect is still gated.

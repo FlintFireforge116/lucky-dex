@@ -116,10 +116,15 @@ function conditionalAttackUseful(card,energy){
 // mixed-type evolutions and conditional Energy rules.
 function familyEssentialTypes(line){
  const all=[...new Set((line||[]).flatMap(attackTypes))];
- if(all.length<=2||!line?.length)return all;
+ if(!line?.length)return all;
  const endpoint=attackTypes(line[line.length-1]);
  if(endpoint.length>2)return all;
  const canPay=card=>!card.attacks?.length||card.attacks.some(attack=>[...String(attack.cost||'')].every(symbol=>symbol==='C'||!CODE_TO_TYPE[symbol]||endpoint.includes(CODE_TO_TYPE[symbol])));
+ // DP1's Metal Steelix can be powered with Metal alone: Onix's Colorless
+ // Headbutt remains payable, so its optional Fighting attack must not cause
+ // an unwanted second Basic Energy Zone type. Keep pre-DP heuristics intact.
+ if(line[line.length-1]?.setId==='dp1'&&endpoint.length&&line.every(canPay))return endpoint;
+ if(all.length<=2)return all;
  return line.every(canPay)?endpoint:all;
 }
 function familyRoot(card,pool){const line=familyLine(card,pool);return line[0]?.name||card?.name||card?.id||'';}
