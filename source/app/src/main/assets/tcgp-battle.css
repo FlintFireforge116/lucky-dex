@@ -981,6 +981,9 @@ html.android-native-inset body.tcgp-battle-live .tcgp-live-arena:not(.format-cla
 .tcgp-live-choice-rail:has(.text-option){max-height:min(44vh,230px);min-height:132px;align-items:stretch;overflow-y:auto}
 .tcgp-live-choice-card.selected{border-color:#ffdf70;box-shadow:0 0 0 2px #ffe59666;background:#375769;transform:translateY(-2px)}
 .tcgp-live-choice-placeholder{width:62px;min-height:87px;display:grid;place-items:center;padding:4px;box-sizing:border-box;text-align:center;border-radius:5px;background:#597c8f;color:#fff;font-size:10px;overflow-wrap:anywhere}
+/* The HTML hidden attribute must win over the placeholder/image display rules.
+   Otherwise full card art shows with a second, redundant text tile below. */
+.tcgp-live-choice-placeholder[hidden],.tcgp-live-choice-card img[hidden]{display:none!important}
 .tcgp-live-choice-footer{display:flex;justify-content:flex-end;gap:10px;flex:0 0 auto}
 .tcgp-live-choice-confirm{border:1px solid #d0c77b;background:#eed16d;color:#18354a;border-radius:9px;padding:9px 15px;font-weight:950;font-size:11px;min-height:36px}
 .tcgp-live-choice-confirm:disabled{opacity:.45;cursor:not-allowed}

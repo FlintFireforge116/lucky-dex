@@ -168,6 +168,9 @@ function buildDeck(rows,options={}){
  const playableChildren=new Map(),finishMemo=new Map();
  for(const c of pokemonPool)if(c.evolvesFrom){const key=classicCardName(c.evolvesFrom);if(!playableChildren.has(key))playableChildren.set(key,[]);playableChildren.get(key).push(c);}
  const canFinishInPool=c=>{
+  // A viable starting Basic must lead to a useful terminal Pokémon, not
+  // blindly evolve into an inert Xatu/Swellow/Altaria support-only endpoint.
+  if(isStage2OnlySupport(c)&&!hasEligibleBeneficiary(c))return false;
   if(!hasKnownEvolution(c))return true;
   const key=classicCardName(c.name)+'@'+c.stage;
   if(finishMemo.has(key))return finishMemo.get(key);
@@ -176,10 +179,22 @@ function buildDeck(rows,options={}){
   const ok=next.some(child=>familyLine(child,evolutionPool).length>0&&canFinishInPool(child));
   finishMemo.set(key,ok);return ok;
  };
+ // A support-only Poké-Body / Poké-Power is not a viable standalone core.
+ // Restrict it to a pool with a FULL Stage 2 Pokémon-ex evolution family
+ // whose required attack Energy fits the user's selected type filter.
+ // Keep a cached candidate list for both core eligibility and pairing.
+ const stage2ExBeneficiaries=pokemonPool.filter(c=>c.pokemonEx&&c.stage==='Stage 2'&&
+   familyLine(c,evolutionPool).length===3&&
+   familyLine(c,evolutionPool).every(member=>Number(owned.get(member.id)||0)>0)&&
+   familyEssentialTypes(familyLine(c,evolutionPool)).length<=2&&
+   (!requestedEnergy.length||familyEssentialTypes(familyLine(c,evolutionPool)).every(t=>requestedEnergy.includes(t))));
+ const isStage2OnlySupport=c=>!!(c?.deckMeta?.stage2ExSupport&&c.stage!=='Stage 2');
+ const hasEligibleBeneficiary=c=>stage2ExBeneficiaries.some(target=>familyRoot(target,evolutionPool)!==familyRoot(c,evolutionPool));
  // Competitive considers complete evolution families; Random draws a printed
  // Pokémon from the *entire* owned, battle-ready roster (not the top 14).
  const isEligible=c=>{
   const line=familyLine(c,evolutionPool),required=familyEssentialTypes(line),special=specialCosts(line);
+  if(isStage2OnlySupport(c)&&!hasEligibleBeneficiary(c))return false;
   const dual=decks.dualArmorProfile(c),all=[...new Set([...requestedEnergy,...required])];
   if(dual&&!all.includes(dual.energyType)&&all.length<2)all.push(dual.energyType);
   // If the player filters by a type that Dual Armor *grants*, we must be able
@@ -201,6 +216,8 @@ function buildDeck(rows,options={}){
  if(rarityFocus!=='any'||basicOnly)candidates=candidates.filter(c=>matchesRarity(c,rarityFocus,basicOnly));
 
  if(focus?.kind==='pokemon'){
+   if(isStage2OnlySupport(focus)&&!hasEligibleBeneficiary(focus))
+     return fail(`Cannot build around ${focus.name}: its Body/Power supports Stage 2 Pokémon-ex, but no complete Stage 2 ex line fits the chosen sets, owned cards and Energy types. Widen the type/set selection.`);
    const focused=candidates.filter(c=>familyLine(c,evolutionPool).some(member=>classicCardName(member.name)===classicCardName(focus.name)&&member.stage===focus.stage));
    if(focused.length)candidates=focused;
    else if((scope.includes('neo2')||scope.includes('neo3')||scope.includes('neo4'))&&['Darkness','Metal'].some(t=>(focus.types||[]).includes(t)))return fail(`Cannot build around ${focus.name}: a complete evolution family and at most two supported Basic Energy Zone types are required.`);
@@ -257,12 +274,7 @@ function buildDeck(rows,options={}){
  // needs an actual Stage-2 ex line. Select Energy for that ATTACKER instead of
  // diluting its Zone with a Bench-only Xatu/Altaria/Swellow attack cost.
  const supportFocus=!!(!basicOnly&&mainLine.some(c=>c.deckMeta?.stage2ExSupport&&c.stage!=='Stage 2'));
- const stage2Candidates=supportFocus?pokemonPool.filter(c=>c.pokemonEx&&c.stage==='Stage 2'&&
-   familyRoot(c,evolutionPool)!==mainRoot&&familyLine(c,evolutionPool).length===3&&
-   familyLine(c,evolutionPool).every(m=>Number(owned.get(m.id)||0)>0)&&
-   familyEssentialTypes(familyLine(c,evolutionPool)).length<=2&&
-   (!requestedEnergy.length||familyEssentialTypes(familyLine(c,evolutionPool)).every(t=>requestedEnergy.includes(t)))
- ).sort((a,b)=>Number(familyEssentialTypes(familyLine(b,evolutionPool)).some(t=>lineEnergy.includes(t)))-Number(familyEssentialTypes(familyLine(a,evolutionPool)).some(t=>lineEnergy.includes(t)))||pokemonScore(b,evolutionPool)-pokemonScore(a,evolutionPool)||a.id.localeCompare(b.id)):[];
+ const stage2Candidates=supportFocus?stage2ExBeneficiaries.filter(c=>familyRoot(c,evolutionPool)!==mainRoot).sort((a,b)=>Number(familyEssentialTypes(familyLine(b,evolutionPool)).some(t=>lineEnergy.includes(t)))-Number(familyEssentialTypes(familyLine(a,evolutionPool)).some(t=>lineEnergy.includes(t)))||pokemonScore(b,evolutionPool)-pokemonScore(a,evolutionPool)||a.id.localeCompare(b.id)):[];
  const stage2Beneficiary=stage2Candidates[0]||null;
  if(stage2Beneficiary){
    const targetEnergy=familyEssentialTypes(familyLine(stage2Beneficiary,evolutionPool));
@@ -333,7 +345,14 @@ function buildDeck(rows,options={}){
  // decks, then the automatic Energy Zone gave them 50% Grass draws. A true
  // dual-cost featured family (or two explicitly selected types) still works.
  const plannedEnergy=selectedTypes.slice();
- const canFitEnergy=c=>{const line=familyLine(c,evolutionPool),family=line.length?line:[c],needed=[...new Set([...neededTypes(),...familyEssentialTypes(family)])],special=specialCosts([...cards.map(classic.cardById).filter(Boolean),...family]);return (options._allowSecondType===true&&!requestedEnergy.length?needed.length<=2:needed.every(t=>plannedEnergy.includes(t)))&&family.every(member=>conditionalAttackUseful(member,plannedEnergy))&&Object.entries(special).every(([sym,n])=>!n||allowedInSetPool(classic.cardById(SPECIAL_COST_CARDS[sym]),scope)&&Number(owned.get(SPECIAL_COST_CARDS[sym])||0)>=n);};
+ const canFitEnergy=c=>{
+   // A support-only line (Xatu, Swellow, Altaria ex) must not slip into a
+   // Charizard Star / ordinary Stage 1 deck just because its attack is
+   // affordable. Its real payoff requires a Stage 2 Pokémon-ex already here.
+   if(isStage2OnlySupport(c)&&!cards.some(id=>{const p=classic.cardById(id);return p?.pokemonEx&&p.stage==='Stage 2';}))return false;
+   const line=familyLine(c,evolutionPool),family=line.length?line:[c],needed=[...new Set([...neededTypes(),...familyEssentialTypes(family)])],special=specialCosts([...cards.map(classic.cardById).filter(Boolean),...family]);
+   return (options._allowSecondType===true&&!requestedEnergy.length?needed.length<=2:needed.every(t=>plannedEnergy.includes(t)))&&family.every(member=>conditionalAttackUseful(member,plannedEnergy))&&Object.entries(special).every(([sym,n])=>!n||allowedInSetPool(classic.cardById(SPECIAL_COST_CARDS[sym]),scope)&&Number(owned.get(SPECIAL_COST_CARDS[sym])||0)>=n);
+ };
  const chooseCandidate=candidates=>{
    if(!candidates.length)return null;
    if(style==='random'){
@@ -399,11 +418,15 @@ function buildDeck(rows,options={}){
  // Regice ex deck may Bench Regirock ex to unlock Iceberg Crush without
  // having to dilute its Energy Zone with Fighting. This is an option, never
  // a mandatory inclusion, and follows selected-set and ownership constraints.
- const optionalNames=new Set(mainLine.flatMap(c=>(synergy.metadata(c).optionalPartners||[]).map(p=>classicCardName(p.name).toLowerCase())));
+ const optionalPartners=mainLine.flatMap(c=>synergy.metadata(c).optionalPartners||[]);
  const optionalInPlay=endpointCards(pokemonPool).filter(c=>
-  optionalNames.has(classicCardName(c.name).toLowerCase())&&c.id!==main.id&&
-  familyRoot(c,evolutionPool)!==mainRoot&&(!basicOnly||c.stage==='Basic')&&
-  familyLine(c,evolutionPool).length>0&&room(c)>0
+  optionalPartners.some(partner=>classicCardName(partner.name).toLowerCase()===classicCardName(c.name).toLowerCase()&&
+   // 'Preferred partner' is a metadata suggestion, NOT a licence to add
+   // unplayable Fighting Meganium to a Lightning Feraligatr deck. Only a
+   // genuine printed "in play" dependency may justify an off-type Bench card.
+   (canFitEnergy(c)||partner.source!=='printed synergy metadata'&&!isStage2OnlySupport(c)))&&
+  c.id!==main.id&&familyRoot(c,evolutionPool)!==mainRoot&&
+  (!basicOnly||c.stage==='Basic')&&familyLine(c,evolutionPool).length>0&&room(c)>0
  ).sort((a,b)=>{
   const easyA=a.stage==='Basic'?1:0,easyB=b.stage==='Basic'?1:0;
   return easyB-easyA||pokemonScore(b,evolutionPool)-pokemonScore(a,evolutionPool);

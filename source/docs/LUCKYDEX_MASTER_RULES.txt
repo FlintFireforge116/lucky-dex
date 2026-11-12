@@ -1,8 +1,8 @@
 LUCKYDEX — MASTER PROJECT RULES AND DEVELOPMENT CONTRACT
 =========================================================
-Document version: 2.9
+Document version: 2.10
 Compiled: 12 November 2026
-Current source baseline inspected: v0.69.215 (EX Dragon Frontiers full-pass synergy, conditional Energy, physical Tools, Extra Feather and metadata fixes)
+Current source baseline inspected: v0.69.216 (EX Dragon Frontiers follow-up: typed optional partners, Stage 2 ex support-only core filtering, choice-art duplicate fallback fix)
 Recommended repository location: ~/lucky-dex/source/docs/LUCKYDEX_MASTER_RULES.txt
 Project: LuckyDex — Android application/PWA, managed with Termux and GitHub
 
@@ -793,6 +793,46 @@ C-CPU-EX15-014 [LOCKED, 12 Nov 2026] Do not advertise or have CPU attempt Altari
 
 [CHECK] v0.69.215 code and automated tests cover 101/101 EX15 identities, 83/83 focused legal owned-deck constructions, selected explicit battle state outcomes, all printed EX15 attack action smoke calls with supplied Energy, and seeded CPU deck construction. This does NOT mean every card's effect was independently re-proven in every matchup, nor that long CPU self-play or Android touch UI has been certified. Old EX2/EX3 single-type deck coherence tests fail identically on unmodified v0.69.214 baseline; track as unrelated legacy bugs, not new EX15 regressions. EX14's four PARTIAL cards remain unchanged. See docs/EX_DRAGON_FRONTIERS_v0.69.215_FULL_PASS.md for per-card ledger and precise test scope.
 
+
+v0.69.216 CLASSIC DECK-BUILDER FOLLOW-UP — CONDITIONAL PARTNERS / CHOICE ART
+-----------------------------------------------------------------------------
+C-DECK-PARTNER-015 [LOCKED, 12 Nov 2026] A 'preferred partner' in card
+metadata is only a recommendation. It MUST NOT introduce an off-Energy
+attacking evolution family in a single-type auto-deck unless its own attacks
+are payable by the final Energy Zone, or a verified PRINTED in-play dependency
+makes it independently useful as a non-attacking Bench support. In particular
+EX15 Feraligatr δ Lightning cannot add an unpayable Fighting Meganium δ line
+just because the metadata lists Meganium as a preferred partner. In-play
+printed Regi-style requirements may intentionally include an off-type Bench
+Pokemon, but ordinary editorial partner suggestions are not that exception.
+Preserve optional mixed-type support when the player enables it and actual
+mandatory multi-type attack costs on the featured attacker.
+
+C-DECK-SUPPORT-016 [LOCKED, 12 Nov 2026] Stage-2-ex-only support Bodies/Powers
+must have a complete, eligible Stage 2 Pokémon-ex beneficiary family before
+auto-selection. Apply the rule at BOTH paths: the support Pokémon as the
+selected main/focus or partner, AND a randomly selected earlier Basic which
+auto-evolves into the support Pokémon. If the restricted type/set pool has no
+matching Stage 2 ex, skip that random core and any inert support partner; an
+explicit focus should explain why no viable deck can be built rather than
+silently returning a useless Xatu, Swellow or Altaria ex line. A Pokémon Star
+such as Charizard ★ δ is BASIC, not a Stage 2 Pokémon-ex, and does not qualify.
+Do not violate the user's Energy filter just to activate an optional support.
+
+C-UI-CHOICE-005 [LOCKED, 12 Nov 2026] When a choice tile has working full card
+art, show the art WITHOUT a second text-placeholder rectangle. Ensure CSS
+[hidden] wins over display:grid/block rules for both fallback and image; if
+the image fails to load, hide it and unhide the textual fallback. Maintain
+ARIA labels and genuine text-only options. Applies to both player/CPU choice
+surfaces using the shared component; no need to duplicate printed card text.
+
+[CHECK] EX15 v216 fixes verified by deterministic Card/CPU builder tests and
+static CSS fallback assertions; Android rendering and prolonged matches remain
+to be tested on a device. The older EX2/EX3 type/cohesion suites still have
+three pre-existing failures (same results as unchanged v214/v215 baseline), not
+claimed fixed by this EX15 issue pass. See
+LUCKYDEX_069216_CLASSIC_BUILDER_CHOICE_FIXES.md.
+
 CHANGE HISTORY
 =======================================================================
 
@@ -836,5 +876,7 @@ CHANGE HISTORY
 2026-11-12 | Document 2.7 -> 2.8 | App v0.69.214 | [LOCKED] C-PRIZE-CHOICE-001, C-PRIZE-UI-002, C-DECK-RETREAT-008, C-CPU-DOZING-009, C-ENERGY-HAND-017, C-LAB-AUTO-003, C-UI-CARD-004. Added stateful selection of hidden/face-up Prize positions and successive selections for two-Prize KOs; corrected Island Hermit hidden information; updated choice artwork presentation and printed Power/Body labels; paired Swellow with compatible complete Stage 2 ex evolution and Latias with Mr Stone's Project Basic hand retrieval; CPU heals via Snorlax Dozing when sensible; persists Test Lab auto selections across sessions. Updated old auto-Prize assertions, supported catalogue count and redundant label UI tests. Automated Node regression results and Android QA limitations in docs/LUCKYDEX_069214_CLASSIC_QOL_AUDIT.md. Pocket point scoring unchanged.
 
 2026-11-12 | Document 2.8 -> 2.9 | App v0.69.215 | [LOCKED] C-DECK-STAGE2-EX-010, C-EX15-DAMAGE-012, C-EX15-META-013, C-DECK-CONDITIONAL-011, C-CPU-EX15-014. EX15 set-wide postrelease pass: correctly pair Xatu/Swellow/Altaria with full legal Stage 2 ex beneficiary lines and reverse Xatu/Swellow pairings; avoid energy pollution from support-only attackers; include Typhlosion δ Burn activation Fire energy; reserve physical Pokémon Tools for Ledian/Quagsire attacks; correctly tag Arbok Burn+Poison and Vibrava Confusion; stack Xatu Extra Feather for each unsuppressed Xatu; suppress unavailable Altaria hand-only Extra Boost on both boards. Added tests/v07215-ex15-full-pass.test.cjs (13 state/build/smoke tests; 83 owned focused Pokémon decks, 27 generated CPU decks, all EX15 attack actions). Selected EX-era Node suites v07205-v07215 198/198 passed; older EX2/EX3 cohesion failures reproduced in unchanged source baseline. Per-card evidence and limitations documented in docs/EX_DRAGON_FRONTIERS_v0.69.215_FULL_PASS.md. No APK built/pushed, Android handset QA not performed, EX14 gated subset unchanged.
+
+2026-11-12 | Document 2.9 -> 2.10 | App v0.69.216 | [LOCKED] C-DECK-PARTNER-015, C-DECK-SUPPORT-016, C-UI-CHOICE-005. Removed ineffective Xatu/Swellow/Altaria ex support-only lines when no complete Stage 2 Pokémon-ex can be included; guarded random Basic -> inert support evolution and explicit focus constraints; stopped Feraligatr δ Lightning metadata-only Meganium δ Fighting partnership while retaining genuine printed in-play partner exceptions. Hidden choice-card fallback now stays hidden when card art succeeds, with fallback visible only when art fails. Added tests/v07216-classic-builder-choices.test.cjs (6 new tests); 211/211 selected v07203 + v07205–v07216 checks passed. The three previously documented EX2/EX3 cohesion assertions remain unresolved and pass/fail exactly as before. Source patch only; no phone/APK QA.
 
 END OF LUCKYDEX MASTER RULES
