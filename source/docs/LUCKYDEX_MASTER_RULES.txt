@@ -1,8 +1,8 @@
 LUCKYDEX — MASTER PROJECT RULES AND DEVELOPMENT CONTRACT
 =========================================================
-Document version: 2.5
+Document version: 2.6
 Compiled: 12 November 2026
-Current source baseline inspected: v0.69.211 (Charizard δ Peal of Thunder optional-activation fix; built on v0.69.210)
+Current source baseline inspected: v0.69.212 (EX Dragon Frontiers staged 101-card set; based on v0.69.211)
 Recommended repository location: ~/lucky-dex/source/docs/LUCKYDEX_MASTER_RULES.txt
 Project: LuckyDex — Android application/PWA, managed with Termux and GitHub
 
@@ -375,6 +375,25 @@ PART 3 — CLASSIC POKÉMON TCG FORMAT
   [CHECK] A custom Stadium that changes Bench size beyond the engine's usual physical slots needs explicit state and mobile UI tests. Current core's default is three slots, so do not assume eight can physically display correctly just because a card says eight.
   [LOCKED] Prevent cross-set card-name collisions, incorrect special tags (e.g., 'Dark' versus Water for custom Magikarp GX), inconsistent descriptions and incorrect attack preconditions.
 
+
+=======================================================================
+PART 3A — EX DRAGON FRONTIERS GLOBAL MECHANICS (v0.69.212)
+=======================================================================
+
+C-EX15-STATUS-001 [LOCKED] Card availability is evidence based, not catalogue based. Register all 101 English prints; enable only those with supported printed outcomes. The v0.69.212 source marks 82 FULL / battle-enabled and 19 PARTIAL. PARTIAL cards remain visible in collection and inspect, but must not enter live/automatic deck generation; no generic no-op substitution. See docs/EX_DRAGON_FRONTIERS_v0.69.212_RULES_AUDIT.md for exact card IDs and blockers. Preserve the four outstanding ex14 PARTIAL cards.
+
+C-EX15-HOLON-002 [LOCKED] EX Dragon Frontiers reprints Holon Energy FF, GL, and WP. They must behave as the equivalent EX Delta Species print, including basic Energy activation, Pokémon-ex restrictions, relevant deck tags, and CPU attachments. Reprints count toward the correct name/ownership limits. δ Rainbow Energy supplies every colour only while on a δ Pokémon; otherwise Colourless.
+
+C-EX15-ENERGY-003 [LOCKED] Boost Energy supplies three Colourless Energy only on legal evolved Pokémon, prevents retreat as printed, and expires at the correct turn boundary. Scramble Energy is conditional on the attached Pokémon and Prize count, and may supply three flexible Energy units only while its activation requirements hold. Crystal Beach (ex14) changes all multiple-unit Special Energy to one Colourless without altering Basic Energy. Test both active and inactive conditions and CPU planning.
+
+C-EX15-CHOICE-004 [LOCKED] Optional Powers and “up to N” card effects must offer a real stop/decline option. Holon Mentor must pay its required hand discard before searching, enforce the eligible Basic HP threshold and selection limit, and use the real physical deck. Old Rod flips precisely the printed number of coins, then offers the permitted real discard target; do not reroll when a user makes a selection. Recovery from Energy Zone versus physical deck/discard must be explicit and preserved.
+
+C-EX15-BENCH-005 [LOCKED] Between-turn Bench effects (e.g. Flygon ex Sand Damage) must obey target stage, protection and damage events once per correct boundary, with an observable Bench-hit visual. Attack or ability state effects, Special Conditions, attack prevention, retreat changes, Tools and cross-set δ buffs must resolve on the printed side/turn, not only update text. Target selection occurs at the printed step; if an effect says switch BEFORE damage (Feraligatr δ Drag Off), it remains PARTIAL until that sequence is tested.
+
+C-EX15-DECK-006 [LOCKED] Deck metadata and AI must respect δ type, cross-set prerequisite Energy, typed attacks, activated Special Energy, optional Bench partners, Tools, Stage 2 evolution chains and ownership/selected set rules. The 30-card deck and separate ordered Basic Energy Zone must not be conflated. Check deck output across all nine archetypes and actual saved Energy Zone, not only static metadata.
+
+C-EX15-RELEASE-007 [CHECK] Current live-combat subset has targeted Node state tests and supported-move execution checks, but neither Android touch QA nor all cross-set card combinations has been certified. Never claim “101/101 fully implemented” until the remaining 19 effects have real outcomes and tests. The complete per-card ledger and test caveats are in the ex15 rules audit.
+
 =======================================================================
 PART 4 — POKÉMON TCG POCKET (TCGP) — SEPARATE RULESET
 =======================================================================
@@ -693,6 +712,9 @@ PART 13 — INSTRUCTIONS TO PASTE INTO ANY NEW CHAT
   [CHECK]  v0.69.209 Android portrait UI/touch, save migrations and long self-play CPU strategy are unverified. Automated tests verify the 96-card battle-enabled subset and selected affected engine behaviour, not an exhaustive combinatorial proof. App versionCode 7189; v0.69.209. Existing fully historical test failures remain outside this new audit.
 
 =======================================================================
+  [CURRENT] v0.69.212 registers EX Dragon Frontiers (ex15), 101 English cards, their official-style images, names, stats, printed text, named Power/Body/attack rules, 30-card player/CPU/Test Lab set integration and deck metadata. The explicit execution gate enables 82 and keeps 19 labelled PARTIAL in collection but out of battles. Cross-set FF/GL/WP, δ Rainbow, Boost/Scramble, Crystal Beach and selected Tool/Ability mechanics were checked. The latest test results and all 101 individual card statuses are in docs/EX_DRAGON_FRONTIERS_v0.69.212_RULES_AUDIT.md. Four previously gated EX Crystal Guardians cards remain unresolved; don't promote them silently.
+  [CHECK] EX Dragon Frontiers printed-rule coverage is not proof of exhaustive battle simulations or Android touchscreen testing. Feraligatr δ's Drag Off before-damage swap, global δ identity propagation, delayed status/knockout and copied-attack effects remain gated pending correct choices/timing.
+
 CHANGE HISTORY
 =======================================================================
 
@@ -727,5 +749,7 @@ CHANGE HISTORY
 
 2026-11-12 | Document 2.3 -> 2.4 | App v0.69.210 | C-ENERGY-016, C-DECK-EVO-007, C-EX14-CHARIZARD-008. Fix Charizard δ Peal of Thunder auto-decks lacking physical Energy: reserve up to three actually owned Double Rainbow copies when available in selected sets (EX14 or eligible older print), preserving the separate ordered Basic Energy Zone; warn when no owned physical Energy can activate a true physical top-five reveal. Prefer attack-compatible delta Charmander/Charmeleon prints. Enforce Double Rainbow attachment restrictions for direct-from-deck Peal choices and Metal Burn's actual Basic/Special Metal-providing discard. State-based tests in v07210 plus adjacent builder/EX rule regressions; Android phone UI QA not performed.
 2026-11-12 | Document 2.4 -> 2.5 | App v0.69.211 | [LOCKED] C-EX14-POWER-009. Report: Peal of Thunder immediately revealed/discarded up to five physical cards on evolution, even though printed wording says "may". Now explicitly ask Use/Decline before any draw-deck mutation; declining leaves zones unchanged. After accepting, choose one eligible recipient, then optionally attach zero or more valid revealed Energy, discarding only unchosen revealed cards. AI on all four levels declines if no physical Energy is left. Code: tcgp-battle-effects.js, tcgp-battle-ai.js; tests/v07211-charizard-peal-optional.test.cjs plus updated v07210 test; v210 Metal Burn remains unchanged. Android device QA not performed.
+
+2026-11-12 | Document 2.5 -> 2.6 | App v0.69.212 | C-EX15-STATUS-001 through C-EX15-RELEASE-007 | [LOCKED]/[CHECK] Added EX Dragon Frontiers ex15, 101 numbered English prints, 82 FULL and 19 PARTIAL/gated. Registered physical card data, art, collection, player/CPU deck pools, evolution/type/conditional metadata and selected attack/Power/Tool choices. Implemented and tested relevant ex11/ex15 Holon reprints, Boost/Scramble/δ Rainbow and Crystal Beach cross-set Energy handling, optional up-to search stops, correct Holon Mentor/Old Rod selection flows, reactive protective effects, state-based attack damage and between-turn Bench hit events. Code: tcg-classic-dragon-frontiers.js, tcg-classic-battle-data.js, tcg-classic-deck-builder.js, tcg-classic-opponents.js, tcg-classic-set-picker.js, tcgp-battle-core.js, tcgp-battle-effects.js, app-v0167.js, index.html; tests/v07212-ex-dragon-frontiers.test.cjs. See docs/EX_DRAGON_FRONTIERS_v0.69.212_RULES_AUDIT.md for 101-card ledger, follow-ups, updated test totals and any regression caveats. Android device QA not performed. No Pocket rules changed.
 
 END OF LUCKYDEX MASTER RULES
