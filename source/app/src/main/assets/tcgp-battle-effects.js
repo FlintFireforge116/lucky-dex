@@ -6728,6 +6728,30 @@
     const pick=(which,rule,opts={})=>ctx.requestChoice?.({kind:'pokemon',side:'self',selectionSide:which==='opponent'?ctx.foeSide:ctx.side,includeActive:opts.includeActive!==false,filter:opts.filter,effect:{type:'neoRule',rule},optional:!!opts.optional});
     const sel=(which)=>{const board=which==='opponent'?foe:ss,target=ctx.action?.choiceTarget,index=Number(ctx.action?.choiceBenchIndex);return target==='active'?board.active:(board.bench||[]).find(x=>Number(x.benchSlot)===index);};
     const log=(details)=>ctx.state.log.push({type:'neoEffect',side:ctx.side,rule:e.rule,...details});
+    if(e.rule==='dp1:babyEvolve'){
+      // Baby Evolution is an activated Power, NOT normal Stage 1 evolution.
+      // A valid named Basic from hand becomes the new top of the stack, with
+      // no discard of the original Baby and correct from-hand trigger timing.
+      const targetName=e.targetName,source=a,refName=ref=>ctx.cardById(ref.cardId)?.name;
+      if(!source||!targetName||!['Budew','Azurill'].includes(ctx.cardById(source.cardId)?.name))return;
+      if(ctx.resolvingChoice){
+        const ix=ctx.action?.choiceHandIndex,ref=ss.hand[ix];
+        if(!Number.isInteger(ix)||!ref||refName(ref)!==targetName)return;
+        ss.hand.splice(ix,1);source.stack=[...(source.stack||[source.cardId]),ref.cardId];source.cardId=ref.cardId;
+        source.playedOnSideTurn=ss.turnCount;source.evolvedOnTurn=ctx.state.turnNumber;
+        ctx.onBabyEvolved?.(source);source.damage=0;
+        log({babyEvolvedTo:ref.cardId,fromHand:true});return;
+      }
+      if(ss.hand.some(ref=>refName(ref)===targetName))ctx.requestChoice?.({kind:'handCard',side:'self',filter:{name:targetName},effect:e});
+      return;
+    }
+    if(e.rule==='dp1:10:placeCounters'){
+      if(a&&d&&e.amount>0&&!protectedFromEffects(d,ctx)){
+        d.damage=Number(d.damage||0)+Number(e.amount);
+        log({damageCounters:e.amount,target:d.cardId});
+      }
+      return;
+    }
     if(e.rule==='dp1:49:synthesis'){
       const filter={basicEnergy:true,subtype:'Grass'};
       const deck=ss.deck||[],physical=deck.filter(ref=>matchesFilter(ctx.cardById(ref.cardId),filter));
@@ -8817,11 +8841,13 @@
       }
       case 'scoopUp':{
         const slot=affected()[0],ss=slot&&energyOwner(ctx,slot);if(!slot||!ss)break;
-        if(ctx.state.format==='classic'&&['neo1-98','ecard1-151','ex6-99'].includes(ctx.trainerRef?.cardId)){
+        if(ctx.state.format==='classic'&&['neo1-98','ecard1-151','ex6-99','dp1-115'].includes(ctx.trainerRef?.cardId)){
           // Unlike Base Set Scoop Up, Super Scoop Up returns the entire evolution
           // stack and every attachment to hand on heads.
           const refs=[...(slot.stack||[slot.cardId]).map((cardId,i)=>({uid:`${slot.uid}-neo-scoop-${i}`,cardId})),...(slot.specialEnergy||[]),...toolsOf(slot),...(slot.temporaryTrainers||[])];
-          for(const [type,count] of Object.entries(slot.energy||{}))for(let i=0;i<Number(count||0);i++)if(neoBasicIds[type])refs.push({uid:`${slot.uid}-neo-energy-${type}-${i}`,cardId:neoBasicIds[type],zoneGenerated:true});
+          const dpBasicIds={Grass:'dp1-123',Fire:'dp1-124',Water:'dp1-125',Lightning:'dp1-126',Psychic:'dp1-127',Fighting:'dp1-128',Darkness:'dp1-129',Metal:'dp1-130'};
+          const returnIds=ctx.trainerRef?.cardId==='dp1-115'?dpBasicIds:neoBasicIds;
+          for(const [type,count] of Object.entries(slot.energy||{}))for(let i=0;i<Number(count||0);i++)if(returnIds[type])refs.push({uid:`${slot.uid}-neo-energy-${type}-${i}`,cardId:returnIds[type],zoneGenerated:true});
           if(ss.handLimit!=null&&ss.hand.length+refs.length>ss.handLimit)break;
           ss.hand.push(...refs);
           if(ss.active===slot)ss.active=null;else{const index=ss.bench.indexOf(slot);if(index>=0)ss.bench.splice(index,1);}
@@ -9341,6 +9367,43 @@
           const stack=ctx.attacker?.stack||[];
           if(stack.some(id=>ctx.cardById(id)?.name==='Cleffa'))damage+=20;return;
         }
+        // D&P batch 4: conditionally printed damage; always determine actual
+        // Energy and evolution stack state BEFORE choosing Weakness/Resistance.
+        const mine=own(ctx),foe=other(ctx),self=ctx.attacker,def=ctx.defender;
+        const hasUnder=name=>(self?.stack||[]).some(id=>ctx.cardById(id)?.name===name);
+        const energyCount=slot=>Object.values(slot?.energy||{}).reduce((n,v)=>n+Math.max(0,Number(v||0)),0)+(slot?.specialEnergy||[]).length;
+        if(rule==='dp1:10:avenge'){
+          damage=0;
+          const count=pokemonOn(mine).filter(p=>Number(p.damage||0)>0).length;
+          if(count)pending.push({type:'neoRule',rule:'dp1:10:placeCounters',amount:10*count});
+          return;
+        }
+        if(rule==='dp1:10:psywave'){damage+=20*energyCount(def);return;}
+        if(rule==='dp1:13:spikeWhip'){
+          if(hasUnder('Budew'))pending.push({type:'benchDamage',side:'opponent',amount:30});return;
+        }
+        if(rule==='dp1:18:bubblePump'){
+          if(energyCount(self)>=3)damage+=20;
+          if(hasUnder('Azurill'))pending.push({type:'coinFlip',heads:{type:'status',target:'opponentActive',status:'paralysis'}});
+          return;
+        }
+        if(rule==='dp1:21:swallowUp'){
+          const selfHp=Math.max(0,(ctx.maxHp?.(ctx.side,self)||ctx.cardById(self.cardId)?.hp||0)-Number(self?.damage||0));
+          const foeHp=Math.max(0,(ctx.maxHp?.(ctx.foeSide,def)||ctx.cardById(def.cardId)?.hp||0)-Number(def?.damage||0));
+          damage=foeHp<selfHp?60:30;return;
+        }
+        if(rule==='dp1:26:waterGun'){
+          const supply=typeof ctx.effectiveEnergy==='function'?ctx.effectiveEnergy(self):self?.energy||{};
+          damage+=20*Math.min(2,Math.max(0,Number(supply.Water||0)-2));return;
+        }
+        if(rule==='dp1:39:attackOrder'){
+          damage=10*[...pokemonOn(mine),...pokemonOn(foe)].filter(p=>ctx.cardById(p.cardId)?.types?.includes('Grass')).length;return;
+        }
+        if(rule==='dp1:40:darkPulse'){
+          damage=10*pokemonOn(mine).reduce((n,p)=>n+Number((typeof ctx.effectiveEnergy==='function'?ctx.effectiveEnergy(p):p.energy||{}).Darkness||0),0);return;
+        }
+        if(rule==='dp1:88:rollout'){if(hasUnder('Azurill'))damage+=20;return;}
+        if(rule==='dp1:96:toxicSpikes'){damage=hasUnder('Budew')?10:0;return;}
         pending.push(e);return;
       }
       if(e.type==='lentalRule'&&String(e.rule||'').startsWith('sv1:')){
@@ -10853,6 +10916,10 @@
     return [{}];
   }
   function choicesForEffect(effect,ctx){
+    if(effect?.type==='neoRule'&&effect.rule==='dp1:13:spikeWhip'){
+      const stacked=(ctx.attacker?.stack||[]).some(id=>ctx.cardById(id)?.name==='Budew');
+      return stacked&&other(ctx).bench?.length?targetChoices('opponentBench',ctx):[{}];
+    }
     if(effect?.type==='neoRule'&&effect.rule==='ex16:15:lightningStrike')return [{effectSelection:'',choiceLabel:'50 damage — keep Lightning Energy'},...(Number(ctx.attacker?.energy?.Lightning||0)>0?[{effectSelection:'discardLightning',choiceLabel:'90 damage — discard all Lightning Energy'}]:[])];
     if(effect?.type==='neoRule'&&effect.rule==='ex1:darkSlash'){
       return [{effectSelection:'',choiceLabel:'40 damage - keep Darkness Energy'},

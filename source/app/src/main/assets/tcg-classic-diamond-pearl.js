@@ -189,7 +189,20 @@ const PRINTS={
   77:["The Defending Pokémon is now Asleep.","If Clefairy is evolved from Cleffa, this attack does 20 damage plus 20 more damage."],
   79:["Switch 1 of your opponent's Benched Pokémon with 1 of the Defending Pokémon. The new Defending Pokémon is now Asleep.",""],
   70:["Choose 1 of the Defending Pokémon's attacks. That Pokémon can't use that attack during your opponent's next turn.","Search your discard pile for a Trainer card, show it to your opponent, and put it into your hand."],
-  92:["Choose up to 2 of your opponent's Benched Pokémon. This attack does 10 damage to each of them. (Don't apply Weakness and Resistance for Benched Pokémon.) Onix can't attack during your next turn.",""],
+  92:["Choose up to 2 of your opponent's Benched Pokémon. This attack does 10 damage to each of them. (Don't apply Weakness and Resistance for Benched Pokémon.) Onix can't attack during your next turn.",""],  6:["This attack's damage isn't affected by Resistance.","Does 20 damage to 1 of your opponent's Benched Pokémon. (Don't apply Weakness and Resistance for Benched Pokémon.)"],
+  10:["Count the number of your Pokémon that have any damage counters on them. Put that many damage counters on the Defending Pokémon.","Does 30 damage plus 20 more damage for each Energy attached to the Defending Pokémon."],
+  13:["The Defending Pokémon is now Poisoned.","If Budew is anywhere under Roserade, choose 1 of your opponent's Benched Pokémon. This attack does 30 damage to that Pokémon. (Don't apply Weakness and Resistance for Benched Pokémon.)"],
+  18:["Flip a coin. If heads, prevent all damage done to Azumarill during your opponent's next turn.","If Azumarill has 3 or more Energy attached to it, this attack does 40 damage plus 20 more damage. If Azurill is anywhere under Azumarill, flip a coin. If heads, the Defending Pokémon is now Paralyzed."],
+  21:["Before doing damage, count the remaining HP of the Defending Pokémon and Carnivine. If the Defending Pokémon has fewer remaining HP than Carnivine's, this attack does 60 damage instead.","Flip a coin. If heads, the Defending Pokémon is now Paralyzed and discard an Energy card attached to the Defending Pokémon."],
+  26:["Flip a coin. If heads, discard an Energy attached to the Defending Pokémon.","Does 40 damage plus 20 more damage for each Water Energy attached to Floatzel but not used to pay for this attack's Energy cost. You can't add more than 40 damage in this way."],
+  39:["Discard a Grass Energy attached to Vespiquen and remove all damage counters from 1 of your Benched Grass Pokémon.","Does 10 damage times the number of Grass Pokémon in play (both yours and your opponent's)."],
+  40:["Search your deck for any 1 card and put it into your hand. Shuffle your deck afterward.","Does 10 damage times the total amount of Darkness Energy attached to all of your Pokémon."],
+  41:["Flip a coin. If heads, move all damage counters from Wobbuffet to the Defending Pokémon."],
+  57:["Flip a coin. If heads, discard an Energy card attached to 1 of your opponent's Pokémon.","Flip a coin. If tails, this attack does nothing."],
+  88:["If Marill is evolved from Azurill, this attack does 10 damage plus 20 more damage.","Switch Marill with 1 of your Benched Pokémon."],
+  96:["The Defending Pokémon is now Poisoned. If Roselia is evolved from Budew, this attack does 10 damage to the Defending Pokémon.","The Defending Pokémon is now Asleep. Remove 2 damage counters from 1 of your Pokémon."],
+  43:["Search your deck for a Trainer card, show it to your opponent, and put it into your hand. Shuffle your deck afterward."],
+  69:["Put any 1 card from your discard pile into your hand."],
 };
 const noop={type:'noop'},status=s=>({type:'status',target:'opponentActive',status:s});
 const lock=(action,target='opponentActive',duration='opponentTurn')=>({type:'lock',target,action,duration});
@@ -248,7 +261,20 @@ const EFFECTS={
   77:[status('sleep'),{type:'neoRule',rule:'dp1:77:moonImpact'}],
   79:[seq({type:'forceOpponentSwitch'},status('sleep')),noop],
   70:[{type:'chooseAttackLock',duration:'opponentTurn'},{type:'searchChosen',source:'discard',amount:1,filter:{kind:'trainer'}}],
-  92:[seq({type:'multiTargetDamage',target:'opponentBench',count:2,amount:10,upTo:true},lock('attack','self','nextOwnTurn')),noop],
+  92:[seq({type:'multiTargetDamage',target:'opponentBench',count:2,amount:10,upTo:true},lock('attack','self','nextOwnTurn')),noop],  6:[{type:'damageRule',ignoreResistance:true},benchHit(20)],
+  10:[{type:'neoRule',rule:'dp1:10:avenge'},{type:'neoRule',rule:'dp1:10:psywave'}],
+  13:[status('poison'),{type:'neoRule',rule:'dp1:13:spikeWhip'}],
+  18:[flip({type:'preventDamage',target:'self',duration:'opponentTurn'}),{type:'neoRule',rule:'dp1:18:bubblePump'}],
+  21:[{type:'neoRule',rule:'dp1:21:swallowUp'},flip(seq(status('paralysis'),{type:'discardEnergyCard',target:'opponentActive',amount:1}))],
+  26:[flip({type:'discardEnergyCard',target:'opponentActive',amount:1}),{type:'neoRule',rule:'dp1:26:waterGun'}],
+  39:[seq({type:'discardEnergyCard',target:'self',energyType:'Grass',amount:1},{type:'heal',target:'selfBench',filter:{subtype:'Grass'},amount:999}),{type:'neoRule',rule:'dp1:39:attackOrder'}],
+  40:[{type:'searchChosen',source:'deck',amount:1,filter:{}},{type:'neoRule',rule:'dp1:40:darkPulse'}],
+  41:[flip({type:'moveDamage',target:'self',destination:'opponentActive',amount:'all'})],
+  57:[flip({type:'chooseTarget',target:'opponentPokemon',chooser:'owner',effect:{type:'discardEnergyCard',target:'opponentPokemon',amount:1}}),{type:'coinAttackGate',heads:noop}],
+  88:[{type:'neoRule',rule:'dp1:88:rollout'},{type:'switch',side:'self'}],
+  96:[seq(status('poison'),{type:'neoRule',rule:'dp1:96:toxicSpikes'}),seq(status('sleep'),{type:'heal',target:'selfPokemon',amount:20})],
+  43:[{type:'searchChosen',source:'deck',amount:1,filter:{kind:'trainer'}}],
+  69:[{type:'searchChosen',source:'discard',amount:1,filter:{}}],
 };
 // Trainer wording checked against the individual dp1 printed-card records.
 // Rule text below is catalogue data even when an effect is still gated.
@@ -274,8 +300,12 @@ const TRAINER_EFFECTS={
  110:flip({type:'searchChosen',source:'deck',amount:1,filter:{kind:'pokemon'}}),
  117:{type:'neoRule',rule:'ex1:basicSearch1'},
  118:{type:'heal',target:'selfPokemon',amount:20},
- 119:{type:'switch',side:'self'}
+ 119:{type:'switch',side:'self'},
+ 107:{type:'neoRule',rule:'ex16:75:trainer'},
+ 115:flip({type:'scoopUp',target:'selfPokemon'})
 };
+const BABY_TARGET={43:'Roselia',69:'Marill'};
+const BABY_WORDING={43:'Once during your turn (before your attack), you may put Roselia from your hand onto Budew (this counts as evolving Budew) and remove all damage counters from Budew.',69:'Once during your turn (before your attack), you may put Marill from your hand onto Azurill (this counts as evolving Azurill) and remove all damage counters from Azurill.'};
 const RULES_LVX='Put this card onto your Active Pokémon of the named species. A Pokémon LV.X retains attacks, Poké-Powers and Poké-Bodies from its previous level.';
 const READY=new Set([...Object.keys(EFFECTS).map(Number),...Object.keys(TRAINER_EFFECTS).map(Number)]);
 function parse(row){
@@ -291,6 +321,7 @@ function parse(row){
   const abilities=powerSpecs.split(';').filter(Boolean).map(s=>{const [power,type]=s.split('~');return {
     name:power,type:type?.includes('Power')?'activated':'passive',printedPowerType:type?.includes('Power')?'power':'body',
     text:'See the printed card. This ability is not yet battle-enabled.',effect:{type:'noop'}};});
+  if(BABY_TARGET[n])abilities[0]={name:'Baby Evolution',type:'activated',printedPowerType:'power',oncePerTurn:true,disabledByStatus:true,text:BABY_WORDING[n],effect:{type:'neoRule',rule:'dp1:babyEvolve',targetName:BABY_TARGET[n]}};
   const parseModifier=s=>s?{type:T[s[0]],value:s.slice(1)}:null;
   const w=parseModifier(weak),r=parseModifier(resist);
   Object.assign(card,{stage,hp:Number(hp),types:code.split('').map(x=>T[x]),subtype:T[code[0]],
@@ -312,8 +343,11 @@ function parse(row){
  const roles=new Set();if(/draw/.test(fullPrint))roles.add('draw');if(/search your deck/.test(fullPrint))roles.add('search');if(inflicts.length)roles.add('status');
  if(/return.*energy|attach.*energy|move.*energy/.test(fullPrint))roles.add('energy-acceleration');
  const payoff=[];
+ if(n===13){roles.add('budew-stack');payoff.push('Budew enables Spike Whip Bench damage');}
+ if(n===18){roles.add('azurill-stack');payoff.push('Azurill enables Bubble Pump Paralysis');}
  card.deckMeta={roles:[...roles],synergy:[...roles],energyTypes,preferredEnergyTypes:[],inflicts,payoffs:payoff,
-   preferredPartners:[],conditionalAttackEnergyTypes:[],stage2ExSupport:null,requiresTools:[]};
+   preferredPartners:[],conditionalAttackEnergyTypes:[],stage2ExSupport:null,requiresTools:[],
+   babyEvolutionSupport:n===13?['Budew']:n===18?['Azurill']:[]};
  // NO unverified attack, LV.X mechanic, Power or trainer enters CPU / Test Lab.
  return Object.freeze({...card,battleEnabled:ready,deckEligible:ready&&card.deckEligible!==false,
   support:{status:ready?'FULL':'PARTIAL',reasons:ready?[]:['Printed interactions not yet fully implemented/tested']}});

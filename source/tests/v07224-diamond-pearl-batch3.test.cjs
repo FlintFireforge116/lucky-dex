@@ -20,7 +20,7 @@ function resolveChoices(s,pick=()=>null){let seen=[];for(let i=0;i<16&&s.phase==
  }assert.notEqual(s.phase,'effectChoice','choice resolves');return seen;}
 function attack(s,index=0,side='player',chooseAttack=()=>null,pick=()=>null){s.activeSide=side;const acts=core.legalActions(s,side).filter(a=>a.type==='attack'&&a.attackIndex===index);assert.ok(acts.length,`${s.sides[side].active?.cardId} ${index} legal`);const a=chooseAttack(acts,s)||acts[0];core.applyAction(s,side,a);const seen=resolveChoices(s,pick);return {a,seen};}
 test('DP1 stage 3 enables 19 verified Pokémon and preserves 130-card catalogue',()=>{
- assert.equal(dp.coverage().total,130);assert.equal(dp.coverage().battleEnabled,67);
+ assert.equal(dp.coverage().total,130);assert.equal(dp.coverage().battleEnabled,83);
  for(const n of added){const c=dp.cardById('dp1-'+n);assert.ok(c?.battleEnabled,`${n} enabled`);for(const a of c.attacks){assert.ok(!a.text.startsWith('See the original card'),`${n} printed`);assert.deepEqual(fx.validateEffect(a.effect),[],`${n} ${a.name}`);}}
  for(const c of dp.CARDS.filter(c=>!c.battleEnabled))assert.ok(!c.deckEligible,`${c.id} gated`);
 });

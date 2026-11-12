@@ -337,6 +337,15 @@ function buildDeck(rows,options={}){
  // Ensure any preserved evolutions gain their missing prerequisites.
  for(const id of [...cards]){const c=classic.cardById(id);if(c?.kind==='pokemon'&&c.stage!=='Basic'){const line=familyLine(c,evolutionPool);if(line.length)for(const member of line.slice(0,-1))if(!(counts.get(member.id)||0))add(member,1,member?.effect?.type==='playFossil');}}
  const mainCopies=mainLine.length>=2?3:4;addLine(mainLine,mainCopies);
+ // Baby evolution support is not an ordinary Stage-1 predecessor: printed
+ // Azurill->Marill and Budew->Roselia are optional in-hand Powers. A focus
+ // on their explicit payoffs should still receive playable Baby copies.
+ if(scope.includes('dp1')&&!basicOnly){
+   const names=[...new Set(mainLine.flatMap(c=>c.deckMeta?.babyEvolutionSupport||[]))];
+   for(const name of names){const baby=pokemonPool.find(c=>c.name===name&&c.setId==='dp1'&&c.battleEnabled);
+     if(baby&&room(baby)>0)add(baby,Math.min(2,room(baby)),true);
+   }
+ }
  // The supported Stage 2 ex is the win condition in an Xatu/Altaria/Swellow
  // focused deck. Include the FULL evolution family, not just its Stage 2.
  if(stage2Beneficiary)addLine(familyLine(stage2Beneficiary,evolutionPool),2);
