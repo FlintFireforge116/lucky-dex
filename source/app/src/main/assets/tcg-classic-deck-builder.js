@@ -71,7 +71,29 @@ const allowedInSetPool=(card,sets)=>!!card&&(sets.includes(card.setId)||isDiscov
 function specialCosts(_cards){return {D:0,M:0};} // Basic Darkness/Metal satisfies typed attack costs; Special Energy is optional.
 
 function classicCardName(name){return String(name||'').replace(/[’]/g,"'").replace(/\s+(?=[♀♂])/g,'').replace(/\s*δ\s*$/u,'').trim();}
-function familyLine(card,pool){if(!card||card.kind!=='pokemon')return [];const line=[card],seen=new Set([card.id]);let cur=card;while(cur.evolvesFrom){const prior=pool.find(c=>(c.kind==='pokemon'||c.effect?.type==='playFossil')&&classicCardName(c.name)===classicCardName(cur.evolvesFrom));if(!prior||seen.has(prior.id))return [];line.unshift(prior);seen.add(prior.id);cur=prior;}return line;}
+function familyLine(card,pool){
+ if(!card||card.kind!=='pokemon')return [];
+ const line=[card],seen=new Set([card.id]);let cur=card;
+ // When an expansion includes different prints of a pre-evolution, choose
+ // the print that can fight using the final attacker's Energy plan. Without
+ // this, a Lightning/Metal Charizard δ was paired with Fire Charmeleon even
+ // though the set contains a Lightning Charmeleon δ.
+ const finalTypes=new Set(attackTypes(card));
+ while(cur.evolvesFrom){
+  const parents=pool.filter(c=>(c.kind==='pokemon'||c.effect?.type==='playFossil')&&classicCardName(c.name)===classicCardName(cur.evolvesFrom));
+  if(!parents.length)return [];
+  const fit=c=>{
+   const needs=attackTypes(c),off=needs.filter(t=>!finalTypes.has(t)).length,
+     playable=(c.attacks||[]).some(a=>[...String(a.cost||'')].every(symbol=>symbol==='C'||!CODE_TO_TYPE[symbol]||finalTypes.has(CODE_TO_TYPE[symbol]))),
+     sameType=(c.types||[]).some(t=>(card.types||[]).includes(t));
+   return (playable?10:0)+(sameType?3:0)-off*15;
+  };
+  parents.sort((a,b)=>fit(b)-fit(a));
+  const prior=parents[0];if(seen.has(prior.id))return [];
+  line.unshift(prior);seen.add(prior.id);cur=prior;
+ }
+ return line;
+}
 // A visible Stage 1 is not a finished core when a Stage 2 exists but is
 // PARTIAL, unowned or excluded by the selected sets. Check the full catalogue
 // before treating the end of the playable subset as a terminal evolution.
@@ -420,6 +442,25 @@ function buildDeck(rows,options={}){
  const flexibleDarkMetal=classic.cardById('ex13-97');
  if(flexibleDarkMetal&&allowedInSetPool(flexibleDarkMetal,scope)&&
    selectedTypes.includes('Darkness')&&selectedTypes.includes('Metal'))add(flexibleDarkMetal,1);
+ // Stage-2 Powers that reveal physical deck cards (Charizard δ's Peal of
+ // Thunder) cannot find Basic Energy in the separate Zone. Reserve actually
+ // owned, legally attachable *physical* Energy before general Trainers. This
+ // is a payoff/dependency choice, not a conversion of the Energy Zone or a
+ // blanket Special Energy filler rule. Dragon-type mixed Energy costs remain
+ // served by the planned Basic Energy Zone separately.
+ const revealedPhysicalEnergyCore=mainLine.some(c=>(c.deckMeta?.triggerDependencies||[]).includes('top-five-physical-deck-energy'));
+ const revealedPhysicalEnergySupport=cards.map(classic.cardById).some(c=>c?.kind==='pokemon'&&(c.deckMeta?.triggerDependencies||[]).includes('top-five-physical-deck-energy'));
+ const hasEvolvedNonExTarget=cards.map(classic.cardById).some(c=>c?.kind==='pokemon'&&['Stage 1','Stage 2'].includes(c.stage)&&!c.pokemonEx);
+ const peekEnergyNames=new Set(cards.map(classic.cardById).flatMap(c=>c?.deckMeta?.physicalDeckEnergyPayoffs||[]));
+ const eligiblePeekEnergy=pool.filter(c=>c.kind==='energy'&&c.specialEnergy&&peekEnergyNames.has(c.name))
+   .sort((a,b)=>Number(b.setId===main.setId)-Number(a.setId===main.setId)||a.id.localeCompare(b.id));
+ if(revealedPhysicalEnergySupport&&hasEvolvedNonExTarget){
+   let reserve=revealedPhysicalEnergyCore?3:2;
+   for(const energyCard of eligiblePeekEnergy){
+     if(reserve<=0)break;
+     reserve-=add(energyCard,Math.min(reserve,room(energyCard)));
+   }
+ }
  // Stage 2 decks value Breeder; add it before generic staples when owned.
  if(cards.map(classic.cardById).some(c=>c?.stage==='Stage 2')){const breeder=classic.cardById('base1-76');if(breeder&&scope.includes(breeder.setId))add(breeder,Math.min(2,room(breeder)));}
  if(focus&&scope.includes(focus.setId)&&focus.kind!=='pokemon')add(focus,Math.min(2,room(focus)));
@@ -565,7 +606,10 @@ function buildDeck(rows,options={}){
  const zoneLabel=finalEnergy.join(' / ');
  const label=specialist?`${specialist} · Basic Zone: ${zoneLabel}`:(requested.includes('Colorless')?`Colorless / ${zoneLabel}`:zoneLabel);
  const plan=synergy.report(cards.map(classic.cardById).filter(Boolean),finalEnergy,theme);
- return {ok:true,cards,energyTypes:finalEnergy,errors:[],warnings:plan.warnings.map(message=>({message})),plan,style,archetypeKey:archetypeKey(featured||main),focusCardId:focus?.id||featured?.id||main.id,strategy:`${style==='random'?'Random featured':'Competitive'} · ${theme!=='any'?synergy.THEMES.find(t=>t.id===theme).label+' · ':''}${rarityFocus!=='any'?RARITY_FOCUS.find(r=>r.id===rarityFocus).label+' · ':''}${basicOnly?'Basic-only · ':''}${label} · ${featured?featured.name+' featured · ':''}${archetypeName(main,evolutionPool)} core · ${pokemonCount()} Pokémon / ${30-pokemonCount()} Trainers & Special Energy`};
+ const notes=plan.warnings.map(message=>({message}));
+ if(revealedPhysicalEnergySupport&&!cards.some(id=>classic.cardById(id)?.kind==='energy'))
+   notes.push({message:'Peal of Thunder looks at the real draw deck, not the Basic Energy Zone. No owned physical Energy was available in this deck, so its top-five reveal cannot attach Energy.'});
+ return {ok:true,cards,energyTypes:finalEnergy,errors:[],warnings:notes,plan,style,archetypeKey:archetypeKey(featured||main),focusCardId:focus?.id||featured?.id||main.id,strategy:`${style==='random'?'Random featured':'Competitive'} · ${theme!=='any'?synergy.THEMES.find(t=>t.id===theme).label+' · ':''}${rarityFocus!=='any'?RARITY_FOCUS.find(r=>r.id===rarityFocus).label+' · ':''}${basicOnly?'Basic-only · ':''}${label} · ${featured?featured.name+' featured · ':''}${archetypeName(main,evolutionPool)} core · ${pokemonCount()} Pokémon / ${30-pokemonCount()} Trainers & Special Energy`};
 }
 function buildDeckAsync(rows,options,control={}){return new Promise(resolve=>{setTimeout(()=>{if(control.isCancelled?.())return resolve(null);resolve(buildDeck(rows,options));},0);});}
 return {buildDeck,buildDeckAsync,THEMES:synergy.THEMES,familyLine,familyRoot,attackTypes,conditionalAttackTypes,allowedInSetPool,ARCHETYPE_TYPES,SET_IDS,RARITY_FOCUS,rarityTier,matchesRarity};

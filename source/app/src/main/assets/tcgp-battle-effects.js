@@ -4143,14 +4143,23 @@
           if(!e.step){const top=us.deck.splice(0,5);if(!top.length)return;
             ex14Rule({...e,step:'target',topRefs:top},{...ctx,resolvingChoice:false});return;}
           if(e.step==='target'){
-            if(ctx.resolvingChoice){const target=chosen(us);if(!target)return;
+            if(ctx.resolvingChoice){
+              if(c.choiceSkip){us.discard.push(...(e.topRefs||[]));return;}
+              const target=chosen(us);if(!target)return;
               ex14Rule({...e,step:'select',targetUid:target.uid},{...ctx,resolvingChoice:false});return;}
-            if(my.length)pokemonPick(us,{optional:false});else us.discard.push(...(e.topRefs||[]));return;
+            if(my.length)pokemonPick(us,{optional:true});else us.discard.push(...(e.topRefs||[]));return;
           }
           if(e.step==='select'){
             const target=my.find(p=>p.uid===e.targetUid),remaining=e.topRefs||[];
             if(!target){us.discard.push(...remaining);return;}
-            const eligible=remaining.map((ref,index)=>({ref,index})).filter(x=>card(x.ref)?.kind==='energy');
+            // Card effects cannot override an Energy card's printed restriction:
+            // Double Rainbow must attach to an Evolved non-ex Pokemon.
+            const validEnergy=(ref)=>{const ce=card(ref),mon=ctx.cardById(target.cardId);
+              if(ce?.kind!=='energy')return false;
+              if(ce.energyRestriction?.stage&&!ce.energyRestriction.stage.includes(mon?.stage))return false;
+              if(ce.energyRestriction?.excludePokemonEx&&mon?.pokemonEx)return false;
+              return true;};
+            const eligible=remaining.map((ref,index)=>({ref,index})).filter(x=>validEnergy(x.ref));
             if(ctx.resolvingChoice){const idx=Number(c.choiceOption);
               if(idx===eligible.length||c.choiceSkip){us.discard.push(...remaining);return;}
               const x=eligible[idx];if(!x)return;
@@ -4271,6 +4280,24 @@
             else{const ix=a.specialEnergy.findIndex(ref=>ref.uid===x.ref.uid);if(ix>=0)us.discard.push(...a.specialEnergy.splice(ix,1));}return;}
           if(eligible.length)pick('option',{options:eligible.map(x=>'Discard '+x.label),optional:false});return;
         }
+      case '4:0':{ // Metal Burn: discard every attached source of Metal Energy.
+        // Rainbow/double-unit sources are Metal if they currently provide it,
+        // but Crystal Beach may convert a double-unit source to Colorless.
+        const basic=Number(a?.energy?.Metal||0);
+        if(basic){a.energy.Metal=0;recordDiscardedEnergy(us,'Metal',basic);}
+        const keep=[];let spent=0;
+        for(const ref of a?.specialEnergy||[]){
+          const energy=ctx.effectiveEnergy?.({...a,energy:{},specialEnergy:[ref]})||{},
+            otherSpecial=(a.specialEnergy||[]).some(r=>r!==ref),
+            inactiveMulti=ref.cardId==='ex13-96'&&otherSpecial,
+            metal=!inactiveMulti&&(Number(energy.Metal||0)>0||Number(energy.Miracle||0)>0||
+              Number(energy.Crystal||0)>0&&energy.__crystalAllowed?.Metal);
+          if(metal){us.discard.push(ref);spent++;}else keep.push(ref);
+        }
+        a.specialEnergy=keep;
+        ctx.state.log.push({type:'ex14MetalBurnDiscard',side:ctx.side,cardId:a.cardId,basic,physical:spent});
+        return;
+      }
       case '93:0':{const choices=[...Object.entries(a?.energy||{}).filter(([,count])=>Number(count)>0).map(([type])=>({kind:'basic',type,label:type+' Basic Energy'})),
           ...(a?.specialEnergy||[]).map(ref=>({kind:'special',ref,label:card(ref)?.name||ref.cardId}))];
         if(ctx.resolvingChoice){if(c.choiceSkip)return;const x=choices[Number(c.choiceOption)];if(!x)return;

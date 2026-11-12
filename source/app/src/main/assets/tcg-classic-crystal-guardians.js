@@ -76,6 +76,9 @@ function parse(n){
   inflicts:[...inflicts],payoffs:[...payoffs],preferredPartners,conditionalAttackEnergyTypes:n===25?['Psychic']:[],
   conditionalTypes:n===25?[{type:'Psychic',requiresEnergy:'Psychic'}]:[],
   requiresEnergyCards:n===4?['Metal Energy']:[],requiresTools:[8,9,22].includes(n)?['pokemonTool']:[],
+  // A physical-deck reveal needs an actual Special Energy card in the 30-card
+  // list; the unlimited Basic Energy Zone cannot populate its top five.
+  physicalDeckEnergyPayoffs:n===4?['Double Rainbow Energy']:[],
   triggerDependencies:n===4?['evolve-from-hand','top-five-physical-deck-energy']:n===98?['energy-discard','turn-ends']:[]});
  const ready=!INCOMPLETE.has(n)&&[...(card.attacks||[]).map(a=>a.effect),...(card.abilities||[]).map(a=>a.effect),card.effect||noop].every(effects.supportsEffect);
  return Object.freeze({...card,battleEnabled:ready,deckEligible:ready,support:{status:ready?'FULL':'PARTIAL',reasons:ready?[]:[PARTIAL_REASONS[n]||'Unverified printed effect; excluded from live decks until complete']}});

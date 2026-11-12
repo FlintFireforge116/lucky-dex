@@ -1,8 +1,8 @@
 LUCKYDEX — MASTER PROJECT RULES AND DEVELOPMENT CONTRACT
 =========================================================
-Document version: 2.3
+Document version: 2.4
 Compiled: 12 November 2026
-Current source baseline inspected: v0.69.209 (EX Crystal Guardians; built on v0.69.208)
+Current source baseline inspected: v0.69.210 (Charizard δ physical-Energy support; built on v0.69.209)
 Recommended repository location: ~/lucky-dex/source/docs/LUCKYDEX_MASTER_RULES.txt
 Project: LuckyDex — Android application/PWA, managed with Termux and GitHub
 
@@ -124,6 +124,9 @@ PART 3 — CLASSIC POKÉMON TCG FORMAT
   [LOCKED] When Energy is discarded from an attached Pokémon or by a card cost, Basic Energy goes into the owner's separate Basic ENERGY DISCARD, and physical Special Energy goes into the owner's normal card discard (unless printed card text or a properly documented exception says otherwise).
   [LOCKED] A Knocked Out Pokémon's attached Basic Energy also goes into the separate Basic Energy discard. This is essential for later Energy recovery and must not vanish into the infinite pool.
   [LOCKED] C-ENERGY-015: A generic deck search for ANY card (for example Base Set Computer Search) must search ONLY the actual draw deck. It must NOT generate Basic Energy from the Zone. The Zone substitution is permitted ONLY for an explicit search for Basic Energy, respecting eligible types and card-specific restrictions; it never makes an absent physical card appear.
+  [LOCKED] C-ENERGY-016 (v0.69.210): A Power/attack that looks at the top N cards of the physical draw deck (for example EX Crystal Guardians Charizard δ Peal of Thunder) reveals ONLY those real cards. It cannot substitute or silently sample the separate Basic Energy Zone. A builder focused on such a Power should prefer compatible, owned physical Special Energy when available and eligible to attach, *before* generic Trainer filler. Where no compatible owned physical Energy is present, keep the printed limitation and warn rather than inventing Energy.
+  [LOCKED] C-DECK-EVO-007 (v0.69.210): When a named evolution has multiple owned prints of a pre-evolution, favour the variant with useful attacks payable by the final attacker's Energy plan. Never silently turn optional off-type attack requirements into extra Basic Energy types when a compatible variant exists.
+  [LOCKED] C-EX14-CHARIZARD-008 (v0.69.210): Double Rainbow supplies two flexible units only on evolved non-ex Pokémon and reduces outgoing attack damage by 10; Peal of Thunder respects its attach restrictions. Charizard δ Metal Burn discards actual attached Energy currently providing Metal (Basic Energy to the basic ledger; physical Special Energy to card discard). Crystal Beach can change which types Special Energy currently provides.
   [LOCKED] A card that retrieves discarded Energy searches ALL eligible discard destinations, not just the visible ordinary discard pile or just the Basic Energy counts.
   [LOCKED] Recovered Energy MUST arrive at the EXACT destination specified: (1) HAND, (2) ACTIVE/BENCH POKÉMON, (3) DRAW DECK, (4) ENERGY ZONE/SUPPLY, or (5) another named zone. These are not interchangeable operations.
   [LOCKED] If a card says 'choose' Energy, the player selects eligible cards/types/targets and count. Do not silently use the first, newest, most convenient or cheapest candidate.
@@ -720,5 +723,7 @@ CHANGE HISTORY
 
 2026-11-11 | Historical v0.69.198–v0.69.208 bridge | Previously delivered patches completed EX Delta Species, EX Legend Maker and EX Holon Phantoms, and corrected Holon/React Energy deck selection, player card-art choices, optional Pokémon pairings, move metadata, CPU Special Energy attachment, Bench damage visuals, and Energy selection UI. Individual previous release notes/tests are retained; the original master document was not updated consistently in those earlier patches, which this version explicitly rectifies. These historical claims are not re-certified by the new v209 tests.
 2026-11-12 | Document 2.2 -> 2.3 | App v0.69.209 | Registered EX Crystal Guardians ex14 with 100 numbered English prints, all abilities, attacks, Trainer rules, asset references, player/CPU/Test Lab set integration, and named per-card deck metadata. Tested supported Stadium/Tool, double-unit Special Energy, Bench/Active and search/discard/choice paths; gated four genuinely unfinished cards (ex14-91, ex14-98, ex14-99, ex14-100) as PARTIAL, leaving 96 battle-enabled. The latest release test counts are recorded in docs/EX_CRYSTAL_GUARDIANS_v0.69.209_RULES_AUDIT.md. Android hardware QA not performed.
+
+2026-11-12 | Document 2.3 -> 2.4 | App v0.69.210 | C-ENERGY-016, C-DECK-EVO-007, C-EX14-CHARIZARD-008. Fix Charizard δ Peal of Thunder auto-decks lacking physical Energy: reserve up to three actually owned Double Rainbow copies when available in selected sets (EX14 or eligible older print), preserving the separate ordered Basic Energy Zone; warn when no owned physical Energy can activate a true physical top-five reveal. Prefer attack-compatible delta Charmander/Charmeleon prints. Enforce Double Rainbow attachment restrictions for direct-from-deck Peal choices and Metal Burn's actual Basic/Special Metal-providing discard. State-based tests in v07210 plus adjacent builder/EX rule regressions; Android phone UI QA not performed.
 
 END OF LUCKYDEX MASTER RULES

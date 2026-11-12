@@ -131,3 +131,13 @@
 | 98 | Swampert ex | Pokémon · Water | PARTIAL | Attacks: Ultra Pump. Powers/Bodies: Energy Recycle. **UNSUPPORTED:** Energy Recycle must choose exactly three discarded Energy and assign attachments, ending turn; Ultra Pump needs optional two-hand-card discard and Bench target. |
 | 99 | Alakazam ★ | Pokémon · Psychic | PARTIAL | Attacks: Psychic Select, Skill Copy. Powers/Bodies: —. **UNSUPPORTED:** Psychic Select must retrieve any card from real discard; Skill Copy must discard selected hand Pokémon, choose legal attack, pay cost. |
 | 100 | Celebi ★ | Pokémon · Grass | PARTIAL | Attacks: Leaf Shade. Powers/Bodies: Time Travel. **UNSUPPORTED:** Time Travel KO replacement must offer optional coin flip, remove attachments, and replace prize knockout with bottom-of-deck return. |
+
+## v0.69.210 follow-up — Charizard δ and physical Energy (12 November 2026)
+
+- The v209 roster and four PARTIAL cards are unchanged; all 100 records remain in catalogue and 96 remain enabled.
+- v209's builder populated Charizard δ decks with Lightning/Metal Basic Energy Zone types but **zero physical Energy in the 30-card draw deck**, leaving Peal of Thunder no Energy to reveal. This was reproduced with an ex14-only owned-card fixture.
+- The v210 builder reserves up to three actually owned Double Rainbow Energy cards *before* Trainer filler when the active deck plan contains a top-five physical-Energy-reveal Power. Both EX14 and a selected EX Emerald printing can be eligible; ownership, selected-set boundaries, four-name copy limits and evolved non-ex restriction still apply. Without owned physical Energy, the deck remains legal but warns Peal cannot attach Energy.
+- Evolution variant selection prefers Lightning Charmander δ and Charmeleon δ for Lightning/Metal Charizard δ rather than the same set's Fire versions with unavailable Fire attack costs.
+- Peal of Thunder now enforces a chosen Energy card's attach restriction even when attaching from a deck reveal; skipping discards the five revealed cards. Its search never substitutes Basic Energy from the separate Zone.
+- Metal Burn now discards the attacker's currently Metal-providing Energy: Basic Metal to Energy discard ledger and physical Special Energy to real card discard. Double Rainbow contributes two flexible units and a -10 attack penalty; Crystal Beach turns it into one Colorless unit rather than Metal.
+- Tests: `tests/v07210-crystal-charizard-physical-energy.test.cjs` (new state-based cases); recent related tests executed separately. Android touch QA not yet performed.
