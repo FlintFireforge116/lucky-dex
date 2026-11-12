@@ -1,8 +1,8 @@
 LUCKYDEX — MASTER PROJECT RULES AND DEVELOPMENT CONTRACT
 =========================================================
-Document version: 2.12
+Document version: 2.13
 Compiled: 12 November 2026
-Current source baseline inspected: v0.69.219 (EX Power Keepers Stadium/Trainer effects stage 3 over v218; v216 builder restrictions retained)
+Current source baseline inspected: v0.69.220 (EX Power Keepers fully battle-enabled over v219; v216 builder restrictions retained)
 Recommended repository location: ~/lucky-dex/source/docs/LUCKYDEX_MASTER_RULES.txt
 Project: LuckyDex — Android application/PWA, managed with Termux and GitHub
 
@@ -903,6 +903,43 @@ before claiming perfect printed-choice fidelity. The automated tests verify
 persistent state, not live Android touch selection. Maintain the 24-card
 gate and continue through remaining Fossils, Powers and ex/Star triggers.
 
+v0.69.220 EX POWER KEEPERS COMPLETION — PRINTED CHOICES & FOSSILS
+----------------------------------------------------------------------------
+C-EX16-POWER-006 [LOCKED, 12 Nov 2026] An ability that activates only when
+played from hand to evolve (Cradily Evolutionary Call, Walrein ex Chilling
+Breath) MUST NOT trigger on deck/effect evolution; Pokémon ★ and Absol ex
+Bench-entry abilities similarly require a genuine hand-to-Bench action.
+Resolve mandatory and optional choices through owner-correct battle-choice
+prompts and the existing CPU/Test Lab mechanism. A KO-triggered Power such
+as Lanturn Energy Grounding must run BEFORE the knocked-out Pokémon's
+attached Basic Energy reaches the discard ledger, moving a selected eligible
+unit directly to its printed recipient without creating fresh Energy.
+
+C-EX16-FOSSIL-007 [LOCKED, 12 Nov 2026] Claw Fossil ex16-84, Mysterious
+Fossil ex16-85 and Root Fossil ex16-86 act as Colorless Pokémon on Bench
+but are still physical Trainer cards; they have no attacks and cannot
+retreat or receive Special Conditions. Knockouts discard them but award NO
+Prize card and do NOT increment knockout counters. Owner may discard a
+Fossil from play on own turn before attacking. Their passive reactions
+and evolution lines must keep using real battle slots and source IDs.
+
+C-EX16-DAMAGE-008 [LOCKED, 12 Nov 2026] Repeated targeted hits, triggered
+Bench counters and reactive attack damage must use the printed order of
+choices, prevention and type rules. Armaldo Rock Blast chooses one valid
+opposing target per discarded Fighting Energy card; Flygon ex Psychic
+Protector discards 0–4 real hand cards chosen by the defender and reduces
+incoming damage *after applicable attack calculation*; Absol ex Psychic
+Pulse hits only opposing Bench Pokémon already carrying damage counters;
+Lanturn Lightning Strike is 50 without discard or 90 after discarding
+all Lightning Energy (not 40/90). Printed immunity and optional discards
+must remain legal on both player and CPU turns.
+
+[CHECK] v220 is a complete source-level EX16 card-enable pass, 108/108; this
+is NOT an exhaustive print-image proof nor Android device test. All 344
+selected v072xx automated EX-era/regression checks passed. The pre-existing
+Altaria Surprise facedown-selection limitation remains pending. Detailed
+card audit and device QA matrix: docs/EX_POWER_KEEPERS_v0.69.220_FULL_PASS.md.
+
 CHANGE HISTORY
 =======================================================================
 
@@ -954,3 +991,5 @@ CHANGE HISTORY
 2026-11-12 | Document 2.11 -> 2.12 | App v0.69.219 | [LOCKED] C-EX16-STADIUM-003, C-EX16-ENERGY-004, C-EX16-SEARCH-005. Enabled 14 additional Power Keepers prints (84/108 enabled, 24 gated). All five Stadium effects active in shared engine and Altaria between-turn healing; implemented explicit Energy Recycle System hand/deck selection, Basic-only Energy Switch, Scott, Steven’s Advice, Pichu and Wynaut Baby Evolution, Banette/Mightyena attacks. Expanded tests/v07219 and versioned audit. No APK/Android QA.
 
 END OF LUCKYDEX MASTER RULES
+
+2026-11-12 | Document 2.12 -> 2.13 | App v0.69.220 | [LOCKED] C-EX16-POWER-006, C-EX16-FOSSIL-007, C-EX16-DAMAGE-008. Enabled the remaining 24 EX Power Keepers cards (108/108), including real Fossil Pokémon slots/no-Prize KO, evolution/Bench/KO Powers, chosen Energy source/destination, multi-target attacks, printed Pokémon-ex and Star reactive effects. Fixed Lanturn 50/90 damage split, Armaldo no-Resistance Mach Claw, selected Flygon ex protection, and Magne­ton recovered-Energy choice loop. New tests: v07220 EX16 completion; updated stage assertions. Full selected Node v072xx regressions: 344/344 passing. Baseline v0.69.219; Android APK/device QA not performed. Details docs/EX_POWER_KEEPERS_v0.69.220_FULL_PASS.md.

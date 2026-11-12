@@ -20,13 +20,13 @@ function pick(s,fn){const side=s.choiceSide||s.activeSide,a=legal(s,side).filter
 function resolve(s,fn){let n=0;while(s.phase==='effectChoice'&&n++<20)pick(s,fn);assert.ok(n<21,'choice settled');}
 function stadium(s,id){item(s,id);assert.equal(s.stadium?.cardId,id);}
 
-test('source manifest has 84 ready cards, 24 gated and all new effect definitions validate',()=>{
- const summary=cards.coverage();assert.equal(summary.total,108);assert.equal(summary.battleEnabled,84);assert.equal(summary.partial.length,24);
+test('source manifest now has all 108 cards and new effect definitions validate',()=>{
+ const summary=cards.coverage();assert.equal(summary.total,108);assert.equal(summary.battleEnabled,108);assert.equal(summary.partial.length,0);
  for(const n of [2,4,18,21,70,71,72,73,75,76,79,81,82,83]){
   const c=cards.cardById('ex16-'+n);assert.equal(c.battleEnabled,true,c.id);assert.equal(c.support.status,'FULL',c.id);
   for(const e of [c.effect,...(c.attacks||[]).map(x=>x.effect),...(c.abilities||[]).map(x=>x.effect)].filter(Boolean))assert.deepEqual(fx.validateEffect(e),[],c.id);
  }
- for(const n of [3,5,7,8,9,10,13,22,45,56,84,86,92,93,94,95,97,98,99,100,101,102])assert.equal(cards.cardById('ex16-'+n).battleEnabled,false);
+ for(const n of [3,5,7,8,9,10,13,22,45,56,84,86,92,93,94,95,97,98,99,100,101,102])assert.equal(cards.cardById('ex16-'+n).battleEnabled,true);
 });
 test('Battle Frontier suppresses Stage 1 Darkness and Colorless powers but not Basic or Fighting',()=>{
  const s=setup('ex16-27');s.stadium={uid:'stad',cardId:'ex16-71'};

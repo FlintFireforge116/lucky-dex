@@ -30,9 +30,9 @@ test('ex16 catalogue contains exactly 108 canonical cards with full print, art a
  assert.equal(ex16.cardById('ex16-96').attacks[0].damage,150);
  assert.equal(ex16.cardById('ex16-108').deckEligible,false);
 });
-test('unsupported complex effects are not falsely marked as battle-ready',()=>{
+test('formerly staged complex effects now have complete battle handlers',()=>{
  for(const n of [3,5,7,8,9,10,13,22,45,56,84,86,92,93,94,95,97,98,99,100,101,102]){
-   const c=ex16.cardById('ex16-'+n);assert.equal(c.battleEnabled,false,c.id);assert.ok(c.support.reasons.length,c.id);
+   const c=ex16.cardById('ex16-'+n);assert.equal(c.battleEnabled,true,c.id);assert.deepEqual(c.support.reasons,[],c.id);
  }
  assert.equal(ex16.cardById('ex16-80').battleEnabled,true);
 });

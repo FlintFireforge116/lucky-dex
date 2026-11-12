@@ -30,6 +30,38 @@ const NEXT_TRAINERS={"73":{"type":"neoRule","rule":"ex16:73:trainer"},"75":{"typ
 const NEXT_POWERS={"2":{"type":"neoRule","rule":"ex16:2:synergy"},
 "70":{"type":"neoRule","rule":"ex16:70:babyEvolution"},
 "21":{"type":"neoRule","rule":"ex16:21:babyEvolution"},"27":{"type":"status","target":"opponentActive","status":"poison","condition":{"type":"stadiumInPlay","cardId":"ex16-82"}},"29":{"type":"noop"}};
+
+// Completion batch: retain a distinct printed-effect handler per remaining print.
+// Effects with a numeric vanilla attack remain explicit no-ops only where the
+// printed move has no secondary behaviour.
+const FINAL_READY=new Set([3,5,7,8,9,10,13,15,16,22,45,56,84,86,92,93,94,95,97,98,99,100,101,102]);
+const FINAL_MOVES={
+  3:[{type:'neoRule',rule:'ex16:3:rockBlast'},null],
+  5:[{type:'neoRule',rule:'ex16:5:fireStream'}],
+  7:[{type:'neoRule',rule:'ex16:7:poisonRing'}],
+  8:[{type:'neoRule',rule:'ex16:8:maxEnergySource'}],
+  9:[{type:'neoRule',rule:'ex16:9:energyBurst'}],
+  10:[{type:'neoRule',rule:'ex16:10:luringAntenna'},null],
+  13:[{type:'neoRule',rule:'ex16:13:criticalMove'}],
+  15:[{type:'neoRule',rule:'ex16:15:lightningStrike'}],
+  16:[{type:'neoRule',rule:'ex16:16:magneticForce'}],
+  22:[{type:'neoRule',rule:'ex16:22:downDraw'},{type:'neoRule',rule:'ex16:22:feintAttack'}],
+  45:[{type:'neoRule',rule:'ex16:45:magneticLines'}],
+  56:[{type:'neoRule',rule:'ex16:56:influence'},null],
+  92:[{type:'neoRule',rule:'ex16:92:psychicPulse'}],
+  93:[{type:'neoRule',rule:'ex16:93:psychicBoom'},{type:'neoRule',rule:'ex16:93:shadowCrush'}],
+  94:[{type:'neoRule',rule:'ex16:94:slashingStrike'}],
+  95:[{type:'neoRule',rule:'ex16:95:scanblast'}],
+  97:[{type:'neoRule',rule:'ex16:97:skillHack'},{type:'neoRule',rule:'ex16:97:dirge'}],
+  98:[{type:'neoRule',rule:'ex16:98:whirlwind'},null],
+  99:[{type:'neoRule',rule:'ex16:99:wreck'}],
+  100:[{type:'neoRule',rule:'ex16:100:flamethrower'}],
+  101:[{type:'neoRule',rule:'ex16:101:agility'}],
+  102:[{type:'neoRule',rule:'ex16:102:whirlpool'}]
+};
+const FINAL_POWERS={5:{type:'neoRule',rule:'ex16:5:firestarter'},7:{type:'neoRule',rule:'ex16:7:evolutionaryCall'},8:{type:'neoRule',rule:'ex16:8:energyDraw'},9:{type:'neoRule',rule:'ex16:9:psyShadow'},10:{type:'neoRule',rule:'ex16:10:primalStare'},13:{type:'neoRule',rule:'ex16:13:lazy'},15:{type:'neoRule',rule:'ex16:15:energyGrounding'},16:{type:'neoRule',rule:'ex16:16:magneticField'},22:{type:'neoRule',rule:'ex16:22:synergy'},92:{type:'neoRule',rule:'ex16:92:cursedEyes'},93:{type:'neoRule',rule:'ex16:93:typeShift'},94:{type:'neoRule',rule:'ex16:94:psychicProtector'},95:{type:'neoRule',rule:'ex16:95:magneticRedraw'},98:{type:'neoRule',rule:'ex16:98:metalGravity'},99:{type:'neoRule',rule:'ex16:99:chillingBreath'},100:{type:'neoRule',rule:'ex16:100:crimsonRay'},101:{type:'neoRule',rule:'ex16:101:yellowRay'},102:{type:'neoRule',rule:'ex16:102:blueRay'}};
+const FINAL_TRAINERS={84:{type:'playFossil',hp:40,subtype:'Colorless',canRetreat:false},86:{type:'playFossil',hp:40,subtype:'Colorless',canRetreat:false}};
+
 const PARTIAL_EFFECTS={"1": ["Printed effect not yet implemented and verified in live battle"], "2": ["Printed effect not yet implemented and verified in live battle"], "3": ["Printed effect not yet implemented and verified in live battle"], "4": ["Printed effect not yet implemented and verified in live battle"], "5": ["Printed effect not yet implemented and verified in live battle"], "6": ["Printed effect not yet implemented and verified in live battle"], "7": ["Printed effect not yet implemented and verified in live battle"], "8": ["Printed effect not yet implemented and verified in live battle"], "9": ["Printed effect not yet implemented and verified in live battle"], "10": ["Printed effect not yet implemented and verified in live battle"], "11": ["Printed effect not yet implemented and verified in live battle"], "12": ["Printed effect not yet implemented and verified in live battle"], "13": ["Printed effect not yet implemented and verified in live battle"], "14": ["Printed effect not yet implemented and verified in live battle"], "15": ["Printed effect not yet implemented and verified in live battle"], "16": ["Printed effect not yet implemented and verified in live battle"], "17": ["Printed effect not yet implemented and verified in live battle"], "18": ["Printed effect not yet implemented and verified in live battle"], "19": ["Printed effect not yet implemented and verified in live battle"], "20": ["Printed effect not yet implemented and verified in live battle"], "21": ["Printed effect not yet implemented and verified in live battle"], "22": ["Printed effect not yet implemented and verified in live battle"], "23": ["Printed effect not yet implemented and verified in live battle"], "24": ["Printed effect not yet implemented and verified in live battle"], "25": ["Printed effect not yet implemented and verified in live battle"], "26": ["Printed effect not yet implemented and verified in live battle"], "27": ["Printed effect not yet implemented and verified in live battle"], "28": ["Printed effect not yet implemented and verified in live battle"], "29": ["Printed effect not yet implemented and verified in live battle"], "30": ["Printed effect not yet implemented and verified in live battle"], "31": ["Printed effect not yet implemented and verified in live battle"], "32": ["Printed effect not yet implemented and verified in live battle"], "33": ["Printed effect not yet implemented and verified in live battle"], "34": ["Printed effect not yet implemented and verified in live battle"], "35": ["Printed effect not yet implemented and verified in live battle"], "36": ["Printed effect not yet implemented and verified in live battle"], "37": ["Printed effect not yet implemented and verified in live battle"], "38": ["Printed effect not yet implemented and verified in live battle"], "39": ["Printed effect not yet implemented and verified in live battle"], "40": ["Printed effect not yet implemented and verified in live battle"], "41": ["Printed effect not yet implemented and verified in live battle"], "42": ["Printed effect not yet implemented and verified in live battle"], "43": ["Printed effect not yet implemented and verified in live battle"], "44": ["Printed effect not yet implemented and verified in live battle"], "45": ["Printed effect not yet implemented and verified in live battle"], "46": ["Printed effect not yet implemented and verified in live battle"], "47": ["Printed effect not yet implemented and verified in live battle"], "48": ["Printed effect not yet implemented and verified in live battle"], "49": ["Printed effect not yet implemented and verified in live battle"], "50": ["Printed effect not yet implemented and verified in live battle"], "51": ["Printed effect not yet implemented and verified in live battle"], "52": ["Printed effect not yet implemented and verified in live battle"], "53": ["Printed effect not yet implemented and verified in live battle"], "54": ["Printed effect not yet implemented and verified in live battle"], "55": ["Printed effect not yet implemented and verified in live battle"], "56": ["Printed effect not yet implemented and verified in live battle"], "57": ["Printed effect not yet implemented and verified in live battle"], "58": ["Printed effect not yet implemented and verified in live battle"], "59": ["Printed effect not yet implemented and verified in live battle"], "60": ["Printed effect not yet implemented and verified in live battle"], "61": ["Printed effect not yet implemented and verified in live battle"], "62": ["Printed effect not yet implemented and verified in live battle"], "63": ["Printed effect not yet implemented and verified in live battle"], "64": ["Printed effect not yet implemented and verified in live battle"], "65": ["Printed effect not yet implemented and verified in live battle"], "66": ["Printed effect not yet implemented and verified in live battle"], "67": ["Printed effect not yet implemented and verified in live battle"], "68": ["Printed effect not yet implemented and verified in live battle"], "69": ["Printed effect not yet implemented and verified in live battle"], "70": ["Printed effect not yet implemented and verified in live battle"], "71": ["Printed effect not yet implemented and verified in live battle"], "72": ["Printed effect not yet implemented and verified in live battle"], "73": ["Printed effect not yet implemented and verified in live battle"], "74": ["Printed effect not yet implemented and verified in live battle"], "75": ["Printed effect not yet implemented and verified in live battle"], "76": ["Printed effect not yet implemented and verified in live battle"], "77": ["Printed effect not yet implemented and verified in live battle"], "78": ["Printed effect not yet implemented and verified in live battle"], "79": ["Printed effect not yet implemented and verified in live battle"], "80": ["Printed effect not yet implemented and verified in live battle"], "81": ["Printed effect not yet implemented and verified in live battle"], "82": ["Printed effect not yet implemented and verified in live battle"], "83": ["Printed effect not yet implemented and verified in live battle"], "84": ["Printed effect not yet implemented and verified in live battle"], "85": ["Printed effect not yet implemented and verified in live battle"], "86": ["Printed effect not yet implemented and verified in live battle"], "90": ["Attach-from-hand switch effect has not been implemented"], "91": ["Attach-from-hand switch effect has not been implemented"], "92": ["Printed effect not yet implemented and verified in live battle"], "93": ["Printed effect not yet implemented and verified in live battle"], "94": ["Printed effect not yet implemented and verified in live battle"], "95": ["Printed effect not yet implemented and verified in live battle"], "96": ["Printed effect not yet implemented and verified in live battle"], "97": ["Printed effect not yet implemented and verified in live battle"], "98": ["Printed effect not yet implemented and verified in live battle"], "99": ["Printed effect not yet implemented and verified in live battle"], "100": ["Printed effect not yet implemented and verified in live battle"], "101": ["Printed effect not yet implemented and verified in live battle"], "102": ["Printed effect not yet implemented and verified in live battle"], "87": ["Special Energy reprint must reproduce original live modifiers"], "88": ["Special Energy reprint must reproduce original live modifiers"], "89": ["Special Energy reprint must reproduce original live modifiers"]};
 function parse(n){
  const s=DATA.get(n),p=TEXT.get(n);if(!s||!p)throw Error('Power Keepers missing print '+n);
@@ -42,22 +74,21 @@ function parse(n){
     const [name,cost,damageText='']=spec.split('~');const text=attackTexts[i]||'';
     return {name,cost,damage:Number((damageText.match(/^\d+/)||[])[0]||0),damageText:damageText||null,
       text:text||(/^\d+$/.test(damageText)?'Deals '+damageText+' damage.':'See printed card.'),
-      effect:NEXT_MOVES[n]?.[i]||MOVE_EFFECTS[n]?.[i]||{type:'noop'}};
+      effect:FINAL_MOVES[n]?.[i]||NEXT_MOVES[n]?.[i]||MOVE_EFFECTS[n]?.[i]||{type:'noop'}};
   });
   const arr=String(abilities||'').split(';').filter(Boolean);
-  const powers=arr.map((spec,i)=>{const [name,kind]=spec.split('~'),isPower=kind.includes('Power'),trigger=n===7||n===15||n===92||n===99||STAR.has(n)?
-    (n===7||n===15||n===99?'evolved': 'benched'):null;
+  const powers=arr.map((spec,i)=>{const [name,kind]=spec.split('~'),isPower=kind.includes('Power'),trigger=[7,92,99,100,101,102].includes(n)?([7,99].includes(n)?'evolved':'benched'):n===15?'knockedOutAlly':null;
     return {name,type:trigger?'triggered':isPower?'activated':'passive',printedPowerType:isPower?'power':'body',
-      oncePerTurn:!!isPower&&!trigger,disabledByStatus:!!isPower,activeOnly:[13,16,34,93,95].includes(n),
-      event:trigger||undefined,fromHandOnly:!!trigger,text:abilityTexts[i]||'',effect:{type:'neoRule',rule:'ex16:'+n+':power'+(i?':'+i:'')}};
+      oncePerTurn:!!isPower&&!trigger,disabledByStatus:!!isPower,activeOnly:[13,16,34,93,95].includes(n),benchOnly:[92,100,101,102].includes(n),
+      event:trigger||undefined,fromHandOnly:!!trigger&&trigger!=='knockedOutAlly',text:abilityTexts[i]||'',effect:{type:'neoRule',rule:'ex16:'+n+':power'+(i?':'+i:'')}};
   });
   Object.assign(card,{stage,hp:Number(hp),types:[...typeCodes].map(t=>T[t]),subtype:T[typeCodes[0]]||'Colorless',retreat:Number(retreat||0),
     weakness:T[weak?.[0]]||null,weaknesses:[...String(weak||'')].map(t=>({type:T[t],value:'×2'})),weaknessValue:weak?'×2':null,resistance:T[resist?.[0]]||null,resistances:[...String(resist||'')].map(t=>({type:T[t],value:'-30'})),resistanceValue:resist?'-30':null,
     evolvesFrom:from||null,pokemonEx:EX.has(n),isEx:EX.has(n),pokemonStar:STAR.has(n),isPokemonStar:STAR.has(n),
     prizeCards:EX.has(n)?2:1,attacks,abilities:powers});
  }else if(kind==='T'){
-  Object.assign(card,{trainerType:stage,text:rules,effect:NEXT_TRAINERS[n]||(n===77?{type:'benchFromDeck',filter:{kind:'pokemon',stage:'Basic',isEx:false},amount:1,choose:true}:n===78?{type:'selectTopToHand',count:7,filter:{kind:'pokemon'}}:n===80?{type:'drawToHandSize',size:6}:n===85?{type:'playFossil',hp:50,subtype:'Colorless',canRetreat:false}:STADIUM.has(n)?{type:'noop'}:{type:'neoRule',rule:'ex16:'+n+':trainer'}),
-    ...(n>=84&&n<=86?{hp:Number(hp),fossil:true,fossilHp:Number(hp),fossilPokemonType:'Colorless'}:{})});
+  Object.assign(card,{trainerType:stage,text:rules,effect:FINAL_TRAINERS[n]||NEXT_TRAINERS[n]||(n===77?{type:'benchFromDeck',filter:{kind:'pokemon',stage:'Basic',isEx:false},amount:1,choose:true}:n===78?{type:'selectTopToHand',count:7,filter:{kind:'pokemon'}}:n===80?{type:'drawToHandSize',size:6}:n===85?{type:'playFossil',hp:50,subtype:'Colorless',canRetreat:false}:STADIUM.has(n)?{type:'noop'}:{type:'neoRule',rule:'ex16:'+n+':trainer'}),
+    ...(n>=84&&n<=86?{hp:Number(hp),fossil:true,fossilHp:Number(hp),fossilPokemonType:'Colorless',countsAsKnockout:false,noPrize:true,statusImmune:true}:{})});
  }else if(BASIC_ENERGY[n]){
   Object.assign(card,{basicEnergy:true,specialEnergy:false,subtype:BASIC_ENERGY[n],types:[BASIC_ENERGY[n]],effect:{type:'noop'},deckEligible:false,text:rules});
  }else{
@@ -95,7 +126,8 @@ function parse(n){
  // Every listed effect is a print we will NOT quietly simulate as a vanilla attack.
  if(BODY_EFFECTS[n]&&card.abilities?.length)card.abilities[0].effect=BODY_EFFECTS[n];
  if(NEXT_POWERS[n]&&card.abilities?.length)card.abilities[0].effect=NEXT_POWERS[n];
- const ready=NEXT_READY.has(n)||FINISHED.has(n)||!PARTIAL_EFFECTS[n];
+ if(FINAL_POWERS[n]&&card.abilities?.length)card.abilities[0].effect=FINAL_POWERS[n];
+ const ready=FINAL_READY.has(n)||NEXT_READY.has(n)||FINISHED.has(n)||!PARTIAL_EFFECTS[n];
  return Object.freeze({...card,battleEnabled:ready,deckEligible:card.deckEligible!==false&&ready,
    support:{status:ready?'FULL':'PARTIAL',reasons:ready?[]:missing}});
 }
