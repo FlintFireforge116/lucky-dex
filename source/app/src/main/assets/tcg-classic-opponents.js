@@ -51,7 +51,19 @@
        const dual=decks.dualArmorProfile(card);
        return card?.kind==='pokemon'&&((card.types||[]).includes(type)||(dual?.types.includes(type)&&energy.includes(dual.energyType))||builder.conditionalAttackTypes(card).includes(type)&&energy.includes(type));
      });
-     if(!legal.ok||profile.missingEnergyTypes.length||!matchesChosenType)continue;
+     // DP1 Onix has a Fighting move but can evolve into Metal Steelix using
+     // only its Colorless Headbutt. A blanket missing-type scan wrongly
+     // rejects that legal Metal-only deck; test whether each included Pokemon
+     // has at least one actually payable attack instead. Retain the existing
+     // profile gate for other sets until their broader mixed-pool audit.
+     const symbols={G:'Grass',R:'Fire',W:'Water',L:'Lightning',P:'Psychic',F:'Fighting',D:'Darkness',M:'Metal'};
+     const everyPokemonPlayable=result.cards.every(id=>{
+       const card=classic.cardById(id);
+       if(card?.kind!=='pokemon'||!(card.attacks||[]).length)return true;
+       return card.attacks.some(a=>[...String(a.cost||'')].every(sym=>sym==='C'||energy.includes(symbols[sym])));
+     });
+     const dpOnly=allowed.length===1&&allowed[0]==='dp1';
+     if(!legal.ok||(dpOnly?!everyPokemonPlayable:profile.missingEnergyTypes.length>0)||!matchesChosenType)continue;
      if(result.cards.some(id=>!builder.allowedInSetPool(classic.cardById(id),allowed)))continue;
      const archetype=String(result.strategy.match(/· ([^·]+) core/)?.[1]||'Classic TCG').trim();
      return {ok:true,type,rarityFocus,basicOnly,theme,cards:result.cards.slice(),energyTypes:energy.slice(),sets:allowed.slice(),archetype,archetypeKey:result.archetypeKey,name:`${type} · ${archetype}`};

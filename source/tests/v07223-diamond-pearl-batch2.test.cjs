@@ -18,7 +18,7 @@ function setup(att='dp1-84',def='dp1-94'){
 function attack(s,index=0,actor='player',selector=()=>true){const a=core.legalActions(s,actor).find(x=>x.type==='attack'&&x.attackIndex===index&&selector(x));assert.ok(a,`${s.sides[actor].active?.cardId} attack ${index} available`);core.applyAction(s,actor,a);return a;}
 function choices(s,pick){const seen=[];for(let n=0;n<16&&s.phase==='effectChoice';n++){const actions=core.legalActions(s,s.choiceSide).filter(x=>x.type==='effectChoice');assert.ok(actions.length>0,`choice ${n}`);const selected=pick?pick(actions,s,n):actions.find(x=>!x.choiceSkip)||actions[0];assert.ok(selected);seen.push({side:s.choiceSide,chosen:selected,options:actions});core.applyAction(s,s.choiceSide,selected);}assert.notEqual(s.phase,'effectChoice','all choices must resolve');return seen;}
 test('second DP batch: 19 newly active cards, all 130 present and every active effect validates',()=>{
- assert.equal(dp.coverage().total,130);assert.equal(dp.coverage().battleEnabled,83);
+ assert.equal(dp.coverage().total,130);assert.equal(dp.coverage().battleEnabled,96);
  for(const n of [19,25,44,45,52,56,59,62,63,64,72,73,75,82,83,87,89,97,98]){
   const c=dp.cardById('dp1-'+n);assert.equal(c.battleEnabled,true,c.id);for(const a of c.attacks){assert.ok(!a.text.includes('See the original card'),c.id+' '+a.name);assert.deepEqual(fx.validateEffect(a.effect),[],c.id+' '+a.name);}
  }

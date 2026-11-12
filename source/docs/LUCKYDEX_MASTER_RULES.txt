@@ -1,8 +1,8 @@
 LUCKYDEX — MASTER PROJECT RULES AND DEVELOPMENT CONTRACT
 =========================================================
-Document version: 2.18
+Document version: 2.19
 Compiled: 12 November 2026
-Current source baseline inspected: v0.69.224; v0.69.225 expands Diamond & Pearl to 83 source-enabled prints with optional Baby Evolution, while LV.X and remaining Powers stay gated
+Current source baseline inspected: v0.69.225; v0.69.226 expands Diamond & Pearl to 96 battle-enabled prints, with Baby Evolution, hidden-hand and Trainer choice tests, while LV.X stays gated
 Recommended repository location: ~/lucky-dex/source/docs/LUCKYDEX_MASTER_RULES.txt
 Project: LuckyDex — Android application/PWA, managed with Termux and GitHub
 
@@ -834,11 +834,62 @@ THIS PART APPLIES TO EVERY FUTURE CHAT, EXPANSION, FIX AND AGREED RULE CHANGE.
   * Check selected source Pokémon, actual attached Basic Energy subtype,
     and different destination Pokémon for Energy Switch. The deckbuilder
     must preserve single-type restrictions even if a supporting Pokémon
-    has another native type. A known gap in CPU-generated mono-Metal decks
-    must remain documented and cannot be hidden by successful focused
-    Steelix builds.
+    has another native type. The mono-Metal CPU generation gap from v0.69.225 was fixed in
+    v0.69.226 by testing a payable attack at each included Pokemon; keep
+    per-Energy CPU regressions to detect future recurrence.
   * In stage releases, report exact enabled/gated numbers and test results,
     and leave all nonimplemented LV.X and triggered Powers gated.
+
+10.14F [LOCKED] C-RELEASE-GATE-013 — CHOICE PRIVACY, REAL TARGETS, REAL OUTCOMES (v2.19)
+  * An effect that chooses an opposing hand card WITHOUT LOOKING must show
+    facedown positions only, not card identities or a random chosen card.
+    Test a known two-card hand, choose position 1, verify the exact physical
+    card is moved to the correct discard/deck destination, and ensure
+    the other card remains. Test the opponent/CPU side too.
+  * Printed optional effects must offer both an actual decline and a legal
+    accept target. Test both outcomes, not just that a popup or action
+    exists. If a target requires attached Energy, an empty slot is excluded.
+  * Printed BEFORE DAMAGE switching (e.g., DP Magneton Magnetic Ray) must
+    change the active defender BEFORE base damage, Weakness, Resistance,
+    damage prevention and KO evaluation. Test both choose and decline with
+    distinct, Energy-qualified Bench targets; preserve defending side.
+  * Trainer and Poké-Power coin outcomes must be tested independently using
+    deterministic seeds; test the exact card/entity destination, the right
+    source zone (hand, deck, ordinary discard, Basic-Energy ledger), and
+    unchanged state when the effect is declined or its coin flip fails.
+
+10.14G [LOCKED] C-RELEASE-GATE-014 — PRINTED STATUS TICK AMOUNTS (v2.19)
+  * A printed stronger Poison (e.g., DP Skuntank Toxic Cloud, two damage
+    counters) requires amount=20 in the status record; ordinary Poison is
+    amount=10. Verify the between-turn tick with the proper phase and do
+    not mistake automatic Sleep recovery or normal Weakness for an effect
+    bug. Reversing the attack or target side must not alter the rule.
+  * All self-damage, status, choice and Bench interaction smoke tests must
+    include targeted, assertive outcome tests for any new shared handler.
+    A validated effect object is only syntax, not proof of card correctness.
+
+10.14H [LOCKED] C-RELEASE-GATE-015 — PER-POKEMON PAYABLE ATTACK / CPU ENERGY (v2.19)
+  * A Pokemon may have a printed off-type attack but still be playable on a
+    mono-Energy plan if at least one different attack is fully payable.
+    DP Steelix/Onix is the canonical example: Onix's Colorless Headbutt
+    works from Metal Energy and Steelix's Metal attacks work from Metal.
+  * For DP1-only CPU builds, inspect every included Pokemon's attack costs,
+    not a global union of every optional printed cost. Require a legal
+    30-card deck, only permitted cards and Basic Energy, at least one
+    payable attack per Pokemon, all expected evolution stages, and true
+    matching of the selected type. Do not relax older-set Energy rules
+    as an accidental side effect of this DP-specific repair.
+  * Run seeded opponent builds for all eight Basic Energy types after each
+    new release, especially Metal. A Colorless-only requested archetype
+    needs a real Basic Energy type supply; it does not imply that a
+    printed Colorless Basic Energy card exists.
+  * Partner metadata must be checked for Baby Evolution STACK payoffs even
+    when the partner is a Basic or Stage 1 rather than a final Stage 2:
+    DP Electabuzz's Shock Wave needs Elekid, and Clefairy's Moon Impact
+    needs Cleffa. Choose no off-filter Energy solely for support Babies.
+  * All LV.X remain gated until their Active-only Level-Up legality,
+    previous-level inherited attacks/Powers, interaction/retreat/KO/Prize
+    timing and player/CPU choices are implemented and verified.
 
 10.15 [CHECK] C-DP1-ERA-001 — PRINTED ERA ISOLATION
   D&P 2007 uses printed ADDITIVE Weakness (+10/+20/+30) and reduction Resistance
@@ -864,7 +915,7 @@ PART 11 — EXPANSION REGISTER / CURRENT AUDIT BASELINE
   [CURRENT] v0.69.185 targeted tests for recent EX Deoxys changes were reported as 67 passing; the wider historical run reported 370 passing, 5 obsolete version/UI assertion failures. These are HISTORICAL test outcomes, not guarantees about any later build.
   [CURRENT] v0.69.186 restores EX Deoxys Ninjask Slash’s missing runtime damage rule and fixes next-turn bonus display for older sets. C-ATTACK-001 regression tests cover actual damage, visible previews, expiry, both players, and Weakness applied after base-power replacement.
   [CHECK] Recheck source availability and compatibility before claiming any given card/expansion is 'fully correct'; the existence of a card record does not prove every unusual interaction.
-  [CURRENT] Diamond & Pearl (dp1) v0.69.225 STAGE 4 — 130 numbered English prints sourced from PokemonTCG/pokemon-tcg-data/cards/en/dp1.json (107 Pokémon, 15 Trainers, 8 Basic Energy). 83/130 source battle-enabled (68 Pokémon, 7 Trainers, 8 Basic Energies), 47 gated including three LV.X. This stage adds Roserade/Azumarill with actual optional Baby Evolution support, Lucario, Floatzel, Weavile and others, plus selective Energy Switch and Super Scoop Up. Real effect/Trainer tests, 428/428 selected regressions, and 3 CPU seeds for all eight mono-types (7/8 types produce legal candidates; Metal does not). Not device-QA or exhaustive. See docs/DIAMOND_PEARL_v0.69.225_STAGE4_AUDIT.md.
+  [CURRENT] Diamond & Pearl (dp1) v0.69.226 STAGE 5 — 130 numbered English prints sourced from PokemonTCG/pokemon-tcg-data/cards/en/dp1.json (107 Pokémon, 15 Trainers, 8 Basic Energy). 96/130 source battle-enabled (78 Pokémon, 10 Trainers, 8 Basic Energies); 34 gated, including all three LV.X. New: three Baby Evolution Powers (Elekid, Wynaut, Cleffa), Electabuzz/Clefairy stack payoff metadata, Snorlax and Electabuzz conditional attacks, Skuntank stronger Poison, Magneton Magnetic Ray choose/switch, hidden-hand selections and three Trainers with real source/destination checks. 442/442 selected regressions passed, and 24 CPU decks across all 8 mono-Energy types were legal. Not Android-device QA or exhaustive. See docs/DIAMOND_PEARL_v0.69.226_STAGE5_AUDIT.md.
   [CURRENT] EX Power Keepers (ex16) — 108 numbered English prints, all 108 source-enabled as of v220. v221 postrelease audit covers 128 attack execution smokes, focused deck legality, eight explicit mono-Energy type filters, conditional/triggered battle outcomes and 357 passing EX-era Node regressions. Cradily Poison Ring, chosen Armaldo Rock Blast protection, optional Pokémon-ex/Star Powers, Shiftry copied use costs, Altaria hidden-hand position choice, Sableye hand limit, Stage-1 status metadata and EX16-only Energy filters were corrected. This is not a proof of every attack/coin state or an Android-device QA pass. See docs/EX_POWER_KEEPERS_v0.69.221_FULL_PASS.md.
 
   [CURRENT] v0.69.187 adds EX Emerald (ex9), 107 registered cards including 11 Pokémon-ex, 11 Trainer cards, 4 physical Special Energy, 6 collectible-art Basic Energy cards, and secret Farfetch'd. Both player and CPU deck builders are registered for 30-card EX Emerald decks; direct attack targeting and effect-choice adapters are included. Printed card data source: Pokémon TCG data, cards/en/ex9.json (card text/card numbers checked 10 November 2026).
@@ -1263,5 +1314,7 @@ CHANGE HISTORY
 2026-11-12 | Document 2.16 -> 2.17 | App v0.69.224 | [LOCKED] C-RELEASE-GATE-009, C-RELEASE-GATE-010. Stage 3 adds 19 more DP1 battle-enabled Pokémon (67/130), with complete Empoleon/Infernape/Staraptor/Torterra lines. Regression found and fixed newly masked v223 Buizel Splash About in the new broad DP1 dispatcher; exercised Brine damaged-target prerequisite, Grotle physical/zone Energy routing, optional zero/one/multiple Bench targets, self-KO logs and true mono-Metal Steelix focus without unnecessary Onix Fighting Energy. All v072xx suites passing in the v224 packaging run. Outstanding: all three LV.X and other gated cards; DP-only random Metal CPU generation unavailable; no Android device QA. See docs/DIAMOND_PEARL_v0.69.224_STAGE3_AUDIT.md.
 
 2026-11-12 | Document 2.17 -> 2.18 | App v0.69.225 | [LOCKED] C-RELEASE-GATE-011, C-RELEASE-GATE-012. Stage 4 adds 16 source-enabled DP1 prints (83/130), implements real optional from-hand Baby Evolution Powers for Budew and Azurill and their conditional Roserade/Azumarill partners, selected Trainer reprint outcomes (Energy Switch, Super Scoop Up), printed DP1 Basic Energy return artwork, and two-sided attack exercise with targeted damage/target/energy checks. 428/428 selected Node regressions passed; 3 seeded mono-type CPU builds each for eight types generated valid decks for seven types but zero for Metal. All LV.X and other 47 cards remain gated, no Android QA. See docs/DIAMOND_PEARL_v0.69.225_STAGE4_AUDIT.md.
+
+2026-11-12 | Document 2.18 -> 2.19 | App v0.69.226 | [LOCKED] C-RELEASE-GATE-013, 014 and 015. DP1 Stage 5 adds 13 enabled prints (96/130), real hidden-hand choices, optional Magnetic Ray before damage, stronger Toxic Cloud poison, 3 Baby Evolution powers and hand/deck Trainer retrieval with actual destination assertions. Corrected DP-only CPU mono-Metal legality by assessing payable attacks at each stage rather than unioning all printed attacks. Selected Node regression 442/442; all eight mono-Energy types succeed across 3 seeds each. 34 cards still gated including all 3 LV.X; no Android QA. See docs/DIAMOND_PEARL_v0.69.226_STAGE5_AUDIT.md.
 
 END OF LUCKYDEX MASTER RULES

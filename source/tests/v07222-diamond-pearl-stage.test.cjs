@@ -21,7 +21,7 @@ function finishChoices(s){for(let n=0;n<12&&s.phase==='effectChoice';n++){const 
 test('DP1 complete collector catalogue: 130 unique identities, exact printed Weakness modifiers and 3 gated LV.X',()=>{
  assert.equal(dp.CARDS.length,130);assert.deepEqual(dp.CARDS.map(x=>Number(x.number)),Array.from({length:130},(_,i)=>i+1));
  assert.equal(dp.CARDS.filter(x=>x.kind==='pokemon').length,107);assert.equal(dp.CARDS.filter(x=>x.kind==='trainer').length,15);assert.equal(dp.CARDS.filter(x=>x.kind==='energy').length,8);
- assert.equal(dp.CARDS.filter(x=>x.battleEnabled).length,83);assert.equal(dp.CARDS.filter(x=>!x.battleEnabled).length,47);
+ assert.equal(dp.CARDS.filter(x=>x.battleEnabled).length,96);assert.equal(dp.CARDS.filter(x=>!x.battleEnabled).length,34);
  for(const id of ['dp1-120','dp1-121','dp1-122']){const c=dp.cardById(id);assert.equal(c.isLevelX,true);assert.equal(c.battleEnabled,false);assert.equal(c.stage,'Level-Up');}
  assert.equal(dp.cardById('dp1-28').weaknessValue,'+20');assert.equal(dp.cardById('dp1-28').retreat,2);
  assert.equal(dp.cardById('dp1-129').subtype,'Darkness');assert.equal(dp.cardById('dp1-130').subtype,'Metal');
@@ -114,7 +114,7 @@ test('set-only builder makes complete 30-card playable focused decks, with no un
   assert.ok(d.cards.every(x=>data.cardById(x).battleEnabled&&data.cardById(x).setId==='dp1'));
  }
 });
-test('CPU can create a legal no-gated DP1 Grass opponent and fail explicitly when narrow pool unbuildable',()=>{
+test('CPU can create legal no-gated DP1 Grass and Metal opponents after payoff-aware Energy selection',()=>{
  for(const seed of [3,17,39,57]){const d=opponents.generate({sets:['dp1'],type:'Grass',seed});assert.ok(d.ok,`seed ${seed}: ${d.error}`);assert.equal(d.cards.length,30);assert.ok(data.validateDeck(d.cards).ok);}
- const unavailable=opponents.generate({sets:['dp1'],type:'Metal',seed:17});assert.equal(unavailable.ok,false);assert.match(unavailable.error,/No legal Classic CPU deck/);
+ const metal=opponents.generate({sets:['dp1'],type:'Metal',seed:17});assert.ok(metal.ok,metal.error);assert.deepEqual(metal.energyTypes,['Metal']);assert.equal(metal.cards.length,30);assert.ok(data.validateDeck(metal.cards).ok);
 });

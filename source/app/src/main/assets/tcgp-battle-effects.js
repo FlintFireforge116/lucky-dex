@@ -6728,12 +6728,54 @@
     const pick=(which,rule,opts={})=>ctx.requestChoice?.({kind:'pokemon',side:'self',selectionSide:which==='opponent'?ctx.foeSide:ctx.side,includeActive:opts.includeActive!==false,filter:opts.filter,effect:{type:'neoRule',rule},optional:!!opts.optional});
     const sel=(which)=>{const board=which==='opponent'?foe:ss,target=ctx.action?.choiceTarget,index=Number(ctx.action?.choiceBenchIndex);return target==='active'?board.active:(board.bench||[]).find(x=>Number(x.benchSlot)===index);};
     const log=(details)=>ctx.state.log.push({type:'neoEffect',side:ctx.side,rule:e.rule,...details});
+    if(e.rule==='dp1:36:highHat'){
+      // The attacker sees only positions in the opponent's hand, never its cards.
+      if(ctx.resolvingChoice){const i=Number(ctx.action?.choiceOption);if(!Number.isInteger(i)||i<0||i>=foe.hand.length)return;
+        const [ref]=foe.hand.splice(i,1),c=ctx.cardById(ref.cardId);if(c?.basicEnergy&&ctx.state.format==='classic')recordDiscardedEnergy(foe,c.subtype,1);else foe.discard.push(ref);
+        log({discardedFromHiddenHand:ref.cardId});return;}
+      if(foe.hand.length)ctx.requestChoice?.({kind:'option',side:'self',options:foe.hand.map((_,i)=>'Face-down card '+(i+1)),effect:e});return;
+    }
+    if(e.rule==='dp1:106:energyRestore'){
+      const basicIds={Grass:'dp1-123',Fire:'dp1-124',Water:'dp1-125',Lightning:'dp1-126',Psychic:'dp1-127',Fighting:'dp1-128',Darkness:'dp1-129',Metal:'dp1-130'};
+      const usable=()=>[...ss.discard.map((ref,i)=>({ref,index:i,type:ctx.cardById(ref.cardId)?.subtype})).filter(x=>ctx.cardById(x.ref.cardId)?.basicEnergy&&basicIds[x.type]),
+        ...Object.entries(ss.energyDiscard||{}).filter(([type,n])=>basicIds[type]&&Number(n)>0).map(([type])=>({type,virtual:true}))];
+      if(e.stage==='pick'&&ctx.resolvingChoice){
+        const options=usable();const hit=options[Number(ctx.action?.choiceOption)];if(!hit)return;
+        if(ss.hand.length>=Number(ss.handLimit||8))return;
+        if(hit.virtual){ss.energyDiscard[hit.type]--;neoRecoveredEnergyToHand(ctx,ss,hit.type,1,basicIds[hit.type]);}
+        else{const [ref]=ss.discard.splice(hit.index,1);ss.hand.push(ref);}
+        const left=Number(e.remaining||1)-1;log({basicEnergyRecovered:hit.type,remaining:left});
+        if(left>0&&usable().length&&ss.hand.length<Number(ss.handLimit||8))neoRule({...e,stage:'pick',remaining:left},{...ctx,resolvingChoice:false});return;
+      }
+      if(e.stage==='pick'){
+        const options=usable();if(options.length&&ss.hand.length<Number(ss.handLimit||8))ctx.requestChoice?.({kind:'option',side:'self',options:options.map(x=>x.virtual?('Discarded '+x.type+' Basic Energy'):('Discarded '+ctx.cardById(x.ref.cardId)?.name)),effect:e});return;
+      }
+      let heads=0;for(let i=0;i<3;i++){const hit=coin(ctx);heads+=hit?1:0;ctx.state.log.push({type:'coin',side:ctx.side,reason:'Energy Restore '+(i+1),heads:hit,results:[hit]});}
+      const count=Math.min(heads,usable().reduce((n,x)=>n+(x.virtual?Number(ss.energyDiscard?.[x.type]||0):1),0),Math.max(0,Number(ss.handLimit||8)-ss.hand.length));
+      log({heads,eligible:count});if(count)neoRule({...e,stage:'pick',remaining:count},{...ctx,resolvingChoice:false});return;
+    }
+    if(e.rule==='dp1:108:nightCenter'){
+      if(ctx.resolvingChoice){const target=sel('self');if(!target)return;
+        const heads=[coin(ctx),coin(ctx)];ctx.state.log.push({type:'coin',side:ctx.side,reason:'Night Pokémon Center',heads:heads.filter(Boolean).length,results:heads});
+        if(heads.every(Boolean)){target.damage=0;log({healed:target.cardId});}
+        else if(heads.every(h=>!h)){
+          for(const [type,n] of Object.entries(target.energy||{})){recordDiscardedEnergy(ss,type,Number(n||0));target.energy[type]=0;}
+          ss.discard.push(...(target.specialEnergy||[]));target.specialEnergy=[];log({allEnergyDiscarded:target.cardId});
+        }return;}
+      if(pokemonOn(ss).length)ctx.requestChoice?.({kind:'pokemon',side:'self',includeActive:true,effect:e});return;
+    }
+    if(e.rule==='dp1:111:handy910is'){
+      const refs=ss.deck.slice(0,2);
+      if(ctx.resolvingChoice){const option=Number(ctx.action?.choiceOption);if(option<0||option>=refs.length||ss.hand.length>=Number(ss.handLimit||8))return;
+        const [chosen]=ss.deck.splice(option,1);ss.hand.push(chosen);if(ss.deck.length>=1){const [otherCard]=ss.deck.splice(0,1);ss.deck.push(otherCard);}log({chosenCard:chosen.cardId,bottomedOther:true});return;}
+      if(refs.length&&ss.hand.length<Number(ss.handLimit||8))ctx.requestChoice?.({kind:'option',side:'self',options:refs.map(ref=>'Take '+ctx.cardById(ref.cardId)?.name),effect:e});return;
+    }
     if(e.rule==='dp1:babyEvolve'){
       // Baby Evolution is an activated Power, NOT normal Stage 1 evolution.
       // A valid named Basic from hand becomes the new top of the stack, with
       // no discard of the original Baby and correct from-hand trigger timing.
       const targetName=e.targetName,source=a,refName=ref=>ctx.cardById(ref.cardId)?.name;
-      if(!source||!targetName||!['Budew','Azurill'].includes(ctx.cardById(source.cardId)?.name))return;
+      if(!source||!targetName||!['Budew','Azurill','Wynaut','Elekid','Cleffa'].includes(ctx.cardById(source.cardId)?.name))return;
       if(ctx.resolvingChoice){
         const ix=ctx.action?.choiceHandIndex,ref=ss.hand[ix];
         if(!Number.isInteger(ix)||!ref||refName(ref)!==targetName)return;
@@ -9402,6 +9444,17 @@
         if(rule==='dp1:40:darkPulse'){
           damage=10*pokemonOn(mine).reduce((n,p)=>n+Number((typeof ctx.effectiveEnergy==='function'?ctx.effectiveEnergy(p):p.energy||{}).Darkness||0),0);return;
         }
+        if(rule==='dp1:54:magneticRay'){
+          // The switch happens *before* the attack does damage. Decline is
+          // always an explicit choice; only Energetic Benched targets qualify.
+          const selected=foe.bench.find(slot=>slot.uid===ctx.action?.effectSelection);
+          if(selected&&(Object.values(selected.energy||{}).some(n=>Number(n)>0)||(selected.specialEnergy||[]).length)){
+            switchPokemon(foe,selected.benchSlot,ctx.state);
+            damageTarget=foe.active;
+          }return;
+        }
+        if(rule==='dp1:37:easeUp'){if(hasUnder('Munchlax'))damage+=30;return;}
+        if(rule==='dp1:81:shockWave'){if(hasUnder('Elekid'))pending.push({type:'benchDamage',side:'opponent',amount:20});return;}
         if(rule==='dp1:88:rollout'){if(hasUnder('Azurill'))damage+=20;return;}
         if(rule==='dp1:96:toxicSpikes'){damage=hasUnder('Budew')?10:0;return;}
         pending.push(e);return;
@@ -10916,6 +10969,14 @@
     return [{}];
   }
   function choicesForEffect(effect,ctx){
+    if(effect?.type==='neoRule'&&effect.rule==='dp1:54:magneticRay'){
+      const valid=other(ctx).bench.filter(slot=>slot&&(Object.values(slot.energy||{}).some(n=>Number(n)>0)||(slot.specialEnergy||[]).length>0));
+      return [{effectSelection:'',choiceLabel:'Keep the current Defending Pokémon'},...valid.map(slot=>({effectSelection:slot.uid,choiceLabel:'Switch in '+(ctx.cardById(slot.cardId)?.name||'Pokémon')+' before damage'}))];
+    }
+    if(effect?.type==='neoRule'&&effect.rule==='dp1:81:shockWave'){
+      const stacked=(ctx.attacker?.stack||[]).some(id=>ctx.cardById(id)?.name==='Elekid');
+      return stacked&&other(ctx).bench.length?targetChoices('opponentBench',ctx):[{}];
+    }
     if(effect?.type==='neoRule'&&effect.rule==='dp1:13:spikeWhip'){
       const stacked=(ctx.attacker?.stack||[]).some(id=>ctx.cardById(id)?.name==='Budew');
       return stacked&&other(ctx).bench?.length?targetChoices('opponentBench',ctx):[{}];

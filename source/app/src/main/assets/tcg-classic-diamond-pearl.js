@@ -203,6 +203,16 @@ const PRINTS={
   96:["The Defending Pokémon is now Poisoned. If Roselia is evolved from Budew, this attack does 10 damage to the Defending Pokémon.","The Defending Pokémon is now Asleep. Remove 2 damage counters from 1 of your Pokémon."],
   43:["Search your deck for a Trainer card, show it to your opponent, and put it into your hand. Shuffle your deck afterward."],
   69:["Put any 1 card from your discard pile into your hand."],
+  15:["Choose 1 of your opponent's Pokémon that doesn't have any damage counters on it. This attack does 30 damage to that Pokémon. (Don't apply Weakness and Resistance for Benched Pokémon.)", 'Flip a coin. If heads, the Defending Pokémon is now Poisoned. Put 2 damage counters instead of 1 on the Defending Pokémon between turns.'],
+  36:["Choose 1 card from your opponent's hand without looking and discard it.", 'Flip a coin. If heads, the Defending Pokémon is now Paralyzed.'],
+  37:["The Defending Pokémon can't retreat during your opponent's next turn.", 'Snorlax is now Asleep. If Snorlax is evolved from Munchlax, this attack does 40 damage plus 30 more damage.'],
+  42:["Choose 1 card from your opponent's hand without looking. Look at the card you chose, then have your opponent shuffle that card into his or her deck."],
+  48:['Search your deck for a Lightning Energy card, show it to your opponent, and put it into your hand. Shuffle your deck afterward.'],
+  54:['Flip 3 coins. This attack does 20 damage times the number of heads.', "Before doing damage, you may choose 1 of your opponent's Benched Pokémon that has any Energy attached to it and switch that Pokémon with 1 of the Defending Pokémon."],
+  78:['Draw a card.'],
+  80:["Flip a coin. If heads, choose 1 of the Defending Pokémon's attacks. That Pokémon can't use that attack during your opponent's next turn.", "Does 10 damage to 1 of your opponent's Benched Pokémon. (Don't apply Weakness and Resistance for Benched Pokémon.)"],
+  81:['Flip a coin. If heads, this attack does 30 damage plus 10 more damage. If tails, Electabuzz does 10 damage to itself.', "Flip a coin. If heads, the Defending Pokémon is now Paralyzed. If Electabuzz is evolved from Elekid, this attack does 20 damage to 1 of your opponent's Benched Pokémon. (Don't apply Weakness and Resistance for Benched Pokémon.)"],
+  91:["Choose 1 card from your opponent's hand without looking. Look at the card you chose, then have your opponent shuffle that card into his or her deck.", 'Flip a coin. If heads, the Defending Pokémon is now Confused.'],
 };
 const noop={type:'noop'},status=s=>({type:'status',target:'opponentActive',status:s});
 const lock=(action,target='opponentActive',duration='opponentTurn')=>({type:'lock',target,action,duration});
@@ -275,6 +285,17 @@ const EFFECTS={
   96:[seq(status('poison'),{type:'neoRule',rule:'dp1:96:toxicSpikes'}),seq(status('sleep'),{type:'heal',target:'selfPokemon',amount:20})],
   43:[{type:'searchChosen',source:'deck',amount:1,filter:{kind:'trainer'}}],
   69:[{type:'searchChosen',source:'discard',amount:1,filter:{}}],
+  15:[{type:'selectedDamage',target:'opponentPokemon',filter:{damaged:false},amount:30},flip({type:'status',target:'opponentActive',status:'poison',amount:20},noop)],
+  36:[{type:'neoRule',rule:'dp1:36:highHat'},flip(status('paralysis'))],
+  37:[lock('retreat'),seq({type:'neoRule',rule:'dp1:37:easeUp'},{type:'status',target:'self',status:'sleep'})],
+  42:[{type:'neoRule',rule:'ex16:2:surprise'}],
+  48:[{type:'searchChosen',source:'deck',amount:1,filter:{basicEnergy:true,subtype:'Lightning'}}],
+  54:[{type:'coinDamage',coins:3,amount:20,mode:'replace'},{type:'neoRule',rule:'dp1:54:magneticRay'}],
+  78:[{type:'draw',amount:1}],
+  80:[flip({type:'chooseAttackLock',duration:'opponentTurn'}),benchHit(10)],
+  81:[flip(extra(10),{type:'selfDamage',amount:10}),seq(flip(status('paralysis')),{type:'neoRule',rule:'dp1:81:shockWave'})],
+  91:[{type:'neoRule',rule:'ex16:2:surprise'},flip(status('confusion'))],
+
 };
 // Trainer wording checked against the individual dp1 printed-card records.
 // Rule text below is catalogue data even when an effect is still gated.
@@ -302,10 +323,17 @@ const TRAINER_EFFECTS={
  118:{type:'heal',target:'selfPokemon',amount:20},
  119:{type:'switch',side:'self'},
  107:{type:'neoRule',rule:'ex16:75:trainer'},
- 115:flip({type:'scoopUp',target:'selfPokemon'})
+ 115:flip({type:'scoopUp',target:'selfPokemon'}),
+ 106:{type:'neoRule',rule:'dp1:106:energyRestore'},
+ 108:{type:'neoRule',rule:'dp1:108:nightCenter'},
+ 111:{type:'neoRule',rule:'dp1:111:handy910is'},
+
 };
-const BABY_TARGET={43:'Roselia',69:'Marill'};
+const BABY_TARGET={42:'Wobbuffet',43:'Roselia',48:'Electabuzz',69:'Marill',78:'Clefairy'};
 const BABY_WORDING={43:'Once during your turn (before your attack), you may put Roselia from your hand onto Budew (this counts as evolving Budew) and remove all damage counters from Budew.',69:'Once during your turn (before your attack), you may put Marill from your hand onto Azurill (this counts as evolving Azurill) and remove all damage counters from Azurill.'};
+BABY_WORDING[42]='Once during your turn (before your attack), you may put Wobbuffet from your hand onto Wynaut and remove all damage counters from Wynaut.';
+BABY_WORDING[48]='Once during your turn (before your attack), you may put Electabuzz from your hand onto Elekid and remove all damage counters from Elekid.';
+BABY_WORDING[78]='Once during your turn (before your attack), you may put Clefairy from your hand onto Cleffa and remove all damage counters from Cleffa.';
 const RULES_LVX='Put this card onto your Active Pokémon of the named species. A Pokémon LV.X retains attacks, Poké-Powers and Poké-Bodies from its previous level.';
 const READY=new Set([...Object.keys(EFFECTS).map(Number),...Object.keys(TRAINER_EFFECTS).map(Number)]);
 function parse(row){
@@ -347,7 +375,7 @@ function parse(row){
  if(n===18){roles.add('azurill-stack');payoff.push('Azurill enables Bubble Pump Paralysis');}
  card.deckMeta={roles:[...roles],synergy:[...roles],energyTypes,preferredEnergyTypes:[],inflicts,payoffs:payoff,
    preferredPartners:[],conditionalAttackEnergyTypes:[],stage2ExSupport:null,requiresTools:[],
-   babyEvolutionSupport:n===13?['Budew']:n===18?['Azurill']:[]};
+   babyEvolutionSupport:n===13?['Budew']:n===18?['Azurill']:n===77?['Cleffa']:n===81?['Elekid']:[]};
  // NO unverified attack, LV.X mechanic, Power or trainer enters CPU / Test Lab.
  return Object.freeze({...card,battleEnabled:ready,deckEligible:ready&&card.deckEligible!==false,
   support:{status:ready?'FULL':'PARTIAL',reasons:ready?[]:['Printed interactions not yet fully implemented/tested']}});
