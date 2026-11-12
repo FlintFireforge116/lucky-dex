@@ -27,7 +27,7 @@ const STAPLES=Object.freeze([
  ['base1-83',1], // Maintenance
  ['base1-87',1]  // Pokedex
 ]);
-const SET_IDS=Object.freeze(['base1','base2','base3','base5','gym1','gym2','neo1','neo2','neo3','neo4','base6','ecard1','ecard2','ecard3','ex1','ex2','ex3','ex4','ex5','ex6','ex7','ex8','ex9','ex10','ex11','ex12','ex13','ex14','ex15','ex16','SNAPFLORIO','SNAPFOUNJA','sv1']);
+const SET_IDS=Object.freeze(['base1','base2','base3','base5','gym1','gym2','neo1','neo2','neo3','neo4','base6','ecard1','ecard2','ecard3','ex1','ex2','ex3','ex4','ex5','ex6','ex7','ex8','ex9','ex10','ex11','ex12','ex13','ex14','ex15','ex16','dp1','SNAPFLORIO','SNAPFOUNJA','sv1']);
 // Darkness and Metal are already Basic Energy types. Deduplicate before rendering
 // archetype chips so each energy type has exactly one toggle.
 const ARCHETYPE_TYPES=Object.freeze([...new Set([...decks.ENERGY_TYPES,'Colorless'])]);
@@ -97,7 +97,9 @@ function familyLine(card,pool){
 // A visible Stage 1 is not a finished core when a Stage 2 exists but is
 // PARTIAL, unowned or excluded by the selected sets. Check the full catalogue
 // before treating the end of the playable subset as a terminal evolution.
-const FULL_EVOLUTION_NAMES=new Set(classic.CARDS.filter(c=>c.kind==='pokemon'&&c.evolvesFrom).map(c=>classicCardName(c.evolvesFrom)));
+// A future staged set's GATED evolutions must not retroactively invalidate
+// old one-set Stage-1 builds. Legacy EX pool rules still apply unchanged.
+const FULL_EVOLUTION_NAMES=new Set(classic.CARDS.filter(c=>c.kind==='pokemon'&&c.evolvesFrom&&(c.setId!=='dp1'||c.battleEnabled)).map(c=>classicCardName(c.evolvesFrom)));
 function hasKnownEvolution(card){return !!(card?.kind==='pokemon'&&FULL_EVOLUTION_NAMES.has(classicCardName(card.name)));}
 function abilityEnergy(card){return decks.dualArmorProfile(card)?.energyType||null;}
 function effectiveTypes(card){return [...new Set([...(card?.types||[]),...(decks.dualArmorProfile(card)?.types||[])])];}

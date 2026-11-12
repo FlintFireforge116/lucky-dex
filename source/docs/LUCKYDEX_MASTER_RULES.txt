@@ -1,8 +1,8 @@
 LUCKYDEX — MASTER PROJECT RULES AND DEVELOPMENT CONTRACT
 =========================================================
-Document version: 2.14
+Document version: 2.15
 Compiled: 12 November 2026
-Current source baseline inspected: v0.69.221 (EX Power Keepers post-completion audit on v220; v216 builder restrictions retained)
+Current source baseline inspected: v0.69.221; v0.69.222 adds DP1 safely gated source catalogue plus first verified playable slice
 Recommended repository location: ~/lucky-dex/source/docs/LUCKYDEX_MASTER_RULES.txt
 Project: LuckyDex — Android application/PWA, managed with Termux and GitHub
 
@@ -632,6 +632,127 @@ THIS PART APPLIES TO EVERY FUTURE CHAT, EXPANSION, FIX AND AGREED RULE CHANGE.
   Do not increment the document revision just because a build number changes with no content change; DO append the expansion register/status note or 'no global rule changes' where needed.
   If requested, a short project-level prompt can point all future conversations to this file, but the full detail lives here rather than being limited by custom-instruction space.
 
+
+10.8 [LOCKED] C-RELEASE-GATE-001 — SOURCE-TRUTH PREFLIGHT (NO GUESSES)
+  At expansion start, identify and verify: exact ZIP/source commit and version; scripts/registries/picker/opponents; exact English card-print set ID, numbered count and secret/alternate prints; authority URL for EVERY printed card; pre-existing mechanics; cross-era conversion rules; intended release order and all required running assets. Read THIS FILE and the most recent postrelease audit before coding. Do not extrapolate printed rules from names or other expansions. Record baseline passing/failing tests before a change so old failures are not attributed to new work.
+  Compare printed set record count against catalogue with exact number/ID continuity, names, type, stage, HP, evolved-from, Weakness and Resistance MAGNITUDE, retreat, rarity, image, attacks, costs, damage, ability name/type/trigger, Trainer/Stadium/Special Energy text and Basic Energy identity. Do NOT infer effect correctness from a card scan or an artwork URL.
+
+10.9 [LOCKED] C-RELEASE-GATE-002 — EXPLICIT PER-CARD EXECUTION CONTRACT
+  For EVERY attack, Power, Body, Trainer, Stadium, Tool or Energy effect write down:
+    (a) acting/choosing side, victim side, and who may DECLINE; (b) exact trigger and
+    play/evolution/attack/KO/retreat/between-turn window; (c) prior conditions and
+    Energy costs, plus any additional discard, reveal or self-KO costs; (d) source,
+    destination and ownership of each card/Energy/counter, Basic Zone vs physical
+    hand/deck/discard, including special Energy; (e) choice order, number and
+    eligible targets/hand positions; (f) hidden vs visible information; (g) timing
+    of damage, Weakness, Resistance, prevention, healing, statuses and KO/Prizes;
+    (h) exact duration and cleanup; (i) CPU strategy and touchscreen presentation.
+  Trace real BEFORE and AFTER game state in tests. A registered handler, a no-op
+  fallback, or merely opening a picker NEVER counts as a verified effect.
+  Every optional 'may' starts with a real Use/Decline decision (player and CPU),
+  and Decline must leave all source/destination zones unchanged. A forced action
+  with a legal target must never quietly skip. Choice ownership MUST agree with
+  printed text; card identity cannot be shown for facedown opponent hand picks.
+
+10.10 [LOCKED] C-RELEASE-GATE-003 — INTERACTION DEPENDENCY MATRIX
+  BEFORE enabling a card map both forward and reverse synergies across:
+    Stadium <-> Power/Body/attack/status; Tool <-> attack/evolution/ability;
+    Special Energy <-> costs/activation/KO/discard/retrieval; Supporter/Trainer
+    <-> hand/deck/Zone/discard; Bench/Active/KO/retreat <-> triggered abilities;
+    evolution stages <-> support Powers; card classifications (ex, Star, LV.X,
+    delta, Dark, Rocket, Fossil) <-> limitations and printed interactions.
+  Test an interaction WITH its required partner, WITHOUT the partner, and WITH
+  the partner disabled/suppressed or out of range. Test opponent and player
+  separately and verify the CPU makes a sensible choice. Example historical
+  failures: Cacturne only works with Sidney's Stadium; Altaria heals under
+  Drake's Stadium; Xatu must pair with a COMPLETE Stage 2 ex beneficiary;
+  Power-disabled cards cannot silently trigger; Tool-demanding attacks need
+  a legal Tool. Capture new global interactions in this file, not merely notes.
+
+10.11 [LOCKED] C-RELEASE-GATE-004 — DECKBUILDER & CPU INVARIANTS
+  For BOTH owned player decks and all-cards Test Lab/CPU, test:
+  * Exactly 30 real cards, legal per-name copy cap, owned copies when relevant,
+    legal species/form limits, allowed set/rarity/Stage restriction and one
+    playable Basic; never pull a gated/unsupported card.
+  * All selected attacking Pokemon can actually pay at least one useful attack
+    from the computed Basic Energy Zone and permitted physical Special Energy;
+    do not add off-type lines just because synergy metadata says 'preferred'.
+  * If the user explicitly chooses ONE Energy type, only that type is planned;
+    Colorless costs are payable, but no unrequested colored Energy type may
+    leak in. Widen automatically ONLY if type selection was not locked and
+    explain this in the returned plan.
+  * Complete Basic->Stage 1->Stage 2 evolution chain where feasible; NEVER add
+    a stranded Stage 1, a useless Pokémon-ex-only support or an out-of-set
+    evolution. Baby ancestry and LV.X level-up are distinct from Stage 1/2;
+    LV.X must retain its previous-level attacks and be legal only as printed.
+  * Include real consumable Tools/Energy/Stadium/Bench partners for conditional
+    cards. Support effects must change composition, not just appear as tags.
+  * Focused build on every battle-enabled Pokémon with a four-copy synthetic
+    collection: PASS, or provide a machine-testable explanation for impossible
+    set/type/ownership constraints. Do not silently 'pass' an unbuilt focus.
+  * Seeded CPU builds across ALL eight Basic Energy types, all nine strategy
+    archetypes, single-set / selected mixed-set pools, with no strategy locks,
+    blank actions, hidden-hand peeking, endless choice loops or habitual skips
+    for beneficial effects. Explicitly report unsupported types while staged.
+
+10.12 [LOCKED] C-RELEASE-GATE-005 — TESTS MUST DEMONSTRATE OUTCOMES
+  Minimum release matrix for EACH new effect family:
+    successful and ineligible use, no-target case, zero/multiple target case,
+    mandatory and declined optional paths, player and CPU as actor, appropriate
+    self/opponent ownership, attack/Bench/KO/checkpoint timing, stacked effects
+    and ability suppression. Count real affected cards/counters, not only logs.
+  For random effects fix RNG seeds and assert BOTH heads/tails branches.
+  For search/discard/transfers assert the exact CARD ID and ZONE before/after;
+  do not let card-count coincidences mask a wrong destination. For attacks,
+  compare printed damage at base, Weakness/Resistance, protected Bench,
+  multipliers/additive damage and copied attacks including non-Energy costs.
+  Repeat an EX-era regression selection after cross-era shared-engine edits.
+  Record any known baseline failures separately and never relabel them 'fixed'.
+  Attack smoke tests are necessary but INSUFFICIENT: a no-crash attack can be
+  entirely wrong; each unique effect family also requires outcome tests.
+
+10.13 [LOCKED] C-RELEASE-GATE-006 — NON-NEGOTIABLE CARD LEDGER & RELEASE WORDING
+  Keep one ledger row for EACH print with: ID/name, printed metadata verified
+  (Y/N), attack handler tested (Y/N/N/A), activated/triggered ability tested,
+  relevant dependency tested, owner/CPU choice tested, deckbuild tested, result
+  FULL/PARTIAL/BLOCKED and the remaining defect. Source registration is NOT
+  battle readiness, and battle readiness is NOT proof of print-level fidelity.
+  Stage releases may list all cards in the collection but enable only cards
+  with complete executable effects and corresponding tests. A required mechanic
+  absent from the current engine remains BLOCKED with an explicit issue.
+  NEVER say a set is 'complete' until ALL printed cards are battle-enabled,
+  print-vs-runtime effects are individually audited, legal focused and CPU
+  builds are verified or explained, and targeted plus cross-set tests pass.
+  Even 'complete' means SOURCE completion only unless real Android touch QA,
+  artwork and CPU matches were actually performed. Separate test classes,
+  passing counts, skipped assertions, known limitations and user-visible steps.
+
+10.14 [LOCKED] C-RELEASE-GATE-007 — HANDOFF AND UI
+  Preserve prior versions, apply source-relative incremental patches and include
+  this MASTER RULES file in every rules-changing ZIP. Increment app/versionCode,
+  produce actual reproducible tests, verify ZIP paths and list required baseline.
+  Prefer player card ART with no duplicate descriptive overlay where artwork
+  loads; on failure show readable text. Facing-down card position choices must
+  not reveal hidden card identities. The Android UI, CPU and Test Lab must use
+  the SAME validated action/choice state machine, not separate placeholder logic.
+  In release notes include: exact completed/gated counts, code changes, tested
+  interaction matrix and matchups, full command/output summary, known gaps,
+  install block, no false phone-test claim, next gated subset by card ID.
+
+10.15 [CHECK] C-DP1-ERA-001 — PRINTED ERA ISOLATION
+  D&P 2007 uses printed ADDITIVE Weakness (+10/+20/+30) and reduction Resistance
+  (-20). Apply the printed amount only in applicable era/print; never globally
+  replace legacy ×2 calculations. DP Basic Darkness/Metal are true Basic Energy
+  (not interchangeable with historical Special Energy prints). A Pokémon LV.X
+  levels up ONLY from its named ACTIVE previous-level card and inherits that
+  level's attacks/Powers/Bodies; it is not a standalone Basic/Stage 1/Stage 2.
+  D&P opening-turn draw/Trainer-Stadium-Supporter restrictions must be scoped to
+  applicable games, not backported to legacy EX battles; verify user-approved
+  30-card Classic adaptation, implement and test before advertising full DP1.
+  Current v0.69.222 STAGE is NOT complete: LV.X, changed opening rules and
+  most abilities remain battle-gated. This era-specific rule is a REQUIRED
+  future release gate, not proof that all its mechanics have shipped.
+
 =======================================================================
 PART 11 — EXPANSION REGISTER / CURRENT AUDIT BASELINE
 =======================================================================
@@ -642,6 +763,7 @@ PART 11 — EXPANSION REGISTER / CURRENT AUDIT BASELINE
   [CURRENT] v0.69.185 targeted tests for recent EX Deoxys changes were reported as 67 passing; the wider historical run reported 370 passing, 5 obsolete version/UI assertion failures. These are HISTORICAL test outcomes, not guarantees about any later build.
   [CURRENT] v0.69.186 restores EX Deoxys Ninjask Slash’s missing runtime damage rule and fixes next-turn bonus display for older sets. C-ATTACK-001 regression tests cover actual damage, visible previews, expiry, both players, and Weakness applied after base-power replacement.
   [CHECK] Recheck source availability and compatibility before claiming any given card/expansion is 'fully correct'; the existence of a card record does not prove every unusual interaction.
+  [CURRENT] Diamond & Pearl (dp1) v0.69.222 STAGE — 130 numbered English prints sourced from PokemonTCG/pokemon-tcg-data/cards/en/dp1.json, 107 Pokémon, 15 Trainers, 8 Basic Energies. Only 29/130 source battle-enabled (16 Pokémon, 5 Trainers, 8 Basic Energy prints); all other 101 kept battle-gated, including 3 LV.X. The stage adds additive printed Weakness without altering EX ×2, registers collection/set picker/player builder/CPU, and validates selected attacks, searches, statuses and transfers. The 29 enabled prints are not proof of every interaction. Narrow set-only CPU availability is incomplete, and D&P opening-turn/LV.X mechanics remain [CHECK]. See docs/DIAMOND_PEARL_v0.69.222_STAGE1_AUDIT.md and tests/v07222-diamond-pearl-stage.test.cjs. Android QA not performed.
   [CURRENT] EX Power Keepers (ex16) — 108 numbered English prints, all 108 source-enabled as of v220. v221 postrelease audit covers 128 attack execution smokes, focused deck legality, eight explicit mono-Energy type filters, conditional/triggered battle outcomes and 357 passing EX-era Node regressions. Cradily Poison Ring, chosen Armaldo Rock Blast protection, optional Pokémon-ex/Star Powers, Shiftry copied use costs, Altaria hidden-hand position choice, Sableye hand limit, Stage-1 status metadata and EX16-only Energy filters were corrected. This is not a proof of every attack/coin state or an Android-device QA pass. See docs/EX_POWER_KEEPERS_v0.69.221_FULL_PASS.md.
 
   [CURRENT] v0.69.187 adds EX Emerald (ex9), 107 registered cards including 11 Pokémon-ex, 11 Trainer cards, 4 physical Special Energy, 6 collectible-art Basic Energy cards, and secret Farfetch'd. Both player and CPU deck builders are registered for 30-card EX Emerald decks; direct attack targeting and effect-choice adapters are included. Printed card data source: Pokémon TCG data, cards/en/ex9.json (card text/card numbers checked 10 November 2026).
@@ -1028,8 +1150,11 @@ CHANGE HISTORY
 
 2026-11-12 | Document 2.11 -> 2.12 | App v0.69.219 | [LOCKED] C-EX16-STADIUM-003, C-EX16-ENERGY-004, C-EX16-SEARCH-005. Enabled 14 additional Power Keepers prints (84/108 enabled, 24 gated). All five Stadium effects active in shared engine and Altaria between-turn healing; implemented explicit Energy Recycle System hand/deck selection, Basic-only Energy Switch, Scott, Steven’s Advice, Pichu and Wynaut Baby Evolution, Banette/Mightyena attacks. Expanded tests/v07219 and versioned audit. No APK/Android QA.
 
-END OF LUCKYDEX MASTER RULES
 
 2026-11-12 | Document 2.12 -> 2.13 | App v0.69.220 | [LOCKED] C-EX16-POWER-006, C-EX16-FOSSIL-007, C-EX16-DAMAGE-008. Enabled the remaining 24 EX Power Keepers cards (108/108), including real Fossil Pokémon slots/no-Prize KO, evolution/Bench/KO Powers, chosen Energy source/destination, multi-target attacks, printed Pokémon-ex and Star reactive effects. Fixed Lanturn 50/90 damage split, Armaldo no-Resistance Mach Claw, selected Flygon ex protection, and Magne­ton recovered-Energy choice loop. New tests: v07220 EX16 completion; updated stage assertions. Full selected Node v072xx regressions: 344/344 passing. Baseline v0.69.219; Android APK/device QA not performed. Details docs/EX_POWER_KEEPERS_v0.69.220_FULL_PASS.md.
 
 2026-11-12 | Document 2.13 -> 2.14 | App v0.69.221 | [LOCKED] C-EX16-PRINT-009, C-EX16-OPTIONAL-010, C-EX16-BUILDER-011. Corrected Poison Ring retreat-only lock, attack protection/reduction on Rock Blast, facedown Altaria position selection, optional ex/Star triggers and CPU decisions, copied attack non-Energy costs, Down Draw 8-card limit, poison/sleep metadata, and EX16 single-type builder restrictions without changing older mixed sets. Postrelease all-108 ledger, 128 deterministic attack smokes, 80/81 EX16-only focused builds (Magneton intentionally gated), 64 strict-type builds, 357/357 selected Node regressions. No APK/Android-device QA. Details: docs/EX_POWER_KEEPERS_v0.69.221_FULL_PASS.md.
+
+2026-11-12 | Document 2.14 -> 2.15 | App v0.69.222 | [LOCKED] C-RELEASE-GATE-001..007; [CHECK] C-DP1-ERA-001. Turned Power Keepers lessons (Stadium/Body causality, optional Power choice, face-down selection, damage/protection, copied non-Energy costs, mono-type deck constraints) into explicit source-contract preflight, card-by-card evidence-ledger, dependency tests, 8-type CPU/builder gating and verified patch-handoff standards. Registered dp1 130-card collection with 29 tested-source-enabled and 101 gated. Added additive Weakness while retaining old EX ×2, first batch attacks and Trainer/Basic Energy support, targeted tests and live audit. No APK/Android QA. See docs/DIAMOND_PEARL_v0.69.222_STAGE1_AUDIT.md.
+
+END OF LUCKYDEX MASTER RULES
