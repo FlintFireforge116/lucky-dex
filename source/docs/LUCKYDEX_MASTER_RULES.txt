@@ -1,8 +1,8 @@
 LUCKYDEX — MASTER PROJECT RULES AND DEVELOPMENT CONTRACT
 =========================================================
-Document version: 2.13
+Document version: 2.14
 Compiled: 12 November 2026
-Current source baseline inspected: v0.69.220 (EX Power Keepers fully battle-enabled over v219; v216 builder restrictions retained)
+Current source baseline inspected: v0.69.221 (EX Power Keepers post-completion audit on v220; v216 builder restrictions retained)
 Recommended repository location: ~/lucky-dex/source/docs/LUCKYDEX_MASTER_RULES.txt
 Project: LuckyDex — Android application/PWA, managed with Termux and GitHub
 
@@ -642,7 +642,7 @@ PART 11 — EXPANSION REGISTER / CURRENT AUDIT BASELINE
   [CURRENT] v0.69.185 targeted tests for recent EX Deoxys changes were reported as 67 passing; the wider historical run reported 370 passing, 5 obsolete version/UI assertion failures. These are HISTORICAL test outcomes, not guarantees about any later build.
   [CURRENT] v0.69.186 restores EX Deoxys Ninjask Slash’s missing runtime damage rule and fixes next-turn bonus display for older sets. C-ATTACK-001 regression tests cover actual damage, visible previews, expiry, both players, and Weakness applied after base-power replacement.
   [CHECK] Recheck source availability and compatibility before claiming any given card/expansion is 'fully correct'; the existence of a card record does not prove every unusual interaction.
-  [CURRENT] EX Power Keepers (ex16) — 108 numbered English prints; v219 battle-enabled 84/108 (14 new since v218, including all 5 Stadiums and 4 choice-driven Trainers). 24 PARTIAL cards remain gated, including Fossils, complex evolved Powers, Pokémon-ex and Pokémon ★. Current live-outcome tests cover Stadium damage/Weakness/retreat/status, Altaria Drake healing, Baby Evolution, choice-driven Energy Recycle System and Energy Switch, Scott and Steven’s Advice, Banette and Mightyena. These 24 gated cards are NOT battle-ready, and the 84 enabled cards still need eventual full card-by-card audit and Android handset QA. See EX_POWER_KEEPERS_v0.69.219_STAGE3_AUDIT.md.
+  [CURRENT] EX Power Keepers (ex16) — 108 numbered English prints, all 108 source-enabled as of v220. v221 postrelease audit covers 128 attack execution smokes, focused deck legality, eight explicit mono-Energy type filters, conditional/triggered battle outcomes and 357 passing EX-era Node regressions. Cradily Poison Ring, chosen Armaldo Rock Blast protection, optional Pokémon-ex/Star Powers, Shiftry copied use costs, Altaria hidden-hand position choice, Sableye hand limit, Stage-1 status metadata and EX16-only Energy filters were corrected. This is not a proof of every attack/coin state or an Android-device QA pass. See docs/EX_POWER_KEEPERS_v0.69.221_FULL_PASS.md.
 
   [CURRENT] v0.69.187 adds EX Emerald (ex9), 107 registered cards including 11 Pokémon-ex, 11 Trainer cards, 4 physical Special Energy, 6 collectible-art Basic Energy cards, and secret Farfetch'd. Both player and CPU deck builders are registered for 30-card EX Emerald decks; direct attack targeting and effect-choice adapters are included. Printed card data source: Pokémon TCG data, cards/en/ex9.json (card text/card numbers checked 10 November 2026).
   [CURRENT] Tests: v07187-ex-emerald.test.cjs and v07187-ex-emerald-audit.test.cjs exercise all attacks through two random seeds, legal CPU/player deck construction, Form Change, Special Energy, discards, damage counters and conditional Powers/Bodies. Recent expansion suite v07172–v07187 passed 210/210 before the final targeting/Rare Candy assertions; final post-change count is in the patch release checks. Node tests do not replace touch-device QA.
@@ -940,6 +940,44 @@ selected v072xx automated EX-era/regression checks passed. The pre-existing
 Altaria Surprise facedown-selection limitation remains pending. Detailed
 card audit and device QA matrix: docs/EX_POWER_KEEPERS_v0.69.220_FULL_PASS.md.
 
+v0.69.221 EX POWER KEEPERS POSTRELEASE AUDIT — PRINT FIDELITY AND CHOICES
+----------------------------------------------------------------------------
+C-EX16-PRINT-009 [LOCKED, 12 Nov 2026] Poison Ring prohibits RETREAT only;
+never reuse a shared lock that ALSO disallows attacks. A chosen spread hit
+(Rock Blast) is attack damage and must respect the chosen defender's
+protection, damage reduction and Stadium modifiers, while observing the
+printed exception to Weakness/Resistance. Copy attacks waive only Energy
+cost where printed; their other attack-use costs still execute, including
+physical deck cards discarded by Volcanic Flame.
+
+C-EX16-OPTIONAL-010 [LOCKED, 12 Nov 2026] 'You may' Bench/evolution Powers
+(Absol ex Cursed Eyes, Walrein ex Chilling Breath and Eeveelution Star
+Crimson/Yellow/Blue Ray) require an actual Use/Decline choice. A declined
+Power MUST change nothing. The CPU must consider each Star Power's impact
+on both visible Active Pokémon, and may not peek at the rival's private hand.
+Altaria Surprise must offer facedown opponent-hand POSITIONS, NOT card
+names/art; the chosen position then returns its card to deck and shuffles.
+Sableye Down Draw respects the converted Classic 8-card hand limit.
+
+C-EX16-BUILDER-011 [LOCKED, 12 Nov 2026] For EX Power Keepers-ONLY builds,
+explicit single-type filters may not be silently broadened to include a
+second required attack type on Flygon ex, Salamence ex or their full lines.
+A mixed-type deck needs an explicit compatible selection. Preserve earlier
+sets' documented mixed evolution-family conversions as a separate rule;
+never break previous Holon/Kingdra/Deoxys expectations merely to change EX16.
+Status metadata must include Cacturne Poison Structure (power-originated
+Poison) and Kirlia Dream Eater's Sleep payoff. Magneton ex16-16 focus under
+a one-set filter remains restricted because a later Magnezone exists outside
+that selected pool; do not silently accept an incomplete focused family.
+
+[CHECK] EX16 v221 108/108 enabled; 128 attacks execute in a deterministic
+smoke state; 80/81 Pokémon produce legal EX16-only focused auto decks,
+with only the documented Magneton focus exception; 64 seeded one-type
+builds did not add unselected Energy; nine CPU archetype decks tested.
+The selected 357/357 v072xx Node tests passed. These verify a finite
+representative matrix, NOT every printed state or Android touchscreen QA.
+See docs/EX_POWER_KEEPERS_v0.69.221_FULL_PASS.md for 108-card ledger.
+
 CHANGE HISTORY
 =======================================================================
 
@@ -993,3 +1031,5 @@ CHANGE HISTORY
 END OF LUCKYDEX MASTER RULES
 
 2026-11-12 | Document 2.12 -> 2.13 | App v0.69.220 | [LOCKED] C-EX16-POWER-006, C-EX16-FOSSIL-007, C-EX16-DAMAGE-008. Enabled the remaining 24 EX Power Keepers cards (108/108), including real Fossil Pokémon slots/no-Prize KO, evolution/Bench/KO Powers, chosen Energy source/destination, multi-target attacks, printed Pokémon-ex and Star reactive effects. Fixed Lanturn 50/90 damage split, Armaldo no-Resistance Mach Claw, selected Flygon ex protection, and Magne­ton recovered-Energy choice loop. New tests: v07220 EX16 completion; updated stage assertions. Full selected Node v072xx regressions: 344/344 passing. Baseline v0.69.219; Android APK/device QA not performed. Details docs/EX_POWER_KEEPERS_v0.69.220_FULL_PASS.md.
+
+2026-11-12 | Document 2.13 -> 2.14 | App v0.69.221 | [LOCKED] C-EX16-PRINT-009, C-EX16-OPTIONAL-010, C-EX16-BUILDER-011. Corrected Poison Ring retreat-only lock, attack protection/reduction on Rock Blast, facedown Altaria position selection, optional ex/Star triggers and CPU decisions, copied attack non-Energy costs, Down Draw 8-card limit, poison/sleep metadata, and EX16 single-type builder restrictions without changing older mixed sets. Postrelease all-108 ledger, 128 deterministic attack smokes, 80/81 EX16-only focused builds (Magneton intentionally gated), 64 strict-type builds, 357/357 selected Node regressions. No APK/Android-device QA. Details: docs/EX_POWER_KEEPERS_v0.69.221_FULL_PASS.md.

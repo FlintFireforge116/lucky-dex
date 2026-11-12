@@ -385,6 +385,34 @@
     // leakage. Choose from the actual legal set instead.
     if(state.format==='classic'&&state.phase==='effectChoice'){
       const pending=state.pendingChoice||{},rule=String(pending.effect?.rule||'');
+      // EX Power Keepers Bench/evolution Powers explicitly say 'may'. The
+      // default first-option policy blindly burned/injured our own Active
+      // with a Star, even when the opponent gained the same benefit. Evaluate
+      // only PUBLIC board state; do not inspect the opponent's hidden hand.
+      if(pending.originSide===side&&pending.kind==='option'&&pending.effect?.ex16OptionalPower==='offer'&&
+         ['ex16:92:cursedEyes','ex16:99:chillingBreath','ex16:100:crimsonRay',
+          'ex16:101:yellowRay','ex16:102:blueRay'].includes(rule)){
+        const own=state.sides[side]?.active,enemy=state.sides[foeOf(side)]?.active;
+        const myCard=own&&data.cardById(own.cardId),theirCard=enemy&&data.cardById(enemy.cardId);
+        const remaining=(p,c)=>p?Number(c?.hp||0)-Number(p.damage||0):0;
+        let use=true;
+        if(rule==='ex16:100:crimsonRay'){
+          const ownBurned=!!own?.conditions?.burn,enemyBurned=!!enemy?.conditions?.burn;
+          use=!!enemy&&!enemyBurned&&(ownBurned||remaining(enemy,theirCard)<=20||!own);
+        }else if(rule==='ex16:101:yellowRay'){
+          use=!!enemy&&(remaining(enemy,theirCard)<=10&&remaining(own,myCard)>10||
+            remaining(enemy,theirCard)<remaining(own,myCard)-40);
+        }else if(rule==='ex16:102:blueRay'){
+          const myDamage=Number(own?.damage||0),theirDamage=Number(enemy?.damage||0);
+          const myConditions=!!(own?.conditions?.burn||own?.conditions?.poison||own?.conditions?.sleep||
+            own?.conditions?.paralysis||own?.conditions?.confusion);
+          const theirConditions=!!(enemy?.conditions?.burn||enemy?.conditions?.poison||enemy?.conditions?.sleep||
+            enemy?.conditions?.paralysis||enemy?.conditions?.confusion);
+          use=myDamage>theirDamage||myConditions&&!theirConditions;
+        }
+        const chosen=legal.find(a=>a.type==='effectChoice'&&a.choiceOption===(use?0:1));
+        if(chosen)return chosen;
+      }
       // Charizard δ's evolution-triggered Peal of Thunder is a "may" Power.
       // CPU knows its own 30-card deck composition, not its top-card order:
       // decline when no physical Energy remains rather than milling five

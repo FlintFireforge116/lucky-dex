@@ -105,7 +105,7 @@ test('Banette Bench Manipulation flips one coin per defender Bench and ignores m
 });
 test('Altaria Surprise removes one hidden opponent hand card to shuffled draw deck',()=>{
  const s=setup('ex16-2','ex16-24');s.sides.opponent.hand=[{uid:'h1',cardId:'ex16-57'},{uid:'h2',cardId:'ex16-59'}];const before=s.sides.opponent.deck.length;
- attack(s,0);const effect=s.log.find(x=>x.type==='ex16Surprise');assert.ok(effect,'blind card selection recorded');
+ attack(s,0);assert.equal(s.phase,'effectChoice');const cards=legal(s).filter(x=>x.type==='effectChoice');assert.equal(cards.length,2);assert.ok(cards.every(x=>!x.choiceCardId),'opponent hidden hand identity must not leak before choice');pick(s,x=>x.choiceOption===1);const effect=s.log.find(x=>x.type==='ex16Surprise');assert.ok(effect,'facedown hand-card selection recorded');assert.equal(effect.revealedCardId,'ex16-59');
  assert.ok(s.sides.opponent.deck.length===before||s.sides.opponent.deck.length===before+1, 'next turn may draw');
  assert.ok(s.sides.opponent.deck.concat(s.sides.opponent.hand).some(x=>x.uid==='h1'||x.uid==='h2'));
 });

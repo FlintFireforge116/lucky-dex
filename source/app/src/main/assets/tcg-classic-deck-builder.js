@@ -196,6 +196,12 @@ function buildDeck(rows,options={}){
   const line=familyLine(c,evolutionPool),required=familyEssentialTypes(line),special=specialCosts(line);
   if(isStage2OnlySupport(c)&&!hasEligibleBeneficiary(c))return false;
   const dual=decks.dualArmorProfile(c),all=[...new Set([...requestedEnergy,...required])];
+  // In EX Power Keepers-only builds, a one-type selection must not recruit
+  // a Fire/Water Salamence or Grass/Lightning Flygon and then quietly add a
+  // second Energy type. Keep older sets' longstanding evolution-energy
+  // conversion (e.g. mixed Kingdra delta) unchanged in this set audit.
+  if(scope.length===1&&scope[0]==='ex16'&&requestedEnergy.length===1&&!allowMixedEnergy&&!dual&&
+     required.some(t=>!requestedEnergy.includes(t)))return false;
   if(dual&&!all.includes(dual.energyType)&&all.length<2)all.push(dual.energyType);
   // If the player filters by a type that Dual Armor *grants*, we must be able
   // to attach its trigger Energy; just matching the name is not enough.

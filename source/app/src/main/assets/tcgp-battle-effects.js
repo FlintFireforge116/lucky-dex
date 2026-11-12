@@ -6416,6 +6416,19 @@
       log('ex16DiscardEnergyRecovered',{energyType:pick.type,destination:toDeck?'deck':'hand'});
       return true;
     };
+    // Printed "you may use this power" is an actual decision, not an
+    // automatically fired Bench / evolution effect. This shared choice works
+    // for the player, CPU and Test Lab, without changing other sets' triggers.
+    if(['92:cursedEyes','99:chillingBreath','100:crimsonRay','101:yellowRay','102:blueRay'].includes(rule)){
+      if(e.ex16OptionalPower==='offer' && ctx.resolvingChoice){
+        if(Number(ctx.action?.choiceOption)!==0)return;
+        return ex16Rule({...e,ex16OptionalPower:'accepted'},{...ctx,resolvingChoice:false});
+      }
+      if(!e.ex16OptionalPower){
+        request('option',{ex16OptionalPower:'offer'},{options:['Use '+(card({cardId:source?.cardId})?.abilities?.[0]?.name||'Poké-Power'),'Do not use']});
+        return;
+      }
+    }
     switch(rule){
       // EX Power Keepers #5 Firestarter — discarded Energy, never fresh supply.
       case '5:firestarter':{
@@ -6493,7 +6506,13 @@
         return;
       }
       case '3:rockBlast':{
-        if(e.stage==='target'&&ctx.resolvingChoice){const p=selected(foe);if(!p)return; p.damage=Number(p.damage||0)+20;log('ex16RockBlastHit',{targetUid:p.uid,damage:20});
+        if(e.stage==='target'&&ctx.resolvingChoice){const p=selected(foe);if(!p)return;
+          // Rock Blast's selected hit is attack damage: respect protection and
+          // reductions, but never apply Weakness or Resistance to this spread hit.
+          const drake=ctx.state.stadium?.cardId==='ex16-72'&&p===foe.active&&card(p)?.types?.includes('Colorless')?10:0;
+          const hit=attackIsPrevented(ctx.state,ctx.foeSide,p,source,ctx.cardById)?0:
+            Math.max(0,20-modifierAmount(ctx.state,ctx.foeSide,p,'damageReduction',ctx.cardById)-drake);
+          p.damage=Number(p.damage||0)+hit;log('ex16RockBlastHit',{targetUid:p.uid,damage:hit});
           if(Number(e.remaining)>1)return ex16Rule({...e,stage:'chooseEnergy',remaining:Number(e.remaining)-1},{...ctx,resolvingChoice:false});return;}
         if(e.stage==='chooseEnergy'&&ctx.resolvingChoice){if(ctx.action.choiceSkip)return;
           const choices=[...Object.keys(source.energy||{}).filter(t=>t==='Fighting'&&Number(source.energy[t])>0).map(t=>({type:t,kind:'basic'})),...(source.specialEnergy||[]).filter(r=>Number((r.provides||card(r)?.effect?.provides||{}).Fighting)>0).map(r=>({kind:'special',uid:r.uid}))];
@@ -6518,7 +6537,12 @@
         const options=[...Object.keys(source.energy||{}).filter(t=>t===typ&&source.energy[t]>0).map(t=>'Discard '+t+' Basic Energy'),...(source.specialEnergy||[]).filter(r=>Number((r.provides||card(r)?.effect?.provides||{})[typ])>0).map(r=>'Discard '+(card(r)?.name||'Special Energy'))];
         if(options.length)request('option',{stage:'discard'},{options,optional:rule==='93:shadowCrush'});return;
       }
-      case '7:poisonRing':if(foe.active){if(!statusIsPrevented(ctx.state,foe.active,ctx.cardById,'poison'))foe.active.conditions={...(foe.active.conditions||{}),poison:{amount:10}};foe.active.neoScaryFace={expiresTurn:ctx.state.turnNumber+1};}return;
+      case '7:poisonRing':if(foe.active){
+        if(!statusIsPrevented(ctx.state,foe.active,ctx.cardById,'poison'))foe.active.conditions={...(foe.active.conditions||{}),poison:{amount:10}};
+        // Poison Ring blocks only retreat. Neo Scary Face additionally blocks
+        // ATTACKS, which is not printed on Cradily's card.
+        foe.active.locks=[...(foe.active.locks||[]),{action:'retreat',expiresTurn:ctx.state.turnNumber+1}];
+      }return;
       case '10:luringAntenna':{
         const hit=p=>{if(!p)return;let dmg=20;
           dmg=attackDamageWithState(ctx.state,ctx.side,source,ctx.foeSide,p,dmg,ctx.cardById);
@@ -6541,7 +6565,7 @@
         for(let i=(source.specialEnergy||[]).length-1;i>=0;i--){const ref=source.specialEnergy[i],provides=ref.provides||card(ref)?.effect?.provides||{};if(Number(provides.Lightning)>0)us.discard.push(...source.specialEnergy.splice(i,1));}
         return;
       }
-      case '22:downDraw':for(let i=0;i<2&&us.deck.length;i++){const ref=us.deck.pop();if(ref)us.hand.push(ref);}log('ex16DownDraw');return;
+      case '22:downDraw':for(let i=0;i<2&&us.deck.length&&us.hand.length<Number(us.handLimit||8);i++){const ref=us.deck.pop();if(ref)us.hand.push(ref);}log('ex16DownDraw');return;
       case '22:feintAttack':{
         if(ctx.resolvingChoice){const p=selected(foe);if(p){p.damage=Number(p.damage||0)+20;log('ex16FeintAttack',{targetUid:p.uid});}return;}
         request('pokemon',{}, {selectionSide:ctx.foeSide,includeActive:true});return;
@@ -6584,26 +6608,30 @@
       }
       case '97:skillHack':{
         if(e.stage==='attack'&&ctx.resolvingChoice){const ref=foe.hand.find(ref=>ref.uid===e.refUid),c=card(ref),i=Number(ctx.action.choiceOption),attack=c?.attacks?.[i];if(!attack||Number(e.depth||0)>2)return;
-          const copied=resolveAttack(attack,{...ctx,attack,copyDepth:Number(e.depth||0)+1,ignoreUseCosts:true});
+          const copied=resolveAttack(attack,{...ctx,attack,copyDepth:Number(e.depth||0)+1,ignoreUseCosts:false});
           let damage=Number(copied.damage||0),target=copied.damageTarget===undefined?foe.active:copied.damageTarget;
           if(target&&damage>0){if(!copied.damageRules?.ignoreWeakness)damage=attackDamageWithState(ctx.state,ctx.side,source,ctx.foeSide,target,damage,ctx.cardById);
             if(attackIsPrevented(ctx.state,ctx.foeSide,target,source,ctx.cardById))damage=0;
             else damage=Math.max(0,damage-modifierAmount(ctx.state,ctx.foeSide,target,'damageReduction',ctx.cardById));
             target.damage=Number(target.damage||0)+damage;log('ex16SkillHackDamage',{copiedFrom:c.name,attack:attack.name,damage});}
           const pending=copied.pendingEffects||[];
-          for(let j=0;j<pending.length;j++){applyEffect(pending[j],{...ctx,attack,ignoreUseCosts:true});if(ctx.state.phase==='effectChoice'){
+          for(let j=0;j<pending.length;j++){applyEffect(pending[j],{...ctx,attack,ignoreUseCosts:false});if(ctx.state.phase==='effectChoice'){
             ctx.state.pendingChoice.afterEffects=[...(ctx.state.pendingChoice.afterEffects||[]),...pending.slice(j+1)];return;}}return;}
         if(e.stage==='hand'&&ctx.resolvingChoice){const ref=foe.hand[Number(ctx.action.choiceHandIndex)],c=card(ref);
           if(c?.kind==='pokemon'&&(c.attacks||[]).length)request('option',{stage:'attack',refUid:ref.uid,depth:e.depth||0},{options:c.attacks.map(a=>'Copy '+c.name+' — '+a.name)});return;}
         if(foe.hand.some(ref=>card(ref)?.kind==='pokemon'&&(card(ref)?.attacks||[]).length))request('opponentHandCard',{stage:'hand'},{filter:{kind:'pokemon'}});return;
       }
       case '2:surprise':{
-        // The hand is hidden. A seeded random facedown index models a blind
-        // selection without revealing the remaining cards to the attacker.
-        if(!foe.hand.length)return;
-        const index=Math.floor(ctx.random(ctx.state)*foe.hand.length);
-        const [ref]=foe.hand.splice(index,1);foe.deck.push(ref);ctx.shuffle?.(ctx.state,foe.deck);
-        log('ex16Surprise',{revealedCardId:ref.cardId,returnedToDeck:true});return;
+        // Offer only *positions* in the hidden opponent hand. The chooser
+        // must not see IDs/art before selecting the facedown position.
+        if(e.stage==='faceDown'&&ctx.resolvingChoice){
+          const index=Number(ctx.action.choiceOption);if(!Number.isInteger(index)||index<0||index>=foe.hand.length)return;
+          const [ref]=foe.hand.splice(index,1);foe.deck.push(ref);ctx.shuffle?.(ctx.state,foe.deck);
+          log('ex16Surprise',{revealedCardId:ref.cardId,returnedToDeck:true});return;
+        }
+        if(foe.hand.length)request('option',{stage:'faceDown'},
+          {options:foe.hand.map((_,i)=>'Face-down card '+(i+1)),prompt:'Choose a facedown card position in the opponent hand'});
+        return;
       }
       case '2:synergy':return; // Between-turn healing is evaluated in battle core.
       case '18:plunder':return; // The attached Trainers are discarded BEFORE damage in resolveAttack.

@@ -66,7 +66,7 @@ test('Magneton Magnetic Field discards hand card and recovers up to 2 Basic from
  const s=setup('ex16-16');s.sides.player.energyDiscard={Fire:2};s.sides.player.hand=[{uid:'z',cardId:'ex16-57'}];power(s);settle(s);assert.ok(s.sides.player.hand.filter(r=>all.cardById(r.cardId)?.basicEnergy).length>=1);
 });
 test('Sableye Down Draw uses deck BOTTOM, not top',()=>{
- const s=setup('ex16-22');s.sides.player.deck=[{uid:'bottom',cardId:'ex16-59'},{uid:'top',cardId:'ex16-57'}];const ref=s.sides.player.deck.map(x=>x.uid);strike(s,0);assert.ok(s.sides.player.hand.some(r=>r.uid==='bottom'));assert.ok(s.sides.player.hand.some(r=>r.uid==='top'));
+ const s=setup('ex16-22');s.sides.player.hand=[];s.sides.player.deck=[{uid:'bottom',cardId:'ex16-59'},{uid:'top',cardId:'ex16-57'}];const ref=s.sides.player.deck.map(x=>x.uid);strike(s,0);assert.ok(s.sides.player.hand.some(r=>r.uid==='bottom'));assert.ok(s.sides.player.hand.some(r=>r.uid==='top'));
 });
 test('Beldum Magnetic Lines coin flip and conditional Bench transfer',()=>{
  const s=setup('ex16-45');s.sides.player.active.energy={Metal:2};strike(s,0);if(s.phase==='effectChoice'){settle(s);assert.ok(s.sides.opponent.bench[0].energy.Lightning>=1);}assert.ok(s.log.some(l=>l.reason==='Magnetic Lines'));
@@ -90,15 +90,15 @@ test('Skarmory ex Metal Gravity damages a retreating foe exactly once per turn',
  const s=setup('ex16-14','ex16-98');s.sides.player.active.energy={Colorless:4};s.sides.player.bench[0].energy={};const a=legal(s).find(a=>a.type==='retreat');assert.ok(a,'retreat available');core.applyAction(s,'player',a);assert.ok(s.log.some(l=>l.type==='ex16MetalGravity'));
 });
 test('Walrein ex Chilling Breath stops Trainers on opposing next turn',()=>{
- const s=setup();evolve(s,'ex16-99','ex16-37');s.sides.opponent.hand=[{uid:'tr',cardId:'ex16-75'}];s.activeSide='opponent';s.turnNumber=11;
+ const s=setup();evolve(s,'ex16-99','ex16-37');choose(s,x=>x.choiceOption===0);s.sides.opponent.hand=[{uid:'tr',cardId:'ex16-75'}];s.activeSide='opponent';s.turnNumber=11;
  assert.ok(!legal(s,'opponent').some(a=>a.type==='trainer'));
 });
 test('Flareon Star and Vaporeon Star enter Bench with correct triggered conditions',()=>{
- const s=setup();onBench(s,'ex16-100');assert.ok(s.sides.player.active.conditions?.burn);
- const v=setup();v.sides.player.active.damage=40;v.sides.opponent.active.damage=40;v.sides.player.active.conditions={sleep:true};onBench(v,'ex16-102');assert.equal(v.sides.player.active.damage,10);assert.equal(v.sides.opponent.active.damage,10);assert.ok(!v.sides.player.active.conditions.sleep);
+ const s=setup();onBench(s,'ex16-100');choose(s,x=>x.choiceOption===0);assert.ok(s.sides.player.active.conditions?.burn);
+ const v=setup();v.sides.player.active.damage=40;v.sides.opponent.active.damage=40;v.sides.player.active.conditions={sleep:true};onBench(v,'ex16-102');choose(v,x=>x.choiceOption===0);assert.equal(v.sides.player.active.damage,10);assert.equal(v.sides.opponent.active.damage,10);assert.ok(!v.sides.player.active.conditions.sleep);
 });
 test('Jolteon Star Yellow Ray adds 10 to each Active on Bench entry',()=>{
- const s=setup();onBench(s,'ex16-101');assert.equal(s.sides.player.active.damage,10);assert.equal(s.sides.opponent.active.damage,10);
+ const s=setup();onBench(s,'ex16-101');choose(s,x=>x.choiceOption===0);assert.equal(s.sides.player.active.damage,10);assert.equal(s.sides.opponent.active.damage,10);
 });
 test('Cradily Evolutionary Call searches up to 3 real Pokémon and shuffles',()=>{
  const s=setup();s.sides.player.deck=[{uid:'c1',cardId:'ex16-51'},{uid:'c2',cardId:'ex16-37'},{uid:'x',cardId:'ex16-72'},{uid:'c3',cardId:'ex16-59'}];

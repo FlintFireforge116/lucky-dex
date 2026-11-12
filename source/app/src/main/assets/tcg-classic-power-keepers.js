@@ -112,6 +112,10 @@ function parse(n){
    if(new RegExp('defending pok[eé]mon is (?:now )?'+phrase).test(attackWording))inflicts.add(tag);
    if(new RegExp('if the defending pok[eé]mon is '+phrase).test(attackWording))payoffs.add(tag);
  }
+ // Explicitly tag Power-originated status effects and conditional attack
+ // payoffs. Attack-only regexes miss Cacturne's Poison Structure entirely.
+ if(n===27){inflicts.add('poison');roles.add('status');synergy.add('status');}
+ if(n===31){payoffs.add('sleep');roles.add('status-payoff');synergy.add('sleep');}
  if([2,30,14,18,22,27,99].includes(n)){roles.add('stadium-payoff');synergy.add('stadium');}
  if([3,9,12,15,16,42,57,73,75,87,88,89].includes(n))synergy.add('energy');
  const partners={2:["Drake's Stadium"],14:["Phoebe's Stadium"],18:["Sidney's Stadium"],22:["Phoebe's Stadium"],
