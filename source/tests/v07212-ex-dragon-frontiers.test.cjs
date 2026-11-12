@@ -59,8 +59,8 @@ test('Arbok Burning Venom applies both Burn and Poison',()=>{
 test('Baby card status and combat actions remain usable',()=>{
  const s=battle('ex15-53','ex15-61');s.sides.player.active.energy={Metal:1};atk(s,1);assert.ok(s.log.some(x=>x.type==='coin'));
 });
-test('previously known complex cards are explicitly gated from CPU generation',()=>{
- for(const id of ['ex15-1','ex15-5','ex15-10','ex15-11','ex15-91','ex15-99','ex15-100','ex15-101']){const c=cat.cardById(id);assert.equal(c.battleEnabled,false,id);assert.ok(c.support.reasons.length>0);}
+test('completed complex cards are now eligible for live decks',()=>{
+ for(const id of ['ex15-1','ex15-5','ex15-10','ex15-11','ex15-91','ex15-99','ex15-100','ex15-101']){const c=cat.cardById(id);assert.equal(c.battleEnabled,true,id);assert.equal(c.support.reasons.length,0,id);}
 });
 test('CPU can build valid legal single-type decks from supported Dragon Frontiers cards',()=>{
  for(const type of ['Fire','Psychic','Metal'])for(const seed of [2,41,100]){

@@ -1011,6 +1011,7 @@
         if(abilityBlockedByStatus(ability,source)||ability.type==='passive'||ability.type==='triggered'||ability.activeOnly&&source!==s.active||ability.benchOnly&&source===s.active)return;
         if(state.format==='classic'&&sourceCard?.pokemonEx&&ability.printedPowerType==='power'&&
            ['player','opponent'].some(w=>pokemonOn(state.sides[w]).some(p=>p.cardId==='ex14-96'&&!effects.abilitiesSuppressed(state,w,p,data.cardById))))return;
+        if(source.cardId==='ex15-8'&&(Number(source.damage||0)<40||!Array.isArray(source.stack)||source.stack.length<2||!s.deck.some(ref=>/^(?:Ninetales|Ninetales ex)(?: δ)?$/.test(data.cardById(ref.cardId)?.name||''))))return;
         if(source.cardId==='ex14-18'&&Number(s.ex14DeltaSignTurn)===state.turnNumber)return;
         if(source.cardId==='ex5-16'&&Number(s.ex5HealDanceUsedTurn)===state.turnNumber)return;
         if(['ex5-23','ex5-25','ex5-26','ex5-30'].includes(source.cardId)&&Number(s.ex5TemperamentalWeatherTurn)===Number(s.turnCount))return;
@@ -1055,6 +1056,8 @@
         }
       }
     }
+    if(state.format==='classic'&&Number(s.ex15TrainerLockUntil||0)>=Number(state.turnNumber))
+      for(let i=actions.length-1;i>=0;i--)if(actions[i].type==='trainer'&&data.cardById(actions[i].cardId)?.trainerType!=='Supporter')actions.splice(i,1);
     if(state.format==='classic'&&(Number(s.ex7TrainerLockedUntil||0)>=Number(state.turnNumber)||Number(s.ex8TrainerLockUntil||0)>=Number(state.turnNumber)))for(let i=actions.length-1;i>=0;i--)if(actions[i].type==='trainer'&&data.cardById(actions[i].cardId)?.trainerType!=='Supporter')actions.splice(i,1);
     if(state.format==='classic'&&Number(s.ex8SupporterLockUntil||0)>=Number(state.turnNumber))for(let i=actions.length-1;i>=0;i--)if(actions[i].type==='trainer'&&data.cardById(actions[i].cardId)?.trainerType==='Supporter')actions.splice(i,1);
     if(state.format==='classic'&&state.sides[side==='player'?'opponent':'player'].active?.cardId==='ex8-100')for(let i=actions.length-1;i>=0;i--)if(actions[i].type==='trainer'&&data.cardById(actions[i].cardId)?.trainerType==='Stadium')actions.splice(i,1);
@@ -1373,6 +1376,12 @@
     if(state.format==='classic'){const side=state.activeSide,ss=state.sides[side],pending=ss.gymCharity; if(pending&&pending.turn===state.turnNumber){const target=[ss.active,...ss.bench].find(p=>p&&p.uid===pending.activeUid);if(target&&target.damage<maxHp(state,side,target)){const idx=ss.discard.findIndex(r=>r.uid===pending.uid);if(idx>=0)ss.hand.push(...ss.discard.splice(idx,1));}ss.gymCharity=null;}}
     if(state.format==='classic'){const ss=state.sides[state.activeSide],slot=ss.active;if(slot?.cardId==='SNAPFOUNJA-061'&&ss.lastAttackTurn===state.turnNumber)slot.conditions={...(slot.conditions||{}),sleep:true};}
     checkup(state);
+    if(state.format==='classic')for(const ownerSide of ['player','opponent']){
+      const owner=state.sides[ownerSide],foe=state.sides[ownerSide==='player'?'opponent':'player'],snorlax=owner.active;
+      if(snorlax?.cardId==='ex15-10'&&snorlax.conditions?.sleep&&foe.active&&
+         !effects.abilitiesSuppressed(state,ownerSide,snorlax,data.cardById)){
+        foe.active.damage=Number(foe.active.damage||0)+20;
+        state.log.push({type:'ex15Bedhead',side:ownerSide,targetUid:foe.active.uid,amount:20});}}
     if(!resolveKnockOut(state,'advanceTurn')&&!beginSkyridgeStarPieceChoice(state))advanceTurn(state);
   }
 
@@ -1905,6 +1914,10 @@
           state.log.push({type:'gymEffect',side:foeSide,rule:'Ninja Trick',switched:true});
         }
       }
+      if(state.format==='classic'&&s.active.cardId==='ex15-2'&&attack.name==='Drag Off'&&matched.effectSelection){
+        const chosen=foe.bench.find(p=>p.uid===matched.effectSelection);
+        if(chosen){effects.switchPokemon(foe,Number(chosen.benchSlot),state);matched.ex15DragOffResolved=true;
+          state.log.push({type:'ex15DragOff',side,targetUid:chosen.uid,preDamage:true});}}
       if(state.format==='classic'&&['ex8-2','ex8-104'].includes(s.active.cardId)&&matched.effectSelection&&['Luring Antenna','Drag Off'].includes(attack.name)){
         const incoming=foe.bench.find(p=>p.uid===matched.effectSelection);
         if(incoming){effects.switchPokemon(foe,Number(incoming.benchSlot),state);matched.ex8PreSwitchResolved=true;}

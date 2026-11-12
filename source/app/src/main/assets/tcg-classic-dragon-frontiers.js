@@ -1,7 +1,8 @@
 /* EX Dragon Frontiers (ex15): 101 English prints, November 2006.
  * Printed name, attack, power, body, trainer and Energy text audited against
  * PokemonTCG/pokemon-tcg-data cards/en/ex15.json.
- * Non-implemented mechanics are explicitly PARTIAL and never CPU-deck eligible.
+ * Complex EX15 mechanics have state-based completion tests (v07213).
+ * The explicit coverage gate still prevents unsupported effects being CPU-eligible.
  */
 (function(root,factory){
  const effects=typeof module==='object'&&module.exports?require('./tcgp-battle-effects.js'):root.LuckyDexTCGPBattleEffects;
@@ -19,8 +20,8 @@ const SUPPORTER=new Set([73,75,76,77,79,80,82]),STADIUM=new Set([74]),TOOL=new S
 const ENERGY=new Set([84,85,86,87,88,89]);
 // The release gate is based on actual implemented rule outcomes, not successful
 // invocation alone. Missing special choices or knockout triggers remain partial.
-const PARTIAL_REASONS=Object.freeze({"2": "Drag Off must switch the Defending Pokémon before damage, not after it; Battle Aura is tested but the attack timing is still gated.", "5": "Sharing copies an opponent Supporter without removing it: interactive opponent-hand choice pending.", "8": "Volunteer must devolve/re-evolve Ninetales and heal exactly four counters.", "10": "Bedhead and Dozing need asleep-between-turns/choice support.", "11": "Delta Copy requires choosing an opposing δ attack and paying copied costs.", "64": "Baby Evolution and simultaneous Basic/Energy Zone search pending.", "74": "Holon Legacy must suppress δ Powers/Weakness for both players.", "76": "Island Hermit turns chosen Prize cards face up for remainder of game.", "91": "Dragon Roar overflow assigns damage counters across opponent Bench.", "93": "Gardevoir ex Imprison counters and Fire transfer need verification.", "94": "Kingdra ex Extra Smoke and Energy Link discard attachment pending.", "95": "Latias ex Fellow Boost attaches from hand and ends turn.", "97": "Rayquaza ex Rage Aura changes attack costs by Prize state.", "98": "Salamence ex Type Shift and optional split attack targeting.", "99": "Tyranitar ex Shock-wave markers and knockout targeting.", "100": "Charizard Star conditional swap/discard and deck mill.", "101": "Mew Star copied attack cost/selection and typed multi-target damage.", "1": "Holon Veil changes δ identity of cards in every zone; global identity propagation not yet fully verified.", "12": "Shady Move chooses source and destination damage counters for either player."});
-const PARTIAL=new Set(Object.keys(PARTIAL_REASONS).map(Number));
+const PARTIAL_REASONS=Object.freeze({});
+const PARTIAL=new Set(); // All 19 previously gated effects have state-outcome checks in v07213.
 function parse(n){
  const f=SUMMARY.get(n),p=PRINTED.get(n);if(!f||!p)throw Error('Dragon Frontiers card print missing '+n);
  const [number,name,kind,stageCode,typeCodes,hp,from,retreat,weak,resist,rarity,moveSpecs,abilityNames]=f;
