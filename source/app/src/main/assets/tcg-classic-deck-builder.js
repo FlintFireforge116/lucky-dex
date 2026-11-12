@@ -414,6 +414,9 @@ function buildDeck(rows,options={}){
  const holonLakeUseful=deltaMons.some(c=>c.deckMeta?.holonStadiumPayoff)||deltaMons.length>=2;
  if(holonLakeUseful&&holonLake&&allowedInSetPool(holonLake,scope)&&!
    cards.some(id=>classic.cardById(id)?.trainerType==='Stadium'))add(holonLake,1);
+ const mainMetal=(mainLine||[]).some(c=>(c.types||[]).includes('Metal')||(c.deckMeta?.requiredEnergyTypes||[]).includes('Metal'));
+ const defensiveMetal=classic.cardById('ex13-95');
+ if(mainMetal&&selectedTypes.includes('Metal')&&defensiveMetal&&allowedInSetPool(defensiveMetal,scope))add(defensiveMetal,Math.min(1,room(defensiveMetal)));
  const flexibleDarkMetal=classic.cardById('ex13-97');
  if(flexibleDarkMetal&&allowedInSetPool(flexibleDarkMetal,scope)&&
    selectedTypes.includes('Darkness')&&selectedTypes.includes('Metal'))add(flexibleDarkMetal,1);

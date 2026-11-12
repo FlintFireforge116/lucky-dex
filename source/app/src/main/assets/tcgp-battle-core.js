@@ -942,6 +942,12 @@
         if(abilityBlockedByStatus(ability,source)||ability.type==='passive'||ability.type==='triggered'||ability.activeOnly&&source!==s.active||ability.benchOnly&&source===s.active)return;
         if(source.cardId==='ex5-16'&&Number(s.ex5HealDanceUsedTurn)===state.turnNumber)return;
         if(['ex5-23','ex5-25','ex5-26','ex5-30'].includes(source.cardId)&&Number(s.ex5TemperamentalWeatherTurn)===Number(s.turnCount))return;
+        // LuckyDex has a three-slot Bench, so Crawdaunt ex Splash Back only
+        // becomes actionable once the opposing Bench is actually full.
+        if(source.cardId==='ex13-99'){
+          const enemy=state.sides[side==='player'?'opponent':'player'];
+          if((enemy?.bench||[]).filter(Boolean).length<Math.min(3,Number(enemy?.benchLimit||3)))return;
+        }
         if(ability.vstarPower&&s.vstarPowerUsed)return;
         const used=(s.abilityUsed||{})[source.uid+':'+abilityIndex];if(ability.oncePerTurn!==false&&used===s.turnCount)return;
         if(ability.lentalSharedOnce==='scavenge'&&s.lentalScavengeUsedTurn===s.turnCount)return;

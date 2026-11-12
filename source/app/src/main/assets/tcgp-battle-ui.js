@@ -566,6 +566,7 @@
     if(effect.type==='nextAttackBonus')return `Deal ${n} more damage with the named attack next time.`;
     if(effect.type==='damageFromDamage')return 'Damage depends on damage counters already placed.';
     if(effect.type==='reorderTop')return `Look at and rearrange the top ${effect.count||1} cards of your deck.`;
+    if(effect.type==='neoRule')return ''; // Printed rule text is displayed on the attack; no placeholder for plain damage.
     return `Resolve ${String(effect.type||'special').replace(/([a-z])([A-Z])/g,'$1 $2')} effect.`;
   }
   function attackDescription(attack){
@@ -967,7 +968,7 @@
     // aren't hand/deck card refs, so resolve the matching real print for art.
     // Do not turn Special Energy, 'Draw 1 card', or other options into Energy.
     const label=String(action.choiceLabel||'').trim();
-    const match=/^(?:(?:Find|Recover|Take|Attach|Choose|Get|Return|Discard)\s+)?(Grass|Fire|Water|Lightning|Psychic|Fighting|Darkness|Metal)(?: Energy)(?:\s+card)?$/i.exec(label)||/^(Grass|Fire|Water|Lightning|Psychic|Fighting|Darkness|Metal)$/i.exec(label);
+    const match=/^(?:(?:Find|Recover|Take|Attach|Choose|Get|Return|Discard|Search for)\s+)?(Grass|Fire|Water|Lightning|Psychic|Fighting|Darkness|Metal)(?:\s+(?:Basic\s+)?Energy)(?:\s+card)?$/i.exec(label)||/^(Grass|Fire|Water|Lightning|Psychic|Fighting|Darkness|Metal)$/i.exec(label);
     const basicType=match?uiAssets?.normalise?.(match[1])||match[1]:!card&&energy&&uiAssets?.normalise?.(energy);
     const basicPrint=!card&&basicType?data.cardById(uiAssets?.energyCardId?.(basicType)):null;
     const art=cardId?cardArtUrl(cardId,pending.discardZone==='opponent'||kind==='opponentHandCard'?'opponent':'player'):(basicType?(basicPrint?.image||uiAssets?.energyCardUrl?.(basicType)||''):'');
@@ -979,7 +980,7 @@
   }
   function choiceCardTileHtml(action,index){
     const model=choiceCardModel(action,index),selected=battleChoiceSelectionIndex===index;
-    return `<button type="button" class="tcgp-live-choice-card ${selected?'selected':''}" data-tcgp-action="select-choice-card" data-action-index="${index}" aria-pressed="${selected}" aria-label="${esc(model.title)} ${esc(model.detail)}">${model.art?`<img src="${esc(model.art)}" alt="${esc(model.title)}" loading="lazy" onerror="this.hidden=true;this.nextElementSibling.hidden=false"><span class="tcgp-live-choice-placeholder" hidden>${esc(model.title)}</span>`:`<span class="tcgp-live-choice-placeholder">${esc(model.title)}</span>`}<b>${esc(model.title)}</b><small>${esc(model.optionLabel||model.detail)}</small></button>`;
+    return `<button type="button" class="tcgp-live-choice-card ${model.art?'':'text-option'} ${selected?'selected':''}" data-tcgp-action="select-choice-card" data-action-index="${index}" aria-pressed="${selected}" aria-label="${esc(model.title)} ${esc(model.detail)}">${model.art?`<img src="${esc(model.art)}" alt="${esc(model.title)}" loading="lazy" onerror="this.hidden=true;this.nextElementSibling.hidden=false"><span class="tcgp-live-choice-placeholder" hidden>${esc(model.title)}</span><b>${esc(model.title)}</b>`:`<span class="tcgp-live-choice-text">${esc(model.title)}</span>`}<small>${esc(model.art?(model.optionLabel||model.detail):model.detail)}</small></button>`;
   }
   function liveEffectChoiceCenterHtml(){
     const battle=currentBattle,pending=battle?.pendingChoice;

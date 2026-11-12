@@ -28,8 +28,8 @@ function parse(n){
  const card={id:'ex13-'+n,setId:'ex13',number:String(n),name,kind:kind==='P'?'pokemon':kind==='E'?'energy':'trainer',source:'tcg',battleFormat:'classic',rarity,
    image:'https://images.pokemontcg.io/ex13/'+n+'.png',imageLarge:'https://images.pokemontcg.io/ex13/'+n+'_hires.png'};
  if(kind==='P'){
-   const attacks=String(moveSpecs||'').split(';').filter(Boolean).map((str,i)=>{const [name,cost,shown='']=str.split('~');return {name,cost,damage:Number((shown.match(/^\d+/)||[])[0]||0),damageText:shown||null,text:attackTexts[i]||'',effect:rule(n,i)};});
-   const abilities=abilityTexts.map((str,i)=>{const [category,title,...rest]=str.split(':'),isPower=category.includes('Power'),trigger=[].includes(n)?'evolved':null;return {name:title||abilityNames,type:trigger?'triggered':isPower?'activated':'passive',printedPowerType:isPower?'power':'body',oncePerTurn:isPower&&!trigger,disabledByStatus:isPower,text:rest.join(':'),effect:rule(n,'power'+(i?':'+i:''))};});
+   const attacks=String(moveSpecs||'').split(';').filter(Boolean).map((str,i)=>{const [name,cost,shown='']=str.split('~');return {name,cost,damage:Number((shown.match(/^\d+/)||[])[0]||0),damageText:shown||null,text:attackTexts[i]||(/^[0-9]+$/.test(shown)&&Number(shown)>0?`Deals ${Number(shown)} damage.`:''),effect:rule(n,i)};});
+   const abilities=abilityTexts.map((str,i)=>{const [category,title,...rest]=str.split(':'),isPower=category.includes('Power'),trigger=[].includes(n)?'evolved':null;const printed=rest.join(':');return {name:title||abilityNames,type:trigger?'triggered':isPower?'activated':'passive',printedPowerType:isPower?'power':'body',oncePerTurn:isPower&&!trigger,disabledByStatus:isPower,text:n===99?printed.replace('4 or more Benched Pokémon','3 or more Benched Pokémon (LuckyDex 3-Bench rules)'):printed,effect:rule(n,'power'+(i?':'+i:''))};});
    Object.assign(card,{stage:stageCode==='0'?'Basic':'Stage '+stageCode,types:typeCodes.split('').map(t=>T[t]),subtype:T[typeCodes[0]]||'Colorless',hp:Number(hp),retreat:Number(retreat||0),
      weakness:T[weak]||null,weaknessValue:weak?'×2':null,resistance:T[resist]||null,resistanceValue:resist?'-30':null,evolvesFrom:from||null,
      deltaSpecies:name.includes('δ'),holonEnergyPokemon:n===44,pokemonEx:EX.has(n),isEx:EX.has(n),pokemonStar:STAR.has(n),isPokemonStar:STAR.has(n),prizeCards:EX.has(n)?2:1,attacks,abilities});
@@ -65,10 +65,10 @@ function parse(n){
  const preferredPartners=n===11?['Latios','Latios ex']:n===12?['Latias','Latias ex']:n===19?['Oddish','Gloom','Vileplume']:n===44?[]:n===8?['Holon Lake']:n===43?['Holon Lake']:n===53?['Holon Energy']:n===76?['Pikachu']:[];
  const holonPayoff=[14,16,53].includes(n),holonStadium=[8,43,48].includes(n);
  const energySupport=n===7?['δ Rainbow Energy']:holonPayoff?['Holon Energy']:n===98?['δ Rainbow Energy']:[];
- const conditionalAttackEnergyTypes=n===30?['Water']:[];if(n===30)preferredEnergyTypes.add('Water');
+ const conditionalAttackEnergyTypes=n===30?['Water']:[];if(n===30)preferredEnergyTypes.add('Water');if(n===10){preferredEnergyTypes.add('Fire');preferredEnergyTypes.add('Metal');}
  card.deckMeta=Object.freeze({roles:[...roles],synergy:[...synergy],energyTypes:[...energyTypes],preferredEnergyTypes:[...preferredEnergyTypes],
    inflicts:[...inflicts],payoffs:[...payoffs],specialEnergyPayoffs:holonPayoff?['holon-energy']:n===7?['delta-rainbow']:[],
-   requiresEnergyCards:energySupport,holonStadiumPayoff:holonStadium,preferredPartners,
+   requiresEnergyCards:energySupport,requiredEnergyTypes:n===10?['Fire','Metal']:[],holonStadiumPayoff:holonStadium,preferredPartners,
    alternateFormCardIds:[3,4,5,6].includes(n)?['ex8-16','ex8-17','ex8-18','ex9-2',...[3,4,5,6].filter(id=>id!==n).map(id=>'ex13-'+id)]:[],
    conditionalAttackEnergyTypes,conditionalAttackPayoffs:[],stages:card.stage?.startsWith('Stage ')?[card.stage]:[]});
  const ready=SUPPORTED.has(n)&&[...(card.attacks||[]).map(a=>a.effect),...(card.abilities||[]).map(a=>a.effect),card.effect||noop].every(effects.supportsEffect);

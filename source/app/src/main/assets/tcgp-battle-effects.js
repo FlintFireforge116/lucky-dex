@@ -4157,7 +4157,7 @@
             else us.hand.push(...us.discard.splice(us.discard.findIndex(r=>r.uid===ent.ref.uid),1));return;}
           if(opts.length)pick('option',{options:opts.map(x=>'Recover '+x.label),optional:false});return;}
         case 76:{if(ctx.resolvingChoice){const ix=Number(c.choiceHandIndex),ref=us.hand[ix],ce=card(ref);if(!ref||ce?.name!=='Pikachu')return;us.hand.splice(ix,1);a.cardId=ref.cardId;a.stack=[...(a.stack||['ex13-76']),ref.cardId];a.evolvedOnTurn=turn;a.damage=0;return;}if(us.hand.some(ref=>card(ref)?.name==='Pikachu'))pick('handCard',{filter:{name:'Pikachu'}});return;}
-        case 99:if(foe.bench.length>=4){if(ctx.resolvingChoice){const p=selected(foe);if(!p||!foe.bench.includes(p))return;
+        case 99:if(foe.bench.length>=Math.min(3,Number(foe.benchLimit||3))){if(ctx.resolvingChoice){const p=selected(foe);if(!p||!foe.bench.includes(p))return;
           foe.bench=foe.bench.filter(b=>b!==p);for(const id of p.stack||[p.cardId])foe.hand.push({uid:'ex13-splash-'+turn+'-'+id,cardId:id});
           for(const r of [...(p.specialEnergy||[]),...(p.tools||[])])foe.hand.push(r);
           for(const [type,n] of Object.entries(p.energy||{}))for(let i=0;i<n;i++)foe.hand.push({uid:'ex13-splash-energy-'+type+'-'+i,cardId:neoBasicIds[type]});
@@ -7625,6 +7625,34 @@
     throw new Error('Unsupported Lental rule: '+rule);
   }
 
+  // Legacy/custom card rules can directly add damage counters to Bench
+  // Pokémon. Their HP changes were correct but they skipped benchDamage logs,
+  // leaving Camerupt's Magnitude, Claydol's Wide Laser and similar attacks
+  // without the bench-hit animation. Log the *unreported* HP delta for every
+  // neoRule call, including optional target choices and self-Bench damage.
+  function logRuleBenchHits(ctx,run){
+    const sides=ctx.state?.sides||{},log=ctx.state?.log;
+    if(!Array.isArray(log))return run();
+    const snapshots=[];
+    for(const name of ['player','opponent'])for(const p of sides[name]?.bench||[])
+      if(p)snapshots.push({name,p,uid:p.uid,before:Number(p.damage||0),index:Number(p.benchSlot||0)});
+    const logStart=log.length;
+    const result=run();
+    for(const hit of snapshots){
+      if(!sides[hit.name]?.bench?.some(p=>p===hit.p||p.uid===hit.uid))continue;
+      const change=Math.max(0,Number(hit.p.damage||0)-hit.before);
+      if(!change)continue;
+      const recorded=log.slice(logStart).filter(e=>e?.type==='benchDamage'&&
+        (e.targetSide||((e.side==='player')?'opponent':'player'))===hit.name&&
+        (e.targetCardId===hit.p.cardId||e.cardId===hit.p.cardId)&&
+        Number(e.benchIndex||0)===hit.index).reduce((sum,e)=>sum+Math.max(0,Number(e.amount||0)),0);
+      const missing=Math.max(0,change-recorded);
+      if(missing)log.push({type:'benchDamage',side:ctx.side,targetSide:hit.name,
+        sourceCardId:ctx.attacker?.cardId||null,targetCardId:hit.p.cardId,
+        benchIndex:hit.index,amount:missing,attack:ctx.attack?.name||'Attack'});
+    }
+    return result;
+  }
   function applyEffect(effect,ctx){
     if(!effect)return;
     assertEffect(effect);
@@ -7641,9 +7669,9 @@
     const affected=()=>targets(effect.target,ctx).filter(s=>!protectedFromEffects(s,ctx)&&matchesFilter(ctx.cardById(s.cardId),effect.filter,s)),log=entry=>ctx.state.log.push(Object.assign({side:ctx.side},entry));
     switch(effect.type){
       case 'noop':case 'specialEnergy':break;
-      case 'lentalRule':lentalRule(effect,ctx);break;
-      case 'neoRule':neoRule(effect,ctx);break;
-      case 'gymRule':applyGymRule(effect,ctx);break;
+      case 'lentalRule':logRuleBenchHits(ctx,()=>lentalRule(effect,ctx));break;
+      case 'neoRule':logRuleBenchHits(ctx,()=>neoRule(effect,ctx));break;
+      case 'gymRule':logRuleBenchHits(ctx,()=>applyGymRule(effect,ctx));break;
       case 'forceFirstCoinHead':{const ss=own(ctx);ss.forceFirstCoinHeadTurn=ctx.state.turnNumber;ss.forceFirstCoinHeadUsed=false;break;}
       case 'coinReroll':case 'toolCapacity':case 'repeatAttack':case 'chooseDiscardForBonus':case 'weaknessMultiplier':case 'statusRecoveryAura':case 'copyRandomAttackFromPrivate':break;
       case 'weaknessGuard':for(const target of affected())target.weaknessGuard={duration:effect.duration||'opponentTurn',expiresTurn:effect.duration==='opponentTurn'?ctx.state.turnNumber+1:null};break;
@@ -8027,9 +8055,9 @@
       case 'healSelf':if(ctx.attacker&&!healingIsBlocked(ctx.state,ctx.attacker,ctx.cardById))ctx.attacker.damage=Math.max(0,Number(ctx.attacker.damage||0)-effect.amount);break;
       case 'heal':for(const s of affected())if(!healingIsBlocked(ctx.state,s,ctx.cardById))s.damage=Math.max(0,Number(s.damage||0)-effect.amount);log({type:'heal',amount:effect.amount});break;
       case 'selfDamage':if(ctx.attacker)ctx.attacker.damage=Number(ctx.attacker.damage||0)+effect.amount;break;
-      case 'damage':for(const s of affected()){if(ctx.isAbility){const targetSide=pokemonOn(own(ctx)).includes(s)?ctx.side:ctx.foeSide;if(findPassiveRule(ctx.state,targetSide,s,'preventAbilityDamage',ctx.cardById))continue;}s.damage=Number(s.damage||0)+effect.amount;}break;
-      case 'halveRemainingHp':for(const s of affected()){const which=pokemonOn(own(ctx)).includes(s)?ctx.side:ctx.foeSide,max=Math.max(1,Number(ctx.maxHp?ctx.maxHp(which,s):ctx.cardById(s.cardId)?.hp||0)),remaining=Math.max(0,max-Number(s.damage||0)),next=Math.floor(remaining/2);s.damage=Math.max(Number(s.damage||0),max-next);}break;
-      case 'setRemainingHp':for(const s of affected()){const which=pokemonOn(own(ctx)).includes(s)?ctx.side:ctx.foeSide,max=Math.max(1,Number(ctx.maxHp?ctx.maxHp(which,s):ctx.cardById(s.cardId)?.hp||0));s.damage=Math.max(Number(s.damage||0),max-Number(effect.amount||0));}break;
+      case 'damage':logRuleBenchHits(ctx,()=>{for(const s of affected()){if(ctx.isAbility){const targetSide=pokemonOn(own(ctx)).includes(s)?ctx.side:ctx.foeSide;if(findPassiveRule(ctx.state,targetSide,s,'preventAbilityDamage',ctx.cardById))continue;}s.damage=Number(s.damage||0)+effect.amount;}});break;
+      case 'halveRemainingHp':logRuleBenchHits(ctx,()=>{for(const s of affected()){const which=pokemonOn(own(ctx)).includes(s)?ctx.side:ctx.foeSide,max=Math.max(1,Number(ctx.maxHp?ctx.maxHp(which,s):ctx.cardById(s.cardId)?.hp||0)),remaining=Math.max(0,max-Number(s.damage||0)),next=Math.floor(remaining/2);s.damage=Math.max(Number(s.damage||0),max-next);}});break;
+      case 'setRemainingHp':logRuleBenchHits(ctx,()=>{for(const s of affected()){const which=pokemonOn(own(ctx)).includes(s)?ctx.side:ctx.foeSide,max=Math.max(1,Number(ctx.maxHp?ctx.maxHp(which,s):ctx.cardById(s.cardId)?.hp||0));s.damage=Math.max(Number(s.damage||0),max-Number(effect.amount||0));}});break;
       case 'attachEnergyFromDiscard':{for(const s of affected()){const owner=energyOwner(ctx,s);if(!owner)continue;const type=effect.energyType||ctx.action?.effectEnergyType;if(!type)continue;const available=neoTakeDiscard(ctx,owner,type,Number(effect.amount||1));if(available<=0)continue;s.energy[type]=Number(s.energy[type]||0)+available;ctx.onEnergyAttached?.(s,type,available);}break;}
       case 'attachRandomEnergyFromDiscard':{for(const s of affected()){const owner=energyOwner(ctx,s);if(!owner)continue;for(let i=0;i<Number(effect.amount||1);i++){const units=[...Object.entries(owner.energyDiscard||{}).flatMap(([type,n])=>Array(Math.max(0,Math.floor(Number(n)||0))).fill(type)),...(owner.discard||[]).map(ref=>ctx.cardById(ref.cardId)).filter(c=>c?.basicEnergy).map(c=>c.subtype)];if(!units.length)break;const type=units[Math.floor(ctx.random(ctx.state)*units.length)];if(!neoTakeDiscard(ctx,owner,type,1))break;s.energy[type]=Number(s.energy[type]||0)+1;ctx.onEnergyAttached?.(s,type,1);}}break;}
       case 'randomStatus':{for(const s of affected()){const choices=(effect.statuses||STATUSES).filter(status=>!effect.excludeExisting||!s.conditions?.[status]);if(!choices.length)continue;const status=choices[Math.floor(ctx.random(ctx.state)*choices.length)];applyEffect({type:'status',target:effect.target||'opponentActive',status},ctx);}break;}
