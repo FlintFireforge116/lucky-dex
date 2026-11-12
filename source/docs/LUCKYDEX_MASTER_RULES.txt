@@ -1,8 +1,8 @@
 LUCKYDEX — MASTER PROJECT RULES AND DEVELOPMENT CONTRACT
 =========================================================
-Document version: 2.4
+Document version: 2.5
 Compiled: 12 November 2026
-Current source baseline inspected: v0.69.210 (Charizard δ physical-Energy support; built on v0.69.209)
+Current source baseline inspected: v0.69.211 (Charizard δ Peal of Thunder optional-activation fix; built on v0.69.210)
 Recommended repository location: ~/lucky-dex/source/docs/LUCKYDEX_MASTER_RULES.txt
 Project: LuckyDex — Android application/PWA, managed with Termux and GitHub
 
@@ -354,6 +354,7 @@ PART 3 — CLASSIC POKÉMON TCG FORMAT
   [LOCKED] When choosing multiple attributes (which Pokémon, which attached Energy, how many Energy, which effect), present the stages clearly and do not silently choose an arbitrary target.
   [LOCKED] Choosing a discard/deck/hand card should show recognizable card art/names and the relevant source zone, then confirm before irreversible actions when helpful.
   [LOCKED] If an effect offers skip/cancel/optional choice, preserve it. 'Skip' must not unintentionally consume a card or apply damage.
+  [LOCKED] C-EX14-POWER-009 (12 Nov 2026): Charizard δ (ex14-4) Peal of Thunder is an OPTIONAL evolution-triggered Power. Offer Use/Decline BEFORE looking at or removing the top five cards. Declining MUST leave the physical draw deck, hand and discard unchanged. If used, look at up to five actual physical deck cards, choose any number of legally attachable Energy cards for one Pokémon (including zero), then discard the remaining revealed cards. Never substitute the Classic Basic Energy Zone. The CPU may decline when no physical Energy remains; ordinary Metal Burn attack costs/discards are independent of this Power.
   [LOCKED] For switching, promotion, Bench targeting and drag-to-play, highlight valid slots on the arena. Don't replace player-selected outcomes with 'leftmost Bench' defaults.
   [LOCKED] UI should retain readable optional-effect labels, even where the attack artwork is the same for every alternative.
 
@@ -725,5 +726,6 @@ CHANGE HISTORY
 2026-11-12 | Document 2.2 -> 2.3 | App v0.69.209 | Registered EX Crystal Guardians ex14 with 100 numbered English prints, all abilities, attacks, Trainer rules, asset references, player/CPU/Test Lab set integration, and named per-card deck metadata. Tested supported Stadium/Tool, double-unit Special Energy, Bench/Active and search/discard/choice paths; gated four genuinely unfinished cards (ex14-91, ex14-98, ex14-99, ex14-100) as PARTIAL, leaving 96 battle-enabled. The latest release test counts are recorded in docs/EX_CRYSTAL_GUARDIANS_v0.69.209_RULES_AUDIT.md. Android hardware QA not performed.
 
 2026-11-12 | Document 2.3 -> 2.4 | App v0.69.210 | C-ENERGY-016, C-DECK-EVO-007, C-EX14-CHARIZARD-008. Fix Charizard δ Peal of Thunder auto-decks lacking physical Energy: reserve up to three actually owned Double Rainbow copies when available in selected sets (EX14 or eligible older print), preserving the separate ordered Basic Energy Zone; warn when no owned physical Energy can activate a true physical top-five reveal. Prefer attack-compatible delta Charmander/Charmeleon prints. Enforce Double Rainbow attachment restrictions for direct-from-deck Peal choices and Metal Burn's actual Basic/Special Metal-providing discard. State-based tests in v07210 plus adjacent builder/EX rule regressions; Android phone UI QA not performed.
+2026-11-12 | Document 2.4 -> 2.5 | App v0.69.211 | [LOCKED] C-EX14-POWER-009. Report: Peal of Thunder immediately revealed/discarded up to five physical cards on evolution, even though printed wording says "may". Now explicitly ask Use/Decline before any draw-deck mutation; declining leaves zones unchanged. After accepting, choose one eligible recipient, then optionally attach zero or more valid revealed Energy, discarding only unchosen revealed cards. AI on all four levels declines if no physical Energy is left. Code: tcgp-battle-effects.js, tcgp-battle-ai.js; tests/v07211-charizard-peal-optional.test.cjs plus updated v07210 test; v210 Metal Burn remains unchanged. Android device QA not performed.
 
 END OF LUCKYDEX MASTER RULES

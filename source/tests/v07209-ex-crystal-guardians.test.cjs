@@ -145,6 +145,7 @@ test('Charizard delta Peal of Thunder selects one recipient, attaches Energy fro
    {uid:'top4',cardId:'ex14-88'},{uid:'top5',cardId:'ex14-63'},{uid:'top6',cardId:'ex14-45'}];
  const evo=core.legalActions(s,'player').find(x=>x.type==='evolve'&&x.cardId==='ex14-4');assert.ok(evo);
  core.applyAction(s,'player',evo);assert.equal(s.phase,'effectChoice');
+ choose(s,x=>x.choiceOption===0&&/Use Peal/.test(x.choiceLabel));
  choose(s,x=>x.choiceTarget==='active');assert.equal(s.phase,'effectChoice');
  choose(s,x=>x.choiceOption===0);assert.equal(s.phase,'effectChoice');
  choose(s,x=>x.choiceOption===0);assert.equal(s.phase,'battle');

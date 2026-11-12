@@ -15,6 +15,45 @@
     for(const c of cost)if(c!=='C'){const type=effects.ENERGY_CODE[c];if(energy[type]>0)energy[type]--;else missing++;}
     return missing+Math.max(0,[...cost].filter(c=>c==='C').length-effects.totalEnergy(energy));
   }
+  // Double Colorless supplies TWO Colorless units, never Fighting (or any
+  // other named type). Judge it by the exact printed attack costs rather than
+  // by the raw number of attached Energy. In particular, Brock's Onix #21
+  // needs FF/FFF and cannot evolve into an ordinary Steelix.
+  function missingForCost(cost,pool){
+    const energy={...pool};let need=0;
+    for(const code of String(cost||''))if(code!=='C'){
+      const type=effects.ENERGY_CODE[code];
+      if(Number(energy[type]||0)>0)energy[type]--;
+      else if(Number(energy.Miracle||0)>0)energy.Miracle--;
+      else need++;
+    }
+    return need+Math.max(0,[...String(cost||'')].filter(x=>x==='C').length-effects.totalEnergy(energy));
+  }
+  function doubleColorlessValue(state,side,action){
+    const ss=state.sides[side],slot=slotFor(ss,action.target,action.benchIndex);
+    if(!slot)return 0;
+    const ref=ss.hand[action.handIndex];
+    const before=core.effectiveEnergy(state,side,slot);
+    const after=core.effectiveEnergy(state,side,{...slot,specialEnergy:[...(slot.specialEnergy||[]),ref]});
+    const value=attack=>Math.max(0,missingForCost(attack.cost,before)-missingForCost(attack.cost,after));
+    const current=data.cardById(slot.cardId);
+    const attackGain=Math.max(0,...(current?.attacks||[]).map(value));
+    if(attackGain>0)return attackGain*50;
+    // A speculative attachment is only worthwhile if a *real* evolution of
+    // this exact named Pokemon exists in the CPU's remaining cards. Do not
+    // infer that Brock's Onix can evolve into Steelix.
+    const candidates=[...(ss.hand||[]),...(ss.deck||[])];
+    const exactName=String(current?.name||'').replace(/[’]/g,"'").trim();
+    const evolves=c=>String(c?.evolvesFrom||'').replace(/[’]/g,"'").trim()===exactName;
+    if(candidates.some(r=>{const c=data.cardById(r.cardId);return c?.kind==='pokemon'&&evolves(c)&&
+      (c.attacks||[]).some(a=>String(a.cost||'').includes('C')&&value(a)>0);})){return 8;}
+    return 0;
+  }
+  function uselessDoubleColorless(state,side,action){
+    return action.type==='attachSpecial'&&
+      data.cardById(action.cardId)?.name==='Double Colorless Energy'&&
+      doubleColorlessValue(state,side,action)<=0;
+  }
   // The Classic Energy Zone and an Energy card in hand are TWO independent
   // attachments. An AI that scores only `attach` can draw/recover Basic Energy
   // repeatedly yet never attach the real cards in its hand.
@@ -53,6 +92,7 @@
       else if(triggers.length)synergyBonus+=40*triggers.length;
       else synergyBonus-=35;
     }
+    if(handCard?.name==='Double Colorless Energy')synergyBonus+=doubleColorlessValue(state,side,action)>0?doubleColorlessValue(state,side,action):-1000;
     if(handCard?.id==='ex12-82'){
       const eligible=card?.deckMeta?.specialEnergyPayoffs?.includes('react-energy');
       const current=(slot.specialEnergy||[]).filter(r=>r.cardId==='ex12-82').length;
@@ -284,6 +324,7 @@
   function chooseAction(state,side,difficulty,actionCount){
     const level=DIFFICULTIES.indexOf(String(difficulty||'Beginner'));if(level<0)throw new Error('Unknown AI difficulty: '+difficulty);
     const legal=core.legalActions(state,side).filter(action=>{
+      if(state.format==='classic'&&uselessDoubleColorless(state,side,action))return false;
       if(state.format==='classic'&&action.type==='trainer'&&!usefulClassicTrainer(state,side,action))return false;
       if(state.format!=='classic'||action.type!=='ability')return true;
       const source=slotFor(state.sides[side],action.target,action.benchIndex),card=data.cardById(source?.cardId),index=Number(action.abilityIndex||0),power=(card?.abilities||[])[index];
@@ -330,6 +371,16 @@
     // leakage. Choose from the actual legal set instead.
     if(state.format==='classic'&&state.phase==='effectChoice'){
       const pending=state.pendingChoice||{},rule=String(pending.effect?.rule||'');
+      // Charizard δ's evolution-triggered Peal of Thunder is a "may" Power.
+      // CPU knows its own 30-card deck composition, not its top-card order:
+      // decline when no physical Energy remains rather than milling five
+      // otherwise valuable cards for no possible attachment.
+      if(pending.originSide===side&&rule==='ex14:4:power'&&pending.kind==='option'&&!pending.effect?.step){
+        const hasPhysicalEnergy=(state.sides[side].deck||[]).some(ref=>data.cardById(ref.cardId)?.kind==='energy');
+        const wanted=hasPhysicalEnergy?0:1;
+        const chosen=legal.find(a=>a.type==='effectChoice'&&a.choiceOption===wanted);
+        if(chosen)return chosen;
+      }
       // EX Unseen Forces makes many beneficial effects optional. Choosing
       // Skip by default wasted Potions, Fire Dance, Jolteon's Energy ramp,
       // Lanturn's discard recovery, Onix's retrieval and Unown Q's Energy

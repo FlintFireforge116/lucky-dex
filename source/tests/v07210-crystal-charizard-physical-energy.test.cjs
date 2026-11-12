@@ -36,7 +36,7 @@ test('Peal attaches actual revealed Double Rainbow to Charizard, not Basic Energ
  const s=battle(),p=s.sides.player;p.active=core.makePokemonSlot('ex14-29',2,'char');p.active.playedOnSideTurn=2;
  p.hand=[{uid:'evo',cardId:'ex14-4'}];p.deck=[{uid:'d',cardId:'ex14-88'},{uid:'non',cardId:'ex14-71'},{uid:'still',cardId:'ex14-65'}];
  const evolve=core.legalActions(s,'player').find(a=>a.type==='evolve'&&a.cardId==='ex14-4');assert.ok(evolve);core.applyAction(s,'player',evolve);
- choose(s,a=>a.choiceTarget==='active');choose(s,a=>a.choiceOption===0);
+ choose(s,a=>a.choiceOption===0);choose(s,a=>a.choiceTarget==='active');choose(s,a=>a.choiceOption===0);
  assert.equal(s.phase,'battle');assert.equal(p.active.specialEnergy.filter(x=>x.cardId==='ex14-88').length,1);
  assert.equal(p.active.energy.Metal||0,0);assert.equal(p.deck.length,0);assert.deepEqual(p.discard.map(r=>r.uid).sort(),['non','still']);
 });
@@ -44,7 +44,7 @@ test('Peal cannot bypass Double Rainbow restriction when choosing a Basic recipi
  const s=battle(),p=s.sides.player;p.active=core.makePokemonSlot('ex14-29',2,'char');p.active.playedOnSideTurn=2;
  p.hand=[{uid:'evo',cardId:'ex14-4'}];p.deck=[{uid:'d',cardId:'ex14-88'},{uid:'n',cardId:'ex14-71'}];
  core.applyAction(s,'player',core.legalActions(s,'player').find(a=>a.type==='evolve'&&a.cardId==='ex14-4'));
- choose(s,a=>a.choiceTarget==='bench'&&a.choiceBenchIndex===0);
+ choose(s,a=>a.choiceOption===0);choose(s,a=>a.choiceTarget==='bench'&&a.choiceBenchIndex===0);
  assert.equal(s.phase,'battle');assert.equal(p.bench[0].specialEnergy.length,0);assert.ok(p.discard.some(r=>r.uid==='d'));
 });
 test('Metal Burn discards Basic Metal and Double Rainbow as real physical Special Energy',()=>{

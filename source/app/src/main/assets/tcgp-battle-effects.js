@@ -4140,8 +4140,17 @@
           pokemonPick(us,{includeActive:false});}return;
         case 27:draw(1);return;
         case 4:{
-          if(!e.step){const top=us.deck.splice(0,5);if(!top.length)return;
-            ex14Rule({...e,step:'target',topRefs:top},{...ctx,resolvingChoice:false});return;}
+          // Peal of Thunder is optional BEFORE looking at the deck.
+          // Declining must neither reveal nor discard any of the top five cards.
+          if(!e.step){
+            if(ctx.resolvingChoice){
+              if(c.choiceSkip||Number(c.choiceOption)!==0)return;
+              const top=us.deck.splice(0,5);if(!top.length)return;
+              ex14Rule({...e,step:'target',topRefs:top},{...ctx,resolvingChoice:false});return;
+            }
+            if(us.deck.length)pick('option',{options:['Use Peal of Thunder: look at top 5 cards','Decline Peal of Thunder: keep deck unchanged'],optional:false});
+            return;
+          }
           if(e.step==='target'){
             if(ctx.resolvingChoice){
               if(c.choiceSkip){us.discard.push(...(e.topRefs||[]));return;}
