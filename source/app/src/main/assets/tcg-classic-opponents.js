@@ -13,7 +13,7 @@
  if(!classic||!decks||!builder)throw new Error('Classic opponent generation dependencies are missing.');
  const ALL_PLAYABLE=Object.freeze(classic.CARDS.filter(card=>card.battleEnabled&&card.deckEligible!==false).map(card=>Object.freeze({gameplayId:card.id,quantity:4})));
  const TYPES=builder.ARCHETYPE_TYPES.slice();
- const SETS=['base1','base2','base3','base5','gym1','gym2','neo1','neo2','neo3','neo4','base6','ecard1','ecard2','ecard3','ex1','ex2','ex3','ex4','ex5','ex6','ex7','ex8','ex9','ex10','ex11','ex12','ex13','SNAPFLORIO','SNAPFOUNJA','sv1'];
+ const SETS=['base1','base2','base3','base5','gym1','gym2','neo1','neo2','neo3','neo4','base6','ecard1','ecard2','ecard3','ex1','ex2','ex3','ex4','ex5','ex6','ex7','ex8','ex9','ex10','ex11','ex12','ex13','ex14','SNAPFLORIO','SNAPFOUNJA','sv1'];
  function pick(seed,size){let x=(Number(seed)||0x9e3779b9)>>>0;x^=x<<13;x^=x>>>17;x^=x<<5;return (x>>>0)%size;}
  function pickType({seed=Date.now(),excludeTypes=[],includeColorless=false}={}){
    const availableTypes=includeColorless?TYPES:decks.ENERGY_TYPES.slice();
@@ -32,7 +32,11 @@
    const first=pick(seed,candidates.length);
    const allowed=[...new Set((sets||SETS).filter(id=>SETS.includes(id)))];
    if(!allowed.length)return {ok:false,error:'Select at least one set for the CPU card pool.'};
-   for(let step=0;step<candidates.length;step++){
+   // One unlucky seed must not make an otherwise buildable selected-type
+   // opponent unavailable. Retry with distinct seeded candidate mixes while
+   // preserving the requested type, set filter and all legality checks.
+   const attempts=candidates.length===1?5:candidates.length;
+   for(let step=0;step<attempts;step++){
      const type=candidates[(first+step)%candidates.length];
      const result=builder.buildDeck(ALL_PLAYABLE,{style:'random',types:[type],sets:allowed,rarityFocus,basicOnly,theme,randomSeed:(Number(seed)+step*2654435761)>>>0,excludeArchetypes});
      if(!result.ok)continue;

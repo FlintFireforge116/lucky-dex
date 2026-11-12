@@ -1,8 +1,8 @@
 LUCKYDEX — MASTER PROJECT RULES AND DEVELOPMENT CONTRACT
 =========================================================
-Document version: 2.2
-Compiled: 11 November 2026
-Current source baseline inspected: v0.69.197 (EX Delta Species ex11 audit; based on v0.69.196)
+Document version: 2.3
+Compiled: 12 November 2026
+Current source baseline inspected: v0.69.209 (EX Crystal Guardians; built on v0.69.208)
 Recommended repository location: ~/lucky-dex/source/docs/LUCKYDEX_MASTER_RULES.txt
 Project: LuckyDex — Android application/PWA, managed with Termux and GitHub
 
@@ -463,7 +463,7 @@ PART 7 — TEST LAB / DEVELOPER TOOLS
 PART 8 — CARDS / EXPANSIONS: CONTENT COMPLETENESS STANDARD
 =======================================================================
 
-  [LOCKED] Add expansions in the agreed chronological/selected order; after EX Deoxys (ex8) comes EX Emerald (ex9, included in v0.69.187), with EX Unseen Forces (ex10) next unless the user changes direction.
+  [LOCKED] Add expansions in the agreed chronological/selected order; current sequence continues EX Deoxys (ex8), EX Emerald (ex9), EX Unseen Forces (ex10), EX Delta Species (ex11), EX Legend Maker (ex12), EX Holon Phantoms (ex13), EX Crystal Guardians (ex14). Future sets follow release order unless user changes direction.
   [LOCKED] New expansion work covers ALL actual cards, not just the headline Pokémon. Include Trainers, Supporters, Stadiums, Tools, Special Energy, evolution chains and Pokémon with non-obvious effects.
   [LOCKED] Use exact set IDs and card numbers with authoritative card text and errata. Do not invent unreadable text or silently create Pokémon that were not in the released set.
   [LOCKED] Inspect interactions with older cards: Rocket, Gym, Neo, Delta, EX, Special Energy, existing custom Snap sets, status effects, Stadiums and Tools. Card references to 'Dark Pokémon', 'Rocket's', 'Trainer', 'Pokémon-ex', etc. must recognise compatible older and newer cards when the printed wording intends them to.
@@ -682,6 +682,12 @@ PART 13 — INSTRUCTIONS TO PASTE INTO ANY NEW CHAT
 
 "We are continuing development of LuckyDex. Read source/docs/LUCKYDEX_MASTER_RULES.txt from the latest uploaded source ZIP FIRST. Treat its [LOCKED] rules as binding and its [CHECK] items as unresolved, not automatically resolved by the code. Review the actual current version and card implementation before editing. Preserve saves, ownership, art, achievements, CPU logic, Test Lab, existing gameplay and all prior expansions. Do not use Codex unless I ask. When I add a new rule or we discover an exception, update this TXT, its changelog, the relevant card/engine tests and any set notes in the SAME patch. For new sets, cover every card, move, metadata, player/CPU deck-builder integration, Special Energy, targeting, cross-set rules and regression tests. Deliver a real, versioned changed-files patch with correct Termux installation instructions. Never mistake 'current code behaviour' for an approved design rule."
 
+
+  [CURRENT] v0.69.209 adds EX Crystal Guardians (ex14), 100 numbered English cards, printed attacks/abilities, art URLs and ownership/set/player/CPU/Test Lab integration. Of those 100, 96 are marked battle-enabled/deck-eligible after supported-effect testing; four remain [CHECK]/PARTIAL and are visible but gated from live player and CPU decks: Delcatty ex #91, Swampert ex #98, Alakazam ★ #99, Celebi ★ #100. See docs/EX_CRYSTAL_GUARDIANS_v0.69.209_RULES_AUDIT.md for the complete 100-line card-by-card status and exact unresolved mechanics.
+  [CURRENT] EX14 Crystal Beach temporarily restricts two-or-more-unit Special Energy to one Colorless Energy; Double Rainbow attaches only to Evolved non-ex and reduces damage; Cessation Crystal suppresses Poké-Powers and Poké-Bodies while attached to an Active legal Pokémon; Memory Berry allows compatible pre-evolution attacks and is discarded after attacking; Holon Circle ends an attack and discards itself. Specific damage, lock, move, supply/hand/discard, choice and timed triggers are implemented in shared rules plus the ex14 dispatcher.
+  [LOCKED] For a new expansion, having a card's printed text, image and an executable `neoRule` name does NOT justify battleEnabled. Nonfunctional copied attacks, KO-replacement effects, discard routing or player-selected targeting must stay PARTIAL until meaningful state-outcome tests pass. Maintain metadata for Energy, tools, statuses, triggers, Bench synergy, evolution and conditional damage in the same pass.
+  [CHECK]  v0.69.209 Android portrait UI/touch, save migrations and long self-play CPU strategy are unverified. Automated tests verify the 96-card battle-enabled subset and selected affected engine behaviour, not an exhaustive combinatorial proof. App versionCode 7189; v0.69.209. Existing fully historical test failures remain outside this new audit.
+
 =======================================================================
 CHANGE HISTORY
 =======================================================================
@@ -710,5 +716,9 @@ CHANGE HISTORY
 2026-11-11 | Document 2.0 -> 2.1 | App v0.69.196 | [LOCKED] C-EX11-DELTA-001, C-EX11-HOLON-002/003, C-EX11-ENERGY-004, C-EX11-TRAINER-005. Registered all 114 official EX Delta Species (ex11) card identities, stats, attacks, Powers/Bodies, printed text, rarity, art, player/CPU deck metadata, opponent set picker and catalogue. The implementation gate enables 82, with 32 PARTIAL/restricted cards (including the Holon Pokémon-as-Energy alternate attachment mechanic). Added faithful ex11 Holon Energy FF/GL/WP conditional defensive rules and EX Darkness/Metal print support; dual-type Energy/evolution paths; Basic Energy Zone and real-discard routing; Holon Supporter mandatory discard legality. Source regression tests: tests/v07196-ex-delta-species.test.cjs (10 tests incl 107 attack executions), with 160/160 selected EX-era and Energy tests passing. No Android handset QA. This is staged rollout: do not describe the remaining 32 as playable.
 
 2026-11-11 | Document 2.1 -> 2.2 | App v0.69.197 | [LOCKED] C-EX10-UNOWN-020, C-EX11-BODY-006, C-EX11-CHOICE-007, C-EX11-META-008. Corrected EX10 Unown W printed 20 damage/preview; implemented EX11 Shelgon delta Exoskeleton and secret Azumarill Thick Fat; made Vaporeon ex Evolutionary Swirl optional with opponent-owned draw count; corrected searched-card/energy-transfer/disruption metadata and Holon Energy activator types. tests/v07197-unown-delta-audit.test.cjs tests actual combat outcomes and 12 seeded CPU matches (four difficulty levels); 209/209 recent EX-era + Energy tests passed. Selected older-set tests 46/52 with all six failures reproduced in unchanged v0.69.196 baseline. All 32 existing EX11 PARTIAL cards remain gated; no Android device QA.
+
+
+2026-11-11 | Historical v0.69.198–v0.69.208 bridge | Previously delivered patches completed EX Delta Species, EX Legend Maker and EX Holon Phantoms, and corrected Holon/React Energy deck selection, player card-art choices, optional Pokémon pairings, move metadata, CPU Special Energy attachment, Bench damage visuals, and Energy selection UI. Individual previous release notes/tests are retained; the original master document was not updated consistently in those earlier patches, which this version explicitly rectifies. These historical claims are not re-certified by the new v209 tests.
+2026-11-12 | Document 2.2 -> 2.3 | App v0.69.209 | Registered EX Crystal Guardians ex14 with 100 numbered English prints, all abilities, attacks, Trainer rules, asset references, player/CPU/Test Lab set integration, and named per-card deck metadata. Tested supported Stadium/Tool, double-unit Special Energy, Bench/Active and search/discard/choice paths; gated four genuinely unfinished cards (ex14-91, ex14-98, ex14-99, ex14-100) as PARTIAL, leaving 96 battle-enabled. The latest release test counts are recorded in docs/EX_CRYSTAL_GUARDIANS_v0.69.209_RULES_AUDIT.md. Android hardware QA not performed.
 
 END OF LUCKYDEX MASTER RULES

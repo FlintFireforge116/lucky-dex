@@ -80,7 +80,8 @@ test('both Classic and Pocket editors render the eight Energy cards as tappable 
   }
 });
 test('full installed Classic catalogue can be classified without missing metadata fields',()=>{
- assert.equal(data.CARDS.length,3459);
+ // v0.69.208 baseline has 3459 cards; EX Crystal Guardians adds exactly 100.
+ assert.equal(data.CARDS.length,3459 + require(A+'tcg-classic-crystal-guardians').CARDS.length);
  let ready=0;
  for(const card of data.CARDS){
   const m=synergy.metadata(card);
