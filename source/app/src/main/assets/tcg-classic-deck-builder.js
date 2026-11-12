@@ -248,6 +248,27 @@ function buildDeck(rows,options={}){
  // Neo Scyther Grass -> Scizor Metal, Pupitar Fighting -> Tyranitar Darkness).
  // Never grant that second type to an unrelated support attacker.
  const mainRoot=familyRoot(main,evolutionPool),lineEnergy=familyEssentialTypes(mainLine),selectedTypes=[...new Set([...requestedEnergy,...lineEnergy])];
+ // Conditional attack payoffs require actual attached Basic Energy. Typhlosion
+ // δ has a Psychic attack cost, but Burning Ball only Burns with two Fire.
+ // Don't promise the bonus when a locked dual-type filter has no room.
+ const conditionalPayoffTypes=[...new Set(mainLine.flatMap(c=>c.deckMeta?.conditionalAttackEnergyTypes||[]))];
+ for(const type of conditionalPayoffTypes)if(!selectedTypes.includes(type)&&selectedTypes.length<2)selectedTypes.push(type);
+ // A Stage-1 Body/Poké-Power whose entire purpose is supporting Stage 2 ex
+ // needs an actual Stage-2 ex line. Select Energy for that ATTACKER instead of
+ // diluting its Zone with a Bench-only Xatu/Altaria/Swellow attack cost.
+ const supportFocus=!!(!basicOnly&&mainLine.some(c=>c.deckMeta?.stage2ExSupport&&c.stage!=='Stage 2'));
+ const stage2Candidates=supportFocus?pokemonPool.filter(c=>c.pokemonEx&&c.stage==='Stage 2'&&
+   familyRoot(c,evolutionPool)!==mainRoot&&familyLine(c,evolutionPool).length===3&&
+   familyLine(c,evolutionPool).every(m=>Number(owned.get(m.id)||0)>0)&&
+   familyEssentialTypes(familyLine(c,evolutionPool)).length<=2&&
+   (!requestedEnergy.length||familyEssentialTypes(familyLine(c,evolutionPool)).every(t=>requestedEnergy.includes(t)))
+ ).sort((a,b)=>Number(familyEssentialTypes(familyLine(b,evolutionPool)).some(t=>lineEnergy.includes(t)))-Number(familyEssentialTypes(familyLine(a,evolutionPool)).some(t=>lineEnergy.includes(t)))||pokemonScore(b,evolutionPool)-pokemonScore(a,evolutionPool)||a.id.localeCompare(b.id)):[];
+ const stage2Beneficiary=stage2Candidates[0]||null;
+ if(stage2Beneficiary){
+   const targetEnergy=familyEssentialTypes(familyLine(stage2Beneficiary,evolutionPool));
+   selectedTypes.splice(0,selectedTypes.length,...new Set([...requestedEnergy,...targetEnergy]));
+   if(!selectedTypes.length)selectedTypes.push((stage2Beneficiary.types||[]).find(t=>decks.ENERGY_TYPES.includes(t))||'Fighting');
+ }
  // A conditional secondary type is useful only if its *actual* activation
  // Energy is available. Add it to the automatic Zone without introducing an
  // irrelevant third type or losing the attack's printed costs.
@@ -291,6 +312,9 @@ function buildDeck(rows,options={}){
  // Ensure any preserved evolutions gain their missing prerequisites.
  for(const id of [...cards]){const c=classic.cardById(id);if(c?.kind==='pokemon'&&c.stage!=='Basic'){const line=familyLine(c,evolutionPool);if(line.length)for(const member of line.slice(0,-1))if(!(counts.get(member.id)||0))add(member,1,member?.effect?.type==='playFossil');}}
  const mainCopies=mainLine.length>=2?3:4;addLine(mainLine,mainCopies);
+ // The supported Stage 2 ex is the win condition in an Xatu/Altaria/Swellow
+ // focused deck. Include the FULL evolution family, not just its Stage 2.
+ if(stage2Beneficiary)addLine(familyLine(stage2Beneficiary,evolutionPool),2);
  // A stage-two engine wants one more opening Basic than evolution cards.
  if(mainLine.length>=2)add(mainLine[0],1,true);
  // Fossil lines need a playable Fossil Basic in the 30-card deck. A normal
@@ -318,22 +342,34 @@ function buildDeck(rows,options={}){
    }
    return candidates[0];
  };
- // Extra Wing is not a generic Fire-type payoff.  Swellow δ enables free
- // Retreat for allied Stage 2 Pokémon-ex, so favour the *complete* partner
- // line over unrelated attacking Pokémon (and never add an unplayable off-type).
- if(!basicOnly&&cards.length<=23&&pokemonCount()<=10){
-  const swellow=classic.cardById('ex15-40');
-  const swellowHere=mainLine.some(c=>c.id==='ex15-40');
-  if(swellowHere){
-   const stage2Ex=endpointCards(pokemonPool).filter(c=>c.pokemonEx&&c.stage==='Stage 2'&&
-    c.id!==main.id&&familyRoot(c,evolutionPool)!==mainRoot&&familyLine(c,evolutionPool).length===3&&canFitEnergy(c)&&
-    familyLine(c,evolutionPool).every(member=>room(member)>0));
-   stage2Ex.sort((a,b)=>pokemonScore(b,evolutionPool)-pokemonScore(a,evolutionPool));
-   if(stage2Ex.length)addLine(familyLine(stage2Ex[0],evolutionPool),1);
-  }else if(main.stage==='Stage 2'&&main.pokemonEx&&swellow&&pool.includes(swellow)&&canFitEnergy(swellow)){
-   const line=familyLine(swellow,evolutionPool);
-   if(line.length===2&&line.every(member=>room(member)>0))addLine(line,1);
-  }
+ // EX Dragon Frontiers' Stage-2-ex support is a *shared* synergy:
+ // Xatu gives attack damage, Swellow gives free retreat, Altaria ex ramps
+ // actual Basic Energy from hand, and Kingdra ex reduces incoming damage.
+ // A support's Bench Body does not require paying its own attack costs.
+ if(!basicOnly&&cards.length<=23&&pokemonCount()<=16){
+   const hasStage2Ex=cards.some(id=>{const c=classic.cardById(id);return c?.pokemonEx&&c.stage==='Stage 2';});
+   const supportInMain=mainLine.some(c=>c.deckMeta?.stage2ExSupport&&c.stage!=='Stage 2');
+   if(!hasStage2Ex&&!supportInMain){ // ordinary attacker: no useless ex support
+   }else if(hasStage2Ex){
+     // First add Xatu (offensive payoff), then Swellow (mobility). Don't add
+     // duplicates of the main evolution line; support is intentionally small.
+     for(const id of ['ex15-25','ex15-40']){
+       const helper=classic.cardById(id);
+       if(!helper||!pool.includes(helper)||cards.includes(id))continue;
+       const line=familyLine(helper,evolutionPool);
+       if(line.length===2&&line.every(member=>room(member)>0)&&pokemonCount()+line.length<=17&&cards.length+line.length<=26)
+         addLine(line,1);
+     }
+     // Altaria ex requires a PHYSICAL Basic Energy card in hand and is not
+     // useful with a bare Energy Zone. Only include it with a hand source.
+     const altaria=classic.cardById('ex15-90');
+     const hasHandSource=pool.some(c=>c.kind==='trainer'&&c.name==="Mr. Stone's Project");
+     if(!supportInMain&&hasHandSource&&altaria&&pool.includes(altaria)&&!cards.includes(altaria.id)){
+       const line=familyLine(altaria,evolutionPool);
+       if(line.length===2&&line.every(member=>room(member)>0)&&pokemonCount()+2<=17&&cards.length+line.length<=24)
+         addLine(line,1);
+     }
+   }
  }
  // Prefer an entire compatible evolution partner; never add an isolated Basic
  // whose strength depends upon an unavailable evolution (e.g. Base Set Koffing).
@@ -418,10 +454,11 @@ function buildDeck(rows,options={}){
  // Energy into hand so the Power is usable without rewriting its printed rule.
  const fellowBoostCore=mainLine.some(c=>c.id==='ex15-95');
  const fellowBoostSupport=cards.some(id=>id==='ex15-95');
- if(fellowBoostCore||fellowBoostSupport){
+ const altariaBoostSupport=cards.includes('ex15-90')&&cards.some(id=>{const c=classic.cardById(id);return c?.pokemonEx&&c.stage==='Stage 2';});
+ if(fellowBoostCore||fellowBoostSupport||altariaBoostSupport){
    const stones=pool.filter(c=>c.name==="Mr. Stone's Project"&&c.kind==='trainer')
      .sort((a,b)=>Number(b.setId===main.setId)-Number(a.setId===main.setId)||a.id.localeCompare(b.id));
-   let remaining=fellowBoostCore?3:2;
+   let remaining=fellowBoostCore||mainLine.some(c=>c.id==='ex15-90')?3:2;
    for(const trainer of stones){if(!remaining)break;remaining-=add(trainer,Math.min(remaining,room(trainer)));}
  }
  // Printed Special Energy dependencies must be chosen before generic draw
@@ -488,6 +525,16 @@ function buildDeck(rows,options={}){
      if(reserve<=0)break;
      reserve-=add(energyCard,Math.min(reserve,room(energyCard)));
    }
+ }
+ // Tool-triggered Metal Star / Pump Out is genuinely unusable without a
+ // physical Pokémon Tool. Reserve Tools before Supporter/Item filler.
+ const needsPokemonTool=cards.map(classic.cardById).some(c=>c?.kind==='pokemon'&&
+   (c.deckMeta?.requiresTools||[]).includes('pokemonTool'));
+ if(needsPokemonTool){
+   const tools=pool.filter(c=>c.trainerType==='Tool'&&c.battleEnabled)
+     .sort((a,b)=>Number(b.id==='ex15-81')-Number(a.id==='ex15-81')||a.id.localeCompare(b.id));
+   let need=3;
+   for(const tool of tools){if(!need)break;need-=add(tool,Math.min(need,room(tool)));}
  }
  // Stage 2 decks value Breeder; add it before generic staples when owned.
  if(cards.map(classic.cardById).some(c=>c?.stage==='Stage 2')){const breeder=classic.cardById('base1-76');if(breeder&&scope.includes(breeder.setId))add(breeder,Math.min(2,room(breeder)));}
@@ -628,7 +675,7 @@ function buildDeck(rows,options={}){
  }
  const legal=decks.validateDraft(cards,rows,{requireFull:true});if(!legal.ok)return {ok:false,cards,energyTypes:selectedTypes,errors:legal.errors,warnings:[],strategy:''};
  const analysis=decks.analyzeDeck(cards),conditionalDual=requestedEnergy.length===2&&requestedEnergy.every(type=>conditionalAttackTypes(main).includes(type)),
-  energyTypes=requestedEnergy.length===1||conditionalDual||lineEnergy.length>=2?selectedTypes.slice(0,2):(allowMixedEnergy&&requestedEnergy.length===2?requestedEnergy:neededTypes().length?analysis.recommendedEnergyTypes.slice(0,2):selectedTypes.slice(0,2));
+  energyTypes=(main.pokemonEx&&main.stage==='Stage 2')||stage2Beneficiary||conditionalPayoffTypes.some(t=>selectedTypes.includes(t))||requestedEnergy.length===1||conditionalDual||lineEnergy.length>=2?selectedTypes.slice(0,2):(allowMixedEnergy&&requestedEnergy.length===2?requestedEnergy:neededTypes().length?analysis.recommendedEnergyTypes.slice(0,2):selectedTypes.slice(0,2));
  const finalEnergy=energyTypes.length?energyTypes:selectedTypes.slice(0,2);
  const specialist=(main.types||[]).find(t=>t==='Darkness'||t==='Metal');
  const zoneLabel=finalEnergy.join(' / ');

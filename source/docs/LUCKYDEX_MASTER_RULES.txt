@@ -1,8 +1,8 @@
 LUCKYDEX — MASTER PROJECT RULES AND DEVELOPMENT CONTRACT
 =========================================================
-Document version: 2.8
+Document version: 2.9
 Compiled: 12 November 2026
-Current source baseline inspected: v0.69.214 (Classic Prize selection, CPU Dozing, Stage 2 ex synergy, hand-only Energy and Test Lab preferences)
+Current source baseline inspected: v0.69.215 (EX Dragon Frontiers full-pass synergy, conditional Energy, physical Tools, Extra Feather and metadata fixes)
 Recommended repository location: ~/lucky-dex/source/docs/LUCKYDEX_MASTER_RULES.txt
 Project: LuckyDex — Android application/PWA, managed with Termux and GitHub
 
@@ -779,6 +779,20 @@ fully verified. Historical manual-vs-current Classic board-size conflict
 remains unresolved. EX Crystal Guardians' four prior PARTIAL cards remain
 gated. See docs/LUCKYDEX_069214_CLASSIC_QOL_AUDIT.md for tests and caveats.
 
+v0.69.215 EX DRAGON FRONTIERS — STAGE 2 EX / DECK-SYNERGY AUDIT
+------------------------------------------------------------------
+C-DECK-STAGE2-EX-010 [LOCKED, 12 Nov 2026] A deck's automatic selection of a Pokémon whose main Bench Body or Power serves Stage 2 Pokémon-ex must include a COMPLETE, owned, legal Stage 2 Pokémon-ex evolution family when available in the chosen sets. Do not include Xatu δ solely as a weak attacker without a beneficiary or put a Stage 2 ex in a deck without its evolving Basic/Stage 1. Reverse synergy is also important: a Stage 2 ex attacker should favour Xatu δ's attack boost and Swellow δ's retreat reduction when their lines are legal and available. Treat Altaria ex δ's Extra Boost as hand-only Basic Energy acceleration; only include that support with a real way to get physical Basic Energy into hand, not the infinite Basic Energy Zone. The first priority in automatic Energy planning is paying for the Stage 2 ex ATTACKER, not forcing an off-type Bench support attack. Respect user-set type filters, allowed sets, ownership, 4-copy names, Pokemon Star restrictions and 30-card deck size. Special-purpose support can have a nonpayable off-type attack if its passive effect is independently useful, but don't incorrectly claim the off-type Energy is available. This is a general rule for future stages and cross-set engines, not just Xatu.
+
+C-EX15-DAMAGE-012 [LOCKED, 12 Nov 2026] Xatu δ Extra Feather supplies +10 attack damage for EACH in-play, unsuppressed allied Xatu δ benefiting a Stage 2 Pokémon-ex, on both player and CPU boards, applied before Weakness/Resistance; do not collapse two separate Bodies into one Boolean bonus. Respect Power/Body suppression and the printed qualifying stage/ex requirement.
+
+C-EX15-META-013 [LOCKED, 12 Nov 2026] Attack-effect metadata must identify all inflicted Special Conditions, including combined effects and target aliases such as “that Pokémon,” without falsely treating self-inflicted Sleep as an attack against the opponent. For EX15: Arbok δ has Burn AND Poison; Vibrava δ has Confusion. Use the printed targets for deckbuilding and CPU evaluations, not an overly narrow regex.
+
+C-DECK-CONDITIONAL-011 [LOCKED, 12 Nov 2026] If a featured Pokémon's printed damage, secondary effect or Body uses attached optional Energy of another type, allocate the conditional trigger type to automatic Basic Zone selection where feasible, after mandatory attack types and user-locked filter constraints. EX15 Typhlosion δ's Burning Ball needs Psychic to attack but Fire to reliably enable its printed Burn condition. Do not apply this secondary Energy automatically to unrelated attackers. Pokémon requiring Tools as a condition of an attack or bonus must get owned, legal physical Tools before generic Trainer fillers when possible. A Tool's printed effect must still be independently legal and useful.
+
+C-CPU-EX15-014 [LOCKED, 12 Nov 2026] Do not advertise or have CPU attempt Altaria ex δ Extra Boost unless the side ACTUALLY holds at least one physical Basic Energy card AND controls a Stage 2 Pokémon-ex recipient; never pretend the Basic Zone is a physical hand card. Both sides must use identical preconditions and legal choices. Preserve other hand-only Power/Supporter selection constraints.
+
+[CHECK] v0.69.215 code and automated tests cover 101/101 EX15 identities, 83/83 focused legal owned-deck constructions, selected explicit battle state outcomes, all printed EX15 attack action smoke calls with supplied Energy, and seeded CPU deck construction. This does NOT mean every card's effect was independently re-proven in every matchup, nor that long CPU self-play or Android touch UI has been certified. Old EX2/EX3 single-type deck coherence tests fail identically on unmodified v0.69.214 baseline; track as unrelated legacy bugs, not new EX15 regressions. EX14's four PARTIAL cards remain unchanged. See docs/EX_DRAGON_FRONTIERS_v0.69.215_FULL_PASS.md for per-card ledger and precise test scope.
+
 CHANGE HISTORY
 =======================================================================
 
@@ -820,5 +834,7 @@ CHANGE HISTORY
 2026-11-12 | Document 2.6 -> 2.7 | App v0.69.213 | [LOCKED] C-EX15-OPTIONAL-008, C-EX15-DAMAGE-009, C-EX15-COPY-010, C-EX15-ENERGY-011. Completed 19 previously gated EX Dragon Frontiers effects and enabled 101/101 cards in Classic battles/CPU decks. Implemented pre-damage Drag Off switching, Ampharos live delta checks, two-board targeting and marker rules, copied attack restrictions/recursion guard, Holon Legacy suppression, Island Hermit Prize flips, Dragonite overflow counters, Dragon Roar, Ninetales selected discard Energy recipient, Charizard Star distinct Energy recovery, Kingdra pre-Weakness protection and Mew Star Energy choice. The v07213 tests assert actual combat state, not only no-crash. Replaced obsolete gating assertion in v07212. Selected EX15/EX14/EX13 v07205–v07213 suites: 167/167 passed; no Android device QA. See docs/EX_DRAGON_FRONTIERS_v0.69.213_COMPLETION_AUDIT.md. EX14's four gated cards remain unchanged.
 
 2026-11-12 | Document 2.7 -> 2.8 | App v0.69.214 | [LOCKED] C-PRIZE-CHOICE-001, C-PRIZE-UI-002, C-DECK-RETREAT-008, C-CPU-DOZING-009, C-ENERGY-HAND-017, C-LAB-AUTO-003, C-UI-CARD-004. Added stateful selection of hidden/face-up Prize positions and successive selections for two-Prize KOs; corrected Island Hermit hidden information; updated choice artwork presentation and printed Power/Body labels; paired Swellow with compatible complete Stage 2 ex evolution and Latias with Mr Stone's Project Basic hand retrieval; CPU heals via Snorlax Dozing when sensible; persists Test Lab auto selections across sessions. Updated old auto-Prize assertions, supported catalogue count and redundant label UI tests. Automated Node regression results and Android QA limitations in docs/LUCKYDEX_069214_CLASSIC_QOL_AUDIT.md. Pocket point scoring unchanged.
+
+2026-11-12 | Document 2.8 -> 2.9 | App v0.69.215 | [LOCKED] C-DECK-STAGE2-EX-010, C-EX15-DAMAGE-012, C-EX15-META-013, C-DECK-CONDITIONAL-011, C-CPU-EX15-014. EX15 set-wide postrelease pass: correctly pair Xatu/Swellow/Altaria with full legal Stage 2 ex beneficiary lines and reverse Xatu/Swellow pairings; avoid energy pollution from support-only attackers; include Typhlosion δ Burn activation Fire energy; reserve physical Pokémon Tools for Ledian/Quagsire attacks; correctly tag Arbok Burn+Poison and Vibrava Confusion; stack Xatu Extra Feather for each unsuppressed Xatu; suppress unavailable Altaria hand-only Extra Boost on both boards. Added tests/v07215-ex15-full-pass.test.cjs (13 state/build/smoke tests; 83 owned focused Pokémon decks, 27 generated CPU decks, all EX15 attack actions). Selected EX-era Node suites v07205-v07215 198/198 passed; older EX2/EX3 cohesion failures reproduced in unchanged source baseline. Per-card evidence and limitations documented in docs/EX_DRAGON_FRONTIERS_v0.69.215_FULL_PASS.md. No APK built/pushed, Android handset QA not performed, EX14 gated subset unchanged.
 
 END OF LUCKYDEX MASTER RULES

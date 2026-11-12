@@ -1016,6 +1016,11 @@
         // Fellow Boost can only use an actual Basic Energy card in HAND,
         // never the next Energy Zone unit. Don't offer an inert Power.
         if(source.cardId==='ex15-95'&&!s.hand.some(ref=>data.cardById(ref.cardId)?.basicEnergy))return;
+        // Altaria ex Extra Boost is also HAND-only, and it needs an allied
+        // Stage 2 Pokémon-ex. Hide the Power when it has no legal outcome,
+        // for human players and all CPU difficulty settings alike.
+        if(source.cardId==='ex15-90'&&(!s.hand.some(ref=>data.cardById(ref.cardId)?.basicEnergy)||
+          !pokemonOn(s).some(p=>{const c=data.cardById(p.cardId);return c?.pokemonEx&&c.stage==='Stage 2';})))return;
         if(source.cardId==='ex15-8'&&(Number(source.damage||0)<40||!Array.isArray(source.stack)||source.stack.length<2||!s.deck.some(ref=>/^(?:Ninetales|Ninetales ex)(?: δ)?$/.test(data.cardById(ref.cardId)?.name||''))))return;
         if(source.cardId==='ex14-18'&&Number(s.ex14DeltaSignTurn)===state.turnNumber)return;
         if(source.cardId==='ex5-16'&&Number(s.ex5HealDanceUsedTurn)===state.turnNumber)return;

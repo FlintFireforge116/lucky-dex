@@ -55,17 +55,30 @@ function parse(n){
  if(/holon energy/.test(printed)){roles.add('holon-energy-payoff');synergy.add('holon-energy');}
  if(/evolv|evolution/.test(printed)&&card.kind==='pokemon')roles.add('evolution-synergy');
  if(/δ rainbow energy/.test(printed)){roles.add('delta-rainbow');synergy.add('delta-rainbow');}
- for(const [word,tag] of [['asleep','sleep'],['poisoned','poison'],['burned','burn'],['paralyzed','paralysis'],['confused','confusion']]){
-  if(new RegExp('defending pok[eé]mon is now '+word).test(printed))inflicts.add(tag);
-  if(printed.includes('if the defending pokémon is '+word))payoffs.add(tag);
+ // Read status effects from ATTACK text, including multiple simultaneous
+ // statuses (Arbok Burning Venom), non-'now' language (Gligar Tail Sting),
+ // and 'that Pokémon' targets (Vibrava Sonic Noise). Do not mistake a Body
+ // that protects against Sleep for an attack that inflicts Sleep.
+ const attackWording=(card.attacks||[]).map(a=>String(a.text||'').toLowerCase()).join(' ');
+ const inflicted=/\b(?:the defending pok[eé]mon|that pok[eé]mon) is(?: now)? ((?:(?:asleep|poisoned|burned|paralyzed|confused)(?: and )?)+)/g;
+ for(const m of attackWording.matchAll(inflicted))for(const status of m[1].match(/asleep|poisoned|burned|paralyzed|confused/g)||[]){
+   const tags={asleep:'sleep',poisoned:'poison',burned:'burn',paralyzed:'paralysis',confused:'confusion'};
+   inflicts.add(tags[status]);
  }
+ for(const [word,tag] of [['asleep','sleep'],['poisoned','poison'],['burned','burn'],['paralyzed','paralysis'],['confused','confusion']])
+   if(printed.includes('if the defending pokémon is '+word))payoffs.add(tag);
+ // Stage 2 Pokémon-ex Bodies/Powers are deck partners, not ordinary
+ // attack-cost synergies. A Bench Xatu, Swellow, Altaria ex or Kingdra ex
+ // can benefit another attacker without attaching its own printed Energy.
+ const stage2ExSupport=({25:'damage',40:'retreat',90:'hand-energy',94:'defense'})[n]||null;
+ if(stage2ExSupport){roles.add('stage2-ex-support');synergy.add('stage2-ex');}
  if(EX.has(n))roles.add('pokemon-ex');if(STAR.has(n))roles.add('pokemon-star');
  if(card.kind==='trainer')roles.add(card.trainerType.toLowerCase());if(card.kind==='energy')roles.add('energy');
  const partners=({1:["Flaaffy", "Mareep"],2:["Ampharos δ", "Meganium δ"],7:["Nidoking δ"],12:["Quilava δ", "Cyndaquil δ"],25:["Stage 2 Pokémon-ex"],40:["Stage 2 Pokémon-ex"],30:["Ampharos δ"],41:["Togetic δ"],90:["Stage 2 Pokémon-ex"],95:["Latios", "Latios ex"],96:["Latias", "Latias ex"],98:["Shelgon δ"],99:["Shock-wave marker"]}[n]||[]);
- const specialEnergyPayoffs=({12:["fire-energy"],15:["water-energy"],18:["pokemon-tool"],21:["pokemon-tool"],84:["holon-energy"],85:["holon-energy"],86:["holon-energy"],88:["delta-rainbow"],89:["scramble-energy"],40:["stage2-ex-retreat"],90:["stage2-ex"],95:["latias-latios"]}[n]||[]);
+ const specialEnergyPayoffs=({12:["fire-energy"],15:["water-energy"],18:["pokemon-tool"],21:["pokemon-tool"],84:["holon-energy"],85:["holon-energy"],86:["holon-energy"],88:["delta-rainbow"],89:["scramble-energy"],25:["stage2-ex-damage"],40:["stage2-ex-retreat"],90:["stage2-ex-hand-energy"],94:["stage2-ex-defense"],95:["latias-latios"]}[n]||[]);
  if([12,15].includes(n))preferredEnergyTypes.add(n===12?'Fire':'Water');
  if([18,21].includes(n))synergy.add('pokemon-tool');
- card.deckMeta=Object.freeze({roles:[...roles],synergy:[...synergy],energyTypes:[...energyTypes],preferredEnergyTypes:[...preferredEnergyTypes],inflicts:[...inflicts],payoffs:[...payoffs],preferredPartners:partners,specialEnergyPayoffs,holonEnergyPayoff:specialEnergyPayoffs.includes('holon-energy'),requiresTools:[18,21].includes(n)?['pokemonTool']:[],conditionalAttackEnergyTypes:n===12?['Fire']:n===15?['Water']:[],conditionalAttackPayoffs:n===12?[{energyType:'Fire',attack:'Burning Ball',benefit:'burn'}]:n===15?[{energyType:'Water',attack:'Surge',benefit:'damage'}]:[],stages:card.stage?.startsWith('Stage ')?[card.stage]:[]});
+ card.deckMeta=Object.freeze({roles:[...roles],synergy:[...synergy],energyTypes:[...energyTypes],preferredEnergyTypes:[...preferredEnergyTypes],inflicts:[...inflicts],payoffs:[...payoffs],preferredPartners:partners,specialEnergyPayoffs,stage2ExSupport,handBasicEnergySource:[90,95].includes(n)?'hand':null,holonEnergyPayoff:specialEnergyPayoffs.includes('holon-energy'),requiresTools:[18,21].includes(n)?['pokemonTool']:[],conditionalAttackEnergyTypes:n===12?['Fire']:n===15?['Water']:[],conditionalAttackPayoffs:n===12?[{energyType:'Fire',attack:'Burning Ball',benefit:'burn'}]:n===15?[{energyType:'Water',attack:'Surge',benefit:'damage'}]:[],stages:card.stage?.startsWith('Stage ')?[card.stage]:[]});
  const ready=!PARTIAL.has(n)&&[...(card.attacks||[]).map(a=>a.effect),...(card.abilities||[]).map(a=>a.effect),card.effect||noop].every(effects.supportsEffect);
  return Object.freeze({...card,battleEnabled:ready,deckEligible:ready,support:{status:ready?'FULL':'PARTIAL',reasons:ready?[]:[PARTIAL_REASONS[n]||'Printed mechanic not yet outcome-verified']}});
 }

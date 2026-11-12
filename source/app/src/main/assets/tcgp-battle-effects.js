@@ -11049,7 +11049,7 @@ if(r==='lastResort')return ss.hand.length===0?[{}]:[];if(r==='surgeSwap')return 
       // Weakness/Resistance, even when the attacker is from a previous set.
       if(n>0&&ex15IsDelta(state,attackSide,attackerSlot,cardById)&&pokemonOn(state.sides[attackSide]).some(p=>p.cardId==='ex15-2'&&!abilitiesSuppressed(state,attackSide,p,cardById)))n+=10;
       if(n>0&&defender?.pokemonEx&&defender?.stage==='Stage 2')n=Math.max(0,n-10*pokemonOn(state.sides[defenderSide]).filter(p=>p.cardId==='ex15-94'&&!abilitiesSuppressed(state,defenderSide,p,cardById)).length);
-      if(n>0&&attacker?.pokemonEx&&attacker?.stage==='Stage 2'&&pokemonOn(state.sides[attackSide]).some(p=>p.cardId==='ex15-25'&&!abilitiesSuppressed(state,attackSide,p,cardById)))n+=10;
+      if(n>0&&attacker?.pokemonEx&&attacker?.stage==='Stage 2')n+=10*pokemonOn(state.sides[attackSide]).filter(p=>p.cardId==='ex15-25'&&!abilitiesSuppressed(state,attackSide,p,cardById)).length;
       if(n>0&&Number(attackerSlot.ex15OutgoingMinusUntil||0)>=state.turnNumber)n=Math.max(0,n-Number(attackerSlot.ex15OutgoingMinusAmount||20));
       if(n>0&&ownerActive?.cardId==='ex3-19'&&!abilitiesSuppressed(state,defenderSide,ownerActive,cardById))n=Math.max(0,n-10);
       if(n>0&&Number(state.sides?.[attackSide]?.ex3DragonDanceUntil)===state.turnNumber)n+=40;
