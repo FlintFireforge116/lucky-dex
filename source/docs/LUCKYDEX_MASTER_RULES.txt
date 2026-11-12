@@ -1,8 +1,8 @@
 LUCKYDEX — MASTER PROJECT RULES AND DEVELOPMENT CONTRACT
 =========================================================
-Document version: 2.10
+Document version: 2.11
 Compiled: 12 November 2026
-Current source baseline inspected: v0.69.216 (EX Dragon Frontiers follow-up: typed optional partners, Stage 2 ex support-only core filtering, choice-art duplicate fallback fix)
+Current source baseline inspected: v0.69.218 (EX Power Keepers v217 staged source plus v218 battle-effects extension; v216 builder restrictions retained)
 Recommended repository location: ~/lucky-dex/source/docs/LUCKYDEX_MASTER_RULES.txt
 Project: LuckyDex — Android application/PWA, managed with Termux and GitHub
 
@@ -553,6 +553,8 @@ PART 9 — TESTING / REGRESSION / RELEASE QUALITY
   R22 [C-ENERGY-013/014] Neo/e-Card Darkness bonus after Weakness vs EX-era before Weakness only on eligible attackers; Double Rainbow -10 on Swift and Bench.
   R23 [C-CHOICE-001] EX Emerald Lava Burn base+Bench, PokéNav top-three choice and actual reorder even when zero eligible; Regice ex selected Basic/Special Energy discard.
   R24 [C-METADATA-001] Metadata for real Energy recovery vs damage scaling, Lady Outing legal autobuilder scoring, CPU/player 30-card deck legality.
+  R25 [C-EX16-ENERGY-001] Power Keepers Darkness/Metal/Multi reprint damage/defense/conditional provision matches equivalent EX-era printed Energy (against other Pokémon types and multi-Energy attachments); zero extra effect from the wrong type.
+  R26 [C-EX16-CHOICE-002] A printed choice of opponent Pokémon and individual attached Energy is made by the PLAYER NAMED ON THE CARD, with actual Basic/Special choice and correct discard zone. When the defending player is told to choose which hand cards to discard (Mawile Pull Away), the defender chooses each card rather than suffering a random discard.
 
 
 9.3 Honest release notes
@@ -640,6 +642,7 @@ PART 11 — EXPANSION REGISTER / CURRENT AUDIT BASELINE
   [CURRENT] v0.69.185 targeted tests for recent EX Deoxys changes were reported as 67 passing; the wider historical run reported 370 passing, 5 obsolete version/UI assertion failures. These are HISTORICAL test outcomes, not guarantees about any later build.
   [CURRENT] v0.69.186 restores EX Deoxys Ninjask Slash’s missing runtime damage rule and fixes next-turn bonus display for older sets. C-ATTACK-001 regression tests cover actual damage, visible previews, expiry, both players, and Weakness applied after base-power replacement.
   [CHECK] Recheck source availability and compatibility before claiming any given card/expansion is 'fully correct'; the existence of a card record does not prove every unusual interaction.
+  [CURRENT] EX Power Keepers (ex16) — 108 numbered English prints, staged in v0.69.217, continued v0.69.218. v218 battle-ready: 70/108 (54 Pokémon, 5 Trainers, 5 Special Energy, 6 collectible Basic Energy prints); 38 PARTIAL/gated. Source: tcg-classic-power-keepers.js. In this pass, verified Mawile, Cacturne, Combusken, Kabuto, Energy Removal 2 and EX16 Special Energy 87–91 with live engine outcome tests. Catalogue and CPU/player set pickers retain v217 integration. THESE 38 GATED CARDS ARE NOT BATTLE READY and remaining ungated legacy effects need a later card-by-card audit; no Android handset QA. See EX_POWER_KEEPERS_v0.69.218_STAGE2_AUDIT.md.
 
   [CURRENT] v0.69.187 adds EX Emerald (ex9), 107 registered cards including 11 Pokémon-ex, 11 Trainer cards, 4 physical Special Energy, 6 collectible-art Basic Energy cards, and secret Farfetch'd. Both player and CPU deck builders are registered for 30-card EX Emerald decks; direct attack targeting and effect-choice adapters are included. Printed card data source: Pokémon TCG data, cards/en/ex9.json (card text/card numbers checked 10 November 2026).
   [CURRENT] Tests: v07187-ex-emerald.test.cjs and v07187-ex-emerald-audit.test.cjs exercise all attacks through two random seeds, legal CPU/player deck construction, Form Change, Special Energy, discards, damage counters and conditional Powers/Bodies. Recent expansion suite v07172–v07187 passed 210/210 before the final targeting/Rare Candy assertions; final post-change count is in the patch release checks. Node tests do not replace touch-device QA.
@@ -833,6 +836,35 @@ three pre-existing failures (same results as unchanged v214/v215 baseline), not
 claimed fixed by this EX15 issue pass. See
 LUCKYDEX_069216_CLASSIC_BUILDER_CHOICE_FIXES.md.
 
+v0.69.218 EX POWER KEEPERS STAGE 2 — TARGET CHOICES AND ENERGY REPRINTS
+--------------------------------------------------------------------------
+C-EX16-ENERGY-001 [LOCKED, 12 Nov 2026] EX-era printed Darkness Energy,
+Metal Energy and Multi Energy reprints must reuse the matching live engine
+rules, not just copy printed Energy text into the card catalogue. Darkness
++10 applies to attacks by Darkness/Dark-name Pokémon before Weakness;
+Metal damage reduction applies only when attached to an actual Metal Pokémon
+(after Weakness/Resistance); Multi provides one any-type unit unless another
+Special Energy is attached, in which case it provides one Colorless. No extra
+Energy unit or unrelated Pokémon buff is created. EX16 exact IDs: 87/88/89.
+
+C-EX16-CHOICE-002 [LOCKED, 12 Nov 2026] A choice of an opposing target is
+owned by the side named by the printed card, not automatically by the target
+owner. Energy Removal 2 (ex16-74): flip first, then on heads let the TRAINER
+OWNER choose opposing Active or Bench and subsequently a specific attached
+Basic or Special Energy card; the selected card reaches the correct discard
+ledger. Mawile ex16-17 Pull Away: when the defending player has 5+ cards,
+THE DEFENDER chooses which cards to discard, one at a time until four remain;
+next-turn automatic draw follows normal battle timing.
+
+[CHECK] v218 adds 15 newly battle-enabled cards over the staged v217 release,
+not a claim that all Power Keepers cards are complete. Retain gating for the
+remaining 38 (Stadiums, Fossils, evolution-triggered Powers and Pokémon-ex).
+Avoid blindly using Cacturne's Poison Structure unless Sidney's Stadium is
+actually in play; the Stadium itself remains gated for decks in this build.
+Automated node suites: tests/v07200 through v07218, with the exact final
+pass count recorded in EX_POWER_KEEPERS_v0.69.218_STAGE2_AUDIT.md. Android
+choice overlays and CPU match duration still need device QA.
+
 CHANGE HISTORY
 =======================================================================
 
@@ -878,5 +910,7 @@ CHANGE HISTORY
 2026-11-12 | Document 2.8 -> 2.9 | App v0.69.215 | [LOCKED] C-DECK-STAGE2-EX-010, C-EX15-DAMAGE-012, C-EX15-META-013, C-DECK-CONDITIONAL-011, C-CPU-EX15-014. EX15 set-wide postrelease pass: correctly pair Xatu/Swellow/Altaria with full legal Stage 2 ex beneficiary lines and reverse Xatu/Swellow pairings; avoid energy pollution from support-only attackers; include Typhlosion δ Burn activation Fire energy; reserve physical Pokémon Tools for Ledian/Quagsire attacks; correctly tag Arbok Burn+Poison and Vibrava Confusion; stack Xatu Extra Feather for each unsuppressed Xatu; suppress unavailable Altaria hand-only Extra Boost on both boards. Added tests/v07215-ex15-full-pass.test.cjs (13 state/build/smoke tests; 83 owned focused Pokémon decks, 27 generated CPU decks, all EX15 attack actions). Selected EX-era Node suites v07205-v07215 198/198 passed; older EX2/EX3 cohesion failures reproduced in unchanged source baseline. Per-card evidence and limitations documented in docs/EX_DRAGON_FRONTIERS_v0.69.215_FULL_PASS.md. No APK built/pushed, Android handset QA not performed, EX14 gated subset unchanged.
 
 2026-11-12 | Document 2.9 -> 2.10 | App v0.69.216 | [LOCKED] C-DECK-PARTNER-015, C-DECK-SUPPORT-016, C-UI-CHOICE-005. Removed ineffective Xatu/Swellow/Altaria ex support-only lines when no complete Stage 2 Pokémon-ex can be included; guarded random Basic -> inert support evolution and explicit focus constraints; stopped Feraligatr δ Lightning metadata-only Meganium δ Fighting partnership while retaining genuine printed in-play partner exceptions. Hidden choice-card fallback now stays hidden when card art succeeds, with fallback visible only when art fails. Added tests/v07216-classic-builder-choices.test.cjs (6 new tests); 211/211 selected v07203 + v07205–v07216 checks passed. The three previously documented EX2/EX3 cohesion assertions remain unresolved and pass/fail exactly as before. Source patch only; no phone/APK QA.
+
+2026-11-12 | Document 2.10 -> 2.11 | App v0.69.218 | [LOCKED] C-EX16-ENERGY-001, C-EX16-CHOICE-002. Added executable EX16 Darkness/Metal/Multi Energy reprints, owner-correct Energy Removal 2 target and attached-Energy selection, Mawile defender-selected hand discards, Cacturne conditional Stadium Poison, Combusken hand-Fire cure, Kabuto evolution search, Mawile Bench search, and Cyclone/Warp hand attachment switch choices. 70/108 enabled, 38 gated. All 290 selected v07200-v07218 Node regressions passed before final packaging. Source patch only, no device testing.
 
 END OF LUCKYDEX MASTER RULES

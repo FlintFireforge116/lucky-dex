@@ -663,7 +663,7 @@
       if(ref.cardId==='ex13-97'&&!miracleWind){next.Crystal=Number(next.Crystal||0)+1;next.__crystalAllowed={...next.__crystalAllowed,Darkness:true,Metal:true};continue;}
       // Delta Rainbow works only as rainbow while attached to a delta-species Pokemon.
       if(['ex13-98','ex15-88'].includes(ref.cardId)&&!miracleWind){const delta=!!data.cardById(slot?.cardId)?.deltaSpecies;const t=delta?'Miracle':'Colorless';next[t]=Number(next[t]||0)+1;continue;}
-      if(['ex2-93','ex6-103','ex9-89','ex13-96'].includes(ref.cardId)&&!miracleWind){const another=(slot.specialEnergy||[]).some(x=>x!==ref&&x.uid!==ref.uid);const t=another?'Colorless':'Miracle';next[t]=Number(next[t]||0)+1;continue;}
+      if(['ex2-93','ex6-103','ex9-89','ex13-96','ex16-89'].includes(ref.cardId)&&!miracleWind){const another=(slot.specialEnergy||[]).some(x=>x!==ref&&x.uid!==ref.uid);const t=another?'Colorless':'Miracle';next[t]=Number(next[t]||0)+1;continue;}
       if(['ex1-95','ex12-81'].includes(ref.cardId)&&!miracleWind){next.Miracle=Number(next.Miracle||0)+1;continue;}
       if(ref.cardId==='ecard2-146'&&!miracleWind){const basicTypes=Object.entries(slot?.energy||{}).filter(([,n])=>Number(n)>0).map(([type])=>type);
         if(!basicTypes.length)next.Colorless=Number(next.Colorless||0)+1;
@@ -818,7 +818,7 @@
         const card=data.cardById(attacker.cardId);
         if(state.format==='classic'&&!miraculousWindActive(snapshot)&&
           (card?.types?.includes('Darkness')||/Dark/i.test(card?.name||'')))
-          damage+=10*(attacker.specialEnergy||[]).filter(ref=>['ex1-93','ex9-86','ex10-96','ex11-103','ex13-94'].includes(ref.cardId)).length;
+          damage+=10*(attacker.specialEnergy||[]).filter(ref=>['ex1-93','ex9-86','ex10-96','ex11-103','ex13-94','ex16-87'].includes(ref.cardId)).length;
         damage=Math.max(0,damage-10*(attacker.specialEnergy||[]).filter(ref=>['ex9-87','ex14-88'].includes(ref.cardId)).length);
         if(attacker.cardId==='ex9-1'&&!effects.abilitiesSuppressed(snapshot,side,attacker,data.cardById)&&Number(data.cardById(attacker.cardId).hp||0)-Number(attacker.damage||0)<=40)damage+=40;
         if(Number(snapshot.sides[side]?.ex9DragonDanceUntil||0)===Number(snapshot.turnNumber))damage+=30;
@@ -1238,7 +1238,7 @@
     const attackerCard=data.cardById(attacker.cardId);
     if(state.format==='classic'&&damage>0&&!miraculousWindActive(state)&&attackerCard&&
       (attackerCard.types?.includes('Darkness')||/Dark/i.test(attackerCard.name||'')))
-      damage+=10*(attacker.specialEnergy||[]).filter(r=>['ex1-93','ex9-86','ex10-96','ex11-103','ex13-94'].includes(r.cardId)).length;
+      damage+=10*(attacker.specialEnergy||[]).filter(r=>['ex1-93','ex9-86','ex10-96','ex11-103','ex13-94','ex16-87'].includes(r.cardId)).length;
     damage+=effects.modifierAmount(state,foeSide,defender,'damageTaken',data.cardById);
     damage=effects.attackDamageWithState(state,side,attacker,foeSide,defender,damage,data.cardById);
     if(state.format==='classic'&&damage>0)damage+=10*(attacker.specialEnergy||[]).filter(r=>['neo1-104','ecard1-158','ecard2-142'].includes(r.cardId)).length;
@@ -1254,6 +1254,7 @@
     }
     defender.damage=Number(defender.damage||0)+damage;if(damage>0)effects.florioReactToAttackDamage?.(state,foeSide,defender,side,attacker,damage,data.cardById,random);if(damage>0)defender.lastDamageSource={side,uid:attacker.uid,cardId:attacker.cardId,attack:true,turn:state.turnNumber};
     if(damage>0&&defender.legendaryMirrorShellUntil>=state.turnNumber&&state.format==='classic'){attacker.damage=Number(attacker.damage||0)+damage;state.log.push({type:'legendaryMirrorShell',side:foeSide,amount:damage,cardId:defender.cardId});}
+      if(damage>0&&state.format==='classic'&&defender===state.sides[foeSide].active&&['ex16-41','ex16-47'].includes(defender.cardId)&&!effects.abilitiesSuppressed(state,foeSide,defender,data.cardById)){attacker.damage=Number(attacker.damage||0)+10;state.log.push({type:'ex16RoughSkin',side:foeSide,cardId:defender.cardId,amount:10});}
       if(damage>0&&defender.retaliate&&(defender.retaliate.expiresTurn==null||state.turnNumber<=defender.retaliate.expiresTurn)){const amount=Number(defender.retaliate.amount||0);attacker.damage=Number(attacker.damage||0)+amount;state.log.push({type:'retaliate',side:foeSide,amount,cardId:defender.cardId});}
     state.log.push({type:'attack',side,cardId:attacker.cardId,attack:attackName,damage,target:'active',repeat:true});ss.lastAttackName=attackName;ss.lastAttackTurn=state.turnNumber;ss.attackCounts=ss.attackCounts||{};ss.attackCounts[attackName]=Number(ss.attackCounts[attackName]||0)+1;attacker.attackUseCount=Number(attacker.attackUseCount||0)+1;
     if(damage>0){const eventData={attacker,damage,source:{side,attack:true,uid:attacker.uid,cardId:attacker.cardId}};triggerAbilities(state,'damagedByAttack',foeSide,defender,eventData);triggerPersistent(state,'damagedByAttack',foeSide,defender,eventData);}
@@ -1844,6 +1845,10 @@
         }
       }
       if(state.stadium?.cardId==='ecard2-131'&&matched.target==='bench'&&Number(target.damage||0)>0)target.damage=Math.max(0,target.damage-10);
+      if(state.format==='classic'&&card.basicEnergy&&card.subtype==='Fire'&&target.cardId==='ex16-29'&&
+        !effects.abilitiesSuppressed(state,side,target,data.cardById)){
+        target.conditions={};state.log.push({type:'ex16NaturalCure',side,targetUid:target.uid});
+      }
       if(card.basicEnergy&&card.subtype==='Fire'&&target.cardId==='ex12-83'&&
         !effects.abilitiesSuppressed(state,side,target,data.cardById)){
         target.damage=Math.max(0,Number(target.damage||0)-10);target.conditions={};
@@ -1867,6 +1872,10 @@
       if(state.format==='classic'&&state.stadium?.cardId==='ex5-89'&&data.cardById(target.cardId)?.types?.some(t=>['Water','Fighting','Metal'].includes(t))){target.conditions={};state.log.push({type:'ex5IslandCave',side,cardId:target.cardId});}
       if(state.format==='classic'&&pokemonOn(foe).some(p=>p.cardId==='ex3-89'&&!effects.abilitiesSuppressed(state,foeSide,p,data.cardById))){target.damage=Number(target.damage||0)+10;state.log.push({type:'ex3Conductivity',side:foeSide,target:target.cardId,damage:10});}
       state.log.push({type:'attachSpecial',side,target:matched.target,benchIndex:matched.benchIndex,cardId:target.cardId,energyCardId:card.id,provides});
+      if(state.format==='classic'&&matched.target==='active'&&['ex16-90','ex16-91'].includes(card.id)){
+        if(card.id==='ex16-90'&&foe.bench.length)beginEffectChoice(state,side,target,{kind:'pokemon',side:'opponent',selectionSide:foeSide,includeActive:false,optional:false,effect:{type:'neoRule',rule:'ex10:special:99'},resume:'trainer'});
+        if(card.id==='ex16-91'&&s.bench.length)beginEffectChoice(state,side,target,{kind:'pokemon',side:'self',includeActive:false,optional:false,effect:{type:'neoRule',rule:'ex10:special:100'},resume:'trainer'});
+      }
       if(state.format==='classic'&&matched.target==='active'&&['ex10-99','ex10-100'].includes(card.id)){
         if(card.id==='ex10-99'&&foe.bench.length)beginEffectChoice(state,side,target,{kind:'pokemon',side:'opponent',selectionSide:foeSide,includeActive:false,optional:false,effect:{type:'neoRule',rule:'ex10:special:99'}});
         if(card.id==='ex10-100'&&s.bench.length)beginEffectChoice(state,side,target,{kind:'pokemon',side:'self',includeActive:false,optional:false,effect:{type:'neoRule',rule:'ex10:special:100'}});
@@ -2055,7 +2064,7 @@
           !foe.active.conditions?.sleep&&!foe.active.conditions?.paralysis&&!foe.active.conditions?.confusion)damage=Math.max(0,damage-10);
         if(state.format==='classic'&&damage>0&&!miraculousWindActive(state)&&
           (attackerCard.types?.includes('Darkness')||/Dark/i.test(attackerCard.name||'')))
-          damage+=10*(s.active.specialEnergy||[]).filter(r=>['ex1-93','ex9-86','ex10-96','ex11-103','ex13-94'].includes(r.cardId)).length;
+          damage+=10*(s.active.specialEnergy||[]).filter(r=>['ex1-93','ex9-86','ex10-96','ex11-103','ex13-94','ex16-87'].includes(r.cardId)).length;
         damage+=effects.modifierAmount(state,foeSide,defender,'damageTaken',data.cardById);
         if(state.format==='classic'&&damage>0){const metal=miraculousWindActive(state)?0:(s.active.specialEnergy||[]).filter(r=>['neo1-19','ecard1-159','ecard2-143'].includes(r.cardId)).length;if(metal&&!attackerCard.types?.includes('Metal'))damage=Math.max(0,damage-metal*10);}
         if(state.format==='classic'&&damage>0)damage=Math.max(0,damage-10*(s.active.specialEnergy||[]).filter(r=>['ex9-87','ex14-88'].includes(r.cardId)).length);
@@ -2111,7 +2120,7 @@
       }
       if(state.format==='classic'&&damage>0&&Number(defender.ex1TearyEyesUntil||0)>=state.turnNumber)damage=Math.max(0,damage-10);
       if(state.format==='classic'){
-        const metal=miraculousWindActive(state)?0:(defender.specialEnergy||[]).filter(r=>(['neo1-19','ecard1-159','ecard2-143'].includes(r.cardId)||['ex9-88','ex1-94','ex10-97','ex11-107','ex13-95'].includes(r.cardId)&&data.cardById(defender.cardId)?.types?.includes('Metal'))).length;
+        const metal=miraculousWindActive(state)?0:(defender.specialEnergy||[]).filter(r=>(['neo1-19','ecard1-159','ecard2-143'].includes(r.cardId)||['ex9-88','ex1-94','ex10-97','ex11-107','ex13-95','ex16-88'].includes(r.cardId)&&data.cardById(defender.cardId)?.types?.includes('Metal'))).length;
         damage=result.damageRules?.ignoreEffects?damage:Math.max(0,damage-metal*10);
         // Aquapolis Dense Body / Energy Barrier: actual Basic-stage and
         // attached Basic Energy counts, not approximate generic modifiers.
@@ -2189,6 +2198,7 @@
       if(damage>0&&state.format==='classic'&&defender===foe.active&&['ex12-78','ex13-91'].includes(defender.cardId))s.active.damage=Number(s.active.damage||0)+10;
       if(damage>0&&state.format==='classic'&&defender===foe.active&&defender.cardId==='ex12-70'&&
          !effects.abilitiesSuppressed(state,foeSide,defender,data.cardById))s.active.conditions={...(s.active.conditions||{}),poison:true};
+      if(damage>0&&state.format==='classic'&&defender===foe.active&&['ex16-41','ex16-47'].includes(defender.cardId)&&!effects.abilitiesSuppressed(state,foeSide,defender,data.cardById)){s.active.damage=Number(s.active.damage||0)+10;state.log.push({type:'ex16RoughSkin',side:foeSide,cardId:defender.cardId,amount:10});}
       if(damage>0&&defender.retaliate&&(defender.retaliate.expiresTurn==null||state.turnNumber<=defender.retaliate.expiresTurn)){const amount=Number(defender.retaliate.amount||0);s.active.damage=Number(s.active.damage||0)+amount;state.log.push({type:'retaliate',side:foeSide,amount,cardId:defender.cardId});}
       if(state.format==='classic')foe.neoObservedAttack={turn:state.turnNumber,cardId:attackSourceCard.id,attackIndex:matched.attackIndex,witnesses:pokemonOn(foe).map(x=>x.uid)};
       state.log.push({type:'attack',side,cardId:attackerCard.id,attack:attack.name,damage,damageReason:damage===0?resistanceReason:(attack.effect?.rule==='founja:swiftBeak'&&Number(s.active.movedToActiveTurn)===Number(state.turnNumber)?'Bench → Active this turn: +80':''),target:isActive?'active':'bench',benchIndex:defender.benchSlot});s.lastAttackName=attack.name;s.lastAttackTurn=state.turnNumber;s.attackCounts=s.attackCounts||{};s.attackCounts[attack.name]=Number(s.attackCounts[attack.name]||0)+1;s.active.attackUseCount=Number(s.active.attackUseCount||0)+1;
