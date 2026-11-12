@@ -4267,8 +4267,7 @@
           if(ctx.resolvingChoice){if(c.choiceSkip)return;const x=available[Number(c.choiceOption)];if(!x)return;
             x.ref.faceUp=true;ctx.state.log.push({type:'ex15PrizeReveal',side:ctx.side,cardId:x.ref.cardId,index:x.i});
             if(remaining>1)ex15Rule({...e,remaining:remaining-1},{...ctx,resolvingChoice:false});return;}
-          if(remaining>0&&available.length)pick('option',{options:available.map(x=>'Reveal Prize '+(x.i+1)+' · '+(card(x.ref)?.name||'Card')),
-            optionCardIds:available.map(x=>x.ref.cardId),optional:true});return;}
+          if(remaining>0&&available.length)pick('option',{options:available.map(x=>'Reveal face-down Prize '+(x.i+1)),optional:true});return;}
         case 77:{const source=e.step||'pickSource';if(source==='pickSource'){
           if(ctx.resolvingChoice){const from=Number(c.choiceOption)===1?'discard':'deck';ex15Rule({...e,step:from,remaining:2},{...ctx,resolvingChoice:false});return;}
           pick('option',{options:['Search Energy Zone for two Basic Energy','Recover two Basic Energy from discard'],optional:false});return;}

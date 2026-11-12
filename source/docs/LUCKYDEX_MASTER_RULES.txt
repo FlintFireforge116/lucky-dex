@@ -1,8 +1,8 @@
 LUCKYDEX — MASTER PROJECT RULES AND DEVELOPMENT CONTRACT
 =========================================================
-Document version: 2.7
+Document version: 2.8
 Compiled: 12 November 2026
-Current source baseline inspected: v0.69.213 (EX Dragon Frontiers 101-card completion audit, based on v0.69.212)
+Current source baseline inspected: v0.69.214 (Classic Prize selection, CPU Dozing, Stage 2 ex synergy, hand-only Energy and Test Lab preferences)
 Recommended repository location: ~/lucky-dex/source/docs/LUCKYDEX_MASTER_RULES.txt
 Project: LuckyDex — Android application/PWA, managed with Termux and GitHub
 
@@ -719,6 +719,66 @@ PART 13 — INSTRUCTIONS TO PASTE INTO ANY NEW CHAT
   [LOCKED] C-EX15-ENERGY-011: A card that discards one Energy and recovers a DIFFERENT Energy cannot immediately recover the same physical card. When discard pools aggregate Basic Energy by type, preserve how many cards of that type existed before the discard to enforce distinct physical identity. Cross-set Holon Energy reprints share their activation rules and legal owner limits.
   [CHECK] The full relevant automated test run is 167/167 (v07205–v07213 selected suites) and does not substitute for Android touch QA, extensive long-match AI decisions, or exhaustively simulating every pairwise card interaction. Four earlier EX Crystal Guardians cards remain gated (ex14-91, ex14-98, ex14-99, ex14-100). No Pocket rules intentionally changed.
 
+v0.69.214 SHARED MECHANICS AND USER-APPROVED UI REFINEMENTS
+------------------------------------------------------------
+C-PRIZE-CHOICE-001 [LOCKED, 12 Nov 2026] Classic Prize awards require the
+claiming human player to choose a specific Prize POSITION after a knockout,
+not take the next/first card by default. Hidden Prize identities must remain
+secret in battle actions, previews, labels and screen-reader text. Cards
+previously revealed by an effect must retain face-up identity and artwork.
+Each two-Prize ex knockout permits TWO successive choices from the then-
+remaining pile. KO/promotion, end-turn and victory resolution must resume only
+after all applicable choices. CPU chooses without reading hidden identities.
+Pocket point-scoring is unchanged.
+
+C-PRIZE-UI-002 [LOCKED] In a Classic battle, tapping your Prize count opens a
+preview of all remaining positions as face-down cards, except those already
+revealed by a card effect. After a KO the same choices are actionable. New
+reveals (e.g. Island Hermit) must not name an unrevealed Prize in the OPTION
+prompt before the choice is committed. A face-up card remains visible until it
+is drawn, exchanged or hidden by an explicit printed effect. Preserve the
+existing chosen sleeve artwork on hidden positions. Enforce Classic hand cap
+after collecting, without deleting cards.
+
+C-DECK-RETREAT-008 [LOCKED] A passive Body such as EX Dragon Frontiers
+Swellow delta Extra Wing is Stage 2 Pokémon-ex *retreat support*, not generic
+Fire damage synergy. When eligible and Energy-compatible, the automatic
+builder should pair its complete Taillow->Swellow line with a COMPLETE Stage 2
+Pokémon-ex evolution line and vice versa; never leave an orphan Stage 2 or
+invent a third Basic Energy type. Such support is optional for manual decks.
+
+C-CPU-DOZING-009 [LOCKED] Snorlax delta Dozing is an OPTIONAL Poké-Power.
+The CPU should use it when active, damaged enough to heal and legal, then
+select the healing choice rather than the initial decline option. The
+printed Asleep consequence and Bedhead between-turn trigger remain intact;
+never turn Dozing into a forced auto-trigger for the human.
+
+C-ENERGY-HAND-017 [LOCKED] Latias ex delta Fellow Boost attaches an actual
+Basic Energy CARD FROM HAND and ends the player's turn. Do not consume the
+next Basic Energy Zone card directly. The builder should reserve legal
+physical-hand Basic retrieval (Mr. Stone's Project where present) so the Power
+can function. Its action must not appear without a hand Basic card; inspection
+must explain this restriction. Respect once-per-turn and legal target choices.
+
+C-LAB-AUTO-003 [LOCKED] Test Lab Classic auto-builder preferences (selected
+sets, attack Energy types, theme, rarity, Basic-only, random/comparison
+options) persist independently from normal Classic and CPU opponent settings.
+Saving a Test Lab deck preference cannot rewrite owned normal deck data,
+rewards, collection, or normal opponent settings. Persist and restore across
+Test Lab exit/re-entry, including previous saved schema migration.
+
+C-UI-CARD-004 [LOCKED] In choice menus with recognisable full card artwork,
+do not repeat the card name in large duplicate text blocks below the image.
+Retain screen-reader alt/ARIA labels, readable prompts, and full text when
+there is NO suitable artwork. Display printed Poké-Body versus Poké-Power
+identity accurately, rather than labelling every legacy ability a Power.
+
+[CHECK] This v0.69.214 pass changes global Classic KO/Prize timing; extensive
+third-party mobile touchscreen and exotic simultaneous KO effects are NOT
+fully verified. Historical manual-vs-current Classic board-size conflict
+remains unresolved. EX Crystal Guardians' four prior PARTIAL cards remain
+gated. See docs/LUCKYDEX_069214_CLASSIC_QOL_AUDIT.md for tests and caveats.
+
 CHANGE HISTORY
 =======================================================================
 
@@ -758,5 +818,7 @@ CHANGE HISTORY
 
 
 2026-11-12 | Document 2.6 -> 2.7 | App v0.69.213 | [LOCKED] C-EX15-OPTIONAL-008, C-EX15-DAMAGE-009, C-EX15-COPY-010, C-EX15-ENERGY-011. Completed 19 previously gated EX Dragon Frontiers effects and enabled 101/101 cards in Classic battles/CPU decks. Implemented pre-damage Drag Off switching, Ampharos live delta checks, two-board targeting and marker rules, copied attack restrictions/recursion guard, Holon Legacy suppression, Island Hermit Prize flips, Dragonite overflow counters, Dragon Roar, Ninetales selected discard Energy recipient, Charizard Star distinct Energy recovery, Kingdra pre-Weakness protection and Mew Star Energy choice. The v07213 tests assert actual combat state, not only no-crash. Replaced obsolete gating assertion in v07212. Selected EX15/EX14/EX13 v07205–v07213 suites: 167/167 passed; no Android device QA. See docs/EX_DRAGON_FRONTIERS_v0.69.213_COMPLETION_AUDIT.md. EX14's four gated cards remain unchanged.
+
+2026-11-12 | Document 2.7 -> 2.8 | App v0.69.214 | [LOCKED] C-PRIZE-CHOICE-001, C-PRIZE-UI-002, C-DECK-RETREAT-008, C-CPU-DOZING-009, C-ENERGY-HAND-017, C-LAB-AUTO-003, C-UI-CARD-004. Added stateful selection of hidden/face-up Prize positions and successive selections for two-Prize KOs; corrected Island Hermit hidden information; updated choice artwork presentation and printed Power/Body labels; paired Swellow with compatible complete Stage 2 ex evolution and Latias with Mr Stone's Project Basic hand retrieval; CPU heals via Snorlax Dozing when sensible; persists Test Lab auto selections across sessions. Updated old auto-Prize assertions, supported catalogue count and redundant label UI tests. Automated Node regression results and Android QA limitations in docs/LUCKYDEX_069214_CLASSIC_QOL_AUDIT.md. Pocket point scoring unchanged.
 
 END OF LUCKYDEX MASTER RULES

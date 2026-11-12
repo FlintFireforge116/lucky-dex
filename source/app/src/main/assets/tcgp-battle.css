@@ -1043,3 +1043,26 @@ html.android-native-inset body.tcgp-battle-live .tcgp-live-arena:not(.format-cla
   text-align:center;font-size:10px;font-weight:850;line-height:1.25;
   box-shadow:0 2px 5px rgba(39,28,15,.12);pointer-events:none;
 }
+
+/* v0.69.214: compact tappable Prize preview, including face-up revelations.
+   Don't add a third item to the deck/discard pile's fixed two-row grid. */
+.tcgp-live-prize-pile{display:inline-flex;align-items:center;gap:3px;min-height:26px;padding:2px 5px;border:1px solid #9ebfc9;border-radius:7px;background:#e7f4fa;color:#234b63;font:800 9px/1.2 sans-serif;white-space:nowrap;cursor:pointer}
+.tcgp-live-prize-pile b{font-size:12px;color:#165778}
+.tcgp-live-prize-pile small{font-size:8px;color:#2d7656}
+.tcgp-classic-score-numbers{flex-wrap:wrap;row-gap:2px}
+.tcgp-live-prize-sheet{max-height:82%;overflow-y:auto}
+.tcgp-live-prize-sheet>p{margin:4px 0 10px;color:#d9e8f2;font-size:12px}
+.tcgp-live-prize-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(75px,1fr));gap:8px;width:100%;max-width:480px;max-height:55dvh;overflow:auto;padding:4px}
+.tcgp-live-prize-card{display:grid;grid-template-rows:minmax(0,1fr) auto;min-height:112px;max-width:120px;min-width:0;gap:3px;padding:4px;border:2px solid #7c9eb3;border-radius:9px;background:#325469;color:#fff;text-align:center;cursor:pointer}
+.tcgp-live-prize-card:disabled{opacity:1;cursor:default}
+.tcgp-live-prize-card img,.tcgp-live-prize-back{display:block;width:100%;height:91px;object-fit:contain;border-radius:5px}
+.tcgp-live-prize-back{background:#313b6b center / cover no-repeat;border:1px solid #bac2da;display:grid;place-items:center;color:#dfd1ff;font-size:24px}
+.tcgp-live-prize-card.face-up{border-color:#e1c45e}
+.tcgp-live-prize-card small{font-size:10px;font-weight:700}
+.tcgp-prize-pick-centre{display:flex;flex-direction:column;align-items:stretch;justify-content:center;gap:9px;max-height:80%;overflow-y:auto}
+.tcgp-prize-pick-centre .tcgp-live-prize-grid{grid-template-columns:repeat(3,minmax(0,1fr));align-self:center;max-width:380px}
+.tcgp-prize-pick-centre .tcgp-live-prize-card{width:100%;max-width:none;min-height:92px}
+.tcgp-prize-pick-centre .tcgp-live-prize-card img,.tcgp-prize-pick-centre .tcgp-live-prize-back{height:80px}
+@media(max-width:390px){.tcgp-live-prize-pile{min-height:22px;font-size:8px;padding:2px 3px}.tcgp-classic-score-numbers{gap:3px}.tcgp-live-prize-grid{gap:5px}}
+
+.tcgp-live-prize-revealed-name{display:grid;place-items:center;min-height:80px;color:#fff1bb;font-weight:800;font-size:11px;overflow-wrap:anywhere;line-height:1.25;text-align:center}

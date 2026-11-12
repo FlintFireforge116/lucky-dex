@@ -384,6 +384,8 @@
     const filterCard=(slotOrRef)=>{if((p.excludeUids||[]).includes(slotOrRef?.uid))return false;const card=data.cardById(slotOrRef?.cardId);return !p.filter||!effects.matchesFilter||effects.matchesFilter(card,p.filter,slotOrRef);};
     if(p.kind==='narrowGymReturn'){
       for(const slot of ss.bench||[])if(slot)out.push({type:'effectChoice',choiceTarget:'bench',choiceBenchIndex:Number(slot.benchSlot),choiceCardId:slot.cardId});
+    }else if(p.kind==='prizeCard'){
+      ss.prizes.forEach((ref,index)=>out.push({type:'effectChoice',choicePrizeIndex:index,...(ref.faceUp?{choiceCardId:ref.cardId}:{})}));
     }else if(p.kind==='switchBench'||p.kind==='pokemon'){
       const board=state.sides[p.selectionSide||side],eligible=slot=>slot&&filterCard(slot)&&(!p.requireTool||toolsOf(slot).length>0);
       if(p.kind==='pokemon'&&p.includeActive!==false&&eligible(board.active))out.push({type:'effectChoice',choiceTarget:'active',choiceCardId:board.active.cardId});
@@ -1011,6 +1013,9 @@
         if(abilityBlockedByStatus(ability,source)||ability.type==='passive'||ability.type==='triggered'||ability.activeOnly&&source!==s.active||ability.benchOnly&&source===s.active)return;
         if(state.format==='classic'&&sourceCard?.pokemonEx&&ability.printedPowerType==='power'&&
            ['player','opponent'].some(w=>pokemonOn(state.sides[w]).some(p=>p.cardId==='ex14-96'&&!effects.abilitiesSuppressed(state,w,p,data.cardById))))return;
+        // Fellow Boost can only use an actual Basic Energy card in HAND,
+        // never the next Energy Zone unit. Don't offer an inert Power.
+        if(source.cardId==='ex15-95'&&!s.hand.some(ref=>data.cardById(ref.cardId)?.basicEnergy))return;
         if(source.cardId==='ex15-8'&&(Number(source.damage||0)<40||!Array.isArray(source.stack)||source.stack.length<2||!s.deck.some(ref=>/^(?:Ninetales|Ninetales ex)(?: δ)?$/.test(data.cardById(ref.cardId)?.name||''))))return;
         if(source.cardId==='ex14-18'&&Number(s.ex14DeltaSignTurn)===state.turnNumber)return;
         if(source.cardId==='ex5-16'&&Number(s.ex5HealDanceUsedTurn)===state.turnNumber)return;
@@ -1068,7 +1073,7 @@
 
   function actionMatches(legal, action){
     if (!legal || !action || legal.type !== action.type) return false;
-    const keys = ['handIndex','cardId','target','benchIndex','attackIndex','attackCardId','abilityIndex','effectTarget','effectBenchIndex','evolutionCardId','choiceTarget','choiceBenchIndex','choiceHandIndex','choiceDiscardIndex','choiceDeckIndex','choiceCardId','choiceAttackIndex','choiceToolIndex','choiceOption','choiceSkip','effectEnergyType','effectSpecialEnergyUid','effectSelection','copiedEffectSelection'];
+    const keys = ['handIndex','cardId','target','benchIndex','attackIndex','attackCardId','abilityIndex','effectTarget','effectBenchIndex','evolutionCardId','choiceTarget','choiceBenchIndex','choiceHandIndex','choiceDiscardIndex','choiceDeckIndex','choiceCardId','choiceAttackIndex','choiceToolIndex','choicePrizeIndex','choiceOption','choiceSkip','effectEnergyType','effectSpecialEnergyUid','effectSelection','copiedEffectSelection'];
     return keys.every(key => action[key] == null || legal[key] === action[key]);
   }
 
@@ -1404,6 +1409,38 @@
       for(const energy of slot.specialEnergy||[])neoRecycleSpecial(s,energy);
   }
 
+  // Official Prize choice: the human selects a position without seeing its
+  // identity, while existing face-up Prize effects remain visible.  Multiple
+  // Prize KOs grant successive choices rather than auto-taking deck order.
+  function awardClassicPrize(state,side,index){
+    const ss=state.sides[side],i=Number(index);
+    if(!Number.isInteger(i)||i<0||i>=ss.prizes.length)return false;
+    const [ref]=ss.prizes.splice(i,1);ss.hand.push(ref);
+    ss.prizesTaken=Number(ss.prizesTaken||0)+1;
+    state.log.push({type:'prize',side,cardId:ref.cardId,prizePosition:i,remaining:ss.prizes.length,taken:ss.prizesTaken});
+    return true;
+  }
+  function beginClassicPrizeChoice(state,resume,cause){
+    const queue=state.pendingPrizeClaims||[];
+    while(queue.length){
+      const next=queue[0],ss=state.sides[next.side];
+      if(!ss?.prizes?.length||next.remaining<=0){queue.shift();continue;}
+      if(next.side==='opponent'){
+        // Choose only from visible information; never examine hidden Prize IDs.
+        const visible=ss.prizes.map((r,i)=>r.faceUp?i:-1).filter(i=>i>=0);
+        const index=visible.length?visible[Math.floor(random(state)*visible.length)]:Math.floor(random(state)*ss.prizes.length);
+        awardClassicPrize(state,next.side,index);next.remaining--;continue;
+      }
+      state.phase='effectChoice';state.choiceSide=next.side;
+      state.pendingChoice={kind:'prizeCard',special:'chooseClassicPrize',side:next.side,
+        originSide:next.side,prompt:next.remaining>1?`Choose a Prize card · ${next.remaining} to take`:'Choose a Prize card',
+        koResume:resume||null,koCause:cause||null};
+      return true;
+    }
+    state.pendingPrizeClaims=[];
+    return false;
+  }
+
   function resolveKnockOut(state,resume,cause){
     let any=false;
     while(true){
@@ -1478,11 +1515,8 @@
         if(state.rules?.winMode==='prizes'){
           const awardsPrize=card?.effect?.noPrize!==true&&card?.noPrize!==true;
           let awarded=0;const prizeCount=awardsPrize?prizeValue(card):0;
-          for(let i=0;i<prizeCount;i++){
-            const prize=foe.prizes.shift();if(!prize)break;
-            foe.hand.push(prize);awarded++;foe.prizesTaken=Number(foe.prizesTaken||0)+1;
-            state.log.push({type:'prize',side:foeSide,cardId:prize.cardId,remaining:foe.prizes.length,taken:foe.prizesTaken});
-          }
+          awarded=Math.min(prizeCount,Math.max(0,foe.prizes.length-(state.pendingPrizeClaims||[]).filter(q=>q.side===foeSide).reduce((n,q)=>n+q.remaining,0)));
+          if(awarded){state.pendingPrizeClaims=state.pendingPrizeClaims||[];state.pendingPrizeClaims.push({side:foeSide,remaining:awarded});}
           state.log.push({type:'ko',side,cardId:card.id,turnNumber:state.turnNumber,prizesTaken:foe.prizesTaken,awarded});
         }else{
           points=Math.max(1,Number(card.points||1));const pointBonuses=(foe.koPointBonuses||[]).filter(b=>(b.expiresTurn==null||state.turnNumber<=b.expiresTurn)&&(!b.attackerFilter||attacker&&effects.matchesFilter(data.cardById(attacker.cardId),b.attackerFilter,attacker)));for(const bonus of pointBonuses)points+=Number(bonus.amount||0);if(guardEligible&&koGuard.mode==='noPointsCoin'){const heads=random(state)<0.5;state.log.push({type:'coin',side,heads,reason:'noPointsKo',results:[heads]});if(heads)points=0;}foe.points+=points;foe.pointsGainedThisTurn=Number(foe.pointsGainedThisTurn||0)+points;state.log.push({type:'ko',side,cardId:card.id,turnNumber:state.turnNumber,points:foe.points,awarded:points});
@@ -1491,6 +1525,7 @@
         if(attacker&&countsAsKnockout){triggerAbilities(state,'opponentKnockedOut',foeSide,attacker,{knockedOut:slot,points,prizes:Number(foe.prizesTaken||0)});triggerPersistent(state,'opponentKnockedOut',foeSide,attacker,{knockedOut:slot,points,prizes:Number(foe.prizesTaken||0)});}
       }
     }
+    if(state.format==='classic'&&beginClassicPrizeChoice(state,resume,cause))return true;
     const p=state.sides.player,o=state.sides.opponent;
     if(state.rules?.winMode==='prizes'){
       const target=Math.max(1,Number(state.rules.prizeCount||5)),pPrize=Number(p.prizesTaken||0)>=target,oPrize=Number(o.prizesTaken||0)>=target;
@@ -1612,6 +1647,19 @@
     }
     if(matched.type==='effectChoice'){
       const pending=state.pendingChoice;if(!pending)throw new Error('No pending effect choice.');
+      if(pending.special==='chooseClassicPrize'){
+        const claims=state.pendingPrizeClaims||[],entry=claims[0];
+        if(!entry||entry.side!==side||!awardClassicPrize(state,side,matched.choicePrizeIndex))throw new Error('Choose a remaining Prize card.');
+        entry.remaining--;
+        state.pendingChoice=null;state.choiceSide=null;state.phase='battle';
+        const paused=resolveKnockOut(state,pending.koResume,pending.koCause);
+        if(!paused&&state.phase==='battle'){
+          if(pending.koResume==='endTurn')endTurn(state);
+          else if(pending.koResume==='advanceTurn')advanceTurn(state);
+          else if(pending.koResume==='repeatAttack')finishRepeatAttack(state);
+        }
+        return state;
+      }
       if(pending.special==='narrowGymReturn'){
         narrowGymReturnToHand(state,side,matched.choiceBenchIndex);
         state.pendingChoice=null;state.choiceSide=null;state.phase='battle';

@@ -333,6 +333,12 @@
       return !(power?.oncePerTurn===false&&state.sides[side].abilityUsed?.[source.uid+':'+index]===state.sides[side].turnCount);
     });
     if(!legal.length)return null;
+    if(state.format==='classic'&&state.phase==='battle'&&state.sides[side]?.active?.cardId==='ex15-10'&&
+       Number(state.sides[side].active.damage||0)>=20&&
+       !state.sides[side].active.conditions?.sleep){
+      const doze=legal.find(a=>a.type==='ability'&&a.cardId==='ex15-10'&&a.abilityIndex===1);
+      if(doze)return doze;
+    }
     // Healing Field is a once-per-turn Stadium action, not a Trainer card.
     // Resolve it while there is damage to heal; don't leave it unused because
     // one hidden-RNG simulation happened to turn up tails.
@@ -347,6 +353,14 @@
       const owner=isOpponent?foeOf(origin):origin,candidates=legal.filter(a=>a.type==='effectChoice').map(a=>({action:a,count:attachedCount(slotFor(state.sides[owner],a.choiceTarget,a.choiceBenchIndex))})).filter(x=>x.count>0);
       candidates.sort((a,b)=>isOpponent?b.count-a.count:a.count-b.count);
       if(candidates.length)return candidates[0].action;
+    }
+    // Snorlax δ Dozing is an optional Power: do not habitually pick the first
+    // (decline) option when it can heal and activate Bedhead between turns.
+    if(state.format==='classic'&&state.phase==='effectChoice'&&
+       String(state.pendingChoice?.effect?.rule||'').startsWith('ex15:10:power')){
+      const source=state.sides[side]?.active;
+      const heal=legal.find(a=>a.type==='effectChoice'&&a.choiceOption===1);
+      if(source?.cardId==='ex15-10'&&Number(source.damage||0)>=10&&heal)return heal;
     }
     // Escape resistance stalemates before scoring another futile attack.
     const rescue=usefulRetreatFromResistance(state,side,legal);if(rescue)return rescue;

@@ -47,5 +47,5 @@ test('Battle chooser displays card artwork for option-linked IDs with safe text 
  assert.match(src,/const cardId=action\.choiceCardId\|\|null/);
  assert.match(src,/model\.art\?`<img/);
  assert.match(src,/tcgp-live-choice-placeholder/);
- assert.match(src,/model\.optionLabel\|\|model\.detail/);
+ assert.match(src,/!model\.art\?`<small>/,'show labels only when art is missing');
 });

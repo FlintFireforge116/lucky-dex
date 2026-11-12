@@ -5,7 +5,7 @@ const D=root.LuckyDexClassicTCGBattleData,K=root.LuckyDexClassicTCGDecks,W=root.
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const el=id=>root.document.getElementById(id);const btn=(action,label,attrs='')=>`<button type="button" data-classic-deck="${action}" ${attrs}>${label}</button>`;
 let host,draft,baseline,rows=[],ownedRows=[],filters={owned:true,enabled:true},search='',sort='number',page=0,message='',pendingLeave=null,buildSerial=0,buildTimer=null,buildActive=false;
-let autoOptions={style:'competitive',types:[],randomType:false,allowMixedEnergy:false,rarityFocus:'any',basicOnly:false,theme:'any',compareCandidates:true,playtestCandidates:false,sets:[...B.SET_IDS]};let autoSetUI={search:'',sort:'release',selectedOnly:false};const randomHistory=new Map(),randomTypeHistory=[];
+const DEFAULT_AUTO_OPTIONS={style:'competitive',types:[],randomType:false,allowMixedEnergy:false,rarityFocus:'any',basicOnly:false,theme:'any',compareCandidates:true,playtestCandidates:false,sets:[...B.SET_IDS]};let autoOptions={...DEFAULT_AUTO_OPTIONS};let autoSetUI={search:'',sort:'release',selectedOnly:false};const randomHistory=new Map(),randomTypeHistory=[];
 function clone(deck){return {...deck,cards:(deck?.cards||[]).slice(),energyTypes:K.deckEnergyTypes(deck||{cards:[]}),energyMode:deck?.energyMode==='manual'?'manual':'auto'};}
 function signature(deck){if(!deck)return'';const types=deck.energyMode==='manual'?deck.energyTypes:K.analyzeDeck(deck.cards).recommendedEnergyTypes;return JSON.stringify({name:deck.name,cards:deck.cards.slice().sort(),energyMode:deck.energyMode,energyTypes:(types||[]).slice().sort()});}
 function isDirty(){return !!host&&signature(draft)!==signature(baseline);}
@@ -24,7 +24,23 @@ function energyTile(action,type,pressed){
  return btn(action,`${picture}<span>${esc(type)}</span>`,`data-id="${esc(type)}" class="tcgp-editor-energy-option" aria-label="${esc(type)} Energy" aria-pressed="${!!pressed}"`);
 }
 function deckHtml(){const types=energy(),unique=[...counts()].map(([id])=>D.cardById(id)).filter(Boolean),selected=draft.cards.map(D.cardById).filter(Boolean),pokemon=selected.filter(c=>c.kind==='pokemon').length,special=selected.filter(c=>c.specialEnergy).length,trainers=selected.length-pokemon-special;return `<header><h2>MY DECK <span>· ${draft.cards.length} / 30</span></h2><div class="tcgp-editor-deck-actions">${btn('clear-deck','Clear deck',`aria-label="Clear all cards from this deck" ${draft.cards.length?'':'disabled'}`)}${btn('energy',`${types.join(' / ')||'Auto Energy'} ▾`,`aria-label="Configure Energy"`)}</div></header><div class="tcgp-editor-composition">${pokemon} Pokémon · ${trainers} Trainers · ${special} Special Energy · ${draft.energyMode==='manual'?'Manual':'Auto'} Energy Zone</div><div class="tcgp-editor-deck-grid">${unique.length?unique.map(c=>tile(c,true)).join(''):'<p>Choose a Classic TCG card below to start your deck.</p>'}</div>`;}
-function open(options){cancelBuild();host=options;const state=K.ensureState(host.state()),old=options.deck||state.decks.find(d=>d.id===state.activeDeckId);fresh(old||{name:'My Classic Deck',cards:[],energyMode:'auto',energyTypes:[]});filters={owned:false,enabled:true};search='';sort='number';page=0;message='';autoOptions={style:'competitive',types:[],randomType:false,allowMixedEnergy:false,rarityFocus:'any',basicOnly:false,theme:'any',compareCandidates:true,playtestCandidates:false,sets:[...B.SET_IDS]};autoSetUI={search:'',sort:'release',selectedOnly:false};refreshRows();mount();if(options.quick)autoBuild('recommended',autoOptions);}
+function restoreAutoOptions(){
+ const stored=host?.state()?.tcgClassicBattle?.autoBuildOptions;
+ if(!stored||typeof stored!=='object')return {...DEFAULT_AUTO_OPTIONS,types:[],sets:[...B.SET_IDS]};
+ return {...DEFAULT_AUTO_OPTIONS,
+  style:stored.style==='random'?'random':'competitive',
+  types:Array.isArray(stored.types)?stored.types.filter(x=>B.ARCHETYPE_TYPES.includes(x)).slice(0,2):[],
+  randomType:stored.randomType===true,allowMixedEnergy:stored.allowMixedEnergy===true,
+  rarityFocus:B.RARITY_FOCUS.some(x=>x.id===stored.rarityFocus)?stored.rarityFocus:'any',
+  basicOnly:stored.basicOnly===true,theme:B.THEMES.some(x=>x.id===stored.theme)?stored.theme:'any',
+  compareCandidates:stored.compareCandidates!==false,playtestCandidates:stored.playtestCandidates===true,
+  sets:Array.isArray(stored.sets)?B.SET_IDS.filter(x=>stored.sets.includes(x)):[...B.SET_IDS]};
+}
+function rememberAutoOptions(){
+ const cfg=K.ensureState(host.state());cfg.autoBuildOptions={...autoOptions,types:autoOptions.types.slice(),sets:autoOptions.sets.slice()};
+ host.save();
+}
+function open(options){cancelBuild();host=options;const state=K.ensureState(host.state()),old=options.deck||state.decks.find(d=>d.id===state.activeDeckId);fresh(old||{name:'My Classic Deck',cards:[],energyMode:'auto',energyTypes:[]});filters={owned:false,enabled:true};search='';sort='number';page=0;message='';autoOptions=restoreAutoOptions();autoSetUI={search:'',sort:'release',selectedOnly:false};refreshRows();mount();if(options.quick)autoBuild('recommended',autoOptions);}
 function mount(){host.container.innerHTML=`<div id="classicDeckWorkspace" class="tcgp-editor format-classic">${host.sandbox?'<p class="tcgp-battle-note"><strong>TEST LAB</strong> · All battle-ready cards unlocked · saved in your separate Test Lab library · no collection changes or rewards</p>':''}<div class="tcgp-editor-top"><input id="classicDeckNameInput" maxlength="40" value="${esc(draft.name)}" aria-label="Deck name"><nav>${btn('manage','Decks')}${btn('auto','Auto build')}${btn('save','Save')}</nav></div><section id="classicMyDeck" class="tcgp-editor-mydeck">${deckHtml()}</section><div class="tcgp-editor-tools"><input id="classicDeckSearchInput" type="search" value="${esc(search)}" placeholder="Search Classic cards, attacks, rules…" aria-label="Search cards"><div>${btn('filters',filterLabel())}${btn('clear-filters','Clear filters','hidden')}${btn('sort','Sort ▾')}</div><p id="classicEditorMessage" role="status"></p></div><section id="classicDeckResults"></section><div id="classicEditorModal"></div></div>`;el('classicDeckWorkspace').addEventListener('click',click);el('classicDeckWorkspace').addEventListener('input',e=>{if(e.target.matches('[data-set-search]')){autoSetUI.search=e.target.value;S.refresh(e.target.closest('.tcg-set-selector'),autoOptions.sets,autoSetUI);}});el('classicDeckWorkspace').addEventListener('change',e=>{if(e.target.matches('[data-set-sort]')){autoSetUI.sort=e.target.value;autoSheet();}});el('classicDeckNameInput').addEventListener('input',e=>draft.name=e.target.value);el('classicDeckSearchInput').addEventListener('input',e=>{search=e.target.value;page=0;renderResults();});renderResults();updateMessage();}
 function updateMessage(){const node=el('classicEditorMessage');if(node)node.innerHTML=`<span>${esc(message)}</span>${buildActive?` <button type="button" data-classic-deck="cancel-auto" aria-label="Cancel deck build">CANCEL BUILD</button>`:''}`;}
 function update(){const scroller=el('classicMyDeck')?.querySelector('.tcgp-editor-deck-grid'),top=scroller?.scrollTop||0,left=scroller?.scrollLeft||0;el('classicMyDeck').innerHTML=deckHtml();const next=el('classicMyDeck')?.querySelector('.tcgp-editor-deck-grid');if(next){next.scrollTop=top;next.scrollLeft=left;}renderResults();updateMessage();}
@@ -65,6 +81,7 @@ function autoSheet(){
 }
 function autoBuild(mode,extra={}){
  cancelBuild();
+ rememberAutoOptions();
  const serial=buildSerial,owner=host,target=draft;
  const style=extra.style||autoOptions.style,isRandom=style==='random';
  const surprise=!extra.cardId&&(extra.randomType==null?autoOptions.randomType:!!extra.randomType);
@@ -109,9 +126,11 @@ function click(event){
    if(choice){const id=choice.dataset.setChoice,selected=new Set(autoOptions.sets);if(selected.has(id))selected.delete(id);else selected.add(id);autoOptions.sets=B.SET_IDS.filter(v=>selected.has(v));}
    if(bulk){const old=new Set(autoOptions.sets);autoOptions.sets=bulk.dataset.setBulk==='all'?B.SET_IDS.slice():bulk.dataset.setBulk==='none'?[]:B.SET_IDS.filter(v=>!old.has(v));}
    if(only)autoSetUI.selectedOnly=!autoSetUI.selectedOnly;
-   S.refresh(selector,autoOptions.sets,autoSetUI);return;
+   rememberAutoOptions();S.refresh(selector,autoOptions.sets,autoSetUI);return;
   }
  }
+ const autoSetting=event.target.closest('[data-classic-deck^="auto-"]');
+ if(autoSetting&&!['auto-new'].includes(autoSetting.dataset.classicDeck))root.setTimeout(()=>{if(host)rememberAutoOptions();},0);
  const filter=event.target.closest('[data-classic-filter]');if(filter){event.stopPropagation();const k=filter.dataset.classicFilter,v=filter.dataset.value;if(k==='types'){const set=new Set(filters.types||[]);if(set.has(v))set.delete(v);else if(set.size<2)set.add(v);filters.types=[...set];}else if(['owned','enabled'].includes(k))filters[k]=!filters[k];else filters[k]=String(filters[k])===v?'':v;page=0;filterSheet();return;}const node=event.target.closest('[data-classic-deck]');if(!node)return;event.stopPropagation();const action=node.dataset.classicDeck,id=node.dataset.id;
  if(action==='cancel-auto'){cancelBuild();message='Deck build cancelled; your previous deck is unchanged.';updateMessage();return;}
  if(action==='close-sheet'||action==='leave-cancel'){pendingLeave=null;return closeSheet();}

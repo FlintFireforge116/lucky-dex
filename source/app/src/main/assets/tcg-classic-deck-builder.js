@@ -318,6 +318,23 @@ function buildDeck(rows,options={}){
    }
    return candidates[0];
  };
+ // Extra Wing is not a generic Fire-type payoff.  Swellow δ enables free
+ // Retreat for allied Stage 2 Pokémon-ex, so favour the *complete* partner
+ // line over unrelated attacking Pokémon (and never add an unplayable off-type).
+ if(!basicOnly&&cards.length<=23&&pokemonCount()<=10){
+  const swellow=classic.cardById('ex15-40');
+  const swellowHere=mainLine.some(c=>c.id==='ex15-40');
+  if(swellowHere){
+   const stage2Ex=endpointCards(pokemonPool).filter(c=>c.pokemonEx&&c.stage==='Stage 2'&&
+    c.id!==main.id&&familyRoot(c,evolutionPool)!==mainRoot&&familyLine(c,evolutionPool).length===3&&canFitEnergy(c)&&
+    familyLine(c,evolutionPool).every(member=>room(member)>0));
+   stage2Ex.sort((a,b)=>pokemonScore(b,evolutionPool)-pokemonScore(a,evolutionPool));
+   if(stage2Ex.length)addLine(familyLine(stage2Ex[0],evolutionPool),1);
+  }else if(main.stage==='Stage 2'&&main.pokemonEx&&swellow&&pool.includes(swellow)&&canFitEnergy(swellow)){
+   const line=familyLine(swellow,evolutionPool);
+   if(line.length===2&&line.every(member=>room(member)>0))addLine(line,1);
+  }
+ }
  // Prefer an entire compatible evolution partner; never add an isolated Basic
  // whose strength depends upon an unavailable evolution (e.g. Base Set Koffing).
  const partnerCandidates=endpointCards(pokemonPool).filter(c=>
@@ -395,6 +412,17 @@ function buildDeck(rows,options={}){
  for(const [symbol,needed] of Object.entries(specialNeeds))if(needed){
    const energyCard=classic.cardById(SPECIAL_COST_CARDS[symbol]);
    if(energyCard&&allowedInSetPool(energyCard,scope))add(energyCard,Math.min(4,Math.max(needed*2,2)));
+ }
+ // EX Dragon Frontiers Fellow Boost attaches a physical Basic Energy *from
+ // hand*, not the hybrid Energy Zone. Mr Stone's Project can fetch Basic
+ // Energy into hand so the Power is usable without rewriting its printed rule.
+ const fellowBoostCore=mainLine.some(c=>c.id==='ex15-95');
+ const fellowBoostSupport=cards.some(id=>id==='ex15-95');
+ if(fellowBoostCore||fellowBoostSupport){
+   const stones=pool.filter(c=>c.name==="Mr. Stone's Project"&&c.kind==='trainer')
+     .sort((a,b)=>Number(b.setId===main.setId)-Number(a.setId===main.setId)||a.id.localeCompare(b.id));
+   let remaining=fellowBoostCore?3:2;
+   for(const trainer of stones){if(!remaining)break;remaining-=add(trainer,Math.min(remaining,room(trainer)));}
  }
  // Printed Special Energy dependencies must be chosen before generic draw
  // Trainers fill all 30 card slots. In the hybrid format the Basic Energy

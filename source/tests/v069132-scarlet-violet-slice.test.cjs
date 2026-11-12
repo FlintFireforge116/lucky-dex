@@ -52,7 +52,13 @@ test('basic-ex and alt-ex give two Prizes on KO',()=>{
  s.sides.player.active.cardId='sv1-32';s.sides.player.active.stack=['sv1-30','sv1-32'];s.sides.player.active.energy.Fire=3;
  s.sides.opponent.active.cardId='sv1-224';s.sides.opponent.active.stack=['sv1-30','sv1-224'];s.sides.opponent.active.damage=260;
  const attack=core.legalActions(s,'player').find(a=>a.type==='attack'&&a.attackIndex===0);
- assert.ok(attack);core.applyAction(s,'player',attack);assert.equal(s.sides.player.prizesTaken,2);
+ assert.ok(attack);core.applyAction(s,'player',attack);
+ assert.equal(s.pendingChoice?.special,'chooseClassicPrize');
+ for(let i=0;i<2;i++){
+  const choice=core.legalActions(s,'player').find(a=>a.type==='effectChoice'&&a.choicePrizeIndex===0);
+  assert.ok(choice,'each Prize should be selected explicitly');core.applyAction(s,'player',choice);
+ }
+ assert.equal(s.sides.player.prizesTaken,2);
 });
 test('Professor research, Poké Ball and Ultra Ball produce legal play choices',()=>{
  for(const id of ['sv1-189','sv1-185','sv1-196']){
