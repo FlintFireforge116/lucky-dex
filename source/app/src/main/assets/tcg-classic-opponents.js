@@ -48,7 +48,7 @@
        return card?.kind==='pokemon'&&((card.types||[]).includes(type)||(dual?.types.includes(type)&&energy.includes(dual.energyType))||builder.conditionalAttackTypes(card).includes(type)&&energy.includes(type));
      });
      if(!legal.ok||profile.missingEnergyTypes.length||!matchesChosenType)continue;
-     if(result.cards.some(id=>{const card=classic.cardById(id);return !allowed.includes(card?.setId)&&!((allowed.includes('neo2')||allowed.includes('neo3')||allowed.includes('neo4'))&&['neo1-104','neo1-19'].includes(id));}))continue;
+     if(result.cards.some(id=>!builder.allowedInSetPool(classic.cardById(id),allowed)))continue;
      const archetype=String(result.strategy.match(/· ([^·]+) core/)?.[1]||'Classic TCG').trim();
      return {ok:true,type,rarityFocus,basicOnly,theme,cards:result.cards.slice(),energyTypes:energy.slice(),sets:allowed.slice(),archetype,archetypeKey:result.archetypeKey,name:`${type} · ${archetype}`};
    }

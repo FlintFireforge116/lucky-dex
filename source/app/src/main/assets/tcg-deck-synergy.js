@@ -315,6 +315,12 @@
   const support=uniq(trainers.filter(c=>metadata(c).roles.some(r=>['draw','search','energy','healing','retreat'].includes(r))).map(c=>c.name)).slice(0,6);
   const dead=uniq(trainers.filter(c=>trainerScore(c,ctx)===-Infinity).map(c=>c.name));
   const warnings=[];if(dead.length)warnings.push('Unsupported support: '+dead.join(', '));
+  // Support for Sharpedo δ, Rayquaza δ and other Holon payoffs may come from
+  // the prior EX Delta Species set. Don't hide an inactive payoff if the
+  // player owns none of those Special Energy cards.
+  if(pokemon.some(p=>metadata(p).specialEnergyPayoffs.includes('holon-energy'))&&
+    !selected.some(c=>/^Holon Energy (?:FF|GL|WP)$/.test(c.name||'')))
+    warnings.push("Holon Energy bonus inactive: add Holon Energy FF, GL or WP (EX Delta Species) to enable the Pokémon\'s printed payoff.");
   // Existing manually assembled decks are still legal without optional attack
   // triggers, but make the lost payoff visible rather than hiding it behind the
   // fact that the printed attack can be paid with generic Colorless Energy.

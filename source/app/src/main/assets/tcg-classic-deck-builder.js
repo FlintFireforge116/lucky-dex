@@ -61,7 +61,13 @@ const SPECIAL_COST_CARDS=Object.freeze({D:'neo1-104',M:'neo1-19'});
 // the relevant Neo Genesis Special Energy as a cross-set energy supply, not as
 // an off-set Pokémon/Trainer. Ownership and four-copy limits still apply.
 const isDiscoveryEnergySupply=(card,sets)=>(sets.includes('neo2')||sets.includes('neo3')||sets.includes('neo4'))&&Object.values(SPECIAL_COST_CARDS).includes(card?.id);
-const allowedInSetPool=(card,sets)=>sets.includes(card.setId)||isDiscoveryEnergySupply(card,sets);
+// Holon Phantoms prints several attacks/Poké-Bodies that explicitly need
+// the Holon Energy cards printed in EX Delta Species. Treat these three
+// Special Energy cards as optional cross-set *support*, not as an invitation
+// to mix unrelated Pokémon from the older expansion. Ownership still applies.
+const isHolonPhantomsEnergySupply=(card,sets)=>sets.includes('ex13')&&card?.setId==='ex11'&&
+ /^Holon Energy (?:FF|GL|WP)$/.test(card.name||'');
+const allowedInSetPool=(card,sets)=>!!card&&(sets.includes(card.setId)||isDiscoveryEnergySupply(card,sets)||isHolonPhantomsEnergySupply(card,sets));
 function specialCosts(_cards){return {D:0,M:0};} // Basic Darkness/Metal satisfies typed attack costs; Special Energy is optional.
 
 function classicCardName(name){return String(name||'').replace(/[’]/g,"'").replace(/\s+(?=[♀♂])/g,'').replace(/\s*δ\s*$/u,'').trim();}
@@ -473,8 +479,32 @@ function buildDeck(rows,options={}){
  }).sort((a,b)=>b[1]-a[1]);
  for(const [id] of supports){if(cards.length>=30||gymAdded>=4)break;gymAdded+=add(classic.cardById(id),1);}
  for(const [id,want] of STAPLES){const card=classic.cardById(id);if(card&&scope.includes(card.setId)){const already=cards.filter(cid=>classicCardName(classic.cardById(cid)?.name)===classicCardName(card.name)).length;add(card,Math.min(Math.max(0,want-already),room(card)));}if(cards.length>=30)break;}
+ // Special Energy must never be treated as generic 30-card filler. In the
+ // hybrid rules Basic Darkness/Metal already comes from the Energy Zone;
+ // their Special prints are only worthwhile if the *printed additional effect*
+ // can work on at least one of this deck's Pokémon. A Fighting Sharpedo δ
+ // does NOT gain the Darkness Energy +10 attack bonus, for example.
+ const usefulFillerSpecialEnergy=card=>{
+   if(!card?.specialEnergy)return false;
+   const name=String(card.name||'');
+   const pokemon=cards.map(classic.cardById).filter(c=>c?.kind==='pokemon');
+   if(name==='Darkness Energy')return pokemon.some(p=>(p.types||[]).includes('Darkness')||/^Dark\s/i.test(p.name||''));
+   if(name==='Metal Energy')return pokemon.some(p=>(p.types||[]).includes('Metal'));
+   if(name==='Dark Metal Energy')return pokemon.some(p=>
+     (p.types||[]).some(t=>t==='Darkness'||t==='Metal')||
+     (p.attacks||[]).some(a=>/[DM]/.test(String(a.cost||''))));
+   if(name==='React Energy')return pokemon.some(p=>synergy.metadata(p).specialEnergyPayoffs.includes('react-energy'));
+   if(name==='δ Rainbow Energy')return pokemon.some(p=>p.deltaSpecies===true);
+   // Holon Energy is selected earlier using its real basic-Energy activation
+   // conditions and printed on-Pokémon payoffs, not in this filler stage.
+   if(/^Holon Energy (?:FF|GL|WP)$/.test(name))return false;
+   return true;
+ };
+ const usefulFillerCard=c=>c?.kind==='trainer'||
+   (c?.specialEnergy&&usefulFillerSpecialEnergy(c)&&
+    (!isDiscoveryEnergySupply(c,scope)||specialNeeds[c.id==='neo1-104'?'D':'M']>0));
  // Fallback through remaining owned Trainers first, then compatible Basics. This remains legal but avoids stranded evolutions.
- const trainerFallback=pool.filter(c=>(c.kind==='trainer'||c.specialEnergy&&!/^Holon Energy (?:FF|GL|WP)$/.test(c.name||'')&&(!isDiscoveryEnergySupply(c,scope)||specialNeeds[c.id==='neo1-104'?'D':'M']>0))&&trainerIsUseful(c)).sort((a,b)=>synergy.trainerScore(b,supportContext())-synergy.trainerScore(a,supportContext())||Number(a.number)-Number(b.number));
+ const trainerFallback=pool.filter(c=>usefulFillerCard(c)&&trainerIsUseful(c)).sort((a,b)=>synergy.trainerScore(b,supportContext())-synergy.trainerScore(a,supportContext())||Number(a.number)-Number(b.number));
  for(const c of trainerFallback){while(cards.length<30&&room(c)>0){if(!add(c,1))break;}if(cards.length>=30)break;}
  const cohesiveBasic=c=>{
   if(options._allowSecondType===true&&!requestedEnergy.length)return true;
@@ -486,7 +516,7 @@ function buildDeck(rows,options={}){
  if(cards.length<30&&!requestedEnergy.length){for(const c of pokemonPool.filter(c=>c.stage==='Basic').sort((a,b)=>Number(matchesRarity(b,rarityFocus,basicOnly))-Number(matchesRarity(a,rarityFocus,basicOnly)))){if(!canFitEnergy(c)||!cohesiveBasic(c)||(!basicOnly&&familyRoot(c,evolutionPool)!==mainRoot&&hasKnownEvolution(c)))continue;while(cards.length<30&&room(c)>0){if(!add(c,1))break;}if(cards.length>=30)break;}}
  // Final conservative fill: respect the planned mono/explicit dual Energy profile;
  // only the sparse-inventory rescue is allowed a second otherwise unrequested type.
- if(cards.length<30){for(const c of pool.filter(c=>(c.kind==='trainer'||c.specialEnergy&&!/^Holon Energy (?:FF|GL|WP)$/.test(c.name||'')&&(!isDiscoveryEnergySupply(c,scope)||specialNeeds[c.id==='neo1-104'?'D':'M']>0)||c.stage==='Basic')&&trainerIsUseful(c))){while(cards.length<30&&room(c)>0){const trial=[...cards,c.id],profile=decks.analyzeDeck(trial).recommendedEnergyTypes;if(options._allowSecondType===true&&!requestedEnergy.length?profile.length>2:!profile.every(t=>plannedEnergy.includes(t)))break;if(!add(c,1))break;}if(cards.length>=30)break;}}
+ if(cards.length<30){for(const c of pool.filter(c=>(usefulFillerCard(c)||c.stage==='Basic')&&trainerIsUseful(c))){while(cards.length<30&&room(c)>0){const trial=[...cards,c.id],profile=decks.analyzeDeck(trial).recommendedEnergyTypes;if(options._allowSecondType===true&&!requestedEnergy.length?profile.length>2:!profile.every(t=>plannedEnergy.includes(t)))break;if(!add(c,1))break;}if(cards.length>=30)break;}}
  if(cards.length!==30){
    // Sparse themed pools can choose an awkward first core that leaves too few
    // compatible fillers. Retry distinct archetypes rather than handing back an
@@ -535,5 +565,5 @@ function buildDeck(rows,options={}){
  return {ok:true,cards,energyTypes:finalEnergy,errors:[],warnings:plan.warnings.map(message=>({message})),plan,style,archetypeKey:archetypeKey(featured||main),focusCardId:focus?.id||featured?.id||main.id,strategy:`${style==='random'?'Random featured':'Competitive'} · ${theme!=='any'?synergy.THEMES.find(t=>t.id===theme).label+' · ':''}${rarityFocus!=='any'?RARITY_FOCUS.find(r=>r.id===rarityFocus).label+' · ':''}${basicOnly?'Basic-only · ':''}${label} · ${featured?featured.name+' featured · ':''}${archetypeName(main,evolutionPool)} core · ${pokemonCount()} Pokémon / ${30-pokemonCount()} Trainers & Special Energy`};
 }
 function buildDeckAsync(rows,options,control={}){return new Promise(resolve=>{setTimeout(()=>{if(control.isCancelled?.())return resolve(null);resolve(buildDeck(rows,options));},0);});}
-return {buildDeck,buildDeckAsync,THEMES:synergy.THEMES,familyLine,familyRoot,attackTypes,conditionalAttackTypes,ARCHETYPE_TYPES,SET_IDS,RARITY_FOCUS,rarityTier,matchesRarity};
+return {buildDeck,buildDeckAsync,THEMES:synergy.THEMES,familyLine,familyRoot,attackTypes,conditionalAttackTypes,allowedInSetPool,ARCHETYPE_TYPES,SET_IDS,RARITY_FOCUS,rarityTier,matchesRarity};
 });
