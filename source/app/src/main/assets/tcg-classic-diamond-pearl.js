@@ -213,6 +213,20 @@ const PRINTS={
   80:["Flip a coin. If heads, choose 1 of the Defending Pokémon's attacks. That Pokémon can't use that attack during your opponent's next turn.", "Does 10 damage to 1 of your opponent's Benched Pokémon. (Don't apply Weakness and Resistance for Benched Pokémon.)"],
   81:['Flip a coin. If heads, this attack does 30 damage plus 10 more damage. If tails, Electabuzz does 10 damage to itself.', "Flip a coin. If heads, the Defending Pokémon is now Paralyzed. If Electabuzz is evolved from Elekid, this attack does 20 damage to 1 of your opponent's Benched Pokémon. (Don't apply Weakness and Resistance for Benched Pokémon.)"],
   91:["Choose 1 card from your opponent's hand without looking. Look at the card you chose, then have your opponent shuffle that card into his or her deck.", 'Flip a coin. If heads, the Defending Pokémon is now Confused.'],
+  8:['Does 50 damage plus 10 more damage for each Metal Energy attached to Magnezone.'],
+  24:['Search your discard pile for up to 5 in any combination of Pokémon and Supporter cards. Show them to your opponent and shuffle them into your deck.', "Does 10 damage to each Benched Pokémon (both yours and your opponent's). (Don't apply Weakness and Resistance for Benched Pokémon.)"],
+  30:['Flip a coin until you get tails. Remove a number of damage counters equal to the number of heads from 1 of your Pokémon.', "Does 20 damage to 1 of your opponent's Benched Pokémon. (Don't apply Weakness and Resistance for Benched Pokémon.) You may switch Lopunny with 1 of your Benched Pokémon."],
+  31:["If any of your Pokémon were Knocked Out by damage from an opponent's attack during his or her last turn, this attack does 20 damage plus 50 more damage.", 'Flip a coin. If heads, this attack does 60 damage plus 30 more damage and the Defending Pokémon is now Confused.'],
+  32:["Count the number of damage counters on Medicham. Put that many damage counters on 1 of your opponent's Pokémon.", 'Medicham does 20 damage to itself.'],
+  33:["Discard 2 cards from your hand. (If you can't discard 2 cards, this attack does nothing.) Flip 2 coins. This attack does 30 damage times the number of heads."],
+  46:['Flip a coin. If heads, put 1 of your Benched Pokémon and all cards attached to on top of your deck. Shuffle your deck afterward.', "Flip a coin. If heads, the Defending Pokémon is now Confused and can't retreat during your opponent's next turn."],
+  47:["Flip a coin. If heads, put 2 damage counters on each of your opponent's Pokémon. If tails, put 2 damage counters on 1 of your Pokémon.", "Does 10 damage to each of your opponent's Benched Pokémon that doesn't have a Retreat Cost. (Don't apply Weakness and Resistance for Benched Pokémon.)"],
+  65:[''],
+  66:[''],
+  67:[''],
+  68:[''],
+  71:["Flip a coin. If heads, your opponent can't play any Trainer cards from his or her hand during your opponent's next turn, and any damage done to Bonsly by attacks is reduced by 30 (after applying Weakness and Resistance)."],
+  90:["Shuffle your hand into your deck. Then, draw a number of cards equal to the number of cards in your opponent's hand."],
 };
 const noop={type:'noop'},status=s=>({type:'status',target:'opponentActive',status:s});
 const lock=(action,target='opponentActive',duration='opponentTurn')=>({type:'lock',target,action,duration});
@@ -296,6 +310,17 @@ const EFFECTS={
   81:[flip(extra(10),{type:'selfDamage',amount:10}),seq(flip(status('paralysis')),{type:'neoRule',rule:'dp1:81:shockWave'})],
   91:[{type:'neoRule',rule:'ex16:2:surprise'},flip(status('confusion'))],
 
+  8:[{type:'neoRule',rule:'dp1:8:metalBlast'}],
+  24:[{type:'neoRule',rule:'dp1:24:windWave'},seq(benchHit(10),{type:'benchDamage',side:'self',all:true,amount:10})],
+  30:[{type:'neoRule',rule:'dp1:30:healingWish'},seq(benchHit(20),{type:'neoRule',rule:'dp1:30:flopSwitch'})],
+  31:[{type:'neoRule',rule:'dp1:31:revenge'},flip(seq(extra(30),status('confusion')))],
+  32:[{type:'neoRule',rule:'dp1:32:forcePalm'},{type:'selfDamage',amount:20}],
+  33:[{type:'neoRule',rule:'dp1:33:heave'}],
+  46:[flip({type:'neoRule',rule:'dp1:46:blowingWind'}),flip(seq(status('confusion'),lock('retreat')))],
+  47:[flip({type:'neoRule',rule:'dp1:47:roamHeads'},{type:'neoRule',rule:'dp1:47:roamTails'}),{type:'neoRule',rule:'dp1:47:gravityWave'}],
+  65:[noop],66:[noop],67:[noop],68:[noop],
+  90:[{type:'handShuffle',side:'self',draw:'opponentHandCount'}],
+
 };
 // Trainer wording checked against the individual dp1 printed-card records.
 // Rule text below is catalogue data even when an effect is still gated.
@@ -327,13 +352,17 @@ const TRAINER_EFFECTS={
  106:{type:'neoRule',rule:'dp1:106:energyRestore'},
  108:{type:'neoRule',rule:'dp1:108:nightCenter'},
  111:{type:'neoRule',rule:'dp1:111:handy910is'},
+ 116:seq({type:'forceOpponentSwitch'}, {type:'neoRule',rule:'dp1:116:ownSwitch'}),
 
 };
-const BABY_TARGET={42:'Wobbuffet',43:'Roselia',48:'Electabuzz',69:'Marill',78:'Clefairy'};
+const BABY_TARGET={33:'Snorlax',42:'Wobbuffet',43:'Roselia',48:'Electabuzz',69:'Marill',71:'Sudowoodo',78:'Clefairy',90:'Mr. Mime'};
 const BABY_WORDING={43:'Once during your turn (before your attack), you may put Roselia from your hand onto Budew (this counts as evolving Budew) and remove all damage counters from Budew.',69:'Once during your turn (before your attack), you may put Marill from your hand onto Azurill (this counts as evolving Azurill) and remove all damage counters from Azurill.'};
 BABY_WORDING[42]='Once during your turn (before your attack), you may put Wobbuffet from your hand onto Wynaut and remove all damage counters from Wynaut.';
 BABY_WORDING[48]='Once during your turn (before your attack), you may put Electabuzz from your hand onto Elekid and remove all damage counters from Elekid.';
 BABY_WORDING[78]='Once during your turn (before your attack), you may put Clefairy from your hand onto Cleffa and remove all damage counters from Cleffa.';
+BABY_WORDING[33]='Once during your turn (before your attack), you may put Snorlax from your hand onto Munchlax (this counts as evolving Munchlax) and remove all damage counters from Munchlax.';
+BABY_WORDING[71]='Once during your turn (before your attack), you may put Sudowoodo from your hand onto Bonsly (this counts as evolving Bonsly) and remove all damage counters from Bonsly.';
+BABY_WORDING[90]='Once during your turn (before your attack), you may put Mr. Mime from your hand onto Mime Jr. (this counts as evolving Mime Jr.) and remove all damage counters from Mime Jr.';
 const RULES_LVX='Put this card onto your Active Pokémon of the named species. A Pokémon LV.X retains attacks, Poké-Powers and Poké-Bodies from its previous level.';
 const READY=new Set([...Object.keys(EFFECTS).map(Number),...Object.keys(TRAINER_EFFECTS).map(Number)]);
 function parse(row){
@@ -349,6 +378,15 @@ function parse(row){
   const abilities=powerSpecs.split(';').filter(Boolean).map(s=>{const [power,type]=s.split('~');return {
     name:power,type:type?.includes('Power')?'activated':'passive',printedPowerType:type?.includes('Power')?'power':'body',
     text:'See the printed card. This ability is not yet battle-enabled.',effect:{type:'noop'}};});
+  const POWER_WORDING={
+   8:'If you have any Metal Energy attached to your Active Pokémon, the Retreat Cost for that Pokémon is 0.',
+   65:'Once during your turn (before your attack), if Unown A is on your Bench, you may look at the top 2 cards of your deck and put them back on top of your deck in any order.',
+   66:'Once during your turn (before your attack), if Unown B is on your Bench, you may flip a coin. If heads, discard all cards attached to any 1 of your Unown and shuffle that Pokémon back into your deck.',
+   67:'Once during your turn (before your attack), if Unown C is on your Bench, you may flip a coin. If heads, search your deck for any 1 Unown and put it onto your Bench. Shuffle your deck afterward.',
+   68:'Once during your turn (before your attack), if Unown D is on your Bench, you may flip a coin. If heads, each player may draw a card. (You draw your card first.)'
+  };
+  if(n===8)abilities[0]={name:'Magnetize',type:'passive',printedPowerType:'body',text:POWER_WORDING[8],effect:{type:'noop'}};
+  if(n>=65&&n<=68)abilities[0]={name:['ANALYZE','BOUNCE','CALL','DRAW'][n-65],type:'activated',printedPowerType:'power',oncePerTurn:true,benchOnly:true,text:POWER_WORDING[n],effect:{type:'neoRule',rule:`dp1:${n}:unown`}};
   if(BABY_TARGET[n])abilities[0]={name:'Baby Evolution',type:'activated',printedPowerType:'power',oncePerTurn:true,disabledByStatus:true,text:BABY_WORDING[n],effect:{type:'neoRule',rule:'dp1:babyEvolve',targetName:BABY_TARGET[n]}};
   const parseModifier=s=>s?{type:T[s[0]],value:s.slice(1)}:null;
   const w=parseModifier(weak),r=parseModifier(resist);
@@ -375,7 +413,7 @@ function parse(row){
  if(n===18){roles.add('azurill-stack');payoff.push('Azurill enables Bubble Pump Paralysis');}
  card.deckMeta={roles:[...roles],synergy:[...roles],energyTypes,preferredEnergyTypes:[],inflicts,payoffs:payoff,
    preferredPartners:[],conditionalAttackEnergyTypes:[],stage2ExSupport:null,requiresTools:[],
-   babyEvolutionSupport:n===13?['Budew']:n===18?['Azurill']:n===77?['Cleffa']:n===81?['Elekid']:[]};
+   babyEvolutionSupport:n===13?['Budew']:n===18?['Azurill']:n===77?['Cleffa']:n===81?['Elekid']:n===37?['Munchlax']:[]};
  // NO unverified attack, LV.X mechanic, Power or trainer enters CPU / Test Lab.
  return Object.freeze({...card,battleEnabled:ready,deckEligible:ready&&card.deckEligible!==false,
   support:{status:ready?'FULL':'PARTIAL',reasons:ready?[]:['Printed interactions not yet fully implemented/tested']}});

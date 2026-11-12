@@ -514,6 +514,10 @@
   }
   function retreatCost(state,side){const slot=state.sides[side].active;
     if(state.format==='classic'&&slot&&toolsOf(slot).some(ref=>['ex3-82','ex8-84'].includes(ref.cardId)))return 0;
+    // DP1 Magnezone's Metal-dependent Magnetize is a continuous Poké-Body;
+    // it applies to any allied Active Pokémon and respects Body suppression.
+    if(state.format==='classic'&&slot&&Number(effectiveEnergy(state,side,slot).Metal||0)>0&&
+       pokemonOn(state.sides[side]).some(p=>p.cardId==='dp1-8'&&!effects.abilitiesSuppressed(state,side,p,data.cardById)))return 0;
     if(state.format==='classic'&&slot?.cardId==='ex13-30'&&Number(slot.energy?.Water||0)>0&&!effects.abilitiesSuppressed(state,side,slot,data.cardById))return 0;
     if(state.format==='classic'&&slot?.cardId==='ex14-55'&&Number(effectiveEnergy(state,side,slot).Water||0)>0&&!effects.abilitiesSuppressed(state,side,slot,data.cardById))return 0;
     if(state.format==='classic'&&slot?.cardId==='ex14-95'&&
@@ -1020,6 +1024,7 @@
            ['player','opponent'].some(w=>pokemonOn(state.sides[w]).some(p=>p.cardId==='ex14-96'&&!effects.abilitiesSuppressed(state,w,p,data.cardById))))return;
         // Fellow Boost can only use an actual Basic Energy card in HAND,
         // never the next Energy Zone unit. Don't offer an inert Power.
+        if(/^dp1-6[5-8]$/.test(source.cardId)&&s.active===source)return; // Unown Powers need the Bench.
         if(source.cardId==='ex15-95'&&!s.hand.some(ref=>data.cardById(ref.cardId)?.basicEnergy))return;
         // Altaria ex Extra Boost is also HAND-only, and it needs an allied
         // Stage 2 Pokémon-ex. Hide the Power when it has no legal outcome,

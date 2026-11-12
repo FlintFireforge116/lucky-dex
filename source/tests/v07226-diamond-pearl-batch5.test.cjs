@@ -24,7 +24,7 @@ function attack(s,index=0,side='player',select=()=>null,pick=()=>null){s.activeS
 
 
 test('Stage 5 cards are registered with printed descriptions and validated effects',()=>{
- assert.equal(dp.coverage().total,130);assert.equal(dp.coverage().battleEnabled,96);
+ assert.equal(dp.coverage().total,130);assert.ok(dp.coverage().battleEnabled>=96);
  for(const n of added){const c=dp.cardById('dp1-'+n);assert.ok(c.battleEnabled,String(n));for(const a of c.attacks||[]){assert.ok(!a.text.includes('See the original card'),`${n}:${a.name}`);assert.deepEqual(fx.validateEffect(a.effect),[],`${n}:${a.name}`);}if(c.kind==='trainer')assert.deepEqual(fx.validateEffect(c.effect),[],String(n));}
 });
 test('New attack smoke tests execute as both player and CPU',()=>{
