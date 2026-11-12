@@ -1,8 +1,8 @@
 LUCKYDEX — MASTER PROJECT RULES AND DEVELOPMENT CONTRACT
 =========================================================
-Document version: 2.11
+Document version: 2.12
 Compiled: 12 November 2026
-Current source baseline inspected: v0.69.218 (EX Power Keepers v217 staged source plus v218 battle-effects extension; v216 builder restrictions retained)
+Current source baseline inspected: v0.69.219 (EX Power Keepers Stadium/Trainer effects stage 3 over v218; v216 builder restrictions retained)
 Recommended repository location: ~/lucky-dex/source/docs/LUCKYDEX_MASTER_RULES.txt
 Project: LuckyDex — Android application/PWA, managed with Termux and GitHub
 
@@ -642,7 +642,7 @@ PART 11 — EXPANSION REGISTER / CURRENT AUDIT BASELINE
   [CURRENT] v0.69.185 targeted tests for recent EX Deoxys changes were reported as 67 passing; the wider historical run reported 370 passing, 5 obsolete version/UI assertion failures. These are HISTORICAL test outcomes, not guarantees about any later build.
   [CURRENT] v0.69.186 restores EX Deoxys Ninjask Slash’s missing runtime damage rule and fixes next-turn bonus display for older sets. C-ATTACK-001 regression tests cover actual damage, visible previews, expiry, both players, and Weakness applied after base-power replacement.
   [CHECK] Recheck source availability and compatibility before claiming any given card/expansion is 'fully correct'; the existence of a card record does not prove every unusual interaction.
-  [CURRENT] EX Power Keepers (ex16) — 108 numbered English prints, staged in v0.69.217, continued v0.69.218. v218 battle-ready: 70/108 (54 Pokémon, 5 Trainers, 5 Special Energy, 6 collectible Basic Energy prints); 38 PARTIAL/gated. Source: tcg-classic-power-keepers.js. In this pass, verified Mawile, Cacturne, Combusken, Kabuto, Energy Removal 2 and EX16 Special Energy 87–91 with live engine outcome tests. Catalogue and CPU/player set pickers retain v217 integration. THESE 38 GATED CARDS ARE NOT BATTLE READY and remaining ungated legacy effects need a later card-by-card audit; no Android handset QA. See EX_POWER_KEEPERS_v0.69.218_STAGE2_AUDIT.md.
+  [CURRENT] EX Power Keepers (ex16) — 108 numbered English prints; v219 battle-enabled 84/108 (14 new since v218, including all 5 Stadiums and 4 choice-driven Trainers). 24 PARTIAL cards remain gated, including Fossils, complex evolved Powers, Pokémon-ex and Pokémon ★. Current live-outcome tests cover Stadium damage/Weakness/retreat/status, Altaria Drake healing, Baby Evolution, choice-driven Energy Recycle System and Energy Switch, Scott and Steven’s Advice, Banette and Mightyena. These 24 gated cards are NOT battle-ready, and the 84 enabled cards still need eventual full card-by-card audit and Android handset QA. See EX_POWER_KEEPERS_v0.69.219_STAGE3_AUDIT.md.
 
   [CURRENT] v0.69.187 adds EX Emerald (ex9), 107 registered cards including 11 Pokémon-ex, 11 Trainer cards, 4 physical Special Energy, 6 collectible-art Basic Energy cards, and secret Farfetch'd. Both player and CPU deck builders are registered for 30-card EX Emerald decks; direct attack targeting and effect-choice adapters are included. Printed card data source: Pokémon TCG data, cards/en/ex9.json (card text/card numbers checked 10 November 2026).
   [CURRENT] Tests: v07187-ex-emerald.test.cjs and v07187-ex-emerald-audit.test.cjs exercise all attacks through two random seeds, legal CPU/player deck construction, Form Change, Special Energy, discards, damage counters and conditional Powers/Bodies. Recent expansion suite v07172–v07187 passed 210/210 before the final targeting/Rare Candy assertions; final post-change count is in the patch release checks. Node tests do not replace touch-device QA.
@@ -865,6 +865,44 @@ Automated node suites: tests/v07200 through v07218, with the exact final
 pass count recorded in EX_POWER_KEEPERS_v0.69.218_STAGE2_AUDIT.md. Android
 choice overlays and CPU match duration still need device QA.
 
+v0.69.219 EX POWER KEEPERS STAGE 3 — SHARED STADIUMS AND REAL CHOICES
+----------------------------------------------------------------------------
+C-EX16-STADIUM-003 [LOCKED, 12 Nov 2026] All five EX Power Keepers
+Stadiums are two-sided continuous effects, active only while that Stadium
+is in play: Battle Frontier suppresses Poké-Powers AND Poké-Bodies on
+evolved Colorless/Darkness/Metal Pokémon; Drake’s Stadium reduces incoming
+attack damage to Active Colorless Pokémon by 10 AFTER Weakness/Resistance;
+Glacia’s Stadium removes Weakness only from non-ex Water Pokémon; Phoebe’s
+Stadium reduces Psychic Pokémon retreat Energy by two Colorless; Sidney’s
+Stadium prevents Sleep/Confusion/Paralysis on Darkness Pokémon and clears
+those conditions on entering play. Altaria #2’s Synergy Effect heals 10 at
+the between-turn checkpoint only while Drake’s Stadium is present and its
+Body is not suppressed.
+
+C-EX16-ENERGY-004 [LOCKED, 12 Nov 2026] Energy Recycle System lets the
+owner choose EITHER exactly 1 discarded Basic Energy to HAND or exactly
+3 discarded Basic Energy into the real PHYSICAL draw deck (when available).
+Find eligible Basic Energy in both the separate discard ledger AND any
+actual card discard; make each recovered type/card a real selection. Do NOT
+send the three-card mode to the Energy Zone. Energy Switch must choose an
+attached BASIC Energy unit on a source Pokémon and a DIFFERENT recipient;
+it must not silently consume/move Special Energy.
+
+C-EX16-SEARCH-005 [LOCKED, 12 Nov 2026] Scott searches for up to three
+real, eligible Supporter/Stadium cards in any mix, and the player can stop
+early. Steven’s Advice offers a genuine numeric draw choice up to the
+number of opposing Pokémon in play, capped by the current hand limit; it
+is not playable when the owner holds seven or more cards including Steven’s.
+Pichu’s Cry for Help searches only Lightning non-ex Pokémon. Baby Evolution
+chooses a real matching evolution from hand and removes all damage counters.
+
+[CHECK] EX16 Altaria Surprise currently uses a seeded BLIND random opposing
+hand-card selection, which correctly avoids exposing hidden choices but is
+not equivalent to user-selectable facedown position; improve the choice UI
+before claiming perfect printed-choice fidelity. The automated tests verify
+persistent state, not live Android touch selection. Maintain the 24-card
+gate and continue through remaining Fossils, Powers and ex/Star triggers.
+
 CHANGE HISTORY
 =======================================================================
 
@@ -912,5 +950,7 @@ CHANGE HISTORY
 2026-11-12 | Document 2.9 -> 2.10 | App v0.69.216 | [LOCKED] C-DECK-PARTNER-015, C-DECK-SUPPORT-016, C-UI-CHOICE-005. Removed ineffective Xatu/Swellow/Altaria ex support-only lines when no complete Stage 2 Pokémon-ex can be included; guarded random Basic -> inert support evolution and explicit focus constraints; stopped Feraligatr δ Lightning metadata-only Meganium δ Fighting partnership while retaining genuine printed in-play partner exceptions. Hidden choice-card fallback now stays hidden when card art succeeds, with fallback visible only when art fails. Added tests/v07216-classic-builder-choices.test.cjs (6 new tests); 211/211 selected v07203 + v07205–v07216 checks passed. The three previously documented EX2/EX3 cohesion assertions remain unresolved and pass/fail exactly as before. Source patch only; no phone/APK QA.
 
 2026-11-12 | Document 2.10 -> 2.11 | App v0.69.218 | [LOCKED] C-EX16-ENERGY-001, C-EX16-CHOICE-002. Added executable EX16 Darkness/Metal/Multi Energy reprints, owner-correct Energy Removal 2 target and attached-Energy selection, Mawile defender-selected hand discards, Cacturne conditional Stadium Poison, Combusken hand-Fire cure, Kabuto evolution search, Mawile Bench search, and Cyclone/Warp hand attachment switch choices. 70/108 enabled, 38 gated. All 290 selected v07200-v07218 Node regressions passed before final packaging. Source patch only, no device testing.
+
+2026-11-12 | Document 2.11 -> 2.12 | App v0.69.219 | [LOCKED] C-EX16-STADIUM-003, C-EX16-ENERGY-004, C-EX16-SEARCH-005. Enabled 14 additional Power Keepers prints (84/108 enabled, 24 gated). All five Stadium effects active in shared engine and Altaria between-turn healing; implemented explicit Energy Recycle System hand/deck selection, Basic-only Energy Switch, Scott, Steven’s Advice, Pichu and Wynaut Baby Evolution, Banette/Mightyena attacks. Expanded tests/v07219 and versioned audit. No APK/Android QA.
 
 END OF LUCKYDEX MASTER RULES

@@ -31,7 +31,7 @@ test('ex16 catalogue contains exactly 108 canonical cards with full print, art a
  assert.equal(ex16.cardById('ex16-108').deckEligible,false);
 });
 test('unsupported complex effects are not falsely marked as battle-ready',()=>{
- for(const n of [2,3,5,7,8,9,10,13,18,21,22,45,56,70,71,72,73,75,76,79,81,82,83,84,86,92,93,94,95,97,98,99,100,101,102]){
+ for(const n of [3,5,7,8,9,10,13,22,45,56,84,86,92,93,94,95,97,98,99,100,101,102]){
    const c=ex16.cardById('ex16-'+n);assert.equal(c.battleEnabled,false,c.id);assert.ok(c.support.reasons.length,c.id);
  }
  assert.equal(ex16.cardById('ex16-80').battleEnabled,true);
@@ -60,7 +60,7 @@ test('printed effects preserve statuses, Fossil identities, ex Prize rules and u
  assert.equal(ex16.cardById('ex16-94').prizeCards,2);
  assert.equal(ex16.cardById('ex16-100').pokemonStar,true);
  assert.equal(ex16.cardById('ex16-85').fossilHp,50);
- assert.ok(classic.validateDeck(['ex16-2']).errors.some(e=>e.includes('cannot occupy')||e.includes('not battle-ready')));
+ assert.ok(classic.validateDeck(['ex16-2']).errors.length>0, 'a single Stage 1 cannot form a valid 30-card deck');
 });
 
 

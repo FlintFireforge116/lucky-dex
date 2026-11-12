@@ -568,6 +568,7 @@
     if(state.format==='classic'&&data.cardById(slot?.cardId)?.retreatZeroAgainstEvolution&&!effects.abilitiesSuppressed(state,side,slot,data.cardById)&&['Stage 1','Stage 2'].includes(data.cardById(state.sides[side==='player'?'opponent':'player']?.active?.cardId)?.stage))return 0;
     if(state.format==='classic'&&pokemonOn(state.sides[side]).some(s=>s.cardId==='ex6-9'&&!effects.abilitiesSuppressed(state,side,s,data.cardById))&&/^(?:Nidoran [♀♂]|Nidorina|Nidorino|Nidoking)$/.test(ownerName))return 0;
     if(gym==='SNAPFLORIO-111'&&data.cardById(slot.cardId)?.stage==='Basic')stadiumCost-=1;
+    if(gym==='ex16-79'&&data.cardById(slot.cardId)?.types?.includes('Psychic'))stadiumCost-=2;
     if(state.format==='classic'&&gym==='ex4-78'&&!ownerName.startsWith("Team Aqua's"))stadiumCost+=1;
     if(state.format==='classic'&&gym==='ex3-85'&&data.cardById(slot.cardId)?.types?.some(t=>['Fire','Water'].includes(t)))stadiumCost-=1;
     if(gym==='sv1-167'&&data.cardById(slot.cardId)?.stage==='Basic')stadiumCost-=1;
@@ -911,6 +912,7 @@
       // Holon Supporters discard an additional hand card as a mandatory cost.
       if(state.format==='classic'&&['ex11-91','ex11-92','ex11-93','ex11-95','ex11-97'].includes(card.id)&&s.hand.length<2)return;
       if(card.id==='ex5-92'&&s.hand.length>7)return;
+      if(card.id==='ex16-83'&&s.hand.length>=7)return; // Steven's Advice counts the Supporter itself.
       // Pow! Hand Extension is playable only while behind on Prizes and with
       // an opposing Benched Pokémon available for either printed choice.
       if(card.id==='ex7-85'&&(s.prizes.length<=state.sides[side==='player'?'opponent':'player'].prizes.length||!state.sides[side==='player'?'opponent':'player'].bench.length))return;
@@ -1125,6 +1127,7 @@
     }
     if(state.format==='classic')for(const side of ['player','opponent'])for(const slot of pokemonOn(state.sides[side])){
       if(['ex12-80','ex13-93'].includes(slot.cardId)&&!effects.healingIsBlocked(state,slot,data.cardById))slot.damage=Math.max(0,Number(slot.damage||0)-10);
+      if(slot.cardId==='ex16-2'&&state.stadium?.cardId==='ex16-72'&&!effects.abilitiesSuppressed(state,side,slot,data.cardById)&&!effects.healingIsBlocked(state,slot,data.cardById))slot.damage=Math.max(0,Number(slot.damage||0)-10);
       if(state.stadium?.cardId==='ex12-72'&&data.cardById(slot.cardId)?.abilities?.some(a=>a.printedPowerType==='power'))
         slot.damage=Number(slot.damage||0)+10;
 
@@ -1624,6 +1627,7 @@
       if(state.stadium)state.sides[state.stadium.ownerSide].discard.push({uid:state.stadium.uid,cardId:state.stadium.cardId});
       state.stadium={...ref,ownerSide:side};s.stadiumUsed=true;
       if(card.id==='SNAPFLORIO-104')for(const who of ['player','opponent'])for(const slot of [state.sides[who].active,...state.sides[who].bench].filter(Boolean))if(data.cardById(slot.cardId)?.types?.some(t=>t==='Grass'||t==='Psychic'))slot.conditions={};
+      if(card.id==='ex16-82')for(const who of ['player','opponent'])for(const slot of [state.sides[who].active,...state.sides[who].bench].filter(Boolean))if(data.cardById(slot.cardId)?.types?.includes('Darkness'))for(const key of ['sleep','confusion','paralysis'])delete slot.conditions?.[key];
       for(const which of ['player','opponent']){
         state.sides[which].benchLimit=card.id==='gym1-124'?2:card.id==='SNAPFLORIO-108'?5:3;
         normalizeBenchSlots(state.sides[which]);
@@ -2134,6 +2138,8 @@
         if(state.stadium?.cardId==='neo1-97'&&attackerCard.types?.includes('Colorless'))damage=Math.max(0,damage-30);
       }
       if(state.format==='classic'&&damage>0&&!result.damageRules?.ignoreEffects&&toolsOf(defender).some(r=>['ex3-83','ex15-72'].includes(r.cardId)))damage=Math.max(0,damage-20);
+      // EX16 Drake's Stadium: active Colorless Pokémon receive -10 after matchup.
+      if(state.format==='classic'&&state.stadium?.cardId==='ex16-72'&&isActive&&data.cardById(defender.cardId)?.types?.includes('Colorless'))damage=Math.max(0,damage-10);
       if(state.format==='classic'&&damage>0&&Number(defender.ex6ExpandUntil||0)>=state.turnNumber)damage=Math.max(0,damage-10);
       if(damage>0&&!result.damageRules?.ignoreEffects){const coinGuard=effects.findPassiveRule(state,foeSide,defender,'coinDamageGuard',data.cardById);if(coinGuard){const heads=random(state)<0.5;state.log.push({type:'coin',side:foeSide,heads,reason:'coinDamageGuard',results:[heads]});if(heads)damage=coinGuard.preventAll?0:Math.max(0,damage-Number(coinGuard.reduction||0));}}
       if(state.format==='classic'&&damage>0&&!result.damageRules?.ignoreEffects){
