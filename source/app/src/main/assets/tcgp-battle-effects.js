@@ -863,7 +863,15 @@
       case 'unownQ':if(flip())for(const slot of neoSlots(ctx,'self'))if(ctx.cardById(slot.cardId)?.name?.startsWith('Unown ['))slot.attackGuard={type:'preventDamage',target:'self',effects:true,expiresTurn:ctx.state.turnNumber+1};break;
       case 'unownL':if(flip()){ctx.shuffle?.(ctx.state,ss.deck);ctx.shuffle?.(ctx.state,foe.deck);}break;
       case 'unownS':{const ref=ss.prizes?.[0];if(ref){ref.revealed=true;log({lookedAtPrize:ref.cardId});}break;}
-      case 'unownT':if(flip())log({opponentHand:foe.hand.map(r=>r.cardId),ownHand:ss.hand.map(r=>r.cardId)});break;
+      case 'unownT':{
+        // Tell reveals the opponent's HAND, never their deck. The player must
+        // be shown real card art, not only a log entry containing card IDs.
+        if(flip('Unown [T] Tell')){
+          const cards=foe.hand.map(r=>r.cardId),shown=ss.hand.map(r=>r.cardId);
+          ctx.state.log.push({type:'revealHand',side:ctx.side,revealedSide:'opponent',reason:'Unown [T] Tell',cards,sharedHand:shown});
+        }
+        break;
+      }
       case 'unownV':{if(!flip())break;const candidates=neoSlots(ctx,'self').filter(s=>s!==att&&ctx.cardById(s.cardId)?.name?.startsWith('Unown ['));if(candidates.length)choose('self','unownVPick',true,{nameContains:'Unown ['});break;}
       case 'unownVPick':{const s=selected(ss);if(!s||s===att||!ctx.cardById(s.cardId)?.name?.startsWith('Unown ['))break;ss.hand.push({uid:'neo4-v-'+ctx.state.turnNumber,cardId:s.cardId});ss.discard.push(...(s.specialEnergy||[]),...(s.tool?[s.tool]:[]));for(const [t,n] of Object.entries(s.energy||{}))recordDiscardedEnergy(ss,t,n);if(ss.active===s)ss.active=null;else ss.bench.splice(ss.bench.indexOf(s),1);break;}
       case 'gentleFlames':case 'beatdown':case 'splashAbout':case 'synchronize':break;
@@ -4159,7 +4167,7 @@
             if(!target||!targets.includes(target)||!ce?.basicEnergy)return;
             us.hand.splice(us.hand.indexOf(ref),1);
             target.energy=target.energy||{};target.energy[ce.subtype]=Number(target.energy[ce.subtype]||0)+1;
-            ctx.onEnergyAttached?.(target,ce.subtype,1);
+            ctx.onEnergyAttached?.(target,ce.subtype,1,{fromHand:true});
             ctx.state.log.push({type:'ex15ExtraBoost',side:ctx.side,targetUid:target.uid,energyType:ce.subtype});return;
           }
           if(ctx.resolvingChoice){const ref=us.hand[Number(c.choiceHandIndex)];if(!ref||!eligible.some(x=>x.uid===ref.uid))return;
@@ -4194,7 +4202,7 @@
           const choices=us.hand.map((ref,index)=>({ref,index})).filter(x=>card(x.ref)?.basicEnergy);
           if(e.step==='target'){if(ctx.resolvingChoice){if(c.choiceSkip)return;const target=chosen(us),ref=us.hand.find(r=>r.uid===e.refUid),type=card(ref)?.subtype;
               if(!targetList.includes(target)||!type||!card(ref)?.basicEnergy)return;us.hand.splice(us.hand.indexOf(ref),1);
-              target.energy=target.energy||{};target.energy[type]=Number(target.energy[type]||0)+1;ctx.onEnergyAttached?.(target,type,1);
+              target.energy=target.energy||{};target.energy[type]=Number(target.energy[type]||0)+1;ctx.onEnergyAttached?.(target,type,1,{fromHand:true});
               ctx.state.log.push({type:'ex15FellowBoost',side:ctx.side,targetUid:target.uid,energyType:type});ctx.endTurn?.();return;}
             if(targetList.length)pokemonPick(us,{excludeUids:my.filter(p=>!targetList.includes(p)).map(p=>p.uid),optional:true});return;}
           if(ctx.resolvingChoice){if(c.choiceSkip)return;const x=choices.find(x=>x.index===Number(c.choiceHandIndex));if(x)ex15Rule({...e,step:'target',refUid:x.ref.uid},{...ctx,resolvingChoice:false});return;}

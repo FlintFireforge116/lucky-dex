@@ -1,8 +1,8 @@
 LUCKYDEX — MASTER PROJECT RULES AND DEVELOPMENT CONTRACT
 =========================================================
-Document version: 2.27
+Document version: 2.28
 Compiled: 13 November 2026
-Current inspected source: v0.69.234. All 124 Mysterious Treasures prints are collection-registered and battle-enabled; there are no remaining gated dp2 cards. All three LV.X cards and the 130/130 Diamond & Pearl Base cards remain enabled. Historical appendices below record their own stage counts; the latest Appendix v2.27 supersedes their [CURRENT] coverage figures. Android APK/device QA and the separate independent full-set audit remain pending.
+Current inspected source: v0.69.235. All 124 Mysterious Treasures prints are collection-registered and battle-enabled; there are no remaining gated dp2 cards. An independent source-level outcome, engine, metadata, CPU, and cross-set pass is documented in MYSTERIOUS_TREASURES_v0.69.235_FULL_AUDIT.md. Historical appendices below record earlier stage counts; latest 2.28 supersedes earlier [CURRENT] coverage. Android APK and device QA remain pending.
 Recommended repository location: ~/lucky-dex/source/docs/LUCKYDEX_MASTER_RULES.txt
 Project: LuckyDex — Android application/PWA, managed with Termux and GitHub
 
@@ -1478,3 +1478,49 @@ APPENDIX — v2.27 / v0.69.234 MYSTERIOUS TREASURES COMPLETION PASS
 [LOCKED] CPU Wager chooses rock/paper/scissors without reading the hidden opponent choice and varies its choice on ties; CPU decides winner/loser draws, conditional cancellation, poison, guessing, discarded cards and protective reactions rather than always blindly choosing the first option.
 [CHECK] This is a full *implementation* pass with automated catalog, attack path, Trainer path, CPU, and focused effect tests. It is NOT a substitute for a separately requested independent card-by-card full audit or for APK/on-device UI testing. Continue with the separate audit next, rather than treating the existence of a valid effect object as proof of every printed interaction.
 2026-11-13 | Document 2.26 -> 2.27 | App v0.69.234 | MT Stage 4 completes 124/124 and documents the final 18 cards, the shared reactive-Power, Fossil, Tool, Energy counting, copied-attack, coin/turn and CPU Wager rules. Details and regression evidence in docs/MYSTERIOUS_TREASURES_v0.69.234_COMPLETE.md.
+
+
+=======================================================================
+APPENDIX v2.28 — 13 NOVEMBER 2026 — v0.69.235
+=======================================================================
+[LOCKED] C-REVEAL-HAND-022: When a card instructs a player to LOOK AT an
+opponent's hand, show an actual visible card-art hand reveal (not a silent
+battle-log array or a deck browser) only after the relevant coin outcome;
+respect tails and conditional 'may'. Neo Destiny Unown [T] Tell (neo4-88)
+reveals the opponent's HAND on heads, then shares the user's hand to the
+opponent; it does not reveal the physical deck. Hand reveal needs an explicit
+Continue/Close and must follow the visible coin animation, not obscure it.
+This is a general cross-era UI convention. Verify with device QA.
+
+[LOCKED] C-ENERGY-REACTIVE-023: A physical Basic Energy CARD placed onto a
+Pokémon by a Poké-Power FROM HAND is a real fromHand energy-attachment event,
+including Altaria ex δ Extra Boost and Latias ex δ Fellow Boost. It does
+not consume the normal basic-Zone attachment; the event must reach matching
+Energy-attached triggers for recipient and opponent. Mysterious Treasures
+Electivire LV.X Shocking Tail deals the printed two damage counters for
+such an opposing attachment. A generated Basic Energy from the Classic
+Energy Zone emits fromZone instead and MUST NOT be mistaken for fromHand.
+
+[CURRENT] C-ALTARIA-UI-024: If Extra Boost is absent, the Pokémon action
+sheet explains the real prerequisite: physical Basic Energy in HAND,
+Stage 2 Pokémon-ex beneficiary, unused once-per-turn Power, and absence
+of Power suppression. Neither Rainbow nor Double Colorless is physical
+Basic Energy. This is an explanatory UI change; printed eligibility
+was already correct and is preserved for both players.
+
+[CURRENT] Postrelease v0.69.235 source audit: 124/124 battle enabled;
+111 Pokémon, 10 Trainers, 3 Energy; 168 attack prints and 37 named
+Powers/Bodies; 336 attack-seat path executions, 20 Trainer-seat paths,
+24 legal set-only CPU decks across eight types, eight simulated CPU
+matches with no illegal actions. Completed smaller Node runs 318/318,
+200/200, 84/84, for 602 distinct passing checks. See file
+MYSTERIOUS_TREASURES_v0.69.235_FULL_AUDIT.md for the full numbered
+ledger and limitations. APK was NOT built or device-tested. Existing
+historical unrelated defects are not declared fixed by these checks.
+
+CHANGE HISTORY
+2026-11-13 | 2.27 -> 2.28 | v0.69.235 | Added conditional Altaria
+Extra Boost explanation, real Neo Destiny Unown [T] heads reveal of
+opponent HAND, explicit fromHand notifications for Power-attached
+Basic Energy, Electivire LV.X Shocking Tail cross-era test, 124-card
+full structural and integration audit, and upgraded Android versionCode.
