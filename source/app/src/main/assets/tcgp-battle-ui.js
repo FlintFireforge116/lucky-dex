@@ -1025,7 +1025,14 @@
   }
   function choiceCardTileHtml(action,index){
     const model=choiceCardModel(action,index),selected=battleChoiceSelectionIndex===index;
-    return `<button type="button" class="tcgp-live-choice-card ${model.art?'':'text-option'} ${selected?'selected':''}" data-tcgp-action="select-choice-card" data-action-index="${index}" aria-pressed="${selected}" aria-label="${esc(model.title)} ${esc(model.detail)}">${model.art?`<img src="${esc(model.art)}" alt="${esc(model.title)}" loading="lazy" onerror="this.hidden=true;this.nextElementSibling.hidden=false"><span class="tcgp-live-choice-placeholder" hidden>${esc(model.title)}</span>`:`<span class="tcgp-live-choice-text">${esc(model.title)}</span>`}${(!model.art||action.choiceAttackIndex!=null||action.choiceLabel)?`<small>${esc(model.optionLabel||model.detail)}</small>`:''}</button>`;
+    // Artwork-only card picks shouldn't repeat the card name or BASIC ENERGY.
+    // But meaningful labels (copied attacks, outcomes, different targets)
+    // must stay visible so two identical pieces of art are never ambiguous.
+    const optionLabel=String(action.choiceLabel||'').trim().toLowerCase().replace(/\s+/g,' '),
+      cardName=String(model.title||'').trim().toLowerCase(),
+      redundant=optionLabel===cardName||['find','choose','select','take','get','pick'].some(verb=>optionLabel===verb+' '+cardName),
+      describe=!model.art||action.choiceAttackIndex!=null||!!(action.choiceLabel&&!redundant);
+    return `<button type="button" class="tcgp-live-choice-card ${model.art?'':'text-option'} ${selected?'selected':''}" data-tcgp-action="select-choice-card" data-action-index="${index}" aria-pressed="${selected}" aria-label="${esc(model.title)} ${esc(model.detail)}">${model.art?`<img src="${esc(model.art)}" alt="${esc(model.title)}" loading="lazy" onerror="this.hidden=true;this.nextElementSibling.hidden=false"><span class="tcgp-live-choice-placeholder" hidden>${esc(model.title)}</span>`:`<span class="tcgp-live-choice-text">${esc(model.title)}</span>`}${describe?`<small>${esc(model.optionLabel||model.detail)}</small>`:''}</button>`;
   }
   function liveEffectChoiceCenterHtml(){
     const battle=currentBattle,pending=battle?.pendingChoice;
