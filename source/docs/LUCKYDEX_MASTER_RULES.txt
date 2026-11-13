@@ -1,8 +1,8 @@
 LUCKYDEX — MASTER PROJECT RULES AND DEVELOPMENT CONTRACT
 =========================================================
-Document version: 2.24
+Document version: 2.25
 Compiled: 13 November 2026
-Current inspected source: v0.69.230; v0.69.231 integrates all 124 Mysterious Treasures collector entries, with 72 battle-ready and 52 still restricted. Do not mislabel this as full-set implementation. Diamond & Pearl Base remains 130/130 enabled. Android QA and full Mysterious Treasures outcome audit are pending.
+Current inspected source: v0.69.232; all 124 Mysterious Treasures collector entries are registered, 91 battle-enabled and 33 still restricted. All three Mysterious Treasures LV.X prints are now battle-enabled. Diamond & Pearl Base remains 130/130 enabled. Android QA and the independent full Mysterious Treasures audit remain pending.
 Recommended repository location: ~/lucky-dex/source/docs/LUCKYDEX_MASTER_RULES.txt
 Project: LuckyDex — Android application/PWA, managed with Termux and GitHub
 
@@ -1429,3 +1429,20 @@ APPENDIX — v2.24 / v0.69.231 MYSTERIOUS TREASURES INITIAL INTEGRATION
 [LOCKED] Multi Energy provides one Energy of any type when alone and only Colorless when another Special Energy is attached. Darkness and Metal Special Energy printed bonuses apply only to matching Pokémon.
 [LOCKED] Do not substitute a Basic Energy-zone draw for printed effects that explicitly say Energy from hand or discard.
 [CHECK] Mysterious Treasures Fossil-as-Basic rules, Lake Boundary multiplicative Weakness, reactive Power Cancel, the new Unown Powers and Level-Up cards remain gated; they need actual engine behaviour and choice/KO tests.
+
+
+=======================================================================
+APPENDIX — v2.25 / v0.69.232 MYSTERIOUS TREASURES STAGE 2
+=======================================================================
+[CURRENT] Second incremental implementation stage, following v0.69.231. 91/124 Mysterious Treasures cards now battle-enabled: 83 Pokémon, 5 Trainers, 3 Special Energy. 33 remain restricted; not a completed expansion and not yet the independently requested complete-set audit. This CURRENT statement supersedes the historical 72/124 count in v2.24 Appendix.
+[LOCKED] LV.X: Electivire (#121), Lucario (#122), and Magmortar (#123) level up only matching Active Pokémon from the hand, preserve evolution stack and inherited attack options, and must not retrigger ordinary evolution triggers. Deckbuilder must build the prerequisite evolutionary chain.
+[LOCKED] Electivire LV.X Shocking Tail reacts to opposing Energy attached FROM HAND to any opposing Pokémon, not to Energy Zone attachment. Pulse Barrier removes opposing Tools/Stadiums and grants opponent-turn attack/effect prevention only when it removes at least one qualifying card.
+[LOCKED] Lucario LV.X Stance is offered ONLY on leveling up from the hand, may be declined, and is not an ordinary reusable turn Power. Close Combat raises damage received during the next opposing turn.
+[LOCKED] Magmortar LV.X Flame Bluster discards two attached Fire Energy, targets one opposing Pokémon and locks only Flame Bluster on the next own turn. Torrid Wave Burn applies three damage counters between turns, not the standard Burn amount.
+[LOCKED] Optional attacks MUST show all outcomes and real consequences in legal-action labels: Aggron Hard Metal (60 or 100 with 40 recoil), Feraligatr Energy Cyclone (chosen hand Energy count), and Larvitar Mountain Bite (keep deck or discard top and fall Asleep).
+[LOCKED] Recovery of Basic Energy from the special LuckyDex Energy discard zone MUST restore the correct printed Energy identity. Diamond & Pearl Base #123 Grass, #124 Fire, #125 Water, #126 Lightning, #127 Psychic, #128 Fighting, #129 Darkness, #130 Metal; never swap types merely because numerically adjacent IDs looked plausible.
+[LOCKED] All moved cards must come from the authentic source: printed cards from hand/deck/discard, Basic Energy from zone only for approved conversion. Aggron Heap Up shuffles actual discarded Energy cards plus reconstructed Basic Energy tokens of matching types into the deck.
+[LOCKED] Reactive Abomasnow Glacier Snow, Sandslash Spike Armor and Glalie/Dewgong damage reductions must be tested through real attacks, not merely effect registration. Evolutionary Vitality on Croconaw must move real Energy cards from the top five of the deck. Ninetales Color Shift must use the selected target's type until turn end.
+[CHECK] Fossil-as-Pokémon Trainer cards #116 and #117, Lake Boundary weakness conversion, and advanced reactive Power/Unown mechanics remain unimplemented; 33 cards stay gated. The user still requests finishing the entire set before the separate complete-set audit.
+[CHECK] Automated selected cross-set Node regressions pass, but do not substitute for APK/on-device UI, animation, CPU decision-quality or full scenario testing.
+2026-11-13 | Document 2.24 -> 2.25 | App v0.69.232 | MT Stage 2: enabled 19 additional prints including 3 LV.X; 91/124 play-ready, 33 gated. Added focused outcome tests for ability triggers, turn locks, choice semantics, statuses and Energy movement; staged two-batch v072xx regression 539/539 passing. Android QA not performed.

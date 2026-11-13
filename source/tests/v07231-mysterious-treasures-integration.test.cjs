@@ -37,7 +37,7 @@ test('Every enabled Mysterious Treasures attack selectable and resolves for play
   if(!allowed.length){failures.push(`${c.id} ${att.name} ${side}: not selectable`);continue;}
   try{core.applyAction(s,side,allowed[0]);for(let j=0;j<30&&s.phase==='effectChoice';j++){
    const actions=core.legalActions(s,s.choiceSide).filter(a=>a.type==='effectChoice');if(!actions.length)throw Error('No decisions');
-   core.applyAction(s,s.choiceSide,actions.find(a=>!a.choiceSkip)||actions[0]);}
+   core.applyAction(s,s.choiceSide,(j>0?actions.find(a=>a.choiceSkip):null)||actions.find(a=>!a.choiceSkip)||actions[0]);}
    if(s.phase==='effectChoice')throw Error('Effect choice not resolved');
   }catch(e){failures.push(`${c.id} ${att.name} ${side}: ${String(e.message||e)}`);}
  }

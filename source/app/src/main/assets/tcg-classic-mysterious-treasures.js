@@ -144,6 +144,28 @@ const search=(where,amount,filter)=>({type:'searchChosen',source:where,amount,fi
 const selfGuard=(amount=999)=>({type:'preventDamage',target:'self',duration:'opponentTurn',...(amount!==999?{maxDamage:amount}:{})});
 const EFFECTS={
  // No invented move text or vanilla approximations: each enabled attack below is mapped to its effect.
+ // Stage 2: selected printed effects, conditional evolution attacks and Level-Up cards.
+ 1:[custom(1,'heapUp'),custom(1,'hardMetal')],
+ 8:[custom(8,'energyCyclone'),custom(8,'breakingTail')],
+ 19:[coin(bench(10))],
+ 25:[coin(seq({type:'actionLock',side:'opponent',cardType:'Trainer',duration:'opponentTurn'},{type:'actionLock',side:'opponent',cardType:'Supporter',duration:'opponentTurn'}))],
+ 32:[{type:'discardEnergyCard',target:'self',energyType:'Fire',amount:1}],
+ 44:[lock('retreat')],
+ 45:[status('sleep','self')],
+ 61:[custom(61,'spikeArmor'),custom(61,'poisonSpike')],
+ 87:[custom(87,'mountainBite'),noop],
+ 12:[{type:'attackCoinGate',target:'opponentActive',duration:'opponentTurn'},custom(12,'flameDrum')],
+ 7:[custom(7,'sprouting'),custom(7,'leafTornado')],
+ 24:[custom(24,'stringBomb'),custom(24,'nutritionalSupport')],
+ 68:[custom(68,'wakePunch'),{type:'coinDamage',coins:3,amount:30,mode:'replace'}],
+ 70:[noop,custom(70,'throwOff')],
+ 81:[custom(81,'electromagneticJam')],
+ 82:[custom(82,'directHitBomb')],
+ 102:[noop,custom(102,'willpower')],
+ 121:[custom(121,'pulseBarrier')],
+ 122:[{type:'modifier',stat:'damageTaken',target:'self',amount:30,duration:'opponentTurn'}],
+ 123:[custom(123,'flameBluster')],
+ 12:[{type:'attackCoinGate',target:'opponentActive',duration:'opponentTurn'},custom(12,'flameDrum')],
  7:[custom(7,'sprouting'),custom(7,'leafTornado')],
  13:[seq(coin(status('poison')),coin(status('burn')),coin(status('paralysis'))),custom(13,'counterattack')],
  22:[custom(22,'callIn'),custom(22,'strangeBell')],
@@ -222,6 +244,7 @@ Object.assign(EFFECTS,{
   105:[seq({type:'removeStatus',target:'self'}, {type:'healSelf',amount:20},status('sleep','self')),custom(105,'sweetPalm')],
 });
 const READY=new Set([
+ 1,7,8,12,19,24,25,32,44,45,61,68,81,82,87,102,121,122,123,
  13,22,27,28,33,35,38,40,41,47,48,49,50,51,53,54,55,56,57,58,59,60,62,63,64,71,72,74,75,76,77,78,79,83,84,85,86,89,90,91,92,95,96,97,98,99,100,101,103,104,106,107,108
 ]);
 
@@ -298,8 +321,37 @@ const PRINTS={
  107:['Deal 10 damage to an opposing Benched Pokémon.'],
  108:['On heads Confuse the Defending Pokémon.',''],
 };
+Object.assign(PRINTS,{
+ 1:['Return all discarded Energy cards to the deck and shuffle; if any are Special Metal Energy, +30 damage.', 'Option: 60 damage, or 100 damage with 40 recoil.'],
+ 8:['Choose Energy cards from your hand, return each chosen card to the deck and shuffle; deal 20 per card.', 'Discard a random unknown card from the opponent’s hand.'],
+ 19:['On heads also deal 10 to each opposing Benched Pokémon.'],
+ 25:['On heads opponent may not play Trainers or Supporters next turn.'],
+ 32:['Discard an attached Fire Energy.'],
+ 44:['Defending Pokémon cannot retreat next turn.'],
+ 45:['Deal 60 and make Dewgong Asleep.'],
+ 61:['If Sandslash is damaged by the opponent’s attack, place four damage counters on that attacker, even if Sandslash is KO’d.', 'Poison the Defending Pokémon if it already has damage counters.'],
+ 87:['You may discard the top deck card for +10 damage and put Larvitar to Sleep.', ''],
+ 12:['Attack-blocking Smoke Bomb: the Defending Pokémon must flip a coin to attack next turn.', 'Unless Magby is in the evolution stack, discard two Energy cards from your hand or this attack does nothing.'],
+ 7:['Search your deck/ordered Energy supply for Grass Energy and attach it to Celebi.', 'You may move any number of Basic Grass Energy from your Pokémon to your other Pokémon.'],
+ 24:['Flip a coin for every Basic Energy attached to Exeggutor and the Defending Pokémon; 30 damage per heads.', 'Search your deck/ordered Energy supply for up to two Grass Energy and attach them to any of your Pokémon.'],
+ 68:['If Vigoroth evolved from a Sleeping Slakoth this turn, the base damage is 60.', 'Flip three coins; 30 damage per heads.'],
+ 70:['','Choose an opposing Pokémon, discard its Pokémon Tools BEFORE dealing 20 damage.'],
+ 81:['On heads your opponent cannot attach Energy from hand to the Active Pokémon next turn.'],
+ 82:['Flip a coin per Energy on Exeggcute; deal 10 damage per heads to a chosen opposing Pokémon.'],
+ 102:['','On heads Spheal’s Rollout base damage becomes 40 on its next turn.'],
+ 121:['Discard all opposing Pokémon Tools and Stadiums. If you discard any, prevent attacks and their effects against Electivire during the opponent’s next turn.'],
+ 122:['Do 80 damage; Lucario takes 30 more damage from attacks on the opponent’s next turn.'],
+ 123:['Discard two attached Fire Energy. Choose one opposing Pokémon and deal 100 damage; Flame Bluster is unavailable on your next turn.']
+});
 const BABIES={42:'Chimecho',52:'Chansey',88:'Magmar',93:'Pikachu'};
-const POWER_READY={16:{name:'Firestarter',text:'Once during your turn, attach a Fire Energy card from your discard pile to one of your Benched Pokémon.',rule:'dp2:16:firestarter'},94:{name:'Electro Recycle',text:'If Pichu is under Pikachu, once during your turn retrieve a Lightning Energy from your discard pile to your hand.',rule:'dp2:94:electroRecycle'}};
+const POWER_READY={
+ 19:{name:'Glacier Snow',type:'triggered',event:'damagedByAttack',oncePerTurn:false,text:'When Active Abomasnow is damaged by an attack (even if knocked out), put the attacking Pokémon Asleep.',rule:'dp2:19:glacierSnow'},
+ 32:{name:'Color Shift',type:'activated',oncePerTurn:true,text:'Choose an opposing Pokémon; Ninetales becomes its type until end of this turn.',rule:'dp2:32:colorShift'},
+ 44:{name:'Evolutionary Vitality',type:'triggered',event:'evolved',fromHandOnly:true,oncePerTurn:false,text:'When evolved from hand, reveal the top five cards, take all Energy cards into hand and shuffle the rest.',rule:'dp2:44:evolutionaryVitality'},
+ 121:{name:'Shocking Tail',type:'triggered',event:'opponentEnergyAttached',activeOnly:true,disabledByStatus:false,oncePerTurn:false,text:'While Electivire LV.X is Active, put two damage counters on each opposing Pokémon receiving Energy attached from hand.',rule:'dp2:121:shockingTail'},
+ 122:{name:'Stance',type:'triggered',event:'levelUp',fromHandOnly:true,oncePerTurn:true,text:'On leveling up Active Lucario from hand, you may prevent all effects of the opponent’s next attack.',rule:'dp2:122:stance'},
+ 123:{name:'Torrid Wave',type:'activated',activeOnly:true,oncePerTurn:true,disabledByStatus:true,text:'Once per turn while Active, Burn the Defending Pokémon; this Burn deals three damage counters between turns.',rule:'dp2:123:torridWave'},
+ 16:{name:'Firestarter',text:'Once during your turn, attach a Fire Energy card from your discard pile to one of your Benched Pokémon.',rule:'dp2:16:firestarter'},94:{name:'Electro Recycle',text:'If Pichu is under Pikachu, once during your turn retrieve a Lightning Energy from your discard pile to your hand.',rule:'dp2:94:electroRecycle'}};
 const TRAINER_TEXT={109:'Put a card from your hand on top of your deck, then search your deck for a Pokémon and put it into your hand. Shuffle your deck.',110:'Look at the bottom seven cards of your deck. Put one Pokémon from those cards into your hand, return the others and shuffle.',113:'Choose up to three Pokémon and Basic Energy cards from your discard pile and shuffle them into your deck.',114:'Reveal cards from your deck until you reveal a Pokémon. Put that Pokémon into your hand and shuffle the other cards back into your deck.',124:'Flip three coins. For each heads, choose one Pokémon in your discard pile and put it into your hand.'};
 const TRAINER_EFFECTS={109:{type:'neoRule',rule:'dp2:109:bebe'},110:{type:'neoRule',rule:'dp2:110:dusk'},113:{type:'neoRule',rule:'dp2:113:nightMaintenance'},114:{type:'neoRule',rule:'dp2:114:quick'},124:{type:'neoRule',rule:'dp2:124:timeSpace'}};
 for(const n of [109,110,113,114,124,118,119,120])READY.add(n);
@@ -330,7 +382,7 @@ function parse(row){
      }),isLevelX:stage==='Level-Up',levelUpFrom:stage==='Level-Up'?from:null,
      text:stage==='Level-Up'?'Level up only your Active Pokémon. Retain attacks and Powers from the previous level.':undefined});
    if(BABIES[n]&&card.abilities.length){card.abilities[0]={name:'Baby Evolution',type:'activated',printedPowerType:'power',oncePerTurn:true,disabledByStatus:true,text:'Once during your turn, evolve this Baby Pokémon into '+BABIES[n]+' from your hand and remove its damage counters.',effect:{type:'neoRule',rule:'dp1:babyEvolve',targetName:BABIES[n]}};}
-   if(POWER_READY[n]&&card.abilities.length){const p=POWER_READY[n];card.abilities[0]={name:p.name,type:'activated',printedPowerType:'power',oncePerTurn:true,disabledByStatus:true,text:p.text,effect:{type:'neoRule',rule:p.rule}};}
+   if(POWER_READY[n]&&card.abilities.length){const p=POWER_READY[n];card.abilities[0]={name:p.name,type:p.type||'activated',printedPowerType:n===121?'body':'power',oncePerTurn:p.oncePerTurn??true,disabledByStatus:p.disabledByStatus??(p.type==='triggered'?false:true),activeOnly:!!p.activeOnly,event:p.event,fromHandOnly:!!p.fromHandOnly,text:p.text,effect:{type:'neoRule',rule:p.rule}};}
    const full=[...card.attacks.map(a=>a.text),...card.abilities.map(a=>a.text)].join(' ').toLowerCase();
    const types=[...new Set(card.attacks.flatMap(a=>[...a.cost].filter(s=>s!=='C').map(s=>T[s])))];
    const roles=new Set();if(/draw|hand/.test(full))roles.add('draw');if(/search|recover|retrieve/.test(full))roles.add('search');
