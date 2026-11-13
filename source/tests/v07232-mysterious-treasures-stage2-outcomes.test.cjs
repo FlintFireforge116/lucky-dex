@@ -18,7 +18,7 @@ function resolve(s,picker){const chosen=[];for(let n=0;n<40&&s.phase==='effectCh
 function attack(s,i,picker){const acts=core.legalActions(s,'player').filter(a=>a.type==='attack'&&a.attackCardId===s.sides.player.active.cardId&&a.attackIndex===i);assert.ok(acts.length,`Cannot choose ${s.sides.player.active?.cardId}:${i}`);core.applyAction(s,'player',acts[0]);resolve(s,picker);return s;}
 function level(s,id,pick){s.sides.player.hand.unshift({uid:'lvx-'+id,cardId:id});const a=core.legalActions(s,'player').find(x=>x.type==='evolve'&&x.cardId===id&&x.target==='active');assert.ok(a,'LV.X not legal '+id);core.applyAction(s,'player',a);resolve(s,pick);return s;}
 test('Stage 2 cards enabled only when their attacks and powers are implemented',()=>{
- assert.equal(mt.CARDS.length,124);assert.equal(mt.coverage().battleEnabled,106);
+ assert.equal(mt.CARDS.length,124);assert.equal(mt.coverage().battleEnabled,124);
  for(const c of mt.CARDS.filter(c=>c.battleEnabled))for(const x of [...(c.attacks||[]),...(c.abilities||[])])assert.deepEqual(fx.validateEffect(x.effect),[],c.id+' '+x.name);
  assert.equal(mt.cardById('dp2-70').battleEnabled,true,'Aipom tool removal implemented before damage');
 });

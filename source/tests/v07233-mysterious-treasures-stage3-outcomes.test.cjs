@@ -21,10 +21,10 @@ function attack(s,i,pick){const a=core.legalActions(s,'player').find(x=>x.type==
 function power(s,id,pick){const a=core.legalActions(s,'player').find(x=>x.type==='ability'&&x.cardId===id);assert.ok(a,'Missing power '+id);core.applyAction(s,'player',a);resolve(s,pick);return s;}
 const attackLog=s=>s.log.filter(x=>x.type==='attack').at(-1);
 
-test('Stage 3 catalogue and effects are fully supported, other prints remain gated',()=>{
- assert.equal(mt.CARDS.length,124);assert.equal(mt.coverage().battleEnabled,106);
+test('Stage 3 effects stay supported when the final 18 Mysterious Treasures prints are activated',()=>{
+ assert.equal(mt.CARDS.length,124);assert.equal(mt.coverage().battleEnabled,124);
  for(const c of mt.CARDS.filter(c=>c.battleEnabled))for(const a of [...(c.attacks||[]),...(c.abilities||[])])assert.deepEqual(fx.validateEffect(a.effect),[],`${c.id} ${a.name}`);
- for(const n of [2,3,4,10,18,21,23,26,30,36,37,39,43,65,67,115,116,117])assert.equal(mt.cardById('dp2-'+n).battleEnabled,false,n);
+ for(const n of [2,3,4,10,18,21,23,26,30,36,37,39,43,65,67,115,116,117])assert.equal(mt.cardById('dp2-'+n).battleEnabled,true,n);
 });
 
 test('Bronzong Shady Stamp Confuses and Miracle Oracle draws then discards a chosen non-Energy',()=>{

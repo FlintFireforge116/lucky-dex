@@ -54,7 +54,9 @@ test('All enabled Mysterious Treasures Trainers offer legal plays from both seat
   if(!plays.length){failures.push(c.id+' '+side+' no play');continue;}
   try{core.applyAction(s,side,plays[0]);for(let j=0;j<30&&s.phase==='effectChoice';j++){
    const options=core.legalActions(s,s.choiceSide).filter(a=>a.type==='effectChoice');if(!options.length)throw Error('No choice actions');
-   core.applyAction(s,s.choiceSide,options.find(a=>!a.choiceSkip)||options[0]);}
+   const rule=s.pendingChoice?.effect?.rule,stage=s.pendingChoice?.effect?.stage;
+   const selected=(rule==='dp2:115:teamGalacticsWager'&&stage==='foeRock'?options.find(a=>a.choiceOption===2):null)||options.find(a=>!a.choiceSkip)||options[0];
+   core.applyAction(s,s.choiceSide,selected);}
    if(s.phase==='effectChoice')throw Error('Effect unresolved');}
   catch(e){failures.push(c.id+' '+side+' '+e.message);}
  }

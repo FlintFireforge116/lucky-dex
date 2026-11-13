@@ -385,6 +385,35 @@
     // leakage. Choose from the actual legal set instead.
     if(state.format==='classic'&&state.phase==='effectChoice'){
       const pending=state.pendingChoice||{},rule=String(pending.effect?.rule||'');
+      // Mysterious Treasures (dp2): pick opposing-player decisions on their
+      // own merits. Wager uses a public-state-derived choice, never the hidden
+      // opponent selection, and changes its selection after an RPS tie.
+      if(rule.startsWith('dp2:')&&pending.kind==='option'){
+        const stage=String(pending.effect?.stage||''),choose=n=>legal.find(a=>a.type==='effectChoice'&&a.choiceOption===n);
+        if(rule==='dp2:115:teamGalacticsWager'){
+          if(stage==='rock'||stage==='foeRock'){
+            const round=Number(state.dp2WagerRound||0);
+            let hash=((state.rngState>>>0)^Math.imul(round+1,0x9e3779b9)^(side==='player'?0x51cc2341:0xa72d6d8f))>>>0;
+            hash^=hash>>>16;hash=Math.imul(hash,0x7feb352d)>>>0;hash^=hash>>>15;
+            return choose(hash%3)||legal[0];
+          }
+          const cap=stage==='drawLoser'?3:6,me=state.sides[side];
+          if(stage==='drawUs'||stage==='drawFoe'||stage==='drawLoser'){
+            const n=Math.min(cap,Math.max(0,(me?.deck||[]).length),Math.max(0,Number(me?.handLimit||8)-(me?.hand||[]).length));
+            return choose(n)||legal[0];
+          }
+        }
+        if(rule==='dp2:3:charityTail'&&stage==='offer'){
+          const me=state.sides[side],active=me?.active,health=Number(data.cardById(active?.cardId)?.hp||0)-Number(active?.damage||0);
+          return choose(me?.hand?.length>=2&&(health<=80||me.hand.length>3)?1:0)||legal[0];
+        }
+        if(rule==='dp2:2:powerCancel'&&stage==='offer')return choose(state.sides[side]?.hand?.length>=4?1:0)||legal[0];
+        if(rule==='dp2:18:memoryOut'&&stage==='offer')return choose(1)||legal[0];
+        if(rule==='dp2:23:evolutionaryToxic'&&stage==='offer')return choose(state.sides[foeOf(side)]?.active?.conditions?.poison?0:1)||legal[0];
+        if(rule==='dp2:39:freezeUp'&&stage==='offer')return choose(1)||legal[0];
+        if(rule==='dp2:39:iceBind'&&stage==='decision')return choose(state.sides[side]?.hand?.length>1?0:legal.filter(a=>a.type==='effectChoice').length-1)||legal[0];
+        if(rule==='dp2:30:trickPlay'&&stage==='guess')return choose((Number(state.turnNumber||0)+(state.rngState>>>0))%2)||legal[0];
+      }
       // EX Power Keepers Bench/evolution Powers explicitly say 'may'. The
       // default first-option policy blindly burned/injured our own Active
       // with a Star, even when the opponent gained the same benefit. Evaluate

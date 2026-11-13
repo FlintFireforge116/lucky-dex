@@ -1,8 +1,8 @@
 /* LuckyDex Classic TCG — Diamond & Pearl: Mysterious Treasures (dp2).
  * 124 unique collector-number prints (123/123 + Time-Space Distortion 124).
  * Historical printed metadata: PokemonTCG/pokemon-tcg-data cards/en/dp2.json.
- * Only cards with executed, modeled effects are battle-enabled; others are
- * collection-visible and excluded from CPU and Test Lab battle until audited.
+ * All 124 collector prints now have modeled Classic battle effects and
+ * may be used in CPU decks and the Test Lab.
  */
 (function(root,factory){const api=factory();if(typeof module==='object'&&module.exports)module.exports=api;if(root)root.LuckyDexClassicTCGMysteriousTreasures=api;})(typeof globalThis!=='undefined'?globalThis:this,function(){'use strict';
 const SET={id:'dp2',name:'Mysterious Treasures',series:'Diamond & Pearl',releaseDate:'2007-08-01',cardCount:124,printedTotal:123};
@@ -237,8 +237,7 @@ const EFFECTS={
  107:[bench(10)],
  108:[coin(status('confusion')),noop],
 };
-// The set's fully implemented battle subset is explicit. Other prints remain available
-// in the collection, but cannot be autobuilt, selected in Test Lab, or played in Classic.
+// READY includes every print after the four-stage implementation work.
 
 // Additional fully modeled no-Power and Baby Evolution attacks.
 Object.assign(EFFECTS,{
@@ -263,6 +262,26 @@ const READY=new Set([
 ]);
 
 for(const n of [15,16,17,42,52,69,80,88,93,94,105])READY.add(n);
+// Stage 4: the remaining 18 prints now have executable battle rules.
+for(const n of [2,3,4,10,18,21,23,26,30,36,37,39,43,65,67,115,116,117])READY.add(n);
+Object.assign(EFFECTS,{
+ 2:[custom(2,'psychicGuard')],
+ 3:[custom(3,'tailInfluence'),custom(3,'charityTail')],
+ 4:[custom(4,'bindPulse')],
+ 10:[custom(10,'darkWingFlaps')],
+ 18:[custom(18,'mindOff')],
+ 21:[custom(21,'angerRevenge')],
+ 23:[custom(23,'strikeAndFade')],
+ 26:[custom(26,'enrage')],
+ 30:[custom(30,'trickPlay')],
+ 36:[status('poison')],
+ 37:[custom(37,'hiddenPower')],
+ 39:[custom(39,'iceBind')],
+ 43:[noop,bench(20)],
+ 65:[custom(65,'hiddenPower')],
+ 67:[custom(67,'hiddenPower')]
+});
+
 
 const PRINTS={
  5:['Before dealing damage, optionally attach one Basic Energy from your discard to Blissey; +10 damage per attached Energy.'],
@@ -349,6 +368,23 @@ const PRINTS={
  108:['On heads Confuse the Defending Pokémon.',''],
 };
 Object.assign(PRINTS,{
+ 2:['50 damage. During your opponent’s next turn reduce damage to Alakazam from Stage 2 Pokémon by 30.'],
+ 3:['30 damage; opponent flips until heads, moving one Energy per tails from Defending Pokémon to bottom of deck.','80 damage; opponent may discard 2 cards from hand to reduce to 10 damage.'],
+ 4:['10 damage. Opponent cannot attach Special Energy cards from hand on next turn.'],
+ 10:['50 damage. Randomly shuffle 1 card from the opponent’s hand into their deck.'],
+ 18:['10 damage. If Mesprit and Azelf are in play, 20 more damage and Sleep.'],
+ 21:['60 damage. If Bastiodon was damaged by an attack last turn, put 4 damage counters on 1 opponent Benched Pokémon.'],
+ 23:['Choose 1 opposing Pokémon, deal 50 damage. Flip a coin; on tails shuffle Crobat and all attached cards into your deck.'],
+ 26:['80 damage. Flip until tails; on heads discard random opponent hand cards, on first tails Confuse Gyarados.'],
+ 30:['Opponent guesses a coin flip. Wrong guess: 50 damage to defender; right guess: 20 damage to Mr. Mime.'],
+ 36:['30 damage and Poison the Defending Pokémon.'],
+ 37:['Choose an Energy on the Defending Pokémon to make a face-down Special Colorless Energy until the end of opponent’s next turn.'],
+ 39:['70 damage. Opponent may discard 1 card from hand to prevent Paralysis.'],
+ 43:['20 damage.','30 damage and 20 to one opposing Benched Pokémon.'],
+ 65:['During your opponent’s next turn, all their coin flips are tails.'],
+ 67:['Look at opponent’s hand and shuffle 1 chosen card into deck; then opponent does same to your revealed hand.']
+});
+Object.assign(PRINTS,{
  1:['Return all discarded Energy cards to the deck and shuffle; if any are Special Metal Energy, +30 damage.', 'Option: 60 damage, or 100 damage with 40 recoil.'],
  8:['Choose Energy cards from your hand, return each chosen card to the deck and shuffle; deal 20 per card.', 'Discard a random unknown card from the opponent’s hand.'],
  19:['On heads also deal 10 to each opposing Benched Pokémon.'],
@@ -389,8 +425,23 @@ const POWER_READY={
  122:{name:'Stance',type:'triggered',event:'levelUp',fromHandOnly:true,oncePerTurn:true,text:'On leveling up Active Lucario from hand, you may prevent all effects of the opponent’s next attack.',rule:'dp2:122:stance'},
  123:{name:'Torrid Wave',type:'activated',activeOnly:true,oncePerTurn:true,disabledByStatus:true,text:'Once per turn while Active, Burn the Defending Pokémon; this Burn deals three damage counters between turns.',rule:'dp2:123:torridWave'},
  16:{name:'Firestarter',text:'Once during your turn, attach a Fire Energy card from your discard pile to one of your Benched Pokémon.',rule:'dp2:16:firestarter'},94:{name:'Electro Recycle',text:'If Pichu is under Pikachu, once during your turn retrieve a Lightning Energy from your discard pile to your hand.',rule:'dp2:94:electroRecycle'}};
-const TRAINER_TEXT={111:'Search your deck or discard pile for a Fossil Trainer or a Stage 1 or Stage 2 Pokémon evolved from a Fossil, reveal it, and put it in your hand.',112:'All Pokémon have Weakness ×2 instead of their printed Weakness.',109:'Put a card from your hand on top of your deck, then search your deck for a Pokémon and put it into your hand. Shuffle your deck.',110:'Look at the bottom seven cards of your deck. Put one Pokémon from those cards into your hand, return the others and shuffle.',113:'Choose up to three Pokémon and Basic Energy cards from your discard pile and shuffle them into your deck.',114:'Reveal cards from your deck until you reveal a Pokémon. Put that Pokémon into your hand and shuffle the other cards back into your deck.',124:'Flip three coins. For each heads, choose one Pokémon in your discard pile and put it into your hand.'};
-const TRAINER_EFFECTS={111:{type:'neoRule',rule:'dp2:111:fossilExcavator'},112:{type:'noop'},109:{type:'neoRule',rule:'dp2:109:bebe'},110:{type:'neoRule',rule:'dp2:110:dusk'},113:{type:'neoRule',rule:'dp2:113:nightMaintenance'},114:{type:'neoRule',rule:'dp2:114:quick'},124:{type:'neoRule',rule:'dp2:124:timeSpace'}};
+Object.assign(POWER_READY,{
+ 2:{name:'Power Cancel',type:'passive',disabledByStatus:true,text:'On an opponent’s turn, discard 2 cards from hand to cancel an opposing Poké-Power as it is used (optional).',rule:'dp2:2:powerCancel'},
+ 4:{name:'Downer Material',type:'passive',disabledByStatus:false,text:'With Uxie and Mesprit allied, opposing Basic Pokémon attacks cost 1 more Colorless (not cumulative).',rule:'dp2:4:downerMaterial'},
+ 10:{name:'Dark Genes',type:'passive',disabledByStatus:false,text:'While Honchkrow has Energy for its own attack, Murkrow may use that attack for free.',rule:'dp2:10:darkGenes'},
+ 18:{name:'Memory Out',type:'triggered',event:'damagedByAttack',oncePerTurn:false,disabledByStatus:false,text:'When damaged by an opponent’s attack, even if knocked out, optionally lock the attacking move next turn.',rule:'dp2:18:memoryOut'},
+ 21:{name:'Protective Wall',type:'passive',disabledByStatus:false,text:'Opponent’s attacks do no damage to your Benched Pokémon.',rule:'dp2:21:protectiveWall'},
+ 23:{name:'Evolutionary Toxic',type:'triggered',event:'evolved',fromHandOnly:true,oncePerTurn:false,text:'When evolved from hand, optionally Poison the Defending Pokémon; 2 counters between turns.',rule:'dp2:23:evolutionaryToxic'},
+ 26:{name:'Dragon DNA',type:'passive',disabledByStatus:false,text:'Gyarados may use attacks of Basic Magikarp in its evolution stack, adding 30 to damage dealt.',rule:'dp2:26:dragonDNA'},
+ 30:{name:'Airy Wall',type:'passive',disabledByStatus:false,text:'Prevent attacks from Pokémon with 2 or fewer Energy cards; with Mime Jr. underneath also prevent attack effects.',rule:'dp2:30:airyWall'},
+ 36:{name:'Poison Sacs',type:'passive',disabledByStatus:false,text:'Your opponent’s Poison conditions are not removed by evolution or Level-Up.',rule:'dp2:36:poisonSacs'},
+ 37:{name:'ITEM',type:'activated',oncePerTurn:true,text:'If Unown I, T, E, M are all on Bench, search your deck for a Trainer card and put it into hand. Only 1 ITEM each turn.',rule:'dp2:37:item'},
+ 39:{name:'Freeze-up',type:'triggered',event:'evolved',fromHandOnly:true,oncePerTurn:false,text:'On evolution from hand optionally flip 2 coins; 2 heads discard Defending Pokémon and attachments without KO.',rule:'dp2:39:freezeUp'},
+ 65:{name:'EQUIP',type:'activated',benchOnly:true,activeOnly:false,oncePerTurn:true,text:'From your Bench discard attachments and attach Unown E as Pokémon Tool to your own Pokémon for +10 HP.',rule:'dp2:65:equip'},
+ 67:{name:'THROW',type:'activated',activeOnly:true,oncePerTurn:true,text:'Discard a card from your hand; on heads put 2 damage counters on one opponent Benched Pokémon.',rule:'dp2:67:throw'}
+});
+const TRAINER_TEXT={111:'Search your deck or discard pile for a Fossil Trainer or a Stage 1 or Stage 2 Pokémon evolved from a Fossil, reveal it, and put it in your hand.',112:'All Pokémon have Weakness ×2 instead of their printed Weakness.',109:'Put a card from your hand on top of your deck, then search your deck for a Pokémon and put it into your hand. Shuffle your deck.',110:'Look at the bottom seven cards of your deck. Put one Pokémon from those cards into your hand, return the others and shuffle.',113:'Choose up to three Pokémon and Basic Energy cards from your discard pile and shuffle them into your deck.',114:'Reveal cards from your deck until you reveal a Pokémon. Put that Pokémon into your hand and shuffle the other cards back into your deck.',124:'Flip three coins. For each heads, choose one Pokémon in your discard pile and put it into your hand.',115:'Both players shuffle their hands into their decks, play rock-paper-scissors, then the winner draws up to 6 cards and the loser up to 3.',116:'Play as a 50 HP Colorless Basic Pokémon on your Bench, even though this is a Trainer. Armor Stone reduces incoming attack damage by 10 per heads until tails. May voluntarily discard it, but a Knock Out awards a Prize.',117:'Play as a 50 HP Colorless Basic Pokémon on your Bench, even though this is a Trainer. Skull Stone places 1 damage counter on the attacker for each heads until tails when an attack would Knock Out Skull Fossil. May voluntarily discard it, but a Knock Out awards a Prize.'};
+const TRAINER_EFFECTS={111:{type:'neoRule',rule:'dp2:111:fossilExcavator'},112:{type:'noop'},109:{type:'neoRule',rule:'dp2:109:bebe'},110:{type:'neoRule',rule:'dp2:110:dusk'},113:{type:'neoRule',rule:'dp2:113:nightMaintenance'},114:{type:'neoRule',rule:'dp2:114:quick'},124:{type:'neoRule',rule:'dp2:124:timeSpace'},115:{type:'neoRule',rule:'dp2:115:teamGalacticsWager'},116:{type:'playFossil',hp:50,subtype:'Colorless',canRetreat:false,countsAsKnockout:true},117:{type:'playFossil',hp:50,subtype:'Colorless',canRetreat:false,countsAsKnockout:true}};
 for(const n of [109,110,111,112,113,114,124,118,119,120])READY.add(n);
 const GATED_EXPLANATION='Printed effects require additional mechanic verification before Classic battle use';
 function parse(row){
@@ -419,7 +470,7 @@ function parse(row){
      }),isLevelX:stage==='Level-Up',levelUpFrom:stage==='Level-Up'?from:null,
      text:stage==='Level-Up'?'Level up only your Active Pokémon. Retain attacks and Powers from the previous level.':undefined});
    if(BABIES[n]&&card.abilities.length){card.abilities[0]={name:'Baby Evolution',type:'activated',printedPowerType:'power',oncePerTurn:true,disabledByStatus:true,text:'Once during your turn, evolve this Baby Pokémon into '+BABIES[n]+' from your hand and remove its damage counters.',effect:{type:'neoRule',rule:'dp1:babyEvolve',targetName:BABIES[n]}};}
-   if(POWER_READY[n]&&card.abilities.length){const p=POWER_READY[n];card.abilities[0]={name:p.name,type:p.type||'activated',printedPowerType:p.type==='passive'||n===121?'body':'power',expeditionSpecialCondition:p.type!=='passive',oncePerTurn:p.oncePerTurn??true,disabledByStatus:p.disabledByStatus??(p.type==='triggered'?false:true),activeOnly:!!p.activeOnly,event:p.event,fromHandOnly:!!p.fromHandOnly,text:p.text,effect:{type:'neoRule',rule:p.rule}};}
+   if(POWER_READY[n]&&card.abilities.length){const p=POWER_READY[n];card.abilities[0]={name:p.name,type:p.type||'activated',printedPowerType:p.type==='passive'||n===121?'body':'power',expeditionSpecialCondition:p.type!=='passive',oncePerTurn:p.oncePerTurn??true,disabledByStatus:p.disabledByStatus??(p.type==='triggered'?false:true),activeOnly:!!p.activeOnly,benchOnly:!!p.benchOnly,event:p.event,fromHandOnly:!!p.fromHandOnly,text:p.text,effect:{type:'neoRule',rule:p.rule}};}
    const full=[...card.attacks.map(a=>a.text),...card.abilities.map(a=>a.text)].join(' ').toLowerCase();
    const types=[...new Set(card.attacks.flatMap(a=>[...a.cost].filter(s=>s!=='C').map(s=>T[s])))];
    const roles=new Set();if(/draw|hand/.test(full))roles.add('draw');if(/search|recover|retrieve/.test(full))roles.add('search');
@@ -428,6 +479,7 @@ function parse(row){
  }else if(trainer){
    card.trainerType=stage;card.text=TRAINER_TEXT[n]||'Original printed Trainer effect; battle use requires outcome verification.';
    card.effect=TRAINER_EFFECTS[n]||{type:'noop'};
+   if(n===116||n===117)Object.assign(card,{hp:50,types:['Colorless'],subtype:'Colorless',stage:'Basic',retreat:0,fossil:true,fossilHp:50,countsAsKnockout:true,statusImmune:['sleep','paralysis','confusion','poison','burn']});
  }else{card.basicEnergy=false;card.specialEnergy=true;card.subtype=name==='Metal Energy'?'Metal':name==='Darkness Energy'?'Darkness':'Colorless';card.types=[card.subtype];card.effect={type:'specialEnergy',provides:{[card.subtype]:1}};card.deckEligible=n>=118&&n<=120;card.text=n===118?'Provides one unit of any Energy type while no other Special Energy is attached; otherwise provides Colorless.':n===119?'Provides Darkness Energy and adds 10 damage to its Darkness Pokémon’s attacks.':'Provides Metal Energy and reduces damage to its Metal Pokémon by 10.';}
  return Object.freeze({...card,battleEnabled:ready,deckEligible:ready&&card.deckEligible!==false,
    support:{status:ready?'FULL':'PARTIAL',reasons:ready?[]:[GATED_EXPLANATION]}});
