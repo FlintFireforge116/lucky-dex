@@ -1,8 +1,8 @@
 LUCKYDEX — MASTER PROJECT RULES AND DEVELOPMENT CONTRACT
 =========================================================
-Document version: 2.21
+Document version: 2.22
 Compiled: 13 November 2026
-Current source baseline inspected: v0.69.227; v0.69.228 enables 130/130 Diamond & Pearl prints including 3 LV.X. Active-only leveling, previous-level inheritance, triggered evolution Powers, hidden-hand holding/return and 8-Fire-Energy Flare Up are implemented and have focused Node tests. Android QA and long random CPU play are outstanding.
+Current source baseline inspected: v0.69.228; v0.69.229 fixes copied-attack choice clarity and Prize presentation timing without changing the 130/130 Diamond & Pearl rules or ownership/collection. Focused Node tests and DP1 regressions pass; Android QA and long random CPU play remain outstanding.
 Recommended repository location: ~/lucky-dex/source/docs/LUCKYDEX_MASTER_RULES.txt
 Project: LuckyDex — Android application/PWA, managed with Termux and GitHub
 
@@ -44,6 +44,14 @@ RULE PRECEDENCE AND CONFLICT MANAGEMENT
   • A printed same-name Special Energy effect must remain distinct from Basic Energy Zone counters. Track real destinations for all moved/discarded cards; no silent auto-choices when the card says 'may' or 'choose'.
   • A source-level 130/130 catalogue ledger is NOT by itself proof of Android correctness. Keep active device, UX, long CPU matches and full cross-set regressions as separate evidence categories. Never claim a build/install or device test was performed unless it actually happened.
 =======================================================================
+
+10.14M [LOCKED] C-UI-CHOICE-020 / C-UI-PRIZE-021 — PRINTED ATTACK SELECTION AND RESOLUTION BARRIERS (v2.22)
+  • Any action producing multiple legal choices MUST display a user-meaningful difference from the underlying rule action, not just the repeated attacker art/name or the nominal base damage. Copy-attack selectors (e.g. Diamond & Pearl Clefable Metronome) show the COPIED Pokémon's print art, copied attack name, base damage / effect-only classification, and its actual printed effect. A printed 0-damage effect must not be marketed as an identical "0 DMG" option.
+  • Attack selection labels must use choiceCardId+choiceAttackIndex to resolve the printed target move. Never select/preview a random outcome to manufacture damage text or reveal hidden cards; describe printed effects, not hypothetical outcomes. The attack resolves through the original action unchanged; menu rendering must never modify attack semantics.
+  • Effect-choice attack options must visibly show the attack name alongside card art. Display distinct action.choiceLabel descriptions for any option with matching artwork, including Trainers, coin contingencies and voluntary discard choices. Check that each set's multi-option attacks have distinct visible labels in generated legal-action states.
+  • In Classic TCG, a human Prize-pick modal MUST NOT appear until the originating action's visible coin flips, attack animation, secondary damage/status and knockouts have finished. The battle core may record a pending Prize choice immediately, but the renderer holds its interactive choice while the presentation plays, including when a player effect-choice itself causes a KO.
+  • The hold releases upon natural animation completion or the player's explicit Skip, and must fail open when animations/assets are unavailable. Do not lock the player in the Prize screen; do not skip the official human Prize position choice; preserve face-up Prize states, multiple consecutive Prize claims and CPU selections. Reset hold when abandoning/restarting battle.
+  • Regression: assert distinct copied attack choices for 2+ moves; assert correct copied card art; assert no Prize modal during a pending attack/coin/KO sequence; assert choice returns after presentation, including no-animation fallback; assert non-Prize choices remain available; run DP1 attack-choice label sweep. Test real device animation ordering separately.
 
 PART 1 — PERMANENT DEVELOPMENT / HANDOFF RULES
 =======================================================================
@@ -1392,3 +1400,5 @@ CHANGE HISTORY
 END OF LUCKYDEX MASTER RULES
 
 2026-11-13 | Document 2.20 -> 2.21 | App v0.69.228 | [LOCKED] C-RELEASE-GATE-019. D&P Base reaches 130/130 implemented source prints. Added 12 ordinary cards/Trainers and five higher-complexity Pokémon plus three LV.X (Empoleon, Infernape, Torterra). Active-only LV.X restrictions, previous-level attacks/Powers, on-evolution triggers, conditional Pokémon Powers, hidden-hand holding with delayed return, 8 Fire Energy discard requirement and four-stage LV.X deckbuilder are checked by focused Node tests. Old EX16-only Dusclops/Magneton are now intentionally incomplete if their fully playable DP1 evolutions are out of the selected set. Ex15 Stage 2-ex support focus fixed. Android and APK not tested; see docs/DIAMOND_PEARL_v0.69.228_COMPLETION_AUDIT.md.
+
+2026-11-13 | Document 2.21 -> 2.22 | App v0.69.229 | [LOCKED] C-UI-CHOICE-020 and C-UI-PRIZE-021. Diamond & Pearl Metronome now names and depicts the actual copied opposing attack rather than two identical Clefable 0 DMG choices; copy choice shows original printed effect without fake predicted dice. Visible attack names added for artwork-backed effect-choice tiles. Classic Prize picker is presented only AFTER the full recorded coin/attack/KO animation sequence, with auto-release on normal completion/Skip/animation-unavailable fallback. New focused tests v07229 + DP1 catalog choice-label audit; 145/145 selected DP1 v07222–v07229 tests passed. Source-only; Android QA outstanding.

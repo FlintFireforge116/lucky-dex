@@ -76,7 +76,7 @@
       if(action==='classic-opponent-basic')button.setAttribute('aria-pressed',String(cfg.basicOnly));
     });
   }
-  let currentBattle=null,currentChallenge=null,currentPractice=false,currentClassic=false,currentPlayerDeck=null,resultInfo=null,cpuPending=false,cpuTimer=null,cpuActions=0,battleActionCache=[],battleInspect=null,battleOverlay=null,battleContextActionIndices=[],battlePokemonActionSpec=null,battleHandIndex=-1,battleDiscardSide='player',handDragSuppressUntil=0,battleEvent='',battleEventSide=null,battleEventCardId=null,battleEventKind=null,battleChoiceSelectionIndex=-1,battleChoiceBoardFilter=null,battlePresentationBusy=false,battlePresentationTimers=[],battlePresentationDone=null,battlePresentationSerial=0;
+  let currentBattle=null,currentChallenge=null,currentPractice=false,currentClassic=false,currentPlayerDeck=null,resultInfo=null,cpuPending=false,cpuTimer=null,cpuActions=0,battleActionCache=[],battleInspect=null,battleOverlay=null,battleContextActionIndices=[],battlePokemonActionSpec=null,battleHandIndex=-1,battleDiscardSide='player',handDragSuppressUntil=0,battleEvent='',battleEventSide=null,battleEventCardId=null,battleEventKind=null,battleChoiceSelectionIndex=-1,battleChoiceBoardFilter=null,battlePresentationBusy=false,battlePresentationTimers=[],battlePresentationDone=null,battlePresentationSerial=0,battlePrizePresentationHeld=false;
 
   const esc=value=>String(value==null?'':value).replace(/[&<>"']/g,ch=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));
   const el=id=>root&&root.document?root.document.getElementById(id):null;
@@ -141,12 +141,41 @@
     const target=action.effectTarget||action.target,index=action.effectTarget?action.effectBenchIndex:action.benchIndex;
     return target?` → ${slotName(state,side,target,index)}${String(target).toLowerCase().includes('bench')?` · Bench ${Number(index||0)+1}`:''}`:'';
   }
+  // An attack like Clefable's Metronome is chosen through the ATTACK menu,
+  // not a later effect-choice sheet.  Show the actual opponent's move, its
+  // printed damage/effect and the source card for every copied-attack option.
+  function copiedAttackOption(action,state,side){
+    if(action?.type!=='attack'||action.choiceAttackIndex==null||!action.choiceCardId)return null;
+    const ownActive=state?.sides?.[side]?.active;
+    const attack=data.cardById(action.attackCardId||ownActive?.cardId)?.attacks?.[action.attackIndex];
+    const findCopy=e=>e?.type==='copyAttack'?e:e?.type==='sequence'?(e.effects||[]).map(findCopy).find(Boolean):null;
+    const copyEffect=findCopy(attack?.effect);if(!copyEffect)return null;
+    const source=data.cardById(action.choiceCardId),copied=source?.attacks?.[Number(action.choiceAttackIndex)];
+    if(!source||!copied)return null;
+    const damage=copied.damageText||String(Number(copied.damage||0)||0);
+    const text=String(copied.text||'').trim();
+    return {source,attack:copied,damage,text,sourceSide:copyEffect.source==='selfBench'?side:side==='player'?'opponent':'player',originalName:attack?.name||'COPY ATTACK'};
+  }
+  function copiedAttackLabel(action,state,side){
+    const copied=copiedAttackOption(action,state,side);if(!copied)return null;
+    const outcome=copied.damage==='0'||!copied.damage?'EFFECT ONLY':`${copied.damage} DMG`;
+    const description=copied.text?` · ${copied.text}`:'';
+    return `${copied.originalName} → COPY ${copied.source.name}: ${copied.attack.name} (${outcome})${description}`;
+  }
+  function shouldHoldPrizePresentation(state,logs){
+    return state?.pendingChoice?.special==='chooseClassicPrize'&&Array.isArray(logs)&&logs.some(entry=>['coin','attack','attackFailed','benchDamage','status','heal','ko','draw'].includes(entry?.type));
+  }
+  function releasePrizePresentation(){
+    if(!battlePrizePresentationHeld)return;
+    battlePrizePresentationHeld=false;
+    if(currentBattle&&screen==='battle')renderBattle();
+  }
   function actionLabel(action,state,side){
     if(!action)return'PLAY';
     if(action.type==='setupActive')return`ACTIVE · ${cardName(action.cardId)}`;
     if(action.type==='setupBench')return`BENCH · ${cardName(action.cardId)}`;
     if(action.type==='setupReady')return'READY';
-    if(action.type==='effectChoice'){const c=action.choiceCardId?cardName(action.choiceCardId):'';if(state?.pendingChoice?.effect?.rule==='energyFlow'){const slot=action.choiceTarget==='active'?state.sides?.[side]?.active:state.sides?.[side]?.bench?.find(x=>x.benchSlot===Number(action.choiceBenchIndex));const special=slot?.specialEnergy?.find(r=>r.uid===action.effectSpecialEnergyUid);if(special)return `RETURN ${cardName(special.cardId)} · ${c}`;if(action.effectEnergyType)return `RETURN ${action.effectEnergyType} ENERGY · ${c}`;}if(action.choiceAttackIndex!=null)return `CHOOSE ${c} ATTACK ${Number(action.choiceAttackIndex)+1}`;if(action.choiceTarget==='bench')return `CHOOSE ${c||'BENCH '+(Number(action.choiceBenchIndex)+1)}`;if(action.choiceTarget==='active')return `CHOOSE ${c||'ACTIVE'}`;if(action.choiceHandIndex!=null)return `CHOOSE ${c||'HAND CARD'}`;if(action.choiceDiscardIndex!=null)return `CHOOSE ${c||'DISCARD CARD'}`;if(action.choiceDeckIndex!=null)return `CHOOSE ${c||'DECK CARD'}`;if(action.choiceOption!=null)return action.choiceLabel||`OPTION ${Number(action.choiceOption)+1}`;if(action.choiceSkip)return 'SKIP';return 'CHOOSE';}
+    if(action.type==='effectChoice'){const c=action.choiceCardId?cardName(action.choiceCardId):'';if(state?.pendingChoice?.effect?.rule==='energyFlow'){const slot=action.choiceTarget==='active'?state.sides?.[side]?.active:state.sides?.[side]?.bench?.find(x=>x.benchSlot===Number(action.choiceBenchIndex));const special=slot?.specialEnergy?.find(r=>r.uid===action.effectSpecialEnergyUid);if(special)return `RETURN ${cardName(special.cardId)} · ${c}`;if(action.effectEnergyType)return `RETURN ${action.effectEnergyType} ENERGY · ${c}`;}if(action.choiceAttackIndex!=null){const attack=data.cardById(action.choiceCardId)?.attacks?.[Number(action.choiceAttackIndex)];return `CHOOSE ${c} · ${attack?.name||'ATTACK '+(Number(action.choiceAttackIndex)+1)}`;}if(action.choiceTarget==='bench')return `CHOOSE ${c||'BENCH '+(Number(action.choiceBenchIndex)+1)}`;if(action.choiceTarget==='active')return `CHOOSE ${c||'ACTIVE'}`;if(action.choiceHandIndex!=null)return `CHOOSE ${c||'HAND CARD'}`;if(action.choiceDiscardIndex!=null)return `CHOOSE ${c||'DISCARD CARD'}`;if(action.choiceDeckIndex!=null)return `CHOOSE ${c||'DECK CARD'}`;if(action.choiceOption!=null)return action.choiceLabel||`OPTION ${Number(action.choiceOption)+1}`;if(action.choiceSkip)return 'SKIP';return 'CHOOSE';}
     if(action.type==='promote')return`PROMOTE · ${slotName(state,side,'bench',action.benchIndex)}`;
     if(action.type==='bench')return`BENCH · ${cardName(action.cardId)}`;
     if(action.type==='evolve')return`EVOLVE ${slotName(state,side,action.target,action.benchIndex)} → ${cardName(action.cardId)}`;
@@ -170,6 +199,7 @@
       if(attack?.effect?.rule==='ex5:38:0'&&action.choiceLabel)return `LIGHTNING STRIKE · ${action.choiceLabel}`;
       // Optional attack outcomes may have identical artwork and damage.
       // Display the choice made by the rules engine, not just the attack name.
+      const copyLabel=copiedAttackLabel(action,state,side);if(copyLabel)return copyLabel;
       const outcome=action.choiceLabel?` — ${action.choiceLabel}`:'';
       return `${attack?.name||'ATTACK'}${action.attackCardId&&action.attackCardId!==active?.cardId?` · ${sourceCard?.name||'PREVIOUS EVOLUTION'}`:''} · ${preview?.text??attack?.damageText??attack?.damage??0} DMG${outcome}${targetLabel(action,state,side)}`;
     }
@@ -995,12 +1025,13 @@
   }
   function choiceCardTileHtml(action,index){
     const model=choiceCardModel(action,index),selected=battleChoiceSelectionIndex===index;
-    return `<button type="button" class="tcgp-live-choice-card ${model.art?'':'text-option'} ${selected?'selected':''}" data-tcgp-action="select-choice-card" data-action-index="${index}" aria-pressed="${selected}" aria-label="${esc(model.title)} ${esc(model.detail)}">${model.art?`<img src="${esc(model.art)}" alt="${esc(model.title)}" loading="lazy" onerror="this.hidden=true;this.nextElementSibling.hidden=false"><span class="tcgp-live-choice-placeholder" hidden>${esc(model.title)}</span>`:`<span class="tcgp-live-choice-text">${esc(model.title)}</span>`}${!model.art?`<small>${esc(model.detail)}</small>`:''}</button>`;
+    return `<button type="button" class="tcgp-live-choice-card ${model.art?'':'text-option'} ${selected?'selected':''}" data-tcgp-action="select-choice-card" data-action-index="${index}" aria-pressed="${selected}" aria-label="${esc(model.title)} ${esc(model.detail)}">${model.art?`<img src="${esc(model.art)}" alt="${esc(model.title)}" loading="lazy" onerror="this.hidden=true;this.nextElementSibling.hidden=false"><span class="tcgp-live-choice-placeholder" hidden>${esc(model.title)}</span>`:`<span class="tcgp-live-choice-text">${esc(model.title)}</span>`}${(!model.art||action.choiceAttackIndex!=null||action.choiceLabel)?`<small>${esc(model.optionLabel||model.detail)}</small>`:''}</button>`;
   }
   function liveEffectChoiceCenterHtml(){
     const battle=currentBattle,pending=battle?.pendingChoice;
     if(battle?.phase!=='effectChoice'||battle.choiceSide!=='player'||!pending)return '';
     if(pending.special==='chooseClassicPrize'){
+      if(battlePrizePresentationHeld)return '';
       const prizes=battle.sides.player.prizes||[];
       const actions=battleActionCache;
       return `<section class="tcgp-live-choice-centre tcgp-prize-pick-centre" aria-label="Choose a Prize card"><div class="tcgp-live-choice-head"><div><small>PRIZE CARDS</small><b>${esc(pending.prompt||'Choose a Prize')}</b><span>Choose a position. Face-down cards remain hidden; any previously revealed cards are visible.</span></div></div><div class="tcgp-live-prize-grid">${prizes.map((ref,i)=>prizeCardButton(ref,i,actions.findIndex(a=>a.choicePrizeIndex===i))).join('')}</div></section>`;
@@ -1024,7 +1055,7 @@
     // Board-target actions use a non-modal hint; the actual Pokémon is selected
     // in its original slot rather than through duplicate labels in a sheet.
     if(boardOnly)return `<div class="tcgp-live-board-target-hint" role="status"><span>${directTargets?'Tap the Pokémon you want to target on the board.':`Tap a highlighted Bench Pokémon to ${rows.some(r=>r.action.type==='retreat')?'RETREAT':'SELECT'}.`}</span><button type="button" data-tcgp-action="close-overlay">CANCEL</button></div>`;
-    const buttons=rows.map(({index,action})=>{const id=action.cardId||action.choiceCardId||(action.target==='bench'?core.benchSlotAt(currentBattle.sides.player,action.benchIndex)?.cardId:null),art=id?cardArtUrl(id,'player'):'';return `<button class="tcgp-live-context-card" type="button" data-tcgp-action="battle-action" data-action-index="${index}">${art?`<img src="${esc(art)}" alt="">`:''}<span>${esc(actionLabel(action,currentBattle,'player'))}</span></button>`;}).join('');
+    const buttons=rows.map(({index,action})=>{const copy=copiedAttackOption(action,currentBattle,'player'),id=copy?.source?.id||action.cardId||action.choiceCardId||(action.target==='bench'?core.benchSlotAt(currentBattle.sides.player,action.benchIndex)?.cardId:null),art=id?cardArtUrl(id,copy?.sourceSide||'player'):'';return `<button class="tcgp-live-context-card${copy?' is-copy-attack':''}" type="button" data-tcgp-action="battle-action" data-action-index="${index}">${art?`<img src="${esc(art)}" alt="">`:''}<span>${esc(actionLabel(action,currentBattle,'player'))}</span></button>`;}).join('');
     return `<div class="tcgp-live-context-centre" role="dialog" aria-label="Choose a play"><div class="tcgp-live-context-head"><b>Choose a play</b><button type="button" data-tcgp-action="close-overlay">×</button></div><div class="tcgp-live-context-rail">${buttons}</div></div>`;
   }
   function handActionIndices(handIndex){return battleActionCache.map((action,index)=>({action,index})).filter(({action})=>Number(action.handIndex)===Number(handIndex)&&['setupActive','setupBench','bench','evolve','trainer','attachSpecial'].includes(action.type)).map(({index})=>index);}
@@ -1103,6 +1134,7 @@
       return `<div class="tcgp-live-mid-controls setup" data-card-play-zone="1"><span>SETUP</span><b>${currentBattle.sides.player.active?'ADD BENCH OR START':'CHOOSE ACTIVE'}</b><em>Drag a Basic here or directly onto the board.</em>${readyIndex>=0?`<button type="button" class="tcgp-live-end-turn" data-tcgp-action="battle-action" data-action-index="${readyIndex}">READY</button>`:''}</div>`;
     }
     if(currentBattle?.phase==='effectChoice'){
+      if(battlePrizePresentationHeld&&currentBattle.pendingChoice?.special==='chooseClassicPrize')return '<div class="tcgp-live-mid-controls promote" role="status"><span>ATTACK</span><b>RESOLVING EFFECTS…</b><em>Coin flips and knockout results are being shown before Prize selection.</em></div>';
       const mine=currentBattle.choiceSide==='player';
       return `<div class="tcgp-live-mid-controls promote"><span>EFFECT</span><b>${mine?'SELECT A CARD':'CPU CHOOSING'}</b><em>${mine?'Tap a highlighted card or use the centre selector.':esc(currentBattle.pendingChoice?.prompt||'CPU is resolving the effect.')}</em>${!mine&&!cpuPending&&!battlePresentationBusy?'<button type="button" class="tcgp-live-end-turn" data-tcgp-action="resume-cpu">RESUME CPU</button>':''}</div>`;
     }
@@ -1187,7 +1219,7 @@
   }
   function startClassicBattle(cards,practice){
     if(!practice&&!classicOpponentConfig().sets.length){toast('Choose at least one opponent expansion first.');return;}
-    clearBattleEvent();finishBattlePresentation(false);cancelGesture?.();clearTimeout(cpuTimer);cpuTimer=null;
+    clearBattleEvent();finishBattlePresentation(false);battlePrizePresentationHeld=false;cancelGesture?.();clearTimeout(cpuTimer);cpuTimer=null;
     const playerCards=Array.isArray(cards)?cards.slice():[];
     // Real Classic matches rotate through all six CPU Energy types. Practice
     // retains the original fixed loaner for predictable testing.
@@ -1261,8 +1293,9 @@
       catch(recoveryError){console.error('[TCGP Battle] recovery failed',recoveryError);cpuPending=false;setBattleEvent('CPU action failed · tap Resume CPU');renderBattle();return;}
     }
     cpuActions+=1;const added=currentBattle.log.slice(before);setBattleEvent(eventForAction(chosen,'opponent',before),'opponent',chosen,added);
-    const finished=currentBattle?.phase==='finished',again=!finished&&cpuOwnsNextAction();cpuPending=again;renderBattle();
+    const finished=currentBattle?.phase==='finished',again=!finished&&cpuOwnsNextAction();cpuPending=again;battlePrizePresentationHeld=shouldHoldPrizePresentation(currentBattle,added);renderBattle();
     const continueCpu=()=>{
+      releasePrizePresentation();
       if(currentBattle?.phase==='finished'){cpuPending=false;finishBattle();return;}
       if(again){clearTimeout(cpuTimer);cpuTimer=setTimeout(cpuStep,cpuRemainingDwellMs(chosen,added,Date.now()-started));}
     };
@@ -1284,7 +1317,7 @@
     catch(error){console.error('[LuckyDex Test Lab] failed',error);toast(error.message||'Could not open lab');renderHome(true);}
   }
   function requestLeave(callback){if(screen==='builder'&&root?.LuckyDexTCGPDeckEditor?.requestLeave)return root.LuckyDexTCGPDeckEditor.requestLeave(callback);if(screen==='classic-builder'&&root?.LuckyDexClassicTCGDeckEditor?.requestLeave)return root.LuckyDexClassicTCGDeckEditor.requestLeave(callback);callback();return true;}
-  function close(force){root?.LuckyDexSubstituteLab?.close?.();if(force!==true&&(screen==='builder'||screen==='classic-builder'))return requestLeave(()=>close(true));clearBattleEvent();finishBattlePresentation(false);cancelGesture?.();clearTimeout(cpuTimer);cpuTimer=null;cpuPending=false;currentBattle=null;currentClassic=false;const view=el('tcgpBattleView'),home=el('packHome');if(view)view.hidden=true;if(home)home.hidden=false;battleInspect=null;battleOverlay=null;setBattleLive(false);sandboxMode=false;setScreen('home');}
+  function close(force){root?.LuckyDexSubstituteLab?.close?.();if(force!==true&&(screen==='builder'||screen==='classic-builder'))return requestLeave(()=>close(true));clearBattleEvent();finishBattlePresentation(false);battlePrizePresentationHeld=false;cancelGesture?.();clearTimeout(cpuTimer);cpuTimer=null;cpuPending=false;currentBattle=null;currentClassic=false;const view=el('tcgpBattleView'),home=el('packHome');if(view)view.hidden=true;if(home)home.hidden=false;battleInspect=null;battleOverlay=null;setBattleLive(false);sandboxMode=false;setScreen('home');}
   function showHelp(){const help=el('tcgpBattleHelp');if(help)help.hidden=false;}
   function hideHelp(){const help=el('tcgpBattleHelp');if(help)help.hidden=true;}
   function back(){
@@ -1469,8 +1502,10 @@
     battleOverlay=null;battleInspect=null;battleContextActionIndices=[];battlePokemonActionSpec=null;battleChoiceSelectionIndex=-1;battleChoiceBoardFilter=null;
     const anchors=capturePresentationAnchors(chosen,'player'),before=currentBattle.log.length;
     try{core.applyAction(currentBattle,'player',chosen);}catch(error){console.error('[TCGP Battle] action error',error);toast(error.message||'That play is not legal.');return false;}
-    const added=currentBattle.log.slice(before);setBattleEvent(eventForAction(chosen,'player',before));renderBattle();
-    playBattlePresentation(chosen,'player',anchors,added,()=>{if(currentBattle?.phase==='finished')finishBattle();else maybeCpu();});
+    const added=currentBattle.log.slice(before);battlePrizePresentationHeld=shouldHoldPrizePresentation(currentBattle,added);setBattleEvent(eventForAction(chosen,'player',before));renderBattle();
+    const done=()=>{releasePrizePresentation();if(currentBattle?.phase==='finished')finishBattle();else maybeCpu();};
+    try{playBattlePresentation(chosen,'player',anchors,added,done);}
+    catch(error){console.warn('[TCGP Battle] player presentation failed; showing result and Prize choice',error);finishBattlePresentation(false);done();}
     return true;
   }
   function applyHandCenterDrop(handIndex){
@@ -1610,5 +1645,5 @@
   }
   if(root&&root.document){if(root.document.readyState==='loading')root.document.addEventListener('DOMContentLoaded',init,{once:true});else init();}
 
-  return{actionLabel,actionEventText,cardArtUrl,cardRulesHtml,supportText,filterBuilderRows,resultSummary,coverageForOwnedCards,centerHandActionIndices,directHandDropActionIndex,open,close,renderHome,requestLeave,isEditing:()=>screen==='builder',_test:{cpuActionDwellMs,cpuRemainingDwellMs,slotTools,buildInspectSpec,resolveInspect,attachedToolLinksHtml,liveToolMiniCardsHtml,liveCardHtml,attackPresentationMeta,coinSequence,battleSummaryStats,capturePresentationAnchors,targetKeyForAction,benchDamagePresentationEntry,stadiumSlotModel,resultActionsModel,choiceBoardActions,contextualBoardActions,canChooseBoardDirect,boardTargetForAction,boardTargetOnlyActions,classicTrainerRestriction,liveContextActionsOverlayHtml,liveMidControlsHtml,livePrizePileHtml,livePrizeOverlayHtml,liveEffectChoiceCenterHtml,prizeCardButton,choiceCardTileHtml,choiceCardModel,handChoiceActionIndices,cpuActionCardId,setCurrentBattleForTests:(state,actions)=>{currentBattle=state;battleActionCache=actions||[];battleChoiceSelectionIndex=-1;battleChoiceBoardFilter=null;},setBattleOverlayForTests:(overlay,indices)=>{battleOverlay=overlay;battleContextActionIndices=indices||battleActionCache.map((_,i)=>i);},playmatArtPath,coinArtPath,coinPresentationHtml,energyCostHtml,liveAttachedEnergyHtml,liveEnergySourceHtml,liveBenchReadOnlyMovesHtml,handActionIndices,attackDescription,zoomArtworkButtonHtml,cardZoomOverlayHtml,openHandActions,openEnergyActions,pokemonActionIndices,pokemonInteractionAttrs,benchSwitchActionIndices,classicOpponentConfig,classicOpponentPickerHtml,pocketOpponentConfig,pocketOpponentPickerHtml,classicOpponentHandRevealed,handDropErrorMessage,dragPreviewTransform},back};
+  return{actionLabel,actionEventText,cardArtUrl,cardRulesHtml,supportText,filterBuilderRows,resultSummary,coverageForOwnedCards,centerHandActionIndices,directHandDropActionIndex,open,close,renderHome,requestLeave,isEditing:()=>screen==='builder',_test:{copiedAttackOption,copiedAttackLabel,shouldHoldPrizePresentation,setPrizePresentationHeldForTests:value=>{battlePrizePresentationHeld=!!value;},liveMidControlsHtml,cpuActionDwellMs,cpuRemainingDwellMs,slotTools,buildInspectSpec,resolveInspect,attachedToolLinksHtml,liveToolMiniCardsHtml,liveCardHtml,attackPresentationMeta,coinSequence,battleSummaryStats,capturePresentationAnchors,targetKeyForAction,benchDamagePresentationEntry,stadiumSlotModel,resultActionsModel,choiceBoardActions,contextualBoardActions,canChooseBoardDirect,boardTargetForAction,boardTargetOnlyActions,classicTrainerRestriction,liveContextActionsOverlayHtml,liveMidControlsHtml,livePrizePileHtml,livePrizeOverlayHtml,liveEffectChoiceCenterHtml,prizeCardButton,choiceCardTileHtml,choiceCardModel,handChoiceActionIndices,cpuActionCardId,setCurrentBattleForTests:(state,actions)=>{currentBattle=state;battleActionCache=actions||[];battleChoiceSelectionIndex=-1;battleChoiceBoardFilter=null;},setBattleOverlayForTests:(overlay,indices)=>{battleOverlay=overlay;battleContextActionIndices=indices||battleActionCache.map((_,i)=>i);},playmatArtPath,coinArtPath,coinPresentationHtml,energyCostHtml,liveAttachedEnergyHtml,liveEnergySourceHtml,liveBenchReadOnlyMovesHtml,handActionIndices,attackDescription,zoomArtworkButtonHtml,cardZoomOverlayHtml,openHandActions,openEnergyActions,pokemonActionIndices,pokemonInteractionAttrs,benchSwitchActionIndices,classicOpponentConfig,classicOpponentPickerHtml,pocketOpponentConfig,pocketOpponentPickerHtml,classicOpponentHandRevealed,handDropErrorMessage,dragPreviewTransform},back};
 });

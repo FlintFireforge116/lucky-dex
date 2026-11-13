@@ -996,6 +996,10 @@ html.android-native-inset body.tcgp-battle-live .tcgp-live-arena:not(.format-cla
 .tcgp-live-context-rail{display:flex;gap:10px;overflow-x:auto;overscroll-behavior-x:contain;padding-bottom:5px}
 .tcgp-live-context-card{display:grid;gap:6px;justify-items:center;flex:0 0 100px;max-width:100px;border:1px solid #86adbf;border-radius:9px;background:#264760;color:#fff;padding:7px;font-size:10px}
 .tcgp-live-context-card img{width:68px;height:95px;object-fit:contain}
+/* Copy-attack choices must display the copied Pokémon/attack and printed effect,
+   not multiple indistinguishable 0-DMG cards of the attacker. */
+.tcgp-live-context-card.is-copy-attack{flex:0 0 clamp(155px,44vw,205px);max-width:205px;min-width:155px;text-align:center;line-height:1.4;overflow-wrap:anywhere;white-space:normal;padding:9px;font-size:11px}
+.tcgp-live-context-card.is-copy-attack img{width:76px;height:105px}
 /* CPU feedback belongs in the centre lane; its card stays on the CPU mat. */
 .tcgp-live-mid{overflow:visible!important;isolation:isolate}
 .tcgp-live-action-event{position:absolute!important;left:50%!important;top:50%!important;transform:translate(-50%,-50%)!important;
