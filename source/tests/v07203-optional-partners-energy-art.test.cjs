@@ -81,7 +81,7 @@ test('both Classic and Pocket editors render the eight Energy cards as tappable 
 });
 test('full installed Classic catalogue can be classified without missing metadata fields',()=>{
  // v0.69.208 baseline has 3459 cards; Crystal Guardians, Dragon Frontiers, and Power Keepers add their printed catalogues.
- assert.equal(data.CARDS.length,3459 + require(A+'tcg-classic-crystal-guardians').CARDS.length + require(A+'tcg-classic-dragon-frontiers').CARDS.length + require(A+'tcg-classic-power-keepers').CARDS.length + require(A+'tcg-classic-diamond-pearl').CARDS.length);
+ assert.equal(data.CARDS.length,3459 + require(A+'tcg-classic-crystal-guardians').CARDS.length + require(A+'tcg-classic-dragon-frontiers').CARDS.length + require(A+'tcg-classic-power-keepers').CARDS.length + require(A+'tcg-classic-diamond-pearl').CARDS.length + require(A+'tcg-classic-mysterious-treasures').CARDS.length);
  let ready=0;
  for(const card of data.CARDS){
   const m=synergy.metadata(card);

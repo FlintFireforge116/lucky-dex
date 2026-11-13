@@ -1,8 +1,8 @@
 LUCKYDEX — MASTER PROJECT RULES AND DEVELOPMENT CONTRACT
 =========================================================
-Document version: 2.23
+Document version: 2.24
 Compiled: 13 November 2026
-Current source baseline inspected: v0.69.229; v0.69.230 repairs Steelix/Staraptor delayed attack timing, audits every Diamond & Pearl attack and Trainer from both seats, and preserves readable choice art without redundant captions. 130/130 DP1 source prints remain enabled; Android hardware QA and exhaustive printed outcome verification remain outstanding.
+Current inspected source: v0.69.230; v0.69.231 integrates all 124 Mysterious Treasures collector entries, with 72 battle-ready and 52 still restricted. Do not mislabel this as full-set implementation. Diamond & Pearl Base remains 130/130 enabled. Android QA and full Mysterious Treasures outcome audit are pending.
 Recommended repository location: ~/lucky-dex/source/docs/LUCKYDEX_MASTER_RULES.txt
 Project: LuckyDex — Android application/PWA, managed with Termux and GitHub
 
@@ -1415,3 +1415,17 @@ END OF LUCKYDEX MASTER RULES
 =======================================================================
 
 2026-11-13 | Document 2.22 -> 2.23 | App v0.69.230 | [LOCKED] C-DP1-TURN-022 / C-DP1-AUDIT-023. Corrected Steelix Metal Slash nextOwnTurn lock; corrected Staraptor Accelerative Dive nextOwnTurn guard, including prevention of Brave Heart self-damage; reconciled artwork-only plain Energy choices with required copied-attack labels. 130/130 catalogue and two-sided 372-attack/30-Trainer smoke, per-print effect/schema checks, actual turn-transition/guard outcome tests. v072xx combined regression and exact status recorded in release audit; APK/Android QA still outstanding.
+
+
+=======================================================================
+APPENDIX — v2.24 / v0.69.231 MYSTERIOUS TREASURES INITIAL INTEGRATION
+=======================================================================
+[LOCKED] The user asked for entire new expansions to be implemented in one pass, then checked in a separate pass. Every registered card must have its full printed actions implemented before claiming this goal met.
+[CURRENT] Mysterious Treasures (dp2) has 124 numbered prints, including secret rare 124 Time-Space Distortion, but only 72 are currently battle-enabled. 52 are explicitly gated, NOT disguised as no-op attacks.
+[LOCKED] Retain current prior-set battle mechanics: per-attack legal action checks, full resolution before Prize choice, correct next-own-turn attack lock, optional decisions, and full evolution lines.
+[CHECK] The user requested full printed-card support; this release is **not** completion. It is only a partial, testable source delivery. The remaining cards must be completed before claiming a dedicated full-set audit.
+[LOCKED] For each set, test a Pokémon's attacks from both sides, Trainers from both sides, Basic Energy compatibility, source/target zones, and CPU deck generation. A smoke pass is not a proof of every conditional outcome.
+[LOCKED] Baby Evolution remains a Power from hand with previous Baby underneath and damage cleared.
+[LOCKED] Multi Energy provides one Energy of any type when alone and only Colorless when another Special Energy is attached. Darkness and Metal Special Energy printed bonuses apply only to matching Pokémon.
+[LOCKED] Do not substitute a Basic Energy-zone draw for printed effects that explicitly say Energy from hand or discard.
+[CHECK] Mysterious Treasures Fossil-as-Basic rules, Lake Boundary multiplicative Weakness, reactive Power Cancel, the new Unown Powers and Level-Up cards remain gated; they need actual engine behaviour and choice/KO tests.
