@@ -16,6 +16,7 @@
   // Reprints can use variant apostrophes or symbol spacing, but are still the
   // same evolution/copy identity in the Classic format.
   function classicCardName(name){return String(name||'').replace(/[’]/g,"'").replace(/\s+(?=[♀♂])/g,'').replace(/\s*δ\s*$/u,'').trim();}
+  function classicEvolutionMatches(baseName,parentName){const a=classicCardName(baseName),p=classicCardName(parentName);return a===p||(p==='Burmy'&&/^Burmy (?:Plant|Sandy|Trash) Cloak$/.test(a));}
   function seedValue(seed){
     let n = Number(seed);
     if (!Number.isFinite(n)) n = Date.now();
@@ -341,7 +342,7 @@
       // LV.X is a LEVEL UP of an Active previous-level Pokémon, not Stage 3
       // or a Bench evolution. Never stack an LV.X onto another LV.X.
       if(evo.isLevelX&&(target!=='active'||!base||base.isLevelX||state.sides[side].active!==slot||base.name!==evo.levelUpFrom))return false;
-      const evolvesName=asName?.name||base?.name;if((state.format==='classic'?classicCardName(evolvesName)!==classicCardName(evo.evolvesFrom):evolvesName!==evo.evolvesFrom))return false;
+      const evolvesName=asName?.name||base?.name;if((state.format==='classic'?!classicEvolutionMatches(evolvesName,evo.evolvesFrom):evolvesName!==evo.evolvesFrom))return false;
       const firstTurn=s.turnCount<=1,sameTurn=Number(slot.playedOnSideTurn)>=Number(s.turnCount);
       const giovanniBonus=state.format==='classic'&&Number(s.gym2GiovanniEvolutionTurn)===Number(state.turnNumber)&&base?.name?.startsWith("Giovanni's")&&evo.name?.startsWith("Giovanni's");
       if(firstTurn&&!timing?.firstTurn&&!giovanniBonus)return false;if(sameTurn&&!timing?.sameTurn&&!giovanniBonus)return false;
@@ -443,7 +444,7 @@
         // HAND. Opposing reactive Bodies (Electivire LV.X Shocking Tail) must
         // see that event, unlike an attachment from the Classic Energy Zone.
         if(fromHand)triggerAbilities(state,'opponentEnergyAttached',targetSide==='player'?'opponent':'player',null,{target,energyType,fromHand:true,fromZone:false,sourceSide:targetSide});
-      }},gymBenchRedirect:(which,slot,amount)=>gymBenchRedirect(state,which,slot,amount),onEvolved:target=>{const targetSide=pokemonOn(state.sides.player).includes(target)?'player':'opponent';triggerAbilities(state,'evolved',targetSide,target,{fromDeck:true});},onBabyEvolved:target=>{const targetSide=pokemonOn(state.sides.player).includes(target)?'player':'opponent';effects.clearTemporaryEffects(state,target);triggerAbilities(state,'evolved',targetSide,target,{fromHand:true,babyEvolution:true});},evolveFromDeck:target=>{const targetSide=pokemonOn(state.sides.player).includes(target)?'player':'opponent',ss=state.sides[targetSide],base=data.cardById(target.cardId),candidates=ss.deck.map((r,index)=>({r,index,card:data.cardById(r.cardId)})).filter(x=>x.card?.battleEnabled&&x.card.kind==='pokemon'&&(state.format==='classic'?classicCardName(x.card.evolvesFrom)===classicCardName(base?.name):x.card.evolvesFrom===base?.name));if(!candidates.length)return false;const hit=candidates[Math.floor(random(state)*candidates.length)],[ref]=ss.deck.splice(hit.index,1);target.cardId=ref.cardId;target.stack.push(ref.cardId);target.playedOnSideTurn=ss.turnCount;target.evolvedOnTurn=state.turnNumber;shuffle(state,ss.deck);state.log.push({type:'evolve',side:targetSide,cardId:ref.cardId,fromDeck:true});triggerAbilities(state,'evolved',targetSide,target,{fromDeck:true});return true;},transformSelfToEnergy:(source,targetUid,energyType,amount)=>{if(!source)return false;const target=pokemonOn(state.sides[side]).find(slot=>slot&&slot.uid===targetUid&&slot!==source);if(!target)return false;source.transformOnKO={targetUid,provides:{[energyType]:Math.max(1,Number(amount||2))}};source.damage=Math.max(Number(source.damage||0),maxHp(state,side,source));return true;}};
+      }},gymBenchRedirect:(which,slot,amount)=>gymBenchRedirect(state,which,slot,amount),onEvolved:target=>{const targetSide=pokemonOn(state.sides.player).includes(target)?'player':'opponent';triggerAbilities(state,'evolved',targetSide,target,{fromDeck:true});},onBabyEvolved:target=>{const targetSide=pokemonOn(state.sides.player).includes(target)?'player':'opponent';effects.clearTemporaryEffects(state,target);triggerAbilities(state,'evolved',targetSide,target,{fromHand:true,babyEvolution:true});},evolveFromDeck:target=>{const targetSide=pokemonOn(state.sides.player).includes(target)?'player':'opponent',ss=state.sides[targetSide],base=data.cardById(target.cardId),candidates=ss.deck.map((r,index)=>({r,index,card:data.cardById(r.cardId)})).filter(x=>x.card?.battleEnabled&&x.card.kind==='pokemon'&&(state.format==='classic'?classicEvolutionMatches(base?.name,x.card.evolvesFrom):x.card.evolvesFrom===base?.name));if(!candidates.length)return false;const hit=candidates[Math.floor(random(state)*candidates.length)],[ref]=ss.deck.splice(hit.index,1);target.cardId=ref.cardId;target.stack.push(ref.cardId);target.playedOnSideTurn=ss.turnCount;target.evolvedOnTurn=state.turnNumber;shuffle(state,ss.deck);state.log.push({type:'evolve',side:targetSide,cardId:ref.cardId,fromDeck:true});triggerAbilities(state,'evolved',targetSide,target,{fromDeck:true});return true;},transformSelfToEnergy:(source,targetUid,energyType,amount)=>{if(!source)return false;const target=pokemonOn(state.sides[side]).find(slot=>slot&&slot.uid===targetUid&&slot!==source);if(!target)return false;source.transformOnKO={targetUid,provides:{[energyType]:Math.max(1,Number(amount||2))}};source.damage=Math.max(Number(source.damage||0),maxHp(state,side,source));return true;}};
   }
 
   function offerExpeditionHarvestBounty(state,side,target){
@@ -1096,6 +1097,7 @@
         // Altaria ex Extra Boost is also HAND-only, and it needs an allied
         // Stage 2 Pokémon-ex. Hide the Power when it has no legal outcome,
         // for human players and all CPU difficulty settings alike.
+        if(source.cardId==='dp3-60'&&(!s.active||source!==s.active||Number(source.damage||0)<=0||Number(effectiveEnergy(state,side==='player'?'opponent':'player',state.sides[side==='player'?'opponent':'player'].active).Water||0)<=0))return;
         if(source.cardId==='ex15-90'&&(!s.hand.some(ref=>data.cardById(ref.cardId)?.basicEnergy)||
           !pokemonOn(s).some(p=>{const c=data.cardById(p.cardId);return c?.pokemonEx&&c.stage==='Stage 2';})))return;
         if(source.cardId==='ex15-8'&&(Number(source.damage||0)<40||!Array.isArray(source.stack)||source.stack.length<2||!s.deck.some(ref=>/^(?:Ninetales|Ninetales ex)(?: δ)?$/.test(data.cardById(ref.cardId)?.name||''))))return;
@@ -1382,7 +1384,7 @@
       const board=state.sides[who];for(const slot of board.bench){
         if(Number(slot.damage||0)<20||!toolsOf(slot).some(ref=>ref.cardId==='ecard3-139'))continue;
         const base=data.cardById(slot.cardId),choices=board.deck.filter(ref=>{
-          const c=data.cardById(ref.cardId);return c?.kind==='pokemon'&&c.battleEnabled&&['Stage 1','Stage 2'].includes(c.stage)&&classicCardName(c.evolvesFrom)===classicCardName(base?.name);
+          const c=data.cardById(ref.cardId);return c?.kind==='pokemon'&&c.battleEnabled&&['Stage 1','Stage 2'].includes(c.stage)&&classicEvolutionMatches(base?.name,c.evolvesFrom);
         });
         if(!choices.length)continue;
         beginEffectChoice(state,who,slot,{kind:'deckCard',side:'self',filter:{kind:'pokemon',evolvesFrom:base.name},

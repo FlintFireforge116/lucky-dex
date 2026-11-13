@@ -105,7 +105,7 @@ function auditSet(setId, context){
    if(!Number.isFinite(Number(c.hp))||Number(c.hp)<=0)issue('error','C-AUDIT-003','Pokémon HP is missing or invalid.');
    if(!Array.isArray(c.types)||!c.types.length)issue('warning','C-AUDIT-003','Pokémon has no attack/identity type.');
    if(c.stage!=='Basic'&&c.stage!=='Baby'&&!c.evolvesFrom&&!c.levelUpFrom)issue('warning','C-AUDIT-003','Evolution is missing evolvesFrom/levelUpFrom.');
-   if(c.evolvesFrom&&!knownNames.has(String(c.evolvesFrom).toLowerCase()))issue('warning','C-AUDIT-003',`Evolution parent "${c.evolvesFrom}" is absent by exact name from the full catalog; verify alternate spelling or Fossil support.`);
+   if(c.evolvesFrom&&!knownNames.has(String(c.evolvesFrom).toLowerCase())&&!(c.id==='dp3-33'&&['Burmy Plant Cloak','Burmy Sandy Cloak','Burmy Trash Cloak'].every(n=>knownNames.has(n.toLowerCase()))))issue('warning','C-AUDIT-003',`Evolution parent "${c.evolvesFrom}" is absent by exact name from the full catalog; verify alternate spelling or Fossil support.`);
    if(c.stage==='Level-Up'&&!c.levelUpFrom&&!c.evolvesFrom)issue('warning','C-AUDIT-003','Level-Up Pokémon has no prerequisite identity.');
    if(c.battleEnabled&&!Array.isArray(c.attacks))issue('error','C-AUDIT-002','Enabled Pokémon has no attacks array.');
    for(const [i,a] of (c.attacks||[]).entries()){

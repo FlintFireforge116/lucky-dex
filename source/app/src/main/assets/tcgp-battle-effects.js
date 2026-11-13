@@ -209,7 +209,7 @@
       case 'selfStatus':return !!(a&&a.conditions&&(c.status?a.conditions[c.status]:Object.keys(a.conditions).length));
       case 'opponentStatus':return !!(d&&d.conditions&&(c.status?d.conditions[c.status]:Object.keys(d.conditions).length));
       case 'opponentEx':{const card=d&&ctx.cardById(d.cardId);return !!(card&&(card.isEx||card.points===2||/ ex$/.test(card.name)));}
-      case 'selfEnergyAtLeast':case 'opponentEnergyAtLeast':{const e=(c.type==='selfEnergyAtLeast'?a:d)?.energy||{};return (c.energyType?Number(e[c.energyType]||0):totalEnergy(e))>=Number(c.amount||0);}
+      case 'selfEnergyAtLeast':case 'opponentEnergyAtLeast':{const slot=c.type==='selfEnergyAtLeast'?a:d,e=slot?.energy||{};let count=c.energyType?Number(e[c.energyType]||0):totalEnergy(e);if(c.countSpecial){for(const ref of slot?.specialEnergy||[]){const provides=ref.provides||ctx.cardById?.(ref.cardId)?.effect?.provides||{};count+=c.energyType?Number(provides[c.energyType]||0):Object.values(provides).reduce((sum,n)=>sum+Number(n||0),0);}}return count>=Number(c.amount||0);}
       case 'benchAtLeast':return (c.side==='opponent'?other(ctx):own(ctx)).bench.length>=Number(c.amount||0);
       case 'koLastOpponentTurn':return Number(own(ctx).lastKnockoutTurn||-99)===Number(ctx.state.turnNumber)-1;
       case 'sweetsRelayLastTurn':return own(ctx).lastAttackName==='Sweets Relay'&&Number(own(ctx).lastAttackTurn||-99)===Number(ctx.state.turnNumber)-2;
@@ -7219,6 +7219,50 @@
     // Diamond & Pearl Stage 7 — explicit card movements and player decisions.
     // Diamond & Pearl final eight printed effects: explicit selections,
     // actual deck/hand/energy movements, and optional Poké-Powers.
+    if(e.rule==='dp3:30:lovelyKiss'){
+      const hasSmoochum=(a?.stack||[]).some(id=>ctx.cardById(id)?.name==='Smoochum');
+      applyEffect({type:'moveDamage',target:'self',destination:'opponentActive',amount:hasSmoochum?40:20},ctx);return;
+    }
+    if(e.rule==='dp3:86:astonish'){
+      // The revealed hand card and shuffled hand card must be identical.
+      if(!foe.hand.length)return;const index=Math.floor(ctx.random(ctx.state)*foe.hand.length),[ref]=foe.hand.splice(index,1);
+      ctx.state.log.push({type:'revealHand',revealedSide:'opponent',cards:[ref.cardId],reason:'Astonish'});
+      foe.deck.push(ref);ctx.shuffle?.(ctx.state,foe.deck);log({cardId:ref.cardId,zone:'opponentDeck'});return;
+    }
+    if(e.rule==='dp3:104:grope'){
+      const top=ss.deck.slice(0,2);
+      if(!top.length)return;
+      if(ctx.resolvingChoice){const chosen=Number(ctx.action?.choiceDeckIndex);if(!Number.isInteger(chosen)||chosen<0||chosen>=Math.min(2,ss.deck.length))return;
+        const [ref]=ss.deck.splice(chosen,1);if(ss.hand.length<Number(ss.handLimit||10))ss.hand.push(ref);else ss.deck.unshift(ref);
+        if(top.length===2){const remaining=top.find(x=>x.uid!==ref.uid),index=ss.deck.findIndex(x=>x.uid===remaining?.uid);if(index>=0)ss.deck.push(...ss.deck.splice(index,1));}
+        log({taken:ref.cardId,remainingBottom:top.length>1?top.find(x=>x.uid!==ref.uid)?.cardId:null});return;
+      }
+      ctx.requestChoice?.({kind:'topDeckCard',side:'self',deckSide:ctx.side,count:top.length,effect:e});return;
+    }
+    if(e.rule==='dp3:122:oakVisit'){
+      if(e.stage==='bottom'){
+        if(ctx.resolvingChoice&&Number.isInteger(ctx.action?.choiceHandIndex)){
+          const index=ctx.action.choiceHandIndex;
+          if(index>=0&&index<ss.hand.length){const [ref]=ss.hand.splice(index,1);ss.deck.push(ref);log({movedToBottom:ref.cardId});}
+        }return;
+      }
+      for(let i=0;i<3;i++)ctx.drawCard(ss);
+      if(ss.hand.length)ctx.requestChoice?.({kind:'handCard',side:'self',effect:{...e,stage:'bottom'}});return;
+    }
+    if(e.rule==='dp3:126:marsBottom'){
+      if(!foe.hand.length)return;
+      const index=Math.floor(ctx.random(ctx.state)*foe.hand.length),[ref]=foe.hand.splice(index,1);
+      foe.deck.push(ref);log({opponentCardToDeckBottom:true,hidden:true});return;
+    }
+    if(e.rule==='dp3:45:drainPunch'){
+      // Counts attached physical Energy cards, not the Energy units they provide.
+      const amount=10*(totalEnergy(d?.energy||{})+(d?.specialEnergy||[]).length);
+      if(a&&!healingIsBlocked(ctx.state,a,ctx.cardById))a.damage=Math.max(0,Number(a.damage||0)-amount);
+      log({healed:amount});return;
+    }
+    if(e.rule==='dp3:46:flareTail'){
+      if(e.discard&&Number(a?.energy?.Fire||0)>0){a.energy.Fire--;recordDiscardedEnergy(ss,'Fire',1);log({discard:'Fire'});}return;
+    }
     if(e.rule==='dp1:2:hardFeelings'){
       if(d&&!protectedFromEffects(d,ctx)){const count=5+Number(foe.prizesTaken||0);d.damage=Number(d.damage||0)+10*count;log({counters:count,prizesTaken:Number(foe.prizesTaken||0)});}return;
     }
@@ -10126,6 +10170,42 @@
       if(e.type==='neoRule'&&e.rule==='dp3:92:waterSport'){
         const attached=slot=>totalEnergy(slot?.energy||{})+(slot?.specialEnergy||[]).length;
         if(attached(ctx.attacker)<attached(ctx.defender))damage+=20;
+        return;
+      }
+      if(e.type==='neoRule'&&String(e.rule||'').startsWith('dp3:')){
+        const name=e.rule.slice(4),self=ctx.attacker,def=ctx.defender;
+        if(name==='45:drainPunch'){pending.push(e);return;}
+        if(name==='41:leafHurricane'){
+          const hp=(slot,side)=>Math.max(0,Number(ctx.maxHp?.(side,slot)||ctx.cardById(slot?.cardId)?.hp||0)-Number(slot?.damage||0));
+          if(self&&def&&hp(def,ctx.foeSide)<hp(self,ctx.side))pending.push({type:'status',target:'opponentActive',status:'confusion'});return;
+        }
+        if(['30:lovelyKiss','86:astonish','104:grope'].includes(name)){
+          damage=0;pending.push(e);return;
+        }
+        if(name==='38:petalDance'){
+          const rolls=[coin(ctx),coin(ctx),coin(ctx)],heads=rolls.filter(Boolean).length;
+          ctx.state.log.push({type:'coin',side:ctx.side,reason:'Petal Dance',heads,coins:3,results:rolls});
+          damage=30*heads;
+          if(heads>=2)pending.push({type:'status',target:'self',status:'confusion'});
+          return;
+        }
+        if(name==='45:homingUppercut'){
+          if(Number((ctx.retreatCost?.(ctx.foeSide)??ctx.cardById(def?.cardId)?.retreat) || 0)===0)damage+=60;
+          return;
+        }
+        if(name==='46:flareTail'){
+          const heads=coin(ctx);ctx.state.log.push({type:'coin',side:ctx.side,heads,results:[heads],reason:'Flare Tail'});
+          if(heads&&Number(self?.energy?.Fire||0)>0){damage+=20;pending.push({...e,discard:true});}return;
+        }
+        if(name==='59:powerGuillotine'){
+          const rolls=[coin(ctx),coin(ctx)];ctx.state.log.push({type:'coin',side:ctx.side,heads:rolls.filter(Boolean).length,results:rolls,reason:'Power Guillotine'});
+          if(rolls.some(x=>!x))damage=10;return;
+        }
+        if(name==='111:synchroPunch'){
+          const selfEnergy=self?.energy||{},defEnergy=ctx.effectiveEnergy?.(def)||def?.energy||{};
+          if(Object.keys(selfEnergy).some(type=>Number(selfEnergy[type]||0)>0&&Number(defEnergy[type]||0)>0))damage+=30;
+          return;
+        }
         return;
       }
       // Mysterious Treasures attacks: dynamic damage before Weakness and

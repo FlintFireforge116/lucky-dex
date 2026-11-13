@@ -1,6 +1,6 @@
 /* LuckyDex Classic TCG — Diamond & Pearl: Secret Wonders (dp3).
  * 132 printed cards (source: PokemonTCG/pokemon-tcg-data cards/en/dp3.json).
- * Stage 1: canonical collector identities, types, attack costs and art;
+ * Stage 2: canonical collector identities, attack costs and art;
  * only individually reviewed effects may be battle-enabled.
  */
 (function(root,factory){const api=factory();if(typeof module==='object'&&module.exports)module.exports=api;if(root)root.LuckyDexClassicTCGSecretWonders=api;})(typeof globalThis!=='undefined'?globalThis:this,function(){'use strict';
@@ -139,7 +139,7 @@ const RAW=`1|Ampharos|P|Stage 2|130|L|Flaaffy|F+30|M-20|3|Rare Holo|Cluster Bolt
 131|Gardevoir LV.X|P|Level-Up|130|P|Gardevoir|P×2||2|Rare Holo LV.X|Bring Down~PP~|Teleportation~Power
 132|Honchkrow LV.X|P|Level-Up|110|D|Honchkrow|L+30|F-20|0|Rare Holo LV.X|Feint Attack~CC~;Darkness Wing~DDC~60|`;
 const DATA=RAW.split('\n').map(row=>row.split('|'));
-const READY=new Set([49,51,54,58,62,64,74,75,76,77,81,82,83,85,87,88,89,90,91,92,93,94,97,98,99,100,102,103,105,108,110,112,113,115,116,117,118,119,120,121,123,124,127,128,129,130]);
+const READY=new Set([30,38,60,68,86,104,106,122,126,17,33,41,42,43,45,46,57,59,61,65,78,79,80,95,107,111,49,51,54,58,62,64,74,75,76,77,81,82,83,85,87,88,89,90,91,92,93,94,97,98,99,100,102,103,105,108,110,112,113,115,116,117,118,119,120,121,123,124,127,128,129,130]);
 const noop={type:'noop'};
 const flip=(heads,tails=noop)=>({type:'coinFlip',heads,tails});
 const seq=(...effects)=>({type:'sequence',effects});
@@ -147,6 +147,30 @@ const status=s=>({type:'status',target:'opponentActive',status:s});
 const extra=n=>({type:'bonusDamage',amount:n});
 const lock=(action,target='opponentActive',duration='opponentTurn')=>({type:'lock',action,target,duration});
 const EFFECTS={
+ 30:[{type:'status',target:'opponentActive',status:'paralysis',condition:{type:'damagedByAttackLastOpponentTurn'}},{type:'neoRule',rule:'dp3:30:lovelyKiss'}],
+ 38:[{type:'neoRule',rule:'dp3:38:petalDance'}],
+ 60:[{type:'benchDamage',side:'opponent',amount:20}],
+ 68:[noop],
+ 86:[flip({type:'neoRule',rule:'dp3:86:astonish'})],
+ 104:[{type:'neoRule',rule:'dp3:104:grope'},noop],
+ 106:[{type:'benchFromDeck',amount:2,choose:true,filter:{kind:'pokemon',stage:'Basic',name:['Shellos East Sea','Shellos West Sea']}},noop],
+ 17:[seq(status('sleep'),status('poison')),flip(seq(extra(30),{type:'healSelf',amount:30}))],
+ 33:[{type:'modifier',stat:'postWeaknessAttackDamage',amount:40,scope:'self',duration:'nextOwnTurn'},{type:'bonusDamage',amount:40,condition:{type:'selfDamaged'}}],
+ 41:[{type:'neoRule',rule:'dp3:41:leafHurricane'}],
+ 42:[{type:'energyDamage',source:'self',energyType:'Fighting',amount:10}],
+ 43:[{type:'selfDamage',amount:20}],
+ 45:[{type:'neoRule',rule:'dp3:45:drainPunch'},{type:'neoRule',rule:'dp3:45:homingUppercut'}],
+ 46:[status('burn'),{type:'neoRule',rule:'dp3:46:flareTail'}],
+ 57:[{type:'modifier',stat:'attackDamage',amount:20,scope:'self',duration:'nextOwnTurn'},status('poison')],
+ 59:[lock('retreat'),{type:'neoRule',rule:'dp3:59:powerGuillotine'}],
+ 61:[flip(extra(60)),{type:'bonusDamage',amount:20,condition:{type:'selfHasEnergyType',energyType:'Darkness'}}],
+ 65:[{type:'switch',side:'self'}],
+ 78:[{type:'bonusDamage',amount:10,condition:{type:'selfHasEnergyType',energyType:'Grass'}}],
+ 79:[{type:'bonusDamage',amount:10,condition:{type:'selfHasEnergyType',energyType:'Fighting'}}],
+ 80:[{type:'bonusDamage',amount:10,condition:{type:'selfHasEnergyType',energyType:'Metal'}}],
+ 95:[seq({type:'damageRule',ignoreWeakness:true,ignoreResistance:true,ignoreEffects:true},{type:'selectedDamage',target:'opponentPokemon',amount:20,ignoreWeakness:true,ignoreResistance:true})],
+ 107:[noop,seq({type:'discardEnergy',target:'self',energyType:'Water',amount:1},{type:'healSelf',amount:1000})],
+ 111:[seq({type:'draw',amount:1},{type:'draw',amount:1,fromBottom:true}),{type:'neoRule',rule:'dp3:111:synchroPunch'}],
  49:[{type:'nextAttackBonus',attackName:'Leek Slap',amount:30},{type:'lock',action:'attack',attackName:'Leek Slap',target:'self',duration:'nextOwnTurn'}],
  64:[{type:'nextAttackBonus',attackName:'Protect Charge',amount:50},{type:'modifier',stat:'damageReduction',amount:30,scope:'self',duration:'opponentTurn'}],
  76:[noop,{type:'damageFromDamage',source:'self',amount:1}],
@@ -182,6 +206,29 @@ const EFFECTS={
  118:[status('sleep'),seq({type:'damageRule',ignoreWeakness:true,ignoreResistance:true},{type:'selectedDamage',target:'opponentPokemon',amount:10})]
 };
 const PRINTS={
+ 30:['If Jynx was damaged by an attack during the opponent’s last turn, the Defending Pokémon is now Paralyzed.','Move 2 damage counters from Jynx to the Defending Pokémon, or 4 if Smoochum is underneath Jynx.'],
+ 38:['Flip 3 coins. Do 30 damage per heads; if 2 or more heads, Sunflora becomes Confused.'],
+ 60:['Does 20 damage to 1 of the opponent’s Benched Pokémon.'],
+ 68:[''],
+ 86:['Flip a coin. Heads: choose an opponent’s hand card randomly without looking, show it, then shuffle that SAME card into their deck.'],
+ 104:['Look at your top 2 deck cards; choose 1 for your hand and place the other at the bottom of your deck.',''],
+ 106:['Search your deck for up to 2 in any combination of Shellos East Sea or Shellos West Sea and Bench them. Shuffle afterward.',''],
+ 17:['The Defending Pokémon is now Asleep and Poisoned.','Flip a coin. Heads: 30 more damage and heal 30 damage from Roserade.'],
+ 33:['Next turn, attacks by Mothim that damage the Defending Pokémon do 40 more damage after Weakness and Resistance.','If Mothim has any damage counters, this attack does 40 more damage.'],
+ 41:['If the Defending Pokémon has fewer remaining HP than Wormadam Plant Cloak, it is now Confused.'],
+ 42:['Does 10 more damage for each Fighting Energy attached to Wormadam Sandy Cloak.'],
+ 43:['Wormadam Trash Cloak does 20 damage to itself.'],
+ 45:['Heal Breloom 10 damage for each Energy card attached to the Defending Pokémon.','If the Defending Pokémon has Retreat Cost 0, this attack does 60 more damage.'],
+ 46:['The Defending Pokémon is now Burned.','Flip a coin. Heads: discard one Fire Energy from Charmeleon to do 20 more damage.'],
+ 57:['During your next turn, Nidorino’s attacks do 20 more damage to the Defending Pokémon.','The Defending Pokémon is now Poisoned.'],
+ 59:['The Defending Pokémon cannot retreat next turn.','Flip 2 coins. If either is tails, this attack’s base damage is 10 instead of 100.'],
+ 61:['Flip a coin. Heads: 60 more damage.','If Raticate has Darkness Energy attached, this attack does 20 more damage.'],
+ 65:['Switch Skiploom with one of your Benched Pokémon.'],
+ 78:['If Burmy Plant Cloak has Grass Energy, 10 more damage.'],79:['If Burmy Sandy Cloak has Fighting Energy, 10 more damage.'],
+ 80:['If Burmy Trash Cloak has Metal Energy, 10 more damage.'],
+ 95:['Choose any opposing Pokémon; do 20 damage ignoring Weakness, Resistance and effects.'],
+ 107:['','Discard a Water Energy attached to Shellos West Sea and remove all damage counters from it.'],
+ 111:['Draw one card from the top and one card from the bottom of your deck.','If attached Basic Energy matches any Energy type on the Defending Pokémon, 30 more damage.'],
  49:["During your next turn, Leek Slap's base damage is 60.","Farfetch'd cannot use Leek Slap during your next turn."],
  64:["During your next turn, Protect Charge's base damage is 80.","During your opponent's next turn, damage done to Shelgon by attacks is reduced by 30."],
  76:['','Does 10 damage plus 10 more damage for each damage counter on Bagon.'],
@@ -220,9 +267,31 @@ const PRINTS={
  118:['The Defending Pokémon is now Asleep.','Choose one of your opponent’s Pokémon. Do 10 damage, ignoring Weakness and Resistance.']
 };
 const ABILITIES={
+ 38:[{type:'heal',target:'selfAll',amount:10,filter:{subtype:'Grass'}}],
+ 60:[{type:'healSelf',amount:30,condition:{type:'opponentEnergyAtLeast',energyType:'Water',amount:1,countSpecial:true}}],
+ 68:[{type:'heal',target:'opponentActive',amount:20}],
+ 41:[{type:'modifier',stat:'maxHp',amount:40,scope:'self',duration:'whileInPlay',condition:{type:'selfEnergyAtLeast',energyType:'Grass',amount:2,countSpecial:true}}],
+ 42:[{type:'preventEffects',duration:'whileInPlay'}],
+ 43:[{type:'modifier',stat:'damageReduction',amount:20,scope:'self',duration:'whileInPlay',condition:{type:'selfHasTool'}}],
+ 65:[{type:'modifier',stat:'damageReduction',amount:20,scope:'self',duration:'whileInPlay',condition:{type:'selfHasEnergyType',energyType:'Grass'},opponentFilter:{evolved:true}}],
+ 78:[{type:'attachEnergyFromDiscard',target:'self',energyType:'Grass',amount:1}],
+ 79:[{type:'attachEnergyFromDiscard',target:'self',energyType:'Fighting',amount:1}],
+ 80:[{type:'attachEnergyFromDiscard',target:'self',energyType:'Metal',amount:1}],
  90:[{type:'modifier',stat:'retreatCost',amount:-1,scope:'self',duration:'whileInPlay',condition:{type:'selfHasEnergyType',energyType:'Grass'}}]
 };
-const ABILITY_PRINTS={90:['Cottonweed: If Hoppip has Grass Energy attached, its Retreat Cost is 0.']};
+const ABILITY_PRINTS={
+ 38:['Grass Whistle: Once per turn, heal 10 damage from each friendly Grass Pokémon. Cannot be used while Sunflora has a Special Condition.'],
+ 60:['Aqua Healing: Once per turn, if Quagsire is Active and the Defending Pokémon has Water Energy, heal Quagsire 30.'],
+ 68:['Kind: Once per turn, remove 2 damage counters from the Defending Pokémon.'],
+ 41:['Plant Cloak: With 2 or more Grass Energy attached, Wormadam Plant Cloak has +40 HP.'],
+ 42:['Sandy Cloak: Prevent all effects of attacks, excluding damage, done to Wormadam Sandy Cloak.'],
+ 43:['Trash Cloak: Damage taken is reduced by 20 if Wormadam Trash Cloak has a Pokémon Tool attached.'],
+ 65:['Cotton Balloon: With Grass Energy attached, reduce damage from opponent Evolved Pokémon attacks by 20.'],
+ 78:['Wear Cloak: Once on your turn, if Active, attach one Basic Grass Energy from your discard pile to Burmy.'],
+ 79:['Wear Cloak: Once on your turn, if Active, attach one Basic Fighting Energy from your discard pile to Burmy.'],
+ 80:['Wear Cloak: Once on your turn, if Active, attach one Basic Metal Energy from your discard pile to Burmy.'],
+ 90:['Cottonweed: If Hoppip has Grass Energy attached, its Retreat Cost is 0.']
+};
 const TRAINER_TEXT={
  119:'Put one card from your hand on top of your deck, then search for one Pokémon. You cannot play this if it is your only hand card.',
  120:'Shuffle up to three Pokémon and Basic Energy cards from your discard pile back into your deck.',
@@ -238,6 +307,7 @@ const TRAINER_TEXT={
 const TRAINER_EFFECTS={
  119:{type:'neoRule',rule:'dp2:109:bebe'},120:{type:'neoRule',rule:'dp2:113:nightMaintenance'},
  121:{type:'modifier',stat:'postWeaknessAttackDamage',amount:10,duration:'whileInPlay',scope:'self'},
+  122:{type:'neoRule',rule:'dp3:122:oakVisit'},126:seq({type:'draw',amount:2},{type:'neoRule',rule:'dp3:126:marsBottom'}),
  123:{type:'neoRule',rule:'dp1:112:rowan'},124:{type:'neoRule',rule:'dp1:113:rival'},
  127:{type:'heal',target:'selfPokemon',amount:20},128:{type:'switch',side:'self'}
 };
@@ -258,7 +328,7 @@ function parse(row){
       damage:Number((damageText.match(/^\d+/)||[])[0]||0),damageText:damageText||null,
       text:PRINTS[n]?.[i]??'Printed attack effect awaiting implementation and verification.',effect:EFFECTS[n]?.[i]||noop};}),
     abilities:(powers||'').split(';').filter(Boolean).map(s=>{const [power,t]=s.split('~');return {name:power,type:t==='Power'?'activated':'passive',
-      printedPowerType:t==='Power'?'power':'body',text:ABILITY_PRINTS[n]?.[0]||'Printed Poké-Power or Poké-Body awaiting verified effect and timing.',effect:ABILITIES[n]?.[0]||noop};}),
+      printedPowerType:t==='Power'?'power':'body',activeOnly:[60,78,79,80].includes(n),disabledByStatus:[38,60].includes(n),text:ABILITY_PRINTS[n]?.[0]||'Printed Poké-Power or Poké-Body awaiting verified effect and timing.',effect:ABILITIES[n]?.[0]||noop};}),
     isLevelX:stage==='Level-Up',levelUpFrom:stage==='Level-Up'?from:null,
     text:stage==='Level-Up'?'Only level up the Active Pokémon; the card retains prior attacks and Powers.':undefined});
    const full=[...card.attacks.map(a=>a.text),...card.abilities.map(a=>a.text)].join(' ').toLowerCase();

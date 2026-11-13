@@ -71,6 +71,8 @@ const allowedInSetPool=(card,sets)=>!!card&&(sets.includes(card.setId)||isDiscov
 function specialCosts(_cards){return {D:0,M:0};} // Basic Darkness/Metal satisfies typed attack costs; Special Energy is optional.
 
 function classicCardName(name){return String(name||'').replace(/[’]/g,"'").replace(/\s+(?=[♀♂])/g,'').replace(/\s*δ\s*$/u,'').trim();}
+function classicEvolutionMatches(baseName,parentName){const a=classicCardName(baseName),p=classicCardName(parentName);return a===p||(p==='Burmy'&&/^Burmy (?:Plant|Sandy|Trash) Cloak$/.test(a));}
+function parentKeys(baseName){const n=classicCardName(baseName);return /^Burmy (?:Plant|Sandy|Trash) Cloak$/.test(n)?[n,'Burmy']:[n];}
 function familyLine(card,pool){
  if(!card||card.kind!=='pokemon')return [];
  const line=[card],seen=new Set([card.id]);let cur=card;
@@ -80,7 +82,7 @@ function familyLine(card,pool){
  // though the set contains a Lightning Charmeleon δ.
  const finalTypes=new Set(attackTypes(card));
  while(cur.evolvesFrom){
-  const parents=pool.filter(c=>(c.kind==='pokemon'||c.effect?.type==='playFossil')&&classicCardName(c.name)===classicCardName(cur.evolvesFrom));
+  const parents=pool.filter(c=>(c.kind==='pokemon'||c.effect?.type==='playFossil')&&classicEvolutionMatches(c.name,cur.evolvesFrom));
   if(!parents.length)return [];
   const fit=c=>{
    const needs=attackTypes(c),off=needs.filter(t=>!finalTypes.has(t)).length,
@@ -100,7 +102,7 @@ function familyLine(card,pool){
 // A future staged set's GATED evolutions must not retroactively invalidate
 // old one-set Stage-1 builds. Legacy EX pool rules still apply unchanged.
 const FULL_EVOLUTION_NAMES=new Set(classic.CARDS.filter(c=>c.kind==='pokemon'&&c.evolvesFrom&&(!['dp1','dp2','dp3'].includes(c.setId)||c.battleEnabled)).map(c=>classicCardName(c.evolvesFrom)));
-function hasKnownEvolution(card){return !!(card?.kind==='pokemon'&&FULL_EVOLUTION_NAMES.has(classicCardName(card.name)));}
+function hasKnownEvolution(card){return !!(card?.kind==='pokemon'&&parentKeys(card.name).some(k=>FULL_EVOLUTION_NAMES.has(k)));}
 function abilityEnergy(card){return decks.dualArmorProfile(card)?.energyType||null;}
 function effectiveTypes(card){return [...new Set([...(card?.types||[]),...(decks.dualArmorProfile(card)?.types||[])])];}
 function conditionalAttackTypes(card){return synergy.metadata(card)?.conditionalAttackEnergyTypes||[];}
@@ -129,7 +131,7 @@ function familyEssentialTypes(line){
 }
 function familyRoot(card,pool){const line=familyLine(card,pool);return line[0]?.name||card?.name||card?.id||'';}
 function archetypeName(card,pool){const root=familyRoot(card,pool);return ['Mysterious Fossil','Eevee'].includes(root)?card?.name||root:root;}
-function endpointCards(pool){const parents=new Set(pool.filter(c=>c.kind==='pokemon'&&c.evolvesFrom).map(c=>classicCardName(c.evolvesFrom)));return pool.filter(c=>c.kind==='pokemon'&&!parents.has(classicCardName(c.name)));}
+function endpointCards(pool){const parents=new Set(pool.filter(c=>c.kind==='pokemon'&&c.evolvesFrom).map(c=>classicCardName(c.evolvesFrom)));return pool.filter(c=>c.kind==='pokemon'&&!parentKeys(c.name).some(k=>parents.has(k)));}
 function damageValue(card){let best=0;for(const a of card?.attacks||[]){
   const raw=Number(a.damage||0);
   const effect=a.effect||{};
@@ -182,7 +184,7 @@ function buildDeck(rows,options={}){
   const key=classicCardName(c.name)+'@'+c.stage;
   if(finishMemo.has(key))return finishMemo.get(key);
   // Children must be higher stages and have a legal, playable root chain.
-  const next=(playableChildren.get(classicCardName(c.name))||[]).filter(child=>(STAGE_RANK[child.stage]||0)>(STAGE_RANK[c.stage]||0));
+  const next=parentKeys(c.name).flatMap(k=>playableChildren.get(k)||[]).filter(child=>(STAGE_RANK[child.stage]||0)>(STAGE_RANK[c.stage]||0));
   const ok=next.some(child=>familyLine(child,evolutionPool).length>0&&canFinishInPool(child));
   finishMemo.set(key,ok);return ok;
  };

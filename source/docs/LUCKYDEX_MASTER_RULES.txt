@@ -1,8 +1,8 @@
 LUCKYDEX — MASTER PROJECT RULES AND DEVELOPMENT CONTRACT
 =========================================================
-Document version: 2.30
+Document version: 2.31
 Compiled: 13 November 2026
-Current inspected source: v0.69.237. Mysterious Treasures dp2 is fully registered and battle-enabled at 124/124. Secret Wonders dp3 is newly registered at 132 collector prints; 46 are battle-enabled and 86 explicitly gated while mechanics are implemented. See SECRET_WONDERS_v0.69.237_STAGE1.md. Historical appendices remain part of the project record. Android APK and device QA remain pending.
+Current inspected source: v0.69.238. Mysterious Treasures dp2 is fully registered and battle-enabled at 124/124. Secret Wonders dp3 has 132 collector prints; 72 are battle-enabled and 60 explicitly gated while mechanics are implemented. See SECRET_WONDERS_v0.69.238_STAGE2.md. Historical appendices remain part of the project record. Android APK and device QA remain pending.
 Recommended repository location: ~/lucky-dex/source/docs/LUCKYDEX_MASTER_RULES.txt
 Project: LuckyDex — Android application/PWA, managed with Termux and GitHub
 
@@ -1622,3 +1622,52 @@ source/docs/SECRET_WONDERS_v0.69.237_STAGE1.md for exact evidence.
 draw and conditional Energy damage rules, 13 focused tests, new staged
 smoke-loaner coverage and GitHub preflight for both dp2 and dp3. Device
 APK/UI remains unverified.
+
+
+=======================================================================
+APPENDIX v2.31 — 13 NOVEMBER 2026 — v0.69.238 SECRET WONDERS STAGE 2
+=======================================================================
+[CURRENT] 72 of Secret Wonders' 132 numbered prints are battle-enabled;
+60 are explicitly gated. Stage 2 enables 26 additional prints: dp3
+#17, #30, #33, #38, #41–43, #45–46, #57, #59–61, #65, #68,
+#78–80, #86, #95, #104, #106–107, #111, #122 and #126.
+
+[LOCKED] C-EVO-011: Burmy's three named Cloak forms are three valid
+parents for a Mothim evolution. Wormadam's Cloak form still requires
+its matching Burmy parent. The evolution check must not accept the
+wrong Wormadam as an alternative, and automatic deck construction
+must include a valid Mothim parent.
+
+[LOCKED] C-ENERGY-012: When a card says Energy of a type is attached,
+count Special Energy that provides that type as well as Basic Energy.
+When the card explicitly says Basic Energy from a specified source,
+require a real Basic Energy and respect the physical source zone.
+Wormadam Plant Cloak's +40 HP counts attached Special Grass Energy;
+Burmy Wear Cloak takes real Basic Energy from discard. Test both.
+
+[LOCKED] C-CHOICE-013: When attacks or Supporters draw from the bottom
+of the deck, inspect a hidden opponent hand card or choose among top
+cards, preserve the exact moved card reference and placement. In the
+UI, any actual reveal must be shown and avoid leaking unchosen cards.
+A "random opponent card" cannot become a secretly user-selected card.
+Coin flips and choices must complete before KO and Prize screens.
+
+[CURRENT] Stage 2 includes outcome checks for Roserade, Mothim,
+Wormadam Cloaks, Breloom, Charmeleon, Nidorino, Pinsir, Raticate,
+Burmy Wear Cloak, Murkrow, Shellos Recover/Search, Spinda, Jynx,
+Sunflora, Quagsire, Unown K, Duskull, Sentret, Oak's Visit and
+Team Galactic's Mars. The independent auditor validates catalog,
+choice paths and effect schemas, not printed-text fidelity or device
+UI. Continue manual Android testing and independent printed-card QA.
+
+[CHECK] The remaining 60 gated cards include significant new
+mechanics: Blastoise Waterlog turn-ending attachments; Gardevoir
+Telepass opponent's discarded Supporter effect; Gallade flipping
+Prize cards face-up; Ho-Oh reactive pseudo-KO; LV.X inheritance,
+Unown word-dependent Powers and opponent choice. Do not prematurely
+enable any with placeholder effects.
+
+2026-11-13 | 2.30 -> 2.31 | v0.69.238 | 72/132 Secret Wonders
+playable, 26 newly enabled, 234/234 synthetic player/CPU action paths,
+new outcome tests and repaired multi-cloak evolution. Android APK
+and device choice/reveal presentation remain unverified.
