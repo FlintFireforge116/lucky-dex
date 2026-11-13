@@ -1524,3 +1524,50 @@ Extra Boost explanation, real Neo Destiny Unown [T] heads reveal of
 opponent HAND, explicit fromHand notifications for Power-attached
 Basic Energy, Electivire LV.X Shocking Tail cross-era test, 124-card
 full structural and integration audit, and upgraded Android versionCode.
+
+
+=======================================================================
+APPENDIX v2.29 — 13 NOVEMBER 2026 — v0.69.236 AUTOMATED CLASSIC AUDITOR
+=======================================================================
+[LOCKED] C-AUDIT-001–007: Every new Classic expansion must run the
+source/scripts/audit-classic-set.cjs preflight against its current collector
+catalog before shipping. The reference rules remain this TXT; the small
+machine-readable configuration lives at
+source/data/classic-card-audit-contract.json. Update its defaultSetId when
+changing the active expansion so GitHub CI audits that expansion automatically.
+
+[LOCKED] Fail a release for definite failures: duplicate/unregistered
+prints, mismatched declared count, FULL-vs-PARTIAL inconsistencies, invalid
+battle effects, enabled printed placeholders and illegal 30-card CPU decks
+for a complete set. Do not enable a card with an incomplete action simply
+because its JSON passes the validator.
+
+[LOCKED] Warnings/review flags are distinct from proven faults. Include
+unverified stage parents, contradictory Energy metadata, missing custom
+handler evidence, no-op passives, printed choices, opponent private data,
+Energy zones, repeatable actions, timing and special condition interactions
+in a human and deterministic-outcome test follow-up. Explicitly validate
+player and CPU choices and source/destination changes. Neither the presence
+of a card ID in a test file nor a synthetic attack execution proves
+printed-correct effects.
+
+[LOCKED] C-AUDIT-UI-008: Android rendering, ability availability,
+coin/prize timing, face-down privacy, readable choice labels and real CPU
+strategy cannot be certified by this Node-only preflight. Continue to
+playtest on device, investigate displayed errors and maintain real
+cross-set outcome regressions.
+
+[CURRENT] The dp2 preflight in v0.69.236 finds 124/124 battle-enabled
+prints and zero blocking effect/catalog faults, 16/16 legal generated CPU
+decks and 356/356 player/CPU attack/Trainer synthetic action paths
+completing; 5 advisory source/semantics review flags still require context.
+This is **not** independent proof of all printed cards. Source corrections:
+Glalie Craggy Face and Dewgong Cold Fat no longer show misleading gated
+Poké-Body descriptions; their existing core damage reduction was already
+exercised by v0.69.232 tests. Baseline reports are in source/generated.
+
+2026-11-13 | Document 2.28 -> 2.29 | App v0.69.236 | C-AUDIT-001–008
+added executable Classic card audit contract, per-card Markdown/JSON ledger,
+real effect-validator and registry checks, eight-type CPU deck legality,
+two-sided synthetic action preflight, focused self-tests and GitHub APK
+build gate. Did not add any new expansion or certify Android UI behaviour.

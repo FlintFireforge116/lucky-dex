@@ -471,6 +471,20 @@ function parse(row){
      text:stage==='Level-Up'?'Level up only your Active Pokémon. Retain attacks and Powers from the previous level.':undefined});
    if(BABIES[n]&&card.abilities.length){card.abilities[0]={name:'Baby Evolution',type:'activated',printedPowerType:'power',oncePerTurn:true,disabledByStatus:true,text:'Once during your turn, evolve this Baby Pokémon into '+BABIES[n]+' from your hand and remove its damage counters.',effect:{type:'neoRule',rule:'dp1:babyEvolve',targetName:BABIES[n]}};}
    if(POWER_READY[n]&&card.abilities.length){const p=POWER_READY[n];card.abilities[0]={name:p.name,type:p.type||'activated',printedPowerType:p.type==='passive'||n===121?'body':'power',expeditionSpecialCondition:p.type!=='passive',oncePerTurn:p.oncePerTurn??true,disabledByStatus:p.disabledByStatus??(p.type==='triggered'?false:true),activeOnly:!!p.activeOnly,benchOnly:!!p.benchOnly,event:p.event,fromHandOnly:!!p.fromHandOnly,text:p.text,effect:{type:'neoRule',rule:p.rule}};}
+
+   // v0.69.236 catalog preflight: these two FULL Poké-Bodies already execute
+   // through the shared core's damage adapter, not an activated effect. Never
+   // leave a misleading 'remains gated' description on their playable cards.
+   const corePassiveText={
+     25:'While Glalie is Active, damage it receives from attacks by Stage 2 Pokémon is reduced by 20.',
+     45:'While Dewgong is Asleep, damage it receives from attacks is reduced by 40.'
+   };
+   if(corePassiveText[n]&&card.abilities.length){
+     card.abilities[0]={...card.abilities[0],type:'passive',printedPowerType:'body',
+       oncePerTurn:false,disabledByStatus:false,text:corePassiveText[n],
+       effect:{type:'noop'},corePassive:true};
+   }
+
    const full=[...card.attacks.map(a=>a.text),...card.abilities.map(a=>a.text)].join(' ').toLowerCase();
    const types=[...new Set(card.attacks.flatMap(a=>[...a.cost].filter(s=>s!=='C').map(s=>T[s])))];
    const roles=new Set();if(/draw|hand/.test(full))roles.add('draw');if(/search|recover|retrieve/.test(full))roles.add('search');

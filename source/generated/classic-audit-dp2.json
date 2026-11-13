@@ -1,0 +1,2724 @@
+{
+  "schemaVersion": 1,
+  "contract": "docs/LUCKYDEX_MASTER_RULES.txt",
+  "scope": "Static preflight + optional synthetic execution, not printed correctness or Android certification",
+  "summary": {
+    "setId": "dp2",
+    "setName": "Mysterious Treasures",
+    "total": 124,
+    "declared": 124,
+    "counts": {
+      "pokemon": 111,
+      "trainer": 10,
+      "energy": 3,
+      "attacks": 168,
+      "abilities": 37,
+      "enabled": 124,
+      "gated": 0
+    },
+    "risks": {
+      "choice": 25,
+      "privacy": 9,
+      "timing": 28,
+      "energyMovement": 23,
+      "status": 6,
+      "deckSearch": 17,
+      "coin": 49
+    },
+    "withStaticTestMentions": 79,
+    "errors": 0,
+    "warnings": 0,
+    "reviewFlags": 5
+  },
+  "findings": [
+    {
+      "severity": "review",
+      "rule": "C-AUDIT-002",
+      "cardId": "dp2-9",
+      "message": "attack Dragon Fang: no-op effect despite conditional printed text; verify custom attack resolver."
+    },
+    {
+      "severity": "review",
+      "rule": "C-AUDIT-002",
+      "cardId": "dp2-25",
+      "message": "ability Craggy Face: no-op effect; verify separately implemented passive/continuous rule."
+    },
+    {
+      "severity": "review",
+      "rule": "C-AUDIT-002",
+      "cardId": "dp2-45",
+      "message": "ability Cold Fat: no-op effect; verify separately implemented passive/continuous rule."
+    },
+    {
+      "severity": "review",
+      "rule": "C-AUDIT-002",
+      "cardId": "dp2-73",
+      "message": "attack Tackle: no-op effect despite conditional printed text; verify custom attack resolver."
+    },
+    {
+      "severity": "review",
+      "rule": "C-AUDIT-002",
+      "cardId": "dp2-112",
+      "message": "card effect: no-op Trainer/Stadium effect; verify shared continuous rule."
+    }
+  ],
+  "cardLedger": [
+    {
+      "id": "dp2-1",
+      "name": "Aggron",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [
+        "energyMovement"
+      ],
+      "effectTypes": [
+        "neoRule"
+      ],
+      "customRules": [
+        "dp2:1:heapUp",
+        "dp2:1:hardMetal"
+      ],
+      "testFilesMentioningId": [
+        "v07232-mysterious-treasures-stage2-outcomes.test.cjs",
+        "v07236-classic-card-auditor.test.cjs"
+      ],
+      "findings": []
+    },
+    {
+      "id": "dp2-2",
+      "name": "Alakazam",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 1,
+      "abilityCount": 1,
+      "riskTags": [
+        "timing"
+      ],
+      "effectTypes": [
+        "neoRule"
+      ],
+      "customRules": [
+        "dp2:2:psychicGuard",
+        "dp2:2:powerCancel"
+      ],
+      "testFilesMentioningId": [
+        "v07234-mysterious-treasures-completion.test.cjs"
+      ],
+      "findings": []
+    },
+    {
+      "id": "dp2-3",
+      "name": "Ambipom",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [
+        "coin"
+      ],
+      "effectTypes": [
+        "neoRule"
+      ],
+      "customRules": [
+        "dp2:3:tailInfluence",
+        "dp2:3:charityTail"
+      ],
+      "testFilesMentioningId": [
+        "v07234-mysterious-treasures-completion.test.cjs"
+      ],
+      "findings": []
+    },
+    {
+      "id": "dp2-4",
+      "name": "Azelf",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 1,
+      "abilityCount": 1,
+      "riskTags": [
+        "timing",
+        "energyMovement"
+      ],
+      "effectTypes": [
+        "neoRule"
+      ],
+      "customRules": [
+        "dp2:4:bindPulse",
+        "dp2:4:downerMaterial"
+      ],
+      "testFilesMentioningId": [
+        "v07233-mysterious-treasures-stage3-outcomes.test.cjs",
+        "v07234-mysterious-treasures-completion.test.cjs"
+      ],
+      "findings": []
+    },
+    {
+      "id": "dp2-5",
+      "name": "Blissey",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 1,
+      "abilityCount": 1,
+      "riskTags": [
+        "choice",
+        "timing",
+        "energyMovement",
+        "deckSearch"
+      ],
+      "effectTypes": [
+        "neoRule"
+      ],
+      "customRules": [
+        "dp2:5:happyChance",
+        "dp2:5:kindEgg"
+      ],
+      "testFilesMentioningId": [
+        "v07233-mysterious-treasures-stage3-outcomes.test.cjs"
+      ],
+      "findings": []
+    },
+    {
+      "id": "dp2-6",
+      "name": "Bronzong",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 1,
+      "abilityCount": 1,
+      "riskTags": [
+        "energyMovement"
+      ],
+      "effectTypes": [
+        "status",
+        "neoRule"
+      ],
+      "customRules": [
+        "dp2:6:miracleOracle"
+      ],
+      "testFilesMentioningId": [
+        "v07233-mysterious-treasures-stage3-outcomes.test.cjs",
+        "v07234-mysterious-treasures-completion.test.cjs"
+      ],
+      "findings": []
+    },
+    {
+      "id": "dp2-7",
+      "name": "Celebi",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [
+        "choice",
+        "energyMovement",
+        "deckSearch"
+      ],
+      "effectTypes": [
+        "neoRule"
+      ],
+      "customRules": [
+        "dp2:7:sprouting",
+        "dp2:7:leafTornado"
+      ],
+      "testFilesMentioningId": [
+        "v07232-mysterious-treasures-stage2-outcomes.test.cjs",
+        "v07234-mysterious-treasures-completion.test.cjs"
+      ],
+      "findings": []
+    },
+    {
+      "id": "dp2-8",
+      "name": "Feraligatr",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [
+        "choice"
+      ],
+      "effectTypes": [
+        "neoRule"
+      ],
+      "customRules": [
+        "dp2:8:energyCyclone",
+        "dp2:8:breakingTail"
+      ],
+      "testFilesMentioningId": [
+        "v07232-mysterious-treasures-stage2-outcomes.test.cjs",
+        "v07233-mysterious-treasures-stage3-outcomes.test.cjs",
+        "v07234-mysterious-treasures-completion.test.cjs",
+        "v07236-classic-card-auditor.test.cjs"
+      ],
+      "findings": []
+    },
+    {
+      "id": "dp2-9",
+      "name": "Garchomp",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 1,
+      "abilityCount": 1,
+      "riskTags": [
+        "energyMovement"
+      ],
+      "effectTypes": [
+        "noop",
+        "neoRule"
+      ],
+      "customRules": [
+        "dp2:9:rainbowScale"
+      ],
+      "testFilesMentioningId": [
+        "v07233-mysterious-treasures-stage3-outcomes.test.cjs",
+        "v07236-classic-card-auditor.test.cjs"
+      ],
+      "findings": [
+        {
+          "severity": "review",
+          "rule": "C-AUDIT-002",
+          "message": "attack Dragon Fang: no-op effect despite conditional printed text; verify custom attack resolver."
+        }
+      ]
+    },
+    {
+      "id": "dp2-10",
+      "name": "Honchkrow",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 1,
+      "abilityCount": 1,
+      "riskTags": [
+        "deckSearch"
+      ],
+      "effectTypes": [
+        "neoRule"
+      ],
+      "customRules": [
+        "dp2:10:darkWingFlaps",
+        "dp2:10:darkGenes"
+      ],
+      "testFilesMentioningId": [
+        "v07234-mysterious-treasures-completion.test.cjs"
+      ],
+      "findings": []
+    },
+    {
+      "id": "dp2-11",
+      "name": "Lumineon",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 1,
+      "abilityCount": 1,
+      "riskTags": [
+        "energyMovement"
+      ],
+      "effectTypes": [
+        "neoRule"
+      ],
+      "customRules": [
+        "dp2:11:reverseStream",
+        "dp2:11:lureRing"
+      ],
+      "testFilesMentioningId": [
+        "v07233-mysterious-treasures-stage3-outcomes.test.cjs"
+      ],
+      "findings": []
+    },
+    {
+      "id": "dp2-12",
+      "name": "Magmortar",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [
+        "timing",
+        "energyMovement",
+        "coin"
+      ],
+      "effectTypes": [
+        "attackCoinGate",
+        "neoRule"
+      ],
+      "customRules": [
+        "dp2:12:flameDrum"
+      ],
+      "testFilesMentioningId": [
+        "v07232-mysterious-treasures-stage2-outcomes.test.cjs",
+        "v07233-mysterious-treasures-stage3-outcomes.test.cjs"
+      ],
+      "findings": []
+    },
+    {
+      "id": "dp2-13",
+      "name": "Meganium",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [],
+      "effectTypes": [
+        "sequence",
+        "coinFlip",
+        "status",
+        "noop",
+        "neoRule"
+      ],
+      "customRules": [
+        "dp2:13:counterattack"
+      ],
+      "testFilesMentioningId": [
+        "v07231-mysterious-treasures-integration.test.cjs"
+      ],
+      "findings": []
+    },
+    {
+      "id": "dp2-14",
+      "name": "Mesprit",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 1,
+      "abilityCount": 1,
+      "riskTags": [
+        "choice"
+      ],
+      "effectTypes": [
+        "switch",
+        "neoRule"
+      ],
+      "customRules": [
+        "dp2:14:upperMaterial"
+      ],
+      "testFilesMentioningId": [
+        "v07233-mysterious-treasures-stage3-outcomes.test.cjs",
+        "v07234-mysterious-treasures-completion.test.cjs"
+      ],
+      "findings": []
+    },
+    {
+      "id": "dp2-15",
+      "name": "Raichu",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [
+        "choice",
+        "energyMovement",
+        "deckSearch"
+      ],
+      "effectTypes": [
+        "neoRule"
+      ],
+      "customRules": [
+        "dp2:15:electromagneticInduction",
+        "dp2:15:explosiveThunder"
+      ],
+      "testFilesMentioningId": [
+        "v07233-mysterious-treasures-stage3-outcomes.test.cjs",
+        "v07234-mysterious-treasures-completion.test.cjs"
+      ],
+      "findings": []
+    },
+    {
+      "id": "dp2-16",
+      "name": "Typhlosion",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 1,
+      "abilityCount": 1,
+      "riskTags": [
+        "energyMovement"
+      ],
+      "effectTypes": [
+        "discardEnergyCard",
+        "neoRule"
+      ],
+      "customRules": [
+        "dp2:16:firestarter"
+      ],
+      "testFilesMentioningId": [],
+      "findings": []
+    },
+    {
+      "id": "dp2-17",
+      "name": "Tyranitar",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [
+        "energyMovement"
+      ],
+      "effectTypes": [
+        "neoRule"
+      ],
+      "customRules": [
+        "dp2:17:payback",
+        "dp2:17:groundBurn"
+      ],
+      "testFilesMentioningId": [],
+      "findings": []
+    },
+    {
+      "id": "dp2-18",
+      "name": "Uxie",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 1,
+      "abilityCount": 1,
+      "riskTags": [
+        "timing"
+      ],
+      "effectTypes": [
+        "neoRule"
+      ],
+      "customRules": [
+        "dp2:18:mindOff",
+        "dp2:18:memoryOut"
+      ],
+      "testFilesMentioningId": [
+        "v07233-mysterious-treasures-stage3-outcomes.test.cjs",
+        "v07234-mysterious-treasures-completion.test.cjs",
+        "v07235-mysterious-treasures-full-audit.test.cjs"
+      ],
+      "findings": []
+    },
+    {
+      "id": "dp2-19",
+      "name": "Abomasnow",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 1,
+      "abilityCount": 1,
+      "riskTags": [
+        "status",
+        "coin"
+      ],
+      "effectTypes": [
+        "coinFlip",
+        "benchDamage",
+        "noop",
+        "neoRule"
+      ],
+      "customRules": [
+        "dp2:19:glacierSnow"
+      ],
+      "testFilesMentioningId": [
+        "v07232-mysterious-treasures-stage2-outcomes.test.cjs",
+        "v07235-mysterious-treasures-full-audit.test.cjs"
+      ],
+      "findings": []
+    },
+    {
+      "id": "dp2-20",
+      "name": "Ariados",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 1,
+      "abilityCount": 1,
+      "riskTags": [
+        "coin"
+      ],
+      "effectTypes": [
+        "coinFlip",
+        "status",
+        "neoRule"
+      ],
+      "customRules": [
+        "dp2:20:sticky"
+      ],
+      "testFilesMentioningId": [
+        "v07233-mysterious-treasures-stage3-outcomes.test.cjs"
+      ],
+      "findings": []
+    },
+    {
+      "id": "dp2-21",
+      "name": "Bastiodon",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 1,
+      "abilityCount": 1,
+      "riskTags": [],
+      "effectTypes": [
+        "neoRule"
+      ],
+      "customRules": [
+        "dp2:21:angerRevenge",
+        "dp2:21:protectiveWall"
+      ],
+      "testFilesMentioningId": [
+        "v07234-mysterious-treasures-completion.test.cjs"
+      ],
+      "findings": []
+    },
+    {
+      "id": "dp2-22",
+      "name": "Chimecho",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [],
+      "effectTypes": [
+        "neoRule"
+      ],
+      "customRules": [
+        "dp2:22:callIn",
+        "dp2:22:strangeBell"
+      ],
+      "testFilesMentioningId": [],
+      "findings": []
+    },
+    {
+      "id": "dp2-23",
+      "name": "Crobat",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 1,
+      "abilityCount": 1,
+      "riskTags": [
+        "choice",
+        "timing",
+        "deckSearch",
+        "coin"
+      ],
+      "effectTypes": [
+        "neoRule"
+      ],
+      "customRules": [
+        "dp2:23:strikeAndFade",
+        "dp2:23:evolutionaryToxic"
+      ],
+      "testFilesMentioningId": [
+        "v07234-mysterious-treasures-completion.test.cjs"
+      ],
+      "findings": []
+    },
+    {
+      "id": "dp2-24",
+      "name": "Exeggutor",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [
+        "choice",
+        "energyMovement",
+        "deckSearch",
+        "coin"
+      ],
+      "effectTypes": [
+        "neoRule"
+      ],
+      "customRules": [
+        "dp2:24:stringBomb",
+        "dp2:24:nutritionalSupport"
+      ],
+      "testFilesMentioningId": [
+        "v07232-mysterious-treasures-stage2-outcomes.test.cjs"
+      ],
+      "findings": []
+    },
+    {
+      "id": "dp2-25",
+      "name": "Glalie",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 1,
+      "abilityCount": 1,
+      "riskTags": [
+        "timing",
+        "coin"
+      ],
+      "effectTypes": [
+        "coinFlip",
+        "sequence",
+        "actionLock",
+        "noop"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [
+        "v07232-mysterious-treasures-stage2-outcomes.test.cjs"
+      ],
+      "findings": [
+        {
+          "severity": "review",
+          "rule": "C-AUDIT-002",
+          "message": "ability Craggy Face: no-op effect; verify separately implemented passive/continuous rule."
+        }
+      ]
+    },
+    {
+      "id": "dp2-26",
+      "name": "Gyarados",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 1,
+      "abilityCount": 1,
+      "riskTags": [
+        "coin"
+      ],
+      "effectTypes": [
+        "neoRule"
+      ],
+      "customRules": [
+        "dp2:26:enrage",
+        "dp2:26:dragonDNA"
+      ],
+      "testFilesMentioningId": [
+        "v07234-mysterious-treasures-completion.test.cjs"
+      ],
+      "findings": []
+    },
+    {
+      "id": "dp2-27",
+      "name": "Kricketune",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [
+        "status"
+      ],
+      "effectTypes": [
+        "status",
+        "neoRule"
+      ],
+      "customRules": [
+        "dp2:27:concerto"
+      ],
+      "testFilesMentioningId": [],
+      "findings": []
+    },
+    {
+      "id": "dp2-28",
+      "name": "Manectric",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [
+        "energyMovement"
+      ],
+      "effectTypes": [
+        "neoRule"
+      ],
+      "customRules": [
+        "dp2:28:lightningTwister",
+        "dp2:28:chainLightning"
+      ],
+      "testFilesMentioningId": [],
+      "findings": []
+    },
+    {
+      "id": "dp2-29",
+      "name": "Mantine",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 1,
+      "abilityCount": 1,
+      "riskTags": [
+        "timing"
+      ],
+      "effectTypes": [
+        "lock",
+        "neoRule"
+      ],
+      "customRules": [
+        "dp2:29:jumboFin"
+      ],
+      "testFilesMentioningId": [
+        "v07233-mysterious-treasures-stage3-outcomes.test.cjs"
+      ],
+      "findings": []
+    },
+    {
+      "id": "dp2-30",
+      "name": "Mr. Mime",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 1,
+      "abilityCount": 1,
+      "riskTags": [],
+      "effectTypes": [
+        "neoRule"
+      ],
+      "customRules": [
+        "dp2:30:trickPlay",
+        "dp2:30:airyWall"
+      ],
+      "testFilesMentioningId": [
+        "v07234-mysterious-treasures-completion.test.cjs"
+      ],
+      "findings": []
+    },
+    {
+      "id": "dp2-31",
+      "name": "Nidoqueen",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 1,
+      "abilityCount": 1,
+      "riskTags": [],
+      "effectTypes": [
+        "neoRule"
+      ],
+      "customRules": [
+        "dp2:31:giveAid",
+        "dp2:31:motherPheromone"
+      ],
+      "testFilesMentioningId": [
+        "v07233-mysterious-treasures-stage3-outcomes.test.cjs"
+      ],
+      "findings": []
+    },
+    {
+      "id": "dp2-32",
+      "name": "Ninetales",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 1,
+      "abilityCount": 1,
+      "riskTags": [
+        "choice",
+        "energyMovement"
+      ],
+      "effectTypes": [
+        "discardEnergyCard",
+        "neoRule"
+      ],
+      "customRules": [
+        "dp2:32:colorShift"
+      ],
+      "testFilesMentioningId": [
+        "v07232-mysterious-treasures-stage2-outcomes.test.cjs",
+        "v07233-mysterious-treasures-stage3-outcomes.test.cjs"
+      ],
+      "findings": []
+    },
+    {
+      "id": "dp2-33",
+      "name": "Rampardos",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [],
+      "effectTypes": [
+        "neoRule",
+        "sequence",
+        "selfDamage",
+        "damageRule"
+      ],
+      "customRules": [
+        "dp2:33:assurance"
+      ],
+      "testFilesMentioningId": [],
+      "findings": []
+    },
+    {
+      "id": "dp2-34",
+      "name": "Slaking",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 1,
+      "abilityCount": 1,
+      "riskTags": [
+        "coin"
+      ],
+      "effectTypes": [
+        "neoRule"
+      ],
+      "customRules": [
+        "dp2:34:lazyBlow",
+        "dp2:34:energeticImpulse"
+      ],
+      "testFilesMentioningId": [
+        "v07233-mysterious-treasures-stage3-outcomes.test.cjs"
+      ],
+      "findings": []
+    },
+    {
+      "id": "dp2-35",
+      "name": "Sudowoodo",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [
+        "timing"
+      ],
+      "effectTypes": [
+        "neoRule",
+        "sequence",
+        "forceOpponentSwitch",
+        "lock"
+      ],
+      "customRules": [
+        "dp2:35:sidestep"
+      ],
+      "testFilesMentioningId": [],
+      "findings": []
+    },
+    {
+      "id": "dp2-36",
+      "name": "Toxicroak",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 1,
+      "abilityCount": 1,
+      "riskTags": [],
+      "effectTypes": [
+        "status",
+        "neoRule"
+      ],
+      "customRules": [
+        "dp2:36:poisonSacs"
+      ],
+      "testFilesMentioningId": [
+        "v07234-mysterious-treasures-completion.test.cjs"
+      ],
+      "findings": []
+    },
+    {
+      "id": "dp2-37",
+      "name": "Unown [I]",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 1,
+      "abilityCount": 1,
+      "riskTags": [
+        "choice",
+        "privacy",
+        "timing",
+        "deckSearch"
+      ],
+      "effectTypes": [
+        "neoRule"
+      ],
+      "customRules": [
+        "dp2:37:hiddenPower",
+        "dp2:37:item"
+      ],
+      "testFilesMentioningId": [
+        "v07234-mysterious-treasures-completion.test.cjs"
+      ],
+      "findings": []
+    },
+    {
+      "id": "dp2-38",
+      "name": "Ursaring",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [
+        "timing"
+      ],
+      "effectTypes": [
+        "sequence",
+        "status",
+        "modifier",
+        "neoRule"
+      ],
+      "customRules": [
+        "dp2:38:defensiveClaw"
+      ],
+      "testFilesMentioningId": [],
+      "findings": []
+    },
+    {
+      "id": "dp2-39",
+      "name": "Walrein",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 1,
+      "abilityCount": 1,
+      "riskTags": [
+        "coin"
+      ],
+      "effectTypes": [
+        "neoRule"
+      ],
+      "customRules": [
+        "dp2:39:iceBind",
+        "dp2:39:freezeUp"
+      ],
+      "testFilesMentioningId": [
+        "v07234-mysterious-treasures-completion.test.cjs"
+      ],
+      "findings": []
+    },
+    {
+      "id": "dp2-40",
+      "name": "Whiscash",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [],
+      "effectTypes": [
+        "damageFromDamage",
+        "sequence",
+        "benchDamage"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [],
+      "findings": []
+    },
+    {
+      "id": "dp2-41",
+      "name": "Bayleef",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [
+        "coin"
+      ],
+      "effectTypes": [
+        "searchChosen",
+        "coinDamage"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [],
+      "findings": []
+    },
+    {
+      "id": "dp2-42",
+      "name": "Chingling",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 1,
+      "abilityCount": 1,
+      "riskTags": [
+        "deckSearch"
+      ],
+      "effectTypes": [
+        "searchChosen",
+        "neoRule"
+      ],
+      "customRules": [
+        "dp1:babyEvolve"
+      ],
+      "testFilesMentioningId": [],
+      "findings": []
+    },
+    {
+      "id": "dp2-43",
+      "name": "Cranidos",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [],
+      "effectTypes": [
+        "noop",
+        "benchDamage"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [
+        "v07234-mysterious-treasures-completion.test.cjs"
+      ],
+      "findings": []
+    },
+    {
+      "id": "dp2-44",
+      "name": "Croconaw",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 1,
+      "abilityCount": 1,
+      "riskTags": [
+        "privacy",
+        "timing"
+      ],
+      "effectTypes": [
+        "lock",
+        "neoRule"
+      ],
+      "customRules": [
+        "dp2:44:evolutionaryVitality"
+      ],
+      "testFilesMentioningId": [
+        "v07232-mysterious-treasures-stage2-outcomes.test.cjs"
+      ],
+      "findings": []
+    },
+    {
+      "id": "dp2-45",
+      "name": "Dewgong",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 1,
+      "abilityCount": 1,
+      "riskTags": [
+        "status"
+      ],
+      "effectTypes": [
+        "status",
+        "noop"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [
+        "v07232-mysterious-treasures-stage2-outcomes.test.cjs"
+      ],
+      "findings": [
+        {
+          "severity": "review",
+          "rule": "C-AUDIT-002",
+          "message": "ability Cold Fat: no-op effect; verify separately implemented passive/continuous rule."
+        }
+      ]
+    },
+    {
+      "id": "dp2-46",
+      "name": "Dodrio",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [
+        "choice",
+        "coin"
+      ],
+      "effectTypes": [
+        "coinDamage",
+        "neoRule"
+      ],
+      "customRules": [
+        "dp2:46:triplePick"
+      ],
+      "testFilesMentioningId": [
+        "v07233-mysterious-treasures-stage3-outcomes.test.cjs"
+      ],
+      "findings": []
+    },
+    {
+      "id": "dp2-47",
+      "name": "Dunsparce",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [],
+      "effectTypes": [
+        "draw",
+        "switch"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [],
+      "findings": []
+    },
+    {
+      "id": "dp2-48",
+      "name": "Gabite",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [
+        "choice",
+        "coin"
+      ],
+      "effectTypes": [
+        "searchChosen",
+        "neoRule"
+      ],
+      "customRules": [
+        "dp2:48:marvelousShine"
+      ],
+      "testFilesMentioningId": [],
+      "findings": []
+    },
+    {
+      "id": "dp2-49",
+      "name": "Girafarig",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [
+        "deckSearch",
+        "coin"
+      ],
+      "effectTypes": [
+        "searchChosen",
+        "coinFlip",
+        "status",
+        "noop"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [],
+      "findings": []
+    },
+    {
+      "id": "dp2-50",
+      "name": "Golbat",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 1,
+      "abilityCount": 0,
+      "riskTags": [
+        "privacy"
+      ],
+      "effectTypes": [
+        "revealHand"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [
+        "v07234-mysterious-treasures-completion.test.cjs"
+      ],
+      "findings": []
+    },
+    {
+      "id": "dp2-51",
+      "name": "Graveler",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [
+        "coin"
+      ],
+      "effectTypes": [
+        "coinDamage",
+        "multiTargetDamage"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [],
+      "findings": []
+    },
+    {
+      "id": "dp2-52",
+      "name": "Happiny",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 1,
+      "abilityCount": 1,
+      "riskTags": [],
+      "effectTypes": [
+        "heal",
+        "neoRule"
+      ],
+      "customRules": [
+        "dp1:babyEvolve"
+      ],
+      "testFilesMentioningId": [
+        "v07233-mysterious-treasures-stage3-outcomes.test.cjs"
+      ],
+      "findings": []
+    },
+    {
+      "id": "dp2-53",
+      "name": "Lairon",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [],
+      "effectTypes": [
+        "neoRule",
+        "noop"
+      ],
+      "customRules": [
+        "dp2:53:mend"
+      ],
+      "testFilesMentioningId": [],
+      "findings": []
+    },
+    {
+      "id": "dp2-54",
+      "name": "Magmar",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [
+        "energyMovement"
+      ],
+      "effectTypes": [
+        "noop",
+        "discardEnergyCard"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [
+        "v07232-mysterious-treasures-stage2-outcomes.test.cjs"
+      ],
+      "findings": []
+    },
+    {
+      "id": "dp2-55",
+      "name": "Masquerain",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [],
+      "effectTypes": [
+        "neoRule"
+      ],
+      "customRules": [
+        "dp2:55:centrifugal",
+        "dp2:55:ripple"
+      ],
+      "testFilesMentioningId": [],
+      "findings": []
+    },
+    {
+      "id": "dp2-56",
+      "name": "Nidorina",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [
+        "choice"
+      ],
+      "effectTypes": [
+        "searchChosen",
+        "noop"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [],
+      "findings": []
+    },
+    {
+      "id": "dp2-57",
+      "name": "Octillery",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [
+        "choice",
+        "energyMovement"
+      ],
+      "effectTypes": [
+        "neoRule",
+        "selectedDamage"
+      ],
+      "customRules": [
+        "dp2:57:crashBomber"
+      ],
+      "testFilesMentioningId": [],
+      "findings": []
+    },
+    {
+      "id": "dp2-58",
+      "name": "Parasect",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [],
+      "effectTypes": [
+        "neoRule",
+        "healSelf"
+      ],
+      "customRules": [
+        "dp2:58:wildSpores"
+      ],
+      "testFilesMentioningId": [],
+      "findings": []
+    },
+    {
+      "id": "dp2-59",
+      "name": "Pupitar",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [
+        "timing",
+        "coin"
+      ],
+      "effectTypes": [
+        "neoRule",
+        "sequence",
+        "selfDamage",
+        "coinFlip",
+        "preventDamage",
+        "noop"
+      ],
+      "customRules": [
+        "dp2:59:pressurizedGas"
+      ],
+      "testFilesMentioningId": [],
+      "findings": []
+    },
+    {
+      "id": "dp2-60",
+      "name": "Quilava",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 1,
+      "abilityCount": 0,
+      "riskTags": [
+        "energyMovement",
+        "coin"
+      ],
+      "effectTypes": [
+        "coinFlip",
+        "noop",
+        "discardEnergyCard"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [],
+      "findings": []
+    },
+    {
+      "id": "dp2-61",
+      "name": "Sandslash",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [],
+      "effectTypes": [
+        "neoRule"
+      ],
+      "customRules": [
+        "dp2:61:spikeArmor",
+        "dp2:61:poisonSpike"
+      ],
+      "testFilesMentioningId": [
+        "v07232-mysterious-treasures-stage2-outcomes.test.cjs"
+      ],
+      "findings": []
+    },
+    {
+      "id": "dp2-62",
+      "name": "Sealeo",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 1,
+      "abilityCount": 0,
+      "riskTags": [
+        "choice"
+      ],
+      "effectTypes": [
+        "selectedDamage"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [
+        "v07234-mysterious-treasures-completion.test.cjs"
+      ],
+      "findings": []
+    },
+    {
+      "id": "dp2-63",
+      "name": "Shieldon",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [
+        "timing",
+        "coin"
+      ],
+      "effectTypes": [
+        "modifier",
+        "coinFlip",
+        "bonusDamage",
+        "noop"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [
+        "v07234-mysterious-treasures-completion.test.cjs"
+      ],
+      "findings": []
+    },
+    {
+      "id": "dp2-64",
+      "name": "Tropius",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [],
+      "effectTypes": [
+        "neoRule",
+        "forceOpponentSwitch"
+      ],
+      "customRules": [
+        "dp2:64:bonusLeaf"
+      ],
+      "testFilesMentioningId": [],
+      "findings": []
+    },
+    {
+      "id": "dp2-65",
+      "name": "Unown [E]",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 1,
+      "abilityCount": 1,
+      "riskTags": [
+        "timing",
+        "coin"
+      ],
+      "effectTypes": [
+        "neoRule"
+      ],
+      "customRules": [
+        "dp2:65:hiddenPower",
+        "dp2:65:equip"
+      ],
+      "testFilesMentioningId": [
+        "v07234-mysterious-treasures-completion.test.cjs"
+      ],
+      "findings": []
+    },
+    {
+      "id": "dp2-66",
+      "name": "Unown [M]",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 1,
+      "abilityCount": 1,
+      "riskTags": [
+        "choice",
+        "coin"
+      ],
+      "effectTypes": [
+        "neoRule"
+      ],
+      "customRules": [
+        "dp2:66:hiddenPower",
+        "dp2:66:magnet"
+      ],
+      "testFilesMentioningId": [
+        "v07233-mysterious-treasures-stage3-outcomes.test.cjs",
+        "v07234-mysterious-treasures-completion.test.cjs"
+      ],
+      "findings": []
+    },
+    {
+      "id": "dp2-67",
+      "name": "Unown [T]",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 1,
+      "abilityCount": 1,
+      "riskTags": [
+        "choice",
+        "privacy",
+        "deckSearch",
+        "coin"
+      ],
+      "effectTypes": [
+        "neoRule"
+      ],
+      "customRules": [
+        "dp2:67:hiddenPower",
+        "dp2:67:throw"
+      ],
+      "testFilesMentioningId": [
+        "v07234-mysterious-treasures-completion.test.cjs"
+      ],
+      "findings": []
+    },
+    {
+      "id": "dp2-68",
+      "name": "Vigoroth",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [
+        "coin"
+      ],
+      "effectTypes": [
+        "neoRule",
+        "coinDamage"
+      ],
+      "customRules": [
+        "dp2:68:wakePunch"
+      ],
+      "testFilesMentioningId": [
+        "v07232-mysterious-treasures-stage2-outcomes.test.cjs",
+        "v07233-mysterious-treasures-stage3-outcomes.test.cjs"
+      ],
+      "findings": []
+    },
+    {
+      "id": "dp2-69",
+      "name": "Abra",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [
+        "privacy",
+        "deckSearch"
+      ],
+      "effectTypes": [
+        "neoRule"
+      ],
+      "customRules": [
+        "dp2:69:playSearch",
+        "dp2:69:ultraEvolution"
+      ],
+      "testFilesMentioningId": [],
+      "findings": []
+    },
+    {
+      "id": "dp2-70",
+      "name": "Aipom",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [
+        "choice",
+        "timing"
+      ],
+      "effectTypes": [
+        "noop",
+        "neoRule"
+      ],
+      "customRules": [
+        "dp2:70:throwOff"
+      ],
+      "testFilesMentioningId": [
+        "v07232-mysterious-treasures-stage2-outcomes.test.cjs",
+        "v07233-mysterious-treasures-stage3-outcomes.test.cjs"
+      ],
+      "findings": []
+    },
+    {
+      "id": "dp2-71",
+      "name": "Aron",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 1,
+      "abilityCount": 0,
+      "riskTags": [],
+      "effectTypes": [
+        "selfDamage"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [],
+      "findings": []
+    },
+    {
+      "id": "dp2-72",
+      "name": "Barboach",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 1,
+      "abilityCount": 0,
+      "riskTags": [
+        "coin"
+      ],
+      "effectTypes": [
+        "neoRule"
+      ],
+      "customRules": [
+        "dp2:72:mudSpit"
+      ],
+      "testFilesMentioningId": [
+        "v07235-mysterious-treasures-full-audit.test.cjs"
+      ],
+      "findings": []
+    },
+    {
+      "id": "dp2-73",
+      "name": "Bidoof",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 1,
+      "abilityCount": 0,
+      "riskTags": [],
+      "effectTypes": [
+        "noop"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [
+        "v07232-mysterious-treasures-stage2-outcomes.test.cjs",
+        "v07233-mysterious-treasures-stage3-outcomes.test.cjs",
+        "v07234-mysterious-treasures-completion.test.cjs",
+        "v07236-classic-card-auditor.test.cjs"
+      ],
+      "findings": [
+        {
+          "severity": "review",
+          "rule": "C-AUDIT-002",
+          "message": "attack Tackle: no-op effect despite conditional printed text; verify custom attack resolver."
+        }
+      ]
+    },
+    {
+      "id": "dp2-74",
+      "name": "Bronzor",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 1,
+      "abilityCount": 0,
+      "riskTags": [
+        "coin"
+      ],
+      "effectTypes": [
+        "coinFlip",
+        "status",
+        "noop"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [],
+      "findings": []
+    },
+    {
+      "id": "dp2-75",
+      "name": "Buizel",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 1,
+      "abilityCount": 0,
+      "riskTags": [
+        "coin"
+      ],
+      "effectTypes": [
+        "coinFlip",
+        "bonusDamage",
+        "noop"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [
+        "v07232-mysterious-treasures-stage2-outcomes.test.cjs",
+        "v07233-mysterious-treasures-stage3-outcomes.test.cjs",
+        "v07234-mysterious-treasures-completion.test.cjs"
+      ],
+      "findings": []
+    },
+    {
+      "id": "dp2-76",
+      "name": "Chansey",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [
+        "timing",
+        "coin"
+      ],
+      "effectTypes": [
+        "coinFlip",
+        "preventDamage",
+        "noop",
+        "selfDamage"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [
+        "v07233-mysterious-treasures-stage3-outcomes.test.cjs"
+      ],
+      "findings": []
+    },
+    {
+      "id": "dp2-77",
+      "name": "Chikorita",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [
+        "status",
+        "coin"
+      ],
+      "effectTypes": [
+        "coinFlip",
+        "status",
+        "noop",
+        "bonusDamage"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [],
+      "findings": []
+    },
+    {
+      "id": "dp2-78",
+      "name": "Croagunk",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [
+        "timing",
+        "coin"
+      ],
+      "effectTypes": [
+        "coinFlip",
+        "actionLock",
+        "noop",
+        "status"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [
+        "v07234-mysterious-treasures-completion.test.cjs"
+      ],
+      "findings": []
+    },
+    {
+      "id": "dp2-79",
+      "name": "Cyndaquil",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [],
+      "effectTypes": [
+        "noop"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [
+        "v07231-mysterious-treasures-integration.test.cjs",
+        "v07235-mysterious-treasures-full-audit.test.cjs"
+      ],
+      "findings": []
+    },
+    {
+      "id": "dp2-80",
+      "name": "Doduo",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [
+        "timing",
+        "coin"
+      ],
+      "effectTypes": [
+        "coinDamage",
+        "lock"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [
+        "v07235-mysterious-treasures-full-audit.test.cjs"
+      ],
+      "findings": []
+    },
+    {
+      "id": "dp2-81",
+      "name": "Electrike",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 1,
+      "abilityCount": 0,
+      "riskTags": [
+        "timing",
+        "energyMovement",
+        "coin"
+      ],
+      "effectTypes": [
+        "neoRule"
+      ],
+      "customRules": [
+        "dp2:81:electromagneticJam"
+      ],
+      "testFilesMentioningId": [
+        "v07232-mysterious-treasures-stage2-outcomes.test.cjs"
+      ],
+      "findings": []
+    },
+    {
+      "id": "dp2-82",
+      "name": "Exeggcute",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 1,
+      "abilityCount": 0,
+      "riskTags": [
+        "choice",
+        "coin"
+      ],
+      "effectTypes": [
+        "neoRule"
+      ],
+      "customRules": [
+        "dp2:82:directHitBomb"
+      ],
+      "testFilesMentioningId": [
+        "v07232-mysterious-treasures-stage2-outcomes.test.cjs"
+      ],
+      "findings": []
+    },
+    {
+      "id": "dp2-83",
+      "name": "Finneon",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [
+        "timing",
+        "coin"
+      ],
+      "effectTypes": [
+        "coinFlip",
+        "preventDamage",
+        "noop"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [],
+      "findings": []
+    },
+    {
+      "id": "dp2-84",
+      "name": "Geodude",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 1,
+      "abilityCount": 0,
+      "riskTags": [
+        "choice"
+      ],
+      "effectTypes": [
+        "multiTargetDamage"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [],
+      "findings": []
+    },
+    {
+      "id": "dp2-85",
+      "name": "Gible",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 1,
+      "abilityCount": 0,
+      "riskTags": [],
+      "effectTypes": [
+        "forceOpponentSwitch"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [],
+      "findings": []
+    },
+    {
+      "id": "dp2-86",
+      "name": "Kricketot",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [],
+      "effectTypes": [
+        "benchFromDeck",
+        "noop"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [],
+      "findings": []
+    },
+    {
+      "id": "dp2-87",
+      "name": "Larvitar",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [
+        "choice"
+      ],
+      "effectTypes": [
+        "neoRule",
+        "noop"
+      ],
+      "customRules": [
+        "dp2:87:mountainBite"
+      ],
+      "testFilesMentioningId": [
+        "v07232-mysterious-treasures-stage2-outcomes.test.cjs"
+      ],
+      "findings": []
+    },
+    {
+      "id": "dp2-88",
+      "name": "Magby",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 1,
+      "abilityCount": 1,
+      "riskTags": [
+        "status",
+        "coin"
+      ],
+      "effectTypes": [
+        "coinFlip",
+        "status",
+        "noop",
+        "neoRule"
+      ],
+      "customRules": [
+        "dp1:babyEvolve"
+      ],
+      "testFilesMentioningId": [
+        "v07232-mysterious-treasures-stage2-outcomes.test.cjs"
+      ],
+      "findings": []
+    },
+    {
+      "id": "dp2-89",
+      "name": "Magikarp",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [
+        "coin"
+      ],
+      "effectTypes": [
+        "damageFromDamage",
+        "neoRule"
+      ],
+      "customRules": [
+        "dp2:89:dragonRage"
+      ],
+      "testFilesMentioningId": [
+        "v07234-mysterious-treasures-completion.test.cjs"
+      ],
+      "findings": []
+    },
+    {
+      "id": "dp2-90",
+      "name": "Murkrow",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [
+        "deckSearch"
+      ],
+      "effectTypes": [
+        "benchFromDeck",
+        "switch"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [
+        "v07234-mysterious-treasures-completion.test.cjs"
+      ],
+      "findings": []
+    },
+    {
+      "id": "dp2-91",
+      "name": "Nidoran ♀",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [
+        "coin"
+      ],
+      "effectTypes": [
+        "neoRule",
+        "coinFlip",
+        "status",
+        "noop"
+      ],
+      "customRules": [
+        "dp2:91:callFamily"
+      ],
+      "testFilesMentioningId": [
+        "v07233-mysterious-treasures-stage3-outcomes.test.cjs"
+      ],
+      "findings": []
+    },
+    {
+      "id": "dp2-92",
+      "name": "Paras",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [
+        "coin"
+      ],
+      "effectTypes": [
+        "noop",
+        "coinFlip",
+        "status"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [],
+      "findings": []
+    },
+    {
+      "id": "dp2-93",
+      "name": "Pichu",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 1,
+      "abilityCount": 1,
+      "riskTags": [
+        "coin"
+      ],
+      "effectTypes": [
+        "coinAttackGate",
+        "noop",
+        "neoRule"
+      ],
+      "customRules": [
+        "dp1:babyEvolve"
+      ],
+      "testFilesMentioningId": [],
+      "findings": []
+    },
+    {
+      "id": "dp2-94",
+      "name": "Pikachu",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 1,
+      "abilityCount": 1,
+      "riskTags": [
+        "coin"
+      ],
+      "effectTypes": [
+        "coinFlip",
+        "bonusDamage",
+        "noop",
+        "neoRule"
+      ],
+      "customRules": [
+        "dp2:94:electroRecycle"
+      ],
+      "testFilesMentioningId": [],
+      "findings": []
+    },
+    {
+      "id": "dp2-95",
+      "name": "Remoraid",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [
+        "coin"
+      ],
+      "effectTypes": [
+        "selectedDamage",
+        "coinFlip",
+        "status",
+        "noop"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [],
+      "findings": []
+    },
+    {
+      "id": "dp2-96",
+      "name": "Sandshrew",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [
+        "timing"
+      ],
+      "effectTypes": [
+        "attackCoinGate",
+        "noop"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [],
+      "findings": []
+    },
+    {
+      "id": "dp2-97",
+      "name": "Seel",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 1,
+      "abilityCount": 0,
+      "riskTags": [
+        "coin"
+      ],
+      "effectTypes": [
+        "coinFlip",
+        "status",
+        "noop"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [],
+      "findings": []
+    },
+    {
+      "id": "dp2-98",
+      "name": "Shinx",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 1,
+      "abilityCount": 0,
+      "riskTags": [
+        "energyMovement",
+        "coin"
+      ],
+      "effectTypes": [
+        "coinFlip",
+        "attachEnergyFromDiscard",
+        "noop"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [],
+      "findings": []
+    },
+    {
+      "id": "dp2-99",
+      "name": "Slakoth",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 1,
+      "abilityCount": 0,
+      "riskTags": [
+        "status"
+      ],
+      "effectTypes": [
+        "sequence",
+        "status"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [
+        "v07232-mysterious-treasures-stage2-outcomes.test.cjs",
+        "v07233-mysterious-treasures-stage3-outcomes.test.cjs"
+      ],
+      "findings": []
+    },
+    {
+      "id": "dp2-100",
+      "name": "Snorunt",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [
+        "coin"
+      ],
+      "effectTypes": [
+        "draw",
+        "coinAttackGate",
+        "noop"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [
+        "v07236-classic-card-auditor.test.cjs"
+      ],
+      "findings": []
+    },
+    {
+      "id": "dp2-101",
+      "name": "Snover",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [
+        "privacy",
+        "coin"
+      ],
+      "effectTypes": [
+        "revealHand",
+        "coinFlip",
+        "noop",
+        "selfDamage"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [],
+      "findings": []
+    },
+    {
+      "id": "dp2-102",
+      "name": "Spheal",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [
+        "timing",
+        "coin"
+      ],
+      "effectTypes": [
+        "noop",
+        "neoRule"
+      ],
+      "customRules": [
+        "dp2:102:willpower"
+      ],
+      "testFilesMentioningId": [
+        "v07232-mysterious-treasures-stage2-outcomes.test.cjs"
+      ],
+      "findings": []
+    },
+    {
+      "id": "dp2-103",
+      "name": "Spinarak",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [
+        "timing",
+        "coin"
+      ],
+      "effectTypes": [
+        "lock",
+        "coinDamage"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [],
+      "findings": []
+    },
+    {
+      "id": "dp2-104",
+      "name": "Surskit",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 1,
+      "abilityCount": 0,
+      "riskTags": [],
+      "effectTypes": [
+        "sequence",
+        "forceOpponentSwitch",
+        "status"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [],
+      "findings": []
+    },
+    {
+      "id": "dp2-105",
+      "name": "Teddiursa",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [
+        "timing"
+      ],
+      "effectTypes": [
+        "sequence",
+        "removeStatus",
+        "healSelf",
+        "status",
+        "neoRule"
+      ],
+      "customRules": [
+        "dp2:105:sweetPalm"
+      ],
+      "testFilesMentioningId": [
+        "v07232-mysterious-treasures-stage2-outcomes.test.cjs"
+      ],
+      "findings": []
+    },
+    {
+      "id": "dp2-106",
+      "name": "Totodile",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [],
+      "effectTypes": [
+        "noop",
+        "neoRule"
+      ],
+      "customRules": [
+        "dp2:106:shiningFang"
+      ],
+      "testFilesMentioningId": [
+        "v07232-mysterious-treasures-stage2-outcomes.test.cjs"
+      ],
+      "findings": []
+    },
+    {
+      "id": "dp2-107",
+      "name": "Vulpix",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 1,
+      "abilityCount": 0,
+      "riskTags": [],
+      "effectTypes": [
+        "benchDamage"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [],
+      "findings": []
+    },
+    {
+      "id": "dp2-108",
+      "name": "Zubat",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [
+        "coin"
+      ],
+      "effectTypes": [
+        "coinFlip",
+        "status",
+        "noop"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [
+        "v07234-mysterious-treasures-completion.test.cjs"
+      ],
+      "findings": []
+    },
+    {
+      "id": "dp2-109",
+      "name": "Bebe's Search",
+      "kind": "trainer",
+      "battleEnabled": true,
+      "attackCount": 0,
+      "abilityCount": 0,
+      "riskTags": [
+        "deckSearch"
+      ],
+      "effectTypes": [
+        "neoRule"
+      ],
+      "customRules": [
+        "dp2:109:bebe"
+      ],
+      "testFilesMentioningId": [
+        "v07232-mysterious-treasures-stage2-outcomes.test.cjs"
+      ],
+      "findings": []
+    },
+    {
+      "id": "dp2-110",
+      "name": "Dusk Ball",
+      "kind": "trainer",
+      "battleEnabled": true,
+      "attackCount": 0,
+      "abilityCount": 0,
+      "riskTags": [
+        "privacy",
+        "deckSearch"
+      ],
+      "effectTypes": [
+        "neoRule"
+      ],
+      "customRules": [
+        "dp2:110:dusk"
+      ],
+      "testFilesMentioningId": [
+        "v07232-mysterious-treasures-stage2-outcomes.test.cjs"
+      ],
+      "findings": []
+    },
+    {
+      "id": "dp2-111",
+      "name": "Fossil Excavator",
+      "kind": "trainer",
+      "battleEnabled": true,
+      "attackCount": 0,
+      "abilityCount": 0,
+      "riskTags": [
+        "privacy",
+        "deckSearch"
+      ],
+      "effectTypes": [
+        "neoRule"
+      ],
+      "customRules": [
+        "dp2:111:fossilExcavator"
+      ],
+      "testFilesMentioningId": [
+        "v07231-mysterious-treasures-integration.test.cjs",
+        "v07233-mysterious-treasures-stage3-outcomes.test.cjs"
+      ],
+      "findings": []
+    },
+    {
+      "id": "dp2-112",
+      "name": "Lake Boundary",
+      "kind": "trainer",
+      "battleEnabled": true,
+      "attackCount": 0,
+      "abilityCount": 0,
+      "riskTags": [],
+      "effectTypes": [
+        "noop"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [
+        "v07233-mysterious-treasures-stage3-outcomes.test.cjs"
+      ],
+      "findings": [
+        {
+          "severity": "review",
+          "rule": "C-AUDIT-002",
+          "message": "card effect: no-op Trainer/Stadium effect; verify shared continuous rule."
+        }
+      ]
+    },
+    {
+      "id": "dp2-113",
+      "name": "Night Maintenance",
+      "kind": "trainer",
+      "battleEnabled": true,
+      "attackCount": 0,
+      "abilityCount": 0,
+      "riskTags": [
+        "choice",
+        "energyMovement",
+        "deckSearch"
+      ],
+      "effectTypes": [
+        "neoRule"
+      ],
+      "customRules": [
+        "dp2:113:nightMaintenance"
+      ],
+      "testFilesMentioningId": [],
+      "findings": []
+    },
+    {
+      "id": "dp2-114",
+      "name": "Quick Ball",
+      "kind": "trainer",
+      "battleEnabled": true,
+      "attackCount": 0,
+      "abilityCount": 0,
+      "riskTags": [
+        "privacy",
+        "deckSearch"
+      ],
+      "effectTypes": [
+        "neoRule"
+      ],
+      "customRules": [
+        "dp2:114:quick"
+      ],
+      "testFilesMentioningId": [],
+      "findings": []
+    },
+    {
+      "id": "dp2-115",
+      "name": "Team Galactic's Wager",
+      "kind": "trainer",
+      "battleEnabled": true,
+      "attackCount": 0,
+      "abilityCount": 0,
+      "riskTags": [
+        "choice"
+      ],
+      "effectTypes": [
+        "neoRule"
+      ],
+      "customRules": [
+        "dp2:115:teamGalacticsWager"
+      ],
+      "testFilesMentioningId": [
+        "v07234-mysterious-treasures-completion.test.cjs",
+        "v07236-classic-card-auditor.test.cjs"
+      ],
+      "findings": []
+    },
+    {
+      "id": "dp2-116",
+      "name": "Armor Fossil",
+      "kind": "trainer",
+      "battleEnabled": true,
+      "attackCount": 0,
+      "abilityCount": 0,
+      "riskTags": [
+        "coin"
+      ],
+      "effectTypes": [
+        "playFossil"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [
+        "v07231-mysterious-treasures-integration.test.cjs",
+        "v07233-mysterious-treasures-stage3-outcomes.test.cjs",
+        "v07234-mysterious-treasures-completion.test.cjs"
+      ],
+      "findings": []
+    },
+    {
+      "id": "dp2-117",
+      "name": "Skull Fossil",
+      "kind": "trainer",
+      "battleEnabled": true,
+      "attackCount": 0,
+      "abilityCount": 0,
+      "riskTags": [
+        "coin"
+      ],
+      "effectTypes": [
+        "playFossil"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [
+        "v07233-mysterious-treasures-stage3-outcomes.test.cjs",
+        "v07234-mysterious-treasures-completion.test.cjs"
+      ],
+      "findings": []
+    },
+    {
+      "id": "dp2-118",
+      "name": "Multi Energy",
+      "kind": "energy",
+      "battleEnabled": true,
+      "attackCount": 0,
+      "abilityCount": 0,
+      "riskTags": [
+        "energyMovement"
+      ],
+      "effectTypes": [
+        "specialEnergy"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [
+        "v07232-mysterious-treasures-stage2-outcomes.test.cjs",
+        "v07233-mysterious-treasures-stage3-outcomes.test.cjs",
+        "v07235-mysterious-treasures-full-audit.test.cjs"
+      ],
+      "findings": []
+    },
+    {
+      "id": "dp2-119",
+      "name": "Darkness Energy",
+      "kind": "energy",
+      "battleEnabled": true,
+      "attackCount": 0,
+      "abilityCount": 0,
+      "riskTags": [],
+      "effectTypes": [
+        "specialEnergy"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [
+        "v07232-mysterious-treasures-stage2-outcomes.test.cjs"
+      ],
+      "findings": []
+    },
+    {
+      "id": "dp2-120",
+      "name": "Metal Energy",
+      "kind": "energy",
+      "battleEnabled": true,
+      "attackCount": 0,
+      "abilityCount": 0,
+      "riskTags": [],
+      "effectTypes": [
+        "specialEnergy"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [
+        "v07232-mysterious-treasures-stage2-outcomes.test.cjs",
+        "v07234-mysterious-treasures-completion.test.cjs"
+      ],
+      "findings": []
+    },
+    {
+      "id": "dp2-121",
+      "name": "Electivire LV.X",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 1,
+      "abilityCount": 1,
+      "riskTags": [
+        "timing",
+        "energyMovement"
+      ],
+      "effectTypes": [
+        "neoRule"
+      ],
+      "customRules": [
+        "dp2:121:pulseBarrier",
+        "dp2:121:shockingTail"
+      ],
+      "testFilesMentioningId": [
+        "v07232-mysterious-treasures-stage2-outcomes.test.cjs",
+        "v07235-mysterious-treasures-full-audit.test.cjs"
+      ],
+      "findings": []
+    },
+    {
+      "id": "dp2-122",
+      "name": "Lucario LV.X",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 1,
+      "abilityCount": 1,
+      "riskTags": [
+        "choice",
+        "timing"
+      ],
+      "effectTypes": [
+        "modifier",
+        "neoRule"
+      ],
+      "customRules": [
+        "dp2:122:stance"
+      ],
+      "testFilesMentioningId": [
+        "v07232-mysterious-treasures-stage2-outcomes.test.cjs"
+      ],
+      "findings": []
+    },
+    {
+      "id": "dp2-123",
+      "name": "Magmortar LV.X",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 1,
+      "abilityCount": 1,
+      "riskTags": [
+        "choice",
+        "timing",
+        "energyMovement"
+      ],
+      "effectTypes": [
+        "neoRule"
+      ],
+      "customRules": [
+        "dp2:123:flameBluster",
+        "dp2:123:torridWave"
+      ],
+      "testFilesMentioningId": [
+        "v07232-mysterious-treasures-stage2-outcomes.test.cjs"
+      ],
+      "findings": []
+    },
+    {
+      "id": "dp2-124",
+      "name": "Time-Space Distortion",
+      "kind": "trainer",
+      "battleEnabled": true,
+      "attackCount": 0,
+      "abilityCount": 0,
+      "riskTags": [
+        "choice",
+        "coin"
+      ],
+      "effectTypes": [
+        "neoRule"
+      ],
+      "customRules": [
+        "dp2:124:timeSpace"
+      ],
+      "testFilesMentioningId": [],
+      "findings": []
+    }
+  ],
+  "cpu": {
+    "attempted": 16,
+    "valid": 16,
+    "failures": []
+  },
+  "smoke": {
+    "attempted": 356,
+    "executed": 356,
+    "skipped": 0,
+    "skippedDetails": [],
+    "failures": []
+  }
+}

@@ -1,0 +1,59 @@
+{
+  "schemaVersion": 1,
+  "sourceOfTruth": "docs/LUCKYDEX_MASTER_RULES.txt",
+  "scope": "Classic TCG; scripted preflight, not a printed-card certification",
+  "checks": [
+    {
+      "id": "C-AUDIT-001",
+      "level": "error",
+      "rule": "C-RELEASE-GATE-003",
+      "purpose": "Unique registered print, claimed set size, consistent enabled/partial/deck gates"
+    },
+    {
+      "id": "C-AUDIT-002",
+      "level": "error",
+      "rule": "C-RELEASE-GATE-009",
+      "purpose": "Recognized battle effects, supported parameters, incomplete or placeholder enabled effects"
+    },
+    {
+      "id": "C-AUDIT-003",
+      "level": "warning",
+      "rule": "C-RELEASE-GATE-018",
+      "purpose": "Evolution parent, level-up identity, basic metadata and attack cost/energy-plan correlation"
+    },
+    {
+      "id": "C-AUDIT-004",
+      "level": "review",
+      "rule": "C-RELEASE-GATE-013",
+      "purpose": "Manual targeting, private information, coin, optionality and effect ordering review"
+    },
+    {
+      "id": "C-AUDIT-005",
+      "level": "error",
+      "rule": "C-RELEASE-GATE-004",
+      "purpose": "Eight-type CPU generated deck legality when a set is fully playable"
+    },
+    {
+      "id": "C-AUDIT-006",
+      "level": "review",
+      "rule": "C-RELEASE-GATE-005",
+      "purpose": "Evidence coverage: static test mentions do not prove printed outcomes"
+    },
+    {
+      "id": "C-AUDIT-007",
+      "level": "review",
+      "rule": "C-RELEASE-GATE-007",
+      "purpose": "Source execution cannot certify an Android UI, readability, animation or player decisions"
+    }
+  ],
+  "riskPatterns": {
+    "choice": "\\b(?:choose|chosen|select|you may|your opponent may|opponent chooses|up to)\\b",
+    "privacy": "\\b(?:look at (?:your|the|an? opponent|opponent.s).*hand|reveal.*hand|face.down|secret|without looking)\\b",
+    "timing": "\\b(?:before (?:doing|dealing)|after (?:doing|dealing)|during your opponent.s|between turns|next turn|when (?:attached|evolved|damaged|knocked out))\\b",
+    "energyMovement": "\\b(?:attach.*energy|discard.*energy|move.*energy|return.*energy|basic energy|special energy)\\b",
+    "status": "\\b(?:asleep|burned|poisoned|paralyzed|confused|special condition)\\b",
+    "deckSearch": "\\b(?:search.*deck|look at.*deck|shuffle.*deck|top [0-9]+ cards)\\b",
+    "coin": "\\b(?:flip (?:a|[0-9]+|one|two|three) coin|heads|tails)\\b"
+  },
+  "defaultSetId": "dp2"
+}

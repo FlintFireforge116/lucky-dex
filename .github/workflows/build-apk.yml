@@ -25,6 +25,17 @@ jobs:
           test -f source/settings.gradle
           test -f source/app/build.gradle
 
+      - name: Set up Node.js for Classic preflight
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Test Classic card auditor
+        run: node --test source/tests/v07236-classic-card-auditor.test.cjs
+
+      - name: Audit configured Classic expansion
+        run: node source/scripts/audit-classic-set.cjs --smoke --no-write
+
       - name: Set up Java 17
         uses: actions/setup-java@v4
         with:
