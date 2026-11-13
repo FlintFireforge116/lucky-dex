@@ -18,20 +18,20 @@ function setup(att='dp1-84',def='dp1-94'){
 function attack(s,index=0){const a=core.legalActions(s,'player').find(x=>x.type==='attack'&&x.attackIndex===index);assert.ok(a,`Attack ${index} was not legal`);core.applyAction(s,'player',a);}
 function play(s,id){s.sides.player.hand=[{uid:'played-'+id,cardId:id}];const a=core.legalActions(s,'player').find(x=>x.type==='trainer'&&x.cardId===id);assert.ok(a,`${id} Trainer legal`);core.applyAction(s,'player',a);return a;}
 function finishChoices(s){for(let n=0;n<12&&s.phase==='effectChoice';n++){const a=core.legalActions(s,s.choiceSide).find(x=>x.type==='effectChoice'&&!x.choiceSkip);assert.ok(a,`choice must resolve in ${n} steps`);core.applyAction(s,s.choiceSide,a);}assert.notEqual(s.phase,'effectChoice');}
-test('DP1 complete collector catalogue: 130 unique identities, exact printed Weakness modifiers and 3 gated LV.X',()=>{
+test('DP1 complete collector catalogue: 130 unique identities, exact Weakness modifiers and 3 playable LV.X',()=>{
  assert.equal(dp.CARDS.length,130);assert.deepEqual(dp.CARDS.map(x=>Number(x.number)),Array.from({length:130},(_,i)=>i+1));
  assert.equal(dp.CARDS.filter(x=>x.kind==='pokemon').length,107);assert.equal(dp.CARDS.filter(x=>x.kind==='trainer').length,15);assert.equal(dp.CARDS.filter(x=>x.kind==='energy').length,8);
  assert.ok(dp.CARDS.filter(x=>x.battleEnabled).length>=96);assert.ok(dp.CARDS.filter(x=>!x.battleEnabled).length<=34);
- for(const id of ['dp1-120','dp1-121','dp1-122']){const c=dp.cardById(id);assert.equal(c.isLevelX,true);assert.equal(c.battleEnabled,false);assert.equal(c.stage,'Level-Up');}
+ for(const id of ['dp1-120','dp1-121','dp1-122']){const c=dp.cardById(id);assert.equal(c.isLevelX,true);assert.equal(c.battleEnabled,true);assert.equal(c.stage,'Level-Up');}
  assert.equal(dp.cardById('dp1-28').weaknessValue,'+20');assert.equal(dp.cardById('dp1-28').retreat,2);
  assert.equal(dp.cardById('dp1-129').subtype,'Darkness');assert.equal(dp.cardById('dp1-130').subtype,'Metal');
  assert.ok(dp.CARDS.every(c=>c.setId==='dp1'&&c.image.includes('images.pokemontcg.io/dp1/')));
 });
-test('gated printed Powers, LV.X and complex attacks are NOT playable or visible in deck pool',()=>{
+test('all complete printed Powers and LV.X are battle-ready and deck pool contains only legal enabled prints',()=>{
  for(const c of dp.CARDS){const inData=data.cardById(c.id);assert.ok(inData,`missing in combined Classic catalogue: ${c.id}`);assert.equal(inData.battleEnabled,c.battleEnabled);if(!c.battleEnabled)assert.equal(c.deckEligible,false);}
  const d=builder.buildDeck(owned,{sets:['dp1'],focusCardId:'dp1-28',types:['Grass'],randomSeed:6});assert.ok(d.ok,JSON.stringify(d.errors));assert.equal(d.cards.length,30);
  assert.ok(d.cards.every(id=>{const c=data.cardById(id);return c.battleEnabled&&c.deckEligible!==false&&c.setId==='dp1';}));
- assert.equal(d.cards.includes('dp1-120'),false);
+ assert.ok(dp.cardById('dp1-120').battleEnabled&&dp.cardById('dp1-121').battleEnabled&&dp.cardById('dp1-122').battleEnabled);
 });
 test('verified battle cards never advertise placeholder effect description',()=>{
  for(const c of dp.CARDS.filter(x=>x.kind==='pokemon'&&x.battleEnabled)){

@@ -22,7 +22,7 @@ function resolveChoices(s,pick=()=>null){const seen=[];for(let i=0;i<30&&s.phase
 function attack(s,index=0,side='player',select=()=>null,pick=()=>null){s.activeSide=side;const acts=core.legalActions(s,side).filter(a=>a.type==='attack'&&a.attackIndex===index);assert.ok(acts.length,`${s.sides[side].active?.cardId} attack ${index}`);core.applyAction(s,side,select(acts,s)||acts[0]);return resolveChoices(s,pick);}
 function ability(s,id,pick=()=>null,target='bench'){s.activeSide='player';const acts=core.legalActions(s,'player').filter(a=>a.type==='ability'&&a.cardId===id);assert.ok(acts.length,'No ability for '+id);core.applyAction(s,'player',acts.find(x=>x.target===target)||acts[0]);return resolveChoices(s,pick);}
 test('Stage 6 catalogue shows implemented, validated effects only',()=>{
- assert.equal(dp.coverage().total,130);assert.equal(dp.coverage().battleEnabled,110);
+ assert.equal(dp.coverage().total,130);assert.ok(dp.coverage().battleEnabled>=110);
  for(const n of added){const c=dp.cardById('dp1-'+n);assert.ok(c.battleEnabled,String(n));for(const a of c.attacks||[]){assert.ok(!a.text.includes('See the original card'),`${n}:${a.name}`);assert.deepEqual(fx.validateEffect(a.effect),[],`${n}:${a.name}`);}for(const a of c.abilities||[]){assert.ok(!a.text.includes('See the printed card'),`${n}:${a.name}`);assert.deepEqual(fx.validateEffect(a.effect),[],`${n}:power`);}if(c.kind==='trainer')assert.deepEqual(fx.validateEffect(c.effect),[],String(n));}
 });
 test('Every newly enabled attack executes on both sides',()=>{

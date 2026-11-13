@@ -338,6 +338,9 @@
     const canEvolveTarget=(slot,evo,target)=>{
       if(!slot||state.format==='classic'&&Number(slot.neoDestinyEvolutionLockUntil||0)>=state.turnNumber)return false;
       const base=data.cardById(slot.cardId),asName=effects.evolutionRule(state,side,slot,'evolutionAsName',data.cardById),timing=effects.evolutionRule(state,side,slot,'evolutionTimingOverride',data.cardById);
+      // LV.X is a LEVEL UP of an Active previous-level Pokémon, not Stage 3
+      // or a Bench evolution. Never stack an LV.X onto another LV.X.
+      if(evo.isLevelX&&(target!=='active'||!base||base.isLevelX||state.sides[side].active!==slot||base.name!==evo.levelUpFrom))return false;
       const evolvesName=asName?.name||base?.name;if((state.format==='classic'?classicCardName(evolvesName)!==classicCardName(evo.evolvesFrom):evolvesName!==evo.evolvesFrom))return false;
       const firstTurn=s.turnCount<=1,sameTurn=Number(slot.playedOnSideTurn)>=Number(s.turnCount);
       const giovanniBonus=state.format==='classic'&&Number(s.gym2GiovanniEvolutionTurn)===Number(state.turnNumber)&&base?.name?.startsWith("Giovanni's")&&evo.name?.startsWith("Giovanni's");
@@ -498,7 +501,7 @@
     if(event==='evolved'&&state.format==='classic'&&onlySource?.cardId==='ex7-1'&&state.sides[side]?.active===onlySource&&!effects.abilitiesSuppressed(state,side,onlySource,data.cardById)){const defender=state.sides[side==='player'?'opponent':'player']?.active;if(defender)defender.conditions={...(defender.conditions||{}),paralysis:{appliedTurn:state.turnNumber}};}
     if(event==='evolved'&&state.stadium?.cardId==='gym2-123'&&onlySource&&data.cardById(onlySource.cardId)?.name?.startsWith("Giovanni's"))onlySource.damage=Math.max(0,Number(onlySource.damage||0)-20);
     for(const source of [ss.active,...ss.bench].filter(Boolean)){if(onlySource&&source!==onlySource)continue;if(Number(source.neoDestinyPowerLockUntil||0)>=state.turnNumber||effects.abilitiesSuppressed(state,side,source,data.cardById)||Number(state.sides[side]?.gym2PowerLockUntil||0)>=state.turnNumber)continue;
-      for(const ability of abilitiesFor(data.cardById(source.cardId))){if(state.format==='classic'&&data.cardById(source.cardId)?.pokemonEx&&ability.printedPowerType==='power'&&
+      for(const ability of abilitiesFor(data.cardById(source.cardId),source)){if(state.format==='classic'&&data.cardById(source.cardId)?.pokemonEx&&ability.printedPowerType==='power'&&
           ['player','opponent'].some(w=>pokemonOn(state.sides[w]).some(p=>p.cardId==='ex14-96'&&!effects.abilitiesSuppressed(state,w,p,data.cardById))))continue;
         if(abilityBlockedByStatus(ability,source)||ability.type!=='triggered'||ability.event!==event||ability.activeOnly&&ss.active!==source||ability.benchOnly&&ss.active===source)continue;if(event==='endTurn'){const ownersTurn=state.activeSide===side,turn=ability.turn||'owner';if(turn==='owner'&&!ownersTurn||turn==='opponent'&&ownersTurn)continue;}if(ability.opponentAttackOnly&&!(meta.source?.attack&&meta.source.side===(side==='player'?'opponent':'player')))continue;if(ability.energyType&&ability.energyType!==meta.energyType)continue;if(ability.fromHandOnly&&!meta.fromHand)continue;if(ability.firstTurnOnly&&ss.turnCount!==1)continue;
         effects.applyEffect(ability.effect,{...effectContext(state,side,{},source),isAbility:true,eventData:meta});state.log.push({type:'ability',side,cardId:source.cardId,ability:ability.name,event});
@@ -699,7 +702,12 @@
     while(remaining>0&&special.length){const ref=special.shift(),value=Object.values(specialEnergyProvides(ref)).reduce((a,b)=>a+Number(b||0),0)||1;discardSpecial.push(ref);remaining-=value;}
     return remaining<=0?{energy:generated,specialEnergy:special,discardSpecial}:null;
   }
-  function abilitiesFor(card){return (card?.abilities?.length?card.abilities:Array.isArray(card?.ability)?card.ability:[card?.ability]).filter(Boolean);}
+  function abilitiesFor(card,slot){
+    const own=(card?.abilities?.length?card.abilities:Array.isArray(card?.ability)?card.ability:[card?.ability]).filter(Boolean);
+    if(!card?.isLevelX||!slot||slot.stack?.length<2)return own;
+    const previous=data.cardById(slot.stack[slot.stack.length-2]);
+    return [...own,...(previous?.abilities?.length?previous.abilities:[])];
+  }
   function abilityBlockedByStatus(ability,slot){if(!ability?.disabledByStatus||!slot)return false;const c=slot.conditions||{};
     // Expedition's printed Poké-Powers are disabled by ANY Special Condition,
     // including Poison and Burn; many later card texts only name three.
@@ -716,7 +724,11 @@
   function attackOptions(state,side){
     const slot=state?.sides?.[side]?.active,current=data.cardById(slot?.cardId);if(!slot||!current)return[];
     const out=(current.attacks||[]).map((attack,attackIndex)=>({cardId:current.id,attackIndex,attack,previous:false}));
-    if(effects.canUsePreviousEvolutionAttacks?.(state,side,slot,data.cardById))for(const cardId of (slot.stack||[]).slice(0,-1)){const card=data.cardById(cardId);for(const [attackIndex,attack] of (card?.attacks||[]).entries())out.push({cardId,attackIndex,attack,previous:true});}
+    if(current.isLevelX&&slot.stack?.length>=2){
+      const prior=data.cardById(slot.stack[slot.stack.length-2]);
+      if(prior&&prior.name===current.levelUpFrom)for(const [attackIndex,attack] of (prior.attacks||[]).entries())out.push({cardId:prior.id,attackIndex,attack,previous:true});
+    }
+    if(!current.isLevelX&&effects.canUsePreviousEvolutionAttacks?.(state,side,slot,data.cardById))for(const cardId of (slot.stack||[]).slice(0,-1)){const card=data.cardById(cardId);for(const [attackIndex,attack] of (card?.attacks||[]).entries())out.push({cardId,attackIndex,attack,previous:true});}
     if(state.format==='classic'&&current.id==='ex12-88'&&!effects.abilitiesSuppressed(state,side,slot,data.cardById)){
       const seen=new Set(out.map(x=>x.cardId+':'+x.attackIndex));
       for(const which of ['player','opponent'])for(const p of [state.sides[which].active,...state.sides[which].bench].filter(Boolean)){
@@ -919,6 +931,7 @@
       // Holon Supporters discard an additional hand card as a mandatory cost.
       if(state.format==='classic'&&['ex11-91','ex11-92','ex11-93','ex11-95','ex11-97'].includes(card.id)&&s.hand.length<2)return;
       if(card.id==='ex5-92'&&s.hand.length>7)return;
+      if(card.id==='dp1-112'&&s.hand.length<=1)return;
       if(card.id==='ex16-83'&&s.hand.length>=7)return; // Steven's Advice counts the Supporter itself.
       // Pow! Hand Extension is playable only while behind on Prizes and with
       // an opposing Benched Pokémon available for either printed choice.
@@ -1018,13 +1031,19 @@
     }
     for(const source of [s.active,...s.bench].filter(Boolean)){
       const sourceCard=data.cardById(source.cardId);if(Number(source.neoDestinyPowerLockUntil||0)>=state.turnNumber||effects.abilitiesSuppressed(state,side,source,data.cardById))continue;
-      abilitiesFor(sourceCard).forEach((ability,abilityIndex)=>{
+      abilitiesFor(sourceCard,source).forEach((ability,abilityIndex)=>{
         if(abilityBlockedByStatus(ability,source)||ability.type==='passive'||ability.type==='triggered'||ability.activeOnly&&source!==s.active||ability.benchOnly&&source===s.active)return;
         if(state.format==='classic'&&sourceCard?.pokemonEx&&ability.printedPowerType==='power'&&
            ['player','opponent'].some(w=>pokemonOn(state.sides[w]).some(p=>p.cardId==='ex14-96'&&!effects.abilitiesSuppressed(state,w,p,data.cardById))))return;
         // Fellow Boost can only use an actual Basic Energy card in HAND,
         // never the next Energy Zone unit. Don't offer an inert Power.
         if(/^dp1-6[5-8]$/.test(source.cardId)&&s.active===source)return; // Unown Powers need the Bench.
+        if(source.cardId==='dp1-2'&&state.sides[side==='player'?'opponent':'player'].bench.filter(Boolean).length<4)return;
+        if(source.cardId==='dp1-3'&&(!(source.stack||[]).some(id=>data.cardById(id)?.name==='Elekid')||!pokemonOn(s).some(p=>p!==source&&(Number(p.energy?.Lightning||0)>0||(p.specialEnergy||[]).some(r=>Number((r.provides||data.cardById(r.cardId)?.effect?.provides||{}).Lightning||0)>0)))))return;
+        if(source.cardId==='dp1-14'&&(!state.sides[side==='player'?'opponent':'player'].bench.some(p=>p?.stack?.length>1)))return;
+        if(source.cardId==='dp1-120'&&!state.sides[side==='player'?'opponent':'player'].hand.length)return;
+        if(source.cardId==='dp1-121'&&!s.deck.length)return;
+        if(source.cardId==='dp1-122'&&((s.prizes||[]).length<=(state.sides[side==='player'?'opponent':'player'].prizes||[]).length||!state.sides[side==='player'?'opponent':'player'].bench.filter(Boolean).length))return;
         if(source.cardId==='ex15-95'&&!s.hand.some(ref=>data.cardById(ref.cardId)?.basicEnergy))return;
         // Altaria ex Extra Boost is also HAND-only, and it needs an allied
         // Stage 2 Pokémon-ex. Hide the Power when it has no legal outcome,
@@ -1315,6 +1334,11 @@
     effects.resolveDelayedEffects?.(state,state.activeSide,data.cardById,(side,source)=>effectContext(state,side,{},source));
     if(state.format==='classic'){
       const who=state.activeSide,board=state.sides[who];
+      if(board.dp1SupremeHeld?.length&&state.turnNumber>=Number(board.dp1SupremeReturnTurn||Infinity)){
+        const held=board.dp1SupremeHeld.splice(0);board.hand.push(...held);
+        delete board.dp1SupremeHeld;delete board.dp1SupremeReturnTurn;
+        state.log.push({type:'dp1SupremeReturn',side:who,amount:held.length});
+      }
       for(const slot of pokemonOn(board))for(const ref of [...(slot.specialEnergy||[])]){
         if(data.cardById(ref.cardId)?.name!=='Boost Energy')continue;
         slot.specialEnergy=slot.specialEnergy.filter(x=>x.uid!==ref.uid);
@@ -1802,7 +1826,10 @@
       const poison=keepPoison?target.conditions.poison:null,burn=state.stadium?.cardId==='ex12-74'?target.conditions?.burn:null;
       effects.clearTemporaryEffects(state,target);if(poison)target.conditions.poison=poison;if(burn)target.conditions.burn=burn;
       target.playedOnSideTurn=s.turnCount;target.evolvedOnTurn=state.turnNumber;
-      state.log.push({type:'evolve',side,cardId:ref.cardId,target:matched.target,benchIndex:matched.benchIndex});triggerAbilities(state,'evolved',side,target,{fromHand:true});
+      const levelUp=!!data.cardById(ref.cardId)?.isLevelX;
+      state.log.push({type:levelUp?'levelUp':'evolve',side,cardId:ref.cardId,target:matched.target,benchIndex:matched.benchIndex});
+      // Leveling up is not evolving, and must not retrigger evolve-from-hand Powers.
+      if(!levelUp)triggerAbilities(state,'evolved',side,target,{fromHand:true});
       if(state.format==='classic'&&ref.cardId==='ex5-12'&&!effects.abilitiesSuppressed(state,side,target,data.cardById)){
         for(const w of ['player','opponent'])for(const slot of pokemonOn(state.sides[w]))if(!data.cardById(slot.cardId)?.pokemonEx&&!effects.healingIsBlocked(state,slot,data.cardById))slot.damage=0;
         state.log.push({type:'ex5HealingShower',side});
@@ -1817,7 +1844,7 @@
       return state;
     }
     if (matched.type === 'ability'){
-      const source=slotForTarget(s,matched.target,matched.benchIndex),ability=abilitiesFor(data.cardById(source.cardId))[matched.abilityIndex||0];
+      const source=slotForTarget(s,matched.target,matched.benchIndex),ability=abilitiesFor(data.cardById(source.cardId),source)[matched.abilityIndex||0];
       s.abilityUsed=s.abilityUsed||{};s.abilityUsed[source.uid+':'+(matched.abilityIndex||0)]=s.turnCount;
       if(source.cardId==='ex5-16')s.ex5HealDanceUsedTurn=state.turnNumber;
       if(['ex5-23','ex5-25','ex5-26','ex5-30'].includes(source.cardId))s.ex5TemperamentalWeatherTurn=s.turnCount;
@@ -2145,6 +2172,7 @@
             !effects.abilitiesSuppressed(state,side,s.active,data.cardById)&&
             !s.active.conditions?.sleep&&!s.active.conditions?.confusion&&!s.active.conditions?.paralysis&&
             [s,foe].flatMap(board=>pokemonOn(board)).filter(slot=>['Poliwag','Poliwhirl','Poliwrath','Politoed'].includes(data.cardById(slot.cardId)?.name)).length>3)damage+=40;
+          if(state.format==='classic'&&defender.dp1SandEject?.sourceSide===side&&Number(defender.dp1SandEject.turn)===Number(state.turnNumber))damage+=40;
           damage+=effects.modifierAmount(state,side,s.active,'postWeaknessAttackDamage',data.cardById);
           if(state.format==='classic'){
             // Neo/e-Card Darkness Energy adds +10 AFTER Weakness/Resistance,

@@ -227,6 +227,22 @@ const PRINTS={
   68:[''],
   71:["Flip a coin. If heads, your opponent can't play any Trainer cards from his or her hand during your opponent's next turn, and any damage done to Bonsly by attacks is reduced by 30 (after applying Weakness and Resistance)."],
   90:["Shuffle your hand into your deck. Then, draw a number of cards equal to the number of cards in your opponent's hand."],
+  1:["Draw a card.", "You may return all Energy attached to Dialga to your hand. If you do, remove the highest Stage Evolution card from the Defending Pokémon and shuffle it into your opponent's deck."],
+  11:["Search your deck for a Stadium card, put it into your hand, and shuffle. Discard any Stadium in play.", "You may flip a coin. If heads, discard all Energy attached to Palkia and shuffle the Defending Pokémon and all attached cards into your opponent's deck."],
+  22:["Flip 2 coins. Deal 30 damage times the number of heads.", "Copy one attack of the Defending Pokémon without its Energy cost; still pay any other costs."],
+  27:["On heads put damage counters on the Defending Pokémon until it has only 10 HP remaining.", "Place four damage counters on your opponent's Pokémon in any way you like, then switch Gengar with a Benched Pokémon."],
+  29:["The Defending Pokémon cannot retreat next turn.", "During your next turn, attacks damaging the Defending Pokémon do 40 more damage after Weakness and Resistance."],
+  34:["Put one card from hand face up as a Prize, then replace it with a face-down Prize without looking.", "If your hand and the opponent's hand have the same number of cards, deal 50 additional damage."],
+  100:["Flip 2 coins. Deal 10 damage for each heads.", "Choose an opposing Pokémon; do 20 damage ignoring Weakness, Resistance, Powers, Bodies, and effects on it."],
+  2:["Put 5 damage counters on the Defending Pokémon. Then put 1 additional damage counter for each Prize your opponent has taken."],
+  3:["You may discard all Lightning Energy attached to Electivire. If you do, base damage becomes 120 instead of 60."],
+  7:["Move all Lightning Energy attached to Luxray to one of your Benched Pokémon, if any."],
+  12:["This attack ignores Weakness and Resistance. Rhyperior cannot attack during your next turn."],
+  14:["Flip 2 coins. This attack does 50 damage plus 20 for each heads."],
+  120:["Choose any opposing Pokémon and deal 80 damage to it (no Weakness or Resistance for Bench). Empoleon cannot attack during your next turn."],
+  121:["Shuffle exactly 8 Fire Energy cards from your discard pile into your deck. This attack does nothing if fewer than 8 are available."],
+  122:["Deal 30 damage to one opposing Benched Pokémon; Torterra takes 30 damage itself."],
+
 };
 const noop={type:'noop'},status=s=>({type:'status',target:'opponentActive',status:s});
 const lock=(action,target='opponentActive',duration='opponentTurn')=>({type:'lock',target,action,duration});
@@ -320,6 +336,26 @@ const EFFECTS={
   47:[flip({type:'neoRule',rule:'dp1:47:roamHeads'},{type:'neoRule',rule:'dp1:47:roamTails'}),{type:'neoRule',rule:'dp1:47:gravityWave'}],
   65:[noop],66:[noop],67:[noop],68:[noop],
   90:[{type:'handShuffle',side:'self',draw:'opponentHandCount'}],
+  // Diamond & Pearl v0.69.228: checked attack effects.
+  1:[{type:'draw',amount:1},{type:'neoRule',rule:'dp1:1:flashCannon'}],
+  11:[seq({type:'searchChosen',source:'deck',amount:1,filter:{trainerType:'Stadium'}},{type:'discardStadium'}),{type:'neoRule',rule:'dp1:11:transback'}],
+  22:[{type:'coinDamage',coins:2,amount:30,mode:'replace'},{type:'copyAttack',source:'opponentActive',ignoreUseCosts:true}],
+  27:[{type:'neoRule',rule:'dp1:27:lifeDrain'},{type:'neoRule',rule:'dp1:27:shadowDance'}],
+  29:[lock('retreat'),{type:'neoRule',rule:'dp1:29:sandEject'}],
+  34:[{type:'neoRule',rule:'dp1:34:seeBeyond'},{type:'neoRule',rule:'dp1:34:extrasensory'}],
+  71:[flip(seq({type:'actionLock',side:'opponent',cardType:'Trainer',duration:'opponentTurn'},{type:'modifier',stat:'damageReduction',amount:30,duration:'opponentTurn',scope:'self'}))],
+  100:[{type:'coinDamage',coins:2,amount:10,mode:'replace'},{type:'neoRule',rule:'dp1:100:feintAttack'}],
+  // Final eight: no placeholders. LV.X attack inheritance is enforced by the core.
+  2:[{type:'neoRule',rule:'dp1:2:hardFeelings'}],
+  3:[{type:'neoRule',rule:'dp1:3:gigaImpact'}],
+  7:[{type:'neoRule',rule:'dp1:7:lightningStar'}],
+  12:[seq({type:'damageRule',ignoreWeakness:true,ignoreResistance:true},lock('attack','self','nextOwnTurn'))],
+  14:[{type:'coinDamage',coins:2,amount:20,mode:'add'}],
+  120:[seq({type:'selectedDamage',target:'opponentPokemon',amount:80},lock('attack','self','nextOwnTurn'))],
+  121:[{type:'neoRule',rule:'dp1:121:flareUp'}],
+  122:[seq(benchHit(30),{type:'selfDamage',amount:30})],
+
+
 
 };
 // Trainer wording checked against the individual dp1 printed-card records.
@@ -353,6 +389,11 @@ const TRAINER_EFFECTS={
  108:{type:'neoRule',rule:'dp1:108:nightCenter'},
  111:{type:'neoRule',rule:'dp1:111:handy910is'},
  116:seq({type:'forceOpponentSwitch'}, {type:'neoRule',rule:'dp1:116:ownSwitch'}),
+  109:{type:'modifier',stat:'postWeaknessAttackDamage',amount:10,duration:'whileInPlay',scope:'self'},
+  112:{type:'neoRule',rule:'dp1:112:rowan'},
+  113:{type:'neoRule',rule:'dp1:113:rival'},
+  114:{type:'stadiumAction',effect:{type:'neoRule',rule:'dp1:114:speedStadium'}},
+
 
 };
 const BABY_TARGET={33:'Snorlax',42:'Wobbuffet',43:'Roselia',48:'Electabuzz',69:'Marill',71:'Sudowoodo',78:'Clefairy',90:'Mr. Mime'};
@@ -387,6 +428,18 @@ function parse(row){
   };
   if(n===8)abilities[0]={name:'Magnetize',type:'passive',printedPowerType:'body',text:POWER_WORDING[8],effect:{type:'noop'}};
   if(n>=65&&n<=68)abilities[0]={name:['ANALYZE','BOUNCE','CALL','DRAW'][n-65],type:'activated',printedPowerType:'power',oncePerTurn:true,benchOnly:true,text:POWER_WORDING[n],effect:{type:'neoRule',rule:`dp1:${n}:unown`}};
+  // Verified Diamond & Pearl final eight Poké-Powers and LV.X rules.
+  const printedPowers={
+   2:['Dark Palm','activated','Once during your turn, if your opponent has four or more Benched Pokémon, you may shuffle one opposing Benched Pokémon with all its attachments into their deck.',false,false],
+   3:['Intense Voltage','activated','As often as you like, if Elekid is under Electivire, you may move Lightning Energy from one of your Pokémon to Electivire.',false,false],
+   7:['Gleam Eyes','triggered','When you evolve into Luxray from hand, you may put a Basic Pokémon from the opponent\'s hand on their Bench and switch it Active.',true,false],
+   12:['Earth Fissure','triggered','When you evolve into Rhyperior from hand, you may discard the top three cards of your opponent\'s deck.',true,false],
+   14:['Darkness Fan','activated','Once per turn while Shiftry is Active, flip a coin. On heads return the highest evolution card of an opposing Benched Evolved Pokémon to its owner\'s hand.',false,true],
+   120:['Supreme Command','activated','Once per turn, choose up to two unrevealed cards from the opponent\'s hand. Hold them face down until the end of their next turn.',false,false],
+   121:['Burning Head','activated','Once per turn, look at the top three cards of your deck, choose one for your hand and discard the other two.',false,false],
+   122:['Forest Murmurs','activated','Once per turn, if you have more Prize cards remaining than your opponent, switch one of their Benched Pokémon with their Active Pokémon.',false,false]
+  };
+  if(printedPowers[n]){const [power,type,text,triggered,activeOnly]=printedPowers[n];abilities[0]={name:power,type,printedPowerType:'power',oncePerTurn:n!==3,fromHandOnly:triggered,event:triggered?'evolved':undefined,activeOnly,disabledByStatus:n!==7&&n!==12,expeditionSpecialCondition:n!==7&&n!==12,text,effect:{type:'neoRule',rule:`dp1:${n}:power`}};}
   if(BABY_TARGET[n])abilities[0]={name:'Baby Evolution',type:'activated',printedPowerType:'power',oncePerTurn:true,disabledByStatus:true,text:BABY_WORDING[n],effect:{type:'neoRule',rule:'dp1:babyEvolve',targetName:BABY_TARGET[n]}};
   const parseModifier=s=>s?{type:T[s[0]],value:s.slice(1)}:null;
   const w=parseModifier(weak),r=parseModifier(resist);
@@ -396,7 +449,7 @@ function parse(row){
     attacks,abilities,isLevelX:stage==='Level-Up',levelUpFrom:stage==='Level-Up'?from:null,
     text:stage==='Level-Up'?RULES_LVX:undefined});
  }else if(kind==='T'){
-  Object.assign(card,{trainerType:stage,text:TRAINER_TEXT[n]||'See the printed card for rules.',
+  Object.assign(card,{trainerType:n===109?'AttachedTrainer':stage,expires:n===109?'endOwnTurn':undefined,text:TRAINER_TEXT[n]||'See the printed card for rules.',
     effect:TRAINER_EFFECTS[n]||{type:'noop'}});
  }else{
   const energyType=T['GRWLPFDM'[n-123]];

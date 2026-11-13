@@ -1,8 +1,8 @@
 LUCKYDEX — MASTER PROJECT RULES AND DEVELOPMENT CONTRACT
 =========================================================
-Document version: 2.20
-Compiled: 12 November 2026
-Current source baseline inspected: v0.69.226; v0.69.227 expands Diamond & Pearl to 110/130 battle-enabled prints, with Bench-only Unown Powers, accurate attached-card return, counter targeting, Active promotion and opponent-controlled selections. 20 cards remain gated, including all LV.X.
+Document version: 2.21
+Compiled: 13 November 2026
+Current source baseline inspected: v0.69.227; v0.69.228 enables 130/130 Diamond & Pearl prints including 3 LV.X. Active-only leveling, previous-level inheritance, triggered evolution Powers, hidden-hand holding/return and 8-Fire-Energy Flare Up are implemented and have focused Node tests. Android QA and long random CPU play are outstanding.
 Recommended repository location: ~/lucky-dex/source/docs/LUCKYDEX_MASTER_RULES.txt
 Project: LuckyDex — Android application/PWA, managed with Termux and GitHub
 
@@ -32,6 +32,19 @@ RULE PRECEDENCE AND CONFLICT MANAGEMENT
 8. Date or version every revised rule. Keep a change history; never silently rewrite a historical decision or disguise a bug as a design adaptation.
 
 =======================================================================
+=======================================================================
+10.14L [LOCKED] C-RELEASE-GATE-019 — DIAMOND & PEARL LV.X AND PRINT COMPLETION (v2.21)
+  • Every registered 130-print dp1 card has a battle effect, real metadata and playable source registration; no placeholder/no-op claim is allowed for a card that has a printed attack or Power.
+  • LV.X cards may LEVEL UP only the matching species' Active previous-level Pokémon from hand, not a Benched Pokémon and not a card entered/evolved that turn. Level-up is NOT an Evolution event and never retriggers 'when evolved from hand' Powers. LV.X preserves all prior levels in stack, attached Energy, Tools and damage; it inherits attack and Power/Body options of the immediately previous printed level (not an unrelated earlier evolution).
+  • All LV.X drawn or opponent-built decks must contain the entire previous-level family, including Basic, Stage 1 and Stage 2. Rank Level-Up after Stage 2 in deckbuilding and keep each prerequisite owned and legal.
+  • Empoleon LV.X Supreme Command temporarily holds up to two concealed opponent-hand cards, without revealing identities, until the END of the opponent's next turn. Cards are not in hand or in play while held; restore actual card references at expiry. Hydro Impact may target opponent Bench and imposes the next-attack lock.
+  • Infernape LV.X Flare Up requires 8 real Fire Energy in the discard ledger/physical pile or does nothing. On success return exactly 8 to deck, shuffle and resolve its printed damage. Burning Head chooses one card from top three and discards the others.
+  • Torterra LV.X Forest Murmurs requires the owner have MORE Prizes remaining than opponent and a legal Bench target. Vigorous Dash has targeted opponent Bench damage and real self-damage.
+  • Dusknoir Dark Palm requires FOUR opposing Benched Pokémon (not a hard-coded three-slot conversion), and shuffles complete evolution/attached-card stack to the owner's deck. Luxray Gleam Eyes and Rhyperior Earth Fissure trigger on evolution FROM HAND only; both must offer meaningful decline choices. Electivire Intense Voltage needs Elekid underneath, supports repeating within the same turn, and offers only truly movable Lightning Energy source cards. Shiftry Darkness Fan needs Active Shiftry and a selectable Evolved opponent Benched target.
+  • A printed same-name Special Energy effect must remain distinct from Basic Energy Zone counters. Track real destinations for all moved/discarded cards; no silent auto-choices when the card says 'may' or 'choose'.
+  • A source-level 130/130 catalogue ledger is NOT by itself proof of Android correctness. Keep active device, UX, long CPU matches and full cross-set regressions as separate evidence categories. Never claim a build/install or device test was performed unless it actually happened.
+=======================================================================
+
 PART 1 — PERMANENT DEVELOPMENT / HANDOFF RULES
 =======================================================================
 
@@ -1377,3 +1390,5 @@ CHANGE HISTORY
 2026-11-12 | Document 2.19 -> 2.20 | App v0.69.227 | [LOCKED] C-RELEASE-GATE-016–018. DP1 Stage 6 enabled 14 additional prints, 110/130 total. New: Bench-only Unown Powers, explicit owner-controlled optional choices, correct Active promotion after bounce, attached-card return to deck with original-set Basic Energy print, multi-source discard retrieval and different damage-counter vs attack-damage paths. 20 cards remain gated, including all LV.X. See Stage 6 audit.
 
 END OF LUCKYDEX MASTER RULES
+
+2026-11-13 | Document 2.20 -> 2.21 | App v0.69.228 | [LOCKED] C-RELEASE-GATE-019. D&P Base reaches 130/130 implemented source prints. Added 12 ordinary cards/Trainers and five higher-complexity Pokémon plus three LV.X (Empoleon, Infernape, Torterra). Active-only LV.X restrictions, previous-level attacks/Powers, on-evolution triggers, conditional Pokémon Powers, hidden-hand holding with delayed return, 8 Fire Energy discard requirement and four-stage LV.X deckbuilder are checked by focused Node tests. Old EX16-only Dusclops/Magneton are now intentionally incomplete if their fully playable DP1 evolutions are out of the selected set. Ex15 Stage 2-ex support focus fixed. Android and APK not tested; see docs/DIAMOND_PEARL_v0.69.228_COMPLETION_AUDIT.md.

@@ -31,7 +31,7 @@ const SET_IDS=Object.freeze(['base1','base2','base3','base5','gym1','gym2','neo1
 // Darkness and Metal are already Basic Energy types. Deduplicate before rendering
 // archetype chips so each energy type has exactly one toggle.
 const ARCHETYPE_TYPES=Object.freeze([...new Set([...decks.ENERGY_TYPES,'Colorless'])]);
-const STAGE_RANK=Object.freeze({'Basic':0,'Stage 1':1,'Stage 2':2});
+const STAGE_RANK=Object.freeze({'Basic':0,'Stage 1':1,'Stage 2':2,'Level-Up':3});
 const RARITY_FOCUS=Object.freeze([{id:'any',label:'Any rarity'},{id:'common',label:'Common'},{id:'uncommon',label:'Uncommon'},{id:'rare',label:'Rare / Holo'},{id:'ultra',label:'Ultra Rare · V / ex / VMAX'}]);
 function rarityTier(card){
  // Original Pokemon-ex prints are Ultra/ex targets even when the printed
@@ -195,7 +195,7 @@ function buildDeck(rows,options={}){
    familyLine(c,evolutionPool).every(member=>Number(owned.get(member.id)||0)>0)&&
    familyEssentialTypes(familyLine(c,evolutionPool)).length<=2&&
    (!requestedEnergy.length||familyEssentialTypes(familyLine(c,evolutionPool)).every(t=>requestedEnergy.includes(t))));
- const isStage2OnlySupport=c=>!!(c?.deckMeta?.stage2ExSupport&&c.stage!=='Stage 2');
+ const isStage2OnlySupport=c=>!!((c?.deckMeta?.stage2ExSupport||['ex15-25','ex15-40','ex15-90'].includes(c?.id))&&c.stage!=='Stage 2');
  const hasEligibleBeneficiary=c=>stage2ExBeneficiaries.some(target=>familyRoot(target,evolutionPool)!==familyRoot(c,evolutionPool));
  // Competitive considers complete evolution families; Random draws a printed
  // Pokémon from the *entire* owned, battle-ready roster (not the top 14).
@@ -286,7 +286,7 @@ function buildDeck(rows,options={}){
  // A Stage-1 Body/Poké-Power whose entire purpose is supporting Stage 2 ex
  // needs an actual Stage-2 ex line. Select Energy for that ATTACKER instead of
  // diluting its Zone with a Bench-only Xatu/Altaria/Swellow attack cost.
- const supportFocus=!!(!basicOnly&&mainLine.some(c=>c.deckMeta?.stage2ExSupport&&c.stage!=='Stage 2'));
+ const supportFocus=!!(!basicOnly&&mainLine.some(isStage2OnlySupport));
  const stage2Candidates=supportFocus?stage2ExBeneficiaries.filter(c=>familyRoot(c,evolutionPool)!==mainRoot).sort((a,b)=>Number(familyEssentialTypes(familyLine(b,evolutionPool)).some(t=>lineEnergy.includes(t)))-Number(familyEssentialTypes(familyLine(a,evolutionPool)).some(t=>lineEnergy.includes(t)))||pokemonScore(b,evolutionPool)-pokemonScore(a,evolutionPool)||a.id.localeCompare(b.id)):[];
  const stage2Beneficiary=stage2Candidates[0]||null;
  if(stage2Beneficiary){
@@ -389,7 +389,7 @@ function buildDeck(rows,options={}){
  // A support's Bench Body does not require paying its own attack costs.
  if(!basicOnly&&cards.length<=23&&pokemonCount()<=16){
    const hasStage2Ex=cards.some(id=>{const c=classic.cardById(id);return c?.pokemonEx&&c.stage==='Stage 2';});
-   const supportInMain=mainLine.some(c=>c.deckMeta?.stage2ExSupport&&c.stage!=='Stage 2');
+   const supportInMain=mainLine.some(isStage2OnlySupport);
    if(!hasStage2Ex&&!supportInMain){ // ordinary attacker: no useless ex support
    }else if(hasStage2Ex){
      // First add Xatu (offensive payoff), then Swellow (mobility). Don't add

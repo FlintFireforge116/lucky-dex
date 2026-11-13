@@ -17,7 +17,7 @@ for(const c of pk.CARDS.filter(c=>c.kind==='pokemon')){
  }
  console.log('FOCUSED BUILD SUMMARY',JSON.stringify({total:result.length,failures:result.filter(x=>x.error),offType:result.filter(x=>x.offType?.length).map(x=>({id:x.id,energy:x.energy,offType:x.offType})),incomplete:result.filter(x=>x.incomplete?.length).map(x=>({id:x.id,incomplete:x.incomplete})),results:result.slice(0,5)},null,2));
  assert.equal(result.length,81);
- assert.deepEqual(result.filter(x=>x.error).map(x=>x.id),['ex16-16'],'The one-set Magneton focus is intentionally excluded because its catalogued Magnezone evolution is outside this set');
+ assert.deepEqual(result.filter(x=>x.error).map(x=>x.id),['ex16-14','ex16-16'],'With DP1 Dusknoir and Magnezone now playable, EX16-only Dusclops and Magneton intentionally require an out-of-set evolved endpoint');
  assert.ok(result.filter(x=>!x.error).every(x=>!x.offType.length),'No off-Energy-cost focused lines');
 });
 test('Full ex16 attack action smoke checks with deterministic state, record unresolved choices',()=>{
