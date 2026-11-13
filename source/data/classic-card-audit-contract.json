@@ -55,5 +55,5 @@
     "deckSearch": "\\b(?:search.*deck|look at.*deck|shuffle.*deck|top [0-9]+ cards)\\b",
     "coin": "\\b(?:flip (?:a|[0-9]+|one|two|three) coin|heads|tails)\\b"
   },
-  "defaultSetId": "dp2"
+  "defaultSetId": "dp3"
 }

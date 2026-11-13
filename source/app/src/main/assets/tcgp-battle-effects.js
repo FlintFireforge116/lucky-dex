@@ -10082,7 +10082,12 @@
       case 'moveEnergy':{if(!ctx.resolvingChoice&&typeof ctx.requestChoice==='function'&&(effect.source==='selfBench'||effect.target==='selfBench')){const selector=effect.source==='selfBench'?effect.source:effect.target;ctx.requestChoice({kind:'pokemon',side:'self',includeActive:false,filter:effect.source==='selfBench'?effect.sourceFilter:effect.filter,effect});break;}const sources=targets(effect.source,ctx).filter(s=>matchesFilter(ctx.cardById(s.cardId),effect.sourceFilter,s)),destination=targets(effect.target,ctx)[0];if(!sources.length||!destination)break;let remaining=effect.amount==='all'?Infinity:effect.amount;for(const source of sources){if(source===destination)continue;for(const type of Object.keys(source.energy)){const chosenType=ctx.action?.effectEnergyType||effect.energyType;if(chosenType&&type!==chosenType)continue;if(effect.allowedEnergyTypes&&!effect.allowedEnergyTypes.includes(type))continue;const amount=Math.min(remaining,Number(source.energy[type]||0));source.energy[type]-=amount;destination.energy[type]=Number(destination.energy[type]||0)+amount;remaining-=amount;if(remaining<=0)break;}if(remaining<=0)break;}break;}
       case 'handShuffle':{const sides=effect.side==='both'?[own(ctx),other(ctx)]:[effect.side==='opponent'?other(ctx):own(ctx)];const opponentCount=other(ctx).hand.length,counts=sides.map(s=>effect.draw==='same'?s.hand.length:effect.draw==='opponentHandCount'?opponentCount:effect.draw==='pointsRemaining'?Math.max(0,3-Number(s.points||0)):effect.draw);for(const ss of sides){ss.deck.push(...ss.hand.splice(0));ctx.shuffle(ctx.state,ss.deck);}sides.forEach((ss,index)=>{for(let i=0;i<counts[index];i++)ctx.drawCard(ss);});break;}
       case 'preventStatus':for(const s of affected())s.statusGuard={...effect};break;
-      case 'draw':{const ss=effect.side==='opponent'?other(ctx):own(ctx);for(let i=0;i<effect.amount;i++)ctx.drawCard(ss);log({type:'draw',amount:effect.amount});break;}
+      case 'draw':{const ss=effect.side==='opponent'?other(ctx):own(ctx);for(let i=0;i<effect.amount;i++){
+        if(effect.fromBottom){
+          if(ss.deck.length&&ss.hand.length<Number(ss.handLimit||10))ss.hand.push(ss.deck.pop());
+          else if(!ss.deck.length)ctx.drawCard(ss);
+        }else ctx.drawCard(ss);
+      }log({type:'draw',amount:effect.amount,fromBottom:!!effect.fromBottom});break;}
       case 'topDeckFilter':{const ss=own(ctx);if(!ss.deck.length)break;const ref=ss.deck.shift(),card=ctx.cardById(ref.cardId);if(matchesFilter(card,effect.filter)&&ss.hand.length<10){ss.hand.push(ref);log({type:'topDeckMatch',cardId:ref.cardId});}else{ss.deck.push(ref);log({type:'topDeckBottom',cardId:ref.cardId});}break;}
       case 'fieldCountDraw':{const slots=effect.side==='both'?[...pokemonOn(own(ctx)),...pokemonOn(other(ctx))]:pokemonOn(own(ctx));const amount=slots.filter(slot=>matchesFilter(ctx.cardById(slot.cardId),effect.filter,slot)).length;for(let i=0;i<amount;i++)ctx.drawCard(own(ctx));log({type:'draw',amount});break;}
       case 'searchRandomBasic':case 'search':{const ss=own(ctx),source=ss[effect.source||'deck'];for(let i=0;i<effect.amount&&ss.hand.length<10;i++){const candidates=source.map((r,index)=>({r,index})).filter(({r})=>matchesFilter(ctx.cardById(r.cardId),effect.type==='searchRandomBasic'?{kind:'pokemon',stage:'Basic'}:effect.filter));if(!candidates.length)break;const hit=candidates[Math.floor(ctx.random(ctx.state)*candidates.length)];const [found]=source.splice(hit.index,1);ss.hand.push(found);log({type:'search',cardId:found.cardId});}if((effect.source||'deck')==='deck'&&ctx.shuffle)ctx.shuffle(ctx.state,ss.deck);break;}
@@ -10117,6 +10122,12 @@
       if(e.type==='topDeckDiscardBonus'){const ss=own(ctx);const ref=ss.deck.shift();if(ref){ss.discard.push(ref);const card=ctx.cardById(ref.cardId);if(matchesFilter(card,e.filter,ref))damage+=Number(e.amount||0);}return;}
       if(e.type==='damageRule'){damageRules={...damageRules,...e};return;}
 
+      // Secret Wonders Water Sport checks attached Energy counts before hit damage.
+      if(e.type==='neoRule'&&e.rule==='dp3:92:waterSport'){
+        const attached=slot=>totalEnergy(slot?.energy||{})+(slot?.specialEnergy||[]).length;
+        if(attached(ctx.attacker)<attached(ctx.defender))damage+=20;
+        return;
+      }
       // Mysterious Treasures attacks: dynamic damage before Weakness and
       // Resistance; resolved choices and after-damage effects are deferred.
       if(e.type==='neoRule'&&String(e.rule||'').startsWith('dp2:')){

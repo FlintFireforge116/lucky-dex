@@ -1,0 +1,2219 @@
+{
+  "schemaVersion": 1,
+  "contract": "docs/LUCKYDEX_MASTER_RULES.txt",
+  "scope": "Static preflight + optional synthetic execution, not printed correctness or Android certification",
+  "summary": {
+    "setId": "dp3",
+    "setName": "Secret Wonders",
+    "total": 132,
+    "declared": 132,
+    "counts": {
+      "pokemon": 120,
+      "trainer": 10,
+      "energy": 2,
+      "attacks": 194,
+      "abilities": 45,
+      "enabled": 46,
+      "gated": 86
+    },
+    "risks": {
+      "choice": 5,
+      "privacy": 4,
+      "timing": 8,
+      "energyMovement": 3,
+      "status": 8,
+      "deckSearch": 3,
+      "coin": 17
+    },
+    "withStaticTestMentions": 16,
+    "errors": 0,
+    "warnings": 1,
+    "reviewFlags": 0
+  },
+  "findings": [
+    {
+      "severity": "warning",
+      "rule": "C-AUDIT-003",
+      "cardId": "dp3-33",
+      "message": "Evolution parent \"Burmy\" is absent by exact name from the full catalog; verify alternate spelling or Fossil support."
+    }
+  ],
+  "cardLedger": [
+    {
+      "id": "dp3-1",
+      "name": "Ampharos",
+      "kind": "pokemon",
+      "battleEnabled": false,
+      "attackCount": 1,
+      "abilityCount": 1,
+      "riskTags": [],
+      "effectTypes": [
+        "noop"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [],
+      "findings": []
+    },
+    {
+      "id": "dp3-2",
+      "name": "Blastoise",
+      "kind": "pokemon",
+      "battleEnabled": false,
+      "attackCount": 1,
+      "abilityCount": 1,
+      "riskTags": [],
+      "effectTypes": [
+        "noop"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [],
+      "findings": []
+    },
+    {
+      "id": "dp3-3",
+      "name": "Charizard",
+      "kind": "pokemon",
+      "battleEnabled": false,
+      "attackCount": 1,
+      "abilityCount": 1,
+      "riskTags": [],
+      "effectTypes": [
+        "noop"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [],
+      "findings": []
+    },
+    {
+      "id": "dp3-4",
+      "name": "Entei",
+      "kind": "pokemon",
+      "battleEnabled": false,
+      "attackCount": 1,
+      "abilityCount": 1,
+      "riskTags": [],
+      "effectTypes": [
+        "noop"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [],
+      "findings": []
+    },
+    {
+      "id": "dp3-5",
+      "name": "Flygon",
+      "kind": "pokemon",
+      "battleEnabled": false,
+      "attackCount": 1,
+      "abilityCount": 1,
+      "riskTags": [],
+      "effectTypes": [
+        "noop"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [],
+      "findings": []
+    },
+    {
+      "id": "dp3-6",
+      "name": "Gallade",
+      "kind": "pokemon",
+      "battleEnabled": false,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [],
+      "effectTypes": [
+        "noop"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [],
+      "findings": []
+    },
+    {
+      "id": "dp3-7",
+      "name": "Gardevoir",
+      "kind": "pokemon",
+      "battleEnabled": false,
+      "attackCount": 1,
+      "abilityCount": 1,
+      "riskTags": [],
+      "effectTypes": [
+        "noop"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [],
+      "findings": []
+    },
+    {
+      "id": "dp3-8",
+      "name": "Gastrodon East Sea",
+      "kind": "pokemon",
+      "battleEnabled": false,
+      "attackCount": 1,
+      "abilityCount": 1,
+      "riskTags": [],
+      "effectTypes": [
+        "noop"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [],
+      "findings": []
+    },
+    {
+      "id": "dp3-9",
+      "name": "Gastrodon West Sea",
+      "kind": "pokemon",
+      "battleEnabled": false,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [],
+      "effectTypes": [
+        "noop"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [],
+      "findings": []
+    },
+    {
+      "id": "dp3-10",
+      "name": "Ho-Oh",
+      "kind": "pokemon",
+      "battleEnabled": false,
+      "attackCount": 1,
+      "abilityCount": 1,
+      "riskTags": [],
+      "effectTypes": [
+        "noop"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [],
+      "findings": []
+    },
+    {
+      "id": "dp3-11",
+      "name": "Jumpluff",
+      "kind": "pokemon",
+      "battleEnabled": false,
+      "attackCount": 1,
+      "abilityCount": 1,
+      "riskTags": [],
+      "effectTypes": [
+        "noop"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [],
+      "findings": []
+    },
+    {
+      "id": "dp3-12",
+      "name": "Lickilicky",
+      "kind": "pokemon",
+      "battleEnabled": false,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [],
+      "effectTypes": [
+        "noop"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [],
+      "findings": []
+    },
+    {
+      "id": "dp3-13",
+      "name": "Ludicolo",
+      "kind": "pokemon",
+      "battleEnabled": false,
+      "attackCount": 1,
+      "abilityCount": 1,
+      "riskTags": [],
+      "effectTypes": [
+        "noop"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [],
+      "findings": []
+    },
+    {
+      "id": "dp3-14",
+      "name": "Lugia",
+      "kind": "pokemon",
+      "battleEnabled": false,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [],
+      "effectTypes": [
+        "noop"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [],
+      "findings": []
+    },
+    {
+      "id": "dp3-15",
+      "name": "Mew",
+      "kind": "pokemon",
+      "battleEnabled": false,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [],
+      "effectTypes": [
+        "noop"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [],
+      "findings": []
+    },
+    {
+      "id": "dp3-16",
+      "name": "Raikou",
+      "kind": "pokemon",
+      "battleEnabled": false,
+      "attackCount": 1,
+      "abilityCount": 1,
+      "riskTags": [],
+      "effectTypes": [
+        "noop"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [],
+      "findings": []
+    },
+    {
+      "id": "dp3-17",
+      "name": "Roserade",
+      "kind": "pokemon",
+      "battleEnabled": false,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [],
+      "effectTypes": [
+        "noop"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [],
+      "findings": []
+    },
+    {
+      "id": "dp3-18",
+      "name": "Salamence",
+      "kind": "pokemon",
+      "battleEnabled": false,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [],
+      "effectTypes": [
+        "noop"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [],
+      "findings": []
+    },
+    {
+      "id": "dp3-19",
+      "name": "Suicune",
+      "kind": "pokemon",
+      "battleEnabled": false,
+      "attackCount": 1,
+      "abilityCount": 1,
+      "riskTags": [],
+      "effectTypes": [
+        "noop"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [],
+      "findings": []
+    },
+    {
+      "id": "dp3-20",
+      "name": "Venusaur",
+      "kind": "pokemon",
+      "battleEnabled": false,
+      "attackCount": 1,
+      "abilityCount": 1,
+      "riskTags": [],
+      "effectTypes": [
+        "noop"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [],
+      "findings": []
+    },
+    {
+      "id": "dp3-21",
+      "name": "Absol",
+      "kind": "pokemon",
+      "battleEnabled": false,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [],
+      "effectTypes": [
+        "noop"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [],
+      "findings": []
+    },
+    {
+      "id": "dp3-22",
+      "name": "Arcanine",
+      "kind": "pokemon",
+      "battleEnabled": false,
+      "attackCount": 1,
+      "abilityCount": 1,
+      "riskTags": [],
+      "effectTypes": [
+        "noop"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [],
+      "findings": []
+    },
+    {
+      "id": "dp3-23",
+      "name": "Banette",
+      "kind": "pokemon",
+      "battleEnabled": false,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [],
+      "effectTypes": [
+        "noop"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [],
+      "findings": []
+    },
+    {
+      "id": "dp3-24",
+      "name": "Dugtrio",
+      "kind": "pokemon",
+      "battleEnabled": false,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [],
+      "effectTypes": [
+        "noop"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [],
+      "findings": []
+    },
+    {
+      "id": "dp3-25",
+      "name": "Electivire",
+      "kind": "pokemon",
+      "battleEnabled": false,
+      "attackCount": 1,
+      "abilityCount": 1,
+      "riskTags": [],
+      "effectTypes": [
+        "noop"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [],
+      "findings": []
+    },
+    {
+      "id": "dp3-26",
+      "name": "Electrode",
+      "kind": "pokemon",
+      "battleEnabled": false,
+      "attackCount": 1,
+      "abilityCount": 1,
+      "riskTags": [],
+      "effectTypes": [
+        "noop"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [],
+      "findings": []
+    },
+    {
+      "id": "dp3-27",
+      "name": "Furret",
+      "kind": "pokemon",
+      "battleEnabled": false,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [],
+      "effectTypes": [
+        "noop"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [],
+      "findings": []
+    },
+    {
+      "id": "dp3-28",
+      "name": "Golduck",
+      "kind": "pokemon",
+      "battleEnabled": false,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [],
+      "effectTypes": [
+        "noop"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [],
+      "findings": []
+    },
+    {
+      "id": "dp3-29",
+      "name": "Golem",
+      "kind": "pokemon",
+      "battleEnabled": false,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [],
+      "effectTypes": [
+        "noop"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [],
+      "findings": []
+    },
+    {
+      "id": "dp3-30",
+      "name": "Jynx",
+      "kind": "pokemon",
+      "battleEnabled": false,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [],
+      "effectTypes": [
+        "noop"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [],
+      "findings": []
+    },
+    {
+      "id": "dp3-31",
+      "name": "Magmortar",
+      "kind": "pokemon",
+      "battleEnabled": false,
+      "attackCount": 2,
+      "abilityCount": 1,
+      "riskTags": [],
+      "effectTypes": [
+        "noop"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [],
+      "findings": []
+    },
+    {
+      "id": "dp3-32",
+      "name": "Minun",
+      "kind": "pokemon",
+      "battleEnabled": false,
+      "attackCount": 1,
+      "abilityCount": 1,
+      "riskTags": [],
+      "effectTypes": [
+        "noop"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [],
+      "findings": []
+    },
+    {
+      "id": "dp3-33",
+      "name": "Mothim",
+      "kind": "pokemon",
+      "battleEnabled": false,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [],
+      "effectTypes": [
+        "noop"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [],
+      "findings": [
+        {
+          "severity": "warning",
+          "rule": "C-AUDIT-003",
+          "message": "Evolution parent \"Burmy\" is absent by exact name from the full catalog; verify alternate spelling or Fossil support."
+        }
+      ]
+    },
+    {
+      "id": "dp3-34",
+      "name": "Nidoking",
+      "kind": "pokemon",
+      "battleEnabled": false,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [],
+      "effectTypes": [
+        "noop"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [],
+      "findings": []
+    },
+    {
+      "id": "dp3-35",
+      "name": "Pidgeot",
+      "kind": "pokemon",
+      "battleEnabled": false,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [],
+      "effectTypes": [
+        "noop"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [],
+      "findings": []
+    },
+    {
+      "id": "dp3-36",
+      "name": "Plusle",
+      "kind": "pokemon",
+      "battleEnabled": false,
+      "attackCount": 1,
+      "abilityCount": 1,
+      "riskTags": [],
+      "effectTypes": [
+        "noop"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [],
+      "findings": []
+    },
+    {
+      "id": "dp3-37",
+      "name": "Sharpedo",
+      "kind": "pokemon",
+      "battleEnabled": false,
+      "attackCount": 1,
+      "abilityCount": 1,
+      "riskTags": [],
+      "effectTypes": [
+        "noop"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [],
+      "findings": []
+    },
+    {
+      "id": "dp3-38",
+      "name": "Sunflora",
+      "kind": "pokemon",
+      "battleEnabled": false,
+      "attackCount": 1,
+      "abilityCount": 1,
+      "riskTags": [],
+      "effectTypes": [
+        "noop"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [],
+      "findings": []
+    },
+    {
+      "id": "dp3-39",
+      "name": "Unown [S]",
+      "kind": "pokemon",
+      "battleEnabled": false,
+      "attackCount": 1,
+      "abilityCount": 1,
+      "riskTags": [],
+      "effectTypes": [
+        "noop"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [],
+      "findings": []
+    },
+    {
+      "id": "dp3-40",
+      "name": "Weavile",
+      "kind": "pokemon",
+      "battleEnabled": false,
+      "attackCount": 2,
+      "abilityCount": 1,
+      "riskTags": [],
+      "effectTypes": [
+        "noop"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [],
+      "findings": []
+    },
+    {
+      "id": "dp3-41",
+      "name": "Wormadam Plant Cloak",
+      "kind": "pokemon",
+      "battleEnabled": false,
+      "attackCount": 1,
+      "abilityCount": 1,
+      "riskTags": [],
+      "effectTypes": [
+        "noop"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [],
+      "findings": []
+    },
+    {
+      "id": "dp3-42",
+      "name": "Wormadam Sandy Cloak",
+      "kind": "pokemon",
+      "battleEnabled": false,
+      "attackCount": 1,
+      "abilityCount": 1,
+      "riskTags": [],
+      "effectTypes": [
+        "noop"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [],
+      "findings": []
+    },
+    {
+      "id": "dp3-43",
+      "name": "Wormadam Trash Cloak",
+      "kind": "pokemon",
+      "battleEnabled": false,
+      "attackCount": 1,
+      "abilityCount": 1,
+      "riskTags": [],
+      "effectTypes": [
+        "noop"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [],
+      "findings": []
+    },
+    {
+      "id": "dp3-44",
+      "name": "Xatu",
+      "kind": "pokemon",
+      "battleEnabled": false,
+      "attackCount": 1,
+      "abilityCount": 1,
+      "riskTags": [],
+      "effectTypes": [
+        "noop"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [],
+      "findings": []
+    },
+    {
+      "id": "dp3-45",
+      "name": "Breloom",
+      "kind": "pokemon",
+      "battleEnabled": false,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [],
+      "effectTypes": [
+        "noop"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [],
+      "findings": []
+    },
+    {
+      "id": "dp3-46",
+      "name": "Charmeleon",
+      "kind": "pokemon",
+      "battleEnabled": false,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [],
+      "effectTypes": [
+        "noop"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [],
+      "findings": []
+    },
+    {
+      "id": "dp3-47",
+      "name": "Cloyster",
+      "kind": "pokemon",
+      "battleEnabled": false,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [],
+      "effectTypes": [
+        "noop"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [],
+      "findings": []
+    },
+    {
+      "id": "dp3-48",
+      "name": "Donphan",
+      "kind": "pokemon",
+      "battleEnabled": false,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [],
+      "effectTypes": [
+        "noop"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [],
+      "findings": []
+    },
+    {
+      "id": "dp3-49",
+      "name": "Farfetch'd",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [
+        "timing"
+      ],
+      "effectTypes": [
+        "nextAttackBonus",
+        "lock"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [
+        "v07237-secret-wonders-stage1.test.cjs"
+      ],
+      "findings": []
+    },
+    {
+      "id": "dp3-50",
+      "name": "Flaaffy",
+      "kind": "pokemon",
+      "battleEnabled": false,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [],
+      "effectTypes": [
+        "noop"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [],
+      "findings": []
+    },
+    {
+      "id": "dp3-51",
+      "name": "Ivysaur",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [],
+      "effectTypes": [
+        "healSelf",
+        "noop"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [],
+      "findings": []
+    },
+    {
+      "id": "dp3-52",
+      "name": "Kecleon",
+      "kind": "pokemon",
+      "battleEnabled": false,
+      "attackCount": 1,
+      "abilityCount": 1,
+      "riskTags": [],
+      "effectTypes": [
+        "noop"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [],
+      "findings": []
+    },
+    {
+      "id": "dp3-53",
+      "name": "Kirlia",
+      "kind": "pokemon",
+      "battleEnabled": false,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [],
+      "effectTypes": [
+        "noop"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [],
+      "findings": []
+    },
+    {
+      "id": "dp3-54",
+      "name": "Lombre",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [
+        "timing",
+        "coin"
+      ],
+      "effectTypes": [
+        "coinFlip",
+        "actionLock",
+        "noop",
+        "healSelf"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [],
+      "findings": []
+    },
+    {
+      "id": "dp3-55",
+      "name": "Miltank",
+      "kind": "pokemon",
+      "battleEnabled": false,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [],
+      "effectTypes": [
+        "noop"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [],
+      "findings": []
+    },
+    {
+      "id": "dp3-56",
+      "name": "Muk",
+      "kind": "pokemon",
+      "battleEnabled": false,
+      "attackCount": 1,
+      "abilityCount": 1,
+      "riskTags": [],
+      "effectTypes": [
+        "noop"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [],
+      "findings": []
+    },
+    {
+      "id": "dp3-57",
+      "name": "Nidorino",
+      "kind": "pokemon",
+      "battleEnabled": false,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [],
+      "effectTypes": [
+        "noop"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [],
+      "findings": []
+    },
+    {
+      "id": "dp3-58",
+      "name": "Pidgeotto",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [
+        "coin"
+      ],
+      "effectTypes": [
+        "noop",
+        "coinFlip",
+        "bonusDamage"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [],
+      "findings": []
+    },
+    {
+      "id": "dp3-59",
+      "name": "Pinsir",
+      "kind": "pokemon",
+      "battleEnabled": false,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [],
+      "effectTypes": [
+        "noop"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [],
+      "findings": []
+    },
+    {
+      "id": "dp3-60",
+      "name": "Quagsire",
+      "kind": "pokemon",
+      "battleEnabled": false,
+      "attackCount": 1,
+      "abilityCount": 1,
+      "riskTags": [],
+      "effectTypes": [
+        "noop"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [],
+      "findings": []
+    },
+    {
+      "id": "dp3-61",
+      "name": "Raticate",
+      "kind": "pokemon",
+      "battleEnabled": false,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [],
+      "effectTypes": [
+        "noop"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [],
+      "findings": []
+    },
+    {
+      "id": "dp3-62",
+      "name": "Roselia",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [
+        "status"
+      ],
+      "effectTypes": [
+        "status",
+        "noop"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [],
+      "findings": []
+    },
+    {
+      "id": "dp3-63",
+      "name": "Sableye",
+      "kind": "pokemon",
+      "battleEnabled": false,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [],
+      "effectTypes": [
+        "noop"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [],
+      "findings": []
+    },
+    {
+      "id": "dp3-64",
+      "name": "Shelgon",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [
+        "timing"
+      ],
+      "effectTypes": [
+        "nextAttackBonus",
+        "modifier"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [
+        "v07237-secret-wonders-stage1.test.cjs"
+      ],
+      "findings": []
+    },
+    {
+      "id": "dp3-65",
+      "name": "Skiploom",
+      "kind": "pokemon",
+      "battleEnabled": false,
+      "attackCount": 1,
+      "abilityCount": 1,
+      "riskTags": [],
+      "effectTypes": [
+        "noop"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [],
+      "findings": []
+    },
+    {
+      "id": "dp3-66",
+      "name": "Smeargle",
+      "kind": "pokemon",
+      "battleEnabled": false,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [],
+      "effectTypes": [
+        "noop"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [],
+      "findings": []
+    },
+    {
+      "id": "dp3-67",
+      "name": "Smoochum",
+      "kind": "pokemon",
+      "battleEnabled": false,
+      "attackCount": 1,
+      "abilityCount": 1,
+      "riskTags": [],
+      "effectTypes": [
+        "noop"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [],
+      "findings": []
+    },
+    {
+      "id": "dp3-68",
+      "name": "Unown [K]",
+      "kind": "pokemon",
+      "battleEnabled": false,
+      "attackCount": 1,
+      "abilityCount": 1,
+      "riskTags": [],
+      "effectTypes": [
+        "noop"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [],
+      "findings": []
+    },
+    {
+      "id": "dp3-69",
+      "name": "Unown [N]",
+      "kind": "pokemon",
+      "battleEnabled": false,
+      "attackCount": 1,
+      "abilityCount": 1,
+      "riskTags": [],
+      "effectTypes": [
+        "noop"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [],
+      "findings": []
+    },
+    {
+      "id": "dp3-70",
+      "name": "Unown [O]",
+      "kind": "pokemon",
+      "battleEnabled": false,
+      "attackCount": 1,
+      "abilityCount": 1,
+      "riskTags": [],
+      "effectTypes": [
+        "noop"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [],
+      "findings": []
+    },
+    {
+      "id": "dp3-71",
+      "name": "Unown [X]",
+      "kind": "pokemon",
+      "battleEnabled": false,
+      "attackCount": 1,
+      "abilityCount": 1,
+      "riskTags": [],
+      "effectTypes": [
+        "noop"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [],
+      "findings": []
+    },
+    {
+      "id": "dp3-72",
+      "name": "Unown [Z]",
+      "kind": "pokemon",
+      "battleEnabled": false,
+      "attackCount": 1,
+      "abilityCount": 1,
+      "riskTags": [],
+      "effectTypes": [
+        "noop"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [],
+      "findings": []
+    },
+    {
+      "id": "dp3-73",
+      "name": "Venomoth",
+      "kind": "pokemon",
+      "battleEnabled": false,
+      "attackCount": 1,
+      "abilityCount": 1,
+      "riskTags": [],
+      "effectTypes": [
+        "noop"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [],
+      "findings": []
+    },
+    {
+      "id": "dp3-74",
+      "name": "Vibrava",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [
+        "energyMovement",
+        "coin"
+      ],
+      "effectTypes": [
+        "neoRule",
+        "coinFlip",
+        "discardEnergyCard",
+        "noop"
+      ],
+      "customRules": [
+        "dp1:58:aquaShower"
+      ],
+      "testFilesMentioningId": [],
+      "findings": []
+    },
+    {
+      "id": "dp3-75",
+      "name": "Wartortle",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [
+        "timing"
+      ],
+      "effectTypes": [
+        "lock",
+        "noop"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [
+        "v07237-secret-wonders-stage1.test.cjs"
+      ],
+      "findings": []
+    },
+    {
+      "id": "dp3-76",
+      "name": "Bagon",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [],
+      "effectTypes": [
+        "noop",
+        "damageFromDamage"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [
+        "v07237-secret-wonders-stage1.test.cjs"
+      ],
+      "findings": []
+    },
+    {
+      "id": "dp3-77",
+      "name": "Bulbasaur",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [
+        "status",
+        "coin"
+      ],
+      "effectTypes": [
+        "status",
+        "coinDamage"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [],
+      "findings": []
+    },
+    {
+      "id": "dp3-78",
+      "name": "Burmy Plant Cloak",
+      "kind": "pokemon",
+      "battleEnabled": false,
+      "attackCount": 1,
+      "abilityCount": 1,
+      "riskTags": [],
+      "effectTypes": [
+        "noop"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [],
+      "findings": []
+    },
+    {
+      "id": "dp3-79",
+      "name": "Burmy Sandy Cloak",
+      "kind": "pokemon",
+      "battleEnabled": false,
+      "attackCount": 1,
+      "abilityCount": 1,
+      "riskTags": [],
+      "effectTypes": [
+        "noop"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [],
+      "findings": []
+    },
+    {
+      "id": "dp3-80",
+      "name": "Burmy Trash Cloak",
+      "kind": "pokemon",
+      "battleEnabled": false,
+      "attackCount": 1,
+      "abilityCount": 1,
+      "riskTags": [],
+      "effectTypes": [
+        "noop"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [],
+      "findings": []
+    },
+    {
+      "id": "dp3-81",
+      "name": "Carvanha",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [
+        "privacy",
+        "coin"
+      ],
+      "effectTypes": [
+        "noop",
+        "coinFlip",
+        "discardHand"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [],
+      "findings": []
+    },
+    {
+      "id": "dp3-82",
+      "name": "Charmander",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [],
+      "effectTypes": [
+        "noop",
+        "selectedDamage"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [
+        "v07237-secret-wonders-stage1.test.cjs"
+      ],
+      "findings": []
+    },
+    {
+      "id": "dp3-83",
+      "name": "Clefairy",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 1,
+      "abilityCount": 0,
+      "riskTags": [
+        "coin"
+      ],
+      "effectTypes": [
+        "coinDamage"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [
+        "v07237-secret-wonders-stage1.test.cjs"
+      ],
+      "findings": []
+    },
+    {
+      "id": "dp3-84",
+      "name": "Corsola",
+      "kind": "pokemon",
+      "battleEnabled": false,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [],
+      "effectTypes": [
+        "noop"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [
+        "v07237-secret-wonders-stage1.test.cjs"
+      ],
+      "findings": []
+    },
+    {
+      "id": "dp3-85",
+      "name": "Diglett",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [],
+      "effectTypes": [
+        "draw",
+        "noop"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [
+        "v07237-secret-wonders-stage1.test.cjs"
+      ],
+      "findings": []
+    },
+    {
+      "id": "dp3-86",
+      "name": "Duskull",
+      "kind": "pokemon",
+      "battleEnabled": false,
+      "attackCount": 1,
+      "abilityCount": 0,
+      "riskTags": [],
+      "effectTypes": [
+        "noop"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [],
+      "findings": []
+    },
+    {
+      "id": "dp3-87",
+      "name": "Electabuzz",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [
+        "coin"
+      ],
+      "effectTypes": [
+        "coinFlip",
+        "status",
+        "noop",
+        "selfDamage"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [],
+      "findings": []
+    },
+    {
+      "id": "dp3-88",
+      "name": "Grimer",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [
+        "timing",
+        "coin"
+      ],
+      "effectTypes": [
+        "noop",
+        "attackCoinGate"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [],
+      "findings": []
+    },
+    {
+      "id": "dp3-89",
+      "name": "Growlithe",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [],
+      "effectTypes": [
+        "forceOpponentSwitch",
+        "noop"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [],
+      "findings": []
+    },
+    {
+      "id": "dp3-90",
+      "name": "Hoppip",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 1,
+      "abilityCount": 1,
+      "riskTags": [],
+      "effectTypes": [
+        "removeStatus",
+        "modifier"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [],
+      "findings": []
+    },
+    {
+      "id": "dp3-91",
+      "name": "Lickitung",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [
+        "coin"
+      ],
+      "effectTypes": [
+        "coinFlip",
+        "status",
+        "noop",
+        "bonusDamage"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [],
+      "findings": []
+    },
+    {
+      "id": "dp3-92",
+      "name": "Lotad",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [],
+      "effectTypes": [
+        "neoRule",
+        "noop"
+      ],
+      "customRules": [
+        "dp3:92:waterSport"
+      ],
+      "testFilesMentioningId": [
+        "v07237-secret-wonders-stage1.test.cjs"
+      ],
+      "findings": []
+    },
+    {
+      "id": "dp3-93",
+      "name": "Magmar",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [
+        "status"
+      ],
+      "effectTypes": [
+        "noop",
+        "status"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [],
+      "findings": []
+    },
+    {
+      "id": "dp3-94",
+      "name": "Mareep",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [
+        "coin"
+      ],
+      "effectTypes": [
+        "coinFlip",
+        "status",
+        "noop"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [],
+      "findings": []
+    },
+    {
+      "id": "dp3-95",
+      "name": "Murkrow",
+      "kind": "pokemon",
+      "battleEnabled": false,
+      "attackCount": 1,
+      "abilityCount": 0,
+      "riskTags": [],
+      "effectTypes": [
+        "noop"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [],
+      "findings": []
+    },
+    {
+      "id": "dp3-96",
+      "name": "Natu",
+      "kind": "pokemon",
+      "battleEnabled": false,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [],
+      "effectTypes": [
+        "noop"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [],
+      "findings": []
+    },
+    {
+      "id": "dp3-97",
+      "name": "Nidoran ♂",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [
+        "status",
+        "coin"
+      ],
+      "effectTypes": [
+        "draw",
+        "sequence",
+        "coinFlip",
+        "status",
+        "noop"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [],
+      "findings": []
+    },
+    {
+      "id": "dp3-98",
+      "name": "Phanpy",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [],
+      "effectTypes": [
+        "damageFromDamage",
+        "selfDamage"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [],
+      "findings": []
+    },
+    {
+      "id": "dp3-99",
+      "name": "Pidgey",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [
+        "timing"
+      ],
+      "effectTypes": [
+        "modifier",
+        "noop"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [],
+      "findings": []
+    },
+    {
+      "id": "dp3-100",
+      "name": "Psyduck",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [
+        "status",
+        "coin"
+      ],
+      "effectTypes": [
+        "draw",
+        "coinFlip",
+        "status"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [
+        "v07237-secret-wonders-stage1.test.cjs"
+      ],
+      "findings": []
+    },
+    {
+      "id": "dp3-101",
+      "name": "Qwilfish",
+      "kind": "pokemon",
+      "battleEnabled": false,
+      "attackCount": 1,
+      "abilityCount": 1,
+      "riskTags": [],
+      "effectTypes": [
+        "noop"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [],
+      "findings": []
+    },
+    {
+      "id": "dp3-102",
+      "name": "Ralts",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [
+        "coin"
+      ],
+      "effectTypes": [
+        "noop",
+        "coinFlip",
+        "status"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [],
+      "findings": []
+    },
+    {
+      "id": "dp3-103",
+      "name": "Rattata",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [
+        "timing",
+        "coin"
+      ],
+      "effectTypes": [
+        "coinFlip",
+        "lock",
+        "noop"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [],
+      "findings": []
+    },
+    {
+      "id": "dp3-104",
+      "name": "Sentret",
+      "kind": "pokemon",
+      "battleEnabled": false,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [],
+      "effectTypes": [
+        "noop"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [],
+      "findings": []
+    },
+    {
+      "id": "dp3-105",
+      "name": "Shellder",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [],
+      "effectTypes": [
+        "healSelf",
+        "noop"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [],
+      "findings": []
+    },
+    {
+      "id": "dp3-106",
+      "name": "Shellos East Sea",
+      "kind": "pokemon",
+      "battleEnabled": false,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [],
+      "effectTypes": [
+        "noop"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [],
+      "findings": []
+    },
+    {
+      "id": "dp3-107",
+      "name": "Shellos West Sea",
+      "kind": "pokemon",
+      "battleEnabled": false,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [],
+      "effectTypes": [
+        "noop"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [],
+      "findings": []
+    },
+    {
+      "id": "dp3-108",
+      "name": "Shroomish",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [
+        "coin"
+      ],
+      "effectTypes": [
+        "noop",
+        "coinFlip",
+        "status"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [],
+      "findings": []
+    },
+    {
+      "id": "dp3-109",
+      "name": "Shuckle",
+      "kind": "pokemon",
+      "battleEnabled": false,
+      "attackCount": 1,
+      "abilityCount": 1,
+      "riskTags": [],
+      "effectTypes": [
+        "noop"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [],
+      "findings": []
+    },
+    {
+      "id": "dp3-110",
+      "name": "Shuppet",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [],
+      "effectTypes": [
+        "damage",
+        "noop"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [
+        "v07237-secret-wonders-stage1.test.cjs"
+      ],
+      "findings": []
+    },
+    {
+      "id": "dp3-111",
+      "name": "Spinda",
+      "kind": "pokemon",
+      "battleEnabled": false,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [],
+      "effectTypes": [
+        "noop"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [],
+      "findings": []
+    },
+    {
+      "id": "dp3-112",
+      "name": "Squirtle",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [
+        "status",
+        "coin"
+      ],
+      "effectTypes": [
+        "coinFlip",
+        "status",
+        "noop",
+        "coinDamageByEnergy"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [
+        "v07237-secret-wonders-stage1.test.cjs"
+      ],
+      "findings": []
+    },
+    {
+      "id": "dp3-113",
+      "name": "Stantler",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [
+        "privacy",
+        "status",
+        "deckSearch"
+      ],
+      "effectTypes": [
+        "searchChosen",
+        "status"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [
+        "v07237-secret-wonders-stage1.test.cjs"
+      ],
+      "findings": []
+    },
+    {
+      "id": "dp3-114",
+      "name": "Sunkern",
+      "kind": "pokemon",
+      "battleEnabled": false,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [],
+      "effectTypes": [
+        "noop"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [],
+      "findings": []
+    },
+    {
+      "id": "dp3-115",
+      "name": "Trapinch",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [
+        "timing"
+      ],
+      "effectTypes": [
+        "forceOpponentSwitch",
+        "lock"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [],
+      "findings": []
+    },
+    {
+      "id": "dp3-116",
+      "name": "Venonat",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [
+        "coin"
+      ],
+      "effectTypes": [
+        "coinFlip",
+        "status",
+        "noop"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [],
+      "findings": []
+    },
+    {
+      "id": "dp3-117",
+      "name": "Voltorb",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [],
+      "effectTypes": [
+        "noop",
+        "selfDamage"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [],
+      "findings": []
+    },
+    {
+      "id": "dp3-118",
+      "name": "Wooper",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [
+        "choice",
+        "status"
+      ],
+      "effectTypes": [
+        "status",
+        "sequence",
+        "damageRule",
+        "selectedDamage"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [],
+      "findings": []
+    },
+    {
+      "id": "dp3-119",
+      "name": "Bebe's Search",
+      "kind": "trainer",
+      "battleEnabled": true,
+      "attackCount": 0,
+      "abilityCount": 0,
+      "riskTags": [],
+      "effectTypes": [
+        "neoRule"
+      ],
+      "customRules": [
+        "dp2:109:bebe"
+      ],
+      "testFilesMentioningId": [],
+      "findings": []
+    },
+    {
+      "id": "dp3-120",
+      "name": "Night Maintenance",
+      "kind": "trainer",
+      "battleEnabled": true,
+      "attackCount": 0,
+      "abilityCount": 0,
+      "riskTags": [
+        "choice",
+        "energyMovement",
+        "deckSearch"
+      ],
+      "effectTypes": [
+        "neoRule"
+      ],
+      "customRules": [
+        "dp2:113:nightMaintenance"
+      ],
+      "testFilesMentioningId": [],
+      "findings": []
+    },
+    {
+      "id": "dp3-121",
+      "name": "PlusPower",
+      "kind": "trainer",
+      "battleEnabled": true,
+      "attackCount": 0,
+      "abilityCount": 0,
+      "riskTags": [],
+      "effectTypes": [
+        "modifier"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [],
+      "findings": []
+    },
+    {
+      "id": "dp3-122",
+      "name": "Professor Oak's Visit",
+      "kind": "trainer",
+      "battleEnabled": false,
+      "attackCount": 0,
+      "abilityCount": 0,
+      "riskTags": [],
+      "effectTypes": [
+        "noop"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [],
+      "findings": []
+    },
+    {
+      "id": "dp3-123",
+      "name": "Professor Rowan",
+      "kind": "trainer",
+      "battleEnabled": true,
+      "attackCount": 0,
+      "abilityCount": 0,
+      "riskTags": [
+        "deckSearch"
+      ],
+      "effectTypes": [
+        "neoRule"
+      ],
+      "customRules": [
+        "dp1:112:rowan"
+      ],
+      "testFilesMentioningId": [
+        "v07237-secret-wonders-stage1.test.cjs"
+      ],
+      "findings": []
+    },
+    {
+      "id": "dp3-124",
+      "name": "Rival",
+      "kind": "trainer",
+      "battleEnabled": true,
+      "attackCount": 0,
+      "abilityCount": 0,
+      "riskTags": [
+        "choice",
+        "privacy"
+      ],
+      "effectTypes": [
+        "neoRule"
+      ],
+      "customRules": [
+        "dp1:113:rival"
+      ],
+      "testFilesMentioningId": [],
+      "findings": []
+    },
+    {
+      "id": "dp3-125",
+      "name": "Roseanne's Research",
+      "kind": "trainer",
+      "battleEnabled": false,
+      "attackCount": 0,
+      "abilityCount": 0,
+      "riskTags": [
+        "choice",
+        "energyMovement"
+      ],
+      "effectTypes": [
+        "noop"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [],
+      "findings": []
+    },
+    {
+      "id": "dp3-126",
+      "name": "Team Galactic's Mars",
+      "kind": "trainer",
+      "battleEnabled": false,
+      "attackCount": 0,
+      "abilityCount": 0,
+      "riskTags": [
+        "choice",
+        "privacy"
+      ],
+      "effectTypes": [
+        "noop"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [],
+      "findings": []
+    },
+    {
+      "id": "dp3-127",
+      "name": "Potion",
+      "kind": "trainer",
+      "battleEnabled": true,
+      "attackCount": 0,
+      "abilityCount": 0,
+      "riskTags": [],
+      "effectTypes": [
+        "heal"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [],
+      "findings": []
+    },
+    {
+      "id": "dp3-128",
+      "name": "Switch",
+      "kind": "trainer",
+      "battleEnabled": true,
+      "attackCount": 0,
+      "abilityCount": 0,
+      "riskTags": [],
+      "effectTypes": [
+        "switch"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [],
+      "findings": []
+    },
+    {
+      "id": "dp3-129",
+      "name": "Darkness Energy",
+      "kind": "energy",
+      "battleEnabled": true,
+      "attackCount": 0,
+      "abilityCount": 0,
+      "riskTags": [],
+      "effectTypes": [
+        "specialEnergy"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [
+        "v07237-secret-wonders-stage1.test.cjs"
+      ],
+      "findings": []
+    },
+    {
+      "id": "dp3-130",
+      "name": "Metal Energy",
+      "kind": "energy",
+      "battleEnabled": true,
+      "attackCount": 0,
+      "abilityCount": 0,
+      "riskTags": [],
+      "effectTypes": [
+        "specialEnergy"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [
+        "v07237-secret-wonders-stage1.test.cjs"
+      ],
+      "findings": []
+    },
+    {
+      "id": "dp3-131",
+      "name": "Gardevoir LV.X",
+      "kind": "pokemon",
+      "battleEnabled": false,
+      "attackCount": 1,
+      "abilityCount": 1,
+      "riskTags": [],
+      "effectTypes": [
+        "noop"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [],
+      "findings": []
+    },
+    {
+      "id": "dp3-132",
+      "name": "Honchkrow LV.X",
+      "kind": "pokemon",
+      "battleEnabled": false,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [],
+      "effectTypes": [
+        "noop"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [],
+      "findings": []
+    }
+  ],
+  "cpu": null,
+  "smoke": {
+    "attempted": 158,
+    "executed": 158,
+    "skipped": 0,
+    "skippedDetails": [],
+    "failures": []
+  }
+}

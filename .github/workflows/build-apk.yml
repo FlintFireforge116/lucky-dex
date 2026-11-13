@@ -33,8 +33,15 @@ jobs:
       - name: Test Classic card auditor
         run: node --test source/tests/v07236-classic-card-auditor.test.cjs
 
-      - name: Audit configured Classic expansion
-        run: node source/scripts/audit-classic-set.cjs --smoke --no-write
+      - name: Test Secret Wonders staging and effects
+        run: node --test source/tests/v07237-secret-wonders-stage1.test.cjs
+
+      - name: Audit completed Mysterious Treasures set
+        run: node source/scripts/audit-classic-set.cjs --set dp2 --smoke --no-write
+
+      - name: Audit staged Secret Wonders set
+        # Do not claim set-only CPU legality before its remaining cards are enabled.
+        run: node source/scripts/audit-classic-set.cjs --set dp3 --smoke --no-cpu --no-write
 
       - name: Set up Java 17
         uses: actions/setup-java@v4

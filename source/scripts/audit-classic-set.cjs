@@ -186,7 +186,11 @@ function auditSet(setId, context){
  return {schemaVersion:1,contract:CONTRACT.sourceOfTruth,scope:'Static preflight + optional synthetic execution, not printed correctness or Android certification',summary,findings,cardLedger:perCard,cpu:cpuResult,smoke:smokeResult};
 }
 function runSmokes(cards,{data,core,opponents}){
- const sample=opponents.generate({sets:[cards[0].setId],type:'Grass',seed:23});
+ // In a staged expansion, there may be too few enabled Basics to form a
+ // self-contained 30-card loaner. Use an audited complete set to construct
+ // the disposable board instead of silently skipping every new attack.
+ let sample=opponents.generate({sets:[cards[0].setId],type:'Grass',seed:23});
+ if(!sample?.ok)sample=opponents.generate({sets:['dp2'],type:'Grass',seed:23});
  if(!sample?.ok)return {attempted:0,executed:0,skipped:0,skippedDetails:[],failures:[{cardId:null,action:'setup',reason:'Could not build a legal loaner deck'}]};
  const baseTypes=DEFAULT_TYPES;
  const result={attempted:0,executed:0,skipped:0,skippedDetails:[],failures:[]};
@@ -207,7 +211,11 @@ function runSmokes(cards,{data,core,opponents}){
    const actionName=card.kind==='trainer'?'trainer':`attack ${card.attacks[ix]?.name||ix}`;
    try{
     const s=scene(card.kind==='pokemon'?card.id:'dp1-17',side);
-    if(card.kind==='trainer')s.sides[side].hand=[{cardId:card.id,uid:'auditor-trainer'}];
+    if(card.kind==='trainer'){
+      s.sides[side].hand=[{cardId:card.id,uid:'auditor-trainer'}];
+      // Healing Items are legal only when there is a damaged recipient.
+      if(card.effect?.type==='heal')s.sides[side].active.damage=20;
+    }
     const actions=core.legalActions(s,side);
     const action=actions.find(a=>card.kind==='trainer'?a.type==='trainer'&&a.cardId===card.id:a.type==='attack'&&a.attackIndex===ix&&(!a.attackCardId||a.attackCardId===card.id));
     if(!action){result.skipped++;result.skippedDetails.push({cardId:card.id,side,action:actionName});continue;}

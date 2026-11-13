@@ -1,8 +1,8 @@
 LUCKYDEX — MASTER PROJECT RULES AND DEVELOPMENT CONTRACT
 =========================================================
-Document version: 2.28
+Document version: 2.30
 Compiled: 13 November 2026
-Current inspected source: v0.69.235. All 124 Mysterious Treasures prints are collection-registered and battle-enabled; there are no remaining gated dp2 cards. An independent source-level outcome, engine, metadata, CPU, and cross-set pass is documented in MYSTERIOUS_TREASURES_v0.69.235_FULL_AUDIT.md. Historical appendices below record earlier stage counts; latest 2.28 supersedes earlier [CURRENT] coverage. Android APK and device QA remain pending.
+Current inspected source: v0.69.237. Mysterious Treasures dp2 is fully registered and battle-enabled at 124/124. Secret Wonders dp3 is newly registered at 132 collector prints; 46 are battle-enabled and 86 explicitly gated while mechanics are implemented. See SECRET_WONDERS_v0.69.237_STAGE1.md. Historical appendices remain part of the project record. Android APK and device QA remain pending.
 Recommended repository location: ~/lucky-dex/source/docs/LUCKYDEX_MASTER_RULES.txt
 Project: LuckyDex — Android application/PWA, managed with Termux and GitHub
 
@@ -1571,3 +1571,54 @@ added executable Classic card audit contract, per-card Markdown/JSON ledger,
 real effect-validator and registry checks, eight-type CPU deck legality,
 two-sided synthetic action preflight, focused self-tests and GitHub APK
 build gate. Did not add any new expansion or certify Android UI behaviour.
+
+
+=======================================================================
+APPENDIX v2.30 — 13 NOVEMBER 2026 — v0.69.237 SECRET WONDERS STAGE 1
+=======================================================================
+[CURRENT] 132 numbered Secret Wonders (dp3) prints registered with authentic
+collector IDs, art source, types, stages, costs, evolution identity, and
+card classification. 46 prints are battleEnabled/deckEligible; the other
+86 are explicitly PARTIAL and excluded from live player/CPU deckbuilding.
+Do not call this a completed set, or count synthetic attacks as printed
+correctness. Set-only CPU deck generation cannot be certified until enough
+battle-ready cards exist in each Energy category.
+
+[LOCKED] C-AUDIT-009: Staged set audits use a stable previously verified
+loaner for synthetic battle scenes when the new set cannot supply a legal
+30-card loaner. Smoke tests must not report zero actions as success. Real
+set-exclusive CPU construction is a separate release gate when the set is
+complete; do not silently mix older sets and certify it as set-exclusive.
+
+[LOCKED] C-DRAW-DECK-010: A card that specifically draws from the BOTTOM
+of the deck takes the physical last deck entry, not the normal top card.
+Preserve the requested deck position and add outcome tests. For cards
+saying choose opponent's Pokémon or search a Supporter, test the human
+selection actions as well as effect resolution.
+
+[CURRENT] v0.69.237 implementation and audit details: dp3 Bagon Rage,
+Lotad Water Sport, Diglett Down Draw, Psyduck Migraine, Farfetch'd Swords
+Dance, Shelgon Focus Energy, Wartortle Giant Wave, Shuppet Gossip,
+Squirtle Aqua Tail and Stantler Lead have focused outcome tests. The
+reprinted Special Darkness/Metal Energy collector IDs use the existing
+physical Special Energy bonuses. Explicit tests cover real card selection,
+concrete damage and restriction timing, not just action existence.
+
+[CHECK] The unresolved Mothim -> Burmy evolution parent is a canonical
+printed alias: "Burmy" corresponds to multiple cloak-form Basics. Its
+cross-form evolution logic is not yet implemented, and Mothim stays gated.
+Unown multi-card words, Powers interrupting another player's turn, Prize
+choices and LV.X interactions need dedicated future resolution and UI QA.
+
+[CURRENT] v0.69.237 Stage 1 audit: 46/132 enabled, 86 PARTIAL,
+zero definite catalog/effect validation errors and one documented Mothim
+parent warning; all enabled synthetic attack/Trainer paths from both sides
+complete without skipped actions. See generated/classic-audit-dp3.md,
+source/tests/v07237-secret-wonders-stage1.test.cjs and
+source/docs/SECRET_WONDERS_v0.69.237_STAGE1.md for exact evidence.
+
+2026-11-13 | 2.29 -> 2.30 | v0.69.237 | Registered Secret Wonders
+132-print staged catalog, 46 battle-ready subset, new precise bottom-deck
+draw and conditional Energy damage rules, 13 focused tests, new staged
+smoke-loaner coverage and GitHub preflight for both dp2 and dp3. Device
+APK/UI remains unverified.
