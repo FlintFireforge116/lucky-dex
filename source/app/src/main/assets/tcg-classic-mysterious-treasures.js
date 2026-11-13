@@ -145,6 +145,19 @@ const selfGuard=(amount=999)=>({type:'preventDamage',target:'self',duration:'opp
 const EFFECTS={
  // No invented move text or vanilla approximations: each enabled attack below is mapped to its effect.
  // Stage 2: selected printed effects, conditional evolution attacks and Level-Up cards.
+ 5:[custom(5,'happyChance')],
+ 6:[status('confusion')],
+ 9:[noop],
+ 11:[custom(11,'reverseStream')],
+ 14:[{type:'switch',side:'self'}],
+ 20:[coin(status('poison'),status('paralysis'))],
+ 29:[{type:'lock',action:'attack',attackName:'Giant Wave',target:'self',duration:'nextOwnTurn'}],
+ 31:[custom(31,'giveAid')],
+ 34:[custom(34,'lazyBlow')],
+ 66:[custom(66,'hiddenPower')],
+ 73:[noop],
+ 70:[noop,custom(70,'throwOff')],
+ 46:[{type:'coinDamage',coins:3,amount:10,mode:'replace'},custom(46,'triplePick')],
  1:[custom(1,'heapUp'),custom(1,'hardMetal')],
  8:[custom(8,'energyCyclone'),custom(8,'breakingTail')],
  19:[coin(bench(10))],
@@ -244,6 +257,7 @@ Object.assign(EFFECTS,{
   105:[seq({type:'removeStatus',target:'self'}, {type:'healSelf',amount:20},status('sleep','self')),custom(105,'sweetPalm')],
 });
 const READY=new Set([
+ 5,6,9,11,14,20,29,31,34,46,66,70,73,
  1,7,8,12,19,24,25,32,44,45,61,68,81,82,87,102,121,122,123,
  13,22,27,28,33,35,38,40,41,47,48,49,50,51,53,54,55,56,57,58,59,60,62,63,64,71,72,74,75,76,77,78,79,83,84,85,86,89,90,91,92,95,96,97,98,99,100,101,103,104,106,107,108
 ]);
@@ -251,6 +265,19 @@ const READY=new Set([
 for(const n of [15,16,17,42,52,69,80,88,93,94,105])READY.add(n);
 
 const PRINTS={
+ 5:['Before dealing damage, optionally attach one Basic Energy from your discard to Blissey; +10 damage per attached Energy.'],
+ 6:['Confuse the Defending Pokémon.'],
+ 9:['70 damage. Rainbow Scale adds 40 if defender has Weakness to an Energy type attached to Garchomp, unless Garchomp has Special Energy.'],
+ 11:['30 damage plus 10 per attached Water Energy. Return all Water Energy on Lumineon to your hand.'],
+ 14:['Deal 30 damage. You may switch Mesprit with a Benched Pokémon.'],
+ 20:['Flip a coin: heads Poison, tails Paralyze the Defending Pokémon.'],
+ 29:['50 damage. Mantine cannot use Giant Wave next turn.'],
+ 31:['90 damage, reduced to 50 when you have the same or fewer Benched Pokémon than the opponent.'],
+ 34:['50 damage. Energetic Impulse can raise the base damage to 130 for this turn.'],
+ 66:['Flip a coin. Heads: deal 30 to the Defending Pokémon; tails: deal 30 to one of your Pokémon instead.'],
+ 73:['30 damage. Wacan Berry reduces damage from Lightning attackers by 20.'],
+ 70:['10 damage.','Choose one opposing Pokémon, discard its Pokémon Tools before dealing 20 damage to it.'],
+ 46:['Flip three coins, 10 damage per heads.','Choose up to three different evolved opposing Pokémon; deal 30 damage to each, ignoring Bench Weakness/Resistance.'],
  15:['Search your deck for up to 2 Lightning Energy and attach them to 1 of your Pokémon.', 'Discard all Basic Lightning Energy attached to Raichu; do 30 damage per discarded Energy.'],
  16:['Discard one Water Energy attached to the Defending Pokémon.'],
  17:['If the opponent has only 1 Prize left, do 40 extra damage and discard their top 3 deck cards.', 'Both players discard the top card of their decks. Do 20 extra damage for each Energy card discarded.'],
@@ -345,6 +372,16 @@ Object.assign(PRINTS,{
 });
 const BABIES={42:'Chimecho',52:'Chansey',88:'Magmar',93:'Pikachu'};
 const POWER_READY={
+ 5:{name:'Kind Egg',type:'activated',oncePerTurn:true,text:'If Happiny is under Blissey, shuffle up to one card for each attached Energy from your hand into the deck, then draw as many.',rule:'dp2:5:kindEgg'},
+ 6:{name:'Miracle Oracle',type:'activated',oncePerTurn:true,text:'Draw 1, then discard one hand card. Draw an extra card if that card was Energy.',rule:'dp2:6:miracleOracle'},
+ 9:{name:'Rainbow Scale',type:'passive',oncePerTurn:false,disabledByStatus:false,text:'+40 damage if the Defending Pokémon has Weakness to any attached Energy type, but this does not work with Special Energy attached.',rule:'dp2:9:rainbowScale'},
+ 11:{name:'Lure Ring',type:'activated',activeOnly:true,oncePerTurn:true,text:'Switch in an opposing Benched Pokémon with printed maximum HP of at least 100.',rule:'dp2:11:lureRing'},
+ 14:{name:'Upper Material',type:'passive',oncePerTurn:false,disabledByStatus:false,text:'With Uxie and Azelf in play, all Uxie, Mesprit and Azelf on either side have free retreat.',rule:'dp2:14:upperMaterial'},
+ 20:{name:'Sticky',type:'passive',oncePerTurn:false,disabledByStatus:false,text:'All Pokémon except Ariados have one extra retreat cost.',rule:'dp2:20:sticky'},
+ 29:{name:'Jumbo Fin',type:'passive',oncePerTurn:false,disabledByStatus:false,text:'If Mantyke is under Mantine, all your Water Pokémon retreat for two Colorless Energy less.',rule:'dp2:29:jumboFin'},
+ 31:{name:'Mother Pheromone',type:'passive',oncePerTurn:false,disabledByStatus:false,text:'Your Nidoran, Nidorina, Nidorino and Nidoking attacks cost one Colorless less.',rule:'dp2:31:motherPheromone'},
+ 34:{name:'Energetic Impulse',type:'activated',activeOnly:true,oncePerTurn:true,text:'Flip a coin: heads Lazy Blow is 130 this turn; tails Slaking cannot attack or retreat this turn.',rule:'dp2:34:energeticImpulse'},
+ 66:{name:'MAGNET',type:'activated',activeOnly:true,oncePerTurn:true,text:'Flip a coin; heads you may switch an opposing Benched Pokémon to Active.',rule:'dp2:66:magnet'},
  19:{name:'Glacier Snow',type:'triggered',event:'damagedByAttack',oncePerTurn:false,text:'When Active Abomasnow is damaged by an attack (even if knocked out), put the attacking Pokémon Asleep.',rule:'dp2:19:glacierSnow'},
  32:{name:'Color Shift',type:'activated',oncePerTurn:true,text:'Choose an opposing Pokémon; Ninetales becomes its type until end of this turn.',rule:'dp2:32:colorShift'},
  44:{name:'Evolutionary Vitality',type:'triggered',event:'evolved',fromHandOnly:true,oncePerTurn:false,text:'When evolved from hand, reveal the top five cards, take all Energy cards into hand and shuffle the rest.',rule:'dp2:44:evolutionaryVitality'},
@@ -352,9 +389,9 @@ const POWER_READY={
  122:{name:'Stance',type:'triggered',event:'levelUp',fromHandOnly:true,oncePerTurn:true,text:'On leveling up Active Lucario from hand, you may prevent all effects of the opponent’s next attack.',rule:'dp2:122:stance'},
  123:{name:'Torrid Wave',type:'activated',activeOnly:true,oncePerTurn:true,disabledByStatus:true,text:'Once per turn while Active, Burn the Defending Pokémon; this Burn deals three damage counters between turns.',rule:'dp2:123:torridWave'},
  16:{name:'Firestarter',text:'Once during your turn, attach a Fire Energy card from your discard pile to one of your Benched Pokémon.',rule:'dp2:16:firestarter'},94:{name:'Electro Recycle',text:'If Pichu is under Pikachu, once during your turn retrieve a Lightning Energy from your discard pile to your hand.',rule:'dp2:94:electroRecycle'}};
-const TRAINER_TEXT={109:'Put a card from your hand on top of your deck, then search your deck for a Pokémon and put it into your hand. Shuffle your deck.',110:'Look at the bottom seven cards of your deck. Put one Pokémon from those cards into your hand, return the others and shuffle.',113:'Choose up to three Pokémon and Basic Energy cards from your discard pile and shuffle them into your deck.',114:'Reveal cards from your deck until you reveal a Pokémon. Put that Pokémon into your hand and shuffle the other cards back into your deck.',124:'Flip three coins. For each heads, choose one Pokémon in your discard pile and put it into your hand.'};
-const TRAINER_EFFECTS={109:{type:'neoRule',rule:'dp2:109:bebe'},110:{type:'neoRule',rule:'dp2:110:dusk'},113:{type:'neoRule',rule:'dp2:113:nightMaintenance'},114:{type:'neoRule',rule:'dp2:114:quick'},124:{type:'neoRule',rule:'dp2:124:timeSpace'}};
-for(const n of [109,110,113,114,124,118,119,120])READY.add(n);
+const TRAINER_TEXT={111:'Search your deck or discard pile for a Fossil Trainer or a Stage 1 or Stage 2 Pokémon evolved from a Fossil, reveal it, and put it in your hand.',112:'All Pokémon have Weakness ×2 instead of their printed Weakness.',109:'Put a card from your hand on top of your deck, then search your deck for a Pokémon and put it into your hand. Shuffle your deck.',110:'Look at the bottom seven cards of your deck. Put one Pokémon from those cards into your hand, return the others and shuffle.',113:'Choose up to three Pokémon and Basic Energy cards from your discard pile and shuffle them into your deck.',114:'Reveal cards from your deck until you reveal a Pokémon. Put that Pokémon into your hand and shuffle the other cards back into your deck.',124:'Flip three coins. For each heads, choose one Pokémon in your discard pile and put it into your hand.'};
+const TRAINER_EFFECTS={111:{type:'neoRule',rule:'dp2:111:fossilExcavator'},112:{type:'noop'},109:{type:'neoRule',rule:'dp2:109:bebe'},110:{type:'neoRule',rule:'dp2:110:dusk'},113:{type:'neoRule',rule:'dp2:113:nightMaintenance'},114:{type:'neoRule',rule:'dp2:114:quick'},124:{type:'neoRule',rule:'dp2:124:timeSpace'}};
+for(const n of [109,110,111,112,113,114,124,118,119,120])READY.add(n);
 const GATED_EXPLANATION='Printed effects require additional mechanic verification before Classic battle use';
 function parse(row){
  const [number,name,kind,stage,hp,code,from,weak,resist,retreat,rarity,attacks,powers]=row;
@@ -382,7 +419,7 @@ function parse(row){
      }),isLevelX:stage==='Level-Up',levelUpFrom:stage==='Level-Up'?from:null,
      text:stage==='Level-Up'?'Level up only your Active Pokémon. Retain attacks and Powers from the previous level.':undefined});
    if(BABIES[n]&&card.abilities.length){card.abilities[0]={name:'Baby Evolution',type:'activated',printedPowerType:'power',oncePerTurn:true,disabledByStatus:true,text:'Once during your turn, evolve this Baby Pokémon into '+BABIES[n]+' from your hand and remove its damage counters.',effect:{type:'neoRule',rule:'dp1:babyEvolve',targetName:BABIES[n]}};}
-   if(POWER_READY[n]&&card.abilities.length){const p=POWER_READY[n];card.abilities[0]={name:p.name,type:p.type||'activated',printedPowerType:n===121?'body':'power',oncePerTurn:p.oncePerTurn??true,disabledByStatus:p.disabledByStatus??(p.type==='triggered'?false:true),activeOnly:!!p.activeOnly,event:p.event,fromHandOnly:!!p.fromHandOnly,text:p.text,effect:{type:'neoRule',rule:p.rule}};}
+   if(POWER_READY[n]&&card.abilities.length){const p=POWER_READY[n];card.abilities[0]={name:p.name,type:p.type||'activated',printedPowerType:p.type==='passive'||n===121?'body':'power',expeditionSpecialCondition:p.type!=='passive',oncePerTurn:p.oncePerTurn??true,disabledByStatus:p.disabledByStatus??(p.type==='triggered'?false:true),activeOnly:!!p.activeOnly,event:p.event,fromHandOnly:!!p.fromHandOnly,text:p.text,effect:{type:'neoRule',rule:p.rule}};}
    const full=[...card.attacks.map(a=>a.text),...card.abilities.map(a=>a.text)].join(' ').toLowerCase();
    const types=[...new Set(card.attacks.flatMap(a=>[...a.cost].filter(s=>s!=='C').map(s=>T[s])))];
    const roles=new Set();if(/draw|hand/.test(full))roles.add('draw');if(/search|recover|retrieve/.test(full))roles.add('search');

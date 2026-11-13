@@ -516,6 +516,19 @@
     if(state.stadium){const source=ss.active||ss.bench[0];if(source){const ctx={...effectContext(state,side,{},source),eventData:meta};effects.applyPersistentEvent(data.cardById(state.stadium.cardId)?.effect,event,ctx);}}
   }
   function retreatCost(state,side){const slot=state.sides[side].active;
+    // Mysterious Treasures continuous Poké-Bodies: evaluate on both seats,
+    // even when the source is Benched, with Body suppression respected.
+    if(state.format==='classic'&&slot){
+      const activeName=data.cardById(slot.cardId)?.name||'';
+      const sources=who=>pokemonOn(state.sides[who]).filter(p=>!effects.abilitiesSuppressed(state,who,p,data.cardById));
+      const gods=['Uxie','Mesprit','Azelf'];
+      if(gods.includes(activeName)&&['player','opponent'].some(who=>sources(who).some(p=>p.cardId==='dp2-14')&&
+          sources(who).some(p=>data.cardById(p.cardId)?.name==='Uxie')&&sources(who).some(p=>data.cardById(p.cardId)?.name==='Azelf')))return 0;
+      const sticky=['player','opponent'].reduce((count,who)=>count+sources(who).filter(p=>p.cardId==='dp2-20').length,0);
+      const fins=sources(side).filter(p=>p.cardId==='dp2-29'&&(p.stack||[]).some(id=>data.cardById(id)?.name==='Mantyke')).length;
+      const finRelief=effects.effectiveTypes(state,side,slot,data.cardById).includes('Water')?2*fins:0;
+      slot.dp2RetreatAdjustment=(activeName==='Ariados'?0:sticky)-finRelief;
+    }
     if(state.format==='classic'&&slot&&toolsOf(slot).some(ref=>['ex3-82','ex8-84'].includes(ref.cardId)))return 0;
     // DP1 Magnezone's Metal-dependent Magnetize is a continuous Poké-Body;
     // it applies to any allied Active Pokémon and respects Body suppression.
@@ -587,8 +600,12 @@
     const aqGluey=state.format==='classic'&&['player','opponent'].some(w=>pokemonOn(state.sides[w]).some(p=>['ecard2-3','ecard2-H3'].includes(p.cardId)&&!effects.abilitiesSuppressed(state,w,p,data.cardById)));
     const aqHeavy=state.format==='classic'&&slot?.cardId==='ecard2-23'&&Number(slot.energy?.Grass||0)>0?2:0;
     const aqMagnet=state.format==='classic'&&slot?.cardId==='ecard2-91'&&!effects.abilitiesSuppressed(state,side,slot,data.cardById)?state.sides[side].bench.filter(p=>data.cardById(p?.cardId)?.name==='Magnemite').length:0;
-    return Math.max(0,Number(data.cardById(slot.cardId).retreat||0)+effects.modifierAmount(state,side,slot,'retreatCost',data.cardById)+stadiumCost+aqHeavy+(aqGluey?1:0)-aqMagnet-ex6Dodrio);}
+    return Math.max(0,Number(data.cardById(slot.cardId).retreat||0)+effects.modifierAmount(state,side,slot,'retreatCost',data.cardById)+stadiumCost+aqHeavy+(aqGluey?1:0)-aqMagnet-ex6Dodrio+Number(slot.dp2RetreatAdjustment||0));}
   function attackCost(state,side,attack){const slot=state.sides[side].active;let cost=effects.attackCostOverride(state,side,slot,attack,data.cardById)??attack.cost??'';
+    if(state.format==='classic'&&slot&&/^(Nidoran ♀|Nidorina|Nidoran ♂|Nidorino|Nidoking)$/.test(data.cardById(slot.cardId)?.name||'')){
+      const pheromones=pokemonOn(state.sides[side]).filter(p=>p.cardId==='dp2-31'&&!effects.abilitiesSuppressed(state,side,p,data.cardById)).length;
+      for(let i=0;i<pheromones;i++){const index=cost.lastIndexOf('C');if(index<0)break;cost=cost.slice(0,index)+cost.slice(index+1);}
+    }
     if(state.format==='classic'&&slot){
       if(slot.cardId==='ex14-94'&&attack&&['Shield Beam','Super Psy Bolt'].includes(attack.name)&&
          !effects.abilitiesSuppressed(state,side,slot,data.cardById)&&
@@ -1040,6 +1057,8 @@
         // never the next Energy Zone unit. Don't offer an inert Power.
         if(/^dp1-6[5-8]$/.test(source.cardId)&&s.active===source)return; // Unown Powers need the Bench.
         if(source.cardId==='dp1-2'&&state.sides[side==='player'?'opponent':'player'].bench.filter(Boolean).length<4)return;
+        if(source.cardId==='dp2-5'&&ability.name==='Kind Egg'&&!(source.stack||[]).some(id=>data.cardById(id)?.name==='Happiny'))return;
+        if(source.cardId==='dp2-11'&&ability.name==='Lure Ring'&&!state.sides[side==='player'?'opponent':'player'].bench.some(p=>Number(data.cardById(p.cardId)?.hp||0)>=100))return;
         if(source.cardId==='dp1-3'&&(!(source.stack||[]).some(id=>data.cardById(id)?.name==='Elekid')||!pokemonOn(s).some(p=>p!==source&&(Number(p.energy?.Lightning||0)>0||(p.specialEnergy||[]).some(r=>Number((r.provides||data.cardById(r.cardId)?.effect?.provides||{}).Lightning||0)>0)))))return;
         if(source.cardId==='dp1-14'&&(!state.sides[side==='player'?'opponent':'player'].bench.some(p=>p?.stack?.length>1)))return;
         if(source.cardId==='dp1-120'&&!state.sides[side==='player'?'opponent':'player'].hand.length)return;

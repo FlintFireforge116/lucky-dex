@@ -1,8 +1,8 @@
 LUCKYDEX — MASTER PROJECT RULES AND DEVELOPMENT CONTRACT
 =========================================================
-Document version: 2.25
+Document version: 2.26
 Compiled: 13 November 2026
-Current inspected source: v0.69.232; all 124 Mysterious Treasures collector entries are registered, 91 battle-enabled and 33 still restricted. All three Mysterious Treasures LV.X prints are now battle-enabled. Diamond & Pearl Base remains 130/130 enabled. Android QA and the independent full Mysterious Treasures audit remain pending.
+Current inspected source: v0.69.233; all 124 Mysterious Treasures collector entries are registered, 106 battle-enabled and 18 still restricted. All three Mysterious Treasures LV.X prints remain battle-enabled. Diamond & Pearl Base remains 130/130 enabled. Android QA and the independent full Mysterious Treasures audit remain pending.
 Recommended repository location: ~/lucky-dex/source/docs/LUCKYDEX_MASTER_RULES.txt
 Project: LuckyDex — Android application/PWA, managed with Termux and GitHub
 
@@ -1446,3 +1446,20 @@ APPENDIX — v2.25 / v0.69.232 MYSTERIOUS TREASURES STAGE 2
 [CHECK] Fossil-as-Pokémon Trainer cards #116 and #117, Lake Boundary weakness conversion, and advanced reactive Power/Unown mechanics remain unimplemented; 33 cards stay gated. The user still requests finishing the entire set before the separate complete-set audit.
 [CHECK] Automated selected cross-set Node regressions pass, but do not substitute for APK/on-device UI, animation, CPU decision-quality or full scenario testing.
 2026-11-13 | Document 2.24 -> 2.25 | App v0.69.232 | MT Stage 2: enabled 19 additional prints including 3 LV.X; 91/124 play-ready, 33 gated. Added focused outcome tests for ability triggers, turn locks, choice semantics, statuses and Energy movement; staged two-batch v072xx regression 539/539 passing. Android QA not performed.
+
+
+=======================================================================
+APPENDIX — v2.26 / v0.69.233 MYSTERIOUS TREASURES STAGE 3
+=======================================================================
+[CURRENT] Third incremental implementation stage, following v0.69.232: 106/124 collector entries are battle-enabled (96 Pokémon, 7 Trainers including Lake Boundary Stadium, 3 Special Energy prints); 18 remain gated. The preceding stage appendices are preserved as historical snapshots. This is not a full expansion completion release and is not yet the independently requested all-card audit.
+[LOCKED] Benched/Active Poké-Bodies must affect both player and CPU via a common cost or damage adapter, not UI-only metadata: Ariados Sticky adds one retreat cost to every OTHER Pokémon; Mesprit Upper Material checks the Uxie/Azelf partnership and reduces the three Lake Guardians' retreat costs to zero; Mantine Jumbo Fin reduces allied Water retreat costs by two when Mantyke is beneath Mantine; Nidoqueen Mother Pheromone reduces one Colorless unit from qualified Nidoran family attacks. Respect printed exception and Body suppression.
+[LOCKED] Weakness is a stadium-aware engine rule: Lake Boundary converts Weakness for both players to a full x2 calculation, rather than applying the normal Diamond & Pearl +10/+20/+30 amount. Resistance and damage-prevention order still apply correctly. Stadium replacement/removal must restore ordinary Weakness automatically.
+[LOCKED] Aipom Throw Off removes all attached Tools from the chosen enemy target BEFORE dealing damage, including for Bench targets. Never turn an attack with a pre-damage printed effect into a post-damage optional action.
+[LOCKED] Blissey Happy Chance offers an optional actual Basic Energy card from discard before damage; the Energy contributes to that hit's attached-Energy bonus. Kind Egg requires Happiny anywhere beneath Blissey, shuffles the selected 0..N cards from hand into the deck, then draws the same count (the shuffled cards may be redrawn).
+[LOCKED] Unown M MAGNET must use actual active-only power timing, target Bench choices and coin outcome; its Hidden Power heads hits the defender for 30 and tails causes 30 self-side damage to the chosen own Pokémon instead of damage to the defender.
+[LOCKED] Slaking Energetic Impulse is only available while Active and is used once per turn before attacking: heads increases Lazy Blow's BASE damage to 130 for that turn; tails blocks its attacks and retreat for that turn. Its effect expires if Slaking leaves the Active position, even if it returns during the same turn.
+[LOCKED] Fossil Excavator is a Supporter with a real choice of qualified Fossil-named Trainer or matching Fossil-evolution card from the actual deck OR discard; never spawn cards from nowhere. Fossil-as-Basic Trainer cards Armor Fossil and Skull Fossil remain gated pending full play, KO and discard lifecycle implementation.
+[LOCKED] Activated Poké-Powers must be blocked by appropriate Special Conditions, even if they also use a named metadata adapter. Passive Poké-Bodies must continue functioning while the owner is Special-Conditioned unless their card says otherwise. Check suppression effects separately.
+[CHECK] Eighteen printed Mysterious Treasures cards remain restricted, including reactive Alakazam/Uxie, Unown I/E/T, Fossil-as-Basic cards, Team Galactic's Wager, and remaining conditional Powers. All 124 appear in the collection but gated prints must not be treated as playable.
+[CHECK] Final isolated Node regression batches passed 290/290 and 269/269 (559/559 total), including the new Slaking leave-Active lifecycle assertion. Neither automated batch replaces Android device playtesting or the promised separate full-set audit.
+2026-11-13 | Document 2.25 -> 2.26 | App v0.69.233 | MT Stage 3: enabled 15 further prints for 106/124 total; implemented shared retreat/attack-cost/Weakness rules, card ordering/selection, added 20 focused outcomes including Slaking leave-Active effect clearing; 18 prints remain gated. Selected cross-set suites 559/559 passing; Android APK/device QA not performed.

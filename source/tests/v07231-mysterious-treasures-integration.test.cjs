@@ -49,6 +49,7 @@ test('All enabled Mysterious Treasures Trainers offer legal plays from both seat
  for(const c of dp2.CARDS.filter(x=>x.battleEnabled&&x.kind==='trainer'))for(const side of ['player','opponent']){
   count++;const s=setup('dp1-17','dp1-16',side);s.sides[side].hand.unshift({uid:'target-trainer',cardId:c.id});
   s.sides[side].discard.unshift({uid:'recoverable-mon',cardId:'dp2-79'});
+  if(c.id==='dp2-111')s.sides[side].deck.unshift({uid:'fossil-trainer-target',cardId:'dp2-116'});
   const plays=core.legalActions(s,side).filter(a=>a.type==='trainer'&&a.cardId===c.id);
   if(!plays.length){failures.push(c.id+' '+side+' no play');continue;}
   try{core.applyAction(s,side,plays[0]);for(let j=0;j<30&&s.phase==='effectChoice';j++){
