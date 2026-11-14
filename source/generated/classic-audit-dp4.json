@@ -1,0 +1,2095 @@
+{
+  "schemaVersion": 1,
+  "contract": "docs/LUCKYDEX_MASTER_RULES.txt",
+  "scope": "Static preflight + optional synthetic execution, not printed correctness or Android certification",
+  "summary": {
+    "setId": "dp4",
+    "setName": "Great Encounters",
+    "total": 106,
+    "declared": 106,
+    "counts": {
+      "pokemon": 100,
+      "trainer": 6,
+      "energy": 0,
+      "attacks": 172,
+      "abilities": 28,
+      "enabled": 76,
+      "gated": 30
+    },
+    "risks": {
+      "choice": 17,
+      "privacy": 0,
+      "timing": 15,
+      "energyMovement": 9,
+      "status": 12,
+      "deckSearch": 10,
+      "coin": 33
+    },
+    "withStaticTestMentions": 44,
+    "errors": 0,
+    "warnings": 0,
+    "reviewFlags": 0
+  },
+  "findings": [],
+  "cardLedger": [
+    {
+      "id": "dp4-1",
+      "name": "Blaziken",
+      "kind": "pokemon",
+      "battleEnabled": false,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [],
+      "effectTypes": [
+        "noop"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [],
+      "findings": []
+    },
+    {
+      "id": "dp4-2",
+      "name": "Cresselia",
+      "kind": "pokemon",
+      "battleEnabled": false,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [],
+      "effectTypes": [
+        "noop"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [
+        "v07243-great-encounters.test.cjs"
+      ],
+      "findings": []
+    },
+    {
+      "id": "dp4-3",
+      "name": "Darkrai",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [
+        "deckSearch"
+      ],
+      "effectTypes": [
+        "searchChosen",
+        "neoRule"
+      ],
+      "customRules": [
+        "dp4:3:darknessPursuit"
+      ],
+      "testFilesMentioningId": [
+        "v07243-great-encounters.test.cjs"
+      ],
+      "findings": []
+    },
+    {
+      "id": "dp4-4",
+      "name": "Darkrai",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [
+        "choice",
+        "status"
+      ],
+      "effectTypes": [
+        "chooseOption",
+        "noop",
+        "forceOpponentSwitch",
+        "neoRule"
+      ],
+      "customRules": [
+        "dp4:4:sleepHole"
+      ],
+      "testFilesMentioningId": [
+        "v07243-great-encounters.test.cjs"
+      ],
+      "findings": []
+    },
+    {
+      "id": "dp4-5",
+      "name": "Pachirisu",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [
+        "choice",
+        "deckSearch"
+      ],
+      "effectTypes": [
+        "benchFromDeck",
+        "neoRule"
+      ],
+      "customRules": [
+        "dp4:5:smashShort"
+      ],
+      "testFilesMentioningId": [
+        "v07243-great-encounters.test.cjs"
+      ],
+      "findings": []
+    },
+    {
+      "id": "dp4-6",
+      "name": "Porygon-Z",
+      "kind": "pokemon",
+      "battleEnabled": false,
+      "attackCount": 1,
+      "abilityCount": 1,
+      "riskTags": [],
+      "effectTypes": [
+        "noop"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [],
+      "findings": []
+    },
+    {
+      "id": "dp4-7",
+      "name": "Rotom",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [
+        "choice",
+        "deckSearch",
+        "coin"
+      ],
+      "effectTypes": [
+        "shuffleChosenHand",
+        "coinFlip",
+        "sequence",
+        "bonusDamage",
+        "status",
+        "noop"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [],
+      "findings": []
+    },
+    {
+      "id": "dp4-8",
+      "name": "Sceptile",
+      "kind": "pokemon",
+      "battleEnabled": false,
+      "attackCount": 1,
+      "abilityCount": 1,
+      "riskTags": [],
+      "effectTypes": [
+        "noop"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [],
+      "findings": []
+    },
+    {
+      "id": "dp4-9",
+      "name": "Swampert",
+      "kind": "pokemon",
+      "battleEnabled": false,
+      "attackCount": 1,
+      "abilityCount": 1,
+      "riskTags": [],
+      "effectTypes": [
+        "noop"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [],
+      "findings": []
+    },
+    {
+      "id": "dp4-10",
+      "name": "Tangrowth",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [
+        "choice",
+        "timing",
+        "energyMovement"
+      ],
+      "effectTypes": [
+        "neoRule",
+        "sequence",
+        "healSelf",
+        "lock"
+      ],
+      "customRules": [
+        "dp4:10:powerWhip"
+      ],
+      "testFilesMentioningId": [
+        "v07243-great-encounters.test.cjs"
+      ],
+      "findings": []
+    },
+    {
+      "id": "dp4-11",
+      "name": "Togekiss",
+      "kind": "pokemon",
+      "battleEnabled": false,
+      "attackCount": 1,
+      "abilityCount": 1,
+      "riskTags": [],
+      "effectTypes": [
+        "noop"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [],
+      "findings": []
+    },
+    {
+      "id": "dp4-12",
+      "name": "Altaria",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [
+        "timing",
+        "coin"
+      ],
+      "effectTypes": [
+        "coinAttackGate",
+        "status",
+        "modifier"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [
+        "v07243-great-encounters.test.cjs"
+      ],
+      "findings": []
+    },
+    {
+      "id": "dp4-13",
+      "name": "Beedrill",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [
+        "coin"
+      ],
+      "effectTypes": [
+        "fieldCountDamage",
+        "coinDamage"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [],
+      "findings": []
+    },
+    {
+      "id": "dp4-14",
+      "name": "Butterfree",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [
+        "status",
+        "coin"
+      ],
+      "effectTypes": [
+        "neoRule",
+        "coinFlip",
+        "status"
+      ],
+      "customRules": [
+        "dp4:14:parallelDrain"
+      ],
+      "testFilesMentioningId": [
+        "v07243-great-encounters.test.cjs"
+      ],
+      "findings": []
+    },
+    {
+      "id": "dp4-15",
+      "name": "Claydol",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 1,
+      "abilityCount": 1,
+      "riskTags": [
+        "choice"
+      ],
+      "effectTypes": [
+        "noop",
+        "neoRule"
+      ],
+      "customRules": [
+        "dp4:15:cosmicPower"
+      ],
+      "testFilesMentioningId": [
+        "v07243-great-encounters.test.cjs"
+      ],
+      "findings": []
+    },
+    {
+      "id": "dp4-16",
+      "name": "Dialga",
+      "kind": "pokemon",
+      "battleEnabled": false,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [],
+      "effectTypes": [
+        "noop"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [],
+      "findings": []
+    },
+    {
+      "id": "dp4-17",
+      "name": "Exploud",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [
+        "timing"
+      ],
+      "effectTypes": [
+        "neoRule",
+        "noop"
+      ],
+      "customRules": [
+        "dp4:17:ambientNoise"
+      ],
+      "testFilesMentioningId": [
+        "v07243-great-encounters.test.cjs"
+      ],
+      "findings": []
+    },
+    {
+      "id": "dp4-18",
+      "name": "Houndoom",
+      "kind": "pokemon",
+      "battleEnabled": false,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [],
+      "effectTypes": [
+        "noop"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [],
+      "findings": []
+    },
+    {
+      "id": "dp4-19",
+      "name": "Hypno",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [
+        "status"
+      ],
+      "effectTypes": [
+        "neoRule",
+        "status"
+      ],
+      "customRules": [
+        "dp4:19:dreamCatcher"
+      ],
+      "testFilesMentioningId": [
+        "v07243-great-encounters.test.cjs"
+      ],
+      "findings": []
+    },
+    {
+      "id": "dp4-20",
+      "name": "Kingler",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [],
+      "effectTypes": [
+        "noop",
+        "selfDamageIfDefenderKnockedOut"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [],
+      "findings": []
+    },
+    {
+      "id": "dp4-21",
+      "name": "Lapras",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [
+        "energyMovement"
+      ],
+      "effectTypes": [
+        "neoRule",
+        "noop"
+      ],
+      "customRules": [
+        "dp4:21:carryIn"
+      ],
+      "testFilesMentioningId": [
+        "v07243-great-encounters.test.cjs"
+      ],
+      "findings": []
+    },
+    {
+      "id": "dp4-22",
+      "name": "Latias",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [
+        "energyMovement"
+      ],
+      "effectTypes": [
+        "sequence",
+        "healSelf",
+        "removeStatus",
+        "discardEnergyCard"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [
+        "v07243-great-encounters.test.cjs"
+      ],
+      "findings": []
+    },
+    {
+      "id": "dp4-23",
+      "name": "Latios",
+      "kind": "pokemon",
+      "battleEnabled": false,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [],
+      "effectTypes": [
+        "noop"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [],
+      "findings": []
+    },
+    {
+      "id": "dp4-24",
+      "name": "Mawile",
+      "kind": "pokemon",
+      "battleEnabled": false,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [],
+      "effectTypes": [
+        "noop"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [],
+      "findings": []
+    },
+    {
+      "id": "dp4-25",
+      "name": "Milotic",
+      "kind": "pokemon",
+      "battleEnabled": false,
+      "attackCount": 1,
+      "abilityCount": 1,
+      "riskTags": [],
+      "effectTypes": [
+        "noop"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [
+        "v07243-great-encounters.test.cjs"
+      ],
+      "findings": []
+    },
+    {
+      "id": "dp4-26",
+      "name": "Palkia",
+      "kind": "pokemon",
+      "battleEnabled": false,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [],
+      "effectTypes": [
+        "noop"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [],
+      "findings": []
+    },
+    {
+      "id": "dp4-27",
+      "name": "Primeape",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 1,
+      "abilityCount": 1,
+      "riskTags": [
+        "timing",
+        "coin"
+      ],
+      "effectTypes": [
+        "sequence",
+        "status",
+        "coinFlip",
+        "lock",
+        "noop",
+        "modifier"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [
+        "v07243-great-encounters.test.cjs"
+      ],
+      "findings": []
+    },
+    {
+      "id": "dp4-28",
+      "name": "Slowking",
+      "kind": "pokemon",
+      "battleEnabled": false,
+      "attackCount": 1,
+      "abilityCount": 1,
+      "riskTags": [],
+      "effectTypes": [
+        "noop"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [],
+      "findings": []
+    },
+    {
+      "id": "dp4-29",
+      "name": "Unown [H]",
+      "kind": "pokemon",
+      "battleEnabled": false,
+      "attackCount": 1,
+      "abilityCount": 1,
+      "riskTags": [],
+      "effectTypes": [
+        "noop"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [],
+      "findings": []
+    },
+    {
+      "id": "dp4-30",
+      "name": "Wailord",
+      "kind": "pokemon",
+      "battleEnabled": false,
+      "attackCount": 1,
+      "abilityCount": 1,
+      "riskTags": [],
+      "effectTypes": [
+        "noop"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [
+        "v07243-great-encounters.test.cjs"
+      ],
+      "findings": []
+    },
+    {
+      "id": "dp4-31",
+      "name": "Weezing",
+      "kind": "pokemon",
+      "battleEnabled": false,
+      "attackCount": 1,
+      "abilityCount": 1,
+      "riskTags": [],
+      "effectTypes": [
+        "noop"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [],
+      "findings": []
+    },
+    {
+      "id": "dp4-32",
+      "name": "Wigglytuff",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 1,
+      "abilityCount": 1,
+      "riskTags": [
+        "status"
+      ],
+      "effectTypes": [
+        "neoRule",
+        "sequence",
+        "status"
+      ],
+      "customRules": [
+        "dp4:32:balloonAttack"
+      ],
+      "testFilesMentioningId": [
+        "v07243-great-encounters.test.cjs"
+      ],
+      "findings": []
+    },
+    {
+      "id": "dp4-33",
+      "name": "Arbok",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [
+        "status",
+        "coin"
+      ],
+      "effectTypes": [
+        "sequence",
+        "bonusDamage",
+        "status",
+        "coinFlip",
+        "noop"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [],
+      "findings": []
+    },
+    {
+      "id": "dp4-34",
+      "name": "Cacturne",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [
+        "coin"
+      ],
+      "effectTypes": [
+        "coinDamage",
+        "bonusDamage"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [],
+      "findings": []
+    },
+    {
+      "id": "dp4-35",
+      "name": "Combusken",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [
+        "timing",
+        "coin"
+      ],
+      "effectTypes": [
+        "modifier",
+        "coinDamage"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [],
+      "findings": []
+    },
+    {
+      "id": "dp4-36",
+      "name": "Delibird",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [
+        "deckSearch",
+        "coin"
+      ],
+      "effectTypes": [
+        "coinFlip",
+        "searchChosen",
+        "noop"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [],
+      "findings": []
+    },
+    {
+      "id": "dp4-37",
+      "name": "Floatzel",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [
+        "choice",
+        "timing",
+        "coin"
+      ],
+      "effectTypes": [
+        "coinFlip",
+        "preventDamage",
+        "noop",
+        "benchDamage"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [],
+      "findings": []
+    },
+    {
+      "id": "dp4-38",
+      "name": "Gorebyss",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [
+        "choice"
+      ],
+      "effectTypes": [
+        "neoRule",
+        "sequence",
+        "bonusDamage",
+        "status"
+      ],
+      "customRules": [
+        "dp4:38:sweetTemptation"
+      ],
+      "testFilesMentioningId": [
+        "v07243-great-encounters.test.cjs"
+      ],
+      "findings": []
+    },
+    {
+      "id": "dp4-39",
+      "name": "Granbull",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [
+        "timing"
+      ],
+      "effectTypes": [
+        "modifier",
+        "damageFromDamage"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [],
+      "findings": []
+    },
+    {
+      "id": "dp4-40",
+      "name": "Grovyle",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [
+        "choice"
+      ],
+      "effectTypes": [
+        "searchChosen",
+        "status"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [],
+      "findings": []
+    },
+    {
+      "id": "dp4-41",
+      "name": "Hariyama",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [
+        "coin"
+      ],
+      "effectTypes": [
+        "coinFlip",
+        "bonusDamage",
+        "noop",
+        "neoRule"
+      ],
+      "customRules": [
+        "dp4:41:spiritedThrow"
+      ],
+      "testFilesMentioningId": [
+        "v07243-great-encounters.test.cjs"
+      ],
+      "findings": []
+    },
+    {
+      "id": "dp4-42",
+      "name": "Huntail",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [
+        "timing",
+        "energyMovement",
+        "coin"
+      ],
+      "effectTypes": [
+        "coinFlip",
+        "sequence",
+        "lock",
+        "noop",
+        "neoRule"
+      ],
+      "customRules": [
+        "dp4:42:threatenAndDrop"
+      ],
+      "testFilesMentioningId": [
+        "v07243-great-encounters.test.cjs"
+      ],
+      "findings": []
+    },
+    {
+      "id": "dp4-43",
+      "name": "Linoone",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [],
+      "effectTypes": [
+        "neoRule",
+        "benchDamage"
+      ],
+      "customRules": [
+        "dp4:43:switcheroo"
+      ],
+      "testFilesMentioningId": [
+        "v07243-great-encounters.test.cjs"
+      ],
+      "findings": []
+    },
+    {
+      "id": "dp4-44",
+      "name": "Loudred",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [
+        "choice",
+        "coin"
+      ],
+      "effectTypes": [
+        "selectedDamage",
+        "coinFlip",
+        "bonusDamage",
+        "noop"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [],
+      "findings": []
+    },
+    {
+      "id": "dp4-45",
+      "name": "Magcargo",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 1,
+      "abilityCount": 1,
+      "riskTags": [
+        "choice",
+        "status"
+      ],
+      "effectTypes": [
+        "neoRule",
+        "sequence",
+        "preventStatus"
+      ],
+      "customRules": [
+        "dp4:45:lavaPlume"
+      ],
+      "testFilesMentioningId": [
+        "v07243-great-encounters.test.cjs"
+      ],
+      "findings": []
+    },
+    {
+      "id": "dp4-46",
+      "name": "Marshtomp",
+      "kind": "pokemon",
+      "battleEnabled": false,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [],
+      "effectTypes": [
+        "noop"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [],
+      "findings": []
+    },
+    {
+      "id": "dp4-47",
+      "name": "Metapod",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 1,
+      "abilityCount": 1,
+      "riskTags": [
+        "coin"
+      ],
+      "effectTypes": [
+        "noop",
+        "coinFlip",
+        "evolveFromDeck"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [
+        "v07243-great-encounters.test.cjs"
+      ],
+      "findings": []
+    },
+    {
+      "id": "dp4-48",
+      "name": "Pelipper",
+      "kind": "pokemon",
+      "battleEnabled": false,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [],
+      "effectTypes": [
+        "noop"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [],
+      "findings": []
+    },
+    {
+      "id": "dp4-49",
+      "name": "Porygon2",
+      "kind": "pokemon",
+      "battleEnabled": false,
+      "attackCount": 1,
+      "abilityCount": 1,
+      "riskTags": [],
+      "effectTypes": [
+        "noop"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [],
+      "findings": []
+    },
+    {
+      "id": "dp4-50",
+      "name": "Purugly",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [
+        "energyMovement",
+        "coin"
+      ],
+      "effectTypes": [
+        "coinFlip",
+        "discardEnergyCard",
+        "noop",
+        "coinDamage"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [],
+      "findings": []
+    },
+    {
+      "id": "dp4-51",
+      "name": "Relicanth",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [
+        "choice",
+        "status"
+      ],
+      "effectTypes": [
+        "searchChosen",
+        "sequence",
+        "status"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [],
+      "findings": []
+    },
+    {
+      "id": "dp4-52",
+      "name": "Seviper",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [
+        "timing",
+        "coin"
+      ],
+      "effectTypes": [
+        "coinFlip",
+        "actionLock",
+        "noop",
+        "sequence",
+        "bonusDamage",
+        "status"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [],
+      "findings": []
+    },
+    {
+      "id": "dp4-53",
+      "name": "Skarmory",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [
+        "timing",
+        "energyMovement",
+        "coin"
+      ],
+      "effectTypes": [
+        "coinFlip",
+        "discardEnergyCard",
+        "noop",
+        "modifier"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [],
+      "findings": []
+    },
+    {
+      "id": "dp4-54",
+      "name": "Slowbro",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [
+        "choice",
+        "timing"
+      ],
+      "effectTypes": [
+        "chooseAttackLock",
+        "noop"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [],
+      "findings": []
+    },
+    {
+      "id": "dp4-55",
+      "name": "Togetic",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [
+        "choice"
+      ],
+      "effectTypes": [
+        "noop",
+        "neoRule"
+      ],
+      "customRules": [
+        "dp4:55:sweetKiss"
+      ],
+      "testFilesMentioningId": [
+        "v07243-great-encounters.test.cjs"
+      ],
+      "findings": []
+    },
+    {
+      "id": "dp4-56",
+      "name": "Unown [F]",
+      "kind": "pokemon",
+      "battleEnabled": false,
+      "attackCount": 1,
+      "abilityCount": 1,
+      "riskTags": [],
+      "effectTypes": [
+        "noop"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [],
+      "findings": []
+    },
+    {
+      "id": "dp4-57",
+      "name": "Unown [G]",
+      "kind": "pokemon",
+      "battleEnabled": false,
+      "attackCount": 1,
+      "abilityCount": 1,
+      "riskTags": [],
+      "effectTypes": [
+        "noop"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [],
+      "findings": []
+    },
+    {
+      "id": "dp4-58",
+      "name": "Wailmer",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [
+        "coin"
+      ],
+      "effectTypes": [
+        "coinFlip",
+        "benchDamage",
+        "noop"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [],
+      "findings": []
+    },
+    {
+      "id": "dp4-59",
+      "name": "Zangoose",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [],
+      "effectTypes": [
+        "noop",
+        "bonusDamage"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [],
+      "findings": []
+    },
+    {
+      "id": "dp4-60",
+      "name": "Baltoy",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [],
+      "effectTypes": [
+        "drawToHandSize",
+        "switch"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [],
+      "findings": []
+    },
+    {
+      "id": "dp4-61",
+      "name": "Buizel",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [],
+      "effectTypes": [
+        "noop"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [
+        "v07243-great-encounters.test.cjs"
+      ],
+      "findings": []
+    },
+    {
+      "id": "dp4-62",
+      "name": "Cacnea",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [
+        "timing",
+        "coin"
+      ],
+      "effectTypes": [
+        "attackCoinGate",
+        "status"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [
+        "v07243-great-encounters.test.cjs"
+      ],
+      "findings": []
+    },
+    {
+      "id": "dp4-63",
+      "name": "Caterpie",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 1,
+      "abilityCount": 1,
+      "riskTags": [
+        "coin"
+      ],
+      "effectTypes": [
+        "noop",
+        "coinFlip",
+        "evolveFromDeck"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [
+        "v07243-great-encounters.test.cjs"
+      ],
+      "findings": []
+    },
+    {
+      "id": "dp4-64",
+      "name": "Clamperl",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [
+        "coin"
+      ],
+      "effectTypes": [
+        "coinAttackGate",
+        "status",
+        "noop"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [
+        "v07243-great-encounters.test.cjs"
+      ],
+      "findings": []
+    },
+    {
+      "id": "dp4-65",
+      "name": "Drowzee",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [
+        "status"
+      ],
+      "effectTypes": [
+        "status",
+        "noop"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [
+        "v07243-great-encounters.test.cjs"
+      ],
+      "findings": []
+    },
+    {
+      "id": "dp4-66",
+      "name": "Ekans",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [
+        "coin"
+      ],
+      "effectTypes": [
+        "healSelf",
+        "coinFlip",
+        "status",
+        "noop"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [],
+      "findings": []
+    },
+    {
+      "id": "dp4-67",
+      "name": "Feebas",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [
+        "deckSearch"
+      ],
+      "effectTypes": [
+        "noop",
+        "searchChosen"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [
+        "v07243-great-encounters.test.cjs"
+      ],
+      "findings": []
+    },
+    {
+      "id": "dp4-68",
+      "name": "Glameow",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [],
+      "effectTypes": [
+        "forceOpponentSwitch",
+        "noop"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [],
+      "findings": []
+    },
+    {
+      "id": "dp4-69",
+      "name": "Houndour",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [
+        "energyMovement",
+        "coin"
+      ],
+      "effectTypes": [
+        "coinFlip",
+        "noop",
+        "discardEnergyCard"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [],
+      "findings": []
+    },
+    {
+      "id": "dp4-70",
+      "name": "Igglybuff",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 1,
+      "abilityCount": 1,
+      "riskTags": [],
+      "effectTypes": [
+        "neoRule"
+      ],
+      "customRules": [
+        "dp4:70:inquire",
+        "dp4:70:babyEvolution"
+      ],
+      "testFilesMentioningId": [
+        "v07243-great-encounters.test.cjs"
+      ],
+      "findings": []
+    },
+    {
+      "id": "dp4-71",
+      "name": "Illumise",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 1,
+      "abilityCount": 1,
+      "riskTags": [
+        "status",
+        "deckSearch",
+        "coin"
+      ],
+      "effectTypes": [
+        "neoRule",
+        "coinFlip",
+        "benchFromDeck",
+        "noop"
+      ],
+      "customRules": [
+        "dp4:71:fireflyScent"
+      ],
+      "testFilesMentioningId": [
+        "v07243-great-encounters.test.cjs"
+      ],
+      "findings": []
+    },
+    {
+      "id": "dp4-72",
+      "name": "Jigglypuff",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [
+        "timing",
+        "status"
+      ],
+      "effectTypes": [
+        "status",
+        "modifier"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [
+        "v07243-great-encounters.test.cjs"
+      ],
+      "findings": []
+    },
+    {
+      "id": "dp4-73",
+      "name": "Kakuna",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [
+        "timing"
+      ],
+      "effectTypes": [
+        "modifier",
+        "status"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [],
+      "findings": []
+    },
+    {
+      "id": "dp4-74",
+      "name": "Koffing",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [],
+      "effectTypes": [
+        "noop",
+        "sequence",
+        "status",
+        "attackCoinGate"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [],
+      "findings": []
+    },
+    {
+      "id": "dp4-75",
+      "name": "Krabby",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [],
+      "effectTypes": [
+        "noop"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [],
+      "findings": []
+    },
+    {
+      "id": "dp4-76",
+      "name": "Lunatone",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 1,
+      "abilityCount": 1,
+      "riskTags": [
+        "choice"
+      ],
+      "effectTypes": [
+        "chooseOption",
+        "noop",
+        "discardStadium",
+        "neoRule"
+      ],
+      "customRules": [
+        "dp4:76:gravityChange"
+      ],
+      "testFilesMentioningId": [
+        "v07243-great-encounters.test.cjs"
+      ],
+      "findings": []
+    },
+    {
+      "id": "dp4-77",
+      "name": "Luvdisc",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [
+        "energyMovement"
+      ],
+      "effectTypes": [
+        "neoRule",
+        "bonusDamage"
+      ],
+      "customRules": [
+        "dp4:77:rendezvous"
+      ],
+      "testFilesMentioningId": [
+        "v07243-great-encounters.test.cjs"
+      ],
+      "findings": []
+    },
+    {
+      "id": "dp4-78",
+      "name": "Makuhita",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [
+        "energyMovement",
+        "coin"
+      ],
+      "effectTypes": [
+        "noop",
+        "coinAttackGate",
+        "discardEnergyCard"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [],
+      "findings": []
+    },
+    {
+      "id": "dp4-79",
+      "name": "Mankey",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [],
+      "effectTypes": [
+        "noop",
+        "damageFromDamage"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [],
+      "findings": []
+    },
+    {
+      "id": "dp4-80",
+      "name": "Mudkip",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [
+        "coin"
+      ],
+      "effectTypes": [
+        "noop",
+        "coinDamage"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [],
+      "findings": []
+    },
+    {
+      "id": "dp4-81",
+      "name": "Porygon",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [
+        "deckSearch"
+      ],
+      "effectTypes": [
+        "reorderTop",
+        "noop"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [],
+      "findings": []
+    },
+    {
+      "id": "dp4-82",
+      "name": "Slowpoke",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [
+        "timing",
+        "status"
+      ],
+      "effectTypes": [
+        "sequence",
+        "healSelf",
+        "removeStatus",
+        "status",
+        "lock"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [],
+      "findings": []
+    },
+    {
+      "id": "dp4-83",
+      "name": "Slugma",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [
+        "coin"
+      ],
+      "effectTypes": [
+        "noop",
+        "coinFlip",
+        "status"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [],
+      "findings": []
+    },
+    {
+      "id": "dp4-84",
+      "name": "Snubbull",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [],
+      "effectTypes": [
+        "forceOpponentSwitch",
+        "noop"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [],
+      "findings": []
+    },
+    {
+      "id": "dp4-85",
+      "name": "Solrock",
+      "kind": "pokemon",
+      "battleEnabled": false,
+      "attackCount": 1,
+      "abilityCount": 1,
+      "riskTags": [],
+      "effectTypes": [
+        "noop"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [
+        "v07243-great-encounters.test.cjs"
+      ],
+      "findings": []
+    },
+    {
+      "id": "dp4-86",
+      "name": "Swablu",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [
+        "coin"
+      ],
+      "effectTypes": [
+        "coinFlip",
+        "preventDamage",
+        "noop",
+        "benchDamage"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [],
+      "findings": []
+    },
+    {
+      "id": "dp4-87",
+      "name": "Tangela",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [],
+      "effectTypes": [
+        "forceOpponentSwitch",
+        "retreatCostDamage"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [],
+      "findings": []
+    },
+    {
+      "id": "dp4-88",
+      "name": "Togepi",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [
+        "status",
+        "deckSearch",
+        "coin"
+      ],
+      "effectTypes": [
+        "status",
+        "coinFlip",
+        "searchChosen",
+        "noop"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [],
+      "findings": []
+    },
+    {
+      "id": "dp4-89",
+      "name": "Torchic",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [],
+      "effectTypes": [
+        "noop",
+        "status"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [],
+      "findings": []
+    },
+    {
+      "id": "dp4-90",
+      "name": "Treecko",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [
+        "choice"
+      ],
+      "effectTypes": [
+        "neoRule",
+        "healSelf"
+      ],
+      "customRules": [
+        "dp4:90:energyBall"
+      ],
+      "testFilesMentioningId": [
+        "v07243-great-encounters.test.cjs"
+      ],
+      "findings": []
+    },
+    {
+      "id": "dp4-91",
+      "name": "Unown [L]",
+      "kind": "pokemon",
+      "battleEnabled": false,
+      "attackCount": 1,
+      "abilityCount": 1,
+      "riskTags": [],
+      "effectTypes": [
+        "noop"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [
+        "v07243-great-encounters.test.cjs"
+      ],
+      "findings": []
+    },
+    {
+      "id": "dp4-92",
+      "name": "Volbeat",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 1,
+      "abilityCount": 1,
+      "riskTags": [
+        "coin"
+      ],
+      "effectTypes": [
+        "coinFlip",
+        "status",
+        "noop",
+        "neoRule"
+      ],
+      "customRules": [
+        "dp4:92:lightConduct"
+      ],
+      "testFilesMentioningId": [
+        "v07243-great-encounters.test.cjs"
+      ],
+      "findings": []
+    },
+    {
+      "id": "dp4-93",
+      "name": "Weedle",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [
+        "deckSearch",
+        "coin"
+      ],
+      "effectTypes": [
+        "benchFromDeck",
+        "coinFlip",
+        "status",
+        "noop"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [
+        "v07243-great-encounters.test.cjs"
+      ],
+      "findings": []
+    },
+    {
+      "id": "dp4-94",
+      "name": "Whismur",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [
+        "coin"
+      ],
+      "effectTypes": [
+        "noop",
+        "neoRule"
+      ],
+      "customRules": [
+        "dp4:94:uproar"
+      ],
+      "testFilesMentioningId": [],
+      "findings": []
+    },
+    {
+      "id": "dp4-95",
+      "name": "Wingull",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [],
+      "effectTypes": [
+        "noop"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [],
+      "findings": []
+    },
+    {
+      "id": "dp4-96",
+      "name": "Zigzagoon",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [
+        "coin"
+      ],
+      "effectTypes": [
+        "neoRule",
+        "coinDamage"
+      ],
+      "customRules": [
+        "dp4:96:pullOut"
+      ],
+      "testFilesMentioningId": [
+        "v07243-great-encounters.test.cjs"
+      ],
+      "findings": []
+    },
+    {
+      "id": "dp4-97",
+      "name": "Amulet Coin",
+      "kind": "trainer",
+      "battleEnabled": false,
+      "attackCount": 0,
+      "abilityCount": 0,
+      "riskTags": [],
+      "effectTypes": [
+        "noop"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [],
+      "findings": []
+    },
+    {
+      "id": "dp4-98",
+      "name": "Felicity's Drawing",
+      "kind": "trainer",
+      "battleEnabled": true,
+      "attackCount": 0,
+      "abilityCount": 0,
+      "riskTags": [
+        "choice"
+      ],
+      "effectTypes": [
+        "neoRule"
+      ],
+      "customRules": [
+        "dp4:98:felicityDrawing"
+      ],
+      "testFilesMentioningId": [
+        "v07243-great-encounters.test.cjs"
+      ],
+      "findings": []
+    },
+    {
+      "id": "dp4-99",
+      "name": "Leftovers",
+      "kind": "trainer",
+      "battleEnabled": false,
+      "attackCount": 0,
+      "abilityCount": 0,
+      "riskTags": [],
+      "effectTypes": [
+        "noop"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [],
+      "findings": []
+    },
+    {
+      "id": "dp4-100",
+      "name": "Moonlight Stadium",
+      "kind": "trainer",
+      "battleEnabled": false,
+      "attackCount": 0,
+      "abilityCount": 0,
+      "riskTags": [],
+      "effectTypes": [
+        "noop"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [],
+      "findings": []
+    },
+    {
+      "id": "dp4-101",
+      "name": "Premier Ball",
+      "kind": "trainer",
+      "battleEnabled": true,
+      "attackCount": 0,
+      "abilityCount": 0,
+      "riskTags": [
+        "deckSearch"
+      ],
+      "effectTypes": [
+        "neoRule"
+      ],
+      "customRules": [
+        "dp4:101:premierBall"
+      ],
+      "testFilesMentioningId": [
+        "v07243-great-encounters.test.cjs"
+      ],
+      "findings": []
+    },
+    {
+      "id": "dp4-102",
+      "name": "Rare Candy",
+      "kind": "trainer",
+      "battleEnabled": true,
+      "attackCount": 0,
+      "abilityCount": 0,
+      "riskTags": [
+        "choice"
+      ],
+      "effectTypes": [
+        "rareCandy"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [],
+      "findings": []
+    },
+    {
+      "id": "dp4-103",
+      "name": "Cresselia LV.X",
+      "kind": "pokemon",
+      "battleEnabled": false,
+      "attackCount": 1,
+      "abilityCount": 1,
+      "riskTags": [],
+      "effectTypes": [
+        "noop"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [
+        "v07243-great-encounters.test.cjs"
+      ],
+      "findings": []
+    },
+    {
+      "id": "dp4-104",
+      "name": "Darkrai LV.X",
+      "kind": "pokemon",
+      "battleEnabled": false,
+      "attackCount": 1,
+      "abilityCount": 1,
+      "riskTags": [],
+      "effectTypes": [
+        "noop"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [],
+      "findings": []
+    },
+    {
+      "id": "dp4-105",
+      "name": "Dialga LV.X",
+      "kind": "pokemon",
+      "battleEnabled": false,
+      "attackCount": 1,
+      "abilityCount": 1,
+      "riskTags": [],
+      "effectTypes": [
+        "noop"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [],
+      "findings": []
+    },
+    {
+      "id": "dp4-106",
+      "name": "Palkia LV.X",
+      "kind": "pokemon",
+      "battleEnabled": false,
+      "attackCount": 1,
+      "abilityCount": 1,
+      "riskTags": [],
+      "effectTypes": [
+        "noop"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [
+        "v07243-great-encounters.test.cjs"
+      ],
+      "findings": []
+    }
+  ],
+  "cpu": {
+    "attempted": 16,
+    "valid": 16,
+    "failures": []
+  },
+  "smoke": {
+    "attempted": 278,
+    "executed": 274,
+    "skipped": 4,
+    "skippedDetails": [
+      {
+        "cardId": "dp4-7",
+        "side": "player",
+        "action": "attack Astonish"
+      },
+      {
+        "cardId": "dp4-7",
+        "side": "opponent",
+        "action": "attack Astonish"
+      },
+      {
+        "cardId": "dp4-102",
+        "side": "player",
+        "action": "trainer"
+      },
+      {
+        "cardId": "dp4-102",
+        "side": "opponent",
+        "action": "trainer"
+      }
+    ],
+    "failures": []
+  }
+}

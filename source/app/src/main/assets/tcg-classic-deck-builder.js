@@ -27,7 +27,7 @@ const STAPLES=Object.freeze([
  ['base1-83',1], // Maintenance
  ['base1-87',1]  // Pokedex
 ]);
-const SET_IDS=Object.freeze(['base1','base2','base3','base5','gym1','gym2','neo1','neo2','neo3','neo4','base6','ecard1','ecard2','ecard3','ex1','ex2','ex3','ex4','ex5','ex6','ex7','ex8','ex9','ex10','ex11','ex12','ex13','ex14','ex15','ex16','dp1','dp2','dp3','SNAPFLORIO','SNAPFOUNJA','sv1']);
+const SET_IDS=Object.freeze(['base1','base2','base3','base5','gym1','gym2','neo1','neo2','neo3','neo4','base6','ecard1','ecard2','ecard3','ex1','ex2','ex3','ex4','ex5','ex6','ex7','ex8','ex9','ex10','ex11','ex12','ex13','ex14','ex15','ex16','dp1','dp2','dp3','dp4','SNAPFLORIO','SNAPFOUNJA','sv1']);
 // Darkness and Metal are already Basic Energy types. Deduplicate before rendering
 // archetype chips so each energy type has exactly one toggle.
 const ARCHETYPE_TYPES=Object.freeze([...new Set([...decks.ENERGY_TYPES,'Colorless'])]);
@@ -116,7 +116,7 @@ function familyLine(card,pool){
 // before treating the end of the playable subset as a terminal evolution.
 // A future staged set's GATED evolutions must not retroactively invalidate
 // old one-set Stage-1 builds. Legacy EX pool rules still apply unchanged.
-const FULL_EVOLUTION_NAMES=new Set(classic.CARDS.filter(c=>c.kind==='pokemon'&&c.evolvesFrom&&(!['dp1','dp2','dp3'].includes(c.setId)||c.battleEnabled)).map(c=>classicCardName(c.evolvesFrom)));
+const FULL_EVOLUTION_NAMES=new Set(classic.CARDS.filter(c=>c.kind==='pokemon'&&c.evolvesFrom&&(!['dp1','dp2','dp3','dp4'].includes(c.setId)||c.battleEnabled)).map(c=>classicCardName(c.evolvesFrom)));
 function hasKnownEvolution(card){return !!(card?.kind==='pokemon'&&parentKeys(card.name).some(k=>FULL_EVOLUTION_NAMES.has(k)));}
 function abilityEnergy(card){return decks.dualArmorProfile(card)?.energyType||null;}
 function effectiveTypes(card){return [...new Set([...(card?.types||[]),...(decks.dualArmorProfile(card)?.types||[])])];}
@@ -140,7 +140,7 @@ function familyEssentialTypes(line){
  // DP1's Metal Steelix can be powered with Metal alone: Onix's Colorless
  // Headbutt remains payable, so its optional Fighting attack must not cause
  // an unwanted second Basic Energy Zone type. Keep pre-DP heuristics intact.
- if(['dp1','dp2','dp3'].includes(line[line.length-1]?.setId)&&endpoint.length&&line.every(canPay))return endpoint;
+ if(['dp1','dp2','dp3','dp4'].includes(line[line.length-1]?.setId)&&endpoint.length&&line.every(canPay))return endpoint;
  if(all.length<=2)return all;
  return line.every(canPay)?endpoint:all;
 }
