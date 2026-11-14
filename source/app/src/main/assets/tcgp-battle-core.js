@@ -891,7 +891,7 @@
         const card=data.cardById(attacker.cardId);
         if(state.format==='classic'&&!miraculousWindActive(snapshot)&&
           (card?.types?.includes('Darkness')||/Dark/i.test(card?.name||'')))
-          damage+=10*(attacker.specialEnergy||[]).filter(ref=>['ex1-93','ex9-86','ex10-96','ex11-103','ex13-94','ex16-87','dp2-119','dp3-129'].includes(ref.cardId)).length;
+          damage+=10*(attacker.specialEnergy||[]).filter(ref=>['ex1-93','ex9-86','ex10-96','ex11-103','ex13-94','ex16-87','dp2-119','dp3-129','dp5-93'].includes(ref.cardId)).length;
         damage=Math.max(0,damage-10*(attacker.specialEnergy||[]).filter(ref=>['ex9-87','ex14-88'].includes(ref.cardId)).length);
         if(attacker.cardId==='ex9-1'&&!effects.abilitiesSuppressed(snapshot,side,attacker,data.cardById)&&Number(data.cardById(attacker.cardId).hp||0)-Number(attacker.damage||0)<=40)damage+=40;
         if(Number(snapshot.sides[side]?.ex9DragonDanceUntil||0)===Number(snapshot.turnNumber))damage+=30;
@@ -1373,7 +1373,7 @@
     const attackerCard=data.cardById(attacker.cardId);
     if(state.format==='classic'&&damage>0&&!miraculousWindActive(state)&&attackerCard&&
       (attackerCard.types?.includes('Darkness')||/Dark/i.test(attackerCard.name||'')))
-      damage+=10*(attacker.specialEnergy||[]).filter(r=>['ex1-93','ex9-86','ex10-96','ex11-103','ex13-94','ex16-87','dp2-119','dp3-129'].includes(r.cardId)).length;
+      damage+=10*(attacker.specialEnergy||[]).filter(r=>['ex1-93','ex9-86','ex10-96','ex11-103','ex13-94','ex16-87','dp2-119','dp3-129','dp5-93'].includes(r.cardId)).length;
     damage+=effects.modifierAmount(state,foeSide,defender,'damageTaken',data.cardById);
     damage=effects.attackDamageWithState(state,side,attacker,foeSide,defender,damage,data.cardById);
     if(state.format==='classic'&&!effects.abilitiesSuppressed(state,foeSide,defender,data.cardById)){
@@ -2370,7 +2370,7 @@
           !foe.active.conditions?.sleep&&!foe.active.conditions?.paralysis&&!foe.active.conditions?.confusion)damage=Math.max(0,damage-10);
         if(state.format==='classic'&&damage>0&&!miraculousWindActive(state)&&
           (attackerCard.types?.includes('Darkness')||/Dark/i.test(attackerCard.name||'')))
-          damage+=10*(s.active.specialEnergy||[]).filter(r=>['ex1-93','ex9-86','ex10-96','ex11-103','ex13-94','ex16-87','dp2-119','dp3-129'].includes(r.cardId)).length;
+          damage+=10*(s.active.specialEnergy||[]).filter(r=>['ex1-93','ex9-86','ex10-96','ex11-103','ex13-94','ex16-87','dp2-119','dp3-129','dp5-93'].includes(r.cardId)).length;
         damage+=effects.modifierAmount(state,foeSide,defender,'damageTaken',data.cardById);
         if(state.format==='classic'&&damage>0){const metal=miraculousWindActive(state)?0:(s.active.specialEnergy||[]).filter(r=>['neo1-19','ecard1-159','ecard2-143'].includes(r.cardId)).length;if(metal&&!attackerCard.types?.includes('Metal'))damage=Math.max(0,damage-metal*10);}
         if(state.format==='classic'&&damage>0)damage=Math.max(0,damage-10*(s.active.specialEnergy||[]).filter(r=>['ex9-87','ex14-88'].includes(r.cardId)).length);
@@ -2443,7 +2443,7 @@
       }
       if(state.format==='classic'&&damage>0&&Number(defender.ex1TearyEyesUntil||0)>=state.turnNumber)damage=Math.max(0,damage-10);
       if(state.format==='classic'){
-        const metal=miraculousWindActive(state)?0:(defender.specialEnergy||[]).filter(r=>(['neo1-19','ecard1-159','ecard2-143'].includes(r.cardId)||['ex9-88','ex1-94','ex10-97','ex11-107','ex13-95','ex16-88','dp2-120','dp3-130'].includes(r.cardId)&&data.cardById(defender.cardId)?.types?.includes('Metal'))).length;
+        const metal=miraculousWindActive(state)?0:(defender.specialEnergy||[]).filter(r=>(['neo1-19','ecard1-159','ecard2-143'].includes(r.cardId)||['ex9-88','ex1-94','ex10-97','ex11-107','ex13-95','ex16-88','dp2-120','dp3-130','dp5-95'].includes(r.cardId)&&data.cardById(defender.cardId)?.types?.includes('Metal'))).length;
         damage=result.damageRules?.ignoreEffects?damage:Math.max(0,damage-metal*10);
         // Aquapolis Dense Body / Energy Barrier: actual Basic-stage and
         // attached Basic Energy counts, not approximate generic modifiers.

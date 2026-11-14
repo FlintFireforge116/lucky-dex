@@ -1905,3 +1905,13 @@ dependency pairing for Psychic Smoochum/Jynx and cross-set equivalents.
   [FORMAT CONVERSION, NEEDS REVISIT IF BENCH LIMIT CHANGES] Great Encounters Unown H HEAL requires Unown H/E/A/L in play, including the Active slot plus three Bench spaces; the unmodified printed four-Bench requirement is impossible in the default LuckyDex three-Bench Classic format. Do not weaken the named-letter requirement or accidentally treat this as unmodified tabletop rules.
   [CHECK] Review five continuous passive handlers that are intentionally represented by no-op catalog effects: Milotic Marvel Scale, Wailord Sleeping Pulse, Weezing Toxic Virus, Solrock Sunlight and Unown L LINK. They run through shared engine rules and deserve periodic device boundary tests.
   [AUDIT] Enforce that all playable attacks/abilities have accurate printed descriptions; do not accept gated placeholders on enabled cards. Great Encounters audit is 106 enabled, 80 Great Encounters tests passed, 354/356 synthetic smoke paths (two Rare Candy synthetic skips), 16/16 legal CPU decks. Consult docs/GREAT_ENCOUNTERS_v0.69.246_INDEPENDENT_AUDIT.md for numbered ledger and evidence limits.
+
+2026-11-14 | 2.37 -> 2.38 | v0.69.247 | Majestic Dawn staged expansion integration.
+  [CATALOG] 100 exact dp5 prints with real image IDs, stages, attacks, Energy costs, 60 battle-enabled and 40 gated for unverified mechanics.
+  [CHECKS] Before release, test outcome semantics for damage, multiple card picks, actual Energy zones, player/CPU sides, Special Energy, hidden information, timing. 26 dedicated Majestic Dawn tests pass, 208 staged smoke paths pass (completed-set loaner), 131 selected cross-set regressions pass.
+  [BODIES] Do not enable the remaining named Powers/Bodies, Fossils, special Energy timing, or LV.X cards until effect and timing handlers plus tests are complete.
+  [SET] Catalog and opponent filtering must recognize dp5 Majestic Dawn; only battle-enabled prints are eligible for automated decks.
+  [AUDITOR] For a partially enabled set, choose an audited completed-set loaner rather than attempting an incomplete set-only Grass deck. Never report untested CPU set-only legality as passing.
+  [REPRINTS] New Darkness/Metal Energy print IDs must receive the correct physical Special Energy modifiers. Verify across older attackers and defenders.
+  [CHOICES] Buneary Extend Ears applies healing to every own Benched Pokémon, not only to a single selection. Prefer precise targets and physical card-ID choices.
+  [DOC] See source/docs/MAJESTIC_DAWN_v0.69.247_STAGE1.md for ready/gated ledger and evidence limits.
