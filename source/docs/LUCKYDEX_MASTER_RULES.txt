@@ -1,6 +1,6 @@
 LUCKYDEX — MASTER PROJECT RULES AND DEVELOPMENT CONTRACT
 =========================================================
-Document version: 2.35
+Document version: 2.36
 Compiled: 14 November 2026
 Current inspected source: v0.69.242. Mysterious Treasures dp2 is 124/124 and Secret Wonders dp3 is 132/132 collector prints enabled. v0.69.241 documents the independent print-by-print Secret Wonders audit; v0.69.242 fixes Classic Baby Evolution autobuild dependencies. Source tests do not prove APK/device behaviour.
 Recommended repository location: ~/lucky-dex/source/docs/LUCKYDEX_MASTER_RULES.txt
@@ -1883,3 +1883,16 @@ dependency pairing for Psychic Smoochum/Jynx and cross-set equivalents.
 - Physical card selection and opponent-visible choices are required wherever print says choose/search/discard. Hidden Prize cards must not be exposed without a printed effect permitting it.
 - Tests: v07243-great-encounters.test.cjs, v07244-great-encounters-stage2.test.cjs, v07244-great-encounters-remaining.test.cjs; run Classic auditor dp4 and dp2/dp3 regression/smoke after shared changes. Detailed ledger: docs/GREAT_ENCOUNTERS_v0.69.244_IMPLEMENTATION.md.
 - The six gated prints are not complete. Device-level Android rendering and all real-match CPU outcomes remain unverified.
+
+
+=== VERSION 0.69.245 — GREAT ENCOUNTERS COMPLETE ===
+[CURRENT] All 106 Great Encounters dp4 card prints are battle-enabled in source.
+[LOCKED] Mawile Pick Out must select a physical face-down Prize from EITHER player's Prize row without leaking its identity before selection. Reveal the selected card; if it is a Supporter, resolve its printed effect as an attack while leaving it face-up in the Prize row. Jaw Bite boosts damage on the subsequent own turn AFTER weakness/resistance, not as base damage.
+[LOCKED] Unown G's Hidden Power deals 50 base, dropping to 10 if damaged. Its GUARD Power discards attachments and converts Unown G into a genuine Pokémon Tool on a chosen Pokémon; protect that Pokémon from attack EFFECTS but not damage. An opponent may still select attacks where GUARD prevents their effects.
+[LOCKED] Unown L LINK offers real printed attacks from any Unown in play on EITHER board, still requiring their printed Energy cost. Hidden Power lets the attacking player choose up to two actual physical cards from EITHER discard and reorder them on top of the selected owner's deck.
+[LOCKED] Darkrai LV.X Endless Darkness's special Sleep check uses TWO coins: both heads wakes; one or both tails stays Asleep; DOUBLE tails also Knocks Out the sleeping Pokémon, triggering normal promotion/prize flow. Its Dark Shadow grants +10 per physical Basic Darkness Energy attached to a Darkness Pokémon attacking, without double-stacking multiple Dark Shadows.
+[LOCKED] Dialga LV.X Time Skip gives the OPPONENT exactly two coin flips: both heads end the user's current turn; both tails end the opponent's following turn only AFTER their opening draw; mixed results continue normally. Metal Flash's no-repeat lock applies to that attack, not other attacks.
+[LOCKED] Palkia LV.X Restructure gives the OPPONENT the first choice of the user's Active/Bench switch, then the USER chooses the opposing switch. Hydro Reflect can optionally move ALL physically attached Basic and Special Energy among the user's Bench, with no duplicated or missing Energy.
+[LOCKED] Unrevealed face-down Prize identities must remain concealed in choice labels and card-art overlays. Legal choice actions must remain distinct by physical Prize index, Pokémon Tool index and Special Energy UID. CPU choices must resolve without stalling.
+[CURRENT] Added tests/v07245-great-encounters-completion.test.cjs to GitHub preflight. Run the dp4 full auditor, dp2/dp3 regression and full Great Encounters test families. Smoke paths skipped because synthetic game state lacks the required setup are NOT certified passes. Full printed-card independent audit and real Android APK playtest are separate follow-up work.
+2026-11-14 | 2.35 -> 2.36 | v0.69.245 | Great Encounters final six cards enabled, shared turn/KO/Prize/Unown Tool handling and regression tests.

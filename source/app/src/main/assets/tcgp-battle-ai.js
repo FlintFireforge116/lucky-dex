@@ -4,7 +4,7 @@
 })(typeof globalThis!=='undefined'?globalThis:this,function(core,data,effects){
   'use strict';
   const DIFFICULTIES=['Beginner','Intermediate','Advanced','Expert'];
-  const ACTION_KEYS=['type','handIndex','cardId','target','benchIndex','attackIndex','attackCardId','abilityIndex','effectTarget','effectBenchIndex','choiceTarget','choiceBenchIndex','choiceHandIndex','choiceDiscardIndex','choiceDeckIndex','choiceCardId','choiceAttackIndex','choiceOption','choiceSkip','effectEnergyType'];
+  const ACTION_KEYS=['type','handIndex','cardId','target','benchIndex','attackIndex','attackCardId','abilityIndex','effectTarget','effectBenchIndex','choiceTarget','choiceBenchIndex','choiceHandIndex','choiceDiscardIndex','choiceDeckIndex','choiceCardId','choiceAttackIndex','choiceToolIndex','choicePrizeIndex','choiceOption','choiceSkip','effectEnergyType','effectSpecialEnergyUid'];
   const sameAction=(a,b)=>!!a&&!!b&&ACTION_KEYS.every(k=>a[k]===b[k]||(a[k]==null&&b[k]==null));
   const foeOf=side=>side==='player'?'opponent':'player';
   const clone=value=>JSON.parse(JSON.stringify(value));

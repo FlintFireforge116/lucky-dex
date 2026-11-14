@@ -13,22 +13,22 @@
       "energy": 0,
       "attacks": 172,
       "abilities": 28,
-      "enabled": 100,
-      "gated": 6
+      "enabled": 106,
+      "gated": 0
     },
     "risks": {
-      "choice": 25,
-      "privacy": 0,
-      "timing": 18,
-      "energyMovement": 20,
-      "status": 14,
+      "choice": 28,
+      "privacy": 1,
+      "timing": 20,
+      "energyMovement": 22,
+      "status": 15,
       "deckSearch": 14,
-      "coin": 41
+      "coin": 43
     },
-    "withStaticTestMentions": 62,
+    "withStaticTestMentions": 67,
     "errors": 0,
     "warnings": 0,
-    "reviewFlags": 4
+    "reviewFlags": 5
   },
   "findings": [
     {
@@ -54,6 +54,12 @@
       "rule": "C-AUDIT-002",
       "cardId": "dp4-85",
       "message": "ability Sunlight: no-op effect; verify separately implemented passive/continuous rule."
+    },
+    {
+      "severity": "review",
+      "rule": "C-AUDIT-002",
+      "cardId": "dp4-91",
+      "message": "ability LINK: no-op effect; verify separately implemented passive/continuous rule."
     }
   ],
   "cardLedger": [
@@ -123,7 +129,8 @@
         "dp4:3:darknessPursuit"
       ],
       "testFilesMentioningId": [
-        "v07243-great-encounters.test.cjs"
+        "v07243-great-encounters.test.cjs",
+        "v07245-great-encounters-completion.test.cjs"
       ],
       "findings": []
     },
@@ -586,15 +593,24 @@
       "id": "dp4-24",
       "name": "Mawile",
       "kind": "pokemon",
-      "battleEnabled": false,
+      "battleEnabled": true,
       "attackCount": 2,
       "abilityCount": 0,
-      "riskTags": [],
-      "effectTypes": [
-        "noop"
+      "riskTags": [
+        "choice",
+        "privacy",
+        "timing"
       ],
-      "customRules": [],
-      "testFilesMentioningId": [],
+      "effectTypes": [
+        "neoRule",
+        "modifier"
+      ],
+      "customRules": [
+        "dp4:24:pickOut"
+      ],
+      "testFilesMentioningId": [
+        "v07245-great-encounters-completion.test.cjs"
+      ],
       "findings": []
     },
     {
@@ -737,7 +753,8 @@
       "testFilesMentioningId": [
         "v07243-great-encounters.test.cjs",
         "v07244-great-encounters-remaining.test.cjs",
-        "v07244-great-encounters-stage2.test.cjs"
+        "v07244-great-encounters-stage2.test.cjs",
+        "v07245-great-encounters-completion.test.cjs"
       ],
       "findings": [
         {
@@ -1309,7 +1326,8 @@
         "dp4:56:fake"
       ],
       "testFilesMentioningId": [
-        "v07244-great-encounters-remaining.test.cjs"
+        "v07244-great-encounters-remaining.test.cjs",
+        "v07245-great-encounters-completion.test.cjs"
       ],
       "findings": []
     },
@@ -1317,15 +1335,20 @@
       "id": "dp4-57",
       "name": "Unown [G]",
       "kind": "pokemon",
-      "battleEnabled": false,
+      "battleEnabled": true,
       "attackCount": 1,
       "abilityCount": 1,
       "riskTags": [],
       "effectTypes": [
-        "noop"
+        "neoRule"
       ],
-      "customRules": [],
-      "testFilesMentioningId": [],
+      "customRules": [
+        "dp4:57:hiddenPower",
+        "dp4:57:guard"
+      ],
+      "testFilesMentioningId": [
+        "v07245-great-encounters-completion.test.cjs"
+      ],
       "findings": []
     },
     {
@@ -1394,7 +1417,8 @@
       "testFilesMentioningId": [
         "v07243-great-encounters.test.cjs",
         "v07244-great-encounters-remaining.test.cjs",
-        "v07244-great-encounters-stage2.test.cjs"
+        "v07244-great-encounters-stage2.test.cjs",
+        "v07245-great-encounters-completion.test.cjs"
       ],
       "findings": []
     },
@@ -1931,7 +1955,9 @@
         "noop"
       ],
       "customRules": [],
-      "testFilesMentioningId": [],
+      "testFilesMentioningId": [
+        "v07245-great-encounters-completion.test.cjs"
+      ],
       "findings": []
     },
     {
@@ -1949,7 +1975,8 @@
       "customRules": [],
       "testFilesMentioningId": [
         "v07244-great-encounters-remaining.test.cjs",
-        "v07244-great-encounters-stage2.test.cjs"
+        "v07244-great-encounters-stage2.test.cjs",
+        "v07245-great-encounters-completion.test.cjs"
       ],
       "findings": []
     },
@@ -1980,18 +2007,31 @@
       "id": "dp4-91",
       "name": "Unown [L]",
       "kind": "pokemon",
-      "battleEnabled": false,
+      "battleEnabled": true,
       "attackCount": 1,
       "abilityCount": 1,
-      "riskTags": [],
+      "riskTags": [
+        "choice",
+        "energyMovement"
+      ],
       "effectTypes": [
+        "neoRule",
         "noop"
       ],
-      "customRules": [],
-      "testFilesMentioningId": [
-        "v07243-great-encounters.test.cjs"
+      "customRules": [
+        "dp4:91:hiddenPower"
       ],
-      "findings": []
+      "testFilesMentioningId": [
+        "v07243-great-encounters.test.cjs",
+        "v07245-great-encounters-completion.test.cjs"
+      ],
+      "findings": [
+        {
+          "severity": "review",
+          "rule": "C-AUDIT-002",
+          "message": "ability LINK: no-op effect; verify separately implemented passive/continuous rule."
+        }
+      ]
     },
     {
       "id": "dp4-92",
@@ -2038,7 +2078,8 @@
       "testFilesMentioningId": [
         "v07243-great-encounters.test.cjs",
         "v07244-great-encounters-remaining.test.cjs",
-        "v07244-great-encounters-stage2.test.cjs"
+        "v07244-great-encounters-stage2.test.cjs",
+        "v07245-great-encounters-completion.test.cjs"
       ],
       "findings": []
     },
@@ -2113,7 +2154,8 @@
       ],
       "customRules": [],
       "testFilesMentioningId": [
-        "v07244-great-encounters-stage2.test.cjs"
+        "v07244-great-encounters-stage2.test.cjs",
+        "v07245-great-encounters-completion.test.cjs"
       ],
       "findings": []
     },
@@ -2134,7 +2176,8 @@
         "dp4:98:felicityDrawing"
       ],
       "testFilesMentioningId": [
-        "v07243-great-encounters.test.cjs"
+        "v07243-great-encounters.test.cjs",
+        "v07245-great-encounters-completion.test.cjs"
       ],
       "findings": []
     },
@@ -2152,7 +2195,8 @@
       ],
       "customRules": [],
       "testFilesMentioningId": [
-        "v07244-great-encounters-stage2.test.cjs"
+        "v07244-great-encounters-stage2.test.cjs",
+        "v07245-great-encounters-completion.test.cjs"
       ],
       "findings": []
     },
@@ -2236,46 +2280,67 @@
       "id": "dp4-104",
       "name": "Darkrai LV.X",
       "kind": "pokemon",
-      "battleEnabled": false,
+      "battleEnabled": true,
       "attackCount": 1,
       "abilityCount": 1,
-      "riskTags": [],
+      "riskTags": [
+        "status",
+        "coin"
+      ],
       "effectTypes": [
-        "noop"
+        "status",
+        "modifier"
       ],
       "customRules": [],
-      "testFilesMentioningId": [],
+      "testFilesMentioningId": [
+        "v07245-great-encounters-completion.test.cjs"
+      ],
       "findings": []
     },
     {
       "id": "dp4-105",
       "name": "Dialga LV.X",
       "kind": "pokemon",
-      "battleEnabled": false,
+      "battleEnabled": true,
       "attackCount": 1,
       "abilityCount": 1,
-      "riskTags": [],
-      "effectTypes": [
-        "noop"
+      "riskTags": [
+        "timing",
+        "coin"
       ],
-      "customRules": [],
-      "testFilesMentioningId": [],
+      "effectTypes": [
+        "lock",
+        "neoRule"
+      ],
+      "customRules": [
+        "dp4:105:timeSkip"
+      ],
+      "testFilesMentioningId": [
+        "v07245-great-encounters-completion.test.cjs"
+      ],
       "findings": []
     },
     {
       "id": "dp4-106",
       "name": "Palkia LV.X",
       "kind": "pokemon",
-      "battleEnabled": false,
+      "battleEnabled": true,
       "attackCount": 1,
       "abilityCount": 1,
-      "riskTags": [],
-      "effectTypes": [
-        "noop"
+      "riskTags": [
+        "choice",
+        "energyMovement"
       ],
-      "customRules": [],
+      "effectTypes": [
+        "neoRule"
+      ],
+      "customRules": [
+        "dp4:106:hydroReflect",
+        "dp4:106:restructure"
+      ],
       "testFilesMentioningId": [
-        "v07243-great-encounters.test.cjs"
+        "v07243-great-encounters.test.cjs",
+        "v07245-great-encounters-completion.test.cjs"
       ],
       "findings": []
     }
@@ -2286,8 +2351,8 @@
     "failures": []
   },
   "smoke": {
-    "attempted": 342,
-    "executed": 338,
+    "attempted": 356,
+    "executed": 352,
     "skipped": 4,
     "skippedDetails": [
       {

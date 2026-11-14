@@ -19,9 +19,9 @@ function hit(s,side='player',i=0){const a=core.legalActions(s,side).find(x=>x.ty
 function power(s,side='player'){const a=core.legalActions(s,side).find(x=>x.type==='ability'&&x.cardId===s.sides[side].active.cardId);assert.ok(a,'ability unavailable: '+s.sides[side].active.cardId);core.applyAction(s,side,a);return a;}
 function choose(s,pred){assert.equal(s.phase,'effectChoice','expected choice');const a=core.legalActions(s,s.choiceSide).filter(x=>x.type==='effectChoice');assert.ok(a.length,'no legal effect choices');const pick=pred?a.find(pred):a.find(x=>!x.choiceSkip)||a[0];assert.ok(pick,'missing desired choice '+JSON.stringify(a));core.applyAction(s,s.choiceSide,pick);return pick;}
 function finish(s){for(let i=0;i<25&&s.phase==='effectChoice';i++)choose(s);assert.notEqual(s.phase,'effectChoice','choice stalled');}
-test('Great Encounters has 106 distinct canonical art prints; only reviewed cards enabled',()=>{
+test('Great Encounters has 106 distinct canonical art prints; all six remaining cards enabled',()=>{
  assert.equal(set.CARDS.length,106);assert.equal(new Set(set.CARDS.map(x=>x.id)).size,106);
- assert.equal(set.coverage().battleEnabled,100);assert.equal(set.coverage().gated.length,6);
+ assert.equal(set.coverage().battleEnabled,106);assert.equal(set.coverage().gated.length,0);
  for(const c of set.CARDS){assert.equal(c.image,`https://images.pokemontcg.io/dp4/${c.number}.png`);assert.equal(data.cardById(c.id).name,c.name);
   if(c.battleEnabled)for(const part of [...(c.attacks||[]),...(c.abilities||[]),c])if(part.effect)assert.deepEqual(fx.validateEffect(part.effect),[],c.id+' '+(part.name||''));
  }

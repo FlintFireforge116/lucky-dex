@@ -323,6 +323,9 @@
     if(drawn&&state.format==='classic'&&state.sides[side==='player'?'opponent':'player'].active?.cardId==='SNAPFOUNJA-033'){const idx=s.hand.findIndex(r=>r.uid===drawn.uid);if(idx>=0){s.hand.splice(idx,1);s.deck.push(drawn);state.log.push({type:'founjaLookout',side,cardId:drawn.cardId});}}
     if(drawn&&state.format==='classic'&&state.sides[side==='player'?'opponent':'player'].active?.cardId==='SNAPFLORIO-096')state.log.push({type:'revealDraw',side,cardId:drawn.cardId,reason:'Circle Soar'});
     state.log.push({type:'turn',side,turnNumber:state.turnNumber});
+    // Dialga LV.X Time Skip: the affected player still gets the start-of-turn draw.
+    // Their turn ends after that draw, before any actions can be taken.
+    if(state.format==='classic'&&s.dp4SkipAfterDraw){s.dp4SkipAfterDraw=false;state.log.push({type:'turnSkipped',side,reason:'Time Skip'});endTurn(state);return;}
     triggerAbilities(state,'beginTurn',side);
     triggerPersistent(state,'beginTurn',side);
     if(state.format==='classic'&&state.stadium?.cardId==='SNAPFLORIO-118')resolveKnockOut(state,null);
@@ -389,7 +392,7 @@
     if(p.kind==='narrowGymReturn'){
       for(const slot of ss.bench||[])if(slot)out.push({type:'effectChoice',choiceTarget:'bench',choiceBenchIndex:Number(slot.benchSlot),choiceCardId:slot.cardId});
     }else if(p.kind==='prizeCard'){
-      ss.prizes.forEach((ref,index)=>{if(p.effect?.rule==='dp3:6:psychicCut'&&ref.faceUp)return;out.push({type:'effectChoice',choicePrizeIndex:index,...(ref.faceUp?{choiceCardId:ref.cardId}:{})});});
+      const prizeBoard=state.sides[p.selectionSide||side];prizeBoard.prizes.forEach((ref,index)=>{if(p.effect?.rule==='dp3:6:psychicCut'&&ref.faceUp)return;out.push({type:'effectChoice',choicePrizeIndex:index,...(ref.faceUp?{choiceCardId:ref.cardId}:{})});});
     }else if(p.kind==='switchBench'||p.kind==='pokemon'){
       const board=state.sides[p.selectionSide||side],eligible=slot=>slot&&filterCard(slot)&&(!p.requireTool||toolsOf(slot).length>0);
       if(p.kind==='pokemon'&&p.includeActive!==false&&eligible(board.active))out.push({type:'effectChoice',choiceTarget:'active',choiceCardId:board.active.cardId});
@@ -768,6 +771,13 @@
       const card=data.cardById(cardId);if(card?.name!=='Magikarp')continue;
       for(const [attackIndex,attack] of (card.attacks||[]).entries())out.push({cardId,attackIndex,attack,previous:true});
     }
+    if(state.format==='classic'&&current.id==='dp4-91'&&!effects.abilitiesSuppressed(state,side,slot,data.cardById)){
+      const seen=new Set(out.map(x=>x.cardId+':'+x.attackIndex));
+      for(const who of ['player','opponent'])for(const p of pokemonOn(state.sides[who])){
+        const c=data.cardById(p.cardId);if(!/^Unown(?: \[|$)/.test(c?.name||'')||!c.battleEnabled)continue;
+        for(const [attackIndex,attack] of (c.attacks||[]).entries()){const key=c.id+':'+attackIndex;if(!seen.has(key)){seen.add(key);out.push({cardId:c.id,attackIndex,attack,borrowed:true});}}
+      }
+    }
     if(state.format==='classic'&&current.name==='Murkrow'){
       const sources=pokemonOn(state.sides[side]).filter(p=>p.cardId==='dp2-10'&&!effects.abilitiesSuppressed(state,side,p,data.cardById)&&!p.conditions?.sleep&&!p.conditions?.paralysis&&!p.conditions?.confusion);
       for(const source of sources)for(const [attackIndex,attack] of (data.cardById(source.cardId)?.attacks||[]).entries()){
@@ -1089,6 +1099,7 @@
         // never the next Energy Zone unit. Don't offer an inert Power.
         if(/^dp1-6[5-8]$/.test(source.cardId)&&s.active===source)return; // Unown Powers need the Bench.
         if(source.cardId==='dp4-29'&&(!s.bench.includes(source)||!['H','E','A','L'].every(letter=>s.bench.some(p=>data.cardById(p.cardId)?.name==='Unown ['+letter+']'))))return;
+        if(source.cardId==='dp4-57'&&(!s.bench.includes(source)||!pokemonOn(s).some(p=>p!==source&&toolsOf(p).length<effects.toolCapacity(state,side,p,data.cardById))))return;
         if(source.cardId==='dp4-9'&&!s.bench.some(p=>Number(p.energy?.Water||0)>0||Number(p.energy?.Fighting||0)>0||(p.specialEnergy||[]).some(ref=>{const prov=ref.provides||data.cardById(ref.cardId)?.effect?.provides||{};return Number(prov.Water||0)+Number(prov.Fighting||0)>0;})))return;
         if(source.cardId==='dp1-2'&&state.sides[side==='player'?'opponent':'player'].bench.filter(Boolean).length<4)return;
         if(source.cardId==='dp2-5'&&ability.name==='Kind Egg'&&!(source.stack||[]).some(id=>data.cardById(id)?.name==='Happiny'))return;
@@ -1338,7 +1349,7 @@
         slot.damage=Math.max(0,Number(slot.damage||0)-10);
       if(c.poison){const base=typeof c.poison==='object'?Number(c.poison.amount??10):10,amount=Math.max(0,base+effects.modifierAmount(state,side,slot,'poisonDamageBonus',data.cardById));const virus=state.format==='classic'?['player','opponent'].reduce((n,who)=>n+pokemonOn(state.sides[who]).filter(p=>p.cardId==='dp4-31'&&!effects.abilitiesSuppressed(state,who,p,data.cardById)).length,0)*10:0;slot.damage+=amount+virus;state.log.push({type:'statusDamage',side,status:'poison',amount:amount+virus});}
       if(c.burn){const fullFlame=state.format==='classic'&&state.stadium?.cardId==='ex12-74';const aura=state.format==='classic' &&['player','opponent'].some(w=>{const p=state.sides[w].active;return p?.cardId==='ex6-13'&&!effects.abilitiesSuppressed(state,w,p,data.cardById);});const burnDamage=Math.max(aura||fullFlame?40:20,Number(slot.dp2TorridDamage||0));slot.damage+=burnDamage;state.log.push({type:'statusDamage',side,status:'burn',amount:burnDamage});const heads=random(state)<0.5;state.log.push({type:'coin',side,heads,status:'burn',results:[heads]});if(heads){delete c.burn;slot.dp2TorridDamage=0;}}
-      if(c.sleep){const opp=side==='player'?'opponent':'player',lull=state.format==='classic'&&state.sides[opp].active?.cardId==='SNAPFOUNJA-041'&&state.sides[opp].active?.conditions?.sleep;const destinyGengar=state.format==='classic'&&['player','opponent'].some(who=>pokemonOn(state.sides[who]).some(p=>p.cardId==='neo4-6'&&!p.conditions?.sleep&&!p.conditions?.confusion&&!p.conditions?.paralysis&&!effects.abilitiesSuppressed(state,who,p,data.cardById)));const relic=state.format==='classic'&&['player','opponent'].some(w=>state.sides[w].active?.cardId==='ex5-24'&&!effects.abilitiesSuppressed(state,w,state.sides[w].active,data.cardById));const deepSleep=state.format==='classic'&&['player','opponent'].some(w=>state.sides[w].active?.cardId==='ex12-40'&&!effects.abilitiesSuppressed(state,w,state.sides[w].active,data.cardById));const coins=lull||destinyGengar||relic||deepSleep?2:typeof c.sleep==='object'?Math.max(1,Number(c.sleep.recoveryCoins||1)):1;let allHeads=true;for(let i=0;i<coins;i++){const heads=random(state)<0.5;state.log.push({type:'coin',side,heads,status:'sleep',results:[heads]});if(!heads)allHeads=false;}if(allHeads)delete c.sleep;state.log.push({type:'sleepCheck',side,woke:allHeads,coins});}
+      if(c.sleep){const darkraiKo=!!c.sleep?.knockoutOnDoubleTails;const opp=side==='player'?'opponent':'player',lull=state.format==='classic'&&state.sides[opp].active?.cardId==='SNAPFOUNJA-041'&&state.sides[opp].active?.conditions?.sleep;const destinyGengar=state.format==='classic'&&['player','opponent'].some(who=>pokemonOn(state.sides[who]).some(p=>p.cardId==='neo4-6'&&!p.conditions?.sleep&&!p.conditions?.confusion&&!p.conditions?.paralysis&&!effects.abilitiesSuppressed(state,who,p,data.cardById)));const relic=state.format==='classic'&&['player','opponent'].some(w=>state.sides[w].active?.cardId==='ex5-24'&&!effects.abilitiesSuppressed(state,w,state.sides[w].active,data.cardById));const deepSleep=state.format==='classic'&&['player','opponent'].some(w=>state.sides[w].active?.cardId==='ex12-40'&&!effects.abilitiesSuppressed(state,w,state.sides[w].active,data.cardById));const coins=lull||destinyGengar||relic||deepSleep?2:typeof c.sleep==='object'?Math.max(1,Number(c.sleep.recoveryCoins||1)):1;let allHeads=true,allTails=true;for(let i=0;i<coins;i++){const heads=random(state)<0.5;state.log.push({type:'coin',side,heads,status:'sleep',results:[heads]});if(!heads)allHeads=false;else allTails=false;}if(allHeads)delete c.sleep;if(darkraiKo&&allTails&&coins===2){slot.damage=Math.max(Number(slot.damage||0),maxHp(state,side,slot));state.log.push({type:'darkraiSleepKO',side,cardId:slot.cardId});}state.log.push({type:'sleepCheck',side,woke:allHeads,coins});}
       if(c.paralysis&&side===state.activeSide&&Number(c.paralysis.appliedTurn??-1)<state.turnNumber)delete c.paralysis;
     }
   }

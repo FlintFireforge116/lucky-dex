@@ -45,7 +45,10 @@ jobs:
       - name: Test Great Encounters continuation and complex card outcomes
         run: node --test source/tests/v07244-great-encounters-stage2.test.cjs source/tests/v07244-great-encounters-remaining.test.cjs
 
-      - name: Audit staged Great Encounters battle effects
+      - name: Test completed Great Encounters complex card outcomes
+        run: node --test source/tests/v07245-great-encounters-completion.test.cjs
+
+      - name: Audit completed Great Encounters battle effects
         run: node source/scripts/audit-classic-set.cjs --set dp4 --smoke --no-write
 
       - name: Audit completed Mysterious Treasures set

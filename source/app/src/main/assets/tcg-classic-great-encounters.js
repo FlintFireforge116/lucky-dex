@@ -124,7 +124,7 @@ const gate=(heads=N)=>({type:'coinAttackGate',heads});
 const rule=(name)=>({type:'neoRule',rule:'dp4:'+name});
 // Conservative, verified-only enablement. Cards with pending choices or reactive
 // Powers remain visible in the collection but cannot enter generated battle decks.
-const READY=new Set([1,25,30,31,56,103,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,26,27,28,29,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50,51,52,53,54,55,58,59,60,61,62,63,64,65,66,67,68,69,70,71,72,73,74,75,76,77,78,79,80,81,82,83,84,85,86,87,88,89,90,92,93,94,95,96,97,98,99,100,101,102]);
+const READY=new Set([1,25,30,31,56,103,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,26,27,28,29,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50,51,52,53,54,55,58,59,60,61,62,63,64,65,66,67,68,69,70,71,72,73,74,75,76,77,78,79,80,81,82,83,84,85,86,87,88,89,90,92,93,94,95,96,97,98,99,100,101,102,24,57,91,104,105,106]);
 const EFFECTS={
  1:[rule('1:fireDance'),rule('1:flameKick')],
  25:[rule('25:twister')],
@@ -132,6 +132,12 @@ const EFFECTS={
  31:[flip(seq(stat('confusion'),stat('poison')))],
  56:[rule('56:hiddenPower')],
  103:[rule('103:moonSkip')],
+ 24:[rule('24:pickOut'),mod('postWeaknessAttackDamage',20,'self','nextOwnTurn')],
+ 57:[rule('57:hiddenPower')],
+ 91:[rule('91:hiddenPower')],
+ 104:[{type:'status',target:'opponentActive',status:'sleep',recoveryCoins:2,knockoutOnDoubleTails:true}],
+ 105:[lock('attack','self','nextOwnTurn')],
+ 106:[rule('106:hydroReflect')],
  // Stage 2: printed effects with physical source cards and explicit player choices.
  2:[rule('2:moonTwinkle'),rule('2:lunarDance')],
  6:[{type:'coinDamage',coins:3,amount:40,mode:'replace'},N],
@@ -227,6 +233,11 @@ const ABILITIES={
  31:[N],
  56:[rule('56:fake')],
  103:[rule('103:fullMoonDance')],
+ 57:[rule('57:guard')],
+ 91:[N],
+ 104:[{type:'modifier',stat:'darkShadow',amount:10,scope:'team',duration:'whileInPlay',nonStacking:true}],
+ 105:[rule('105:timeSkip')],
+ 106:[rule('106:restructure')],
  6:[rule('6:conversion')],
  8:[{type:'modifier',stat:'energyMultiplier',amount:2,scope:'team',duration:'whileInPlay',filter:{subtype:'Grass'},nonStacking:true}],
  9:[rule('9:washOut')],
@@ -244,6 +255,12 @@ const PRINTS={
  31:['Flip: on heads, the Defending Pokémon is both Confused and Poisoned.'],
  56:['You may flip a coin: tails does no damage; heads sets the base damage to 30.'],
  103:['If Moon Skip Knocks Out the Defending Pokémon, take one extra Prize.'],
+ 24:['Choose one face-down Prize, yours or the opponent’s, turn it face up. If it is a Supporter, perform that Supporter effect without moving the Prize.','Next turn, attacks damaging the same Defending Pokémon deal 20 extra damage.'],
+ 57:['50 damage if undamaged; 10 damage if Unown G has damage counters.'],
+ 91:['Choose up to two physical cards in either player’s discard pile to return to the top of that player’s deck, in your chosen order.'],
+ 104:['Put the Defending Pokémon Asleep. On each between-turn check flip two coins: double heads wakes, double tails Knocks Out, mixed results remain Asleep.'],
+ 105:['Dialga cannot use Metal Flash next turn.'],
+ 106:['After 60 damage, optionally move all attached Energy cards to any of your Benched Pokémon.'],
  48:['Choose up to two physical Basic Water Energy from your hand; attach them to Pelipper, healing 20 per card.','30 damage per Energy attached; return all its Energy to the top of the deck, then shuffle.'],
  46:['','Deal 30 to one opposing Pokémon and 10 to each other opposing Pokémon.'],
  29:['Discard one card from your hand. If you cannot discard, the attack does nothing.'],
@@ -327,7 +344,7 @@ const PRINTS={
  94:['','Flip: heads deal 10 damage to each opposing Pokémon.'],
  96:['Return any one card from your discard to the top of your deck.','Flip two coins; 10 per heads.']
 };
-const ABILITY_TEXT={25:['Prevent all effects of attacks, including damage, from opposing Pokémon LV.X.'],30:['Between turns, remove 1 damage counter from Wailord while it is Asleep.'],31:['Between turns, each player places one additional damage counter on their Poisoned Pokémon.'],56:['While Unown F is Benched, flip a concealed coin; if the opponent guesses incorrectly, draw a card.'],103:['Move one damage counter from any Pokémon to another Pokémon on either side.'],85:['With Lunatone in play, your Psychic and Fighting attacks ignore opposing Resistance.'],49:['Discard a Supporter from hand to use its effect as Porygon2’s Power.'],29:['With Unown H, E, A and L on the Bench, remove all Special Conditions from your Active Pokémon.'],28:['If one of your Pokémon was Knocked Out last opponent turn, search your deck for any card.'],11:['On evolving from hand, examine the top 10 cards and attach Basic Energy to your Pokémon, then shuffle.'],9:['Repeatedly move Water or Fighting Energy from a Benched Pokémon to your Active Pokémon.'],8:['Basic Grass Energy attached to your Grass Pokémon provides two Grass Energy. Only one Wild Growth applies.'],6:['Discard one Basic Energy card from your hand; Porygon-Z changes to its type until end of turn.'],47:['Once during turn while Metapod is Active, flip: heads evolve Metapod from your draw deck.'],63:['Once during turn while Caterpie is Active, flip: heads evolve Caterpie from your draw deck.'],45:['Magcargo cannot be Asleep or Paralyzed.'],15:['Once per turn, put up to two cards from hand onto bottom of deck, then draw until you have six.'],71:['Flip: heads search your deck for a Basic Grass Pokémon and Bench it.'],76:['Discard a card from hand; if Solrock is in play, draw one card.'],92:['With Illumise in play, put a Supporter from your discard on top of your deck.'],32:['Once per turn, put both Active Pokémon Asleep.'],70:['Evolve into a real Jigglypuff from hand and clear damage.'],27:['If damaged, Primeape attacks deal 40 additional damage to the Defending Pokémon.']};
+const ABILITY_TEXT={24:[],57:['While Benched, discard all cards attached to Unown G and attach it as a Tool to another of your Pokémon to prevent all attack effects except damage.'],91:['Can use any attack on any Unown in play (either player), paying its printed Energy cost.'],104:['Basic Darkness Energy on your Darkness Pokémon adds 10 attack damage per Basic Darkness Energy, without stacking Dark Shadow.'],105:["Opponent flips two coins. Both heads: your turn ends now. Both tails: opponent’s next turn ends immediately after their draw."],106:['Opponent chooses your Bench to switch Active, then you choose an opposing Bench to switch Active.'],25:['Prevent all effects of attacks, including damage, from opposing Pokémon LV.X.'],30:['Between turns, remove 1 damage counter from Wailord while it is Asleep.'],31:['Between turns, each player places one additional damage counter on their Poisoned Pokémon.'],56:['While Unown F is Benched, flip a concealed coin; if the opponent guesses incorrectly, draw a card.'],103:['Move one damage counter from any Pokémon to another Pokémon on either side.'],85:['With Lunatone in play, your Psychic and Fighting attacks ignore opposing Resistance.'],49:['Discard a Supporter from hand to use its effect as Porygon2’s Power.'],29:['With Unown H, E, A and L on the Bench, remove all Special Conditions from your Active Pokémon.'],28:['If one of your Pokémon was Knocked Out last opponent turn, search your deck for any card.'],11:['On evolving from hand, examine the top 10 cards and attach Basic Energy to your Pokémon, then shuffle.'],9:['Repeatedly move Water or Fighting Energy from a Benched Pokémon to your Active Pokémon.'],8:['Basic Grass Energy attached to your Grass Pokémon provides two Grass Energy. Only one Wild Growth applies.'],6:['Discard one Basic Energy card from your hand; Porygon-Z changes to its type until end of turn.'],47:['Once during turn while Metapod is Active, flip: heads evolve Metapod from your draw deck.'],63:['Once during turn while Caterpie is Active, flip: heads evolve Caterpie from your draw deck.'],45:['Magcargo cannot be Asleep or Paralyzed.'],15:['Once per turn, put up to two cards from hand onto bottom of deck, then draw until you have six.'],71:['Flip: heads search your deck for a Basic Grass Pokémon and Bench it.'],76:['Discard a card from hand; if Solrock is in play, draw one card.'],92:['With Illumise in play, put a Supporter from your discard on top of your deck.'],32:['Once per turn, put both Active Pokémon Asleep.'],70:['Evolve into a real Jigglypuff from hand and clear damage.'],27:['If damaged, Primeape attacks deal 40 additional damage to the Defending Pokémon.']};
 const DATA=RAW.split('\n').map(row=>row.split('|'));
 function parse(row){
  const [number,name,kind,stage,hp,code,from,weak,resist,retreat,rarity,moves,powers]=row;
@@ -345,9 +362,10 @@ function parse(row){
       name:attackName,cost,damage:Number((damageText.match(/^\d+/)||[])[0]||0),damageText:damageText||null,
       text:PRINTS[n]?.[i]??'Printed attack under implementation review; battle entry gated.',effect:EFFECTS[n]?.[i]||N};}),
     abilities:(powers||'').split(';').filter(Boolean).map(s=>{const [power,type]=s.split('~');return {
-      name:power,...(n===9?{oncePerTurn:false}:{}),type:n===11?'triggered':type==='Power'?'activated':'passive',...(n===11?{event:'evolved',fromHandOnly:true}:{}),printedPowerType:type==='Power'?'power':'body',
+      name:power,...(n===9?{oncePerTurn:false}:{}),type:n===11?'triggered':type==='Power'?'activated':'passive',...(n===57?{benchOnly:true}:{}),...(n===11?{event:'evolved',fromHandOnly:true}:{}),printedPowerType:type==='Power'?'power':'body',
       disabledByStatus:type==='Power',text:ABILITY_TEXT[n]?.[0]||'Poké-Power or Poké-Body awaiting battle timing verification.',effect:ABILITIES[n]?.[0]||N};}),
     isLevelX:stage==='Level-Up',levelUpFrom:stage==='Level-Up'?from:null});
+  if(n===57)card.effect={type:'preventEffects',duration:'whileInPlay'}; // only used while attached as Unown G Tool
   const ownTexts=[...card.attacks.map(a=>a.text),...card.abilities.map(a=>a.text)].join(' ').toLowerCase();
   const roles=[];for(const [role,regex] of Object.entries({draw:/draw|hand/,search:/search|discard to|deck/,status:/asleep|sleep|poison|confus|paraly|burn/,heal:/heal|remove.*damage counter/,ramp:/attach.*energy/,control:/can't|prevent|switch/}))if(regex.test(ownTexts))roles.push(role);
   const types=[...new Set(card.attacks.flatMap(a=>[...a.cost].filter(x=>x!=='C').map(x=>T[x])))];

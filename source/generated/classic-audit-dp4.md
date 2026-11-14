@@ -1,8 +1,8 @@
 # LuckyDex Classic audit — dp4 / Great Encounters
 
-**Status:** No definite catalog/schema failures; 0 warnings; 4 follow-up flags.
+**Status:** No definite catalog/schema failures; 0 warnings; 5 follow-up flags.
 
-**Coverage:** 100/106 enabled, 6 gated. 172 attacks, 28 named abilities; 62/106 IDs mentioned in test files (mentions are not proof).
+**Coverage:** 106/106 enabled, 0 gated. 172 attacks, 28 named abilities; 67/106 IDs mentioned in test files (mentions are not proof).
 
 **Source contract:** `docs/LUCKYDEX_MASTER_RULES.txt`.
 
@@ -10,13 +10,13 @@
 
 | Category | Cards needing scenarios |
 |---|---:|
-| choice | 25 |
-| privacy | 0 |
-| timing | 18 |
-| energyMovement | 20 |
-| status | 14 |
+| choice | 28 |
+| privacy | 1 |
+| timing | 20 |
+| energyMovement | 22 |
+| status | 15 |
 | deckSearch | 14 |
-| coin | 41 |
+| coin | 43 |
 
 ## Generated CPU decks
 
@@ -24,7 +24,7 @@
 
 ## Synthetic battle action checks
 
-338/342 actions executed; 4 skipped (not necessarily defects); 0 scenario exceptions/unresolved choices.
+352/356 actions executed; 4 skipped (not necessarily defects); 0 scenario exceptions/unresolved choices.
 
 ## Definite failures and warnings
 
@@ -32,7 +32,7 @@ None identified by these checks.
 
 ## Needs manual rule / UI review
 
-Risk tags are prompts for scenario tests, not automatic implementation failures. 79 cards flagged.
+Risk tags are prompts for scenario tests, not automatic implementation failures. 84 cards flagged.
 
 - **dp4-1 Blaziken** — choice, energyMovement
 - **dp4-2 Cresselia** — choice, energyMovement
@@ -56,6 +56,7 @@ Risk tags are prompts for scenario tests, not automatic implementation failures.
 - **dp4-21 Lapras** — energyMovement
 - **dp4-22 Latias** — energyMovement
 - **dp4-23 Latios** — energyMovement, deckSearch, coin
+- **dp4-24 Mawile** — choice, privacy, timing
 - **dp4-25 Milotic** — choice, coin; ability Marvel Scale: no-op effect; verify separately implemented passive/continuous rule.
 - **dp4-26 Palkia** — choice, energyMovement, deckSearch, coin
 - **dp4-27 Primeape** — timing, coin
@@ -106,6 +107,7 @@ Risk tags are prompts for scenario tests, not automatic implementation failures.
 - **dp4-86 Swablu** — coin
 - **dp4-88 Togepi** — status, deckSearch, coin
 - **dp4-90 Treecko** — choice
+- **dp4-91 Unown [L]** — choice, energyMovement; ability LINK: no-op effect; verify separately implemented passive/continuous rule.
 - **dp4-92 Volbeat** — coin
 - **dp4-93 Weedle** — deckSearch, coin
 - **dp4-94 Whismur** — coin
@@ -113,6 +115,9 @@ Risk tags are prompts for scenario tests, not automatic implementation failures.
 - **dp4-98 Felicity's Drawing** — choice
 - **dp4-101 Premier Ball** — deckSearch
 - **dp4-102 Rare Candy** — choice
+- **dp4-104 Darkrai LV.X** — status, coin
+- **dp4-105 Dialga LV.X** — timing, coin
+- **dp4-106 Palkia LV.X** — choice, energyMovement
 
 ## Card ledger
 
@@ -120,7 +125,7 @@ Risk tags are prompts for scenario tests, not automatic implementation failures.
 |---|---|---:|---:|---|---:|
 | dp4-1 Blaziken | enabled | 2 | 0 | choice, energyMovement | 1 |
 | dp4-2 Cresselia | enabled | 2 | 0 | choice, energyMovement | 3 |
-| dp4-3 Darkrai | enabled | 2 | 0 | deckSearch | 1 |
+| dp4-3 Darkrai | enabled | 2 | 0 | deckSearch | 2 |
 | dp4-4 Darkrai | enabled | 2 | 0 | choice, status | 1 |
 | dp4-5 Pachirisu | enabled | 2 | 0 | choice, deckSearch | 1 |
 | dp4-6 Porygon-Z | enabled | 1 | 1 | energyMovement, coin | 1 |
@@ -141,13 +146,13 @@ Risk tags are prompts for scenario tests, not automatic implementation failures.
 | dp4-21 Lapras | enabled | 2 | 0 | energyMovement | 1 |
 | dp4-22 Latias | enabled | 2 | 0 | energyMovement | 1 |
 | dp4-23 Latios | enabled | 2 | 0 | energyMovement, deckSearch, coin | 1 |
-| dp4-24 Mawile | gated | 2 | 0 |  | 0 |
+| dp4-24 Mawile | enabled | 2 | 0 | choice, privacy, timing | 1 |
 | dp4-25 Milotic | enabled | 1 | 1 | choice, coin | 2 |
 | dp4-26 Palkia | enabled | 2 | 0 | choice, energyMovement, deckSearch, coin | 1 |
 | dp4-27 Primeape | enabled | 1 | 1 | timing, coin | 1 |
 | dp4-28 Slowking | enabled | 1 | 1 | timing, deckSearch | 0 |
 | dp4-29 Unown [H] | enabled | 1 | 1 |  | 0 |
-| dp4-30 Wailord | enabled | 1 | 1 | timing, status | 3 |
+| dp4-30 Wailord | enabled | 1 | 1 | timing, status | 4 |
 | dp4-31 Weezing | enabled | 1 | 1 | timing, status, coin | 1 |
 | dp4-32 Wigglytuff | enabled | 1 | 1 | status | 1 |
 | dp4-33 Arbok | enabled | 2 | 0 | status, coin | 0 |
@@ -173,12 +178,12 @@ Risk tags are prompts for scenario tests, not automatic implementation failures.
 | dp4-53 Skarmory | enabled | 2 | 0 | timing, energyMovement, coin | 0 |
 | dp4-54 Slowbro | enabled | 2 | 0 | choice, timing | 0 |
 | dp4-55 Togetic | enabled | 2 | 0 | choice | 1 |
-| dp4-56 Unown [F] | enabled | 1 | 1 | choice, coin | 1 |
-| dp4-57 Unown [G] | gated | 1 | 1 |  | 0 |
+| dp4-56 Unown [F] | enabled | 1 | 1 | choice, coin | 2 |
+| dp4-57 Unown [G] | enabled | 1 | 1 |  | 1 |
 | dp4-58 Wailmer | enabled | 2 | 0 | coin | 0 |
 | dp4-59 Zangoose | enabled | 2 | 0 |  | 0 |
 | dp4-60 Baltoy | enabled | 2 | 0 |  | 0 |
-| dp4-61 Buizel | enabled | 2 | 0 |  | 3 |
+| dp4-61 Buizel | enabled | 2 | 0 |  | 4 |
 | dp4-62 Cacnea | enabled | 2 | 0 | timing, coin | 1 |
 | dp4-63 Caterpie | enabled | 1 | 1 | coin | 1 |
 | dp4-64 Clamperl | enabled | 2 | 0 | coin | 1 |
@@ -205,25 +210,25 @@ Risk tags are prompts for scenario tests, not automatic implementation failures.
 | dp4-85 Solrock | enabled | 1 | 1 |  | 1 |
 | dp4-86 Swablu | enabled | 2 | 0 | coin | 0 |
 | dp4-87 Tangela | enabled | 2 | 0 |  | 0 |
-| dp4-88 Togepi | enabled | 2 | 0 | status, deckSearch, coin | 0 |
-| dp4-89 Torchic | enabled | 2 | 0 |  | 2 |
+| dp4-88 Togepi | enabled | 2 | 0 | status, deckSearch, coin | 1 |
+| dp4-89 Torchic | enabled | 2 | 0 |  | 3 |
 | dp4-90 Treecko | enabled | 2 | 0 | choice | 2 |
-| dp4-91 Unown [L] | gated | 1 | 1 |  | 1 |
+| dp4-91 Unown [L] | enabled | 1 | 1 | choice, energyMovement | 2 |
 | dp4-92 Volbeat | enabled | 1 | 1 | coin | 1 |
-| dp4-93 Weedle | enabled | 2 | 0 | deckSearch, coin | 3 |
+| dp4-93 Weedle | enabled | 2 | 0 | deckSearch, coin | 4 |
 | dp4-94 Whismur | enabled | 2 | 0 | coin | 0 |
 | dp4-95 Wingull | enabled | 2 | 0 |  | 0 |
 | dp4-96 Zigzagoon | enabled | 2 | 0 | coin | 1 |
-| dp4-97 Amulet Coin | enabled | 0 | 0 |  | 1 |
-| dp4-98 Felicity's Drawing | enabled | 0 | 0 | choice | 1 |
-| dp4-99 Leftovers | enabled | 0 | 0 |  | 1 |
+| dp4-97 Amulet Coin | enabled | 0 | 0 |  | 2 |
+| dp4-98 Felicity's Drawing | enabled | 0 | 0 | choice | 2 |
+| dp4-99 Leftovers | enabled | 0 | 0 |  | 2 |
 | dp4-100 Moonlight Stadium | enabled | 0 | 0 |  | 1 |
 | dp4-101 Premier Ball | enabled | 0 | 0 | deckSearch | 1 |
 | dp4-102 Rare Candy | enabled | 0 | 0 | choice | 0 |
 | dp4-103 Cresselia LV.X | enabled | 1 | 1 |  | 2 |
-| dp4-104 Darkrai LV.X | gated | 1 | 1 |  | 0 |
-| dp4-105 Dialga LV.X | gated | 1 | 1 |  | 0 |
-| dp4-106 Palkia LV.X | gated | 1 | 1 |  | 1 |
+| dp4-104 Darkrai LV.X | enabled | 1 | 1 | status, coin | 1 |
+| dp4-105 Dialga LV.X | enabled | 1 | 1 | timing, coin | 1 |
+| dp4-106 Palkia LV.X | enabled | 1 | 1 | choice, energyMovement | 2 |
 
 ## Boundaries
 
