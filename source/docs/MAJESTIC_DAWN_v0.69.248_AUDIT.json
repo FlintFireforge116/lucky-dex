@@ -1,0 +1,2226 @@
+{
+  "schemaVersion": 1,
+  "contract": "docs/LUCKYDEX_MASTER_RULES.txt",
+  "scope": "Static preflight + optional synthetic execution, not printed correctness or Android certification",
+  "summary": {
+    "setId": "dp5",
+    "setName": "Majestic Dawn",
+    "total": 100,
+    "declared": 100,
+    "counts": {
+      "pokemon": 82,
+      "trainer": 13,
+      "energy": 5,
+      "attacks": 143,
+      "abilities": 23,
+      "enabled": 100,
+      "gated": 0
+    },
+    "risks": {
+      "choice": 17,
+      "privacy": 1,
+      "timing": 13,
+      "energyMovement": 24,
+      "status": 5,
+      "deckSearch": 11,
+      "coin": 51
+    },
+    "withStaticTestMentions": 80,
+    "errors": 0,
+    "warnings": 0,
+    "reviewFlags": 7
+  },
+  "findings": [
+    {
+      "severity": "review",
+      "rule": "C-AUDIT-002",
+      "cardId": "dp5-6",
+      "message": "ability Primal Shell: no-op effect; verify separately implemented passive/continuous rule."
+    },
+    {
+      "severity": "review",
+      "rule": "C-AUDIT-002",
+      "cardId": "dp5-18",
+      "message": "ability Sunlight Veil: no-op effect; verify separately implemented passive/continuous rule."
+    },
+    {
+      "severity": "review",
+      "rule": "C-AUDIT-002",
+      "cardId": "dp5-32",
+      "message": "ability Moonlight Veil: no-op effect; verify separately implemented passive/continuous rule."
+    },
+    {
+      "severity": "review",
+      "rule": "C-AUDIT-002",
+      "cardId": "dp5-42",
+      "message": "ability Disturbance Scales: no-op effect; verify separately implemented passive/continuous rule."
+    },
+    {
+      "severity": "review",
+      "rule": "C-AUDIT-002",
+      "cardId": "dp5-79",
+      "message": "card effect: no-op Trainer/Stadium effect; verify shared continuous rule."
+    },
+    {
+      "severity": "review",
+      "rule": "C-AUDIT-002",
+      "cardId": "dp5-90",
+      "message": "card effect: custom rule ex1:basicSearch1 has no obvious source literal; inspect dispatcher."
+    },
+    {
+      "severity": "review",
+      "rule": "C-AUDIT-002",
+      "cardId": "dp5-98",
+      "message": "ability Chilly Breath: no-op effect; verify separately implemented passive/continuous rule."
+    }
+  ],
+  "cardLedger": [
+    {
+      "id": "dp5-1",
+      "name": "Articuno",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 1,
+      "abilityCount": 1,
+      "riskTags": [
+        "coin"
+      ],
+      "effectTypes": [
+        "coinFlip",
+        "benchDamage",
+        "neoRule"
+      ],
+      "customRules": [
+        "dp5:1:freezingScreech"
+      ],
+      "testFilesMentioningId": [
+        "v07248-majestic-dawn-continuation.test.cjs"
+      ],
+      "findings": []
+    },
+    {
+      "id": "dp5-2",
+      "name": "Cresselia",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [],
+      "effectTypes": [
+        "neoRule",
+        "heal"
+      ],
+      "customRules": [
+        "dp3:96:futureSight"
+      ],
+      "testFilesMentioningId": [
+        "v07247-majestic-dawn-stage1.test.cjs"
+      ],
+      "findings": []
+    },
+    {
+      "id": "dp5-3",
+      "name": "Darkrai",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 2,
+      "abilityCount": 1,
+      "riskTags": [
+        "choice",
+        "timing",
+        "status"
+      ],
+      "effectTypes": [
+        "neoRule"
+      ],
+      "customRules": [
+        "dp5:3:darkSlumber",
+        "dp5:3:darkResolve",
+        "dp5:3:darknessShade"
+      ],
+      "testFilesMentioningId": [
+        "v07248-majestic-dawn-continuation.test.cjs"
+      ],
+      "findings": []
+    },
+    {
+      "id": "dp5-4",
+      "name": "Dialga",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [
+        "coin"
+      ],
+      "effectTypes": [
+        "drawToHandSize",
+        "coinFlip",
+        "bonusDamage",
+        "noop"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [
+        "v07247-majestic-dawn-stage1.test.cjs"
+      ],
+      "findings": []
+    },
+    {
+      "id": "dp5-5",
+      "name": "Glaceon",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [
+        "timing",
+        "coin"
+      ],
+      "effectTypes": [
+        "coinFlip",
+        "preventDamage",
+        "noop",
+        "damageRule"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [
+        "v07247-majestic-dawn-stage1.test.cjs"
+      ],
+      "findings": []
+    },
+    {
+      "id": "dp5-6",
+      "name": "Kabutops",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 1,
+      "abilityCount": 1,
+      "riskTags": [],
+      "effectTypes": [
+        "benchDamage",
+        "noop"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [
+        "v07248-majestic-dawn-continuation.test.cjs"
+      ],
+      "findings": [
+        {
+          "severity": "review",
+          "rule": "C-AUDIT-002",
+          "message": "ability Primal Shell: no-op effect; verify separately implemented passive/continuous rule."
+        }
+      ]
+    },
+    {
+      "id": "dp5-7",
+      "name": "Leafeon",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [
+        "timing"
+      ],
+      "effectTypes": [
+        "lock",
+        "modifier"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [
+        "v07247-majestic-dawn-stage1.test.cjs",
+        "v07248-majestic-dawn-continuation.test.cjs"
+      ],
+      "findings": []
+    },
+    {
+      "id": "dp5-8",
+      "name": "Manaphy",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 2,
+      "abilityCount": 1,
+      "riskTags": [
+        "choice",
+        "energyMovement",
+        "coin"
+      ],
+      "effectTypes": [
+        "coinFlip",
+        "searchChosen",
+        "noop",
+        "neoRule",
+        "healSelf"
+      ],
+      "customRules": [
+        "dp5:8:fountain"
+      ],
+      "testFilesMentioningId": [
+        "v07248-majestic-dawn-continuation.test.cjs"
+      ],
+      "findings": []
+    },
+    {
+      "id": "dp5-9",
+      "name": "Mewtwo",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 3,
+      "abilityCount": 0,
+      "riskTags": [
+        "choice",
+        "energyMovement"
+      ],
+      "effectTypes": [
+        "neoRule",
+        "noop"
+      ],
+      "customRules": [
+        "dp5:9:energyAbsorption",
+        "dp5:9:recover"
+      ],
+      "testFilesMentioningId": [
+        "v07248-majestic-dawn-continuation.test.cjs"
+      ],
+      "findings": []
+    },
+    {
+      "id": "dp5-10",
+      "name": "Moltres",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 1,
+      "abilityCount": 1,
+      "riskTags": [
+        "choice",
+        "energyMovement",
+        "coin"
+      ],
+      "effectTypes": [
+        "neoRule"
+      ],
+      "customRules": [
+        "dp5:10:scorchingWing",
+        "dp5:10:flameCharge"
+      ],
+      "testFilesMentioningId": [
+        "v07248-majestic-dawn-continuation.test.cjs"
+      ],
+      "findings": []
+    },
+    {
+      "id": "dp5-11",
+      "name": "Palkia",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [
+        "energyMovement"
+      ],
+      "effectTypes": [
+        "forceOpponentSwitch",
+        "neoRule"
+      ],
+      "customRules": [
+        "dp5:11:pearlBlast"
+      ],
+      "testFilesMentioningId": [
+        "v07248-majestic-dawn-continuation.test.cjs"
+      ],
+      "findings": []
+    },
+    {
+      "id": "dp5-12",
+      "name": "Phione",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [
+        "status",
+        "deckSearch"
+      ],
+      "effectTypes": [
+        "neoRule",
+        "status"
+      ],
+      "customRules": [
+        "dp5:12:evolutionWish"
+      ],
+      "testFilesMentioningId": [
+        "v07248-majestic-dawn-continuation.test.cjs"
+      ],
+      "findings": []
+    },
+    {
+      "id": "dp5-13",
+      "name": "Rotom",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [
+        "choice",
+        "energyMovement"
+      ],
+      "effectTypes": [
+        "neoRule"
+      ],
+      "customRules": [
+        "dp5:13:dualTrans",
+        "dp5:13:reflectEnergy"
+      ],
+      "testFilesMentioningId": [
+        "v07248-majestic-dawn-continuation.test.cjs"
+      ],
+      "findings": []
+    },
+    {
+      "id": "dp5-14",
+      "name": "Zapdos",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 1,
+      "abilityCount": 1,
+      "riskTags": [
+        "coin"
+      ],
+      "effectTypes": [
+        "neoRule"
+      ],
+      "customRules": [
+        "dp5:14:ragingThunder",
+        "dp5:14:sheetLightning"
+      ],
+      "testFilesMentioningId": [
+        "v07248-majestic-dawn-continuation.test.cjs"
+      ],
+      "findings": []
+    },
+    {
+      "id": "dp5-15",
+      "name": "Aerodactyl",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 1,
+      "abilityCount": 1,
+      "riskTags": [
+        "status",
+        "coin"
+      ],
+      "effectTypes": [
+        "coinFlip",
+        "status",
+        "noop",
+        "neoRule"
+      ],
+      "customRules": [
+        "dp5:15:primalClaw"
+      ],
+      "testFilesMentioningId": [
+        "v07248-majestic-dawn-continuation.test.cjs"
+      ],
+      "findings": []
+    },
+    {
+      "id": "dp5-16",
+      "name": "Bronzong",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 2,
+      "abilityCount": 1,
+      "riskTags": [
+        "timing"
+      ],
+      "effectTypes": [
+        "neoRule",
+        "modifier"
+      ],
+      "customRules": [
+        "dp5:16:painAmplifier",
+        "dp5:16:cursedAlloy"
+      ],
+      "testFilesMentioningId": [
+        "v07248-majestic-dawn-continuation.test.cjs"
+      ],
+      "findings": []
+    },
+    {
+      "id": "dp5-17",
+      "name": "Empoleon",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [
+        "coin"
+      ],
+      "effectTypes": [
+        "multiTargetDamage",
+        "neoRule"
+      ],
+      "customRules": [
+        "dp5:17:surfTogether"
+      ],
+      "testFilesMentioningId": [
+        "v07248-majestic-dawn-continuation.test.cjs"
+      ],
+      "findings": []
+    },
+    {
+      "id": "dp5-18",
+      "name": "Espeon",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 1,
+      "abilityCount": 1,
+      "riskTags": [
+        "energyMovement"
+      ],
+      "effectTypes": [
+        "neoRule",
+        "noop"
+      ],
+      "customRules": [
+        "dp5:18:morningSun"
+      ],
+      "testFilesMentioningId": [
+        "v07248-majestic-dawn-continuation.test.cjs"
+      ],
+      "findings": [
+        {
+          "severity": "review",
+          "rule": "C-AUDIT-002",
+          "message": "ability Sunlight Veil: no-op effect; verify separately implemented passive/continuous rule."
+        }
+      ]
+    },
+    {
+      "id": "dp5-19",
+      "name": "Flareon",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [
+        "energyMovement",
+        "coin"
+      ],
+      "effectTypes": [
+        "coinFlip",
+        "status",
+        "noop",
+        "neoRule"
+      ],
+      "customRules": [
+        "dp5:19:kindle"
+      ],
+      "testFilesMentioningId": [
+        "v07248-majestic-dawn-continuation.test.cjs"
+      ],
+      "findings": []
+    },
+    {
+      "id": "dp5-20",
+      "name": "Glaceon",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [
+        "status",
+        "coin"
+      ],
+      "effectTypes": [
+        "benchDamage",
+        "coinFlip",
+        "status",
+        "noop"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [
+        "v07247-majestic-dawn-stage1.test.cjs"
+      ],
+      "findings": []
+    },
+    {
+      "id": "dp5-21",
+      "name": "Hippowdon",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [
+        "energyMovement",
+        "coin"
+      ],
+      "effectTypes": [
+        "attachEnergyFromDiscard",
+        "coinDamageByEnergy"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [
+        "v07247-majestic-dawn-stage1.test.cjs"
+      ],
+      "findings": []
+    },
+    {
+      "id": "dp5-22",
+      "name": "Infernape",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [
+        "energyMovement"
+      ],
+      "effectTypes": [
+        "benchDamage",
+        "sequence",
+        "energyDamage",
+        "discardEnergyCard"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [
+        "v07247-majestic-dawn-stage1.test.cjs"
+      ],
+      "findings": []
+    },
+    {
+      "id": "dp5-23",
+      "name": "Jolteon",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [
+        "energyMovement",
+        "coin"
+      ],
+      "effectTypes": [
+        "coinFlip",
+        "status",
+        "noop",
+        "neoRule"
+      ],
+      "customRules": [
+        "dp5:23:lightningStrike"
+      ],
+      "testFilesMentioningId": [
+        "v07248-majestic-dawn-continuation.test.cjs"
+      ],
+      "findings": []
+    },
+    {
+      "id": "dp5-24",
+      "name": "Leafeon",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [
+        "coin"
+      ],
+      "effectTypes": [
+        "healSelf",
+        "coinFlip",
+        "bonusDamage",
+        "noop"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [],
+      "findings": []
+    },
+    {
+      "id": "dp5-25",
+      "name": "Minun",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [],
+      "effectTypes": [
+        "noop",
+        "benchDamage"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [],
+      "findings": []
+    },
+    {
+      "id": "dp5-26",
+      "name": "Omastar",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 1,
+      "abilityCount": 1,
+      "riskTags": [
+        "choice",
+        "timing"
+      ],
+      "effectTypes": [
+        "forceOpponentSwitch",
+        "neoRule"
+      ],
+      "customRules": [
+        "dp5:26:primalSwirl"
+      ],
+      "testFilesMentioningId": [
+        "v07248-majestic-dawn-continuation.test.cjs"
+      ],
+      "findings": []
+    },
+    {
+      "id": "dp5-27",
+      "name": "Phione",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [
+        "timing",
+        "energyMovement",
+        "coin"
+      ],
+      "effectTypes": [
+        "modifier",
+        "coinFlip",
+        "discardEnergyCard",
+        "noop"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [],
+      "findings": []
+    },
+    {
+      "id": "dp5-28",
+      "name": "Plusle",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [],
+      "effectTypes": [
+        "benchFromDeck",
+        "bonusDamage"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [],
+      "findings": []
+    },
+    {
+      "id": "dp5-29",
+      "name": "Scizor",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [
+        "energyMovement",
+        "coin"
+      ],
+      "effectTypes": [
+        "bonusDamage",
+        "coinFlip",
+        "noop"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [
+        "v07247-majestic-dawn-stage1.test.cjs"
+      ],
+      "findings": []
+    },
+    {
+      "id": "dp5-30",
+      "name": "Torterra",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [
+        "timing"
+      ],
+      "effectTypes": [
+        "benchDamage",
+        "lock"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [
+        "v07247-majestic-dawn-stage1.test.cjs",
+        "v07248-majestic-dawn-continuation.test.cjs"
+      ],
+      "findings": []
+    },
+    {
+      "id": "dp5-31",
+      "name": "Toxicroak",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [
+        "coin"
+      ],
+      "effectTypes": [
+        "sequence",
+        "status",
+        "coinFlip",
+        "noop"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [],
+      "findings": []
+    },
+    {
+      "id": "dp5-32",
+      "name": "Umbreon",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 1,
+      "abilityCount": 1,
+      "riskTags": [],
+      "effectTypes": [
+        "status",
+        "noop"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [
+        "v07248-majestic-dawn-continuation.test.cjs"
+      ],
+      "findings": [
+        {
+          "severity": "review",
+          "rule": "C-AUDIT-002",
+          "message": "ability Moonlight Veil: no-op effect; verify separately implemented passive/continuous rule."
+        }
+      ]
+    },
+    {
+      "id": "dp5-33",
+      "name": "Unown [P]",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 1,
+      "abilityCount": 1,
+      "riskTags": [],
+      "effectTypes": [
+        "neoRule"
+      ],
+      "customRules": [
+        "dp5:33:hiddenPower",
+        "dp5:33:put"
+      ],
+      "testFilesMentioningId": [
+        "v07248-majestic-dawn-continuation.test.cjs"
+      ],
+      "findings": []
+    },
+    {
+      "id": "dp5-34",
+      "name": "Vaporeon",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [
+        "energyMovement",
+        "coin"
+      ],
+      "effectTypes": [
+        "heal",
+        "neoRule"
+      ],
+      "customRules": [
+        "dp5:34:hyperWhirlpool"
+      ],
+      "testFilesMentioningId": [
+        "v07248-majestic-dawn-continuation.test.cjs"
+      ],
+      "findings": []
+    },
+    {
+      "id": "dp5-35",
+      "name": "Ambipom",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [
+        "choice",
+        "deckSearch"
+      ],
+      "effectTypes": [
+        "neoRule",
+        "selectedDamage"
+      ],
+      "customRules": [
+        "dp4:7:astonish"
+      ],
+      "testFilesMentioningId": [],
+      "findings": []
+    },
+    {
+      "id": "dp5-36",
+      "name": "Fearow",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [
+        "coin"
+      ],
+      "effectTypes": [
+        "coinDamage",
+        "noop"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [
+        "v07247-majestic-dawn-stage1.test.cjs"
+      ],
+      "findings": []
+    },
+    {
+      "id": "dp5-37",
+      "name": "Grotle",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [
+        "energyMovement",
+        "coin"
+      ],
+      "effectTypes": [
+        "attachEnergy",
+        "coinFlip",
+        "status",
+        "noop"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [
+        "v07247-majestic-dawn-stage1.test.cjs",
+        "v07248-majestic-dawn-continuation.test.cjs"
+      ],
+      "findings": []
+    },
+    {
+      "id": "dp5-38",
+      "name": "Kangaskhan",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [
+        "coin"
+      ],
+      "effectTypes": [
+        "noop",
+        "coinDamage"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [
+        "v07247-majestic-dawn-stage1.test.cjs",
+        "v07248-majestic-dawn-continuation.test.cjs"
+      ],
+      "findings": []
+    },
+    {
+      "id": "dp5-39",
+      "name": "Lickitung",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [
+        "coin"
+      ],
+      "effectTypes": [
+        "draw",
+        "coinDamage"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [
+        "v07247-majestic-dawn-stage1.test.cjs"
+      ],
+      "findings": []
+    },
+    {
+      "id": "dp5-40",
+      "name": "Manectric",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [
+        "coin"
+      ],
+      "effectTypes": [
+        "coinFlip",
+        "status",
+        "noop",
+        "neoRule"
+      ],
+      "customRules": [
+        "dp5:40:voltCrush"
+      ],
+      "testFilesMentioningId": [
+        "v07248-majestic-dawn-continuation.test.cjs"
+      ],
+      "findings": []
+    },
+    {
+      "id": "dp5-41",
+      "name": "Monferno",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [
+        "coin"
+      ],
+      "effectTypes": [
+        "status",
+        "coinFlip",
+        "bonusDamage",
+        "noop"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [
+        "v07247-majestic-dawn-stage1.test.cjs"
+      ],
+      "findings": []
+    },
+    {
+      "id": "dp5-42",
+      "name": "Mothim",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 2,
+      "abilityCount": 1,
+      "riskTags": [
+        "energyMovement"
+      ],
+      "effectTypes": [
+        "neoRule",
+        "noop"
+      ],
+      "customRules": [
+        "dp5:42:getHelp",
+        "dp5:42:quickTouch"
+      ],
+      "testFilesMentioningId": [
+        "v07248-majestic-dawn-continuation.test.cjs"
+      ],
+      "findings": [
+        {
+          "severity": "review",
+          "rule": "C-AUDIT-002",
+          "message": "ability Disturbance Scales: no-op effect; verify separately implemented passive/continuous rule."
+        }
+      ]
+    },
+    {
+      "id": "dp5-43",
+      "name": "Pachirisu",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [
+        "coin"
+      ],
+      "effectTypes": [
+        "neoRule",
+        "coinFlip",
+        "status",
+        "noop"
+      ],
+      "customRules": [
+        "dp5:43:transTail"
+      ],
+      "testFilesMentioningId": [
+        "v07248-majestic-dawn-continuation.test.cjs"
+      ],
+      "findings": []
+    },
+    {
+      "id": "dp5-44",
+      "name": "Prinplup",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [
+        "choice"
+      ],
+      "effectTypes": [
+        "selectedDamage",
+        "multiTargetDamage"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [
+        "v07247-majestic-dawn-stage1.test.cjs"
+      ],
+      "findings": []
+    },
+    {
+      "id": "dp5-45",
+      "name": "Raichu",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [
+        "timing",
+        "energyMovement",
+        "coin"
+      ],
+      "effectTypes": [
+        "coinFlip",
+        "preventDamage",
+        "noop",
+        "discardEnergyCard"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [
+        "v07247-majestic-dawn-stage1.test.cjs",
+        "v07248-majestic-dawn-continuation.test.cjs"
+      ],
+      "findings": []
+    },
+    {
+      "id": "dp5-46",
+      "name": "Scyther",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [
+        "coin"
+      ],
+      "effectTypes": [
+        "noop",
+        "coinTierBonus"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [
+        "v07247-majestic-dawn-stage1.test.cjs"
+      ],
+      "findings": []
+    },
+    {
+      "id": "dp5-47",
+      "name": "Staravia",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [
+        "coin"
+      ],
+      "effectTypes": [
+        "coinFlip",
+        "bonusDamage",
+        "noop"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [
+        "v07247-majestic-dawn-stage1.test.cjs"
+      ],
+      "findings": []
+    },
+    {
+      "id": "dp5-48",
+      "name": "Sudowoodo",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [],
+      "effectTypes": [
+        "damageFromDamage",
+        "selfDamage"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [],
+      "findings": []
+    },
+    {
+      "id": "dp5-49",
+      "name": "Unown [Q]",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 1,
+      "abilityCount": 1,
+      "riskTags": [],
+      "effectTypes": [
+        "noop",
+        "neoRule"
+      ],
+      "customRules": [
+        "dp5:49:quick"
+      ],
+      "testFilesMentioningId": [
+        "v07248-majestic-dawn-continuation.test.cjs"
+      ],
+      "findings": []
+    },
+    {
+      "id": "dp5-50",
+      "name": "Aipom",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [],
+      "effectTypes": [
+        "draw",
+        "neoRule"
+      ],
+      "customRules": [
+        "dp5:50:handTrick"
+      ],
+      "testFilesMentioningId": [
+        "v07248-majestic-dawn-continuation.test.cjs"
+      ],
+      "findings": []
+    },
+    {
+      "id": "dp5-51",
+      "name": "Aipom",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [
+        "coin"
+      ],
+      "effectTypes": [
+        "noop",
+        "coinAttackGate"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [],
+      "findings": []
+    },
+    {
+      "id": "dp5-52",
+      "name": "Bronzor",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [
+        "status",
+        "coin"
+      ],
+      "effectTypes": [
+        "status",
+        "coinFlip",
+        "noop"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [
+        "v07247-majestic-dawn-stage1.test.cjs"
+      ],
+      "findings": []
+    },
+    {
+      "id": "dp5-53",
+      "name": "Buneary",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [],
+      "effectTypes": [
+        "searchChosen",
+        "heal"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [
+        "v07247-majestic-dawn-stage1.test.cjs"
+      ],
+      "findings": []
+    },
+    {
+      "id": "dp5-54",
+      "name": "Burmy Sandy Cloak",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [
+        "coin"
+      ],
+      "effectTypes": [
+        "coinFlip",
+        "preventDamage",
+        "noop"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [],
+      "findings": []
+    },
+    {
+      "id": "dp5-55",
+      "name": "Chatot",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [
+        "timing",
+        "deckSearch"
+      ],
+      "effectTypes": [
+        "handShuffle",
+        "lock"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [
+        "v07247-majestic-dawn-stage1.test.cjs"
+      ],
+      "findings": []
+    },
+    {
+      "id": "dp5-56",
+      "name": "Chimchar",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [
+        "coin"
+      ],
+      "effectTypes": [
+        "noop",
+        "coinAttackGate"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [],
+      "findings": []
+    },
+    {
+      "id": "dp5-57",
+      "name": "Chimchar",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 1,
+      "abilityCount": 0,
+      "riskTags": [
+        "coin"
+      ],
+      "effectTypes": [
+        "coinDamage"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [],
+      "findings": []
+    },
+    {
+      "id": "dp5-58",
+      "name": "Chingling",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 1,
+      "abilityCount": 1,
+      "riskTags": [
+        "choice",
+        "coin"
+      ],
+      "effectTypes": [
+        "coinFlip",
+        "benchDamage",
+        "noop",
+        "neoRule"
+      ],
+      "customRules": [
+        "dp5:58:babyEvolution"
+      ],
+      "testFilesMentioningId": [
+        "v07248-majestic-dawn-continuation.test.cjs"
+      ],
+      "findings": []
+    },
+    {
+      "id": "dp5-59",
+      "name": "Combee",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [
+        "choice"
+      ],
+      "effectTypes": [
+        "heal",
+        "selectedDamage"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [
+        "v07247-majestic-dawn-stage1.test.cjs"
+      ],
+      "findings": []
+    },
+    {
+      "id": "dp5-60",
+      "name": "Croagunk",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [
+        "coin"
+      ],
+      "effectTypes": [
+        "noop",
+        "coinFlip",
+        "status"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [
+        "v07247-majestic-dawn-stage1.test.cjs"
+      ],
+      "findings": []
+    },
+    {
+      "id": "dp5-61",
+      "name": "Drifloon",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [
+        "coin"
+      ],
+      "effectTypes": [
+        "coinFlip",
+        "searchChosen",
+        "noop",
+        "switch"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [
+        "v07247-majestic-dawn-stage1.test.cjs"
+      ],
+      "findings": []
+    },
+    {
+      "id": "dp5-62",
+      "name": "Eevee",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [
+        "deckSearch",
+        "coin"
+      ],
+      "effectTypes": [
+        "benchFromDeck",
+        "coinAttackGate",
+        "noop"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [],
+      "findings": []
+    },
+    {
+      "id": "dp5-63",
+      "name": "Eevee",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [
+        "timing",
+        "coin"
+      ],
+      "effectTypes": [
+        "noop",
+        "attackCoinGate"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [
+        "v07247-majestic-dawn-stage1.test.cjs"
+      ],
+      "findings": []
+    },
+    {
+      "id": "dp5-64",
+      "name": "Electrike",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [
+        "choice"
+      ],
+      "effectTypes": [
+        "selectedDamage",
+        "noop"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [
+        "v07247-majestic-dawn-stage1.test.cjs"
+      ],
+      "findings": []
+    },
+    {
+      "id": "dp5-65",
+      "name": "Glameow",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [
+        "energyMovement",
+        "coin"
+      ],
+      "effectTypes": [
+        "benchFromDeck",
+        "coinFlip",
+        "discardEnergyCard",
+        "noop"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [
+        "v07247-majestic-dawn-stage1.test.cjs"
+      ],
+      "findings": []
+    },
+    {
+      "id": "dp5-66",
+      "name": "Hippopotas",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [
+        "coin"
+      ],
+      "effectTypes": [
+        "coinFlip",
+        "bonusDamage",
+        "noop",
+        "selfDamage"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [],
+      "findings": []
+    },
+    {
+      "id": "dp5-67",
+      "name": "Kabuto",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 1,
+      "abilityCount": 1,
+      "riskTags": [
+        "deckSearch",
+        "coin"
+      ],
+      "effectTypes": [
+        "noop",
+        "neoRule"
+      ],
+      "customRules": [
+        "dp5:67:ancientGuidance"
+      ],
+      "testFilesMentioningId": [
+        "v07248-majestic-dawn-continuation.test.cjs"
+      ],
+      "findings": []
+    },
+    {
+      "id": "dp5-68",
+      "name": "Munchlax",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 1,
+      "abilityCount": 1,
+      "riskTags": [
+        "choice",
+        "coin"
+      ],
+      "effectTypes": [
+        "coinFlip",
+        "status",
+        "noop",
+        "neoRule"
+      ],
+      "customRules": [
+        "dp5:68:babyEvolution"
+      ],
+      "testFilesMentioningId": [
+        "v07248-majestic-dawn-continuation.test.cjs"
+      ],
+      "findings": []
+    },
+    {
+      "id": "dp5-69",
+      "name": "Omanyte",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 1,
+      "abilityCount": 1,
+      "riskTags": [
+        "coin"
+      ],
+      "effectTypes": [
+        "multiTargetDamage",
+        "neoRule"
+      ],
+      "customRules": [
+        "dp5:69:callUp"
+      ],
+      "testFilesMentioningId": [
+        "v07248-majestic-dawn-continuation.test.cjs"
+      ],
+      "findings": []
+    },
+    {
+      "id": "dp5-70",
+      "name": "Pikachu",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [
+        "coin"
+      ],
+      "effectTypes": [
+        "coinFlip",
+        "bonusDamage",
+        "noop",
+        "selfDamage"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [
+        "v07247-majestic-dawn-stage1.test.cjs",
+        "v07248-majestic-dawn-continuation.test.cjs"
+      ],
+      "findings": []
+    },
+    {
+      "id": "dp5-71",
+      "name": "Piplup",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [
+        "coin"
+      ],
+      "effectTypes": [
+        "coinFlip",
+        "bonusDamage",
+        "noop"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [
+        "v07247-majestic-dawn-stage1.test.cjs"
+      ],
+      "findings": []
+    },
+    {
+      "id": "dp5-72",
+      "name": "Piplup",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 1,
+      "abilityCount": 0,
+      "riskTags": [
+        "choice"
+      ],
+      "effectTypes": [
+        "selectedDamage"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [
+        "v07247-majestic-dawn-stage1.test.cjs"
+      ],
+      "findings": []
+    },
+    {
+      "id": "dp5-73",
+      "name": "Shellos East Sea",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [],
+      "effectTypes": [
+        "noop",
+        "benchDamage"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [
+        "v07247-majestic-dawn-stage1.test.cjs"
+      ],
+      "findings": []
+    },
+    {
+      "id": "dp5-74",
+      "name": "Spearow",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [
+        "coin"
+      ],
+      "effectTypes": [
+        "noop",
+        "coinAttackGate"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [
+        "v07247-majestic-dawn-stage1.test.cjs"
+      ],
+      "findings": []
+    },
+    {
+      "id": "dp5-75",
+      "name": "Starly",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [],
+      "effectTypes": [
+        "forceOpponentSwitch",
+        "noop"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [
+        "v07247-majestic-dawn-stage1.test.cjs"
+      ],
+      "findings": []
+    },
+    {
+      "id": "dp5-76",
+      "name": "Stunky",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [
+        "coin"
+      ],
+      "effectTypes": [
+        "coinFlip",
+        "status",
+        "noop"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [
+        "v07247-majestic-dawn-stage1.test.cjs"
+      ],
+      "findings": []
+    },
+    {
+      "id": "dp5-77",
+      "name": "Turtwig",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [],
+      "effectTypes": [
+        "noop"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [
+        "v07247-majestic-dawn-stage1.test.cjs",
+        "v07248-majestic-dawn-continuation.test.cjs"
+      ],
+      "findings": []
+    },
+    {
+      "id": "dp5-78",
+      "name": "Turtwig",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 1,
+      "abilityCount": 0,
+      "riskTags": [],
+      "effectTypes": [
+        "noop"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [
+        "v07247-majestic-dawn-stage1.test.cjs",
+        "v07248-majestic-dawn-continuation.test.cjs"
+      ],
+      "findings": []
+    },
+    {
+      "id": "dp5-79",
+      "name": "Dawn Stadium",
+      "kind": "trainer",
+      "battleEnabled": true,
+      "attackCount": 0,
+      "abilityCount": 0,
+      "riskTags": [],
+      "effectTypes": [
+        "noop"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [
+        "v07248-majestic-dawn-continuation.test.cjs"
+      ],
+      "findings": [
+        {
+          "severity": "review",
+          "rule": "C-AUDIT-002",
+          "message": "card effect: no-op Trainer/Stadium effect; verify shared continuous rule."
+        }
+      ]
+    },
+    {
+      "id": "dp5-80",
+      "name": "Dusk Ball",
+      "kind": "trainer",
+      "battleEnabled": true,
+      "attackCount": 0,
+      "abilityCount": 0,
+      "riskTags": [
+        "choice"
+      ],
+      "effectTypes": [
+        "neoRule"
+      ],
+      "customRules": [
+        "dp2:110:dusk"
+      ],
+      "testFilesMentioningId": [
+        "v07247-majestic-dawn-stage1.test.cjs",
+        "v07248-majestic-dawn-continuation.test.cjs"
+      ],
+      "findings": []
+    },
+    {
+      "id": "dp5-81",
+      "name": "Energy Restore",
+      "kind": "trainer",
+      "battleEnabled": true,
+      "attackCount": 0,
+      "abilityCount": 0,
+      "riskTags": [
+        "energyMovement",
+        "coin"
+      ],
+      "effectTypes": [
+        "neoRule"
+      ],
+      "customRules": [
+        "dp1:106:energyRestore"
+      ],
+      "testFilesMentioningId": [],
+      "findings": []
+    },
+    {
+      "id": "dp5-82",
+      "name": "Fossil Excavator",
+      "kind": "trainer",
+      "battleEnabled": true,
+      "attackCount": 0,
+      "abilityCount": 0,
+      "riskTags": [
+        "deckSearch"
+      ],
+      "effectTypes": [
+        "neoRule"
+      ],
+      "customRules": [
+        "dp2:111:fossilExcavator"
+      ],
+      "testFilesMentioningId": [],
+      "findings": []
+    },
+    {
+      "id": "dp5-83",
+      "name": "Mom's Kindness",
+      "kind": "trainer",
+      "battleEnabled": true,
+      "attackCount": 0,
+      "abilityCount": 0,
+      "riskTags": [],
+      "effectTypes": [
+        "draw"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [
+        "v07247-majestic-dawn-stage1.test.cjs",
+        "v07248-majestic-dawn-continuation.test.cjs"
+      ],
+      "findings": []
+    },
+    {
+      "id": "dp5-84",
+      "name": "Old Amber",
+      "kind": "trainer",
+      "battleEnabled": true,
+      "attackCount": 0,
+      "abilityCount": 1,
+      "riskTags": [],
+      "effectTypes": [
+        "playFossil"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [
+        "v07248-majestic-dawn-continuation.test.cjs"
+      ],
+      "findings": []
+    },
+    {
+      "id": "dp5-85",
+      "name": "Poké Ball",
+      "kind": "trainer",
+      "battleEnabled": true,
+      "attackCount": 0,
+      "abilityCount": 0,
+      "riskTags": [
+        "deckSearch",
+        "coin"
+      ],
+      "effectTypes": [
+        "coinFlip",
+        "searchChosen",
+        "noop"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [],
+      "findings": []
+    },
+    {
+      "id": "dp5-86",
+      "name": "Quick Ball",
+      "kind": "trainer",
+      "battleEnabled": true,
+      "attackCount": 0,
+      "abilityCount": 0,
+      "riskTags": [
+        "privacy"
+      ],
+      "effectTypes": [
+        "neoRule"
+      ],
+      "customRules": [
+        "dp2:114:quick"
+      ],
+      "testFilesMentioningId": [],
+      "findings": []
+    },
+    {
+      "id": "dp5-87",
+      "name": "Super Scoop Up",
+      "kind": "trainer",
+      "battleEnabled": true,
+      "attackCount": 0,
+      "abilityCount": 0,
+      "riskTags": [
+        "coin"
+      ],
+      "effectTypes": [
+        "coinFlip",
+        "scoopUp",
+        "noop"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [],
+      "findings": []
+    },
+    {
+      "id": "dp5-88",
+      "name": "Warp Point",
+      "kind": "trainer",
+      "battleEnabled": true,
+      "attackCount": 0,
+      "abilityCount": 0,
+      "riskTags": [],
+      "effectTypes": [
+        "sequence",
+        "forceOpponentSwitch",
+        "neoRule"
+      ],
+      "customRules": [
+        "dp1:116:ownSwitch"
+      ],
+      "testFilesMentioningId": [],
+      "findings": []
+    },
+    {
+      "id": "dp5-89",
+      "name": "Dome Fossil",
+      "kind": "trainer",
+      "battleEnabled": true,
+      "attackCount": 0,
+      "abilityCount": 1,
+      "riskTags": [
+        "energyMovement",
+        "deckSearch"
+      ],
+      "effectTypes": [
+        "playFossil"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [
+        "v07248-majestic-dawn-continuation.test.cjs"
+      ],
+      "findings": []
+    },
+    {
+      "id": "dp5-90",
+      "name": "Energy Search",
+      "kind": "trainer",
+      "battleEnabled": true,
+      "attackCount": 0,
+      "abilityCount": 0,
+      "riskTags": [
+        "energyMovement",
+        "deckSearch"
+      ],
+      "effectTypes": [
+        "neoRule"
+      ],
+      "customRules": [
+        "ex1:basicSearch1"
+      ],
+      "testFilesMentioningId": [],
+      "findings": [
+        {
+          "severity": "review",
+          "rule": "C-AUDIT-002",
+          "message": "card effect: custom rule ex1:basicSearch1 has no obvious source literal; inspect dispatcher."
+        }
+      ]
+    },
+    {
+      "id": "dp5-91",
+      "name": "Helix Fossil",
+      "kind": "trainer",
+      "battleEnabled": true,
+      "attackCount": 0,
+      "abilityCount": 1,
+      "riskTags": [
+        "energyMovement",
+        "deckSearch"
+      ],
+      "effectTypes": [
+        "playFossil"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [
+        "v07248-majestic-dawn-continuation.test.cjs"
+      ],
+      "findings": []
+    },
+    {
+      "id": "dp5-92",
+      "name": "Call Energy",
+      "kind": "energy",
+      "battleEnabled": true,
+      "attackCount": 0,
+      "abilityCount": 0,
+      "riskTags": [
+        "choice"
+      ],
+      "effectTypes": [
+        "specialEnergy"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [
+        "v07248-majestic-dawn-continuation.test.cjs"
+      ],
+      "findings": []
+    },
+    {
+      "id": "dp5-93",
+      "name": "Darkness Energy",
+      "kind": "energy",
+      "battleEnabled": true,
+      "attackCount": 0,
+      "abilityCount": 0,
+      "riskTags": [
+        "timing"
+      ],
+      "effectTypes": [
+        "specialEnergy"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [
+        "v07247-majestic-dawn-stage1.test.cjs",
+        "v07248-majestic-dawn-continuation.test.cjs"
+      ],
+      "findings": []
+    },
+    {
+      "id": "dp5-94",
+      "name": "Health Energy",
+      "kind": "energy",
+      "battleEnabled": true,
+      "attackCount": 0,
+      "abilityCount": 0,
+      "riskTags": [
+        "timing"
+      ],
+      "effectTypes": [
+        "specialEnergy"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [
+        "v07248-majestic-dawn-continuation.test.cjs"
+      ],
+      "findings": []
+    },
+    {
+      "id": "dp5-95",
+      "name": "Metal Energy",
+      "kind": "energy",
+      "battleEnabled": true,
+      "attackCount": 0,
+      "abilityCount": 0,
+      "riskTags": [],
+      "effectTypes": [
+        "specialEnergy"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [
+        "v07247-majestic-dawn-stage1.test.cjs"
+      ],
+      "findings": []
+    },
+    {
+      "id": "dp5-96",
+      "name": "Recover Energy",
+      "kind": "energy",
+      "battleEnabled": true,
+      "attackCount": 0,
+      "abilityCount": 0,
+      "riskTags": [
+        "timing"
+      ],
+      "effectTypes": [
+        "specialEnergy"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [
+        "v07248-majestic-dawn-continuation.test.cjs"
+      ],
+      "findings": []
+    },
+    {
+      "id": "dp5-97",
+      "name": "Garchomp LV.X",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 1,
+      "abilityCount": 1,
+      "riskTags": [
+        "choice",
+        "energyMovement",
+        "coin"
+      ],
+      "effectTypes": [
+        "neoRule"
+      ],
+      "customRules": [
+        "dp5:97:restore",
+        "dp5:97:dragonPulse"
+      ],
+      "testFilesMentioningId": [
+        "v07248-majestic-dawn-continuation.test.cjs"
+      ],
+      "findings": []
+    },
+    {
+      "id": "dp5-98",
+      "name": "Glaceon LV.X",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 1,
+      "abilityCount": 1,
+      "riskTags": [
+        "coin"
+      ],
+      "effectTypes": [
+        "coinFlip",
+        "benchDamage",
+        "noop"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [
+        "v07248-majestic-dawn-continuation.test.cjs"
+      ],
+      "findings": [
+        {
+          "severity": "review",
+          "rule": "C-AUDIT-002",
+          "message": "ability Chilly Breath: no-op effect; verify separately implemented passive/continuous rule."
+        }
+      ]
+    },
+    {
+      "id": "dp5-99",
+      "name": "Leafeon LV.X",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 1,
+      "abilityCount": 1,
+      "riskTags": [
+        "energyMovement"
+      ],
+      "effectTypes": [
+        "neoRule"
+      ],
+      "customRules": [
+        "dp5:99:verdantDance",
+        "dp5:99:energyForcing"
+      ],
+      "testFilesMentioningId": [
+        "v07248-majestic-dawn-continuation.test.cjs"
+      ],
+      "findings": []
+    },
+    {
+      "id": "dp5-100",
+      "name": "Porygon-Z LV.X",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 0,
+      "abilityCount": 2,
+      "riskTags": [
+        "choice",
+        "energyMovement",
+        "deckSearch"
+      ],
+      "effectTypes": [
+        "neoRule"
+      ],
+      "customRules": [
+        "dp5:100:modeCrash",
+        "dp5:100:decode"
+      ],
+      "testFilesMentioningId": [
+        "v07248-majestic-dawn-continuation.test.cjs"
+      ],
+      "findings": []
+    }
+  ],
+  "cpu": {
+    "attempted": 16,
+    "valid": 16,
+    "failures": []
+  },
+  "smoke": {
+    "attempted": 312,
+    "executed": 312,
+    "skipped": 0,
+    "skippedDetails": [],
+    "failures": []
+  }
+}

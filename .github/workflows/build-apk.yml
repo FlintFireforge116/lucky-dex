@@ -51,11 +51,11 @@ jobs:
       - name: Test Great Encounters independent card audit corrections
         run: node --test source/tests/v07246-great-encounters-independent-audit.test.cjs
 
-      - name: Test Majestic Dawn staged implementation and outcomes
-        run: node --test source/tests/v07247-majestic-dawn-stage1.test.cjs
+      - name: Test completed Majestic Dawn implementation, outcomes and CPU set filtering
+        run: node --test source/tests/v07247-majestic-dawn-stage1.test.cjs source/tests/v07248-majestic-dawn-continuation.test.cjs
 
-      - name: Audit Majestic Dawn staged card effects (using completed-set loaner)
-        run: node source/scripts/audit-classic-set.cjs --set dp5 --smoke --no-cpu --no-write
+      - name: Audit complete Majestic Dawn effects and CPU-generated decks
+        run: node source/scripts/audit-classic-set.cjs --set dp5 --smoke --no-write
 
       - name: Audit completed Great Encounters battle effects
         run: node source/scripts/audit-classic-set.cjs --set dp4 --smoke --no-write

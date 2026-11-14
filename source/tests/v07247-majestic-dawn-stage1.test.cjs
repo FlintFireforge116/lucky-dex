@@ -18,7 +18,7 @@ function hit(s,index=0){const a=core.legalActions(s,'player').find(x=>x.type==='
 function choose(s,pred){assert.equal(s.phase,'effectChoice');let options=core.legalActions(s,s.choiceSide).filter(x=>x.type==='effectChoice');assert.ok(options.length,'missing choices');const c=pred?options.find(pred):(options.find(x=>!x.choiceSkip)||options[0]);assert.ok(c,'missing target option: '+JSON.stringify(options));core.applyAction(s,s.choiceSide,c);return c;}
 function finish(s){for(let i=0;i<25&&s.phase==='effectChoice';i++)choose(s);assert.notEqual(s.phase,'effectChoice','stalled choice');}
 test('Majestic Dawn catalog has exact 100 print identities and correct gating',()=>{
- assert.equal(md.CARDS.length,100);assert.equal(new Set(md.CARDS.map(c=>c.id)).size,100);assert.equal(md.CARDS.filter(c=>c.battleEnabled).length,60);
+ assert.equal(md.CARDS.length,100);assert.equal(new Set(md.CARDS.map(c=>c.id)).size,100);assert.equal(md.CARDS.filter(c=>c.battleEnabled).length,100);
  for(const c of md.CARDS){assert.equal(data.cardById(c.id),c);assert.equal(c.image,`https://images.pokemontcg.io/dp5/${c.number}.png`);if(c.battleEnabled)for(const p of [...(c.attacks||[]),...(c.abilities||[]),c])if(p.effect)assert.deepEqual(fx.validateEffect(p.effect),[],c.id);}
  assert.ok(data.SETS.some(s=>s.id==='dp5'));
  assert.ok(opponent.SETS.includes('dp5'));
