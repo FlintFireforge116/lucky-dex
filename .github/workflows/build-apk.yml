@@ -36,6 +36,9 @@ jobs:
       - name: Test completed Secret Wonders card effects and outcomes
         run: node --test source/tests/v07237-secret-wonders-stage1.test.cjs source/tests/v07238-secret-wonders-stage2.test.cjs source/tests/v07239-secret-wonders-stage3.test.cjs source/tests/v07240-secret-wonders-completion.test.cjs source/tests/v07241-secret-wonders-independent-audit.test.cjs
 
+      - name: Check Classic Baby Evolution deck dependencies
+        run: node --test source/tests/v07242-classic-baby-evolution-deck-coherence.test.cjs
+
       - name: Audit completed Mysterious Treasures set
         run: node source/scripts/audit-classic-set.cjs --set dp2 --smoke --no-write
 

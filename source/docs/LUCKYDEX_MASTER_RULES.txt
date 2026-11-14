@@ -1,8 +1,8 @@
 LUCKYDEX — MASTER PROJECT RULES AND DEVELOPMENT CONTRACT
 =========================================================
-Document version: 2.33
+Document version: 2.35
 Compiled: 14 November 2026
-Current inspected source: v0.69.240. Mysterious Treasures dp2 is 124/124 enabled. Secret Wonders dp3 has 132/132 collector prints enabled after consolidated Stage 4 implementation. See SECRET_WONDERS_v0.69.240_COMPLETE.md. Earlier stage appendices remain historical records, not the current completion count. Automated source checks pass; independent card-by-card ruling audit and Android APK/device QA remain pending.
+Current inspected source: v0.69.242. Mysterious Treasures dp2 is 124/124 and Secret Wonders dp3 is 132/132 collector prints enabled. v0.69.241 documents the independent print-by-print Secret Wonders audit; v0.69.242 fixes Classic Baby Evolution autobuild dependencies. Source tests do not prove APK/device behaviour.
 Recommended repository location: ~/lucky-dex/source/docs/LUCKYDEX_MASTER_RULES.txt
 Project: LuckyDex — Android application/PWA, managed with Termux and GitHub
 
@@ -1830,3 +1830,32 @@ These checks do NOT prove every printed ruling or certify a real phone.
 2026-11-14 | 2.33 -> 2.34 | v0.69.241 | Independent Secret Wonders
 print-ledger and choice-card-art fixes, Furret/Nidoking/Golem corrections,
 selected-target damage calculation fixes, updated GitHub preflight.
+
+
+APPENDIX v2.35 — 14 NOVEMBER 2026 — v0.69.242 BABY EVOLUTION DECK DEPENDENCIES
+================================================================================
+[LOCKED] C-DECK-BABY-001 — BABY EVOLUTION PAIRING IN AUTOMATED CLASSIC DECKS
+  * Baby Evolution is a voluntary Basic-to-Basic Power from an actual card in hand.
+    Its target (Smoochum -> Jynx, Pichu -> Pikachu, etc.) is not encoded by
+    evolvesFrom and MUST be modelled as a separate deckbuilding dependency.
+  * When auto-building or filling/repairing, never add an orphan Baby Evolution
+    print without at least one owned, battle-ready compatible Basic target.
+    Selection must obey enabled set filters and the chosen Energy plan.
+  * When a Baby Evolution Pokémon is the featured/core card, reserve real
+    copies of the target early, before generic support/Trainer filler. For a
+    4-copy Baby core, prefer at least two target copies when available.
+  * Do not add a third Basic Energy Zone type solely to support a Baby target.
+    The target should have at least one attack payable by the chosen zone.
+  * A saved draft containing a Baby with no partner can be repaired by adding
+    a valid target; if that target is unowned/unavailable, exclude the Baby
+    from the generated repair rather than silently preserve a dead combo.
+  * Manual decks are not forbidden from including standalone Baby Pokémon:
+    this is a recommendation/dependency rule for the auto-builder, not a new
+    official gameplay restriction.
+  * The shared Classic auto-builder serves both Test Lab and CPU opponents.
+    Maintain a versioned regression test for Secret Wonders Smoochum/Jynx,
+    older Baby Evolution lines, missing-target pools and Fill/repair.
+[CURRENT] Source tests/v07242-classic-baby-evolution-deck-coherence.test.cjs
+checks the above; Android Test Lab still needs device verification.
+2026-11-14 | 2.34 -> 2.35 | v0.69.242 | Classic auto-builder Baby Evolution
+dependency pairing for Psychic Smoochum/Jynx and cross-set equivalents.

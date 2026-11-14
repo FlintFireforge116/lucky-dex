@@ -73,6 +73,21 @@ function specialCosts(_cards){return {D:0,M:0};} // Basic Darkness/Metal satisfi
 function classicCardName(name){return String(name||'').replace(/[’]/g,"'").replace(/\s+(?=[♀♂])/g,'').replace(/\s*δ\s*$/u,'').trim();}
 function classicEvolutionMatches(baseName,parentName){const a=classicCardName(baseName),p=classicCardName(parentName);return a===p||(p==='Burmy'&&/^Burmy (?:Plant|Sandy|Trash) Cloak$/.test(a));}
 function parentKeys(baseName){const n=classicCardName(baseName);return /^Burmy (?:Plant|Sandy|Trash) Cloak$/.test(n)?[n,'Burmy']:[n];}
+// Baby Evolution is a special, voluntary Basic -> Basic evolution. It does
+// not use evolvesFrom, so ordinary evolution-chain completion cannot detect
+// missing partners (e.g. Smoochum -> Jynx). Treat it as a *deck dependency*.
+// Fallbacks cover older prints whose ability text is empty or truncated.
+const BABY_EVOLUTION_FAMILIES=Object.freeze({
+ Azurill:['Marill'],Bonsly:['Sudowoodo'],Budew:['Roselia'],Chingling:['Chimecho'],
+ Cleffa:['Clefairy'],Elekid:['Electabuzz'],Happiny:['Chansey'],Igglybuff:['Jigglypuff'],
+ Magby:['Magmar'],Mantyke:['Mantine'],Munchlax:['Snorlax'],'Mime Jr.':['Mr. Mime'],
+ Pichu:['Pikachu'],Smoochum:['Jynx'],Tyrogue:['Hitmonchan','Hitmonlee','Hitmontop'],
+ Wynaut:['Wobbuffet']
+});
+function babyEvolutionTargets(card){
+ if(card?.kind!=='pokemon'||!(card.abilities||[]).some(a=>/^Baby Evolution$/i.test(a.name||'')))return [];
+ const name=classicCardName(card.name);return BABY_EVOLUTION_FAMILIES[name]||[];
+}
 function familyLine(card,pool){
  if(!card||card.kind!=='pokemon')return [];
  const line=[card],seen=new Set([card.id]);let cur=card;
@@ -175,6 +190,17 @@ function buildDeck(rows,options={}){
  if(!pokemonPool.some(c=>c.stage==='Basic'))return fail('No owned battle-ready Basic Pokémon are available.');
  const requested=[...new Set((options.types||[]).filter(t=>ARCHETYPE_TYPES.includes(t)))].slice(0,2),requestedEnergy=requested.filter(t=>decks.ENERGY_TYPES.includes(t)),allowMixedEnergy=options.allowMixedEnergy===true,existing=Array.isArray(options.cards)?options.cards:[],focus=classic.cardById(options.focusCardId),random=rng(options.randomSeed),excluded=new Set(options.excludeArchetypes||[]);
  const playableChildren=new Map(),finishMemo=new Map();
+ // A Baby Evolution partner must be a genuinely owned, battle-enabled
+ // Basic target in the selected sets. Since this is an unusual evolution,
+ // the target remains Basic in the catalog and needs explicit deck pairing.
+ const playableBabyTargets=(baby,energy=[])=>{
+   const names=babyEvolutionTargets(baby);
+   if(!names.length)return [];
+   return pokemonPool.filter(c=>c.stage==='Basic'&&names.includes(classicCardName(c.name))&&
+     (!energy.length||!(c.attacks||[]).length||(c.attacks||[]).some(a=>[...String(a.cost||'')].every(symbol=>symbol==='C'||!CODE_TO_TYPE[symbol]||energy.includes(CODE_TO_TYPE[symbol])))))
+     .sort((a,b)=>Number(b.setId===baby.setId)-Number(a.setId===baby.setId)||
+       Number((b.types||[]).some(t=>(baby.types||[]).includes(t)))-Number((a.types||[]).some(t=>(baby.types||[]).includes(t)))||a.id.localeCompare(b.id));
+ };
  for(const c of pokemonPool)if(c.evolvesFrom){const key=classicCardName(c.evolvesFrom);if(!playableChildren.has(key))playableChildren.set(key,[]);playableChildren.get(key).push(c);}
  const canFinishInPool=c=>{
   // A viable starting Basic must lead to a useful terminal Pokémon, not
@@ -204,6 +230,7 @@ function buildDeck(rows,options={}){
  const isEligible=c=>{
   const line=familyLine(c,evolutionPool),required=familyEssentialTypes(line),special=specialCosts(line);
   if(isStage2OnlySupport(c)&&!hasEligibleBeneficiary(c))return false;
+  if(babyEvolutionTargets(c).length&&!playableBabyTargets(c,requestedEnergy.length?requestedEnergy:required).length)return false;
   const dual=decks.dualArmorProfile(c),all=[...new Set([...requestedEnergy,...required])];
   // In EX Power Keepers-only builds, a one-type selection must not recruit
   // a Fire/Water Salamence or Grass/Lightning Flygon and then quietly add a
@@ -231,6 +258,8 @@ function buildDeck(rows,options={}){
  if(rarityFocus!=='any'||basicOnly)candidates=candidates.filter(c=>matchesRarity(c,rarityFocus,basicOnly));
 
  if(focus?.kind==='pokemon'){
+   if(babyEvolutionTargets(focus).length&&!playableBabyTargets(focus,requestedEnergy).length)
+     return fail(`Cannot build around ${focus.name}: its Baby Evolution needs an owned, battle-ready ${babyEvolutionTargets(focus).join(' / ')} in the selected sets and Energy plan.`);
    if(isStage2OnlySupport(focus)&&!hasEligibleBeneficiary(focus))
      return fail(`Cannot build around ${focus.name}: its Body/Power supports Stage 2 Pokémon-ex, but no complete Stage 2 ex line fits the chosen sets, owned cards and Energy types. Widen the type/set selection.`);
    const focused=candidates.filter(c=>familyLine(c,evolutionPool).some(member=>classicCardName(member.name)===classicCardName(focus.name)&&member.stage===focus.stage));
@@ -332,20 +361,46 @@ function buildDeck(rows,options={}){
    return true;
  }
  function room(card){const copiesOfName=[...counts].filter(([id])=>classicCardName(classic.cardById(id)?.name)===classicCardName(card.name)).reduce((sum,[,count])=>sum+count,0);const starSlots=card.pokemonStar?Math.max(0,1-cards.filter(id=>classic.cardById(id)?.pokemonStar).length):4;return Math.max(0,Math.min(starSlots,(card.name.startsWith('Shining ')?1:4)-copiesOfName,Number(owned.get(card.id)||0)-(counts.get(card.id)||0)));}
- function add(card,n=1,fromEvolutionLine=false){if(card?.kind==='trainer'&&!fromEvolutionLine&&!trainerIsUseful(card))return 0;if(card?.trainerType==='Stadium'&&cards.filter(id=>classic.cardById(id)?.trainerType==='Stadium').length>=1&&!cards.includes(card.id))return 0;let added=0;while(added<n&&cards.length<30&&room(card)>0&&!(card?.trainerType==='Stadium'&&cards.filter(id=>classic.cardById(id)?.trainerType==='Stadium').length>=2)){cards.push(card.id);counts.set(card.id,(counts.get(card.id)||0)+1);added++;}return added;}
+ function hasBabyPartner(card){
+   const names=babyEvolutionTargets(card);
+   return !names.length||cards.some(id=>names.includes(classicCardName(classic.cardById(id)?.name)));
+ }
+ function add(card,n=1,fromEvolutionLine=false){if(!fromEvolutionLine&&!hasBabyPartner(card))return 0;if(card?.kind==='trainer'&&!fromEvolutionLine&&!trainerIsUseful(card))return 0;if(card?.trainerType==='Stadium'&&cards.filter(id=>classic.cardById(id)?.trainerType==='Stadium').length>=1&&!cards.includes(card.id))return 0;let added=0;while(added<n&&cards.length<30&&room(card)>0&&!(card?.trainerType==='Stadium'&&cards.filter(id=>classic.cardById(id)?.trainerType==='Stadium').length>=2)){cards.push(card.id);counts.set(card.id,(counts.get(card.id)||0)+1);added++;}return added;}
  function addLine(line,copies){if(!line.length||line.some(c=>Number(owned.get(c.id)||0)<1))return false;for(let copy=0;copy<copies;copy++){if(line.some(c=>room(c)<1)||cards.length+line.length>30)break;for(const c of line)add(c,1,true);}return line.every(c=>(counts.get(c.id)||0)>0);}
  // Preserve legal existing cards first for Fill / repair, but never exceed ownership/copy limits.
- for(const id of existing){const c=classic.cardById(id);if(c&&allowedInSetPool(c,scope)&&c.battleEnabled&&c.deckEligible!==false)add(c,1);}
+ for(const id of existing){const c=classic.cardById(id);if(c&&allowedInSetPool(c,scope)&&c.battleEnabled&&c.deckEligible!==false&&!babyEvolutionTargets(c).length)add(c,1);}
+ // Existing draft cards are preserved where coherent. For a manually
+ // saved Baby-first list, insert the playable partner before the Baby; never
+ // silently preserve an orphaned Baby in a generated/fill result.
+ for(const id of existing){const c=classic.cardById(id);if(!c||!allowedInSetPool(c,scope)||!c.battleEnabled||c.deckEligible===false||!babyEvolutionTargets(c).length)continue;
+   if(!hasBabyPartner(c)){
+     const partner=playableBabyTargets(c,selectedTypes)[0];
+     if(partner&&!cards.includes(partner.id)&&cards.length<29)add(partner,1,true);
+   }
+   add(c,1);
+ }
  // Ensure any preserved evolutions gain their missing prerequisites.
  for(const id of [...cards]){const c=classic.cardById(id);if(c?.kind==='pokemon'&&c.stage!=='Basic'){const line=familyLine(c,evolutionPool);if(line.length)for(const member of line.slice(0,-1))if(!(counts.get(member.id)||0))add(member,1,member?.effect?.type==='playFossil');}}
  const mainCopies=mainLine.length>=2?3:4;addLine(mainLine,mainCopies);
+ // Reserve the Baby's real Basic evolution partner *before* generic
+ // Pokémon and Trainers fill the deck. This is not an ordinary evolution line
+ // and must not be inferred from the evolvesFrom field.
+ if(mainLine.some(c=>babyEvolutionTargets(c).length)){
+   for(const baby of mainLine.filter(c=>babyEvolutionTargets(c).length)){
+     const partner=playableBabyTargets(baby,selectedTypes)[0];
+     if(!partner)return fail(`Cannot build around ${baby.name} without its Baby Evolution partner in the selected, owned card pool.`);
+     const babyCopies=counts.get(baby.id)||0;
+     if(!hasBabyPartner(baby)&&!add(partner,Math.min(2,Math.max(1,Math.ceil(babyCopies/2))),true))
+       return fail(`Cannot add ${baby.name}'s Baby Evolution partner ${partner.name} to this deck.`);
+   }
+ }
  // Baby evolution support is not an ordinary Stage-1 predecessor: printed
  // Azurill->Marill and Budew->Roselia are optional in-hand Powers. A focus
  // on their explicit payoffs should still receive playable Baby copies.
  if(scope.includes('dp1')&&!basicOnly){
    const names=[...new Set(mainLine.flatMap(c=>c.deckMeta?.babyEvolutionSupport||[]))];
    for(const name of names){const baby=pokemonPool.find(c=>c.name===name&&c.setId==='dp1'&&c.battleEnabled);
-     if(baby&&room(baby)>0)add(baby,Math.min(2,room(baby)),true);
+     if(baby&&hasBabyPartner(baby)&&room(baby)>0)add(baby,Math.min(2,room(baby)));
    }
  }
  // The supported Stage 2 ex is the win condition in an Xatu/Altaria/Swellow
@@ -720,6 +775,10 @@ function buildDeck(rows,options={}){
    }
    return fail(`Could only assemble ${cards.length}/30 compatible owned cards. Add more Classic TCG cards or widen the Energy type filter.`);
  }
+ // A Baby Evolution target is a necessary deck-building dependency,
+ // irrespective of whether its printed attack can be used alone.
+ const unpairedBaby=cards.map(classic.cardById).find(c=>babyEvolutionTargets(c).length&&!hasBabyPartner(c));
+ if(unpairedBaby)return fail(`${unpairedBaby.name} was included without a playable Baby Evolution partner.`);
  const legal=decks.validateDraft(cards,rows,{requireFull:true});if(!legal.ok)return {ok:false,cards,energyTypes:selectedTypes,errors:legal.errors,warnings:[],strategy:''};
  const analysis=decks.analyzeDeck(cards),conditionalDual=requestedEnergy.length===2&&requestedEnergy.every(type=>conditionalAttackTypes(main).includes(type)),
   energyTypes=(main.pokemonEx&&main.stage==='Stage 2')||stage2Beneficiary||conditionalPayoffTypes.some(t=>selectedTypes.includes(t))||requestedEnergy.length===1||conditionalDual||lineEnergy.length>=2?selectedTypes.slice(0,2):(allowMixedEnergy&&requestedEnergy.length===2?requestedEnergy:neededTypes().length?analysis.recommendedEnergyTypes.slice(0,2):selectedTypes.slice(0,2));
