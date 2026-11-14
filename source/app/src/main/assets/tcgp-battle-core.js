@@ -505,6 +505,10 @@
   }
   function triggerAbilities(state,event,side,onlySource,eventData){
     const ss=state.sides[side],meta=eventData||{};
+    // Record real from-hand attachments for printed same-turn attack conditions.
+    // Energy Zone attachments deliberately do not count as from-hand events.
+    if(event==='energyAttached'&&onlySource&&meta.fromHand){onlySource.lastHandEnergyType=meta.energyType;onlySource.lastHandEnergyAttachedTurn=state.turnNumber;}
+
     if(event==='evolved'&&state.format==='classic'&&eventData?.fromHand){const foe=side==='player'?'opponent':'player';for(const source of pokemonOn(state.sides[foe]))if(source.cardId==='ex7-2'&&!effects.abilitiesSuppressed(state,foe,source,data.cardById)&&Number(source.ex7DarkestImpulseTurn)!==state.turnNumber){source.ex7DarkestImpulseTurn=state.turnNumber;onlySource.damage=Number(onlySource.damage||0)+20;state.log.push({type:'ex7DarkestImpulse',side:foe,damaged:onlySource.cardId});}}
     if(event==='evolved'&&state.format==='classic'&&onlySource?.cardId==='ex7-1'&&state.sides[side]?.active===onlySource&&!effects.abilitiesSuppressed(state,side,onlySource,data.cardById)){const defender=state.sides[side==='player'?'opponent':'player']?.active;if(defender)defender.conditions={...(defender.conditions||{}),paralysis:{appliedTurn:state.turnNumber}};}
     if(event==='evolved'&&state.stadium?.cardId==='gym2-123'&&onlySource&&data.cardById(onlySource.cardId)?.name?.startsWith("Giovanni's"))onlySource.damage=Math.max(0,Number(onlySource.damage||0)-20);
@@ -1097,6 +1101,10 @@
         // Altaria ex Extra Boost is also HAND-only, and it needs an allied
         // Stage 2 Pokémon-ex. Hide the Power when it has no legal outcome,
         // for human players and all CPU difficulty settings alike.
+        // Secret Wonders: do not offer an activated Power with no legal result.
+        if(source.cardId==='dp3-2'&&!s.hand.some(ref=>{const c=data.cardById(ref.cardId);return c?.basicEnergy&&c.subtype==='Water';}))return;
+        if(source.cardId==='dp3-8'&&(!Number(source.damage||0)||!pokemonOn(s).some(p=>data.cardById(p.cardId)?.name==='Gastrodon West Sea')))return;
+        if(source.cardId==='dp3-25'&&!(Number(s.energyDiscard?.Lightning||0)>0||(s.discard||[]).some(ref=>{const c=data.cardById(ref.cardId);return c?.kind==='energy'&&(c.subtype==='Lightning'||Number(c.effect?.provides?.Lightning||0)>0);})))return;
         if(source.cardId==='dp3-60'&&(!s.active||source!==s.active||Number(source.damage||0)<=0||Number(effectiveEnergy(state,side==='player'?'opponent':'player',state.sides[side==='player'?'opponent':'player'].active).Water||0)<=0))return;
         if(source.cardId==='ex15-90'&&(!s.hand.some(ref=>data.cardById(ref.cardId)?.basicEnergy)||
           !pokemonOn(s).some(p=>{const c=data.cardById(p.cardId);return c?.pokemonEx&&c.stage==='Stage 2';})))return;
@@ -2397,7 +2405,7 @@
       gymReactiveDamage(state,foeSide,defender,side,s.active,damage);
       if(state.format==='classic'&&damage>0){
         // EX Unseen Forces reactive Stages of Evolution / Silver Sparkle.
-        if(defender?.cardId==='ex10-105'&&!effects.abilitiesSuppressed(state,foeSide,defender,data.cardById)){
+        if(['ex10-105','dp3-37'].includes(defender?.cardId)&&!effects.abilitiesSuppressed(state,foeSide,defender,data.cardById)){
           triggerAbilities(state,'damaged',foeSide,defender,{source:{side,uid:s.active?.uid,attack:attack.name},damage});
         }
         if(defender?.cardId==='ex10-26'&&Array.isArray(defender.stack)&&defender.stack.length>1&&!effects.abilitiesSuppressed(state,foeSide,defender,data.cardById)&&foe.active===defender){

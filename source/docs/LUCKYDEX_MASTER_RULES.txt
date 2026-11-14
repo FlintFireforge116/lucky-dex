@@ -1,8 +1,8 @@
 LUCKYDEX — MASTER PROJECT RULES AND DEVELOPMENT CONTRACT
 =========================================================
-Document version: 2.31
-Compiled: 13 November 2026
-Current inspected source: v0.69.238. Mysterious Treasures dp2 is fully registered and battle-enabled at 124/124. Secret Wonders dp3 has 132 collector prints; 72 are battle-enabled and 60 explicitly gated while mechanics are implemented. See SECRET_WONDERS_v0.69.238_STAGE2.md. Historical appendices remain part of the project record. Android APK and device QA remain pending.
+Document version: 2.32
+Compiled: 14 November 2026
+Current inspected source: v0.69.239. Mysterious Treasures dp2 is fully registered and battle-enabled at 124/124. Secret Wonders dp3 has 132 collector prints; 88 are battle-enabled and 44 explicitly gated while mechanics are implemented. See SECRET_WONDERS_v0.69.239_STAGE3.md. Historical appendices remain part of the project record. Android APK and device QA remain pending.
 Recommended repository location: ~/lucky-dex/source/docs/LUCKYDEX_MASTER_RULES.txt
 Project: LuckyDex — Android application/PWA, managed with Termux and GitHub
 
@@ -1671,3 +1671,61 @@ enable any with placeholder effects.
 playable, 26 newly enabled, 234/234 synthetic player/CPU action paths,
 new outcome tests and repaired multi-cloak evolution. Android APK
 and device choice/reveal presentation remain unverified.
+
+
+=======================================================================
+APPENDIX v2.32 — 14 NOVEMBER 2026 — v0.69.239 SECRET WONDERS STAGE 3
+=======================================================================
+[CURRENT] Secret Wonders Stage 3 has 88/132 collector-number cards with
+battleEnabled=true; 44 are deliberately gated. This batch implements 16
+additional prints: #2 Blastoise, #5 Flygon, #8-9 both Gastrodon,
+#13 Ludicolo, #14 Lugia, #21 Absol, #25 Electivire, #31 Magmortar,
+#37 Sharpedo, #48 Donphan, #55 Miltank, #63 Sableye, #84 Corsola,
+#96 Natu, and #125 Roseanne's Research.
+
+[LOCKED] C-TURN-014: A Poké-Power whose printed effect says its user's
+turn ends must end the turn after all physical hand Energy attachments
+and any required player selections finish. An attachment that says
+"from your hand" only sees actual Basic Energy cards in hand; Energy
+Zone charges are distinct. For Waterlog, each card and recipient is
+chosen by the user, and finishing ends that player's turn. An absent
+eligible card must not create an unusable Power menu.
+
+[LOCKED] C-EVENT-015: Damage retaliation, hand Energy attachment and
+between-turn Poké-Bodies must be driven by actual resolution events, not
+by approximations based on current Energy totals. Flygon/Sharpedo-style
+triggered reactions must check active position and printed defending
+type; Magmortar Flame Body requires physical Fire Energy from hand and
+is not triggered by an Energy Zone attachment. Flygon Sand Sonic checks
+same-turn Fighting Energy attached from hand, not just Fighting Energy
+present. Preserve trigger-before-KO where the card states "even if KO".
+
+[LOCKED] C-CHOICE-016: Multiple recipient Pokémon, top-deck card order,
+random concealed hand removal, optional repeat actions and two distinct
+Benched damage recipients require actual choice/zone flows. Donphan
+Rapid Spin must permit the opponent to choose their replacement before
+the attacking player chooses their own. Miltank Healing Milk must not
+open a dead-end selection when nothing can be healed. Roseanne's
+Research must retain the chosen basic Pokémon/Energy refs (or the
+explicit approved Energy Zone adaptation) and shuffle the deck.
+
+[CURRENT] Stage 3 adds source-level tests in
+source/tests/v07239-secret-wonders-stage3.test.cjs, runs them in GitHub
+APK preflight and refreshes generated/classic-audit-dp3.{md,json}.
+The staged auditor checks enabled card effect schemas and two-sided
+attack/Trainer action paths using a known-good donor loaner deck.
+It does NOT certify Secret Wonders-only CPU deck legality, all printed
+rulings, Android UI animations or every cross-set interaction. Keep all
+44 gated cards out of player/CPU competitive deck selection until their
+effects have real implementation and passing outcome tests.
+
+[CHECK] Next Stage 4 should prioritise remaining unusual effects such as
+Gardevoir Telepass, Gallade face-up Prize effects, Ho-Oh Phoenix Turn,
+Unown word combinations and Gardevoir/Honchkrow LV.X. These require
+correct player/CPU selections, interruption timing, and visible UI
+state; do not mark them enabled without exact end-state testing.
+
+2026-11-14 | 2.31 -> 2.32 | v0.69.239 | Added 16 Secret Wonders
+cards (88/132), 19 focused Stage 3 tests, live from-hand Energy event
+tracking and pre-KO reactive damage, end-turn/choice gates and expanded
+GitHub preflight. Android APK/device UI remains unverified.

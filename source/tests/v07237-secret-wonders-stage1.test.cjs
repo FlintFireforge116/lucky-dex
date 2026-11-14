@@ -22,9 +22,9 @@ function board(self='dp3-76',foe='dp1-17',side='player',seed=23){
 function attack(s,side,index,target){const actions=core.legalActions(s,side);const a=actions.find(x=>x.type==='attack'&&x.attackIndex===index&&(!target||x.target===target));assert.ok(a,`attack ${index} missing for ${side}: `+JSON.stringify(actions.filter(x=>x.type==='attack')));core.applyAction(s,side,a);return a;}
 function choices(s,fn){let count=0;while(s.phase==='effectChoice'&&count++<32){const acts=core.legalActions(s,s.choiceSide).filter(a=>a.type==='effectChoice');assert.ok(acts.length,'no effect choices');core.applyAction(s,s.choiceSide,fn?.(acts,s)||acts.find(a=>!a.choiceSkip)||acts[0]);}assert.notEqual(s.phase,'effectChoice','choice stalled');}
 
-test('Secret Wonders 132 unique prints registered in game, 72 verified-stage flags, and incomplete cards gated',()=>{
+test('Secret Wonders 132 unique prints registered in game, current verified-stage flags, and incomplete cards gated',()=>{
  assert.equal(set.CARDS.length,132);assert.equal(new Set(set.CARDS.map(x=>x.id)).size,132);
- assert.equal(set.coverage().battleEnabled,72);assert.equal(set.coverage().gated.length,60);
+ assert.equal(set.coverage().battleEnabled,88);assert.equal(set.coverage().gated.length,44);
  for(let n=1;n<=132;n++){const c=data.cardById('dp3-'+n);assert.ok(c,n+' missing');assert.equal(c.setId,'dp3');assert.equal(Number(c.number),n);assert.ok(c.image.includes('dp3/'),c.id);assert.equal(c.deckEligible,c.battleEnabled,c.id);if(c.battleEnabled){if(c.kind==='pokemon'){for(const a of c.attacks)assert.deepEqual(effects.validateEffect(a.effect),[],c.id+': '+a.name);for(const a of c.abilities||[])assert.deepEqual(effects.validateEffect(a.effect),[],c.id+': '+a.name);}else assert.deepEqual(effects.validateEffect(c.effect),[],c.id);}}
  for(const id of [1,7,18,101,131,132])assert.equal(data.cardById('dp3-'+id).battleEnabled,false,'unverified mechanics remain gated');
  for(const id of [49,64,76,81,85,90,92,100,112,113,119,120,121,123,124,127,128,129,130])assert.equal(data.cardById('dp3-'+id).battleEnabled,true,id);
@@ -35,7 +35,7 @@ test('Secret Wonders 132 unique prints registered in game, 72 verified-stage fla
 test('independent auditor reports no card errors and completes every synthetic enabled attack and trainer both sides',()=>{
  const r=audit.auditSet('dp3',{data,fx:effects,core,opponents:opp,smoke:true,cpu:false,engineText:fs.readFileSync(path.join(__dirname,'../app/src/main/assets/tcgp-battle-effects.js'),'utf8')});
  assert.equal(r.summary.errors,0,JSON.stringify(r.findings.filter(f=>f.severity==='error')));assert.equal(r.summary.total,132);
- assert.equal(r.summary.counts.enabled,72);assert.equal(r.smoke.executed,r.smoke.attempted);assert.equal(r.smoke.skipped,0);assert.deepEqual(r.smoke.failures,[]);
+ assert.equal(r.summary.counts.enabled,88);assert.equal(r.smoke.executed,r.smoke.attempted);assert.equal(r.smoke.skipped,0);assert.deepEqual(r.smoke.failures,[]);
 });
 
 test('Bagon Rage counts damage counters, independent of attacker side',()=>{

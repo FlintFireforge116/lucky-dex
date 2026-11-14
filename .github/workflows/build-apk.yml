@@ -34,7 +34,7 @@ jobs:
         run: node --test source/tests/v07236-classic-card-auditor.test.cjs
 
       - name: Test Secret Wonders staged card effects and outcomes
-        run: node --test source/tests/v07237-secret-wonders-stage1.test.cjs source/tests/v07238-secret-wonders-stage2.test.cjs
+        run: node --test source/tests/v07237-secret-wonders-stage1.test.cjs source/tests/v07238-secret-wonders-stage2.test.cjs source/tests/v07239-secret-wonders-stage3.test.cjs
 
       - name: Audit completed Mysterious Treasures set
         run: node source/scripts/audit-classic-set.cjs --set dp2 --smoke --no-write

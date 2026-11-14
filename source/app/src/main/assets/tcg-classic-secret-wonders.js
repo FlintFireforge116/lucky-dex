@@ -1,6 +1,6 @@
 /* LuckyDex Classic TCG — Diamond & Pearl: Secret Wonders (dp3).
  * 132 printed cards (source: PokemonTCG/pokemon-tcg-data cards/en/dp3.json).
- * Stage 2: canonical collector identities, attack costs and art;
+ * Stage 3: canonical collector identities, attack costs and art;
  * only individually reviewed effects may be battle-enabled.
  */
 (function(root,factory){const api=factory();if(typeof module==='object'&&module.exports)module.exports=api;if(root)root.LuckyDexClassicTCGSecretWonders=api;})(typeof globalThis!=='undefined'?globalThis:this,function(){'use strict';
@@ -139,7 +139,7 @@ const RAW=`1|Ampharos|P|Stage 2|130|L|Flaaffy|F+30|M-20|3|Rare Holo|Cluster Bolt
 131|Gardevoir LV.X|P|Level-Up|130|P|Gardevoir|P×2||2|Rare Holo LV.X|Bring Down~PP~|Teleportation~Power
 132|Honchkrow LV.X|P|Level-Up|110|D|Honchkrow|L+30|F-20|0|Rare Holo LV.X|Feint Attack~CC~;Darkness Wing~DDC~60|`;
 const DATA=RAW.split('\n').map(row=>row.split('|'));
-const READY=new Set([30,38,60,68,86,104,106,122,126,17,33,41,42,43,45,46,57,59,61,65,78,79,80,95,107,111,49,51,54,58,62,64,74,75,76,77,81,82,83,85,87,88,89,90,91,92,93,94,97,98,99,100,102,103,105,108,110,112,113,115,116,117,118,119,120,121,123,124,127,128,129,130]);
+const READY=new Set([30,38,60,68,86,104,106,122,126,17,33,41,42,43,45,46,57,59,61,65,78,79,80,95,107,111,49,51,54,58,62,64,74,75,76,77,81,82,83,85,87,88,89,90,91,92,93,94,97,98,99,100,102,103,105,108,110,112,113,115,116,117,118,119,120,121,123,124,127,128,129,130,2,5,8,9,13,14,21,25,31,37,48,55,63,84,96,125]);
 const noop={type:'noop'};
 const flip=(heads,tails=noop)=>({type:'coinFlip',heads,tails});
 const seq=(...effects)=>({type:'sequence',effects});
@@ -147,6 +147,22 @@ const status=s=>({type:'status',target:'opponentActive',status:s});
 const extra=n=>({type:'bonusDamage',amount:n});
 const lock=(action,target='opponentActive',duration='opponentTurn')=>({type:'lock',action,target,duration});
 const EFFECTS={
+  2:[{type:'neoRule',rule:'dp3:2:hydroPump'}],
+  5:[{type:'neoRule',rule:'dp3:5:sandSonic'}],
+  8:[{type:'neoRule',rule:'dp3:8:dwindling'}],
+  9:[{type:'neoRule',rule:'dp3:9:raging'},{type:'neoRule',rule:'dp3:9:wildWaves'}],
+  13:[{type:'neoRule',rule:'dp3:13:naturePower'}],
+  14:[{type:'neoRule',rule:'dp3:14:silverWing'},{type:'neoRule',rule:'dp3:14:psychicDestruction'}],
+  21:[{type:'neoRule',rule:'dp3:21:balefulWind'},{type:'neoRule',rule:'dp3:21:raid'}],
+  25:[{type:'neoRule',rule:'dp3:25:discharge'}],
+  31:[{type:'energyDamage',source:'self',energyType:'Fire',amount:20,mode:'replace'},{type:'neoRule',rule:'dp3:31:fireballBazooka'}],
+  37:[{type:'neoRule',rule:'dp3:37:strikeWound'}],
+  48:[{type:'neoRule',rule:'dp3:48:rapidSpin'},{type:'neoRule',rule:'dp3:48:bashIn'}],
+  55:[{type:'neoRule',rule:'dp3:55:healingMilk'},{type:'coinDamage',coins:'untilTails',amount:20,mode:'replace'}],
+  63:[{type:'neoRule',rule:'dp3:63:rummage'},{type:'neoRule',rule:'dp3:63:shadowSneak'}],
+  84:[{type:'neoRule',rule:'dp3:84:rally'},noop],
+  96:[{type:'neoRule',rule:'dp3:96:botheringWave'},{type:'neoRule',rule:'dp3:96:futureSight'}],
+
  30:[{type:'status',target:'opponentActive',status:'paralysis',condition:{type:'damagedByAttackLastOpponentTurn'}},{type:'neoRule',rule:'dp3:30:lovelyKiss'}],
  38:[{type:'neoRule',rule:'dp3:38:petalDance'}],
  60:[{type:'benchDamage',side:'opponent',amount:20}],
@@ -206,6 +222,22 @@ const EFFECTS={
  118:[status('sleep'),seq({type:'damageRule',ignoreWeakness:true,ignoreResistance:true},{type:'selectedDamage',target:'opponentPokemon',amount:10})]
 };
 const PRINTS={
+  2:['Add 20 damage for each Water Energy attached beyond the attack cost, maximum +40.'],
+  5:['If a Fighting Energy card was attached from hand to Flygon this turn, do 20 more damage.'],
+  8:['80 damage minus 10 for each damage counter on Gastrodon East Sea.'],
+  9:['20 more damage for each damage counter on Gastrodon West Sea. After damage, remove 2 damage counters.','Put 1 damage counter on EACH Benched Pokémon, yours and the opponent’s.'],
+  13:['+20 damage if you own the Stadium in play; Confuse the opponent if they own it.'],
+  14:['Flip a coin. Heads: select Energy attached to the Defending Pokémon and return it to its owner’s hand.','If the Defending Pokémon has any Energy attached, this attack’s BASE damage is 40, not 120.'],
+  21:['Discard one random hidden card from the opponent’s hand; if it was Trainer/Supporter/Stadium, discard one more random hidden card.','40 base damage if Absol was played from hand this turn; otherwise 10.'],
+  25:['Discard all attached Lightning Energy cards and flip a coin for each; 50 damage per heads.'],
+  31:['20 damage times Fire Energy attached to Magmortar.','Do 20 damage to up to 2 different opposing Benched Pokémon.'],
+  37:['If the Defending Pokémon has at least 2 damage counters, 20 extra damage. Ignore Weakness, Resistance, Poké-Powers/Bodies and other defender effects.'],
+  48:['Opponent switches their Active with one of their Benched Pokémon; then you switch yours.','If the Defending Pokémon has a Tool attached, do 60 more damage.'],
+  55:['Flip two coins. Heal 30 damage per heads from one of your Pokémon.','Flip until tails; 20 damage per heads.'],
+  63:['Look at top five deck cards; choose any Trainers to put in hand, then shuffle deck.','20 more damage if the players have different Prize counts.'],
+  84:['Search deck for up to 3 Basic Pokémon of different types and Bench them, then shuffle.',''],
+  96:['Coin flip: on heads discard one of the Defending Pokémon’s Energy cards.','Look at the top five cards of either player’s deck, then rearrange them.'],
+
  30:['If Jynx was damaged by an attack during the opponent’s last turn, the Defending Pokémon is now Paralyzed.','Move 2 damage counters from Jynx to the Defending Pokémon, or 4 if Smoochum is underneath Jynx.'],
  38:['Flip 3 coins. Do 30 damage per heads; if 2 or more heads, Sunflora becomes Confused.'],
  60:['Does 20 damage to 1 of the opponent’s Benched Pokémon.'],
@@ -267,6 +299,14 @@ const PRINTS={
  118:['The Defending Pokémon is now Asleep.','Choose one of your opponent’s Pokémon. Do 10 damage, ignoring Weakness and Resistance.']
 };
 const ABILITIES={
+  2:[{type:'neoRule',rule:'dp3:2:waterlog'}],
+  5:[{type:'neoRule',rule:'dp3:5:irritatingBuzz'}],
+  8:[{type:'neoRule',rule:'dp3:8:osmoticPressure'}],
+  13:[{type:'healSelf',amount:10}],
+  25:[{type:'neoRule',rule:'dp3:25:motorDrive'}],
+  31:[{type:'healSelf',amount:20}],
+  37:[{type:'damage',target:'opponentActive',amount:20}],
+
  38:[{type:'heal',target:'selfAll',amount:10,filter:{subtype:'Grass'}}],
  60:[{type:'healSelf',amount:30,condition:{type:'opponentEnergyAtLeast',energyType:'Water',amount:1,countSpecial:true}}],
  68:[{type:'heal',target:'opponentActive',amount:20}],
@@ -280,6 +320,12 @@ const ABILITIES={
  90:[{type:'modifier',stat:'retreatCost',amount:-1,scope:'self',duration:'whileInPlay',condition:{type:'selfHasEnergyType',energyType:'Grass'}}]
 };
 const ABILITY_PRINTS={
+  2:['Waterlog: Attach as many Basic Water Energy cards from hand to any of your Pokémon, one by one. If any were attached, end your turn. Cannot use while affected by Special Conditions.'],
+  5:['Irritating Buzz: Between turns, if Flygon is Active put 1 damage counter on the opponent Active unless it is Fighting.'],
+  8:['Osmotic Pressure: Once per turn, move up to 3 damage counters from East Sea to one of your West Sea Gastrodon.'],
+  13:['Rain Dish: At each between-turn interval, heal one damage counter from Ludicolo.'],
+  25:['Motor Drive: Once per turn, attach one Lightning Energy from your discard pile to Electivire. Cannot use while affected by Special Conditions.'],
+
  38:['Grass Whistle: Once per turn, heal 10 damage from each friendly Grass Pokémon. Cannot be used while Sunflora has a Special Condition.'],
  60:['Aqua Healing: Once per turn, if Quagsire is Active and the Defending Pokémon has Water Energy, heal Quagsire 30.'],
  68:['Kind: Once per turn, remove 2 damage counters from the Defending Pokémon.'],
@@ -291,6 +337,12 @@ const ABILITY_PRINTS={
  79:['Wear Cloak: Once on your turn, if Active, attach one Basic Fighting Energy from your discard pile to Burmy.'],
  80:['Wear Cloak: Once on your turn, if Active, attach one Basic Metal Energy from your discard pile to Burmy.'],
  90:['Cottonweed: If Hoppip has Grass Energy attached, its Retreat Cost is 0.']
+};
+const ABILITY_META={
+  5:{type:'triggered',event:'endTurn',turn:'any',activeOnly:true},
+  13:{type:'triggered',event:'endTurn',turn:'any'},
+  31:{type:'triggered',event:'energyAttached',fromHandOnly:true,energyType:'Fire'},
+  37:{type:'triggered',event:'damaged',activeOnly:true,opponentAttackOnly:true}
 };
 const TRAINER_TEXT={
  119:'Put one card from your hand on top of your deck, then search for one Pokémon. You cannot play this if it is your only hand card.',
@@ -309,6 +361,7 @@ const TRAINER_EFFECTS={
  121:{type:'modifier',stat:'postWeaknessAttackDamage',amount:10,duration:'whileInPlay',scope:'self'},
   122:{type:'neoRule',rule:'dp3:122:oakVisit'},126:seq({type:'draw',amount:2},{type:'neoRule',rule:'dp3:126:marsBottom'}),
  123:{type:'neoRule',rule:'dp1:112:rowan'},124:{type:'neoRule',rule:'dp1:113:rival'},
+ 125:{type:'neoRule',rule:'dp3:125:roseanne'},
  127:{type:'heal',target:'selfPokemon',amount:20},128:{type:'switch',side:'self'}
 };
 const TRAINER_GATED='Printed Trainer effect is not yet verified for this set; battle use disabled.';
@@ -328,7 +381,7 @@ function parse(row){
       damage:Number((damageText.match(/^\d+/)||[])[0]||0),damageText:damageText||null,
       text:PRINTS[n]?.[i]??'Printed attack effect awaiting implementation and verification.',effect:EFFECTS[n]?.[i]||noop};}),
     abilities:(powers||'').split(';').filter(Boolean).map(s=>{const [power,t]=s.split('~');return {name:power,type:t==='Power'?'activated':'passive',
-      printedPowerType:t==='Power'?'power':'body',activeOnly:[60,78,79,80].includes(n),disabledByStatus:[38,60].includes(n),text:ABILITY_PRINTS[n]?.[0]||'Printed Poké-Power or Poké-Body awaiting verified effect and timing.',effect:ABILITIES[n]?.[0]||noop};}),
+      printedPowerType:t==='Power'?'power':'body',activeOnly:[60,78,79,80].includes(n),disabledByStatus:[2,25,38,60].includes(n),text:ABILITY_PRINTS[n]?.[0]||'Printed Poké-Power or Poké-Body awaiting verified effect and timing.',effect:ABILITIES[n]?.[0]||noop,...(ABILITY_META[n]||{})};}),
     isLevelX:stage==='Level-Up',levelUpFrom:stage==='Level-Up'?from:null,
     text:stage==='Level-Up'?'Only level up the Active Pokémon; the card retains prior attacks and Powers.':undefined});
    const full=[...card.attacks.map(a=>a.text),...card.abilities.map(a=>a.text)].join(' ').toLowerCase();

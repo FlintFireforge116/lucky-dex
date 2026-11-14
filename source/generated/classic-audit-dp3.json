@@ -13,19 +13,19 @@
       "energy": 2,
       "attacks": 194,
       "abilities": 45,
-      "enabled": 72,
-      "gated": 60
+      "enabled": 88,
+      "gated": 44
     },
     "risks": {
-      "choice": 9,
+      "choice": 14,
       "privacy": 6,
-      "timing": 11,
-      "energyMovement": 9,
+      "timing": 12,
+      "energyMovement": 13,
       "status": 14,
-      "deckSearch": 6,
-      "coin": 23
+      "deckSearch": 9,
+      "coin": 27
     },
-    "withStaticTestMentions": 42,
+    "withStaticTestMentions": 62,
     "errors": 0,
     "warnings": 0,
     "reviewFlags": 0
@@ -51,15 +51,22 @@
       "id": "dp3-2",
       "name": "Blastoise",
       "kind": "pokemon",
-      "battleEnabled": false,
+      "battleEnabled": true,
       "attackCount": 1,
       "abilityCount": 1,
-      "riskTags": [],
-      "effectTypes": [
-        "noop"
+      "riskTags": [
+        "energyMovement"
       ],
-      "customRules": [],
-      "testFilesMentioningId": [],
+      "effectTypes": [
+        "neoRule"
+      ],
+      "customRules": [
+        "dp3:2:hydroPump",
+        "dp3:2:waterlog"
+      ],
+      "testFilesMentioningId": [
+        "v07239-secret-wonders-stage3.test.cjs"
+      ],
       "findings": []
     },
     {
@@ -74,7 +81,9 @@
         "noop"
       ],
       "customRules": [],
-      "testFilesMentioningId": [],
+      "testFilesMentioningId": [
+        "v07239-secret-wonders-stage3.test.cjs"
+      ],
       "findings": []
     },
     {
@@ -96,15 +105,22 @@
       "id": "dp3-5",
       "name": "Flygon",
       "kind": "pokemon",
-      "battleEnabled": false,
+      "battleEnabled": true,
       "attackCount": 1,
       "abilityCount": 1,
-      "riskTags": [],
-      "effectTypes": [
-        "noop"
+      "riskTags": [
+        "timing"
       ],
-      "customRules": [],
-      "testFilesMentioningId": [],
+      "effectTypes": [
+        "neoRule"
+      ],
+      "customRules": [
+        "dp3:5:sandSonic",
+        "dp3:5:irritatingBuzz"
+      ],
+      "testFilesMentioningId": [
+        "v07239-secret-wonders-stage3.test.cjs"
+      ],
       "findings": []
     },
     {
@@ -141,30 +157,42 @@
       "id": "dp3-8",
       "name": "Gastrodon East Sea",
       "kind": "pokemon",
-      "battleEnabled": false,
+      "battleEnabled": true,
       "attackCount": 1,
       "abilityCount": 1,
-      "riskTags": [],
-      "effectTypes": [
-        "noop"
+      "riskTags": [
+        "choice"
       ],
-      "customRules": [],
-      "testFilesMentioningId": [],
+      "effectTypes": [
+        "neoRule"
+      ],
+      "customRules": [
+        "dp3:8:dwindling",
+        "dp3:8:osmoticPressure"
+      ],
+      "testFilesMentioningId": [
+        "v07239-secret-wonders-stage3.test.cjs"
+      ],
       "findings": []
     },
     {
       "id": "dp3-9",
       "name": "Gastrodon West Sea",
       "kind": "pokemon",
-      "battleEnabled": false,
+      "battleEnabled": true,
       "attackCount": 2,
       "abilityCount": 0,
       "riskTags": [],
       "effectTypes": [
-        "noop"
+        "neoRule"
       ],
-      "customRules": [],
-      "testFilesMentioningId": [],
+      "customRules": [
+        "dp3:9:raging",
+        "dp3:9:wildWaves"
+      ],
+      "testFilesMentioningId": [
+        "v07239-secret-wonders-stage3.test.cjs"
+      ],
       "findings": []
     },
     {
@@ -216,30 +244,44 @@
       "id": "dp3-13",
       "name": "Ludicolo",
       "kind": "pokemon",
-      "battleEnabled": false,
+      "battleEnabled": true,
       "attackCount": 1,
       "abilityCount": 1,
       "riskTags": [],
       "effectTypes": [
-        "noop"
+        "neoRule",
+        "healSelf"
       ],
-      "customRules": [],
-      "testFilesMentioningId": [],
+      "customRules": [
+        "dp3:13:naturePower"
+      ],
+      "testFilesMentioningId": [
+        "v07239-secret-wonders-stage3.test.cjs"
+      ],
       "findings": []
     },
     {
       "id": "dp3-14",
       "name": "Lugia",
       "kind": "pokemon",
-      "battleEnabled": false,
+      "battleEnabled": true,
       "attackCount": 2,
       "abilityCount": 0,
-      "riskTags": [],
-      "effectTypes": [
-        "noop"
+      "riskTags": [
+        "choice",
+        "energyMovement",
+        "coin"
       ],
-      "customRules": [],
-      "testFilesMentioningId": [],
+      "effectTypes": [
+        "neoRule"
+      ],
+      "customRules": [
+        "dp3:14:silverWing",
+        "dp3:14:psychicDestruction"
+      ],
+      "testFilesMentioningId": [
+        "v07239-secret-wonders-stage3.test.cjs"
+      ],
       "findings": []
     },
     {
@@ -293,7 +335,8 @@
       ],
       "customRules": [],
       "testFilesMentioningId": [
-        "v07238-secret-wonders-stage2.test.cjs"
+        "v07238-secret-wonders-stage2.test.cjs",
+        "v07239-secret-wonders-stage3.test.cjs"
       ],
       "findings": []
     },
@@ -310,7 +353,8 @@
       ],
       "customRules": [],
       "testFilesMentioningId": [
-        "v07238-secret-wonders-stage2.test.cjs"
+        "v07238-secret-wonders-stage2.test.cjs",
+        "v07239-secret-wonders-stage3.test.cjs"
       ],
       "findings": []
     },
@@ -348,15 +392,20 @@
       "id": "dp3-21",
       "name": "Absol",
       "kind": "pokemon",
-      "battleEnabled": false,
+      "battleEnabled": true,
       "attackCount": 2,
       "abilityCount": 0,
       "riskTags": [],
       "effectTypes": [
-        "noop"
+        "neoRule"
       ],
-      "customRules": [],
-      "testFilesMentioningId": [],
+      "customRules": [
+        "dp3:21:balefulWind",
+        "dp3:21:raid"
+      ],
+      "testFilesMentioningId": [
+        "v07239-secret-wonders-stage3.test.cjs"
+      ],
       "findings": []
     },
     {
@@ -408,15 +457,23 @@
       "id": "dp3-25",
       "name": "Electivire",
       "kind": "pokemon",
-      "battleEnabled": false,
+      "battleEnabled": true,
       "attackCount": 1,
       "abilityCount": 1,
-      "riskTags": [],
-      "effectTypes": [
-        "noop"
+      "riskTags": [
+        "energyMovement",
+        "coin"
       ],
-      "customRules": [],
-      "testFilesMentioningId": [],
+      "effectTypes": [
+        "neoRule"
+      ],
+      "customRules": [
+        "dp3:25:discharge",
+        "dp3:25:motorDrive"
+      ],
+      "testFilesMentioningId": [
+        "v07239-secret-wonders-stage3.test.cjs"
+      ],
       "findings": []
     },
     {
@@ -505,15 +562,23 @@
       "id": "dp3-31",
       "name": "Magmortar",
       "kind": "pokemon",
-      "battleEnabled": false,
+      "battleEnabled": true,
       "attackCount": 2,
       "abilityCount": 1,
-      "riskTags": [],
-      "effectTypes": [
-        "noop"
+      "riskTags": [
+        "choice"
       ],
-      "customRules": [],
-      "testFilesMentioningId": [],
+      "effectTypes": [
+        "energyDamage",
+        "neoRule",
+        "healSelf"
+      ],
+      "customRules": [
+        "dp3:31:fireballBazooka"
+      ],
+      "testFilesMentioningId": [
+        "v07239-secret-wonders-stage3.test.cjs"
+      ],
       "findings": []
     },
     {
@@ -602,15 +667,20 @@
       "id": "dp3-37",
       "name": "Sharpedo",
       "kind": "pokemon",
-      "battleEnabled": false,
+      "battleEnabled": true,
       "attackCount": 1,
       "abilityCount": 1,
       "riskTags": [],
       "effectTypes": [
-        "noop"
+        "neoRule",
+        "damage"
       ],
-      "customRules": [],
-      "testFilesMentioningId": [],
+      "customRules": [
+        "dp3:37:strikeWound"
+      ],
+      "testFilesMentioningId": [
+        "v07239-secret-wonders-stage3.test.cjs"
+      ],
       "findings": []
     },
     {
@@ -802,15 +872,20 @@
       "id": "dp3-48",
       "name": "Donphan",
       "kind": "pokemon",
-      "battleEnabled": false,
+      "battleEnabled": true,
       "attackCount": 2,
       "abilityCount": 0,
       "riskTags": [],
       "effectTypes": [
-        "noop"
+        "neoRule"
       ],
-      "customRules": [],
-      "testFilesMentioningId": [],
+      "customRules": [
+        "dp3:48:rapidSpin",
+        "dp3:48:bashIn"
+      ],
+      "testFilesMentioningId": [
+        "v07239-secret-wonders-stage3.test.cjs"
+      ],
       "findings": []
     },
     {
@@ -830,7 +905,8 @@
       "customRules": [],
       "testFilesMentioningId": [
         "v07237-secret-wonders-stage1.test.cjs",
-        "v07238-secret-wonders-stage2.test.cjs"
+        "v07238-secret-wonders-stage2.test.cjs",
+        "v07239-secret-wonders-stage3.test.cjs"
       ],
       "findings": []
     },
@@ -920,15 +996,22 @@
       "id": "dp3-55",
       "name": "Miltank",
       "kind": "pokemon",
-      "battleEnabled": false,
+      "battleEnabled": true,
       "attackCount": 2,
       "abilityCount": 0,
-      "riskTags": [],
-      "effectTypes": [
-        "noop"
+      "riskTags": [
+        "coin"
       ],
-      "customRules": [],
-      "testFilesMentioningId": [],
+      "effectTypes": [
+        "neoRule",
+        "coinDamage"
+      ],
+      "customRules": [
+        "dp3:55:healingMilk"
+      ],
+      "testFilesMentioningId": [
+        "v07239-secret-wonders-stage3.test.cjs"
+      ],
       "findings": []
     },
     {
@@ -1070,15 +1153,23 @@
       "id": "dp3-63",
       "name": "Sableye",
       "kind": "pokemon",
-      "battleEnabled": false,
+      "battleEnabled": true,
       "attackCount": 2,
       "abilityCount": 0,
-      "riskTags": [],
-      "effectTypes": [
-        "noop"
+      "riskTags": [
+        "choice",
+        "deckSearch"
       ],
-      "customRules": [],
-      "testFilesMentioningId": [],
+      "effectTypes": [
+        "neoRule"
+      ],
+      "customRules": [
+        "dp3:63:rummage",
+        "dp3:63:shadowSneak"
+      ],
+      "testFilesMentioningId": [
+        "v07239-secret-wonders-stage3.test.cjs"
+      ],
       "findings": []
     },
     {
@@ -1319,7 +1410,9 @@
         "coinDamage"
       ],
       "customRules": [],
-      "testFilesMentioningId": [],
+      "testFilesMentioningId": [
+        "v07239-secret-wonders-stage3.test.cjs"
+      ],
       "findings": []
     },
     {
@@ -1411,7 +1504,8 @@
       "customRules": [],
       "testFilesMentioningId": [
         "v07237-secret-wonders-stage1.test.cjs",
-        "v07238-secret-wonders-stage2.test.cjs"
+        "v07238-secret-wonders-stage2.test.cjs",
+        "v07239-secret-wonders-stage3.test.cjs"
       ],
       "findings": []
     },
@@ -1431,7 +1525,8 @@
       "customRules": [],
       "testFilesMentioningId": [
         "v07237-secret-wonders-stage1.test.cjs",
-        "v07238-secret-wonders-stage2.test.cjs"
+        "v07238-secret-wonders-stage2.test.cjs",
+        "v07239-secret-wonders-stage3.test.cjs"
       ],
       "findings": []
     },
@@ -1439,17 +1534,24 @@
       "id": "dp3-84",
       "name": "Corsola",
       "kind": "pokemon",
-      "battleEnabled": false,
+      "battleEnabled": true,
       "attackCount": 2,
       "abilityCount": 0,
-      "riskTags": [],
+      "riskTags": [
+        "choice",
+        "deckSearch"
+      ],
       "effectTypes": [
+        "neoRule",
         "noop"
       ],
-      "customRules": [],
+      "customRules": [
+        "dp3:84:rally"
+      ],
       "testFilesMentioningId": [
         "v07237-secret-wonders-stage1.test.cjs",
-        "v07238-secret-wonders-stage2.test.cjs"
+        "v07238-secret-wonders-stage2.test.cjs",
+        "v07239-secret-wonders-stage3.test.cjs"
       ],
       "findings": []
     },
@@ -1468,7 +1570,8 @@
       "customRules": [],
       "testFilesMentioningId": [
         "v07237-secret-wonders-stage1.test.cjs",
-        "v07238-secret-wonders-stage2.test.cjs"
+        "v07238-secret-wonders-stage2.test.cjs",
+        "v07239-secret-wonders-stage3.test.cjs"
       ],
       "findings": []
     },
@@ -1673,15 +1776,24 @@
       "id": "dp3-96",
       "name": "Natu",
       "kind": "pokemon",
-      "battleEnabled": false,
+      "battleEnabled": true,
       "attackCount": 2,
       "abilityCount": 0,
-      "riskTags": [],
-      "effectTypes": [
-        "noop"
+      "riskTags": [
+        "energyMovement",
+        "deckSearch",
+        "coin"
       ],
-      "customRules": [],
-      "testFilesMentioningId": [],
+      "effectTypes": [
+        "neoRule"
+      ],
+      "customRules": [
+        "dp3:96:botheringWave",
+        "dp3:96:futureSight"
+      ],
+      "testFilesMentioningId": [
+        "v07239-secret-wonders-stage3.test.cjs"
+      ],
       "findings": []
     },
     {
@@ -1737,7 +1849,9 @@
         "noop"
       ],
       "customRules": [],
-      "testFilesMentioningId": [],
+      "testFilesMentioningId": [
+        "v07239-secret-wonders-stage3.test.cjs"
+      ],
       "findings": []
     },
     {
@@ -1813,7 +1927,9 @@
         "noop"
       ],
       "customRules": [],
-      "testFilesMentioningId": [],
+      "testFilesMentioningId": [
+        "v07239-secret-wonders-stage3.test.cjs"
+      ],
       "findings": []
     },
     {
@@ -2176,7 +2292,8 @@
         "dp3:122:oakVisit"
       ],
       "testFilesMentioningId": [
-        "v07238-secret-wonders-stage2.test.cjs"
+        "v07238-secret-wonders-stage2.test.cjs",
+        "v07239-secret-wonders-stage3.test.cjs"
       ],
       "findings": []
     },
@@ -2225,7 +2342,7 @@
       "id": "dp3-125",
       "name": "Roseanne's Research",
       "kind": "trainer",
-      "battleEnabled": false,
+      "battleEnabled": true,
       "attackCount": 0,
       "abilityCount": 0,
       "riskTags": [
@@ -2233,10 +2350,14 @@
         "energyMovement"
       ],
       "effectTypes": [
-        "noop"
+        "neoRule"
       ],
-      "customRules": [],
-      "testFilesMentioningId": [],
+      "customRules": [
+        "dp3:125:roseanne"
+      ],
+      "testFilesMentioningId": [
+        "v07239-secret-wonders-stage3.test.cjs"
+      ],
       "findings": []
     },
     {
@@ -2275,7 +2396,9 @@
         "heal"
       ],
       "customRules": [],
-      "testFilesMentioningId": [],
+      "testFilesMentioningId": [
+        "v07239-secret-wonders-stage3.test.cjs"
+      ],
       "findings": []
     },
     {
@@ -2306,7 +2429,8 @@
       ],
       "customRules": [],
       "testFilesMentioningId": [
-        "v07237-secret-wonders-stage1.test.cjs"
+        "v07237-secret-wonders-stage1.test.cjs",
+        "v07239-secret-wonders-stage3.test.cjs"
       ],
       "findings": []
     },
@@ -2360,8 +2484,8 @@
   ],
   "cpu": null,
   "smoke": {
-    "attempted": 234,
-    "executed": 234,
+    "attempted": 284,
+    "executed": 284,
     "skipped": 0,
     "skippedDetails": [],
     "failures": []

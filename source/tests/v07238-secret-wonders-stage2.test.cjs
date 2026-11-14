@@ -19,10 +19,10 @@ function board(card='dp3-17',opponent='dp3-49',side='player',seed=23){
 function hit(s,side='player',i=0,target){const actions=core.legalActions(s,side),a=actions.find(x=>x.type==='attack'&&x.attackIndex===i&&(!target||x.target===target));assert.ok(a,`Missing ${side} attack ${i} (${target||'any'}): `+JSON.stringify(actions.filter(x=>x.type==='attack')));core.applyAction(s,side,a);return a;}
 function finishChoices(s,choose){let n=0;while(s.phase==='effectChoice'&&n++<25){const actions=core.legalActions(s,s.choiceSide).filter(a=>a.type==='effectChoice');assert.ok(actions.length,'missing legal choice');core.applyAction(s,s.choiceSide,choose?.(actions,s)||actions.find(a=>!a.choiceSkip)||actions[0]);}assert.notEqual(s.phase,'effectChoice','choice flow stuck');}
 
-test('Stage 2 makes 72 of 132 cards battle ready, gated entries remain unavailable and all enabled effects validate',()=>{
- assert.equal(set.CARDS.length,132);assert.equal(set.coverage().battleEnabled,72);assert.equal(set.coverage().gated.length,60);
+test('Current staged set keeps all implemented cards battle ready, gated entries remain unavailable and all enabled effects validate',()=>{
+ assert.equal(set.CARDS.length,132);assert.equal(set.coverage().battleEnabled,88);assert.equal(set.coverage().gated.length,44);
  for(const c of set.CARDS.filter(c=>c.battleEnabled))for(const a of [...(c.attacks||[]),...(c.abilities||[]),c])if(a.effect)assert.deepEqual(fx.validateEffect(a.effect),[],c.id+' '+(a.name||'card'));
- for(const n of [1,2,6,7,18,35,101,131,132])assert.equal(data.cardById('dp3-'+n).battleEnabled,false);
+ for(const n of [1,6,7,18,35,101,131,132])assert.equal(data.cardById('dp3-'+n).battleEnabled,false);
 });
 
 test('auditor verifies every enabled card attack and Trainer for both player and CPU sides',()=>{
