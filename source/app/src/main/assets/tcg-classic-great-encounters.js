@@ -132,7 +132,7 @@ const EFFECTS={
  31:[flip(seq(stat('confusion'),stat('poison')))],
  56:[rule('56:hiddenPower')],
  103:[rule('103:moonSkip')],
- 24:[rule('24:pickOut'),mod('postWeaknessAttackDamage',20,'self','nextOwnTurn')],
+ 24:[rule('24:pickOut'),rule('24:jawBite')],
  57:[rule('57:hiddenPower')],
  91:[rule('91:hiddenPower')],
  104:[{type:'status',target:'opponentActive',status:'sleep',recoveryCoins:2,knockoutOnDoubleTails:true}],
@@ -177,7 +177,7 @@ const EFFECTS={
  70:[rule('70:inquire')],
  77:[rule('77:rendezvous'),bonus(20,{type:'equalEnergyCount'})],
  3:[search({kind:'energy'}),rule('3:darknessPursuit')],
- 7:[{type:'shuffleChosenHand',side:'opponent',amount:1},flip(seq(bonus(30),stat('paralysis')))],
+ 7:[rule('7:astonish'),flip(seq(bonus(30),stat('paralysis')))],
  12:[gate(stat('paralysis')),mod('damageReduction',30,'self','opponentTurn',{type:'opponentMatches',filter:{evolved:true}})],
  13:[{type:'fieldCountDamage',amount:30,filter:{name:'Beedrill'},mode:'replace'},{type:'coinDamage',coins:2,amount:50,mode:'replace'}],
  20:[N,{type:'selfDamageIfDefenderKnockedOut',amount:30}],
@@ -249,6 +249,7 @@ const ABILITIES={
 47:[{...flip({type:'evolveFromDeck'}),condition:{type:'selfIsActive'}}],63:[{...flip({type:'evolveFromDeck'}),condition:{type:'selfIsActive'}}],45:[seq({type:'preventStatus',status:'sleep',duration:'whileInPlay',scope:'self'},{type:'preventStatus',status:'paralysis',duration:'whileInPlay',scope:'self'})],15:[rule('15:cosmicPower')],71:[flip({type:'benchFromDeck',amount:1,choose:true,filter:{kind:'pokemon',stage:'Basic',subtype:'Grass'}})],76:[rule('76:gravityChange')],92:[rule('92:lightConduct')],32:[seq(stat('sleep'),stat('sleep','self'))],70:[rule('70:babyEvolution')],27:[{type:'modifier',stat:'attackDamage',amount:40,scope:'self',duration:'whileInPlay',condition:{type:'selfDamaged'}}]};
 const TRAINER_EFFECTS={97:{type:'triggeredEffect',event:'endTurn',turn:'owner',activeOnly:true,effect:{type:'draw',amount:1}},99:{type:'triggeredEffect',event:'endTurn',turn:'owner',activeOnly:true,effect:{type:'healSelf',amount:10}},100:{type:'modifier',stat:'retreatCost',amount:-99,scope:'both',duration:'whileInPlay',filter:{subtype:['Psychic','Darkness']}},98:rule('98:felicityDrawing'),101:rule('101:premierBall'),102:{type:'rareCandy'}};
 const PRINTS={
+ 85:['Search your discard pile for a Basic Energy card and attach it to one of your Benched Pokémon.'],
  1:['30 damage; choose one of your Pokémon to attach a Fire Energy from your discard pile.','Discard 2 Fire Energy from Blaziken; deal 80 damage to one opposing Pokémon, ignoring Bench Weakness and Resistance.'],
  25:['Flip 2 coins. Both tails: no damage; for each heads, choose an Energy on the Defending Pokémon and discard it.'],
  30:['If Wailord has any damage counters, Wailord becomes Asleep.'],
@@ -344,7 +345,7 @@ const PRINTS={
  94:['','Flip: heads deal 10 damage to each opposing Pokémon.'],
  96:['Return any one card from your discard to the top of your deck.','Flip two coins; 10 per heads.']
 };
-const ABILITY_TEXT={24:[],57:['While Benched, discard all cards attached to Unown G and attach it as a Tool to another of your Pokémon to prevent all attack effects except damage.'],91:['Can use any attack on any Unown in play (either player), paying its printed Energy cost.'],104:['Basic Darkness Energy on your Darkness Pokémon adds 10 attack damage per Basic Darkness Energy, without stacking Dark Shadow.'],105:["Opponent flips two coins. Both heads: your turn ends now. Both tails: opponent’s next turn ends immediately after their draw."],106:['Opponent chooses your Bench to switch Active, then you choose an opposing Bench to switch Active.'],25:['Prevent all effects of attacks, including damage, from opposing Pokémon LV.X.'],30:['Between turns, remove 1 damage counter from Wailord while it is Asleep.'],31:['Between turns, each player places one additional damage counter on their Poisoned Pokémon.'],56:['While Unown F is Benched, flip a concealed coin; if the opponent guesses incorrectly, draw a card.'],103:['Move one damage counter from any Pokémon to another Pokémon on either side.'],85:['With Lunatone in play, your Psychic and Fighting attacks ignore opposing Resistance.'],49:['Discard a Supporter from hand to use its effect as Porygon2’s Power.'],29:['With Unown H, E, A and L on the Bench, remove all Special Conditions from your Active Pokémon.'],28:['If one of your Pokémon was Knocked Out last opponent turn, search your deck for any card.'],11:['On evolving from hand, examine the top 10 cards and attach Basic Energy to your Pokémon, then shuffle.'],9:['Repeatedly move Water or Fighting Energy from a Benched Pokémon to your Active Pokémon.'],8:['Basic Grass Energy attached to your Grass Pokémon provides two Grass Energy. Only one Wild Growth applies.'],6:['Discard one Basic Energy card from your hand; Porygon-Z changes to its type until end of turn.'],47:['Once during turn while Metapod is Active, flip: heads evolve Metapod from your draw deck.'],63:['Once during turn while Caterpie is Active, flip: heads evolve Caterpie from your draw deck.'],45:['Magcargo cannot be Asleep or Paralyzed.'],15:['Once per turn, put up to two cards from hand onto bottom of deck, then draw until you have six.'],71:['Flip: heads search your deck for a Basic Grass Pokémon and Bench it.'],76:['Discard a card from hand; if Solrock is in play, draw one card.'],92:['With Illumise in play, put a Supporter from your discard on top of your deck.'],32:['Once per turn, put both Active Pokémon Asleep.'],70:['Evolve into a real Jigglypuff from hand and clear damage.'],27:['If damaged, Primeape attacks deal 40 additional damage to the Defending Pokémon.']};
+const ABILITY_TEXT={24:[],57:['While Benched, discard all cards attached to Unown G and attach it as a Tool to another of your Pokémon to prevent all attack effects except damage.'],91:['Can use any attack on any Unown in play (either player), paying its printed Energy cost.'],104:['Basic Darkness Energy on your Darkness Pokémon adds 10 attack damage per Basic Darkness Energy, without stacking Dark Shadow.'],105:["Opponent flips two coins. Both heads: your turn ends now. Both tails: opponent’s next turn ends immediately after their draw."],106:['Opponent chooses your Bench to switch Active, then you choose an opposing Bench to switch Active.'],25:['Prevent all effects of attacks, including damage, from opposing Pokémon LV.X.'],30:['Between turns, remove 1 damage counter from Wailord while it is Asleep.'],31:['Between turns, each player places one additional damage counter on their Poisoned Pokémon.'],56:['While Unown F is Benched, flip a concealed coin; if the opponent guesses incorrectly, draw a card.'],103:['Move one damage counter from any Pokémon to another Pokémon on either side.'],85:['With Lunatone in play, your Psychic and Fighting attacks ignore opposing Resistance.'],49:['Discard a Supporter from hand to use its effect as Porygon2’s Power.'],29:['If Unown H, E, A and L are all on the Bench, clear your Active Pokémon’s Special Conditions. LuckyDex 3-Bench format: one of those four may instead be Active.'],28:['If one of your Pokémon was Knocked Out last opponent turn, search your deck for any card.'],11:['On evolving from hand, examine the top 10 cards and attach Basic Energy to your Pokémon, then shuffle.'],9:['Repeatedly move Water or Fighting Energy from a Benched Pokémon to your Active Pokémon.'],8:['Basic Grass Energy attached to your Grass Pokémon provides two Grass Energy. Only one Wild Growth applies.'],6:['Discard one Basic Energy card from your hand; Porygon-Z changes to its type until end of turn.'],47:['Once during turn while Metapod is Active, flip: heads evolve Metapod from your draw deck.'],63:['Once during turn while Caterpie is Active, flip: heads evolve Caterpie from your draw deck.'],45:['Magcargo cannot be Asleep or Paralyzed.'],15:['Once per turn, put up to two cards from hand onto bottom of deck, then draw until you have six.'],71:['Flip: heads search your deck for a Basic Grass Pokémon and Bench it.'],76:['Discard a card from hand; if Solrock is in play, draw one card.'],92:['With Illumise in play, put a Supporter from your discard on top of your deck.'],32:['Once per turn, put both Active Pokémon Asleep.'],70:['Evolve into a real Jigglypuff from hand and clear damage.'],27:['If damaged, Primeape attacks deal 40 additional damage to the Defending Pokémon.']};
 const DATA=RAW.split('\n').map(row=>row.split('|'));
 function parse(row){
  const [number,name,kind,stage,hp,code,from,weak,resist,retreat,rarity,moves,powers]=row;
@@ -360,7 +361,7 @@ function parse(row){
     resistance:r?.type||null,resistanceValue:r?.value||null,resistances:r?[r]:[],
     attacks:(moves||'').split(';').filter(Boolean).map((s,i)=>{const [attackName,cost='',damageText='']=s.split('~');return {
       name:attackName,cost,damage:Number((damageText.match(/^\d+/)||[])[0]||0),damageText:damageText||null,
-      text:PRINTS[n]?.[i]??'Printed attack under implementation review; battle entry gated.',effect:EFFECTS[n]?.[i]||N};}),
+      text:PRINTS[n]?.[i]??'',effect:EFFECTS[n]?.[i]||N};}),
     abilities:(powers||'').split(';').filter(Boolean).map(s=>{const [power,type]=s.split('~');return {
       name:power,...(n===9?{oncePerTurn:false}:{}),type:n===11?'triggered':type==='Power'?'activated':'passive',...(n===57?{benchOnly:true}:{}),...(n===11?{event:'evolved',fromHandOnly:true}:{}),printedPowerType:type==='Power'?'power':'body',
       disabledByStatus:type==='Power',text:ABILITY_TEXT[n]?.[0]||'Poké-Power or Poké-Body awaiting battle timing verification.',effect:ABILITIES[n]?.[0]||N};}),
@@ -369,7 +370,15 @@ function parse(row){
   const ownTexts=[...card.attacks.map(a=>a.text),...card.abilities.map(a=>a.text)].join(' ').toLowerCase();
   const roles=[];for(const [role,regex] of Object.entries({draw:/draw|hand/,search:/search|discard to|deck/,status:/asleep|sleep|poison|confus|paraly|burn/,heal:/heal|remove.*damage counter/,ramp:/attach.*energy/,control:/can't|prevent|switch/}))if(regex.test(ownTexts))roles.push(role);
   const types=[...new Set(card.attacks.flatMap(a=>[...a.cost].filter(x=>x!=='C').map(x=>T[x])))];
-  card.deckMeta={roles,synergy:roles,energyTypes:types,preferredEnergyTypes:types,inflicts:[],payoffs:[],preferredPartners:[],conditionalAttackEnergyTypes:[],babyEvolutionSupport:[]};
+  // Non-attack-cost prerequisites belong in deck metadata, otherwise a
+  // Colorless/Psychic build can pick an engine it cannot actually activate.
+  const partners={32:['Igglybuff'],71:['Volbeat'],76:['Solrock'],
+    85:['Lunatone'],92:['Illumise']};
+  const conditional={18:['Darkness'],42:['Darkness']};
+  card.deckMeta={roles,synergy:roles,energyTypes:types,preferredEnergyTypes:types,
+    inflicts:[],payoffs:[],preferredPartners:partners[n]||[],
+    conditionalAttackEnergyTypes:conditional[n]||[],
+    babyEvolutionSupport:n===32?['Igglybuff']:[]};
  }else if(trainer){card.trainerType=stage==='Pokémon Tool'?'Tool':stage;card.text=stage==='Item'?'Trainer effect cross-checked against previous print.':'Printed Trainer action awaiting implementation.';card.effect=TRAINER_EFFECTS[n]||N;
   if(n===97)card.text='If the attached Pokémon is Active at the end of your turn, draw a card.';
   if(n===99)card.text='At the end of your turn, remove 1 damage counter from the Active Pokémon holding this Tool.';

@@ -17,7 +17,7 @@ const CONTRACT=require('../data/classic-card-audit-contract.json');
 const DEFAULT_TYPES=['Grass','Fire','Water','Lightning','Psychic','Fighting','Darkness','Metal'];
 const ENERGY_CODES={G:'Grass',R:'Fire',W:'Water',L:'Lightning',P:'Psychic',F:'Fighting',D:'Darkness',M:'Metal',C:'Colorless'};
 const RE_PLAUSIBLE_PURE_DAMAGE=/^\s*(?:(?:this )?attack (?:does|is)|deal(?:s)? )?\d+\s*damage\.?\s*$/i;
-const PLACEHOLDER=/special effect|not yet battle.enabled|battle use requires outcome verification|printed power or body remains gated|effect not implemented|todo\b|tbd\b/i;
+const PLACEHOLDER=/special effect|not yet battle.enabled|battle use requires outcome verification|printed power or body remains gated|effect not implemented|under implementation review|battle entry gated|awaiting battle timing|todo\b|tbd\b/i;
 const EFFECT_CHILDREN=['effect','heads','tails','then','else','onHeads','onTails','success','failure','before','after','trueEffect','falseEffect'];
 const PATTERNS=Object.fromEntries(Object.entries(CONTRACT.riskPatterns).map(([k,v])=>[k,new RegExp(v,'i')]));
 const isObj=v=>v!==null&&typeof v==='object'&&!Array.isArray(v);

@@ -48,6 +48,9 @@ jobs:
       - name: Test completed Great Encounters complex card outcomes
         run: node --test source/tests/v07245-great-encounters-completion.test.cjs
 
+      - name: Test Great Encounters independent card audit corrections
+        run: node --test source/tests/v07246-great-encounters-independent-audit.test.cjs
+
       - name: Audit completed Great Encounters battle effects
         run: node source/scripts/audit-classic-set.cjs --set dp4 --smoke --no-write
 

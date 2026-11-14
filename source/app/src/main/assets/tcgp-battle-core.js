@@ -1098,7 +1098,14 @@
         // Fellow Boost can only use an actual Basic Energy card in HAND,
         // never the next Energy Zone unit. Don't offer an inert Power.
         if(/^dp1-6[5-8]$/.test(source.cardId)&&s.active===source)return; // Unown Powers need the Bench.
-        if(source.cardId==='dp4-29'&&(!s.bench.includes(source)||!['H','E','A','L'].every(letter=>s.bench.some(p=>data.cardById(p.cardId)?.name==='Unown ['+letter+']'))))return;
+        if(source.cardId==='dp4-29'){
+          // Printed HEAL needs four Unown on the Bench. Classic's normal
+          // three-slot Bench cannot hold them; permit exactly one required
+          // letter to occupy the Active slot in this shortened format.
+          const places=Number(s.benchLimit||3)>=4?s.bench:[s.active,...s.bench].filter(Boolean);
+          if((Number(s.benchLimit||3)>=4&&!s.bench.includes(source))||
+             !['H','E','A','L'].every(letter=>places.some(p=>data.cardById(p.cardId)?.name==='Unown ['+letter+']')))return;
+        }
         if(source.cardId==='dp4-57'&&(!s.bench.includes(source)||!pokemonOn(s).some(p=>p!==source&&toolsOf(p).length<effects.toolCapacity(state,side,p,data.cardById))))return;
         if(source.cardId==='dp4-9'&&!s.bench.some(p=>Number(p.energy?.Water||0)>0||Number(p.energy?.Fighting||0)>0||(p.specialEnergy||[]).some(ref=>{const prov=ref.provides||data.cardById(ref.cardId)?.effect?.provides||{};return Number(prov.Water||0)+Number(prov.Fighting||0)>0;})))return;
         if(source.cardId==='dp1-2'&&state.sides[side==='player'?'opponent':'player'].bench.filter(Boolean).length<4)return;
@@ -2394,6 +2401,10 @@
             [s,foe].flatMap(board=>pokemonOn(board)).filter(slot=>['Poliwag','Poliwhirl','Poliwrath','Politoed'].includes(data.cardById(slot.cardId)?.name)).length>3)damage+=40;
           if(state.format==='classic'&&defender.dp1SandEject?.sourceSide===side&&Number(defender.dp1SandEject.turn)===Number(state.turnNumber))damage+=40;
           damage+=effects.modifierAmount(state,side,s.active,'postWeaknessAttackDamage',data.cardById);
+          // Great Encounters Mawile: Jaw Bite boosts only an attack that
+          // actually hits the same Defending Pokemon on the next own turn.
+          if(state.format==='classic'&&defender.dp4JawBite?.sourceSide===side&&
+             Number(defender.dp4JawBite.triggerTurn)===Number(state.turnNumber))damage+=20;
           if(state.format==='classic'){
             // Neo/e-Card Darkness Energy adds +10 AFTER Weakness/Resistance,
             // even on non-Dark attackers; EX-era Darkness Energy adds +10

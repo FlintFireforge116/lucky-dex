@@ -2,7 +2,7 @@
 
 **Status:** No definite catalog/schema failures; 0 warnings; 5 follow-up flags.
 
-**Coverage:** 106/106 enabled, 0 gated. 172 attacks, 28 named abilities; 67/106 IDs mentioned in test files (mentions are not proof).
+**Coverage:** 106/106 enabled, 0 gated. 172 attacks, 28 named abilities; 70/106 IDs mentioned in test files (mentions are not proof).
 
 **Source contract:** `docs/LUCKYDEX_MASTER_RULES.txt`.
 
@@ -13,7 +13,7 @@
 | choice | 28 |
 | privacy | 1 |
 | timing | 20 |
-| energyMovement | 22 |
+| energyMovement | 23 |
 | status | 15 |
 | deckSearch | 14 |
 | coin | 43 |
@@ -24,7 +24,7 @@
 
 ## Synthetic battle action checks
 
-352/356 actions executed; 4 skipped (not necessarily defects); 0 scenario exceptions/unresolved choices.
+354/356 actions executed; 2 skipped (not necessarily defects); 0 scenario exceptions/unresolved choices.
 
 ## Definite failures and warnings
 
@@ -103,7 +103,7 @@ Risk tags are prompts for scenario tests, not automatic implementation failures.
 - **dp4-81 Porygon** — deckSearch
 - **dp4-82 Slowpoke** — timing, status
 - **dp4-83 Slugma** — coin
-- **dp4-85 Solrock** — source review; ability Sunlight: no-op effect; verify separately implemented passive/continuous rule.
+- **dp4-85 Solrock** — energyMovement; ability Sunlight: no-op effect; verify separately implemented passive/continuous rule.
 - **dp4-86 Swablu** — coin
 - **dp4-88 Togepi** — status, deckSearch, coin
 - **dp4-90 Treecko** — choice
@@ -123,13 +123,13 @@ Risk tags are prompts for scenario tests, not automatic implementation failures.
 
 | Print | Status | Attacks | Powers | Risks | Test-file mentions |
 |---|---|---:|---:|---|---:|
-| dp4-1 Blaziken | enabled | 2 | 0 | choice, energyMovement | 1 |
+| dp4-1 Blaziken | enabled | 2 | 0 | choice, energyMovement | 2 |
 | dp4-2 Cresselia | enabled | 2 | 0 | choice, energyMovement | 3 |
 | dp4-3 Darkrai | enabled | 2 | 0 | deckSearch | 2 |
 | dp4-4 Darkrai | enabled | 2 | 0 | choice, status | 1 |
 | dp4-5 Pachirisu | enabled | 2 | 0 | choice, deckSearch | 1 |
 | dp4-6 Porygon-Z | enabled | 1 | 1 | energyMovement, coin | 1 |
-| dp4-7 Rotom | enabled | 2 | 0 | choice, deckSearch, coin | 0 |
+| dp4-7 Rotom | enabled | 2 | 0 | choice, deckSearch, coin | 1 |
 | dp4-8 Sceptile | enabled | 1 | 1 | energyMovement, coin | 1 |
 | dp4-9 Swampert | enabled | 1 | 1 | energyMovement | 2 |
 | dp4-10 Tangrowth | enabled | 2 | 0 | choice, timing, energyMovement | 1 |
@@ -140,31 +140,31 @@ Risk tags are prompts for scenario tests, not automatic implementation failures.
 | dp4-15 Claydol | enabled | 1 | 1 | choice | 1 |
 | dp4-16 Dialga | enabled | 2 | 0 | choice, energyMovement | 1 |
 | dp4-17 Exploud | enabled | 2 | 0 | timing | 1 |
-| dp4-18 Houndoom | enabled | 2 | 0 | choice, energyMovement | 1 |
+| dp4-18 Houndoom | enabled | 2 | 0 | choice, energyMovement | 2 |
 | dp4-19 Hypno | enabled | 2 | 0 | status | 2 |
 | dp4-20 Kingler | enabled | 2 | 0 |  | 0 |
 | dp4-21 Lapras | enabled | 2 | 0 | energyMovement | 1 |
 | dp4-22 Latias | enabled | 2 | 0 | energyMovement | 1 |
 | dp4-23 Latios | enabled | 2 | 0 | energyMovement, deckSearch, coin | 1 |
-| dp4-24 Mawile | enabled | 2 | 0 | choice, privacy, timing | 1 |
+| dp4-24 Mawile | enabled | 2 | 0 | choice, privacy, timing | 2 |
 | dp4-25 Milotic | enabled | 1 | 1 | choice, coin | 2 |
 | dp4-26 Palkia | enabled | 2 | 0 | choice, energyMovement, deckSearch, coin | 1 |
 | dp4-27 Primeape | enabled | 1 | 1 | timing, coin | 1 |
 | dp4-28 Slowking | enabled | 1 | 1 | timing, deckSearch | 0 |
-| dp4-29 Unown [H] | enabled | 1 | 1 |  | 0 |
+| dp4-29 Unown [H] | enabled | 1 | 1 |  | 1 |
 | dp4-30 Wailord | enabled | 1 | 1 | timing, status | 4 |
 | dp4-31 Weezing | enabled | 1 | 1 | timing, status, coin | 1 |
-| dp4-32 Wigglytuff | enabled | 1 | 1 | status | 1 |
+| dp4-32 Wigglytuff | enabled | 1 | 1 | status | 2 |
 | dp4-33 Arbok | enabled | 2 | 0 | status, coin | 0 |
 | dp4-34 Cacturne | enabled | 2 | 0 | coin | 0 |
-| dp4-35 Combusken | enabled | 2 | 0 | timing, coin | 1 |
+| dp4-35 Combusken | enabled | 2 | 0 | timing, coin | 2 |
 | dp4-36 Delibird | enabled | 2 | 0 | deckSearch, coin | 0 |
 | dp4-37 Floatzel | enabled | 2 | 0 | choice, timing, coin | 0 |
 | dp4-38 Gorebyss | enabled | 2 | 0 | choice | 1 |
 | dp4-39 Granbull | enabled | 2 | 0 | timing | 0 |
 | dp4-40 Grovyle | enabled | 2 | 0 | choice | 0 |
 | dp4-41 Hariyama | enabled | 2 | 0 | coin | 1 |
-| dp4-42 Huntail | enabled | 2 | 0 | timing, energyMovement, coin | 1 |
+| dp4-42 Huntail | enabled | 2 | 0 | timing, energyMovement, coin | 2 |
 | dp4-43 Linoone | enabled | 2 | 0 |  | 1 |
 | dp4-44 Loudred | enabled | 2 | 0 | choice, coin | 0 |
 | dp4-45 Magcargo | enabled | 1 | 1 | choice, status | 1 |
@@ -183,7 +183,7 @@ Risk tags are prompts for scenario tests, not automatic implementation failures.
 | dp4-58 Wailmer | enabled | 2 | 0 | coin | 0 |
 | dp4-59 Zangoose | enabled | 2 | 0 |  | 0 |
 | dp4-60 Baltoy | enabled | 2 | 0 |  | 0 |
-| dp4-61 Buizel | enabled | 2 | 0 |  | 4 |
+| dp4-61 Buizel | enabled | 2 | 0 |  | 5 |
 | dp4-62 Cacnea | enabled | 2 | 0 | timing, coin | 1 |
 | dp4-63 Caterpie | enabled | 1 | 1 | coin | 1 |
 | dp4-64 Clamperl | enabled | 2 | 0 | coin | 1 |
@@ -193,12 +193,12 @@ Risk tags are prompts for scenario tests, not automatic implementation failures.
 | dp4-68 Glameow | enabled | 2 | 0 |  | 0 |
 | dp4-69 Houndour | enabled | 2 | 0 | energyMovement, coin | 0 |
 | dp4-70 Igglybuff | enabled | 1 | 1 |  | 1 |
-| dp4-71 Illumise | enabled | 1 | 1 | status, deckSearch, coin | 1 |
+| dp4-71 Illumise | enabled | 1 | 1 | status, deckSearch, coin | 2 |
 | dp4-72 Jigglypuff | enabled | 2 | 0 | timing, status | 1 |
 | dp4-73 Kakuna | enabled | 2 | 0 | timing | 0 |
 | dp4-74 Koffing | enabled | 2 | 0 |  | 0 |
 | dp4-75 Krabby | enabled | 2 | 0 |  | 0 |
-| dp4-76 Lunatone | enabled | 1 | 1 | choice | 1 |
+| dp4-76 Lunatone | enabled | 1 | 1 | choice | 2 |
 | dp4-77 Luvdisc | enabled | 2 | 0 | energyMovement | 1 |
 | dp4-78 Makuhita | enabled | 2 | 0 | energyMovement, coin | 0 |
 | dp4-79 Mankey | enabled | 2 | 0 |  | 0 |
@@ -207,24 +207,24 @@ Risk tags are prompts for scenario tests, not automatic implementation failures.
 | dp4-82 Slowpoke | enabled | 2 | 0 | timing, status | 0 |
 | dp4-83 Slugma | enabled | 2 | 0 | coin | 0 |
 | dp4-84 Snubbull | enabled | 2 | 0 |  | 0 |
-| dp4-85 Solrock | enabled | 1 | 1 |  | 1 |
+| dp4-85 Solrock | enabled | 1 | 1 | energyMovement | 2 |
 | dp4-86 Swablu | enabled | 2 | 0 | coin | 0 |
 | dp4-87 Tangela | enabled | 2 | 0 |  | 0 |
 | dp4-88 Togepi | enabled | 2 | 0 | status, deckSearch, coin | 1 |
-| dp4-89 Torchic | enabled | 2 | 0 |  | 3 |
+| dp4-89 Torchic | enabled | 2 | 0 |  | 4 |
 | dp4-90 Treecko | enabled | 2 | 0 | choice | 2 |
-| dp4-91 Unown [L] | enabled | 1 | 1 | choice, energyMovement | 2 |
-| dp4-92 Volbeat | enabled | 1 | 1 | coin | 1 |
-| dp4-93 Weedle | enabled | 2 | 0 | deckSearch, coin | 4 |
+| dp4-91 Unown [L] | enabled | 1 | 1 | choice, energyMovement | 3 |
+| dp4-92 Volbeat | enabled | 1 | 1 | coin | 2 |
+| dp4-93 Weedle | enabled | 2 | 0 | deckSearch, coin | 5 |
 | dp4-94 Whismur | enabled | 2 | 0 | coin | 0 |
 | dp4-95 Wingull | enabled | 2 | 0 |  | 0 |
-| dp4-96 Zigzagoon | enabled | 2 | 0 | coin | 1 |
-| dp4-97 Amulet Coin | enabled | 0 | 0 |  | 2 |
+| dp4-96 Zigzagoon | enabled | 2 | 0 | coin | 2 |
+| dp4-97 Amulet Coin | enabled | 0 | 0 |  | 3 |
 | dp4-98 Felicity's Drawing | enabled | 0 | 0 | choice | 2 |
 | dp4-99 Leftovers | enabled | 0 | 0 |  | 2 |
 | dp4-100 Moonlight Stadium | enabled | 0 | 0 |  | 1 |
 | dp4-101 Premier Ball | enabled | 0 | 0 | deckSearch | 1 |
-| dp4-102 Rare Candy | enabled | 0 | 0 | choice | 0 |
+| dp4-102 Rare Candy | enabled | 0 | 0 | choice | 1 |
 | dp4-103 Cresselia LV.X | enabled | 1 | 1 |  | 2 |
 | dp4-104 Darkrai LV.X | enabled | 1 | 1 | status, coin | 1 |
 | dp4-105 Dialga LV.X | enabled | 1 | 1 | timing, coin | 1 |
