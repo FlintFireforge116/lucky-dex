@@ -227,7 +227,7 @@ function runSmokes(cards,{data,core,opponents}){
       const rule=String(s.pendingChoice?.effect?.rule||'');
       const stage=s.pendingChoice?.effect?.stage;
       const choice=stage==='foeRock'?(choices.find(a=>Number(a.choiceOption)===1)||choices.at(-1)):
-        (rule==='dp2:7:leafTornado'&&n>1)?(choices.find(a=>a.choiceSkip)||choices[0]):
+        ((rule==='dp2:7:leafTornado'&&n>1)||(rule==='dp3:27:batonPass'&&stage==='move'&&n>2))?(choices.find(a=>a.choiceSkip)||choices[0]):
         (choices.find(a=>!a.choiceSkip)||choices[0]);
       core.applyAction(s,s.choiceSide,choice);
     }

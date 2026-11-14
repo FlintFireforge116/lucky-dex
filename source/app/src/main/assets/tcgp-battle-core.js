@@ -1854,6 +1854,15 @@
         restoreState(state,snapshot);state.rngState=rngAfter;const owner=state.sides[ownerSide];owner.coinRerollUsedTurn=owner.coinRerollUsedTurn||{};owner.coinRerollUsedTurn[scope]=state.turnNumber;
         return applyAction(state,actionSide,originalAction);
       }
+      if(pending.special==='dp3PoisonRub'){
+        // Attacker chooses the optional replacement BEFORE the attack runs.
+        // Re-run the already-declared attack against the incoming defender so
+        // damage, Weakness, Resistance, reactive Bodies and KO all use it.
+        state.pendingChoice=null;state.choiceSide=null;state.phase='battle';
+        if(matched.choiceTarget==='bench')effects.switchPokemon(state.sides[pending.targetSide],matched.choiceBenchIndex,state);
+        state.dp3PoisonRubResolved={side:pending.originSide,sourceUid:pending.sourceUid,turn:state.turnNumber};
+        try{return applyAction(state,pending.originSide,pending.attackAction);}finally{delete state.dp3PoisonRubResolved;}
+      }
       if(pending.special==='ex16FlygonShield'){
         const owner=state.sides[pending.originSide],target=findSlotByUid(state,pending.originSide,pending.targetUid);
         if(pending.stage==='count'){
@@ -2184,6 +2193,13 @@
     if (matched.type === 'attack'){
       if(state.format==='classic'&&state.stadium?.cardId==='SNAPFOUNJA-082'&&foe.active&&data.cardById(foe.active.cardId)?.types?.some(t=>t==='Water'||t==='Fighting')){const results=[random(state)<.5,random(state)<.5];state.log.push({type:'coin',side,reason:'Muddy Pond',heads:results.filter(Boolean).length,results});if(results.every(x=>!x)){state.log.push({type:'attackFailed',side,reason:'Muddy Pond'});endTurn(state);return state;}}
       const attackerCard=data.cardById(s.active.cardId),attackSourceCard=data.cardById(matched.attackCardId||s.active.cardId),attack=attackSourceCard.attacks[matched.attackIndex];
+      if(state.format==='classic'&&s.active.cardId==='dp3-34'&&attack.name==='Poison Rub'&&foe.bench.length&&
+         !(state.dp3PoisonRubResolved?.side===side&&state.dp3PoisonRubResolved?.sourceUid===s.active.uid&&state.dp3PoisonRubResolved?.turn===state.turnNumber)){
+        beginEffectChoice(state,side,s.active,{kind:'switchBench',side:'self',selectionSide:foeSide,
+          optional:true,special:'dp3PoisonRub',targetSide:foeSide,attackAction:{...matched},
+          prompt:'Poison Rub — switch the Defending Pokémon before damage?'});
+        return state;
+      }
       if(state.format==='classic'&&s.active.cardId==='dp2-3'&&attack.name==='Charity Tail'&&state.dp2CharityTailChoice==null&&foe.hand.length>=2){
         state.dp2QueuedCharityTail={side,attack:{...matched}};
         beginEffectChoice(state,foeSide,foe.active,{kind:'option',side:'self',options:['Keep hand — take 80 damage','Discard 2 cards — reduce damage to 10'],effect:{type:'neoRule',rule:'dp2:3:charityTail',stage:'offer'},resume:'dp2CharityTail'});

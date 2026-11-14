@@ -1787,3 +1787,46 @@ has been performed for v0.69.240.
 choice, hand/deck, event, Energy transformation, delayed attack and
 Prize handling; updated auditor, source tests, preflight and set notes.
 Automated tests are not an independent ruling or Android device audit.
+
+APPENDIX v2.34 — 14 NOVEMBER 2026 — v0.69.241 PRINT-BY-PRINT AUDIT + CARD-ART CHOICES
+====================================================================================
+[LOCKED] C-CHOICE-020: Whenever a card effect asks for an identifiable
+physical Pokémon, Trainer, Stadium, Tool or Energy card, its choice data
+MUST carry the exact `optionCardIds`/`choiceCardId` print identity so
+all card-choice overlays render actual card art. Never rely on a label
+alone if the physical card reference is available. Cards of the same
+species from different expansions must retain the true print. Safe
+unique-name fallback is permissible only for zones already known to
+the chooser; NEVER expose face-down Prize identities, unknown opponent
+hand contents or unrevealed opposing deck cards. Numeric decisions,
+pass/fail, yes/no and true hidden options remain text or card backs.
+Always distinguish physical Basic Energy prints from Energy Zone tokens.
+
+[LOCKED] C-DP3-CHOICE-021: Furret's Baton Pass transfers ANY NUMBER of
+its Basic and Special Energy cards after the optional Bench switch,
+including zero, with an explicit Finish/Skip. Nidoking Poison Rub gives
+the ATTACKER the option to switch the defending Pokemon BEFORE damage
+and Poison. Golem Double Throw selects two DISTINCT enemy Pokemon where
+two exist; it cannot strike the same Active twice.
+
+[LOCKED] C-DAMAGE-022: Attacks that deal damage to a CHOSEN Active
+Pokemon apply its printed Weakness, Resistance, attack modifiers,
+and defensive Bodies/Tools unless explicitly overridden. For Benched
+damage, apply the attack's printed exception (usually no Weakness or
+Resistance). Distinguish damage COUNTERS from attack damage: counters
+usually bypass the standard damage calculation. Verified Secret Wonders
+examples: Jumpluff Cottonweed Punch, Cloyster Spine Missile, Golem
+Double Throw and Xatu Energy Singe. Knock Outs and Prizes occur AFTER
+all selected attack targets/effects have resolved.
+
+[CURRENT] v0.69.241 source tests include fifteen new focused rule/UI
+outcome checks in v07241-secret-wonders-independent-audit.test.cjs,
+plus full dp3 and previous-set regressions. GitHub preflight runs this
+new test file. `docs/SECRET_WONDERS_v0.69.241_PRINT_BY_PRINT_AUDIT.md`
+tracks all 132 prints, their registered mechanics and remaining audit
+risk tags. `generated/classic-audit-dp3.md` and JSON are reproducible.
+These checks do NOT prove every printed ruling or certify a real phone.
+
+2026-11-14 | 2.33 -> 2.34 | v0.69.241 | Independent Secret Wonders
+print-ledger and choice-card-art fixes, Furret/Nidoking/Golem corrections,
+selected-target damage calculation fixes, updated GitHub preflight.

@@ -967,10 +967,10 @@ html.android-native-inset body.tcgp-battle-live .tcgp-live-arena:not(.format-cla
 .tcgp-live-choice-head b{font-size:13px;line-height:1.3;overflow-wrap:anywhere}
 .tcgp-live-choice-head span{font-size:10px;line-height:1.3;color:#c5d9e5}
 .tcgp-live-choice-cancel,.tcgp-live-choice-skip{background:#294962;border:1px solid #8faebc;color:#fff;border-radius:8px;padding:7px 12px;font-size:10px;font-weight:850}
-.tcgp-live-choice-rail{display:flex;gap:9px;overflow-x:auto;overflow-y:hidden;flex:1 1 auto;min-height:0;max-height:min(48vh,270px);padding:3px 3px 10px;scrollbar-width:thin;scroll-snap-type:x proximity;overscroll-behavior-x:contain}
-.tcgp-live-choice-card{flex:0 0 82px;min-width:82px;max-width:82px;display:flex;flex-direction:column;align-items:center;gap:3px;scroll-snap-align:center;
+.tcgp-live-choice-rail{display:flex;gap:9px;overflow-x:auto;overflow-y:hidden;flex:1 1 auto;min-height:0;max-height:min(51vh,310px);padding:3px 3px 10px;scrollbar-width:thin;scroll-snap-type:x proximity;overscroll-behavior-x:contain}
+.tcgp-live-choice-card{flex:0 0 106px;min-width:106px;max-width:106px;display:flex;flex-direction:column;align-items:center;gap:3px;scroll-snap-align:center;
   padding:4px;border:2px solid #668599;border-radius:9px;background:#24455b;color:#f6fbff;cursor:pointer;min-height:0;align-self:flex-start;height:max-content}
-.tcgp-live-choice-card img{display:block;width:62px;height:87px;border-radius:5px;object-fit:contain;background:#163246}
+.tcgp-live-choice-card img{display:block;width:93px;height:131px;border-radius:5px;object-fit:contain;background:#163246}
 .tcgp-live-choice-card b{font-size:9px;line-height:1.25;text-align:center;max-height:none;overflow:visible;overflow-wrap:anywhere;white-space:normal;width:100%}
 .tcgp-live-choice-card small{font-size:8px;line-height:1.25;color:#c1d8e4;text-align:center;max-height:none;overflow:visible;overflow-wrap:anywhere;white-space:normal}
 /* Choice actions without card art are actions, not fake card prints.
@@ -980,7 +980,7 @@ html.android-native-inset body.tcgp-battle-live .tcgp-live-arena:not(.format-cla
 .tcgp-live-choice-card.text-option small{max-height:none;overflow:visible;font-size:9px}
 .tcgp-live-choice-rail:has(.text-option){max-height:min(44vh,230px);min-height:132px;align-items:stretch;overflow-y:auto}
 .tcgp-live-choice-card.selected{border-color:#ffdf70;box-shadow:0 0 0 2px #ffe59666;background:#375769;transform:translateY(-2px)}
-.tcgp-live-choice-placeholder{width:62px;min-height:87px;display:grid;place-items:center;padding:4px;box-sizing:border-box;text-align:center;border-radius:5px;background:#597c8f;color:#fff;font-size:10px;overflow-wrap:anywhere}
+.tcgp-live-choice-placeholder{width:93px;min-height:131px;display:grid;place-items:center;padding:4px;box-sizing:border-box;text-align:center;border-radius:5px;background:#597c8f;color:#fff;font-size:10px;overflow-wrap:anywhere}
 /* The HTML hidden attribute must win over the placeholder/image display rules.
    Otherwise full card art shows with a second, redundant text tile below. */
 .tcgp-live-choice-placeholder[hidden],.tcgp-live-choice-card img[hidden]{display:none!important}
@@ -1018,8 +1018,8 @@ html.android-native-inset body.tcgp-battle-live .tcgp-live-arena:not(.format-cla
 .tcgp-live-cpu-card-reveal>span{display:grid;place-items:center;min-height:70px;text-align:center;color:#fff;font-size:10px}
 @keyframes tcgpCpuReveal{from{opacity:0;transform:scale(.86) translateY(5px)}to{opacity:1;transform:scale(1)}}
 @media(max-width:380px){
- .tcgp-live-choice-card{flex-basis:73px;min-width:73px;max-width:73px}
- .tcgp-live-choice-card img{width:55px;height:78px}
+ .tcgp-live-choice-card{flex-basis:96px;min-width:96px;max-width:73px}
+ .tcgp-live-choice-card img{width:84px;height:118px}
  .tcgp-live-choice-rail{max-height:min(48vh,250px)}
  .tcgp-live-action-event{font-size:9px!important;width:min(69%,340px)!important}
  .tcgp-live-cpu-card-reveal{right:2%;width:57px}

@@ -25,7 +25,7 @@
       "deckSearch": 14,
       "coin": 46
     },
-    "withStaticTestMentions": 83,
+    "withStaticTestMentions": 87,
     "errors": 0,
     "warnings": 0,
     "reviewFlags": 0
@@ -275,7 +275,8 @@
         "dp3:11:cottonSpore"
       ],
       "testFilesMentioningId": [
-        "v07240-secret-wonders-completion.test.cjs"
+        "v07240-secret-wonders-completion.test.cjs",
+        "v07241-secret-wonders-independent-audit.test.cjs"
       ],
       "findings": []
     },
@@ -435,7 +436,8 @@
       "testFilesMentioningId": [
         "v07238-secret-wonders-stage2.test.cjs",
         "v07239-secret-wonders-stage3.test.cjs",
-        "v07240-secret-wonders-completion.test.cjs"
+        "v07240-secret-wonders-completion.test.cjs",
+        "v07241-secret-wonders-independent-audit.test.cjs"
       ],
       "findings": []
     },
@@ -632,7 +634,9 @@
         "dp3:27:keenEye",
         "dp3:27:batonPass"
       ],
-      "testFilesMentioningId": [],
+      "testFilesMentioningId": [
+        "v07241-secret-wonders-independent-audit.test.cjs"
+      ],
       "findings": []
     },
     {
@@ -677,7 +681,8 @@
         "dp3:29:megatonRock"
       ],
       "testFilesMentioningId": [
-        "v07240-secret-wonders-completion.test.cjs"
+        "v07240-secret-wonders-completion.test.cjs",
+        "v07241-secret-wonders-independent-audit.test.cjs"
       ],
       "findings": []
     },
@@ -787,7 +792,9 @@
         "dp3:34:poisonRub",
         "dp3:34:prideAttack"
       ],
-      "testFilesMentioningId": [],
+      "testFilesMentioningId": [
+        "v07241-secret-wonders-independent-audit.test.cjs"
+      ],
       "findings": []
     },
     {
@@ -997,7 +1004,9 @@
         "dp3:44:energySinge",
         "dp3:44:psychicShift"
       ],
-      "testFilesMentioningId": [],
+      "testFilesMentioningId": [
+        "v07241-secret-wonders-independent-audit.test.cjs"
+      ],
       "findings": []
     },
     {
@@ -1228,7 +1237,8 @@
         "dp3:55:healingMilk"
       ],
       "testFilesMentioningId": [
-        "v07239-secret-wonders-stage3.test.cjs"
+        "v07239-secret-wonders-stage3.test.cjs",
+        "v07241-secret-wonders-independent-audit.test.cjs"
       ],
       "findings": []
     },
@@ -1672,7 +1682,8 @@
       ],
       "customRules": [],
       "testFilesMentioningId": [
-        "v07237-secret-wonders-stage1.test.cjs"
+        "v07237-secret-wonders-stage1.test.cjs",
+        "v07241-secret-wonders-independent-audit.test.cjs"
       ],
       "findings": []
     },
@@ -1789,7 +1800,8 @@
         "v07237-secret-wonders-stage1.test.cjs",
         "v07238-secret-wonders-stage2.test.cjs",
         "v07239-secret-wonders-stage3.test.cjs",
-        "v07240-secret-wonders-completion.test.cjs"
+        "v07240-secret-wonders-completion.test.cjs",
+        "v07241-secret-wonders-independent-audit.test.cjs"
       ],
       "findings": []
     },
@@ -1811,7 +1823,8 @@
         "v07237-secret-wonders-stage1.test.cjs",
         "v07238-secret-wonders-stage2.test.cjs",
         "v07239-secret-wonders-stage3.test.cjs",
-        "v07240-secret-wonders-completion.test.cjs"
+        "v07240-secret-wonders-completion.test.cjs",
+        "v07241-secret-wonders-independent-audit.test.cjs"
       ],
       "findings": []
     },
@@ -1856,7 +1869,8 @@
       "testFilesMentioningId": [
         "v07237-secret-wonders-stage1.test.cjs",
         "v07238-secret-wonders-stage2.test.cjs",
-        "v07239-secret-wonders-stage3.test.cjs"
+        "v07239-secret-wonders-stage3.test.cjs",
+        "v07241-secret-wonders-independent-audit.test.cjs"
       ],
       "findings": []
     },
@@ -1882,7 +1896,8 @@
         "dp3:86:astonish"
       ],
       "testFilesMentioningId": [
-        "v07238-secret-wonders-stage2.test.cjs"
+        "v07238-secret-wonders-stage2.test.cjs",
+        "v07241-secret-wonders-independent-audit.test.cjs"
       ],
       "findings": []
     },
@@ -2543,7 +2558,8 @@
         "dp2:109:bebe"
       ],
       "testFilesMentioningId": [
-        "v07240-secret-wonders-completion.test.cjs"
+        "v07240-secret-wonders-completion.test.cjs",
+        "v07241-secret-wonders-independent-audit.test.cjs"
       ],
       "findings": []
     },
@@ -2565,7 +2581,9 @@
       "customRules": [
         "dp2:113:nightMaintenance"
       ],
-      "testFilesMentioningId": [],
+      "testFilesMentioningId": [
+        "v07241-secret-wonders-independent-audit.test.cjs"
+      ],
       "findings": []
     },
     {
@@ -2621,7 +2639,8 @@
       ],
       "testFilesMentioningId": [
         "v07237-secret-wonders-stage1.test.cjs",
-        "v07240-secret-wonders-completion.test.cjs"
+        "v07240-secret-wonders-completion.test.cjs",
+        "v07241-secret-wonders-independent-audit.test.cjs"
       ],
       "findings": []
     },
@@ -2643,7 +2662,8 @@
         "dp1:113:rival"
       ],
       "testFilesMentioningId": [
-        "v07240-secret-wonders-completion.test.cjs"
+        "v07240-secret-wonders-completion.test.cjs",
+        "v07241-secret-wonders-independent-audit.test.cjs"
       ],
       "findings": []
     },
@@ -2707,7 +2727,8 @@
       "customRules": [],
       "testFilesMentioningId": [
         "v07239-secret-wonders-stage3.test.cjs",
-        "v07240-secret-wonders-completion.test.cjs"
+        "v07240-secret-wonders-completion.test.cjs",
+        "v07241-secret-wonders-independent-audit.test.cjs"
       ],
       "findings": []
     },
@@ -2780,7 +2801,8 @@
         "dp3:131:teleportation"
       ],
       "testFilesMentioningId": [
-        "v07240-secret-wonders-completion.test.cjs"
+        "v07240-secret-wonders-completion.test.cjs",
+        "v07241-secret-wonders-independent-audit.test.cjs"
       ],
       "findings": []
     },

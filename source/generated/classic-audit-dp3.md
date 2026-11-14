@@ -2,7 +2,7 @@
 
 **Status:** No definite catalog/schema failures; 0 warnings; 0 follow-up flags.
 
-**Coverage:** 132/132 enabled, 0 gated. 194 attacks, 45 named abilities; 83/132 IDs mentioned in test files (mentions are not proof).
+**Coverage:** 132/132 enabled, 0 gated. 194 attacks, 45 named abilities; 87/132 IDs mentioned in test files (mentions are not proof).
 
 **Source contract:** `docs/LUCKYDEX_MASTER_RULES.txt`.
 
@@ -150,14 +150,14 @@ Risk tags are prompts for scenario tests, not automatic implementation failures.
 | dp3-8 Gastrodon East Sea | enabled | 1 | 1 | choice | 1 |
 | dp3-9 Gastrodon West Sea | enabled | 2 | 0 |  | 1 |
 | dp3-10 Ho-Oh | enabled | 1 | 1 | energyMovement, coin | 1 |
-| dp3-11 Jumpluff | enabled | 1 | 1 | choice, timing, coin | 1 |
+| dp3-11 Jumpluff | enabled | 1 | 1 | choice, timing, coin | 2 |
 | dp3-12 Lickilicky | enabled | 2 | 0 | choice, timing, coin | 0 |
 | dp3-13 Ludicolo | enabled | 1 | 1 |  | 1 |
 | dp3-14 Lugia | enabled | 2 | 0 | choice, energyMovement, coin | 1 |
 | dp3-15 Mew | enabled | 2 | 0 | choice, energyMovement | 0 |
 | dp3-16 Raikou | enabled | 1 | 1 | choice, energyMovement | 1 |
 | dp3-17 Roserade | enabled | 2 | 0 | status, coin | 2 |
-| dp3-18 Salamence | enabled | 2 | 0 | energyMovement | 3 |
+| dp3-18 Salamence | enabled | 2 | 0 | energyMovement | 4 |
 | dp3-19 Suicune | enabled | 1 | 1 | choice, timing | 0 |
 | dp3-20 Venusaur | enabled | 1 | 1 | choice, coin | 1 |
 | dp3-21 Absol | enabled | 2 | 0 |  | 1 |
@@ -166,14 +166,14 @@ Risk tags are prompts for scenario tests, not automatic implementation failures.
 | dp3-24 Dugtrio | enabled | 2 | 0 | timing, coin | 1 |
 | dp3-25 Electivire | enabled | 1 | 1 | energyMovement, coin | 1 |
 | dp3-26 Electrode | enabled | 1 | 1 | energyMovement | 1 |
-| dp3-27 Furret | enabled | 2 | 0 | choice, energyMovement | 0 |
+| dp3-27 Furret | enabled | 2 | 0 | choice, energyMovement | 1 |
 | dp3-28 Golduck | enabled | 2 | 0 | choice, timing | 1 |
-| dp3-29 Golem | enabled | 2 | 0 | choice, timing | 1 |
+| dp3-29 Golem | enabled | 2 | 0 | choice, timing | 2 |
 | dp3-30 Jynx | enabled | 2 | 0 | status | 1 |
 | dp3-31 Magmortar | enabled | 2 | 1 | choice | 1 |
 | dp3-32 Minun | enabled | 1 | 1 | choice, energyMovement | 1 |
 | dp3-33 Mothim | enabled | 2 | 0 | timing | 1 |
-| dp3-34 Nidoking | enabled | 2 | 0 | timing, coin | 0 |
+| dp3-34 Nidoking | enabled | 2 | 0 | timing, coin | 1 |
 | dp3-35 Pidgeot | enabled | 2 | 0 |  | 2 |
 | dp3-36 Plusle | enabled | 1 | 1 | choice, energyMovement | 0 |
 | dp3-37 Sharpedo | enabled | 1 | 1 |  | 1 |
@@ -183,7 +183,7 @@ Risk tags are prompts for scenario tests, not automatic implementation failures.
 | dp3-41 Wormadam Plant Cloak | enabled | 1 | 1 | status | 1 |
 | dp3-42 Wormadam Sandy Cloak | enabled | 1 | 1 |  | 1 |
 | dp3-43 Wormadam Trash Cloak | enabled | 1 | 1 |  | 1 |
-| dp3-44 Xatu | enabled | 1 | 1 | choice, energyMovement, status | 0 |
+| dp3-44 Xatu | enabled | 1 | 1 | choice, energyMovement, status | 1 |
 | dp3-45 Breloom | enabled | 2 | 0 |  | 1 |
 | dp3-46 Charmeleon | enabled | 2 | 0 | energyMovement, status, coin | 1 |
 | dp3-47 Cloyster | enabled | 2 | 0 | choice, coin | 0 |
@@ -194,7 +194,7 @@ Risk tags are prompts for scenario tests, not automatic implementation failures.
 | dp3-52 Kecleon | enabled | 1 | 1 | energyMovement, coin | 0 |
 | dp3-53 Kirlia | enabled | 2 | 0 | choice | 0 |
 | dp3-54 Lombre | enabled | 2 | 0 | timing, coin | 0 |
-| dp3-55 Miltank | enabled | 2 | 0 | coin | 1 |
+| dp3-55 Miltank | enabled | 2 | 0 | coin | 2 |
 | dp3-56 Muk | enabled | 1 | 1 | timing, status | 0 |
 | dp3-57 Nidorino | enabled | 2 | 0 | timing, status | 1 |
 | dp3-58 Pidgeotto | enabled | 2 | 0 | coin | 0 |
@@ -215,17 +215,17 @@ Risk tags are prompts for scenario tests, not automatic implementation failures.
 | dp3-73 Venomoth | enabled | 1 | 1 | timing, status | 1 |
 | dp3-74 Vibrava | enabled | 2 | 0 | energyMovement, coin | 0 |
 | dp3-75 Wartortle | enabled | 2 | 0 | timing | 1 |
-| dp3-76 Bagon | enabled | 2 | 0 |  | 1 |
+| dp3-76 Bagon | enabled | 2 | 0 |  | 2 |
 | dp3-77 Bulbasaur | enabled | 2 | 0 | status, coin | 2 |
 | dp3-78 Burmy Plant Cloak | enabled | 1 | 1 | energyMovement | 0 |
 | dp3-79 Burmy Sandy Cloak | enabled | 1 | 1 | energyMovement | 0 |
 | dp3-80 Burmy Trash Cloak | enabled | 1 | 1 | energyMovement | 0 |
 | dp3-81 Carvanha | enabled | 2 | 0 | privacy, coin | 0 |
-| dp3-82 Charmander | enabled | 2 | 0 |  | 4 |
-| dp3-83 Clefairy | enabled | 1 | 0 | coin | 4 |
+| dp3-82 Charmander | enabled | 2 | 0 |  | 5 |
+| dp3-83 Clefairy | enabled | 1 | 0 | coin | 5 |
 | dp3-84 Corsola | enabled | 2 | 0 | choice, deckSearch | 3 |
-| dp3-85 Diglett | enabled | 2 | 0 |  | 3 |
-| dp3-86 Duskull | enabled | 1 | 0 | choice, privacy, deckSearch, coin | 1 |
+| dp3-85 Diglett | enabled | 2 | 0 |  | 4 |
+| dp3-86 Duskull | enabled | 1 | 0 | choice, privacy, deckSearch, coin | 2 |
 | dp3-87 Electabuzz | enabled | 2 | 0 | coin | 1 |
 | dp3-88 Grimer | enabled | 2 | 0 | timing, coin | 0 |
 | dp3-89 Growlithe | enabled | 2 | 0 |  | 0 |
@@ -258,19 +258,19 @@ Risk tags are prompts for scenario tests, not automatic implementation failures.
 | dp3-116 Venonat | enabled | 2 | 0 | coin | 0 |
 | dp3-117 Voltorb | enabled | 2 | 0 |  | 0 |
 | dp3-118 Wooper | enabled | 2 | 0 | choice, status | 0 |
-| dp3-119 Bebe's Search | enabled | 0 | 0 |  | 1 |
-| dp3-120 Night Maintenance | enabled | 0 | 0 | choice, energyMovement, deckSearch | 0 |
+| dp3-119 Bebe's Search | enabled | 0 | 0 |  | 2 |
+| dp3-120 Night Maintenance | enabled | 0 | 0 | choice, energyMovement, deckSearch | 1 |
 | dp3-121 PlusPower | enabled | 0 | 0 |  | 0 |
 | dp3-122 Professor Oak's Visit | enabled | 0 | 0 |  | 2 |
-| dp3-123 Professor Rowan | enabled | 0 | 0 | deckSearch | 2 |
-| dp3-124 Rival | enabled | 0 | 0 | choice, privacy | 1 |
+| dp3-123 Professor Rowan | enabled | 0 | 0 | deckSearch | 3 |
+| dp3-124 Rival | enabled | 0 | 0 | choice, privacy | 2 |
 | dp3-125 Roseanne's Research | enabled | 0 | 0 | choice, energyMovement | 1 |
 | dp3-126 Team Galactic's Mars | enabled | 0 | 0 | choice, privacy | 1 |
-| dp3-127 Potion | enabled | 0 | 0 |  | 2 |
+| dp3-127 Potion | enabled | 0 | 0 |  | 3 |
 | dp3-128 Switch | enabled | 0 | 0 |  | 0 |
 | dp3-129 Darkness Energy | enabled | 0 | 0 |  | 2 |
 | dp3-130 Metal Energy | enabled | 0 | 0 |  | 1 |
-| dp3-131 Gardevoir LV.X | enabled | 1 | 1 | choice, status | 1 |
+| dp3-131 Gardevoir LV.X | enabled | 1 | 1 | choice, status | 2 |
 | dp3-132 Honchkrow LV.X | enabled | 2 | 0 | choice | 0 |
 
 ## Boundaries
