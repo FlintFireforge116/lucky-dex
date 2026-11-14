@@ -21,7 +21,7 @@ function choose(s,pred){assert.equal(s.phase,'effectChoice','expected choice');c
 function finish(s){for(let i=0;i<25&&s.phase==='effectChoice';i++)choose(s);assert.notEqual(s.phase,'effectChoice','choice stalled');}
 test('Great Encounters has 106 distinct canonical art prints; only reviewed cards enabled',()=>{
  assert.equal(set.CARDS.length,106);assert.equal(new Set(set.CARDS.map(x=>x.id)).size,106);
- assert.equal(set.coverage().battleEnabled,76);assert.equal(set.coverage().gated.length,30);
+ assert.equal(set.coverage().battleEnabled,100);assert.equal(set.coverage().gated.length,6);
  for(const c of set.CARDS){assert.equal(c.image,`https://images.pokemontcg.io/dp4/${c.number}.png`);assert.equal(data.cardById(c.id).name,c.name);
   if(c.battleEnabled)for(const part of [...(c.attacks||[]),...(c.abilities||[]),c])if(part.effect)assert.deepEqual(fx.validateEffect(part.effect),[],c.id+' '+(part.name||''));
  }
@@ -32,7 +32,7 @@ test('Great Encounters has 106 distinct canonical art prints; only reviewed card
 test('Darkrai Darkness Pursuit recognises Cresselia and Sleep Hole uses sleeping target state',()=>{
  let s=board('dp4-3','dp4-2');hit(s,'player',1);assert.equal(s.sides.opponent.active,null,'100 damage should Knock Out 80-HP Cresselia');
  s=board('dp4-4','dp4-61');hit(s,'player',1);assert.equal(s.sides.opponent.active.damage,40);
- s=board('dp4-4','dp4-30');s.sides.opponent.active.conditions={sleep:true};hit(s,'player',1);assert.equal(s.sides.opponent.active.damage,80);
+ s=board('dp4-4','dp4-9');s.sides.opponent.active.conditions={sleep:true};hit(s,'player',1);assert.equal(s.sides.opponent.active.damage,80);
 });
 test('Darkrai Darkness Roar gives attacker optional choice then lets defender owner switch',()=>{
  const s=board('dp4-4','dp4-61');const b=slot('dp4-62','foe-b');b.benchSlot=0;s.sides.opponent.bench=[b];hit(s);assert.equal(s.phase,'effectChoice');
@@ -89,9 +89,9 @@ test('Claydol Cosmic Power puts selected physical cards on bottom then draws unt
  assert.equal(s.sides.player.hand.length,6);assert.ok(s.sides.player.deck.some(x=>x.uid==='weed'));assert.ok(s.sides.player.deck.some(x=>x.uid==='buiz'));
 });
 test('Hypno Dream Catcher transfers damage counters only if target is sleeping',()=>{
- const s=board('dp4-19','dp4-30');s.sides.player.active.damage=30;s.sides.opponent.active.conditions={sleep:true};hit(s);
+ const s=board('dp4-19','dp4-9');s.sides.player.active.damage=30;s.sides.opponent.active.conditions={sleep:true};hit(s);
  assert.equal(s.sides.player.active.damage,0);assert.equal(s.sides.opponent.active.damage,30);
- const x=board('dp4-19','dp4-30');x.sides.player.active.damage=30;hit(x);assert.equal(x.sides.player.active.damage,30);assert.equal(x.sides.opponent.active.damage,0);
+ const x=board('dp4-19','dp4-9');x.sides.player.active.damage=30;hit(x);assert.equal(x.sides.player.active.damage,30);assert.equal(x.sides.opponent.active.damage,0);
 });
 test('Latias Miraculous Light heals and clears Special Conditions',()=>{
  const s=board('dp4-22','dp4-30');s.sides.player.active.damage=30;s.sides.player.active.conditions={poison:{amount:10}};hit(s);

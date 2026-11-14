@@ -13,54 +13,95 @@
       "energy": 0,
       "attacks": 172,
       "abilities": 28,
-      "enabled": 76,
-      "gated": 30
+      "enabled": 100,
+      "gated": 6
     },
     "risks": {
-      "choice": 17,
+      "choice": 25,
       "privacy": 0,
-      "timing": 15,
-      "energyMovement": 9,
-      "status": 12,
-      "deckSearch": 10,
-      "coin": 33
+      "timing": 18,
+      "energyMovement": 20,
+      "status": 14,
+      "deckSearch": 14,
+      "coin": 41
     },
-    "withStaticTestMentions": 44,
+    "withStaticTestMentions": 62,
     "errors": 0,
     "warnings": 0,
-    "reviewFlags": 0
+    "reviewFlags": 4
   },
-  "findings": [],
+  "findings": [
+    {
+      "severity": "review",
+      "rule": "C-AUDIT-002",
+      "cardId": "dp4-25",
+      "message": "ability Marvel Scale: no-op effect; verify separately implemented passive/continuous rule."
+    },
+    {
+      "severity": "review",
+      "rule": "C-AUDIT-002",
+      "cardId": "dp4-30",
+      "message": "ability Sleeping Pulse: no-op effect; verify separately implemented passive/continuous rule."
+    },
+    {
+      "severity": "review",
+      "rule": "C-AUDIT-002",
+      "cardId": "dp4-31",
+      "message": "ability Toxic Virus: no-op effect; verify separately implemented passive/continuous rule."
+    },
+    {
+      "severity": "review",
+      "rule": "C-AUDIT-002",
+      "cardId": "dp4-85",
+      "message": "ability Sunlight: no-op effect; verify separately implemented passive/continuous rule."
+    }
+  ],
   "cardLedger": [
     {
       "id": "dp4-1",
       "name": "Blaziken",
       "kind": "pokemon",
-      "battleEnabled": false,
+      "battleEnabled": true,
       "attackCount": 2,
       "abilityCount": 0,
-      "riskTags": [],
-      "effectTypes": [
-        "noop"
+      "riskTags": [
+        "choice",
+        "energyMovement"
       ],
-      "customRules": [],
-      "testFilesMentioningId": [],
+      "effectTypes": [
+        "neoRule"
+      ],
+      "customRules": [
+        "dp4:1:fireDance",
+        "dp4:1:flameKick"
+      ],
+      "testFilesMentioningId": [
+        "v07244-great-encounters-remaining.test.cjs"
+      ],
       "findings": []
     },
     {
       "id": "dp4-2",
       "name": "Cresselia",
       "kind": "pokemon",
-      "battleEnabled": false,
+      "battleEnabled": true,
       "attackCount": 2,
       "abilityCount": 0,
-      "riskTags": [],
-      "effectTypes": [
-        "noop"
+      "riskTags": [
+        "choice",
+        "energyMovement"
       ],
-      "customRules": [],
+      "effectTypes": [
+        "neoRule"
+      ],
+      "customRules": [
+        "dp4:2:moonTwinkle",
+        "dp4:2:lunarDance"
+      ],
       "testFilesMentioningId": [
-        "v07243-great-encounters.test.cjs"
+        "v07243-great-encounters.test.cjs",
+        "v07244-great-encounters-remaining.test.cjs",
+        "v07244-great-encounters-stage2.test.cjs"
       ],
       "findings": []
     },
@@ -138,15 +179,23 @@
       "id": "dp4-6",
       "name": "Porygon-Z",
       "kind": "pokemon",
-      "battleEnabled": false,
+      "battleEnabled": true,
       "attackCount": 1,
       "abilityCount": 1,
-      "riskTags": [],
-      "effectTypes": [
-        "noop"
+      "riskTags": [
+        "energyMovement",
+        "coin"
       ],
-      "customRules": [],
-      "testFilesMentioningId": [],
+      "effectTypes": [
+        "coinDamage",
+        "neoRule"
+      ],
+      "customRules": [
+        "dp4:6:conversion"
+      ],
+      "testFilesMentioningId": [
+        "v07244-great-encounters-stage2.test.cjs"
+      ],
       "findings": []
     },
     {
@@ -177,30 +226,46 @@
       "id": "dp4-8",
       "name": "Sceptile",
       "kind": "pokemon",
-      "battleEnabled": false,
+      "battleEnabled": true,
       "attackCount": 1,
       "abilityCount": 1,
-      "riskTags": [],
+      "riskTags": [
+        "energyMovement",
+        "coin"
+      ],
       "effectTypes": [
-        "noop"
+        "coinFlip",
+        "bonusDamage",
+        "noop",
+        "modifier"
       ],
       "customRules": [],
-      "testFilesMentioningId": [],
+      "testFilesMentioningId": [
+        "v07244-great-encounters-stage2.test.cjs"
+      ],
       "findings": []
     },
     {
       "id": "dp4-9",
       "name": "Swampert",
       "kind": "pokemon",
-      "battleEnabled": false,
+      "battleEnabled": true,
       "attackCount": 1,
       "abilityCount": 1,
-      "riskTags": [],
-      "effectTypes": [
-        "noop"
+      "riskTags": [
+        "energyMovement"
       ],
-      "customRules": [],
-      "testFilesMentioningId": [],
+      "effectTypes": [
+        "discardTop",
+        "neoRule"
+      ],
+      "customRules": [
+        "dp4:9:washOut"
+      ],
+      "testFilesMentioningId": [
+        "v07243-great-encounters.test.cjs",
+        "v07244-great-encounters-stage2.test.cjs"
+      ],
       "findings": []
     },
     {
@@ -233,14 +298,23 @@
       "id": "dp4-11",
       "name": "Togekiss",
       "kind": "pokemon",
-      "battleEnabled": false,
+      "battleEnabled": true,
       "attackCount": 1,
       "abilityCount": 1,
-      "riskTags": [],
-      "effectTypes": [
-        "noop"
+      "riskTags": [
+        "energyMovement",
+        "deckSearch",
+        "coin"
       ],
-      "customRules": [],
+      "effectTypes": [
+        "coinFlip",
+        "bonusDamage",
+        "healSelf",
+        "neoRule"
+      ],
+      "customRules": [
+        "dp4:11:sereneGrace"
+      ],
       "testFilesMentioningId": [],
       "findings": []
     },
@@ -334,15 +408,23 @@
       "id": "dp4-16",
       "name": "Dialga",
       "kind": "pokemon",
-      "battleEnabled": false,
+      "battleEnabled": true,
       "attackCount": 2,
       "abilityCount": 0,
-      "riskTags": [],
-      "effectTypes": [
-        "noop"
+      "riskTags": [
+        "choice",
+        "energyMovement"
       ],
-      "customRules": [],
-      "testFilesMentioningId": [],
+      "effectTypes": [
+        "draw",
+        "neoRule"
+      ],
+      "customRules": [
+        "dp4:16:flashCannon"
+      ],
+      "testFilesMentioningId": [
+        "v07244-great-encounters-stage2.test.cjs"
+      ],
       "findings": []
     },
     {
@@ -371,15 +453,23 @@
       "id": "dp4-18",
       "name": "Houndoom",
       "kind": "pokemon",
-      "battleEnabled": false,
+      "battleEnabled": true,
       "attackCount": 2,
       "abilityCount": 0,
-      "riskTags": [],
-      "effectTypes": [
-        "noop"
+      "riskTags": [
+        "choice",
+        "energyMovement"
       ],
-      "customRules": [],
-      "testFilesMentioningId": [],
+      "effectTypes": [
+        "neoRule"
+      ],
+      "customRules": [
+        "dp4:18:darkFang",
+        "dp4:18:blackFire"
+      ],
+      "testFilesMentioningId": [
+        "v07244-great-encounters-stage2.test.cjs"
+      ],
       "findings": []
     },
     {
@@ -400,7 +490,8 @@
         "dp4:19:dreamCatcher"
       ],
       "testFilesMentioningId": [
-        "v07243-great-encounters.test.cjs"
+        "v07243-great-encounters.test.cjs",
+        "v07244-great-encounters-stage2.test.cjs"
       ],
       "findings": []
     },
@@ -468,15 +559,27 @@
       "id": "dp4-23",
       "name": "Latios",
       "kind": "pokemon",
-      "battleEnabled": false,
+      "battleEnabled": true,
       "attackCount": 2,
       "abilityCount": 0,
-      "riskTags": [],
-      "effectTypes": [
-        "noop"
+      "riskTags": [
+        "energyMovement",
+        "deckSearch",
+        "coin"
       ],
-      "customRules": [],
-      "testFilesMentioningId": [],
+      "effectTypes": [
+        "sequence",
+        "coinFlip",
+        "neoRule",
+        "noop",
+        "discardEnergyCard"
+      ],
+      "customRules": [
+        "dp4:23:energyDraw"
+      ],
+      "testFilesMentioningId": [
+        "v07244-great-encounters-stage2.test.cjs"
+      ],
       "findings": []
     },
     {
@@ -498,32 +601,55 @@
       "id": "dp4-25",
       "name": "Milotic",
       "kind": "pokemon",
-      "battleEnabled": false,
+      "battleEnabled": true,
       "attackCount": 1,
       "abilityCount": 1,
-      "riskTags": [],
+      "riskTags": [
+        "choice",
+        "coin"
+      ],
       "effectTypes": [
+        "neoRule",
         "noop"
       ],
-      "customRules": [],
-      "testFilesMentioningId": [
-        "v07243-great-encounters.test.cjs"
+      "customRules": [
+        "dp4:25:twister"
       ],
-      "findings": []
+      "testFilesMentioningId": [
+        "v07243-great-encounters.test.cjs",
+        "v07244-great-encounters-remaining.test.cjs"
+      ],
+      "findings": [
+        {
+          "severity": "review",
+          "rule": "C-AUDIT-002",
+          "message": "ability Marvel Scale: no-op effect; verify separately implemented passive/continuous rule."
+        }
+      ]
     },
     {
       "id": "dp4-26",
       "name": "Palkia",
       "kind": "pokemon",
-      "battleEnabled": false,
+      "battleEnabled": true,
       "attackCount": 2,
       "abilityCount": 0,
-      "riskTags": [],
-      "effectTypes": [
-        "noop"
+      "riskTags": [
+        "choice",
+        "energyMovement",
+        "deckSearch",
+        "coin"
       ],
-      "customRules": [],
-      "testFilesMentioningId": [],
+      "effectTypes": [
+        "neoRule"
+      ],
+      "customRules": [
+        "dp4:26:spacialRend",
+        "dp4:26:transback"
+      ],
+      "testFilesMentioningId": [
+        "v07244-great-encounters-stage2.test.cjs"
+      ],
       "findings": []
     },
     {
@@ -555,14 +681,20 @@
       "id": "dp4-28",
       "name": "Slowking",
       "kind": "pokemon",
-      "battleEnabled": false,
+      "battleEnabled": true,
       "attackCount": 1,
       "abilityCount": 1,
-      "riskTags": [],
-      "effectTypes": [
-        "noop"
+      "riskTags": [
+        "timing",
+        "deckSearch"
       ],
-      "customRules": [],
+      "effectTypes": [
+        "modifier",
+        "neoRule"
+      ],
+      "customRules": [
+        "dp4:28:trumpCard"
+      ],
       "testFilesMentioningId": [],
       "findings": []
     },
@@ -570,14 +702,17 @@
       "id": "dp4-29",
       "name": "Unown [H]",
       "kind": "pokemon",
-      "battleEnabled": false,
+      "battleEnabled": true,
       "attackCount": 1,
       "abilityCount": 1,
       "riskTags": [],
       "effectTypes": [
-        "noop"
+        "neoRule"
       ],
-      "customRules": [],
+      "customRules": [
+        "dp4:29:hiddenPower",
+        "dp4:29:heal"
+      ],
       "testFilesMentioningId": [],
       "findings": []
     },
@@ -585,33 +720,62 @@
       "id": "dp4-30",
       "name": "Wailord",
       "kind": "pokemon",
-      "battleEnabled": false,
+      "battleEnabled": true,
       "attackCount": 1,
       "abilityCount": 1,
-      "riskTags": [],
+      "riskTags": [
+        "timing",
+        "status"
+      ],
       "effectTypes": [
+        "neoRule",
         "noop"
       ],
-      "customRules": [],
-      "testFilesMentioningId": [
-        "v07243-great-encounters.test.cjs"
+      "customRules": [
+        "dp4:30:sinkDeep"
       ],
-      "findings": []
+      "testFilesMentioningId": [
+        "v07243-great-encounters.test.cjs",
+        "v07244-great-encounters-remaining.test.cjs",
+        "v07244-great-encounters-stage2.test.cjs"
+      ],
+      "findings": [
+        {
+          "severity": "review",
+          "rule": "C-AUDIT-002",
+          "message": "ability Sleeping Pulse: no-op effect; verify separately implemented passive/continuous rule."
+        }
+      ]
     },
     {
       "id": "dp4-31",
       "name": "Weezing",
       "kind": "pokemon",
-      "battleEnabled": false,
+      "battleEnabled": true,
       "attackCount": 1,
       "abilityCount": 1,
-      "riskTags": [],
+      "riskTags": [
+        "timing",
+        "status",
+        "coin"
+      ],
       "effectTypes": [
+        "coinFlip",
+        "sequence",
+        "status",
         "noop"
       ],
       "customRules": [],
-      "testFilesMentioningId": [],
-      "findings": []
+      "testFilesMentioningId": [
+        "v07244-great-encounters-remaining.test.cjs"
+      ],
+      "findings": [
+        {
+          "severity": "review",
+          "rule": "C-AUDIT-002",
+          "message": "ability Toxic Virus: no-op effect; verify separately implemented passive/continuous rule."
+        }
+      ]
     },
     {
       "id": "dp4-32",
@@ -692,7 +856,9 @@
         "coinDamage"
       ],
       "customRules": [],
-      "testFilesMentioningId": [],
+      "testFilesMentioningId": [
+        "v07244-great-encounters-stage2.test.cjs"
+      ],
       "findings": []
     },
     {
@@ -917,15 +1083,20 @@
       "id": "dp4-46",
       "name": "Marshtomp",
       "kind": "pokemon",
-      "battleEnabled": false,
+      "battleEnabled": true,
       "attackCount": 2,
       "abilityCount": 0,
       "riskTags": [],
       "effectTypes": [
-        "noop"
+        "noop",
+        "neoRule"
       ],
-      "customRules": [],
-      "testFilesMentioningId": [],
+      "customRules": [
+        "dp4:46:muddyBomb"
+      ],
+      "testFilesMentioningId": [
+        "v07244-great-encounters-stage2.test.cjs"
+      ],
       "findings": []
     },
     {
@@ -953,30 +1124,43 @@
       "id": "dp4-48",
       "name": "Pelipper",
       "kind": "pokemon",
-      "battleEnabled": false,
+      "battleEnabled": true,
       "attackCount": 2,
       "abilityCount": 0,
-      "riskTags": [],
-      "effectTypes": [
-        "noop"
+      "riskTags": [
+        "choice",
+        "energyMovement"
       ],
-      "customRules": [],
-      "testFilesMentioningId": [],
+      "effectTypes": [
+        "neoRule"
+      ],
+      "customRules": [
+        "dp4:48:guzzle",
+        "dp4:48:jetReturn"
+      ],
+      "testFilesMentioningId": [
+        "v07244-great-encounters-stage2.test.cjs"
+      ],
       "findings": []
     },
     {
       "id": "dp4-49",
       "name": "Porygon2",
       "kind": "pokemon",
-      "battleEnabled": false,
+      "battleEnabled": true,
       "attackCount": 1,
       "abilityCount": 1,
       "riskTags": [],
       "effectTypes": [
-        "noop"
+        "noop",
+        "neoRule"
       ],
-      "customRules": [],
-      "testFilesMentioningId": [],
+      "customRules": [
+        "dp4:49:download"
+      ],
+      "testFilesMentioningId": [
+        "v07244-great-encounters-stage2.test.cjs"
+      ],
       "findings": []
     },
     {
@@ -1110,15 +1294,23 @@
       "id": "dp4-56",
       "name": "Unown [F]",
       "kind": "pokemon",
-      "battleEnabled": false,
+      "battleEnabled": true,
       "attackCount": 1,
       "abilityCount": 1,
-      "riskTags": [],
-      "effectTypes": [
-        "noop"
+      "riskTags": [
+        "choice",
+        "coin"
       ],
-      "customRules": [],
-      "testFilesMentioningId": [],
+      "effectTypes": [
+        "neoRule"
+      ],
+      "customRules": [
+        "dp4:56:hiddenPower",
+        "dp4:56:fake"
+      ],
+      "testFilesMentioningId": [
+        "v07244-great-encounters-remaining.test.cjs"
+      ],
       "findings": []
     },
     {
@@ -1200,7 +1392,9 @@
       ],
       "customRules": [],
       "testFilesMentioningId": [
-        "v07243-great-encounters.test.cjs"
+        "v07243-great-encounters.test.cjs",
+        "v07244-great-encounters-remaining.test.cjs",
+        "v07244-great-encounters-stage2.test.cjs"
       ],
       "findings": []
     },
@@ -1660,18 +1854,27 @@
       "id": "dp4-85",
       "name": "Solrock",
       "kind": "pokemon",
-      "battleEnabled": false,
+      "battleEnabled": true,
       "attackCount": 1,
       "abilityCount": 1,
       "riskTags": [],
       "effectTypes": [
+        "neoRule",
         "noop"
       ],
-      "customRules": [],
+      "customRules": [
+        "dp4:85:solCharge"
+      ],
       "testFilesMentioningId": [
         "v07243-great-encounters.test.cjs"
       ],
-      "findings": []
+      "findings": [
+        {
+          "severity": "review",
+          "rule": "C-AUDIT-002",
+          "message": "ability Sunlight: no-op effect; verify separately implemented passive/continuous rule."
+        }
+      ]
     },
     {
       "id": "dp4-86",
@@ -1744,7 +1947,10 @@
         "status"
       ],
       "customRules": [],
-      "testFilesMentioningId": [],
+      "testFilesMentioningId": [
+        "v07244-great-encounters-remaining.test.cjs",
+        "v07244-great-encounters-stage2.test.cjs"
+      ],
       "findings": []
     },
     {
@@ -1765,7 +1971,8 @@
         "dp4:90:energyBall"
       ],
       "testFilesMentioningId": [
-        "v07243-great-encounters.test.cjs"
+        "v07243-great-encounters.test.cjs",
+        "v07244-great-encounters-stage2.test.cjs"
       ],
       "findings": []
     },
@@ -1829,7 +2036,9 @@
       ],
       "customRules": [],
       "testFilesMentioningId": [
-        "v07243-great-encounters.test.cjs"
+        "v07243-great-encounters.test.cjs",
+        "v07244-great-encounters-remaining.test.cjs",
+        "v07244-great-encounters-stage2.test.cjs"
       ],
       "findings": []
     },
@@ -1894,15 +2103,18 @@
       "id": "dp4-97",
       "name": "Amulet Coin",
       "kind": "trainer",
-      "battleEnabled": false,
+      "battleEnabled": true,
       "attackCount": 0,
       "abilityCount": 0,
       "riskTags": [],
       "effectTypes": [
-        "noop"
+        "triggeredEffect",
+        "draw"
       ],
       "customRules": [],
-      "testFilesMentioningId": [],
+      "testFilesMentioningId": [
+        "v07244-great-encounters-stage2.test.cjs"
+      ],
       "findings": []
     },
     {
@@ -1930,30 +2142,35 @@
       "id": "dp4-99",
       "name": "Leftovers",
       "kind": "trainer",
-      "battleEnabled": false,
+      "battleEnabled": true,
       "attackCount": 0,
       "abilityCount": 0,
       "riskTags": [],
       "effectTypes": [
-        "noop"
+        "triggeredEffect",
+        "healSelf"
       ],
       "customRules": [],
-      "testFilesMentioningId": [],
+      "testFilesMentioningId": [
+        "v07244-great-encounters-stage2.test.cjs"
+      ],
       "findings": []
     },
     {
       "id": "dp4-100",
       "name": "Moonlight Stadium",
       "kind": "trainer",
-      "battleEnabled": false,
+      "battleEnabled": true,
       "attackCount": 0,
       "abilityCount": 0,
       "riskTags": [],
       "effectTypes": [
-        "noop"
+        "modifier"
       ],
       "customRules": [],
-      "testFilesMentioningId": [],
+      "testFilesMentioningId": [
+        "v07244-great-encounters-stage2.test.cjs"
+      ],
       "findings": []
     },
     {
@@ -1998,16 +2215,20 @@
       "id": "dp4-103",
       "name": "Cresselia LV.X",
       "kind": "pokemon",
-      "battleEnabled": false,
+      "battleEnabled": true,
       "attackCount": 1,
       "abilityCount": 1,
       "riskTags": [],
       "effectTypes": [
-        "noop"
+        "neoRule"
       ],
-      "customRules": [],
+      "customRules": [
+        "dp4:103:moonSkip",
+        "dp4:103:fullMoonDance"
+      ],
       "testFilesMentioningId": [
-        "v07243-great-encounters.test.cjs"
+        "v07243-great-encounters.test.cjs",
+        "v07244-great-encounters-remaining.test.cjs"
       ],
       "findings": []
     },
@@ -2065,8 +2286,8 @@
     "failures": []
   },
   "smoke": {
-    "attempted": 278,
-    "executed": 274,
+    "attempted": 342,
+    "executed": 338,
     "skipped": 4,
     "skippedDetails": [
       {

@@ -1870,3 +1870,16 @@ dependency pairing for Psychic Smoochum/Jynx and cross-set equivalents.
 - If a printed card search/choice refers to a physical card, present a card ID/artwork choice. Textual labels are reserved for decisions, and concealed opponent cards must remain hidden except where the card reveals them.
 - An auditor smoke-path skip is not a pass. Synthetic smoke completion also does not prove the entire printed effect or the Android choice UI.
 - This release is not a full dp4 certification; its remaining 30 gated prints need a follow-up implementation and separate review.
+
+
+=== VERSION 0.69.244 — GREAT ENCOUNTERS CONTINUATION AND TIMING ===
+- Use the card catalog for the numbered source of truth. All 106 Great Encounters prints are registered; exactly 100 are battle-enabled, with Mawile #24, Unown G #57, Unown L #91, Darkrai LV.X #104, Dialga LV.X #105 and Palkia LV.X #106 gated pending verified mechanics.
+- Do not enable a card until mandatory Energy/cost, physical card choices, reactive Powers/Bodies and player/CPU outcomes work. A smoke action completion alone is not printed-rule verification.
+- Togekiss Serene Grace attaches Basic Energy from the ORIGINAL top 10 cards examined; cannot pull a newly exposed 11th card.
+- Flame Kick: two Fire Energy discarded from Blaziken, choose a target, deal 80 (no Bench weakness/resistance). Twister: two flips, no effect on double-tails, choose one attached Defending Energy to discard per heads.
+- Wailord Sleeping Pulse heals during between-turn check while Asleep. Weezing Toxic Virus adds 10 poison damage between turns to BOTH players' Poisoned Pokémon. Marvel Scale protects Milotic from opposing Pokémon LV.X attacks.
+- Unown F Hidden Power must present a choice to flip or preserve guaranteed 10 damage; FAKE lets the opponent guess the hidden coin, not merely a predetermined CPU decision.
+- Moon Skip on Cresselia LV.X takes an extra Prize only when its attack KOs the Defending Pokémon; preserve Prize selection sequence. Full Moon Dance can select source/target on either side.
+- Physical card selection and opponent-visible choices are required wherever print says choose/search/discard. Hidden Prize cards must not be exposed without a printed effect permitting it.
+- Tests: v07243-great-encounters.test.cjs, v07244-great-encounters-stage2.test.cjs, v07244-great-encounters-remaining.test.cjs; run Classic auditor dp4 and dp2/dp3 regression/smoke after shared changes. Detailed ledger: docs/GREAT_ENCOUNTERS_v0.69.244_IMPLEMENTATION.md.
+- The six gated prints are not complete. Device-level Android rendering and all real-match CPU outcomes remain unverified.

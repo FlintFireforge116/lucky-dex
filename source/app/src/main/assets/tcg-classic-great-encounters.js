@@ -124,8 +124,30 @@ const gate=(heads=N)=>({type:'coinAttackGate',heads});
 const rule=(name)=>({type:'neoRule',rule:'dp4:'+name});
 // Conservative, verified-only enablement. Cards with pending choices or reactive
 // Powers remain visible in the collection but cannot enter generated battle decks.
-const READY=new Set([4,14,21,32,55,67,70,77,15,19,22,38,71,76,92,98,101,45,5,10,17,42,43,47,63,3,7,12,13,20,27,33,34,35,36,37,39,40,41,44,50,51,52,53,54,58,59,60,61,62,64,65,66,68,69,72,73,74,75,78,79,80,81,82,83,84,86,87,88,89,90,93,94,95,96,102]);
+const READY=new Set([1,25,30,31,56,103,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,26,27,28,29,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50,51,52,53,54,55,58,59,60,61,62,63,64,65,66,67,68,69,70,71,72,73,74,75,76,77,78,79,80,81,82,83,84,85,86,87,88,89,90,92,93,94,95,96,97,98,99,100,101,102]);
 const EFFECTS={
+ 1:[rule('1:fireDance'),rule('1:flameKick')],
+ 25:[rule('25:twister')],
+ 30:[rule('30:sinkDeep')],
+ 31:[flip(seq(stat('confusion'),stat('poison')))],
+ 56:[rule('56:hiddenPower')],
+ 103:[rule('103:moonSkip')],
+ // Stage 2: printed effects with physical source cards and explicit player choices.
+ 2:[rule('2:moonTwinkle'),rule('2:lunarDance')],
+ 6:[{type:'coinDamage',coins:3,amount:40,mode:'replace'},N],
+ 8:[flip(bonus(20))],
+ 9:[{type:'discardTop',amount:1,side:'opponent'},N],
+ 11:[flip(bonus(30),{type:'healSelf',amount:30})],
+ 16:[{type:'draw',amount:1},rule('16:flashCannon')],
+ 18:[rule('18:darkFang'),rule('18:blackFire')],
+ 23:[seq(flip(rule('23:energyDraw')),N),{type:'discardEnergyCard',target:'self',amount:3}],
+ 26:[rule('26:spacialRend'),rule('26:transback')],
+ 28:[mod('attackDamage',30,'self','nextOwnTurn')],
+ 29:[rule('29:hiddenPower')],
+ 46:[N,rule('46:muddyBomb')],
+ 48:[rule('48:guzzle'),rule('48:jetReturn')],
+ 85:[rule('85:solCharge')],
+
  5:[{type:'benchFromDeck',amount:3,choose:true,filter:{kind:'pokemon',stage:'Basic'}},rule('5:smashShort')],
  10:[rule('10:powerWhip'),seq({type:'healSelf',amount:30},lock('retreat'))],
  17:[rule('17:ambientNoise'),N],
@@ -199,9 +221,42 @@ const EFFECTS={
  95:[N,N],
  96:[rule('96:pullOut'),{type:'coinDamage',coins:2,amount:10,mode:'replace'}]
 };
-const ABILITIES={47:[{...flip({type:'evolveFromDeck'}),condition:{type:'selfIsActive'}}],63:[{...flip({type:'evolveFromDeck'}),condition:{type:'selfIsActive'}}],45:[seq({type:'preventStatus',status:'sleep',duration:'whileInPlay',scope:'self'},{type:'preventStatus',status:'paralysis',duration:'whileInPlay',scope:'self'})],15:[rule('15:cosmicPower')],71:[flip({type:'benchFromDeck',amount:1,choose:true,filter:{kind:'pokemon',stage:'Basic',subtype:'Grass'}})],76:[rule('76:gravityChange')],92:[rule('92:lightConduct')],32:[seq(stat('sleep'),stat('sleep','self'))],70:[rule('70:babyEvolution')],27:[{type:'modifier',stat:'attackDamage',amount:40,scope:'self',duration:'whileInPlay',condition:{type:'selfDamaged'}}]};
-const TRAINER_EFFECTS={98:rule('98:felicityDrawing'),101:rule('101:premierBall'),102:{type:'rareCandy'}};
+const ABILITIES={
+ 25:[N],
+ 30:[N],
+ 31:[N],
+ 56:[rule('56:fake')],
+ 103:[rule('103:fullMoonDance')],
+ 6:[rule('6:conversion')],
+ 8:[{type:'modifier',stat:'energyMultiplier',amount:2,scope:'team',duration:'whileInPlay',filter:{subtype:'Grass'},nonStacking:true}],
+ 9:[rule('9:washOut')],
+ 11:[rule('11:sereneGrace')],
+ 28:[rule('28:trumpCard')],
+ 29:[rule('29:heal')],
+ 49:[rule('49:download')],
+ 85:[N],
+47:[{...flip({type:'evolveFromDeck'}),condition:{type:'selfIsActive'}}],63:[{...flip({type:'evolveFromDeck'}),condition:{type:'selfIsActive'}}],45:[seq({type:'preventStatus',status:'sleep',duration:'whileInPlay',scope:'self'},{type:'preventStatus',status:'paralysis',duration:'whileInPlay',scope:'self'})],15:[rule('15:cosmicPower')],71:[flip({type:'benchFromDeck',amount:1,choose:true,filter:{kind:'pokemon',stage:'Basic',subtype:'Grass'}})],76:[rule('76:gravityChange')],92:[rule('92:lightConduct')],32:[seq(stat('sleep'),stat('sleep','self'))],70:[rule('70:babyEvolution')],27:[{type:'modifier',stat:'attackDamage',amount:40,scope:'self',duration:'whileInPlay',condition:{type:'selfDamaged'}}]};
+const TRAINER_EFFECTS={97:{type:'triggeredEffect',event:'endTurn',turn:'owner',activeOnly:true,effect:{type:'draw',amount:1}},99:{type:'triggeredEffect',event:'endTurn',turn:'owner',activeOnly:true,effect:{type:'healSelf',amount:10}},100:{type:'modifier',stat:'retreatCost',amount:-99,scope:'both',duration:'whileInPlay',filter:{subtype:['Psychic','Darkness']}},98:rule('98:felicityDrawing'),101:rule('101:premierBall'),102:{type:'rareCandy'}};
 const PRINTS={
+ 1:['30 damage; choose one of your Pokémon to attach a Fire Energy from your discard pile.','Discard 2 Fire Energy from Blaziken; deal 80 damage to one opposing Pokémon, ignoring Bench Weakness and Resistance.'],
+ 25:['Flip 2 coins. Both tails: no damage; for each heads, choose an Energy on the Defending Pokémon and discard it.'],
+ 30:['If Wailord has any damage counters, Wailord becomes Asleep.'],
+ 31:['Flip: on heads, the Defending Pokémon is both Confused and Poisoned.'],
+ 56:['You may flip a coin: tails does no damage; heads sets the base damage to 30.'],
+ 103:['If Moon Skip Knocks Out the Defending Pokémon, take one extra Prize.'],
+ 48:['Choose up to two physical Basic Water Energy from your hand; attach them to Pelipper, healing 20 per card.','30 damage per Energy attached; return all its Energy to the top of the deck, then shuffle.'],
+ 46:['','Deal 30 to one opposing Pokémon and 10 to each other opposing Pokémon.'],
+ 29:['Discard one card from your hand. If you cannot discard, the attack does nothing.'],
+ 28:["During your next turn Psych Up's base damage is 60."],
+ 26:['Search your deck for a Stadium and put it into your hand, then discard a Stadium in play.',"You may flip; heads: discard all Energy from Palkia, shuffle the opponent's Active Pokémon and its attached cards into their deck."],
+ 23:['Flip: on heads search your deck for Basic Energy and attach it to Latios.','Discard three Energy attached to Latios.'],
+ 18:["Discard one unknown card from your opponent's hand.",'You may discard an attached Fire Energy to Burn or an attached Darkness Energy to do 30 extra damage.'],
+ 16:['Draw a card.',"You may return all Energy attached to Dialga to your hand, then devolve the Defending Pokémon's highest Evolution card into its owner's deck."],
+ 11:['Flip: heads do 30 more damage; tails remove three damage counters from Togekiss.'],
+ 9:["Discard the top card of your opponent's deck."],
+ 8:['Flip a coin. Heads: 20 additional damage.'],
+ 6:['Flip three coins. This attack does 40 damage for each heads.'],
+ 2:['If a Stadium is in play, remove two damage counters from Cresselia.','You may discard two attached Energy cards to remove all damage from one of your Benched Pokémon.'],
  5:['Search your deck for up to three Basic Pokémon and put them onto your Bench.','If the Defending Pokémon has a Tool, +30 damage. Discard it and same-name Tools from opponent hand.'],
  10:['Choose an opposing Pokémon and deal 10 damage per basic Energy attached to Tangrowth.','Heal Tangrowth by 30 and prevent defending Pokémon retreat next turn.'],
  17:['Flip two coins. First chooses 50 Active or 20 to every opposing Bench. Second Confuses or prevents Trainer, Supporter and Stadium cards next turn.',''],
@@ -272,7 +327,7 @@ const PRINTS={
  94:['','Flip: heads deal 10 damage to each opposing Pokémon.'],
  96:['Return any one card from your discard to the top of your deck.','Flip two coins; 10 per heads.']
 };
-const ABILITY_TEXT={47:['Once during turn while Metapod is Active, flip: heads evolve Metapod from your draw deck.'],63:['Once during turn while Caterpie is Active, flip: heads evolve Caterpie from your draw deck.'],45:['Magcargo cannot be Asleep or Paralyzed.'],15:['Once per turn, put up to two cards from hand onto bottom of deck, then draw until you have six.'],71:['Flip: heads search your deck for a Basic Grass Pokémon and Bench it.'],76:['Discard a card from hand; if Solrock is in play, draw one card.'],92:['With Illumise in play, put a Supporter from your discard on top of your deck.'],32:['Once per turn, put both Active Pokémon Asleep.'],70:['Evolve into a real Jigglypuff from hand and clear damage.'],27:['If damaged, Primeape attacks deal 40 additional damage to the Defending Pokémon.']};
+const ABILITY_TEXT={25:['Prevent all effects of attacks, including damage, from opposing Pokémon LV.X.'],30:['Between turns, remove 1 damage counter from Wailord while it is Asleep.'],31:['Between turns, each player places one additional damage counter on their Poisoned Pokémon.'],56:['While Unown F is Benched, flip a concealed coin; if the opponent guesses incorrectly, draw a card.'],103:['Move one damage counter from any Pokémon to another Pokémon on either side.'],85:['With Lunatone in play, your Psychic and Fighting attacks ignore opposing Resistance.'],49:['Discard a Supporter from hand to use its effect as Porygon2’s Power.'],29:['With Unown H, E, A and L on the Bench, remove all Special Conditions from your Active Pokémon.'],28:['If one of your Pokémon was Knocked Out last opponent turn, search your deck for any card.'],11:['On evolving from hand, examine the top 10 cards and attach Basic Energy to your Pokémon, then shuffle.'],9:['Repeatedly move Water or Fighting Energy from a Benched Pokémon to your Active Pokémon.'],8:['Basic Grass Energy attached to your Grass Pokémon provides two Grass Energy. Only one Wild Growth applies.'],6:['Discard one Basic Energy card from your hand; Porygon-Z changes to its type until end of turn.'],47:['Once during turn while Metapod is Active, flip: heads evolve Metapod from your draw deck.'],63:['Once during turn while Caterpie is Active, flip: heads evolve Caterpie from your draw deck.'],45:['Magcargo cannot be Asleep or Paralyzed.'],15:['Once per turn, put up to two cards from hand onto bottom of deck, then draw until you have six.'],71:['Flip: heads search your deck for a Basic Grass Pokémon and Bench it.'],76:['Discard a card from hand; if Solrock is in play, draw one card.'],92:['With Illumise in play, put a Supporter from your discard on top of your deck.'],32:['Once per turn, put both Active Pokémon Asleep.'],70:['Evolve into a real Jigglypuff from hand and clear damage.'],27:['If damaged, Primeape attacks deal 40 additional damage to the Defending Pokémon.']};
 const DATA=RAW.split('\n').map(row=>row.split('|'));
 function parse(row){
  const [number,name,kind,stage,hp,code,from,weak,resist,retreat,rarity,moves,powers]=row;
@@ -290,7 +345,7 @@ function parse(row){
       name:attackName,cost,damage:Number((damageText.match(/^\d+/)||[])[0]||0),damageText:damageText||null,
       text:PRINTS[n]?.[i]??'Printed attack under implementation review; battle entry gated.',effect:EFFECTS[n]?.[i]||N};}),
     abilities:(powers||'').split(';').filter(Boolean).map(s=>{const [power,type]=s.split('~');return {
-      name:power,type:type==='Power'?'activated':'passive',printedPowerType:type==='Power'?'power':'body',
+      name:power,...(n===9?{oncePerTurn:false}:{}),type:n===11?'triggered':type==='Power'?'activated':'passive',...(n===11?{event:'evolved',fromHandOnly:true}:{}),printedPowerType:type==='Power'?'power':'body',
       disabledByStatus:type==='Power',text:ABILITY_TEXT[n]?.[0]||'Poké-Power or Poké-Body awaiting battle timing verification.',effect:ABILITIES[n]?.[0]||N};}),
     isLevelX:stage==='Level-Up',levelUpFrom:stage==='Level-Up'?from:null});
   const ownTexts=[...card.attacks.map(a=>a.text),...card.abilities.map(a=>a.text)].join(' ').toLowerCase();
@@ -298,6 +353,9 @@ function parse(row){
   const types=[...new Set(card.attacks.flatMap(a=>[...a.cost].filter(x=>x!=='C').map(x=>T[x])))];
   card.deckMeta={roles,synergy:roles,energyTypes:types,preferredEnergyTypes:types,inflicts:[],payoffs:[],preferredPartners:[],conditionalAttackEnergyTypes:[],babyEvolutionSupport:[]};
  }else if(trainer){card.trainerType=stage==='Pokémon Tool'?'Tool':stage;card.text=stage==='Item'?'Trainer effect cross-checked against previous print.':'Printed Trainer action awaiting implementation.';card.effect=TRAINER_EFFECTS[n]||N;
+  if(n===97)card.text='If the attached Pokémon is Active at the end of your turn, draw a card.';
+  if(n===99)card.text='At the end of your turn, remove 1 damage counter from the Active Pokémon holding this Tool.';
+  if(n===100)card.text='Psychic and Darkness Pokémon on both sides have zero Retreat Cost.';
   if(n===98)card.text='Discard up to 2 cards from your hand. Discard 1 to draw 3, or 2 to draw 4.';
   if(n===101)card.text='Search your deck or discard for a Pokémon LV.X and put it into your hand.';
   if(n===102)card.text='Choose one of your Basic Pokémon and evolve directly into a valid Stage 1 or Stage 2 card from your hand.';

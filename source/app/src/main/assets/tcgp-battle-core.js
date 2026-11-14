@@ -1088,6 +1088,8 @@
         // Fellow Boost can only use an actual Basic Energy card in HAND,
         // never the next Energy Zone unit. Don't offer an inert Power.
         if(/^dp1-6[5-8]$/.test(source.cardId)&&s.active===source)return; // Unown Powers need the Bench.
+        if(source.cardId==='dp4-29'&&(!s.bench.includes(source)||!['H','E','A','L'].every(letter=>s.bench.some(p=>data.cardById(p.cardId)?.name==='Unown ['+letter+']'))))return;
+        if(source.cardId==='dp4-9'&&!s.bench.some(p=>Number(p.energy?.Water||0)>0||Number(p.energy?.Fighting||0)>0||(p.specialEnergy||[]).some(ref=>{const prov=ref.provides||data.cardById(ref.cardId)?.effect?.provides||{};return Number(prov.Water||0)+Number(prov.Fighting||0)>0;})))return;
         if(source.cardId==='dp1-2'&&state.sides[side==='player'?'opponent':'player'].bench.filter(Boolean).length<4)return;
         if(source.cardId==='dp2-5'&&ability.name==='Kind Egg'&&!(source.stack||[]).some(id=>data.cardById(id)?.name==='Happiny'))return;
         if(source.cardId==='dp2-37'&&ability.name==='ITEM'&&(!['dp2-37','dp2-65','dp2-66','dp2-67'].every(id=>s.bench.some(p=>p.cardId===id))||!s.deck.some(ref=>data.cardById(ref.cardId)?.kind==='trainer')||s.hand.length>=Number(s.handLimit||8)))return;
@@ -1331,7 +1333,10 @@
       const slot=state.sides[side].active;if(!slot)continue;
       const c=slot.conditions||{};
       if(slot.gym2ShapeshiftSource&&(c.sleep||c.confusion||c.paralysis))effects.revertShapeshift(state,slot);
-      if(c.poison){const base=typeof c.poison==='object'?Number(c.poison.amount??10):10,amount=Math.max(0,base+effects.modifierAmount(state,side,slot,'poisonDamageBonus',data.cardById));slot.damage+=amount;state.log.push({type:'statusDamage',side,status:'poison',amount});}
+      // Great Encounters: Sleeping Pulse heals a Sleeping Wailord between turns.
+      if(slot.cardId==='dp4-30'&&c.sleep&&!effects.abilitiesSuppressed(state,side,slot,data.cardById))
+        slot.damage=Math.max(0,Number(slot.damage||0)-10);
+      if(c.poison){const base=typeof c.poison==='object'?Number(c.poison.amount??10):10,amount=Math.max(0,base+effects.modifierAmount(state,side,slot,'poisonDamageBonus',data.cardById));const virus=state.format==='classic'?['player','opponent'].reduce((n,who)=>n+pokemonOn(state.sides[who]).filter(p=>p.cardId==='dp4-31'&&!effects.abilitiesSuppressed(state,who,p,data.cardById)).length,0)*10:0;slot.damage+=amount+virus;state.log.push({type:'statusDamage',side,status:'poison',amount:amount+virus});}
       if(c.burn){const fullFlame=state.format==='classic'&&state.stadium?.cardId==='ex12-74';const aura=state.format==='classic' &&['player','opponent'].some(w=>{const p=state.sides[w].active;return p?.cardId==='ex6-13'&&!effects.abilitiesSuppressed(state,w,p,data.cardById);});const burnDamage=Math.max(aura||fullFlame?40:20,Number(slot.dp2TorridDamage||0));slot.damage+=burnDamage;state.log.push({type:'statusDamage',side,status:'burn',amount:burnDamage});const heads=random(state)<0.5;state.log.push({type:'coin',side,heads,status:'burn',results:[heads]});if(heads){delete c.burn;slot.dp2TorridDamage=0;}}
       if(c.sleep){const opp=side==='player'?'opponent':'player',lull=state.format==='classic'&&state.sides[opp].active?.cardId==='SNAPFOUNJA-041'&&state.sides[opp].active?.conditions?.sleep;const destinyGengar=state.format==='classic'&&['player','opponent'].some(who=>pokemonOn(state.sides[who]).some(p=>p.cardId==='neo4-6'&&!p.conditions?.sleep&&!p.conditions?.confusion&&!p.conditions?.paralysis&&!effects.abilitiesSuppressed(state,who,p,data.cardById)));const relic=state.format==='classic'&&['player','opponent'].some(w=>state.sides[w].active?.cardId==='ex5-24'&&!effects.abilitiesSuppressed(state,w,state.sides[w].active,data.cardById));const deepSleep=state.format==='classic'&&['player','opponent'].some(w=>state.sides[w].active?.cardId==='ex12-40'&&!effects.abilitiesSuppressed(state,w,state.sides[w].active,data.cardById));const coins=lull||destinyGengar||relic||deepSleep?2:typeof c.sleep==='object'?Math.max(1,Number(c.sleep.recoveryCoins||1)):1;let allHeads=true;for(let i=0;i<coins;i++){const heads=random(state)<0.5;state.log.push({type:'coin',side,heads,status:'sleep',results:[heads]});if(!heads)allHeads=false;}if(allHeads)delete c.sleep;state.log.push({type:'sleepCheck',side,woke:allHeads,coins});}
       if(c.paralysis&&side===state.activeSide&&Number(c.paralysis.appliedTurn??-1)<state.turnNumber)delete c.paralysis;
@@ -1694,7 +1699,8 @@
         const attacker=source&&[foe.active,...foe.bench].find(x=>x&&x.uid===source.uid);let points=0;
         if(state.rules?.winMode==='prizes'){
           const awardsPrize=!(slot.cardId==='dp3-26'&&slot.transformOnKO)&&!slot.dp2ForcedDiscard&&card?.effect?.noPrize!==true&&card?.noPrize!==true&&!['ex16-84','ex16-85','ex16-86'].includes(card?.id);
-          let awarded=0;const prizeCount=awardsPrize?prizeValue(card):0;
+          let awarded=0;const extraMoonSkip=attacker?.cardId==='dp4-103'&&source?.attack&&source?.side===foeSide&&foe.lastAttackName==='Moon Skip'?1:0;
+          const prizeCount=awardsPrize?prizeValue(card)+extraMoonSkip:0;
           awarded=Math.min(prizeCount,Math.max(0,foe.prizes.length-(state.pendingPrizeClaims||[]).filter(q=>q.side===foeSide).reduce((n,q)=>n+q.remaining,0)));
           if(awarded){state.pendingPrizeClaims=state.pendingPrizeClaims||[];state.pendingPrizeClaims.push({side:foeSide,remaining:awarded});}
           state.log.push({type:'ko',side,cardId:card.id,turnNumber:state.turnNumber,prizesTaken:foe.prizesTaken,awarded});

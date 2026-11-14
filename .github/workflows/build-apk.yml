@@ -42,6 +42,9 @@ jobs:
       - name: Test Great Encounters implementation and card outcomes
         run: node --test source/tests/v07243-great-encounters.test.cjs
 
+      - name: Test Great Encounters continuation and complex card outcomes
+        run: node --test source/tests/v07244-great-encounters-stage2.test.cjs source/tests/v07244-great-encounters-remaining.test.cjs
+
       - name: Audit staged Great Encounters battle effects
         run: node source/scripts/audit-classic-set.cjs --set dp4 --smoke --no-write
 
