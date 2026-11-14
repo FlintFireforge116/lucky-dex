@@ -54,6 +54,9 @@ jobs:
       - name: Test completed Majestic Dawn implementation, outcomes and CPU set filtering
         run: node --test source/tests/v07247-majestic-dawn-stage1.test.cjs source/tests/v07248-majestic-dawn-continuation.test.cjs
 
+      - name: Test Majestic Dawn independent card audit and cross-set Energy triggers
+        run: node --test source/tests/v07249-majestic-dawn-independent-audit.test.cjs
+
       - name: Audit complete Majestic Dawn effects and CPU-generated decks
         run: node source/scripts/audit-classic-set.cjs --set dp5 --smoke --no-write
 

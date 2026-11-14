@@ -1,8 +1,8 @@
 LUCKYDEX — MASTER PROJECT RULES AND DEVELOPMENT CONTRACT
 =========================================================
-Document version: 2.36
+Document version: 2.39
 Compiled: 14 November 2026
-Current inspected source: v0.69.242. Mysterious Treasures dp2 is 124/124 and Secret Wonders dp3 is 132/132 collector prints enabled. v0.69.241 documents the independent print-by-print Secret Wonders audit; v0.69.242 fixes Classic Baby Evolution autobuild dependencies. Source tests do not prove APK/device behaviour.
+Current inspected source: v0.69.249 Majestic Dawn independent source audit; dp5 100/100 collector prints enabled. Source tests do not prove APK/device behaviour.
 Recommended repository location: ~/lucky-dex/source/docs/LUCKYDEX_MASTER_RULES.txt
 Project: LuckyDex — Android application/PWA, managed with Termux and GitHub
 
@@ -1925,3 +1925,11 @@ dependency pairing for Psychic Smoochum/Jynx and cross-set equivalents.
 [EEVEE] Espeon Sunlight Veil +20 HP on Eevee evolutions once, and Umbreon Moonlight Veil ignore Weakness / free retreat for that family. Avoid stacking equivalent copies.
 [CHOICES] Use actual artwork and physical card IDs for selections, preserve hidden info and allow optional effects to be skipped. Check entry-triggered powers for actual in-play and from-hand timing, and complete effects before Prize selection.
 [AUDIT] The 100-card auditor has 0 catalog errors/warnings and 312/312 synthetic smoke actions, 16/16 legal CPU decks; 65 Majestic Dawn and 185 selected older-set regression tests passed. Seven nonblocking manual review flags remain (continuous Powers/Body and reused Energy Search handler). Retain 100-card ledger at docs/MAJESTIC_DAWN_v0.69.248_COMPLETION.md and generated auditor report at docs/MAJESTIC_DAWN_v0.69.248_AUDIT.md.
+
+
+=== VERSION 0.69.249 — MAJESTIC DAWN INDEPENDENT AUDIT ===
+[FIX] Physical Special Energy attached from hand by a Poké-Power MUST resolve that card's printed attachment triggers. Leafeon LV.X Energy Forcing using Health Energy heals 10 and using Recover Energy removes all Special Conditions, exactly as a normal hand attachment would. Handle these through the shared energyAttached event with the attached physical Energy card ID; prevent duplicated triggers in the ordinary attachSpecial path. Do not trigger either on Energy Zone or movement between Pokémon.
+[FIX] Eeveelution Poké-Bodies must recognize the genuine previous-level print on a Pokémon LV.X's stack. A Glaceon LV.X correctly levelled up from Glaceon evolved from Eevee retains Espeon Sunlight Veil's +20 HP and Umbreon Moonlight Veil's no Weakness/free retreat. Do not grant this to an isolated LV.X that lacks an Eevee evolution in its physical stack.
+[FIX, CROSS-SET] Lucario LV.X Stance protection must not apply at the moment of Level-Up before its optional choice resolves. Only install protection after the player explicitly accepts the offer.
+[CHECK] Verify card-art choices, hidden opponent information, Prize sequencing, CPU decisions and end-of-turn triggers on an Android APK separately; no source audit is proof of device behaviour. These tests include regression on the ordinary hand attachment, Dawn Stadium interaction, Aqua Skin, and the Level-Up family.
+[TEST] v07249-majestic-dawn-independent-audit.test.cjs is a required GitHub pre-build check. Continue running full auditor --set dp5 --smoke and selected prior-set tests after any shared engine modification.

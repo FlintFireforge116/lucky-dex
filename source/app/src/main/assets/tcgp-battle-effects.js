@@ -7093,7 +7093,9 @@
       const target=ctx.eventData?.target;if(ctx.eventData?.fromHand&&target&&ss.active===a){target.damage=Number(target.damage||0)+20;log({target:target.cardId,damageCounters:2});}return;
     }
     if(n===122&&rule==='stance'){
-      if(e.stage==='offer'&&(!ctx.resolvingChoice||Number(ctx.action?.choiceOption)!==1))return;
+      // The levelUp trigger only *offers* Stance. Never install the guard
+      // before the player answers the optional use/decline choice.
+      if(e.stage!=='offer'||!ctx.resolvingChoice||Number(ctx.action?.choiceOption)!==1)return;
       if(ss.active===a)applyEffect({type:'preventDamage',target:'self',duration:'opponentTurn',preventEffects:true},ctx);return;
     }
     if(n===123&&rule==='torridWave'){
@@ -7263,7 +7265,7 @@
         const list=()=>ss.hand.filter(ref=>{const c=card(ref);return c?.basicEnergy||c?.specialEnergy;});
         if(e.stage==='energy'&&ctx.resolvingChoice){const ref=list()[Number(ctx.action?.choiceOption)];if(ref)ctx.requestChoice?.({kind:'pokemon',side:'self',selectionSide:ctx.side,includeActive:true,effect:{...e,stage:'target',energyUid:ref.uid}});return;}
         if(e.stage==='target'&&ctx.resolvingChoice){const target=selectedOwn(),i=ss.hand.findIndex(ref=>ref.uid===e.energyUid);if(!target||i<0)return;const [ref]=ss.hand.splice(i,1),c=card(ref),type=c?.basicEnergy?c.subtype:Object.keys(c?.effect?.provides||{})[0]||'Colorless';
-          energize(target,type,ref);ctx.onEnergyAttached?.(target,type,1,{fromHand:true});ctx.state.log.push({type:'attach',side:ctx.side,source:'Energy Forcing',cardId:ref.cardId,targetCardId:target.cardId});return;}
+          energize(target,type,ref);ctx.onEnergyAttached?.(target,type,1,{fromHand:true,energyCardId:ref.cardId});ctx.state.log.push({type:'attach',side:ctx.side,source:'Energy Forcing',cardId:ref.cardId,targetCardId:target.cardId});return;}
         if(list().length)opts('energy',list().map(ref=>'Attach '+name(ref)),list().map(ref=>ref.cardId));return;
       }
       if(key==='100:modeCrash'){
@@ -14250,7 +14252,7 @@ if(r==='lastResort')return ss.hand.length===0?[{}]:[];if(r==='surgeSwap')return 
       const electroGuard=defender?.id==='ex9-37'&&(Number(defenderSlot.energy?.Lightning||0)>0||(defenderSlot.specialEnergy||[]).some(r=>Number((r.provides||cardById(r.cardId)?.effect?.provides||{}).Lightning||0)>0))&&!abilitiesSuppressed(state,defenderSide,defenderSlot,cardById);
       const rocketNoWeakness=darkHole||electroGuard||state.format==='classic'&&(defender?.id==='ex7-97'&&Number(defenderSlot.energy?.Darkness||0)>0||pokemonOn(state.sides[defenderSide]).some(p=>p.cardId==='ex7-12'&&!abilitiesSuppressed(state,defenderSide,p,cardById))&&state.sides[defenderSide]?.active===defenderSlot);
       const blooming=state.sides?.[defenderSide]&&pokemonOn(state.sides[defenderSide]).some(p=>p.cardId==='sv1-93'&&!abilitiesSuppressed(state,defenderSide,p,cardById));
-      const majesticMoonlight=state?.format==='classic'&&defender?.evolvesFrom==='Eevee'&&
+      const majesticMoonlight=state?.format==='classic'&&(defender?.evolvesFrom==='Eevee'||defender?.isLevelX&&(defenderSlot?.stack||[]).some(id=>cardById(id)?.evolvesFrom==='Eevee'))&&
         pokemonOn(state.sides[defenderSide]).some(p=>p.cardId==='dp5-32'&&!abilitiesSuppressed(state,defenderSide,p,cardById));
       const glaciaNoWeakness=state.stadium?.cardId==='ex16-76'&&defender?.types?.includes('Water')&&!defender?.pokemonEx;
       const hiddenLegendsTomb=state.stadium?.cardId==='ex5-87'&&!defender?.pokemonEx&&!/^(?:Team Aqua's|Team Magma's|Brock's|Misty's|Lt. Surge's|Erika's|Koga's|Blaine's|Sabrina's|Giovanni's|Rocket's)/.test(defender?.name||'');

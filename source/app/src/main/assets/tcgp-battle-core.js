@@ -442,7 +442,7 @@
       const idx=who.hand.findIndex(r=>r.uid===ref.uid);if(idx>=0){who.hand.splice(idx,1);who.deck.push(ref);state.log.push({type:'founjaLookout',side:from,cardId:ref.cardId});}}
       if(state.sides[otherSide].active?.cardId==='SNAPFLORIO-096')state.log.push({type:'revealDraw',side:from,cardId:ref.cardId,reason:'Circle Soar'});}return ref;},maxHp:(which,slot)=>maxHp(state,which,slot),retreatCost:which=>retreatCost(state,which),effectiveEnergy:slot=>{const which=pokemonOn(state.sides.player).includes(slot)?'player':'opponent';return effectiveEnergy(state,which,slot);},canPayCopiedCost:attack=>effects.canPayCost(effectiveEnergy(state,side,attacker||state.sides[side].active),attackCost(state,side,attack)),endTurn:()=>endTurn(state),requestChoice:spec=>beginEffectChoice(state,side,attacker||state.sides[side].active,{...spec,trainerRef:action?.trainerRef||spec.trainerRef||null}),queuePrize:(which,amount=1)=>{const q=state.pendingPrizeClaims=state.pendingPrizeClaims||[];const owner=state.sides[which];if(owner?.prizes?.length)q.push({side:which,remaining:Math.min(Number(amount||1),owner.prizes.length)});},benchCard:(ss,ref)=>{const slot=emptyBenchSlots(ss)[0];if(slot==null)return null;const placed=placeOnBench(ss,makePokemonSlot(ref.cardId,ss.turnCount,ref.uid),slot),targetSide=ss===state.sides.player?'player':'opponent';triggerAbilities(state,'benched',targetSide,placed,{fromDeck:true});return slot;},onEnergyAttached:(target,energyType,amount,sourceMeta)=>{if(state.format==='classic'&&energyType==='Water'&&['ex7-26','ex7-81'].includes(target?.cardId)){target.conditions={};target.damage=Math.max(0,Number(target.damage||0)-(target.cardId==='ex7-26'?20:10));}const targetSide=pokemonOn(state.sides.player).includes(target)?'player':'opponent';for(let i=0;i<Number(amount||1);i++){
         const fromHand=!!sourceMeta?.fromHand;
-        triggerAbilities(state,'energyAttached',targetSide,target,{energyType,fromZone:!fromHand,fromHand});
+        triggerAbilities(state,'energyAttached',targetSide,target,{energyType,energyCardId:sourceMeta?.energyCardId,fromZone:!fromHand,fromHand});
         // Physical Basic Energy attached by a Power is still attached FROM
         // HAND. Opposing reactive Bodies (Electivire LV.X Shocking Tail) must
         // see that event, unlike an attachment from the Classic Energy Zone.
@@ -496,7 +496,14 @@
       state.log.push({type:'gymCounter',side:defenderSide,damage:dealt});
     }
   }
-  function maxHp(state,side,slot){const eeveeStage=data.cardById(slot?.cardId)?.evolvesFrom==='Eevee';
+  // A Level-Up is still the same Eevee evolution. Look through its real
+  // printed level stack instead of checking only the LV.X card's immediate
+  // evolvesFrom field (which names Glaceon/Leafeon, not Eevee).
+  function majesticEeveeEvolution(slot){
+    const c=data.cardById(slot?.cardId);
+    return c?.evolvesFrom==='Eevee'||!!(c?.isLevelX&&(slot?.stack||[]).some(id=>data.cardById(id)?.evolvesFrom==='Eevee'));
+  }
+  function maxHp(state,side,slot){const eeveeStage=majesticEeveeEvolution(slot);
     const majesticVeil=state.format==='classic'&&eeveeStage&&pokemonOn(state.sides[side]).some(p=>p.cardId==='dp5-18'&&!effects.abilitiesSuppressed(state,side,p,data.cardById))?20:0;
     const ex3LowPressure=state.format==='classic'&&state.stadium?.cardId==='ex3-86'&&data.cardById(slot?.cardId)?.types?.some(t=>['Grass','Lightning'].includes(t))?10:0;const rocketHideout=state.format==='classic'&&state.stadium?.cardId==='ex7-87'&&/^(Dark |Rocket's )/.test(data.cardById(slot?.cardId)?.name||'')?20:0;const dp2Equip=toolsOf(slot).some(r=>r.cardId==='dp2-65')?10:0;const extra=majesticVeil+ex3LowPressure+rocketHideout+dp2Equip+(slot.cardId==='gym2-97'?10*Number(slot.energy?.Psychic||0):slot.cardId==='gym2-10'&&slot.gym2GiantGrowth&&state.sides[side].active===slot?40:0);return Math.max(1,Number(data.cardById(slot.cardId).hp||0)+extra+effects.modifierAmount(state,side,slot,'maxHp',data.cardById));}
   function ex14DarkEyes(state,usedBy,source,ability){
@@ -513,6 +520,18 @@
     // Record real from-hand attachments for printed same-turn attack conditions.
     // Energy Zone attachments deliberately do not count as from-hand events.
     if(event==='energyAttached'&&onlySource&&meta.fromHand){onlySource.lastHandEnergyType=meta.energyType;onlySource.lastHandEnergyAttachedTurn=state.turnNumber;}
+    // Printed hand-attachment triggers belong to the shared Energy event, not
+    // only the normal attachSpecial action. Extra attachments (e.g. Leafeon
+    // LV.X Energy Forcing) must resolve the same physical Energy-card effect.
+    if(event==='energyAttached'&&meta.fromHand&&onlySource&&meta.energyCardId==='dp5-94'){
+      const before=Number(onlySource.damage||0);
+      if(!effects.healingIsBlocked(state,onlySource,data.cardById))onlySource.damage=Math.max(0,before-10);
+      state.log.push({type:'majesticHealthEnergy',side,targetCardId:onlySource.cardId,healed:before-onlySource.damage});
+    }
+    if(event==='energyAttached'&&meta.fromHand&&onlySource&&meta.energyCardId==='dp5-96'){
+      onlySource.conditions={};
+      state.log.push({type:'majesticRecoverEnergy',side,targetCardId:onlySource.cardId});
+    }
     // Majestic Dawn's Dawn Stadium responds to PHYSICAL hand attachments,
     // whether Basic or Special Energy. The generated Energy Zone is excluded.
     if(event==='energyAttached'&&meta.fromHand&&onlySource&&state.stadium?.cardId==='dp5-79'&&
@@ -544,7 +563,7 @@
     if(state.stadium){const source=ss.active||ss.bench[0];if(source){const ctx={...effectContext(state,side,{},source),eventData:meta};effects.applyPersistentEvent(data.cardById(state.stadium.cardId)?.effect,event,ctx);}}
   }
   function retreatCost(state,side){const slot=state.sides[side].active;
-    if(state.format==='classic'&&data.cardById(slot?.cardId)?.evolvesFrom==='Eevee'&&
+    if(state.format==='classic'&&majesticEeveeEvolution(slot)&&
        pokemonOn(state.sides[side]).some(p=>p.cardId==='dp5-32'&&!effects.abilitiesSuppressed(state,side,p,data.cardById)))return 0;
 
     // Mysterious Treasures continuous Poké-Bodies: evaluate on both seats,
@@ -2165,8 +2184,6 @@
         target.damage=0;state.log.push({type:'ex12ReactiveHealing',side,target:target.uid});
       }
       if(card.id==='ex8-94'&&!data.cardById(target.cardId)?.pokemonEx){target.conditions={};target.damage=Math.max(0,Number(target.damage||0)-10);}
-      if(card.id==='dp5-94'){target.damage=Math.max(0,Number(target.damage||0)-10);state.log.push({type:'majesticHealthEnergy',side,targetCardId:target.cardId});}
-      if(card.id==='dp5-96'){target.conditions={};state.log.push({type:'majesticRecoverEnergy',side,targetCardId:target.cardId});}
 
       if(state.format==='classic'&&card.basicEnergy&&card.subtype==='Water'&&target.cardId==='ex8-34')target.conditions={};
       if(state.format==='classic'&&card.basicEnergy&&card.subtype==='Darkness'&&target.cardId==='ex8-108'&&foe.bench.length&&!effects.abilitiesSuppressed(state,side,target,data.cardById)){
@@ -2192,7 +2209,7 @@
       }
 
       if(state.phase==='effectChoice')state.pendingChoice.resume=state.pendingChoice.resume||'trainer';
-      triggerAbilities(state,'energyAttached',side,target,{energyType:Object.keys(provides)[0]||'Colorless',fromZone:false,fromHand:true,specialEnergy:!!card.specialEnergy});
+      triggerAbilities(state,'energyAttached',side,target,{energyType:Object.keys(provides)[0]||'Colorless',energyCardId:card.id,fromZone:false,fromHand:true,specialEnergy:!!card.specialEnergy});
       triggerAbilities(state,'opponentEnergyAttached',foeSide,null,{target,energyType:Object.keys(provides)[0]||'Colorless',fromHand:true,sourceSide:side});
       offerExpeditionHarvestBounty(state,side,target);if(state.phase!=='effectChoice')resolveKnockOut(state,null);return state;
     }
