@@ -215,6 +215,13 @@ function runSmokes(cards,{data,core,opponents}){
       s.sides[side].hand=[{cardId:card.id,uid:'auditor-trainer'}];
       // Healing Items are legal only when there is a damaged recipient.
       if(card.effect?.type==='heal')s.sides[side].active.damage=20;
+      // The autobuilder intentionally excludes orphan Fossils. Supply a
+      // real recoverable Fossil in this disposable synthetic scene instead
+      // of assuming a random loaner deck happens to contain one.
+      if(card.effect?.rule==='dp2:111:fossilExcavator'){
+        const fossil=cards.find(c=>c.effect?.type==='playFossil'&&/Fossil/i.test(c.name||''))||data.cardById('dp5-89');
+        if(fossil)s.sides[side].discard.push({cardId:fossil.id,uid:'auditor-fossil-target'});
+      }
     }
     const actions=core.legalActions(s,side);
     const action=actions.find(a=>card.kind==='trainer'?a.type==='trainer'&&a.cardId===card.id:a.type==='attack'&&a.attackIndex===ix&&(!a.attackCardId||a.attackCardId===card.id));

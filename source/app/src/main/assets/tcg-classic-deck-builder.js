@@ -73,6 +73,22 @@ function specialCosts(_cards){return {D:0,M:0};} // Basic Darkness/Metal satisfi
 function classicCardName(name){return String(name||'').replace(/[’]/g,"'").replace(/\s+(?=[♀♂])/g,'').replace(/\s*δ\s*$/u,'').trim();}
 function classicEvolutionMatches(baseName,parentName){const a=classicCardName(baseName),p=classicCardName(parentName);return a===p||(p==='Burmy'&&/^Burmy (?:Plant|Sandy|Trash) Cloak$/.test(a));}
 function parentKeys(baseName){const n=classicCardName(baseName);return /^Burmy (?:Plant|Sandy|Trash) Cloak$/.test(n)?[n,'Burmy']:[n];}
+// A Fossil printed as a playable Trainer is an evolution prerequisite, not
+// a generic Item or a disposable 30th card. Clefairy Doll also uses the
+// playFossil engine path, but must NOT be mistaken for an evolution Fossil.
+const EVOLUTION_FOSSIL_NAMES=new Set(classic.CARDS.filter(c=>c.kind==='trainer'&&c.effect?.type==='playFossil'&&
+  /(?:Fossil|Old Amber)$/i.test(classicCardName(c.name))).map(c=>classicCardName(c.name)));
+function isEvolutionFossil(card){return !!(card?.kind==='trainer'&&card.effect?.type==='playFossil'&&EVOLUTION_FOSSIL_NAMES.has(classicCardName(card.name)));}
+function fossilEvolutionInDeck(fossil,ids){return (ids||[]).some(id=>{
+ const c=classic.cardById(id);
+ return c?.kind==='pokemon'&&!!c.evolvesFrom&&classicEvolutionMatches(fossil.name,c.evolvesFrom);
+});}
+function anyFossilEvolutionInDeck(ids){return (ids||[]).some(id=>{
+ const c=classic.cardById(id);
+ return c?.kind==='pokemon'&&!!c.evolvesFrom&&EVOLUTION_FOSSIL_NAMES.has(classicCardName(c.evolvesFrom));
+});}
+function isFossilSupport(card){return card?.kind==='trainer'&&
+  (['Holon Fossil','Fossil Egg','Fossil Excavator'].includes(classicCardName(card.name)));}
 // Baby Evolution is a special, voluntary Basic -> Basic evolution. It does
 // not use evolvesFrom, so ordinary evolution-chain completion cannot detect
 // missing partners (e.g. Smoochum -> Jynx). Treat it as a *deck dependency*.
@@ -179,7 +195,13 @@ function completeLineFor(featured,candidates,pool){
  descendants.sort((a,b)=>(STAGE_RANK[b.stage]||0)-(STAGE_RANK[a.stage]||0));
  const endpoint=descendants[0]||featured;
  const line=familyLine(endpoint,pool);
- return line.map(card=>classicCardName(card.name)===classicCardName(featured.name)&&card.stage===featured.stage?featured:card);
+ const selected=line.map(card=>classicCardName(card.name)===classicCardName(featured.name)&&card.stage===featured.stage?featured:card);
+ // Replacing an intermediate printed Pokémon must also replace its actual
+ // prerequisites. Otherwise a chosen Dome Fossil Kabuto could acquire a
+ // Mysterious Fossil parent from a different Kabuto print in another set.
+ const index=selected.findIndex(c=>c.id===featured.id);
+ if(index>0){const prefix=familyLine(featured,pool);if(prefix.length===index+1)return [...prefix.slice(0,-1),...selected.slice(index)];}
+ return selected;
 }
 
 function fail(message){return {ok:false,cards:[],energyTypes:[],errors:[message],warnings:[],strategy:''};}
@@ -188,7 +210,19 @@ function buildDeck(rows,options={}){
  const style=options.style==='random'?'random':'competitive',owned=ownedMap(rows),allowedSets=(options.sets||SET_IDS).filter(s=>SET_IDS.includes(s)),scope=allowedSets.length?allowedSets:SET_IDS,pool=classic.CARDS.filter(c=>allowedInSetPool(c,scope)&&c.battleEnabled&&c.deckEligible!==false&&Number(owned.get(c.id)||0)>0),pokemonPool=pool.filter(c=>c.kind==='pokemon'),evolutionPool=pool.filter(c=>c.kind==='pokemon'||c.effect?.type==='playFossil');
  if([...pool].reduce((sum,c)=>sum+Math.min(4,owned.get(c.id)||0),0)<30)return fail('Not enough owned battle-ready Classic card copies to build a 30-card deck.');
  if(!pokemonPool.some(c=>c.stage==='Basic'))return fail('No owned battle-ready Basic Pokémon are available.');
- const requested=[...new Set((options.types||[]).filter(t=>ARCHETYPE_TYPES.includes(t)))].slice(0,2),requestedEnergy=requested.filter(t=>decks.ENERGY_TYPES.includes(t)),allowMixedEnergy=options.allowMixedEnergy===true,existing=Array.isArray(options.cards)?options.cards:[],focus=classic.cardById(options.focusCardId),random=rng(options.randomSeed),excluded=new Set(options.excludeArchetypes||[]);
+ const requested=[...new Set((options.types||[]).filter(t=>ARCHETYPE_TYPES.includes(t)))].slice(0,2),requestedEnergy=requested.filter(t=>decks.ENERGY_TYPES.includes(t)),allowMixedEnergy=options.allowMixedEnergy===true,existing=Array.isArray(options.cards)?options.cards:[],random=rng(options.randomSeed),excluded=new Set(options.excludeArchetypes||[]);
+ let focus=classic.cardById(options.focusCardId);
+ const fossilFocus=isEvolutionFossil(focus)?focus:null;
+ if(fossilFocus){
+   if(!evolutionPool.some(c=>c.id===fossilFocus.id))return fail(`${fossilFocus.name} is not owned or battle-ready in the selected sets.`);
+   if(basicOnly)return fail(`${fossilFocus.name} requires a Pokémon evolution, which is incompatible with Basic-only mode.`);
+   const descendants=pokemonPool.filter(p=>familyLine(p,evolutionPool).some(member=>isEvolutionFossil(member)&&classicEvolutionMatches(member.name,fossilFocus.name)));
+   descendants.sort((a,b)=>(STAGE_RANK[b.stage]||0)-(STAGE_RANK[a.stage]||0)||pokemonScore(b,evolutionPool)-pokemonScore(a,evolutionPool));
+   if(!descendants.length)return fail(`Cannot build around ${fossilFocus.name}: no owned, battle-ready Pokémon evolves from it in the selected sets.`);
+   focus=descendants[0];
+ }
+ if(isFossilSupport(focus)&&!pokemonPool.some(p=>familyLine(p,evolutionPool).some(member=>isEvolutionFossil(member))))
+   return fail(`Cannot build around ${focus.name}: no owned, battle-ready Fossil evolution line is available.`);
  const playableChildren=new Map(),finishMemo=new Map();
  // A Baby Evolution partner must be a genuinely owned, battle-enabled
  // Basic target in the selected sets. Since this is an unusual evolution,
@@ -301,6 +335,17 @@ function buildDeck(rows,options={}){
    mainLine=focus?.kind==='pokemon'?completeLineFor(focus,selectable,evolutionPool):familyLine(main,evolutionPool);
    main=mainLine[mainLine.length-1]||main;
  }
+ // When multiple sets print the same Fossil, keep the actual focused print
+ // in the selected evolutionary line instead of quietly swapping its card ID.
+ if(fossilFocus){
+   // A focus on a specific Fossil print is a focus on its matching family,
+   // even when another set also prints the same evolved Pokémon species.
+   mainLine=familyLine(focus,evolutionPool);
+   if(!mainLine.length||!isEvolutionFossil(mainLine[0])||!classicEvolutionMatches(mainLine[0].name,fossilFocus.name))
+     return fail(`Cannot find a complete evolution family for ${fossilFocus.name} in the selected sets.`);
+   mainLine[0]=fossilFocus;
+   main=mainLine[mainLine.length-1];
+ }
  // Choosing two allowed types is not a request to pollute a single-type
  // attacker's Energy Zone. Mixed *support* requires an explicit opt-in; a
  // featured family that itself needs two Energy types always keeps both.
@@ -334,6 +379,10 @@ function buildDeck(rows,options={}){
  if(!selectedTypes.length)selectedTypes.push('Fighting');
  const cards=[],counts=new Map();
  function trainerIsUseful(card){
+   // Never draw Fossils from the general Trainer pool without a matching
+   // evolution already in the actual 30-card deck (not merely owned).
+   if(isEvolutionFossil(card)&&!fossilEvolutionInDeck(card,cards))return false;
+   if(isFossilSupport(card)&&!anyFossilEvolutionInDeck(cards))return false;
    if(card?.technicalMachine&&cards.some(id=>id==='ex11-25')){
      const supported=['ecard1-144','ex5-84','ex5-85','ex5-86'];
      if(!supported.includes(card.id))return false;
@@ -365,10 +414,10 @@ function buildDeck(rows,options={}){
    const names=babyEvolutionTargets(card);
    return !names.length||cards.some(id=>names.includes(classicCardName(classic.cardById(id)?.name)));
  }
- function add(card,n=1,fromEvolutionLine=false){if(!fromEvolutionLine&&!hasBabyPartner(card))return 0;if(card?.kind==='trainer'&&!fromEvolutionLine&&!trainerIsUseful(card))return 0;if(card?.trainerType==='Stadium'&&cards.filter(id=>classic.cardById(id)?.trainerType==='Stadium').length>=1&&!cards.includes(card.id))return 0;let added=0;while(added<n&&cards.length<30&&room(card)>0&&!(card?.trainerType==='Stadium'&&cards.filter(id=>classic.cardById(id)?.trainerType==='Stadium').length>=2)){cards.push(card.id);counts.set(card.id,(counts.get(card.id)||0)+1);added++;}return added;}
+ function add(card,n=1,fromEvolutionLine=false){if(!fromEvolutionLine&&isEvolutionFossil(card)&&!fossilEvolutionInDeck(card,cards))return 0;if(!fromEvolutionLine&&!hasBabyPartner(card))return 0;if(card?.kind==='trainer'&&!fromEvolutionLine&&!trainerIsUseful(card))return 0;if(card?.trainerType==='Stadium'&&cards.filter(id=>classic.cardById(id)?.trainerType==='Stadium').length>=1&&!cards.includes(card.id))return 0;let added=0;while(added<n&&cards.length<30&&room(card)>0&&!(card?.trainerType==='Stadium'&&cards.filter(id=>classic.cardById(id)?.trainerType==='Stadium').length>=2)){cards.push(card.id);counts.set(card.id,(counts.get(card.id)||0)+1);added++;}return added;}
  function addLine(line,copies){if(!line.length||line.some(c=>Number(owned.get(c.id)||0)<1))return false;for(let copy=0;copy<copies;copy++){if(line.some(c=>room(c)<1)||cards.length+line.length>30)break;for(const c of line)add(c,1,true);}return line.every(c=>(counts.get(c.id)||0)>0);}
  // Preserve legal existing cards first for Fill / repair, but never exceed ownership/copy limits.
- for(const id of existing){const c=classic.cardById(id);if(c&&allowedInSetPool(c,scope)&&c.battleEnabled&&c.deckEligible!==false&&!babyEvolutionTargets(c).length)add(c,1);}
+ for(const id of existing){const c=classic.cardById(id);if(c&&allowedInSetPool(c,scope)&&c.battleEnabled&&c.deckEligible!==false&&!babyEvolutionTargets(c).length&&!isEvolutionFossil(c)&&!isFossilSupport(c))add(c,1);}
  // Existing draft cards are preserved where coherent. For a manually
  // saved Baby-first list, insert the playable partner before the Baby; never
  // silently preserve an orphaned Baby in a generated/fill result.
@@ -381,6 +430,12 @@ function buildDeck(rows,options={}){
  }
  // Ensure any preserved evolutions gain their missing prerequisites.
  for(const id of [...cards]){const c=classic.cardById(id);if(c?.kind==='pokemon'&&c.stage!=='Basic'){const line=familyLine(c,evolutionPool);if(line.length)for(const member of line.slice(0,-1))if(!(counts.get(member.id)||0))add(member,1,member?.effect?.type==='playFossil');}}
+ // Fill/repair may retain an owned Fossil only after its direct evolution
+ // survived the initial filter. It must never keep an orphan saved Item.
+ for(const id of existing){const c=classic.cardById(id);if(!c||!allowedInSetPool(c,scope)||!c.battleEnabled||c.deckEligible===false)continue;
+   if(isEvolutionFossil(c)&&fossilEvolutionInDeck(c,cards))add(c,1);
+   if(isFossilSupport(c)&&anyFossilEvolutionInDeck(cards))add(c,1);
+ }
  const mainCopies=mainLine.length>=2?3:4;addLine(mainLine,mainCopies);
  // Reserve the Baby's real Basic evolution partner *before* generic
  // Pokémon and Trainers fill the deck. This is not an ordinary evolution line
@@ -779,6 +834,10 @@ function buildDeck(rows,options={}){
  // irrespective of whether its printed attack can be used alone.
  const unpairedBaby=cards.map(classic.cardById).find(c=>babyEvolutionTargets(c).length&&!hasBabyPartner(c));
  if(unpairedBaby)return fail(`${unpairedBaby.name} was included without a playable Baby Evolution partner.`);
+ const orphanFossil=cards.map(classic.cardById).find(c=>isEvolutionFossil(c)&&!fossilEvolutionInDeck(c,cards));
+ if(orphanFossil)return fail(`${orphanFossil.name} was included without a matching Fossil Pokémon evolution in this deck.`);
+ const orphanFossilSupport=cards.map(classic.cardById).find(c=>isFossilSupport(c)&&!anyFossilEvolutionInDeck(cards));
+ if(orphanFossilSupport)return fail(`${orphanFossilSupport.name} was included without a Fossil evolution line in this deck.`);
  const legal=decks.validateDraft(cards,rows,{requireFull:true});if(!legal.ok)return {ok:false,cards,energyTypes:selectedTypes,errors:legal.errors,warnings:[],strategy:''};
  const analysis=decks.analyzeDeck(cards),conditionalDual=requestedEnergy.length===2&&requestedEnergy.every(type=>conditionalAttackTypes(main).includes(type)),
   energyTypes=(main.pokemonEx&&main.stage==='Stage 2')||stage2Beneficiary||conditionalPayoffTypes.some(t=>selectedTypes.includes(t))||requestedEnergy.length===1||conditionalDual||lineEnergy.length>=2?selectedTypes.slice(0,2):(allowMixedEnergy&&requestedEnergy.length===2?requestedEnergy:neededTypes().length?analysis.recommendedEnergyTypes.slice(0,2):selectedTypes.slice(0,2));
@@ -790,7 +849,7 @@ function buildDeck(rows,options={}){
  const notes=plan.warnings.map(message=>({message}));
  if(revealedPhysicalEnergySupport&&!cards.some(id=>classic.cardById(id)?.kind==='energy'))
    notes.push({message:'Peal of Thunder looks at the real draw deck, not the Basic Energy Zone. No owned physical Energy was available in this deck, so its top-five reveal cannot attach Energy.'});
- return {ok:true,cards,energyTypes:finalEnergy,errors:[],warnings:notes,plan,style,archetypeKey:archetypeKey(featured||main),focusCardId:focus?.id||featured?.id||main.id,strategy:`${style==='random'?'Random featured':'Competitive'} · ${theme!=='any'?synergy.THEMES.find(t=>t.id===theme).label+' · ':''}${rarityFocus!=='any'?RARITY_FOCUS.find(r=>r.id===rarityFocus).label+' · ':''}${basicOnly?'Basic-only · ':''}${label} · ${featured?featured.name+' featured · ':''}${archetypeName(main,evolutionPool)} core · ${pokemonCount()} Pokémon / ${30-pokemonCount()} Trainers & Special Energy`};
+ return {ok:true,cards,energyTypes:finalEnergy,errors:[],warnings:notes,plan,style,archetypeKey:archetypeKey(featured||main),focusCardId:fossilFocus?.id||focus?.id||featured?.id||main.id,strategy:`${style==='random'?'Random featured':'Competitive'} · ${theme!=='any'?synergy.THEMES.find(t=>t.id===theme).label+' · ':''}${rarityFocus!=='any'?RARITY_FOCUS.find(r=>r.id===rarityFocus).label+' · ':''}${basicOnly?'Basic-only · ':''}${label} · ${featured?featured.name+' featured · ':''}${archetypeName(main,evolutionPool)} core · ${pokemonCount()} Pokémon / ${30-pokemonCount()} Trainers & Special Energy`};
 }
 function buildDeckAsync(rows,options,control={}){return new Promise(resolve=>{setTimeout(()=>{if(control.isCancelled?.())return resolve(null);resolve(buildDeck(rows,options));},0);});}
 return {buildDeck,buildDeckAsync,THEMES:synergy.THEMES,familyLine,familyRoot,attackTypes,conditionalAttackTypes,allowedInSetPool,ARCHETYPE_TYPES,SET_IDS,RARITY_FOCUS,rarityTier,matchesRarity};

@@ -1,8 +1,8 @@
 LUCKYDEX — MASTER PROJECT RULES AND DEVELOPMENT CONTRACT
 =========================================================
-Document version: 2.39
+Document version: 2.40
 Compiled: 14 November 2026
-Current inspected source: v0.69.249 Majestic Dawn independent source audit; dp5 100/100 collector prints enabled. Source tests do not prove APK/device behaviour.
+Current inspected source: v0.69.250 Classic Fossil automatic-deck dependency fix; dp5 100/100 collector prints enabled. Source tests do not prove APK/device behaviour.
 Recommended repository location: ~/lucky-dex/source/docs/LUCKYDEX_MASTER_RULES.txt
 Project: LuckyDex — Android application/PWA, managed with Termux and GitHub
 
@@ -1933,3 +1933,10 @@ dependency pairing for Psychic Smoochum/Jynx and cross-set equivalents.
 [FIX, CROSS-SET] Lucario LV.X Stance protection must not apply at the moment of Level-Up before its optional choice resolves. Only install protection after the player explicitly accepts the offer.
 [CHECK] Verify card-art choices, hidden opponent information, Prize sequencing, CPU decisions and end-of-turn triggers on an Android APK separately; no source audit is proof of device behaviour. These tests include regression on the ordinary hand attachment, Dawn Stadium interaction, Aqua Skin, and the Level-Up family.
 [TEST] v07249-majestic-dawn-independent-audit.test.cjs is a required GitHub pre-build check. Continue running full auditor --set dp5 --smoke and selected prior-set tests after any shared engine modification.
+
+
+=== VERSION 0.69.250 — FOSSIL EVOLUTION DEPENDENCIES IN CLASSIC AUTOBUILDER ===
+[LOCKED] C-DECK-FOSSIL-DEPENDENCY-001 — Automatically generated Classic decks (competitive, random, CPU, Test Lab, and Fill/repair) must NEVER add an evolution Fossil card purely as a generic Trainer/filler Item. The actual deck must include at least one owned, battle-ready, selected-set Pokémon whose evolvesFrom explicitly matches the exact printed Fossil name (Mysterious Fossil, Root Fossil, Claw Fossil, Armor Fossil, Skull Fossil, Old Amber, Dome Fossil, Helix Fossil, etc.). Merely owning a Fossil Pokémon in the collection or having a different Fossil evolution in the deck does not qualify.
+[LOCKED] Include Fossils as their evolution-line prerequisites when building a valid complete Fossil line. Related search/support cards (Fossil Egg, Holon Fossil, Fossil Excavator) must not be chosen without an actual compatible Fossil evolution represented in the generated deck. If a user focuses a playable Fossil with an eligible evolution, select that evolution as the core; otherwise give a clear failure rather than silently insert useless filler.
+[LOCKED] When auto-filling or repairing a saved deck, drop orphaned Fossils. Do NOT remove Fossils from manual card selection or make otherwise legal manual decks invalid merely because of these strategic autobuild rules. Clefairy Doll, which shares the engine's playFossil implementation but is not an evolution Fossil, is exempt.
+[TEST] Use v07250-classic-fossil-deck-dependencies.test.cjs in GitHub preflight, including cross-set/CPU/Basic-only/selected-Fossil-focus cases. A 30/30 legal deck can still be strategically incoherent; validate actual evolution dependencies as well as basic legality.
