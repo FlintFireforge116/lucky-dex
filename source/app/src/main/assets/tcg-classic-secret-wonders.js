@@ -1,6 +1,6 @@
 /* LuckyDex Classic TCG — Diamond & Pearl: Secret Wonders (dp3).
  * 132 printed cards (source: PokemonTCG/pokemon-tcg-data cards/en/dp3.json).
- * Stage 3: canonical collector identities, attack costs and art;
+ * Stage 4 full set: canonical collector identities, attack costs and art;
  * only individually reviewed effects may be battle-enabled.
  */
 (function(root,factory){const api=factory();if(typeof module==='object'&&module.exports)module.exports=api;if(root)root.LuckyDexClassicTCGSecretWonders=api;})(typeof globalThis!=='undefined'?globalThis:this,function(){'use strict';
@@ -139,7 +139,7 @@ const RAW=`1|Ampharos|P|Stage 2|130|L|Flaaffy|F+30|M-20|3|Rare Holo|Cluster Bolt
 131|Gardevoir LV.X|P|Level-Up|130|P|Gardevoir|P×2||2|Rare Holo LV.X|Bring Down~PP~|Teleportation~Power
 132|Honchkrow LV.X|P|Level-Up|110|D|Honchkrow|L+30|F-20|0|Rare Holo LV.X|Feint Attack~CC~;Darkness Wing~DDC~60|`;
 const DATA=RAW.split('\n').map(row=>row.split('|'));
-const READY=new Set([30,38,60,68,86,104,106,122,126,17,33,41,42,43,45,46,57,59,61,65,78,79,80,95,107,111,49,51,54,58,62,64,74,75,76,77,81,82,83,85,87,88,89,90,91,92,93,94,97,98,99,100,102,103,105,108,110,112,113,115,116,117,118,119,120,121,123,124,127,128,129,130,2,5,8,9,13,14,21,25,31,37,48,55,63,84,96,125]);
+const READY=new Set(Array.from({length:132},(_,i)=>i+1));
 const noop={type:'noop'};
 const flip=(heads,tails=noop)=>({type:'coinFlip',heads,tails});
 const seq=(...effects)=>({type:'sequence',effects});
@@ -298,6 +298,98 @@ const PRINTS={
  117:['','Voltorb does 50 damage to itself.'],
  118:['The Defending Pokémon is now Asleep.','Choose one of your opponent’s Pokémon. Do 10 damage, ignoring Weakness and Resistance.']
 };
+
+// Stage 4: remaining printed attacks. Dedicated dp3 rules use genuine card/board
+// selections; the catalog never enables a placeholder effect.
+Object.assign(EFFECTS,{
+ 1:[{type:'neoRule',rule:'dp3:1:clusterBolt'}],
+ 3:[{type:'neoRule',rule:'dp3:3:blastBurn'}],
+ 4:[{type:'neoRule',rule:'dp3:4:blazeRoar'}],
+ 6:[{type:'neoRule',rule:'dp3:6:sonicBlade'},{type:'neoRule',rule:'dp3:6:psychicCut'}],
+ 7:[{type:'neoRule',rule:'dp3:7:psychicLock'}],
+ 10:[{type:'neoRule',rule:'dp3:10:rainbowWing'}],
+ 11:[{type:'neoRule',rule:'dp3:11:cottonweedPunch'}],
+ 12:[{type:'neoRule',rule:'dp3:12:tongueReel'},{type:'lock',action:'attack',target:'self',duration:'nextOwnTurn'}],
+ 15:[{type:'neoRule',rule:'dp3:15:psychicBalance'},{type:'neoRule',rule:'dp3:15:reCreation'}],
+ 16:[{type:'neoRule',rule:'dp3:16:thunderClimb'}],
+ 18:[{type:'damageRule',ignoreWeakness:true,ignoreResistance:true,ignoreEffects:true},{type:'neoRule',rule:'dp3:18:dragonFinish'}],
+ 19:[{type:'modifier',stat:'attackDamage',amount:-20,scope:'opponentActive',duration:'opponentTurn'}],
+ 20:[{type:'coinFlip',heads:{type:'healSelf',amount:40}}],
+ 22:[{type:'selfDamage',amount:40}],
+ 23:[{type:'neoRule',rule:'dp3:23:ghostHead'},{type:'neoRule',rule:'dp3:23:spitefulPain'}],
+ 24:[{type:'neoRule',rule:'dp3:24:digTrap'},{type:'neoRule',rule:'dp3:24:pitTrap'}],
+ 26:[{type:'neoRule',rule:'dp3:26:ionBlast'}],
+ 27:[{type:'neoRule',rule:'dp3:27:keenEye'},{type:'neoRule',rule:'dp3:27:batonPass'}],
+ 28:[{type:'neoRule',rule:'dp3:28:encore'},{type:'neoRule',rule:'dp3:28:breakBeam'}],
+ 29:[{type:'neoRule',rule:'dp3:29:doubleThrow'},{type:'neoRule',rule:'dp3:29:megatonRock'}],
+ 32:[{type:'neoRule',rule:'dp3:32:tagPlayMinus'}],
+ 34:[{type:'neoRule',rule:'dp3:34:poisonRub'},{type:'neoRule',rule:'dp3:34:prideAttack'}],
+ 35:[{type:'neoRule',rule:'dp3:35:mirrorMove'},{type:'forceOpponentSwitch'}],
+ 36:[{type:'neoRule',rule:'dp3:36:tagPlayPlus'}],
+ 39:[{type:'coinFlip',heads:{type:'status',target:'opponentActive',status:'confusion'}}],
+ 40:[{type:'neoRule',rule:'dp3:40:shadowCharge'},{type:'neoRule',rule:'dp3:40:chipOff'}],
+ 44:[{type:'neoRule',rule:'dp3:44:energySinge'}],
+ 47:[{type:'neoRule',rule:'dp3:47:withdraw'},{type:'neoRule',rule:'dp3:47:spineMissile'}],
+ 50:[{type:'neoRule',rule:'dp3:50:attractCurrent'},flip(noop,{type:'selfDamage',amount:10})],
+ 52:[{type:'neoRule',rule:'dp3:52:blindScratch'}],
+ 53:[{type:'neoRule',rule:'dp3:53:psychicResearch'},seq({type:'damageRule',ignoreWeakness:true,ignoreResistance:true},{type:'selectedDamage',target:'opponentPokemon',amount:40,ignoreWeakness:true,ignoreResistance:true})],
+ 56:[seq(status('confusion'),lock('retreat'))],
+ 66:[{type:'neoRule',rule:'dp3:66:colorPick'},{type:'neoRule',rule:'dp3:66:trace'}],
+ 67:[{type:'neoRule',rule:'dp3:67:psykiss'}],
+ 69:[flip(status('burn'))],70:[flip(status('sleep'))],71:[flip(status('paralysis'))],
+ 72:[{type:'neoRule',rule:'dp3:72:hiddenPower'}],
+ 73:[{type:'neoRule',rule:'dp3:73:disturbanceDive'}],
+ 101:[flip(status('paralysis'))],
+ 109:[{type:'neoRule',rule:'dp3:109:fermentPoison'}],
+ 114:[{type:'neoRule',rule:'dp3:114:sunSoak'},noop],
+ 131:[{type:'neoRule',rule:'dp3:131:bringDown'}],
+ 132:[seq({type:'damageRule',ignoreWeakness:true,ignoreResistance:true,ignoreEffects:true},{type:'selectedDamage',target:'opponentPokemon',amount:40,ignoreWeakness:true,ignoreResistance:true}),{type:'neoRule',rule:'dp3:132:darknessWing'}]
+});
+Object.assign(PRINTS,{
+ 1:['You may discard all Lightning Energy attached to Ampharos to deal 20 damage to each opposing Benched Pokémon with Energy.'],
+ 3:['Flip a coin: heads discard 2 Energy, tails discard 4. If you cannot discard them, this attack does nothing.'],
+ 4:['Deal 20 to one opponent Benched Pokémon. Flip a coin; tails discard 2 Fire Energy.'],
+ 6:['Place damage counters until the Defending Pokémon has only 50 HP remaining, then the opponent switches it.','Turn any number of your face-down Prizes face up; 20 more damage for each.'],
+ 7:['Opposing Pokémon cannot use Poké-Powers during their next turn.'],
+ 10:['20 damage for each different Basic Energy type attached to Ho-Oh.'],
+ 11:['Flip two coins. Choose one opposing Pokémon; deal 30 damage for each heads, ignoring Bench Weakness/Resistance.'],
+ 12:['Choose an opposing Pokémon; if Benched, switch it Active. Do 20 damage and flip a coin; heads Paralyze.','Lickilicky cannot attack next turn.'],
+ 15:['Draw cards until your hand equals your opponent’s hand size, if it was smaller.','Choose an attack on an opposing Pokémon in discard; copy it without paying its Energy cost.'],
+ 16:['Discard top three deck cards; add 10 damage per discarded Lightning Energy. Attach discarded Lightning Energy to a Pokémon.'],
+ 18:['Ignore Weakness, Resistance, and all effects on the Defending Pokémon.','Discard either 2 basic Fire Energy for 100 Active damage or 2 basic Water for 100 damage to one opposing Benched Pokémon.'],
+ 19:['Reduce attacks from the Defending Pokémon by 20 next turn.'],
+ 20:['Flip a coin. Heads: heal 40 damage from Venusaur.'],
+ 22:['Arcanine deals 40 damage to itself.'],
+ 23:['Put as many damage counters on Banette as you choose, then the same on the Defending Pokémon.','If another Banette is in your discard, add 40 damage and shuffle that Banette into deck.'],
+ 24:['Heads: prevent effects and damage next turn; if Dugtrio stays Active until end of opponent turn, place six damage counters on their Bench.','Opponent flips a coin. Tails: 50 additional damage.'],
+ 26:['Optionally deal 60 additional damage and 100 damage to Electrode itself.'],
+ 27:['Choose up to two cards from your deck and put them into your hand.','You may switch Furret and move any number of attached Energy to the new Active Pokémon.'],
+ 28:['Choose a Defending Pokémon attack that is the only attack it can use next turn.','Optionally deal 20 additional damage and Confuse Golduck.'],
+ 29:['Choose two of the opponent’s Pokémon and deal 30 to each.','Optionally deal 40 instead of 80 and reduce incoming attack damage by 40 next turn.'],
+ 32:['If Plusle is Benched, you may move an Energy card attached to Minun to your Bench.'],
+ 34:['Optionally switch the Defending Pokémon before dealing 20 damage and Poisoning it.','Flip once for each Nidoqueen on your Bench; 30 more damage per heads.'],
+ 35:['If Pidgeot was damaged by an attack last turn, mirror that damage to the Defending Pokémon.','Force the opponent to switch their Active.'],
+ 36:['If Minun is Benched, you may deal 20 damage to a Benched Pokémon instead.'],
+ 39:['Flip a coin; heads Confuse the Defending Pokémon.'],
+ 40:['Find up to two Darkness Energy and attach them among your Pokémon.','If opponent has 6 or more cards, randomly discard until five remain.'],
+ 44:['Choose one opposing Pokémon; deal 20 damage plus 10 more per attached Energy card.'],
+ 47:['Heads: prevent all attack damage to Cloyster next opponent turn.','Flip 4 coins; for each heads select one opposing Pokémon to deal 20 damage. Targets may repeat.'],
+ 50:['Search your deck for a Lightning Energy card and attach it to one of your Pokémon.','Tails: Flaaffy does 10 damage to itself.'],
+ 52:['Tails: deal no damage to opponent; deal 20 to one of your own Pokémon.'],
+ 53:['Choose a Supporter in your discard and apply its effect, keeping it in discard.','Choose one opposing Pokémon to deal 40 damage ignoring Weakness and Resistance.'],
+ 56:['Confuse the Defending Pokémon and prevent it retreating next turn.'],
+ 66:['Search deck for up to three Basic Energy and add to your hand.','Heads: copy an attack from an opponent Benched Pokémon without paying its Energy cost.'],
+ 67:['Heads: shuffle a selected opponent attached Special Energy back into their deck.'],
+ 69:['Heads: Burn the Defending Pokémon.'],70:['Heads: Sleep the Defending Pokémon.'],71:['Heads: Paralyze the Defending Pokémon.'],
+ 72:['Move as many damage counters as you wish from your Unown to the Defending Pokémon.'],
+ 73:['Prevent attack effects except damage next turn.'],
+ 101:['Heads: Paralyze the Defending Pokémon.'],
+ 109:['Poison the Defending Pokémon; while poisoned by this attack its Poké-Body is disabled.'],
+ 114:['Heads: heal Sunkern completely, then evolve it using a matching Evolution from your deck.'],
+ 131:['Choose the Pokémon with the fewest remaining HP besides Gardevoir LV.X, yours or opponent’s; Knock it Out.'],
+ 132:['Choose one opponent Pokémon; deal 40 ignoring Weakness, Resistance and other effects.','If this attack Knocks Out the Defending Pokémon, take any one card from your discard to your hand.']
+});
+
 const ABILITIES={
   2:[{type:'neoRule',rule:'dp3:2:waterlog'}],
   5:[{type:'neoRule',rule:'dp3:5:irritatingBuzz'}],
@@ -319,6 +411,52 @@ const ABILITIES={
  80:[{type:'attachEnergyFromDiscard',target:'self',energyType:'Metal',amount:1}],
  90:[{type:'modifier',stat:'retreatCost',amount:-1,scope:'self',duration:'whileInPlay',condition:{type:'selfHasEnergyType',energyType:'Grass'}}]
 };
+
+Object.assign(ABILITIES,{
+ 1:[{type:'neoRule',rule:'dp3:1:jamming'}],3:[{type:'neoRule',rule:'dp3:3:furyBlaze'}],
+ 4:[{type:'neoRule',rule:'dp3:4:burningCoat'}],7:[{type:'neoRule',rule:'dp3:7:telepass'}],10:[{type:'neoRule',rule:'dp3:10:phoenixTurn'}],
+ 11:[{type:'neoRule',rule:'dp3:11:cottonSpore'}],16:[{type:'neoRule',rule:'dp3:16:thunderRumble'}],
+ 19:[{type:'neoRule',rule:'dp3:19:aquaRecover'}],20:[{type:'neoRule',rule:'dp3:20:miracleAroma'}],
+ 22:[{type:'neoRule',rule:'dp3:22:flameDash'}],26:[{type:'neoRule',rule:'dp3:26:energyShift'}],
+ 32:[{type:'neoRule',rule:'dp3:32:minusCharge'}],36:[{type:'neoRule',rule:'dp3:36:plusCharge'}],
+ 39:[{type:'neoRule',rule:'dp3:39:set'}],40:[{type:'neoRule',rule:'dp3:40:darkEngage'}],
+ 44:[{type:'neoRule',rule:'dp3:44:psychicShift'}],52:[{type:'neoRule',rule:'dp3:52:camouflage'}],
+ 56:[{type:'neoRule',rule:'dp3:56:toxicSludge'}],67:[{type:'neoRule',rule:'dp3:67:babyEvolution'}],
+ 69:[{type:'neoRule',rule:'dp3:69:nod'}],70:[{type:'neoRule',rule:'dp3:70:one'}],71:[{type:'neoRule',rule:'dp3:71:xray'}],
+ 72:[{type:'neoRule',rule:'dp3:72:zero'}],73:[{type:'neoRule',rule:'dp3:73:dangerousScales'}],
+ 101:[{type:'neoRule',rule:'dp3:101:balloonSting'}],109:[{type:'neoRule',rule:'dp3:109:potShell'}],
+ 131:[{type:'neoRule',rule:'dp3:131:teleportation'}]
+});
+const ABILITY_STAGE4_PRINTS={
+ 1:'After the opponent plays a Supporter from hand, place one damage counter on each of their Pokémon. This cannot stack.',
+ 3:'If the opponent has three or fewer Prizes, attacks deal 50 additional damage.',
+ 4:'When Entei knocks out an opponent with attack damage, discard top three of their deck.',
+ 7:'Once per turn, choose a Supporter from the opponent’s discard and use its effect without moving that card.',
+ 10:'If Knocked Out by attack damage, coin heads can preserve Ho-Oh with Energy and remove other cards, while opponent still takes Prize.',
+ 11:'When damaged by an opponent attack, flip a coin; heads prevent all damage.',
+ 16:'After Lightning Energy is attached from hand, put one damage counter on a chosen opposing Benched Pokémon.',
+ 19:'When benched from hand, optionally recover up to three Water Pokémon from discard to hand.',
+ 20:'Once per turn, flip a coin; heads choose Sleep, Burn, or Poison for Defending Pokémon.',
+ 22:'When evolved from hand on Bench, may switch Arcanine Active and move any attached Energy from former Active.',
+ 26:'If Electrode would be KO’d by attack, attach it as Rainbow Special Energy to one of your Pokémon instead.',
+ 32:'Once per turn after a Pokémon was KO’d last opponent turn, draw two cards.',
+ 36:'Once per turn after your Pokémon was KO’d last opponent turn, recover two Basic Energy from discard.',
+ 39:'If Unown S, E, and T are Benched, heads puts one discarded Energy on top of your deck.',
+ 40:'Once per turn, your Active Pokémon becomes Darkness type until it is no longer Active or turn ends.',
+ 44:'While on Bench, move a Special Condition from your Active Pokémon to the Defending Pokémon.',
+ 52:'Incoming attack damage reduced by 40 if Kecleon has Basic Energy matching attacker type.',
+ 56:'End of each turn, poison opposing Active with Grass Energy unless already Poisoned.',
+ 67:'Once per turn, evolve Smoochum into Jynx from hand and heal all damage.',
+ 69:'If Unown N, O, D are Benched, opponent may take a Prize; if so you also take one, otherwise draw one card.',
+ 70:'If Unown O, N, E are Benched and hand contains exactly one card, draw to seven.',
+ 71:'While Unown X is Benched, look at the top card of opponent’s deck.',
+ 72:'If Unown Z is Benched and deck empty, discard attached cards and place Unown Z on top of deck.',
+ 73:'If Active Venomoth is damaged by opponent attack, put the Attacker Asleep and Poisoned, even if KO’d.',
+ 101:'When Active Qwilfish takes damage from opponent attack, optionally flip; heads poison Attacker for two counters between turns.',
+ 109:'Prevent all effects of attacks, including damage, from Pokémon with Special Energy attached.',
+ 131:'Once per turn, switch Gardevoir LV.X with any other of your Pokémon; cannot use while under Special Condition.'
+};
+
 const ABILITY_PRINTS={
   2:['Waterlog: Attach as many Basic Water Energy cards from hand to any of your Pokémon, one by one. If any were attached, end your turn. Cannot use while affected by Special Conditions.'],
   5:['Irritating Buzz: Between turns, if Flygon is Active put 1 damage counter on the opponent Active unless it is Fighting.'],
@@ -338,12 +476,25 @@ const ABILITY_PRINTS={
  80:['Wear Cloak: Once on your turn, if Active, attach one Basic Metal Energy from your discard pile to Burmy.'],
  90:['Cottonweed: If Hoppip has Grass Energy attached, its Retreat Cost is 0.']
 };
+Object.assign(ABILITY_PRINTS,Object.fromEntries(Object.entries(ABILITY_STAGE4_PRINTS).map(([n,text])=>[Number(n),[text]])));
 const ABILITY_META={
   5:{type:'triggered',event:'endTurn',turn:'any',activeOnly:true},
   13:{type:'triggered',event:'endTurn',turn:'any'},
   31:{type:'triggered',event:'energyAttached',fromHandOnly:true,energyType:'Fire'},
   37:{type:'triggered',event:'damaged',activeOnly:true,opponentAttackOnly:true}
 };
+
+Object.assign(ABILITY_META,{
+ 1:{type:'triggered',event:'opponentSupporterPlayed'},4:{type:'triggered',event:'opponentKnockedOut',activeOnly:true},
+ 10:{type:'triggered',event:'knockedOut',opponentAttackOnly:true},11:{type:'passive'},
+ 16:{type:'triggered',event:'energyAttached',energyType:'Lightning',fromHandOnly:true},
+ 19:{type:'triggered',event:'benched',fromHandOnly:true},22:{type:'triggered',event:'evolved',fromHandOnly:true},
+ 26:{type:'triggered',event:'knockedOut',opponentAttackOnly:true},
+ 52:{type:'passive'},56:{type:'triggered',event:'endTurn',turn:'any'},
+ 73:{type:'triggered',event:'damagedByAttack',activeOnly:true,opponentAttackOnly:true},
+ 101:{type:'triggered',event:'damagedByAttack',activeOnly:true,opponentAttackOnly:true}
+});
+
 const TRAINER_TEXT={
  119:'Put one card from your hand on top of your deck, then search for one Pokémon. You cannot play this if it is your only hand card.',
  120:'Shuffle up to three Pokémon and Basic Energy cards from your discard pile back into your deck.',
@@ -381,14 +532,39 @@ function parse(row){
       damage:Number((damageText.match(/^\d+/)||[])[0]||0),damageText:damageText||null,
       text:PRINTS[n]?.[i]??'Printed attack effect awaiting implementation and verification.',effect:EFFECTS[n]?.[i]||noop};}),
     abilities:(powers||'').split(';').filter(Boolean).map(s=>{const [power,t]=s.split('~');return {name:power,type:t==='Power'?'activated':'passive',
-      printedPowerType:t==='Power'?'power':'body',activeOnly:[60,78,79,80].includes(n),disabledByStatus:[2,25,38,60].includes(n),text:ABILITY_PRINTS[n]?.[0]||'Printed Poké-Power or Poké-Body awaiting verified effect and timing.',effect:ABILITIES[n]?.[0]||noop,...(ABILITY_META[n]||{})};}),
+      printedPowerType:t==='Power'?'power':'body',activeOnly:[60,78,79,80].includes(n),disabledByStatus:[2,7,20,25,38,60,131].includes(n),text:ABILITY_PRINTS[n]?.[0]||'Printed Poké-Power or Poké-Body awaiting verified effect and timing.',effect:ABILITIES[n]?.[0]||noop,...(ABILITY_META[n]||{})};}),
     isLevelX:stage==='Level-Up',levelUpFrom:stage==='Level-Up'?from:null,
     text:stage==='Level-Up'?'Only level up the Active Pokémon; the card retains prior attacks and Powers.':undefined});
    const full=[...card.attacks.map(a=>a.text),...card.abilities.map(a=>a.text)].join(' ').toLowerCase();
    const types=[...new Set(card.attacks.flatMap(a=>[...a.cost].filter(x=>x!=='C').map(x=>T[x])))];
    const roles=new Set();if(/draw|hand/.test(full))roles.add('draw');if(/search|recover|retrieve/.test(full))roles.add('search');
    if(/asleep|poison|confus|paraly|burn/.test(full))roles.add('status');
-   card.deckMeta={roles:[...roles],synergy:[...roles],energyTypes:types,preferredEnergyTypes:[],inflicts:[],payoffs:[],preferredPartners:[],conditionalAttackEnergyTypes:[],babyEvolutionSupport:[]};
+   // Keep deck-builder metadata for unusual printed requirements separate
+   // from the face type. Never auto-include an unrelated Energy colour.
+   const extras={
+     2:{roles:['energy-ramp'],preferredEnergyTypes:['Water']},
+     7:{roles:['supporter-copy','power-lock'],preferredPartners:['Kirlia','Ralts']},
+     18:{roles:['dual-energy-attacker'],preferredEnergyTypes:['Fire','Water'],conditionalAttackEnergyTypes:['Fire','Water']},
+     23:{roles:['damage-counters'],preferredPartners:['Shuppet']},
+     31:{roles:['fire-energy-payoff'],conditionalAttackEnergyTypes:['Fire']},
+     32:{preferredPartners:['Plusle'],roles:['ko-recovery']},
+     36:{preferredPartners:['Minun'],roles:['ko-recovery']},
+     39:{preferredPartners:['Unown [S]','Unown [E]','Unown [T]']},
+     40:{preferredEnergyTypes:['Darkness'],roles:['type-shift','energy-ramp']},
+     41:{preferredEnergyTypes:['Grass'],conditionalAttackEnergyTypes:['Grass']},
+     42:{preferredEnergyTypes:['Fighting'],conditionalAttackEnergyTypes:['Fighting']},
+     43:{roles:['tool-protection']},
+     69:{preferredPartners:['Unown [O]','Unown [D]'],roles:['prize-control']},
+     70:{preferredPartners:['Unown [N]','Unown [E]'],roles:['hand-refill']},
+     72:{preferredPartners:['Unown'],roles:['damage-shift']},
+     78:{conditionalAttackEnergyTypes:['Grass']},
+     79:{conditionalAttackEnergyTypes:['Fighting']},
+     80:{conditionalAttackEnergyTypes:['Metal']},
+     109:{roles:['poison-control','special-energy-counter']},
+     131:{roles:['lvx-low-hp-ko'],preferredPartners:['Gardevoir','Kirlia','Ralts']},
+     132:{roles:['lvx-discard-recovery'],preferredPartners:['Honchkrow','Murkrow']}
+   }[n]||{};
+   card.deckMeta={roles:[...new Set([...roles,...(extras.roles||[])])],synergy:[...new Set([...roles,...(extras.roles||[])])],energyTypes:types,preferredEnergyTypes:extras.preferredEnergyTypes||[],inflicts:[],payoffs:[],preferredPartners:extras.preferredPartners||[],conditionalAttackEnergyTypes:extras.conditionalAttackEnergyTypes||[],babyEvolutionSupport:[]};
  }else if(trainer){card.trainerType=stage;card.text=TRAINER_TEXT[n]||TRAINER_GATED;card.effect=TRAINER_EFFECTS[n]||noop;}
  else {card.basicEnergy=false;card.specialEnergy=true;card.subtype=n===129?'Darkness':'Metal';card.types=[card.subtype];
    card.effect={type:'specialEnergy',provides:{[card.subtype]:1}};

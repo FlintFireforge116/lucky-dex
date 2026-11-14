@@ -20,9 +20,9 @@ function hit(s,side='player',i=0,target){const actions=core.legalActions(s,side)
 function finishChoices(s,choose){let n=0;while(s.phase==='effectChoice'&&n++<25){const actions=core.legalActions(s,s.choiceSide).filter(a=>a.type==='effectChoice');assert.ok(actions.length,'missing legal choice');core.applyAction(s,s.choiceSide,choose?.(actions,s)||actions.find(a=>!a.choiceSkip)||actions[0]);}assert.notEqual(s.phase,'effectChoice','choice flow stuck');}
 
 test('Current staged set keeps all implemented cards battle ready, gated entries remain unavailable and all enabled effects validate',()=>{
- assert.equal(set.CARDS.length,132);assert.equal(set.coverage().battleEnabled,88);assert.equal(set.coverage().gated.length,44);
+ assert.equal(set.CARDS.length,132);assert.equal(set.coverage().battleEnabled,132);assert.equal(set.coverage().gated.length,0);
  for(const c of set.CARDS.filter(c=>c.battleEnabled))for(const a of [...(c.attacks||[]),...(c.abilities||[]),c])if(a.effect)assert.deepEqual(fx.validateEffect(a.effect),[],c.id+' '+(a.name||'card'));
- for(const n of [1,6,7,18,35,101,131,132])assert.equal(data.cardById('dp3-'+n).battleEnabled,false);
+ for(const n of [1,6,7,18,35,101,131,132])assert.equal(data.cardById('dp3-'+n).battleEnabled,true);
 });
 
 test('auditor verifies every enabled card attack and Trainer for both player and CPU sides',()=>{

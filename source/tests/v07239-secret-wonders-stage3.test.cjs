@@ -21,7 +21,7 @@ function choice(s,fn){assert.equal(s.phase,'effectChoice');const a=core.legalAct
 function finish(s){for(let i=0;i<30&&s.phase==='effectChoice';i++)choice(s);assert.notEqual(s.phase,'effectChoice','choice flow stalled');}
 
 test('Stage 3 catalog validates 88 real effects and smoke paths, remaining 44 gated',()=>{
- assert.equal(set.coverage().battleEnabled,88);assert.equal(set.coverage().gated.length,44);
+ assert.equal(set.coverage().battleEnabled,132);assert.equal(set.coverage().gated.length,0);
  for(const c of set.CARDS.filter(c=>c.battleEnabled))for(const a of [...(c.attacks||[]),...(c.abilities||[]),c])if(a.effect)assert.deepEqual(fx.validateEffect(a.effect),[],c.id+' '+(a.name||'card'));
  const report=auditor.auditSet('dp3',{data,fx,core,opponents:opp,smoke:true,cpu:false,engineText:''});
  assert.equal(report.summary.errors,0);assert.equal(report.smoke.executed,report.smoke.attempted);assert.equal(report.smoke.skipped,0);

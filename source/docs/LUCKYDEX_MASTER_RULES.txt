@@ -1,8 +1,8 @@
 LUCKYDEX — MASTER PROJECT RULES AND DEVELOPMENT CONTRACT
 =========================================================
-Document version: 2.32
+Document version: 2.33
 Compiled: 14 November 2026
-Current inspected source: v0.69.239. Mysterious Treasures dp2 is fully registered and battle-enabled at 124/124. Secret Wonders dp3 has 132 collector prints; 88 are battle-enabled and 44 explicitly gated while mechanics are implemented. See SECRET_WONDERS_v0.69.239_STAGE3.md. Historical appendices remain part of the project record. Android APK and device QA remain pending.
+Current inspected source: v0.69.240. Mysterious Treasures dp2 is 124/124 enabled. Secret Wonders dp3 has 132/132 collector prints enabled after consolidated Stage 4 implementation. See SECRET_WONDERS_v0.69.240_COMPLETE.md. Earlier stage appendices remain historical records, not the current completion count. Automated source checks pass; independent card-by-card ruling audit and Android APK/device QA remain pending.
 Recommended repository location: ~/lucky-dex/source/docs/LUCKYDEX_MASTER_RULES.txt
 Project: LuckyDex — Android application/PWA, managed with Termux and GitHub
 
@@ -1729,3 +1729,61 @@ state; do not mark them enabled without exact end-state testing.
 cards (88/132), 19 focused Stage 3 tests, live from-hand Energy event
 tracking and pre-KO reactive damage, end-turn/choice gates and expanded
 GitHub preflight. Android APK/device UI remains unverified.
+
+
+APPENDIX v2.33 — 14 NOVEMBER 2026 — v0.69.240 SECRET WONDERS COMPLETE IMPLEMENTATION
+=======================================================================
+[CURRENT] Secret Wonders dp3 now has 132/132 collector-number card records
+battleEnabled and deckEligible. Stages 1–3 remain historical development
+reports. The final 44 previously gated cards have been given attack/
+Poké-Power/Body implementations, including 2 LV.X cards, with effect
+choices and two-sided smoke execution. The master rules remain binding.
+
+[LOCKED] C-DP3-CHOICE-017: Printed selection effects are not resolved by
+a generic 'special effect' placeholder. For Psychic Cut, previously
+face-down Prize cards chosen to turn face-up must STAY face-up; a
+separate Prize taken after a Knock Out is selected through the normal
+Prize UX. Unown N's NOD gives the opposing player the decision and
+both players their own actual Prize cards, not phantom counters.
+
+[LOCKED] C-DP3-KO-018: Reactive Poke-Powers happen before Knock Out
+cleanup where necessary. Ho-Oh Phoenix Turn on heads retains the
+Pokemon and its Energy but still awards the opposing Prize. Electrode
+Energy Shift may put Electrode onto another friendly Pokemon as ONE
+Rainbow Special Energy and must not award a KO Prize for that conversion.
+Dugtrio Dig Trap hits a chosen opposing Bench only if it remains Active
+through the opponent's following turn. Any attack-KO sequencing change
+must not expose the Prize menu before animations finish.
+
+[LOCKED] C-DP3-TURN-019: Thunder Climb discards only THREE top-deck
+cards and attaches the Lightning cards among those three; it must NOT
+discard another three in its follow-up attachment selection. Fury Blaze
+applies its additional damage before matchups. Jamming triggers after
+the opponent plays a Supporter from hand and may not stack multiple
+Jamming Bodies in one turn. Card abilities sharing a once-per-turn
+limit must not offer unusable buttons; copied Supporters stay in their
+original discard zone. Temporary Darkness type through Dark Engage is
+Active-only and expires when the Pokemon is no longer Active or the
+turn ends.
+
+[CHECK] The automated Classic auditor verifies catalog/schema and
+synthetic resolution coverage, not the complete printed-card rulebook.
+Additional manual scenarios are especially important for multiple
+conditional optional moves, copied attacks, Prize display timing,
+LV.X and rare Energy/KO collisions; check on-device UI and the CPU in
+long matches separately. No installed APK or on-device verification
+has been performed for v0.69.240.
+
+[CURRENT] Verification for this consolidated implementation:
+  • 132/132 enabled; 408/408 synthetic attack/Trainer smoke paths.
+  • 16/16 generated CPU decks legal in the auditor's eight-type sweep.
+  • 21 focused completion tests (source/tests/v07240-secret-wonders-completion.test.cjs),
+    previous Secret Wonders tests updated to check the new baseline.
+  • 218 selected cross-set source regressions passed before packaging.
+  • GitHub preflight runs full dp3 audit and all four Secret Wonders suites.
+
+2026-11-14 | 2.32 -> 2.33 | v0.69.240 | Consolidated the final
+44 Secret Wonders cards into one completion patch. Added printed
+choice, hand/deck, event, Energy transformation, delayed attack and
+Prize handling; updated auditor, source tests, preflight and set notes.
+Automated tests are not an independent ruling or Android device audit.

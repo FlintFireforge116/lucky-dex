@@ -24,9 +24,9 @@ function choices(s,fn){let count=0;while(s.phase==='effectChoice'&&count++<32){c
 
 test('Secret Wonders 132 unique prints registered in game, current verified-stage flags, and incomplete cards gated',()=>{
  assert.equal(set.CARDS.length,132);assert.equal(new Set(set.CARDS.map(x=>x.id)).size,132);
- assert.equal(set.coverage().battleEnabled,88);assert.equal(set.coverage().gated.length,44);
+ assert.equal(set.coverage().battleEnabled,132);assert.equal(set.coverage().gated.length,0);
  for(let n=1;n<=132;n++){const c=data.cardById('dp3-'+n);assert.ok(c,n+' missing');assert.equal(c.setId,'dp3');assert.equal(Number(c.number),n);assert.ok(c.image.includes('dp3/'),c.id);assert.equal(c.deckEligible,c.battleEnabled,c.id);if(c.battleEnabled){if(c.kind==='pokemon'){for(const a of c.attacks)assert.deepEqual(effects.validateEffect(a.effect),[],c.id+': '+a.name);for(const a of c.abilities||[])assert.deepEqual(effects.validateEffect(a.effect),[],c.id+': '+a.name);}else assert.deepEqual(effects.validateEffect(c.effect),[],c.id);}}
- for(const id of [1,7,18,101,131,132])assert.equal(data.cardById('dp3-'+id).battleEnabled,false,'unverified mechanics remain gated');
+ for(const id of [1,7,18,101,131,132])assert.equal(data.cardById('dp3-'+id).battleEnabled,true,'completion enables previously gated mechanics');
  for(const id of [49,64,76,81,85,90,92,100,112,113,119,120,121,123,124,127,128,129,130])assert.equal(data.cardById('dp3-'+id).battleEnabled,true,id);
  assert.equal(data.cardById('dp3-129').effect.provides.Darkness,1);assert.equal(data.cardById('dp3-130').effect.provides.Metal,1);
  assert.ok(fs.readFileSync(path.join(__dirname,'../app/src/main/assets/index.html'),'utf8').includes('tcg-classic-secret-wonders.js'));
@@ -35,7 +35,7 @@ test('Secret Wonders 132 unique prints registered in game, current verified-stag
 test('independent auditor reports no card errors and completes every synthetic enabled attack and trainer both sides',()=>{
  const r=audit.auditSet('dp3',{data,fx:effects,core,opponents:opp,smoke:true,cpu:false,engineText:fs.readFileSync(path.join(__dirname,'../app/src/main/assets/tcgp-battle-effects.js'),'utf8')});
  assert.equal(r.summary.errors,0,JSON.stringify(r.findings.filter(f=>f.severity==='error')));assert.equal(r.summary.total,132);
- assert.equal(r.summary.counts.enabled,88);assert.equal(r.smoke.executed,r.smoke.attempted);assert.equal(r.smoke.skipped,0);assert.deepEqual(r.smoke.failures,[]);
+ assert.equal(r.summary.counts.enabled,132);assert.equal(r.smoke.executed,r.smoke.attempted);assert.equal(r.smoke.skipped,0);assert.deepEqual(r.smoke.failures,[]);
 });
 
 test('Bagon Rage counts damage counters, independent of attacker side',()=>{
