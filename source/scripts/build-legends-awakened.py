@@ -11,6 +11,7 @@ import pathlib
 import re
 import urllib.request
 from dp6_verified_outcomes import verified_effect
+from dp6_batch4_verified import ABILITIES as BATCH4_ABILITIES
 
 ROOT = pathlib.Path(__file__).resolve().parent.parent
 OUT = ROOT / 'app/src/main/assets/tcg-classic-legends-awakened.js'
@@ -84,9 +85,9 @@ def build_cards(upstream):
                 effect,verified=simple_effect(a.get('text') or '', name)
             damage_shape=re.fullmatch(r'\d*',damage_text) is not None
             if damage_text.endswith('+') and re.fullmatch(r'\d+\+',damage_text):
-                damage_shape=(effect.get('type')=='coinFlip' and effect.get('heads',{}).get('type')=='bonusDamage') or effect.get('type') in ('bonusDamage','energyDamage','damageFromDamage','topDeckBothDiscardBonus','chooseDiscardForBonus','fieldCountDamage','sequence') or (effect.get('type')=='coinDamage' and effect.get('mode')=='add')
+                damage_shape=bool(verified and effect.get('type') in ('coinFlip','bonusDamage','energyDamage','damageFromDamage','topDeckBothDiscardBonus','chooseDiscardForBonus','fieldCountDamage','sequence','neoRule','coinDamage'))
             if damage_text.endswith('×') and re.fullmatch(r'\d+×',damage_text):
-                damage_shape=effect.get('type') in ('coinDamage','coinDamageByPokemon') and effect.get('mode')=='replace'
+                damage_shape=(effect.get('type') in ('coinDamage','coinDamageByPokemon','fieldCountDamage','energyDamage') and effect.get('mode')=='replace') or effect.get('type')=='neoRule'
             safe &= bool(verified and damage_shape)
             attacks.append({'name':a['name'],'cost':cost,'damage':int(damage_text or 0) if damage_text.isdecimal() else int(re.match(r'\d+',damage_text).group()) if re.match(r'\d+',damage_text) else 0,
                             'damageText':damage_text or None,'text':a.get('text') or '', 'effect':effect})
@@ -95,7 +96,13 @@ def build_cards(upstream):
             abilities.append({'name':ab['name'],'type':'activated' if ab['type']=='Poké-Power' else 'passive',
                 'printedPowerType':'power' if ab['type']=='Poké-Power' else 'body',
                 'disabledByStatus':ab['type']=='Poké-Power','text':ab.get('text') or '', 'effect':NOOP})
-        if abilities or not attacks: safe=False
+        if abilities:
+            audited = BATCH4_ABILITIES.get(n)
+            if len(abilities) == 1 and audited and abilities[0]['name']==audited['name']:
+                abilities[0].update({k:v for k,v in audited.items() if k!='name'})
+            else:
+                safe=False
+        if not attacks: safe=False
         if stage=='Level-Up' or not pokemon: safe=False
         weakness=(original.get('weaknesses') or [{}])[0]
         resist=(original.get('resistances') or [{}])[0]
@@ -143,7 +150,7 @@ def build_cards(upstream):
 
 def write_js(cards,output):
     payload=json.dumps(cards,ensure_ascii=False,separators=(',',':'))
-    js='''/* LuckyDex Classic TCG — Legends Awakened (dp6), v0.69.254 verified battle batch.
+    js='''/* LuckyDex Classic TCG — Legends Awakened (dp6), v0.69.255 verified battle batch.
  * Card identities, attacks, text and abilities: PokemonTCG/pokemon-tcg-data cards/en/dp6.json.
  * Gated cards are collection-visible but NOT battle-eligible. DO NOT promote
  * complex prints by changing battleEnabled without outcome-level tests.

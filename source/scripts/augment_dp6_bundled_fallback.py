@@ -3,6 +3,7 @@
 import sys,json,pathlib,re
 sys.path.insert(0,str(pathlib.Path(__file__).parent))
 from dp6_verified_outcomes import EXTRA,verified_effect
+from dp6_batch4_verified import ABILITIES as BATCH4_ABILITIES
 from dp6_extra_print_snapshots import PRINTS
 ROOT=pathlib.Path(__file__).resolve().parents[1]
 path=ROOT/'app/src/main/assets/tcg-classic-legends-awakened.js'
@@ -26,10 +27,18 @@ for n,spec in PRINTS.items():
               'retreat':retreat,'weakness':weak or None,'weaknessValue':weakval or None,
               'weaknesses':[{'type':weak,'value':weakval}] if weak else [],
               'resistance':res or None,'resistanceValue':resval or None,
-              'resistances':[{'type':res,'value':resval}] if res else [],'attacks':attacks,'abilities':[],
+              'resistances':[{'type':res,'value':resval}] if res else [],'attacks':attacks,'abilities':([{'name': BATCH4_ABILITIES[n]['name'], 'text': '', **{k:v for k,v in BATCH4_ABILITIES[n].items() if k!='name'}}] if n in BATCH4_ABILITIES else []),
               'battleEnabled':True,'deckEligible':True,'support':{'status':'FULL','reasons':[]},
               'deckMeta':{'roles':[],'synergy':[],'energyTypes':preferred,'preferredEnergyTypes':preferred,
                           'preferredPartners':[],'inflicts':[],'payoffs':[]}})
+# Even gated cards must have their printed Trainer subtype: partner card
+# effects (Sneasel Rob) and deck filters inspect the public catalogue.
+trainer_stages={129:'Pokémon Tool',130:'Supporter',131:'Supporter',132:'Item',
+                133:'Item',134:'Stadium',135:'Stadium',136:'Technical Machine',
+                137:'Technical Machine',138:'Item',139:'Item'}
+for number,subtype in trainer_stages.items():
+    if cards[number-1]['kind']=='trainer':
+        cards[number-1]['trainerType']=subtype
 text=text[:start]+json.dumps(cards,ensure_ascii=False,separators=(',',':'))+text[end:]
 text=text.replace('v0.69.251 staged','v0.69.252 expanded')
 path.write_text(text,encoding='utf-8')

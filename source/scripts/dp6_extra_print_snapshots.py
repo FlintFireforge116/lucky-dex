@@ -147,3 +147,8 @@ PRINTS.update({
 ("Star Boomerang","W","30","You may return Starmie and all cards attached to it to your hand."),
 ("Core Flash","P","","Choose 1 of your opponent's Pokémon that has any Poké-Powers or Poké-Bodies. This attack does 50 damage to that Pokémon. (Don't apply Weakness and Resistance for Benched Pokémon.)")]),
 })
+
+# v0.69.255 Batch 4: only fully reviewed and battle-testable prints are imported.
+from dp6_batch4_prints import PRINTS as BATCH4_PRINTS
+from dp6_batch4_verified import BE_READY as BATCH4_READY
+PRINTS.update({n: BATCH4_PRINTS[n] for n in BATCH4_READY})

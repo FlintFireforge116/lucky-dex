@@ -17,6 +17,7 @@ mod = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(mod)
 build_cards, simple_effect = mod.build_cards, mod.simple_effect
 from dp6_extra_print_snapshots import PRINTS  # noqa: E402
+from dp6_batch4_verified import ABILITIES as BATCH4_ABILITIES
 
 TYPE = {'G': 'Grass', 'R': 'Fire', 'W': 'Water', 'L': 'Lightning',
         'P': 'Psychic', 'F': 'Fighting', 'D': 'Darkness', 'M': 'Metal',
@@ -39,6 +40,11 @@ def make_prints():
                 'attacks': [{'name': name, 'cost': [TYPE[t] for t in cost],
                              'damage': damage, 'text': text}
                             for name, cost, damage, text in moves]}
+        if n in BATCH4_ABILITIES:
+            ability = BATCH4_ABILITIES[n]
+            card['abilities'] = [{'name': ability['name'],
+                                  'type': 'Poké-Power' if ability.get('printedPowerType')=='power' else 'Poké-Body',
+                                  'text': 'Archived printed triggered ability'}]
         if evolved:
             card['evolvesFrom'] = evolved
         if weak:

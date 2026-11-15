@@ -96,8 +96,12 @@ def verified_effect(collector,attack):
     spec=EXTRA.get(int(collector),{}).get(actual_name)
     if spec is None:return None,False
     damage=str(attack.get('damage') or '')
-    if damage.endswith('+') and spec.get('type') not in ('bonusDamage','energyDamage','damageFromDamage','topDeckBothDiscardBonus','coinDamage','chooseDiscardForBonus','sequence','coinFlip'):
+    if damage.endswith('+') and spec.get('type') not in ('bonusDamage','energyDamage','damageFromDamage','topDeckBothDiscardBonus','coinDamage','chooseDiscardForBonus','sequence','coinFlip','neoRule'):
         return None,False
-    if damage.endswith('×') and spec.get('type') not in ('coinDamage','coinDamageByPokemon'):
+    if damage.endswith('×') and not (spec.get('type') in ('coinDamage','coinDamageByPokemon','fieldCountDamage','energyDamage','neoRule') and (spec.get('mode')=='replace' or spec.get('type')=='neoRule')):
         return None,False
     return spec,True
+
+# v0.69.255 Stage 4 exact printed-attack mapping; audited upstream names/text/costs.
+from dp6_batch4_verified import ATTACKS as BATCH4_ATTACKS
+EXTRA.update(BATCH4_ATTACKS)
