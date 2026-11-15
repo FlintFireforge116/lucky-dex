@@ -1140,6 +1140,26 @@
            !effects.abilitiesSuppressed(state,side==='player'?'opponent':'player',state.sides[side==='player'?'opponent':'player'].active,data.cardById))return;
         if(source.cardId==='dp5-99'&&ability.name==='Energy Forcing'&&!s.hand.some(ref=>{const c=data.cardById(ref.cardId);return c?.basicEnergy||c?.specialEnergy;}))return;
         if(source.cardId==='dp5-100'&&ability.name==='Decode'&&!s.deck.length)return;
+        // Legends Awakened: avoid advertising Poké-Powers whose printed
+        // prerequisites have no legal target/cost. This applies equally to
+        // player decisions and CPU action generation.
+        if(state.format==='classic'&&source.cardId==='dp6-6'&&!pokemonOn(s).some(p=>p!==source&&(
+          Number(p.energy?.Fire||0)>0||(p.specialEnergy||[]).some(ref=>Number((ref.provides||data.cardById(ref.cardId)?.effect?.provides||{}).Fire||0)>0))))return;
+        if(state.format==='classic'&&source.cardId==='dp6-14'&&(
+          pokemonOn(s).some(p=>p!==source&&data.cardById(p.cardId)?.name==='Rayquaza')||
+          !(s.discard||[]).some(ref=>data.cardById(ref.cardId)?.basicEnergy&&['Fire','Lightning'].includes(data.cardById(ref.cardId)?.subtype))&&
+          !['Fire','Lightning'].some(t=>Number(s.energyDiscard?.[t]||0)>0)))return;
+        if(state.format==='classic'&&['dp6-36','dp6-38','dp6-39'].includes(source.cardId)&&s.hand.length<2)return;
+        if(state.format==='classic'&&source.cardId==='dp6-36'&&(
+          !foe.active||!foe.bench.filter(Boolean).length||['Stage 1','Stage 2','Level-Up'].includes(data.cardById(foe.active.cardId)?.stage)))return;
+        if(state.format==='classic'&&source.cardId==='dp6-38'&&(
+          Number(s.energyDiscard?.Fighting||0)<1&&!(s.discard||[]).some(ref=>{
+            const c=data.cardById(ref.cardId);return c?.kind==='energy'&&(c.subtype==='Fighting'||Number(c.effect?.provides?.Fighting||0)>0);
+          })))return;
+        if(state.format==='classic'&&source.cardId==='dp6-79'&&!pokemonOn(s).some(p=>Number(p.damage||0)>0))return;
+        if(state.format==='classic'&&source.cardId==='dp6-81'&&(
+          source===s.active||!s.active||!/^Unown(?: \[|\b)/.test(data.cardById(s.active.cardId)?.name||'')))return;
+
         if(abilityBlockedByStatus(ability,source)||ability.type==='passive'||ability.type==='triggered'||ability.activeOnly&&source!==s.active||ability.benchOnly&&source===s.active)return;
         if(state.format==='classic'&&sourceCard?.pokemonEx&&ability.printedPowerType==='power'&&
            ['player','opponent'].some(w=>pokemonOn(state.sides[w]).some(p=>p.cardId==='ex14-96'&&!effects.abilitiesSuppressed(state,w,p,data.cardById))))return;

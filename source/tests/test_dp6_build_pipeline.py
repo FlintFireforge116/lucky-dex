@@ -21,6 +21,7 @@ from dp6_batch4_verified import ABILITIES as BATCH4_ABILITIES
 from dp6_batch5_verified import ABILITIES as BATCH5_ABILITIES
 from dp6_batch6_verified import ABILITIES as BATCH6_ABILITIES
 from dp6_batch7_verified import ABILITIES as BATCH7_ABILITIES
+from dp6_batch8_verified import ABILITIES as BATCH8_ABILITIES
 from dp6_batch6_fossils import FOSSILS
 
 TYPE = {'G': 'Grass', 'R': 'Fire', 'W': 'Water', 'L': 'Lightning',
@@ -44,8 +45,8 @@ def make_prints():
                 'attacks': [{'name': name, 'cost': [TYPE[t] for t in cost],
                              'damage': damage, 'text': text}
                             for name, cost, damage, text in moves]}
-        if n in BATCH4_ABILITIES or n in BATCH5_ABILITIES or n in BATCH6_ABILITIES or n in BATCH7_ABILITIES:
-            ability = BATCH7_ABILITIES.get(n) or BATCH6_ABILITIES.get(n) or BATCH5_ABILITIES.get(n) or BATCH4_ABILITIES[n]
+        if n in BATCH4_ABILITIES or n in BATCH5_ABILITIES or n in BATCH6_ABILITIES or n in BATCH7_ABILITIES or n in BATCH8_ABILITIES:
+            ability = BATCH8_ABILITIES.get(n) or BATCH7_ABILITIES.get(n) or BATCH6_ABILITIES.get(n) or BATCH5_ABILITIES.get(n) or BATCH4_ABILITIES[n]
             card['abilities'] = [{'name': ability['name'],
                                   'type': 'Poké-Power' if ability.get('printedPowerType')=='power' else 'Poké-Body',
                                   'text': 'Archived printed triggered ability'}]

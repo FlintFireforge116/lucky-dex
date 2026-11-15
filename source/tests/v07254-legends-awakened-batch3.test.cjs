@@ -22,7 +22,7 @@ function coin(s){return s.log.find(x=>x.type==='coin'&&x.side==='player');}
 test('17 fully registered new prints, non-compliant prints remain gated',()=>{
  assert.equal(la.CARDS.length,146);assert.ok(la.coverage().battleEnabled>=62);
  for(const n of added){const c=data.cardById(`dp6-${n}`);assert.equal(c?.battleEnabled,true,`dp6-${n}`);assert.equal(c.attacks.length,2);for(const a of c.attacks)assert.deepEqual(fx.validateEffect(a.effect),[],`${c.name} ${a.name}`);}
- for(const n of [6,7,13,14,16,27,38])assert.equal(data.isBattleEnabled(`dp6-${n}`),false);
+ for(const n of [7,16,19,21,27,42])assert.equal(data.isBattleEnabled(`dp6-${n}`),false);
 });
 test('all 34 newly enabled attacks have actionable, non-throwing paths',()=>{
  for(const n of added)for(let i=0;i<2;i++){

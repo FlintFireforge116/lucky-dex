@@ -22,7 +22,7 @@ test('dp6 registration has 146 distinct prints, physical artwork and strict gate
  assert.equal(la.CARDS.filter(c=>c.battleEnabled).length>=8,true);
  for(let n=1;n<=146;n++){const c=la.cardById(`dp6-${n}`);assert.ok(c);assert.equal(c.number,String(n));assert.strictEqual(data.cardById(c.id),c);assert.equal(c.image,`https://images.pokemontcg.io/dp6/${n}.png`);if(c.battleEnabled){assert.equal(c.support.status,'FULL');for(const a of c.attacks||[])assert.deepEqual(fx.validateEffect(a.effect),[]);}}
  assert.equal(data.SETS.some(x=>x.id==='dp6'),true);assert.ok(cpu.SETS.includes('dp6'));assert.ok(builder.SET_IDS.includes('dp6'));
- for(const id of ['dp6-6','dp6-7','dp6-13','dp6-14'])assert.equal(la.cardById(id).battleEnabled,false,`must not enable unimplemented ${id}`);
+ for(const id of ['dp6-7','dp6-16','dp6-19','dp6-21'])assert.equal(la.cardById(id).battleEnabled,false,`must not enable unimplemented ${id}`);
  assert.equal(data.projectOwnedCards([{source:'tcg',setName:'Legends Awakened',localId:'117',count:2}]).find(x=>x.gameplayId==='dp6-117')?.quantity,2);
 });
 test('Unverified DP6 Pokemon, Powers, LV.X and Fossils never enter deckbuilder',()=>{
@@ -30,7 +30,7 @@ test('Unverified DP6 Pokemon, Powers, LV.X and Fossils never enter deckbuilder',
   assert.equal(c.deckEligible,false,c.id);
   assert.equal(c.support.status,'PARTIAL',c.id);
  }
- for(const id of ['dp6-6','dp6-7','dp6-13'])assert.equal(data.isBattleEnabled(id),false);
+ for(const id of ['dp6-7','dp6-16','dp6-19'])assert.equal(data.isBattleEnabled(id),false);
 });
 test('verified Riolu, Chinchou, Drifloon and Metang printed damage and status',()=>{
  assert.equal(la.cardById('dp6-117').stage,'Basic');

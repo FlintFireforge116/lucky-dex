@@ -7,6 +7,7 @@ from dp6_batch4_verified import ABILITIES as BATCH4_ABILITIES
 from dp6_batch5_verified import ABILITIES as BATCH5_ABILITIES
 from dp6_batch6_verified import ABILITIES as BATCH6_ABILITIES
 from dp6_batch7_verified import ABILITIES as BATCH7_ABILITIES
+from dp6_batch8_verified import ABILITIES as BATCH8_ABILITIES
 from dp6_batch6_fossils import FOSSILS
 from dp6_extra_print_snapshots import PRINTS
 ROOT=pathlib.Path(__file__).resolve().parents[1]
@@ -19,7 +20,7 @@ TYPE={'G':'Grass','R':'Fire','W':'Water','L':'Lightning','P':'Psychic','F':'Figh
 for n,spec in PRINTS.items():
     name,stage,hp,typing,evolved,weak,weakval,res,resval,retreat,rarity,moves=spec
     c=cards[n-1]
-    assert c['id']==f'dp6-{n}' and c['name']==name
+    assert c['id']==f'dp6-{n}' and (c['name']==name or n in (76,78,79,80,81) and c['name']==name.replace('[','').replace(']',''))
     attacks=[]
     for attack_name,cost,damage,printed_text in moves:
         effect,ready=verified_effect(n,{'name':attack_name,'cost':cost,'damage':damage,'text':printed_text})
@@ -27,11 +28,11 @@ for n,spec in PRINTS.items():
         attacks.append({'name':attack_name,'cost':cost,'damage':int(re.match(r'\d+',damage).group()) if re.match(r'\d+',damage) else 0,
                         'damageText':damage or None,'text':printed_text,'effect':effect})
     preferred=list(dict.fromkeys(TYPE[t] for _,cost,_,_ in moves for t in cost if t in TYPE))
-    c.update({'stage':stage,'hp':hp,'types':[typing],'subtype':typing,'rarity':rarity,'evolvesFrom':evolved or None,
+    c.update({'name':name,'stage':stage,'hp':hp,'types':[typing],'subtype':typing,'rarity':rarity,'evolvesFrom':evolved or None,
               'retreat':retreat,'weakness':weak or None,'weaknessValue':weakval or None,
               'weaknesses':[{'type':weak,'value':weakval}] if weak else [],
               'resistance':res or None,'resistanceValue':resval or None,
-              'resistances':[{'type':res,'value':resval}] if res else [],'attacks':attacks,'abilities':([{'name': (BATCH7_ABILITIES.get(n) or BATCH6_ABILITIES.get(n) or BATCH5_ABILITIES.get(n) or BATCH4_ABILITIES[n])['name'], 'text': '', **{k:v for k,v in (BATCH7_ABILITIES.get(n) or BATCH6_ABILITIES.get(n) or BATCH5_ABILITIES.get(n) or BATCH4_ABILITIES[n]).items() if k!='name'}}] if n in BATCH4_ABILITIES or n in BATCH5_ABILITIES or n in BATCH6_ABILITIES or n in BATCH7_ABILITIES else []),
+              'resistances':[{'type':res,'value':resval}] if res else [],'attacks':attacks,'abilities':([{'name': (BATCH8_ABILITIES.get(n) or BATCH7_ABILITIES.get(n) or BATCH6_ABILITIES.get(n) or BATCH5_ABILITIES.get(n) or BATCH4_ABILITIES[n])['name'], 'text': '', **{k:v for k,v in (BATCH8_ABILITIES.get(n) or BATCH7_ABILITIES.get(n) or BATCH6_ABILITIES.get(n) or BATCH5_ABILITIES.get(n) or BATCH4_ABILITIES[n]).items() if k!='name'}}] if n in BATCH4_ABILITIES or n in BATCH5_ABILITIES or n in BATCH6_ABILITIES or n in BATCH7_ABILITIES or n in BATCH8_ABILITIES else []),
               'battleEnabled':True,'deckEligible':True,'isLevelX':stage=='Level-Up','levelUpFrom':evolved if stage=='Level-Up' else None,'support':{'status':'FULL','reasons':[]},
               'deckMeta':{'roles':[],'synergy':[],'energyTypes':preferred,'preferredEnergyTypes':preferred,
                           'preferredPartners':[],'inflicts':[],'payoffs':[]}})
@@ -56,6 +57,6 @@ for number,subtype in trainer_stages.items():
     if cards[number-1]['kind']=='trainer':
         cards[number-1]['trainerType']=subtype
 text=text[:start]+json.dumps(cards,ensure_ascii=False,separators=(',',':'))+text[end:]
-text=text.replace('v0.69.251 staged','v0.69.257 reuse')
+text=re.sub(r'v0\.69\.\d+ verified battle batch','v0.69.258 verified battle batch',text,count=1)
 path.write_text(text,encoding='utf-8')
 print('Prepared local offline fallback:',len([c for c in cards if c['battleEnabled']]),'of',len(cards))

@@ -20,13 +20,13 @@ function actions(s,which='attack',side='player'){return core.legalActions(s,side
 function use(s,which='attack',index=0,side='player'){const act=actions(s,which,side)[index];assert.ok(act,`${which} missing for ${s.sides[side].active?.cardId} ${s.phase}`);core.applyAction(s,side,act);return act;}
 function damage(s){return [...s.log].reverse().find(e=>e.type==='attack'&&e.side==='player')?.damage;}
 function settle(s){for(let i=0;i<20&&s.phase==='effectChoice';i++)use(s,'effectChoice',0,s.pendingChoice.side);assert.notEqual(s.phase,'effectChoice');}
-test('Legends Awakened expands to 111; all 14 audited prints are complete and effect-schema valid',()=>{
- assert.equal(la.coverage().battleEnabled,111);
+test('Legends Awakened expands to 123; all 14 audited prints are complete and effect-schema valid',()=>{
+ assert.equal(la.coverage().battleEnabled,123);
  for(const n of ids){const c=data.cardById('dp6-'+n);assert.ok(c.battleEnabled,`dp6-${n} gated`);
   for(const a of c.attacks)assert.deepEqual(fx.validateEffect(a.effect),[],c.id+' '+a.name);
   for(const a of c.abilities)assert.deepEqual(fx.validateEffect(a.effect),[],c.id+' '+a.name);
  }
- for(const n of [6,7,13,14,16,18,19,21,27,38,40,42,129,130,131,135])assert.equal(data.isBattleEnabled('dp6-'+n),false,`incomplete dp6-${n} activated`);
+ for(const n of [7,16,19,21,27,40,42,129,130,131,135])assert.equal(data.isBattleEnabled('dp6-'+n),false,`incomplete dp6-${n} activated`);
 });
 test('Every new attack can be declared and its choices resolve without throwing',()=>{
  for(const n of ids){const c=data.cardById('dp6-'+n);for(let i=0;i<c.attacks.length;i++){
