@@ -168,3 +168,6 @@ PRINTS.update({n: BATCH7_PRINTS[n] for n in BATCH7_READY})
 from dp6_batch8_prints import PRINTS as BATCH8_PRINTS
 from dp6_batch8_verified import BE_READY as BATCH8_READY
 PRINTS.update({n:BATCH8_PRINTS[n] for n in BATCH8_READY})
+
+from dp6_final_prints import PRINTS as FINAL_PRINTS
+PRINTS.update(FINAL_PRINTS)

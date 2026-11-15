@@ -23,6 +23,8 @@ from dp6_batch6_verified import ABILITIES as BATCH6_ABILITIES
 from dp6_batch7_verified import ABILITIES as BATCH7_ABILITIES
 from dp6_batch8_verified import ABILITIES as BATCH8_ABILITIES
 from dp6_batch6_fossils import FOSSILS
+from dp6_final_prints import TRAINERS as FINAL_TRAINERS, TRAINER_ATTACKS as FINAL_TRAINER_ATTACKS, ABILITY_TEXT as FINAL_ABILITY_TEXT
+from dp6_final_verified import ABILITIES as FINAL_ABILITIES
 
 TYPE = {'G': 'Grass', 'R': 'Fire', 'W': 'Water', 'L': 'Lightning',
         'P': 'Psychic', 'F': 'Fighting', 'D': 'Darkness', 'M': 'Metal',
@@ -62,6 +64,23 @@ def make_prints():
             'supertype':'Trainer','subtypes':['Item'],'hp':'40',
             'abilities':[{'name':spec['abilityName'],'type':'Poké-Body','text':spec['abilityText']}],
             'rules':spec['rules']}
+    # Final 9 Trainer prints and 9 unique triggered abilities must also
+    # regenerate byte-for-byte from printed rules, not from the offline fallback.
+    for n,(name,stage,rules) in FINAL_TRAINERS.items():
+        trainer={'id':f'dp6-{n}','number':str(n),'name':name,
+                 'supertype':'Trainer','subtypes':[stage],'rules':rules}
+        if n in FINAL_TRAINER_ATTACKS:
+            trainer['attacks']=[{'name':a,'cost':[TYPE[t] for t in cost],
+                                 'damage':damage,'text':text}
+                                for a,cost,damage,text in FINAL_TRAINER_ATTACKS[n]]
+        upstream[n-1]=trainer
+    for n,text in FINAL_ABILITY_TEXT.items():
+        # The source archive keeps Poké-Body and Poké-Power types distinct.
+        a=upstream[n-1].get('abilities') or [{'name':FINAL_ABILITIES[n]['name'],'type':'Poké-Body'}]
+        a[0]['name']=FINAL_ABILITIES[n]['name']
+        a[0]['text']=text
+        a[0]['type']='Poké-Body' if n==27 else 'Poké-Power'
+        upstream[n-1]['abilities']=a
     return upstream
 
 
@@ -98,6 +117,17 @@ def main():
                 f'dp6-{n} {attack["name"]} effect drift:\n'
                 f'generated={attack["effect"]}\n'
                 f'bundled={cached["effect"]}')
+    for n in FINAL_TRAINERS:
+        new,old=result[n-1],fallback[n-1]
+        assert new['battleEnabled'] and old['battleEnabled'], f'dp6-{n} Trainer must be playable'
+        assert new['trainerType']==old['trainerType'], f'dp6-{n} Trainer type drift'
+        assert new['effect']==old['effect'],f'dp6-{n} Trainer effect drift'
+        assert new.get('attacks',[])==old.get('attacks',[]),f'dp6-{n} TM effect drift'
+    for n in FINAL_ABILITY_TEXT:
+        new,old=result[n-1],fallback[n-1]
+        assert new['abilities'][0]['effect']==old['abilities'][0]['effect'],f'dp6-{n} Ability drift'
+    # Synthetic placeholders remain gated; all precisely audited prints must regenerate enabled.
+    assert sum(bool(x['battleEnabled']) for x in result)==len(PRINTS)+len(FOSSILS)+len(FINAL_TRAINERS), 'audited readiness drift'
     print(f'PASS DP6 regenerated effects match all {len(PRINTS)} exact print snapshots; '
           'Bellossom heals each ally, not just itself')
 

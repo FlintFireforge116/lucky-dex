@@ -118,3 +118,6 @@ EXTRA.update(BATCH7_ATTACKS)
 
 from dp6_batch8_verified import ATTACKS as BATCH8_ATTACKS
 EXTRA.update(BATCH8_ATTACKS)
+
+from dp6_final_verified import ATTACKS as FINAL_ATTACKS
+EXTRA.update(FINAL_ATTACKS)

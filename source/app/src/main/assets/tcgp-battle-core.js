@@ -505,7 +505,9 @@
   }
   function maxHp(state,side,slot){const eeveeStage=majesticEeveeEvolution(slot);
     const majesticVeil=state.format==='classic'&&eeveeStage&&pokemonOn(state.sides[side]).some(p=>p.cardId==='dp5-18'&&!effects.abilitiesSuppressed(state,side,p,data.cardById))?20:0;
-    const ex3LowPressure=state.format==='classic'&&state.stadium?.cardId==='ex3-86'&&data.cardById(slot?.cardId)?.types?.some(t=>['Grass','Lightning'].includes(t))?10:0;const rocketHideout=state.format==='classic'&&state.stadium?.cardId==='ex7-87'&&/^(Dark |Rocket's )/.test(data.cardById(slot?.cardId)?.name||'')?20:0;const dp2Equip=toolsOf(slot).some(r=>r.cardId==='dp2-65')?10:0;const extra=majesticVeil+ex3LowPressure+rocketHideout+dp2Equip+(slot.cardId==='gym2-97'?10*Number(slot.energy?.Psychic||0):slot.cardId==='gym2-10'&&slot.gym2GiantGrowth&&state.sides[side].active===slot?40:0);return Math.max(1,Number(data.cardById(slot.cardId).hp||0)+extra+effects.modifierAmount(state,side,slot,'maxHp',data.cardById));}
+    const ex3LowPressure=state.format==='classic'&&state.stadium?.cardId==='ex3-86'&&data.cardById(slot?.cardId)?.types?.some(t=>['Grass','Lightning'].includes(t))?10:0;const rocketHideout=state.format==='classic'&&state.stadium?.cardId==='ex7-87'&&/^(Dark |Rocket's )/.test(data.cardById(slot?.cardId)?.name||'')?20:0;const dp2Equip=toolsOf(slot).some(r=>r.cardId==='dp2-65')?10:0;const dp6Temple=state.format==='classic'&&state.stadium?.cardId==='dp6-134'&&(['Basic','Baby'].includes(data.cardById(slot.cardId)?.stage)||['dp6-138','dp6-139'].includes(slot.cardId))?20:0;
+    const copyHp=state.format==='classic'&&slot.cardId==='dp6-27'&&state.sides[side].active===slot&&!effects.abilitiesSuppressed(state,side,slot,data.cardById)?Number(data.cardById(state.sides[side==='player'?'opponent':'player'].active?.cardId)?.hp||60):Number(data.cardById(slot.cardId)?.hp||0);
+    const extra=dp6Temple+majesticVeil+ex3LowPressure+rocketHideout+dp2Equip+(slot.cardId==='gym2-97'?10*Number(slot.energy?.Psychic||0):slot.cardId==='gym2-10'&&slot.gym2GiantGrowth&&state.sides[side].active===slot?40:0);return Math.max(1,copyHp+extra+effects.modifierAmount(state,side,slot,'maxHp',data.cardById));}
   function ex14DarkEyes(state,usedBy,source,ability){
     if(state.format!=='classic'||!source||ability?.printedPowerType!=='power')return;
     const reacting=usedBy==='player'?'opponent':'player';
@@ -805,6 +807,7 @@
   function attackOptions(state,side){
     const slot=state?.sides?.[side]?.active,current=data.cardById(slot?.cardId);if(!slot||!current)return[];
     const out=(current.attacks||[]).map((attack,attackIndex)=>({cardId:current.id,attackIndex,attack,previous:false}));
+    if(state.format==='classic'&&current.id==='dp6-27'&&!effects.abilitiesSuppressed(state,side,slot,data.cardById)){const other=data.cardById(state.sides[side==='player'?'opponent':'player'].active?.cardId);if(other&&other.id!==current.id)for(const [attackIndex,attack] of (other.attacks||[]).entries())out.push({cardId:other.id,attackIndex,attack,borrowed:true});}
     if(current.isLevelX&&slot.stack?.length>=2){
       const prior=data.cardById(slot.stack[slot.stack.length-2]);
       if(prior&&prior.name===current.levelUpFrom)for(const [attackIndex,attack] of (prior.attacks||[]).entries())out.push({cardId:prior.id,attackIndex,attack,previous:true});
@@ -1502,7 +1505,8 @@
       if(Number(defender.dp3ProtectUntil||0)>=state.turnNumber||Number(defender.dp3DigTrapUntil||0)>=state.turnNumber)damage=0;
       if(Number(defender.dp3MegatonShieldUntil||0)>=state.turnNumber)damage=Math.max(0,damage-40);
     }
-    defender.damage=Number(defender.damage||0)+damage;if(damage>0)effects.florioReactToAttackDamage?.(state,foeSide,defender,side,attacker,damage,data.cardById,random);
+    defender.damage=Number(defender.damage||0)+damage;
+    if(state.format==='classic'&&damage>0)for(const ref of toolsOf(defender))if(ref.cardId==='dp6-129')ref.dp6BubbleCoatDamagedTurn=state.turnNumber;if(damage>0)effects.florioReactToAttackDamage?.(state,foeSide,defender,side,attacker,damage,data.cardById,random);
     if(state.format==='classic'&&damage>0&&defender.cardId==='dp2-61'&&Number(defender.dp2SpikeArmorUntil||0)>=state.turnNumber){attacker.damage=Number(attacker.damage||0)+40;state.log.push({type:'dp2SpikeArmor',side:foeSide,target:attacker.cardId,amount:40});}if(damage>0)defender.lastDamageSource={side,uid:attacker.uid,cardId:attacker.cardId,attack:true,turn:state.turnNumber};
     if(damage>0&&defender.legendaryMirrorShellUntil>=state.turnNumber&&state.format==='classic'){attacker.damage=Number(attacker.damage||0)+damage;state.log.push({type:'legendaryMirrorShell',side:foeSide,amount:damage,cardId:defender.cardId});}
       if(damage>0&&state.format==='classic'&&defender===state.sides[foeSide].active&&['ex16-41','ex16-47'].includes(defender.cardId)&&!effects.abilitiesSuppressed(state,foeSide,defender,data.cardById)){attacker.damage=Number(attacker.damage||0)+10;state.log.push({type:'ex16RoughSkin',side:foeSide,cardId:defender.cardId,amount:10});}
@@ -1550,6 +1554,22 @@
       for(const p of pokemonOn(board))if(p.dp5DarkSlumber&&state.turnNumber>=Number(p.dp5DarkSlumber.due||Infinity)){
         const due=p.dp5DarkSlumber;delete p.dp5DarkSlumber;
         if(board.active===p&&due.targetUid===p.uid){p.conditions={...(p.conditions||{}),sleep:true};state.log.push({type:'status',side:who,status:'sleep',cardId:p.cardId,reason:'Dark Slumber'});}
+      }
+    }
+    if(state.format==='classic'){
+      const turn=state.turnNumber,who=state.activeSide,ownBoard=state.sides[who];
+      for(const side of ['player','opponent'])for(const slot of pokemonOn(state.sides[side])){
+        if(side===who&&Number(slot.dp6EnergyDissolveUntil)===turn){
+          const type=Object.keys(slot.energy||{}).find(t=>Number(slot.energy[t]||0)>0);
+          if(type){slot.energy[type]--;ownBoard.energyDiscard[type]=Number(ownBoard.energyDiscard[type]||0)+1;state.log.push({type:'dp6EnergyDissolve',side,targetUid:slot.uid,type});}
+          else if((slot.specialEnergy||[]).length){state.sides[side].discard.push(slot.specialEnergy.shift());state.log.push({type:'dp6EnergyDissolve',side,targetUid:slot.uid,type:'Special'});}
+          delete slot.dp6EnergyDissolveUntil;
+        }
+        for(const ref of [...toolsOf(slot)])if(ref.cardId==='dp6-129'&&Number(ref.dp6BubbleCoatDamagedTurn)===turn){
+          if(slot.tool?.uid===ref.uid)slot.tool=slot.extraTools?.shift()||null;
+          else slot.extraTools=(slot.extraTools||[]).filter(t=>t.uid!==ref.uid);
+          state.sides[side].discard.push(ref);state.log.push({type:'dp6BubbleCoatExpired',side,targetUid:slot.uid});
+        }
       }
     }
     triggerAbilities(state,'endTurn','player');triggerAbilities(state,'endTurn','opponent');
@@ -1760,7 +1780,7 @@
           }
         }
 
-        if(!slot._koTriggersResolved&&!slot.dp2ForcedDiscard){slot._koTriggersResolved=true;if(eventSource?.attack&&eventSource.side===foeSide){s.dp3AllyKoPreviousTurn=state.turnNumber;triggerAbilities(state,'knockedOutAlly',side,null,{source:eventSource,knockedOut:slot});}triggerAbilities(state,'knockedOut',side,slot,{source:eventSource});triggerPersistent(state,'knockedOut',side,slot,{source:eventSource});
+        if(!slot._koTriggersResolved&&!slot.dp2ForcedDiscard){slot._koTriggersResolved=true;if(eventSource?.attack&&eventSource.side===foeSide){s.dp3AllyKoPreviousTurn=state.turnNumber;triggerAbilities(state,'knockedOutAlly',side,null,{source:eventSource,knockedOut:slot});}triggerAbilities(state,'knockedOutByAttack',side,slot,{source:eventSource,attacker:findSlotByUid(state,foeSide,eventSource?.uid)});triggerAbilities(state,'knockedOut',side,slot,{source:eventSource});triggerPersistent(state,'knockedOut',side,slot,{source:eventSource});
           // Exp. Share watches an ally Active being knocked out by attack damage.
           if(state.format==='classic'&&slot===s.active&&eventSource?.attack&&eventSource.side===foeSide)triggerPersistent(state,'teammateKnockedOut',side,null,{knockedOut:slot,source:eventSource});
           if(state.format==='classic'&&slot===s.active&&eventSource?.attack&&eventSource.side===foeSide&&pokemonOn(s).some(p=>p!==slot&&toolsOf(p).some(r=>r.cardId==='neo4-93'))){
@@ -2377,6 +2397,13 @@
           state.log.push({type:'gymEffect',side:foeSide,rule:'Ninja Trick',switched:true});
         }
       }
+      // Cradily Drain Down changes the Active Pokémon BEFORE damage, so the new
+      // defender receives ordinary Active Weakness, Resistance and KO handling.
+      if(state.format==='classic'&&s.active.cardId==='dp6-21'&&attack.name==='Drain Down'&&matched.effectSelection){
+        const target=foe.bench.find(p=>p.uid===matched.effectSelection);
+        if(target){effects.switchPokemon(foe,Number(target.benchSlot),state);state.log.push({type:'dp6DrainDown',side,targetUid:target.uid,preDamage:true});}
+      }
+      if(state.format==='classic'&&s.active.cardId==='dp6-44'&&attack.name==='Burning Scent'&&matched.effectSelection){const target=foe.bench.find(p=>p.uid===matched.effectSelection);if(target){effects.switchPokemon(foe,Number(target.benchSlot),state);state.log.push({type:'dp6BurningScent',side,targetUid:target.uid,preDamage:true});}}
       if(state.format==='classic'&&s.active.cardId==='ex15-2'&&attack.name==='Drag Off'&&matched.effectSelection){
         const chosen=foe.bench.find(p=>p.uid===matched.effectSelection);
         if(chosen){effects.switchPokemon(foe,Number(chosen.benchSlot),state);matched.ex15DragOffResolved=true;
@@ -2600,6 +2627,7 @@
       if(Number(defender.dp3MegatonShieldUntil||0)>=state.turnNumber)damage=Math.max(0,damage-40);
     }
     defender.damage=Number(defender.damage||0)+damage;
+    if(state.format==='classic'&&damage>0)for(const ref of toolsOf(defender))if(ref.cardId==='dp6-129')ref.dp6BubbleCoatDamagedTurn=state.turnNumber;
     if(state.format==='classic'&&damage>0&&defender.cardId==='dp2-61'&&Number(defender.dp2SpikeArmorUntil||0)>=state.turnNumber){s.active.damage=Number(s.active.damage||0)+40;state.log.push({type:'dp2SpikeArmor',side:foeSide,target:s.active.cardId,amount:40});}
     if(damage>0&&state.format==='classic'&&defender===foe.active&&!effects.abilitiesSuppressed(state,foeSide,defender,data.cardById)){
       if(defender.cardId==='ex7-18')s.active.conditions={...(s.active.conditions||{}),poison:true};

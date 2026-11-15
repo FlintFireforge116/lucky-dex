@@ -35,7 +35,7 @@ ATTACKS = {
 99:{'Counter Punch':{'type':'retaliateDamage','amount':40,'duration':'opponentTurn'},'Gut Strike':bonus(30,{'type':'selfStackContains','name':'Tyrogue'})},
 100:{'Gut Kick':RULE('100:gutKick'),'Mega Kick':N},
 118:{'Recharge':RULE('118:recharge'),'Double Kick':{'type':'coinDamage','coins':2,'amount':20,'mode':'replace'}},
-120:{'Rob':{'type':'shuffleHandMatching','side':'opponent','filter':{'trainerType':['Pokémon Tool','Technical Machine']}},'Slash':N},
+120:{'Rob':{'type':'shuffleHandMatching','side':'opponent','filter':{'trainerType':['Pokémon Tool','Technical Machine','Tool']}},'Slash':N},
 }
 
 ABILITIES = {

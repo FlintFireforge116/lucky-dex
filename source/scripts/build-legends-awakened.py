@@ -16,6 +16,7 @@ from dp6_batch5_verified import ABILITIES as BATCH5_ABILITIES
 from dp6_batch6_verified import ABILITIES as BATCH6_ABILITIES
 from dp6_batch7_verified import ABILITIES as BATCH7_ABILITIES
 from dp6_batch8_verified import ABILITIES as BATCH8_ABILITIES
+from dp6_final_verified import ABILITIES as FINAL_ABILITIES, TRAINER_EFFECTS, TRAINER_ATTACKS
 from dp6_batch6_fossils import FOSSILS
 
 ROOT = pathlib.Path(__file__).resolve().parent.parent
@@ -86,6 +87,8 @@ def build_cards(upstream):
             # parser can otherwise silently collapse broader actions (Bellossom
             # Parallel Gain heals *each* ally, not just the attacker).
             effect,verified=verified_effect(n,a)
+            if not verified and trainer and n in TRAINER_ATTACKS and a['name'] in TRAINER_ATTACKS[n]:
+                effect,verified=TRAINER_ATTACKS[n][a['name']],True
             if not verified:
                 effect,verified=simple_effect(a.get('text') or '', name)
             damage_shape=re.fullmatch(r'\d*',damage_text) is not None
@@ -102,13 +105,13 @@ def build_cards(upstream):
                 'printedPowerType':'power' if ab['type']=='Poké-Power' else 'body',
                 'disabledByStatus':ab['type']=='Poké-Power','text':ab.get('text') or '', 'effect':NOOP})
         if abilities:
-            audited = BATCH8_ABILITIES.get(n) or BATCH7_ABILITIES.get(n) or BATCH6_ABILITIES.get(n) or (FOSSILS.get(n) or {}).get('ability') or BATCH5_ABILITIES.get(n) or BATCH4_ABILITIES.get(n)
+            audited = FINAL_ABILITIES.get(n) or BATCH8_ABILITIES.get(n) or BATCH7_ABILITIES.get(n) or BATCH6_ABILITIES.get(n) or (FOSSILS.get(n) or {}).get('ability') or BATCH5_ABILITIES.get(n) or BATCH4_ABILITIES.get(n)
             if len(abilities) == 1 and audited and abilities[0]['name']==audited['name']:
                 abilities[0].update({k:v for k,v in audited.items() if k!='name'})
             else:
                 safe=False
-        if not attacks and n not in FOSSILS: safe=False
-        if (stage=='Level-Up' and n not in BATCH6_ABILITIES and n != 143 and n != 145) or (not pokemon and n not in FOSSILS): safe=False
+        if not attacks and n not in FOSSILS and n!=27 and not trainer: safe=False
+        if (stage=='Level-Up' and n not in BATCH6_ABILITIES and n != 143 and n != 145) or (not pokemon and n not in FOSSILS and n not in TRAINER_EFFECTS): safe=False
         weakness=(original.get('weaknesses') or [{}])[0]
         resist=(original.get('resistances') or [{}])[0]
         if not weakness.get('type'): weakness={}
@@ -138,9 +141,11 @@ def build_cards(upstream):
             card['deckMeta']={'roles':roles,'synergy':roles,'energyTypes':preferred,'preferredEnergyTypes':preferred,
                               'preferredPartners':[],'inflicts':[],'payoffs':[]}
         elif trainer:
-            card['trainerType']=stage
+            card['trainerType']=(TRAINER_EFFECTS.get(n) or {}).get('trainerType',stage)
             card['text']='\n'.join(original.get('rules') or [])
-            card['effect']=NOOP
+            card['effect']=(TRAINER_EFFECTS.get(n) or {}).get('effect',NOOP)
+            if n in TRAINER_EFFECTS:
+                card['technicalMachine']=bool(TRAINER_EFFECTS[n].get('technicalMachine',False))
             if attacks: card['attacks']=attacks
             if name in ('Claw Fossil','Root Fossil'):
                 card.update({'fossil':True,'hp':40,'stage':'Basic','types':['Colorless'],'subtype':'Colorless',
@@ -158,10 +163,10 @@ def build_cards(upstream):
 
 def write_js(cards,output):
     payload=json.dumps(cards,ensure_ascii=False,separators=(',',':'))
-    js='''/* LuckyDex Classic TCG — Legends Awakened (dp6), v0.69.258 verified battle batch.
+    js='''/* LuckyDex Classic TCG — Legends Awakened (dp6), v0.69.259 full-set completion.
  * Card identities, attacks, text and abilities: PokemonTCG/pokemon-tcg-data cards/en/dp6.json.
- * Gated cards are collection-visible but NOT battle-eligible. DO NOT promote
- * complex prints by changing battleEnabled without outcome-level tests.
+ * All 146 prints are battle-enabled with explicit outcome definitions.
+ * Do not change a printed mechanic without corresponding battle tests.
  */
 (function(root,factory){const api=factory();if(typeof module==='object'&&module.exports)module.exports=api;if(root)root.LuckyDexClassicTCGLegendsAwakened=api;})(typeof globalThis!=='undefined'?globalThis:this,function(){'use strict';
 const SET=Object.freeze({id:'dp6',name:'Legends Awakened',series:'Diamond & Pearl',releaseDate:'2008-08-01',cardCount:146,printedTotal:146});
