@@ -84,7 +84,7 @@ def build_cards(upstream):
                 effect,verified=simple_effect(a.get('text') or '', name)
             damage_shape=re.fullmatch(r'\d*',damage_text) is not None
             if damage_text.endswith('+') and re.fullmatch(r'\d+\+',damage_text):
-                damage_shape=(effect.get('type')=='coinFlip' and effect.get('heads',{}).get('type')=='bonusDamage') or effect.get('type') in ('bonusDamage','energyDamage','fieldCountDamage','sequence') or (effect.get('type')=='coinDamage' and effect.get('mode')=='add')
+                damage_shape=(effect.get('type')=='coinFlip' and effect.get('heads',{}).get('type')=='bonusDamage') or effect.get('type') in ('bonusDamage','energyDamage','damageFromDamage','topDeckBothDiscardBonus','chooseDiscardForBonus','fieldCountDamage','sequence') or (effect.get('type')=='coinDamage' and effect.get('mode')=='add')
             if damage_text.endswith('×') and re.fullmatch(r'\d+×',damage_text):
                 damage_shape=effect.get('type') in ('coinDamage','coinDamageByPokemon') and effect.get('mode')=='replace'
             safe &= bool(verified and damage_shape)
@@ -143,7 +143,7 @@ def build_cards(upstream):
 
 def write_js(cards,output):
     payload=json.dumps(cards,ensure_ascii=False,separators=(',',':'))
-    js='''/* LuckyDex Classic TCG — Legends Awakened (dp6), v0.69.253 audited build fix.
+    js='''/* LuckyDex Classic TCG — Legends Awakened (dp6), v0.69.254 verified battle batch.
  * Card identities, attacks, text and abilities: PokemonTCG/pokemon-tcg-data cards/en/dp6.json.
  * Gated cards are collection-visible but NOT battle-eligible. DO NOT promote
  * complex prints by changing battleEnabled without outcome-level tests.

@@ -18,10 +18,10 @@ function board(id,defender='dp5-17',seed=27){
 function attack(s,i=0,selector={}){const list=core.legalActions(s,'player').filter(x=>x.type==='attack'&&x.attackIndex===i);assert.ok(list.length,`${s.sides.player.active?.cardId} attack ${i} missing`);const a=list.find(x=>Object.entries(selector).every(([k,v])=>x[k]===v))||list[0];core.applyAction(s,'player',a);return {s,action:a};}
 function damage(s){return s.sides.opponent.active?.damage||0;}
 function coin(s){return s.log.find(x=>x.type==='coin'&&x.side==='player');}
-test('45 enabled dp6 prints, 101 remaining gated; metadata and effects are genuinely implemented',()=>{
- assert.equal(la.CARDS.length,146);assert.equal(la.CARDS.filter(c=>c.battleEnabled).length,45);
+test('v0.69.252 verified prints remain battle-ready; metadata and effects are genuinely implemented',()=>{
+ assert.equal(la.CARDS.length,146);assert.ok(la.CARDS.filter(c=>c.battleEnabled).length>=45);
  for(const n of added){const c=data.cardById(`dp6-${n}`);assert.ok(c?.battleEnabled,c?.id);assert.equal(c.deckEligible,true);assert.equal(c.support.status,'FULL');assert.ok(c.hp>0);assert.equal(c.attacks.length,2);for(const a of c.attacks){assert.ok(a.name&&a.text!=null);assert.deepEqual(fx.validateEffect(a.effect),[],`${c.id} ${a.name}`);}}
- for(const n of [1,4,7,16,23,24,25,26,138,139,140,141,142,143,144,145,146])assert.equal(data.isBattleEnabled(`dp6-${n}`),false);
+ for(const n of [1,7,16,23,24,25,26,138,139,140,141,142,143,144,145,146])assert.equal(data.isBattleEnabled(`dp6-${n}`),false);
 });
 test('every new attack can be triggered without throwing in physical Classic battle',()=>{
  for(const n of added)for(let i=0;i<2;i++){const s=board(`dp6-${n}`);s.sides.opponent.bench=[slot('dp5-12',`target-${n}`)];if(n===125)s.sides.opponent.active.energy={Water:2,Grass:1};

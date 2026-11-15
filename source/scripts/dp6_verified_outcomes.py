@@ -21,6 +21,36 @@ def guard(amount):
 # Each is an exact printed attack, not an effect invented from a substring.
 # The printed-text audit in tests checks this mapping against the archival source.
 EXTRA={
+  3:{'Destiny Bond':seq({'type':'discardEnergyCard','target':'self','energyType':'Psychic','strictEnergyType':True,'amount':1}, {'type':'destinyBond'}),
+     'Icy Breath':seq(status('sleep'),{'type':'benchDamage','side':'opponent','all':True,'amount':10})},
+  4:{'Shadow Force':seq({'type':'selectedDamage','target':'opponentBench','amount':20}, coin({'type':'preventDamage','target':'self','duration':'opponentTurn','effects':True})),
+     'Brutal Edge':{'type':'damageFromDamage','source':'opponent','amount':1}},
+  17:{'Sonic Wave':seq({'type':'benchDamage','side':'opponent','all':True,'amount':10},{'type':'forceOpponentSwitch','chooseBy':'defender'}),
+      'Pursue and Turn':seq(bonus(20,{'type':'opponentDamageAtLeast','amount':20}),{'type':'switch','side':'self','condition':{'type':'opponentDamageAtLeast','amount':20}})},
+  22:{'Gripthrow':coin({'type':'returnToHand','target':'opponentActive','returnBasicEnergy':True}),
+      'Prop-up Pinchers':bonus(30,{'type':'selfHasTechnicalMachine'})},
+  29:{'Drought':{'type':'chooseOption','options':[
+           {'label':'Do not attach any Fighting Energy','effect':{'type':'noop'}},
+           {'label':'Attach 1 Fighting Energy from hand','effect':{'type':'chooseTarget','target':'selfPokemon','effect':{'type':'attachEnergy','target':'selfPokemon','source':'hand','energyType':'Fighting','amount':1}}},
+           {'label':'Attach 2 Fighting Energy from hand','effect':{'type':'chooseTarget','target':'selfPokemon','effect':{'type':'attachEnergy','target':'selfPokemon','source':'hand','energyType':'Fighting','amount':2}}}]},
+      'Major Earthquake':seq({'type':'discardEnergyCard','target':'self','energyType':'Fighting','strictEnergyType':True,'amount':2},{'type':'benchDamage','side':'self','all':True,'amount':10})},
+  32:{'Drizzle':{'type':'chooseOption','options':[
+           {'label':'Do not attach any Water Energy','effect':{'type':'noop'}},
+           {'label':'Attach 1 Water Energy from hand','effect':{'type':'chooseTarget','target':'selfPokemon','effect':{'type':'attachEnergy','target':'selfPokemon','source':'hand','energyType':'Water','amount':1}}},
+           {'label':'Attach 2 Water Energy from hand','effect':{'type':'chooseTarget','target':'selfPokemon','effect':{'type':'attachEnergy','target':'selfPokemon','source':'hand','energyType':'Water','amount':2}}}]},
+      'High Tide':seq({'type':'discardEnergyCard','target':'self','energyType':'Water','strictEnergyType':True,'amount':2},{'type':'benchDamage','side':'opponent','all':True,'amount':20})},
+  58:{'Rushing Water':{'type':'moveEnergy','source':'opponentActive','target':'opponentBench','amount':1},'Confuse Ray':status('confusion')},
+  93:{'Call for Family':{'type':'benchFromDeck','amount':2,'choose':True,'filter':{'kind':'pokemon','stage':'Basic','subtype':['Grass','Psychic']}},'Hypnosis':status('sleep')},
+  101:{'Triple Kick':{'type':'coinDamage','coins':3,'amount':20,'mode':'replace'},'Gut Spin':{'type':'chooseOption','condition':{'type':'selfStackContains','name':'Tyrogue'},'options':[{'label':'Keep Hitmontop Active','effect':{'type':'noop'}},{'label':'Switch Hitmontop with a Benched Pokémon','effect':{'type':'switch','side':'self'}}]}},
+  102:{'Smokescreen':{'type':'attackCoinGate','target':'opponentActive','duration':'opponentTurn'},'Reverse Thrust':{'type':'switch','side':'self'}},
+  107:{'Show Off':{'type':'searchChosen','source':'deck','amount':1,'filter':{'basicEnergy':True}},'Payback':bonus(20,{'type':'opponentPrizesRemaining','amount':1})},
+  121:{'Psybeam':status('confusion'),'Bounce':{'type':'chooseOption','options':[{'label':'Keep Spoink Active','effect':{'type':'noop'}},{'label':'Switch Spoink with a Benched Pokémon','effect':{'type':'switch','side':'self'}}]}},
+  122:{'Recover':seq({'type':'discardEnergyCard','target':'self','amount':1},heal(30)),'Spinning Attack':{'type':'noop'}},
+  47:{'Eruption':{'type':'topDeckBothDiscardBonus','amount':30},'Take Down':{'type':'selfDamage','amount':20}},
+  59:{'Energy Split':{'type':'dp6EnergySplit'},'Aqua Bolt':{'type':'energyDamage','source':'self','energyType':'Water','amount':10}},
+  70:{'Aqua Pump':{'type':'chooseDiscardForBonus','zone':'hand','max':2,'amount':10,'filter':{'basicEnergy':True,'subtype':'Water'}},'Waterfall':{'type':'noop'}},
+  71:{'Star Boomerang':{'type':'chooseOption','options':[{'label':'Keep Starmie Active','effect':{'type':'noop'}},{'label':'Return Starmie and all attachments to your hand','effect':{'type':'returnToHand','target':'self','returnBasicEnergy':True}}]},
+      'Core Flash':{'type':'selectedDamage','target':'opponentPokemon','filter':{'hasAbility':True},'amount':50}},
   11:{'Hypnoblast':status('sleep'),'Psychic':{'type':'energyDamage','source':'opponent','amount':10}},
   20:{'Parallel Gain':heal(10,'selfAll'),'Blend Pollen':seq({'type':'fieldCountDamage','side':'self','amount':20,'filter':{'name':['Vileplume','Bellossom']}},coin(status('burn')))},
   61:{'Focus Blast':{'type':'selectedDamage','target':'opponentPokemon','amount':30},'Spike Lariat':bonus(20,{'type':'opponentDamaged'})},
@@ -66,7 +96,7 @@ def verified_effect(collector,attack):
     spec=EXTRA.get(int(collector),{}).get(actual_name)
     if spec is None:return None,False
     damage=str(attack.get('damage') or '')
-    if damage.endswith('+') and spec.get('type') not in ('bonusDamage','energyDamage','coinDamage','sequence','coinFlip'):
+    if damage.endswith('+') and spec.get('type') not in ('bonusDamage','energyDamage','damageFromDamage','topDeckBothDiscardBonus','coinDamage','chooseDiscardForBonus','sequence','coinFlip'):
         return None,False
     if damage.endswith('×') and spec.get('type') not in ('coinDamage','coinDamageByPokemon'):
         return None,False

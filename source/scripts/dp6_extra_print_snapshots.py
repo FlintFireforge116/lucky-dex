@@ -89,3 +89,61 @@ PRINTS.update({
 ('U-turn','C','10','Switch Yanma with 1 of your Benched Pokémon.'),
 ('Agility','GG','20',"Flip a coin. If heads, prevent all effects of an attack, including damage, done to Yanma during your opponent's next turn.")]),
 })
+
+# v0.69.254: exact Legends Awakened printed cards verified for the next batch.
+PRINTS.update({
+3:("Froslass","Stage 1",90,"Water","Snorunt","Metal","+20","","",1,"Rare Holo",[
+("Destiny Bond","P","","Discard a Psychic Energy attached to Froslass. During your opponent's next turn, if Froslass would be Knocked Out by damage from an attack, the Attacking Pokémon is Knocked Out."),
+("Icy Breath","WC","40","The Defending Pokémon is now Asleep. Put 1 damage counter on each of your opponent's Benched Pokémon.")]),
+4:("Giratina","Basic",100,"Psychic","","Darkness","×2","Colorless","-20",3,"Rare Holo",[
+("Shadow Force","PC","","Choose 1 of your opponent's Benched Pokémon. This attack does 20 damage to that Pokémon. (Don't apply Weakness and Resistance for Benched Pokémon.) Flip a coin. If heads, prevent all effects of an attack, including damage, done to Giratina during your opponent's next turn."),
+("Brutal Edge","PPCC","50+","Does 50 damage plus 10 more damage for each damage counter on the Defending Pokémon.")]),
+17:("Yanmega","Stage 1",90,"Grass","Yanma","Lightning","+20","Fighting","-20",0,"Rare Holo",[
+("Sonic Wave","","10","Does 10 damage to each of your opponent's Benched Pokémon. (Don't apply Weakness and Resistance for Benched Pokémon.) Your opponent switches the Defending Pokémon with 1 of his or her Benched Pokémon."),
+("Pursue and Turn","GGCC","60+","If the Defending Pokémon already has 2 or more damage counters on it, this attack does 60 damage plus 20 more damage and switch Yanmega with 1 of your Benched Pokémon.")]),
+22:("Crawdaunt","Stage 1",90,"Water","Corphish","Lightning","+20","Psychic","-20",2,"Rare",[
+("Gripthrow","WC","","Flip a coin. If heads, your opponent returns the Defending Pokémon and all cards attached to it to his or her hand."),
+("Prop-up Pinchers","WCC","50+","If Crawdaunt has a Technical Machine card attached to it, this attack does 50 damage plus 30 more damage.")]),
+29:("Groudon","Basic",100,"Fighting","","Grass","×2","Lightning","-20",3,"Rare",[
+("Drought","","","Choose up to 2 basic Fighting Energy cards from your hand and attach them to 1 of your Pokémon."),
+("Major Earthquake","FFC","100","Discard 2 Fighting Energy attached to Groudon and this attack does 10 damage to each of your Benched Pokémon. (Don't apply Weakness and Resistance for Benched Pokémon.)")]),
+32:("Kyogre","Basic",100,"Water","","Lightning","×2","","",3,"Rare",[
+("Drizzle","","","Choose up to 2 basic Water Energy cards from your hand and attach them to 1 of your Pokémon."),
+("High Tide","WWC","60","Discard 2 Water Energy attached to Kyogre. This attack does 20 damage to each of your opponent's Benched Pokémon. (Don't apply Weakness and Resistance for Benched Pokémon.)")]),
+58:("Lanturn","Stage 1",90,"Water","Chinchou","Grass","+20","","",1,"Uncommon",[
+("Rushing Water","CC","20","Move an Energy card attached to the Defending Pokémon to another of your opponent's Pokémon."),
+("Confuse Ray","WL","40","The Defending Pokémon is now Confused.")]),
+93:("Exeggcute","Basic",50,"Psychic","","Psychic","+10","","",1,"Common",[
+("Call for Family","C","","Search your deck for up to 2 in any combination of Grass Basic Pokémon and Psychic Basic Pokémon and put them onto your Bench. Shuffle your deck afterward."),
+("Hypnosis","P","10","The Defending Pokémon is now Asleep.")]),
+101:("Hitmontop","Basic",80,"Fighting","","Psychic","+20","","",1,"Common",[
+("Triple Kick","FC","20×","Flip 3 coins. This attack does 20 damage times the number of heads."),
+("Gut Spin","FCC","50","If Tyrogue is anywhere under Hitmontop, you may switch Hitmontop with 1 of your Benched Pokémon.")]),
+102:("Horsea","Basic",50,"Water","","Lightning","+10","","",1,"Common",[
+("Smokescreen","C","","If the Defending Pokémon tries to attack during your opponent's next turn, your opponent flips a coin. If tails, that attack does nothing."),
+("Reverse Thrust","W","10","Switch Horsea with 1 of your Benched Pokémon.")]),
+107:("Misdreavus","Basic",60,"Psychic","","Darkness","+10","Colorless","-20",1,"Common",[
+("Show Off","","","Search your deck for a basic Energy card, show it to your opponent, and put it into your hand. Shuffle your deck afterward."),
+("Payback","P","10+","If your opponent has only 1 Prize card left, this attack does 10 damage plus 20 more damage.")]),
+121:("Spoink","Basic",50,"Psychic","","Psychic","+10","","",1,"Common",[
+("Psybeam","P","","The Defending Pokémon is now Confused."),
+("Bounce","CC","20","You may switch Spoink with 1 of your Benched Pokémon.")]),
+122:("Staryu","Basic",50,"Water","","Lightning","+10","","",1,"Common",[
+("Recover","C","","Discard an Energy attached to Staryu and remove 3 damage counters from Staryu."),
+("Spinning Attack","WC","20","")]),
+})
+
+PRINTS.update({
+47:("Camerupt","Stage 1",100,"Fire","Numel","Water","+20","","",3,"Uncommon",[
+("Eruption","RC","30+","Each player discards the top of his or her deck. This attack does 30 damage plus 30 more damage for each Energy card discarded in this way."),
+("Take Down","RCC","80","Camerupt does 20 damage to itself.")]),
+59:("Lanturn","Stage 1",90,"Lightning","Chinchou","Fighting","+20","","",2,"Uncommon",[
+("Energy Split","L","","This attack does 30 damage to each of your opponent's Pokémon that has any Energy cards attached to it. (Don't apply Weakness and Resistance for Benched Pokémon.)"),
+("Aqua Bolt","LCC","60+","Does 60 damage plus 10 more damage for each Water Energy attached to Lanturn.")]),
+70:("Seadra","Stage 1",80,"Water","Horsea","Lightning","+20","","",1,"Uncommon",[
+("Aqua Pump","W","30+","You may discard up to 2 Water Energy cards from your hand. If you do, this attack does 30 damage plus 10 more damage for each Energy card you discarded."),
+("Waterfall","WWC","50","")]),
+71:("Starmie","Stage 1",80,"Water","Staryu","Lightning","+20","","",0,"Uncommon",[
+("Star Boomerang","W","30","You may return Starmie and all cards attached to it to your hand."),
+("Core Flash","P","","Choose 1 of your opponent's Pokémon that has any Poké-Powers or Poké-Bodies. This attack does 50 damage to that Pokémon. (Don't apply Weakness and Resistance for Benched Pokémon.)")]),
+})
