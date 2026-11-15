@@ -1,4 +1,4 @@
-/* LuckyDex Classic TCG — Legends Awakened (dp6), v0.69.252 expanded.
+/* LuckyDex Classic TCG — Legends Awakened (dp6), v0.69.253 audited build fix.
  * Card identities, attacks, text and abilities: PokemonTCG/pokemon-tcg-data cards/en/dp6.json.
  * Gated cards are collection-visible but NOT battle-eligible. DO NOT promote
  * complex prints by changing battleEnabled without outcome-level tests.

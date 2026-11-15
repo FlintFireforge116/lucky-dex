@@ -22,7 +22,7 @@ STATUS = {'Asleep':'sleep','Paralyzed':'paralysis','Confused':'confusion',
           'Poisoned':'poison','Burned':'burn'}
 
 
-def simple_effect(text):
+def simple_effect(text, self_name=None):
     """Return (effect, verified) only for exact printed actions modelled here.
 
     No special-case card may use a substring match that drops a second clause.
@@ -43,8 +43,12 @@ def simple_effect(text):
         return {'type':'coinDamage','coins':int(m.group(1)),'amount':int(m.group(2)),'mode':'replace'}, True
     if text=='Draw a card.':
         return {'type':'draw','amount':1},True
-    if (m := re.fullmatch(r'Remove (\d+) damage counters? from [^.]+\.', text)):
-        return {'type':'heal','target':'self','amount':int(m.group(1))*10}, True
+    # Never infer a self-only heal from printed text that may target the full team.
+    # Any healing effect not explicitly naming the attacker must be audited.
+    if (m := re.fullmatch(r'Remove (\d+) damage counters? from ([^.]+)\.', text)):
+        if self_name and m.group(2) == self_name:
+            return {'type':'heal','target':'self','amount':int(m.group(1))*10}, True
+        return NOOP, False
     if (m := re.fullmatch(r'([A-Za-z\- ]+) does (\d+) damage to itself\.',text)):
         return {'type':'selfDamage','amount':int(m.group(2))}, True
     if (m := re.fullmatch(r'The Defending Pok[eé]mon can\'t retreat during your opponent\'s next turn\.',text)):
@@ -72,10 +76,12 @@ def build_cards(upstream):
             cost=''.join(TYPE[t] for t in a.get('cost') or [])
             damage_text=str(a.get('damage') or '')
             # 10× / 20+ cannot be treated as ordinary 10/20 without its verified modifier.
-            effect,verified=simple_effect(a.get('text') or '')
+            # Exact archived-print overrides MUST take precedence. The generic
+            # parser can otherwise silently collapse broader actions (Bellossom
+            # Parallel Gain heals *each* ally, not just the attacker).
+            effect,verified=verified_effect(n,a)
             if not verified:
-                override,ok=verified_effect(n,a)
-                if ok: effect,verified=override,True
+                effect,verified=simple_effect(a.get('text') or '', name)
             damage_shape=re.fullmatch(r'\d*',damage_text) is not None
             if damage_text.endswith('+') and re.fullmatch(r'\d+\+',damage_text):
                 damage_shape=(effect.get('type')=='coinFlip' and effect.get('heads',{}).get('type')=='bonusDamage') or effect.get('type') in ('bonusDamage','energyDamage','fieldCountDamage','sequence') or (effect.get('type')=='coinDamage' and effect.get('mode')=='add')
@@ -137,7 +143,7 @@ def build_cards(upstream):
 
 def write_js(cards,output):
     payload=json.dumps(cards,ensure_ascii=False,separators=(',',':'))
-    js='''/* LuckyDex Classic TCG — Legends Awakened (dp6), v0.69.252 expanded.
+    js='''/* LuckyDex Classic TCG — Legends Awakened (dp6), v0.69.253 audited build fix.
  * Card identities, attacks, text and abilities: PokemonTCG/pokemon-tcg-data cards/en/dp6.json.
  * Gated cards are collection-visible but NOT battle-eligible. DO NOT promote
  * complex prints by changing battleEnabled without outcome-level tests.

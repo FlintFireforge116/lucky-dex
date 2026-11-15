@@ -5,6 +5,9 @@
 # source JSON for next card-outcome audits, and runs both integration suites.
 set -eu
 cd "$(dirname "$0")/.."
+# Validate archived-print overrides against the offline fallback before a live
+# download or APK asset packaging; this would have caught failed CI run #541.
+python3 tests/test_dp6_build_pipeline.py
 mkdir -p data/classic
 url='https://raw.githubusercontent.com/PokemonTCG/pokemon-tcg-data/master/cards/en/dp6.json'
 if [ ! -s data/classic/dp6-print-source.json ]; then

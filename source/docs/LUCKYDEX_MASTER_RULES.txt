@@ -2,7 +2,7 @@ LUCKYDEX — MASTER PROJECT RULES AND DEVELOPMENT CONTRACT
 =========================================================
 Document version: 2.42
 Compiled: 14 November 2026
-Current inspected source: v0.69.252 Legends Awakened dp6 expanded integration: 146 collector prints, 45 battle-enabled and 101 gated in bundled fallback. Full print metadata requires the Termux preparation script. Source tests do not prove APK/device behaviour. Patch extraction is now source-relative by default; see Termux handoff contract below.
+Current inspected source: v0.69.253 Legends Awakened CI regeneration repair (same 45/146 card coverage): 146 collector prints, 45 battle-enabled and 101 gated in bundled fallback. Full print metadata requires the Termux preparation script. Source tests do not prove APK/device behaviour. Patch extraction is now source-relative by default; see Termux handoff contract below.
 Recommended repository location: ~/lucky-dex/source/docs/LUCKYDEX_MASTER_RULES.txt
 Project: LuckyDex — Android application/PWA, managed with Termux and GitHub
 
@@ -1977,3 +1977,11 @@ dependency pairing for Psychic Smoochum/Jynx and cross-set equivalents.
 [HISTORY] The OLD 0.69.251 and 0.69.252 root-relative ZIPs are NOT compatible with -d source. Their earlier [RELEASE] instructions are historical only and SUPERSEDED for all new patch deliverables by this contract. Do not re-extract those old archives using the new commands.
 [STATUS] Legends Awakened is still 45/146 battle-enabled with 101 gated. This is a packaging/CI reliability fix, NOT completion of dp6.
 [TEST] Run focused source-level tests and the patch layout verifier; check Gradle task dependency declaratively. APK/device testing remains outstanding.
+
+
+=== VERSION 0.69.253 — LEGENDS AWAKENED REGENERATION / GITHUB CI FIX ===
+2026-11-15 | 2.42 -> 2.43 | v0.69.253 | Correct build-only regression in the archived-print catalog generator, with no change to current 45/146 card support.
+[ROOT CAUSE] GitHub Actions run #541 (commit 9df94ca, 15 November 2026) failed in :app:prepareLegendsAwakenedForApk because Bellossom Parallel Gain was regenerated using a broad generic heal matcher as target self instead of the exact verified target selfAll. The bundled fallback was correct, so local fallback-only tests had passed while the full regenerate-then-test pipeline failed (30 passed, 1 failed).
+[LOCKED] For EVERY collector print and attack, compare exact archival print snapshots first via verified_effect(n, attack), before considering any generic pattern. Generic heal matching must only target the specifically named attacking Pokémon; never collapse `each of your Pokémon` into self or silently skip target/choice/other printed clauses. Check generator-vs-bundled fallback parity for all verified print snapshots in automated source tests.
+[TEST] Added `tests/test_dp6_build_pipeline.py`: synthetic 146-print build from the exact known print snapshots checks that every approved archived attack effect matches the bundled fallback and that Bellossom Parallel Gain is selfAll. `scripts/prepare-legends-awakened.sh` executes this test before rebuilding the official 146-print JSON and then running Node battle tests. Run #541 log was inspected; APK/device testing for this fix remains pending.
+[RELEASE] Source-relative ZIP per Termux contract: unzip into source/, git add source, commit, push main. VersionCode 7241 / VersionName 0.69.253. No extra new battle-ready cards are claimed; 45/146 battle-ready, 101 gated.
