@@ -1,8 +1,8 @@
 LUCKYDEX — MASTER PROJECT RULES AND DEVELOPMENT CONTRACT
 =========================================================
-Document version: 2.40
+Document version: 2.42
 Compiled: 14 November 2026
-Current inspected source: v0.69.250 Classic Fossil automatic-deck dependency fix; dp5 100/100 collector prints enabled. Source tests do not prove APK/device behaviour.
+Current inspected source: v0.69.252 Legends Awakened dp6 expanded integration: 146 collector prints, 45 battle-enabled and 101 gated in bundled fallback. Full print metadata requires the Termux preparation script. Source tests do not prove APK/device behaviour. Patch extraction is now source-relative by default; see Termux handoff contract below.
 Recommended repository location: ~/lucky-dex/source/docs/LUCKYDEX_MASTER_RULES.txt
 Project: LuckyDex — Android application/PWA, managed with Termux and GitHub
 
@@ -1940,3 +1940,40 @@ dependency pairing for Psychic Smoochum/Jynx and cross-set equivalents.
 [LOCKED] Include Fossils as their evolution-line prerequisites when building a valid complete Fossil line. Related search/support cards (Fossil Egg, Holon Fossil, Fossil Excavator) must not be chosen without an actual compatible Fossil evolution represented in the generated deck. If a user focuses a playable Fossil with an eligible evolution, select that evolution as the core; otherwise give a clear failure rather than silently insert useless filler.
 [LOCKED] When auto-filling or repairing a saved deck, drop orphaned Fossils. Do NOT remove Fossils from manual card selection or make otherwise legal manual decks invalid merely because of these strategic autobuild rules. Clefairy Doll, which shares the engine's playFossil implementation but is not an evolution Fossil, is exempt.
 [TEST] Use v07250-classic-fossil-deck-dependencies.test.cjs in GitHub preflight, including cross-set/CPU/Basic-only/selected-Fossil-focus cases. A 30/30 legal deck can still be strategically incoherent; validate actual evolution dependencies as well as basic legality.
+
+
+=== VERSION 0.69.251 — LEGENDS AWAKENED STAGED CATALOG, TESTED SUBSET ===
+2026-11-15 | 2.40 -> 2.41 | v0.69.251 | Legends Awakened (dp6) Stage 1 with conservative mechanics gate.
+[CURRENT] All 146 numbered dp6 prints have unique IDs (dp6-1 to dp6-146), collection lookup, art URLs and set registration. 18 are battle-enabled in the bundled fallback; 128 remain gated. **This is NOT completion** and must not be reported as 146/146 implemented. All 146 genuine printed stats/attack/Ability texts must be imported with `sh scripts/prepare-legends-awakened.sh` before building; the fallback deliberately does not fabricate unverified attacks, stats or abilities.
+[LOCKED] A newly catalogued card must not become battle-enabled or auto-deck-eligible when its printed attack, Poké-Power/Body, physical-card movement, choice, timing or special condition is not verified. For a damage line marked + or ×, the tested modifier/coin rule must operate; a misleading base value with no bonus is not acceptable.
+[LOCKED] Continue the source contract: dp6 LV.X level up only matching Active previous-level Pokémon, retaining physical evolution/energy/tools/damage; Castform and Deoxys Formes are NOT no-op Powers. Claw Fossil and Root Fossil must not be included in a deck without their matching evolutionary purposes, and must behave as real Pokémon-slot Trainer-Fossils before enabled.
+[CHECK] The bundled 18 ready prints do not constitute a legal dp6-only 30-card card pool; CPU must explicitly fail such a request rather than silently mix older expansions. A later print-by-print pass should complete Fossils, all LV.X, Formes, Trainers, Stadiums, attack/Power choices, reactive effects, prize timing and deck-builder archetype tags.
+[TEST] New source test `tests/v07251-legends-awakened-stage1.test.cjs` covers filtered registration, actual attack outcomes, coin results, between-turn Burn cleanup, draw, heal, recoil, retreat locks and CPU strict filters. External source: PokemonTCG/pokemon-tcg-data cards/en/dp6.json (archived set data). Document: `docs/LEGENDS_AWAKENED_v0.69.251_STAGE1.md`. Android UI and entire-set CPU matches have not been tested here.
+[RELEASE] The v0.69.251 changed-files ZIP is REPO-ROOT relative (its paths start with source/ and .github/). Extract with `cd ~/lucky-dex && unzip -o ZIP -d .`, NOT `-d source`. The APK workflow runs `sh source/scripts/prepare-legends-awakened.sh` before building, including the focused test. Explicitly mark the archive root in the delivery instructions.
+
+
+=== VERSION 0.69.252 — LEGENDS AWAKENED PRINT-EXACT EXPANDED BATTLE PASS ===
+2026-11-15 | 2.41 -> 2.42 | v0.69.252 | Legends Awakened dp6 27 additional print-complete Pokémon with tested attack outcomes.
+[CURRENT] 146 registered printed cards; 45 battle-enabled (18 prior + 27 new) and 101 gated. The developer ZIP contains offline fallback catalogue entries and exact printed attacks for the 45, while the standard `sh scripts/prepare-legends-awakened.sh` refreshes all 146 metadata from the cached or downloaded archival printed source before building. Do not present this set as 146 battle-ready.
+[LOCKED] Enable only prints where EVERY attack and ability has an actual outcome; no silently skipped bonus, coin result, forced/optional target selection, delayed effect, Powers or self-damage. Plus and multiplier notation requires verified variable calculation, not rounded base damage. Source-level tests must exercise actual state mutations, not only effect schema validation.
+[CURRENT] DP6 additions: Mewtwo 11; Bellossom 20; Poliwrath 35; Drifblim 53; Lucario 61; Luxio 62; Marowak 63; Metang 65; Swalot 72; Tauros 74; Buneary 86; Chinchou 88; Corphish 89; Gligar 94; Gloom 96,97; Gulpin 98; Houndour 103; Meowth 106; Nosepass 109; Pineco 113; Poliwag 114; Skitty 119; Swinub 123; Taillow 124; Tentacool 125; Yanma 128. Matching archival print text/energy/HP/stage/evolution/Weakness/Resistance is checked before granting FULL. `dp6_extra_print_snapshots.py` and `dp6_verified_outcomes.py` implement the audited outcomes in both fallback and remote rebuild, ensuring consistent release behaviour.
+[CURRENT] The shared `notDamagedByAttackLastOpponentTurn` condition lets Poliwrath Focus Punch be attempted even after an attack hit on the previous opposing turn, with damage resolving to ZERO as printed; it must never permanently disable an attack or suppress unrelated moves. CPU/real opponent must choose its own forced-switch target, not the attacking player. Gloom Frustration offers only undamaged targets, Lucario Focus Blast and Luxio Spark present legal single Bench targets, and Swinub Sniff Out retrieves a chosen PHYSICAL discard card only after heads.
+[TEST] `node --test tests/v07251-legends-awakened-stage1.test.cjs tests/v07252-legends-awakened-expanded.test.cjs` covers 31 source cases, including 27 new print-complete cards, damage/coin/status/choice/card-zone outcomes and strict game registration; plus preceding set regressions. Build pipeline `prepare-legends-awakened.sh` runs both test files. Report APK as NOT DEVICE TESTED until user verifies it.
+[CHECK] Remaining 101 prints include unresolved Forme powers, LV.X, Fossils and Trainer/Technical Machine/Stadium effects; these remain in owned-collection catalogue with PARTIAL support but cannot be built into battle decks. Do not add standalone Fossils to a generated deck as filler. Full authoritative print metadata for those 101 is available after preparation, NOT necessarily in the bundled offline fallback before preparation.
+[RELEASE] VersionCode 7240, VersionName 0.69.252; repository-root changed-files patch. `cd ~/lucky-dex && unzip -o /sdcard/Download/LuckyDex_patch_v0.69.252_LEGENDS_AWAKENED_EXPANDED.zip -d . && cd source && sh scripts/prepare-legends-awakened.sh`. Do not extract in `source/` because ZIP entries already begin with `source/`.
+
+
+=== TERMUX PATCH DELIVERY CONTRACT (v0.69.252 handoff correction) ===
+2026-11-15 | Delivery-only correction, app version remains v0.69.252 (versionCode 7240), and no new cards are claimed.
+[LOCKED] Starting with LuckyDex_patch_v0.69.252_TERMUX_SOURCE_LAYOUT.zip, every new changed-files patch ZIP MUST have paths RELATIVE TO source/, e.g. app/build.gradle, docs/LUCKYDEX_MASTER_RULES.txt, scripts/file.py, tests/file.test.cjs. Do NOT prefix entries with source/ or put repo-root .github/ files in the patch. Never include a top-level lucky-dex-main/ folder or any path traversal.
+[LOCKED] Include the user's preferred Termux handoff command in EVERY patch response, tailored to the actual patch filename and version. Standard pattern:
+    cd ~/lucky-dex
+    unzip -o /sdcard/Download/<PATCH_FILENAME>.zip -d source
+    git add source
+    git commit -m "LuckyDex <version> <descriptive changes>"
+    git push origin main
+[LOCKED] Source/** is the GitHub Actions trigger; git add source must include EVERY required version file and supporting script. A change requiring repository-root .github/workflows would break this one-paste contract unless an independent source-side integration makes it unnecessary. Do not silently omit required build preparation. Packaging is checked with scripts/verify-source-relative-patch.py before release.
+[BUILD] For v0.69.252, source/app/build.gradle invokes scripts/prepare-legends-awakened.sh as an APK preBuild and merge*Assets dependency; it downloads and caches the full 146-print metadata and runs source outcome tests, so a source-only GitHub push is sufficient. The user need NOT manually run preparation as a separate step. The GitHub workflow already watches source/**. First APK build needs internet to fetch archival print metadata unless previously cached; not a device test.
+[HISTORY] The OLD 0.69.251 and 0.69.252 root-relative ZIPs are NOT compatible with -d source. Their earlier [RELEASE] instructions are historical only and SUPERSEDED for all new patch deliverables by this contract. Do not re-extract those old archives using the new commands.
+[STATUS] Legends Awakened is still 45/146 battle-enabled with 101 gated. This is a packaging/CI reliability fix, NOT completion of dp6.
+[TEST] Run focused source-level tests and the patch layout verifier; check Gradle task dependency declaratively. APK/device testing remains outstanding.

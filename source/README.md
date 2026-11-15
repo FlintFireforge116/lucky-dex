@@ -68,3 +68,25 @@ The compact internal Bench array is preserved for compatibility; a `benchSlot` f
 ## Verification
 
 Focused TCG Battle core/UI/regression tests and JavaScript syntax checks are run before packaging. Browser-backed Playwright tests are not claimed in environments where Playwright is unavailable.
+
+## Termux patch update convention (current)
+
+Patch ZIP contents are relative to `source/` (for example `app/build.gradle`,
+`docs/LUCKYDEX_MASTER_RULES.txt`, and `scripts/...`). Do **not** include the
+`source/` prefix inside new patch ZIPs. Use the exact download filename:
+
+```
+cd ~/lucky-dex
+unzip -o /sdcard/Download/PATCH_FILENAME.zip -d source
+git add source
+git commit -m "LuckyDex vX.Y.Z description of changes"
+git push origin main
+```
+
+GitHub builds on pushes that modify `source/**`. APK preparation required by
+Legends Awakened is a Gradle task in `source/app/build.gradle`, so repository-
+root workflow edits are not required for this release. The older v0.69.251 and
+v0.69.252 ZIPs used a **different**, repo-root-relative layout; use the new
+`TERMUX_SOURCE_LAYOUT` patch for this command sequence. For authoritative
+rules see `docs/LUCKYDEX_MASTER_RULES.txt`.
+

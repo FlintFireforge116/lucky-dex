@@ -1,0 +1,15 @@
+#!/bin/sh
+# v0.69.252 source-relative patch: unzip into ~/lucky-dex/source.
+# Also invoked automatically by source/app/build.gradle during APK builds.
+# Fetches exact archived 146-card printed data, builds offline runtime JS, stores
+# source JSON for next card-outcome audits, and runs both integration suites.
+set -eu
+cd "$(dirname "$0")/.."
+mkdir -p data/classic
+url='https://raw.githubusercontent.com/PokemonTCG/pokemon-tcg-data/master/cards/en/dp6.json'
+if [ ! -s data/classic/dp6-print-source.json ]; then
+  curl -fLSs --retry 3 --connect-timeout 20 "$url" -o data/classic/dp6-print-source.json.tmp
+  mv data/classic/dp6-print-source.json.tmp data/classic/dp6-print-source.json
+fi
+python3 scripts/build-legends-awakened.py --input data/classic/dp6-print-source.json
+node --test tests/v07251-legends-awakened-stage1.test.cjs tests/v07252-legends-awakened-expanded.test.cjs

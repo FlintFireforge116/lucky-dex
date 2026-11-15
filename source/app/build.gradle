@@ -8,8 +8,8 @@ android {
         applicationId 'com.example.luckydex'
         minSdk 26
         targetSdk 35
-        versionCode 7238
-        versionName '0.69.250'
+        versionCode 7240
+        versionName '0.69.252'
     }
 
     signingConfigs {
@@ -164,3 +164,17 @@ tasks.register('validateDeltaReignCardAssets') {
     }
 }
 tasks.named('preBuild').configure { dependsOn tasks.named('validateDeltaReignCardAssets') }
+
+
+// v0.69.252 Termux source-relative handoff: ensure every GitHub Actions APK build
+// prepares all Legends Awakened print metadata without changing the repo-root
+// .github workflow. That way `unzip PATCH -d source; git add source; git push`
+// is sufficient. It is intentionally a dependency of merge*Assets as well as
+// preBuild, so the generated data is up-to-date BEFORE assets are packaged.
+tasks.register('prepareLegendsAwakenedForApk', Exec) {
+    workingDir rootProject.projectDir
+    commandLine 'sh', 'scripts/prepare-legends-awakened.sh'
+}
+tasks.matching { it.name == 'preBuild' || (it.name.startsWith('merge') && it.name.endsWith('Assets')) }.configureEach {
+    dependsOn tasks.named('prepareLegendsAwakenedForApk')
+}
