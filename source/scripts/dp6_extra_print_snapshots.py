@@ -152,3 +152,9 @@ PRINTS.update({
 from dp6_batch4_prints import PRINTS as BATCH4_PRINTS
 from dp6_batch4_verified import BE_READY as BATCH4_READY
 PRINTS.update({n: BATCH4_PRINTS[n] for n in BATCH4_READY})
+
+from dp6_batch5_prints import PRINTS as FORM_PRINTS
+PRINTS.update(FORM_PRINTS)
+
+from dp6_batch6_prints import PRINTS as BATCH6_PRINTS
+PRINTS.update(BATCH6_PRINTS)

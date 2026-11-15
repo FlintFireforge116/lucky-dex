@@ -4,6 +4,9 @@ import sys,json,pathlib,re
 sys.path.insert(0,str(pathlib.Path(__file__).parent))
 from dp6_verified_outcomes import EXTRA,verified_effect
 from dp6_batch4_verified import ABILITIES as BATCH4_ABILITIES
+from dp6_batch5_verified import ABILITIES as BATCH5_ABILITIES
+from dp6_batch6_verified import ABILITIES as BATCH6_ABILITIES
+from dp6_batch6_fossils import FOSSILS
 from dp6_extra_print_snapshots import PRINTS
 ROOT=pathlib.Path(__file__).resolve().parents[1]
 path=ROOT/'app/src/main/assets/tcg-classic-legends-awakened.js'
@@ -27,10 +30,22 @@ for n,spec in PRINTS.items():
               'retreat':retreat,'weakness':weak or None,'weaknessValue':weakval or None,
               'weaknesses':[{'type':weak,'value':weakval}] if weak else [],
               'resistance':res or None,'resistanceValue':resval or None,
-              'resistances':[{'type':res,'value':resval}] if res else [],'attacks':attacks,'abilities':([{'name': BATCH4_ABILITIES[n]['name'], 'text': '', **{k:v for k,v in BATCH4_ABILITIES[n].items() if k!='name'}}] if n in BATCH4_ABILITIES else []),
-              'battleEnabled':True,'deckEligible':True,'support':{'status':'FULL','reasons':[]},
+              'resistances':[{'type':res,'value':resval}] if res else [],'attacks':attacks,'abilities':([{'name': (BATCH6_ABILITIES.get(n) or BATCH5_ABILITIES.get(n) or BATCH4_ABILITIES[n])['name'], 'text': '', **{k:v for k,v in (BATCH6_ABILITIES.get(n) or BATCH5_ABILITIES.get(n) or BATCH4_ABILITIES[n]).items() if k!='name'}}] if n in BATCH4_ABILITIES or n in BATCH5_ABILITIES or n in BATCH6_ABILITIES else []),
+              'battleEnabled':True,'deckEligible':True,'isLevelX':stage=='Level-Up','levelUpFrom':evolved if stage=='Level-Up' else None,'support':{'status':'FULL','reasons':[]},
               'deckMeta':{'roles':[],'synergy':[],'energyTypes':preferred,'preferredEnergyTypes':preferred,
                           'preferredPartners':[],'inflicts':[],'payoffs':[]}})
+# DP6 reuses the established playFossil Trainer placement. Unlike the older
+# EX Sandstorm Fossils, these two count as Knocked Out Pokémon for Prizes.
+for n,spec in FOSSILS.items():
+    c=cards[n-1]
+    assert c['name']==spec['name'] and c['id']==f'dp6-{n}'
+    c.update({'kind':'trainer','trainerType':'Item','text':'\n'.join(spec['rules']),
+      'fossil':True,'hp':40,'stage':'Basic','types':['Colorless'],'subtype':'Colorless',
+      'retreat':0,'countsAsKnockout':True,
+      'effect':{'type':'playFossil','hp':40,'subtype':'Colorless','canRetreat':False,'countsAsKnockout':True},
+      'statusImmune':['sleep','paralysis','confusion','poison','burn'],
+      'abilities':[{'text':spec['abilityText'],**spec['ability']}],
+      'battleEnabled':True,'deckEligible':True,'support':{'status':'FULL','reasons':[]}})
 # Even gated cards must have their printed Trainer subtype: partner card
 # effects (Sneasel Rob) and deck filters inspect the public catalogue.
 trainer_stages={129:'Pokémon Tool',130:'Supporter',131:'Supporter',132:'Item',
@@ -40,6 +55,6 @@ for number,subtype in trainer_stages.items():
     if cards[number-1]['kind']=='trainer':
         cards[number-1]['trainerType']=subtype
 text=text[:start]+json.dumps(cards,ensure_ascii=False,separators=(',',':'))+text[end:]
-text=text.replace('v0.69.251 staged','v0.69.252 expanded')
+text=text.replace('v0.69.251 staged','v0.69.256 reuse')
 path.write_text(text,encoding='utf-8')
 print('Prepared local offline fallback:',len([c for c in cards if c['battleEnabled']]),'of',len(cards))

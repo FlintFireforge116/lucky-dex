@@ -12,6 +12,9 @@ import re
 import urllib.request
 from dp6_verified_outcomes import verified_effect
 from dp6_batch4_verified import ABILITIES as BATCH4_ABILITIES
+from dp6_batch5_verified import ABILITIES as BATCH5_ABILITIES
+from dp6_batch6_verified import ABILITIES as BATCH6_ABILITIES
+from dp6_batch6_fossils import FOSSILS
 
 ROOT = pathlib.Path(__file__).resolve().parent.parent
 OUT = ROOT / 'app/src/main/assets/tcg-classic-legends-awakened.js'
@@ -97,13 +100,13 @@ def build_cards(upstream):
                 'printedPowerType':'power' if ab['type']=='Poké-Power' else 'body',
                 'disabledByStatus':ab['type']=='Poké-Power','text':ab.get('text') or '', 'effect':NOOP})
         if abilities:
-            audited = BATCH4_ABILITIES.get(n)
+            audited = BATCH6_ABILITIES.get(n) or (FOSSILS.get(n) or {}).get('ability') or BATCH5_ABILITIES.get(n) or BATCH4_ABILITIES.get(n)
             if len(abilities) == 1 and audited and abilities[0]['name']==audited['name']:
                 abilities[0].update({k:v for k,v in audited.items() if k!='name'})
             else:
                 safe=False
-        if not attacks: safe=False
-        if stage=='Level-Up' or not pokemon: safe=False
+        if not attacks and n not in FOSSILS: safe=False
+        if (stage=='Level-Up' and n not in BATCH6_ABILITIES and n != 143 and n != 145) or (not pokemon and n not in FOSSILS): safe=False
         weakness=(original.get('weaknesses') or [{}])[0]
         resist=(original.get('resistances') or [{}])[0]
         if not weakness.get('type'): weakness={}
@@ -141,6 +144,9 @@ def build_cards(upstream):
                 card.update({'fossil':True,'hp':40,'stage':'Basic','types':['Colorless'],'subtype':'Colorless',
                              'retreat':0,'countsAsKnockout':True,'statusImmune':['sleep','paralysis','confusion','poison','burn'],
                              'abilities':abilities})
+                if n in FOSSILS:
+                    card['effect']={'type':'playFossil','hp':40,'subtype':'Colorless','canRetreat':False,'countsAsKnockout':True}
+                    card['countsAsKnockout']=True
         else:
             card['specialEnergy']=True;card['text']='\n'.join(original.get('rules') or [])
         ready_count+=int(bool(safe))
@@ -150,7 +156,7 @@ def build_cards(upstream):
 
 def write_js(cards,output):
     payload=json.dumps(cards,ensure_ascii=False,separators=(',',':'))
-    js='''/* LuckyDex Classic TCG — Legends Awakened (dp6), v0.69.255 verified battle batch.
+    js='''/* LuckyDex Classic TCG — Legends Awakened (dp6), v0.69.256 verified battle batch.
  * Card identities, attacks, text and abilities: PokemonTCG/pokemon-tcg-data cards/en/dp6.json.
  * Gated cards are collection-visible but NOT battle-eligible. DO NOT promote
  * complex prints by changing battleEnabled without outcome-level tests.

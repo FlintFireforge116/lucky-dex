@@ -105,3 +105,10 @@ def verified_effect(collector,attack):
 # v0.69.255 Stage 4 exact printed-attack mapping; audited upstream names/text/costs.
 from dp6_batch4_verified import ATTACKS as BATCH4_ATTACKS
 EXTRA.update(BATCH4_ATTACKS)
+
+# v0.69.256: shared archived Deoxys and Castform effects.
+from dp6_batch5_verified import ATTACKS as BATCH5_ATTACKS
+EXTRA.update(BATCH5_ATTACKS)
+
+from dp6_batch6_verified import ATTACKS as BATCH6_ATTACKS
+EXTRA.update(BATCH6_ATTACKS)

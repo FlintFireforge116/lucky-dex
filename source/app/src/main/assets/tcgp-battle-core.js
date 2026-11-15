@@ -791,7 +791,7 @@
   function abilityBlockedByStatus(ability,slot){if(!ability?.disabledByStatus||!slot)return false;const c=slot.conditions||{};
     // Expedition's printed Poké-Powers are disabled by ANY Special Condition,
     // including Poison and Burn; many later card texts only name three.
-    return !!(c.sleep||c.confusion||c.paralysis||(ability.expeditionSpecialCondition&&(c.poison||c.burn)));}
+    return !!(c.sleep||c.confusion||c.paralysis||((ability.expeditionSpecialCondition||ability.allSpecialConditions)&&(c.poison||c.burn)));}
   function trainerType(card){return card.trainerType||card.subtype||'Item';}
   function rareCandyMatches(stage2,basic){
     if(!stage2||stage2.kind!=='pokemon'||stage2.stage!=='Stage 2'||!basic||basic.kind!=='pokemon'||basic.stage!=='Basic')return false;
@@ -1006,7 +1006,7 @@
       const bound=state.format==='classic'&&pokemonOn(state.sides[side==='player'?'opponent':'player']).some(p=>p.cardId==='ex11-23'&&!effects.abilitiesSuppressed(state,side==='player'?'opponent':'player',p,data.cardById));
       if(!evolutionLocked)actions.push(...evolutionActions(state,side).filter(x=>(!activeEvolutionLocked||x.target!=='active')&&(!primalAura||x.target!=='bench')&&(!ex4Cradily||x.target!=='active')&&(!(state.format==='classic'&&state.sides[side==='player'?'opponent':'player'].active?.cardId==='ex16-10'&&!effects.abilitiesSuppressed(state,side==='player'?'opponent':'player',state.sides[side==='player'?'opponent':'player'].active,data.cardById))||x.target!=='active')&&(!bound||!slotForTarget(s,x.target,x.benchIndex)?.conditions?.sleep)));}
 
-    if(state.format==='classic')for(const p of pokemonOn(s))if(['ex16-84','ex16-85','ex16-86','dp2-116','dp2-117','dp5-84','dp5-89','dp5-91'].includes(p.cardId))
+    if(state.format==='classic')for(const p of pokemonOn(s))if(['ex16-84','ex16-85','ex16-86','dp2-116','dp2-117','dp5-84','dp5-89','dp5-91','dp6-138','dp6-139'].includes(p.cardId))
       actions.push({type:'discardFossil',target:p===s.active?'active':'bench',benchIndex:p===s.active?undefined:Number(p.benchSlot),cardId:p.cardId});
     s.hand.forEach((ref,handIndex)=>{
       const card = data.cardById(ref.cardId);
@@ -1202,6 +1202,18 @@
           if((enemy?.bench||[]).filter(Boolean).length<Math.min(3,Number(enemy?.benchLimit||3)))return;
         }
         if(ability.vstarPower&&s.vstarPowerUsed)return;
+        // Form Change / Temperament are family-wide limits, not per-card
+        // limits.  The same slot can change artwork and card ID mid-turn.
+        if(ability.formGroup){
+          if((s.dp6FormUsed||{})[ability.formGroup]===s.turnCount)return;
+          const family=ability.formGroup;
+          const eligible=ref=>{const c=data.cardById(ref.cardId);
+            return c?.kind==='pokemon'&&c?.id!==source.cardId&&
+              (family==='deoxys'?c?.name==='Deoxys'||c?.setId==='dp6'&&[1,24,25,26].includes(Number(c.number)):
+                c?.setId==='dp6'&&[48,49,50,51].includes(Number(c.number)));
+          };
+          if(!s.deck.some(eligible))return;
+        }
         const used=(s.abilityUsed||{})[source.uid+':'+abilityIndex];if(ability.oncePerTurn!==false&&used===s.turnCount)return;
         if(ability.lentalSharedOnce==='scavenge'&&s.lentalScavengeUsedTurn===s.turnCount)return;
         const base={type:'ability',cardId:source.cardId,abilityIndex,target:source===s.active?'active':'bench'};if(source!==s.active)base.benchIndex=Number(source.benchSlot);
@@ -2065,11 +2077,16 @@
       target.cardId = ref.cardId;
       target.stack.push(ref.cardId);
       if(ref.cardId==='dp2-68')target.dp2EvolvedFromSleep=dp2SlakothWasAsleep;
-      const keepPoison=!!target.conditions?.poison&&[foeSide].some(opp=>[state.sides[opp].active,...state.sides[opp].bench].some(p=>['sv1-127','dp2-36'].includes(p?.cardId)&&!effects.abilitiesSuppressed(state,opp,p,data.cardById)));
-      const poison=keepPoison?target.conditions.poison:null,burn=state.stadium?.cardId==='ex12-74'?target.conditions?.burn:null;
-      effects.clearTemporaryEffects(state,target);if(poison)target.conditions.poison=poison;if(burn)target.conditions.burn=burn;
-      target.playedOnSideTurn=s.turnCount;target.evolvedOnTurn=state.turnNumber;
       const levelUp=!!data.cardById(ref.cardId)?.isLevelX;
+      // LV.X is a level-up of the SAME Pokémon, not an evolution. Preserve
+      // current Special Conditions, delayed effects, attack restrictions,
+      // damage, and attachments. Normal evolutions still clear them.
+      if(!levelUp){
+        const keepPoison=!!target.conditions?.poison&&[foeSide].some(opp=>[state.sides[opp].active,...state.sides[opp].bench].some(p=>['sv1-127','dp2-36'].includes(p?.cardId)&&!effects.abilitiesSuppressed(state,opp,p,data.cardById)));
+        const poison=keepPoison?target.conditions.poison:null,burn=state.stadium?.cardId==='ex12-74'?target.conditions?.burn:null;
+        effects.clearTemporaryEffects(state,target);if(poison)target.conditions.poison=poison;if(burn)target.conditions.burn=burn;
+      }
+      target.playedOnSideTurn=s.turnCount;target.evolvedOnTurn=state.turnNumber;
       state.log.push({type:levelUp?'levelUp':'evolve',side,cardId:ref.cardId,target:matched.target,benchIndex:matched.benchIndex});
       // Leveling up is not evolving, and must not retrigger evolve-from-hand Powers.
       if(!levelUp)triggerAbilities(state,'evolved',side,target,{fromHand:true});
@@ -2224,7 +2241,7 @@
     }
     if(matched.type==='discardFossil'){
       const slot=slotForTarget(s,matched.target,matched.benchIndex);
-      if(!slot||!['ex16-84','ex16-85','ex16-86','dp2-116','dp2-117','dp5-84','dp5-89','dp5-91'].includes(slot.cardId))throw new Error('This card is not a Fossil.');
+      if(!slot||!['ex16-84','ex16-85','ex16-86','dp2-116','dp2-117','dp5-84','dp5-89','dp5-91','dp6-138','dp6-139'].includes(slot.cardId))throw new Error('This card is not a Fossil.');
       if(slot===s.active)s.active=null;else s.bench.splice(s.bench.indexOf(slot),1);
       discardKnockedOut(s,slot);state.log.push({type:'ex16DiscardFossil',side,cardId:slot.cardId});
       if(!s.active){if(s.bench.length){state.phase='promote';state.promotionSide=side;}else resolveKnockOut(state,null,'effect');}return state;
