@@ -22,9 +22,9 @@ function choose(s,i=0,side='player'){const opts=actions(s,side);assert.ok(opts.l
 function quietChoices(s,side='player',limit=18){for(let i=0;i<limit&&s.phase==='effectChoice';i++){let chooser=s.pendingChoice?.side||side;const opts=actions(s,chooser);assert.ok(opts.length);core.applyAction(s,chooser,opts[0]);}assert.notEqual(s.phase,'effectChoice');}
 
 test('DP6 registration, all 18 new prints and every new ability/attack has validated effects',()=>{
- assert.equal(la.CARDS.length,146);assert.equal(la.coverage().battleEnabled,97);
+ assert.equal(la.CARDS.length,146);assert.equal(la.coverage().battleEnabled,111);
  for(const n of nums){const c=data.cardById('dp6-'+n);assert.ok(c?.battleEnabled,`dp6-${n} gated`);assert.ok(c?.attacks?.length>=1);for(const move of c.attacks)assert.deepEqual(fx.validateEffect(move.effect),[],`${n}: ${move.name}`);for(const power of c.abilities||[])assert.deepEqual(fx.validateEffect(power.effect),[],`${n}: ${power.name}`);}
- for(const n of [6,7,8,10,12,14,16,19,27,28,38])assert.equal(data.isBattleEnabled('dp6-'+n),false,`unimplemented dp6-${n} entered deck`);
+ for(const n of [6,7,13,14,16,19,27,38])assert.equal(data.isBattleEnabled('dp6-'+n),false,`unimplemented dp6-${n} entered deck`);
 });
 
 test('all new printed attack paths initiate without exceptions, with real choices settled',()=>{

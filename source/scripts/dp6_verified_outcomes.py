@@ -96,7 +96,7 @@ def verified_effect(collector,attack):
     spec=EXTRA.get(int(collector),{}).get(actual_name)
     if spec is None:return None,False
     damage=str(attack.get('damage') or '')
-    if damage.endswith('+') and spec.get('type') not in ('bonusDamage','energyDamage','damageFromDamage','topDeckBothDiscardBonus','coinDamage','chooseDiscardForBonus','sequence','coinFlip','neoRule'):
+    if damage.endswith('+') and spec.get('type') not in ('bonusDamage','energyDamage','damageFromDamage','topDeckBothDiscardBonus','coinDamage','coinDamageByEnergy','chooseDiscardForBonus','sequence','coinFlip','neoRule'):
         return None,False
     if damage.endswith('×') and not (spec.get('type') in ('coinDamage','coinDamageByPokemon','fieldCountDamage','energyDamage','neoRule') and (spec.get('mode')=='replace' or spec.get('type')=='neoRule')):
         return None,False
@@ -112,3 +112,6 @@ EXTRA.update(BATCH5_ATTACKS)
 
 from dp6_batch6_verified import ATTACKS as BATCH6_ATTACKS
 EXTRA.update(BATCH6_ATTACKS)
+
+from dp6_batch7_verified import ATTACKS as BATCH7_ATTACKS
+EXTRA.update(BATCH7_ATTACKS)

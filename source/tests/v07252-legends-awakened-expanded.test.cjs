@@ -21,7 +21,7 @@ function coin(s){return s.log.find(x=>x.type==='coin'&&x.side==='player');}
 test('v0.69.252 verified prints remain battle-ready; metadata and effects are genuinely implemented',()=>{
  assert.equal(la.CARDS.length,146);assert.ok(la.CARDS.filter(c=>c.battleEnabled).length>=45);
  for(const n of added){const c=data.cardById(`dp6-${n}`);assert.ok(c?.battleEnabled,c?.id);assert.equal(c.deckEligible,true);assert.equal(c.support.status,'FULL');assert.ok(c.hp>0);assert.equal(c.attacks.length,2);for(const a of c.attacks){assert.ok(a.name&&a.text!=null);assert.deepEqual(fx.validateEffect(a.effect),[],`${c.id} ${a.name}`);}}
- for(const n of [7,16,23,27,28,38])assert.equal(data.isBattleEnabled(`dp6-${n}`),false);
+ for(const n of [6,7,13,14,16,27,38])assert.equal(data.isBattleEnabled(`dp6-${n}`),false);
 });
 test('every new attack can be triggered without throwing in physical Classic battle',()=>{
  for(const n of added)for(let i=0;i<2;i++){const s=board(`dp6-${n}`);s.sides.opponent.bench=[slot('dp5-12',`target-${n}`)];if(n===125)s.sides.opponent.active.energy={Water:2,Grass:1};

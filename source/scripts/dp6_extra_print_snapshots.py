@@ -158,3 +158,8 @@ PRINTS.update(FORM_PRINTS)
 
 from dp6_batch6_prints import PRINTS as BATCH6_PRINTS
 PRINTS.update(BATCH6_PRINTS)
+
+# v0.69.257: audited remaining Poké-Powers and their printed attacks.
+from dp6_batch7_prints import PRINTS as BATCH7_PRINTS
+from dp6_batch7_verified import BE_READY as BATCH7_READY
+PRINTS.update({n: BATCH7_PRINTS[n] for n in BATCH7_READY})

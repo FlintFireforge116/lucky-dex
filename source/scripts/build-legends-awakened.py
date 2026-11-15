@@ -14,6 +14,7 @@ from dp6_verified_outcomes import verified_effect
 from dp6_batch4_verified import ABILITIES as BATCH4_ABILITIES
 from dp6_batch5_verified import ABILITIES as BATCH5_ABILITIES
 from dp6_batch6_verified import ABILITIES as BATCH6_ABILITIES
+from dp6_batch7_verified import ABILITIES as BATCH7_ABILITIES
 from dp6_batch6_fossils import FOSSILS
 
 ROOT = pathlib.Path(__file__).resolve().parent.parent
@@ -88,7 +89,7 @@ def build_cards(upstream):
                 effect,verified=simple_effect(a.get('text') or '', name)
             damage_shape=re.fullmatch(r'\d*',damage_text) is not None
             if damage_text.endswith('+') and re.fullmatch(r'\d+\+',damage_text):
-                damage_shape=bool(verified and effect.get('type') in ('coinFlip','bonusDamage','energyDamage','damageFromDamage','topDeckBothDiscardBonus','chooseDiscardForBonus','fieldCountDamage','sequence','neoRule','coinDamage'))
+                damage_shape=bool(verified and effect.get('type') in ('coinFlip','bonusDamage','energyDamage','damageFromDamage','topDeckBothDiscardBonus','chooseDiscardForBonus','fieldCountDamage','sequence','neoRule','coinDamage','coinDamageByEnergy'))
             if damage_text.endswith('×') and re.fullmatch(r'\d+×',damage_text):
                 damage_shape=(effect.get('type') in ('coinDamage','coinDamageByPokemon','fieldCountDamage','energyDamage') and effect.get('mode')=='replace') or effect.get('type')=='neoRule'
             safe &= bool(verified and damage_shape)
@@ -100,7 +101,7 @@ def build_cards(upstream):
                 'printedPowerType':'power' if ab['type']=='Poké-Power' else 'body',
                 'disabledByStatus':ab['type']=='Poké-Power','text':ab.get('text') or '', 'effect':NOOP})
         if abilities:
-            audited = BATCH6_ABILITIES.get(n) or (FOSSILS.get(n) or {}).get('ability') or BATCH5_ABILITIES.get(n) or BATCH4_ABILITIES.get(n)
+            audited = BATCH7_ABILITIES.get(n) or BATCH6_ABILITIES.get(n) or (FOSSILS.get(n) or {}).get('ability') or BATCH5_ABILITIES.get(n) or BATCH4_ABILITIES.get(n)
             if len(abilities) == 1 and audited and abilities[0]['name']==audited['name']:
                 abilities[0].update({k:v for k,v in audited.items() if k!='name'})
             else:
@@ -156,7 +157,7 @@ def build_cards(upstream):
 
 def write_js(cards,output):
     payload=json.dumps(cards,ensure_ascii=False,separators=(',',':'))
-    js='''/* LuckyDex Classic TCG — Legends Awakened (dp6), v0.69.256 verified battle batch.
+    js='''/* LuckyDex Classic TCG — Legends Awakened (dp6), v0.69.257 verified battle batch.
  * Card identities, attacks, text and abilities: PokemonTCG/pokemon-tcg-data cards/en/dp6.json.
  * Gated cards are collection-visible but NOT battle-eligible. DO NOT promote
  * complex prints by changing battleEnabled without outcome-level tests.

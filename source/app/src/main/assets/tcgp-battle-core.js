@@ -550,6 +550,7 @@
         if(ability.printedPowerType==='power'&&state.format==='classic'&&
            state.sides[side==='player'?'opponent':'player']?.active?.cardId==='dp5-98'&&
            !effects.abilitiesSuppressed(state,side==='player'?'opponent':'player',state.sides[side==='player'?'opponent':'player'].active,data.cardById))continue;
+        if(state.format==='classic'&&ability.printedPowerType==='power'&&Number(ss.dp6PsychicBindUntil||-1)>=Number(state.turnNumber))continue;
         if(abilityBlockedByStatus(ability,source)||ability.type!=='triggered'||ability.event!==event||ability.activeOnly&&ss.active!==source||ability.benchOnly&&ss.active===source)continue;if(event==='endTurn'){const ownersTurn=state.activeSide===side,turn=ability.turn||'owner';if(turn==='owner'&&!ownersTurn||turn==='opponent'&&ownersTurn)continue;}if(ability.opponentAttackOnly&&!(meta.source?.attack&&meta.source.side===(side==='player'?'opponent':'player')))continue;if(ability.energyType&&ability.energyType!==meta.energyType)continue;if(ability.fromHandOnly&&!meta.fromHand)continue;if(ability.firstTurnOnly&&ss.turnCount!==1)continue;
         effects.applyEffect(ability.effect,{...effectContext(state,side,{},source),isAbility:true,eventData:meta});state.log.push({type:'ability',side,cardId:source.cardId,ability:ability.name,event});
         ex14DarkEyes(state,side,source,ability);
@@ -1202,6 +1203,8 @@
           if((enemy?.bench||[]).filter(Boolean).length<Math.min(3,Number(enemy?.benchLimit||3)))return;
         }
         if(ability.vstarPower&&s.vstarPowerUsed)return;
+        // Mesprit Psychic Bind blocks Powers, never printed Poké-Bodies.
+        if(state.format==='classic'&&ability.printedPowerType==='power'&&Number(s.dp6PsychicBindUntil||-1)>=Number(state.turnNumber))return;
         // Form Change / Temperament are family-wide limits, not per-card
         // limits.  The same slot can change artwork and card ID mid-turn.
         if(ability.formGroup){

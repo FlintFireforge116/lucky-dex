@@ -6,6 +6,7 @@ from dp6_verified_outcomes import EXTRA,verified_effect
 from dp6_batch4_verified import ABILITIES as BATCH4_ABILITIES
 from dp6_batch5_verified import ABILITIES as BATCH5_ABILITIES
 from dp6_batch6_verified import ABILITIES as BATCH6_ABILITIES
+from dp6_batch7_verified import ABILITIES as BATCH7_ABILITIES
 from dp6_batch6_fossils import FOSSILS
 from dp6_extra_print_snapshots import PRINTS
 ROOT=pathlib.Path(__file__).resolve().parents[1]
@@ -30,7 +31,7 @@ for n,spec in PRINTS.items():
               'retreat':retreat,'weakness':weak or None,'weaknessValue':weakval or None,
               'weaknesses':[{'type':weak,'value':weakval}] if weak else [],
               'resistance':res or None,'resistanceValue':resval or None,
-              'resistances':[{'type':res,'value':resval}] if res else [],'attacks':attacks,'abilities':([{'name': (BATCH6_ABILITIES.get(n) or BATCH5_ABILITIES.get(n) or BATCH4_ABILITIES[n])['name'], 'text': '', **{k:v for k,v in (BATCH6_ABILITIES.get(n) or BATCH5_ABILITIES.get(n) or BATCH4_ABILITIES[n]).items() if k!='name'}}] if n in BATCH4_ABILITIES or n in BATCH5_ABILITIES or n in BATCH6_ABILITIES else []),
+              'resistances':[{'type':res,'value':resval}] if res else [],'attacks':attacks,'abilities':([{'name': (BATCH7_ABILITIES.get(n) or BATCH6_ABILITIES.get(n) or BATCH5_ABILITIES.get(n) or BATCH4_ABILITIES[n])['name'], 'text': '', **{k:v for k,v in (BATCH7_ABILITIES.get(n) or BATCH6_ABILITIES.get(n) or BATCH5_ABILITIES.get(n) or BATCH4_ABILITIES[n]).items() if k!='name'}}] if n in BATCH4_ABILITIES or n in BATCH5_ABILITIES or n in BATCH6_ABILITIES or n in BATCH7_ABILITIES else []),
               'battleEnabled':True,'deckEligible':True,'isLevelX':stage=='Level-Up','levelUpFrom':evolved if stage=='Level-Up' else None,'support':{'status':'FULL','reasons':[]},
               'deckMeta':{'roles':[],'synergy':[],'energyTypes':preferred,'preferredEnergyTypes':preferred,
                           'preferredPartners':[],'inflicts':[],'payoffs':[]}})
@@ -55,6 +56,6 @@ for number,subtype in trainer_stages.items():
     if cards[number-1]['kind']=='trainer':
         cards[number-1]['trainerType']=subtype
 text=text[:start]+json.dumps(cards,ensure_ascii=False,separators=(',',':'))+text[end:]
-text=text.replace('v0.69.251 staged','v0.69.256 reuse')
+text=text.replace('v0.69.251 staged','v0.69.257 reuse')
 path.write_text(text,encoding='utf-8')
 print('Prepared local offline fallback:',len([c for c in cards if c['battleEnabled']]),'of',len(cards))

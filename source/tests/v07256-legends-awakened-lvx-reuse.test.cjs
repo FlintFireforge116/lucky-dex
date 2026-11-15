@@ -15,7 +15,7 @@ function options(s,type,side='player'){return core.legalActions(s,side).filter(a
 function use(s,type,idx=0,side='player'){const a=options(s,type,side)[idx];assert.ok(a,`missing ${type} action`);core.applyAction(s,side,a);return a;}
 function settle(s){for(let i=0;i<12&&s.phase==='effectChoice';i++){const side=s.pendingChoice.side;use(s,'effectChoice',0,side);}assert.notEqual(s.phase,'effectChoice');}
 test('all seven archived LV.X share the existing level-up and previous-level inheritance framework',()=>{
- assert.equal(la.coverage().battleEnabled,97);
+ assert.equal(la.coverage().battleEnabled,111);
  for(let n=140;n<=146;n++){
    const c=data.cardById('dp6-'+n);assert.ok(c.battleEnabled,c.id);assert.ok(c.isLevelX);assert.equal(c.stage,'Level-Up');assert.ok(c.levelUpFrom);
    for(const attack of c.attacks)assert.deepEqual(fx.validateEffect(attack.effect),[],c.id+attack.name);

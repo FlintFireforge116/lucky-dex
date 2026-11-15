@@ -20,7 +20,7 @@ function bench(s,side,id){const p=core.makePokemonSlot(id,2,side+'-bench');p.ben
 function settle(s){for(let i=0;i<20&&s.phase==='effectChoice';i++){const side=s.pendingChoice.side;use(s,'effectChoice',0,side);}assert.notEqual(s.phase,'effectChoice');}
 
 test('Eight Forme prints are genuine battle cards with archived attacks and legal Powers',()=>{
- assert.equal(la.coverage().battleEnabled,97);
+ assert.equal(la.coverage().battleEnabled,111);
  for(const n of batch){const c=data.cardById('dp6-'+n);assert.ok(c.battleEnabled,`${n}`);assert.ok(c.deckEligible);assert.equal(c.attacks.length,1);
   assert.deepEqual(fx.validateEffect(c.attacks[0].effect),[]);assert.equal(c.abilities[0].type,'activated');assert.deepEqual(fx.validateEffect(c.abilities[0].effect),[]);
   const s=board(c.id);s.sides.player.deck=[{uid:'form',cardId:(groupA.includes(n)?'dp6-'+groupA.find(v=>v!==n):'dp6-'+groupB.find(v=>v!==n))}];
