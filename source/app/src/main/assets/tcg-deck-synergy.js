@@ -250,6 +250,12 @@
   // Ancient Technical Machines only attach to non-ex Evolved Pokémon without an owner name.
   // A Stage 1 Pokémon-ex does not make these Tools playable.
   if(['ex5-84','ex5-85','ex5-86'].includes(card.id)&&!ctx.pokemon.some(c=>['Stage 1','Stage 2'].includes(c.stage)&&!c.pokemonEx&&!c.isEx&&!/^(?:Team Aqua's|Team Magma's|Brock's|Misty's|Lt. Surge's|Erika's|Koga's|Blaine's|Sabrina's|Giovanni's|Rocket's)/.test(c.name||'')))return -Infinity;
+  // DP6 Technical Machine TS-1 is only helpful with actual evolving lines.
+  // Basic -> LV.X is *not* an Evolution for Evoluter's printed search.
+  if(card.id==='dp6-136'){
+    const names=new Set(ctx.pokemon.map(c=>c.name));
+    if(!ctx.pokemon.some(c=>['Stage 1','Stage 2'].includes(c.stage)&&names.has(c.evolvesFrom)))return -Infinity;
+  }
   // Desert Ruins damages every high-HP Pokémon-ex between turns, including yours.
   // Avoid undermining our own featured ex line during automatic building.
   if(card.id==='ex5-88'&&ctx.pokemon.some(c=>c.pokemonEx||c.isEx))return -Infinity;
@@ -282,6 +288,10 @@
   if(ctx.theme==='disruption'&&p.roles.includes('disruption'))score+=42;
   if(p.energyTypes.length)score+=8;
   if(p.preferredTeams.some(t=>ctx.teams?.has(t)))score+=15;
+  // Printed top-five Pokémon selection deserves a place in evolution decks;
+  // Snowpoint Temple is stronger when multiple unevolved Basics are present.
+  if(card.id==='dp6-133')score+=(ctx.pokemon.some(c=>['Stage 1','Stage 2','Level-Up'].includes(c.stage))?48:24);
+  if(card.id==='dp6-134'&&ctx.pokemon.filter(c=>['Basic','Baby'].includes(c.stage)).length>=3)score+=62;
   if(ctx.optionalPartnerNames?.has(normalize(card.name)))score+=100; // A named Stadium/Trainer payoff, not generic filler.
   // Attack conditional payoff: Machine Burst becomes Sleep + Burn only while
   // a legal Technical Machine is attached. Prefer compatible Tools in the deck.

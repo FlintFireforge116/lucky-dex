@@ -505,7 +505,16 @@
   }
   function maxHp(state,side,slot){const eeveeStage=majesticEeveeEvolution(slot);
     const majesticVeil=state.format==='classic'&&eeveeStage&&pokemonOn(state.sides[side]).some(p=>p.cardId==='dp5-18'&&!effects.abilitiesSuppressed(state,side,p,data.cardById))?20:0;
-    const ex3LowPressure=state.format==='classic'&&state.stadium?.cardId==='ex3-86'&&data.cardById(slot?.cardId)?.types?.some(t=>['Grass','Lightning'].includes(t))?10:0;const rocketHideout=state.format==='classic'&&state.stadium?.cardId==='ex7-87'&&/^(Dark |Rocket's )/.test(data.cardById(slot?.cardId)?.name||'')?20:0;const dp2Equip=toolsOf(slot).some(r=>r.cardId==='dp2-65')?10:0;const dp6Temple=state.format==='classic'&&state.stadium?.cardId==='dp6-134'&&(['Basic','Baby'].includes(data.cardById(slot.cardId)?.stage)||['dp6-138','dp6-139'].includes(slot.cardId))?20:0;
+    const ex3LowPressure=state.format==='classic'&&state.stadium?.cardId==='ex3-86'&&data.cardById(slot?.cardId)?.types?.some(t=>['Grass','Lightning'].includes(t))?10:0;const rocketHideout=state.format==='classic'&&state.stadium?.cardId==='ex7-87'&&/^(Dark |Rocket's )/.test(data.cardById(slot?.cardId)?.name||'')?20:0;const dp2Equip=toolsOf(slot).some(r=>r.cardId==='dp2-65')?10:0;// LV.X is a *level-up*, not an Evolution card: Azelf/Mewtwo/Uxie
+    // LV.X over a Basic receive Snowpoint Temple's +20 HP. A Stage 1/2
+    // underneath an LV.X is still Evolved and must NOT receive that bonus.
+    const currentStage=data.cardById(slot.cardId)?.stage;
+    const priorLevel=currentStage==='Level-Up'?(slot.stack||[]).slice(0,-1).at(-1):null;
+    const underlyingStage=priorLevel?data.cardById(priorLevel)?.stage:null;
+    const snowpointEligible=['Basic','Baby'].includes(currentStage)||
+      currentStage==='Level-Up'&&['Basic','Baby'].includes(underlyingStage)||
+      ['dp6-138','dp6-139'].includes(slot.cardId);
+    const dp6Temple=state.format==='classic'&&state.stadium?.cardId==='dp6-134'&&snowpointEligible?20:0;
     const copyHp=state.format==='classic'&&slot.cardId==='dp6-27'&&state.sides[side].active===slot&&!effects.abilitiesSuppressed(state,side,slot,data.cardById)?Number(data.cardById(state.sides[side==='player'?'opponent':'player'].active?.cardId)?.hp||60):Number(data.cardById(slot.cardId)?.hp||0);
     const extra=dp6Temple+majesticVeil+ex3LowPressure+rocketHideout+dp2Equip+(slot.cardId==='gym2-97'?10*Number(slot.energy?.Psychic||0):slot.cardId==='gym2-10'&&slot.gym2GiantGrowth&&state.sides[side].active===slot?40:0);return Math.max(1,copyHp+extra+effects.modifierAmount(state,side,slot,'maxHp',data.cardById));}
   function ex14DarkEyes(state,usedBy,source,ability){

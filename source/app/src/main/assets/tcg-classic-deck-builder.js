@@ -132,7 +132,7 @@ function familyLine(card,pool){
 // before treating the end of the playable subset as a terminal evolution.
 // A future staged set's GATED evolutions must not retroactively invalidate
 // old one-set Stage-1 builds. Legacy EX pool rules still apply unchanged.
-const FULL_EVOLUTION_NAMES=new Set(classic.CARDS.filter(c=>c.kind==='pokemon'&&c.evolvesFrom&&(!['dp1','dp2','dp3','dp4'].includes(c.setId)||c.battleEnabled)).map(c=>classicCardName(c.evolvesFrom)));
+const FULL_EVOLUTION_NAMES=new Set(classic.CARDS.filter(c=>c.kind==='pokemon'&&c.evolvesFrom&&c.stage!=='Level-Up'&&(!['dp1','dp2','dp3','dp4'].includes(c.setId)||c.battleEnabled)).map(c=>classicCardName(c.evolvesFrom)));
 function hasKnownEvolution(card){return !!(card?.kind==='pokemon'&&parentKeys(card.name).some(k=>FULL_EVOLUTION_NAMES.has(k)));}
 function abilityEnergy(card){return decks.dualArmorProfile(card)?.energyType||null;}
 function effectiveTypes(card){return [...new Set([...(card?.types||[]),...(decks.dualArmorProfile(card)?.types||[])])];}
@@ -212,6 +212,7 @@ function buildDeck(rows,options={}){
  if(!pokemonPool.some(c=>c.stage==='Basic'))return fail('No owned battle-ready Basic Pokémon are available.');
  const requested=[...new Set((options.types||[]).filter(t=>ARCHETYPE_TYPES.includes(t)))].slice(0,2),requestedEnergy=requested.filter(t=>decks.ENERGY_TYPES.includes(t)),allowMixedEnergy=options.allowMixedEnergy===true,existing=Array.isArray(options.cards)?options.cards:[],random=rng(options.randomSeed),excluded=new Set(options.excludeArchetypes||[]);
  let focus=classic.cardById(options.focusCardId);
+ if(basicOnly&&focus?.kind==='pokemon'&&focus.stage!=='Basic')return fail(`${focus.name} is ${focus.stage} and cannot be used in Basic-only mode.`);
  const fossilFocus=isEvolutionFossil(focus)?focus:null;
  if(fossilFocus){
    if(!evolutionPool.some(c=>c.id===fossilFocus.id))return fail(`${fossilFocus.name} is not owned or battle-ready in the selected sets.`);
@@ -335,6 +336,15 @@ function buildDeck(rows,options={}){
    mainLine=focus?.kind==='pokemon'?completeLineFor(focus,selectable,evolutionPool):familyLine(main,evolutionPool);
    main=mainLine[mainLine.length-1]||main;
  }
+ // Basic-only is an explicit player constraint.  The focused-core path
+ // previously expanded a chosen Basic into Stage 1/2 or LV.X even though
+ // the candidate selector itself was filtering to Basic Pokémon.
+ if(basicOnly){
+   if(focus?.kind==='pokemon'&&focus.stage!=='Basic')
+     return fail(`${focus.name} is ${focus.stage} and cannot be used in Basic-only mode.`);
+   mainLine=[featured?.stage==='Basic'?featured:mainLine.find(c=>c.stage==='Basic')||main];
+   main=mainLine[0];
+ }
  // When multiple sets print the same Fossil, keep the actual focused print
  // in the selected evolutionary line instead of quietly swapping its card ID.
  if(fossilFocus){
@@ -383,6 +393,18 @@ function buildDeck(rows,options={}){
    // evolution already in the actual 30-card deck (not merely owned).
    if(isEvolutionFossil(card)&&!fossilEvolutionInDeck(card,cards))return false;
    if(isFossilSupport(card)&&!anyFossilEvolutionInDeck(cards))return false;
+   // Legends Awakened: TS-1 Evoluter must have a real Stage 1/2 evolution
+   // in the current deck. LV.X is not an Evolution card and is never a
+   // valid Evoluter search result. Do not give an all-Basic deck four dead TMs.
+   if(card?.id==='dp6-136'){
+     const species=new Set(cards.map(id=>classic.cardById(id)?.name));
+     if(!cards.some(id=>{const p=classic.cardById(id);return p?.kind==='pokemon'&&
+       ['Stage 1','Stage 2'].includes(p.stage)&&species.has(p.evolvesFrom);}))return false;
+   }
+   // Compact 30-card decks should keep spare slots for draw, search and
+   // counterplay, not fill eight of them with duplicate single-slot Tools.
+   if(['dp6-129','dp6-136','dp6-137'].includes(card?.id)&&
+      cards.filter(id=>id===card.id).length>=Math.max(2,existing.filter(id=>id===card.id).length))return false;
    if(card?.technicalMachine&&cards.some(id=>id==='ex11-25')){
      const supported=['ecard1-144','ex5-84','ex5-85','ex5-86'];
      if(!supported.includes(card.id))return false;
@@ -414,7 +436,7 @@ function buildDeck(rows,options={}){
    const names=babyEvolutionTargets(card);
    return !names.length||cards.some(id=>names.includes(classicCardName(classic.cardById(id)?.name)));
  }
- function add(card,n=1,fromEvolutionLine=false){if(!fromEvolutionLine&&isEvolutionFossil(card)&&!fossilEvolutionInDeck(card,cards))return 0;if(!fromEvolutionLine&&!hasBabyPartner(card))return 0;if(card?.kind==='trainer'&&!fromEvolutionLine&&!trainerIsUseful(card))return 0;if(card?.trainerType==='Stadium'&&cards.filter(id=>classic.cardById(id)?.trainerType==='Stadium').length>=1&&!cards.includes(card.id))return 0;let added=0;while(added<n&&cards.length<30&&room(card)>0&&!(card?.trainerType==='Stadium'&&cards.filter(id=>classic.cardById(id)?.trainerType==='Stadium').length>=2)){cards.push(card.id);counts.set(card.id,(counts.get(card.id)||0)+1);added++;}return added;}
+ function add(card,n=1,fromEvolutionLine=false){if(!fromEvolutionLine&&isEvolutionFossil(card)&&!fossilEvolutionInDeck(card,cards))return 0;if(!fromEvolutionLine&&!hasBabyPartner(card))return 0;if(card?.kind==='trainer'&&!fromEvolutionLine&&!trainerIsUseful(card))return 0;if(card?.trainerType==='Stadium'&&cards.filter(id=>classic.cardById(id)?.trainerType==='Stadium').length>=1&&!cards.includes(card.id))return 0;let added=0;while(added<n&&cards.length<30&&room(card)>0&&(!['dp6-129','dp6-136','dp6-137'].includes(card?.id)||fromEvolutionLine||cards.filter(id=>id===card.id).length<Math.max(2,existing.filter(id=>id===card.id).length))&&!(card?.trainerType==='Stadium'&&cards.filter(id=>classic.cardById(id)?.trainerType==='Stadium').length>=2)){cards.push(card.id);counts.set(card.id,(counts.get(card.id)||0)+1);added++;}return added;}
  function addLine(line,copies){if(!line.length||line.some(c=>Number(owned.get(c.id)||0)<1))return false;for(let copy=0;copy<copies;copy++){if(line.some(c=>room(c)<1)||cards.length+line.length>30)break;for(const c of line)add(c,1,true);}return line.every(c=>(counts.get(c.id)||0)>0);}
  // Preserve legal existing cards first for Fill / repair, but never exceed ownership/copy limits.
  for(const id of existing){const c=classic.cardById(id);if(c&&allowedInSetPool(c,scope)&&c.battleEnabled&&c.deckEligible!==false&&!babyEvolutionTargets(c).length&&!isEvolutionFossil(c)&&!isFossilSupport(c))add(c,1);}
@@ -527,6 +549,7 @@ function buildDeck(rows,options={}){
  // Prefer an entire compatible evolution partner; never add an isolated Basic
  // whose strength depends upon an unavailable evolution (e.g. Base Set Koffing).
  const partnerCandidates=endpointCards(pokemonPool).filter(c=>
+   c.id!=='dp6-143'&& // handled as a complete three-LV.X combo, not isolated filler
    !basicOnly&&matchesRarity(c,rarityFocus,false)&&
    familyRoot(c,evolutionPool)!==mainRoot&&familyRoot(c,evolutionPool)!=='Koffing'&&familyLine(c,evolutionPool).length===2&&canFitEnergy(c)
  ).sort((a,b)=>{
@@ -597,6 +620,43 @@ function buildDeck(rows,options={}){
  if(pokemonCount()<12){
    const support=chooseCandidate(usefulBasics);
    if(support)add(support,Math.min(2,room(support)));
+ }
+ // Legends Awakened: these Powers require physically distinct form prints
+ // in the deck. The battle engine already swaps from the actual deck; having
+ // four of the *same* Deoxys/Castform makes Form Change/Temperament dead.
+ // Do not introduce an off-type attack that the selected Energy Zone cannot pay.
+ for(const group of ['deoxys','castform']){
+   const grouped=cards.map(classic.cardById).filter(c=>c?.setId==='dp6'&&
+     (c.abilities||[]).some(a=>a.formGroup===group));
+   if(!grouped.length)continue;
+   const present=new Set(grouped.map(c=>c.id));
+   const compatible=pokemonPool.filter(c=>c.setId==='dp6'&&!present.has(c.id)&&
+     (c.abilities||[]).some(a=>a.formGroup===group)&&room(c)>0&&
+     attackTypes(c).every(t=>plannedEnergy.includes(t)));
+   // Distinct forms matter more than repeat copies; prefer the original form
+   // as an accessible return-to-baseline when it is not already selected.
+   compatible.sort((a,b)=>Number(b.number=== (group==='deoxys'?'1':'48'))-
+     Number(a.number=== (group==='deoxys'?'1':'48'))||Number(a.number)-Number(b.number));
+   for(const candidate of compatible.slice(0,2))if(cards.length<26&&pokemonCount()<16)
+     add(candidate,Math.min(present.size===1?2:1,room(candidate)),true);
+ }
+ // Ninjask's printed Cast-off Shell summons Shedinja from hand/discard as a
+ // Basic. It is wasted if the auto deck contains no Shedinja at all.
+ if(cards.includes('dp6-67')&&!cards.includes('dp6-40')){
+   const ninjaPartner=classic.cardById('dp6-40');
+   if(ninjaPartner&&pool.includes(ninjaPartner)&&pokemonCount()<17&&cards.length<27)
+     add(ninjaPartner,Math.min(2,room(ninjaPartner)),true);
+ }
+ // Supreme Blast requires BOTH Azelf LV.X and Uxie LV.X in play.  A lonely
+ // Mesprit LV.X from the ordinary partner picker has a dead signature attack.
+ // Include real prerequisite Basic + LV.X lines, never bare Level-Up cards.
+ if(cards.includes('dp6-143'))for(const partnerId of ['dp6-140','dp6-146']){
+   if(cards.includes(partnerId))continue;
+   const lv=classic.cardById(partnerId),line=lv?familyLine(lv,evolutionPool):[];
+   if(line.length===2&&line.every(member=>pool.includes(member)&&room(member)>0)&&
+      familyEssentialTypes(line).every(t=>plannedEnergy.includes(t))&&
+      cards.length+line.length<=29&&pokemonCount()+line.length<=17)
+     addLine(line,1);
  }
  // Special Energy is non-negotiable for a Darkness or Metal attacker.
  // Reserve it ahead of Trainers, otherwise the generated 30-card deck can
@@ -838,6 +898,8 @@ function buildDeck(rows,options={}){
  if(orphanFossil)return fail(`${orphanFossil.name} was included without a matching Fossil Pokémon evolution in this deck.`);
  const orphanFossilSupport=cards.map(classic.cardById).find(c=>isFossilSupport(c)&&!anyFossilEvolutionInDeck(cards));
  if(orphanFossilSupport)return fail(`${orphanFossilSupport.name} was included without a Fossil evolution line in this deck.`);
+ if(cards.includes('dp6-143')&&!['dp6-140','dp6-146'].every(id=>cards.includes(id)))
+   return fail('Mesprit LV.X Supreme Blast requires complete Azelf LV.X and Uxie LV.X lines.');
  const legal=decks.validateDraft(cards,rows,{requireFull:true});if(!legal.ok)return {ok:false,cards,energyTypes:selectedTypes,errors:legal.errors,warnings:[],strategy:''};
  const analysis=decks.analyzeDeck(cards),conditionalDual=requestedEnergy.length===2&&requestedEnergy.every(type=>conditionalAttackTypes(main).includes(type)),
   energyTypes=(main.pokemonEx&&main.stage==='Stage 2')||stage2Beneficiary||conditionalPayoffTypes.some(t=>selectedTypes.includes(t))||requestedEnergy.length===1||conditionalDual||lineEnergy.length>=2?selectedTypes.slice(0,2):(allowMixedEnergy&&requestedEnergy.length===2?requestedEnergy:neededTypes().length?analysis.recommendedEnergyTypes.slice(0,2):selectedTypes.slice(0,2));
