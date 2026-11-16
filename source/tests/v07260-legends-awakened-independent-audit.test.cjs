@@ -124,7 +124,7 @@ test('release version is consistent across Gradle, JavaScript and visible HTML',
  const root=path.resolve(__dirname,'..'),asset=path.join(root,'app/src/main/assets');
  const gradle=fs.readFileSync(path.join(root,'app/build.gradle'),'utf8');
  const version=gradle.match(/versionName '([^']+)'/)?.[1];
- assert.equal(version,'0.69.260');
+ assert.match(version,/^\d+\.\d+\.\d+$/,'valid semver-shaped release stamp');
  const html=fs.readFileSync(path.join(asset,'index.html'),'utf8');
  const app=fs.readFileSync(path.join(asset,'app-v0167.js'),'utf8');
  assert.ok(html.includes(`id="titleBuildVersion">v${version}`));

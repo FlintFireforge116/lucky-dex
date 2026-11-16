@@ -8,8 +8,8 @@ android {
         applicationId 'com.example.luckydex'
         minSdk 26
         targetSdk 35
-        versionCode 7248
-        versionName '0.69.260'
+        versionCode 7249
+        versionName '0.69.261'
     }
 
     signingConfigs {
@@ -177,4 +177,14 @@ tasks.register('prepareLegendsAwakenedForApk', Exec) {
 }
 tasks.matching { it.name == 'preBuild' || (it.name.startsWith('merge') && it.name.endsWith('Assets')) }.configureEach {
     dependsOn tasks.named('prepareLegendsAwakenedForApk')
+}
+
+// v0.69.261 Stormfront: complete offline archived print source and verified
+// outcomes are prepared before Android merges webview assets.
+tasks.register('prepareStormfrontForApk', Exec) {
+    workingDir rootProject.projectDir
+    commandLine 'sh', 'scripts/prepare-stormfront.sh'
+}
+tasks.matching { it.name == 'preBuild' || (it.name.startsWith('merge') && it.name.endsWith('Assets')) }.configureEach {
+    dependsOn tasks.named('prepareStormfrontForApk')
 }

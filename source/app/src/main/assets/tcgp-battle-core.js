@@ -575,6 +575,9 @@
     if(state.stadium){const source=ss.active||ss.bench[0];if(source){const ctx={...effectContext(state,side,{},source),eventData:meta};effects.applyPersistentEvent(data.cardById(state.stadium.cardId)?.effect,event,ctx);}}
   }
   function retreatCost(state,side){const slot=state.sides[side].active;
+    if(state.format==='classic'&&slot?.cardId==='dp7-SH1'&&!effects.abilitiesSuppressed(state,side,slot,data.cardById)&&
+       (slot.tool||(slot.extraTools||[]).length))return Number(data.cardById(slot.cardId)?.retreat||0)+2;
+
     if(state.format==='classic'&&majesticEeveeEvolution(slot)&&
        pokemonOn(state.sides[side]).some(p=>p.cardId==='dp5-32'&&!effects.abilitiesSuppressed(state,side,p,data.cardById)))return 0;
 
@@ -766,6 +769,10 @@
         if(!basicTypes.length)next.Colorless=Number(next.Colorless||0)+1;
         else {next.Crystal=Number(next.Crystal||0)+1;next.__crystalAllowed=Object.fromEntries(basicTypes.map(type=>[type,true]));}
       }else for(const [type,n] of Object.entries(miracleWind?{Colorless:1}:specialEnergyProvides(ref)))next[type]=Number(next[type]||0)+Number(n||0);
+    }
+    if(state.format==='classic'&&slot?.cardId==='dp7-103'&&!effects.abilitiesSuppressed(state,side,slot,data.cardById)){
+      const n=Object.entries(next).filter(([t])=>!t.startsWith('__')).reduce((total,[,v])=>total+Number(v||0),0);
+      return {Fire:n};
     }
     if(slot?.aquapolisIonCoatingUntil===state.turnNumber){next.Water=Number(next.Water||0)+Number(next.Lightning||0);delete next.Lightning;}
     if(slot?.cardId==='ex12-21'&&(slot.stack||[]).some(id=>data.cardById(id)?.name==='Magby')&&
@@ -1095,7 +1102,8 @@
     // Classic: normal Energy Zone attachment and once-per-turn hand Energy
     // attachment are INDEPENDENT. Hand-attached Basic and Special both count
     // toward the hand attachment; card effects can separately accelerate.
-    if(state.format==='classic'){s.hand.forEach((ref,handIndex)=>{const card=data.cardById(ref.cardId);if(!(card?.specialEnergy||card?.basicEnergy||card?.holonEnergyPokemon)||card.battleEnabled===false&& !card.basicEnergy)return;if((card?.specialEnergy||card?.holonEnergyPokemon)&&effects.isActionLocked(state,side,'SpecialEnergy',data.cardById))return;if(s.handEnergyUsed)return;const validEnergyTarget=slot=>slot&&!slot.gymEnergyLock&&(card.id!=='neo4-16'||/^(?:Light |Shining )/.test(data.cardById(slot.cardId)?.name||''));const aqValid=(slot)=>{if(!validEnergyTarget(slot))return false;const mon=data.cardById(slot.cardId),energyType=card.basicEnergy?card.subtype:card.effect?.provides&&Object.keys(card.effect.provides)[0];
+    if(state.format==='classic'&&Number(s.dp7EmperorAuraUntil||0)<Number(state.turnNumber))s.dp7EmperorAuraUntil=0;
+    if(state.format==='classic'&&Number(s.dp7EmperorAuraUntil||0)<Number(state.turnNumber)){s.hand.forEach((ref,handIndex)=>{const card=data.cardById(ref.cardId);if(!(card?.specialEnergy||card?.basicEnergy||card?.holonEnergyPokemon)||card.battleEnabled===false&& !card.basicEnergy)return;if((card?.specialEnergy||card?.holonEnergyPokemon)&&effects.isActionLocked(state,side,'SpecialEnergy',data.cardById))return;if(s.handEnergyUsed)return;const validEnergyTarget=slot=>slot&&!slot.gymEnergyLock&&(card.id!=='neo4-16'||/^(?:Light |Shining )/.test(data.cardById(slot.cardId)?.name||''));const aqValid=(slot)=>{if(!validEnergyTarget(slot))return false;const mon=data.cardById(slot.cardId),energyType=card.basicEnergy?card.subtype:card.effect?.provides&&Object.keys(card.effect.provides)[0];
        if(Number(slot?.ex5NoHandEnergyUntil||0)>=state.turnNumber)return false;
        if(slot===s.active&&Number(s.dp2EnergyHandLockUntil||0)>=state.turnNumber)return false;
        // Holon's Stage 1 Pokémon may be attached as Energy only when the
@@ -2217,6 +2225,12 @@
         if(types.length)beginEffectChoice(state,side,target,{kind:'option',side:'self',options:types.map(t=>'Return '+t+' Energy to hand'),
           effect:{type:'neoRule',rule:'skyridge:bounceEnergy',types},resume:'trainer'});
       }
+      // Stormfront's Cyclone/Warp Energy trigger ONLY on hand attachment to Active.
+      // They use the same mandatory printed switch choice as previous sets.
+      if(state.format==='classic'&&card.id==='dp7-94'&&target===s.active&&foe.bench.length)
+        beginEffectChoice(state,side,target,{kind:'switchBench',side:'opponent',selectionSide:foeSide,effect:{type:'neoRule',rule:'dp7:94:cycloneEnergy'},resume:'trainer'});
+      if(state.format==='classic'&&card.id==='dp7-95'&&target===s.active&&s.bench.length)
+        beginEffectChoice(state,side,target,{kind:'switchBench',side:'self',selectionSide:side,effect:{type:'neoRule',rule:'dp7:95:warpEnergy'},resume:'trainer'});
       if(card.id==='ecard3-143'&&target===s.active&&foe.bench.length)
         beginEffectChoice(state,side,target,{kind:'switchBench',side:'opponent',selectionSide:foeSide,
           effect:{type:'neoRule',rule:'skyridge:cycloneEnergy'},resume:'trainer'});
