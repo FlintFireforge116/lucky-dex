@@ -40,7 +40,7 @@ def read_cards():
    damage=str(x.get('damage') or '')
    if not valid:issues.append('Unverified attack: '+x['name'])
    ok &= valid
-   atk.append({'name':x['name'],'cost':''.join(T[z] for z in x.get('cost') or []),'damage':int(re.search(r'\d+',damage)[0]) if re.search(r'\d+',damage) else 0,
+   atk.append({'name':x['name'],'cost':''.join(T[z] for z in x.get('cost') or []),'damage':(0 if (num==7 and x['name']=='Crash Chant' or num==21 and x['name']=='Ramming Strike') else int(re.search(r'\d+',damage)[0]) if re.search(r'\d+',damage) else 0),
                'damageText':damage or None,'text':x.get('text') or '','effect':eff})
   abilities=[];p=c.get('abilities')or[]
   mapped=V.ABILITIES.get(num,[]);mapped=mapped if isinstance(mapped,list) else [mapped]
@@ -57,10 +57,6 @@ def read_cards():
    tr=V.TRAINERS.get(num)
    if not tr:ok=False;issues.append('Trainer effect not verified')
    elif not runnable(tr[1]):ok=False;issues.append('Trainer runtime pending')
-  if kind=='trainer' and n=='83':
-   # Energy Link must offer unlimited, target-constrained physical Energy transfers
-   # between holders of Energy Link. An attach-only/no-op Tool is not FULL.
-   ok=False;issues.append('Energy Link attached-card movement not yet implemented')
   if kind=='energy':
    if n not in V.ENERGY or not runnable(V.ENERGY[n]['onAttach']):ok=False;issues.append('Special Energy attachment trigger pending')
   if kind=='pokemon' and stage=='Level-Up' and not c.get('evolvesFrom'):

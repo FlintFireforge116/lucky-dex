@@ -140,7 +140,7 @@ ABILITIES={
 26:EVO('Evolutionary Gas',{'type':'attackCoinGate','target':'opponentActive','duration':'opponentTurn'},activeOnly=True),
 27:BODY('Protect Wing',activeOnly=True),
 29:POW('Green Renewal','triggered',SH(10),event='checkup',disabledByStatus=False),
-30:POW('Darkness Drive','triggered',R('30:darknessDrive'),event='opponentPowerUsed'),
+30:POW('Darkness Drive','triggered',R('30:darknessDrive'),event='opponentPower'),
 31:BODY('Green Dignity'),
 32:BODY('Unaware'),
 33:[BODY('Poison Enzyme'),ACT('Baby Evolution',R('33:babyEvolution'),allSpecialConditions=False)],
@@ -149,7 +149,7 @@ ABILITIES={
 47:BODY('Energy Protection'),
 48:BODY('Overeager'),
 96:POW('Ectoplasm','triggered',R('96:ectoplasm'),event='knockedOutByAttack',activeOnly=True),
-97:[BODY('Heat Metal'),POW('Heat Wave','triggered',R('97:heatWave'),event='endTurn',benchOnly=True)],
+97:[BODY('Heat Metal'),POW('Heat Wave','triggered',R('97:heatWave'),event='dp7HeatWaveManual',benchOnly=True)],
 98:BODY('No Guard',activeOnly=True),
 99:BODY('Link Lightning'),
 100:ACT('Sacrifice',R('100:sacrifice')),
@@ -158,7 +158,7 @@ ABILITIES={
 }
 TRAINERS={
  82:('Stadium',{'type':'stadiumAction','effect':R('82:conductiveQuarry')}),
- 83:('Tool',N),
+ 83:('Tool',{'type':'neoRule','rule':'dp7:83:energyLink'}),
  84:('Item',R('84:energySwitch')),
  85:('Item',{'type':'benchFromDeck','amount':1,'choose':True,'filter':{'kind':'pokemon','stage':'Basic'}}),
  86:('Item',R('86:luxuryBall')),
@@ -175,8 +175,8 @@ ENERGY={'94':{'type':'specialEnergy','provides':{'Colorless':1},'onAttach':R('94
 
 # NeoRule IDs are explicitly gated until the dp7 handler has the printed result.
 # Literal NOOP is only valid for attacks with no printed effect at all.
-RUNTIME_RULES={'94:cycloneEnergy','95:warpEnergy','2:emperorAura','3:blazeDance','4:finLuster','8:burstBall','13:cycler','25:accelerate','25:poundDown','34:darkOneEye','72:petalSpikes', '27:strongBreeze', '6:superConnectivity', '82:conductiveQuarry', '45:babyEvolution', '9:gigaPower', '1:nightSpin', '59:silhouette', '33:babyEvolution', '23:bowedWhip', '68:nightmareFeast', '44:energyMilk', 'SH2:countingSong', '31:beeDrain', '1:damageEven','1:shadowCommand','2:whirlpool','43:removalPulse', '18:shadowRoom', '35:trickRoom', '37:electroDiffusion', '69:harden', '20:takeOut', '6:gyroBall', '28:outbreakPower', '65:seaSpray', '78:ingrain', 'SH2:nightBind', '40:hoodwink', '15:derail', '55:gyroSwap', '12:snowPlay', '86:luxuryBall', '13:heavyPotential', '62:pitchDark', '26:plunder', '19:dragonBeat', '84:energySwitch', '30:spinningTail', '48:overconfident', '15:crossPoison', '70:speedBolt', '42:magneticResonance', '45:electricCircuit', '80:screech', '29:greenAcid', '36:radiance', '54:selfAbandonment', '91:premierBall', '18:poltergeist'}  # audited rules with explicit runtime dispatch
-PASSIVE_READY={9,12,14,24,25,27,31,32,33,47,98,103,'SH1'}  # tested continuous hooks
+RUNTIME_RULES={'7:crashChant','7:horrorChant','11:landShake','11:sunshineSong','16:lifting','21:rammingStrike','30:darknessDrive','48:impersonate','83:energyLink','87:marleysRequest','88:pokeBlower','89:pokeDrawer','90:pokeHealer','96:ectoplasm','97:heatWave','99:voltageShoot','100:sacrifice','94:cycloneEnergy','95:warpEnergy','2:emperorAura','3:blazeDance','4:finLuster','8:burstBall','13:cycler','25:accelerate','25:poundDown','34:darkOneEye','72:petalSpikes', '27:strongBreeze', '6:superConnectivity', '82:conductiveQuarry', '45:babyEvolution', '9:gigaPower', '1:nightSpin', '59:silhouette', '33:babyEvolution', '23:bowedWhip', '68:nightmareFeast', '44:energyMilk', 'SH2:countingSong', '31:beeDrain', '1:damageEven','1:shadowCommand','2:whirlpool','43:removalPulse', '18:shadowRoom', '35:trickRoom', '37:electroDiffusion', '69:harden', '20:takeOut', '6:gyroBall', '28:outbreakPower', '65:seaSpray', '78:ingrain', 'SH2:nightBind', '40:hoodwink', '15:derail', '55:gyroSwap', '12:snowPlay', '86:luxuryBall', '13:heavyPotential', '62:pitchDark', '26:plunder', '19:dragonBeat', '84:energySwitch', '30:spinningTail', '48:overconfident', '15:crossPoison', '70:speedBolt', '42:magneticResonance', '45:electricCircuit', '80:screech', '29:greenAcid', '36:radiance', '54:selfAbandonment', '91:premierBall', '18:poltergeist'}  # audited rules with explicit runtime dispatch
+PASSIVE_READY={9,12,14,17,24,25,27,31,32,33,47,48,97,98,99,103,'SH1'}  # tested continuous hooks
 
 # Some supported effect aliases require exact printed semantics and cannot use
 # broad generic fallbacks (e.g. targeted effects before damage vs after).

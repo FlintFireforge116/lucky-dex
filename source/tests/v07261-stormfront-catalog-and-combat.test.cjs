@@ -51,4 +51,4 @@ test('Machamp LV.X Strong-Willed installs a real next-turn conditional KO surviv
  const s=board('dp7-98');attack(s,0);assert.equal(s.sides.player.active.koGuard?.mode,'surviveCoin');assert.equal(s.sides.player.active.koGuard?.remainingHp,10);
 });
 
-test('Energy Link is correctly gated until real attached-energy transfer is implemented',()=>{const tool=storm.cardById('dp7-83');assert.equal(tool.battleEnabled,false);assert.match(tool.support.reasons.join(' '),/Energy Link/);});
+test('Energy Link is enabled only with a real repeatable Tool action, tested in the completion suite',()=>{const tool=storm.cardById('dp7-83');assert.equal(tool.battleEnabled,true);assert.equal(tool.effect.rule,'dp7:83:energyLink');assert.deepEqual(tool.support.reasons,[]);});
