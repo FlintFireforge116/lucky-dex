@@ -61,7 +61,7 @@ ATTACKS={
 33:{'Buddy-buddy':{'type':'searchChosen','source':'deck','amount':1,'filter':{'kind':'pokemon'}}},
 34:{'Dark One-eye':R('34:darkOneEye'),'Ambush':Q(B(20))},
 35:{'Confuse Ray':Q(ST('confusion')),'Trick Room':R('35:trickRoom')},
-36:{'Low Current':N,'Swift':{'type':'damageRule','ignoreWeakness':True,'ignoreResistance':True,'ignoreEffects':True}},
+36:{'Low Current':{'type':'status','target':'opponentActive','status':'paralysis','condition':{'type':'damagedByAttackLastOpponentTurn'}},'Swift':{'type':'damageRule','ignoreWeakness':True,'ignoreResistance':True,'ignoreEffects':True}},
 37:{'Flash':{'type':'attackCoinGate','target':'opponentActive','duration':'opponentTurn'},'Electro Diffusion':R('37:electroDiffusion')},
 38:{'Go and Collect':{'type':'searchChosen','source':'deck','amount':1,'filter':{'kind':'trainer'}},'Fury Cutter':{'type':'coinTierBonus','coins':3,'tiers':{'0':0,'1':10,'2':20,'3':40}}},
 39:{'Tail Shake':ST('sleep'),'Slam':COINS(2,60)},

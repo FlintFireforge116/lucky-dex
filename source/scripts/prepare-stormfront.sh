@@ -3,4 +3,4 @@
 set -eu
 cd "$(dirname "$0")/.."
 python3 scripts/build-stormfront.py
-node --test tests/v07261-stormfront-catalog-and-combat.test.cjs tests/v07262-stormfront-completion.test.cjs
+node --test tests/v07261-stormfront-catalog-and-combat.test.cjs tests/v07262-stormfront-completion.test.cjs tests/v07263-stormfront-independent-audit.test.cjs
