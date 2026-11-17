@@ -452,6 +452,40 @@
         const chosen=legal.find(a=>a.type==='effectChoice'&&a.choiceOption===wanted);
         if(chosen)return chosen;
       }
+      // Platinum Stage 2: finish beneficial optional attacks/Powers with actual
+      // legal choices. This logic uses only our own hand/deck/discard and the
+      // publicly visible board; no opposing concealed cards are inspected.
+      if(pending.originSide===side&&rule.startsWith('pl1:')){
+        const actions=legal.filter(a=>a.type==='effectChoice'&&!a.choiceSkip),
+          key=rule.slice(4),stage=String(pending.effect?.stage||''),us=state.sides[side];
+        const pick=(fn)=>actions.find(fn)||actions[0];
+        const slot=a=>a.choiceTarget==='active'?us.active:(us.bench||[]).find(p=>p.benchSlot===a.choiceBenchIndex);
+        const severity=p=>Number(p?.damage||0)+(p?.conditions?.poison?15:0)+(p?.conditions?.burn?15:0);
+        if(key==='lookers'&&pending.kind==='option'){
+          if(stage==='who'){
+            // Refill our depleted hand, or disrupt a larger enemy hand.
+            const ours=(us.hand||[]).length,theirs=state.sides[foeOf(side)]?.hand?.length||0;
+            return pick(a=>a.choiceOption===(ours<=2?0:theirs>=5?1:0));
+          }
+          if(stage==='draw'){
+            const recipient=state.sides[pending.effect?.affectedSide]||us,
+              count=Math.min(5,Math.max(0,(recipient.deck||[]).length+(recipient.hand||[]).length));
+            return pick(a=>a.choiceOption===count);
+          }
+        }
+        if(key==='nurseCall'&&stage==='healing'&&pending.kind==='pokemon'){
+          actions.sort((a,b)=>severity(slot(b))-severity(slot(a)));
+          if(actions.length)return actions[0];
+        }
+        if(key==='lifeHerb'&&pending.kind==='pokemon'){
+          actions.sort((a,b)=>severity(slot(b))-severity(slot(a)));
+          if(actions.length)return actions[0];
+        }
+        if(key==='reheat'&&pending.kind==='handCard'){
+          if((us.deck||[]).length>=2&&actions.length)return actions[0];
+        }
+        if(['ascension','energyStream','flashBite','hospitality'].includes(key)&&actions.length)return actions[0];
+      }
       // Platinum's printed "search for up to N Basic Pokémon and put them on
       // your Bench" attacks are optional. As with Blissey ex Energy
       // Absorption, a CPU should not immediately skip a beneficial choice.

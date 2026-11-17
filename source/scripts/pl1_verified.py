@@ -165,3 +165,75 @@ ATTACKS['43']['Vine Extract']=S(
 for number,name in [('12','Splashing Turn'),('51','Teleportation Burst'),('61','Bite and Escape'),('97','Run Around')]:
  ATTACKS[number][name]=O(SWITCH(),'Switch with one of your Benched Pokémon')
 ATTACKS['46']['Knock Over']=O({'type':'discardStadium'},'Discard the Stadium in play')
+
+
+# Stage 2: audited reuse of existing mechanics, including physical hand costs,
+# genuine deck choices, and Stadium triggers implemented in battle core.
+# No new attack becomes eligible merely because it has a damage number.
+def RULE(name, **props): return {'type':'neoRule','rule':'pl1:'+name,**props}
+
+ATTACKS['10']['Dark Wing Flaps']={'type':'shuffleRandomHandCard','side':'opponent'}
+ATTACKS['15']['Growth']={'type':'attachEnergy','target':'self','source':'hand','energyType':'Grass','amount':1}
+ATTACKS['39']['Green Blast']={'type':'energyDamage','source':'self','all':True,'energyType':'Grass','amount':10}
+ATTACKS['55']['Upper Hand']={'type':'chooseAttackLock','target':'opponentActive','duration':'opponentTurn'}
+ATTACKS['44']['Ascension']=RULE('ascension')
+ATTACKS['63']['Ascension']=RULE('ascension')
+ATTACKS['81']={'Energy Ball':{'type':'energyDamage','source':'self','amount':10,'extraAbove':1,'maxCount':2},'Synthesis':Q({'type':'neoRule','rule':'dp1:49:synthesis'})}
+ATTACKS['87']['Headache']=Q(S({'type':'actionLock','cardType':'Trainer','duration':'opponentTurn'},{'type':'actionLock','cardType':'Supporter','duration':'opponentTurn'},{'type':'actionLock','cardType':'Stadium','duration':'opponentTurn'}))
+ATTACKS['88']['Chip Off']={'type':'trimHand','side':'opponent','maxSize':5}
+ATTACKS['92']['Fade Out']=S({'type':'attackRequirement','condition':{'type':'benchAtLeast','amount':1}}, {'type':'returnToHand','target':'self'})
+ATTACKS['102']={'Reheat':RULE('reheat'),'Confuse Ray':Q(ST('confusion'))}
+ATTACKS['SH6']['Inflame']=RULE('inflame')
+ATTACKS['67']={'Sneaky Attack':B(10,{'type':'selfHasEnergyType','energyType':'Darkness'}),'Shoot Needle':RULE('shootNeedle')}
+ATTACKS['30']={'Wriggle':RULE('wriggle'),'Dwindling Wave':{'type':'selfDamagePenalty','amount':1}}
+ATTACKS['41']={'Psychic Pulse':{'type':'benchDamage','side':'opponent','amount':10,'all':True,'filter':{'damaged':True}}}
+ATTACKS['50']={'Black Cry':S(LOCK('retreat'), {'type':'actionLock','cardType':'Poké-Power','duration':'opponentTurn'}), 'Dark Slash':RULE('darkSlash')}
+ATTACKS['51']['Teleportation Burst']=O(SWITCH(),'Switch Kirlia with your Benched Pokémon')
+ATTACKS['83']['Take Back']=Q(SEARCH('discard',1,kind='trainer'))
+ATTACKS['89']={'Future Sight':RULE('futureSight'),'Hypnoblast':Q(ST('sleep'))}
+# Energy Stream must offer the exact discarded Basic Energy choice after heads.
+ATTACKS['23']['Energy Stream']=Q(RULE('energyStream'))
+# Fade Out returns every attached card, including generated physical Basic Energy.
+ATTACKS['92']['Fade Out']=S({'type':'attackRequirement','condition':{'type':'benchAtLeast','amount':1}},
+                                  {'type':'returnToHand','target':'self','returnBasicEnergy':True})
+ATTACKS['47']={'Toxic Fang':{'type':'status','target':'opponentActive','status':'poison','amount':20}}
+ATTACKS['76']={'Hospitality':RULE('hospitality')}
+ATTACKS['94']={'Smokescreen':{'type':'attackCoinGate','target':'opponentActive','duration':'opponentTurn'}}
+ATTACKS['99']['Focus Energy']={'type':'nextAttackBonus','attackName':'Fire Shard','amount':60}
+ATTACKS['100']['Flame Ball']=MOVE()
+
+ATTACKS['6']={'Metal Burn':RULE('metalBurn')}
+ABILITIES.update({
+ '6':[P('Time Aura',N,kind='passive',activeOnly=True)],
+ '20':[P('Metal Trait',N,kind='passive')],
+ '22':[P('Nurse Call',RULE('nurseCall'),oncePerTurn=True,allSpecialConditions=True)],
+ '24':[P('Sinkhole',N,kind='passive')],
+})
+
+ABILITIES.update({
+ '3':[P('Fire Breath',ST('burn'),oncePerTurn=True,allSpecialConditions=True)],
+ '40':[P('Anticipation',{'type':'preventEffects','duration':'whileInPlay','target':'self'},kind='passive')],
+ '47':[P('Flash Bite',RULE('flashBite'),kind='triggered',event='benched',fromHandOnly=True)],
+ '66':[P('Thick Skin',{'type':'preventStatus','duration':'whileInPlay','scope':'self'},kind='passive')],
+ '76':[P('Baby Evolution',{'type':'neoRule','rule':'dp1:babyEvolve','targetName':'Chansey'},oncePerTurn=True,allSpecialConditions=True)],
+ '94':[P('Poison Structure',RULE('poisonStructure'),oncePerTurn=True,allSpecialConditions=True)],
+ 'SH4':[P('Swift Swim',{'type':'modifier','stat':'retreatCost','amount':-1,'duration':'whileInPlay','scope':'self','condition':{'type':'selfHasEnergyType','energyType':'Water'}},kind='passive')],
+})
+TRAINERS.update({
+ '104':('Stadium',{'type':'evolutionTimingOverride','firstTurn':True,'sameTurn':True}),
+ '105':('Supporter',RULE('cyrus')),
+ '106':('Stadium',RULE('galacticHQ')),
+ '108':('Item',RULE('lifeHerb')),
+ '109':('Supporter',RULE('lookers')),
+ '110':('Tool',{'type':'previousEvolutionAttacks'}),
+ '111':('Stadium',RULE('miasmaValley')),
+ '112':('AttachedTrainer',{'type':'modifier','stat':'postWeaknessAttackDamage','amount':10,'duration':'whileInPlay','scope':'self'}),
+ '114':('Item',{'type':'neoRule','rule':'dp1:111:handy910is'}),
+})
+# Miracle denotes ONE energy that can satisfy any named cost; listing each type
+# would incorrectly create eight simultaneous Energy units.
+ENERGY['121']={'type':'specialEnergy','provides':{'Miracle':1}}
+
+# These exact rule names have dedicated, verified runtime cases below.
+PL1_RULES={'ascension','reheat','energyStream','metalBurn','nurseCall','hospitality','flashBite','poisonStructure','galacticHQ','lifeHerb','lookers','miasmaValley'}
+REUSED_RULES={'dp1:49:synthesis','dp1:babyEvolve','dp1:111:handy910is'}

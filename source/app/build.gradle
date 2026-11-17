@@ -9,7 +9,7 @@ android {
         minSdk 26
         targetSdk 35
         versionCode 7251
-        versionName '0.69.263'
+        versionName '0.69.264'
     }
 
     signingConfigs {

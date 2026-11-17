@@ -18,8 +18,8 @@ def supported(e):
  if kind=='sequence':return all(supported(x) for x in e.get('effects',[]))
  if kind=='coinFlip':return any(k in e for k in ('heads','tails')) and all(supported(e[k]) for k in ('heads','tails') if k in e)
  if kind=='chooseOption':return all(supported(x.get('effect')) for x in e.get('options',[]))
- if kind=='neoRule':return False  # no unimplemented Platinum rule keys
- return kind in {'noop','bonusDamage','status','heal','draw','sequence','coinFlip','coinDamage','selfDamage','discardEnergyCard','lock','modifier','preventDamage','benchDamage','selectedDamage','benchCountDamage','damageFromDamage','energyDamage','energyTypeCountDamage','discardCountDamage','fieldCountDamage','moveEnergy','drawToHandSize','attackCoinGate','coinAttackGate','searchChosen','attachEnergy','attachRandomEnergyFromDiscard','multiTargetDamage','discardHand','actionLock','removeStatus','removeStatuses','discardStadium','benchFromDeck','evolveFromDeck','koGuard','forceOpponentSwitch','switch','retaliateDamage','nextAttackBonus'}
+ if kind=='neoRule':return e.get('rule') in ({'pl1:'+r for r in V.PL1_RULES}|V.REUSED_RULES)
+ return kind in {'noop','bonusDamage','status','heal','draw','sequence','coinFlip','coinDamage','selfDamage','discardEnergyCard','lock','modifier','preventDamage','benchDamage','selectedDamage','benchCountDamage','damageFromDamage','energyDamage','energyTypeCountDamage','discardCountDamage','fieldCountDamage','moveEnergy','drawToHandSize','attackCoinGate','coinAttackGate','searchChosen','attachEnergy','attachRandomEnergyFromDiscard','multiTargetDamage','discardHand','actionLock','removeStatus','removeStatuses','discardStadium','benchFromDeck','evolveFromDeck','koGuard','forceOpponentSwitch','switch','retaliateDamage','nextAttackBonus','shuffleRandomHandCard','trimHand','returnToHand','attackRequirement','chooseAttackLock','preventEffects','preventStatus','previousEvolutionAttacks','evolutionTimingOverride','selfDamagePenalty','neoRule'}
 def read():
  if not SRC.exists():raise SystemExit('Missing official data/classic/pl1-print-source.json — run sh scripts/prepare-platinum.sh')
  records=json.loads(SRC.read_text('utf8'))
@@ -54,7 +54,7 @@ def read():
   if kind=='energy' and n not in V.ENERGY:problems.append('Special Energy attachment behaviour not verified')
   # Fossils should never be autobuilt when no playable Fossil evolutions exist.
   if kind=='trainer' and n in ('119','120'):problems.append('Fossil play-as-Pokémon and its evolved line not audited')
-  if kind=='pokemon' and stage=='Level-Up' and not c.get('evolvesFrom'):problems.append('Missing LV.X prerequisite')
+  if kind=='pokemon' and stage=='Level-Up' and not c['name'].endswith(' LV.X'):problems.append('Missing LV.X prerequisite')
   active=not problems
   card={'id':'pl1-'+n,'setId':'pl1','number':n,'name':c['name'],'source':'tcg','battleFormat':'classic',
     'kind':kind,'rarity':c.get('rarity') or '', 'image':f'https://images.pokemontcg.io/pl1/{n}.png',
@@ -66,20 +66,21 @@ def read():
    colors=[t for t,v in SYMBOL.items() if v in required]
    raw=' '.join([a.get('text') or '' for a in c.get('attacks') or []]+[p.get('text') or '' for p in c.get('abilities') or []]).lower()
    roles=[role for role,term in [('draw','draw'),('search','search'),('status','asleep'),('heal','remove'),('control','retreat'),('ramp','attach')] if term in raw]
-   is_sp=bool(re.search(r'\b[GLE]$',c['name']))
+   is_sp='SP' in (c.get('subtypes') or [])
    card.update({'stage':stage,'hp':int(c.get('hp') or 0),'types':c.get('types') or ['Colorless'],
-       'subtype':(c.get('types') or ['Colorless'])[0], 'evolvesFrom':c.get('evolvesFrom'),
+       'subtype':(c.get('types') or ['Colorless'])[0], 'evolvesFrom':c.get('evolvesFrom') or (c['name'].removesuffix(' LV.X') if stage=='Level-Up' else None),
        'retreat':c.get('convertedRetreatCost') or 0,
        'weakness':weakness.get('type'),'weaknessValue':weakness.get('value'),'weaknesses':[weakness] if weakness else [],
        'resistance':resistance.get('type'),'resistanceValue':resistance.get('value'),'resistances':[resistance] if resistance else [],
        'attacks':attacks,'abilities':powers,'isLevelX':stage=='Level-Up',
        'isPokemonSP':is_sp,'tags':['pokemon-sp'] if is_sp else [],
-       'levelUpFrom':c.get('evolvesFrom') if stage=='Level-Up' else None,
+       'levelUpFrom':c['name'].removesuffix(' LV.X') if stage=='Level-Up' else None,
        'deckMeta':{'roles':roles,'synergy':roles,'energyTypes':colors,'preferredEnergyTypes':colors,
                    'preferredPartners':[],'inflicts':[],'payoffs':[]}})
   elif kind=='trainer':
    fallback={'type':'noop'}
    card.update({'trainerType':V.TRAINERS.get(n,(stage,fallback))[0],
+     **({'expires':'endOwnTurn'} if n=='112' else {}),
      'text':'\n'.join(c.get('rules') or []),'effect':V.TRAINERS.get(n,(stage,fallback))[1]})
   else:card.update({'specialEnergy':True,'text':'\n'.join(c.get('rules') or []),
     'effect':V.ENERGY.get(n,{'type':'noop'})})

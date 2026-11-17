@@ -343,6 +343,11 @@
     const s=state.sides[side],actions=[];
     const canEvolveTarget=(slot,evo,target)=>{
       if(!slot||state.format==='classic'&&Number(slot.neoDestinyEvolutionLockUntil||0)>=state.turnNumber)return false;
+      // Dialga's Time Aura only locks evolutions played from hand onto the
+      // opposing Active. It must not block Bench evolution or LV.X level-ups.
+      const foeSide=side==='player'?'opponent':'player',dialga=state.sides[foeSide]?.active;
+      if(target==='active'&&state.format==='classic'&&!evo.isLevelX&&dialga?.cardId==='pl1-6'&&
+         !effects.abilitiesSuppressed(state,foeSide,dialga,data.cardById))return false;
       const base=data.cardById(slot.cardId),asName=effects.evolutionRule(state,side,slot,'evolutionAsName',data.cardById),timing=effects.evolutionRule(state,side,slot,'evolutionTimingOverride',data.cardById);
       // LV.X is a LEVEL UP of an Active previous-level Pokémon, not Stage 3
       // or a Bench evolution. Never stack an LV.X onto another LV.X.
@@ -350,7 +355,8 @@
       const evolvesName=asName?.name||base?.name;if((state.format==='classic'?!classicEvolutionMatches(evolvesName,evo.evolvesFrom):evolvesName!==evo.evolvesFrom))return false;
       const firstTurn=s.turnCount<=1,sameTurn=Number(slot.playedOnSideTurn)>=Number(s.turnCount);
       const giovanniBonus=state.format==='classic'&&Number(s.gym2GiovanniEvolutionTurn)===Number(state.turnNumber)&&base?.name?.startsWith("Giovanni's")&&evo.name?.startsWith("Giovanni's");
-      if(firstTurn&&!timing?.firstTurn&&!giovanniBonus)return false;if(sameTurn&&!timing?.sameTurn&&!giovanniBonus)return false;
+      const timeSpace=state.format==='classic'&&state.stadium?.cardId==='pl1-104'&&!evo.isLevelX;
+      if(firstTurn&&!timing?.firstTurn&&!giovanniBonus&&!timeSpace)return false;if(sameTurn&&!timing?.sameTurn&&!giovanniBonus&&!timeSpace)return false;
       return true;
     };
     s.hand.forEach((ref,handIndex)=>{
@@ -530,6 +536,21 @@
   }
   function triggerAbilities(state,event,side,onlySource,eventData){
     const ss=state.sides[side],meta=eventData||{};
+    // Platinum Stadiums are continuous, symmetrical entry triggers, not
+    // effects that fire only when the Stadium is initially played.
+    if(state.format==='classic'&&onlySource&&meta.fromHand){
+      if(event==='evolved'&&state.stadium?.cardId==='pl1-106'){
+        onlySource.damage=Number(onlySource.damage||0)+20;
+        state.log.push({type:'stadiumDamage',side,cardId:onlySource.cardId,stadium:'pl1-106',amount:20});
+      }
+      if(event==='benched'&&state.stadium?.cardId==='pl1-111'){
+        const card=data.cardById(onlySource.cardId);
+        if(card?.stage==='Basic'&&!card.types?.includes('Grass')&&!card.types?.includes('Psychic')){
+          onlySource.damage=Number(onlySource.damage||0)+20;
+          state.log.push({type:'stadiumDamage',side,cardId:onlySource.cardId,stadium:'pl1-111',amount:20});
+        }
+      }
+    }
     // Record real from-hand attachments for printed same-turn attack conditions.
     // Energy Zone attachments deliberately do not count as from-hand events.
     if(event==='energyAttached'&&onlySource&&meta.fromHand){onlySource.lastHandEnergyType=meta.energyType;onlySource.lastHandEnergyAttachedTurn=state.turnNumber;}
@@ -1041,7 +1062,11 @@
         if(s.turnCount<=1)return;
         const stage2Refs=s.hand.map((candidate,evolutionHandIndex)=>({candidate,evolutionHandIndex,card:data.cardById(candidate.cardId)})).filter(x=>x.evolutionHandIndex!==handIndex&&x.card?.battleEnabled&&x.card.kind==='pokemon'&&x.card.stage==='Stage 2');
         const targets=[];if(s.active)targets.push({target:'active',slot:s.active});for(const slot of s.bench)if(slot)targets.push({target:'bench',benchIndex:Number(slot.benchSlot),slot});
-        for(const evo of stage2Refs)for(const target of targets){const basic=data.cardById(target.slot.cardId);if(target.slot.playedOnSideTurn<s.turnCount&&rareCandyMatches(evo.card,basic))actions.push({...base,target:target.target,benchIndex:target.benchIndex,evolutionCardId:evo.card.id});}
+        for(const evo of stage2Refs)for(const target of targets){const basic=data.cardById(target.slot.cardId);
+          const opposingActive=state.sides[side==='player'?'opponent':'player']?.active;
+          if(target.target==='active'&&state.format==='classic'&&opposingActive?.cardId==='pl1-6'&&
+             !effects.abilitiesSuppressed(state,side==='player'?'opponent':'player',opposingActive,data.cardById))continue;
+          if(target.slot.playedOnSideTurn<s.turnCount&&rareCandyMatches(evo.card,basic))actions.push({...base,target:target.target,benchIndex:target.benchIndex,evolutionCardId:evo.card.id});} 
         return;
       }
       if(state.format==='classic'&&state.stadium?.cardId==='gym1-103'&&['Energy Removal','Super Energy Removal'].includes(card.name)&&s.hand.length<3)return;
@@ -1265,6 +1290,8 @@
           };
           if(!s.deck.some(eligible))return;
         }
+        // Nurse Call is once per player turn across ALL Blissey copies.
+        if(ability.name==='Nurse Call'&&(s.pl1NurseCallUsedTurn===s.turnCount||!s.hand.length))return;
         const used=(s.abilityUsed||{})[source.uid+':'+abilityIndex];if(ability.oncePerTurn!==false&&used===s.turnCount)return;
         if(ability.lentalSharedOnce==='scavenge'&&s.lentalScavengeUsedTurn===s.turnCount)return;
         const base={type:'ability',cardId:source.cardId,abilityIndex,target:source===s.active?'active':'bench'};if(source!==s.active)base.benchIndex=Number(source.benchSlot);
@@ -1351,6 +1378,14 @@
   }
 
   function checkup(state){
+    // Bastiodon's Poké-Body works on Bench as well as Active, once between
+    // turns while it holds a Pokémon Tool. Suppressed Bodies do not heal.
+    if(state.format==='classic')for(const side of ['player','opponent'])for(const slot of pokemonOn(state.sides[side])){
+      if(slot.cardId!=='pl1-20'||!toolsOf(slot).length||effects.abilitiesSuppressed(state,side,slot,data.cardById)||
+         effects.healingIsBlocked(state,slot,data.cardById))continue;
+      const before=Number(slot.damage||0);slot.damage=Math.max(0,before-10);
+      if(before!==slot.damage)state.log.push({type:'platinumMetalTrait',side,cardId:slot.cardId,healed:before-slot.damage});
+    }
     if(state.format==='classic')ex9MiloticScaleCleanup(state);
     if(state.format==='classic')for(const side of ['player','opponent'])for(const slot of pokemonOn(state.sides[side]))for(const ref of [...toolsOf(slot)]){
       const lum=ref.cardId==='ex9-78',oran=ref.cardId==='ex9-80',sitrus=ref.cardId==='ex10-91';
@@ -2154,7 +2189,7 @@
         const otherSide=side==='player'?'opponent':'player';if(Number(state.sides[side].dp7LandShakeUntil||0)>=Number(state.turnNumber)){placed.damage=Number(placed.damage||0)+20;state.log.push({type:'dp7LandShake',side,amount:20,cardId:placed.cardId});}
       }
       triggerAbilities(state,'benched',side,placed,{fromHand:true});triggerAbilities(state,'opponentBenched',foeSide,null,{target:placed,fromHand:true,sourceSide:side});if(state.format==='classic')triggerAbilities(state,'opponentBenched',side,null,{target:placed,fromHand:true,sourceSide:side});
-      if(['SNAPFLORIO-106','ex4-83'].includes(state.stadium?.cardId))resolveKnockOut(state,null);
+      if(['SNAPFLORIO-106','ex4-83','pl1-111'].includes(state.stadium?.cardId))resolveKnockOut(state,null);
       if(state.format==='classic'&&ref.cardId==='ex8-102'&&state.phase==='battle'){
         beginEffectChoice(state,side,placed,{kind:'option',side:'self',options:['Do not move basic Energy','Move basic Energy to Rayquaza ex'],
           effect:{type:'neoRule',rule:'ex8:power:102',rayUid:placed.uid,step:'offer'},resume:'trainer'});
@@ -2208,6 +2243,7 @@
     if (matched.type === 'ability'){
       const source=slotForTarget(s,matched.target,matched.benchIndex),ability=abilitiesFor(data.cardById(source.cardId),source)[matched.abilityIndex||0];
       s.abilityUsed=s.abilityUsed||{};if(ability.oncePerTurn!==false)s.abilityUsed[source.uid+':'+(matched.abilityIndex||0)]=s.turnCount;
+      if(ability.name==='Nurse Call')s.pl1NurseCallUsedTurn=s.turnCount;
       if(source.cardId==='ex5-16')s.ex5HealDanceUsedTurn=state.turnNumber;
       if(['ex5-23','ex5-25','ex5-26','ex5-30'].includes(source.cardId))s.ex5TemperamentalWeatherTurn=s.turnCount;
       if(ability.lentalSharedOnce==='scavenge')s.lentalScavengeUsedTurn=s.turnCount;
@@ -2274,7 +2310,7 @@
           effect:{type:'neoRule',rule:'skyridge:cycloneEnergy'},resume:'trainer'});
       if(card.id==='ecard3-144')beginEffectChoice(state,side,target,{kind:'option',side:'self',options:['Keep this Evolution','Heal 20 and devolve'],
         effect:{type:'neoRule',rule:'skyridge:retroEnergy'},resume:'trainer'});
-      if(['ecard2-144','ex1-95','ex12-81'].includes(card.id)){target.damage=Number(target.damage||0)+10;}
+      if(['ecard2-144','ex1-95','ex12-81','pl1-121'].includes(card.id)){target.damage=Number(target.damage||0)+10;}
       if(card.id==='ecard2-147'&&target===s.active&&s.bench.length){
         // Warp Energy is an attachment-triggered, mandatory Bench choice.
         // The regular switch effect expects a preselected index and silently
@@ -2398,8 +2434,16 @@
         if(source){outgoing.damage=Number(outgoing.damage||0)+30;foe.ex16MetalGravityUsedTurn=state.turnNumber;
           state.log.push({type:'ex16MetalGravity',side:side==='player'?'opponent':'player',targetUid:outgoing.uid,damage:30});resolveKnockOut(state,null,'effect');}
       }
+      // Dugtrio Sinkhole is placed on the POKÉMON THAT RETREATED, which is
+      // now on the Bench; each unsuppressed opposing Dugtrio contributes 20.
+      if(state.format==='classic')for(const source of pokemonOn(foe))if(source.cardId==='pl1-24'&&
+         !effects.abilitiesSuppressed(state,side==='player'?'opponent':'player',source,data.cardById)){
+        outgoing.damage=Number(outgoing.damage||0)+20;
+        state.log.push({type:'platinumSinkhole',side:side==='player'?'opponent':'player',targetUid:outgoing.uid,amount:20});
+      }
       s.retreated = true;
-      state.log.push({type:'retreat',side,cardId:outgoing.cardId,toCardId:incoming.cardId,benchIndex:physical,spentEnergy,spentSpecialEnergy:paid.discardSpecial.length});const foeSide=side==='player'?'opponent':'player',retaliator=state.sides[foeSide].active;if(retaliator?.retreatRetaliation&&(retaliator.retreatRetaliation.expiresTurn==null||state.turnNumber<=retaliator.retreatRetaliation.expiresTurn)){s.active.damage=Number(s.active.damage||0)+Number(retaliator.retreatRetaliation.amount||0);state.log.push({type:'retreatRetaliation',side:foeSide,amount:Number(retaliator.retreatRetaliation.amount||0)});resolveKnockOut(state,null);}return state;
+      state.log.push({type:'retreat',side,cardId:outgoing.cardId,toCardId:incoming.cardId,benchIndex:physical,spentEnergy,spentSpecialEnergy:paid.discardSpecial.length});const foeSide=side==='player'?'opponent':'player',retaliator=state.sides[foeSide].active;if(retaliator?.retreatRetaliation&&(retaliator.retreatRetaliation.expiresTurn==null||state.turnNumber<=retaliator.retreatRetaliation.expiresTurn)){s.active.damage=Number(s.active.damage||0)+Number(retaliator.retreatRetaliation.amount||0);state.log.push({type:'retreatRetaliation',side:foeSide,amount:Number(retaliator.retreatRetaliation.amount||0)});resolveKnockOut(state,null);}
+      if(state.format==='classic'&&foe&&pokemonOn(foe).some(p=>p.cardId==='pl1-24'))resolveKnockOut(state,null,'effect');return state;
     }
     if (matched.type === 'attack'){
       if(state.format==='classic'&&state.stadium?.cardId==='SNAPFOUNJA-082'&&foe.active&&data.cardById(foe.active.cardId)?.types?.some(t=>t==='Water'||t==='Fighting')){const results=[random(state)<.5,random(state)<.5];state.log.push({type:'coin',side,reason:'Muddy Pond',heads:results.filter(Boolean).length,results});if(results.every(x=>!x)){state.log.push({type:'attackFailed',side,reason:'Muddy Pond'});endTurn(state);return state;}}
