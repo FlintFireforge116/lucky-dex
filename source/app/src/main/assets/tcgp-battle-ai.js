@@ -452,6 +452,29 @@
         const chosen=legal.find(a=>a.type==='effectChoice'&&a.choiceOption===wanted);
         if(chosen)return chosen;
       }
+      // Platinum's printed "search for up to N Basic Pokémon and put them on
+      // your Bench" attacks are optional. As with Blissey ex Energy
+      // Absorption, a CPU should not immediately skip a beneficial choice.
+      // Inspect only its own deck and public Bench; no opponent hidden data.
+      if(pending.originSide===side&&pending.kind==='deckCard'&&
+         pending.effect?.type==='benchFromDeck'&&pending.effect?.choose&&
+         ['pl1-17','pl1-73','pl1-75','pl1-86'].includes(state.sides[side]?.active?.cardId)&&
+         (state.sides[side]?.bench||[]).filter(Boolean).length<Number(state.sides[side]?.benchLimit||3)){
+        const available=legal.filter(a=>a.type==='effectChoice'&&!a.choiceSkip&&Number.isInteger(a.choiceDeckIndex));
+        if(available.length){
+          const pool=state.sides[side].deck||[];
+          available.sort((a,b)=>{
+            const rating=action=>{
+              const card=data.cardById(pool[action.choiceDeckIndex]?.cardId);
+              const wanted=state.sides[side]?.energyType||'Colorless';
+              const preferred=card?.deckMeta?.preferredEnergyTypes||[];
+              return (preferred.includes(wanted)?100:0)+Number(card?.hp||0)/10+(card?.attacks||[]).length;
+            };
+            return rating(b)-rating(a);
+          });
+          return available[0];
+        }
+      }
       // EX Unseen Forces makes many beneficial effects optional. Choosing
       // Skip by default wasted Potions, Fire Dance, Jolteon's Energy ramp,
       // Lanturn's discard recovery, Onix's retrieval and Unown Q's Energy
@@ -465,7 +488,11 @@
         'ex10:Q:0':['option'],
         'ex10:W:0':['option'],
         'ex10:71:0':['deckCard'],
-        'ex10:46:0':['deckCard']
+        'ex10:46:0':['deckCard'],
+        // Blissey ex Energy Absorption can recover up to three Energy after
+        // attacking. Never auto-skip its optional recovery menu when live
+        // discarded Energy are selectable.
+        'ex10:101:0':['option']
       };
       if(pending.originSide===side&&helpfulEx10[rule]?.includes(pending.kind)){
         const available=legal.filter(a=>a.type==='effectChoice'&&!a.choiceSkip);

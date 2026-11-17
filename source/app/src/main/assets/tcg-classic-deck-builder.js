@@ -27,7 +27,7 @@ const STAPLES=Object.freeze([
  ['base1-83',1], // Maintenance
  ['base1-87',1]  // Pokedex
 ]);
-const SET_IDS=Object.freeze(['base1','base2','base3','base5','gym1','gym2','neo1','neo2','neo3','neo4','base6','ecard1','ecard2','ecard3','ex1','ex2','ex3','ex4','ex5','ex6','ex7','ex8','ex9','ex10','ex11','ex12','ex13','ex14','ex15','ex16','dp1','dp2','dp3','dp4','dp5','dp6','dp7','SNAPFLORIO','SNAPFOUNJA','sv1']);
+const SET_IDS=Object.freeze(['base1','base2','base3','base5','gym1','gym2','neo1','neo2','neo3','neo4','base6','ecard1','ecard2','ecard3','ex1','ex2','ex3','ex4','ex5','ex6','ex7','ex8','ex9','ex10','ex11','ex12','ex13','ex14','ex15','ex16','dp1','dp2','dp3','dp4','dp5','dp6','dp7','pl1','SNAPFLORIO','SNAPFOUNJA','sv1']);
 // Darkness and Metal are already Basic Energy types. Deduplicate before rendering
 // archetype chips so each energy type has exactly one toggle.
 const ARCHETYPE_TYPES=Object.freeze([...new Set([...decks.ENERGY_TYPES,'Colorless'])]);
@@ -388,28 +388,7 @@ function buildDeck(rows,options={}){
  if(!selectedTypes.length){const ownType=requestedEnergy[0]||(main.deckMeta?.preferredEnergyTypes||[]).find(t=>decks.ENERGY_TYPES.includes(t))||(main.types||[]).find(t=>decks.ENERGY_TYPES.includes(t));if(ownType)selectedTypes.push(ownType);}
  if(!selectedTypes.length)selectedTypes.push('Fighting');
  const cards=[],counts=new Map();
- // Stormfront's compact 30-card decks must not be padded with Trainers that
- // have no valid partner or with redundant copies of once-per-discard search.
- // Existing player-authored draft copies are preserved rather than modified.
- const stormfrontSupportLimit=Object.freeze({
-  'dp7-83':2, // Energy Link must come as a functional PAIR of Pokémon Tools
-  'dp7-84':2, 'dp7-85':3, 'dp7-86':1, // only one Luxury Ball can ordinarily be used from a live discard
-  'dp7-87':1, 'dp7-88':2, 'dp7-89':4, 'dp7-90':2,
-  'dp7-91':2, 'dp7-92':2, 'dp7-93':2
- });
- const stormfrontCap=card=>Math.max(stormfrontSupportLimit[card?.id]||4,existing.filter(id=>id===card?.id).length);
  function trainerIsUseful(card){
-   if(stormfrontSupportLimit[card?.id] && (counts.get(card.id)||0)>=stormfrontCap(card))return false;
-   // Premier Ball ONLY searches Pokémon LV.X. Merely having an owned LV.X
-   // outside the actual finished deck does not make this Trainer playable.
-   if(card?.id==='dp7-91'&&!cards.some(id=>classic.cardById(id)?.stage==='Level-Up'))return false;
-   // Energy Link can move Energy only between TWO Tool-bearing Pokémon;
-   // a single Link is strictly a dead card. Reserve the pair atomically.
-   if(card?.id==='dp7-83'){
-     if(cards.filter(id=>classic.cardById(id)?.kind==='pokemon').length<2)return false;
-     if(!(counts.get(card.id)||0)&&(!existing.includes(card.id))&&
-        (cards.length>28||room(card)<2))return false;
-   }
    // Never draw Fossils from the general Trainer pool without a matching
    // evolution already in the actual 30-card deck (not merely owned).
    if(isEvolutionFossil(card)&&!fossilEvolutionInDeck(card,cards))return false;
@@ -457,15 +436,7 @@ function buildDeck(rows,options={}){
    const names=babyEvolutionTargets(card);
    return !names.length||cards.some(id=>names.includes(classicCardName(classic.cardById(id)?.name)));
  }
- function add(card,n=1,fromEvolutionLine=false){
-   // Do not create an orphan Energy Link at the end of a 30-card build.
-   if(card?.id==='dp7-83'&&!fromEvolutionLine&&!(counts.get(card.id)||0)&&
-      !existing.includes(card.id)){
-     if(cards.length>28||room(card)<2)return 0;
-     n=Math.max(2,n);
-   }
-   if(!fromEvolutionLine&&isEvolutionFossil(card)&&!fossilEvolutionInDeck(card,cards))return 0;if(!fromEvolutionLine&&!hasBabyPartner(card))return 0;if(card?.kind==='trainer'&&!fromEvolutionLine&&!trainerIsUseful(card))return 0;if(card?.trainerType==='Stadium'&&cards.filter(id=>classic.cardById(id)?.trainerType==='Stadium').length>=1&&!cards.includes(card.id))return 0;let added=0;while(added<n&&cards.length<30&&room(card)>0&&
-   (!stormfrontSupportLimit[card?.id]||fromEvolutionLine||(counts.get(card.id)||0)<stormfrontCap(card))&&(!['dp6-129','dp6-136','dp6-137'].includes(card?.id)||fromEvolutionLine||cards.filter(id=>id===card.id).length<Math.max(2,existing.filter(id=>id===card.id).length))&&!(card?.trainerType==='Stadium'&&cards.filter(id=>classic.cardById(id)?.trainerType==='Stadium').length>=2)){cards.push(card.id);counts.set(card.id,(counts.get(card.id)||0)+1);added++;}return added;}
+ function add(card,n=1,fromEvolutionLine=false){if(!fromEvolutionLine&&isEvolutionFossil(card)&&!fossilEvolutionInDeck(card,cards))return 0;if(!fromEvolutionLine&&!hasBabyPartner(card))return 0;if(card?.kind==='trainer'&&!fromEvolutionLine&&!trainerIsUseful(card))return 0;if(card?.trainerType==='Stadium'&&cards.filter(id=>classic.cardById(id)?.trainerType==='Stadium').length>=1&&!cards.includes(card.id))return 0;let added=0;while(added<n&&cards.length<30&&room(card)>0&&(!['dp6-129','dp6-136','dp6-137'].includes(card?.id)||fromEvolutionLine||cards.filter(id=>id===card.id).length<Math.max(2,existing.filter(id=>id===card.id).length))&&!(card?.trainerType==='Stadium'&&cards.filter(id=>classic.cardById(id)?.trainerType==='Stadium').length>=2)){cards.push(card.id);counts.set(card.id,(counts.get(card.id)||0)+1);added++;}return added;}
  function addLine(line,copies){if(!line.length||line.some(c=>Number(owned.get(c.id)||0)<1))return false;for(let copy=0;copy<copies;copy++){if(line.some(c=>room(c)<1)||cards.length+line.length>30)break;for(const c of line)add(c,1,true);}return line.every(c=>(counts.get(c.id)||0)>0);}
  // Preserve legal existing cards first for Fill / repair, but never exceed ownership/copy limits.
  for(const id of existing){const c=classic.cardById(id);if(c&&allowedInSetPool(c,scope)&&c.battleEnabled&&c.deckEligible!==false&&!babyEvolutionTargets(c).length&&!isEvolutionFossil(c)&&!isFossilSupport(c))add(c,1);}
