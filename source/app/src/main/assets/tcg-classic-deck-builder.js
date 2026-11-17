@@ -389,6 +389,11 @@ function buildDeck(rows,options={}){
  if(!selectedTypes.length)selectedTypes.push('Fighting');
  const cards=[],counts=new Map();
  function trainerIsUseful(card){
+   // Stormfront's specialist search/transfer cards must have real targets.
+   // A Premier Ball is dead without a LV.X and Conductive Quarry is dead
+   // without Lightning or Metal in the actual selected Energy Zone.
+   if(card?.id==='dp7-91'&&!cards.some(id=>classic.cardById(id)?.stage==='Level-Up'))return false;
+   if(card?.id==='dp7-82'&&!selectedTypes.some(type=>type==='Lightning'||type==='Metal'))return false;
    // Never draw Fossils from the general Trainer pool without a matching
    // evolution already in the actual 30-card deck (not merely owned).
    if(isEvolutionFossil(card)&&!fossilEvolutionInDeck(card,cards))return false;
@@ -431,12 +436,23 @@ function buildDeck(rows,options={}){
    if(card.name==="Brock's Training Method")return cards.some(id=>{const pokemon=classic.cardById(id);return pokemon?.kind==='pokemon'&&pokemon.name.startsWith("Brock's ");});
    return true;
  }
- function room(card){const copiesOfName=[...counts].filter(([id])=>classicCardName(classic.cardById(id)?.name)===classicCardName(card.name)).reduce((sum,[,count])=>sum+count,0);const starSlots=card.pokemonStar?Math.max(0,1-cards.filter(id=>classic.cardById(id)?.pokemonStar).length):4;return Math.max(0,Math.min(starSlots,(card.name.startsWith('Shining ')?1:4)-copiesOfName,Number(owned.get(card.id)||0)-(counts.get(card.id)||0)));}
+ // In compact 30-card Stormfront decks, bulk-search Trainers should not
+ // consume four slots merely because the owner has four copies. Saved manual
+ // choices can be preserved up to the global four-copy limit.
+ const stormfrontAutoCaps={'dp7-91':2,'dp7-86':1,'dp7-85':3,'dp7-83':2};
+ function room(card){const copiesOfName=[...counts].filter(([id])=>classicCardName(classic.cardById(id)?.name)===classicCardName(card.name)).reduce((sum,[,count])=>sum+count,0);const starSlots=card.pokemonStar?Math.max(0,1-cards.filter(id=>classic.cardById(id)?.pokemonStar).length):4;const rawCap=stormfrontAutoCaps[card.id];const allowedCopies=rawCap===undefined?4:Math.min(4,Math.max(rawCap,existing.filter(id=>id===card.id).length));return Math.max(0,Math.min(starSlots,(card.name.startsWith('Shining ')?1:allowedCopies)-copiesOfName,Number(owned.get(card.id)||0)-(counts.get(card.id)||0)));}
  function hasBabyPartner(card){
    const names=babyEvolutionTargets(card);
    return !names.length||cards.some(id=>names.includes(classicCardName(classic.cardById(id)?.name)));
  }
- function add(card,n=1,fromEvolutionLine=false){if(!fromEvolutionLine&&isEvolutionFossil(card)&&!fossilEvolutionInDeck(card,cards))return 0;if(!fromEvolutionLine&&!hasBabyPartner(card))return 0;if(card?.kind==='trainer'&&!fromEvolutionLine&&!trainerIsUseful(card))return 0;if(card?.trainerType==='Stadium'&&cards.filter(id=>classic.cardById(id)?.trainerType==='Stadium').length>=1&&!cards.includes(card.id))return 0;let added=0;while(added<n&&cards.length<30&&room(card)>0&&(!['dp6-129','dp6-136','dp6-137'].includes(card?.id)||fromEvolutionLine||cards.filter(id=>id===card.id).length<Math.max(2,existing.filter(id=>id===card.id).length))&&!(card?.trainerType==='Stadium'&&cards.filter(id=>classic.cardById(id)?.trainerType==='Stadium').length>=2)){cards.push(card.id);counts.set(card.id,(counts.get(card.id)||0)+1);added++;}return added;}
+ function add(card,n=1,fromEvolutionLine=false){
+   // Energy Link is useful as a coherent two-copy package, never a lone
+   // tool that wastes the final slot. Reserve the pair atomically.
+   if(card?.id==='dp7-83'&&!fromEvolutionLine&&(counts.get(card.id)||0)===0){
+     if(Number(owned.get(card.id)||0)<2||cards.length>28||room(card)<2)return 0;
+     n=Math.max(n,2);
+   }
+   if(!fromEvolutionLine&&isEvolutionFossil(card)&&!fossilEvolutionInDeck(card,cards))return 0;if(!fromEvolutionLine&&!hasBabyPartner(card))return 0;if(card?.kind==='trainer'&&!fromEvolutionLine&&!trainerIsUseful(card))return 0;if(card?.trainerType==='Stadium'&&cards.filter(id=>classic.cardById(id)?.trainerType==='Stadium').length>=1&&!cards.includes(card.id))return 0;let added=0;while(added<n&&cards.length<30&&room(card)>0&&(!['dp6-129','dp6-136','dp6-137'].includes(card?.id)||fromEvolutionLine||cards.filter(id=>id===card.id).length<Math.max(2,existing.filter(id=>id===card.id).length))&&!(card?.trainerType==='Stadium'&&cards.filter(id=>classic.cardById(id)?.trainerType==='Stadium').length>=2)){cards.push(card.id);counts.set(card.id,(counts.get(card.id)||0)+1);added++;}return added;}
  function addLine(line,copies){if(!line.length||line.some(c=>Number(owned.get(c.id)||0)<1))return false;for(let copy=0;copy<copies;copy++){if(line.some(c=>room(c)<1)||cards.length+line.length>30)break;for(const c of line)add(c,1,true);}return line.every(c=>(counts.get(c.id)||0)>0);}
  // Preserve legal existing cards first for Fill / repair, but never exceed ownership/copy limits.
  for(const id of existing){const c=classic.cardById(id);if(c&&allowedInSetPool(c,scope)&&c.battleEnabled&&c.deckEligible!==false&&!babyEvolutionTargets(c).length&&!isEvolutionFossil(c)&&!isFossilSupport(c))add(c,1);}
