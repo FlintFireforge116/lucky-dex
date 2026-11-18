@@ -9215,8 +9215,16 @@
       ask([...items.map(r=>({label:'Place '+name(r)+' atop opponent deck',cardId:r.cardId})),{label:'Do not use Serve Trash'}],'top',{refUids:items.map(r=>r.uid)});return;
     }
     if(k==='fossilReaction'){
-      if(!ctx.resolvingChoice)return;
-      const target=board(s).find(p=>p.uid===e.fossilUid),uid=(e.refUids||[])[Number(ctx.action?.choiceOption)-1],ref=s.deck.find(r=>r.uid===uid);
+      if(!ctx.resolvingChoice){
+        const required=self?.cardId==='pl4-92'?'Fighting':self?.cardId==='pl4-93'?'Water':null;
+        if(!required||!ctx.eventData?.fromHand||ctx.eventData.energyType!==required)return;
+        const refs=s.deck.filter(ref=>{const evo=card(ref);return evo?.battleEnabled&&evo.kind==='pokemon'&&evo.evolvesFrom===name(self);});
+        if(refs.length)ask([{label:'Do not evolve Fossil'},...refs.map(ref=>({label:'Evolve into '+name(ref),cardId:ref.cardId}))],'fossil',{fossilUid:self.uid,refUids:refs.map(ref=>ref.uid)});
+        return;
+      }
+      const choice=Number(ctx.action?.choiceOption);
+      if(!Number.isInteger(choice)||choice<=0)return;
+      const target=board(s).find(p=>p.uid===e.fossilUid),uid=(e.refUids||[])[choice-1],ref=s.deck.find(r=>r.uid===uid);
       if(!target||!ref||!['pl4-92','pl4-93'].includes(target.cardId)||card(ref)?.evolvesFrom!==name(target))return;
       s.deck.splice(s.deck.indexOf(ref),1);target.stack.push(ref.cardId);target.cardId=ref.cardId;target.evolvedOnTurn=ctx.state.turnNumber;target.playedOnSideTurn=s.turnCount;
       shuffled(s);log('fossilReaction',{cardId:ref.cardId});return;
@@ -17184,7 +17192,6 @@ if(r==='lastResort')return ss.hand.length===0?[{}]:[];if(r==='surgeSwap')return 
       state.sides[side]?.active?.cardId==='dp6-41'&&
       !abilitiesSuppressed(state,side,state.sides[side].active,cardById))
       return {type:'preventDamage',reason:'White Smoke',effects:true};
-    if(state?.format==='classic'&&slot?.cardId==='pl4-89'&&(state.sides[side]?.bench||[]).includes(slot))return {type:'preventDamage',reason:'Arceus Hard Amber',effects:false};
     if(state?.format==='classic'&&slot?.cardId==='dp5-84'&&(state.sides[side]?.bench||[]).includes(slot)&&!abilitiesSuppressed(state,side,slot,cardById))
       return {type:'preventDamage',reason:'Hard Amber',effects:false};
     if(state?.format==='classic'&&slot?.cardId==='dp4-25'&&cardById(attacker?.cardId)?.isLevelX&&

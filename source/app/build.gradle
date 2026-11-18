@@ -8,8 +8,8 @@ android {
         applicationId 'com.example.luckydex'
         minSdk 26
         targetSdk 35
-        versionCode 7262
-        versionName '0.69.276'
+        versionCode 7265
+        versionName '0.69.279'
     }
 
     signingConfigs {
@@ -264,7 +264,7 @@ tasks.register('generateArceusForApk', Exec) {
 tasks.register('auditArceusForApk', Exec) {
     dependsOn tasks.named('generateArceusForApk')
     workingDir rootProject.projectDir
-    commandLine 'node', '--test', 'tests/v07275-arceus-stage1.test.cjs', 'tests/v07276-arceus-completion.test.cjs'
+    commandLine 'node', '--test', 'tests/v07275-arceus-stage1.test.cjs', 'tests/v07276-arceus-completion.test.cjs', 'tests/v07277-arceus-build-fixes.test.cjs'
 }
 tasks.matching { it.name == 'preBuild' || (it.name.startsWith('merge') && it.name.endsWith('Assets')) }.configureEach {
     dependsOn tasks.named('auditArceusForApk')

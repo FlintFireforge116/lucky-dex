@@ -549,7 +549,7 @@ function projectOwnedCards(cards){
  const projected=base.projectOwnedCards(rows);
  const grouped=new Map();
  for(const owned of rows){const card=ownedJungleCard(owned)||ownedFossilCard(owned)||ownedRocketCard(owned)||ownedGymHeroesCard(owned)||ownedGymChallengeCard(owned)||ownedNeoGenesisCard(owned)||ownedNeoDiscoveryCard(owned)||ownedNeoRevelationCard(owned)||ownedNeoDestinyCard(owned)||ownedLegendaryCard(owned)||ownedExpeditionCard(owned)||ownedAquapolisCard(owned)||ownedSkyridgeCard(owned)||ownedRubySapphireCard(owned)||ownedSandstormCard(owned)||ownedDragonCard(owned)||ownedMagmaAquaCard(owned)||ownedHiddenLegendsCard(owned)||ownedFireRedLeafGreenCard(owned)||ownedTeamRocketReturnsCard(owned)||ownedDeoxysCard(owned)||ownedEmeraldCard(owned)||ownedUnseenCard(owned)||ownedDeltaCard(owned)||ownedLegendMakerCard(owned)||ownedRecentEXCard(owned)||ownedDiamondPearlCard(owned)||ownedMysteriousTreasuresCard(owned)||ownedSecretWondersCard(owned)||ownedGreatEncountersCard(owned)||ownedMajesticDawnCard(owned)||ownedLegendsAwakenedCard(owned)||ownedStormfrontCard(owned)||ownedPlatinumCard(owned)||ownedRisingRivalsCard(owned)||ownedSupremeVictorsCard(owned)||ownedArceusCard(owned)||ownedLentalCard(owned)||ownedSV1Card(owned);if(!card)continue;
-  const quantity=Math.max(0,Number(owned.count==null?1:owned.count)||0);
+  const quantity=Math.max(0,Number(owned.count??owned.quantity??1)||0);
   const variant={id:owned.id||card.id,quantity,image:owned.image||owned.imageUrl||null,rarity:owned.rarity||null,row:owned};
   const current=grouped.get(card.id);
   if(current){current.quantity+=quantity;current.variants.push(variant);}

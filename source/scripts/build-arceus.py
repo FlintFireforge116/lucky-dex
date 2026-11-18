@@ -83,7 +83,8 @@ def build():
   else:
    row.update({'trainerType':(trainer[0] if trainer else stage).replace('Pokémon Tool','Tool'),
       'text':'\n'.join([p.get('type','Poké-Power')+' — '+p['name']+': '+p.get('text','') for p in c.get('abilities') or []]+list(c.get('rules') or [])),
-      'printedAbilities':c.get('abilities') or [],'effect':trainer[1] if trainer else V.N})
+      'printedAbilities':c.get('abilities') or [],'abilities':abilities,
+      'effect':trainer[1] if trainer else V.N})
   out.append(row)
  return out
 

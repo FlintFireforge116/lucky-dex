@@ -565,11 +565,6 @@
         onlySource.damage=Number(onlySource.damage||0)+20;state.log.push({type:'pl3SilverFeather',side,targetUid:onlySource.uid,amount:20});
       }
     }
-    if(state.format==='classic'&&event==='energyAttached'&&meta.fromHand&&onlySource&&
-       ((onlySource.cardId==='pl4-92'&&meta.energyType==='Fighting')||(onlySource.cardId==='pl4-93'&&meta.energyType==='Water'))){
-      const fossil=data.cardById(onlySource.cardId),candidates=ss.deck.filter(ref=>{const evo=data.cardById(ref.cardId);return evo?.battleEnabled&&evo.kind==='pokemon'&&classicEvolutionMatches(fossil?.name,evo.evolvesFrom);});
-      if(candidates.length){beginEffectChoice(state,side,onlySource,{kind:'option',side:'self',options:['Do not evolve Fossil',...candidates.map(ref=>'Evolve into '+data.cardById(ref.cardId).name)],effect:{type:'neoRule',rule:'pl4:fossilReaction',fossilUid:onlySource.uid,refUids:candidates.map(ref=>ref.uid)}});}
-    }
     if(event==='energyAttached'&&onlySource&&meta.fromHand){
       onlySource.lastHandEnergyType=meta.energyType;onlySource.lastHandEnergyAttachedTurn=state.turnNumber;
       if(state.format==='classic'&&onlySource.cardId==='pl2-35'&&meta.energyType==='Grass'&&
