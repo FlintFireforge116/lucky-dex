@@ -13,3 +13,6 @@ if [ ! -f "$FILE" ]; then
   mv "$TMP" "$FILE"
 fi
 python3 "$SOURCE_DIR/scripts/build-arceus.py"
+
+# Verify the actual generated 111-print archive and live effect interactions before staging.
+node --test "$SOURCE_DIR/tests/v07275-arceus-stage1.test.cjs" "$SOURCE_DIR/tests/v07276-arceus-completion.test.cjs"

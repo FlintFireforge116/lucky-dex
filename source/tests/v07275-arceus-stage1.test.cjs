@@ -53,13 +53,13 @@ test('Arceus unlimited copy rule is card-specific and normal 4-of remains enforc
  const regular=db.validateDeck(Array(30).fill('pl4-79'));assert.ok(regular.errors.some(e=>e.includes('four-copy limit')));
 });
 
-test('gated Fossils and unsupported 6-Arceus Bench effects never enter a CPU deck',()=>{
+test('Fossils and Arceus special attacks carry printed rules; CPU excludes remaining gated effects',()=>{
  for(const id of ['pl4-89','pl4-92','pl4-93','pl4-AR5']){
-  assert.equal(db.cardById(id).battleEnabled,false,id);
-  assert.equal(db.cardById(id).deckEligible,false,id);
+  assert.equal(db.cardById(id).battleEnabled,true,id);
+  assert.equal(db.cardById(id).deckEligible,true,id);
  }
  const dead=pl4.CARDS.filter(c=>c.deckEligible===false).map(c=>c.id);
- assert.ok(dead.length>0);
+ // Fully supported sets are also valid; never require artificial gating.
  for(const type of ['Grass','Water','Lightning','Psychic','Fighting','Colorless']){
   const gen=cpu.generate({sets:['pl4'],type,seed:123});if(!gen.ok)continue;
   assert.equal(gen.cards.length,30);

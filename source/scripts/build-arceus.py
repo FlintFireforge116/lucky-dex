@@ -13,14 +13,18 @@ OUT=ROOT/'app/src/main/assets/tcg-classic-arceus.js'
 EXPECTED_GIT_BLOB='2cbff9e0d363c2fc516328bd03aada50c4d99373'
 NUMBERS={str(n) for n in range(1,100)}|{'AR'+str(n) for n in range(1,10)}|{'SH'+str(n) for n in range(10,13)}
 COLOR={'Grass':'G','Fire':'R','Water':'W','Lightning':'L','Psychic':'P','Fighting':'F','Darkness':'D','Metal':'M','Colorless':'C'}
-VALID_EFFECTS={'noop','sequence','status','draw','heal','bonusDamage','coinDamage','coinFlip','selfDamage','discardEnergyCard','coinAttackGate','attackCoinGate','damageRule','modifier','lock','forceOpponentSwitch','selectedDamage','benchDamage','preventDamage','removeStatuses','switch','searchChosen','playFossil','chooseAttackLock','neoRule','coinUntilTailsDamage'}
+VALID_EFFECTS={'noop','sequence','status','draw','heal','bonusDamage','coinDamage','coinFlip','selfDamage','discardEnergyCard','coinAttackGate','attackCoinGate','damageRule','modifier','lock','forceOpponentSwitch','selectedDamage','benchDamage','preventDamage','removeStatuses','switch','searchChosen','playFossil','chooseAttackLock','neoRule','coinUntilTailsDamage','multiTargetDamage','attachEnergyFromDiscard','attachEnergy','damageFromDamage','chooseOption','stadiumAction','koGuard','energyDamage','actionLock','firstDamageGuard','coinAnyHeadsGate','shuffleRandomHandCard','evolutionTimingOverride','weaknessGuard'}
+IMPLEMENTED_PL4={'95:meteorBlast','8:topAccelerator','31:leafSupply','49:cloakScale','3:magmaMantle','4:primalScythe','5:gadgetBolt','6:cloakParty','9:damageRoller','9:entangleRecoil','9:entangleTackle','12:lightningStrike','13:unearth','16:curse','18:wreck','19:tumbleDown','20:vortexChop','21:relaxingShower','23:timeSpiral','23:primalTentacles','24:continuousCrush','25:babySteps','26:dowsingCode','32:darknessGrace','33:wideLaser','51:cloakShard','51:serveTrash','71:megaShot','86:energyRestore','90:professorOakVisit','97:levelDown','97:compoundPain','98:doubleFall','SH10:dragonRage','AR1:prizeCount','AR9:metalBarrier','94:multiType','94:omniscient','fossilReaction','AR5:rippleSwell','AR5:skySpear','91:ultimateZone','29:recruit','43:discharge','45:waterBall','46:ascension','48:dragonBump','53:raid','69:harden','99:bigGrowth'}
+
 def supported(e):
  if not isinstance(e,dict) or e.get('type') not in VALID_EFFECTS:return False
  t=e['type']
  if t=='sequence':return len(e.get('effects',[]))>0 and all(supported(x) for x in e['effects'])
  if t=='coinFlip':return bool(e.get('heads') or e.get('tails')) and all(supported(e[k]) for k in ('heads','tails') if k in e)
+ if t=='stadiumAction':return supported(e.get('effect'))
+ if t=='chooseOption':return bool(e.get('options')) and all(supported(x.get('effect')) for x in e['options'])
  if t=='coinAttackGate':return supported(e.get('heads'))
- if t=='neoRule':return e.get('rule')=='dp1:babyEvolve'
+ if t=='neoRule':return e.get('rule')=='dp1:babyEvolve' or str(e.get('rule','')).startswith('pl4:') and e['rule'][4:] in IMPLEMENTED_PL4
  if t=='coinUntilTailsDamage':return False # unknown action kind, don't activate
  return True
 
@@ -75,10 +79,11 @@ def build():
     'isLevelX':stage=='Level-Up','levelUpFrom':c['name'].removesuffix(' LV.X') if stage=='Level-Up' else None,
     'isPokemonSP':sp,'tags':['pokemon-sp'] if sp else [],
     'deckMeta':{'roles':roles,'synergy':roles,'energyTypes':energy,'preferredEnergyTypes':energy,
-     'preferredPartners':[],'inflicts':[],'payoffs':[]}})
+     'preferredPartners':(['Arceus'] if c['name'].startswith('Arceus') else ['Kabutops'] if c['name']=='Kabuto' else ['Omastar'] if c['name']=='Omanyte' else []),'inflicts':[],'payoffs':[]}})
   else:
    row.update({'trainerType':(trainer[0] if trainer else stage).replace('Pokémon Tool','Tool'),
-      'text':'\n'.join(c.get('rules') or []),'effect':trainer[1] if trainer else V.N})
+      'text':'\n'.join([p.get('type','Poké-Power')+' — '+p['name']+': '+p.get('text','') for p in c.get('abilities') or []]+list(c.get('rules') or [])),
+      'printedAbilities':c.get('abilities') or [],'effect':trainer[1] if trainer else V.N})
   out.append(row)
  return out
 

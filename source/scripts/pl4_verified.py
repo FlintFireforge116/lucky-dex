@@ -4,6 +4,7 @@ Never mark a print usable when part of an attack/Power is unimplemented.
 Each fallback is explicit; none of the non-empty unknown text becomes a noop.
 """
 import re
+from pl4_completion import ATTACKS as COMPLETION_ATTACKS, ABILITIES as COMPLETION_ABILITIES, TRAINERS as COMPLETION_TRAINERS
 N={'type':'noop'}
 def S(*items):return {'type':'sequence','effects':list(items)}
 def Q(heads=None,tails=None):return {'type':'coinFlip',**({'heads':heads} if heads else {}),**({'tails':tails} if tails else {})}
@@ -46,7 +47,7 @@ SPECIAL={
  ('36','Lick'):Q(ST('paralysis')),
  ('36','Night Shade'):PICK(10,'opponentBench'),
  ('37','Double-edge'):{'type':'selfDamage','amount':10},
- ('38','Detect'):Q({'type':'preventDamage','target':'self','duration':'opponentTurn'}),
+ ('38','Detect'):Q({'type':'preventDamage','target':'self','duration':'opponentTurn','effects':True}),
  ('39','Quick Attack'):COIN(1,10),
  ('40','Endure'):None, # one-turn survive-and-10-HP rule differs from prevention
  ('41','Tongue Spring'):PICK(20),
@@ -102,6 +103,7 @@ SPECIAL={
 
 def attack(c,a):
  key=(str(c['number']),a['name'])
+ if key in COMPLETION_ATTACKS:return COMPLETION_ATTACKS[key]
  if key in SPECIAL:return SPECIAL[key]
  txt=(a.get('text') or '').strip()
  if not txt:return N
@@ -130,6 +132,8 @@ def attack(c,a):
  return None
 
 def ability(c,p):
+ key=(str(c['number']),p['name'])
+ if key in COMPLETION_ABILITIES:return COMPLETION_ABILITIES[key]
  # Explicitly block every unverified passive/Poké-Power. Even a correctly
  # displayed Poké-Body must never silently do nothing in a live match.
  if p['name']=='Baby Evolution':return {'type':'activated','printedPowerType':'power','oncePerTurn':True,'disabledByStatus':True,'effect':{'type':'neoRule','rule':'dp1:babyEvolve','targetName':'Pikachu'}}
@@ -140,3 +144,5 @@ TRAINERS={
  '85':('Supporter',SEARCH(3,kind='trainer',trainerType='Tool')),
  # Fossil-print Poké-Powers/reaction triggers are not covered by plain playFossil.
 }
+
+TRAINERS.update(COMPLETION_TRAINERS)
