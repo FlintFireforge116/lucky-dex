@@ -105,10 +105,10 @@ function auditSet(setId, context){
   const effects=[];
   if(c.kind==='pokemon'){
    counts.attacks+=(c.attacks||[]).length;counts.abilities+=abilityList.length;
-   if(!['Basic','Stage 1','Stage 2','Level-Up','Baby','BREAK','VSTAR','VMAX'].includes(c.stage))issue('warning','C-AUDIT-003',`Unexpected Pokémon stage: ${c.stage}`);
+   if(!['Basic','Stage 1','Stage 2','Level-Up','Baby','BREAK','VSTAR','VMAX','LEGEND'].includes(c.stage))issue('warning','C-AUDIT-003',`Unexpected Pokémon stage: ${c.stage}`);
    if(!Number.isFinite(Number(c.hp))||Number(c.hp)<=0)issue('error','C-AUDIT-003','Pokémon HP is missing or invalid.');
    if(!Array.isArray(c.types)||!c.types.length)issue('warning','C-AUDIT-003','Pokémon has no attack/identity type.');
-   if(c.stage!=='Basic'&&c.stage!=='Baby'&&!c.evolvesFrom&&!c.levelUpFrom)issue('warning','C-AUDIT-003','Evolution is missing evolvesFrom/levelUpFrom.');
+   if(!['Basic','Baby','LEGEND'].includes(c.stage)&&!c.evolvesFrom&&!c.levelUpFrom)issue('warning','C-AUDIT-003','Evolution is missing evolvesFrom/levelUpFrom.');
    if(c.evolvesFrom&&!knownNames.has(String(c.evolvesFrom).toLowerCase())&&!((c.id==='dp3-33'||c.id==='dp5-42')&&['Burmy Plant Cloak','Burmy Sandy Cloak','Burmy Trash Cloak'].every(n=>knownNames.has(n.toLowerCase()))))issue('warning','C-AUDIT-003',`Evolution parent "${c.evolvesFrom}" is absent by exact name from the full catalog; verify alternate spelling or Fossil support.`);
    if(c.stage==='Level-Up'&&!c.levelUpFrom&&!c.evolvesFrom)issue('warning','C-AUDIT-003','Level-Up Pokémon has no prerequisite identity.');
    if(c.battleEnabled&&!Array.isArray(c.attacks))issue('error','C-AUDIT-002','Enabled Pokémon has no attacks array.');
@@ -174,14 +174,18 @@ function auditSet(setId, context){
  for(const id of seen)if(duplicateIds.get(id)!==1)emit('error','C-AUDIT-001',id,'Globally ambiguous card ID (more than one registry entry).');
  let cpuResult=null;
  if(cpu){
-  cpuResult={attempted:0,valid:0,failures:[]};
+  cpuResult={attempted:0,valid:0,skipped:[],failures:[]};
   for(const type of DEFAULT_TYPES)for(const seed of [3,17]){
    cpuResult.attempted++;
    try{
     const build=opponents.generate({sets:[setId],type,seed});
     const problems=!build?.ok?[String(build?.reason||'builder did not return a deck')]:[];
     if(build?.ok){if(build.cards?.length!==30)problems.push(`Expected 30 cards, got ${build.cards?.length}`);const validation=data.validateDeck(build.cards);if(validation?.errors?.length)problems.push(...validation.errors.map(String));}
-    if(problems.length)cpuResult.failures.push({type,seed,problems});else cpuResult.valid++;
+    if(problems.length){
+      const supported=cards.some(c=>c.kind==='pokemon'&&c.battleEnabled&&c.deckEligible!==false&&(c.types||[]).includes(type));
+      if(!build?.ok&&!supported)cpuResult.skipped.push({type,seed,reason:'No '+type+' Pokémon in this set'});
+      else cpuResult.failures.push({type,seed,problems});
+    }else cpuResult.valid++;
    }catch(error){cpuResult.failures.push({type,seed,problems:[String(error.message||error)]});}
   }
   for(const f of cpuResult.failures)emit(isFullSet?'error':'review','C-AUDIT-005',null,`CPU ${f.type} seed ${f.seed}: ${f.problems.join('; ')}`);
@@ -260,7 +264,7 @@ function toMarkdown(report){
  '',`**Source contract:** \`${report.contract}\`.`,
  '', '## Mechanical risk inventory', '', '| Category | Cards needing scenarios |','|---|---:|',
  ...Object.entries(s.risks).map(([k,v])=>`| ${k} | ${v} |`),
- '', '## Generated CPU decks','',report.cpu?`${report.cpu.valid}/${report.cpu.attempted} legal 30-card decks across eight Energy types (two seeds each).`:'Not requested.',
+ '', '## Generated CPU decks','',report.cpu?`${report.cpu.valid}/${report.cpu.attempted} legal 30-card decks; ${(report.cpu.skipped||[]).length} explicitly unsupported type/seed combinations, ${report.cpu.failures.length} failures.`:'Not requested.',
  '', '## Synthetic battle action checks','',report.smoke?`${report.smoke.executed}/${report.smoke.attempted} actions executed; ${report.smoke.skipped} skipped (not necessarily defects); ${report.smoke.failures.length} scenario exceptions/unresolved choices.`:'Not requested (run with --smoke).',
  '', '## Definite failures and warnings',''];
  const high=report.findings.filter(f=>f.severity!=='review');

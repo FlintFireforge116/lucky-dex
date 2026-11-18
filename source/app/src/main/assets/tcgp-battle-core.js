@@ -727,6 +727,7 @@
     const aqMagnet=state.format==='classic'&&slot?.cardId==='ecard2-91'&&!effects.abilitiesSuppressed(state,side,slot,data.cardById)?state.sides[side].bench.filter(p=>data.cardById(p?.cardId)?.name==='Magnemite').length:0;
     return Math.max(0,Number(data.cardById(slot.cardId).retreat||0)+effects.modifierAmount(state,side,slot,'retreatCost',data.cardById)+stadiumCost+aqHeavy+(aqGluey?1:0)-aqMagnet-ex6Dodrio+Number(slot.dp2RetreatAdjustment||0));}
   function attackCost(state,side,attack){const slot=state.sides[side].active;let cost=effects.attackCostOverride(state,side,slot,attack,data.cardById)??attack.cost??'';
+    if(state.format==='classic'&&Number(slot?.hgssGraffitiUntil||0)>=Number(state.turnNumber))cost+='C';
     if(state.format==='classic'&&slot?.cardId==='pl1-54'&&Object.keys(slot.conditions||{}).length&&!effects.abilitiesSuppressed(state,side,slot,data.cardById))return '';
     // SP Energy Gain subtracts exactly one Colorless through the shared Tool modifier.
     if(state.format==='classic'&&slot){
@@ -833,6 +834,7 @@
         else {next.Crystal=Number(next.Crystal||0)+1;next.__crystalAllowed=Object.fromEntries(basicTypes.map(type=>[type,true]));}
       }else for(const [type,n] of Object.entries(miracleWind?{Colorless:1}:specialEnergyProvides(ref)))next[type]=Number(next[type]||0)+Number(n||0);
     }
+    if(state.format==='classic'&&['hgss1-111','hgss1-112'].includes(slot?.cardId)&&!effects.abilitiesSuppressed(state,side,slot,data.cardById)){const n=Object.values(next).filter(Number.isFinite).reduce((x,y)=>x+Number(y||0),0);return {Fire:n};}
     if(state.format==='classic'&&slot?.cardId==='dp7-103'&&!effects.abilitiesSuppressed(state,side,slot,data.cardById)){
       const n=Object.entries(next).filter(([t])=>!t.startsWith('__')).reduce((total,[,v])=>total+Number(v||0),0);
       return {Fire:n};
@@ -1094,6 +1096,15 @@
           empty.forEach(benchIndex=>actions.push({type:'bench',handIndex,cardId:card.id,benchIndex}));
         }
       });
+    }
+    // A LEGEND is exactly TWO physical halves played TOGETHER onto an empty
+    // Bench position, never as either half alone. Both remain recoverable.
+    if(state.format==='classic'&&s.bench.length<maxBenchSize(s)){
+      for(const [first,second] of [['hgss1-111','hgss1-112'],['hgss1-113','hgss1-114']]){
+        const i=s.hand.findIndex(r=>r.cardId===first),j=s.hand.findIndex(r=>r.cardId===second);
+        if(i>=0&&j>=0&&data.cardById(first)?.battleEnabled&&data.cardById(second)?.battleEnabled)
+          for(const benchIndex of emptyBenchSlots(s))actions.push({type:'legendBench',cardId:first,handIndex:i,secondHandIndex:j,benchIndex});
+      }
     }
     {const evolutionLocked=effects.isActionLocked(state,side,'Evolution',data.cardById),activeEvolutionLocked=effects.isActionLocked(state,side,'EvolutionActive',data.cardById);
       const ex4Cradily=state.format==='classic'&&state.sides[side==='player'?'opponent':'player'].active?.cardId==='ex4-90'&&!effects.abilitiesSuppressed(state,side==='player'?'opponent':'player',state.sides[side==='player'?'opponent':'player'].active,data.cardById);
@@ -1407,7 +1418,7 @@
 
   function actionMatches(legal, action){
     if (!legal || !action || legal.type !== action.type) return false;
-    const keys = ['handIndex','cardId','target','benchIndex','attackIndex','attackCardId','abilityIndex','effectTarget','effectBenchIndex','evolutionCardId','choiceTarget','choiceBenchIndex','choiceHandIndex','choiceDiscardIndex','choiceDeckIndex','choiceCardId','choiceAttackIndex','choiceToolIndex','choicePrizeIndex','choiceOption','choiceSkip','effectEnergyType','effectSpecialEnergyUid','effectSelection','copiedEffectSelection'];
+    const keys = ['handIndex','secondHandIndex','cardId','target','benchIndex','attackIndex','attackCardId','abilityIndex','effectTarget','effectBenchIndex','evolutionCardId','choiceTarget','choiceBenchIndex','choiceHandIndex','choiceDiscardIndex','choiceDeckIndex','choiceCardId','choiceAttackIndex','choiceToolIndex','choicePrizeIndex','choiceOption','choiceSkip','effectEnergyType','effectSpecialEnergyUid','effectSelection','copiedEffectSelection'];
     return keys.every(key => action[key] == null || legal[key] === action[key]);
   }
 
@@ -1878,6 +1889,7 @@
   function finalizeAttackResult(state){const pending=state.pendingAttackResult;if(!pending)return;delete state.pendingAttackResult;const ss=state.sides[pending.defenderSide],slot=[ss.active,...ss.bench].find(x=>x&&x.uid===pending.defenderUid);if(!slot)return;const after=attackResultSnapshot(slot),before=pending.before,changedConditions={};for(const [key,value] of Object.entries(after.conditions||{}))if(JSON.stringify(value)!==JSON.stringify(before.conditions?.[key]))changedConditions[key]=value;const beforeLocks=before.locks||[],afterLocks=after.locks||[];slot.lastAttackResult={turn:pending.turn,damage:Math.max(0,after.damage-before.damage),conditions:changedConditions,energyCardsDiscarded:Math.max(0,Number(before.energyCards||0)-Number(after.energyCards||0)),attackGate:JSON.stringify(after.attackGate)!==JSON.stringify(before.attackGate)?after.attackGate:null,locks:afterLocks.slice(beforeLocks.length),weaknessOverride:after.weaknessOverride!==before.weaknessOverride?after.weaknessOverride:null,resistanceOverride:after.resistanceOverride!==before.resistanceOverride?after.resistanceOverride:null};}
 
   function prizeValue(card){
+    if(card?.stage==='LEGEND')return 2;
     const explicit=Number(card?.prizeCards||card?.prizeValue||0);
     if(Number.isFinite(explicit)&&explicit>=1)return Math.max(1,Math.min(3,Math.floor(explicit)));
     if(/\b(?:TAG TEAM|VMAX)\b/i.test(card?.name||''))return 3;
@@ -2315,6 +2327,15 @@
     const foeSide = side === 'player' ? 'opponent' : 'player';
     const foe = state.sides[foeSide];
 
+    if(matched.type==='legendBench'){
+      const first=s.hand[matched.handIndex],second=s.hand[matched.secondHandIndex];
+      const required=first?.cardId==='hgss1-111'?'hgss1-112':first?.cardId==='hgss1-113'?'hgss1-114':null;
+      if(!required||second?.cardId!==required||emptyBenchSlots(s).indexOf(matched.benchIndex)<0)throw new Error('Both matching LEGEND halves must be in hand.');
+      for(const i of [matched.handIndex,matched.secondHandIndex].sort((a,b)=>b-a))s.hand.splice(i,1);
+      const placed=makePokemonSlot(first.cardId,s.turnCount,first.uid);placed.stack=[first.cardId,second.cardId];placed.legendHalfUids=[first.uid,second.uid];
+      placeOnBench(s,placed,matched.benchIndex);state.log.push({type:'legendBench',side,cardId:first.cardId,otherHalf:second.cardId,benchIndex:matched.benchIndex});
+      triggerAbilities(state,'benched',side,placed,{fromHand:true,legendPair:true});resolveKnockOut(state,null);return state;
+    }
     if (matched.type === 'bench'){
       const [ref] = s.hand.splice(matched.handIndex,1);
       const placed=placeOnBench(s,makePokemonSlot(ref.cardId,s.turnCount,ref.uid),matched.benchIndex);

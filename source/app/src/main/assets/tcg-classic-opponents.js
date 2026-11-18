@@ -35,11 +35,14 @@
    // One unlucky seed must not make an otherwise buildable selected-type
    // opponent unavailable. Retry with distinct seeded candidate mixes while
    // preserving the requested type, set filter and all legality checks.
-   const attempts=candidates.length===1?5:candidates.length;
+   const attempts=candidates.length===1?22:candidates.length;
    for(let step=0;step<attempts;step++){
      const type=candidates[(first+step)%candidates.length];
      const result=builder.buildDeck(ALL_PLAYABLE,{style:'random',types:[type],sets:allowed,rarityFocus,basicOnly,theme,randomSeed:(Number(seed)+step*2654435761)>>>0,excludeArchetypes});
      if(!result.ok)continue;
+     // Never hand a CPU one LEGEND half without its matching physical half.
+     const count=id=>result.cards.filter(x=>x===id).length;
+     if(count('hgss1-111')!==count('hgss1-112')||count('hgss1-113')!==count('hgss1-114'))continue;
      const legal=classic.validateDeck(result.cards);
      // Preserve the exact legal Energy plan selected by the shared builder:
      // Stage transitions and conditional Dual Armor need a SECOND Basic type.

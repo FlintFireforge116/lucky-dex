@@ -14,12 +14,10 @@ OUT=ROOT/'app/src/main/assets/tcg-classic-heartgold-soulsilver.js'
 EXPECTED_SHA256='e34fc017cbd948bea3f4fa18a627d55efaf2d217dbc4a2ec8afe102f1846a9f2'
 EXPECTED_NUMBERS={str(n) for n in range(1,124)}|{'ONE'}
 LETTER={'Grass':'G','Fire':'R','Water':'W','Lightning':'L','Psychic':'P','Fighting':'F','Darkness':'D','Metal':'M','Colorless':'C'}
-# These explicit gates avoid partially implementing LEGEND placement (two cards,
-# one in-play Pokemon, one Prize result), or opponent-deck/private-hand effects.
-ALWAYS_GATE={'111':'Dual-half LEGEND assembly and pairing not yet implemented',
- '112':'Dual-half LEGEND assembly and pairing not yet implemented',
- '113':'Dual-half LEGEND assembly and pairing not yet implemented',
- '114':'Dual-half LEGEND assembly and pairing not yet implemented'}
+# LEGEND halves are physically paired by the shared battle core; each half
+# remains a distinct collector print and cannot be played individually.
+ALWAYS_GATE={}
+
 
 def load():
  blob=SRC.read_bytes()
@@ -67,7 +65,7 @@ def generate():
    d=re.search(r'\d+',str(damage or ''))
    dmg=int(d.group()) if d else 0
    # Selected damage must not also hit the default Defending Pokemon.
-   if effect.get('type')=='selectedDamage':dmg=0
+   if effect.get('type')=='selectedDamage' or effect.get('rule') in ('hgss1:13:doubleReturn','hgss1:18:bigEggsplosion','hgss1:53:cosmicCyclone'):dmg=0
    attacks.append({'name':aname,'cost':''.join(LETTER[t] for t in cost),'damage':dmg,
     'damageText':damage or None,'text':text or '', 'effect':effect})
   for p in printed_abilities:
@@ -97,7 +95,7 @@ def generate():
     'resistance':res.get('type'),'resistanceValue':res.get('value'),'resistances':resistances,
     'attacks':attacks,'abilities':abilities,
     'isPokemonSP':False,'isLevelX':False,'tags':['pokemon-prime'] if 'Prime' in subtypes else ['pokemon-legend'] if 'LEGEND' in subtypes else [],
-    'legendHalf':number in ['111','112','113','114'],
+    'legendHalf':number in ['111','112','113','114'], 'prizeCards':2 if number in ['111','112','113','114'] else 1,
     'legendPair':('Ho-Oh LEGEND' if number in ['111','112'] else 'Lugia LEGEND') if number in ['111','112','113','114'] else None,
     'deckMeta':{'roles':rs,'synergy':rs,'energyTypes':energy,'preferredEnergyTypes':energy,'preferredPartners':partners,'inflicts':[],'payoffs':[]}})
   elif kind=='trainer':
@@ -116,7 +114,7 @@ def generate():
 def main():
  cards=generate()
  code='''/* LuckyDex HGSS Base (hgss1): 124 authentic collector prints, offline locked.
- * Unknown timing/choices, especially dual-half LEGEND, stay non-battle-ready.
+ * Physical LEGEND halves are paired in Classic battle core; abilities retain printed rules.
  */
 (function(root,factory){const api=factory();if(typeof module==='object'&&module.exports)module.exports=api;if(root)root.LuckyDexClassicTCGHGSS1=api;})(typeof globalThis!=='undefined'?globalThis:this,function(){'use strict';
 const SET=Object.freeze({id:'hgss1',name:'HeartGold & SoulSilver',series:'HeartGold & SoulSilver',releaseDate:'2010-02-10',cardCount:123,printedTotal:124});

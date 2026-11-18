@@ -58,20 +58,13 @@ test('all enabled attack, Trainer and Pokémon power schemas validate, gating is
   }
  }
  assert.ok(eligible>=70,'Need useful battle-ready selection, not only a collector placeholder');
- assert.equal(eligible,87);assert.equal(blocked,29);
- assert.equal(set.coverage().total,124);assert.equal(set.coverage().gated.length,29);
+ assert.equal(eligible,116);assert.equal(blocked,0);
+ assert.equal(set.coverage().total,124);assert.equal(set.coverage().gated.length,0);
 });
 
-test('LEGEND physical halves never enter play individually or become legal basics',()=>{
- for(const n of [111,112,113,114]){
-  const c=set.cardById('hgss1-'+n);
-  assert.equal(c.stage,'LEGEND');assert.equal(c.legendHalf,true);
-  assert.equal(c.battleEnabled,false);assert.equal(c.deckEligible,false);
-  assert.ok(c.support.reasons.some(s=>/two-half|Dual-half/.test(s)));
-  assert.ok(!db.validateDeck([...Array(29).fill('hgss1-72'),'hgss1-'+n]).ok);
- }
- assert.equal(set.cardById('hgss1-111').legendPair,'Ho-Oh LEGEND');
- assert.equal(set.cardById('hgss1-114').legendPair,'Lugia LEGEND');
+test('LEGEND halves are deck-eligible as physical cards but cannot enter as lone Basic Pokémon',()=>{
+ for(const n of [111,112,113,114]){const c=set.cardById('hgss1-'+n);assert.equal(c.stage,'LEGEND');assert.equal(c.legendHalf,true);assert.ok(c.battleEnabled);assert.ok(c.deckEligible);}
+ for(const pair of [[111,112],[113,114]])assert.equal(set.cardById('hgss1-'+pair[0]).legendPair,set.cardById('hgss1-'+pair[1]).legendPair);
 });
 
 test('8 Basic Energy prints remain zoned, double Colorless and Rainbow are special playable Energy',()=>{
@@ -94,10 +87,10 @@ test('Mappable Pokémon effects retain authentic nontrivial behavior and do not 
  assert.equal(find('hgss1-107','Earthquake').effect.side,'self');
  assert.equal(set.cardById('hgss1-107').abilities[0].name,'Exoskeleton');
  assert.equal(set.cardById('hgss1-107').abilities[0].printedPowerType,'body');
- assert.equal(set.cardById('hgss1-108').battleEnabled,false,'Rain Dance cannot be once per turn');
- assert.equal(set.cardById('hgss1-12').battleEnabled,false,'Second Sight must choose player deck');
- assert.equal(set.cardById('hgss1-94').battleEnabled,false,'Moomoo Milk must stick to a chosen target');
- assert.equal(set.cardById('hgss1-91').battleEnabled,false,'Energy Switch must allow any two own Pokémon');
+ assert.equal(set.cardById('hgss1-108').battleEnabled,true,'Rain Dance must be repeatable');
+ assert.equal(set.cardById('hgss1-12').battleEnabled,true,'Second Sight must choose player deck');
+ assert.equal(set.cardById('hgss1-94').battleEnabled,true,'Moomoo Milk must stick to a chosen target');
+ assert.equal(set.cardById('hgss1-91').battleEnabled,true,'Energy Switch must allow any two own Pokémon');
 });
 
 test('HGSS-only CPU builds produce 30 legal, on-set decks with no gated cards for available types',()=>{
@@ -113,6 +106,6 @@ test('HGSS-only CPU builds produce 30 legal, on-set decks with no gated cards fo
 test('version agrees across Gradle, UI and runtime boot bundle, and new set script loads before battle-data',()=>{
  const gradle=fs.readFileSync(path.join(root,'app/build.gradle'),'utf8'),html=fs.readFileSync(path.join(assets,'index.html'),'utf8'),boot=fs.readFileSync(path.join(assets,'app-v0167.js'),'utf8');
  const version=gradle.match(/versionName ['"]([^'"]+)['"]/)[1];
- assert.equal(version,'0.69.282');assert.ok(html.includes('v'+version));assert.ok(boot.includes("window.__LUCKYDEX_BUILD='"+version+"'"));
+ assert.equal(version,'0.69.283');assert.ok(html.includes('v'+version));assert.ok(boot.includes("window.__LUCKYDEX_BUILD='"+version+"'"));
  assert.ok(html.indexOf('tcg-classic-heartgold-soulsilver.js')<html.indexOf('tcg-classic-battle-data.js'));
 });

@@ -87,7 +87,7 @@
   function cpuActionCardId(action,entries){
     if(!action)return null;
     const log=[...(entries||[])].reverse().find(e=>e.type==='trainer'||e.type==='evolve'||e.type==='attack'||e.type==='ability'||e.type==='attachSpecial'||e.type==='bench'||e.type==='promote');
-    const cardId=action.type==='trainer'||action.type==='evolve'||action.type==='attachSpecial'||action.type==='bench'||action.type==='setupActive'||action.type==='setupBench'?action.cardId:
+    const cardId=action.type==='trainer'||action.type==='evolve'||action.type==='attachSpecial'||action.type==='bench'||action.type==='legendBench'||action.type==='setupActive'||action.type==='setupBench'?action.cardId:
       action.type==='attack'?action.attackCardId||log?.cardId||currentBattle?.sides?.opponent?.active?.cardId:
       action.type==='ability'?log?.cardId||currentBattle?.sides?.opponent?.active?.cardId:
       action.type==='effectChoice'?action.choiceCardId||log?.cardId:
@@ -178,6 +178,7 @@
     if(action.type==='effectChoice'){const c=action.choiceCardId?cardName(action.choiceCardId):'';if(state?.pendingChoice?.effect?.rule==='energyFlow'){const slot=action.choiceTarget==='active'?state.sides?.[side]?.active:state.sides?.[side]?.bench?.find(x=>x.benchSlot===Number(action.choiceBenchIndex));const special=slot?.specialEnergy?.find(r=>r.uid===action.effectSpecialEnergyUid);if(special)return `RETURN ${cardName(special.cardId)} · ${c}`;if(action.effectEnergyType)return `RETURN ${action.effectEnergyType} ENERGY · ${c}`;}if(action.choiceAttackIndex!=null){const attack=data.cardById(action.choiceCardId)?.attacks?.[Number(action.choiceAttackIndex)];return `CHOOSE ${c} · ${attack?.name||'ATTACK '+(Number(action.choiceAttackIndex)+1)}`;}if(action.choiceTarget==='bench')return `CHOOSE ${c||'BENCH '+(Number(action.choiceBenchIndex)+1)}`;if(action.choiceTarget==='active')return `CHOOSE ${c||'ACTIVE'}`;if(action.choiceHandIndex!=null)return `CHOOSE ${c||'HAND CARD'}`;if(action.choiceDiscardIndex!=null)return `CHOOSE ${c||'DISCARD CARD'}`;if(action.choiceDeckIndex!=null)return `CHOOSE ${c||'DECK CARD'}`;if(action.choiceOption!=null)return action.choiceLabel||`OPTION ${Number(action.choiceOption)+1}`;if(action.choiceSkip)return 'SKIP';return 'CHOOSE';}
     if(action.type==='promote')return`PROMOTE · ${slotName(state,side,'bench',action.benchIndex)}`;
     if(action.type==='bench')return`BENCH · ${cardName(action.cardId)}`;
+    if(action.type==='legendBench')return`BENCH BOTH HALVES · ${cardName(action.cardId)} (2 Prize LEGEND)`;
     if(action.type==='evolve')return`EVOLVE ${slotName(state,side,action.target,action.benchIndex)} → ${cardName(action.cardId)}`;
     if(action.type==='trainer'){if(action.cardId==='A3-144')return `PLAY RARE CANDY · ${slotName(state,side,action.target,action.benchIndex)} → ${cardName(action.evolutionCardId)}`;return (action.cardId==='BASIC-POKE-BALL'?'PLAY POKE BALL':`PLAY ${cardName(action.cardId)}`)+targetLabel(action,state,side);}
     if(action.type==='ability'){
@@ -211,7 +212,7 @@
     if(!entry)return'';
     const who=entry.side==='player'?'You':'CPU';
     if(entry.type==='setupActive')return`${who} placed ${cardName(entry.cardId)} Active`;
-    if(entry.type==='setupBench'||entry.type==='bench')return`${who} placed ${cardName(entry.cardId)} on Bench ${Number(entry.benchIndex||0)+1}`;
+    if(entry.type==='setupBench'||entry.type==='bench'||entry.type==='legendBench')return`${who} placed ${cardName(entry.cardId)} on Bench ${Number(entry.benchIndex||0)+1}`;
     if(entry.type==='evolve')return`${who} evolved into ${cardName(entry.cardId)}${entry.target==='bench'?` on Bench ${Number(entry.benchIndex||0)+1}`:''}`;
     if(entry.type==='trainer')return`${who} played ${cardName(entry.cardId)}`;
     if(entry.type==='ability')return`${who} used ${entry.ability||entry.abilityName||'an ability'} · ${cardName(entry.cardId)}`;
@@ -241,7 +242,7 @@
       const moltresResult=moltresCoin?(moltresCoin.results?.[0]?' · HEADS — Fire Energy kept':moltresCoin.outcome==='discarded'?' · TAILS — Fire Energy discarded':' · TAILS — no Fire Energy to discard'):'';
       return actionEventText(attack)+flips+moltresResult+(ko?` · KO ${cardName(ko.cardId)}`:'');
     }
-    const preferred=[...added].reverse().find(entry=>['setupActive','setupBench','bench','evolve','trainer','ability','attach','attachSpecial','retreat','promote'].includes(entry.type));
+    const preferred=[...added].reverse().find(entry=>['setupActive','setupBench','bench','legendBench','evolve','trainer','ability','attach','attachSpecial','retreat','promote'].includes(entry.type));
     if(preferred)return actionEventText(preferred);
     if(action.type==='endTurn'){
       const checks=added.filter(entry=>entry.type==='sleepCheck');
@@ -317,7 +318,7 @@
   function targetKeyForAction(action,side){
     if(!action)return boardSlotKey(side,'active',0);
     if(action.type==='setupActive')return boardSlotKey(side,'active',0);
-    if(action.type==='setupBench'||action.type==='bench')return boardSlotKey(side,'bench',action.benchIndex);
+    if(action.type==='setupBench'||action.type==='bench'||action.type==='legendBench')return boardSlotKey(side,'bench',action.benchIndex);
     if(action.type==='evolve'||action.type==='attach'||action.type==='attachSpecial'||action.type==='ability'||action.type==='trainer'){
       let target=action.effectTarget||action.target||'active',index=action.effectTarget?action.effectBenchIndex:action.benchIndex,targetSide=side;
       if(String(target).startsWith('opponent')){targetSide=side==='player'?'opponent':'player';target=String(target).toLowerCase().includes('bench')?'bench':'active';}
@@ -913,7 +914,7 @@
     return `<div data-hand-side="opponent" class="tcgp-live-hand-backs ${reveal?'is-revealed':''}" style="--back-count:${visible}" aria-label="Opponent hand ${side.hand.length} cards${reveal?', revealed by Clairvoyance':''}">${backs}<b>${side.hand.length}</b></div>`;
   }
   function centerHandActionIndices(actions,handIndex){
-    const allowed=new Set(['setupActive','setupBench','bench','evolve','trainer','attachSpecial']);
+    const allowed=new Set(['setupActive','setupBench','bench','legendBench','evolve','trainer','attachSpecial']);
     const index=Number(handIndex);
     return (actions||[]).map((action,actionIndex)=>({action,actionIndex})).filter(row=>allowed.has(row.action?.type)&&Number(row.action?.handIndex)===index).map(row=>row.actionIndex);
   }
@@ -939,7 +940,7 @@
       if(zone==='bench'){
         const occupied=core?.benchSlotAt?core.benchSlotAt(player,benchIndex):player.bench?.[benchIndex];
         if(occupied)return find(action=>action.type==='evolve'&&action.target==='bench'&&Number(action.benchIndex)===benchIndex);
-        return find(action=>action.type==='bench'&&Number(action.benchIndex)===benchIndex);
+        return find(action=>(action.type==='bench'||action.type==='legendBench')&&Number(action.benchIndex)===benchIndex);
       }
     }
     return -1;
@@ -1104,7 +1105,7 @@
     const buttons=rows.map(({index,action})=>{const copy=copiedAttackOption(action,currentBattle,'player'),id=copy?.source?.id||action.cardId||action.choiceCardId||(action.target==='bench'?core.benchSlotAt(currentBattle.sides.player,action.benchIndex)?.cardId:null),art=id?cardArtUrl(id,copy?.sourceSide||'player'):'';return `<button class="tcgp-live-context-card${copy?' is-copy-attack':''}" type="button" data-tcgp-action="battle-action" data-action-index="${index}">${art?`<img src="${esc(art)}" alt="">`:''}<span>${esc(actionLabel(action,currentBattle,'player'))}</span></button>`;}).join('');
     return `<div class="tcgp-live-context-centre" role="dialog" aria-label="Choose a play"><div class="tcgp-live-context-head"><b>Choose a play</b><button type="button" data-tcgp-action="close-overlay">×</button></div><div class="tcgp-live-context-rail">${buttons}</div></div>`;
   }
-  function handActionIndices(handIndex){return battleActionCache.map((action,index)=>({action,index})).filter(({action})=>Number(action.handIndex)===Number(handIndex)&&['setupActive','setupBench','bench','evolve','trainer','attachSpecial'].includes(action.type)).map(({index})=>index);}
+  function handActionIndices(handIndex){return battleActionCache.map((action,index)=>({action,index})).filter(({action})=>Number(action.handIndex)===Number(handIndex)&&['setupActive','setupBench','bench','legendBench','evolve','trainer','attachSpecial'].includes(action.type)).map(({index})=>index);}
   function openHandActions(handIndex){
     if(!currentBattle?.sides?.player?.hand?.[handIndex]||battlePresentationBusy)return;
     battleHandIndex=Number(handIndex);battleInspect=null;battleOverlay='hand-actions';renderBattle();

@@ -36,8 +36,8 @@ ATTACKS={
 ('10','Thunderbolt'):DISC('all'),
 ('11','Poison Jab'):ST('poison'),
 ('12','Psyshock'):Q(ST('paralysis')),
-('13','Double Return'):None, # dynamic counters + one coin
-('14','Acceleration Bolt'):None, # 2 basic energy, chosen target
+('13','Double Return'):{'type':'neoRule','rule':'hgss1:13:doubleReturn'},
+('14','Acceleration Bolt'):{'type':'neoRule','rule':'hgss1:14:accelerationBolt'},
 ('14','Thunder'):Q(t={'type':'selfDamage','amount':20}),
 ('15','Leech Life'):{'type':'drain'},
 ('15','Poisonous Saliva'):ST('poison'),
@@ -45,7 +45,7 @@ ATTACKS={
 ('16','Whirlwind'):{'type':'forceOpponentSwitch','chooseBy':'defender'},
 ('17','Eeeeeeek'):S({'type':'handShuffle','draw':6},ST('sleep','self')),
 ('18','Energy Absorption'):{'type':'attachEnergyFromDiscard','amount':2,'target':'self','upTo':True},
-('18','Big Eggsplosion'):None, # coin for each actual attached energy
+('18','Big Eggsplosion'):{'type':'neoRule','rule':'hgss1:18:bigEggsplosion'},
 ('19','Collect'):DRAW(2),
 ('19','Spin Turn'):SWITCH(),
 ('20','Spinning Tail'):S(BONUS(20),BENCH(20)), # Active once plus each opponent Bench once
@@ -60,12 +60,12 @@ ATTACKS={
 ('25','Swift'):{'type':'damageRule','ignoreWeakness':True,'ignoreResistance':True,'ignoreEffects':True},
 ('26','Sleep Powder'):ST('sleep'),
 ('26','Giant Bloom'):H(20),
-('27','Sharpen Claws'):None, # random opponent-hand 0-3 card discard
+('27','Sharpen Claws'):{'type':'neoRule','rule':'hgss1:27:sharpenClaws'},
 ('27','Sneaky Attack'):BONUS(30,{'type':'selfHasEnergyType','energyType':'Darkness'}),
-('28','Playground'):None, # each player chooses any number of Basic from deck and falls asleep
+('28','Playground'):{'type':'neoRule','rule':'hgss1:28:playground'},
 ('29','Poison Sting'):ST('poison'),
 ('29','Fury Swipes'):COIN(3,30),
-('30','Energy Antics'):None, # opponent chooses energy transfer, then self sleeps
+('30','Energy Antics'):{'type':'neoRule','rule':'hgss1:30:energyAntics'},
 ('32','Fire Spin'):DISC(2),
 ('33','Mischievous Punch'):S({'type':'damageRule','ignoreWeakness':True,'ignoreResistance':True},ST('sleep','self')),
 ('34','Super Poison Breath'):ST('poison'),
@@ -75,7 +75,7 @@ ATTACKS={
 ('37','Recover'):S(DISC(1,'self','Water'),H(130)),
 ('37','Hyper Cannon'):{'type':'allHeadsEffect','coins':2,'heads':BONUS(50)},
 ('38','Big Bite'):LOCK(),
-('39','Snowy Present'):None,
+('39','Snowy Present'):{'type':'neoRule','rule':'hgss1:39:snowyPresent'},
 ('39','Hail'):S(BONUS(10),BENCH(10)), # Active once and each opponent Bench once
 ('40','Rock Hurl'):{'type':'damageRule','ignoreResistance':True},
 ('40','Double Spin'):COIN(2,70),
@@ -85,7 +85,7 @@ ATTACKS={
 ('42','Thundershock'):Q(ST('paralysis')),
 ('43','Green Draw'):{'type':'fieldCountDraw','side':'self','filter':{'subtype':'Grass'}},
 ('43','Double Headbutt'):COIN(2,20,False),
-('44','Graffiti'):None, # self sleep + attack cost +C until opponent turn
+('44','Graffiti'):{'type':'neoRule','rule':'hgss1:44:graffiti'},
 ('45','Group Swim'):SEARCH(1,kind='pokemon',subtype='Water'),
 ('45','Aqua Slash'):{'type':'lock','action':'attack','target':'self','duration':'nextOwnTurn'},
 ('47','Moomoo Squeeze'):SEARCH(1,kind='trainer',name='Moomoo Milk'),
@@ -96,14 +96,14 @@ ATTACKS={
 ('51','Knock Away'):COIN(1,10,False),
 ('52','Big Yawn'):S(ST('sleep'),ST('sleep','self')),
 ('52','Madkinesis'):{'type':'energyDamage','source':'self','energyType':'Psychic','amount':20,'mode':'add'},
-('53','Cosmic Cyclone'):None, # many chosen Energy to shuffle back; no auto choose
+('53','Cosmic Cyclone'):{'type':'neoRule','rule':'hgss1:53:cosmicCyclone'},
 ('54','Hidden Power'):N,
 ('55','Hidden Power'):N,
 ('56','Double Slap'):COIN(2,40),
 ('56','Expand'):GUARD(10),
 ('58','Happy Punch'):Q(H(30)),
 ('60','Minimize'):GUARD(20),
-('62','Sleep Inducer'):None, # choose opponent Bench, switch, then sleep
+('62','Sleep Inducer'):{'type':'neoRule','rule':'hgss1:62:sleepInducer'},
 ('63','Continuous Eggsplosion'):COIN('untilTails',10),
 ('64','Show Off'):SEARCH(2,basicEnergy=True),
 ('67','Bounce'):OPT('Switch Hoppip with one of your Benched Pokémon',SWITCH()),
@@ -112,7 +112,7 @@ ATTACKS={
 ('69','Lick'):Q(ST('paralysis')),
 ('70','Smokescreen'):{'type':'attackCoinGate','target':'opponentActive','duration':'opponentTurn'},
 ('71','Comet Punch'):COIN(4,10),
-('73','Static Electricity'):None, # number of Mareep in both players' in-play zone
+('73','Static Electricity'):{'type':'neoRule','rule':'hgss1:73:staticElectricity'},
 ('74','Water Splash'):COIN(1,10,False),
 ('75','Pay Day'):DRAW(1),
 ('76','Double-edge Claw'):{'type':'selfDamage','amount':10},
@@ -132,6 +132,11 @@ ATTACKS={
 ('108','Hydro Crunch'):{'type':'damageFromDamage','source':'opponent','amount':1},
 ('110','Flare Destroy'):S(DISC(1,'self'),DISC(1,'opponentActive')),
 ('123','Thrash'):Q(BONUS(20),{'type':'selfDamage','amount':20}),
+('3','Fairy Power'):{'type':'neoRule','rule':'hgss1:3:fairyPower'},
+('111','Bright Wing'):DISC(1),
+('112','Bright Wing'):DISC(1),
+('113','Elemental Blast'):{'type':'neoRule','rule':'hgss1:113:elementalBlast'},
+('114','Elemental Blast'):{'type':'neoRule','rule':'hgss1:113:elementalBlast'},
 }
 
 # Existing generic patterns ONLY when the printed sentence has exact semantics.
@@ -163,12 +168,12 @@ def attack(row,a):
 
 def BODY(name,e):return {'name':name,'type':'passive','printedPowerType':'body','disabledByStatus':False,'effect':e}
 def POWER(name,e):return {'name':name,'type':'activated','printedPowerType':'power','disabledByStatus':True,'oncePerTurn':True,'effect':e}
-# New Prime traits require exact placement timings/repeated turns. Unknowns gated.
+# Prime abilities retain printed timing and repeatability.
 ABILITIES={
-('7','Roast Reveal'):None, # discard actual Fire Energy from hand to draw3
+('7','Roast Reveal'):POWER('Roast Reveal',{'type':'neoRule','rule':'hgss1:7:roastReveal'}), # discard actual Fire Energy from hand to draw3
 ('8','Night Sight'):POWER('Night Sight',DRAW(1)),
 ('11','Shell Barricade'):BODY('Shell Barricade',{'type':'preventDamage','target':'self','duration':'whileInPlay','condition':{'type':'selfOnBench'}}),
-('12','Second Sight'):None, # choose whose deck and reorder three cards in specified order
+('12','Second Sight'):POWER('Second Sight',{'type':'neoRule','rule':'hgss1:12:secondSight'}), # choose whose deck and reorder three cards in specified order
 ('17','Sweet Sleeping Face'):BODY('Sweet Sleeping Face',{'type':'preventDamage','target':'self','duration':'whileInPlay','condition':{'type':'selfStatus','status':'sleep'}}),
 ('23','Sleep Pendulum'):POWER('Sleep Pendulum',Q(ST('sleep'))),
 ('28','Sweet Sleeping Face'):BODY('Sweet Sleeping Face',{'type':'preventDamage','target':'self','duration':'whileInPlay','condition':{'type':'selfStatus','status':'sleep'}}),
@@ -176,17 +181,17 @@ ABILITIES={
 ('31','Sunshine Grace'):POWER('Sunshine Grace',SEARCH(1,kind='pokemon',subtype='Grass')),
 ('33','Sweet Sleeping Face'):BODY('Sweet Sleeping Face',{'type':'preventDamage','target':'self','duration':'whileInPlay','condition':{'type':'selfStatus','status':'sleep'}}),
 ('44','Sweet Sleeping Face'):BODY('Sweet Sleeping Face',{'type':'preventDamage','target':'self','duration':'whileInPlay','condition':{'type':'selfStatus','status':'sleep'}}),
-('46','Green Shield'):None, # must protect *all* Grass Pokemon, not merely itself
-('54','RETURN'):None,
-('55','FLASH'):None,
-('105','Conductivity'):None, # energyAttached on opposing Pokemon, hand-only, exact damage
-('106','Blissful Nurse'):None, # evolve trigger, remove all damage & energy only from damaged
+('46','Green Shield'):BODY('Green Shield',{'type':'weaknessGuard','duration':'whileInPlay','target':'selfAll'}), # must protect *all* Grass Pokemon, not merely itself
+('54','RETURN'):{'type':'triggered','event':'benched','fromHandOnly':True,'printedPowerType':'power','effect':{'type':'neoRule','rule':'hgss1:54:return'},'disabledByStatus':True},
+('55','FLASH'):{'type':'triggered','event':'benched','fromHandOnly':True,'printedPowerType':'power','effect':{'type':'neoRule','rule':'hgss1:55:flash'},'disabledByStatus':True},
+('105','Conductivity'):{'type':'triggered','event':'opponentEnergyAttached','fromHandOnly':True,'printedPowerType':'body','effect':{'type':'neoRule','rule':'hgss1:105:conductivity'},'disabledByStatus':False}, # energyAttached on opposing Pokemon, hand-only, exact damage
+('106','Blissful Nurse'):{'type':'triggered','event':'evolved','fromHandOnly':True,'printedPowerType':'power','effect':{'type':'neoRule','rule':'hgss1:106:blissfulNurse'},'disabledByStatus':True}, # evolve trigger, remove all damage & energy only from damaged
 ('107','Exoskeleton'):BODY('Exoskeleton',{'type':'modifier','stat':'damageReduction','amount':20,'duration':'whileInPlay','scope':'self'}),
-('108','Rain Dance'):None, # repeatable per-turn, all hand Water to matching Water Pokemon
-('109','Leaf Trans'):None, # repeatable once per attachment, transfer Water? Grass only
-('110','Afterburner'):None, # discard Fire -> chosen Pokemon 10 damage, once/turn
-('111','Sacred Rainbow'):None,('112','Sacred Rainbow'):None,
-('113','Ocean Grow'):None,('114','Ocean Grow'):None,
+('108','Rain Dance'):{'type':'activated','oncePerTurn':False,'printedPowerType':'power','effect':{'type':'neoRule','rule':'hgss1:108:rainDance'},'disabledByStatus':True}, # repeatable per-turn, all hand Water to matching Water Pokemon
+('109','Leaf Trans'):{'type':'activated','oncePerTurn':False,'printedPowerType':'power','effect':{'type':'neoRule','rule':'hgss1:109:leafTrans'},'disabledByStatus':True}, # repeatable once per attachment, transfer Water? Grass only
+('110','Afterburner'):POWER('Afterburner',{'type':'neoRule','rule':'hgss1:110:afterburner'}), # discard Fire -> chosen Pokemon 10 damage, once/turn
+('111','Sacred Rainbow'):BODY('Sacred Rainbow',{'type':'energyTypeOverride','energyType':'Fire'}),('112','Sacred Rainbow'):BODY('Sacred Rainbow',{'type':'energyTypeOverride','energyType':'Fire'}),
+('113','Ocean Grow'):{'type':'triggered','event':'benched','fromHandOnly':True,'printedPowerType':'power','effect':{'type':'neoRule','rule':'hgss1:113:oceanGrow'},'disabledByStatus':True},('114','Ocean Grow'):{'type':'triggered','event':'benched','fromHandOnly':True,'printedPowerType':'power','effect':{'type':'neoRule','rule':'hgss1:114:oceanGrow'},'disabledByStatus':True},
 }
 
 def ability(row,p):return ABILITIES.get((str(row[0]),p[0]))
@@ -194,12 +199,12 @@ def ability(row,p):return ABILITIES.get((str(row[0]),p[0]))
 TRAINERS={
  '89':('Supporter',DRAW(2)),
  '90':('Supporter',{'type':'handShuffle','draw':'opponentHandCount'}),
- '91':('Item',None), # moving basic Energy between ANY two friendly Pokemon needs exact two targets
+ '91':('Item',{'type':'neoRule','rule':'hgss1:91:energySwitch'}), # moving basic Energy between ANY two friendly Pokemon needs exact two targets
  '92':('Supporter',SEARCH(4,source='discard',basicEnergy=True)),
  '93':('Item',{'type':'removeStatuses','target':'self','statuses':['burn','poison','sleep','paralysis','confusion']}),
- '94':('Item',None), # must retain single chosen Pokemon for both coin results
+ '94':('Item',{'type':'neoRule','rule':'hgss1:94:moomooMilk'}), # must retain single chosen Pokemon for both coin results
  '95':('Item',Q(SEARCH(1,kind='pokemon'))),
- '96':('Item',None), # choose exactly 1 Supporter from top 7
+ '96':('Item',{'type':'selectTopToHand','count':7,'filter':{'kind':'trainer','trainerType':'Supporter'}}), # choose exactly 1 Supporter from top 7
  '97':('Supporter',SEARCH(3,kind='pokemon',stage='Basic')),
  '98':('Item',{'type':'tradeHandForDeck','handFilter':{'kind':'pokemon'},'deckFilter':{'kind':'pokemon'}}),
  '99':('Item',Q({'type':'forceOpponentSwitch','chooseBy':'attacker'})),

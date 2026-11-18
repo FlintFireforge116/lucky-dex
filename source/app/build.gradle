@@ -8,8 +8,8 @@ android {
         applicationId 'com.example.luckydex'
         minSdk 26
         targetSdk 35
-        versionCode 7268
-        versionName '0.69.282'
+        versionCode 7269
+        versionName '0.69.283'
     }
 
     signingConfigs {
@@ -270,7 +270,7 @@ tasks.matching { it.name == 'preBuild' || (it.name.startsWith('merge') && it.nam
     dependsOn tasks.named('auditArceusForApk')
 }
 
-// HeartGold & SoulSilver Stage 1: immutable 124-print snapshot, no network fetch.
+// HGSS1 complete: immutable 124-print snapshot and end-to-end LEGEND/Prime tests; no network fetch.
 // Generator and source fidelity/integration checks run before every APK merge.
 tasks.register('generateHGSS1ForApk', Exec) {
     workingDir rootProject.projectDir
@@ -279,8 +279,13 @@ tasks.register('generateHGSS1ForApk', Exec) {
 tasks.register('auditHGSS1ForApk', Exec) {
     dependsOn tasks.named('generateHGSS1ForApk')
     workingDir rootProject.projectDir
-    commandLine 'node', '--test', 'tests/v07282-heartgold-soulsilver-stage1.test.cjs'
+    commandLine 'node', '--test', 'tests/v07282-heartgold-soulsilver-stage1.test.cjs', 'tests/v07283-hgss1-completion.test.cjs'
+}
+tasks.register('independentHGSS1ForApk', Exec) {
+    dependsOn tasks.named('auditHGSS1ForApk')
+    workingDir rootProject.projectDir
+    commandLine 'node', 'scripts/audit-classic-set.cjs', '--set', 'hgss1', '--smoke', '--no-write'
 }
 tasks.matching { it.name == 'preBuild' || (it.name.startsWith('merge') && it.name.endsWith('Assets')) }.configureEach {
-    dependsOn tasks.named('auditHGSS1ForApk')
+    dependsOn tasks.named('independentHGSS1ForApk')
 }

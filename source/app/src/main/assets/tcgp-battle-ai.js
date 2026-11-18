@@ -241,7 +241,7 @@
     if(action.type==='ability')return dangerous(abilityEffect(card,action.abilityIndex))?-100:800;
     if(action.type==='trainer')return dangerous(card?.effect)?-100:700;
     if(action.type==='stadiumAction')return worthwhileStadiumAction(state,side,action)?850:-100;
-    if(action.type==='bench')return 600;
+    if(action.type==='bench'||action.type==='legendBench')return action.type==='legendBench'?720:600;
     if(action.type==='attach'||action.type==='attachSpecial')return 400+attachScore(action,state,side);
     if(action.type==='attack')return 200+Number(data.cardById(action.attackCardId||state.sides[side].active.cardId)?.attacks[action.attackIndex]?.damage||0);
     if(action.type==='retreat')return -10;
@@ -372,7 +372,7 @@
     // This is especially important for EX Team Magma/Aqua Power Saver: a lone
     // Kyogre/Groudon cannot attack until the team has enough members in play.
     if(state.format==='classic'&&state.phase==='battle'&&!state.sides[side].bench.filter(Boolean).length){
-      const available=legal.filter(a=>a.type==='bench');
+      const available=legal.filter(a=>a.type==='bench'||a.type==='legendBench');
       if(available.length){
         available.sort((a,b)=>Number(data.cardById(b.cardId)?.hp||0)-Number(data.cardById(a.cardId)?.hp||0));
         return available[0];
