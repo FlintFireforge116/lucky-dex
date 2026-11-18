@@ -2108,3 +2108,14 @@ PLATINUM (pl1) — v0.69.265 BATTLE-ENGINE RULES
   Pokémon while in play but Trainer cards in the deck/hand/discard.
 - Run the entire GitHub APK workflow before declaring a build complete. The
   Stormfront deck-builder independent auditor must continue passing.
+
+PLATINUM (pl1) — v0.69.266 CHECKLIST AUDIT / RELEASE GATE
+- [LOCKED] Never accept a synthetic or partially recreated Platinum print archive, even if all 133 IDs are present. Match the exact original official Git blob SHA 594032984905672db5cc37fce0e9405bebb30f45 before a production build.
+- [LOCKED] Run scripts/audit-platinum-checklist.py against freshly generated actual battle cards during Gradle APK preparation. Check every printed HP, type, stage/line, attack cost/damage/text, Power/Body, Trainer rule and enabled mapping; fail the build on any mismatch. A 133-row catalogue-only count is inadequate.
+- [LOCKED] Vine Extract requires existing defender damage BEFORE attack, not damage caused by the current attack.
+- [LOCKED] Cyrus's Conspiracy searches each of the three categories independently; no valid card in the first category must not cancel remaining categories.
+- [LOCKED] Cacturne Poison Experiment chooses the physical attached Energy. Rainbow is ONE flexible Energy and must offer Grass (Poison) vs Darkness (Paralyze) rather than selecting Grass silently.
+- [LOCKED] Golduck Water Slide optionally moves ALL attached Energy copies, then deals one 40 (or 60) attack hit before Weakness, Resistance and protection; never apply a second 20-damage hit.
+- [LOCKED] Automated Platinum decks may not choose SP-only Tools without SP beneficiaries, Power Spray without at least three SP Pokémon, Level Max without LV.X or Memory Berry without a supported evolution.
+- [RELEASE] The 221/221 attack smoke confirms no crash/stuck choice in representative battle states, not complete damage/target/CPU correctness. Preserve honest separation between authenticity, static mapping, live effect verification and phone QA.
+- [TEST] v07266 Platinum checklist regressions (6), all-attacks battle smoke (2×221), older Platinum focused cases, Stormfront and GitHub preflight. Full .266 GitHub APK run must still pass after push.

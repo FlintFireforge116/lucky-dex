@@ -8440,8 +8440,19 @@
       if(hasWater&&foe.bench.length){askPokemon('bench',true,false,true);return;}deal(foe.active,30,true,false);return;
     }
     if(key==='waterSlide'){
-      if(e.stage==='target'&&ctx.resolvingChoice){const to=chosenOwn();if(!to||to===actor)return;for(const pick of energyList(actor)){moveAttached(actor,to,pick);}deal(foe.active,20,true,false);return;}
-      if(!e.stage&&ss.bench.length&&totalAttached(actor)>0){askPokemon('target',false,false,true);return;}return;
+      // Printed 40+20 is a SINGLE attack hit. Apply Weakness, Resistance and
+      // defensive Bodies exactly once, after the optional Energy transfer.
+      if(e.stage==='target'&&ctx.resolvingChoice){
+        if(ctx.action?.choiceSkip){deal(foe.active,40);return;}
+        const to=chosenOwn();if(!to||to===actor){deal(foe.active,40);return;}
+        let moved=0;for(const pick of energyList(actor)){
+          const copies=pick.type?Math.max(0,Number(actor.energy?.[pick.type]||0)):1;
+          for(let i=0;i<copies;i++)if(moveAttached(actor,to,pick))moved++;
+        }
+        deal(foe.active,moved?60:40);return;
+      }
+      if(!e.stage&&ss.bench.length&&totalAttached(actor)>0){askPokemon('target',false,false,true);return;}
+      deal(foe.active,40);return;
     }
     if(key==='rushingFlames'){
       const available=board(ss).flatMap(p=>Array.from({length:Math.max(0,Number(p.energy?.Fire||0))},()=>({uid:p.uid,type:'Fire',label:(card({cardId:p.cardId})?.name||'Pokémon')+' — Fire Energy'})));
@@ -8478,8 +8489,26 @@
         if(ctx.resolvingChoice){const pick=list[choiceIndex()];if(pick)askPokemon('target',false,true,false,{energyUid:pick.uid});return;}options('energy',list,true);return;}
     }
     if(key==='poisonExperiment'){
-      const list=energyList(actor).filter(x=>x.type==='Grass'||x.type==='Darkness'||x.uid&&['Grass','Darkness'].some(type=>Number((actor.specialEnergy||[]).find(r=>r.uid===x.uid)?.provides?.[type]||0)>0));
-      if(ctx.resolvingChoice){if(ctx.action?.choiceSkip)return;const pick=list[choiceIndex()];if(!takeEnergy(ss,actor,pick))return;const type=pick.type||'Grass';applyEffect({type:'status',target:'opponentActive',status:type==='Darkness'?'paralysis':'poison'},ctx);return;}
+      // A rainbow or Darkness-providing Special Energy is not automatically
+      // Grass. Keep the physical Energy selected until its type is resolved.
+      const typesOf=pick=>{
+        if(pick?.type)return ['Grass','Darkness'].includes(pick.type)?[pick.type]:[];
+        const ref=(actor?.specialEnergy||[]).find(x=>x.uid===pick?.uid),provided=ref?.provides||card(ref)?.effect?.provides||{};
+        return ['Grass','Darkness'].filter(t=>Number(provided[t]||0)>0||Number(provided.Miracle||0)>0);
+      };
+      const list=energyList(actor).filter(x=>typesOf(x).length>0);
+      if(e.stage==='energyType'&&ctx.resolvingChoice){
+        const type=['Grass','Darkness'][choiceIndex()],pick=list.find(x=>x.uid===e.energyUid);
+        if(!pick||!typesOf(pick).includes(type)||!takeEnergy(ss,actor,pick))return;
+        applyEffect({type:'status',target:'opponentActive',status:type==='Darkness'?'paralysis':'poison'},ctx);return;
+      }
+      if(ctx.resolvingChoice){if(ctx.action?.choiceSkip)return;const pick=list[choiceIndex()];if(!pick)return;
+        const types=typesOf(pick);if(types.length>1){
+          options('energyType',[{label:'Use Grass: Poison the Defending Pokémon'},{label:'Use Darkness: Paralyze the Defending Pokémon'}],false,{energyUid:pick.uid});return;
+        }
+        if(!types.length||!takeEnergy(ss,actor,pick))return;
+        applyEffect({type:'status',target:'opponentActive',status:types[0]==='Darkness'?'paralysis':'poison'},ctx);return;
+      }
       options('energy',list,true);return;
     }
     if(key==='tailCode'||key==='galacticSwitch'||key==='psychicConnect'||key==='energyFlare'){
@@ -8516,10 +8545,18 @@
     if(key==='honchosCommand'||key==='cyrus'){
       const step=Number(e.step||0),max=key==='cyrus'?3:2;
       const list=ss.deck.filter(ref=>{const c=card(ref);return key==='honchosCommand'?c?.trainerType==='Stadium'||c?.kind==='trainer'&&c.name.startsWith("Team Galactic's Invention"):step===0?c?.trainerType==='Supporter':step===1?c?.basicEnergy:c?.name?.startsWith("Team Galactic's Invention");});
-      if(ctx.resolvingChoice){if(ctx.action?.choiceSkip){ctx.shuffle?.(ctx.state,ss.deck);return;}
-        const ref=list[choiceIndex()];if(ref)searchPick(ss,[...list.map(r=>({uid:r.uid}))],choiceIndex());
-        if(step+1<max)return platinumRule({...e,step:step+1},{...ctx,resolvingChoice:false});return;}
-      if(list.length&&step<max)options('search',list.map(ref=>({label:'Take '+card(ref).name})),true,{step});return;
+      if(ctx.resolvingChoice){
+        if(!ctx.action?.choiceSkip){
+          const ref=list[choiceIndex()];if(ref)searchPick(ss,[...list.map(r=>({uid:r.uid}))],choiceIndex());
+        }
+        // Cyrus searches three independent categories. Skipping or failing to
+        // find one category must not silently cancel the later searches.
+        if(!ctx.action?.choiceSkip||key==='cyrus')if(step+1<max)return platinumRule({...e,step:step+1},{...ctx,resolvingChoice:false});
+        ctx.shuffle?.(ctx.state,ss.deck);return;
+      }
+      if(list.length&&step<max){options('search',list.map(ref=>({label:'Take '+card(ref).name})),true,{step});return;}
+      if(key==='cyrus'&&step+1<max)return platinumRule({...e,step:step+1},{...ctx,resolvingChoice:false});
+      ctx.shuffle?.(ctx.state,ss.deck);return;
     }
     if(key==='removeLost'){
       const list=energyList(foe.active);if(!list.length)return;
@@ -12980,6 +13017,13 @@
         const key=e.rule.slice(4),us=own(ctx),foe=other(ctx),a=ctx.attacker,d=ctx.defender;
         const total=slot=>Object.values(slot?.energy||{}).reduce((n,v)=>n+Math.max(0,Number(v||0)),0)+(slot?.specialEnergy||[]).length;
         const both=[...pokemonOn(us),...pokemonOn(foe)];
+        if(key==='vineExtract'){
+          if(Number(d?.damage||0)>0){
+            pending.push({type:'status',target:'opponentActive',status:'burn'});
+            pending.push({type:'status',target:'opponentActive',status:'poison'});
+          }
+          return;
+        }
         if(key==='aquaPress'){damage=20+10*both.reduce((n,p)=>n+total(p),0);return;}
         if(key==='energyBurst'){damage=20+10*(total(a)+total(d));return;}
         if(key==='loneliness'){damage=30+(!us.hand.some(ref=>ctx.cardById(ref.cardId)?.kind==='pokemon')?30:0);return;}
@@ -12987,7 +13031,7 @@
         if(key==='collude'){damage=20+(us.supporterUsed?20:0);return;}
         if(key==='desperateAttack'){damage=50+(total(a)<total(d)?30:0);return;}
         if(key==='colorfulPowder'){damage=total(a)>=4?60:20;pending.push(e);return;}
-        if(key==='swim'||key==='rushingFlames'||key==='waterVein'||key==='snipingTail'||key==='seedFlare'||key==='shootNeedle'||key==='mirrorMove'||key==='targetAttack'||key==='inviteAndStrike'||key==='darknessLost'||key==='hydroShot'||key==='wriggle')damage=0;
+        if(key==='swim'||key==='waterSlide'||key==='rushingFlames'||key==='waterVein'||key==='snipingTail'||key==='seedFlare'||key==='shootNeedle'||key==='mirrorMove'||key==='targetAttack'||key==='inviteAndStrike'||key==='darknessLost'||key==='hydroShot'||key==='wriggle')damage=0;
         if(key==='inflame'&&!us.hand.some(ref=>{const c=ctx.cardById(ref.cardId);return c?.kind==='energy'&&c?.subtype==='Fire';})){
           damage=0;return;
         }

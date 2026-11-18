@@ -8,8 +8,8 @@ android {
         applicationId 'com.example.luckydex'
         minSdk 26
         targetSdk 35
-        versionCode 7252
-        versionName '0.69.265'
+        versionCode 7253
+        versionName '0.69.266'
     }
 
     signingConfigs {
@@ -196,6 +196,14 @@ tasks.register('generatePlatinumForApk', Exec) {
     workingDir rootProject.projectDir
     commandLine (System.getenv('LUCKYDEX_PYTHON') ?: 'python3'), 'scripts/build-platinum.py'
 }
-tasks.matching { it.name == 'preBuild' || (it.name.startsWith('merge') && it.name.endsWith('Assets')) }.configureEach {
+// Independently compare every compiled card to its authentic printed data.
+// APK production must fail before mergeAssets if a print or effect is gated,
+// synthetic, or mismapped. Generating 133 cards is insufficient by itself.
+tasks.register('auditPlatinumChecklistForApk', Exec) {
     dependsOn tasks.named('generatePlatinumForApk')
+    workingDir rootProject.projectDir
+    commandLine (System.getenv('LUCKYDEX_PYTHON') ?: 'python3'), 'scripts/audit-platinum-checklist.py'
+}
+tasks.matching { it.name == 'preBuild' || (it.name.startsWith('merge') && it.name.endsWith('Assets')) }.configureEach {
+    dependsOn tasks.named('auditPlatinumChecklistForApk')
 }

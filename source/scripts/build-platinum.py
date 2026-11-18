@@ -5,7 +5,7 @@ The original printed text comes from the archived public PokemonTCG card data,
 not from generated labels or guessed mechanics. Card-by-card effects must be
 verified before the corresponding card is enabled for battle/autobuild.
 """
-import json, re, pathlib
+import json, re, pathlib, hashlib, os
 import pl1_verified as V
 ROOT=pathlib.Path(__file__).resolve().parents[1]
 SRC=ROOT/'data/classic/pl1-print-source.json'
@@ -22,7 +22,14 @@ def supported(e):
  return kind in {'noop','bonusDamage','status','heal','draw','sequence','coinFlip','coinDamage','selfDamage','discardEnergyCard','lock','modifier','preventDamage','benchDamage','selectedDamage','benchCountDamage','damageFromDamage','energyDamage','energyTypeCountDamage','discardCountDamage','fieldCountDamage','moveEnergy','drawToHandSize','attackCoinGate','coinAttackGate','searchChosen','attachEnergy','attachRandomEnergyFromDiscard','multiTargetDamage','discardHand','actionLock','removeStatus','removeStatuses','discardStadium','benchFromDeck','evolveFromDeck','koGuard','forceOpponentSwitch','switch','retaliateDamage','nextAttackBonus','shuffleRandomHandCard','trimHand','returnToHand','attackRequirement','chooseAttackLock','preventEffects','preventStatus','previousEvolutionAttacks','evolutionTimingOverride','selfDamagePenalty','neoRule','weaknessGuard','coinBenchDamage','selfDamageIfDefenderKnockedOut','playFossil'}
 def read():
  if not SRC.exists():raise SystemExit('Missing official data/classic/pl1-print-source.json — run sh scripts/prepare-platinum.sh')
- records=json.loads(SRC.read_text('utf8'))
+ # Pin the genuine upstream Platinum release archive, not merely a 133-row
+ # test fixture. GitHub's authenticated repository currently matches this blob.
+ raw=SRC.read_bytes()
+ blob=hashlib.sha1(b'blob '+str(len(raw)).encode()+b'\0'+raw).hexdigest()
+ official='594032984905672db5cc37fce0e9405bebb30f45'
+ if blob!=official and os.environ.get('LUCKYDEX_ALLOW_LOCAL_PLATINUM_TEST_SOURCE')!='1':
+  raise SystemExit('INVALID PLATINUM ARCHIVE: expected official Pokémon TCG Platinum blob '+official+'; got '+blob+'. Do not build APK from a synthetic 133-card fixture.')
+ records=json.loads(raw.decode('utf8'))
  nums=[str(row.get('number')) for row in records]
  if len(nums)!=133 or set(nums)!=EXPECTED or len(set(nums))!=133:raise SystemExit('Platinum data incomplete or mismatched: expected 1–130 plus SH4, SH5, SH6')
  cards=[]

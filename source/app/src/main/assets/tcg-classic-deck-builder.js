@@ -394,6 +394,14 @@ function buildDeck(rows,options={}){
    // without Lightning or Metal in the actual selected Energy Zone.
    if(card?.id==='dp7-91'&&!cards.some(id=>classic.cardById(id)?.stage==='Level-Up'))return false;
    if(card?.id==='dp7-82'&&!selectedTypes.some(type=>type==='Lightning'||type==='Metal'))return false;
+   // Platinum SP and LV.X support cannot be useful without actual physical
+   // beneficiaries in this deck. Three SP are required to play Power Spray.
+   const platinumMembers=()=>cards.map(id=>classic.cardById(id)).filter(p=>p?.kind==='pokemon');
+   const platinumSP=()=>platinumMembers().filter(p=>p.isPokemonSP).length;
+   if(['pl1-116','pl1-118'].includes(card?.id)&&platinumSP()<1)return false;
+   if(card?.id==='pl1-117'&&platinumSP()<3)return false;
+   if(card?.id==='pl1-107'&&!platinumMembers().some(p=>p.stage==='Level-Up'))return false;
+   if(card?.id==='pl1-110'&&!platinumMembers().some(p=>['Stage 1','Stage 2','Level-Up'].includes(p.stage)))return false;
    // Never draw Fossils from the general Trainer pool without a matching
    // evolution already in the actual 30-card deck (not merely owned).
    if(isEvolutionFossil(card)&&!fossilEvolutionInDeck(card,cards))return false;

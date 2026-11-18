@@ -154,9 +154,9 @@ ATTACKS['93']['Heal Bell']=H(10,'selfAll')
 ATTACKS['68']['Sweet Saliva']=H(10,'selfBenchAll')
 ATTACKS['79']['Grind']={'type':'energyDamage','source':'self','amount':10,'mode':'replace','countCards':True}
 ATTACKS['18']['Healing Song']=H(10,'selfAll')
-ATTACKS['43']['Vine Extract']=S(
- {'type':'status','target':'opponentActive','status':'burn','condition':{'type':'opponentDamaged'}},
- {'type':'status','target':'opponentActive','status':'poison','condition':{'type':'opponentDamaged'}})
+# The defending Pokémon must have damage BEFORE Vine Extract strikes,
+# never because this attack's own 30 damage created its first counters.
+ATTACKS['43']['Vine Extract']={'type':'neoRule','rule':'pl1:vineExtract'}
 # Status-changing effects never automatically get damage when the printing says
 # that the damage is to the Bench instead of Active (e.g. attacks printed "-").
 
@@ -320,4 +320,4 @@ PL1_RULES.update({'aquaPress','doubleLauncher','energyBurst','powerWave','attrac
 ATTACKS['18']['Healing Song']=H(10,'selfAll')
 ATTACKS['52']['Gentle Slap']=N
 
-PL1_RULES.update({'wriggle','darkSlash','shootNeedle','futureSight','inflame','cyrus','blackCry'})
+PL1_RULES.update({'wriggle','darkSlash','shootNeedle','futureSight','inflame','cyrus','blackCry','vineExtract'})
