@@ -8,8 +8,8 @@ android {
         applicationId 'com.example.luckydex'
         minSdk 26
         targetSdk 35
-        versionCode 7270
-        versionName '0.69.284'
+        versionCode 7271
+        versionName '0.69.285'
     }
 
     signingConfigs {
@@ -288,4 +288,25 @@ tasks.register('independentHGSS1ForApk', Exec) {
 }
 tasks.matching { it.name == 'preBuild' || (it.name.startsWith('merge') && it.name.endsWith('Assets')) }.configureEach {
     dependsOn tasks.named('independentHGSS1ForApk')
+}
+
+
+// v0.69.285: HGSS2 Unleashed first pass. All 96 immutable printed identities
+// appear in collection; unsupported mechanics are gated from CPU/player decks.
+tasks.register('generateHGSS2ForApk', Exec) {
+    workingDir rootProject.projectDir
+    commandLine (System.getenv('LUCKYDEX_PYTHON') ?: 'python3'), 'scripts/build-hgss2.py'
+}
+tasks.register('auditHGSS2ForApk', Exec) {
+    dependsOn tasks.named('generateHGSS2ForApk')
+    workingDir rootProject.projectDir
+    commandLine 'node', '--test', 'tests/v07285-unleashed-stage1.test.cjs'
+}
+tasks.register('independentHGSS2ForApk', Exec) {
+    dependsOn tasks.named('auditHGSS2ForApk')
+    workingDir rootProject.projectDir
+    commandLine 'node', 'scripts/audit-classic-set.cjs', '--set', 'hgss2', '--smoke', '--no-write'
+}
+tasks.matching { it.name == 'preBuild' || (it.name.startsWith('merge') && it.name.endsWith('Assets')) }.configureEach {
+    dependsOn tasks.named('independentHGSS2ForApk')
 }

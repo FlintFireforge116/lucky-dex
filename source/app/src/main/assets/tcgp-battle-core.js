@@ -1100,7 +1100,7 @@
     // A LEGEND is exactly TWO physical halves played TOGETHER onto an empty
     // Bench position, never as either half alone. Both remain recoverable.
     if(state.format==='classic'&&s.bench.length<maxBenchSize(s)){
-      for(const [first,second] of [['hgss1-111','hgss1-112'],['hgss1-113','hgss1-114']]){
+      for(const [first,second] of [['hgss1-111','hgss1-112'],['hgss1-113','hgss1-114'],['hgss2-90','hgss2-91'],['hgss2-92','hgss2-93'],['hgss2-94','hgss2-95']]){
         const i=s.hand.findIndex(r=>r.cardId===first),j=s.hand.findIndex(r=>r.cardId===second);
         if(i>=0&&j>=0&&data.cardById(first)?.battleEnabled&&data.cardById(second)?.battleEnabled)
           for(const benchIndex of emptyBenchSlots(s))actions.push({type:'legendBench',cardId:first,handIndex:i,secondHandIndex:j,benchIndex});
@@ -2342,7 +2342,7 @@
 
     if(matched.type==='legendBench'){
       const first=s.hand[matched.handIndex],second=s.hand[matched.secondHandIndex];
-      const required=first?.cardId==='hgss1-111'?'hgss1-112':first?.cardId==='hgss1-113'?'hgss1-114':null;
+      const pairs={'hgss1-111':'hgss1-112','hgss1-113':'hgss1-114','hgss2-90':'hgss2-91','hgss2-92':'hgss2-93','hgss2-94':'hgss2-95'};const required=pairs[first?.cardId]||null;
       if(!required||second?.cardId!==required||emptyBenchSlots(s).indexOf(matched.benchIndex)<0)throw new Error('Both matching LEGEND halves must be in hand.');
       for(const i of [matched.handIndex,matched.secondHandIndex].sort((a,b)=>b-a))s.hand.splice(i,1);
       const placed=makePokemonSlot(first.cardId,s.turnCount,first.uid);placed.stack=[first.cardId,second.cardId];placed.legendHalfUids=[first.uid,second.uid];
