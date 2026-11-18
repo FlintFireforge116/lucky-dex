@@ -15,7 +15,7 @@ test('Supreme Victors exact 153 official prints; 254 attacks and 34 abilities re
  assert.equal(printed.length,153);assert.equal(supreme.CARDS.length,153);assert.equal(new Set(supreme.CARDS.map(c=>c.id)).size,153);
  assert.equal(printed.reduce((n,c)=>n+(c.attacks||[]).length,0),254);
  assert.equal(printed.reduce((n,c)=>n+(c.abilities||[]).length,0),34);
- assert.ok(active.length>=84,'Generated playable coverage decreased from v0.69.271 baseline');
+ assert.ok(active.length>=84,'Generated playable coverage decreased from v0.69.272 baseline');
  for(const p of printed){
   const c=supreme.cardById('pl3-'+p.number);assert.ok(c,p.number);assert.equal(c.name,p.name);assert.equal(c.kind,p.supertype==='Pokémon'?'pokemon':'trainer');
   assert.deepEqual((c.attacks||[]).map(x=>[x.name,x.text,x.cost]),(p.attacks||[]).map(x=>[x.name,x.text||'',(x.cost||[]).map(t=>({Grass:'G',Fire:'R',Water:'W',Lightning:'L',Psychic:'P',Fighting:'F',Darkness:'D',Metal:'M',Colorless:'C'})[t]).join('')]));
@@ -52,7 +52,7 @@ test('all enabled Supreme Victors attacks resolve or provide a legal choice; no 
   s.phase='battle';s.turnNumber=12;s.activeSide='player';
   for(const side of ['player','opponent']){const ss=s.sides[side];ss.turnCount=5;ss.hand=[{uid:'hand-'+side,cardId:'pl3-136'}];ss.discard=[{uid:'discard-'+side,cardId:'pl3-90'},{uid:'water-energy-'+side,cardId:'dp1-125'},{uid:'grass-energy-'+side,cardId:'dp1-123'}];ss.lostZone=[];ss.bench=[];}
   s.sides.player.active=core.makePokemonSlot(c.id,2,'supreme-'+c.id);s.sides.player.active.energy={...energy};s.sides.player.active.damage=10;
-  s.sides.opponent.active=core.makePokemonSlot('pl3-90',2,'opponent');s.sides.opponent.active.energy={...energy};s.sides.opponent.bench=[core.makePokemonSlot('pl3-95',2,'opp-bench')];
+  s.sides.opponent.active=core.makePokemonSlot('pl3-90',2,'opponent');s.sides.opponent.active.energy={...energy};s.sides.opponent.active.damage=10;s.sides.opponent.bench=[core.makePokemonSlot('pl3-95',2,'opp-bench')];
   s.sides.player.bench=[core.makePokemonSlot('pl3-91',2,'my-bench')];
   s.sides.player.deck.unshift({uid:'extra-basic',cardId:'pl3-93'},{uid:'extra-stadium',cardId:'pl1-104'},{uid:'extra-trainer',cardId:'pl3-140'});
   const action=core.legalActions(s,'player').find(a=>a.type==='attack'&&a.attackIndex===k);
@@ -70,6 +70,6 @@ test('all enabled Supreme Victors attacks resolve or provide a legal choice; no 
 
 test('the APK build version agrees across Gradle, UI and boot JS',()=>{
  const g=fs.readFileSync(path.join(root,'app/build.gradle'),'utf8');const app=fs.readFileSync(path.join(assets,'app-v0167.js'),'utf8');const html=fs.readFileSync(path.join(assets,'index.html'),'utf8');
- assert.ok(g.includes("versionName '0.69.271'"));assert.ok(app.includes("__LUCKYDEX_BUILD='0.69.271'"));
- assert.ok(html.includes('id="titleBuildVersion">v0.69.271'));assert.ok(html.includes('id="appBuildVersion">LUCKY DEX · v0.69.271'));
+ assert.ok(g.includes("versionName '0.69.272'"));assert.ok(app.includes("__LUCKYDEX_BUILD='0.69.272'"));
+ assert.ok(html.includes('id="titleBuildVersion">v0.69.272'));assert.ok(html.includes('id="appBuildVersion">LUCKY DEX · v0.69.272'));
 });

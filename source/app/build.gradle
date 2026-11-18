@@ -9,7 +9,7 @@ android {
         minSdk 26
         targetSdk 35
         versionCode 7258
-        versionName '0.69.271'
+        versionName '0.69.272'
     }
 
     signingConfigs {
@@ -240,7 +240,7 @@ tasks.register('generateSupremeVictorsForApk', Exec) {
 tasks.register('auditSupremeVictorsForApk', Exec) {
     dependsOn tasks.named('generateSupremeVictorsForApk')
     workingDir rootProject.projectDir
-    commandLine 'node', '--test', 'tests/v07271-supreme-victors-stage1.test.cjs'
+    commandLine 'node', '--test', 'tests/v07271-supreme-victors-stage1.test.cjs', 'tests/v07272-supreme-victors-stage2.test.cjs'
 }
 tasks.matching { it.name == 'preBuild' || (it.name.startsWith('merge') && it.name.endsWith('Assets')) }.configureEach {
     dependsOn tasks.named('auditSupremeVictorsForApk')

@@ -19,8 +19,10 @@ COLOR={'Grass':'G','Fire':'R','Water':'W','Lightning':'L','Psychic':'P','Fightin
 # Individual Trainer handlers. Unsupported support cards remain visible but
 # are never put in 30-card automated battles until their full text works.
 TRAINERS={
+ '135':('Stadium',{'type':'modifier','stat':'retreatCost','amount':-1,'scope':'team','duration':'whileInPlay','filter':{'tag':'pokemon-sp'}}),
  '136':('Supporter',{'type':'selectTopToHand','count':7}),
  '140':('Item',{'type':'searchChosen','source':'discard','amount':1,'filter':{'kind':'trainer','trainerType':'Supporter'},'excludePlayedTrainer':True}),
+ '139':('Supporter',{'type':'neoRule','rule':'pl3:139:palmer'}),
 }
 
 def supported(e):
@@ -30,8 +32,8 @@ def supported(e):
  if t=='coinFlip':return bool(e.get('heads') or e.get('tails')) and all(supported(e[k]) for k in ('heads','tails') if k in e)
  if t=='chooseOption':return bool(e.get('options')) and all(supported(x.get('effect')) for x in e['options'])
  if t=='coinAttackGate':return supported(e.get('heads')) or e.get('heads')==V.N
- if t=='neoRule':return e.get('rule')=='dp1:babyEvolve'
- return t in {'noop','draw','heal','bonusDamage','coinDamage','selfDamage','status','modifier','selectedDamage','benchDamage','lock','forceOpponentSwitch','searchChosen','coinDamageByEnergy','coinBenchDamage','removeStatuses','attachEnergyFromDiscard','chooseAttackLock','preventDamage','damageRule','damageFromDamage','energyDamage','multiTargetDamage','discardEnergyCard','discardTop','coinAttackGate','attackCoinGate','benchFromDeck','switch','drawToHandSize','selfDamagePenalty','fieldCountDamage','selectTopToHand','shuffleRandomHandCard'}
+ if t=='neoRule':return e.get('rule')=='dp1:babyEvolve' or str(e.get('rule','')).startswith('pl3:')
+ return t in {'noop','draw','heal','bonusDamage','coinDamage','selfDamage','status','modifier','selectedDamage','benchDamage','lock','forceOpponentSwitch','searchChosen','coinDamageByEnergy','coinBenchDamage','removeStatuses','attachEnergyFromDiscard','koGuard','preventDamage','modifier','removeStatuses','chooseAttackLock','preventDamage','damageRule','damageFromDamage','energyDamage','multiTargetDamage','discardEnergyCard','discardTop','coinAttackGate','attackCoinGate','benchFromDeck','switch','drawToHandSize','selfDamagePenalty','fieldCountDamage','selectTopToHand','drain','discardCountDamage','returnToHand','nextAttackBonus','moveEnergy','chooseAttackLock','attachEnergy','attachEnergyFromDiscard','shuffleRandomHandCard'}
 
 def build():
  assert SRC.exists() and COMPACT.exists(),'Supreme Victors print files missing; do not synthesize replacement records'

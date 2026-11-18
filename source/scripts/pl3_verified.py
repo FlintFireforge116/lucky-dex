@@ -25,8 +25,54 @@ def ACTIVE_POWER(name,e,**kw):return {'name':name,'type':'activated','printedPow
 def PASSIVE(name,e,**kw):return {'name':name,'type':'passive','printedPowerType':'body','disabledByStatus':False,'effect':e,**kw}
 STAT={'Paralyzed':'paralysis','Poisoned':'poison','Asleep':'sleep','Burned':'burn','Confused':'confusion'}
 
+# Supreme Victors follow-up: only printed effects with executable handlers.
+# Rules marked pl3: are handled before damage in resolveAttack or by a
+# physical-card choice after damage in supremeVictorsRule.
+def R(key):return {'type':'neoRule','rule':'pl3:'+key}
+ADDITIONAL_ATTACKS={
+ ('2','Luring Flame'):R('2:luringFlame'),
+ ('4','Dump and Draw'):R('4:dumpDraw'),
+ ('4','Electric Current'):R('4:electricCurrent'),
+ ('9','Drain Punch'):R('9:drainPunch'),
+ ('9','Rainbow Lariat'):R('9:rainbowLariat'),
+ ('10','Deep Scrap'):R('10:deepScrap'),
+ ('21','Super Psywave'):R('21:superPsywave'),
+ ('26','Ghost Hand'):BENCH_DMG(10,'self',False),
+ ('26','Cursed Wrath'):{'type':'discardCountDamage','amount':10,'mode':'replace','filter':{'tag':'pokemon-sp'}},
+ ('27','Rushing Water'):{'type':'moveEnergy','source':'opponentActive','target':'opponentBench','amount':1},
+ ('27','Escort'):BONUS(20,{'type':'supporterPlayed'}),
+ ('33','Turnaround Standby'):S({'type':'nextAttackBonus','attackName':'Swallow','amount':40},{'type':'nextAttackBonus','attackName':'Bite','amount':40}),
+ ('33','Swallow'):{'type':'drain'},
+ ('34','Channeling'):{'type':'draw','amount':2,'side':'opponent'},
+ ('34','Chakra Points'):R('34:chakraPoints'),
+ ('41','Astonish'):{'type':'shuffleRandomHandCard','side':'opponent'},
+ ('53','Swallow'):Q({'type':'drain'}),
+ ('66','Energy Absorption'):R('66:energyAbsorption'),
+ ('71','Call for Family'):{'type':'benchFromDeck','amount':2,'choose':True,'filter':{'kind':'pokemon','stage':'Basic','subtype':'Lightning'}},
+ ('71','Trash Charge'):{'type':'attachEnergyFromDiscard','amount':1,'energyType':'Lightning','target':'selfPokemon','upTo':True},
+ ('74','Draw In'):{'type':'attachEnergyFromDiscard','amount':2,'energyType':'Fire','target':'self','upTo':True},
+ ('75','Gripthrow'):Q({'type':'returnToHand','target':'opponentActive','returnBasicEnergy':True}),
+ ('75','Sever'):BONUS(30,{'type':'opponentMatches','filter':{'stage':'Stage 2'}}),
+ ('76','Greedy Draw'):R('76:greedyDraw'),
+ ('76','Hand Charge'):{'type':'attachEnergy','amount':1,'source':'hand','energyType':'Lightning','target':'selfPokemon'},
+ ('79','Grand Swell'):R('79:grandSwell'),
+ ('79','Amnesia'):{'type':'chooseAttackLock','target':'opponentActive','duration':'opponentTurn'},
+ ('82','Discharge'):R('82:discharge'),
+ ('96','Growth'):{'type':'attachEnergy','amount':1,'source':'hand','energyType':'Grass','target':'self'},
+ ('104','Count and Draw'):R('104:countAndDraw'),
+ ('24','Ice Shard'):BONUS(50,{'type':'opponentMatches','filter':{'subtype':'Fighting'}}),
+ ('43','Horn Pierce'):R('43:hornPierce'),
+ ('43','Endure'):Q({'type':'koGuard','mode':'survive','remainingHp':10,'duration':'opponentTurn','attackOnly':True}),
+ ('12','Drag Off'):R('12:dragOff'),
+ ('12','Push Over'):{'type':'energyDamage','source':'self','energyType':'Fighting','amount':10},
+ ('42','Needle'):Q(S(ST('paralysis'),ST('poison'))),
+ ('42','Dig Down'):R('42:digDown'),
+ ('44','Spike Wound'):{'type':'selectedDamage','target':'opponentPokemon','amount':30,'filter':{'damaged':True},'ignoreWeakness':True,'ignoreResistance':True},
+}
+
 def attack(c,a):
     text=(a.get('text') or '').strip();name=a['name'];n=c['number'];dmg=a.get('damage') or ''
+    if (n,name) in ADDITIONAL_ATTACKS:return ADDITIONAL_ATTACKS[(n,name)]
     if not text:return N
     m=re.fullmatch(r'Flip a coin\. If heads, this attack does \d+ damage plus (\d+) more damage\.',text)
     if m:return Q(BONUS(int(m[1])))
@@ -165,8 +211,23 @@ def attack(c,a):
     return special.get((n,name))
 
 # Only Powers using an already-supported meaning (and trigger) are enabled.
+# Continuous bodies and triggered effects are modelled as real battle-state
+# modifiers / events, not attack text appended to the card.
+ADDITIONAL_ABILITIES={
+ ('12','Root Protector'):PASSIVE('Root Protector',{'type':'modifier','stat':'damageReduction','amount':20,'scope':'self','duration':'whileInPlay','opponentFilter':{'stage':'Basic'}}),
+ ('62','Evolutionary Pollen'):{'name':'Evolutionary Pollen','type':'triggered','printedPowerType':'power','disabledByStatus':True,'event':'evolved','fromHandOnly':True,'effect':OPTIONAL(ST('sleep'),'Put opponent Active Pokémon Asleep')},
+ ('42','Dig Down'):ACTIVE_POWER('Dig Down',R('42:digDown')),
+ ('3','Pump Up'):PASSIVE('Pump Up',{'type':'modifier','stat':'maxHp','amount':40,'scope':'self','duration':'whileInPlay','condition':{'type':'opponentPrizesAtMost','amount':3}}),
+ ('15','Extreme Speed'):PASSIVE('Extreme Speed',{'type':'modifier','stat':'retreatCost','amount':-1,'scope':'self','duration':'whileInPlay','perEnergyCards':True,'energyType':'Fire'}),
+ ('17','Compound Eyes'):PASSIVE('Compound Eyes',{'type':'modifier','stat':'attackDamage','amount':30,'scope':'self','duration':'whileInPlay','condition':{'type':'opponentMatches','filter':{'hasBody':True}}}),
+ ('24','Thick Fat'):PASSIVE('Thick Fat',{'type':'modifier','stat':'damageReduction','amount':30,'scope':'self','duration':'whileInPlay','opponentFilter':{'subtype':['Fire','Water']}}),
+ ('40','Natural Cure'):{'name':'Natural Cure','type':'triggered','printedPowerType':'body','disabledByStatus':False,'event':'energyAttached','fromHandOnly':True,'effect':{'type':'removeStatuses','target':'self','statuses':['poison','burn','sleep','paralysis','confusion']}},
+ ('44','Marvel Shell'):PASSIVE('Marvel Shell',{'type':'preventDamage','target':'self','duration':'whileInPlay','attackerFilter':{'hasAbility':True}}),
+}
+
 def ability(c,p):
     n=c['number'];name=p['name']
+    if (n,name) in ADDITIONAL_ABILITIES:return ADDITIONAL_ABILITIES[(n,name)]
     if name=='Baby Evolution' and n in ('98','115'):
       return ACTIVE_POWER(name,{'type':'neoRule','rule':'dp1:babyEvolve','targetName':{'98':'Chimecho','115':'Mr. Mime'}[n]})
     if n=='25' and name=='Echo Draw':return ACTIVE_POWER(name,DRAW(1))
