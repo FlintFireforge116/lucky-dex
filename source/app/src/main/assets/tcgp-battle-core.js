@@ -1314,10 +1314,10 @@
           if((Number(s.benchLimit||3)>=4&&!s.bench.includes(source))||
              !['H','E','A','L'].every(letter=>places.some(p=>data.cardById(p.cardId)?.name==='Unown ['+letter+']')))return;
         }
-        if(source.cardId==='hgss2-13'&&ability.name==='Wash Out'&&(!s.active||!s.bench.some(p=>Number(p?.energy?.Water||0)>0||(p?.specialEnergy||[]).some(r=>Number((r.provides||data.cardById(r.cardId)?.effect?.provides||{}).Water||0)>0))))return;
+        if(source.cardId==='hgss2-13'&&ability.name==='Wash Out'&&(!s.active||!s.bench.some(p=>Number(p?.energy?.Water||0)>0||(p?.specialEnergy||[]).some(r=>{const q=r.provides||data.cardById(r.cardId)?.effect?.provides||{};return Number(q.Water||0)>0||Number(q.Miracle||0)>0||Number(q.Rainbow||0)>0;}))))return;
         if(source.cardId==='hgss2-16'&&ability.name==='Water Acceleration'&&!s.hand.some(r=>{const c=data.cardById(r.cardId);return c?.basicEnergy&&c.subtype==='Water';}))return;
         if(source.cardId==='hgss2-7'&&ability.name==='Leap Frog'&&!s.bench.some(p=>data.cardById(p?.cardId)?.types?.includes('Water')))return;
-        if(source.cardId==='hgss2-5'&&ability.name==='Magical Trans'&&(!pokemonOn(s).some(p=>Number(p.energy?.Psychic||0)>0||(p.specialEnergy||[]).some(r=>Number((r.provides||data.cardById(r.cardId)?.effect?.provides||{}).Psychic||0)>0))||pokemonOn(s).length<2))return;
+        if(source.cardId==='hgss2-5'&&ability.name==='Magical Trans'&&(!pokemonOn(s).some(p=>Number(p.energy?.Psychic||0)>0||(p.specialEnergy||[]).some(r=>{const q=r.provides||data.cardById(r.cardId)?.effect?.provides||{};return Number(q.Psychic||0)>0||Number(q.Miracle||0)>0||Number(q.Rainbow||0)>0;}))||pokemonOn(s).length<2))return;
         if(ability.name==='Call Energy'&&(source!==s.active||Number(source.dp5CallEnergyUsedTurn)===s.turnCount||s.bench.length>=Number(s.benchLimit||3)||!s.deck.some(ref=>data.cardById(ref.cardId)?.battleEnabled&&data.cardById(ref.cardId)?.kind==='pokemon'&&data.cardById(ref.cardId)?.stage==='Basic')))return;
         if(source.cardId==='dp4-57'&&(!s.bench.includes(source)||!pokemonOn(s).some(p=>p!==source&&toolsOf(p).length<effects.toolCapacity(state,side,p,data.cardById))))return;
         if(source.cardId==='dp4-9'&&!s.bench.some(p=>Number(p.energy?.Water||0)>0||Number(p.energy?.Fighting||0)>0||(p.specialEnergy||[]).some(ref=>{const prov=ref.provides||data.cardById(ref.cardId)?.effect?.provides||{};return Number(prov.Water||0)+Number(prov.Fighting||0)>0;})))return;

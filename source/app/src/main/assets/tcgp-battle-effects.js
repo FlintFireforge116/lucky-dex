@@ -9891,6 +9891,10 @@
     const physical=(slot,type)=>[...Object.entries(slot?.energy||{}).filter(([t,n])=>Number(n)>0&&(!type||t===type)).map(([t])=>({type:t,label:t+' Basic Energy'})),
       ...(slot?.specialEnergy||[]).filter(ref=>!type||Number((ref.provides||card(ref)?.effect?.provides||{})[type]||0)>0||!!(ref.provides||card(ref)?.effect?.provides||{}).Rainbow||Number((ref.provides||card(ref)?.effect?.provides||{}).Miracle||0)>0).map(ref=>({uid:ref.uid,label:card(ref)?.name||'Special Energy'}))];
     const isBasic=ref=>{const c=card(ref);return !!c?.basicEnergy;};
+    // Rainbow Energy provides one of every type while attached. The HGSS
+    // catalogue encodes this as Miracle:1; it must satisfy printed Water
+    // requirements in addition to ordinary type-providing Special Energy.
+    const provides= (ref,type)=>{const p=ref?.provides||card(ref)?.effect?.provides||{};return Number(p[type]||0)>0||Number(p.Miracle||0)>0||Number(p.Rainbow||0)>0;};
     const discarded=(type)=>[...(ss.discard||[]).filter(r=>{const c=card(r);return c?.kind==='energy'&&c.basicEnergy&&(!type||c.energyType===type||c.subtype===type);}).map(r=>({uid:r.uid,cardId:r.cardId,type:card(r).energyType||card(r).subtype,label:card(r).name||'Basic Energy'})),
       ...Object.entries(ss.energyDiscard||{}).filter(([t,n])=>Number(n)>0&&(!type||type===t)).map(([t])=>({type:t,label:t+' Basic Energy (discard zone)'}))];
     const takeDiscard=pick=>{if(pick.uid){const i=ss.discard.findIndex(r=>r.uid===pick.uid);return i<0?null:ss.discard.splice(i,1)[0];}
@@ -9922,11 +9926,15 @@
       if(count&&available().length)options('attach',available().map(v=>'Attach '+v.label).concat('Done'),{effect:{left:count,doneIndex:available().length}});return;
     }
     if(key==='1:timeHollow'){
-      const eligible=()=>all(foe).filter(p=>(p.stack||[]).length>1&&['Stage 1','Stage 2'].includes(card(p)?.stage));
+      // The print selects different evolved Pokémon and removes only their
+      // highest stage. Never let a second prompt select an already-devolved
+      // slot, even if the same slot still has another evolution underneath.
+      const used=e.usedUids||[],eligible=()=>all(foe).filter(p=>!used.includes(p.uid)&&(p.stack||[]).length>1&&['Stage 1','Stage 2'].includes(card(p)?.stage));
       if(ctx.resolvingChoice){if(act.choiceSkip)return;const slot=chosen(foe);if(!slot||!eligible().includes(slot))return;
         const top=slot.stack.pop();foe.hand.push({uid:'hgss2-time-'+ctx.state.turnNumber+'-'+slot.uid,cardId:top});slot.cardId=slot.stack.at(-1);slot.evolvedOnTurn=null;
-        if(Number(e.left||1)>1&&eligible().length)choosePokemon('select','opponent',{optional:true,filter:{stage:['Stage 1','Stage 2']},effect:{left:Number(e.left)-1}});return;}
-      const n=nEnergy(source);if(n&&eligible().length)choosePokemon('select','opponent',{optional:true,filter:{stage:['Stage 1','Stage 2']},effect:{left:n}});return;
+        const nextUsed=[...used,slot.uid],remaining=all(foe).filter(p=>!nextUsed.includes(p.uid)&&(p.stack||[]).length>1&&['Stage 1','Stage 2'].includes(card(p)?.stage));
+        if(Number(e.left||1)>1&&remaining.length)choosePokemon('select','opponent',{optional:true,filter:{stage:['Stage 1','Stage 2']},excludeUids:nextUsed,effect:{left:Number(e.left)-1,usedUids:nextUsed}});return;}
+      const n=nEnergy(source);if(n&&eligible().length)choosePokemon('select','opponent',{optional:true,filter:{stage:['Stage 1','Stage 2']},excludeUids:used,effect:{left:n,usedUids:used}});return;
     }
     if(key==='5:psychicPulse'){for(const p of foe.bench||[])if(Number(p.damage||0)>0)hit(p,10);return;}
     if(key==='5:magicalTrans'||key==='8:celebrationWind'||key==='13:washOut'){
@@ -9951,11 +9959,12 @@
     if(key==='8:energyBloom'){for(const p of all(ss))if(nEnergy(p)>0&&!healingIsBlocked(ctx.state,p,ctx.cardById))p.damage=Math.max(0,Number(p.damage||0)-30);return;}
     if(key==='13:hydroLauncher'||key==='94:torrentBlade'){
       const amount=key.startsWith('13')?100:100,benchOnly=key.startsWith('94'),types=physical(source,'Water');
-      if(ctx.resolvingChoice&&stage==='energy'){const opts=physical(source,'Water'),pick=opts[i];if(!pick)return;transfer(source,pick,'hand');
+      if(ctx.resolvingChoice&&stage==='energy'){const opts=physical(source,'Water'),pick=opts[i];if(!pick||!transfer(source,pick,'hand'))return;
         if(Number(e.left||2)>1&&physical(source,'Water').length){options('energy',physical(source,'Water').map(x=>'Return '+x.label),{effect:{left:1}});return;}
+        if(Number(e.left||2)>1)return; // Never deal 100 damage after paying only one of two Energy cards.
         if((benchOnly?foe.bench:all(foe)).length)choosePokemon('target','opponent',{includeActive:!benchOnly});return;}
       if(ctx.resolvingChoice&&stage==='target'){const p=chosen(foe);if(p&&(!benchOnly||foe.bench.includes(p)))hit(p,amount);return;}
-      if(types.length&&(Number(source?.energy?.Water||0)+(source?.specialEnergy||[]).filter(r=>Number((r.provides||card(r)?.effect?.provides||{}).Water||0)>0).length)>=2&&(benchOnly?foe.bench:all(foe)).length)options('energy',types.map(x=>'Return '+x.label),{effect:{left:2}});return;
+      if(types.length&&(Number(source?.energy?.Water||0)+(source?.specialEnergy||[]).filter(r=>provides(r,'Water')).length)>=2&&(benchOnly?foe.bench:all(foe)).length&&ss.hand.length+2<=Number(ss.handLimit??8))options('energy',types.map(x=>'Return '+x.label),{effect:{left:2}});return;
     }
     if(key==='16:waterAcceleration'){
       const pool=()=>ss.hand.filter(r=>isBasic(r)&&['Water'].includes(card(r)?.energyType||card(r)?.subtype));
@@ -9971,7 +9980,10 @@
       const type=key.startsWith('20')?'Fire':'Psychic',limit=key.startsWith('20')?3:2,pool=()=>discarded(type);
       if(ctx.resolvingChoice&&stage==='target'){const p=chosen(ss);if(p&&pool().length)options('energy',pool().map(x=>'Attach '+x.label).concat('Done'),{effect:{targetUid:p.uid,left:Number(e.left||limit),doneIndex:pool().length}});return;}
       if(ctx.resolvingChoice&&stage==='energy'){if(isDone())return;const p=all(ss).find(x=>x.uid===e.targetUid),pick=pool()[i];if(!p||!pick)return;
-        attach(p,takeDiscard(pick));if(Number(e.left||1)>1&&pool().length)choosePokemon('target','self',{optional:true,effect:{left:Number(e.left)-1}});return;}
+        attach(p,takeDiscard(pick));if(Number(e.left||1)>1&&pool().length){
+          if(key==='20:heatAcceleration')options('energy',pool().map(x=>'Attach '+x.label).concat('Done'),{effect:{targetUid:p.uid,left:Number(e.left)-1,doneIndex:pool().length}});
+          else choosePokemon('target','self',{optional:true,effect:{left:Number(e.left)-1}});
+        }return;}
       if(pool().length)choosePokemon('target','self',{optional:true,effect:{left:limit}});return;
     }
     if(key==='23:energySignal'){

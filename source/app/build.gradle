@@ -8,8 +8,8 @@ android {
         applicationId 'com.example.luckydex'
         minSdk 26
         targetSdk 35
-        versionCode 7272
-        versionName '0.69.286'
+        versionCode 7273
+        versionName '0.69.287'
     }
 
     signingConfigs {
@@ -300,7 +300,7 @@ tasks.register('generateHGSS2ForApk', Exec) {
 tasks.register('auditHGSS2ForApk', Exec) {
     dependsOn tasks.named('generateHGSS2ForApk')
     workingDir rootProject.projectDir
-    commandLine 'node', '--test', 'tests/v07285-unleashed-stage1.test.cjs', 'tests/v07286-unleashed-completion.test.cjs'
+    commandLine 'node', '--test', 'tests/v07285-unleashed-stage1.test.cjs', 'tests/v07286-unleashed-completion.test.cjs', 'tests/v07287-unleashed-independent-audit.test.cjs'
 }
 tasks.register('independentHGSS2ForApk', Exec) {
     dependsOn tasks.named('auditHGSS2ForApk')

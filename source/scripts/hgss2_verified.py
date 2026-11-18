@@ -98,7 +98,7 @@ ATTACKS={
  ('67','Leech Seed'):{'type':'drain','amount':10},
  ('68','Fireworks'):Q(t=DISC(1,'self','Fire')),
  ('69','Speed Evolution'):{'type':'evolveFromDeck'},
- ('70','Double Attack'):{'type':'neoRule','rule':'hgss2:70:doubleAttack'},
+ ('70','Double Attack'):{'type':'multiTargetDamage','target':'opponentBench','count':2,'amount':10},
  ('87','Energy Stream'):{'type':'neoRule','rule':'hgss1:36:energyLink'},
  ('88','Power Claw'):{'type':'damageRule','ignoreDefenderEffects':True},
  ('88','Megaton Tail'):{'type':'discardTop','side':'self','amount':3},
@@ -149,7 +149,7 @@ TRAINERS={
  # This print permits Stage 1 OR Stage 2 from a Basic; current engine only supports Stage 2.
  # Keep it gated until both printed destinations are legal.
  # '82':('Item',{'type':'rareCandy'}),
- '80':('AttachedTrainer',{'type':'modifier','stat':'postWeaknessAttackDamage','amount':10,'duration':'whileInPlay','scope':'self'}),
+ '80':('AttachedTrainer',{'type':'modifier','stat':'attackDamage','amount':10,'duration':'whileInPlay','scope':'self'}),
  'TWO':('Item',{'type':'shuffleDeck'}),
 }
 
