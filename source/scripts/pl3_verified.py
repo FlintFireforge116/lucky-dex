@@ -70,6 +70,54 @@ ADDITIONAL_ATTACKS={
  ('44','Spike Wound'):{'type':'selectedDamage','target':'opponentPokemon','amount':30,'filter':{'damaged':True},'ignoreWeakness':True,'ignoreResistance':True},
 }
 
+
+# Supreme Victors completion mappings: each key has a matching executable rule
+# or lifecycle hook in tcgp-battle-effects / tcgp-battle-core.
+COMPLETION_ATTACKS = {
+ ('1','Doom News'):R('1:doomNews'),
+ ('5','Speed Impact'):R('5:speedImpact'),
+ ('6','Flame Ball'):R('6:flameBall'),
+ ('7','Geo Impact'):R('7:geoImpact'),
+ ('8','Trash Burst'):R('8:trashBurst'),
+ ('8','Twister'):R('8:twister'),
+ ('13','Desperate Pollen'):R('13:desperatePollen'),
+ ('13','Special Reaction'):R('13:specialReaction'),
+ ('14','Wind Return'):R('14:windReturn'),
+ ('18','Moving Fire'):R('18:movingFire'),
+ ('18','Volcanic Crash'):R('18:volcanicCrash'),
+ ('22','Antique Magic'):R('22:antiqueMagic'),
+ ('22','Synchro Attack'):R('22:synchroAttack'),
+ ('29','Riot'):R('29:riot'),
+ ('30','Licking-Licking Heal'):R('30:lickHeal'),
+ ('32','Gravity Wave'):R('32:gravityWave'),
+ ('37','Desperate Slap'):R('37:desperateSlap'),
+ ('38','Nutritional Support'):R('38:nutritionalSupport'),
+ ('38','Hibernation Spore'):R('38:hibernationSpore'),
+ ('39','Top Drop'):R('39:topDrop'),
+ ('45','Luna Turn'):R('45:lunaTurn'),
+ ('46','Synchro Removal'):R('46:synchroRemoval'),
+ ('52','Hover Hit'):R('52:hoverHit'),
+ ('52','Crash Bomber'):R('52:crashBomber'),
+ ('54','Search and Escape'):R('54:searchEscape'),
+ ('70','Cleansing Ring'):R('70:cleansingRing'),
+ ('70','Scale Blow'):R('70:scaleBlow'),
+ ('72','Switcheroo'):R('72:switcheroo'),
+ ('73','Circling Dive'):R('73:circlingDive'),
+ ('73','Parallel Drain'):R('73:parallelDrain'),
+ ('83','Silver Feather'):R('83:silverFeather'),
+ ('83','Metal Max'):R('83:metalMax'),
+ ('98','Chime'):R('98:chime'),
+ ('141','Darkness Slugger'):R('141:darknessSlugger'),
+ ('142','Jet Shoot'):R('142:jetShoot'),
+ ('143','Malevolent Fire'):R('143:malevolentFire'),
+ ('144','Powerful Spark'):R('144:powerfulSpark'),
+ ('145','Dragon Rush'):R('145:dragonRush'),
+ ('146','Final Blowup'):R('146:finalBlowup'),
+ ('147','Defog'):R('147:defog'),
+ ('SH9','Baton Pass'):R('SH9:batonPass'),
+}
+ADDITIONAL_ATTACKS.update(COMPLETION_ATTACKS)
+
 def attack(c,a):
     text=(a.get('text') or '').strip();name=a['name'];n=c['number'];dmg=a.get('damage') or ''
     if (n,name) in ADDITIONAL_ATTACKS:return ADDITIONAL_ATTACKS[(n,name)]
@@ -224,6 +272,30 @@ ADDITIONAL_ABILITIES={
  ('40','Natural Cure'):{'name':'Natural Cure','type':'triggered','printedPowerType':'body','disabledByStatus':False,'event':'energyAttached','fromHandOnly':True,'effect':{'type':'removeStatuses','target':'self','statuses':['poison','burn','sleep','paralysis','confusion']}},
  ('44','Marvel Shell'):PASSIVE('Marvel Shell',{'type':'preventDamage','target':'self','duration':'whileInPlay','attackerFilter':{'hasAbility':True}}),
 }
+
+
+COMPLETION_ABILITIES={
+ ('5','Dragon Intimidation'):{'name':'Dragon Intimidation','type':'triggered','printedPowerType':'body','disabledByStatus':False,'event':'damagedByAttack','opponentAttackOnly':True,'activeOnly':True,'effect':R('5:dragonIntimidation')},
+ ('6','Evolutionary Flame'):{'name':'Evolutionary Flame','type':'triggered','printedPowerType':'power','disabledByStatus':True,'event':'evolved','fromHandOnly':True,'effect':OPTIONAL(S(ST('burn'),ST('confusion')),'Burn and Confuse opponent Active')},
+ ('7','Gravitation'):PASSIVE('Gravitation',R('7:gravitation')),
+ ('13','Green Aroma'):PASSIVE('Green Aroma',R('13:greenAroma')),
+ ('14','Speed Boost'):ACTIVE_POWER('Speed Boost',R('14:speedBoost'),activeOnly=True),
+ ('28','Erasing Sound'):PASSIVE('Erasing Sound',R('28:erasingSound')),
+ ('29','Darkness Restore'):ACTIVE_POWER('Darkness Restore',R('29:darknessRestore'),activeOnly=True),
+ ('32','Marvel Eyes'):PASSIVE('Marvel Eyes',R('32:marvelEyes')),
+ ('37','Focus Wall'):PASSIVE('Focus Wall',R('37:focusWall')),
+ ('45','Sunshine Fate'):ACTIVE_POWER('Sunshine Fate',R('45:sunshineFate')),
+ ('54','Disrupting Spy'):{'name':'Disrupting Spy','type':'triggered','printedPowerType':'power','disabledByStatus':True,'event':'benched','fromHandOnly':True,'effect':R('54:disruptingSpy')},
+ ('67','Plunge'):ACTIVE_POWER('Plunge',R('67:plunge'),benchOnly=True),
+ ('141','Darkness Send'):{'name':'Darkness Send','type':'triggered','printedPowerType':'power','disabledByStatus':True,'event':'levelUp','fromHandOnly':True,'activeOnly':True,'effect':R('141:darknessSend')},
+ ('142','Burning Spirit'):PASSIVE('Burning Spirit',R('142:burningSpirit')),
+ ('143','Call for Power'):ACTIVE_POWER('Call for Power',R('143:callForPower'),oncePerTurn=False),
+ ('144','Energy Recycle'):ACTIVE_POWER('Energy Recycle',R('144:energyRecycle')),
+ ('145','Healing Breath'):{'name':'Healing Breath','type':'triggered','printedPowerType':'power','disabledByStatus':True,'event':'levelUp','fromHandOnly':True,'activeOnly':True,'effect':OPTIONAL(R('145:healingBreath'),'Heal all Pokémon SP')},
+ ('146','Dragon Spirit'):{'name':'Dragon Spirit','type':'triggered','printedPowerType':'body','disabledByStatus':False,'event':'damagedByAttack','opponentAttackOnly':True,'activeOnly':True,'effect':R('146:dragonSpirit')},
+ ('147','Fast Call'):ACTIVE_POWER('Fast Call',R('147:fastCall')),
+}
+ADDITIONAL_ABILITIES.update(COMPLETION_ABILITIES)
 
 def ability(c,p):
     n=c['number'];name=p['name']

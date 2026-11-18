@@ -23,6 +23,9 @@ TRAINERS={
  '136':('Supporter',{'type':'selectTopToHand','count':7}),
  '140':('Item',{'type':'searchChosen','source':'discard','amount':1,'filter':{'kind':'trainer','trainerType':'Supporter'},'excludePlayedTrainer':True}),
  '139':('Supporter',{'type':'neoRule','rule':'pl3:139:palmer'}),
+ '134':('Stadium',{'type':'neoRule','rule':'pl3:134:battleTower'}),
+ '137':('Supporter',{'type':'neoRule','rule':'pl3:137:cyrusInitiative'}),
+ '138':('Item',{'type':'neoRule','rule':'pl3:138:nightTeleporter'}),
 }
 
 def supported(e):

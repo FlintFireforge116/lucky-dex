@@ -527,7 +527,8 @@
     const pl1Thankfulness=state.format==='classic'&&data.cardById(slot?.cardId)?.types?.includes('Grass')&&
       !/^Shaymin(?: LV\.X)?$/.test(data.cardById(slot?.cardId)?.name||'')&&
       pokemonOn(state.sides[side]).some(p=>p.cardId==='pl1-126'&&!effects.abilitiesSuppressed(state,side,p,data.cardById))?40:0;
-    const extra=pl1Thankfulness+dp6Temple+majesticVeil+ex3LowPressure+rocketHideout+dp2Equip+(slot.cardId==='gym2-97'?10*Number(slot.energy?.Psychic||0):slot.cardId==='gym2-10'&&slot.gym2GiantGrowth&&state.sides[side].active===slot?40:0);return Math.max(1,copyHp+extra+effects.modifierAmount(state,side,slot,'maxHp',data.cardById));}
+    const gravitation=state.format==='classic'&&['player','opponent'].some(w=>pokemonOn(state.sides[w]).some(p=>p.cardId==='pl3-7'&&!effects.abilitiesSuppressed(state,w,p,data.cardById)))?20:0;
+    const extra=pl1Thankfulness+dp6Temple+majesticVeil+ex3LowPressure+rocketHideout+dp2Equip+(slot.cardId==='gym2-97'?10*Number(slot.energy?.Psychic||0):slot.cardId==='gym2-10'&&slot.gym2GiantGrowth&&state.sides[side].active===slot?40:0);return Math.max(1,copyHp+extra-gravitation+effects.modifierAmount(state,side,slot,'maxHp',data.cardById));}
   function ex14DarkEyes(state,usedBy,source,ability){
     if(state.format!=='classic'||!source||ability?.printedPowerType!=='power')return;
     const reacting=usedBy==='player'?'opponent':'player';
@@ -556,6 +557,14 @@
     }
     // Record real from-hand attachments for printed same-turn attack conditions.
     // Energy Zone attachments deliberately do not count as from-hand events.
+    if(state.format==='classic'&&event==='levelUp'&&meta.fromHand&&onlySource&&state.stadium?.cardId==='pl3-134'&&!effects.healingIsBlocked(state,onlySource,data.cardById)){
+      onlySource.damage=Math.max(0,Number(onlySource.damage||0)-40);state.log.push({type:'pl3BattleTower',side,targetUid:onlySource.uid,healed:40});
+    }
+    if(state.format==='classic'&&event==='benched'&&meta.fromHand&&onlySource){const defending=state.sides[side==='player'?'opponent':'player'];
+      if(Number(defending?.pl3SilverFeatherUntil||0)>=Number(state.turnNumber)&&data.cardById(onlySource.cardId)?.stage==='Basic'){
+        onlySource.damage=Number(onlySource.damage||0)+20;state.log.push({type:'pl3SilverFeather',side,targetUid:onlySource.uid,amount:20});
+      }
+    }
     if(event==='energyAttached'&&onlySource&&meta.fromHand){
       onlySource.lastHandEnergyType=meta.energyType;onlySource.lastHandEnergyAttachedTurn=state.turnNumber;
       if(state.format==='classic'&&onlySource.cardId==='pl2-35'&&meta.energyType==='Grass'&&
@@ -615,6 +624,7 @@
     if(state.stadium){const source=ss.active||ss.bench[0];if(source){const ctx={...effectContext(state,side,{},source),eventData:meta};effects.applyPersistentEvent(data.cardById(state.stadium.cardId)?.effect,event,ctx);}}
   }
   function retreatCost(state,side){const slot=state.sides[side].active;
+    if(state.format==='classic'&&slot&&Number(slot.pl3HoverHitUntil||0)>=Number(state.turnNumber))return 0;
     if(state.format==='classic'&&slot){const types=effects.effectiveTypes(state,side,slot,data.cardById);
       if(pokemonOn(state.sides[side]).some(p=>p.cardId==='pl2-5'&&!effects.abilitiesSuppressed(state,side,p,data.cardById)&&
         Object.entries(p.energy||{}).some(([t,n])=>Number(n)>0&&types.includes(t))))return 0;
@@ -1347,6 +1357,7 @@
       for(const entry of attackOptions(state,side)){
         const {cardId:attackCardId,attackIndex,attack}=entry;
         if ((attack.gxAttack||/\bGX\b/i.test(attack.name||''))&&s.gxAttackUsed)continue;
+        if(state.format==='classic'&&s.active.cardId==='pl3-145'&&attack.name==='Dragon Rush'&&Number(s.active.pl3DragonRushUsedTurn||-100)===Number(state.turnNumber)-2)continue;
         if(attack.vstarPower&&s.vstarPowerUsed)continue;
         if(state.format==='classic'&&s.active.cardId==='ex16-13'&&attack.name==='Critical Move'&&Number(s.active.ex16CriticalMoveBlockedUntil||0)>=state.turnNumber)continue;
         if(state.format==='classic'&&s.active.cardId==='ex16-94'&&attack.name==='Slashing Strike'&&Number(s.active.ex16SlashingStrikeLockedUntil||0)>=state.turnNumber)continue;
@@ -1679,6 +1690,14 @@
   function endTurn(state){
     if (state.phase !== 'battle') return;
     if(state.format==='classic'){const owner=state.sides[state.activeSide];if(owner.pl2CharonRef){const ref=owner.pl2CharonRef;delete owner.pl2CharonRef;const i=owner.discard.findIndex(r=>r.uid===ref.uid);if(i>=0)owner.hand.push(...owner.discard.splice(i,1));state.log.push({type:'pl2CharonReturn',side:state.activeSide});}}
+    if(state.format==='classic'){
+      const who=state.activeSide,owner=state.sides[who];
+      for(const target of pokemonOn(owner))if(target.pl3DoomNewsEndOwner===who&&Number(target.pl3DoomNewsFrom||0)<Number(state.turnNumber)){
+        delete target.pl3DoomNewsEndOwner;delete target.pl3DoomNewsFrom;
+        target.damage=Math.max(Number(target.damage||0),maxHp(state,who,target));
+        state.log.push({type:'pl3DoomNews',side:who,targetUid:target.uid,knockout:true});
+      }
+    }
     // Dark Slumber: Sleep is applied at the end of the Defending Pokémon's
     // next turn. An Active switch removes the delayed effect from that target.
     if(state.format==='classic'){
@@ -2858,6 +2877,11 @@
       }
       if(Number(defender.dp3ProtectUntil||0)>=state.turnNumber)damage=0;
       if(Number(defender.dp3MegatonShieldUntil||0)>=state.turnNumber)damage=Math.max(0,damage-40);
+    }
+    if(state.format==='classic'&&defender.cardId==='pl3-37'&&damage>=70&&Number(defender.damage||0)+damage>=maxHp(state,foeSide,defender)&&
+       !effects.abilitiesSuppressed(state,foeSide,defender,data.cardById)){
+      damage=Math.max(0,maxHp(state,foeSide,defender)-10-Number(defender.damage||0));
+      state.log.push({type:'pl3FocusWall',side:foeSide,remainingHp:10});
     }
     defender.damage=Number(defender.damage||0)+damage;
     if(state.format==='classic'&&damage>0&&defender===foe.active&&defender.cardId==='pl2-49'&&

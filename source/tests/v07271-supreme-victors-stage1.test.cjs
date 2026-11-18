@@ -15,7 +15,7 @@ test('Supreme Victors exact 153 official prints; 254 attacks and 34 abilities re
  assert.equal(printed.length,153);assert.equal(supreme.CARDS.length,153);assert.equal(new Set(supreme.CARDS.map(c=>c.id)).size,153);
  assert.equal(printed.reduce((n,c)=>n+(c.attacks||[]).length,0),254);
  assert.equal(printed.reduce((n,c)=>n+(c.abilities||[]).length,0),34);
- assert.ok(active.length>=84,'Generated playable coverage decreased from v0.69.272 baseline');
+ assert.ok(active.length>=84,'Generated playable coverage decreased from v0.69.273 baseline');
  for(const p of printed){
   const c=supreme.cardById('pl3-'+p.number);assert.ok(c,p.number);assert.equal(c.name,p.name);assert.equal(c.kind,p.supertype==='Pokémon'?'pokemon':'trainer');
   assert.deepEqual((c.attacks||[]).map(x=>[x.name,x.text,x.cost]),(p.attacks||[]).map(x=>[x.name,x.text||'',(x.cost||[]).map(t=>({Grass:'G',Fire:'R',Water:'W',Lightning:'L',Psychic:'P',Fighting:'F',Darkness:'D',Metal:'M',Colorless:'C'})[t]).join('')]));
@@ -70,6 +70,6 @@ test('all enabled Supreme Victors attacks resolve or provide a legal choice; no 
 
 test('the APK build version agrees across Gradle, UI and boot JS',()=>{
  const g=fs.readFileSync(path.join(root,'app/build.gradle'),'utf8');const app=fs.readFileSync(path.join(assets,'app-v0167.js'),'utf8');const html=fs.readFileSync(path.join(assets,'index.html'),'utf8');
- assert.ok(g.includes("versionName '0.69.272'"));assert.ok(app.includes("__LUCKYDEX_BUILD='0.69.272'"));
- assert.ok(html.includes('id="titleBuildVersion">v0.69.272'));assert.ok(html.includes('id="appBuildVersion">LUCKY DEX · v0.69.272'));
+ assert.ok(g.includes("versionName '0.69.273'"));assert.ok(app.includes("__LUCKYDEX_BUILD='0.69.273'"));
+ assert.ok(html.includes('id="titleBuildVersion">v0.69.273'));assert.ok(html.includes('id="appBuildVersion">LUCKY DEX · v0.69.273'));
 });
