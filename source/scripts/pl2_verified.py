@@ -148,7 +148,7 @@ ABILITIES={
  '50':[P('Aqua Recycle',R('aquaRecycle'),oncePerTurn=True)],
  '84':[P('Gather Sand',R('gatherSand'),oncePerTurn=True,activeOnly=True)],
  '85':[P('Overgrow',{'type':'modifier','stat':'attackDamage','amount':30,'scope':'self','duration':'whileInPlay','condition':{'type':'selfRemainingHpAtMost','amount':60}},kind='passive')],
- '15':[P('Flutter Wings',SEARCH('deck',1,kind='pokemon',energyType='Grass'),oncePerTurn=True)],
+ '15':[P('Flutter Wings',SEARCH('deck',1,kind='pokemon',subtype='Grass'),oncePerTurn=True)],
  '81':[P('Bad Sleeping Habits',N,kind='passive')],
  '76':[P('Submerge',{'type':'preventDamage','target':'self','scope':'self','duration':'whileInPlay'},kind='passive',benchOnly=True)],
  '66':[P('Exoskeleton',{'type':'modifier','stat':'damageReduction','amount':20,'scope':'self','duration':'whileInPlay'},kind='passive')],
@@ -228,3 +228,77 @@ for number in ('19','26'):
 ATTACKS['26']['Evolving Thunder']=BENCH(10,condition={'type':'evolvedThisTurn'})
 ATTACKS['85']['Giga Drain']={'type':'drain','fraction':1}
 ATTACKS['66']['Dangerous Evolution']=S(ST('poison'),Q({'type':'evolveFromDeck'}))
+
+
+# v0.69.268: independently checked print-specific continuations. Rules below
+# have corresponding executable handlers and outcome tests; unhandled cards
+# remain explicitly gated rather than receiving plausible-looking placeholder
+# damage.
+ATTACKS['10']['Psychic Removal']=Q(Q({'type':'discardEnergyCard','target':'opponentActive','amount':'all'}))
+ATTACKS['10']['Grudge']=R('10:grudge')
+ATTACKS['11']['Trample']=R('11:trample')
+ATTACKS['12']['Long Whip']=R('12:longWhip')
+ATTACKS['14']['Return Blow']=R('pl1mirror')  # exact last-opponent-turn damage, not a new coin roll
+ATTACKS['14']['Metal Fang']=R('14:metalFang')
+ATTACKS['16']['Hand Refresh']=R('16:handRefresh')
+ATTACKS['16']['Payback']=R('16:payback')
+ATTACKS['22']['Muddy Bomb']=R('22:muddyBomb')
+ATTACKS['28']['Magic Heal']=R('28:magicHeal')
+ATTACKS['34']['Evolving Aqua']=R('34:evolvingAqua')
+ABILITIES['34']=[P('Undevelop',{'type':'devolve','target':'self'},oncePerTurn=True)]
+ATTACKS['38']['Recover']=R('38:recover')
+ATTACKS['38']['Mysterious Beam']=Q({'type':'discardEnergyCard','target':'opponentActive','amount':1})
+ATTACKS['44']['Heavy Metal']=R('44:heavyMetal')
+ATTACKS['47']['Pickup Power']=R('47:pickupPower')
+ATTACKS['48']['Crushing Blow']=Q({'type':'discardEnergyCard','target':'opponentActive','amount':1})
+ATTACKS['50']['Synchro Gain']=H(40,'self')
+ATTACKS['50']['Synchro Gain']['condition']={'type':'equalEnergyCount'}
+ABILITIES['50']=[P('Aqua Recycle',R('50:aquaRecycle'),oncePerTurn=True)]
+ATTACKS['51']['Mend']=R('51:mend')
+ATTACKS['52']['Blessed Fruit']=R('52:blessedFruit')
+ATTACKS['53']['Energy Typhoon']=R('53:energyTyphoon')
+ATTACKS['56']['Tail Code']={'type':'moveEnergy','source':'opponentActive','target':'opponentBench','amount':1}
+ATTACKS['56']['Snap Attack']=R('56:snapAttack')
+ATTACKS['63']['Stoke']=R('63:stoke')
+ATTACKS['80']['Healing Sea']=R('80:healingSea')
+ATTACKS['86']['Rescue String']=R('86:rescueString')
+ATTACKS['RT3']['Warm Up']=R('RT3:warmUp')
+ABILITIES['84']=[P('Gather Sand',R('84:gatherSand'),oncePerTurn=True,activeOnly=True)]
+ABILITIES['42']=[P('Sand Armor',{'type':'modifier','stat':'damageReduction','amount':10,'scope':'self','duration':'whileInPlay','condition':{'type':'selfHasEnergyType','energyType':'Fighting'}},kind='passive')]
+ABILITIES['81']=[P('Bad Sleeping Habits',R('81:badSleepingHabits'),kind='passive')]
+ABILITIES['108']=[P('Intimidating Roar',{'type':'forceOpponentSwitch','chooseBy':'defender'},oncePerTurn=True)]
+TRAINERS['88']=('Supporter',R('88:aarons'))
+TRAINERS['90']=('Supporter',R('90:berthas'))
+TRAINERS['96']=('Item',R('96:spRadar'))
+TRAINERS['98']=('Supporter',R('98:volkner'))
+PL2_VERIFIED_RULES.update({
+ 'pl1mirror','10:grudge','11:trample','12:longWhip','14:metalFang',
+ '16:handRefresh','16:payback','22:muddyBomb','28:magicHeal',
+ '34:evolvingAqua','38:recover','44:heavyMetal','47:pickupPower',
+ '50:aquaRecycle','51:mend','52:blessedFruit','53:energyTyphoon','56:snapAttack',
+ '63:stoke','80:healingSea','86:rescueString','RT3:warmUp',
+ '84:gatherSand','81:badSleepingHabits',
+ '88:aarons','90:berthas','96:spRadar','98:volkner'})
+
+# Additional battle-outcome and lifecycle coverage in the same continuation.
+# Arcanine's optional Burn Out bonus must be applied before Weakness, so keep
+# this print gated until its pre-damage option can be offered correctly.
+ATTACKS['15']['Needle Shock']=R('15:needleShock')
+ATTACKS['29']['Fling Away']=R('29:flingAway')
+ATTACKS['29']['Giga Horn']=R('29:gigaHorn')
+ABILITIES['29']=[P('Territoriality',R('29:territoriality'),kind='passive')]
+ATTACKS['35']['Leaf Needle']=R('35:leafNeedle')
+ABILITIES['35']=[P('Royal Gain',R('35:royalGain'),kind='passive')]
+ABILITIES['67']=[P('Colorful Body',R('67:colorfulBody'),kind='passive')]
+TRAINERS['89']=('Supporter',R('89:bebes'))
+TRAINERS['91']=('Supporter',R('91:flints'))
+ABILITIES['103']=[P('Damage Switch',R('103:damageSwitch'))]
+ATTACKS['110']['Darkness Magic']=R('110:darknessMagic')
+ABILITIES['110']=[P('Magical Return',R('110:magicalReturn'))]
+ATTACKS['111']['Exercise']=R('111:exercise')
+ABILITIES['111']=[P('Big Appetite',S({'type':'drawToHandSize','size':6},ST('sleep','self')),oncePerTurn=True,activeOnly=True)]
+PL2_VERIFIED_RULES.update({
+ '1:flamesOfRage','1:flareCondition','15:needleShock',
+ '29:flingAway','29:gigaHorn','29:territoriality',
+ '35:leafNeedle','35:royalGain','67:colorfulBody',
+ '89:bebes','91:flints','103:damageSwitch','110:darknessMagic','110:magicalReturn','111:exercise'})

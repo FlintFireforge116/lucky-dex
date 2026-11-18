@@ -556,7 +556,14 @@
     }
     // Record real from-hand attachments for printed same-turn attack conditions.
     // Energy Zone attachments deliberately do not count as from-hand events.
-    if(event==='energyAttached'&&onlySource&&meta.fromHand){onlySource.lastHandEnergyType=meta.energyType;onlySource.lastHandEnergyAttachedTurn=state.turnNumber;}
+    if(event==='energyAttached'&&onlySource&&meta.fromHand){
+      onlySource.lastHandEnergyType=meta.energyType;onlySource.lastHandEnergyAttachedTurn=state.turnNumber;
+      if(state.format==='classic'&&onlySource.cardId==='pl2-35'&&meta.energyType==='Grass'&&
+         !effects.abilitiesSuppressed(state,side,onlySource,data.cardById)){
+        onlySource.damage=Math.max(0,Number(onlySource.damage||0)-10);
+        state.log.push({type:'pl2RoyalGain',side,amount:10,targetUid:onlySource.uid});
+      }
+    }
     // Printed hand-attachment triggers belong to the shared Energy event, not
     // only the normal attachSpecial action. Extra attachments (e.g. Leafeon
     // LV.X Energy Forcing) must resolve the same physical Energy-card effect.
@@ -777,6 +784,11 @@
          const units=Object.values(specialEnergyProvides(ref)).reduce((sum,n)=>sum+Number(n||0),0);
          next.Grass=Number(next.Grass||0)+units;continue;
       }
+      // Rising Rivals SP Energy is one rainbow unit ONLY on a Pokemon SP.
+      // Upper Energy supplies two Colorless only while behind on Prizes and
+      // never to a Level-Up Pokemon. Each remains a single physical card.
+      if(ref.cardId==='pl2-101'&&!miracleWind){const sp=!!data.cardById(slot.cardId)?.isPokemonSP;const type=sp?'Miracle':'Colorless';next[type]=Number(next[type]||0)+1;continue;}
+      if(ref.cardId==='pl2-102'&&!miracleWind){const behind=state.sides[side].prizes.length>state.sides[side==='player'?'opponent':'player'].prizes.length,levelX=data.cardById(slot.cardId)?.stage==='Level-Up';next.Colorless=Number(next.Colorless||0)+(behind&&!levelX?2:1);continue;}
       if(ref.cardId==='ex14-88'&&!miracleWind){next.Miracle=Number(next.Miracle||0)+2;continue;}
       if(ref.cardId==='ex12-82'&&!miracleWind&&['ex12-17','ex12-18'].includes(slot?.cardId)&&
           pokemonOn(state.sides[side]).some(p=>p.cardId==='ex12-17'&&!effects.abilitiesSuppressed(state,side,p,data.cardById))){
@@ -1068,6 +1080,7 @@
     s.hand.forEach((ref,handIndex)=>{
       const card = data.cardById(ref.cardId);
       if(!card||card.kind!=='trainer'||!card.battleEnabled||card.id==='pl1-117')return; // Power Spray is an opponent-turn interrupt only.
+      if(state.format==='classic'&&card.id==='pl2-89'&&s.hand.length<2)return; // Bebe must return a second card.
       if(state.format==='classic'&&/Technical Machine/i.test(card.name||'')&&['player','opponent'].some(w=>pokemonOn(state.sides[w]).some(slot=>slot.cardId==='ex9-96'&&!effects.abilitiesSuppressed(state,w,slot,data.cardById))))return;
       const type=trainerType(card),base={type:'trainer',handIndex,cardId:card.id};if(effects.isActionLocked(state,side,'Trainer',data.cardById)||effects.isActionLocked(state,side,type,data.cardById))return;
       if(card.effect?.type==='playFossil'){for(const benchIndex of emptyBenchSlots(s))actions.push({...base,target:'bench',benchIndex});return;}
@@ -1188,7 +1201,12 @@
     // EX Unseen Forces Octillery Super Suction Cups: only while it is Active.
     // It restricts the OPPONENT'S retreat, not its own player's retreat.
     const ex10Octillery=state.format==='classic'&&state.sides[side==='player'?'opponent':'player'].active?.cardId==='ex10-10'&&!effects.abilitiesSuppressed(state,side==='player'?'opponent':'player',state.sides[side==='player'?'opponent':'player'].active,data.cardById);
-    if (!ex10Octillery && !s.retreated && s.active && !(state.format==='classic'&&state.sides[side==='player'?'opponent':'player'].active?.cardId==='ex2-3'&&!effects.abilitiesSuppressed(state,side==='player'?'opponent':'player',state.sides[side==='player'?'opponent':'player'].active,data.cardById)) && Number(s.skyridgeMirageFailedTurn)!==state.turnNumber && !(s.active.specialEnergy||[]).some(r=>['ecard2-145','ex8-93','ex10-98','ex15-87'].includes(r.cardId)) && s.bench.length&&(s.active.cardId==='SNAPFLORIO-073'||!neoTrapActive(state,side,s.active,'retreat'))&&(!conditions.sleep&&!conditions.paralysis||s.active.cardId==='ex5-33'&&!effects.abilitiesSuppressed(state,side,s.active,data.cardById))&&(s.active.cardId==='SNAPFLORIO-073'||!effects.isLocked(state,s.active,'retreat'))&&data.cardById(s.active.cardId).effect?.type!=='playFossil'){
+    // Rising Rivals Snorlax: the opposing Active cannot retreat while
+    // Bad Sleeping Habits is active (and Snorlax remains Asleep).
+    const pl2SnorlaxLock=state.format==='classic'&&state.sides[side==='player'?'opponent':'player'].active?.cardId==='pl2-81'&&
+      state.sides[side==='player'?'opponent':'player'].active?.conditions?.sleep&&
+      !effects.abilitiesSuppressed(state,side==='player'?'opponent':'player',state.sides[side==='player'?'opponent':'player'].active,data.cardById);
+    if (!pl2SnorlaxLock && !ex10Octillery && !s.retreated && s.active && !(state.format==='classic'&&state.sides[side==='player'?'opponent':'player'].active?.cardId==='ex2-3'&&!effects.abilitiesSuppressed(state,side==='player'?'opponent':'player',state.sides[side==='player'?'opponent':'player'].active,data.cardById)) && Number(s.skyridgeMirageFailedTurn)!==state.turnNumber && !(s.active.specialEnergy||[]).some(r=>['ecard2-145','ex8-93','ex10-98','ex15-87'].includes(r.cardId)) && s.bench.length&&(s.active.cardId==='SNAPFLORIO-073'||!neoTrapActive(state,side,s.active,'retreat'))&&(!conditions.sleep&&!conditions.paralysis||s.active.cardId==='ex5-33'&&!effects.abilitiesSuppressed(state,side,s.active,data.cardById))&&(s.active.cardId==='SNAPFLORIO-073'||!effects.isLocked(state,s.active,'retreat'))&&data.cardById(s.active.cardId).effect?.type!=='playFossil'){
       if (effects.totalEnergy(effectiveEnergy(state,side,s.active)) >= retreatCost(state,side)){
         s.bench.forEach(slot=>{if(slot)actions.push({type:'retreat',benchIndex:Number(slot.benchSlot)});});
       }
@@ -2861,6 +2879,11 @@
       if(state.format==='classic')foe.neoObservedAttack={turn:state.turnNumber,cardId:attackSourceCard.id,attackIndex:matched.attackIndex,witnesses:pokemonOn(foe).map(x=>x.uid)};
       if(state.format==='classic')s.active.pl1LastAttackTurn=state.turnNumber;
       state.log.push({type:'attack',side,cardId:attackerCard.id,attack:attack.name,damage,damageReason:damage===0?resistanceReason:(attack.effect?.rule==='founja:swiftBeak'&&Number(s.active.movedToActiveTurn)===Number(state.turnNumber)?'Bench → Active this turn: +80':''),target:isActive?'active':'bench',benchIndex:defender.benchSlot});s.lastAttackName=attack.name;s.lastAttackTurn=state.turnNumber;s.attackCounts=s.attackCounts||{};s.attackCounts[attack.name]=Number(s.attackCounts[attack.name]||0)+1;s.active.attackUseCount=Number(s.active.attackUseCount||0)+1;
+      if(damage>0&&state.format==='classic'&&defender===foe.active&&
+        pokemonOn(foe).some(p=>p.cardId==='pl2-29'&&!effects.abilitiesSuppressed(state,foeSide,p,data.cardById))){
+        s.active.damage=Number(s.active.damage||0)+20;
+        state.log.push({type:'pl2Territoriality',side:foeSide,counters:2});
+      }
       if(damage>0){const eventData={attacker:s.active,damage,source:{side,attack:true,uid:s.active.uid,cardId:s.active.cardId}};triggerAbilities(state,'damagedByAttack',foeSide,defender,eventData);if(['dp3-73','dp3-101'].includes(defender.cardId))triggerAbilities(state,'damaged',foeSide,defender,eventData);triggerPersistent(state,'damagedByAttack',foeSide,defender,eventData);}
       if(guard?.effects||Number(defender.neoDestinyPreventEffectsUntil||0)>=state.turnNumber||effects.attackEffectsPrevented(state,foeSide,defender,s.active,data.cardById)||state.sides[foeSide].active!==defender)context.preventedTargets=new Set([defender.uid,...[state.sides[foeSide].active?.uid].filter(Boolean)]);context.dealtDamage=damage;
       if(state.format==='classic'&&damage>0&&defender.cardId==='SNAPFLORIO-005'&&Object.values(defender.energy||{}).some(n=>Number(n)>0))result.pendingEffects.unshift({type:'lentalRule',rule:'pinsirWait114',defenderUid:defender.uid,damage});
