@@ -8,8 +8,8 @@ android {
         applicationId 'com.example.luckydex'
         minSdk 26
         targetSdk 35
-        versionCode 7276
-        versionName '0.69.290'
+        versionCode 7277
+        versionName '0.69.291'
     }
 
     signingConfigs {
@@ -330,4 +330,24 @@ tasks.register('independentHGSS3ForApk', Exec) {
 }
 tasks.matching { it.name == 'preBuild' || (it.name.startsWith('merge') && it.name.endsWith('Assets')) }.configureEach {
     dependsOn tasks.named('independentHGSS3ForApk')
+}
+
+// v0.69.291 HeartGold & SoulSilver Triumphant: bundled immutable 103-print
+// collector transcription, gated-only verified gameplay, player/CPU integration.
+tasks.register('generateHGSS4ForApk', Exec) {
+    workingDir rootProject.projectDir
+    commandLine (System.getenv('LUCKYDEX_PYTHON') ?: 'python3'), 'scripts/build-hgss4.py'
+}
+tasks.register('auditHGSS4ForApk', Exec) {
+    dependsOn tasks.named('generateHGSS4ForApk')
+    workingDir rootProject.projectDir
+    commandLine 'node', '--test', 'tests/v07291-triumphant-stage1.test.cjs'
+}
+tasks.register('independentHGSS4ForApk', Exec) {
+    dependsOn tasks.named('auditHGSS4ForApk')
+    workingDir rootProject.projectDir
+    commandLine 'node', 'scripts/audit-classic-set.cjs', '--set', 'hgss4', '--smoke', '--no-write'
+}
+tasks.matching { it.name == 'preBuild' || (it.name.startsWith('merge') && it.name.endsWith('Assets')) }.configureEach {
+    dependsOn tasks.named('independentHGSS4ForApk')
 }
