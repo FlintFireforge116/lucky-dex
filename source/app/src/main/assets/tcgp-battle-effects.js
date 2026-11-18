@@ -9653,7 +9653,7 @@
       log=entry=>ctx.state.log.push({type:'hgssEffect',side:ctx.side,rule:e.rule,...entry}),
       energyId={Grass:'base1-99',Fire:'base1-98',Water:'base1-102',Lightning:'base1-100',Psychic:'base1-101',Fighting:'base1-97',Darkness:'lental-basic-darkness',Metal:'lental-basic-metal'},
       add=(p,type,ref)=>{if(!p)return;if(ref&&card(ref)?.specialEnergy)(p.specialEnergy=p.specialEnergy||[]).push(ref);else p.energy[type]=Number(p.energy[type]||0)+1;},
-      energyCards=(p,types)=>[...Object.entries(p?.energy||{}).filter(([t,n])=>n>0&&(!types||types.includes(t))).map(([type,n])=>({type,label:type+' Basic Energy'})),...(p?.specialEnergy||[]).filter(ref=>!types||types.some(t=>Number((ref.provides||card(ref)?.effect?.provides||{})[t]||0)>0)).map(ref=>({uid:ref.uid,cardId:ref.cardId,label:card(ref)?.name||'Special Energy'}))],
+      energyCards=(p,types)=>[...Object.entries(p?.energy||{}).filter(([t,n])=>n>0&&(!types||types.includes(t))).map(([type,n])=>({type,label:type+' Basic Energy'})),...(p?.specialEnergy||[]).filter(ref=>!types||types.some(t=>{const provides=ref.provides||card(ref)?.effect?.provides||{};return Number(provides[t]||0)>0||Number(provides.Miracle||0)>0;})).map(ref=>({uid:ref.uid,cardId:ref.cardId,label:card(ref)?.name||'Special Energy'}))],
       transfer=(src,dst,pick,kind='move')=>{if(!src||!pick)return false;if(pick.type){if(!Number(src.energy[pick.type]||0))return false;src.energy[pick.type]--;if(kind==='discard'){ss.energyDiscard=ss.energyDiscard||{};ss.energyDiscard[pick.type]=Number(ss.energyDiscard[pick.type]||0)+1;}else if(kind==='deck')ss.deck.push({uid:'hgss-return-'+ctx.state.turnNumber+'-'+ss.deck.length,cardId:energyId[pick.type],zoneGenerated:true});else if(kind==='hand')ss.hand.push({uid:'hgss-return-'+ctx.state.turnNumber+'-'+ss.hand.length,cardId:energyId[pick.type],zoneGenerated:true});else if(dst)add(dst,pick.type);return true;}
         const i=(src.specialEnergy||[]).findIndex(ref=>ref.uid===pick.uid);if(i<0)return false;const [ref]=src.specialEnergy.splice(i,1);if(kind==='discard')ss.discard.push(ref);else if(kind==='deck')ss.deck.push(ref);else if(kind==='hand')ss.hand.push(ref);else if(dst)add(dst,null,ref);return true;},
       optionsFor=(slot,types)=>energyCards(slot,types),
@@ -9701,6 +9701,61 @@
       }
       if(key.startsWith('73'))return hgss1Rule({...e,uid:a?.uid,stage:'energy',remaining:limit},{...ctx,resolvingChoice:false});
       if(limit&&all(ss).length)me('target');return;
+    }
+    // HGSS discards and recovery require real card choices. A Basic Energy
+    // type is a fungible zone counter; each Special Energy is an individual
+    // physical card. Never silently discard the first attached type or ignore
+    // a recoverable Special Energy when printed text says "Energy card".
+    if(key==='18:energyAbsorption'||key==='36:energyLink'){
+      const limit=key==='18:energyAbsorption'?2:1;
+      const available=()=>[
+        ...(ss.discard||[]).filter(ref=>card(ref)?.kind==='energy').map(ref=>({uid:ref.uid,ref,label:'Attach '+card(ref).name+' (discard)'})),
+        ...Object.entries(ss.energyDiscard||{}).filter(([,n])=>Number(n)>0).map(([type])=>({type,label:'Attach '+type+' Basic Energy (discard zone)'}))
+      ];
+      if(ctx.resolvingChoice&&e.stage==='pick'){
+        const options=available(),index=Number(ctx.action?.choiceOption);
+        if(index<0||index>=options.length)return; // optional Done
+        const chosen=options[index],ref=chosen.uid?ss.discard.find(x=>x.uid===chosen.uid):null;
+        let type=chosen.type;
+        if(ref){const ix=ss.discard.findIndex(x=>x.uid===ref.uid);if(ix<0)return;
+          ss.discard.splice(ix,1);const printed=card(ref);type=printed?.basicEnergy?printed.energyType:Object.keys(printed?.effect?.provides||{})[0]||'Colorless';
+          add(a,type,printed?.specialEnergy?ref:null);
+        }else if(type&&Number(ss.energyDiscard?.[type]||0)>0){ss.energyDiscard[type]--;add(a,type);}else return;
+        ctx.onEnergyAttached?.(a,type,1,{fromHand:false});log({attached:type,cardId:ref?.cardId||null,targetUid:a?.uid});
+        const remaining=Number(e.remaining||limit)-1,next=available();
+        if(remaining>0&&next.length)ask('option','pick',{options:[...next.map(x=>x.label),'Done — attach no more Energy'],effect:{...e,stage:'pick',remaining}});
+        return;
+      }
+      const next=available();if(next.length&&a)ask('option','pick',{options:[...next.map(x=>x.label),'Done — attach no Energy'],effect:{...e,stage:'pick',remaining:limit}});
+      return;
+    }
+    if(['4:hyperBeam','32:fireSpin','37:recover','49:flamethrower','87:emberDiscard',
+        '105:lightningCrushDiscard','110:flareDestroy','111:brightWing','112:brightWing'].includes(key)){
+      const paths={
+        '4:hyperBeam':['opponent'],'32:fireSpin':['self','self'],
+        '37:recover':['self'],'49:flamethrower':['self'],
+        '87:emberDiscard':['self'],'105:lightningCrushDiscard':['opponent'],
+        '110:flareDestroy':['self','opponent'],
+        '111:brightWing':['self'],'112:brightWing':['self']};
+      const sides=paths[key],index=Number(e.index||0),isOpponent=sides[index]==='opponent',board=isOpponent?foe:ss,source=isOpponent?d:a;
+      const filter=['37:recover','87:emberDiscard'].includes(key)?['Water','Fire'][Number(key.startsWith('87'))]:null;
+      const options=energyCards(source,filter?[filter]:null);
+      if(ctx.resolvingChoice&&e.stage==='pick'){
+        const chosen=options[Number(ctx.action?.choiceOption)];if(!chosen||!source)return;
+        let moved=false;
+        if(chosen.type&&Number(source.energy?.[chosen.type]||0)>0){source.energy[chosen.type]--;
+          board.energyDiscard=board.energyDiscard||{};board.energyDiscard[chosen.type]=Number(board.energyDiscard[chosen.type]||0)+1;moved=true;
+        }else if(chosen.uid){const j=(source.specialEnergy||[]).findIndex(x=>x.uid===chosen.uid);
+          if(j>=0){board.discard.push(...source.specialEnergy.splice(j,1));moved=true;}}
+        if(!moved)return;
+        log({discarded:chosen.type||chosen.cardId||'Special Energy',sourceUid:source.uid,owner:isOpponent?ctx.foeSide:ctx.side});
+        if(key==='37:recover'){if(!healingIsBlocked(ctx.state,a,ctx.cardById))a.damage=0;return;}
+        if(index+1<sides.length)return hgss1Rule({...e,index:index+1,stage:'pick'},{...ctx,resolvingChoice:false});
+        return;
+      }
+      if(source&&options.length)ask('option','pick',{options:options.map(o=>'Discard '+o.label+' from '+(card({cardId:source.cardId})?.name||'Pokémon')),
+        effect:{...e,stage:'pick',index}});
+      return;
     }
     if(key==='27:sharpenClaws'){
       const heads=coins(3,'Sharpen Claws');for(let i=0;i<heads&&foe.hand.length;i++){const j=Math.floor(ctx.random(ctx.state)*foe.hand.length);const [r]=foe.hand.splice(j,1);foe.discard.push(r);log({discarded:r.cardId});}return;
@@ -9757,6 +9812,19 @@
     if(key==='62:sleepInducer'){
       if(ctx.resolvingChoice){const target=selection(foe);if(target&&foe.bench.includes(target)){switchPokemon(foe,Number(target.benchSlot),ctx.state);applyEffect({type:'status',target:'opponentActive',status:'sleep'},ctx);}return;}
       if(foe.bench.length)them('choose',{includeActive:false});return;
+    }
+    if(key==='85:cureKernels'){
+      // Printed choice: heal 2 damage counters from ANY one of your Pokémon,
+      // not whichever Pokémon happens to be Active when the attack resolves.
+      if(ctx.resolvingChoice){const target=selection(ss);
+        if(target&&Number(target.damage||0)>0&&!healingIsBlocked(ctx.state,target,ctx.cardById)){
+          const amount=Math.min(20,Number(target.damage||0));target.damage-=amount;
+          log({targetUid:target.uid,healed:amount});
+        }
+        return;
+      }
+      if(all(ss).some(p=>Number(p.damage||0)>0))me('heal',{filter:{damaged:true}});
+      return;
     }
     if(key==='94:moomooMilk'){
       if(ctx.resolvingChoice){const target=selection(ss);if(!target)return;const n=coins(2,'Moomoo Milk')*30;target.damage=Math.max(0,Number(target.damage||0)-n);log({healed:n,targetUid:target.uid});return;}

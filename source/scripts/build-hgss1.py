@@ -48,6 +48,16 @@ def roles(row,attacks,abilities):
  if 'status' in types:role.append('status')
  if types.intersection({'lock','attackCoinGate','forceOpponentSwitch','moveEnergy'}):role.append('control')
  if types.intersection({'attachEnergy','attachEnergyFromDiscard'}):role.append('ramp')
+ # Some completed HGSS effects use a shared neoRule resolver. The exact
+ # physical print number is authoritative metadata; avoid inferring ramp from
+ # the generic word 'Energy' (discard attacks are NOT acceleration).
+ explicit={
+  '7':['draw'],'12':['control'],'14':['ramp'],'18':['ramp'],
+  '28':['search'],'30':['control'],'36':['ramp'],'54':['control'],
+  '55':['control'],'73':['ramp'],'106':['heal'],'108':['ramp'],
+  '109':['control'],'110':['ramp']}
+ for r in explicit.get(str(row[0]),[]):
+  if r not in role:role.append(r)
  return role
 
 def generate():
@@ -64,6 +74,10 @@ def generate():
    if effect is None:issues.append('Unverified attack: '+aname);effect=V.N
    d=re.search(r'\d+',str(damage or ''))
    dmg=int(d.group()) if d else 0
+   # Printed 10× / 20× etc. are DAMAGE MULTIPLIERS, not a fixed base hit.
+   # The mapped effect computes the whole amount; adding that printed digit
+   # as base caused Jumpluff Mass Attack and Phanpy Flail to overdamage.
+   if re.search(r'\d+\s*[×x]\s*$', str(damage or ''), re.I):dmg=0
    # Selected damage must not also hit the default Defending Pokemon.
    if effect.get('type')=='selectedDamage' or effect.get('rule') in ('hgss1:13:doubleReturn','hgss1:18:bigEggsplosion','hgss1:53:cosmicCyclone'):dmg=0
    attacks.append({'name':aname,'cost':''.join(LETTER[t] for t in cost),'damage':dmg,

@@ -1262,6 +1262,19 @@
            !effects.abilitiesSuppressed(state,side==='player'?'opponent':'player',state.sides[side==='player'?'opponent':'player'].active,data.cardById))return;
         if(ability.name==='Energy Link'&&(!pokemonOn(s).some(p=>p!==source&&toolsOf(p).some(ref=>ref.cardId==='dp7-83'))||
            !Object.values(source.energy||{}).some(n=>Number(n)>0)&&!(source.specialEnergy||[]).length))return;
+        // HGSS Prime powers must not advertise inert actions. In particular,
+        // Rain Dance / Leaf Trans are indefinitely repeatable for a human,
+        // so an empty action would also tempt the CPU into a no-progress loop.
+        if(state.format==='classic'&&source.cardId==='hgss1-7'&&
+           !s.hand.some(ref=>{const c=data.cardById(ref.cardId);return c?.basicEnergy&&c.energyType==='Fire';}))return;
+        if(state.format==='classic'&&source.cardId==='hgss1-108'&&(
+           !s.hand.some(ref=>{const c=data.cardById(ref.cardId);return c?.basicEnergy&&c.energyType==='Water';})||
+           !pokemonOn(s).some(p=>data.cardById(p.cardId)?.types?.includes('Water'))))return;
+        if(state.format==='classic'&&source.cardId==='hgss1-109'&&(
+           pokemonOn(s).length<2||!pokemonOn(s).some(p=>Number(p.energy?.Grass||0)>0||
+              (p.specialEnergy||[]).some(ref=>Number((ref.provides||data.cardById(ref.cardId)?.effect?.provides||{}).Grass||0)>0))))return;
+        if(state.format==='classic'&&source.cardId==='hgss1-110'&&
+           !Number(s.energyDiscard?.Fire||0)&&!s.discard.some(ref=>{const c=data.cardById(ref.cardId);return c?.basicEnergy&&c.energyType==='Fire';}))return;
         if(source.cardId==='dp5-99'&&ability.name==='Energy Forcing'&&!s.hand.some(ref=>{const c=data.cardById(ref.cardId);return c?.basicEnergy||c?.specialEnergy;}))return;
         if(source.cardId==='dp5-100'&&ability.name==='Decode'&&!s.deck.length)return;
         // Legends Awakened: avoid advertising Poké-Powers whose printed

@@ -106,6 +106,6 @@ test('HGSS-only CPU builds produce 30 legal, on-set decks with no gated cards fo
 test('version agrees across Gradle, UI and runtime boot bundle, and new set script loads before battle-data',()=>{
  const gradle=fs.readFileSync(path.join(root,'app/build.gradle'),'utf8'),html=fs.readFileSync(path.join(assets,'index.html'),'utf8'),boot=fs.readFileSync(path.join(assets,'app-v0167.js'),'utf8');
  const version=gradle.match(/versionName ['"]([^'"]+)['"]/)[1];
- assert.equal(version,'0.69.283');assert.ok(html.includes('v'+version));assert.ok(boot.includes("window.__LUCKYDEX_BUILD='"+version+"'"));
+ assert.match(version,/^0\.69\.\d+$/);assert.ok(Number(version.split('.').at(-1))>=282);assert.ok(html.includes('v'+version));assert.ok(boot.includes("window.__LUCKYDEX_BUILD='"+version+"'"));
  assert.ok(html.indexOf('tcg-classic-heartgold-soulsilver.js')<html.indexOf('tcg-classic-battle-data.js'));
 });
