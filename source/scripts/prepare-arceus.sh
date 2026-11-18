@@ -14,9 +14,10 @@ if [ ! -f "$FILE" ]; then
 fi
 python3 "$SOURCE_DIR/scripts/build-arceus.py"
 python3 "$SOURCE_DIR/tests/pl4_generator_regression.py"
+python3 "$SOURCE_DIR/tests/pl4_roles_audit.py"
 
 # Verify the actual generated 111-print archive and live effect interactions before staging.
-node --test "$SOURCE_DIR/tests/v07275-arceus-stage1.test.cjs" "$SOURCE_DIR/tests/v07276-arceus-completion.test.cjs" "$SOURCE_DIR/tests/v07277-arceus-build-fixes.test.cjs"
+node --test "$SOURCE_DIR/tests/v07275-arceus-stage1.test.cjs" "$SOURCE_DIR/tests/v07276-arceus-completion.test.cjs" "$SOURCE_DIR/tests/v07277-arceus-build-fixes.test.cjs" "$SOURCE_DIR/tests/v07281-arceus-deck-audit.test.cjs"
 # Also guard against stale prior-set release version assertions before pushing.
 # GitHub's preBuild task runs the full Supreme Victors audit, but this fast
 # stage-1 check catches cross-release version drift during local preparation.

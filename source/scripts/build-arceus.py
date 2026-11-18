@@ -28,6 +28,33 @@ def supported(e):
  if t=='coinUntilTailsDamage':return False # unknown action kind, don't activate
  return True
 
+def deck_roles(c, attacks, abilities):
+ """Conservative effect-based metadata for deck builder and CPU theme selection.
+
+ The old substring approach labelled discard-attachment attacks as 'ramp'
+ and devolution/removing Energy as 'heal'. Only effects which genuinely
+ do the job receive those roles.
+ """
+ def walk(obj):
+  if isinstance(obj,dict):
+   yield obj
+   for key in ('effects','effect','heads','tails','options'):
+    yield from walk(obj.get(key))
+  elif isinstance(obj,list):
+   for x in obj:yield from walk(x)
+ effects=[v for item in attacks+abilities for v in walk(item.get('effect'))]
+ kinds={x.get('type') for x in effects}
+ rules={str(x.get('rule','')) for x in effects if x.get('type')=='neoRule'}
+ text=' '.join(str(x.get('text') or '') for x in (c.get('attacks') or [])+(c.get('abilities') or []))
+ roles=[]
+ if 'draw' in kinds or re.search(r'\bdraw (?:a|\d+) cards?\b',text,re.I):roles.append('draw')
+ if 'searchChosen' in kinds or re.search(r'\bsearch your deck\b',text,re.I):roles.append('search')
+ if 'heal' in kinds or re.search(r'\bremove (?:all|\d+|up to \d+) damage counters?\b',text,re.I):roles.append('heal')
+ if 'status' in kinds or 'pl4:49:cloakScale' in rules:roles.append('status')
+ if kinds.intersection({'lock','forceOpponentSwitch','actionLock'}) or rules.intersection({'pl4:23:timeSpiral','pl4:29:recruit'}):roles.append('control')
+ if kinds.intersection({'attachEnergyFromDiscard','attachEnergy'}) or rules.intersection({'pl4:8:topAccelerator','pl4:31:leafSupply','pl4:99:bigGrowth','pl4:AR5:rippleSwell'}):roles.append('ramp')
+ return roles
+
 def build():
  if not SRC.exists():raise SystemExit('Missing data/classic/pl4-print-source.json: run sh source/scripts/prepare-arceus.sh in ~/lucky-dex first')
  data=SRC.read_bytes()
@@ -68,8 +95,7 @@ def build():
   if kind=='pokemon':
    weak=(c.get('weaknesses') or [{}])[0];res=(c.get('resistances') or [{}])[0]
    energy=list(dict.fromkeys(x for a in c.get('attacks',[]) for x in a.get('cost',[]) if x!='Colorless'))
-   text=' '.join([(x.get('text') or '') for x in (c.get('attacks') or [])+(c.get('abilities') or [])]).lower()
-   roles=[role for role,keyword in [('draw','draw'),('search','search'),('heal','remove'),('status','poison'),('control','retreat'),('ramp','attach')] if keyword in text]
+   roles=deck_roles(c,attacks,abilities)
    sp='SP' in subtypes
    row.update({'stage':stage,'hp':int(c['hp']), 'types':c.get('types') or ['Colorless'],
     'subtype':(c.get('types') or ['Colorless'])[0], 'evolvesFrom':c.get('evolvesFrom') or (c['name'].removesuffix(' LV.X') if stage=='Level-Up' else None),
