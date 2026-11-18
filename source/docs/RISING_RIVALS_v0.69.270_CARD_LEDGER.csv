@@ -1,0 +1,121 @@
+card_id,name,kind,source_enabled,printed_attributes,attack_count,ability_count,risk_tags,id_mentioned_in_test,independent_smoke,focus_deck
+pl2-1,Arcanine,pokemon,True,matched to official archive,2,1,choice;energyMovement;status,False,smoke eligible,yes
+pl2-2,Bastiodon GL,pokemon,True,matched to official archive,2,0,,False,smoke eligible,yes
+pl2-3,Darkrai G,pokemon,True,matched to official archive,1,1,timing;status,False,smoke eligible,yes
+pl2-4,Floatzel GL,pokemon,True,matched to official archive,2,0,choice;timing,False,smoke eligible,yes
+pl2-5,Flygon,pokemon,True,matched to official archive,2,1,timing;energyMovement,True,smoke eligible,yes
+pl2-6,Froslass GL,pokemon,True,matched to official archive,2,0,status,False,smoke eligible,yes
+pl2-7,Jirachi,pokemon,True,matched to official archive,2,1,choice;timing;deckSearch,False,smoke eligible,yes
+pl2-8,Lucario GL,pokemon,True,matched to official archive,1,1,,False,smoke eligible,yes
+pl2-9,Luxray GL,pokemon,True,matched to official archive,2,0,energyMovement,True,8 scenario skips present; see audit notes,yes
+pl2-10,Mismagius GL,pokemon,True,matched to official archive,2,0,energyMovement;coin,True,smoke eligible,yes
+pl2-11,Rampardos GL,pokemon,True,matched to official archive,2,0,coin,True,smoke eligible,yes
+pl2-12,Roserade GL,pokemon,True,matched to official archive,2,0,choice;timing;status,False,smoke eligible,yes
+pl2-13,Shiftry,pokemon,True,matched to official archive,2,1,timing;status;coin,True,smoke eligible,yes
+pl2-14,Aggron,pokemon,True,matched to official archive,3,0,choice;timing,False,smoke eligible,yes
+pl2-15,Beedrill,pokemon,True,matched to official archive,1,1,choice;status;deckSearch,True,smoke eligible,yes
+pl2-16,Bronzong E4,pokemon,True,matched to official archive,2,0,choice;status;deckSearch,False,smoke eligible,yes
+pl2-17,Drapion E4,pokemon,True,matched to official archive,2,0,status;coin,False,smoke eligible,yes
+pl2-18,Espeon E4,pokemon,True,matched to official archive,2,0,status,False,smoke eligible,yes
+pl2-19,Flareon,pokemon,True,matched to official archive,2,1,choice;status,True,smoke eligible,yes
+pl2-20,Gallade E4,pokemon,True,matched to official archive,2,0,,False,smoke eligible,yes
+pl2-21,Gastrodon East Sea,pokemon,True,matched to official archive,2,1,choice;energyMovement;deckSearch,True,smoke eligible,yes
+pl2-22,Gastrodon West Sea,pokemon,True,matched to official archive,3,0,choice,True,smoke eligible,yes
+pl2-23,Golem E4,pokemon,True,matched to official archive,2,0,,False,smoke eligible,yes
+pl2-24,Heracross E4,pokemon,True,matched to official archive,2,0,timing;coin,False,smoke eligible,yes
+pl2-25,Hippowdon,pokemon,True,matched to official archive,2,1,choice;timing;energyMovement,True,smoke eligible,yes
+pl2-26,Jolteon,pokemon,True,matched to official archive,2,1,choice;status;coin,False,smoke eligible,yes
+pl2-27,Mamoswine GL,pokemon,True,matched to official archive,1,1,timing;coin,True,smoke eligible,yes
+pl2-28,Mr. Mime E4,pokemon,True,matched to official archive,2,0,timing;coin,False,smoke eligible,yes
+pl2-29,Nidoking,pokemon,True,matched to official archive,2,1,coin,True,smoke eligible,yes
+pl2-30,Nidoqueen,pokemon,True,matched to official archive,2,1,timing,True,smoke eligible,yes
+pl2-31,Raichu GL,pokemon,True,matched to official archive,2,0,choice,False,smoke eligible,yes
+pl2-32,Rhyperior E4,pokemon,True,matched to official archive,2,0,coin,False,smoke eligible,yes
+pl2-33,Snorlax,pokemon,True,matched to official archive,2,0,choice;energyMovement;status;coin,False,smoke eligible,yes
+pl2-34,Vaporeon,pokemon,True,matched to official archive,2,1,choice;status,True,smoke eligible,yes
+pl2-35,Vespiquen E4,pokemon,True,matched to official archive,1,1,energyMovement;coin,True,smoke eligible,yes
+pl2-36,Walrein,pokemon,True,matched to official archive,1,1,choice;energyMovement,True,smoke eligible,yes
+pl2-37,Yanmega E4,pokemon,True,matched to official archive,2,0,choice,False,smoke eligible,yes
+pl2-38,Alakazam E4,pokemon,True,matched to official archive,2,0,energyMovement;coin,False,smoke eligible,yes
+pl2-39,Electrode G,pokemon,True,matched to official archive,2,0,energyMovement,False,smoke eligible,yes
+pl2-40,Gengar GL,pokemon,True,matched to official archive,2,0,choice;status;deckSearch,True,smoke eligible,yes
+pl2-41,Glaceon,pokemon,True,matched to official archive,2,1,choice;status,True,smoke eligible,yes
+pl2-42,Hippowdon E4,pokemon,True,matched to official archive,1,1,coin,False,smoke eligible,yes
+pl2-43,Infernape E4,pokemon,True,matched to official archive,2,0,choice,False,smoke eligible,yes
+pl2-44,Lairon,pokemon,True,matched to official archive,2,0,timing;coin,True,smoke eligible,yes
+pl2-45,Leafeon,pokemon,True,matched to official archive,2,1,energyMovement;status,True,smoke eligible,yes
+pl2-46,Machamp GL,pokemon,True,matched to official archive,2,0,deckSearch,True,smoke eligible,yes
+pl2-47,Rapidash E4,pokemon,True,matched to official archive,2,0,energyMovement;coin,False,smoke eligible,yes
+pl2-48,Scizor E4,pokemon,True,matched to official archive,2,0,energyMovement;coin,False,smoke eligible,yes
+pl2-49,Sharpedo,pokemon,True,matched to official archive,2,1,timing;energyMovement;coin,False,smoke eligible,yes
+pl2-50,Starmie,pokemon,True,matched to official archive,2,1,choice;timing;energyMovement;status,False,smoke eligible,yes
+pl2-51,Steelix GL,pokemon,True,matched to official archive,2,0,energyMovement;status;coin,True,smoke eligible,yes
+pl2-52,Tropius,pokemon,True,matched to official archive,3,0,timing;coin,False,smoke eligible,yes
+pl2-53,Vibrava,pokemon,True,matched to official archive,2,0,energyMovement;deckSearch;coin,True,smoke eligible,yes
+pl2-54,Whiscash E4,pokemon,True,matched to official archive,2,0,status,False,smoke eligible,yes
+pl2-55,Aerodactyl GL,pokemon,True,matched to official archive,2,0,timing,False,smoke eligible,yes
+pl2-56,Ambipom G,pokemon,True,matched to official archive,2,0,energyMovement,True,smoke eligible,yes
+pl2-57,Aron,pokemon,True,matched to official archive,2,0,coin,False,smoke eligible,yes
+pl2-58,Carvanha,pokemon,True,matched to official archive,2,0,timing;energyMovement;coin,False,smoke eligible,yes
+pl2-59,Eevee,pokemon,True,matched to official archive,2,0,choice;deckSearch,True,smoke eligible,yes
+pl2-60,Flareon E4,pokemon,True,matched to official archive,2,0,energyMovement;coin,False,smoke eligible,yes
+pl2-61,Forretress G,pokemon,True,matched to official archive,2,0,timing;coin,False,smoke eligible,yes
+pl2-62,Gliscor E4,pokemon,True,matched to official archive,2,0,status;coin,False,smoke eligible,yes
+pl2-63,Growlithe,pokemon,True,matched to official archive,2,0,deckSearch,True,smoke eligible,yes
+pl2-64,Hippopotas,pokemon,True,matched to official archive,2,0,coin,False,smoke eligible,yes
+pl2-65,Houndoom E4,pokemon,True,matched to official archive,2,0,timing;status,False,smoke eligible,yes
+pl2-66,Kakuna,pokemon,True,matched to official archive,1,1,status;deckSearch;coin,False,smoke eligible,yes
+pl2-67,Kecleon,pokemon,True,matched to official archive,1,1,coin,True,smoke eligible,yes
+pl2-68,Koffing,pokemon,True,matched to official archive,2,0,status;coin,False,smoke eligible,yes
+pl2-69,Munchlax,pokemon,True,matched to official archive,1,1,choice;status,True,smoke eligible,yes
+pl2-70,Munchlax,pokemon,True,matched to official archive,1,1,choice;deckSearch,False,smoke eligible,yes
+pl2-71,Nidoran ♀,pokemon,True,matched to official archive,2,0,deckSearch,False,smoke eligible,yes
+pl2-72,Nidoran ♂,pokemon,True,matched to official archive,2,0,timing;coin,False,smoke eligible,yes
+pl2-73,Nidorina,pokemon,True,matched to official archive,2,0,status,True,smoke eligible,yes
+pl2-74,Nidorino,pokemon,True,matched to official archive,2,0,choice;timing;status,False,smoke eligible,yes
+pl2-75,Nuzleaf,pokemon,True,matched to official archive,2,0,choice;timing;coin,False,smoke eligible,yes
+pl2-76,Quagsire GL,pokemon,True,matched to official archive,1,1,choice,False,smoke eligible,yes
+pl2-77,Sealeo,pokemon,True,matched to official archive,2,0,choice;timing;deckSearch;coin,True,smoke eligible,yes
+pl2-78,Seedot,pokemon,True,matched to official archive,2,0,choice;privacy;timing;deckSearch,False,smoke eligible,yes
+pl2-79,Shellos East Sea,pokemon,True,matched to official archive,2,0,choice;coin,False,8 scenario skips present; see audit notes,yes
+pl2-80,Shellos West Sea,pokemon,True,matched to official archive,2,0,choice;coin,False,smoke eligible,yes
+pl2-81,Snorlax,pokemon,True,matched to official archive,2,1,status;coin,True,smoke eligible,yes
+pl2-82,Spheal,pokemon,True,matched to official archive,2,0,status,True,smoke eligible,yes
+pl2-83,Staryu,pokemon,True,matched to official archive,2,0,,True,smoke eligible,yes
+pl2-84,Trapinch,pokemon,True,matched to official archive,1,1,choice;energyMovement,True,smoke eligible,yes
+pl2-85,Turtwig GL,pokemon,True,matched to official archive,1,1,,True,smoke eligible,yes
+pl2-86,Weedle,pokemon,True,matched to official archive,2,0,choice;deckSearch;coin,False,smoke eligible,yes
+pl2-87,Weezing,pokemon,True,matched to official archive,2,1,status,False,smoke eligible,yes
+pl2-88,Aaron's Collection,trainer,True,matched to official archive,0,0,choice;energyMovement,False,smoke eligible,not applicable
+pl2-89,Bebe's Search,trainer,True,matched to official archive,0,0,choice;deckSearch,True,8 scenario skips present; see audit notes,not applicable
+pl2-90,Bertha's Warmth,trainer,True,matched to official archive,0,0,,True,smoke eligible,not applicable
+pl2-91,Flint's Willpower,trainer,True,matched to official archive,0,0,energyMovement,True,smoke eligible,not applicable
+pl2-92,Lucian's Assignment,trainer,True,matched to official archive,0,0,energyMovement,False,smoke eligible,not applicable
+pl2-93,Pokémon Contest Hall,trainer,True,matched to official archive,0,0,deckSearch;coin,True,smoke eligible,not applicable
+pl2-94,Sunyshore City Gym,trainer,True,matched to official archive,0,0,,True,smoke eligible,not applicable
+pl2-95,Team Galactic's Invention G-107 Technical Machine G,trainer,True,matched to official archive,1,0,choice,True,8 scenario skips present; see audit notes,not applicable
+pl2-96,Team Galactic's Invention G-109 SP Radar,trainer,True,matched to official archive,0,0,choice;deckSearch,True,smoke eligible,not applicable
+pl2-97,Underground Expedition,trainer,True,matched to official archive,0,0,choice;privacy;deckSearch,False,smoke eligible,not applicable
+pl2-98,Volkner's Philosophy,trainer,True,matched to official archive,0,0,choice,False,smoke eligible,not applicable
+pl2-99,Darkness Energy,energy,True,matched to official archive,0,0,energyMovement,True,smoke eligible,not applicable
+pl2-100,Metal Energy,energy,True,matched to official archive,0,0,energyMovement,False,smoke eligible,not applicable
+pl2-101,SP Energy,energy,True,matched to official archive,0,0,energyMovement,True,smoke eligible,not applicable
+pl2-102,Upper Energy,energy,True,matched to official archive,0,0,energyMovement,True,smoke eligible,not applicable
+pl2-103,Alakazam E4 LV.X,pokemon,True,matched to official archive,1,1,choice;status,True,smoke eligible,yes
+pl2-104,Floatzel GL LV.X,pokemon,True,matched to official archive,1,1,choice;deckSearch,True,smoke eligible,yes
+pl2-105,Flygon LV.X,pokemon,True,matched to official archive,1,1,choice;timing,False,smoke eligible,yes
+pl2-106,Gallade E4 LV.X,pokemon,True,matched to official archive,1,1,choice,False,smoke eligible,yes
+pl2-107,Hippowdon LV.X,pokemon,True,matched to official archive,1,1,choice;energyMovement;deckSearch,False,smoke eligible,yes
+pl2-108,Infernape E4 LV.X,pokemon,True,matched to official archive,1,1,choice;energyMovement;status,False,smoke eligible,yes
+pl2-109,Luxray GL LV.X,pokemon,True,matched to official archive,1,1,choice,True,smoke eligible,yes
+pl2-110,Mismagius GL LV.X,pokemon,True,matched to official archive,1,1,choice;status,True,smoke eligible,yes
+pl2-111,Snorlax LV.X,pokemon,True,matched to official archive,1,1,choice;energyMovement;status,True,smoke eligible,yes
+pl2-112,Pikachu,pokemon,True,matched to official archive,2,0,coin,True,smoke eligible,yes
+pl2-113,Flying Pikachu,pokemon,True,matched to official archive,2,0,timing;status;coin,False,smoke eligible,yes
+pl2-114,Surfing Pikachu,pokemon,True,matched to official archive,1,0,,False,smoke eligible,yes
+pl2-RT1,Fan Rotom,pokemon,True,matched to official archive,2,1,choice;energyMovement;coin,True,smoke eligible,yes
+pl2-RT2,Frost Rotom,pokemon,True,matched to official archive,2,1,choice,True,smoke eligible,yes
+pl2-RT3,Heat Rotom,pokemon,True,matched to official archive,2,1,choice;status;deckSearch,False,smoke eligible,yes
+pl2-RT4,Mow Rotom,pokemon,True,matched to official archive,2,1,choice;energyMovement;coin,True,smoke eligible,yes
+pl2-RT5,Wash Rotom,pokemon,True,matched to official archive,2,1,choice;privacy;coin,False,smoke eligible,yes
+pl2-RT6,Charon's Choice,trainer,True,matched to official archive,0,0,deckSearch,True,smoke eligible,not applicable

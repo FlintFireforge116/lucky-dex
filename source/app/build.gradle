@@ -8,8 +8,8 @@ android {
         applicationId 'com.example.luckydex'
         minSdk 26
         targetSdk 35
-        versionCode 7256
-        versionName '0.69.269'
+        versionCode 7257
+        versionName '0.69.270'
     }
 
     signingConfigs {
@@ -199,10 +199,17 @@ tasks.register('generateRisingRivalsForApk', Exec) {
 tasks.register('auditRisingRivalsForApk', Exec) {
     dependsOn tasks.named('generateRisingRivalsForApk')
     workingDir rootProject.projectDir
-    commandLine 'node', '--test', 'tests/v07267-rising-rivals-stage1.test.cjs', 'tests/v07268-rising-rivals-continuation.test.cjs', 'tests/v07269-rising-rivals-completion.test.cjs'
+    commandLine 'node', '--test', 'tests/v07267-rising-rivals-stage1.test.cjs', 'tests/v07268-rising-rivals-continuation.test.cjs', 'tests/v07269-rising-rivals-completion.test.cjs', 'tests/v07270-rising-rivals-independent-audit.test.cjs'
+}
+// Run the generic independent auditor too: legality, CPU-generated decks,
+// effects and choice flows must succeed on each APK build, not just locally.
+tasks.register('independentRisingRivalsForApk', Exec) {
+    dependsOn tasks.named('auditRisingRivalsForApk')
+    workingDir rootProject.projectDir
+    commandLine 'node', 'scripts/audit-classic-set.cjs', '--set', 'pl2', '--smoke', '--no-write'
 }
 tasks.matching { it.name == 'preBuild' || (it.name.startsWith('merge') && it.name.endsWith('Assets')) }.configureEach {
-    dependsOn tasks.named('auditRisingRivalsForApk')
+    dependsOn tasks.named('independentRisingRivalsForApk')
 }
 
 // Platinum (133 official prints): regenerate executable effects before packaging.

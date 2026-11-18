@@ -369,7 +369,7 @@ ATTACKS['13']['Seal Off']=R('13:sealOff')
 PL2_VERIFIED_RULES.add('13:sealOff')
 
 # Water Rescue is an optional *triggered* ally-KO reaction.
-ABILITIES['104']=[P('Water Rescue',R('104:waterRescue'),kind='triggered',event='knockedOutAlly',opponentAttackOnly=True)]
+ABILITIES['104']=[P('Water Rescue',R('104:waterRescue'),kind='triggered',event='knockedOutAlly',opponentAttackOnly=True,printedPowerType='body',disabledByStatus=False)]
 # Contest Hall stays in play. Its coin action is available once each turn to
 # each side, not as a one-shot effect when the Stadium enters play.
 TRAINERS['93']=('Stadium',{'type':'stadiumAction','effect':R('93:contestHall')})

@@ -81,8 +81,12 @@ function auditSet(setId, context){
  const seen=new Set(),perCard=[];
  const counts={pokemon:0,trainer:0,energy:0,attacks:0,abilities:0,enabled:0,gated:0};
  const isFullSet=cards.every(c=>c.battleEnabled);
- if(setDef&&Number(setDef.cardCount)&&cards.length!==Number(setDef.cardCount))
-  emit('error','C-AUDIT-001',null,`Registry has ${cards.length} prints; declared ${setDef.cardCount}.`);
+ // A set may distinguish its numbered release count from extra/secret
+ // collector prints. Accept either documented total, but not an unrelated
+ // count; older expansions use different conventions for these fields.
+ const declaredSizes=[setDef?.cardCount,setDef?.printedTotal].map(Number).filter(n=>Number.isFinite(n)&&n>0);
+ if(declaredSizes.length&&!declaredSizes.includes(cards.length))
+  emit('error','C-AUDIT-001',null,`Registry has ${cards.length} prints; declared ${setDef.cardCount}${Number(setDef.printedTotal)>0&&Number(setDef.printedTotal)!==Number(setDef.cardCount)?' (alternate collector total '+setDef.printedTotal+')':''}.`);
  for(const c of cards){
   if(seen.has(c.id))emit('error','C-AUDIT-001',c.id,'Duplicate collector print ID.');
   seen.add(c.id);
@@ -130,6 +134,9 @@ function auditSet(setId, context){
     if(required.length&&Array.isArray(c.deckMeta.energyTypes)&&!required.some(type=>c.deckMeta.energyTypes.includes(type)))issue('warning','C-AUDIT-003',`Printed attack costs ${required.join('/')} have no overlap with deckMeta.energyTypes; check autobuilder resource plan.`);
    }
   }else if(c.kind==='trainer'||c.kind==='energy'){
+   // Technical Machines have an actual printed attack, even though the
+   // physical print is a Trainer. Count it as part of the move inventory.
+   counts.attacks+=(c.attacks||[]).length;
    effects.push({label:'card effect',value:c.effect,printed:c.text});
    if(c.battleEnabled&&c.kind==='trainer'&&PLACEHOLDER.test(String(c.text||'')))issue('error','C-AUDIT-002','Trainer still has placeholder printed text.');
   }else issue('warning','C-AUDIT-001',`Unexpected card kind: ${c.kind}.`);
@@ -182,7 +189,7 @@ function auditSet(setId, context){
  let smokeResult=null;
  if(smoke&&core)smokeResult=runSmokes(cards,{data,core,opponents});
  if(smokeResult)for(const f of smokeResult.failures)emit('review','C-AUDIT-007',f.cardId,`${f.action}: ${f.reason}`);
- const summary={setId,setName:setDef?.name||null,total:cards.length,declared:setDef?.cardCount??null,counts,risks:Object.fromEntries(Object.keys(PATTERNS).map(k=>[k,perCard.filter(c=>c.riskTags.includes(k)).length])),withStaticTestMentions:perCard.filter(c=>c.testFilesMentioningId.length).length,errors:findings.filter(f=>f.severity==='error').length,warnings:findings.filter(f=>f.severity==='warning').length,reviewFlags:findings.filter(f=>f.severity==='review').length};
+ const summary={setId,setName:setDef?.name||null,total:cards.length,declared:declaredSizes.includes(cards.length)?cards.length:(setDef?.cardCount??null),counts,risks:Object.fromEntries(Object.keys(PATTERNS).map(k=>[k,perCard.filter(c=>c.riskTags.includes(k)).length])),withStaticTestMentions:perCard.filter(c=>c.testFilesMentioningId.length).length,errors:findings.filter(f=>f.severity==='error').length,warnings:findings.filter(f=>f.severity==='warning').length,reviewFlags:findings.filter(f=>f.severity==='review').length};
  return {schemaVersion:1,contract:CONTRACT.sourceOfTruth,scope:'Static preflight + optional synthetic execution, not printed correctness or Android certification',summary,findings,cardLedger:perCard,cpu:cpuResult,smoke:smokeResult};
 }
 function runSmokes(cards,{data,core,opponents}){

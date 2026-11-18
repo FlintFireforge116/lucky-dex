@@ -402,6 +402,16 @@ function buildDeck(rows,options={}){
    if(card?.id==='pl1-117'&&platinumSP()<3)return false;
    if(card?.id==='pl1-107'&&!platinumMembers().some(p=>p.stage==='Level-Up'))return false;
    if(card?.id==='pl1-110'&&!platinumMembers().some(p=>['Stage 1','Stage 2','Level-Up'].includes(p.stage)))return false;
+   // Rising Rivals SP-only cards are dead without an actual Pokémon SP in
+   // the *constructed deck*, regardless of whether the owner owns SP cards.
+   // Respect explicitly retained user card choices; these restrictions only
+   // govern automatic additions to the deck.
+   const manuallyKept=card?.id&&existing.includes(card.id);
+   if(!manuallyKept&&['pl2-90','pl2-91','pl2-95','pl2-96'].includes(card?.id)&&platinumSP()<1)return false;
+   // Flint's Willpower attaches a physical basic Energy card from the hand.
+   // A hybrid Zone-only Energy plan cannot fulfill that requirement, even
+   // when a Pokémon SP is present.
+   if(!manuallyKept&&card?.id==='pl2-91'&&!cards.some(id=>classic.cardById(id)?.basicEnergy))return false;
    // Never draw Fossils from the general Trainer pool without a matching
    // evolution already in the actual 30-card deck (not merely owned).
    if(isEvolutionFossil(card)&&!fossilEvolutionInDeck(card,cards))return false;
@@ -447,7 +457,7 @@ function buildDeck(rows,options={}){
  // In compact 30-card Stormfront decks, bulk-search Trainers should not
  // consume four slots merely because the owner has four copies. Saved manual
  // choices can be preserved up to the global four-copy limit.
- const stormfrontAutoCaps={'dp7-91':2,'dp7-86':1,'dp7-85':3,'dp7-83':2};
+ const stormfrontAutoCaps={'dp7-91':2,'dp7-86':1,'dp7-85':3,'dp7-83':2,'pl2-96':2,'pl2-95':2};
  function room(card){const copiesOfName=[...counts].filter(([id])=>classicCardName(classic.cardById(id)?.name)===classicCardName(card.name)).reduce((sum,[,count])=>sum+count,0);const starSlots=card.pokemonStar?Math.max(0,1-cards.filter(id=>classic.cardById(id)?.pokemonStar).length):4;const rawCap=stormfrontAutoCaps[card.id];const allowedCopies=rawCap===undefined?4:Math.min(4,Math.max(rawCap,existing.filter(id=>id===card.id).length));return Math.max(0,Math.min(starSlots,(card.name.startsWith('Shining ')?1:allowedCopies)-copiesOfName,Number(owned.get(card.id)||0)-(counts.get(card.id)||0)));}
  function hasBabyPartner(card){
    const names=babyEvolutionTargets(card);
