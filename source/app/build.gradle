@@ -8,8 +8,8 @@ android {
         applicationId 'com.example.luckydex'
         minSdk 26
         targetSdk 35
-        versionCode 7273
-        versionName '0.69.287'
+        versionCode 7274
+        versionName '0.69.288'
     }
 
     signingConfigs {
@@ -309,4 +309,25 @@ tasks.register('independentHGSS2ForApk', Exec) {
 }
 tasks.matching { it.name == 'preBuild' || (it.name.startsWith('merge') && it.name.endsWith('Assets')) }.configureEach {
     dependsOn tasks.named('independentHGSS2ForApk')
+}
+
+// v0.69.288: source-pinned HGSS Undaunted physical 91-print catalogue.
+// This conservative stage maps fully-supported mechanics and deliberately
+// gates unsupported attacks, powers, and LEGEND effects.
+tasks.register('generateHGSS3ForApk', Exec) {
+    workingDir rootProject.projectDir
+    commandLine (System.getenv('LUCKYDEX_PYTHON') ?: 'python3'), 'scripts/build-hgss3.py'
+}
+tasks.register('auditHGSS3ForApk', Exec) {
+    dependsOn tasks.named('generateHGSS3ForApk')
+    workingDir rootProject.projectDir
+    commandLine 'node', '--test', 'tests/v07288-undaunted-stage1.test.cjs'
+}
+tasks.register('independentHGSS3ForApk', Exec) {
+    dependsOn tasks.named('auditHGSS3ForApk')
+    workingDir rootProject.projectDir
+    commandLine 'node', 'scripts/audit-classic-set.cjs', '--set', 'hgss3', '--smoke', '--no-write'
+}
+tasks.matching { it.name == 'preBuild' || (it.name.startsWith('merge') && it.name.endsWith('Assets')) }.configureEach {
+    dependsOn tasks.named('independentHGSS3ForApk')
 }
