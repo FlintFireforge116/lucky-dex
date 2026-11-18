@@ -8,8 +8,8 @@ android {
         applicationId 'com.example.luckydex'
         minSdk 26
         targetSdk 35
-        versionCode 7260
-        versionName '0.69.274'
+        versionCode 7261
+        versionName '0.69.275'
     }
 
     signingConfigs {
@@ -253,4 +253,19 @@ tasks.register('independentSupremeVictorsForApk', Exec) {
 }
 tasks.matching { it.name == 'preBuild' || (it.name.startsWith('merge') && it.name.endsWith('Assets')) }.configureEach {
     dependsOn tasks.named('independentSupremeVictorsForApk')
+}
+
+// Arceus v0.69.275: the original English print source is committed by
+// prepare-arceus.sh before push and verified against its exact Git blob.
+tasks.register('generateArceusForApk', Exec) {
+    workingDir rootProject.projectDir
+    commandLine (System.getenv('LUCKYDEX_PYTHON') ?: 'python3'), 'scripts/build-arceus.py'
+}
+tasks.register('auditArceusForApk', Exec) {
+    dependsOn tasks.named('generateArceusForApk')
+    workingDir rootProject.projectDir
+    commandLine 'node', '--test', 'tests/v07275-arceus-stage1.test.cjs'
+}
+tasks.matching { it.name == 'preBuild' || (it.name.startsWith('merge') && it.name.endsWith('Assets')) }.configureEach {
+    dependsOn tasks.named('auditArceusForApk')
 }
