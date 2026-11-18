@@ -69,7 +69,15 @@ test('all enabled Supreme Victors attacks resolve or provide a legal choice; no 
 });
 
 test('the APK build version agrees across Gradle, UI and boot JS',()=>{
- const g=fs.readFileSync(path.join(root,'app/build.gradle'),'utf8');const app=fs.readFileSync(path.join(assets,'app-v0167.js'),'utf8');const html=fs.readFileSync(path.join(assets,'index.html'),'utf8');
- assert.ok(g.includes("versionName '0.69.274'"));assert.ok(app.includes("__LUCKYDEX_BUILD='0.69.274'"));
- assert.ok(html.includes('id="titleBuildVersion">v0.69.274'));assert.ok(html.includes('id="appBuildVersion">LUCKY DEX · v0.69.274'));
+ const g=fs.readFileSync(path.join(root,'app/build.gradle'),'utf8');
+ const app=fs.readFileSync(path.join(assets,'app-v0167.js'),'utf8');
+ const html=fs.readFileSync(path.join(assets,'index.html'),'utf8');
+ // This is a cross-release invariant. Do not pin an old set-audit test to its
+ // original release number: later sets must continue to pass this same audit.
+ const m=g.match(/\bversionName\s+['"](\d+\.\d+\.\d+)['"]/);
+ assert.ok(m,'Gradle must define a semantic versionName');
+ const version=m[1];
+ assert.ok(app.includes(`window.__LUCKYDEX_BUILD='${version}'`),`Boot JS version differs from Gradle ${version}`);
+ assert.ok(html.includes(`id="titleBuildVersion">v${version}`),`Title UI version differs from Gradle ${version}`);
+ assert.ok(html.includes(`id="appBuildVersion">LUCKY DEX · v${version}`),`App UI version differs from Gradle ${version}`);
 });
