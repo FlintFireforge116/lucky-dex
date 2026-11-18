@@ -8,8 +8,8 @@ android {
         applicationId 'com.example.luckydex'
         minSdk 26
         targetSdk 35
-        versionCode 7257
-        versionName '0.69.270'
+        versionCode 7258
+        versionName '0.69.271'
     }
 
     signingConfigs {
@@ -229,4 +229,28 @@ tasks.register('auditPlatinumChecklistForApk', Exec) {
 }
 tasks.matching { it.name == 'preBuild' || (it.name.startsWith('merge') && it.name.endsWith('Assets')) }.configureEach {
     dependsOn tasks.named('auditPlatinumChecklistForApk')
+}
+
+// Supreme Victors offline source + strict current-generator check.
+// Note: regenerate before tests and APK asset merging to avoid stale output.
+tasks.register('generateSupremeVictorsForApk', Exec) {
+    workingDir rootProject.projectDir
+    commandLine (System.getenv('LUCKYDEX_PYTHON') ?: 'python3'), 'scripts/build-supreme-victors.py'
+}
+tasks.register('auditSupremeVictorsForApk', Exec) {
+    dependsOn tasks.named('generateSupremeVictorsForApk')
+    workingDir rootProject.projectDir
+    commandLine 'node', '--test', 'tests/v07271-supreme-victors-stage1.test.cjs'
+}
+tasks.matching { it.name == 'preBuild' || (it.name.startsWith('merge') && it.name.endsWith('Assets')) }.configureEach {
+    dependsOn tasks.named('auditSupremeVictorsForApk')
+}
+// Independent card/deck/choice smoke, in addition to the static print checks.
+tasks.register('independentSupremeVictorsForApk', Exec) {
+    dependsOn tasks.named('auditSupremeVictorsForApk')
+    workingDir rootProject.projectDir
+    commandLine 'node', 'scripts/audit-classic-set.cjs', '--set', 'pl3', '--smoke', '--no-write'
+}
+tasks.matching { it.name == 'preBuild' || (it.name.startsWith('merge') && it.name.endsWith('Assets')) }.configureEach {
+    dependsOn tasks.named('independentSupremeVictorsForApk')
 }
