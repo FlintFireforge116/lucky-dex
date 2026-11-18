@@ -20,8 +20,8 @@ function mon(id,uid=String(seq++),energy={}){const x=core.makePokemonSlot(id,2,u
 function attack(s,idx=0){const a=core.legalActions(s,'player').find(a=>a.type==='attack'&&a.attackIndex===idx);assert.ok(a,`attack missing ${s.sides.player.active?.cardId} #${idx}`);core.applyAction(s,'player',a);return s;}
 function choose(s,match){assert.equal(s.phase,'effectChoice','must offer a choice');const who=s.choiceSide||'player',actions=core.legalActions(s,who).filter(a=>['effectChoice','chooseEffect'].includes(a.type));assert.ok(actions.length,'no legal choices '+JSON.stringify(s.pendingChoice));const selected=match?actions.find(match):actions.find(a=>!a.choiceSkip)||actions[0];assert.ok(selected,'selection not found '+JSON.stringify(actions));core.applyAction(s,who,selected);return s;}
 function drain(s){for(let n=0;n<20&&s.phase==='effectChoice';n++)choose(s);assert.notEqual(s.phase,'effectChoice');return s;}
-test('Stage 2 still has exact printed text, deliberately gating remaining complex cards',()=>{
- assert.equal(rr.CARDS.length,120);assert.equal(rr.CARDS.filter(c=>c.battleEnabled).length,89);
+test('Stage 3 retains exact printed text and all 120 playable cards',()=>{
+ assert.equal(rr.CARDS.length,120);assert.equal(rr.CARDS.filter(c=>c.battleEnabled).length,120);
  for(const c of rr.CARDS.filter(c=>c.battleEnabled)){for(const a of [...(c.attacks||[]),...(c.abilities||[]),...(c.effect?[c]:[])])assert.deepEqual(effects.validateEffect(a.effect),[],c.id+': '+a.name);}
 });
 test('Grudge depends on opponent prizes actually taken, not its own bench or cards in hand',()=>{

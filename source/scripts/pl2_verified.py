@@ -75,7 +75,7 @@ ATTACKS={
 '43':{'Split Bomb':{'type':'multiTargetDamage','target':'opponentPokemon','amount':20,'count':2},'High Jump Kick':N},
 '44':{'Heavy Metal':R('44:heavyMetal'),'Granite Head':GUARD(10)},
 '45':{'Plus Energy':R('45:plusEnergy'),'Soothing Scent':ST('sleep')},
-'46':{'Cross-Cut':B(20,EVOLVED),'Brush Off':R('46:brushOff')},
+'46':{'Cross-Cut':R('46:crossCut'),'Brush Off':R('46:brushOff')},
 '47':{'Pickup Power':R('47:pickupPower'),'Fire Mane':N},
 '48':{'Cut':N,'Crushing Blow':Q(R('38:beam'))},
 '49':{'Crunch':R('49:crunch'),'Sharp Fang':N},
@@ -302,3 +302,74 @@ PL2_VERIFIED_RULES.update({
  '29:flingAway','29:gigaHorn','29:territoriality',
  '35:leafNeedle','35:royalGain','67:colorfulBody',
  '89:bebes','91:flints','103:damageSwitch','110:darknessMagic','110:magicalReturn','111:exercise'})
+
+# v0.69.269: remaining 31 print-completion entries. Each rule has a
+# battle-state implementation or an explicit continuous/event hook.
+ATTACKS['1']['Burn Out']=R('1:burnOut')
+ATTACKS['1']['Flames of Rage']=R('1:flamesOfRage')
+ATTACKS['5']['Sand Wall']=R('5:sandWall')
+ATTACKS['5']['Power Swing']=R('5:powerSwing')
+ATTACKS['7']['Detour']=R('7:detour')
+ATTACKS['21']['Calling Wave']=R('21:callingWave')
+ATTACKS['25']['Save Sand']=R('25:saveSand')
+ATTACKS['25']['Groundquake']=R('25:groundquake')
+ATTACKS['40']['Attack and Hide']=R('40:attackAndHide')
+ATTACKS['41']['Ice Bind']=R('41:iceBind')
+ATTACKS['45']['Plus Energy']=R('45:plusEnergy')
+ATTACKS['46']['Brush Off']=R('46:brushOff')
+ATTACKS['49']['Crunch']=R('49:crunch')
+ATTACKS['55']['Primal Breath']=R('55:primalBreath')
+ATTACKS['58']['Whirlpool']=Q(DISC(1,'opponentActive'))
+ATTACKS['78']['Harden']=R('78:harden')
+ATTACKS['87']['Damage Breakdown']=R('87:damageBreakdown')
+ATTACKS['104']['Energy Cyclone']=R('104:energyCyclone')
+ATTACKS['105']['Extreme Attack']=R('105:extremeAttack')
+ATTACKS['107']['Double Shoot']=R('107:doubleShoot')
+ATTACKS['109']['Flash Impact']=R('109:flashImpact')
+ATTACKS['95']['Damage Porter']=R('95:damagePorter')
+for n,ability in {
+ '1':'Flare Condition','3':'Eerie Aura','5':'Rainbow Float','7':'Final Wish','8':'Boundary Aura',
+ '13':'Unlucky Wind','21':'Sticky Hold','25':'Sand Cover','27':'Icy Aura',
+ '30':'Maternal Comfort','36':'Gather Ice','41':'Frost Wind','45':'Energy Refresh',
+ '49':'Energy Shark','87':'Camouflage Gas','104':'Water Rescue','105':'Wind Erosion',
+ '106':'Blade Storm','107':'Sand Reset','109':'Bright Look'
+}.items():
+ ABILITIES[n]=[P(ability,R(n+':'+ability[:1].lower()+ability[1:].replace(' ','')),kind='passive' if n not in ('7','36','106','107','109') else ('triggered' if n in ('7','36','106','109') else 'activated'),**(
+    {'event':'knockedOutByAttack','opponentAttackOnly':True} if n=='7' else
+    {'event':'evolved','fromHandOnly':True} if n=='36' else
+    {'event':'levelUp','activeOnly':True,'fromHandOnly':True} if n in ('106','109') else
+    {'oncePerTurn':False} if n=='107' else
+    {}))]
+# See print: Walrein's Gather Ice is an on-evolution optional power, and
+# Jirachi's Final Wish is a KO replacement triggered on the opponent's turn.
+TRAINERS.update({
+ '92':('Supporter',R('92:lucians')),
+ '93':('Stadium',R('93:contestHall')),
+ '94':('Stadium',R('94:sunyshore')),
+ '95':('Tool',R('95:damagePorter')),
+ '97':('Supporter',R('97:expedition')),
+ 'RT6':('Supporter',R('RT6:charon')),
+})
+PL2_VERIFIED_RULES.update({
+ '46:crossCut','1:burnOut','1:flamesOfRage','5:sandWall','5:powerSwing','7:detour',
+ '21:callingWave','21:stickyHoldOffer','21:stickyHoldMove','25:saveSand','25:groundquake','40:attackAndHide','41:iceBind',
+ '45:plusEnergy','46:brushOff','49:crunch','55:primalBreath','78:harden',
+ '87:damageBreakdown','104:energyCyclone','105:extremeAttack','107:doubleShoot',
+ '109:flashImpact','95:damagePorter',
+ '92:lucians','93:contestHall','94:sunyshore','97:expedition','RT6:charon',
+ *(n+':'+name[:1].lower()+name[1:].replace(' ','') for n,name in {
+ '1':'Flare Condition','3':'Eerie Aura','5':'Rainbow Float','7':'Final Wish','8':'Boundary Aura',
+ '13':'Unlucky Wind','21':'Sticky Hold','25':'Sand Cover','27':'Icy Aura',
+ '30':'Maternal Comfort','36':'Gather Ice','41':'Frost Wind','45':'Energy Refresh',
+ '49':'Energy Shark','87':'Camouflage Gas','104':'Water Rescue','105':'Wind Erosion',
+ '106':'Blade Storm','107':'Sand Reset','109':'Bright Look'}.items())
+})
+
+ATTACKS['13']['Seal Off']=R('13:sealOff')
+PL2_VERIFIED_RULES.add('13:sealOff')
+
+# Water Rescue is an optional *triggered* ally-KO reaction.
+ABILITIES['104']=[P('Water Rescue',R('104:waterRescue'),kind='triggered',event='knockedOutAlly',opponentAttackOnly=True)]
+# Contest Hall stays in play. Its coin action is available once each turn to
+# each side, not as a one-shot effect when the Stadium enters play.
+TRAINERS['93']=('Stadium',{'type':'stadiumAction','effect':R('93:contestHall')})
