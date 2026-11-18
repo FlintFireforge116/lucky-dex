@@ -19,7 +19,7 @@ def supported(e):
  if kind=='coinFlip':return any(k in e for k in ('heads','tails')) and all(supported(e[k]) for k in ('heads','tails') if k in e)
  if kind=='chooseOption':return all(supported(x.get('effect')) for x in e.get('options',[]))
  if kind=='neoRule':return e.get('rule') in ({'pl1:'+r for r in V.PL1_RULES}|V.REUSED_RULES)
- return kind in {'noop','bonusDamage','status','heal','draw','sequence','coinFlip','coinDamage','selfDamage','discardEnergyCard','lock','modifier','preventDamage','benchDamage','selectedDamage','benchCountDamage','damageFromDamage','energyDamage','energyTypeCountDamage','discardCountDamage','fieldCountDamage','moveEnergy','drawToHandSize','attackCoinGate','coinAttackGate','searchChosen','attachEnergy','attachRandomEnergyFromDiscard','multiTargetDamage','discardHand','actionLock','removeStatus','removeStatuses','discardStadium','benchFromDeck','evolveFromDeck','koGuard','forceOpponentSwitch','switch','retaliateDamage','nextAttackBonus','shuffleRandomHandCard','trimHand','returnToHand','attackRequirement','chooseAttackLock','preventEffects','preventStatus','previousEvolutionAttacks','evolutionTimingOverride','selfDamagePenalty','neoRule'}
+ return kind in {'noop','bonusDamage','status','heal','draw','sequence','coinFlip','coinDamage','selfDamage','discardEnergyCard','lock','modifier','preventDamage','benchDamage','selectedDamage','benchCountDamage','damageFromDamage','energyDamage','energyTypeCountDamage','discardCountDamage','fieldCountDamage','moveEnergy','drawToHandSize','attackCoinGate','coinAttackGate','searchChosen','attachEnergy','attachRandomEnergyFromDiscard','multiTargetDamage','discardHand','actionLock','removeStatus','removeStatuses','discardStadium','benchFromDeck','evolveFromDeck','koGuard','forceOpponentSwitch','switch','retaliateDamage','nextAttackBonus','shuffleRandomHandCard','trimHand','returnToHand','attackRequirement','chooseAttackLock','preventEffects','preventStatus','previousEvolutionAttacks','evolutionTimingOverride','selfDamagePenalty','neoRule','weaknessGuard','coinBenchDamage','selfDamageIfDefenderKnockedOut','playFossil'}
 def read():
  if not SRC.exists():raise SystemExit('Missing official data/classic/pl1-print-source.json — run sh scripts/prepare-platinum.sh')
  records=json.loads(SRC.read_text('utf8'))
@@ -52,8 +52,8 @@ def read():
    trainer=V.TRAINERS.get(n)
    if not trainer or not supported(trainer[1]):problems.append('Trainer effect not verified')
   if kind=='energy' and n not in V.ENERGY:problems.append('Special Energy attachment behaviour not verified')
-  # Fossils should never be autobuilt when no playable Fossil evolutions exist.
-  if kind=='trainer' and n in ('119','120'):problems.append('Fossil play-as-Pokémon and its evolved line not audited')
+  # Armor/Skull Fossils evolve into Shieldon/Cranidos; both lines are now
+  # represented as actual play-as-Basic Trainer cards with on-KO Stones.
   if kind=='pokemon' and stage=='Level-Up' and not c['name'].endswith(' LV.X'):problems.append('Missing LV.X prerequisite')
   active=not problems
   card={'id':'pl1-'+n,'setId':'pl1','number':n,'name':c['name'],'source':'tcg','battleFormat':'classic',
@@ -79,7 +79,7 @@ def read():
                    'preferredPartners':[],'inflicts':[],'payoffs':[]}})
   elif kind=='trainer':
    fallback={'type':'noop'}
-   card.update({'trainerType':V.TRAINERS.get(n,(stage,fallback))[0],
+   card.update({**({'hp':int(c.get('hp') or 50),'types':['Colorless'],'subtype':'Colorless','stage':'Basic','retreat':99,'abilities':powers,'fossil':True} if n in ('119','120') else {}),'trainerType':V.TRAINERS.get(n,(stage,fallback))[0],
      **({'expires':'endOwnTurn'} if n=='112' else {}),
      'text':'\n'.join(c.get('rules') or []),'effect':V.TRAINERS.get(n,(stage,fallback))[1]})
   else:card.update({'specialEnergy':True,'text':'\n'.join(c.get('rules') or []),
@@ -90,7 +90,7 @@ def read():
 def main():
  cards=read();print(f'Platinum: {len(cards)} collector prints, {sum(c["battleEnabled"] for c in cards)} fully mapped, {sum(not c["battleEnabled"] for c in cards)} gated')
  # All original text is retained for the 133 prints, even if battle gated.
- script='''/* LuckyDex Platinum (pl1): 133 official collector prints.\n * Incomplete outcomes are not executable in battles or used by autobuild.\n */\n(function(root,factory){const api=factory();if(typeof module==='object'&&module.exports)module.exports=api;if(root)root.LuckyDexClassicTCGPlatinum=api;})(typeof globalThis!=='undefined'?globalThis:this,function(){'use strict';\nconst SET=Object.freeze({id:'pl1',name:'Platinum',series:'Platinum',releaseDate:'2009-02-11',cardCount:127,printedTotal:133});\nconst CARDS=Object.freeze(__RECORDS__.map(c=>Object.freeze(c)));\nconst INDEX=new Map(CARDS.map(c=>[c.id,c]));\nreturn {SET,CARDS,cardById:id=>INDEX.get(String(id||''))||null,coverage:()=>({total:CARDS.length,battleEnabled:CARDS.filter(c=>c.battleEnabled).length,gated:CARDS.filter(c=>!c.battleEnabled).map(c=>c.id)})};\n});\n'''
+ script='''/* LuckyDex Platinum (pl1): 133 official collector prints.\n * Incomplete outcomes are not executable in battles or used by autobuild.\n */\n(function(root,factory){const api=factory();if(typeof module==='object'&&module.exports)module.exports=api;if(root)root.LuckyDexClassicTCGPlatinum=api;})(typeof globalThis!=='undefined'?globalThis:this,function(){'use strict';\nconst SET=Object.freeze({id:'pl1',name:'Platinum',series:'Platinum',releaseDate:'2009-02-11',cardCount:133,printedTotal:133});\nconst CARDS=Object.freeze(__RECORDS__.map(c=>Object.freeze(c)));\nconst INDEX=new Map(CARDS.map(c=>[c.id,c]));\nreturn {SET,CARDS,cardById:id=>INDEX.get(String(id||''))||null,coverage:()=>({total:CARDS.length,battleEnabled:CARDS.filter(c=>c.battleEnabled).length,gated:CARDS.filter(c=>!c.battleEnabled).map(c=>c.id)})};\n});\n'''
  OUT.write_text(script.replace('__RECORDS__',json.dumps(cards,ensure_ascii=False,separators=(',',':'))),'utf8')
  for c in cards:
   if not c['battleEnabled']:print('GATED',c['id'],c['name'],':',', '.join(c['support']['reasons']))

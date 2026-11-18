@@ -452,6 +452,24 @@
         const chosen=legal.find(a=>a.type==='effectChoice'&&a.choiceOption===wanted);
         if(chosen)return chosen;
       }
+      // Power Spray is an opponent-turn interrupt, never a normal Trainer.
+      // The AI should cancel an opponent's real Poké-Power if it has three SP
+      // in play and the physical Power Spray card in its own hand.
+      if(pending.special==='pl1PowerSpray'){
+        const interrupt=legal.find(a=>a.type==='effectChoice'&&a.choiceOption===1);
+        if(interrupt)return interrupt;
+      }
+      // Invisible Tentacles requires discarding a *real* hand card to attack.
+      // Prefer the cheapest expendable physical card, not an invalid Skip.
+      if(pending.special==='pl1InvisibleTentacles'){
+        const cards=state.sides[side]?.hand||[];
+        const choices=legal.filter(a=>a.type==='effectChoice'&&Number.isInteger(a.choiceHandIndex));
+        choices.sort((a,b)=>{
+          const score=x=>{const c=data.cardById(cards[x.choiceHandIndex]?.cardId);return c?.kind==='energy'?0:c?.kind==='trainer'?2:3;};
+          return score(a)-score(b);
+        });
+        if(choices.length)return choices[0];
+      }
       // Platinum Stage 2: finish beneficial optional attacks/Powers with actual
       // legal choices. This logic uses only our own hand/deck/discard and the
       // publicly visible board; no opposing concealed cards are inspected.

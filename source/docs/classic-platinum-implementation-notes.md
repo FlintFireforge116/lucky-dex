@@ -1,31 +1,27 @@
-# Platinum — Classic30 implementation notes (v0.69.264 Stage 2)
+# Platinum — Classic30 completion pass (v0.69.265)
 
-Set: **Platinum / pl1** (130 numbered print IDs plus `SH4`, `SH5`, `SH6`). The canonical printed descriptions, HP, types, and attacks must come from the PokemonTCG/pokemon-tcg-data `cards/en/pl1.json` archive, copied locally to `data/classic/pl1-print-source.json`. The generator `scripts/build-platinum.py` recreates `app/src/main/assets/tcg-classic-platinum.js` from that archive and the explicit audited mappings in `scripts/pl1_verified.py`.
+**Expansion:** Platinum / `pl1`, 133 distinct collector prints: `1`–`130`, plus `SH4`, `SH5`, `SH6`. The canonical card texts, types, HP, retreat, weakness, costs, evolution identity and rarity come **only** from the locally archived official `data/classic/pl1-print-source.json`. No synthesized development card records are distributed in the ZIP. GitHub's Gradle `generatePlatinumForApk` step rebuilds `app/src/main/assets/tcg-classic-platinum.js` offline before assets merge. The standard Termux unzip/commit/push workflow is sufficient.
 
-## Battle / deck builder rule
+## Mapped mechanics and deck rules
 
-A card is **FULL** and available to play/autobuild only if every printed attack, ability, and attached trainer/special-energy effect has a verified implementation. Other cards remain in the catalogue for inspection and collection and are **not** eligible to be selected in generated 30-card decks. A displayed attack description alone is not evidence that it executes.
+Every collector print is mapped in `scripts/pl1_verified.py` and validated by `scripts/build-platinum.py`; the latest local catalogue generated against the temporary test fixture showed **133/133 battle-enabled** and **0 gated**. This is an implementation coverage claim, not proof that every possible cross-set board has been played manually. Each card retains its printed effects and unique collector ID; never turn a no-op into unprinted damage or let unsupported effect choices fall through silently.
 
-- Use existing typed effect handlers for coins, statuses, healing, discards, damage, searches, switches, Energy management, and self-damage, with clear optional player decisions.
-- Do **not** treat Pokémon SP as a new species: they are basic Pokémon with a separate `pokemon-sp` identity tag for SP-only effects and search.
-- LV.X requires its eligible existing Active Pokémon and retains prior attacks and powers. **All unverified Platinum LV.X cards are disabled** until full transfer, Lost Zone, trigger timing, and body suppression logic are implemented and live-tested.
-- Lost Zone is distinct from the discard pile; a discard is never an acceptable substitute for a printed Lost Zone effect.
-- Stadium effects must trigger on their *printed* conditions (evolution, bench arrival, etc.), not simply upon playing the Stadium. Unverified Stadiums are disabled.
-- Fossils should not appear in autobuild unless their play-as-Pokémon rules work and a playable Fossil evolution is part of the available pool. In this initial audited pass, Armor Fossil and Skull Fossil remain gated.
-- Optional attack choices must show clear actions; CPU should choose helpful Energy recovery/search options instead of Skip by default.
+- Pokémon **SP** retain Basic identity but have an `isPokemonSP` flag. Energy Gain attaches only to SP, removes at most **one** Colorless cost through the Tool modifier, and Power Spray is a reaction to an opposing Poké-Power only when its owner has at least three SP in play. Poké Turn returns the selected SP and attached physical cards to the owner's hand.
+- **LV.X** level up the matching Active, not arbitrary evolved families; previously learned attacks and Powers remain accessible. Dialga G, Drapion, Giratina, Palkia G and Shaymin variants use printed restrictions. Non-SP Bodies are suppressed by Time Crystal, not the Poké-Powers of ordinary Pokémon.
+- **Lost Zone** differs from discard. Broken-space Blow, Darkness Lost, Remove Lost and Lost Cyclone move appropriate Pokémon, attachments and/or Energy there. Prize resolution for actual knockouts still happens.
+- **Stadiums**: Broken Time-Space changes evolution timing; Galactic HQ triggers on hand evolution; Miasma Valley triggers on eligible Basic bench arrival. None is a one-time play damage effect.
+- **Rainbow Energy** supplies one flexible Energy unit, never all colours simultaneously, and causes 10 damage counters on hand attachment. Actual Basic-vs-Special Energy identity is maintained across hand, deck, discard, attached and Lost Zone zones.
+- **Armor/Skull Fossil** are Trainers in a deck and Basic Pokémon in play, with their printed coin-based defensive effects; the deck builder should only select them where Shieldon/Cranidos evolution support makes sense.
+- Multi-stage options remain visible, including Energy source and destination, moving cards and damage counters, chosen deck cards, separate coin results, and whether to use optional effects. CPU choices go through the same legal-action system.
+- **Ludicolo Cheerful Voice** ends the current turn and boosts Ludicolo's attacks on the next own turn. **Gardevoir Psychic Connect** moves one Psychic Energy from an own Benched Pokémon only to the own Active. **Rampardos Iron Skull** ignores Resistance and defending effects. Damage Bind prevents damaged Pokémon from using Poké-Powers while allowing Poké-Bodies.
 
-## Regression criteria
+## Validation
 
-After generation, `node --test tests/v07263-platinum-catalog.test.cjs tests/v07263-blissey-cpu-energy-absorption.test.cjs` checks 133 identities, battle eligibility gates, effect schemas, lookup, and Blissey ex CPU recovery across difficulty settings. Source commit must include both official print-source JSON and generated JS, so subsequent APK builds are fully offline/deterministic. Do not bypass these tests by enabling incomplete cards or substituting placeholder damage.
+- The baseline GitHub Actions Classic preflight: **273/273** Node.js tests passed locally.
+- Stormfront preparation and independent deck-builder tests: **46/46** passed.
+- Platinum catalogue, Stage 2 and completion tests: **40/40** passed using an *explicitly temporary 133-card fixture*; the fixture is not shipped in the release.
+- Platinum static card audit with no CPU simulation: 133/133 enabled, no errors; a further CPU deck audit using the simplified fixture was inconclusive for some typed decks. Full live-archive deck generation and a real GitHub APK build still need verification following the push.
 
-**Status:** Platinum is integrated into set selection and catalogue preparation. This is **not** a claim that all 133 cards are battle-ready. Unsupported effects are intentionally held for subsequent mechanics passes; the generator prints a list of every gated print and its reason.
+The ZIP deliberately excludes both `data/classic/pl1-print-source.json` and `app/src/main/assets/tcg-classic-platinum.js` because development copies used a simplified test fixture. The previously committed authentic GitHub sources are preserved, and Android builds rebuild the authentic asset deterministically.
 
-## Stage 2 verified battle expansion (v0.69.264)
-
-Verified in live classic battle-state tests: Rainbow Energy (one flexible unit, 10 damage on attachment), Broken Time-Space evolution timing, Galactic HQ evolution counters, Miasma Valley Basic bench counters, PlusPower attack modifier/expiry, Crobat G Flash Bite target choice, Skuntank G Poison Structure (Stadium prerequisite and Pokémon SP immunity), Happiny Baby Evolution using Chansey in hand, Blissey Nurse Call shared once-per-turn activation, Bastiodon Metal Trait, Dugtrio Sinkhole on retreat, Dialga Time Aura and Metal Burn, selectable Energy Stream recovery, Vulpix Reheat physical hand discards, Looker’s Investigation choosing either hand and 0–5 draws, Life Herb, and chosen Hospitality substitution. Helpful Platinum effect choices are taken by the CPU instead of blindly selecting Skip. All choices draw from actual legal actions; no hidden opponent cards are inspected.
-
-New mechanical mappings are conservative: any card with an unsupported Power, Body, attack or Trainer effect is still in the collection catalogue but disabled for battles and autobuild. In particular, unverified LV.X and Lost Zone implementations remain gated. Fossil deck dependency rules remain intact.
-
-Run `sh scripts/prepare-platinum.sh` after extracting the ZIP. It retrieves the archived official 133 printed cards if absent, runs `scripts/build-platinum.py`, and then the focused test suite when Node.js is installed. This patch does **not** include the synthetic test fixture used during development. The `data/classic/pl1-print-source.json` and generated `tcg-classic-platinum.js` should be committed once generated from the real source. Run `node --test tests/v07264-platinum-stage2-effects.test.cjs` to repeat the Stage 2 runtime tests.
-
-During development, the fixture-backed Platinum tests and selected late-DP/Stormfront regressions passed; full integration against a downloaded real official 133-card archive must run in Termux after preparation.
+Run: `node --test tests/v07263-platinum-catalog.test.cjs tests/v07264-platinum-stage2-effects.test.cjs tests/v07265-platinum-completion.test.cjs`. Do not assert successful installation or the complete Android build before the GitHub workflow finishes.

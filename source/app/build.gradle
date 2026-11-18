@@ -8,8 +8,8 @@ android {
         applicationId 'com.example.luckydex'
         minSdk 26
         targetSdk 35
-        versionCode 7251
-        versionName '0.69.264'
+        versionCode 7252
+        versionName '0.69.265'
     }
 
     signingConfigs {
@@ -187,4 +187,15 @@ tasks.register('prepareStormfrontForApk', Exec) {
 }
 tasks.matching { it.name == 'preBuild' || (it.name.startsWith('merge') && it.name.endsWith('Assets')) }.configureEach {
     dependsOn tasks.named('prepareStormfrontForApk')
+}
+
+// Platinum (133 official prints): regenerate executable effects before packaging.
+// The source archive is checked into source/data/classic by the Stage 1 install;
+// do NOT download or synthesize replacement card texts during the APK build.
+tasks.register('generatePlatinumForApk', Exec) {
+    workingDir rootProject.projectDir
+    commandLine (System.getenv('LUCKYDEX_PYTHON') ?: 'python3'), 'scripts/build-platinum.py'
+}
+tasks.matching { it.name == 'preBuild' || (it.name.startsWith('merge') && it.name.endsWith('Assets')) }.configureEach {
+    dependsOn tasks.named('generatePlatinumForApk')
 }

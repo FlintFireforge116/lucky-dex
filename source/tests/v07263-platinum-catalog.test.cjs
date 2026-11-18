@@ -19,9 +19,9 @@ test('Every executable Platinum card maps all of its printed effects, while unkn
   if(c.kind==='trainer')assert.deepEqual(fx.validateEffect(c.effect),[],c.id);
  }
 });
-test('Platinum SH cards retain their distinct identities and fossils are gated until live fossil rules exist',()=>{
+test('Platinum SH prints and playable Armor/Skull Fossils have their own identities',()=>{
  for(const id of ['pl1-SH4','pl1-SH5','pl1-SH6'])assert.equal(platinum.cardById(id)?.id,id);
- for(const id of ['pl1-119','pl1-120'])assert.equal(platinum.cardById(id)?.deckEligible,false);
+ for(const id of ['pl1-119','pl1-120']){const c=platinum.cardById(id);assert.ok(c.deckEligible);assert.equal(c.effect?.type,'playFossil');assert.equal(c.hp,50);}
 });
 test('All battle-enabled Platinum cards must resolve in the global card lookup',()=>{
  for(const c of platinum.CARDS.filter(c=>c.battleEnabled))assert.equal(db.cardById(c.id)?.id,c.id);

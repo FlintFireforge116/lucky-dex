@@ -2080,9 +2080,31 @@ dependency pairing for Psychic Smoochum/Jynx and cross-set equivalents.
 [TEST] scripts/prepare-stormfront.sh: regenerate offline 106-print asset; node --test tests/v07261-stormfront-catalog-and-combat.test.cjs tests/v07262-stormfront-completion.test.cjs; 46/46 pass. Seven selected earlier-format suites pass 114/114. All 106 prints pass schema/registration audit, but source tests do not replace APK build and phone gameplay tests.
 [RELEASE] Source-relative patch zip: cd ~/lucky-dex; unzip -o /sdcard/Download/LuckyDex_patch_v0.69.262_STORMFRONT_COMPLETE.zip -d source; git add source; git commit -m "LuckyDex v0.69.262 Stormfront complete effects"; git push origin main. Do not use Codex unless user requests.
 
-=== VERSION 0.69.263 — STORMFRONT (DP7) INDEPENDENT PRINTED-CARD + DECK AUDIT ===
-2026-11-16 | Audit retained all 106/106 Stormfront collector prints battle-enabled. Correct Electrode #36 Low Current: after a hit from an opposing attack during the PRECEDING opponent turn only, apply Paralysis (existing damagedByAttackLastOpponentTurn condition). An effectful printed attack cannot be tagged noop solely because its base damage works.
-[STORMFRONT AUTO-DECK SUPPORT] Premier Ball only if an actual Pokémon LV.X is already in the deck, at most 2 copies by default. Luxury Ball at most 1 by default: after it enters discard, other Luxury Balls cannot be played. Energy Link must be added as a PAIR of Tools, attached across two distinct Pokémon; do not add a useless singleton as 30-card filler. Reserve two slots atomically; max two by default. Great Ball max 3; cap extra DP7 support/healing/retreat cards so the 30-card build doesn't become dead-Trainer saturation. Preserve explicitly supplied legal manual draft copies when doing Fill/repair, where the user may deliberately choose otherwise.
-[STORMFRONT SET COHERENCE] Stormfront-only Empoleon, Infernape, Torterra and Heatran LV.X cannot be focused without their earlier-set prerequisites. Do NOT silently import Pokémon from outside the requested set; show a clear failed build. Regigigas three-named-energy attacks may exceed the current two-type Basic Energy Zone and must not be advertised as fully payable by a mono/dual auto deck. Preserve prior Fossil, Baby Evolution, LV.X, Basic-only, set selection and actual attack-cost checks.
-[TESTS] scripts/prepare-stormfront.sh now runs tests/v07263-stormfront-independent-audit.test.cjs alongside the existing suites. Verified 106 archived printed identities/attacks/ability texts, functional Electrode Low Current, 86 valid focus builds, 45 CPU builds and 12 random builds, plus 114 selected old-set regression tests. One sample AI-vs-AI battle finished; larger AI stress test not completed, and phone UX not verified. Source tests do not imply APK success: obtain GitHub Actions result for v0.69.263.
-[RELEASE] Source-relative ZIP only; unzip into source then git add source, git commit and git push. Do not use Codex unless explicitly asked.
+
+PLATINUM (pl1) — v0.69.265 BATTLE-ENGINE RULES
+- Original 133 numbered and secret collector prints are the authoritative
+  source, not placeholder labels. Regenerate with scripts/build-platinum.py
+  from data/classic/pl1-print-source.json before producing an APK.
+- Distinguish Poké-Powers from Poké-Bodies. Damage Bind disables Powers on
+  damaged Pokémon; Time Crystal disables non-SP Bodies only; Power Spray may
+  react to the opposing player's Power if at least 3 Pokémon SP are in play.
+- A basic Energy Zone type is not the same as a physical Energy card in hand,
+  deck, discard, or attached. All choices inspect and move real refs or update
+  the appropriate zone ledger. Rainbow Energy supplies ONE flexible Energy.
+- Pokémon SP are marked by the authentic printed SP subtype; Energy Gain only
+  attaches to SP, and Poké Turn returns the selected SP and ALL attached cards.
+- Broken-space Blow and Darkness Lost send a KO Pokémon and its full stack,
+  Tools, special and Basic Energy to the owner's Lost Zone. Prize rewards and
+  ordinary defeat flow are still resolved normally.
+- LV.X is a Level-Up, not a normal evolution; its underlying previous-level
+  attacks and Powers must remain available, and its Level-Up prerequisites
+  must be retained when the deck builder selects an LV.X.
+- Stadium effects such as Galactic HQ / Miasma Valley trigger when a Pokémon
+  enters/evolves, not merely when the Stadium is played.
+- Every optional attack or Power must present a readable, complete choice
+  sequence; expert AI should make legal beneficial choices, not always Skip.
+- Fossils should only appear in an autobuilt deck when their printed
+  evolution partners are available and chosen; playable Fossils are Basic
+  Pokémon while in play but Trainer cards in the deck/hand/discard.
+- Run the entire GitHub APK workflow before declaring a build complete. The
+  Stormfront deck-builder independent auditor must continue passing.

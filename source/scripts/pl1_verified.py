@@ -187,7 +187,7 @@ ATTACKS['SH6']['Inflame']=RULE('inflame')
 ATTACKS['67']={'Sneaky Attack':B(10,{'type':'selfHasEnergyType','energyType':'Darkness'}),'Shoot Needle':RULE('shootNeedle')}
 ATTACKS['30']={'Wriggle':RULE('wriggle'),'Dwindling Wave':{'type':'selfDamagePenalty','amount':1}}
 ATTACKS['41']={'Psychic Pulse':{'type':'benchDamage','side':'opponent','amount':10,'all':True,'filter':{'damaged':True}}}
-ATTACKS['50']={'Black Cry':S(LOCK('retreat'), {'type':'actionLock','cardType':'Poké-Power','duration':'opponentTurn'}), 'Dark Slash':RULE('darkSlash')}
+ATTACKS['50']={'Black Cry':S(LOCK('retreat'), RULE('blackCry')), 'Dark Slash':RULE('darkSlash')}
 ATTACKS['51']['Teleportation Burst']=O(SWITCH(),'Switch Kirlia with your Benched Pokémon')
 ATTACKS['83']['Take Back']=Q(SEARCH('discard',1,kind='trainer'))
 ATTACKS['89']={'Future Sight':RULE('futureSight'),'Hypnoblast':Q(ST('sleep'))}
@@ -237,3 +237,87 @@ ENERGY['121']={'type':'specialEnergy','provides':{'Miracle':1}}
 # These exact rule names have dedicated, verified runtime cases below.
 PL1_RULES={'ascension','reheat','energyStream','metalBurn','nurseCall','hospitality','flashBite','poisonStructure','galacticHQ','lifeHerb','lookers','miasmaValley'}
 REUSED_RULES={'dp1:49:synthesis','dp1:babyEvolve','dp1:111:handy910is'}
+
+# Platinum completion: these are card-specific physical choices and trigger
+# rules; they are NOT generic damage fallbacks. Implementations are kept in the
+# shared battle engine and audited by the v0.69.265 Platinum tests.
+ATTACKS.update({
+ '2':{'Aqua Press':RULE('aquaPress'),'Double Launcher':RULE('doubleLauncher')},
+ '5':{'Time-Space Traveling':{'type':'drawToHandSize','size':7}},
+ '8':{'Energy Burst':RULE('energyBurst'),'Psychic Protection':{'type':'weaknessGuard','target':'self','duration':'opponentTurn'}},
+ '9':{'Earth Power':{'type':'coinBenchDamage','coins':2,'amount':10,'side':'opponent','all':True}},
+ '11':{'Power Wave':RULE('powerWave'),'Attract Current':RULE('attractCurrent')},
+ '13':{'Head Smash':{'type':'selfDamageIfDefenderKnockedOut','amount':40},'Mold Breaker':GUARD(20)},
+ '16':{'Best Dash':RULE('bestDash')},
+ '18':{'Midnight Eyes':S(ST('sleep'),RULE('markMidnightEyes')),'Perish Song':RULE('perishSong')},
+ '19':{'Darkness Switch':RULE('darknessSwitch'),'Loneliness':RULE('loneliness')},
+ '21':{'Colorful Powder':RULE('colorfulPowder'),'Silver Scale':RULE('silverScale')},
+ '25':{'Smogscreen':S(ST('poison'),{'type':'attackCoinGate','target':'opponentActive','duration':'opponentTurn'}), 'Chemical Scale':RULE('chemicalScale')},
+ '27':{'Strafe':O(SWITCH(),'Switch Giratina with your Benched Pokémon'), 'Broken-space Blow':RULE('brokenSpaceBlow')},
+ '29':{'Swim':RULE('swim'),'Water Slide':RULE('waterSlide')},
+ '31':{'Rushing Flames':RULE('rushingFlames'),'Rage':{'type':'damageFromDamage','source':'self','amount':1}},
+ '33':{'Harrumph':RULE('harrumph'), 'Body Press':Q(S(ST('paralysis'),RULE('bodyPressDiscard')))},
+ '34':{'Mad Dance':ST('confusion'),'Best Dance':RULE('bestDance')},
+ '35':{'Love Call':RULE('loveCall'),'Sweet Kiss':{'type':'draw','side':'opponent','amount':1}},
+ '36':{'Flame Bash':RULE('flameBash'),'Mysterious Flames':RULE('mysteriousFlames')},
+ '42':{'Spike Wound':RULE('spikeWound'),'Poison Experiment':RULE('poisonExperiment')},
+ '48':{'Spark':{'type':'multiTargetDamage','target':'opponentBench','count':2,'amount':10,'upTo':True}, 'Tail Code':RULE('tailCode')},
+ '52':{'Interrupt':Q(RULE('interrupt'))},
+ '54':{'Collude':RULE('collude'),'Desperate Attack':RULE('desperateAttack')},
+ '58':{'Water Vein':RULE('waterVein'),'Octazooka':{'type':'attackCoinGate','target':'opponentActive','duration':'opponentTurn'}},
+ '60':{'Stealth Rock':SELECT(30,'opponentPokemon',ignoreWeakness=True,ignoreResistance=True),'Hyper Beam':Q(RULE('hyperBeam'))},
+ '66':{'Invite and Strike':RULE('inviteAndStrike'),'Chop Up':{'type':'benchDamage','side':'opponent','amount':10,'all':True,'filter':{'damaged':True}}},
+ '77':{'Honcho\'s Command':RULE('honchosCommand'),'Target Attack':RULE('targetAttack')},
+ '122':{'Remove Lost':RULE('removeLost')},
+ '123':{'Sniping Tail':RULE('snipingTail')},
+ '124':{'Darkness Lost':RULE('darknessLost')},
+ '125':{'Hydro Shot':RULE('hydroShot')},
+ '126':{'Seed Flare':RULE('seedFlare')},
+ '127':{'Energy Flare':RULE('energyFlare')},
+ 'SH5':{'Roost':S(H(40),LOCK('retreat','self','opponentTurn')),'Mirror Move':RULE('mirrorMove'),'Fury Attack':COINS(3,10)},
+})
+ABILITIES.update({
+ '1':[P('Damage Bind',N,'passive')],
+ '2':[P('Dig Well',RULE('digWell'),oncePerTurn=True,allSpecialConditions=True)],
+ '4':[P('Power Circulation',RULE('powerCirculation'),oncePerTurn=True,allSpecialConditions=True)],
+ '5':[P('Reverse Time',RULE('reverseTime'),'triggered',event='benched',fromHandOnly=True)],
+ '8':[P('Psychic Connect',RULE('psychicConnect'),oncePerTurn=False,allSpecialConditions=True)],
+ '9':[P('Let Loose',RULE('letLoose'),'triggered',event='benched',fromHandOnly=True)],
+ '11':[P('Electric Barrier',N,'passive')],
+ '13':[P('Iron Skull',N,'passive')],
+ '16':[P('Lazy Paunch',N,'passive')],
+ '19':[P('Temper Tantrum',RULE('temperTantrum'),oncePerTurn=True,allSpecialConditions=True)],
+ '25':[P('Camouflage Pattern',N,'passive')],
+ '34':[P('Cheerful Voice',RULE('cheerfulVoice'),oncePerTurn=True,allSpecialConditions=True)],
+ '41':[P('Galactic Switch',RULE('galacticSwitch'),oncePerTurn=True,allSpecialConditions=True)],
+ '54':[P('Cold Feet',N,'passive')],
+ '57':[P('Sludge Cell',N,'passive')],
+ '119':[P('Armor Stone',N,'passive')],
+ '120':[P('Skull Stone',N,'passive')],
+ '122':[P('Time Crystal',N,'passive')],
+ '123':[P('Tri-Poison',Q({'type':'status','target':'opponentActive','status':'poison','amount':30}),oncePerTurn=True,allSpecialConditions=True)],
+ '124':[P('Invisible Tentacles',N,'passive')],
+ '125':[P('Lost Cyclone',RULE('lostCyclone'),oncePerTurn=True,allSpecialConditions=True)],
+ '126':[P('Thankfulness',N,'passive')],
+ '127':[P('Revenge Seed',N,'passive')],
+})
+TRAINERS.update({
+ '107':('Item',RULE('levelMax')),
+ '116':('Tool',{'type':'modifier','stat':'attackCost','amount':-1,'duration':'whileInPlay','scope':'self'}),
+ '117':('Item',RULE('powerSpray')),
+ '118':('Item',RULE('pokeTurn')),
+ '119':('Item',{'type':'playFossil','hp':50,'subtype':'Colorless','canRetreat':False}),
+ '120':('Item',{'type':'playFossil','hp':50,'subtype':'Colorless','canRetreat':False}),
+})
+PL1_RULES.update({'aquaPress','doubleLauncher','energyBurst','powerWave','attractCurrent','bestDash','markMidnightEyes',
+ 'perishSong','darknessSwitch','loneliness','colorfulPowder','silverScale','chemicalScale',
+ 'brokenSpaceBlow','swim','waterSlide','rushingFlames','harrumph','bodyPressDiscard','bestDance',
+ 'loveCall','flameBash','mysteriousFlames','spikeWound','poisonExperiment','tailCode','interrupt',
+ 'collude','desperateAttack','waterVein','hyperBeam','inviteAndStrike','honchosCommand','targetAttack',
+ 'removeLost','snipingTail','darknessLost','hydroShot','seedFlare','energyFlare','mirrorMove',
+ 'digWell','powerCirculation','reverseTime','psychicConnect','letLoose','temperTantrum',
+ 'cheerfulVoice','galacticSwitch','lostCyclone','levelMax','powerSpray','pokeTurn'})
+ATTACKS['18']['Healing Song']=H(10,'selfAll')
+ATTACKS['52']['Gentle Slap']=N
+
+PL1_RULES.update({'wriggle','darkSlash','shootNeedle','futureSight','inflame','cyrus','blackCry'})
