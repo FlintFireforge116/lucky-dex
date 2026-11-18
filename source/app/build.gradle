@@ -8,8 +8,8 @@ android {
         applicationId 'com.example.luckydex'
         minSdk 26
         targetSdk 35
-        versionCode 7267
-        versionName '0.69.281'
+        versionCode 7268
+        versionName '0.69.282'
     }
 
     signingConfigs {
@@ -268,4 +268,19 @@ tasks.register('auditArceusForApk', Exec) {
 }
 tasks.matching { it.name == 'preBuild' || (it.name.startsWith('merge') && it.name.endsWith('Assets')) }.configureEach {
     dependsOn tasks.named('auditArceusForApk')
+}
+
+// HeartGold & SoulSilver Stage 1: immutable 124-print snapshot, no network fetch.
+// Generator and source fidelity/integration checks run before every APK merge.
+tasks.register('generateHGSS1ForApk', Exec) {
+    workingDir rootProject.projectDir
+    commandLine (System.getenv('LUCKYDEX_PYTHON') ?: 'python3'), 'scripts/build-hgss1.py'
+}
+tasks.register('auditHGSS1ForApk', Exec) {
+    dependsOn tasks.named('generateHGSS1ForApk')
+    workingDir rootProject.projectDir
+    commandLine 'node', '--test', 'tests/v07282-heartgold-soulsilver-stage1.test.cjs'
+}
+tasks.matching { it.name == 'preBuild' || (it.name.startsWith('merge') && it.name.endsWith('Assets')) }.configureEach {
+    dependsOn tasks.named('auditHGSS1ForApk')
 }

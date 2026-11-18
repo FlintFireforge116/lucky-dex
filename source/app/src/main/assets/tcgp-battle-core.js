@@ -2458,7 +2458,7 @@
           effect:{type:'neoRule',rule:'skyridge:cycloneEnergy'},resume:'trainer'});
       if(card.id==='ecard3-144')beginEffectChoice(state,side,target,{kind:'option',side:'self',options:['Keep this Evolution','Heal 20 and devolve'],
         effect:{type:'neoRule',rule:'skyridge:retroEnergy'},resume:'trainer'});
-      if(['ecard2-144','ex1-95','ex12-81','pl1-121'].includes(card.id)){target.damage=Number(target.damage||0)+10;}
+      if(['ecard2-144','ex1-95','ex12-81','pl1-121','hgss1-104'].includes(card.id)){target.damage=Number(target.damage||0)+10;}
       if(card.id==='ecard2-147'&&target===s.active&&s.bench.length){
         // Warp Energy is an attachment-triggered, mandatory Bench choice.
         // The regular switch effect expects a preselected index and silently
