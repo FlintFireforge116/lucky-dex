@@ -8689,7 +8689,20 @@
     throw new Error('Unsupported Platinum runtime rule: '+key);
   }
 
+  function risingRivalsRule(e,ctx){
+    const key=String(e.rule||'').slice(4);
+    if(key==='rotomShift'){
+      if(ctx.attacker&&['Grass','Fire','Water','Colorless'].includes(e.to)){
+        ctx.attacker.typeOverride={type:e.to,expiresTurn:ctx.state.turnNumber};
+        ctx.state.log.push({type:'risingRivalsShift',side:ctx.side,cardId:ctx.attacker.cardId,to:e.to});
+      }
+      return;
+    }
+    throw new Error('Rising Rivals rule was not implemented: '+key);
+  }
+
   function neoRule(e,ctx){
+    if(String(e.rule||'').startsWith('pl2:'))return risingRivalsRule(e,ctx);
     if(String(e.rule||'').startsWith('pl1:'))return platinumRule(e,ctx);
     if(String(e.rule||'').startsWith('dp7:'))return dp7Rule(e,ctx);
     if(String(e.rule||'').startsWith('dp6:'))return dp6Rule(e,ctx);
@@ -12922,6 +12935,9 @@
       case 'discardEnergy':for(const s of affected()){const owner=energyOwner(ctx,s);if(effect.random){const count=effect.amount==='all'?totalEnergy(s.energy):effect.amount;for(let i=0;i<count;i++){const units=Object.entries(s.energy).flatMap(([type,n])=>Array(Math.max(0,Math.floor(n))).fill(type));if(!units.length)break;const type=units[Math.floor(ctx.random(ctx.state)*units.length)];s.energy[type]--;recordDiscardedEnergy(owner,type,1);}}else if(effect.energyType){const before=Number(s.energy[effect.energyType]||0),after=effect.amount==='all'?0:Math.max(0,before-effect.amount);s.energy[effect.energyType]=after;recordDiscardedEnergy(owner,effect.energyType,before-after);}else if(ctx.action?.effectEnergyType){const type=ctx.action.effectEnergyType,before=Number(s.energy[type]||0),after=effect.amount==='all'?0:Math.max(0,before-Number(effect.amount||0));s.energy[type]=after;recordDiscardedEnergy(owner,type,before-after);}else{const before={...(s.energy||{})};s.energy=effect.amount==='all'?{}:spendGenericEnergy(s.energy,Math.min(effect.amount,totalEnergy(s.energy)));for(const [type,n] of Object.entries(before))recordDiscardedEnergy(owner,type,Number(n||0)-Number(s.energy?.[type]||0));}}break;
       case 'moveEnergy':{
         if(!ctx.resolvingChoice&&typeof ctx.requestChoice==='function'&&(effect.source==='selfBench'||effect.target==='selfBench')){
+          // No choice prompt is valid when the required Bench is empty. A
+          // pending effectChoice with zero legal actions would freeze battles.
+          if(!(own(ctx).bench||[]).some(slot=>slot&&matchesFilter(ctx.cardById(slot.cardId),effect.source==='selfBench'?effect.sourceFilter:effect.filter,slot)))break;
           const selector=effect.source==='selfBench'?effect.source:effect.target;
           ctx.requestChoice({kind:'pokemon',side:'self',includeActive:false,filter:effect.source==='selfBench'?effect.sourceFilter:effect.filter,effect});break;
         }

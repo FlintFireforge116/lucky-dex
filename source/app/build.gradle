@@ -8,8 +8,8 @@ android {
         applicationId 'com.example.luckydex'
         minSdk 26
         targetSdk 35
-        versionCode 7253
-        versionName '0.69.266'
+        versionCode 7254
+        versionName '0.69.267'
     }
 
     signingConfigs {
@@ -187,6 +187,22 @@ tasks.register('prepareStormfrontForApk', Exec) {
 }
 tasks.matching { it.name == 'preBuild' || (it.name.startsWith('merge') && it.name.endsWith('Assets')) }.configureEach {
     dependsOn tasks.named('prepareStormfrontForApk')
+}
+
+// Rising Rivals: regenerate verified card effects from offline real print source.
+tasks.register('generateRisingRivalsForApk', Exec) {
+    workingDir rootProject.projectDir
+    commandLine (System.getenv('LUCKYDEX_PYTHON') ?: 'python3'), 'scripts/build-rising-rivals.py'
+}
+// Release gate: the authentic 120-print archive, verified mappings and
+// player/CPU battle smoke must all pass before the APK is produced.
+tasks.register('auditRisingRivalsForApk', Exec) {
+    dependsOn tasks.named('generateRisingRivalsForApk')
+    workingDir rootProject.projectDir
+    commandLine 'node', '--test', 'tests/v07267-rising-rivals-stage1.test.cjs'
+}
+tasks.matching { it.name == 'preBuild' || (it.name.startsWith('merge') && it.name.endsWith('Assets')) }.configureEach {
+    dependsOn tasks.named('auditRisingRivalsForApk')
 }
 
 // Platinum (133 official prints): regenerate executable effects before packaging.
