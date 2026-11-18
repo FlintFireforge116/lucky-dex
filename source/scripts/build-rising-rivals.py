@@ -14,13 +14,14 @@ SYMBOL={'Grass':'G','Fire':'R','Water':'W','Lightning':'L','Psychic':'P','Fighti
 # Snapshot digest of real official records, not a test-only generated fixture.
 EXPECTED_SHA256='e13db36df7a9dbc51a92a2dfff53d5f543380497d96005ca63e0538fa8f0b23e'
 EXPECTED={str(n) for n in range(1,115)}|{'RT'+str(n) for n in range(1,7)}
-SIMPLE={'devolve','drain','coinUntilTails','discardHand','damage','noop','bonusDamage','status','heal','draw','sequence','coinFlip','coinDamage','selfDamage','discardEnergyCard','lock','modifier','preventDamage','benchDamage','selectedDamage','benchCountDamage','damageFromDamage','energyDamage','moveEnergy','attackCoinGate','coinAttackGate','searchChosen','multiTargetDamage','damageRule','forceOpponentSwitch','switch','shuffleRandomHandCard','nextAttackBonus','removeStatus','attackRequirement','specialEnergy','discardChosenHand','drawToHandSize','coinBenchDamage','coinAnyHeadsGate','coinRepeatEffect','retreatCostDamage','knockOut','topDeckDiscardBonus','returnToHand','moveDamage','attachEnergy','benchFromDeck','discardStadium','evolveFromDeck'}
+SIMPLE={'devolve','drain','coinUntilTails','discardHand','damage','noop','bonusDamage','status','heal','draw','sequence','coinFlip','coinDamage','selfDamage','discardEnergyCard','lock','modifier','preventDamage','benchDamage','selectedDamage','benchCountDamage','damageFromDamage','energyDamage','moveEnergy','attackCoinGate','coinAttackGate','searchChosen','multiTargetDamage','damageRule','forceOpponentSwitch','switch','shuffleRandomHandCard','nextAttackBonus','removeStatus','attackRequirement','specialEnergy','discardChosenHand','drawToHandSize','coinBenchDamage','coinAnyHeadsGate','coinRepeatEffect','retreatCostDamage','knockOut','topDeckDiscardBonus','returnToHand','moveDamage','attachEnergy','benchFromDeck','discardStadium','evolveFromDeck','stadiumAction'}
 def supported(e):
  if not isinstance(e,dict):return False
  t=e.get('type')
  if t=='neoRule':return e.get('rule') in ({'pl2:'+r for r in V.PL2_VERIFIED_RULES}|{'dp1:babyEvolve'})
  if t=='sequence':return bool(e.get('effects')) and all(supported(x) for x in e['effects'])
  if t=='coinFlip':return any(z in e for z in ('heads','tails')) and all(supported(e[z]) for z in ('heads','tails') if z in e)
+ if t=='stadiumAction':return supported(e.get('effect'))
  if t=='chooseOption':return bool(e.get('options')) and all(supported(x.get('effect')) for x in e['options'])
  if t=='coinUntilTails':return supported(e.get('effect'))
  return t in SIMPLE
@@ -54,7 +55,7 @@ def build():
    tr=V.TRAINERS.get(n)
    if not tr or not supported(tr[1]):problems.append('Trainer not implemented')
   if kind=='energy':
-   if n not in V.ENERGY or n in ('101','102'):problems.append('Special Energy not implemented')
+   if n not in V.ENERGY:problems.append('Special Energy not implemented')
   active=not problems
   item={'id':'pl2-'+n,'setId':'pl2','number':n,'name':c['name'],'source':'tcg','battleFormat':'classic',
    'kind':kind,'rarity':c.get('rarity') or '', 'image':f'https://images.pokemontcg.io/pl2/{n}.png',
@@ -77,6 +78,7 @@ def build():
   elif kind=='trainer':
    item.update({'trainerType':V.TRAINERS.get(n,(stage,V.N))[0],
      'text':'\n'.join(c.get('rules') or []),'effect':V.TRAINERS.get(n,(stage,V.N))[1],
+     **({'technicalMachine':True,'tags':['pokemon-sp']} if n=='95' else {}),
      **({'attacks':attacks} if attacks else {})})
   else:item.update({'specialEnergy':True,'text':'\n'.join(c.get('rules') or []),'effect':V.ENERGY.get(n,V.N)})
   cards.append(item)
