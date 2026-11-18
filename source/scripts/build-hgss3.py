@@ -58,7 +58,7 @@ def generate():
     'printedPowerType':'power' if ptype=='Poké-Power' else 'body','disabledByStatus':ptype=='Poké-Power',**mapping})
   trainer=V.TRAINERS.get(number) if kind=='trainer' else None
   if kind=='trainer' and trainer is None:errors.append('Unverified printed Trainer effect')
-  if kind=='energy':errors.append('Printed Special Energy bonus/reduction not verified in battle engine')
+  if kind=='energy' and number not in ('79','80'):errors.append('Printed Special Energy bonus/reduction not verified in battle engine')
   if kind=='pokemon' and not hp:errors.append('Missing printed HP')
   c={'id':'hgss3-'+number,'setId':'hgss3','number':number,'name':name,'source':'tcg','battleFormat':'classic','kind':kind,
    'rarity':rarity or '', 'image':f'https://images.pokemontcg.io/hgss3/{number}.png',
@@ -77,7 +77,7 @@ def generate():
     'prizeCards':2 if number in LEGENDS else 1,
     'deckMeta':{'roles':meta_roles,'synergy':meta_roles,'energyTypes':energy,'preferredEnergyTypes':energy,
       'preferredPartners':partners,'inflicts':[],'payoffs':[]}})
-  elif kind=='trainer':c.update({'trainerType':trainer[0] if trainer else stage,'text':'\n'.join(rules), 'effect':trainer[1] if trainer else V.N})
+  elif kind=='trainer':c.update({'trainerType':trainer[0] if trainer else stage,'text':'\n'.join(rules), 'effect':trainer[1] if trainer else V.N,**({'expires':'endOpponentTurn'} if number=='72' else {})})
   else:c.update({'specialEnergy':True,'basicEnergy':False,'energyType':'Darkness' if number=='79' else 'Metal',
       'subtype':'Darkness' if number=='79' else 'Metal','text':'\n'.join(rules),
       'effect':{'type':'specialEnergy','provides':{'Darkness':1} if number=='79' else {'Metal':1}}})

@@ -70,12 +70,12 @@ test('Undaunted is reachable in player set picker, deck builder, CPU, collection
  assert.ok(fs.readFileSync(path.join(assets,'app-v0167.js'),'utf8').includes("__LUCKYDEX_BUILD='"+v+"'"));
  assert.ok(fs.readFileSync(path.join(root,'app/build.gradle'),'utf8').includes("v07288-undaunted-stage1.test.cjs"));
 });
-test('both new LEGEND pairs remain gated together until all printed abilities work',()=>{
+test('LEGEND pairs remain symmetric: both halves are enabled together after completion',()=>{
  for(const [a,b] of [['87','88'],['89','90']]){
   const x=hg.cardById(id(a)),y=hg.cardById(id(b));
   assert.equal(x.stage,'LEGEND');assert.equal(y.stage,'LEGEND');assert.equal(x.prizeCards,2);assert.equal(y.prizeCards,2);
   assert.equal(x.legendPair,y.legendPair);assert.equal(x.battleEnabled,y.battleEnabled);
-  assert.equal(x.deckEligible,false);assert.equal(y.deckEligible,false);
+  assert.equal(x.deckEligible,y.deckEligible);assert.ok(x.deckEligible,'Both halves should now be playable');assert.ok(y.deckEligible);
  }
 });
 test('multiplier damage starts at zero, not duplicated base damage',()=>{

@@ -115,3 +115,59 @@ TRAINERS={
  '73':('Item',{'type':'tradeHandForDeck','handFilter':{'kind':'energy'},'deckFilter':{'kind':'energy'}}),
  '77':('Supporter',{'type':'selectTopToHand','count':5,'amount':2,'remaining':'discard'}),
 }
+
+
+# v0.69.289 complete printed Undaunted interactions. All custom rules below
+# have an explicit shared-engine resolver and regression coverage. They must
+# never silently reduce to noop or a mismatched generic effect.
+COMPLETION_ATTACKS={
+ ('2','Solar Suggestion'):rule('2','solarSuggestion'),
+ ('4','Ninja Fang'):rule('4','ninjaFang'),
+ ('5','Fire Counterattack'):rule('5','fireCounterattack'),
+ ('5','Dark Roar'):rule('5','darkRoar'),
+ ('6','Lava Flow'):rule('6','lavaFlow'),
+ ('9','Blessed Wings'):rule('9','blessedWings'),
+ ('10','Moonlight Fang'):rule('10','moonlightFang'),
+ ('12','Take Away'):rule('12','takeAway'),
+ ('13','Gyro Ball'):rule('13','gyroBall'),
+ ('15','Blindside'):rule('15','blindside'),
+ ('31','Sludge Drag'):rule('31','sludgeDrag'),
+ ('31','Pester'):rule('31','pester'),
+ ('34','Gnaw Up'):rule('34','gnawUp'),
+ ('35','Pull Out'):rule('35','pullOut'),
+ ('35','Dark Hand'):rule('35','darkHand'),
+ ('36','Afterimage Strike'):rule('36','afterimageStrike'),
+ ('39','Fly'):rule('39','fly'),
+ ('45','Double Headstrike'):rule('45','doubleHeadstrike'),
+ ('56','Selfish Draw'):rule('56','selfishDraw'),
+ ('56','Destructive Jaw'):rule('56','destructiveJaw'),
+ ('58','Astonish'):rule('58','astonish'),
+ ('66','Rambunctious Party'):rule('66','rambunctiousParty'),
+ ('70','Plead'):rule('70','plead'),
+ ('87','Mega Tidal Wave'):rule('87','megaTidalWave'),
+ ('88','Mega Tidal Wave'):rule('87','megaTidalWave'),
+}
+ATTACKS.update(COMPLETION_ATTACKS)
+COMPLETION_ABILITIES={
+ ('8','Portrait'):{'type':'activated','oncePerTurn':True,'activeOnly':True,'disabledByStatus':True,'effect':rule('8','portrait')},
+ ('20','Mischievous Trick'):{'type':'activated','oncePerTurn':True,'disabledByStatus':True,'effect':rule('20','mischievousTrick')},
+ ('23','Defense Sign'):{'type':'passive','disabledByStatus':False,'effect':rule('23','defenseSign')},
+ ('24','Allergy Flower'):{'type':'passive','disabledByStatus':False,'effect':rule('24','allergyFlower')},
+ ('25','Claw Snag'):{'type':'triggered','event':'evolved','fromHandOnly':True,'disabledByStatus':True,'effect':rule('25','clawSnag')},
+ ('67','Active Volcano'):{'type':'activated','oncePerTurn':True,'disabledByStatus':True,'effect':rule('67','activeVolcano')},
+ ('81','Evolution Memories'):{'type':'passive','disabledByStatus':False,'effect':rule('81','evolutionMemories')},
+ ('84','Red Armor'):{'type':'passive','disabledByStatus':False,'effect':rule('84','redArmor')},
+ ('85',"Opponent's Choice"):{'type':'activated','oncePerTurn':True,'disabledByStatus':True,'effect':rule('85','opponentsChoice')},
+ ('89','Space Virus'):{'type':'passive','disabledByStatus':False,'effect':rule('89','spaceVirus')},
+ ('90','Space Virus'):{'type':'passive','disabledByStatus':False,'effect':rule('89','spaceVirus')},
+}
+ABILITIES.update(COMPLETION_ABILITIES)
+TRAINERS.update({
+ '71':('Stadium',{'type':'stadiumAction','effect':rule('71','burnedTower')}),
+ '72':('AttachedTrainer',{'type':'modifier','stat':'damageReduction','amount':20,'scope':'self','duration':'whileInPlay'}),
+ '74':('Supporter',rule('74','flowerShopLady')),
+ '75':('Item',rule('75','legendBox')),
+ '76':('Stadium',rule('76','ruinsOfAlph')),
+ '78':('Supporter',rule('78','rocketsTrickery')),
+ 'THREE':('Item',rule('THREE','alphLithograph')),
+})

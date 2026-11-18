@@ -8,8 +8,8 @@ android {
         applicationId 'com.example.luckydex'
         minSdk 26
         targetSdk 35
-        versionCode 7274
-        versionName '0.69.288'
+        versionCode 7275
+        versionName '0.69.289'
     }
 
     signingConfigs {
@@ -321,7 +321,7 @@ tasks.register('generateHGSS3ForApk', Exec) {
 tasks.register('auditHGSS3ForApk', Exec) {
     dependsOn tasks.named('generateHGSS3ForApk')
     workingDir rootProject.projectDir
-    commandLine 'node', '--test', 'tests/v07288-undaunted-stage1.test.cjs'
+    commandLine 'node', '--test', 'tests/v07288-undaunted-stage1.test.cjs', 'tests/v07289-undaunted-completion.test.cjs'
 }
 tasks.register('independentHGSS3ForApk', Exec) {
     dependsOn tasks.named('auditHGSS3ForApk')
