@@ -103,7 +103,7 @@ ABILITIES={
  ('40','DARK'):{'type':'triggered','event':'benched','fromHandOnly':True,'effect':SEARCH(1,kind='energy',name='Darkness Energy')},
  ('82','Fire Breath'):{'type':'activated','oncePerTurn':True,'effect':Q(ST('burn'))},
  ('83','Voltage Increase'):{'type':'activated','oncePerTurn':False,'effect':rule('83','voltageIncrease')},
- ('86','Cloud-Covered Moon'):{'type':'activated','oncePerTurn':True,'effect':Q({'type':'returnToHand','target':'self','returnBasicEnergy':True})},
+ ('86','Cloud-Covered Moon'):{'type':'activated','oncePerTurn':True,'activeOnly':True,'effect':Q({'type':'returnToHand','target':'self','returnBasicEnergy':True})},
 }
 def ability(row,p):
  mapped=ABILITIES.get((str(row[0]),p[0]))

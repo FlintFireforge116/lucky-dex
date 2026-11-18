@@ -10175,10 +10175,11 @@
       const j=ss.discard.findIndex(r=>r.uid===x.ref.uid);if(j<0)return false;ss.deck.push(ss.discard.splice(j,1)[0]);return true;};
     const statuses=['burn','poison','sleep','paralysis','confusion'];
     if(key==='2:solarSuggestion'){
+      if(ctx.resolvingChoice&&act.choiceSkip)return;
       if(ctx.resolvingChoice&&stage==='from'){const p=selectedOwn();if(!p||p.damage<10)return;mon('to','opponent',{effect:{sourceUid:p.uid,moved:Number(e.moved||0)}});return;}
       if(ctx.resolvingChoice&&stage==='to'){const from=uid(all(ss),e.sourceUid),dest=selectedFoe();if(!from||from.damage<10||!dest)return;from.damage-=10;dest.damage=Number(dest.damage||0)+10;const moved=Number(e.moved||0)+1;if(moved<4&&all(ss).some(p=>p.damage>=10))opt('again',['Done moving damage counters','Move another damage counter'],{effect:{moved}});return;}
       if(ctx.resolvingChoice&&stage==='again'&&i===0)return;
-      if(all(ss).some(p=>p.damage>=10)&&all(foe).length)mon('from','self',{filter:{damaged:true},effect:{moved:Number(e.moved||0)}});return;
+      if(all(ss).some(p=>p.damage>=10)&&all(foe).length)mon('from','self',{filter:{damaged:true},optional:true,effect:{moved:Number(e.moved||0)}});return;
     }
     if(key==='4:ninjaFang'){if(def){const n=attackDamageWithState(ctx.state,ctx.side,source,ctx.foeSide,def,30,ctx.cardById);if(n>0&&!attackIsPrevented(ctx.state,ctx.foeSide,def,source,ctx.cardById)&&Number(def.damage||0)>0&&Number(def.damage||0)<=n)applyEffect({type:'status',status:'paralysis',target:'opponentActive'},ctx);}return;}
     if(key==='5:fireCounterattack'){if(all(foe).some(p=>card(p)?.types?.includes('Fighting')))bonus(20,60);return;}
@@ -10210,8 +10211,9 @@
       if(ss.prizes.length&&ss.deck.length)choice('prizeCard','swap',{selectionSide:ctx.side});return;
     }
     if(key==='25:clawSnag'){
+      if(ctx.resolvingChoice&&act.choiceSkip)return;
       if(ctx.resolvingChoice&&Number.isInteger(act.choiceHandIndex)){const j=act.choiceHandIndex;if(j<0||j>=foe.hand.length)return;foe.discard.push(foe.hand.splice(j,1)[0]);return;}
-      if(foe.hand.length)choice('opponentHandCard','discardOpponent',{selectionSide:ctx.foeSide});return;
+      if(foe.hand.length)choice('opponentHandCard','discardOpponent',{selectionSide:ctx.foeSide,optional:true});return;
     }
     if(key==='31:sludgeDrag'){
       if(ctx.resolvingChoice&&stage==='target'){const p=selectedFoe();if(!p||!foe.bench.includes(p))return;const j=foe.bench.indexOf(p),old=foe.active;foe.active=p;foe.bench[j]=old;if(old)old.benchSlot=p.benchSlot;p.benchSlot=null;applyEffect({type:'status',target:'opponentActive',status:'confusion'},ctx);applyEffect({type:'status',target:'opponentActive',status:'poison'},ctx);return;}
