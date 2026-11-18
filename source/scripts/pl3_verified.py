@@ -162,7 +162,7 @@ def attack(c,a):
     if m:return None # actual card category missing in capture; explicit only
     # One-off audited mechanics whose printed conditions match reusable handlers.
     special={
-      ('1','Feint Attack'):PICK_DMG(20,'opponentPokemon'),
+      ('1','Feint Attack'):{'type':'selectedDamage','amount':20,'target':'opponentPokemon','ignoreWeakness':True,'ignoreResistance':True,'ignoreEffects':True},
       ('2','Luring Flame'):None, # must apply Burn after opponent finishes switch choice
       ('2','Vapor Kick'):BONUS(30,{'type':'pokemonPresent','zone':'inPlay','side':'opponent','filter':{'subtype':'Water'}}),
       ('3','Shadow Ball'):PICK_DMG(40,'opponentBench',False),

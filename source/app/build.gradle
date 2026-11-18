@@ -8,8 +8,8 @@ android {
         applicationId 'com.example.luckydex'
         minSdk 26
         targetSdk 35
-        versionCode 7259
-        versionName '0.69.273'
+        versionCode 7260
+        versionName '0.69.274'
     }
 
     signingConfigs {
@@ -240,7 +240,7 @@ tasks.register('generateSupremeVictorsForApk', Exec) {
 tasks.register('auditSupremeVictorsForApk', Exec) {
     dependsOn tasks.named('generateSupremeVictorsForApk')
     workingDir rootProject.projectDir
-    commandLine 'node', '--test', 'tests/v07271-supreme-victors-stage1.test.cjs', 'tests/v07272-supreme-victors-stage2.test.cjs', 'tests/v07273-supreme-victors-completion.test.cjs'
+    commandLine 'node', '--test', 'tests/v07271-supreme-victors-stage1.test.cjs', 'tests/v07272-supreme-victors-stage2.test.cjs', 'tests/v07273-supreme-victors-completion.test.cjs', 'tests/v07274-supreme-victors-independent-audit.test.cjs'
 }
 tasks.matching { it.name == 'preBuild' || (it.name.startsWith('merge') && it.name.endsWith('Assets')) }.configureEach {
     dependsOn tasks.named('auditSupremeVictorsForApk')

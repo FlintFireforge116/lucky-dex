@@ -9121,7 +9121,7 @@
     const mine=()=>pokemonOn(ss),theirs=()=>pokemonOn(foe);
     const name=slot=>card({cardId:slot?.cardId})?.name||'Pokémon';
     const flip=label=>{const heads=coin(ctx);ctx.state.log.push({type:'coin',side:ctx.side,reason:label,heads,results:[heads]});return heads;};
-    const takeEnergy=(slot,type,from,to)=>{if(!slot||!to)return false;const n=Number(from?.energy?.[type]||0);if(n<=0)return false;from.energy[type]=n-1;to.energy[type]=Number(to.energy?.[type]||0)+1;return true;};
+    const takeEnergy=(slot,type,from,to)=>{if(!from||!to)return false;const n=Number(from?.energy?.[type]||0);if(n<=0)return false;from.energy[type]=n-1;to.energy[type]=Number(to.energy?.[type]||0)+1;return true;};
     const deckChoice=(pool,stage,extra={})=>{if(pool.length)ask(pool.map(ref=>({ref,label:'Choose '+card(ref)?.name})),stage,{...extra,refUids:pool.map(ref=>ref.uid)});};
     const moveDeckRef=(owner,uid,target,location='hand')=>{const i=owner.deck.findIndex(r=>r.uid===uid);if(i<0)return false;target[location].push(...owner.deck.splice(i,1));return true;};
     const applyHeal=(slot,amount)=>heal(slot,amount);

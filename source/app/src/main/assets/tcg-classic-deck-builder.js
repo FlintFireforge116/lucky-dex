@@ -211,6 +211,17 @@ function buildDeck(rows,options={}){
  if([...pool].reduce((sum,c)=>sum+Math.min(4,owned.get(c.id)||0),0)<30)return fail('Not enough owned battle-ready Classic card copies to build a 30-card deck.');
  if(!pokemonPool.some(c=>c.stage==='Basic'))return fail('No owned battle-ready Basic Pokémon are available.');
  const requested=[...new Set((options.types||[]).filter(t=>ARCHETYPE_TYPES.includes(t)))].slice(0,2),requestedEnergy=requested.filter(t=>decks.ENERGY_TYPES.includes(t)),allowMixedEnergy=options.allowMixedEnergy===true,existing=Array.isArray(options.cards)?options.cards:[],random=rng(options.randomSeed),excluded=new Set(options.excludeArchetypes||[]);
+ // Evolution end-points are era-aware: a later-era species such as
+ // Annihilape must not retroactively invalidate 2009 Primeape decks. An
+ // earlier known Stage 2 still requires its complete line when selected.
+ const latestEra=Math.max(...scope.map(id=>SET_IDS.indexOf(id)).filter(i=>i>=0));
+ const knownEvolutionParentsInEra=new Set(classic.CARDS.filter(c=>c.kind==='pokemon'&&c.evolvesFrom&&c.stage!=='Level-Up'&&SET_IDS.indexOf(c.setId)<=latestEra&&(!['dp1','dp2','dp3','dp4'].includes(c.setId)||c.battleEnabled)).map(c=>classicCardName(c.evolvesFrom)));
+ const hasKnownEvolutionInEra=card=>!!(card?.kind==='pokemon'&&parentKeys(card.name).some(k=>knownEvolutionParentsInEra.has(k)));
+ // Rayquaza C LV.X explicitly costs Water + Psychic + Fighting. Only an
+ // explicit focus on this printed card opts its Energy Zone into three
+ // types; normal autobuild remains two-type by default.
+ const maxEnergyTypes=scope.includes('pl3')&&['pl3-8','pl3-146'].includes(options.focusCardId)?3:2;
+
  let focus=classic.cardById(options.focusCardId);
  if(basicOnly&&focus?.kind==='pokemon'&&focus.stage!=='Basic')return fail(`${focus.name} is ${focus.stage} and cannot be used in Basic-only mode.`);
  const fossilFocus=isEvolutionFossil(focus)?focus:null;
@@ -241,7 +252,7 @@ function buildDeck(rows,options={}){
   // A viable starting Basic must lead to a useful terminal Pokémon, not
   // blindly evolve into an inert Xatu/Swellow/Altaria support-only endpoint.
   if(isStage2OnlySupport(c)&&!hasEligibleBeneficiary(c))return false;
-  if(!hasKnownEvolution(c))return true;
+  if(!hasKnownEvolutionInEra(c))return true;
   const key=classicCardName(c.name)+'@'+c.stage;
   if(finishMemo.has(key))return finishMemo.get(key);
   // Children must be higher stages and have a legal, playable root chain.
@@ -280,7 +291,7 @@ function buildDeck(rows,options={}){
   // A Dual Armor core must *actually* activate its second type. If an
   // explicit two-type filter leaves no slot, choose a different core.
   const activeMatch=!dual||all.includes(dual.energyType);
-  return !!line.length&&required.length<=2&&all.length<=2&&matching&&activeMatch&&
+  return !!line.length&&required.length<=maxEnergyTypes&&all.length<=maxEnergyTypes&&matching&&activeMatch&&
    (requestedEnergy.length!==2||required.every(type=>requestedEnergy.includes(type)))&&
    Object.entries(special).every(([sym,n])=>!n||(classic.cardById(SPECIAL_COST_CARDS[sym])?.battleEnabled&&allowedInSetPool(classic.cardById(SPECIAL_COST_CARDS[sym]),scope)&&Number(owned.get(SPECIAL_COST_CARDS[sym])||0)>=n));
  };
@@ -407,6 +418,11 @@ function buildDeck(rows,options={}){
    // Respect explicitly retained user card choices; these restrictions only
    // govern automatic additions to the deck.
    const manuallyKept=card?.id&&existing.includes(card.id);
+   // Supreme Victors Stadiums must strengthen the actual deck. Battle Tower
+   // heals Pokémon only when they Level-Up; without a friendly LV.X it risks
+   // healing only the opponent. Champion's Room helps Pokémon SP only.
+   if(!manuallyKept&&card?.id==='pl3-134'&&!platinumMembers().some(p=>p.stage==='Level-Up'))return false;
+   if(!manuallyKept&&card?.id==='pl3-135'&&!platinumMembers().some(p=>p.isPokemonSP))return false;
    if(!manuallyKept&&['pl2-90','pl2-91','pl2-95','pl2-96'].includes(card?.id)&&platinumSP()<1)return false;
    // Flint's Willpower attaches a physical basic Energy card from the hand.
    // A hybrid Zone-only Energy plan cannot fulfill that requirement, even
@@ -881,9 +897,9 @@ function buildDeck(rows,options={}){
   return effectiveTypes(c).some(t=>t==='Colorless'||effectiveTypes(main).includes(t)||selectedTypes.includes(t));
  };
  const fallbackBasics=pokemonPool.filter(c=>c.stage==='Basic'&&canFitEnergy(c)&&cohesiveBasic(c)&&
-   (basicOnly||familyRoot(c,evolutionPool)===mainRoot||!hasKnownEvolution(c))).sort((a,b)=>Number(matchesRarity(b,rarityFocus,basicOnly))-Number(matchesRarity(a,rarityFocus,basicOnly))||standaloneScore(b)-standaloneScore(a));
+   (basicOnly||familyRoot(c,evolutionPool)===mainRoot||!hasKnownEvolutionInEra(c))).sort((a,b)=>Number(matchesRarity(b,rarityFocus,basicOnly))-Number(matchesRarity(a,rarityFocus,basicOnly))||standaloneScore(b)-standaloneScore(a));
  for(const c of fallbackBasics){while(cards.length<30&&room(c)>0&&canFitEnergy(c)){if(!add(c,1))break;}if(cards.length>=30)break;}
- if(cards.length<30&&!requestedEnergy.length){for(const c of pokemonPool.filter(c=>c.stage==='Basic').sort((a,b)=>Number(matchesRarity(b,rarityFocus,basicOnly))-Number(matchesRarity(a,rarityFocus,basicOnly)))){if(!canFitEnergy(c)||!cohesiveBasic(c)||(!basicOnly&&familyRoot(c,evolutionPool)!==mainRoot&&hasKnownEvolution(c)))continue;while(cards.length<30&&room(c)>0){if(!add(c,1))break;}if(cards.length>=30)break;}}
+ if(cards.length<30&&!requestedEnergy.length){for(const c of pokemonPool.filter(c=>c.stage==='Basic').sort((a,b)=>Number(matchesRarity(b,rarityFocus,basicOnly))-Number(matchesRarity(a,rarityFocus,basicOnly)))){if(!canFitEnergy(c)||!cohesiveBasic(c)||(!basicOnly&&familyRoot(c,evolutionPool)!==mainRoot&&hasKnownEvolutionInEra(c)))continue;while(cards.length<30&&room(c)>0){if(!add(c,1))break;}if(cards.length>=30)break;}}
  // Final conservative fill: respect the planned mono/explicit dual Energy profile;
  // only the sparse-inventory rescue is allowed a second otherwise unrequested type.
  if(cards.length<30){for(const c of pool.filter(c=>(usefulFillerCard(c)||c.stage==='Basic')&&trainerIsUseful(c))){while(cards.length<30&&room(c)>0){const trial=[...cards,c.id],profile=decks.analyzeDeck(trial).recommendedEnergyTypes;if(options._allowSecondType===true&&!requestedEnergy.length?profile.length>2:!profile.every(t=>plannedEnergy.includes(t)))break;if(!add(c,1))break;}if(cards.length>=30)break;}}
@@ -936,8 +952,8 @@ function buildDeck(rows,options={}){
    return fail('Mesprit LV.X Supreme Blast requires complete Azelf LV.X and Uxie LV.X lines.');
  const legal=decks.validateDraft(cards,rows,{requireFull:true});if(!legal.ok)return {ok:false,cards,energyTypes:selectedTypes,errors:legal.errors,warnings:[],strategy:''};
  const analysis=decks.analyzeDeck(cards),conditionalDual=requestedEnergy.length===2&&requestedEnergy.every(type=>conditionalAttackTypes(main).includes(type)),
-  energyTypes=(main.pokemonEx&&main.stage==='Stage 2')||stage2Beneficiary||conditionalPayoffTypes.some(t=>selectedTypes.includes(t))||requestedEnergy.length===1||conditionalDual||lineEnergy.length>=2?selectedTypes.slice(0,2):(allowMixedEnergy&&requestedEnergy.length===2?requestedEnergy:neededTypes().length?analysis.recommendedEnergyTypes.slice(0,2):selectedTypes.slice(0,2));
- const finalEnergy=energyTypes.length?energyTypes:selectedTypes.slice(0,2);
+  energyTypes=(main.pokemonEx&&main.stage==='Stage 2')||stage2Beneficiary||conditionalPayoffTypes.some(t=>selectedTypes.includes(t))||requestedEnergy.length===1||conditionalDual||lineEnergy.length>=2?selectedTypes.slice(0,maxEnergyTypes):(allowMixedEnergy&&requestedEnergy.length===2?requestedEnergy:neededTypes().length?analysis.recommendedEnergyTypes.slice(0,2):selectedTypes.slice(0,maxEnergyTypes));
+ const finalEnergy=energyTypes.length?energyTypes:selectedTypes.slice(0,maxEnergyTypes);
  const specialist=(main.types||[]).find(t=>t==='Darkness'||t==='Metal');
  const zoneLabel=finalEnergy.join(' / ');
  const label=specialist?`${specialist} · Basic Zone: ${zoneLabel}`:(requested.includes('Colorless')?`Colorless / ${zoneLabel}`:zoneLabel);
