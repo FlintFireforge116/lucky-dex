@@ -1,7 +1,6 @@
-"""Conservative verified HGSS Unleashed printed mechanics, no fake noop effects.
+"""Verified HGSS Unleashed completed printed mechanics, no fake noop effects.
 
-Each returned effect is executable by the current Classic engine. Complex
-interactions are explicitly gated until their physical choices can be tested.
+Each returned effect is executable by the current Classic engine. Complex effects use verified shared-engine physical card/choice resolution.
 """
 import re
 import hgss1_verified as H
@@ -153,3 +152,51 @@ TRAINERS={
  '80':('AttachedTrainer',{'type':'modifier','stat':'postWeaknessAttackDamage','amount':10,'duration':'whileInPlay','scope':'self'}),
  'TWO':('Item',{'type':'shuffleDeck'}),
 }
+
+
+# Unleashed completion: exact choice-driven mechanics use the shared hgss2: resolver.
+COMPLETION_ATTACKS={
+ ('1','Time Hollow'):rule('1','timeHollow'),
+ ('4','Double Leg Hammer'):{'type':'multiTargetDamage','target':'opponentBench','count':2,'amount':40},
+ ('5','Psychic Pulse'):rule('5','psychicPulse'),
+ ('6','Switch Cannon'):rule('6','switchCannon'),
+ ('8','Energy Bloom'):rule('8','energyBloom'),
+ ('13','Hydro Launcher'):rule('13','hydroLauncher'),
+ ('17','Stream Pump'):rule('17','streamPump'),
+ ('20','Heat Acceleration'):rule('20','heatAcceleration'),
+ ('33','Energy Crane'):rule('33','energyCrane'),
+ ('84','Severe Poison'):{'type':'status','target':'opponentActive','status':'poison','amount':40},
+ ('84','Skill Dive'):PICK(30),
+ ('85','Dragon Steam'):rule('85','dragonSteam'),
+ ('86','Powerful Spark'):rule('86','powerfulSpark'),
+ ('87','Gaia Crush'):rule('87','gaiaCrush'),
+ ('88','Darkness Howl'):rule('88','darknessHowl'),
+ ('90','Thunder Fall'):rule('90','thunderFall'),('91','Thunder Fall'):rule('90','thunderFall'),
+ ('94','Torrent Blade'):rule('94','torrentBlade'),('95','Torrent Blade'):rule('94','torrentBlade'),
+}
+ATTACKS.update(COMPLETION_ATTACKS)
+COMPLETION_ABILITIES={
+ ('1','Stardust Song'):{'type':'triggered','event':'benched','fromHandOnly':True,'printedPowerType':'power','disabledByStatus':True,'effect':rule('1','stardustSong')},
+ ('4','Psychic Float'):{'type':'passive','printedPowerType':'body','disabledByStatus':False,'effect':rule('4','psychicFloat')},
+ ('5','Magical Trans'):{'type':'activated','oncePerTurn':True,'printedPowerType':'power','disabledByStatus':True,'effect':rule('5','magicalTrans')},
+ ('7','Leap Frog'):{'type':'activated','oncePerTurn':True,'printedPowerType':'power','disabledByStatus':True,'effect':rule('7','leapFrog')},
+ ('8','Celebration Wind'):{'type':'triggered','event':'benched','fromHandOnly':True,'printedPowerType':'power','disabledByStatus':True,'effect':rule('8','celebrationWind')},
+ ('13','Wash Out'):{'type':'activated','oncePerTurn':False,'printedPowerType':'power','disabledByStatus':True,'effect':rule('13','washOut')},
+ ('16','Water Acceleration'):{'type':'activated','oncePerTurn':True,'printedPowerType':'power','disabledByStatus':True,'effect':rule('16','waterAcceleration')},
+ ('23','Energy Signal'):{'type':'triggered','event':'energyAttached','fromHandOnly':True,'printedPowerType':'power','disabledByStatus':True,'effect':rule('23','energySignal')},
+ ('56','Energy Healer'):{'type':'triggered','event':'energyAttached','fromHandOnly':True,'printedPowerType':'body','disabledByStatus':False,'effect':{'type':'heal','amount':10,'target':'self'}},
+ ('85','Spray Splash'):{'type':'activated','oncePerTurn':True,'printedPowerType':'power','disabledByStatus':True,'effect':rule('85','spraySplash')},
+ ('86','Underwater Dive'):{'type':'activated','oncePerTurn':True,'printedPowerType':'power','disabledByStatus':True,'effect':rule('86','underwaterDive')},
+ ('87','Perfect Metal'):{'type':'passive','printedPowerType':'body','disabledByStatus':False,'effect':{'type':'preventStatus','scope':'self','duration':'whileInPlay'}},
+}
+ABILITIES.update(COMPLETION_ABILITIES)
+TRAINERS.update({
+ '71':('Supporter',rule('71','cheerleadersCheer')),
+ '74':('Item',rule('74','energyReturner')),
+ '75':('Supporter',rule('75','engineersAdjustments')),
+ '76':('Item',rule('76','goodRod')),
+ '77':('Supporter',rule('77','interviewersQuestions')),
+ '79':('Item',rule('79','lifeHerb')),
+ '82':('Item',{'type':'rareCandy','allowStage1':True}),
+ '83':('Item',rule('83','superScoopUp')),
+})

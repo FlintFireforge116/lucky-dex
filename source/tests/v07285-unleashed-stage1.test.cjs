@@ -62,7 +62,8 @@ test('HGSS2 is selectable, cards resolve by owned collector ID, and version is c
  const owned=db.projectOwnedCards([{source:'tcg',setId:'hgss2',number:'1',quantity:2},{source:'tcg',setId:'hgss2',number:'TWO',quantity:1},{source:'tcg',setId:'hgss2',number:'92',quantity:3}]);
  for(const [n,q] of [['1',2],['TWO',1],['92',3]])assert.ok(owned.some(x=>x.gameplayId===id(n)&&x.quantity===q),JSON.stringify(owned));
  const gradle=fs.readFileSync(path.join(root,'app/build.gradle'),'utf8');
- assert.match(gradle,/versionName '0\.69\.285'/);assert.match(fs.readFileSync(path.join(assets,'app-v0167.js'),'utf8'),/__LUCKYDEX_BUILD='0\.69\.285'/);assert.ok(fs.readFileSync(path.join(assets,'index.html'),'utf8').includes('v0.69.285'));
+ const match=gradle.match(/versionName '([^']+)'/);assert.ok(match,'Gradle must declare versionName');const version=match[1];
+ assert.ok(fs.readFileSync(path.join(assets,'app-v0167.js'),'utf8').includes("__LUCKYDEX_BUILD='"+version+"'"));assert.ok(fs.readFileSync(path.join(assets,'index.html'),'utf8').includes('v'+version));
 });
 test('the three unique LEGEND pairs are one two-Prize Pokémon, never solitary Basic Pokémon',()=>{
  for(const [first,second] of legendPairs){
@@ -86,10 +87,10 @@ test('LEGEND knockout loses both printed physical halves and awards two Prizes',
  assert.equal(foe.prizes.length,prizes-2);assert.equal(foe.prizesTaken,2);
  assert.deepEqual(p.discard.filter(x=>[id('92'),id('93')].includes(x.cardId)).map(x=>x.cardId).sort(),[id('92'),id('93')]);
 });
-test('PlusPower is temporary; unimplemented Stage-1 Rare Candy is gated instead of misrepresented',()=>{
+test('PlusPower is temporary; printed HGSS2 Rare Candy supports Stage 1 and Stage 2',()=>{
  assert.equal(set.cardById(id('80')).trainerType,'AttachedTrainer');assert.equal(set.cardById(id('80')).expires,'endOwnTurn');
- assert.equal(set.cardById(id('82')).battleEnabled,false);
- assert.match(set.cardById(id('82')).support.reasons.join(' '),/Unverified/);
+ assert.equal(set.cardById(id('82')).battleEnabled,true);
+ assert.equal(set.cardById(id('82')).effect.allowStage1,true);
 });
 test('multiplication and damage-counter attacks have correct base-damage metadata',()=>{
  for(const [number,name] of [['2','Hard Crush'],['7','Big Chorus'],['9','Push Over'],['11','Psywave'],['12','Twineedle'],['14','Hurricane Wing'],['15','Repeating Drill'],['23','Power Blow'],['24','Steel Swing'],['41','Crimson Bull']]){

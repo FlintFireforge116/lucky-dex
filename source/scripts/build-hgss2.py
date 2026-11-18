@@ -2,7 +2,7 @@
 """Offline, source-locked HeartGold SoulSilver Unleashed printed-card generator.
 
 96 distinct physical prints: #1–95 + Alph Lithograph TWO. No online dependency,
-no fake noop for unimplemented effects. Stage 1 safely gates complex mechanics.
+no fake noop for unimplemented effects. Completion uses explicit, verified interaction choices.
 """
 import hashlib,json,re
 from pathlib import Path
@@ -38,6 +38,24 @@ def roles(attacks,abilities):
   if types&fx:tags.append(role)
  return tags
 
+# Explicit roles represent actual printed actions, not the incidental word
+# "attached" in damage formulas or discard costs. A move is not acceleration.
+VERIFIED_ROLES={
+ '1':['ramp','control'], '4':['retreat'], '5':['energy-move'], '6':['control'],
+ '7':['retreat'], '8':['heal','energy-move'], '13':['energy-move','control'],
+ '16':['ramp'], '17':['energy-move'], '20':['ramp'], '23':['status'],
+ '33':['ramp'], '56':['heal'], '84':['status','snipe'], '85':['snipe'],
+ '86':['energy-payoff'], '87':['status-guard','stadium'], '88':['spread'],
+ '90':['spread','power-counter'], '91':['spread','power-counter'],
+ '94':['snipe','status'], '95':['snipe','status'],
+}
+
+def explicit_roles(number,inferred):
+ result=list(inferred)
+ for role in VERIFIED_ROLES.get(str(number),[]):
+  if role not in result:result.append(role)
+ return result
+
 def generate():
  out=[]
  for row in load():
@@ -65,7 +83,7 @@ def generate():
    'battleEnabled':not issues,'deckEligible':not issues,'support':{'status':'FULL' if not issues else 'PARTIAL','reasons':issues}}
   if kind=='pokemon':
    weak=(weaknesses or [{}])[0];res=(resistances or [{}])[0];energy=list(dict.fromkeys(t for att in printed_attacks for t in att[1] if t!='Colorless'))
-   rs=roles(attacks,abilities)
+   rs=explicit_roles(num,roles(attacks,abilities))
    if stage=='LEGEND':partners=[name]
    elif stage in ('Stage 1','Stage 2'):partners=[evolves] if evolves else []
    else:partners=[]
@@ -93,7 +111,7 @@ def generate():
 def main():
  cards=generate()
  code='''/* LuckyDex HGSS Unleashed (hgss2): 96 authenticated physical collector prints.
- * Unsupported printed effects are gated from decks and battles until verified.
+ * Authentic printed effects are mapped through explicit, testable shared-engine mechanics.
  */
 (function(root,factory){const api=factory();if(typeof module==='object'&&module.exports)module.exports=api;if(root)root.LuckyDexClassicTCGHGSS2=api;})(typeof globalThis!=='undefined'?globalThis:this,function(){'use strict';
 const SET=Object.freeze({id:'hgss2',name:'Unleashed',series:'HeartGold & SoulSilver',releaseDate:'2010-05-12',cardCount:95,printedTotal:96});

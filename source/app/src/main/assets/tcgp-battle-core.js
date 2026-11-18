@@ -423,6 +423,7 @@
     }else if(p.kind==='energySource'){
       const energyBoard=state.sides[p.selectionSide||side];
       for(const slot of [energyBoard.active,...(energyBoard.bench||[])].filter(Boolean)){
+        if(p.onlyBench&&slot===energyBoard.active)continue;
         if(p.energySourceUid&&slot.uid!==p.energySourceUid)continue;
         const target={type:'effectChoice',choiceTarget:slot===energyBoard.active?'active':'bench',choiceBenchIndex:slot===energyBoard.active?undefined:Number(slot.benchSlot),choiceCardId:slot.cardId};
         for(const [energyType,amount] of Object.entries(slot.energy||{})){
@@ -624,6 +625,7 @@
     if(state.stadium){const source=ss.active||ss.bench[0];if(source){const ctx={...effectContext(state,side,{},source),eventData:meta};effects.applyPersistentEvent(data.cardById(state.stadium.cardId)?.effect,event,ctx);}}
   }
   function retreatCost(state,side){const slot=state.sides[side].active;
+    if(state.format==='classic'&&slot&&pokemonOn(state.sides[side]).some(p=>p.cardId==='hgss2-4'&&!effects.abilitiesSuppressed(state,side,p,data.cardById))&&Number(effectiveEnergy(state,side,slot).Psychic||0)>0)return 0;
     if(state.format==='classic'&&slot&&Number(slot.pl3HoverHitUntil||0)>=Number(state.turnNumber))return 0;
     if(state.format==='classic'&&slot){const types=effects.effectiveTypes(state,side,slot,data.cardById);
       if(pokemonOn(state.sides[side]).some(p=>p.cardId==='pl2-5'&&!effects.abilitiesSuppressed(state,side,p,data.cardById)&&
@@ -1118,18 +1120,19 @@
       const card = data.cardById(ref.cardId);
       if(!card||card.kind!=='trainer'||!card.battleEnabled||card.id==='pl1-117')return; // Power Spray is an opponent-turn interrupt only.
       if(state.format==='classic'&&card.id==='pl2-89'&&s.hand.length<2)return; // Bebe must return a second card.
+      if(state.format==='classic'&&card.id==='hgss2-75'&&!s.hand.some((other,i)=>i!==handIndex&&data.cardById(other.cardId)?.kind==='energy'))return; // Engineer must actually discard an Energy from hand.
       if(state.format==='classic'&&/Technical Machine/i.test(card.name||'')&&['player','opponent'].some(w=>pokemonOn(state.sides[w]).some(slot=>slot.cardId==='ex9-96'&&!effects.abilitiesSuppressed(state,w,slot,data.cardById))))return;
       const type=trainerType(card),base={type:'trainer',handIndex,cardId:card.id};if(effects.isActionLocked(state,side,'Trainer',data.cardById)||effects.isActionLocked(state,side,type,data.cardById))return;
       if(card.effect?.type==='playFossil'){for(const benchIndex of emptyBenchSlots(s))actions.push({...base,target:'bench',benchIndex});return;}
       if(card.effect?.type==='rareCandy'){
         if(s.turnCount<=1)return;
-        const stage2Refs=s.hand.map((candidate,evolutionHandIndex)=>({candidate,evolutionHandIndex,card:data.cardById(candidate.cardId)})).filter(x=>x.evolutionHandIndex!==handIndex&&x.card?.battleEnabled&&x.card.kind==='pokemon'&&x.card.stage==='Stage 2');
+        const stage2Refs=s.hand.map((candidate,evolutionHandIndex)=>({candidate,evolutionHandIndex,card:data.cardById(candidate.cardId)})).filter(x=>x.evolutionHandIndex!==handIndex&&x.card?.battleEnabled&&x.card.kind==='pokemon'&&(x.card.stage==='Stage 2'||card.effect.allowStage1&&x.card.stage==='Stage 1'));
         const targets=[];if(s.active)targets.push({target:'active',slot:s.active});for(const slot of s.bench)if(slot)targets.push({target:'bench',benchIndex:Number(slot.benchSlot),slot});
         for(const evo of stage2Refs)for(const target of targets){const basic=data.cardById(target.slot.cardId);
           const opposingActive=state.sides[side==='player'?'opponent':'player']?.active;
           if(target.target==='active'&&state.format==='classic'&&opposingActive?.cardId==='pl1-6'&&
              !effects.abilitiesSuppressed(state,side==='player'?'opponent':'player',opposingActive,data.cardById))continue;
-          if(target.slot.playedOnSideTurn<s.turnCount&&rareCandyMatches(evo.card,basic))actions.push({...base,target:target.target,benchIndex:target.benchIndex,evolutionCardId:evo.card.id});} 
+          if(target.slot.playedOnSideTurn<s.turnCount&&(evo.card.stage==='Stage 1'?basic?.stage==='Basic'&&evo.card.evolvesFrom===basic.name:rareCandyMatches(evo.card,basic)))actions.push({...base,target:target.target,benchIndex:target.benchIndex,evolutionCardId:evo.card.id});} 
         return;
       }
       if(state.format==='classic'&&state.stadium?.cardId==='gym1-103'&&['Energy Removal','Super Energy Removal'].includes(card.name)&&s.hand.length<3)return;
@@ -1311,6 +1314,10 @@
           if((Number(s.benchLimit||3)>=4&&!s.bench.includes(source))||
              !['H','E','A','L'].every(letter=>places.some(p=>data.cardById(p.cardId)?.name==='Unown ['+letter+']')))return;
         }
+        if(source.cardId==='hgss2-13'&&ability.name==='Wash Out'&&(!s.active||!s.bench.some(p=>Number(p?.energy?.Water||0)>0||(p?.specialEnergy||[]).some(r=>Number((r.provides||data.cardById(r.cardId)?.effect?.provides||{}).Water||0)>0))))return;
+        if(source.cardId==='hgss2-16'&&ability.name==='Water Acceleration'&&!s.hand.some(r=>{const c=data.cardById(r.cardId);return c?.basicEnergy&&c.subtype==='Water';}))return;
+        if(source.cardId==='hgss2-7'&&ability.name==='Leap Frog'&&!s.bench.some(p=>data.cardById(p?.cardId)?.types?.includes('Water')))return;
+        if(source.cardId==='hgss2-5'&&ability.name==='Magical Trans'&&(!pokemonOn(s).some(p=>Number(p.energy?.Psychic||0)>0||(p.specialEnergy||[]).some(r=>Number((r.provides||data.cardById(r.cardId)?.effect?.provides||{}).Psychic||0)>0))||pokemonOn(s).length<2))return;
         if(ability.name==='Call Energy'&&(source!==s.active||Number(source.dp5CallEnergyUsedTurn)===s.turnCount||s.bench.length>=Number(s.benchLimit||3)||!s.deck.some(ref=>data.cardById(ref.cardId)?.battleEnabled&&data.cardById(ref.cardId)?.kind==='pokemon'&&data.cardById(ref.cardId)?.stage==='Basic')))return;
         if(source.cardId==='dp4-57'&&(!s.bench.includes(source)||!pokemonOn(s).some(p=>p!==source&&toolsOf(p).length<effects.toolCapacity(state,side,p,data.cardById))))return;
         if(source.cardId==='dp4-9'&&!s.bench.some(p=>Number(p.energy?.Water||0)>0||Number(p.energy?.Fighting||0)>0||(p.specialEnergy||[]).some(ref=>{const prov=ref.provides||data.cardById(ref.cardId)?.effect?.provides||{};return Number(prov.Water||0)+Number(prov.Fighting||0)>0;})))return;
@@ -2761,6 +2768,12 @@
       const isActive=defender===foe.active;
       state.pendingAttackResult={defenderSide:foeSide,defenderUid:defender.uid,turn:state.turnNumber,before:attackResultSnapshot(defender)};
       let damage=result.damage;
+      if(state.format==='classic'&&s.active.cardId==='hgss2-85'&&attack.name==='Dragon Steam'&&
+         pokemonOn(foe).some(p=>data.cardById(p.cardId)?.types?.includes('Fire')))damage=20;
+      if(state.format==='classic'&&s.active.cardId==='hgss2-86'&&attack.name==='Powerful Spark'){
+        const count=pokemonOn(s).reduce((sum,p)=>sum+Object.values(p.energy||{}).reduce((n,k)=>n+Number(k||0),0)+(p.specialEnergy||[]).length,0);
+        damage+=10*count;
+      }
       // Ludicolo's Cheerful Voice applies to its attacks on the *next own*
       // turn, after the Power has ended the current turn.
       if(state.format==='classic'&&s.active.cardId==='pl1-34'&&Number(s.active.pl1CheerfulVoiceUntil)===state.turnNumber){
