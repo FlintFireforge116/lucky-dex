@@ -8,8 +8,8 @@ android {
         applicationId 'com.example.luckydex'
         minSdk 26
         targetSdk 35
-        versionCode 7281
-        versionName '0.69.295'
+        versionCode 7282
+        versionName '0.69.296'
     }
 
     signingConfigs {
@@ -366,4 +366,18 @@ tasks.register('auditCOL1ForApk', Exec) {
 }
 tasks.matching { it.name == 'preBuild' || (it.name.startsWith('merge') && it.name.endsWith('Assets')) }.configureEach {
     dependsOn tasks.named('auditCOL1ForApk')
+}
+
+// v0.69.296 Black & White Base set: pinned source and battle/deck smoke audit.
+tasks.register('generateBW1ForApk', Exec) {
+    workingDir rootProject.projectDir
+    commandLine (System.getenv('LUCKYDEX_PYTHON') ?: 'python3'), 'scripts/build-bw1.py'
+}
+tasks.register('auditBW1ForApk', Exec) {
+    dependsOn tasks.named('generateBW1ForApk')
+    workingDir rootProject.projectDir
+    commandLine 'node', '--test', 'tests/v07296-black-white.test.cjs'
+}
+tasks.matching { it.name == 'preBuild' || (it.name.startsWith('merge') && it.name.endsWith('Assets')) }.configureEach {
+    dependsOn tasks.named('auditBW1ForApk')
 }

@@ -1449,6 +1449,11 @@
         }
         // Nurse Call is once per player turn across ALL Blissey copies.
         if(ability.name==='Nurse Call'&&(s.pl1NurseCallUsedTurn===s.turnCount||!s.hand.length))return;
+        // Black & White Abilities cannot offer inert repeatable CPU actions.
+        if(state.format==='classic'&&source.cardId==='bw1-20'&&!s.hand.some(ref=>{const c=data.cardById(ref.cardId);return c?.basicEnergy&&c.energyType==='Fire';}))return;
+        if(state.format==='classic'&&source.cardId==='bw1-57'&&!pokemonOn(s).some(p=>Number(p.damage||0)>=10&&pokemonOn(s).some(q=>q!==p&&Number(q.damage||0)+10<maxHp(state,side,q))))return;
+        if(state.format==='classic'&&source.cardId==='bw1-76'&&(
+          pokemonOn(s).length<2||!pokemonOn(s).some(p=>Number(p.energy?.Metal||0)>0||(p.specialEnergy||[]).some(ref=>Number((ref.provides||data.cardById(ref.cardId)?.effect?.provides||{}).Metal||0)>0))))return;
         const used=(s.abilityUsed||{})[source.uid+':'+abilityIndex];if(ability.oncePerTurn!==false&&used===s.turnCount)return;
         if(ability.lentalSharedOnce==='scavenge'&&s.lentalScavengeUsedTurn===s.turnCount)return;
         const base={type:'ability',cardId:source.cardId,abilityIndex,target:source===s.active?'active':'bench'};if(source!==s.active)base.benchIndex=Number(source.benchSlot);

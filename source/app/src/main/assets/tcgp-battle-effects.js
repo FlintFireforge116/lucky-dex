@@ -10706,7 +10706,122 @@
     throw new Error('Unimplemented Call of Legends mechanic '+key);
   }
 
+  // v0.69.296 Black & White: all choice-based rules use actual board zones.
+  function bw1Rule(e,ctx){
+    const key=String(e.rule).slice(4),ss=own(ctx),foe=other(ctx),a=ctx.attacker,d=ctx.defender,
+      act=ctx.action||{},stage=e.stage||'start',turn=Number(ctx.state.turnNumber||0),
+      ownAll=()=>pokemonOn(ss),foeAll=()=>pokemonOn(foe),
+      card=ref=>ctx.cardById(ref?.cardId),label=ref=>card(ref)?.name||'Card',
+      chosen=which=>selected(ctx,which==='opponent'?foe:ss),
+      pick=(phase,which='self',extra={})=>ctx.requestChoice?.({kind:'pokemon',side:'self',selectionSide:which==='opponent'?ctx.foeSide:ctx.side,includeActive:true,effect:{...e,stage:phase,...extra}}),
+      options=(phase,choices,extra={})=>choices.length&&ctx.requestChoice?.({kind:'option',side:'self',options:choices,effect:{...e,stage:phase,...extra}}),
+      log=(details={})=>ctx.state.log.push({type:'blackWhiteRule',side:ctx.side,rule:key,...details});
+    const heal=(slot,n)=>{if(slot&&!healingIsBlocked(ctx.state,slot,ctx.cardById))slot.damage=Math.max(0,Number(slot.damage||0)-n);};
+    if(key==='leafStorm'){for(const p of ownAll())if(ctx.cardById(p.cardId)?.types?.includes('Grass'))heal(p,20);return;}
+    if(key==='royalHeal'){for(const p of ownAll())heal(p,10);return;}
+    if(key==='infernoFandango'){
+      const valid=ref=>card(ref)?.kind==='energy'&&card(ref)?.basicEnergy&&card(ref)?.energyType==='Fire';
+      if(stage==='card'&&ctx.resolvingChoice){const ref=ss.hand[Number(act.choiceHandIndex)];if(ref&&valid(ref))pick('target','self',{energyUid:ref.uid});return;}
+      if(stage==='target'&&ctx.resolvingChoice){const p=chosen('self'),i=ss.hand.findIndex(ref=>ref.uid===e.energyUid);
+        if(p&&i>=0&&valid(ss.hand[i])){const ref=ss.hand.splice(i,1)[0];p.energy.Fire=Number(p.energy?.Fire||0)+1;ctx.onEnergyAttached?.(p,'Fire',1,{fromHand:true,energyCardId:ref.cardId});log({energy:ref.cardId,target:p.cardId});}return;}
+      if(ss.hand.some(valid))ctx.requestChoice?.({kind:'handCard',side:'self',filter:{kind:'energy',basicEnergy:true,providesEnergyType:'Fire'},effect:{...e,stage:'card'}});return;
+    }
+    if(key==='damageSwap'){
+      if(stage==='source'&&ctx.resolvingChoice){const src=chosen('self');if(src&&src.damage>=10&&ownAll().some(p=>p!==src&&Number(p.damage||0)+10<Number(ctx.maxHp?.(ctx.side,p)||card(p)?.hp||0)))pick('target','self',{sourceUid:src.uid});return;}
+      if(stage==='target'&&ctx.resolvingChoice){const src=ownAll().find(p=>p.uid===e.sourceUid),dest=chosen('self');const hp=Number(ctx.maxHp?.(ctx.side,dest)||card(dest)?.hp||0);
+        if(src&&dest&&src!==dest&&src.damage>=10&&Number(dest.damage||0)+10<hp){src.damage-=10;dest.damage=Number(dest.damage||0)+10;log({from:src.cardId,to:dest.cardId});}return;}
+      if(ownAll().some(src=>src.damage>=10&&ownAll().some(dest=>src!==dest&&Number(dest.damage||0)+10<Number(ctx.maxHp?.(ctx.side,dest)||card(dest)?.hp||0))))pick('source');return;
+    }
+    if(key==='naturePower')return; // additive damage is evaluated in resolveAttack before Weakness
+    if(key==='flameCharge'){
+      const physical=()=>ss.deck.map((r,i)=>({r,i})).filter(x=>card(x.r)?.basicEnergy&&card(x.r)?.energyType==='Fire');
+      const canZone=()=>Array.isArray(ss.energySupply)&&ss.energySupply.includes('Fire');
+      const attach=source=>{if(!a)return;if(source==='deck'){const it=ss.deck[Number(act.choiceDeckIndex)];if(!it||!card(it)?.basicEnergy||card(it)?.energyType!=='Fire')return;ss.deck.splice(Number(act.choiceDeckIndex),1);ctx.shuffle?.(ctx.state,ss.deck);}else{const at=ss.energySupply?.indexOf('Fire')??-1;if(at<0)return;ss.energySupply.splice(at,1);ss.nextEnergyType=ss.energySupply[0]||null;}
+        a.energy.Fire=Number(a.energy?.Fire||0)+1;ctx.onEnergyAttached?.(a,'Fire',1,{fromHand:false});log({source});};
+      if(stage==='source'&&ctx.resolvingChoice){if(Number(act.choiceOption)===0){ctx.requestChoice?.({kind:'deckCard',side:'self',filter:{kind:'energy',basicEnergy:true,energyType:'Fire'},effect:{...e,stage:'deck'}});}else attach('zone');return;}
+      if(stage==='deck'&&ctx.resolvingChoice){attach('deck');return;}
+      if(physical().length&&canZone())options('source',['Attach Fire Energy from your deck','Attach Fire Energy from the ordered Energy Zone']);
+      else if(physical().length)ctx.requestChoice?.({kind:'deckCard',side:'self',filter:{kind:'energy',basicEnergy:true,energyType:'Fire'},effect:{...e,stage:'deck'}});
+      else if(canZone())attach('zone');return;
+    }
+    if(key==='featherDance'||key==='bulkUp')return applyEffect({type:'modifier',stat:'attackDamage',amount:key==='featherDance'?40:20,scope:'self',duration:'nextOwnTurn'},ctx);
+    if(key==='cellCulture'){
+      if(ctx.resolvingChoice){const j=Number(act.choiceDeckIndex),ref=ss.deck[j];if(card(ref)?.name!=='Solosis'||card(ref)?.stage!=='Basic'||ss.bench.length>=Number(ss.benchLimit||3))return;ss.deck.splice(j,1);ctx.benchCard?.(ss,ref);ctx.shuffle?.(ctx.state,ss.deck);return;}
+      if(ss.bench.length<Number(ss.benchLimit||3)&&ss.deck.some(r=>card(r)?.name==='Solosis'&&card(r)?.stage==='Basic'))ctx.requestChoice?.({kind:'deckCard',side:'self',filter:{kind:'pokemon',name:'Solosis',stage:'Basic'},effect:e});return;
+    }
+    if(key==='torment'){
+      if(ctx.resolvingChoice){const attacked=card(d)?.attacks?.[Number(act.choiceOption)];if(d&&attacked){d.locks=d.locks||[];d.locks.push({action:'attack',attackName:attacked.name,expiresTurn:turn+1});log({locked:attacked.name});}return;}
+      if(card(d)?.attacks?.length)options('attack',card(d).attacks.map(attack=>'Block '+attack.name));return;
+    }
+    if(key==='blindside'){
+      if(ctx.resolvingChoice){const p=chosen('opponent');if(!p||Number(p.damage||0)<=0)return;
+        if(attackIsPrevented(ctx.state,ctx.foeSide,p,a,ctx.cardById))return;
+        const amount=p===foe.active?attackDamageWithState(ctx.state,ctx.side,a,ctx.foeSide,p,50,ctx.cardById):Math.max(0,50-modifierAmount(ctx.state,ctx.foeSide,p,'damageReduction',ctx.cardById));p.damage=Number(p.damage||0)+amount;return;}
+      if(foeAll().some(p=>Number(p.damage||0)>0))ctx.requestChoice?.({kind:'pokemon',side:'self',selectionSide:ctx.foeSide,includeActive:true,filter:{damaged:true},effect:e});return;
+    }
+    if(key==='odorSleuth'){
+      const remaining=Number(e.remaining||0);
+      if(stage==='discard'&&ctx.resolvingChoice){const j=Number(act.choiceDiscardIndex),ref=ss.discard[j];if(ref){ss.discard.splice(j,1);ss.hand.push(ref);}
+        if(remaining>1&&ss.discard.length)ctx.requestChoice?.({kind:'discardCard',side:'self',effect:{...e,stage:'discard',remaining:remaining-1}});return;}
+      const rolls=[coin(ctx),coin(ctx),coin(ctx)];const heads=rolls.filter(Boolean).length;log({coinResults:rolls});if(heads&&ss.discard.length)ctx.requestChoice?.({kind:'discardCard',side:'self',effect:{...e,stage:'discard',remaining:heads}});return;
+    }
+    if(key==='professorJuniper'){const discarded=ss.hand.splice(0);ss.discard.push(...discarded);for(let i=0;i<7;i++)ctx.drawCard?.(ss);log({discarded:discarded.length});return;}
+    if(key==='revive'){
+      if(ctx.resolvingChoice){const j=Number(act.choiceDiscardIndex),r=ss.discard[j];if(card(r)?.kind==='pokemon'&&card(r)?.stage==='Basic'&&ss.bench.length<Number(ss.benchLimit||3)){ss.discard.splice(j,1);ctx.benchCard?.(ss,r);}return;}
+      if(ss.bench.length<Number(ss.benchLimit||3)&&ss.discard.some(r=>card(r)?.kind==='pokemon'&&card(r)?.stage==='Basic'))ctx.requestChoice?.({kind:'discardCard',side:'self',filter:{kind:'pokemon',stage:'Basic'},effect:e});return;
+    }
+    if(key==='superScoop'){
+      if(ctx.resolvingChoice){const p=chosen('self');if(p)applyEffect({type:'returnToHand',target:'selfPokemon',returnBasicEnergy:true},ctx);return;}
+      if(coin(ctx))pick('target');return;
+    }
+    if(key==='energySearch'){
+      const real=()=>ss.deck.map((ref,i)=>({ref,i})).filter(x=>card(x.ref)?.basicEnergy);
+      const zone=()=>ss.energySupply||[],ids={Grass:105,Fire:106,Water:107,Lightning:108,Psychic:109,Fighting:110,Darkness:111,Metal:112};
+      const takeDeck=()=>{const i=Number(act.choiceDeckIndex),ref=ss.deck[i];if(!ref||!card(ref)?.basicEnergy)return false;ss.hand.push(...ss.deck.splice(i,1));ctx.shuffle?.(ctx.state,ss.deck);return true;};
+      const takeZone=()=>{const i=Number(act.choiceOption??0),typ=zone()[i];if(!typ||!ids[typ])return false;ss.energySupply.splice(i,1);ss.nextEnergyType=ss.energySupply[0]||null;ss.hand.push({uid:'bw1-zone-'+turn+'-'+ss.hand.length+'-'+typ,cardId:'bw1-'+ids[typ],zoneGenerated:true});return true;};
+      if(stage==='deck'&&ctx.resolvingChoice){takeDeck();return;}
+      if(stage==='zone'&&ctx.resolvingChoice){takeZone();return;}
+      if(stage==='source'&&ctx.resolvingChoice){if(Number(act.choiceOption)===0)ctx.requestChoice?.({kind:'deckCard',side:'self',filter:{kind:'energy',basicEnergy:true},effect:{...e,stage:'deck'}});else options('zone',zone().map(t=>'Take '+t+' Energy'));return;}
+      if(real().length&&zone().length)options('source',['Search the physical deck','Take from ordered Energy Zone']);
+      else if(real().length)ctx.requestChoice?.({kind:'deckCard',side:'self',filter:{kind:'energy',basicEnergy:true},effect:{...e,stage:'deck'}});
+      else if(zone().length)options('zone',zone().map(t=>'Take '+t+' Energy'));return;
+    }
+    if(key==='energyRetrieval'){
+      const idByType={Grass:105,Fire:106,Water:107,Lightning:108,Psychic:109,Fighting:110,Darkness:111,Metal:112};
+      const physical=()=>ss.discard.map((ref,i)=>({ref,i})).filter(x=>card(x.ref)?.basicEnergy);
+      const zones=()=>Object.entries(ss.energyDiscard||{}).filter(([t,n])=>Number(n)>0&&idByType[t]);
+      const remaining=Number(e.remaining??2);
+      const more=()=>{if(remaining<=1)return;const effect={...e,stage:'start',remaining:remaining-1};bw1Rule(effect,{...ctx,resolvingChoice:false,action:{}});};
+      if(stage==='source'&&ctx.resolvingChoice){if(Number(act.choiceOption)===0)ctx.requestChoice?.({kind:'discardCard',side:'self',filter:{kind:'energy',basicEnergy:true},effect:{...e,stage:'physical'}});else options('zone',zones().map(([t])=>'Recover '+t),{types:zones().map(([t])=>t)});return;}
+      if(stage==='physical'&&ctx.resolvingChoice){const i=Number(act.choiceDiscardIndex),ref=ss.discard[i];if(card(ref)?.basicEnergy){ss.hand.push(...ss.discard.splice(i,1));more();}return;}
+      if(stage==='zone'&&ctx.resolvingChoice){const type=e.types?.[Number(act.choiceOption)];if(type&&Number(ss.energyDiscard?.[type]||0)>0&&idByType[type]){ss.energyDiscard[type]--;ss.hand.push({uid:'bw1-retrieved-'+turn+'-'+ss.hand.length+'-'+type,cardId:'bw1-'+idByType[type],zoneGenerated:true});more();}return;}
+      if(physical().length&&zones().length)options('source',['Recover physical discarded Energy','Recover from discarded Energy supply']);
+      else if(physical().length)ctx.requestChoice?.({kind:'discardCard',side:'self',filter:{kind:'energy',basicEnergy:true},effect:{...e,stage:'physical'}});
+      else if(zones().length)options('zone',zones().map(([t])=>'Recover '+t),{types:zones().map(([t])=>t)});return;
+    }
+    if(key==='energySwitch'){
+      const sources=()=>ownAll().filter(p=>Object.values(p.energy||{}).some(n=>Number(n||0)>0));
+      if(stage==='source'&&ctx.resolvingChoice){const p=chosen('self');if(p&&Object.values(p.energy||{}).some(n=>Number(n||0)>0))options('energy',Object.entries(p.energy).filter(([,n])=>Number(n)>0).map(([t])=>t),{sourceUid:p.uid,energyTypes:Object.keys(p.energy).filter(t=>Number(p.energy[t])>0)});return;}
+      if(stage==='energy'&&ctx.resolvingChoice){const type=e.energyTypes?.[Number(act.choiceOption)],p=ownAll().find(s=>s.uid===e.sourceUid);if(type&&p&&Number(p.energy?.[type]||0)>0)pick('target','self',{sourceUid:p.uid,energyType:type});return;}
+      if(stage==='target'&&ctx.resolvingChoice){const from=ownAll().find(s=>s.uid===e.sourceUid),to=chosen('self');if(from&&to&&from!==to&&Number(from.energy?.[e.energyType]||0)>0){from.energy[e.energyType]--;to.energy[e.energyType]=Number(to.energy[e.energyType]||0)+1;ctx.onEnergyAttached?.(to,e.energyType,1,{fromHand:false});}return;}
+      if(sources().length&&ownAll().length>1)pick('source');return;
+    }
+    if(key==='energize'){
+      const physical=()=>ss.discard.map((r,i)=>({r,i})).filter(x=>card(x.r)?.kind==='energy'&&card(x.r)?.basicEnergy&&card(x.r)?.energyType==='Lightning');
+      const supply=()=>Number(ss.energyDiscard?.Lightning||0)>0;
+      const attach=source=>{if(!a)return;if(source==='physical'){const r=ss.discard[Number(act.choiceDiscardIndex)];if(!r||card(r)?.energyType!=='Lightning'||!card(r)?.basicEnergy)return;ss.discard.splice(Number(act.choiceDiscardIndex),1);}else{if(!supply())return;ss.energyDiscard.Lightning--;}
+        a.energy.Lightning=Number(a.energy?.Lightning||0)+1;ctx.onEnergyAttached?.(a,'Lightning',1,{fromHand:false});};
+      if(stage==='source'&&ctx.resolvingChoice){if(Number(act.choiceOption)===0)ctx.requestChoice?.({kind:'discardCard',side:'self',filter:{kind:'energy',basicEnergy:true,energyType:'Lightning'},effect:{...e,stage:'discard'}});else attach('zone');return;}
+      if(stage==='discard'&&ctx.resolvingChoice){attach('physical');return;}
+      if(physical().length&&supply())options('source',['Attach Lightning from discard pile','Attach Lightning from spent Energy supply']);
+      else if(physical().length)ctx.requestChoice?.({kind:'discardCard',side:'self',filter:{kind:'energy',basicEnergy:true,energyType:'Lightning'},effect:{...e,stage:'discard'}});
+      else if(supply())attach('zone');return;
+    }
+    throw new Error('Unimplemented Black & White mechanic '+key);
+  }
+
   function neoRule(e,ctx){
+    if(String(e.rule||'').startsWith('bw1:'))return bw1Rule(e,ctx);
     if(String(e.rule||'').startsWith('col1:'))return col1Rule(e,ctx);
     if(String(e.rule||'').startsWith('hgss4:'))return triumphantRule(e,ctx);
     if(String(e.rule||'').startsWith('hgss3:'))return undauntedRule(e,ctx);
@@ -15055,6 +15170,10 @@
       }
 
 
+      if(e.type==='neoRule'&&e.rule==='bw1:naturePower'){
+        const count=board=>pokemonOn(board).reduce((n,p)=>n+Number(ctx.effectiveEnergy?.(p)?.Grass||p?.energy?.Grass||0),0);
+        damage+=10*(count(own(ctx))+count(other(ctx)));return;
+      }
       if(e.type==='neoRule'&&e.rule==='col1:14:dimensionSphere'){
         damage+=20*(own(ctx).lostZone||[]).filter(ref=>ctx.cardById(ref.cardId)?.kind==='pokemon').length;return;
       }
