@@ -10337,7 +10337,27 @@
     if(key==='10:colorTag'){
       const t=['Grass','Fire','Water','Lightning','Psychic','Fighting','Darkness','Metal','Colorless'];if(ctx.resolvingChoice){const type=t[i];if(!type)return;for(const p of them())if((card(p)?.types||[]).includes(type))p.damage=Number(p.damage||0)+10;return;}opt('type',t);return;
     }
-    if(key==='10:spookyWhirlpool'){foe.deck.push(...foe.hand.splice(0));shuffle(foe);for(let j=0;j<6;j++)ctx.drawCard?.(foe);return;}
+    if(key==='10:spookyWhirlpool'){
+      // This from-hand Bench trigger is explicitly optional on the printed card.
+      if(!ctx.resolvingChoice){opt('confirm',['Do not use Spooky Whirlpool','Shuffle opponent hand into deck and draw 6']);return;}
+      if(stage!=='confirm'||i!==1)return;
+      foe.deck.push(...foe.hand.splice(0));shuffle(foe);for(let j=0;j<6;j++)ctx.drawCard?.(foe);return;
+    }
+    if(key==='49:mapping'){
+      const stadium={kind:'trainer',trainerType:'Stadium'};
+      if(!ctx.resolvingChoice){
+        if(ss.deck.some(r=>{const c=card(r);return c?.kind==='trainer'&&(c.trainerType==='Stadium'||c.subtype==='Stadium'||c.subtypes?.includes('Stadium'));}))
+          opt('confirm',['Do not use Mapping','Search for a Stadium card']);
+        return;
+      }
+      if(stage==='confirm'){if(i===1)ctx.requestChoice?.({kind:'deckCard',side:'self',filter:stadium,effect:{...e,stage:'stadium'}});return;}
+      if(stage==='stadium'){
+        const j=Number(act.choiceDeckIndex),r=ss.deck[j],c=card(r);
+        if(Number.isInteger(j)&&c?.kind==='trainer'&&(c.trainerType==='Stadium'||c.subtype==='Stadium'||c.subtypes?.includes('Stadium'))){handAdd(ss,ss.deck.splice(j,1)[0]);shuffle(ss);}
+        return;
+      }
+      return;
+    }
     if(key==='13:astonish'){
       const count=Math.min(2,foe.hand.length);for(let j=0;j<count;j++){const index=Math.floor(ctx.random(ctx.state)*foe.hand.length);foe.deck.push(foe.hand.splice(index,1)[0]);}shuffle(foe);log('opponentHandToDeck',{count});return;
     }
@@ -10366,7 +10386,7 @@
       const list=energyDiscard(ss,['Lightning']);if(ctx.resolvingChoice){const en=list[i],ref=en?.ref;if(!en||!src)return;if(en.type){ss.energyDiscard[en.type]--;src.energy.Lightning=Number(src.energy.Lightning||0)+1;}else{ss.discard.splice(ss.discard.indexOf(ref),1);if(card(ref)?.basicEnergy)src.energy.Lightning=Number(src.energy.Lightning||0)+1;else src.specialEnergy.push(ref);}ctx.onEnergyAttached?.(src,'Lightning',1,{fromHand:false});return;}
       if(list.length)opt('energy',list.map(x=>'Attach '+x.label));return;
     }
-    if(key==='20:thunderShot'){for(const p of them())if(energyCount(p)>0)damage(p,50,'opponent',false);return;}
+    if(key==='20:thunderShot'){for(const p of them())if(energyCount(p)>0)damage(p,50,'opponent',p===foe.active);return;}
     if(key==='23:psychicLock'){foe.hgss4PowersLockedUntil=n+1;return;}
     if(key==='26:vitalThrow'){if(ctx.resolvingChoice){if(i===1){bonus(40,20);if(src)src.damage=Number(src.damage||0)+20;}return;}opt('confirm',['Deal 40 damage','Deal 60 damage and take 20 recoil']);return;}
     if(key==='27:topBurner'){
@@ -10380,6 +10400,37 @@
     }
     if(key==='35:sneakyPlacement'||key==='63:sneakyPlacement'){
       if(ctx.resolvingChoice){const p=selectedFoe();if(p)p.damage=Number(p.damage||0)+(key.startsWith('35')?20:10);return;}pick('target','opponent');return;
+    }
+    // Licking Shot is ten damage PER Energy CARD on Lickilicky, not a
+    // flat ten. Weakness and Resistance still apply to the Active target.
+    if(key==='38:lickingShot'){
+      if(ctx.resolvingChoice){const p=selectedFoe();if(p)damage(p,10*energyCount(src),'opponent',p===foe.active);return;}
+      if(them().length)pick('target','opponent');return;
+    }
+    // Messenger returns the actual attacking Pidgey, its evolution stack and
+    // all attachments to the deck after the chosen Pokémon enters the hand.
+    if(key==='71:messenger'){
+      const finish=()=>{
+        if(!src)return;
+        const refs=(src.stack||[src.cardId]).map((id,j)=>({uid:src.uid+'-messenger-'+j,cardId:id}));
+        for(const r of [src.tool,...src.extraTools||[],...src.specialEnergy||[],...src.temporaryTrainers||[]].filter(Boolean))refs.push(r);
+        for(const [type,count] of Object.entries(src.energy||{}))for(let j=0;j<Number(count||0);j++)
+          refs.push({uid:src.uid+'-messenger-energy-'+type+'-'+j,cardId:energyIDs[type]||'dp1-123',zoneGenerated:true});
+        if(ss.active===src)ss.active=null;else if(ss.bench.includes(src))ss.bench.splice(ss.bench.indexOf(src),1);
+        ss.deck.push(...refs);shuffle(ss);log('messengerReturn',{returned:refs.length});
+      };
+      if(ctx.resolvingChoice){const j=Number(act.choiceDeckIndex),ref=ss.deck[j];
+        if(ref&&card(ref)?.kind==='pokemon')handAdd(ss,ss.deck.splice(j,1)[0]);finish();return;}
+      if(ss.deck.some(ref=>card(ref)?.kind==='pokemon'))ctx.requestChoice?.({kind:'deckCard',side:'self',filter:{kind:'pokemon'},optional:true,effect:e});
+      else finish();return;
+    }
+    // Tails targets one of your own Pokémon, not 'no damage'. Both sides
+    // choose their actual target; only Benched Pokémon ignore W/R.
+    if(key==='74:trippingHeadbutt'){
+      if(ctx.resolvingChoice){const ownTarget=e.which==='self',p=ownTarget?selectedOwn():selectedFoe();
+        if(p)damage(p,30,ownTarget?'self':'opponent',p===(ownTarget?ss.active:foe.active));return;}
+      const heads=flip('Tripping Headbutt'),board=heads?foe:ss;
+      if(both(board).length)pick('target',heads?'opponent':'self',{effect:{which:heads?'opponent':'self'}});return;
     }
     if(key==='39:rendezvousDraw'){for(const [board,who] of [[ss,ctx.side],[foe,ctx.foeSide]]){const r=ctx.drawCard?.(board);if(r)log('revealedDraw',{side:who,cardId:r.cardId});}return;}
     if(key==='47:twister'){

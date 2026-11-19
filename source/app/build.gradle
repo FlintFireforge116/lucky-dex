@@ -8,8 +8,8 @@ android {
         applicationId 'com.example.luckydex'
         minSdk 26
         targetSdk 35
-        versionCode 7278
-        versionName '0.69.292'
+        versionCode 7279
+        versionName '0.69.293'
     }
 
     signingConfigs {
@@ -332,7 +332,7 @@ tasks.matching { it.name == 'preBuild' || (it.name.startsWith('merge') && it.nam
     dependsOn tasks.named('independentHGSS3ForApk')
 }
 
-// v0.69.292 HeartGold & SoulSilver Triumphant complete: source-pinned 103
+// v0.69.293 HeartGold & SoulSilver Triumphant independent audit: source-pinned 103
 // printed cards, two exact LEGEND pairs and verified move/Prime/Prize choices.
 tasks.register('generateHGSS4ForApk', Exec) {
     workingDir rootProject.projectDir
@@ -341,7 +341,7 @@ tasks.register('generateHGSS4ForApk', Exec) {
 tasks.register('auditHGSS4ForApk', Exec) {
     dependsOn tasks.named('generateHGSS4ForApk')
     workingDir rootProject.projectDir
-    commandLine 'node', '--test', 'tests/v07291-triumphant-stage1.test.cjs', 'tests/v07292-triumphant-completion.test.cjs'
+    commandLine 'node', '--test', 'tests/v07291-triumphant-stage1.test.cjs', 'tests/v07292-triumphant-completion.test.cjs', 'tests/v07293-triumphant-independent-audit.test.cjs'
 }
 tasks.register('independentHGSS4ForApk', Exec) {
     dependsOn tasks.named('auditHGSS4ForApk')
