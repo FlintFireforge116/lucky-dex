@@ -771,6 +771,19 @@ function buildDeck(rows,options={}){
  const mainMetal=(mainLine||[]).some(c=>(c.types||[]).includes('Metal')||(c.deckMeta?.requiredEnergyTypes||[]).includes('Metal'));
  const defensiveMetal=classic.cardById('ex13-95');
  if(mainMetal&&selectedTypes.includes('Metal')&&defensiveMetal&&allowedInSetPool(defensiveMetal,scope))add(defensiveMetal,Math.min(1,room(defensiveMetal)));
+ // Call of Legends has two *physical* Special Energy prints. Reserve them
+ // before Trainer filler when matching Pokémon are actually in the deck: this
+ // lets Skarmory's Steel Coat search a real Metal Energy card and gives Dark/
+ // Metal Pokémon their printed Special Energy payoff. The Basic Energy Zone
+ // remains separate, and no Basic Energy cards are added to the 30-card deck.
+ if(scope.includes('col1')){
+   const pokemon=cards.map(classic.cardById).filter(c=>c?.kind==='pokemon');
+   for(const [id,type] of [['col1-86','Darkness'],['col1-87','Metal']]){
+     if(!pokemon.some(c=>(c.types||[]).includes(type)))continue;
+     const physical=classic.cardById(id);
+     if(physical&&allowedInSetPool(physical,scope))add(physical,Math.min(2,room(physical)));
+   }
+ }
  const flexibleDarkMetal=classic.cardById('ex13-97');
  if(flexibleDarkMetal&&allowedInSetPool(flexibleDarkMetal,scope)&&
    selectedTypes.includes('Darkness')&&selectedTypes.includes('Metal'))add(flexibleDarkMetal,1);

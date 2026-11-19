@@ -8,8 +8,8 @@ android {
         applicationId 'com.example.luckydex'
         minSdk 26
         targetSdk 35
-        versionCode 7280
-        versionName '0.69.294'
+        versionCode 7281
+        versionName '0.69.295'
     }
 
     signingConfigs {
@@ -362,7 +362,7 @@ tasks.register('generateCOL1ForApk', Exec) {
 tasks.register('auditCOL1ForApk', Exec) {
     dependsOn tasks.named('generateCOL1ForApk')
     workingDir rootProject.projectDir
-    commandLine 'node', '--test', 'tests/v07294-call-of-legends.test.cjs'
+    commandLine 'node', '--test', 'tests/v07294-call-of-legends.test.cjs', 'tests/v07295-col1-independent-audit.test.cjs'
 }
 tasks.matching { it.name == 'preBuild' || (it.name.startsWith('merge') && it.name.endsWith('Assets')) }.configureEach {
     dependsOn tasks.named('auditCOL1ForApk')
