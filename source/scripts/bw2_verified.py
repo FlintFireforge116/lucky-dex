@@ -22,7 +22,7 @@ A={
  ('19',"Water's Power"):R('waterPower'),
  ('19','Flamethrower'):DISC(1),
  ('23',"Grass' Power"):R('grassPower'),
- ('23','Rushing Water'):{'type':'moveEnergy','source':'opponentActive','target':'opponentBench','amount':1},
+ ('23','Rushing Water'):R('rushingWater'),
  ('24','Flail'):{'type':'damageFromDamage','source':'self','amount':1},
  ('24','Final Gambit'):R('finalGambit'),
  ('25','Splatter'):PICK(30),

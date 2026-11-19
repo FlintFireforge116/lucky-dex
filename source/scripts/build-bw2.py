@@ -38,12 +38,17 @@ def generate():
    roles=[];terms=' '.join([a[3] for a in attacks]+[p[2] for p in abilities]).lower()
    for role,words in [('draw',['draw ','into your hand']),('search',['search your deck']),('ramp',['attach',' energy']),('heal',['heal ','recover']),('status',['poisoned','burned','asleep','paralyzed','confused']),('control',["can't retreat",'discard','move '])]:
     if any(word in terms for word in words):roles.append(role)
+   # Elemental-monkey off-type Energy bonuses require a second Basic Energy
+   # type in automatically generated decks even though their attacks cost only Colorless.
+   conditional_types={'2':['Fire'],'19':['Water'],'23':['Grass']}.get(n,[])
    c.update(stage=stage,hp=int(hp),types=[typ],subtype=typ,evolvesFrom=evolves or None,retreat=retreat,
     weakness=weak or None,weaknessValue='×2' if weak else None,weaknesses=[{'type':weak,'value':'×2'}] if weak else [],
     resistance=res or None,resistanceValue='-20' if res else None,resistances=[{'type':res,'value':'-20'}] if res else [],
-    attacks=converted,abilities=powers,tags=['full-art'] if int(n) in (113,114) else ['secret-rare'] if n=='115' else [],
+    attacks=converted,abilities=powers,tags=['full-art'] if n in ('97','98') else [],
     isPokemonSP=False,isLevelX=False,deckMeta={'roles':roles,'synergy':roles,'energyTypes':needed,
-    'preferredEnergyTypes':needed,'preferredPartners':[evolves] if evolves else [],'inflicts':[],'payoffs':[]})
+    'preferredEnergyTypes':list(dict.fromkeys(needed+conditional_types)),
+    'conditionalAttackEnergyTypes':conditional_types,
+    'preferredPartners':[evolves] if evolves else [],'inflicts':[],'payoffs':[]})
   elif kind=='trainer':
    c.update(trainerType=trainer[0] if trainer else stage,text='\n'.join(rules),effect=trainer[1] if trainer else {'type':'unsupported'})
   else:

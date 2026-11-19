@@ -10874,6 +10874,29 @@
       if(key==='charge'&&a){const opts=[...available.map(x=>`Attach ${energyType(x.ref)} from deck`),...supply.map(t=>`Attach ${t} from ordered Energy Zone`)];if(opts.length)choose('source',opts);return;}
       if(us.bench.length&&(available.length||supply.length))ctx.requestChoice?.({kind:'pokemon',side:'self',selectionSide:ctx.side,includeActive:false,effect:{...e,stage:'bench'}});return;
     }
+    // Simipour's Rushing Water chooses BOTH the attached Energy on the
+    // opponent's Active Pokémon and the receiving opposing Benched Pokémon.
+    // Generic moveEnergy only prompts self-Bench destinations and silently
+    // fails for this printed opponent-Bench movement.
+    if(key==='rushingWater'){
+      const source=foe.active;
+      if(!source||!foe.bench?.length)return;
+      if(stage==='bench'&&ctx.resolvingChoice){
+        const to=selectedFoe(),from=foe.active;
+        if(from?.uid===e.sourceUid&&to&&foe.bench.includes(to))
+          transferEnergy(from,to,e.energyChoice);
+        return;
+      }
+      if(stage==='energy'&&ctx.resolvingChoice){
+        const picked=energy(source)[Number(act.choiceOption)];
+        if(picked)ctx.requestChoice?.({kind:'pokemon',side:'self',selectionSide:ctx.foeSide,
+          includeActive:false,effect:{...e,stage:'bench',sourceUid:source.uid,energyChoice:picked}});
+        return;
+      }
+      const attached=energy(source);
+      if(attached.length)choose('energy',attached.map(x=>'Move '+x.label+' to an opposing Benched Pokémon'));
+      return;
+    }
     if(key==='encore'){
       const all=card(d)?.attacks||[];
       if(ctx.resolvingChoice){const allowed=all[Number(act.choiceOption)];if(d&&allowed){d.locks=d.locks||[];for(const att of all)if(att.name!==allowed.name)d.locks.push({action:'attack',attackName:att.name,expiresTurn:turn+1});}return;}

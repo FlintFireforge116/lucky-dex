@@ -2342,3 +2342,22 @@ Mechanical rules to preserve in future sets:
 - Harden checks the final damage threshold (40 or less) after matchup math.
 - Include these rules in Classic checks and never assume a schema-clean card
   is functionally correct without an executable scenario test.
+
+
+EMERGING POWERS INDEPENDENT AUDIT — v0.69.299 (19 Nov 2026)
+----------------------------------------------------------------
+[CURRENT] Simipour #23 Rushing Water must offer BOTH choices: which Energy
+attached to the opposing Active Pokémon to move, and which opposing Benched
+Pokémon receives it. Preserve the actual Energy attachment; do not auto-discard,
+copy it, or default the target to the opponent Active. If no legal Energy or
+Bench exists, resolve with no movement and no dead choice prompt.
+[CURRENT] Conditional off-type Energy payoffs belong in deck-builder metadata:
+Simisage #2 needs Fire for Fire's Power, Simisear #19 needs Water for Water's
+Power, and Simipour #23 needs Grass for Grass' Power. These are optional
+conditional buffs; preserve primary attack Energy costs and include both
+types in a focused auto-built deck when the selection constraints permit.
+[CURRENT] BW2 full-art identity: Thundurus #97 and Tornadus #98 are full-art
+prints and should have the correct metadata tag rather than generic rare-only
+metadata. Check generated cards AFTER the APK rebuild, not only source rows.
+[CHECK] Synthetic smoke actions and static review flags are not exhaustive
+execution proof; retain the independent regression tests in the APK preBuild.
