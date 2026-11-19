@@ -1178,6 +1178,9 @@
       // either hand; Supporters and Stadiums are distinct printed classes.
       if(state.format==='classic'&&trainerType(card)==='Item'&&
         ['player','opponent'].some(w=>pokemonOn(state.sides[w]).some(p=>p.cardId==='hgss3-24'&&!effects.abilitiesSuppressed(state,w,p,data.cardById))))return;
+      // Emerging Powers Gothitelle: Magic Room blocks opposing Items only while Active.
+      if(state.format==='classic'&&trainerType(card)==='Item'&&foe.active?.cardId==='bw2-47'&&
+        !effects.abilitiesSuppressed(state,side==='player'?'opponent':'player',foe.active,data.cardById))return;
       const type=trainerType(card),base={type:'trainer',handIndex,cardId:card.id};if(effects.isActionLocked(state,side,'Trainer',data.cardById)||effects.isActionLocked(state,side,type,data.cardById))return;
       if(card.effect?.type==='playFossil'){for(const benchIndex of emptyBenchSlots(s))actions.push({...base,target:'bench',benchIndex});return;}
       if(card.effect?.type==='rareCandy'){

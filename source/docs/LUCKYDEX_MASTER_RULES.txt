@@ -2299,3 +2299,46 @@ LUCKYDEX v0.69.289 / HGSS3 UNDAUNTED COMPLETION (18 NOV 2026)
 [ABILITIES] Black & White printed Abilities are distinct from older Poké-Powers and Poké-Bodies. Earlier suppression cards naming only Powers/Bodies, e.g. Cessation Crystal, cannot disable Shell Armor, Royal Heal, Inferno Fandango, Damage Swap or Shift Gear. Explicit contemporary ability suppression still takes effect where present. Special Conditions alone do not switch off B&W Abilities.
 [CI] Run `tests/v07296-black-white.test.cjs` and new `tests/v07297-bw1-independent-audit.test.cjs` at preBuild via auditBW1ForApk, while preserving earlier HGSS/COL1 gates. The independent tests verify Revenge's actual attack KO bookkeeping, no-op impossible Damage Swap targets, Ability suppression compatibility, checkup triggers, copy attacks, Energy Zone transfers, coin tails and status prerequisites. All local checks require a new GitHub APK build and phone test for runtime certification.
 [INSTALL] Keep normal cd / unzip patch -d source / git add / git commit / git push.
+
+============================================================
+BLACK & WHITE: EMERGING POWERS (BW2) — v0.69.298
+============================================================
+Canonical source: PokemonTCG/pokemon-tcg-data cards/en/bw2.json, pinned as
+ data/classic/bw2-print-compact.json and verified by scripts/build-bw2.py.
+98 distinct numbered prints: 91 Pokemon, 7 Trainers, including separate
+full-art Thundurus #97 and Tornadus #98. All are available in set selection,
+collection, Classic deck builder, CPU decks, and Test Lab through the common
+registry. Regenerate assets and run tests in the APK build.
+
+Mechanical rules to preserve in future sets:
+- Modern Abilities and earlier Poke-Powers/Poke-Bodies are separate classes.
+  Gothitelle (Magic Room) prevents only the opposing player's Items, only
+  while Gothitelle is Active, unless the Ability itself is suppressed. It
+  must not block a Supporter or Item played by Gothitelle's owner.
+- Nurturing evolves a chosen owned Pokemon from an actual matching Evolution
+  card in the deck, without first moving that card to hand; any ordinary
+  evolution-on-turn restrictions are bypassed by this attack's explicit text.
+- Helping Hand and Thundurus Charge must consume the selected physical basic
+  Energy from the deck or the ordered Energy Zone; never invent attachments.
+- Max Potion heals the selected Pokemon and moves *all* its attached Energy
+  into the appropriate physical or Basic-Energy discard accounting.
+- Great Ball reveals only the deck's current top seven; selecting a Pokemon
+  places that physical card into hand and shuffles the rest back into deck.
+  'Decline' is a real choice; unavailable non-Pokemon cards are not targets.
+- Crushing Hammer, Deleting Glare, and Black Eyes target only Pokemon with
+  Energy, and the player chooses which attached Energy is discarded. Black
+  Eyes is optional and only usable with Krookodile Active.
+- Power Whip, Feint Attack and other chosen-target attacks must present clear
+  target choices and honor printed Weakness, Resistance and effect bypasses.
+- Optional Superpower and Quick Tail Smash coin choices occur before damage
+  matching, with recoil and tails gate applied exactly as printed.
+- Shear, Energy Wheel, Hurricane, Tailwind, Charge Beam and Recycle move real
+  cards or tracked Basic Energy units between correct battle zones. Special
+  Energy is moved as a whole physical attachment, not as a free Basic Energy.
+- Phat Sound uses the *same* three flips against every opposing Pokemon;
+  active Weakness/Resistance applies but Bench Weakness/Resistance does not.
+- Sacred Sword and Zap Cannon restrict only their named attack on the next
+  own turn, not all attacks. Encore restricts all except the chosen move.
+- Harden checks the final damage threshold (40 or less) after matchup math.
+- Include these rules in Classic checks and never assume a schema-clean card
+  is functionally correct without an executable scenario test.

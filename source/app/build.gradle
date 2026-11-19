@@ -8,8 +8,8 @@ android {
         applicationId 'com.example.luckydex'
         minSdk 26
         targetSdk 35
-        versionCode 7282
-        versionName '0.69.297'
+        versionCode 7298
+        versionName '0.69.298'
     }
 
     signingConfigs {
@@ -380,4 +380,18 @@ tasks.register('auditBW1ForApk', Exec) {
 }
 tasks.matching { it.name == 'preBuild' || (it.name.startsWith('merge') && it.name.endsWith('Assets')) }.configureEach {
     dependsOn tasks.named('auditBW1ForApk')
+}
+
+// v0.69.298 Emerging Powers — pinned offline generator and regression suite.
+tasks.register('generateBW2ForApk', Exec) {
+    workingDir rootProject.projectDir
+    commandLine (System.getenv('LUCKYDEX_PYTHON') ?: 'python3'), 'scripts/build-bw2.py'
+}
+tasks.register('auditBW2ForApk', Exec) {
+    dependsOn tasks.named('generateBW2ForApk')
+    workingDir rootProject.projectDir
+    commandLine 'node', '--test', 'tests/v07298-emerging-powers.test.cjs'
+}
+tasks.matching { it.name == 'preBuild' || (it.name.startsWith('merge') && it.name.endsWith('Assets')) }.configureEach {
+    dependsOn tasks.named('auditBW2ForApk')
 }
