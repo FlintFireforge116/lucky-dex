@@ -529,7 +529,10 @@
       !/^Shaymin(?: LV\.X)?$/.test(data.cardById(slot?.cardId)?.name||'')&&
       pokemonOn(state.sides[side]).some(p=>p.cardId==='pl1-126'&&!effects.abilitiesSuppressed(state,side,p,data.cardById))?40:0;
     const gravitation=state.format==='classic'&&['player','opponent'].some(w=>pokemonOn(state.sides[w]).some(p=>p.cardId==='pl3-7'&&!effects.abilitiesSuppressed(state,w,p,data.cardById)))?20:0;
-    const extra=pl1Thankfulness+dp6Temple+majesticVeil+ex3LowPressure+rocketHideout+dp2Equip+(slot.cardId==='gym2-97'?10*Number(slot.energy?.Psychic||0):slot.cardId==='gym2-10'&&slot.gym2GiantGrowth&&state.sides[side].active===slot?40:0);return Math.max(1,copyHp+extra-gravitation+effects.modifierAmount(state,side,slot,'maxHp',data.cardById));}
+    const hgss4Nidoking=state.format==='classic'&&slot?.cardId==='hgss4-6'&&!effects.abilitiesSuppressed(state,side,slot,data.cardById)
+      ?20*pokemonOn(state.sides[side]).filter(p=>data.cardById(p.cardId)?.name==='Nidoqueen').length:0;
+    const hgss4Indigo=state.format==='classic'&&state.stadium?.cardId==='hgss4-86'&&data.cardById(slot?.cardId)?.stage==='LEGEND'?30:0;
+    const extra=hgss4Nidoking+hgss4Indigo+pl1Thankfulness+dp6Temple+majesticVeil+ex3LowPressure+rocketHideout+dp2Equip+(slot.cardId==='gym2-97'?10*Number(slot.energy?.Psychic||0):slot.cardId==='gym2-10'&&slot.gym2GiantGrowth&&state.sides[side].active===slot?40:0);return Math.max(1,copyHp+extra-gravitation+effects.modifierAmount(state,side,slot,'maxHp',data.cardById));}
   function ex14DarkEyes(state,usedBy,source,ability){
     if(state.format!=='classic'||!source||ability?.printedPowerType!=='power')return;
     const reacting=usedBy==='player'?'opponent':'player';
@@ -556,6 +559,14 @@
         }
       }
     }
+    if(state.format==='classic'&&event==='benched'&&meta.fromHand&&onlySource&&
+       data.cardById(onlySource.cardId)?.stage==='Basic'){
+      const enemySide=side==='player'?'opponent':'player',active=state.sides[enemySide].active;
+      if(active?.cardId==='hgss4-91'&&!effects.abilitiesSuppressed(state,enemySide,active,data.cardById)){
+        onlySource.damage=Number(onlySource.damage||0)+20;
+        state.log.push({type:'hgss4EyeOfDisaster',side:enemySide,targetUid:onlySource.uid,damage:20});
+      }
+    }
     // Record real from-hand attachments for printed same-turn attack conditions.
     // Energy Zone attachments deliberately do not count as from-hand events.
     if(state.format==='classic'&&event==='levelUp'&&meta.fromHand&&onlySource&&state.stadium?.cardId==='pl3-134'&&!effects.healingIsBlocked(state,onlySource,data.cardById)){
@@ -565,6 +576,13 @@
       if(Number(defending?.pl3SilverFeatherUntil||0)>=Number(state.turnNumber)&&data.cardById(onlySource.cardId)?.stage==='Basic'){
         onlySource.damage=Number(onlySource.damage||0)+20;state.log.push({type:'pl3SilverFeather',side,targetUid:onlySource.uid,amount:20});
       }
+    }
+    if(state.format==='classic'&&event==='energyAttached'&&onlySource&&meta.fromHand&&
+       onlySource.cardId==='hgss4-22'&&meta.energyType==='Water'&&
+       !effects.abilitiesSuppressed(state,side,onlySource,data.cardById)&&
+       !effects.healingIsBlocked(state,onlySource,data.cardById)){
+      onlySource.damage=Math.max(0,Number(onlySource.damage||0)-20);
+      state.log.push({type:'hgss4NaturalRemedy',side,targetUid:onlySource.uid});
     }
     if(event==='energyAttached'&&onlySource&&meta.fromHand){
       onlySource.lastHandEnergyType=meta.energyType;onlySource.lastHandEnergyAttachedTurn=state.turnNumber;
@@ -903,6 +921,18 @@
       for(const p of pokemonOn(state.sides[side])){const c=data.cardById(p.cardId);if(p===slot||c?.name!=='Arceus'||!c.battleEnabled)continue;
         for(const [attackIndex,attack] of (c.attacks||[]).entries()){const key=c.id+':'+attackIndex;if(seen.has(key))continue;seen.add(key);out.push({cardId:c.id,attackIndex,attack,borrowed:true});}}
     }
+    // Triumphant Mew Prime Lost Link borrows printed attacks of Pokémon in
+    // either player's Lost Zone, never cards still in discard/deck/hand.
+    if(state.format==='classic'&&current.id==='hgss4-97'&&!effects.abilitiesSuppressed(state,side,slot,data.cardById)){
+      const seen=new Set(out.map(x=>x.cardId+':'+x.attackIndex));
+      for(const which of ['player','opponent'])for(const ref of state.sides[which].lostZone||[]){
+        const mon=data.cardById(ref.cardId);if(mon?.kind!=='pokemon'||!mon.battleEnabled)continue;
+        for(const [attackIndex,attack] of (mon.attacks||[]).entries()){
+          const key=mon.id+':'+attackIndex;if(seen.has(key))continue;
+          seen.add(key);out.push({cardId:mon.id,attackIndex,attack,borrowed:true});
+        }
+      }
+    }
     // Undaunted Espeon Prime Evolution Memories borrows the attacks from
     // each Eevee evolution in play (excluding other Espeon Prime copies).
     if(state.format==='classic'&&current.id==='hgss3-81'&&!effects.abilitiesSuppressed(state,side,slot,data.cardById)){
@@ -1086,6 +1116,12 @@
     }
   }
   function legalActions(state, side){
+    if(state?.format==='classic')for(const who of ['player','opponent']){
+      const foeSide=who==='player'?'opponent':'player',foe=state.sides[foeSide],board=state.sides[who];
+      const activeDitto=pokemonOn(foe).some(p=>p.cardId==='hgss4-17'&&!effects.abilitiesSuppressed(state,foeSide,p,data.cardById));
+      if(activeDitto&&Number(board.benchLimit||3)===3)board.benchLimit=4;
+      else if(!activeDitto&&Number(board.benchLimit||3)===4&&!state.stadium)board.benchLimit=3;
+    }
     effects.applyContinuousRules?.(state,data.cardById);
     if(state?.format==='classic')effects.florio114PrismCleanup?.(state);
     if(state?.format==='classic')ex9MiloticScaleCleanup(state);
@@ -1115,7 +1151,7 @@
     // A LEGEND is exactly TWO physical halves played TOGETHER onto an empty
     // Bench position, never as either half alone. Both remain recoverable.
     if(state.format==='classic'&&s.bench.length<maxBenchSize(s)){
-      for(const [first,second] of [['hgss1-111','hgss1-112'],['hgss1-113','hgss1-114'],['hgss2-90','hgss2-91'],['hgss2-92','hgss2-93'],['hgss2-94','hgss2-95'],['hgss3-87','hgss3-88'],['hgss3-89','hgss3-90']]){
+      for(const [first,second] of [['hgss1-111','hgss1-112'],['hgss1-113','hgss1-114'],['hgss2-90','hgss2-91'],['hgss2-92','hgss2-93'],['hgss2-94','hgss2-95'],['hgss3-87','hgss3-88'],['hgss3-89','hgss3-90'],['hgss4-99','hgss4-100'],['hgss4-101','hgss4-102']]){
         const i=s.hand.findIndex(r=>r.cardId===first),j=s.hand.findIndex(r=>r.cardId===second);
         if(i>=0&&j>=0&&data.cardById(first)?.battleEnabled&&data.cardById(second)?.battleEnabled)
           for(const benchIndex of emptyBenchSlots(s))actions.push({type:'legendBench',cardId:first,handIndex:i,secondHandIndex:j,benchIndex});
@@ -1133,6 +1169,9 @@
       const card = data.cardById(ref.cardId);
       if(!card||card.kind!=='trainer'||!card.battleEnabled||card.id==='pl1-117')return; // Power Spray is an opponent-turn interrupt only.
       if(state.format==='classic'&&card.id==='pl2-89'&&s.hand.length<2)return; // Bebe must return a second card.
+      if(state.format==='classic'&&['hgss4-85','hgss4-89'].includes(card.id)&&s.prizes.length<=foe.prizes.length)return;
+      if(state.format==='classic'&&card.id==='hgss4-87'&&
+         (s.hand.length<3||!s.discard.some(r=>data.cardById(r.cardId)?.kind==='trainer'&&['Item','Trainer','AttachedTrainer'].includes(data.cardById(r.cardId)?.trainerType)&&r.cardId!=='hgss4-87')))return;
       if(state.format==='classic'&&card.id==='hgss2-75'&&!s.hand.some((other,i)=>i!==handIndex&&data.cardById(other.cardId)?.kind==='energy'))return; // Engineer must actually discard an Energy from hand.
       if(state.format==='classic'&&/Technical Machine/i.test(card.name||'')&&['player','opponent'].some(w=>pokemonOn(state.sides[w]).some(slot=>slot.cardId==='ex9-96'&&!effects.abilitiesSuppressed(state,w,slot,data.cardById))))return;
       // HGSS3 Vileplume Allergy Flower blocks Trainer cards played from
@@ -1334,6 +1373,10 @@
         if(source.cardId==='hgss3-8'&&(!foe.hand.some(r=>{const c=data.cardById(r.cardId);return c?.kind==='trainer'&&trainerType(c)==='Supporter';})||source!==s.active))return;
         if(source.cardId==='hgss3-20'&&(!s.prizes.length||!s.deck.length))return;
         if(source.cardId==='hgss3-85'&&!s.deck.length)return;
+        if(source.cardId==='hgss4-92'&&!s.hand.some(r=>data.cardById(r.cardId)?.basicEnergy&&data.cardById(r.cardId)?.subtype==='Grass'))return;
+        if(source.cardId==='hgss4-95'&&(source===s.active||!s.active||!(Number(s.active.energy?.Fighting||0)>0||(s.active.specialEnergy||[]).some(r=>Number((r.provides||data.cardById(r.cardId)?.effect?.provides||{}).Fighting||0)>0))))return;
+        if(source.cardId==='hgss4-7'&&!(s.discard||[]).some(r=>data.cardById(r.cardId)?.kind==='trainer'))return;
+        if(source.cardId==='hgss4-96'&&s.hand.length>=6)return;
         if(source.cardId==='hgss3-83'&&(!pokemonOn(s).some(p=>p!==source&&(Number(p.energy?.Lightning||0)>0||(p.specialEnergy||[]).some(r=>{const q=r.provides||data.cardById(r.cardId)?.effect?.provides||{};return Number(q.Lightning||0)>0||Number(q.Miracle||0)>0||Number(q.Rainbow||0)>0;})))))return;
         if(source.cardId==='hgss2-13'&&ability.name==='Wash Out'&&(!s.active||!s.bench.some(p=>Number(p?.energy?.Water||0)>0||(p?.specialEnergy||[]).some(r=>{const q=r.provides||data.cardById(r.cardId)?.effect?.provides||{};return Number(q.Water||0)>0||Number(q.Miracle||0)>0||Number(q.Rainbow||0)>0;}))))return;
         if(source.cardId==='hgss2-16'&&ability.name==='Water Acceleration'&&!s.hand.some(r=>{const c=data.cardById(r.cardId);return c?.basicEnergy&&c.subtype==='Water';}))return;
@@ -1390,6 +1433,8 @@
         if(ability.vstarPower&&s.vstarPowerUsed)return;
         // Mesprit Psychic Bind blocks Powers, never printed Poké-Bodies.
         if(state.format==='classic'&&ability.printedPowerType==='power'&&Number(s.dp6PsychicBindUntil||-1)>=Number(state.turnNumber))return;
+        if(state.format==='classic'&&ability.printedPowerType==='power'&&Number(s.hgss4PowersLockedUntil||-1)>=Number(state.turnNumber))return;
+
         // Form Change / Temperament are family-wide limits, not per-card
         // limits.  The same slot can change artwork and card ID mid-turn.
         if(ability.formGroup){
@@ -2072,6 +2117,25 @@
           state.log.push({type:'founjaTeleport',side,cardId:slot.cardId});
         }
         else if(slot.pl2WaterRescue){delete slot.pl2WaterRescue;for(const [i,id] of (slot.stack||[slot.cardId]).entries())s.hand.push({uid:slot.uid+'-waterrescue-'+i,cardId:id});s.hand.push(...toolsOf(slot),...temporaryTrainersOf(slot),...(slot.specialEnergy||[]));const ids={Grass:'dp1-123',Fire:'dp1-124',Water:'dp1-125',Lightning:'dp1-126',Psychic:'dp1-127',Fighting:'dp1-128',Darkness:'lental-basic-darkness',Metal:'lental-basic-metal'};for(const [type,n] of Object.entries(slot.energy||{}))for(let i=0;i<Number(n||0);i++)s.hand.push({uid:slot.uid+'-waterrescue-energy-'+type+'-'+i,cardId:ids[type],zoneGenerated:true});state.log.push({type:'pl2WaterRescue',side,cardId:slot.cardId});}
+        else if(state.format==='classic'&&cause==='attack'&&eventSource?.attack&&eventSource.side===foeSide&&
+          (slot.specialEnergy||[]).some(r=>r.cardId==='hgss4-90')){
+          const top=slot.stack.at(-1)||slot.cardId,old=s.discard.length;
+          discardKnockedOut(s,slot);
+          const j=s.discard.findLastIndex(r=>r.cardId===top);
+          if(j>=old){const ref=s.discard.splice(j,1)[0];s.hand.push(ref);}
+          state.log.push({type:'hgss4RescueEnergy',side,cardId:top});
+        }
+        else if(state.format==='classic'&&cause==='attack'&&eventSource?.attack&&eventSource.side===foeSide&&
+          ((slot.hgss4LostKo?.turn===state.turnNumber&&slot.hgss4LostKo?.uid===eventSource.uid)||
+           (foe.active?.cardId==='hgss4-94'&&!effects.abilitiesSuppressed(state,foeSide,foe.active,data.cardById)))){
+          const full=slot.hgss4LostKo?.uid===eventSource.uid&&slot.hgss4LostKo?.turn===state.turnNumber;
+          const old=s.discard.length,stack=slot.stack||[slot.cardId];discardKnockedOut(s,slot);
+          s.lostZone=s.lostZone||[];
+          const extras=s.discard.splice(old);
+          if(full)s.lostZone.push(...extras);
+          else for(const ref of extras){if(stack.includes(ref.cardId))s.lostZone.push(ref);else s.discard.push(ref);}
+          state.log.push({type:'hgss4CatastropheLostZone',side,full,cardId:slot.cardId});
+        }
         else if(effects.florio114RescueKO?.(state,side,slot,source,data.cardById)){}
         else if(guardEligible&&koGuard.mode==='returnToHand'){
           const top=slot.stack[slot.stack.length-1];for(let i=slot.stack.length-2;i>=0;i--)s.discard.push({uid:`${slot.uid}-stack-${i}`,cardId:slot.stack[i]});for(const tool of toolsOf(slot))s.discard.push(tool);for(const ref of temporaryTrainersOf(slot))s.discard.push(ref);for(const energy of slot.specialEnergy||[])s.discard.push(energy);if(top&&(s.handLimit==null||s.hand.length<s.handLimit))s.hand.push({uid:`${slot.uid}-rescued`,cardId:top});else if(top)s.discard.push({uid:`${slot.uid}-rescued`,cardId:top});
@@ -2373,7 +2437,7 @@
 
     if(matched.type==='legendBench'){
       const first=s.hand[matched.handIndex],second=s.hand[matched.secondHandIndex];
-      const pairs={'hgss1-111':'hgss1-112','hgss1-113':'hgss1-114','hgss2-90':'hgss2-91','hgss2-92':'hgss2-93','hgss2-94':'hgss2-95','hgss3-87':'hgss3-88','hgss3-89':'hgss3-90'};const required=pairs[first?.cardId]||null;
+      const pairs={'hgss1-111':'hgss1-112','hgss1-113':'hgss1-114','hgss2-90':'hgss2-91','hgss2-92':'hgss2-93','hgss2-94':'hgss2-95','hgss3-87':'hgss3-88','hgss3-89':'hgss3-90','hgss4-99':'hgss4-100','hgss4-101':'hgss4-102'};const required=pairs[first?.cardId]||null;
       if(!required||second?.cardId!==required||emptyBenchSlots(s).indexOf(matched.benchIndex)<0)throw new Error('Both matching LEGEND halves must be in hand.');
       for(const i of [matched.handIndex,matched.secondHandIndex].sort((a,b)=>b-a))s.hand.splice(i,1);
       const placed=makePokemonSlot(first.cardId,s.turnCount,first.uid);placed.stack=[first.cardId,second.cardId];placed.legendHalfUids=[first.uid,second.uid];

@@ -51,13 +51,13 @@ test('Triumphant is registered in collection, player picker, CPU picker, deck bu
  const ver=gradle.match(/versionName '([^']+)'/)[1];assert.ok(fs.readFileSync(path.join(assets,'index.html'),'utf8').includes('v'+ver));
  assert.ok(fs.readFileSync(path.join(assets,'app-v0167.js'),'utf8').includes("__LUCKYDEX_BUILD='"+ver+"'"));
 });
-test('each two-half LEGEND remains a matched pair and is correctly gated until combat is implemented',()=>{
+test('each two-half LEGEND is a matched, battle-enabled pair after completion',()=>{
  for(const [a,b] of [['99','100'],['101','102']]){
   const left=hg.cardById(id(a)),right=hg.cardById(id(b));
   assert.equal(left.stage,'LEGEND');assert.equal(right.stage,'LEGEND');assert.equal(left.legendPair,right.legendPair);
   assert.equal(left.prizeCards,2);assert.equal(right.prizeCards,2);
   assert.equal(left.battleEnabled,right.battleEnabled);assert.equal(left.deckEligible,right.deckEligible);
-  assert.equal(left.battleEnabled,false,'Do not enable a paired LEGEND with placeholder attack mechanics');
+  assert.equal(left.battleEnabled,true,'Both halves must be playable together after completion');
  }
 });
 test('multiplicative printed damage does not add an incorrect fixed damage value',()=>{

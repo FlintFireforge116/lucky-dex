@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 """Source-pinned 103-print Pokémon TCG HGSS Triumphant generator.
 
-The exact official collector transcription is bundled. Unknown complex effects
-remain collectible, but explicitly gated from Classic battles and CPU decks.
+The exact official collector transcription is bundled. Every printed card
+now has an executable battle handler; CI rejects unexpected gating.
 """
 import hashlib,json,re
 from pathlib import Path
@@ -58,7 +58,7 @@ def generate():
     'printedPowerType':'power' if ptype=='Poké-Power' else 'body','disabledByStatus':ptype=='Poké-Power',**mapping})
   trainer=V.TRAINERS.get(number) if kind=='trainer' else None
   if kind=='trainer' and trainer is None:errors.append('Unverified printed Trainer effect')
-  if kind=='energy':errors.append('Rescue Energy KO-return trigger not yet implemented')
+  # Rescue Energy has a dedicated KO return trigger in the Classic engine.
   if kind=='pokemon' and not hp:errors.append('Missing printed HP')
   c={'id':'hgss4-'+number,'setId':'hgss4','number':number,'name':name,'source':'tcg','battleFormat':'classic','kind':kind,
    'rarity':rarity or '', 'image':f'https://images.pokemontcg.io/hgss4/{number}.png',

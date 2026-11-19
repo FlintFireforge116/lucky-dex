@@ -102,6 +102,71 @@ TRAINERS={
  # None of these special cards receives a misleading generic substitute.
 }
 
+# Triumphant completion uses one explicit rule ID per printed interaction.
+# Each ID must have an executable shared-engine handler; no unverified noop.
+def R(n,slug):return {'type':'neoRule','rule':f'hgss4:{n}:{slug}'}
+COMPLETION_ATTACKS={
+ ('3','Future Sight'):R('3','futureSight'),
+ ('5','Snowstorm'):R('5','snowstorm'),
+ ('7','Suspicious Beam β'):R('7','suspiciousBeam'),
+ ('10','Color Tag'):R('10','colorTag'),
+ ('13','Astonish'):R('13','astonish'),('13','Tail Spank'):R('13','tailSpank'),
+ ('14','Lost Crush'):R('14','lostCrush'),('14','Breakdown'):R('14','breakdown'),
+ ('15','Legend Ceremony'):R('15','legendCeremony'),('15','Reflect Energy'):R('15','reflectEnergy'),
+ ('18','Dragon Stamp'):R('18','dragonStamp'),
+ ('20','Plasma'):R('20','plasma'),('20','Thunder Shot'):R('20','thunderShot'),
+ ('22','Powerful Splash'):R('22','powerfulSplash'),
+ ('23','Psychic Lock'):R('23','psychicLock'),('23','Bench Manipulation'):R('23','benchManipulation'),
+ ('26','Vital Throw'):R('26','vitalThrow'),
+ ('27','Top Burner'):R('27','topBurner'),('28','Prize Count'):R('28','prizeCount'),
+ ('29','Headwind'):R('29','headwind'),('30','Strip Bare'):R('30','stripBare'),
+ ('34','Lightning Strike'):R('34','lightningStrike'),
+ ('35','Sneaky Placement'):R('35','sneakyPlacement'),
+ ('39','Rendezvous Draw'):R('39','rendezvousDraw'),('39','Distorted Wave'):R('39','distortedWave'),
+ ('47','Twister'):R('47','twister'),('50','Tentavolve'):R('50','tentavolve'),
+ ('53','Corrode Target'):R('53','corrodeTarget'),
+ ('63','Sneaky Placement'):R('63','sneakyPlacement'),
+ ('64','Sweet Scent'):R('64','sweetScent'),('64','Vulcan Beat'):R('64','vulcanBeat'),
+ ('70','Pheromone Poison'):R('70','pheromonePoison'),
+ ('75','Disable'):R('75','disable'),('75','Haunt'):R('75','haunt'),
+ ('82','Illumisile'):R('82','illumisile'),('82','Firefly Light'):S(ST('burn'),ST('confusion')),
+ ('91','Vicious Claw'):R('91','viciousClaw'),('92','Time Circle'):R('92','timeCircle'),
+ ('94','Hurl into Darkness'):R('94','hurlIntoDarkness'),('94','Cursed Drop'):R('94','cursedDrop'),
+ ('95','Crushing Punch'):R('95','crushingPunch'),('95','Champ Buster'):R('95','champBuster'),
+ ('96','Lost Burn'):R('96','lostBurn'),('97','See Off'):R('97','seeOff'),
+ ('99','Lost Crisis'):R('99','lostCrisis'),('100','Lost Crisis'):R('99','lostCrisis'),
+ ('99',"Moon's Invite"):R('99','moonsInvite'),('100',"Moon's Invite"):R('99','moonsInvite'),
+ ('101','Sudden Delete'):R('101','suddenDelete'),('102','Sudden Delete'):R('101','suddenDelete'),
+ ('101','Time Control'):R('101','timeControl'),('102','Time Control'):R('101','timeControl'),
+}
+ATTACKS.update(COMPLETION_ATTACKS)
+COMPLETION_ABILITIES={
+ ('6','Pheromone Stamina'):{'type':'passive','effect':R('6','pheromoneStamina')},
+ ('7','Dimension Transfer'):{'type':'activated','oncePerTurn':True,'effect':R('7','dimensionTransfer')},
+ ('9','Heal Block'):{'type':'passive','effect':R('9','healBlock')},
+ ('10','Spooky Whirlpool'):{'type':'triggered','event':'benched','fromHandOnly':True,'effect':R('10','spookyWhirlpool')},
+ ('17','Dittobolic'):{'type':'passive','effect':R('17','dittobolic')},
+ ('22','Natural Remedy'):{'type':'passive','effect':R('22','naturalRemedy')},
+ ('60','Lonely Bone'):{'type':'passive','effect':R('60','lonelyBone')},
+ ('91','Eye of Disaster'):{'type':'passive','activeOnly':True,'effect':R('91','eyeOfDisaster')},
+ ('92','Forest Breath'):{'type':'activated','oncePerTurn':True,'activeOnly':True,'effect':R('92','forestBreath')},
+ ('93','Energymite'):{'type':'activated','oncePerTurn':True,'effect':R('93','energymite')},
+ ('94','Catastrophe'):{'type':'passive','activeOnly':True,'effect':R('94','catastrophe')},
+ ('95','Fighting Tag'):{'type':'activated','oncePerTurn':True,'benchOnly':True,'effect':R('95','fightingTag')},
+ ('96','Magnetic Draw'):{'type':'activated','oncePerTurn':True,'effect':R('96','magneticDraw')},
+ ('97','Lost Link'):{'type':'passive','effect':R('97','lostLink')},
+ ('98','Insight'):{'type':'passive','effect':R('98','insight')},
+}
+ABILITIES.update(COMPLETION_ABILITIES)
+TRAINERS.update({
+ '85':('Supporter',R('85','blackBelt')),
+ '86':('Stadium',R('86','indigoPlateau')),
+ '87':('Item',R('87','junkArm')),
+ '88':('Supporter',R('88','seeker')),
+ '89':('Supporter',R('89','twins')),
+ 'FOUR':('Item',R('FOUR','alphLithograph')),
+})
+
 def attack(row,a):
  key=(str(row[0]),a[0]);effect=ATTACKS.get(key)
  if effect is not None:return effect

@@ -8,8 +8,8 @@ android {
         applicationId 'com.example.luckydex'
         minSdk 26
         targetSdk 35
-        versionCode 7277
-        versionName '0.69.291'
+        versionCode 7278
+        versionName '0.69.292'
     }
 
     signingConfigs {
@@ -332,8 +332,8 @@ tasks.matching { it.name == 'preBuild' || (it.name.startsWith('merge') && it.nam
     dependsOn tasks.named('independentHGSS3ForApk')
 }
 
-// v0.69.291 HeartGold & SoulSilver Triumphant: bundled immutable 103-print
-// collector transcription, gated-only verified gameplay, player/CPU integration.
+// v0.69.292 HeartGold & SoulSilver Triumphant complete: source-pinned 103
+// printed cards, two exact LEGEND pairs and verified move/Prime/Prize choices.
 tasks.register('generateHGSS4ForApk', Exec) {
     workingDir rootProject.projectDir
     commandLine (System.getenv('LUCKYDEX_PYTHON') ?: 'python3'), 'scripts/build-hgss4.py'
@@ -341,7 +341,7 @@ tasks.register('generateHGSS4ForApk', Exec) {
 tasks.register('auditHGSS4ForApk', Exec) {
     dependsOn tasks.named('generateHGSS4ForApk')
     workingDir rootProject.projectDir
-    commandLine 'node', '--test', 'tests/v07291-triumphant-stage1.test.cjs'
+    commandLine 'node', '--test', 'tests/v07291-triumphant-stage1.test.cjs', 'tests/v07292-triumphant-completion.test.cjs'
 }
 tasks.register('independentHGSS4ForApk', Exec) {
     dependsOn tasks.named('auditHGSS4ForApk')
