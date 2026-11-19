@@ -8,8 +8,8 @@ android {
         applicationId 'com.example.luckydex'
         minSdk 26
         targetSdk 35
-        versionCode 7279
-        versionName '0.69.293'
+        versionCode 7280
+        versionName '0.69.294'
     }
 
     signingConfigs {
@@ -350,4 +350,20 @@ tasks.register('independentHGSS4ForApk', Exec) {
 }
 tasks.matching { it.name == 'preBuild' || (it.name.startsWith('merge') && it.name.endsWith('Assets')) }.configureEach {
     dependsOn tasks.named('independentHGSS4ForApk')
+}
+
+// v0.69.294 Call of Legends: 95 numbered cards, 11 SL secret rares.
+// The pinned 106-print transcription is bundled in source/data/classic.
+// Builds verify the source hash and never fetch print text.
+tasks.register('generateCOL1ForApk', Exec) {
+    workingDir rootProject.projectDir
+    commandLine (System.getenv('LUCKYDEX_PYTHON') ?: 'python3'), 'scripts/build-col1.py'
+}
+tasks.register('auditCOL1ForApk', Exec) {
+    dependsOn tasks.named('generateCOL1ForApk')
+    workingDir rootProject.projectDir
+    commandLine 'node', '--test', 'tests/v07294-call-of-legends.test.cjs'
+}
+tasks.matching { it.name == 'preBuild' || (it.name.startsWith('merge') && it.name.endsWith('Assets')) }.configureEach {
+    dependsOn tasks.named('auditCOL1ForApk')
 }

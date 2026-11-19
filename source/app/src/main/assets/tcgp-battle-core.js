@@ -2912,7 +2912,7 @@
         if(state.format==='classic'&&foe.active?.cardId==='ex1-10'&&!effects.abilitiesSuppressed(state,foeSide,foe.active,data.cardById)&&
           !foe.active.conditions?.sleep&&!foe.active.conditions?.paralysis&&!foe.active.conditions?.confusion)damage=Math.max(0,damage-10);
         if(state.format==='classic'&&damage>0&&attackerCard.types?.includes('Darkness'))
-          damage+=10*(s.active.specialEnergy||[]).filter(ref=>ref.cardId==='hgss3-79').length;
+          damage+=10*(s.active.specialEnergy||[]).filter(ref=>['hgss3-79','col1-86'].includes(ref.cardId)).length;
         if(state.format==='classic'&&damage>0&&!miraculousWindActive(state)&&
           (attackerCard.types?.includes('Darkness')||/Dark/i.test(attackerCard.name||'')))
           damage+=10*(s.active.specialEnergy||[]).filter(r=>['ex1-93','ex9-86','ex10-96','ex11-103','ex13-94','ex16-87','dp2-119','dp3-129','dp5-93'].includes(r.cardId)).length;
