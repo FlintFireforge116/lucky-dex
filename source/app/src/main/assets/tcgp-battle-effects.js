@@ -7,7 +7,7 @@
   const ENERGY_CODE = Object.freeze({G:'Grass',R:'Fire',W:'Water',L:'Lightning',P:'Psychic',F:'Fighting',D:'Darkness',M:'Metal',C:'Colorless'});
   const ENERGY_TYPES=Object.values(ENERGY_CODE);
   const TARGETS=['eventPokemon','self','selfActive','selfBench','selfPokemon','opponentActive','opponentBench','opponentPokemon','opponentAll','selfAll','selfBenchAll'];
-  const CONDITIONS=['selfDamaged','selfUndamaged','opponentDamaged','opponentStatus','selfStatus','opponentEx','selfEnergyAtLeast','opponentEnergyAtLeast','benchAtLeast','selfHasTool','selfHasTechnicalMachine','selfStackContains','opponentDamageAtLeast','opponentPrizesRemaining','opponentPrizesAtMost','opponentHasTool','opponentHasSpecialEnergy','selfExtraEnergyAtLeast','supporterPlayed','noSupporterInPlay','stadiumInPlay','opponentMatches','pokemonPresent','koLastOpponentTurn','sweetsRelayLastTurn','movedFromBenchThisTurn','evolvedThisTurn','selfHasEnergyType','selfMoreEnergy','opponentHpGreater','selfRemainingHpAtMost','handSizeOneOf','sameEnergyTypeAtLeast','opponentPointsExact','combinedActiveEnergyAtLeast','teamEnergyAtLeast','teamDistinctEnergyTypesAtLeast','discardContains','equalEnergyCount','handSizesEqual','ownPointsExact','opponentHpLess','fewerPokemonInPlay','opponentHandSizeOneOf','selfDistinctEnergyTypesAtLeast','ownTurnCountAtMost','selfMatches','opponentStadiumInPlay','pokemonPresentAll','damagedByAttackLastOpponentTurn','notDamagedByAttackLastOpponentTurn','activeMatches','ownPointsAtLeast','teamDistinctTypesAtLeast','firstAttackAfterPlay','opponentPointsGainedLastTurn','handAtLeast','selfRemainingHpAbove','selfRemainingHpFractionAtMost','selfRetreatCostAtLeast','koLastOpponentTurnFilter','selfOnBench','selfIsActive','selfNoEnergy','deckEmpty','opponentPointsAtLeast','ownTurnCountAtLeast'];
+  const CONDITIONS=['selfDamaged','selfUndamaged','opponentDamaged','opponentStatus','selfStatus','opponentEx','selfEnergyAtLeast','opponentEnergyAtLeast','benchAtLeast','selfHasTool','selfHasTechnicalMachine','selfStackContains','opponentDamageAtLeast','opponentPrizesRemaining','opponentPrizesAtMost','opponentHasTool','opponentHasSpecialEnergy','selfExtraEnergyAtLeast','supporterPlayed','noSupporterInPlay','stadiumInPlay','opponentMatches','pokemonPresent','koLastOpponentTurn','koByOpponentAttackLastTurn','sweetsRelayLastTurn','movedFromBenchThisTurn','evolvedThisTurn','selfHasEnergyType','selfMoreEnergy','opponentHpGreater','selfRemainingHpAtMost','handSizeOneOf','sameEnergyTypeAtLeast','opponentPointsExact','combinedActiveEnergyAtLeast','teamEnergyAtLeast','teamDistinctEnergyTypesAtLeast','discardContains','equalEnergyCount','handSizesEqual','ownPointsExact','opponentHpLess','fewerPokemonInPlay','opponentHandSizeOneOf','selfDistinctEnergyTypesAtLeast','ownTurnCountAtMost','selfMatches','opponentStadiumInPlay','pokemonPresentAll','damagedByAttackLastOpponentTurn','notDamagedByAttackLastOpponentTurn','activeMatches','ownPointsAtLeast','teamDistinctTypesAtLeast','firstAttackAfterPlay','opponentPointsGainedLastTurn','handAtLeast','selfRemainingHpAbove','selfRemainingHpFractionAtMost','selfRetreatCostAtLeast','koLastOpponentTurnFilter','selfOnBench','selfIsActive','selfNoEnergy','deckEmpty','opponentPointsAtLeast','ownTurnCountAtLeast'];
   const FILTER_KEYS=['kind','stage','subtype','notSubtype','name','trainerType','isEx','damaged','evolved','hasAbility','hasBody','evolvesFrom','hasEnergyType','hasAnyEnergy','basicEnergy','specialEnergy','classicRecoverable','nameContains','hpAtMost','retreatAtLeast','energyTypeAtLeast','points','attackName','tag'];
   const STATUSES=['poison','burn','sleep','paralysis','confusion'];
   const STATS=['attackDamage','damageReduction','retreatCost','attackCost','maxHp','energyMultiplier','poisonDamageBonus','attackCostGrass','attackCostFire','attackCostWater','attackCostLightning','attackCostPsychic','attackCostFighting','attackCostDarkness','attackCostMetal','attackCostColorless','damageTaken','attackDamageAllTargets','postWeaknessAttackDamage','darkShadow'];
@@ -221,6 +221,7 @@
       case 'selfEnergyAtLeast':case 'opponentEnergyAtLeast':{const slot=c.type==='selfEnergyAtLeast'?a:d,e=slot?.energy||{};let count=c.energyType?Number(e[c.energyType]||0):totalEnergy(e);if(c.countSpecial){for(const ref of slot?.specialEnergy||[]){const provides=ref.provides||ctx.cardById?.(ref.cardId)?.effect?.provides||{};count+=c.energyType?Number(provides[c.energyType]||0):Object.values(provides).reduce((sum,n)=>sum+Number(n||0),0);}}return count>=Number(c.amount||0);}
       case 'benchAtLeast':return (c.side==='opponent'?other(ctx):own(ctx)).bench.length>=Number(c.amount||0);
       case 'koLastOpponentTurn':return Number(own(ctx).lastKnockoutTurn||-99)===Number(ctx.state.turnNumber)-1;
+      case 'koByOpponentAttackLastTurn':return Number(own(ctx).lastOpponentAttackKoTurn||-99)===Number(ctx.state.turnNumber)-1;
       case 'sweetsRelayLastTurn':return own(ctx).lastAttackName==='Sweets Relay'&&Number(own(ctx).lastAttackTurn||-99)===Number(ctx.state.turnNumber)-2;
       case 'movedFromBenchThisTurn':return Number(a?.movedToActiveTurn||-99)===Number(ctx.state.turnNumber);
       case 'evolvedThisTurn':return Number(a?.evolvedOnTurn||-99)===Number(ctx.state.turnNumber);
@@ -10713,7 +10714,7 @@
       ownAll=()=>pokemonOn(ss),foeAll=()=>pokemonOn(foe),
       card=ref=>ctx.cardById(ref?.cardId),label=ref=>card(ref)?.name||'Card',
       chosen=which=>selected(ctx,which==='opponent'?foe:ss),
-      pick=(phase,which='self',extra={})=>ctx.requestChoice?.({kind:'pokemon',side:'self',selectionSide:which==='opponent'?ctx.foeSide:ctx.side,includeActive:true,effect:{...e,stage:phase,...extra}}),
+      pick=(phase,which='self',extra={})=>{const {excludeUids,filter,...flow}=extra;ctx.requestChoice?.({kind:'pokemon',side:'self',selectionSide:which==='opponent'?ctx.foeSide:ctx.side,includeActive:true,...(excludeUids?{excludeUids}:{}),...(filter?{filter}:{}),effect:{...e,stage:phase,...flow}});},
       options=(phase,choices,extra={})=>choices.length&&ctx.requestChoice?.({kind:'option',side:'self',options:choices,effect:{...e,stage:phase,...extra}}),
       log=(details={})=>ctx.state.log.push({type:'blackWhiteRule',side:ctx.side,rule:key,...details});
     const heal=(slot,n)=>{if(slot&&!healingIsBlocked(ctx.state,slot,ctx.cardById))slot.damage=Math.max(0,Number(slot.damage||0)-n);};
@@ -10727,10 +10728,11 @@
       if(ss.hand.some(valid))ctx.requestChoice?.({kind:'handCard',side:'self',filter:{kind:'energy',basicEnergy:true,providesEnergyType:'Fire'},effect:{...e,stage:'card'}});return;
     }
     if(key==='damageSwap'){
-      if(stage==='source'&&ctx.resolvingChoice){const src=chosen('self');if(src&&src.damage>=10&&ownAll().some(p=>p!==src&&Number(p.damage||0)+10<Number(ctx.maxHp?.(ctx.side,p)||card(p)?.hp||0)))pick('target','self',{sourceUid:src.uid});return;}
+      if(stage==='source'&&ctx.resolvingChoice){const src=chosen('self');if(src&&src.damage>=10&&ownAll().some(p=>p!==src&&Number(p.damage||0)+10<Number(ctx.maxHp?.(ctx.side,p)||card(p)?.hp||0)))pick('target','self',{sourceUid:src.uid,excludeUids:ownAll().filter(p=>p===src||Number(p.damage||0)+10>=Number(ctx.maxHp?.(ctx.side,p)||card(p)?.hp||0)).map(p=>p.uid)});return;}
       if(stage==='target'&&ctx.resolvingChoice){const src=ownAll().find(p=>p.uid===e.sourceUid),dest=chosen('self');const hp=Number(ctx.maxHp?.(ctx.side,dest)||card(dest)?.hp||0);
         if(src&&dest&&src!==dest&&src.damage>=10&&Number(dest.damage||0)+10<hp){src.damage-=10;dest.damage=Number(dest.damage||0)+10;log({from:src.cardId,to:dest.cardId});}return;}
-      if(ownAll().some(src=>src.damage>=10&&ownAll().some(dest=>src!==dest&&Number(dest.damage||0)+10<Number(ctx.maxHp?.(ctx.side,dest)||card(dest)?.hp||0))))pick('source');return;
+      const valid=src=>src.damage>=10&&ownAll().some(dest=>src!==dest&&Number(dest.damage||0)+10<Number(ctx.maxHp?.(ctx.side,dest)||card(dest)?.hp||0));
+      if(ownAll().some(valid))pick('source','self',{excludeUids:ownAll().filter(src=>!valid(src)).map(src=>src.uid)});return;
     }
     if(key==='naturePower')return; // additive damage is evaluated in resolveAttack before Weakness
     if(key==='flameCharge'){
@@ -18189,6 +18191,15 @@ if(r==='lastResort')return ss.hand.length===0?[{}]:[];if(r==='surgeSwap')return 
     return heads;
   }
   function abilitiesSuppressed(state,side,slot,cardById){
+    // A modern printed *Ability* is neither a Poké-Power nor a
+    // Poké-Body. Historic suppression effects that only name those older
+    // mechanics must not disable newer Abilities (e.g. Cessation Crystal).
+    if(state?.format==='classic'&&slot&&
+       (cardById(slot.cardId)?.abilities||[]).some(a=>a.printedPowerType==='ability')){
+      if(slot.abilitySuppressed&&(slot.abilitySuppressed.duration!=='whileActive'||state.sides[side]?.active===slot))return true;
+      if(slot.locks?.some(x=>x.action==='ability'&&Number(x.expiresTurn)>=Number(state.turnNumber)))return true;
+      return false;
+    }
     if(state?.format==='classic'&&slot&&Number(slot.pl2PowerBodyLockedUntil||-1)>=Number(state.turnNumber))return true;
     if(state?.format==='classic'&&slot&&(cardById(slot.cardId)?.abilities||[]).length>0&&
        (cardById(slot.cardId)?.abilities||[]).every(a=>a.printedPowerType==='body')&&

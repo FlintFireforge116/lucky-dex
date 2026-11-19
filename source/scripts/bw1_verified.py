@@ -63,7 +63,7 @@ A={
 ('86','Fly'):{'type':'neoRule','rule':'hgss3:39:fly'},
 ('89','Do the Wave'):{'type':'benchCountDamage','side':'self','amount':20},
 ('90','Double Stomp'):COIN(2,20,False),
-('91','Revenge'):BONUS(70,{'type':'koLastOpponentTurn'}),
+('91','Revenge'):BONUS(70,{'type':'koByOpponentAttackLastTurn'}),
 ('91','Head Charge'):Q(t={'type':'selfDamage','amount':20}),
 ('113','Outrage'):{'type':'damageFromDamage','source':'self','amount':1},
 ('113','Blue Flare'):DISC(2,'self','Fire'),

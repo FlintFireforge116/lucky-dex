@@ -2107,7 +2107,7 @@
         }
         if(state.format==='classic'&&source?.attack&&source?.side===foeSide&&
           data.cardById(slot.cardId)?.types?.includes('Grass'))s.pl1GrassKoTurn=state.turnNumber;
-        any=true;const countsAsKnockout=!(slot.cardId==='dp3-26'&&slot.transformOnKO)&&!slot.dp2ForcedDiscard&&card?.effect?.countsAsKnockout!==false&&card?.countsAsKnockout!==false&&!['ex16-84','ex16-85','ex16-86'].includes(card?.id);if(countsAsKnockout){if(Number(s.lastKnockoutTurn)!==Number(state.turnNumber))s.lastKnockedOutCardIds=[];s.lastKnockoutTurn=state.turnNumber;s.lastKnockedOutCardIds.push(card.id);s.knockoutsTaken=Number(s.knockoutsTaken||0)+1;}
+        any=true;const countsAsKnockout=!(slot.cardId==='dp3-26'&&slot.transformOnKO)&&!slot.dp2ForcedDiscard&&card?.effect?.countsAsKnockout!==false&&card?.countsAsKnockout!==false&&!['ex16-84','ex16-85','ex16-86'].includes(card?.id);if(countsAsKnockout){if(Number(s.lastKnockoutTurn)!==Number(state.turnNumber))s.lastKnockedOutCardIds=[];s.lastKnockoutTurn=state.turnNumber;s.lastKnockedOutCardIds.push(card.id);s.knockoutsTaken=Number(s.knockoutsTaken||0)+1;if(cause==='attack'&&source?.side===foeSide&&source?.attack)s.lastOpponentAttackKoTurn=state.turnNumber;}
         const arceusBeltBonus=state.format==='classic'&&toolsOf(slot).some(ref=>ref.cardId==='pl4-87')?1:0;
         const arceusLuckyEgg=state.format==='classic'&&cause==='attack'&&source?.side===foeSide&&toolsOf(slot).some(ref=>ref.cardId==='pl4-88');
         const teleport=state.format==='classic'&&cause==='attack'&&source?.side===foeSide&&source?.attack&&toolsOf(slot).some(r=>r.cardId==='SNAPFOUNJA-084');
