@@ -8,8 +8,8 @@ android {
         applicationId 'com.example.luckydex'
         minSdk 26
         targetSdk 35
-        versionCode 7299
-        versionName '0.69.299'
+        versionCode 7300
+        versionName '0.69.300'
     }
 
     signingConfigs {
@@ -390,7 +390,7 @@ tasks.register('generateBW2ForApk', Exec) {
 tasks.register('auditBW2ForApk', Exec) {
     dependsOn tasks.named('generateBW2ForApk')
     workingDir rootProject.projectDir
-    commandLine 'node', '--test', 'tests/v07298-emerging-powers.test.cjs', 'tests/v07299-emerging-powers-independent-audit.test.cjs'
+    commandLine 'node', '--test', 'tests/v07298-emerging-powers.test.cjs', 'tests/v07299-emerging-powers-independent-audit.test.cjs', 'tests/v07300-classic-discard-ledger-recovery.test.cjs'
 }
 tasks.matching { it.name == 'preBuild' || (it.name.startsWith('merge') && it.name.endsWith('Assets')) }.configureEach {
     dependsOn tasks.named('auditBW2ForApk')

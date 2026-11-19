@@ -2361,3 +2361,34 @@ prints and should have the correct metadata tag rather than generic rare-only
 metadata. Check generated cards AFTER the APK rebuild, not only source rows.
 [CHECK] Synthetic smoke actions and static review flags are not exhaustive
 execution proof; retain the independent regression tests in the APK preBuild.
+
+
+============================================================
+CLASSIC DISCARD LEDGER RECOVERY — v0.69.300 (19 Nov 2026)
+============================================================
+[ROOT CAUSE] Classic Basic Energy detached from Pokemon is recorded as a
+  discarded Basic Energy *count* in sides[side].energyDiscard[type].
+  Physically discarded cards (including Special Energy and some Basic Energy
+  prints) remain in sides[side].discard[]; the separate ordered
+  sides[side].energySupply[] is FRESH Energy, NEVER discarded Energy.
+[RECOVER] Any source:'discard' + searchChosen effect must offer legal
+  physical discard cards and the matching Basic Energy discard ledger,
+  both through a validated, visible choice menu. Recovered Basic Energy
+  decrements energyDiscard[type] EXACTLY ONCE and yields one real playable
+  Basic Energy card in hand. No extra fresh Energy or copies may appear.
+[REPRINTS] This fixes ecard3-125 Skyridge Fisherman, hgss1-92 Fisherman,
+  dp2-48 Gabite (Gather Up), and pl2-33 Snorlax (Pick and Collect).
+  The common resolver also supports future generic discard searches whose
+  card filters legally permit Basic Energy; trainer and Pokemon-only searches
+  remain confined to physical discard cards.
+[CHOICES] Show the type/count of ledger Energy beside physical discard
+  card candidates. Stop when the effect's count is satisfied, matching cards
+  are exhausted, or the Classic eight-card hand limit is reached. Never
+  expose the opponent's discard pool or zero-count entries.
+[CPU] Advanced CPU can legally choose from either discard source without
+  a stuck effectChoice screen. Preserve the AI's non-skip search preference.
+[CI] Include tests/v07300-classic-discard-ledger-recovery.test.cjs in the
+  BW2 preBuild gate. The tests cover live Supporter play, both Fishermans,
+  Gabite, Snorlax, mixed physical + ledger searches, hand capacity, opponent
+  isolation, no-op empty discards, live Energy discard and CPU completion.
+[INSTALL] Apply patch ZIP over v0.69.299 in source/; run git add/commit/push.

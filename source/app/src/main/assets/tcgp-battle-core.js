@@ -411,6 +411,13 @@
       ss.deck.forEach((ref,index)=>{const card=data.cardById(ref.cardId);if(!(p.excludeUids||[]).includes(ref.uid)&&(!p.filter||effects.matchesFilter(card,p.filter,ref)))out.push({type:'effectChoice',choiceDeckIndex:index,choiceCardId:ref.cardId});});
     }else if(p.kind==='discardCard'){
       const zoneSide=p.discardZone==='opponent'?(p.originSide==='player'?'opponent':'player'):side,target=state.sides[zoneSide],excluded=new Set(p.excludeUids||[]);target.discard.forEach((ref,index)=>{const card=data.cardById(ref.cardId);if(!excluded.has(ref.uid)&&(!p.filter||effects.matchesFilter(card,p.filter,ref)))out.push({type:'effectChoice',choiceDiscardIndex:index,choiceCardId:ref.cardId});});
+      // Classic Basic Energy discarded from an attachment lives in an actual
+      // per-type discard ledger, not target.discard. Offer it alongside real
+      // card refs for effects that explicitly opt in to both discard zones.
+      if(state.format==='classic'&&Array.isArray(p.ledgerEnergyOptions))for(const entry of p.ledgerEnergyOptions){
+        const count=Number(target.energyDiscard?.[entry.type]||0),card=data.cardById(entry.cardId);
+        if(count>0&&card?.basicEnergy&&(!p.filter||effects.matchesFilter(card,p.filter)))out.push({type:'effectChoice',effectEnergyType:entry.type,choiceCardId:entry.cardId,choiceLabel:`Discarded ${entry.type} Energy (${count})`});
+      }
     }else if(p.kind==='opponentHandCard'){
       const targetSide=p.originSide==='player'?'opponent':'player',target=state.sides[targetSide];target.hand.forEach((ref,index)=>{const card=data.cardById(ref.cardId);if(!p.filter||effects.matchesFilter(card,p.filter,ref))out.push({type:'effectChoice',choiceHandIndex:index,choiceCardId:ref.cardId});});
     }else if(p.kind==='attack'){

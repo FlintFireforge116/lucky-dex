@@ -15052,6 +15052,48 @@
       }
       case 'searchChosen':{
         const ss=own(ctx),source=ss[effect.source||'deck'];
+        // Classic keeps most discarded Basic Energy from attachments in
+        // energyDiscard[type], while physical Special Energy and some Basic
+        // prints are in discard[]. Both are legally in the discard pile.
+        // Do not consult the fresh Energy Zone for any discard recovery.
+        if(effect.source==='discard'){
+          const eligibleRef=ref=>{
+            const c=ctx.cardById(ref?.cardId);
+            return !!c&&matchesFilter(c,effect.filter)&&(!effect.excludePlayedTrainer||ref.uid!==ctx.trainerRef?.uid);
+          };
+          const eligibleLedger=()=>ctx.state.format!=='classic'?[]:Object.entries(ss.energyDiscard||{})
+            .filter(([type,count])=>Number(count)>0&&neoBasicIds[type]&&matchesFilter(ctx.cardById(neoBasicIds[type]),effect.filter))
+            .map(([type])=>({type,cardId:neoBasicIds[type]}));
+          const prompt=remaining=>{
+            if(ss.handLimit!=null&&ss.hand.length>=ss.handLimit)return;
+            const ledger=eligibleLedger();
+            if(!ss.discard.some(eligibleRef)&&!ledger.length)return;
+            ctx.requestChoice?.({kind:'discardCard',side:'self',filter:effect.filter,
+              excludeUids:effect.excludePlayedTrainer&&ctx.trainerRef?[ctx.trainerRef.uid]:[],
+              ledgerEnergyOptions:ledger,effect:{...effect,remaining}});
+          };
+          if(ctx.resolvingChoice){
+            if(ctx.action?.choiceSkip)break;
+            if(ss.handLimit!=null&&ss.hand.length>=ss.handLimit)break;
+            let recovered=false;
+            const type=ctx.action?.effectEnergyType;
+            if(typeof type==='string'&&eligibleLedger().some(x=>x.type===type)){
+              ss.energyDiscard[type]--;
+              neoRecoveredEnergyToHand(ctx,ss,type,1);
+              log({type:'recoverDiscardEnergy',energyType:type,source:'ledger'});
+              recovered=true;
+            }else{
+              const index=ctx.action?.choiceDiscardIndex,ref=Number.isInteger(index)?ss.discard[index]:null;
+              if(ref&&eligibleRef(ref)){
+                ss.hand.push(...ss.discard.splice(index,1));
+                log({type:'search',cardId:ref.cardId,source:'discard'});
+                recovered=true;
+              }
+            }
+            if(recovered){const left=Number(effect.remaining||effect.amount||1)-1;if(left>0)prompt(left);}
+          }else prompt(Number(effect.remaining||effect.amount||1));
+          break;
+        }
         if((effect.source||'deck')==='deck'&&effect.zoneTypes){
           if(ctx.resolvingChoice){const type=effect.zoneTypes[Number(ctx.action?.choiceOption)];if(type&&ss.hand.length<Number(ss.handLimit||10)&&neoEnergyToHand(ctx,ss,type,1)){const left=Number(effect.remaining||effect.amount||1)-1;if(left>0)applyEffect({...effect,zoneTypes:null,remaining:left},{...ctx,resolvingChoice:false});}}
           return;
