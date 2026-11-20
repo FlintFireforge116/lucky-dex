@@ -151,7 +151,18 @@ test('XY-only legal CPU recovery preserves 30 cards, actual ownership and Fairy 
   assert.equal(b.cards.length,30,type);assert.equal(data.validateDeck(b.cards).ok,true,type);
   assert.equal(deck.validateDraft(b.cards,rows,{requireFull:true}).ok,true,type);
   assert.ok(b.cards.every(id=>data.cardById(id)?.setId==='xy1'),type);
-  assert.ok(b.cards.every(id=>data.cardById(id)?.stage==='Basic'||data.cardById(id)?.kind!=='pokemon'),type);
+  // Every included evolution has its matching parent in the same deck;
+  // Basics with evolution dependencies are only included as complete lines.
+  const pokemon=b.cards.map(id=>data.cardById(id)).filter(c=>c?.kind==='pokemon');
+  for(const mon of pokemon){
+   if(mon.stage==='Basic')continue;
+   assert.ok(pokemon.some(parent=>parent.name===mon.evolvesFrom),`${type}: orphan ${mon.name}`);
+  }
+  for(const mon of pokemon.filter(c=>c.stage==='Basic')){
+   const descendants=set.CARDS.filter(c=>c.battleEnabled&&c.evolvesFrom===mon.name);
+   if(descendants.length)assert.ok(pokemon.some(x=>descendants.some(d=>d.id===x.id)),`${type}: unpaired ${mon.name}`);
+  }
+
   if(type==='Fairy')assert.equal(b.energyTypes.includes('Fairy'),true,type);
  }
  assert.ok(any>=4,'at least four types should have fully owned, legal single-set rescues');

@@ -243,35 +243,80 @@ function rescueXY1Deck(rows,options={}){
  if(scopes.length!==1||scopes[0]!=='xy1'||types.length!==1||options.focusCardId||
     options.basicOnly===true||(options.rarityFocus&&options.rarityFocus!=='any')||
     (options.theme&&options.theme!=='any')||(options.cards&&options.cards.length))return null;
- const type=types[0],wanted=type==='Dragon'?['Fire','Lightning']:type==='Colorless'?['Fairy']:[type];
+ const type=types[0];
  if(!ARCHETYPE_TYPES.includes(type))return null;
- const owned=ownedMap(rows),attackable=c=>(c.attacks||[]).some(a=>{
+ const energyTypes=type==='Colorless'?['Fairy']:type==='Dragon'?['Fire','Lightning']:[type];
+ const owned=ownedMap(rows);
+ const canUse=c=>!!c&&c.setId==='xy1'&&c.kind==='pokemon'&&c.battleEnabled&&
+   c.deckEligible!==false&&Number(owned.get(c.id)||0)>0;
+ const pool=classic.CARDS.filter(canUse);
+ const attackable=c=>(c.attacks||[]).some(a=>{
    const symbols=Array.isArray(a.cost)?a.cost:[...String(a.cost||'')];
-   return symbols.every(k=>k==='C'||!CODE_TO_TYPE[k]||wanted.includes(CODE_TO_TYPE[k]));
+   return symbols.every(k=>k==='C'||!CODE_TO_TYPE[k]||energyTypes.includes(CODE_TO_TYPE[k]));
  });
- const eligible=c=>c?.setId==='xy1'&&c?.kind==='pokemon'&&c.stage==='Basic'&&c.battleEnabled&&
-   c.deckEligible!==false&&Number(owned.get(c.id)||0)>0&&attackable(c);
- const all=classic.CARDS.filter(eligible);
- const primary=all.filter(c=>(c.types||[]).includes(type));
- const neutral=all.filter(c=>(c.types||[]).includes('Colorless'));
- const ordered=[...primary,...neutral,...all].filter((c,i,arr)=>arr.findIndex(x=>x.id===c.id)===i)
-   .filter(c=>!hasKnownEvolution(c)||primary.length<4)
-   .sort((a,b)=>Number((b.types||[]).includes(type))-Number((a.types||[]).includes(type))||
-      Number((b.types||[]).includes('Colorless'))-Number((a.types||[]).includes('Colorless'))||
-      Number(b.hp||0)-Number(a.hp||0));
- const selected=[],add=(id,n)=>{if(n>0)selected.push([id,n]);};
- let remaining=14;
- for(const c of ordered){const n=Math.min(remaining,4,Number(owned.get(c.id)||0));add(c.id,n);remaining-=n;if(!remaining)break;}
- if(remaining>0)return null;
+ const sameArchetype=c=>(c.types||[]).includes(type)||
+   (type!=='Dragon'&&(c.types||[]).includes('Colorless'));
+ // A legal Pokemon-family unit is either a standalone Basic or a COMPLETE
+ // owned evolution line. Never pad the 30-card deck with orphaned evolving
+ // Basics, Stage 1/2 Pokemon without parents, or cards from other sets.
+ const groups=[];
+ for(const c of pool){
+   if(!sameArchetype(c)||!attackable(c))continue;
+   let line;
+   if(c.stage==='Basic'){
+     if(hasKnownEvolution(c)||babyEvolutionTargets(c).length)continue;
+     line=[c];
+   }else if(['Stage 1','Stage 2'].includes(c.stage)){
+     // If the chosen Pokemon itself can evolve again, don't stop the line
+     // halfway through (e.g. a Quilava without a Typhlosion).
+     if(hasKnownEvolution(c))continue;
+     line=familyLine(c,pool);
+     if(line.length<2||line[0]?.stage!=='Basic'||
+        line.some(x=>!canUse(x)||x.kind!=='pokemon'||!sameArchetype(x)))continue;
+   }else continue;
+   if(new Set(line.map(x=>classicCardName(x.name))).size!==line.length)continue;
+   groups.push({line,endpoint:c,primary:(c.types||[]).includes(type),
+     maxCopies:Math.min(4,...line.map(x=>Number(owned.get(x.id)||0)))});
+ }
+ // Prefer an on-type attacker, with Colorless only as genuinely playable
+ // support. Prefer smaller independent Basic cores before complete families.
+ groups.sort((a,b)=>Number(b.primary)-Number(a.primary)||
+   a.line.length-b.line.length||Number(b.endpoint.hp||0)-Number(a.endpoint.hp||0));
+ const unique=[],usedNames=new Set();
+ for(const g of groups){
+   const names=g.line.map(c=>classicCardName(c.name));
+   if(names.some(name=>usedNames.has(name)))continue;
+   unique.push(g);for(const name of names)usedNames.add(name);
+ }
+ if(!unique.some(g=>g.primary))return null;
+ // Each copy of an evolution unit includes its actual Basic/Stage 1 parent.
+ // A bounded exact-fill search avoids the old all-Basic filter, which left
+ // 0 of 108 authentic XY CPU decks constructible in GitHub's build tests.
+ const solve=(i,remaining,parts)=>{
+   if(remaining===0)return parts;
+   if(i>=unique.length)return null;
+   const g=unique[i],max=Math.min(g.maxCopies,Math.floor(remaining/g.line.length));
+   for(let n=max;n>=0;n--){
+     const found=solve(i+1,remaining-n*g.line.length,n?[...parts,[g,n]]:parts);
+     if(found)return found;
+   }
+   return null;
+ };
+ const parts=solve(0,14,[]);
+ if(!parts)return null;
+ const selected=parts.flatMap(([g,n])=>g.line.flatMap(c=>Array(n).fill(c.id)));
  const staples=['xy1-118','xy1-122','xy1-123','xy1-130'];
- for(const id of staples){const c=classic.cardById(id);if(!c||!c.battleEnabled||!c.deckEligible||Number(owned.get(id)||0)<4)return null;add(id,4);}
- const cards=selected.flatMap(([id,n])=>Array(n).fill(id));
- if(cards.length!==30||!classic.validateDeck(cards).ok||!decks.validateDraft(cards,rows,{requireFull:true}).ok)return null;
- return {ok:true,cards,energyTypes:wanted,errors:[],warnings:[],style:'competitive',
-   archetypeKey:'xy1-'+type.toLowerCase()+'-fallback',focusCardId:selected[0][0],
-   strategy:'XY Base verified owned single-set recovery'};
+ for(const id of staples){const c=classic.cardById(id);
+   if(!c||!c.battleEnabled||c.deckEligible===false||Number(owned.get(id)||0)<4)return null;
+   selected.push(...Array(4).fill(id));
+ }
+ if(selected.length!==30||!classic.validateDeck(selected).ok||
+    !decks.validateDraft(selected,rows,{requireFull:true}).ok||
+    decks.analyzeDeck(selected,energyTypes).missingEnergyTypes.length)return null;
+ return {ok:true,cards:selected,energyTypes,errors:[],warnings:[],style:'competitive',
+   archetypeKey:'xy1-'+type.toLowerCase()+'-fallback',focusCardId:parts[0][0].endpoint.id,
+   strategy:'XY Base legal owned complete-family rescue'};
 }
-
 function rescueBW11Deck(rows,options={}){
  const scopes=options.sets||[],types=options.types||[];
  if(scopes.length!==1||scopes[0]!=='bw11'||types.length!==1||options.focusCardId||

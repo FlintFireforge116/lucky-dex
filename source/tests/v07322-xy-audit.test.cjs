@@ -165,5 +165,7 @@ test('release version uses the exact same string in Gradle, title and boot JS',(
  assert.ok(version);assert.ok(app.includes(`window.__LUCKYDEX_BUILD='${version}'`));
  assert.ok(html.includes(`id="titleBuildVersion">v${version}`));
  assert.ok(html.includes(`id="appBuildVersion">LUCKY DEX · v${version}`));
- assert.equal(Number(g.match(/\bversionCode\s+(\d+)/)?.[1]),7322);
+ const buildCode=Number(g.match(/\bversionCode\s+(\d+)/)?.[1]);
+ assert.equal(buildCode,7000+Number(version.split('.').at(-1)),
+  'Classic versionCode must match the v0.69.patch release number');
 });
