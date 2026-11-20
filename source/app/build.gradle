@@ -8,8 +8,8 @@ android {
         applicationId 'com.example.luckydex'
         minSdk 26
         targetSdk 35
-        versionCode 7302
-        versionName '0.69.302'
+        versionCode 7303
+        versionName '0.69.303'
     }
 
     signingConfigs {
@@ -404,7 +404,7 @@ tasks.register('generateBW3ForApk', Exec) {
 tasks.register('auditBW3ForApk', Exec) {
     dependsOn tasks.named('generateBW3ForApk')
     workingDir rootProject.projectDir
-    commandLine 'node', '--test', 'tests/v07302-noble-victories.test.cjs'
+    commandLine 'node', '--test', 'tests/v07302-noble-victories.test.cjs', 'tests/v07303-noble-victories-independent-audit.test.cjs'
 }
 tasks.matching { it.name == 'preBuild' || (it.name.startsWith('merge') && it.name.endsWith('Assets')) }.configureEach {
     dependsOn tasks.named('auditBW3ForApk')

@@ -2474,3 +2474,32 @@ LUCKYDEX 0.69.302 — BLACK & WHITE: NOBLE VICTORIES (BW3)
   in the preBuild/asset-merge gate. Also run the full classic expansion audit
   with `node scripts/audit-classic-set.cjs --set bw3 --smoke`.
 [INSTALL] Apply v0.69.302 ZIP over v0.69.301 in source/; git add/commit/push.
+
+
+LUCKYDEX 0.69.303 — NOBLE VICTORIES INDEPENDENT AUDIT
+------------------------------------------------------------------
+[BUG FIXED] Fossil Items are NOT generic filler. Cover Fossil (#90) must
+  accompany at least one physically included Tirtouga (#25); Plume Fossil
+  (#93) must accompany Archen (#66). The family builder must resolve each
+  Restored Pokémon's printed evolvesFrom (Cover/Plume Fossil), so automatic
+  and focused decks include the complete three-card dependency where needed.
+  Reject orphan Restored Pokémon AND orphan Fossil Items. In a lone BW3 pool,
+  normal decks must not include standalone Fossil Items just to reach 30 cards.
+[CHOICE] Karrablast and Shelmet Mysterious Evolution explicitly say IF a
+  partner is present search and evolve; selecting an eligible printed
+  Evolution from the physical deck is optional, not an unavoidable forced
+  selection. Preserve the choice in both player and CPU action flows.
+[CHECK — FORMAT] Victini (#15) V-create requires five friendly Benched
+  Pokémon by its PRINTED rule. The current normal Classic 30-card battle
+  still has a 3-slot Bench. Do NOT silently adjust the attack's condition or
+  the globally disputed Bench size. The auto-builder must avoid this dead
+  attacker unless the supplied draft explicitly has a verified five-Bench
+  expansion route. A focus without that route must show an explanation rather
+  than output an unusable 30-card deck. The long-term Classic 3-vs-5 Bench
+  conflict remains awaiting a user decision; it is not resolved by this patch.
+[TEST] Mandatory tests/v07303-noble-victories-independent-audit.test.cjs
+  added to auditBW3ForApk. A wider 810-deck CPU spot-check separately
+  verified zero orphan Fossils and zero impossible default-bench V-create
+  copies. Source checks do not demonstrate successful GitHub APK builds or
+  on-device gameplay.
+[INSTALL] Apply v0.69.303 ZIP over v0.69.302, unzip -d source and git push.

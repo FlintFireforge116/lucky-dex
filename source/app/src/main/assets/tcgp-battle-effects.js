@@ -11031,7 +11031,7 @@
       if(!mine().some(p=>card(p)?.name===partner))return;
       if(stage==='evolve'&&ctx.resolvingChoice){const i=Number(act.choiceDeckIndex),ref=us.deck[i],ev=card(ref);if(!ref||ev?.evolvesFrom!==self.name||ev?.battleEnabled===false)return;
         us.deck.splice(i,1);a.stack=[...(a.stack||[a.cardId]),ref.cardId];a.cardId=ref.cardId;a.evolvedOnTurn=turn;a.evolvedOnSideTurn=us.turnCount;ctx.onEvolved?.(a);ctx.shuffle?.(ctx.state,us.deck);return;}
-      if(us.deck.some(ref=>card(ref)?.evolvesFrom===self.name&&card(ref)?.battleEnabled))ctx.requestChoice?.({kind:'deckCard',side:'self',filter:{kind:'pokemon',evolvesFrom:self.name},effect:{...e,stage:'evolve'}});return;
+      if(us.deck.some(ref=>card(ref)?.evolvesFrom===self.name&&card(ref)?.battleEnabled))ctx.requestChoice?.({kind:'deckCard',side:'self',filter:{kind:'pokemon',evolvesFrom:self.name},optional:true,effect:{...e,stage:'evolve'}});return;
     }
     if(key==='storedPower'){
       if(stage==='target'&&ctx.resolvingChoice){const p=chosen();if(!p||p===a||!us.bench.includes(p))return;

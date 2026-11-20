@@ -76,9 +76,16 @@ function parentKeys(baseName){const n=classicCardName(baseName);return /^Burmy (
 // A Fossil printed as a playable Trainer is an evolution prerequisite, not
 // a generic Item or a disposable 30th card. Clefairy Doll also uses the
 // playFossil engine path, but must NOT be mistaken for an evolution Fossil.
-const EVOLUTION_FOSSIL_NAMES=new Set(classic.CARDS.filter(c=>c.kind==='trainer'&&c.effect?.type==='playFossil'&&
+// BW3 Restored Pokémon are not Basics: these two specific Item cards are
+// their required entry path.  Treat them as fossil-family roots for deck
+// generation, while the battle engine continues to bench via bottom-seven.
+const RESTORED_FOSSIL_IDS=new Set(['bw3-90','bw3-93']);
+const EVOLUTION_FOSSIL_NAMES=new Set(classic.CARDS.filter(c=>c.kind==='trainer'&&
+  (c.effect?.type==='playFossil'||RESTORED_FOSSIL_IDS.has(c.id))&&
   /(?:Fossil|Old Amber)$/i.test(classicCardName(c.name))).map(c=>classicCardName(c.name)));
-function isEvolutionFossil(card){return !!(card?.kind==='trainer'&&card.effect?.type==='playFossil'&&EVOLUTION_FOSSIL_NAMES.has(classicCardName(card.name)));}
+function isEvolutionFossil(card){return !!(card?.kind==='trainer'&&
+  (card.effect?.type==='playFossil'||RESTORED_FOSSIL_IDS.has(card.id))&&
+  EVOLUTION_FOSSIL_NAMES.has(classicCardName(card.name)));}
 function fossilEvolutionInDeck(fossil,ids){return (ids||[]).some(id=>{
  const c=classic.cardById(id);
  return c?.kind==='pokemon'&&!!c.evolvesFrom&&classicEvolutionMatches(fossil.name,c.evolvesFrom);
@@ -113,7 +120,7 @@ function familyLine(card,pool){
  // though the set contains a Lightning Charmeleon δ.
  const finalTypes=new Set(attackTypes(card));
  while(cur.evolvesFrom){
-  const parents=pool.filter(c=>(c.kind==='pokemon'||c.effect?.type==='playFossil')&&classicEvolutionMatches(c.name,cur.evolvesFrom));
+  const parents=pool.filter(c=>(c.kind==='pokemon'||isEvolutionFossil(c))&&classicEvolutionMatches(c.name,cur.evolvesFrom));
   if(!parents.length)return [];
   const fit=c=>{
    const needs=attackTypes(c),off=needs.filter(t=>!finalTypes.has(t)).length,
@@ -207,10 +214,14 @@ function completeLineFor(featured,candidates,pool){
 function fail(message){return {ok:false,cards:[],energyTypes:[],errors:[message],warnings:[],strategy:''};}
 function buildDeck(rows,options={}){
  const rarityFocus=RARITY_FOCUS.some(r=>r.id===options.rarityFocus)?options.rarityFocus:'any',basicOnly=options.basicOnly===true,theme=synergy.THEMES.some(t=>t.id===options.theme)?options.theme:'any';
- const style=options.style==='random'?'random':'competitive',owned=ownedMap(rows),allowedSets=(options.sets||SET_IDS).filter(s=>SET_IDS.includes(s)),scope=allowedSets.length?allowedSets:SET_IDS,pool=classic.CARDS.filter(c=>allowedInSetPool(c,scope)&&c.battleEnabled&&c.deckEligible!==false&&Number(owned.get(c.id)||0)>0),pokemonPool=pool.filter(c=>c.kind==='pokemon'),evolutionPool=pool.filter(c=>c.kind==='pokemon'||c.effect?.type==='playFossil');
+ const style=options.style==='random'?'random':'competitive',owned=ownedMap(rows),allowedSets=(options.sets||SET_IDS).filter(s=>SET_IDS.includes(s)),scope=allowedSets.length?allowedSets:SET_IDS,pool=classic.CARDS.filter(c=>allowedInSetPool(c,scope)&&c.battleEnabled&&c.deckEligible!==false&&Number(owned.get(c.id)||0)>0),pokemonPool=pool.filter(c=>c.kind==='pokemon'),evolutionPool=pool.filter(c=>c.kind==='pokemon'||isEvolutionFossil(c));
  if([...pool].reduce((sum,c)=>sum+Math.min(c.setId==='pl4'&&(/^AR[1-9]$/.test(String(c.number))||['94','95','96'].includes(String(c.number)))?30:4,owned.get(c.id)||0),0)<30)return fail('Not enough owned battle-ready Classic card copies to build a 30-card deck.');
  if(!pokemonPool.some(c=>c.stage==='Basic'))return fail('No owned battle-ready Basic Pokémon are available.');
  const requested=[...new Set((options.types||[]).filter(t=>ARCHETYPE_TYPES.includes(t)))].slice(0,2),requestedEnergy=requested.filter(t=>decks.ENERGY_TYPES.includes(t)),allowMixedEnergy=options.allowMixedEnergy===true,existing=Array.isArray(options.cards)?options.cards:[],random=rng(options.randomSeed),excluded=new Set(options.excludeArchetypes||[]);
+ // V-create requires five actual Benched Pokemon. LuckyDex Classic's default
+ // three-slot Bench cannot satisfy it; only a saved deck with a five-slot
+ // Bench stadium can deliberately use this print. Never auto-pick a dead core.
+ const hasFiveBenchRoute=scope.includes('SNAPFLORIO')&&existing.includes('SNAPFLORIO-108');
  // Evolution end-points are era-aware: a later-era species such as
  // Annihilape must not retroactively invalidate 2009 Primeape decks. An
  // earlier known Stage 2 still requires its complete line when selected.
@@ -274,6 +285,7 @@ function buildDeck(rows,options={}){
  // Competitive considers complete evolution families; Random draws a printed
  // Pokémon from the *entire* owned, battle-ready roster (not the top 14).
  const isEligible=c=>{
+  if(c.id==='bw3-15'&&!hasFiveBenchRoute)return false;
   const line=familyLine(c,evolutionPool),required=familyEssentialTypes(line),special=specialCosts(line);
   if(isStage2OnlySupport(c)&&!hasEligibleBeneficiary(c))return false;
   if(babyEvolutionTargets(c).length&&!playableBabyTargets(c,requestedEnergy.length?requestedEnergy:required).length)return false;
@@ -304,6 +316,7 @@ function buildDeck(rows,options={}){
  if(rarityFocus!=='any'||basicOnly)candidates=candidates.filter(c=>matchesRarity(c,rarityFocus,basicOnly));
 
  if(focus?.kind==='pokemon'){
+   if(focus.id==='bw3-15'&&!hasFiveBenchRoute)return fail('Victini V-create requires five Benched Pokemon; the default Classic three-slot Bench cannot use it. Use a verified five-slot Bench effect in a mixed-set draft.');
    if(babyEvolutionTargets(focus).length&&!playableBabyTargets(focus,requestedEnergy).length)
      return fail(`Cannot build around ${focus.name}: its Baby Evolution needs an owned, battle-ready ${babyEvolutionTargets(focus).join(' / ')} in the selected sets and Energy plan.`);
    if(isStage2OnlySupport(focus)&&!hasEligibleBeneficiary(focus))
@@ -480,6 +493,7 @@ function buildDeck(rows,options={}){
    return !names.length||cards.some(id=>names.includes(classicCardName(classic.cardById(id)?.name)));
  }
  function add(card,n=1,fromEvolutionLine=false){
+   if(card?.id==='bw3-15'&&!hasFiveBenchRoute)return 0;
    // Energy Link is useful as a coherent two-copy package, never a lone
    // tool that wastes the final slot. Reserve the pair atomically.
    if(card?.id==='dp7-83'&&!fromEvolutionLine&&(counts.get(card.id)||0)===0){
