@@ -1306,8 +1306,8 @@
       if(card.id==='ex7-85'&&(s.prizes.length<=state.sides[side==='player'?'opponent':'player'].prizes.length||!state.sides[side==='player'?'opponent':'player'].bench.length))return;
       if(state.format==='classic'&&card.id==='pl2-95'&&!pokemonOn(s).some(p=>data.cardById(p.cardId)?.isPokemonSP))return;
       if(card.id==='bw8-119'&&(!s.deck.some(r=>r.cardId==='bw8-127')||!pokemonOn(s).some(p=>data.cardById(p.cardId)?.teamPlasma)))return;
-      if(card.id==='bw8-125'&&!s.hand.some(r=>r.cardId!==card.id&&data.cardById(r.cardId)?.teamPlasma))return;
-      if(card.id==='bw8-128'&&(s.hand.length<3||!s.discard.some(r=>data.cardById(r.cardId)?.kind==='trainer')))return;
+      if(card.id==='bw8-125'&&!s.hand.some((r,i)=>i!==handIndex&&data.cardById(r.cardId)?.teamPlasma))return;
+      if(card.id==='bw8-128'&&(s.hand.length<3||!s.discard.some(r=>data.cardById(r.cardId)?.kind==='trainer')&&!s.hand.some((r,i)=>i!==handIndex&&data.cardById(r.cardId)?.kind==='trainer')))return;
       if(type==='Supporter'&&s.supporterUsed&&!(state.format==='classic'&&Number(s.bw8SupportersPlayed||0)<2&&pokemonOn(s).some(p=>p.cardId==='bw8-46'&&!effects.abilitiesSuppressed(state,side,p,data.cardById))))return;
       if(state.format==='classic'&&(s.neoTrainerLockTurn===state.turnNumber||Number(s.neoDestinyTrainerLockUntil||0)>=state.turnNumber))return;
       if(state.format==='classic'&&card.id==='neo4-105'&&s.hand.length>=5)return;

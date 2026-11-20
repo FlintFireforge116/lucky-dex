@@ -69,7 +69,16 @@ def generate(rows):
         if kind=='pokemon':
             needed=list(dict.fromkeys(SYMBOL[e] for _,cost,_,_ in attacks for e in cost if e in SYMBOL))
             text=' '.join([a[3] for a in attacks]+[p[2] for p in abilities]).lower()
-            roles=[tag for tag,kw in [('draw','draw '),('search','search your deck'),('heal','heal '),('status','poisoned'),('control','discard'),('ramp','attach')] if kw in text]
+            # Audited semantics: `attached` describes energy/card state, NOT ramp.
+            # `discard` can be a self-cost, NOT disruption of the opponent.
+            ramp_prints={18,34,37,47,131,137}
+            roles=[]
+            if re.search(r'\bdraw(?:s)?\b',text):roles.append('draw')
+            if 'search your deck' in text:roles.append('search')
+            if re.search(r'\bheal\b',text):roles.append('heal')
+            if any(x in text for x in ['is now poisoned','is now burned','is now confused','is now paralyzed','is now asleep','choose a special condition']):roles.append('status')
+            if ('opponent' in text or 'defending pokémon' in text) and any(x in text for x in ['discard','switch','can\'t retreat','can’t retreat','shuffle it into']):roles.append('control')
+            if int(n) in ramp_prints:roles.append('ramp')
             special=['Metal'] if title_needs_metal(name,abilities) else []
             card.update(stage=subtypes[0] if subtypes else 'Basic',hp=int(hp),types=types or ['Colorless'],subtype=types[0] if types else 'Colorless',evolvesFrom=evolves,
                         retreat=retreat,weakness=weak,weaknessValue='×2' if weak else None,weaknesses=[{'type':weak,'value':'×2'}] if weak else [],
