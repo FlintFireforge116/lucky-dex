@@ -2392,3 +2392,25 @@ CLASSIC DISCARD LEDGER RECOVERY — v0.69.300 (19 Nov 2026)
   Gabite, Snorlax, mixed physical + ledger searches, hand capacity, opponent
   isolation, no-op empty discards, live Energy discard and CPU completion.
 [INSTALL] Apply patch ZIP over v0.69.299 in source/; run git add/commit/push.
+
+
+LUCKYDEX 0.69.301 — EMERGING POWERS DISCARD / ENERGY / HAND AUDIT
+------------------------------------------------------------------
+- Discard effects such as Emerging Powers Recycle use the owner's physical discard
+  plus individually counted spent Basic Energy in the Classic Energy discard
+  ledger. Recovered ledger Energy is removed from the ledger, instantiated as a
+  physical era-appropriate Basic Energy card, and put on top of the deck. It
+  must NEVER draw from the fresh ordered Energy Zone.
+- A Trainer currently resolving its own effect may be present in the engine's
+  discard[] for implementation purposes, but is not a legal candidate to
+  retrieve with that same Trainer's effect. Earlier completed Trainers in
+  discard are normal candidates. These choices work for human and CPU players.
+- Any conditional attached-Energy attack text counts older Rainbow Energy
+  prints (including energy encoded as Miracle) as providing the named type.
+  Emerging Powers Simisage, Simisear, Simipour and Mandibuzz follow this rule.
+- A delayed Trainer search decision, including Great Ball, must not exceed
+  the Classic eight-card hand limit. If a choice becomes invalid because the
+  hand is full, retain the card in its original deck and shuffle as required.
+- Keep exact player choices for Superpower and Quick Tail Smash; losing the
+  optional choice is a gameplay regression, even if damage calculation passes.
+- Run tests/v07301-emerging-powers-deep-audit.test.cjs at every APK build.

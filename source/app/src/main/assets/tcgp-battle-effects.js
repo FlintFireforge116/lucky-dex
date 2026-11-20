@@ -10822,6 +10822,15 @@
     throw new Error('Unimplemented Black & White mechanic '+key);
   }
 
+  // Black & White-era text counts the actual type provided by an attached
+  // Special Energy. Earlier Rainbow prints often encode this as Miracle rather
+  // than a literal entry for every type; keep that cross-era rule consistent.
+  function bw2SpecialProvides(ref,type,cardById){
+    const c=cardById?.(ref?.cardId),provided=ref?.provides||c?.effect?.provides||{};
+    return Number(provided[type]||0)>0||Number(provided.Miracle||0)>0||
+      Number(provided.Rainbow||0)>0||c?.name==='Rainbow Energy';
+  }
+
   // Emerging Powers: card-specific effects with physical-zone transfers and explicit choices.
   function bw2Rule(e,ctx){
     const key=String(e.rule).slice(4),us=own(ctx),foe=other(ctx),a=ctx.attacker,d=ctx.defender,
@@ -10848,7 +10857,7 @@
     // These costed actions can be performed even if there is no eligible target.
     if(key==='firePower'||key==='waterPower'||key==='grassPower'){
       const type={firePower:'Fire',waterPower:'Water',grassPower:'Grass'}[key];
-      if(Number(a?.energy?.[type]||0)<1 && !(a?.specialEnergy||[]).some(r=>Number((r.provides||card(r)?.effect?.provides||{})[type]||0)>0))return;
+      if(Number(ctx.effectiveEnergy?.(a)?.[type]||0)<1 && Number(a?.energy?.[type]||0)<1 && !(a?.specialEnergy||[]).some(r=>bw2SpecialProvides(r,type,ctx.cardById)))return;
       if(key==='grassPower'){if(a&&!healingIsBlocked(ctx.state,a,ctx.cardById))a.damage=Math.max(0,Number(a.damage||0)-20);}
       else applyEffect({type:'status',target:'opponentActive',status:key==='firePower'?'burn':'sleep'},ctx);return;
     }
@@ -10936,7 +10945,7 @@
       if(us.bench.length&&(key==='hurricane'?energy(a).some(x=>x.type):us.bench.some(p=>energy(p).length)))ctx.requestChoice?.({kind:'pokemon',side:'self',selectionSide:ctx.side,includeActive:false,excludeUids:key==='energyWheel'?us.bench.filter(p=>!energy(p).length).map(p=>p.uid):[],effect:{...e,stage:'pokemon'}});return;
     }
     if(key==='greatBall'){
-      if(stage==='pick'&&ctx.resolvingChoice){const list=e.revealed||[],found=list.filter(r=>card(r)?.kind==='pokemon'),j=Number(act.choiceOption),chosenRef=found[j];if(chosenRef){us.hand.push(chosenRef);}us.deck.push(...list.filter(ref=>ref!==chosenRef));ctx.shuffle?.(ctx.state,us.deck);return;}
+      if(stage==='pick'&&ctx.resolvingChoice){const list=e.revealed||[],found=list.filter(r=>card(r)?.kind==='pokemon'),j=Number(act.choiceOption);let chosenRef=found[j];if(chosenRef&&us.hand.length<Number(us.handLimit??Infinity))us.hand.push(chosenRef);else chosenRef=null;us.deck.push(...list.filter(ref=>ref!==chosenRef));ctx.shuffle?.(ctx.state,us.deck);return;}
       const revealed=us.deck.splice(0,7),found=revealed.filter(r=>card(r)?.kind==='pokemon');if(!found.length){us.deck.push(...revealed);ctx.shuffle?.(ctx.state,us.deck);return;}
       const choices=[...found.map(r=>'Take '+card(r).name),'Take no Pokémon'];ctx.requestChoice?.({kind:'option',side:'self',options:choices,effect:{...e,stage:'pick',revealed}});return;
     }
@@ -10945,8 +10954,43 @@
       if(mine().length)choosePokemon('target');return;
     }
     if(key==='recycle'){
-      if(ctx.resolvingChoice){const i=Number(act.choiceDiscardIndex),ref=us.discard[i];if(!ref)return;us.deck.unshift(...us.discard.splice(i,1));return;}
-      if(us.discard.length)ctx.requestChoice?.({kind:'discardCard',side:'self',effect:e});return;
+      // Classic spent Basic Energy lives in energyDiscard, not discard[].
+      // Recycle targets the discard pile, NEVER the fresh ordered Energy Zone.
+      const basicPrints={Grass:'bw1-105',Fire:'bw1-106',Water:'bw1-107',Lightning:'bw1-108',Psychic:'bw1-109',Fighting:'bw1-110',Darkness:'bw1-111',Metal:'bw1-112'};
+      const excluded=ctx.trainerRef?.uid;
+      const physicalAvailable=()=>us.discard.some(ref=>ref.uid!==excluded);
+      const available=()=>Object.entries(us.energyDiscard||{}).filter(([type,count])=>
+        basicPrints[type]&&Number(count)>0).map(([type])=>type);
+      const putSpentOnTop=type=>{
+        if(!basicPrints[type]||Number(us.energyDiscard?.[type]||0)<1)return;
+        us.energyDiscard[type]--;
+        ctx.state.bw2RecycleCounter=Number(ctx.state.bw2RecycleCounter||0)+1;
+        us.deck.unshift({uid:`bw2-recycle-${ctx.side}-${turn}-${ctx.state.bw2RecycleCounter}`,
+          cardId:basicPrints[type],zoneGenerated:false});
+        log({source:'discardedBasicEnergy',energyType:type});
+      };
+      if(ctx.resolvingChoice){
+        if(stage==='physical'){
+          const i=Number(act.choiceDiscardIndex),ref=us.discard[i];
+          if(!Number.isInteger(i)||i<0||!ref||ref.uid===excluded)return;
+          us.deck.unshift(...us.discard.splice(i,1));return;
+        }
+        const i=Number(act.choiceOption),types=e.ledgerTypes||[];
+        if(!Number.isInteger(i)||i<0)return;
+        if(stage==='source'){
+          if(i===0){if(physicalAvailable())ctx.requestChoice?.({kind:'discardCard',side:'self',excludeUids:excluded?[excluded]:[],effect:{...e,stage:'physical'}});return;}
+          putSpentOnTop(types[i-1]);return;
+        }
+        if(stage==='ledger')putSpentOnTop(types[i]);
+        return;
+      }
+      const types=available();
+      if(physicalAvailable()&&types.length)choose('source',
+        ['Choose a physical discarded card',...types.map(type=>'Return discarded '+type+' Energy to top of deck')],
+        {ledgerTypes:types});
+      else if(physicalAvailable())ctx.requestChoice?.({kind:'discardCard',side:'self',excludeUids:excluded?[excluded]:[],effect:{...e,stage:'physical'}});
+      else if(types.length)choose('ledger',types.map(type=>'Return discarded '+type+' Energy to top of deck'),{ledgerTypes:types});
+      return;
     }
     throw new Error('Unimplemented Emerging Powers mechanic: '+key);
   }
@@ -15352,7 +15396,7 @@
         if(key==='smackDown'){damage=20+((def?.resistanceOverride||ctx.cardById(def?.cardId)?.resistance)==='Fighting'?60:0);return;}
         if(key==='darkPulse'){
           const c=ref=>ctx.cardById(ref.cardId);
-          damage=20+10*pokemonOn(us).reduce((total,p)=>total+Number(p.energy?.Darkness||0)+(p.specialEnergy||[]).filter(ref=>Number((ref.provides||c(ref)?.effect?.provides||{}).Darkness||0)>0).length,0);return;
+          damage=20+10*pokemonOn(us).reduce((total,p)=>total+Number(p.energy?.Darkness||0)+(p.specialEnergy||[]).filter(ref=>bw2SpecialProvides(ref,'Darkness',ctx.cardById)).length,0);return;
         }
         if(key==='powerWhip'){
           const target=pokemonOn(foe).find(x=>x.uid===String(ctx.action?.effectSelection||''))||def;
