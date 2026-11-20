@@ -11143,7 +11143,7 @@
     }
     if(k==='giantFan'){
       if(stage==='start'&&!ctx.eventData?.fromHand||!theirs().length)return;
-      if(stage==='use'&&ctx.resolvingChoice){if(Number(act.choiceOption)===0){const heads=coin(ctx);log({heads});if(heads)target('chooseOpponent','opponent');}return;}
+      if(stage==='use'&&ctx.resolvingChoice){if(Number(act.choiceOption)===0){const heads=coin(ctx);ctx.state.log.push({type:'coin',side:ctx.side,reason:'Giant Fan',results:[heads],heads:Number(heads)});log({heads});if(heads)target('chooseOpponent','opponent');}return;}
       if(stage==='chooseOpponent'&&ctx.resolvingChoice){const p=picked('opponent');if(!p||!theirs().includes(p))return;
         const cards=[...(p.stack||[p.cardId]).map((id,i)=>({uid:p.uid+'-giantfan-'+i,cardId:id})),...(p.specialEnergy||[]),...(p.tool?[p.tool]:[]),...(p.extraTools||[])];
         for(const [type,n] of Object.entries(p.energy||{}))for(let i=0;i<Number(n||0);i++)cards.push({uid:p.uid+'-'+type+'-'+i,cardId:neoBasicIds[type]});
@@ -11166,7 +11166,7 @@
         else if(supply){const p=k==='stoke'?a:(mine().find(x=>x.uid===e.targetUid)||a);neoSupplyAttach(ctx,us,p,type,1);}return;}
       if(stage==='physical'&&ctx.resolvingChoice){const index=Number(act.choiceDeckIndex),ref=us.deck[index],p=k==='stoke'?a:(mine().find(x=>x.uid===e.targetUid)||a);if(ref&&p&&card(ref)?.basicEnergy&&card(ref)?.subtype===type){us.deck.splice(index,1);p.energy=p.energy||{};p.energy[type]=Number(p.energy[type]||0)+1;ctx.onEnergyAttached?.(p,type,1);ctx.shuffle?.(ctx.state,us.deck);}return;}
       if(stage==='chooseTarget'&&ctx.resolvingChoice){const p=picked('self');if(!p||!mine().includes(p))return;bw4Rule({...e,stage:'start',targetUid:p.uid},{...ctx,resolvingChoice:false});return;}
-      if(k==='stoke'){const heads=coin(ctx);log({heads});if(!heads)return;}
+      if(k==='stoke'){const heads=coin(ctx);ctx.state.log.push({type:'coin',side:ctx.side,reason:'Stoke',results:[heads],heads:Number(heads)});log({heads});if(!heads)return;}
       if(!e.targetUid&&k==='synthesis')return target('chooseTarget');
       if(eligible.length&&supply)option('pickSource',['Search physical deck for '+type+' Energy','Attach '+type+' from ordered Energy Zone']);
       else if(eligible.length)ctx.requestChoice?.({kind:'deckCard',side:'self',filter:{basicEnergy:true,subtype:type},effect:{...e,stage:'physical'}});
@@ -11176,7 +11176,7 @@
     if(k==='powerPinch'){
       const choices=()=>[...Object.entries(d?.energy||{}).filter(([,n])=>Number(n)>0).map(([t])=>({t,label:'Discard '+t+' Energy'})),...(d?.specialEnergy||[]).map(ref=>({uid:ref.uid,label:'Discard '+card(ref)?.name}))];
       if(stage==='remove'&&ctx.resolvingChoice){const pick=choices()[Number(act.choiceOption)];if(!pick)return;if(pick.uid){const i=d.specialEnergy.findIndex(ref=>ref.uid===pick.uid);if(i>=0)foe.discard.push(...d.specialEnergy.splice(i,1));}else discardSource(d,foe,pick.t);if(Number(e.remaining||1)>1&&choices().length)option('remove',choices().map(x=>x.label),{remaining:Number(e.remaining)-1});return;}
-      const results=[coin(ctx),coin(ctx)],n=results.filter(Boolean).length;log({results});if(n&&choices().length)option('remove',choices().map(x=>x.label),{remaining:n});return;
+      const results=[coin(ctx),coin(ctx)],n=results.filter(Boolean).length;ctx.state.log.push({type:'coin',side:ctx.side,reason:'Power Pinch',results,heads:n});log({results});if(n&&choices().length)option('remove',choices().map(x=>x.label),{remaining:n});return;
     }
     if(k==='frozenWings'){
       const options=(d?.specialEnergy||[]).map(ref=>({uid:ref.uid,label:'Discard '+card(ref)?.name}));
@@ -11195,7 +11195,7 @@
       if(stage==='pick'&&ctx.resolvingChoice){const x=eligible()[Number(act.choiceOption)];if(!x||!handSpace())return;us.hand.push(...us.deck.splice(x.i,1));if(Number(e.remaining||1)>1&&eligible().length&&handSpace())option('pick',eligible().map(x=>'Take '+card(x.ref)?.name),{remaining:Number(e.remaining)-1});else ctx.shuffle?.(ctx.state,us.deck);return;}
       if(eligible().length&&handSpace())option('pick',eligible().map(x=>'Take '+card(x.ref)?.name),{remaining:2});return;
     }
-    if(k==='shadowClaw'){if(coin(ctx)&&foe.hand.length){const i=Math.floor(ctx.random(ctx.state)*foe.hand.length);foe.discard.push(...foe.hand.splice(i,1));}return;}
+    if(k==='shadowClaw'){const heads=coin(ctx);ctx.state.log.push({type:'coin',side:ctx.side,reason:'Shadow Claw',results:[heads],heads:Number(heads)});if(heads&&foe.hand.length){const i=Math.floor(ctx.random(ctx.state)*foe.hand.length);foe.discard.push(...foe.hand.splice(i,1));}return;}
     if(k==='surprisePunch'){
       const sources=()=>[...Object.entries(d?.energy||{}).filter(([,n])=>Number(n)>0).map(([t])=>({t,label:t+' Basic Energy'})),...(d?.specialEnergy||[]).map(ref=>({uid:ref.uid,label:card(ref)?.name}))];
       if(stage==='destination'&&ctx.resolvingChoice){const p=picked('opponent'),x=e.source;if(!p||!foe.bench.includes(p)||!x)return;
@@ -15649,7 +15649,7 @@
             if(k==='stadiumWave')pending.push({type:'status',target:'opponentActive',status:'sleep'});}return;
         }
         if(k==='baredFangs'){if(!Number(d?.damage||0))damage=0;return;}
-        if(k==='crushingIce'){damage+=10*Number(ctx.cardById(d?.cardId)?.retreat||0);return;}
+        if(k==='crushingIce'){const cost=ctx.retreatCost?.(ctx.foeSide);damage+=10*Math.max(0,Number((cost??ctx.cardById(d?.cardId)?.retreat)||0));return;}
         if(k==='vengefulWish'){
           damage=Number(a?.lastAttackResult?.turn)===Number(ctx.state.turnNumber)-1?Number(a.lastAttackResult.damage||0):0;return;
         }
@@ -18182,6 +18182,7 @@
   function choicesForEffect(effect,ctx){
     if(effect?.type==='neoRule'&&String(effect.rule||'').startsWith('bw4:')){
       const k=effect.rule.slice(4),foe=other(ctx),us=own(ctx);
+      if(k==='forewarn')return us.deck.length>0&&us.hand.length<Number(us.handLimit||8)?[{}]:[];
       if(k==='pokemonCenter')return us.bench.some(p=>Number(p.damage||0)>0&&!healingIsBlocked(ctx.state,p,ctx.cardById))?[{}]:[];
       if(k==='slipperySoles'&&!us.bench.length)return [];
       if(k==='gigaPower')return [{effectSelection:'',choiceLabel:'60 damage, no recoil'},{effectSelection:'boost',choiceLabel:'80 damage and 20 self damage'}];

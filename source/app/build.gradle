@@ -8,8 +8,8 @@ android {
         applicationId 'com.example.luckydex'
         minSdk 26
         targetSdk 35
-        versionCode 7304
-        versionName '0.69.304'
+        versionCode 7305
+        versionName '0.69.305'
     }
 
     signingConfigs {
@@ -410,7 +410,7 @@ tasks.matching { it.name == 'preBuild' || (it.name.startsWith('merge') && it.nam
     dependsOn tasks.named('auditBW3ForApk')
 }
 
-// Next Destinies (v0.69.304): pinned 103-card source and EX battle regressions.
+// Next Destinies (v0.69.305): pinned 103-card source and EX battle regressions.
 tasks.register('generateBW4ForApk', Exec) {
     workingDir rootProject.projectDir
     commandLine (System.getenv('LUCKYDEX_PYTHON') ?: 'python3'), 'scripts/build-bw4.py'
@@ -418,7 +418,7 @@ tasks.register('generateBW4ForApk', Exec) {
 tasks.register('auditBW4ForApk', Exec) {
     dependsOn tasks.named('generateBW4ForApk')
     workingDir rootProject.projectDir
-    commandLine 'node', '--test', 'tests/v07304-next-destinies.test.cjs'
+    commandLine 'node', '--test', 'tests/v07304-next-destinies.test.cjs', 'tests/v07305-next-destinies-independent-audit.test.cjs'
 }
 tasks.matching { it.name == 'preBuild' || (it.name.startsWith('merge') && it.name.endsWith('Assets')) }.configureEach {
     dependsOn tasks.named('auditBW4ForApk')
