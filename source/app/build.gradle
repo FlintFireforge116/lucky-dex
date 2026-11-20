@@ -8,8 +8,8 @@ android {
         applicationId 'com.example.luckydex'
         minSdk 26
         targetSdk 35
-        versionCode 7311
-        versionName '0.69.311'
+        versionCode 7312
+        versionName '0.69.312'
     }
 
     signingConfigs {
@@ -490,4 +490,26 @@ tasks.register('auditBW7ForApk', Exec) {
 }
 tasks.matching { it.name == 'preBuild' || (it.name.startsWith('merge') && it.name.endsWith('Assets')) }.configureEach {
     dependsOn tasks.named('auditBW7ForApk')
+}
+
+// v0.69.312 Plasma Storm. Fetch pinned source only on first prep; thereafter
+// generation and all regression checks are fully deterministic and offline.
+tasks.register('generateBW8ForApk', Exec) {
+    workingDir rootProject.projectDir
+    commandLine (System.getenv('LUCKYDEX_PYTHON') ?: 'python3'), 'scripts/build-bw8.py'
+}
+tasks.named('auditBW7ForApk').configure { dependsOn tasks.named('generateBW8ForApk') }
+tasks.register('auditBW8ForApk', Exec) {
+    dependsOn tasks.named('auditBW7ForApk')
+    workingDir rootProject.projectDir
+    commandLine 'node', '--test', 'tests/v07312-plasma-mechanics.test.cjs', 'tests/v07312-plasma-storm.test.cjs'
+}
+tasks.matching { it.name == 'preBuild' || (it.name.startsWith('merge') && it.name.endsWith('Assets')) }.configureEach {
+    dependsOn tasks.named('auditBW8ForApk')
+}
+
+// All independent legacy checks import the central catalogue, so none may
+// start before BW8 source generation has created its required JS module.
+tasks.matching { it.name.startsWith('audit') && it.name.endsWith('ForApk') && it.name != 'auditBW8ForApk' }.configureEach {
+    dependsOn tasks.named('generateBW8ForApk')
 }

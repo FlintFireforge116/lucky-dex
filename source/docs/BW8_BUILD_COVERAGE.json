@@ -1,0 +1,12 @@
+{
+  "printed": 138,
+  "battleReady": 137,
+  "gated": {
+    "bw8-104": [
+      "Bright Veil requires selective prevention of opponents’ Item effects targeting a Pokémon; do not simulate as no-op."
+    ]
+  },
+  "attacks": 194,
+  "abilities": 20,
+  "sourceGitBlob": "5ae56545ca722ef9ebfee78ae434ce416efa4277"
+}
