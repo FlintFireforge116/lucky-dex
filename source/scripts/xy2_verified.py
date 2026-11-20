@@ -35,7 +35,8 @@ ATTACKS={
  ('31','Frost Barrier'):GUARD(20),('31','Shatter'):E('discardStadium'),
  ('33','Electricounter'):R('electricounter'),
  ('34','Fang Snipe'):R('fangSnipe'),('34','Wild Charge'):E('selfDamage',amount=30),
- ('35','Dual Bullet'):R('dualBullet'),('101','Dual Bullet'):R('dualBullet'),
+ ('35','Dual Bullet'):E('multiTargetDamage',target='opponentPokemon',count=2,amount=50,activeWeaknessResistance=True),
+ ('101','Dual Bullet'):E('multiTargetDamage',target='opponentPokemon',count=2,amount=50,activeWeaknessResistance=True),
  ('36','Destructive Beam'):Q(R('opponentDiscardEnergy')),
  ('37','Parabolic Charge'):SEARCH(2,kind='energy'),
  ('38','Revival'):R('revival'),('38','Sneaky Placement'):R('sneakyPlacement'),
@@ -90,6 +91,12 @@ ABILITIES={
  'Thorn Tempest':{'type':'triggered','event':'evolved','fromHandOnly':True,'effect':R('thornTempest')},
  'Intimidating Mane':{'type':'passive','effect':R('intimidatingMane')},
  'Poison Barrier':{'type':'passive','effect':R('poisonBarrier')},
+ 'Leaf Draw':{'type':'activated','oncePerTurn':True,'effect':R('leafDraw')},
+ 'Counterattack Quills':{'type':'triggered','event':'damagedByAttack','activeOnly':True,'opponentAttackOnly':True,'effect':R('counterattackQuills')},
+ 'Energy Grace':{'type':'activated','oncePerTurn':True,'effect':R('energyGrace')},
+ 'Shadow Void':{'type':'activated','oncePerTurn':False,'effect':R('shadowVoid')},
+ 'Gooey Regeneration':{'type':'activated','oncePerTurn':False,'effect':R('gooeyRegeneration')},
+ 'Big Jump':{'type':'activated','oncePerTurn':True,'effect':E('returnToHand',target='self',returnBasicEnergy=True)},
 }
 # Trainer effects must have a real player/CPU target-resolution route.
 TRAINERS={
@@ -146,7 +153,8 @@ GATE={
 # are verified in real battle-state tests before removing their gates.
 GATE.pop('98')
 # Audited global mechanics, timed attacks, physical discard, and evolution-trigger effects.
-for _audited in ('1','2','10','60','61','64','71','80','95'):
+for _audited in ('1','2','10','60','61','64','71','80','95',
+ '7','9','20','21','23','27','29','34','35','38','39','40','43','49','50','74','82','85','101'):
  GATE.pop(_audited,None)
 
 def attack(row,a):

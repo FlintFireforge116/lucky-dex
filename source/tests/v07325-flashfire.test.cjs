@@ -127,7 +127,10 @@ test('Every enabled Flashfire attack and Trainer declares a validated effect and
  const implemented=new Set(['psychic','derangedDance','electricounter','bigTusk','flail','ironCrash','wonderBlast',
   'revenge','powerfulFriends','strongGust','peckOff','triplePoison','blacksmith','fieryTorch','palPad',
   'pokemonCenterLady','megaphone','trickShovel','ultraBall','sacredAsh','stoke','callForFamily1','callForFamily2','sneakyPlacement','quiverDance','opponentDiscardEnergy',
-  'adaptiveEvolution','flowerVeil','poisonBarrier','stirAndSnooze','thornTempest','chipOff','excitingShake','pricklyNeedles','harden']);
+  'adaptiveEvolution','flowerVeil','poisonBarrier','stirAndSnooze','thornTempest','chipOff','excitingShake','pricklyNeedles','harden',
+  'intimidatingMane','leafDraw','whiplash','scorchingFang','counterattackQuills','energyGrace','heartWink','rescue',
+  'fangSnipe','revival','cursedDrop','shadowVoid','painPellets','earInfluence','rockRush',
+  'flashClaw','gooeyRegeneration','buriedTreasureHunt']);
  for(const c of flash.CARDS.filter(c=>c.battleEnabled)){
   for(const eff of [...(c.attacks||[]).map(a=>a.effect),...(c.abilities||[]).map(a=>a.effect),...(c.kind==='trainer'?[c.effect]:[])]){
    function walk(e){if(!e)return;

@@ -316,7 +316,11 @@
       }
     }
     neoToolCheck(state,side);
-    const hadCardToDraw=s.deck.length>0,drawn=drawCard(s);
+    // Flashfire Luvdisc Heart Wink prevents only the natural draw at the
+    // beginning of this next turn. Trainers and attack draws remain legal.
+    const xy2NoDraw=state.format==='classic'&&Number(s.xy2HeartWinkSkipTurn)===Number(state.turnNumber);
+    const hadCardToDraw=s.deck.length>0,drawn=xy2NoDraw?null:drawCard(s);
+    if(xy2NoDraw){delete s.xy2HeartWinkSkipTurn;state.log.push({type:'drawSkipped',side,reason:'Heart Wink',turnNumber:state.turnNumber});}
     // The compact Classic hybrid uses Pocket's no-deck-out rule: losing
     // 5 Prize cards plus the 7-card opening hand from a 30-card deck would
     // otherwise turn normal draw Trainers into premature match losses.
@@ -1624,6 +1628,15 @@
         if(source.cardId==='bw7-63'&&!(pokemonOn(foe).length>1&&pokemonOn(foe).some(p=>Number(p.damage||0)>=10)))return;
         if(source.cardId==='bw7-68'&&Number(s.bw7LongDistanceHypnosisTurn)===Number(s.turnCount))return;
         if(source.cardId==='bw7-108'&&!s.hand.some(r=>data.cardById(r.cardId)?.kind==='pokemon'&&data.cardById(r.cardId)?.stage==='Basic'))return;
+        // XY2 Ability legality: do not offer repeatable no-op actions to CPU.
+        if(state.format==='classic'&&source.cardId==='xy2-7'&&!s.hand.some(r=>data.cardById(r.cardId)?.basicEnergy&&data.cardById(r.cardId)?.energyType==='Grass'))return;
+        if(state.format==='classic'&&source.cardId==='xy2-23'&&(
+          !pokemonOn(s).some(p=>p!==source&&!data.cardById(p.cardId)?.pokemonEx&&!data.cardById(p.cardId)?.pokemonEX)||
+          Object.values(s.energyDiscard||{}).reduce((n,v)=>n+Number(v||0),0)+s.discard.filter(r=>data.cardById(r.cardId)?.basicEnergy).length<3))return;
+        if(state.format==='classic'&&source.cardId==='xy2-40'&&(
+          !pokemonOn(s).some(p=>p!==source&&Number(p.damage||0)>=10)))return;
+        if(state.format==='classic'&&source.cardId==='xy2-74'&&(
+          !source.damage||!Object.values(source.energy||{}).some(n=>Number(n)>0)&&!(source.specialEnergy||[]).length))return;
         // BW10 repeatable powers are only offered when a real legal move
         // exists: otherwise the advanced CPU repeatedly selects an inert action.
         if(state.format==='classic'&&source.cardId==='bw10-2'&&
