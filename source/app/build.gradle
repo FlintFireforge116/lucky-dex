@@ -8,8 +8,8 @@ android {
         applicationId 'com.example.luckydex'
         minSdk 26
         targetSdk 35
-        versionCode 7330
-        versionName '0.69.330'
+        versionCode 7331
+        versionName '0.69.331'
     }
 
     signingConfigs {
@@ -600,7 +600,7 @@ tasks.matching { it.name == 'preBuild' || (it.name.startsWith('merge') && it.nam
 // placeholders, or if Reshiram/Vanilluxe cost and coin rules regress.
 // This must run after BOTH pinned generators, before any Android asset merge.
 tasks.register('auditV07328PlayerReportedBugsForApk', Exec) {
-    dependsOn tasks.named('auditXY2ForApk')
+    dependsOn tasks.named('auditXY2ForApk'), tasks.named('generateBW3ForApk')
     workingDir rootProject.projectDir
     commandLine 'node', '--test', 'tests/v07328-reshiram-vanilluxe-xy-ui-regressions.test.cjs'
 }

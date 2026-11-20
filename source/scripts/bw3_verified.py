@@ -20,7 +20,7 @@ A={
  ('21','Fiery Dance'):R('fieryDance'),
  ('23','Round'):R('round'),('24','Round'):R('round'),
  ('26','Crunch'):DISC(1,'opponentActive'),
- ('29','Double Freeze'):R('doubleFreeze'),
+ ('29','Double Freeze'):{'type':'coinDamageStatus','coins':2,'amount':40,'minHeads':1,'status':'paralysis'},
  ('31','Hydro Pump'):{'type':'energyDamage','source':'self','energyType':'Water','amount':20,'mode':'add'},
  ('32','Ice Shard'):BONUS(40,{'type':'opponentMatches','filter':{'subtype':'Fighting'}}),
  ('33','Ice Chain'):{'type':'forceOpponentSwitch','chooseBy':'attacker'},
