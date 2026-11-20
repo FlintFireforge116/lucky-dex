@@ -2261,7 +2261,7 @@
           }if(transform&&target){target.specialEnergy=target.specialEnergy||[];target.specialEnergy.push({uid:`${slot.uid}-transformed-energy`,cardId:card.id,provides:{...transform.provides},transformedPokemon:true});state.log.push({type:'transformEnergy',side,cardId:card.id,targetCardId:target.cardId,provides:{...transform.provides}});}}if(slot===s.active)s.active=null;else s.bench.splice(s.bench.indexOf(slot),1);
         const attacker=source&&[foe.active,...foe.bench].find(x=>x&&x.uid===source.uid);let points=0;
         if(state.rules?.winMode==='prizes'){
-          const awardsPrize=!(slot.cardId==='pl2-87'&&slot.conditions?.confusion&&!effects.abilitiesSuppressed(state,side,slot,data.cardById))&&!(slot.cardId==='dp3-26'&&slot.transformOnKO)&&!slot.dp2ForcedDiscard&&card?.effect?.noPrize!==true&&card?.noPrize!==true&&!['ex16-84','ex16-85','ex16-86'].includes(card?.id);
+          const awardsPrize=!(slot.cardId==='pl2-87'&&slot.conditions?.confusion&&!effects.abilitiesSuppressed(state,side,slot,data.cardById))&&!(slot.cardId==='dp3-26'&&slot.transformOnKO)&&!slot.dp2ForcedDiscard&&card?.effect?.noPrize!==true&&!(card?.noPrize===true&&(slot.cardId!=='bw6-48'||!effects.abilitiesSuppressed(state,side,slot,data.cardById)))&&!['ex16-84','ex16-85','ex16-86'].includes(card?.id);
           let awarded=0;const extraMoonSkip=attacker?.cardId==='dp4-103'&&source?.attack&&source?.side===foeSide&&foe.lastAttackName==='Moon Skip'?1:0;
           const arceusExtra=state.format==='classic'&&source?.side===foeSide&&source?.attack&&foe.pl4DoubleFallUntil===state.turnNumber&&['pl4-98'].includes(attacker?.cardId)?1:0;
           const hgss3SpaceVirus=awardsPrize&&cause==='attack'&&eventSource?.attack&&

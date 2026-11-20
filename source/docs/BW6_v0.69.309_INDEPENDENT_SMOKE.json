@@ -1,0 +1,3196 @@
+{
+  "schemaVersion": 1,
+  "contract": "docs/LUCKYDEX_MASTER_RULES.txt",
+  "scope": "Static preflight + optional synthetic execution, not printed correctness or Android certification",
+  "summary": {
+    "setId": "bw6",
+    "setName": "Dragons Exalted",
+    "total": 128,
+    "declared": 128,
+    "counts": {
+      "pokemon": 122,
+      "trainer": 4,
+      "energy": 2,
+      "attacks": 200,
+      "abilities": 20,
+      "enabled": 128,
+      "gated": 0
+    },
+    "risks": {
+      "choice": 18,
+      "privacy": 2,
+      "timing": 21,
+      "energyMovement": 26,
+      "status": 22,
+      "deckSearch": 16,
+      "coin": 46
+    },
+    "withStaticTestMentions": 13,
+    "errors": 0,
+    "warnings": 0,
+    "reviewFlags": 57
+  },
+  "findings": [
+    {
+      "severity": "review",
+      "rule": "C-AUDIT-002",
+      "cardId": "bw6-7",
+      "message": "attack Harden: custom rule bw6:harden has no obvious source literal; inspect dispatcher."
+    },
+    {
+      "severity": "review",
+      "rule": "C-AUDIT-002",
+      "cardId": "bw6-8",
+      "message": "attack Triple Energy: custom rule bw6:tripleEnergy has no obvious source literal; inspect dispatcher."
+    },
+    {
+      "severity": "review",
+      "rule": "C-AUDIT-002",
+      "cardId": "bw6-11",
+      "message": "ability Cast-off Shell: custom rule bw6:castOffShell has no obvious source literal; inspect dispatcher."
+    },
+    {
+      "severity": "review",
+      "rule": "C-AUDIT-002",
+      "cardId": "bw6-16",
+      "message": "attack Reinforced Needle: custom rule bw6:reinforcedNeedle has no obvious source literal; inspect dispatcher."
+    },
+    {
+      "severity": "review",
+      "rule": "C-AUDIT-002",
+      "cardId": "bw6-19",
+      "message": "attack Hexed Flame: custom rule bw6:hexedFlame has no obvious source literal; inspect dispatcher."
+    },
+    {
+      "severity": "review",
+      "rule": "C-AUDIT-002",
+      "cardId": "bw6-22",
+      "message": "attack Rainbow Burn: custom rule bw6:rainbowBurn has no obvious source literal; inspect dispatcher."
+    },
+    {
+      "severity": "review",
+      "rule": "C-AUDIT-002",
+      "cardId": "bw6-22",
+      "message": "ability Rebirth: custom rule bw6:rebirth has no obvious source literal; inspect dispatcher."
+    },
+    {
+      "severity": "review",
+      "rule": "C-AUDIT-002",
+      "cardId": "bw6-26",
+      "message": "attack Water Cannon: custom rule bw6:waterCannon has no obvious source literal; inspect dispatcher."
+    },
+    {
+      "severity": "review",
+      "rule": "C-AUDIT-002",
+      "cardId": "bw6-27",
+      "message": "attack Add-a-Dash: custom rule bw6:addADash has no obvious source literal; inspect dispatcher."
+    },
+    {
+      "severity": "review",
+      "rule": "C-AUDIT-002",
+      "cardId": "bw6-29",
+      "message": "attack Unstoppable Roll: custom rule bw6:unstoppableRoll has no obvious source literal; inspect dispatcher."
+    },
+    {
+      "severity": "review",
+      "rule": "C-AUDIT-002",
+      "cardId": "bw6-36",
+      "message": "attack Echoed Voice: custom rule bw4:echoedVoice has no obvious source literal; inspect dispatcher."
+    },
+    {
+      "severity": "review",
+      "rule": "C-AUDIT-002",
+      "cardId": "bw6-38",
+      "message": "attack Thunder Jolt: custom rule bw6:thunderJolt has no obvious source literal; inspect dispatcher."
+    },
+    {
+      "severity": "review",
+      "rule": "C-AUDIT-002",
+      "cardId": "bw6-40",
+      "message": "ability Electromagnetic Wall: custom rule bw6:electromagneticWall has no obvious source literal; inspect dispatcher."
+    },
+    {
+      "severity": "review",
+      "rule": "C-AUDIT-002",
+      "cardId": "bw6-43",
+      "message": "attack Energy Crush: custom rule bw6:energyCrush has no obvious source literal; inspect dispatcher."
+    },
+    {
+      "severity": "review",
+      "rule": "C-AUDIT-002",
+      "cardId": "bw6-43",
+      "message": "attack Flash Impact: custom rule bw6:flashImpact has no obvious source literal; inspect dispatcher."
+    },
+    {
+      "severity": "review",
+      "rule": "C-AUDIT-002",
+      "cardId": "bw6-44",
+      "message": "attack Energy Assist: custom rule bw6:energyAssist has no obvious source literal; inspect dispatcher."
+    },
+    {
+      "severity": "review",
+      "rule": "C-AUDIT-002",
+      "cardId": "bw6-46",
+      "message": "attack Replace: custom rule bw6:replace has no obvious source literal; inspect dispatcher."
+    },
+    {
+      "severity": "review",
+      "rule": "C-AUDIT-002",
+      "cardId": "bw6-46",
+      "message": "ability Versatile: custom rule bw6:versatile has no obvious source literal; inspect dispatcher."
+    },
+    {
+      "severity": "review",
+      "rule": "C-AUDIT-002",
+      "cardId": "bw6-48",
+      "message": "attack Cursed Drop: custom rule bw6:cursedDrop has no obvious source literal; inspect dispatcher."
+    },
+    {
+      "severity": "review",
+      "rule": "C-AUDIT-002",
+      "cardId": "bw6-51",
+      "message": "attack Shadow Steal: custom rule bw6:shadowSteal has no obvious source literal; inspect dispatcher."
+    },
+    {
+      "severity": "review",
+      "rule": "C-AUDIT-002",
+      "cardId": "bw6-52",
+      "message": "ability Safeguard: custom rule bw6:safeguard has no obvious source literal; inspect dispatcher."
+    },
+    {
+      "severity": "review",
+      "rule": "C-AUDIT-002",
+      "cardId": "bw6-54",
+      "message": "ability Garbotoxin: custom rule bw6:garbotoxin has no obvious source literal; inspect dispatcher."
+    },
+    {
+      "severity": "review",
+      "rule": "C-AUDIT-002",
+      "cardId": "bw6-57",
+      "message": "attack Doom Decree: custom rule bw6:doomDecree has no obvious source literal; inspect dispatcher."
+    },
+    {
+      "severity": "review",
+      "rule": "C-AUDIT-002",
+      "cardId": "bw6-61",
+      "message": "attack Vortex Chop: custom rule bw6:vortexChop has no obvious source literal; inspect dispatcher."
+    },
+    {
+      "severity": "review",
+      "rule": "C-AUDIT-002",
+      "cardId": "bw6-63",
+      "message": "attack Reverse Spin: custom rule bw6:reverseSpin has no obvious source literal; inspect dispatcher."
+    },
+    {
+      "severity": "review",
+      "rule": "C-AUDIT-002",
+      "cardId": "bw6-64",
+      "message": "attack Rapid Spin: custom rule bw6:rapidSpin has no obvious source literal; inspect dispatcher."
+    },
+    {
+      "severity": "review",
+      "rule": "C-AUDIT-002",
+      "cardId": "bw6-67",
+      "message": "attack Revenge Cannon: custom rule bw6:revengeCannon has no obvious source literal; inspect dispatcher."
+    },
+    {
+      "severity": "review",
+      "rule": "C-AUDIT-002",
+      "cardId": "bw6-68",
+      "message": "attack Superpower: custom rule bw6:superpower has no obvious source literal; inspect dispatcher."
+    },
+    {
+      "severity": "review",
+      "rule": "C-AUDIT-002",
+      "cardId": "bw6-71",
+      "message": "attack Pump-up Smash: custom rule bw6:pumpUpSmash has no obvious source literal; inspect dispatcher."
+    },
+    {
+      "severity": "review",
+      "rule": "C-AUDIT-002",
+      "cardId": "bw6-79",
+      "message": "attack Wreak Havoc: custom rule bw6:wreakHavoc has no obvious source literal; inspect dispatcher."
+    },
+    {
+      "severity": "review",
+      "rule": "C-AUDIT-002",
+      "cardId": "bw6-80",
+      "message": "attack Giga Horn: custom rule bw6:gigaHorn has no obvious source literal; inspect dispatcher."
+    },
+    {
+      "severity": "review",
+      "rule": "C-AUDIT-002",
+      "cardId": "bw6-81",
+      "message": "attack Triple Laser: custom rule bw6:tripleLaser has no obvious source literal; inspect dispatcher."
+    },
+    {
+      "severity": "review",
+      "rule": "C-AUDIT-002",
+      "cardId": "bw6-83",
+      "message": "attack Pull Out: custom rule bw6:pullOut has no obvious source literal; inspect dispatcher."
+    },
+    {
+      "severity": "review",
+      "rule": "C-AUDIT-002",
+      "cardId": "bw6-84",
+      "message": "ability Fight Song: custom rule bw6:fightSong has no obvious source literal; inspect dispatcher."
+    },
+    {
+      "severity": "review",
+      "rule": "C-AUDIT-002",
+      "cardId": "bw6-85",
+      "message": "attack Celestial Roar: custom rule bw6:celestialRoar has no obvious source literal; inspect dispatcher."
+    },
+    {
+      "severity": "review",
+      "rule": "C-AUDIT-002",
+      "cardId": "bw6-85",
+      "message": "attack Dragon Burst: custom rule bw6:dragonBurst has no obvious source literal; inspect dispatcher."
+    },
+    {
+      "severity": "review",
+      "rule": "C-AUDIT-002",
+      "cardId": "bw6-89",
+      "message": "ability Dragon Call: custom rule bw6:dragonCall has no obvious source literal; inspect dispatcher."
+    },
+    {
+      "severity": "review",
+      "rule": "C-AUDIT-002",
+      "cardId": "bw6-96",
+      "message": "attack Draw In: custom rule bw6:drawIn has no obvious source literal; inspect dispatcher."
+    },
+    {
+      "severity": "review",
+      "rule": "C-AUDIT-002",
+      "cardId": "bw6-97",
+      "message": "ability Dark Trance: custom rule bw6:darkTrance has no obvious source literal; inspect dispatcher."
+    },
+    {
+      "severity": "review",
+      "rule": "C-AUDIT-002",
+      "cardId": "bw6-103",
+      "message": "ability Unobservant: custom rule bw6:unobservant has no obvious source literal; inspect dispatcher."
+    },
+    {
+      "severity": "review",
+      "rule": "C-AUDIT-002",
+      "cardId": "bw6-110",
+      "message": "attack Gold Breaker: custom rule bw6:goldBreaker has no obvious source literal; inspect dispatcher."
+    },
+    {
+      "severity": "review",
+      "rule": "C-AUDIT-002",
+      "cardId": "bw6-110",
+      "message": "ability Bouffer: custom rule bw6:bouffer has no obvious source literal; inspect dispatcher."
+    },
+    {
+      "severity": "review",
+      "rule": "C-AUDIT-002",
+      "cardId": "bw6-111",
+      "message": "attack Chirp: custom rule bw6:chirp has no obvious source literal; inspect dispatcher."
+    },
+    {
+      "severity": "review",
+      "rule": "C-AUDIT-002",
+      "cardId": "bw6-114",
+      "message": "card effect: custom rule bw6:giantCape has no obvious source literal; inspect dispatcher."
+    },
+    {
+      "severity": "review",
+      "rule": "C-AUDIT-002",
+      "cardId": "bw6-115",
+      "message": "card effect: custom rule bw6:rescueScarf has no obvious source literal; inspect dispatcher."
+    },
+    {
+      "severity": "review",
+      "rule": "C-AUDIT-002",
+      "cardId": "bw6-116",
+      "message": "card effect: custom rule bw6:toolScrapper has no obvious source literal; inspect dispatcher."
+    },
+    {
+      "severity": "review",
+      "rule": "C-AUDIT-002",
+      "cardId": "bw6-119",
+      "message": "attack Rainbow Burn: custom rule bw6:rainbowBurn has no obvious source literal; inspect dispatcher."
+    },
+    {
+      "severity": "review",
+      "rule": "C-AUDIT-002",
+      "cardId": "bw6-119",
+      "message": "ability Rebirth: custom rule bw6:rebirth has no obvious source literal; inspect dispatcher."
+    },
+    {
+      "severity": "review",
+      "rule": "C-AUDIT-002",
+      "cardId": "bw6-120",
+      "message": "attack Replace: custom rule bw6:replace has no obvious source literal; inspect dispatcher."
+    },
+    {
+      "severity": "review",
+      "rule": "C-AUDIT-002",
+      "cardId": "bw6-120",
+      "message": "ability Versatile: custom rule bw6:versatile has no obvious source literal; inspect dispatcher."
+    },
+    {
+      "severity": "review",
+      "rule": "C-AUDIT-002",
+      "cardId": "bw6-121",
+      "message": "attack Pump-up Smash: custom rule bw6:pumpUpSmash has no obvious source literal; inspect dispatcher."
+    },
+    {
+      "severity": "review",
+      "rule": "C-AUDIT-002",
+      "cardId": "bw6-122",
+      "message": "attack Triple Laser: custom rule bw6:tripleLaser has no obvious source literal; inspect dispatcher."
+    },
+    {
+      "severity": "review",
+      "rule": "C-AUDIT-002",
+      "cardId": "bw6-123",
+      "message": "attack Celestial Roar: custom rule bw6:celestialRoar has no obvious source literal; inspect dispatcher."
+    },
+    {
+      "severity": "review",
+      "rule": "C-AUDIT-002",
+      "cardId": "bw6-123",
+      "message": "attack Dragon Burst: custom rule bw6:dragonBurst has no obvious source literal; inspect dispatcher."
+    },
+    {
+      "severity": "review",
+      "rule": "C-AUDIT-002",
+      "cardId": "bw6-125",
+      "message": "ability Royal Heal: custom rule bw1:royalHeal has no obvious source literal; inspect dispatcher."
+    },
+    {
+      "severity": "review",
+      "rule": "C-AUDIT-002",
+      "cardId": "bw6-126",
+      "message": "ability Damage Swap: custom rule bw1:damageSwap has no obvious source literal; inspect dispatcher."
+    },
+    {
+      "severity": "review",
+      "rule": "C-AUDIT-002",
+      "cardId": "bw6-127",
+      "message": "attack Bombast: custom rule bw5:bombast has no obvious source literal; inspect dispatcher."
+    }
+  ],
+  "cardLedger": [
+    {
+      "id": "bw6-1",
+      "name": "Hoppip",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 1,
+      "abilityCount": 0,
+      "riskTags": [
+        "coin"
+      ],
+      "effectTypes": [
+        "coinDamage"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [
+        "v07308-dragons-exalted.test.cjs",
+        "v07309-dragons-exalted-independent-audit.test.cjs"
+      ],
+      "findings": []
+    },
+    {
+      "id": "bw6-2",
+      "name": "Skiploom",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 1,
+      "abilityCount": 0,
+      "riskTags": [
+        "coin"
+      ],
+      "effectTypes": [
+        "coinDamage"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [
+        "v07308-dragons-exalted.test.cjs",
+        "v07309-dragons-exalted-independent-audit.test.cjs"
+      ],
+      "findings": []
+    },
+    {
+      "id": "bw6-3",
+      "name": "Jumpluff",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 1,
+      "abilityCount": 1,
+      "riskTags": [
+        "choice",
+        "coin"
+      ],
+      "effectTypes": [
+        "coinDamage",
+        "returnToHand"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [
+        "v07308-dragons-exalted.test.cjs",
+        "v07309-dragons-exalted-independent-audit.test.cjs"
+      ],
+      "findings": []
+    },
+    {
+      "id": "bw6-4",
+      "name": "Yanma",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 1,
+      "abilityCount": 0,
+      "riskTags": [],
+      "effectTypes": [
+        "forceOpponentSwitch"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [],
+      "findings": []
+    },
+    {
+      "id": "bw6-5",
+      "name": "Yanmega",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [
+        "timing",
+        "coin"
+      ],
+      "effectTypes": [
+        "coinFlip",
+        "preventDamage",
+        "noop"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [],
+      "findings": []
+    },
+    {
+      "id": "bw6-6",
+      "name": "Wurmple",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 1,
+      "abilityCount": 0,
+      "riskTags": [
+        "status",
+        "coin"
+      ],
+      "effectTypes": [
+        "coinFlip",
+        "sequence",
+        "status"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [],
+      "findings": []
+    },
+    {
+      "id": "bw6-7",
+      "name": "Silcoon",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [
+        "timing"
+      ],
+      "effectTypes": [
+        "neoRule",
+        "noop"
+      ],
+      "customRules": [
+        "bw6:harden"
+      ],
+      "testFilesMentioningId": [],
+      "findings": [
+        {
+          "severity": "review",
+          "rule": "C-AUDIT-002",
+          "message": "attack Harden: custom rule bw6:harden has no obvious source literal; inspect dispatcher."
+        }
+      ]
+    },
+    {
+      "id": "bw6-8",
+      "name": "Beautifly",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [
+        "energyMovement",
+        "deckSearch"
+      ],
+      "effectTypes": [
+        "neoRule",
+        "heal"
+      ],
+      "customRules": [
+        "bw6:tripleEnergy"
+      ],
+      "testFilesMentioningId": [],
+      "findings": [
+        {
+          "severity": "review",
+          "rule": "C-AUDIT-002",
+          "message": "attack Triple Energy: custom rule bw6:tripleEnergy has no obvious source literal; inspect dispatcher."
+        }
+      ]
+    },
+    {
+      "id": "bw6-9",
+      "name": "Cascoon",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [],
+      "effectTypes": [
+        "forceOpponentSwitch",
+        "heal"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [],
+      "findings": []
+    },
+    {
+      "id": "bw6-10",
+      "name": "Nincada",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 1,
+      "abilityCount": 0,
+      "riskTags": [
+        "timing",
+        "coin"
+      ],
+      "effectTypes": [
+        "coinFlip",
+        "preventDamage"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [],
+      "findings": []
+    },
+    {
+      "id": "bw6-11",
+      "name": "Ninjask",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 1,
+      "abilityCount": 1,
+      "riskTags": [
+        "choice",
+        "deckSearch"
+      ],
+      "effectTypes": [
+        "chooseOption",
+        "switch",
+        "noop",
+        "neoRule"
+      ],
+      "customRules": [
+        "bw6:castOffShell"
+      ],
+      "testFilesMentioningId": [],
+      "findings": [
+        {
+          "severity": "review",
+          "rule": "C-AUDIT-002",
+          "message": "ability Cast-off Shell: custom rule bw6:castOffShell has no obvious source literal; inspect dispatcher."
+        }
+      ]
+    },
+    {
+      "id": "bw6-12",
+      "name": "Roselia",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [
+        "coin"
+      ],
+      "effectTypes": [
+        "coinDamage",
+        "sequence",
+        "heal",
+        "removeStatus"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [],
+      "findings": []
+    },
+    {
+      "id": "bw6-13",
+      "name": "Roselia",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 1,
+      "abilityCount": 0,
+      "riskTags": [
+        "coin"
+      ],
+      "effectTypes": [
+        "coinFlip",
+        "bonusDamage"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [],
+      "findings": []
+    },
+    {
+      "id": "bw6-14",
+      "name": "Roserade",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [
+        "status",
+        "coin"
+      ],
+      "effectTypes": [
+        "coinDamage",
+        "status"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [],
+      "findings": []
+    },
+    {
+      "id": "bw6-15",
+      "name": "Roserade",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 1,
+      "abilityCount": 1,
+      "riskTags": [
+        "choice",
+        "status",
+        "deckSearch",
+        "coin"
+      ],
+      "effectTypes": [
+        "coinFlip",
+        "sequence",
+        "bonusDamage",
+        "status",
+        "searchChosen"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [],
+      "findings": []
+    },
+    {
+      "id": "bw6-16",
+      "name": "Maractus",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [
+        "status",
+        "coin"
+      ],
+      "effectTypes": [
+        "coinFlip",
+        "status",
+        "neoRule"
+      ],
+      "customRules": [
+        "bw6:reinforcedNeedle"
+      ],
+      "testFilesMentioningId": [],
+      "findings": [
+        {
+          "severity": "review",
+          "rule": "C-AUDIT-002",
+          "message": "attack Reinforced Needle: custom rule bw6:reinforcedNeedle has no obvious source literal; inspect dispatcher."
+        }
+      ]
+    },
+    {
+      "id": "bw6-17",
+      "name": "Foongus",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 1,
+      "abilityCount": 0,
+      "riskTags": [
+        "coin"
+      ],
+      "effectTypes": [
+        "coinDamage"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [],
+      "findings": []
+    },
+    {
+      "id": "bw6-18",
+      "name": "Vulpix",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 1,
+      "abilityCount": 0,
+      "riskTags": [
+        "status"
+      ],
+      "effectTypes": [
+        "status"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [],
+      "findings": []
+    },
+    {
+      "id": "bw6-19",
+      "name": "Ninetales",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 1,
+      "abilityCount": 1,
+      "riskTags": [
+        "choice",
+        "status"
+      ],
+      "effectTypes": [
+        "neoRule",
+        "forceOpponentSwitch"
+      ],
+      "customRules": [
+        "bw6:hexedFlame"
+      ],
+      "testFilesMentioningId": [],
+      "findings": [
+        {
+          "severity": "review",
+          "rule": "C-AUDIT-002",
+          "message": "attack Hexed Flame: custom rule bw6:hexedFlame has no obvious source literal; inspect dispatcher."
+        }
+      ]
+    },
+    {
+      "id": "bw6-20",
+      "name": "Magmar",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [],
+      "effectTypes": [
+        "noop"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [],
+      "findings": []
+    },
+    {
+      "id": "bw6-21",
+      "name": "Magmortar",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [
+        "timing",
+        "energyMovement"
+      ],
+      "effectTypes": [
+        "modifier",
+        "discardEnergyCard"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [],
+      "findings": []
+    },
+    {
+      "id": "bw6-22",
+      "name": "Ho-Oh-EX",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 1,
+      "abilityCount": 1,
+      "riskTags": [
+        "choice",
+        "energyMovement",
+        "coin"
+      ],
+      "effectTypes": [
+        "neoRule"
+      ],
+      "customRules": [
+        "bw6:rainbowBurn",
+        "bw6:rebirth"
+      ],
+      "testFilesMentioningId": [
+        "v07308-dragons-exalted.test.cjs"
+      ],
+      "findings": [
+        {
+          "severity": "review",
+          "rule": "C-AUDIT-002",
+          "message": "attack Rainbow Burn: custom rule bw6:rainbowBurn has no obvious source literal; inspect dispatcher."
+        },
+        {
+          "severity": "review",
+          "rule": "C-AUDIT-002",
+          "message": "ability Rebirth: custom rule bw6:rebirth has no obvious source literal; inspect dispatcher."
+        }
+      ]
+    },
+    {
+      "id": "bw6-23",
+      "name": "Magikarp",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 1,
+      "abilityCount": 0,
+      "riskTags": [
+        "coin"
+      ],
+      "effectTypes": [
+        "coinDamage"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [],
+      "findings": []
+    },
+    {
+      "id": "bw6-24",
+      "name": "Gyarados",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [
+        "coin"
+      ],
+      "effectTypes": [
+        "noop",
+        "coinDamage"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [],
+      "findings": []
+    },
+    {
+      "id": "bw6-25",
+      "name": "Wailmer",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [
+        "status",
+        "coin"
+      ],
+      "effectTypes": [
+        "coinFlip",
+        "status",
+        "noop"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [],
+      "findings": []
+    },
+    {
+      "id": "bw6-26",
+      "name": "Wailord",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [
+        "timing",
+        "coin"
+      ],
+      "effectTypes": [
+        "neoRule",
+        "lock"
+      ],
+      "customRules": [
+        "bw6:waterCannon"
+      ],
+      "testFilesMentioningId": [],
+      "findings": [
+        {
+          "severity": "review",
+          "rule": "C-AUDIT-002",
+          "message": "attack Water Cannon: custom rule bw6:waterCannon has no obvious source literal; inspect dispatcher."
+        }
+      ]
+    },
+    {
+      "id": "bw6-27",
+      "name": "Feebas",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 1,
+      "abilityCount": 0,
+      "riskTags": [
+        "coin"
+      ],
+      "effectTypes": [
+        "neoRule"
+      ],
+      "customRules": [
+        "bw6:addADash"
+      ],
+      "testFilesMentioningId": [],
+      "findings": [
+        {
+          "severity": "review",
+          "rule": "C-AUDIT-002",
+          "message": "attack Add-a-Dash: custom rule bw6:addADash has no obvious source literal; inspect dispatcher."
+        }
+      ]
+    },
+    {
+      "id": "bw6-28",
+      "name": "Milotic",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [
+        "status",
+        "deckSearch"
+      ],
+      "effectTypes": [
+        "searchChosen",
+        "status"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [],
+      "findings": []
+    },
+    {
+      "id": "bw6-29",
+      "name": "Spheal",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 1,
+      "abilityCount": 0,
+      "riskTags": [
+        "coin"
+      ],
+      "effectTypes": [
+        "neoRule"
+      ],
+      "customRules": [
+        "bw6:unstoppableRoll"
+      ],
+      "testFilesMentioningId": [],
+      "findings": [
+        {
+          "severity": "review",
+          "rule": "C-AUDIT-002",
+          "message": "attack Unstoppable Roll: custom rule bw6:unstoppableRoll has no obvious source literal; inspect dispatcher."
+        }
+      ]
+    },
+    {
+      "id": "bw6-30",
+      "name": "Sealeo",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [],
+      "effectTypes": [
+        "noop"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [],
+      "findings": []
+    },
+    {
+      "id": "bw6-31",
+      "name": "Walrein",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [
+        "timing",
+        "status"
+      ],
+      "effectTypes": [
+        "noop",
+        "sequence",
+        "status",
+        "lock"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [],
+      "findings": []
+    },
+    {
+      "id": "bw6-32",
+      "name": "Buizel",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 1,
+      "abilityCount": 0,
+      "riskTags": [],
+      "effectTypes": [
+        "noop"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [],
+      "findings": []
+    },
+    {
+      "id": "bw6-33",
+      "name": "Floatzel",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [],
+      "effectTypes": [
+        "noop"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [],
+      "findings": []
+    },
+    {
+      "id": "bw6-34",
+      "name": "Tympole",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 1,
+      "abilityCount": 0,
+      "riskTags": [
+        "status",
+        "coin"
+      ],
+      "effectTypes": [
+        "coinFlip",
+        "status"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [],
+      "findings": []
+    },
+    {
+      "id": "bw6-35",
+      "name": "Palpitoad",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [
+        "status"
+      ],
+      "effectTypes": [
+        "status",
+        "noop"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [],
+      "findings": []
+    },
+    {
+      "id": "bw6-36",
+      "name": "Seismitoad",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [
+        "timing"
+      ],
+      "effectTypes": [
+        "neoRule",
+        "heal"
+      ],
+      "customRules": [
+        "bw4:echoedVoice"
+      ],
+      "testFilesMentioningId": [],
+      "findings": [
+        {
+          "severity": "review",
+          "rule": "C-AUDIT-002",
+          "message": "attack Echoed Voice: custom rule bw4:echoedVoice has no obvious source literal; inspect dispatcher."
+        }
+      ]
+    },
+    {
+      "id": "bw6-37",
+      "name": "Alomomola",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [
+        "energyMovement",
+        "coin"
+      ],
+      "effectTypes": [
+        "coinFlip",
+        "discardEnergyCard",
+        "coinDamage"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [],
+      "findings": []
+    },
+    {
+      "id": "bw6-38",
+      "name": "Mareep",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [
+        "timing",
+        "coin"
+      ],
+      "effectTypes": [
+        "modifier",
+        "neoRule"
+      ],
+      "customRules": [
+        "bw6:thunderJolt"
+      ],
+      "testFilesMentioningId": [],
+      "findings": [
+        {
+          "severity": "review",
+          "rule": "C-AUDIT-002",
+          "message": "attack Thunder Jolt: custom rule bw6:thunderJolt has no obvious source literal; inspect dispatcher."
+        }
+      ]
+    },
+    {
+      "id": "bw6-39",
+      "name": "Flaaffy",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [
+        "timing"
+      ],
+      "effectTypes": [
+        "modifier",
+        "noop"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [],
+      "findings": []
+    },
+    {
+      "id": "bw6-40",
+      "name": "Ampharos",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 1,
+      "abilityCount": 1,
+      "riskTags": [
+        "energyMovement"
+      ],
+      "effectTypes": [
+        "selectedDamage",
+        "neoRule"
+      ],
+      "customRules": [
+        "bw6:electromagneticWall"
+      ],
+      "testFilesMentioningId": [],
+      "findings": [
+        {
+          "severity": "review",
+          "rule": "C-AUDIT-002",
+          "message": "ability Electromagnetic Wall: custom rule bw6:electromagneticWall has no obvious source literal; inspect dispatcher."
+        }
+      ]
+    },
+    {
+      "id": "bw6-41",
+      "name": "Electrike",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [
+        "coin"
+      ],
+      "effectTypes": [
+        "noop",
+        "coinFlip",
+        "bonusDamage"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [],
+      "findings": []
+    },
+    {
+      "id": "bw6-42",
+      "name": "Electrike",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 1,
+      "abilityCount": 0,
+      "riskTags": [
+        "coin"
+      ],
+      "effectTypes": [
+        "coinDamage"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [],
+      "findings": []
+    },
+    {
+      "id": "bw6-43",
+      "name": "Manectric",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [],
+      "effectTypes": [
+        "neoRule"
+      ],
+      "customRules": [
+        "bw6:energyCrush",
+        "bw6:flashImpact"
+      ],
+      "testFilesMentioningId": [],
+      "findings": [
+        {
+          "severity": "review",
+          "rule": "C-AUDIT-002",
+          "message": "attack Energy Crush: custom rule bw6:energyCrush has no obvious source literal; inspect dispatcher."
+        },
+        {
+          "severity": "review",
+          "rule": "C-AUDIT-002",
+          "message": "attack Flash Impact: custom rule bw6:flashImpact has no obvious source literal; inspect dispatcher."
+        }
+      ]
+    },
+    {
+      "id": "bw6-44",
+      "name": "Manectric",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [
+        "energyMovement",
+        "coin"
+      ],
+      "effectTypes": [
+        "neoRule",
+        "coinFlip",
+        "bonusDamage"
+      ],
+      "customRules": [
+        "bw6:energyAssist"
+      ],
+      "testFilesMentioningId": [],
+      "findings": [
+        {
+          "severity": "review",
+          "rule": "C-AUDIT-002",
+          "message": "attack Energy Assist: custom rule bw6:energyAssist has no obvious source literal; inspect dispatcher."
+        }
+      ]
+    },
+    {
+      "id": "bw6-45",
+      "name": "Emolga",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [
+        "deckSearch"
+      ],
+      "effectTypes": [
+        "benchFromDeck",
+        "noop"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [],
+      "findings": []
+    },
+    {
+      "id": "bw6-46",
+      "name": "Mew-EX",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 1,
+      "abilityCount": 1,
+      "riskTags": [
+        "energyMovement"
+      ],
+      "effectTypes": [
+        "neoRule"
+      ],
+      "customRules": [
+        "bw6:replace",
+        "bw6:versatile"
+      ],
+      "testFilesMentioningId": [],
+      "findings": [
+        {
+          "severity": "review",
+          "rule": "C-AUDIT-002",
+          "message": "attack Replace: custom rule bw6:replace has no obvious source literal; inspect dispatcher."
+        },
+        {
+          "severity": "review",
+          "rule": "C-AUDIT-002",
+          "message": "ability Versatile: custom rule bw6:versatile has no obvious source literal; inspect dispatcher."
+        }
+      ]
+    },
+    {
+      "id": "bw6-47",
+      "name": "Dustox",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [
+        "status",
+        "coin"
+      ],
+      "effectTypes": [
+        "sequence",
+        "status",
+        "coinFlip",
+        "bonusDamage"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [],
+      "findings": []
+    },
+    {
+      "id": "bw6-48",
+      "name": "Shedinja",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 1,
+      "abilityCount": 1,
+      "riskTags": [],
+      "effectTypes": [
+        "neoRule",
+        "koPointBonus"
+      ],
+      "customRules": [
+        "bw6:cursedDrop"
+      ],
+      "testFilesMentioningId": [
+        "v07308-dragons-exalted.test.cjs"
+      ],
+      "findings": [
+        {
+          "severity": "review",
+          "rule": "C-AUDIT-002",
+          "message": "attack Cursed Drop: custom rule bw6:cursedDrop has no obvious source literal; inspect dispatcher."
+        }
+      ]
+    },
+    {
+      "id": "bw6-49",
+      "name": "Drifloon",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 1,
+      "abilityCount": 0,
+      "riskTags": [],
+      "effectTypes": [
+        "selectedDamage"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [],
+      "findings": []
+    },
+    {
+      "id": "bw6-50",
+      "name": "Drifloon",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [],
+      "effectTypes": [
+        "noop"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [],
+      "findings": []
+    },
+    {
+      "id": "bw6-51",
+      "name": "Drifblim",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [
+        "energyMovement"
+      ],
+      "effectTypes": [
+        "neoRule",
+        "selectedDamage"
+      ],
+      "customRules": [
+        "bw6:shadowSteal"
+      ],
+      "testFilesMentioningId": [],
+      "findings": [
+        {
+          "severity": "review",
+          "rule": "C-AUDIT-002",
+          "message": "attack Shadow Steal: custom rule bw6:shadowSteal has no obvious source literal; inspect dispatcher."
+        }
+      ]
+    },
+    {
+      "id": "bw6-52",
+      "name": "Sigilyph",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 1,
+      "abilityCount": 1,
+      "riskTags": [],
+      "effectTypes": [
+        "energyDamage",
+        "neoRule"
+      ],
+      "customRules": [
+        "bw6:safeguard"
+      ],
+      "testFilesMentioningId": [],
+      "findings": [
+        {
+          "severity": "review",
+          "rule": "C-AUDIT-002",
+          "message": "ability Safeguard: custom rule bw6:safeguard has no obvious source literal; inspect dispatcher."
+        }
+      ]
+    },
+    {
+      "id": "bw6-53",
+      "name": "Trubbish",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [
+        "status"
+      ],
+      "effectTypes": [
+        "noop",
+        "status"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [],
+      "findings": []
+    },
+    {
+      "id": "bw6-54",
+      "name": "Garbodor",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 1,
+      "abilityCount": 1,
+      "riskTags": [],
+      "effectTypes": [
+        "noop",
+        "neoRule"
+      ],
+      "customRules": [
+        "bw6:garbotoxin"
+      ],
+      "testFilesMentioningId": [],
+      "findings": [
+        {
+          "severity": "review",
+          "rule": "C-AUDIT-002",
+          "message": "ability Garbotoxin: custom rule bw6:garbotoxin has no obvious source literal; inspect dispatcher."
+        }
+      ]
+    },
+    {
+      "id": "bw6-55",
+      "name": "Gothita",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 1,
+      "abilityCount": 0,
+      "riskTags": [
+        "deckSearch"
+      ],
+      "effectTypes": [
+        "reorderTop"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [],
+      "findings": []
+    },
+    {
+      "id": "bw6-56",
+      "name": "Gothorita",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [
+        "status"
+      ],
+      "effectTypes": [
+        "status",
+        "damageRule"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [],
+      "findings": []
+    },
+    {
+      "id": "bw6-57",
+      "name": "Gothitelle",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [
+        "coin"
+      ],
+      "effectTypes": [
+        "neoRule",
+        "benchCountDamage"
+      ],
+      "customRules": [
+        "bw6:doomDecree"
+      ],
+      "testFilesMentioningId": [],
+      "findings": [
+        {
+          "severity": "review",
+          "rule": "C-AUDIT-002",
+          "message": "attack Doom Decree: custom rule bw6:doomDecree has no obvious source literal; inspect dispatcher."
+        }
+      ]
+    },
+    {
+      "id": "bw6-58",
+      "name": "Golett",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [],
+      "effectTypes": [
+        "heal",
+        "noop"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [],
+      "findings": []
+    },
+    {
+      "id": "bw6-59",
+      "name": "Golurk",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [
+        "timing"
+      ],
+      "effectTypes": [
+        "devolve",
+        "weaknessGuard"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [],
+      "findings": []
+    },
+    {
+      "id": "bw6-60",
+      "name": "Cubone",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [],
+      "effectTypes": [
+        "noop"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [],
+      "findings": []
+    },
+    {
+      "id": "bw6-61",
+      "name": "Marowak",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [
+        "timing"
+      ],
+      "effectTypes": [
+        "lock",
+        "neoRule"
+      ],
+      "customRules": [
+        "bw6:vortexChop"
+      ],
+      "testFilesMentioningId": [],
+      "findings": [
+        {
+          "severity": "review",
+          "rule": "C-AUDIT-002",
+          "message": "attack Vortex Chop: custom rule bw6:vortexChop has no obvious source literal; inspect dispatcher."
+        }
+      ]
+    },
+    {
+      "id": "bw6-62",
+      "name": "Nosepass",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 1,
+      "abilityCount": 0,
+      "riskTags": [],
+      "effectTypes": [
+        "noop"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [],
+      "findings": []
+    },
+    {
+      "id": "bw6-63",
+      "name": "Baltoy",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [
+        "deckSearch"
+      ],
+      "effectTypes": [
+        "noop",
+        "neoRule"
+      ],
+      "customRules": [
+        "bw6:reverseSpin"
+      ],
+      "testFilesMentioningId": [],
+      "findings": [
+        {
+          "severity": "review",
+          "rule": "C-AUDIT-002",
+          "message": "attack Reverse Spin: custom rule bw6:reverseSpin has no obvious source literal; inspect dispatcher."
+        }
+      ]
+    },
+    {
+      "id": "bw6-64",
+      "name": "Claydol",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [
+        "coin"
+      ],
+      "effectTypes": [
+        "neoRule",
+        "coinFlip",
+        "bonusDamage"
+      ],
+      "customRules": [
+        "bw6:rapidSpin"
+      ],
+      "testFilesMentioningId": [],
+      "findings": [
+        {
+          "severity": "review",
+          "rule": "C-AUDIT-002",
+          "message": "attack Rapid Spin: custom rule bw6:rapidSpin has no obvious source literal; inspect dispatcher."
+        }
+      ]
+    },
+    {
+      "id": "bw6-65",
+      "name": "Roggenrola",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [
+        "coin"
+      ],
+      "effectTypes": [
+        "coinFlip",
+        "bonusDamage",
+        "noop"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [],
+      "findings": []
+    },
+    {
+      "id": "bw6-66",
+      "name": "Boldore",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [
+        "coin"
+      ],
+      "effectTypes": [
+        "coinDamage",
+        "benchDamage"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [],
+      "findings": []
+    },
+    {
+      "id": "bw6-67",
+      "name": "Gigalith",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [],
+      "effectTypes": [
+        "neoRule",
+        "selfDamage"
+      ],
+      "customRules": [
+        "bw6:revengeCannon"
+      ],
+      "testFilesMentioningId": [],
+      "findings": [
+        {
+          "severity": "review",
+          "rule": "C-AUDIT-002",
+          "message": "attack Revenge Cannon: custom rule bw6:revengeCannon has no obvious source literal; inspect dispatcher."
+        }
+      ]
+    },
+    {
+      "id": "bw6-68",
+      "name": "Throh",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [
+        "choice",
+        "status",
+        "coin"
+      ],
+      "effectTypes": [
+        "coinFlip",
+        "sequence",
+        "bonusDamage",
+        "status",
+        "neoRule"
+      ],
+      "customRules": [
+        "bw6:superpower"
+      ],
+      "testFilesMentioningId": [],
+      "findings": [
+        {
+          "severity": "review",
+          "rule": "C-AUDIT-002",
+          "message": "attack Superpower: custom rule bw6:superpower has no obvious source literal; inspect dispatcher."
+        }
+      ]
+    },
+    {
+      "id": "bw6-69",
+      "name": "Sawk",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [],
+      "effectTypes": [
+        "sequence",
+        "heal",
+        "switch",
+        "neoRule"
+      ],
+      "customRules": [
+        "bw6:karateChop"
+      ],
+      "testFilesMentioningId": [],
+      "findings": []
+    },
+    {
+      "id": "bw6-70",
+      "name": "Stunfisk",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [
+        "timing"
+      ],
+      "effectTypes": [
+        "selectedDamage",
+        "lock"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [],
+      "findings": []
+    },
+    {
+      "id": "bw6-71",
+      "name": "Terrakion-EX",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [
+        "energyMovement"
+      ],
+      "effectTypes": [
+        "damageRule",
+        "neoRule"
+      ],
+      "customRules": [
+        "bw6:pumpUpSmash"
+      ],
+      "testFilesMentioningId": [],
+      "findings": [
+        {
+          "severity": "review",
+          "rule": "C-AUDIT-002",
+          "message": "attack Pump-up Smash: custom rule bw6:pumpUpSmash has no obvious source literal; inspect dispatcher."
+        }
+      ]
+    },
+    {
+      "id": "bw6-72",
+      "name": "Murkrow",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [],
+      "effectTypes": [
+        "noop"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [],
+      "findings": []
+    },
+    {
+      "id": "bw6-73",
+      "name": "Honchkrow",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [
+        "choice"
+      ],
+      "effectTypes": [
+        "chooseOption",
+        "forceOpponentSwitch",
+        "noop",
+        "discardHand"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [],
+      "findings": []
+    },
+    {
+      "id": "bw6-74",
+      "name": "Houndour",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [],
+      "effectTypes": [
+        "noop"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [],
+      "findings": []
+    },
+    {
+      "id": "bw6-75",
+      "name": "Houndoom",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [
+        "status"
+      ],
+      "effectTypes": [
+        "noop",
+        "status"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [],
+      "findings": []
+    },
+    {
+      "id": "bw6-76",
+      "name": "Stunky",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 1,
+      "abilityCount": 0,
+      "riskTags": [
+        "energyMovement",
+        "coin"
+      ],
+      "effectTypes": [
+        "coinFlip",
+        "discardEnergyCard"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [],
+      "findings": []
+    },
+    {
+      "id": "bw6-77",
+      "name": "Skuntank",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [
+        "timing",
+        "status",
+        "coin"
+      ],
+      "effectTypes": [
+        "sequence",
+        "status",
+        "attackCoinGate",
+        "noop"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [],
+      "findings": []
+    },
+    {
+      "id": "bw6-78",
+      "name": "Aron",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 1,
+      "abilityCount": 0,
+      "riskTags": [],
+      "effectTypes": [
+        "selfDamage"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [],
+      "findings": []
+    },
+    {
+      "id": "bw6-79",
+      "name": "Lairon",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [
+        "coin"
+      ],
+      "effectTypes": [
+        "noop",
+        "neoRule"
+      ],
+      "customRules": [
+        "bw6:wreakHavoc"
+      ],
+      "testFilesMentioningId": [],
+      "findings": [
+        {
+          "severity": "review",
+          "rule": "C-AUDIT-002",
+          "message": "attack Wreak Havoc: custom rule bw6:wreakHavoc has no obvious source literal; inspect dispatcher."
+        }
+      ]
+    },
+    {
+      "id": "bw6-80",
+      "name": "Aggron",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 1,
+      "abilityCount": 1,
+      "riskTags": [
+        "choice",
+        "deckSearch",
+        "coin"
+      ],
+      "effectTypes": [
+        "neoRule",
+        "discardTop"
+      ],
+      "customRules": [
+        "bw6:gigaHorn"
+      ],
+      "testFilesMentioningId": [],
+      "findings": [
+        {
+          "severity": "review",
+          "rule": "C-AUDIT-002",
+          "message": "attack Giga Horn: custom rule bw6:gigaHorn has no obvious source literal; inspect dispatcher."
+        }
+      ]
+    },
+    {
+      "id": "bw6-81",
+      "name": "Registeel-EX",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [
+        "timing"
+      ],
+      "effectTypes": [
+        "neoRule",
+        "modifier"
+      ],
+      "customRules": [
+        "bw6:tripleLaser"
+      ],
+      "testFilesMentioningId": [
+        "v07308-dragons-exalted.test.cjs",
+        "v07309-dragons-exalted-independent-audit.test.cjs"
+      ],
+      "findings": [
+        {
+          "severity": "review",
+          "rule": "C-AUDIT-002",
+          "message": "attack Triple Laser: custom rule bw6:tripleLaser has no obvious source literal; inspect dispatcher."
+        }
+      ]
+    },
+    {
+      "id": "bw6-82",
+      "name": "Probopass",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [
+        "choice",
+        "energyMovement"
+      ],
+      "effectTypes": [
+        "neoRule",
+        "bonusDamage"
+      ],
+      "customRules": [
+        "bw6:magneticLines"
+      ],
+      "testFilesMentioningId": [
+        "v07309-dragons-exalted-independent-audit.test.cjs"
+      ],
+      "findings": []
+    },
+    {
+      "id": "bw6-83",
+      "name": "Durant",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [
+        "coin"
+      ],
+      "effectTypes": [
+        "neoRule",
+        "coinDamage"
+      ],
+      "customRules": [
+        "bw6:pullOut"
+      ],
+      "testFilesMentioningId": [],
+      "findings": [
+        {
+          "severity": "review",
+          "rule": "C-AUDIT-002",
+          "message": "attack Pull Out: custom rule bw6:pullOut has no obvious source literal; inspect dispatcher."
+        }
+      ]
+    },
+    {
+      "id": "bw6-84",
+      "name": "Altaria",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 1,
+      "abilityCount": 1,
+      "riskTags": [],
+      "effectTypes": [
+        "noop",
+        "neoRule"
+      ],
+      "customRules": [
+        "bw6:fightSong"
+      ],
+      "testFilesMentioningId": [],
+      "findings": [
+        {
+          "severity": "review",
+          "rule": "C-AUDIT-002",
+          "message": "ability Fight Song: custom rule bw6:fightSong has no obvious source literal; inspect dispatcher."
+        }
+      ]
+    },
+    {
+      "id": "bw6-85",
+      "name": "Rayquaza-EX",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [
+        "energyMovement",
+        "deckSearch"
+      ],
+      "effectTypes": [
+        "neoRule"
+      ],
+      "customRules": [
+        "bw6:celestialRoar",
+        "bw6:dragonBurst"
+      ],
+      "testFilesMentioningId": [
+        "v07308-dragons-exalted.test.cjs",
+        "v07309-dragons-exalted-independent-audit.test.cjs"
+      ],
+      "findings": [
+        {
+          "severity": "review",
+          "rule": "C-AUDIT-002",
+          "message": "attack Celestial Roar: custom rule bw6:celestialRoar has no obvious source literal; inspect dispatcher."
+        },
+        {
+          "severity": "review",
+          "rule": "C-AUDIT-002",
+          "message": "attack Dragon Burst: custom rule bw6:dragonBurst has no obvious source literal; inspect dispatcher."
+        }
+      ]
+    },
+    {
+      "id": "bw6-86",
+      "name": "Gible",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [],
+      "effectTypes": [
+        "noop"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [],
+      "findings": []
+    },
+    {
+      "id": "bw6-87",
+      "name": "Gible",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [
+        "timing",
+        "coin"
+      ],
+      "effectTypes": [
+        "attackCoinGate",
+        "coinFlip",
+        "bonusDamage"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [],
+      "findings": []
+    },
+    {
+      "id": "bw6-88",
+      "name": "Gabite",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [],
+      "effectTypes": [
+        "noop",
+        "damageRule"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [],
+      "findings": []
+    },
+    {
+      "id": "bw6-89",
+      "name": "Gabite",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 1,
+      "abilityCount": 1,
+      "riskTags": [
+        "choice",
+        "privacy",
+        "deckSearch"
+      ],
+      "effectTypes": [
+        "noop",
+        "neoRule"
+      ],
+      "customRules": [
+        "bw6:dragonCall"
+      ],
+      "testFilesMentioningId": [],
+      "findings": [
+        {
+          "severity": "review",
+          "rule": "C-AUDIT-002",
+          "message": "ability Dragon Call: custom rule bw6:dragonCall has no obvious source literal; inspect dispatcher."
+        }
+      ]
+    },
+    {
+      "id": "bw6-90",
+      "name": "Garchomp",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [
+        "energyMovement",
+        "deckSearch"
+      ],
+      "effectTypes": [
+        "discardEnergyCard",
+        "discardTop"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [],
+      "findings": []
+    },
+    {
+      "id": "bw6-91",
+      "name": "Garchomp",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [
+        "timing"
+      ],
+      "effectTypes": [
+        "noop",
+        "lock"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [],
+      "findings": []
+    },
+    {
+      "id": "bw6-92",
+      "name": "Giratina-EX",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [
+        "deckSearch"
+      ],
+      "effectTypes": [
+        "damageRule",
+        "discardTop"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [],
+      "findings": []
+    },
+    {
+      "id": "bw6-93",
+      "name": "Deino",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [
+        "energyMovement",
+        "status",
+        "coin"
+      ],
+      "effectTypes": [
+        "coinFlip",
+        "status",
+        "discardEnergyCard"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [],
+      "findings": []
+    },
+    {
+      "id": "bw6-94",
+      "name": "Deino",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [
+        "timing"
+      ],
+      "effectTypes": [
+        "modifier",
+        "noop"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [],
+      "findings": []
+    },
+    {
+      "id": "bw6-95",
+      "name": "Zweilous",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [
+        "energyMovement",
+        "coin"
+      ],
+      "effectTypes": [
+        "coinFlip",
+        "discardEnergyCard",
+        "noop"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [],
+      "findings": []
+    },
+    {
+      "id": "bw6-96",
+      "name": "Zweilous",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [
+        "energyMovement"
+      ],
+      "effectTypes": [
+        "neoRule",
+        "noop"
+      ],
+      "customRules": [
+        "bw6:drawIn"
+      ],
+      "testFilesMentioningId": [],
+      "findings": [
+        {
+          "severity": "review",
+          "rule": "C-AUDIT-002",
+          "message": "attack Draw In: custom rule bw6:drawIn has no obvious source literal; inspect dispatcher."
+        }
+      ]
+    },
+    {
+      "id": "bw6-97",
+      "name": "Hydreigon",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 1,
+      "abilityCount": 1,
+      "riskTags": [
+        "choice",
+        "energyMovement"
+      ],
+      "effectTypes": [
+        "discardEnergyCard",
+        "neoRule"
+      ],
+      "customRules": [
+        "bw6:darkTrance"
+      ],
+      "testFilesMentioningId": [],
+      "findings": [
+        {
+          "severity": "review",
+          "rule": "C-AUDIT-002",
+          "message": "ability Dark Trance: custom rule bw6:darkTrance has no obvious source literal; inspect dispatcher."
+        }
+      ]
+    },
+    {
+      "id": "bw6-98",
+      "name": "Hydreigon",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [
+        "energyMovement",
+        "coin"
+      ],
+      "effectTypes": [
+        "drain",
+        "coinFlip",
+        "discardEnergyCard"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [],
+      "findings": []
+    },
+    {
+      "id": "bw6-99",
+      "name": "Aipom",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 1,
+      "abilityCount": 0,
+      "riskTags": [
+        "coin"
+      ],
+      "effectTypes": [
+        "coinDamage"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [],
+      "findings": []
+    },
+    {
+      "id": "bw6-100",
+      "name": "Ambipom",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [
+        "coin"
+      ],
+      "effectTypes": [
+        "coinDamage",
+        "handCountDamage"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [],
+      "findings": []
+    },
+    {
+      "id": "bw6-101",
+      "name": "Slakoth",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 1,
+      "abilityCount": 0,
+      "riskTags": [
+        "status"
+      ],
+      "effectTypes": [
+        "status"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [],
+      "findings": []
+    },
+    {
+      "id": "bw6-102",
+      "name": "Vigoroth",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 1,
+      "abilityCount": 0,
+      "riskTags": [
+        "coin"
+      ],
+      "effectTypes": [
+        "coinFlip",
+        "bonusDamage"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [],
+      "findings": []
+    },
+    {
+      "id": "bw6-103",
+      "name": "Slaking",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 1,
+      "abilityCount": 1,
+      "riskTags": [
+        "energyMovement"
+      ],
+      "effectTypes": [
+        "discardEnergyCard",
+        "neoRule"
+      ],
+      "customRules": [
+        "bw6:unobservant"
+      ],
+      "testFilesMentioningId": [],
+      "findings": [
+        {
+          "severity": "review",
+          "rule": "C-AUDIT-002",
+          "message": "ability Unobservant: custom rule bw6:unobservant has no obvious source literal; inspect dispatcher."
+        }
+      ]
+    },
+    {
+      "id": "bw6-104",
+      "name": "Swablu",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [
+        "status"
+      ],
+      "effectTypes": [
+        "status",
+        "noop"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [],
+      "findings": []
+    },
+    {
+      "id": "bw6-105",
+      "name": "Swablu",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 1,
+      "abilityCount": 0,
+      "riskTags": [],
+      "effectTypes": [
+        "noop"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [],
+      "findings": []
+    },
+    {
+      "id": "bw6-106",
+      "name": "Bidoof",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 1,
+      "abilityCount": 0,
+      "riskTags": [
+        "status"
+      ],
+      "effectTypes": [
+        "sequence",
+        "status"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [],
+      "findings": []
+    },
+    {
+      "id": "bw6-107",
+      "name": "Bibarel",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [
+        "choice",
+        "timing",
+        "status"
+      ],
+      "effectTypes": [
+        "chooseAttackLock",
+        "sequence",
+        "status"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [],
+      "findings": []
+    },
+    {
+      "id": "bw6-108",
+      "name": "Audino",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [],
+      "effectTypes": [
+        "removeStatus",
+        "heal"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [],
+      "findings": []
+    },
+    {
+      "id": "bw6-109",
+      "name": "Minccino",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [],
+      "effectTypes": [
+        "noop",
+        "selfDamage"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [],
+      "findings": []
+    },
+    {
+      "id": "bw6-110",
+      "name": "Bouffalant",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 1,
+      "abilityCount": 1,
+      "riskTags": [],
+      "effectTypes": [
+        "neoRule"
+      ],
+      "customRules": [
+        "bw6:goldBreaker",
+        "bw6:bouffer"
+      ],
+      "testFilesMentioningId": [
+        "v07308-dragons-exalted.test.cjs"
+      ],
+      "findings": [
+        {
+          "severity": "review",
+          "rule": "C-AUDIT-002",
+          "message": "attack Gold Breaker: custom rule bw6:goldBreaker has no obvious source literal; inspect dispatcher."
+        },
+        {
+          "severity": "review",
+          "rule": "C-AUDIT-002",
+          "message": "ability Bouffer: custom rule bw6:bouffer has no obvious source literal; inspect dispatcher."
+        }
+      ]
+    },
+    {
+      "id": "bw6-111",
+      "name": "Rufflet",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [
+        "privacy",
+        "deckSearch",
+        "coin"
+      ],
+      "effectTypes": [
+        "neoRule",
+        "coinFlip",
+        "bonusDamage"
+      ],
+      "customRules": [
+        "bw6:chirp"
+      ],
+      "testFilesMentioningId": [],
+      "findings": [
+        {
+          "severity": "review",
+          "rule": "C-AUDIT-002",
+          "message": "attack Chirp: custom rule bw6:chirp has no obvious source literal; inspect dispatcher."
+        }
+      ]
+    },
+    {
+      "id": "bw6-112",
+      "name": "Braviary",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [
+        "coin"
+      ],
+      "effectTypes": [
+        "noop",
+        "coinDamage"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [],
+      "findings": []
+    },
+    {
+      "id": "bw6-113",
+      "name": "Devolution Spray",
+      "kind": "trainer",
+      "battleEnabled": true,
+      "attackCount": 0,
+      "abilityCount": 0,
+      "riskTags": [
+        "choice"
+      ],
+      "effectTypes": [
+        "devolutionSpray"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [],
+      "findings": []
+    },
+    {
+      "id": "bw6-114",
+      "name": "Giant Cape",
+      "kind": "trainer",
+      "battleEnabled": true,
+      "attackCount": 0,
+      "abilityCount": 0,
+      "riskTags": [
+        "choice"
+      ],
+      "effectTypes": [
+        "neoRule"
+      ],
+      "customRules": [
+        "bw6:giantCape"
+      ],
+      "testFilesMentioningId": [
+        "v07308-dragons-exalted.test.cjs",
+        "v07309-dragons-exalted-independent-audit.test.cjs"
+      ],
+      "findings": [
+        {
+          "severity": "review",
+          "rule": "C-AUDIT-002",
+          "message": "card effect: custom rule bw6:giantCape has no obvious source literal; inspect dispatcher."
+        }
+      ]
+    },
+    {
+      "id": "bw6-115",
+      "name": "Rescue Scarf",
+      "kind": "trainer",
+      "battleEnabled": true,
+      "attackCount": 0,
+      "abilityCount": 0,
+      "riskTags": [
+        "choice"
+      ],
+      "effectTypes": [
+        "neoRule"
+      ],
+      "customRules": [
+        "bw6:rescueScarf"
+      ],
+      "testFilesMentioningId": [
+        "v07308-dragons-exalted.test.cjs"
+      ],
+      "findings": [
+        {
+          "severity": "review",
+          "rule": "C-AUDIT-002",
+          "message": "card effect: custom rule bw6:rescueScarf has no obvious source literal; inspect dispatcher."
+        }
+      ]
+    },
+    {
+      "id": "bw6-116",
+      "name": "Tool Scrapper",
+      "kind": "trainer",
+      "battleEnabled": true,
+      "attackCount": 0,
+      "abilityCount": 0,
+      "riskTags": [
+        "choice"
+      ],
+      "effectTypes": [
+        "neoRule"
+      ],
+      "customRules": [
+        "bw6:toolScrapper"
+      ],
+      "testFilesMentioningId": [],
+      "findings": [
+        {
+          "severity": "review",
+          "rule": "C-AUDIT-002",
+          "message": "card effect: custom rule bw6:toolScrapper has no obvious source literal; inspect dispatcher."
+        }
+      ]
+    },
+    {
+      "id": "bw6-117",
+      "name": "Blend Energy GrassFirePsychicDarkness",
+      "kind": "energy",
+      "battleEnabled": true,
+      "attackCount": 0,
+      "abilityCount": 0,
+      "riskTags": [
+        "energyMovement"
+      ],
+      "effectTypes": [
+        "specialEnergy"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [
+        "v07308-dragons-exalted.test.cjs",
+        "v07309-dragons-exalted-independent-audit.test.cjs"
+      ],
+      "findings": []
+    },
+    {
+      "id": "bw6-118",
+      "name": "Blend Energy WaterLightningFightingMetal",
+      "kind": "energy",
+      "battleEnabled": true,
+      "attackCount": 0,
+      "abilityCount": 0,
+      "riskTags": [
+        "energyMovement"
+      ],
+      "effectTypes": [
+        "specialEnergy"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [
+        "v07308-dragons-exalted.test.cjs"
+      ],
+      "findings": []
+    },
+    {
+      "id": "bw6-119",
+      "name": "Ho-Oh-EX",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 1,
+      "abilityCount": 1,
+      "riskTags": [
+        "choice",
+        "energyMovement",
+        "coin"
+      ],
+      "effectTypes": [
+        "neoRule"
+      ],
+      "customRules": [
+        "bw6:rainbowBurn",
+        "bw6:rebirth"
+      ],
+      "testFilesMentioningId": [],
+      "findings": [
+        {
+          "severity": "review",
+          "rule": "C-AUDIT-002",
+          "message": "attack Rainbow Burn: custom rule bw6:rainbowBurn has no obvious source literal; inspect dispatcher."
+        },
+        {
+          "severity": "review",
+          "rule": "C-AUDIT-002",
+          "message": "ability Rebirth: custom rule bw6:rebirth has no obvious source literal; inspect dispatcher."
+        }
+      ]
+    },
+    {
+      "id": "bw6-120",
+      "name": "Mew-EX",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 1,
+      "abilityCount": 1,
+      "riskTags": [
+        "energyMovement"
+      ],
+      "effectTypes": [
+        "neoRule"
+      ],
+      "customRules": [
+        "bw6:replace",
+        "bw6:versatile"
+      ],
+      "testFilesMentioningId": [],
+      "findings": [
+        {
+          "severity": "review",
+          "rule": "C-AUDIT-002",
+          "message": "attack Replace: custom rule bw6:replace has no obvious source literal; inspect dispatcher."
+        },
+        {
+          "severity": "review",
+          "rule": "C-AUDIT-002",
+          "message": "ability Versatile: custom rule bw6:versatile has no obvious source literal; inspect dispatcher."
+        }
+      ]
+    },
+    {
+      "id": "bw6-121",
+      "name": "Terrakion-EX",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [
+        "energyMovement"
+      ],
+      "effectTypes": [
+        "damageRule",
+        "neoRule"
+      ],
+      "customRules": [
+        "bw6:pumpUpSmash"
+      ],
+      "testFilesMentioningId": [],
+      "findings": [
+        {
+          "severity": "review",
+          "rule": "C-AUDIT-002",
+          "message": "attack Pump-up Smash: custom rule bw6:pumpUpSmash has no obvious source literal; inspect dispatcher."
+        }
+      ]
+    },
+    {
+      "id": "bw6-122",
+      "name": "Registeel-EX",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [
+        "timing"
+      ],
+      "effectTypes": [
+        "neoRule",
+        "modifier"
+      ],
+      "customRules": [
+        "bw6:tripleLaser"
+      ],
+      "testFilesMentioningId": [],
+      "findings": [
+        {
+          "severity": "review",
+          "rule": "C-AUDIT-002",
+          "message": "attack Triple Laser: custom rule bw6:tripleLaser has no obvious source literal; inspect dispatcher."
+        }
+      ]
+    },
+    {
+      "id": "bw6-123",
+      "name": "Rayquaza-EX",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [
+        "energyMovement",
+        "deckSearch"
+      ],
+      "effectTypes": [
+        "neoRule"
+      ],
+      "customRules": [
+        "bw6:celestialRoar",
+        "bw6:dragonBurst"
+      ],
+      "testFilesMentioningId": [],
+      "findings": [
+        {
+          "severity": "review",
+          "rule": "C-AUDIT-002",
+          "message": "attack Celestial Roar: custom rule bw6:celestialRoar has no obvious source literal; inspect dispatcher."
+        },
+        {
+          "severity": "review",
+          "rule": "C-AUDIT-002",
+          "message": "attack Dragon Burst: custom rule bw6:dragonBurst has no obvious source literal; inspect dispatcher."
+        }
+      ]
+    },
+    {
+      "id": "bw6-124",
+      "name": "Giratina-EX",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [
+        "deckSearch"
+      ],
+      "effectTypes": [
+        "damageRule",
+        "discardTop"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [],
+      "findings": []
+    },
+    {
+      "id": "bw6-125",
+      "name": "Serperior",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 1,
+      "abilityCount": 1,
+      "riskTags": [
+        "timing",
+        "energyMovement"
+      ],
+      "effectTypes": [
+        "neoRule"
+      ],
+      "customRules": [
+        "bw6:leafTornado",
+        "bw1:royalHeal"
+      ],
+      "testFilesMentioningId": [],
+      "findings": [
+        {
+          "severity": "review",
+          "rule": "C-AUDIT-002",
+          "message": "ability Royal Heal: custom rule bw1:royalHeal has no obvious source literal; inspect dispatcher."
+        }
+      ]
+    },
+    {
+      "id": "bw6-126",
+      "name": "Reuniclus",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 1,
+      "abilityCount": 1,
+      "riskTags": [
+        "choice"
+      ],
+      "effectTypes": [
+        "energyDamage",
+        "neoRule"
+      ],
+      "customRules": [
+        "bw1:damageSwap"
+      ],
+      "testFilesMentioningId": [],
+      "findings": [
+        {
+          "severity": "review",
+          "rule": "C-AUDIT-002",
+          "message": "ability Damage Swap: custom rule bw1:damageSwap has no obvious source literal; inspect dispatcher."
+        }
+      ]
+    },
+    {
+      "id": "bw6-127",
+      "name": "Krookodile",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [
+        "timing"
+      ],
+      "effectTypes": [
+        "lock",
+        "neoRule"
+      ],
+      "customRules": [
+        "bw5:bombast"
+      ],
+      "testFilesMentioningId": [],
+      "findings": [
+        {
+          "severity": "review",
+          "rule": "C-AUDIT-002",
+          "message": "attack Bombast: custom rule bw5:bombast has no obvious source literal; inspect dispatcher."
+        }
+      ]
+    },
+    {
+      "id": "bw6-128",
+      "name": "Rayquaza",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [
+        "deckSearch"
+      ],
+      "effectTypes": [
+        "discardTop",
+        "damageRule"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [],
+      "findings": []
+    }
+  ],
+  "cpu": {
+    "attempted": 16,
+    "valid": 16,
+    "skipped": [],
+    "failures": []
+  },
+  "smoke": {
+    "attempted": 408,
+    "executed": 402,
+    "skipped": 6,
+    "skippedDetails": [
+      {
+        "cardId": "bw6-44",
+        "side": "player",
+        "action": "attack Energy Assist"
+      },
+      {
+        "cardId": "bw6-44",
+        "side": "opponent",
+        "action": "attack Energy Assist"
+      },
+      {
+        "cardId": "bw6-113",
+        "side": "player",
+        "action": "trainer"
+      },
+      {
+        "cardId": "bw6-113",
+        "side": "opponent",
+        "action": "trainer"
+      },
+      {
+        "cardId": "bw6-116",
+        "side": "player",
+        "action": "trainer"
+      },
+      {
+        "cardId": "bw6-116",
+        "side": "opponent",
+        "action": "trainer"
+      }
+    ],
+    "failures": []
+  }
+}

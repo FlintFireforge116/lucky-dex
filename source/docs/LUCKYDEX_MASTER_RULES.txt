@@ -2569,3 +2569,11 @@ LUCKYDEX 0.69.303 — NOBLE VICTORIES INDEPENDENT AUDIT
 - Tool Scrapper must allow one or two legal attached Pokémon Tool selections, including both players; second choice may be declined. Physical cards return to the correct owner's discard pile.
 - Attack choice, coin and target-resolution log events MUST finish before the Prize picker. Existing Classic 30-card deck/8-card hand/ordered Basic Energy Zone are unchanged.
 - APK build gate: scripts/build-bw6.py, tests/v07308-dragons-exalted.test.cjs.
+
+# Dragons Exalted independent gameplay audit — v0.69.309
+- Ninetales #19 Hexed Flame counts each distinct Special Condition currently affecting the Defending Pokémon, +50 each, before Weakness and Resistance; Burn is not the sole condition.
+- Marowak #61 Vortex Chop adds 30 only if the Defending Pokémon has Resistance; Retreat Cost does not affect the move.
+- Probopass #82 Magnetic Lines is optional and may move a REAL attached Special Energy card as well as a Basic Energy counter to the opponent's Bench; maintain its original UID, no minted replacement.
+- Registeel-EX #81/#122 Triple Laser damages three distinct opposing Pokémon: the Active target receives Weakness/Resistance normally; Benched Pokémon ignore both.
+- Shedinja #48 Empty Shell awards no Prize only while its Ability functions. Garbotoxin or other effective Ability suppression restores the standard one-Prize knockout.
+- All five rules above have direct Node regression coverage at tests/v07309-dragons-exalted-independent-audit.test.cjs and are APK build gates.

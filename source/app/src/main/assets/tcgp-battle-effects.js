@@ -11293,7 +11293,7 @@
     }
     if(key==='leafTornado')return applyEffect({type:'redistributeEnergy',allowedEnergyTypes:['Grass'],includeSpecialEnergy:true},ctx);
     if(key==='harden'){if(a)a.bw6HardenUntil=turn+1;return;}
-    if(key==='tripleLaser')return applyEffect({type:'multiTargetDamage',target:'opponentPokemon',count:3,amount:30},ctx);
+    if(key==='tripleLaser')return applyEffect({type:'multiTargetDamage',target:'opponentPokemon',count:3,amount:30,activeWeaknessResistance:true},ctx);
     if(key==='chirp'){
       const available=us.deck.map((ref,i)=>({ref,i})).filter(x=>(owner(x.ref)?.resistances||[]).some(r=>r.type==='Fighting'));
       if(phase==='pick'&&ctx.resolvingChoice){const x=available[Number(act.choiceOption)];
@@ -11409,9 +11409,17 @@
       choice('boost',['No extra damage','Add +20 damage and 20 self damage']);return;
     }
     if(key==='magneticLines'){
-      if(phase==='dest'&&ctx.resolvingChoice){const p=chosen(foe),type=e.energyType;if(!p||!foe.bench.includes(p)||!d||!type||Number(d.energy?.[type]||0)<1)return;d.energy[type]--;p.energy=p.energy||{};p.energy[type]=Number(p.energy[type]||0)+1;return;}
-      if(phase==='source'&&ctx.resolvingChoice){const types=Object.keys(d?.energy||{}).filter(t=>Number(d.energy[t])>0),type=types[Number(act.choiceOption)];if(type)choosePokemon('dest','opponent',{includeActive:false,energyType:type});return;}
-      const types=Object.keys(d?.energy||{}).filter(t=>Number(d.energy[t])>0);if(types.length&&foe.bench.length)choice('source',types.map(t=>'Move '+t+' Energy to opposing Bench'));return;
+      // Probopass #82 may move ANY one attached Energy card, not just Basic
+      // Energy counters. Keep physical Special Energy intact with its UID.
+      const sources=[...Object.entries(d?.energy||{}).filter(([,n])=>Number(n)>0).map(([type])=>({type,label:type+' Basic Energy'})),
+        ...(d?.specialEnergy||[]).map(ref=>({specialUid:ref.uid,label:name(ref)+' Special Energy'}))];
+      if(phase==='dest'&&ctx.resolvingChoice){const p=chosen(foe);if(!p||!foe.bench.includes(p)||!d||!foe.active||foe.active!==d)return;
+        if(e.specialUid){const i=(d.specialEnergy||[]).findIndex(ref=>ref.uid===e.specialUid);if(i<0)return;p.specialEnergy=p.specialEnergy||[];p.specialEnergy.push(...d.specialEnergy.splice(i,1));}
+        else if(e.energyType&&Number(d.energy?.[e.energyType]||0)>0){d.energy[e.energyType]--;p.energy=p.energy||{};p.energy[e.energyType]=Number(p.energy[e.energyType]||0)+1;}
+        else return;
+        log({movedEnergy:true,from:d.uid,to:p.uid,specialUid:e.specialUid||null,energyType:e.energyType||null});return;}
+      if(phase==='source'&&ctx.resolvingChoice){const n=Number(act.choiceOption);if(n===0)return;const src=sources[n-1];if(src)choosePokemon('dest','opponent',{includeActive:false,energyType:src.type||null,specialUid:src.specialUid||null});return;}
+      if(sources.length&&foe.bench.length)choice('source',['Do not move Energy',...sources.map(x=>'Move '+x.label+' to an opposing Benched Pokémon')]);return;
     }
     if(key==='thunderJolt'){if(!flip())applyEffect({type:'selfDamage',amount:10},ctx);return;}
     if(key==='gigaHorn'||key==='doomDecree'||key==='unstoppableRoll'||key==='waterCannon')return;
@@ -16095,8 +16103,8 @@
         if(k==='revengeCannon'){damage+=pokemonOn(us).filter(p=>p!==us.active).reduce((n,p)=>n+Math.floor(Number(p.damage||0)/10),0)*10;return;}
         if(k==='karateChop'){damage=Math.max(0,70-Math.floor(Number(a?.damage||0)/10)*10);return;}
         if(k==='reinforcedNeedle'){if(a?.tool||(a?.extraTools||[]).length)damage+=30;return;}
-        if(k==='hexedFlame'){if(d?.conditions?.burn)damage+=20;return;}
-        if(k==='vortexChop'){if(Number(ctx.retreatCost?.(ctx.foeSide)??c(d)?.retreat??0)>0)damage+=30;return;}
+        if(k==='hexedFlame'){damage+=50*['poison','burn','sleep','paralysis','confusion'].filter(status=>Boolean(d?.conditions?.[status])).length;return;}
+        if(k==='vortexChop'){const card=c(d),resist=d?.resistanceOverride||card?.resistance||card?.resistances?.[0]?.type;if(resist)damage+=30;return;}
         if(k==='goldBreaker'){if(c(d)?.pokemonEX)damage+=60;return;}
         if(k==='gigaHorn'){if(roll(2)===0)damage=0;return;}
         if(k==='unstoppableRoll'){if(roll(2)===2)damage+=30;return;}
