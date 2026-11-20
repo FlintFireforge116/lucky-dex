@@ -75,8 +75,24 @@ test('8 Basic Energy prints remain zoned, double Colorless and Rainbow are speci
  assert.equal(dce.specialEnergy,true);assert.equal(rainbow.specialEnergy,true);
  assert.deepEqual(dce.effect.provides,{Colorless:2});assert.deepEqual(rainbow.effect.provides,{Miracle:1});
  assert.equal(rainbow.deckEligible,true);
- const core=fs.readFileSync(path.join(assets,'tcgp-battle-core.js'),'utf8');
- assert.ok(core.includes("'hgss1-104'].includes(card.id)"),'Rainbow hand-attachment damage must be enabled');
+ // Test the actual attachment and damage instead of requiring a particular
+ // textual order of IDs in the source. XY Rainbow Energy shares this handler.
+ const battle=require(path.join(assets,'tcgp-battle-core.js'));
+ const deck=cpu.generate({sets:['hgss1'],type:'Grass',seed:3});
+ assert.ok(deck.ok,'HGSS legal deck prerequisite');
+ const s=battle.createBattle({format:'classic',firstSide:'player',seed:1037,
+   playerDeck:deck.cards,opponentDeck:deck.cards,
+   playerEnergyTypes:['Grass','Fire','Water'],opponentEnergyTypes:['Grass','Fire','Water']});
+ s.phase='battle';s.activeSide='player';s.turnNumber=8;
+ s.sides.player.active=battle.makePokemonSlot('hgss1-65',3,'rainbow-audit-active');
+ s.sides.player.bench=[];s.sides.player.hand=[{uid:'rainbow-audit-hand',cardId:'hgss1-104'}];
+ s.sides.player.handEnergyUsed=false;
+ const action=battle.legalActions(s,'player').find(a=>a.type==='attachSpecial'&&a.target==='active'&&a.cardId==='hgss1-104');
+ assert.ok(action,'HGSS Rainbow Energy must be attachable from hand');
+ battle.applyAction(s,'player',action);
+ assert.equal(s.sides.player.active.damage,10,'HGSS Rainbow Energy must add 10 damage on attachment');
+ assert.deepEqual(s.sides.player.active.specialEnergy.map(e=>e.uid),['rainbow-audit-hand']);
+ assert.equal(battle.effectiveEnergy(s,'player',s.sides.player.active).Miracle,1);
 });
 
 test('Mappable Pokémon effects retain authentic nontrivial behavior and do not invent new printed powers',()=>{
