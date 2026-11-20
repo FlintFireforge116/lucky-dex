@@ -463,7 +463,26 @@
         // HAND. Opposing reactive Bodies (Electivire LV.X Shocking Tail) must
         // see that event, unlike an attachment from the Classic Energy Zone.
         if(fromHand)triggerAbilities(state,'opponentEnergyAttached',targetSide==='player'?'opponent':'player',null,{target,energyType,fromHand:true,fromZone:false,sourceSide:targetSide});
-      }},gymBenchRedirect:(which,slot,amount)=>gymBenchRedirect(state,which,slot,amount),onEvolved:target=>{const targetSide=pokemonOn(state.sides.player).includes(target)?'player':'opponent';triggerAbilities(state,'evolved',targetSide,target,{fromDeck:true});},onBabyEvolved:target=>{const targetSide=pokemonOn(state.sides.player).includes(target)?'player':'opponent';effects.clearTemporaryEffects(state,target);triggerAbilities(state,'evolved',targetSide,target,{fromHand:true,babyEvolution:true});},evolveFromDeck:target=>{const targetSide=pokemonOn(state.sides.player).includes(target)?'player':'opponent',ss=state.sides[targetSide],base=data.cardById(target.cardId),candidates=ss.deck.map((r,index)=>({r,index,card:data.cardById(r.cardId)})).filter(x=>x.card?.battleEnabled&&x.card.kind==='pokemon'&&(state.format==='classic'?classicEvolutionMatches(base?.name,x.card.evolvesFrom):x.card.evolvesFrom===base?.name));if(!candidates.length)return false;const hit=candidates[Math.floor(random(state)*candidates.length)],[ref]=ss.deck.splice(hit.index,1);target.cardId=ref.cardId;target.stack.push(ref.cardId);target.playedOnSideTurn=ss.turnCount;target.evolvedOnTurn=state.turnNumber;shuffle(state,ss.deck);state.log.push({type:'evolve',side:targetSide,cardId:ref.cardId,fromDeck:true});triggerAbilities(state,'evolved',targetSide,target,{fromDeck:true});return true;},transformSelfToEnergy:(source,targetUid,energyType,amount)=>{if(!source)return false;const target=pokemonOn(state.sides[side]).find(slot=>slot&&slot.uid===targetUid&&slot!==source);if(!target)return false;source.transformOnKO={targetUid,provides:{[energyType]:Math.max(1,Number(amount||2))}};source.damage=Math.max(Number(source.damage||0),maxHp(state,side,source));return true;}};
+      }},gymBenchRedirect:(which,slot,amount)=>gymBenchRedirect(state,which,slot,amount),onEvolved:target=>{const targetSide=pokemonOn(state.sides.player).includes(target)?'player':'opponent';triggerAbilities(state,'evolved',targetSide,target,{fromDeck:true});},onBabyEvolved:target=>{const targetSide=pokemonOn(state.sides.player).includes(target)?'player':'opponent';effects.clearTemporaryEffects(state,target);triggerAbilities(state,'evolved',targetSide,target,{fromHand:true,babyEvolution:true});},evolveFromDeck:target=>{const targetSide=pokemonOn(state.sides.player).includes(target)?'player':'opponent',ss=state.sides[targetSide],base=data.cardById(target.cardId),candidates=ss.deck.map((r,index)=>({r,index,card:data.cardById(r.cardId)})).filter(x=>x.card?.battleEnabled&&x.card.kind==='pokemon'&&(state.format==='classic'?classicEvolutionMatches(base?.name,x.card.evolvesFrom):x.card.evolvesFrom===base?.name));if(!candidates.length)return false;const hit=candidates[Math.floor(random(state)*candidates.length)],[ref]=ss.deck.splice(hit.index,1);target.cardId=ref.cardId;target.stack.push(ref.cardId);target.playedOnSideTurn=ss.turnCount;target.evolvedOnTurn=state.turnNumber;shuffle(state,ss.deck);state.log.push({type:'evolve',side:targetSide,cardId:ref.cardId,fromDeck:true});triggerAbilities(state,'evolved',targetSide,target,{fromDeck:true});return true;},transformSelfToEnergy:(source,targetUid,energyType,amount)=>{if(!source)return false;const target=pokemonOn(state.sides[side]).find(slot=>slot&&slot.uid===targetUid&&slot!==source);if(!target)return false;source.transformOnKO={targetUid,provides:{[energyType]:Math.max(1,Number(amount||2))}};source.damage=Math.max(Number(source.damage||0),maxHp(state,side,source));return true;},applyCopiedAttack:(copiedAttack,copiedFrom)=>{
+      // Resolve Benched-Pokemon attacks as the current Active's attack. The
+      // printed Assist cost is already paid; copied attack Energy is not.
+      // The original attack remains the one-per-turn declaration.
+      if(!copiedAttack||!copiedFrom||!state.sides[side].bench.includes(copiedFrom))return 0;
+      const source=attacker||state.sides[side].active,opponent=state.sides[foeSide],targetContext={...effectContext(state,side,{},source),copyDepth:1,isAttack:true},result=effects.resolveAttack(copiedAttack,targetContext);
+      const target=result.damageTarget===undefined?opponent.active:result.damageTarget;
+      if(!target)return 0;
+      let damage=Number(result.damage||0);
+      if(damage>0&&target===opponent.active&&!result.damageRules?.ignoreWeakness)
+        damage=effects.attackDamageWithState(state,side,source,foeSide,target,damage,data.cardById);
+      if(damage>0){target.damage=Number(target.damage||0)+damage;
+        const attackEvent={attacker:source,damage,source:{side,attack:true,uid:source?.uid,cardId:source?.cardId}};
+        triggerAbilities(state,'damagedByAttack',foeSide,target,attackEvent);
+        triggerPersistent(state,'damagedByAttack',foeSide,target,attackEvent);
+      }
+      state.log.push({type:'copyAttack',side,fromCardId:copiedFrom.cardId,attack:copiedAttack.name,damage});
+      for(const effect of result.pendingEffects||[]){effects.applyEffect(effect,targetContext);if(state.phase==='effectChoice')break;}
+      return damage;
+    }};
   }
 
   function offerExpeditionHarvestBounty(state,side,target){
@@ -540,7 +559,9 @@
       ?20*pokemonOn(state.sides[side]).filter(p=>data.cardById(p.cardId)?.name==='Nidoqueen').length:0;
     const hgss4Indigo=state.format==='classic'&&state.stadium?.cardId==='hgss4-86'&&data.cardById(slot?.cardId)?.stage==='LEGEND'?30:0;
     const bw6Cape=toolsOf(slot).some(ref=>ref.cardId==='bw6-114')?20:0;
-    const extra=bw6Cape+hgss4Nidoking+hgss4Indigo+pl1Thankfulness+dp6Temple+majesticVeil+ex3LowPressure+rocketHideout+dp2Equip+(slot.cardId==='gym2-97'?10*Number(slot.energy?.Psychic||0):slot.cardId==='gym2-10'&&slot.gym2GiantGrowth&&state.sides[side].active===slot?40:0);return Math.max(1,copyHp+extra-gravitation+effects.modifierAmount(state,side,slot,'maxHp',data.cardById));}
+    const bw7Gym=state.format==='classic'&&state.stadium?.cardId==='bw7-127'&&data.cardById(slot.cardId)?.types?.includes('Colorless')?20:0;
+    const bw7Wall=state.format==='classic'&&['bw7-101','bw7-145'].includes(slot.cardId)&&toolsOf(slot).some(ref=>ref.cardId==='bw7-139')?120:0;
+    const extra=bw7Gym+bw7Wall+bw6Cape+hgss4Nidoking+hgss4Indigo+pl1Thankfulness+dp6Temple+majesticVeil+ex3LowPressure+rocketHideout+dp2Equip+(slot.cardId==='gym2-97'?10*Number(slot.energy?.Psychic||0):slot.cardId==='gym2-10'&&slot.gym2GiantGrowth&&state.sides[side].active===slot?40:0);return Math.max(1,copyHp+extra-gravitation+effects.modifierAmount(state,side,slot,'maxHp',data.cardById));}
   function ex14DarkEyes(state,usedBy,source,ability){
     if(state.format!=='classic'||!source||ability?.printedPowerType!=='power')return;
     const reacting=usedBy==='player'?'opponent':'player';
@@ -574,6 +595,14 @@
         onlySource.damage=Number(onlySource.damage||0)+20;
         state.log.push({type:'hgss4EyeOfDisaster',side:enemySide,targetUid:onlySource.uid,damage:20});
       }
+    }
+    // Rocky Helmet (including secret print) activates on *attack damage* to
+    // its Active holder. It does not trigger on poison, checkup or zero damage.
+    if(state.format==='classic'&&event==='damagedByAttack'&&Number(meta.damage||0)>0&&onlySource===ss.active&&
+       [onlySource.tool,...(onlySource.extraTools||[])].filter(Boolean).some(r=>['bw7-133','bw7-153'].includes(r.cardId))&&
+       meta.source?.side!==(side)){
+      const attacker=meta.attacker||state.sides[meta.source.side]?.active;
+      if(attacker){attacker.damage=Number(attacker.damage||0)+20;state.log.push({type:'bw7RockyHelmet',side,attackerUid:attacker.uid,damage:20});}
     }
     // Record real from-hand attachments for printed same-turn attack conditions.
     // Energy Zone attachments deliberately do not count as from-hand events.
@@ -651,6 +680,8 @@
     if(state.stadium){const source=ss.active||ss.bench[0];if(source){const ctx={...effectContext(state,side,{},source),eventData:meta};effects.applyPersistentEvent(data.cardById(state.stadium.cardId)?.effect,event,ctx);}}
   }
   function retreatCost(state,side){const slot=state.sides[side].active;
+    const bw7Jellicent=state.format==='classic'?pokemonOn(state.sides[side==='player'?'opponent':'player']).filter(p=>p.cardId==='bw7-45'&&!effects.abilitiesSuppressed(state,side==='player'?'opponent':'player',p,data.cardById)).length:0;
+    if(slot)slot.bw7RetreatAdjustment=bw7Jellicent;
     // Dark Explorers Dark Cloak covers every allied Pokémon with any Darkness
     // Energy, including a compatible Rainbow-providing Special Energy.
     if(state.format==='classic'&&slot&&pokemonOn(state.sides[side]).some(p=>['bw5-63','bw5-107'].includes(p.cardId)&&!effects.abilitiesSuppressed(state,side,p,data.cardById))&&
@@ -759,7 +790,7 @@
     const aqGluey=state.format==='classic'&&['player','opponent'].some(w=>pokemonOn(state.sides[w]).some(p=>['ecard2-3','ecard2-H3'].includes(p.cardId)&&!effects.abilitiesSuppressed(state,w,p,data.cardById)));
     const aqHeavy=state.format==='classic'&&slot?.cardId==='ecard2-23'&&Number(slot.energy?.Grass||0)>0?2:0;
     const aqMagnet=state.format==='classic'&&slot?.cardId==='ecard2-91'&&!effects.abilitiesSuppressed(state,side,slot,data.cardById)?state.sides[side].bench.filter(p=>data.cardById(p?.cardId)?.name==='Magnemite').length:0;
-    return Math.max(0,Number(data.cardById(slot.cardId).retreat||0)+effects.modifierAmount(state,side,slot,'retreatCost',data.cardById)+stadiumCost+aqHeavy+(aqGluey?1:0)-aqMagnet-ex6Dodrio+Number(slot.dp2RetreatAdjustment||0));}
+    return Math.max(0,Number(data.cardById(slot.cardId).retreat||0)+effects.modifierAmount(state,side,slot,'retreatCost',data.cardById)+stadiumCost+aqHeavy+(aqGluey?1:0)-aqMagnet-ex6Dodrio+Number(slot.dp2RetreatAdjustment||0)+bw7Jellicent);}
   function attackCost(state,side,attack){const slot=state.sides[side].active;let cost=effects.attackCostOverride(state,side,slot,attack,data.cardById)??attack.cost??'';
     if(state.format==='classic'&&Number(slot?.hgssGraffitiUntil||0)>=Number(state.turnNumber))cost+='C';
     if(state.format==='classic'&&slot?.cardId==='pl1-54'&&Object.keys(slot.conditions||{}).length&&!effects.abilitiesSuppressed(state,side,slot,data.cardById))return '';
@@ -1219,6 +1250,15 @@
       if(state.format==='classic'&&card.id==='hgss4-87'&&
          (s.hand.length<3||!s.discard.some(r=>data.cardById(r.cardId)?.kind==='trainer'&&['Item','Trainer','AttachedTrainer'].includes(data.cardById(r.cardId)?.trainerType)&&r.cardId!=='hgss4-87')))return;
       if(state.format==='classic'&&card.id==='hgss2-75'&&!s.hand.some((other,i)=>i!==handIndex&&data.cardById(other.cardId)?.kind==='energy'))return; // Engineer must actually discard an Energy from hand.
+      // Boundaries Crossed: Stoutland's Sentinel is a field-wide Supporter
+      // prohibition only while Stoutland is the opposing Active, and only
+      // when its printed Ability has not been suppressed.
+      if(state.format==='classic'&&trainerType(card)==='Supporter'&&['bw7-122'].includes(foe.active?.cardId)&&
+        !effects.abilitiesSuppressed(state,side==='player'?'opponent':'player',foe.active,data.cardById))return;
+      if(state.format==='classic'&&card.id==='bw7-137'&&s.hand.length<3)return;
+      if(state.format==='classic'&&['bw7-128','bw7-134','bw7-149','bw7-131'].includes(card.id)&&s.hand.length>=Number(s.handLimit||8))return;
+      if(state.format==='classic'&&card.id==='bw7-140'&&!(Number(s.active?.damage||0)>0))return;
+      if(state.format==='classic'&&card.id==='bw7-132'&&!pokemonOn(s).some(p=>Number(p.damage||0)>0))return;
       // Dark Explorers mandatory Item costs and targets: do not consume an
       // Item when its printed effect cannot legally resolve.
       if(state.format==='classic'&&card.id==='bw5-102'&&s.hand.length<3)return; // Ultra Ball needs TWO other cards to discard.
@@ -1310,6 +1350,12 @@
         if(!s.stadiumUsed&&effects.supportsEffect(card.effect)&&(!state.stadium||data.cardById(state.stadium.cardId).name!==card.name))actions.push(base);
       }else for(const target of effectChoices(card.effect,effectContext(state,side)))actions.push({...base,...target});
     });
+    // Audino Busybody is a HAND Ability: revealing it heals the Active and
+    // clears its condition, then the actual physical Audino enters discard.
+    // It is not a Bench ability and does not consume the Supporter quota.
+    if(state.format==='classic'&&s.active&&(Number(s.active.damage||0)>0||Object.keys(s.active.conditions||{}).length)&&
+      !effects.isActionLocked(state,side,'Ability',data.cardById))for(const [handIndex,ref] of s.hand.entries())
+      if(ref.cardId==='bw7-126')actions.push({type:'bw7Busybody',handIndex,cardId:ref.cardId});
     // Classic: normal Energy Zone attachment and once-per-turn hand Energy
     // attachment are INDEPENDENT. Hand-attached Basic and Special both count
     // toward the hand attachment; card effects can separately accelerate.
@@ -1507,6 +1553,13 @@
         }
         // Nurse Call is once per player turn across ALL Blissey copies.
         if(ability.name==='Nurse Call'&&(s.pl1NurseCallUsedTurn===s.turnCount||!s.hand.length))return;
+        // BW7 once-per-turn or repeatable Abilities cannot be offered as
+        // no-ops to either the human or advanced CPU.
+        if(source.cardId==='bw7-31'&&!s.hand.some(r=>{const c=data.cardById(r.cardId);return c?.basicEnergy&&c.subtype==='Water';}))return;
+        if(['bw7-49','bw7-142'].includes(source.cardId)&&source===s.active)return;
+        if(source.cardId==='bw7-63'&&!(pokemonOn(foe).length>1&&pokemonOn(foe).some(p=>Number(p.damage||0)>=10)))return;
+        if(source.cardId==='bw7-68'&&Number(s.bw7LongDistanceHypnosisTurn)===Number(s.turnCount))return;
+        if(source.cardId==='bw7-108'&&!s.hand.some(r=>data.cardById(r.cardId)?.kind==='pokemon'&&data.cardById(r.cardId)?.stage==='Basic'))return;
         // Noble Victories Dynamotor requires real discarded Lightning Energy
         // and a Bench destination; do not offer a silent no-op to CPU/player.
         if(state.format==='classic'&&source.cardId==='bw3-40'&&(
@@ -2618,6 +2671,15 @@
       resolveKnockOut(state,null);
       return state;
     }
+    if(matched.type==='bw7Busybody'){
+      const [ref]=s.hand.splice(matched.handIndex,1);if(!ref||ref.cardId!=='bw7-126')throw new Error('Audino left the hand.');
+      s.discard.push(ref);if(s.active){s.active.damage=Math.max(0,Number(s.active.damage||0)-10);
+        const statuses=['poison','burn','sleep','paralysis','confusion'].filter(key=>s.active.conditions?.[key]);
+        if(statuses.length===1)delete s.active.conditions[statuses[0]];
+        if(statuses.length>1)beginEffectChoice(state,side,s.active,{kind:'option',side:'self',options:statuses.map(status=>'Remove '+status),effect:{type:'neoRule',rule:'bw7:busybodyCondition',statuses},resume:'ability'});
+      }
+      state.log.push({type:'ability',side,cardId:'bw7-126',ability:'Busybody',fromHand:true});if(state.phase!=='effectChoice')resolveKnockOut(state,null);return state;
+    }
     if (matched.type === 'trainer'){
       playTrainer(state,side,matched);
       return state;
@@ -3324,5 +3386,5 @@
 
   function publicSnapshot(state){ return JSON.parse(JSON.stringify(state)); }
 
-  return {createBattle,makePokemonSlot,legalActions,attackOptions,attackAvailability,attackDamagePreview,effectiveEnergy,energyCostLabel,applyAction,publicSnapshot,drawCard,endTurn,benchSlotAt,benchArrayIndex,normalizeBenchSlots,random,shuffle,checkup,effectContext,maxHp};
+  return {createBattle,makePokemonSlot,legalActions,attackOptions,attackAvailability,attackDamagePreview,effectiveEnergy,energyCostLabel,applyAction,publicSnapshot,drawCard,endTurn,benchSlotAt,benchArrayIndex,normalizeBenchSlots,random,shuffle,checkup,effectContext,maxHp,retreatCost};
 });

@@ -92,6 +92,7 @@ function validateDraft(cards,rows,{requireFull=false}={}){
    if(list.length>30)errors.push(`Classic TCG decks contain 30 cards (${list.length}/30).`);
    for(const [id,count] of counts){const card=classic.cardById(id);if(!card){errors.push(`Unknown Classic TCG card: ${id}.`);continue;}if(card.basicEnergy||card.deckEligible===false)errors.push(`${card.name} cannot occupy a Classic deck slot.`);if(!card.battleEnabled)errors.push(`${card.name} is not battle-ready.`);if([...counts].filter(([x])=>classicCardName(classic.cardById(x)?.name)===classicCardName(card.name)).reduce((n,[,v])=>n+v,0)>maxNamedCopies(card))errors.push(card.name.startsWith('Shining ')?`${card.name} is limited to one card per deck.`:`${card.name} exceeds the ${maxNamedCopies(card)}-copy limit across its prints.`);}
  }
+ if(list.filter(id=>classic.cardById(id)?.aceSpec).length>1)errors.push('Only one ACE SPEC card is permitted per Classic deck.');
  for(const [id,count] of counts){const card=classic.cardById(id);if(!card)continue;const quantity=Number(have.get(id)||0);if(count>quantity)errors.push(`Not enough owned copies of ${card.name}: need ${count}, own ${quantity}.`);}
  return {ok:errors.length===0,errors};
 }
@@ -100,7 +101,7 @@ function edit(cards,id,delta,rows){
  const list=(cards||[]).map(x=>classic.cardById(x)?.id||String(x||'')),card=classic.cardById(id),fail=error=>({ok:false,cards:list,error});if(!card)return fail('Unknown Base Set card.');
  const count=list.filter(x=>x===card.id).length;if(delta<0){const index=list.lastIndexOf(card.id);if(index>=0)list.splice(index,1);return {ok:true,cards:list};}
  if(card.basicEnergy||card.deckEligible===false)return fail('Basic Energy comes from the Energy Zone and is not placed in the 30-card deck.');
- if(!card.battleEnabled)return fail('This Classic card is not battle-ready.');if(list.length>=30)return fail('Your Classic deck already has 30 cards.');if(list.filter(id=>classicCardName(classic.cardById(id)?.name)===classicCardName(card.name)).length>=maxNamedCopies(card))return fail(card.name.startsWith('Shining ')?`Only one ${card.name} may be in a deck.`:`Maximum ${maxNamedCopies(card)} copies of this Pokémon or Trainer card across all prints.`);
+ if(!card.battleEnabled)return fail('This Classic card is not battle-ready.');if(card.aceSpec&&list.some(x=>classic.cardById(x)?.aceSpec))return fail('Only one ACE SPEC card is allowed per Classic deck.');if(list.length>=30)return fail('Your Classic deck already has 30 cards.');if(list.filter(id=>classicCardName(classic.cardById(id)?.name)===classicCardName(card.name)).length>=maxNamedCopies(card))return fail(card.name.startsWith('Shining ')?`Only one ${card.name} may be in a deck.`:`Maximum ${maxNamedCopies(card)} copies of this Pokémon or Trainer card across all prints.`);
  const have=Number(ownedMap(rows).get(card.id)||0);if(count>=have)return fail('No more owned copies available.');list.push(card.id);return {ok:true,cards:list};
 }
 function newId(battle){let n=1;while(battle.decks.some(deck=>deck.id===`classic-${n}`))n++;return `classic-${n}`;}

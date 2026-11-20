@@ -2577,3 +2577,17 @@ LUCKYDEX 0.69.303 — NOBLE VICTORIES INDEPENDENT AUDIT
 - Registeel-EX #81/#122 Triple Laser damages three distinct opposing Pokémon: the Active target receives Weakness/Resistance normally; Benched Pokémon ignore both.
 - Shedinja #48 Empty Shell awards no Prize only while its Ability functions. Garbotoxin or other effective Ability suppression restores the standard one-Prize knockout.
 - All five rules above have direct Node regression coverage at tests/v07309-dragons-exalted-independent-audit.test.cjs and are APK build gates.
+
+
+2026-11-20 / v0.69.310 / BOUNDARIES CROSSED (bw7)
+- Register all 153 numbered prints, retaining true printed 216 attacks and 21 Abilities. Printed EX variants retain unique card IDs; EX knockout awards two selectable Prizes.
+- ACE SPEC cards are limited to ONE TOTAL card across an entire 30-card physical deck, regardless of different names or prints. Validate in both direct deck editing and CPU autobuild.
+- Crystal Edge boosts only White Kyurem-EX, and Crystal Wall sets Black Kyurem-EX maximum HP to 300 only while attached. Removing the Tool restores natural HP without healing existing damage.
+- Psychic Musharna Dream Waltz may be used while Asleep and adds 30 damage in that condition. Whimsicott Fluffy Tag boosts the selected new Active only during the next own turn, before Weakness/Resistance.
+- Liepard Assist flips a coin and, if heads, lets the attacking player select and copy an attack on one of their Benched Pokemon. Never search for, consume, or auto-play a Supporter.
+- Hugh makes the OPPONENT resolve hand size 5 first, and then the player; when over 5 the owning player selects physical cards to move to their DISCARD, not back to deck.
+- Audino Busybody is an ACTUAL playable hand action. Reveal and discard Audino, heal 10 on Active, and remove exactly ONE chosen Special Condition (never all simultaneously). The hand action must be reachable in mobile UI.
+- Dusknoir Sinister Hand moves real damage counters with explicit target selections. Draw In / Dragon Stream must consume existing discarded Basic Energy from the physical discard or tracked Basic Energy ledger, never create free Energy from the Zone.
+- Town Map exposes actual current Prizes, without redrawing or replacing them. Optional attack costs and all Tool attachment effects preserve physical card identity and per-turn limits.
+- Apply Weakness/Resistance to Active-target damage and not to Benched damage. One player choice must resolve visibly before a pending Prize selection interrupts the flow.
+- Never promote a card to FULL solely because it passes a schema audit. Include direct action and printed-effect regression tests; audit static flags in a separate pass.
