@@ -81,18 +81,23 @@ function parentKeys(baseName){const n=classicCardName(baseName);return /^Burmy (
 // BW3 Restored Pokémon are not Basics: these two specific Item cards are
 // their required entry path.  Treat them as fossil-family roots for deck
 // generation, while the battle engine continues to bench via bottom-seven.
-const RESTORED_FOSSIL_IDS=new Set(['bw3-90','bw3-93','bw5-97']);
+const RESTORED_FOSSIL_IDS=new Set(['bw3-90','bw3-93','bw5-97','bw10-79','bw10-82','bw10-87']);
 const EVOLUTION_FOSSIL_NAMES=new Set(classic.CARDS.filter(c=>c.kind==='trainer'&&
   (c.effect?.type==='playFossil'||RESTORED_FOSSIL_IDS.has(c.id))&&
-  (c.id==='bw5-97'||/(?:Fossil|Old Amber)$/i.test(classicCardName(c.name)))).map(c=>classicCardName(c.name)));
+  (c.id==='bw5-97'||/(?:Fossil(?: Lileep)?|Old Amber)$/i.test(classicCardName(c.name)))).map(c=>classicCardName(c.name)));
 function isEvolutionFossil(card){return !!(card?.kind==='trainer'&&
   (card.effect?.type==='playFossil'||RESTORED_FOSSIL_IDS.has(card.id))&&
   EVOLUTION_FOSSIL_NAMES.has(classicCardName(card.name)));}
-function fossilEvolutionInDeck(fossil,ids){if(fossil?.id==='bw5-97')return (ids||[]).includes('bw5-53');return (ids||[]).some(id=>{
+function fossilEvolutionInDeck(fossil,ids){
+ const restored={'bw10-79':'bw10-27','bw10-82':'bw10-53','bw10-87':'bw10-3'};
+ if(restored[fossil?.id])return (ids||[]).includes(restored[fossil.id]);
+ if(fossil?.id==='bw5-97')return (ids||[]).includes('bw5-53');return (ids||[]).some(id=>{
  const c=classic.cardById(id);
  return c?.kind==='pokemon'&&!!c.evolvesFrom&&classicEvolutionMatches(fossil.name,c.evolvesFrom);
 });}
-function anyFossilEvolutionInDeck(ids){return (ids||[]).some(id=>{
+function anyFossilEvolutionInDeck(ids){
+ if(['bw10-3','bw10-27','bw10-53'].some(id=>(ids||[]).includes(id)))return true;
+ return (ids||[]).some(id=>{
  const c=classic.cardById(id);
  return c?.kind==='pokemon'&&!!c.evolvesFrom&&EVOLUTION_FOSSIL_NAMES.has(classicCardName(c.evolvesFrom));
 });}
@@ -136,6 +141,11 @@ function familyLine(card,pool){
   parents.sort((a,b)=>fit(b)-fit(a));
   const prior=parents[0];if(seen.has(prior.id))return [];
   line.unshift(prior);seen.add(prior.id);cur=prior;
+ }
+ const restoredFossil={'bw10-3':'bw10-87','bw10-27':'bw10-79','bw10-53':'bw10-82'};
+ const needed=restoredFossil[line[0]?.id];
+ if(needed){const fossil=pool.find(c=>c.id===needed);
+   if(!fossil)return [];line.unshift(fossil);
  }
  return line;
 }

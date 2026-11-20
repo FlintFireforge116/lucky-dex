@@ -19,7 +19,9 @@ test('BW10 source registration, print conservation and explicit unsupported gate
  assert.equal(prints.reduce((n,c)=>n+c[7].length,0),139);assert.equal(prints.reduce((n,c)=>n+c[8].length,0),21);
  for(let i=0;i<105;i++){const c=set.CARDS[i];assert.equal(c.name,prints[i][1]);assert.strictEqual(data.cardById(c.id),c);assert.equal((c.attacks||[]).length,prints[i][7].length);assert.equal((c.abilities||[]).length,prints[i][8].length);assert.equal(c.deckEligible,c.battleEnabled);if(c.battleEnabled)for(const a of c.attacks||[])assert.notEqual(a.effect?.type,'unsupported');}
  assert.equal(data.coverage().plasmaBlast.printed,105);
- for(const n of [3,27,53,102])assert.equal(set.cardById('bw10-'+n).battleEnabled,false,'must gate nonstandard effect '+n);
+ for(const n of [3,27,53,102,2,4,8,9,11,23,28,35,36,37,38,49,54,60,64,69,74,96,97,98,104])
+   assert.equal(set.cardById('bw10-'+n).battleEnabled,true,'completion regression for BW10 print '+n);
+ for(const n of [33,41,86,95])assert.equal(set.cardById('bw10-'+n).battleEnabled,false,'must gate nonstandard effect '+n);
  assert.equal(set.cardById('bw10-91').kind,'energy');assert.equal(set.cardById('bw10-91').specialEnergy,true);
  for(const n of [11,30,60,65,66,96,97,98,99,100])if(set.cardById('bw10-'+n)?.pokemonEX)assert.equal(set.cardById('bw10-'+n).prizeCards,2);
 });

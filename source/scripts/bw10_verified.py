@@ -48,9 +48,9 @@ A={
 }
 ABILITY={
  'Tool Reversal':{'type':'activated','effect':R('toolReversal'),'oncePerTurn':False},
- 'Prehistoric Call':{'type':'activated','effect':R('prehistoricCall'),'oncePerTurn':True},
+ 'Prehistoric Call':{'type':'passive','effect':R('prehistoricCall')},
  'Verdant Wind':{'type':'passive','effect':R('verdantWind')},
- 'Red Signal':{'type':'passive','effect':R('redSignal')},
+ 'Red Signal':{'type':'triggered','event':'energyAttached','fromHandOnly':True,'effect':R('redSignal')},
  'Deluge':{'type':'activated','effect':{'type':'neoRule','rule':'bw7:deluge'},'oncePerTurn':False},
  'Safeguard':P.ABILITY['Safeguard'],
  'Cursed Glare':{'type':'passive','effect':R('cursedGlare')},
@@ -58,10 +58,10 @@ ABILITY={
  'Mental Shroud':{'type':'passive','effect':R('mentalShroud')},
  'Toolbox':{'type':'passive','effect':R('toolbox')},
  'Badge of Discipline':{'type':'passive','effect':R('badgeDiscipline')},
- 'Stellar Guidance':{'type':'passive','effect':R('stellarGuidance')},
- 'Breakwing':{'type':'passive','effect':R('breakwing')},
+ 'Stellar Guidance':{'type':'triggered','event':'benched','fromHandOnly':True,'effect':R('stellarGuidance')},
+ 'Breakwing':{'type':'triggered','event':'evolved','fromHandOnly':True,'effect':R('breakwing')},
  'Plasma Transfer':{'type':'activated','effect':R('plasmaTransfer'),'oncePerTurn':False},
- 'Propagation':P.ABILITY['Propagation'],
+ 'Propagation':{'type':'passive','effect':R('propagation')},
  'Sinister Hand':{'type':'activated','effect':R('sinisterHand'),'oncePerTurn':False},
 }
 TRAINERS={
@@ -79,37 +79,12 @@ TRAINERS={
 # No silent no-ops: these prints need explicit zones, ability triggers or
 # control flows before they are eligible for the live CPU/deck builder.
 GATE={
- '2':'Tool Reversal: repeatable activation and exact attached Tool return require action UI.',
- '3':'Prehistoric Call: Abilities from discard are not part of the normal board-only activation UI.',
- '4':'Lifesplosion: benching Stage 2 Pokémon without a previous evolution requires a special resolution path.',
- '8':'Retribution: previous-turn KO must preserve exact Escavalier identity.',
- '11':'Red Signal: optional switch must trigger on a physical Plasma Energy attached from hand.',
- '27':'Prehistoric Call: discard pile Ability requires an out-of-play action.',
  '33':'Crush and Burn: multi-source, multi-Pokémon Energy choice requires exact physical source accounting.',
- '36':'Psypower requires freely distributing three damage counters between different targets.',
- '38':'Psyjamming requires selecting and moving multiple physical Special Energy cards owned by opponent.',
  '41':'Toolbox requires four Tools and replacement selection when Ability is lost.',
- '53':'Prehistoric Call: discard pile Ability requires an out-of-play action.',
- '60':'Stellar Guidance must trigger only on bench placement from hand.',
- '69':'Strike of the Champion needs direct KO and prize-timing integration.',
- '74':'Plasma Transfer requires a repeatable physical Plasma Energy move action.',
  '95':'Scoop Up Cyclone must return the whole stack with exact attached Basic and Special Energy references.',
- '97':'Red Signal must trigger from hand-attached Plasma Energy.',
- '98':'Stellar Guidance must trigger only on bench placement from hand.',
- '102':'Propagation requires activation from discard pile (also gated in BW9).',
- '104':'Sinister Hand damage movement requires repeatable choice of both Pokémon.',
- '28':'Carracosta depends on Restored Tirtouga from the gated fossil chain.',
- '54':'Archeops depends on Restored Archen from the gated fossil chain.',
- '35':'Drifting Balloon modifies printed attack costs dynamically for opponent Team Plasma counts.',
  '86':'Reversal Trigger requires a KO-on-opponent-attack triggered search.',
 }
 # Extra gating is intentionally conservative on abilities / high-level effects.
-for n in ('9','96'):
-    GATE.setdefault(n,'Verdant Wind special condition immunity and immediate cleanse need global status hooks.')
-for n in ('23',):GATE.setdefault(n,'Cursed Glare must block Special Energy being attached from hand to all opponents.')
-for n in ('37',):GATE.setdefault(n,'Mental Shroud requires changing Weakness globally with Uxie and Azelf in play.')
-for n in ('49',):GATE.setdefault(n,'Badge of Discipline modifies Fighting damage type rules.')
-for n in ('64',):GATE.setdefault(n,'Breakwing triggers when the evolution enters play from hand.')
 
 # BW10 new per-print attack texts not in A must be exact-rule safe; defer to
 # previously audited generic parser, never re-use id-specific older-set neoRule.

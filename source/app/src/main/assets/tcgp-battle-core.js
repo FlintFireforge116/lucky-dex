@@ -809,6 +809,11 @@
     const aqMagnet=state.format==='classic'&&slot?.cardId==='ecard2-91'&&!effects.abilitiesSuppressed(state,side,slot,data.cardById)?state.sides[side].bench.filter(p=>data.cardById(p?.cardId)?.name==='Magnemite').length:0;
     return Math.max(0,Number(data.cardById(slot.cardId).retreat||0)+effects.modifierAmount(state,side,slot,'retreatCost',data.cardById)+stadiumCost+aqHeavy+(aqGluey?1:0)-aqMagnet-ex6Dodrio+Number(slot.dp2RetreatAdjustment||0)+bw7Jellicent-(bw9Glaceon?2:0));}
   function attackCost(state,side,attack){const slot=state.sides[side].active;let cost=effects.attackCostOverride(state,side,slot,attack,data.cardById)??attack.cost??'';
+    if(state.format==='classic'&&slot?.cardId==='bw10-35'&&!effects.abilitiesSuppressed(state,side,slot,data.cardById)){
+      cost=Array.isArray(cost)?cost.join(''):String(cost);
+      const plasmaCount=pokemonOn(state.sides[side==='player'?'opponent':'player']).filter(p=>data.cardById(p.cardId)?.teamPlasma||toolsOf(p).some(r=>r.cardId==='bw9-104')).length;
+      for(let i=0;i<plasmaCount;i++){const at=cost.lastIndexOf('C');if(at<0)break;cost=cost.slice(0,at)+cost.slice(at+1);}
+    }
     if(state.format==='classic'&&Number(slot?.hgssGraffitiUntil||0)>=Number(state.turnNumber))cost+='C';
     if(state.format==='classic'&&slot?.cardId==='pl1-54'&&Object.keys(slot.conditions||{}).length&&!effects.abilitiesSuppressed(state,side,slot,data.cardById))return '';
     // SP Energy Gain subtracts exactly one Colorless through the shared Tool modifier.
@@ -1385,7 +1390,7 @@
     // attachment are INDEPENDENT. Hand-attached Basic and Special both count
     // toward the hand attachment; card effects can separately accelerate.
     if(state.format==='classic'&&Number(s.dp7EmperorAuraUntil||0)<Number(state.turnNumber))s.dp7EmperorAuraUntil=0;
-    if(state.format==='classic'&&Number(s.dp7EmperorAuraUntil||0)<Number(state.turnNumber)){s.hand.forEach((ref,handIndex)=>{const card=data.cardById(ref.cardId);if(!(card?.specialEnergy||card?.basicEnergy||card?.holonEnergyPokemon)||card.battleEnabled===false&& !card.basicEnergy)return;if((card?.specialEnergy||card?.holonEnergyPokemon)&&effects.isActionLocked(state,side,'SpecialEnergy',data.cardById))return;if(s.handEnergyUsed)return;const validEnergyTarget=slot=>slot&&!slot.gymEnergyLock&&(card.id!=='neo4-16'||/^(?:Light |Shining )/.test(data.cardById(slot.cardId)?.name||''));const aqValid=(slot)=>{if(!validEnergyTarget(slot))return false;const mon=data.cardById(slot.cardId),energyType=card.basicEnergy?card.subtype:card.effect?.provides&&Object.keys(card.effect.provides)[0];
+    if(state.format==='classic'&&Number(s.dp7EmperorAuraUntil||0)<Number(state.turnNumber)){s.hand.forEach((ref,handIndex)=>{const card=data.cardById(ref.cardId);if(!(card?.specialEnergy||card?.basicEnergy||card?.holonEnergyPokemon)||card.battleEnabled===false&& !card.basicEnergy)return;if((card?.specialEnergy||card?.holonEnergyPokemon)&&effects.isActionLocked(state,side,'SpecialEnergy',data.cardById))return;if(card.specialEnergy&&state.sides[side==='player'?'opponent':'player']?.active?.cardId==='bw10-23'&&!effects.abilitiesSuppressed(state,side==='player'?'opponent':'player',state.sides[side==='player'?'opponent':'player'].active,data.cardById))return;if(s.handEnergyUsed)return;const validEnergyTarget=slot=>slot&&!slot.gymEnergyLock&&(card.id!=='neo4-16'||/^(?:Light |Shining )/.test(data.cardById(slot.cardId)?.name||''));const aqValid=(slot)=>{if(!validEnergyTarget(slot))return false;const mon=data.cardById(slot.cardId),energyType=card.basicEnergy?card.subtype:card.effect?.provides&&Object.keys(card.effect.provides)[0];
        if(Number(slot?.ex5NoHandEnergyUntil||0)>=state.turnNumber)return false;
        if(slot===s.active&&Number(s.dp2EnergyHandLockUntil||0)>=state.turnNumber)return false;
        // Holon's Stage 1 Pokémon may be attached as Energy only when the
@@ -1585,6 +1590,15 @@
         if(source.cardId==='bw7-63'&&!(pokemonOn(foe).length>1&&pokemonOn(foe).some(p=>Number(p.damage||0)>=10)))return;
         if(source.cardId==='bw7-68'&&Number(s.bw7LongDistanceHypnosisTurn)===Number(s.turnCount))return;
         if(source.cardId==='bw7-108'&&!s.hand.some(r=>data.cardById(r.cardId)?.kind==='pokemon'&&data.cardById(r.cardId)?.stage==='Basic'))return;
+        // BW10 repeatable powers are only offered when a real legal move
+        // exists: otherwise the advanced CPU repeatedly selects an inert action.
+        if(state.format==='classic'&&source.cardId==='bw10-2'&&
+          (!s.hand||s.hand.length>=Number(s.handLimit||8)||
+           !pokemonOn(s).some(p=>p.tool||(p.extraTools||[]).length)))return;
+        if(state.format==='classic'&&source.cardId==='bw10-74'&&
+          (pokemonOn(s).length<2||!pokemonOn(s).some(p=>(p.specialEnergy||[]).some(r=>['bw8-127','bw9-106','bw10-91'].includes(r.cardId)))))return;
+        if(state.format==='classic'&&source.cardId==='bw10-104'&&
+          (pokemonOn(foe).length<2||!pokemonOn(foe).some(p=>Number(p.damage||0)>=10)))return;
         // Noble Victories Dynamotor requires real discarded Lightning Energy
         // and a Bench destination; do not offer a silent no-op to CPU/player.
         if(state.format==='classic'&&source.cardId==='bw3-40'&&(
@@ -1610,6 +1624,18 @@
       for(const ref of s.discard){const mon=data.cardById(ref.cardId);
         if(mon?.name!=='Ho-Oh-EX'||mon.setId!=='bw6'||s.bw6RebirthUsed[ref.uid]===s.turnCount)continue;
         actions.push({type:'abilityDiscard',cardId:ref.cardId,sourceUid:ref.uid});
+      }
+    }
+    // Restored Pokémon Prehistoric Call and Exeggcute Propagation are
+    // activated from the discard zone. They must never be offered as
+    // ordinary in-play board powers or silently mutate the energy ledger.
+    if(state.format==='classic'){
+      s.bw10DiscardAbilityUsed=s.bw10DiscardAbilityUsed||{};
+      for(const ref of s.discard||[]){
+        if(!['bw10-3','bw10-27','bw10-53','bw10-102'].includes(ref.cardId))continue;
+        if(s.bw10DiscardAbilityUsed[ref.uid]===Number(s.turnCount))continue;
+        if(ref.cardId==='bw10-102'&&s.hand.length>=Number(s.handLimit||8))continue;
+        actions.push({type:'bw10DiscardAbility',cardId:ref.cardId,sourceUid:ref.uid});
       }
     }
     // BW5 Slowbro Airhead: even Prize counts (2/4/6) prohibit its attacks.
@@ -2712,6 +2738,24 @@
       playTrainer(state,side,matched);
       return state;
     }
+    if(matched.type==='bw10DiscardAbility'){
+      const index=(s.discard||[]).findIndex(ref=>ref.uid===matched.sourceUid&&ref.cardId===matched.cardId);
+      if(index<0||!['bw10-3','bw10-27','bw10-53','bw10-102'].includes(matched.cardId))
+        throw new Error('BW10 discard Ability source is no longer available');
+      s.bw10DiscardAbilityUsed=s.bw10DiscardAbilityUsed||{};
+      if(s.bw10DiscardAbilityUsed[matched.sourceUid]===Number(s.turnCount))
+        throw new Error('BW10 discard Ability already used this turn');
+      const propagation=matched.cardId==='bw10-102';
+      if(propagation&&s.hand.length>=Number(s.handLimit||8))throw new Error('Hand is full');
+      const [ref]=s.discard.splice(index,1);
+      // deck[0] is the next draw. Prehistoric Call places the Restored
+      // Pokémon on the *bottom*, while Propagation returns Exeggcute to hand.
+      if(propagation)s.hand.push(ref);else s.deck.push(ref);
+      s.bw10DiscardAbilityUsed[ref.uid]=Number(s.turnCount);
+      state.log.push({type:'ability',side,cardId:ref.cardId,
+        ability:propagation?'Propagation':'Prehistoric Call',fromDiscard:true});
+      return state;
+    }
     if(matched.type==='abilityDiscard'){
       const ref=s.discard.find(x=>x.uid===matched.sourceUid&&x.cardId===matched.cardId);
       const card=data.cardById(ref?.cardId),ability=card?.abilities?.find(a=>a.name==='Rebirth');
@@ -2767,6 +2811,7 @@
       const target=slotForTarget(s,matched.target,matched.benchIndex),[ref]=s.hand.splice(matched.handIndex,1),card=data.cardById(ref?.cardId);
       if(!target||!ref||!(card?.specialEnergy||card?.basicEnergy||card?.holonEnergyPokemon))throw new Error('That Energy card attachment is no longer legal.');
       if(state.format==='classic'&&card.specialEnergy&&Number(s.dp2BindPulseUntil||0)>=state.turnNumber){s.hand.splice(matched.handIndex,0,ref);return state;}
+      if(state.format==='classic'&&card.specialEnergy&&foe.active?.cardId==='bw10-23'&&!effects.abilitiesSuppressed(state,foeSide,foe.active,data.cardById)){s.hand.splice(matched.handIndex,0,ref);return state;}
       let provides={};if(card.basicEnergy){target.energy[card.subtype]=Number(target.energy[card.subtype]||0)+1;provides={[card.subtype]:1};}else{
         // Attached Holon Pokémon remain Pokémon cards in every other zone.
         // Holon's Voltorb/Magnemite = 1 Colorless; evolutions = 2 of any type.
