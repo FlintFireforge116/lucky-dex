@@ -1293,6 +1293,18 @@
       // Dark Explorers mandatory Item costs and targets: do not consume an
       // Item when its printed effect cannot legally resolve.
       if(state.format==='classic'&&card.id==='bw5-102'&&s.hand.length<3)return; // Ultra Ball needs TWO other cards to discard.
+      // Flashfire mandatory costs. Do not offer a Trainer whose exact printed
+      // cost cannot be paid. Real Energy-zone discard entries are allowed only
+      // for cards that explicitly recover Energy from discard, never from hand.
+      if(state.format==='classic'&&card.id==='xy2-99'&&s.hand.length<3)return;
+      if(state.format==='classic'&&card.id==='xy2-89'&&
+        !s.hand.some((r,i)=>i!==handIndex&&data.cardById(r.cardId)?.basicEnergy&&
+          ['Fire'].includes(data.cardById(r.cardId)?.energyType||data.cardById(r.cardId)?.subtype)))return;
+      if(state.format==='classic'&&['xy2-88','xy2-88a'].includes(card.id)&&
+        (!pokemonOn(s).some(p=>data.cardById(p.cardId)?.types?.includes('Fire'))||
+          (Number(s.energyDiscard?.Fire||0)+s.discard.filter(r=>data.cardById(r.cardId)?.basicEnergy&&
+            ['Fire'].includes(data.cardById(r.cardId)?.energyType||data.cardById(r.cardId)?.subtype)).length)<2))return;
+
       if(state.format==='classic'&&card.id==='bw5-93'&&
         (!s.bench.some(p=>data.cardById(p.cardId)?.types?.includes('Darkness'))||
          !(Number(s.energyDiscard?.Darkness||0)>0||s.discard.some(r=>data.cardById(r.cardId)?.basicEnergy&&data.cardById(r.cardId)?.subtype==='Darkness'))))return;

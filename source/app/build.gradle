@@ -8,8 +8,8 @@ android {
         applicationId 'com.example.luckydex'
         minSdk 26
         targetSdk 35
-        versionCode 7324
-        versionName '0.69.324'
+        versionCode 7325
+        versionName '0.69.325'
     }
 
     signingConfigs {
@@ -578,4 +578,20 @@ tasks.register('auditXY1ForApk', Exec) {
 }
 tasks.matching { it.name == 'preBuild' || (it.name.startsWith('merge') && it.name.endsWith('Assets')) }.configureEach {
     dependsOn tasks.named('auditXY1ForApk')
+}
+
+// XY Flashfire pinned 110-row catalogue: independent effect/CPU preflight.
+// Generate BEFORE Android merge; Termux workflow remains unzip/add/commit/push.
+tasks.register('generateXY2ForApk', Exec) {
+    dependsOn tasks.named('auditXY1ForApk')
+    workingDir rootProject.projectDir
+    commandLine (System.getenv('LUCKYDEX_PYTHON') ?: 'python3'), 'scripts/build-xy2.py'
+}
+tasks.register('auditXY2ForApk', Exec) {
+    dependsOn tasks.named('generateXY2ForApk')
+    workingDir rootProject.projectDir
+    commandLine 'node', '--test', '--test-concurrency=2', 'tests/v07325-flashfire.test.cjs'
+}
+tasks.matching { it.name == 'preBuild' || (it.name.startsWith('merge') && it.name.endsWith('Assets')) }.configureEach {
+    dependsOn tasks.named('auditXY2ForApk')
 }

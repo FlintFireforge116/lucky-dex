@@ -27,7 +27,7 @@ const STAPLES=Object.freeze([
  ['base1-83',1], // Maintenance
  ['base1-87',1]  // Pokedex
 ]);
-const SET_IDS=Object.freeze(['base1','base2','base3','base5','gym1','gym2','neo1','neo2','neo3','neo4','base6','ecard1','ecard2','ecard3','ex1','ex2','ex3','ex4','ex5','ex6','ex7','ex8','ex9','ex10','ex11','ex12','ex13','ex14','ex15','ex16','dp1','dp2','dp3','dp4','dp5','dp6','dp7','pl1','pl2','pl3','pl4','hgss1','hgss2','hgss3','hgss4','col1','bw1','bw2','bw3','bw4','bw5','bw6','bw7','bw8','bw9','bw10','bw11','xy1','SNAPFLORIO','SNAPFOUNJA','sv1']);
+const SET_IDS=Object.freeze(['base1','base2','base3','base5','gym1','gym2','neo1','neo2','neo3','neo4','base6','ecard1','ecard2','ecard3','ex1','ex2','ex3','ex4','ex5','ex6','ex7','ex8','ex9','ex10','ex11','ex12','ex13','ex14','ex15','ex16','dp1','dp2','dp3','dp4','dp5','dp6','dp7','pl1','pl2','pl3','pl4','hgss1','hgss2','hgss3','hgss4','col1','bw1','bw2','bw3','bw4','bw5','bw6','bw7','bw8','bw9','bw10','bw11','xy1','xy2','SNAPFLORIO','SNAPFOUNJA','sv1']);
 // Darkness and Metal are already Basic Energy types. Deduplicate before rendering
 // archetype chips so each energy type has exactly one toggle.
 // Dragon is a Pokémon type, never a Basic Energy type. Include it as an
@@ -316,6 +316,85 @@ function rescueXY1Deck(rows,options={}){
  return {ok:true,cards:selected,energyTypes,errors:[],warnings:[],style:'competitive',
    archetypeKey:'xy1-'+type.toLowerCase()+'-fallback',focusCardId:parts[0][0].endpoint.id,
    strategy:'XY Base legal owned complete-family rescue'};
+}
+function rescueXY2Deck(rows,options={}){
+ const scopes=options.sets||[],types=options.types||[];
+ if(scopes.length!==1||scopes[0]!=='xy2'||types.length!==1||options.focusCardId||
+    options.basicOnly===true||(options.rarityFocus&&options.rarityFocus!=='any')||
+    (options.theme&&options.theme!=='any')||(options.cards&&options.cards.length))return null;
+ const type=types[0];
+ if(!ARCHETYPE_TYPES.includes(type))return null;
+ const energyTypes=type==='Colorless'?['Fairy']:type==='Dragon'?['Fire','Lightning']:[type];
+ const owned=ownedMap(rows);
+ const canUse=c=>!!c&&c.setId==='xy2'&&c.kind==='pokemon'&&c.battleEnabled&&
+   c.deckEligible!==false&&Number(owned.get(c.id)||0)>0;
+ const pool=classic.CARDS.filter(canUse);
+ const attackable=c=>(c.attacks||[]).some(a=>{
+   const symbols=Array.isArray(a.cost)?a.cost:[...String(a.cost||'')];
+   return symbols.every(k=>k==='C'||!CODE_TO_TYPE[k]||energyTypes.includes(CODE_TO_TYPE[k]));
+ });
+ const sameArchetype=c=>(c.types||[]).includes(type)||
+   (type!=='Dragon'&&(c.types||[]).includes('Colorless'));
+ // A legal Pokemon-family unit is either a standalone Basic or a COMPLETE
+ // owned evolution line. Never pad the 30-card deck with orphaned evolving
+ // Basics, Stage 1/2 Pokemon without parents, or cards from other sets.
+ const groups=[];
+ for(const c of pool){
+   if(!sameArchetype(c)||!attackable(c))continue;
+   let line;
+   if(c.stage==='Basic'){
+     if(hasKnownEvolution(c)||babyEvolutionTargets(c).length)continue;
+     line=[c];
+   }else if(['Stage 1','Stage 2'].includes(c.stage)){
+     // If the chosen Pokemon itself can evolve again, don't stop the line
+     // halfway through (e.g. a Quilava without a Typhlosion).
+     if(hasKnownEvolution(c))continue;
+     line=familyLine(c,pool);
+     if(line.length<2||line[0]?.stage!=='Basic'||
+        line.some(x=>!canUse(x)||x.kind!=='pokemon'||!sameArchetype(x)))continue;
+   }else continue;
+   if(new Set(line.map(x=>classicCardName(x.name))).size!==line.length)continue;
+   groups.push({line,endpoint:c,primary:(c.types||[]).includes(type),
+     maxCopies:Math.min(4,...line.map(x=>Number(owned.get(x.id)||0)))});
+ }
+ // Prefer an on-type attacker, with Colorless only as genuinely playable
+ // support. Prefer smaller independent Basic cores before complete families.
+ groups.sort((a,b)=>Number(b.primary)-Number(a.primary)||
+   a.line.length-b.line.length||Number(b.endpoint.hp||0)-Number(a.endpoint.hp||0));
+ const unique=[],usedNames=new Set();
+ for(const g of groups){
+   const names=g.line.map(c=>classicCardName(c.name));
+   if(names.some(name=>usedNames.has(name)))continue;
+   unique.push(g);for(const name of names)usedNames.add(name);
+ }
+ if(!unique.some(g=>g.primary))return null;
+ // Each copy of an evolution unit includes its actual Basic/Stage 1 parent.
+ // A bounded exact-fill search avoids the old all-Basic filter, which left
+ // 0 of 108 authentic XY CPU decks constructible in GitHub's build tests.
+ const solve=(i,remaining,parts)=>{
+   if(remaining===0)return parts;
+   if(i>=unique.length)return null;
+   const g=unique[i],max=Math.min(g.maxCopies,Math.floor(remaining/g.line.length));
+   for(let n=max;n>=0;n--){
+     const found=solve(i+1,remaining-n*g.line.length,n?[...parts,[g,n]]:parts);
+     if(found)return found;
+   }
+   return null;
+ };
+ const parts=solve(0,14,[]);
+ if(!parts)return null;
+ const selected=parts.flatMap(([g,n])=>g.line.flatMap(c=>Array(n).fill(c.id)));
+ const staples=['xy2-90','xy2-93','xy2-94','xy2-99'];
+ for(const id of staples){const c=classic.cardById(id);
+   if(!c||!c.battleEnabled||c.deckEligible===false||Number(owned.get(id)||0)<4)return null;
+   selected.push(...Array(4).fill(id));
+ }
+ if(selected.length!==30||!classic.validateDeck(selected).ok||
+    !decks.validateDraft(selected,rows,{requireFull:true}).ok||
+    decks.analyzeDeck(selected,energyTypes).missingEnergyTypes.length)return null;
+ return {ok:true,cards:selected,energyTypes,errors:[],warnings:[],style:'competitive',
+   archetypeKey:'xy2-'+type.toLowerCase()+'-fallback',focusCardId:parts[0][0].endpoint.id,
+   strategy:'Flashfire legal owned complete-family rescue'};
 }
 function rescueBW11Deck(rows,options={}){
  const scopes=options.sets||[],types=options.types||[];
@@ -1135,6 +1214,8 @@ function buildDeck(rows,options={}){
  if(cards.length!==30){
    const xy1Recovery=rescueXY1Deck(rows,{...options,sets:scope});
    if(xy1Recovery?.ok)return xy1Recovery;
+   const xy2Recovery=rescueXY2Deck(rows,{...options,sets:scope});
+   if(xy2Recovery?.ok)return xy2Recovery;
    const bw11Recovery=rescueBW11Deck(rows,{...options,sets:scope});
    if(bw11Recovery?.ok)return bw11Recovery;
    const bw10Recovery=rescueBW10Deck(rows,{...options,sets:scope});
@@ -1199,5 +1280,5 @@ function buildDeck(rows,options={}){
  return {ok:true,cards,energyTypes:finalEnergy,errors:[],warnings:notes,plan,style,archetypeKey:archetypeKey(featured||main),focusCardId:fossilFocus?.id||focus?.id||featured?.id||main.id,strategy:`${style==='random'?'Random featured':'Competitive'} · ${theme!=='any'?synergy.THEMES.find(t=>t.id===theme).label+' · ':''}${rarityFocus!=='any'?RARITY_FOCUS.find(r=>r.id===rarityFocus).label+' · ':''}${basicOnly?'Basic-only · ':''}${label} · ${featured?featured.name+' featured · ':''}${archetypeName(main,evolutionPool)} core · ${pokemonCount()} Pokémon / ${30-pokemonCount()} Trainers & Special Energy`};
 }
 function buildDeckAsync(rows,options,control={}){return new Promise(resolve=>{setTimeout(()=>{if(control.isCancelled?.())return resolve(null);resolve(buildDeck(rows,options));},0);});}
-return {buildDeck,rescueBW10Deck,rescueBW11Deck,rescueXY1Deck,buildDeckAsync,THEMES:synergy.THEMES,familyLine,familyRoot,attackTypes,conditionalAttackTypes,allowedInSetPool,ARCHETYPE_TYPES,SET_IDS,RARITY_FOCUS,rarityTier,matchesRarity};
+return {buildDeck,rescueBW10Deck,rescueBW11Deck,rescueXY1Deck,rescueXY2Deck,buildDeckAsync,THEMES:synergy.THEMES,familyLine,familyRoot,attackTypes,conditionalAttackTypes,allowedInSetPool,ARCHETYPE_TYPES,SET_IDS,RARITY_FOCUS,rarityTier,matchesRarity};
 });
