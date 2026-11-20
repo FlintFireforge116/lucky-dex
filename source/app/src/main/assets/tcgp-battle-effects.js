@@ -12454,9 +12454,24 @@
     }
     if(k==='aquaBoomerang'){applyEffect({type:'returnToHand',target:'self',returnBasicEnergy:true},ctx);return;}
     if(k==='ambushBite'||k==='wringOut'||k==='discardOpponentSpecial'||k==='cleave'){
+      // Wring Out's heads-only Paralysis is a normal attack status effect;
+      // direct condition assignment bypassed Status immunity and failed to
+      // replace incompatible major conditions. Apply only on the initial
+      // pending-effect resolution, never again after an Energy choice.
+      if(k==='wringOut'&&stage==='start')applyEffect({type:'status',status:'paralysis',target:'opponentActive'},ctx);
       const xs=k==='discardOpponentSpecial'?(d?.specialEnergy||[]).map(r=>({kind:'special',uid:r.uid,p:d,label:label(r)})):ownedEnergy(d);
       if(stage==='discard'&&ctx.resolvingChoice){const x=xs[Number(act.choiceOption)];if(x)discardEnergy(foe,x);return;}
-      if(k==='cleave'){for(const x of [...xs])discardEnergy(foe,x);return;}
+      if(k==='cleave'){
+        // Altaria's double-heads effect removes *all* Energy, not just one
+        // Basic counter per type. ownedEnergy() is a choice-source list and
+        // deliberately has only one row for each Basic type.
+        if(!d)return;
+        for(const [type,n] of Object.entries(d.energy||{}))if(Number(n)>0){
+          recordDiscardedEnergy(foe,type,Number(n));d.energy[type]=0;
+        }
+        foe.discard.push(...(d.specialEnergy||[]));d.specialEnergy=[];
+        return;
+      }
       if(xs.length===1)discardEnergy(foe,xs[0]);else if(xs.length>1)ask('discard',xs.map(x=>'Discard '+x.label));return;
     }
     if(k==='tagDraw'){const hasMinun=us.bench.some(p=>card(p)?.name==='Minun');us.deck.push(...us.hand.splice(0));shuffle();draw(hasMinun?8:4);return;}
@@ -12473,7 +12488,10 @@
     }
     if(k==='eternalRadiance'){
       if(a&&d){const moved=Number(a.damage||0);a.damage=0;d.damage=Number(d.damage||0)+moved;
-        a.bw11EternalRadianceUntil=turn+2;trace({movedCounters:moved,defender:d.cardId});}return;
+        // Printed drawback: cannot use *Eternal Radiance* during the next
+        // own turn. A custom field alone was never consulted by isLocked.
+        applyEffect({type:'lock',action:'attack',target:'self',duration:'nextOwnTurn',attackName:'Eternal Radiance'},ctx);
+        trace({movedCounters:moved,defender:d.cardId});}return;
     }
     if(k==='echoedVoice'){if(a)a.bw11EchoedVoiceUntil=turn+2;return;}
     if(k==='leafWallop'){if(a)a.bw10LeafWallopUntil=turn+2;return;}
@@ -12486,7 +12504,10 @@
       if(xs.length)ask('pick',xs.map(r=>'Evolve into '+label(r)));return;
     }
     if(k==='brilliantVoice'){const heads=coin(ctx);ctx.state.log.push({type:'coin',side:ctx.side,reason:'Brilliant Voice',results:[heads],heads:Number(heads)});
-      if(d){d.conditions=d.conditions||{};d.conditions[heads?'sleep':'confusion']=true;}return;}
+      // Use the shared immunity and mutually-exclusive Status rules rather
+      // than writing directly to defender.conditions.
+      if(d)applyEffect({type:'status',status:heads?'sleep':'confusion',target:'opponentActive'},ctx);
+      return;}
     if(k==='cursedDrop'){
       if(stage==='target'&&ctx.resolvingChoice){const p=chosen('opponent');if(!p||!theirs().includes(p))return;
         p.damage=Number(p.damage||0)+10;
@@ -17143,8 +17164,23 @@
       if(e.type==='neoRule'&&String(e.rule||'').startsWith('bw11:')){
         const k=e.rule.slice(5),us=own(ctx),foe=other(ctx),a=ctx.attacker,d=ctx.defender,
           card=p=>ctx.cardById(p?.cardId),mon=p=>card(p)?.name||'',turn=Number(ctx.state.turnNumber||0),
-          units=p=>Object.values(p?.energy||{}).reduce((n,c)=>n+Number(c||0),0)+(p?.specialEnergy||[]).reduce((n,r)=>n+Number(ctx.cardById(r.cardId)?.effect?.provides?.Colorless||1),0),
-          typed=(p,t)=>Number(p?.energy?.[t]||0)+(p?.specialEnergy||[]).filter(r=>Number(ctx.cardById(r.cardId)?.effect?.provides?.[t]||0)>0).length,
+          // The Core's effectiveEnergy accounts for conditional Scramble/Boost,
+          // Crystal Beach converting multi-unit cards to one Colorless, and
+          // flexible types without counting a Rainbow card once per type.
+          // The manual branch is used only by isolated effect/test contexts.
+          units=p=>{
+            const effective=ctx.effectiveEnergy?.(p);
+            if(effective)return Object.entries(effective).filter(([type])=>!type.startsWith('__')).reduce((n,[,v])=>n+(Number(v)||0),0);
+            return Object.values(p?.energy||{}).reduce((n,c)=>n+Number(c||0),0)+(p?.specialEnergy||[]).reduce((n,r)=>{
+              const values=r?.provides||ctx.cardById(r.cardId)?.effect?.provides||{};
+              return n+Math.max(1,...Object.values(values).map(v=>Number(v)||0));
+            },0);
+          },
+          typed=(p,t)=>{
+            const effective=ctx.effectiveEnergy?.(p);
+            if(effective)return Number(effective[t]||0)+Number(effective.Miracle||0)+(effective.__crystalAllowed?.[t]?Number(effective.Crystal||0):0);
+            return Number(p?.energy?.[t]||0)+(p?.specialEnergy||[]).filter(r=>Number(ctx.cardById(r.cardId)?.effect?.provides?.[t]||0)>0).length;
+          },
           count=p=>Math.floor(Number(p?.damage||0)/10),rewards=Number(foe.prizesTaken||0);
         if(k==='outrage'||k==='darkRush'){damage+=k==='darkRush'?20*count(a):10*count(a);return;}
         if(k==='energyPress'){damage+=20*units(d);return;}
@@ -17164,7 +17200,7 @@
         if(k==='ambushBite'||k==='wringOut'||k==='cleave'){
           const results=k==='cleave'?[coin(ctx),coin(ctx)]:[coin(ctx)];ctx.state.log.push({type:'coin',side:ctx.side,reason:ctx.attack.name,results,heads:results.filter(Boolean).length});
           if(k==='ambushBite'&&results[0]){damage+=20;pending.push(e);}
-          if(k==='wringOut'&&results[0]){if(d){d.conditions=d.conditions||{};d.conditions.paralysis=true;}pending.push(e);}
+          if(k==='wringOut'&&results[0])pending.push(e);
           if(k==='cleave'&&results.every(Boolean))pending.push(e);
           return;
         }

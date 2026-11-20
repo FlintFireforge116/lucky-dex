@@ -64,6 +64,8 @@ A={
  ('RC11','Brilliant Voice'):R('brilliantVoice'),('RC11','Round'):R('round'),
  ('RC13','Captivate'):Q(E('forceOpponentSwitch',chooseBy='attacker')),('RC16','Picnic Weather'):R('picnicWeather'),('RC20','No Attack'):N,
  ('RC21','Synthesis'):R('synthesis'),('RC21','Revenge Blast'):R('revengeBlast'),
+ ('RC17','Relaxed Roll'):COIN('untilTails',30),
+ ('RC19','Echoed Voice'):R('echoedVoice'),
  ('RC22','Outrage'):R('outrage'),('RC22','Blue Flare'):DISC(2,typ='Fire'),
  ('RC23','Call for Family'):R('callForFamily2'),('RC24','Replace'):R('replace'),
  ('RC25','Brilliant Voice'):R('brilliantVoice'),('RC25','Round'):R('round')
