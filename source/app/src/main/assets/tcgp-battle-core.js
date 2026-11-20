@@ -744,6 +744,7 @@
     if(state.format==='classic'&&gym==='ex4-78'&&!ownerName.startsWith("Team Aqua's"))stadiumCost+=1;
     if(state.format==='classic'&&gym==='ex3-85'&&data.cardById(slot.cardId)?.types?.some(t=>['Fire','Water'].includes(t)))stadiumCost-=1;
     if(gym==='sv1-167'&&data.cardById(slot.cardId)?.stage==='Basic')stadiumCost-=1;
+    if(gym==='bw4-91'&&data.cardById(slot.cardId)?.stage==='Basic')stadiumCost-=1;
     if(state.format==='classic'&&gym==='neo4-92'&&['Basic','Baby'].includes(data.cardById(slot.cardId)?.stage))stadiumCost+=1;
     if(state.format==='classic'&&Number(slot?.neoDestinyRetreatExtraUntil||0)>=state.turnNumber)stadiumCost+=1;
     if(state.format==='classic'&&data.cardById(slot.cardId)?.name?.startsWith('Unown [')&&pokemonOn(state.sides[side]).some(p=>p!==slot&&p.cardId==='neo4-60'&&state.sides[side].bench.includes(p)&&!effects.abilitiesSuppressed(state,side,p,data.cardById)))return 0;if(data.cardById(slot.cardId)?.retreatZeroWithWater&&(Number(slot.energy?.Water||0)+(slot.specialEnergy||[]).reduce((n,r)=>n+Number(r.provides?.Water||data.cardById(r.cardId)?.effect?.provides?.Water||0),0))>=Number(data.cardById(slot.cardId)?.retreatWaterMinimum||1))return 0;
@@ -812,6 +813,11 @@
         let n=0;for(const [type,amount] of Object.entries(slot.energy||{})){if(type.startsWith('__'))continue;n+=Number(amount||0);delete next[type];}next.Miracle=Number(next.Miracle||0)+n;
       }
     }
+    // Next Destinies Gardevoir: only Basic Psychic Energy on friendly Psychic
+    // Pokemon doubles; does not duplicate physical Energy cards or Prism.
+    if(state.format==='classic'&&data.cardById(slot?.cardId)?.types?.includes('Psychic')&&
+      pokemonOn(state.sides[side]).some(p=>p.cardId==='bw4-57'&&!effects.abilitiesSuppressed(state,side,p,data.cardById)))
+      next.Psychic=Number(next.Psychic||0)+Number(slot?.energy?.Psychic||0);
     for(const ref of slot?.specialEnergy||[]){
       // Crystal Beach: two- or three-unit Special Energy becomes ONE Colorless
       // regardless of the attached Pokemon's Powers or Bodies. Keep the Basic
@@ -833,6 +839,10 @@
          const units=Object.values(specialEnergyProvides(ref)).reduce((sum,n)=>sum+Number(n||0),0);
          next.Grass=Number(next.Grass||0)+units;continue;
       }
+      // BW Next Destinies Prism: all types only while on a Basic Pokemon;
+      // single Colorless elsewhere.  This is one physical Special Energy.
+      if(ref.cardId==='bw4-93'&&!miracleWind){const basic=data.cardById(slot?.cardId)?.stage==='Basic';
+        const type=basic?'Miracle':'Colorless';next[type]=Number(next[type]||0)+1;continue;}
       // Rising Rivals SP Energy is one rainbow unit ONLY on a Pokemon SP.
       // Upper Energy supplies two Colorless only while behind on Prizes and
       // never to a Level-Up Pokemon. Each remains a single physical card.
@@ -2089,6 +2099,23 @@
             if(receiver.tool?.uid===exp.uid)receiver.tool=receiver.extraTools?.shift()||null;
             else receiver.extraTools=(receiver.extraTools||[]).filter(t=>t.uid!==exp.uid);
             s.discard.push(exp);state.log.push({type:'ex6ExpAll',side,cardId:receiver.cardId,energyType:type});
+          }
+        }
+
+        // Black & White Exp. Share: the owner MAY move exactly one BASIC Energy
+        // from the knocked-out Active before the remaining attachments enter
+        // the actual discard ledger. The Tool itself stays attached.
+        if(state.format==='classic'&&slot===s.active&&eventSource?.attack&&eventSource.side===foeSide&&
+           !slot._bw4ExpShareResolved){
+          const eligible=[];
+          for(const p of s.bench||[]){if(!p||!toolsOf(p).some(ref=>ref.cardId==='bw4-87'))continue;
+            for(const [type,n] of Object.entries(slot.energy||{}))if(Number(n)>0)eligible.push({targetUid:p.uid,energyType:type});}
+          if(eligible.length){slot._bw4ExpShareResolved=true;
+            beginEffectChoice(state,side,slot,{kind:'option',side:'self',
+              options:[...eligible.map(x=>'Move '+x.energyType+' Energy to '+data.cardById(findSlotByUid(state,side,x.targetUid)?.cardId)?.name),'Do not move Energy'],
+              effect:{type:'neoRule',rule:'bw4:expShare',sourceUid:slot.uid,eligible}});
+            state.pendingChoice.resume='knockout';state.pendingChoice.koResume=resume||null;state.pendingChoice.koCause=cause||null;
+            return true;
           }
         }
 
