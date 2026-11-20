@@ -27,7 +27,7 @@ const STAPLES=Object.freeze([
  ['base1-83',1], // Maintenance
  ['base1-87',1]  // Pokedex
 ]);
-const SET_IDS=Object.freeze(['base1','base2','base3','base5','gym1','gym2','neo1','neo2','neo3','neo4','base6','ecard1','ecard2','ecard3','ex1','ex2','ex3','ex4','ex5','ex6','ex7','ex8','ex9','ex10','ex11','ex12','ex13','ex14','ex15','ex16','dp1','dp2','dp3','dp4','dp5','dp6','dp7','pl1','pl2','pl3','pl4','hgss1','hgss2','hgss3','hgss4','col1','bw1','bw2','bw3','bw4','bw5','bw6','bw7','bw8','bw9','bw10','bw11','SNAPFLORIO','SNAPFOUNJA','sv1']);
+const SET_IDS=Object.freeze(['base1','base2','base3','base5','gym1','gym2','neo1','neo2','neo3','neo4','base6','ecard1','ecard2','ecard3','ex1','ex2','ex3','ex4','ex5','ex6','ex7','ex8','ex9','ex10','ex11','ex12','ex13','ex14','ex15','ex16','dp1','dp2','dp3','dp4','dp5','dp6','dp7','pl1','pl2','pl3','pl4','hgss1','hgss2','hgss3','hgss4','col1','bw1','bw2','bw3','bw4','bw5','bw6','bw7','bw8','bw9','bw10','bw11','xy1','SNAPFLORIO','SNAPFOUNJA','sv1']);
 // Darkness and Metal are already Basic Energy types. Deduplicate before rendering
 // archetype chips so each energy type has exactly one toggle.
 // Dragon is a Pokémon type, never a Basic Energy type. Include it as an
@@ -235,6 +235,43 @@ function fail(message){return {ok:false,cards:[],energyTypes:[],errors:[message]
 // BW11-only complete Basic cores. The emergency path never changes manual
 // selection and refuses to create cards not actually owned. 14 legitimate
 // Pokémon prints + four legitimate playsets, all inside Legendary Treasures.
+// XY Base single-set fallback: only authentic owned prints; reserve 14 basic
+// attackers and four useful 4-copy Trainer/Special Energy groups. This does not
+// replace the normal evolution-aware builder or change manual/featured decks.
+function rescueXY1Deck(rows,options={}){
+ const scopes=options.sets||[],types=options.types||[];
+ if(scopes.length!==1||scopes[0]!=='xy1'||types.length!==1||options.focusCardId||
+    options.basicOnly===true||(options.rarityFocus&&options.rarityFocus!=='any')||
+    (options.theme&&options.theme!=='any')||(options.cards&&options.cards.length))return null;
+ const type=types[0],wanted=type==='Dragon'?['Fire','Lightning']:type==='Colorless'?['Fairy']:[type];
+ if(!ARCHETYPE_TYPES.includes(type))return null;
+ const owned=ownedMap(rows),attackable=c=>(c.attacks||[]).some(a=>{
+   const symbols=Array.isArray(a.cost)?a.cost:[...String(a.cost||'')];
+   return symbols.every(k=>k==='C'||!CODE_TO_TYPE[k]||wanted.includes(CODE_TO_TYPE[k]));
+ });
+ const eligible=c=>c?.setId==='xy1'&&c?.kind==='pokemon'&&c.stage==='Basic'&&c.battleEnabled&&
+   c.deckEligible!==false&&Number(owned.get(c.id)||0)>0&&attackable(c);
+ const all=classic.CARDS.filter(eligible);
+ const primary=all.filter(c=>(c.types||[]).includes(type));
+ const neutral=all.filter(c=>(c.types||[]).includes('Colorless'));
+ const ordered=[...primary,...neutral,...all].filter((c,i,arr)=>arr.findIndex(x=>x.id===c.id)===i)
+   .filter(c=>!hasKnownEvolution(c)||primary.length<4)
+   .sort((a,b)=>Number((b.types||[]).includes(type))-Number((a.types||[]).includes(type))||
+      Number((b.types||[]).includes('Colorless'))-Number((a.types||[]).includes('Colorless'))||
+      Number(b.hp||0)-Number(a.hp||0));
+ const selected=[],add=(id,n)=>{if(n>0)selected.push([id,n]);};
+ let remaining=14;
+ for(const c of ordered){const n=Math.min(remaining,4,Number(owned.get(c.id)||0));add(c.id,n);remaining-=n;if(!remaining)break;}
+ if(remaining>0)return null;
+ const staples=['xy1-118','xy1-122','xy1-123','xy1-130'];
+ for(const id of staples){const c=classic.cardById(id);if(!c||!c.battleEnabled||!c.deckEligible||Number(owned.get(id)||0)<4)return null;add(id,4);}
+ const cards=selected.flatMap(([id,n])=>Array(n).fill(id));
+ if(cards.length!==30||!classic.validateDeck(cards).ok||!decks.validateDraft(cards,rows,{requireFull:true}).ok)return null;
+ return {ok:true,cards,energyTypes:wanted,errors:[],warnings:[],style:'competitive',
+   archetypeKey:'xy1-'+type.toLowerCase()+'-fallback',focusCardId:selected[0][0],
+   strategy:'XY Base verified owned single-set recovery'};
+}
+
 function rescueBW11Deck(rows,options={}){
  const scopes=options.sets||[],types=options.types||[];
  if(scopes.length!==1||scopes[0]!=='bw11'||types.length!==1||options.focusCardId||
@@ -1051,6 +1088,8 @@ function buildDeck(rows,options={}){
  // only the sparse-inventory rescue is allowed a second otherwise unrequested type.
  if(cards.length<30){for(const c of pool.filter(c=>(usefulFillerCard(c)||c.stage==='Basic')&&trainerIsUseful(c))){while(cards.length<30&&room(c)>0){const trial=[...cards,c.id],profile=decks.analyzeDeck(trial).recommendedEnergyTypes;if(options._allowSecondType===true&&!requestedEnergy.length?profile.length>2:!profile.every(t=>plannedEnergy.includes(t)))break;if(!add(c,1))break;}if(cards.length>=30)break;}}
  if(cards.length!==30){
+   const xy1Recovery=rescueXY1Deck(rows,{...options,sets:scope});
+   if(xy1Recovery?.ok)return xy1Recovery;
    const bw11Recovery=rescueBW11Deck(rows,{...options,sets:scope});
    if(bw11Recovery?.ok)return bw11Recovery;
    const bw10Recovery=rescueBW10Deck(rows,{...options,sets:scope});
@@ -1115,5 +1154,5 @@ function buildDeck(rows,options={}){
  return {ok:true,cards,energyTypes:finalEnergy,errors:[],warnings:notes,plan,style,archetypeKey:archetypeKey(featured||main),focusCardId:fossilFocus?.id||focus?.id||featured?.id||main.id,strategy:`${style==='random'?'Random featured':'Competitive'} · ${theme!=='any'?synergy.THEMES.find(t=>t.id===theme).label+' · ':''}${rarityFocus!=='any'?RARITY_FOCUS.find(r=>r.id===rarityFocus).label+' · ':''}${basicOnly?'Basic-only · ':''}${label} · ${featured?featured.name+' featured · ':''}${archetypeName(main,evolutionPool)} core · ${pokemonCount()} Pokémon / ${30-pokemonCount()} Trainers & Special Energy`};
 }
 function buildDeckAsync(rows,options,control={}){return new Promise(resolve=>{setTimeout(()=>{if(control.isCancelled?.())return resolve(null);resolve(buildDeck(rows,options));},0);});}
-return {buildDeck,rescueBW10Deck,rescueBW11Deck,buildDeckAsync,THEMES:synergy.THEMES,familyLine,familyRoot,attackTypes,conditionalAttackTypes,allowedInSetPool,ARCHETYPE_TYPES,SET_IDS,RARITY_FOCUS,rarityTier,matchesRarity};
+return {buildDeck,rescueBW10Deck,rescueBW11Deck,rescueXY1Deck,buildDeckAsync,THEMES:synergy.THEMES,familyLine,familyRoot,attackTypes,conditionalAttackTypes,allowedInSetPool,ARCHETYPE_TYPES,SET_IDS,RARITY_FOCUS,rarityTier,matchesRarity};
 });

@@ -8,8 +8,8 @@ android {
         applicationId 'com.example.luckydex'
         minSdk 26
         targetSdk 35
-        versionCode 7320
-        versionName '0.69.320'
+        versionCode 7321
+        versionName '0.69.321'
     }
 
     signingConfigs {
@@ -562,4 +562,20 @@ tasks.register('auditBW11ForApk', Exec) {
 }
 tasks.matching { it.name == 'preBuild' || (it.name.startsWith('merge') && it.name.endsWith('Assets')) }.configureEach {
     dependsOn tasks.named('auditBW11ForApk')
+}
+
+// XY Base: source-pinned 146-print catalogue; always generate BEFORE test and asset merge.
+// The user only unzips source-relative patch and commits/pushes.
+tasks.register('generateXY1ForApk', Exec) {
+    dependsOn tasks.named('auditBW11ForApk')
+    workingDir rootProject.projectDir
+    commandLine (System.getenv('LUCKYDEX_PYTHON') ?: 'python3'), 'scripts/build-xy1.py'
+}
+tasks.register('auditXY1ForApk', Exec) {
+    dependsOn tasks.named('generateXY1ForApk')
+    workingDir rootProject.projectDir
+    commandLine 'node', '--test', 'tests/v07321-xy-base.test.cjs'
+}
+tasks.matching { it.name == 'preBuild' || (it.name.startsWith('merge') && it.name.endsWith('Assets')) }.configureEach {
+    dependsOn tasks.named('auditXY1ForApk')
 }

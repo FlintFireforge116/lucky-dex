@@ -694,6 +694,12 @@
     if(state.stadium){const source=ss.active||ss.bench[0];if(source){const ctx={...effectContext(state,side,{},source),eventData:meta};effects.applyPersistentEvent(data.cardById(state.stadium.cardId)?.effect,event,ctx);}}
   }
   function retreatCost(state,side){const slot=state.sides[side].active;
+    // Fairy Garden (XY 117): all Pokemon with Fairy-providing attached Energy
+    // have free retreat, including opposing Pokemon and flexible Rainbow.
+    if(state.format==='classic'&&slot&&state.stadium?.cardId==='xy1-117'){
+      const en=effectiveEnergy(state,side,slot);
+      if(Number(en.Fairy||0)>0||Number(en.Miracle||0)>0)return 0;
+    }
     if(state.format==='classic'&&slot&&toolsOf(slot).some(r=>r.cardId==='bw9-99'))return 0;
     const bw9Plasma=slot&&(data.cardById(slot.cardId)?.teamPlasma||toolsOf(slot).some(r=>r.cardId==='bw9-104'));
     const bw9Glaceon=bw9Plasma&&pokemonOn(state.sides[side]).some(p=>p.cardId==='bw9-23'&&!effects.abilitiesSuppressed(state,side,p,data.cardById));
@@ -1949,6 +1955,11 @@
     if(state.format==='classic'&&damage>0&&defender.cardId==='dp2-61'&&Number(defender.dp2SpikeArmorUntil||0)>=state.turnNumber){attacker.damage=Number(attacker.damage||0)+40;state.log.push({type:'dp2SpikeArmor',side:foeSide,target:attacker.cardId,amount:40});}if(damage>0)defender.lastDamageSource={side,uid:attacker.uid,cardId:attacker.cardId,attack:true,turn:state.turnNumber};
     if(damage>0&&defender.legendaryMirrorShellUntil>=state.turnNumber&&state.format==='classic'){attacker.damage=Number(attacker.damage||0)+damage;state.log.push({type:'legendaryMirrorShell',side:foeSide,amount:damage,cardId:defender.cardId});}
       if(damage>0&&state.format==='classic'&&defender===state.sides[foeSide].active&&['ex16-41','ex16-47'].includes(defender.cardId)&&!effects.abilitiesSuppressed(state,foeSide,defender,data.cardById)){attacker.damage=Number(attacker.damage||0)+10;state.log.push({type:'ex16RoughSkin',side:foeSide,cardId:defender.cardId,amount:10});}
+      if(damage>0&&state.format==='classic'&&defender.cardId==='xy1-14'&&
+         !effects.abilitiesSuppressed(state,foeSide,defender,data.cardById)){
+        attacker.damage=Number(attacker.damage||0)+30;
+        state.log.push({type:'spikyShield',side:foeSide,amount:30,sourceUid:defender.uid});
+      }
       if(damage>0&&defender.retaliate&&(defender.retaliate.expiresTurn==null||state.turnNumber<=defender.retaliate.expiresTurn)){const amount=Number(defender.retaliate.amount||0);attacker.damage=Number(attacker.damage||0)+amount;state.log.push({type:'retaliate',side:foeSide,amount,cardId:defender.cardId});}
     state.log.push({type:'attack',side,cardId:attacker.cardId,attack:attackName,damage,target:'active',repeat:true});ss.lastAttackName=attackName;ss.lastAttackTurn=state.turnNumber;ss.attackCounts=ss.attackCounts||{};ss.attackCounts[attackName]=Number(ss.attackCounts[attackName]||0)+1;attacker.attackUseCount=Number(attacker.attackUseCount||0)+1;
     if(damage>0&&state.format==='classic'&&defender===state.sides[foeSide].active&&toolsOf(defender).some(r=>r.cardId==='bw3-94')){attacker.damage=Number(attacker.damage||0)+20;state.log.push({type:'bw3RockyHelmet',side:foeSide,amount:20});}
@@ -2723,6 +2734,12 @@
       state.log.push({type:levelUp?'levelUp':'evolve',side,cardId:ref.cardId,target:matched.target,benchIndex:matched.benchIndex});
       // Leveling up is not evolving, and must not retrigger evolve-from-hand Powers.
       if(!levelUp)triggerAbilities(state,'evolved',side,target,{fromHand:true});
+      if(state.format==='classic'&&ref.cardId==='xy1-95'&&!effects.abilitiesSuppressed(state,side,target,data.cardById)){
+        for(const p of pokemonOn(s)){
+          const en=effectiveEnergy(state,side,p);
+          if(Number(en.Fairy||0)>0||Number(en.Miracle||0)>0)p.conditions={};
+        }
+      }
       if(levelUp)triggerAbilities(state,'levelUp',side,target,{fromHand:true});
       if(levelUp&&ref.cardId==='dp2-122'&&!effects.abilitiesSuppressed(state,side,target,data.cardById)){
         beginEffectChoice(state,side,target,{kind:'option',side:'self',options:['Decline Stance','Use Stance to prevent the next attack'],effect:{type:'neoRule',rule:'dp2:122:stance',stage:'offer'},resume:'trainer'});
@@ -2734,6 +2751,13 @@
       if(state.format==='classic'&&ref.cardId==='ex3-18'&&!effects.abilitiesSuppressed(state,side,target,data.cardById)){effects.applyEffect({type:'neoRule',rule:'ex3:looseShell'},effectContext(state,side,matched,target));if(state.phase==='effectChoice')state.pendingChoice.resume=state.pendingChoice.resume||'trainer';}
 
       resolveKnockOut(state,null);
+      // XY printed Mega Evolution rule: when a Pokemon becomes a Mega,
+      // the active player's turn ends immediately. Never allow a Mega to
+      // evolve and attack in the same turn; no speculative permanent lock.
+      if(state.format==='classic'&&data.cardById(ref.cardId)?.megaEvolution){
+        state.log.push({type:'megaEvolutionEndTurn',side,cardId:ref.cardId});
+        if(state.phase==='battle')endTurn(state);
+      }
       return state;
     }
     if(matched.type==='bw7Busybody'){
@@ -2858,7 +2882,10 @@
           effect:{type:'neoRule',rule:'skyridge:cycloneEnergy'},resume:'trainer'});
       if(card.id==='ecard3-144')beginEffectChoice(state,side,target,{kind:'option',side:'self',options:['Keep this Evolution','Heal 20 and devolve'],
         effect:{type:'neoRule',rule:'skyridge:retroEnergy'},resume:'trainer'});
-      if(['ecard2-144','ex1-95','ex12-81','pl1-121','hgss1-104'].includes(card.id)){target.damage=Number(target.damage||0)+10;}
+      if(['ecard2-144','ex1-95','ex12-81','pl1-121','hgss1-104','xy1-131'].includes(card.id)){
+        target.damage=Number(target.damage||0)+10;
+        if(card.id==='xy1-131')state.log.push({type:'rainbowEnergyAttachmentDamage',side,targetUid:target.uid,amount:10});
+      }
       if(card.id==='ecard2-147'&&target===s.active&&s.bench.length){
         // Warp Energy is an attachment-triggered, mandatory Bench choice.
         // The regular switch effect expects a preselected index and silently
@@ -2916,6 +2943,10 @@
       if(state.phase==='effectChoice')state.pendingChoice.resume=state.pendingChoice.resume||'trainer';
       triggerAbilities(state,'energyAttached',side,target,{energyType:Object.keys(provides)[0]||'Colorless',energyCardId:card.id,fromZone:false,fromHand:true,specialEnergy:!!card.specialEnergy});
       triggerAbilities(state,'opponentEnergyAttached',foeSide,null,{target,energyType:Object.keys(provides)[0]||'Colorless',fromHand:true,sourceSide:side});
+      if(state.format==='classic'&&pokemonOn(s).some(p=>p.cardId==='xy1-95'&&!effects.abilitiesSuppressed(state,side,p,data.cardById))){
+        const en=effectiveEnergy(state,side,target);
+        if(Number(en.Fairy||0)>0||Number(en.Miracle||0)>0)target.conditions={};
+      }
       offerExpeditionHarvestBounty(state,side,target);if(state.phase!=='effectChoice')resolveKnockOut(state,null);return state;
     }
     if (matched.type === 'attach'){
@@ -2923,6 +2954,8 @@
       const type = s.energyType;
       target.energy[type] = Number(target.energy[type] || 0) + 1;
       s.energyUsed = true;
+      if(state.format==='classic'&&type==='Fairy'&&pokemonOn(s).some(p=>p.cardId==='xy1-95'&&
+        !effects.abilitiesSuppressed(state,side,p,data.cardById)))target.conditions={};
       state.log.push({type:'attach',side,target:matched.target,benchIndex:matched.benchIndex,cardId:target.cardId,energyType:type});triggerAbilities(state,'energyAttached',side,target,{energyType:type,fromZone:true});triggerAbilities(state,'opponentEnergyAttached',side==='player'?'opponent':'player',null,{target,energyType:type,fromZone:true,sourceSide:side});
       offerExpeditionHarvestBounty(state,side,target);if(state.phase!=='effectChoice')resolveKnockOut(state,null);
       return state;
@@ -3349,6 +3382,13 @@
     }
     if(state.format==='classic'&&defender.cardId==='pl4-69'&&damage>0&&damage<=30&&Number(defender.pl4HardenUntil||0)>=Number(state.turnNumber))damage=0;
     defender.damage=Number(defender.damage||0)+damage;
+    // Chesnaught's Spiky Shield reacts even if the hit itself knocks it out;
+    // apply the return counters before checking either player's Prizes.
+    if(state.format==='classic'&&damage>0&&defender.cardId==='xy1-14'&&s.active&&
+       !effects.abilitiesSuppressed(state,foeSide,defender,data.cardById)){
+      s.active.damage=Number(s.active.damage||0)+30;
+      state.log.push({type:'spikyShield',side:foeSide,amount:30,sourceUid:defender.uid});
+    }
     if(state.format==='classic'&&damage>0&&defender===foe.active&&defender.cardId==='pl2-49'&&
        !effects.abilitiesSuppressed(state,foeSide,defender,data.cardById)&&s.active){
       const energyTypes=Object.entries(s.active.energy||{}).filter(([,n])=>Number(n)>0).map(([type])=>type),special=s.active.specialEnergy||[];

@@ -3,7 +3,7 @@
 const SET=Object.freeze({id:'base1',name:'Base Set',series:'Base',releaseDate:'1999-01-09',cardCount:102});
 const NAMES=[
 'Alakazam','Blastoise','Chansey','Charizard','Clefairy','Gyarados','Hitmonchan','Machamp','Magneton','Mewtwo','Nidoking','Ninetales','Poliwrath','Raichu','Venusaur','Zapdos','Beedrill','Dragonair','Dugtrio','Electabuzz','Electrode','Pidgeotto','Arcanine','Charmeleon','Dewgong','Dratini',"Farfetch'd",'Growlithe','Haunter','Ivysaur','Jynx','Kadabra','Kakuna','Machoke','Magikarp','Magmar','Nidorino','Poliwhirl','Porygon','Raticate','Seel','Wartortle','Abra','Bulbasaur','Caterpie','Charmander','Diglett','Doduo','Drowzee','Gastly','Koffing','Machop','Magnemite','Metapod','Nidoran♂','Onix','Pidgey','Pikachu','Poliwag','Ponyta','Rattata','Sandshrew','Squirtle','Starmie','Staryu','Tangela','Voltorb','Vulpix','Weedle','Clefairy Doll','Computer Search','Devolution Spray','Impostor Professor Oak','Item Finder','Lass','Pokémon Breeder','Pokémon Trader','Scoop Up','Super Energy Removal','Defender','Energy Retrieval','Full Heal','Maintenance','PlusPower','Pokémon Center','Pokémon Flute','Pokédex','Professor Oak','Revive','Super Potion','Bill','Energy Removal','Gust of Wind','Potion','Switch','Double Colorless Energy','Fighting Energy','Fire Energy','Grass Energy','Lightning Energy','Psychic Energy','Water Energy'];
-const ENERGY_CODE={Grass:'G',Fire:'R',Water:'W',Lightning:'L',Psychic:'P',Fighting:'F',Colorless:'C'};
+const ENERGY_CODE={Grass:'G',Fire:'R',Water:'W',Lightning:'L',Psychic:'P',Fighting:'F',Colorless:'C',Fairy:'Y'};
 const BASIC_ENERGY={97:'Fighting',98:'Fire',99:'Grass',100:'Lightning',101:'Psychic',102:'Water'};
 const byId=Object.create(null);
 function support(status,reasons=[]){return {status,reasons:[...reasons]};}

@@ -6,8 +6,8 @@
 })(typeof globalThis!=='undefined'?globalThis:this,function(classic){
 'use strict';
 if(!classic)throw new Error('Classic TCG battle data is missing.');
-const ENERGY_TYPES=Object.freeze(['Grass','Fire','Water','Lightning','Psychic','Fighting','Darkness','Metal']);
-const ENERGY_CODE=Object.freeze({G:'Grass',R:'Fire',W:'Water',L:'Lightning',P:'Psychic',F:'Fighting',D:'Darkness',M:'Metal'});
+const ENERGY_TYPES=Object.freeze(['Grass','Fire','Water','Lightning','Psychic','Fighting','Darkness','Metal','Fairy']);
+const ENERGY_CODE=Object.freeze({G:'Grass',R:'Fire',W:'Water',L:'Lightning',P:'Psychic',F:'Fighting',D:'Darkness',M:'Metal',Y:'Fairy'});
 const DEFAULTS=Object.freeze({schema:1,decks:[],activeDeckId:null,stats:{matches:0,wins:0,losses:0,draws:0,totalTurns:0,bestWinTurns:null}});
 const LOANER_DECK=Object.freeze(classic.CLASSIC30_LOANER_DECK.slice());
 function ensureState(state){

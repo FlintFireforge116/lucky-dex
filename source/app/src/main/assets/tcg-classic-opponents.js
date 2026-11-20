@@ -13,7 +13,7 @@
  if(!classic||!decks||!builder)throw new Error('Classic opponent generation dependencies are missing.');
  const ALL_PLAYABLE=Object.freeze(classic.CARDS.filter(card=>card.battleEnabled&&card.deckEligible!==false).map(card=>Object.freeze({gameplayId:card.id,quantity:card.setId==='pl4'&&(/^AR[1-9]$/.test(String(card.number))||['94','95','96'].includes(String(card.number)))?30:4})));
  const TYPES=builder.ARCHETYPE_TYPES.slice();
- const SETS=['base1','base2','base3','base5','gym1','gym2','neo1','neo2','neo3','neo4','base6','ecard1','ecard2','ecard3','ex1','ex2','ex3','ex4','ex5','ex6','ex7','ex8','ex9','ex10','ex11','ex12','ex13','ex14','ex15','ex16','dp1','dp2','dp3','dp4','dp5','dp6','dp7','pl1','pl2','pl3','pl4','hgss1','hgss2','hgss3','hgss4','col1','bw1','bw2','bw3','bw4','bw5','bw6','bw7','bw8','bw9','bw10','bw11','SNAPFLORIO','SNAPFOUNJA','sv1'];
+ const SETS=['base1','base2','base3','base5','gym1','gym2','neo1','neo2','neo3','neo4','base6','ecard1','ecard2','ecard3','ex1','ex2','ex3','ex4','ex5','ex6','ex7','ex8','ex9','ex10','ex11','ex12','ex13','ex14','ex15','ex16','dp1','dp2','dp3','dp4','dp5','dp6','dp7','pl1','pl2','pl3','pl4','hgss1','hgss2','hgss3','hgss4','col1','bw1','bw2','bw3','bw4','bw5','bw6','bw7','bw8','bw9','bw10','bw11','xy1','SNAPFLORIO','SNAPFOUNJA','sv1'];
  function pick(seed,size){let x=(Number(seed)||0x9e3779b9)>>>0;x^=x<<13;x^=x>>>17;x^=x<<5;return (x>>>0)%size;}
  function pickType({seed=Date.now(),excludeTypes=[],includeColorless=false}={}){
    const availableTypes=includeColorless?TYPES:decks.ENERGY_TYPES.slice();
@@ -65,7 +65,7 @@
        if(card?.kind!=='pokemon'||!(card.attacks||[]).length)return true;
        return card.attacks.some(a=>(Array.isArray(a.cost)?a.cost:[...String(a.cost||'')]).every(sym=>sym==='C'||energy.includes(symbols[sym])));
      });
-     const dpOnly=allowed.length===1&&['dp1','dp2','dp3','dp4','dp5','dp6','dp7','pl1','pl2','pl3','pl4','hgss1','hgss2','hgss3','hgss4','col1','bw1','bw2','bw3','bw4','bw5','bw6','bw7','bw8','bw9','bw10','bw11'].includes(allowed[0]);
+     const dpOnly=allowed.length===1&&['dp1','dp2','dp3','dp4','dp5','dp6','dp7','pl1','pl2','pl3','pl4','hgss1','hgss2','hgss3','hgss4','col1','bw1','bw2','bw3','bw4','bw5','bw6','bw7','bw8','bw9','bw10','bw11','xy1'].includes(allowed[0]);
      if(!legal.ok||(dpOnly?!everyPokemonPlayable:profile.missingEnergyTypes.length>0)||!matchesChosenType)continue;
      if(result.cards.some(id=>!builder.allowedInSetPool(classic.cardById(id),allowed)))continue;
      const archetype=String(result.strategy.match(/· ([^·]+) core/)?.[1]||'Classic TCG').trim();
