@@ -12168,16 +12168,25 @@
       ctx.shuffle?.(ctx.state,foe.deck);draw(us,removed.length);ctx.state.log.push({type:'bw9Ghetsis',side:ctx.side,items:removed.length});return;
     }
     if(k==='flareNavigate'){
-      const xs=fromDeck(c=>c?.basicEnergy&&c.energyType==='Fire'||c?.specialEnergy&&String(c.name||'').includes('Fire Energy'));
+      const xs=fromDeck(c=>c?.basicEnergy&&(c.energyType||c.subtype)==='Fire'||c?.specialEnergy&&String(c.name||'').includes('Fire Energy'));
       if(stage==='target'&&ctx.resolvingChoice){const p=selectedTarget('self'),i=us.deck.findIndex(r=>r.uid===e.sourceUid);if(p&&i>=0){attach(p,take(us.deck,i), 'deck');p.damage=Number(p.damage||0)+10;shuffle();}return;}
       if(stage==='pick'&&ctx.resolvingChoice){const x=xs[Number(act.choiceOption)];if(x)target('target','self',{sourceUid:x.r.uid});return;}
       if(xs.length)ask('pick',xs.map(x=>'Attach '+label(x.r)));return;
     }
     if(k==='raidenKnuckle'){
-      const xs=fromDiscard(c=>c?.kind==='energy'),mons=us.bench.filter(plasma);
-      if(stage==='target'&&ctx.resolvingChoice){const p=selectedTarget('self'),i=us.discard.findIndex(r=>r.uid===e.refUid);if(p&&us.bench.includes(p)&&plasma(p)&&i>=0)attach(p,take(us.discard,i));return;}
-      if(stage==='pick'&&ctx.resolvingChoice){const x=xs[Number(act.choiceOption)];if(x)target('target','self',{includeActive:false,refUid:x.r.uid});return;}
-      if(mons.length&&xs.length)ask('pick',xs.map(x=>'Attach '+label(x.r)+' from discard'));return;
+      // Printed Energy may be physical discard cards OR Classic's discarded
+      // Basic Energy ledger. Never take it from the fresh Energy Zone.
+      const xs=[...fromDiscard(c=>c?.kind==='energy').map(x=>({kind:'physical',r:x.r})),
+        ...Object.entries(us.energyDiscard||{}).filter(([type,n])=>Number(n)>0&&neoBasicIds[type])
+          .map(([type])=>({kind:'ledger',type}))],mons=us.bench.filter(plasma);
+      if(stage==='target'&&ctx.resolvingChoice){const p=selectedTarget('self');
+        if(!p||!us.bench.includes(p)||!plasma(p))return;
+        if(e.ledgerType){const type=e.ledgerType;if(!neoBasicIds[type]||Number(us.energyDiscard?.[type]||0)<1)return;
+          us.energyDiscard[type]--;p.energy=p.energy||{};p.energy[type]=Number(p.energy[type]||0)+1;
+          ctx.onEnergyAttached?.(p,type,1,{fromHand:false,source:'discard'});return;}
+        const i=us.discard.findIndex(r=>r.uid===e.refUid);if(i>=0&&card(us.discard[i])?.kind==='energy')attach(p,take(us.discard,i));return;}
+      if(stage==='pick'&&ctx.resolvingChoice){const x=xs[Number(act.choiceOption)];if(x)target('target','self',{includeActive:false,...(x.kind==='physical'?{refUid:x.r.uid}:{ledgerType:x.type})});return;}
+      if(mons.length&&xs.length)ask('pick',xs.map(x=>'Attach '+(x.kind==='physical'?label(x.r):x.type+' Basic Energy')+' from discard'));return;
     }
     if(k==='thunderousNoise'){if(plasmaEnergy(a))pickDiscard(d,foe,'discardEnergy');return;}
     if(k==='cryofreeze'){
@@ -12187,8 +12196,15 @@
     }
     if(k==='poisonSuction'){if(d?.conditions?.poison&&a)a.damage=Math.max(0,Number(a.damage||0)-60);return;}
     if(k==='sludgeCrash'){
-      let heads=0;while(heads<100&&coin(ctx))heads++;ctx.state.log.push({type:'coin',side:ctx.side,reason:'Sludge Crash',heads});
-      const all=energySources(d);for(let i=0;i<heads&&energySources(d).length;i++)discard(foe,d,energySources(d)[0]);return;
+      // The attacking player chooses the attached Energy to discard for each
+      // heads, including an exact physical Special Energy when present.
+      if(stage==='energy'&&ctx.resolvingChoice){const xs=energySources(d),chosen=xs[Number(act.choiceOption)];
+        if(!chosen||!discard(foe,d,chosen))return;
+        if(Number(e.remaining||0)>1&&energySources(d).length)
+          ask('energy',energySources(d).map(x=>'Discard '+x.label),{remaining:Number(e.remaining)-1});return;}
+      let heads=0,results=[];while(heads<100){const h=coin(ctx);results.push(h);if(!h)break;heads++;}
+      ctx.state.log.push({type:'coin',side:ctx.side,reason:'Sludge Crash',heads,results});
+      if(heads&&energySources(d).length)ask('energy',energySources(d).map(x=>'Discard '+x.label),{remaining:heads});return;
     }
     if(k==='lurePoison'){
       if(stage==='target'&&ctx.resolvingChoice){const p=selectedTarget('opponent');if(p&&foe.bench.includes(p)){switchPokemon(foe,p.benchSlot,ctx.state);foe.active.conditions=foe.active.conditions||{};foe.active.conditions.poison=true;}return;}
@@ -12208,16 +12224,26 @@
       if(ownAll().some(p=>p.damage>=10))target('source');return;
     }
         if(k==='superiorEnergyRetrieval'||k==='ultraBall'){
-      const paid=Number(e.paid||0),left=2-paid,hand=us.hand.filter(r=>r.uid!==ctx.trainerRef?.uid);
-      if(stage==='cost'&&ctx.resolvingChoice){const x=hand[Number(act.choiceOption)];if(!x)return;const idx=us.hand.findIndex(r=>r.uid===x.uid);if(idx<0)return;take(us.hand,idx,us.discard);
-        if(left>1){ask('cost',us.hand.filter(r=>r.uid!==ctx.trainerRef?.uid).map(r=>'Discard '+label(r)),{paid:paid+1,discardedUids:[...(e.discardedUids||[]),x.r.uid]});return;}
-        if(k==='ultraBall'){const opts=fromDeck(c=>c?.kind==='pokemon');if(opts.length)ask('take',opts.map(x=>'Find '+label(x.r)));}
-        else{const opts=fromDiscard((c,r)=>c?.basicEnergy&&![...(e.discardedUids||[]),x.r.uid].includes(r.uid));if(opts.length)ask('take',opts.map(x=>'Recover '+label(x.r)),{remaining:4,discardedUids:[...(e.discardedUids||[]),x.r.uid]});}return;}
-      if(stage==='take'&&ctx.resolvingChoice){const opts=(k==='ultraBall'?fromDeck(c=>c?.kind==='pokemon'):fromDiscard((c,r)=>c?.basicEnergy&&!(e.discardedUids||[]).includes(r.uid)));
-        const x=opts[Number(act.choiceOption)];if(!x||full(us))return;
-        take(k==='ultraBall'?us.deck:us.discard,x.i,us.hand);
-        if(k==='ultraBall')shuffle();else if(Number(e.remaining||1)>1){const more=fromDiscard((c,r)=>c?.basicEnergy&&!(e.discardedUids||[]).includes(r.uid));if(more.length&&!full(us))ask('take',more.map(x=>'Recover '+label(x.r)),{...e,remaining:Number(e.remaining)-1});}return;}
-      if(hand.length>=2)ask('cost',hand.map(r=>'Discard '+label(r)),{paid:0});return;
+      const paid=Number(e.paid||0),hand=us.hand.filter(r=>r.uid!==ctx.trainerRef?.uid),
+        excluded=new Set(e.discardedUids||[]),
+        recover=()=>[...fromDiscard((c,r)=>c?.basicEnergy&&!excluded.has(r.uid))
+                      .map(x=>({kind:'physical',uid:x.r.uid,name:label(x.r)})),
+          ...Object.entries(us.energyDiscard||{}).filter(([type,n])=>Number(n)>0&&neoBasicIds[type])
+            .map(([type])=>({kind:'ledger',type,name:type+' Basic Energy (discard)'}))],
+        nextTake=(remaining,ids)=>{const choices=k==='ultraBall'?fromDeck(c=>c?.kind==='pokemon').map(x=>({kind:'physical',uid:x.r.uid,name:label(x.r)})):recover();
+          if(choices.length&&remaining>0&&!full(us))ask('take',choices.map(x=>(k==='ultraBall'?'Find ':'Recover ')+x.name),{remaining,discardedUids:ids});
+          else if(k==='ultraBall')shuffle();};
+      if(stage==='cost'&&ctx.resolvingChoice){const ref=hand[Number(act.choiceOption)];if(!ref)return;
+        const idx=us.hand.findIndex(r=>r.uid===ref.uid);if(idx<0)return;
+        take(us.hand,idx,us.discard);const ids=[...excluded,ref.uid];
+        if(paid+1<2){const left=us.hand.filter(r=>r.uid!==ctx.trainerRef?.uid);if(left.length)ask('cost',left.map(r=>'Discard '+label(r)),{paid:paid+1,discardedUids:ids});}
+        else nextTake(k==='ultraBall'?1:4,ids);return;}
+      if(stage==='take'&&ctx.resolvingChoice){const choices=k==='ultraBall'?fromDeck(c=>c?.kind==='pokemon').map(x=>({kind:'physical',uid:x.r.uid})):recover();
+        const x=choices[Number(act.choiceOption)];if(!x||full(us))return;
+        if(x.kind==='ledger'){if(Number(us.energyDiscard?.[x.type]||0)<1)return;us.energyDiscard[x.type]--;neoRecoveredEnergyToHand(ctx,us,x.type,1);}
+        else {const source=k==='ultraBall'?us.deck:us.discard,i=source.findIndex(r=>r.uid===x.uid);if(i<0)return;take(source,i,us.hand);}
+        const remaining=Number(e.remaining||1)-1;if(k==='ultraBall')shuffle();else nextTake(remaining,[...excluded]);return;}
+      if(hand.length>=2)ask('cost',hand.map(r=>'Discard '+label(r)),{paid:0,discardedUids:[]});return;
     }
     if(k==='maxPotion'){
       if(stage==='target'&&ctx.resolvingChoice){const p=selectedTarget('self');if(!p)return;p.damage=0;for(const x of Object.entries(p.energy||{})){if(x[1]>0){recordDiscardedEnergy(us,x[0],x[1]);p.energy[x[0]]=0;}}us.discard.push(...special(p));p.specialEnergy=[];return;}
@@ -12250,9 +12276,11 @@
       if(xs.length===1)discard(foe,d,{kind:'special',uid:xs[0].uid});else if(xs.length>1)ask('energy',xs.map(x=>'Discard '+label(x)));return;
     }
     if(k==='dragonVortex'){
-      const relevant=us.discard.filter(r=>basic(r)&&['Water','Lightning'].includes(card(r)?.energyType));
+      const relevant=us.discard.filter(r=>basic(r)&&['Water','Lightning'].includes(card(r)?.energyType||card(r)?.subtype));
       for(const ref of relevant){const i=us.discard.findIndex(r=>r.uid===ref.uid);if(i>=0)us.deck.push(...us.discard.splice(i,1));}
-      for(const type of ['Water','Lightning']){const n=Number(us.energyDiscard?.[type]||0);if(n>0){us.energyDiscard[type]=0;ctx.state.log.push({type:'bw9EnergyLedgerRestored',side:ctx.side,energyType:type,amount:n});}}
+      for(const type of ['Water','Lightning']){const n=Number(us.energyDiscard?.[type]||0);if(n>0){
+        us.energyDiscard[type]=0;neoRecoveredToDeck(ctx,us,type,n);
+        ctx.state.log.push({type:'bw9EnergyLedgerRestored',side:ctx.side,energyType:type,amount:n});}}
       shuffle();return;
     }
     if(k==='wilify'||k==='vilify'){
@@ -16699,7 +16727,7 @@
         if(k==='jetBlast'){damage+=30*(a?.specialEnergy||[]).filter(r=>['bw8-127','bw9-106'].includes(r.cardId)).length;return;}
         if(k==='attackCommand'){damage=10*(ons(us).length+ons(foe).length);return;}
         if(k==='psychic'){damage+=10*n(d);return;}
-        if(k==='dragonVortex'){damage=20*(us.discard.filter(r=>card(r)?.basicEnergy&&['Water','Lightning'].includes(card(r)?.energyType)).length+Number(us.energyDiscard?.Water||0)+Number(us.energyDiscard?.Lightning||0));pending.push(e);return;}
+        if(k==='dragonVortex'){damage=20*(us.discard.filter(r=>card(r)?.basicEnergy&&['Water','Lightning'].includes(card(r)?.energyType||card(r)?.subtype)).length+Number(us.energyDiscard?.Water||0)+Number(us.energyDiscard?.Lightning||0));pending.push(e);return;}
         if(k==='vilify'){const chosen=String(ctx.action?.effectSelection||'').split(',').filter(Boolean),refs=chosen.filter(uid=>us.hand.some(r=>r.uid===uid&&card(r)?.kind==='pokemon'));damage=30*refs.length;if(refs.length)pending.push({...e,discardUids:refs});return;}
         if(k==='fly'){const h=coin(ctx);ctx.state.log.push({type:'coin',side:ctx.side,reason:'Fly',results:[h],heads:Number(h)});if(!h)damage=0;else pending.push({...e,heads:true});return;}
         if(k==='obsidianFang'){if(d){const tools=[d.tool,...(d.extraTools||[])].filter(Boolean);foe.discard.push(...tools);d.tool=null;d.extraTools=[];}return;}

@@ -1,8 +1,8 @@
 LUCKYDEX — MASTER PROJECT RULES AND DEVELOPMENT CONTRACT
 =========================================================
-Document version: 2.45
-Compiled: 15 November 2026
-Current inspected source: v0.69.256 Legends Awakened stage 5, 146 collector prints, 97 battle-enabled and 49 gated in bundled fallback. Full print metadata is refreshed by the automatic APK preparation script. Source tests do not prove APK/device behaviour. Patch extraction is source-relative by default; see Termux handoff contract below.
+Document version: 2.46
+Compiled: 20 November 2026
+Current inspected source: v0.69.315 Plasma Freeze BW9, 122 collector prints, 119 battle-enabled and 3 intentionally gated. Source tests and synthetic smokes do not prove APK/device behaviour. Patch extraction is source-relative by default; see Termux handoff contract below.
 Recommended repository location: ~/lucky-dex/source/docs/LUCKYDEX_MASTER_RULES.txt
 Project: LuckyDex — Android application/PWA, managed with Termux and GitHub
 
@@ -2656,3 +2656,16 @@ LUCKYDEX 0.69.303 — NOBLE VICTORIES INDEPENDENT AUDIT
 - Weavile Hail damages Active AND each opposing Benched Pokemon, without duplicate Active damage. Seismitoad Seismic Punch damages both Benches. Persistent opponent Item and Supporter locks belong to PLAYER/timer state, not merely the Active slot; switches cannot clear them.
 - Build gate: generateBW9ForApk depends on auditBW8ForApk and generates cached BW9 JS. auditBW9ForApk depends on generation, tests/v07314-plasma-freeze.test.cjs. Android preBuild/merge Assets depend on auditBW9ForApk. The new suite validates CPU autobuild and targeted mechanics; full printed-effect human battle audit remains a separate pass.
 - Plasma-storm/freeze CPU autobuild MUST reserve actual physical Plasma Energy when any core attack has a Plasma Energy attachment payoff or Colress Machine can attach to Team Plasma beneficiaries. A Basic Colorless Energy Zone does not satisfy the Plasma Energy condition. BW9 Quagsire Mud Gun requires a conditional Fighting Energy even though its displayed attack costs do not. Plasma Energy filler is unsuitable for unrelated decks.
+
+
+2026-11-20 / v0.69.315 / PLASMA FREEZE BW9 INDEPENDENT MASTER-CHECKLIST AUDIT
+- All 122 original BW9 prints are retained with 175 attacks, 17 named abilities; 119 eligible, three deliberately gated: Exeggcute #4 Propagation (discard Ability), Cofagrigus #56 Six Feet Under (self-KO and distributed counters), Kecleon #94 Imittack (chosen copied attack and copied cost). Do not re-enable without authentic effect-choice, timing and CPU tests.
+- Only valid engine search-filter keys are permitted. Cryogonal #30 Call Sign must search Water POKEMON by subtype, never Energy metadata; Pachirisu #37 Minor Errand-Running must request actual BASIC Energy, including valid ordered Energy Zone conversion when appropriate. The source generator and 119 enabled card effect schemas are checked.
+- Ultra Ball (#122) and Superior Energy Retrieval (#103) require TWO OTHER physical hand cards as cost, chosen separately by UID. A card-reference is not an object wrapping an `r` property. Ultra Ball takes exactly the selected Pokemon card from deck. Superior Energy Retrieval recovers up to four eligible Basic Energy cards from PHYSICAL discard and/or the separate Basic Energy DISCARD LEDGER; cards discarded as its own cost cannot be recovered by that effect. Do not use the fresh Energy Zone as a discard source. Honor hand cap.
+- Thundurus-EX Raiden Knuckle (#38/#110) attaches to an eligible Benched TEAM PLASMA Pokemon from physical discard OR the Basic Energy discard ledger, preserving physical Special Energy UID or consuming one actual ledger unit. Chandelure Flare Navigate searches by Basic Energy subtype, not an optional `energyType` field absent on many older-set Basic prints; attaches from DECK, not the fresh ordered Zone.
+- Kingdra Dragon Vortex (#84) counts physically discarded Basic Water/Lightning Energy whose identity can be given by `subtype`, and discarded Water/Lightning ledger units. BOTH sources must be moved to the physical draw deck on resolution, not just zeroed from the ledger. Preserve physical original card UID, make each returned ledger unit a real draw-deck Energy ref, then shuffle once.
+- Muk Sludge Crash (#46) must log all coin outcomes and offer a fresh, explicit player choice of WHICH opposing attached Energy to discard for every heads. Repeat choices against the remaining legal sources; never silently discard the first source.
+- Miltank Max Milk (#93) was independently tested; existing code correctly heals the chosen Pokemon but discards the attacker Miltank's own Energy. Preserve this behaviour. Kingdra Tri Bullet chooses up to three DISTINCT opponent Pokemon; each receives its printed damage exactly once.
+- A valid catalogue schema and legal CPU deck alone are not a full printed-effect proof: generic BW9 smoke exercised 128/370 synthetic actions; 242 were skipped, while 88 manual-review flags remain. Review flags are not proof of defects. Device UI / prize timing and real match AI behaviour require separate checks.
+- Verification of v0.69.315: 0 static catalogue errors/0 warnings; 120/120 selected cross-set tests pass (BW6-9), BW9 build gate 24/24; 315/315 independent 30-card CPU decks valid across nine type choices x 35 seeds, 199 with Plasma-energy-dependent attackers and none lacking real Plasma Energy. Never claim Android/GitHub build success before user confirmation.
+- Build gate: `generateBW9ForApk` regenerates pinned 122-print catalogue; `auditBW9ForApk` executes BOTH `v07314-plasma-freeze.test.cjs` and `v07315-plasma-freeze-checklist.test.cjs`. `sh scripts/prepare-bw9.sh` runs the same two. VersionName 0.69.315 and versionCode 7314.

@@ -8,8 +8,8 @@ android {
         applicationId 'com.example.luckydex'
         minSdk 26
         targetSdk 35
-        versionCode 7313
-        versionName '0.69.314'
+        versionCode 7314
+        versionName '0.69.315'
     }
 
     signingConfigs {
@@ -525,7 +525,7 @@ tasks.register('generateBW9ForApk', Exec) {
 tasks.register('auditBW9ForApk', Exec) {
     dependsOn tasks.named('generateBW9ForApk')
     workingDir rootProject.projectDir
-    commandLine 'node', '--test', 'tests/v07314-plasma-freeze.test.cjs'
+    commandLine 'node', '--test', 'tests/v07314-plasma-freeze.test.cjs', 'tests/v07315-plasma-freeze-checklist.test.cjs'
 }
 tasks.matching { it.name == 'preBuild' || (it.name.startsWith('merge') && it.name.endsWith('Assets')) }.configureEach {
     dependsOn tasks.named('auditBW9ForApk')
