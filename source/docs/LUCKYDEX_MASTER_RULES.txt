@@ -2528,3 +2528,31 @@ LUCKYDEX 0.69.303 — NOBLE VICTORIES INDEPENDENT AUDIT
   Zone and eight-card hand cap. Special Energy remains a physical deck card.
 * Build-time checks: scripts/build-bw5.py then
   tests/v07306-dark-explorers.test.cjs before APK asset merge.
+
+[0.69.307 / Dark Explorers Independent Audit]
+* Discard-to-attachment searches MUST filter physical cards to Energy only;
+  the separate Basic Energy discard ledger is also a legal source. Searches
+  specifically requiring Basic Energy (e.g. Leafeon Energy Assist) exclude
+  physical Special Energy; those permitting any Energy (e.g. Charge Beam) may
+  attach physical Special Energy with its UID and card identity preserved.
+  Never transform a Trainer or Pokemon in the discard into an Energy counter.
+* Chosen attack targets MUST enter the ordinary attack damage pipeline.
+  Raikou-EX Volt Bolt applies Weakness/Resistance to its Active target,
+  ignores those modifiers on the Bench, and discards actual Lightning Energy
+  after attack damage resolves. Both full-art and normal prints reuse this.
+* Multi-target attacks that can choose the opposing Active (e.g. Kyogre-EX
+  Dual Splash) apply normal Weakness/Resistance only to that Active hit;
+  Benched hits ignore these modifiers. Preserve explicit choices and do not
+  assume that all multi-target damage is Weakness-free.
+* Cofagrigus Chuck must determine Tool-discard damage once, prior to type
+  matchup; after the attack it discards only explicitly selected physical Tool
+  cards and must never apply duplicate direct damage. Unique selection IDs
+  prevent duplicate-count exploits.
+* Item-play legality checks must honor mandatory costs/targets: Ultra Ball
+  cannot be played without TWO other hand cards, Dark Patch needs discarded
+  Basic Darkness and a Benched Darkness Pokemon, and Enhanced Hammer needs
+  an actual opposing attached Special Energy card. These must not consume a
+  card on a knowingly impossible action.
+* v0.69.307 build gate: v07307-bw5-independent-audit.test.cjs executes after
+  printed source generation plus the v07306 full-set tests. Android build and
+  device verification remain separate requirements.

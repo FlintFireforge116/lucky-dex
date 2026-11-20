@@ -8,8 +8,8 @@ android {
         applicationId 'com.example.luckydex'
         minSdk 26
         targetSdk 35
-        versionCode 7306
-        versionName '0.69.306'
+        versionCode 7307
+        versionName '0.69.307'
     }
 
     signingConfigs {
@@ -437,4 +437,15 @@ tasks.register('auditBW5ForApk', Exec) {
 }
 tasks.matching { it.name == 'preBuild' || (it.name.startsWith('merge') && it.name.endsWith('Assets')) }.configureEach {
     dependsOn tasks.named('auditBW5ForApk')
+}
+
+// v0.69.307: independent Dark Explorers printed-effect audit. Run the
+// regression cases after generation, and before Android merges assets.
+tasks.register('auditBW5IndependentForApk', Exec) {
+    dependsOn tasks.named('auditBW5ForApk')
+    workingDir rootProject.projectDir
+    commandLine 'node', '--test', 'tests/v07307-bw5-independent-audit.test.cjs'
+}
+tasks.matching { it.name == 'preBuild' || (it.name.startsWith('merge') && it.name.endsWith('Assets')) }.configureEach {
+    dependsOn tasks.named('auditBW5IndependentForApk')
 }

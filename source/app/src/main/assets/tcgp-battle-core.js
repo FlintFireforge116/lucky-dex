@@ -1197,6 +1197,14 @@
       if(state.format==='classic'&&card.id==='hgss4-87'&&
          (s.hand.length<3||!s.discard.some(r=>data.cardById(r.cardId)?.kind==='trainer'&&['Item','Trainer','AttachedTrainer'].includes(data.cardById(r.cardId)?.trainerType)&&r.cardId!=='hgss4-87')))return;
       if(state.format==='classic'&&card.id==='hgss2-75'&&!s.hand.some((other,i)=>i!==handIndex&&data.cardById(other.cardId)?.kind==='energy'))return; // Engineer must actually discard an Energy from hand.
+      // Dark Explorers mandatory Item costs and targets: do not consume an
+      // Item when its printed effect cannot legally resolve.
+      if(state.format==='classic'&&card.id==='bw5-102'&&s.hand.length<3)return; // Ultra Ball needs TWO other cards to discard.
+      if(state.format==='classic'&&card.id==='bw5-93'&&
+        (!s.bench.some(p=>data.cardById(p.cardId)?.types?.includes('Darkness'))||
+         !(Number(s.energyDiscard?.Darkness||0)>0||s.discard.some(r=>data.cardById(r.cardId)?.basicEnergy&&data.cardById(r.cardId)?.subtype==='Darkness'))))return;
+      if(state.format==='classic'&&card.id==='bw5-94'&&
+        !pokemonOn(foe).some(p=>(p.specialEnergy||[]).length>0))return; // Enhanced Hammer must have Special Energy to discard.
       if(state.format==='classic'&&/Technical Machine/i.test(card.name||'')&&['player','opponent'].some(w=>pokemonOn(state.sides[w]).some(slot=>slot.cardId==='ex9-96'&&!effects.abilitiesSuppressed(state,w,slot,data.cardById))))return;
       // HGSS3 Vileplume Allergy Flower blocks Trainer cards played from
       // either hand; Supporters and Stadiums are distinct printed classes.
