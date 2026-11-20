@@ -2414,3 +2414,63 @@ LUCKYDEX 0.69.301 — EMERGING POWERS DISCARD / ENERGY / HAND AUDIT
 - Keep exact player choices for Superpower and Quick Tail Smash; losing the
   optional choice is a gameplay regression, even if damage calculation passes.
 - Run tests/v07301-emerging-powers-deep-audit.test.cjs at every APK build.
+
+LUCKYDEX 0.69.302 — BLACK & WHITE: NOBLE VICTORIES (BW3)
+------------------------------------------------------------------
+[CATALOG] Include all 102 distinct collector prints in Noble Victories, including
+  97–100 full-art Pokémon, 101 full-art N, and 102 secret Meowth. Never collapse
+  duplicate named prints into one attack record. All 153 attacks and 12 Abilities
+  must preserve their own printed text and effect definitions.
+[RESTORED] Tirtouga (#25) and Archen (#66) have the special printed Restored
+  stage, NOT the Basic stage. They cannot be used in opening setup or played
+  directly from hand as Basic Pokémon. Cover Fossil (#90) and Plume Fossil
+  (#93) look only at the bottom SEVEN *physical* cards of the owner's deck,
+  may reveal and Bench the matching Restored Pokémon, then shuffle the
+  remaining cards back into the deck. The player may decline. Once in play,
+  each Restored Pokémon can evolve normally into Carracosta or Archeops.
+[ABILITIES] Black & White Abilities are NOT legacy Poké-Powers or Bodies.
+  Leaf Tailor suppresses Weakness only on friendly Pokémon with Energy;
+  Carracosta's Solid Rock flips on incoming attack damage and applies the
+  50-point reduction AFTER Weakness/Resistance; Conkeldurr's Craftsmanship
+  increases maximum HP by 20 per attached Fighting Energy; Hydreigon's Dark
+  Aura turns all attached Basic/Special Energy into Darkness, preserving unit
+  count; Archeops's Ancient Power blocks hand-played evolutions for BOTH
+  players (including Rare Candy), not evolution caused by attacks/Abilities.
+[REACTIONS] Jellicent Cursed Body confuses the ATTACKING Pokémon when its
+  owner is Active and is damaged by an opponent's attack; Druddigon Rough
+  Skin places 2 damage counters on the ATTACKING Pokémon under the same
+  conditions. Both trigger before KO resolution, including a lethal attack.
+  Rocky Helmet deals 20 damage to the attacker when the equipped Active is
+  damaged. Eviolite reduces damage by 20 after matchup only when attached to
+  a Basic Pokémon. Do not register these as inert, passive once-only effects.
+[DISCARD] Eelektrik Dynamotor retrieves an actual Basic Lightning Energy
+  from the physical discard pile OR the separate Basic Energy discard ledger,
+  attaches it to an owner's Benched Pokémon, and is used once per turn. Never
+  generate fresh Energy or offer a dead CPU action with no legal source/target.
+  Volcarona Fiery Dance, Landorus Abundant Harvest and Bisharp Energy Stream
+  similarly use an actual discarded Basic Energy card. Super Rod shuffles
+  three selected Pokémon/Basic Energy from physical discard and/or the ledger
+  back into the physical deck, decrementing the ledger for every recovered
+  Basic Energy card. Trubbish Garbage Collection returns a real discard card
+  to the deck top; the resolving effect cannot select its own current Item.
+[CHOICES] Victini Stored Power moves all attached Energy to one CHOSEN own
+  Benched Pokémon. Gigalith Core Cannon selects an opposing Pokémon and
+  counts Fighting Energy attached to the attacker (including compatible
+  Special Energy). Chandelure Cursed Shadow selects opposing Pokémon to
+  receive exactly three damage counters in any legal distribution. N shuffles
+  each player's hand back into their own deck, then draws for their own
+  remaining Prizes, respecting LuckyDex's eight-card hand cap.
+[COINS] Victini Victory Star offers its optional attack coin-flip reroll once
+  per turn across copies; V-blast requires BOTH heads to deal damage; V-create
+  requires five Pokémon on the owner's Bench for its printed attack; otherwise
+  its damage is zero, even if the compact format rarely permits a five-Bench
+  state. Never silently relax the printed condition in CPU attacks.
+[ANALYSIS] Dynamic damage for Round, Net Force, Electrichain and Core Cannon
+  must be computed BEFORE the Weakness/Resistance pass. Electrichain's extra
+  damage requires a Lightning Pokémon on the Bench, not its Lightning-type
+  attacker alone. Leaf Wallop adds 40 to its own attack on the next turn;
+  Slashing Strike cannot use its *named attack* during the next owner turn.
+[TEST] Run scripts/build-bw3.py and tests/v07302-noble-victories.test.cjs
+  in the preBuild/asset-merge gate. Also run the full classic expansion audit
+  with `node scripts/audit-classic-set.cjs --set bw3 --smoke`.
+[INSTALL] Apply v0.69.302 ZIP over v0.69.301 in source/; git add/commit/push.

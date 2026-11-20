@@ -105,7 +105,7 @@ function auditSet(setId, context){
   const effects=[];
   if(c.kind==='pokemon'){
    counts.attacks+=(c.attacks||[]).length;counts.abilities+=abilityList.length;
-   if(!['Basic','Stage 1','Stage 2','Level-Up','Baby','BREAK','VSTAR','VMAX','LEGEND'].includes(c.stage))issue('warning','C-AUDIT-003',`Unexpected Pokémon stage: ${c.stage}`);
+   if(!['Basic','Stage 1','Stage 2','Level-Up','Baby','Restored','BREAK','VSTAR','VMAX','LEGEND'].includes(c.stage))issue('warning','C-AUDIT-003',`Unexpected Pokémon stage: ${c.stage}`);
    if(!Number.isFinite(Number(c.hp))||Number(c.hp)<=0)issue('error','C-AUDIT-003','Pokémon HP is missing or invalid.');
    if(!Array.isArray(c.types)||!c.types.length)issue('warning','C-AUDIT-003','Pokémon has no attack/identity type.');
    if(!['Basic','Baby','LEGEND'].includes(c.stage)&&!c.evolvesFrom&&!c.levelUpFrom)issue('warning','C-AUDIT-003','Evolution is missing evolvesFrom/levelUpFrom.');

@@ -8,8 +8,8 @@ android {
         applicationId 'com.example.luckydex'
         minSdk 26
         targetSdk 35
-        versionCode 7301
-        versionName '0.69.301'
+        versionCode 7302
+        versionName '0.69.302'
     }
 
     signingConfigs {
@@ -394,4 +394,18 @@ tasks.register('auditBW2ForApk', Exec) {
 }
 tasks.matching { it.name == 'preBuild' || (it.name.startsWith('merge') && it.name.endsWith('Assets')) }.configureEach {
     dependsOn tasks.named('auditBW2ForApk')
+}
+
+// Noble Victories (v0.69.302) offline catalog generation and battle tests.
+tasks.register('generateBW3ForApk', Exec) {
+    workingDir rootProject.projectDir
+    commandLine (System.getenv('LUCKYDEX_PYTHON') ?: 'python3'), 'scripts/build-bw3.py'
+}
+tasks.register('auditBW3ForApk', Exec) {
+    dependsOn tasks.named('generateBW3ForApk')
+    workingDir rootProject.projectDir
+    commandLine 'node', '--test', 'tests/v07302-noble-victories.test.cjs'
+}
+tasks.matching { it.name == 'preBuild' || (it.name.startsWith('merge') && it.name.endsWith('Assets')) }.configureEach {
+    dependsOn tasks.named('auditBW3ForApk')
 }
