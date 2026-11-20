@@ -11702,6 +11702,18 @@
       log=info=>ctx.state.log.push({type:'boundariesCrossed',side:ctx.side,rule:key,...info}),
       flip=()=>{const heads=coin(ctx);ctx.state.log.push({type:'coin',side:ctx.side,reason:'bw7:'+key,results:[heads],heads:Number(heads)});return heads;},
       ids={Grass:'bw1-105',Fire:'bw1-106',Water:'bw1-107',Lightning:'bw1-108',Psychic:'bw1-109',Fighting:'bw1-110',Darkness:'bw1-111',Metal:'bw1-112'},
+      // A physical Special Energy is eligible when it actually provides the
+      // specified type. Blend provides one flexible unit, not four units.
+      specialMatches=(ref,type,slot)=>{const c=card(ref),v=ref.provides||c?.effect?.provides||{};
+        if(ref.cardId==='bw4-93')return card({cardId:slot?.cardId})?.stage==='Basic';
+        if(ref.cardId==='bw6-117')return ['Grass','Fire','Psychic','Darkness'].includes(type);
+        if(ref.cardId==='bw6-118')return ['Water','Lightning','Fighting','Metal'].includes(type);
+        return Number(v[type]||v.Miracle||v.Rainbow||0)>0;},
+      sourcesFor=(slot,type)=>[...(Number(slot?.energy?.[type]||0)>0?[{kind:'basic',type,label:type+' Basic Energy'}]:[]),...(slot?.specialEnergy||[]).filter(ref=>specialMatches(ref,type,slot)).map(ref=>({kind:'special',uid:ref.uid,type,label:name(ref)}))],
+      discardSource=(slot,owner,source)=>{if(!slot||!source)return false;
+        if(source.kind==='basic'){if(Number(slot.energy?.[source.type]||0)<1)return false;slot.energy[source.type]--;recordDiscardedEnergy(owner,source.type,1);return true;}
+        const i=(slot.specialEnergy||[]).findIndex(ref=>ref.uid===source.uid&&specialMatches(ref,source.type,slot));
+        if(i<0)return false;owner.discard.push(...slot.specialEnergy.splice(i,1));return true;},
       discardedBasic=(type=null)=>[...us.discard.filter(r=>card(r)?.basicEnergy&&(!type||(card(r)?.energyType||card(r)?.subtype)===type)).map(r=>({uid:r.uid,type:card(r)?.energyType||card(r)?.subtype,label:name(r)})),...Object.entries(us.energyDiscard||{}).filter(([t,n])=>Number(n)>0&&(!type||t===type)).map(([t])=>({ledger:t,type:t,label:t+' Basic Energy from discard'}))],
       takeBasic=x=>{if(!x)return null;if(x.uid){const i=us.discard.findIndex(r=>r.uid===x.uid);return i<0?null:us.discard.splice(i,1)[0];}
         if(x.ledger&&Number(us.energyDiscard?.[x.ledger]||0)>0){us.energyDiscard[x.ledger]--;return {uid:'bw7-recovered-'+turn+'-'+Math.floor(ctx.random(ctx.state)*10000000),cardId:ids[x.ledger]};}return null;},
@@ -11738,12 +11750,13 @@
       return;
     }
     if(key==='energySearch'){
-      const types=[...new Set([...(us.energySupply||[]),...us.deck.filter(r=>card(r)?.basicEnergy).map(r=>card(r)?.subtype||card(r)?.energyType)])].filter(Boolean);
-      if(stage==='energy'&&ctx.resolvingChoice){const type=types[Number(act.choiceOption)];if(!type||!canDraw(us))return;
-        const i=us.deck.findIndex(r=>card(r)?.basicEnergy&&(card(r)?.subtype||card(r)?.energyType)===type);
-        if(i>=0)us.hand.push(...us.deck.splice(i,1));else{const j=(us.energySupply||[]).indexOf(type);if(j>=0){us.energySupply.splice(j,1);us.hand.push({uid:'bw7-energy-search-'+turn+'-'+Math.floor(ctx.random(ctx.state)*100000),cardId:ids[type]});}}
-        ctx.shuffle?.(ctx.state,us.deck);log({searchedBasicEnergy:type});return;}
-      if(types.length&&canDraw(us))opt('energy',types.map(t=>'Search '+t+' Basic Energy'));return;
+      const options=[...us.deck.filter(r=>card(r)?.basicEnergy).map(r=>({kind:'deck',uid:r.uid,type:card(r)?.subtype||card(r)?.energyType,label:name(r)+' (physical deck)'})),
+        ...[...new Set(us.energySupply||[])].filter(t=>ids[t]).map(t=>({kind:'zone',type:t,label:t+' Basic Energy (Energy Zone)'}))];
+      if(stage==='energy'&&ctx.resolvingChoice){const x=options[Number(act.choiceOption)];if(!x||!canDraw(us))return;
+        if(x.kind==='deck'){const i=us.deck.findIndex(r=>r.uid===x.uid);if(i<0)return;us.hand.push(...us.deck.splice(i,1));}
+        else{const j=(us.energySupply||[]).indexOf(x.type);if(j<0)return;us.energySupply.splice(j,1);us.hand.push({uid:'bw7-energy-search-'+turn+'-'+Math.floor(ctx.random(ctx.state)*100000),cardId:ids[x.type]});}
+        ctx.shuffle?.(ctx.state,us.deck);log({searchedBasicEnergy:x.type,source:x.kind});return;}
+      if(options.length&&canDraw(us))opt('energy',options.map((x,i)=>(i+1)+'. Take '+x.label));return;
     }
     if(key==='computerSearch'){
       const available=us.hand.filter(r=>r.uid!==e.playingRefUid);
@@ -11794,11 +11807,16 @@
         if(Number(e.remaining||2)>1&&discardedBasic('Fire').length)opt('attach',discardedBasic('Fire').map(x=>'Attach '+x.label),{remaining:Number(e.remaining||2)-1});return;}
       opt('attach',energy.map(x=>'Attach '+x.label),{remaining:2});return;
     }
-    if(key==='firefighting'){if(Number(d?.energy?.Fire||0)>0){d.energy.Fire--;recordDiscardedEnergy(foe,'Fire',1);log({discardedOpposingFire:1});}return;}
+    if(key==='firefighting'){
+      const sources=sourcesFor(d,'Fire');
+      if(stage==='discard'&&ctx.resolvingChoice){const src=sources[Number(act.choiceOption)];if(discardSource(d,foe,src))log({discardedOpposingFire:1,source:src.kind,uid:src.uid||null});return;}
+      if(sources.length===1){if(discardSource(d,foe,sources[0]))log({discardedOpposingFire:1,source:sources[0].kind});}
+      else if(sources.length>1)opt('discard',sources.map((src,i)=>(i+1)+'. Discard '+src.label));return;
+    }
     if(key==='splitBomb'){
-      if(stage==='second'&&ctx.resolvingChoice){const p=picked(foe);if(p&&p.uid!==e.firstUid){p.damage=Number(p.damage||0)+40;log({targetUid:p.uid,damage:40});}return;}
-      if(stage==='first'&&ctx.resolvingChoice){const p=picked(foe);if(!p)return;p.damage=Number(p.damage||0)+40;log({targetUid:p.uid,damage:40});if(team(foe).length>1)choose('second','opponent',{excludeUids:[p.uid],firstUid:p.uid});return;}
-      choose('first','opponent');return;
+      // Compatibility for saved pre-v311 battles. The new print mapping uses
+      // this generic handler so Active Weakness, Resistance and guards apply.
+      applyEffect({type:'multiTargetDamage',target:'opponentPokemon',count:2,amount:40,activeWeaknessResistance:true},ctx);return;
     }
     if(key==='defog'){if(e.doDiscard&&ctx.state.stadium){ctx.state.log.push({type:'stadiumDiscarded',cardId:ctx.state.stadium.cardId});ctx.state.stadium=null;}return;}
     if(key==='astonish'){
@@ -11808,7 +11826,10 @@
       if(stage==='target'&&ctx.resolvingChoice){const p=picked(foe);if(p){p.damage=Number(p.damage||0)+30;log({target:p.uid,damage:30});}return;}choose('target','opponent');return;
     }
     if(key==='landsJudgment'){
-      if(!e.doDiscard||!a)return;const n=Number(a.energy?.Fighting||0);if(n){a.energy.Fighting=0;recordDiscardedEnergy(us,'Fighting',n);log({discardedAllFighting:n});}return;
+      if(!e.doDiscard||!a)return;let n=0;
+      while(Number(a.energy?.Fighting||0)>0){if(discardSource(a,us,{kind:'basic',type:'Fighting'}))n++;else break;}
+      for(const ref of [...(a.specialEnergy||[])])if(specialMatches(ref,'Fighting',a)&&discardSource(a,us,{kind:'special',uid:ref.uid,type:'Fighting'}))n++;
+      log({discardedAllFighting:n});return;
     }
     if(key==='assist'){
       // Liepard Assist copies an attack of a BENCHED Pokemon after heads,
@@ -11827,10 +11848,20 @@
       return;
     }
     if(key==='steelSlash'){if(a)a.bw7SteelSlashUntil=turn+1;return;}
-    if(key==='flyingBeatdown'){if(ctx.action?.effectSelection!=='discard')return;
-      if(!a||Number(a.energy?.Grass||0)<1||Number(a.energy?.Fighting||0)<1)return;
-      for(const type of ['Grass','Fighting']){a.energy[type]--;recordDiscardedEnergy(us,type,1);}
-      if(d){d.conditions=d.conditions||{};delete d.conditions.sleep;delete d.conditions.confusion;d.conditions.paralysis={appliedTurn:turn};}return;}
+    if(key==='flyingBeatdown'){
+      if(!a||stage!=='pair'&&act.effectSelection!=='discard')return;
+      const grass=sourcesFor(a,'Grass'),fight=sourcesFor(a,'Fighting'),
+        pairs=grass.flatMap(g=>fight.filter(f=>!(g.kind==='special'&&f.kind==='special'&&g.uid===f.uid))
+          .map(f=>({grass:g,fighting:f})));
+      const paralyze=()=>{if(d){d.conditions=d.conditions||{};delete d.conditions.sleep;delete d.conditions.confusion;d.conditions.paralysis={appliedTurn:turn};}};
+      if(stage==='pair'&&ctx.resolvingChoice){const pick=(e.pairs||[])[Number(act.choiceOption)];
+        if(!pick||!grass.some(x=>x.kind===pick.grass.kind&&x.uid===pick.grass.uid&&x.type===pick.grass.type)||
+          !fight.some(x=>x.kind===pick.fighting.kind&&x.uid===pick.fighting.uid&&x.type===pick.fighting.type))return;
+        if(discardSource(a,us,pick.grass)&&discardSource(a,us,pick.fighting)){paralyze();log({discardedFlyingBeatdown:2});}return;}
+      if(pairs.length===1){if(discardSource(a,us,pairs[0].grass)&&discardSource(a,us,pairs[0].fighting)){paralyze();log({discardedFlyingBeatdown:2});}}
+      else if(pairs.length>1)opt('pair',pairs.map((p,i)=>(i+1)+'. Discard '+p.grass.label+' + '+p.fighting.label),{pairs});
+      return;
+    }
     if(key==='dragonStream'){
       const energy=discardedBasic();if(stage==='attach'&&ctx.resolvingChoice){const pick=energy[Number(act.choiceOption)];if(!pick)return;const ref=takeBasic(pick);if(ref)attach(a,pick.type,ref);return;}
       if(energy.length)opt('attach',energy.map(x=>'Attach '+x.label));return;
@@ -16264,7 +16295,7 @@
         if(k==='extrasensory'){if(us.hand.length===foe.hand.length)damage+=60;return;}
         if(k==='dreamWaltz'){if(a?.conditions?.sleep)damage+=30;return;}
         if(k==='venoshock'){if(d?.conditions?.poison)damage+=40;return;}
-        if(k==='landsJudgment'){if(ctx.action?.effectSelection==='discard'&&Number(a?.energy?.Fighting||0)>0){damage+=70;pending.push({...e,doDiscard:true});}return;}
+        if(k==='landsJudgment'){if(ctx.action?.effectSelection==='discard'&&(Number(a?.energy?.Fighting||0)>0||(a?.specialEnergy||[]).some(r=>r.cardId==='bw4-93'?ctx.cardById(a.cardId)?.stage==='Basic':r.cardId==='bw6-118'||Number((r.provides||ctx.cardById(r.cardId)?.effect?.provides||{}).Fighting||0)>0||Number((r.provides||ctx.cardById(r.cardId)?.effect?.provides||{}).Miracle||0)>0||Number((r.provides||ctx.cardById(r.cardId)?.effect?.provides||{}).Rainbow||0)>0))){damage+=70;pending.push({...e,doDiscard:true});}return;}
         if(k==='defog'){if(ctx.action?.effectSelection==='discard'&&ctx.state.stadium){damage+=40;pending.push({...e,doDiscard:true});}return;}
         if(k==='psychUp'){if(Number(a?.bw7PsychUpUntil||0)>=Number(ctx.state.turnNumber)&&Number(a?.bw7PsychUpPrimedAt||0)<Number(ctx.state.turnNumber))damage+=30;pending.push(e);return;}
         if(k==='superFang'){damage=0;pending.push(e);return;}
@@ -18899,9 +18930,20 @@
   function choicesForEffect(effect,ctx){
     if(effect?.type==='neoRule'&&String(effect.rule||'').startsWith('bw7:')){
       const k=effect.rule.slice(4),a=ctx.attacker,foe=other(ctx);
-      if(k==='landsJudgment')return [{effectSelection:'',choiceLabel:'80 damage — keep Fighting Energy'},...(Number(a?.energy?.Fighting||0)>0?[{effectSelection:'discard',choiceLabel:'150 damage — discard all Fighting Energy'}]:[])];
+      if(k==='landsJudgment'){
+        const eligible=Number(a?.energy?.Fighting||0)>0||(a?.specialEnergy||[]).some(r=>r.cardId==='bw4-93'?ctx.cardById(a.cardId)?.stage==='Basic':r.cardId==='bw6-118'||Number((r.provides||ctx.cardById(r.cardId)?.effect?.provides||{}).Fighting||0)>0||Number((r.provides||ctx.cardById(r.cardId)?.effect?.provides||{}).Miracle||0)>0||Number((r.provides||ctx.cardById(r.cardId)?.effect?.provides||{}).Rainbow||0)>0);
+        return [{effectSelection:'',choiceLabel:'80 damage — keep Fighting Energy'},...(eligible?[{effectSelection:'discard',choiceLabel:'150 damage — discard all Fighting Energy (including Special)'}]:[])];}
       if(k==='defog')return [{effectSelection:'',choiceLabel:'60 damage — keep Stadium'},...(ctx.state.stadium?[{effectSelection:'discard',choiceLabel:'100 damage — discard Stadium'}]:[])];
-      if(k==='flyingBeatdown')return [{effectSelection:'',choiceLabel:'80 damage — keep Energy'},...(Number(a?.energy?.Grass||0)>0&&Number(a?.energy?.Fighting||0)>0?[{effectSelection:'discard',choiceLabel:'80 damage — discard Grass + Fighting and Paralyze'}]:[])];
+      if(k==='flyingBeatdown'){
+        const gives=(ref,type)=>{const v=ref.provides||ctx.cardById(ref.cardId)?.effect?.provides||{};
+          if(ref.cardId==='bw4-93')return ctx.cardById(a?.cardId)?.stage==='Basic';
+          if(ref.cardId==='bw6-117')return ['Grass','Fire','Psychic','Darkness'].includes(type);
+          if(ref.cardId==='bw6-118')return ['Water','Lightning','Fighting','Metal'].includes(type);
+          return Number(v[type]||v.Rainbow||v.Miracle||0)>0;},
+          sources=type=>[...(Number(a?.energy?.[type]||0)>0?['basic:'+type]:[]),...(a?.specialEnergy||[]).filter(ref=>gives(ref,type)).map(ref=>'special:'+ref.uid)],
+          grass=sources('Grass'),fighting=sources('Fighting'),
+          possible=grass.some(g=>fighting.some(f=>g!==f));
+        return [{effectSelection:'',choiceLabel:'80 damage — keep Energy'},...(possible?[{effectSelection:'discard',choiceLabel:'80 damage — choose Grass + Fighting to discard and Paralyze'}]:[])];} 
       if(k==='hammerhead')return foe.bench.length?foe.bench.map(p=>({effectSelection:p.uid,choiceLabel:'30 Bench damage to '+ctx.cardById(p.cardId)?.name})):[{}];
       return [{}];
     }

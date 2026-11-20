@@ -2591,3 +2591,31 @@ LUCKYDEX 0.69.303 — NOBLE VICTORIES INDEPENDENT AUDIT
 - Town Map exposes actual current Prizes, without redrawing or replacing them. Optional attack costs and all Tool attachment effects preserve physical card identity and per-turn limits.
 - Apply Weakness/Resistance to Active-target damage and not to Benched damage. One player choice must resolve visibly before a pending Prize selection interrupts the flow.
 - Never promote a card to FULL solely because it passes a schema audit. Include direct action and printed-effect regression tests; audit static flags in a separate pass.
+
+
+2026-11-20 / v0.69.311 / BW7 BOUNDARIES CROSSED MASTER-CHECKLIST AUDIT
+- Multi-target attacks selecting an opposing Active Pokemon MUST apply its normal
+  Weakness, Resistance, damage guards and applicable continuous damage modifiers.
+  Bench targets ignore Weakness and Resistance. Charizard #20 Split Bomb is
+  checked with both an Active Vileplume under Allergy Panic and a Bench target.
+- A request to discard a named Energy type can discard a physical Special Energy
+  card which PROVIDES that type, not only a typed Basic Energy counter; the
+  original Special Energy UID moves intact to its owner's physical discard.
+  Psyduck #33 Firefighting offers a choice if multiple eligible cards exist.
+- Landorus-EX #89/#144 Land's Judgment includes attached Fighting-providing
+  Special Energy in its optional 70-damage boost and discards ALL eligible
+  Fighting Basic counters and Special Energy cards, preserving their UIDs.
+- Flygon #99 Flying Beatdown permits its Grass + Fighting optional discard
+  from Basic counters or matching physical Special Energy cards. Two DISTINCT
+  units/cards are mandatory; one wildcard cannot fund both costs. Where multiple
+  choices exist, the player chooses which Energy to discard.
+- Energy Search #128 preserves the distinction between an actual Basic Energy
+  card from the 30-card physical deck and a Basic Energy Zone unit. When both
+  are available they remain distinct choices; taking an actual card retains its UID.
+- Build gate adds tests/v07311-boundaries-crossed-checklist.test.cjs to the
+  original v07310 set tests. The 60 static review flags/121 cards marked for
+  manual validation are NOT claimed resolved by the static/synthetic smoke
+  audit. Emulator/device and GitHub APK build verification remain separate.
+- Computer Search #137 requires two actual selected hand cards as the cost, then
+  selects a real physical deck card into hand and shuffles; this has a
+  direct full-action regression even if the generic audit harness skips it.

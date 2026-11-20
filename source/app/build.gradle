@@ -8,8 +8,8 @@ android {
         applicationId 'com.example.luckydex'
         minSdk 26
         targetSdk 35
-        versionCode 7310
-        versionName '0.69.310'
+        versionCode 7311
+        versionName '0.69.311'
     }
 
     signingConfigs {
@@ -476,7 +476,7 @@ tasks.matching { it.name == 'preBuild' || (it.name.startsWith('merge') && it.nam
     dependsOn tasks.named('auditBW6IndependentForApk')
 }
 
-// v0.69.310 Boundaries Crossed: pin the complete printed roster and run
+// v0.69.311 Boundaries Crossed: pin the complete printed roster and run
 // explicit ACE SPEC, EX, discard ledger, hand UI, attack and Ability tests
 // before packaging any Android assets.
 tasks.register('generateBW7ForApk', Exec) {
@@ -486,7 +486,7 @@ tasks.register('generateBW7ForApk', Exec) {
 tasks.register('auditBW7ForApk', Exec) {
     dependsOn tasks.named('generateBW7ForApk')
     workingDir rootProject.projectDir
-    commandLine 'node', '--test', 'tests/v07310-boundaries-crossed.test.cjs'
+    commandLine 'node', '--test', 'tests/v07310-boundaries-crossed.test.cjs', 'tests/v07311-boundaries-crossed-checklist.test.cjs'
 }
 tasks.matching { it.name == 'preBuild' || (it.name.startsWith('merge') && it.name.endsWith('Assets')) }.configureEach {
     dependsOn tasks.named('auditBW7ForApk')

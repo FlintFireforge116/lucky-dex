@@ -20,7 +20,7 @@ A={
  ('15','Fluffy Tag'):R('fluffyTag'),
  ('17','Magical Leaf'):Q(S(BONUS(30),H(30))),
  ('18','Draw In'):R('drawInFire'),
- ('20','Split Bomb'):R('splitBomb'),
+ ('20','Split Bomb'):{'type':'multiTargetDamage','target':'opponentPokemon','count':2,'amount':40,'activeWeaknessResistance':True},
  ('23','Relentless Flames'):COIN('untilTails',30),
  ('28','Continuous Tumble'):COIN('untilTails',20),
  ('28','Damage Counterpunch'):BONUS(60,{'type':'selfDamaged'}),

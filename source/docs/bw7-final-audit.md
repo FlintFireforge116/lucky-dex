@@ -1,8 +1,8 @@
 # LuckyDex Classic audit — bw7 / Boundaries Crossed
 
-**Status:** No definite catalog/schema failures; 0 warnings; 60 follow-up flags.
+**Status:** No definite catalog/schema failures; 0 warnings; 59 follow-up flags.
 
-**Coverage:** 153/153 enabled, 0 gated. 216 attacks, 21 named abilities; 15/153 IDs mentioned in test files (mentions are not proof).
+**Coverage:** 153/153 enabled, 0 gated. 216 attacks, 21 named abilities; 20/153 IDs mentioned in test files (mentions are not proof).
 
 **Source contract:** `docs/LUCKYDEX_MASTER_RULES.txt`.
 
@@ -47,7 +47,7 @@ Risk tags are prompts for scenario tests, not automatic implementation failures.
 - **bw7-16 Petilil** — status, coin
 - **bw7-17 Lilligant** — coin
 - **bw7-18 Charmander** — energyMovement; attack Draw In: custom rule bw7:drawInFire has no obvious source literal; inspect dispatcher.
-- **bw7-20 Charizard** — energyMovement; attack Split Bomb: custom rule bw7:splitBomb has no obvious source literal; inspect dispatcher.
+- **bw7-20 Charizard** — energyMovement
 - **bw7-21 Numel** — energyMovement
 - **bw7-22 Camerupt** — energyMovement, status, coin
 - **bw7-23 Victini** — coin
@@ -160,10 +160,10 @@ Risk tags are prompts for scenario tests, not automatic implementation failures.
 
 | Print | Status | Attacks | Powers | Risks | Test-file mentions |
 |---|---|---:|---:|---|---:|
-| bw7-1 Oddish | enabled | 2 | 0 |  | 1 |
-| bw7-2 Gloom | enabled | 2 | 0 | status | 1 |
+| bw7-1 Oddish | enabled | 2 | 0 |  | 2 |
+| bw7-2 Gloom | enabled | 2 | 0 | status | 2 |
 | bw7-3 Vileplume | enabled | 1 | 1 | status | 1 |
-| bw7-4 Bellossom | enabled | 2 | 0 | status, coin | 0 |
+| bw7-4 Bellossom | enabled | 2 | 0 | status, coin | 1 |
 | bw7-5 Tangela | enabled | 2 | 0 |  | 0 |
 | bw7-6 Tangrowth | enabled | 2 | 0 | timing | 0 |
 | bw7-7 Scyther | enabled | 2 | 0 |  | 1 |
@@ -179,7 +179,7 @@ Risk tags are prompts for scenario tests, not automatic implementation failures.
 | bw7-17 Lilligant | enabled | 2 | 0 | coin | 0 |
 | bw7-18 Charmander | enabled | 2 | 0 | energyMovement | 0 |
 | bw7-19 Charmeleon | enabled | 2 | 0 |  | 0 |
-| bw7-20 Charizard | enabled | 2 | 0 | energyMovement | 0 |
+| bw7-20 Charizard | enabled | 2 | 0 | energyMovement | 1 |
 | bw7-21 Numel | enabled | 1 | 0 | energyMovement | 0 |
 | bw7-22 Camerupt | enabled | 2 | 0 | energyMovement, status, coin | 0 |
 | bw7-23 Victini | enabled | 2 | 0 | coin | 0 |
@@ -192,7 +192,7 @@ Risk tags are prompts for scenario tests, not automatic implementation failures.
 | bw7-30 Wartortle | enabled | 2 | 0 | timing, coin | 0 |
 | bw7-31 Blastoise | enabled | 1 | 1 | choice, energyMovement | 0 |
 | bw7-32 Psyduck | enabled | 1 | 0 | status, coin | 0 |
-| bw7-33 Psyduck | enabled | 1 | 0 | energyMovement | 0 |
+| bw7-33 Psyduck | enabled | 1 | 0 | energyMovement | 1 |
 | bw7-34 Golduck | enabled | 2 | 0 | status | 0 |
 | bw7-35 Golduck | enabled | 2 | 0 | choice, timing, energyMovement | 0 |
 | bw7-36 Marill | enabled | 2 | 0 |  | 0 |
@@ -248,7 +248,7 @@ Risk tags are prompts for scenario tests, not automatic implementation failures.
 | bw7-86 Mienfoo | enabled | 1 | 0 | coin | 0 |
 | bw7-87 Mienfoo | enabled | 1 | 0 |  | 0 |
 | bw7-88 Mienshao | enabled | 2 | 0 | coin | 0 |
-| bw7-89 Landorus-EX | enabled | 2 | 0 | choice, energyMovement | 1 |
+| bw7-89 Landorus-EX | enabled | 2 | 0 | choice, energyMovement | 2 |
 | bw7-90 Purrloin | enabled | 1 | 0 | coin | 0 |
 | bw7-91 Liepard | enabled | 2 | 0 | choice, status, coin | 0 |
 | bw7-92 Vullaby | enabled | 2 | 0 |  | 0 |
@@ -258,7 +258,7 @@ Risk tags are prompts for scenario tests, not automatic implementation failures.
 | bw7-96 Skarmory | enabled | 2 | 0 | status, coin | 0 |
 | bw7-97 Klink | enabled | 1 | 0 |  | 0 |
 | bw7-98 Vibrava | enabled | 2 | 0 | coin | 0 |
-| bw7-99 Flygon | enabled | 1 | 1 | choice, timing, energyMovement, status | 0 |
+| bw7-99 Flygon | enabled | 1 | 1 | choice, timing, energyMovement, status | 1 |
 | bw7-100 Black Kyurem | enabled | 2 | 0 | energyMovement, coin | 0 |
 | bw7-101 Black Kyurem-EX | enabled | 2 | 0 | timing, status, coin | 0 |
 | bw7-102 White Kyurem | enabled | 2 | 0 | coin | 0 |
@@ -287,7 +287,7 @@ Risk tags are prompts for scenario tests, not automatic implementation failures.
 | bw7-125 Unfezant | enabled | 2 | 0 | energyMovement, coin | 0 |
 | bw7-126 Audino | enabled | 1 | 1 | choice, timing, status, coin | 1 |
 | bw7-127 Aspertia City Gym | enabled | 0 | 0 |  | 1 |
-| bw7-128 Energy Search | enabled | 0 | 0 | choice, privacy, energyMovement, deckSearch | 1 |
+| bw7-128 Energy Search | enabled | 0 | 0 | choice, privacy, energyMovement, deckSearch | 2 |
 | bw7-129 Great Ball | enabled | 0 | 0 | choice, privacy, deckSearch | 0 |
 | bw7-130 Hugh | enabled | 0 | 0 | choice | 1 |
 | bw7-131 Poké Ball | enabled | 0 | 0 | choice, privacy, deckSearch, coin | 0 |
@@ -296,14 +296,14 @@ Risk tags are prompts for scenario tests, not automatic implementation failures.
 | bw7-134 Skyla | enabled | 0 | 0 | choice, privacy, deckSearch | 0 |
 | bw7-135 Switch | enabled | 0 | 0 | choice | 0 |
 | bw7-136 Town Map | enabled | 0 | 0 | choice | 0 |
-| bw7-137 Computer Search | enabled | 0 | 0 | choice, deckSearch | 1 |
+| bw7-137 Computer Search | enabled | 0 | 0 | choice, deckSearch | 2 |
 | bw7-138 Crystal Edge | enabled | 0 | 0 | choice | 1 |
 | bw7-139 Crystal Wall | enabled | 0 | 0 | choice | 1 |
 | bw7-140 Gold Potion | enabled | 0 | 0 | choice | 0 |
 | bw7-141 Celebi-EX | enabled | 1 | 1 |  | 0 |
 | bw7-142 Keldeo-EX | enabled | 1 | 1 | choice | 0 |
 | bw7-143 Cresselia-EX | enabled | 1 | 1 | timing | 0 |
-| bw7-144 Landorus-EX | enabled | 2 | 0 | choice, energyMovement | 0 |
+| bw7-144 Landorus-EX | enabled | 2 | 0 | choice, energyMovement | 1 |
 | bw7-145 Black Kyurem-EX | enabled | 2 | 0 | timing, status, coin | 0 |
 | bw7-146 White Kyurem-EX | enabled | 2 | 0 | energyMovement, status, coin | 0 |
 | bw7-147 Bianca | enabled | 0 | 0 | choice | 0 |
