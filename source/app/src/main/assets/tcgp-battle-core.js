@@ -1111,6 +1111,8 @@
       // Technical Machines grant a temporary attack, not a new Pokémon identity.
       for(const ref of toolsOf(slot)){
         const tool=data.cardById(ref.cardId);if(!tool?.technicalMachine)continue;
+        // G Booster/G Scope attacks belong exclusively to Genesect-EX.
+        if(['bw10-92','bw10-93'].includes(tool.id)&&current.name!=='Genesect-EX')continue;
         for(const [attackIndex,attack] of (tool.attacks||[]).entries())
           out.push({cardId:tool.id,attackIndex,attack,technicalMachine:true});
       }
@@ -1321,7 +1323,7 @@
       // an opposing Benched Pokémon available for either printed choice.
       if(card.id==='ex7-85'&&(s.prizes.length<=state.sides[side==='player'?'opponent':'player'].prizes.length||!state.sides[side==='player'?'opponent':'player'].bench.length))return;
       if(state.format==='classic'&&card.id==='pl2-95'&&!pokemonOn(s).some(p=>data.cardById(p.cardId)?.isPokemonSP))return;
-      if(card.id==='bw8-119'&&(!s.deck.some(r=>['bw8-127','bw9-106'].includes(r.cardId))||!pokemonOn(s).some(p=>data.cardById(p.cardId)?.teamPlasma||toolsOf(p).some(r=>r.cardId==='bw9-104'))))return;
+      if(card.id==='bw8-119'&&(!s.deck.some(r=>['bw8-127','bw9-106','bw10-91'].includes(r.cardId))||!pokemonOn(s).some(p=>data.cardById(p.cardId)?.teamPlasma||toolsOf(p).some(r=>r.cardId==='bw9-104'))))return;
       if(card.id==='bw8-125'&&!s.hand.some((r,i)=>i!==handIndex&&data.cardById(r.cardId)?.teamPlasma))return;
       if(card.id==='bw8-128'&&(s.hand.length<3||!s.discard.some(r=>data.cardById(r.cardId)?.kind==='trainer')&&!s.hand.some((r,i)=>i!==handIndex&&data.cardById(r.cardId)?.kind==='trainer')))return;
       if(state.format==='classic'&&type==='Supporter'&&Number(s.bw9SupportersLockedUntil||0)>=Number(state.turnNumber))return;
@@ -2030,7 +2032,7 @@
       }
     }
     if(state.format==='classic'){const who=state.activeSide,board=state.sides[who];for(const slot of pokemonOn(board)){for(const ref of [...toolsOf(slot)]){
-      const magnifier=ref.cardId==='neo4-101',technicalMachine=data.cardById(ref.cardId)?.technicalMachine;
+      const magnifier=ref.cardId==='neo4-101',technicalMachine=data.cardById(ref.cardId)?.technicalMachine&&!['bw10-92','bw10-93'].includes(ref.cardId);
       const strengthCharm=['ecard1-150','ex4-74','ex8-92','ex15-81'].includes(ref.cardId)&&ref.strengthCharmUsedTurn===state.turnNumber;
       const memoryBerry=ref.cardId==='ecard2-128'&&slot.aquapolisMemoryBerryUsedTurn===state.turnNumber;
       const crystalGuardiansTool=['ex14-76','ex14-80'].includes(ref.cardId)&&ref.ex14UsedTurn===state.turnNumber;
@@ -3145,7 +3147,15 @@
           }
           if(state.stadium?.cardId==='gym2-113'&&attackerCard.types?.includes('Water')&&data.cardById(defender.cardId)?.name?.startsWith("Blaine's"))result.damageRules={...result.damageRules,ignoreWeakness:true};
           // Plasma Frigate prevents Weakness, not Resistance or other effects.
-          const noPlasmaWeakness=state.format==='classic'&&(state.stadium?.cardId==='bw8-124'&&(defender.specialEnergy||[]).some(r=>['bw8-127','bw9-106'].includes(r.cardId))||Number(defender.bw9NoWeaknessUntil||0)>=Number(state.turnNumber));
+          if(state.format==='classic'&&toolsOf(s.active).some(r=>r.cardId==='bw10-88')&&
+              !attackerCard.pokemonEX&&data.cardById(defender.cardId)?.pokemonEX)damage+=30;
+          if(state.format==='classic'&&Number(s.bw10IrisUntil||0)>=Number(state.turnNumber)&&isActive)
+            damage+=10*Number(foe.prizesTaken||0);
+          if(state.format==='classic'&&Number(s.active?.bw10NextAttackBonusUntil||0)>=Number(state.turnNumber)&&isActive)
+            damage+=50;
+          if(state.format==='classic'&&Number(s.active?.bw10LeafWallopUntil||0)>=Number(state.turnNumber)&&isActive&&attack.name==='Leaf Wallop')
+            damage+=40;
+          const noPlasmaWeakness=state.format==='classic'&&(state.stadium?.cardId==='bw8-124'&&(defender.specialEnergy||[]).some(r=>['bw8-127','bw9-106','bw10-91'].includes(r.cardId))||Number(defender.bw9NoWeaknessUntil||0)>=Number(state.turnNumber));
           const oldWeakness=defender.weaknessOverride;
           if(noPlasmaWeakness)defender.weaknessOverride='__bw8_no_weakness__';
           try{damage=effects.attackDamageWithState(state,side,s.active,foeSide,defender,damage,data.cardById);}finally{if(noPlasmaWeakness)defender.weaknessOverride=oldWeakness;}
@@ -3196,9 +3206,12 @@
       damage=guard?0:Math.max(0,damage-(result.damageRules?.ignoreEffects?0:effects.modifierAmount(state,foeSide,defender,'damageReduction',data.cardById)));
       if(state.format==='classic'&&!result.damageRules?.ignoreEffects&&
           ((['bw9-85','bw9-112'].includes(defender.cardId)&&!effects.abilitiesSuppressed(state,foeSide,defender,data.cardById)&&attackerCard.abilities?.length)||
-           (defender.cardId==='bw9-118'&&!effects.abilitiesSuppressed(state,foeSide,defender,data.cardById)&&attackerCard.pokemonEX)))damage=0;
+           (['bw9-118','bw10-20'].includes(defender.cardId)&&!effects.abilitiesSuppressed(state,foeSide,defender,data.cardById)&&attackerCard.pokemonEX)))damage=0;
       if(state.format==='classic'&&data.cardById(s.active.cardId)?.pokemonEX&&pokemonOn(foe).some(p=>p.cardId==='bw8-90'&&!effects.abilitiesSuppressed(state,foeSide,p,data.cardById))&&effects.effectiveTypes(state,foeSide,defender,data.cardById).includes('Metal')&&!result.damageRules?.ignoreEffects)damage=0;
       if(state.format==='classic'&&!result.damageRules?.ignoreEffects){
+        if(state.format==='classic'&&toolsOf(defender).some(r=>r.cardId==='bw10-89')&&
+            !data.cardById(defender.cardId)?.pokemonEX&&
+            (attackerCard.teamPlasma||toolsOf(s.active).some(r=>r.cardId==='bw9-104')))damage=0;
         if(!isActive&&pokemonOn(foe).some(p=>p.cardId==='bw9-47'&&!effects.abilitiesSuppressed(state,foeSide,p,data.cardById)))damage=0;
         if(['bw9-22'].includes(defender.cardId)&&!effects.abilitiesSuppressed(state,foeSide,defender,data.cardById))damage=Math.max(0,damage-20);
         if(Number(defender.bw9PivotUntil||0)>=Number(state.turnNumber))damage+=20;

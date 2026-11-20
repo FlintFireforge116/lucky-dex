@@ -1,0 +1,97 @@
+{
+  "printed": 105,
+  "battleReady": 76,
+  "gated": {
+    "bw10-2": [
+      "Tool Reversal: repeatable activation and exact attached Tool return require action UI."
+    ],
+    "bw10-3": [
+      "Prehistoric Call: Abilities from discard are not part of the normal board-only activation UI."
+    ],
+    "bw10-4": [
+      "Lifesplosion: benching Stage 2 Pokémon without a previous evolution requires a special resolution path."
+    ],
+    "bw10-8": [
+      "Retribution: previous-turn KO must preserve exact Escavalier identity."
+    ],
+    "bw10-9": [
+      "Verdant Wind special condition immunity and immediate cleanse need global status hooks."
+    ],
+    "bw10-11": [
+      "Red Signal: optional switch must trigger on a physical Plasma Energy attached from hand."
+    ],
+    "bw10-23": [
+      "Cursed Glare must block Special Energy being attached from hand to all opponents."
+    ],
+    "bw10-27": [
+      "Prehistoric Call: discard pile Ability requires an out-of-play action."
+    ],
+    "bw10-28": [
+      "Carracosta depends on Restored Tirtouga from the gated fossil chain."
+    ],
+    "bw10-33": [
+      "Crush and Burn: multi-source, multi-Pokémon Energy choice requires exact physical source accounting."
+    ],
+    "bw10-35": [
+      "Drifting Balloon modifies printed attack costs dynamically for opponent Team Plasma counts."
+    ],
+    "bw10-36": [
+      "Psypower requires freely distributing three damage counters between different targets."
+    ],
+    "bw10-37": [
+      "Mental Shroud requires changing Weakness globally with Uxie and Azelf in play."
+    ],
+    "bw10-38": [
+      "Psyjamming requires selecting and moving multiple physical Special Energy cards owned by opponent."
+    ],
+    "bw10-41": [
+      "Toolbox requires four Tools and replacement selection when Ability is lost."
+    ],
+    "bw10-49": [
+      "Badge of Discipline modifies Fighting damage type rules."
+    ],
+    "bw10-53": [
+      "Prehistoric Call: discard pile Ability requires an out-of-play action."
+    ],
+    "bw10-54": [
+      "Archeops depends on Restored Archen from the gated fossil chain."
+    ],
+    "bw10-60": [
+      "Stellar Guidance must trigger only on bench placement from hand."
+    ],
+    "bw10-64": [
+      "Breakwing triggers when the evolution enters play from hand."
+    ],
+    "bw10-69": [
+      "Strike of the Champion needs direct KO and prize-timing integration."
+    ],
+    "bw10-74": [
+      "Plasma Transfer requires a repeatable physical Plasma Energy move action."
+    ],
+    "bw10-86": [
+      "Reversal Trigger requires a KO-on-opponent-attack triggered search."
+    ],
+    "bw10-95": [
+      "Scoop Up Cyclone must return the whole stack with exact attached Basic and Special Energy references."
+    ],
+    "bw10-96": [
+      "Verdant Wind special condition immunity and immediate cleanse need global status hooks.",
+      "Unimplemented printed attack: Emerald Slash"
+    ],
+    "bw10-97": [
+      "Red Signal must trigger from hand-attached Plasma Energy."
+    ],
+    "bw10-98": [
+      "Stellar Guidance must trigger only on bench placement from hand."
+    ],
+    "bw10-102": [
+      "Propagation requires activation from discard pile (also gated in BW9)."
+    ],
+    "bw10-104": [
+      "Sinister Hand damage movement requires repeatable choice of both Pokémon."
+    ]
+  },
+  "attacks": 139,
+  "abilities": 21,
+  "sourceGitBlob": "ccddde115a17152e330d29736a3f1665e006d67f"
+}

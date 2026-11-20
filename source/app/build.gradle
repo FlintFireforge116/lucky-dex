@@ -8,8 +8,8 @@ android {
         applicationId 'com.example.luckydex'
         minSdk 26
         targetSdk 35
-        versionCode 7314
-        versionName '0.69.315'
+        versionCode 7315
+        versionName '0.69.316'
     }
 
     signingConfigs {
@@ -529,4 +529,20 @@ tasks.register('auditBW9ForApk', Exec) {
 }
 tasks.matching { it.name == 'preBuild' || (it.name.startsWith('merge') && it.name.endsWith('Assets')) }.configureEach {
     dependsOn tasks.named('auditBW9ForApk')
+}
+
+// v0.69.316 Plasma Blast (BW10): pinned Git object, exact print
+// generation before battle-data compilation and cross-set regression checks.
+tasks.register('generateBW10ForApk', Exec) {
+    dependsOn tasks.named('auditBW9ForApk')
+    workingDir rootProject.projectDir
+    commandLine (System.getenv('LUCKYDEX_PYTHON') ?: 'python3'), 'scripts/build-bw10.py'
+}
+tasks.register('auditBW10ForApk', Exec) {
+    dependsOn tasks.named('generateBW10ForApk')
+    workingDir rootProject.projectDir
+    commandLine 'node', '--test', 'tests/v07316-plasma-blast.test.cjs'
+}
+tasks.matching { it.name == 'preBuild' || (it.name.startsWith('merge') && it.name.endsWith('Assets')) }.configureEach {
+    dependsOn tasks.named('auditBW10ForApk')
 }

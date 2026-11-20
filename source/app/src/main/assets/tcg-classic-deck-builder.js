@@ -27,7 +27,7 @@ const STAPLES=Object.freeze([
  ['base1-83',1], // Maintenance
  ['base1-87',1]  // Pokedex
 ]);
-const SET_IDS=Object.freeze(['base1','base2','base3','base5','gym1','gym2','neo1','neo2','neo3','neo4','base6','ecard1','ecard2','ecard3','ex1','ex2','ex3','ex4','ex5','ex6','ex7','ex8','ex9','ex10','ex11','ex12','ex13','ex14','ex15','ex16','dp1','dp2','dp3','dp4','dp5','dp6','dp7','pl1','pl2','pl3','pl4','hgss1','hgss2','hgss3','hgss4','col1','bw1','bw2','bw3','bw4','bw5','bw6','bw7','bw8','bw9','SNAPFLORIO','SNAPFOUNJA','sv1']);
+const SET_IDS=Object.freeze(['base1','base2','base3','base5','gym1','gym2','neo1','neo2','neo3','neo4','base6','ecard1','ecard2','ecard3','ex1','ex2','ex3','ex4','ex5','ex6','ex7','ex8','ex9','ex10','ex11','ex12','ex13','ex14','ex15','ex16','dp1','dp2','dp3','dp4','dp5','dp6','dp7','pl1','pl2','pl3','pl4','hgss1','hgss2','hgss3','hgss4','col1','bw1','bw2','bw3','bw4','bw5','bw6','bw7','bw8','bw9','bw10','SNAPFLORIO','SNAPFOUNJA','sv1']);
 // Darkness and Metal are already Basic Energy types. Deduplicate before rendering
 // archetype chips so each energy type has exactly one toggle.
 // Dragon is a Pokémon type, never a Basic Energy type. Include it as an
@@ -807,8 +807,8 @@ function buildDeck(rows,options={}){
  // Colorless counter is not a Plasma Energy CARD. When the printed attack
  // payoff checks Plasma Energy or Colress Machine can attach one, reserve
  // actual Special Energy copies before Trainer filler crowds them out.
- // Include BW8 and BW9 cards, preferring the focus set's identical print.
- if(scope.includes('bw8')||scope.includes('bw9')){
+ // Include BW8, BW9 and BW10 cards, preferring the focus set's identical print.
+ if(scope.includes('bw8')||scope.includes('bw9')||scope.includes('bw10')){
    const pokemon=cards.map(classic.cardById).filter(c=>c?.kind==='pokemon');
    const plasmaPayoff=pokemon.some(c=>(c.attacks||[]).some(a=>/Plasma Energy attached|Plasma Gale/i.test(String(a.text||'')+' '+a.name)));
    const hasColressMachine=pool.some(c=>c.name==='Colress Machine'&&c.battleEnabled);
