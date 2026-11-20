@@ -2503,3 +2503,28 @@ LUCKYDEX 0.69.303 — NOBLE VICTORIES INDEPENDENT AUDIT
   copies. Source checks do not demonstrate successful GitHub APK builds or
   on-device gameplay.
 [INSTALL] Apply v0.69.303 ZIP over v0.69.302, unzip -d source and git push.
+
+[0.69.306 / Black & White: Dark Explorers]
+* The 111 printed Dark Explorers cards (bw5-1..111) retain distinct print IDs,
+  canonical attack/Ability text and 2-Prize Basic Pokémon-EX handling.
+* Effects retrieving Basic Energy from discard (e.g., Grand Flame, Dark Patch,
+  Charge Beam) must access physical discard and the genuine Basic Energy discard
+  ledger; never create fresh energy from the live Energy Zone for these effects.
+* Dark Patch can attach only discarded Basic Darkness Energy to a Benched Darkness
+  Pokémon. Darkrai-EX's continuous Dark Cloak grants zero retreat cost to allied
+  Pokémon with Darkness-providing Energy and respects Ability suppression.
+* Old Amber Aerodactyl can put an owned Restored Aerodactyl onto the Bench from
+  the bottom seven physical deck cards. The Pokémon cannot be benched from hand
+  as an ordinary Basic; the deck builder must pair it with the Old Amber Item.
+* Printed attack bonuses and coin conditions are resolved before applying
+  Weakness and Resistance. Choices must name the exact Energy/Tool/target and
+  make decline options explicit. Slurp Shakedown promotes its targeted opponent
+  Bench Pokémon before damage is calculated against that newly Active target.
+* Solar Revelation guards energy-bearing allied Pokémon against effects of
+  opposing attacks (not damage); Ancient Scream and Dark Claw boost eligible
+  damage; Scorching Scales changes opponent Burn checks; Slowbro Airhead gates
+  attack actions at an even number of remaining Prize cards.
+* Game retains its established 30-card physical deck, separate Basic Energy
+  Zone and eight-card hand cap. Special Energy remains a physical deck card.
+* Build-time checks: scripts/build-bw5.py then
+  tests/v07306-dark-explorers.test.cjs before APK asset merge.

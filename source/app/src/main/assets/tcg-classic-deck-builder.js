@@ -27,7 +27,7 @@ const STAPLES=Object.freeze([
  ['base1-83',1], // Maintenance
  ['base1-87',1]  // Pokedex
 ]);
-const SET_IDS=Object.freeze(['base1','base2','base3','base5','gym1','gym2','neo1','neo2','neo3','neo4','base6','ecard1','ecard2','ecard3','ex1','ex2','ex3','ex4','ex5','ex6','ex7','ex8','ex9','ex10','ex11','ex12','ex13','ex14','ex15','ex16','dp1','dp2','dp3','dp4','dp5','dp6','dp7','pl1','pl2','pl3','pl4','hgss1','hgss2','hgss3','hgss4','col1','bw1','bw2','bw3','bw4','SNAPFLORIO','SNAPFOUNJA','sv1']);
+const SET_IDS=Object.freeze(['base1','base2','base3','base5','gym1','gym2','neo1','neo2','neo3','neo4','base6','ecard1','ecard2','ecard3','ex1','ex2','ex3','ex4','ex5','ex6','ex7','ex8','ex9','ex10','ex11','ex12','ex13','ex14','ex15','ex16','dp1','dp2','dp3','dp4','dp5','dp6','dp7','pl1','pl2','pl3','pl4','hgss1','hgss2','hgss3','hgss4','col1','bw1','bw2','bw3','bw4','bw5','SNAPFLORIO','SNAPFOUNJA','sv1']);
 // Darkness and Metal are already Basic Energy types. Deduplicate before rendering
 // archetype chips so each energy type has exactly one toggle.
 const ARCHETYPE_TYPES=Object.freeze([...new Set([...decks.ENERGY_TYPES,'Colorless'])]);
@@ -79,14 +79,14 @@ function parentKeys(baseName){const n=classicCardName(baseName);return /^Burmy (
 // BW3 Restored Pokémon are not Basics: these two specific Item cards are
 // their required entry path.  Treat them as fossil-family roots for deck
 // generation, while the battle engine continues to bench via bottom-seven.
-const RESTORED_FOSSIL_IDS=new Set(['bw3-90','bw3-93']);
+const RESTORED_FOSSIL_IDS=new Set(['bw3-90','bw3-93','bw5-97']);
 const EVOLUTION_FOSSIL_NAMES=new Set(classic.CARDS.filter(c=>c.kind==='trainer'&&
   (c.effect?.type==='playFossil'||RESTORED_FOSSIL_IDS.has(c.id))&&
-  /(?:Fossil|Old Amber)$/i.test(classicCardName(c.name))).map(c=>classicCardName(c.name)));
+  (c.id==='bw5-97'||/(?:Fossil|Old Amber)$/i.test(classicCardName(c.name)))).map(c=>classicCardName(c.name)));
 function isEvolutionFossil(card){return !!(card?.kind==='trainer'&&
   (card.effect?.type==='playFossil'||RESTORED_FOSSIL_IDS.has(card.id))&&
   EVOLUTION_FOSSIL_NAMES.has(classicCardName(card.name)));}
-function fossilEvolutionInDeck(fossil,ids){return (ids||[]).some(id=>{
+function fossilEvolutionInDeck(fossil,ids){if(fossil?.id==='bw5-97')return (ids||[]).includes('bw5-53');return (ids||[]).some(id=>{
  const c=classic.cardById(id);
  return c?.kind==='pokemon'&&!!c.evolvesFrom&&classicEvolutionMatches(fossil.name,c.evolvesFrom);
 });}
@@ -113,6 +113,9 @@ function babyEvolutionTargets(card){
 }
 function familyLine(card,pool){
  if(!card||card.kind!=='pokemon')return [];
+ // Old Amber Aerodactyl puts a Restored Pokemon directly on the Bench.
+ // This is a required Item/Pokemon deck pair, NOT a Basic evolution.
+ if(card.id==='bw5-53'){const amber=pool.find(c=>c.id==='bw5-97');return amber?[amber,card]:[];}
  const line=[card],seen=new Set([card.id]);let cur=card;
  // When an expansion includes different prints of a pre-evolution, choose
  // the print that can fight using the final attacker's Energy plan. Without

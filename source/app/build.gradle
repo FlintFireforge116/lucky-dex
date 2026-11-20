@@ -8,8 +8,8 @@ android {
         applicationId 'com.example.luckydex'
         minSdk 26
         targetSdk 35
-        versionCode 7305
-        versionName '0.69.305'
+        versionCode 7306
+        versionName '0.69.306'
     }
 
     signingConfigs {
@@ -422,4 +422,19 @@ tasks.register('auditBW4ForApk', Exec) {
 }
 tasks.matching { it.name == 'preBuild' || (it.name.startsWith('merge') && it.name.endsWith('Assets')) }.configureEach {
     dependsOn tasks.named('auditBW4ForApk')
+}
+
+// Dark Explorers (v0.69.306): pinned complete source + special rules, EX,
+// discard ledger, Restored fossil family and CPU deck legality tests.
+tasks.register('generateBW5ForApk', Exec) {
+    workingDir rootProject.projectDir
+    commandLine (System.getenv('LUCKYDEX_PYTHON') ?: 'python3'), 'scripts/build-bw5.py'
+}
+tasks.register('auditBW5ForApk', Exec) {
+    dependsOn tasks.named('generateBW5ForApk')
+    workingDir rootProject.projectDir
+    commandLine 'node', '--test', 'tests/v07306-dark-explorers.test.cjs'
+}
+tasks.matching { it.name == 'preBuild' || (it.name.startsWith('merge') && it.name.endsWith('Assets')) }.configureEach {
+    dependsOn tasks.named('auditBW5ForApk')
 }

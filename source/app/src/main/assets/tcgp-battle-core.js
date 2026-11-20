@@ -650,6 +650,11 @@
     if(state.stadium){const source=ss.active||ss.bench[0];if(source){const ctx={...effectContext(state,side,{},source),eventData:meta};effects.applyPersistentEvent(data.cardById(state.stadium.cardId)?.effect,event,ctx);}}
   }
   function retreatCost(state,side){const slot=state.sides[side].active;
+    // Dark Explorers Dark Cloak covers every allied Pokémon with any Darkness
+    // Energy, including a compatible Rainbow-providing Special Energy.
+    if(state.format==='classic'&&slot&&pokemonOn(state.sides[side]).some(p=>['bw5-63','bw5-107'].includes(p.cardId)&&!effects.abilitiesSuppressed(state,side,p,data.cardById))&&
+       Number(effectiveEnergy(state,side,slot).Darkness||0)>0)return 0;
+
     if(state.format==='classic'&&slot&&pokemonOn(state.sides[side]).some(p=>p.cardId==='hgss2-4'&&!effects.abilitiesSuppressed(state,side,p,data.cardById))&&Number(effectiveEnergy(state,side,slot).Psychic||0)>0)return 0;
     if(state.format==='classic'&&slot&&Number(slot.pl3HoverHitUntil||0)>=Number(state.turnNumber))return 0;
     if(state.format==='classic'&&slot){const types=effects.effectiveTypes(state,side,slot,data.cardById);
@@ -1489,7 +1494,10 @@
         for(const target of effectChoices(ability.effect,effectContext(state,side,{},source))){const a={...base};if(target.target)a.effectTarget=target.target;if(target.benchIndex!=null)a.effectBenchIndex=target.benchIndex;actions.push(a);}
       });
     }
-    if (s.active&&!conditions.paralysis&&Number(s.active.ex11AttackLockUntil||0)!==Number(state.turnNumber)){
+    // BW5 Slowbro Airhead: even Prize counts (2/4/6) prohibit its attacks.
+    const bw5Airhead=state.format==='classic'&&s.active?.cardId==='bw5-24'&&
+      !effects.abilitiesSuppressed(state,side,s.active,data.cardById)&&[2,4,6].includes(Number(s.prizes?.length||0));
+    if (s.active&&!bw5Airhead&&!conditions.paralysis&&Number(s.active.ex11AttackLockUntil||0)!==Number(state.turnNumber)){
       for(const entry of attackOptions(state,side)){
         const {cardId:attackCardId,attackIndex,attack}=entry;
         if ((attack.gxAttack||/\bGX\b/i.test(attack.name||''))&&s.gxAttackUsed)continue;
@@ -1722,7 +1730,10 @@
       if(slot.cardId==='dp4-30'&&c.sleep&&!effects.abilitiesSuppressed(state,side,slot,data.cardById))
         slot.damage=Math.max(0,Number(slot.damage||0)-10);
       if(c.poison){const base=typeof c.poison==='object'?Number(c.poison.amount??10):10,amount=Math.max(0,base+effects.modifierAmount(state,side,slot,'poisonDamageBonus',data.cardById));const virus=state.format==='classic'?['player','opponent'].reduce((n,who)=>n+pokemonOn(state.sides[who]).filter(p=>p.cardId==='dp4-31'&&!effects.abilitiesSuppressed(state,who,p,data.cardById)).length,0)*10:0;slot.damage+=amount+virus;state.log.push({type:'statusDamage',side,status:'poison',amount:amount+virus});}
-      if(c.burn){const heatMetal=state.format==='classic'&&[side==='player'?'opponent':'player'].some(w=>pokemonOn(state.sides[w]).some(p=>p.cardId==='dp7-97'&&!effects.abilitiesSuppressed(state,w,p,data.cardById)));const fullFlame=state.format==='classic'&&state.stadium?.cardId==='ex12-74';const aura=state.format==='classic' &&['player','opponent'].some(w=>{const p=state.sides[w].active;return p?.cardId==='ex6-13'&&!effects.abilitiesSuppressed(state,w,p,data.cardById);});const burnDamage=Math.max(aura||fullFlame?40:20,Number(slot.dp2TorridDamage||0));slot.damage+=burnDamage;state.log.push({type:'statusDamage',side,status:'burn',amount:burnDamage});const heads=heatMetal?false:random(state)<0.5;state.log.push({type:'coin',side,heads,status:'burn',results:[heads],heatMetal});if(heads){delete c.burn;slot.dp2TorridDamage=0;}}
+      if(c.burn){const heatMetal=state.format==='classic'&&[side==='player'?'opponent':'player'].some(w=>pokemonOn(state.sides[w]).some(p=>p.cardId==='dp7-97'&&!effects.abilitiesSuppressed(state,w,p,data.cardById)));const fullFlame=state.format==='classic'&&state.stadium?.cardId==='ex12-74';const aura=state.format==='classic' &&['player','opponent'].some(w=>{const p=state.sides[w].active;return p?.cardId==='ex6-13'&&!effects.abilitiesSuppressed(state,w,p,data.cardById);});// BW5 Scorching Scales: four instead of two counters on the opposing
+      // Burned Active between turns; independent of ordinary burn coin flips.
+      const scorch=state.format==='classic'&&pokemonOn(state.sides[side==='player'?'opponent':'player']).some(p=>p.cardId==='bw5-22'&&!effects.abilitiesSuppressed(state,side==='player'?'opponent':'player',p,data.cardById));
+      const burnDamage=Math.max(aura||fullFlame||scorch?40:20,Number(slot.dp2TorridDamage||0));slot.damage+=burnDamage;state.log.push({type:'statusDamage',side,status:'burn',amount:burnDamage});const heads=heatMetal?false:random(state)<0.5;state.log.push({type:'coin',side,heads,status:'burn',results:[heads],heatMetal});if(heads){delete c.burn;slot.dp2TorridDamage=0;}}
       if(c.sleep){const darkraiKo=!!c.sleep?.knockoutOnDoubleTails;const opp=side==='player'?'opponent':'player',lull=state.format==='classic'&&state.sides[opp].active?.cardId==='SNAPFOUNJA-041'&&state.sides[opp].active?.conditions?.sleep;const destinyGengar=state.format==='classic'&&['player','opponent'].some(who=>pokemonOn(state.sides[who]).some(p=>p.cardId==='neo4-6'&&!p.conditions?.sleep&&!p.conditions?.confusion&&!p.conditions?.paralysis&&!effects.abilitiesSuppressed(state,who,p,data.cardById)));const relic=state.format==='classic'&&['player','opponent'].some(w=>state.sides[w].active?.cardId==='ex5-24'&&!effects.abilitiesSuppressed(state,w,state.sides[w].active,data.cardById));const deepSleep=state.format==='classic'&&['player','opponent'].some(w=>state.sides[w].active?.cardId==='ex12-40'&&!effects.abilitiesSuppressed(state,w,state.sides[w].active,data.cardById));const coins=lull||destinyGengar||relic||deepSleep?2:typeof c.sleep==='object'?Math.max(1,Number(c.sleep.recoveryCoins||1)):1;let allHeads=true,allTails=true;for(let i=0;i<coins;i++){const heads=random(state)<0.5;state.log.push({type:'coin',side,heads,status:'sleep',results:[heads]});if(!heads)allHeads=false;else allTails=false;}if(allHeads)delete c.sleep;if(darkraiKo&&allTails&&coins===2){slot.damage=Math.max(Number(slot.damage||0),maxHp(state,side,slot));state.log.push({type:'darkraiSleepKO',side,cardId:slot.cardId});}state.log.push({type:'sleepCheck',side,woke:allHeads,coins});}
       if(c.paralysis&&side===state.activeSide&&Number(c.paralysis.appliedTurn??-1)<state.turnNumber)delete c.paralysis;
     }
