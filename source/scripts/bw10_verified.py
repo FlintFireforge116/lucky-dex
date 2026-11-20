@@ -9,7 +9,7 @@ A={
 ('1','Sweet Scent'):R('sweetScent'),
 ('4','Lifesplosion'):R('lifesplosion'),('5','Return'):E('drawToHandSize',size=6),('5','Energy Press'):R('energyPress'),
 ('8','Retribution'):R('retribution'),
-('9','Emerald Slash'):R('emeraldSlash'),('10','Call for Family'):R('grassCallFamily'),
+('9','Emerald Slash'):R('emeraldSlash'),('96','Emerald Slash'):R('emeraldSlash'),('10','Call for Family'):R('grassCallFamily'),
 ('11','Megalo Cannon'):E('benchDamage',amount=20,side='opponent',count=1),
 ('13','Solar Transporter'):R('solarTransporter'),('13','Leech Life'):E('drain'),
 ('16','Hydro Pump'):R('hydroPump'),('17','Cleanse Away'):R('cleanseAway'),

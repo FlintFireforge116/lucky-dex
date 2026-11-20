@@ -9,7 +9,7 @@ android {
         minSdk 26
         targetSdk 35
         versionCode 7316
-        versionName '0.69.317'
+        versionName '0.69.318'
     }
 
     signingConfigs {
@@ -541,7 +541,7 @@ tasks.register('generateBW10ForApk', Exec) {
 tasks.register('auditBW10ForApk', Exec) {
     dependsOn tasks.named('generateBW10ForApk')
     workingDir rootProject.projectDir
-    commandLine 'node', '--test', 'tests/v07316-plasma-blast.test.cjs', 'tests/v07317-plasma-blast-completion.test.cjs'
+    commandLine 'node', '--test', 'tests/v07316-plasma-blast.test.cjs', 'tests/v07317-plasma-blast-completion.test.cjs', 'tests/v07318-plasma-blast-build-fix.test.cjs'
 }
 tasks.matching { it.name == 'preBuild' || (it.name.startsWith('merge') && it.name.endsWith('Assets')) }.configureEach {
     dependsOn tasks.named('auditBW10ForApk')

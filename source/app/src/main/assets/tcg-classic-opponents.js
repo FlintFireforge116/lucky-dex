@@ -71,6 +71,22 @@
      const archetype=String(result.strategy.match(/· ([^·]+) core/)?.[1]||'Classic TCG').trim();
      return {ok:true,type,rarityFocus,basicOnly,theme,cards:result.cards.slice(),energyTypes:energy.slice(),sets:allowed.slice(),archetype,archetypeKey:result.archetypeKey,name:`${type} · ${archetype}`};
    }
+   // The Plasma Blast set is intentionally sparse in some single-type
+   // archetypes. If normal generated candidates all fail legality/energy
+   // checks, use only a VERIFIED BW10-local, complete-family 30-card plan.
+   // Do not convert an unavailable type into an off-type CPU deck.
+   if(allowed.length===1&&allowed[0]==='bw10'&&type&&
+      typeof builder.rescueBW10Deck==='function'){
+     const rescued=builder.rescueBW10Deck(ALL_PLAYABLE,{sets:allowed,types:[type],rarityFocus,basicOnly,theme});
+     if(rescued?.ok&&classic.validateDeck(rescued.cards).ok&&
+        !decks.analyzeDeck(rescued.cards,rescued.energyTypes).missingEnergyTypes.length){
+       return {ok:true,type,rarityFocus,basicOnly,theme,cards:rescued.cards.slice(),
+         energyTypes:rescued.energyTypes.slice(),sets:allowed.slice(),
+         archetype:'Plasma Blast complete family',
+         archetypeKey:rescued.archetypeKey,
+         name:type+' · Plasma Blast complete family'};
+     }
+   }
    return {ok:false,error:'No legal Classic CPU deck matches those rarity, evolution and set settings. Try another rarity or more sets.'};
  }
  return {generate,pickType,TYPES,SETS};

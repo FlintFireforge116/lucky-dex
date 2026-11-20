@@ -227,6 +227,51 @@ function completeLineFor(featured,candidates,pool){
 }
 
 function fail(message){return {ok:false,cards:[],energyTypes:[],errors:[message],warnings:[],strategy:''};}
+// BW10 source-verified emergency legal composition. This is ONLY a fallback
+// for a BW10-only unrestricted auto deck when the normal core algorithm has
+// failed. Complete families are required; no orphan Restored Pokémon, false
+// Energy, ACE SPEC overflow, cross-set Trainers or generic unrelated basics.
+// Exposed for an independent regression; it never overrides a manual focus.
+function rescueBW10Deck(rows,options={}){
+ const scopes=options.sets||[],types=options.types||[];
+ if(scopes.length!==1||scopes[0]!=='bw10'||types.length!==1||
+    options.focusCardId||options.basicOnly===true||
+    (options.rarityFocus&&options.rarityFocus!=='any')||
+    (options.theme&&options.theme!=='any')||
+    (options.cards&&options.cards.length))return null;
+ const type=types[0];
+ const families={
+  Grass:[['bw10-5',3],['bw10-10',3]],
+  Fire:[['bw10-12',3],['bw10-13',3]],
+  Water:[['bw10-17',3],['bw10-20',3]],
+  Psychic:[['bw10-36',3],['bw10-37',3]],
+  Fighting:[['bw10-51',3],['bw10-52',3]],
+  Metal:[['bw10-57',2],['bw10-58',2],['bw10-59',2]],
+  Darkness:[['bw10-55',3],['bw10-56',3]],
+  Colorless:[['bw10-71',3],['bw10-77',3]],
+  Dragon:[['bw10-62',2],['bw10-63',2],['bw10-64',2]]
+ };
+ const core=families[type];if(!core)return null;
+ const trainers=[['bw10-78',4],['bw10-80',4],['bw10-83',4],['bw10-84',4],['bw10-88',4],['bw10-90',4]];
+ const owned=ownedMap(rows),selected=[...core,...trainers];
+ if(selected.some(([id,n])=>{const c=classic.cardById(id);return !c||c.setId!=='bw10'||
+   !c.battleEnabled||c.deckEligible===false||Number(owned.get(id)||0)<n;
+ }))return null;
+ const cards=selected.flatMap(([id,n])=>Array(n).fill(id));
+ const energyTypes=type==='Colorless'?['Fighting']:type==='Dragon'?['Fire','Water']:[type];
+ if(cards.length!==30||!classic.validateDeck(cards).ok||
+    !decks.validateDraft(cards,rows,{requireFull:true}).ok||
+    decks.analyzeDeck(cards,energyTypes).missingEnergyTypes.length)return null;
+ // Never return a legal but energy-unpayable attacking roster.
+ const coded={G:'Grass',R:'Fire',W:'Water',L:'Lightning',P:'Psychic',F:'Fighting',D:'Darkness',M:'Metal'};
+ if(core.some(([id])=>{const p=classic.cardById(id);return (p.attacks||[]).length&&
+    !(p.attacks||[]).some(a=>[...String(a.cost||'')].every(sym=>sym==='C'||!coded[sym]||energyTypes.includes(coded[sym])));
+ }))return null;
+ return {ok:true,cards,energyTypes,errors:[],warnings:[],
+  style:options.style==='random'?'random':'competitive',
+  archetypeKey:'bw10-'+type.toLowerCase()+'-fallback',
+  focusCardId:core[0][0],strategy:'BW10 verified '+type+' complete-family recovery'};
+}
 function buildDeck(rows,options={}){
  const rarityFocus=RARITY_FOCUS.some(r=>r.id===options.rarityFocus)?options.rarityFocus:'any',basicOnly=options.basicOnly===true,theme=synergy.THEMES.some(t=>t.id===options.theme)?options.theme:'any';
  const style=options.style==='random'?'random':'competitive',owned=ownedMap(rows),allowedSets=(options.sets||SET_IDS).filter(s=>SET_IDS.includes(s)),scope=allowedSets.length?allowedSets:SET_IDS,pool=classic.CARDS.filter(c=>allowedInSetPool(c,scope)&&c.battleEnabled&&c.deckEligible!==false&&Number(owned.get(c.id)||0)>0),pokemonPool=pool.filter(c=>c.kind==='pokemon'),evolutionPool=pool.filter(c=>c.kind==='pokemon'||isEvolutionFossil(c));
@@ -969,6 +1014,8 @@ function buildDeck(rows,options={}){
  // only the sparse-inventory rescue is allowed a second otherwise unrequested type.
  if(cards.length<30){for(const c of pool.filter(c=>(usefulFillerCard(c)||c.stage==='Basic')&&trainerIsUseful(c))){while(cards.length<30&&room(c)>0){const trial=[...cards,c.id],profile=decks.analyzeDeck(trial).recommendedEnergyTypes;if(options._allowSecondType===true&&!requestedEnergy.length?profile.length>2:!profile.every(t=>plannedEnergy.includes(t)))break;if(!add(c,1))break;}if(cards.length>=30)break;}}
  if(cards.length!==30){
+   const bw10Recovery=rescueBW10Deck(rows,{...options,sets:scope});
+   if(bw10Recovery)return bw10Recovery;
    // Sparse themed pools can choose an awkward first core that leaves too few
    // compatible fillers. Retry distinct archetypes rather than handing back an
    // incomplete deck when other owned families could form a legal deck.
@@ -1029,5 +1076,5 @@ function buildDeck(rows,options={}){
  return {ok:true,cards,energyTypes:finalEnergy,errors:[],warnings:notes,plan,style,archetypeKey:archetypeKey(featured||main),focusCardId:fossilFocus?.id||focus?.id||featured?.id||main.id,strategy:`${style==='random'?'Random featured':'Competitive'} · ${theme!=='any'?synergy.THEMES.find(t=>t.id===theme).label+' · ':''}${rarityFocus!=='any'?RARITY_FOCUS.find(r=>r.id===rarityFocus).label+' · ':''}${basicOnly?'Basic-only · ':''}${label} · ${featured?featured.name+' featured · ':''}${archetypeName(main,evolutionPool)} core · ${pokemonCount()} Pokémon / ${30-pokemonCount()} Trainers & Special Energy`};
 }
 function buildDeckAsync(rows,options,control={}){return new Promise(resolve=>{setTimeout(()=>{if(control.isCancelled?.())return resolve(null);resolve(buildDeck(rows,options));},0);});}
-return {buildDeck,buildDeckAsync,THEMES:synergy.THEMES,familyLine,familyRoot,attackTypes,conditionalAttackTypes,allowedInSetPool,ARCHETYPE_TYPES,SET_IDS,RARITY_FOCUS,rarityTier,matchesRarity};
+return {buildDeck,rescueBW10Deck,buildDeckAsync,THEMES:synergy.THEMES,familyLine,familyRoot,attackTypes,conditionalAttackTypes,allowedInSetPool,ARCHETYPE_TYPES,SET_IDS,RARITY_FOCUS,rarityTier,matchesRarity};
 });
