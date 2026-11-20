@@ -244,7 +244,12 @@ function runSmokes(cards,{data,core,opponents}){
       if(!choices.length)break;
       const rule=String(s.pendingChoice?.effect?.rule||'');
       const stage=s.pendingChoice?.effect?.stage;
-      const choice=stage==='foeRock'?(choices.find(a=>Number(a.choiceOption)===1)||choices.at(-1)):
+      // A synthetic smoke chooser must finish multi-stage Energy transfers;
+      // choosing the first 'Move another' option forever is not a game defect.
+      const finishingEnergy=String(s.pendingChoice?.effect?.type||'')==='redistributeEnergy'&&
+        s.pendingChoice?.effect?.phase==='continue';
+      const choice=finishingEnergy?(choices.find(a=>Number(a.choiceOption)===1)||choices.at(-1)):
+        stage==='foeRock'?(choices.find(a=>Number(a.choiceOption)===1)||choices.at(-1)):
         ((rule==='dp2:7:leafTornado'&&n>1)||(rule==='dp3:27:batonPass'&&stage==='move'&&n>2))?(choices.find(a=>a.choiceSkip)||choices[0]):
         (choices.find(a=>!a.choiceSkip)||choices[0]);
       core.applyAction(s,s.choiceSide,choice);

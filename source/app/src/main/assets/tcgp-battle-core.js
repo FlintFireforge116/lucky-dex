@@ -539,7 +539,8 @@
     const hgss4Nidoking=state.format==='classic'&&slot?.cardId==='hgss4-6'&&!effects.abilitiesSuppressed(state,side,slot,data.cardById)
       ?20*pokemonOn(state.sides[side]).filter(p=>data.cardById(p.cardId)?.name==='Nidoqueen').length:0;
     const hgss4Indigo=state.format==='classic'&&state.stadium?.cardId==='hgss4-86'&&data.cardById(slot?.cardId)?.stage==='LEGEND'?30:0;
-    const extra=hgss4Nidoking+hgss4Indigo+pl1Thankfulness+dp6Temple+majesticVeil+ex3LowPressure+rocketHideout+dp2Equip+(slot.cardId==='gym2-97'?10*Number(slot.energy?.Psychic||0):slot.cardId==='gym2-10'&&slot.gym2GiantGrowth&&state.sides[side].active===slot?40:0);return Math.max(1,copyHp+extra-gravitation+effects.modifierAmount(state,side,slot,'maxHp',data.cardById));}
+    const bw6Cape=toolsOf(slot).some(ref=>ref.cardId==='bw6-114')?20:0;
+    const extra=bw6Cape+hgss4Nidoking+hgss4Indigo+pl1Thankfulness+dp6Temple+majesticVeil+ex3LowPressure+rocketHideout+dp2Equip+(slot.cardId==='gym2-97'?10*Number(slot.energy?.Psychic||0):slot.cardId==='gym2-10'&&slot.gym2GiantGrowth&&state.sides[side].active===slot?40:0);return Math.max(1,copyHp+extra-gravitation+effects.modifierAmount(state,side,slot,'maxHp',data.cardById));}
   function ex14DarkEyes(state,usedBy,source,ability){
     if(state.format!=='classic'||!source||ability?.printedPowerType!=='power')return;
     const reacting=usedBy==='player'?'opponent':'player';
@@ -848,6 +849,14 @@
       // single Colorless elsewhere.  This is one physical Special Energy.
       if(ref.cardId==='bw4-93'&&!miracleWind){const basic=data.cardById(slot?.cardId)?.stage==='Basic';
         const type=basic?'Miracle':'Colorless';next[type]=Number(next[type]||0)+1;continue;}
+      // Dragons Exalted Blend Energy: one unrestricted Colorless unit or
+      // one unit of one of the four printed types, never four at once.
+      if(['bw6-117','bw6-118'].includes(ref.cardId)&&!miracleWind){
+        const allowed=ref.cardId==='bw6-117'?['Grass','Fire','Psychic','Darkness']:['Water','Lightning','Fighting','Metal'];
+        next.Crystal=Number(next.Crystal||0)+1;
+        next.__crystalAllowed={...next.__crystalAllowed,...Object.fromEntries(allowed.map(t=>[t,true]))};
+        continue;
+      }
       // Rising Rivals SP Energy is one rainbow unit ONLY on a Pokemon SP.
       // Upper Energy supplies two Colorless only while behind on Prizes and
       // never to a Level-Up Pokemon. Each remains a single physical card.
@@ -990,6 +999,19 @@
       for(const source of sources)for(const [attackIndex,attack] of (data.cardById(source.cardId)?.attacks||[]).entries()){
         const provides=effectiveEnergy(state,side,source);
         if(effects.canPayCost(provides,attack.cost||''))out.push({cardId:source.cardId,attackIndex,attack,borrowed:true,dp2DarkGenes:true});
+      }
+    }
+    // Dragons Exalted Mew-EX Versatile: borrowed attacks of ANY Pokemon in
+    // play, with energy costs paid by Mew rather than the source card.
+    if(state.format==='classic'&&['bw6-46','bw6-120'].includes(current.id)&&
+       !effects.abilitiesSuppressed(state,side,slot,data.cardById)){
+      const seen=new Set(out.map(x=>x.cardId+':'+x.attackIndex));
+      for(const who of ['player','opponent'])for(const p of pokemonOn(state.sides[who])){
+        const card=data.cardById(p.cardId);if(!card?.battleEnabled||card.id===current.id)continue;
+        for(const [attackIndex,attack] of (card.attacks||[]).entries()){
+          const k=card.id+':'+attackIndex;if(seen.has(k))continue;seen.add(k);
+          out.push({cardId:card.id,attackIndex,attack,borrowed:true});
+        }
       }
     }
     if(state.format==='classic'&&current.id==='ex12-88'&&!effects.abilitiesSuppressed(state,side,slot,data.cardById)){
@@ -1502,6 +1524,16 @@
         for(const target of effectChoices(ability.effect,effectContext(state,side,{},source))){const a={...base};if(target.target)a.effectTarget=target.target;if(target.benchIndex!=null)a.effectBenchIndex=target.benchIndex;actions.push(a);}
       });
     }
+    if(state.format==='classic'&&!['player','opponent'].some(w=>pokemonOn(state.sides[w]).some(p=>p.cardId==='bw6-54'&&toolsOf(p).length&&
+       !p.abilitySuppressed))&&s.bench.length<Number(s.benchLimit||3)&&
+       [ ...new Set([...Object.entries(s.energyDiscard||{}).filter(([,n])=>Number(n)>0).map(([t])=>t),
+         ...s.discard.filter(ref=>data.cardById(ref.cardId)?.basicEnergy).map(ref=>data.cardById(ref.cardId).energyType)])].length>=3){
+      s.bw6RebirthUsed=s.bw6RebirthUsed||{};
+      for(const ref of s.discard){const mon=data.cardById(ref.cardId);
+        if(mon?.name!=='Ho-Oh-EX'||mon.setId!=='bw6'||s.bw6RebirthUsed[ref.uid]===s.turnCount)continue;
+        actions.push({type:'abilityDiscard',cardId:ref.cardId,sourceUid:ref.uid});
+      }
+    }
     // BW5 Slowbro Airhead: even Prize counts (2/4/6) prohibit its attacks.
     const bw5Airhead=state.format==='classic'&&s.active?.cardId==='bw5-24'&&
       !effects.abilitiesSuppressed(state,side,s.active,data.cardById)&&[2,4,6].includes(Number(s.prizes?.length||0));
@@ -1554,7 +1586,7 @@
 
   function actionMatches(legal, action){
     if (!legal || !action || legal.type !== action.type) return false;
-    const keys = ['handIndex','secondHandIndex','cardId','target','benchIndex','attackIndex','attackCardId','abilityIndex','effectTarget','effectBenchIndex','evolutionCardId','choiceTarget','choiceBenchIndex','choiceHandIndex','choiceDiscardIndex','choiceDeckIndex','choiceCardId','choiceAttackIndex','choiceToolIndex','choicePrizeIndex','choiceOption','choiceSkip','effectEnergyType','effectSpecialEnergyUid','effectSelection','copiedEffectSelection'];
+    const keys = ['handIndex','secondHandIndex','cardId','target','benchIndex','attackIndex','attackCardId','abilityIndex','sourceUid','effectTarget','effectBenchIndex','evolutionCardId','choiceTarget','choiceBenchIndex','choiceHandIndex','choiceDiscardIndex','choiceDeckIndex','choiceCardId','choiceAttackIndex','choiceToolIndex','choicePrizeIndex','choiceOption','choiceSkip','effectEnergyType','effectSpecialEnergyUid','effectSelection','copiedEffectSelection'];
     return keys.every(key => action[key] == null || legal[key] === action[key]);
   }
 
@@ -2189,6 +2221,16 @@
         }
         else if(slot.pl2WaterRescue){delete slot.pl2WaterRescue;for(const [i,id] of (slot.stack||[slot.cardId]).entries())s.hand.push({uid:slot.uid+'-waterrescue-'+i,cardId:id});s.hand.push(...toolsOf(slot),...temporaryTrainersOf(slot),...(slot.specialEnergy||[]));const ids={Grass:'dp1-123',Fire:'dp1-124',Water:'dp1-125',Lightning:'dp1-126',Psychic:'dp1-127',Fighting:'dp1-128',Darkness:'lental-basic-darkness',Metal:'lental-basic-metal'};for(const [type,n] of Object.entries(slot.energy||{}))for(let i=0;i<Number(n||0);i++)s.hand.push({uid:slot.uid+'-waterrescue-energy-'+type+'-'+i,cardId:ids[type],zoneGenerated:true});state.log.push({type:'pl2WaterRescue',side,cardId:slot.cardId});}
         else if(state.format==='classic'&&cause==='attack'&&eventSource?.attack&&eventSource.side===foeSide&&
+          toolsOf(slot).some(r=>r.cardId==='bw6-115')){
+          // Rescue Scarf returns the knocked-out Pokemon (not its attached
+          // cards) to hand. Discard Energy/Tools before the board is cleared.
+          const top=(slot.stack||[]).at(-1)||slot.cardId,old=s.discard.length;
+          discardKnockedOut(s,slot);
+          const j=s.discard.findLastIndex(r=>r.cardId===top);
+          if(j>=old&&s.hand.length<Number(s.handLimit||8))s.hand.push(...s.discard.splice(j,1));
+          state.log.push({type:'bw6RescueScarf',side,cardId:top});
+        }
+        else if(state.format==='classic'&&cause==='attack'&&eventSource?.attack&&eventSource.side===foeSide&&
           (slot.specialEnergy||[]).some(r=>r.cardId==='hgss4-90')){
           const top=slot.stack.at(-1)||slot.cardId,old=s.discard.length;
           discardKnockedOut(s,slot);
@@ -2578,6 +2620,18 @@
     }
     if (matched.type === 'trainer'){
       playTrainer(state,side,matched);
+      return state;
+    }
+    if(matched.type==='abilityDiscard'){
+      const ref=s.discard.find(x=>x.uid===matched.sourceUid&&x.cardId===matched.cardId);
+      const card=data.cardById(ref?.cardId),ability=card?.abilities?.find(a=>a.name==='Rebirth');
+      if(!ref||!ability)throw new Error('Rebirth source has left the discard pile');
+      s.bw6RebirthUsed=s.bw6RebirthUsed||{};s.bw6RebirthUsed[ref.uid]=s.turnCount;
+      const source=makePokemonSlot(ref.cardId,s.turnCount,ref.uid);
+      effects.applyEffect({...ability.effect,sourceUid:ref.uid},{...effectContext(state,side,matched,source),isAbility:true});
+      if(state.phase==='effectChoice')state.pendingChoice.resume=state.pendingChoice.resume||'ability';
+      state.log.push({type:'ability',side,cardId:ref.cardId,ability:'Rebirth',fromDiscard:true});
+      if(state.phase!=='effectChoice')resolveKnockOut(state,null);
       return state;
     }
     if (matched.type === 'ability'){

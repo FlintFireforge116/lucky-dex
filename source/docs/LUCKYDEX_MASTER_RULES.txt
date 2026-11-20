@@ -2556,3 +2556,16 @@ LUCKYDEX 0.69.303 — NOBLE VICTORIES INDEPENDENT AUDIT
 * v0.69.307 build gate: v07307-bw5-independent-audit.test.cjs executes after
   printed source generation plus the v07306 full-set tests. Android build and
   device verification remain separate requirements.
+
+
+=== v0.69.308: BLACK & WHITE DRAGONS EXALTED (BW6) ===
+- All 128 numbered prints are catalogued with pinned official card data; Dragon type is distinct from the Energy types required by printed attacks.
+- Blend Energy GRPD (#117) and WLFM (#118) each count as exactly ONE unit, usable as Colorless or one of the four specified types. They never provide all four simultaneously. Special Energy is a physical 30-card-deck card.
+- Rebirth is explicitly usable from the physical discard pile once per turn, only with an available Bench slot and three different discarded Basic Energy types. On heads, choose distinct discarded types and attach REAL discarded Energy, preserving the separate Basic Energy discard ledger. Never draw new Energy from the Energy Zone.
+- Rayquaza-EX Dragon Burst offers an explicit choice to discard all Basic Fire or all Basic Lightning attached; damage is 60 times physical cards discarded, calculated before Weakness/Resistance. Do not silently select one.
+- Ho-Oh-EX / Mew-EX / other Pokémon-EX give TWO selectable Prizes when knocked out; Shedinja Empty Shell awards none. Rescue Scarf returns only the KO Pokémon to hand, discarding its attachments.
+- Mew-EX Versatile can use printed attacks of Pokémon in play on both sides, paying costs from Mew's own Energy. Garbotoxin disables Abilities (except Garbotoxin) while its Garbodor has a Tool, including Rebirth, and restores them when the Tool goes.
+- Altaria Fight Song gives +20 pre-Weakness to Dragon attacks targeting Active; Bouffer reduces received attack damage by 20; Safeguard prevents attack damage/effects from Pokémon-EX; Giant Cape adds +20 maximum HP.
+- Tool Scrapper must allow one or two legal attached Pokémon Tool selections, including both players; second choice may be declined. Physical cards return to the correct owner's discard pile.
+- Attack choice, coin and target-resolution log events MUST finish before the Prize picker. Existing Classic 30-card deck/8-card hand/ordered Basic Energy Zone are unchanged.
+- APK build gate: scripts/build-bw6.py, tests/v07308-dragons-exalted.test.cjs.

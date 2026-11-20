@@ -8,8 +8,8 @@ android {
         applicationId 'com.example.luckydex'
         minSdk 26
         targetSdk 35
-        versionCode 7307
-        versionName '0.69.307'
+        versionCode 7308
+        versionName '0.69.308'
     }
 
     signingConfigs {
@@ -448,4 +448,19 @@ tasks.register('auditBW5IndependentForApk', Exec) {
 }
 tasks.matching { it.name == 'preBuild' || (it.name.startsWith('merge') && it.name.endsWith('Assets')) }.configureEach {
     dependsOn tasks.named('auditBW5IndependentForApk')
+}
+
+// v0.69.308 Dragons Exalted: pinned full print roster, Dragon/Blend/EX rules
+// and deterministic per-mechanic tests. Fail the APK build on regressions.
+tasks.register('generateBW6ForApk', Exec) {
+    workingDir rootProject.projectDir
+    commandLine (System.getenv('LUCKYDEX_PYTHON') ?: 'python3'), 'scripts/build-bw6.py'
+}
+tasks.register('auditBW6ForApk', Exec) {
+    dependsOn tasks.named('generateBW6ForApk')
+    workingDir rootProject.projectDir
+    commandLine 'node', '--test', 'tests/v07308-dragons-exalted.test.cjs'
+}
+tasks.matching { it.name == 'preBuild' || (it.name.startsWith('merge') && it.name.endsWith('Assets')) }.configureEach {
+    dependsOn tasks.named('auditBW6ForApk')
 }
