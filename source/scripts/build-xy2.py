@@ -36,7 +36,7 @@ def get_source():
  if len(rows)!=110 or [str(r[0]) for r in rows] != [str(i) for i in range(1,89)]+['88a']+[str(i) for i in range(89,110)]:
   raise RuntimeError('XY2 must conserve all 110 official printed rows, including Blacksmith 88a')
  if sum(len(r[7]) for r in rows)!=153 or sum(len(r[8]) for r in rows)!=13:
-  raise RuntimeError('XY1 printed attacks / abilities changed: expected 153 / 13')
+  raise RuntimeError('XY2 printed attacks / abilities changed: expected 153 / 13')
  return rows
 
 def generate(rows):

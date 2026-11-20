@@ -8,8 +8,8 @@ android {
         applicationId 'com.example.luckydex'
         minSdk 26
         targetSdk 35
-        versionCode 7325
-        versionName '0.69.325'
+        versionCode 7326
+        versionName '0.69.326'
     }
 
     signingConfigs {
@@ -590,7 +590,7 @@ tasks.register('generateXY2ForApk', Exec) {
 tasks.register('auditXY2ForApk', Exec) {
     dependsOn tasks.named('generateXY2ForApk')
     workingDir rootProject.projectDir
-    commandLine 'node', '--test', '--test-concurrency=2', 'tests/v07325-flashfire.test.cjs'
+    commandLine 'node', '--test', '--test-concurrency=2', 'tests/v07325-flashfire.test.cjs', 'tests/v07326-flashfire-audit.test.cjs'
 }
 tasks.matching { it.name == 'preBuild' || (it.name.startsWith('merge') && it.name.endsWith('Assets')) }.configureEach {
     dependsOn tasks.named('auditXY2ForApk')

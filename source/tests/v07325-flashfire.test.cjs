@@ -58,7 +58,7 @@ test('Flashfire preserves all 110 official rows, including unique Blacksmith 88a
   const c=flash.cardById('xy2-'+n);assert.equal(c.megaEvolution,true,c.id);
   assert.equal(c.stage,'Stage 1');assert.equal(c.prizeCards,2);
  }
- for(const n of ['95','98'])assert.equal(flash.cardById('xy2-'+n).battleEnabled,n==='98');
+ for(const n of ['95','98'])assert.equal(flash.cardById('xy2-'+n).battleEnabled,true,`XY2 ${n}`);
 });
 
 test('Pyroar Intimidating Mane prevents Basic damage but not evolved damage',()=>{
@@ -126,12 +126,13 @@ test('Flashfire-only deck recovery never changes other set-selection or invents 
 test('Every enabled Flashfire attack and Trainer declares a validated effect and supported runtime rule', {skip:!hasSource},()=>{
  const implemented=new Set(['psychic','derangedDance','electricounter','bigTusk','flail','ironCrash','wonderBlast',
   'revenge','powerfulFriends','strongGust','peckOff','triplePoison','blacksmith','fieryTorch','palPad',
-  'pokemonCenterLady','megaphone','trickShovel','ultraBall','sacredAsh','stoke','callForFamily1','callForFamily2','sneakyPlacement','quiverDance','opponentDiscardEnergy']);
+  'pokemonCenterLady','megaphone','trickShovel','ultraBall','sacredAsh','stoke','callForFamily1','callForFamily2','sneakyPlacement','quiverDance','opponentDiscardEnergy',
+  'adaptiveEvolution','flowerVeil','poisonBarrier','stirAndSnooze','thornTempest','chipOff','excitingShake','pricklyNeedles','harden']);
  for(const c of flash.CARDS.filter(c=>c.battleEnabled)){
   for(const eff of [...(c.attacks||[]).map(a=>a.effect),...(c.abilities||[]).map(a=>a.effect),...(c.kind==='trainer'?[c.effect]:[])]){
    function walk(e){if(!e)return;
     if(e.type==='neoRule'&&e.rule.startsWith('xy2:'))assert.ok(implemented.has(e.rule.slice(4)),c.id+':'+e.rule);
-    for(const key of ['effects'])for(const x of e[key]||[])walk(x);
+    for(const key of ['effects'])for(const x of Array.isArray(e[key])?e[key]:[])walk(x);
     for(const key of ['heads','tails'])if(e[key])walk(e[key]);
    }walk(eff);
   }

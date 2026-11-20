@@ -2758,3 +2758,18 @@ lines and require actual owned 30-card legal decklists. Keep unimplemented
 printed moves, abilities and Item actions visibly gated. Audit each print and
 rarity variant independently, and preserve alternate collector IDs like 88a.
 The v0.69.325 integration does not replace the prior XY Base master audit.
+
+XY FLASHFIRE v0.69.326 AUDIT: Caterpie/Metapod Adaptive Evolution applies on
+first turn or turn played only while the Ability is unsuppressed, without
+bypassing non-timing restrictions. Floette Flower Veil adds 20 maximum HP per
+unsuppressed Floette to allied Grass Pokemon, including Benched. Dragalge
+Poison Barrier forbids retreat of the opposing Poisoned Active (and does not
+remove Energy or prevent switching by attacks). Protection Cube prevents
+recoil from the holder's own attacks, never opponent damage. Snorlax Stir and
+Snooze requires two heads to wake at between-turns checkups. Durant Chip Off
+uses exact random physical hand refs down to four cards. Forretress Thorn
+Tempest triggers only on evolution from hand, offers a genuine optional choice,
+and when chosen hits all opposing Pokemon with one counter each before KO
+resolution. Maractus Exciting Shake changes the
+next owner's Prickly Needles to six coin flips, not the current attack.
+Keep unresolved cards gated and test card/UID conservation and 30-card decks.

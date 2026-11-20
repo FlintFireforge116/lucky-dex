@@ -16,6 +16,7 @@ ATTACKS={
  ('7','Deranged Dance'):R('derangedDance'),
  ('9','Whiplash'):R('whiplash'),
  ('10','Exciting Shake'):R('excitingShake'),('10','Prickly Needles'):R('pricklyNeedles'),
+ ('61','Chip Off'):R('chipOff'),
  ('11','Stoke'):Q(R('stoke')),('11','Fire Blast'):DISC(),
  ('12','Combustion Blast'):E('lock',action='attack',target='self',duration='nextOwnTurn',attackName='Combustion Blast'),
  ('13','Crimson Dive'):E('selfDamage',amount=50),
@@ -35,6 +36,7 @@ ATTACKS={
  ('33','Electricounter'):R('electricounter'),
  ('34','Fang Snipe'):R('fangSnipe'),('34','Wild Charge'):E('selfDamage',amount=30),
  ('35','Dual Bullet'):R('dualBullet'),('101','Dual Bullet'):R('dualBullet'),
+ ('36','Destructive Beam'):Q(R('opponentDiscardEnergy')),
  ('37','Parabolic Charge'):SEARCH(2,kind='energy'),
  ('38','Revival'):R('revival'),('38','Sneaky Placement'):R('sneakyPlacement'),
  ('39','Cursed Drop'):R('cursedDrop'),
@@ -82,6 +84,10 @@ for a,b in [('11','100'),('35','101'),('41','102'),('78','103'),('13','107'),('6
   if number==a:ATTACKS.setdefault((b,name),effect)
 
 ABILITIES={
+ 'Adaptive Evolution':{'type':'passive','effect':R('adaptiveEvolution')},
+ 'Flower Veil':{'type':'passive','effect':R('flowerVeil')},
+ 'Stir and Snooze':{'type':'passive','effect':R('stirAndSnooze')},
+ 'Thorn Tempest':{'type':'triggered','event':'evolved','fromHandOnly':True,'effect':R('thornTempest')},
  'Intimidating Mane':{'type':'passive','effect':R('intimidatingMane')},
  'Poison Barrier':{'type':'passive','effect':R('poisonBarrier')},
 }
@@ -134,11 +140,14 @@ GATE={
  '101':'Dual Bullet distributes 50 damage to exactly two selected opposing Pokemon.',
  '98':'Trick Shovel requires own/opponent top-deck inspection and optional discard choice.',
 }
-# Explicit, static mechanics with real global rules, despite being stored as
-# no-op passive descriptors (the battle engine evaluates them continuously).
-# Poison Barrier remains gated until cross-turn retreat legality is checked.
-# GATE.pop('71')
+# Explicit, static mechanics use global engine rules even though their
+# passive effect descriptor has no standalone activation UI. In v0.69.326,
+# active-only Poison Barrier retreat lock and Protection Cube recoil prevention
+# are verified in real battle-state tests before removing their gates.
 GATE.pop('98')
+# Audited global mechanics, timed attacks, physical discard, and evolution-trigger effects.
+for _audited in ('1','2','10','60','61','64','71','80','95'):
+ GATE.pop(_audited,None)
 
 def attack(row,a):
  n,title=str(row[0]),a[0]

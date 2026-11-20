@@ -13007,7 +13007,29 @@
        else return false;
        slot.energy=slot.energy||{};slot.energy.Fire=Number(slot.energy.Fire||0)+1;
        ctx.onEnergyAttached?.(slot,'Fire',1,{fromHand:false});return true;};
-    if(k==='intimidatingMane'||k==='poisonBarrier')return;
+    if(['intimidatingMane','poisonBarrier','adaptiveEvolution','flowerVeil','stirAndSnooze'].includes(k))return;
+    if(k==='thornTempest'){
+      // Printed 'you may': the player must explicitly accept the trigger.
+      // The choice resumes without eventData, so check fromHand only when
+      // initially offered. KO/prize resolution follows the completed choice.
+      if(stage==='confirm'&&ctx.resolvingChoice){
+        if(Number(act.choiceOption)===1)for(const p of them()){
+          p.damage=Number(p.damage||0)+10;record({target:p.uid,counters:1});
+        }return;
+      }
+      if(ctx.isAbility&&ctx.eventData?.fromHand&&them().length)
+        ask('confirm',['Do not use Thorn Tempest','Put 1 damage counter on each opponent Pokémon']);
+      return;
+    }
+    if(k==='chipOff'){
+      // Discard random physical cards down to exactly four, never pick for
+      // the player or duplicate UIDs. The opponent retains the other cards.
+      const removed=[];while(foe.hand.length>4){const i=Math.min(foe.hand.length-1,Math.max(0,Math.floor((ctx.random?.(ctx.state)||0)*foe.hand.length)));
+        const [ref]=foe.hand.splice(i,1);if(ref){foe.discard.push(ref);removed.push(ref.uid);}}
+      record({discarded:removed});return;
+    }
+    if(k==='excitingShake'){if(a)a.xy2PricklyNeedlesNext=turn+2;return;}
+    if(k==='harden'){if(a)a.xy2HardenUntil=turn+1;return;}
     if(['psychic','derangedDance','electricounter','bigTusk','flail','ironCrash','wonderBlast','revenge','powerfulFriends'].includes(k))return;
     if(k==='triplePoison'){
       const d=ctx.defender;if(d&&!statusIsPrevented(ctx.state,d,ctx.cardById,'poison')){
@@ -17354,6 +17376,11 @@
         const shielded=ctx.isAttack&&guard?.duration==='nextOwnTurn'&&
           (guard.expiresTurn==null||ctx.state.turnNumber<=guard.expiresTurn);
         if(shielded){log({type:'preventedSelfDamage',amount:effect.amount,cardId:ctx.attacker.cardId});break;}
+        // Flashfire Protection Cube prevents only recoil inflicted by the
+        // holder's own attack. Opponent attacks still damage normally.
+        if(ctx.isAttack&&toolsOf(ctx.attacker).some(ref=>ref.cardId==='xy2-95')){
+          log({type:'preventedSelfDamage',amount:effect.amount,cardId:ctx.attacker.cardId,reason:'Protection Cube'});break;
+        }
         ctx.attacker.damage=Number(ctx.attacker.damage||0)+effect.amount;
       }break;
       case 'damage':logRuleBenchHits(ctx,()=>{for(const s of affected()){if(ctx.isAbility){const targetSide=pokemonOn(own(ctx)).includes(s)?ctx.side:ctx.foeSide;if(findPassiveRule(ctx.state,targetSide,s,'preventAbilityDamage',ctx.cardById))continue;}s.damage=Number(s.damage||0)+effect.amount;}});break;
@@ -17541,6 +17568,12 @@
           card=p=>ctx.cardById(p?.cardId),counter=p=>Math.floor(Number(p?.damage||0)/10),
           units=p=>{const val=ctx.effectiveEnergy?.(p);return val?Object.entries(val).filter(([t])=>!t.startsWith('__')).reduce((n,[,v])=>n+Number(v||0),0):
             Object.values(p?.energy||{}).reduce((n,v)=>n+Number(v||0),0)+(p?.specialEnergy||[]).length;};
+        if(k==='pricklyNeedles'){
+          const six=Number(a?.xy2PricklyNeedlesNext)===Number(ctx.state.turnNumber);
+          const results=Array.from({length:six?6:2},()=>coin(ctx));
+          damage=20*results.filter(Boolean).length;
+          ctx.state.log.push({type:'coin',side:ctx.side,reason:'Prickly Needles',heads:results.filter(Boolean).length,results});return;
+        }
         if(k==='psychic'){damage+=10*units(d);return;}
         if(k==='bigTusk'){damage=Math.max(0,120-10*counter(a));return;}
         if(k==='flail'){damage=10*counter(a);return;}
@@ -21605,6 +21638,9 @@ if(r==='lastResort')return ss.hand.length===0?[{}]:[];if(r==='surgeSwap')return 
         if(Number(defenderSlot.pl2HardenUntil)>=state.turnNumber&&finalValue<=40)finalValue=0;
         if(Number(defenderSlot.bw2HardenUntil)>=state.turnNumber&&finalValue<=40)finalValue=0;
         if(Number(defenderSlot.bw6HardenUntil)>=state.turnNumber&&finalValue<=60)finalValue=0;
+        // Flashfire Metapod Harden: block attack damage of 60 or less
+        // after Weakness/Resistance on the opponent's following turn.
+        if(Number(defenderSlot.xy2HardenUntil)>=Number(state.turnNumber)&&finalValue<=60)finalValue=0;
         if(Number(defenderSlot.dp7ScreechUntil)>=state.turnNumber&&defenderSlot.dp7ScreechFromSide===attackSide&&finalValue>0)finalValue+=20;
       }
       // Cinccino Smooth Coat: coin-flip prevention of actual attack damage.
