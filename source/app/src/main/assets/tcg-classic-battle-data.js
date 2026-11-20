@@ -68,6 +68,20 @@
 if(!base||!Array.isArray(base.CARDS)||!jungle||!Array.isArray(jungle.CARDS)||!fossil||!Array.isArray(fossil.CARDS)||!rocket||!Array.isArray(rocket.CARDS)||!gym||!Array.isArray(gym.CARDS)||!challenge||!Array.isArray(challenge.CARDS)||!neo||!Array.isArray(neo.CARDS)||!discovery||!Array.isArray(discovery.CARDS)||!revelation||!Array.isArray(revelation.CARDS)||!destiny||!Array.isArray(destiny.CARDS))throw new Error('Classic TCG set catalogues are missing.');
 const CARDS=[...base.CARDS,...jungle.CARDS,...fossil.CARDS,...rocket.CARDS,...gym.CARDS,...challenge.CARDS,...neo.CARDS,...discovery.CARDS,...revelation.CARDS,...destiny.CARDS,...legendary.CARDS,...expedition.CARDS,...aquapolis.CARDS,...skyridge.CARDS,...ruby.CARDS,...sandstorm.CARDS,...dragon.CARDS,...magmaAqua.CARDS,...hiddenLegends.CARDS,...fireRedLeafGreen.CARDS,...teamRocketReturns.CARDS,...deoxys.CARDS,...emerald.CARDS,...unseen.CARDS,...delta.CARDS,...legendMaker.CARDS,...holonPhantoms.CARDS,...crystalGuardians.CARDS,...dragonFrontiers.CARDS,...powerKeepers.CARDS,...diamondPearl.CARDS,...mysteriousTreasures.CARDS,...secretWonders.CARDS,...greatEncounters.CARDS,...majesticDawn.CARDS,...legendsAwakened.CARDS,...stormfront.CARDS,...platinum.CARDS,...rising.CARDS,...supreme.CARDS,...arceus.CARDS,...hgss1.CARDS,...hgss2.CARDS,...hgss3.CARDS,...hgss4.CARDS,...col1.CARDS,...bw1.CARDS,...bw2.CARDS,...bw3.CARDS,...bw4.CARDS,...bw5.CARDS,...bw6.CARDS,...bw7.CARDS,...bw8.CARDS,...bw9.CARDS,...bw10.CARDS,...bw11.CARDS,...xy1.CARDS,...xy2.CARDS,...lental.CARDS,...sv1.CARDS];
 
+// Every Classic subsystem (CPU, deck builder, action legality, card inspection,
+// copied attacks, and Tool modifiers) must see the same compact, printed
+// Energy-code format. Plasma Storm/Freeze/Blast imported many attacks with
+// costs like ["R","C"], which String(cost) would turn into "R,C".  Fix once
+// at registration so downstream consumers cannot disagree about energy units.
+const PRINTED_ENERGY_CODES=/^[GRWLPFDMYC]*$/;
+for(const card of CARDS)for(const attack of card.attacks||[]){
+  const raw=attack.cost??'';
+  const cost=Array.isArray(raw)?raw.join(''):raw;
+  if(typeof cost!=='string'||!PRINTED_ENERGY_CODES.test(cost))
+    throw new Error(`Invalid printed attack Energy cost: ${card.id} ${attack.name}: ${JSON.stringify(raw)}`);
+  if(Array.isArray(raw))attack.cost=cost;
+}
+
 // Legacy v0.69.63 seed details retained as provenance fixtures. v0.69.64's
 // complete Base Set mechanics live in tcg-classic-base1.js; registering these
 // seed rows is idempotent and preserves the original audited starter records.

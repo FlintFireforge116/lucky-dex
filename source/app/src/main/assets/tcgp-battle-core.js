@@ -831,6 +831,10 @@
     const aqMagnet=state.format==='classic'&&slot?.cardId==='ecard2-91'&&!effects.abilitiesSuppressed(state,side,slot,data.cardById)?state.sides[side].bench.filter(p=>data.cardById(p?.cardId)?.name==='Magnemite').length:0;
     return Math.max(0,Number(data.cardById(slot.cardId).retreat||0)+effects.modifierAmount(state,side,slot,'retreatCost',data.cardById)+stadiumCost+aqHeavy+(aqGluey?1:0)-aqMagnet-ex6Dodrio+Number(slot.dp2RetreatAdjustment||0)+bw7Jellicent-(bw9Glaceon?2:0));}
   function attackCost(state,side,attack){const slot=state.sides[side].active;let cost=effects.attackCostOverride(state,side,slot,attack,data.cardById)??attack.cost??'';
+    // Some older/imported prints and conditional overrides store costs as a
+    // symbol array. Array.toString() inserts commas (e.g. [R,R,C] -> R,R,C),
+    // which appear as phantom Energy icons and make legal moves unpayable.
+    cost=Array.isArray(cost)?cost.join(''):String(cost);
     if(state.format==='classic'&&slot?.cardId==='bw10-35'&&!effects.abilitiesSuppressed(state,side,slot,data.cardById)){
       cost=Array.isArray(cost)?cost.join(''):String(cost);
       const plasmaCount=pokemonOn(state.sides[side==='player'?'opponent':'player']).filter(p=>data.cardById(p.cardId)?.teamPlasma||toolsOf(p).some(r=>r.cardId==='bw9-104')).length;
@@ -1017,7 +1021,7 @@
   }
   function effectChoices(effect,ctx){return effects.supportsEffect(effect)?effects.choicesForEffect(effect,ctx):[];}
 
-  function energyCostLabel(cost){const names={...effects.ENERGY_CODE,C:'Colourless'},counts={};for(const c of cost||'')counts[c]=(counts[c]||0)+1;return Object.entries(counts).map(([c,n])=>`${n} ${names[c]||c}`).join(' + ')||'No Energy';}
+  function energyCostLabel(cost){const names={...effects.ENERGY_CODE,C:'Colourless'},counts={};const symbols=Array.isArray(cost)?cost.join(''):String(cost||'');for(const c of symbols)counts[c]=(counts[c]||0)+1;return Object.entries(counts).map(([c,n])=>`${n} ${names[c]||c}`).join(' + ')||'No Energy';}
   function attackHasRandom(effect){if(!effect||typeof effect!=='object')return false;if(['coinFlip','coinDamage','coinUntilTails'].includes(effect.type))return true;if(Array.isArray(effect.effects)&&effect.effects.some(attackHasRandom))return true;return ['heads','tails','effect'].some(key=>attackHasRandom(effect[key]));}
   function attackOptions(state,side){
     const slot=state?.sides?.[side]?.active,current=data.cardById(slot?.cardId);if(!slot||!current)return[];
@@ -2240,7 +2244,7 @@
       s.lostZone=s.lostZone||[];
       for(const [i,id] of (slot.stack||[slot.cardId]).entries())s.lostZone.push({uid:slot.uid+'-pl1-lost-'+i,cardId:id});
       s.lostZone.push(...toolsOf(slot),...temporaryTrainersOf(slot),...(slot.specialEnergy||[]));
-      const types={Grass:'base1-99',Fire:'base1-98',Water:'base1-102',Lightning:'base1-100',Psychic:'base1-101',Fighting:'base1-97',Darkness:'lental-basic-darkness',Metal:'lental-basic-metal'};
+      const types={Grass:'base1-99',Fire:'base1-98',Water:'base1-102',Lightning:'base1-100',Psychic:'base1-101',Fighting:'base1-97',Darkness:'lental-basic-darkness',Metal:'lental-basic-metal',Fairy:'xy1-140'};
       for(const [type,n] of Object.entries(slot.energy||{}))for(let i=0;i<Number(n||0);i++)
         s.lostZone.push({uid:slot.uid+'-pl1-lost-energy-'+type+'-'+i,cardId:types[type]||'base1-99',zoneGenerated:true});
       return;
@@ -2379,14 +2383,14 @@
         if(teleport){
           for(let i=0;i<slot.stack.length;i++)s.hand.push({uid:`${slot.uid}-teleport-${i}`,cardId:slot.stack[i]});
           for(const ref of [...toolsOf(slot),...(slot.specialEnergy||[]),...temporaryTrainersOf(slot)])s.hand.push(ref);
-          const basicEnergy={Fighting:'base1-97',Fire:'base1-98',Grass:'base1-99',Lightning:'base1-100',Psychic:'base1-101',Water:'base1-102',Darkness:'lental-basic-darkness',Metal:'lental-basic-metal'};
+          const basicEnergy={Fighting:'base1-97',Fire:'base1-98',Grass:'base1-99',Lightning:'base1-100',Psychic:'base1-101',Water:'base1-102',Darkness:'lental-basic-darkness',Metal:'lental-basic-metal',Fairy:'xy1-140'};
           for(const [type,n] of Object.entries(slot.energy||{}))for(let i=0;i<Number(n||0);i++){
             const id=basicEnergy[type];if(id)s.hand.push({uid:`${slot.uid}-teleport-energy-${type}-${i}`,cardId:id,zoneGenerated:true});
             else{s.energyDiscard[type]=Number(s.energyDiscard[type]||0)+1;}
           }
           state.log.push({type:'founjaTeleport',side,cardId:slot.cardId});
         }
-        else if(slot.pl2WaterRescue){delete slot.pl2WaterRescue;for(const [i,id] of (slot.stack||[slot.cardId]).entries())s.hand.push({uid:slot.uid+'-waterrescue-'+i,cardId:id});s.hand.push(...toolsOf(slot),...temporaryTrainersOf(slot),...(slot.specialEnergy||[]));const ids={Grass:'dp1-123',Fire:'dp1-124',Water:'dp1-125',Lightning:'dp1-126',Psychic:'dp1-127',Fighting:'dp1-128',Darkness:'lental-basic-darkness',Metal:'lental-basic-metal'};for(const [type,n] of Object.entries(slot.energy||{}))for(let i=0;i<Number(n||0);i++)s.hand.push({uid:slot.uid+'-waterrescue-energy-'+type+'-'+i,cardId:ids[type],zoneGenerated:true});state.log.push({type:'pl2WaterRescue',side,cardId:slot.cardId});}
+        else if(slot.pl2WaterRescue){delete slot.pl2WaterRescue;for(const [i,id] of (slot.stack||[slot.cardId]).entries())s.hand.push({uid:slot.uid+'-waterrescue-'+i,cardId:id});s.hand.push(...toolsOf(slot),...temporaryTrainersOf(slot),...(slot.specialEnergy||[]));const ids={Grass:'dp1-123',Fire:'dp1-124',Water:'dp1-125',Lightning:'dp1-126',Psychic:'dp1-127',Fighting:'dp1-128',Darkness:'lental-basic-darkness',Metal:'lental-basic-metal',Fairy:'xy1-140'};for(const [type,n] of Object.entries(slot.energy||{}))for(let i=0;i<Number(n||0);i++)s.hand.push({uid:slot.uid+'-waterrescue-energy-'+type+'-'+i,cardId:ids[type],zoneGenerated:true});state.log.push({type:'pl2WaterRescue',side,cardId:slot.cardId});}
         else if(state.format==='classic'&&cause==='attack'&&eventSource?.attack&&eventSource.side===foeSide&&
           toolsOf(slot).some(r=>r.cardId==='bw6-115')){
           // Rescue Scarf returns the knocked-out Pokemon (not its attached

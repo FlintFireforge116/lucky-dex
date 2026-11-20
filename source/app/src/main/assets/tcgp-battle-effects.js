@@ -165,6 +165,9 @@
   function assertEffect(effect){const errors=validateEffect(effect);if(errors.length)throw new Error(errors.join('; '));}
   function totalEnergy(energy){return Object.values(energy||{}).reduce((n,v)=>n+Math.max(0,Number(v)||0),0);}
   function canPayCost(energy,cost){
+    // Normalise legacy/imported symbol arrays before any typing checks.
+    // String(["R","R","C"]) would otherwise create phantom comma costs.
+    cost=Array.isArray(cost)?cost.join(''):String(cost||'');
     if(energy?.__towerBasics){
       // Holon Research Tower: each Basic Energy can provide either its normal
       // type or Metal, never two units. Try all valid assignments so mixed

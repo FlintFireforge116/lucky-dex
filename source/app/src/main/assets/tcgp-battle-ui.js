@@ -629,9 +629,9 @@
     return abilityHtml+handEnergyNote+attacks+trainer+energy+discoveryAdaptation+(options?.developer?paragraph(supportText(card)):'');
   }
   function energyCostHtml(cost){
-    const letters=String(cost||'').split('').filter(Boolean);
+    const letters=(Array.isArray(cost)?cost.join(''):String(cost||'')).split('').filter(Boolean);
     if(!letters.length)return '<span class="tcgp-cost-empty">No Energy</span>';
-    const labelFor=letter=>({G:'Grass',R:'Fire',W:'Water',L:'Lightning',P:'Psychic',F:'Fighting',D:'Darkness',M:'Metal',C:'Colorless',N:'Dragon'}[letter]||letter);
+    const labelFor=letter=>({G:'Grass',R:'Fire',W:'Water',L:'Lightning',P:'Psychic',F:'Fighting',D:'Darkness',M:'Metal',Y:'Fairy',C:'Colorless',N:'Dragon'}[letter]||letter);
     return `<span class="tcgp-cost">${letters.map(letter=>energyIconHtml(labelFor(letter),{className:'cost'})).join('')}</span>`;
   }
   function slotTools(slot){

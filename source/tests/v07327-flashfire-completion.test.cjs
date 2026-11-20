@@ -197,8 +197,12 @@ test('XY2 completion: real Sneasel Flash Claw action requires the defending play
  const s=scene();s.sides.player.active=mon('xy2-50','sneasel');s.sides.player.active.energy.Darkness=4;
  s.sides.opponent.active=mon('xy2-4','defender');
  s.sides.opponent.hand=[ref('xy2-4','hand-a'),ref('xy2-5','hand-b')];
- const action=core.legalActions(s,'player').find(a=>a.type==='attack'&&a.attackIndex===0);
- assert.ok(action);core.applyAction(s,'player',action);
+ // Flash Claw is Sneasel's SECOND attack (index 1); the first is Scratch.
+ // Never test the discard interaction by accidentally executing Scratch.
+ const flashIndex=data.cardById('xy2-50').attacks.findIndex(a=>a.name==='Flash Claw');
+ assert.equal(flashIndex,1,'Flash Claw must resolve from the actual second printed move');
+ const action=core.legalActions(s,'player').find(a=>a.type==='attack'&&a.attackIndex===flashIndex);
+ assert.ok(action,'Flash Claw must be a legal move');core.applyAction(s,'player',action);
  assert.equal(s.phase,'effectChoice');assert.equal(s.choiceSide,'opponent');
  const opts=core.legalActions(s,'opponent');assert.equal(opts.length,2);
  core.applyAction(s,'opponent',opts[1]);

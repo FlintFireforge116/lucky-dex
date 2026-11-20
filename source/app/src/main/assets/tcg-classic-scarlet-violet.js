@@ -557,7 +557,7 @@ Object.assign(TRAINERS,{
  167:{type:'noop'},
  169:{type:'modifier',stat:'attackDamage',amount:30,duration:'whileInPlay',sv1DefianceBand:true},
  170:sv('electricGenerator'),
- 171:{type:'energyRetrieval',amount:2,energyCardIds:{Grass:'base1-99',Fire:'base1-98',Water:'base1-102',Lightning:'base1-100',Psychic:'base1-101',Fighting:'base1-97',Darkness:'lental-basic-darkness',Metal:'lental-basic-metal'}},
+ 171:{type:'energyRetrieval',amount:2,energyCardIds:{Grass:'base1-99',Fire:'base1-98',Water:'base1-102',Lightning:'base1-100',Psychic:'base1-101',Fighting:'base1-97',Darkness:'lental-basic-darkness',Metal:'lental-basic-metal',Fairy:'xy1-140'}},
  172:sv('energySearch'),
  173:sv('energySwitch'),
  174:{type:'triggeredEffect',event:'teammateKnockedOut',effect:sv('expShare')},

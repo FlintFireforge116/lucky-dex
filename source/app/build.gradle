@@ -8,8 +8,8 @@ android {
         applicationId 'com.example.luckydex'
         minSdk 26
         targetSdk 35
-        versionCode 7327
-        versionName '0.69.327'
+        versionCode 7329
+        versionName '0.69.329'
     }
 
     signingConfigs {
@@ -594,4 +594,28 @@ tasks.register('auditXY2ForApk', Exec) {
 }
 tasks.matching { it.name == 'preBuild' || (it.name.startsWith('merge') && it.name.endsWith('Assets')) }.configureEach {
     dependsOn tasks.named('auditXY2ForApk')
+}
+
+// v0.69.328: fail the APK build if the two generated XY catalogues are still
+// placeholders, or if Reshiram/Vanilluxe cost and coin rules regress.
+// This must run after BOTH pinned generators, before any Android asset merge.
+tasks.register('auditV07328PlayerReportedBugsForApk', Exec) {
+    dependsOn tasks.named('auditXY2ForApk')
+    workingDir rootProject.projectDir
+    commandLine 'node', '--test', 'tests/v07328-reshiram-vanilluxe-xy-ui-regressions.test.cjs'
+}
+tasks.matching { it.name == 'preBuild' || (it.name.startsWith('merge') && it.name.endsWith('Assets')) }.configureEach {
+    dependsOn tasks.named('auditV07328PlayerReportedBugsForApk')
+}
+
+// v0.69.329: whole-Classic printed Energy contract, across every set.
+// Must run AFTER both XY pinned sources have been generated and after the
+// earlier Flashfire / player-report audits, BEFORE packaging webview assets.
+tasks.register('auditV07329AllClassicAttackEnergyForApk', Exec) {
+    dependsOn tasks.named('auditV07328PlayerReportedBugsForApk')
+    workingDir rootProject.projectDir
+    commandLine 'node', '--test', 'tests/v07329-classic-global-energy-audit.test.cjs'
+}
+tasks.matching { it.name == 'preBuild' || (it.name.startsWith('merge') && it.name.endsWith('Assets')) }.configureEach {
+    dependsOn tasks.named('auditV07329AllClassicAttackEnergyForApk')
 }
