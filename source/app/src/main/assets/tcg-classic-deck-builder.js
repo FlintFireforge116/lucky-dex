@@ -27,7 +27,7 @@ const STAPLES=Object.freeze([
  ['base1-83',1], // Maintenance
  ['base1-87',1]  // Pokedex
 ]);
-const SET_IDS=Object.freeze(['base1','base2','base3','base5','gym1','gym2','neo1','neo2','neo3','neo4','base6','ecard1','ecard2','ecard3','ex1','ex2','ex3','ex4','ex5','ex6','ex7','ex8','ex9','ex10','ex11','ex12','ex13','ex14','ex15','ex16','dp1','dp2','dp3','dp4','dp5','dp6','dp7','pl1','pl2','pl3','pl4','hgss1','hgss2','hgss3','hgss4','col1','bw1','bw2','bw3','bw4','bw5','bw6','bw7','bw8','bw9','bw10','SNAPFLORIO','SNAPFOUNJA','sv1']);
+const SET_IDS=Object.freeze(['base1','base2','base3','base5','gym1','gym2','neo1','neo2','neo3','neo4','base6','ecard1','ecard2','ecard3','ex1','ex2','ex3','ex4','ex5','ex6','ex7','ex8','ex9','ex10','ex11','ex12','ex13','ex14','ex15','ex16','dp1','dp2','dp3','dp4','dp5','dp6','dp7','pl1','pl2','pl3','pl4','hgss1','hgss2','hgss3','hgss4','col1','bw1','bw2','bw3','bw4','bw5','bw6','bw7','bw8','bw9','bw10','bw11','SNAPFLORIO','SNAPFOUNJA','sv1']);
 // Darkness and Metal are already Basic Energy types. Deduplicate before rendering
 // archetype chips so each energy type has exactly one toggle.
 // Dragon is a Pokémon type, never a Basic Energy type. Include it as an
@@ -232,6 +232,43 @@ function fail(message){return {ok:false,cards:[],energyTypes:[],errors:[message]
 // failed. Complete families are required; no orphan Restored Pokémon, false
 // Energy, ACE SPEC overflow, cross-set Trainers or generic unrelated basics.
 // Exposed for an independent regression; it never overrides a manual focus.
+// BW11-only complete Basic cores. The emergency path never changes manual
+// selection and refuses to create cards not actually owned. 14 legitimate
+// Pokémon prints + four legitimate playsets, all inside Legendary Treasures.
+function rescueBW11Deck(rows,options={}){
+ const scopes=options.sets||[],types=options.types||[];
+ if(scopes.length!==1||scopes[0]!=='bw11'||types.length!==1||options.focusCardId||
+    options.basicOnly===true||(options.rarityFocus&&options.rarityFocus!=='any')||
+    (options.theme&&options.theme!=='any')||(options.cards&&options.cards.length))return null;
+ const type=types[0],families={
+  Grass:['bw11-3','bw11-5','bw11-15','bw11-13'],
+  Fire:['bw11-22','bw11-24','bw11-28','bw11-29'],
+  Water:['bw11-32','bw11-43','bw11-44','bw11-45'],
+  Lightning:['bw11-46','bw11-50','bw11-51','bw11-52'],
+  Psychic:['bw11-53','bw11-54','bw11-66','bw11-77'],
+  Fighting:['bw11-82','bw11-84','bw11-85','bw11-83'],
+  Darkness:['bw11-88','bw11-89','bw11-90','bw11-RC13'],
+  Metal:['bw11-91','bw11-107','bw11-108','bw11-104'],
+  Dragon:['bw11-93','bw11-100','bw11-101','bw11-107'],
+  Colorless:['bw11-107','bw11-108','bw11-104','bw11-RC15']
+ };
+ const core=families[type];if(!core)return null;
+ const counts=[4,4,4,2],trainers=['bw11-109','bw11-111','bw11-112','bw11-113'];
+ const selected=[...core.map((id,i)=>[id,counts[i]]),...trainers.map(id=>[id,4])];
+ const owned=ownedMap(rows);
+ if(selected.some(([id,n])=>{const c=classic.cardById(id);return !c||!c.battleEnabled||c.deckEligible===false||
+     c.setId!=='bw11'||Number(owned.get(id)||0)<n;}))return null;
+ const cards=selected.flatMap(([id,n])=>Array(n).fill(id));
+ const energyTypes=type==='Dragon'?['Fire','Lightning']:type==='Colorless'?['Fighting']:[type];
+ if(cards.length!==30||!classic.validateDeck(cards).ok||
+    !decks.validateDraft(cards,rows,{requireFull:true}).ok)return null;
+ const code={G:'Grass',R:'Fire',W:'Water',L:'Lightning',P:'Psychic',F:'Fighting',D:'Darkness',M:'Metal'};
+ if(core.some(id=>{const c=classic.cardById(id);return !(c.attacks||[]).some(a=>
+  (Array.isArray(a.cost)?a.cost:[...String(a.cost||'')]).every(t=>t==='C'||!code[t]||energyTypes.includes(code[t])));} ))return null;
+ return {ok:true,cards,energyTypes,errors:[],warnings:[],style:'competitive',
+   archetypeKey:'bw11-'+type.toLowerCase()+'-fallback',focusCardId:core[0],
+   strategy:'BW11 verified single-set recovery'};
+}
 function rescueBW10Deck(rows,options={}){
  const scopes=options.sets||[],types=options.types||[];
  if(scopes.length!==1||scopes[0]!=='bw10'||types.length!==1||
@@ -863,7 +900,7 @@ function buildDeck(rows,options={}){
  // payoff checks Plasma Energy or Colress Machine can attach one, reserve
  // actual Special Energy copies before Trainer filler crowds them out.
  // Include BW8, BW9 and BW10 cards, preferring the focus set's identical print.
- if(scope.includes('bw8')||scope.includes('bw9')||scope.includes('bw10')){
+ if(scope.includes('bw8')||scope.includes('bw9')||scope.includes('bw10')||scope.includes('bw11')){
    const pokemon=cards.map(classic.cardById).filter(c=>c?.kind==='pokemon');
    const plasmaPayoff=pokemon.some(c=>(c.attacks||[]).some(a=>/Plasma Energy attached|Plasma Gale/i.test(String(a.text||'')+' '+a.name)));
    const hasColressMachine=pool.some(c=>c.name==='Colress Machine'&&c.battleEnabled);
@@ -1014,6 +1051,8 @@ function buildDeck(rows,options={}){
  // only the sparse-inventory rescue is allowed a second otherwise unrequested type.
  if(cards.length<30){for(const c of pool.filter(c=>(usefulFillerCard(c)||c.stage==='Basic')&&trainerIsUseful(c))){while(cards.length<30&&room(c)>0){const trial=[...cards,c.id],profile=decks.analyzeDeck(trial).recommendedEnergyTypes;if(options._allowSecondType===true&&!requestedEnergy.length?profile.length>2:!profile.every(t=>plannedEnergy.includes(t)))break;if(!add(c,1))break;}if(cards.length>=30)break;}}
  if(cards.length!==30){
+   const bw11Recovery=rescueBW11Deck(rows,{...options,sets:scope});
+   if(bw11Recovery?.ok)return bw11Recovery;
    const bw10Recovery=rescueBW10Deck(rows,{...options,sets:scope});
    if(bw10Recovery)return bw10Recovery;
    // Sparse themed pools can choose an awkward first core that leaves too few
@@ -1076,5 +1115,5 @@ function buildDeck(rows,options={}){
  return {ok:true,cards,energyTypes:finalEnergy,errors:[],warnings:notes,plan,style,archetypeKey:archetypeKey(featured||main),focusCardId:fossilFocus?.id||focus?.id||featured?.id||main.id,strategy:`${style==='random'?'Random featured':'Competitive'} · ${theme!=='any'?synergy.THEMES.find(t=>t.id===theme).label+' · ':''}${rarityFocus!=='any'?RARITY_FOCUS.find(r=>r.id===rarityFocus).label+' · ':''}${basicOnly?'Basic-only · ':''}${label} · ${featured?featured.name+' featured · ':''}${archetypeName(main,evolutionPool)} core · ${pokemonCount()} Pokémon / ${30-pokemonCount()} Trainers & Special Energy`};
 }
 function buildDeckAsync(rows,options,control={}){return new Promise(resolve=>{setTimeout(()=>{if(control.isCancelled?.())return resolve(null);resolve(buildDeck(rows,options));},0);});}
-return {buildDeck,rescueBW10Deck,buildDeckAsync,THEMES:synergy.THEMES,familyLine,familyRoot,attackTypes,conditionalAttackTypes,allowedInSetPool,ARCHETYPE_TYPES,SET_IDS,RARITY_FOCUS,rarityTier,matchesRarity};
+return {buildDeck,rescueBW10Deck,rescueBW11Deck,buildDeckAsync,THEMES:synergy.THEMES,familyLine,familyRoot,attackTypes,conditionalAttackTypes,allowedInSetPool,ARCHETYPE_TYPES,SET_IDS,RARITY_FOCUS,rarityTier,matchesRarity};
 });

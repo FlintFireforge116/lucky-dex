@@ -8,8 +8,8 @@ android {
         applicationId 'com.example.luckydex'
         minSdk 26
         targetSdk 35
-        versionCode 7316
-        versionName '0.69.318'
+        versionCode 7319
+        versionName '0.69.319'
     }
 
     signingConfigs {
@@ -545,4 +545,21 @@ tasks.register('auditBW10ForApk', Exec) {
 }
 tasks.matching { it.name == 'preBuild' || (it.name.startsWith('merge') && it.name.endsWith('Assets')) }.configureEach {
     dependsOn tasks.named('auditBW10ForApk')
+}
+
+// BW11, including all 25 Radiant Collection prints, is generated from an
+// immutable Git blob on GitHub Actions. This runs automatically: users only
+// unzip / git add / commit / push. The audit NEVER runs on the stub asset.
+tasks.register('generateBW11ForApk', Exec) {
+    dependsOn tasks.named('auditBW10ForApk')
+    workingDir rootProject.projectDir
+    commandLine (System.getenv('LUCKYDEX_PYTHON') ?: 'python3'), 'scripts/build-bw11.py'
+}
+tasks.register('auditBW11ForApk', Exec) {
+    dependsOn tasks.named('generateBW11ForApk')
+    workingDir rootProject.projectDir
+    commandLine 'node', '--test', 'tests/v07319-legendary-treasures.test.cjs'
+}
+tasks.matching { it.name == 'preBuild' || (it.name.startsWith('merge') && it.name.endsWith('Assets')) }.configureEach {
+    dependsOn tasks.named('auditBW11ForApk')
 }

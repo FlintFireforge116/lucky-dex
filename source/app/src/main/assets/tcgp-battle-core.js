@@ -701,7 +701,8 @@
     if(slot)slot.bw7RetreatAdjustment=bw7Jellicent;
     // Dark Explorers Dark Cloak covers every allied Pokémon with any Darkness
     // Energy, including a compatible Rainbow-providing Special Energy.
-    if(state.format==='classic'&&slot&&pokemonOn(state.sides[side]).some(p=>['bw5-63','bw5-107'].includes(p.cardId)&&!effects.abilitiesSuppressed(state,side,p,data.cardById))&&
+    if(state.format==='classic'&&slot?.cardId==='bw11-RC3'&&!effects.abilitiesSuppressed(state,side,slot,data.cardById)&&Number(effectiveEnergy(state,side,slot).Grass||0)>0)return 0;
+    if(state.format==='classic'&&slot&&pokemonOn(state.sides[side]).some(p=>['bw5-63','bw5-107','bw11-88'].includes(p.cardId)&&!effects.abilitiesSuppressed(state,side,p,data.cardById))&&
        Number(effectiveEnergy(state,side,slot).Darkness||0)>0)return 0;
 
     if(state.format==='classic'&&slot&&pokemonOn(state.sides[side]).some(p=>p.cardId==='hgss2-4'&&!effects.abilitiesSuppressed(state,side,p,data.cardById))&&Number(effectiveEnergy(state,side,slot).Psychic||0)>0)return 0;
@@ -1056,7 +1057,7 @@
     }
     // Dragons Exalted Mew-EX Versatile: borrowed attacks of ANY Pokemon in
     // play, with energy costs paid by Mew rather than the source card.
-    if(state.format==='classic'&&['bw6-46','bw6-120'].includes(current.id)&&
+    if(state.format==='classic'&&['bw6-46','bw6-120','bw11-RC24'].includes(current.id)&&
        !effects.abilitiesSuppressed(state,side,slot,data.cardById)){
       const seen=new Set(out.map(x=>x.cardId+':'+x.attackIndex));
       for(const who of ['player','opponent'])for(const p of pokemonOn(state.sides[who])){
@@ -1986,6 +1987,16 @@
 
   function endTurn(state){
     if (state.phase !== 'battle') return;
+    // Serperior Royal Heal: between-turn healing is global to its owner's
+    // Pokémon, once per active copy, and respects Ability suppression.
+    if(state.format==='classic')for(const who of ['player','opponent']){
+      const board=state.sides[who];
+      const healers=pokemonOn(board).filter(p=>p.cardId==='bw11-8'&&!effects.abilitiesSuppressed(state,who,p,data.cardById));
+      if(healers.length)for(const p of pokemonOn(board))if(p.damage>0){
+        const before=p.damage;p.damage=Math.max(0,p.damage-10*healers.length);
+        state.log.push({type:'heal',side:who,reason:'Royal Heal',targetUid:p.uid,amount:before-p.damage});
+      }
+    }
     if(state.format==='classic'){
       const ending=state.activeSide;
       for(const owner of ['player','opponent'])if(owner!==ending){
@@ -2372,7 +2383,7 @@
           const hgss3SpaceVirus=awardsPrize&&cause==='attack'&&eventSource?.attack&&
             ['hgss3-89','hgss3-90'].includes(attacker?.cardId)&&eventSource.uid===attacker?.uid&&
             !effects.abilitiesSuppressed(state,foeSide,attacker,data.cardById)?1:0;
-          const bw8Overflow=awardsPrize&&cause==='attack'&&eventSource?.attack&&attacker&&['bw8-108','bw8-134'].includes(attacker.cardId)&&eventSource.uid===attacker.uid&&!effects.abilitiesSuppressed(state,foeSide,attacker,data.cardById)?1:0;
+          const bw8Overflow=awardsPrize&&cause==='attack'&&eventSource?.attack&&attacker&&['bw8-108','bw8-134','bw11-102'].includes(attacker.cardId)&&eventSource.uid===attacker.uid&&!effects.abilitiesSuppressed(state,foeSide,attacker,data.cardById)?1:0;
           const bw9LifeDew=state.format==='classic'&&toolsOf(slot).some(r=>r.cardId==='bw9-107')?1:0;
           const prizeCount=awardsPrize?Math.max(0,prizeValue(card)+extraMoonSkip+arceusBeltBonus+arceusExtra+hgss3SpaceVirus+bw8Overflow-bw9LifeDew):0;
           awarded=Math.min(prizeCount,Math.max(0,foe.prizes.length-(state.pendingPrizeClaims||[]).filter(q=>q.side===foeSide).reduce((n,q)=>n+q.remaining,0)));
@@ -3200,7 +3211,9 @@
             damage+=50;
           if(state.format==='classic'&&Number(s.active?.bw10LeafWallopUntil||0)>=Number(state.turnNumber)&&isActive&&attack.name==='Leaf Wallop')
             damage+=40;
-          const noPlasmaWeakness=state.format==='classic'&&(state.stadium?.cardId==='bw8-124'&&(defender.specialEnergy||[]).some(r=>['bw8-127','bw9-106','bw10-91'].includes(r.cardId))||Number(defender.bw9NoWeaknessUntil||0)>=Number(state.turnNumber));
+          const noPlasmaWeakness=state.format==='classic'&&(
+            pokemonOn(foe).some(p=>p.cardId==='bw11-12'&&!effects.abilitiesSuppressed(state,foeSide,p,data.cardById))&&
+              (Object.values(defender.energy||{}).some(n=>Number(n)>0)||(defender.specialEnergy||[]).length>0)||state.stadium?.cardId==='bw8-124'&&(defender.specialEnergy||[]).some(r=>['bw8-127','bw9-106','bw10-91'].includes(r.cardId))||Number(defender.bw9NoWeaknessUntil||0)>=Number(state.turnNumber));
           const oldWeakness=defender.weaknessOverride;
           if(noPlasmaWeakness)defender.weaknessOverride='__bw8_no_weakness__';
           try{damage=effects.attackDamageWithState(state,side,s.active,foeSide,defender,damage,data.cardById);}finally{if(noPlasmaWeakness)defender.weaknessOverride=oldWeakness;}
@@ -3251,7 +3264,7 @@
       damage=guard?0:Math.max(0,damage-(result.damageRules?.ignoreEffects?0:effects.modifierAmount(state,foeSide,defender,'damageReduction',data.cardById)));
       if(state.format==='classic'&&!result.damageRules?.ignoreEffects&&
           ((['bw9-85','bw9-112'].includes(defender.cardId)&&!effects.abilitiesSuppressed(state,foeSide,defender,data.cardById)&&attackerCard.abilities?.length)||
-           (['bw9-118','bw10-20'].includes(defender.cardId)&&!effects.abilitiesSuppressed(state,foeSide,defender,data.cardById)&&attackerCard.pokemonEX)))damage=0;
+           (['bw9-118','bw10-20','bw11-66'].includes(defender.cardId)&&!effects.abilitiesSuppressed(state,foeSide,defender,data.cardById)&&attackerCard.pokemonEX)))damage=0;
       if(state.format==='classic'&&data.cardById(s.active.cardId)?.pokemonEX&&pokemonOn(foe).some(p=>p.cardId==='bw8-90'&&!effects.abilitiesSuppressed(state,foeSide,p,data.cardById))&&effects.effectiveTypes(state,foeSide,defender,data.cardById).includes('Metal')&&!result.damageRules?.ignoreEffects)damage=0;
       if(state.format==='classic'&&!result.damageRules?.ignoreEffects){
         if(state.format==='classic'&&toolsOf(defender).some(r=>r.cardId==='bw10-89')&&
