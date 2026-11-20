@@ -27,7 +27,7 @@ const STAPLES=Object.freeze([
  ['base1-83',1], // Maintenance
  ['base1-87',1]  // Pokedex
 ]);
-const SET_IDS=Object.freeze(['base1','base2','base3','base5','gym1','gym2','neo1','neo2','neo3','neo4','base6','ecard1','ecard2','ecard3','ex1','ex2','ex3','ex4','ex5','ex6','ex7','ex8','ex9','ex10','ex11','ex12','ex13','ex14','ex15','ex16','dp1','dp2','dp3','dp4','dp5','dp6','dp7','pl1','pl2','pl3','pl4','hgss1','hgss2','hgss3','hgss4','col1','bw1','bw2','bw3','bw4','bw5','bw6','bw7','bw8','SNAPFLORIO','SNAPFOUNJA','sv1']);
+const SET_IDS=Object.freeze(['base1','base2','base3','base5','gym1','gym2','neo1','neo2','neo3','neo4','base6','ecard1','ecard2','ecard3','ex1','ex2','ex3','ex4','ex5','ex6','ex7','ex8','ex9','ex10','ex11','ex12','ex13','ex14','ex15','ex16','dp1','dp2','dp3','dp4','dp5','dp6','dp7','pl1','pl2','pl3','pl4','hgss1','hgss2','hgss3','hgss4','col1','bw1','bw2','bw3','bw4','bw5','bw6','bw7','bw8','bw9','SNAPFLORIO','SNAPFOUNJA','sv1']);
 // Darkness and Metal are already Basic Energy types. Deduplicate before rendering
 // archetype chips so each energy type has exactly one toggle.
 // Dragon is a Pokémon type, never a Basic Energy type. Include it as an
@@ -803,6 +803,27 @@ function buildDeck(rows,options={}){
      if(physical&&allowedInSetPool(physical,scope))add(physical,Math.min(2,room(physical)));
    }
  }
+ // v0.69.314 Plasma Freeze / Storm physical Plasma Energy. The Zone's
+ // Colorless counter is not a Plasma Energy CARD. When the printed attack
+ // payoff checks Plasma Energy or Colress Machine can attach one, reserve
+ // actual Special Energy copies before Trainer filler crowds them out.
+ // Include BW8 and BW9 cards, preferring the focus set's identical print.
+ if(scope.includes('bw8')||scope.includes('bw9')){
+   const pokemon=cards.map(classic.cardById).filter(c=>c?.kind==='pokemon');
+   const plasmaPayoff=pokemon.some(c=>(c.attacks||[]).some(a=>/Plasma Energy attached|Plasma Gale/i.test(String(a.text||'')+' '+a.name)));
+   const hasColressMachine=pool.some(c=>c.name==='Colress Machine'&&c.battleEnabled);
+   const plasmaPackage=pokemon.some(c=>c.teamPlasma)&&hasColressMachine;
+   const requested=plasmaPayoff?3:plasmaPackage?2:0;
+   if(requested){
+     const energies=pool.filter(c=>c.kind==='energy'&&c.specialEnergy&&c.name==='Plasma Energy')
+       .sort((a,b)=>Number(b.setId===main.setId)-Number(a.setId===main.setId)||a.id.localeCompare(b.id));
+     let remaining=requested;
+     for(const energyCard of energies){
+       if(remaining<=0||cards.length>=30)break;
+       remaining-=add(energyCard,Math.min(remaining,room(energyCard)));
+     }
+   }
+ }
  const flexibleDarkMetal=classic.cardById('ex13-97');
  if(flexibleDarkMetal&&allowedInSetPool(flexibleDarkMetal,scope)&&
    selectedTypes.includes('Darkness')&&selectedTypes.includes('Metal'))add(flexibleDarkMetal,1);
@@ -912,6 +933,8 @@ function buildDeck(rows,options={}){
      (p.types||[]).some(t=>t==='Darkness'||t==='Metal')||
      (p.attacks||[]).some(a=>/[DM]/.test(String(a.cost||''))));
    if(name==='React Energy')return pokemon.some(p=>synergy.metadata(p).specialEnergyPayoffs.includes('react-energy'));
+   if(name==='Plasma Energy')return pokemon.some(p=>p.teamPlasma||
+     (p.attacks||[]).some(a=>/Plasma Energy attached|Plasma Gale/i.test(String(a.text||'')+' '+a.name)));
    if(name==='δ Rainbow Energy')return pokemon.some(p=>p.deltaSpecies===true);
    // Holon Energy is selected earlier using its real basic-Energy activation
    // conditions and printed on-Pokémon payoffs, not in this filler stage.

@@ -1,0 +1,18 @@
+{
+  "printed": 122,
+  "battleReady": 119,
+  "gated": {
+    "bw9-4": [
+      "Propagation requires playable Ability while Pokémon is in discard, which normal board-only Ability actions do not support."
+    ],
+    "bw9-56": [
+      "Six Feet Under requires multi-target damage-counter distribution and KO sequencing."
+    ],
+    "bw9-94": [
+      "Imittack must present target attack choice and recursively execute its actual effect with copied energy requirements."
+    ]
+  },
+  "attacks": 175,
+  "abilities": 17,
+  "sourceGitBlob": "b659099a0445bab44b1a7df61a70d83bc13895a0"
+}

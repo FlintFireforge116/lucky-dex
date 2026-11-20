@@ -9,7 +9,7 @@ android {
         minSdk 26
         targetSdk 35
         versionCode 7313
-        versionName '0.69.313'
+        versionName '0.69.314'
     }
 
     signingConfigs {
@@ -512,4 +512,21 @@ tasks.matching { it.name == 'preBuild' || (it.name.startsWith('merge') && it.nam
 // start before BW8 source generation has created its required JS module.
 tasks.matching { it.name.startsWith('audit') && it.name.endsWith('ForApk') && it.name != 'auditBW8ForApk' }.configureEach {
     dependsOn tasks.named('generateBW8ForApk')
+}
+
+// v0.69.314 Plasma Freeze (BW9): reproducibly generate pinned 122-print
+// catalogue before running its gameplay / CPU / Team Plasma regressions.
+// Depend on BW8 audit so physical Plasma Energy cross-set logic is present.
+tasks.register('generateBW9ForApk', Exec) {
+    dependsOn tasks.named('auditBW8ForApk')
+    workingDir rootProject.projectDir
+    commandLine (System.getenv('LUCKYDEX_PYTHON') ?: 'python3'), 'scripts/build-bw9.py'
+}
+tasks.register('auditBW9ForApk', Exec) {
+    dependsOn tasks.named('generateBW9ForApk')
+    workingDir rootProject.projectDir
+    commandLine 'node', '--test', 'tests/v07314-plasma-freeze.test.cjs'
+}
+tasks.matching { it.name == 'preBuild' || (it.name.startsWith('merge') && it.name.endsWith('Assets')) }.configureEach {
+    dependsOn tasks.named('auditBW9ForApk')
 }
