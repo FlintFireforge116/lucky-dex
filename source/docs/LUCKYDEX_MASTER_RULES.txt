@@ -2928,3 +2928,18 @@ CLASSIC BATTLE v0.69.329 — GLOBAL PRINTED ATTACK ENERGY CONTRACT
     git push origin main
 
   Change only the ZIP basename and commit message on future handoffs. No separate prepare script.
+
+
+2026-11-21 / v0.69.336 / XY3 FULL CARD-BY-CARD AUDIT + HYPNO
+- Always test every printed attack and Ability against the pinned official source, including names, ordered costs, mechanics and alternate art. Every unhandled nonempty effect must gate the corresponding print out of battle and autobuild; no fake FULL status or silent no-op.
+- Hypno Hand Control: opponent reveals hand; attacking player selects whether and which opposing Supporter to play; the physically removed Supporter goes to opponent's discard. Resolve its effect against the original owning player's hand, deck, discard and board, but all choices belong to the attacking player (including nested searches). The attack still ends the attacking player's turn. Both CPU and player direction must work.
+- Raid conditional damage requires an evolution this very turn. Thorough Crunch flips two visible coins, then the attacker selects a real Energy on the opposing Active for each heads, removing physical cards or recording basic Energy discard.
+- Permanent v07336 independent audit runs on generated 114-print xy3 before APK merge: 159 attacks, 14 Ability occurrences, 18 Trainer rows, evolution and energy symbols, alternative art equivalence, executable effect schemas, and multiple 30-card builds including CPU-compatible shared builders.
+- Bump **both** index.html build IDs (`titleBuildVersion` and `appBuildVersion`) when incrementing Gradle and app JS version; the Supreme Victors test is a global release invariant and MUST be run before every upload.
+- Termux handoff stays exactly:
+  cd ~/lucky-dex
+  unzip -o /sdcard/Download/PATCH_NAME.zip -d source
+  git add source
+  git commit -m "Commit message"
+  git push origin main
+- Do not claim a CI APK build or device test passed before GitHub verifies it. 0.69.335 GitHub run #624 failed on stale appBuildVersion; 0.69.336 fixes it.

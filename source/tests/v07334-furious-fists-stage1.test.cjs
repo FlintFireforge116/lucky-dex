@@ -22,12 +22,13 @@ test('Furious Fists is registered for player decks, CPU opponents, inspector, an
  assert.ok(html.includes('<script src="tcg-classic-furious-fists.js"></script>'));
  assert.ok(html.indexOf('tcg-classic-furious-fists.js')<html.indexOf('tcg-classic-battle-data.js'));
 });
-test('v0.69.335 is consistent in Android, title, and boot JS',()=>{
+test('v0.69.336 is consistent in Android, title, and boot JS',()=>{
  const gradle=fs.readFileSync(path.join(root,'app/build.gradle'),'utf8');
- assert.match(gradle,/versionCode 7335/);
- assert.match(gradle,/versionName '0\.69\.335'/);
- assert.match(fs.readFileSync(path.join(assets,'index.html'),'utf8'),/titleBuildVersion">v0\.69\.335/);
- assert.match(fs.readFileSync(path.join(assets,'app-v0167.js'),'utf8'),/window\.__LUCKYDEX_BUILD='0\.69\.335'/);
+ assert.match(gradle,/versionCode 7336/);
+ assert.match(gradle,/versionName '0\.69\.336'/);
+ assert.match(fs.readFileSync(path.join(assets,'index.html'),'utf8'),/titleBuildVersion">v0\.69\.336/);
+ assert.match(fs.readFileSync(path.join(assets,'index.html'),'utf8'),/appBuildVersion">LUCKY DEX · v0\.69\.336/);
+ assert.match(fs.readFileSync(path.join(assets,'app-v0167.js'),'utf8'),/window\.__LUCKYDEX_BUILD='0\.69\.336'/);
 });
 test('build includes immutable XY3 generation BEFORE full catalogue audit and assets',()=>{
  const gradle=fs.readFileSync(path.join(root,'app/build.gradle'),'utf8');
@@ -67,7 +68,7 @@ test('formerly restricted Fighter, Fossil, Tool, and Special Energy prints are n
  for(const n of ['1','4','5','9','14','18','25','26','30','31','32','40','46','52','55','55a','58','59','61','62','63','64','68','72','73','74','76','77','79','80','84','85','90','91','92','94','95','96','97','98','99','101','102','103','104','105','106','108','110','111','112','113']){
   const c=furious.cardById('xy3-'+n);assert.ok(c);assert.equal(c.battleEnabled,true,c.id+': '+c.support.reasons?.join('; '));
  }
- for(const n of ['36']){const c=furious.cardById('xy3-'+n);assert.equal(c?.battleEnabled,false,'must not pretend unsolved private/forced-play rule works');}
+ assert.equal(furious.cardById('xy3-36')?.battleEnabled,true,'Hypno Hand Control must be genuinely resolved');
 });
 
 test('offline rule-mapping smoke: real attacker effect schemas and unsupported print gating',()=>{

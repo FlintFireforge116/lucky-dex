@@ -13451,6 +13451,47 @@
         ctx.state.log.push({type:'damage',side:ctx.side,targetUid:victim.uid,cardId:victim.cardId,amount,attack:'Burning Shot'});return;}
       if(opponents.length)ask('target',opponents.map(p=>'Deal 150 to '+name({cardId:p.cardId})+(p===foe.active?' (Active)':' (Bench)')),{targets:opponents.map(p=>p.uid)});return;
     }
+    if(k==='handControl'){
+      // Reveal the opposing hand before selecting an actual Supporter card.
+      // 'Play' is forced even outside the defender's ordinary Supporter turn.
+      // Do not copy this Supporter as an attacker's card: that would search,
+      // draw or discard from the WRONG player's zones.
+      const supports=foe.hand.filter(ref=>{
+        const card=lookup(ref);
+        return card?.trainerType==='Supporter'&&card.battleEnabled!==false&&
+          card.effect&&card.effect.type!=='unsupported'&&supportsEffect(card.effect);
+      });
+      if(step==='play'&&ctx.resolvingChoice){
+        const uid=effect.uids?.[Number(action.choiceOption)];
+        const index=foe.hand.findIndex(ref=>ref.uid===uid&&lookup(ref)?.trainerType==='Supporter');
+        if(index<0)return;
+        const ref=foe.hand[index],supporter=lookup(ref);
+        if(!supporter?.effect||supporter.battleEnabled===false||!supportsEffect(supporter.effect))return;
+        foe.hand.splice(index,1);foe.discard.push(ref);
+        note({forcedSupporter:ref.cardId,fromSide:ctx.foeSide,controlledBy:ctx.side});
+        ctx.state.xy3ForcedSupporter={ownerSide:ctx.foeSide,controllerSide:ctx.side,cardId:ref.cardId};
+        // Handler runs as the defender (the owner of the played Supporter).
+        // Only the chooser is overridden. The owner's deck, hand, discard,
+        // board, and Energy Zone are not replaced by the attacker's.
+        const supportCtx={...ctx,side:ctx.foeSide,foeSide:ctx.side,
+          attacker:foe.active,defender:s.active,isTrainer:true,trainerRef:ref,
+          requestChoice:spec=>{
+            const choosingSide=spec.side==='opponent'?ctx.side:ctx.foeSide;
+            ctx.requestChoice?.({...spec,side:'self',selectionSide:spec.selectionSide||choosingSide,xy3ControlledSupporter:true});
+            const pending=ctx.state.pendingChoice;
+            if(pending){pending.originSide=ctx.foeSide;pending.sourceUid=foe.active?.uid||null;
+              pending.xy3ControlledSupporter=true;pending.trainerRef=ref;}
+          }};
+        applyEffect(supporter.effect,supportCtx);
+        if(ctx.state.phase!=='effectChoice')delete ctx.state.xy3ForcedSupporter;
+        return;
+      }
+      // The entire hand is revealed by the printed attack, even when it
+      // contains no Supporter. Publicly log the reveal (as printed).
+      note({revealedOpponentHand:foe.hand.map(ref=>ref.cardId)});
+      if(supports.length)ask('play',[...supports.map(ref=>'Make opponent play '+name(ref)),'Do not play a Supporter'],{uids:supports.map(ref=>ref.uid)});
+      return;
+    }
     if(k==='safetyCheck'){
       if(step==='close')return;
       if(step==='inspect'&&ctx.resolvingChoice){
