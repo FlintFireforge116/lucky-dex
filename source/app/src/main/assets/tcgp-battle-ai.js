@@ -381,6 +381,32 @@
       const heal=legal.find(a=>a.type==='effectChoice'&&a.choiceOption===1);
       if(source?.cardId==='ex15-10'&&Number(source.damage||0)>=10&&heal)return heal;
     }
+    // Roaring Skies Serene Grace: the CPU must actually attach the revealed
+    // Zone Basic Energy, not choose the first ('Done') option repeatedly.
+    // All choices are drawn from its own known Zone and public Pokémon.
+    if(state.format==='classic'&&state.phase==='effectChoice'&&state.pendingChoice?.originSide===side){
+      const pending=state.pendingChoice,e=pending.effect||{},choices=legal.filter(a=>a.type==='effectChoice');
+      const grace=e.type==='attachTopZoneEnergy'||e.type==='chooseOption'&&e.options?.some(o=>o.effect?.type==='attachTopZoneEnergy');
+      if(grace){
+        if(e.type==='chooseOption')return choices.find(a=>a.choiceOption===0)||choices[0];
+        if(pending.kind==='option')return choices.find(a=>a.choiceOption===1)||choices.find(a=>a.choiceOption===0)||choices[0];
+        if(pending.kind==='pokemon'){
+          const energyType=e.remainingTypes?.[e.selectedIndex];
+          const ss=state.sides[side],fakeState={...state,sides:{...state.sides,[side]:{...ss,energyType}}};
+          choices.sort((a,b)=>attachScore({type:'attach',target:b.choiceTarget,benchIndex:b.choiceBenchIndex},fakeState,side)-
+            attachScore({type:'attach',target:a.choiceTarget,benchIndex:a.choiceBenchIndex},fakeState,side));
+          return choices[0];
+        }
+      }
+      if(e.rule==='xy6:wingBuzz'&&pending.kind==='handCard'){
+        const hand=state.sides[side].hand||[];
+        const score=a=>{
+          const card=data.cardById(hand[a.choiceHandIndex]?.cardId);
+          return (card?.basicEnergy?0:card?.kind==='trainer'?2:card?.stage==='Stage 2'?5:card?.stage==='Stage 1'?4:3);
+        };
+        choices.sort((a,b)=>score(a)-score(b));return choices[0];
+      }
+    }
     // Escape resistance stalemates before scoring another futile attack.
     const rescue=usefulRetreatFromResistance(state,side,legal);if(rescue)return rescue;
     const chargedAttack=chargedCoinAttack(state,side,legal);if(chargedAttack)return chargedAttack;

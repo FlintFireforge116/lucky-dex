@@ -3406,3 +3406,12 @@ LUCKYDEX v0.69.359 — ROARING SKIES STAGE 7 AND STAGE 6 CI REPAIR
 - Regression: tests/v07359-roaring-skies-stage7.test.cjs, auditXY6Stage7ForApk depends on Stage 6; locally 80 passed, 0 failed, 3 skips in a focused cross-era selection. Stage 7 APK still requires GitHub validation.
 - Termux: unzip -o /sdcard/Download/LuckyDex_patch_v0.69.359_ROARING_SKIES_STAGE7.zip -d source ; git add source ; git commit -m "LuckyDex v0.69.359 Roaring Skies Stage 7 and Wally CI fix" ; git push origin main
 ========================================================================
+
+
+LUCKYDEX v0.69.360 — XY ROARING SKIES STAGE 8
+- Ninjask #10 Wing Buzz now discards a CHOSEN physical card from own hand to own discard (or Basic Energy ledger), then mills exactly one physical top card of the other player's 30-card draw deck. Only when Active, once per turn, and only with real hand/target deck cards. CPU does not choose an inert action and prefers expendable cards.
+- Togekiss #46 Serene Grace triggers only when played from HAND to evolve. Due to LuckyDex's separated Energy Zone, inspect the eight REAL top Basic Energy units of the Energy Zone rather than a Pokémon/Trainer draw deck with no Basic Energy. The player may decline or choose any number; after each selection choose its recipient, consume the real Zone unit, and finally shuffle the unchosen units back into the Energy Zone. Attachments are Ability attachments, NOT normal per-turn hand/Zone attachment.
+- The CPU uses Serene Grace and places selected Energy rather than defaulting to Done.
+- Banette #31 Tool Concealment remains deliberately unplayable until every historic Tool effect pathway is globally guarded, while still keeping Tools physically attached. Never enable an incomplete global suppression Ability.
+- Verified baseline: v0.69.359 Stage 7 passed GitHub run #648. v0.69.360 still requires GitHub APK validation. Run v07360 stage8 regression tests after the full pinned catalogue generation in Gradle.
+- Termux: unzip -o /sdcard/Download/LuckyDex_patch_v0.69.360_ROARING_SKIES_STAGE8.zip -d source ; git add source ; git commit -m "LuckyDex v0.69.360 Roaring Skies Stage 8 Energy and Wing Buzz" ; git push origin main

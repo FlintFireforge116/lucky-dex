@@ -720,6 +720,7 @@
            !effects.abilitiesSuppressed(state,side==='player'?'opponent':'player',state.sides[side==='player'?'opponent':'player'].active,data.cardById))continue;
         if(state.format==='classic'&&ability.printedPowerType==='power'&&Number(ss.dp6PsychicBindUntil||-1)>=Number(state.turnNumber))continue;
         if(ability.name==='Set Up'&&source.cardId.startsWith('xy6-')&&(ss.hand.length>=6||!ss.deck.length))continue;
+        if(ability.name==='Serene Grace'&&source.cardId==='xy6-46'&&(!Array.isArray(ss.energySupply)||!ss.energySupply.length))continue;
         if(ability.name==='Cursed Eyes'&&source.cardId==='xy6-40'){
           const targets=pokemonOn(state.sides[side==='player'?'opponent':'player']);
           if(targets.length<2||!targets.some(p=>Number(p.damage||0)>=30))continue;
@@ -1734,6 +1735,7 @@
           pokemonOn(s).length<2||!pokemonOn(s).some(p=>Number(p.energy?.Metal||0)>0||(p.specialEnergy||[]).some(ref=>Number((ref.provides||data.cardById(ref.cardId)?.effect?.provides||{}).Metal||0)>0))))return;
         // Do not offer an inert hand-Energy Ability to the CPU or player.
         // This checks *physical hand* cards, never the fresh Energy Zone.
+        if(source.cardId==='xy6-10'&&ability.name==='Wing Buzz'&&(!s.hand.length||!foe.deck.length))return;
         if(ability.requiresBasicEnergyFromHand&&!s.hand.some(ref=>{
           const card=data.cardById(ref.cardId);
           return card?.basicEnergy&&card.subtype===ability.requiresBasicEnergyFromHand;

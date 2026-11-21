@@ -154,6 +154,8 @@ ABILITIES={
  # fires on a deck/discard summon, and cannot exceed the Classic hand cap.
  'Set Up':{'type':'triggered','event':'benched','fromHandOnly':True,'effect':OPT('Draw until you have 6 cards',E('drawToHandSize',size=6))},
  'Max Wind':{'type':'triggered','event':'evolved','fromHandOnly':True,'effect':E('chooseTarget',target='selfPokemon',effect=H(999,'selfPokemon'),optional=True)},
+ 'Wing Buzz':{'type':'activated','activeOnly':True,'oncePerTurn':True,'effect':E('neoRule',rule='xy6:wingBuzz')},
+ 'Serene Grace':{'type':'triggered','event':'evolved','fromHandOnly':True,'effect':OPT('Attach Basic Energy from the top 8 Energy Zone cards',E('attachTopZoneEnergy',count=8))},
  'Cursed Eyes':{'type':'triggered','event':'benched','fromHandOnly':True,'effect':OPT('Move 3 damage counters between opposing Pokémon',E('moveOpposingCounters',amount=30))},
  'Exoskeleton':{'type':'passive','effect':E('modifier',stat='damageReduction',amount=10,scope='self',duration='whileInPlay')},
  'Dragon Road':{'type':'passive','effect':E('modifier',stat='retreatCost',amount=-2,scope='team',duration='whileInPlay',filter={'subtype':'Dragon'},condition={'type':'stadiumInPlay'})},
