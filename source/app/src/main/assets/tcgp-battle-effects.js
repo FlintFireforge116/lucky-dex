@@ -309,6 +309,10 @@
     // Solar Revelation (BW5 Espeon): attached Energy prevents effects of
     // opposing attacks, never damage; own effects still resolve normally.
     if(ctx?.isAttack&&ctx?.state?.format==='classic'&&slot&&
+       (slot.specialEnergy||[]).some(ref=>ref.cardId==='xy5-144')&&
+       ctx.cardById(slot.cardId)?.types?.includes('Fairy')&&
+       energyOwner(ctx,slot)!==own(ctx))return true;
+    if(ctx?.isAttack&&ctx?.state?.format==='classic'&&slot&&
        (Object.values(slot.energy||{}).some(n=>Number(n)>0)||(slot.specialEnergy||[]).length)){
       const holder=energyOwner(ctx,slot),side=holder===ctx.state.sides?.player?'player':holder===ctx.state.sides?.opponent?'opponent':null;
       if(side&&side!==ctx.side&&pokemonOn(holder).some(p=>p.cardId==='bw5-48'&&!abilitiesSuppressed(ctx.state,side,p,ctx.cardById)))return true;

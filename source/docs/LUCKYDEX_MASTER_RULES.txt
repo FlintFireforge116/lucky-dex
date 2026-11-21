@@ -3095,3 +3095,15 @@ git push origin main
 - Shield Energy, Wonder Energy, Stage2 abilities, new Stadiums and special Supporters must not enter decks until their per-turn/per-card effects, legality, physical Energy ledgers and CPU use are tested.
 - The permanent cross-era deck-quality audit must exclude only missing generated catalogues locally, and separately test each set's genuine generated cards on GitHub. Do not weaken real GitHub build-time coverage.
 - Standard Termux update is `cd ~/lucky-dex`, `unzip -o /sdcard/Download/LuckyDex_patch_v0.69.343_PRIMAL_CLASH_STAGE1.zip -d source`, `git add source`, `git commit -m "LuckyDex v0.69.343 Primal Clash stage 1"`, `git push origin main`.
+
+=== v0.69.344: XY5 Primal Clash stage 2 — SHARED Ancient Traits, Spirit Links and Special Energies ===
+- Source baseline: user-confirmed successful v0.69.343 APK build. Do not claim v0.69.344 GitHub APK success before CI verifies it.
+- Ω Barrage: second attack immediately following first if source Active persists, including after KO/promotion; no ordinary actions between attacks, end-turn triggers and status check only after final attack. CPU uses same legal attack rules.
+- α Growth: two physical hand Energy attachments maximum to SAME trait holder this turn; Energy Zone and Trainer/attack/Ability attachments do not consume the special hand-attachment bonus. A full exact simultaneous-attachment UX should be checked on device.
+- α Recovery: heal double actual reduction in damage, gated by no-healing effects, tracked by physical slot UID. Test multiple healing sources and effect-choice resumes.
+- Ω Barrier and unimplemented Primal signature attacks remain GATED; never silently treat their printed effects as no-op.
+- Matching Spirit Links (Aggron, Gardevoir, Groudon, Kyogre) prevent only the matching Mega/Primal Evolution's turn ending; a Spirit Link is a regular Tool attachment and auto deck builder adds it only if a matching evolution is in the deck.
+- Shield Energy: Metal only, -10 incoming attack damage per attached copy; Wonder Energy: Fairy only, block opponent attack effects but not damage; discard attached off-type Special Energy upon evolution/type change. Include only when corresponding type actually exists in auto-built decks.
+- Water Veil: hand-attached Energy (not Energy Zone) removes conditions from Wailord-EX. Barrier Shrine: unsuppressed Ninetales prevents Stadium played by EITHER player.
+- Energy Retrieval #126: physical Basic Energy in discard is a selectable card; spent Basic Energy Zone counters are separately selectable and consumed for up to 2 recovered Basic Energy cards.
+- Permanent regression: tests/v07344-primal-clash-stage2.test.cjs. APK gate auditXY5ForApk runs Stage 1 and Stage 2; full 164-print official audit remains CI-only before Android packaging.

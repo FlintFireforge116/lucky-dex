@@ -52,6 +52,7 @@ ATTACKS={
  ('64','Thrash'):Q(BONUS(20),E('selfDamage',amount=20)),
  ('68','Double Kick'):COIN(2,40),('69','Poison Jab'):ST('poison'),('69','Dynamite Punch'):E('selfDamage',amount=20),
  ('70','Lost in the Waves'):E('returnToHand',target='self',returnBasicEnergy=True),
+ ('81','Yoga Kick'):E('damageRule',ignoreWeakness=True,ignoreResistance=True),
  ('72','Dancing Tentacles'):S(ST('confusion'),ST('poison')),
  ('72','Stick and Absorb'):S(H(30),LOCK()),
  ('74','Take Down'):E('selfDamage',amount=10),('75','Take Down'):E('selfDamage',amount=10),
@@ -97,6 +98,24 @@ TRAINERS={
  '135':('Item',E('rareCandy')),
  '162':('Item',E('neoRule',rule='xy4:enhancedHammer')),
  '163':('Item',SWITCH()),
+}
+# Spirit Links have genuine Tool placement, with matching Mega/Primal
+# turn-ending exception enforced by shared core evolution code.
+for n in ('123','130','131','132'):
+ TRAINERS[n]=('Tool',E('noop'))
+# Retrieval searches real physical discard refs, not new Energy from Zone.
+# Recover real printed Basic Energy cards from physical discard first, or
+# choose the separately tracked discarded Basic Energy Zone by type.
+TRAINERS['126']=('Item',E('energyRetrieval',amount=2,energyCardIds={
+ 'Grass':'dp1-123','Fire':'dp1-124','Water':'dp1-125','Lightning':'dp1-126',
+ 'Psychic':'dp1-127','Fighting':'dp1-128','Darkness':'dp1-129','Metal':'dp1-130',
+ 'Fairy':'xy1-140'}))
+# Weakness Policy must remain gated until the damage engine reads it.
+TRAITS_IMPLEMENTED={'Ω Barrage','α Growth','α Recovery'}
+ABILITIES={
+ 'Water Veil':{'type':'triggered','event':'energyAttached','fromHandOnly':True,
+   'effect':E('removeStatuses',target='self',statuses=['poison','burn','sleep','paralysis','confusion'])},
+ 'Barrier Shrine':{'type':'passive','effect':E('noop')},
 }
 TRAINERS['159']=TRAINERS['134'];TRAINERS['161']=TRAINERS['125']
 # Existing combat engine supports Item/Supporter, but not an Ancient Trait

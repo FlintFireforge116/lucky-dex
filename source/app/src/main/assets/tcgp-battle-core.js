@@ -1443,6 +1443,9 @@
         if(s.active&&validToolTarget(s.active)&&toolsOf(s.active).length<effects.toolCapacity(state,side,s.active,data.cardById))actions.push({...base,target:'active'});
         for(const slot of s.bench)if(validToolTarget(slot)&&toolsOf(slot).length<effects.toolCapacity(state,side,slot,data.cardById))actions.push({...base,target:'bench',benchIndex:Number(slot.benchSlot)});
       }else if(type==='Stadium'){
+        // XY5 Ninetales Barrier Shrine prevents BOTH players from playing
+        // Stadiums directly from the hand, including replacing one in play.
+        if(state.format==='classic'&&['player','opponent'].some(w=>pokemonOn(state.sides[w]).some(p=>p.cardId==='xy5-21'&&!effects.abilitiesSuppressed(state,w,p,data.cardById))))return;
         const enemySide=side==='player'?'opponent':'player';
         if(state.format==='classic'&&/^Holon/.test(data.cardById(state.stadium?.cardId)?.name||'')&&
           pokemonOn(state.sides[enemySide]).some(p=>p.cardId==='ex13-43'&&!effects.abilitiesSuppressed(state,enemySide,p,data.cardById)))return;
@@ -1459,10 +1462,12 @@
     // attachment are INDEPENDENT. Hand-attached Basic and Special both count
     // toward the hand attachment; card effects can separately accelerate.
     if(state.format==='classic'&&Number(s.dp7EmperorAuraUntil||0)<Number(state.turnNumber))s.dp7EmperorAuraUntil=0;
-    if(state.format==='classic'&&Number(s.dp7EmperorAuraUntil||0)<Number(state.turnNumber)){s.hand.forEach((ref,handIndex)=>{const card=data.cardById(ref.cardId);if(!(card?.specialEnergy||card?.basicEnergy||card?.holonEnergyPokemon)||card.battleEnabled===false&& !card.basicEnergy)return;if((card?.specialEnergy||card?.holonEnergyPokemon)&&effects.isActionLocked(state,side,'SpecialEnergy',data.cardById))return;if(card.specialEnergy&&state.sides[side==='player'?'opponent':'player']?.active?.cardId==='bw10-23'&&!effects.abilitiesSuppressed(state,side==='player'?'opponent':'player',state.sides[side==='player'?'opponent':'player'].active,data.cardById))return;if(s.handEnergyUsed)return;const validEnergyTarget=slot=>slot&&!slot.gymEnergyLock&&(card.id!=='neo4-16'||/^(?:Light |Shining )/.test(data.cardById(slot.cardId)?.name||''));const aqValid=(slot)=>{if(!validEnergyTarget(slot))return false;const mon=data.cardById(slot.cardId),energyType=card.basicEnergy?card.subtype:card.effect?.provides&&Object.keys(card.effect.provides)[0];
+    if(state.format==='classic'&&Number(s.dp7EmperorAuraUntil||0)<Number(state.turnNumber)){s.hand.forEach((ref,handIndex)=>{const card=data.cardById(ref.cardId);if(!(card?.specialEnergy||card?.basicEnergy||card?.holonEnergyPokemon)||card.battleEnabled===false&& !card.basicEnergy)return;if((card?.specialEnergy||card?.holonEnergyPokemon)&&effects.isActionLocked(state,side,'SpecialEnergy',data.cardById))return;if(card.specialEnergy&&state.sides[side==='player'?'opponent':'player']?.active?.cardId==='bw10-23'&&!effects.abilitiesSuppressed(state,side==='player'?'opponent':'player',state.sides[side==='player'?'opponent':'player'].active,data.cardById))return;if(s.handEnergyUsed&&Number(s.xy5GrowthBonus?.turn)!==Number(state.turnNumber))return;const validEnergyTarget=slot=>slot&&!slot.gymEnergyLock&&(card.id!=='neo4-16'||/^(?:Light |Shining )/.test(data.cardById(slot.cardId)?.name||''));const aqValid=(slot)=>{if(!validEnergyTarget(slot))return false;if(s.handEnergyUsed&&s.xy5GrowthBonus?.targetUid!==slot.uid)return false;const mon=data.cardById(slot.cardId),energyType=card.basicEnergy?card.subtype:card.effect?.provides&&Object.keys(card.effect.provides)[0];
        if(card.id==='xy3-103'&&!mon?.types?.includes('Grass'))return false;
        if(card.id==='xy3-104'&&!mon?.types?.includes('Fighting'))return false;
        if(card.id==='xy4-112'&&!mon?.types?.includes('Psychic'))return false;
+       if(card.id==='xy5-143'&&!mon?.types?.includes('Metal'))return false;
+       if(card.id==='xy5-144'&&!mon?.types?.includes('Fairy'))return false;
        if(Number(slot?.ex5NoHandEnergyUntil||0)>=state.turnNumber||Number(slot?.xy4NoHandEnergyUntil||0)>=state.turnNumber)return false;
        if(slot===s.active&&Number(s.dp2EnergyHandLockUntil||0)>=state.turnNumber)return false;
        // Holon's Stage 1 Pokémon may be attached as Energy only when the
@@ -1776,6 +1781,8 @@
     if(state.format==='classic'&&Number(s.ex8SupporterLockUntil||0)>=Number(state.turnNumber))for(let i=actions.length-1;i>=0;i--)if(actions[i].type==='trainer'&&data.cardById(actions[i].cardId)?.trainerType==='Supporter')actions.splice(i,1);
     if(state.format==='classic'&&state.sides[side==='player'?'opponent':'player'].active?.cardId==='ex8-100')for(let i=actions.length-1;i>=0;i--)if(actions[i].type==='trainer'&&data.cardById(actions[i].cardId)?.trainerType==='Stadium')actions.splice(i,1);
     actions.push({type:'endTurn'});
+    if(state.format==='classic'&&state.xy5BarrageSecond?.side===side&&Number(state.xy5BarrageSecond.turn)===Number(state.turnNumber))
+      return actions.filter(a=>a.type==='attack'||a.type==='endTurn');
     if(state.format==='classic'&&Number(s.founjaNoHandUntil||0)>=Number(state.turnNumber))return actions.filter(a=>!['bench','evolve','trainer','attachSpecial'].includes(a.type));
     return actions;
   }
@@ -2087,6 +2094,16 @@
 
   function endTurn(state){
     if (state.phase !== 'battle') return;
+    if(state.format==='classic'&&state.xy5BarragePending){
+      const pending=state.xy5BarragePending;delete state.xy5BarragePending;
+      if(pending.side===state.activeSide&&pending.turn===state.turnNumber&&
+         state.sides[pending.side]?.active?.uid===pending.sourceUid){
+        state.xy5BarrageSecond={...pending};
+        state.log.push({type:'xy5OmegaBarrage',side:pending.side,attackNumber:2});
+        return;
+      }
+    }
+    delete state.xy5BarrageSecond;
     // Serperior Royal Heal: between-turn healing is global to its owner's
     // Pokémon, once per active copy, and respects Ability suppression.
     if(state.format==='classic')for(const who of ['player','opponent']){
@@ -2843,7 +2860,11 @@ const target=slotForTarget(s,action.target,action.benchIndex);if(card.id==='pl2-
       const target = slotForTarget(s,matched.target,matched.benchIndex);
       const xy4SpiritLink=state.format==='classic'&&(
         (['xy4-35','xy4-121'].includes(ref.cardId)&&toolsOf(target).some(t=>t.cardId==='xy4-95'))||
-        (['xy4-24','xy4-24a','xy4-120'].includes(ref.cardId)&&toolsOf(target).some(t=>t.cardId==='xy4-100')));
+        (['xy4-24','xy4-24a','xy4-120'].includes(ref.cardId)&&toolsOf(target).some(t=>t.cardId==='xy4-100'))||
+        (['xy5-94','xy5-154'].includes(ref.cardId)&&toolsOf(target).some(t=>t.cardId==='xy5-123'))||
+        (['xy5-106','xy5-156'].includes(ref.cardId)&&toolsOf(target).some(t=>t.cardId==='xy5-130'))||
+        (['xy5-86','xy5-151'].includes(ref.cardId)&&toolsOf(target).some(t=>t.cardId==='xy5-131'))||
+        (['xy5-55','xy5-149'].includes(ref.cardId)&&toolsOf(target).some(t=>t.cardId==='xy5-132')));
       const dp2SlakothWasAsleep=target.cardId==='dp2-99'&&!!target.conditions?.sleep;
       target.cardId = ref.cardId;
       target.stack.push(ref.cardId);
@@ -2979,7 +3000,14 @@ const target=slotForTarget(s,action.target,action.benchIndex);if(card.id==='pl2-
         // Holon's Voltorb/Magnemite = 1 Colorless; evolutions = 2 of any type.
         if(card.holonEnergyPokemon)ref.provides=['ex11-21','ex11-22','ex13-44'].includes(card.id)?{Miracle:2}:{Colorless:1};
         target.specialEnergy=target.specialEnergy||[];target.specialEnergy.push(ref);provides={...specialEnergyProvides(ref)};
-      }s.handEnergyUsed=true;
+      }
+      // Alpha Growth permits exactly one additional HAND Energy card on the
+      // same Pokemon. No generated Energy Zone or effect acceleration counts.
+      const growthUsed=!!(s.handEnergyUsed&&s.xy5GrowthBonus?.targetUid===target.uid&&Number(s.xy5GrowthBonus.turn)===Number(state.turnNumber));
+      if(growthUsed)delete s.xy5GrowthBonus;
+      else if(state.format==='classic'&&data.cardById(target.cardId)?.ancientTrait?.name==='α Growth')
+        s.xy5GrowthBonus={turn:state.turnNumber,targetUid:target.uid};
+      s.handEnergyUsed=true;
       if(card.id==='xy3-103'&&!effects.healingIsBlocked(state,target,data.cardById)){target.damage=Math.max(0,Number(target.damage||0)-30);state.log.push({type:'xy3HerbalEnergy',side,targetUid:target.uid,healed:30});}
       if(card.holonEnergyPokemon&&['ex11-21','ex11-22','ex13-44'].includes(card.id)){
         const eligible=[...Object.entries(target.energy||{}).filter(([,n])=>Number(n)>0).map(([type])=>({type,label:'Return '+type+' Basic Energy'})),
@@ -3454,7 +3482,8 @@ const target=slotForTarget(s,action.target,action.benchIndex);if(card.id==='pl2-
       if(state.format==='classic'&&damage>0&&Number(defender.ex1TearyEyesUntil||0)>=state.turnNumber)damage=Math.max(0,damage-10);
       if(state.format==='classic'){
         const metal=miraculousWindActive(state)?0:(defender.specialEnergy||[]).filter(r=>(['neo1-19','ecard1-159','ecard2-143'].includes(r.cardId)||['ex9-88','ex1-94','ex10-97','ex11-107','ex13-95','ex16-88','dp2-120','dp3-130','dp5-95'].includes(r.cardId)&&data.cardById(defender.cardId)?.types?.includes('Metal'))).length;
-        damage=result.damageRules?.ignoreEffects?damage:Math.max(0,damage-metal*10);
+        const xy5Shield=miraculousWindActive(state)||!data.cardById(defender.cardId)?.types?.includes('Metal')?0:(defender.specialEnergy||[]).filter(r=>r.cardId==='xy5-143').length;
+        damage=result.damageRules?.ignoreEffects?damage:Math.max(0,damage-(metal+xy5Shield)*10);
         // Aquapolis Dense Body / Energy Barrier: actual Basic-stage and
         // attached Basic Energy counts, not approximate generic modifiers.
         if(!result.damageRules?.ignoreEffects&&!effects.abilitiesSuppressed(state,foeSide,defender,data.cardById)){
@@ -3601,6 +3630,9 @@ const target=slotForTarget(s,action.target,action.benchIndex);if(card.id==='pl2-
       }
       if(damage>0&&state.format==='classic'&&defender===foe.active&&toolsOf(defender).some(r=>r.cardId==='bw3-94')){s.active.damage=Number(s.active.damage||0)+20;state.log.push({type:'bw3RockyHelmet',side:foeSide,amount:20});}
       if(damage>0){const eventData={attacker:s.active,damage,source:{side,attack:true,uid:s.active.uid,cardId:s.active.cardId}};triggerAbilities(state,'damagedByAttack',foeSide,defender,eventData);if(['dp3-73','dp3-101'].includes(defender.cardId))triggerAbilities(state,'damaged',foeSide,defender,eventData);triggerPersistent(state,'damagedByAttack',foeSide,defender,eventData);}
+      if(state.format==='classic'&&data.cardById(s.active.cardId)?.ancientTrait?.name==='Ω Barrage'&&
+         !state.xy5BarrageSecond&&!state.xy5BarragePending)
+        state.xy5BarragePending={side,turn:state.turnNumber,sourceUid:s.active.uid};
       if(guard?.effects||Number(defender.neoDestinyPreventEffectsUntil||0)>=state.turnNumber||effects.attackEffectsPrevented(state,foeSide,defender,s.active,data.cardById)||state.sides[foeSide].active!==defender)context.preventedTargets=new Set([defender.uid,...[state.sides[foeSide].active?.uid].filter(Boolean)]);context.dealtDamage=damage;
       if(state.format==='classic'&&damage>0&&defender.cardId==='SNAPFLORIO-005'&&Object.values(defender.energy||{}).some(n=>Number(n)>0))result.pendingEffects.unshift({type:'lentalRule',rule:'pinsirWait114',defenderUid:defender.uid,damage});
       for(let i=0;i<result.pendingEffects.length;i++){effects.applyEffect(result.pendingEffects[i],context);if(state.phase==='effectChoice'){state.pendingChoice.afterEffects=[...(state.pendingChoice.afterEffects||[]),...result.pendingEffects.slice(i+1)];state.pendingChoice.resume='attack';state.pendingChoice.isAttack=true;return state;}}
@@ -3672,6 +3704,7 @@ const target=slotForTarget(s,action.target,action.benchIndex);if(card.id==='pl2-
   }
   function neoMonitoredAction(state,side,action){
     const before=Object.fromEntries(['player','opponent'].map(who=>[who,{uid:state.sides[who].active?.uid,bench:new Set((state.sides[who].bench||[]).map(p=>p.uid))}]));
+    const healingBefore=Object.fromEntries(['player','opponent'].map(who=>[who,Object.fromEntries(pokemonOn(state.sides[who]).map(p=>[p.uid,Number(p.damage||0)]))]));
     const turnOfAction=state.turnNumber;
     const result=applyActionRaw(state,side,action);
     for(const owner of ['player','opponent']){
@@ -3686,7 +3719,7 @@ const target=slotForTarget(s,action.target,action.benchIndex);if(card.id==='pl2-
       const board=state.sides[owner];for(const pokemon of pokemonOn(board)){
         const types=data.cardById(pokemon.cardId)?.types||[],kept=[];
         for(const ref of pokemon.specialEnergy||[]){
-          const required=ref.cardId==='xy3-103'?'Grass':ref.cardId==='xy3-104'?'Fighting':ref.cardId==='xy4-112'?'Psychic':null;
+          const required=ref.cardId==='xy3-103'?'Grass':ref.cardId==='xy3-104'?'Fighting':ref.cardId==='xy4-112'?'Psychic':ref.cardId==='xy5-143'?'Metal':ref.cardId==='xy5-144'?'Fairy':null;
           if(required&&!types.includes(required)){
             board.discard.push(ref);state.log.push({type:'xy3SpecialEnergyDiscard',side:owner,uid:ref.uid,reason:'ineligibleAttachedType',cardId:ref.cardId});
           }else kept.push(ref);
@@ -3702,6 +3735,17 @@ const target=slotForTarget(s,action.target,action.benchIndex);if(card.id==='pl2-
         if(['xy4-97','xy4-98'].includes(ref?.cardId)&&owner&&owner!==who&&state.sides[owner])state.sides[owner].discard.push(ref);
         else keep.push(ref);}
       sideState.discard=keep;
+    }
+    // Alpha Recovery doubles healing actually received in this action,
+    // including resolved choices and Trainer/attack/evolution heals.
+    if(state.format==='classic')for(const who of ['player','opponent'])for(const p of pokemonOn(state.sides[who])){
+      const old=healingBefore[who][p.uid];
+      if(old==null||data.cardById(p.cardId)?.ancientTrait?.name!=='α Recovery')continue;
+      const healed=Math.max(0,Number(old)-Number(p.damage||0));
+      if(healed&&!effects.healingIsBlocked(state,p,data.cardById)){
+        const extra=Math.min(healed,Number(p.damage||0));p.damage-=extra;
+        state.log.push({type:'xy5AlphaRecovery',side:who,targetUid:p.uid,extraHealed:extra});
+      }
     }
     neoSpikesAfterAction(state,before);sandstormToolLock(state);enforceHandLimit(state);return result;
   }

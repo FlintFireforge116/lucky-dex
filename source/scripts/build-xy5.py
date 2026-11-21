@@ -53,7 +53,7 @@ def generate(rows):
   n,name,sup,subtypes,hp,types,evolves,attacks,abilities,weak,res,retreat,rarity,rules,trainer_class,trait=row
   n=str(n);kind={'Pokémon':'pokemon','Trainer':'trainer','Energy':'energy'}[sup]
   issues=[];aa=[];pw=[]
-  if trait:issues.append('Ancient Trait needs shared attack/attachment/healing/trainer prevention hooks: '+trait['name'])
+  if trait and trait['name'] not in V.TRAITS_IMPLEMENTED:issues.append('Ancient Trait not yet audited against every effect path: '+trait['name'])
   for title,cost,damage,printed in attacks:
    eff=V.attack(row,[title,cost,damage,printed]);
    if eff is None:issues.append('Unimplemented printed attack: '+title)
@@ -62,11 +62,12 @@ def generate(rows):
    aa.append({'name':title,'cost':cost,'damage':base,'damageText':damage or None,'text':printed,
     'effect':eff if eff is not None else {'type':'unsupported','reason':'Needs a dedicated printed-rule implementation'}})
   for title,ability_type,printed in abilities:
-   # No Ability can be declared complete until its once-per-turn or event
-   # timing has been checked against both CPU and player action resolution.
-   issues.append('Unimplemented printed Ability: '+title)
+   impl=V.ABILITIES.get(title)
+   if impl is None:issues.append('Unimplemented printed Ability: '+title)
+   else:pw.append({'name':title,'text':printed,'printedPowerType':'ability','disabledByStatus':False,**impl})
+
   if kind=='trainer' and n not in V.TRAINERS:issues.append('Unimplemented Trainer rules')
-  if kind=='energy':issues.append('Special Energy must implement type restrictions and passive rules')
+  if kind=='energy' and n not in ('143','144'):issues.append('Special Energy must implement type restrictions and passive rules')
   ok=not issues;ex='EX' in subtypes;mega='MEGA' in subtypes
   card={'id':'xy5-'+n,'setId':'xy5','number':n,'name':name,'source':'tcg','battleFormat':'classic','kind':kind,
    'rarity':rarity,'image':f'https://images.pokemontcg.io/xy5/{n}.png','imageLarge':f'https://images.pokemontcg.io/xy5/{n}_hires.png',
@@ -99,7 +100,7 @@ def generate(rows):
    # never let the CPU use Shield/Wonder before their global passives work.
    t='Metal' if n=='143' else 'Fairy' if n=='144' else 'Colorless'
    card.update(basicEnergy=False,specialEnergy=True,energyType=t,subtype=t,text='\n'.join(rules),
-      effect={'type':'unsupported','reason':'Special Energy passive not implemented'})
+      effect={'type':'specialEnergy','provides':{t:1}} if n in ('143','144') else {'type':'unsupported','reason':'Special Energy passive not implemented'})
   cards.append(card)
  return cards
 

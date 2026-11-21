@@ -701,6 +701,14 @@ function buildDeck(rows,options={}){
    // Being battle-enabled does not mean the Trainer has a useful target.
    if(!manuallyKept){
      const pokemon=selectedPokemon();
+     // Primal Clash Spirit Links are only useful with their exact Mega or
+     // Primal Evolution prints IN the finished 30-card deck. A matching
+     // ordinary Basic EX is not enough; do not auto-add dead Tool cards.
+     const xy5Links={'xy5-123':['xy5-94','xy5-154'],
+       'xy5-130':['xy5-106','xy5-156'],
+       'xy5-131':['xy5-86','xy5-151'],
+       'xy5-132':['xy5-55','xy5-149']};
+     if(xy5Links[card?.id]&&!pokemon.some(p=>xy5Links[card.id].includes(p.id)))return false;
      // Evolution accelerators without Stage 2 targets are dead cards.
      if(card?.name==='Rare Candy'&&!pokemon.some(p=>p.stage==='Stage 2'))return false;
      if(card?.name==="Brock's Protection"&&!pokemon.some(p=>p.name.startsWith("Brock's ")))return false;
@@ -1245,6 +1253,8 @@ function buildDeck(rows,options={}){
    const pokemon=cards.map(classic.cardById).filter(c=>c?.kind==='pokemon');
    if(name==='Darkness Energy')return pokemon.some(p=>(p.types||[]).includes('Darkness')||/^Dark\s/i.test(p.name||''));
    if(name==='Metal Energy')return pokemon.some(p=>(p.types||[]).includes('Metal'));
+   if(name==='Shield Energy')return pokemon.some(p=>(p.types||[]).includes('Metal'));
+   if(name==='Wonder Energy')return pokemon.some(p=>(p.types||[]).includes('Fairy'));
    if(name==='Dark Metal Energy')return pokemon.some(p=>
      (p.types||[]).some(t=>t==='Darkness'||t==='Metal')||
      (p.attacks||[]).some(a=>/[DM]/.test(String(a.cost||''))));

@@ -38,7 +38,7 @@ test('XY5 pinned generated source and audit are required BEFORE Android asset me
  assert.ok(script.includes('38a427242a56d0e9bcd4450718d1f5ae28377f82'));
 });
 
-test('XY5 conservative generator enables proven rules and gates Ancient Traits and unsupported mechanics',()=>{
+test('XY5 generator exposes audited Ancient Traits and gates all unsupported effects',()=>{
  const code=String.raw`
 import sys,json,importlib.util
 s=sys.argv[1];sys.path.insert(0,s)
@@ -61,10 +61,14 @@ print(json.dumps(m.generate(rows)))`;
  assert.equal(r.status,0,r.stderr||r.stdout);
  const by=Object.fromEntries(JSON.parse(r.stdout).map(c=>[c.number,c]));
  for(const n of ['3','4','125','129','135','161'])assert.equal(by[n].battleEnabled,true,`${n}: ${by[n].support.reasons}`);
- for(const n of ['9','21','55','143','164']){
+ for(const n of ['9','55','164']){
   assert.equal(by[n].battleEnabled,false,n);assert.equal(by[n].deckEligible,false,n);
   assert.ok(by[n].support.reasons.length>0,n);
  }
+ assert.equal(by['21'].battleEnabled,true,'Barrier Shrine is implemented');
+ assert.equal(by['21'].abilities[0].name,'Barrier Shrine');
+ assert.equal(by['143'].battleEnabled,true,'Shield Energy typed passive is implemented');
+ assert.deepEqual(by['143'].effect,{type:'specialEnergy',provides:{Metal:1}});
  assert.equal(by['55'].megaEvolution,true);assert.equal(by['55'].pokemonEX,true);assert.equal(by['55'].prizeCards,2);
  assert.deepEqual(by['3'].attacks[0].cost,['G','C']);
  assert.equal(by['3'].attacks[0].damage,0,'50× is dynamic, never a flat 50');
@@ -98,7 +102,7 @@ test('Official pinned Primal Clash print source has 164 unique cards and exactly
  for(const n of ['55','86','94','106','149','151','154','156']){
   const c=primal.cardById('xy5-'+n);assert.ok(c.megaEvolution);assert.ok(c.pokemonEX);
  }
- for(const n of ['143','144'])assert.equal(primal.cardById('xy5-'+n).deckEligible,false,'Special Energy is not yet implemented');
+ for(const n of ['143','144'])assert.equal(primal.cardById('xy5-'+n).deckEligible,true,'Both typed XY5 Special Energies are implemented');
 });
 
 test('XY5 prints are owner-projected by exact collector number, not substituted by older expansions',{skip:!GENERATED},()=>{
