@@ -1084,6 +1084,38 @@ function buildDeck(rows,options={}){
    const energyCard=classic.cardById(SPECIAL_COST_CARDS[symbol]);
    if(energyCard&&allowedInSetPool(energyCard,scope))add(energyCard,Math.min(4,Math.max(needed*2,2)));
  }
+ // Primal Clash: Mega/Primal evolutions ordinarily end the turn. A
+ // constructed line without its matching Spirit Link is much less useful.
+ // Reserve at most two *owned, matching* Tools before generic Trainer filler
+ // takes the remaining slots; never add a link for a missing evolution.
+ const xy5SpiritLinks=[
+   ['xy5-123',['xy5-94','xy5-154']],  // M Aggron-EX
+   ['xy5-130',['xy5-106','xy5-156']],// M Gardevoir-EX
+   ['xy5-131',['xy5-86','xy5-151']], // Primal Groudon-EX
+   ['xy5-132',['xy5-55','xy5-149']] // Primal Kyogre-EX
+ ];
+ for(const [id,partners] of xy5SpiritLinks){
+   if(!partners.some(p=>cards.includes(p)))continue;
+   const link=classic.cardById(id);
+   if(link&&pool.includes(link))add(link,Math.min(2,room(link)));
+ }
+ // The 30-card format EXCLUDES physical Basic Energy. Sceptile Nurture and
+ // Heal and Torchic Flare Bonus need Energy actually in hand, which ordinary
+ // turn attachments from the Energy Zone do not supply. Reserve compatible
+ // Zone-to-hand search Trainers from the owned/set-scoped pool, if available.
+ const xy5HandEnergyNeeds=[['xy5-8','Grass'],['xy5-26','Fire']]
+   .filter(([id])=>cards.includes(id));
+ if(xy5HandEnergyNeeds.length){
+   const energyToHandRules=new Set(['bw1:energySearch','bw4:cilan','ex1:basicSearch1','ex1:basicSearch2','expedition:energySearch','ex9:trainer:79','ex15:77:trainer']);
+   const searchers=pool.filter(c=>c.kind==='trainer'&&c.battleEnabled!==false&&
+     (energyToHandRules.has(c.effect?.rule)||c.name==='Energy Search'))
+     .sort((a,b)=>Number(a.trainerType==='Item')-Number(b.trainerType==='Item')||
+       Number(b.setId===main.setId)-Number(a.setId===main.setId)||a.id.localeCompare(b.id));
+   let reserve=2;
+   for(const trainer of searchers){if(reserve<=0||cards.length>=30)break;
+     reserve-=add(trainer,Math.min(reserve,room(trainer)));
+   }
+ }
  // EX Dragon Frontiers Fellow Boost attaches a physical Basic Energy *from
  // hand*, not the hybrid Energy Zone. Mr Stone's Project can fetch Basic
  // Energy into hand so the Power is usable without rewriting its printed rule.
@@ -1454,6 +1486,15 @@ function buildDeck(rows,options={}){
  const label=specialist?`${specialist} · Basic Zone: ${zoneLabel}`:(requested.includes('Colorless')?`Colorless / ${zoneLabel}`:zoneLabel);
  const plan=synergy.report(cards.map(classic.cardById).filter(Boolean),finalEnergy,theme);
  const notes=plan.warnings.map(message=>({message}));
+ for(const [,type] of xy5HandEnergyNeeds){
+   const sourceAvailable=cards.some(id=>{const c=classic.cardById(id);return c?.kind==='trainer'&&
+     (['bw1:energySearch','bw4:cilan','ex1:basicSearch1','ex1:basicSearch2','expedition:energySearch','ex9:trainer:79','ex15:77:trainer'].includes(c.effect?.rule)||c.name==='Energy Search');});
+   if(!sourceAvailable)notes.push({message:`Primal Clash ${type} hand-Energy ability/attack has no Energy-to-hand Trainer in this deck. Zone attachments alone cannot provide a physical Energy card in hand; include an Energy Search, Cilan or compatible source from an owned set.`});
+ }
+ for(const [id,partners] of xy5SpiritLinks){
+   if(partners.some(p=>cards.includes(p))&&!cards.includes(id))
+     notes.push({message:`The ${classic.cardById(id)?.name||'Spirit Link'} is absent: this Mega/Primal Evolution will end your turn. Add the matching Tool if available.`});
+ }
  if(revealedPhysicalEnergySupport&&!cards.some(id=>classic.cardById(id)?.kind==='energy'))
    notes.push({message:'Peal of Thunder looks at the real draw deck, not the Basic Energy Zone. No owned physical Energy was available in this deck, so its top-five reveal cannot attach Energy.'});
  return {ok:true,cards,energyTypes:finalEnergy,errors:[],warnings:notes,plan,style,archetypeKey:archetypeKey(featured||main),focusCardId:fossilFocus?.id||focus?.id||featured?.id||main.id,strategy:`${style==='random'?'Random featured':'Competitive'} · ${theme!=='any'?synergy.THEMES.find(t=>t.id===theme).label+' · ':''}${rarityFocus!=='any'?RARITY_FOCUS.find(r=>r.id===rarityFocus).label+' · ':''}${basicOnly?'Basic-only · ':''}${label} · ${featured?featured.name+' featured · ':''}${archetypeName(main,evolutionPool)} core · ${pokemonCount()} Pokémon / ${30-pokemonCount()} Trainers & Special Energy`};

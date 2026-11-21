@@ -673,7 +673,7 @@ tasks.matching { it.name == 'preBuild' || (it.name.startsWith('merge') && it.nam
     dependsOn tasks.named('auditXY4ForApk')
 }
 
-// v0.69.351 XY5 Primal Clash complete 164/164 and Omega Barrier Trainer guard. The official
+// v0.69.352 XY5 Primal Clash independent rule, CPU and deck audit. The official
 // pinned catalogue and independent staged audit run BEFORE Android merges.
 tasks.register('generateXY5ForApk', Exec) {
     dependsOn tasks.named('auditXY4ForApk')
@@ -683,7 +683,7 @@ tasks.register('generateXY5ForApk', Exec) {
 tasks.register('auditXY5ForApk', Exec) {
     dependsOn tasks.named('generateXY5ForApk')
     workingDir rootProject.projectDir
-    commandLine 'node', '--test', 'tests/v07343-primal-clash-stage1.test.cjs', 'tests/v07344-primal-clash-stage2.test.cjs', 'tests/v07345-primal-clash-stage3.test.cjs', 'tests/v07346-primal-clash-abilities.test.cjs', 'tests/v07347-primal-clash-trainers-attacks.test.cjs', 'tests/v07348-primal-clash-attack-completion.test.cjs', 'tests/v07349-primal-clash-gated-completion.test.cjs', 'tests/v07350-pinned-tcg-raw-ci-fix.test.cjs', 'tests/v07351-primal-clash-omega-barrier-audit.test.cjs'
+    commandLine 'node', '--test', 'tests/v07343-primal-clash-stage1.test.cjs', 'tests/v07344-primal-clash-stage2.test.cjs', 'tests/v07345-primal-clash-stage3.test.cjs', 'tests/v07346-primal-clash-abilities.test.cjs', 'tests/v07347-primal-clash-trainers-attacks.test.cjs', 'tests/v07348-primal-clash-attack-completion.test.cjs', 'tests/v07349-primal-clash-gated-completion.test.cjs', 'tests/v07350-pinned-tcg-raw-ci-fix.test.cjs', 'tests/v07351-primal-clash-omega-barrier-audit.test.cjs', 'tests/v07352-primal-clash-independent-audit.test.cjs'
 }
 tasks.named('auditV07329AllClassicAttackEnergyForApk').configure {
     dependsOn tasks.named('auditXY5ForApk')

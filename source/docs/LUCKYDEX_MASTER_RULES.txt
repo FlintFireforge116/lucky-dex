@@ -3193,3 +3193,20 @@ git push origin main
   git add source
   git commit -m "LuckyDex v0.69.351 Primal Clash Omega Barrier completion"
   git push origin main
+
+[2026-11-21 v0.69.352 XY5 PRIMAL CLASH INDEPENDENT AUDIT | ESCAPE ROPE, EXCADRILL AND DECK SYNERGY]
+- Confirmed v0.69.351 APK success in public GitHub Actions run #640 before beginning the independent v0.69.352 corrections.
+- Official Primal Clash remains 164 authenticated battle-enabled prints, 217 printed attacks, 13 Abilities and 22 printed Ancient Traits. Never treat source-only Node passes as proof that a new Android APK built.
+- OMEGA BARRIER and forced switches: Ω Barrier on the outgoing opponent Active prevents an opposing Item/Supporter from forcing that Active out. When the outgoing Active has NO Ω Barrier, its controller may legitimately promote an Ω Barrier Bench as replacement if the controller chooses, such as Escape Rope. The opponent playing a Trainer may NOT choose that protected Bench as its targeted effect. An opposing Escape Rope may still switch the person playing the Item's own Pokemon even if the defender Active is protected; do not cancel the whole Trainer globally. Prevent a generic catch-all snapshot from undoing allowed promotions.
+- Excadrill #96 Straight Claw printed base damage is SIXTY (60), not 20. Optional real attached Energy discard adds 30; present accurate choice labels, preserving resolution before prizes.
+- Auto deck-building: prioritise 1-2 matching, owned, legal Spirit Link Tools for a included M Aggron, M Gardevoir, Primal Groudon, or Primal Kyogre line before random Trainer fillers. Warn if missing. Do not add orphaned links.
+- XY5 Sceptile #8 Nurture and Heal and Torchic #26 Flare Bonus require physical Energy cards IN HAND. In LuckyDex hybrid Classic30, physical Basic Energy cards are DECK-INELIGIBLE; never insert them into a 30-card deck to satisfy such prerequisites. Prefer eligible, owned Energy Search/Cilan/compatible legal Trainer cards that take actual Energy from Zone into hand; warn if none are in the deck. Energy Zone attachment alone is not a payment from hand.
+- Keep tests/v07352-primal-clash-independent-audit.test.cjs in Gradle auditXY5ForApk, run all previous XY5 suites and cross-era Energy/deck/Trainer tests before APK asset merging. Local audit: XY5 104 pass, 0 fail, 7 catalogue skips; cross-era 37 pass, 0 fail, 4 skips. v0.69.352 APK build still requires GitHub verification.
+- Details: docs/XY5_PRIMAL_CLASH_INDEPENDENT_AUDIT_v0.69.352.md
+
+TERMUX PATCH APPLICATION (v0.69.352):
+cd ~/lucky-dex
+unzip -o /sdcard/Download/LuckyDex_patch_v0.69.352_PRIMAL_CLASH_INDEPENDENT_AUDIT.zip -d source
+git add source
+git commit -m "LuckyDex v0.69.352 independent Primal Clash audit"
+git push origin main

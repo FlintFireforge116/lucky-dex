@@ -12071,8 +12071,14 @@
     if(key==='escapeRope'){
       // Force both players to choose, defender first. Selection is not random.
       const to=stage==='self'?us:foe,who=stage==='self'?'self':'opponent';
-      if(ctx.resolvingChoice){const p=selectedTarget(to);if(p&&to.bench.includes(p))switchPokemon(to,p.benchSlot,ctx.state);if(stage==='opponent'&&us.bench.length)target('self','self',{includeActive:false});return;}
-      if(foe.bench.length)target('opponent','opponent',{includeActive:false});else if(us.bench.length)target('self','self',{includeActive:false});return;
+      const protectedActive=()=>foe.active&&protectedFromEffects(foe.active,ctx);
+      if(ctx.resolvingChoice){const p=selectedTarget(to);
+        if(p&&to.bench.includes(p)&&(stage!=='opponent'||!protectedActive()))switchPokemon(to,p.benchSlot,ctx.state);
+        if(stage==='opponent'&&us.bench.length)target('self','self',{includeActive:false});return;}
+      // If the opposing Active has Ω Barrier, that half of Escape Rope is
+      // blocked, but the person playing the Item may still switch their own.
+      if(foe.bench.length&&!protectedActive())target('opponent','opponent',{includeActive:false});
+      else if(us.bench.length)target('self','self',{includeActive:false});return;
     }
     if(key==='dowsingMachine'){
       const current=ctx.trainerRef?.uid||ctx.action?.trainerRef?.uid||e.playingRefUid;
@@ -18153,7 +18159,13 @@
   }
   function applyEffect(effect,ctx){
     if(!effect)return;
-    const guard=omegaTrainerGuard(ctx);
+    // A defender-chosen switch affects the outgoing Active Pokémon. If it
+    // lacks Ω Barrier, the player may promote a Benched Ω Barrier Pokémon.
+    // The generic snapshot guard would otherwise undo that entirely legal
+    // promotion. The actual switch handlers still check the outgoing Active.
+    const defenderChoosesSwitch=effect.type==='forceOpponentSwitch'&&effect.chooseBy!=='attacker';
+    const escapeRope=effect.type==='neoRule'&&effect.rule==='bw8:escapeRope';
+    const guard=(defenderChoosesSwitch||escapeRope)?null:omegaTrainerGuard(ctx);
     if(!guard)return applyEffectUnchecked(effect,ctx);
     // Never offer an unusable target-only choice when all relevant opposing
     // Pokémon are protected. Filter by UID to preserve normal card filters.
@@ -18511,7 +18523,7 @@
         for(let i=0;i<effect.amount;i++){const candidates=ss.deck.map((r,index)=>({r,index})).filter(({r})=>matchesFilter(ctx.cardById(r.cardId),effect.filter));if(!candidates.length||typeof ctx.benchCard!=='function')break;const hit=candidates[Math.floor(ctx.random(ctx.state)*candidates.length)],[ref]=ss.deck.splice(hit.index,1);if(ctx.benchCard(ss,ref)==null){ss.deck.splice(hit.index,0,ref);break;}log({type:'benchFromDeck',cardId:ref.cardId});}if(ctx.shuffle)ctx.shuffle(ctx.state,ss.deck);break;}
       case 'forceOpponentSwitch':{
         const ss=other(ctx);if(!ss.active||!ss.bench.length||protectedFromEffects(ss.active,ctx))break;
-        if(ctx.resolvingChoice&&ctx.action?.choiceTarget==='bench'){const incoming=ss.bench.find(p=>p&&Number(p.benchSlot)===Number(ctx.action.choiceBenchIndex));if(!incoming||protectedFromEffects(incoming,ctx))break;switchPokemon(ss,ctx.action.choiceBenchIndex,ctx.state);log({type:'switch',chosenBy:effect.chooseBy==='attacker'?ctx.side:ctx.foeSide});break;}
+        if(ctx.resolvingChoice&&ctx.action?.choiceTarget==='bench'){const incoming=ss.bench.find(p=>p&&Number(p.benchSlot)===Number(ctx.action.choiceBenchIndex));if(!incoming||(effect.chooseBy==='attacker'&&protectedFromEffects(incoming,ctx)))break;switchPokemon(ss,ctx.action.choiceBenchIndex,ctx.state);log({type:'switch',chosenBy:effect.chooseBy==='attacker'?ctx.side:ctx.foeSide});break;}
         if(typeof ctx.requestChoice==='function')ctx.requestChoice({kind:'switchBench',side:effect.chooseBy==='attacker'?'self':'opponent',selectionSide:ctx.foeSide,effect});break;
       }
       case 'revealHand':{const ss=effect.side==='self'?own(ctx):other(ctx);let refs=ss.hand.slice();if(effect.random){const n=Math.min(refs.length,Math.max(0,Number(effect.random)||0)),pool=refs.slice();refs=[];for(let i=0;i<n&&pool.length;i++){const index=Math.floor(ctx.random(ctx.state)*pool.length);refs.push(...pool.splice(index,1));}}log({type:'revealHand',revealedSide:effect.side||'opponent',cards:refs.map(r=>r.cardId)});break;}
@@ -22013,7 +22025,7 @@
         ?[{effectSelection:'discard',choiceLabel:'Discard ALL attached Lightning Energy — +50 damage'}]:[])];
     if(effect?.type==='neoRule'&&effect.rule==='xy5:straightClaw'){
       const a=ctx.attacker;
-      return [{effectSelection:'',choiceLabel:'20 damage — keep attached Energy'},
+      return [{effectSelection:'',choiceLabel:'60 damage — keep attached Energy'},
         ...Object.entries(a?.energy||{}).filter(([,n])=>Number(n)>0).map(([type])=>({effectSelection:'basic:'+type,choiceLabel:'Discard '+type+' Basic Energy for +30 damage'})),
         ...(a?.specialEnergy||[]).map(ref=>({effectSelection:'special:'+ref.uid,choiceLabel:'Discard '+(ctx.cardById(ref.cardId)?.name||ref.cardId)+' for +30 damage'}))];
     }
