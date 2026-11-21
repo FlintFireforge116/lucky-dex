@@ -3740,3 +3740,12 @@ unzip -o /sdcard/Download/LuckyDex_patch_v0.69.370_ANCIENT_ORIGINS_STAGE7.zip -d
 git add source
 git commit -m "LuckyDex v0.69.370 Ancient Origins Stage 7"
 git push origin main
+
+
+[Ancient Origins XY7 v0.69.371 Stage 8]
+- Giratina-EX #57/#93 Renegade Pulse prevents both damage and effects of opposing Mega Evolution attacks while its Ability is active. Hex Maniac and relevant Ability-suppression rules disable it.
+- Giratina-EX #57/#93 Chaos Wheel: after resolving its attack, lock opposing hand-played Pokemon Tools, Special Energy and Stadiums until the end of that opponent's next turn. Normal Energy Zone attachments and existing attachments are not locked.
+- Metagross #49 Magnetic Warp: once per turn, if a friendly Bench exists, choose a new own Active; then if an opposing Bench exists, opponent chooses their new Active. No automatic selection or phantom switch with empty Bench.
+- Metagross #49 Iron Cannon: explicit choice to keep Metal Energy at 80 damage or discard all attached Metal Energy for 160. Basic Metal enters physical Energy discard ledger; Special Metal cards enter physical discard pile; damage choice resolves before damage.
+- Keep legacy Legends Awakened optional switching test enabled in GitHub CI. Stage 8 regression suite executes before APK packaging.
+- Stage 8 cross-era nuance: an opposing θ Stop Active cannot be forcibly switched by Metagross's activated Magnetic Warp; the self-switch still succeeds. Beginner CPU chooses Iron Cannon's discard boost mainly when it enables a knockout.

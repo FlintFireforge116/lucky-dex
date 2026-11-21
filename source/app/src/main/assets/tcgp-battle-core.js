@@ -1748,6 +1748,7 @@
           pokemonOn(s).length<2||!pokemonOn(s).some(p=>Number(p.energy?.Metal||0)>0||(p.specialEnergy||[]).some(ref=>Number((ref.provides||data.cardById(ref.cardId)?.effect?.provides||{}).Metal||0)>0))))return;
         // Do not offer an inert hand-Energy Ability to the CPU or player.
         // This checks *physical hand* cards, never the fresh Energy Zone.
+        if(source.cardId==='xy7-49'&&ability.name==='Magnetic Warp'&&!s.bench.length)return;
         if(source.cardId==='xy7-6'&&ability.name==='Poisonous Nest'&&
            !['player','opponent'].some(w=>{
              const slot=state.sides[w].active;

@@ -248,7 +248,15 @@
       // Explosive Jet has no printed fixed damage: score its explicitly chosen
       // discard amount rather than treating every option as a zero-damage hit.
       const fireCount=/^count:(\d+)$/.exec(String(action.effectSelection||''));
-      const damage=attack?.effect?.rule==='xy5:explosiveJet'&&fireCount?Number(fireCount[1])*50:Number(attack?.damage||0);
+      let damage=attack?.effect?.rule==='xy5:explosiveJet'&&fireCount?Number(fireCount[1])*50:Number(attack?.damage||0);
+      if((action.attackCardId||state.sides[side].active.cardId)==='xy7-49'&&attack?.name==='Iron Cannon'){
+        // Don't throw away all attached Metal for an unnecessary +80; do
+        // choose the discard when it actually secures a knockout.
+        const target=state.sides[foeOf(side)].active;
+        const remaining=target?core.maxHp(state,foeOf(side),target)-Number(target.damage||0):Infinity;
+        if(action.effectSelection==='discard')return 200+(remaining>80&&remaining<=160?220:20);
+        damage=80;
+      }
       return 200+damage;
     }
     if(action.type==='retreat')return -10;

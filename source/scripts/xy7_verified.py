@@ -1,4 +1,4 @@
-"""Ancient Origins (XY7), Stage 7: explicitly supported printed effects only.
+"""Ancient Origins (XY7), Stage 8: explicitly supported printed effects only.
 
 Do not enable a print if *any* attack, Ability, theta Ancient Trait,
 Trainer or Special Energy passive remains unaudited. Reuse battle effects only
@@ -64,6 +64,7 @@ ATTACKS={
  ('46','Entangling Control'):S(E('forceOpponentSwitch',chooseBy='attacker'),ST('confusion')),
  ('46','Trash Tentacle'):SEARCH(1,source='discard'),
  ('48','Bullet Punch'):COIN(2,20,False),
+ ('49','Iron Cannon'):E('xy7IronCannon'),
  ('50','Machine Gun Stomp'):E('handCountDamage',side='self',amount=10,mode='add'),
  ('50','Guard Press'):GUARD(20),
  ('51','Iron Head'):COIN('untilTails',30),
@@ -72,6 +73,7 @@ ATTACKS={
  ('54','Telekinesis'):E('selectedDamage',target='opponentPokemon',amount=50,ignoreWeakness=True,ignoreResistance=True),
  ('55','Cotton Bed'):ST('sleep'),
  ('56','Windy Mischief'):E('xy7WindyMischief'),
+ ('57','Chaos Wheel'):E('xy7ChaosWheel'),
  ('59','Bubble'):Q(ST('paralysis')),
  ('61','Act Tough'):BONUS(20,{'type':'selfHasEnergyType','energyType':'Darkness'}),
  ('62','Fake Out'):Q(ST('paralysis')),('62','Ambush'):Q(BONUS(30)),
@@ -137,6 +139,8 @@ ABILITIES={
  'Electric Effect':{'type':'passive','effect':E('additionalType',types=['Lightning'])},
  'Double Type':{'type':'passive','effect':E('additionalType',types=['Psychic','Fighting'])},
  'Farewell Letter':{'type':'activated','benchOnly':True,'oncePerTurn':True,'effect':S(E('discardSelf'),DRAW(1))},
+ 'Magnetic Warp':{'type':'activated','oncePerTurn':True,'effect':E('xy7MagneticWarp')},
+ 'Renegade Pulse':{'type':'passive','effect':E('xy7RenegadePulse')},
  'Scoundrel Ring':{'type':'triggered','event':'benched','fromHandOnly':True,
    'effect':OPT('Search for up to 3 Pokémon-EX except Hoopa-EX',
      SEARCH(3,kind='pokemon',isEx=True,notName='Hoopa-EX'))},
