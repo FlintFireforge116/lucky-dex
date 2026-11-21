@@ -3210,3 +3210,36 @@ unzip -o /sdcard/Download/LuckyDex_patch_v0.69.352_PRIMAL_CLASH_INDEPENDENT_AUDI
 git add source
 git commit -m "LuckyDex v0.69.352 independent Primal Clash audit"
 git push origin main
+
+========================================================================
+LUCKYDEX v0.69.353 — XY6 ROARING SKIES STAGE 1
+========================================================================
+NEXT SET: XY Roaring Skies (xy6), official 110 numbered cards + 77a and 92a,
+112 unique collector prints; 147 attack texts, 15 Ability occurrences and
+12 Delta Ancient Trait occurrences. The immutable raw-source Git blob is
+5eab0c0148a5cb52dd7005628aa61c793ec0d930. Regenerate before APK assets
+merge; reject noncanonical alternate-print ordering and mismatched counts.
+
+STAGED SUPPORT IS INTENTIONAL: All 112 cards exist for collection/inspection.
+Only prints whose ENTIRE rule set is implemented may enter Classic battles,
+player autobuild or CPU autobuild. Never silently treat an unknown effect as
+noop. Keep Delta Plus (extra earned Prize only for attack-damage KO), Delta
+Evolution (first-turn/same-turn evolving), Delta Wild (conditional post-type
+reduction), Sky Field (8 Bench including discard-to-5), Double Dragon Energy
+(two all-type units, Dragon-only) and unverified abilities/mechanics gated
+until dedicated deterministic tests prove them. Print full reason in support.
+
+Spirit Links for Gallade, Latios and Rayquaza use exact Mega targets, never
+unrelated EX versions. Always check that autobuild Trainers serve actual
+selected deck Pokémon and 30-card deck construction excludes Basic Energy.
+Energy searches must honor separate Energy Zone and hand cap. Follow Stage 1
+with targeted mechanic completion and an independent card-by-card/CPU/deck
+audit. No APK build success claim before GitHub Actions confirms it.
+
+CURRENT TERMUX PATCH FLOW (download ZIP to phone first):
+cd ~/lucky-dex
+unzip -o /sdcard/Download/LuckyDex_patch_v0.69.353_ROARING_SKIES_STAGE1.zip -d source
+git add source
+git commit -m "LuckyDex v0.69.353 Roaring Skies Stage 1 integration"
+git push origin main
+========================================================================

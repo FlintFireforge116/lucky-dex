@@ -8,8 +8,8 @@ android {
         applicationId 'com.example.luckydex'
         minSdk 26
         targetSdk 35
-        versionCode 7351
-        versionName '0.69.351'
+        versionCode 7353
+        versionName '0.69.353'
     }
 
     signingConfigs {
@@ -690,4 +690,24 @@ tasks.named('auditV07329AllClassicAttackEnergyForApk').configure {
 }
 tasks.matching { it.name == 'preBuild' || (it.name.startsWith('merge') && it.name.endsWith('Assets')) }.configureEach {
     dependsOn tasks.named('auditXY5ForApk')
+}
+
+// v0.69.353 XY6 Roaring Skies Stage 1. The pinned 112-print catalogue is
+// generated BEFORE the independent battle audit and Android asset merge.
+// Unknown Delta mechanics remain gated; never ship an offline placeholder.
+tasks.register('generateXY6ForApk', Exec) {
+    dependsOn tasks.named('auditXY5ForApk')
+    workingDir rootProject.projectDir
+    commandLine (System.getenv('LUCKYDEX_PYTHON') ?: 'python3'), 'scripts/build-xy6.py'
+}
+tasks.register('auditXY6ForApk', Exec) {
+    dependsOn tasks.named('generateXY6ForApk')
+    workingDir rootProject.projectDir
+    commandLine 'node', '--test', 'tests/v07353-roaring-skies-stage1.test.cjs'
+}
+tasks.named('auditV07329AllClassicAttackEnergyForApk').configure {
+    dependsOn tasks.named('auditXY6ForApk')
+}
+tasks.matching { it.name == 'preBuild' || (it.name.startsWith('merge') && it.name.endsWith('Assets')) }.configureEach {
+    dependsOn tasks.named('auditXY6ForApk')
 }

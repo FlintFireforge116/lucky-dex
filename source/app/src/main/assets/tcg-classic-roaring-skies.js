@@ -1,0 +1,2 @@
+/* Build-time placeholder. :app:generateXY6ForApk MUST replace this before APK packaging. */
+(function(root,factory){const api=factory();if(typeof module==='object'&&module.exports)module.exports=api;if(root)root.LuckyDexClassicTCGXY6=api;})(typeof globalThis!=='undefined'?globalThis:this,function(){'use strict';const SET=Object.freeze({id:'xy6',name:'Roaring Skies',series:'XY',releaseDate:'2015-05-06',cardCount:110,printedTotal:112});const CARDS=Object.freeze([]);return {SET,CARDS,cardById:()=>null,coverage:()=>({total:0,printed:0,battleEnabled:0,gated:[]})};});

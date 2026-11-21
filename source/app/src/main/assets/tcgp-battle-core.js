@@ -2873,7 +2873,10 @@ const target=slotForTarget(s,action.target,action.benchIndex);if(card.id==='pl2-
         (['xy5-94','xy5-154'].includes(ref.cardId)&&toolsOf(target).some(t=>t.cardId==='xy5-123'))||
         (['xy5-106','xy5-156'].includes(ref.cardId)&&toolsOf(target).some(t=>t.cardId==='xy5-130'))||
         (['xy5-86','xy5-151'].includes(ref.cardId)&&toolsOf(target).some(t=>t.cardId==='xy5-131'))||
-        (['xy5-55','xy5-149'].includes(ref.cardId)&&toolsOf(target).some(t=>t.cardId==='xy5-132')));
+        (['xy5-55','xy5-149'].includes(ref.cardId)&&toolsOf(target).some(t=>t.cardId==='xy5-132'))||
+        (['xy6-35','xy6-100'].includes(ref.cardId)&&toolsOf(target).some(t=>t.cardId==='xy6-83'))||
+        (['xy6-59','xy6-102'].includes(ref.cardId)&&toolsOf(target).some(t=>t.cardId==='xy6-85'))||
+        (['xy6-61','xy6-76','xy6-105'].includes(ref.cardId)&&toolsOf(target).some(t=>t.cardId==='xy6-87')));
       const dp2SlakothWasAsleep=target.cardId==='dp2-99'&&!!target.conditions?.sleep;
       target.cardId = ref.cardId;
       target.stack.push(ref.cardId);
