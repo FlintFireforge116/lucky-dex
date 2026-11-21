@@ -84,7 +84,7 @@ ATTACKS={
 # equivalents via the shared copy mapping directly below.
 ATTACKS.update({
  ('10','Afterimage Assault'):E('benchFromDeck',amount=2,filter={'kind':'pokemon','name':'Ninjask'},choose=True),
- ('11','Cursed Rain'):S(E('damage',target='opponentAll',amount=10),SWITCH()),
+ ('11','Cursed Rain'):S(E('placeDamageCounters',target='opponentAll',amount=10),SWITCH()),
  ('33','Close Encounter'):DRAW(2),
  ('33','Overdrive Smash'):E('nextAttackBonus',attackName='Overdrive Smash',amount=60),
  ('34','Piercing Prizes'):E('neoRule',rule='xy6:piercingPrizes'),

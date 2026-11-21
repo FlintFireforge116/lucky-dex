@@ -145,7 +145,7 @@
       case 'trimHand':need(['self','opponent'].includes(effect.side),'invalid trim-hand side');need(integer(effect.maxSize),'invalid trim-hand size');break;
       case 'shuffleRandomHandCard':need(['self','opponent'].includes(effect.side),'invalid shuffle-hand side');break;
       case 'setRemainingHp':need(nonnegative(effect.amount),'invalid remaining HP amount');break;
-      case 'placeDamageCounters':need(nonnegative(effect.amount)&&integer(effect.amount)&&effect.amount%10===0,'invalid damage counter total');need(['opponentActive','opponentPokemon','opponentBench'].includes(effect.target),'damage counters require opposing target');break;
+      case 'placeDamageCounters':need(nonnegative(effect.amount)&&integer(effect.amount)&&effect.amount%10===0,'invalid damage counter total');need(['opponentActive','opponentPokemon','opponentBench','opponentAll'].includes(effect.target),'damage counters require opposing target');break;
       case 'playFossil':need(nonnegative(effect.hp)&&effect.hp>0,'invalid Fossil HP');need(effect.subtype==='Colorless','invalid Fossil type');need(effect.canRetreat===false,'Fossil cannot retreat');break;
       case 'modifier':need(STATS.includes(effect.stat),'invalid modifier stat');need(typeof effect.amount==='number'&&Number.isFinite(effect.amount),'invalid modifier amount');need(['turn','opponentTurn','nextOwnTurn','whileActive','whileInPlay'].includes(effect.duration),'invalid duration');if(effect.scope!=null)need(['self','team','active','both','opponentActive'].includes(effect.scope),'invalid modifier scope');break;
       case 'discardTop':need(integer(effect.amount),'invalid discarded card count');break;
@@ -11925,7 +11925,7 @@
     const key=String(e.rule||'').slice(4),us=own(ctx),foe=other(ctx),a=ctx.attacker,d=ctx.defender,
       act=ctx.action||{},stage=e.stage||'start',turn=Number(ctx.state.turnNumber||0),
       c=ref=>ctx.cardById(ref?.cardId), mons=ss=>pokemonOn(ss),
-      team=p=>Boolean(c(p)?.teamPlasma)||[p?.tool,...(p?.extraTools||[])].filter(Boolean).some(r=>r.cardId==='bw9-104'), plasma=p=>(p?.specialEnergy||[]).some(r=>['bw8-127','bw9-106','bw10-91'].includes(r.cardId)),
+      team=p=>Boolean(c(p)?.teamPlasma)||activeToolsOf(ctx.state,p,ctx.cardById).some(r=>r.cardId==='bw9-104'), plasma=p=>(p?.specialEnergy||[]).some(r=>['bw8-127','bw9-106','bw10-91'].includes(r.cardId)),
       label=r=>c(r)?.name||r?.cardId||'Card', limit=ss=>ss.hand.length<Number(ss.handLimit||8),
       draw=(ss,n)=>{for(let i=0;i<n&&ss.deck.length&&limit(ss);i++)ctx.drawCard?.(ss);},
       ask=(step,options,extra={})=>options.length&&ctx.requestChoice?.({kind:'option',side:'self',options,effect:{...e,stage:step,...extra}}),
@@ -12149,7 +12149,7 @@
       limit=()=>us.hand.length<Number(us.handLimit||8),
       plasmaIds=['bw8-127','bw9-106','bw10-91'],
       plasma=p=>(p?.specialEnergy||[]).filter(r=>plasmaIds.includes(r.cardId)).length,
-      team=p=>Boolean(card(p)?.teamPlasma)||(p?.tool?.cardId==='bw9-104')||(p?.extraTools||[]).some(r=>r.cardId==='bw9-104'),
+      team=p=>Boolean(card(p)?.teamPlasma)||activeToolsOf(ctx.state,p,ctx.cardById).some(r=>r.cardId==='bw9-104'),
       ask=(stage,options,extra={})=>options.length&&ctx.requestChoice?.({kind:'option',side:'self',options,effect:{...e,stage,...extra}}),
       target=(stage,who='self',extra={})=>ctx.requestChoice?.({kind:'pokemon',side:'self',selectionSide:who==='self'?ctx.side:ctx.foeSide,includeActive:extra.includeActive!==false,...extra,effect:{...e,stage,...extra}}),
       selectedTarget=who=>selected(ctx,who==='opponent'?foe:us),
@@ -12604,7 +12604,7 @@
       stage=e.stage||'start',act=ctx.action||{},turn=Number(ctx.state.turnNumber||0),
       card=r=>ctx.cardById(r?.cardId),label=r=>card(r)?.name||r?.cardId||'Card',
       ownAll=()=>pokemonOn(us),foeAll=()=>pokemonOn(foe),
-      plasma=p=>!!card(p)?.teamPlasma||[p?.tool,...(p?.extraTools||[])].filter(Boolean).some(r=>r.cardId==='bw9-104'),
+      plasma=p=>!!card(p)?.teamPlasma||activeToolsOf(ctx.state,p,ctx.cardById).some(r=>r.cardId==='bw9-104'),
       plasmaEnergy=p=>(p?.specialEnergy||[]).some(r=>['bw8-127','bw9-106','bw10-91'].includes(r.cardId)),
       full=ss=>ss.hand.length>=Number(ss.handLimit||8),
       draw=(ss,n)=>{for(let i=0;i<n&&ss.deck.length&&!full(ss);i++)ctx.drawCard?.(ss);},
@@ -19496,7 +19496,7 @@
 
       if(e.type==='neoRule'&&String(e.rule||'').startsWith('bw10:')){
         const k=e.rule.slice(5),us=own(ctx),foe=other(ctx),a=ctx.attacker,d=ctx.defender,
-          card=p=>ctx.cardById(p?.cardId),isPlasma=p=>Boolean(card(p)?.teamPlasma)||p?.tool?.cardId==='bw9-104',
+          card=p=>ctx.cardById(p?.cardId),isPlasma=p=>Boolean(card(p)?.teamPlasma)||activeToolsOf(ctx.state,p,ctx.cardById).some(r=>r.cardId==='bw9-104'),
           totalEnergy=p=>Object.values(p?.energy||{}).reduce((t,n)=>t+Number(n||0),0)+(p?.specialEnergy||[]).length,
           counter=p=>Math.floor(Number(p?.damage||0)/10),turn=Number(ctx.state.turnNumber||0);
         if(k==='energyPress'){damage+=20*totalEnergy(d);return;}
@@ -19572,7 +19572,7 @@
         if(k==='plasmaBonus40'){if(hasPlasma(a))damage+=40;return;}
         if(k==='plasmaParalyze'){if(hasPlasma(a))pending.push(e);return;}
         if(k==='plasmaGale'){if(!hasPlasma(a))damage=0;else pending.push(e);return;}
-        if(k==='teampact'){damage=30*on(us).filter(p=>card(p)?.teamPlasma||[p.tool,...(p.extraTools||[])].filter(Boolean).some(r=>r.cardId==='bw9-104')).length;return;}
+        if(k==='teampact'){damage=30*on(us).filter(p=>card(p)?.teamPlasma||activeToolsOf(ctx.state,p,ctx.cardById).some(r=>r.cardId==='bw9-104')).length;return;}
         if(k==='toolDrop'){damage=20*[...on(us),...on(foe)].reduce((n,p)=>n+(p.tool?1:0)+(p.extraTools||[]).length,0);return;}
         if(k==='damageBeat'){damage=20*Math.floor(Number(d?.damage||0)/10);return;}
         if(k==='powerfulRage'){damage=20*Math.floor(Number(a?.damage||0)/10);return;}

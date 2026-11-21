@@ -3447,3 +3447,34 @@ LUCKYDEX v0.69.361 — XY ROARING SKIES 112-PRINT COMPLETION
     git commit -m "LuckyDex v0.69.361 Roaring Skies complete and Tool audit"
     git push origin main
 ========================================================================
+
+========================================================================
+LUCKYDEX v0.69.362 — XY6 ROARING SKIES INDEPENDENT CARD AUDIT
+========================================================================
+- Verified baseline: GitHub Actions #650 v0.69.361 SUCCESS; the generated
+  pinned Roaring Skies catalogue has all 112 prints enabled, with the printed
+  147 attacks, 15 Abilities and 12 Ancient Traits. A 112/112 source check
+  does not by itself prove correct interactions with EVERY older expansion.
+- Shedinja #11 Cursed Rain is DAMAGE COUNTER PLACEMENT on EVERY opposing
+  Pokémon (one counter = 10 damage). Do not classify it as Bench attack
+  damage; Wide Lens, Weakness and Resistance do not multiply counters.
+  Its printed self-switch follows the placement.
+- Banette #31 Tool Concealment blanks the EFFECTS of Tools globally, but
+  does not detach them or stop effects that depend only on a Tool existing.
+  Guard older hard-coded effects: Head Ringer adds no attack Energy cost;
+  Rocky Helmet reflects no damage; Unown E EQUIP adds no HP; Plasma Badge
+  grants no Team Plasma effect while Banette suppresses its text. When the
+  Ability is suppressed/removed, attached Tools resume functioning normally.
+- The independent suite tests actual battle-state interactions and source
+  descriptors; 23 local suites: 249 passed, 0 failed, 7 generated-catalogue
+  dependent skips. `auditXY6IndependentForApk` must run after the 112-print
+  catalogue generation and after the Stage 8/Completion tests.
+- The next set is NOT blocked by source coverage, but is blocked by an
+  unverified v0.69.362 APK until GitHub completes its CI run successfully.
+- Termux:
+    cd ~/lucky-dex
+    unzip -o /sdcard/Download/LuckyDex_patch_v0.69.362_ROARING_SKIES_INDEPENDENT_AUDIT.zip -d source
+    git add source
+    git commit -m "LuckyDex v0.69.362 Roaring Skies independent audit"
+    git push origin main
+========================================================================

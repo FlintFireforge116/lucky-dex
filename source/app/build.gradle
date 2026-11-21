@@ -8,8 +8,8 @@ android {
         applicationId 'com.example.luckydex'
         minSdk 26
         targetSdk 35
-        versionCode 7361
-        versionName '0.69.361'
+        versionCode 7362
+        versionName '0.69.362'
     }
 
     signingConfigs {
@@ -829,4 +829,19 @@ tasks.named('auditV07329AllClassicAttackEnergyForApk').configure {
 }
 tasks.matching { it.name == 'preBuild' || (it.name.startsWith('merge') && it.name.endsWith('Assets')) }.configureEach {
     dependsOn tasks.named('auditXY6CompletionForApk')
+}
+
+
+// v0.69.362: independent Roaring Skies counter-vs-damage and Banette
+// cross-era hard-coded Tool audit. This runs AFTER official 112-print generation.
+tasks.register('auditXY6IndependentForApk', Exec) {
+    dependsOn tasks.named('auditXY6CompletionForApk')
+    workingDir rootProject.projectDir
+    commandLine 'node', '--test', 'tests/v07362-roaring-skies-independent-audit.test.cjs'
+}
+tasks.named('auditV07329AllClassicAttackEnergyForApk').configure {
+    dependsOn tasks.named('auditXY6IndependentForApk')
+}
+tasks.matching { it.name == 'preBuild' || (it.name.startsWith('merge') && it.name.endsWith('Assets')) }.configureEach {
+    dependsOn tasks.named('auditXY6IndependentForApk')
 }

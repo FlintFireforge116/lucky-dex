@@ -563,7 +563,7 @@
   }
   function maxHp(state,side,slot){const eeveeStage=majesticEeveeEvolution(slot);
     const majesticVeil=state.format==='classic'&&eeveeStage&&pokemonOn(state.sides[side]).some(p=>p.cardId==='dp5-18'&&!effects.abilitiesSuppressed(state,side,p,data.cardById))?20:0;
-    const ex3LowPressure=state.format==='classic'&&state.stadium?.cardId==='ex3-86'&&data.cardById(slot?.cardId)?.types?.some(t=>['Grass','Lightning'].includes(t))?10:0;const rocketHideout=state.format==='classic'&&state.stadium?.cardId==='ex7-87'&&/^(Dark |Rocket's )/.test(data.cardById(slot?.cardId)?.name||'')?20:0;const dp2Equip=toolsOf(slot).some(r=>r.cardId==='dp2-65')?10:0;// LV.X is a *level-up*, not an Evolution card: Azelf/Mewtwo/Uxie
+    const ex3LowPressure=state.format==='classic'&&state.stadium?.cardId==='ex3-86'&&data.cardById(slot?.cardId)?.types?.some(t=>['Grass','Lightning'].includes(t))?10:0;const rocketHideout=state.format==='classic'&&state.stadium?.cardId==='ex7-87'&&/^(Dark |Rocket's )/.test(data.cardById(slot?.cardId)?.name||'')?20:0;const dp2Equip=activeToolsOf(state,slot).some(r=>r.cardId==='dp2-65')?10:0;// LV.X is a *level-up*, not an Evolution card: Azelf/Mewtwo/Uxie
     // LV.X over a Basic receive Snowpoint Temple's +20 HP. A Stage 1/2
     // underneath an LV.X is still Evolved and must NOT receive that bonus.
     const currentStage=data.cardById(slot.cardId)?.stage;
@@ -634,7 +634,7 @@
     // Rocky Helmet (including secret print) activates on *attack damage* to
     // its Active holder. It does not trigger on poison, checkup or zero damage.
     if(state.format==='classic'&&event==='damagedByAttack'&&Number(meta.damage||0)>0&&onlySource===ss.active&&
-       [onlySource.tool,...(onlySource.extraTools||[])].filter(Boolean).some(r=>['bw7-133','bw7-153'].includes(r.cardId))&&
+       activeToolsOf(state,onlySource).some(r=>['bw7-133','bw7-153'].includes(r.cardId))&&
        meta.source?.side!==(side)){
       const attacker=meta.attacker||state.sides[meta.source.side]?.active;
       if(attacker){attacker.damage=Number(attacker.damage||0)+20;state.log.push({type:'bw7RockyHelmet',side,attackerUid:attacker.uid,damage:20});}
@@ -869,7 +869,7 @@
     if(state.format==='classic'&&['Poliwag','Poliwhirl','Poliwrath'].includes(data.cardById(slot?.cardId)?.name)&&
       pokemonOn(state.sides[side]).some(p=>p.cardId==='xy3-18'&&!effects.abilitiesSuppressed(state,side,p,data.cardById)))cost=cost.replace(/C/g,'');
     // Head Ringer is owned by the opponent but increases the holder's cost.
-    if(state.format==='classic'&&slot&&toolsOf(slot).some(r=>r.cardId==='xy4-97'))cost+='C';
+    if(state.format==='classic'&&slot&&activeToolsOf(state,slot).some(r=>r.cardId==='xy4-97'))cost+='C';
     // XY4 Dimension Valley applies to BOTH players, reduces only one printed
     // Colorless symbol, and never removes a required Psychic Energy symbol.
     if(state.format==='classic'&&state.stadium?.cardId==='xy4-93'&&
