@@ -363,11 +363,12 @@
       // permits both first-turn evolution and evolving on the turn played.
       // Ability suppression removes the permission, without overriding any
       // other evolution prohibition such as Ancient Power or Dialga.
+      const deltaEvolution=state.format==='classic'&&evo.ancientTrait?.name==='Δ Evolution';
       const adaptive=state.format==='classic'&&['xy2-1','xy2-2'].includes(slot.cardId)&&
         !effects.abilitiesSuppressed(state,side,slot,data.cardById); 
       const giovanniBonus=state.format==='classic'&&Number(s.gym2GiovanniEvolutionTurn)===Number(state.turnNumber)&&base?.name?.startsWith("Giovanni's")&&evo.name?.startsWith("Giovanni's");
       const timeSpace=state.format==='classic'&&state.stadium?.cardId==='pl1-104'&&!evo.isLevelX;
-      if(firstTurn&&!adaptive&&!timing?.firstTurn&&!giovanniBonus&&!timeSpace)return false;if(sameTurn&&!adaptive&&!timing?.sameTurn&&!giovanniBonus&&!timeSpace)return false;
+      if(firstTurn&&!deltaEvolution&&!adaptive&&!timing?.firstTurn&&!giovanniBonus&&!timeSpace)return false;if(sameTurn&&!deltaEvolution&&!adaptive&&!timing?.sameTurn&&!giovanniBonus&&!timeSpace)return false;
       return true;
     };
     s.hand.forEach((ref,handIndex)=>{
@@ -2521,8 +2522,15 @@
             ['hgss3-89','hgss3-90'].includes(attacker?.cardId)&&eventSource.uid===attacker?.uid&&
             !effects.abilitiesSuppressed(state,foeSide,attacker,data.cardById)?1:0;
           const bw8Overflow=awardsPrize&&cause==='attack'&&eventSource?.attack&&attacker&&['bw8-108','bw8-134','bw11-102'].includes(attacker.cardId)&&eventSource.uid===attacker.uid&&!effects.abilitiesSuppressed(state,foeSide,attacker,data.cardById)?1:0;
+          // Roaring Skies Δ Plus is a separate Prize for a KO caused by actual
+          // damage from this attack (including a selected Bench target).
+          // It must not reward poison, an effect KO, or an unrelated old hit.
+          const deltaPlus=awardsPrize&&state.format==='classic'&&cause==='attack'&&
+            source?.attack&&source.side===foeSide&&
+            Number(source.damage||0)>0&&Number(source.turn)===Number(state.turnNumber)&&
+            data.cardById(source.cardId)?.ancientTrait?.name==='Δ Plus'?1:0;
           const bw9LifeDew=state.format==='classic'&&toolsOf(slot).some(r=>r.cardId==='bw9-107')?1:0;
-          const prizeCount=awardsPrize?Math.max(0,prizeValue(card)+extraMoonSkip+arceusBeltBonus+arceusExtra+hgss3SpaceVirus+bw8Overflow-bw9LifeDew):0;
+          const prizeCount=awardsPrize?Math.max(0,prizeValue(card)+extraMoonSkip+arceusBeltBonus+arceusExtra+hgss3SpaceVirus+bw8Overflow+deltaPlus-bw9LifeDew):0;
           awarded=Math.min(prizeCount,Math.max(0,foe.prizes.length-(state.pendingPrizeClaims||[]).filter(q=>q.side===foeSide).reduce((n,q)=>n+q.remaining,0)));
           if(awarded){state.pendingPrizeClaims=state.pendingPrizeClaims||[];state.pendingPrizeClaims.push({side:foeSide,remaining:awarded});}
           state.log.push({type:'ko',side,cardId:card.id,turnNumber:state.turnNumber,prizesTaken:foe.prizesTaken,awarded});

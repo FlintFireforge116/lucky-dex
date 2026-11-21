@@ -8,8 +8,8 @@ android {
         applicationId 'com.example.luckydex'
         minSdk 26
         targetSdk 35
-        versionCode 7353
-        versionName '0.69.353'
+        versionCode 7354
+        versionName '0.69.354'
     }
 
     signingConfigs {
@@ -710,4 +710,19 @@ tasks.named('auditV07329AllClassicAttackEnergyForApk').configure {
 }
 tasks.matching { it.name == 'preBuild' || (it.name.startsWith('merge') && it.name.endsWith('Assets')) }.configureEach {
     dependsOn tasks.named('auditXY6ForApk')
+}
+
+// v0.69.354: XY6 Stage 2 Delta traits + preserved cross-era gameplay.
+// Run after official generation, before app merge; gameplay checks intentionally
+// use test-local injected print fixtures so no network or collectible state leaks.
+tasks.register('auditXY6Stage2ForApk', Exec) {
+    dependsOn tasks.named('auditXY6ForApk')
+    workingDir rootProject.projectDir
+    commandLine 'node', '--test', 'tests/v07354-roaring-skies-delta-traits.test.cjs'
+}
+tasks.named('auditV07329AllClassicAttackEnergyForApk').configure {
+    dependsOn tasks.named('auditXY6Stage2ForApk')
+}
+tasks.matching { it.name == 'preBuild' || (it.name.startsWith('merge') && it.name.endsWith('Assets')) }.configureEach {
+    dependsOn tasks.named('auditXY6Stage2ForApk')
 }

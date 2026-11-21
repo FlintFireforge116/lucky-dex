@@ -17,6 +17,7 @@ ATTACKS={
  ('6','Poison Sting'):ST('poison'),
  ('6','Iron Defense'):Q(E('preventDamage',target='self',duration='opponentTurn')),
  ('7','Psybeam'):ST('confusion'),('7','Twilight Poison'):S(ST('sleep'),ST('poison')),
+ ('8','Wind Shard'):E('selectedDamage',target='opponentBench',amount=50),
  ('9','Slight Intrusion'):E('selfDamage',amount=10),
  ('11','Hopeless Scream'):E('damageFromDamage',source='self',amount=5,mode='replace'),
  ('12','Stomp'):Q(BONUS(20)),
@@ -24,13 +25,20 @@ ATTACKS={
  ('15','Grand Loop'):S(DRAW(3),OPT('Switch this Pokémon with your Bench',SWITCH())),
  ('15','Brave Bird'):E('selfDamage',amount=20),
  ('16','Find Ice'):SEARCH(3,kind='energy',basicEnergy=True),
+ ('17','Chilling Sigh'):ST('sleep'),('17','Tri Edge'):COIN(3,40,False),
+ ('28','Psywave'):E('energyDamage',source='opponent',amount=10,mode='replace'),
  ('19','Swallow'):E('drain'),('19','Water Pulse'):ST('sleep'),
+ ('20','Tail Whip'):Q(E('lock',action='attack',target='opponentActive',duration='opponentTurn')),
  ('21','Thunder Wave'):Q(ST('paralysis')),('21','Big Explosion'):E('selfDamage',amount=60),
  ('22','Continuous Tumble'):COIN('untilTails',20),
  ('25','Random Spark'):E('selectedDamage',target='opponentPokemon',amount=30),
  ('26','Headlock'):Q(BONUS(30),ST('paralysis')),
  ('26','Voltage Rush'):E('selfDamage',amount=50),
+ ('30','Bleh'):E('neoRule',rule='xy4:enhancedHammer'),
+ ('32','Evolution Jammer'):E('actionLock',side='opponent',cardType='Evolution',duration='opponentTurn'),
+ ('32','Curse Deeply'):E('placeDamageCounters',target='opponentActive',amount=50),
  ('34','Swift Lunge'):OPT('Have opponent switch their Active Pokémon',E('forceOpponentSwitch',chooseBy='defender')),
+ ('35','Unwavering Blade'):E('benchDamage',side='opponent',amount=30,all=True,filter={'damaged':True}),
  ('36','Stun Poison'):Q(S(ST('paralysis'),ST('poison'))),
  ('37','Rock Slide'):E('multiTargetDamage',target='opponentBench',count=2,amount=20,upTo=True),
  ('38','Sand Attack'):E('attackCoinGate',target='opponentActive',duration='opponentTurn'),
@@ -40,6 +48,7 @@ ATTACKS={
  ('43','Sweet Kiss'):E('draw',side='opponent',amount=1),
  ('45','Powerful Slap'):E('coinDamageByEnergy',amount=50,countCards=True),
  ('45','Aura Sphere'):E('multiTargetDamage',target='opponentBench',count=1,amount=20,upTo=True),
+ ('47','Spin Tackle'):Q(t=E('selfDamage',amount=20)),
  ('48','Play Rough'):Q(BONUS(20)),
  ('49','Slam'):COIN(2,20),('50','Shed Skin'):H(30),('50','Slam'):COIN(2,60),
  ('51','Mach Press'):E('allHeadsEffect',coins=2,heads=ST('paralysis')),
@@ -48,6 +57,7 @@ ATTACKS={
  ('57','Shatter'):E('discardStadium'),
  ('57','Power Howl'):E('filteredHandCountDamage',side='opponent',filter={},amount=20,mode='replace'),
  ('57','Steam Blast'):DISC(3),
+ ('60','Dragon Strike'):Q(t=E('lock',action='attack',target='self',attackName='Dragon Strike',duration='nextOwnTurn')),
  ('61','Dragon Ascent'):DISC(2),
  ('62','Shred'):E('damageRule',ignoreEffects=True),
  ('63','Bright Wing'):DISC(1,'self','Fire'),
@@ -58,7 +68,11 @@ ATTACKS={
  ('69','Blow Through'):BONUS(30,{'type':'stadiumInPlay'}),
  ('70','Double Peck'):COIN(2,10),
  ('71','Clutch'):LOCK(),('71','Aerial Ace'):Q(BONUS(30)),
+ ('72','Peck'):N,('72','Wing Attack'):N,
  ('75','Intensifying Burn'):BONUS(50,{'type':'opponentEx'}),
+ ('76','Emerald Break'):E('benchCountDamage',side='self',amount=30,mode='replace'),
+ ('81','Feather Dance'):E('nextAttackBonus',attackName='Sky Attack',amount=80),
+ ('81','Sky Attack'):E('coinAttackGate',heads=N),
  ('75','Dragon Pulse'):E('discardTop',side='self',amount=3),
  ('77','Sky Return'):E('returnToHand',target='self',returnBasicEnergy=True),
  ('79','Fly'):E('coinAttackGate',heads=E('preventDamage',target='self',duration='opponentTurn',preventEffects=True)),
@@ -86,10 +100,14 @@ TRAINERS={
  '109':('Item',E('neoRule',rule='xy2:energySwitch')),
  '110':('Item',SEARCH(1,source='discard',kind='trainer',trainerType='Supporter')),
 }
-# Ancient Traits: for now, preserve every printed trait but gate its card.
-# Special Energy's two-unit all-type conversion also requires a new energy hook.
-TRAITS_IMPLEMENTED=set()
-ABILITIES={}
+# All three printed Δ Ancient Traits are enforced by the shared battle core.
+# Special Energy's two-unit all-type conversion still requires an energy hook.
+TRAITS_IMPLEMENTED={'Δ Evolution','Δ Plus','Δ Wild'}
+ABILITIES={
+ 'Miraculous Scales':{'type':'passive','effect':N},
+ 'Jewel Armor':{'type':'passive','effect':N},
+ 'Clear Humming':{'type':'passive','effect':N},
+}
 
 def attack(row,a):
  num,title=str(row[0]),a[0];txt=(a[3] or '').strip()

@@ -3243,3 +3243,23 @@ git add source
 git commit -m "LuckyDex v0.69.353 Roaring Skies Stage 1 integration"
 git push origin main
 ========================================================================
+
+========================================================================
+LUCKYDEX v0.69.354 — ROARING SKIES STAGE 2: Δ EVOLUTION / Δ PLUS / Δ WILD
+========================================================================
+- Confirmed v0.69.353 Stage 1 GitHub Actions #642 succeeded. XY6 remains 112 official prints, 147 attack occurrences, 15 Abilities and 12 Ancient Trait prints. All printed cards are in the collection, but ONLY fully implemented cards may enter player/CPU battle decks.
+- Δ Evolution is a permission for the EVOLVING CARD, allowing first-turn and same-turn evolution; it does not override evolution parent identity, global lock, or the Mega turn-ending rule. Applies to both M Rayquaza-EX #76 and #105.
+- Δ Plus awards one EXTRA selectable face-down Prize only if the specific attacking Pokémon's attack DAMAGE knocked out the target (including Bench). Must use real KO source metadata, respect EX prize value, and never trigger for poison, passive effects or stale hits; retain any bonus even if attacker self-KOs in the same attack.
+- Δ Wild reduces final DAMAGE by 20 only if attacker has Grass/Fire/Water/Lightning typing, after Weakness/Resistance. The Ancient Trait is NOT blocked by Ability suppression; ability-based protection is.
+- Beautifly #5 Miraculous Scales blocks only damage from opponent Pokémon-EX attacks; Carbink #47 Jewel Armor protects its Bench position against own/opponent attack damage; Altaria #74 Clear Humming grants no Weakness to friendly Colorless Pokémon while unsuppressed.
+- Newly mapped attack effects use correct physical target selection and damage timing: Banette Curse Deeply puts 5 damage counters without weakness; its Evolution Jammer locks opponent evolution next turn; M Gallade Unwavering Blade hits only damaged opponent Bench; M Rayquaza Emerald Break scales with actual own Bench; Unfezant Feather Dance boosts its next-turn Sky Attack; and mapped safe coin, lock, recoil and search rules retain exact effects. Both listed alternate prints share effects.
+- Keep Sky Field's eight Bench, Double Dragon Energy's two multitype units, Shaymin-EX Set Up and other unique unproven interactions gated until their dedicated implementation and tests. Do NOT pretend the whole set is battle-ready.
+- v07354 regression suite (Δ Prize, evolving, 20-damage post-type reduction, copied alt prints, counters, damage guards) joins v07353 in Gradle's APK preflight after generation; run cross-era tests. GitHub build remains unconfirmed until Actions passes.
+- Details: docs/XY6_ROARING_SKIES_STAGE2_v0.69.354.md
+CURRENT TERMUX:
+cd ~/lucky-dex
+unzip -o /sdcard/Download/LuckyDex_patch_v0.69.354_ROARING_SKIES_STAGE2_DELTA.zip -d source
+git add source
+git commit -m "LuckyDex v0.69.354 Roaring Skies Delta mechanics"
+git push origin main
+========================================================================
