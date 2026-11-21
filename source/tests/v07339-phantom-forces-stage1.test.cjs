@@ -74,8 +74,8 @@ print(json.dumps(m.generate(rows)))`;
  const r=spawnSync('python3',['-c',code,path.join(root,'scripts')],{encoding:'utf8',maxBuffer:1024*1024});
  assert.equal(r.status,0,r.stderr||r.stdout);
  const by=Object.fromEntries(JSON.parse(r.stdout).map(c=>[c.number,c]));
- for(const id of ['26','44','23','91','93','103','107','109','111','112'])assert.equal(by[id].battleEnabled,true,id+': '+by[id].support.reasons);
- for(const id of ['2'])assert.equal(by[id].battleEnabled,false,id+' must stay gated');
+ for(const id of ['2','26','44','23','91','93','103','107','109','111','112'])assert.equal(by[id].battleEnabled,true,id+': '+by[id].support.reasons);
+ assert.equal(by['2'].attacks[0].effect.rule,'xy4:dizzyingWind');
  for(const card of Object.values(by).filter(c=>c.battleEnabled)){
   for(const attack of card.attacks||[])assert.deepEqual(effects.validateEffect(attack.effect),[],card.id+': '+attack.name);
   if(card.kind==='trainer')assert.deepEqual(effects.validateEffect(card.effect),[],card.id);

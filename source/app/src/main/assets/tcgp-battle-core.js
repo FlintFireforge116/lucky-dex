@@ -42,7 +42,7 @@
   let slotSequence=0;
   function makePokemonSlot(cardId, playedOnSideTurn, uid){
     const card = data.cardById(cardId);
-    if (!card || card.kind !== 'pokemon'&&card.effect?.type!=='playFossil') throw new Error(`Not a Pokémon battle card: ${cardId}`);
+    if (!card || card.kind !== 'pokemon'&&card.effect?.type!=='playFossil'&&card.id!=='xy4-102') throw new Error(`Not a Pokémon battle card: ${cardId}`);
     return {
       uid:uid || `slot-${cardId}-${++slotSequence}`,
       cardId:card.id,
@@ -851,6 +851,8 @@
     cost=Array.isArray(cost)?cost.join(''):String(cost);
     if(state.format==='classic'&&['Poliwag','Poliwhirl','Poliwrath'].includes(data.cardById(slot?.cardId)?.name)&&
       pokemonOn(state.sides[side]).some(p=>p.cardId==='xy3-18'&&!effects.abilitiesSuppressed(state,side,p,data.cardById)))cost=cost.replace(/C/g,'');
+    // Head Ringer is owned by the opponent but increases the holder's cost.
+    if(state.format==='classic'&&slot&&toolsOf(slot).some(r=>r.cardId==='xy4-97'))cost+='C';
     // XY4 Dimension Valley applies to BOTH players, reduces only one printed
     // Colorless symbol, and never removes a required Psychic Energy symbol.
     if(state.format==='classic'&&state.stadium?.cardId==='xy4-93'&&
@@ -1358,6 +1360,7 @@
       if(state.format==='classic'&&trainerType(card)==='Item'&&foe.active?.cardId==='bw2-47'&&
         !effects.abilitiesSuppressed(state,side==='player'?'opponent':'player',foe.active,data.cardById))return;
       const type=trainerType(card),base={type:'trainer',handIndex,cardId:card.id};if(effects.isActionLocked(state,side,'Trainer',data.cardById)||effects.isActionLocked(state,side,type,data.cardById))return;
+      if(card.id==='xy4-102'){for(const benchIndex of emptyBenchSlots(s))actions.push({...base,target:'bench',benchIndex});return;}
       if(card.effect?.type==='playFossil'){for(const benchIndex of emptyBenchSlots(s))actions.push({...base,target:'bench',benchIndex});return;}
       if(card.effect?.type==='rareCandy'){
         if(state.format==='classic'&&['player','opponent'].some(w=>pokemonOn(state.sides[w]).some(p=>p.cardId==='bw3-67'&&!effects.abilitiesSuppressed(state,w,p,data.cardById))))return;
@@ -1404,6 +1407,12 @@
       }else if(type==='Tool'){
         // Phantom Forces Goodra prevents hand Tool attachments for both players.
         if(state.format==='classic'&&['player','opponent'].some(w=>pokemonOn(state.sides[w]).some(p=>p.cardId==='xy4-77'&&!effects.abilitiesSuppressed(state,w,p,data.cardById))))return;
+        // Team Flare Hyper Gear must attach to the opponent's Pokemon-EX.
+        if(['xy4-97','xy4-98'].includes(card.id)){
+          for(const p of pokemonOn(foe))if(data.cardById(p.cardId)?.pokemonEX&&toolsOf(p).length<effects.toolCapacity(state,side,p,data.cardById))
+            actions.push({...base,target:p===foe.active?'opponentActive':'opponentBench',benchIndex:p===foe.active?undefined:Number(p.benchSlot)});
+          return;
+        }
         if(!effects.supportsEffect(card.effect)||!effects.supportsEffect(card.onAttach))return;
         // Battle Stick's printed Bidoof condition is also a placement rule.
         // Enforce it here for player, CPU and test harness alike.
@@ -1506,10 +1515,15 @@
     const xy2PoisonBarrier=state.format==='classic'&&!!s.active?.conditions?.poison&&
       pokemonOn(foe).some(p=>p.cardId==='xy2-71'&&!effects.abilitiesSuppressed(state,side==='player'?'opponent':'player',p,data.cardById));
     if (!xy2PoisonBarrier && !(state.format==='classic'&&state.sides[side==='player'?'opponent':'player'].active?.cardId==='bw8-101'&&!effects.abilitiesSuppressed(state,side==='player'?'opponent':'player',state.sides[side==='player'?'opponent':'player'].active,data.cardById)) && !pl2SnorlaxLock && !ex10Octillery && !s.retreated && s.active && !(state.format==='classic'&&state.sides[side==='player'?'opponent':'player'].active?.cardId==='ex2-3'&&!effects.abilitiesSuppressed(state,side==='player'?'opponent':'player',state.sides[side==='player'?'opponent':'player'].active,data.cardById)) && Number(s.skyridgeMirageFailedTurn)!==state.turnNumber && !(s.active.specialEnergy||[]).some(r=>['ecard2-145','ex8-93','ex10-98','ex15-87'].includes(r.cardId)) && s.bench.length&&(s.active.cardId==='SNAPFLORIO-073'||!neoTrapActive(state,side,s.active,'retreat'))&&(!conditions.sleep&&!conditions.paralysis||s.active.cardId==='ex5-33'&&!effects.abilitiesSuppressed(state,side,s.active,data.cardById))&&(s.active.cardId==='SNAPFLORIO-073'||!effects.isLocked(state,s.active,'retreat'))&&data.cardById(s.active.cardId).effect?.type!=='playFossil'){
-      if (effects.totalEnergy(effectiveEnergy(state,side,s.active)) >= retreatCost(state,side)){
+      if (s.active.cardId!=='xy4-102'&&effects.totalEnergy(effectiveEnergy(state,side,s.active)) >= retreatCost(state,side)){
         s.bench.forEach(slot=>{if(slot)actions.push({type:'retreat',benchIndex:Number(slot.benchSlot)});});
       }
     }
+    // Robo Substitute can be voluntarily discarded once in play (never as a retreat).
+    if(state.format==='classic'&&s.active?.cardId==='xy4-102'&&s.bench.length)
+      actions.push({type:'xy4DiscardRoboSubstitute',target:'active'});
+    if(state.format==='classic')for(const p of s.bench)if(p.cardId==='xy4-102')
+      actions.push({type:'xy4DiscardRoboSubstitute',target:'bench',benchIndex:Number(p.benchSlot)});
     for(const source of [s.active,...s.bench].filter(Boolean)){
       const sourceCard=data.cardById(source.cardId);if(Number(source.neoDestinyPowerLockUntil||0)>=state.turnNumber)continue;
       const powersSuppressed=effects.abilitiesSuppressed(state,side,source,data.cardById);
@@ -1796,6 +1810,11 @@
       else if(ref.dp2OriginalProvides){ref.provides=ref.dp2OriginalProvides;delete ref.dp2OriginalProvides;}
       delete ref.dp2FaceDownUntil;
     }
+    if(state.format==='classic')for(const who of ['player','opponent'])for(const slot of pokemonOn(state.sides[who]))
+      if(slot.xy4TrickStickerUntil!=null&&Number(slot.xy4TrickStickerUntil)<Number(state.turnNumber)){
+        if(slot.weaknessOverride==='Lightning')delete slot.weaknessOverride;
+        delete slot.xy4TrickStickerUntil;
+      }
     state.modifiers=(state.modifiers||[]).filter(m=>m.expiresTurn==null||m.expiresTurn>=state.turnNumber);
     beginTurn(state,state.activeSide);
   }
@@ -2550,6 +2569,17 @@
   function playTrainer(state,side,action){
     const s=state.sides[side];const [ref]=s.hand.splice(action.handIndex,1);const card=data.cardById(ref.cardId),type=trainerType(card);if(state.format==='classic'&&state.stadium?.cardId==='gym1-103'&&['Energy Removal','Super Energy Removal'].includes(card.name)){for(let n=0;n<2;n++){const index=s.hand.length-1;if(index>=0)s.discard.push(...s.hand.splice(index,1));}}
     state.log.push({type:'trainer',side,cardId:card.id,target:action.target,benchIndex:action.benchIndex});
+    // Dizzying Wind: every Trainer played from hand on the affected turn flips.
+    // A tails result discards even a Stadium/Tool/Supporter without resolving it.
+    if(state.format==='classic'&&Number(s.xy4DizzyingWindUntil||0)>=Number(state.turnNumber)){
+      const heads=random(state)<0.5;state.log.push({type:'coin',side,reason:'Dizzying Wind',heads,results:[heads]});
+      if(!heads){s.discard.push(ref);if(type==='Supporter'){s.supporterUsed=true;s.bw8SupportersPlayed=Number(s.bw8SupportersPlayed||0)+1;}if(type==='Stadium')s.stadiumUsed=true;
+        state.log.push({type:'xy4DizzyingWind',side,cardId:card.id,noEffect:true});return;}
+    }
+    if(card.id==='xy4-102'){
+      const slot=makePokemonSlot(card.id,s.turnCount,ref.uid);placeOnBench(s,slot,action.benchIndex);
+      state.log.push({type:'xy4RoboSubstitutePlayed',side,uid:slot.uid,benchIndex:action.benchIndex});return;
+    }
     if(card.effect?.type==='playFossil'){placeOnBench(s,makePokemonSlot(card.id,s.turnCount,ref.uid),action.benchIndex);return;}
     if(card.effect?.type==='rareCandy'){
       const evoIndex=s.hand.findIndex(candidate=>candidate.cardId===action.evolutionCardId);if(evoIndex<0)throw new Error('Rare Candy Stage 2 is no longer in hand.');
@@ -2576,7 +2606,14 @@
     }
     if(type==='Supporter'){ref.pl2PlayedThisTurn=state.turnNumber;s.supporterUsed=true;s.bw8SupportersPlayed=Number(s.bw8SupportersPlayed||0)+1;if(/^Holon/.test(card.name||''))s.holonSupporterPlayedTurn=state.turnNumber;}
     if(type==='AttachedTrainer'){const target=slotForTarget(s,action.target,action.benchIndex);if(!target)throw new Error('Attached Trainer target is no longer in play.');target.temporaryTrainers=target.temporaryTrainers||[];target.temporaryTrainers.push({...ref,ownerSide:side,attachedTurn:state.turnNumber});resolveKnockOut(state,null);return;}
-    if(type==='Tool'){if(state.format==='classic'&&['player','opponent'].some(w=>pokemonOn(state.sides[w]).some(p=>p.cardId==='xy4-77'&&!effects.abilitiesSuppressed(state,w,p,data.cardById))))throw new Error('Slip Trip blocks Tool attachments.');const target=slotForTarget(s,action.target,action.benchIndex);if(card.id==='pl2-95'&&!data.cardById(target?.cardId)?.isPokemonSP)throw new Error('Technical Machine G must attach to Pokémon SP.');ref.ownerSide=side;ref.attachedTurn=state.turnNumber;attachTool(target,ref);const ctx=effectContext(state,side,action,target);effects.applyEffect(card.onAttach,ctx);effects.applyPersistentEvent(card.effect,'onAttach',ctx);resolveKnockOut(state,null);return;}
+    if(type==='Tool'){if(state.format==='classic'&&['player','opponent'].some(w=>pokemonOn(state.sides[w]).some(p=>p.cardId==='xy4-77'&&!effects.abilitiesSuppressed(state,w,p,data.cardById))))throw new Error('Slip Trip blocks Tool attachments.');      if(['xy4-97','xy4-98'].includes(card.id)){
+        const enemy=state.sides[side==='player'?'opponent':'player'];
+        const target=slotForTarget(enemy,action.target==='opponentActive'?'active':'bench',action.benchIndex);
+        if(!target||!data.cardById(target.cardId)?.pokemonEX||toolsOf(target).length>=effects.toolCapacity(state,side,target,data.cardById))throw new Error('Team Flare Tool requires an opposing Pokemon-EX without a Tool.');
+        ref.ownerSide=side;ref.attachedTurn=state.turnNumber;attachTool(target,ref);
+        state.log.push({type:'xy4TeamFlareTool',side,targetUid:target.uid,cardId:card.id});return;
+      }
+const target=slotForTarget(s,action.target,action.benchIndex);if(card.id==='pl2-95'&&!data.cardById(target?.cardId)?.isPokemonSP)throw new Error('Technical Machine G must attach to Pokémon SP.');ref.ownerSide=side;ref.attachedTurn=state.turnNumber;attachTool(target,ref);const ctx=effectContext(state,side,action,target);effects.applyEffect(card.onAttach,ctx);effects.applyPersistentEvent(card.effect,'onAttach',ctx);resolveKnockOut(state,null);return;}
     if(type==='Stadium'){
       state.lentalDamOverflow=state.stadium?.cardId==='SNAPFLORIO-108';
       if(state.stadium){const prior=state.stadium;state.sides[prior.ownerSide][prior.cardId==='dp7-96'&&prior.dp7Ectoplasm?'hand':'discard'].push({uid:prior.uid,cardId:prior.cardId});}
@@ -3573,6 +3610,14 @@
       if(!paused&&state.phase==='battle'&&!(s.active?.dp7LinkLightningReady===state.turnNumber))endTurn(state);
       return state;
     }
+    if(matched.type==='xy4DiscardRoboSubstitute'){
+      const ss=state.sides[side],slot=slotForTarget(ss,matched.target,matched.benchIndex);
+      if(!slot||slot.cardId!=='xy4-102'||slot===ss.active&&!ss.bench.length)throw new Error('Cannot discard Robo Substitute without a replacement Active.');
+      discardKnockedOut(ss,slot);
+      if(slot===ss.active){const chosen=ss.bench.shift();chosen.benchSlot=null;ss.active=chosen;effects.clearTemporaryEffects(state,chosen);}
+      else ss.bench.splice(ss.bench.indexOf(slot),1);
+      state.log.push({type:'xy4RoboSubstituteDiscarded',side,uid:slot.uid});return;
+    }
     if (matched.type === 'endTurn'){
       endTurn(state);
       return state;
@@ -3648,6 +3693,15 @@
         }
         pokemon.specialEnergy=kept;
       }
+    }
+    // Team Flare Tools keep their original owner's discard destination even
+    // when knocked off an opponent's EX by damage, Xerosic or Tool removal.
+    if(state.format==='classic')for(const who of ['player','opponent']){
+      const sideState=state.sides[who],keep=[];
+      for(const ref of sideState.discard||[]){const owner=ref?.ownerSide;
+        if(['xy4-97','xy4-98'].includes(ref?.cardId)&&owner&&owner!==who&&state.sides[owner])state.sides[owner].discard.push(ref);
+        else keep.push(ref);}
+      sideState.discard=keep;
     }
     neoSpikesAfterAction(state,before);sandstormToolLock(state);enforceHandLimit(state);return result;
   }

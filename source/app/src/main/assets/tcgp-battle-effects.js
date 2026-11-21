@@ -13439,6 +13439,34 @@
         applyEffect({type:'status',target:'opponentActive',status:'sleep'},ctx);note({sleep:true});return;}
       if(foe.active)ask('sleep',['Do not use Hyper Hypnosis','Make opposing Active Pokémon Asleep']);return;
     }
+    if(key==='cobwebTrip'){
+      // The attacker chooses a real opposing Benched Pokemon; the newly
+      // promoted Pokemon, not the old Active, becomes Confused.
+      if(step==='chooseBench'&&ctx.resolvingChoice){
+        const selectedIndex=Number(act.choiceOption),p=foe.bench[selectedIndex];
+        if(!p||!foe.active)return;
+        const old=foe.active,at=foe.bench.indexOf(p),oldSlot=p.benchSlot;
+        foe.active=p;p.benchSlot=null;old.benchSlot=oldSlot;foe.bench[at]=old;
+        clearTemporaryEffects(ctx.state,old);
+        applyEffect({type:'status',target:'opponentActive',status:'confusion'},ctx);
+        note({switchedTo:p.uid,confused:p.uid});return;
+      }
+      if(foe.active&&foe.bench.length)ask('chooseBench',foe.bench.map(p=>'Switch to and confuse '+name({cardId:p.cardId})));
+      return;
+    }
+    if(key==='dizzyingWind'){foe.xy4DizzyingWindUntil=ctx.state.turnNumber+1;note({trainerCoinGateUntil:foe.xy4DizzyingWindUntil});return;}
+    if(key==='trickSticker'){if(foe.active){foe.active.weaknessOverride='Lightning';foe.active.xy4TrickStickerUntil=ctx.state.turnNumber+2;note({weakness:'Lightning',target:foe.active.uid,until:foe.active.xy4TrickStickerUntil});}return;}
+    if(key==='parabolicSpark'){
+      const remaining=Number(e.remaining||0);
+      const options=board(ss).flatMap(p=>attached(ss,p).filter(en=>en.kind==='basic'&&en.type==='Lightning'||en.kind==='special'&&
+        Number((p.specialEnergy||[]).find(r=>r.uid===en.uid)?.provides?.Lightning||get((p.specialEnergy||[]).find(r=>r.uid===en.uid))?.effect?.provides?.Lightning||0)>0)
+        .map(en=>({p,en})));
+      if(step==='discard'&&ctx.resolvingChoice){const picked=options[Number(act.choiceOption)];if(!picked||!takeAttached(ss,picked.p,picked.en))return;
+        note({discarded:picked.en.label,from:picked.p.uid,remaining:remaining-1});
+        if(remaining>1)return xy4Rule({...e,step:'start',remaining:remaining-1},{...ctx,resolvingChoice:false});return;}
+      if(remaining>0&&options.length)ask('discard',options.map(x=>'Discard '+x.en.label+' from '+name({cardId:x.p.cardId})+' ['+x.p.uid+']'),{remaining});return;
+    }
+    if(['headRinger','jammingNet','roboSubstitute'].includes(key))return; // Attachment/Bench placement runs in the core transaction.
     if(key==='submissionHold'||key==='bCancel'){
       if(foe.active){foe.active[key==='submissionHold'?'xy4NoHandEnergyUntil':'xy4NoEvolveUntil']=ctx.state.turnNumber+1;
         note({locked:key,until:ctx.state.turnNumber+1,targetUid:foe.active.uid});}return;
@@ -18363,6 +18391,16 @@
           const heads=coin(ctx);ctx.state.log.push({type:'coin',side:ctx.side,reason:'Tender Vengeance',results:[heads],heads:Number(heads)});
           damage=heads?10*us.bench.reduce((n,p)=>n+Math.floor(Number(p.damage||0)/10),0):0;return;
         }
+        if(k==='parabolicSpark'){
+          const options=board(us).flatMap(p=>[
+            ...Object.entries(p.energy||{}).filter(([type,n])=>type==='Lightning'&&Number(n)>0).flatMap(([,n])=>Array.from({length:Number(n)},()=>1)),
+            ...(p.specialEnergy||[]).filter(ref=>Number((ref.provides||card(ref)?.effect?.provides||{}).Lightning||0)>0)]);
+          const wanted=Number(String(ctx.action?.effectSelection||'0').replace(/^count:/,''));
+          const count=Number.isInteger(wanted)?Math.max(0,Math.min(options.length,wanted)):0;
+          damage=30*count;
+          if(count)pending.push({...e,remaining:count});
+          ctx.state.log.push({type:'xy4ParabolicSpark',side:ctx.side,discardCount:count,damage});return;
+        }
         if(k==='nightMarch'){
           const count=us.discard.filter(ref=>card(ref)?.kind==='pokemon'&&
             (card(ref).attacks||[]).some(move=>move.name==='Night March')).length;
@@ -18390,7 +18428,7 @@
             damage+=20;pending.push({type:'selfDamage',amount:20});
           }return;
         }
-        if(['turboBolt','hyperWhirlpool','nightAttack','dreamOfMemories','cursedDrop3','cursedDrop6','chronoWind','submissionHold','bCancel','coordinate','meddling','lightPulse'].includes(k)){
+        if(['turboBolt','hyperWhirlpool','nightAttack','dreamOfMemories','cursedDrop3','cursedDrop6','chronoWind','submissionHold','bCancel','coordinate','meddling','lightPulse','cobwebTrip'].includes(k)){
           pending.push(e);return;
         }
         // Other bespoke rules stay gated until their exact hook exists.
@@ -21325,6 +21363,12 @@
     return [{}];
   }
   function choicesForEffect(effect,ctx){
+    if(effect?.type==='neoRule'&&effect.rule==='xy4:parabolicSpark'){
+      const ss=own(ctx),eligible=p=>Number(p?.energy?.Lightning||0)+(p?.specialEnergy||[]).filter(ref=>
+        Number((ref.provides||ctx.cardById(ref.cardId)?.effect?.provides||{}).Lightning||0)>0).length,
+        max=pokemonOn(ss).reduce((n,p)=>n+eligible(p),0);
+      return Array.from({length:max+1},(_,n)=>({effectSelection:'count:'+n,choiceLabel:'Discard '+n+' Lightning Energy for '+(n*30)+' damage'}));
+    }
     if(effect?.type==='neoRule'&&effect.rule==='xy4:chargeDash')return [
       {effectSelection:'',choiceLabel:'60 damage — no recoil'},
       {effectSelection:'boost',choiceLabel:'80 damage — take 20 recoil'}];
@@ -22526,6 +22570,9 @@ if(r==='lastResort')return ss.hand.length===0?[{}]:[];if(r==='surgeSwap')return 
   }
   function attackDamageWithState(state,attackSide,attackerSlot,defenderSide,defenderSlot,damage,cardById){
     let n=Math.max(0,Number(damage||0));if(!n||!attackerSlot||!defenderSlot)return n;
+    // Team Flare Jamming Net weakens the holder's attacks BEFORE Weakness/Resistance.
+    if(state?.format==='classic'&&toolsOf(attackerSlot).some(ref=>ref.cardId==='xy4-98'))n=Math.max(0,n-20);
+    if(!n)return 0;
     const finishDamage=(value)=>{
       // Stormfront continuous defence is applied after Weakness/Resistance.
       // Passive bodies remain active when their Pokemon is affected by a Condition.

@@ -3064,3 +3064,24 @@ unzip -o /sdcard/Download/LuckyDex_patch_v0.69.341_PHANTOM_FORCES_STAGE2.zip -d 
 git add source
 git commit -m "LuckyDex v0.69.341 Phantom Forces gameplay stage 2"
 git push origin main
+
+
+=== v0.69.342: XY Phantom Forces full-completion audit / 124 official prints ===
+- The pinned official `xy4` catalogue has exactly 124 records, 162 printed attacks, and 15 Ability print occurrences, including alt prints 24a and 65a. Do not claim full set completion if GitHub's generated-catalogue audit fails or if any card remains gated.
+- All attacks must use their precise printed Energy symbols (Classic may store cost as a compact string), and all printed mandatory effects must be actual, target-aware mechanics, not a silent noop.
+- Venomoth Dizzying Wind: each Trainer played by the opponent on the next turn gets a separate coin check; tails prevents the Trainer effect but consumes/discards the card and appropriate once-per-turn usage.
+- Pachirisu Trick Sticker: temporarily override only the Defending Pokemon's Weakness to Lightning through the end of the user's next turn, without changing the weakness multiplier. End when the target leaves the Active position.
+- Heliolisk Parabolic Spark: the attacker chooses how many eligible Lightning Energy cards to discard before attack damage is decided (zero is allowed); each genuine physical/attached Energy discard increases damage by 30; the choices resolve before Prize handling.
+- Head Ringer and Jamming Net are Team Flare Tools on the *opponent's* Pokemon-EX without an existing Tool. Head Ringer increases that Pokemon's attack costs by one Colorless; Jamming Net reduces its attack damage to defending Pokemon by 20 before Weakness/Resistance. Discarded opponent-attached Tools return to the actual card owner's discard. CPU follows the same legal choices.
+- Robo Substitute is an Item in hand and deck, but once played becomes a 30 HP Colorless Basic-like Bench Pokemon. It cannot Retreat, can be discarded voluntarily by its owner before the attack, counts as a Knock Out when KO'd but never grants a Prize. It is not eligible as an opening Basic.
+- Jellicent Ensnaring Spray adds 10 damage per Energy card genuinely attached to the opponent's Active Pokemon (including attached Special Energy); Galvantula Cobweb Trip chooses the opponent Bench Pokemon to switch into Active, then Confuses the newly Active Pokemon.
+- All Phantom Forces alternate prints must preserve their real attack costs, attacks and Ability names; legitimate source-text differences in decorative rule wording are not gameplay differences.
+- Permanent tests/v07342-phantom-forces-final-audit.test.cjs audits actual battle-state transitions locally and requires all 124 generated official prints and legal 30-card decks on GitHub. The Gradle auditXY4ForApk task MUST depend on generation and run this audit before Android assets merge.
+- Keep Gradle versionCode, versionName, HTML build banners and JS boot marker synchronized on every patch.
+
+TERMUX PATCH APPLICATION (v0.69.342):
+cd ~/lucky-dex
+unzip -o /sdcard/Download/LuckyDex_patch_v0.69.342_PHANTOM_FORCES_FULL_AUDIT.zip -d source
+git add source
+git commit -m "LuckyDex v0.69.342 Phantom Forces full completion and audit"
+git push origin main

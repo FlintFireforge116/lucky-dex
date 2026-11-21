@@ -121,7 +121,7 @@ print(json.dumps({'gates':sorted(GATE),'attacks':{n:ATTACKS.get((n,name)) for n,
  for(const item of Object.values(obj.trainers))assert.ok(item?.[1]?.type==='neoRule');
  for(const a of Object.values(obj.attacks))assert.ok(a?.type);
  assert.ok(obj.abilities.includes('Metal Links')&&obj.abilities.includes('Dark Impulse'));
- assert.ok(obj.gates.includes('102'),'Robo Substitute must remain gated until implemented');
+ assert.ok(!obj.gates.includes('102'),'Robo Substitute must now be implemented');
 });
 
 test('Gourgeist Gourgantic raises maximum HP to 200 only with Grass Energy and an active Ability',()=>withCards(()=>{

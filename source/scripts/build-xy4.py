@@ -89,6 +89,10 @@ def generate(rows):
   elif kind=='trainer':
    obj=V.TRAINERS.get(n);card.update(trainerType=obj[0] if obj else (subtypes[0] if subtypes else 'Item'),
       text='\n'.join(rules),effect=obj[1] if obj else {'type':'unsupported'},aceSpec=False,maxDeckCopies=4)
+   if n=='102':
+    # Item in hand; virtual Basic Pokemon after playing it. Never start a match with it.
+    card.update(hp=30,stage='Basic',types=['Colorless'],subtype='Colorless',retreat=0,noPrize=True,countsAsKnockout=True,
+     deckMeta={'roles':['stall'],'synergy':['stall'],'energyTypes':[],'preferredEnergyTypes':[],'preferredPartners':[]})
   elif kind=='energy':
    if n=='111':
     card.update(basicEnergy=False,specialEnergy=True,energyType='Colorless',subtype='Colorless',

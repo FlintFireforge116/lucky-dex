@@ -9,6 +9,7 @@ E=lambda t,**kw:{'type':t,**kw}
 R=lambda k:E('neoRule',rule='xy4:'+k)
 STATUS={'Asleep':'sleep','Burned':'burn','Poisoned':'poison','Paralyzed':'paralysis','Confused':'confusion'}
 ATTACKS={
+ ('2','Dizzying Wind'):R('dizzyingWind'),
  ('2','Noxious Scales'):S(ST('confusion'),ST('poison')),
  ('4','Windfall'):E('handShuffle',draw=6),
  ('4','Surprise Strike'):BONUS(50,{'type':'movedFromBenchThisTurn'}),
@@ -28,6 +29,7 @@ ATTACKS={
  ('22','Surf'):N,
  ('22','Super Deep Dive'):S(H(30),SWITCH()),
  ('21','Meddling'):R('meddling'),
+ ('21','Ensnaring Spray'):E('energyDamage',source='opponent',amount=10,mode='add'),
  ('23','Overrun'):E('multiTargetDamage',target='opponentBench',amount=20,count=1,upTo=True),
  ('23','Assault Laser'):BONUS(60,{'type':'opponentHasTool'}),
  ('24','Turbo Bolt'):R('turboBolt'),
@@ -38,11 +40,14 @@ ATTACKS={
  ('80','Lucky Punch'):E('attackRequirement',condition={'type':'handSizeOneOf','values':[7]}),
  ('81','Tender Vengeance'):R('tenderVengeance'),
  ('24a','Turbo Bolt'):R('turboBolt'),
+ ('25','Trick Sticker'):R('trickSticker'),
  ('25','Pachi'):Q(BONUS(30)),
  ('26','Night March'):R('nightMarch'),
+ ('27','Cobweb Trip'):R('cobwebTrip'),
  ('27','Electroweb'):LOCK(),
  ('28','Tail Rap'):COIN(2,20,False),
  ('29','Quick Attack'):Q(BONUS(10)),
+ ('30','Parabolic Spark'):R('parabolicSpark'),
  ('31','Skill Dive'):E('selectedDamage',target='opponentPokemon',amount=10),
  ('32','Swoop Across'):R('swoopAcross'),
  ('33','Skill Dive'):E('selectedDamage',target='opponentPokemon',amount=30),
@@ -143,6 +148,9 @@ TRAINERS={
  '100':('Tool',N),
  '108':('Tool',N),
  '105':('Stadium',N),
+ '97':('Tool',R('headRinger')),
+ '98':('Tool',R('jammingNet')),
+ '102':('Item',R('roboSubstitute')),
  '91':('Supporter',R('az')),
  '92':('Item',R('battleCompressor')),
  '94':('Item',R('enhancedHammer')),
@@ -161,14 +169,8 @@ for source,alt in [('91','117'),('99','118'),('110','119')]:
  if source in TRAINERS:TRAINERS[alt]=TRAINERS[source]
 # All enabled Trainers use exact physical-card effects (including Special-only Hammer).
 
-GATE={
- '2':'Dizzying Wind requires a next-turn Trainer coin-gate on both types of Trainers.',
- '25':'Trick Sticker changes Weakness into next turn.',
- '30':'Parabolic Spark discards selectable Lightning Energy across board to calculate attack.',
- '97':'Head Ringer attaches to opposing EX and adds one Colorless attack cost.',
- '98':'Jamming Net attaches to opposing EX and reduces attack damage.',
- '102':'Robo Substitute is a special 30 HP Basic with no Prize and no retreat.',
-}
+GATE={}
+
 # The cards with existing reliable attack mappings but gated other mandatory
 # mechanics remain collectible yet excluded from automated battle decks.
 
