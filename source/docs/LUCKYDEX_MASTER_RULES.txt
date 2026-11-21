@@ -3180,3 +3180,16 @@ git push origin main
 - The helper verifies exact expected Git blob SHA-1 over the ORIGINAL payload bytes before JSON deserialization or source normalization. Preserve each existing BLOB constant, all expected set counts, official rules, and every independent test. If data changes, FAIL visibly; do not accept a moving upstream file silently.
 - Test with node --test tests/v07350-pinned-tcg-raw-ci-fix.test.cjs and run existing XY5/cross-set suites. Live network and Gradle APK require GitHub Actions confirmation.
 - Canonical Termux: cd ~/lucky-dex ; unzip -o /sdcard/Download/LuckyDex_patch_v0.69.350_GITHUB_RATE_LIMIT_FIX.zip -d source ; git add source ; git commit -m "LuckyDex v0.69.350 pinned TCG source download fix" ; git push origin main.
+
+[2026-11-21 v0.69.351 XY5 Ω BARRIER GLOBAL TRAINER EFFECT AUDIT]
+- XY5 Primal Clash: all 164 authenticated prints now enabled for Classic battle and automatic deck building (after CI pinned catalogue generation verifies official 164-card print list). Last six Ω Barrier cards are #9 Sceptile, #24 Magcargo, #60 Electrike, #77 Rhyperior, #86 Primal Groudon-EX, and #151 alternate Primal Groudon-EX. Preserve all attacks and Ancient Trait descriptions.
+- Ω Barrier printed scope: whenever an OPPONENT PLAYS a Trainer card other than a Pokémon Tool or Stadium, prevent its effects done to THIS Pokémon. Do not treat Trainer-effect prevention as attack damage immunity, global Trainer lock, own Trainer prevention, or protection against Stadiums/Pokémon Tools. Protect Active AND Bench, including evolved Pokémon and EX prints.
+- Guard ALL generic target paths and bespoke old-set handlers at the Item/Supporter effect execution boundary. The guard applies to choice continuations and reconstitutes protected slot state if a direct legacy handler writes it; it does NOT negate effects on other ordinary Pokémon or on hand/deck as a whole. Preserve real Energy ledger/ref provenance. Filter impossible opposing Pokémon selections to avoid zero-option frozen modals.
+- Tests: v07351 Ω Barrier cross-era audit is mandatory in Gradle auditXY5ForApk, as are updated earlier XY5 tests that now expect 164/164 rather than 158/164. Extra checks include forced switch, random Energy, target damage, Tool/Stadium/attack exemptions, alternative Primal prints, and official generator coverage.
+- Last successful public GitHub build before this patch: v0.69.350 #639 succeeded; do not claim v0.69.351 APK success before user reports/CI confirms.
+- Canonical Termux:
+  cd ~/lucky-dex
+  unzip -o /sdcard/Download/LuckyDex_patch_v0.69.351_PRIMAL_CLASH_OMEGA_BARRIER.zip -d source
+  git add source
+  git commit -m "LuckyDex v0.69.351 Primal Clash Omega Barrier completion"
+  git push origin main

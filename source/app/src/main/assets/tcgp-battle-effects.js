@@ -18095,7 +18095,85 @@
     }
     return result;
   }
+  // XY5 Ω Barrier is deliberately resolved at the Trainer effect boundary,
+  // not just in the generic `affected()` selector. Older sets contain bespoke
+  // Item/Supporter handlers which manipulate the enemy Active/Bench directly.
+  // The ordinary selectors still prevent the mutation in the common path;
+  // this audit guard enforces the trait for all legacy effects, including
+  // continuations after a player/CPU choice. It NEVER runs for Pokémon Tools,
+  // Stadiums, attacks, Abilities or the protected player's own Trainers.
+  function omegaTrainerGuard(ctx){
+    if(ctx?.state?.format!=='classic'||ctx.isAttack||ctx.isAbility||ctx.isStadium)return null;
+    const trainer=ctx.trainerRef&&ctx.cardById?.(ctx.trainerRef.cardId);
+    if(!trainer||!['Item','Supporter'].includes(trainer.trainerType))return null;
+    const ss=other(ctx),slots=pokemonOn(ss).filter(p=>ctx.cardById(p.cardId)?.ancientTrait?.name==='Ω Barrier');
+    if(!slots.length)return null;
+    const positions={active:ss.active,bench:ss.bench.slice()};
+    const energyDiscard={...(ss.energyDiscard||{})};
+    const saved=slots.map(slot=>({slot,copy:JSON.parse(JSON.stringify(slot))}));
+    return {ss,positions,energyDiscard,saved};
+  }
+  function restoreOmegaTrainerGuard(ctx,guard){
+    const {ss,positions,energyDiscard,saved}=guard;
+    let moved=false;
+    for(const {slot,copy} of saved){
+      const still=(ss.active===slot||ss.bench.includes(slot));
+      const originallyActive=positions.active===slot;
+      if(!still||originallyActive!== (ss.active===slot) || !originallyActive&&ss.bench.indexOf(slot)!==positions.bench.indexOf(slot))moved=true;
+      // If a bespoke Trainer discarded or returned an attached real card,
+      // remove the duplicate from the destination before restoring the slot.
+      const beforeAttached=[...copy.specialEnergy||[],...copy.temporaryTrainers||[],...(copy.tool?[copy.tool]:[]),...copy.extraTools||[]];
+      const afterAttached=new Set([...(slot.specialEnergy||[]),...(slot.temporaryTrainers||[]),...(slot.tool?[slot.tool]:[]),...(slot.extraTools||[])].map(r=>r.uid));
+      const lostUids=new Set(beforeAttached.filter(r=>!afterAttached.has(r.uid)).map(r=>r.uid));
+      for(const owner of [ctx.state.sides.player,ctx.state.sides.opponent])for(const zone of ['hand','deck','discard']){
+        const xs=owner[zone];if(Array.isArray(xs))for(let i=xs.length-1;i>=0;i--)if(lostUids.has(xs[i]?.uid))xs.splice(i,1);
+      }
+      // Some legacy effects also move a protected Basic Pokémon to a hand.
+      // Its actual original slot is re-established below rather than cloned.
+      if(!still){for(const owner of [ctx.state.sides.player,ctx.state.sides.opponent])for(const zone of ['hand','deck','discard']){
+        const xs=owner[zone];if(Array.isArray(xs))for(let i=xs.length-1;i>=0;i--)if(xs[i]?.uid===slot.uid)xs.splice(i,1);
+      }}
+      // Basic Energy in Classic uses the physical per-type discard ledger.
+      // Undo only the discard attributable to a protected Pokémon, not Energy
+      // legitimately lost from any other Pokémon under the same Trainer.
+      for(const [type,before] of Object.entries(copy.energy||{})){
+        const removed=Math.max(0,Number(before||0)-Number(slot.energy?.[type]||0));
+        const ledgerIncrease=Math.max(0,Number(ss.energyDiscard?.[type]||0)-Number(energyDiscard[type]||0));
+        if(removed&&ledgerIncrease)ss.energyDiscard[type]=Math.max(0,Number(ss.energyDiscard[type])-Math.min(removed,ledgerIncrease));
+      }
+      for(const k of Object.keys(slot))if(!Object.prototype.hasOwnProperty.call(copy,k))delete slot[k];
+      Object.assign(slot,copy);
+    }
+    if(moved){
+      // An opposing Item/Supporter cannot switch, return or discard an Ω
+      // Barrier Pokémon. Restore the pre-effect positions using the original
+      // slot objects, so live references and identity remain stable.
+      ss.active=positions.active;ss.bench=positions.bench;
+    }
+  }
   function applyEffect(effect,ctx){
+    if(!effect)return;
+    const guard=omegaTrainerGuard(ctx);
+    if(!guard)return applyEffectUnchecked(effect,ctx);
+    // Never offer an unusable target-only choice when all relevant opposing
+    // Pokémon are protected. Filter by UID to preserve normal card filters.
+    const previousChoice=ctx.requestChoice;
+    const guardedCtx={...ctx,requestChoice:typeof previousChoice==='function'?(spec=>{
+      if(['pokemon','switchBench','energySource','energyTarget','toolCard'].includes(spec?.kind)){
+        const pickerSide=spec.side==='opponent'?ctx.foeSide:spec.side==='self'?ctx.side:spec.side;
+        const selectedSide=spec.selectionSide||pickerSide;
+        if(selectedSide===ctx.foeSide){
+          const blocked=guard.saved.map(x=>x.slot.uid),excluded=[...new Set([...(spec.excludeUids||[]),...blocked])];
+          const candidates=spec.kind==='switchBench'||spec.includeActive===false?guard.ss.bench:pokemonOn(guard.ss);
+          if(!candidates.some(p=>p&&!excluded.includes(p.uid)&&matchesFilter(ctx.cardById(p.cardId),spec.filter,p)))return;
+          return previousChoice({...spec,excludeUids:excluded});
+        }
+      }
+      return previousChoice(spec);
+    }):previousChoice};
+    try{return applyEffectUnchecked(effect,guardedCtx);}finally{restoreOmegaTrainerGuard(ctx,guard);}
+  }
+  function applyEffectUnchecked(effect,ctx){
     if(!effect)return;
     assertEffect(effect);
     if(!conditionMatches(effect.condition,ctx))return;
@@ -18335,7 +18413,7 @@
         if(typeof ctx.requestChoice==='function')ctx.requestChoice({kind:'energyTarget',side:'self',filter:effect.filter,energyTypes:available,effect:{...effect,usedTypes,placed}});
         break;
       }
-      case 'multiTargetDamage':{if(ctx.isAttack&&ctx.state.stadium?.cardId==='xy3-97'&&effect.target==='opponentBench')break;if(effect.upTo&&ctx.resolvingChoice&&ctx.action?.choiceSkip)break;const foe=other(ctx),remaining=Math.max(1,Number((effect.remaining??effect.count)||1)),chosen=Array.isArray(effect.chosenUids)?effect.chosenUids.slice():[];if(ctx.resolvingChoice){const target=selected(ctx,foe);if(target&&!chosen.includes(target.uid)){const side=ctx.foeSide,guard=ctx.isAttack&&attackIsPrevented(ctx.state,side,target,ctx.attacker,ctx.cardById)||fossilTransparencyBlocks(ctx,side,target);
+      case 'multiTargetDamage':{if(ctx.isAttack&&ctx.state.stadium?.cardId==='xy3-97'&&effect.target==='opponentBench')break;if(effect.upTo&&ctx.resolvingChoice&&ctx.action?.choiceSkip)break;const foe=other(ctx),remaining=Math.max(1,Number((effect.remaining??effect.count)||1)),chosen=Array.isArray(effect.chosenUids)?effect.chosenUids.slice():[];if(ctx.resolvingChoice){const target=selected(ctx,foe);if(target&&!protectedFromEffects(target,ctx)&&!chosen.includes(target.uid)){const side=ctx.foeSide,guard=ctx.isAttack&&attackIsPrevented(ctx.state,side,target,ctx.attacker,ctx.cardById)||fossilTransparencyBlocks(ctx,side,target);
             const printed=Math.max(0,Number(effect.amount||0));
             const amount=guard?0:effect.activeWeaknessResistance&&ctx.isAttack&&target===foe.active&&ctx.attacker?
               attackDamageWithState(ctx.state,ctx.side,ctx.attacker,side,target,printed,ctx.cardById):
@@ -18400,8 +18478,8 @@
         while(ss.hand.length>effect.maxSize){const index=Math.floor(ctx.random(ctx.state)*ss.hand.length);const [ref]=ss.hand.splice(index,1),c=ctx.cardById(ref?.cardId);if(ctx.state.format==='classic'&&c?.basicEnergy)recordDiscardedEnergy(ss,c.subtype,1);else if(ref)ss.discard.push(ref);}break;
       }
       case 'shuffleRandomHandCard':{const ss=effect.side==='opponent'?other(ctx):own(ctx),candidates=ss.hand.map((r,index)=>({r,index})).filter(({r})=>!effect.filter||matchesFilter(ctx.cardById(r.cardId),effect.filter));if(candidates.length){const hit=candidates[Math.floor(ctx.random(ctx.state)*candidates.length)],[ref]=ss.hand.splice(hit.index,1);ss.deck.push(ref);ctx.shuffle(ctx.state,ss.deck);}break;}
-      case 'randomPokemonDamage':{let hits=effect.perEnergyType?Number(ctx.attacker?.energy?.[effect.perEnergyType]||0):Number(effect.hits||0);for(const bonus of own(ctx).randomHitBonuses||[])if((bonus.expiresTurn==null||ctx.state.turnNumber<=bonus.expiresTurn)&&bonus.attackName===ctx.attack?.name)hits+=Number(bonus.amount||0);for(let i=0;i<hits;i++){let entries=effect.bothSides?[...pokemonOn(own(ctx)).map(slot=>({slot,side:ctx.side})),...pokemonOn(other(ctx)).map(slot=>({slot,side:ctx.foeSide}))]:(effect.zone==='bench'?other(ctx).bench.filter(Boolean):pokemonOn(other(ctx))).map(slot=>({slot,side:ctx.foeSide}));if(effect.zone==='bench'&&effect.bothSides)entries=entries.filter(x=>x.slot!==own(ctx).active&&x.slot!==other(ctx).active);if(effect.excludeSelf)entries=entries.filter(x=>x.slot!==ctx.attacker);if(!entries.length)break;const hit=entries[Math.floor(ctx.random(ctx.state)*entries.length)],guard=ctx.isAttack&&attackIsPrevented(ctx.state,hit.side,hit.slot,ctx.attacker,ctx.cardById),amount=guard?0:Math.max(0,effect.amount-(ctx.isAttack?modifierAmount(ctx.state,hit.side,hit.slot,'damageReduction',ctx.cardById):0));hit.slot.damage=Number(hit.slot.damage||0)+amount;}break;}
-      case 'globalRandomDiscardEnergy':{const count=Math.max(1,Number(effect.amount||1)),sides=effect.side==='self'?[own(ctx)]:effect.side==='opponent'?[other(ctx)]:[own(ctx),other(ctx)];for(let pick=0;pick<count;pick++){const slots=sides.flatMap(ss=>pokemonOn(ss).filter(slot=>!effect.filter||matchesFilter(ctx.cardById(slot.cardId),effect.filter,slot)).map(slot=>({slot,side:ss}))),units=[];for(const x of slots)for(const [type,n] of Object.entries(x.slot.energy||{}))for(let i=0;i<Number(n||0);i++)units.push({...x,type});if(!units.length)break;const hit=units[Math.floor(ctx.random(ctx.state)*units.length)];hit.slot.energy[hit.type]=Math.max(0,Number(hit.slot.energy[hit.type]||0)-1);recordDiscardedEnergy(hit.side,hit.type,1);}break;}
+      case 'randomPokemonDamage':{let hits=effect.perEnergyType?Number(ctx.attacker?.energy?.[effect.perEnergyType]||0):Number(effect.hits||0);for(const bonus of own(ctx).randomHitBonuses||[])if((bonus.expiresTurn==null||ctx.state.turnNumber<=bonus.expiresTurn)&&bonus.attackName===ctx.attack?.name)hits+=Number(bonus.amount||0);for(let i=0;i<hits;i++){let entries=effect.bothSides?[...pokemonOn(own(ctx)).map(slot=>({slot,side:ctx.side})),...pokemonOn(other(ctx)).map(slot=>({slot,side:ctx.foeSide}))]:(effect.zone==='bench'?other(ctx).bench.filter(Boolean):pokemonOn(other(ctx))).map(slot=>({slot,side:ctx.foeSide}));if(effect.zone==='bench'&&effect.bothSides)entries=entries.filter(x=>x.slot!==own(ctx).active&&x.slot!==other(ctx).active);if(effect.excludeSelf)entries=entries.filter(x=>x.slot!==ctx.attacker);entries=entries.filter(x=>!protectedFromEffects(x.slot,ctx));if(!entries.length)break;const hit=entries[Math.floor(ctx.random(ctx.state)*entries.length)],guard=ctx.isAttack&&attackIsPrevented(ctx.state,hit.side,hit.slot,ctx.attacker,ctx.cardById),amount=guard?0:Math.max(0,effect.amount-(ctx.isAttack?modifierAmount(ctx.state,hit.side,hit.slot,'damageReduction',ctx.cardById):0));hit.slot.damage=Number(hit.slot.damage||0)+amount;}break;}
+      case 'globalRandomDiscardEnergy':{const count=Math.max(1,Number(effect.amount||1)),sides=effect.side==='self'?[own(ctx)]:effect.side==='opponent'?[other(ctx)]:[own(ctx),other(ctx)];for(let pick=0;pick<count;pick++){const slots=sides.flatMap(ss=>pokemonOn(ss).filter(slot=>!protectedFromEffects(slot,ctx)&&(!effect.filter||matchesFilter(ctx.cardById(slot.cardId),effect.filter,slot))).map(slot=>({slot,side:ss}))),units=[];for(const x of slots)for(const [type,n] of Object.entries(x.slot.energy||{}))for(let i=0;i<Number(n||0);i++)units.push({...x,type});if(!units.length)break;const hit=units[Math.floor(ctx.random(ctx.state)*units.length)];hit.slot.energy[hit.type]=Math.max(0,Number(hit.slot.energy[hit.type]||0)-1);recordDiscardedEnergy(hit.side,hit.type,1);}break;}
       case 'discardStadium':if(ctx.state.stadium){
         const st=ctx.state.stadium,ss=ctx.state.sides[st.ownerSide];
         ss.discard.push({uid:st.uid,cardId:st.cardId});ctx.state.stadium=null;
@@ -18432,8 +18510,8 @@
         }
         for(let i=0;i<effect.amount;i++){const candidates=ss.deck.map((r,index)=>({r,index})).filter(({r})=>matchesFilter(ctx.cardById(r.cardId),effect.filter));if(!candidates.length||typeof ctx.benchCard!=='function')break;const hit=candidates[Math.floor(ctx.random(ctx.state)*candidates.length)],[ref]=ss.deck.splice(hit.index,1);if(ctx.benchCard(ss,ref)==null){ss.deck.splice(hit.index,0,ref);break;}log({type:'benchFromDeck',cardId:ref.cardId});}if(ctx.shuffle)ctx.shuffle(ctx.state,ss.deck);break;}
       case 'forceOpponentSwitch':{
-        const ss=other(ctx);if(!ss.active||!ss.bench.length)break;
-        if(ctx.resolvingChoice&&ctx.action?.choiceTarget==='bench'){switchPokemon(ss,ctx.action.choiceBenchIndex,ctx.state);log({type:'switch',chosenBy:effect.chooseBy==='attacker'?ctx.side:ctx.foeSide});break;}
+        const ss=other(ctx);if(!ss.active||!ss.bench.length||protectedFromEffects(ss.active,ctx))break;
+        if(ctx.resolvingChoice&&ctx.action?.choiceTarget==='bench'){const incoming=ss.bench.find(p=>p&&Number(p.benchSlot)===Number(ctx.action.choiceBenchIndex));if(!incoming||protectedFromEffects(incoming,ctx))break;switchPokemon(ss,ctx.action.choiceBenchIndex,ctx.state);log({type:'switch',chosenBy:effect.chooseBy==='attacker'?ctx.side:ctx.foeSide});break;}
         if(typeof ctx.requestChoice==='function')ctx.requestChoice({kind:'switchBench',side:effect.chooseBy==='attacker'?'self':'opponent',selectionSide:ctx.foeSide,effect});break;
       }
       case 'revealHand':{const ss=effect.side==='self'?own(ctx):other(ctx);let refs=ss.hand.slice();if(effect.random){const n=Math.min(refs.length,Math.max(0,Number(effect.random)||0)),pool=refs.slice();refs=[];for(let i=0;i<n&&pool.length;i++){const index=Math.floor(ctx.random(ctx.state)*pool.length);refs.push(...pool.splice(index,1));}}log({type:'revealHand',revealedSide:effect.side||'opponent',cards:refs.map(r=>r.cardId)});break;}
@@ -18670,7 +18748,7 @@
       case 'endTurn':if(typeof ctx.endTurn==='function')ctx.endTurn();break;
       case 'removeRandomStatus':for(const s of affected()){const keys=Object.keys(s.conditions||{});if(!keys.length)continue;const key=keys[Math.floor(ctx.random(ctx.state)*keys.length)];delete s.conditions[key];}break;
       case 'chainLightning':{if(ctx.isAttack&&ctx.state.stadium?.cardId==='SNAPFLORIO-112')break;const defenderType=ctx.cardById(ctx.defender?.cardId)?.types?.[0];if(!defenderType||defenderType==='Colorless')break;for(const side of [ctx.side,ctx.foeSide]){for(const slot of ctx.state.sides[side].bench||[]){if(!slot||!ctx.cardById(slot.cardId)?.types?.includes(defenderType))continue;const reduced=modifierAmount(ctx.state,side,slot,'damageReduction',ctx.cardById);const guard=attackIsPrevented(ctx.state,side,slot,ctx.attacker,ctx.cardById)||fossilTransparencyBlocks(ctx,side,slot);let amount=guard?0:Math.max(0,Number(effect.amount||10)-reduced);if(amount>0)amount=ctx.gymBenchRedirect?.(side,slot,amount)??amount;slot.damage=Number(slot.damage||0)+amount;if(amount)log({type:'benchDamage',targetSide:side,targetCardId:slot.cardId,sourceCardId:ctx.attacker?.cardId,amount,attack:ctx.attack?.name});}}break;}
-      case 'benchDamage':{if(ctx.isAttack&&['SNAPFLORIO-112','xy3-97'].includes(ctx.state.stadium?.cardId))break;const ss=effect.side==='self'?own(ctx):other(ctx);const list=effect.all?ss.bench:targets(effect.side==='self'?'selfBench':'opponentBench',ctx);for(const s of list.filter(s=>s&&matchesFilter(ctx.cardById(s.cardId),effect.filter,s))){const side=effect.side==='self'?ctx.side:ctx.foeSide;const guard=ctx.isAttack&&attackIsPrevented(ctx.state,side,s,ctx.attacker,ctx.cardById)||fossilTransparencyBlocks(ctx,side,s);const bonus=ctx.isAttack&&ctx.attacker?modifierAmount(ctx.state,ctx.side,ctx.attacker,'attackDamageAllTargets',ctx.cardById):0;
+      case 'benchDamage':{if(ctx.isAttack&&['SNAPFLORIO-112','xy3-97'].includes(ctx.state.stadium?.cardId))break;const ss=effect.side==='self'?own(ctx):other(ctx);const list=effect.all?ss.bench:targets(effect.side==='self'?'selfBench':'opponentBench',ctx);for(const s of list.filter(s=>s&&!protectedFromEffects(s,ctx)&&matchesFilter(ctx.cardById(s.cardId),effect.filter,s))){const side=effect.side==='self'?ctx.side:ctx.foeSide;const guard=ctx.isAttack&&attackIsPrevented(ctx.state,side,s,ctx.attacker,ctx.cardById)||fossilTransparencyBlocks(ctx,side,s);const bonus=ctx.isAttack&&ctx.attacker?modifierAmount(ctx.state,ctx.side,ctx.attacker,'attackDamageAllTargets',ctx.cardById):0;
         const charm=ctx.isAttack&&ctx.attacker&&Number(effect.amount||0)+bonus>0?toolsOf(ctx.attacker).find(r=>r.cardId==='ecard1-150'):null;
         const doubleRainbowPenalty=ctx.isAttack&&effect.side==='opponent'?10*(ctx.attacker?.specialEnergy||[]).filter(ref=>['ex9-87','ex14-88'].includes(ref.cardId)).length:0;
         const bwEvioliteReduction=ctx.isAttack&&ctx.state.format==='classic'&&ctx.cardById(s.cardId)?.stage==='Basic'&&toolsOf(s).some(ref=>['bw3-91','bw8-122'].includes(ref.cardId))?20:0;
@@ -18734,7 +18812,7 @@
           const selector=effect.source==='selfBench'?effect.source:effect.target;
           ctx.requestChoice({kind:'pokemon',side:'self',includeActive:false,filter:effect.source==='selfBench'?effect.sourceFilter:effect.filter,effect});break;
         }
-        const sources=targets(effect.source,ctx).filter(s=>matchesFilter(ctx.cardById(s.cardId),effect.sourceFilter,s)),destination=targets(effect.target,ctx)[0];
+        const sources=targets(effect.source,ctx).filter(s=>!protectedFromEffects(s,ctx)&&matchesFilter(ctx.cardById(s.cardId),effect.sourceFilter,s)),destination=targets(effect.target,ctx).find(s=>!protectedFromEffects(s,ctx));
         if(!sources.length||!destination)break;
         let remaining=effect.amount==='all'?Infinity:effect.amount;
         for(const source of sources){

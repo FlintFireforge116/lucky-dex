@@ -38,7 +38,7 @@ test('XY5 pinned generated source and audit are required BEFORE Android asset me
  assert.ok(script.includes('38a427242a56d0e9bcd4450718d1f5ae28377f82'));
 });
 
-test('XY5 generator exposes audited Ancient Traits and gates all unsupported effects',()=>{
+test('XY5 generator exposes audited Ancient Traits and keeps unsupported printed effects gated',()=>{
  const code=String.raw`
 import sys,json,importlib.util
 s=sys.argv[1];sys.path.insert(0,s)
@@ -62,8 +62,8 @@ print(json.dumps(m.generate(rows)))`;
  const by=Object.fromEntries(JSON.parse(r.stdout).map(c=>[c.number,c]));
  for(const n of ['3','4','125','129','135','161'])assert.equal(by[n].battleEnabled,true,`${n}: ${by[n].support.reasons}`);
  for(const n of ['9']){
-  assert.equal(by[n].battleEnabled,false,n);assert.equal(by[n].deckEligible,false,n);
-  assert.ok(by[n].support.reasons.length>0,n);
+  assert.equal(by[n].battleEnabled,true,n);assert.equal(by[n].deckEligible,true,n);
+  assert.deepEqual(by[n].support.reasons,[],n);
  }
  for(const n of ['55','164'])assert.equal(by[n].battleEnabled,true,n+' new printed mechanics implemented');
  assert.equal(by['21'].battleEnabled,true,'Barrier Shrine is implemented');

@@ -32,7 +32,7 @@ print(json.dumps({'attacks':[v.ATTACKS.get((n,k)) for n,k in [('3','Allergic Sho
  const p=spawnSync('python3',['-c',py,path.join(root,'scripts')],{encoding:'utf8'});assert.equal(p.status,0,p.stderr);const found=JSON.parse(p.stdout);
  for(const a of found.attacks){assert.ok(a);assert.deepEqual(effects.validateEffect(a),[]);}
  assert.equal(found.trainer[0],'Tool');assert.deepEqual(effects.validateEffect(found.trainer[1]),[]);
- assert.ok(!found.omega.includes('Ω Barrier'));
+ assert.ok(found.omega.includes('Ω Barrier'));
 });
 
 test('Allergic Shock marks just the Defending Pokémon, and a subsequent own-turn damaging attack knocks it out',()=>withCards(()=>{
@@ -107,10 +107,10 @@ test('XY5 Exp. Share offers own chosen basic-energy transfer on an attack KO and
  assert.equal(p.bench[0].tool.uid,'exp-real');
 }));
 
-test('Generated Primal Clash only keeps the six Ω Barrier prints gated',{skip:!fs.existsSync(path.join(root,'data/classic/xy5-print-compact.json'))},()=>{
+test('Generated Primal Clash unlocks all six Ω Barrier prints',{skip:!fs.existsSync(path.join(root,'data/classic/xy5-print-compact.json'))},()=>{
  const set=require(path.join(assets,'tcg-classic-primal-clash.js'));
- assert.equal(set.CARDS.length,164);assert.equal(set.coverage().battleEnabled,158);
- assert.deepEqual(set.coverage().gated.sort(),['xy5-9','xy5-24','xy5-60','xy5-77','xy5-86','xy5-151'].sort());
+ assert.equal(set.CARDS.length,164);assert.equal(set.coverage().battleEnabled,164);
+ assert.deepEqual(set.coverage().gated,[]);
  for(const n of ['3','29','91','128','146','152'])assert.equal(set.cardById('xy5-'+n)?.battleEnabled,true);
 });
 

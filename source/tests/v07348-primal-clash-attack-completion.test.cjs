@@ -44,7 +44,7 @@ keys=[('28','Spreading Flames'),('40','Amnesia'),('49','Shell Protection'),('54'
 print(json.dumps({'effects':[v.ATTACKS.get(k) for k in keys], 'traits':list(v.TRAITS_IMPLEMENTED)}))`;
  const r=spawnSync('python3',['-c',py,path.join(root,'scripts')],{encoding:'utf8'});assert.equal(r.status,0,r.stderr);
  const out=JSON.parse(r.stdout);for(const effect of out.effects){assert.ok(effect);assert.deepEqual(effects.validateEffect(effect),[]);}
- assert.ok(!out.traits.includes('Ω Barrier'),'Do not unlock Omega without a full protection audit');
+ assert.ok(out.traits.includes('Ω Barrier'),'XY5 Omega is now guarded against legacy opposing Trainer effects');
 });
 
 test('Amnesia lets attacker choose the exact opponent attack and enforces next-turn lock',()=>withCards(()=>{
@@ -127,13 +127,12 @@ test('Dragon Blast discards one Water and one Lightning after attack',()=>withCa
 test('Official generated print coverage and gating are checked by CI, not by an empty local stub',{skip:!fs.existsSync(path.join(root,'data/classic/xy5-print-compact.json'))},()=>{
  const primal=require(path.join(assets,'tcg-classic-primal-clash.js'));
  assert.equal(primal.CARDS.length,164);
- assert.equal(primal.coverage().battleEnabled,158,'Expected newly implemented physical-zone attacks and six remaining Omega-gated prints');
- assert.deepEqual(primal.coverage().gated.sort(),['xy5-9','xy5-24','xy5-60','xy5-77','xy5-86','xy5-151'].sort(),
-   'Never silently unlock missing Omega protection or unresolved special effects');
+ assert.equal(primal.coverage().battleEnabled,164,'All 164 verified prints should now be playable');
+ assert.deepEqual(primal.coverage().gated,[],'No Primal Clash print should remain gated');
  for(const n of ['28','40','49','54','61','65','76','88','97','99','101','107','108','114','148']){
   const c=primal.cardById('xy5-'+n);assert.ok(c?.battleEnabled,`Previously gated print ${n}: ${JSON.stringify(c?.support?.reasons)}`);
  }
- for(const c of primal.CARDS.filter(c=>c.ancientTrait?.name==='Ω Barrier'))assert.equal(c.battleEnabled,false,`${c.id} must remain gated`);
+ for(const c of primal.CARDS.filter(c=>c.ancientTrait?.name==='Ω Barrier'))assert.equal(c.battleEnabled,true,`${c.id} must be battle-ready`);
 });
 
 

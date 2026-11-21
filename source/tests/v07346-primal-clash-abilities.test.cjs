@@ -179,11 +179,10 @@ test('Official 164-print CI catalogue preserves all 13 mapped printed Abilities 
    for(const a of c.abilities)assert.deepEqual(effects.validateEffect(a.effect),[],`${c.id} ${a.name}`);}
   if(c.battleEnabled){for(const a of c.attacks||[])assert.notEqual(a.effect?.type,'unsupported',`${c.id} ${a.name}`);}
  }
- // The Omega Barrier blanket protection has NOT been proven on every
- // earlier bespoke Trainer handler. Leave its prints unavailable.
+ // The updated Ω Barrier protection covers generic and bespoke Trainer handlers.
  for(const c of primal.CARDS.filter(c=>c.ancientTrait?.name==='Ω Barrier')){
-  assert.equal(c.battleEnabled,false,`Unverified Ω Barrier: ${c.id}`);
-  assert.equal(c.deckEligible,false,`Unsafe CPU inclusion: ${c.id}`);
+  assert.equal(c.battleEnabled,true,`Ω Barrier remains gated: ${c.id}`);
+  assert.equal(c.deckEligible,true,`Ω Barrier missing from CPU deck pool: ${c.id}`);
  }
  for(const n of ['24','43','50','104','117','119','121']){
   const c=by[n];assert.ok(c);for(const a of c.attacks)assert.notEqual(a.effect?.type,'unsupported',`${n} ${a.name}`);

@@ -225,7 +225,7 @@ test('Ω Barrier is scoped to opposing Item/Supporter effects, not opponent Tool
  assert.equal(s.sides.opponent.active.energy.Water,0,'Attacks are not protected by Ω Barrier');
 }));
 
-test('Primal Clash generator enables only completed new rules and still gates Ω Barrier prints',()=>{
+test('Primal Clash generator enables completed rules including protected Ω Barrier prints',()=>{
  const {spawnSync}=require('node:child_process');
  const code=String.raw`
 import sys,json,importlib.util
@@ -253,7 +253,7 @@ print(json.dumps(m.generate(rows)))`;
  const result=spawnSync('python3',['-c',code,p],{encoding:'utf8',maxBuffer:1024*1024});
  assert.equal(result.status,0,result.stderr);
  const by=Object.fromEntries(JSON.parse(result.stdout).map(c=>[c.number,c]));
- assert.equal(by['86'].battleEnabled,false,'Ω Barrier still gated despite working Gaia Volcano attack');
+ assert.equal(by['86'].battleEnabled,true,'Gaia Volcano and Ω Barrier now both implemented');
  assert.equal(by['86'].attacks[0].effect.rule,'xy5:gaiaVolcano');
  for(const n of ['55','94','100','106','119','122','136','137','138','139','140','142','164']){
    const c=by[n];assert.equal(c.battleEnabled,true,c.id+': '+c.support.reasons.join('; '));

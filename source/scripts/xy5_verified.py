@@ -163,7 +163,7 @@ TRAINERS['126']=('Item',E('energyRetrieval',amount=2,energyCardIds={
  'Psychic':'dp1-127','Fighting':'dp1-128','Darkness':'dp1-129','Metal':'dp1-130',
  'Fairy':'xy1-140'}))
 # Weakness Policy must remain gated until the damage engine reads it.
-TRAITS_IMPLEMENTED={'Ω Barrage','α Growth','α Recovery'}
+TRAITS_IMPLEMENTED={'Ω Barrage','α Growth','α Recovery','Ω Barrier'}
 ABILITIES={
  'Water Veil':{'type':'triggered','event':'energyAttached','fromHandOnly':True,
    'effect':E('removeStatuses',target='self',statuses=['poison','burn','sleep','paralysis','confusion'])},

@@ -41,7 +41,7 @@ keys=[('18','Helping Hand'),('26','Flare Bonus'),('37','Astonish'),('44','Aqua S
 print(json.dumps({'effects':[v.ATTACKS.get(k) for k in keys], 'trainers':[v.TRAINERS.get(str(n)) for n in [124,133,141,157,158,160]], 'traits':list(v.TRAITS_IMPLEMENTED)}))`;
  const run=spawnSync('python3',['-c',code,path.join(root,'scripts')],{encoding:'utf8'});assert.equal(run.status,0,run.stderr);
  const out=JSON.parse(run.stdout);for(const e of out.effects){assert.ok(e,'missing attack mapping');assert.deepEqual(effects.validateEffect(e),[]);}
- for(const t of out.trainers){assert.ok(t);assert.deepEqual(effects.validateEffect(t[1]),[]);}assert.ok(!out.traits.includes('Ω Barrier'));
+ for(const t of out.trainers){assert.ok(t);assert.deepEqual(effects.validateEffect(t[1]),[]);}assert.ok(out.traits.includes('Ω Barrier'), 'XY5 Omega protection has a dedicated regression suite');
 });
 
 test('Archie: only final card in hand, live Water discard target, empty Bench; physical Bench + 5 draw',()=>withCards(()=>{
