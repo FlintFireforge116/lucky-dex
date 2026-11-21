@@ -1080,3 +1080,23 @@ html.android-native-inset body.tcgp-battle-live .tcgp-live-arena:not(.format-cla
 .tcgp-live-reveal-card{min-width:0;display:flex;flex-direction:column;align-items:center;gap:5px}
 .tcgp-live-reveal-card img{display:block;width:100%;max-width:125px;aspect-ratio:2.5/3.5;object-fit:contain;border-radius:6px}
 .tcgp-live-reveal-card small{font-size:11px;line-height:1.3;overflow-wrap:anywhere;text-align:center}
+
+
+/* v0.69.356 — Sky Field: all eight physical Bench slots remain on the board.
+   One row of eight fits the Classic half-mat without overlapping Active,
+   the Stadium or hand on smaller Android screens. Pocket is untouched. */
+.tcgp-live-arena.format-classic.sky-field-bench .tcgp-live-player-bench,
+.tcgp-live-arena.format-classic.sky-field-bench .tcgp-live-opponent-bench{
+  grid-template-columns:repeat(8,minmax(0,1fr))!important;
+  grid-template-rows:1fr!important;
+  width:96%!important;max-width:none!important;
+  column-gap:3px!important;row-gap:0!important;
+  justify-items:stretch!important;
+}
+.tcgp-live-arena.format-classic.sky-field-bench .tcgp-live-player-bench{bottom:0!important}
+.tcgp-live-arena.format-classic.sky-field-bench .tcgp-live-opponent-bench{top:0!important}
+.tcgp-live-arena.format-classic.sky-field-bench .tcgp-live-card-wrap.compact{min-width:0!important}
+@media(max-width:380px){
+ .tcgp-live-arena.format-classic.sky-field-bench .tcgp-live-player-bench,
+ .tcgp-live-arena.format-classic.sky-field-bench .tcgp-live-opponent-bench{width:98%!important;column-gap:2px!important}
+}

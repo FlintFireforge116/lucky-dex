@@ -8,8 +8,8 @@ android {
         applicationId 'com.example.luckydex'
         minSdk 26
         targetSdk 35
-        versionCode 7355
-        versionName '0.69.355'
+        versionCode 7356
+        versionName '0.69.356'
     }
 
     signingConfigs {
@@ -740,4 +740,20 @@ tasks.named('auditV07329AllClassicAttackEnergyForApk').configure {
 }
 tasks.matching { it.name == 'preBuild' || (it.name.startsWith('merge') && it.name.endsWith('Assets')) }.configureEach {
     dependsOn tasks.named('auditXY6Stage3ForApk')
+}
+
+
+// v0.69.356: Sky Field physical 8-slot Bench on both sides, Stadium removal
+// chooser, and cross-set Stadium compatibility. Build-time generated XY6
+// official prints are checked by the previous stages first.
+tasks.register('auditXY6Stage4ForApk', Exec) {
+    dependsOn tasks.named('auditXY6Stage3ForApk')
+    workingDir rootProject.projectDir
+    commandLine 'node', '--test', 'tests/v07356-roaring-skies-sky-field.test.cjs'
+}
+tasks.named('auditV07329AllClassicAttackEnergyForApk').configure {
+    dependsOn tasks.named('auditXY6Stage4ForApk')
+}
+tasks.matching { it.name == 'preBuild' || (it.name.startsWith('merge') && it.name.endsWith('Assets')) }.configureEach {
+    dependsOn tasks.named('auditXY6Stage4ForApk')
 }

@@ -93,6 +93,7 @@ TRAINERS={
  '85':('Tool',N), # Latios Spirit Link
  '86':('Item',E('attachEnergyFromDiscard',target='selfPokemon',filter={'tag':'mega-evolution'},amount=1)), # Mega Turbo; choose actual Mega and discarded Basic Energy
  '87':('Tool',N), # Rayquaza Spirit Link
+ '89':('Stadium',N), # Sky Field: physical 8-slot Bench + ordered discard to printed 5 in battle core
  '88':('Item',E('benchFromDiscard',side='self',amount=1,filter={'kind':'pokemon','stage':'Basic'})),
  '90':('Supporter',S(SEARCH(1,kind='trainer',trainerType='Supporter'),SEARCH(1,kind='energy',basicEnergy=True))),
  '91':('Item',SWITCH()),

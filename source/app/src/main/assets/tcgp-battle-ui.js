@@ -224,6 +224,8 @@
     if(entry.type==='retreat'){const count=Object.values(entry.spentEnergy||{}).reduce((n,v)=>n+Number(v||0),0)+Number(entry.spentSpecialEnergy||0);return`${who} retreated ${cardName(entry.cardId)} → ${cardName(entry.toCardId)} · ${count?`discarded ${count} Energy for Retreat`:'free Retreat (no Energy discarded)'}`;}
     if(entry.type==='attack')return`${who} used ${entry.attack} · ${Number(entry.damage||0)} damage${entry.damageReason?` · ${entry.damageReason}`:''}`;
     if(entry.type==='ko')return`${cardName(entry.cardId)} was Knocked Out`;
+    if(entry.type==='xy6SkyFieldLeft')return'Sky Field left play — discard Benched Pokémon down to five';
+    if(entry.type==='xy6SkyFieldBenchDiscard')return`${entry.side==='player'?'You':'CPU'} discarded ${cardName(entry.cardId)} and all attached cards (Sky Field)`;
     if(entry.type==='promote')return`${who} promoted ${cardName(entry.cardId)} to Active`;
     if(entry.type==='sleepCheck')return`${who==='You'?'Your':'CPU'} Pokémon ${entry.woke?'woke up':'is still Asleep'} after the Sleep coin flip`;
     if(entry.type==='coin'&&entry.reason==='Dream Garden')return`Dream Garden · ${entry.heads?'HEADS — no new Sleep':'TAILS — Active Pokémon fell Asleep'}`;
@@ -304,7 +306,7 @@
       const stateSide=currentBattle?.sides?.[sideName];
       const activeNode=content.querySelector(boardSlotSelector(sideName,'active',0));
       slots[boardSlotKey(sideName,'active',0)]={rect:presentationRect(activeNode),cardId:stateSide?.active?.cardId||null,zone:'active',index:0,side:sideName};
-      for(let i=0;i<Math.max(3,Math.min(5,Number(stateSide?.benchLimit||3)));i++){
+      for(let i=0;i<Math.max(3,Math.min(8,Number(stateSide?.benchLimit||3)));i++){
         const node=content.querySelector(boardSlotSelector(sideName,'bench',i)),slot=core?.benchSlotAt?core.benchSlotAt(stateSide,i):stateSide?.bench?.[i];
         slots[boardSlotKey(sideName,'bench',i)]={rect:presentationRect(node),cardId:slot?.cardId||null,zone:'bench',index:i,side:sideName};
       }
@@ -685,6 +687,8 @@
     if(entry.type==='turn')return`Turn ${entry.turnNumber}: ${entry.side==='player'?'Your':'CPU'} turn`;
     if(entry.type==='attack')return`${entry.side==='player'?'You':'CPU'} used ${entry.attack} for ${entry.damage}${entry.damageReason?` (${entry.damageReason})`:''}`;
     if(entry.type==='ko')return`${cardName(entry.cardId)} was Knocked Out`;
+    if(entry.type==='xy6SkyFieldLeft')return'Sky Field left play — discard Benched Pokémon down to five';
+    if(entry.type==='xy6SkyFieldBenchDiscard')return`${who} discarded ${cardName(entry.cardId)} and all attached cards (Sky Field)`;
     if(entry.type==='search')return`${entry.side==='player'?'You':'CPU'} found ${cardName(entry.cardId)}`;
     if(entry.type==='pokemonTraderReveal')return`${entry.side==='player'?'You':'CPU'} traded ${cardName(entry.fromHand)} for ${cardName(entry.fromDeck)}`;
     return actionEventText(entry);
@@ -770,7 +774,7 @@
   }
   function canChooseBoardDirect(state,actions){
     if(state?.phase!=='effectChoice'||state.choiceSide!=='player')return false;
-    return ['pokemon','switchBench','narrowGymReturn','attack','energyTarget','energySource','toolCard'].includes(state.pendingChoice?.kind)||state.pendingChoice?.special==='narrowGymReturn';
+    return ['pokemon','switchBench','narrowGymReturn','skyFieldBenchTrim','attack','energyTarget','energySource','toolCard'].includes(state.pendingChoice?.kind)||['narrowGymReturn','skyFieldBenchTrim'].includes(state.pendingChoice?.special);
   }
   function boardChoiceAttrs(side,zone,index){
     const indices=choiceBoardActions(currentBattle,battleActionCache,side,zone,index);
@@ -791,9 +795,9 @@
     if(!slot)return inspectAttrs(side,zone,index);
     const boardChoice=boardChoiceAttrs(side,zone,index);if(boardChoice)return boardChoice;
     if(side!=='player')return inspectAttrs(side,zone,index);
-    if(zone==='bench'&&currentBattle?.phase==='effectChoice'&&currentBattle?.choiceSide==='player'&&currentBattle?.pendingChoice?.special==='narrowGymReturn'){
+    if(zone==='bench'&&currentBattle?.phase==='effectChoice'&&currentBattle?.choiceSide==='player'&&['narrowGymReturn','skyFieldBenchTrim'].includes(currentBattle?.pendingChoice?.special)){
       const actionIndex=battleActionCache.findIndex(action=>action.type==='effectChoice'&&action.choiceTarget==='bench'&&Number(action.choiceBenchIndex)===Number(index));
-      if(actionIndex>=0)return `data-tcgp-action="battle-action" data-action-index="${actionIndex}" aria-label="Return ${esc(cardName(slot.cardId))} to hand for Narrow Gym"`;
+      if(actionIndex>=0)return `data-tcgp-action="battle-action" data-action-index="${actionIndex}" aria-label="Choose ${esc(cardName(slot.cardId))} for the Bench reduction"`;
     }
     const indices=pokemonActionIndices(side,zone,index),activeAttackSurface=currentBattle?.phase==='battle'&&currentBattle?.activeSide==='player'&&zone==='active'&&!cpuPending;
     // A tapped Benched Pokemon should explain why its attacks cannot be used,
@@ -896,7 +900,7 @@
     // A knockout can leave an old physical slot 2 populated. Normalize here
     // as well as in the engine so no occupied Pokémon becomes invisible.
     core?.normalizeBenchSlots?.(sideState);
-    for(let i=0;i<Math.min(5,Math.max(Number(sideState.benchLimit??3),sideState.bench?.length||0));i++){const slot=core?.benchSlotAt?core.benchSlotAt(sideState,i):(bench?.[i]||null);slots.push(liveCardHtml(slot,{compact:true,side:sideName,zone:'bench',index:i,showActions:false}));}
+    for(let i=0;i<Math.min(8,Math.max(Number(sideState.benchLimit??3),sideState.bench?.length||0));i++){const slot=core?.benchSlotAt?core.benchSlotAt(sideState,i):(bench?.[i]||null);slots.push(liveCardHtml(slot,{compact:true,side:sideName,zone:'bench',index:i,showActions:false}));}
     return slots.join('');
   }
   function classicOpponentHandRevealed(battle){
@@ -1223,7 +1227,8 @@
     const cpuMessageVisible=!!battleEvent&&battleEventSide==='opponent',cpuReporting=cpuMessageVisible&&(cpuPending||cpuOwnsNextAction());
     const narrowGym=classic&&currentBattle.stadium?.cardId==='gym1-124'&&currentBattle.pendingChoice?.special!=='narrowGymReturn';
     const lentalWide=classic&&[p,o].some(ss=>Number(ss.benchLimit||3)>3||(ss.bench||[]).length>3);
-    setContent(`<section class="tcgp-live-arena ${classic?'format-classic':''}${narrowGym?' narrow-gym':''}${lentalWide?' lental-wide-bench':''}" aria-label="${classic?'Classic TCG':'TCG Pocket'} battlefield">
+    const skyFieldWide=classic&&(currentBattle.stadium?.cardId==='xy6-89'||[p,o].some(ss=>Number(ss.benchLimit||3)>5||(ss.bench||[]).length>5));
+    setContent(`<section class="tcgp-live-arena ${classic?'format-classic':''}${narrowGym?' narrow-gym':''}${lentalWide?' lental-wide-bench':''}${skyFieldWide?' sky-field-bench':''}" aria-label="${classic?'Classic TCG':'TCG Pocket'} battlefield">
       <section class="tcgp-live-opponent-top" aria-label="Opponent hand and piles">${livePileHtml('opponent',o,'discard')}${liveOpponentHandHtml(o)}${livePileHtml('opponent',o,'deck')}</section>
       <section class="tcgp-live-opponent tcgp-live-mat-half" data-mat-side="opponent" ${playmatStyle('opponent')} aria-label="Opponent half">
         <div class="tcgp-live-opponent-bench" aria-label="Opponent Bench">${liveBenchHtml('opponent',o.bench)}</div>

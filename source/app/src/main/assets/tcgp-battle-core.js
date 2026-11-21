@@ -61,11 +61,11 @@
   function attachTool(slot,ref){ if(!slot.tool)slot.tool=ref;else{slot.extraTools=slot.extraTools||[];slot.extraTools.push(ref);} }
 
   function normalizeBenchSlots(sideState){
-    const bench=sideState?.bench||[],cap=Math.max(0,Math.min(5,Number(sideState?.benchLimit??3)));
+    const bench=sideState?.bench||[],cap=Math.max(0,Math.min(8,Number(sideState?.benchLimit??3)));
     // A newly played Narrow Gym may temporarily leave three Pokémon on the
     // Bench pending a return-to-hand choice. Keep all three visible until the
     // player has chosen one. Afterwards, no Pokémon may remain in hidden slot 2.
-    const visible=Math.min(5,Math.max(cap,bench.filter(Boolean).length));
+    const visible=Math.min(8,Math.max(cap,bench.filter(Boolean).length));
     const used=new Set(),unplaced=[];
     // Reserve valid physical slots first. Otherwise an off-screen Pokémon at
     // slot 2 could steal slot 0 from a Pokémon already displayed there.
@@ -76,7 +76,7 @@
       else unplaced.push(slot);
     });
     for(const slot of unplaced){
-      const physical=[0,1,2,3,4].slice(0,visible).find(i=>!used.has(i));
+      const physical=Array.from({length:visible},(_,i)=>i).find(i=>!used.has(i));
       if(physical===undefined)continue;
       slot.benchSlot=physical;used.add(physical);
     }
@@ -94,12 +94,12 @@
     return index>=0?sideState.bench[index]:null;
   }
 
-  function maxBenchSize(sideState){return Math.max(0,Math.min(5,Number(sideState?.benchLimit??3)));}
+  function maxBenchSize(sideState){return Math.max(0,Math.min(8,Number(sideState?.benchLimit??3)));}
 
   function emptyBenchSlots(sideState){
     normalizeBenchSlots(sideState);
     const used=new Set((sideState?.bench||[]).filter(Boolean).map(slot=>Number(slot.benchSlot)));
-    return [0,1,2,3,4].slice(0,maxBenchSize(sideState)).filter(i=>!used.has(i));
+    return Array.from({length:maxBenchSize(sideState)},(_,i)=>i).filter(i=>!used.has(i));
   }
 
   function placeOnBench(sideState,slot,benchIndex){
@@ -409,7 +409,7 @@
   function effectChoiceActions(state,side){
     const p=state.pendingChoice;if(!p||p.side!==side)return[];const ss=state.sides[p.selectionSide||side],out=[];
     const filterCard=(slotOrRef)=>{if((p.excludeUids||[]).includes(slotOrRef?.uid))return false;const card=data.cardById(slotOrRef?.cardId);return !p.filter||!effects.matchesFilter||effects.matchesFilter(card,p.filter,slotOrRef);};
-    if(p.kind==='narrowGymReturn'){
+    if(p.kind==='narrowGymReturn'||p.kind==='skyFieldBenchTrim'){
       for(const slot of ss.bench||[])if(slot)out.push({type:'effectChoice',choiceTarget:'bench',choiceBenchIndex:Number(slot.benchSlot),choiceCardId:slot.cardId});
     }else if(p.kind==='prizeCard'){
       const prizeBoard=state.sides[p.selectionSide||side];prizeBoard.prizes.forEach((ref,index)=>{if(p.effect?.rule==='dp3:6:psychicCut'&&ref.faceUp)return;out.push({type:'effectChoice',choicePrizeIndex:index,...(ref.faceUp?{choiceCardId:ref.cardId}:{})});});
@@ -1275,6 +1275,7 @@
     }
   }
   function legalActions(state, side){
+    if(state?.format==='classic')reconcileSkyField(state);
     if(state?.format==='classic')for(const who of ['player','opponent']){
       const foeSide=who==='player'?'opponent':'player',foe=state.sides[foeSide],board=state.sides[who];
       const activeDitto=pokemonOn(foe).some(p=>p.cardId==='hgss4-17'&&!effects.abilitiesSuppressed(state,foeSide,p,data.cardById));
@@ -1285,6 +1286,7 @@
     if(state?.format==='classic')effects.florio114PrismCleanup?.(state);
     if(state?.format==='classic')ex9MiloticScaleCleanup(state);
     if (!state) return [];
+    if(state.phase==='battle'&&reconcileSkyField(state))return effectChoiceActions(state,side);
     if(state.lentalDamOverflow&&state.phase==='battle'&&checkNarrowGymOverflow(state))return effectChoiceActions(state,side);
     if (state.phase === 'setup') return setupActions(state,side);
     if (state.phase === 'effectChoice') return effectChoiceActions(state,side);
@@ -2570,6 +2572,65 @@
     return false;
   }
 
+  // Roaring Skies Sky Field: physical slots 0–7 stay visible for either
+  // side. If the Stadium leaves play, *each player chooses* which Pokémon
+  // (and every attachment) to discard until five remain. The controller of
+  // Sky Field chooses first, as printed. No KO or Prize is awarded.
+  // LuckyDex Classic30 normally uses a three-slot Bench; once Sky Field is
+  // played its standard post-Stadium cap becomes the printed five for the
+  // remainder of this battle, unless a restrictive Stadium overrides it.
+  function reconcileSkyField(state){
+    if(state?.format!=='classic'||!state.sides)return false;
+    const active=state.stadium?.cardId==='xy6-89';
+    if(active){
+      if(!state.xy6SkyFieldActive||state.xy6SkyFieldUid!==state.stadium.uid){
+        state.xy6SkyFieldOwner=state.stadium.ownerSide||'player';
+        state.xy6SkyFieldUid=state.stadium.uid;
+      }
+      state.xy6SkyFieldActive=true;
+      state.xy6SkyFieldFiveAfter=true;
+    }else if(state.xy6SkyFieldActive){
+      state.xy6SkyFieldActive=false;
+      state.xy6SkyFieldTrim=true;
+      state.log.push({type:'xy6SkyFieldLeft',side:state.xy6SkyFieldOwner||'player'});
+    }
+    for(const who of ['player','opponent']){
+      const s=state.sides[who];
+      const cap=active?8:state.stadium?.cardId==='gym1-124'?2:
+        state.stadium?.cardId==='SNAPFLORIO-108'?5:
+        state.xy6SkyFieldFiveAfter?5:3;
+      // Preserve the unrelated Ditto expanded Bench until its own rule ends.
+      const foe=state.sides[who==='player'?'opponent':'player'];
+      const ditto=state.stadium?.cardId!=='gym1-124'&&!active&&
+        pokemonOn(foe).some(p=>p.cardId==='hgss4-17'&&!effects.abilitiesSuppressed(state,foe.id,p,data.cardById));
+      s.benchLimit=ditto?Math.max(cap,4):cap;
+      normalizeBenchSlots(s);
+    }
+    if(active||!state.xy6SkyFieldTrim)return false;
+    // Do not interrupt KO promotion or another unresolved card choice.
+    if(state.phase!=='battle'||state.pendingChoice)return false;
+    const first=state.xy6SkyFieldOwner||'player',other=first==='player'?'opponent':'player';
+    const owner=[first,other].find(w=>state.sides[w].bench.length>5);
+    if(!owner){delete state.xy6SkyFieldTrim;return false;}
+    state.pendingChoice={kind:'skyFieldBenchTrim',special:'skyFieldBenchTrim',side:owner,originSide:first,
+      prompt:'Sky Field left play — choose one of your Benched Pokémon to discard (including all attached cards). Keep five.'};
+    state.phase='effectChoice';state.choiceSide=owner;
+    return true;
+  }
+  function discardSkyFieldBench(state,side,benchIndex){
+    const board=state.sides[side],index=benchArrayIndex(board,benchIndex);
+    if(index<0)throw new Error('Choose a Benched Pokémon to discard for Sky Field.');
+    const [pokemon]=board.bench.splice(index,1);
+    // Stadium removal is not a Knock Out: no Prize and no damage/KO triggers.
+    discardKnockedOut(board,pokemon);
+    state.log.push({type:'xy6SkyFieldBenchDiscard',side,cardId:pokemon.cardId,uid:pokemon.uid,benchIndex});
+    // Compact high physical slots to ensure every remaining card is visible,
+    // including on a normal five-slot Bench with old slot 7 occupied.
+    board.bench.sort((a,b)=>Number(a.benchSlot)-Number(b.benchSlot));
+    board.bench.forEach((slot,index)=>{slot.benchSlot=index;});
+    normalizeBenchSlots(board);
+  }
+
   // LuckyDex Classic has three Bench spaces. Narrow Gym therefore limits
   // both sides to TWO (the printed four-slot rule otherwise has no effect).
   function narrowGymReturnToHand(state,side,benchIndex){
@@ -2599,6 +2660,10 @@
     ss.bench.forEach((pokemon,i)=>{pokemon.benchSlot=i;});
   }
   function checkNarrowGymOverflow(state){
+    if(state.xy6SkyFieldTrim&&['battle','effectChoice','promote'].includes(state.phase)){
+      if(reconcileSkyField(state))return true;
+      if(state.xy6SkyFieldTrim)return false;
+    }
     const narrow=state.stadium?.cardId==='gym1-124',giant=state.stadium?.cardId==='ex12-75';
     if(!narrow&&!giant&&!state.lentalDamOverflow)return false;
     const stadiumSide=state.stadium?.ownerSide||'player';
@@ -2669,11 +2734,8 @@ const target=slotForTarget(s,action.target,action.benchIndex);if(card.id==='pl2-
         }
       if(card.id==='SNAPFLORIO-104')for(const who of ['player','opponent'])for(const slot of [state.sides[who].active,...state.sides[who].bench].filter(Boolean))if(data.cardById(slot.cardId)?.types?.some(t=>t==='Grass'||t==='Psychic'))slot.conditions={};
       if(card.id==='ex16-82')for(const who of ['player','opponent'])for(const slot of [state.sides[who].active,...state.sides[who].bench].filter(Boolean))if(data.cardById(slot.cardId)?.types?.includes('Darkness'))for(const key of ['sleep','confusion','paralysis'])delete slot.conditions?.[key];
-      for(const which of ['player','opponent']){
-        state.sides[which].benchLimit=card.id==='gym1-124'?2:card.id==='SNAPFLORIO-108'?5:3;
-        normalizeBenchSlots(state.sides[which]);
-      }
-      if(checkNarrowGymOverflow(state))return;resolveKnockOut(state,null);return;
+      if(reconcileSkyField(state)||checkNarrowGymOverflow(state))return;
+      resolveKnockOut(state,null);return;
     }
     const conservation=state.format==='classic'&&type==='Item'&&s.founjaConservationUsedTurn!==state.turnNumber&&pokemonOn(s).some(slot=>slot.cardId==='SNAPFOUNJA-038'&&!effects.abilitiesSuppressed(state,side,slot,data.cardById));
     if(conservation){s.deck.push(ref);shuffle(state,s.deck);s.founjaConservationUsedTurn=state.turnNumber;state.log.push({type:'founjaConservation',side,cardId:card.id});}
@@ -2711,6 +2773,12 @@ const target=slotForTarget(s,action.target,action.benchIndex);if(card.id==='pl2-
           else if(pending.koResume==='advanceTurn')advanceTurn(state);
           else if(pending.koResume==='repeatAttack')finishRepeatAttack(state);
         }
+        return state;
+      }
+      if(pending.special==='skyFieldBenchTrim'){
+        discardSkyFieldBench(state,side,matched.choiceBenchIndex);
+        state.pendingChoice=null;state.choiceSide=null;state.phase='battle';
+        if(!reconcileSkyField(state)&&!checkNarrowGymOverflow(state))resolveKnockOut(state,null);
         return state;
       }
       if(pending.special==='narrowGymReturn'){
@@ -3787,7 +3855,8 @@ const target=slotForTarget(s,action.target,action.benchIndex);if(card.id==='pl2-
         state.log.push({type:'xy5AlphaRecovery',side:who,targetUid:p.uid,extraHealed:extra});
       }
     }
-    neoSpikesAfterAction(state,before);sandstormToolLock(state);enforceHandLimit(state);return result;
+    neoSpikesAfterAction(state,before);sandstormToolLock(state);enforceHandLimit(state);
+    reconcileSkyField(state);return result;
   }
   function applyAction(state,side,action){
     const rc=rerollContext(state,side,action),source=rc&&effects.coinRerollSource?.(state,rc.ownerSide,rc.scope,rc.subject,data.cardById);

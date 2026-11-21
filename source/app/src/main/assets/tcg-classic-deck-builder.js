@@ -764,6 +764,10 @@ function buildDeck(rows,options={}){
      // Healing Scarf checks physical hand-Energy cards, not Energy Zone
      // attachments. A deck with no Special Energy has no routine trigger.
      if(card?.id==='xy6-84'&&!cards.some(id=>classic.cardById(id)?.specialEnergy))return false;
+     // Sky Field is not a generic filler Stadium: it earns its slot when the
+     // deck can exploit more than three Bench spaces with Emerald Break.
+     if(card?.id==='xy6-89'&&(!pokemon.some(p=>['xy6-76','xy6-105'].includes(p.id))||
+       pokemon.filter(p=>p.stage==='Basic').length<5))return false;
    }
    // Supreme Victors Stadiums must strengthen the actual deck. Battle Tower
    // heals Pokémon only when they Level-Up; without a friendly LV.X it risks

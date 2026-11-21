@@ -16244,13 +16244,13 @@
         break;
       }
       case 'revelation:callMurkrow':{
-        if(ss.bench.length<Math.min(5,Number(ss.benchLimit??3))&&ss.deck.some(ref=>ctx.cardById(ref.cardId)?.name==='Murkrow'))
+        if(ss.bench.length<Math.min(8,Number(ss.benchLimit??3))&&ss.deck.some(ref=>ctx.cardById(ref.cardId)?.name==='Murkrow'))
           ctx.requestChoice?.({kind:'deckCard',side:'self',filter:{kind:'pokemon',name:'Murkrow'},effect:{type:'neoRule',rule:'revelation:callMurkrowPick'}});
         break;
       }
       case 'revelation:callMurkrowPick':{
         const i=Number(ctx.action?.choiceDeckIndex),ref=ss.deck[i];
-        if(ref&&ctx.cardById(ref.cardId)?.name==='Murkrow'&&ss.bench.length<Math.min(5,Number(ss.benchLimit??3))){
+        if(ref&&ctx.cardById(ref.cardId)?.name==='Murkrow'&&ss.bench.length<Math.min(8,Number(ss.benchLimit??3))){
           const [picked]=ss.deck.splice(i,1);ctx.benchCard?.(ss,picked);ctx.shuffle?.(ctx.state,ss.deck);log({benched:picked.cardId});
         }
         break;
@@ -16456,16 +16456,16 @@
       case 'mooMooMilk':pick('self','mooMooPick');break;
       case 'mooMooPick':{const slot=sel('self');if(!slot)break;let heads=0;for(let i=0;i<2;i++)if(neoFlip(ctx,'Moo-Moo Milk'))heads++;slot.damage=Math.max(0,Number(slot.damage||0)-heads*20);break;}
       case 'pokemonMarch':{
-        const hasBasics=board=>board.deck.some(r=>ctx.cardById(r.cardId)?.stage==='Basic'&&ctx.cardById(r.cardId)?.kind==='pokemon')&&board.bench.length<Math.min(5,Number(board.benchLimit??3));
+        const hasBasics=board=>board.deck.some(r=>ctx.cardById(r.cardId)?.stage==='Basic'&&ctx.cardById(r.cardId)?.kind==='pokemon')&&board.bench.length<Math.min(8,Number(board.benchLimit??3));
         if(hasBasics(foe))ctx.requestChoice?.({kind:'deckCard',side:'opponent',filter:{kind:'pokemon',stage:'Basic'},optional:true,effect:{type:'neoRule',rule:'pokemonMarchFoe'}});
         else if(hasBasics(ss))ctx.requestChoice?.({kind:'deckCard',side:'self',filter:{kind:'pokemon',stage:'Basic'},optional:true,effect:{type:'neoRule',rule:'pokemonMarchSelf'}});
         break;
       }
       case 'pokemonMarchFoe':case 'pokemonMarchSelf':{
         const board=e.rule==='pokemonMarchFoe'?foe:ss;
-        if(!ctx.action?.choiceSkip){const index=Number(ctx.action?.choiceDeckIndex),ref=board.deck[index];if(ref&&ctx.cardById(ref.cardId)?.kind==='pokemon'&&ctx.cardById(ref.cardId)?.stage==='Basic'&&board.bench.length<Math.min(5,Number(board.benchLimit??3))){board.deck.splice(index,1);ctx.benchCard?.(board,ref);}}
+        if(!ctx.action?.choiceSkip){const index=Number(ctx.action?.choiceDeckIndex),ref=board.deck[index];if(ref&&ctx.cardById(ref.cardId)?.kind==='pokemon'&&ctx.cardById(ref.cardId)?.stage==='Basic'&&board.bench.length<Math.min(8,Number(board.benchLimit??3))){board.deck.splice(index,1);ctx.benchCard?.(board,ref);}}
         ctx.shuffle?.(ctx.state,board.deck);
-        if(e.rule==='pokemonMarchFoe'&&ss.deck.some(r=>ctx.cardById(r.cardId)?.kind==='pokemon'&&ctx.cardById(r.cardId)?.stage==='Basic')&&ss.bench.length<Math.min(5,Number(ss.benchLimit??3)))ctx.requestChoice?.({kind:'deckCard',side:'self',filter:{kind:'pokemon',stage:'Basic'},optional:true,effect:{type:'neoRule',rule:'pokemonMarchSelf'}});
+        if(e.rule==='pokemonMarchFoe'&&ss.deck.some(r=>ctx.cardById(r.cardId)?.kind==='pokemon'&&ctx.cardById(r.cardId)?.stage==='Basic')&&ss.bench.length<Math.min(8,Number(ss.benchLimit??3)))ctx.requestChoice?.({kind:'deckCard',side:'self',filter:{kind:'pokemon',stage:'Basic'},optional:true,effect:{type:'neoRule',rule:'pokemonMarchSelf'}});
         break;
       }
       case 'superRod':{

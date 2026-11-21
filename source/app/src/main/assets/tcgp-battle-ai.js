@@ -340,6 +340,18 @@
       return !(power?.oncePerTurn===false&&state.sides[side].abilityUsed?.[source.uid+':'+index]===state.sides[side].turnCount);
     });
     if(!legal.length)return null;
+    if(state.format==='classic'&&state.phase==='effectChoice'&&state.pendingChoice?.special==='skyFieldBenchTrim'){
+      const bench=state.sides[side].bench;
+      const score=action=>{
+        const slot=bench.find(p=>Number(p.benchSlot)===Number(action.choiceBenchIndex));
+        if(!slot)return Infinity;
+        const card=data.cardById(slot.cardId),energy=attachedCount(slot);
+        const stage=card?.stage==='Stage 2'?45:card?.stage==='Stage 1'?20:0;
+        return stage+energy*15+(slot.tool?9:0)+(slot.specialEnergy||[]).length*5+
+          Math.max(0,Number(card?.hp||0)-Number(slot.damage||0))*.09;
+      };
+      return legal.filter(a=>a.type==='effectChoice').sort((a,b)=>score(a)-score(b))[0]||legal[0];
+    }
     if(state.format==='classic'&&state.phase==='battle'&&state.sides[side]?.active?.cardId==='ex15-10'&&
        Number(state.sides[side].active.damage||0)>=20&&
        !state.sides[side].active.conditions?.sleep){

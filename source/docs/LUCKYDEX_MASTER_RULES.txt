@@ -3298,3 +3298,23 @@ git add source
 git commit -m "LuckyDex v0.69.355 Roaring Skies Stage 3"
 git push origin main
 ```
+
+========================================================================
+LUCKYDEX v0.69.356 — ROARING SKIES STAGE 4: SKY FIELD (xy6-89)
+========================================================================
+- Baseline: v0.69.355 passed GitHub Actions #644. Stage 4 is not yet APK-verified.
+- Sky Field enables eight REAL, individually targetable Bench slots 0–7 on BOTH Classic boards. Board rendering, physical-slot normalization, search/placement and CPU must never silently restrict it to five slots. No ninth Bench card is legal.
+- Sky Field leaves play: the player who controlled Sky Field chooses their own Benched Pokémon to DISCARD down to five FIRST. Then the other player chooses, if needed. Discard entire evolution stack, Tools, real Special Energy and generated Basic Energy to their proper discard areas. This is NOT a Knock Out and MUST NOT award Prize cards. Display an explicit choice for each discard.
+- Classic30 normally has 3 Bench slots. Sky Field's PRINTED rule specifically says discard down to FIVE; after it leaves, keep a base five-slot cap for the rest of that battle unless another Stadium limits it (Narrow Gym 2; Florio Dam 5). This avoids an unprinted extra automatic discard of two.
+- If Sky Field is replaced by Narrow Gym, first discard down to FIVE, then use Narrow Gym's normal return-to-hand decisions down to TWO. Deferred attack/Prize/KO/promotion prompts are not overwritten. This synchronization also covers attack-discarded Stadiums, not only Trainer-play replacements.
+- CPU discards the least invested eligible Bench Pokémon first. When considering Sky Field, account for friendly/hostile M Rayquaza Emerald Break instead of Stadium spam. Auto deckbuilder only inserts Sky Field into a completed Emerald Break plan with five+ Basic Pokémon; respect saved manual picks.
+- Only Sky Field #89 becomes newly battle-ready in Stage 4. Other printed Roaring Skies effects remain gated until implemented and tested. Official xy6 source remains pinned to Git blob 5eab0c0148a5cb52dd7005628aa61c793ec0d930.
+- Regression: tests/v07356-roaring-skies-sky-field.test.cjs is included in Gradle auditXY6Stage4ForApk, after Stage 1–3 audits and catalogue generation. Local targeted suite: 93 passed, 0 failed, 7 generated-catalogue-dependent skips. Details: docs/XY6_ROARING_SKIES_STAGE4_SKY_FIELD_v0.69.356.md
+
+CURRENT TERMUX PATCH:
+cd ~/lucky-dex
+unzip -o /sdcard/Download/LuckyDex_patch_v0.69.356_ROARING_SKIES_SKY_FIELD.zip -d source
+git add source
+git commit -m "LuckyDex v0.69.356 Roaring Skies Sky Field eight Bench"
+git push origin main
+========================================================================

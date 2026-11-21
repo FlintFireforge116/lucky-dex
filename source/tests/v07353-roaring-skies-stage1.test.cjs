@@ -29,8 +29,12 @@ test('Roaring Skies set appears in player, opponent, pack selection and registry
 
 test('APK generation is CI-gated: source pin, version, prebuild audit',()=>{
  const gradle=fs.readFileSync(path.join(root,'app/build.gradle'),'utf8');
- assert.match(gradle,/versionCode\s+73(?:53|54|55)/);
- assert.match(gradle,/versionName '0\.69\.35[345]'/);
+ // Do not pin the Stage 1 regression to a Stage 1–3 release number.
+ // Every later XY6 patch must keep Gradle and the boot assets in sync.
+ const code=Number(gradle.match(/versionCode\s+(\d+)/)?.[1]);
+ const version=gradle.match(/versionName '([^']+)'/)?.[1];
+ assert.match(version||'',/^0\.69\.\d+$/);
+ assert.equal(code,7000+Number(version.split('.')[2]));
  for(const target of ['generateXY6ForApk','auditXY6ForApk'])
   assert.ok(gradle.includes(`tasks.register('${target}'`));
  assert.match(gradle,/dependsOn tasks.named\('auditXY6ForApk'\)/);
@@ -38,7 +42,7 @@ test('APK generation is CI-gated: source pin, version, prebuild audit',()=>{
  assert.ok(script.includes('5eab0c0148a5cb52dd7005628aa61c793ec0d930'));
  assert.ok(script.includes('load_pinned_set'));
  assert.ok(script.includes('!=112')&&script.includes('!=147')&&script.includes('!=15')&&script.includes('!=12'));
- assert.match(fs.readFileSync(path.join(assets,'app-v0167.js'),'utf8'),/window\.__LUCKYDEX_BUILD='0\.69\.35[345]'/);
+ assert.ok(fs.readFileSync(path.join(assets,'app-v0167.js'),'utf8').includes(`window.__LUCKYDEX_BUILD='${version}'`));
 });
 
 test('Stage 1 verifier can validate every FULL attack and Trainer without faking Delta rules',()=>{
