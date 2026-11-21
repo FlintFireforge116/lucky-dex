@@ -3085,3 +3085,13 @@ unzip -o /sdcard/Download/LuckyDex_patch_v0.69.342_PHANTOM_FORCES_FULL_AUDIT.zip
 git add source
 git commit -m "LuckyDex v0.69.342 Phantom Forces full completion and audit"
 git push origin main
+
+=== v0.69.343: XY5 Primal Clash integration and Ancient Trait gates ===
+- The official English XY5 set Primal Clash has 164 collector prints, 217 attacks, 13 Ability print instances, and 22 Ancient Trait print instances. Retain all printed cards, attack text, real Energy costs, set-specific card IDs and alt-art print identities. Source is pinned to the official Git blob 38a427242a56d0e9bcd4450718d1f5ae28377f82, validated in the GitHub build.
+- Extend shared Classic player, CPU, collection projection, set picker, card inspector and 30-card auto builder with every new set, never replacing the previous expansion.
+- The `scripts/build-xy5.py` generator materializes every print before APK asset merge, and `tests/v07343-primal-clash-stage1.test.cjs` runs after generation. No source placeholder may ship; never treat an unimplemented rule as a silent noop.
+- Ancient Traits Ω Barrage (second attack), Ω Barrier (Trainer protection), α Growth (extra hand attachment), α Recovery (double healing) require full battle/CPU timing integration. Keep their prints unplayable and out of decks until the engine and tests support them.
+- Primal Reversion uses the appropriate original Pokémon-EX and the rules for Mega end-turn evolution, with Groudon/Kyogre Spirit Link exceptions when equipped. Do not unlock without correct base lines, Tools and prize behaviour.
+- Shield Energy, Wonder Energy, Stage2 abilities, new Stadiums and special Supporters must not enter decks until their per-turn/per-card effects, legality, physical Energy ledgers and CPU use are tested.
+- The permanent cross-era deck-quality audit must exclude only missing generated catalogues locally, and separately test each set's genuine generated cards on GitHub. Do not weaken real GitHub build-time coverage.
+- Standard Termux update is `cd ~/lucky-dex`, `unzip -o /sdcard/Download/LuckyDex_patch_v0.69.343_PRIMAL_CLASH_STAGE1.zip -d source`, `git add source`, `git commit -m "LuckyDex v0.69.343 Primal Clash stage 1"`, `git push origin main`.

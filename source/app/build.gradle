@@ -8,8 +8,8 @@ android {
         applicationId 'com.example.luckydex'
         minSdk 26
         targetSdk 35
-        versionCode 7342
-        versionName '0.69.342'
+        versionCode 7343
+        versionName '0.69.343'
     }
 
     signingConfigs {
@@ -671,4 +671,23 @@ tasks.named('auditV07329AllClassicAttackEnergyForApk').configure {
 }
 tasks.matching { it.name == 'preBuild' || (it.name.startsWith('merge') && it.name.endsWith('Assets')) }.configureEach {
     dependsOn tasks.named('auditXY4ForApk')
+}
+
+// v0.69.343 XY5 Primal Clash. Never ship stub/partial cards. The official
+// pinned catalogue and independent staged audit run BEFORE Android merges.
+tasks.register('generateXY5ForApk', Exec) {
+    dependsOn tasks.named('auditXY4ForApk')
+    workingDir rootProject.projectDir
+    commandLine (System.getenv('LUCKYDEX_PYTHON') ?: 'python3'), 'scripts/build-xy5.py'
+}
+tasks.register('auditXY5ForApk', Exec) {
+    dependsOn tasks.named('generateXY5ForApk')
+    workingDir rootProject.projectDir
+    commandLine 'node', '--test', 'tests/v07343-primal-clash-stage1.test.cjs'
+}
+tasks.named('auditV07329AllClassicAttackEnergyForApk').configure {
+    dependsOn tasks.named('auditXY5ForApk')
+}
+tasks.matching { it.name == 'preBuild' || (it.name.startsWith('merge') && it.name.endsWith('Assets')) }.configureEach {
+    dependsOn tasks.named('auditXY5ForApk')
 }
