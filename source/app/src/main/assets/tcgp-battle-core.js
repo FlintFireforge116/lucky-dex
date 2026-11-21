@@ -2406,13 +2406,13 @@
           }
         }
 
-        // Black & White Exp. Share: the owner MAY move exactly one BASIC Energy
+        // Black & White / Primal Clash Exp. Share: move one actual BASIC Energy
         // from the knocked-out Active before the remaining attachments enter
         // the actual discard ledger. The Tool itself stays attached.
         if(state.format==='classic'&&slot===s.active&&eventSource?.attack&&eventSource.side===foeSide&&
            !slot._bw4ExpShareResolved){
           const eligible=[];
-          for(const p of s.bench||[]){if(!p||!toolsOf(p).some(ref=>ref.cardId==='bw4-87'))continue;
+          for(const p of s.bench||[]){if(!p||!toolsOf(p).some(ref=>['bw4-87','xy5-128'].includes(ref.cardId)))continue;
             for(const [type,n] of Object.entries(slot.energy||{}))if(Number(n)>0)eligible.push({targetUid:p.uid,energyType:type});}
           if(eligible.length){slot._bw4ExpShareResolved=true;
             beginEffectChoice(state,side,slot,{kind:'option',side:'self',
@@ -3555,6 +3555,15 @@ const target=slotForTarget(s,action.target,action.benchIndex);if(card.id==='pl2-
     }
     if(state.format==='classic'&&defender.cardId==='pl4-69'&&damage>0&&damage<=30&&Number(defender.pl4HardenUntil||0)>=Number(state.turnNumber))damage=0;
     defender.damage=Number(defender.damage||0)+damage;
+    // Beedrill's Allergic Shock applies only when the SAME Defending Pokémon
+    // is damaged on the attacker's NEXT turn. It never bypasses a zero-damage
+    // guard and retreat/evolution clears the condition as usual.
+    if(state.format==='classic'&&damage>0&&defender.xy5AllergicShock?.side===side&&
+       Number(defender.xy5AllergicShock.triggerTurn)===Number(state.turnNumber)){
+      defender.damage=Math.max(Number(defender.damage||0),maxHp(state,foeSide,defender));
+      state.log.push({type:'xy5AllergicShockKO',side,targetUid:defender.uid,cardId:defender.cardId});
+      delete defender.xy5AllergicShock;
+    }
     // Furious Fists Hawlucha-EX Counterattack: resolves before the KO check,
     // even when the damaged Active Hawlucha-EX will be knocked out.
     if(state.format==='classic'&&damage>0&&defender===foe.active&&defender.cardId==='xy3-64'&&s.active&&

@@ -4,7 +4,7 @@
 })(typeof globalThis!=='undefined'?globalThis:this,function(core,data,effects){
   'use strict';
   const DIFFICULTIES=['Beginner','Intermediate','Advanced','Expert'];
-  const ACTION_KEYS=['type','handIndex','cardId','target','benchIndex','attackIndex','attackCardId','abilityIndex','effectTarget','effectBenchIndex','choiceTarget','choiceBenchIndex','choiceHandIndex','choiceDiscardIndex','choiceDeckIndex','choiceCardId','choiceAttackIndex','choiceToolIndex','choicePrizeIndex','choiceOption','choiceSkip','effectEnergyType','effectSpecialEnergyUid'];
+  const ACTION_KEYS=['type','handIndex','cardId','target','benchIndex','attackIndex','attackCardId','abilityIndex','effectTarget','effectBenchIndex','choiceTarget','choiceBenchIndex','choiceHandIndex','choiceDiscardIndex','choiceDeckIndex','choiceCardId','choiceAttackIndex','choiceToolIndex','choicePrizeIndex','choiceOption','choiceSkip','effectEnergyType','effectSpecialEnergyUid','effectSelection','copiedEffectSelection'];
   const sameAction=(a,b)=>!!a&&!!b&&ACTION_KEYS.every(k=>a[k]===b[k]||(a[k]==null&&b[k]==null));
   const foeOf=side=>side==='player'?'opponent':'player';
   const clone=value=>JSON.parse(JSON.stringify(value));
@@ -243,7 +243,14 @@
     if(action.type==='stadiumAction')return worthwhileStadiumAction(state,side,action)?850:-100;
     if(action.type==='bench'||action.type==='legendBench')return action.type==='legendBench'?720:600;
     if(action.type==='attach'||action.type==='attachSpecial')return 400+attachScore(action,state,side);
-    if(action.type==='attack')return 200+Number(data.cardById(action.attackCardId||state.sides[side].active.cardId)?.attacks[action.attackIndex]?.damage||0);
+    if(action.type==='attack'){
+      const attack=data.cardById(action.attackCardId||state.sides[side].active.cardId)?.attacks[action.attackIndex];
+      // Explosive Jet has no printed fixed damage: score its explicitly chosen
+      // discard amount rather than treating every option as a zero-damage hit.
+      const fireCount=/^count:(\d+)$/.exec(String(action.effectSelection||''));
+      const damage=attack?.effect?.rule==='xy5:explosiveJet'&&fireCount?Number(fireCount[1])*50:Number(attack?.damage||0);
+      return 200+damage;
+    }
     if(action.type==='retreat')return -10;
     return 0;
   }

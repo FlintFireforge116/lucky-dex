@@ -127,6 +127,16 @@ ATTACKS.update({
  ('101','Trick'):E('neoRule',rule='xy5:trick'),
  ('114','Replace'):E('neoRule',rule='xy5:replace'),
 })
+# Stage 7: fully specified battle paths, with physical-zone provenance.
+# Allergic Shock is a delayed attack KO effect; Explosive Jet may discard
+# selected Fire-providing Energy cards across the whole allied board; Hunt
+# switches before damage so weakness/resistance use the new Active.
+ATTACKS[('3','Allergic Shock')]=E('neoRule',rule='xy5:allergicShock')
+for n in ('29','146'):
+ ATTACKS[(n,'Explosive Jet')]=E('neoRule',rule='xy5:explosiveJet')
+for n in ('91','152'):
+ ATTACKS[(n,'Hunt')]=E('neoRule',rule='xy5:hunt')
+
 # Secret/alternate prints share printed rules with the standard print.
 ATTACKS[('148','Giant Whirlpool')]=ATTACKS[('54','Giant Whirlpool')]
 
@@ -180,6 +190,7 @@ TRAINERS['140']=('Stadium',E('noop'))
 TRAINERS['142']=('Tool',E('noop'))
 TRAINERS['164']=TRAINERS['142']
 TRAINERS['159']=TRAINERS['134'];TRAINERS['161']=TRAINERS['125']
+TRAINERS['128']=('Tool',E('noop')) # Exp. Share: exact KO interception in Classic core.
 # The "last card in hand" Ace in the Hole Supporters and Teammates have
 # legality gates in Classic core. Choices preserve real discard/deck refs.
 for n in ('124','157'):

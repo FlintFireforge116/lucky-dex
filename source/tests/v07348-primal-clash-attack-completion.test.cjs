@@ -127,8 +127,8 @@ test('Dragon Blast discards one Water and one Lightning after attack',()=>withCa
 test('Official generated print coverage and gating are checked by CI, not by an empty local stub',{skip:!fs.existsSync(path.join(root,'data/classic/xy5-print-compact.json'))},()=>{
  const primal=require(path.join(assets,'tcg-classic-primal-clash.js'));
  assert.equal(primal.CARDS.length,164);
- assert.equal(primal.coverage().battleEnabled,152,'Expected fifteen newly implemented printed variants and twelve remaining gated');
- assert.deepEqual(primal.coverage().gated.sort(),['xy5-3','xy5-9','xy5-24','xy5-29','xy5-60','xy5-77','xy5-86','xy5-91','xy5-128','xy5-146','xy5-151','xy5-152'].sort(),
+ assert.equal(primal.coverage().battleEnabled,158,'Expected newly implemented physical-zone attacks and six remaining Omega-gated prints');
+ assert.deepEqual(primal.coverage().gated.sort(),['xy5-9','xy5-24','xy5-60','xy5-77','xy5-86','xy5-151'].sort(),
    'Never silently unlock missing Omega protection or unresolved special effects');
  for(const n of ['28','40','49','54','61','65','76','88','97','99','101','107','108','114','148']){
   const c=primal.cardById('xy5-'+n);assert.ok(c?.battleEnabled,`Previously gated print ${n}: ${JSON.stringify(c?.support?.reasons)}`);

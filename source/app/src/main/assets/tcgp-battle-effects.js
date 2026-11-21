@@ -303,7 +303,7 @@
     // that Pokémon, including a Special Condition scheduled for a later turn.
     if(state?.format==='classic'&&Array.isArray(state.delayedEffects))
       state.delayedEffects=state.delayedEffects.filter(item=>item.targetUid!==slot.uid);
-    clearConditions(slot);delete slot.locks;delete slot.attackGuard;delete slot.statusGuard;delete slot.attackGate;delete slot.retaliate;delete slot.stackedAttackBonuses;delete slot.abilitySuppressed;delete slot.energyTypeOverride;delete slot.typeOverride;delete slot.weaknessOverride;delete slot.resistanceOverride;delete slot.destinyBond;delete slot.gymShadowImages;delete slot.gymCounterGuard;delete slot.gymFireWall;delete slot.gymDeflector;delete slot.gymEnergyLock;delete slot.gym2Intimidate;delete slot.gym2GiantGrowth;delete slot.gym2PoisonAmount;delete slot.gym2NinjaTrick;delete slot.gym2FaceDown;delete slot.gym2BubblesLockTurn;delete slot.legendaryMirrorShellUntil;delete slot.neoMeanLook;delete slot.neoWebLock;delete slot.neoJawClamp;delete slot.neoLeer;delete slot.neoAmnesia;delete slot.neoScaryFace;delete slot.neoAttackLock;delete slot.neoDeflector;delete slot.neoPollenShield;delete slot.neoScreech;delete slot.neoLockOn;delete slot.neoCounter;delete slot.neoPursuit;delete slot.neoSecretePoison;delete slot.neoSlime;delete slot.neoGazeUntil;delete slot.dp2LazyBlowUntil;delete slot.dp4JawBite;if(state)state.modifiers=(state.modifiers||[]).filter(m=>m.targetUid!==slot.uid||m.scope==='team'||m.scope==='active'||m.scope==='opponentActive');}
+    clearConditions(slot);delete slot.locks;delete slot.attackGuard;delete slot.statusGuard;delete slot.attackGate;delete slot.retaliate;delete slot.stackedAttackBonuses;delete slot.abilitySuppressed;delete slot.energyTypeOverride;delete slot.typeOverride;delete slot.weaknessOverride;delete slot.resistanceOverride;delete slot.destinyBond;delete slot.gymShadowImages;delete slot.gymCounterGuard;delete slot.gymFireWall;delete slot.gymDeflector;delete slot.gymEnergyLock;delete slot.gym2Intimidate;delete slot.gym2GiantGrowth;delete slot.gym2PoisonAmount;delete slot.gym2NinjaTrick;delete slot.gym2FaceDown;delete slot.gym2BubblesLockTurn;delete slot.legendaryMirrorShellUntil;delete slot.neoMeanLook;delete slot.neoWebLock;delete slot.neoJawClamp;delete slot.neoLeer;delete slot.neoAmnesia;delete slot.neoScaryFace;delete slot.neoAttackLock;delete slot.neoDeflector;delete slot.neoPollenShield;delete slot.neoScreech;delete slot.neoLockOn;delete slot.neoCounter;delete slot.neoPursuit;delete slot.neoSecretePoison;delete slot.neoSlime;delete slot.neoGazeUntil;delete slot.dp2LazyBlowUntil;delete slot.dp4JawBite;delete slot.xy5AllergicShock;if(state)state.modifiers=(state.modifiers||[]).filter(m=>m.targetUid!==slot.uid||m.scope==='team'||m.scope==='active'||m.scope==='opponentActive');}
   function switchPokemon(side,benchIndex,state){const index=side.bench.findIndex(s=>s&&Number(s.benchSlot)===Number(benchIndex));if(index<0||!side.active)return false;const incoming=side.bench[index],outgoing=side.active;outgoing.benchSlot=Number(incoming.benchSlot);incoming.benchSlot=null;incoming.movedToActiveTurn=state?.turnNumber;side.bench[index]=outgoing;side.active=incoming;clearTemporaryEffects(state,outgoing);return true;}
   function protectedFromEffects(slot,ctx){
     // Primal Clash Ω Barrier: this exact Pokémon is protected from effects
@@ -11161,7 +11161,7 @@
       if(!ctx.resolvingChoice)return;
       const opt=(e.eligible||[])[Number(act.choiceOption)];if(!opt||!e.sourceUid)return;
       const old=mine().find(p=>p.uid===e.sourceUid),receiver=us.bench.find(p=>p.uid===opt.targetUid);
-      if(!old||!receiver||!toolsOf(receiver).some(r=>r.cardId==='bw4-87'))return;
+      if(!old||!receiver||!toolsOf(receiver).some(r=>['bw4-87','xy5-128'].includes(r.cardId)))return;
       if(Number(old.energy?.[opt.energyType]||0)<1)return;
       old.energy[opt.energyType]--;receiver.energy=receiver.energy||{};
       receiver.energy[opt.energyType]=Number(receiver.energy[opt.energyType]||0)+1;
@@ -13968,13 +13968,42 @@
 
   function xy5Rule(e,ctx){
     const k=String(e.rule||'').slice(4),ss=own(ctx),source=ctx.attacker,action=ctx.action||{};
-    if(k==='gaiaVolcano'||k==='brilliantArrow'||k==='megatonSlam')return;
+    if(k==='gaiaVolcano'||k==='brilliantArrow'||k==='megatonSlam'||k==='hunt')return;
     // Every Primal Clash Ability uses the same optional choice/continuation
     // system as attacks. No synthetic deck/discard cards are created here.
     const card=ref=>ctx.cardById(ref?.cardId),label=ref=>(card(ref)?.name||ref?.cardId)+' ['+ref.uid+']';
     const ask=(step,options,rest={})=>ctx.requestChoice?.({kind:'option',side:'self',options,
       effect:{...e,step,...rest}});
     const mine=()=>pokemonOn(ss),enemy=()=>other(ctx),sourceReady=()=>mine().includes(source)&&!abilitiesSuppressed(ctx.state,ctx.side,source,ctx.cardById);
+    if(k==='allergicShock'){
+      const target=ctx.defender;
+      if(target&&!protectedFromEffects(target,ctx)){
+        target.xy5AllergicShock={side:ctx.side,triggerTurn:Number(ctx.state.turnNumber)+2};
+        ctx.state.log.push({type:'xy5AllergicShock',side:ctx.side,targetUid:target.uid,triggerTurn:target.xy5AllergicShock.triggerTurn});
+      }
+      return;
+    }
+    if(k==='explosiveJet'){
+      const available=()=>mine().flatMap(p=>[
+        ...Object.entries(p.energy||{}).filter(([t,n])=>t==='Fire'&&Number(n)>0).map(([t])=>({p,kind:'basic',type:t,label:'Basic Fire Energy'})),
+        ...(p.specialEnergy||[]).filter(ref=>{const c=card(ref),provided=ref.provides||c?.effect?.provides||{};
+          return Number(provided.Fire||provided.Rainbow||provided.Miracle||0)>0;})
+          .map(ref=>({p,kind:'special',uid:ref.uid,label:label(ref)}))]);
+      const remaining=Math.max(0,Number(e.remaining||0));
+      if(!remaining)return;
+      const options=available();
+      if(ctx.resolvingChoice){const chosen=options[Number(action.choiceOption)];if(!chosen)return;
+        if(chosen.kind==='basic'){
+          chosen.p.energy.Fire--;recordDiscardedEnergy(ss,'Fire',1);
+        }else{const index=(chosen.p.specialEnergy||[]).findIndex(ref=>ref.uid===chosen.uid);if(index<0)return;
+          ss.discard.push(...chosen.p.specialEnergy.splice(index,1));}
+        ctx.state.log.push({type:'xy5ExplosiveJetDiscard',side:ctx.side,sourceUid:chosen.p.uid,energy:chosen.label});
+        if(remaining>1)return xy5Rule({...e,remaining:remaining-1},{...ctx,resolvingChoice:false});
+        return;
+      }
+      if(options.length)ask('discard',options.map(x=>'Discard '+x.label+' from '+(card(x.p)?.name||x.p.cardId)+' ['+x.p.uid+']'),{remaining});
+      return;
+    }
     if(k==='trick'){
       // Printed Trick moves an actual attached Tool to a different Pokémon
       // controlled by the SAME player. Never exchange ownership of the ref.
@@ -18872,6 +18901,27 @@
       // Active damage but before the attack is considered finished.
       if(e.type==='neoRule'&&String(e.rule||'').startsWith('xy5:')){
         const key=e.rule.slice(4);
+        if(key==='allergicShock'){pending.push(e);return;}
+        if(key==='explosiveJet'){
+          const count=pokemonOn(own(ctx)).reduce((sum,p)=>sum+Number(p.energy?.Fire||0)+(p.specialEnergy||[]).filter(ref=>{
+            const energy=ref.provides||ctx.cardById(ref.cardId)?.effect?.provides||{};
+            return Number(energy.Fire||energy.Rainbow||energy.Miracle||0)>0;
+          }).length,0);
+          const wanted=Number(String(ctx.action?.effectSelection||'count:0').replace(/^count:/,''));
+          const actual=Number.isInteger(wanted)?Math.max(0,Math.min(count,wanted)):0;
+          damage=50*actual;
+          if(actual)pending.push({...e,remaining:actual});
+          ctx.state.log.push({type:'xy5ExplosiveJet',side:ctx.side,discardCount:actual,damage});return;
+        }
+        if(key==='hunt'){
+          // Switch the chosen opponent Pokémon BEFORE dealing attack damage;
+          // the newly Active target receives normal Weakness/Resistance.
+          const foe=other(ctx),chosen=foe.bench.find(p=>Number(p.benchSlot)===Number(ctx.action?.choiceBenchIndex??ctx.action?.benchIndex));
+          if(!chosen){damage=0;return;}
+          switchPokemon(foe,chosen.benchSlot,ctx.state);
+          damageTarget=foe.active;damage=30;
+          ctx.state.log.push({type:'xy5Hunt',side:ctx.side,newActiveUid:foe.active.uid});return;
+        }
         if(key==='rockShower'){
           const results=Array.from({length:3},()=>coin(ctx)),hits=results.filter(Boolean).length;
           damage=20*hits;ctx.state.log.push({type:'coin',side:ctx.side,reason:'Rock Shower',results,heads:hits});
@@ -21864,6 +21914,15 @@
   function choicesForEffect(effect,ctx){
     if(effect?.type==='neoRule'&&String(effect.rule||'').startsWith('xy5:')){
       const k=effect.rule.slice(4),ss=own(ctx),foe=other(ctx);
+      if(k==='hunt')return targetChoices('opponentBench',ctx);
+      if(k==='explosiveJet'){
+        const max=pokemonOn(ss).reduce((sum,p)=>sum+Number(p.energy?.Fire||0)+(p.specialEnergy||[]).filter(ref=>{
+          const provided=ref.provides||ctx.cardById(ref.cardId)?.effect?.provides||{};
+          return Number(provided.Fire||provided.Rainbow||provided.Miracle||0)>0;
+        }).length,0);
+        return Array.from({length:max+1},(_,n)=>({effectSelection:'count:'+n,
+          choiceLabel:'Discard '+n+' attached Fire Energy '+(n===1?'card':'cards')+' — '+n*50+' damage'}));
+      }
       if(k==='divingSearch')return ss.deck.length?[{}]:[];
       if(k==='energyConnect')return ss.active&&ss.bench.some(p=>Object.values(p.energy||{}).some(n=>Number(n)>0))?[{}]:[];
       if(k==='captivatingRhythm')return foe.active&&foe.bench.length?[{}]:[];
