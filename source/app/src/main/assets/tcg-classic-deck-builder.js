@@ -727,6 +727,12 @@ function buildDeck(rows,options={}){
            (c?.deckMeta?.roles||[]).includes('discard');
        }))return false;
      }
+     // Wally may accelerate an evolution even on turn one, but only a
+     // constructed 30-card deck with a real parent/evolution pair can use it.
+     // Do not auto-add either artwork as unthemed Supporter filler.
+     if(['xy6-94','xy6-107'].includes(card?.id)&&!pokemon.some(evo=>
+       evo.stage!=='Basic'&&pokemon.some(base=>
+         classicCardName(base.name)===classicCardName(evo.evolvesFrom||'')&&base.id!==evo.id)))return false;
      // Teammates is a conditional comeback Supporter; avoid crowding the
      // scarce Trainer slots with copies in ultra-short Pokémon builds.
      if(['xy5-141','xy5-160'].includes(card?.id)&&pokemon.length<7)return false;

@@ -97,6 +97,22 @@ ATTACKS.update({
  ('78','Homing Pidove'):S(E('inspectTop',side='self',amount=1),OPT('Shuffle your deck',E('shuffleDeck',side='self'))),
 })
 
+# Stage 6: preserve physical card identity, explicit selections and their printed
+# order.  Remaining unresolved attacks and Abilities are still deliberately gated.
+ATTACKS.update({
+ ('14','Peck Off'):E('discardTool',target='opponentActive',amount='all',timing='beforeDamage'),
+ ('23','Raging Thunder'):E('benchDamage',side='self',amount=40),
+ ('29','Future Sight'):E('chooseOption',options=[
+  {'label':'Arrange the top 5 cards of your deck','effect':E('reorderTop',deckSide='self',count=5)},
+  {'label':"Arrange the top 5 cards of your opponent's deck",'effect':E('reorderTop',deckSide='opponent',count=5)},
+ ]),
+ ('29','Stressful Eye'):S(E('revealHand',side='opponent'),E('discardChosenHand',side='opponent',selectBy='attacker',amount=1,filter={'kind':'trainer'})),
+ ('48','Look for Keys'):E('revealUntilMatching',filter={'kind':'trainer','trainerType':'Item'}),
+ ('53','Song of Echoes'):E('handShuffle',draw='bothBenchCount'),
+ ('80','Strong Winds'):E('shuffleAllAttached'),
+ ('52','Wrapped in Wind'):E('attachChosenBasicFromHand',amount=2,target='self'),
+})
+
 # Never use a generic attack if it does not implement the printed result.
 # Explicit alternate artworks are the SAME physical attack text, but unique prints.
 for original,alternate in [('26','98'),('34','99'),('35','100'),('58','101'),('59','102'),('62','103'),('75','104'),('76','105'),('77','77a'),('77','106')]:
@@ -122,6 +138,8 @@ TRAINERS={
  '108':('Supporter',SEARCH(3,kind='pokemon',subtype='Colorless')),
  '109':('Item',E('neoRule',rule='xy2:energySwitch')),
  '110':('Item',SEARCH(1,source='discard',kind='trainer',trainerType='Supporter')),
+ '94':('Supporter',E('chooseEvolutionFromDeck',excludeEx=True)),
+ '107':('Supporter',E('chooseEvolutionFromDeck',excludeEx=True)),
 }
 # All three printed Δ Ancient Traits are enforced by the shared battle core.
 # Special Energy's two-unit all-type conversion still requires an energy hook.
@@ -136,6 +154,7 @@ ABILITIES={
  'Max Wind':{'type':'triggered','event':'evolved','fromHandOnly':True,'effect':E('chooseTarget',target='selfPokemon',effect=H(999,'selfPokemon'),optional=True)},
  'Exoskeleton':{'type':'passive','effect':E('modifier',stat='damageReduction',amount=10,scope='self',duration='whileInPlay')},
  'Dragon Road':{'type':'passive','effect':E('modifier',stat='retreatCost',amount=-2,scope='team',duration='whileInPlay',filter={'subtype':'Dragon'},condition={'type':'stadiumInPlay'})},
+ 'Turboblaze':{'type':'activated','oncePerTurn':True,'activeOnly':True,'requiresBasicEnergyFromHand':'Fire','effect':E('chooseTarget',forceChoose=True,target='selfPokemon',filter={'subtype':'Dragon'},effect=E('attachEnergy',target='selfPokemon',amount=1,source='hand',energyType='Fire'))},
 }
 
 def attack(row,a):

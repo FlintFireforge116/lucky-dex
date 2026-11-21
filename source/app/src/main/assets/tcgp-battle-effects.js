@@ -11,7 +11,7 @@
   const FILTER_KEYS=['kind','notName','stage','subtype','notSubtype','name','trainerType','isEx','damaged','evolved','hasAbility','hasBody','evolvesFrom','hasEnergyType','hasAnyEnergy','basicEnergy','specialEnergy','classicRecoverable','nameContains','hpAtMost','retreatAtLeast','energyTypeAtLeast','points','attackName','tag'];
   const STATUSES=['poison','burn','sleep','paralysis','confusion'];
   const STATS=['attackDamage','damageReduction','retreatCost','attackCost','maxHp','energyMultiplier','poisonDamageBonus','attackCostGrass','attackCostFire','attackCostWater','attackCostLightning','attackCostPsychic','attackCostFighting','attackCostDarkness','attackCostMetal','attackCostColorless','damageTaken','attackDamageAllTargets','postWeaknessAttackDamage','darkShadow'];
-  const effectTypes=Object.freeze(['lentalRule','neoRule','gymRule','ex16EnergyCardPick','ex16DigDeep','fossilWildfire','fossilThunderstorm','fossilProphecy','fossilMoveCounter','fossilTransparency','fossilArmor','fossilClairvoyance','fossilRecycle','chainLightning','returnIfSurvives','peek','noop','sequence','healSelf','heal','damage','bonusDamage','coinDamage','energyDamage','benchCountDamage','statusDamage','damageFromDamage','discardEnergyCard','discardTop','benchDamage','selfDamage','attachEnergy','discardEnergy','draw','search','searchRandomBasic','switch','status','coinFlip','modifier','removeStatus','lock','preventDamage','selectedDamage','coinUntilTails','playFossil','rareCandy','discardSelf','moveEnergy','handShuffle','preventStatus','actionLock','discardTool','discardHand','benchFromDeck','allHeadsBonus','attackCoinGate','retaliateDamage','pointDamage','namedAttackCountDamage','usedAttackCountDamage','coinDamageByPokemon','randomPokemonDamage','globalRandomDiscardEnergy','retreatCostDamage','toolCountDamage','discardStadium','drain','nextAttackBonus','coinAttackGate','damageRule','evolveFromDeck','coinDamageByEnergy','discardCountDamage','fieldCountDamage','energyTypeCountDamage','statusCountDamage','handCountDamage','remainingHpDamage','trimHand','shuffleRandomHandCard','halveRemainingHp','setRemainingHp','placeDamageCounters','removeRandomStatus','randomStatus','allHeadsEffect','selfDamagePenalty','deckCountDamage','attachEnergyFromDiscard','endTurn','coinRepeatEffect','coinDamageStatus','topDeckFilter','fieldCountDraw','selectedEnergyDamage','forceOpponentSwitch','revealHand','inspectTop','returnToHand','shuffleIntoDeck','discardChosenHand','shuffleChosenHand','searchChosen','takeTopMatching','selectTopToHand','swapHandWithRandomDeck','moveDamage','discardBenchPokemon','copyAttack','drawToHandSize','chooseTarget','attackRequirement','triggeredEffect','koGuard','coinDamageGuard','preventEffects','healingBlock','setNextEnergyRandom','changeRandomEnergyType','devolve','chooseOption','revealDeck','removeStatuses','topDeckDiscardBonus','topDeckBothDiscardBonus','dp6EnergySplit','coinAnyHeadsGate','shuffleDeck','returnAllTools','shuffleAllTools','evolveTargetFromDeck','moveRandomEnergy','stealRandomFromDiscard','filteredHandCountDamage','pointsGainedLastTurnDamage','koCountDamage','preventAbilityDamage','distributeEnergy','previousEvolutionAttacks','stackAttackBonus','firstDamageGuard','topDeckCountDamage','attachRandomEnergy','selfDamageIfDefenderKnockedOut','shuffleRandomCombinedHandCard','coinDiscardEnergyDamage','createCard','coinBonus','coinTierBonus','coinBenchDamage','searchThenShuffleChosen','stadiumAction','rerollEnergyZone','evolutionAsName','evolutionTimingOverride','abilitySuppression','conditionalAttackCost','additionalType','benchFromDiscard','attachRandomEnergyFromDiscard','knockOut','discardPokemon','koPointBonus','randomAttackLock','optionalDiscardBenchBonus','randomHitBonus','statusRecoveryAura','weaknessGuard','weaknessMultiplier','copyRandomTrainerEffect','healActiveReturnTrainer','copyRandomAttackFromPrivate','energyAttachStatusTrap','multiTargetDamage','scheduleDelayed','retreatRetaliation','chooseDiscardForBonus','reorderTop','redistributeEnergy','distributeDiscardEnergyDistinct','benchBasicsFromOpponentHand','forceFirstCoinHead','coinReroll','toolCapacity','repeatAttack','energyTypeOverride','redistributeDamage','chooseAttackLock','chooseTypeOverride','remainingHpFractionDamage','destinyBond','shuffleHandMatching','tradeHandForDeck','scoopUp','energyRetrieval','pokemonCenter','devolutionSpray','multiEnergyRemoval','specialEnergy','selfKoAttachAsEnergy','mirrorLastAttackResult','replayAttackResult']);
+  const effectTypes=Object.freeze(['lentalRule','neoRule','gymRule','ex16EnergyCardPick','ex16DigDeep','fossilWildfire','fossilThunderstorm','fossilProphecy','fossilMoveCounter','fossilTransparency','fossilArmor','fossilClairvoyance','fossilRecycle','chainLightning','returnIfSurvives','peek','noop','sequence','healSelf','heal','damage','bonusDamage','coinDamage','energyDamage','benchCountDamage','statusDamage','damageFromDamage','discardEnergyCard','discardTop','benchDamage','selfDamage','attachEnergy','discardEnergy','draw','search','searchRandomBasic','switch','status','coinFlip','modifier','removeStatus','lock','preventDamage','selectedDamage','coinUntilTails','playFossil','rareCandy','discardSelf','moveEnergy','handShuffle','preventStatus','actionLock','discardTool','discardHand','benchFromDeck','allHeadsBonus','attackCoinGate','retaliateDamage','pointDamage','namedAttackCountDamage','usedAttackCountDamage','coinDamageByPokemon','randomPokemonDamage','globalRandomDiscardEnergy','retreatCostDamage','toolCountDamage','discardStadium','drain','nextAttackBonus','coinAttackGate','damageRule','evolveFromDeck','coinDamageByEnergy','discardCountDamage','fieldCountDamage','energyTypeCountDamage','statusCountDamage','handCountDamage','remainingHpDamage','trimHand','shuffleRandomHandCard','halveRemainingHp','setRemainingHp','placeDamageCounters','removeRandomStatus','randomStatus','allHeadsEffect','selfDamagePenalty','deckCountDamage','attachEnergyFromDiscard','endTurn','coinRepeatEffect','coinDamageStatus','topDeckFilter','fieldCountDraw','selectedEnergyDamage','forceOpponentSwitch','revealHand','inspectTop','returnToHand','shuffleIntoDeck','discardChosenHand','shuffleChosenHand','searchChosen','takeTopMatching','revealUntilMatching','attachChosenBasicFromHand','chooseEvolutionFromDeck','shuffleAllAttached','selectTopToHand','swapHandWithRandomDeck','moveDamage','discardBenchPokemon','copyAttack','drawToHandSize','chooseTarget','attackRequirement','triggeredEffect','koGuard','coinDamageGuard','preventEffects','healingBlock','setNextEnergyRandom','changeRandomEnergyType','devolve','chooseOption','revealDeck','removeStatuses','topDeckDiscardBonus','topDeckBothDiscardBonus','dp6EnergySplit','coinAnyHeadsGate','shuffleDeck','returnAllTools','shuffleAllTools','evolveTargetFromDeck','moveRandomEnergy','stealRandomFromDiscard','filteredHandCountDamage','pointsGainedLastTurnDamage','koCountDamage','preventAbilityDamage','distributeEnergy','previousEvolutionAttacks','stackAttackBonus','firstDamageGuard','topDeckCountDamage','attachRandomEnergy','selfDamageIfDefenderKnockedOut','shuffleRandomCombinedHandCard','coinDiscardEnergyDamage','createCard','coinBonus','coinTierBonus','coinBenchDamage','searchThenShuffleChosen','stadiumAction','rerollEnergyZone','evolutionAsName','evolutionTimingOverride','abilitySuppression','conditionalAttackCost','additionalType','benchFromDiscard','attachRandomEnergyFromDiscard','knockOut','discardPokemon','koPointBonus','randomAttackLock','optionalDiscardBenchBonus','randomHitBonus','statusRecoveryAura','weaknessGuard','weaknessMultiplier','copyRandomTrainerEffect','healActiveReturnTrainer','copyRandomAttackFromPrivate','energyAttachStatusTrap','multiTargetDamage','scheduleDelayed','retreatRetaliation','chooseDiscardForBonus','reorderTop','redistributeEnergy','distributeDiscardEnergyDistinct','benchBasicsFromOpponentHand','forceFirstCoinHead','coinReroll','toolCapacity','repeatAttack','energyTypeOverride','redistributeDamage','chooseAttackLock','chooseTypeOverride','remainingHpFractionDamage','destinyBond','shuffleHandMatching','tradeHandForDeck','scoopUp','energyRetrieval','pokemonCenter','devolutionSpray','multiEnergyRemoval','specialEnergy','selfKoAttachAsEnergy','mirrorLastAttackResult','replayAttackResult']);
   const nonnegative=n=>typeof n==='number'&&Number.isFinite(n)&&n>=0;
   const integer=n=>nonnegative(n)&&Number.isInteger(n);
   function validateEffect(effect,path){
@@ -54,7 +54,7 @@
       case 'additionalType':need(Array.isArray(effect.types)&&effect.types.length>0&&effect.types.every(x=>ENERGY_TYPES.includes(x)),'additionalType requires valid types');break;
       case 'sequence':need(Array.isArray(effect.effects)&&effect.effects.length>0,'sequence requires effects');for(const [i,e] of (Array.isArray(effect.effects)?effect.effects:[]).entries()){need(e!=null,'sequence cannot contain null');errors.push(...validateEffect(e,`${at}.effects[${i}]`));}break;
       case 'moveEnergy':need(['self','selfActive','selfBench','selfBenchAll','selfAll','opponentActive'].includes(effect.source),'invalid Energy movement source');need(['self','selfActive','selfBench',...(effect.source==='opponentActive'?['opponentBench']:[])].includes(effect.target),'invalid Energy movement destination');need(!(effect.source==='selfBench'&&effect.target==='selfBench'),'two selected Bench endpoints require separate selection');need(effect.amount==='all'||integer(effect.amount),'invalid moved Energy amount');if(effect.allowedEnergyTypes!=null)need(Array.isArray(effect.allowedEnergyTypes)&&effect.allowedEnergyTypes.every(x=>ENERGY_TYPES.includes(x)),'invalid allowed moved Energy types');break;
-      case 'handShuffle':need(effect.draw==='same'||effect.draw==='opponentHandCount'||effect.draw==='pointsRemaining'||integer(effect.draw),'invalid hand redraw amount');break;
+      case 'handShuffle':need(effect.draw==='same'||effect.draw==='opponentHandCount'||effect.draw==='pointsRemaining'||effect.draw==='bothBenchCount'||integer(effect.draw),'invalid hand redraw amount');break;
       case 'preventStatus':need(['whileInPlay','whileActive'].includes(effect.duration),'invalid status immunity duration');if(effect.status!=null)need(STATUSES.includes(effect.status),'invalid prevented status');if(effect.scope!=null)need(['self','team'].includes(effect.scope),'invalid status scope');break;
       case 'coinUntilTails':need(!!effect.effect,'coinUntilTails requires effect');errors.push(...validateEffect(effect.effect,`${at}.effect`));break;
       case 'lock':need(['attack','retreat'].includes(effect.action),'invalid locked action');need(['nextOwnTurn','opponentTurn','whileInPlay'].includes(effect.duration),'invalid lock duration');break;
@@ -134,6 +134,9 @@
       case 'endTurn':break;
       case 'coinRepeatEffect':need(integer(effect.coins)&&effect.coins>0,'invalid repeated coin count');need(!!effect.effect,'coinRepeatEffect requires child effect');if(effect.zeroDamageIfNoHeads!=null)need(typeof effect.zeroDamageIfNoHeads==='boolean','invalid zero-damage flag');errors.push(...validateEffect(effect.effect,`${at}.effect`));break;
       case 'coinDamageStatus':need(integer(effect.coins)&&effect.coins>0,'invalid damage/status coin count');need(nonnegative(effect.amount),'invalid per-head damage');need(integer(effect.minHeads)&&effect.minHeads>0&&effect.minHeads<=effect.coins,'invalid status head threshold');need(STATUSES.includes(effect.status),'invalid threshold status');break;
+      case 'chooseEvolutionFromDeck':case 'shuffleAllAttached':break;
+      case 'attachChosenBasicFromHand':need(integer(effect.amount)&&effect.amount>0,'invalid attach-from-hand limit');break;
+      case 'revealUntilMatching':need(effect.filter&&typeof effect.filter==='object'&&!Array.isArray(effect.filter),'reveal until matching requires filter');break;
       case 'topDeckFilter':need(effect.filter&&typeof effect.filter==='object'&&!Array.isArray(effect.filter),'topDeckFilter requires filter');for(const key of Object.keys(effect.filter||{}))need(FILTER_KEYS.includes(key),'invalid top-deck filter');break;
       case 'fieldCountDraw':need(['self','both'].includes(effect.side),'invalid field-count side');need(effect.filter&&typeof effect.filter==='object'&&!Array.isArray(effect.filter),'fieldCountDraw requires filter');for(const key of Object.keys(effect.filter||{}))need(FILTER_KEYS.includes(key),'invalid field-count filter');break;
       case 'selectedEnergyDamage':need(['opponentPokemon','opponentBench'].includes(effect.target),'invalid selected Energy-damage target');need(nonnegative(effect.amount),'invalid selected Energy multiplier');break;
@@ -18628,8 +18631,8 @@
         ss.deck.push(...refs);if(ss.active===slot)ss.active=null;else ss.bench.splice(ss.bench.indexOf(slot),1);if(ctx.shuffle)ctx.shuffle(ctx.state,ss.deck);log({type:'shuffleIntoDeck',cardId:slot.cardId});}break;}
       case 'discardChosenHand':{
         const ss=effect.side==='opponent'?other(ctx):own(ctx),needed=Math.max(1,Number(effect.amount||1));
-        if(ctx.resolvingChoice&&Number.isInteger(ctx.action?.choiceHandIndex)){const [ref]=ss.hand.splice(ctx.action.choiceHandIndex,1);if(ref){const c=ctx.cardById(ref.cardId);if(ctx.state.format==='classic'&&c?.basicEnergy)recordDiscardedEnergy(ss,c.subtype,1);else ss.discard.push(ref);}const left=Number(effect.remaining||needed)-1;if(left>0&&ss.hand.length&&typeof ctx.requestChoice==='function')ctx.requestChoice({kind:'handCard',side:effect.side||'self',filter:effect.filter,effect:{...effect,remaining:left}});break;}
-        const candidates=ss.hand.filter(r=>!effect.filter||matchesFilter(ctx.cardById(r.cardId),effect.filter,r));if(candidates.length<needed){if(effect.required)ctx.actionFailed=true;break;}if(typeof ctx.requestChoice==='function')ctx.requestChoice({kind:'handCard',side:effect.side||'self',filter:effect.filter,effect:{...effect,remaining:needed}});break;
+        if(ctx.resolvingChoice&&Number.isInteger(ctx.action?.choiceHandIndex)){const [ref]=ss.hand.splice(ctx.action.choiceHandIndex,1);if(ref){const c=ctx.cardById(ref.cardId);if(ctx.state.format==='classic'&&c?.basicEnergy)recordDiscardedEnergy(ss,c.subtype,1);else ss.discard.push(ref);}const left=Number(effect.remaining||needed)-1;if(left>0&&ss.hand.length&&typeof ctx.requestChoice==='function')ctx.requestChoice({kind:effect.side==='opponent'&&effect.selectBy==='attacker'?'opponentHandCard':'handCard',side:effect.selectBy==='attacker'?'self':effect.side||'self',filter:effect.filter,effect:{...effect,remaining:left}});break;}
+        const candidates=ss.hand.filter(r=>!effect.filter||matchesFilter(ctx.cardById(r.cardId),effect.filter,r));if(candidates.length<needed){if(effect.required)ctx.actionFailed=true;break;}if(typeof ctx.requestChoice==='function')ctx.requestChoice({kind:effect.side==='opponent'&&effect.selectBy==='attacker'?'opponentHandCard':'handCard',side:effect.selectBy==='attacker'?'self':effect.side||'self',filter:effect.filter,effect:{...effect,remaining:needed}});break;
       }
       case 'shuffleChosenHand':{
         const ss=effect.side==='opponent'?other(ctx):own(ctx),needed=Math.max(1,Number(effect.remaining||effect.amount||1));
@@ -18697,6 +18700,20 @@
         else if(types.length&&typeof ctx.requestChoice==='function')ctx.requestChoice({kind:'option',side:'self',optional:true,options:types.map(t=>'Take '+t+' Energy from Energy Zone'),effect:{...effect,remaining:Number(effect.remaining||effect.amount||1),zoneTypes:types}});
         break;
       }
+      case 'revealUntilMatching':{
+        // Klefki: inspect successive physical draw-deck refs until the first
+        // matching Item. Keep exactly that Item; return all others to the deck.
+        const ss=own(ctx),unmatched=[],revealed=[];let hit=null;
+        while(ss.deck.length){const ref=ss.deck.shift();revealed.push(ref.cardId);
+          if(matchesFilter(ctx.cardById(ref.cardId),effect.filter,ref)){hit=ref;break;}
+          unmatched.push(ref);
+        }
+        if(hit){if(ss.hand.length<Number(ss.handLimit||8))ss.hand.push(hit);else unmatched.push(hit);}
+        ss.deck.push(...unmatched);
+        if(ctx.shuffle)ctx.shuffle(ctx.state,ss.deck);
+        log({type:'revealUntilMatching',side:ctx.side,cards:revealed,found:hit?.cardId||null});
+        break;
+      }
       case 'takeTopMatching':{const ss=own(ctx),n=Math.min(Number(effect.count||1),ss.deck.length),top=ss.deck.splice(0,n),keep=[],rest=[];for(const ref of top)(matchesFilter(ctx.cardById(ref.cardId),effect.filter)?keep:rest).push(ref);while(keep.length&&ss.hand.length<10)ss.hand.push(keep.shift());ss.deck.push(...keep,...rest);ctx.shuffle?.(ctx.state,ss.deck);break;}
       case 'selectTopToHand':{
         const ss=own(ctx),n=Math.min(Number(effect.count||1),ss.deck.length);
@@ -18720,7 +18737,7 @@
       case 'drawToHandSize':{const ss=own(ctx),match=(effect.matchSide||'opponent')==='self'?own(ctx):other(ctx),goal=effect.size!=null?Number(effect.size):match.hand.length;while(ss.hand.length<goal&&ss.deck.length)ctx.drawCard(ss);break;}
       case 'chooseTarget':{
         const actionTarget=ctx.action?.choiceTarget||ctx.action?.effectTarget||ctx.action?.target;
-        if(ctx.resolvingChoice||(effect.chooser!=='owner'&&actionTarget)){
+        if(ctx.resolvingChoice||(!effect.forceChoose&&effect.chooser!=='owner'&&actionTarget)){
           if(ctx.resolvingChoice&&effect.chooser==='owner'&&effect.effect?.type==='discardEnergyCard'){
             const foe=other(ctx),slot=selected(ctx,foe);
             if(!slot)break;
@@ -18819,6 +18836,79 @@
         if(eligibleTargets(excluded).length&&typeof ctx.requestChoice==='function')ctx.requestChoice({kind:'pokemon',side:'self',includeActive:effect.target==='selfPokemon',filter:effect.filter,excludeUids:excluded,effect:{...effect,remainingTypes:queue}});
         break;
       }
+      case 'chooseEvolutionFromDeck':{
+        // Wally searches the *physical deck* for a chosen evolution of an
+        // eligible in-play non-EX Pokémon. Unlike ordinary hand evolution,
+        // this is legal on the first turn and on a newly played Pokémon.
+        const ss=own(ctx),isEligible=slot=>{
+          const card=ctx.cardById(slot.cardId);
+          if(!card||effect.excludeEx&&card.pokemonEX)return false;
+          if(Number(slot.neoDestinyEvolutionLockUntil||0)>=Number(ctx.state.turnNumber)||Number(slot.pl2NoEvolveUntil||0)>=Number(ctx.state.turnNumber)||Number(slot.xy4NoEvolveUntil||0)>=Number(ctx.state.turnNumber))return false;
+          return ss.deck.some(ref=>{const evo=ctx.cardById(ref.cardId);return evo?.battleEnabled&&evo.kind==='pokemon'&&evo.evolvesFrom===card.name;});
+        };
+        if(ctx.resolvingChoice){
+          if(!effect.targetUid){const picked=selected(ctx,ss);if(!picked||!isEligible(picked))break;
+            const card=ctx.cardById(picked.cardId);
+            if(typeof ctx.requestChoice==='function')ctx.requestChoice({kind:'deckCard',side:'self',filter:{kind:'pokemon',evolvesFrom:card.name},effect:{...effect,targetUid:picked.uid}});
+            break;
+          }
+          const picked=pokemonOn(ss).find(slot=>slot.uid===effect.targetUid);
+          const index=ctx.action?.choiceDeckIndex,ref=Number.isInteger(index)?ss.deck[index]:null;
+          if(!picked||!ref||!isEligible(picked))break;
+          const evo=ctx.cardById(ref.cardId),base=ctx.cardById(picked.cardId);
+          if(!evo?.battleEnabled||evo.kind!=='pokemon'||evo.evolvesFrom!==base?.name)break;
+          ss.deck.splice(index,1);picked.cardId=ref.cardId;picked.stack.push(ref.cardId);
+          picked.evolvedOnTurn=ctx.state.turnNumber;picked.playedOnSideTurn=ss.turnCount;
+          ctx.shuffle?.(ctx.state,ss.deck);
+          log({type:'evolve',side:ctx.side,cardId:ref.cardId,fromDeck:true,source:'Wally'});
+          ctx.onEvolved?.(picked);
+          break;
+        }
+        const allowed=pokemonOn(ss).filter(isEligible).map(slot=>slot.uid);
+        if(allowed.length&&typeof ctx.requestChoice==='function')ctx.requestChoice({kind:'pokemon',side:'self',includeActive:true,allowedUids:allowed,effect});
+        break;
+      }
+      case 'shuffleAllAttached':{
+        // Unfezant Strong Winds affects both sides. Pokémon stay in place;
+        // actual physical Tools/Special Energy are returned, while Classic
+        // Basic Energy ledgers become real Basic cards in each owner's deck.
+        for(const ss of [own(ctx),other(ctx)]){
+          let shuffled=0;
+          for(const slot of pokemonOn(ss)){
+            const attached=[...toolsOf(slot),...temporaryTrainersOf(slot),...(slot.specialEnergy||[])];
+            ss.deck.push(...attached);shuffled+=attached.length;
+            slot.tool=null;slot.extraTools=[];slot.temporaryTrainers=[];slot.specialEnergy=[];
+            for(const [type,amount] of Object.entries(slot.energy||{})){
+              shuffled+=neoRecoveredToDeck(ctx,ss,type,Number(amount)||0);
+            }
+            slot.energy={};
+          }
+          if(shuffled)ctx.shuffle?.(ctx.state,ss.deck);
+          log({type:'shuffleAllAttached',ownerSide:ss===own(ctx)?ctx.side:ctx.foeSide,amount:shuffled});
+        }
+        break;
+      }
+      case 'attachChosenBasicFromHand':{
+        // Dragonite Wrapped in Wind: choose zero to two *actual Basic Energy
+        // cards in hand*. An empty hand never consults the fresh Energy Zone.
+        const ss=own(ctx),dest=ctx.attacker;
+        const basic=ref=>ctx.cardById(ref.cardId)?.basicEnergy===true;
+        if(ctx.resolvingChoice){
+          if(ctx.action?.choiceSkip)break;
+          const index=ctx.action?.choiceHandIndex,ref=Number.isInteger(index)?ss.hand[index]:null;
+          if(!ref||!basic(ref)||!dest)break;
+          ss.hand.splice(index,1);
+          const type=ctx.cardById(ref.cardId).subtype;
+          dest.energy=dest.energy||{};dest.energy[type]=Number(dest.energy[type]||0)+1;
+          ctx.onEnergyAttached?.(dest,type,1,{fromHand:true,energyCardId:ref.cardId});
+          log({type:'effectEnergy',energyType:type,totalAmount:1,source:'hand',cardId:ref.cardId});
+          const left=Number(effect.remaining||effect.amount)-1;
+          if(left>0&&ss.hand.some(basic)&&typeof ctx.requestChoice==='function')ctx.requestChoice({kind:'handCard',side:'self',filter:{basicEnergy:true},effect:{...effect,remaining:left},optional:true});
+          break;
+        }
+        if(ss.hand.some(basic)&&typeof ctx.requestChoice==='function')ctx.requestChoice({kind:'handCard',side:'self',filter:{basicEnergy:true},effect,optional:true});
+        break;
+      }
       case 'attachEnergy':{const recipients=affected(),attachedBySide={player:0,opponent:0};for(const s of recipients){const side=pokemonOn(own(ctx)).includes(s)?ctx.side:ctx.foeSide,owner=ctx.state.sides[side];let amount=Number(effect.amount||0);
           if(effect.source==='hand'){
             amount=0;for(let i=0;i<Number(effect.amount||0);i++){
@@ -18829,7 +18919,7 @@
               owner.hand.splice(idx,1);amount++;
             }
           }else if(Array.isArray(owner.energySupply))amount=neoSupplyTake(ctx,owner,effect.energyType,effect.amount);
-          if(!amount)continue;s.energy[effect.energyType]=Number(s.energy[effect.energyType]||0)+amount;attachedBySide[side]+=amount;if(typeof ctx.onEnergyAttached==='function')ctx.onEnergyAttached(s,effect.energyType,amount);}log({type:'effectEnergy',amount:effect.amount,totalAmount:attachedBySide.player+attachedBySide.opponent,attachedBySide,energyType:effect.energyType});break;}
+          if(!amount)continue;s.energy[effect.energyType]=Number(s.energy[effect.energyType]||0)+amount;attachedBySide[side]+=amount;if(typeof ctx.onEnergyAttached==='function')ctx.onEnergyAttached(s,effect.energyType,amount,{fromHand:effect.source==='hand'});}log({type:'effectEnergy',amount:effect.amount,totalAmount:attachedBySide.player+attachedBySide.opponent,attachedBySide,energyType:effect.energyType});break;}
       case 'discardEnergyCard':for(const s of affected()){const owner=energyOwner(ctx,s);if(!owner)continue;const protectedByBrock=(s.temporaryTrainers||[]).some(r=>ctx.cardById(r.cardId)?.id==='gym2-101');if(protectedByBrock&&owner!==own(ctx))continue;let left=effect.amount==='all'?(effect.strictEnergyType&&effect.energyType?Number(s.energy?.[effect.energyType]||0)+(s.specialEnergy||[]).filter(r=>Number((r.provides||ctx.cardById(r.cardId)?.effect?.provides||{})[effect.energyType]||0)>0).length:Object.values(s.energy||{}).reduce((n,x)=>n+Number(x||0),0)+(s.specialEnergy||[]).length):Number(effect.amount||1);while(left>0){const special=s.specialEnergy||[];const chosenUid=ctx.action?.effectSpecialEnergyUid;if(chosenUid){const index=special.findIndex(r=>r.uid===chosenUid);if(index>=0&&(!effect.strictEnergyType||!effect.energyType||Number((special[index].provides||ctx.cardById(special[index].cardId)?.effect?.provides||{})[effect.energyType]||0)>0)){const [ref]=special.splice(index,1);if(ref.cardId==='neo1-105'||ctx.state.stadium?.cardId==='neo1-84'&&owner!==own(ctx)&&ctx.cardById(ref.cardId)?.subtype!=='Colorless')owner.hand.push(ref);else owner.discard.push(ref);left--;continue;}}const chosenType=effect.energyType||ctx.action?.effectEnergyType;if(chosenType&&Number(s.energy?.[chosenType]||0)>0){s.energy[chosenType]--;if(ctx.state.stadium?.cardId==='neo1-84'&&owner!==own(ctx)&&chosenType!=='Colorless')neoRecoveredEnergyToHand(ctx,owner,chosenType,1);else recordDiscardedEnergy(owner,chosenType,1);left--;continue;}if(effect.strictEnergyType&&effect.energyType){const idx=special.findIndex(r=>Number((r.provides||ctx.cardById(r.cardId)?.effect?.provides||{})[effect.energyType]||0)>0);if(idx>=0){owner.discard.push(...special.splice(idx,1));left--;continue;}break;}const generated=Object.entries(s.energy||{}).find(([,n])=>Number(n)>0);if(generated){s.energy[generated[0]]--;if(ctx.state.stadium?.cardId==='neo1-84'&&owner!==own(ctx)&&generated[0]!=='Colorless')neoRecoveredEnergyToHand(ctx,owner,generated[0],1);else recordDiscardedEnergy(owner,generated[0],1);left--;continue;}if(special.length){const ref=special.shift();if(ref.cardId==='neo1-105'||ctx.state.stadium?.cardId==='neo1-84'&&owner!==own(ctx)&&ctx.cardById(ref.cardId)?.subtype!=='Colorless')owner.hand.push(ref);else owner.discard.push(ref);left--;continue;}break;}}break;
       case 'discardEnergy':for(const s of affected()){const owner=energyOwner(ctx,s);if(effect.random){const count=effect.amount==='all'?totalEnergy(s.energy):effect.amount;for(let i=0;i<count;i++){const units=Object.entries(s.energy).flatMap(([type,n])=>Array(Math.max(0,Math.floor(n))).fill(type));if(!units.length)break;const type=units[Math.floor(ctx.random(ctx.state)*units.length)];s.energy[type]--;recordDiscardedEnergy(owner,type,1);}}else if(effect.energyType){const before=Number(s.energy[effect.energyType]||0),after=effect.amount==='all'?0:Math.max(0,before-effect.amount);s.energy[effect.energyType]=after;recordDiscardedEnergy(owner,effect.energyType,before-after);}else if(ctx.action?.effectEnergyType){const type=ctx.action.effectEnergyType,before=Number(s.energy[type]||0),after=effect.amount==='all'?0:Math.max(0,before-Number(effect.amount||0));s.energy[type]=after;recordDiscardedEnergy(owner,type,before-after);}else{const before={...(s.energy||{})};s.energy=effect.amount==='all'?{}:spendGenericEnergy(s.energy,Math.min(effect.amount,totalEnergy(s.energy)));for(const [type,n] of Object.entries(before))recordDiscardedEnergy(owner,type,Number(n||0)-Number(s.energy?.[type]||0));}}break;
       case 'moveEnergy':{
@@ -18859,7 +18949,7 @@
         }
         break;
       }
-      case 'handShuffle':{const sides=effect.side==='both'?[own(ctx),other(ctx)]:[effect.side==='opponent'?other(ctx):own(ctx)];const opponentCount=other(ctx).hand.length,counts=sides.map(s=>effect.draw==='same'?s.hand.length:effect.draw==='opponentHandCount'?opponentCount:effect.draw==='pointsRemaining'?Math.max(0,3-Number(s.points||0)):effect.draw);for(const ss of sides){ss.deck.push(...ss.hand.splice(0));ctx.shuffle(ctx.state,ss.deck);}sides.forEach((ss,index)=>{for(let i=0;i<counts[index];i++)ctx.drawCard(ss);});break;}
+      case 'handShuffle':{const sides=effect.side==='both'?[own(ctx),other(ctx)]:[effect.side==='opponent'?other(ctx):own(ctx)];const opponentCount=other(ctx).hand.length,counts=sides.map(s=>effect.draw==='same'?s.hand.length:effect.draw==='opponentHandCount'?opponentCount:effect.draw==='pointsRemaining'?Math.max(0,3-Number(s.points||0)):effect.draw==='bothBenchCount'?(own(ctx).bench||[]).filter(Boolean).length+(other(ctx).bench||[]).filter(Boolean).length:effect.draw);for(const ss of sides){ss.deck.push(...ss.hand.splice(0));ctx.shuffle(ctx.state,ss.deck);}sides.forEach((ss,index)=>{for(let i=0;i<counts[index];i++)ctx.drawCard(ss);});break;}
       case 'preventStatus':for(const s of affected())s.statusGuard={...effect};break;
       case 'draw':{const ss=effect.side==='opponent'?other(ctx):own(ctx);for(let i=0;i<effect.amount;i++){
         if(effect.fromBottom){
@@ -22665,6 +22755,12 @@ if(r==='lastResort')return ss.hand.length===0?[{}]:[];if(r==='surgeSwap')return 
     if(['mirrorLastAttackResult','replayAttackResult','reorderTop','redistributeEnergy','redistributeDamage','chooseAttackLock','chooseTypeOverride','tradeHandForDeck','energyRetrieval','multiEnergyRemoval','distributeDiscardEnergyDistinct'].includes(effect.type))return [{}];
     if(effect.type==='optionalDiscardBenchBonus'){const choices=targetChoices('selfBench',ctx).filter(action=>targets('selfBench',{...ctx,action}).some(slot=>matchesFilter(ctx.cardById(slot.cardId),effect.filter,slot)));return [...choices,{choiceSkip:true}];}
     if(effect.type==='moveRandomEnergy'&&effect.source==='opponentBench')return targetChoices('opponentBench',ctx).filter(action=>targets('opponentBench',{...ctx,action}).some(slot=>totalEnergy(slot.energy)>0));
+    if(effect.type==='chooseEvolutionFromDeck'){
+      const ss=own(ctx);return pokemonOn(ss).some(slot=>{
+        const card=ctx.cardById(slot.cardId);if(!card||effect.excludeEx&&card.pokemonEX)return false;
+        return ss.deck.some(ref=>{const evo=ctx.cardById(ref.cardId);return evo?.battleEnabled&&evo.kind==='pokemon'&&evo.evolvesFrom===card.name;});
+      })?[{}]:[];
+    }
     if(effect.type==='stadiumAction')return choicesForEffect(effect.effect,ctx);
     if(effect.type==='scheduleDelayed'&&effect.targetMode==='selectedSpot')return targetChoices('opponentPokemon',ctx);
     if(effect.type==='multiTargetDamage')return [{}];

@@ -8,8 +8,8 @@ android {
         applicationId 'com.example.luckydex'
         minSdk 26
         targetSdk 35
-        versionCode 7357
-        versionName '0.69.357'
+        versionCode 7358
+        versionName '0.69.358'
     }
 
     signingConfigs {
@@ -758,7 +758,7 @@ tasks.matching { it.name == 'preBuild' || (it.name.startsWith('merge') && it.nam
     dependsOn tasks.named('auditXY6Stage4ForApk')
 }
 
-// v0.69.357: Roaring Skies Stage 5 battle-verified attacks, delayed KO,
+// v0.69.358: Roaring Skies Stage 5 battle-verified attacks, delayed KO,
 // Prize-scaling damage, damage/effect-only guards and triggered Abilities.
 // The pinned 112-print catalogue still builds first via the Stage 1 dependency.
 tasks.register('auditXY6Stage5ForApk', Exec) {
@@ -771,4 +771,19 @@ tasks.named('auditV07329AllClassicAttackEnergyForApk').configure {
 }
 tasks.matching { it.name == 'preBuild' || (it.name.startsWith('merge') && it.name.endsWith('Assets')) }.configureEach {
     dependsOn tasks.named('auditXY6Stage5ForApk')
+}
+
+// v0.69.358: XY6 Stage 6 print-faithful remaining interactions:
+// real hands/decks, timed Tool removal, conditional Energy and board resets.
+// Runs after Stage 5 and pinned XY6 catalogue generation.
+tasks.register('auditXY6Stage6ForApk', Exec) {
+    dependsOn tasks.named('auditXY6Stage5ForApk')
+    workingDir rootProject.projectDir
+    commandLine 'node', '--test', 'tests/v07358-roaring-skies-stage6.test.cjs'
+}
+tasks.named('auditV07329AllClassicAttackEnergyForApk').configure {
+    dependsOn tasks.named('auditXY6Stage6ForApk')
+}
+tasks.matching { it.name == 'preBuild' || (it.name.startsWith('merge') && it.name.endsWith('Assets')) }.configureEach {
+    dependsOn tasks.named('auditXY6Stage6ForApk')
 }

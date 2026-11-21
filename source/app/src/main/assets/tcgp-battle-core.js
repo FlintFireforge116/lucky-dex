@@ -408,7 +408,7 @@
   }
   function effectChoiceActions(state,side){
     const p=state.pendingChoice;if(!p||p.side!==side)return[];const ss=state.sides[p.selectionSide||side],out=[];
-    const filterCard=(slotOrRef)=>{if((p.excludeUids||[]).includes(slotOrRef?.uid))return false;const card=data.cardById(slotOrRef?.cardId);return !p.filter||!effects.matchesFilter||effects.matchesFilter(card,p.filter,slotOrRef);};
+    const filterCard=(slotOrRef)=>{if((p.excludeUids||[]).includes(slotOrRef?.uid)||(p.allowedUids&&!p.allowedUids.includes(slotOrRef?.uid)))return false;const card=data.cardById(slotOrRef?.cardId);return !p.filter||!effects.matchesFilter||effects.matchesFilter(card,p.filter,slotOrRef);};
     if(p.kind==='narrowGymReturn'||p.kind==='skyFieldBenchTrim'){
       for(const slot of ss.bench||[])if(slot)out.push({type:'effectChoice',choiceTarget:'bench',choiceBenchIndex:Number(slot.benchSlot),choiceCardId:slot.cardId});
     }else if(p.kind==='prizeCard'){
@@ -1728,6 +1728,12 @@
         if(state.format==='classic'&&source.cardId==='bw1-57'&&!pokemonOn(s).some(p=>Number(p.damage||0)>=10&&pokemonOn(s).some(q=>q!==p&&Number(q.damage||0)+10<maxHp(state,side,q))))return;
         if(state.format==='classic'&&source.cardId==='bw1-76'&&(
           pokemonOn(s).length<2||!pokemonOn(s).some(p=>Number(p.energy?.Metal||0)>0||(p.specialEnergy||[]).some(ref=>Number((ref.provides||data.cardById(ref.cardId)?.effect?.provides||{}).Metal||0)>0))))return;
+        // Do not offer an inert hand-Energy Ability to the CPU or player.
+        // This checks *physical hand* cards, never the fresh Energy Zone.
+        if(ability.requiresBasicEnergyFromHand&&!s.hand.some(ref=>{
+          const card=data.cardById(ref.cardId);
+          return card?.basicEnergy&&card.subtype===ability.requiresBasicEnergyFromHand;
+        }))return;
         const used=(s.abilityUsed||{})[source.uid+':'+abilityIndex];if(ability.oncePerTurn!==false&&used===s.turnCount)return;
         if(ability.lentalSharedOnce==='scavenge'&&s.lentalScavengeUsedTurn===s.turnCount)return;
         const base={type:'ability',cardId:source.cardId,abilityIndex,target:source===s.active?'active':'bench'};if(source!==s.active)base.benchIndex=Number(source.benchSlot);
@@ -3399,6 +3405,16 @@ const target=slotForTarget(s,action.target,action.benchIndex);if(card.id==='pl2-
       // Snapshot physical Energy BEFORE resolving attack costs or their pending effects.
       if(state.format==='classic'&&['Fire','Metal'].some(t=>data.cardById(s.active.cardId)?.types?.includes(t)))s.active.dp7PreAttackEnergy={...s.active.energy};
       const context={...effectContext(state,side,matched),isAttack:true},result=effects.resolveAttack(attack,context);
+      // Some printed attacks explicitly resolve an effect BEFORE damage.
+      // A Pokémon Tool removed by Peck Off must not reduce the incoming hit.
+      // General timing metadata keeps those pre-damage effects out of the
+      // ordinary post-damage queue, without affecting other attack effects.
+      if(state.format==='classic'&&result.pendingEffects?.length){
+        const before=result.pendingEffects.filter(e=>e?.timing==='beforeDamage');
+        for(const effect of before)effects.applyEffect(effect,context);
+        if(before.length)result.pendingEffects=result.pendingEffects.filter(e=>e?.timing!=='beforeDamage');
+      }
+
       if(s.active?.dp7LinkLightningReady===state.turnNumber&&matched.attackCardId!==s.active.cardId)delete s.active.dp7LinkLightningReady;
       if(attack.name==='Charity Tail'&&s.active.cardId==='dp2-3')delete state.dp2CharityTailChoice;
       if(state.format==='classic'&&s.active.cardId==='ex1-19'&&attack.name==='Spit Up'&&Number(s.active.ex1StockpileUntil)===state.turnNumber)result.damage=70;
