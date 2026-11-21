@@ -14,6 +14,24 @@ BLOB='9996bfa724c3d7fc23c9fcc31341cd521311ecb1'
 URL='https://api.github.com/repos/PokemonTCG/pokemon-tcg-data/git/blobs/'+BLOB
 SYMBOL={'G':'Grass','R':'Fire','W':'Water','L':'Lightning','P':'Psychic','F':'Fighting','D':'Darkness','M':'Metal','Y':'Fairy'}
 BASIC={}
+# The pinned upstream catalogue contains one malformed Heracross-EX attack
+# description: its generic Pokémon-EX Prize rule was appended to Giga Power's
+# printed attack text. This rule belongs at CARD level (card.rules, prizeCards),
+# not inside an attack. The alt-art #105 already separates it correctly.
+EX_PRIZE_RULE='When a Pokémon-EX has been Knocked Out, your opponent takes 2 Prize cards.'
+
+def normalize_printed_rows(rows):
+ for row in rows:
+  # Keep normalisation narrow and auditable. Never strip genuine attack text
+  # unless the same EX rule is explicitly present in this card's rules field.
+  if row[2]!='Pokémon' or 'EX' not in (row[3] or []):continue
+  rules=row[13] or []
+  if not any('Pokémon-EX rule:' in str(r) and EX_PRIZE_RULE in str(r) for r in rules):continue
+  for attack in row[7]:
+   original=attack[3] or ''
+   suffix=' | '+EX_PRIZE_RULE
+   if original.endswith(suffix):attack[3]=original[:-len(suffix)].rstrip()
+ return rows
 
 def get_source():
  if SRC.exists():rows=json.loads(SRC.read_text(encoding='utf-8'))
@@ -31,8 +49,13 @@ def get_source():
     c.get('resistances',[{}])[0].get('type') if c.get('resistances') else None,
     c.get('convertedRetreatCost',0),c.get('rarity',''),c.get('rules',[]),c.get('trainerType')]
     for c in official]
-  SRC.parent.mkdir(parents=True,exist_ok=True)
-  SRC.write_text(json.dumps(rows,ensure_ascii=False,separators=(',',':'))+'\n',encoding='utf-8')
+ # Normalise both downloaded and previously cached compact records. Persist
+ # the normalized source for the independent audit and runtime generator alike.
+ rows=normalize_printed_rows(rows)
+ SRC.parent.mkdir(parents=True,exist_ok=True)
+ normalized=json.dumps(rows,ensure_ascii=False,separators=(',',':'))+'\n'
+ if not SRC.exists() or SRC.read_text(encoding='utf-8')!=normalized:
+  SRC.write_text(normalized,encoding='utf-8')
  if len(rows)!=114 or [str(r[0]) for r in rows] != [str(i) for i in range(1,56)]+['55a']+[str(i) for i in range(56,114)]:
   raise RuntimeError('XY3 must conserve all 114 official printed rows, including Mega Lucario 55a')
  if sum(len(r[7]) for r in rows)!=159 or sum(len(r[8]) for r in rows)!=14:

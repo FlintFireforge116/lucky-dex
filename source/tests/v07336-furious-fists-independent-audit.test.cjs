@@ -72,6 +72,42 @@ test('Hypno Hand Control: an empty opponent hand, declining, or an unusable Supp
  }finally{data.cardById=old;}
 });
 
+// Regression for the official upstream XY3 source: original Heracross-EX #4
+// accidentally includes the general Pokémon-EX Prize rule in Giga Power's
+// attack text. Alt-art #105 does not. Both must produce identical, accurate
+// card attacks while retaining the two-Prize rule at Pokémon level.
+test('Heracross-EX #4 and #105 normalize misplaced EX Prize text before registration',()=>{
+ const script=String.raw`
+import json,sys,importlib.util
+sys.path.insert(0,sys.argv[1])
+spec=importlib.util.spec_from_file_location('build_xy3',sys.argv[1]+'/build-xy3.py')
+B=importlib.util.module_from_spec(spec);spec.loader.exec_module(B)
+bonus='When a Pokémon-EX has been Knocked Out, your opponent takes 2 Prize cards.'
+move='You may do 40 more damage. If you do, this Pokémon does 20 damage to itself.'
+rule='Pokémon-EX rule: '+bonus
+def sample(n,attack_text):
+ return [n,'Heracross-EX','Pokémon',['Basic','EX'],'170',['Grass'],None,
+ [['Guard Press',['G','C'],'40','During your opponent\'s next turn, any damage done to this Pokémon by attacks is reduced by 20 (after applying Weakness and Resistance).'],
+  ['Giga Power',['G','G','C'],'80+',attack_text]],[], 'Fire',None,3,'Rare Holo',[rule],None]
+rows=[sample('4',move+' | '+bonus),sample('105',move)]
+normalized=B.normalize_printed_rows(rows)
+cards=B.generate(normalized)
+print(json.dumps({'attackText':[c['attacks'][1]['text'] for c in cards],
+ 'effects':[c['attacks'][1]['effect'] for c in cards],
+ 'prizes':[c['prizeCards'] for c in cards],
+ 'rules':[r[13] for r in normalized]}))`;
+ const proc=spawnSync('python3',['-c',script,path.join(root,'scripts')],{encoding:'utf8'});
+ assert.equal(proc.status,0,proc.stderr);
+ const parsed=JSON.parse(proc.stdout);
+ assert.deepEqual(parsed.attackText,[
+  'You may do 40 more damage. If you do, this Pokémon does 20 damage to itself.',
+  'You may do 40 more damage. If you do, this Pokémon does 20 damage to itself.'
+ ]);
+ assert.deepEqual(parsed.effects[0],parsed.effects[1],'same gameplay effect');
+ assert.deepEqual(parsed.prizes,[2,2],'Pokémon-EX rule still awards two Prizes');
+ assert.ok(parsed.rules.every(r=>r[0].startsWith('Pokémon-EX rule:')));
+});
+
 test('Furious Fists complete printed catalogue, energy symbols, all mandatory effects, and alt-print parity',{skip:!generated},()=>{
  const rows=JSON.parse(fs.readFileSync(printPath,'utf8'));
  assert.equal(rows.length,114);assert.equal(furious.CARDS.length,114);
@@ -94,7 +130,7 @@ test('Furious Fists complete printed catalogue, energy symbols, all mandatory ef
     assert.equal(actual.name,a[0],id+' attack name');assert.equal(actual.cost,a[1].join(''),id+' canonical cost from printed symbols');
     assert.ok(a[1].every(s=>ok.has(s)),id+' valid Energy symbols');
     assert.equal(actual.damageText,a[2]||null,id+' printed damage text');
-    assert.equal(actual.text,a[3],id+' printed effect');
+    assert.equal(actual.text,a[3],id+' printed effect');assert.ok(!actual.text.includes(' | When a Pokémon-EX has been Knocked Out'),id+' Prize rule must not contaminate attack text');
    }
    assert.equal(c.evolvesFrom,row[6],id+' stage chain');
    if(c.pokemonEX)assert.equal(c.prizeCards,2,id+' EX prize count');
