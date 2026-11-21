@@ -8,23 +8,19 @@ from __future__ import annotations
 import base64,hashlib,json,re,urllib.request
 from pathlib import Path
 import bw11_verified as V
+from pinned_tcg_source import load_pinned_set
 ROOT=Path(__file__).resolve().parents[1]
 SRC=ROOT/'data/classic/bw11-print-compact.json'
 OUT=ROOT/'app/src/main/assets/tcg-classic-legendary-treasures.js'
 COVER=ROOT/'docs/BW11_BUILD_COVERAGE.json'
 BLOB='e4e09d569e76c71943e2399221c9f904b4420096'
-URL='https://api.github.com/repos/PokemonTCG/pokemon-tcg-data/git/blobs/'+BLOB
+# Fetch pinned upstream Git raw content (verified against BLOB), not rate-limited REST.
 SYMBOL={'G':'Grass','R':'Fire','W':'Water','L':'Lightning','P':'Psychic','F':'Fighting','D':'Darkness','M':'Metal'}
 
 def get_source():
  if SRC.exists():rows=json.loads(SRC.read_text(encoding='utf-8'))
  else:
-  req=urllib.request.Request(URL,headers={'User-Agent':'LuckyDex-BW11-verified','Accept':'application/vnd.github+json'})
-  with urllib.request.urlopen(req,timeout=60) as resp:data=json.load(resp)
-  original=base64.b64decode(data['content'])
-  sha=hashlib.sha1(f'blob {len(original)}\0'.encode()+original).hexdigest()
-  if sha!=BLOB:raise RuntimeError('BW11 pinned source hash mismatch: '+sha)
-  official=json.loads(original)
+  official=load_pinned_set('bw11', BLOB, timeout=60)
   rows=[[c.get('number'),c.get('name'),c.get('supertype'),c.get('subtypes',[]),c.get('hp'),c.get('types',[]),c.get('evolvesFrom'),
     [[a['name'],[next((k for k,v in SYMBOL.items() if v==en),'C') for en in a.get('cost',[])],a.get('damage',''),a.get('text','')] for a in c.get('attacks',[])],
     [[a['name'],a.get('type','Ability'),a.get('text','')] for a in c.get('abilities',[])],

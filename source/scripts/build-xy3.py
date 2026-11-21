@@ -6,12 +6,13 @@ from __future__ import annotations
 import base64,hashlib,json,re,urllib.request
 from pathlib import Path
 import xy3_verified as V
+from pinned_tcg_source import load_pinned_set
 ROOT=Path(__file__).resolve().parents[1]
 SRC=ROOT/'data/classic/xy3-print-compact.json'
 OUT=ROOT/'app/src/main/assets/tcg-classic-furious-fists.js'
 COVER=ROOT/'docs/XY3_BUILD_COVERAGE.json'
 BLOB='9996bfa724c3d7fc23c9fcc31341cd521311ecb1'
-URL='https://api.github.com/repos/PokemonTCG/pokemon-tcg-data/git/blobs/'+BLOB
+# Fetch pinned upstream Git raw content (verified against BLOB), not rate-limited REST.
 SYMBOL={'G':'Grass','R':'Fire','W':'Water','L':'Lightning','P':'Psychic','F':'Fighting','D':'Darkness','M':'Metal','Y':'Fairy'}
 BASIC={}
 # The pinned upstream catalogue contains one malformed Heracross-EX attack
@@ -36,12 +37,7 @@ def normalize_printed_rows(rows):
 def get_source():
  if SRC.exists():rows=json.loads(SRC.read_text(encoding='utf-8'))
  else:
-  req=urllib.request.Request(URL,headers={'User-Agent':'LuckyDex-XY3-verified','Accept':'application/vnd.github+json'})
-  with urllib.request.urlopen(req,timeout=75) as resp:data=json.load(resp)
-  original=base64.b64decode(data['content'])
-  sha=hashlib.sha1(f'blob {len(original)}\0'.encode()+original).hexdigest()
-  if sha!=BLOB:raise RuntimeError('XY3 pinned source hash mismatch: '+sha)
-  official=json.loads(original)
+  official=load_pinned_set('xy3', BLOB, timeout=75)
   rows=[[c.get('number'),c.get('name'),c.get('supertype'),c.get('subtypes',[]),c.get('hp'),c.get('types',[]),c.get('evolvesFrom'),
     [[a['name'],[next((k for k,v in SYMBOL.items() if v==en),'C') for en in a.get('cost',[])],a.get('damage',''),a.get('text','')] for a in c.get('attacks',[])],
     [[a['name'],a.get('type','Ability'),a.get('text','')] for a in c.get('abilities',[])],

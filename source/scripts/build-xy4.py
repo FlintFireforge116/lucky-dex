@@ -6,23 +6,19 @@ from __future__ import annotations
 import base64,hashlib,json,re,urllib.request
 from pathlib import Path
 import xy4_verified as V
+from pinned_tcg_source import load_pinned_set
 ROOT=Path(__file__).resolve().parents[1]
 SRC=ROOT/'data/classic/xy4-print-compact.json'
 OUT=ROOT/'app/src/main/assets/tcg-classic-phantom-forces.js'
 COVER=ROOT/'docs/XY4_BUILD_COVERAGE.json'
 BLOB='85ab15304b4741c1f5601ee786fc8f3a764326f9'
-URL='https://api.github.com/repos/PokemonTCG/pokemon-tcg-data/git/blobs/'+BLOB
+# Fetch pinned upstream Git raw content (verified against BLOB), not rate-limited REST.
 SYMBOL={'G':'Grass','R':'Fire','W':'Water','L':'Lightning','P':'Psychic','F':'Fighting','D':'Darkness','M':'Metal','Y':'Fairy'}
 BASIC={}
 def get_source():
  if SRC.exists():rows=json.loads(SRC.read_text(encoding='utf-8'))
  else:
-  req=urllib.request.Request(URL,headers={'User-Agent':'LuckyDex-XY4-verified','Accept':'application/vnd.github+json'})
-  with urllib.request.urlopen(req,timeout=75) as resp:data=json.load(resp)
-  original=base64.b64decode(data['content'])
-  sha=hashlib.sha1(f'blob {len(original)}\0'.encode()+original).hexdigest()
-  if sha!=BLOB:raise RuntimeError('XY4 pinned source hash mismatch: '+sha)
-  official=json.loads(original)
+  official=load_pinned_set('xy4', BLOB, timeout=75)
   rows=[[c.get('number'),c.get('name'),c.get('supertype'),c.get('subtypes',[]),c.get('hp'),c.get('types',[]),c.get('evolvesFrom'),
     [[a['name'],[next((k for k,v in SYMBOL.items() if v==en),'C') for en in a.get('cost',[])],a.get('damage',''),a.get('text','')] for a in c.get('attacks',[])],
     [[a['name'],a.get('type','Ability'),a.get('text','')] for a in c.get('abilities',[])],

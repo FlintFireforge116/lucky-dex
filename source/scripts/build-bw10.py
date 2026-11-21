@@ -10,24 +10,20 @@ import base64, hashlib, json, re, urllib.request
 from pathlib import Path
 import bw10_verified as V
 
+from pinned_tcg_source import load_pinned_set
 ROOT=Path(__file__).resolve().parents[1]
 SRC=ROOT/'data/classic/bw10-print-compact.json'
 OUT=ROOT/'app/src/main/assets/tcg-classic-plasma-blast.js'
 COVER=ROOT/'docs/BW10_BUILD_COVERAGE.json'
 BLOB='ccddde115a17152e330d29736a3f1665e006d67f'
-URL=f'https://api.github.com/repos/PokemonTCG/pokemon-tcg-data/git/blobs/{BLOB}'
+# Fetch pinned upstream Git raw content (verified against BLOB), not rate-limited REST.
 SYMBOL={'G':'Grass','R':'Fire','W':'Water','L':'Lightning','P':'Psychic','F':'Fighting','D':'Darkness','M':'Metal'}
 
 def get_source():
     if SRC.exists():
         rows=json.loads(SRC.read_text(encoding='utf-8'))
     else:
-        req=urllib.request.Request(URL,headers={'User-Agent':'LuckyDex-BW10-verified','Accept':'application/vnd.github+json'})
-        with urllib.request.urlopen(req,timeout=45) as resp:data=json.load(resp)
-        original=base64.b64decode(data['content'])
-        sha=hashlib.sha1(f'blob {len(original)}\0'.encode()+original).hexdigest()
-        if sha!=BLOB:raise RuntimeError('Source blob mismatch: got '+sha)
-        official=json.loads(original)
+        official=load_pinned_set('bw10', BLOB, timeout=45)
         rows=[[c.get('number'),c.get('name'),c.get('supertype'),c.get('subtypes',[]),c.get('hp'),c.get('types',[]),c.get('evolvesFrom'),
                [[a['name'],[next((k for k,v in SYMBOL.items() if v==e),'C') for e in a.get('cost',[])],a.get('damage',''),a.get('text','')] for a in c.get('attacks',[])],
                [[a['name'],a.get('type','Ability'),a.get('text','')] for a in c.get('abilities',[])],
