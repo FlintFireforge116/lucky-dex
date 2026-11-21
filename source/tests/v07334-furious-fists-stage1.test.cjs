@@ -22,12 +22,12 @@ test('Furious Fists is registered for player decks, CPU opponents, inspector, an
  assert.ok(html.includes('<script src="tcg-classic-furious-fists.js"></script>'));
  assert.ok(html.indexOf('tcg-classic-furious-fists.js')<html.indexOf('tcg-classic-battle-data.js'));
 });
-test('v0.69.334 is consistent in Android, title, and boot JS',()=>{
+test('v0.69.335 is consistent in Android, title, and boot JS',()=>{
  const gradle=fs.readFileSync(path.join(root,'app/build.gradle'),'utf8');
- assert.match(gradle,/versionCode 7334/);
- assert.match(gradle,/versionName '0\.69\.334'/);
- assert.match(fs.readFileSync(path.join(assets,'index.html'),'utf8'),/titleBuildVersion">v0\.69\.334/);
- assert.match(fs.readFileSync(path.join(assets,'app-v0167.js'),'utf8'),/window\.__LUCKYDEX_BUILD='0\.69\.334'/);
+ assert.match(gradle,/versionCode 7335/);
+ assert.match(gradle,/versionName '0\.69\.335'/);
+ assert.match(fs.readFileSync(path.join(assets,'index.html'),'utf8'),/titleBuildVersion">v0\.69\.335/);
+ assert.match(fs.readFileSync(path.join(assets,'app-v0167.js'),'utf8'),/window\.__LUCKYDEX_BUILD='0\.69\.335'/);
 });
 test('build includes immutable XY3 generation BEFORE full catalogue audit and assets',()=>{
  const gradle=fs.readFileSync(path.join(root,'app/build.gradle'),'utf8');
@@ -59,19 +59,16 @@ test('pinned official 114 prints are conserved, and unsupported rules do not mas
  }
  const mega=furious.cardById('xy3-55a');assert.equal(mega.name,'M Lucario-EX');
  assert.equal(mega.pokemonEX,true);assert.equal(mega.megaEvolution,true);assert.equal(mega.prizeCards,2);
- assert.equal(furious.cardById('xy3-103').battleEnabled,false,'Herbal Energy must not be a fake generic Energy');
- assert.equal(furious.cardById('xy3-104').battleEnabled,false,'Strong Energy must not be a fake generic Energy');
+ for(const [id,type] of [['xy3-103','Grass'],['xy3-104','Fighting']]){const card=furious.cardById(id);assert.equal(card.battleEnabled,true,id);assert.deepEqual(card.effect.provides,{[type]:1});}
  assert.ok(furious.CARDS.filter(c=>c.battleEnabled).length>=30,'at least 30 prints should be playable in stage1');
 });
 
-test('printed Basic support does not silently activate locked Fighting/Tool mechanics',{skip:!GENERATED},()=>{
- for(const number of ['90','91','92','94','95','97','98','99','101','102','103','104']){
-  const c=furious.cardById('xy3-'+number);assert.ok(c);assert.equal(c.battleEnabled,false,c.id);
-  assert.ok(c.support.reasons?.length,c.id);
+test('formerly restricted Fighter, Fossil, Tool, and Special Energy prints are now implemented',{skip:!GENERATED},()=>{
+ for(const n of ['1','4','5','9','14','18','25','26','30','31','32','40','46','52','55','55a','58','59','61','62','63','64','68','72','73','74','76','77','79','80','84','85','90','91','92','94','95','96','97','98','99','101','102','103','104','105','106','108','110','111','112','113']){
+  const c=furious.cardById('xy3-'+n);assert.ok(c);assert.equal(c.battleEnabled,true,c.id+': '+c.support.reasons?.join('; '));
  }
- for(const n of ['54','56','60','75','78','87'])assert.ok(furious.cardById('xy3-'+n)?.battleEnabled,'verified simple attack '+n);
+ for(const n of ['36']){const c=furious.cardById('xy3-'+n);assert.equal(c?.battleEnabled,false,'must not pretend unsolved private/forced-play rule works');}
 });
-
 
 test('offline rule-mapping smoke: real attacker effect schemas and unsupported print gating',()=>{
  // This works even before the official 114-print source is generated. The
@@ -107,7 +104,7 @@ print(json.dumps(m.generate(rows)))`;
   for(const move of card.attacks||[])assert.deepEqual(effects.validateEffect(move.effect),[],`${card.name}: ${move.name}`);
   if(card.kind==='trainer')assert.deepEqual(effects.validateEffect(card.effect),[],card.name);
  }
- for(const n of ['1','5','55','112','103','104'])assert.equal(by(n).battleEnabled,false,n+' must be gated');
+ for(const n of ['1','5','55','112','103','104'])assert.equal(by(n).battleEnabled,true,n+' now has a real effect');
  assert.equal(by('54').pokemonEX,true);
  assert.equal(by('5').attacks[0].damage,180);
  assert.equal(by('60').attacks[0].damage,0);

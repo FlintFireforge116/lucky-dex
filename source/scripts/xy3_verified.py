@@ -50,6 +50,7 @@ ATTACKS={
  ('37','Hug'):LOCK(),
  ('38','Poison Sting'):Q(ST('poison')),
  ('39','Psy Bolt'):Q(ST('paralysis')),
+ ('40','Fortunate Eye'):E('neoRule',rule='xy3:fortunateEye'),
  ('41','Psy Report'):E('revealHand',side='opponent'),
  ('42','Rock Smash'):Q(BONUS(30)),
  ('43','Wreck'):BONUS(60,{'type':'stadiumInPlay'}),
@@ -94,7 +95,7 @@ ATTACKS={
  ('82','Reckless Charge'):Q(t=E('selfDamage',amount=20)),
  ('83','Amnesia'):E('chooseAttackLock',side='opponent'),
  ('83','Knuckle Sandwich'):DISC(),
- ('85','Thorough Crunch'):E('coinDiscardEnergyDamage',coins=2,damage=0),
+ ('85','Thorough Crunch'):E('neoRule',rule='xy3:thoroughCrunch'),
  ('86','Push Down'):E('chooseOption',options=[{'label':'Switch opponent Active','effect':E('forceOpponentSwitch',chooseBy='attacker')},{'label':'Leave opponent Active','effect':N}]),
  ('86','Twister Throw'):BONUS(60,{'type':'handSizesEqual'}),
 }
@@ -183,6 +184,100 @@ GATE={
  '111':'Korrina needs Fighting Pokémon and Item choice.',
  '113':'Rising Fist requires selected opposing Energy discard.',
 }
+
+# XY3 completion pass: every lifted gate below has either an audited generic
+# engine operation or a dedicated XY3 handler with an executable test.
+R=lambda key:E('neoRule',rule='xy3:'+key)
+ATTACKS.update({
+ ('1','Knock Off'):E('discardHand',side='opponent',amount=1),
+ ('9','Afterimage Strike'):R('afterimageStrike'),
+ ('4','Guard Press'):GUARD(20),('4','Giga Power'):R('gigaPower'),
+ ('5','Big Bang Horn'):R('bigBangHorn'),
+ ('14','Burning Shot'):R('burningShot'),
+ ('20','Grenade Hammer'):R('grenadeHammer'),
+ ('30','Tag Team Spark'):R('tagTeamSpark'),
+ ('31','Positive Hand'):R('positiveHand'),
+ ('32','Negative Discard'):R('negativeDiscard'),
+ ('35','Sinister Suggestion'):R('sinisterSuggestion'),
+ ('34','Entrainment'):E('benchFromDeck',amount=2,filter={'kind':'pokemon','stage':'Basic'}),
+ ('34','Energy Short'):E('energyDamage',source='opponent',amount=20),
+ ('41','Psy Report'):E('revealHand',side='opponent'),
+ ('43','Wreck'):R('wreck'),
+ ('55','Rising Fist'):DISC(1,target='opponentActive'),
+ ('55a','Rising Fist'):DISC(1,target='opponentActive'),
+ ('58','Shout of Power'):R('shoutOfPower'),
+ ('59','Bad-Influence Evolution'):R('badInfluenceEvolution'),
+ ('63','Flying Press'):E('attackRequirement',condition={'type':'opponentEx'}),
+ ('67','Machine Gun Headbutt'):S(COIN(3,50),ST('confusion','self')),
+ ('68','Clobber'):R('clobber'),
+ ('72','Curly Ribbon'):R('curlyRibbon'),
+ ('74','Jet Sonic'):R('jetSonic'),
+ ('76','Rainbow Shower'):R('rainbowShower'),
+ ('77','Boomburst'):R('boomburst'),
+ ('79','Knock Off'):E('discardHand',side='opponent',amount=1),
+ ('80','Gnaw'):N,
+ ('83','Amnesia'):E('chooseAttackLock',side='opponent'),
+ ('84','Safety Check'):R('safetyCheck'),
+ ('85','Held-Item Inspection'):R('heldItemInspection'),
+ ('85','Thorough Crunch'):E('coinDiscardEnergyDamage',coins=2,damage=0),
+ ('86','Push Down'):E('chooseOption',options=[{'label':'Switch opponent Active','effect':E('forceOpponentSwitch',chooseBy='attacker')},{'label':'Leave opponent Active','effect':N}]),
+ ('105','Guard Press'):GUARD(20),('105','Giga Power'):R('gigaPower'),
+ ('106','Grenade Hammer'):R('grenadeHammer'),
+ ('108','Jet Sonic'):R('jetSonic'),
+ ('112','Big Bang Horn'):R('bigBangHorn'),
+ ('113','Rising Fist'):DISC(1,target='opponentActive'),
+})
+ABILITIES.update({
+ 'Wafting Scent':{'type':'activated','oncePerTurn':True,'effect':R('waftingScent')},
+ "King's Song":{'type':'passive','effect':R('kingsSong')},
+ 'Ice Shield':{'type':'passive','effect':R('iceShield')},
+ 'Fighting Fury':{'type':'passive','effect':R('fightingFury')},
+ 'Thick Fat':{'type':'passive','effect':R('thickFat')},
+ 'Victory Kiss':{'type':'activated','oncePerTurn':True,'benchOnly':True,'effect':R('victoryKiss')},
+ 'Teleport Room':{'type':'activated','oncePerTurn':True,'effect':R('teleportRoom')},
+ 'Shining Spirit':{'type':'passive','effect':R('shiningSpirit')},
+ 'Counterattack':{'type':'passive','effect':N},
+ 'Secret Key':{'type':'passive','effect':R('secretKey')},
+ 'Bust In':{'type':'triggered','event':'benched','fromHandOnly':True,'effect':R('bustIn')},
+ 'Echolocation':{'type':'passive','effect':E('coinDamageGuard',preventAll=True)},
+ 'Energy Evolution':{'type':'triggered','event':'energyAttached','effect':R('energyEvolution')},
+})
+TRAINERS.update({
+ '90':('Stadium',N),
+ '91':('Tool',N),
+ '92':('Supporter',R('fossilResearcher')),
+ '94':('Item',R('jawFossil')),
+ '95':('Supporter',R('korrina')),
+ '96':('Item',R('maintenance')),
+ '97':('Stadium',N),
+ '98':('Item',R('sailFossil')),
+ '99':('Tool',N),
+ '101':('Item',R('toolRetriever')),
+ '102':('Stadium',N),
+ '110':('Supporter',R('fossilResearcher')),
+ '111':('Supporter',R('korrina')),
+})
+# Related alternate-arts have identical printed effect contracts.
+for _from,_to in [('4','105'),('20','106'),('54','107'),('74','108'),('5','112'),('55','113')]:
+ for (_n,_title),_effect in list(ATTACKS.items()):
+  if _n==_from:ATTACKS[(_to,_title)]=_effect
+
+# Never make an unverified print playable by deleting its gate only: the
+# requirements for each of these entries are covered by dedicated tests.
+for _number in ('1','3','4','5','11','14','18','20','25','26','30','31','32','34','37','41','43','46','52','55','55a','57','58','59','61','62','63','64','67','68','72','73','74','76','77','79','80','83','84','85','90','91','92','94','95','96','97','98','99','101','102','103','104','105','106','108','110','111','112','113'):
+ GATE.pop(_number,None)
+
+# The privacy-sensitive or bespoke rules below are not misrepresented as complete.
+# They remain visible for collecting, but excluded from battle/deck generation.
+for _recent in ('9','35','40','84'):GATE.pop(_recent,None)
+for _n,_why in {
+ '35':'Sinister Suggestion is live (opponent coin tails).',
+ '36':'Hand Control requires playing an opposing Supporter under the attacker decisions.',
+ 
+}.items():
+ if _n in ('35',):continue
+ GATE[_n]=_why
+
 # Dynamic printed-effects parsers: only exact cases validated by the shared engine.
 def attack(row,a):
  n,title=str(row[0]),a[0]

@@ -2898,3 +2898,33 @@ CLASSIC BATTLE v0.69.329 — GLOBAL PRINTED ATTACK ENERGY CONTRACT
     git push origin main
 
   Subsequent handoffs: keep exactly this format, updating only filename and commit message. Current last VERIFIED successful APK workflow at drafting: v0.69.333 / run #622.
+
+=======================================================================
+2026-11-21 / v0.69.335 / XY FURIOUS FISTS — EFFECTS, SPECIAL ENERGY, FOSSILS & AUDIT
+=======================================================================
+[LOCKED] RULES THAT APPLY TO FUTURE EXPANSIONS
+  - Implement printed effects at their actual source/target/timing. A build passing is not proof of correct gameplay. Never silently assign no-op, substitute a random effect, or label an unsupported print FULL.
+  - Strong-style conditional Special Energy: enforce printed recipient type both when attaching AND after a type-changing evolution. Damage modifiers apply only to the eligible holder and correct attack target; Herbal-style on-attach healing must obey healing prevention.
+  - Stacking Fighting boosts must resolve before Weakness/Resistance: Fighting Stadium applies only to opposing active Pokemon-EX and both sides; Strong Energy only to Fighting holder; Machamp Fighting Fury is an independent team aura. Bench damage cannot receive Active-only bonuses.
+  - Never use a Restored Fossil as an ordinary Basic Pokemon. Fossil Researcher uses chosen copies of its named species from the physical deck, while Jaw Fossil/Sail Fossil examine its physical bottom seven. The autobuilder must preserve Fossil/Evolution dependencies and no empty Fossil packages.
+  - A Tool that changes KO survival must be checked after damage but before KO/Prize resolution, and physically removed after activation. A Tool preventing statuses must also remove existing statuses on attachment when printed.
+  - All chance effects must log visible outcomes. Noivern Echolocation and Accelgor Afterimage Strike require a real defensive coin roll; pending Coin decisions must finish before selecting prizes.
+  - Physical Trainer/Pokemon search, actual discarded Energy, and fresh Basic Energy Zone searches are distinct. Vibrava Charge Energy may use the existing Basic Energy Zone search contract; Korrina, Fossil Researcher, Jaw/Sail Fossils, and Tool Retriever must use actual card UIDs.
+  - Forcing opponent Supporters with attacker-owned choices is NOT equivalent to playing your own Supporter. Keep Hypno #36 Hand Control marked PARTIAL/deck-ineligible until this cross-player interaction exists. Patrat #84 Safety Check IS playable with a private reveal in the choosing player’s option pane and no public card-identity log. Build-time print coverage must report any additional unsupported text.
+  - Keep player and CPU deck-building selection, legality and Trainer synergy audits running after each new set; do not regress the v0.69.333 cross-era builder improvements.
+[LOCKED] BUILD AND AUDIT ORDER
+  - GitHub v0.69.334 Stage 1 succeeded on build #623.
+  - Official xy3 114-print generator runs before BOTH Furious Fists test suites. v0.69.335 adds v07335 completion tests into auditXY3ForApk. Source ZIP may contain official-catalogue placeholders; never claim full catalogue auditing completed until GitHub finishes generation and audits.
+  - Local suite: node --test tests/v07334-furious-fists-stage1.test.cjs tests/v07335-furious-fists-completion.test.cjs
+  - Global builder: node --test tests/v07333-classic-deck-quality.test.cjs
+[LOCKED] TERMUX HANDOFF (same exact format for all future source-relative ZIP patches)
+
+    cd ~/lucky-dex
+
+    unzip -o /sdcard/Download/LuckyDex_patch_v0.69.335_FURIOUS_FISTS_COMPLETION.zip -d source
+
+    git add source
+    git commit -m "LuckyDex v0.69.335 Furious Fists completion and audit"
+    git push origin main
+
+  Change only the ZIP basename and commit message on future handoffs. No separate prepare script.

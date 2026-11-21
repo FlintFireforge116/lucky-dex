@@ -85,6 +85,7 @@ def generate(rows):
   elif kind=='trainer':
    obj=V.TRAINERS.get(n);card.update(trainerType=obj[0] if obj else (subtypes[0] if subtypes else 'Item'),
       text='\n'.join(rules),effect=obj[1] if obj else {'type':'unsupported'},aceSpec=False,maxDeckCopies=4)
+   if n=='99':card['onAttach']={'type':'removeStatuses','target':'self','statuses':['sleep','paralysis','confusion','poison','burn']}
   elif n in BASIC:
    card.update(basicEnergy=True,specialEnergy=False,energyType=BASIC[n],subtype=BASIC[n],
      text='\n'.join(rules),effect={'type':'noop'})
@@ -94,7 +95,7 @@ def generate(rows):
    card.update(basicEnergy=False,specialEnergy=True,
      energyType=('Grass' if n=='103' else 'Fighting'),
      subtype=('Grass' if n=='103' else 'Fighting'),
-     text='\n'.join(rules),effect={'type':'unsupported','reason':'Specific attached-type and on-attach modifier mechanics required'})
+     text='\n'.join(rules),effect={'type':'specialEnergy','provides':{('Grass' if n=='103' else 'Fighting'):1}})
   cards.append(card)
  return cards
 
