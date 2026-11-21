@@ -1,8 +1,8 @@
 LUCKYDEX — MASTER PROJECT RULES AND DEVELOPMENT CONTRACT
 =========================================================
-Document version: 2.48
-Compiled: 20 November 2026
-Current inspected source: v0.69.325 XY Flashfire initial integration (official pinned 110 printed rows, 109 numbered plus Blacksmith 88a). v0.69.324 XY Base APK built successfully per user. Flashfire requires its own GitHub APK build; patch extraction is source-relative.
+Document version: 2.49
+Compiled: 21 November 2026
+Current inspected source: v0.69.332 XY explicit Basic Energy Zone search repair built on top of the successfully built v0.69.331 (GitHub Actions run #620). v0.69.332 APK build has not been verified; patch extraction is source-relative.
 Recommended repository location: ~/lucky-dex/source/docs/LUCKYDEX_MASTER_RULES.txt
 Project: LuckyDex — Android application/PWA, managed with Termux and GitHub
 
@@ -2715,7 +2715,7 @@ LuckyDex v0.69.321 — XY Base first-pass checklist (2026-11-20)
 - Fairy is a real ninth Basic Energy type, code Y. Basic Fairy Energy comes from the Energy Zone, while printed Rainbow Energy and Double Colorless are actual physical UID-bearing cards with distinct attachment rules. Rainbow attachment from hand inflicts 10 damage, and Double Colorless provides two Colorless units, not two physical cards.
 - Mega Evolution must use the exact printed non-Mega Pokemon-EX prerequisite and ENDS THAT TURN when played from hand. Mega Pokemon-EX awards the printed two Prizes if KO'd. Never treat Mega EX as a Basic or permit immediate attack.
 - Fairy Garden and Shadow Circle are both-sided Stadium effects based on the Energy currently ATTACHED to the relevant Pokemon (not matching Pokemon type). Hard Charm and Furfrou Fur Coat reduce opposing attack damage to the holder including on the Bench; Muscle Band adds 20 before Weakness only when attacking the opposing Active. Sweet Veil prevents and clears conditions if the holder has Fairy-providing Energy, unless suppressed.
-- XY printed selectable effects must preserve each unique physical UID, distinguish special attached Energy from the discarded Basic Energy ledger, and support optional Done, legal choices, hand cap and KO/prize timing. Great Ball searches top seven, and Professor's Letter takes at most two physical Basic Energy cards from the DECK, not the Energy Zone. Energy assignment needs typed recipient choice.
+- XY printed selectable effects must preserve each unique physical UID, distinguish special attached Energy from the discarded Basic Energy ledger, and support optional Done, legal choices, hand cap and KO/prize timing. Great Ball searches the actual top seven cards only. [SUPERSEDED v0.69.332] The old restriction requiring Professor's Letter to take only PHYSICAL deck Basic Energy was inconsistent with global C-ENERGY-002 and is no longer valid: Professor's Letter may find eligible fresh Basic Energy in the ordered Energy Zone (or real Basic cards shuffled into the draw deck); selected Energy goes to HAND, not directly onto a Pokémon. Energy assignment needs typed recipient choice.
 - CPU decks must obey a true 30-card composition, four-copy limits, complete evolution dependencies, unique Special Energy identities, Fairy typed attack cost, and no gated prints. The XY-only sparse emergency recovery cannot affect older sets, user-built decks, or explicit focus.
 - Entire prints with one missing attack/Ability/Trainer rule are gated and documented; no optimistic fake no-op. In particular revisit two-sided Rapid Spin, Stance Change, Fossil/stack return, Geomancy choice, Evosoda evolution timing and exact Tool/KO reactions in the independent set audit. Printed-card conservation is NOT equivalent to battle-readiness.
 - Local mapping schema validation: 127/127. Synthetic 146-print fixture (not shipped): 13/13 XY checks pass. Source-dependent independent tests skip locally and must execute in GitHub AFTER pinned XY generation. Do not claim GitHub build success or final battle-enabled count until verified there. Phone installation remains unzip -> git add -> git commit -> git push with no preparation command.
@@ -2726,8 +2726,8 @@ LuckyDex v0.69.322 — XY Base independent master checklist / GitHub build repai
 - XY Beedrill Flash Needle flips three coins and does 40 per heads; all heads also creates the printed next-opponent-turn attack prevention. Vivillon Conversion Powder chooses ONLY Asleep or Poisoned and routes through normal status immunity. Magcargo Magma Mantle offers keep/discard-top before damage and adds +50 only when a Fire Energy card is actually discarded. Rhyperior Rock Black flips once per Fighting Energy supplied (effective Energy), not simply attached physical card count.
 - XY Conkeldurr Wake-Up Slap checks status BEFORE damage, adds 60, and removes conditions AFTER damage. XY Skarmory-EX Joust removes ALL opponent Active Tools BEFORE resolving damage and preserves the discarded Tool UIDs. Charge Dash and Electron Crush optional bonus/discard choices must never consume the first eligible Energy without player consent.
 - XY Gourgeist Spirit Scream places counters on both Active Pokemon until each has 10 remaining HP, never reduces existing counters. Eerie Voice places two counters on each opposing Pokemon (active and benched), subject to attack-effect protection. Mine reveals the top of the opposing deck only to the player who used it, who may then choose to shuffle that deck. Mad Mountain mills only after both required heads and counts existing attacker damage counters.
-- XY Energy Salon searches the deck for up to three DIFFERENT Basic Energy types, choosing exact physical UIDs; Pickup recovers two chosen Item references and recognizes XY-era Tools as Items. Recover discards a selected attached Energy to heal the attacker fully. Super Potion targets a damaged Pokemon with attached Energy, discards an EXACT selected unit/physical reference, and heals 60 only when cost is paid.
-- XY Geomancy chooses two DIFFERENT Benched Pokemon, each receiving a real Fairy Energy from deck; shuffle once after the complete search. Emolga-EX Energy Glide attaches a physical Lightning Energy from deck before allowing the required Bench switch. Yveltal Oblivion Wing recovers from actual Basic Darkness discard ledger or physical discard, and Yveltal-EX Y Cyclone moves exact physical Energy references.
+- XY Energy Salon searches up to three DIFFERENT Basic Energy types: choose physical Basic Energy UIDs from the real draw deck or eligible Energy Zone types, consuming each selected supply unit; no duplicate type. Pickup recovers two chosen Item references and recognizes XY-era Tools as Items. Recover discards a selected attached Energy to heal the attacker fully. Super Potion targets a damaged Pokemon with attached Energy, discards an EXACT selected unit/physical reference, and heals 60 only when cost is paid.
+- XY Geomancy chooses two DIFFERENT Benched Pokemon, each receiving actual Fairy Energy either from a physical Basic card in the draw deck or an available Fairy entry in the Energy Zone; shuffle once after the complete search. Emolga-EX Energy Glide attaches actual Lightning Energy from physical deck or eligible Zone before allowing the required Bench switch. Flame Charge similarly searches Fire Energy from either source. Yveltal Oblivion Wing recovers ONLY actual Basic Darkness discard ledger or physical discard, and Yveltal-EX Y Cyclone moves exact attached Energy references.
 - All collector prints remain catalogued, but only battle-enabled prints may enter the CPU/manual builder. The explicit source-level XY gating list after v0.69.322 contains 19 complex prints (4, 11, 29, 32, 35, 44, 48, 50, 54, 71, 74, 76, 85, 86, 89, 103, 115, 116, 142). Other unsupported printed text may add generated gates; NEVER claim 127 battle-ready or any final enabled count without running official pinned catalogue generation.
 - XY source audit includes 22 direct gameplay tests and an existing 13-test catalog/engine suite. Local synthetic fixtures (clearly not official cards) are for schema/CPU smoke only and are explicitly REMOVED before packaging. GitHub `auditXY1ForApk` must execute BOTH v07321 and v07322 tests after pinned generation. No bypass of audit or APK build gates. Previous-set regressions must remain green.
 
@@ -2803,3 +2803,43 @@ CLASSIC BATTLE v0.69.329 — GLOBAL PRINTED ATTACK ENERGY CONTRACT
 - Battle action legality, attached Energy explanations, UI icons, AI energy valuation and deck builder all use the same canonical cost. Fairy Energy (Y) is pink Fairy, not Colorless; Fairy Basic Energy and its actual icon are supported.
 - Audit each future deck across every attack cost, both typed and Colorless payment, exactly matching energy icons, runtime menu and available pinned-source print records. Run `node --test tests/v07329-classic-global-energy-audit.test.cjs` and keep the APK preBuild audit enabled.
 - Full-Classic offline audit at v0.69.329: 9,725 moves across 59 set IDs; 508 previously array-shaped costs in Plasma Storm, Plasma Freeze and Plasma Blast normalized. 15 locally bundled source-print sets showed zero printed cost mismatches. XY must be generated before the final Gradle audit.
+
+
+=======================================================================
+2026-11-21 / v0.69.332 / CLASSIC XY BASIC ENERGY ZONE SEARCH + TERMUX HANDOFF
+=======================================================================
+[LOCKED] SOURCE ADAPTATION / SUPERSESSION OF OLD XY NOTE
+  - The user reaffirmed: an EXPLICIT search of the DECK for fresh Basic Energy is adapted to the ordered Classic Basic Energy Zone. This restates C-ENERGY-002, C-ENERGY-003 and C-ENERGY-015 and supersedes the conflicting v0.69.321/v0.69.322 'physical deck only' notes for Professor's Letter, Energy Salon, Flame Charge, Geomancy and Energy Glide. Searches can also choose real physical Basic Energy that an earlier effect moved into the draw deck. If both sources exist, show BOTH choices. Never synthesize Special Energy or use discarded Energy as a fresh search.
+  - Professor's Letter: choose UP TO TWO Basic Energy, each from a real eligible Zone entry or real Basic Energy card in draw deck; reveal the choice, put that Energy into HAND, and shuffle the physical deck after search. NEVER attach automatically. The normal Zone attachment and hand attachment allowances are separate and unchanged. Enforce the existing 8-card hand limit, show Done, and preserve existing physical UIDs. Consuming a Zone entry updates the actual ordered queue / preview.
+  - XY Energy Salon: up to 3 different Basic Energy TYPES; offer eligible Zone types as well as physical Basic Energy cards; do not permit the same type twice.
+  - XY Flame Charge (Fire), Geomancy (Fairy, two different Bench recipients) and Emolga-EX Energy Glide (Lightning, then optional required Bench switch) use the same source adapter, but their printed destination is ATTACHED to the correct Pokémon, not the hand. Use the actual Energy Zone queue and exact physical UIDs when applicable.
+  - EXCEPTIONS: a generic any-card search such as Computer Search does NOT pull arbitrary Basic Energy from the Zone. Looking at the top N physical deck cards (Dig Out, Magma Mantle, etc.) does NOT use the Zone. Recovery from discard MUST use the Basic Energy discard ledger or actual discarded physical cards. Cards specifying Energy from HAND must use cards actually present in hand.
+  - Permanent build regression: tests/v07332-xy-energy-zone-contract.test.cjs is part of Gradle auditXY1ForApk, after the official pinned XY1 catalogue generator; test supply consumption, type selection, physical UIDs, hand destination/cap, two recipients and Fairy Basic Energy. Never weaken build gates to hide failing tests.
+  - Verified preceding successful build: GitHub Actions run #620 / v0.69.331. This v0.69.332 is a new patch; GitHub APK build must be checked separately.
+
+[LOCKED] STANDARD TERMUX ZIP HANDOFF — KEEP THIS EXACT FOUR-COMMAND WORKFLOW
+  - Source home: ~/lucky-dex/source/ . Patch ZIP contains paths relative to source/ (for example app/, scripts/, tests/, docs/). User downloads ZIP to /sdcard/Download/ and runs from ~/lucky-dex.
+  - For each new patch, change ONLY the ZIP filename and commit message below; never add 'prepare' scripts or change the unzip destination by default. A missing file or failed unzip must be resolved before git add/commit/push.
+
+  Current example for v0.69.332:
+
+    cd ~/lucky-dex
+
+    unzip -o /sdcard/Download/LuckyDex_patch_v0.69.332_XY_ENERGY_ZONE_SEARCH.zip -d source
+
+    git add source
+    git commit -m "LuckyDex v0.69.332 XY Basic Energy Zone search"
+    git push origin main
+
+  Generic future template (replace NAME.zip and the version in the commit message):
+
+    cd ~/lucky-dex
+
+    unzip -o /sdcard/Download/PATCH_FILENAME.zip -d source
+
+    git add source
+    git commit -m "LuckyDex vX.Y.Z description of patch"
+    git push origin main
+
+  DO NOT assume GitHub Actions passing merely because local tests passed. Never
+  ask to delete prior workflow runs or run an unrelated reset as a build repair.
