@@ -720,6 +720,10 @@
            !effects.abilitiesSuppressed(state,side==='player'?'opponent':'player',state.sides[side==='player'?'opponent':'player'].active,data.cardById))continue;
         if(state.format==='classic'&&ability.printedPowerType==='power'&&Number(ss.dp6PsychicBindUntil||-1)>=Number(state.turnNumber))continue;
         if(ability.name==='Set Up'&&source.cardId.startsWith('xy6-')&&(ss.hand.length>=6||!ss.deck.length))continue;
+        if(ability.name==='Cursed Eyes'&&source.cardId==='xy6-40'){
+          const targets=pokemonOn(state.sides[side==='player'?'opponent':'player']);
+          if(targets.length<2||!targets.some(p=>Number(p.damage||0)>=30))continue;
+        }
         if(pl1PowerBlocked(state,side,source,ability)||abilityBlockedByStatus(ability,source)||ability.type!=='triggered'||ability.event!==event||ability.activeOnly&&ss.active!==source||ability.benchOnly&&ss.active===source)continue;if(event==='endTurn'){const ownersTurn=state.activeSide===side,turn=ability.turn||'owner';if(turn==='owner'&&!ownersTurn||turn==='opponent'&&ownersTurn)continue;}if(ability.opponentAttackOnly&&!(meta.source?.attack&&meta.source.side===(side==='player'?'opponent':'player')))continue;if(ability.energyType&&ability.energyType!==meta.energyType)continue;if(ability.fromHandOnly&&!meta.fromHand)continue;if(ability.firstTurnOnly&&ss.turnCount!==1)continue;
         effects.applyEffect(ability.effect,{...effectContext(state,side,{},source),isAbility:true,eventData:meta});state.log.push({type:'ability',side,cardId:source.cardId,ability:ability.name,event});
         ex14DarkEyes(state,side,source,ability);
@@ -3462,6 +3466,7 @@ const target=slotForTarget(s,action.target,action.benchIndex);if(card.id==='pl2-
          maxHp(state,side,s.active)-Number(s.active.damage||0)<=20&&
          !effects.abilitiesSuppressed(state,side,s.active,data.cardById)&&
          !s.active.conditions?.sleep&&!s.active.conditions?.confusion&&!s.active.conditions?.paralysis&&damage>0){damage=120;}
+      if(!isActive&&damage>0&&state.format==='classic')damage=effects.wideLensBenchMatchup(state,side,s.active,foeSide,defender,damage,data.cardById);
       if(!isActive&&damage>0&&state.format==='classic'&&toolsOf(s.active).some(ref=>ref.cardId==='ecard1-150')){
         // Direct attacks on the Bench have no Weakness/Resistance; Strength
         // Charm still adds ten to an attack that dealt nonzero damage.

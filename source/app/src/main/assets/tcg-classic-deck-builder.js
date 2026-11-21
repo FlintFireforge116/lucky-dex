@@ -770,6 +770,13 @@ function buildDeck(rows,options={}){
      // Healing Scarf checks physical hand-Energy cards, not Energy Zone
      // attachments. A deck with no Special Energy has no routine trigger.
      if(card?.id==='xy6-84'&&!cards.some(id=>classic.cardById(id)?.specialEnergy))return false;
+     // Wide Lens only changes damage to the opponent's Bench. Without an
+     // actual printed Bench-damaging attack in this 30-card deck it cannot
+     // contribute; don't auto-fill otherwise unrelated decks with the Tool.
+     if(card?.id==='xy6-95'&&!pokemon.some(p=>(p.attacks||[]).some(a=>
+       /(?:opponent['’]s|the opponent['’]s)\s+(?:Benched|Bench)|(?:opponent['’]s|the opponent['’]s)\s+Pok[eé]mon/i.test(String(a.text||''))&&
+       /(?:damage to|does \d+ damage|damage on|damage among)/i.test(String(a.text||''))&&
+       /(?:Benched|Bench)/i.test(String(a.text||'')))))return false;
      // Sky Field is not a generic filler Stadium: it earns its slot when the
      // deck can exploit more than three Bench spaces with Emerald Break.
      if(card?.id==='xy6-89'&&(!pokemon.some(p=>['xy6-76','xy6-105'].includes(p.id))||

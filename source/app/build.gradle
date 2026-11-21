@@ -8,8 +8,8 @@ android {
         applicationId 'com.example.luckydex'
         minSdk 26
         targetSdk 35
-        versionCode 7358
-        versionName '0.69.358'
+        versionCode 7359
+        versionName '0.69.359'
     }
 
     signingConfigs {
@@ -786,4 +786,18 @@ tasks.named('auditV07329AllClassicAttackEnergyForApk').configure {
 }
 tasks.matching { it.name == 'preBuild' || (it.name.startsWith('merge') && it.name.endsWith('Assets')) }.configureEach {
     dependsOn tasks.named('auditXY6Stage6ForApk')
+}
+
+// v0.69.359: Roaring Skies Stage 7 interaction audit and the Stage 6
+// Wally Pokémon-EX restriction fix. Run after the previous XY6 stages.
+tasks.register('auditXY6Stage7ForApk', Exec) {
+    dependsOn tasks.named('auditXY6Stage6ForApk')
+    workingDir rootProject.projectDir
+    commandLine 'node', '--test', 'tests/v07359-roaring-skies-stage7.test.cjs'
+}
+tasks.named('auditV07329AllClassicAttackEnergyForApk').configure {
+    dependsOn tasks.named('auditXY6Stage7ForApk')
+}
+tasks.matching { it.name == 'preBuild' || (it.name.startsWith('merge') && it.name.endsWith('Assets')) }.configureEach {
+    dependsOn tasks.named('auditXY6Stage7ForApk')
 }

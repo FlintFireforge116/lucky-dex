@@ -3394,3 +3394,15 @@ git add source
 git commit -m "LuckyDex v0.69.358 Roaring Skies Stage 6 interactions"
 git push origin main
 ```
+
+========================================================================
+LUCKYDEX v0.69.359 — ROARING SKIES STAGE 7 AND STAGE 6 CI REPAIR
+========================================================================
+- Stage 6 v0.69.358 CI #647 failed at the Wally EX regression: source-card EX status was checked only via structured metadata. Wally now refuses to evolve a Pokémon-EX even if a fixture/card is missing the `pokemonEX` flag, by consulting the EX name/tag too. Official EX print handling remains unchanged.
+- Roaring Skies Electrode #22 Energy Bomb: optional redistribution of ALL physically attached Basic/Special Energy, one actual unit/card at a time to a chosen compatible Benched Pokémon. Do not give Dragon-restricted Special Energy an invalid recipient or pull replacement Energy from the Zone.
+- Roaring Skies Absol #40 Cursed Eyes: optional on-play-from-hand Bench Ability that transfers exactly THREE existing damage counters from one opposing Pokémon to a different opposing Pokémon, with explicit source/recipient choices. No other enter-play source triggers it.
+- Roaring Skies Wide Lens #95: opposing-Bench ATTACK damage applies printed Weakness and Resistance. Never affect damage-counter placement, own Bench, or a Pokémon not holding Wide Lens. Respect Weakness Policy and other no-Weakness guards. Auto deckbuilding needs a genuine Bench-damaging attack in its constructed 30-card deck before suggesting the Tool, unless manually retained.
+- Keep Banette Tool Concealment and Togekiss Serene Grace gated until their global effects and physical Basic Energy interactions are implemented and covered by tests. No placeholder abilities.
+- Regression: tests/v07359-roaring-skies-stage7.test.cjs, auditXY6Stage7ForApk depends on Stage 6; locally 80 passed, 0 failed, 3 skips in a focused cross-era selection. Stage 7 APK still requires GitHub validation.
+- Termux: unzip -o /sdcard/Download/LuckyDex_patch_v0.69.359_ROARING_SKIES_STAGE7.zip -d source ; git add source ; git commit -m "LuckyDex v0.69.359 Roaring Skies Stage 7 and Wally CI fix" ; git push origin main
+========================================================================

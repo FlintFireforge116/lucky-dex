@@ -31,6 +31,7 @@ ATTACKS={
  ('20','Tail Whip'):Q(E('lock',action='attack',target='opponentActive',duration='opponentTurn')),
  ('21','Thunder Wave'):Q(ST('paralysis')),('21','Big Explosion'):E('selfDamage',amount=60),
  ('22','Continuous Tumble'):COIN('untilTails',20),
+ ('22','Energy Bomb'):OPT('Move all Energy attached to Electrode to your Benched Pokémon',E('distributeEnergy',source='self',target='selfBench',amount='all',includeSpecialEnergy=True)),
  ('25','Random Spark'):E('selectedDamage',target='opponentPokemon',amount=30),
  ('26','Headlock'):Q(BONUS(30),ST('paralysis')),
  ('26','Voltage Rush'):E('selfDamage',amount=50),
@@ -136,6 +137,7 @@ TRAINERS={
  '93':('Item',E('neoRule',rule='xy2:ultraBall')),
  '96':('Supporter',SEARCH(3,kind='pokemon',subtype='Colorless')),
  '108':('Supporter',SEARCH(3,kind='pokemon',subtype='Colorless')),
+ '95':('Tool',N), # Wide Lens: bench damage uses the universal attack-matchup adjustment.
  '109':('Item',E('neoRule',rule='xy2:energySwitch')),
  '110':('Item',SEARCH(1,source='discard',kind='trainer',trainerType='Supporter')),
  '94':('Supporter',E('chooseEvolutionFromDeck',excludeEx=True)),
@@ -152,6 +154,7 @@ ABILITIES={
  # fires on a deck/discard summon, and cannot exceed the Classic hand cap.
  'Set Up':{'type':'triggered','event':'benched','fromHandOnly':True,'effect':OPT('Draw until you have 6 cards',E('drawToHandSize',size=6))},
  'Max Wind':{'type':'triggered','event':'evolved','fromHandOnly':True,'effect':E('chooseTarget',target='selfPokemon',effect=H(999,'selfPokemon'),optional=True)},
+ 'Cursed Eyes':{'type':'triggered','event':'benched','fromHandOnly':True,'effect':OPT('Move 3 damage counters between opposing Pokémon',E('moveOpposingCounters',amount=30))},
  'Exoskeleton':{'type':'passive','effect':E('modifier',stat='damageReduction',amount=10,scope='self',duration='whileInPlay')},
  'Dragon Road':{'type':'passive','effect':E('modifier',stat='retreatCost',amount=-2,scope='team',duration='whileInPlay',filter={'subtype':'Dragon'},condition={'type':'stadiumInPlay'})},
  'Turboblaze':{'type':'activated','oncePerTurn':True,'activeOnly':True,'requiresBasicEnergyFromHand':'Fire','effect':E('chooseTarget',forceChoose=True,target='selfPokemon',filter={'subtype':'Dragon'},effect=E('attachEnergy',target='selfPokemon',amount=1,source='hand',energyType='Fire'))},
