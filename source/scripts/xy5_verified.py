@@ -109,6 +109,27 @@ for original,alternate in [('19','145'),('29','146'),('38','147'),('54','148'),(
  for (n,name),eff in list(ATTACKS.items()):
   if n==original:ATTACKS[(alternate,name)]=eff
 
+
+# Primal Clash Stage 6: complete previously gated printed attack text.
+ATTACKS.update({
+ ('28','Spreading Flames'):E('neoRule',rule='xy5:spreadingFlames'),
+ ('40','Amnesia'):E('chooseAttackLock',target='opponentActive',duration='opponentTurn'),
+ ('49','Shell Protection'):E('neoRule',rule='xy5:shellProtection'),
+ ('54','Giant Whirlpool'):E('neoRule',rule='xy5:giantWhirlpool'),
+ ('61','Electric Shock'):S(DISC('all','self','Lightning'),ST('paralysis')),
+ ('65','Electricannon'):E('neoRule',rule='xy5:electricannon'),
+ ('76','Rock Shower'):E('neoRule',rule='xy5:rockShower'),
+ ('88','Resistance Desert'):E('neoRule',rule='xy5:resistanceDesert'),
+ ('97','Dredge'):E('neoRule',rule='xy5:dredge'),
+ ('99','False Swipe'):Q(E('setRemainingHp',target='opponentActive',amount=10)),
+ ('107','Twister'):E('neoRule',rule='xy5:twister'),
+ ('108','Dragon Blast'):S(DISC(1,'self','Water'),DISC(1,'self','Lightning')),
+ ('101','Trick'):E('neoRule',rule='xy5:trick'),
+ ('114','Replace'):E('neoRule',rule='xy5:replace'),
+})
+# Secret/alternate prints share printed rules with the standard print.
+ATTACKS[('148','Giant Whirlpool')]=ATTACKS[('54','Giant Whirlpool')]
+
 # Stage 1 enables only a proven subset of Trainer effects; complex exact
 # choice, event, Stadium, Spirit Link, and Special Energy rules remain gated.
 TRAINERS={

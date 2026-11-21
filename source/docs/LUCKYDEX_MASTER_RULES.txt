@@ -3152,3 +3152,13 @@ git push origin main
 - Ω Barrier Ancient Trait cards remain gated until all bespoke old-era Trainer effects are verified, including effects applying outside generic protection hooks. DO NOT re-enable them just because a subset passes.
 - Auto deck builder must not choose last-card-in-hand Aces without matching Pokémon and actual discard setup. Conditional Teammates is not generic filler.
 - Permanent new test: tests/v07347-primal-clash-trainers-attacks.test.cjs. Updated version 0.69.347; CI checks all earlier XY sets before APK asset merge. Build remains unconfirmed until GitHub Actions succeeds.
+
+[2026-11-21 v0.69.348 XY5 Primal Clash Stage 6 | PHYSICAL ATTACK MOVES + GUARD SCOPE]
+- Fully model the next set's mandatory and optional attack rules with actual targets and choice order. Moves from the discard must use physical discard refs or separate typed Basic Energy Zone discard; searches for Basic Energy in the deck use the Energy Zone, never a fabricated deck card.
+- Correct printed EX-only prevention requires checking pokemonEX OR pokemonEx (and isEx), and blocking opponent attack effects only when the attack source is actually an EX. Generic non-EX attacks must still apply effects.
+- Return-to-hand effects preserve the 8-card LuckyDex cap while keeping returned cards; overflow older cards return to the physical deck. Do not copy or synthesize physical Special Energy/Tools.
+- Prior to attack damage, choose optional Energy costs and roll damage-changing coins; resolve forced discard/attachment and related target choices before KO/Prize or turn advancement.
+- Stage 6 effect suite: Spreading Flames, Amnesia, Shell Protection, Giant Whirlpool, Electric Shock, Electricannon, Rock Shower, Resistance Desert, Dredge, False Swipe, Trick, Twister, Dragon Blast, Replace. Secret Kyogre shares its printed effect.
+- Ω Barrier is still gated until legacy custom Trainer handlers are fully inspected, even though generic Trainer effect protection is present. Do not release incomplete prints or include them in CPU decks. Other uncommon gated attacks, Exp Share and unusual KO/evolution effects remain for the final Stage 7 audit.
+- Permanent regression test tests/v07348-primal-clash-attack-completion.test.cjs runs in the GitHub XY5 audit before APK asset merge. Target catalogue now 152 battle-ready /164, with 12 explicitly gated; await confirmed GitHub build.
+- Standard Termux ZIP installation continues: cd ~/lucky-dex ; unzip -o /sdcard/Download/<patch>.zip -d source ; git add source ; git commit -m "description" ; git push origin main.
