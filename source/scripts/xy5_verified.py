@@ -16,6 +16,7 @@ ATTACKS={
  ('12','Solar Ray'):H(20,'selfAll'),
  ('14','Spiral Gyration'):S(ST('confusion'),SWITCH()),('14','Air Slash'):DISC(),
  ('15','Spore'):ST('sleep'),('16','Dynamic Punch'):Q(S(BONUS(20),ST('confusion'))),
+ ('18','Helping Hand'):E('neoRule',rule='xy5:helpingHand'),
  ('17','Acrobatics'):COIN(2,20,False),('17','Pester'):BONUS(30,{'type':'opponentStatus'}),
  ('19','Dark Forest'):LOCK(),('19','Wood Blast'):E('energyDamage',source='self',energyType='Grass',amount=20,mode='add'),
  ('20','Roar'):E('forceOpponentSwitch',chooseBy='defender'),('21','Flickering Flames'):ST('sleep'),
@@ -23,18 +24,21 @@ ATTACKS={
  ('23','Flame Burst'):E('multiTargetDamage',target='opponentBench',count=2,amount=20,upTo=True),('23','Flamethrower'):DISC(),
  ('24','Indomitable Blaze'):BONUS(60,{'type':'opponentEx'}),
  ('25','Ember'):Q(t=DISC(1,typ='Fire')),
+ ('26','Flare Bonus'):E('neoRule',rule='xy5:flareBonus'),
  ('27','Quick Attack'):Q(BONUS(20)),('28','Heat Blow'):DISC(),('29','Tumbling Attack'):Q(BONUS(30)),
  ('30','Bubble'):Q(ST('paralysis')),
  ('31','Knockout Needle'):E('allHeadsEffect',coins=2,heads=BONUS(40)),
  ('32','Lunge'):E('coinAttackGate',heads=N),('34','Endeavor'):COIN(2,20,False),
  ('35','Water Arrow'):E('selectedDamage',target='opponentPokemon',amount=60),
  ('36','Hydro Pump'):E('energyDamage',source='self',energyType='Water',amount=30,mode='add'),
+ ('37','Astonish'):E('shuffleRandomHandCard',side='opponent'),
  ('37','Splash Dance'):E('nextAttackBonus',attackName='Splash Dance',amount=60),
  ('38','High Breaching'):ST('sleep','self'),
  ('40','Rising Lunge'):Q(BONUS(30)),
  ('41','Earthquake'):BENCH(20,'self'),
  ('42','Knock Off'):E('discardHand',side='opponent',amount=1),
  ('43','Float On'):Q(t=E('selfDamage',amount=10)),
+ ('44','Aqua Swirl'):OPT('Have your opponent choose a Benched Pokémon to switch in',E('forceOpponentSwitch',chooseBy='defender')),
  ('45','Ball Roll'):COIN('untilTails',30),
  ('47','Freezing Headbutt'):Q(ST('paralysis')),
  ('48','Knock Over'):OPT('Discard the Stadium in play',E('discardStadium')),
@@ -51,34 +55,39 @@ ATTACKS={
  ('56','Deep Sea Swirl'):E('handShuffle',draw=6),('56','Life Saver'):SEARCH(2,source='discard',kind='pokemon',subtype='Water'),
  ('58','Dive'):Q(E('preventDamage',target='self',duration='opponentTurn',preventEffects=True)),
  ('58','Take Down'):E('selfDamage',amount=20),
+ ('59','Charge'):E('neoRule',rule='xy5:charge'),
  ('60','Thunder Fang'):Q(ST('paralysis')),
  ('61','Lightning Turn'):SWITCH(),
  ('62','Water Splash'):Q(BONUS(10)),('63','Buzz Flip'):COIN(4,30),
  ('64','Thrash'):Q(BONUS(20),E('selfDamage',amount=20)),
+ ('68','Poison Fang'):E('status',target='opponentActive',status='poison',amount=20),
  ('68','Double Kick'):COIN(2,40),('69','Poison Jab'):ST('poison'),('69','Dynamite Punch'):E('selfDamage',amount=20),
  ('70','Lost in the Waves'):E('returnToHand',target='self',returnBasicEnergy=True),
+ ('80','Pure Power'):E('neoRule',rule='xy5:purePower'),
  ('81','Yoga Kick'):E('damageRule',ignoreWeakness=True,ignoreResistance=True),
  ('72','Dancing Tentacles'):S(ST('confusion'),ST('poison')),
  ('72','Stick and Absorb'):S(H(30),LOCK()),
+ ('73','Synchro Star'):E('neoRule',rule='xy5:synchroStar'),
  ('74','Take Down'):E('selfDamage',amount=10),('75','Take Down'):E('selfDamage',amount=10),
  ('76','Stone Edge'):Q(BONUS(40)),('77','Hammer Arm'):E('discardTop',side='opponent',amount=1),
  ('78','Stiffen'):GUARD(40),('83','Solar Generator'):SEARCH(2,kind='energy',specialEnergy=True),('84','Rock Smash'):Q(BONUS(20)),('84','Break Ground'):BENCH(10,'self'),
  ('85','Rip Claw'):Q(DISC(1,'opponentActive')),
- ('88','Double-Edge'):E('selfDamage',amount=20),('89','Fury Swipes'):COIN(3,10),
+ ('88','Double-Edge'):E('selfDamage',amount=20),('90','Ear Dig'):E('neoRule',rule='xy5:earDig'),('89','Fury Swipes'):COIN(3,10),
  ('91','Jagged Fang'):S(DISC(),DISC(1,'opponentActive')),
  ('93','Steel Headbutt'):Q(BONUS(30)),('93','Raging Hammer'):E('damageFromDamage',source='self',amount=1),
- ('95','Triple Smash'):COIN(3,30),('95','Reinforced Nose'):BONUS(50,{'type':'selfHasTool'}),
+ ('95','Triple Smash'):COIN(3,30),('96','Straight Claw'):E('neoRule',rule='xy5:straightClaw'),('95','Reinforced Nose'):BONUS(50,{'type':'selfHasTool'}),
  ('96','Drill Run'):Q(DISC(1,'opponentActive')),
  ('100','Protect Charge'):GUARD(20),('101','Lock Up'):LOCK(),
  ('103','Bubble Beam'):Q(ST('paralysis')),
  ('103','Superpower'):OPT('Do 30 more damage and 30 self-damage',S(BONUS(30),E('selfDamage',amount=30))),
+ ('116','Lead'):SEARCH(1,kind='trainer',trainerType='Supporter'),
  ('104','Dwindling Wave'):E('selfDamagePenalty',amount=1),
  ('104','Tail Rap'):COIN(2,30),
  ('105','Life Leap'):E('drain'),
  ('105','Shining Wind'):E('weaknessGuard',duration='opponentTurn'),
  ('106','Brilliant Arrow'):E('neoRule',rule='xy5:brilliantArrow'),
  ('94','Megaton Slam'):E('neoRule',rule='xy5:megatonSlam'),
- ('107','Shred'):E('damageRule',ignoreEffects=True),
+ ('107','Shred'):E('damageRule',ignoreEffects=True),('108','Gather Strength'):SEARCH(4,kind='energy',basicEnergy=True),
  ('109','Sand Attack'):E('attackCoinGate',target='opponentActive',duration='opponentTurn'),
  ('110','Sand Tomb'):LOCK(),
  ('111','Sand Attack'):E('attackCoinGate',target='opponentActive',duration='opponentTurn'),
@@ -150,6 +159,15 @@ TRAINERS['140']=('Stadium',E('noop'))
 TRAINERS['142']=('Tool',E('noop'))
 TRAINERS['164']=TRAINERS['142']
 TRAINERS['159']=TRAINERS['134'];TRAINERS['161']=TRAINERS['125']
+# The "last card in hand" Ace in the Hole Supporters and Teammates have
+# legality gates in Classic core. Choices preserve real discard/deck refs.
+for n in ('124','157'):
+ TRAINERS[n]=('Supporter',E('neoRule',rule='xy5:aceInHole',energyType='Water'))
+for n in ('133','158'):
+ TRAINERS[n]=('Supporter',E('neoRule',rule='xy5:aceInHole',energyType='Fighting'))
+for n in ('141','160'):
+ TRAINERS[n]=('Supporter',E('neoRule',rule='xy5:teammates'))
+
 # Existing combat engine supports Item/Supporter, but not an Ancient Trait
 # action queue or the three new Primal Spirit Links. Explicitly exclude them.
 GATE={}

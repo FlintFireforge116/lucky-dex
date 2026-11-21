@@ -13975,6 +13975,88 @@
     const ask=(step,options,rest={})=>ctx.requestChoice?.({kind:'option',side:'self',options,
       effect:{...e,step,...rest}});
     const mine=()=>pokemonOn(ss),enemy=()=>other(ctx),sourceReady=()=>mine().includes(source)&&!abilitiesSuppressed(ctx.state,ctx.side,source,ctx.cardById);
+    if(k==='aceInHole'){
+      // The core legality gate requires this to be the last card in hand.
+      const list=()=>ss.discard.filter(ref=>{
+        const c=card(ref);return c?.kind==='pokemon'&&c?.types?.includes(e.energyType)&&c.battleEnabled;
+      });
+      const drawFive=()=>{for(let i=0;i<5;i++)ctx.drawCard?.(ss);};
+      if(ctx.resolvingChoice){const uid=e.uids?.[Number(action.choiceOption)],idx=ss.discard.findIndex(ref=>ref.uid===uid);
+        if(idx<0||ss.bench.length>=Number(ss.benchLimit||3)||!list().some(ref=>ref.uid===uid))return;
+        const [ref]=ss.discard.splice(idx,1);if(ctx.benchCard(ss,ref)==null){ss.discard.splice(idx,0,ref);return;}
+        drawFive();ctx.state.log.push({type:'xy5AceInHole',side:ctx.side,uid,cardId:ref.cardId,kind:e.energyType});return;}
+      if(ss.hand.length!==0||ss.bench.length>=Number(ss.benchLimit||3))return;
+      const candidates=list();if(candidates.length)ask('bench',candidates.map(ref=>'Bench '+label(ref)+' from discard; then draw 5'),{uids:candidates.map(r=>r.uid)});return;
+    }
+    if(k==='teammates'){
+      // lastKnockoutTurn is recorded on the *owner* of the Pokémon that
+      // fell, including non-attack KOs, so it covers the printed condition.
+      if(Number(ss.lastKnockoutTurn||-99)!==Number(ctx.state.turnNumber)-1)return;
+      const select=()=>ss.deck.filter(ref=>!e.selectedUids?.includes(ref.uid));
+      if(ctx.resolvingChoice){const opts=select(),uid=e.uids?.[Number(action.choiceOption)];
+        if(uid){const idx=ss.deck.findIndex(ref=>ref.uid===uid);if(idx<0||ss.hand.length>=Number(ss.handLimit||8))return;
+          ss.hand.push(...ss.deck.splice(idx,1));ctx.state.log.push({type:'xy5Teammates',side:ctx.side,uid});}
+        const remaining=Number(e.remaining??2)-1;
+        if(uid&&remaining>0&&ss.deck.length&&ss.hand.length<Number(ss.handLimit||8)){
+          const rest=ss.deck.slice();ask('take',rest.map(ref=>'Take '+label(ref)).concat(['Done searching']),{uids:rest.map(ref=>ref.uid),remaining});return;
+        }
+        ctx.shuffle?.(ctx.state,ss.deck);return;
+      }
+      const opts=ss.deck.slice();if(opts.length&&ss.hand.length<Number(ss.handLimit||8))ask('take',opts.map(ref=>'Take '+label(ref)).concat(['Done searching']),{uids:opts.map(ref=>ref.uid),remaining:2});
+      else ctx.shuffle?.(ctx.state,ss.deck);return;
+    }
+    if(k==='helpingHand'||k==='charge'){
+      // Fresh Basic Energy searches use the Classic Energy Zone (not a
+      // fictional physical Energy in the 30-card deck).
+      const types=()=>Array.isArray(ss.energySupply)?[...new Set(ss.energySupply.filter(t=>neoBasicIds[t]))]:[];
+      const targets=()=>k==='charge'?[source].filter(Boolean):ss.bench.filter(Boolean);
+      if(k==='charge'&&(!source||!types().includes('Lightning')))return;
+      if(k==='helpingHand'&&(!targets().length||!types().length))return;
+      if(e.step==='attach'&&ctx.resolvingChoice){const target=targets().find(p=>p.uid===e.targetUid),type=e.types?.[Number(action.choiceOption)];
+        if(!target||!type||!types().includes(type)||(k==='charge'&&type!=='Lightning'))return;
+        if(neoSupplyAttach(ctx,ss,target,type,1))ctx.state.log.push({type:'xy5EnergySearchAttach',side:ctx.side,rule:k,targetUid:target.uid,energyType:type});return;}
+      if(e.step==='target'&&ctx.resolvingChoice){const target=targets().find(p=>p.uid===e.targetUids?.[Number(action.choiceOption)]);
+        if(!target)return;const ts=types();if(ts.length)ask('attach',ts.map(t=>'Attach '+t+' from Energy Zone to '+(card(target)?.name||target.cardId)),{targetUid:target.uid,types:ts});return;}
+      if(k==='charge'){if(neoSupplyAttach(ctx,ss,source,'Lightning',1))ctx.state.log.push({type:'xy5EnergySearchAttach',side:ctx.side,rule:k,targetUid:source.uid,energyType:'Lightning'});return;}
+      if(targets().length)ask('target',targets().map(p=>'Attach Basic Energy to '+(ctx.cardById(p.cardId)?.name||p.cardId)),{targetUids:targets().map(p=>p.uid)});return;
+    }
+    if(k==='flareBonus'){
+      const fire=()=>ss.hand.filter(ref=>{const c=card(ref);return c?.basicEnergy&&(c.energyType||c.subtype)==='Fire'||c?.specialEnergy&&Number(c.effect?.provides?.Fire||0)>0;});
+      if(ctx.resolvingChoice){const uid=e.uids?.[Number(action.choiceOption)],i=ss.hand.findIndex(ref=>ref.uid===uid);
+        if(i<0||!fire().some(ref=>ref.uid===uid))return;ss.discard.push(...ss.hand.splice(i,1));
+        ctx.drawCard?.(ss);ctx.drawCard?.(ss);ctx.state.log.push({type:'xy5FlareBonus',side:ctx.side,discardedUid:uid});return;}
+      const opts=fire();if(opts.length)ask('discard',opts.map(ref=>'Discard '+label(ref)+' to draw 2').concat(['Do not discard']),{uids:opts.map(ref=>ref.uid)});return;
+    }
+    if(k==='earDig'){
+      let heads=0;const results=[];
+      for(let i=0;i<50;i++){const h=coin(ctx);results.push(h);if(!h)break;
+        if(enemy().deck.length){enemy().discard.push(enemy().deck.shift());heads++;}}
+      ctx.state.log.push({type:'coin',side:ctx.side,reason:'Ear Dig',results,heads:results.filter(Boolean).length});
+      ctx.state.log.push({type:'xy5EarDig',side:ctx.side,discarded:heads});return;
+    }
+    if(k==='purePower'){
+      // Four *individual* damage counters, each placed by the attacker.
+      // Effects protection (e.g. Wonder Energy) applies; Weakness doesn't.
+      const units=()=>pokemonOn(enemy()).filter(p=>!protectedFromEffects(p,ctx));
+      if(ctx.resolvingChoice){const uid=e.uids?.[Number(action.choiceOption)],target=units().find(p=>p.uid===uid);
+        if(!target)return;target.damage=Number(target.damage||0)+10;
+        ctx.state.log.push({type:'xy5PurePower',side:ctx.side,targetUid:uid,amount:10});
+        const remaining=Number(e.remaining||4)-1;
+        if(remaining>0&&units().length){const opts=units();ask('counter',opts.map(p=>'Put 1 damage counter on '+(ctx.cardById(p.cardId)?.name||p.cardId)+' ['+p.uid+']'),{uids:opts.map(p=>p.uid),remaining});}return;}
+      const opts=units();if(opts.length)ask('counter',opts.map(p=>'Put 1 damage counter on '+(ctx.cardById(p.cardId)?.name||p.cardId)+' ['+p.uid+']'),{uids:opts.map(p=>p.uid),remaining:4});return;
+    }
+    if(k==='straightClaw'){
+      // Optional discard is selected BEFORE attack damage is computed;
+      // this phase executes only after the damage has resolved.
+      const selection=String(e.energyChoice||''),refId=selection.startsWith('special:')?selection.slice(8):null;
+      if(refId){const i=(source?.specialEnergy||[]).findIndex(ref=>ref.uid===refId);
+        if(i<0)return;ss.discard.push(...source.specialEnergy.splice(i,1));}
+      else if(selection.startsWith('basic:')){
+        const type=selection.slice(6);if(!Number(source?.energy?.[type]||0))return;
+        source.energy[type]--;recordDiscardedEnergy(ss,type,1);
+      }else return;
+      ctx.state.log.push({type:'xy5StraightClaw',side:ctx.side,energyChoice:selection});return;
+    }
     if(k==='derail'){
       // Printed attack always deals its regular damage; only the discard
       // can be prevented by Wonder Energy or an earlier attack effect.
@@ -18666,7 +18748,20 @@
           pending.push(e);
           return;
         }
-        if(key==='derail'||key==='rototiller'){pending.push(e);return;}
+        if(key==='synchroStar'){
+          // Equal number of attached Energy cards, including one DCE card as ONE.
+          const count=p=>Object.values(p?.energy||{}).reduce((n,x)=>n+Number(x||0),0)+(p?.specialEnergy||[]).length;
+          if(ctx.attacker&&ctx.defender&&count(ctx.attacker)===count(ctx.defender))damage+=60;
+          return;
+        }
+        if(key==='straightClaw'){
+          const pick=String(ctx.action?.effectSelection||'');
+          const basic=pick.startsWith('basic:')&&Number(ctx.attacker?.energy?.[pick.slice(6)]||0)>0;
+          const special=pick.startsWith('special:')&&(ctx.attacker?.specialEnergy||[]).some(ref=>ref.uid===pick.slice(8));
+          if(basic||special){damage+=30;pending.push({...e,energyChoice:pick});}
+          return;
+        }
+        if(['derail','rototiller','helpingHand','charge','flareBonus','purePower','earDig'].includes(key)){pending.push(e);return;}
         throw new Error('XY5 unknown printed attack rule '+key);
       }
       // Furious Fists: printed attack damage is resolved BEFORE matchup or attack logs.
@@ -21604,6 +21699,12 @@
       if(k==='captivatingRhythm')return foe.active&&foe.bench.length?[{}]:[];
       if(k==='nurtureHeal')return ss.hand.some(ref=>{const c=ctx.cardById(ref.cardId);return c?.basicEnergy&&(c.energyType||c.subtype)==='Grass'||c?.specialEnergy&&Number(c.effect?.provides?.Grass||0)>0&& (c.id!=='xy3-103'||pokemonOn(ss).some(p=>ctx.cardById(p.cardId)?.types?.includes('Grass')));})?[{}]:[];
       if(k==='sandFlap')return ss.deck.length||ss.hand.length||foe.deck.length||foe.hand.length?[{}]:[];
+    }
+    if(effect?.type==='neoRule'&&effect.rule==='xy5:straightClaw'){
+      const a=ctx.attacker;
+      return [{effectSelection:'',choiceLabel:'20 damage — keep attached Energy'},
+        ...Object.entries(a?.energy||{}).filter(([,n])=>Number(n)>0).map(([type])=>({effectSelection:'basic:'+type,choiceLabel:'Discard '+type+' Basic Energy for +30 damage'})),
+        ...(a?.specialEnergy||[]).map(ref=>({effectSelection:'special:'+ref.uid,choiceLabel:'Discard '+(ctx.cardById(ref.cardId)?.name||ref.cardId)+' for +30 damage'}))];
     }
     if(effect?.type==='neoRule'&&effect.rule==='xy5:megatonSlam')return [
       {effectSelection:'',choiceLabel:'120 damage — do not flip'},

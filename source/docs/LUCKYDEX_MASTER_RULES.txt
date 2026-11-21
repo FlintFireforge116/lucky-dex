@@ -3142,3 +3142,13 @@ unzip -o /sdcard/Download/LuckyDex_patch_v0.69.346_PRIMAL_CLASH_ABILITIES.zip -d
 git add source
 git commit -m "LuckyDex v0.69.346 Primal Clash abilities and attacks"
 git push origin main
+
+[2026-11-21 v0.69.347 XY5 Primal Clash Stage 5 | CARD-MOVEMENT, CONDITIONAL SUPPORTERS]
+- Archie/Maxie are legal only as final card in hand. Choose a real matching-type Pokémon from your own physical discard, Bench it directly (including Stage 2), then draw five real draw-deck cards. Required actual free Bench slot. Manual hand choice, no imaginary discard card.
+- Teammates can be used only if one of YOUR Pokémon was knocked out during the opposing player's previous turn; choose up to two distinct actual cards from your deck, then shuffle; obey hand limit.
+- Helping Hand and Electrike's Charge search FRESH Basic Energy from Classic's ordered Energy Zone, never the physical discard and never the physical 30-card deck. Search may select a matching symbol from Zone; ordinary Energy attachment turn quota is unchanged.
+- Torchic Flare Bonus discards a physical Fire Energy card from hand, never the Energy Zone. Astonish returns one randomly chosen opponent-hand card to the draw deck.
+- Synchro Star compares PHYSICAL Energy CARD counts including Special Energy (DCE counts as ONE card). Poison Fang has 20 between-turn damage. Pure Power places four chosen damage counters individually, preserving damage-counter immunity.
+- Ω Barrier Ancient Trait cards remain gated until all bespoke old-era Trainer effects are verified, including effects applying outside generic protection hooks. DO NOT re-enable them just because a subset passes.
+- Auto deck builder must not choose last-card-in-hand Aces without matching Pokémon and actual discard setup. Conditional Teammates is not generic filler.
+- Permanent new test: tests/v07347-primal-clash-trainers-attacks.test.cjs. Updated version 0.69.347; CI checks all earlier XY sets before APK asset merge. Build remains unconfirmed until GitHub Actions succeeds.

@@ -712,6 +712,21 @@ function buildDeck(rows,options={}){
      // Primal Clash's new Trainers must match the *constructed* 30-card
      // deck, not the full collection. Basic Energy in the automatic Zone is
      // not a printed hand card, so it cannot pay Scorched Earth's discard.
+     // Archie/Maxie only work as the final hand card AND require a matching
+     // real Pokémon in the discard. Do not auto-insert them as generic
+     // Supporter filler into an unrelated 30-card deck. Manual picks remain.
+     if(['xy5-124','xy5-157','xy5-133','xy5-158'].includes(card?.id)){
+       const targetType=['xy5-124','xy5-157'].includes(card.id)?'Water':'Fighting';
+       if(pokemon.filter(p=>(p.types||[]).includes(targetType)).length<3)return false;
+       if(!cards.some(id=>{
+         const c=classic.cardById(id),name=c?.name||'';
+         return /^(Battle Compressor|Ultra Ball|Professor Sycamore|Professor Juniper|Computer Search|Acro Bike)$/.test(name)||
+           (c?.deckMeta?.roles||[]).includes('discard');
+       }))return false;
+     }
+     // Teammates is a conditional comeback Supporter; avoid crowding the
+     // scarce Trainer slots with copies in ultra-short Pokémon builds.
+     if(['xy5-141','xy5-160'].includes(card?.id)&&pokemon.length<7)return false;
      if(card?.id==='xy5-137'&&!pokemon.some(p=>(p.types||[]).some(t=>t==='Water'||t==='Lightning')))return false;
      if(card?.id==='xy5-138'&&!cards.some(id=>{const c=classic.cardById(id);return c?.basicEnergy&&['Fire','Fighting'].includes(c.energyType||c.subtype);} ))return false;
      if(card?.id==='xy5-139'&&!pokemon.some(p=>p.stage!=='Basic'&&pokemon.some(b=>

@@ -1334,6 +1334,15 @@
       // Dark Explorers mandatory Item costs and targets: do not consume an
       // Item when its printed effect cannot legally resolve.
       if(state.format==='classic'&&card.id==='bw5-102'&&s.hand.length<3)return; // Ultra Ball needs TWO other cards to discard.
+      // Primal Clash: last-card-in-hand Ace in the Hole Supporters only work
+      // with an eligible discard Pokémon and an empty Bench slot. Teammates
+      // requires a real KO during the opponent's previous turn.
+      if(state.format==='classic'&&['xy5-124','xy5-133','xy5-157','xy5-158'].includes(card.id)){
+        const type=['xy5-124','xy5-157'].includes(card.id)?'Water':'Fighting';
+        if(s.hand.length!==1||s.bench.length>=maxBenchSize(s)||!s.discard.some(ref=>{const mon=data.cardById(ref.cardId);return mon?.kind==='pokemon'&&mon?.battleEnabled&&mon?.types?.includes(type);}))return;
+      }
+      if(state.format==='classic'&&['xy5-141','xy5-160'].includes(card.id)&&
+        (Number(s.lastKnockoutTurn||-99)!==Number(state.turnNumber)-1||!s.deck.length))return;
       // Flashfire mandatory costs. Do not offer a Trainer whose exact printed
       // cost cannot be paid. Real Energy-zone discard entries are allowed only
       // for cards that explicitly recover Energy from discard, never from hand.
