@@ -101,6 +101,10 @@ for original,alternative in [('7','84'),('8','85'),('25','86'),('27','87'),('28'
 # stay visible but gated. Spirit Links are paired to matching Mega IDs in core.
 TRAINERS={
  '70':('Tool',N),  # Ampharos Spirit Link
+ '73':('Stadium',N),  # Faded Town: between-turn damage in shared core
+ '74':('Stadium',N),  # Forest of Giant Plants: evolution timing in shared core
+ '75':('Supporter',E('xy7HexManiac')),
+ '75a':('Supporter',E('xy7HexManiac')),
  '78':('Supporter',E('forceOpponentSwitch',chooseBy='attacker')),
  '79':('Item',S(E('discardStadium'),DRAW(1))),
  '80':('Tool',N),  # Sceptile Spirit Link

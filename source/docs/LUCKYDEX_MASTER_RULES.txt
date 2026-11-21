@@ -3584,3 +3584,42 @@ LUCKYDEX v0.69.365 — XY ANCIENT ORIGINS STAGE 3 (ABILITIES)
     git commit -m "LuckyDex v0.69.365 Ancient Origins Stage 3 abilities"
     git push origin main
 ========================================================================
+
+========================================================================
+LUCKYDEX v0.69.366 — XY ANCIENT ORIGINS STAGE 4 (STADIUMS / ENERGY)
+========================================================================
+[CURRENT] v0.69.366 implements six physical XY7 prints across five
+mechanics; the GitHub APK build of this patch is not yet verified.
+- Faded Town #73: between-turn damage is two counters on EACH Mega
+  Evolution Pokémon of either player, including Benched Pokémon.
+  Counters are not damage from an attack; replacement ends the effect.
+- Forest of Giant Plants #74: Grass Pokémon (determined from effective
+  type) may evolve on the first turn and the turn they entered play.
+  It does not globally remove evolution requirements or non-Grass timing.
+- Hex Maniac #75/#75a: one Supporter blocks ALL Pokémon Abilities
+  through the opponent's following turn, including subsequently played
+  Pokémon and abilities used from the discard pile. The block ends on
+  the original player's next turn. Ancient Traits are not Abilities.
+- Dangerous Energy #82: only Darkness hosts; physical Special Energy
+  provides one Darkness unit and places two counters on opposing
+  attacking EX when its Darkness Active host takes attack damage, even
+  if knocked out. Counter placement is not attacking damage.
+- Flash Energy #83: only Lightning hosts; physical Special Energy
+  provides one Lightning unit and removes Weakness during damage
+  calculations, including Bench Weakness where Wide Lens applies.
+- Moving #82/#83 to an invalid host causes a real discard; preserving
+  ownership/identity is mandatory. No Energy Zone substitution is made
+  for these two physical Special Energy cards.
+- Autobuilder: avoid #82/#83 in incompatible typing strategies; avoid
+  Faded Town in Mega-dependent plans and require Grass evolution
+  synergy for Forest. Keep players' manually constructed decks intact.
+- Eight new direct battle tests passed locally; the focused older-set
+  and deck/energy suites also passed. Catalogue-generated/Android tests
+  still require GitHub APK CI. The 101-print XY7 set is not yet complete.
+- Termux:
+    cd ~/lucky-dex
+    unzip -o /sdcard/Download/LuckyDex_patch_v0.69.366_ANCIENT_ORIGINS_STAGE4.zip -d source
+    git add source
+    git commit -m "LuckyDex v0.69.366 Ancient Origins Stage 4 rules"
+    git push origin main
+========================================================================

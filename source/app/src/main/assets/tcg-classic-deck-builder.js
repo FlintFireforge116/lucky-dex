@@ -755,6 +755,11 @@ function buildDeck(rows,options={}){
      if(card?.id==='xy5-139'&&!pokemon.some(p=>p.stage!=='Basic'&&pokemon.some(b=>
        classicCardName(b.name)===classicCardName(p.evolvesFrom||'')&&b.id!==p.id)))return false;
      if(card?.id==='xy5-140'&&pokemon.some(p=>p.stage==='Basic'&&(p.abilities||[]).length))return false;
+     // Ancient Origins Stadiums and Ability lock need a coherent deck plan.
+     if(card?.id==='xy7-74'&&!pokemon.some(p=>(p.types||[]).includes('Grass')&&p.stage!=='Basic'&&
+       pokemon.some(b=>(b.types||[]).includes('Grass')&&classicCardName(b.name)===classicCardName(p.evolvesFrom||''))))return false;
+     if(card?.id==='xy7-73'&&pokemon.some(p=>p.megaEvolution))return false;
+     if(['xy7-75','xy7-75a'].includes(card?.id)&&pokemon.filter(p=>(p.abilities||[]).length).length>3)return false;
      if(card?.id==='xy5-136'&&!pokemon.some(p=>pokemon.filter(other=>classicCardName(other.name)===classicCardName(p.name)).length>1))return false;
 
      // Evolution accelerators without Stage 2 targets are dead cards.
@@ -1368,6 +1373,8 @@ function buildDeck(rows,options={}){
    if(name==='Metal Energy')return pokemon.some(p=>(p.types||[]).includes('Metal'));
    if(name==='Shield Energy')return pokemon.some(p=>(p.types||[]).includes('Metal'));
    if(name==='Wonder Energy')return pokemon.some(p=>(p.types||[]).includes('Fairy'));
+   if(name==='Dangerous Energy')return pokemon.some(p=>(p.types||[]).includes('Darkness'));
+   if(name==='Flash Energy')return pokemon.some(p=>(p.types||[]).includes('Lightning'));
    if(name==='Dark Metal Energy')return pokemon.some(p=>
      (p.types||[]).some(t=>t==='Darkness'||t==='Metal')||
      (p.attacks||[]).some(a=>/[DM]/.test(String(a.cost||''))));

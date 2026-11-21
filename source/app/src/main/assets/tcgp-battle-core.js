@@ -370,7 +370,12 @@
         !effects.abilitiesSuppressed(state,side,slot,data.cardById); 
       const giovanniBonus=state.format==='classic'&&Number(s.gym2GiovanniEvolutionTurn)===Number(state.turnNumber)&&base?.name?.startsWith("Giovanni's")&&evo.name?.startsWith("Giovanni's");
       const timeSpace=state.format==='classic'&&state.stadium?.cardId==='pl1-104'&&!evo.isLevelX;
-      if(firstTurn&&!deltaEvolution&&!adaptive&&!timing?.firstTurn&&!giovanniBonus&&!timeSpace)return false;if(sameTurn&&!deltaEvolution&&!adaptive&&!timing?.sameTurn&&!giovanniBonus&&!timeSpace)return false;
+      // Forest of Giant Plants removes first-turn / played-this-turn limits
+      // only for Grass Pokemon already in play. It does not override other
+      // evolution locks, nor make a non-Grass Pokemon eligible.
+      const forestGrass=state.format==='classic'&&state.stadium?.cardId==='xy7-74'&&!evo.isLevelX&&
+        effects.effectiveTypes(state,side,slot,data.cardById).includes('Grass');
+      if(firstTurn&&!deltaEvolution&&!adaptive&&!timing?.firstTurn&&!giovanniBonus&&!timeSpace&&!forestGrass)return false;if(sameTurn&&!deltaEvolution&&!adaptive&&!timing?.sameTurn&&!giovanniBonus&&!timeSpace&&!forestGrass)return false;
       return true;
     };
     s.hand.forEach((ref,handIndex)=>{
@@ -1498,6 +1503,8 @@
        if(card.id==='xy5-143'&&!mon?.types?.includes('Metal'))return false;
        if(card.id==='xy5-144'&&!mon?.types?.includes('Fairy'))return false;
        if(card.id==='xy6-97'&&!mon?.types?.includes('Dragon'))return false;
+       if(card.id==='xy7-82'&&!effects.effectiveTypes(state,side,slot,data.cardById).includes('Darkness'))return false;
+       if(card.id==='xy7-83'&&!effects.effectiveTypes(state,side,slot,data.cardById).includes('Lightning'))return false;
        if(Number(slot?.ex5NoHandEnergyUntil||0)>=state.turnNumber||Number(slot?.xy4NoHandEnergyUntil||0)>=state.turnNumber)return false;
        if(slot===s.active&&Number(s.dp2EnergyHandLockUntil||0)>=state.turnNumber)return false;
        // Holon's Stage 1 Pokémon may be attached as Energy only when the
@@ -1756,7 +1763,8 @@
         for(const target of effectChoices(ability.effect,effectContext(state,side,{},source))){const a={...base};if(target.target)a.effectTarget=target.target;if(target.benchIndex!=null)a.effectBenchIndex=target.benchIndex;actions.push(a);}
       });
     }
-    if(state.format==='classic'&&!['player','opponent'].some(w=>pokemonOn(state.sides[w]).some(p=>p.cardId==='bw6-54'&&toolsOf(p).length&&
+    if(state.format==='classic'&&Number(state.xy7HexManiacUntil||0)<Number(state.turnNumber)&&
+       !['player','opponent'].some(w=>pokemonOn(state.sides[w]).some(p=>p.cardId==='bw6-54'&&toolsOf(p).length&&
        !p.abilitySuppressed))&&s.bench.length<Number(s.benchLimit||3)&&
        [ ...new Set([...Object.entries(s.energyDiscard||{}).filter(([,n])=>Number(n)>0).map(([t])=>t),
          ...s.discard.filter(ref=>data.cardById(ref.cardId)?.basicEnergy).map(ref=>data.cardById(ref.cardId).energyType)])].length>=3){
@@ -1769,7 +1777,7 @@
     // Restored Pokémon Prehistoric Call and Exeggcute Propagation are
     // activated from the discard zone. They must never be offered as
     // ordinary in-play board powers or silently mutate the energy ledger.
-    if(state.format==='classic'){
+    if(state.format==='classic'&&Number(state.xy7HexManiacUntil||0)<Number(state.turnNumber)){
       s.bw10DiscardAbilityUsed=s.bw10DiscardAbilityUsed||{};
       for(const ref of s.discard||[]){
         if(!['bw10-3','bw10-27','bw10-53','bw10-102'].includes(ref.cardId))continue;
@@ -1949,6 +1957,15 @@
     }
     if(state.format==='classic'&&state.stadium?.cardId==='dp7-96'&&state.stadium.dp7Ectoplasm){const who=state.stadium.ownerSide==='player'?'opponent':'player';
       for(const target of pokemonOn(state.sides[who])){target.damage=Number(target.damage||0)+10;state.log.push({type:'dp7EctoplasmDamage',side:who,targetUid:target.uid,amount:10});}}
+    if(state.format==='classic'&&state.stadium?.cardId==='xy7-73'){
+      // Faded Town places two damage counters BETWEEN turns, on every
+      // Mega Evolution (including the MEGA-subtype Primal Reversions).
+      for(const who of ['player','opponent'])for(const slot of pokemonOn(state.sides[who]))
+        if(data.cardById(slot.cardId)?.megaEvolution){
+          slot.damage=Number(slot.damage||0)+20;
+          state.log.push({type:'xy7FadedTown',side:who,targetUid:slot.uid,amount:20});
+        }
+    }
     if(state.format==='classic')sandstormToolLock(state);
     if(state.format==='classic'&&state.stadium?.cardId==='SNAPFOUNJA-081')for(const side of ['player','opponent']){const slot=state.sides[side].active;if(slot&&data.cardById(slot.cardId)?.name?.includes('Illumina')&&!effects.healingIsBlocked(state,slot,data.cardById)){const before=Number(slot.damage||0);slot.damage=Math.max(0,before-20);if(before!==slot.damage)state.log.push({type:'founjaTreeHeal',side,amount:before-slot.damage});}}
     effects.applyContinuousRules?.(state,data.cardById);
@@ -3782,6 +3799,16 @@ const target=slotForTarget(s,action.target,action.benchIndex);if(card.id==='pl2-
         state.log.push({type:'pl2Territoriality',side:foeSide,counters:2});
       }
       if(damage>0&&state.format==='classic'&&defender===foe.active&&activeToolsOf(state,defender).some(r=>r.cardId==='bw3-94')){s.active.damage=Number(s.active.damage||0)+20;state.log.push({type:'bw3RockyHelmet',side:foeSide,amount:20});}
+      // Dangerous Energy puts two DAMAGE COUNTERS on an attacking Pokemon-EX
+      // for each attached copy, even when the holder is knocked out. The
+      // defender must be a Darkness Pokemon in the Active position.
+      if(state.format==='classic'&&damage>0&&defender===foe.active&&s.active&&
+         data.cardById(s.active.cardId)?.pokemonEX&&
+         effects.effectiveTypes(state,foeSide,defender,data.cardById).includes('Darkness')){
+        const copies=(defender.specialEnergy||[]).filter(r=>r.cardId==='xy7-82').length;
+        if(copies){s.active.damage=Number(s.active.damage||0)+20*copies;
+          state.log.push({type:'xy7DangerousEnergy',side:foeSide,targetUid:s.active.uid,counters:2*copies});}
+      }
       if(damage>0){const eventData={attacker:s.active,damage,source:{side,attack:true,uid:s.active.uid,cardId:s.active.cardId}};triggerAbilities(state,'damagedByAttack',foeSide,defender,eventData);if(['dp3-73','dp3-101'].includes(defender.cardId))triggerAbilities(state,'damaged',foeSide,defender,eventData);triggerPersistent(state,'damagedByAttack',foeSide,defender,eventData);}
       if(state.format==='classic'&&data.cardById(s.active.cardId)?.ancientTrait?.name==='Ω Barrage'&&
          !state.xy5BarrageSecond&&!state.xy5BarragePending)

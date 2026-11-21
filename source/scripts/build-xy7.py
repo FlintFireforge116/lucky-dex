@@ -62,7 +62,7 @@ def generate(rows):
    else:pw.append({'name':title,'text':printed,'printedPowerType':'ability','disabledByStatus':False,**impl})
 
   if kind=='trainer' and n not in V.TRAINERS:issues.append('Unimplemented Trainer rules')
-  if kind=='energy':issues.append('Unaudited continuous Special Energy passive')
+  if kind=='energy' and n not in ('82','83'):issues.append('Unaudited continuous Special Energy passive')
   ok=not issues;ex='EX' in subtypes;mega='MEGA' in subtypes
   card={'id':'xy7-'+n,'setId':'xy7','number':n,'name':name,'source':'tcg','battleFormat':'classic','kind':kind,
    'rarity':rarity,'image':f'https://images.pokemontcg.io/xy7/{n}.png','imageLarge':f'https://images.pokemontcg.io/xy7/{n}_hires.png',
@@ -91,9 +91,9 @@ def generate(rows):
    card.update(trainerType=obj[0] if obj else next((s for s in subtypes if s in ('Item','Supporter','Stadium','Pokémon Tool')),'Item'),
     text='\n'.join(rules),effect=obj[1] if obj else {'type':'unsupported'},aceSpec=False,maxDeckCopies=4)
   elif kind=='energy':
-   # Dangerous Energy and Flash Energy are collected but not battle eligible
-   # before their global passives are implemented; ordinary typed supply
-   # would incorrectly bypass printed protection / retaliation rules.
+   # Dangerous Energy (Darkness) and Flash Energy (Lightning) are handled
+   # by engine-wide attachment, retaliation and weakness hooks. Physical
+   # Special Energy cards remain distinct from generated basic Zone units.
    t='Darkness' if n=='82' else 'Lightning'
    card.update(basicEnergy=False,specialEnergy=True,energyType=t,subtype=t,text='\n'.join(rules),
       effect={'type':'specialEnergy','provides':{t:1},'attachOnlyTypes':[t]})
