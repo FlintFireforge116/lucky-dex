@@ -1,8 +1,8 @@
 LUCKYDEX — MASTER PROJECT RULES AND DEVELOPMENT CONTRACT
 =========================================================
-Document version: 2.50
+Document version: 2.51
 Compiled: 21 November 2026
-Current inspected source: v0.69.333 Classic cross-era deckbuilder quality audit, based on v0.69.332 (GitHub Actions run #621 successful). v0.69.333 APK build has not been verified; patch extraction is source-relative.
+Current inspected source: v0.69.334 Furious Fists stage 1, based on v0.69.333 Classic deckbuilder quality audit (GitHub Actions run #622 succeeded). v0.69.334 APK build has NOT been verified; patch extraction is source-relative.
 Recommended repository location: ~/lucky-dex/source/docs/LUCKYDEX_MASTER_RULES.txt
 Project: LuckyDex — Android application/PWA, managed with Termux and GitHub
 
@@ -2869,3 +2869,32 @@ CLASSIC BATTLE v0.69.329 — GLOBAL PRINTED ATTACK ENERGY CONTRACT
     git push origin main
 
   After each patch, replace only the ZIP name and commit text; do not run prepare scripts by default. v0.69.332 build #621 succeeded on GitHub; a local test success for v0.69.333 does not establish GitHub APK success.
+
+
+=======================================================================
+2026-11-21 / v0.69.334 / XY FURIOUS FISTS — PINNED PRINT CATALOGUE, GUARDED BATTLE MECHANICS
+=======================================================================
+[LOCKED] XY3 PRINT IDENTITY AND RELEASE PROCESS
+  - Furious Fists is xy3, 113 numbered official prints PLUS 55a alternate Mega Lucario-EX = 114 distinct collector rows, 159 printed attacks and 14 printed Abilities. The audited source is immutable PokemonTCG/pokemon-tcg-data git blob 9996bfa724c3d7fc23c9fcc31341cd521311ecb1, not a hand-constructed approximated list. Source printer generator: scripts/build-xy3.py; official compact source generated at data/classic/xy3-print-compact.json; battle asset generated at app/src/main/assets/tcg-classic-furious-fists.js.
+  - New set must appear in player AND CPU set selectors, deck-builder allowed-set IDs, Classic card registry, owned-card projector and browser bootstrap before battle game code. Keep Mega Evolution prerequisites, EX two-Prize rules, exact printed energy costs, stage/evolution links and rarity/alternate print IDs.
+  - Full official-source generation MUST run on GitHub BEFORE any audit that assumes xy3 cards exist and BEFORE Android assets merge. Termux only unzips, stages, commits and pushes; there is no manual prepare script. A source-side empty placeholder MUST NOT reach the APK: source-dependent tests enforce 114/114 real generated collector cards. Master rule: only enabled cards may enter battle or player/CPU autobuilt decks.
+  - This release is an explicit INCREMENTAL integration, NOT a declaration that all 114 printed cards are battle-ready. For attacks, Trainer effects, Tools, Stage abilities, Fossil restorations and Special Energy whose exact printed behaviour is not proven, preserve accurate metadata and printed text BUT label the print PARTIAL and set battleEnabled=false and deckEligible=false. Never use a noop effect for a nontrivial attack to inflate readiness. `tests/v07334-furious-fists-stage1.test.cjs` includes hard source-independent checks and full catalogue checks when pinned source is generated.
+[CHECK] NEW MECHANICS TO IMPLEMENT IN A LATER FURIOUS FISTS PASS
+  - Fossil Researcher, Jaw Fossil and Sail Fossil interact with Restored Amaura/Tyrunt; normal stage chains/ordinary Basic bench rules cannot silently substitute for legal Restored placement. Tyrantrum and Aurorus deck dependencies must reflect the actual Fossil requirements.
+  - Herbal Energy must attach only to Grass Pokémon, provide exactly 1 Grass and heal 30 on attachment; Strong Energy must attach only to Fighting Pokémon, provide exactly 1 Fighting and add 20 damage by that holder. Both are disabled until the runtime attachment-type validator and triggered effects work (not generic Rainbow Energy).
+  - Focus Sash, Fighting Stadium, Training Center, Mountain Ring and Sparkling Robe each change global/conditional state. Pokémon-EX, Fighting, Tools and evolution stage filters must match printed rules and both players' turns.
+  - Lucario-EX -> Mega Lucario-EX and Heracross-EX -> Mega Heracross-EX need actual Mega Evolution turn-ending flow; do not build or bench Mega parents whose eligible base is gated. Mega Lucario Rising Fist must choose and discard an actual attached opposing Energy card. Dragonite-EX Bust In requires on-Bench-play response with selected Energy transfers. Optional Giga Power damage plus self-damage must be a visible meaningful option.
+  - Victory Kiss, Fighting Fury, King's Song, Secret Key, Echolocation and Ice Shield are global, Bench, triggered or passive Abilities with timing-specific effects; don't register fake passive noops. Trainer search must respect the Basic Energy Zone conversion ONLY for explicit fresh Basic Energy searches and physical deck choices otherwise, as in v0.69.332.
+[LOCKED] QUALITY GATE
+  - Each card's unimplemented detail must be recorded as an explicit reason in docs/XY3_BUILD_COVERAGE.json; v0.69.334 includes source-independent synthetic legal/illegal print tests. The global attack cost, deck-quality and old XY1/XY2 tests remain enabled and depend on XY3 generation before final APK assembly. Do not claim successful GitHub v0.69.334 APK build until observed.
+[LOCKED] TERMUX HANDOFF FOR THIS VERSION
+
+    cd ~/lucky-dex
+
+    unzip -o /sdcard/Download/LuckyDex_patch_v0.69.334_FURIOUS_FISTS_STAGE1.zip -d source
+
+    git add source
+    git commit -m "LuckyDex v0.69.334 Furious Fists stage 1"
+    git push origin main
+
+  Subsequent handoffs: keep exactly this format, updating only filename and commit message. Current last VERIFIED successful APK workflow at drafting: v0.69.333 / run #622.

@@ -8,8 +8,8 @@ android {
         applicationId 'com.example.luckydex'
         minSdk 26
         targetSdk 35
-        versionCode 7333
-        versionName '0.69.333'
+        versionCode 7334
+        versionName '0.69.334'
     }
 
     signingConfigs {
@@ -630,4 +630,25 @@ tasks.register('auditV07333ClassicDeckQualityForApk', Exec) {
 }
 tasks.matching { it.name == 'preBuild' || (it.name.startsWith('merge') && it.name.endsWith('Assets')) }.configureEach {
     dependsOn tasks.named('auditV07333ClassicDeckQualityForApk')
+}
+
+// v0.69.334 Furious Fists: pinned 114-record collector catalogue, including
+// alternate Mega Lucario 55a. The official print source is fetched by its
+// immutable Git blob and verified BEFORE both the battle audit and APK asset merge.
+// As with XY1/XY2, Termux only needs unzip -d source + git add/commit/push.
+tasks.register('generateXY3ForApk', Exec) {
+    dependsOn tasks.named('auditXY2ForApk')
+    workingDir rootProject.projectDir
+    commandLine (System.getenv('LUCKYDEX_PYTHON') ?: 'python3'), 'scripts/build-xy3.py'
+}
+tasks.register('auditXY3ForApk', Exec) {
+    dependsOn tasks.named('generateXY3ForApk')
+    workingDir rootProject.projectDir
+    commandLine 'node', '--test', 'tests/v07334-furious-fists-stage1.test.cjs'
+}
+tasks.named('auditV07329AllClassicAttackEnergyForApk').configure {
+    dependsOn tasks.named('auditXY3ForApk')
+}
+tasks.matching { it.name == 'preBuild' || (it.name.startsWith('merge') && it.name.endsWith('Assets')) }.configureEach {
+    dependsOn tasks.named('auditXY3ForApk')
 }
