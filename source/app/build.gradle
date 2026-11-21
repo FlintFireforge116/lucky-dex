@@ -8,8 +8,8 @@ android {
         applicationId 'com.example.luckydex'
         minSdk 26
         targetSdk 35
-        versionCode 7340
-        versionName '0.69.340'
+        versionCode 7341
+        versionName '0.69.341'
     }
 
     signingConfigs {
@@ -664,7 +664,7 @@ tasks.register('generateXY4ForApk', Exec) {
 tasks.register('auditXY4ForApk', Exec) {
     dependsOn tasks.named('generateXY4ForApk')
     workingDir rootProject.projectDir
-    commandLine 'node', '--test', 'tests/v07339-phantom-forces-stage1.test.cjs'
+    commandLine 'node', '--test', 'tests/v07339-phantom-forces-stage1.test.cjs', 'tests/v07341-phantom-forces-completion.test.cjs'
 }
 tasks.named('auditV07329AllClassicAttackEnergyForApk').configure {
     dependsOn tasks.named('auditXY4ForApk')

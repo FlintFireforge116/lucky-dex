@@ -3047,3 +3047,20 @@ from app/build.gradle, require Android versionCode to match the release, and
 compare the same value to BOTH HTML build markers and the JavaScript boot
 marker. Do not hard-code a particular released version in an old set's
 regression test; otherwise all later releases fail CI when version changes.
+
+
+=== v0.69.341: XY Phantom Forces completion expansion / Stage 2 ===
+- Built atop v0.69.340 (successful GitHub build). 124 official printed cards remain in the collection; no fake placeholder cards are battle-enabled.
+- Attacks, Abilities and Trainers use the same physical deck/discard, board-target selection, Energy Zone/discard ledger, Prize and coin-log rules as older Classic TCG.
+- Major completed rules: Night March; Metal Links; Dark Impulse; Turbo Bolt; Tasting; Golbat/Crobat bite-on-evolution; Flare Command; Malamar-EX Hyper Hypnosis; Chandelure Fainting Spell; Wobbuffet Bide Barricade; Gourgeist Gourgantic; High Density Armor; Mighty Shield; Energy/Tool/Status attack interactions; Chrono Wind; AZ; Battle Compressor; Sycamore; Xerosic; Trump Card; Target Whistle; Enhanced Hammer; Night Attack; Hyper Whirlpool; Dream of Memories; Leavanny Coordinate; Jellicent Meddling; Goodra Slip Trip; B Cancel; Submission Hold; Trick Coin; Protect.
+- Each card explicitly gated in scripts/xy4_verified.py must remain in the gallery but be unavailable for battle/auto-deck until all of its mandatory effects are supported and verified. The six remaining explicitly gated numbers are #2, #25, #30, #97, #98, #102; Mega Gengar Phantom Gate and Diancie Sparkle are now implemented and tested.
+- From-hand attachments are distinct from Energy Zone attachments; effects explicitly saying 'from hand' must not trigger on discarded-energy acceleration or the independent Energy Zone.
+- Permanent source-based CI tests: tests/v07339-phantom-forces-stage1.test.cjs and tests/v07341-phantom-forces-completion.test.cjs; both run after official XY4 catalogue generation, before Android assets merge.
+- The printed catalogue/full APK build can only be called verified after GitHub Actions has completed successfully. Local synthetic battle-state tests alone are not proof of the final APK.
+
+Exact Termux update pattern (for v0.69.341):
+cd ~/lucky-dex
+unzip -o /sdcard/Download/LuckyDex_patch_v0.69.341_PHANTOM_FORCES_STAGE2.zip -d source
+git add source
+git commit -m "LuckyDex v0.69.341 Phantom Forces gameplay stage 2"
+git push origin main
