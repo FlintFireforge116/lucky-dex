@@ -3125,3 +3125,20 @@ unzip -o /sdcard/Download/LuckyDex_patch_v0.69.345_PRIMAL_CLASH_STAGE3.zip -d so
 git add source
 git commit -m "LuckyDex v0.69.345 Primal Clash gameplay stage 3"
 git push origin main
+
+
+=== v0.69.346: XY5 Primal Clash stage 4 — all printed Ability mappings and physical-choice attacks ===
+- Source baseline is the user-confirmed v0.69.345 successful GitHub build. v0.69.346 requires its own successful CI run; do not claim complete XY5 print gameplay coverage yet.
+- Seven XY5 new Abilities: Sceptile Nurture and Heal attaches an actual Grass Energy card from hand (without spending normal hand attachment), then heals 30; Ludicolo Captivating Rhythm flips a coin then chooses opponent Bench on heads; Swampert Diving Search searches the actual deck and shuffles the selected ref to top; Milotic Sparkling Ripples retrieves a selected real discard card only on hand evolution; Eelektross Energy Connect moves only Basic Energy from Bench to Active, repeated until none exists; Crawdaunt Unruly Claw offers an optional exact opponent Active Energy discard only on hand evolution; Flygon Sand Flap shuffles a chosen player hand into their own deck and draws four. Do not auto-resolve choices or generate fake printed energy.
+- Optional on-evolution Abilities must include a Skip/Keep option. Every selection must finish before the game continues; CPU follows same legal state.
+- Newly supported XY5 printed attacks: Magcargo Indomitable Blaze EX bonus, Feebas Float On tails recoil, Huntail Powerful Storm counts actual Energy units including DCE team-wide, Azumarill Dwindling Wave subtracts attacker's damage counters, Bidoof Drench Water Energy bonus, Bouffalant Derail selects actual opposing Special Energy (and honours Wonder Energy effect protection), and Bunnelby Rototiller moves exactly one chosen physical discard ref into deck and shuffles it.
+- Preserve all 164 unique official XY5 prints, 217 printed attacks, 13 Ability occurrences, 22 Ancient Traits. If any print has an unresolved attack, Ability or Ancient Trait, gate it from battle AND CPU deck building; do not count a correctly mapped Ability as a fully playable Pokemon if its move is unfinished.
+- Ω Barrier generic prevention is in place but older bespoke Trainer handlers are NOT independently audited; all Ω Barrier printed Pokemon remain gated until a later full global pass.
+- Permanent tests/v07346-primal-clash-abilities.test.cjs covers real battle state / no fake physical cards / optional triggers / Special Energy immunity and required generated card mapping on CI. Include it in auditXY5ForApk before APK asset merging.
+
+TERMUX PATCH APPLICATION (v0.69.346):
+cd ~/lucky-dex
+unzip -o /sdcard/Download/LuckyDex_patch_v0.69.346_PRIMAL_CLASH_ABILITIES.zip -d source
+git add source
+git commit -m "LuckyDex v0.69.346 Primal Clash abilities and attacks"
+git push origin main

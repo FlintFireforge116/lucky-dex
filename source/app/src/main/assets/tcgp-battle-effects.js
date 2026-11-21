@@ -13969,6 +13969,111 @@
   function xy5Rule(e,ctx){
     const k=String(e.rule||'').slice(4),ss=own(ctx),source=ctx.attacker,action=ctx.action||{};
     if(k==='gaiaVolcano'||k==='brilliantArrow'||k==='megatonSlam')return;
+    // Every Primal Clash Ability uses the same optional choice/continuation
+    // system as attacks. No synthetic deck/discard cards are created here.
+    const card=ref=>ctx.cardById(ref?.cardId),label=ref=>(card(ref)?.name||ref?.cardId)+' ['+ref.uid+']';
+    const ask=(step,options,rest={})=>ctx.requestChoice?.({kind:'option',side:'self',options,
+      effect:{...e,step,...rest}});
+    const mine=()=>pokemonOn(ss),enemy=()=>other(ctx),sourceReady=()=>mine().includes(source)&&!abilitiesSuppressed(ctx.state,ctx.side,source,ctx.cardById);
+    if(k==='derail'){
+      // Printed attack always deals its regular damage; only the discard
+      // can be prevented by Wonder Energy or an earlier attack effect.
+      const target=ctx.defender;if(!target||protectedFromEffects(target,ctx))return;
+      const options=(target.specialEnergy||[]).slice();
+      if(ctx.resolvingChoice){const uid=e.uids?.[Number(action.choiceOption)],i=(target.specialEnergy||[]).findIndex(r=>r.uid===uid);
+        if(i<0)return;const [ref]=target.specialEnergy.splice(i,1);other(ctx).discard.push(ref);
+        ctx.state.log.push({type:'xy5Derail',side:ctx.side,targetUid:target.uid,energyUid:ref.uid});return;}
+      if(options.length)ask('discardSpecial',options.map(ref=>'Discard '+label(ref)),{uids:options.map(r=>r.uid)});return;
+    }
+    if(k==='rototiller'){
+      const opts=ss.discard.slice();if(!opts.length)return;
+      if(ctx.resolvingChoice){const uid=e.uids?.[Number(action.choiceOption)],i=ss.discard.findIndex(r=>r.uid===uid);
+        if(i<0)return;const [ref]=ss.discard.splice(i,1);ss.deck.push(ref);ctx.shuffle?.(ctx.state,ss.deck);
+        ctx.state.log.push({type:'xy5Rototiller',side:ctx.side,uid,cardId:ref.cardId});return;}
+      ask('recycle',opts.map(ref=>'Shuffle '+label(ref)+' into deck'),{uids:opts.map(ref=>ref.uid)});return;
+    }
+    if(k==='divingSearch'){
+      if(!sourceReady()||!ss.deck?.length)return;
+      const list=ss.deck.slice();
+      if(ctx.resolvingChoice){const uid=e.uids?.[Number(action.choiceOption)],idx=ss.deck.findIndex(r=>r.uid===uid);
+        if(idx<0)return;const [chosen]=ss.deck.splice(idx,1);ctx.shuffle?.(ctx.state,ss.deck);
+        ss.deck.unshift(chosen);ctx.state.log.push({type:'xy5DivingSearch',side:ctx.side,uid,cardId:chosen.cardId});return;}
+      ask('top',list.map(r=>'Put '+label(r)+' on top of deck'),{uids:list.map(r=>r.uid)});return;
+    }
+    if(k==='energyConnect'){
+      if(!sourceReady()||!ss.active)return;
+      const list=ss.bench.flatMap(p=>Object.entries(p.energy||{}).filter(([,n])=>Number(n)>0)
+        .map(([type])=>({uid:p.uid,type,label:'Move '+type+' Basic Energy from '+(ctx.cardById(p.cardId)?.name||p.cardId)+' to Active'})));
+      if(ctx.resolvingChoice){const hit=(e.choices||[])[Number(action.choiceOption)],from=ss.bench.find(p=>p.uid===hit?.uid);
+        if(!from||!ss.active||Number(from.energy?.[hit.type]||0)<1)return;
+        from.energy[hit.type]--;ss.active.energy=ss.active.energy||{};
+        ss.active.energy[hit.type]=Number(ss.active.energy[hit.type]||0)+1;
+        ctx.state.log.push({type:'xy5EnergyConnect',side:ctx.side,sourceUid:from.uid,targetUid:ss.active.uid,energy:hit.type});return;}
+      if(list.length)ask('move',list.map(x=>x.label),{choices:list});return;
+    }
+    if(k==='captivatingRhythm'){
+      if(!sourceReady()||!enemy().active||!enemy().bench?.length)return;
+      if(ctx.resolvingChoice){const uid=e.benchUids?.[Number(action.choiceOption)],p=enemy().bench.find(x=>x.uid===uid);
+        if(p)switchPokemon(enemy(),p.benchSlot,ctx.state);return;}
+      const heads=coin(ctx);ctx.state.log.push({type:'coin',side:ctx.side,reason:'Captivating Rhythm',heads,results:[heads]});
+      if(heads)ask('switch',enemy().bench.map(p=>'Switch in opponent '+(ctx.cardById(p.cardId)?.name||p.cardId)),
+        {benchUids:enemy().bench.map(p=>p.uid)});return;
+    }
+    if(k==='nurtureHeal'){
+      if(!sourceReady())return;
+      const isGrass=(ref,p)=>{const c=card(ref);if(!c)return false;
+        if(c.basicEnergy)return (c.energyType||c.subtype)==='Grass';
+        if(!c.specialEnergy||!Number(c.effect?.provides?.Grass||0))return false;
+        if(c.id==='xy3-103'&&!ctx.cardById(p.cardId)?.types?.includes('Grass'))return false;
+        return true;};
+      const eligible=p=>ss.hand.filter(ref=>isGrass(ref,p));
+      if(e.step==='attach'&&ctx.resolvingChoice){const p=mine().find(p=>p.uid===e.targetUid),uid=e.uids?.[Number(action.choiceOption)],
+        i=ss.hand.findIndex(r=>r.uid===uid);if(!p||i<0||!isGrass(ss.hand[i],p))return;
+        const [ref]=ss.hand.splice(i,1),c=card(ref);
+        if(c.basicEnergy)p.energy.Grass=Number(p.energy.Grass||0)+1;
+        else{p.specialEnergy=p.specialEnergy||[];p.specialEnergy.push(ref);}
+        ctx.onEnergyAttached?.(p,'Grass',1,{fromHand:true,energyCardId:c.id});
+        if(c.id==='xy3-103'&&!healingIsBlocked(ctx.state,p,ctx.cardById))p.damage=Math.max(0,Number(p.damage||0)-30);
+        if(!healingIsBlocked(ctx.state,p,ctx.cardById))p.damage=Math.max(0,Number(p.damage||0)-30);
+        ctx.state.log.push({type:'xy5NurtureHeal',side:ctx.side,targetUid:p.uid,energyUid:uid});return;}
+      if(e.step==='target'&&ctx.resolvingChoice){const p=mine().find(p=>p.uid===e.targetUids?.[Number(action.choiceOption)]);
+        if(!p)return;const cards=eligible(p);if(cards.length)ask('attach',cards.map(ref=>'Attach '+label(ref)+' to '+ctx.cardById(p.cardId)?.name),
+          {targetUid:p.uid,uids:cards.map(r=>r.uid)});return;}
+      const targets=mine().filter(p=>eligible(p).length>0);
+      if(targets.length)ask('target',targets.map(p=>'Attach Grass Energy to '+(ctx.cardById(p.cardId)?.name||p.cardId)),
+        {targetUids:targets.map(p=>p.uid)});return;
+    }
+    if(k==='sparklingRipples'){
+      if(!sourceReady()||!ss.discard?.length)return;
+      if(ctx.resolvingChoice){const uid=e.uids?.[Number(action.choiceOption)],idx=ss.discard.findIndex(r=>r.uid===uid);
+        if(idx<0||ss.hand.length>=Number(ss.handLimit||8))return;
+        const [ref]=ss.discard.splice(idx,1);ss.hand.push(ref);
+        ctx.state.log.push({type:'xy5SparklingRipples',side:ctx.side,uid,cardId:ref.cardId});return;}
+      if(ss.hand.length>=Number(ss.handLimit||8))return;
+      const list=ss.discard.slice();ask('recover',[...list.map(ref=>'Return '+label(ref)+' to hand'),'Do not return a card'],{uids:list.map(r=>r.uid)});return;
+    }
+    if(k==='unrulyClaw'){
+      if(!sourceReady()||!enemy().active)return;
+      const target=enemy().active;
+      const available=()=>[...Object.entries(target.energy||{}).filter(([,n])=>Number(n)>0).map(([type])=>({kind:'basic',type,label:type+' Basic Energy'})),
+         ...(target.specialEnergy||[]).map(ref=>({kind:'special',uid:ref.uid,label:label(ref)}))];
+      if(ctx.resolvingChoice){const options=available(),idx=Number(action.choiceOption),pick=options[idx];
+        if(!pick)return;
+        if(pick.kind==='basic'){target.energy[pick.type]--;enemy().energyDiscard=enemy().energyDiscard||{};
+          enemy().energyDiscard[pick.type]=Number(enemy().energyDiscard[pick.type]||0)+1;}
+        else{const i=target.specialEnergy.findIndex(r=>r.uid===pick.uid);if(i<0)return;enemy().discard.push(...target.specialEnergy.splice(i,1));}
+        ctx.state.log.push({type:'xy5UnrulyClaw',side:ctx.side,targetUid:target.uid,energy:pick.label});return;}
+      const options=available();if(options.length)ask('discard',[...options.map(x=>'Discard '+x.label),'Keep opponent’s Energy'],{});return;
+    }
+    if(k==='sandFlap'){
+      if(!sourceReady())return;
+      if(!ctx.resolvingChoice){ask('player',['Shuffle your hand into your deck; draw 4',"Shuffle opponent's hand into their deck; draw 4"]);return;}
+      const chosen=Number(action.choiceOption)===1?enemy():ss;
+      if(![0,1].includes(Number(action.choiceOption)))return;
+      const count=chosen.hand.length;chosen.deck.push(...chosen.hand.splice(0));ctx.shuffle?.(ctx.state,chosen.deck);
+      for(let i=0;i<4&&chosen.deck.length&&chosen.hand.length<Number(chosen.handLimit||8);i++)ctx.drawCard?.(chosen);
+      ctx.state.log.push({type:'xy5SandFlap',side:ctx.side,recipient:Number(action.choiceOption)===1?'opponent':'self',recycled:count,drew:Math.min(4,chosen.hand.length)});return;
+    }
     if(k==='acroBike'){
       // Take exactly the physical top two cards, keep the chosen ref and
       // discard the other. No replacement draw, search or reshuffle.
@@ -18561,6 +18666,7 @@
           pending.push(e);
           return;
         }
+        if(key==='derail'||key==='rototiller'){pending.push(e);return;}
         throw new Error('XY5 unknown printed attack rule '+key);
       }
       // Furious Fists: printed attack damage is resolved BEFORE matchup or attack logs.
@@ -21491,6 +21597,14 @@
     return [{}];
   }
   function choicesForEffect(effect,ctx){
+    if(effect?.type==='neoRule'&&String(effect.rule||'').startsWith('xy5:')){
+      const k=effect.rule.slice(4),ss=own(ctx),foe=other(ctx);
+      if(k==='divingSearch')return ss.deck.length?[{}]:[];
+      if(k==='energyConnect')return ss.active&&ss.bench.some(p=>Object.values(p.energy||{}).some(n=>Number(n)>0))?[{}]:[];
+      if(k==='captivatingRhythm')return foe.active&&foe.bench.length?[{}]:[];
+      if(k==='nurtureHeal')return ss.hand.some(ref=>{const c=ctx.cardById(ref.cardId);return c?.basicEnergy&&(c.energyType||c.subtype)==='Grass'||c?.specialEnergy&&Number(c.effect?.provides?.Grass||0)>0&& (c.id!=='xy3-103'||pokemonOn(ss).some(p=>ctx.cardById(p.cardId)?.types?.includes('Grass')));})?[{}]:[];
+      if(k==='sandFlap')return ss.deck.length||ss.hand.length||foe.deck.length||foe.hand.length?[{}]:[];
+    }
     if(effect?.type==='neoRule'&&effect.rule==='xy5:megatonSlam')return [
       {effectSelection:'',choiceLabel:'120 damage — do not flip'},
       {effectSelection:'flip',choiceLabel:'Flip: heads +120; tails 20 to your Bench'}];
