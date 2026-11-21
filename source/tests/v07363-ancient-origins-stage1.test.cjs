@@ -24,7 +24,7 @@ test('Ancient Origins registry, player/CPU deck sets and browser load order',()=
 test('XY7 source is pinned and generated before Android mergeAssets',()=>{
  const gradle=fs.readFileSync(path.join(root,'app/build.gradle'),'utf8'),
   version=gradle.match(/versionName '([^']+)'/)?.[1],code=Number(gradle.match(/versionCode\s+(\d+)/)?.[1]);
- assert.equal(version,'0.69.364');assert.equal(code,7364);
+ assert.equal(version,'0.69.365');assert.equal(code,7365);
  assert.match(gradle,/tasks\.register\('generateXY7ForApk'/);
  assert.match(gradle,/tasks\.register\('auditXY7ForApk'/);
  assert.match(gradle,/dependsOn tasks\.named\('auditXY7ForApk'\)/);
@@ -77,7 +77,7 @@ print(json.dumps(m.generate(r)))`;
  assert.equal(r.status,0,r.stderr||r.stdout);
  const cards=Object.fromEntries(JSON.parse(r.stdout).map(c=>[c.id,c]));
  for(const n of ['1','7','28','70','78','84','100'])assert.equal(cards['xy7-'+n].battleEnabled,true,'expected battle enabled xy7-'+n+': '+cards['xy7-'+n].support.reasons);
- for(const n of ['8','30','75','75a','82','83'])assert.equal(cards['xy7-'+n].battleEnabled,false,'unverified card must stay gated: '+n);
+ for(const n of ['8','75','75a','82','83'])assert.equal(cards['xy7-'+n].battleEnabled,false,'unverified card must stay gated: '+n);
  for(const n of ['43','96'])assert.equal(cards['xy7-'+n].battleEnabled,true,'audited θ trait '+n);
  assert.equal(cards['xy7-7'].prizeCards,2);
  assert.deepEqual(cards['xy7-7'].attacks[1].cost,['G','C','C']);
@@ -120,7 +120,7 @@ test('Full official Ancient Origins catalogue, costs, choices and all 101 printe
   }
  }
  assert.ok(set.coverage().battleEnabled>=30,'Stage 1 should have a substantial playable starting set');
- for(const n of ['8','21','35','67','85'])
+ for(const n of ['8','21','67','85'])
   assert.equal(set.cardById('xy7-'+n).battleEnabled,false,'incomplete non-trait printed mechanic '+n);
  for(const n of ['11','15','18','32','43','50','92','96','97','98'])
   assert.equal(set.cardById('xy7-'+n).battleEnabled,true,'audited theta Trait '+n);

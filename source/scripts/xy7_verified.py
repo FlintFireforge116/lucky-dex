@@ -1,4 +1,4 @@
-"""Ancient Origins (XY7), Stage 1: explicitly supported printed effects only.
+"""Ancient Origins (XY7), Stage 3: explicitly supported printed effects only.
 
 Do not enable a print if *any* attack, Ability, theta Ancient Trait,
 Trainer or Special Energy passive remains unaudited. Reuse battle effects only
@@ -113,6 +113,13 @@ TRAITS_IMPLEMENTED={'θ Stop','θ Double','θ Max'}  # Engine-level, with cross-
 # Only existing independently-tested Ability hooks. All global passives remain
 # gated until cross-set targeting and Ability-suppression are verified.
 ABILITIES={
+ 'Irritating Pollen':{'type':'passive','effect':S(E('actionLock',cardType='Item',side='both',duration='whileInPlay'), E('actionLock',cardType='Tool',side='both',duration='whileInPlay'))},
+ 'Poisonous Nest':{'type':'activated','oncePerTurn':True,'effect':E('xy7PoisonousNest')},
+ 'Flare Effect':{'type':'passive','effect':E('additionalType',types=['Fire'])},
+ 'Aqua Effect':{'type':'passive','effect':E('additionalType',types=['Water'])},
+ 'Electric Effect':{'type':'passive','effect':E('additionalType',types=['Lightning'])},
+ 'Double Type':{'type':'passive','effect':E('additionalType',types=['Psychic','Fighting'])},
+ 'Farewell Letter':{'type':'activated','benchOnly':True,'oncePerTurn':True,'effect':S(E('discardSelf'),DRAW(1))},
  'Scoundrel Ring':{'type':'triggered','event':'benched','fromHandOnly':True,
    'effect':OPT('Search for up to 3 Pokémon-EX except Hoopa-EX',
      SEARCH(3,kind='pokemon',isEx=True,notName='Hoopa-EX'))},

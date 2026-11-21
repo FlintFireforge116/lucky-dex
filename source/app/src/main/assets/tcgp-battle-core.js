@@ -1737,6 +1737,14 @@
           pokemonOn(s).length<2||!pokemonOn(s).some(p=>Number(p.energy?.Metal||0)>0||(p.specialEnergy||[]).some(ref=>Number((ref.provides||data.cardById(ref.cardId)?.effect?.provides||{}).Metal||0)>0))))return;
         // Do not offer an inert hand-Energy Ability to the CPU or player.
         // This checks *physical hand* cards, never the fresh Energy Zone.
+        if(source.cardId==='xy7-6'&&ability.name==='Poisonous Nest'&&
+           !['player','opponent'].some(w=>{
+             const slot=state.sides[w].active;
+             return slot&&!slot.conditions?.poison&&
+               !effects.effectiveTypes(state,w,slot,data.cardById).includes('Grass')&&
+               !(w!==side&&data.cardById(slot.cardId)?.ancientTrait?.name==='θ Stop')&&
+               !effects.statusIsPrevented(state,slot,data.cardById,'poison');
+           }))return; // Never offer a no-op to the CPU or player.
         if(source.cardId==='xy6-10'&&ability.name==='Wing Buzz'&&(!s.hand.length||!foe.deck.length))return;
         if(ability.requiresBasicEnergyFromHand&&!s.hand.some(ref=>{
           const card=data.cardById(ref.cardId);

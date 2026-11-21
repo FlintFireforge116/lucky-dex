@@ -3548,3 +3548,39 @@ LUCKYDEX v0.69.364 — XY ANCIENT ORIGINS STAGE 2 (θ ANCIENT TRAITS)
     git commit -m "LuckyDex v0.69.364 Ancient Origins theta traits"
     git push origin main
 ========================================================================
+
+========================================================================
+LUCKYDEX v0.69.365 — XY ANCIENT ORIGINS STAGE 3 (ABILITIES)
+========================================================================
+[CURRENT] v0.69.364 passed GitHub Actions build #653.
+[CURRENT] v0.69.365 patch is locally tested; GitHub APK still pending.
+- Vileplume #3 Irritating Pollen is an Ability (not an Ancient Trait):
+  while unsuppressed it locks both players' Item cards including Pokémon
+  Tools, but not Supporters or Stadiums. Item lock clears when suppressed.
+- Ariados #6 Poisonous Nest: activated at most once per turn, Poison both
+  non-Grass Actives, using effective typing. Obey θ Stop on an opposing
+  target and all ordinary status guards. Never reduce severe Poison to 10.
+  CPU should not activate with no eligible target.
+- Flareon #13 / Vaporeon #22 / Jolteon #26 grant their extra respective
+  Fire / Water / Lightning types to ALL friendly Stage 1 Pokémon in play.
+  These effects can stack, do not alter Energy costs, do not help Basics or
+  Stage 2, and turn off when the source Ability is suppressed.
+- Unown #30 Farewell Letter may be used only from the Bench; discard the
+  real Unown + attached Tools/Special Energy and record real Basic Energy in
+  the discard Zone, then draw exactly 1 physical deck card. No prizes.
+- Golurk #35 Double Type grants Psychic + Fighting while unsuppressed.
+- Autobuilder: a Vileplume core avoids more than two auto-picked ordinary
+  Items; Rare Candy retains an exemption to build the Stage 2 line.
+  Preserve manually selected cards. No ghost Energy cards or resources.
+- Exact official source still pinned/verified at GitHub build time.
+  Incomplete attacks, Trainers, Stadiums, Special Energy remain gated.
+- Tests: 41 passed, 0 failed, 4 catalogue-dependent skips in focused suite,
+  plus 21 passed in independent deck/energy/fossil suite. A heavier classic
+  builder stress run timed out and is not reported as passing.
+- Termux:
+    cd ~/lucky-dex
+    unzip -o /sdcard/Download/LuckyDex_patch_v0.69.365_ANCIENT_ORIGINS_STAGE3_ABILITIES.zip -d source
+    git add source
+    git commit -m "LuckyDex v0.69.365 Ancient Origins Stage 3 abilities"
+    git push origin main
+========================================================================

@@ -706,6 +706,12 @@ function buildDeck(rows,options={}){
      // support slots on inactive Tools when automatically building around it.
      // Existing user-selected Tools are retained, even if situational.
      if(card?.trainerType==='Tool'&&pokemon.some(p=>p.id==='xy6-31'))return false;
+     // Vileplume's Irritating Pollen blocks Items for both players once live.
+     // Keep a small setup allowance (and Rare Candy for its Stage 2 line),
+     // but prioritise functional Supporters instead of dead Item filler.
+     if(card?.trainerType==='Item'&&card?.name!=='Rare Candy'&&
+        pokemon.some(p=>p.id==='xy7-3')&&
+        cards.filter(id=>classic.cardById(id)?.trainerType==='Item').length>=2)return false;
      // Primal Clash Spirit Links are only useful with their exact Mega or
      // Primal Evolution prints IN the finished 30-card deck. A matching
      // ordinary Basic EX is not enough; do not auto-add dead Tool cards.
