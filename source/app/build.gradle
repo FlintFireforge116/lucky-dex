@@ -8,8 +8,8 @@ android {
         applicationId 'com.example.luckydex'
         minSdk 26
         targetSdk 35
-        versionCode 7363
-        versionName '0.69.363'
+        versionCode 7364
+        versionName '0.69.364'
     }
 
     signingConfigs {
@@ -846,7 +846,7 @@ tasks.matching { it.name == 'preBuild' || (it.name.startsWith('merge') && it.nam
     dependsOn tasks.named('auditXY6IndependentForApk')
 }
 
-// v0.69.363 XY7 Ancient Origins: verified 101-print catalogue and conservative Stage 1.
+// v0.69.364 XY7 Ancient Origins: verified 101-print catalogue and θ Ancient Traits Stage 2.
 // Run before mergeAssets, and after the completed Roaring Skies audit.
 tasks.register('generateXY7ForApk', Exec) {
     dependsOn tasks.named('auditXY6IndependentForApk')
@@ -856,7 +856,7 @@ tasks.register('generateXY7ForApk', Exec) {
 tasks.register('auditXY7ForApk', Exec) {
     dependsOn tasks.named('generateXY7ForApk')
     workingDir rootProject.projectDir
-    commandLine 'node', '--test', 'tests/v07363-ancient-origins-stage1.test.cjs'
+    commandLine 'node', '--test', 'tests/v07363-ancient-origins-stage1.test.cjs', 'tests/v07364-ancient-origins-theta.test.cjs'
 }
 tasks.matching { it.name == 'preBuild' || (it.name.startsWith('merge') && it.name.endsWith('Assets')) }.configureEach {
     dependsOn tasks.named('auditXY7ForApk')

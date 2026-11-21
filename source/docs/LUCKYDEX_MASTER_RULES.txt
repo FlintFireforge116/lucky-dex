@@ -1,8 +1,8 @@
 LUCKYDEX — MASTER PROJECT RULES AND DEVELOPMENT CONTRACT
 =========================================================
-Document version: 2.52
+Document version: 2.53
 Compiled: 21 November 2026
-Current inspected source: v0.69.337 Furious Fists CI audit repair, based on v0.69.336 source (GitHub Actions run #625 failed in the XY3 audit); this patch has local regression tests but no completed GitHub APK build yet. Source-relative ZIP extraction into ~/lucky-dex/source/.
+Current inspected source: v0.69.364 Ancient Origins Stage 2, based on verified v0.69.363 Stage 1 (GitHub run #652 success); v0.69.364 passes local regression but awaits GitHub APK verification. Source-relative ZIP extraction into ~/lucky-dex/source/.
 Recommended repository location: ~/lucky-dex/source/docs/LUCKYDEX_MASTER_RULES.txt
 Project: LuckyDex — Android application/PWA, managed with Termux and GitHub
 
@@ -3508,5 +3508,43 @@ LUCKYDEX v0.69.363 — XY ANCIENT ORIGINS STAGE 1
     unzip -o /sdcard/Download/LuckyDex_patch_v0.69.363_ANCIENT_ORIGINS_STAGE1.zip -d source
     git add source
     git commit -m "LuckyDex v0.69.363 Ancient Origins Stage 1"
+    git push origin main
+========================================================================
+
+========================================================================
+LUCKYDEX v0.69.364 — XY ANCIENT ORIGINS STAGE 2 (θ ANCIENT TRAITS)
+========================================================================
+[CURRENT] Stage 1 v0.69.363 successfully built on GitHub (run #652).
+[CURRENT] Stage 2 changes are locally tested; GitHub APK has not yet built.
+- θ Stop: opposing Pokémon Ability effects done to a θ Stop Pokémon
+  are prevented. Own Abilities, attacks and Trainer effects are not
+  blocked. Ancient Traits are independent of Pokémon Abilities; ability
+  suppression must not disable θ Stop itself. Guard old direct Ability
+  mutations as well as generic targeted damage/status effects.
+- θ Double: a θ Double Pokémon has a capacity of TWO physical Pokémon
+  Tools, held as tool + extraTools. Both must be inspectable, removable,
+  and discarded to the correct owner. Ordinary Pokémon still have one.
+  Banette suppresses both Tool effects but does not detach either Tool.
+- θ Max: on evolving/reverting INTO the printed θ Max Mega or Primal
+  Pokémon, heal inherited damage entirely unless healing is blocked.
+  Do not remove attached Energy/Tools or treat θ Max as an Ability.
+- θ Max reprints xy7-96, xy7-97, xy7-98 reuse their exactly matching
+  older Tidal Storm, Gaia Volcano and Emerald Break handlers. Kyogre,
+  Groudon, Rayquaza Spirit Links from prior sets also cover reprints,
+  including automatic deck-building synergy and Tool Concealment.
+- 10 formerly gated θ print identities now enabled in source: #11,
+  #15, #18, #32, #43, #50, #92, #96, #97, #98.
+- θ-printed cards #8, #21, #35, #67, #85 remain gated due to OTHER
+  unfinished printed attacks or Abilities. All other incomplete XY7
+  cards, continuous Special Energy and global Stadium/Supporter effects
+  remain gated rather than pretending fully supported.
+- Stage 2 regression: 132 passed, 0 failed, 6 catalogue-dependent skips
+  in selected cross-set tests (Primal Clash + Roaring Skies + XY7).
+  GitHub runs both Stage 1 and Stage 2 checks after catalog generation.
+- Termux:
+    cd ~/lucky-dex
+    unzip -o /sdcard/Download/LuckyDex_patch_v0.69.364_ANCIENT_ORIGINS_STAGE2_THETA.zip -d source
+    git add source
+    git commit -m "LuckyDex v0.69.364 Ancient Origins theta traits"
     git push origin main
 ========================================================================

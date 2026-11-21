@@ -711,11 +711,11 @@ function buildDeck(rows,options={}){
      // ordinary Basic EX is not enough; do not auto-add dead Tool cards.
      const xy5Links={'xy5-123':['xy5-94','xy5-154'],
        'xy5-130':['xy5-106','xy5-156'],
-       'xy5-131':['xy5-86','xy5-151'],
-       'xy5-132':['xy5-55','xy5-149'],
+       'xy5-131':['xy5-86','xy5-151','xy7-97'],
+       'xy5-132':['xy5-55','xy5-149','xy7-96'],
        'xy6-83':['xy6-35','xy6-100'],
        'xy6-85':['xy6-59','xy6-102'],
-       'xy6-87':['xy6-61','xy6-76','xy6-105'],
+       'xy6-87':['xy6-61','xy6-76','xy6-105','xy7-98'],
        'xy7-70':['xy7-28','xy7-88'],
        'xy7-80':['xy7-8','xy7-85'],
        'xy7-81':['xy7-43','xy7-92']};
@@ -1126,11 +1126,11 @@ function buildDeck(rows,options={}){
  const xy5SpiritLinks=[
    ['xy5-123',['xy5-94','xy5-154']],  // M Aggron-EX
    ['xy5-130',['xy5-106','xy5-156']],// M Gardevoir-EX
-   ['xy5-131',['xy5-86','xy5-151']], // Primal Groudon-EX
-   ['xy5-132',['xy5-55','xy5-149']], // Primal Kyogre-EX
+   ['xy5-131',['xy5-86','xy5-151','xy7-97']], // Primal Groudon-EX
+   ['xy5-132',['xy5-55','xy5-149','xy7-96']], // Primal Kyogre-EX
    ['xy6-83',['xy6-35','xy6-100']], // M Gallade-EX
    ['xy6-85',['xy6-59','xy6-102']], // M Latios-EX
-   ['xy6-87',['xy6-61','xy6-76','xy6-105']], // M Rayquaza-EX
+   ['xy6-87',['xy6-61','xy6-76','xy6-105','xy7-98']], // M Rayquaza-EX
    ['xy7-70',['xy7-28','xy7-88']], // M Ampharos-EX
    ['xy7-80',['xy7-8','xy7-85']], // M Sceptile-EX
    ['xy7-81',['xy7-43','xy7-92']] // M Tyranitar-EX

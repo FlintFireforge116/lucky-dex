@@ -70,6 +70,13 @@ ATTACKS={
  ('63','Lunge'):E('coinAttackGate',heads=N),
  ('65','Tri Attack'):COIN(3,30),
  ('67','Dazzle Blast'):ST('confusion'),
+ # θ Double cards: all effects on these prints already use verified handlers.
+ ('15','Flame Screen'):GUARD(30),
+ ('43','Destroyer King'):E('damageFromDamage',source='opponent',amount=6,mode='add'),
+ # θ Max Secret Rares reuse the exact effects of the original official prints.
+ ('96','Tidal Storm'):E('neoRule',rule='xy5:tidalStorm'),
+ ('97','Gaia Volcano'):E('neoRule',rule='xy5:gaiaVolcano'),
+ ('98','Emerald Break'):E('benchCountDamage',side='self',amount=30,mode='replace'),
  # Aero Ball counts both Active Energy totals; left gated until the
  # existing energyDamage handler supports that exact combined scope.
 }
@@ -82,9 +89,8 @@ ATTACKS.pop(('46','Entangling Control'))
 # Correction: select a card of any kind from the discard must not expose an
 # unfiltered Search that could create a new card rather than move a physical one.
 ATTACKS.pop(('46','Trash Tentacle'))
-# Correction: attack's base damage and bonus depend on the enemy's current
-# damage counters; in this stage we leave Mega Tyranitar gated by θ Double.
-# Ancient Traits all remain gated until cross-set compatibility is proven.
+# θ traits are independent of Abilities; card eligibility still requires
+# every individual attack and Ability to be implemented.
 
 # Every shiny EX reprint is its own collection print but has identical rules.
 for original,alternative in [('7','84'),('8','85'),('25','86'),('27','87'),('28','88'),('36','89'),('37','90'),('42','91'),('43','92'),('57','93'),('68','94'),('75','75a')]:
@@ -103,7 +109,7 @@ TRAINERS={
  '99':('Item',E('neoRule',rule='bw1:energyRetrieval')),
  '100':('Item',E('selectTopToHand',count=4,optional=True,filter={'kind':'trainer','notName':"Trainers' Mail"})),
 }
-TRAITS_IMPLEMENTED=set()  # θ Stop, θ Double, θ Max are NOT yet audited.
+TRAITS_IMPLEMENTED={'θ Stop','θ Double','θ Max'}  # Engine-level, with cross-set tests.
 # Only existing independently-tested Ability hooks. All global passives remain
 # gated until cross-set targeting and Ability-suppression are verified.
 ABILITIES={

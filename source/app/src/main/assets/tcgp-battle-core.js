@@ -2973,11 +2973,11 @@ const target=slotForTarget(s,action.target,action.benchIndex);if(card.id==='pl2-
         (['xy4-24','xy4-24a','xy4-120'].includes(ref.cardId)&&toolsOf(target).some(t=>t.cardId==='xy4-100'))||
         (['xy5-94','xy5-154'].includes(ref.cardId)&&toolsOf(target).some(t=>t.cardId==='xy5-123'))||
         (['xy5-106','xy5-156'].includes(ref.cardId)&&toolsOf(target).some(t=>t.cardId==='xy5-130'))||
-        (['xy5-86','xy5-151'].includes(ref.cardId)&&toolsOf(target).some(t=>t.cardId==='xy5-131'))||
-        (['xy5-55','xy5-149'].includes(ref.cardId)&&toolsOf(target).some(t=>t.cardId==='xy5-132'))||
+        (['xy5-86','xy5-151','xy7-97'].includes(ref.cardId)&&toolsOf(target).some(t=>t.cardId==='xy5-131'))||
+        (['xy5-55','xy5-149','xy7-96'].includes(ref.cardId)&&toolsOf(target).some(t=>t.cardId==='xy5-132'))||
         (['xy6-35','xy6-100'].includes(ref.cardId)&&toolsOf(target).some(t=>t.cardId==='xy6-83'))||
         (['xy6-59','xy6-102'].includes(ref.cardId)&&toolsOf(target).some(t=>t.cardId==='xy6-85'))||
-        (['xy6-61','xy6-76','xy6-105'].includes(ref.cardId)&&toolsOf(target).some(t=>t.cardId==='xy6-87'))||
+        (['xy6-61','xy6-76','xy6-105','xy7-98'].includes(ref.cardId)&&toolsOf(target).some(t=>t.cardId==='xy6-87'))||
         (['xy7-28','xy7-88'].includes(ref.cardId)&&toolsOf(target).some(t=>t.cardId==='xy7-70'))||
         (['xy7-8','xy7-85'].includes(ref.cardId)&&toolsOf(target).some(t=>t.cardId==='xy7-80'))||
         (['xy7-43','xy7-92'].includes(ref.cardId)&&toolsOf(target).some(t=>t.cardId==='xy7-81')));
@@ -2989,6 +2989,15 @@ const target=slotForTarget(s,action.target,action.benchIndex);if(card.id==='pl2-
       // LV.X is a level-up of the SAME Pokémon, not an evolution. Preserve
       // current Special Conditions, delayed effects, attack restrictions,
       // damage, and attachments. Normal evolutions still clear them.
+      // θ Max is an Ancient Trait, NOT an Ability: evolving into this print
+      // heals its inherited damage even while the Pokémon's Abilities are off.
+      // Respect genuine healing prevention (such as a healing-blocking attack).
+      if(!levelUp&&state.format==='classic'&&data.cardById(ref.cardId)?.ancientTrait?.name==='θ Max'&&
+         !effects.healingIsBlocked(state,target,data.cardById)){
+        const healed=Number(target.damage||0);
+        target.damage=0;
+        state.log.push({type:'xy7ThetaMax',side,targetUid:target.uid,cardId:ref.cardId,healed});
+      }
       if(!levelUp){
         const keepPoison=!!target.conditions?.poison&&[foeSide].some(opp=>[state.sides[opp].active,...state.sides[opp].bench].some(p=>['sv1-127','dp2-36'].includes(p?.cardId)&&!effects.abilitiesSuppressed(state,opp,p,data.cardById)));
         const poison=keepPoison?target.conditions.poison:null,burn=state.stadium?.cardId==='ex12-74'||[side==='player'?'opponent':'player'].some(w=>pokemonOn(state.sides[w]).some(p=>p.cardId==='dp7-97'&&!effects.abilitiesSuppressed(state,w,p,data.cardById)))?target.conditions?.burn:null;

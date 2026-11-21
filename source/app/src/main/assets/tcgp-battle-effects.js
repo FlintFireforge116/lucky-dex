@@ -338,6 +338,12 @@
        ctx.cardById(slot.cardId)?.ancientTrait?.name==='Ω Barrier')return true;
     // Solar Revelation (BW5 Espeon): attached Energy prevents effects of
     // opposing attacks, never damage; own effects still resolve normally.
+    // Ancient Origins θ Stop protects against effects from the *opponent's
+    // Pokémon's Abilities*. It is not an Ability itself, and is unaffected by
+    // Silent Lab, Hex Maniac or Garbotoxin.
+    if(ctx?.isAbility&&ctx?.state?.format==='classic'&&slot&&
+       energyOwner(ctx,slot)===other(ctx)&&
+       ctx.cardById(slot.cardId)?.ancientTrait?.name==='θ Stop')return true;
     if(ctx?.isAttack&&ctx?.state?.format==='classic'&&slot&&
        (slot.specialEnergy||[]).some(ref=>ref.cardId==='xy5-144')&&
        ctx.cardById(slot.cardId)?.types?.includes('Fairy')&&
@@ -18195,8 +18201,36 @@
       ss.active=positions.active;ss.bench=positions.bench;
     }
   }
+  function thetaAbilityGuard(ctx){
+    if(ctx?.state?.format!=='classic'||!ctx.isAbility||ctx.isAttack)return null;
+    const ss=other(ctx),slots=pokemonOn(ss).filter(p=>ctx.cardById(p.cardId)?.ancientTrait?.name==='θ Stop');
+    if(!slots.length)return null;
+    return {ss,positions:{active:ss.active,bench:ss.bench.slice()},
+      energyDiscard:{...(ss.energyDiscard||{})},
+      saved:slots.map(slot=>({slot,copy:JSON.parse(JSON.stringify(slot))}))};
+  }
   function applyEffect(effect,ctx){
     if(!effect)return;
+    // Shared and legacy Pokémon Abilities may mutate opponent slots directly,
+    // without passing through generic effect target filtering. Restore only
+    // enemy θ Stop Pokémon after an opposing Ability's full resolution.
+    const theta=thetaAbilityGuard(ctx);
+    if(theta){
+      const previousChoice=ctx.requestChoice;
+      const guarded={...ctx,requestChoice:typeof previousChoice==='function'?spec=>{
+        if(['pokemon','switchBench','energySource','energyTarget','toolCard'].includes(spec?.kind)){
+          const chosenSide=spec.selectionSide||(spec.side==='opponent'?ctx.foeSide:spec.side==='self'?ctx.side:spec.side);
+          if(chosenSide===ctx.foeSide){
+            const excludeUids=[...new Set([...(spec.excludeUids||[]),...theta.saved.map(x=>x.slot.uid)])];
+            const targets=spec.kind==='switchBench'||spec.includeActive===false?theta.ss.bench:pokemonOn(theta.ss);
+            if(!targets.some(p=>p&&!excludeUids.includes(p.uid)&&matchesFilter(ctx.cardById(p.cardId),spec.filter,p)))return;
+            return previousChoice({...spec,excludeUids});
+          }
+        }
+        return previousChoice(spec);
+      }:previousChoice};
+      try{return applyEffectUnchecked(effect,guarded);}finally{restoreOmegaTrainerGuard(ctx,theta);}
+    }
     // A defender-chosen switch affects the outgoing Active Pokémon. If it
     // lacks Ω Barrier, the player may promote a Benched Ω Barrier Pokémon.
     // The generic snapshot guard would otherwise undo that entirely legal
@@ -22945,7 +22979,7 @@ if(r==='lastResort')return ss.hand.length===0?[{}]:[];if(r==='surgeSwap')return 
       if(effect.type==='attachEnergyFromDiscard'&&!ctx.isAttack)return list.length>0&&neoDiscardAvailable(ctx,own(ctx),effect.energyType)>=(effect.upTo?1:Number(effect.amount||1));if(effect.type==='switch')return (effect.side==='opponent'?other(ctx):own(ctx)).active!=null&&list.length>0;return !selector||list.length>0;});
     return valid.length||!ctx.isAttack||effect.type==='selectedDamage'?valid:[{}];
   }
-  function toolCapacity(state,side,slot,cardById){if(!slot)return 1;if(Number(slot.syntheticToolCapacity)>0)return Number(slot.syntheticToolCapacity);let cap=1;if(abilitiesSuppressed(state,side,slot,cardById))return cap;const card=cardById(slot.cardId),abilities=(card?.abilities?.length?card.abilities:Array.isArray(card?.ability)?card.ability:[card?.ability]).filter(Boolean),ctx={state,side,foeSide:side==='player'?'opponent':'player',attacker:slot,defender:state.sides[side==='player'?'opponent':'player'].active,cardById};const scan=e=>{if(!e)return;if(e.type==='sequence'){for(const x of e.effects||[])scan(x);return;}if(e.type==='toolCapacity'&&conditionMatches(e.condition,ctx))cap=Math.max(cap,Number(e.amount||1));};for(const ability of abilities)if(ability.type==='passive')scan(ability.effect);return cap;}
+  function toolCapacity(state,side,slot,cardById){if(!slot)return 1;if(Number(slot.syntheticToolCapacity)>0)return Number(slot.syntheticToolCapacity);const card=cardById(slot.cardId);let cap=state?.format==='classic'&&card?.ancientTrait?.name==='θ Double'?2:1;if(abilitiesSuppressed(state,side,slot,cardById))return cap;const abilities=(card?.abilities?.length?card.abilities:Array.isArray(card?.ability)?card.ability:[card?.ability]).filter(Boolean),ctx={state,side,foeSide:side==='player'?'opponent':'player',attacker:slot,defender:state.sides[side==='player'?'opponent':'player'].active,cardById};const scan=e=>{if(!e)return;if(e.type==='sequence'){for(const x of e.effects||[])scan(x);return;}if(e.type==='toolCapacity'&&conditionMatches(e.condition,ctx))cap=Math.max(cap,Number(e.amount||1));};for(const ability of abilities)if(ability.type==='passive')scan(ability.effect);return cap;}
   function passiveModifiers(effect,source,side,state,slot,stat,out,cardById){
     if(!effect)return;
     if(effect.type==='sequence'){effect.effects.forEach(e=>passiveModifiers(e,source,side,state,slot,stat,out,cardById));return;}
