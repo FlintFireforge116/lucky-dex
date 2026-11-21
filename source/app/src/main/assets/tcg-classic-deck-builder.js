@@ -760,6 +760,11 @@ function buildDeck(rows,options={}){
        pokemon.some(b=>(b.types||[]).includes('Grass')&&classicCardName(b.name)===classicCardName(p.evolvesFrom||''))))return false;
      if(card?.id==='xy7-73'&&pokemon.some(p=>p.megaEvolution))return false;
      if(['xy7-75','xy7-75a'].includes(card?.id)&&pokemon.filter(p=>(p.abilities||[]).length).length>3)return false;
+     // Ancient Origins recycle Items need cards that genuinely enter the
+     // matching discard zone. Avoid stuffing an unrelated compact deck with
+     // Eco Arm or Energy Recycler as generic filler.
+     if(card?.id==='xy7-71'&&cards.filter(id=>classic.cardById(id)?.trainerType==='Tool').length<2)return false;
+     if(card?.id==='xy7-72'&&!pokemon.some(p=>(p.attacks||[]).some(a=>/discard.*energy|discard all.*energy/i.test(a.text||''))))return false;
      if(card?.id==='xy5-136'&&!pokemon.some(p=>pokemon.filter(other=>classicCardName(other.name)===classicCardName(p.name)).length>1))return false;
 
      // Evolution accelerators without Stage 2 targets are dead cards.

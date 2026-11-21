@@ -29,6 +29,7 @@ ATTACKS={
  ('18','Burning Scales'):COIN(2,20,False),('18','Wind Wheel'):E('forceOpponentSwitch',chooseBy='defender'),
  ('20','Berserker Splash'):S(BENCH(10,'self'),BENCH(10,'opponent')),
  ('20','Aqua Tail'):E('coinDamageByEnergy',amount=30,energyType='Water',countAttachedEnergyType=True),
+ ('21','Full Retaliation'):E('xy7MagikarpRetaliation'),
  ('21','Thrash'):Q(BONUS(30),E('selfDamage',amount=30)),
  ('23','Deep Sea Search'):SEARCH(2,kind='trainer',trainerType='Tool'),
  ('23','Take Down'):E('selfDamage',amount=10),
@@ -56,6 +57,8 @@ ATTACKS={
  ('43','Destroyer King'):E('damageFromDamage',source='opponent',amount=6,mode='add'),
  ('44','Furtive Drop'):E('placeDamageCounters',target='opponentActive',amount=30),
  ('45','Ink Spit'):E('attackCoinGate',target='opponentActive',duration='opponentTurn'),
+ ('46','Entangling Control'):E('xy7EntanglingControl'),
+ ('46','Trash Tentacle'):SEARCH(1,source='discard'),
  ('46','Entangling Control'):S(E('forceOpponentSwitch',chooseBy='attacker'),ST('confusion')),
  ('46','Trash Tentacle'):SEARCH(1,source='discard'),
  ('48','Bullet Punch'):COIN(2,20,False),
@@ -70,6 +73,8 @@ ATTACKS={
  ('61','Act Tough'):BONUS(20,{'type':'selfHasEnergyType','energyType':'Darkness'}),
  ('62','Fake Out'):Q(ST('paralysis')),('62','Ambush'):Q(BONUS(30)),
  ('63','Lunge'):E('coinAttackGate',heads=N),
+ ('66','Cyber Crush'):E('xy7CyberCrush'),
+ ('66','Slowing Beam'):E('xy7SlowingBeam'),
  ('65','Tri Attack'):COIN(3,30),
  ('67','Dazzle Blast'):ST('confusion'),
  ('68','Aero Ball'):E('xy7AeroBall'),
@@ -86,11 +91,8 @@ ATTACKS={
 }
 # Prize Count is based on the actual unclaimed Prize-card piles of both sides,
 # not score or the default tabletop six Prize cards.
-# Correction: damage only on opponent's *new* Active needs a new effect handler.
-ATTACKS.pop(('46','Entangling Control'))
-# Correction: select a card of any kind from the discard must not expose an
-# unfiltered Search that could create a new card rather than move a physical one.
-ATTACKS.pop(('46','Trash Tentacle'))
+# Stage 6: Entangling Control confuses the *new* Active only after choice.
+# Trash Tentacle searches only existing physical discard/ledger entries.
 # θ traits are independent of Abilities; card eligibility still requires
 # every individual attack and Ability to be implemented.
 
@@ -105,6 +107,8 @@ TRAINERS={
  '69':('Supporter',S(E('handShuffle',side='self',draw=6,condition={'type':'ownPrizesMore'}),
                          E('handShuffle',side='opponent',draw=3,condition={'type':'ownPrizesMore'}))), # Ace Trainer
  '70':('Tool',N),  # Ampharos Spirit Link
+ '71':('Item',E('xy7RecycleTools',amount=3)),
+ '72':('Item',E('xy7RecycleBasics',amount=5)),
  '76':('Item',SEARCH(1,kind='pokemon',hpAtMost=90)), # Level Ball
  '73':('Stadium',N),  # Faded Town: between-turn damage in shared core
  '74':('Stadium',N),  # Forest of Giant Plants: evolution timing in shared core
@@ -133,6 +137,8 @@ ABILITIES={
    'effect':OPT('Search for up to 3 Pokémon-EX except Hoopa-EX',
      SEARCH(3,kind='pokemon',isEx=True,notName='Hoopa-EX'))},
  'Bright Heal':{'type':'activated','oncePerTurn':True,'effect':H(20,'selfAll')},
+ 'Water Down':{'type':'triggered','event':'energyAttached','fromHandOnly':True,'energyType':'Water',
+   'effect':OPT('Search your draw deck for Goomy',E('benchFromDeck',amount=1,choose=True,filter={'kind':'pokemon','name':'Goomy'}))},
 }
 
 def attack(row, a):

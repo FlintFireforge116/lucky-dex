@@ -885,6 +885,8 @@
       for(let i=0;i<plasmaCount;i++){const at=cost.lastIndexOf('C');if(at<0)break;cost=cost.slice(0,at)+cost.slice(at+1);}
     }
     if(state.format==='classic'&&Number(slot?.hgssGraffitiUntil||0)>=Number(state.turnNumber))cost+='C';
+    // Ancient Origins Slowing Beam: one extra Colorless for the defending Pokémon's attacks on its next turn.
+    if(state.format==='classic'&&Number(slot?.xy7SlowingBeamUntil||0)>=Number(state.turnNumber))cost+='C';
     if(state.format==='classic'&&slot?.cardId==='pl1-54'&&Object.keys(slot.conditions||{}).length&&!effects.abilitiesSuppressed(state,side,slot,data.cardById))return '';
     // SP Energy Gain subtracts exactly one Colorless through the shared Tool modifier.
     if(state.format==='classic'&&slot){

@@ -8,8 +8,8 @@ android {
         applicationId 'com.example.luckydex'
         minSdk 26
         targetSdk 35
-        versionCode 7367
-        versionName '0.69.367'
+        versionCode 7368
+        versionName '0.69.368'
     }
 
     signingConfigs {
@@ -856,7 +856,7 @@ tasks.register('generateXY7ForApk', Exec) {
 tasks.register('auditXY7ForApk', Exec) {
     dependsOn tasks.named('generateXY7ForApk')
     workingDir rootProject.projectDir
-    commandLine 'node', '--test', 'tests/v07363-ancient-origins-stage1.test.cjs', 'tests/v07364-ancient-origins-theta.test.cjs', 'tests/v07365-ancient-origins-abilities.test.cjs', 'tests/v07366-ancient-origins-stage4.test.cjs', 'tests/v07367-ancient-origins-stage5.test.cjs'
+    commandLine 'node', '--test', 'tests/v07363-ancient-origins-stage1.test.cjs', 'tests/v07364-ancient-origins-theta.test.cjs', 'tests/v07365-ancient-origins-abilities.test.cjs', 'tests/v07366-ancient-origins-stage4.test.cjs', 'tests/v07367-ancient-origins-stage5.test.cjs', 'tests/v07368-ancient-origins-stage6.test.cjs'
 }
 tasks.matching { it.name == 'preBuild' || (it.name.startsWith('merge') && it.name.endsWith('Assets')) }.configureEach {
     dependsOn tasks.named('auditXY7ForApk')

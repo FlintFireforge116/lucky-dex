@@ -3668,3 +3668,45 @@ LUCKYDEX v0.69.367 — XY ANCIENT ORIGINS STAGE 5 (ATTACKS / TRAINERS)
     git commit -m "LuckyDex v0.69.367 Ancient Origins Stage 5 effects"
     git push origin main
 ========================================================================
+
+===============================================================================
+LUCKYDEX v0.69.368 — XY ANCIENT ORIGINS STAGE 6 + STAGE 5 CI FIX
+===============================================================================
+[CURRENT] Ancient Origins continues; still contains gated, unimplemented prints.
+The Stage 5 CI failure was caused by a stale Stage 1 test asserting that
+Mega Sceptile-EX #8 was unplayable, even after Stage 5 completed Jagged Saber.
+Stage 6 corrects the test; it does not revert the Stage 5 effects.
+
+ADDED:
+- Gyarados #21 Full Retaliation: +30 per existing damage counter on own
+  Benched Magikarp. Counts neither other Benched Pokemon nor discarded Magikarp.
+- Malamar #46 Entangling Control: player chooses opposing Bench target, then
+  newly promoted Active becomes Confused. Trash Tentacle recovers one actual
+  discarded card, including Basic Energy recorded in the Classic ledger.
+- Porygon-Z #66 Cyber Crush: discard all opposing attached Special Energy,
+  without touching Basic Energy. Slowing Beam: affected defender's attack costs
+  +1 Colorless for the opponent's next turn; clear on switching/evolving.
+- Goomy #58 Water Down: optional search of physical deck after attaching a
+  Water Energy *from hand*; never trigger from normal Energy Zone attachment.
+- Eco Arm #71: choose up to three real Pokemon Tool cards from discard, return
+  to physical deck, then shuffle; do not invent cards or select unrelated Items.
+- Energy Recycler #72: move up to five genuine discarded Basic Energy units
+  back into the Classic ordered Energy Zone, never Special Energy.
+- Autobuilder filters for Eco Arm and Energy Recycler to reduce unsynergistic
+  Trainer filler; player-retained manual choices are not removed.
+
+RUN TESTS:
+  node --test tests/v07363-ancient-origins-stage1.test.cjs \
+    tests/v07364-ancient-origins-theta.test.cjs \
+    tests/v07365-ancient-origins-abilities.test.cjs \
+    tests/v07366-ancient-origins-stage4.test.cjs \
+    tests/v07367-ancient-origins-stage5.test.cjs \
+    tests/v07368-ancient-origins-stage6.test.cjs
+
+TERMUX:
+  cd ~/lucky-dex
+  unzip -o /sdcard/Download/LuckyDex_patch_v0.69.368_ANCIENT_ORIGINS_STAGE6.zip -d source
+  git add source
+  git commit -m "LuckyDex v0.69.368 Ancient Origins Stage 6 and CI fix"
+  git push origin main
+===============================================================================
