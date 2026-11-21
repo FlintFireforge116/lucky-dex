@@ -3018,3 +3018,32 @@ git push origin main
 
 Keep patch archive entries relative to source/ (e.g. app/build.gradle, not
 source/app/build.gradle). Do not require an extra setup script in Termux.
+
+=== v0.69.340: XY4 Phantom Forces GitHub Energy-cost audit fix ===
+Classic attack costs are canonical *symbol strings* in the shared registry,
+e.g. GC, FFCC and CC, even when the immutable official XY4 print data uses
+symbol arrays, e.g. ["G","C"]. When independently auditing printed costs,
+normalize both structures to identical ordered symbol strings, preserving
+symbol count and type. Never loosen a printed-energy comparison to mere
+convertedEnergyCost or total count. Apply this comparison to all 124 XY4
+prints after GitHub generates the official catalogue; keep the exact print,
+spell/attack and deck gating tests enabled. This repairs the stage-1 CI-only
+false-negative (five of six prior XY4 tests passed). The repair is audit-only:
+no Pokémon abilities, attack rules, costs, or deck-building decisions change.
+Version parity is mandatory across Android Gradle, HTML title and app boot JS.
+
+TERMUX PATCH APPLICATION (copy as a single block):
+cd ~/lucky-dex
+
+unzip -o /sdcard/Download/LuckyDex_patch_v0.69.340_PHANTOM_FORCES_CI_COST_FIX.zip -d source
+
+git add source
+git commit -m "LuckyDex v0.69.340 Phantom Forces CI cost audit repair"
+git push origin main
+
+VERSION-CHECK TEST POLICY (introduced v0.69.340):
+Any persistent set-audit test checking app build version MUST read versionName
+from app/build.gradle, require Android versionCode to match the release, and
+compare the same value to BOTH HTML build markers and the JavaScript boot
+marker. Do not hard-code a particular released version in an old set's
+regression test; otherwise all later releases fail CI when version changes.

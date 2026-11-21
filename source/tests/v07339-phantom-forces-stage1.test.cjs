@@ -9,6 +9,15 @@ const picker=require(path.join(assets,'tcg-classic-set-picker.js'));
 const effects=require(path.join(assets,'tcgp-battle-effects.js'));
 const source=path.join(root,'data/classic/xy4-print-compact.json');
 const GENERATED=fs.existsSync(source);
+// The shared Classic registry normalizes printed Energy arrays to a compact
+// string (['G','C'] -> 'GC'). Compare symbols, not the JS representation.
+// Preserve order and multiplicity: 'GC' is never equivalent to 'GG'.
+function printedCostSymbols(cost) {
+ if (Array.isArray(cost)) return cost.join('');
+ if (typeof cost === 'string') return cost;
+ throw new TypeError('Unexpected Classic attack Energy cost: '+String(cost));
+}
+
 
 test('Phantom Forces is registered for player, opponent, card inspector, and HTML boot',()=>{
  assert.equal(phantom.SET.id,'xy4');assert.equal(phantom.SET.printedTotal,124);assert.equal(phantom.SET.cardCount,119);
@@ -21,13 +30,20 @@ test('Phantom Forces is registered for player, opponent, card inspector, and HTM
  assert.ok(html.indexOf('tcg-classic-phantom-forces.js')<html.indexOf('tcg-classic-battle-data.js'));
 });
 
-test('v0.69.339 agrees across Android, title, and boot and audits before mergeAssets',()=>{
+test('Android, title, boot version and XY4 audit dependencies remain synchronized',()=>{
  const gradle=fs.readFileSync(path.join(root,'app/build.gradle'),'utf8');
- assert.match(gradle,/versionCode 7339/);assert.match(gradle,/versionName '0\.69\.339'/);
+ const name=/versionName '0\.69\.(\d+)'/.exec(gradle);
+ const code=/versionCode\s+(\d+)/.exec(gradle);
+ assert.ok(name && code,'Android version fields must be present');
+ const patchNumber=Number(name[1]);
+ assert.ok(patchNumber>=339,'XY4 release must not regress');
+ assert.equal(Number(code[1]),7000+patchNumber);
+ const version=`0.69.${patchNumber}`;
  const html=fs.readFileSync(path.join(assets,'index.html'),'utf8');
- assert.match(html,/titleBuildVersion">v0\.69\.339/);
- assert.match(html,/appBuildVersion">LUCKY DEX · v0\.69\.339/);
- assert.match(fs.readFileSync(path.join(assets,'app-v0167.js'),'utf8'),/window\.__LUCKYDEX_BUILD='0\.69\.339'/);
+ const boot=fs.readFileSync(path.join(assets,'app-v0167.js'),'utf8');
+ assert.ok(html.includes(`titleBuildVersion">v${version}`),'title version mismatch');
+ assert.ok(html.includes(`appBuildVersion">LUCKY DEX · v${version}`),'UI version mismatch');
+ assert.ok(boot.includes(`window.__LUCKYDEX_BUILD='${version}'`),'boot version mismatch');
  assert.match(gradle,/tasks\.register\('generateXY4ForApk'/);
  assert.match(gradle,/tasks\.register\('auditXY4ForApk'/);
  assert.match(gradle,/auditV07329AllClassicAttackEnergyForApk'\)\.configure\s*\{\s*dependsOn tasks\.named\('auditXY4ForApk'/);
@@ -96,7 +112,7 @@ test('CI uses immutable XY4 blob, includes alt prints, and does not ship placeho
   const row=rows[i],card=phantom.CARDS[i];
   assert.equal(card.id,'xy4-'+row[0]);assert.equal(card.name,row[1]);
   assert.equal(classic.cardById(card.id),card);
-  assert.deepEqual((card.attacks||[]).map(at=>at.cost),row[7].map(at=>at[1]));
+  assert.deepEqual((card.attacks||[]).map(at=>printedCostSymbols(at.cost)),row[7].map(at=>printedCostSymbols(at[1])),card.id+' printed Energy cost');
   if(!card.battleEnabled){assert.equal(card.deckEligible,false,card.id);continue;}
   assert.equal(card.support.status,'FULL',card.id);
   for(const at of card.attacks||[])assert.deepEqual(effects.validateEffect(at.effect),[],card.id+':'+at.name);
@@ -108,6 +124,15 @@ test('CI uses immutable XY4 blob, includes alt prints, and does not ship placeho
  assert.equal(phantom.cardById('xy4-65a').pokemonEX,true);
  assert.equal(phantom.cardById('xy4-111').effect.provides.Colorless,2);
  assert.equal(phantom.cardById('xy4-112').deckEligible,true,'Mystery Energy typed, retreat-modifying');
+});
+
+test('printed Energy-cost comparison accepts string and array storage, but rejects wrong costs',()=>{
+ assert.equal(printedCostSymbols(['G','C']), 'GC');
+ assert.equal(printedCostSymbols('GC'), 'GC');
+ assert.equal(printedCostSymbols(['C','G']), 'CG');
+ assert.notEqual(printedCostSymbols(['G','C']), printedCostSymbols('GG'));
+ assert.notEqual(printedCostSymbols(['C','G']), printedCostSymbols('GC'));
+ assert.throws(()=>printedCostSymbols({G:1,C:1}),TypeError);
 });
 
 test('Phantom Forces random 30-card decks contain only playable registered prints',{skip:!GENERATED},()=>{

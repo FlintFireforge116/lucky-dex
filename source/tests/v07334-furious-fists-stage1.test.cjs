@@ -24,11 +24,18 @@ test('Furious Fists is registered for player decks, CPU opponents, inspector, an
 });
 test('current build is consistent in Android, title, and boot JS',()=>{
  const gradle=fs.readFileSync(path.join(root,'app/build.gradle'),'utf8');
- assert.match(gradle,/versionCode 7339/);
- assert.match(gradle,/versionName '0\.69\.339'/);
- assert.match(fs.readFileSync(path.join(assets,'index.html'),'utf8'),/titleBuildVersion">v0\.69\.339/);
- assert.match(fs.readFileSync(path.join(assets,'index.html'),'utf8'),/appBuildVersion">LUCKY DEX · v0\.69\.339/);
- assert.match(fs.readFileSync(path.join(assets,'app-v0167.js'),'utf8'),/window\.__LUCKYDEX_BUILD='0\.69\.339'/);
+ const name=/versionName '0\.69\.(\d+)'/.exec(gradle);
+ const code=/versionCode\s+(\d+)/.exec(gradle);
+ assert.ok(name && code,'Android versionName/versionCode must be present');
+ const patchNumber=Number(name[1]);
+ assert.ok(patchNumber>=338,'must not regress below the Furious Fists integration');
+ assert.equal(Number(code[1]),7000+patchNumber,'Android versionCode must match versionName');
+ const version=`0.69.${patchNumber}`;
+ const html=fs.readFileSync(path.join(assets,'index.html'),'utf8');
+ const boot=fs.readFileSync(path.join(assets,'app-v0167.js'),'utf8');
+ assert.ok(html.includes(`titleBuildVersion">v${version}`),'title version mismatch');
+ assert.ok(html.includes(`appBuildVersion">LUCKY DEX · v${version}`),'UI version mismatch');
+ assert.ok(boot.includes(`window.__LUCKYDEX_BUILD='${version}'`),'boot version mismatch');
 });
 test('build includes immutable XY3 generation BEFORE full catalogue audit and assets',()=>{
  const gradle=fs.readFileSync(path.join(root,'app/build.gradle'),'utf8');
