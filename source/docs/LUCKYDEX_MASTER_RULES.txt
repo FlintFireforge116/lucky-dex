@@ -3107,3 +3107,21 @@ git push origin main
 - Water Veil: hand-attached Energy (not Energy Zone) removes conditions from Wailord-EX. Barrier Shrine: unsuppressed Ninetales prevents Stadium played by EITHER player.
 - Energy Retrieval #126: physical Basic Energy in discard is a selectable card; spent Basic Energy Zone counters are separately selectable and consumed for up to 2 recovered Basic Energy cards.
 - Permanent regression: tests/v07344-primal-clash-stage2.test.cjs. APK gate auditXY5ForApk runs Stage 1 and Stage 2; full 164-print official audit remains CI-only before Android packaging.
+
+=== v0.69.345: XY5 Primal Clash stage 3 — physical Primal moves, passive field mechanics and Trainer choices ===
+- Source baseline is the user-confirmed successful v0.69.344 GitHub APK. Current release still requires GitHub verification. Do not mark the full XY5 set done until every 164-print catalogue entry, attack, Ability and Ancient Trait is both implemented and independently audited.
+- Tidal Storm (#55/#149) deals printed 150 to Active and 30 to each opposing Benched EX, THEN chooses one own Benched recipient and up to two genuine Basic or attached Special Energy to move from the attacker. No fake Energy, no discard or Energy Zone substitution. Finish mandatory choices before advancing turn or showing prizes.
+- Gaia Volcano (#86/#151) gets +100 only if a Stadium is in play and physically discards that Stadium to its actual owner's discard. The Groudon prints remain GATED while Ω Barrier's global protection is unverified.
+- Megaton Slam (#94/#154) optional coin: decline = plain 120, heads = +120, tails = 20 own Bench damage. Brilliant Arrow (#106/#156) = 30 per actually attached Fairy Energy across whole own board, including compatible Special Energy; Shining Wind (#105/#155) prevents Weakness on opponent's next turn.
+- Miracle Guard (Aegislash) sets own team's Weakness to none while unsuppressed; Rock Wall (Rhyperior) reduces received damage by 10 AFTER Weakness/Resistance; Sap Sipper (Bouffalant) adds 40 when attacking a Grass target. Suppress appropriate Basic Abilities under Silent Lab. Do not unlock any otherwise unfinished card merely because one Ability works.
+- Rough Seas: once per player's turn heal each friendly Water/Lightning by 30 (with α Recovery bonus). Scorched Earth: discard REAL Fire/Fighting Energy from physical hand to draw 2; Basic Energy available only from the separate Zone cannot pay its cost. Shrine of Memories offers real previous-Evolution attacks (printed cost still applies). Weakness Policy removes holder's Weakness. Acro Bike and Repeat Ball use actual deck/hand/discard refs and explicit choice selection.
+- Ω Barrier central Item/Supporter protection has been introduced but ALL Ω Barrier cards remain EXPLICITLY GATED until older bespoke Trainer paths are independently verified. Trainer Pokémon Tools and Stadiums are not blocked by Ω Barrier, and neither are attacks. Never use a mere passive registry descriptor as evidence every targeted effect is protected.
+- The automatic 30-card deck builder avoids new unsupported/no-payoff cards: Spirit Link requires matching Mega, Shield/Wonder Energy requires matching Pokémon type, Rough Seas requires Water/Lightning, Scorched Earth requires ACTUAL printed Fire/Fighting Basic Energy in the deck, Shrine of Memories requires a connected Evolution, Silent Lab avoids own Basic Ability shutdown, Repeat Ball requires same-name Pokémon duplicates. Respect explicitly retained manual choices.
+- Run permanent source and generated-catalogue tests/v07345-primal-clash-stage3.test.cjs with v07343 and v07344 after immutable XY5 generation, before Android asset merging. Continue cross-era testing for Energy Zone vs physical discard, CPU target legality, Trainers, stadiums and Pokémon Tool effects. No fabricated card entries in any source ZIP.
+
+TERMUX PATCH APPLICATION (v0.69.345):
+cd ~/lucky-dex
+unzip -o /sdcard/Download/LuckyDex_patch_v0.69.345_PRIMAL_CLASH_STAGE3.zip -d source
+git add source
+git commit -m "LuckyDex v0.69.345 Primal Clash gameplay stage 3"
+git push origin main

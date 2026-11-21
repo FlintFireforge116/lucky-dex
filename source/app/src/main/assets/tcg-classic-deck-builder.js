@@ -709,6 +709,16 @@ function buildDeck(rows,options={}){
        'xy5-131':['xy5-86','xy5-151'],
        'xy5-132':['xy5-55','xy5-149']};
      if(xy5Links[card?.id]&&!pokemon.some(p=>xy5Links[card.id].includes(p.id)))return false;
+     // Primal Clash's new Trainers must match the *constructed* 30-card
+     // deck, not the full collection. Basic Energy in the automatic Zone is
+     // not a printed hand card, so it cannot pay Scorched Earth's discard.
+     if(card?.id==='xy5-137'&&!pokemon.some(p=>(p.types||[]).some(t=>t==='Water'||t==='Lightning')))return false;
+     if(card?.id==='xy5-138'&&!cards.some(id=>{const c=classic.cardById(id);return c?.basicEnergy&&['Fire','Fighting'].includes(c.energyType||c.subtype);} ))return false;
+     if(card?.id==='xy5-139'&&!pokemon.some(p=>p.stage!=='Basic'&&pokemon.some(b=>
+       classicCardName(b.name)===classicCardName(p.evolvesFrom||'')&&b.id!==p.id)))return false;
+     if(card?.id==='xy5-140'&&pokemon.some(p=>p.stage==='Basic'&&(p.abilities||[]).length))return false;
+     if(card?.id==='xy5-136'&&!pokemon.some(p=>pokemon.filter(other=>classicCardName(other.name)===classicCardName(p.name)).length>1))return false;
+
      // Evolution accelerators without Stage 2 targets are dead cards.
      if(card?.name==='Rare Candy'&&!pokemon.some(p=>p.stage==='Stage 2'))return false;
      if(card?.name==="Brock's Protection"&&!pokemon.some(p=>p.name.startsWith("Brock's ")))return false;

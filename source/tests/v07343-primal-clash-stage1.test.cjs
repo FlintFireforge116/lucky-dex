@@ -61,10 +61,11 @@ print(json.dumps(m.generate(rows)))`;
  assert.equal(r.status,0,r.stderr||r.stdout);
  const by=Object.fromEntries(JSON.parse(r.stdout).map(c=>[c.number,c]));
  for(const n of ['3','4','125','129','135','161'])assert.equal(by[n].battleEnabled,true,`${n}: ${by[n].support.reasons}`);
- for(const n of ['9','55','164']){
+ for(const n of ['9']){
   assert.equal(by[n].battleEnabled,false,n);assert.equal(by[n].deckEligible,false,n);
   assert.ok(by[n].support.reasons.length>0,n);
  }
+ for(const n of ['55','164'])assert.equal(by[n].battleEnabled,true,n+' new printed mechanics implemented');
  assert.equal(by['21'].battleEnabled,true,'Barrier Shrine is implemented');
  assert.equal(by['21'].abilities[0].name,'Barrier Shrine');
  assert.equal(by['143'].battleEnabled,true,'Shield Energy typed passive is implemented');

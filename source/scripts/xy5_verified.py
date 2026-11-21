@@ -43,6 +43,8 @@ ATTACKS={
  ('52','Psy Bolt'):Q(ST('paralysis')),
  ('53','Spring Tides'):COIN('untilTails',30),('53','Ocean Cyclone'):BENCH(10,'opponent'),
  ('54','Water Pulse'):ST('sleep'),
+ ('55','Tidal Storm'):E('neoRule',rule='xy5:tidalStorm'),
+ ('86','Gaia Volcano'):E('neoRule',rule='xy5:gaiaVolcano'),
  ('56','Deep Sea Swirl'):E('handShuffle',draw=6),('56','Life Saver'):SEARCH(2,source='discard',kind='pokemon',subtype='Water'),
  ('58','Dive'):Q(E('preventDamage',target='self',duration='opponentTurn',preventEffects=True)),
  ('58','Take Down'):E('selfDamage',amount=20),
@@ -69,6 +71,9 @@ ATTACKS={
  ('103','Superpower'):OPT('Do 30 more damage and 30 self-damage',S(BONUS(30),E('selfDamage',amount=30))),
  ('104','Tail Rap'):COIN(2,30),
  ('105','Life Leap'):E('drain'),
+ ('105','Shining Wind'):E('weaknessGuard',duration='opponentTurn'),
+ ('106','Brilliant Arrow'):E('neoRule',rule='xy5:brilliantArrow'),
+ ('94','Megaton Slam'):E('neoRule',rule='xy5:megatonSlam'),
  ('107','Shred'):E('damageRule',ignoreEffects=True),
  ('109','Sand Attack'):E('attackCoinGate',target='opponentActive',duration='opponentTurn'),
  ('110','Sand Tomb'):LOCK(),
@@ -116,7 +121,20 @@ ABILITIES={
  'Water Veil':{'type':'triggered','event':'energyAttached','fromHandOnly':True,
    'effect':E('removeStatuses',target='self',statuses=['poison','burn','sleep','paralysis','confusion'])},
  'Barrier Shrine':{'type':'passive','effect':E('noop')},
+ 'Rock Wall':{'type':'passive','effect':E('noop')},
+ 'Miracle Guard':{'type':'passive','effect':E('noop')},
+ 'Sap Sipper':{'type':'passive','effect':E('noop')},
 }
+# Rough Seas is a once-per-turn Stadium action for either side.
+TRAINERS['137']=('Stadium',E('stadiumAction',effect=E('heal',target='selfAll',amount=30,filter={'subtype':['Water','Lightning']})))
+TRAINERS['138']=('Stadium',E('stadiumAction',effect=E('neoRule',rule='xy5:scorchedEarth')))
+TRAINERS['122']=('Item',E('neoRule',rule='xy5:acroBike'))
+TRAINERS['136']=('Item',E('neoRule',rule='xy5:repeatBall'))
+# Shrine of Memories, Silent Lab and Weakness Policy use global battle hooks.
+TRAINERS['139']=('Stadium',E('noop'))
+TRAINERS['140']=('Stadium',E('noop'))
+TRAINERS['142']=('Tool',E('noop'))
+TRAINERS['164']=TRAINERS['142']
 TRAINERS['159']=TRAINERS['134'];TRAINERS['161']=TRAINERS['125']
 # Existing combat engine supports Item/Supporter, but not an Ancient Trait
 # action queue or the three new Primal Spirit Links. Explicitly exclude them.
