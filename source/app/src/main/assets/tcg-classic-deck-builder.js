@@ -27,7 +27,7 @@ const STAPLES=Object.freeze([
  ['base1-83',1], // Maintenance
  ['base1-87',1]  // Pokedex
 ]);
-const SET_IDS=Object.freeze(['base1','base2','base3','base5','gym1','gym2','neo1','neo2','neo3','neo4','base6','ecard1','ecard2','ecard3','ex1','ex2','ex3','ex4','ex5','ex6','ex7','ex8','ex9','ex10','ex11','ex12','ex13','ex14','ex15','ex16','dp1','dp2','dp3','dp4','dp5','dp6','dp7','pl1','pl2','pl3','pl4','hgss1','hgss2','hgss3','hgss4','col1','bw1','bw2','bw3','bw4','bw5','bw6','bw7','bw8','bw9','bw10','bw11','xy1','xy2','xy3','xy4','xy5','xy6','SNAPFLORIO','SNAPFOUNJA','sv1']);
+const SET_IDS=Object.freeze(['base1','base2','base3','base5','gym1','gym2','neo1','neo2','neo3','neo4','base6','ecard1','ecard2','ecard3','ex1','ex2','ex3','ex4','ex5','ex6','ex7','ex8','ex9','ex10','ex11','ex12','ex13','ex14','ex15','ex16','dp1','dp2','dp3','dp4','dp5','dp6','dp7','pl1','pl2','pl3','pl4','hgss1','hgss2','hgss3','hgss4','col1','bw1','bw2','bw3','bw4','bw5','bw6','bw7','bw8','bw9','bw10','bw11','xy1','xy2','xy3','xy4','xy5','xy6','xy7','SNAPFLORIO','SNAPFOUNJA','sv1']);
 // Darkness and Metal are already Basic Energy types. Deduplicate before rendering
 // archetype chips so each energy type has exactly one toggle.
 // Dragon is a Pokémon type, never a Basic Energy type. Include it as an
@@ -715,7 +715,10 @@ function buildDeck(rows,options={}){
        'xy5-132':['xy5-55','xy5-149'],
        'xy6-83':['xy6-35','xy6-100'],
        'xy6-85':['xy6-59','xy6-102'],
-       'xy6-87':['xy6-61','xy6-76','xy6-105']};
+       'xy6-87':['xy6-61','xy6-76','xy6-105'],
+       'xy7-70':['xy7-28','xy7-88'],
+       'xy7-80':['xy7-8','xy7-85'],
+       'xy7-81':['xy7-43','xy7-92']};
      if(xy5Links[card?.id]&&!pokemon.some(p=>xy5Links[card.id].includes(p.id)))return false;
      // Primal Clash's new Trainers must match the *constructed* 30-card
      // deck, not the full collection. Basic Energy in the automatic Zone is
@@ -1127,7 +1130,10 @@ function buildDeck(rows,options={}){
    ['xy5-132',['xy5-55','xy5-149']], // Primal Kyogre-EX
    ['xy6-83',['xy6-35','xy6-100']], // M Gallade-EX
    ['xy6-85',['xy6-59','xy6-102']], // M Latios-EX
-   ['xy6-87',['xy6-61','xy6-76','xy6-105']] // M Rayquaza-EX
+   ['xy6-87',['xy6-61','xy6-76','xy6-105']], // M Rayquaza-EX
+   ['xy7-70',['xy7-28','xy7-88']], // M Ampharos-EX
+   ['xy7-80',['xy7-8','xy7-85']], // M Sceptile-EX
+   ['xy7-81',['xy7-43','xy7-92']] // M Tyranitar-EX
  ];
  for(const [id,partners] of xy5SpiritLinks){
    if(!partners.some(p=>cards.includes(p)))continue;

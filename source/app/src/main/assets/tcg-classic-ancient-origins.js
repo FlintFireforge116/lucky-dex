@@ -1,0 +1,2 @@
+/* Build-time placeholder — must be replaced by generateXY7ForApk. */
+(function(root,factory){const api=factory();if(typeof module==='object'&&module.exports)module.exports=api;if(root)root.LuckyDexClassicTCGXY7=api;})(typeof globalThis!=='undefined'?globalThis:this,function(){'use strict';const SET=Object.freeze({id:'xy7',name:'Ancient Origins',series:'XY',releaseDate:'2015-08-12',cardCount:100,printedTotal:101});const CARDS=Object.freeze([]);return {SET,CARDS,cardById:()=>null,coverage:()=>({total:0,printed:0,battleEnabled:0,gated:[]})};});

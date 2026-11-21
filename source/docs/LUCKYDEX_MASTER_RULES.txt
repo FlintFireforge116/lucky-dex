@@ -3478,3 +3478,35 @@ LUCKYDEX v0.69.362 — XY6 ROARING SKIES INDEPENDENT CARD AUDIT
     git commit -m "LuckyDex v0.69.362 Roaring Skies independent audit"
     git push origin main
 ========================================================================
+
+========================================================================
+LUCKYDEX v0.69.363 — XY ANCIENT ORIGINS STAGE 1
+========================================================================
+- Verified predecessor: GitHub build #651 v0.69.362 succeeded. Roaring Skies
+  finished 112/112 prior to starting the next expansion.
+- XY7 Ancient Origins: 100 numbered + special 75a = 101 distinct printed cards;
+  130 attacks, 14 Abilities and 15 theta Ancient Trait prints. Keep 75a
+  distinct in all collection IDs and deck selection.
+- Real, hash-verified official source is generated during APK build by
+  scripts/build-xy7.py and audited by tests/v07363-ancient-origins-stage1.test.cjs.
+  The empty build-time source placeholder is never sufficient for APK release.
+- Theta Stop, Double and Max are NOT Delta/Alpha/Omega traits. Do not unlock
+  without proper ability blocking, dual Tool slots, and heal-on-evolution.
+- The two new XY7 Special Energy types require continuous global effects;
+  gated until Dangerous Energy damage retaliation and Flash Energy no-Weakness
+  work with former-set Tools, Bench, KO, damage and CPU logic.
+- Matching Spirit Links: Ampharos #70 -> M Ampharos-EX #28/#88; Sceptile #80
+  -> M Sceptile-EX #8/#85; Tyranitar #81 -> M Tyranitar-EX #43/#92.
+  They do NOT grant a general free Mega Evolution; Banette blanks their text.
+- Stage 1 excludes incomplete printed attacks/Abilities from battle decks;
+  no guessed effects or invented Energy. Deck auto-fill respects actual
+  parent/evolution and matching Spirit Links, without removing manual picks.
+- Tests: Stage 1 verifier + Roaring Skies independent regression suites.
+  Official catalogue-dependent tests must run in GitHub after generation.
+- Termux:
+    cd ~/lucky-dex
+    unzip -o /sdcard/Download/LuckyDex_patch_v0.69.363_ANCIENT_ORIGINS_STAGE1.zip -d source
+    git add source
+    git commit -m "LuckyDex v0.69.363 Ancient Origins Stage 1"
+    git push origin main
+========================================================================
