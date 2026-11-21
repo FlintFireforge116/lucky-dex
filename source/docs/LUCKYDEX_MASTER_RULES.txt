@@ -3415,3 +3415,35 @@ LUCKYDEX v0.69.360 — XY ROARING SKIES STAGE 8
 - Banette #31 Tool Concealment remains deliberately unplayable until every historic Tool effect pathway is globally guarded, while still keeping Tools physically attached. Never enable an incomplete global suppression Ability.
 - Verified baseline: v0.69.359 Stage 7 passed GitHub run #648. v0.69.360 still requires GitHub APK validation. Run v07360 stage8 regression tests after the full pinned catalogue generation in Gradle.
 - Termux: unzip -o /sdcard/Download/LuckyDex_patch_v0.69.360_ROARING_SKIES_STAGE8.zip -d source ; git add source ; git commit -m "LuckyDex v0.69.360 Roaring Skies Stage 8 Energy and Wing Buzz" ; git push origin main
+
+========================================================================
+LUCKYDEX v0.69.361 — XY ROARING SKIES 112-PRINT COMPLETION
+========================================================================
+- Baseline v0.69.360 GitHub run #649 SUCCESS. Roaring Skies official pinned
+  set: xy6, 110 numbered + 77a and 92a = 112 distinct prints, 147 attacks,
+  15 Abilities, 12 Ancient Traits. Avoid conflating alternate-art IDs.
+- Banette #31 Tool Concealment is a GLOBAL two-player suppression of Pokémon
+  TOOL EFFECTS only. Tools remain physically attached, occupy Tool slots and
+  may be discarded or moved normally. Generic passive/protection, Weakness,
+  retreat, triggered Tools and older card-ID-based Tool hooks must see the
+  suppressed active Tool list, never the physical Tool list. Garbotoxin's
+  physically attached Tool still counts toward its Ability condition.
+- Togetic #44 Go Fetch moves at most THREE actual discarded Basic Energy
+  units/cards into the separately managed Basic Energy Zone, with player
+  type choices and Zone shuffle. It must NEVER invent Energy, count Special
+  Energy as Basic, or search an unrelated 30-card Pokemon/Trainer deck.
+- CPU autobuilder avoids automatically adding Tools alongside Banette #31,
+  but never deletes or forbids manually retained Tool choices.
+- Source maps every Roaring Skies attack and Ability; generated-catalogue
+  test in auditXY6CompletionForApk requires exactly 112 battle-enabled and
+  deck-eligible prints and zero gated cards before GitHub APK may succeed.
+- Combined local Roaring Skies + prior cross-era selection: 131 pass,
+  0 fail, 4 catalogue-dependent skips. The APK itself is unverified until
+  the v0.69.361 GitHub run succeeds. Keep manual cross-era testing useful.
+- Termux:
+    cd ~/lucky-dex
+    unzip -o /sdcard/Download/LuckyDex_patch_v0.69.361_ROARING_SKIES_COMPLETION.zip -d source
+    git add source
+    git commit -m "LuckyDex v0.69.361 Roaring Skies complete and Tool audit"
+    git push origin main
+========================================================================

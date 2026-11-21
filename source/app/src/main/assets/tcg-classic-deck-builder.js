@@ -701,6 +701,11 @@ function buildDeck(rows,options={}){
    // Being battle-enabled does not mean the Trainer has a useful target.
    if(!manuallyKept){
      const pokemon=selectedPokemon();
+     // Banette's global Tool Concealment blanks every Pokémon Tool on both
+     // boards while its Ability is live. Avoid spending the compact 30-card
+     // support slots on inactive Tools when automatically building around it.
+     // Existing user-selected Tools are retained, even if situational.
+     if(card?.trainerType==='Tool'&&pokemon.some(p=>p.id==='xy6-31'))return false;
      // Primal Clash Spirit Links are only useful with their exact Mega or
      // Primal Evolution prints IN the finished 30-card deck. A matching
      // ordinary Basic EX is not enough; do not auto-add dead Tool cards.

@@ -26,13 +26,12 @@ function using(fn){const old=data.cardById;data.cardById=id=>cards[id]||old(id);
 function battle(){const s=core.createBattle({format:'classic',playerDeck:loan,opponentDeck:loan,seed:360,firstSide:'player',playerEnergyTypes:['Fire','Fairy','Water'],opponentEnergyTypes:['Water']});s.phase='battle';s.activeSide='player';s.turnNumber=10;for(const ss of Object.values(s.sides)){ss.turnCount=5;ss.bench=[];ss.hand=[];ss.handEnergyUsed=false;ss.energyUsed=false;ss.supporterUsed=false;ss.stadiumUsed=false;ss.handLimit=8;}s.sides.player.active=slot('demo-togetic','active');s.sides.player.bench=[slot('demo-basic','bench',0)];s.sides.opponent.active=slot('demo-basic','foe');return s;}
 function choice(s,pred){const options=core.legalActions(s,s.choiceSide||'player').filter(a=>a.type==='effectChoice');const found=options.find(pred);assert.ok(found,`Missing choice: ${JSON.stringify(options)}`);return core.applyAction(s,s.choiceSide||'player',found);}
 function evolve(s){s.sides.player.hand=[ref('xy6-46','toge')];const a=core.legalActions(s,'player').find(a=>a.type==='evolve'&&a.cardId==='xy6-46');assert.ok(a,'Togekiss not eligible to evolve');return core.applyAction(s,'player',a);}
-test('Togekiss and Ninjask are enabled; Banette stays gated',()=>{
+test('Togekiss, Ninjask and later-completed Banette are enabled',()=>{
  assert.equal(cards['xy6-10'].battleEnabled,true,JSON.stringify(cards['xy6-10'].support));
  assert.deepEqual(fx.validateEffect(cards['xy6-10'].abilities[0].effect),[]);
  assert.equal(cards['xy6-46'].battleEnabled,true,JSON.stringify(cards['xy6-46'].support));
  assert.deepEqual(fx.validateEffect(cards['xy6-46'].abilities[0].effect),[]);
- assert.equal(cards['xy6-31'].battleEnabled,false);
- assert.match(cards['xy6-31'].support.reasons.join(' '),/Tool Concealment/);
+ assert.equal(cards['xy6-31'].battleEnabled,true,JSON.stringify(cards['xy6-31'].support));
 });
 test('Serene Grace may be declined without removing any zone Energy',()=>using(()=>{
  const s=battle(),ss=s.sides.player;ss.energySupply=['Fairy','Fire','Water','Fairy','Fire','Water','Fairy','Fire','Water'];const before=ss.energySupply.slice();evolve(s);

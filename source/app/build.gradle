@@ -8,8 +8,8 @@ android {
         applicationId 'com.example.luckydex'
         minSdk 26
         targetSdk 35
-        versionCode 7360
-        versionName '0.69.360'
+        versionCode 7361
+        versionName '0.69.361'
     }
 
     signingConfigs {
@@ -815,4 +815,18 @@ tasks.named('auditV07329AllClassicAttackEnergyForApk').configure {
 }
 tasks.matching { it.name == 'preBuild' || (it.name.startsWith('merge') && it.name.endsWith('Assets')) }.configureEach {
     dependsOn tasks.named('auditXY6Stage8ForApk')
+}
+
+// v0.69.361: Roaring Skies complete with Banette global Tool suppression,
+// Togetic physical-discard Energy recovery and 112-print build-time gate.
+tasks.register('auditXY6CompletionForApk', Exec) {
+    dependsOn tasks.named('auditXY6Stage8ForApk')
+    workingDir rootProject.projectDir
+    commandLine 'node', '--test', 'tests/v07361-roaring-skies-completion.test.cjs'
+}
+tasks.named('auditV07329AllClassicAttackEnergyForApk').configure {
+    dependsOn tasks.named('auditXY6CompletionForApk')
+}
+tasks.matching { it.name == 'preBuild' || (it.name.startsWith('merge') && it.name.endsWith('Assets')) }.configureEach {
+    dependsOn tasks.named('auditXY6CompletionForApk')
 }
