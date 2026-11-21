@@ -3623,3 +3623,48 @@ mechanics; the GitHub APK build of this patch is not yet verified.
     git commit -m "LuckyDex v0.69.366 Ancient Origins Stage 4 rules"
     git push origin main
 ========================================================================
+
+========================================================================
+LUCKYDEX v0.69.367 — XY ANCIENT ORIGINS STAGE 5 (ATTACKS / TRAINERS)
+========================================================================
+[CURRENT] v0.69.367 continues Ancient Origins; the set is NOT finished.
+- Previous v0.69.366 Stage 4 APK built successfully on GitHub (#655).
+- M Sceptile-EX #8/#85 Jagged Saber does 100 attack damage and lets
+  the attacker choose up to TWO real Basic Grass Energy cards FROM HAND.
+  Each selected card requires its own Benched receiver and fully heals
+  that recipient after attachment. Attaching to the Active is prohibited.
+  The opponent's Active takes normal attack damage. Decline is optional;
+  never take Basic Energy out of the separate Energy Zone instead.
+- Virizion #12 Prize Count compares OWN REMAINING Prize cards with the
+  opponent's, adding 80 only if own unclaimed pile is strictly larger.
+  Do not use points earned or assume a full starting Prize count.
+- Registeel #51 Forbidden Iron Hammer discards one opposing Active Energy
+  only if that Active Pokemon is EX; preserve physical Energy/discard.
+- Lugia-EX #68/#94 Aero Ball is 20 per *Energy unit* attached to BOTH
+  Actives, counting multi-unit Special Energy correctly. Deep Hurricane
+  adds 70 and then discards the real Stadium only if a Stadium is in play.
+- Hoopa-EX #36 Scoundrel Ring uses a genuine optional deck search for
+  up to three Pokemon-EX other than Hoopa-EX; Hyperspace Fury selects
+  opposing Active/Bench, deals 100, and discards two attached Energy.
+  Correctly resume nested optional choices without silently skipping.
+- Level Ball #76 searches real deck Pokemon with printed HP <=90.
+- Ace Trainer #69 is playable only when the player has MORE unclaimed
+  Prize cards than the opponent; shuffle each player's real hand into
+  their own deck, then self draws six and opponent draws three.
+- CPU: during optional Jagged Saber choices attach Basic Grass Energy
+  from the actual hand to a useful Bench target instead of auto-Skip.
+- Autobuilder: Mega Sceptile requires Grass Energy in hand and may
+  benefit from Steven #95 / equivalent search. 30-card decks EXCLUDE
+  physical Basic Energy; preserve player's manually chosen Trainer cards.
+- A separate local Stage 5 battle suite checks effects, target choices,
+  Energy accounting, CPU and alternative-print descriptors; older XY
+  tests are also run. Generated catalogue tests may skip locally.
+- The entire XY7 101-print catalogue is not yet independently audited:
+  unsupported attacks / abilities / Trainers must remain battle-gated.
+- Termux:
+    cd ~/lucky-dex
+    unzip -o /sdcard/Download/LuckyDex_patch_v0.69.367_ANCIENT_ORIGINS_STAGE5.zip -d source
+    git add source
+    git commit -m "LuckyDex v0.69.367 Ancient Origins Stage 5 effects"
+    git push origin main
+========================================================================

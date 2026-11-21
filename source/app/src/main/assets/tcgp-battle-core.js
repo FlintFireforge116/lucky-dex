@@ -1419,6 +1419,8 @@
       if(card.id==='ex5-92'&&s.hand.length>7)return;
       if(card.id==='dp1-112'&&s.hand.length<=1)return;
       if(card.id==='ex16-83'&&s.hand.length>=7)return; // Steven's Advice counts the Supporter itself.
+      // Ace Trainer is playable only while *behind* in unclaimed Prize cards.
+      if(card.id==='xy7-69'&&(s.prizes||[]).length<=(state.sides[side==='player'?'opponent':'player'].prizes||[]).length)return;
       // Pow! Hand Extension is playable only while behind on Prizes and with
       // an opposing Benched Pokémon available for either printed choice.
       if(card.id==='ex7-85'&&(s.prizes.length<=state.sides[side==='player'?'opponent':'player'].prizes.length||!state.sides[side==='player'?'opponent':'player'].bench.length))return;

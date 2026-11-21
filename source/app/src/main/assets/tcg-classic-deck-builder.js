@@ -1161,15 +1161,15 @@ function buildDeck(rows,options={}){
      add(doubleDragon,Math.min(2,room(doubleDragon)));
  }
  // The 30-card format EXCLUDES physical Basic Energy. Sceptile Nurture and
- // Heal and Torchic Flare Bonus need Energy actually in hand, which ordinary
+ // Heal, Mega Sceptile Jagged Saber and Torchic Flare Bonus need Energy in hand, which ordinary
  // turn attachments from the Energy Zone do not supply. Reserve compatible
  // Zone-to-hand search Trainers from the owned/set-scoped pool, if available.
- const xy5HandEnergyNeeds=[['xy5-8','Grass'],['xy5-26','Fire']]
+ const xy5HandEnergyNeeds=[['xy5-8','Grass'],['xy5-26','Fire'],['xy7-8','Grass'],['xy7-85','Grass']]
    .filter(([id])=>cards.includes(id));
  if(xy5HandEnergyNeeds.length){
    const energyToHandRules=new Set(['bw1:energySearch','bw4:cilan','ex1:basicSearch1','ex1:basicSearch2','expedition:energySearch','ex9:trainer:79','ex15:77:trainer']);
    const searchers=pool.filter(c=>c.kind==='trainer'&&c.battleEnabled!==false&&
-     (energyToHandRules.has(c.effect?.rule)||c.name==='Energy Search'))
+     (energyToHandRules.has(c.effect?.rule)||c.name==='Energy Search'||c.id==='xy7-95'))
      .sort((a,b)=>Number(a.trainerType==='Item')-Number(b.trainerType==='Item')||
        Number(b.setId===main.setId)-Number(a.setId===main.setId)||a.id.localeCompare(b.id));
    let reserve=2;

@@ -24,7 +24,7 @@ test('Ancient Origins registry, player/CPU deck sets and browser load order',()=
 test('XY7 source is pinned and generated before Android mergeAssets',()=>{
  const gradle=fs.readFileSync(path.join(root,'app/build.gradle'),'utf8'),
   version=gradle.match(/versionName '([^']+)'/)?.[1],code=Number(gradle.match(/versionCode\s+(\d+)/)?.[1]);
- assert.equal(version,'0.69.366');assert.equal(code,7366);
+ assert.match(version,/^0\.69\.\d+$/);assert.equal(code,7000+Number(version.split('.')[2]));
  assert.match(gradle,/tasks\.register\('generateXY7ForApk'/);
  assert.match(gradle,/tasks\.register\('auditXY7ForApk'/);
  assert.match(gradle,/dependsOn tasks\.named\('auditXY7ForApk'\)/);
@@ -77,7 +77,7 @@ print(json.dumps(m.generate(r)))`;
  assert.equal(r.status,0,r.stderr||r.stdout);
  const cards=Object.fromEntries(JSON.parse(r.stdout).map(c=>[c.id,c]));
  for(const n of ['1','7','28','70','78','84','100'])assert.equal(cards['xy7-'+n].battleEnabled,true,'expected battle enabled xy7-'+n+': '+cards['xy7-'+n].support.reasons);
- for(const n of ['8'])assert.equal(cards['xy7-'+n].battleEnabled,false,'unverified card must stay gated: '+n);
+ assert.equal(cards['xy7-8'].battleEnabled,true,'Mega Sceptile Jagged Saber has its own audited Stage 5 handler');
  for(const n of ['75','75a','82','83'])assert.equal(cards['xy7-'+n].battleEnabled,true,'Stage 4 audited print '+n);
  for(const n of ['43','96'])assert.equal(cards['xy7-'+n].battleEnabled,true,'audited θ trait '+n);
  assert.equal(cards['xy7-7'].prizeCards,2);

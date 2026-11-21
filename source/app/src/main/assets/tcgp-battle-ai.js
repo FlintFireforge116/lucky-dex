@@ -386,6 +386,33 @@
     // All choices are drawn from its own known Zone and public Pokémon.
     if(state.format==='classic'&&state.phase==='effectChoice'&&state.pendingChoice?.originSide===side){
       const pending=state.pendingChoice,e=pending.effect||{},choices=legal.filter(a=>a.type==='effectChoice');
+      // Ancient Origins M Sceptile-EX: Jagged Saber is optional but valuable.
+      // Choose genuine Grass Basic Energy already in hand and a useful Bench
+      // recipient; never manufacture Energy from the separate Energy Zone.
+      if(e.type==='xy7JaggedSaber'){
+        if(pending.kind==='handCard'){
+          const hand=state.sides[side]?.hand||[];
+          const useful=choices.filter(a=>!a.choiceSkip&&Number.isInteger(a.choiceHandIndex)&&
+            data.cardById(hand[a.choiceHandIndex]?.cardId)?.basicEnergy===true&&
+            ['Grass'].includes(data.cardById(hand[a.choiceHandIndex]?.cardId)?.subtype||
+              data.cardById(hand[a.choiceHandIndex]?.cardId)?.energyType));
+          if(useful.length)return useful[0];
+          return choices.find(a=>a.choiceSkip)||choices[0];
+        }
+        if(pending.kind==='pokemon'){
+          const bench=state.sides[side]?.bench||[];
+          const score=a=>{
+            const slot=bench.find(p=>p&&Number(p.benchSlot)===Number(a.choiceBenchIndex));
+            if(!slot)return -Infinity;
+            const card=data.cardById(slot.cardId);
+            return Math.min(Number(slot.damage||0),120)*2+
+              ((card?.types||[]).includes('Grass')?30:0)-attachedCount(slot)*6;
+          };
+          const valid=choices.filter(a=>a.choiceTarget==='bench');
+          valid.sort((a,b)=>score(b)-score(a));
+          return valid[0]||choices[0];
+        }
+      }
       const grace=e.type==='attachTopZoneEnergy'||e.type==='chooseOption'&&e.options?.some(o=>o.effect?.type==='attachTopZoneEnergy');
       if(grace){
         if(e.type==='chooseOption')return choices.find(a=>a.choiceOption===0)||choices[0];

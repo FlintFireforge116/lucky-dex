@@ -20,10 +20,11 @@ ATTACKS={
  ('10','Bee Revenge'):E('discardCountDamage',side='self',filter={'kind':'pokemon'},amount=10,mode='add'),
  ('11','Bee Drain'):E('drain'),('11','Fury Swipes'):COIN(3,30),
  ('12','Bail Out'):SEARCH(2,source='discard',kind='pokemon'),
- ('12','Prize Count'):BONUS(80,{'type':'ownPointsAtLeast','amount':1}), # replaced by predicate below, gated until precise Prize comparison
+ ('12','Prize Count'):BONUS(80,{'type':'ownPrizesMore'}),
  ('13','Heat Breath'):Q(BONUS(20)),
  ('14','Combat Blaze'):E('benchCountDamage',side='opponent',amount=20,mode='add'),
  ('15','Flame Screen'):GUARD(30),('15','Heat Tackle'):Q(t=E('selfDamage',amount=30)),
+ ('8','Jagged Saber'):E('xy7JaggedSaber',amount=2),
  ('17','Flamethrower'):DISC(),
  ('18','Burning Scales'):COIN(2,20,False),('18','Wind Wheel'):E('forceOpponentSwitch',chooseBy='defender'),
  ('20','Berserker Splash'):S(BENCH(10,'self'),BENCH(10,'opponent')),
@@ -61,6 +62,7 @@ ATTACKS={
  ('50','Machine Gun Stomp'):E('handCountDamage',side='self',amount=10,mode='add'),
  ('50','Guard Press'):GUARD(20),
  ('51','Iron Head'):COIN('untilTails',30),
+ ('51','Forbidden Iron Hammer'):E('discardEnergyCard',amount=1,target='opponentActive',condition={'type':'opponentEx'}),
  ('53','Calm Mind'):H(30),
  ('54','Telekinesis'):E('selectedDamage',target='opponentPokemon',amount=50,ignoreWeakness=True,ignoreResistance=True),
  ('55','Cotton Bed'):ST('sleep'),
@@ -70,6 +72,8 @@ ATTACKS={
  ('63','Lunge'):E('coinAttackGate',heads=N),
  ('65','Tri Attack'):COIN(3,30),
  ('67','Dazzle Blast'):ST('confusion'),
+ ('68','Aero Ball'):E('xy7AeroBall'),
+ ('68','Deep Hurricane'):S(BONUS(70,{'type':'stadiumInPlay'}),E('discardStadium',condition={'type':'stadiumInPlay'})),
  # θ Double cards: all effects on these prints already use verified handlers.
  ('15','Flame Screen'):GUARD(30),
  ('43','Destroyer King'):E('damageFromDamage',source='opponent',amount=6,mode='add'),
@@ -80,10 +84,8 @@ ATTACKS={
  # Aero Ball counts both Active Energy totals; left gated until the
  # existing energyDamage handler supports that exact combined scope.
 }
-# Correction: the printed Prize Count condition checks whether the *player* has
-# strictly more unclaimed Prize cards, not a fixed threshold. Keep the entire
-# Virizion print gated until this is handled by a real comparison.
-ATTACKS.pop(('12','Prize Count'))
+# Prize Count is based on the actual unclaimed Prize-card piles of both sides,
+# not score or the default tabletop six Prize cards.
 # Correction: damage only on opponent's *new* Active needs a new effect handler.
 ATTACKS.pop(('46','Entangling Control'))
 # Correction: select a card of any kind from the discard must not expose an
@@ -100,7 +102,10 @@ for original,alternative in [('7','84'),('8','85'),('25','86'),('27','87'),('28'
 # Exact reused Trainer rules. All other items / Stadiums / Special Energy cards
 # stay visible but gated. Spirit Links are paired to matching Mega IDs in core.
 TRAINERS={
+ '69':('Supporter',S(E('handShuffle',side='self',draw=6,condition={'type':'ownPrizesMore'}),
+                         E('handShuffle',side='opponent',draw=3,condition={'type':'ownPrizesMore'}))), # Ace Trainer
  '70':('Tool',N),  # Ampharos Spirit Link
+ '76':('Item',SEARCH(1,kind='pokemon',hpAtMost=90)), # Level Ball
  '73':('Stadium',N),  # Faded Town: between-turn damage in shared core
  '74':('Stadium',N),  # Forest of Giant Plants: evolution timing in shared core
  '75':('Supporter',E('xy7HexManiac')),
