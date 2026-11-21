@@ -670,6 +670,14 @@ function buildDeck(rows,options={}){
  if(!selectedTypes.length){const ownType=requestedEnergy[0]||(main.deckMeta?.preferredEnergyTypes||[]).find(t=>decks.ENERGY_TYPES.includes(t))||(main.types||[]).find(t=>decks.ENERGY_TYPES.includes(t));if(ownType)selectedTypes.push(ownType);}
  if(!selectedTypes.length)selectedTypes.push('Fighting');
  const cards=[],counts=new Map();
+ // The Classic format is only 30 cards. Trainer redundancy is useful, but
+ // stuffing four copies of every high-scoring Supporter/Tool is not. Start
+ // with varied two-copy support, relaxing only for inventories which cannot
+ // produce a full legal deck otherwise. Manually retained copies are exempt.
+ let autoTrainerCap=2,autoPokemonCap=18,energyFillerPhase=false;
+ const retainedNameCopies=new Map();
+ for(const id of existing){const saved=classic.cardById(id);if(saved){const name=classicCardName(saved.name);retainedNameCopies.set(name,(retainedNameCopies.get(name)||0)+1);}}
+ const selectedPokemon=()=>cards.map(classic.cardById).filter(c=>c?.kind==='pokemon');
  function trainerIsUseful(card){
    // Stormfront's specialist search/transfer cards must have real targets.
    // A Premier Ball is dead without a LV.X and Conductive Quarry is dead
@@ -689,6 +697,31 @@ function buildDeck(rows,options={}){
    // Respect explicitly retained user card choices; these restrictions only
    // govern automatic additions to the deck.
    const manuallyKept=card?.id&&existing.includes(card.id);
+   // Cross-era printed restrictions, evaluated against this particular deck.
+   // Being battle-enabled does not mean the Trainer has a useful target.
+   if(!manuallyKept){
+     const pokemon=selectedPokemon();
+     // Evolution accelerators without Stage 2 targets are dead cards.
+     if(card?.name==='Rare Candy'&&!pokemon.some(p=>p.stage==='Stage 2'))return false;
+     if(card?.name==="Brock's Protection"&&!pokemon.some(p=>p.name.startsWith("Brock's ")))return false;
+     // Across the Gym sets, Trainer names vary but their printed text is
+     // decisive: an Item for Giovanni's/Koga's Pokémon is not generic filler.
+     const gymOwners=['Brock','Misty','Erika','Lt. Surge','Koga','Sabrina','Blaine','Giovanni'];
+     const targetText=String(card?.text||card?.printedRules||'');
+     const owner=gymOwners.find(name=>new RegExp(name.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')+"(?:['’]s)?\\s+Pok[eé]mon",'i').test(targetText));
+     if(owner&&!pokemon.some(p=>p.name.startsWith(owner+"'s ")))return false;
+     if(/^Mystery Plate [αβγδ]/.test(card?.name||'')&&cards.some(id=>/^Mystery Plate [αβγδ]/.test(classic.cardById(id)?.name||'')))return false;
+     if(card?.name==='Apricorn Maker'&&!cards.some(id=>{
+       const target=classic.cardById(id);return target?.kind==='trainer'&&/Ball/i.test(target.name||'')&&target.id!==card.id;
+     }))return false;
+     if(card?.name==='Heavy Ball'&&!pokemon.some(p=>Number(p.retreatCost??p.retreat??0)>=3))return false;
+     // Frozen City damages both players, so a normal non-Plasma core hurts
+     // itself. Only select it as a meaningful Team Plasma stadium.
+     if(card?.name==='Frozen City'&&(!pokemon.some(p=>p.teamPlasma)||pokemon.some(p=>!p.teamPlasma)))return false;
+     // VS Seeker can only recover a physical Supporter; don't select it
+     // into a build with no Supporter cards whatsoever.
+     if(card?.name==='VS Seeker'&&!cards.some(id=>classic.cardById(id)?.trainerType==='Supporter'))return false;
+   }
    // Supreme Victors Stadiums must strengthen the actual deck. Battle Tower
    // heals Pokémon only when they Level-Up; without a friendly LV.X it risks
    // healing only the opponent. Champion's Room helps Pokémon SP only.
@@ -745,13 +778,43 @@ function buildDeck(rows,options={}){
  // consume four slots merely because the owner has four copies. Saved manual
  // choices can be preserved up to the global four-copy limit.
  const stormfrontAutoCaps={'dp7-91':2,'dp7-86':1,'dp7-85':3,'dp7-83':2,'pl2-96':2,'pl2-95':2};
- function room(card){const arceusUnlimited=card.setId==='pl4'&&(/^AR[1-9]$/.test(String(card.number))||['94','95','96'].includes(String(card.number)));const copiesOfName=[...counts].filter(([id])=>classicCardName(classic.cardById(id)?.name)===classicCardName(card.name)).reduce((sum,[,count])=>sum+count,0);const starSlots=card.pokemonStar?Math.max(0,1-cards.filter(id=>classic.cardById(id)?.pokemonStar).length):arceusUnlimited?30:4;const rawCap=stormfrontAutoCaps[card.id];const allowedCopies=arceusUnlimited?30:rawCap===undefined?4:Math.min(4,Math.max(rawCap,existing.filter(id=>id===card.id).length));return Math.max(0,Math.min(starSlots,(card.name.startsWith('Shining ')?1:allowedCopies)-copiesOfName,Number(owned.get(card.id)||0)-(counts.get(card.id)||0)));}
+ function room(card){
+   const arceusUnlimited=card.setId==='pl4'&&(/^AR[1-9]$/.test(String(card.number))||['94','95','96'].includes(String(card.number)));
+   const name=classicCardName(card.name);
+   const copiesOfName=[...counts].filter(([id])=>classicCardName(classic.cardById(id)?.name)===name).reduce((sum,[,count])=>sum+count,0);
+   const starSlots=card.pokemonStar?Math.max(0,1-cards.filter(id=>classic.cardById(id)?.pokemonStar).length):arceusUnlimited?30:4;
+   const aceSlots=card.aceSpec?Math.max(0,1-cards.filter(id=>classic.cardById(id)?.aceSpec).length):4;
+   const miracleSlots=name==='Miracle Energy'?Math.max(0,1-copiesOfName):4;
+   const rawCap=stormfrontAutoCaps[card.id];
+   let allowedCopies=arceusUnlimited?30:rawCap===undefined?4:Math.min(4,Math.max(rawCap,existing.filter(id=>id===card.id).length));
+   if(energyFillerPhase&&card.specialEnergy){
+     // Never turn the final third of a Zone-based deck into four copies of
+     // unrelated physical Energy. Keep copies intentionally reserved earlier.
+     allowedCopies=Math.min(allowedCopies,Math.max(copiesOfName,retainedNameCopies.get(name)||0,1));
+   }
+   if(card.kind==='trainer'&&!isEvolutionFossil(card)){
+     const saved=retainedNameCopies.get(name)||0;
+     // Evolution searching and rare synergy combos can reach three copies;
+     // the generic filler phase starts at two before considering a third.
+     const namedDependency=cards.some(id=>{
+       const c=classic.cardById(id);return c?.kind==='pokemon'&&
+         (c.deckMeta?.preferredTrainerNames||[]).includes(card.name);
+     });
+     const strategicCap=namedDependency?Math.min(4,autoTrainerCap+1):autoTrainerCap;
+     allowedCopies=Math.min(allowedCopies,Math.max(saved,strategicCap));
+   }
+   return Math.max(0,Math.min(starSlots,aceSlots,miracleSlots,(card.name.startsWith('Shining ')?1:allowedCopies)-copiesOfName,Number(owned.get(card.id)||0)-(counts.get(card.id)||0)));
+ }
  function hasBabyPartner(card){
    const names=babyEvolutionTargets(card);
    return !names.length||cards.some(id=>names.includes(classicCardName(classic.cardById(id)?.name)));
  }
  function add(card,n=1,fromEvolutionLine=false){
    if(card?.id==='bw3-15'&&!hasFiveBenchRoute)return 0;
+   // Don't solve a weak Trainer plan by padding twenty-five irrelevant Basics.
+   // Keep manual drafts and whole evolution packages intact.
+   if(!fromEvolutionLine&&card?.kind==='pokemon'&&!existing.includes(card.id)&&
+      cards.filter(id=>classic.cardById(id)?.kind==='pokemon').length>=autoPokemonCap)return 0;
    // Energy Link is useful as a coherent two-copy package, never a lone
    // tool that wastes the final slot. Reserve the pair atomically.
    if(card?.id==='dp7-83'&&!fromEvolutionLine&&(counts.get(card.id)||0)===0){
@@ -1192,25 +1255,106 @@ function buildDeck(rows,options={}){
    // Holon Energy is selected earlier using its real basic-Energy activation
    // conditions and printed on-Pokémon payoffs, not in this filler stage.
    if(/^Holon Energy (?:FF|GL|WP)$/.test(name))return false;
-   return true;
+   // Unknown Special Energy is not generic filler in a separate Energy Zone.
+   return false;
  };
  const usefulFillerCard=c=>c?.kind==='trainer'||
    (c?.specialEnergy&&usefulFillerSpecialEnergy(c)&&
     (!isDiscoveryEnergySupply(c,scope)||specialNeeds[c.id==='neo1-104'?'D':'M']>0));
  // Fallback through remaining owned Trainers first, then compatible Basics. This remains legal but avoids stranded evolutions.
- const trainerFallback=pool.filter(c=>usefulFillerCard(c)&&trainerIsUseful(c)).sort((a,b)=>synergy.trainerScore(b,supportContext())-synergy.trainerScore(a,supportContext())||Number(a.number)-Number(b.number));
- for(const c of trainerFallback){while(cards.length<30&&room(c)>0){if(!add(c,1))break;}if(cards.length>=30)break;}
+ energyFillerPhase=true;
+ const trainerPool=pool.filter(c=>usefulFillerCard(c));
+ // Re-rank after EVERY addition: four of a generic draw Supporter are not
+ // better than a balanced mix of search, switching, recovery and counterplay.
+ // In particular the Supporter once-per-turn rule is factored into selection.
+ function marginalTrainerScore(card){
+   const base=card.kind==='trainer'?synergy.trainerScore(card,supportContext()):
+     (card.specialEnergy&&usefulFillerSpecialEnergy(card)?20:-Infinity);
+   if(!Number.isFinite(base))return -Infinity;
+   const others=cards.map(classic.cardById).filter(c=>c?.kind==='trainer');
+   const repeats=others.filter(c=>classicCardName(c.name)===classicCardName(card.name)).length;
+   const roles=new Set(synergy.metadata(card).roles||[]);
+   let penalty=repeats*34;
+   if(card.trainerType==='Supporter'){
+     const supporters=others.filter(c=>c.trainerType==='Supporter').length;
+     penalty+=Math.max(0,supporters-4)*12;
+   }
+   for(const role of ['draw','search','healing','energy','retreat','stall','disruption']){
+     if(!roles.has(role))continue;
+     const otherRoleCount=others.filter(c=>synergy.metadata(c).roles.includes(role)).length;
+     const threshold=role==='draw'||role==='search'?5:role==='energy'?3:2;
+     penalty+=Math.max(0,otherRoleCount-threshold)*9;
+   }
+   // Energy from the hybrid Zone is already available for ordinary turn
+   // attachments. Hand-only Energy search is not the strongest generic filler.
+   if(['Energy Search','Cilan',"Professor's Letter"].includes(card.name)&&
+      !cards.some(id=>{
+        const c=classic.cardById(id);return c?.kind==='pokemon'&&
+        ((c.deckMeta?.triggerDependencies||[]).includes('basic-energy-in-hand')||
+         (c.abilities||[]).some(a=>/Basic Energy card from your hand/i.test(a.text||'')));
+      }))penalty+=23;
+   if(card.trainerType==='AttachedTrainer'||card.trainerType==='Tool')penalty+=8;
+   return base-penalty;
+ }
+ function fillTrainerSlots(){
+   const blocked=new Set();
+   while(cards.length<30){
+     const stadiums=cards.filter(id=>classic.cardById(id)?.trainerType==='Stadium');
+     const ranked=trainerPool.filter(c=>!blocked.has(c.id)&&room(c)>0&&
+       !(c.trainerType==='Stadium'&&(stadiums.length>=2||(stadiums.length>=1&&!stadiums.includes(c.id))))&&
+       (!c.specialEnergy||usefulFillerSpecialEnergy(c))&&
+       (c.kind!=='trainer'||trainerIsUseful(c))).map(card=>({card,score:marginalTrainerScore(card)}))
+       .filter(x=>Number.isFinite(x.score)).sort((a,b)=>b.score-a.score||a.card.id.localeCompare(b.card.id));
+     if(!ranked.length)break;
+     if(!add(ranked[0].card,1))blocked.add(ranked[0].card.id);
+   }
+ }
+ fillTrainerSlots();
  const cohesiveBasic=c=>{
   if(options._allowSecondType===true&&!requestedEnergy.length)return true;
   return effectiveTypes(c).some(t=>t==='Colorless'||effectiveTypes(main).includes(t)||selectedTypes.includes(t));
  };
  const fallbackBasics=pokemonPool.filter(c=>c.stage==='Basic'&&canFitEnergy(c)&&cohesiveBasic(c)&&
    (basicOnly||familyRoot(c,evolutionPool)===mainRoot||!hasKnownEvolutionInEra(c))).sort((a,b)=>Number(matchesRarity(b,rarityFocus,basicOnly))-Number(matchesRarity(a,rarityFocus,basicOnly))||standaloneScore(b)-standaloneScore(a));
- for(const c of fallbackBasics){while(cards.length<30&&room(c)>0&&canFitEnergy(c)){if(!add(c,1))break;}if(cards.length>=30)break;}
- if(cards.length<30&&!requestedEnergy.length){for(const c of pokemonPool.filter(c=>c.stage==='Basic').sort((a,b)=>Number(matchesRarity(b,rarityFocus,basicOnly))-Number(matchesRarity(a,rarityFocus,basicOnly)))){if(!canFitEnergy(c)||!cohesiveBasic(c)||(!basicOnly&&familyRoot(c,evolutionPool)!==mainRoot&&hasKnownEvolutionInEra(c)))continue;while(cards.length<30&&room(c)>0){if(!add(c,1))break;}if(cards.length>=30)break;}}
+ for(const c of fallbackBasics){while(cards.length<30&&pokemonCount()<18&&room(c)>0&&canFitEnergy(c)){if(!add(c,1))break;}if(cards.length>=30)break;}
+ if(cards.length<30&&!requestedEnergy.length){for(const c of pokemonPool.filter(c=>c.stage==='Basic').sort((a,b)=>Number(matchesRarity(b,rarityFocus,basicOnly))-Number(matchesRarity(a,rarityFocus,basicOnly)))){if(!canFitEnergy(c)||!cohesiveBasic(c)||(!basicOnly&&familyRoot(c,evolutionPool)!==mainRoot&&hasKnownEvolutionInEra(c)))continue;while(cards.length<30&&pokemonCount()<18&&room(c)>0){if(!add(c,1))break;}if(cards.length>=30)break;}}
+ // Try a third copy only after diversifying trainers and choosing compatible
+ // Pokémon. Some eras have very narrow trainer pools; retain legal recovery.
+ if(cards.length<30){autoTrainerCap=3;fillTrainerSlots();}
+ if(cards.length<30){autoTrainerCap=4;fillTrainerSlots();}
  // Final conservative fill: respect the planned mono/explicit dual Energy profile;
  // only the sparse-inventory rescue is allowed a second otherwise unrequested type.
  if(cards.length<30){for(const c of pool.filter(c=>(usefulFillerCard(c)||c.stage==='Basic')&&trainerIsUseful(c))){while(cards.length<30&&room(c)>0){const trial=[...cards,c.id],profile=decks.analyzeDeck(trial).recommendedEnergyTypes;if(options._allowSecondType===true&&!requestedEnergy.length?profile.length>2:!profile.every(t=>plannedEnergy.includes(t)))break;if(!add(c,1))break;}if(cards.length>=30)break;}}
+ // Some authentic single-set pools (Jungle, Team Rocket, Neo Revelation)
+ // only print one to three usable Trainers. A 30-card deck cannot meet the
+ // normal 18-Pokémon soft cap in those sets. Relax only in that sparse-pool
+ // emergency; do not apply this to the normal multi-era auto builder.
+ if(cards.length<30&&scope.length===1&&pool.filter(c=>c.kind==='trainer').length<=4){
+   autoPokemonCap=30;
+   // Add complete affordable Stage-1 families before loose Basics. This
+   // rescues Team Rocket without stuffing isolated Dratini or Diglett into
+   // a deck that has no path to its printed final evolution.
+   const spareFamilies=endpointCards(pokemonPool).filter(c=>
+     familyRoot(c,evolutionPool)!==mainRoot&&familyLine(c,evolutionPool).length===2&&canFitEnergy(c))
+     .sort((a,b)=>Number(effectiveTypes(b).some(t=>effectiveTypes(main).includes(t)))-
+       Number(effectiveTypes(a).some(t=>effectiveTypes(main).includes(t)))||
+       pokemonScore(b,evolutionPool)-pokemonScore(a,evolutionPool)||a.id.localeCompare(b.id));
+   for(const endpoint of spareFamilies){
+     const line=familyLine(endpoint,evolutionPool);
+     if(line.some(member=>room(member)<1)||line.length>30-cards.length)continue;
+     const repeats=Math.min(2,Math.floor((30-cards.length)/line.length),...line.map(member=>room(member)));
+     if(repeats>0)addLine(line,repeats);
+     if(cards.length>=30)break;
+   }
+   const fallbackRoots=pokemonPool.filter(c=>c.stage==='Basic'&&canFitEnergy(c)&&cohesiveBasic(c))
+      .sort((a,b)=>Number(familyRoot(b,evolutionPool)===mainRoot)-Number(familyRoot(a,evolutionPool)===mainRoot)||
+        standaloneScore(b)-standaloneScore(a)||a.id.localeCompare(b.id));
+   for(const basic of fallbackRoots){
+     if(!basicOnly&&familyRoot(basic,evolutionPool)!==mainRoot&&hasKnownEvolutionInEra(basic))continue;
+     while(cards.length<30&&room(basic)>0){if(!add(basic,1))break;}
+     if(cards.length>=30)break;
+   }
+ }
  if(cards.length!==30){
    const xy1Recovery=rescueXY1Deck(rows,{...options,sets:scope});
    if(xy1Recovery?.ok)return xy1Recovery;

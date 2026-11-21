@@ -1,8 +1,8 @@
 LUCKYDEX — MASTER PROJECT RULES AND DEVELOPMENT CONTRACT
 =========================================================
-Document version: 2.49
+Document version: 2.50
 Compiled: 21 November 2026
-Current inspected source: v0.69.332 XY explicit Basic Energy Zone search repair built on top of the successfully built v0.69.331 (GitHub Actions run #620). v0.69.332 APK build has not been verified; patch extraction is source-relative.
+Current inspected source: v0.69.333 Classic cross-era deckbuilder quality audit, based on v0.69.332 (GitHub Actions run #621 successful). v0.69.333 APK build has not been verified; patch extraction is source-relative.
 Recommended repository location: ~/lucky-dex/source/docs/LUCKYDEX_MASTER_RULES.txt
 Project: LuckyDex — Android application/PWA, managed with Termux and GitHub
 
@@ -2843,3 +2843,29 @@ CLASSIC BATTLE v0.69.329 — GLOBAL PRINTED ATTACK ENERGY CONTRACT
 
   DO NOT assume GitHub Actions passing merely because local tests passed. Never
   ask to delete prior workflow runs or run an unrelated reset as a build repair.
+
+
+=======================================================================
+2026-11-21 / v0.69.333 / CLASSIC ALL-ERA DECK QUALITY AUDIT
+=======================================================================
+[LOCKED] CROSS-ERA AUTOBUILD CONTRACT (not only newly added sets)
+  - Decks must contain exactly 30 real, owned, battle-ready cards and legally coherent evolution families, with sufficient Energy Zone types for intended attackers. A genuine Bench-only support Pokémon should not force dead third/fourth Energy types just because its unused attack is off-type.
+  - Auto-selection of Trainer fillers should consider marginal role synergy. Prefer a spread of real usable draw, Pokémon search, evolution support, recycling, retreat/healing, and appropriate counterplay instead of defaulting to four copies of the top few generic Trainers. Four copies are NOT intrinsically illegal or banned, especially when a single-set print pool has only one or two useful Trainer cards; retain any user-selected legal four-copy package.
+  - Printed target conditions must be respected: Giovanni/Brock/etc Trainers only with the corresponding named Pokémon, Rare Candy with relevant Stage 2 targets, Apricorn Maker only if a Ball card is included, Heavy Ball only if a compatible target exists, LV.X/SP support only with actual targets, and other role dependencies validated from printed text or existing executable effect metadata. Don't allow meaningless Stadium/Tool filler to crowd out the core line.
+  - Recognise Trainers implemented via legacy neoRule/printed text, not only generic effect handlers; this information must feed both ranking and post-build synergy reporting.
+  - ACE SPEC total limited to one; Miracle Energy limited to one per deck; no generic special Energy filler without a payoff. Basic Energy continues to come from the hybrid Energy Zone, not physical deck padding.
+  - Prefer an initial 2-copy ceiling for AUTOMATIC generic Trainers, with an adaptive 3/4-copy fallback only if inventory cannot complete a coherent 30-card deck. Early sets with extremely small Trainer inventories may exceed the usual 18 Pokémon soft cap to complete a legal deck. Manually retained copies are exempt from soft caps.
+  - Permanent test: `node --test tests/v07333-classic-deck-quality.test.cjs`, enabled in GitHub preBuild after the entire attack-energy audit. Current locally bundled Classic catalogue: 59 fully populated set IDs with two styles each = 118, plus six focused Trainer builds, ten mixed-era builds, eight CPU samples and two retention/support-specific builds, no invalid/missing Energy, dead-effect Trainer, ownership or 30-card failures. The three build-time generated BW11, XY1 and XY2 source catalogues were empty in local archive and are instead gated by their separate upstream generator-specific audits. Never represent this as proof of an installed APK or real CPU match quality.
+  - Keep full player/autobuilder and CPU deck selection logic in step: audit opponent deck generation too when changing shared candidate/ranking logic. Don't use any unrequested Codex tools.
+
+[LOCKED] TERMUX EXAMPLE FOR NEXT HANDOFF (source-relative ZIP)
+
+    cd ~/lucky-dex
+
+    unzip -o /sdcard/Download/LuckyDex_patch_v0.69.333_CLASSIC_DECK_SYNERGY_AUDIT.zip -d source
+
+    git add source
+    git commit -m "LuckyDex v0.69.333 Classic deck synergy and trainer balance"
+    git push origin main
+
+  After each patch, replace only the ZIP name and commit text; do not run prepare scripts by default. v0.69.332 build #621 succeeded on GitHub; a local test success for v0.69.333 does not establish GitHub APK success.

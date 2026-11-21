@@ -8,8 +8,8 @@ android {
         applicationId 'com.example.luckydex'
         minSdk 26
         targetSdk 35
-        versionCode 7332
-        versionName '0.69.332'
+        versionCode 7333
+        versionName '0.69.333'
     }
 
     signingConfigs {
@@ -618,4 +618,16 @@ tasks.register('auditV07329AllClassicAttackEnergyForApk', Exec) {
 }
 tasks.matching { it.name == 'preBuild' || (it.name.startsWith('merge') && it.name.endsWith('Assets')) }.configureEach {
     dependsOn tasks.named('auditV07329AllClassicAttackEnergyForApk')
+}
+
+// v0.69.333: full Classic deckbuilding quality gate.  Every locally populated
+// set is evaluated through the real builder in multiple deterministic styles;
+// XY/BW11 are separately audited by their pinned official-set generators.
+tasks.register('auditV07333ClassicDeckQualityForApk', Exec) {
+    dependsOn tasks.named('auditV07329AllClassicAttackEnergyForApk')
+    workingDir rootProject.projectDir
+    commandLine 'node', '--test', 'tests/v07333-classic-deck-quality.test.cjs'
+}
+tasks.matching { it.name == 'preBuild' || (it.name.startsWith('merge') && it.name.endsWith('Assets')) }.configureEach {
+    dependsOn tasks.named('auditV07333ClassicDeckQualityForApk')
 }

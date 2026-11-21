@@ -56,11 +56,18 @@ function analyzeDeck(cards,configured){
  const byId=new Map();for(const c of pokemon)byId.set(c.id,(byId.get(c.id)||0)+1);
  const optionalPartnerMeta=()=>{try{return typeof module==='object'&&module.exports?require('./tcg-deck-synergy.js'):typeof globalThis!=='undefined'?globalThis.LuckyDexDeckSynergy:null;}catch(_){return null;}};
  const meta=optionalPartnerMeta();
- const benchOnly=new Set(endpoints.filter(minor=>endpoints.some(major=>{
-   if(major.id===minor.id||Number(byId.get(major.id)||0)<=Number(byId.get(minor.id)||0))return false;
-   const partners=meta?.metadata?.(major)?.optionalPartners||major.deckMeta?.preferredPartners?.map(name=>({name}))||[];
-   return partners.some(p=>normalizeName(p.name)===normalizeName(minor.name));
- })).map(c=>c.id));
+ const hasStage2Ex=pokemon.some(c=>c.stage==='Stage 2'&&(c.pokemonEx||c.isEx));
+ const benchOnly=new Set(endpoints.filter(minor=>
+   // Dragon Frontiers' Xatu, Swellow and Altaria ex are intentionally Bench
+   // support for Stage 2 Pokémon-ex. Their own Darkness/Fire/Water attacks
+   // do not require splashing three dead Basic Energy types into the Zone.
+   (hasStage2Ex&&(minor.deckMeta?.stage2ExSupport||['ex15-25','ex15-40','ex15-90'].includes(minor.id)))||
+   endpoints.some(major=>{
+     if(major.id===minor.id||Number(byId.get(major.id)||0)<=Number(byId.get(minor.id)||0))return false;
+     const partners=meta?.metadata?.(major)?.optionalPartners||major.deckMeta?.preferredPartners?.map(name=>({name}))||[];
+     return partners.some(p=>normalizeName(p.name)===normalizeName(minor.name));
+   })
+ ).map(c=>c.id));
  for(const end of endpoints){
    if(benchOnly.has(end.id))continue;
    const line=[end],seen=new Set([end.id]);let prior=end;

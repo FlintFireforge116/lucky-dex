@@ -170,6 +170,18 @@
   // Infer *target restrictions* only for Trainers: a Pokémon's mention of a
   // type describes its own effects, not what support Pokémon are legal.
   if(card.kind==='trainer'){
+   // Most later eras implement Trainers through a named 'neoRule' handler.
+   // Those handlers deliberately don't duplicate their actions in the effect
+   // tree. Without carefully extracting the printed actions, strong cards
+   // such as Dusk Ball, Quick Ball, Oracle and Underground Expedition all
+   // score as useless generic filler, while four weak draw cards dominate.
+   const printed=String(card.text||card.printedRules||'').toLowerCase();
+   if(/(?:\bsearch\b[^.]{0,90}\b(?:deck|discard pile)\b|\bchoose\b[^.]{0,75}\b(?:cards?|pok[eé]mon)\b[^.]{0,65}\b(?:hand|deck)\b|\blook at the top\b[^.]{0,80}\bchoose\b)/i.test(printed))roles.add('search');
+   if(/\bdraw\s+(?:up to\s+)?(?:one|two|three|four|five|six|seven|\d+)\s+cards?\b|\bdraw\s+(?:cards?|until)\b/i.test(printed))roles.add('draw');
+   if(/\bheal\s+(?:all|\d+)|\bremove\s+(?:all|\d+)\s+damage counters\b/i.test(printed))roles.add('healing');
+   if(/\b(?:switch (?:your|the) (?:Active )?Pok[eé]mon|switch one of your|retreat cost is reduced|retreat cost.*less)\b/i.test(printed))roles.add('retreat');
+   if(/\battach\b[^.]{0,65}\benergy\b/i.test(printed))roles.add('energy');
+   if(/\bopponent\b[^.]{0,55}\b(?:discard|shuffle|can't play|cannot play)\b/i.test(printed))roles.add('disruption');
    for(const type of TYPES){
     const r=new RegExp(`\\b${type} (?:Energy|Pok[eé]mon)\\b`,'i');
     if(r.test(texts)&&!(/opponent(?:'s|s)?[^.]{0,45}\b(?:Grass|Fire|Water|Lightning|Psychic|Fighting|Darkness|Metal)\b/i.test(texts)))energyTypes.add(type);
