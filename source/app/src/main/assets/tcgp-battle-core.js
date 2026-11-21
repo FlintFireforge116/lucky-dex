@@ -839,7 +839,7 @@
     const aqGluey=state.format==='classic'&&['player','opponent'].some(w=>pokemonOn(state.sides[w]).some(p=>['ecard2-3','ecard2-H3'].includes(p.cardId)&&!effects.abilitiesSuppressed(state,w,p,data.cardById)));
     const aqHeavy=state.format==='classic'&&slot?.cardId==='ecard2-23'&&Number(slot.energy?.Grass||0)>0?2:0;
     const aqMagnet=state.format==='classic'&&slot?.cardId==='ecard2-91'&&!effects.abilitiesSuppressed(state,side,slot,data.cardById)?state.sides[side].bench.filter(p=>data.cardById(p?.cardId)?.name==='Magnemite').length:0;
-    return Math.max(0,Number(data.cardById(slot.cardId).retreat||0)+effects.modifierAmount(state,side,slot,'retreatCost',data.cardById)+stadiumCost+aqHeavy+(aqGluey?1:0)-aqMagnet-ex6Dodrio+Number(slot.dp2RetreatAdjustment||0)+bw7Jellicent-(bw9Glaceon?2:0));}
+    return Math.max(0,Number(data.cardById(slot.cardId).retreat||0)+effects.modifierAmount(state,side,slot,'retreatCost',data.cardById)+stadiumCost+aqHeavy+(aqGluey?1:0)-aqMagnet-ex6Dodrio-2*(slot.specialEnergy||[]).filter(ref=>ref.cardId==='xy4-112').length+Number(slot.dp2RetreatAdjustment||0)+bw7Jellicent-(bw9Glaceon?2:0));}
   function attackCost(state,side,attack){const slot=state.sides[side].active;let cost=effects.attackCostOverride(state,side,slot,attack,data.cardById)??attack.cost??'';
     // Some older/imported prints and conditional overrides store costs as a
     // symbol array. Array.toString() inserts commas (e.g. [R,R,C] -> R,R,C),
@@ -847,6 +847,10 @@
     cost=Array.isArray(cost)?cost.join(''):String(cost);
     if(state.format==='classic'&&['Poliwag','Poliwhirl','Poliwrath'].includes(data.cardById(slot?.cardId)?.name)&&
       pokemonOn(state.sides[side]).some(p=>p.cardId==='xy3-18'&&!effects.abilitiesSuppressed(state,side,p,data.cardById)))cost=cost.replace(/C/g,'');
+    // XY4 Dimension Valley applies to BOTH players, reduces only one printed
+    // Colorless symbol, and never removes a required Psychic Energy symbol.
+    if(state.format==='classic'&&state.stadium?.cardId==='xy4-93'&&
+       data.cardById(slot?.cardId)?.types?.includes('Psychic'))cost=cost.replace('C','');
     if(state.format==='classic'&&slot?.cardId==='bw10-35'&&!effects.abilitiesSuppressed(state,side,slot,data.cardById)){
       cost=Array.isArray(cost)?cost.join(''):String(cost);
       const plasmaCount=pokemonOn(state.sides[side==='player'?'opponent':'player']).filter(p=>data.cardById(p.cardId)?.teamPlasma||toolsOf(p).some(r=>r.cardId==='bw9-104')).length;
@@ -1443,6 +1447,7 @@
     if(state.format==='classic'&&Number(s.dp7EmperorAuraUntil||0)<Number(state.turnNumber)){s.hand.forEach((ref,handIndex)=>{const card=data.cardById(ref.cardId);if(!(card?.specialEnergy||card?.basicEnergy||card?.holonEnergyPokemon)||card.battleEnabled===false&& !card.basicEnergy)return;if((card?.specialEnergy||card?.holonEnergyPokemon)&&effects.isActionLocked(state,side,'SpecialEnergy',data.cardById))return;if(card.specialEnergy&&state.sides[side==='player'?'opponent':'player']?.active?.cardId==='bw10-23'&&!effects.abilitiesSuppressed(state,side==='player'?'opponent':'player',state.sides[side==='player'?'opponent':'player'].active,data.cardById))return;if(s.handEnergyUsed)return;const validEnergyTarget=slot=>slot&&!slot.gymEnergyLock&&(card.id!=='neo4-16'||/^(?:Light |Shining )/.test(data.cardById(slot.cardId)?.name||''));const aqValid=(slot)=>{if(!validEnergyTarget(slot))return false;const mon=data.cardById(slot.cardId),energyType=card.basicEnergy?card.subtype:card.effect?.provides&&Object.keys(card.effect.provides)[0];
        if(card.id==='xy3-103'&&!mon?.types?.includes('Grass'))return false;
        if(card.id==='xy3-104'&&!mon?.types?.includes('Fighting'))return false;
+       if(card.id==='xy4-112'&&!mon?.types?.includes('Psychic'))return false;
        if(Number(slot?.ex5NoHandEnergyUntil||0)>=state.turnNumber)return false;
        if(slot===s.active&&Number(s.dp2EnergyHandLockUntil||0)>=state.turnNumber)return false;
        // Holon's Stage 1 Pokémon may be attached as Energy only when the
@@ -3615,7 +3620,7 @@
       const board=state.sides[owner];for(const pokemon of pokemonOn(board)){
         const types=data.cardById(pokemon.cardId)?.types||[],kept=[];
         for(const ref of pokemon.specialEnergy||[]){
-          const required=ref.cardId==='xy3-103'?'Grass':ref.cardId==='xy3-104'?'Fighting':null;
+          const required=ref.cardId==='xy3-103'?'Grass':ref.cardId==='xy3-104'?'Fighting':ref.cardId==='xy4-112'?'Psychic':null;
           if(required&&!types.includes(required)){
             board.discard.push(ref);state.log.push({type:'xy3SpecialEnergyDiscard',side:owner,uid:ref.uid,reason:'ineligibleAttachedType',cardId:ref.cardId});
           }else kept.push(ref);

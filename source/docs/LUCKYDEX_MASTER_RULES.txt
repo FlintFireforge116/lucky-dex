@@ -2983,3 +2983,38 @@ Termux (patch extracts into source):
     git add source
     git commit -m "LuckyDex v0.69.338 Furious Fists print parity fix"
     git push origin main
+
+=== v0.69.339: XY Phantom Forces (xy4) initial integration ===
+Canonical official set source: PokemonTCG/pokemon-tcg-data `cards/en/xy4.json`,
+immutable Git blob `85ab15304b4741c1f5601ee786fc8f3a764326f9`.
+All 124 printed records must survive import: numbered 1-122 and alt prints 24a
+(M Manectric-EX) and 65a (Aegislash-EX). 162 attacks, 15 Abilities.
+The build uses scripts/build-xy4.py BEFORE asset packaging and any XY4
+catalogue tests; the local empty placeholder is never acceptable in an APK.
+Keep cards with unimplemented mandatory effects visible for collection, but
+`battleEnabled=false` and `deckEligible=false`, including CPU autobuilds.
+Night March must count physical discarded Pokemon that actually have the
+printed Night March attack, from the attacking player's own discard pile.
+This excludes Energy ledger, unused Energy Zone, and opponent discard.
+Dimension Valley removes precisely one Colorless attack-cost symbol from
+Psychic Pokemon on both sides (no reduction of printed Psychic requirements).
+Mystery Energy only attaches to Psychic Pokemon, provides one Psychic, and
+reduces its holder's retreat cost by two per attached copy; off-type evolution
+must discard it. Double Colorless Energy contributes TWO Colorless units.
+Unfinished Team Flare Gear, Spirit Links, Robo Substitute, abilities and
+specific printed effects remain gated, not mapped to fake no-op effects.
+The XY4 audit must verify version parity, generated collector print count,
+energy costs, effects, player and opponent set selectors, and legal 30-card
+single-set decks. Use the shared deck-quality logic, do not bypass it.
+
+TERMUX UPDATE TEMPLATE (always send as one copyable block):
+cd ~/lucky-dex
+
+unzip -o /sdcard/Download/LuckyDex_patch_v0.69.VERSION_DESCRIPTION.zip -d source
+
+git add source
+git commit -m "LuckyDex v0.69.VERSION change description"
+git push origin main
+
+Keep patch archive entries relative to source/ (e.g. app/build.gradle, not
+source/app/build.gradle). Do not require an extra setup script in Termux.

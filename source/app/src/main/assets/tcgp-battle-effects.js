@@ -18072,6 +18072,40 @@
 
 
 
+      // Phantom Forces: dynamic values are computed from physical battle state
+      // before weaknesses, resistance, Prize handling, or damage animations.
+      // The discarded Night March Pokémon must be actual cards in THIS
+      // player's discard, never the fresh Energy Zone or opponent's discard.
+      if(e.type==='neoRule'&&String(e.rule||'').startsWith('xy4:')){
+        const k=e.rule.slice(4),us=own(ctx),foe=other(ctx),a=ctx.attacker,d=ctx.defender,
+          card=p=>ctx.cardById(p?.cardId),board=x=>pokemonOn(x);
+        if(k==='nightMarch'){
+          const count=us.discard.filter(ref=>card(ref)?.kind==='pokemon'&&
+            (card(ref).attacks||[]).some(move=>move.name==='Night March')).length;
+          damage=20*count;
+          ctx.state.log.push({type:'xy4NightMarch',side:ctx.side,discardedNightMarch:count,damage});return;
+        }
+        if(k==='brightGarden'){
+          damage=20*board(us).filter(p=>card(p)?.types?.some(t=>t==='Grass'||t==='Fairy')).length;return;
+        }
+        if(k==='swallowUp'){
+          const selfRemaining=Math.max(0,Number(card(a)?.hp||0)-Number(a?.damage||0));
+          const foeRemaining=Math.max(0,Number(card(d)?.hp||0)-Number(d?.damage||0));
+          if(foeRemaining<selfRemaining)damage+=50;return;
+        }
+        if(k==='swoopAcross'){damage=10;pending.push({type:'benchDamage',side:'opponent',all:true,amount:10});return;}
+        if(k==='boomburst'){damage=20;pending.push({type:'benchDamage',side:'opponent',all:true,amount:20});return;}
+        if(k==='maxamar'){
+          const attached=Object.values(a?.energy||{}).reduce((sum,n)=>sum+Number(n||0),0)+(a?.specialEnergy||[]).length;
+          const results=Array.from({length:Math.max(0,attached)},()=>coin(ctx));
+          damage=60*results.filter(Boolean).length;
+          ctx.state.log.push({type:'coin',side:ctx.side,reason:'MAXamar',results,heads:results.filter(Boolean).length});return;
+        }
+        // Other bespoke rules remain battle-gated by xy4_verified.py until
+        // their choice/zone hooks exist. Never silently resolve them as noop.
+        throw new Error('XY4 attack rule not implemented: '+k);
+      }
+
       // Furious Fists: printed attack damage is resolved BEFORE matchup or attack logs.
       if(e.type==='neoRule'&&String(e.rule||'').startsWith('xy3:')){
         const k=e.rule.slice(4),us=own(ctx),foe=other(ctx),a=ctx.attacker,d=ctx.defender,

@@ -22,13 +22,13 @@ test('Furious Fists is registered for player decks, CPU opponents, inspector, an
  assert.ok(html.includes('<script src="tcg-classic-furious-fists.js"></script>'));
  assert.ok(html.indexOf('tcg-classic-furious-fists.js')<html.indexOf('tcg-classic-battle-data.js'));
 });
-test('v0.69.338 is consistent in Android, title, and boot JS',()=>{
+test('current build is consistent in Android, title, and boot JS',()=>{
  const gradle=fs.readFileSync(path.join(root,'app/build.gradle'),'utf8');
- assert.match(gradle,/versionCode 7338/);
- assert.match(gradle,/versionName '0\.69\.338'/);
- assert.match(fs.readFileSync(path.join(assets,'index.html'),'utf8'),/titleBuildVersion">v0\.69\.338/);
- assert.match(fs.readFileSync(path.join(assets,'index.html'),'utf8'),/appBuildVersion">LUCKY DEX · v0\.69\.338/);
- assert.match(fs.readFileSync(path.join(assets,'app-v0167.js'),'utf8'),/window\.__LUCKYDEX_BUILD='0\.69\.338'/);
+ assert.match(gradle,/versionCode 7339/);
+ assert.match(gradle,/versionName '0\.69\.339'/);
+ assert.match(fs.readFileSync(path.join(assets,'index.html'),'utf8'),/titleBuildVersion">v0\.69\.339/);
+ assert.match(fs.readFileSync(path.join(assets,'index.html'),'utf8'),/appBuildVersion">LUCKY DEX · v0\.69\.339/);
+ assert.match(fs.readFileSync(path.join(assets,'app-v0167.js'),'utf8'),/window\.__LUCKYDEX_BUILD='0\.69\.339'/);
 });
 test('build includes immutable XY3 generation BEFORE full catalogue audit and assets',()=>{
  const gradle=fs.readFileSync(path.join(root,'app/build.gradle'),'utf8');

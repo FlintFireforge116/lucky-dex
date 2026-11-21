@@ -8,8 +8,8 @@ android {
         applicationId 'com.example.luckydex'
         minSdk 26
         targetSdk 35
-        versionCode 7338
-        versionName '0.69.338'
+        versionCode 7339
+        versionName '0.69.339'
     }
 
     signingConfigs {
@@ -651,4 +651,24 @@ tasks.named('auditV07329AllClassicAttackEnergyForApk').configure {
 }
 tasks.matching { it.name == 'preBuild' || (it.name.startsWith('merge') && it.name.endsWith('Assets')) }.configureEach {
     dependsOn tasks.named('auditXY3ForApk')
+}
+
+// v0.69.339 Phantom Forces (XY4): all 124 collector prints, including 24a
+// and 65a, are generated from immutable official source BEFORE the APK and
+// the independent audit. Never allow offline placeholder assets into a build.
+tasks.register('generateXY4ForApk', Exec) {
+    dependsOn tasks.named('auditXY3ForApk')
+    workingDir rootProject.projectDir
+    commandLine (System.getenv('LUCKYDEX_PYTHON') ?: 'python3'), 'scripts/build-xy4.py'
+}
+tasks.register('auditXY4ForApk', Exec) {
+    dependsOn tasks.named('generateXY4ForApk')
+    workingDir rootProject.projectDir
+    commandLine 'node', '--test', 'tests/v07339-phantom-forces-stage1.test.cjs'
+}
+tasks.named('auditV07329AllClassicAttackEnergyForApk').configure {
+    dependsOn tasks.named('auditXY4ForApk')
+}
+tasks.matching { it.name == 'preBuild' || (it.name.startsWith('merge') && it.name.endsWith('Assets')) }.configureEach {
+    dependsOn tasks.named('auditXY4ForApk')
 }
