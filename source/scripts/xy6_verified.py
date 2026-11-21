@@ -79,6 +79,24 @@ ATTACKS={
  ('80','Quick Attack'):Q(BONUS(30)),
  ('82','Acrobatics'):COIN(2,10,False),
 }
+# Stage 5 — individually verified Roaring Skies effects. Preserve alternate art
+# equivalents via the shared copy mapping directly below.
+ATTACKS.update({
+ ('10','Afterimage Assault'):E('benchFromDeck',amount=2,filter={'kind':'pokemon','name':'Ninjask'},choose=True),
+ ('11','Cursed Rain'):S(E('damage',target='opponentAll',amount=10),SWITCH()),
+ ('33','Close Encounter'):DRAW(2),
+ ('33','Overdrive Smash'):E('nextAttackBonus',attackName='Overdrive Smash',amount=60),
+ ('34','Piercing Prizes'):E('neoRule',rule='xy6:piercingPrizes'),
+ ('42','Diminutive Desire'):E('selectTopToHand',count=7),
+ ('42','Doom Desire'):S(DISC('all'),E('scheduleDelayed',event='endOpponentNextTurn',targetMode='defender',effect=E('knockOut',target='opponentActive'))),
+ ('58','Fast Raid'):N, # Attacking on the first turn is already permitted by the Classic engine.
+ ('58','Light Pulse'):E('neoRule',rule='xy6:lightPulse'),
+ ('59','Sonic Ace'):S(E('selectedDamage',target='opponentPokemon',amount=120),DISC(2)),
+ ('64','Energy Stream'):E('attachEnergyFromDiscard',target='self',amount=1),
+ ('73','Bind Wound'):E('chooseTarget',target='selfPokemon',effect=H(20,'selfPokemon')),
+ ('78','Homing Pidove'):S(E('inspectTop',side='self',amount=1),OPT('Shuffle your deck',E('shuffleDeck',side='self'))),
+})
+
 # Never use a generic attack if it does not implement the printed result.
 # Explicit alternate artworks are the SAME physical attack text, but unique prints.
 for original,alternate in [('26','98'),('34','99'),('35','100'),('58','101'),('59','102'),('62','103'),('75','104'),('76','105'),('77','77a'),('77','106')]:
@@ -115,6 +133,9 @@ ABILITIES={
  # An optional on-bench, from-hand trigger. Uses the shared choice flow, never
  # fires on a deck/discard summon, and cannot exceed the Classic hand cap.
  'Set Up':{'type':'triggered','event':'benched','fromHandOnly':True,'effect':OPT('Draw until you have 6 cards',E('drawToHandSize',size=6))},
+ 'Max Wind':{'type':'triggered','event':'evolved','fromHandOnly':True,'effect':E('chooseTarget',target='selfPokemon',effect=H(999,'selfPokemon'),optional=True)},
+ 'Exoskeleton':{'type':'passive','effect':E('modifier',stat='damageReduction',amount=10,scope='self',duration='whileInPlay')},
+ 'Dragon Road':{'type':'passive','effect':E('modifier',stat='retreatCost',amount=-2,scope='team',duration='whileInPlay',filter={'subtype':'Dragon'},condition={'type':'stadiumInPlay'})},
 }
 
 def attack(row,a):

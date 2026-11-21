@@ -18203,7 +18203,15 @@
     switch(effect.type){
       case 'noop':case 'specialEnergy':break;
       case 'lentalRule':logRuleBenchHits(ctx,()=>lentalRule(effect,ctx));break;
-      case 'neoRule':logRuleBenchHits(ctx,()=>neoRule(effect,ctx));break;
+      case 'neoRule':{
+        // XY6 Latios-EX Light Pulse prevents only effects of opposing attacks,
+        // never their damage; preserve the general attack-guard semantics.
+        if(effect.rule==='xy6:lightPulse'){
+          if(ctx.attacker){ctx.attacker.attackGuard={kind:'effectsOnly',preventEffects:true,expiresTurn:ctx.state.turnNumber+1};
+            log({type:'attackGuard',side:ctx.side,cardId:ctx.attacker.cardId,reason:'Light Pulse'});}
+        }else logRuleBenchHits(ctx,()=>neoRule(effect,ctx));
+        break;
+      }
       case 'gymRule':logRuleBenchHits(ctx,()=>applyGymRule(effect,ctx));break;
       case 'forceFirstCoinHead':{const ss=own(ctx);ss.forceFirstCoinHeadTurn=ctx.state.turnNumber;ss.forceFirstCoinHeadUsed=false;break;}
       case 'coinReroll':case 'toolCapacity':case 'repeatAttack':case 'chooseDiscardForBonus':case 'weaknessMultiplier':case 'statusRecoveryAura':case 'copyRandomAttackFromPrivate':break;
@@ -18915,6 +18923,11 @@
         damage=hasEnergy(ctx.defender)?30:0;
         pending.push({type:'benchDamage',side:'opponent',all:true,amount:30,filter:{hasAnyEnergy:true}});
         return;
+      }
+      // XY6 Gallade-EX Piercing Prizes uses *our remaining Prize cards*;
+      // 30-card Classic starts at five, not the six-card tabletop default.
+      if(e.type==='neoRule'&&e.rule==='xy6:piercingPrizes'){
+        damage+=20*Number(own(ctx).prizes?.length||0);return;
       }
       if(e.type==='damageRule'){damageRules={...damageRules,...e};return;}
       // Undaunted: both heads of Doduo and heads-only Fly must decide
@@ -23182,6 +23195,10 @@ if(r==='lastResort')return ss.hand.length===0?[{}]:[];if(r==='surgeSwap')return 
     if(state?.format==='classic'&&state.stadium?.cardId==='SNAPFLORIO-112'&&(state.sides?.[side]?.bench||[]).includes(slot))return {type:'preventDamage',reason:'Florio Nature Park'};
     const passiveFirst=findPassiveRule(state,side,slot,'firstDamageGuard',cardById);if(!slot?.firstDamageGuardConsumed&&(slot?.firstDamageGuard||passiveFirst))return {type:'firstDamageGuard',firstDamage:true};
     const matchesAttacker=guard=>guard?.kind==='preventEx'?!!attacker&&!!(cardById(attacker.cardId)?.pokemonEX||cardById(attacker.cardId)?.pokemonEx||cardById(attacker.cardId)?.isEx):!guard?.attackerFilter||!!attacker&&matchesFilter(cardById(attacker.cardId),guard.attackerFilter,attacker);
+    // An effects-only barrier, such as Roaring Skies Latios-EX Light Pulse,
+    // cannot be treated as an attack damage shield. Status/disruption effects
+    // still consult attackEffectsPrevented() independently.
+    if(slot.attackGuard?.kind==='effectsOnly'&&(slot.attackGuard.expiresTurn==null||state.turnNumber<=slot.attackGuard.expiresTurn))return null;
     if(slot.attackGuard&&(slot.attackGuard.expiresTurn==null||state.turnNumber<=slot.attackGuard.expiresTurn)&&matchesAttacker(slot.attackGuard))return slot.attackGuard;
     const passive=protectionFromSources(state,side,slot,attacker,cardById,'preventDamage');
     return matchesAttacker(passive)?passive:null;
