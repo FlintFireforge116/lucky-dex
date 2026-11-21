@@ -19261,10 +19261,16 @@
         const index=effect.source?ctx.attacker?.benchSlot:(a.choiceBenchIndex??a.effectBenchIndex??a.benchIndex);
         // A switch nested inside a printed optional action (e.g. Spoink Bounce)
         // needs a second, explicit Bench selection after the yes/no option.
-        if(index==null&&ctx.resolvingChoice&&side.bench.length&&typeof ctx.requestChoice==='function'){
-          ctx.requestChoice({kind:'switchBench',side:'self',selectionSide:effect.side==='opponent'?ctx.foeSide:ctx.side,effect});break;
+        if(index==null){
+          // Printed optional switches (Gut Spin, Bounce, etc.) first resolve
+          // a yes/no choice. That wrapper deliberately resets resolvingChoice,
+          // so a Bench selection must depend on whether an actual target was
+          // provided, not on the resolution flag. Never silently do nothing.
+          if(side.bench.length&&typeof ctx.requestChoice==='function')
+            ctx.requestChoice({kind:'switchBench',side:'self',selectionSide:effect.side==='opponent'?ctx.foeSide:ctx.side,effect});
+          break;
         }
-        switchPokemon(side,index,ctx.state);log({type:'switch'});break;
+        if(switchPokemon(side,index,ctx.state))log({type:'switch'});break;
       }
       case 'status':{const recipients=targets(effect.target||'opponentActive',ctx).filter(s=>(s===own(ctx).active||s===other(ctx).active)&&!protectedFromEffects(s,ctx)&&!statusIsPrevented(ctx.state,s,ctx.cardById,effect.status)),affectedBySide={player:0,opponent:0};for(const s of recipients){s.conditions=s.conditions||{};if(['sleep','paralysis','confusion'].includes(effect.status))for(const k of ['sleep','paralysis','confusion'])delete s.conditions[k];s.conditions[effect.status]=effect.status==='poison'?{amount:effect.amount==null?10:effect.amount}:effect.status==='paralysis'?{appliedTurn:ctx.state.turnNumber}:effect.status==='sleep'&&effect.recoveryCoins?{recoveryCoins:Number(effect.recoveryCoins),...(effect.knockoutOnDoubleTails?{knockoutOnDoubleTails:true}:{})}:true;
         if(ctx.isAttack&&s===other(ctx).active&&['ecard3-45','ex8-29','ex8-66'].includes(s.cardId)&&['poison','burn'].includes(effect.status)&&

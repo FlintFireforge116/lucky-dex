@@ -3710,3 +3710,17 @@ TERMUX:
   git commit -m "LuckyDex v0.69.368 Ancient Origins Stage 6 and CI fix"
   git push origin main
 ===============================================================================
+
+===============================================================================
+LUCKYDEX v0.69.369 — ANCIENT ORIGINS BUILD RECOVERY
+===============================================================================
+GitHub #656 v0.69.367: auditXY7ForApk failed because Stage 1 still expected xy7-8 to be gated. That expectation was fixed in v0.69.368 and remains fixed here.
+GitHub #657 v0.69.368: prepareLegendsAwakenedForApk failed in Hitmontop Gut Spin and Spoink Bounce switch regression tests. A nested chooseOption resets resolvingChoice before running the selected switch. Generic switch now prompts for a Bench whenever no target has been chosen, without relying on resolvingChoice; logs only a successful switch. This preserves both older attacks and supports other optional switch effects. A Benchless switch never produces an empty choice.
+Permanent test: tests/v07369-ancient-origins-ci-recovery.test.cjs; wired to auditXY7ForApk.
+Local combined targeted suites: 185 passed, 0 failed, 5 catalogue-dependent skips. These do not verify a GitHub APK build.
+TERMUX:
+cd ~/lucky-dex
+unzip -o /sdcard/Download/LuckyDex_patch_v0.69.369_ANCIENT_ORIGINS_CI_RECOVERY.zip -d source
+git add source
+git commit -m "LuckyDex v0.69.369 Ancient Origins CI recovery"
+git push origin main
