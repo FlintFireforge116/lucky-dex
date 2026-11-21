@@ -121,8 +121,8 @@ test('Full official Ancient Origins catalogue, costs, choices and all 101 printe
   }
  }
  assert.ok(set.coverage().battleEnabled>=30,'Stage 1 should have a substantial playable starting set');
- for(const n of ['67'])
-  assert.equal(set.cardById('xy7-'+n).battleEnabled,false,'incomplete non-trait printed mechanic '+n);
+ for(const n of ['17','33','56','67'])
+  assert.equal(set.cardById('xy7-'+n).battleEnabled,true,'audited Stage 7 print '+n);
  for(const n of ['11','15','18','32','43','50','92','96','97','98'])
   assert.equal(set.cardById('xy7-'+n).battleEnabled,true,'audited theta Trait '+n);
 });

@@ -3724,3 +3724,19 @@ unzip -o /sdcard/Download/LuckyDex_patch_v0.69.369_ANCIENT_ORIGINS_CI_RECOVERY.z
 git add source
 git commit -m "LuckyDex v0.69.369 Ancient Origins CI recovery"
 git push origin main
+
+
+[Ancient Origins XY7 v0.69.370 Stage 7]
+- Claydol #33 Rewind: devolve each opposing evolved Pokemon exactly one stage; every removed top Evolution returns to its owner's hand, preserving Tools/Energy.
+- Volcarona #17 Solar Birth: select one real Basic Pokemon from draw deck to Bench, then optionally attach up to two Basic Energy units selected from the actual Classic Energy Zone; never fabricate physical Energy or take Specials.
+- Whimsicott #56 Windy Mischief: choose one damaged friendly Benched Pokemon and move all damage counters to opposing Active (not attack damage; no Wide Lens/Weakness multiplier).
+- Porygon-Z #67 Digital Reboot: repeatable choice to devolve any number of friendly Benched evolved Pokemon by one or more stages; return each Evolution to hand, retaining attached Energy/Tools.
+- CPU prioritises real Solar Birth Zone choices rather than auto-selecting Done; Digital Reboot defaults to retaining evolved Bench attackers.
+- New Stage 7 regression suite runs in auditXY7ForApk; versionCode=7370 and versionName=0.69.370.
+
+Termux patch command (Ancient Origins Stage 7, v0.69.370):
+cd ~/lucky-dex
+unzip -o /sdcard/Download/LuckyDex_patch_v0.69.370_ANCIENT_ORIGINS_STAGE7.zip -d source
+git add source
+git commit -m "LuckyDex v0.69.370 Ancient Origins Stage 7"
+git push origin main

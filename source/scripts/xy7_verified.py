@@ -1,4 +1,4 @@
-"""Ancient Origins (XY7), Stage 3: explicitly supported printed effects only.
+"""Ancient Origins (XY7), Stage 7: explicitly supported printed effects only.
 
 Do not enable a print if *any* attack, Ability, theta Ancient Trait,
 Trainer or Special Energy passive remains unaudited. Reuse battle effects only
@@ -25,6 +25,7 @@ ATTACKS={
  ('14','Combat Blaze'):E('benchCountDamage',side='opponent',amount=20,mode='add'),
  ('15','Flame Screen'):GUARD(30),('15','Heat Tackle'):Q(t=E('selfDamage',amount=30)),
  ('8','Jagged Saber'):E('xy7JaggedSaber',amount=2),
+ ('17','Solar Birth'):E('xy7SolarBirth'),
  ('17','Flamethrower'):DISC(),
  ('18','Burning Scales'):COIN(2,20,False),('18','Wind Wheel'):E('forceOpponentSwitch',chooseBy='defender'),
  ('20','Berserker Splash'):S(BENCH(10,'self'),BENCH(10,'opponent')),
@@ -43,6 +44,7 @@ ATTACKS={
  ('32','Future Spin'):E('chooseOption',options=[
   {'label':'Arrange the top 3 cards of your deck','effect':E('reorderTop',deckSide='self',count=3)},
   {'label':"Arrange the top 3 cards of the opponent's deck",'effect':E('reorderTop',deckSide='opponent',count=3)}]),
+ ('33','Rewind'):E('xy7Rewind'),
  ('33','Hyper Beam'):Q(DISC(1,'opponentActive')),
  ('34','Smash Punch'):E('coinAttackGate',heads=N),
  ('35','Superpower'):OPT('Do 40 more damage and 20 self-damage',S(BONUS(40),E('selfDamage',amount=20))),
@@ -69,6 +71,7 @@ ATTACKS={
  ('53','Calm Mind'):H(30),
  ('54','Telekinesis'):E('selectedDamage',target='opponentPokemon',amount=50,ignoreWeakness=True,ignoreResistance=True),
  ('55','Cotton Bed'):ST('sleep'),
+ ('56','Windy Mischief'):E('xy7WindyMischief'),
  ('59','Bubble'):Q(ST('paralysis')),
  ('61','Act Tough'):BONUS(20,{'type':'selfHasEnergyType','energyType':'Darkness'}),
  ('62','Fake Out'):Q(ST('paralysis')),('62','Ambush'):Q(BONUS(30)),
@@ -76,6 +79,7 @@ ATTACKS={
  ('66','Cyber Crush'):E('xy7CyberCrush'),
  ('66','Slowing Beam'):E('xy7SlowingBeam'),
  ('65','Tri Attack'):COIN(3,30),
+ ('67','Digital Reboot'):E('xy7DigitalReboot'),
  ('67','Dazzle Blast'):ST('confusion'),
  ('68','Aero Ball'):E('xy7AeroBall'),
  ('68','Deep Hurricane'):S(BONUS(70,{'type':'stadiumInPlay'}),E('discardStadium',condition={'type':'stadiumInPlay'})),

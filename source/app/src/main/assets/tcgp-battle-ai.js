@@ -389,6 +389,16 @@
       // Ancient Origins M Sceptile-EX: Jagged Saber is optional but valuable.
       // Choose genuine Grass Basic Energy already in hand and a useful Bench
       // recipient; never manufacture Energy from the separate Energy Zone.
+      if(e.type==='xy7SolarBirth'&&pending.kind==='option'&&e.phase==='zone'){
+        // Keep accelerating while there is real Energy remaining. The
+        // choices themselves prove that the Zone still contains that type.
+        return choices.find(a=>Number(a.choiceOption)>0)||choices[0];
+      }
+      if(e.type==='xy7DigitalReboot'&&pending.kind==='option'){
+        // Choose to de-evolve Bench Pokémon only when there are hand cards to
+        // regain; preserve evolved attackers for the next turn otherwise.
+        return choices.find(a=>a.choiceOption===0)||choices[0];
+      }
       if(e.type==='xy7JaggedSaber'){
         if(pending.kind==='handCard'){
           const hand=state.sides[side]?.hand||[];
