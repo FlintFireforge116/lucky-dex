@@ -91,7 +91,7 @@ test('Furious Fists complete printed catalogue, energy symbols, all mandatory ef
    assert.equal(c.attacks.length,row[7].length,id+' attack count');
    for(const [j,a] of row[7].entries()){
     const actual=c.attacks[j];
-    assert.equal(actual.name,a[0],id+' attack name');assert.deepEqual(actual.cost,a[1],id+' cost');
+    assert.equal(actual.name,a[0],id+' attack name');assert.equal(actual.cost,a[1].join(''),id+' canonical cost from printed symbols');
     assert.ok(a[1].every(s=>ok.has(s)),id+' valid Energy symbols');
     assert.equal(actual.damageText,a[2]||null,id+' printed damage text');
     assert.equal(actual.text,a[3],id+' printed effect');
@@ -157,6 +157,31 @@ print(json.dumps(B.generate([row])[0]))
  assert.match(fs.readFileSync(path.join(assets,'tcgp-battle-core.js'),'utf8'),/xy3ControlledSupporter/,'attacker choice ownership routing is installed');
 });
 
+test('Machamp Crush remains battle-ready after regeneration and correctly reduces opposing Active damage',()=>{
+ const script=String.raw`
+import json,sys
+sys.path.insert(0,sys.argv[1])
+import importlib.util
+spec=importlib.util.spec_from_file_location('build_xy3',sys.argv[1]+'/build-xy3.py')
+B=importlib.util.module_from_spec(spec);spec.loader.exec_module(B)
+row=['46','Machamp','Pokémon',['Stage 2'],'150',['Fighting'],'Machoke',
+ [['Machamp Crush',['F','F','F'],'80','During your opponent\'s next turn, any damage done by attacks from the Defending Pokémon is reduced by 40 (before applying Weakness and Resistance).']],
+ [['Fighting Fury','Ability','Each of your Fighting Pokémon\'s attacks do 20 more damage to your opponent\'s Active Pokémon (before applying Weakness and Resistance).']],
+ 'Psychic',None,3,'Rare Holo',[],None]
+print(json.dumps(B.generate([row])[0]))`;
+ const proc=spawnSync('python3',['-c',script,path.join(root,'scripts')],{encoding:'utf8'});
+ assert.equal(proc.status,0,proc.stderr);
+ const machamp=JSON.parse(proc.stdout);
+ assert.equal(machamp.battleEnabled,true,JSON.stringify(machamp.support?.reasons));
+ assert.equal(machamp.attacks[0].effect.type,'modifier');
+ assert.deepEqual(effects.validateEffect(machamp.attacks[0].effect),[]);
+ const s=scene();
+ effects.applyEffect(machamp.attacks[0].effect,core.effectContext(s,'player',{},s.sides.player.active));
+ assert.equal(effects.modifierAmount(s,'opponent',s.sides.opponent.active,'damageReduction',data.cardById),40);
+ s.turnNumber+=2;
+ assert.equal(effects.modifierAmount(s,'opponent',s.sides.opponent.active,'damageReduction',data.cardById),0);
+});
+
 test('Accelgor Raid gets exactly +40 only on the turn it evolves',()=>{
  const s=scene(),a=s.sides.player.active;
  const attack={name:'Raid',damage:20,effect:{type:'bonusDamage',amount:40,condition:{type:'evolvedThisTurn'}}};
@@ -194,7 +219,7 @@ print(json.dumps([list(V.ATTACKS.values()),[obj['effect'] for obj in V.ABILITIES
  const p=spawnSync('python3',['-c',script,path.join(root,'scripts')],{encoding:'utf8'});
  assert.equal(p.status,0,p.stderr);
  const [attacks,abilities,trainers,gates]=JSON.parse(p.stdout);
- assert.equal(attacks.length,111);
+ assert.equal(attacks.length,112);
  assert.equal(abilities.length,13);
  assert.equal(trainers.length,18);
  assert.deepEqual(gates,{},'no predeclared Furious Fists print may be silently disabled');

@@ -205,6 +205,7 @@ ATTACKS.update({
  ('34','Energy Short'):E('energyDamage',source='opponent',amount=20),
  ('41','Psy Report'):E('revealHand',side='opponent'),
  ('43','Wreck'):R('wreck'),
+ ('46','Machamp Crush'):E('modifier',stat='damageReduction',amount=40,scope='opponentActive',duration='opponentTurn'),
  ('55','Rising Fist'):DISC(1,target='opponentActive'),
  ('55a','Rising Fist'):DISC(1,target='opponentActive'),
  ('58','Shout of Power'):R('shoutOfPower'),

@@ -1,8 +1,8 @@
 LUCKYDEX — MASTER PROJECT RULES AND DEVELOPMENT CONTRACT
 =========================================================
-Document version: 2.51
+Document version: 2.52
 Compiled: 21 November 2026
-Current inspected source: v0.69.334 Furious Fists stage 1, based on v0.69.333 Classic deckbuilder quality audit (GitHub Actions run #622 succeeded). v0.69.334 APK build has NOT been verified; patch extraction is source-relative.
+Current inspected source: v0.69.337 Furious Fists CI audit repair, based on v0.69.336 source (GitHub Actions run #625 failed in the XY3 audit); this patch has local regression tests but no completed GitHub APK build yet. Source-relative ZIP extraction into ~/lucky-dex/source/.
 Recommended repository location: ~/lucky-dex/source/docs/LUCKYDEX_MASTER_RULES.txt
 Project: LuckyDex — Android application/PWA, managed with Termux and GitHub
 
@@ -2943,3 +2943,18 @@ CLASSIC BATTLE v0.69.329 — GLOBAL PRINTED ATTACK ENERGY CONTRACT
   git commit -m "Commit message"
   git push origin main
 - Do not claim a CI APK build or device test passed before GitHub verifies it. 0.69.335 GitHub run #624 failed on stale appBuildVersion; 0.69.336 fixes it.
+
+=======================================================================
+2026-11-21 / v0.69.337 / FURIOUS FISTS CI #625 REPAIR
+- Build #625 FAILED in :app:auditXY3ForApk (28/30 tests passed).
+- Root cause A: XY3 source mapping removed Machamp Crush during an earlier conservative gate pass. The completion mapping forgot to restore its opponent-turn 40 damage-reduction effect. Restore it in xy3_verified.py so the generator emits a battle-enabled Machamp with its real effect.
+- Root cause B: v07336 independent print audit compared a printed array cost with the shared battle registry's intentionally canonicalised string. Compare the runtime cost with printed symbols joined *without commas*; preserve the strict symbol order, attack names, and per-card checks.
+- Add a synthetic Machamp generator test plus runtime temporary reduction and expiry assertions to catch source-generator regressions before the GitHub generation step.
+- All JavaScript/Android title version markers and existing audit expectations advance to 0.69.337 / 7337.
+- Do not claim GitHub APK success until CI completes; run v07334, v07335, v07336 and the global cost auditor on generated official XY3 assets.
+- Source-relative Termux patch template (keep this exact form):
+    cd ~/lucky-dex
+    unzip -o /sdcard/Download/LuckyDex_patch_v0.69.337_FURIOUS_FISTS_CI_REPAIR.zip -d source
+    git add source
+    git commit -m "LuckyDex v0.69.337 Furious Fists CI audit repair"
+    git push origin main
