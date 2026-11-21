@@ -8,8 +8,8 @@ android {
         applicationId 'com.example.luckydex'
         minSdk 26
         targetSdk 35
-        versionCode 7354
-        versionName '0.69.354'
+        versionCode 7355
+        versionName '0.69.355'
     }
 
     signingConfigs {
@@ -725,4 +725,19 @@ tasks.named('auditV07329AllClassicAttackEnergyForApk').configure {
 }
 tasks.matching { it.name == 'preBuild' || (it.name.startsWith('merge') && it.name.endsWith('Assets')) }.configureEach {
     dependsOn tasks.named('auditXY6Stage2ForApk')
+}
+
+// v0.69.355 XY6 Stage 3: physical two-unit Dragon Special Energy, optional
+// hand-triggered Shaymin draw, Healing Scarf, Mega Turbo and Trainers' Mail.
+// The official XY6 catalogue is generated first by the Stage 1 dependency.
+tasks.register('auditXY6Stage3ForApk', Exec) {
+    dependsOn tasks.named('auditXY6Stage2ForApk')
+    workingDir rootProject.projectDir
+    commandLine 'node', '--test', 'tests/v07355-roaring-skies-stage3.test.cjs'
+}
+tasks.named('auditV07329AllClassicAttackEnergyForApk').configure {
+    dependsOn tasks.named('auditXY6Stage3ForApk')
+}
+tasks.matching { it.name == 'preBuild' || (it.name.startsWith('merge') && it.name.endsWith('Assets')) }.configureEach {
+    dependsOn tasks.named('auditXY6Stage3ForApk')
 }

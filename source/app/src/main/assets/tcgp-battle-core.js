@@ -677,6 +677,14 @@
     // only the normal attachSpecial action. Extra attachments (e.g. Leafeon
     // LV.X Energy Forcing) must resolve the same physical Energy-card effect.
     if(state.format==='classic'&&event==='energyAttached'&&meta.fromHand&&onlySource){
+      // Roaring Skies Healing Scarf: a Pokémon Tool that heals its holder
+      // *only* when an Energy card is attached from the player's hand.
+      // Attaching from Energy Zone, discard, deck, or an attack never heals.
+      if(toolsOf(onlySource).some(ref=>ref.cardId==='xy6-84')&&!effects.healingIsBlocked(state,onlySource,data.cardById)){
+        const before=Number(onlySource.damage||0);
+        onlySource.damage=Math.max(0,before-20);
+        state.log.push({type:'xy6HealingScarf',side,targetUid:onlySource.uid,healed:before-onlySource.damage});
+      }
       const active=ss.active;
       if(active?.cardId==='pl2-45'&&!effects.abilitiesSuppressed(state,side,active,data.cardById)){
         for(const target of pokemonOn(ss))if(!effects.healingIsBlocked(state,target,data.cardById))target.damage=Math.max(0,Number(target.damage||0)-20);
@@ -711,6 +719,7 @@
            state.sides[side==='player'?'opponent':'player']?.active?.cardId==='dp5-98'&&
            !effects.abilitiesSuppressed(state,side==='player'?'opponent':'player',state.sides[side==='player'?'opponent':'player'].active,data.cardById))continue;
         if(state.format==='classic'&&ability.printedPowerType==='power'&&Number(ss.dp6PsychicBindUntil||-1)>=Number(state.turnNumber))continue;
+        if(ability.name==='Set Up'&&source.cardId.startsWith('xy6-')&&(ss.hand.length>=6||!ss.deck.length))continue;
         if(pl1PowerBlocked(state,side,source,ability)||abilityBlockedByStatus(ability,source)||ability.type!=='triggered'||ability.event!==event||ability.activeOnly&&ss.active!==source||ability.benchOnly&&ss.active===source)continue;if(event==='endTurn'){const ownersTurn=state.activeSide===side,turn=ability.turn||'owner';if(turn==='owner'&&!ownersTurn||turn==='opponent'&&ownersTurn)continue;}if(ability.opponentAttackOnly&&!(meta.source?.attack&&meta.source.side===(side==='player'?'opponent':'player')))continue;if(ability.energyType&&ability.energyType!==meta.energyType)continue;if(ability.fromHandOnly&&!meta.fromHand)continue;if(ability.firstTurnOnly&&ss.turnCount!==1)continue;
         effects.applyEffect(ability.effect,{...effectContext(state,side,{},source),isAbility:true,eventData:meta});state.log.push({type:'ability',side,cardId:source.cardId,ability:ability.name,event});
         ex14DarkEyes(state,side,source,ability);
@@ -927,6 +936,7 @@
       pokemonOn(state.sides[side]).some(p=>p.cardId==='bw4-57'&&!effects.abilitiesSuppressed(state,side,p,data.cardById)))
       next.Psychic=Number(next.Psychic||0)+Number(slot?.energy?.Psychic||0);
     for(const ref of slot?.specialEnergy||[]){
+      if(ref.cardId==='xy6-97'&&!data.cardById(slot?.cardId)?.types?.includes('Dragon'))continue;
       // Crystal Beach: two- or three-unit Special Energy becomes ONE Colorless
       // regardless of the attached Pokemon's Powers or Bodies. Keep the Basic
       // Energy Zone (slot.energy) completely separate.
@@ -1478,6 +1488,7 @@
        if(card.id==='xy4-112'&&!mon?.types?.includes('Psychic'))return false;
        if(card.id==='xy5-143'&&!mon?.types?.includes('Metal'))return false;
        if(card.id==='xy5-144'&&!mon?.types?.includes('Fairy'))return false;
+       if(card.id==='xy6-97'&&!mon?.types?.includes('Dragon'))return false;
        if(Number(slot?.ex5NoHandEnergyUntil||0)>=state.turnNumber||Number(slot?.xy4NoHandEnergyUntil||0)>=state.turnNumber)return false;
        if(slot===s.active&&Number(s.dp2EnergyHandLockUntil||0)>=state.turnNumber)return false;
        // Holon's Stage 1 Pokémon may be attached as Energy only when the
@@ -3748,7 +3759,7 @@ const target=slotForTarget(s,action.target,action.benchIndex);if(card.id==='pl2-
       const board=state.sides[owner];for(const pokemon of pokemonOn(board)){
         const types=data.cardById(pokemon.cardId)?.types||[],kept=[];
         for(const ref of pokemon.specialEnergy||[]){
-          const required=ref.cardId==='xy3-103'?'Grass':ref.cardId==='xy3-104'?'Fighting':ref.cardId==='xy4-112'?'Psychic':ref.cardId==='xy5-143'?'Metal':ref.cardId==='xy5-144'?'Fairy':null;
+          const required=ref.cardId==='xy3-103'?'Grass':ref.cardId==='xy3-104'?'Fighting':ref.cardId==='xy4-112'?'Psychic':ref.cardId==='xy5-143'?'Metal':ref.cardId==='xy5-144'?'Fairy':ref.cardId==='xy6-97'?'Dragon':null;
           if(required&&!types.includes(required)){
             board.discard.push(ref);state.log.push({type:'xy3SpecialEnergyDiscard',side:owner,uid:ref.uid,reason:'ineligibleAttachedType',cardId:ref.cardId});
           }else kept.push(ref);

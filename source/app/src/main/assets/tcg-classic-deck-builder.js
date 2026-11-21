@@ -757,6 +757,13 @@ function buildDeck(rows,options={}){
      // VS Seeker can only recover a physical Supporter; don't select it
      // into a build with no Supporter cards whatsoever.
      if(card?.name==='VS Seeker'&&!cards.some(id=>classic.cardById(id)?.trainerType==='Supporter'))return false;
+     // Roaring Skies Mega Turbo is dead without a Mega Evolution in this
+     // *actual* deck, not merely in the owner's collection. Do not use the
+     // Trainer as generic filler in all-Basic or non-Mega decks.
+     if(card?.id==='xy6-86'&&!pokemon.some(p=>p.megaEvolution))return false;
+     // Healing Scarf checks physical hand-Energy cards, not Energy Zone
+     // attachments. A deck with no Special Energy has no routine trigger.
+     if(card?.id==='xy6-84'&&!cards.some(id=>classic.cardById(id)?.specialEnergy))return false;
    }
    // Supreme Victors Stadiums must strengthen the actual deck. Battle Tower
    // heals Pokémon only when they Level-Up; without a friendly LV.X it risks
@@ -1104,6 +1111,15 @@ function buildDeck(rows,options={}){
    if(!partners.some(p=>cards.includes(p)))continue;
    const link=classic.cardById(id);
    if(link&&pool.includes(link))add(link,Math.min(2,room(link)));
+ }
+ // Double Dragon Energy provides two flexible units only on Dragon Pokémon.
+ // Add it early to real Dragon lines (rather than as generic filler) and
+ // NEVER to a non-Dragon deck where it cannot legally be attached.
+ const dragonLine=cards.some(id=>(classic.cardById(id)?.types||[]).includes('Dragon'));
+ if(dragonLine){
+   const doubleDragon=classic.cardById('xy6-97');
+   if(doubleDragon&&pool.includes(doubleDragon)&&cards.length<29)
+     add(doubleDragon,Math.min(2,room(doubleDragon)));
  }
  // The 30-card format EXCLUDES physical Basic Energy. Sceptile Nurture and
  // Heal and Torchic Flare Bonus need Energy actually in hand, which ordinary

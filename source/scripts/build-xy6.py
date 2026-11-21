@@ -62,7 +62,9 @@ def generate(rows):
    else:pw.append({'name':title,'text':printed,'printedPowerType':'ability','disabledByStatus':False,**impl})
 
   if kind=='trainer' and n not in V.TRAINERS:issues.append('Unimplemented Trainer rules')
-  if kind=='energy':issues.append('Double Dragon Energy needs two all-type units and a Dragon-only attachment hook')
+  # XY6 #97: validated by the battle core's Dragon-only attachment check.
+  # Miracle:2 represents *two* independently spendable flexible units, not
+  # a single Rainbow Energy or a separate Basic Energy Zone attachment.
   ok=not issues;ex='EX' in subtypes;mega='MEGA' in subtypes
   card={'id':'xy6-'+n,'setId':'xy6','number':n,'name':name,'source':'tcg','battleFormat':'classic','kind':kind,
    'rarity':rarity,'image':f'https://images.pokemontcg.io/xy6/{n}.png','imageLarge':f'https://images.pokemontcg.io/xy6/{n}_hires.png',
@@ -95,7 +97,7 @@ def generate(rows):
    # never let the CPU use Shield/Wonder before their global passives work.
    t='Dragon'
    card.update(basicEnergy=False,specialEnergy=True,energyType=t,subtype=t,text='\n'.join(rules),
-      effect={'type':'unsupported','reason':'Double Dragon Energy passive not yet implemented'})
+      effect={'type':'specialEnergy','provides':{'Miracle':2},'attachOnlyTypes':['Dragon']})
   cards.append(card)
  return cards
 

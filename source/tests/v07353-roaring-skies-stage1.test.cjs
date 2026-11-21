@@ -29,8 +29,8 @@ test('Roaring Skies set appears in player, opponent, pack selection and registry
 
 test('APK generation is CI-gated: source pin, version, prebuild audit',()=>{
  const gradle=fs.readFileSync(path.join(root,'app/build.gradle'),'utf8');
- assert.match(gradle,/versionCode\s+73(?:53|54)/);
- assert.match(gradle,/versionName '0\.69\.35[34]'/);
+ assert.match(gradle,/versionCode\s+73(?:53|54|55)/);
+ assert.match(gradle,/versionName '0\.69\.35[345]'/);
  for(const target of ['generateXY6ForApk','auditXY6ForApk'])
   assert.ok(gradle.includes(`tasks.register('${target}'`));
  assert.match(gradle,/dependsOn tasks.named\('auditXY6ForApk'\)/);
@@ -38,7 +38,7 @@ test('APK generation is CI-gated: source pin, version, prebuild audit',()=>{
  assert.ok(script.includes('5eab0c0148a5cb52dd7005628aa61c793ec0d930'));
  assert.ok(script.includes('load_pinned_set'));
  assert.ok(script.includes('!=112')&&script.includes('!=147')&&script.includes('!=15')&&script.includes('!=12'));
- assert.match(fs.readFileSync(path.join(assets,'app-v0167.js'),'utf8'),/window\.__LUCKYDEX_BUILD='0\.69\.35[34]'/);
+ assert.match(fs.readFileSync(path.join(assets,'app-v0167.js'),'utf8'),/window\.__LUCKYDEX_BUILD='0\.69\.35[345]'/);
 });
 
 test('Stage 1 verifier can validate every FULL attack and Trainer without faking Delta rules',()=>{
@@ -74,7 +74,8 @@ print(json.dumps({'cards':m.generate(rows),'effectMap':list(v.ATTACKS.values()),
  const output=JSON.parse(r.stdout),by=Object.fromEntries(output.cards.map(c=>[c.id,c]));
  for(const n of ['1','2','83','88','91','93','110'])assert.equal(by['xy6-'+n].battleEnabled,true,n+': '+by['xy6-'+n].support.reasons.join(';'));
  for(const n of ['8','17','32','61'])assert.equal(by['xy6-'+n].battleEnabled,true,n+' should now be enabled');
- for(const n of ['77','77a','92','92a','97'])assert.equal(by['xy6-'+n].battleEnabled,false,n+' should stay gated');
+ for(const n of ['77','77a','97'])assert.equal(by['xy6-'+n].battleEnabled,true,n+' is now implemented');
+ for(const n of ['92','92a'])assert.equal(by['xy6-'+n].battleEnabled,true,n+' now has top-four selection');
  assert.deepEqual(by['xy6-77'].attacks.map(a=>a.name),by['xy6-77a'].attacks.map(a=>a.name));
  assert.equal(by['xy6-61'].megaEvolution,true);
  assert.equal(by['xy6-61'].prizeCards,2);

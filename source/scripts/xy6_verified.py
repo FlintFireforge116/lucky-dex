@@ -89,11 +89,15 @@ for original,alternate in [('26','98'),('34','99'),('35','100'),('58','101'),('5
 # Spirit Links additionally require matching evolution IDs in battle-core.
 TRAINERS={
  '83':('Tool',N), # Gallade Spirit Link
+ '84':('Tool',N), # Healing Scarf: triggered by on-hand Energy attachments in battle core
  '85':('Tool',N), # Latios Spirit Link
+ '86':('Item',E('attachEnergyFromDiscard',target='selfPokemon',filter={'tag':'mega-evolution'},amount=1)), # Mega Turbo; choose actual Mega and discarded Basic Energy
  '87':('Tool',N), # Rayquaza Spirit Link
  '88':('Item',E('benchFromDiscard',side='self',amount=1,filter={'kind':'pokemon','stage':'Basic'})),
  '90':('Supporter',S(SEARCH(1,kind='trainer',trainerType='Supporter'),SEARCH(1,kind='energy',basicEnergy=True))),
  '91':('Item',SWITCH()),
+ '92':('Item',E('selectTopToHand',count=4,optional=True,filter={'kind':'trainer','notName':"Trainers' Mail"})),
+ '92a':('Item',E('selectTopToHand',count=4,optional=True,filter={'kind':'trainer','notName':"Trainers' Mail"})),
  '93':('Item',E('neoRule',rule='xy2:ultraBall')),
  '96':('Supporter',SEARCH(3,kind='pokemon',subtype='Colorless')),
  '108':('Supporter',SEARCH(3,kind='pokemon',subtype='Colorless')),
@@ -107,6 +111,9 @@ ABILITIES={
  'Miraculous Scales':{'type':'passive','effect':N},
  'Jewel Armor':{'type':'passive','effect':N},
  'Clear Humming':{'type':'passive','effect':N},
+ # An optional on-bench, from-hand trigger. Uses the shared choice flow, never
+ # fires on a deck/discard summon, and cannot exceed the Classic hand cap.
+ 'Set Up':{'type':'triggered','event':'benched','fromHandOnly':True,'effect':OPT('Draw until you have 6 cards',E('drawToHandSize',size=6))},
 }
 
 def attack(row,a):
