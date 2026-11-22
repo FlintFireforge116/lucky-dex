@@ -1099,6 +1099,19 @@
         }
       }
     }
+    // Fates Collide Mew: Memories of Dawn borrows every friendly Basic
+    // Pokémon's printed attacks, retaining each copied attack's own Energy cost.
+    if(state.format==='classic'&&current.id==='xy10-29'&&!effects.abilitiesSuppressed(state,side,slot,data.cardById)){
+      const seen=new Set(out.map(x=>x.cardId+':'+x.attackIndex));
+      for(const p of pokemonOn(state.sides[side])){
+        const c=data.cardById(p.cardId);
+        if(!c?.battleEnabled||c.stage!=='Basic'||p===slot)continue;
+        for(const [attackIndex,attack] of (c.attacks||[]).entries()){
+          const key=c.id+':'+attackIndex;if(seen.has(key))continue;
+          seen.add(key);out.push({cardId:c.id,attackIndex,attack,borrowed:true});
+        }
+      }
+    }
     // Undaunted Espeon Prime Evolution Memories borrows the attacks from
     // each Eevee evolution in play (excluding other Espeon Prime copies).
     if(state.format==='classic'&&current.id==='hgss3-81'&&!effects.abilitiesSuppressed(state,side,slot,data.cardById)){
@@ -1197,7 +1210,8 @@
       }
       // Technical Machines grant a temporary attack, not a new Pokémon identity.
       for(const ref of toolsOf(slot)){
-        const tool=data.cardById(ref.cardId);if(!tool?.technicalMachine)continue;
+        const tool=data.cardById(ref.cardId);if(!tool?.technicalMachine&&tool?.id!=='xy10-108')continue;
+        if(tool.id==='xy10-108'&&!['xy10-54','xy10-54a'].includes(current.id))continue;
         // G Booster/G Scope attacks belong exclusively to Genesect-EX.
         if(['bw10-92','bw10-93'].includes(tool.id)&&current.name!=='Genesect-EX')continue;
         for(const [attackIndex,attack] of (tool.attacks||[]).entries())
@@ -1499,6 +1513,7 @@
         if(!s.stadiumUsed&&effects.supportsEffect(card.effect)&&(!state.stadium||data.cardById(state.stadium.cardId).name!==card.name)){
           if(card.id==='xy8-145')for(const face of ['selfBench','opponentBench'])actions.push({...base,effectSelection:face});
           else if(card.id==='xy9-110')for(const face of ['selfDown','opponentDown'])actions.push({...base,effectSelection:face});
+          else if(card.id==='xy10-94')for(const face of ['selfCP','selfSP'])actions.push({...base,effectSelection:face});
           else actions.push(base);
         }
       }else for(const target of effectChoices(card.effect,effectContext(state,side)))actions.push({...base,...target});
@@ -2845,6 +2860,14 @@ const target=slotForTarget(s,action.target,action.benchIndex);if(card.id==='pl2-
       state.lentalDamOverflow=state.stadium?.cardId==='SNAPFLORIO-108';
       if(state.stadium){const prior=state.stadium;state.sides[prior.ownerSide][prior.cardId==='dp7-96'&&prior.dp7Ectoplasm?'hand':'discard'].push({uid:prior.uid,cardId:prior.cardId});}
       state.stadium={...ref,ownerSide:side};s.stadiumUsed=true;
+      if(card.id==='xy10-94'){
+        // The controller chooses which conditions the arrow protects against.
+        // The opponent receives the complementary orientation.
+        state.stadium.xy10ChaosSide=side;
+        state.stadium.xy10ChaosMode=action.effectSelection==='selfSP'?'sp':'cp';
+        state.log.push({type:'xy10ChaosTower',side,mode:state.stadium.xy10ChaosMode});
+        effects.applyContinuousRules?.(state,data.cardById);
+      }
       if(card.id==='xy9-110'){
         state.stadium.xy9DownSide=action.effectSelection==='opponentDown'?(side==='player'?'opponent':'player'):side;
         state.log.push({type:'xy9ReverseValley',downSide:state.stadium.xy9DownSide});
@@ -3108,6 +3131,9 @@ const target=slotForTarget(s,action.target,action.benchIndex);if(card.id==='pl2-
         (['xy10-26','xy10-118'].includes(ref.cardId)&&toolsOf(target).some(t=>t.cardId==='xy10-90'))||
         (['xy10-69','xy10-121'].includes(ref.cardId)&&toolsOf(target).some(t=>t.cardId==='xy10-91'))||
         (ref.cardId==='xy10-85'&&toolsOf(target).some(t=>t.cardId==='xy10-92')));
+      const xy10Kinesis=['xy10-26','xy10-118'].includes(ref.cardId)&&
+        ['xy10-25','xy10-117','xy10-125'].includes(target.cardId)&&
+        !effects.abilitiesSuppressed(state,side,target,data.cardById);
       const dp2SlakothWasAsleep=target.cardId==='dp2-99'&&!!target.conditions?.sleep;
       target.cardId = ref.cardId;
       target.stack.push(ref.cardId);
@@ -3134,6 +3160,7 @@ const target=slotForTarget(s,action.target,action.benchIndex);if(card.id==='pl2-
       state.log.push({type:levelUp?'levelUp':'evolve',side,cardId:ref.cardId,target:matched.target,benchIndex:matched.benchIndex});
       // Leveling up is not evolving, and must not retrigger evolve-from-hand Powers.
       if(!levelUp)triggerAbilities(state,'evolved',side,target,{fromHand:true});
+      if(xy10Kinesis)effects.applyEffect({type:'xy10Final',rule:'kinesis'},{...effectContext(state,side,{},target),isAbility:true,eventData:{fromHand:true}});
       if(state.format==='classic'&&ref.cardId==='xy1-95'&&!effects.abilitiesSuppressed(state,side,target,data.cardById)){
         for(const p of pokemonOn(s)){
           const en=effectiveEnergy(state,side,p);

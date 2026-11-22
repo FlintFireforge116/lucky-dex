@@ -8,8 +8,8 @@ android {
         applicationId 'com.example.luckydex'
         minSdk 26
         targetSdk 35
-        versionCode 7387
-        versionName '0.69.387'
+        versionCode 7388
+        versionName '0.69.388'
     }
 
     signingConfigs {
@@ -916,7 +916,7 @@ tasks.register('generateXY10ForApk', Exec) {
 tasks.register('auditXY10ForApk', Exec) {
     dependsOn tasks.named('generateXY10ForApk')
     workingDir rootProject.projectDir
-    commandLine 'node', '--test', 'tests/v07383-fates-collide-integration.test.cjs', 'tests/v07383-fates-collide-effects.test.cjs', 'tests/v07384-fates-collide-stage2.test.cjs', 'tests/v07385-fates-collide-stage3.test.cjs', 'tests/v07386-fates-collide-stage4.test.cjs', 'tests/v07387-fates-collide-stage5.test.cjs'
+    commandLine 'node', '--test', 'tests/v07383-fates-collide-integration.test.cjs', 'tests/v07383-fates-collide-effects.test.cjs', 'tests/v07384-fates-collide-stage2.test.cjs', 'tests/v07385-fates-collide-stage3.test.cjs', 'tests/v07386-fates-collide-stage4.test.cjs', 'tests/v07387-fates-collide-stage5.test.cjs', 'tests/v07388-fates-collide-complete.test.cjs'
 }
 tasks.matching { it.name == 'preBuild' || (it.name.startsWith('merge') && it.name.endsWith('Assets')) }.configureEach {
     dependsOn tasks.named('auditXY10ForApk')

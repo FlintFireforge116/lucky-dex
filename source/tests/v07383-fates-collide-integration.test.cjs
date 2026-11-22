@@ -64,10 +64,10 @@ print(json.dumps([{'id':c['id'],'enabled':c['battleEnabled'],'reasons':c['suppor
  assert.equal(res.status,0,res.stderr);
  const out=JSON.parse(res.stdout);
  assert.deepEqual(out.map(x=>x.id),['xy10-5','xy10-14','xy10-90','xy10-114','xy10-17']);
- assert.deepEqual(out.map(x=>x.enabled),[true,true,true,true,false]);
+ assert.deepEqual(out.map(x=>x.enabled),[true,true,true,true,true]);
  assert.equal(out[1].evolution,'previous');
  assert.equal(out[1].reasons.length,0,'Flare Witch now has a verified Stage 5 ability');
- assert.match(out[4].reasons.join(' '),/Restored/);
+ assert.equal(out[4].reasons.length,0); // legal Restored entry requires Fossil Items, not ordinary Basic setup
 });
 const generated=fs.existsSync(path.join(root,'data/classic/xy10-print-compact.json'));
 test('Pinned Fates Collide official 129-print catalogue and constructed CPU/player decks', {skip:!generated&&process.env.GITHUB_ACTIONS!=='true'},()=>{

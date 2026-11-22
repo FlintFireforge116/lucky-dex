@@ -122,12 +122,12 @@ test('Energy Pouch returns only Basic Energy from a real opponent-attack KO; att
  assert.ok(p.discard.some(ref=>ref.uid==='attached-special'),'Special Energy is not rescued');
  assert.equal(o.prizes.length,prizes-1);assert.ok(battle.log.some(x=>x.type==='xy10EnergyPouch'));
 });
-test('Stage 5 generated catalogues enable all six prints and keep Restored Pokemon gated',()=>{
+test('Stage 5 generated catalogues enable all six prints and enable the completed Restored family',()=>{
  const py=String.raw`import sys,json,importlib.util;sys.path.insert(0,sys.argv[1]);sp=importlib.util.spec_from_file_location('b',sys.argv[2]);b=importlib.util.module_from_spec(sp);sp.loader.exec_module(b)
 def p(n,name,stage,atk=[],ab=[]):return [n,name,'Pokémon',[stage],140,['Fighting'],None,atk,ab,'Grass',None,1,'Rare',[],None,None]
 def t(n,name,stage='Item'):return [n,name,'Trainer',[stage],None,[],None,[],[],None,None,0,'Uncommon',[],None,None]
 rows=[p('14','Delphox BREAK','BREAK',[],[['Flare Witch','Ability','Search for a Fire Energy and attach it']]),p('51','Carbink BREAK','BREAK',[['Diamond Gift',['F'],'20','Attach 2 Energy from discard to Fighting Pokemon']]),t('95','Devolution Spray'),t('97','Energy Pouch','Pokémon Tool'),t('98','Energy Reset'),t('110','Scorched Earth','Stadium'),p('17','Omanyte','Restored',[['Water Gun',['W'],'30','']])]
 cs=b.generate(rows);print(json.dumps([(c['number'],c['battleEnabled']) for c in cs]))`;
  const r=spawnSync('python3',['-c',py,path.join(root,'scripts'),path.join(root,'scripts/build-xy10.py')],{encoding:'utf8'});
- assert.equal(r.status,0,r.stderr);assert.deepEqual(JSON.parse(r.stdout),[['14',true],['51',true],['95',true],['97',true],['98',true],['110',true],['17',false]]);
+ assert.equal(r.status,0,r.stderr);assert.deepEqual(JSON.parse(r.stdout),[['14',true],['51',true],['95',true],['97',true],['98',true],['110',true],['17',true]]);
 });

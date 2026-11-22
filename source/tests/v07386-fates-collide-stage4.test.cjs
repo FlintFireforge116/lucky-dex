@@ -94,11 +94,11 @@ test('Whimsicott Light Steps chooses energy and Bench recipient, preserving Spec
  fx.applyEffect({...e,stage:'bench',energyKey:'basic:Fairy'},{...s.ctx,resolvingChoice:true,action:{choiceTarget:'bench',choiceBenchIndex:0}});
  assert.equal(s.p.active.energy.Fairy,0);assert.equal(s.p.bench[0].energy.Fairy,1);
 });
-test('Stage 4 generator enables these seven prints while leaving unverified entries gated',()=>{
+test('Stage 4 generator enables these seven prints and a legal Restored Pokémon',()=>{
  const code=String.raw`import sys,json,importlib.util;sys.path.insert(0,sys.argv[1]);sp=importlib.util.spec_from_file_location('b',sys.argv[2]);m=importlib.util.module_from_spec(sp);sp.loader.exec_module(m)
 def p(n,name,stage,atks,abilities=[]):return [n,name,'Pokémon',[stage],120,['Water'],None,atks,abilities,'Grass',None,1,'Rare',[],None,None]
 rows=[p('4','Mothim','Stage 1',[['Gust',['C'],'60','']],[['Wormadam First','Ability','Once per turn move one counter']]),p('19','Omastar BREAK','BREAK',[],[['Dangerous Tentacle','Ability','Switch opposing Benched Pokémon-EX']]),p('23','Barbaracle','Stage 1',[['Claw Slash',['F'],'70','']],[['Hand Block','Ability','Lock Special Energy with Stadium']]),p('61','Bronzong','Stage 1',[['Guard Press',['M','C'],'60','Reduce next attack damage by 20']],[['Metal Fortress','Ability','Protect Bench']]),p('71','Whimsicott','Stage 1',[['Light Steps',['Y'],'40','Move an Energy from this Pokémon']]),p('73','Kingdra-EX','Basic',[['Big Storm',['W'],'20','Discard stadium'],['Dragon Trail',['W'],'60+','Lightning bonus']]),p('122','Kingdra-EX','Basic',[['Big Storm',['W'],'20','Discard stadium'],['Dragon Trail',['W'],'60+','Lightning bonus']]),p('17','Omanyte','Restored',[['Water Gun',['W'],'30','']])]
 cs=m.generate(rows);print(json.dumps([(c['number'],c['battleEnabled']) for c in cs]))`;
  const x=spawnSync('python3',['-c',code,path.join(root,'scripts'),path.join(root,'scripts/build-xy10.py')],{encoding:'utf8'});
- assert.equal(x.status,0,x.stderr);assert.deepEqual(JSON.parse(x.stdout),[['4',true],['19',true],['23',true],['61',true],['71',true],['73',true],['122',true],['17',false]]);
+ assert.equal(x.status,0,x.stderr);assert.deepEqual(JSON.parse(x.stdout),[['4',true],['19',true],['23',true],['61',true],['71',true],['73',true],['122',true],['17',true]]);
 });

@@ -51,15 +51,17 @@ def generate(rows):
   if trait: issues.append('Unverified Ancient Trait')
   # BREAK reuses LV.X previous-card inheritance, but with normal evolution timing.
   # Restored Pokemon require printed fossil play rules, not ordinary Basic setup.
-  if 'Restored' in subtypes:issues.append('Restored Pokémon requires fossil-entry battle legality audit')
+  # Restored Pokémon are deliberately NOT Basics and enter only through a Fossil Item / Ability.
   # Gate unsupported printed effects, even if the card has a usable plain attack.
   for title,cost,damage,printed in attacks:
    eff=V.attack(row,[title,cost,damage,printed]);
    if eff is None:issues.append('Unimplemented printed attack: '+title)
    m=re.search(r'\d+',damage or '')
    base=int(m.group()) if m and '×' not in damage else 0
-   aa.append({'name':title,'cost':cost,'damage':base,'damageText':damage or None,'text':printed,
-    'effect':eff if eff is not None else {'type':'unsupported','reason':'Needs a dedicated printed-rule implementation'}})
+   att={'name':title,'cost':cost,'damage':base,'damageText':damage or None,'text':printed,
+    'effect':eff if eff is not None else {'type':'unsupported','reason':'Needs a dedicated printed-rule implementation'}}
+   if n=='77' and title=='Toss and Turn':att['allowAsleep']=True
+   aa.append(att)
   for title,ability_type,printed in abilities:
    impl=V.ABILITIES.get(title)
    if impl is None:issues.append('Unimplemented printed Ability: '+title)
@@ -96,6 +98,8 @@ def generate(rows):
    obj=V.TRAINERS.get(n)
    card.update(trainerType=obj[0] if obj else next((s for s in subtypes if s in ('Item','Supporter','Stadium','Pokémon Tool')),'Item'),
     text='\n'.join(rules),effect=obj[1] if obj else {'type':'unsupported'},aceSpec=False,maxDeckCopies=4)
+   if n=='108':
+    card.update(attacks=aa)
   elif kind=='energy':
    # Physical Special Energy cards are represented individually.
    t='Colorless' if n=='114' else 'Fighting'

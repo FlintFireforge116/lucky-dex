@@ -1,8 +1,8 @@
 LUCKYDEX — MASTER PROJECT RULES AND DEVELOPMENT CONTRACT
 =========================================================
-Document version: 2.73
+Document version: 2.74
 Compiled: 22 November 2026
-Current verified APK: v0.69.384 GitHub success (run 45045876175); v0.69.385 Fates Collide Stage 3 is locally tested, GitHub APK unverified.
+Current verified APK: v0.69.387 Fates Collide Stage 5 (GitHub run 45051296127 succeeded); v0.69.388 129-print completion is locally tested, GitHub APK unverified.
 Recommended repository location: ~/lucky-dex/source/docs/LUCKYDEX_MASTER_RULES.txt
 Project: LuckyDex — Android application/PWA, managed with Termux and GitHub
 
@@ -4779,3 +4779,48 @@ FATES COLLIDE XY10 STAGE 5 — v0.69.387 / Master Rules v2.73 (2026-11-22)
 7. Output only changed source files, packaged as a patch ZIP extracted with
    `unzip -o <filename> -d source`. Confirm all version markers and contract
    are the SAME exact version. Never claim GitHub APK success before its run.
+
+
+FATES COLLIDE XY10 WHOLE-SET COMPLETION — v0.69.388 / Master Rules v2.74 (2026-11-22)
+------------------------------------------------------------------------------------
+1. 2016 Fates Collide (xy10) has 129 distinct official prints, with pinned source
+   aa097c8da85e960a5afa4f3b96312f64dcbec871, 147 printed attacks, 21 printed
+   Abilities and five BREAK Evolution prints. v0.69.387 (run 45051296127) is the
+   last GitHub-confirmed baseline. Completion v0.69.388 maps all remaining 24
+   previously gated prints in ONE integration pass and requires 129/129 after
+   pinned official catalogue generation. Count alternate arts as distinct prints.
+2. MECHANIC-FIRST MEANS WHOLE-SET FIRST, NOT SIX-CARD CHUNKS: implement all remaining
+   prints in one changed-files-only overlay whenever feasible. Reuse existing
+   effect descriptors, LV.X/BREAK inheritance, energy zones, KO triggers and
+   choice selectors. An independent audit follows the whole-set integration;
+   don't artificially split work into small versioned batches merely because
+   specific mechanics are unusual. Don't silently substitute noops to make
+   the readiness count pass.
+3. Required completion systems: genuine Restored Pokémon (Omanyte, Kabuto,
+   Aerodactyl) enter from bottom-seven Fossil Items or Omastar's Restoring Beam;
+   they are NOT normal setup Basics. The deck builder must keep related Fossil
+   families complete, never add orphan fossil trainers and never treat Restored
+   as a free Basic. Other completed features: Alakazam-EX Kinesis/suppression;
+   Mew Memories of Dawn inherited Basic attacks; Bronzong BREAK Metal Rain;
+   Genesect-EX Drive Change/Rapid Blaster; Rotom's damage movement and search;
+   Tyranitar Raging Roar; Snorlax Toss and Turn while Asleep; Exploud Cacophony;
+   Chaos Tower two-player opposite-facing protections; Zygarde-EX Power Memory
+   Tool-granted attack; selection of physical cards/Energy and exact KO timing.
+4. Source-only preflight must run independently of Gradle parsing and must
+   include ALL stage tests through tests/v07388-fates-collide-complete.test.cjs;
+   check-gradle-source.py --self-test must reject missing newest-stage tests,
+   malformed quoted test arguments and unmatched Groovy structure. Keep
+   v0.69.388, versionCode 7388, title screen, boot JS, XY9+XY10 contracts in sync.
+5. Before git add/commit/push from Termux: python3 source/scripts/check-gradle-source.py
+   --self-test && (cd source && python3 scripts/preflight-xy10-release.py --full).
+   --full must obtain the PINNED immutable dataset, generate all 129 cards,
+   execute the 129-card catalogue/print/cost check and run real deck-quality tests
+   with GITHUB_ACTIONS=true. The source-only skip is never proof of a build.
+   GitHub APK success must be separately confirmed from an actual workflow run.
+6. Always perform the dedicated independent card-by-card, human+CPU, matchup,
+   deck-building and cross-set regression audit AFTER bulk integration. Fix
+   any discovered gameplay defects then, with regression tests; do not call a
+   mapped print bug-free solely because its descriptor validates.
+7. Deliver the changed-files-only patch ZIP with paths relative to source/, not
+   an entire duplicate repository. Apply with unzip -o PATCH.zip -d source,
+   preflight, git add source, git commit, git push origin main.

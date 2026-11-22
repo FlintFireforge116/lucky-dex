@@ -81,22 +81,22 @@ function parentKeys(baseName){const n=classicCardName(baseName);return /^Burmy (
 // BW3 Restored Pokémon are not Basics: these two specific Item cards are
 // their required entry path.  Treat them as fossil-family roots for deck
 // generation, while the battle engine continues to bench via bottom-seven.
-const RESTORED_FOSSIL_IDS=new Set(['bw3-90','bw3-93','bw5-97','bw10-79','bw10-82','bw10-87']);
+const RESTORED_FOSSIL_IDS=new Set(['bw3-90','bw3-93','bw5-97','bw10-79','bw10-82','bw10-87','xy10-96','xy10-102','xy10-106']);
 const EVOLUTION_FOSSIL_NAMES=new Set(classic.CARDS.filter(c=>c.kind==='trainer'&&
   (c.effect?.type==='playFossil'||RESTORED_FOSSIL_IDS.has(c.id))&&
-  (c.id==='bw5-97'||/(?:Fossil(?: Lileep)?|Old Amber)$/i.test(classicCardName(c.name)))).map(c=>classicCardName(c.name)));
+  (c.id==='bw5-97'||c.id.startsWith('xy10-')||/(?:Fossil(?: Lileep)?|Old Amber)$/i.test(classicCardName(c.name)))).map(c=>classicCardName(c.name)));
 function isEvolutionFossil(card){return !!(card?.kind==='trainer'&&
   (card.effect?.type==='playFossil'||RESTORED_FOSSIL_IDS.has(card.id))&&
   EVOLUTION_FOSSIL_NAMES.has(classicCardName(card.name)));}
 function fossilEvolutionInDeck(fossil,ids){
- const restored={'bw10-79':'bw10-27','bw10-82':'bw10-53','bw10-87':'bw10-3'};
+ const restored={'bw10-79':'bw10-27','bw10-82':'bw10-53','bw10-87':'bw10-3','xy10-96':'xy10-38','xy10-102':'xy10-17','xy10-106':'xy10-76'};
  if(restored[fossil?.id])return (ids||[]).includes(restored[fossil.id]);
  if(fossil?.id==='bw5-97')return (ids||[]).includes('bw5-53');return (ids||[]).some(id=>{
  const c=classic.cardById(id);
  return c?.kind==='pokemon'&&!!c.evolvesFrom&&classicEvolutionMatches(fossil.name,c.evolvesFrom);
 });}
 function anyFossilEvolutionInDeck(ids){
- if(['bw10-3','bw10-27','bw10-53'].some(id=>(ids||[]).includes(id)))return true;
+ if(['bw10-3','bw10-27','bw10-53','xy10-17','xy10-38','xy10-76'].some(id=>(ids||[]).includes(id)))return true;
  return (ids||[]).some(id=>{
  const c=classic.cardById(id);
  return c?.kind==='pokemon'&&!!c.evolvesFrom&&EVOLUTION_FOSSIL_NAMES.has(classicCardName(c.evolvesFrom));

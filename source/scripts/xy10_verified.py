@@ -2,12 +2,25 @@
 
 Every print is resolved by (official card number, exact attack title). Never
 conflate same-name cards or mark partial printed effects as battle-enabled.
-Complex Fossil, global effects and delayed KO remain gated pending outcome tests.
+All Fates Collide prints are mapped in one completion pass; independent battle audit follows.
 """
 from xy8_verified import attack as generic_attack
 from hgss1_verified import N,S,Q,ST,H,DISC,COIN,SEARCH,BENCH,BONUS,SWITCH,DRAW,LOCK,GUARD,OPT
 E=lambda t,**kw: {'type':t,**kw}
 ATK={
+ # Fates Collide completion: shared effect dispatcher, no intentionally inert cards.
+ ('9','Flying Flare'):E('xy10Final',rule='flyingFlare'),
+ ('24','Energy Extract'):E('xy10Final',rule='energyExtract'),
+ ('24','Plasmagic'):E('xy10Final',rule='plasmagic'),
+ ('25','Suppression'):E('xy10Final',rule='suppression'),
+ ('29','Encounter'):SEARCH(1,kind='pokemon'),
+ ('31','Head Walking'):E('xy10Final',rule='headWalking'),
+ ('56','Dark Mountain'):E('topDeckDiscardBonus',count=2,amount=50,filter={'kind':'trainer','trainerType':'Supporter'}),
+ ('62','Metal Rain'):E('xy10Final',rule='metalRain'),
+ ('64','Rapid Blaster'):E('xy10Final',rule='rapidBlaster'),
+ ('77','Toss and Turn'):BONUS(90,{'type':'selfStatus','status':'sleep'}),
+ ('82','Cacophony'):E('scheduleDelayed',event='endOpponentNextTurn',targetMode='defender',effect=E('discardPokemon')),
+ ('108','All Cells Burn'):DISC(3),
  ('1','Hide a Berry'):S(DRAW(2),E('xy10HandToDeckBottom',side='self')),
  ('71','Light Steps'):E('xy10LightSteps'),
  ('51','Diamond Gift'):E('xy10DiamondGift'),
@@ -96,6 +109,13 @@ for src,alternates in [('20',['116']),('25',['117','125']),('26',['118']),('55',
 # Simple deterministic card descriptions are routed through the mature XY8
 # parser. Unknown printed sentences MUST remain gated by the generator.
 TRAINERS={
+ # Restored Pokémon are never normal setup Basics; these Items bench from the
+ # bottom seven of the physical deck and then shuffle the remainder.
+ '96':('Item',E('xy10Final',rule='fossilBottom',name='Kabuto')),
+ '102':('Item',E('xy10Final',rule='fossilBottom',name='Omanyte')),
+ '106':('Item',E('xy10Final',rule='fossilBottom',name='Aerodactyl')),
+ '94':('Stadium',E('xy10Final',rule='chaosTower')),
+ '108':('Tool',E('xy10Final',rule='powerMemory')),
  '90':('Tool',N), # Alakazam Spirit Link: matching-Mega turn exemption
  '91':('Tool',N), # Altaria Spirit Link
  '92':('Tool',N), # Audino Spirit Link
@@ -123,6 +143,13 @@ TRAINERS={
  # they are not mapped as generic search/draw because the cost matters.
 }
 ABILITIES={
+ 'Restoring Beam':{'type':'activated','oncePerTurn':True,'effect':E('xy10Final',rule='restoringBeam')},
+ 'Kinesis':{'type':'triggered','event':'evolved','effect':E('xy10Final',rule='kinesis')},
+ 'Memories of Dawn':{'type':'passive','effect':E('xy10Final',rule='memoriesDawn')},
+ 'Bodyguard':{'type':'passive','effect':E('xy10Final',rule='bodyguard')},
+ 'Energy Keeper':{'type':'passive','effect':E('xy10Final',rule='energyKeeper')},
+ 'Raging Roar':{'type':'triggered','event':'evolved','effect':E('xy10Final',rule='ragingRoar')},
+ 'Drive Change':{'type':'activated','oncePerTurn':True,'effect':E('xy10Final',rule='driveChange')},
  # Carbink's Safeguard prevents EX attack DAMAGE and secondary EFFECTS;
  # both barriers disappear under global Ability suppression.
  'Safeguard':{'type':'passive','effect':S(E('preventDamage',duration='whileInPlay',attackerFilter={'isEx':True}),E('preventEffects',duration='whileInPlay',attackerFilter={'isEx':True}))},

@@ -111,8 +111,9 @@ test('Physical Strong Energy stacks only on Fighting attackers and only against 
  s.cards.self.types=['Psychic'];
  assert.equal(fx.attackDamageWithState(s.state,'player',s.p.active,'opponent',s.o.active,80,s.ctx.cardById),base);
 });
-test('An incomplete optional Flying Flare choice stays gated, never enabled with runtime-throwing bonus',()=>{
- assert.equal(m.attacks['9:Flying Flare'],undefined);
+test('Flying Flare now supports the optional 40-damage boost and recoil',()=>{
+ assert.deepEqual(fx.validateEffect(m.attacks['9:Flying Flare']),[]);
+ assert.equal(m.attacks['9:Flying Flare'].rule,'flyingFlare');
 });
 test('GitHub source-only preflight never requires the not-yet-generated official catalogue',()=>{
  const script=fs.readFileSync(path.join(root,'scripts/preflight-xy10-release.py'),'utf8');

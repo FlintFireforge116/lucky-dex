@@ -56,11 +56,12 @@ test('All three Fates Collide Spirit Links exempt only their matching Mega Evolu
   assert.ok(js.includes(`cardId==='${link}'`));for(const id of ids)assert.ok(js.includes(`'${id}'`));
  }
 });
-test('Still-unverified Fossil, Power Memory, alternate KO and global effects remain gated',()=>{
- for(const [num,name] of [['14','Flare Witch'],['19','Dangerous Tentacle'],['25','Kinesis'],['62','Metal Rain'],['82','Cacophony']]){
-  assert.equal(m.attacks[num+':'+name],undefined);
- }
- for(const n of ['94','96','102','108'])assert.equal(m.trainers[n]||m.energy[n],undefined);
+test('Formerly gated Fossil, Power Memory, BREAK and delayed effects are mapped for completion',()=>{
+ for(const [number,attack] of [['62','Metal Rain'],['82','Cacophony']])
+  assert.deepEqual(fx.validateEffect(m.attacks[number+':'+attack]),[]);
+ for(const ability of ['Kinesis','Restoring Beam','Memories of Dawn','Energy Keeper','Drive Change'])
+  assert.deepEqual(fx.validateEffect(m.abilities[ability].effect),[]);
+ for(const number of ['94','96','102','106','108'])assert.deepEqual(fx.validateEffect(m.trainers[number]),[]);
 });
 test('Fates Collide Link Fusion bonuses require matching distinct named Pokémon on the Bench',()=>{
  const s=scene(),a={name:'Link Fusion',damage:10,effect:m.attacks['35:Link Fusion']};
