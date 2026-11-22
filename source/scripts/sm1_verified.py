@@ -181,7 +181,7 @@ ABILITIES.update({
  'Queenly Majesty':{'type':'triggered','event':'evolved','fromHandOnly':True,'effect':SM('queenlyMajesty')},
  'Cowardice':{'type':'activated','oncePerTurn':True,'effect':SM('cowardice')},
  'Water Bubble':{'type':'passive','effect':SM('waterBubble')},
- 'Innards Out':{'type':'triggered','event':'knockedOutByAttack','effect':SM('innardsOut')},
+ 'Innards Out':{'type':'triggered','event':'knockedOutByAttack','activeOnly':True,'effect':SM('innardsOut')},
  'Strong Charge':{'type':'activated','oncePerTurn':True,'effect':SM('strongCharge')},
  'Power of Alchemy':{'type':'passive','effect':SM('powerAlchemy')},
  'Toxic Spikes':{'type':'passive','effect':SM('toxicSpikes')},

@@ -761,7 +761,10 @@
   }
   function retreatCost(state,side){const slot=state.sides[side].active;
     const top=data.cardById(slot?.cardId),previous=top?.breakEvolution&&slot?.stack?.length>1?data.cardById(slot.stack[slot.stack.length-2]):null;
-    const tangling=state.format==='classic'&&['player','opponent'].some(w=>w!==side&&pokemonOn(state.sides[w]).some(p=>p.cardId==='sm1-87'&&!effects.abilitiesSuppressed(state,w,p,data.cardById)))?1:0;
+    // Every independently active Tangling Hair source adds one Colorless.
+    // Multiple Alolan Dugtrio stack; suppression removes only that source.
+    const opponent=side==='player'?'opponent':'player';
+    const tangling=state.format==='classic'?pokemonOn(state.sides[opponent]).filter(p=>p.cardId==='sm1-87'&&!effects.abilitiesSuppressed(state,opponent,p,data.cardById)).length:0;
     const printedRetreat=Number((previous||top)?.retreat||0)+tangling;
     // Fairy Garden (XY 117): all Pokemon with Fairy-providing attached Energy
     // have free retreat, including opposing Pokemon and flexible Rainbow.
@@ -3469,6 +3472,7 @@ const target=slotForTarget(s,action.target,action.benchIndex);if(card.id==='pl2-
       if(!s.active){if(s.bench.length){state.phase='promote';state.promotionSide=side;}else resolveKnockOut(state,null,'effect');}return state;
     }
     if (matched.type === 'retreat'){
+      const foeSide=side==='player'?'opponent':'player';
       if(state.format==='classic'&&activeStadium(state)?.cardId==='ecard3-132'){
         const heads=random(state)<.5;state.log.push({type:'coin',side,reason:'Skyridge Mirage Stadium',heads,results:[heads]});
         if(!heads){s.skyridgeMirageFailedTurn=state.turnNumber;state.log.push({type:'retreatFailed',side,reason:'Mirage Stadium'});return state;}
@@ -3530,7 +3534,7 @@ const target=slotForTarget(s,action.target,action.benchIndex);if(card.id==='pl2-
         state.log.push({type:'platinumSinkhole',side:side==='player'?'opponent':'player',targetUid:outgoing.uid,amount:20});
       }
       s.retreated = true;
-      state.log.push({type:'retreat',side,cardId:outgoing.cardId,toCardId:incoming.cardId,benchIndex:physical,spentEnergy,spentSpecialEnergy:paid.discardSpecial.length});const foeSide=side==='player'?'opponent':'player',retaliator=state.sides[foeSide].active;if(retaliator?.retreatRetaliation&&(retaliator.retreatRetaliation.expiresTurn==null||state.turnNumber<=retaliator.retreatRetaliation.expiresTurn)){s.active.damage=Number(s.active.damage||0)+Number(retaliator.retreatRetaliation.amount||0);state.log.push({type:'retreatRetaliation',side:foeSide,amount:Number(retaliator.retreatRetaliation.amount||0)});resolveKnockOut(state,null);}
+      state.log.push({type:'retreat',side,cardId:outgoing.cardId,toCardId:incoming.cardId,benchIndex:physical,spentEnergy,spentSpecialEnergy:paid.discardSpecial.length});const retaliator=state.sides[foeSide].active;if(retaliator?.retreatRetaliation&&(retaliator.retreatRetaliation.expiresTurn==null||state.turnNumber<=retaliator.retreatRetaliation.expiresTurn)){s.active.damage=Number(s.active.damage||0)+Number(retaliator.retreatRetaliation.amount||0);state.log.push({type:'retreatRetaliation',side:foeSide,amount:Number(retaliator.retreatRetaliation.amount||0)});resolveKnockOut(state,null);}
       if(state.format==='classic'&&outgoing.cardId==='pl2-21'&&!effects.abilitiesSuppressed(state,side,outgoing,data.cardById)&&
          (Object.values(outgoing.energy||{}).some(n=>Number(n)>0)||(outgoing.specialEnergy||[]).length)){
         beginEffectChoice(state,side,outgoing,{kind:'option',side:'self',options:['Leave Energy on Gastrodon','Move Energy to the new Active'],effect:{type:'neoRule',rule:'pl2:21:stickyHoldOffer',sourceUid:outgoing.uid}});

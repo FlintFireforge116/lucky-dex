@@ -5087,3 +5087,11 @@ Steam Siege full gameplay mapping reaches all 116 pinned prints; previously gate
 [LOCKED] The mandatory SM1 pre-push full preflight MUST run the older tests/v07376-breakthrough-complete.test.cjs in addition to SM1 completion, cross-set deck quality, XY12, XY11 and XY10 preflights. New expansion patches must not invalidate earlier exact-code-source assertions merely by adding a valid reprint.
 [CURRENT] This is a test-only compatibility hotfix. Retain app versionName 0.69.400 and versionCode 7400; suffix b labels the ZIP, not a second APK version.
 === END SM1 v0.69.400b LEGACY AUDIT HOOK COMPATIBILITY ===
+
+
+=== v0.69.401 SUN & MOON SM1 INDEPENDENT AUDIT ===
+1. Never reference a `const`/`let` binding before its declaration, even inside callback predicates that may only run for special cards. In Classic `retreat`, define `foeSide` at the start of the block. Live legal-action + applyAction testing must cover reactive Ability paths as well as the clean path; Toxapex Toxic Spikes is the reference.
+2. Stacking continuous Abilities that say “the opponent's Active has +1 Retreat Cost” must COUNT each unsuppressed in-play source rather than treating it as a Boolean. Check both two-source and suppressed-source tests; SM1 Alolan Dugtrio Tangling Hair is the reference.
+3. Any triggered Ability whose printed text requires “if this Pokemon is your Active” MUST declare activeOnly:true in its Ability descriptor so the generic KO event bus cannot incorrectly trigger from the Bench; SM1 Pyukumuku Innards Out is the reference.
+4. Future independent per-set audits must compare every official print's attack costs and names, verify representative live actions, GX/Prize/energy interactions and 30-card CPU/player deck quality. Add tests/v07401-sun-moon-independent-audit.test.cjs to BOTH mandatory SM1 --full preflight and Gradle auditSM1ForApk. Never bypass past-era tests, and keep release number/versionCode/UI/contracts synchronized.
+=== END SM1 INDEPENDENT AUDIT v0.69.401 ===
