@@ -1,18 +1,9 @@
 {
   "printed": 116,
-  "battleReady": 56,
+  "battleReady": 76,
   "gated": {
-    "xy11-2": [
-      "Unimplemented printed attack: Leaf Storm"
-    ],
     "xy11-7": [
       "Unimplemented printed Ability: Sonic Vision"
-    ],
-    "xy11-9": [
-      "Unimplemented printed attack: Bide"
-    ],
-    "xy11-10": [
-      "Unimplemented printed attack: Harden"
     ],
     "xy11-11": [
       "Unimplemented printed attack: Wicked Wind"
@@ -27,15 +18,8 @@
       "Unimplemented printed attack: Flame Charge",
       "Unimplemented printed attack: Incinerate"
     ],
-    "xy11-25": [
-      "Unimplemented printed attack: Power Heater"
-    ],
     "xy11-26": [
       "Unimplemented printed Ability: Steam Up"
-    ],
-    "xy11-27": [
-      "Unimplemented printed attack: Healing Wave",
-      "Unimplemented printed attack: Dwindling Wave"
     ],
     "xy11-29": [
       "Unimplemented printed attack: Sticky Shot"
@@ -68,9 +52,6 @@
     "xy11-47": [
       "Unimplemented printed attack: Burst Curse"
     ],
-    "xy11-48": [
-      "Unimplemented printed attack: Slightly Simmer"
-    ],
     "xy11-49": [
       "Unimplemented printed attack: Mirror Mirror"
     ],
@@ -92,12 +73,6 @@
     "xy11-62": [
       "Unimplemented printed attack: Damage Play"
     ],
-    "xy11-63": [
-      "Unimplemented printed attack: Charge Order"
-    ],
-    "xy11-66": [
-      "Unimplemented printed attack: Baleful Night"
-    ],
     "xy11-70": [
       "Unimplemented printed attack: Counter Head"
     ],
@@ -105,15 +80,9 @@
       "Unimplemented printed attack: Gear Spinner",
       "Unimplemented printed Ability: Heavy Bumper"
     ],
-    "xy11-74": [
-      "Unimplemented printed attack: Quick Guard"
-    ],
     "xy11-75": [
       "Unimplemented printed attack: Soul Blaster",
       "Unimplemented printed Ability: Mystic Heart"
-    ],
-    "xy11-78": [
-      "Unimplemented printed attack: Link Blast"
     ],
     "xy11-79": [
       "Unimplemented printed attack: Despair Ray"
@@ -121,30 +90,11 @@
     "xy11-80": [
       "Unimplemented printed Ability: Wonder Lock"
     ],
-    "xy11-81": [
-      "Unimplemented printed attack: Geomancy"
-    ],
-    "xy11-82": [
-      "Unimplemented printed attack: Life Stream"
-    ],
-    "xy11-83": [
-      "Unimplemented printed attack: Proud Fang",
-      "Unimplemented printed attack: Giga Claw"
-    ],
     "xy11-86": [
       "Unimplemented printed attack: Dark Burn"
     ],
     "xy11-88": [
       "Unimplemented printed attack: Stall"
-    ],
-    "xy11-89": [
-      "Unimplemented printed attack: Raid"
-    ],
-    "xy11-91": [
-      "Unimplemented printed attack: Furry Chance"
-    ],
-    "xy11-93": [
-      "Unimplemented printed attack: Sky Drop"
     ],
     "xy11-96": [
       "Unimplemented printed attack: Aero Blitz",
@@ -152,9 +102,6 @@
     ],
     "xy11-97": [
       "Unimplemented printed Ability: Sudden Cyclone"
-    ],
-    "xy11-99": [
-      "Unimplemented Trainer rules"
     ],
     "xy11-102": [
       "Unimplemented Trainer rules"
@@ -165,9 +112,6 @@
     "xy11-104": [
       "Unimplemented Trainer rules"
     ],
-    "xy11-105": [
-      "Unimplemented Trainer rules"
-    ],
     "xy11-107": [
       "Unimplemented printed attack: Volcanic Heat",
       "Unimplemented printed Ability: Steam Up"
@@ -175,9 +119,6 @@
     "xy11-110": [
       "Unimplemented printed attack: Soul Blaster",
       "Unimplemented printed Ability: Mystic Heart"
-    ],
-    "xy11-111": [
-      "Unimplemented printed attack: Link Blast"
     ],
     "xy11-112": [
       "Unimplemented printed attack: Despair Ray"
@@ -188,9 +129,6 @@
     "xy11-115": [
       "Unimplemented printed attack: Volcanic Heat",
       "Unimplemented printed Ability: Steam Up"
-    ],
-    "xy11-116": [
-      "Unimplemented printed attack: Link Blast"
     ]
   },
   "attacks": 161,

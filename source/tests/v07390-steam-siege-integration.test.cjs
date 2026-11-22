@@ -1,5 +1,5 @@
 'use strict';
-// v0.69.391 XY11 release contract. Source-only is not the generated official audit.
+// v0.69.392 XY11 release contract. Source-only is not the generated official audit.
 const {test}=require('node:test'),assert=require('node:assert/strict'),fs=require('node:fs'),path=require('node:path'),{spawnSync}=require('node:child_process');
 const root=path.resolve(__dirname,'..'),read=x=>fs.readFileSync(path.join(root,x),'utf8');
 const xy=require('../app/src/main/assets/tcg-classic-steam-siege.js');
@@ -21,8 +21,8 @@ test('Steam Siege registry, set picker, player/CPU pool and launch load',()=>{
 });
 test('new-set release version, immutable upstream source and official-count contract',()=>{
  const g=read('app/build.gradle'),v=g.match(/versionName ['"]([^'"]+)['"]/)[1];
- assert.equal(v,'0.69.391');assert.equal(v,contract.release);
- assert.match(g,/versionCode 7391/);
+ assert.equal(v,'0.69.392');assert.equal(v,contract.release);
+ assert.match(g,/versionCode 7392/);
  for(const id of ['xy9','xy10'])assert.equal(require('../scripts/'+id+'_release_contract.json').release,v);
  for(const file of ['app/src/main/assets/index.html','app/src/main/assets/app-v0167.js'])assert.ok(read(file).includes(v),file+' stale build version');
  const builder=read('scripts/build-xy11.py');
@@ -44,7 +44,7 @@ cards=m.generate(rows);print(json.dumps([{'id':c['id'],'enabled':c['battleEnable
  assert.equal(by.get('xy11-69').stage,'Restored');
  assert.equal(by.get('xy11-98').enabled,true,'Uses pre-existing bottom-seven Restored Fossil rule');
  assert.equal(by.get('xy11-114').enabled,true,'Existing exact Sycamore shuffle rule');
- assert.equal(by.get('xy11-99').enabled,false,'Captivating Poké Puff must not become a noop');
+ assert.equal(by.get('xy11-99').enabled,true,'Captivating Poké Puff uses the real opponent-hand Basic selection');
  assert.equal(by.get('xy11-67').enabled,true,'Steelix optional recoil uses existing choice system');
  const core=read('app/src/main/assets/tcgp-battle-core.js');
  for(const id of ['xy11-68','xy11-79','xy11-101','xy11-106'])assert.ok(core.includes(id),'Spirit Link turn exemption missing '+id);

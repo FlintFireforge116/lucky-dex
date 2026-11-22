@@ -14,14 +14,14 @@ import xy11_verified as V
 def check():
  subprocess.run([sys.executable,'scripts/check-gradle-source.py','--self-test'],cwd=ROOT,check=True)
  c=json.loads((ROOT/'scripts/xy11_release_contract.json').read_text())
- assert c['set']=='xy11' and c['stage']=='stage1-audit-pass'
+ assert c['set']=='xy11' and c['stage']=='stage2-reuse-mapped'
  assert (c['printedTotal'],c['attackPrints'],c['abilities'],c['pokemonBreak'],c['dualTypePrints'])==(116,161,18,7,12)
  assert c['pin']=='22ea97ca00b595fe6b121494fd45dd65692deee6'
  assert c['expectedPlayableMinimum']>=35 and len(c['requiredEnabledNumbers'])>=35
  g=(ROOT/'app/build.gradle').read_text()
  m=re.search(r"versionName\s+['\"]([^'\"]+)['\"]",g)
- assert m and m.group(1)==c['release']=='0.69.391'
- assert 'versionCode 7391' in g
+ assert m and m.group(1)==c['release']=='0.69.392'
+ assert 'versionCode 7392' in g
  for n in ('xy9_release_contract.json','xy10_release_contract.json'):
   assert json.loads((ROOT/'scripts'/n).read_text())['release']==c['release'],n+' release drift'
  html=(ROOT/'app/src/main/assets/index.html').read_text()
@@ -67,11 +67,11 @@ def main():
   for n in contract['requiredEnabledNumbers']:
    assert 'xy11-'+n not in report['gated'],'Required Steam Siege print is gated: '+n
   assert (ROOT/'app/src/main/assets/tcg-classic-steam-siege.js').stat().st_size>10000
-  subprocess.run(['node','--test','tests/v07390-steam-siege-integration.test.cjs','tests/v07391-steam-siege-audit.test.cjs'],cwd=ROOT,check=True,env={**os.environ,'GITHUB_ACTIONS':'true'})
+  subprocess.run(['node','--test','tests/v07390-steam-siege-integration.test.cjs','tests/v07391-steam-siege-audit.test.cjs','tests/v07392-steam-siege-batch2.test.cjs'],cwd=ROOT,check=True,env={**os.environ,'GITHUB_ACTIONS':'true'})
   print('PASS XY11: pinned catalogue and strict generated battle-facing tests')
  else:
   env={**os.environ};env.pop('GITHUB_ACTIONS',None)
-  subprocess.run(['node','--test','tests/v07390-steam-siege-integration.test.cjs','tests/v07391-steam-siege-audit.test.cjs'],cwd=ROOT,check=True,env=env)
+  subprocess.run(['node','--test','tests/v07390-steam-siege-integration.test.cjs','tests/v07391-steam-siege-audit.test.cjs','tests/v07392-steam-siege-batch2.test.cjs'],cwd=ROOT,check=True,env=env)
   print('SOURCE ONLY: no official XY11 catalogue audit. Run --full on Termux before pushing.')
 if __name__=='__main__':
  try:main()

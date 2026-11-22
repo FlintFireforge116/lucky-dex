@@ -4891,8 +4891,8 @@ STEAM SIEGE XY11 STAGE 1 — v0.69.390 / Master Rules v2.76 (2026-11-22)
    python3 scripts/check-gradle-source.py --self-test
    python3 scripts/preflight-xy11-release.py --full
    Commit generated pinned source and generated asset only after success.
-6. Keep Gradle code 7391/name 0.69.391, HTML title, boot JS and both prior
-   XY9/XY10 release contracts synchronized. Chain XY11 tasks AFTER XY10
+6. Keep current Gradle versionCode/versionName, HTML title, boot JS and both
+   prior XY9/XY10 release contracts synchronized at each release. Chain XY11 tasks AFTER XY10
    audit, BEFORE asset merge. Guard Gradle source argument syntax against
    broken quoting, and do not claim the GitHub APK build succeeded until the
    workflow reports success. Changed-files-only ZIP is extracted -d source.
@@ -4912,3 +4912,23 @@ Playability must require EVERY printed attack, Ability and Trainer effect to be 
 Classic registration in `app/src/main/assets/tcg-classic-battle-data.js` intentionally converts each attack cost from the generator's `['G','C']` array to the runtime string `'GC'`. This is not an attack-cost bug. Any test importing the Classic battle registry or core before examining a generated set must compare exact printed costs using `Array.isArray(cost) ? cost.join('') : String(cost ?? '')` against the pinned source's `sourceCost.join('')` instead of comparing a string with an array. Check both single-unit ('C') and multi-unit ('GC') costs, including full 116-print generated tests. This should be a shared regression rule for all future sets, not another one-off patch.
 
 A source-only preflight with skipped generated-catalogue checks is NOT proof of a clean `--full` preflight or GitHub build. Keep `preflight-xy11-release.py --full` mandatory before Termux commits/pushes. Do not modify actual attack energy prices or runtime card registration to make a malformed test pass.
+
+
+[XY11 v0.69.392 — STEAM SIEGE BATCH 2, VERIFIED-GATE CONTRACT]
+Never relax generated-attack accuracy gates to increase set coverage. Steam
+Siege 116 prints, 161 attacks, 18 Abilities, 7 BREAK, 12 dual-type prints;
+source-mapped playable count is 76, with 40 incomplete/gated. Full preflight
+MUST run v07392 stage2 regression after pinned build, in Termux AND Gradle:
+`python3 scripts/preflight-xy11-release.py --full`. A source-only pass is not
+a full audit, and none of these passes confirms GitHub APK success.
+Power Heater consumes Basic Fire only from actual discard/energyDiscard, never
+from the upcoming Energy Zone; must choose DIFFERENT Benched Pokemon. Healing
+Wave may discard zero or more hand cards and heal 10 per card. Slightly Simmer
+chooses UP TO TWO actual deck cards and shuffles the rest. Special Charge
+requires PHYSICAL discarded Special Energy, not Zone Energy; never auto-add in
+a deck without Special Energy. Captivating Poke Puff is matchup tech and not
+generic auto-filler. Link Blast counts attached Special Energy in both totals.
+Xerneas BREAK's Life Stream counts Energy on the OWN board only; Pawniard's
+Charge Order counts own Pawniard; Furry Chance discards OPPONENT's top card.
+Keep full source pin, metadata, PRINTED energy symbols and all previously
+cleared tests fixed. Remaining gates must be completed before set sign-off.

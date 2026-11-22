@@ -713,6 +713,11 @@ function buildDeck(rows,options={}){
      if(card?.trainerType==='Item'&&card?.name!=='Rare Candy'&&
         pokemon.some(p=>p.id==='xy7-3')&&
         cards.filter(id=>classic.cardById(id)?.trainerType==='Item').length>=2)return false;
+     // Steam Siege: Special Charge recycles PHYSICAL Special Energy cards,
+     // never the virtual Basic Energy Zone. Captivating Poké Puff is matchup
+     // disruption, not a universal Trainer filler for unrelated archetypes.
+     if(card?.id==='xy11-105'&&!cards.some(id=>classic.cardById(id)?.specialEnergy))return false;
+     if(card?.id==='xy11-99')return false;
      // Fates Collide: only place named, conditional cards when the actual
      // selected deck supplies their recipient. Otherwise these became the
      // identical default 17-Trainer filler package for unrelated archetypes.

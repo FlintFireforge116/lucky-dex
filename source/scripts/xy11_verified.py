@@ -8,13 +8,14 @@ from xy8_verified import attack as generic_attack
 from hgss1_verified import N,S,Q,ST,H,DISC,COIN,SEARCH,BENCH,BONUS,SWITCH,DRAW,LOCK,GUARD,OPT
 E=lambda t,**kw: {'type':t,**kw}
 ATK={
- ('2','Leaf Storm'):H(40,'selfAll'), # Not Grass-filtered; remains gated in STRICT.
+ ('2','Leaf Storm'):E('heal',target='selfAll',amount=40,filter={'subtype':'Grass'}),
  ('5','Fluffy Transport'):E('forceOpponentSwitch',chooseBy='attacker'),
+ ('9','Bide'):Q(E('koGuard',target='self',mode='survive',remainingHp=10,duration='opponentTurn',attackOnly=True),N),
  ('5','Solar Step'):E('pointDamage',side='self',prizesRemaining=True,amount=20,mode='replace'),
  ('6','Scout'):E('revealHand',side='opponent'),
  ('7','Assault Boom'):BONUS(70,{'type':'opponentHasTool'}),
  ('8','Barrier Break'):E('damageRule',ignoreWeakness=True,ignoreResistance=True,ignoreEffects=True),
- ('10','Harden'):E('preventDamage',target='self',duration='opponentTurn',threshold=60),
+ ('10','Harden'):E('preventDamage',target='self',duration='opponentTurn',maxDamage=60),
  ('11','Extrasensory'):BONUS(60,{'type':'handSizesEqual'}),
  ('13','Crazy Spore'):S(ST('confusion'),ST('poison')),
  ('13','Strange Reaction'):E('status',status='paralysis',target='opponentActive',condition={'type':'opponentStatus','status':'confusion'}),
@@ -29,7 +30,9 @@ ATK={
  ('23','Flame Charge'):E('attachEnergy',energyType='Fire',amount=1,target='self'), # Actually from DECK; gated STRICT.
  ('23','Incinerate'):E('discardTool',target='opponentActive',amount=1), # Must remove ALL before damage: gated STRICT.
  ('24','Kaiser Tackle'):E('selfDamage',amount=50),
- ('27','Dwindling Wave'):E('damageFromDamage',source='self',amount=-1,mode='add'), # not a real negative multiplier: gated.
+ ('25','Power Heater'):E('xy11Rule',rule='powerHeater'),
+ ('27','Healing Wave'):E('xy11Rule',rule='healingWave'),
+ ('27','Dwindling Wave'):E('selfDamagePenalty',amount=1,mode='add'),
  ('29','Water Pulse'):ST('sleep'),
  ('32','Pike'):E('multiTargetDamage',target='opponentBench',amount=30,count=1,upTo=True),
  ('35','Lock-On'):LOCK(), # Plus next-turn +120: gated STRICT.
@@ -43,6 +46,7 @@ ATK={
  ('44','Nido Press'):BONUS(40,{'type':'pokemonPresent','zone':'bench','filter':{'name':'Nidorina'}}),
  ('45','Power Lariat'):E('fieldCountDamage',side='self',benchOnly=True,filter={'stage':['Stage 1','Stage 2']},amount=30,mode='add'),
  ('47','Eerie Wave'):ST('confusion'),
+ ('48','Slightly Simmer'):E('xy11Rule',rule='slightlySimmer'),
  ('49','Flickering Flames'):ST('sleep'),
  ('52','Focus Energy'):E('nextAttackBonus',attackName='Flop',amount=40),
  ('50','Past Friends'):E('discardCountDamage',side='self',filter={'kind':'trainer','trainerType':'Supporter'},amount=10,mode='add'),
@@ -59,6 +63,7 @@ ATK={
  ('60','Nyan Roll'):Q(E('preventDamage',target='self',duration='opponentTurn',preventEffects=True)),
  ('62','Nightmare'):ST('sleep'),
  ('63','Charge Order'):E('fieldCountDamage',side='self',amount=10,mode='replace',filter={'name':'Pawniard'}),
+ ('66','Baleful Night'):E('benchDamage',side='opponent',all=True,amount=30,filter={'damaged':True}),
  ('64','Retaliate'):BONUS(60,{'type':'koByOpponentAttackLastTurn'}),
  ('64','Mach Claw'):E('damageRule',ignoreResistance=True),
  ('65','Oblivion Wing'):E('attachEnergyFromDiscard',target='selfBench',energyType='Darkness',amount=1),
@@ -70,14 +75,17 @@ ATK={
  ('70','Fortress of Rage'):E('fieldCountDamage',side='self',benchOnly=True,filter={'damaged':True},amount=10,mode='add'),
  ('73','Gear Spinner'):E('nextAttackBonus',attackName='Gear Spinner',amount=70),
  ('74','Revenge Blast'):E('pointDamage',side='opponent',prizesTaken=True,amount=30,mode='add'),
+ ('74','Quick Guard'):S(E('preventDamage',target='self',duration='opponentTurn',attackerFilter={'stage':'Basic'}),E('lock',action='attack',target='self',attackName='Quick Guard',duration='nextOwnTurn')),
  ('75','Soul Blaster'):E('nextAttackBonus',attackName='Soul Blaster',amount=-60), # printed sets base to 60: gated STRICT.
  ('76','Bubble Drain'):H(10),
  ('77','Bubble Drain'):H(30),
+ ('78','Link Blast'):BONUS(70,{'type':'equalEnergyCount'}),
  ('78','Luminous Blade'):DISC(),
+ ('81','Geomancy'):E('distributeEnergy',source='zone',target='selfBench',energyType='Fairy',amount=2,distinctTargets=True),
  ('81','Rainbow Spear'):DISC(),
- ('82','Life Stream'):E('energyDamage',source='self',amount=20,mode='replace',allInPlay=True),
+ ('82','Life Stream'):E('energyDamage',source='self',amount=20,mode='replace',all=True),
  ('83','Proud Fang'):BONUS(60,{'type':'pokemonPresent','side':'opponent','zone':'inPlay','filter':{'stage':'BREAK'}}),
- ('83','Giga Claw'):E('allHeadsBonus',coins=2,heads=N), # 0 damage if two tails must gate.
+ ('83','Giga Claw'):E('coinAnyHeadsGate',coins=2),
  ('84','Roar'):E('forceOpponentSwitch',chooseBy='defender'),
  ('85','Double Hit'):COIN(2,20),
  ('85','Power Breath'):DISC(),
@@ -85,6 +93,8 @@ ATK={
  ('87','Calamity Blast'):S(DISC(3),E('multiTargetDamage',target='opponentBench',amount=50,count=2,upTo=False)),
  ('88','Stall'):E('discardEnergyCard',target='opponentPokemon',amount=1), # first turn condition gated STRICT.
  ('89','Raid'):BONUS(30,{'type':'evolvedThisTurn'}),
+ ('91','Furry Chance'):E('topDeckDiscardBonus',side='opponent',amount=60,filter={'kind':'energy'}),
+ ('93','Sky Drop'):E('xy11Rule',rule='skyDrop'),
  ('90','Fiddle Around'):E('reorderTop',deckSide='opponent',count=3), # Shared exact selectable top-three ordering.
  ('91','Double Hit'):COIN(2,50),
  ('92','Reckless Charge'):E('selfDamage',amount=10),
@@ -94,24 +104,26 @@ ATK={
 # These descriptors look similar to existing effects but miss essential
 # printed targeting, gating, or timing clauses and MUST NOT be marked ready.
 STRICT={
- ('2','Leaf Storm'),('9','Bide'),('10','Harden'),('11','Wicked Wind'),
+ ('11','Wicked Wind'),
  ('20','Flare Up'),
- ('23','Flame Charge'),('23','Incinerate'),('25','Power Heater'),
- ('27','Healing Wave'),('27','Dwindling Wave'),('29','Sticky Shot'),
+ ('23','Flame Charge'),('23','Incinerate'),
+ ('29','Sticky Shot'),
  ('32','Ultimate Blade'),('35','Lock-On'),('37','Melting Floe'),
  ('42','Double Thread'),('45','Power Lariat'),('46','Transfer Pain'),
- ('47','Burst Curse'),('48','Slightly Simmer'),('49','Mirror Mirror'),
+ ('47','Burst Curse'),('49','Mirror Mirror'),
  ('57','Rushing Water'),
- ('58','Poison Up'),('62','Damage Play'),('63','Charge Order'),
+ ('58','Poison Up'),('62','Damage Play'),
  ('70','Counter Head'),('73','Gear Spinner'),
- ('74','Quick Guard'),('75','Soul Blaster'),('78','Link Blast'),
- ('79','Despair Ray'),('81','Geomancy'),('82','Life Stream'),
- ('83','Proud Fang'),('83','Giga Claw'),('86','Dark Burn'),
- ('88','Stall'),('89','Raid'),
- ('91','Furry Chance'),('93','Sky Drop'),('96','Aero Blitz'),
+ ('75','Soul Blaster'),
+ ('79','Despair Ray'),
+ ('86','Dark Burn'),
+ ('88','Stall'),
+ ('96','Aero Blitz'),
 }
 # Reuse exact printed-equivalent trainers, never generic probabilistic guesses.
 TRAINERS={
+ '99':('Item',S(E('revealHand',side='opponent'),E('benchBasicsFromOpponentHand'))),
+ '105':('Item',E('xy11Rule',rule='specialCharge')),
  '98':('Item',E('xy10Final',rule='fossilBottom',name='Shieldon')),
  '100':('Item',E('xy10Final',rule='fossilBottom',name='Anorith')),
  '101':('Tool',N), # Spirit Link: shared Mega turn rule needs XY11 entry.

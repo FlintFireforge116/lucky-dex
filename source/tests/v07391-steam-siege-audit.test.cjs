@@ -42,7 +42,7 @@ test('Steam Siege audit mapping is exact, validated, and five print-specific gat
  assert.equal(mapped['90|Fiddle Around'].deckSide,'opponent');
  assert.equal(mapped['90|Fiddle Around'].count,3);
  assert.deepEqual(mapped['13|Strange Reaction'].condition,{type:'opponentStatus',status:'confusion'});
- assert.equal(contract.expectedPlayableMinimum,56);
+ assert.ok(contract.expectedPlayableMinimum>=76);
  for(const id of ['13','16','52','53','90'])assert.ok(contract.requiredEnabledNumbers.includes(id));
 });
 test('Ponyta Returning Flames selects a real discard Fire Energy, not unused Energy Zone supply',()=>{
