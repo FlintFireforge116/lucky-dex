@@ -13,6 +13,9 @@ sys.path.insert(0,str(ROOT/'scripts'))
 import xy10_verified as v
 
 def check():
+ # Do not rely on Gradle's own preflight task to check build.gradle syntax: a
+ # malformed Groovy build file fails before any Gradle task can run.
+ subprocess.run([sys.executable,'scripts/check-gradle-source.py','--self-test'],cwd=ROOT,check=True)
  c=json.loads((ROOT/'scripts/xy10_release_contract.json').read_text())
  assert c['set']=='xy10' and c['printedTotal']==129 and c['attackPrints']==147 and c['abilities']==21 and c['pokemonBreak']==5
  assert c['stage'] in ('mechanic-first','mechanic-reuse-2') and c['expectedPlayableMinimum']>=30

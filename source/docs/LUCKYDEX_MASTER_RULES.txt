@@ -1,8 +1,8 @@
 LUCKYDEX — MASTER PROJECT RULES AND DEVELOPMENT CONTRACT
 =========================================================
-Document version: 2.68
+Document version: 2.69
 Compiled: 22 November 2026
-Current inspected source: v0.69.382 GitHub APK success; v0.69.383 Fates Collide failed at source-only preflight; v0.69.384 mechanic reuse and source-only preflight repair passes local tests, new GitHub APK unverified.
+Current inspected source: v0.69.382 GitHub APK success; v0.69.383 Fates Collide failed at source-only preflight; v0.69.384 GitHub failed parsing Gradle; this v0.69.384 syntax repair is locally checked, GitHub APK unverified.
 Recommended repository location: ~/lucky-dex/source/docs/LUCKYDEX_MASTER_RULES.txt
 Project: LuckyDex — Android application/PWA, managed with Termux and GitHub
 
@@ -4581,4 +4581,63 @@ INSTALLATION (TERMUX):
   git add source
   git commit -m "LuckyDex v0.69.384 Fates Collide Stage 2 and CI preflight fix"
   git push origin main
+================================================================================
+
+
+================================================================================
+MANDATORY v2.69 RELEASE SAFETY — GRADLE SYNTAX BEFORE PUSH, NOT INSIDE GRADLE
+================================================================================
+CONFIRMED FAILURES (22 Nov 2026):
+  * v0.69.383 GitHub run 45040073029: source-only preflight erroneously ran
+    generated-catalogue checks before generating the official xy10 JSON.
+  * v0.69.384 GitHub run 45041389228: source/app/build.gradle line 919 had a
+    missing closing quote after the second `tests/...test.cjs` argument in
+    `auditXY10ForApk`. Gradle Groovy failed to compile at line 916. No
+    preflight registered AS A GRADLE TASK can run if build.gradle cannot parse.
+
+NON-NEGOTIABLE CHECK BEFORE EACH NEW ZIP, AND EVERY TERMUX COMMIT/PUSH:
+  cd ~/lucky-dex
+  python3 source/scripts/check-gradle-source.py --self-test
+  (cd source && GITHUB_ACTIONS=true python3 scripts/preflight-xy10-release.py)
+  # Proceed with git add/commit/push ONLY when BOTH commands exit zero.
+  # For later sets, use that set's own source preflight in addition to this
+  # generic standalone Gradle-file guard. Do not reuse the old set preflight
+  # blindly after advancing version/release contracts.
+
+MANDATORY DEVELOPER RELEASE PROCEDURE IN EVERY FUTURE CHAT:
+  1. Build the exact intended final changed-files-only ZIP *first*.
+  2. Extract it over the prior successful source in a clean temp directory
+     (or the current checked-out source) and run the standalone guard there.
+     Do not run tests only against an un-packaged working tree.
+  3. Standalone guard checks Groovy quotes, escapes, delimiters, and that
+     the XY10 audit command supplies each test as a DISTINCT quoted argument
+     separated by commas, with the expected files on disk. It should be
+     extended to subsequent set audit tasks, never weakened.
+  4. Prove the guard rejects the original malformed build.gradle using
+     `python3 scripts/check-gradle-source.py --self-test`.
+  5. Run the exact source-only preflight with GITHUB_ACTIONS=true; it must
+     deliberately defer the catalogue to the post-generation phase.
+  6. Run the node battle-outcome and cross-set regression suites.
+  7. If a local Gradle 8.9 is available, run `gradle :app:help --offline`
+     or an equivalent task configuration/compilation smoke check BEFORE
+     uploading. Standalone static checking is a safety net, NOT a Groovy
+     compiler: report if actual Gradle task configuration was not executed.
+  8. Only declare APK build success after checking the actual latest GitHub
+     Actions run conclusion. Never claim that local tests are APK proof.
+  9. Keep versionName/versionCode, release contracts, source data and title
+     screen synchronized. Build fixes that don't change app behaviour can
+     retain the existing version, avoiding accidental mismatches.
+  10. A failed APK due to syntax, old assertions, or missing generated files
+      must lead to a PERMANENT standalone regression check in the ZIP and
+      these master rules; not merely another one-character repair.
+
+CURRENT FIX:
+  * v0.69.384, unchanged version to avoid another mismatch.
+  * app/build.gradle correctly separates the two Fates Collide effect test
+    files and the Stage 2 test file with independent quoted arguments.
+  * scripts/check-gradle-source.py runs BEFORE Gradle is invoked by the
+    user's standard Termux installation/push command.
+  * scripts/preflight-xy10-release.py invokes this guard and its malformed-
+    source fixture self-tests; generated-catalogue tests remain CI-only.
+  * Card mechanics were not changed in this repair.
 ================================================================================

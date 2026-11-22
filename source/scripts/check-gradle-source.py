@@ -1,0 +1,141 @@
+#!/usr/bin/env python3
+"""Offline pre-push structural audit of app/build.gradle, independent of Gradle.
+
+Detects unterminated quotes, unbalanced delimiters and malformed XY10 audit
+commandLine before a GitHub Gradle build begins. This is a lightweight guard,
+not a replacement for compiling the real Groovy DSL with Gradle.
+"""
+from __future__ import annotations
+import argparse
+import bisect
+import re
+import sys
+from pathlib import Path
+
+ROOT = Path(__file__).resolve().parents[1]
+EXPECTED_XY10_AUDIT = [
+    'node', '--test',
+    'tests/v07383-fates-collide-integration.test.cjs',
+    'tests/v07383-fates-collide-effects.test.cjs',
+    'tests/v07384-fates-collide-stage2.test.cjs',
+]
+
+class GradleSourceError(ValueError):
+    pass
+
+
+def check_balanced(source: str) -> None:
+    """Scan Groovy source for malformed strings and mismatched delimiters."""
+    starts = [0] + [m.end() for m in re.finditer('\n', source)]
+    def loc(i):
+        row = bisect.bisect_right(starts, i)
+        return f'line {row}, column {i-starts[row-1]+1}'
+    stack = []
+    matching = {')': '(', ']': '[', '}': '{'}
+    i, n = 0, len(source)
+    while i < n:
+        if source.startswith('//', i):
+            end = source.find('\n', i+2)
+            i = n if end < 0 else end+1
+            continue
+        if source.startswith('/*', i):
+            end = source.find('*/', i+2)
+            if end < 0:
+                raise GradleSourceError('Unclosed block comment at '+loc(i))
+            i = end+2
+            continue
+        ch = source[i]
+        if ch in "'\"":
+            start = i
+            delimiter = ch * (3 if source.startswith(ch*3, i) else 1)
+            i += len(delimiter)
+            while i < n:
+                if source[i] == '\\':
+                    i += 2
+                    continue
+                if source.startswith(delimiter, i):
+                    i += len(delimiter)
+                    break
+                if len(delimiter) == 1 and source[i] == '\n':
+                    raise GradleSourceError('Unterminated single-line Groovy string at '+loc(start))
+                i += 1
+            else:
+                raise GradleSourceError('Unterminated Groovy string at '+loc(start))
+            continue
+        if ch in '([{':
+            stack.append((ch, i))
+        elif ch in ')]}':
+            if not stack or stack[-1][0] != matching[ch]:
+                raise GradleSourceError('Unexpected '+ch+' at '+loc(i))
+            stack.pop()
+        i += 1
+    if stack:
+        ch, start = stack[-1]
+        raise GradleSourceError('Unclosed '+ch+' at '+loc(start))
+
+
+def check_xy10_command(source: str, root: Path) -> None:
+    match = re.search(r"(?ms)^tasks\.register\('auditXY10ForApk', Exec\) \{(.*?)^\}", source)
+    if not match:
+        raise GradleSourceError('Missing auditXY10ForApk task registration')
+    commands = [x.strip() for x in match.group(1).splitlines() if x.strip().startswith('commandLine')]
+    if len(commands) != 1:
+        raise GradleSourceError('Expected exactly one XY10 audit commandLine')
+    tail = commands[0][len('commandLine'):]
+    # Ensure that only comma-separated Groovy string literals occur in the
+    # command; a missing comma or a quote swallowing the next argument fails.
+    quoted = r"'(?:[^'\\]|\\.)*'"
+    syntax = r'\s*' + quoted + r'(?:\s*,\s*' + quoted + r')*\s*'
+    if not re.fullmatch(syntax, tail):
+        raise GradleSourceError('Malformed XY10 audit commandLine: '+commands[0])
+    args = [m.group(0)[1:-1] for m in re.finditer(quoted, tail)]
+    if args != EXPECTED_XY10_AUDIT:
+        raise GradleSourceError('XY10 audit command must enumerate all three tests as separate quoted arguments; got '+repr(args))
+    for name in args[2:]:
+        if not (root/name).is_file():
+            raise GradleSourceError('Missing mandatory XY10 audit test: '+name)
+
+
+def verify(source: str, root: Path = ROOT) -> None:
+    check_balanced(source)
+    check_xy10_command(source, root)
+
+
+def self_test() -> None:
+    good = (ROOT/'app/build.gradle').read_text(encoding='utf-8')
+    verify(good)
+    bad_quote = good.replace(
+        "'tests/v07383-fates-collide-effects.test.cjs', 'tests/v07384-fates-collide-stage2.test.cjs'",
+        "'tests/v07383-fates-collide-effects.test.cjs, 'tests/v07384-fates-collide-stage2.test.cjs'"
+    )
+    assert bad_quote != good, 'fixture did not match expected audit arguments'
+    for name, source in [
+        ('missing quote', bad_quote),
+        ('missing test comma', good.replace("effects.test.cjs', 'tests/", "effects.test.cjs' 'tests/")),
+        ('unclosed Gradle block', good+'\n{'),
+    ]:
+        try:
+            verify(source)
+        except GradleSourceError:
+            pass
+        else:
+            raise AssertionError('Preflight failed to catch '+name)
+    print('PASS: Gradle guard detects missing quote, missing separator and unbalanced blocks.')
+
+
+def main():
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument('--file', type=Path, default=ROOT/'app/build.gradle')
+    parser.add_argument('--self-test', action='store_true')
+    args = parser.parse_args()
+    try:
+        verify(args.file.read_text(encoding='utf-8'), ROOT)
+        print('PASS: Gradle source strings, delimiters and XY10 audit test arguments.')
+        if args.self_test:
+            self_test()
+    except (OSError, GradleSourceError, AssertionError) as err:
+        print('GRADLE SOURCE PREFLIGHT FAILED: '+str(err), file=sys.stderr)
+        sys.exit(1)
+
+if __name__ == '__main__':
+    main()
