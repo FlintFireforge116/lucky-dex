@@ -1,8 +1,8 @@
 LUCKYDEX — MASTER PROJECT RULES AND DEVELOPMENT CONTRACT
 =========================================================
-Document version: 2.65
+Document version: 2.66
 Compiled: 22 November 2026
-Current inspected source: v0.69.380 BREAKpoint Stage 3 plus v0.69.381 four-card completion; new APK build pending GitHub confirmation. Source-relative ZIP extraction into ~/lucky-dex/source/.
+Current inspected source: v0.69.381 BREAKpoint completion plus v0.69.382 independent rule audit; new APK build pending GitHub confirmation. Source-relative ZIP extraction into ~/lucky-dex/source/.
 Recommended repository location: ~/lucky-dex/source/docs/LUCKYDEX_MASTER_RULES.txt
 Project: LuckyDex — Android application/PWA, managed with Termux and GitHub
 
@@ -4375,5 +4375,56 @@ Termux installation:
   unzip -o /sdcard/Download/LuckyDex_patch_v0.69.381_BREAKPOINT_COMPLETE.zip -d source
   git add source
   git commit -m "LuckyDex v0.69.381 BREAKpoint final four and complete audit"
+  git push origin main
+================================================================================
+
+================================================================================
+XY9 BREAKPOINT v0.69.382 — INDEPENDENT RULE AUDIT / DOC v2.66
+================================================================================
+Source audited: completed XY9 v0.69.381, 126/126 mapped prints. A successful
+source-only audit does not prove the APK built; check GitHub CI for the pushed
+SHA. Generated official 126-card coverage and two deckbuilder styles remain
+mandatory post-generation checks. No older set is deliberately removed.
+
+REPRODUCED GAMEPLAY BUG AND REPAIR:
+  #88 Raticate — Antibodies prevents new Special Conditions, but its printed
+  text ALSO requires that any existing Special Conditions be removed. When
+  Garbodor's Garbotoxin suppresses Antibodies, a condition may be applied.
+  Once the Tool is removed from Garbodor and the suppression ends, Antibodies
+  must immediately clear existing Poison, Burn, Sleep, Confusion, and Paralysis.
+  XY9 #89 Raticate BREAK must inherit this continuous cleanup as well as its
+  passive immunity. Source of truth: XY9 verified Ability effect includes the
+  explicit clearExisting flag, rather than using a generic preventStatus rule
+  for every Pokémon that prevents new conditions.
+  Engine: applyContinuousRules processes self-scoped preventStatus that
+  explicitly opts into clearExisting, but only while its source Ability is
+  not suppressed. Never automatically remove pre-existing conditions for an
+  immunity whose printed text does not instruct such removal.
+
+NEW PERMANENT AUDIT TESTS:
+  tests/v07382-breakpoint-independent-audit.test.cjs asserts Overgrow's
+  remaining-HP threshold, Golduck BREAK's finite Basic-Energy redistribution
+  and Special-Energy exclusion, Raticate BREAK's inherited Antibodies,
+  Garbotoxin suppression/restoration, Ferrothorn Spike Lash Active-vs-Bench
+  accounting, and the actual Antibodies mapping.
+  The test is mandatory in Gradle auditXY9ForApk and the full preflight.
+
+CONTINUE TEST DISCIPLINE:
+  * Test cross-card state changes, especially when a Tool removal reactivates
+    an Ability. Checking only newly applied conditions is insufficient.
+  * Verify Gradle versionCode = 7000 + patch component of versionName
+    (v0.69.382 requires 7382). This caught a stale versionCode 7381
+    during independent cross-set regression before sending the ZIP.
+  * Run the standard source preflight, all XY9 completion and audit suites,
+    selected XY8 and XY7 regressions, and APK generated-catalogue audit.
+  * Do NOT claim full official 126-card audit locally if pinned catalogue
+    generation has not run; zero skipped source-dependent tests in GitHub.
+  * Preserve canonical master TXT in the same patch, source-relative ZIP.
+
+Termux installation:
+  cd ~/lucky-dex
+  unzip -o /sdcard/Download/LuckyDex_patch_v0.69.382_BREAKPOINT_INDEPENDENT_AUDIT.zip -d source
+  git add source
+  git commit -m "LuckyDex v0.69.382 BREAKpoint independent audit"
   git push origin main
 ================================================================================

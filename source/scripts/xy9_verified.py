@@ -146,7 +146,7 @@ ABILITIES={
  'Giant Water Shuriken':{'type':'activated','oncePerTurn':True,'activeOnly':True,'effect':E('neoRule',rule='xy9:giantWaterShuriken')},
  'Garbotoxin':{'type':'passive','effect':E('abilitySuppression',duration='whileInPlay',scope='both',condition={'type':'selfHasTool'})},
  'Purifying Fire':{'type':'activated','oncePerTurn':True,'effect':E('neoRule',rule='xy9:purifyingFire')},
- 'Antibodies':{'type':'passive','effect':E('preventStatus',duration='whileInPlay',scope='self')},
+ 'Antibodies':{'type':'passive','effect':E('preventStatus',duration='whileInPlay',scope='self',clearExisting=True)},
  'Nervous Seed':{'type':'passive','activeOnly':True,'effect':E('modifier',stat='attackCostColorless',amount=1,scope='opponentActive',duration='whileActive',filter={'stage':'Basic'})},
  # Purifying Fire requires specifically BASIC Fire Energy; generic typed-energy
  # predicates also accept Special Energy, so it stays gated for correctness.

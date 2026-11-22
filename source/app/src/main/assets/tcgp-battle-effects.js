@@ -55,7 +55,7 @@
       case 'sequence':need(Array.isArray(effect.effects)&&effect.effects.length>0,'sequence requires effects');for(const [i,e] of (Array.isArray(effect.effects)?effect.effects:[]).entries()){need(e!=null,'sequence cannot contain null');errors.push(...validateEffect(e,`${at}.effects[${i}]`));}break;
       case 'moveEnergy':need(['self','selfActive','selfBench','selfBenchAll','selfAll','opponentActive'].includes(effect.source),'invalid Energy movement source');need(['self','selfActive','selfBench',...(effect.source==='opponentActive'?['opponentBench']:[])].includes(effect.target),'invalid Energy movement destination');need(!(effect.source==='selfBench'&&effect.target==='selfBench'),'two selected Bench endpoints require separate selection');need(effect.amount==='all'||integer(effect.amount),'invalid moved Energy amount');if(effect.allowedEnergyTypes!=null)need(Array.isArray(effect.allowedEnergyTypes)&&effect.allowedEnergyTypes.every(x=>ENERGY_TYPES.includes(x)),'invalid allowed moved Energy types');break;
       case 'handShuffle':need(effect.draw==='same'||effect.draw==='opponentHandCount'||effect.draw==='pointsRemaining'||effect.draw==='bothBenchCount'||integer(effect.draw),'invalid hand redraw amount');break;
-      case 'preventStatus':need(['whileInPlay','whileActive'].includes(effect.duration),'invalid status immunity duration');if(effect.status!=null)need(STATUSES.includes(effect.status),'invalid prevented status');if(effect.scope!=null)need(['self','team'].includes(effect.scope),'invalid status scope');break;
+      case 'preventStatus':need(['whileInPlay','whileActive'].includes(effect.duration),'invalid status immunity duration');if(effect.status!=null)need(STATUSES.includes(effect.status),'invalid prevented status');if(effect.scope!=null)need(['self','team'].includes(effect.scope),'invalid status scope');if(effect.clearExisting!=null)need(typeof effect.clearExisting==='boolean','clearExisting must be boolean');break;
       case 'coinUntilTails':need(!!effect.effect,'coinUntilTails requires effect');errors.push(...validateEffect(effect.effect,`${at}.effect`));break;
       case 'lock':need(['attack','retreat'].includes(effect.action),'invalid locked action');need(['nextOwnTurn','opponentTurn','whileInPlay'].includes(effect.duration),'invalid lock duration');break;
       case 'preventDamage':need(['opponentTurn','nextOwnTurn','whileInPlay','whileActive'].includes(effect.duration),'invalid prevention duration');if(effect.maxDamage!=null)need(nonnegative(effect.maxDamage),'invalid prevention threshold');if(effect.attackerFilter!=null){need(effect.attackerFilter&&typeof effect.attackerFilter==='object'&&!Array.isArray(effect.attackerFilter),'invalid attacker filter');for(const key of Object.keys(effect.attackerFilter||{}))need(FILTER_KEYS.includes(key),'invalid attacker filter key');}break;
@@ -24707,7 +24707,23 @@ if(r==='lastResort')return ss.hand.length===0?[{}]:[];if(r==='surgeSwap')return 
     for(const side of ['player','opponent'])for(const source of pokemonOn(state.sides[side])){
       if(abilitiesSuppressed(state,side,source,cardById))continue;
       const card=cardById(source.cardId),abilities=upgradeAbilities(source,cardById);
-      for(const a of abilities){if(a.type!=='passive'||a.activeOnly&&state.sides[side].active!==source||a.benchOnly&&state.sides[side].active===source)continue;walk(a.effect,rule=>{if(rule.type!=='statusRecoveryAura'||rule.scope!=='team')return;for(const target of pokemonOn(state.sides[side]))if(matchesFilter(cardById(target.cardId),rule.filter,target))clearConditions(target);});}
+      for(const a of abilities){if(a.type!=='passive'||a.activeOnly&&state.sides[side].active!==source||a.benchOnly&&state.sides[side].active===source)continue;walk(a.effect,rule=>{
+        // An immunity such as BREAKpoint Raticate's Antibodies also REMOVES
+        // any existing conditions when it becomes active again after Ability
+        // suppression (e.g. Garbotoxin loses its Tool). Generic immunity
+        // alone only prevents new status application; this is separately
+        // opt-in because not every immunity removes existing conditions.
+        if(rule.type==='preventStatus'&&rule.clearExisting&&rule.scope==='self'){
+          if(matchesFilter(cardById(source.cardId),rule.filter,source)&&
+             conditionMatches(rule.condition,{state,side,foeSide:side==='player'?'opponent':'player',attacker:source,defender:state.sides[side==='player'?'opponent':'player'].active,cardById})){
+            if(!rule.status)clearConditions(source);
+            else if(source.conditions)delete source.conditions[rule.status];
+          }
+          return;
+        }
+        if(rule.type!=='statusRecoveryAura'||rule.scope!=='team')return;
+        for(const target of pokemonOn(state.sides[side]))if(matchesFilter(cardById(target.cardId),rule.filter,target))clearConditions(target);
+      });}
     }
   }
   function wideLensBenchMatchup(state,attackSide,attackerSlot,defenderSide,defenderSlot,damage,cardById){
