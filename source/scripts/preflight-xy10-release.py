@@ -39,7 +39,7 @@ def check():
   assert item in gradle,'Missing stage '+item
  assert "dependsOn tasks.named('preflightXY10ContractForApk')" in gradle
  assert "dependsOn tasks.named('auditXY9ForApk')" in gradle
- for test in ['v07383-fates-collide-integration.test.cjs','v07383-fates-collide-effects.test.cjs','v07384-fates-collide-stage2.test.cjs','v07385-fates-collide-stage3.test.cjs','v07386-fates-collide-stage4.test.cjs','v07387-fates-collide-stage5.test.cjs','v07388-fates-collide-complete.test.cjs']:
+ for test in ['v07383-fates-collide-integration.test.cjs','v07383-fates-collide-effects.test.cjs','v07384-fates-collide-stage2.test.cjs','v07385-fates-collide-stage3.test.cjs','v07386-fates-collide-stage4.test.cjs','v07387-fates-collide-stage5.test.cjs','v07388-fates-collide-complete.test.cjs','v07389-fates-collide-independent-audit.test.cjs']:
   assert test in gradle,'Missing mandatory generated catalogue audit '+test
  data=(ROOT/'app/src/main/assets/tcg-classic-battle-data.js').read_text()
  assert 'LuckyDexClassicTCGXY10' in data and '...xy10.CARDS' in data and 'xy10.cardById(id)' in data
@@ -86,7 +86,7 @@ def main():
   assert (ROOT/'data/classic/xy10-print-compact.json').is_file(), 'The pinned 129-print dataset was not generated'
   assert (ROOT/'app/src/main/assets/tcg-classic-fates-collide.js').stat().st_size>10000, 'The generated Fates Collide runtime is missing or still a stub'
   env={**os.environ,'GITHUB_ACTIONS':'true'}
-  subprocess.run(['node','--test','tests/v07383-fates-collide-integration.test.cjs','tests/v07383-fates-collide-effects.test.cjs','tests/v07384-fates-collide-stage2.test.cjs','tests/v07385-fates-collide-stage3.test.cjs','tests/v07386-fates-collide-stage4.test.cjs','tests/v07387-fates-collide-stage5.test.cjs','tests/v07388-fates-collide-complete.test.cjs'],cwd=ROOT,check=True,env=env)
+  subprocess.run(['node','--test','tests/v07383-fates-collide-integration.test.cjs','tests/v07383-fates-collide-effects.test.cjs','tests/v07384-fates-collide-stage2.test.cjs','tests/v07385-fates-collide-stage3.test.cjs','tests/v07386-fates-collide-stage4.test.cjs','tests/v07387-fates-collide-stage5.test.cjs','tests/v07388-fates-collide-complete.test.cjs','tests/v07389-fates-collide-independent-audit.test.cjs'],cwd=ROOT,check=True,env=env)
   print('PASS: Full official XY10 generated 129-print catalogue, deck and effect audit.')
  else:
   # This preflight is run in GitHub Actions *before* generateXY10ForApk.
@@ -95,7 +95,7 @@ def main():
   # the official source and generated assets actually exist.
   source_only_env={**os.environ}
   source_only_env.pop('GITHUB_ACTIONS',None)
-  subprocess.run(['node','--test','tests/v07383-fates-collide-integration.test.cjs','tests/v07383-fates-collide-effects.test.cjs','tests/v07384-fates-collide-stage2.test.cjs','tests/v07385-fates-collide-stage3.test.cjs','tests/v07386-fates-collide-stage4.test.cjs','tests/v07387-fates-collide-stage5.test.cjs','tests/v07388-fates-collide-complete.test.cjs'],cwd=ROOT,check=True,env=source_only_env)
+  subprocess.run(['node','--test','tests/v07383-fates-collide-integration.test.cjs','tests/v07383-fates-collide-effects.test.cjs','tests/v07384-fates-collide-stage2.test.cjs','tests/v07385-fates-collide-stage3.test.cjs','tests/v07386-fates-collide-stage4.test.cjs','tests/v07387-fates-collide-stage5.test.cjs','tests/v07388-fates-collide-complete.test.cjs','tests/v07389-fates-collide-independent-audit.test.cjs'],cwd=ROOT,check=True,env=source_only_env)
   print('SOURCE ONLY: Pinned catalogue test deferred. BEFORE PUSHING, run: python3 scripts/preflight-xy10-release.py --full')
 if __name__=='__main__':
  try: main()

@@ -19383,9 +19383,12 @@
           choose({kind:'option',side:'self',options:types.map(t=>'Attach '+t+' Energy from deck or Energy Zone')});break;
         }
         if(rule==='plasmagic'){
-          if(!d)break;let moved=0;
+          // Moving counters is an effect on the opposing Pokémon. If that
+          // target is protected, we must not erase our own counters for free.
+          if(!d||protectedFromEffects(d,ctx))break;
+          let moved=0;
           for(const p of pokemonOn(ss)){const n=Math.min(20,Math.floor(Number(p.damage||0)/10)*10);p.damage=Math.max(0,Number(p.damage||0)-n);moved+=n;}
-          if(moved&&!protectedFromEffects(d,ctx))d.damage=Number(d.damage||0)+moved;
+          if(moved)d.damage=Number(d.damage||0)+moved;
           log({type:'xy10Plasmagic',moved});break;
         }
         if(rule==='suppression'){
@@ -19434,10 +19437,26 @@
           choose({kind:'option',side:'self',options:toolsOf(a).map(r=>'Return '+(ctx.cardById(r.cardId)?.name||'Tool')+' to hand')});break;
         }
         if(rule==='kinesis'){
-          if(!ctx.eventData?.fromHand||!foe.active)break;
-          foe.active.damage=Number(foe.active.damage||0)+20;
-          if(foe.bench.length){if(ctx.resolvingChoice){const p=selected(ctx,foe);if(p&&!protectedFromEffects(p,ctx))p.damage=Number(p.damage||0)+30;}
-            else choose({kind:'pokemon',side:'self',selectionSide:ctx.foeSide,includeActive:false,optional:true});}
+          // The printed Kinesis Ability says *may*. Resolve that choice when
+          // the Mega evolves from hand, before selecting a Benched target.
+          // Keep the stage on the effect because choice callbacks do not
+          // carry the original evolved eventData forward.
+          if(!ctx.resolvingChoice){
+            if(!ctx.eventData?.fromHand||!foe.active)break;
+            choose({kind:'option',side:'self',options:['Use Kinesis','Skip Kinesis']},{...effect,stage:'offer'});
+            break;
+          }
+          if(effect.stage==='offer'){
+            if(Number(ctx.action?.choiceOption)!==0||!foe.active)break;
+            if(!protectedFromEffects(foe.active,{...ctx,isAbility:true}))
+              foe.active.damage=Number(foe.active.damage||0)+20;
+            if(foe.bench.length)choose({kind:'pokemon',side:'self',selectionSide:ctx.foeSide,includeActive:false},{...effect,stage:'target'});
+            break;
+          }
+          if(effect.stage==='target'){
+            const p=selected(ctx,foe);
+            if(p&&!protectedFromEffects(p,{...ctx,isAbility:true}))p.damage=Number(p.damage||0)+30;
+          }
           break;
         }
         break;

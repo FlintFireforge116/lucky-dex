@@ -281,6 +281,18 @@
     if(!legal.some(c=>!((c.abilities||[]).length||c.ability)))return -Infinity;
   }
 
+  // XY10 Fates Collide: the generic effect parser cannot infer the named
+  // Power Memory recipient or the *attached* Fairy Energy prerequisite.
+  // Check actual deck Pokémon and the chosen Basic Energy Zone. A Fairy-type
+  // Pokémon with only Metal Energy cannot activate Fairy Drop/Garden.
+  if(card.id==='xy10-108'&&!ctx.pokemon.some(p=>['xy10-54','xy10-54a'].includes(p.id)))return -Infinity;
+  if(['xy10-99','xy10-100'].includes(card.id)&&!ctx.energy.has('Fairy'))return -Infinity;
+  if(card.id==='xy10-95'&&!ctx.pokemon.some(p=>
+    ['Stage 1','Stage 2'].includes(p.stage)&&ctx.pokemon.some(b=>b.name===p.evolvesFrom)))return -Infinity;
+  // Mega Catcher is legal counterplay but an unknown opponent's Mega is not
+  // an automatically reliable 30-card synergy. Never mark it inherently dead
+  // in a manual list; its exclusion from generic filler is a builder choice.
+  if(card.id==='xy10-108'&&ctx.pokemon.some(p=>['xy10-54','xy10-54a'].includes(p.id)))return 125;
   // Exact hard mismatch: never add Stadiums or Tools that only improve Pokémon
   // types and evolution stages absent from the target deck. This is separate
   // from their generic usefulness and does not force a matching type in the

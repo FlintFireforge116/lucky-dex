@@ -1,6 +1,6 @@
 {
   "set": "xy10",
-  "release": "0.69.388",
+  "release": "0.69.389",
   "printedTotal": 129,
   "attackPrints": 147,
   "abilities": 21,
@@ -8,7 +8,7 @@
   "expectedPlayableMinimum": 129,
   "stage": "complete",
   "pin": "aa097c8da85e960a5afa4f3b96312f64dcbec871",
-  "notes": "One-pass completion of all 24 remaining Fates Collide prints; 129/129 mandatory after pinned generation; independent gameplay/deck audit follows.",
+  "notes": "Independent 0.69.389 audit of the complete 129-print Fates Collide set: mandatory source/physical-energy/deck-coherence/optional Kinesis/protected Plasmagic regression tests and 129/129 pinned generated coverage.",
   "requiredEnabledNumbers": [
     "1",
     "2",

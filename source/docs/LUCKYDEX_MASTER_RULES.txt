@@ -4824,3 +4824,36 @@ FATES COLLIDE XY10 WHOLE-SET COMPLETION — v0.69.388 / Master Rules v2.74 (2026
 7. Deliver the changed-files-only patch ZIP with paths relative to source/, not
    an entire duplicate repository. Apply with unzip -o PATCH.zip -d source,
    preflight, git add source, git commit, git push origin main.
+
+FATES COLLIDE XY10 INDEPENDENT AUDIT — v0.69.389 / Master Rules v2.75 (2026-11-22)
+------------------------------------------------------------------------------------
+1. Run the full independent post-completion audit, not just generated print counts:
+   compare each printed attack's source Energy cost, exercise representative
+   Abilities and special mechanics, and generate human/CPU decks across multiple
+   reproducible seeds and selected types. A green source contract alone does not
+   prove battle correctness or good deck-building choices.
+2. NEVER auto-add a Trainer without a reachable physical beneficiary in the
+   actual 30-card deck. Specific recurring XY10 hazards: Power Memory needs
+   Zygarde-EX; Fairy Drop / Fairy Garden need Fairy Energy in the Zone;
+   Devolution Spray needs an Evolution line; Fossil Excavation Kit needs
+   recoverable physical Fossil Items. Mega Catcher is matchup-specific tech,
+   not reliable all-purpose auto-filler. Allow explicit manually retained cards.
+3. Shared deck-quality/synergy reporting must reject genuinely dead Trainers
+   independently of the builder (so a legal deck cannot mask an incoherent one).
+   Cap repeated situational Trainers and keep the consistency backbone diverse.
+   Prefer physical Strong Energy for Fighting and Double Colorless Energy for
+   suitable Colorless attack costs; never pretend the separate Basic Energy Zone
+   contains physical Energy cards for deck searches or discard effects.
+4. Respect printed MAY clauses: Mega Alakazam-EX Kinesis must offer Use/Skip,
+   then target one opponent Bench if present. No silent compulsory damage.
+   Damage-counter movement effects like Rotom Plasmagic must verify the
+   destination is not protected BEFORE removing counters from the source.
+5. Keep `tests/v07389-fates-collide-independent-audit.test.cjs` mandatory in
+   Gradle source checks, `auditXY10ForApk`, and both `--full` and source-only
+   `scripts/preflight-xy10-release.py` paths. Keep Gradle version 0.69.389,
+   versionCode 7389, title and boot versions and XY9/XY10 contracts in sync.
+   Run the strict pinned 129-print full preflight before pushing. GitHub APK
+   success is only known after the actual workflow succeeds.
+6. A failed huge cross-era regression run due to resource/time limits is NOT
+   evidence that those earlier sets were validated. Use focused prior-set
+   regressions and clearly report what was and was not executed.

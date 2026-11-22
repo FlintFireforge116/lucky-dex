@@ -713,6 +713,19 @@ function buildDeck(rows,options={}){
      if(card?.trainerType==='Item'&&card?.name!=='Rare Candy'&&
         pokemon.some(p=>p.id==='xy7-3')&&
         cards.filter(id=>classic.cardById(id)?.trainerType==='Item').length>=2)return false;
+     // Fates Collide: only place named, conditional cards when the actual
+     // selected deck supplies their recipient. Otherwise these became the
+     // identical default 17-Trainer filler package for unrelated archetypes.
+     if(card?.id==='xy10-108'&&!pokemon.some(p=>['xy10-54','xy10-54a'].includes(p.id)))return false;
+     if(['xy10-99','xy10-100'].includes(card?.id)&&!selectedTypes.includes('Fairy'))return false;
+     if(card?.id==='xy10-95'&&!pokemon.some(p=>['Stage 1','Stage 2'].includes(p.stage)&&
+       pokemon.some(base=>classicCardName(base.name)===classicCardName(p.evolvesFrom||''))))return false;
+     // Mega Catcher has no target in our own deck: it is matchup tech, not
+     // generic filler. Preserve the owner's explicit choice if retained.
+     if(card?.id==='xy10-104')return false;
+     // An Excavation Kit without a real Fossil Item in the physical draw
+     // deck cannot ever recover anything, regardless of the Pokemon line.
+     if(card?.id==='xy10-101'&&!cards.some(id=>['xy10-96','xy10-102','xy10-106'].includes(id)))return false;
      // Primal Clash Spirit Links are only useful with their exact Mega or
      // Primal Evolution prints IN the finished 30-card deck. A matching
      // ordinary Basic EX is not enough; do not auto-add dead Tool cards.
@@ -863,7 +876,7 @@ function buildDeck(rows,options={}){
      if(!eligible.length||eligible.every(p=>(p.abilities||[]).length>0))return false;
    }
 
-   if(card?.kind==='trainer'){const ctx=synergy.context(cards.map(classic.cardById).filter(Boolean),selectedTypes,theme);if(synergy.trainerScore(card,ctx)===-Infinity)return false;}
+   if(card?.kind==='trainer'&&!manuallyKept){const ctx=synergy.context(cards.map(classic.cardById).filter(Boolean),selectedTypes,theme);if(synergy.trainerScore(card,ctx)===-Infinity)return false;}
    if(card.name==="Brock's Training Method")return cards.some(id=>{const pokemon=classic.cardById(id);return pokemon?.kind==='pokemon'&&pokemon.name.startsWith("Brock's ");});
    return true;
  }
@@ -871,6 +884,9 @@ function buildDeck(rows,options={}){
  // consume four slots merely because the owner has four copies. Saved manual
  // choices can be preserved up to the global four-copy limit.
  const stormfrontAutoCaps={'dp7-91':2,'dp7-86':1,'dp7-85':3,'dp7-83':2,'pl2-96':2,'pl2-95':2};
+ // These XY10 cards answer narrow situations; a single copy leaves more room
+ // for real draw/search and Pokémon lines. Explicit player copies still win.
+ const xy10SituationalCaps={'xy10-94':1,'xy10-95':1,'xy10-97':1,'xy10-98':1,'xy10-101':2};
  function room(card){
    const arceusUnlimited=card.setId==='pl4'&&(/^AR[1-9]$/.test(String(card.number))||['94','95','96'].includes(String(card.number)));
    const name=classicCardName(card.name);
@@ -878,7 +894,7 @@ function buildDeck(rows,options={}){
    const starSlots=card.pokemonStar?Math.max(0,1-cards.filter(id=>classic.cardById(id)?.pokemonStar).length):arceusUnlimited?30:4;
    const aceSlots=card.aceSpec?Math.max(0,1-cards.filter(id=>classic.cardById(id)?.aceSpec).length):4;
    const miracleSlots=name==='Miracle Energy'?Math.max(0,1-copiesOfName):4;
-   const rawCap=stormfrontAutoCaps[card.id];
+   const rawCap=stormfrontAutoCaps[card.id]??xy10SituationalCaps[card.id];
    let allowedCopies=arceusUnlimited?30:rawCap===undefined?4:Math.min(4,Math.max(rawCap,existing.filter(id=>id===card.id).length));
    if(energyFillerPhase&&card.specialEnergy){
      // Never turn the final third of a Zone-based deck into four copies of
@@ -1229,6 +1245,20 @@ function buildDeck(rows,options={}){
      if(score<strongest.score-80&&(!ctx.specialEnergyPayoffs.has('holon-energy')||score<150))continue;
      remain-=add(card,Math.min(remain,room(card)));
    }
+ }
+ // Fates Collide Strong Energy is a genuine Fighting attack modifier, not
+ // generic hand-card filler. Reserve two physical copies for a Fighting
+ // attacker, then leave most of the 30-card deck for coherent Trainers.
+ if(scope.includes('xy10')){
+   const fighters=cards.map(classic.cardById).filter(c=>c?.kind==='pokemon'&&
+     (c.types||[]).includes('Fighting')&&
+     (c.attacks||[]).some(a=>Array.isArray(a.cost)?a.cost.includes('F'):String(a.cost||'').includes('F')));
+   if(fighters.length&&selectedTypes.includes('Fighting')){
+     const strong=classic.cardById('xy10-115');if(strong&&pool.includes(strong))add(strong,Math.min(2,room(strong)));
+   }
+   const wideColorless=cards.map(classic.cardById).some(c=>c?.kind==='pokemon'&&
+     (c.attacks||[]).some(a=>{const cost=Array.isArray(a.cost)?a.cost:String(a.cost||'').split('');return cost.filter(t=>t==='C').length>=2;}));
+   if(wideColorless){const dce=classic.cardById('xy10-114');if(dce&&pool.includes(dce))add(dce,Math.min(1,room(dce)));}
  }
  // EX Legend Maker React Energy supplies Colorless, but printed React bonuses
  // belong in focused React archetypes, not generic Special Energy filler.
