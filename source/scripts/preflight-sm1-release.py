@@ -28,7 +28,7 @@ def check_source():
   assert "sm1" in (ROOT/'app/src/main/assets'/name).read_text(),'SM1 unregistered in '+name
  gen=(ROOT/'scripts/build-sm1.py').read_text()
  assert c['pin'] in gen and '!=173' in gen and '!=238' in gen and '!=26' in gen
- for name in ('tests/v07399-sun-moon-integration.test.cjs','tests/v07400-sun-moon-completion.test.cjs','tests/v07401-sun-moon-independent-audit.test.cjs','tests/v07333-classic-deck-quality.test.cjs'):
+ for name in ('tests/v07399-sun-moon-integration.test.cjs','tests/v07400-sun-moon-completion.test.cjs','tests/v07401-sun-moon-independent-audit.test.cjs','tests/v07401b-sm1-deck-picker-availability.test.cjs','tests/v07333-classic-deck-quality.test.cjs'):
   assert name in gradle and (ROOT/name).is_file(),'SM1 must run '+name
  assert 'tests/v07376-breakthrough-complete.test.cjs' in gradle, 'SM1 must preserve the earlier XY8 APK audit gate'
  print('PASS SM1 structural: pinned 173 prints (including Eevee 101a), GX, physical Energy, version, full APK gates.')
@@ -42,13 +42,13 @@ def full():
   assert 'sm1-'+n not in d['gated'],'Required playable SM1 card gated: '+n
  assert (ROOT/'app/src/main/assets/tcg-classic-sun-moon.js').stat().st_size>25000
  env={**os.environ,'GITHUB_ACTIONS':'true'}
- subprocess.run(['node','--test','tests/v07399-sun-moon-integration.test.cjs','tests/v07400-sun-moon-completion.test.cjs','tests/v07401-sun-moon-independent-audit.test.cjs','tests/v07333-classic-deck-quality.test.cjs','tests/v07376-breakthrough-complete.test.cjs'],cwd=ROOT,check=True,env=env)
+ subprocess.run(['node','--test','tests/v07399-sun-moon-integration.test.cjs','tests/v07400-sun-moon-completion.test.cjs','tests/v07401-sun-moon-independent-audit.test.cjs','tests/v07401b-sm1-deck-picker-availability.test.cjs','tests/v07333-classic-deck-quality.test.cjs','tests/v07376-breakthrough-complete.test.cjs'],cwd=ROOT,check=True,env=env)
  print(f"PASS SM1 FULL: {d['battleReady']}/173 playable, {len(d['gated'])} explicit gates; cross-set deck-builder quality PASS")
 def main():
  parser=argparse.ArgumentParser(description=__doc__);parser.add_argument('--full',action='store_true');args=parser.parse_args()
  check_source()
  if args.full:full()
- else:subprocess.run(['node','--test','tests/v07399-sun-moon-integration.test.cjs','tests/v07401-sun-moon-independent-audit.test.cjs'],cwd=ROOT,check=True)
+ else:subprocess.run(['node','--test','tests/v07399-sun-moon-integration.test.cjs','tests/v07401-sun-moon-independent-audit.test.cjs','tests/v07401b-sm1-deck-picker-availability.test.cjs'],cwd=ROOT,check=True)
 if __name__=='__main__':
  try:main()
  except (AssertionError,ValueError,subprocess.CalledProcessError) as e:

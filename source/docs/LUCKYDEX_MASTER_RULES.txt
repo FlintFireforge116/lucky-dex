@@ -5095,3 +5095,9 @@ Steam Siege full gameplay mapping reaches all 116 pinned prints; previously gate
 3. Any triggered Ability whose printed text requires “if this Pokemon is your Active” MUST declare activeOnly:true in its Ability descriptor so the generic KO event bus cannot incorrectly trigger from the Bench; SM1 Pyukumuku Innards Out is the reference.
 4. Future independent per-set audits must compare every official print's attack costs and names, verify representative live actions, GX/Prize/energy interactions and 30-card CPU/player deck quality. Add tests/v07401-sun-moon-independent-audit.test.cjs to BOTH mandatory SM1 --full preflight and Gradle auditSM1ForApk. Never bypass past-era tests, and keep release number/versionCode/UI/contracts synchronized.
 === END SM1 INDEPENDENT AUDIT v0.69.401 ===
+
+=== v0.69.401b CLASSIC SET PICKER VISIBILITY / SM1 DECK AVAILABILITY ===
+[BUG] Sun & Moon SM1 was present in shared CARD/DeckBuilder/CPU SET IDs but invisible to players AND CPU set selection because tcg-classic-set-picker.js grouped releases using an eras list that omitted 'Sun & Moon'. Picker.html filtered out rows whose era wasn't in that list.
+[LOCKED] Whenever a new Classic set is registered in the picker rows, its era MUST also appear in the picker eras array (or be provided a non-lossy fallback group), or it will never render as a selectable button. Matching registrations in the engine and CPU do NOT prove UI availability.
+[LOCKED] Run tests/v07401b-sm1-deck-picker-availability.test.cjs as a mandatory SM1 Gradle audit and SM1 full preflight. Check BOTH player and CPU HTML selectors include each registered set; build one legal 30-card deck per surface. This is a test/selector-only patch. v0.69.401 versionName/code stay unchanged; suffix b names the overlay ZIP.
+=== END CLASSIC SET PICKER VISIBILITY ===

@@ -980,7 +980,7 @@ tasks.register('generateSM1ForApk', Exec) {
 tasks.register('auditSM1ForApk', Exec) {
     dependsOn tasks.named('generateSM1ForApk')
     workingDir rootProject.projectDir
-    commandLine 'node', '--test', 'tests/v07399-sun-moon-integration.test.cjs', 'tests/v07400-sun-moon-completion.test.cjs', 'tests/v07401-sun-moon-independent-audit.test.cjs', 'tests/v07333-classic-deck-quality.test.cjs'
+    commandLine 'node', '--test', 'tests/v07399-sun-moon-integration.test.cjs', 'tests/v07400-sun-moon-completion.test.cjs', 'tests/v07401-sun-moon-independent-audit.test.cjs', 'tests/v07401b-sm1-deck-picker-availability.test.cjs', 'tests/v07333-classic-deck-quality.test.cjs'
 }
 tasks.matching { it.name == 'preBuild' || (it.name.startsWith('merge') && it.name.endsWith('Assets')) }.configureEach {
     dependsOn tasks.named('auditSM1ForApk')
