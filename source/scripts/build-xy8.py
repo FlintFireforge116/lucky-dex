@@ -49,7 +49,8 @@ def generate(rows):
   n=str(n);kind={'Pokémon':'pokemon','Trainer':'trainer','Energy':'energy'}[sup]
   issues=[];aa=[];pw=[]
   if trait: issues.append('Unverified Ancient Trait')
-  if 'BREAK' in subtypes:issues.append('BREAK Evolution needs engine inheritance and testing')
+  # BREAK follows LV.X previous-card inheritance, with regular evolution timing.
+  # Gate only unsupported *printed* abilities/attacks, not the whole card family.
   for title,cost,damage,printed in attacks:
    eff=V.attack(row,[title,cost,damage,printed]);
    if eff is None:issues.append('Unimplemented printed attack: '+title)
@@ -86,6 +87,7 @@ def generate(rows):
     resistance=res,resistanceValue='-20' if res else None,resistances=[{'type':res,'value':'-20'}] if res else [],
     attacks=aa,abilities=pw,ancientTrait=trait,prizeCards=2 if ex else 1,pokemonEX=ex,megaEvolution=mega,breakEvolution='BREAK' in subtypes,
     isPokemonSP=False,isLevelX=False,
+    upgradeInheritance='previous' if 'BREAK' in subtypes else None,
     deckMeta={'roles':roles,'synergy':roles,'energyTypes':needed,'preferredEnergyTypes':needed,
       'conditionalAttackEnergyTypes':[],'preferredPartners':partners,'inflicts':[],'payoffs':[]})
   elif kind=='trainer':

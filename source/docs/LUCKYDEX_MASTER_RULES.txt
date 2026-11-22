@@ -1,8 +1,8 @@
 LUCKYDEX — MASTER PROJECT RULES AND DEVELOPMENT CONTRACT
 =========================================================
-Document version: 2.54
+Document version: 2.55
 Compiled: 22 November 2026
-Current inspected source: v0.69.374 XY8 BREAKthrough initial mechanic-first implementation, based on the v0.69.373 Ancient Origins completion patch. XY8 local changes require GitHub APK verification. Source-relative ZIP extraction into ~/lucky-dex/source/.
+Current inspected source: v0.69.374 XY8 BREAKthrough with v0.69.374 build-repair and LV.X-based BREAK reuse patch, based on v0.69.373 Ancient Origins completion. Repaired patch still requires GitHub APK verification. Source-relative ZIP extraction into ~/lucky-dex/source/.
 Recommended repository location: ~/lucky-dex/source/docs/LUCKYDEX_MASTER_RULES.txt
 Project: LuckyDex — Android application/PWA, managed with Termux and GitHub
 
@@ -3885,14 +3885,27 @@ practice of implementing an entire set in nine or ten short stages.
   during Gradle builds; local source includes a generation-only stub.
 - Existing reusable moves and conservative per-print mappings are in
   scripts/xy8_verified.py. Unmapped effects are gated rather than bluffed.
-- Verified official-catalogue static projection for this patch: 108 playable,
-  57 gated prints. The authoritative counts come from
+- Verified official-catalogue static projection for initial integration: 108 playable,
+  57 gated prints; the BREAK reuse repair projects 113 playable, 52 gated. The authoritative counts come from
   docs/XY8_BUILD_COVERAGE.json generated on GitHub; local catalogue is a stub.
 - Group remaining work by the shared mechanic, following
   docs/XY8_GATED_HANDOFF_v0.69.374.md; do not return to one-card patches.
-- Pokémon BREAK must inherit their previous Evolution's attacks, Abilities,
-  Weakness, Resistance and Retreat Cost while taking the new HP and attack;
-  this is a NEW shared core requirement, not equivalent to regular Stage 2.
+- Pokémon BREAK is a REUSE of existing LV.X previous-evolution stack mechanics,
+  NOT a genuinely new card engine. Share inherited attacks and Abilities,
+  attachment preservation, HP upgrade, Weakness/Resistance/type and Retreat
+  handling. BREAK differs from LV.X ONLY in printed rules: it is an Evolution
+  (Active OR Bench, ordinary evolution timing, removes Special Conditions),
+  whereas LV.X is an Active-only level-up with its own status/timing rules.
+  Never make an independent BREAK-only engine or gate all BREAK as unfamiliar.
+- 2026-11-22 CI correction: run #663 failed on Supreme Victors' generic
+  Gradle/UI/JS version-sync invariant. All releases MUST update BOTH HTML
+  version markers id=titleBuildVersion AND id=appBuildVersion, as well as
+  app-v0167.js and Gradle; run the cross-release version test before delivery.
+- v0.69.374 repair reuses LV.X runtime attack/Ability/defense inheritance for
+  BREAK; projected print count becomes 113 ready / 52 gated. Marowak BREAK
+  remains gated pending its printed Bone Revenge scaling, not its BREAK stage.
+  CI-generated coverage remains authoritative, and a local pass is not CI.
+
   Until inheritance, suppression and zone/knockout rules are tested, all six
   BREAK cards remain visible but NOT battleEnabled. This is not 'complete'.
 - Parallel City (oriented two-sided Stadium), Burning Energy (return to Fire

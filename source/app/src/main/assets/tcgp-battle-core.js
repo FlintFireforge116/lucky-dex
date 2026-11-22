@@ -359,6 +359,11 @@
       // LV.X is a LEVEL UP of an Active previous-level Pokémon, not Stage 3
       // or a Bench evolution. Never stack an LV.X onto another LV.X.
       if(evo.isLevelX&&(target!=='active'||!base||base.isLevelX||state.sides[side].active!==slot||base.name!==evo.levelUpFrom))return false;
+      // Pokémon BREAK uses the SAME printed-card stack/inheritance path as LV.X.
+      // Unlike LV.X, BREAK is an Evolution: it may evolve Active or Bench,
+      // has normal evolution timing and cures Special Conditions. A second
+      // BREAK cannot be stacked over a BREAK of the same Pokémon.
+      if(evo.breakEvolution&&(!base||base.breakEvolution||!classicEvolutionMatches(base.name,evo.evolvesFrom)))return false;
       const evolvesName=asName?.name||base?.name;if((state.format==='classic'?!classicEvolutionMatches(evolvesName,evo.evolvesFrom):evolvesName!==evo.evolvesFrom))return false;
       const firstTurn=s.turnCount<=1,sameTurn=Number(slot.playedOnSideTurn)>=Number(s.turnCount);
       // Flashfire Caterpie and Metapod: their own Adaptive Evolution ability
@@ -745,6 +750,8 @@
     if(state.stadium){const source=ss.active||ss.bench[0];if(source){const ctx={...effectContext(state,side,{},source),eventData:meta};effects.applyPersistentEvent(data.cardById(state.stadium.cardId)?.effect,event,ctx);}}
   }
   function retreatCost(state,side){const slot=state.sides[side].active;
+    const top=data.cardById(slot?.cardId),previous=top?.breakEvolution&&slot?.stack?.length>1?data.cardById(slot.stack[slot.stack.length-2]):null;
+    const printedRetreat=Number((previous||top)?.retreat||0);
     // Fairy Garden (XY 117): all Pokemon with Fairy-providing attached Energy
     // have free retreat, including opposing Pokemon and flexible Rainbow.
     if(state.format==='classic'&&slot&&state.stadium?.cardId==='xy1-117'){
@@ -771,7 +778,7 @@
     if(state.format==='classic'&&slot?.cardId==='pl1-SH4'&&Number(effectiveEnergy(state,side,slot).Water||0)>0&&
       !effects.abilitiesSuppressed(state,side,slot,data.cardById))return 0;
     if(state.format==='classic'&&slot?.cardId==='dp7-SH1'&&!effects.abilitiesSuppressed(state,side,slot,data.cardById)&&
-       (slot.tool||(slot.extraTools||[]).length))return Number(data.cardById(slot.cardId)?.retreat||0)+2;
+       (slot.tool||(slot.extraTools||[]).length))return printedRetreat+2;
 
     if(state.format==='classic'&&majesticEeveeEvolution(slot)&&
        pokemonOn(state.sides[side]).some(p=>p.cardId==='dp5-32'&&!effects.abilitiesSuppressed(state,side,p,data.cardById)))return 0;
@@ -797,7 +804,7 @@
     // Unown Q becomes a physical Pokémon Tool, reducing the holder's
     // retreat by one. This does not alter other Pokémon's retreat.
     const unownQ=activeToolsOf(state,slot).filter(ref=>ref.cardId==='dp5-49').length;
-    if(state.format==='classic'&&unownQ)return Math.max(0,Number(data.cardById(slot.cardId)?.retreat||0)-unownQ);
+    if(state.format==='classic'&&unownQ)return Math.max(0,printedRetreat-unownQ);
     if(state.format==='classic'&&slot?.cardId==='ex13-30'&&Number(slot.energy?.Water||0)>0&&!effects.abilitiesSuppressed(state,side,slot,data.cardById))return 0;
     if(state.format==='classic'&&slot?.cardId==='ex14-55'&&Number(effectiveEnergy(state,side,slot).Water||0)>0&&!effects.abilitiesSuppressed(state,side,slot,data.cardById))return 0;
     if(state.format==='classic'&&slot?.cardId==='ex14-95'&&
@@ -813,17 +820,17 @@
       pokemonOn(state.sides[side==='player'?'opponent':'player']).some(p=>p.cardId==='ex12-28'&&p.stack?.some(id=>data.cardById(id)?.name==='Wynaut')&&
         !effects.abilitiesSuppressed(state,side==='player'?'opponent':'player',p,data.cardById))){
       // Wobbuffet's Stages of Evolution taxes the opposing retreat by one Colorless.
-      return Number(data.cardById(slot?.cardId)?.retreat||0)+1;
+      return printedRetreat+1;
     }
     if(state.format==='classic'&&slot?.cardId==='ex11-59'&&!effects.abilitiesSuppressed(state,side,slot,data.cardById)){
-      return Math.max(0,Number(data.cardById(slot.cardId)?.retreat||0)-(state.sides[side].bench||[]).filter(p=>data.cardById(p.cardId)?.name==='Beldum δ').length);
+      return Math.max(0,printedRetreat-(state.sides[side].bench||[]).filter(p=>data.cardById(p.cardId)?.name==='Beldum δ').length);
     }
     if(state.format==='classic'&&pokemonOn(state.sides[side]).some(p=>p.cardId==='ex15-96'&&!effects.abilitiesSuppressed(state,side,p,data.cardById))&&
       /^(?:Latias|Latios)(?: ex)?(?: δ)?$/.test(data.cardById(slot?.cardId)?.name||''))return 0;
     if(state.format==='classic'&&pokemonOn(state.sides[side]).some(p=>p.cardId==='ex15-17'&&
       Array.isArray(p.stack)&&p.stack.length>1&&!effects.abilitiesSuppressed(state,side,p,data.cardById))&&
       data.cardById(slot?.cardId)?.types?.some(t=>['Fire','Psychic'].includes(t)))
-      return Math.max(0,Number(data.cardById(slot?.cardId)?.retreat||0)-1);
+      return Math.max(0,printedRetreat-1);
     if(state.format==='classic'&&slot?.cardId==='ex15-24'&&!effects.abilitiesSuppressed(state,side,slot,data.cardById)){
       const e=effectiveEnergy(state,side,slot);if(Number(e.Psychic||0)+Number(e.Miracle||0)>0)return 0;
     }
@@ -865,7 +872,7 @@
     const aqGluey=state.format==='classic'&&['player','opponent'].some(w=>pokemonOn(state.sides[w]).some(p=>['ecard2-3','ecard2-H3'].includes(p.cardId)&&!effects.abilitiesSuppressed(state,w,p,data.cardById)));
     const aqHeavy=state.format==='classic'&&slot?.cardId==='ecard2-23'&&Number(slot.energy?.Grass||0)>0?2:0;
     const aqMagnet=state.format==='classic'&&slot?.cardId==='ecard2-91'&&!effects.abilitiesSuppressed(state,side,slot,data.cardById)?state.sides[side].bench.filter(p=>data.cardById(p?.cardId)?.name==='Magnemite').length:0;
-    return Math.max(0,Number(data.cardById(slot.cardId).retreat||0)+effects.modifierAmount(state,side,slot,'retreatCost',data.cardById)+stadiumCost+aqHeavy+(aqGluey?1:0)-aqMagnet-ex6Dodrio-2*(slot.specialEnergy||[]).filter(ref=>ref.cardId==='xy4-112').length+Number(slot.dp2RetreatAdjustment||0)+bw7Jellicent-(bw9Glaceon?2:0));}
+    return Math.max(0,printedRetreat+effects.modifierAmount(state,side,slot,'retreatCost',data.cardById)+stadiumCost+aqHeavy+(aqGluey?1:0)-aqMagnet-ex6Dodrio-2*(slot.specialEnergy||[]).filter(ref=>ref.cardId==='xy4-112').length+Number(slot.dp2RetreatAdjustment||0)+bw7Jellicent-(bw9Glaceon?2:0));}
   function attackCost(state,side,attack){const slot=state.sides[side].active;let cost=effects.attackCostOverride(state,side,slot,attack,data.cardById)??attack.cost??'';
     // Some older/imported prints and conditional overrides store costs as a
     // symbol array. Array.toString() inserts commas (e.g. [R,R,C] -> R,R,C),
@@ -1047,7 +1054,8 @@
     // Pokémon Poké-Power or another Energy Zone attachment.
     if(activeToolsOf(state,slot).some(ref=>ref.cardId==='dp7-83'))own.push({name:'Energy Link',type:'activated',oncePerTurn:false,printedPowerType:'tool',disabledByStatus:false,effect:{type:'neoRule',rule:'dp7:83:energyLink'}});
     if(slot?.specialEnergy?.some(ref=>ref.cardId==='dp5-92'))own.push({name:'Call Energy',type:'activated',activeOnly:true,printedPowerType:'energy',disabledByStatus:false,effect:{type:'neoRule',rule:'dp5:92:callEnergy'}});
-    if(!card?.isLevelX||!slot||slot.stack?.length<2)return own;
+    if(!(card?.isLevelX||card?.breakEvolution)||!slot||slot.stack?.length<2)return own;
+    // Same previous-card inheritance for LV.X and BREAK; only play timing differs.
     const previous=data.cardById(slot.stack[slot.stack.length-2]);
     return [...own,...(previous?.abilities?.length?previous.abilities:[])];
   }
@@ -1104,11 +1112,12 @@
         }
       }
     }
-    if(current.isLevelX&&slot.stack?.length>=2){
+    if((current.isLevelX||current.breakEvolution)&&slot.stack?.length>=2){
       const prior=data.cardById(slot.stack[slot.stack.length-2]);
-      if(prior&&prior.name===current.levelUpFrom)for(const [attackIndex,attack] of (prior.attacks||[]).entries())out.push({cardId:prior.id,attackIndex,attack,previous:true});
+      const expected=current.isLevelX?current.levelUpFrom:current.evolvesFrom;
+      if(prior&&classicEvolutionMatches(prior.name,expected))for(const [attackIndex,attack] of (prior.attacks||[]).entries())out.push({cardId:prior.id,attackIndex,attack,previous:true});
     }
-    if(!current.isLevelX&&effects.canUsePreviousEvolutionAttacks?.(state,side,slot,data.cardById))for(const cardId of (slot.stack||[]).slice(0,-1)){const card=data.cardById(cardId);for(const [attackIndex,attack] of (card?.attacks||[]).entries())out.push({cardId,attackIndex,attack,previous:true});}
+    if(!current.isLevelX&&!current.breakEvolution&&effects.canUsePreviousEvolutionAttacks?.(state,side,slot,data.cardById))for(const cardId of (slot.stack||[]).slice(0,-1)){const card=data.cardById(cardId);for(const [attackIndex,attack] of (card?.attacks||[]).entries())out.push({cardId,attackIndex,attack,previous:true});}
     if(state.format==='classic'&&current.id==='dp2-26'&&!effects.abilitiesSuppressed(state,side,slot,data.cardById))for(const cardId of (slot.stack||[]).slice(0,-1)){
       const card=data.cardById(cardId);if(card?.name!=='Magikarp')continue;
       for(const [attackIndex,attack] of (card.attacks||[]).entries())out.push({cardId,attackIndex,attack,previous:true});

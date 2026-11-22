@@ -1,8 +1,9 @@
 """XY8 BREAKthrough: mechanic-first, print-accurate mapping.
 
 No speculative noop fallbacks. Pure damage is noop, all other attack text
-requires an exact reusable pattern or print-specific mapping. Unhandled BREAK
-inheritance, persistent modifiers, special energies and triggered effects are gated.
+requires an exact reusable pattern or print-specific mapping. BREAK reuses
+LV.X previous-card inheritance, with normal Evolution timing; unmapped
+printed BREAK attacks, persistent modifiers and special energies are gated.
 """
 import re
 from hgss1_verified import N,S,Q,ST,H,DISC,COIN,SEARCH,BENCH,BONUS,SWITCH,DRAW,LOCK,GUARD,OPT
@@ -75,7 +76,7 @@ ATTACKS={
  ('77','Whimsy Tackle'):E('coinAttackGate',heads=N),
  ('78','Sharpshooting'):E('selectedDamage',target='opponentPokemon',amount=30),
  ('78','Bone Windmill'):E('switch',side='self',condition={'type':'opponentEx'}),
- # BREAK is gated until inherited evolution state and previous attacks work.
+ # BREAK uses shared LV.X previous-card attacks; printed card effects still require verification.
  ('81','Push Down'):E('forceOpponentSwitch',chooseBy='defender'),
 
  ('83','Nose Jet'):E('attackCoinGate',target='opponentActive',duration='opponentTurn'),

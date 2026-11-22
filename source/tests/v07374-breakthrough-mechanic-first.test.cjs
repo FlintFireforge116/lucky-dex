@@ -38,7 +38,7 @@ print(json.dumps([[str(k),e] for k,e in v.ATTACKS.items()]+[[k,e[1]] for k,e in 
  assert.ok(mapped.length>110);
  for(const [k,e] of mapped)assert.deepEqual(effects.validateEffect(e),[],k);
 });
-test('No silent noop for unmapped printed attacks, unhandled Abilities, BREAK or Energy',()=>{
+test('BREAK shares LV.X inheritance; no silent noop for genuinely unsupported printed effects',()=>{
  const cards=runPy(String.raw`import json,sys,importlib.util
 p=sys.argv[1];sys.path.insert(0,p);spec=importlib.util.spec_from_file_location('xy8',p+'/build-xy8.py');m=importlib.util.module_from_spec(spec);spec.loader.exec_module(m)
 def row(n,name,typ='Pokémon',sub=None,att=None,abs=None):return[str(n),name,typ,sub or (['Basic'] if typ=='Pokémon' else ['Item']),100,['Grass'],None,att or [],abs or [],None,None,1,'Common',[],None,None]
@@ -46,8 +46,10 @@ rows=[row('1','Paras',att=[['Blot',['G'],'10','Heal 10 damage from this Pokémon
 print(json.dumps(m.generate(rows)))`);
  const by=Object.fromEntries(cards.map(c=>[c.id,c]));
  assert.equal(by['xy8-1'].battleEnabled,true);
- for(const id of ['xy8-2','xy8-12','xy8-151','xy8-145']){assert.equal(by[id].battleEnabled,false,id);assert.equal(by[id].deckEligible,false,id);assert.ok(by[id].support.reasons.length,id)}
+ for(const id of ['xy8-2','xy8-151','xy8-145']){assert.equal(by[id].battleEnabled,false,id);assert.equal(by[id].deckEligible,false,id);assert.ok(by[id].support.reasons.length,id)}
  assert.equal(by['xy8-12'].breakEvolution,true);
+ assert.equal(by['xy8-12'].battleEnabled,true,'BREAK is not a separate engine block');
+ assert.equal(by['xy8-12'].upgradeInheritance,'previous');
  assert.equal(by['xy8-33'].abilities[0].name,'Abyssal Hand');
  assert.deepEqual(effects.validateEffect(by['xy8-33'].abilities[0].effect),[]);
 });
@@ -67,7 +69,8 @@ test('Pinned XY8 runtime retains complete official catalogue and no fake enabled
  }
  assert.ok(xy8.coverage().battleEnabled>=60,'Mechanic-first pass must deliver substantial real playable coverage');
  assert.equal(xy8.cardById('xy8-146a').name,"Professor's Letter");
- for(const id of ['xy8-12','xy8-50','xy8-79','xy8-92','xy8-104','xy8-113'])assert.equal(xy8.cardById(id).battleEnabled,false,'No fabricated BREAK inheritance');
+ for(const id of ['xy8-12','xy8-50','xy8-92','xy8-104','xy8-113'])assert.equal(xy8.cardById(id).battleEnabled,true,'BREAK uses verified prior-card inheritance');
+ assert.equal(xy8.cardById('xy8-79').battleEnabled,false,'Bone Revenge remains gated until its scaling effect is implemented');
 });
 
 test('Mechanic reuse uses Energy UNITS, preserves physical top-deck cards and truly discards opponent hand',()=>{

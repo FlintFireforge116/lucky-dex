@@ -33,7 +33,7 @@ const SET_IDS=Object.freeze(['base1','base2','base3','base5','gym1','gym2','neo1
 // Dragon is a Pokémon type, never a Basic Energy type. Include it as an
 // archetype choice; actual deck Energy comes from each Dragon's printed costs.
 const ARCHETYPE_TYPES=Object.freeze([...new Set([...decks.ENERGY_TYPES,'Colorless','Dragon'])]);
-const STAGE_RANK=Object.freeze({'Basic':0,'Stage 1':1,'Stage 2':2,'Level-Up':3});
+const STAGE_RANK=Object.freeze({'Basic':0,'Stage 1':1,'Stage 2':2,'Level-Up':3,'BREAK':3});
 const RARITY_FOCUS=Object.freeze([{id:'any',label:'Any rarity'},{id:'common',label:'Common'},{id:'uncommon',label:'Uncommon'},{id:'rare',label:'Rare / Holo'},{id:'ultra',label:'Ultra Rare · V / ex / VMAX'}]);
 function rarityTier(card){
  // Original Pokemon-ex prints are Ultra/ex targets even when the printed

@@ -1,13 +1,23 @@
-# XY8 BREAKthrough remaining 57 prints — mechanic-first handoff
+# XY8 BREAKthrough remaining 52 projected prints — mechanic-first handoff (repaired)
 
-This is the **pre-CI static inventory** against the pinned official XY8 catalogue and `scripts/xy8_verified.py` as of 2026-11-22. It projects 108 fully mapped prints and **57 gated prints**. For the exact compiled result, inspect the build-generated `docs/XY8_BUILD_COVERAGE.json` and card `support.reasons`; never mark a print playable until its whole printed effect is implemented and tested.
+This is the **pre-CI static inventory** against the pinned official XY8 catalogue and `scripts/xy8_verified.py` as of 2026-11-22. Originally projected 108 mapped and 57 gated; the 2026-11-22 repair projects **113 mapped and 52 gated** after sharing the LV.X inheritance path with BREAK. Exact numbers require build generation. For the exact compiled result, inspect the build-generated `docs/XY8_BUILD_COVERAGE.json` and card `support.reasons`; never mark a print playable until its whole printed effect is implemented and tested.
 
 Instead of implementing these in arbitrary number batches, address their shared mechanics **once**, and then unlock every affected print together. Where a card has multiple unresolved effects, both must pass before enabling it.
 
-## Group 1 — BREAK inheritance (6)
+## Group 1 — LV.X-reused BREAK upgrade, no separate BREAK engine
 
-- 12 Chesnaught BREAK; 50 Raichu BREAK; 79 Marowak BREAK; 92 Zoroark BREAK; 104 Florges BREAK; 113 Noivern BREAK.
-- Shared implementation: correct BREAK evolution target and stack, previous form's attacks and abilities, previous Weakness/Resistance/Retreat, new BREAK HP and attack, tool/energy attachment persistence, bench/active transitions, knockout, devolution and CPU attack selection. Keep gated until all these work.
+- The previous LV.X stack is reused for five BREAK cards: Chesnaught #12,
+  Raichu #50, Zoroark #92, Florges #104 and Noivern #113. Their mapped
+  printed attacks/Ability are already in xy8_verified.py and no longer gated
+  merely because the word BREAK appears.
+- Marowak BREAK #79 remains gated ONLY because Bone Revenge needs its precise
+  opponent-Prize-taken damage scaling; add a tested reusable damage rule.
+- Live inheritance includes previous attacks and Abilities, previous type,
+  Weakness/Resistance/Retreat, new HP and printed moves, plus attachments.
+- Difference from LV.X: BREAK evolves Active or Bench as a normal evolution;
+  LV.X levels up Active only. Regression tests cover both forms and defensive
+  inheritance. Add phone/CPU tests during full-set audit.
+
 
 ## Group 2 — Trainers / Tools / Stadium (13)
 

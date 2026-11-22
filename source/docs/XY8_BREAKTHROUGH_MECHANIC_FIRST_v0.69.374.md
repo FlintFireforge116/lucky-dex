@@ -1,6 +1,8 @@
 # LuckyDex 0.69.374 — XY8 BREAKthrough mechanic-first integration
 
-Date: 2026-11-22. This patch follows the new LOCKED mechanic-first workflow in `docs/LUCKYDEX_MASTER_RULES.txt` (document v2.54). It is **an initial large implementation pass, not a declaration of full set completion**.
+> **Build repair update (22 November 2026):** Original GitHub run #663 failed the version-label check, not a card effect. `XY8_BUILD_REPAIR_BREAK_LVX_REUSE_v0.69.374.md` supersedes the initial BREAK gating statements below: BREAK now shares LV.X previous-card inheritance, five BREAK prints project playable, and the new overall projection is **113 ready / 52 gated**. The original 108/57 counts below are preserved only as the initial-pass historical inventory.
+
+Date: 2026-11-22. This patch follows the new LOCKED mechanic-first workflow in `docs/LUCKYDEX_MASTER_RULES.txt` (document v2.55). It is **an initial large implementation pass, not a declaration of full set completion**.
 
 ## Source catalogue and coverage
 

@@ -872,7 +872,7 @@ tasks.register('generateXY8ForApk', Exec) {
 tasks.register('auditXY8ForApk', Exec) {
     dependsOn tasks.named('generateXY8ForApk')
     workingDir rootProject.projectDir
-    commandLine 'node', '--test', 'tests/v07374-breakthrough-mechanic-first.test.cjs'
+    commandLine 'node', '--test', 'tests/v07374-breakthrough-mechanic-first.test.cjs', 'tests/v07374-breakthrough-lvx-reuse.test.cjs'
 }
 tasks.matching { it.name == 'preBuild' || (it.name.startsWith('merge') && it.name.endsWith('Assets')) }.configureEach {
     dependsOn tasks.named('auditXY8ForApk')
