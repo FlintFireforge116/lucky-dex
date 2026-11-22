@@ -9,6 +9,7 @@ from hgss1_verified import N,S,Q,ST,H,DISC,COIN,SEARCH,BENCH,BONUS,SWITCH,DRAW,L
 E=lambda t,**kw: {'type':t,**kw}
 ATK={
  ('1','Hide a Berry'):S(DRAW(2),E('xy10HandToDeckBottom',side='self')),
+ ('71','Light Steps'):E('xy10LightSteps'),
  ('1','Wrap'):Q(ST('paralysis')),
  ('3','Solar Ray'):H(20,'selfAll'),
  ('3','Leaf Cutter'):Q(BONUS(30)),
@@ -61,6 +62,8 @@ ATK={
  ('69','Mist Purge'):S(BONUS(30,{'type':'selfHasSpecialEnergy'}),E('heal',target='selfAll',amount=30,condition={'type':'selfHasSpecialEnergy'})),
  ('72','Wonder Stage'):BONUS(50,{'type':'stadiumInPlay'}),
  ('73','Big Storm'):E('discardStadium'),
+ ('73','Dragon Trail'):E('xy10BasicLightningDamage',amount=30),
+ ('61','Guard Press'):GUARD(20),
  ('74','Turmoil Strike'):E('selectedDamage',target='opponentPokemon',amount=50,filter={'damaged':True}),
  ('76','Jet Draft'):E('neoRule',rule='xy8:derail'),
  ('77','Swallow'):E('drain'),
@@ -122,6 +125,10 @@ ABILITIES={
  'Sparkle Veil':{'type':'passive','activeOnly':True,'effect':E('modifier',stat='damageReduction',amount=30,scope='team',duration='whileActive')},
  'Regi Power':{'type':'passive','effect':E('xy10RegiPower')},
  'Pressure':{'type':'passive','activeOnly':True,'effect':E('xy10LugiaPressure')},
+ 'Hand Block':{'type':'passive','effect':E('actionLock',side='opponent',cardType='SpecialEnergy',duration='whileInPlay',condition={'type':'stadiumInPlay'})},
+ 'Metal Fortress':{'type':'passive','effect':E('xy10MetalFortress')},
+ 'Dangerous Tentacle':{'type':'activated','oncePerTurn':True,'effect':E('xy10DangerousTentacle')},
+ 'Wormadam First':{'type':'activated','oncePerTurn':False,'effect':E('xy10WormadamFirst')},
 }
 ENERGIES={
  '114':E('specialEnergy',provides={'Colorless':2}),

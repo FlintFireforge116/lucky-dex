@@ -1,6 +1,6 @@
 LUCKYDEX — MASTER PROJECT RULES AND DEVELOPMENT CONTRACT
 =========================================================
-Document version: 2.71
+Document version: 2.72
 Compiled: 22 November 2026
 Current verified APK: v0.69.384 GitHub success (run 45045876175); v0.69.385 Fates Collide Stage 3 is locally tested, GitHub APK unverified.
 Recommended repository location: ~/lucky-dex/source/docs/LUCKYDEX_MASTER_RULES.txt
@@ -4711,3 +4711,34 @@ APPENDIX — v0.69.385 FATES COLLIDE STAGE 3 AND PINNED-CATALOGUE RELEASE SAFETY
 - Mandatory before any release: scripts/check-gradle-source.py --self-test; scripts/preflight-xy10-release.py --full (fetch pinned official source and run the strict post-generator 129-print/CPU-deck audit); all affected XY9/XY10 node regressions; check both versionCode AND versionName across Gradle, HTML, JS, XY9 and XY10 release contracts; verify ZIP integrity and that it overlays source/ paths. A source-only skipped catalogue test is NEVER sufficient to claim an APK build succeeds.
 - Stage 3 test tests/v07385-fates-collide-stage3.test.cjs must be in both Gradle generated audit and the preflight --full test list. Older gated assertions must be reconciled whenever previously unsupported prints are enabled.
 - Apply via unzip -o /sdcard/Download/LuckyDex_patch_v0.69.385_FATES_COLLIDE_STAGE3.zip -d source, then run preflight --full before git add, commit and push.
+
+
+FATES COLLIDE XY10 STAGE 4 — v0.69.386 / Master Rules v2.72 (2026-11-22)
+-----------------------------------------------------------------------------
+1. The successful v0.69.385 APK run #45048155104 is the baseline. Stage 4
+   enables seven additional distinct prints: 4 Mothim, 19 Omastar BREAK,
+   23 Barbaracle, 61 Bronzong, 71 Whimsicott, 73 and 122 Kingdra-EX.
+   The strict generated-catalogue floor advances from 92 to 99 of 129.
+2. Every activated ability must use the same requestChoice/resolvingChoice
+   round trip for human and CPU, with explicitly validated final targets.
+   Omastar BREAK Dangerous Tentacle may select ONLY opponent Benched EX;
+   Mega Catcher uses the same valid benchIndex/choiceBenchIndex contract.
+3. Source/target restrictions matter: Wormadam First moves an EXISTING 10
+   damage counter from a damaged Wormadam; Light Steps moves a REAL attached
+   Basic Energy unit or preserves the UID of a physically attached Special.
+   Kingdra's Dragon Trail counts Basic Lightning attached to THAT attacker,
+   not Special Lightning units or unused cards in the Energy Zone.
+4. Barbaracle Hand Block applies only while a Stadium is in play, only to
+   the opponent's from-hand Special Energy attachments, and shuts off under
+   Ability suppression. Bronzong Metal Fortress protects friendly BENCH
+   only from OPPONENT attack effects, including damage. Do not block own
+   recoil or opponent attack damage to the Active Pokémon.
+5. `source/tests/v07386-fates-collide-stage4.test.cjs` is a mandatory local
+   and post-generation GitHub APK test. The generated catalogue must enable
+   the seven Stage 4 prints and keep unsupported prints gated. The release
+   preflight must include all current stages, check the Gradle source syntax,
+   and run with `--full` ON THE USER'S TERMUX before commit/push.
+6. When exporting a ZIP, include ONLY changed paths under `source/` as a
+   changed-files-only overlay. Keep versionCode, Gradle versionName, HTML
+   title, boot JS, current and preceding set contracts identical. Never
+   describe a future APK build as successful until its GitHub run succeeds.

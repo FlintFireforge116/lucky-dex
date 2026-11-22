@@ -19,6 +19,7 @@ EXPECTED_XY10_AUDIT = [
     'tests/v07383-fates-collide-effects.test.cjs',
     'tests/v07384-fates-collide-stage2.test.cjs',
     'tests/v07385-fates-collide-stage3.test.cjs',
+    'tests/v07386-fates-collide-stage4.test.cjs',
 ]
 
 class GradleSourceError(ValueError):
@@ -113,6 +114,7 @@ def self_test() -> None:
     for name, source in [
         ('missing quote', bad_quote),
         ('missing test comma', good.replace("effects.test.cjs', 'tests/", "effects.test.cjs' 'tests/")),
+        ('missing newest-stage test', good.replace(", 'tests/v07386-fates-collide-stage4.test.cjs'", "")),
         ('unclosed Gradle block', good+'\n{'),
     ]:
         try:

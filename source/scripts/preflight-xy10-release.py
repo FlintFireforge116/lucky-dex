@@ -19,7 +19,7 @@ def check():
  subprocess.run([sys.executable,'scripts/check-gradle-source.py','--self-test'],cwd=ROOT,check=True)
  c=json.loads((ROOT/'scripts/xy10_release_contract.json').read_text())
  assert c['set']=='xy10' and c['printedTotal']==129 and c['attackPrints']==147 and c['abilities']==21 and c['pokemonBreak']==5
- assert c['stage'] in ('mechanic-first','mechanic-reuse-2','mechanic-reuse-3') and c['expectedPlayableMinimum']>=30
+ assert c['stage'] in ('mechanic-first','mechanic-reuse-2','mechanic-reuse-3','mechanic-reuse-4') and c['expectedPlayableMinimum']>=30
  assert isinstance(c['requiredEnabledNumbers'],list) and len(c['requiredEnabledNumbers'])>=20
  assert len(set(c['requiredEnabledNumbers']))==len(c['requiredEnabledNumbers'])
  assert c['pin']=='aa097c8da85e960a5afa4f3b96312f64dcbec871'
@@ -39,7 +39,7 @@ def check():
   assert item in gradle,'Missing stage '+item
  assert "dependsOn tasks.named('preflightXY10ContractForApk')" in gradle
  assert "dependsOn tasks.named('auditXY9ForApk')" in gradle
- for test in ['v07383-fates-collide-integration.test.cjs','v07383-fates-collide-effects.test.cjs','v07384-fates-collide-stage2.test.cjs','v07385-fates-collide-stage3.test.cjs']:
+ for test in ['v07383-fates-collide-integration.test.cjs','v07383-fates-collide-effects.test.cjs','v07384-fates-collide-stage2.test.cjs','v07385-fates-collide-stage3.test.cjs','v07386-fates-collide-stage4.test.cjs']:
   assert test in gradle,'Missing mandatory generated catalogue audit '+test
  data=(ROOT/'app/src/main/assets/tcg-classic-battle-data.js').read_text()
  assert 'LuckyDexClassicTCGXY10' in data and '...xy10.CARDS' in data and 'xy10.cardById(id)' in data
@@ -68,6 +68,9 @@ def check():
  assert 'Safeguard' in v.ABILITIES
  for n in ['101','104','113']:assert n in v.TRAINERS, 'XY10 Stage 3 Trainer missing '+n
  assert ('55','Endgame') in v.ATK and ('119','Endgame') in v.ATK
+ for key in [('61','Guard Press'),('71','Light Steps'),('73','Dragon Trail'),('122','Dragon Trail')]:assert key in v.ATK,'Stage 4 attack missing '+str(key)
+ for ability in ['Wormadam First','Dangerous Tentacle','Hand Block','Metal Fortress']:assert ability in v.ABILITIES,'Stage 4 ability missing '+ability
+ for n in ['4','19','23','61','71','73','122']:assert n in c['requiredEnabledNumbers'],'Stage 4 catalogue contract missing '+n
  print('PASS: XY10 source-only contract, version sync, registry entries, stale-test guards and pinned-source preflight.')
 
 def main():
@@ -78,7 +81,7 @@ def main():
   assert (ROOT/'data/classic/xy10-print-compact.json').is_file(), 'The pinned 129-print dataset was not generated'
   assert (ROOT/'app/src/main/assets/tcg-classic-fates-collide.js').stat().st_size>10000, 'The generated Fates Collide runtime is missing or still a stub'
   env={**os.environ,'GITHUB_ACTIONS':'true'}
-  subprocess.run(['node','--test','tests/v07383-fates-collide-integration.test.cjs','tests/v07383-fates-collide-effects.test.cjs','tests/v07384-fates-collide-stage2.test.cjs','tests/v07385-fates-collide-stage3.test.cjs'],cwd=ROOT,check=True,env=env)
+  subprocess.run(['node','--test','tests/v07383-fates-collide-integration.test.cjs','tests/v07383-fates-collide-effects.test.cjs','tests/v07384-fates-collide-stage2.test.cjs','tests/v07385-fates-collide-stage3.test.cjs','tests/v07386-fates-collide-stage4.test.cjs'],cwd=ROOT,check=True,env=env)
   print('PASS: Full official XY10 generated 129-print catalogue, deck and effect audit.')
  else:
   # This preflight is run in GitHub Actions *before* generateXY10ForApk.
@@ -87,7 +90,7 @@ def main():
   # the official source and generated assets actually exist.
   source_only_env={**os.environ}
   source_only_env.pop('GITHUB_ACTIONS',None)
-  subprocess.run(['node','--test','tests/v07383-fates-collide-integration.test.cjs','tests/v07383-fates-collide-effects.test.cjs','tests/v07384-fates-collide-stage2.test.cjs','tests/v07385-fates-collide-stage3.test.cjs'],cwd=ROOT,check=True,env=source_only_env)
+  subprocess.run(['node','--test','tests/v07383-fates-collide-integration.test.cjs','tests/v07383-fates-collide-effects.test.cjs','tests/v07384-fates-collide-stage2.test.cjs','tests/v07385-fates-collide-stage3.test.cjs','tests/v07386-fates-collide-stage4.test.cjs'],cwd=ROOT,check=True,env=source_only_env)
   print('SOURCE ONLY: Pinned catalogue test deferred. BEFORE PUSHING, run: python3 scripts/preflight-xy10-release.py --full')
 if __name__=='__main__':
  try: main()

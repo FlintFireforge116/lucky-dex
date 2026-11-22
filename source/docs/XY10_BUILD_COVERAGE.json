@@ -1,10 +1,7 @@
 {
   "printed": 129,
-  "battleReady": 92,
+  "battleReady": 99,
   "gated": {
-    "xy10-4": [
-      "Unimplemented printed Ability: Wormadam First"
-    ],
     "xy10-9": [
       "Unimplemented printed attack: Flying Flare"
     ],
@@ -16,12 +13,6 @@
     ],
     "xy10-18": [
       "Unimplemented printed Ability: Restoring Beam"
-    ],
-    "xy10-19": [
-      "Unimplemented printed Ability: Dangerous Tentacle"
-    ],
-    "xy10-23": [
-      "Unimplemented printed Ability: Hand Block"
     ],
     "xy10-24": [
       "Unimplemented printed attack: Energy Extract",
@@ -54,22 +45,12 @@
       "Unimplemented printed attack: Dark Mountain",
       "Unimplemented printed Ability: Raging Roar"
     ],
-    "xy10-61": [
-      "Unimplemented printed attack: Guard Press",
-      "Unimplemented printed Ability: Metal Fortress"
-    ],
     "xy10-62": [
       "Unimplemented printed attack: Metal Rain"
     ],
     "xy10-64": [
       "Unimplemented printed attack: Rapid Blaster",
       "Unimplemented printed Ability: Drive Change"
-    ],
-    "xy10-71": [
-      "Unimplemented printed attack: Light Steps"
-    ],
-    "xy10-73": [
-      "Unimplemented printed attack: Dragon Trail"
     ],
     "xy10-76": [
       "Restored Pokémon requires fossil-entry battle legality audit"
@@ -115,9 +96,6 @@
     "xy10-120": [
       "Unimplemented printed attack: Rapid Blaster",
       "Unimplemented printed Ability: Drive Change"
-    ],
-    "xy10-122": [
-      "Unimplemented printed attack: Dragon Trail"
     ],
     "xy10-125": [
       "Unimplemented printed attack: Suppression",

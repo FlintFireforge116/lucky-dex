@@ -1,14 +1,14 @@
 {
   "set": "xy10",
-  "release": "0.69.385",
+  "release": "0.69.386",
   "printedTotal": 129,
   "attackPrints": 147,
   "abilities": 21,
   "pokemonBreak": 5,
-  "expectedPlayableMinimum": 91,
-  "stage": "mechanic-reuse-3",
+  "expectedPlayableMinimum": 99,
+  "stage": "mechanic-reuse-4",
   "pin": "aa097c8da85e960a5afa4f3b96312f64dcbec871",
-  "notes": "Stage 3: verified Mega-only switch, physical Ultra Ball discards, Fossil discard recovery, suppressed Safeguard and exact Endgame Mega attack-KO bonus. Source-only plus generated-catalogue gates remain mandatory.",
+  "notes": "Stage 4: 7 additional prints enabled through audited attack/power reuse, persistent Bench protection, opponent-only Energy locks, EX-only Bench choices and exact attached Basic Lightning damage; generated catalogue pre-push mandatory.",
   "requiredEnabledNumbers": [
     "1",
     "7",
@@ -50,6 +50,13 @@
     "119",
     "121",
     "123",
-    "124"
+    "124",
+    "4",
+    "19",
+    "23",
+    "61",
+    "71",
+    "73",
+    "122"
   ]
 }
