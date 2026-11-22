@@ -8,8 +8,8 @@ android {
         applicationId 'com.example.luckydex'
         minSdk 26
         targetSdk 35
-        versionCode 7398
-        versionName '0.69.398'
+        versionCode 7399
+        versionName '0.69.399'
     }
 
     signingConfigs {
@@ -944,7 +944,7 @@ tasks.matching { it.name == 'preBuild' || (it.name.startsWith('merge') && it.nam
     dependsOn tasks.named('auditXY11ForApk')
 }
 
-// v0.69.398 — XY12 Evolutions: all 113 prints fully enabled;
+// v0.69.399 — XY12 Evolutions: all 113 prints fully enabled;
 // strict gameplay + deck-quality audits. Gradle generates + validates before merging Android assets.
 tasks.register('preflightXY12ContractForApk', Exec) {
     workingDir rootProject.projectDir
@@ -963,4 +963,25 @@ tasks.register('auditXY12ForApk', Exec) {
 }
 tasks.matching { it.name == 'preBuild' || (it.name.startsWith('merge') && it.name.endsWith('Assets')) }.configureEach {
     dependsOn tasks.named('auditXY12ForApk')
+}
+
+// v0.69.399 Sun & Moon SM1: 173 immutable prints, explicit GX restrictions,
+// generated runtime and exact deck-quality audit BEFORE APK asset merge.
+tasks.register('preflightSM1ContractForApk', Exec) {
+    workingDir rootProject.projectDir
+    commandLine (System.getenv('LUCKYDEX_PYTHON') ?: 'python3'), 'scripts/preflight-sm1-release.py'
+}
+tasks.register('generateSM1ForApk', Exec) {
+    dependsOn tasks.named('preflightSM1ContractForApk')
+    dependsOn tasks.named('auditXY12ForApk')
+    workingDir rootProject.projectDir
+    commandLine (System.getenv('LUCKYDEX_PYTHON') ?: 'python3'), 'scripts/build-sm1.py'
+}
+tasks.register('auditSM1ForApk', Exec) {
+    dependsOn tasks.named('generateSM1ForApk')
+    workingDir rootProject.projectDir
+    commandLine 'node', '--test', 'tests/v07399-sun-moon-integration.test.cjs', 'tests/v07333-classic-deck-quality.test.cjs'
+}
+tasks.matching { it.name == 'preBuild' || (it.name.startsWith('merge') && it.name.endsWith('Assets')) }.configureEach {
+    dependsOn tasks.named('auditSM1ForApk')
 }

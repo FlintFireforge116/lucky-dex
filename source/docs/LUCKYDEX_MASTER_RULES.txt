@@ -1,8 +1,8 @@
 LUCKYDEX — MASTER PROJECT RULES AND DEVELOPMENT CONTRACT
 =========================================================
-Document version: 2.76
+Document version: 2.77
 Compiled: 22 November 2026
-Current verified APK: v0.69.387 Fates Collide Stage 5 (GitHub run 45051296127 succeeded). Local v0.69.389 Fates Collide independent audit passed; Steam Siege v0.69.390 is a pre-GitHub first-stage integration, not a verified APK.
+Current verified APK: v0.69.398 Evolutions independent audit (GitHub Actions run 693 succeeded on 22 November 2026). v0.69.399 Sun & Moon SM1 Stage 1 is local-only pending a GitHub APK build.
 Recommended repository location: ~/lucky-dex/source/docs/LUCKYDEX_MASTER_RULES.txt
 Project: LuckyDex — Android application/PWA, managed with Termux and GitHub
 
@@ -5018,3 +5018,53 @@ Steam Siege full gameplay mapping reaches all 116 pinned prints; previously gate
 3. New-set independent audits must test both effects and printed print variants, plus multiple random player/CPU deck seeds. Add new independent-audit tests to both the set-specific local `--full` preflight AND the Gradle APK audit task. Do not sign off an APK based on local tests alone; confirm GitHub Actions after the user pushes.
 4. For XY12, `scripts/preflight-xy12-release.py --full` and the GitHub `auditXY12ForApk` test task must include tests/v07398-evolutions-independent-audit.test.cjs after v07396 and v07397. Keep version contracts in XY9–XY12, UI, preflights and app/build.gradle consistent for every next release.
 === END v0.69.398 LESSONS ===
+
+
+=== v0.69.399 SUN & MOON SM1 / GX ERA FIRST INTEGRATION (v2.77) ===
+1. [LOCKED] The next set after Evolutions is official Sun & Moon Base SM1. The
+   pinned source is pokemon-tcg-data commit 90f27d0e14cefe48ccb2b8922a7a356b2fcf0072,
+   Git blob b3f5cd6f524ce45d59462fd2a56e237ff06063dc. Preserve exactly
+   173 distinct records: collector numbers 1–172 AND Eevee print 101a.
+   Source totals: 130 Pokemon, 30 Trainers, 13 physical Energy prints;
+   238 attacks, 26 printed Abilities, 27 Pokemon-GX prints and 27 GX attacks.
+2. [CURRENT] SM1 Stage 1 exposes all 173 catalogue records with official
+   printed costs, base damage and listed Abilities; 104 are deliberately
+   playable and 69 are safely gated with explicit reasons in
+   docs/SM1_BUILD_COVERAGE.json. Do NOT claim all 173 are battle-ready.
+   Build from scripts/build-sm1.py and pinned sm1-print-compact.json;
+   maintain scripts/sm1_release_contract.json and strict generated tests.
+3. [LOCKED] Pokemon-GX: an eligible player may use only one GX attack PER
+   GAME, across all Pokemon; use the existing shared gxAttackUsed state.
+   A knocked-out Pokemon-GX gives the opponent TWO Prize cards, using the
+   normal KO/Prize pipeline. Alternate full art/secret prints must have
+   exactly the same mechanics as their matching base GX print. Never fake a
+   missing GX move with a plain attack or noop to enable the card.
+4. [LOCKED] SM1's 11 Basic Energy prints and Special Energy #136 Double
+   Colorless and #137 Rainbow are PHYSICAL cards in deck/hand/discard,
+   distinct from LuckyDex's virtual basic Energy Zone. DCE provides two
+   Colorless; Rainbow #137 remains gated until attaching the card's flexible
+   one-energy provision AND its self-damage on attachment are supported.
+   Some SM1 Basic Energy types repeat across print numbers and must remain
+   distinct printed cards.
+5. [CURRENT] Unimplemented GX attacks, reactive abilities, rare new Trainers,
+   and other non-trivial effects stay gated. Every printed Ability is listed
+   in the generated catalogue even on gated prints. Do not present gated
+   Pokemon/Trainer/Energy cards as selectable for player or CPU decks.
+6. [CHECK] Evolutions and earlier attack-choice timing lessons apply:
+   damage increases must resolve before the damage phase, while Energy/Tool
+   discards and optional actions occur at their correct printed timing.
+   Check GX effects, attached Special Energy and Pokemon-GX Prize rewards
+   with independent battle-level probes as additional batches are finished.
+7. [LOCKED] Gradle APK tasks must invoke preflightSM1ContractForApk,
+   generateSM1ForApk and auditSM1ForApk (which MUST include both
+   tests/v07399-sun-moon-integration.test.cjs AND
+   tests/v07333-classic-deck-quality.test.cjs). Before every Termux push:
+   `python3 source/scripts/check-gradle-source.py --self-test` then
+   `(cd source && python3 scripts/preflight-sm1-release.py --full && python3 scripts/preflight-xy12-release.py --full && python3 scripts/preflight-xy11-release.py --full && python3 scripts/preflight-xy10-release.py --full)`.
+   Never disable the cross-set deck-quality gate to make GitHub pass.
+8. [LOCKED] Overlay ZIPs contain paths relative to source/. Install using
+   `unzip -o PATCH.zip -d source`, then run all preflights BEFORE committing
+   and pushing. Confirm GitHub's real APK success after the push and only
+   then proceed to the remaining 69 gated prints. See
+   docs/SUN_MOON_SM1_STAGE1_v0.69.399.md and SM1_BUILD_COVERAGE.json.
+=== END SM1 v0.69.399 INITIAL GX RULES ===
