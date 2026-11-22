@@ -23934,10 +23934,10 @@ if(r==='lastResort')return ss.hand.length===0?[{}]:[];if(r==='surgeSwap')return 
   function modifierAmount(state,side,slot,stat,cardById){
     if(!slot)return 0;const values=[];
     for(const source of pokemonOn(state.sides[side])){
-      const card=cardById(source.cardId);if(!abilitiesSuppressed(state,side,source,cardById))for(const a of (card?.abilities?.length?card.abilities:Array.isArray(card?.ability)?card.ability:[card?.ability]).filter(Boolean))if(a.type==='passive'&&(!a.activeOnly||state.sides[side].active===source)&&(!a.benchOnly||state.sides[side].active!==source))passiveModifiers(a.effect,source,side,state,slot,stat,values,cardById);
+      const card=cardById(source.cardId);if(!abilitiesSuppressed(state,side,source,cardById))for(const a of upgradeAbilities(source,cardById))if(a.type==='passive'&&(!a.activeOnly||state.sides[side].active===source)&&(!a.benchOnly||state.sides[side].active!==source))passiveModifiers(a.effect,source,side,state,slot,stat,values,cardById);
       for(const tool of activeToolsOf(state,source,cardById))passiveModifiers(cardById(tool.cardId)?.effect,source,side,state,slot,stat,values,cardById);for(const ref of temporaryTrainersOf(source))passiveModifiers(cardById(ref.cardId)?.effect,source,side,state,slot,stat,values,cardById);
     }
-    const foeSide=side==='player'?'opponent':'player';for(const source of pokemonOn(state.sides[foeSide])){if(abilitiesSuppressed(state,foeSide,source,cardById))continue;const card=cardById(source.cardId);for(const a of (card?.abilities?.length?card.abilities:Array.isArray(card?.ability)?card.ability:[card?.ability]).filter(Boolean))if(a.type==='passive'&&a.effect?.scope==='opponentActive'&&(!a.activeOnly||state.sides[foeSide].active===source)&&(!a.benchOnly||state.sides[foeSide].active!==source))passiveModifiers(a.effect,source,foeSide,state,slot,stat,values,cardById);}
+    const foeSide=side==='player'?'opponent':'player';for(const source of pokemonOn(state.sides[foeSide])){if(abilitiesSuppressed(state,foeSide,source,cardById))continue;const card=cardById(source.cardId);for(const a of upgradeAbilities(source,cardById))if(a.type==='passive'&&a.effect?.scope==='opponentActive'&&(!a.activeOnly||state.sides[foeSide].active===source)&&(!a.benchOnly||state.sides[foeSide].active!==source))passiveModifiers(a.effect,source,foeSide,state,slot,stat,values,cardById);}
     if(state?.format==='classic'&&stat==='attackDamage'&&state.sides[side]?.active===slot&&
        cardById(slot.cardId)?.types?.includes('Dragon')){
       // Altaria's Fight Song is cumulative and only increases attacks on the
@@ -23978,7 +23978,7 @@ if(r==='lastResort')return ss.hand.length===0?[{}]:[];if(r==='surgeSwap')return 
   function protectionFromSources(state,side,slot,attacker,cardById,type){
     if(abilitiesSuppressed(state,side,slot,cardById))return null;
     const ctx={state,side,foeSide:side==='player'?'opponent':'player',attacker:slot,defender:attacker,cardById};
-    const card=cardById(slot.cardId),abilities=(card?.abilities?.length?card.abilities:Array.isArray(card?.ability)?card.ability:[card?.ability]).filter(Boolean);
+    const abilities=upgradeAbilities(slot,cardById);
     for(const ability of abilities){if(ability.type!=='passive'||ability.disabledByStatus&&(slot.conditions?.sleep||slot.conditions?.confusion||slot.conditions?.paralysis)||ability.activeOnly&&state.sides[side].active!==slot||ability.benchOnly&&state.sides[side].active===slot)continue;const found=passiveProtection(ability.effect,type,ctx,slot);if(found)return found;}
     for(const tool of activeToolsOf(state,slot,cardById)){const found=passiveProtection(cardById(tool.cardId)?.effect,type,ctx,slot);if(found)return found;}
     return null;

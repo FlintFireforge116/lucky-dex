@@ -2651,6 +2651,8 @@
   function reconcileSkyField(state){
     if(state?.format!=='classic'||!state.sides)return false;
     const active=state.stadium?.cardId==='xy6-89';
+    const parallel=state.stadium?.cardId==='xy8-145';
+    const limitedSide=parallel?state.stadium.xy8BenchSide:null;
     if(active){
       if(!state.xy6SkyFieldActive||state.xy6SkyFieldUid!==state.stadium.uid){
         state.xy6SkyFieldOwner=state.stadium.ownerSide||'player';
@@ -2665,7 +2667,7 @@
     }
     for(const who of ['player','opponent']){
       const s=state.sides[who];
-      const cap=active?8:state.stadium?.cardId==='gym1-124'?2:
+      const cap=active?8:parallel&&limitedSide===who?3:state.stadium?.cardId==='gym1-124'?2:
         state.stadium?.cardId==='SNAPFLORIO-108'?5:
         state.xy6SkyFieldFiveAfter?5:3;
       // Preserve the unrelated Ditto expanded Bench until its own rule ends.
@@ -2675,14 +2677,21 @@
       s.benchLimit=ditto?Math.max(cap,4):cap;
       normalizeBenchSlots(s);
     }
-    if(active||!state.xy6SkyFieldTrim)return false;
-    // Do not interrupt KO promotion or another unresolved card choice.
+    // Parallel City can follow Sky Field, leaving up to eight Benched
+    // Pokémon in play. Its indicated player must choose which to discard
+    // down to THREE; the other player keeps the normal post-Sky Field cap.
+    // Use the existing physical-card discard flow, never an automatic KO.
+    if(active||(!state.xy6SkyFieldTrim&&!parallel))return false;
     if(state.phase!=='battle'||state.pendingChoice)return false;
-    const first=state.xy6SkyFieldOwner||'player',other=first==='player'?'opponent':'player';
-    const owner=[first,other].find(w=>state.sides[w].bench.length>5);
+    const first=parallel?(limitedSide||state.stadium.ownerSide||'player'):(state.xy6SkyFieldOwner||'player');
+    const other=first==='player'?'opponent':'player';
+    const cap=who=>parallel?Math.max(0,Number(state.sides[who]?.benchLimit??3)):5;
+    const owner=[first,other].find(w=>state.sides[w].bench.length>cap(w));
     if(!owner){delete state.xy6SkyFieldTrim;return false;}
+    const keep=cap(owner);
     state.pendingChoice={kind:'skyFieldBenchTrim',special:'skyFieldBenchTrim',side:owner,originSide:first,
-      prompt:'Sky Field left play — choose one of your Benched Pokémon to discard (including all attached cards). Keep five.'};
+      prompt:(parallel&&owner===limitedSide?'Parallel City limits this player to three Benched Pokémon. ':'Sky Field left play. ')+
+        `Choose a Benched Pokémon to discard with all attachments; keep ${keep}.`};
     state.phase='effectChoice';state.choiceSide=owner;
     return true;
   }

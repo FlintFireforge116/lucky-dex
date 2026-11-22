@@ -8,8 +8,8 @@ android {
         applicationId 'com.example.luckydex'
         minSdk 26
         targetSdk 35
-        versionCode 7376
-        versionName '0.69.376'
+        versionCode 7377
+        versionName '0.69.377'
     }
 
     signingConfigs {
@@ -872,7 +872,7 @@ tasks.register('generateXY8ForApk', Exec) {
 tasks.register('auditXY8ForApk', Exec) {
     dependsOn tasks.named('generateXY8ForApk')
     workingDir rootProject.projectDir
-    commandLine 'node', '--test', 'tests/v07374-breakthrough-mechanic-first.test.cjs', 'tests/v07374-breakthrough-lvx-reuse.test.cjs', 'tests/v07375-breakthrough-shared-mechanics.test.cjs', 'tests/v07376-breakthrough-complete.test.cjs'
+    commandLine 'node', '--test', 'tests/v07374-breakthrough-mechanic-first.test.cjs', 'tests/v07374-breakthrough-lvx-reuse.test.cjs', 'tests/v07375-breakthrough-shared-mechanics.test.cjs', 'tests/v07376-breakthrough-complete.test.cjs', 'tests/v07377-breakthrough-audit.test.cjs'
 }
 tasks.matching { it.name == 'preBuild' || (it.name.startsWith('merge') && it.name.endsWith('Assets')) }.configureEach {
     dependsOn tasks.named('auditXY8ForApk')

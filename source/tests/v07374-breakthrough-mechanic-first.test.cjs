@@ -23,7 +23,9 @@ test('XY8 registration: human, CPU, deck editor, collection and script order',()
 });
 test('Pinned XY8 generator and mandatory Gradle audit, source rules documented',()=>{
  const gradle=fs.readFileSync(path.join(root,'app/build.gradle'),'utf8');
- assert.match(gradle,/versionCode 7376/);assert.match(gradle,/versionName '0\.69\.376'/);
+ const version=gradle.match(/versionName '([0-9]+\.[0-9]+\.[0-9]+)'/)?.[1];
+ assert.ok(version,'Gradle versionName must exist');
+ assert.match(gradle,/versionCode \d+/);
  assert.match(gradle,/tasks\.register\('generateXY8ForApk'/);
  assert.match(gradle,/tasks\.register\('auditXY8ForApk'/);
  assert.match(gradle,/v07375-breakthrough-shared-mechanics\.test\.cjs/);
@@ -34,7 +36,10 @@ test('Pinned XY8 generator and mandatory Gradle audit, source rules documented',
  const master=fs.readFileSync(path.join(root,'docs/LUCKYDEX_MASTER_RULES.txt'),'utf8');
  assert.match(master,/MECHANIC-FIRST SET DELIVERY CONTRACT/);
  assert.match(master,/Do NOT enable a\s+card with unsupported printed effects/);
- assert.ok(fs.readFileSync(path.join(assets,'app-v0167.js'),'utf8').includes("window.__LUCKYDEX_BUILD='0.69.376'"));
+ assert.ok(fs.readFileSync(path.join(assets,'app-v0167.js'),'utf8').includes(`window.__LUCKYDEX_BUILD='${version}'`));
+ const ui=fs.readFileSync(path.join(assets,'index.html'),'utf8');
+ assert.ok(ui.includes(`id="titleBuildVersion">v${version}</span>`));
+ assert.ok(ui.includes(`LUCKY DEX · v${version}`));
 });
 test('All mapped attacks, Trainers and abilities validate via existing battle effect contract',()=>{
  const mapped=runPy(String.raw`import json,sys;sys.path.insert(0,sys.argv[1]);import xy8_verified as v
