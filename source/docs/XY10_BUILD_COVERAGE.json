@@ -1,0 +1,151 @@
+{
+  "printed": 129,
+  "battleReady": 86,
+  "gated": {
+    "xy10-4": [
+      "Unimplemented printed Ability: Wormadam First"
+    ],
+    "xy10-9": [
+      "Unimplemented printed attack: Flying Flare"
+    ],
+    "xy10-14": [
+      "Unimplemented printed Ability: Flare Witch"
+    ],
+    "xy10-17": [
+      "Restored Pokémon requires fossil-entry battle legality audit"
+    ],
+    "xy10-18": [
+      "Unimplemented printed Ability: Restoring Beam"
+    ],
+    "xy10-19": [
+      "Unimplemented printed Ability: Dangerous Tentacle"
+    ],
+    "xy10-23": [
+      "Unimplemented printed Ability: Hand Block"
+    ],
+    "xy10-24": [
+      "Unimplemented printed attack: Energy Extract",
+      "Unimplemented printed attack: Plasmagic"
+    ],
+    "xy10-25": [
+      "Unimplemented printed attack: Suppression",
+      "Unimplemented printed Ability: Kinesis"
+    ],
+    "xy10-29": [
+      "Unimplemented printed attack: Encounter",
+      "Unimplemented printed Ability: Memories of Dawn"
+    ],
+    "xy10-31": [
+      "Unimplemented printed attack: Head Walking"
+    ],
+    "xy10-37": [
+      "Unimplemented printed Ability: Bodyguard"
+    ],
+    "xy10-38": [
+      "Restored Pokémon requires fossil-entry battle legality audit"
+    ],
+    "xy10-49": [
+      "Unimplemented printed Ability: Energy Keeper"
+    ],
+    "xy10-50": [
+      "Unimplemented printed Ability: Safeguard"
+    ],
+    "xy10-51": [
+      "Unimplemented printed attack: Diamond Gift"
+    ],
+    "xy10-55": [
+      "Unimplemented printed attack: Veil of Darkness",
+      "Unimplemented printed attack: Endgame"
+    ],
+    "xy10-56": [
+      "Unimplemented printed attack: Dark Mountain",
+      "Unimplemented printed Ability: Raging Roar"
+    ],
+    "xy10-61": [
+      "Unimplemented printed attack: Guard Press",
+      "Unimplemented printed Ability: Metal Fortress"
+    ],
+    "xy10-62": [
+      "Unimplemented printed attack: Metal Rain"
+    ],
+    "xy10-64": [
+      "Unimplemented printed attack: Rapid Blaster",
+      "Unimplemented printed Ability: Drive Change"
+    ],
+    "xy10-71": [
+      "Unimplemented printed attack: Light Steps"
+    ],
+    "xy10-73": [
+      "Unimplemented printed attack: Dragon Trail"
+    ],
+    "xy10-76": [
+      "Restored Pokémon requires fossil-entry battle legality audit"
+    ],
+    "xy10-77": [
+      "Unimplemented printed attack: Toss and Turn"
+    ],
+    "xy10-82": [
+      "Unimplemented printed attack: Cacophony"
+    ],
+    "xy10-94": [
+      "Unimplemented Trainer rules"
+    ],
+    "xy10-95": [
+      "Unimplemented Trainer rules"
+    ],
+    "xy10-96": [
+      "Unimplemented Trainer rules"
+    ],
+    "xy10-97": [
+      "Unimplemented Trainer rules"
+    ],
+    "xy10-98": [
+      "Unimplemented Trainer rules"
+    ],
+    "xy10-101": [
+      "Unimplemented Trainer rules"
+    ],
+    "xy10-102": [
+      "Unimplemented Trainer rules"
+    ],
+    "xy10-104": [
+      "Unimplemented Trainer rules"
+    ],
+    "xy10-106": [
+      "Unimplemented Trainer rules"
+    ],
+    "xy10-108": [
+      "Unimplemented printed attack: All Cells Burn",
+      "Unimplemented Trainer rules"
+    ],
+    "xy10-110": [
+      "Unimplemented Trainer rules"
+    ],
+    "xy10-113": [
+      "Unimplemented Trainer rules"
+    ],
+    "xy10-117": [
+      "Unimplemented printed attack: Suppression",
+      "Unimplemented printed Ability: Kinesis"
+    ],
+    "xy10-119": [
+      "Unimplemented printed attack: Veil of Darkness",
+      "Unimplemented printed attack: Endgame"
+    ],
+    "xy10-120": [
+      "Unimplemented printed attack: Rapid Blaster",
+      "Unimplemented printed Ability: Drive Change"
+    ],
+    "xy10-122": [
+      "Unimplemented printed attack: Dragon Trail"
+    ],
+    "xy10-125": [
+      "Unimplemented printed attack: Suppression",
+      "Unimplemented printed Ability: Kinesis"
+    ]
+  },
+  "attacks": 147,
+  "abilities": 21,
+  "pokemonBreak": 5,
+  "sourceGitBlob": "aa097c8da85e960a5afa4f3b96312f64dcbec871"
+}

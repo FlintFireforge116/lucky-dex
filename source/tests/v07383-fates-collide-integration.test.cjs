@@ -8,6 +8,26 @@ const fx=require('../app/src/main/assets/tcgp-battle-effects.js');
 const read=name=>fs.readFileSync(path.join(root,name),'utf8');
 const contract=require('../scripts/xy10_release_contract.json');
 function cost(c){if(Array.isArray(c))return c.join('');if(typeof c==='string')return c;throw new Error('Bad attack cost shape');}
+// Official source rows may list printable attacks on non-Pokemon cards (e.g.
+// Power Memory), but the runtime only exposes .attacks on Pokemon. Never
+// dereference card.attacks on an Energy or Trainer record.
+function assertPrintedAttackCosts(card,row){
+ if(card.kind!=='pokemon'){
+  assert.ok(card.kind==='trainer'||card.kind==='energy',`Unknown XY10 card kind: ${card.id}`);
+  return;
+ }
+ assert.ok(Array.isArray(card.attacks),`${card.id} is a Pokemon without an attack list`);
+ assert.deepEqual(card.attacks.map(x=>cost(x.cost)),row[7].map(x=>x[1].join('')),`${card.id} printed attack costs`);
+}
+test('XY10 catalogue audit accepts Pokemon, Trainer and Energy runtime shapes',()=>{
+ assertPrintedAttackCosts({id:'xy10-1',kind:'pokemon',attacks:[{cost:['G','C']}]},[null,null,null,null,null,null,null,[['Wrap',['G','C']]]]);
+ assertPrintedAttackCosts({id:'xy10-90',kind:'trainer'},[null,null,null,null,null,null,null,[]]);
+ assertPrintedAttackCosts({id:'xy10-114',kind:'energy'},[null,null,null,null,null,null,null,[]]);
+ // A Trainer can have a printed attack on a Tool without being a Pokemon:
+ // its effect is modeled as a Tool-granted attack, not as card.attacks.
+ assertPrintedAttackCosts({id:'xy10-108',kind:'trainer'},[null,null,null,null,null,null,null,[['All Cells Burn',['F','F','C']]]]);
+ assert.throws(()=>assertPrintedAttackCosts({id:'xy10-2',kind:'pokemon'},[null,null,null,null,null,null,null,[]]),/without an attack list/);
+});
 test('XY10 is loaded and selectable in all five player/CPU/deck paths',()=>{
  const data=read('app/src/main/assets/tcg-classic-battle-data.js');
  const html=read('app/src/main/assets/index.html');
@@ -61,8 +81,10 @@ test('Pinned Fates Collide official 129-print catalogue and constructed CPU/play
  for(let i=0;i<rows.length;i++){
   const row=rows[i],card=xy10.CARDS[i];assert.equal(card.id,'xy10-'+row[0]);assert.equal(card.name,row[1]);
   assert.equal(classic.cardById(card.id),card);assert.equal(card.battleEnabled,card.deckEligible);
-  assert.deepEqual(card.attacks.map(x=>cost(x.cost)),row[7].map(x=>x[1].join('')));
-  for(const a of card.attacks)if(card.battleEnabled)assert.deepEqual(fx.validateEffect(a.effect),[],card.id+'/'+a.name);
+  assertPrintedAttackCosts(card,row);
+  if(card.kind==='pokemon'&&card.battleEnabled){
+   for(const a of card.attacks)assert.deepEqual(fx.validateEffect(a.effect),[],card.id+'/'+a.name);
+  }
   if(card.battleEnabled){assert.equal(card.support.status,'FULL');if(card.kind==='trainer')assert.deepEqual(fx.validateEffect(card.effect),[],card.id);}
   else assert.ok(card.support.reasons.length,card.id+' gated without a reason');
  }

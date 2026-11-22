@@ -2,8 +2,9 @@
 """Fates Collide source preflight; `--full` generates and verifies all official prints.
 
 Fast mode NEVER claims 129/129 card/audit coverage: the official immutable
-catalogue is built during GitHub Actions. Prevents stale stage expectations,
-missing registry hooks, version mismatch, and invalid shared effect mappings.
+catalogue is built during GitHub Actions. For pre-push verification use --full
+to generate official prints and run the actual post-generation audit locally.
+This detects test errors that only occur with non-Pokemon generated cards.
 """
 from __future__ import annotations
 import argparse,json,re,sys,subprocess,os
@@ -67,10 +68,12 @@ def check():
  print('PASS: XY10 source-only contract, version sync, registry entries, stale-test guards and pinned-source preflight.')
 
 def main():
- parser=argparse.ArgumentParser(description=__doc__);parser.add_argument('--full',action='store_true',help='Generate pinned official 129-print source and run mandatory generated-card audit')
+ parser=argparse.ArgumentParser(description=__doc__);parser.add_argument('--full',action='store_true',help='Mandatory before publishing: generate pinned 129-print source, then run the same strict post-generation audit as GitHub CI')
  args=parser.parse_args();check()
  if args.full:
   subprocess.run([sys.executable,'scripts/build-xy10.py'],cwd=ROOT,check=True)
+  assert (ROOT/'data/classic/xy10-print-compact.json').is_file(), 'The pinned 129-print dataset was not generated'
+  assert (ROOT/'app/src/main/assets/tcg-classic-fates-collide.js').stat().st_size>10000, 'The generated Fates Collide runtime is missing or still a stub'
   env={**os.environ,'GITHUB_ACTIONS':'true'}
   subprocess.run(['node','--test','tests/v07383-fates-collide-integration.test.cjs','tests/v07383-fates-collide-effects.test.cjs','tests/v07384-fates-collide-stage2.test.cjs'],cwd=ROOT,check=True,env=env)
   print('PASS: Full official XY10 generated 129-print catalogue, deck and effect audit.')
@@ -82,7 +85,7 @@ def main():
   source_only_env={**os.environ}
   source_only_env.pop('GITHUB_ACTIONS',None)
   subprocess.run(['node','--test','tests/v07383-fates-collide-integration.test.cjs','tests/v07383-fates-collide-effects.test.cjs','tests/v07384-fates-collide-stage2.test.cjs'],cwd=ROOT,check=True,env=source_only_env)
-  print('SOURCE ONLY: Pinned catalogue test deferred to the post-generation GitHub APK audit.')
+  print('SOURCE ONLY: Pinned catalogue test deferred. BEFORE PUSHING, run: python3 scripts/preflight-xy10-release.py --full')
 if __name__=='__main__':
  try: main()
  except (AssertionError,subprocess.CalledProcessError) as e:

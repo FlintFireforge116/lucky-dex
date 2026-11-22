@@ -1,6 +1,6 @@
 LUCKYDEX — MASTER PROJECT RULES AND DEVELOPMENT CONTRACT
 =========================================================
-Document version: 2.69
+Document version: 2.70
 Compiled: 22 November 2026
 Current inspected source: v0.69.382 GitHub APK success; v0.69.383 Fates Collide failed at source-only preflight; v0.69.384 GitHub failed parsing Gradle; this v0.69.384 syntax repair is locally checked, GitHub APK unverified.
 Recommended repository location: ~/lucky-dex/source/docs/LUCKYDEX_MASTER_RULES.txt
@@ -4641,3 +4641,64 @@ CURRENT FIX:
     source fixture self-tests; generated-catalogue tests remain CI-only.
   * Card mechanics were not changed in this repair.
 ================================================================================
+
+
+APPENDIX — v2.70 / v0.69.384 XY10 GENERATED-CATALOGUE CI REPAIR
+=============================================================
+Dated 2026-11-22. Critical lessons from repeated Fates Collide build failures:
+
+A. FAILURE CAUSE (GITHUB RUN 45042878867)
+  The Gradle syntax and source-only preflight passed, and the official 129-print
+  Fates Collide catalogue was generated. Then auditXY10ForApk failed in
+  v07383-fates-collide-integration.test.cjs at card.attacks.map(...). Pokemon
+  have attacks arrays; Trainer and Energy runtime records generally do not.
+  The official source may include a printed attack on a Pokemon Tool (Power
+  Memory), but this is NOT a Pokemon attacks array. Fixed by applying attack
+  cost comparisons and effect checks only to Pokemon; keeping trainer/energy
+  validation separate; retaining all 129-print source and deck checks.
+
+B. NON-NEGOTIABLE FULL PREFLIGHT BEFORE *EVERY* GIT PUSH
+  The source-only preflight can give false confidence because the generated
+  catalogue test is intentionally skipped until source generation. Hence
+  passing only source-only unit tests NEVER establishes build readiness.
+  From ~/lucky-dex, after unzipping a patch:
+
+     cd ~/lucky-dex/source
+     python3 scripts/check-gradle-source.py --self-test
+     python3 scripts/preflight-xy10-release.py --full
+
+  The --full command first runs source-only checks, then generates the pinned
+  official xy10 data and runtime, then runs the exact three Node test files
+  required by :app:auditXY10ForApk with GITHUB_ACTIONS=true. Any nonzero
+  exit code, missing Node/Python installation, network fetch failure, failed
+  deck assertion, failed card assertion, or skipped full catalogue verification
+  BLOCKS commit and push. Never replace --full with a GITHUB_ACTIONS=false
+  source-only run as evidence. The pinned source must remain source-of-truth.
+  If offline/local tools cannot perform this full check, transparently say
+  the APK build is UNVERIFIED and make the Termux full pre-push gate mandatory.
+  Do not claim a successful full audit merely because source-only checks pass.
+
+C. GENERATED MODEL TYPE SAFETY
+  Check Pokemon/Trainer/Energy separately in all current and future generated
+  catalogue audits: required fields and supported effects differ. Never call
+  .attacks.map, .attacks.forEach or .abilities.map on all print records unless
+  presence and type were verified. Runtime Pokemon .attacks should always be
+  an array; no blank-array coercion may mask broken Pokemon data. A Trainer
+  with a printed Tool-granted attack must not be treated as a Pokemon record.
+  Add three-kind fixture tests to preflight for every new expansion.
+
+D. RELEASE STATUS
+  v0.69.383 failed due to premature generated-file access during preflight.
+  v0.69.384 stage2 failed due to malformed Groovy audit commandLine.
+  v0.69.384 syntax repair passed source-only checks but failed generated
+  catalogue audit at Trainer/Energy .attacks.map. This patch corrects that
+  failure; full GitHub APK success remains unverified until pushed.
+
+E. POST-GENERATION REALITY CHECK
+  Full preflight verifies original 129 prints, all 147 printed attacks, 21
+  Abilities, five BREAK cards, correct print order and alternate-art records,
+  per-print runtime mapping, absence of fake noop effects on enabled cards,
+  required minimum/required-enabled set, and legal CPU/player deck building.
+  New releases must run this before shipping; apply the same two-phase model
+  to XY11 and all subsequent sets. Do not introduce a hardcoded stale-stage
+  expectation that contradicts the current playable coverage contract.
