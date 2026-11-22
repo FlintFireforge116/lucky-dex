@@ -8,8 +8,8 @@ android {
         applicationId 'com.example.luckydex'
         minSdk 26
         targetSdk 35
-        versionCode 7395
-        versionName '0.69.395'
+        versionCode 7396
+        versionName '0.69.396'
     }
 
     signingConfigs {
@@ -942,4 +942,25 @@ tasks.register('auditXY11ForApk', Exec) {
 }
 tasks.matching { it.name == 'preBuild' || (it.name.startsWith('merge') && it.name.endsWith('Assets')) }.configureEach {
     dependsOn tasks.named('auditXY11ForApk')
+}
+
+// v0.69.396 — XY12 Evolutions: pinned 113-print source and conservative
+// gameplay gate. Gradle generates + validates before merging Android assets.
+tasks.register('preflightXY12ContractForApk', Exec) {
+    workingDir rootProject.projectDir
+    commandLine (System.getenv('LUCKYDEX_PYTHON') ?: 'python3'), 'scripts/preflight-xy12-release.py'
+}
+tasks.register('generateXY12ForApk', Exec) {
+    dependsOn tasks.named('preflightXY12ContractForApk')
+    dependsOn tasks.named('auditXY11ForApk')
+    workingDir rootProject.projectDir
+    commandLine (System.getenv('LUCKYDEX_PYTHON') ?: 'python3'), 'scripts/build-xy12.py'
+}
+tasks.register('auditXY12ForApk', Exec) {
+    dependsOn tasks.named('generateXY12ForApk')
+    workingDir rootProject.projectDir
+    commandLine 'node', '--test', 'tests/v07396-evolutions-integration.test.cjs'
+}
+tasks.matching { it.name == 'preBuild' || (it.name.startsWith('merge') && it.name.endsWith('Assets')) }.configureEach {
+    dependsOn tasks.named('auditXY12ForApk')
 }

@@ -15,7 +15,7 @@ const a=(n,name)=>{const c=xy.cardById('xy11-'+n);assert.ok(c?.battleEnabled,`Ca
 const ability=(n,name)=>{const c=xy.cardById('xy11-'+n);assert.ok(c?.battleEnabled,`Ability card ${n} gated`);return c.abilities.find(ab=>ab.name===name)?.effect;};
 
 test('Steam Siege Stage 3: 116 verified playable prints, all 116 prints and exact printed costs',()=>{
- assert.equal(contract.release,'0.69.395');assert.equal(contract.stage,'independent-audit');
+ assert.match(contract.release,/^0\.69\.\d+$/);assert.equal(contract.stage,'independent-audit');
  assert.equal(source.length,116);assert.equal(xy.CARDS.length,116);
  assert.equal(xy.CARDS.filter(x=>x.battleEnabled).length,116);
  for(const row of source){const c=xy.cardById('xy11-'+row[0]);assert.equal(c.name,row[1]);

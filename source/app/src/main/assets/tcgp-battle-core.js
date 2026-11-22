@@ -3167,7 +3167,13 @@ const target=slotForTarget(s,action.target,action.benchIndex);if(card.id==='pl2-
         (ref.cardId==='xy10-85'&&toolsOf(target).some(t=>t.cardId==='xy10-92'))||
         // XY11 Spirit Links keep the exact source/target pairing.
         (['xy11-68','xy11-109'].includes(ref.cardId)&&toolsOf(target).some(t=>t.cardId==='xy11-106'))||
-        (['xy11-79','xy11-112'].includes(ref.cardId)&&toolsOf(target).some(t=>t.cardId==='xy11-101')));
+        (['xy11-79','xy11-112'].includes(ref.cardId)&&toolsOf(target).some(t=>t.cardId==='xy11-101'))||
+        // XY12 Evolutions: matching physical Spirit Links only.
+        (['xy12-2','xy12-100'].includes(ref.cardId)&&toolsOf(target).some(t=>t.cardId==='xy12-89'))||
+        (['xy12-13','xy12-101'].includes(ref.cardId)&&toolsOf(target).some(t=>t.cardId==='xy12-75'))||
+        (['xy12-22','xy12-102'].includes(ref.cardId)&&toolsOf(target).some(t=>t.cardId==='xy12-73'))||
+        (ref.cardId==='xy12-27'&&toolsOf(target).some(t=>t.cardId==='xy12-86'))||
+        (['xy12-65','xy12-105'].includes(ref.cardId)&&toolsOf(target).some(t=>t.cardId==='xy12-81')));
       const xy10Kinesis=['xy10-26','xy10-118'].includes(ref.cardId)&&
         ['xy10-25','xy10-117','xy10-125'].includes(target.cardId)&&
         !effects.abilitiesSuppressed(state,side,target,data.cardById);

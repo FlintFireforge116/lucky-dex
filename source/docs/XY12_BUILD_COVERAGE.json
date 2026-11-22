@@ -1,0 +1,103 @@
+{
+  "printed": 113,
+  "battleReady": 83,
+  "gated": {
+    "xy12-7": [
+      "Unimplemented printed attack: Swarming Sting"
+    ],
+    "xy12-11": [
+      "Unimplemented printed Ability: Energy Burn"
+    ],
+    "xy12-15": [
+      "Unimplemented printed attack: Lure"
+    ],
+    "xy12-16": [
+      "Unimplemented printed attack: Explosive Fireball"
+    ],
+    "xy12-18": [
+      "Unimplemented printed attack: Scorching Breath",
+      "Unimplemented printed Ability: Burning Road"
+    ],
+    "xy12-25": [
+      "Unimplemented printed attack: Dashing Punch"
+    ],
+    "xy12-31": [
+      "Unimplemented printed Ability: Space Beacon"
+    ],
+    "xy12-32": [
+      "Unimplemented printed attack: Break Star"
+    ],
+    "xy12-36": [
+      "Unimplemented printed attack: Spark Bolt"
+    ],
+    "xy12-40": [
+      "Unimplemented printed Ability: Buzzap Thunder"
+    ],
+    "xy12-46": [
+      "Unimplemented printed attack: Toxic Drill"
+    ],
+    "xy12-47": [
+      "Unimplemented printed attack: Little Grudge"
+    ],
+    "xy12-51": [
+      "Unimplemented printed attack: Barrier"
+    ],
+    "xy12-53": [
+      "Unimplemented printed Ability: Neutral Shield"
+    ],
+    "xy12-55": [
+      "Unimplemented printed Ability: Submerge"
+    ],
+    "xy12-58": [
+      "Unimplemented printed attack: Karate Chop"
+    ],
+    "xy12-59": [
+      "Unimplemented printed Ability: Counterattack"
+    ],
+    "xy12-60": [
+      "Unimplemented printed attack: Boomerang Lariat"
+    ],
+    "xy12-66": [
+      "Unimplemented printed Ability: Mischievous Fang"
+    ],
+    "xy12-67": [
+      "Unimplemented printed attack: Shadowy Bite"
+    ],
+    "xy12-71": [
+      "Unimplemented printed attack: Conversion 3"
+    ],
+    "xy12-72": [
+      "Unimplemented printed Ability: Pull Up"
+    ],
+    "xy12-74": [
+      "Unimplemented Trainer rules"
+    ],
+    "xy12-80": [
+      "Unimplemented Trainer rules"
+    ],
+    "xy12-87": [
+      "Unimplemented Trainer rules"
+    ],
+    "xy12-106": [
+      "Unimplemented printed Ability: Pull Up"
+    ],
+    "xy12-107": [
+      "Unimplemented Trainer rules"
+    ],
+    "xy12-108": [
+      "Unimplemented Trainer rules"
+    ],
+    "xy12-112": [
+      "Unimplemented printed attack: Harmonize",
+      "Unimplemented printed Ability: Frenzied Escape"
+    ],
+    "xy12-113": [
+      "Unimplemented Trainer rules"
+    ]
+  },
+  "attacks": 129,
+  "abilities": 11,
+  "pokemonBreak": 4,
+  "dualTypePrints": 0,
+  "sourceGitBlob": "7e80c06b0f3e5621058a29e26c90023d1033e65f"
+}

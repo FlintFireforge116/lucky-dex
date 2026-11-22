@@ -13,7 +13,7 @@ const scene=()=>({format:'classic',turnNumber:8,sides:{player:side(slot('xy11-25
 const fx=(n,title)=>{const card=xy.cardById('xy11-'+n);assert.ok(card?.battleEnabled,`${n} must be playable`);const a=card.attacks.find(x=>x.name===title);assert.ok(a,`${n} missing ${title}`);return a;};
 const getCtx=(state,extras={})=>({state,side:'player',foeSide:'opponent',attacker:state.sides.player.active,defender:state.sides.opponent.active,cardById:id=>xy.cardById(id),random:()=>0.4,isAttack:true,...extras});
 test('XY11 Stage 2 required print list is unique and all effect descriptors have registered handlers',()=>{
- assert.equal(contract.release,'0.69.395');assert.equal(contract.expectedPlayableMinimum>=94,true);
+ assert.match(contract.release,/^0\.69\.\d+$/);assert.equal(contract.expectedPlayableMinimum>=94,true);
  assert.equal(new Set(contract.requiredEnabledNumbers).size,contract.requiredEnabledNumbers.length);
  const js=fs.readFileSync(path.join(root,'app/build.gradle'),'utf8');assert.match(js,/v07392-steam-siege-batch2\.test\.cjs/);
  assert.match(fs.readFileSync(path.join(root,'scripts/preflight-xy11-release.py'),'utf8'),/v07392-steam-siege-batch2\.test\.cjs/);

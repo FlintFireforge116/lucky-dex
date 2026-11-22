@@ -27,7 +27,7 @@ const STAPLES=Object.freeze([
  ['base1-83',1], // Maintenance
  ['base1-87',1]  // Pokedex
 ]);
-const SET_IDS=Object.freeze(['base1','base2','base3','base5','gym1','gym2','neo1','neo2','neo3','neo4','base6','ecard1','ecard2','ecard3','ex1','ex2','ex3','ex4','ex5','ex6','ex7','ex8','ex9','ex10','ex11','ex12','ex13','ex14','ex15','ex16','dp1','dp2','dp3','dp4','dp5','dp6','dp7','pl1','pl2','pl3','pl4','hgss1','hgss2','hgss3','hgss4','col1','bw1','bw2','bw3','bw4','bw5','bw6','bw7','bw8','bw9','bw10','bw11','xy1','xy2','xy3','xy4','xy5','xy6','xy7','xy8','xy9','xy10','xy11','SNAPFLORIO','SNAPFOUNJA','sv1']);
+const SET_IDS=Object.freeze(['base1','base2','base3','base5','gym1','gym2','neo1','neo2','neo3','neo4','base6','ecard1','ecard2','ecard3','ex1','ex2','ex3','ex4','ex5','ex6','ex7','ex8','ex9','ex10','ex11','ex12','ex13','ex14','ex15','ex16','dp1','dp2','dp3','dp4','dp5','dp6','dp7','pl1','pl2','pl3','pl4','hgss1','hgss2','hgss3','hgss4','col1','bw1','bw2','bw3','bw4','bw5','bw6','bw7','bw8','bw9','bw10','bw11','xy1','xy2','xy3','xy4','xy5','xy6','xy7','xy8','xy9','xy10','xy11','xy12','SNAPFLORIO','SNAPFOUNJA','sv1']);
 // Darkness and Metal are already Basic Energy types. Deduplicate before rendering
 // archetype chips so each energy type has exactly one toggle.
 // Dragon is a Pokémon type, never a Basic Energy type. Include it as an
@@ -762,7 +762,12 @@ function buildDeck(rows,options={}){
        'xy10-91':['xy10-69','xy10-121'],
        'xy10-92':['xy10-85'],
        'xy11-101':['xy11-79','xy11-112'],
-       'xy11-106':['xy11-68','xy11-109']};
+       'xy11-106':['xy11-68','xy11-109'],
+       'xy12-73':['xy12-22','xy12-102'],
+       'xy12-75':['xy12-13','xy12-101'],
+       'xy12-81':['xy12-65','xy12-105'],
+       'xy12-86':['xy12-27'],
+       'xy12-89':['xy12-2','xy12-100']};
      if(xy5Links[card?.id]&&!pokemon.some(p=>xy5Links[card.id].includes(p.id)))return false;
      // Primal Clash's new Trainers must match the *constructed* 30-card
      // deck, not the full collection. Basic Energy in the automatic Zone is
@@ -1200,7 +1205,12 @@ function buildDeck(rows,options={}){
    ['xy10-91',['xy10-69','xy10-121']], // M Altaria-EX
    ['xy10-92',['xy10-85']], // M Audino-EX
    ['xy11-101',['xy11-79','xy11-112']], // M Gardevoir-EX
-   ['xy11-106',['xy11-68','xy11-109']] // M Steelix-EX
+   ['xy11-106',['xy11-68','xy11-109']], // M Steelix-EX
+   ['xy12-73',['xy12-22','xy12-102']], // M Blastoise-EX
+   ['xy12-75',['xy12-13','xy12-101']], // M Charizard-EX
+   ['xy12-81',['xy12-65','xy12-105']], // M Pidgeot-EX
+   ['xy12-86',['xy12-27']], // M Slowbro-EX
+   ['xy12-89',['xy12-2','xy12-100']] // M Venusaur-EX
  ];
  for(const [id,partners] of xy5SpiritLinks){
    if(!partners.some(p=>cards.includes(p)))continue;

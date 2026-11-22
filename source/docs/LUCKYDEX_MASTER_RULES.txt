@@ -4968,3 +4968,36 @@ Steam Siege full gameplay mapping reaches all 116 pinned prints; previously gate
    regressions. Never skip a failing check to make CI green.
 6. After local tests, confirm the real GitHub Actions APK build separately.
    Local source preflight never proves that an APK compiled successfully.
+
+[XY12 v0.69.396 — EVOLUTIONS STAGE 1: FINAL XY ERA, SAFE GATING]
+1. XY12 Evolutions contains EXACTLY 113 official prints (83 Pokemon, 20 Trainer,
+   10 physical Energy), 129 printed attacks, 11 Ability printings, and four
+   Pokemon BREAK. Preserve exact official print numbering 1–113 including
+   secret/alternate artwork. Pinned upstream JSON Git blob:
+   7e80c06b0f3e5621058a29e26c90023d1033e65f.
+2. Stage 1 has 83 verified gameplay-enabled prints and 30 deliberately gated;
+   do NOT call 113/113 playable or claim an independent audit before all gated
+   Ability/attack/Trainer choices are implemented. Build the complete catalogue
+   in `scripts/build-xy12.py`, and strictly gate all printed mechanics without
+   handlers; never substitute no-op as a gameplay implementation.
+3. XY12 basic Energy prints #91-99 and Double Colorless Energy #90 are
+   PHYSICAL cards in hand/deck/discard, independent of the hybrid Energy Zone.
+   Print costs are stored as arrays by the generator and compact strings in the
+   runtime. Always normalize comparisons and never edit costs to pass tests.
+4. All five Mega Spirit Links must match their specific Mega EX evolution;
+   enable only exact Mega turn exemptions; avoid dead automatic Trainer filler.
+   BREAK upgrades reuse the previous-stage attacks. Gated outlier Japanese
+   secret/exhibition cards must not be incorrectly replaced by generic moves.
+5. Porygon Conversion 3 needs a turn-expiring Weakness override. Generic
+   `chooseTypeOverride` currently leaves this value persistent: this card must
+   stay gated until expiry is implemented and tested. Fly and Dragon Rage reuse
+   matching previously audited two-coin and all-effects protection behavior.
+6. Do not regress the historical GitHub CI 30-card deck gate. Before pushing:
+   `python3 source/scripts/check-gradle-source.py --self-test` and
+   `(cd source && python3 scripts/preflight-xy12-release.py --full && python3 scripts/preflight-xy11-release.py --full && python3 scripts/preflight-xy10-release.py --full)`.
+   Keep full Gradle generation and set audit BEFORE asset merge; 0.69.396 in
+   versionCode, versionName, boot title and XY9/XY10/XY11 release contracts.
+7. New patches install with `unzip -o PATCH.zip -d source`. Validate the
+   package over the last working build and confirm Actions success separately.
+   See docs/EVOLUTIONS_XY12_STAGE1_v0.69.396.md and
+   docs/XY12_BUILD_COVERAGE.json for remaining exact effects.

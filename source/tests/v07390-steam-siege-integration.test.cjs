@@ -21,8 +21,8 @@ test('Steam Siege registry, set picker, player/CPU pool and launch load',()=>{
 });
 test('new-set release version, immutable upstream source and official-count contract',()=>{
  const g=read('app/build.gradle'),v=g.match(/versionName ['"]([^'"]+)['"]/)[1];
- assert.equal(v,'0.69.395');assert.equal(v,contract.release);
- assert.match(g,/versionCode 7395/);
+ assert.match(v,/^0\.69\.\d+$/);assert.equal(v,contract.release);
+ assert.match(g,new RegExp('versionCode '+(7000+Number(v.split('.').at(-1)))));
  for(const id of ['xy9','xy10'])assert.equal(require('../scripts/'+id+'_release_contract.json').release,v);
  for(const file of ['app/src/main/assets/index.html','app/src/main/assets/app-v0167.js'])assert.ok(read(file).includes(v),file+' stale build version');
  const builder=read('scripts/build-xy11.py');
