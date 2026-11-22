@@ -72,6 +72,47 @@ REUSE={
  ('113','Psychic'):E('energyDamage',source='opponent',amount=20,mode='add'),
  ('110','Gumshoe Chance-GX'):E('energyDamage',source='opponent',amount=50,mode='add'),
 }
+# SM1 completion: exact printed mechanics, never a noop substitute.
+# All unusual choices are implemented by the shared sm1Rule runtime.
+SM=lambda rule,**kw:E('sm1Rule',rule=rule,**kw)
+REUSE.update({
+ ('5','Fury Cutter'):E('coinTierBonus',coins=3,tiers={'1':20,'2':60,'3':110}),
+ ('6','Roof Fling'):SM('roofFling'),
+ ('8','Struggle Bug'):E('moveEnergy',source='opponentActive',target='opponentBench',amount=1),
+ ('12','Hollow Hunt-GX'):SM('hollowHunt'),
+ ('14','Synthesis'):SM('synthesis'),
+ ('15','Flower Supply'):SM('flowerSupply'),
+ ('15','Chloroscythe-GX'):E('energyDamage',source='self',energyType='Grass',amount=50,mode='replace'),
+ ('29','Double Jet'):SM('doubleJet'),
+ ('32','Wake-Up Slap'):SM('wakeUpSlap'),
+ ('37','Roost'):S(H(30),E('lock',action='retreat',target='self',duration='nextOwnTurn')),
+ ('38','Courier'):SM('courier'),
+ ('42','Bubble Beat'):E('energyDamage',source='self',all=True,energyType='Water',amount=20,mode='add'),
+ ('42','Grand Echo-GX'):E('heal',target='selfAll',amount=9999),
+ ('49','Searching Light'):SM('searchingLight'),
+ ('53','Discharge'):SM('discharge'),
+ ('61','Divide-GX'):SM('divideGX'),
+ ('66','Moongeist Beam'):SM('moongeist'),
+ ('66','Lunar Fall-GX'):SM('lunarFall'),
+ ('69','Smack Down'):SM('smackDown'),
+ ('71','Rock Artillery'):SM('rockArtillery'),
+ ('75','Absorb Vitality'):SM('absorbVitality'),
+ ('77','Evil Orders'):SM('evilOrders'),
+ ('80','Dark Call-GX'):SM('darkCall'),
+ ('81','Gnaw Through'):SM('gnawThrough'),
+ ('82','Aqua Impact'):E('retreatCostDamage',amount=20,mode='add'),
+ ('84','Knock Off'):SM('knockOff'),
+ ('85','Obsidian Fang'):SM('obsidianFang'),
+ ('86','Spelunk'):E('reorderTop',count=3),
+ ('87','Dig Under'):SM('digUnder'),
+ ('88','Metallic Sound'):SM('metallicSound'),
+ ('89','Sol Burst-GX'):SM('solBurst'),
+ ('92','Fly Around'):SM('flyAround'),
+ ('94','Signs of Evolution'):SM('signsEvolution'),
+ ('95',"Dragon's Wish"):SM('dragonsWish'),
+ ('98','Devastating Wind'):E('handShuffle',side='opponent',draw=3),
+ ('103','Work Up'):SM('workUp'),
+})
 # Every full-art and secret GX print shares its rules with the non-full-art
 # version, even when official text has a synonymous 'number'/'amount'.
 for base,alts in [('15',['138','150']),('35',['139','151']),('61',['140','152']),('66',['141','153']),('80',['142','154']),('89',['143','155']),('100',['144','156']),('110',['145','157'])]:
@@ -107,11 +148,25 @@ TRAINERS={
 }
 for original,variants in [('123',['158']),('132',['160']),('135',['161'])]:
  for num in variants:TRAINERS[num]=TRAINERS[original]
+TRAINERS.update({
+ '114':('Item',SM('bigMalasada')),
+ '115':('Item',SM('crushingHammer')),
+ '117':('Item',SM('energySwitch')),
+ '118':('Tool',N),
+ '121':('Supporter',SM('ilima')),
+ '122':('Supporter',SM('lillie')),
+ '124':('Tool',N),
+ '128':('Supporter',S(DRAW(2),SM('kukui'))),
+ '131':('Item',SM('rotomDex')),
+ '133':('Supporter',SM('teamSkullGrunt')),
+})
+for original,variants in [('121',['146']),('122',['147']),('128',['148']),('133',['149']),('131',['159'])]:
+ for alt in variants:TRAINERS[alt]=TRAINERS[original]
 # Tool effects (Exp Share / Poison Barb) only become active after their
 # corresponding reactive core logic has been individually verified.
-for n in ['118','124']:TRAINERS.pop(n)
+# Core reactive Tool hooks are installed for Exp Share and Poison Barb.
 BASIC={'162':'Psychic','163':'Metal','164':'Grass','165':'Fire','166':'Water','167':'Lightning','168':'Psychic','169':'Fighting','170':'Darkness','171':'Metal','172':'Fairy'}
-ENERGIES={'136':E('specialEnergy',provides={'Colorless':2})}
+ENERGIES={'136':E('specialEnergy',provides={'Colorless':2}),'137':E('specialEnergy',provides={'Miracle':1})}
 # Rainbow Energy's damage-on-attachment and one-unit flexible Energy behaviour
 # must both work; otherwise do not expose this printed card as playable.
 ABILITIES={
@@ -120,3 +175,21 @@ ABILITIES={
  'Curative Pollen':{'type':'activated','oncePerTurn':True,'effect':E('chooseTarget',target='selfPokemon',effect=H(20,'selfPokemon'))},
  'Search the Premises':{'type':'activated','oncePerTurn':True,'effect':E('revealHand',side='opponent')},
 }
+
+ABILITIES.update({
+ 'Feather Arrow':{'type':'activated','oncePerTurn':True,'effect':SM('featherArrow')},
+ 'Queenly Majesty':{'type':'triggered','event':'evolved','fromHandOnly':True,'effect':SM('queenlyMajesty')},
+ 'Cowardice':{'type':'activated','oncePerTurn':True,'effect':SM('cowardice')},
+ 'Water Bubble':{'type':'passive','effect':SM('waterBubble')},
+ 'Innards Out':{'type':'triggered','event':'knockedOutByAttack','effect':SM('innardsOut')},
+ 'Strong Charge':{'type':'activated','oncePerTurn':True,'effect':SM('strongCharge')},
+ 'Power of Alchemy':{'type':'passive','effect':SM('powerAlchemy')},
+ 'Toxic Spikes':{'type':'passive','effect':SM('toxicSpikes')},
+ 'Psychic Transfer':{'type':'activated','oncePerTurn':False,'effect':SM('psychicTransfer')},
+ 'Wall of Sand':{'type':'passive','effect':SM('wallOfSand')},
+ 'Rough Skin':{'type':'triggered','event':'damagedByAttack','effect':SM('roughSkin'), 'activeOnly':True},
+ 'Tangling Hair':{'type':'passive','effect':SM('tanglingHair')},
+ 'Ultra Road':{'type':'activated','oncePerTurn':True,'effect':E('switch',side='self')},
+ 'Energy Evolution':{'type':'triggered','event':'energyAttached','fromHandOnly':True,'effect':SM('energyEvolution')},
+ 'Treasure Hunt':{'type':'triggered','event':'evolved','fromHandOnly':True,'effect':SM('treasureHunt')},
+})

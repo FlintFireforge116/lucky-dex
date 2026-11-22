@@ -1,8 +1,8 @@
 LUCKYDEX — MASTER PROJECT RULES AND DEVELOPMENT CONTRACT
 =========================================================
-Document version: 2.77
+Document version: 2.78
 Compiled: 22 November 2026
-Current verified APK: v0.69.398 Evolutions independent audit (GitHub Actions run 693 succeeded on 22 November 2026). v0.69.399 Sun & Moon SM1 Stage 1 is local-only pending a GitHub APK build.
+Current verified APK: v0.69.398 Evolutions independent audit (GitHub Actions run 693 succeeded on 22 November 2026). v0.69.400 SM1 completion has local tests only until its GitHub APK build is confirmed.
 Recommended repository location: ~/lucky-dex/source/docs/LUCKYDEX_MASTER_RULES.txt
 Project: LuckyDex — Android application/PWA, managed with Termux and GitHub
 
@@ -5068,3 +5068,14 @@ Steam Siege full gameplay mapping reaches all 116 pinned prints; previously gate
    then proceed to the remaining 69 gated prints. See
    docs/SUN_MOON_SM1_STAGE1_v0.69.399.md and SM1_BUILD_COVERAGE.json.
 === END SM1 v0.69.399 INITIAL GX RULES ===
+
+
+=== v0.69.400 SUN & MOON SM1 / GX ERA FULL COMPLETION (v2.78) ===
+[CURRENT] ALL 173 immutable official SM1 prints (including 101a) have enabled, validated effect descriptors: 238 attacks, 26 Abilities, 27 GX attacks and 13 physical Energy prints.
+[LOCKED] Physical Energy cards are distinct from the Energy Zone. Rainbow Energy (sm1-137) provides flexible energy and deals 10 to its attached Pokemon; DCE provides two Colorless.
+[LOCKED] GX attacks are allowed once per PLAYER per game; Pokemon-GX award two Prize cards when Knocked Out. Alternate/full-art cards use the corresponding gameplay effects.
+[CURRENT] Additional bespoke SM1 handlers cover Strong Charge, Energy Evolution, GX attack choices, Dark Call, Moongeist, Grand Echo, Alolan effects, Poison Barb, Exp. Share, and other SM1 attacks, passive and triggered Abilities and Trainers.
+[LOCKED] `scripts/preflight-sm1-release.py --full` now must regenerate all 173 source-locked prints, prove 0 gated, and pass both source and completion suites PLUS `tests/v07333-classic-deck-quality.test.cjs` (mandatory in Gradle `auditSM1ForApk`). Never bypass or weaken this gate.
+[CHECK] A passing local test cannot certify every cross-era combination; inspect the battle sequencing for multi-target choices, attached special Energy, ability suppression and KO triggers at independent audit.
+[CURRENT] v0.69.400 completion overlay and tests are the last local working source until an actual Android GitHub Actions success is confirmed.
+=== END SM1 v0.69.400 COMPLETION ===

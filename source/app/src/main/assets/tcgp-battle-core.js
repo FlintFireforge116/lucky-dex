@@ -442,7 +442,7 @@
     }else if(p.kind==='handCard'){
       ss.hand.forEach((ref,index)=>{const card=data.cardById(ref.cardId);if(!p.filter||effects.matchesFilter(card,p.filter,ref))out.push({type:'effectChoice',choiceHandIndex:index,choiceCardId:ref.cardId});});
     }else if(p.kind==='deckCard'){
-      ss.deck.forEach((ref,index)=>{const card=data.cardById(ref.cardId);if(!(p.excludeUids||[]).includes(ref.uid)&&(!p.filter||effects.matchesFilter(card,p.filter,ref)))out.push({type:'effectChoice',choiceDeckIndex:index,choiceCardId:ref.cardId});});
+      ss.deck.forEach((ref,index)=>{const card=data.cardById(ref.cardId);if(!(p.excludeUids||[]).includes(ref.uid)&&(!p.allowedUids||p.allowedUids.includes(ref.uid))&&(!p.filter||effects.matchesFilter(card,p.filter,ref)))out.push({type:'effectChoice',choiceDeckIndex:index,choiceCardId:ref.cardId});});
     }else if(p.kind==='discardCard'){
       const zoneSide=p.discardZone==='opponent'?(p.originSide==='player'?'opponent':'player'):(p.selectionSide||side),target=state.sides[zoneSide],excluded=new Set(p.excludeUids||[]);target.discard.forEach((ref,index)=>{const card=data.cardById(ref.cardId);if(!excluded.has(ref.uid)&&(!p.allowedUids||p.allowedUids.includes(ref.uid))&&(!p.allowedKinds||p.allowedKinds.includes(card?.kind))&&(!p.basicEnergyOnly||card?.kind!=='energy'||card.basicEnergy)&&(!p.filter||effects.matchesFilter(card,p.filter,ref)))out.push({type:'effectChoice',choiceDiscardIndex:index,choiceCardId:ref.cardId});});
       // Classic Basic Energy discarded from an attachment lives in an actual
@@ -761,7 +761,8 @@
   }
   function retreatCost(state,side){const slot=state.sides[side].active;
     const top=data.cardById(slot?.cardId),previous=top?.breakEvolution&&slot?.stack?.length>1?data.cardById(slot.stack[slot.stack.length-2]):null;
-    const printedRetreat=Number((previous||top)?.retreat||0);
+    const tangling=state.format==='classic'&&['player','opponent'].some(w=>w!==side&&pokemonOn(state.sides[w]).some(p=>p.cardId==='sm1-87'&&!effects.abilitiesSuppressed(state,w,p,data.cardById)))?1:0;
+    const printedRetreat=Number((previous||top)?.retreat||0)+tangling;
     // Fairy Garden (XY 117): all Pokemon with Fairy-providing attached Energy
     // have free retreat, including opposing Pokemon and flexible Rainbow.
     if(state.format==='classic'&&slot&&activeStadium(state)?.cardId==='xy1-117'){
@@ -1542,7 +1543,7 @@
     // attachment are INDEPENDENT. Hand-attached Basic and Special both count
     // toward the hand attachment; card effects can separately accelerate.
     if(state.format==='classic'&&Number(s.dp7EmperorAuraUntil||0)<Number(state.turnNumber))s.dp7EmperorAuraUntil=0;
-    if(state.format==='classic'&&Number(s.dp7EmperorAuraUntil||0)<Number(state.turnNumber)){s.hand.forEach((ref,handIndex)=>{const card=data.cardById(ref.cardId);if(!(card?.specialEnergy||card?.basicEnergy||card?.holonEnergyPokemon)||card.battleEnabled===false&& !card.basicEnergy)return;if((card?.specialEnergy||card?.holonEnergyPokemon)&&effects.isActionLocked(state,side,'SpecialEnergy',data.cardById))return;if(card.specialEnergy&&state.sides[side==='player'?'opponent':'player']?.active?.cardId==='bw10-23'&&!effects.abilitiesSuppressed(state,side==='player'?'opponent':'player',state.sides[side==='player'?'opponent':'player'].active,data.cardById))return;if(s.handEnergyUsed&&Number(s.xy5GrowthBonus?.turn)!==Number(state.turnNumber))return;const validEnergyTarget=slot=>slot&&!slot.gymEnergyLock&&(card.id!=='neo4-16'||/^(?:Light |Shining )/.test(data.cardById(slot.cardId)?.name||''));const aqValid=(slot)=>{if(!validEnergyTarget(slot))return false;if(s.handEnergyUsed&&s.xy5GrowthBonus?.targetUid!==slot.uid)return false;const mon=data.cardById(slot.cardId),energyType=card.basicEnergy?card.subtype:card.effect?.provides&&Object.keys(card.effect.provides)[0];
+    if(state.format==='classic'&&Number(s.dp7EmperorAuraUntil||0)<Number(state.turnNumber)){s.hand.forEach((ref,handIndex)=>{const card=data.cardById(ref.cardId);if(!(card?.specialEnergy||card?.basicEnergy||card?.holonEnergyPokemon)||card.battleEnabled===false&& !card.basicEnergy)return;if((card?.specialEnergy||card?.holonEnergyPokemon)&&effects.isActionLocked(state,side,'SpecialEnergy',data.cardById))return;if(card.specialEnergy&&state.sides[side==='player'?'opponent':'player']?.active?.cardId==='bw10-23'&&!effects.abilitiesSuppressed(state,side==='player'?'opponent':'player',state.sides[side==='player'?'opponent':'player'].active,data.cardById))return;if(s.handEnergyUsed&&Number(s.xy5GrowthBonus?.turn)!==Number(state.turnNumber)&&Number(s.sm1UnlimitedHandEnergyTurn)!==Number(state.turnNumber))return;const validEnergyTarget=slot=>slot&&!slot.gymEnergyLock&&(card.id!=='neo4-16'||/^(?:Light |Shining )/.test(data.cardById(slot.cardId)?.name||''));const aqValid=(slot)=>{if(!validEnergyTarget(slot))return false;if(s.handEnergyUsed&&s.xy5GrowthBonus?.targetUid!==slot.uid&&Number(s.sm1UnlimitedHandEnergyTurn)!==Number(state.turnNumber))return false;const mon=data.cardById(slot.cardId),energyType=card.basicEnergy?card.subtype:card.effect?.provides&&Object.keys(card.effect.provides)[0];
        if(card.id==='xy3-103'&&!mon?.types?.includes('Grass'))return false;
        if(['xy3-104','xy10-115'].includes(card.id)&&!mon?.types?.includes('Fighting'))return false;
        if(card.id==='xy4-112'&&!mon?.types?.includes('Psychic'))return false;
@@ -2169,6 +2170,13 @@
         attacker.damage=Number(attacker.damage||0)+30;
         state.log.push({type:'spikyShield',side:foeSide,amount:30,sourceUid:defender.uid});
       }
+      // Sun & Moon Poison Barb is a reactive Tool, not an Ability.
+      if(state.format==='classic'&&damage>0&&defender===foe.active&&s.active&&
+          activeToolsOf(state,defender).some(ref=>ref.cardId==='sm1-124')&&
+          !effects.statusIsPrevented(state,s.active,data.cardById,'poison')){
+        s.active.conditions={...(s.active.conditions||{}),poison:{amount:10}};
+        state.log.push({type:'sm1PoisonBarb',side:foeSide,attackerUid:s.active.uid});
+      }
       if(damage>0&&defender.retaliate&&(defender.retaliate.expiresTurn==null||state.turnNumber<=defender.retaliate.expiresTurn)){const amount=Number(defender.retaliate.amount||0);attacker.damage=Number(attacker.damage||0)+amount;state.log.push({type:'retaliate',side:foeSide,amount,cardId:defender.cardId});}
     state.log.push({type:'attack',side,cardId:attacker.cardId,attack:attackName,damage,target:'active',repeat:true});ss.lastAttackName=attackName;ss.lastAttackTurn=state.turnNumber;ss.lastAttackCardId=attacker.cardId;ss.attackCounts=ss.attackCounts||{};ss.attackCounts[attackName]=Number(ss.attackCounts[attackName]||0)+1;attacker.attackUseCount=Number(attacker.attackUseCount||0)+1;
     if(damage>0&&state.format==='classic'&&defender===state.sides[foeSide].active&&activeToolsOf(state,defender).some(r=>r.cardId==='bw3-94')){attacker.damage=Number(attacker.damage||0)+20;state.log.push({type:'bw3RockyHelmet',side:foeSide,amount:20});}
@@ -2553,7 +2561,7 @@
         if(state.format==='classic'&&slot===s.active&&eventSource?.attack&&eventSource.side===foeSide&&
            !slot._bw4ExpShareResolved){
           const eligible=[];
-          for(const p of s.bench||[]){if(!p||!activeToolsOf(state,p).some(ref=>['bw4-87','xy5-128'].includes(ref.cardId)))continue;
+          for(const p of s.bench||[]){if(!p||!activeToolsOf(state,p).some(ref=>['bw4-87','xy5-128','sm1-118'].includes(ref.cardId)))continue;
             for(const [type,n] of Object.entries(slot.energy||{}))if(Number(n)>0)eligible.push({targetUid:p.uid,energyType:type});}
           if(eligible.length){slot._bw4ExpShareResolved=true;
             beginEffectChoice(state,side,slot,{kind:'option',side:'self',
@@ -2959,7 +2967,7 @@ const target=slotForTarget(s,action.target,action.benchIndex);if(card.id==='pl2-
     const legal = legalActions(state,side);
     const matched = legal.find(item => actionMatches(item,action));
     if (!matched){
-      if(action?.type==='attachSpecial'&&state.format==='classic'&&state.sides[side].handEnergyUsed)throw new Error('Only one Energy card may be attached from hand each turn.');
+      if(action?.type==='attachSpecial'&&state.format==='classic'&&state.sides[side].handEnergyUsed&&Number(state.sides[side].sm1UnlimitedHandEnergyTurn)!==Number(state.turnNumber))throw new Error('Only one Energy card may be attached from hand each turn.');
       if (action?.type === 'attach' && state.sides[side].energyUsed) throw new Error('Energy Zone can only be attached once per turn.');
       throw new Error(`Illegal Pocket action: ${action && action.type || 'unknown'}.`);
     }
@@ -3375,9 +3383,9 @@ const target=slotForTarget(s,action.target,action.benchIndex);if(card.id==='pl2-
           effect:{type:'neoRule',rule:'skyridge:cycloneEnergy'},resume:'trainer'});
       if(card.id==='ecard3-144')beginEffectChoice(state,side,target,{kind:'option',side:'self',options:['Keep this Evolution','Heal 20 and devolve'],
         effect:{type:'neoRule',rule:'skyridge:retroEnergy'},resume:'trainer'});
-      if(['ecard2-144','ex1-95','ex12-81','pl1-121','hgss1-104','xy1-131','xy8-152'].includes(card.id)){
+      if(['ecard2-144','ex1-95','ex12-81','pl1-121','hgss1-104','xy1-131','xy8-152','sm1-137'].includes(card.id)){
         target.damage=Number(target.damage||0)+10;
-        if(card.id==='xy1-131')state.log.push({type:'rainbowEnergyAttachmentDamage',side,targetUid:target.uid,amount:10});
+        if(['xy1-131','sm1-137'].includes(card.id))state.log.push({type:'rainbowEnergyAttachmentDamage',side,targetUid:target.uid,amount:10});
       }
       if(card.id==='ecard2-147'&&target===s.active&&s.bench.length){
         // Warp Energy is an attachment-triggered, mandatory Bench choice.
@@ -3492,6 +3500,12 @@ const target=slotForTarget(s,action.target,action.benchIndex);if(card.id==='pl2-
       effects.clearTemporaryEffects(state,outgoing);
       s.bench[benchArray]=outgoing;
       s.active=incoming;
+      // SM1 Toxapex: only the NEW Active is poisoned after a voluntary retreat.
+      if(state.format==='classic'&&incoming&&pokemonOn(foe).some(p=>p.cardId==='sm1-63'&&!effects.abilitiesSuppressed(state,foeSide,p,data.cardById))&&
+          !effects.statusIsPrevented(state,incoming,data.cardById,'poison')){
+        incoming.conditions={...(incoming.conditions||{}),poison:{amount:10}};
+        state.log.push({type:'sm1ToxicSpikes',side:foeSide,targetUid:incoming.uid});
+      }
       // Aquapolis Octillery Suction Cups: when Defending Pokémon retreats,
       // it loses every Energy card after paying the Retreat Cost.
       if(state.format==='classic'&&['ecard2-26','ecard2-H20'].includes(foe.active?.cardId)&&
@@ -3992,6 +4006,13 @@ const target=slotForTarget(s,action.target,action.benchIndex);if(card.id==='pl2-
       if(damage>0&&state.format==='classic'&&defender===foe.active&&defender.cardId==='ex12-70'&&
          !effects.abilitiesSuppressed(state,foeSide,defender,data.cardById))s.active.conditions={...(s.active.conditions||{}),poison:true};
       if(damage>0&&state.format==='classic'&&defender===foe.active&&['ex16-41','ex16-47'].includes(defender.cardId)&&!effects.abilitiesSuppressed(state,foeSide,defender,data.cardById)){s.active.damage=Number(s.active.damage||0)+10;state.log.push({type:'ex16RoughSkin',side:foeSide,cardId:defender.cardId,amount:10});}
+      // Sun & Moon Poison Barb is a reactive Tool, not an Ability.
+      if(state.format==='classic'&&damage>0&&defender===foe.active&&s.active&&
+          activeToolsOf(state,defender).some(ref=>ref.cardId==='sm1-124')&&
+          !effects.statusIsPrevented(state,s.active,data.cardById,'poison')){
+        s.active.conditions={...(s.active.conditions||{}),poison:{amount:10}};
+        state.log.push({type:'sm1PoisonBarb',side:foeSide,attackerUid:s.active.uid});
+      }
       if(damage>0&&defender.retaliate&&(defender.retaliate.expiresTurn==null||state.turnNumber<=defender.retaliate.expiresTurn)){const amount=Number(defender.retaliate.amount||0);s.active.damage=Number(s.active.damage||0)+amount;state.log.push({type:'retaliate',side:foeSide,amount,cardId:defender.cardId});}
       if(state.format==='classic')foe.neoObservedAttack={turn:state.turnNumber,cardId:attackSourceCard.id,attackIndex:matched.attackIndex,witnesses:pokemonOn(foe).map(x=>x.uid)};
       if(state.format==='classic')s.active.pl1LastAttackTurn=state.turnNumber;
