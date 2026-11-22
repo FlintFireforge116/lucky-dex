@@ -1,8 +1,8 @@
 LUCKYDEX — MASTER PROJECT RULES AND DEVELOPMENT CONTRACT
 =========================================================
-Document version: 2.67
+Document version: 2.68
 Compiled: 22 November 2026
-Current inspected source: v0.69.382 BREAKpoint independent audit (GitHub APK success), extended locally as v0.69.383 XY10 Fates Collide mechanic-first integration; new APK build pending GitHub confirmation. Source-relative ZIP extraction into ~/lucky-dex/source/.
+Current inspected source: v0.69.382 GitHub APK success; v0.69.383 Fates Collide failed at source-only preflight; v0.69.384 mechanic reuse and source-only preflight repair passes local tests, new GitHub APK unverified.
 Recommended repository location: ~/lucky-dex/source/docs/LUCKYDEX_MASTER_RULES.txt
 Project: LuckyDex — Android application/PWA, managed with Termux and GitHub
 
@@ -4525,5 +4525,60 @@ INSTALLATION (TERMUX):
   unzip -o /sdcard/Download/LuckyDex_patch_v0.69.383_FATES_COLLIDE_MECHANIC_FIRST.zip -d source
   git add source
   git commit -m "LuckyDex v0.69.383 Fates Collide mechanic-first integration"
+  git push origin main
+================================================================================
+
+================================================================================
+APPENDIX — v0.69.384 FATES COLLIDE STAGE 2 + MANDATORY GENERATOR-ORDER RULE
+================================================================================
+KNOWN REAL GITHUB BUILD FAILURE: v0.69.383, GitHub run #45040073029.
+  Cause: `preflightXY10ContractForApk` executes BEFORE generateXY10, but its
+  nested `node --test` inherited GITHUB_ACTIONS=true. The strict generated-
+  catalogue test then tried opening `data/classic/xy10-print-compact.json`
+  before that file existed. This is not an invalid card mechanic.
+
+HARD RULE FOR ALL FUTURE SETS AND ALL NEW CHAT CONTINUATIONS:
+  1. Two distinct CI phases must be modeled explicitly. Source-only preflight
+     must be runnable with GITHUB_ACTIONS=true on the OUTER process without
+     enforcing the not-yet-generated catalogue within nested test runners.
+     Remove GITHUB_ACTIONS from the child test environment for source-only
+     checks, or use a dedicated explicit phase flag (do not fake data files).
+  2. Run the immutable-source generator AFTER source-only preflight. Only then
+     run the STRICT post-generation audit with GITHUB_ACTIONS=true. Never
+     disable or skip it once the generator has run.
+  3. Before every patch, run:
+       GITHUB_ACTIONS=true python3 scripts/preflight-xy10-release.py
+       node --test tests/v07383-fates-collide-integration.test.cjs \
+         tests/v07383-fates-collide-effects.test.cjs \
+         tests/v07384-fates-collide-stage2.test.cjs
+     Adapt names for subsequent expansions. Never trust a test summary whose
+     critical generated-catalogue test was skipped locally as proof of APK.
+  4. As cards are enabled, keep ONE required-enabled release contract. Old
+     gating assertions must be updated and replaced with behavioural tests,
+     not merely deleted. Roll all previous required-enabled prints forward.
+  5. When a card effect includes an OPTIONAL damage bonus, test its actual
+     choice-resolution order. Validators alone will accept chooseOption +
+     bonusDamage, but applying the bonus after attack damage is calculated can
+     throw. Gate it until an actual battle-path test proves correct timing.
+  6. Always audit continuous abilities on Active AND Bench, before/after
+     Weakness/Resistance, inherited BREAK effects, and Ability suppression;
+     Lugia's Pressure and Regirock-EX's Regi Power are reference cases.
+  7. Keep all four version markers and previous/current set release contracts
+     aligned. Changed-files-only ZIP relative to source; do not include any
+     generated or untracked large art files.
+
+Stage 2 new mechanisms and exact touched print numbers are documented in
+  docs/XY10_FATES_COLLIDE_STAGE2_v0.69.384.md
+  tests/v07384-fates-collide-stage2.test.cjs
+  scripts/xy10_release_contract.json
+
+No claims of full 129-print readiness. The full pinned catalogue must be
+created and verified during GitHub CI before report of definitive coverage.
+
+INSTALLATION (TERMUX):
+  cd ~/lucky-dex
+  unzip -o /sdcard/Download/LuckyDex_patch_v0.69.384_FATES_COLLIDE_STAGE2_CI_FIX.zip -d source
+  git add source
+  git commit -m "LuckyDex v0.69.384 Fates Collide Stage 2 and CI preflight fix"
   git push origin main
 ================================================================================

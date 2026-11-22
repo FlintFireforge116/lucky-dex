@@ -1515,7 +1515,7 @@
     if(state.format==='classic'&&Number(s.dp7EmperorAuraUntil||0)<Number(state.turnNumber))s.dp7EmperorAuraUntil=0;
     if(state.format==='classic'&&Number(s.dp7EmperorAuraUntil||0)<Number(state.turnNumber)){s.hand.forEach((ref,handIndex)=>{const card=data.cardById(ref.cardId);if(!(card?.specialEnergy||card?.basicEnergy||card?.holonEnergyPokemon)||card.battleEnabled===false&& !card.basicEnergy)return;if((card?.specialEnergy||card?.holonEnergyPokemon)&&effects.isActionLocked(state,side,'SpecialEnergy',data.cardById))return;if(card.specialEnergy&&state.sides[side==='player'?'opponent':'player']?.active?.cardId==='bw10-23'&&!effects.abilitiesSuppressed(state,side==='player'?'opponent':'player',state.sides[side==='player'?'opponent':'player'].active,data.cardById))return;if(s.handEnergyUsed&&Number(s.xy5GrowthBonus?.turn)!==Number(state.turnNumber))return;const validEnergyTarget=slot=>slot&&!slot.gymEnergyLock&&(card.id!=='neo4-16'||/^(?:Light |Shining )/.test(data.cardById(slot.cardId)?.name||''));const aqValid=(slot)=>{if(!validEnergyTarget(slot))return false;if(s.handEnergyUsed&&s.xy5GrowthBonus?.targetUid!==slot.uid)return false;const mon=data.cardById(slot.cardId),energyType=card.basicEnergy?card.subtype:card.effect?.provides&&Object.keys(card.effect.provides)[0];
        if(card.id==='xy3-103'&&!mon?.types?.includes('Grass'))return false;
-       if(card.id==='xy3-104'&&!mon?.types?.includes('Fighting'))return false;
+       if(['xy3-104','xy10-115'].includes(card.id)&&!mon?.types?.includes('Fighting'))return false;
        if(card.id==='xy4-112'&&!mon?.types?.includes('Psychic'))return false;
        if(card.id==='xy5-143'&&!mon?.types?.includes('Metal'))return false;
        if(card.id==='xy5-144'&&!mon?.types?.includes('Fairy'))return false;
@@ -3985,7 +3985,7 @@ const target=slotForTarget(s,action.target,action.benchIndex);if(card.id==='pl2-
       const board=state.sides[owner];for(const pokemon of pokemonOn(board)){
         const types=data.cardById(pokemon.cardId)?.types||[],kept=[];
         for(const ref of pokemon.specialEnergy||[]){
-          const required=ref.cardId==='xy9-113'?'Water':ref.cardId==='xy8-151'?'Fire':ref.cardId==='xy3-103'?'Grass':ref.cardId==='xy3-104'?'Fighting':ref.cardId==='xy4-112'?'Psychic':ref.cardId==='xy5-143'?'Metal':ref.cardId==='xy5-144'?'Fairy':ref.cardId==='xy6-97'?'Dragon':null;
+          const required=ref.cardId==='xy9-113'?'Water':ref.cardId==='xy8-151'?'Fire':ref.cardId==='xy3-103'?'Grass':['xy3-104','xy10-115'].includes(ref.cardId)?'Fighting':ref.cardId==='xy4-112'?'Psychic':ref.cardId==='xy5-143'?'Metal':ref.cardId==='xy5-144'?'Fairy':ref.cardId==='xy6-97'?'Dragon':null;
           if(required&&!types.includes(required)){
             board.discard.push(ref);state.log.push({type:'xy3SpecialEnergyDiscard',side:owner,uid:ref.uid,reason:'ineligibleAttachedType',cardId:ref.cardId});
           }else kept.push(ref);

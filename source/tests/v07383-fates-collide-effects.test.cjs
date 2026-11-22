@@ -60,7 +60,7 @@ test('Unverified Fossil, Power Memory, alternate KO and global effects remain ga
  for(const [num,name] of [['14','Flare Witch'],['19','Dangerous Tentacle'],['25','Kinesis'],['55','Endgame'],['62','Metal Rain'],['82','Cacophony']]){
   assert.equal(m.attacks[num+':'+name],undefined);
  }
- for(const n of ['94','96','97','98','102','108','115'])assert.equal(m.trainers[n]||m.energy[n],undefined);
+ for(const n of ['94','96','97','98','102','108'])assert.equal(m.trainers[n]||m.energy[n],undefined);
 });
 test('Fates Collide Link Fusion bonuses require matching distinct named Pokémon on the Bench',()=>{
  const s=scene(),a={name:'Link Fusion',damage:10,effect:m.attacks['35:Link Fusion']};

@@ -15,7 +15,7 @@ import xy10_verified as v
 def check():
  c=json.loads((ROOT/'scripts/xy10_release_contract.json').read_text())
  assert c['set']=='xy10' and c['printedTotal']==129 and c['attackPrints']==147 and c['abilities']==21 and c['pokemonBreak']==5
- assert c['stage']=='mechanic-first' and c['expectedPlayableMinimum']>=30
+ assert c['stage'] in ('mechanic-first','mechanic-reuse-2') and c['expectedPlayableMinimum']>=30
  assert isinstance(c['requiredEnabledNumbers'],list) and len(c['requiredEnabledNumbers'])>=20
  assert len(set(c['requiredEnabledNumbers']))==len(c['requiredEnabledNumbers'])
  assert c['pin']=='aa097c8da85e960a5afa4f3b96312f64dcbec871'
@@ -35,7 +35,7 @@ def check():
   assert item in gradle,'Missing stage '+item
  assert "dependsOn tasks.named('preflightXY10ContractForApk')" in gradle
  assert "dependsOn tasks.named('auditXY9ForApk')" in gradle
- for test in ['v07383-fates-collide-integration.test.cjs','v07383-fates-collide-effects.test.cjs']:
+ for test in ['v07383-fates-collide-integration.test.cjs','v07383-fates-collide-effects.test.cjs','v07384-fates-collide-stage2.test.cjs']:
   assert test in gradle,'Missing mandatory generated catalogue audit '+test
  data=(ROOT/'app/src/main/assets/tcg-classic-battle-data.js').read_text()
  assert 'LuckyDexClassicTCGXY10' in data and '...xy10.CARDS' in data and 'xy10.cardById(id)' in data
@@ -52,11 +52,15 @@ def check():
  assert ('26','Zen Force') in v.ATK
  # Printed-rule honesty: no unsupported Fossil, cross-zone Tool, unimplemented
  # activated Abilities or target-restricted forced switches advertised as ready.
- for key in [('9','Flying Flare'),('51','Diamond Gift'),('88','Covet')]:
+ for key in [('9','Flying Flare'),('51','Diamond Gift'),('55','Endgame'),('82','Cacophony')]:
   assert key not in v.ATK,'Unverified interactive attack was silently enabled: '+str(key)
- for id in ['94','95','96','97','98','102','104','108','115']:
+ for id in ['94','95','96','97','98','102','104','108']:
   assert id not in v.TRAINERS,'Unverified nontrivial trainer rule enabled: '+id
  assert 'Kinesis' not in v.ABILITIES and 'Flare Witch' not in v.ABILITIES
+ for key in [('1','Hide a Berry'),('7','Coil'),('21','Blizzard Burn'),('52','Aura Break'),('63','Fight Alone'),('86','Cleaning Up'),('88','Covet')]:assert key in v.ATK, 'Stage 2 mapping missing '+str(key)
+ for id in ['103','109']:assert id in v.TRAINERS,'Stage 2 Trainer missing '+id
+ assert v.ENERGIES.get('115',{}).get('provides')=={'Fighting':1}
+ assert 'Regi Power' in v.ABILITIES and 'Pressure' in v.ABILITIES
  print('PASS: XY10 source-only contract, version sync, registry entries, stale-test guards and pinned-source preflight.')
 
 def main():
@@ -65,11 +69,17 @@ def main():
  if args.full:
   subprocess.run([sys.executable,'scripts/build-xy10.py'],cwd=ROOT,check=True)
   env={**os.environ,'GITHUB_ACTIONS':'true'}
-  subprocess.run(['node','--test','tests/v07383-fates-collide-integration.test.cjs','tests/v07383-fates-collide-effects.test.cjs'],cwd=ROOT,check=True,env=env)
+  subprocess.run(['node','--test','tests/v07383-fates-collide-integration.test.cjs','tests/v07383-fates-collide-effects.test.cjs','tests/v07384-fates-collide-stage2.test.cjs'],cwd=ROOT,check=True,env=env)
   print('PASS: Full official XY10 generated 129-print catalogue, deck and effect audit.')
  else:
-  subprocess.run(['node','--test','tests/v07383-fates-collide-integration.test.cjs','tests/v07383-fates-collide-effects.test.cjs'],cwd=ROOT,check=True)
-  print('SOURCE ONLY: Pinned catalogue test skipped locally; it is mandatory during the GitHub APK build.')
+  # This preflight is run in GitHub Actions *before* generateXY10ForApk.
+  # Do not pass GITHUB_ACTIONS=true into source-only tests: that environment
+  # variable rightly makes the pinned-catalogue audit mandatory only once
+  # the official source and generated assets actually exist.
+  source_only_env={**os.environ}
+  source_only_env.pop('GITHUB_ACTIONS',None)
+  subprocess.run(['node','--test','tests/v07383-fates-collide-integration.test.cjs','tests/v07383-fates-collide-effects.test.cjs','tests/v07384-fates-collide-stage2.test.cjs'],cwd=ROOT,check=True,env=source_only_env)
+  print('SOURCE ONLY: Pinned catalogue test deferred to the post-generation GitHub APK audit.')
 if __name__=='__main__':
  try: main()
  except (AssertionError,subprocess.CalledProcessError) as e:
