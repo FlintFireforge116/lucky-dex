@@ -23,9 +23,10 @@ test('XY8 registration: human, CPU, deck editor, collection and script order',()
 });
 test('Pinned XY8 generator and mandatory Gradle audit, source rules documented',()=>{
  const gradle=fs.readFileSync(path.join(root,'app/build.gradle'),'utf8');
- assert.match(gradle,/versionCode 7374/);assert.match(gradle,/versionName '0\.69\.374'/);
+ assert.match(gradle,/versionCode 7375/);assert.match(gradle,/versionName '0\.69\.375'/);
  assert.match(gradle,/tasks\.register\('generateXY8ForApk'/);
  assert.match(gradle,/tasks\.register\('auditXY8ForApk'/);
+ assert.match(gradle,/v07375-breakthrough-shared-mechanics\.test\.cjs/);
  assert.match(gradle,/dependsOn tasks\.named\('auditXY8ForApk'\)/);
  const py=fs.readFileSync(path.join(root,'scripts/build-xy8.py'),'utf8');
  assert.match(py,/load_pinned_set\('xy8'/);assert.match(py,/951db4c259e70ca2fbd4daa2705e797af19fa25c/);
@@ -33,7 +34,7 @@ test('Pinned XY8 generator and mandatory Gradle audit, source rules documented',
  const master=fs.readFileSync(path.join(root,'docs/LUCKYDEX_MASTER_RULES.txt'),'utf8');
  assert.match(master,/MECHANIC-FIRST SET DELIVERY CONTRACT/);
  assert.match(master,/Do NOT enable a\s+card with unsupported printed effects/);
- assert.ok(fs.readFileSync(path.join(assets,'app-v0167.js'),'utf8').includes("window.__LUCKYDEX_BUILD='0.69.374'"));
+ assert.ok(fs.readFileSync(path.join(assets,'app-v0167.js'),'utf8').includes("window.__LUCKYDEX_BUILD='0.69.375'"));
 });
 test('All mapped attacks, Trainers and abilities validate via existing battle effect contract',()=>{
  const mapped=runPy(String.raw`import json,sys;sys.path.insert(0,sys.argv[1]);import xy8_verified as v
@@ -78,7 +79,10 @@ test('Pinned XY8 runtime retains complete official catalogue and no fake enabled
  assert.ok(xy8.coverage().battleEnabled>=60,'Mechanic-first pass must deliver substantial real playable coverage');
  assert.equal(xy8.cardById('xy8-146a').name,"Professor's Letter");
  for(const id of ['xy8-12','xy8-50','xy8-92','xy8-104','xy8-113'])assert.equal(xy8.cardById(id).battleEnabled,true,'BREAK uses verified prior-card inheritance');
- assert.equal(xy8.cardById('xy8-79').battleEnabled,false,'Bone Revenge remains gated until its scaling effect is implemented');
+ const newlyEnabled=['30','35','45','51','60','63','64','70','79','81','82','94','97','103','107','114','133','137','139','142','144','156','159','160'];
+ for(const id of newlyEnabled)assert.equal(xy8.cardById('xy8-'+id).battleEnabled,true,`Shared mechanics should enable authentic XY8 print ${id}`);
+ for(const id of ['2','3','15','22','28','49','54','59','62','66','88','91','106','111','123','134','135','141','145','147','149','150','151','152','154','158','161','164'])assert.equal(xy8.cardById('xy8-'+id).battleEnabled,false,`Do not unlock unsupported XY8 print ${id}`);
+ assert.ok(xy8.coverage().battleEnabled>=130,'XY8 shared-mechanic second pass must enable substantially more prints');
 });
 
 test('Mechanic reuse uses Energy UNITS, preserves physical top-deck cards and truly discards opponent hand',()=>{
@@ -115,7 +119,7 @@ print(json.dumps({n:v.ATTACKS[(number,title)] for n,number,title in [('thunder',
 
 test('Risky near-miss mappings remain gated instead of misusing similar effects',()=>{
  const unsupported=runPy(String.raw`import json,sys;sys.path.insert(0,sys.argv[1]);import xy8_verified as v
-names=[('22','Inferno Fang'),('35','Cryo Mouth'),('49','Thunderclap Shot'),('63','Vanishing Strike'),('82','Primordial Boom'),('107','Rainbow Force')]
+names=[('22','Inferno Fang'),('49','Thunderclap Shot'),('88','Derail'),('62','Damage Change'),('106','Heavy Perfume'),('111','Dragon Dance')]
 print(json.dumps({'attacks':[v.ATTACKS.get(k) for k in names],'reservedTicket':v.TRAINERS.get('147'),'punch':v.ATTACKS.get(('86','Pompous Punch'))}))`);
  assert.deepEqual(unsupported.attacks,[null,null,null,null,null,null]);
  assert.equal(unsupported.reservedTicket,null);

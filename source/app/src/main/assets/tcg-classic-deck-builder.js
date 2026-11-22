@@ -706,6 +706,7 @@ function buildDeck(rows,options={}){
      // support slots on inactive Tools when automatically building around it.
      // Existing user-selected Tools are retained, even if situational.
      if(card?.trainerType==='Tool'&&pokemon.some(p=>p.id==='xy6-31'))return false;
+     if(card?.trainerType==='Tool'&&pokemon.some(p=>p.id==='xy8-94'))return false;
      // Vileplume's Irritating Pollen blocks Items for both players once live.
      // Keep a small setup allowance (and Rare Candy for its Stage 2 line),
      // but prioritise functional Supporters instead of dead Item filler.
@@ -724,7 +725,10 @@ function buildDeck(rows,options={}){
        'xy6-87':['xy6-61','xy6-76','xy6-105','xy7-98'],
        'xy7-70':['xy7-28','xy7-88'],
        'xy7-80':['xy7-8','xy7-85'],
-       'xy7-81':['xy7-43','xy7-92']};
+       'xy7-81':['xy7-43','xy7-92'],
+       'xy8-139':['xy8-35','xy8-156'],
+       'xy8-142':['xy8-22','xy8-154'],
+       'xy8-144':['xy8-63','xy8-64','xy8-159','xy8-160']};
      if(xy5Links[card?.id]&&!pokemon.some(p=>xy5Links[card.id].includes(p.id)))return false;
      // Primal Clash's new Trainers must match the *constructed* 30-card
      // deck, not the full collection. Basic Energy in the automatic Zone is
@@ -1149,7 +1153,10 @@ function buildDeck(rows,options={}){
    ['xy6-87',['xy6-61','xy6-76','xy6-105','xy7-98']], // M Rayquaza-EX
    ['xy7-70',['xy7-28','xy7-88']], // M Ampharos-EX
    ['xy7-80',['xy7-8','xy7-85']], // M Sceptile-EX
-   ['xy7-81',['xy7-43','xy7-92']] // M Tyranitar-EX
+   ['xy7-81',['xy7-43','xy7-92']], // M Tyranitar-EX
+   ['xy8-139',['xy8-35','xy8-156']], // M Glalie-EX
+   ['xy8-142',['xy8-22','xy8-154']], // M Houndoom-EX
+   ['xy8-144',['xy8-63','xy8-64','xy8-159','xy8-160']] // M Mewtwo-EX
  ];
  for(const [id,partners] of xy5SpiritLinks){
    if(!partners.some(p=>cards.includes(p)))continue;
@@ -1298,7 +1305,7 @@ function buildDeck(rows,options={}){
  const needsPokemonTool=cards.map(classic.cardById).some(c=>c?.kind==='pokemon'&&
    (c.deckMeta?.requiresTools||[]).includes('pokemonTool'));
  if(needsPokemonTool){
-   const tools=pool.filter(c=>c.trainerType==='Tool'&&c.battleEnabled)
+   const tools=pool.filter(c=>c.trainerType==='Tool'&&c.battleEnabled&&trainerIsUseful(c))
      .sort((a,b)=>Number(b.id==='ex15-81')-Number(a.id==='ex15-81')||a.id.localeCompare(b.id));
    let need=3;
    for(const tool of tools){if(!need)break;need-=add(tool,Math.min(need,room(tool)));}

@@ -60,6 +60,19 @@ ATTACKS={
  ('61','Photon Wave'):E('modifier',stat='attackDamage',amount=-30,scope='opponentActive',duration='opponentTurn'),
  ('62','Shatter Shot'):E('energyDamage',source='self',energyType='Psychic',amount=30,mode='replace'),
 
+ # Shared conditional damage and board-state predicates (no card-specific engine forks).
+ ('30','Balance Bind'):E('status',status='paralysis',target='opponentActive',condition={'type':'benchCountsEqual'}),
+ ('35','Cryo Mouth'):BONUS(150,{'type':'selfDamageAtLeast','amount':100}),
+ ('45','Frigid Breath'):S(E('actionLock',side='both',cardType='Supporter',duration='nextOwnTurn'),E('actionLock',side='both',cardType='Stadium',duration='nextOwnTurn')),
+ ('45','Deep Freeze'):Q(ST('paralysis'),ST('confusion')),
+ ('60','Creep Show'):E('knockOut',target='opponentActive',condition={'type':'opponentDamageAtLeast','amount':30}),
+ ('63','Vanishing Strike'):S(BONUS(50,{'type':'stadiumInPlay'}),E('damageRule',condition={'type':'stadiumInPlay'},ignoreResistance=True,ignoreEffects=True)),
+ ('64','Psychic Infinity'):S(E('energyDamage',source='both',amount=30,mode='add'),E('damageRule',ignoreWeakness=True)),
+ ('79','Bone Revenge'):E('pointDamage',side='opponent',prizesTaken=True,amount=40,mode='add'),
+ ('81','Gathering Footsteps'):E('fieldCountDamage',side='self',retreatCostNames=['Swinub','Piloswine','Mamoswine'],amount=10,mode='add'),
+ ('82','Primordial Boom'):S(BONUS(40,{'type':'ownStadiumInPlay'}),E('heal',target='self',amount=40,condition={'type':'opponentStadiumInPlay'})),
+ ('107','Rainbow Force'):E('fieldCountDamage',side='self',benchOnly=True,distinctPokemonTypes=True,amount=30,mode='add'),
+ ('114','Exhausted Tackle'):Q(BONUS(30),E('selfDamage',amount=30)),
  # Psychic Infinity requires combined Active Energy and Weakness exemption.
  ('65','Haunt'):E('placeDamageCounters',target='opponentActive',amount=20),
  ('66','Curse Deeply'):ST('confusion'),
@@ -129,6 +142,11 @@ for src,alts in [('21',['153']),('22',['154']),('34',['155']),('35',['156']),('6
    for alt in alts:ATTACKS[(alt,name)]=effect
 
 TRAINERS={
+ '133':('Tool',E('modifier',stat='damageReduction',amount=40,scope='self',duration='whileInPlay',condition={'type':'opponentHasSpecialEnergy'})),
+ '137':('Tool',E('modifier',stat='retreatCost',amount=-99,scope='self',duration='whileInPlay')),
+ '139':('Tool',N), # Mega Glalie Spirit Link, enforced by shared evolve rule
+ '142':('Tool',N), # Mega Houndoom Spirit Link
+ '144':('Tool',N), # Mega Mewtwo Spirit Link
  '136':('Supporter',SEARCH(4,source='discard',kind='energy',basicEnergy=True)),
  # Float Stone: zero Retreat Cost requires a real continuous Tool passive.
  '138':('Supporter',E('chooseOption',options=[{'label':'Draw until 5 cards','effect':E('drawToHandSize',size=5)},{'label':'+20 damage this turn','effect':E('modifier',stat='attackDamage',scope='team',duration='turn',amount=20)}])),
@@ -148,6 +166,11 @@ TRAINERS={
 # Conservative: no BREAK Pokemon until the shared engine inherits previous
 # attacks, Abilities, weakness, resistance and retreat accurately.
 ABILITIES={
+ 'Sparkling Induction':{'type':'passive','activeOnly':True,'effect':E('modifier',stat='retreatCost',amount=-1,scope='self',duration='whileActive',perBenchFilter={'name':'Magnemite'})},
+ 'My Way':{'type':'passive','effect':E('modifier',stat='retreatCost',amount=-99,scope='self',duration='whileInPlay',condition={'type':'stadiumInPlay'})},
+ 'Fright Night':{'type':'passive','activeOnly':True,'effect':N}, # reuses global tool-effects suppression hook
+ 'Bench Barrier':{'type':'passive','effect':E('modifier',stat='damageReduction',amount=999,scope='team',benchTargetsOnly=True,duration='whileInPlay')},
+ 'Calming Aroma':{'type':'passive','effect':E('modifier',stat='attackCostFairy',amount=-1,scope='team',duration='whileInPlay')},
  'Abyssal Hand':{'type':'activated','oncePerTurn':True,'effect':E('drawToHandSize',size=5)},
  'Dignified Fighter':{'type':'passive','effect':E('modifier',stat='attackDamage',amount=20,scope='team',duration='whileInPlay',filter={'stage':'Basic'})},
  'Thick Fat':{'type':'passive','effect':E('modifier',stat='damageReduction',amount=30,scope='self',duration='whileInPlay',opponentFilter={'subtype':['Fire','Water']})},

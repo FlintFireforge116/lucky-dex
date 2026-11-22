@@ -1,6 +1,6 @@
 LUCKYDEX — MASTER PROJECT RULES AND DEVELOPMENT CONTRACT
 =========================================================
-Document version: 2.57
+Document version: 2.58
 Compiled: 22 November 2026
 Current inspected source: v0.69.374 XY8 BREAKthrough with version/UI, LV.X-based BREAK reuse, early catalogue order fixes, and the post-generation XY8 audit printed-Energy-cost compatibility repair, based on v0.69.373 Ancient Origins. GitHub APK build after this latest repair remains unverified. Source-relative ZIP extraction into ~/lucky-dex/source/.
 Recommended repository location: ~/lucky-dex/source/docs/LUCKYDEX_MASTER_RULES.txt
@@ -3961,3 +3961,37 @@ git add source
 git commit -m "LuckyDex v0.69.374 BREAKthrough mechanic-first integration"
 git push origin main
 ===============================================================================
+
+
+================================================================================
+2026-11-22 — XY8 BREAKthrough v0.69.375 MECHANIC-FIRST REUSE FOLLOW-THROUGH
+================================================================================
+- New gameplay effects are extensions of shared action, damage, stadium,
+  condition, Tool, Energy and evolution semantics, not bespoke card-name rules
+  when existing predicates can be safely parameterised. For BREAK, retain
+  LV.X-derived previous-card mechanics with correct normal evolution timing.
+- In particular, distinguish KO POINTS from physical PRIZE CARDS TAKEN;
+  count Energy UNITS (including multi-unit Special Energy) rather than types,
+  sum Colorless RETREAT SYMBOLS and distinct Pokémon TYPES only as printed,
+  and handle any Stadium owner-dependent requirements using actual ownerSide.
+- Trainer type on runtime cards must use internal `Tool`, not the printed
+  label `Pokémon Tool`. Spirit Link must match the exact Mega print. A Tool
+  that is enabled with a matching engine hook may legitimately have a noop
+  immediate effect; test the hook, not only effect validation.
+- Every generated-set change must extend the per-set Gradle audit command,
+  run its new focused engine outcome tests, run cross-set deck-quality tests,
+  and validate the generated print ledger in CI; source-only tests can skip
+  catalogue assertions. Do not mistake skipped tests for a passing full APK.
+- For the new next-set version, keep Gradle versionCode/versionName, title
+  screen, boot JS and version-sensitive tests synchronized in one patch.
+- `v0.69.375` implementation expands XY8 coverage for conditional attacks,
+  BREAK Bone Revenge, selected Abilities, Float Stone/Assault Vest/Spirit Links.
+  The generated ledger (`docs/XY8_BUILD_COVERAGE.json`) is authoritative;
+  do not claim 165/165 until tested. Unmapped Trainers, Energy, status
+  choices and complicated selection mechanics remain gated.
+- INSTALL (Termux from repository root):
+  cd ~/lucky-dex
+  unzip -o /sdcard/Download/LuckyDex_patch_v0.69.375_BREAKTHROUGH_SHARED_MECHANICS.zip -d source
+  git add source
+  git commit -m "LuckyDex v0.69.375 BREAKthrough mechanic reuse and audit"
+  git push origin main

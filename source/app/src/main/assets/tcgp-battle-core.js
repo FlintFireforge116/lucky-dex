@@ -927,7 +927,7 @@
     if(state.format==='classic'&&state.stadium?.cardId==='SNAPFLORIO-120'&&data.cardById(slot.cardId)?.types?.some(t=>t==='Grass'||t==='Colorless')){
       const i=cost.lastIndexOf('C');if(i>=0)cost=cost.slice(0,i)+cost.slice(i+1);
     }
-    const typed={G:'Grass',R:'Fire',W:'Water',L:'Lightning',P:'Psychic',F:'Fighting',D:'Darkness',M:'Metal',C:'Colorless'};for(const [symbol,name] of Object.entries(typed)){let remove=Math.max(0,-Math.floor(effects.modifierAmount(state,side,slot,'attackCost'+name,data.cardById)));for(let i=cost.length-1;i>=0&&remove;i--)if(cost[i]===symbol){cost=cost.slice(0,i)+cost.slice(i+1);remove--;}}const amount=effects.modifierAmount(state,side,slot,'attackCost',data.cardById);if(amount>=0)return cost+'C'.repeat(Math.floor(amount));let remove=-Math.floor(amount);for(let i=cost.length-1;i>=0&&remove;i--)if(cost[i]==='C'){cost=cost.slice(0,i)+cost.slice(i+1);remove--;}return cost;}
+    const typed={G:'Grass',R:'Fire',W:'Water',L:'Lightning',P:'Psychic',F:'Fighting',D:'Darkness',M:'Metal',Y:'Fairy',C:'Colorless'};for(const [symbol,name] of Object.entries(typed)){let remove=Math.max(0,-Math.floor(effects.modifierAmount(state,side,slot,'attackCost'+name,data.cardById)));for(let i=cost.length-1;i>=0&&remove;i--)if(cost[i]===symbol){cost=cost.slice(0,i)+cost.slice(i+1);remove--;}}const amount=effects.modifierAmount(state,side,slot,'attackCost',data.cardById);if(amount>=0)return cost+'C'.repeat(Math.floor(amount));let remove=-Math.floor(amount);for(let i=cost.length-1;i>=0&&remove;i--)if(cost[i]==='C'){cost=cost.slice(0,i)+cost.slice(i+1);remove--;}return cost;}
   function energyValues(state,side,slot){const values={};for(const type of Object.keys(slot?.energy||{})){
     const mult=effects.modifierAmount(state,side,slot,'energyMultiplier',data.cardById);
     const meg=state.format==='classic'&&type==='Grass'&&data.cardById(slot?.cardId)?.types?.includes('Grass')&&pokemonOn(state.sides[side]).some(p=>p.cardId==='neo1-11'&&!effects.abilitiesSuppressed(state,side,p,data.cardById)&&!p.conditions?.sleep&&!p.conditions?.confusion&&!p.conditions?.paralysis)?2:1;
@@ -3019,7 +3019,10 @@ const target=slotForTarget(s,action.target,action.benchIndex);if(card.id==='pl2-
         (['xy6-61','xy6-76','xy6-105','xy7-98'].includes(ref.cardId)&&toolsOf(target).some(t=>t.cardId==='xy6-87'))||
         (['xy7-28','xy7-88'].includes(ref.cardId)&&toolsOf(target).some(t=>t.cardId==='xy7-70'))||
         (['xy7-8','xy7-85'].includes(ref.cardId)&&toolsOf(target).some(t=>t.cardId==='xy7-80'))||
-        (['xy7-43','xy7-92'].includes(ref.cardId)&&toolsOf(target).some(t=>t.cardId==='xy7-81')));
+        (['xy7-43','xy7-92'].includes(ref.cardId)&&toolsOf(target).some(t=>t.cardId==='xy7-81'))||
+        (['xy8-35','xy8-156'].includes(ref.cardId)&&toolsOf(target).some(t=>t.cardId==='xy8-139'))||
+        (['xy8-22','xy8-154'].includes(ref.cardId)&&toolsOf(target).some(t=>t.cardId==='xy8-142'))||
+        (['xy8-63','xy8-64','xy8-159','xy8-160'].includes(ref.cardId)&&toolsOf(target).some(t=>t.cardId==='xy8-144')));
       const dp2SlakothWasAsleep=target.cardId==='dp2-99'&&!!target.conditions?.sleep;
       target.cardId = ref.cardId;
       target.stack.push(ref.cardId);
