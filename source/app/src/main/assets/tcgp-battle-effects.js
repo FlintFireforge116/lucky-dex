@@ -14610,7 +14610,47 @@
     throw new Error('Unsupported XY8 rule '+key);
   }
 
+  // XY9 BREAKpoint: two distinct new attack-resolution actions while using
+  // the existing coin/deck and damage pipelines. The original physical cards
+  // move between deck and attached Energy rather than granting free Zone units.
+  function xy9Rule(effect,ctx){
+    const key=String(effect.rule||'').slice(4),ss=own(ctx),slot=ctx.attacker;
+    if(key==='stormySeas'){
+      if(!slot)return;
+      let remaining=Number(effect.remaining);
+      if(!Number.isFinite(remaining)){
+        const results=[];remaining=repeatHeads(ctx,()=>{},results);
+        ctx.state.log.push({type:'coin',side:ctx.side,reason:'Stormy Seas',coins:'untilTails',heads:remaining,results});
+      } else if(ctx.resolvingChoice){
+        if(ctx.action?.choiceSkip)remaining=0;
+        else{
+          const index=Number(ctx.action?.choiceDeckIndex),ref=ss.deck[index],card=ctx.cardById(ref?.cardId);
+          if(!Number.isInteger(index)||!ref||!card?.basicEnergy||card.subtype!=='Water')return;
+          ss.deck.splice(index,1);slot.energy=slot.energy||{};
+          slot.energy.Water=Number(slot.energy.Water||0)+1;remaining--;
+          ctx.onEnergyAttached?.(slot,'Water',1,{source:'deck',energyCardId:ref.cardId});
+          ctx.state.log.push({type:'attachEnergy',source:'deck',side:ctx.side,cardId:ref.cardId,targetUid:slot.uid});
+        }
+      }
+      // LuckyDex Classic uses a separate Energy Zone for Basic Energy, not
+      // Basic Energy cards occupying the 30-card physical draw deck. Reuse
+      // the shared supply attachment path before searching physical refs.
+      while(remaining>0&&Array.isArray(ss.energySupply)&&ss.energySupply.includes('Water')){
+        if(!neoSupplyAttach(ctx,ss,slot,'Water',1))break;
+        remaining--;
+        ctx.state.log.push({type:'attachEnergy',source:'energyZone',side:ctx.side,energyType:'Water',targetUid:slot.uid});
+      }
+      if(remaining>0&&ss.deck.some(ref=>{const c=ctx.cardById(ref.cardId);return c?.basicEnergy&&c.subtype==='Water';})&&ctx.requestChoice){
+        ctx.requestChoice({kind:'deckCard',side:'self',filter:{kind:'energy',basicEnergy:true,subtype:'Water'},
+          effect:{...effect,remaining},optional:true});
+      }else ctx.shuffle?.(ctx.state,ss.deck);
+      return;
+    }
+    throw new Error('Unsupported XY9 rule '+key);
+  }
+
   function neoRule(e,ctx){
+    if(String(e.rule||'').startsWith('xy9:'))return xy9Rule(e,ctx);
     if(String(e.rule||'').startsWith('xy8:'))return xy8Rule(e,ctx);
     if(String(e.rule||'').startsWith('xy5:'))return xy5Rule(e,ctx);
     if(String(e.rule||'').startsWith('xy4:'))return xy4Rule(e,ctx);
@@ -19762,6 +19802,16 @@
       }
       // BREAKthrough choice damage is declared BEFORE damage and knockouts.
       // Inferno Fang's discard happens after calculating its +80 bonus.
+      // M Gyarados-EX's opt-in damage is calculated before applying Weakness
+      // and before the printed two-card deck discard.
+      if(e.type==='neoRule'&&e.rule==='xy9:blastGeyser'){
+        if(ctx.action?.effectSelection==='boost'&&ctx.attacker){
+          const energy=typeof ctx.effectiveEnergy==='function'?ctx.effectiveEnergy(ctx.attacker):ctx.attacker.energy||{};
+          damage+=20*Number(energy.Water||0);
+          pending.push({type:'discardTop',side:'self',amount:2});
+        }
+        return;
+      }
       if(e.type==='neoRule'&&e.rule==='xy8:infernoFang'){
         const p=ctx.attacker,fire=Number(p?.energy?.Fire||0)+(p?.specialEnergy||[]).filter(ref=>{
           const v=ref.provides||ctx.cardById(ref.cardId)?.effect?.provides||{};
@@ -22945,6 +22995,9 @@
         ...Object.entries(a?.energy||{}).filter(([,n])=>Number(n)>0).map(([type])=>({effectSelection:'basic:'+type,choiceLabel:'Discard '+type+' Basic Energy for +30 damage'})),
         ...(a?.specialEnergy||[]).map(ref=>({effectSelection:'special:'+ref.uid,choiceLabel:'Discard '+(ctx.cardById(ref.cardId)?.name||ref.cardId)+' for +30 damage'}))];
     }
+    if(effect?.type==='neoRule'&&effect.rule==='xy9:blastGeyser')return [
+      {effectSelection:'',choiceLabel:'120 damage — keep deck intact'},
+      {effectSelection:'boost',choiceLabel:'+20 per Water Energy — discard 2 cards from deck'}];
     if(effect?.type==='neoRule'&&effect.rule==='xy8:infernoFang'){
       const a=ctx.attacker,hasFire=Number(a?.energy?.Fire||0)>0||(a?.specialEnergy||[]).some(ref=>{
         const v=ref.provides||ctx.cardById(ref.cardId)?.effect?.provides||{};

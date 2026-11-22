@@ -9,7 +9,7 @@ const synergy=require('../app/src/main/assets/tcg-deck-synergy.js');
 // These sets use checked-in stubs until their Gradle generator runs. This early
 // deck-quality gate executes BEFORE those generators, so audit their full cards
 // in each set's post-generation audit instead. Keep this list in sync with new XY sets.
-const emptyLocalCatalogues=new Set(['bw11','xy1','xy2','xy3','xy4','xy5','xy6','xy7','xy8']);
+const emptyLocalCatalogues=new Set(['bw11','xy1','xy2','xy3','xy4','xy5','xy6','xy7','xy8','xy9']);
 function ownedFor(set){return classic.CARDS.filter(c=>c.setId===set&&c.battleEnabled&&c.deckEligible!==false).map(c=>({gameplayId:c.id,quantity:4}));}
 function trainerCounts(ids){
  const byName=new Map();
@@ -29,6 +29,15 @@ function assertDeckQuality(result,owned,description){
  assert.ok(cards.filter(c=>c?.name==='Miracle Energy').length<=1,`${description}: Miracle Energy limited`);
  return trainerCounts(result.cards);
 }
+
+test('BREAKpoint generated catalogue is exempt from early local deck gate and audited after generation',()=>{
+ const fs=require('node:fs'),path=require('node:path');
+ const gradle=fs.readFileSync(path.join(__dirname,'../app/build.gradle'),'utf8');
+ assert.ok(emptyLocalCatalogues.has('xy9'));
+ assert.match(gradle,/tasks\.register\('generateXY9ForApk'/);
+ assert.match(gradle,/tasks\.register\('auditXY9ForApk'/);
+ assert.match(gradle,/dependsOn tasks\.named\('generateXY9ForApk'\)/);
+});
 
 test('pinned BREAKthrough catalogue is audited after generation, not by the early local-stub deck gate',()=>{
  const fs=require('node:fs'),path=require('node:path');

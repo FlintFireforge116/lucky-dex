@@ -3061,7 +3061,10 @@ const target=slotForTarget(s,action.target,action.benchIndex);if(card.id==='pl2-
         (['xy7-43','xy7-92'].includes(ref.cardId)&&toolsOf(target).some(t=>t.cardId==='xy7-81'))||
         (['xy8-35','xy8-156'].includes(ref.cardId)&&toolsOf(target).some(t=>t.cardId==='xy8-139'))||
         (['xy8-22','xy8-154'].includes(ref.cardId)&&toolsOf(target).some(t=>t.cardId==='xy8-142'))||
-        (['xy8-63','xy8-64','xy8-159','xy8-160'].includes(ref.cardId)&&toolsOf(target).some(t=>t.cardId==='xy8-144')));
+        (['xy8-63','xy8-64','xy8-159','xy8-160'].includes(ref.cardId)&&toolsOf(target).some(t=>t.cardId==='xy8-144'))||
+        // XY9 BREAKpoint reuses the same Mega turn-ending exception.
+        (['xy9-27','xy9-115'].includes(ref.cardId)&&toolsOf(target).some(t=>t.cardId==='xy9-101'))||
+        (['xy9-77','xy9-120'].includes(ref.cardId)&&toolsOf(target).some(t=>t.cardId==='xy9-111')));
       const dp2SlakothWasAsleep=target.cardId==='dp2-99'&&!!target.conditions?.sleep;
       target.cardId = ref.cardId;
       target.stack.push(ref.cardId);
