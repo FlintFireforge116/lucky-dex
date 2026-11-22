@@ -18,6 +18,7 @@ EXPECTED_XY10_AUDIT = [
     'tests/v07383-fates-collide-integration.test.cjs',
     'tests/v07383-fates-collide-effects.test.cjs',
     'tests/v07384-fates-collide-stage2.test.cjs',
+    'tests/v07385-fates-collide-stage3.test.cjs',
 ]
 
 class GradleSourceError(ValueError):
@@ -90,7 +91,7 @@ def check_xy10_command(source: str, root: Path) -> None:
         raise GradleSourceError('Malformed XY10 audit commandLine: '+commands[0])
     args = [m.group(0)[1:-1] for m in re.finditer(quoted, tail)]
     if args != EXPECTED_XY10_AUDIT:
-        raise GradleSourceError('XY10 audit command must enumerate all three tests as separate quoted arguments; got '+repr(args))
+        raise GradleSourceError('XY10 audit command must enumerate all required tests as separate quoted arguments; got '+repr(args))
     for name in args[2:]:
         if not (root/name).is_file():
             raise GradleSourceError('Missing mandatory XY10 audit test: '+name)

@@ -57,7 +57,7 @@ test('All three Fates Collide Spirit Links exempt only their matching Mega Evolu
  }
 });
 test('Unverified Fossil, Power Memory, alternate KO and global effects remain gated',()=>{
- for(const [num,name] of [['14','Flare Witch'],['19','Dangerous Tentacle'],['25','Kinesis'],['55','Endgame'],['62','Metal Rain'],['82','Cacophony']]){
+ for(const [num,name] of [['14','Flare Witch'],['19','Dangerous Tentacle'],['25','Kinesis'],['62','Metal Rain'],['82','Cacophony']]){
   assert.equal(m.attacks[num+':'+name],undefined);
  }
  for(const n of ['94','96','97','98','102','108'])assert.equal(m.trainers[n]||m.energy[n],undefined);

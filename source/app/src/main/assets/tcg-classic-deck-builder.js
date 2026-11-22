@@ -102,7 +102,7 @@ function anyFossilEvolutionInDeck(ids){
  return c?.kind==='pokemon'&&!!c.evolvesFrom&&EVOLUTION_FOSSIL_NAMES.has(classicCardName(c.evolvesFrom));
 });}
 function isFossilSupport(card){return card?.kind==='trainer'&&
-  (['Holon Fossil','Fossil Egg','Fossil Excavator'].includes(classicCardName(card.name)));}
+  (['Holon Fossil','Fossil Egg','Fossil Excavator','Fossil Excavation Kit'].includes(classicCardName(card.name)));}
 // Baby Evolution is a special, voluntary Basic -> Basic evolution. It does
 // not use evolvesFrom, so ordinary evolution-chain completion cannot detect
 // missing partners (e.g. Smoochum -> Jynx). Treat it as a *deck dependency*.

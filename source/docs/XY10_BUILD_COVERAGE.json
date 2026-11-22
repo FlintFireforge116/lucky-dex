@@ -1,6 +1,6 @@
 {
   "printed": 129,
-  "battleReady": 86,
+  "battleReady": 92,
   "gated": {
     "xy10-4": [
       "Unimplemented printed Ability: Wormadam First"
@@ -47,15 +47,8 @@
     "xy10-49": [
       "Unimplemented printed Ability: Energy Keeper"
     ],
-    "xy10-50": [
-      "Unimplemented printed Ability: Safeguard"
-    ],
     "xy10-51": [
       "Unimplemented printed attack: Diamond Gift"
-    ],
-    "xy10-55": [
-      "Unimplemented printed attack: Veil of Darkness",
-      "Unimplemented printed attack: Endgame"
     ],
     "xy10-56": [
       "Unimplemented printed attack: Dark Mountain",
@@ -102,13 +95,7 @@
     "xy10-98": [
       "Unimplemented Trainer rules"
     ],
-    "xy10-101": [
-      "Unimplemented Trainer rules"
-    ],
     "xy10-102": [
-      "Unimplemented Trainer rules"
-    ],
-    "xy10-104": [
       "Unimplemented Trainer rules"
     ],
     "xy10-106": [
@@ -121,16 +108,9 @@
     "xy10-110": [
       "Unimplemented Trainer rules"
     ],
-    "xy10-113": [
-      "Unimplemented Trainer rules"
-    ],
     "xy10-117": [
       "Unimplemented printed attack: Suppression",
       "Unimplemented printed Ability: Kinesis"
-    ],
-    "xy10-119": [
-      "Unimplemented printed attack: Veil of Darkness",
-      "Unimplemented printed attack: Endgame"
     ],
     "xy10-120": [
       "Unimplemented printed attack: Rapid Blaster",

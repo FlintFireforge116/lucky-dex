@@ -119,6 +119,7 @@ test('GitHub source-only preflight never requires the not-yet-generated official
  assert.match(script,/source_only_env\.pop\('GITHUB_ACTIONS',None\)/);
  assert.match(script,/subprocess\.run\(\['node','--test'.*env=source_only_env/);
  const contract=require('../scripts/xy10_release_contract.json');
- assert.equal(contract.release,'0.69.384');assert.ok(contract.expectedPlayableMinimum>=73);
+ const gradle=fs.readFileSync(path.join(root,'app/build.gradle'),'utf8');
+ assert.equal(contract.release,gradle.match(/versionName ['"]([^'"]+)['"]/)[1]);assert.ok(contract.expectedPlayableMinimum>=73);
  for(const n of ['1','7','21','43','43a','52','63','78','86','88','103','109','115'])assert.ok(contract.requiredEnabledNumbers.includes(n),n);
 });

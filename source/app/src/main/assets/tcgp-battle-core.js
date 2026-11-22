@@ -2626,7 +2626,15 @@
             Number(source.damage||0)>0&&Number(source.turn)===Number(state.turnNumber)&&
             data.cardById(source.cardId)?.ancientTrait?.name==='Δ Plus'?1:0;
           const bw9LifeDew=state.format==='classic'&&activeToolsOf(state,slot).some(r=>r.cardId==='bw9-107')?1:0;
-          const prizeCount=awardsPrize?Math.max(0,prizeValue(card)+extraMoonSkip+arceusBeltBonus+arceusExtra+hgss3SpaceVirus+bw8Overflow+deltaPlus-bw9LifeDew):0;
+          // Fates Collide Umbreon-EX Endgame awards TWO extra Prizes only
+          // when Endgame itself damages and KOs the opposing Mega Evolution.
+          // Secondary poison KOs, unrelated attacks, and other EX never count.
+          const xy10Endgame=awardsPrize&&state.format==='classic'&&cause==='attack'&&
+            source?.attack&&source.side===foeSide&&Number(source.turn)===Number(state.turnNumber)&&
+            source.uid===attacker?.uid&&Number(source.damage||0)>0&&
+            ['xy10-55','xy10-119'].includes(source.cardId)&&foe.lastAttackName==='Endgame'&&
+            card?.megaEvolution===true?2:0;
+          const prizeCount=awardsPrize?Math.max(0,prizeValue(card)+extraMoonSkip+arceusBeltBonus+arceusExtra+hgss3SpaceVirus+bw8Overflow+deltaPlus+xy10Endgame-bw9LifeDew):0;
           awarded=Math.min(prizeCount,Math.max(0,foe.prizes.length-(state.pendingPrizeClaims||[]).filter(q=>q.side===foeSide).reduce((n,q)=>n+q.remaining,0)));
           if(awarded){state.pendingPrizeClaims=state.pendingPrizeClaims||[];state.pendingPrizeClaims.push({side:foeSide,remaining:awarded});}
           state.log.push({type:'ko',side,cardId:card.id,turnNumber:state.turnNumber,prizesTaken:foe.prizesTaken,awarded});

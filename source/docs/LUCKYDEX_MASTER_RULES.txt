@@ -1,8 +1,8 @@
 LUCKYDEX — MASTER PROJECT RULES AND DEVELOPMENT CONTRACT
 =========================================================
-Document version: 2.70
+Document version: 2.71
 Compiled: 22 November 2026
-Current inspected source: v0.69.382 GitHub APK success; v0.69.383 Fates Collide failed at source-only preflight; v0.69.384 GitHub failed parsing Gradle; this v0.69.384 syntax repair is locally checked, GitHub APK unverified.
+Current verified APK: v0.69.384 GitHub success (run 45045876175); v0.69.385 Fates Collide Stage 3 is locally tested, GitHub APK unverified.
 Recommended repository location: ~/lucky-dex/source/docs/LUCKYDEX_MASTER_RULES.txt
 Project: LuckyDex — Android application/PWA, managed with Termux and GitHub
 
@@ -4702,3 +4702,12 @@ E. POST-GENERATION REALITY CHECK
   New releases must run this before shipping; apply the same two-phase model
   to XY11 and all subsequent sets. Do not introduce a hardcoded stale-stage
   expectation that contradicts the current playable coverage contract.
+
+APPENDIX — v0.69.385 FATES COLLIDE STAGE 3 AND PINNED-CATALOGUE RELEASE SAFETY
+=========================================================================
+- Confirmed baseline: v0.69.384 GitHub run 45045876175 PASSED (129 pinned official Fates Collide prints; 86 enabled at Stage 2).
+- Stage 3: Fates Collide Ultra Ball reuses audited BW5 two-physical-hand-discard + selected Pokémon search; Mega Catcher requires actual opposing Benched Mega Evolution and rejects non-Mega targets; Fossil Excavation Kit recovers up to two selected named fossil Items from the discard (and is barred from arbitrary Trainer padding without a valid Fossil line); Carbink Safeguard blocks attacks and effects from Pokémon-EX only while active/unsuppressed; Umbreon-EX Endgame awards exactly two extra Classic Prize cards only for damage-based Mega Evolution knockout by that attack (including identical full art).
+- Treat trainer card physical zones, Special Energy, attack/source ownership and turn timing as mandatory audit dimensions. Descriptors must NOT be enabled on structural validation alone.
+- Mandatory before any release: scripts/check-gradle-source.py --self-test; scripts/preflight-xy10-release.py --full (fetch pinned official source and run the strict post-generator 129-print/CPU-deck audit); all affected XY9/XY10 node regressions; check both versionCode AND versionName across Gradle, HTML, JS, XY9 and XY10 release contracts; verify ZIP integrity and that it overlays source/ paths. A source-only skipped catalogue test is NEVER sufficient to claim an APK build succeeds.
+- Stage 3 test tests/v07385-fates-collide-stage3.test.cjs must be in both Gradle generated audit and the preflight --full test list. Older gated assertions must be reconciled whenever previously unsupported prints are enabled.
+- Apply via unzip -o /sdcard/Download/LuckyDex_patch_v0.69.385_FATES_COLLIDE_STAGE3.zip -d source, then run preflight --full before git add, commit and push.

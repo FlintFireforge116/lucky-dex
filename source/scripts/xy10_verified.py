@@ -78,6 +78,10 @@ ATK={
  ('88','Covet'):S(E('revealHand',side='opponent'),E('xy10HandToDeckBottom',side='opponent')),
  ('89','Sweeping Cure'):E('chooseTarget',target='selfBench',effect=H(90,'selfPokemon')),
  ('89','Knock Away'):Q(BONUS(30)),
+ # Umbreon Endgame: +2 Prize cards ONLY when its actual attack damages
+ # and knocks out an opposing Mega Evolution (core KO trigger verifies).
+ ('55','Veil of Darkness'):E('xy10VeilOfDarkness'),
+ ('55','Endgame'):E('koPointBonus',amount=2,defenderFilter={'tag':'mega-evolution'},attackName='Endgame'),
  # Source-number inheritance of true alternate-art prints, never by same-name alone.
 }
 for src,alternates in [('20',['116']),('25',['117','125']),('26',['118']),('55',['119']),('64',['120']),('69',['121']),('73',['122']),('83',['123']),('43',['43a']),('54',['54a'])]:
@@ -95,6 +99,10 @@ TRAINERS={
  '99':('Item',E('chooseTarget',target='selfPokemon',filter={'hasEnergyType':'Fairy'},effect=H(50,'selfPokemon'))),
  '100':('Stadium',E('modifier',stat='retreatCost',amount=-99,scope='both',duration='whileInPlay',filter={'hasEnergyType':'Fairy'})),
  '103':('Supporter',E('fieldCountDraw',side='opponent',benchOnly=True,filter={'stage':'Basic'})),
+ # Choose up to two REAL Fossil Items from discard, no Energy Zone proxies.
+ '101':('Item',SEARCH(2,source='discard',kind='trainer',name=['Helix Fossil Omanyte','Dome Fossil Kabuto','Old Amber Aerodactyl'])),
+ '104':('Item',E('xy10MegaCatcher')),
+ '113':('Item',E('neoRule',rule='bw5:ultraBall')),
  '109':('Item',E('revealUntilMatching',filter={'kind':'trainer','trainerType':'Supporter'})),
  '105':('Supporter',E('handShuffle',side='both',draw='pointsRemaining')),
  '105a':('Supporter',E('handShuffle',side='both',draw='pointsRemaining')),
@@ -107,6 +115,9 @@ TRAINERS={
  # they are not mapped as generic search/draw because the cost matters.
 }
 ABILITIES={
+ # Carbink's Safeguard prevents EX attack DAMAGE and secondary EFFECTS;
+ # both barriers disappear under global Ability suppression.
+ 'Safeguard':{'type':'passive','effect':S(E('preventDamage',duration='whileInPlay',attackerFilter={'isEx':True}),E('preventEffects',duration='whileInPlay',attackerFilter={'isEx':True}))},
  'Serpentine Strangle':{'type':'triggered','event':'evolved','effect':Q(ST('paralysis'))},
  'Sparkle Veil':{'type':'passive','activeOnly':True,'effect':E('modifier',stat='damageReduction',amount=30,scope='team',duration='whileActive')},
  'Regi Power':{'type':'passive','effect':E('xy10RegiPower')},
