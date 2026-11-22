@@ -1,8 +1,8 @@
 LUCKYDEX — MASTER PROJECT RULES AND DEVELOPMENT CONTRACT
 =========================================================
-Document version: 2.66
+Document version: 2.67
 Compiled: 22 November 2026
-Current inspected source: v0.69.381 BREAKpoint completion plus v0.69.382 independent rule audit; new APK build pending GitHub confirmation. Source-relative ZIP extraction into ~/lucky-dex/source/.
+Current inspected source: v0.69.382 BREAKpoint independent audit (GitHub APK success), extended locally as v0.69.383 XY10 Fates Collide mechanic-first integration; new APK build pending GitHub confirmation. Source-relative ZIP extraction into ~/lucky-dex/source/.
 Recommended repository location: ~/lucky-dex/source/docs/LUCKYDEX_MASTER_RULES.txt
 Project: LuckyDex — Android application/PWA, managed with Termux and GitHub
 
@@ -4426,5 +4426,104 @@ Termux installation:
   unzip -o /sdcard/Download/LuckyDex_patch_v0.69.382_BREAKPOINT_INDEPENDENT_AUDIT.zip -d source
   git add source
   git commit -m "LuckyDex v0.69.382 BREAKpoint independent audit"
+  git push origin main
+================================================================================
+
+================================================================================
+APPENDIX — v0.69.383 XY10 FATES COLLIDE MECHANIC-FIRST INTEGRATION
+Master rules revision 2.67, 22 November 2026
+================================================================================
+
+[CURRENT] VERIFIED BASELINE:
+  * Previous XY9 BREAKpoint audit v0.69.382 built successfully in GitHub.
+  * v0.69.383 is a new patch on that baseline. Local tests alone do NOT
+    confirm the new GitHub APK build succeeded; check after pushing.
+  * Sync app/build.gradle versionName=0.69.383 and versionCode=7383 with
+    index.html titleBuildVersion / LUCKY DEX version and app-v0167.js.
+  * Preserve scripts/xy9_release_contract.json release=0.69.383 to keep the
+    earlier audited preflight compatible with the current app version.
+
+[LOCKED] FATES COLLIDE OFFICIAL PRINT SOURCE:
+  * Set id xy10, title Fates Collide, XY series, print release 2 May 2016.
+  * Pinned upstream PokemonTCG/pokemon-tcg-data cards/en/xy10.json Git blob
+    aa097c8da85e960a5afa4f3b96312f64dcbec871. NEVER use latest/main
+    without re-pinning source and re-auditing printed effects.
+  * 129 distinct prints: numbers 1–125 plus alternate cards 43a (Regirock-EX),
+    54a (Zygarde-EX), 105a (N), 111a (Shauna); 147 attacks, 21 Abilities,
+    and five BREAK evolutions (Delphox, Omastar, Carbink, Bronzong, Lugia).
+  * Full official catalogue generated during GitHub APK build by
+    scripts/build-xy10.py into data/classic/xy10-print-compact.json and
+    app/src/main/assets/tcg-classic-fates-collide.js. The tracked JS stub
+    is intentionally source-only and must never be mistaken for real data.
+
+[CURRENT] FIRST-PASS BATTLE INTEGRATION:
+  * Validated reuse of shared effect descriptors: no fake 'playable' cards
+    with unsupported/noop printed effects. A print becomes battleEnabled and
+    deckEligible only when EVERY attack, Ability, Trainer/Energy effect, and
+    exceptional entry rule is mapped. Mapping is by (card number, move name).
+  * Reuse the audited XY8 BREAK-as-evolution/LV.X inheritance engine and
+    existing official attack-cost decoding; BREAK printed HP and previous
+    attacks, Abilities, typing, Weakness, Resistance, Retreat and attachments.
+  * Completed examples: Delphox Psystorm counts Energy units across both
+    entire boards; M Alakazam Zen Force counts actual opposing damage counters;
+    M Altaria Mist Purge only receives bonus/heal with attached Special Energy;
+    Fairy Garden works for either side with Basic or flexible Special Fairy;
+    Spirit Links for Alakazam, Altaria, Audino; Double Colorless Energy;
+    Glaceon Crystal Ray, Weezing Balloon Bomb, Solosis/Duosion/Reuniclus Bench
+    conditional bonuses, Altaria Shining Wind, N's independent Prize-based
+    hand redraws and Team Rocket's Handiwork coin-dependent opponent milling.
+  * The Fates Collide set is included in Classic data, player set picker,
+    competitive/random deck builder, opponent pool and HTML load order.
+  * Unsupported interactions remain explicitly gated, including restored
+    Fossils, Flare Witch, Dangerous Tentacle, Kinesis, Metal Rain, Power
+    Memory, Choice-heavy removals, global effects or delayed knockout hooks.
+    Continue mechanic-first reuse in the NEXT patch rather than weakening
+    printed rules or forcing unsupported cards into the CPU/deck builder.
+  * Projected FIRST-PASS coverage approximately 73/129 prints (prediction,
+    NOT a final generated-catalogue result). Verify exact count in GitHub
+    docs/XY10_BUILD_COVERAGE.json. Never claim 129/129 playable at this stage.
+
+[LOCKED] AUTOMATED RELEASE CONTRACT AND TESTING (PREVENT PAST FAILURES):
+  * Single source-of-truth stage contract: scripts/xy10_release_contract.json.
+    Do not leave earlier-stage hardcoded gated/enabled assertions in later
+    stage tests. Update contract and all assertions together.
+  * Run source preflight BEFORE packaging:
+      python3 scripts/preflight-xy10-release.py
+    It checks metadata, pin, Gradle/HTML/boot versions, previous XY9 contract,
+    generated-task dependencies, aliases, mapped effect schema, and high-risk
+    incomplete prints. No internet needed in this fast mode.
+  * Build pipeline MUST execute in order:
+      preflightXY10ContractForApk → auditXY9ForApk → generateXY10ForApk
+      → auditXY10ForApk → preBuild / mergeAssets / APK
+    If dependencies are declared separately Gradle may schedule them in the
+    same prerequisite tier; auditXY10 must depend on generateXY10 and
+    generateXY10 must depend on BOTH preflightXY10 and auditXY9.
+  * STRICT GITHUB post-generation audit must verify 129 exact print numbers,
+    147 attack print lines, 21 Abilities, five BREAK cards, all cost syntax,
+    every newly required-enabled print and all unsupported prints gated.
+    Also build legal/usable 30-card 'competitive' and 'random' player/CPU
+    decks using real generated cards. Test skip on local stub is expected;
+    skip on GitHub is FORBIDDEN (GITHUB_ACTIONS=true).
+  * Permanent tests:
+      tests/v07383-fates-collide-integration.test.cjs
+      tests/v07383-fates-collide-effects.test.cjs
+    The second suite probes actual battle outcomes for N, Crystal Ray, Mega
+    Spirit Links, Fairy Garden, Mist Purge, Psystorm, Zen Force, three-stage
+    Bench bonuses, mill/coin effects and Weakness protection.
+  * Regression requirement: run XY9 independent audit, all XY8–XY9 and
+    selected older XY/Ancient Origins suites, cross-set deck-quality test,
+    then final preflight. A success of source-only local tests does not prove
+    generated complete catalogue or GitHub APK success.
+  * Never delete old assertions to make tests green. Replace obsolete
+    stage assumptions with contract-based assertions AND add behavioural
+    tests for formerly gated newly enabled cards.
+  * ZIP ONLY changed source-relative files; do not include repository root,
+    generated synthetic catalogue, .pyc, caches or previous whole-code ZIP.
+
+INSTALLATION (TERMUX):
+  cd ~/lucky-dex
+  unzip -o /sdcard/Download/LuckyDex_patch_v0.69.383_FATES_COLLIDE_MECHANIC_FIRST.zip -d source
+  git add source
+  git commit -m "LuckyDex v0.69.383 Fates Collide mechanic-first integration"
   git push origin main
 ================================================================================

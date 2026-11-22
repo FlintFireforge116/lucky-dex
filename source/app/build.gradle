@@ -8,8 +8,8 @@ android {
         applicationId 'com.example.luckydex'
         minSdk 26
         targetSdk 35
-        versionCode 7382
-        versionName '0.69.382'
+        versionCode 7383
+        versionName '0.69.383'
     }
 
     signingConfigs {
@@ -899,4 +899,25 @@ tasks.register('auditXY9ForApk', Exec) {
 }
 tasks.matching { it.name == 'preBuild' || (it.name.startsWith('merge') && it.name.endsWith('Assets')) }.configureEach {
     dependsOn tasks.named('auditXY9ForApk')
+}
+
+// v0.69.383 — Fates Collide (xy10): strict source-only release contract
+// before generation, then immutable 129-print catalogue and deck audit.
+tasks.register('preflightXY10ContractForApk', Exec) {
+    workingDir rootProject.projectDir
+    commandLine (System.getenv('LUCKYDEX_PYTHON') ?: 'python3'), 'scripts/preflight-xy10-release.py'
+}
+tasks.register('generateXY10ForApk', Exec) {
+    dependsOn tasks.named('preflightXY10ContractForApk')
+    dependsOn tasks.named('auditXY9ForApk')
+    workingDir rootProject.projectDir
+    commandLine (System.getenv('LUCKYDEX_PYTHON') ?: 'python3'), 'scripts/build-xy10.py'
+}
+tasks.register('auditXY10ForApk', Exec) {
+    dependsOn tasks.named('generateXY10ForApk')
+    workingDir rootProject.projectDir
+    commandLine 'node', '--test', 'tests/v07383-fates-collide-integration.test.cjs', 'tests/v07383-fates-collide-effects.test.cjs'
+}
+tasks.matching { it.name == 'preBuild' || (it.name.startsWith('merge') && it.name.endsWith('Assets')) }.configureEach {
+    dependsOn tasks.named('auditXY10ForApk')
 }

@@ -9,7 +9,7 @@ const synergy=require('../app/src/main/assets/tcg-deck-synergy.js');
 // These sets use checked-in stubs until their Gradle generator runs. This early
 // deck-quality gate executes BEFORE those generators, so audit their full cards
 // in each set's post-generation audit instead. Keep this list in sync with new XY sets.
-const emptyLocalCatalogues=new Set(['bw11','xy1','xy2','xy3','xy4','xy5','xy6','xy7','xy8','xy9']);
+const emptyLocalCatalogues=new Set(['bw11','xy1','xy2','xy3','xy4','xy5','xy6','xy7','xy8','xy9','xy10']);
 function ownedFor(set){return classic.CARDS.filter(c=>c.setId===set&&c.battleEnabled&&c.deckEligible!==false).map(c=>({gameplayId:c.id,quantity:4}));}
 function trainerCounts(ids){
  const byName=new Map();

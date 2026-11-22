@@ -3082,7 +3082,11 @@ const target=slotForTarget(s,action.target,action.benchIndex);if(card.id==='pl2-
         (['xy8-63','xy8-64','xy8-159','xy8-160'].includes(ref.cardId)&&toolsOf(target).some(t=>t.cardId==='xy8-144'))||
         // XY9 BREAKpoint reuses the same Mega turn-ending exception.
         (['xy9-27','xy9-115'].includes(ref.cardId)&&toolsOf(target).some(t=>t.cardId==='xy9-101'))||
-        (['xy9-77','xy9-120'].includes(ref.cardId)&&toolsOf(target).some(t=>t.cardId==='xy9-111')));
+        (['xy9-77','xy9-120'].includes(ref.cardId)&&toolsOf(target).some(t=>t.cardId==='xy9-111'))||
+        // XY10 Fates Collide matching Spirit Links reuse the existing Mega turn exemption.
+        (['xy10-26','xy10-118'].includes(ref.cardId)&&toolsOf(target).some(t=>t.cardId==='xy10-90'))||
+        (['xy10-69','xy10-121'].includes(ref.cardId)&&toolsOf(target).some(t=>t.cardId==='xy10-91'))||
+        (ref.cardId==='xy10-85'&&toolsOf(target).some(t=>t.cardId==='xy10-92')));
       const dp2SlakothWasAsleep=target.cardId==='dp2-99'&&!!target.conditions?.sleep;
       target.cardId = ref.cardId;
       target.stack.push(ref.cardId);
