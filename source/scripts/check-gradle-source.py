@@ -25,6 +25,8 @@ EXPECTED_XY10_AUDIT = [
     'tests/v07389-fates-collide-independent-audit.test.cjs',
 ]
 
+EXPECTED_XY11_AUDIT = ['node','--test','tests/v07390-steam-siege-integration.test.cjs','tests/v07391-steam-siege-audit.test.cjs']
+
 class GradleSourceError(ValueError):
     pass
 
@@ -101,9 +103,29 @@ def check_xy10_command(source: str, root: Path) -> None:
             raise GradleSourceError('Missing mandatory XY10 audit test: '+name)
 
 
+def check_xy11_command(source: str, root: Path) -> None:
+    match = re.search(r"(?ms)^tasks\.register\('auditXY11ForApk', Exec\) \{(.*?)^\}", source)
+    if not match:
+        raise GradleSourceError('Missing auditXY11ForApk task registration')
+    commands = [x.strip() for x in match.group(1).splitlines() if x.strip().startswith('commandLine')]
+    if len(commands) != 1:
+        raise GradleSourceError('Expected exactly one XY11 audit commandLine')
+    tail = commands[0][len('commandLine'):]
+    quoted = r"'(?:[^'\\]|\\.)*'"
+    syntax = r'\s*' + quoted + r'(?:\s*,\s*' + quoted + r')*\s*'
+    if not re.fullmatch(syntax, tail):
+        raise GradleSourceError('Malformed XY11 audit commandLine: '+commands[0])
+    args = [m.group(0)[1:-1] for m in re.finditer(quoted, tail)]
+    if args != EXPECTED_XY11_AUDIT:
+        raise GradleSourceError('XY11 audit must enumerate strict tests: '+repr(args))
+    for name in args[2:]:
+        if not (root/name).is_file():
+            raise GradleSourceError('Missing XY11 audit test: '+name)
+
 def verify(source: str, root: Path = ROOT) -> None:
     check_balanced(source)
     check_xy10_command(source, root)
+    check_xy11_command(source, root)
 
 
 def self_test() -> None:
@@ -119,6 +141,8 @@ def self_test() -> None:
         ('missing test comma', good.replace("effects.test.cjs', 'tests/", "effects.test.cjs' 'tests/")),
         ('missing newest-stage test', good.replace(", 'tests/v07389-fates-collide-independent-audit.test.cjs'", "")),
         ('unclosed Gradle block', good+'\n{'),
+        ('missing XY11 audit', good.replace("'tests/v07391-steam-siege-audit.test.cjs'","'tests/not-our-test.test.cjs'")),
+        ('XY11 broken separator', good.replace("'--test', 'tests/v07390-steam-siege-integration.test.cjs'","'--test' 'tests/v07390-steam-siege-integration.test.cjs'")),
     ]:
         try:
             verify(source)

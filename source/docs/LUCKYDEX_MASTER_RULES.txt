@@ -1,8 +1,8 @@
 LUCKYDEX — MASTER PROJECT RULES AND DEVELOPMENT CONTRACT
 =========================================================
-Document version: 2.74
+Document version: 2.76
 Compiled: 22 November 2026
-Current verified APK: v0.69.387 Fates Collide Stage 5 (GitHub run 45051296127 succeeded); v0.69.388 129-print completion is locally tested, GitHub APK unverified.
+Current verified APK: v0.69.387 Fates Collide Stage 5 (GitHub run 45051296127 succeeded). Local v0.69.389 Fates Collide independent audit passed; Steam Siege v0.69.390 is a pre-GitHub first-stage integration, not a verified APK.
 Recommended repository location: ~/lucky-dex/source/docs/LUCKYDEX_MASTER_RULES.txt
 Project: LuckyDex — Android application/PWA, managed with Termux and GitHub
 
@@ -4857,3 +4857,58 @@ FATES COLLIDE XY10 INDEPENDENT AUDIT — v0.69.389 / Master Rules v2.75 (2026-11
 6. A failed huge cross-era regression run due to resource/time limits is NOT
    evidence that those earlier sets were validated. Use focused prior-set
    regressions and clearly report what was and was not executed.
+
+
+STEAM SIEGE XY11 STAGE 1 — v0.69.390 / Master Rules v2.76 (2026-11-22)
+------------------------------------------------------------------------
+1. The official xy11 set has 116 printed cards, 161 printed attacks, 18
+   Ability print entries, seven BREAK Pokémon and 12 dual-type prints.
+   Source: immutable Git commit 90f27d0e14cefe48ccb2b8922a7a356b2fcf0072;
+   card JSON blob 22ea97ca00b595fe6b121494fd45dd65692deee6.
+   Do not mistake a 116-print collection for 116 battle-ready cards.
+2. Mechanic-first bulk integration remains the goal: reuse prior rules and
+   finish the set rapidly, then run a separate human/CPU independent audit.
+   [CHECK] This initial pass explicitly gates unsupported printed text and
+   does NOT represent final whole-set completion. Never count an attack as
+   implemented because its damage number is displayed when its side effect
+   is missing. The generated XY11_BUILD_COVERAGE.json is the authoritative
+   remaining-work checklist. Prefer large, coherent bulk follow-up passes
+   over six-card fragments.
+3. BREAK inheritance reuses the audited LV.X/XY8–10 mechanics. Dual-type
+   Pokémon retain BOTH types. No Energy card was printed in xy11, so ordinary
+   Basic Energy is still supplied by the separate Energy Zone; searches for
+   physical discard/deck/hand cards cannot borrow fictional Energy from it.
+4. Restored Shieldon and Anorith require their exact bottom-seven Fossil
+   Items; do not allow orphan Fossils or treat Restored as starting Basics.
+   Anorith Restored Barrier removes Weakness from allied Restored Pokémon
+   while active and unsuppressed, including the Bench Wide Lens path.
+   Solar Step counts actual remaining Prize cards, not Prize points.
+   Spirit Links must match the exact XY11 Mega evolution and never become
+   automatic filler with no Mega beneficiary.
+5. The pinned 116-print generator runs in scripts/build-xy11.py and leaves
+   incomplete printed effects explicitly battleEnabled=false. The source-only
+   preflight must not be confused with the mandatory full generated audit:
+   python3 scripts/check-gradle-source.py --self-test
+   python3 scripts/preflight-xy11-release.py --full
+   Commit generated pinned source and generated asset only after success.
+6. Keep Gradle code 7391/name 0.69.391, HTML title, boot JS and both prior
+   XY9/XY10 release contracts synchronized. Chain XY11 tasks AFTER XY10
+   audit, BEFORE asset merge. Guard Gradle source argument syntax against
+   broken quoting, and do not claim the GitHub APK build succeeded until the
+   workflow reports success. Changed-files-only ZIP is extracted -d source.
+7. Full implementation must finish gated signature mechanics (Steam Up,
+   Poké Puff, Ninja Boy, Pokémon Ranger, Special Charge, Mega Boost,
+   Magearna Mystic Heart, dual-type and BREAK attacks), then perform the
+   promised independent audit and fix gameplay/deck-synergy defects.
+
+
+[XY11 AUDIT v0.69.391 — INDEPENDENT STATUS 2026-11-22]
+Steam Siege XY11 is NOT complete when only the generator/source-only checks pass. Initial stage mapping: 51/116 playable, 65 gated; v0.69.391 audit reuse brings mapped count to 56/116 playable, 60 gated. The mandatory independent full-catalogue preflight (`python3 scripts/preflight-xy11-release.py --full`) must run on the generated official 116-print set before pushing. Audit source-only means 12 tests pass/3 skip, NOT an integration sign-off. No APK success is presumed.
+Playability must require EVERY printed attack, Ability and Trainer effect to be exact; never treat a no-op or unvalidated effect as gameplay-ready. For named Energy recovered from discard, use physical discard/ledger choices, not fresh Energy Zone; do not copy an attack effect just because its attack name matches. Do not generate a BREAK deck without a playable eligible previous-stage parent and never add an unmatched Spirit Link or Restored Fossil. Audit all newly enabled cards with their actual cost, type, stage, targeted effects, and player/CPU deck-building roles.
+
+
+## XY11 printed Energy-cost regression — v0.69.391b (22 November 2026)
+
+Classic registration in `app/src/main/assets/tcg-classic-battle-data.js` intentionally converts each attack cost from the generator's `['G','C']` array to the runtime string `'GC'`. This is not an attack-cost bug. Any test importing the Classic battle registry or core before examining a generated set must compare exact printed costs using `Array.isArray(cost) ? cost.join('') : String(cost ?? '')` against the pinned source's `sourceCost.join('')` instead of comparing a string with an array. Check both single-unit ('C') and multi-unit ('GC') costs, including full 116-print generated tests. This should be a shared regression rule for all future sets, not another one-off patch.
+
+A source-only preflight with skipped generated-catalogue checks is NOT proof of a clean `--full` preflight or GitHub build. Keep `preflight-xy11-release.py --full` mandatory before Termux commits/pushes. Do not modify actual attack energy prices or runtime card registration to make a malformed test pass.

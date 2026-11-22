@@ -3130,7 +3130,10 @@ const target=slotForTarget(s,action.target,action.benchIndex);if(card.id==='pl2-
         // XY10 Fates Collide matching Spirit Links reuse the existing Mega turn exemption.
         (['xy10-26','xy10-118'].includes(ref.cardId)&&toolsOf(target).some(t=>t.cardId==='xy10-90'))||
         (['xy10-69','xy10-121'].includes(ref.cardId)&&toolsOf(target).some(t=>t.cardId==='xy10-91'))||
-        (ref.cardId==='xy10-85'&&toolsOf(target).some(t=>t.cardId==='xy10-92')));
+        (ref.cardId==='xy10-85'&&toolsOf(target).some(t=>t.cardId==='xy10-92'))||
+        // XY11 Spirit Links keep the exact source/target pairing.
+        (['xy11-68','xy11-109'].includes(ref.cardId)&&toolsOf(target).some(t=>t.cardId==='xy11-106'))||
+        (['xy11-79','xy11-112'].includes(ref.cardId)&&toolsOf(target).some(t=>t.cardId==='xy11-101')));
       const xy10Kinesis=['xy10-26','xy10-118'].includes(ref.cardId)&&
         ['xy10-25','xy10-117','xy10-125'].includes(target.cardId)&&
         !effects.abilitiesSuppressed(state,side,target,data.cardById);

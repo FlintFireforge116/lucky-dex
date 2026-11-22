@@ -27,7 +27,7 @@ const STAPLES=Object.freeze([
  ['base1-83',1], // Maintenance
  ['base1-87',1]  // Pokedex
 ]);
-const SET_IDS=Object.freeze(['base1','base2','base3','base5','gym1','gym2','neo1','neo2','neo3','neo4','base6','ecard1','ecard2','ecard3','ex1','ex2','ex3','ex4','ex5','ex6','ex7','ex8','ex9','ex10','ex11','ex12','ex13','ex14','ex15','ex16','dp1','dp2','dp3','dp4','dp5','dp6','dp7','pl1','pl2','pl3','pl4','hgss1','hgss2','hgss3','hgss4','col1','bw1','bw2','bw3','bw4','bw5','bw6','bw7','bw8','bw9','bw10','bw11','xy1','xy2','xy3','xy4','xy5','xy6','xy7','xy8','xy9','xy10','SNAPFLORIO','SNAPFOUNJA','sv1']);
+const SET_IDS=Object.freeze(['base1','base2','base3','base5','gym1','gym2','neo1','neo2','neo3','neo4','base6','ecard1','ecard2','ecard3','ex1','ex2','ex3','ex4','ex5','ex6','ex7','ex8','ex9','ex10','ex11','ex12','ex13','ex14','ex15','ex16','dp1','dp2','dp3','dp4','dp5','dp6','dp7','pl1','pl2','pl3','pl4','hgss1','hgss2','hgss3','hgss4','col1','bw1','bw2','bw3','bw4','bw5','bw6','bw7','bw8','bw9','bw10','bw11','xy1','xy2','xy3','xy4','xy5','xy6','xy7','xy8','xy9','xy10','xy11','SNAPFLORIO','SNAPFOUNJA','sv1']);
 // Darkness and Metal are already Basic Energy types. Deduplicate before rendering
 // archetype chips so each energy type has exactly one toggle.
 // Dragon is a Pokémon type, never a Basic Energy type. Include it as an
@@ -81,22 +81,22 @@ function parentKeys(baseName){const n=classicCardName(baseName);return /^Burmy (
 // BW3 Restored Pokémon are not Basics: these two specific Item cards are
 // their required entry path.  Treat them as fossil-family roots for deck
 // generation, while the battle engine continues to bench via bottom-seven.
-const RESTORED_FOSSIL_IDS=new Set(['bw3-90','bw3-93','bw5-97','bw10-79','bw10-82','bw10-87','xy10-96','xy10-102','xy10-106']);
+const RESTORED_FOSSIL_IDS=new Set(['bw3-90','bw3-93','bw5-97','bw10-79','bw10-82','bw10-87','xy10-96','xy10-102','xy10-106','xy11-98','xy11-100']);
 const EVOLUTION_FOSSIL_NAMES=new Set(classic.CARDS.filter(c=>c.kind==='trainer'&&
   (c.effect?.type==='playFossil'||RESTORED_FOSSIL_IDS.has(c.id))&&
-  (c.id==='bw5-97'||c.id.startsWith('xy10-')||/(?:Fossil(?: Lileep)?|Old Amber)$/i.test(classicCardName(c.name)))).map(c=>classicCardName(c.name)));
+  (c.id==='bw5-97'||c.id.startsWith('xy10-')||c.id.startsWith('xy11-')||/(?:Fossil(?: Lileep)?|Old Amber)$/i.test(classicCardName(c.name)))).map(c=>classicCardName(c.name)));
 function isEvolutionFossil(card){return !!(card?.kind==='trainer'&&
   (card.effect?.type==='playFossil'||RESTORED_FOSSIL_IDS.has(card.id))&&
   EVOLUTION_FOSSIL_NAMES.has(classicCardName(card.name)));}
 function fossilEvolutionInDeck(fossil,ids){
- const restored={'bw10-79':'bw10-27','bw10-82':'bw10-53','bw10-87':'bw10-3','xy10-96':'xy10-38','xy10-102':'xy10-17','xy10-106':'xy10-76'};
+ const restored={'bw10-79':'bw10-27','bw10-82':'bw10-53','bw10-87':'bw10-3','xy10-96':'xy10-38','xy10-102':'xy10-17','xy10-106':'xy10-76','xy11-98':'xy11-69','xy11-100':'xy11-56'};
  if(restored[fossil?.id])return (ids||[]).includes(restored[fossil.id]);
  if(fossil?.id==='bw5-97')return (ids||[]).includes('bw5-53');return (ids||[]).some(id=>{
  const c=classic.cardById(id);
  return c?.kind==='pokemon'&&!!c.evolvesFrom&&classicEvolutionMatches(fossil.name,c.evolvesFrom);
 });}
 function anyFossilEvolutionInDeck(ids){
- if(['bw10-3','bw10-27','bw10-53','xy10-17','xy10-38','xy10-76'].some(id=>(ids||[]).includes(id)))return true;
+ if(['bw10-3','bw10-27','bw10-53','xy10-17','xy10-38','xy10-76','xy11-56','xy11-69'].some(id=>(ids||[]).includes(id)))return true;
  return (ids||[]).some(id=>{
  const c=classic.cardById(id);
  return c?.kind==='pokemon'&&!!c.evolvesFrom&&EVOLUTION_FOSSIL_NAMES.has(classicCardName(c.evolvesFrom));
@@ -142,7 +142,7 @@ function familyLine(card,pool){
   const prior=parents[0];if(seen.has(prior.id))return [];
   line.unshift(prior);seen.add(prior.id);cur=prior;
  }
- const restoredFossil={'bw10-3':'bw10-87','bw10-27':'bw10-79','bw10-53':'bw10-82'};
+ const restoredFossil={'bw10-3':'bw10-87','bw10-27':'bw10-79','bw10-53':'bw10-82','xy11-56':'xy11-100','xy11-69':'xy11-98'};
  const needed=restoredFossil[line[0]?.id];
  if(needed){const fossil=pool.find(c=>c.id===needed);
    if(!fossil)return [];line.unshift(fossil);
@@ -746,7 +746,9 @@ function buildDeck(rows,options={}){
        'xy9-111':['xy9-77','xy9-120'],
        'xy10-90':['xy10-26','xy10-118'],
        'xy10-91':['xy10-69','xy10-121'],
-       'xy10-92':['xy10-85']};
+       'xy10-92':['xy10-85'],
+       'xy11-101':['xy11-79','xy11-112'],
+       'xy11-106':['xy11-68','xy11-109']};
      if(xy5Links[card?.id]&&!pokemon.some(p=>xy5Links[card.id].includes(p.id)))return false;
      // Primal Clash's new Trainers must match the *constructed* 30-card
      // deck, not the full collection. Basic Energy in the automatic Zone is
@@ -1182,7 +1184,9 @@ function buildDeck(rows,options={}){
    ['xy9-111',['xy9-77','xy9-120']], // M Scizor-EX
    ['xy10-90',['xy10-26','xy10-118']], // M Alakazam-EX
    ['xy10-91',['xy10-69','xy10-121']], // M Altaria-EX
-   ['xy10-92',['xy10-85']] // M Audino-EX
+   ['xy10-92',['xy10-85']], // M Audino-EX
+   ['xy11-101',['xy11-79','xy11-112']], // M Gardevoir-EX
+   ['xy11-106',['xy11-68','xy11-109']] // M Steelix-EX
  ];
  for(const [id,partners] of xy5SpiritLinks){
    if(!partners.some(p=>cards.includes(p)))continue;

@@ -23649,7 +23649,7 @@
       else if(e.type==='damageFromDamage')amount=Number((e.source==='self'?ctx.attacker:ctx.defender)?.damage||0)*e.amount;
       else if(e.type==='statusDamage')amount=ctx.defender?.conditions?.[e.status]?e.amount:0;
       else if(e.type==='allHeadsBonus'){let heads=0;const results=[];for(let i=0;i<e.coins;i++){const hit=coin(ctx);results.push(hit);if(hit)heads++;}ctx.state.log.push({type:'coin',side:ctx.side,heads,coins:e.coins,results});amount=heads===e.coins?e.amount:0;}
-      else if(e.type==='pointDamage')amount=Number(e.prizesTaken?(e.side==='opponent'?other(ctx):own(ctx)).prizesTaken:(e.side==='opponent'?other(ctx):own(ctx)).points||0)*e.amount;
+      else if(e.type==='pointDamage'){const ss=e.side==='opponent'?other(ctx):own(ctx);amount=Number(e.prizesRemaining?(ss.prizes||[]).length:e.prizesTaken?ss.prizesTaken:ss.points||0)*e.amount;}
       else if(e.type==='namedAttackCountDamage'){const cards=[...pokemonOn(own(ctx)).map(s=>ctx.cardById(s.cardId)),...(own(ctx).hand||[]).map(r=>ctx.cardById(r.cardId))];amount=cards.filter(c=>(c?.attacks||[]).some(a=>a.name===e.attackName)).length*e.amount;}
       else if(e.type==='usedAttackCountDamage')amount=Number(own(ctx).attackCounts?.[e.attackName]||0)*e.amount;
       else if(e.type==='coinDamageByPokemon'){const count=(e.benchOnly?own(ctx).bench:pokemonOn(own(ctx))).filter(s=>!e.filter||matchesFilter(ctx.cardById(s.cardId),e.filter,s)).length;let heads=0;const results=[];for(let i=0;i<count;i++){const hit=coin(ctx);results.push(hit);if(hit)heads++;}ctx.state.log.push({type:'coin',side:ctx.side,heads,coins:count,results});amount=heads*e.amount;}
@@ -25140,6 +25140,7 @@ if(r==='lastResort')return ss.hand.length===0?[{}]:[];if(r==='surgeSwap')return 
       pokemonOn(state.sides[defenderSide]).some(p=>
         (p.cardId==='xy5-100'||p.cardId==='xy6-74'&&defender.types?.includes('Colorless'))&&
         !abilitiesSuppressed(state,defenderSide,p,cardById))||
+      xy11RestoredBarrier(state,defenderSide,defenderSlot,cardById)||
       !!findPassiveRule(state,defenderSide,defenderSlot,'weaknessGuard',cardById)||
       state.stadium?.cardId==='ex5-87'&&!defender.pokemonEX||
       state.stadium?.cardId==='pl2-94'&&defender.types?.includes('Lightning')||
@@ -25154,6 +25155,14 @@ if(r==='lastResort')return ss.hand.length===0?[{}]:[];if(r==='surgeSwap')return 
       const raw=String(defender.resistanceValue||'-20'),m=raw.match(/-\s*(\d+)/);n=Math.max(0,n-Number(m?.[1]||20));
     }
     return n;
+  }
+  // Steam Siege Anorith Restored Barrier: while the Ability is active, every
+  // Restored Pokémon on this player's side has no Weakness. Suppression removes
+  // the aura immediately. This covers both active and Wide Lens bench matchups.
+  function xy11RestoredBarrier(state,defenderSide,defenderSlot,cardById){
+    return state?.format==='classic'&&cardById(defenderSlot?.cardId)?.stage==='Restored'&&
+      pokemonOn(state.sides[defenderSide]).some(p=>p.cardId==='xy11-56'&&
+        !abilitiesSuppressed(state,defenderSide,p,cardById));
   }
   function attackDamageWithState(state,attackSide,attackerSlot,defenderSide,defenderSlot,damage,cardById){
     let n=Math.max(0,Number(damage||0));if(!n||!attackerSlot||!defenderSlot)return n;
@@ -25394,7 +25403,7 @@ if(r==='lastResort')return ss.hand.length===0?[{}]:[];if(r==='surgeSwap')return 
       const holonFire=!(defender?.pokemonEx)&&Number(defenderSlot?.energy?.Fire||0)>0&&(defenderSlot?.specialEnergy||[]).some(r=>['ex11-104','ex15-84'].includes(r.cardId));
       const ex14Shield=pokemonOn(state.sides[defenderSide]).some(p=>p.cardId==='ex14-2'&&!abilitiesSuppressed(state,defenderSide,p,cardById))&&
         state.sides[defenderSide].active===defenderSlot;
-      if((weakness&&types.includes(weakness)||!defenderSlot?.weaknessOverride&&defender?.weaknesses?.some(w=>types.includes(w)))&&!ex14Shield&&!blooming&&!hiddenLegendsTomb&&!glaciaNoWeakness&&!majesticMoonlight&&!dp6PsychicAura&&!rocketNoWeakness&&!pl2SunyshoreGuard&&!pl2ArcanineNoWeakness&&!pl3ExploudNoWeakness&&!xy5MiracleGuard&&!xy6ClearHumming&&!xy5WeaknessPolicy&&!xy7FlashEnergy&&!hgssGreenShield&&!bw3LeafTailor&&!bw10MentalShroud&&!xy1ShadowCircle&&!activeToolsOf(state,defenderSlot,cardById).some(r=>r.cardId==='dp6-129')&&!ex10NoWeakness&&!ex15NoWeakness&&!holonFire&&!holonRayquazaGuard&&!legendFossilShield&&!(guard&&(guard.expiresTurn==null||state.turnNumber<=guard.expiresTurn))){const raw=pl2LucarioAura||state.stadium?.cardId==='dp2-112'?'×2':String(defender?.weaknessValue||'×2'),m=raw.match(/[x×]\s*(\d+(?:\.\d+)?)/i),add=raw.match(/^\+\s*(\d+)/);n=state.format==='classic'&&['player','opponent'].some(w=>pokemonOn(state.sides[w]).some(p=>p.cardId==='bw7-3'&&!abilitiesSuppressed(state,w,p,cardById)))?n*4:add?n+Number(add[1]):m?n*Number(m[1]):n*2;}
+      if((weakness&&types.includes(weakness)||!defenderSlot?.weaknessOverride&&defender?.weaknesses?.some(w=>types.includes(w)))&&!ex14Shield&&!blooming&&!hiddenLegendsTomb&&!glaciaNoWeakness&&!majesticMoonlight&&!dp6PsychicAura&&!rocketNoWeakness&&!pl2SunyshoreGuard&&!pl2ArcanineNoWeakness&&!pl3ExploudNoWeakness&&!xy5MiracleGuard&&!xy6ClearHumming&&!xy5WeaknessPolicy&&!xy7FlashEnergy&&!hgssGreenShield&&!bw3LeafTailor&&!bw10MentalShroud&&!xy1ShadowCircle&&!activeToolsOf(state,defenderSlot,cardById).some(r=>r.cardId==='dp6-129')&&!ex10NoWeakness&&!ex15NoWeakness&&!holonFire&&!holonRayquazaGuard&&!legendFossilShield&&!xy11RestoredBarrier(state,defenderSide,defenderSlot,cardById)&&!(guard&&(guard.expiresTurn==null||state.turnNumber<=guard.expiresTurn))){const raw=pl2LucarioAura||state.stadium?.cardId==='dp2-112'?'×2':String(defender?.weaknessValue||'×2'),m=raw.match(/[x×]\s*(\d+(?:\.\d+)?)/i),add=raw.match(/^\+\s*(\d+)/);n=state.format==='classic'&&['player','opponent'].some(w=>pokemonOn(state.sides[w]).some(p=>p.cardId==='bw7-3'&&!abilitiesSuppressed(state,w,p,cardById)))?n*4:add?n+Number(add[1]):m?n*Number(m[1]):n*2;}
       const bw10BadgeDiscipline=state?.format==='classic'&&types.includes('Fighting')&&pokemonOn(state.sides[attackSide]).some(p=>p.cardId==='bw10-49'&&!abilitiesSuppressed(state,attackSide,p,cardById));
       const ancientTentacles=state.format==='classic'&&['Omanyte','Omastar','Kabuto','Kabutops','Kabutops ex'].includes(attacker?.name)&&pokemonOn(state.sides[attackSide]).some(p=>p.cardId==='ex12-60'&&!abilitiesSuppressed(state,attackSide,p,cardById));
       const majesticMothim=state?.format==='classic'&&pokemonOn(state.sides[attackSide]).some(p=>p.cardId==='dp5-42'&&!abilitiesSuppressed(state,attackSide,p,cardById));
