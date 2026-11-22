@@ -1,6 +1,6 @@
 LUCKYDEX — MASTER PROJECT RULES AND DEVELOPMENT CONTRACT
 =========================================================
-Document version: 2.62
+Document version: 2.63
 Compiled: 22 November 2026
 Current inspected source: v0.69.376 BREAKthrough complete (GitHub Actions run 45020904916 succeeded); v0.69.377 independent audit corrections locally tested, awaiting GitHub APK confirmation. Source-relative ZIP extraction into ~/lucky-dex/source/.
 Recommended repository location: ~/lucky-dex/source/docs/LUCKYDEX_MASTER_RULES.txt
@@ -4197,3 +4197,71 @@ outcomes. This integration is a substantial first pass, NOT a full set release.
   • Reuse prior LV.X/BREAK inheritance, Garbodor Tool-dependent Ability suppression, the physical hand/deck/discard and finite Energy Zone methods, and previous Stadium/Tool modifiers. Copies and alternate prints should share identical implementations without conflating print metadata.
   • Every conditional ability must be tested with both its condition satisfied and unsatisfied. Explicit target choices go to the correct owner/player; no silent random effects. On hit, count and apply damage counters without Weakness/Resistance.
   • Never mistake local tests with skipped generated-catalogue cases for a full APK build. Run all new and previously installed Gradle audit stages before handoff; verify GitHub Actions afterward.
+
+
+================================================================================
+2026-11-22 — MANDATORY RELEASE-CONTRACT PREFLIGHT (MASTER v2.63) — NO EXCEPTIONS
+================================================================================
+ROOT CAUSE OF REPEATED CI FAILURES:
+  - v0.69.374: HTML version not synchronized with Gradle; then XY8 source-only
+    deck-quality test evaluated a catalogue that had not been generated yet;
+    then an audit treated registered Energy cost strings as arrays.
+  - v0.69.375: the previous-stage XY8 test still expected a newly implemented
+    card to be gated (Xerneas #107), causing a release failure after generation.
+  - v0.69.379: same preventable stale-test failure: Stage 1 test asserted
+    BREAKpoint Greninja #40 (and other newly implemented XY9 prints) must remain
+    gated, after Stage 2 enabled those cards correctly. Exact Actions run
+    #45028250581, task :app:auditXY9ForApk.
+
+[LOCKED] WHENEVER MOVING A CARD FROM GATED TO PLAYABLE:
+  1. Search ALL tests from previous stages and older eras for hardcoded
+     battleEnabled=false expectations involving that print or effect. Reconcile
+     those *before* release; do not just append a new positive assertion.
+  2. Use ONE set-level authoritative release contract listing all remaining
+     gated print IDs and expected enabled count; never duplicate fixed lists
+     in independent stage tests. For XY9 use scripts/xy9_release_contract.json.
+     Both tests/v07378-breakpoint-integration.test.cjs and
+     tests/v07379-breakpoint-continuation.test.cjs must read the same contract.
+  3. The contract's gated and newly-enabled lists MUST be disjoint. Full
+     post-generator audit MUST compare each of 126 physical prints against
+     its correct printed attacks, Costs, Abilities and support status, and
+     compare the exact gated IDs/count to the release contract. Never make
+     an effect pretend supported to satisfy the test; keep truly incomplete
+     mechanics gated.
+  4. For XY9 execute BEFORE packing any ZIP:
+       cd ~/lucky-dex/source
+       python3 scripts/preflight-xy9-release.py
+     This is a FAST OFFLINE sanity check of previous/new-stage contract,
+     version strings and known mappings. It CANNOT certify generated catalogue.
+     When the official pinned data is available, the mandatory complete gate:
+       python3 scripts/preflight-xy9-release.py --full
+     --full regenerates the pinned official catalogue and runs all 4 XY9
+     suites with GITHUB_ACTIONS=true so generated-catalogue checks cannot skip.
+     NEVER label an offline-only pass a full APK preflight.
+  5. Gradle task preflightXY9ContractForApk runs the fast source check BEFORE
+     generateXY9ForApk; auditXY9ForApk runs generated tests AFTER it. New sets
+     MUST adopt this two-stage, source-only + generated approach, not one test
+     copied from the previous stage with outdated hardcoded gated lists.
+  6. Require ALL prior-era and cross-set audit suites, both deck-builder styles,
+     basic/special Energy ledger, opponent AI, staged evolution inheritance,
+     timing, player choice, metadata and UI versions. Do NOT ship when any
+     unexpected test fails or catalogue tests are skipped in generated mode.
+  7. Before delivery, inspect APK build gate dependency ordering in Gradle;
+     run the source preflight and, whenever possible, the full generated
+     preflight. After user's push confirm GitHub Actions before calling APK
+     successful. If network/preconditions prevent full preflight, disclose it.
+  8. NEVER remove or dilute audits solely to make CI green. Fix stale EXPECTED
+     STATES to match fully tested printed behaviour, but preserve independent
+     catalogue correctness, real battle outcomes and 30-card legal deck checks.
+
+XY9 release v0.69.379 CI REPAIR: correct old Stage 1 gated list by using the
+single 110-playable/16-gated contract shared with Stage 2; preserve exact
+GitHub 126-print audit. Keep v0.69.379 to avoid unrelated version changes.
+
+Termux patch installation:
+  cd ~/lucky-dex
+  unzip -o /sdcard/Download/LuckyDex_patch_v0.69.379_BREAKPOINT_CI_CONTRACT_FIX.zip -d source
+  git add source
+  git commit -m "Fix BREAKpoint stale tests and add release preflight"
+  git push origin main
+================================================================================

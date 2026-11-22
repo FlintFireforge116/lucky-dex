@@ -38,3 +38,14 @@ git add source
 git commit -m "LuckyDex v0.69.379 BREAKpoint Stage 2 effects and audit"
 git push origin main
 ```
+
+## v0.69.379 CI repair: unified source contract
+
+The previous Stage 1 build-time audit still required Greninja #40 and other
+Stage 2 prints to remain gated, although Stage 2 implemented them. This caused
+GitHub Actions run #45028250581 to fail after catalogue generation. The fix
+centralizes all expected gated identities in scripts/xy9_release_contract.json
+and makes both stage tests read it, with a new enforced pre-generator preflight.
+Do not remove any printed-rule checks to make an audit pass. In later stages,
+update the central contract and compare to the generated official catalogue
+instead of adding independent hardcoded gated lists.

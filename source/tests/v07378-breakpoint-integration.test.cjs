@@ -5,6 +5,7 @@ const root=path.resolve(__dirname,'..'),assets=path.join(root,'app/src/main/asse
 const xy9=require(path.join(assets,'tcg-classic-breakpoint.js'));
 const classic=require(path.join(assets,'tcg-classic-battle-data.js'));
 const fx=require(path.join(assets,'tcgp-battle-effects.js'));
+const releaseContract=require(path.join(root,'scripts/xy9_release_contract.json'));
 const read=file=>fs.readFileSync(path.join(root,file),'utf8');
 function printedCost(cost){if(Array.isArray(cost))return cost.join('');if(typeof cost==='string')return cost;throw Error('Unexpected printed cost format');}
 test('XY9 is visible in all required set, deck, opponent and asset loading paths',()=>{
@@ -88,7 +89,8 @@ test('GitHub build MUST verify the pinned 126 prints and every enabled printed e
   assert.deepEqual(decks.analyzeDeck(result.cards,result.energyTypes).missingEnergyTypes,[],'XY9 Energy compatibility '+style);
   assert.deepEqual(synergy.report(result.cards.map(classic.cardById),result.energyTypes,'any').dead,[],'XY9 Trainer synergy '+style);
  }
- assert.ok(xy9.coverage().battleEnabled>=88,'Mechanic-first integration must enable at least 88 verified prints');
- for(const id of ['18','47','66','89'])assert.equal(xy9.cardById('xy9-'+id).battleEnabled,true,'Shared BREAK inheritance failed for '+id);
- for(const id of ['20','40','41','57','96','109','110','113'])assert.equal(xy9.cardById('xy9-'+id).battleEnabled,false,'Unaudited printed effect must stay gated: '+id);
+ assert.equal(xy9.coverage().battleEnabled,releaseContract.expectedPlayable,'XY9 release coverage disagrees with the centralized contract');
+ assert.deepEqual(xy9.coverage().gated.slice().sort(),releaseContract.expectedGated.map(id=>'xy9-'+id).sort(),'XY9 release gated identities disagree with the centralized contract');
+ for(const id of releaseContract.stage1BreakPlayable)assert.equal(xy9.cardById('xy9-'+id).battleEnabled,true,'Shared BREAK inheritance failed for '+id);
+ for(const id of releaseContract.expectedGated)assert.equal(xy9.cardById('xy9-'+id).battleEnabled,false,'Unfinished printed effect must stay gated: '+id);
 });

@@ -2,6 +2,7 @@
 // BREAKpoint continuation: assert concrete state transitions, not labels only.
 const {test}=require('node:test'),assert=require('node:assert/strict'),{spawnSync}=require('node:child_process'),path=require('node:path');
 const root=path.resolve(__dirname,'..'),fx=require('../app/src/main/assets/tcgp-battle-effects.js');
+const releaseContract=require('../scripts/xy9_release_contract.json');
 const script=String.raw`import sys,json;sys.path.insert(0,sys.argv[1]);import xy9_verified as v;print(json.dumps({'a':v.ATK,'t':v.TRAINERS,'b':v.ABILITIES},default=str))`;
 function scene(){
  const cards={basic:{id:'basic',name:'Basic',kind:'pokemon',stage:'Basic',hp:150,retreat:2,attacks:[],types:['Water']},ally:{id:'ally',name:'Ally',kind:'pokemon',stage:'Basic',hp:100,retreat:1,types:['Water'],attacks:[{name:'Round'}]},stage1:{id:'stage1',kind:'pokemon',stage:'Stage 1',hp:100,retreat:3,types:['Fire']},water:{id:'water',kind:'energy',basicEnergy:true,subtype:'Water',energyType:'Water'},fire:{id:'fire',kind:'energy',basicEnergy:true,subtype:'Fire',energyType:'Fire'},special:{id:'special',name:'Special Energy',kind:'energy',specialEnergy:true,effect:{type:'specialEnergy',provides:{Water:1}}},stadium:{id:'stadium',kind:'trainer',trainerType:'Stadium'},xy9Garbo:{id:'xy9-57',name:'Garbodor',kind:'pokemon',stage:'Stage 1',abilities:[{name:'Garbotoxin',printedPowerType:'ability',type:'passive',effect:{type:'abilitySuppression',duration:'whileInPlay',scope:'both',condition:{type:'selfHasTool'}}}]},other:{id:'other',kind:'pokemon',stage:'Basic',abilities:[{name:'Abyssal Hand',printedPowerType:'ability',type:'activated',effect:{type:'drawToHandSize',size:5}}]},belt:{id:'xy9-99',kind:'trainer',trainerType:'Tool',effect:{type:'sequence',effects:[{type:'modifier',stat:'maxHp',amount:40,scope:'self',duration:'whileInPlay',filter:{stage:'Basic'}},{type:'modifier',stat:'attackDamage',amount:10,scope:'self',duration:'whileInPlay',filter:{stage:'Basic'}}]}}};
@@ -108,7 +109,7 @@ test('Pinned GitHub catalogue must enable every fully implemented Stage 2 print 
  {skip:!hasPinnedCatalogue&&process.env.GITHUB_ACTIONS!=='true'},()=>{
   const set=require('../app/src/main/assets/tcg-classic-breakpoint.js');
   assert.equal(set.CARDS.length,126);
-  const nowFull='31 33 40 41 57 62 68 70 80 83 93 98 98a 98b 99 103 104 92 121'.split(' ');
+  const nowFull=releaseContract.stage2Playable;
   for(const number of nowFull){const c=set.cardById('xy9-'+number);assert.ok(c,'Missing print '+number);
     assert.equal(c.battleEnabled,true,'Stage 2 mapped print must be FULL: '+number);
     assert.equal(c.support.status,'FULL','Stage 2 status mismatch: '+number);
@@ -116,7 +117,7 @@ test('Pinned GitHub catalogue must enable every fully implemented Stage 2 print 
     for(const a of c.abilities||[])assert.deepEqual(fx.validateEffect(a.effect),[],'Invalid ability '+c.name+' / '+a.name);
     if(c.kind==='trainer')assert.deepEqual(fx.validateEffect(c.effect),[],'Invalid Trainer '+c.name);
   }
-  const unfinished='6 20 21 30 35 49 59 67 73 96 97 102 108 109 110 113'.split(' ');
+  const unfinished=releaseContract.expectedGated;
   for(const number of unfinished){const c=set.cardById('xy9-'+number);assert.ok(c);assert.equal(c.battleEnabled,false,'Incomplete print must remain gated: '+number);}
 });
 test('Moonlight Slash offers no-cost or real Water return choices and adds 20 only when returned',()=>{

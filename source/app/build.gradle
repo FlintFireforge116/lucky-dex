@@ -880,7 +880,14 @@ tasks.matching { it.name == 'preBuild' || (it.name.startsWith('merge') && it.nam
 
 // v0.69.378 — BREAKpoint (xy9), pinned 126-print catalogue and independent
 // mechanic-first audit. This task MUST run after the completed XY8 audit.
+tasks.register('preflightXY9ContractForApk', Exec) {
+    // Fast, offline, source-only guard catches outdated Stage 1 vs Stage 2
+    // playable/gated assertions BEFORE any network generator or APK work.
+    workingDir rootProject.projectDir
+    commandLine (System.getenv('LUCKYDEX_PYTHON') ?: 'python3'), 'scripts/preflight-xy9-release.py'
+}
 tasks.register('generateXY9ForApk', Exec) {
+    dependsOn tasks.named('preflightXY9ContractForApk')
     dependsOn tasks.named('auditXY8ForApk')
     workingDir rootProject.projectDir
     commandLine (System.getenv('LUCKYDEX_PYTHON') ?: 'python3'), 'scripts/build-xy9.py'
@@ -888,7 +895,7 @@ tasks.register('generateXY9ForApk', Exec) {
 tasks.register('auditXY9ForApk', Exec) {
     dependsOn tasks.named('generateXY9ForApk')
     workingDir rootProject.projectDir
-    commandLine 'node', '--test', 'tests/v07378-breakpoint-integration.test.cjs', 'tests/v07378-breakpoint-effects.test.cjs', 'tests/v07379-breakpoint-continuation.test.cjs'
+    commandLine 'node', '--test', 'tests/v07378-breakpoint-integration.test.cjs', 'tests/v07378-breakpoint-effects.test.cjs', 'tests/v07379-breakpoint-continuation.test.cjs', 'tests/v07379-breakpoint-release-contract.test.cjs'
 }
 tasks.matching { it.name == 'preBuild' || (it.name.startsWith('merge') && it.name.endsWith('Assets')) }.configureEach {
     dependsOn tasks.named('auditXY9ForApk')

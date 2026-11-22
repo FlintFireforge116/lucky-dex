@@ -1,0 +1,52 @@
+{
+  "set": "xy9",
+  "release": "0.69.379",
+  "printedTotal": 126,
+  "expectedPlayable": 110,
+  "expectedGated": [
+    "6",
+    "20",
+    "21",
+    "30",
+    "35",
+    "49",
+    "59",
+    "67",
+    "73",
+    "96",
+    "97",
+    "102",
+    "108",
+    "109",
+    "110",
+    "113"
+  ],
+  "stage1BreakPlayable": [
+    "18",
+    "47",
+    "66",
+    "89"
+  ],
+  "stage2Playable": [
+    "31",
+    "33",
+    "40",
+    "41",
+    "57",
+    "62",
+    "68",
+    "70",
+    "80",
+    "83",
+    "93",
+    "98",
+    "98a",
+    "98b",
+    "99",
+    "103",
+    "104",
+    "92",
+    "121"
+  ],
+  "notes": "Single source of truth for XY9 release readiness; update this file every time a formerly gated print becomes fully supported. Preserve independently verified official catalogue and battle-effect checks."
+}
