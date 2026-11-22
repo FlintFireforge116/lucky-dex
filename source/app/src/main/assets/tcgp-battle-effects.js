@@ -19501,6 +19501,49 @@
           if(p.specialEnergy?.length){side.discard.push(...p.specialEnergy.splice(0,1));return true;}
           return false;
         };
+        // XY12 Mewtwo-EX: Energy Absorption can recover any *physical*
+        // discarded Energy card, including Special Energy such as Double
+        // Colorless, or an individually discarded hybrid Energy Zone unit.
+        if(rule==='energyAbsorption'){
+          const target=ctx.attacker;if(!target)return;
+          const available=()=>[
+            ...(ss.discard||[]).filter(ref=>get(ref)?.kind==='energy')
+              .map(ref=>({kind:'physical',uid:ref.uid,label:get(ref)?.name||'Energy'})),
+            ...Object.entries(ss.energyDiscard||{}).filter(([,n])=>Number(n)>0)
+              .map(([type])=>({kind:'zone',type,label:type+' Energy (discarded Zone card)'}))
+          ];
+          if(ctx.resolvingChoice){
+            const option=available()[Number(ctx.action?.choiceOption)];if(!option)return;
+            if(option.kind==='zone'){
+              if(Number(ss.energyDiscard?.[option.type]||0)<=0)return;
+              ss.energyDiscard[option.type]--;target.energy=target.energy||{};
+              target.energy[option.type]=Number(target.energy[option.type]||0)+1;
+              ctx.onEnergyAttached?.(target,option.type,1,{fromDiscard:true});
+            }else{
+              const ix=(ss.discard||[]).findIndex(ref=>ref.uid===option.uid),ref=ss.discard[ix];
+              if(ix<0||get(ref)?.kind!=='energy')return;
+              ss.discard.splice(ix,1);const c=get(ref);
+              if(c.specialEnergy){target.specialEnergy=target.specialEnergy||[];
+                target.specialEnergy.push(ref);
+                const provides=ref.provides||c.effect?.provides||{};
+                const first=Object.entries(provides).find(([,n])=>Number(n)>0);
+                if(first)ctx.onEnergyAttached?.(target,first[0],Number(first[1]),{fromDiscard:true,cardId:ref.cardId});
+              }else if(c.basicEnergy){const type=c.energyType||c.subtype;
+                target.energy=target.energy||{};
+                target.energy[type]=Number(target.energy[type]||0)+1;
+                ctx.onEnergyAttached?.(target,type,1,{fromDiscard:true,cardId:ref.cardId});
+              }
+            }
+            break;
+          }
+          const options=available();if(options.length)
+            ask({kind:'option',options:options.map(x=>'Attach '+x.label)});
+          break;
+        }
+        if(rule==='sparkBoltDiscard'){
+          if(ctx.attacker)applyEffect({type:'discardEnergyCard',amount:'all',target:'self'},ctx);
+          break;
+        }
         if(rule==='breakStarDamage'){
           for(const target of them){
             if(!ctx.cardById(target.cardId)?.breakEvolution)continue;
@@ -24130,6 +24173,14 @@
       if(attackDoesNothing)return;
       if(e.type==='xy12Rule'){
         const ss=own(ctx),foe=other(ctx),slot=ctx.attacker,rule=e.rule;
+        if(rule==='sparkBolt'){
+          const attached=slot&&(Object.values(slot.energy||{}).some(n=>Number(n)>0)||(slot.specialEnergy||[]).length>0);
+          if(ctx.action?.effectSelection==='discard'&&attached){
+            damage+=70;
+            pending.push({type:'xy12Rule',rule:'sparkBoltDiscard'});
+          }
+          return;
+        }
         if(rule==='swarmingSting'){
           const target=ctx.action?.target==='opponentBench'||ctx.action?.choiceTarget==='opponentBench'
             ?foe.bench.find(p=>p&&Number(p.benchSlot)===Number(ctx.action?.benchIndex??ctx.action?.choiceBenchIndex))
@@ -24824,6 +24875,11 @@
     assertEffect(effect);if(!effect)return [{}];if(effect.type==='attackRequirement')return conditionMatches(effect.condition,ctx)||effect.allowWhenFailed?[{}]:[];if(!conditionMatches(effect.condition,ctx))return ctx.isAttack?[{}]:[];
     if(effect.type==='xy12Rule'){
       const rule=effect.rule,ss=own(ctx),foe=other(ctx);
+      if(rule==='sparkBolt'){
+        const attached=ctx.attacker&&(Object.values(ctx.attacker.energy||{}).some(n=>Number(n)>0)||(ctx.attacker.specialEnergy||[]).length>0);
+        return [{effectSelection:'keep',choiceLabel:'70 damage · keep attached Energy'},
+          ...(attached?[{effectSelection:'discard',choiceLabel:'140 damage · discard all attached Energy'}]:[])];
+      }
       if(rule==='barrier'&&ss.lastBarrierTurn===ctx.state.turnNumber-2)return [];
       if(rule==='swarmingSting')return [{target:'opponentActive',choiceLabel:'Attack Active'},...foe.bench.map(p=>({target:'opponentBench',benchIndex:p.benchSlot,choiceLabel:'Attack '+(ctx.cardById(p.cardId)?.name||'Bench')}))];
       if(rule==='burningRoad')return ctx.attacker?.cardId==='xy12-18'&&ss.active===ctx.attacker&&Number(ctx.attacker.movedToActiveTurn)===Number(ctx.state.turnNumber)&&

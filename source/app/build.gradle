@@ -8,8 +8,8 @@ android {
         applicationId 'com.example.luckydex'
         minSdk 26
         targetSdk 35
-        versionCode 7397
-        versionName '0.69.397'
+        versionCode 7398
+        versionName '0.69.398'
     }
 
     signingConfigs {
@@ -944,7 +944,7 @@ tasks.matching { it.name == 'preBuild' || (it.name.startsWith('merge') && it.nam
     dependsOn tasks.named('auditXY11ForApk')
 }
 
-// v0.69.397 — XY12 Evolutions: all 113 prints fully enabled;
+// v0.69.398 — XY12 Evolutions: all 113 prints fully enabled;
 // strict gameplay + deck-quality audits. Gradle generates + validates before merging Android assets.
 tasks.register('preflightXY12ContractForApk', Exec) {
     workingDir rootProject.projectDir
@@ -959,7 +959,7 @@ tasks.register('generateXY12ForApk', Exec) {
 tasks.register('auditXY12ForApk', Exec) {
     dependsOn tasks.named('generateXY12ForApk')
     workingDir rootProject.projectDir
-    commandLine 'node', '--test', 'tests/v07396-evolutions-integration.test.cjs', 'tests/v07397-evolutions-completion.test.cjs'
+    commandLine 'node', '--test', 'tests/v07396-evolutions-integration.test.cjs', 'tests/v07397-evolutions-completion.test.cjs', 'tests/v07398-evolutions-independent-audit.test.cjs'
 }
 tasks.matching { it.name == 'preBuild' || (it.name.startsWith('merge') && it.name.endsWith('Assets')) }.configureEach {
     dependsOn tasks.named('auditXY12ForApk')
