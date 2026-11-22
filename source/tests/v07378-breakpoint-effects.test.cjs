@@ -60,5 +60,5 @@ test('Shared BREAK evolution references existing audited LV.X infrastructure',()
 });
 test('Newly implemented suppressed Abilities and previously gated effects are mapped, while unfinished special Energy stays gated',()=>{
  const q=py('import sys,json;sys.path.insert(0,sys.argv[1]);import xy9_verified as v;print(json.dumps({"ability":v.ABILITIES.get("Garbotoxin"),"energy":v.ENERGIES.get("113"),"stadium":v.TRAINERS.get("110"),"slowbro":v.ATK.get(("20","Walk-Off Homer"))}))');
- assert.equal(q.ability?.type,'passive');assert.equal(q.energy,null);assert.equal(q.stadium,null);assert.equal(q.slowbro,null);
+ assert.equal(q.ability?.type,'passive');assert.equal(q.energy,null);assert.equal(q.stadium?.[0],'Stadium');assert.equal(q.slowbro?.rule,'xy9:walkOffHomer');
 });

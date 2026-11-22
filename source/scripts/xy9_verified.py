@@ -12,6 +12,7 @@ ATK={
  ('2','Body Slam'):Q(ST('paralysis')),
  ('3','Green Force'):E('drain'),
  ('5','Bug Hunch'):SEARCH(3,kind='pokemon',subtype='Grass'),
+ ('6','Screech'):E('neoRule',rule='xy9:screech'),
  ('7','Aromatherapy'):H(10,'selfAll'),
  ('8','Boo-Hoo'):E('energyAttachStatusTrap',target='opponentActive',status='sleep'),
  ('9','Mountain Munch'):E('discardTop',side='opponent',amount=1),
@@ -25,6 +26,7 @@ ATK={
  # Basic-Energy movement is identical to the existing redistributor, but
  # must allow the owner to select both source and destination.
  ('19','Tail Lure'):SEARCH(1,kind='pokemon'),
+ ('20','Walk-Off Homer'):E('neoRule',rule='xy9:walkOffHomer'),
  ('21','Psych Up'):E('nextAttackBonus',attackName='Psych Up',amount=40),
  ('22','Razor Shell'):Q(BONUS(10)),
  ('23','Clamp'):E('coinAttackGate',heads=ST('paralysis')),
@@ -36,6 +38,7 @@ ATK={
  ('31','Pearl Hurricane'):E('multiTargetDamage',target='opponentBench',amount=30,count=1,upTo=True),
  ('32','Mineral Pump'):H(30,'selfBenchAll'),
  ('35','Shaky Fall'):S(ST('confusion'),LOCK()),
+ ('35','Siphon Off'):E('neoRule',rule='xy9:siphonOff'),
  ('37','Brave Bird'):E('selfDamage',amount=20),
  ('39','Water Duplicates'):E('benchFromDeck',amount=3,choose=True,filter={'kind':'pokemon','name':'Frogadier'}),
  ('42','Knuckle Punch'):N,
@@ -44,11 +47,13 @@ ATK={
  ('46','Snarl'):E('modifier',stat='attackDamage',amount=-20,scope='opponentActive',duration='opponentTurn'),
  ('47','Wild Fury'):COIN('untilTails',40,False),
  ('48','Reckless Charge'):E('selfDamage',amount=10),
+ ('49','Crashing Bolt'):E('neoRule',rule='xy9:crashingBolt'),
  ('52','Miraculous Shine'):E('devolve',target='opponentAll'),
  ('52','Psyshock'):E('damageRule',ignoreEffects=True),
  ('55','Reflective Shield'):E('retaliateDamage',amount=50,duration='opponentTurn'),
  ('55','Psy Report'):E('revealHand',side='opponent'),
  ('56','Acid Spray'):Q(DISC(1,'opponentActive')),
+ ('59','Energy Present'):E('neoRule',rule='xy9:energyPresent'),
  ('60','Stab'):E('placeDamageCounters',target='opponentActive',amount=10),
  ('61','Stab Deeply'):E('placeDamageCounters',target='opponentActive',amount=30),
  ('63','Hide'):Q(E('preventDamage',target='self',duration='opponentTurn',preventEffects=True)),
@@ -59,6 +64,7 @@ ATK={
  ('70','Bite Off'):BONUS(80,{'type':'opponentEx'}),
  ('72','Razor Wind'):E('coinAttackGate',heads=N),
  ('73','Otherworldly Return'):SEARCH(1,source='discard',kind='trainer'),
+ ('73','Roll Up'):E('neoRule',rule='xy9:rollUp'),
  ('74','Dark Pulse'):E('energyDamage',source='self',all=True,energyType='Darkness',amount=20,mode='add'),
  ('74','Dark Head'):BONUS(80,{'type':'opponentStatus','status':'sleep'}),
  ('75','Parting Shot'):S(E('modifier',stat='attackDamage',amount=-60,scope='opponentActive',duration='opponentTurn'),SWITCH()),
@@ -106,6 +112,7 @@ TRAINERS={
  '98':('Supporter',E('neoRule',rule='xy9:delinquent')),
  '98a':('Supporter',E('neoRule',rule='xy9:delinquent')),
  '98b':('Supporter',E('neoRule',rule='xy9:delinquent')),
+ '97':('Tool',S(E('triggeredEffect',event='damagedByAttack',activeOnly=True,opponentAttackOnly=True,effect=E('neoRule',rule='xy9:burstingBalloonCounter')),E('triggeredEffect',event='endTurn',turn='opponent',effect=E('neoRule',rule='xy9:burstingBalloonExpire')))),
  '99':('Tool',S(E('modifier',stat='maxHp',amount=40,scope='self',duration='whileInPlay',filter={'stage':'Basic'}),E('modifier',stat='attackDamage',amount=10,scope='self',duration='whileInPlay',filter={'stage':'Basic'}))),
  '100':('Item',E('selectTopToHand',count=7,filter={'kind':'pokemon'},optional=True)),
  '101':('Tool',N), # Gyarados Spirit Link: existing Mega turn-ending exemption.
@@ -116,7 +123,10 @@ TRAINERS={
  '107':('Supporter',S(E('discardHand',side='self',amount=99),DRAW(7))),
  '107a':('Supporter',S(E('discardHand',side='self',amount=99),DRAW(7))),
  '111':('Tool',N), # Scizor Spirit Link; hook is shared by matching Mega names.
+ '96':('Stadium',E('stadiumAction',effect=E('neoRule',rule='xy9:allNightParty'))),
+ '110':('Stadium',N), # Two orientations use the shared Stadium modifier/choice framework.
  '112':('Supporter',DRAW(3)),
+ '108':('Supporter',E('neoRule',rule='xy9:psychicsThirdEye')),
  '122':('Supporter',SEARCH(1,kind='trainer')),
 }
 # Only abilities whose effect and triggering context are already supported
@@ -124,8 +134,11 @@ TRAINERS={
 # need cross-set passive tests before they can be marked playable.
 ABILITIES={
  'Overgrow':{'type':'passive','effect':E('modifier',stat='attackDamage',amount=70,scope='self',duration='whileInPlay',condition={'type':'selfRemainingHpAtMost','amount':50})},
+ 'Zap Zone':{'type':'passive','effect':E('neoRule',rule='xy9:zapZone')},
  'Hyper Transfer':{'type':'activated','oncePerTurn':False,'effect':E('redistributeEnergy',includeSpecialEnergy=False)},
+ 'Royal Flash':{'type':'activated','oncePerTurn':True,'effect':E('neoRule',rule='xy9:royalFlash')},
  'Goodnight, Babies':{'type':'activated','oncePerTurn':True,'effect':S(ST('sleep','selfActive'),ST('sleep'))},
+ 'Wind Charm':{'type':'passive','activeOnly':True,'effect':E('preventEffects',scope='team',duration='whileActive')},
  'Aqua Tube':{'type':'passive','effect':E('modifier',stat='retreatCost',amount=-99,scope='team',duration='whileInPlay',filter={'hasEnergyType':'Water'})},
  'Giant Water Shuriken':{'type':'activated','oncePerTurn':True,'activeOnly':True,'effect':E('neoRule',rule='xy9:giantWaterShuriken')},
  'Garbotoxin':{'type':'passive','effect':E('abilitySuppression',duration='whileInPlay',scope='both',condition={'type':'selfHasTool'})},

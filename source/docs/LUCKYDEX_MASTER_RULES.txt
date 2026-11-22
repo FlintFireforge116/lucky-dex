@@ -1,8 +1,8 @@
 LUCKYDEX — MASTER PROJECT RULES AND DEVELOPMENT CONTRACT
 =========================================================
-Document version: 2.63
+Document version: 2.64
 Compiled: 22 November 2026
-Current inspected source: v0.69.376 BREAKthrough complete (GitHub Actions run 45020904916 succeeded); v0.69.377 independent audit corrections locally tested, awaiting GitHub APK confirmation. Source-relative ZIP extraction into ~/lucky-dex/source/.
+Current inspected source: v0.69.379 BREAKpoint Stage 2 and CI-contract repair (confirmed to build); v0.69.380 BREAKpoint Stage 3 mechanics locally tested, GitHub APK build not yet verified. Source-relative ZIP extraction into ~/lucky-dex/source/.
 Recommended repository location: ~/lucky-dex/source/docs/LUCKYDEX_MASTER_RULES.txt
 Project: LuckyDex — Android application/PWA, managed with Termux and GitHub
 
@@ -4263,5 +4263,64 @@ Termux patch installation:
   unzip -o /sdcard/Download/LuckyDex_patch_v0.69.379_BREAKPOINT_CI_CONTRACT_FIX.zip -d source
   git add source
   git commit -m "Fix BREAKpoint stale tests and add release preflight"
+  git push origin main
+================================================================================
+
+================================================================================
+XY9 BREAKPOINT v0.69.380 — MECHANIC-FIRST STAGE 3 / DOC v2.64
+================================================================================
+Based on the passing v0.69.379 source contract (do not drop the release
+preflight or independent printed-card audit). One substantial shared-mechanics
+pass enables 12 formerly gated prints; projected 122 of 126 total playable:
+  #6 Kricketune — Screech target-specific next-own-turn bonus AFTER type matchup
+  #20 Slowbro — Walk-Off Homer wins only when exactly one Prize remains
+  #21 Slowking — Royal Flash coin and selected opposing Energy/BENCH movement
+  #30 Suicune — Wind Charm protects team from attack effects, NOT damage
+  #35 Seismitoad — Siphon Off picks real discarded Basic/Special Energy
+  #49 Zebstrika — Crashing Bolt and Lightning-team Zap Zone protection bypass
+  #59 Meowstic — Energy Present 0–2 physical hand attachments to same Bench
+  #73 Shiftry — Roll Up 3 coin flips and explicit discard selections
+  #96 All-Night Party — once-per-turn Stadium action cures Sleep + heals 30
+  #97 Bursting Balloon — 60 retaliation counters on actual attacking Pokémon,
+                        exact Tool ref discarded at opponent turn end
+  #108 Psychic's Third Eye — reveal opposing hand, choose discards, draw equal
+  #110 Reverse Valley — choose facing player; Darkness +10 / Metal -10 damage
+
+Still GATED, do not call the expansion 126/126 until each complete printed
+interaction and full generated-catalogue audit succeeds:
+  #67 Sudowoodo Watch and Learn — replay the actual attack used last turn,
+                                  including copied choices, target and timing
+  #102 Max Elixir — top-six physical deck restriction vs Classic Energy Zone
+  #109 Puzzle of Time — one/two-Item simultaneous play and optional reorder
+  #113 Splash Energy — correct KO timing, return Pokémon only, discard stack
+
+MUST BEFORE ALL FUTURE PATCHES (including other sets):
+  (A) Update scripts/xy9_release_contract.json: playable count, exact gated
+      identities, and current stage's playable list. Every earlier stage audit
+      must consume the same contract, never a local hard-coded old gated list.
+  (B) Run source preflight FIRST:
+          cd ~/lucky-dex/source
+          python3 scripts/preflight-xy9-release.py
+      This checks Gradle/UI/boot version, cross-stage expectations, and source
+      maps. Test ALL old set-stage suites for stale former-gated assertions.
+  (C) Run latest outcome suite PLUS previous stage, Ancient Origins and XY8
+      pass/fail tests. Test real state transitions and both sides, not labels.
+  (D) Run full pinned catalogue:
+          python3 scripts/preflight-xy9-release.py --full
+      If offline/network blocks upstream Git blob fetch, mark local catalogue
+      checks unverified; GitHub CI must generate source and require zero skipped
+      mandatory audits before an APK is confirmed. NEVER guess a CI outcome.
+  (E) Do NOT relax or delete gated, deck-quality or generated-catalogue
+      assertions just to make the build green. Replace stale EXPECTED states
+      only after actual effect resolution tests exist.
+  (F) The v0.69.380 Gradle XY9 audit also runs
+      tests/v07380-breakpoint-stage3.test.cjs after generating official cards.
+      Any new stage must add new test file to this task AND to --full mode.
+
+Termux installation:
+  cd ~/lucky-dex
+  unzip -o /sdcard/Download/LuckyDex_patch_v0.69.380_BREAKPOINT_STAGE3.zip -d source
+  git add source
+  git commit -m "LuckyDex v0.69.380 BREAKpoint Stage 3 mechanic reuse"
   git push origin main
 ================================================================================

@@ -1,24 +1,12 @@
 {
   "set": "xy9",
-  "release": "0.69.379",
+  "release": "0.69.380",
   "printedTotal": 126,
-  "expectedPlayable": 110,
+  "expectedPlayable": 122,
   "expectedGated": [
-    "6",
-    "20",
-    "21",
-    "30",
-    "35",
-    "49",
-    "59",
     "67",
-    "73",
-    "96",
-    "97",
     "102",
-    "108",
     "109",
-    "110",
     "113"
   ],
   "stage1BreakPlayable": [
@@ -48,5 +36,19 @@
     "92",
     "121"
   ],
-  "notes": "Single source of truth for XY9 release readiness; update this file every time a formerly gated print becomes fully supported. Preserve independently verified official catalogue and battle-effect checks."
+  "notes": "Mechanic-first coverage contract. Update on each batch, audit all generated print identities and complete effects in GitHub CI.",
+  "stage3Playable": [
+    "6",
+    "20",
+    "21",
+    "30",
+    "35",
+    "59",
+    "73",
+    "108",
+    "96",
+    "110",
+    "49",
+    "97"
+  ]
 }

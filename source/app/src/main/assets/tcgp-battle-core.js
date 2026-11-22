@@ -1498,6 +1498,7 @@
           pokemonOn(state.sides[enemySide]).some(p=>p.cardId==='ex13-43'&&!effects.abilitiesSuppressed(state,enemySide,p,data.cardById)))return;
         if(!s.stadiumUsed&&effects.supportsEffect(card.effect)&&(!state.stadium||data.cardById(state.stadium.cardId).name!==card.name)){
           if(card.id==='xy8-145')for(const face of ['selfBench','opponentBench'])actions.push({...base,effectSelection:face});
+          else if(card.id==='xy9-110')for(const face of ['selfDown','opponentDown'])actions.push({...base,effectSelection:face});
           else actions.push(base);
         }
       }else for(const target of effectChoices(card.effect,effectContext(state,side)))actions.push({...base,...target});
@@ -2810,6 +2811,10 @@ const target=slotForTarget(s,action.target,action.benchIndex);if(card.id==='pl2-
       state.lentalDamOverflow=state.stadium?.cardId==='SNAPFLORIO-108';
       if(state.stadium){const prior=state.stadium;state.sides[prior.ownerSide][prior.cardId==='dp7-96'&&prior.dp7Ectoplasm?'hand':'discard'].push({uid:prior.uid,cardId:prior.cardId});}
       state.stadium={...ref,ownerSide:side};s.stadiumUsed=true;
+      if(card.id==='xy9-110'){
+        state.stadium.xy9DownSide=action.effectSelection==='opponentDown'?(side==='player'?'opponent':'player'):side;
+        state.log.push({type:'xy9ReverseValley',downSide:state.stadium.xy9DownSide});
+      }
       if(card.id==='xy8-145'){
         // Only one side has a three-Pokémon bench; the other side's Grass,
         // Fire and Water attacks are reduced by 20. The owner chooses the orientation.

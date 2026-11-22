@@ -23,8 +23,10 @@ def check_contract():
  assert len(c['expectedGated'])==len(set(c['expectedGated']))
  assert len(c['stage2Playable'])==len(set(c['stage2Playable']))
  assert not set(c['expectedGated']) & set(c['stage2Playable']), 'A Stage 2 playable print is still marked gated'
+ assert not set(c['expectedGated']) & set(c['stage3Playable']), 'A Stage 3 playable print is still marked gated'
+ assert len(c['stage3Playable'])==len(set(c['stage3Playable']))
  assert not set(c['expectedGated']) & set(c['stage1BreakPlayable'])
- assert all(re.fullmatch(r'[0-9]+[ab]?',x) for x in c['expectedGated']+c['stage2Playable'])
+ assert all(re.fullmatch(r'[0-9]+[ab]?',x) for x in c['expectedGated']+c['stage2Playable']+c['stage3Playable'])
  gradle=(ROOT/'app/build.gradle').read_text()
  m=re.search(r"versionName\s+['\"]([^'\"]+)['\"]",gradle)
  assert m, 'Missing Gradle versionName'
@@ -45,9 +47,11 @@ def check_contract():
  missing=needed-set(v.ATK)
  assert not missing, 'A Stage 2 verified attack mapping was lost: '+str(sorted(missing))
  assert all(k in v.ABILITIES for k in ['Giant Water Shuriken','Garbotoxin','Purifying Fire']), 'A verified Ability mapping was lost'
- assert all(k in v.TRAINERS for k in ['98','98a','98b','99','103','104']), 'Verified Trainer mapping was lost'
- assert not any(k in v.TRAINERS for k in ['96','97','102','108','109','110']), 'An old unfinished Trainer is now mapped: update contract and verify print'
+ assert all(k in v.TRAINERS for k in ['96','97','98','98a','98b','99','103','104','108','110']), 'Verified Trainer mapping was lost'
+ assert not any(k in v.TRAINERS for k in ['102','109']), 'An old unfinished Trainer is now mapped: update contract and verify print'
  assert '113' not in v.ENERGIES, 'Splash Energy is now mapped: update contract and audit new rule'
+ assert all(key in v.ATK for key in [('6','Screech'),('20','Walk-Off Homer'),('35','Siphon Off'),('59','Energy Present'),('73','Roll Up')]),'Stage 3 effect mapping was lost'
+ assert all(key in v.ABILITIES for key in ['Royal Flash','Wind Charm']),'Stage 3 Ability mapping was lost'
  print('XY9 source contract OK: '+str(c['expectedPlayable'])+'/126, '+str(len(c['expectedGated']))+' gated. Versions aligned.')
 
 def run(args):
@@ -57,7 +61,7 @@ def run(args):
 def main():
  p=argparse.ArgumentParser(description=__doc__);p.add_argument('--full',action='store_true',help='Run pinned source generator and all generated XY9 audits, failing on missing catalogue')
  args=p.parse_args();check_contract()
- tests=['tests/v07378-breakpoint-integration.test.cjs','tests/v07378-breakpoint-effects.test.cjs','tests/v07379-breakpoint-continuation.test.cjs','tests/v07379-breakpoint-release-contract.test.cjs']
+ tests=['tests/v07380-breakpoint-stage3.test.cjs','tests/v07378-breakpoint-integration.test.cjs','tests/v07378-breakpoint-effects.test.cjs','tests/v07379-breakpoint-continuation.test.cjs','tests/v07379-breakpoint-release-contract.test.cjs']
  if args.full:
   run([sys.executable,'scripts/build-xy9.py'])
   assert (ROOT/'data/classic/xy9-print-compact.json').exists(), 'Pinned official 126-print source was not generated'
