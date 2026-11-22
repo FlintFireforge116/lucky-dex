@@ -1,4 +1,4 @@
-"""Ancient Origins (XY7), Stage 9: explicitly supported printed effects only.
+"""Ancient Origins (XY7), completion: explicitly supported printed effects only.
 
 Do not enable a print if *any* attack, Ability, theta Ancient Trait,
 Trainer or Special Energy passive remains unaudited. Reuse battle effects only
@@ -12,6 +12,7 @@ STATUS={'Asleep':'sleep','Burned':'burn','Poisoned':'poison','Paralyzed':'paraly
 ATTACKS={
  ('1','Trip Over'):Q(BONUS(10)),
  ('4','Windmill'):SWITCH(),
+ ('4','Flower Tornado'):E('redistributeEnergy',allowedEnergyTypes=['Grass'],includeSpecialEnergy=True),
  ('5','String Shot'):Q(ST('paralysis')),
  ('6','Impound'):LOCK(),
  ('7','Sleep Poison'):Q(S(ST('sleep'),ST('poison'))),
@@ -28,6 +29,7 @@ ATTACKS={
  ('8','Jagged Saber'):E('xy7JaggedSaber',amount=2),
  ('17','Solar Birth'):E('xy7SolarBirth'),
  ('17','Flamethrower'):DISC(),
+ ('19','Epic Splash'):E('xy7EpicSplash'),
  ('18','Burning Scales'):COIN(2,20,False),('18','Wind Wheel'):E('forceOpponentSwitch',chooseBy='defender'),
  ('20','Berserker Splash'):S(BENCH(10,'self'),BENCH(10,'opponent')),
  ('20','Aqua Tail'):E('coinDamageByEnergy',amount=30,energyType='Water',countAttachedEnergyType=True),
@@ -56,9 +58,10 @@ ATTACKS={
  ('38','Nap'):H(20),
  ('39','Landslide'):E('damageRule',ignoreResistance=True),
  ('40','Unyielding Rock'):BONUS(60,{'type':'opponentEx'}),
- ('41','Double Lariat'):COIN(2,90),
+ ('41','Dig Out'):E('xy7DigOut'),('41','Double Lariat'):COIN(2,90),
  ('42','Break Ground'):BENCH(10,'self'),
  ('43','Destroyer King'):E('damageFromDamage',source='opponent',amount=6,mode='add'),
+ ('44','Bewitching Eyes'):E('xy7BewitchingEyes'),
  ('44','Furtive Drop'):E('placeDamageCounters',target='opponentActive',amount=30),
  ('45','Ink Spit'):E('attackCoinGate',target='opponentActive',duration='opponentTurn'),
  ('46','Entangling Control'):E('xy7EntanglingControl'),
@@ -77,9 +80,12 @@ ATTACKS={
  ('56','Windy Mischief'):E('xy7WindyMischief'),
  ('57','Chaos Wheel'):E('xy7ChaosWheel'),
  ('59','Bubble'):Q(ST('paralysis')),
+ ('60','Liquid Blow'):E('xy7LiquidBlow'),
+ ('60','Shining Breath'):E('xy7ShiningBreath'),
  ('61','Act Tough'):BONUS(20,{'type':'selfHasEnergyType','energyType':'Darkness'}),
  ('62','Fake Out'):Q(ST('paralysis')),('62','Ambush'):Q(BONUS(30)),
  ('63','Lunge'):E('coinAttackGate',heads=N),
+ ('64','Data Check'):E('xy7DataCheck'),
  ('66','Cyber Crush'):E('xy7CyberCrush'),
  ('66','Slowing Beam'):E('xy7SlowingBeam'),
  ('65','Tri Attack'):COIN(3,30),
@@ -118,6 +124,7 @@ TRAINERS={
  '71':('Item',E('xy7RecycleTools',amount=3)),
  '72':('Item',E('xy7RecycleBasics',amount=5)),
  '76':('Item',SEARCH(1,kind='pokemon',hpAtMost=90)), # Level Ball
+ '77':('Tool',E('triggeredEffect',event='damagedByAttack',activeOnly=True,opponentAttackOnly=True,effect=DRAW(2))), # Lucky Helmet
  '73':('Stadium',N),  # Faded Town: between-turn damage in shared core
  '74':('Stadium',N),  # Forest of Giant Plants: evolution timing in shared core
  '75':('Supporter',E('xy7HexManiac')),

@@ -3786,3 +3786,33 @@ git add source
 git commit -m "LuckyDex v0.69.372 Ancient Origins Stage 9 Energy attacks"
 git push origin main
 ===============================================================================
+
+===============================================================================
+LUCKYDEX v0.69.373 — ANCIENT ORIGINS XY7 COMPLETE (FINAL SEVEN)
+===============================================================================
+BASELINE: v0.69.372 source, not yet verified with an APK in this patch.
+- All 101 official Ancient Origins prints (1–100 plus 75a) now have an
+  implementation descriptor, including final seven previously gated prints:
+  Bellossom #4 Flower Tornado; Magikarp #19 Epic Splash; Golurk #41 Dig Out;
+  Sableye #44 Bewitching Eyes; Goodra #60 Liquid Blow + Shining Breath;
+  Porygon #64 Data Check; Lucky Helmet #77.
+- Energy stays conserved across real physical draw, ordered Basic Energy
+  Zone, attached energy, Special Energy and actual discard ledger. Dig Out's
+  hybrid top-card sample cannot fabricate or double-count Basic Energy.
+- Require choices for copied opponent-discard Supporters and attack target;
+  respect any Special Energy movement restrictions and effect durations.
+- An Active Lucky Helmet draws two cards on damage BEFORE KO cleanup.
+  Never trigger from Bench damage or zero prevented damage.
+- Gradle auditXY7ForApk checks all 101 prints are battle-ready after
+  generating the pinned official catalogue; local source uses a placeholder
+  and cannot alone verify an APK build.
+- Tests: tests/v07373-ancient-origins-completion.test.cjs plus the earlier
+  Ancient Origins suites and cross-era regressions. See completion doc.
+
+TERMUX:
+cd ~/lucky-dex
+unzip -o /sdcard/Download/LuckyDex_patch_v0.69.373_ANCIENT_ORIGINS_COMPLETE.zip -d source
+git add source
+git commit -m "LuckyDex v0.69.373 Ancient Origins complete"
+git push origin main
+===============================================================================
