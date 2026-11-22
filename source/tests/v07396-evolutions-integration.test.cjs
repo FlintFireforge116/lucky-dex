@@ -18,12 +18,12 @@ const printedCost=x=>Array.isArray(x)?x.join(''):String(x??'');
 const by=n=>xy12.cardById('xy12-'+n);
 
 test('XY12 pinned upstream, build version, dependency and release contract',()=>{
- assert.equal(contract.release,'0.69.396');
- assert.equal(contract.stage,'stage1-reuse');
+ assert.equal(contract.release,'0.69.397');
+ assert.equal(contract.stage,'complete');
  assert.deepEqual([contract.printedTotal,contract.attackPrints,contract.abilities,contract.pokemonBreak,contract.energyPrints],[113,129,11,4,10]);
  assert.equal(contract.pin,'7e80c06b0f3e5621058a29e26c90023d1033e65f');
- assert.match(read('app/build.gradle'),/versionCode 7396/);
- assert.match(read('app/build.gradle'),/versionName '0\.69\.396'/);
+ assert.match(read('app/build.gradle'),/versionCode 7397/);
+ assert.match(read('app/build.gradle'),/versionName '0\.69\.397'/);
  for(const name of ['preflightXY12ContractForApk','generateXY12ForApk','auditXY12ForApk'])assert.ok(read('app/build.gradle').includes(name),'Gradle missing '+name);
  assert.match(read('app/build.gradle'),/dependsOn tasks\.named\('auditXY11ForApk'\)/);
  assert.match(read('app/build.gradle'),/tests\/v07396-evolutions-integration\.test\.cjs/);
@@ -90,9 +90,9 @@ test('Printed reprints reuse their original effect definitions, not mistaken alt
 });
 test('Distinct XY12 regular effects and correct physical discard requirements',()=>{
  assert.equal(by(24).attacks[0].effect.type,'chooseAttackLock');
- assert.equal(by(36).battleEnabled,false,'Energize remains gated until Spark Bolt is implemented');
+ assert.equal(by(36).battleEnabled,true,'Spark Bolt is enabled with optional Energy discard');
  assert.equal(by(52).attacks[0].effect.type,'attachEnergyFromDiscard');
- assert.equal(by(71).battleEnabled,false,'Expiry-safe Conversion 3 is gated');
+ assert.equal(by(71).battleEnabled,true,'Expiry-safe Conversion 3 is enabled');
  assert.equal(by(34).attacks[1].effect.rule,'hgss3:45:doubleHeadstrike');
  assert.equal(by(110).attacks[1].effect.rule,'xy4:fly');
  assert.equal(by(79).effect.effects[0].amount,2);

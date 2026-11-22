@@ -291,6 +291,10 @@
   function beginTurn(state, side){
     const s = state.sides[side];
     s.turnCount += 1;
+    // XY12 Conversion 3 changes Weakness only until the end of the attacker's next turn.
+    if(state.format==='classic')for(const who of ['player','opponent'])for(const p of pokemonOn(state.sides[who]))
+      if(p.weaknessOverrideExpiresTurn!=null&&state.turnNumber>p.weaknessOverrideExpiresTurn){delete p.weaknessOverride;delete p.weaknessOverrideExpiresTurn;}
+
     s.energyUsed = false;
     s.handEnergyUsed = false;
     s.retreated = false;
@@ -440,7 +444,7 @@
     }else if(p.kind==='deckCard'){
       ss.deck.forEach((ref,index)=>{const card=data.cardById(ref.cardId);if(!(p.excludeUids||[]).includes(ref.uid)&&(!p.filter||effects.matchesFilter(card,p.filter,ref)))out.push({type:'effectChoice',choiceDeckIndex:index,choiceCardId:ref.cardId});});
     }else if(p.kind==='discardCard'){
-      const zoneSide=p.discardZone==='opponent'?(p.originSide==='player'?'opponent':'player'):(p.selectionSide||side),target=state.sides[zoneSide],excluded=new Set(p.excludeUids||[]);target.discard.forEach((ref,index)=>{const card=data.cardById(ref.cardId);if(!excluded.has(ref.uid)&&(!p.allowedKinds||p.allowedKinds.includes(card?.kind))&&(!p.basicEnergyOnly||card?.kind!=='energy'||card.basicEnergy)&&(!p.filter||effects.matchesFilter(card,p.filter,ref)))out.push({type:'effectChoice',choiceDiscardIndex:index,choiceCardId:ref.cardId});});
+      const zoneSide=p.discardZone==='opponent'?(p.originSide==='player'?'opponent':'player'):(p.selectionSide||side),target=state.sides[zoneSide],excluded=new Set(p.excludeUids||[]);target.discard.forEach((ref,index)=>{const card=data.cardById(ref.cardId);if(!excluded.has(ref.uid)&&(!p.allowedUids||p.allowedUids.includes(ref.uid))&&(!p.allowedKinds||p.allowedKinds.includes(card?.kind))&&(!p.basicEnergyOnly||card?.kind!=='energy'||card.basicEnergy)&&(!p.filter||effects.matchesFilter(card,p.filter,ref)))out.push({type:'effectChoice',choiceDiscardIndex:index,choiceCardId:ref.cardId});});
       // Classic Basic Energy discarded from an attachment lives in an actual
       // per-type discard ledger, not target.discard. Offer it alongside real
       // card refs for effects that explicitly opt in to both discard zones.
@@ -1045,7 +1049,10 @@
       next.__towerBasics={...slot.energy};
     }
     if(state.format==='classic'&&slot?.cardId==='bw3-79'&&!effects.abilitiesSuppressed(state,side,slot,data.cardById)){const units=Object.entries(next).filter(([type])=>!type.startsWith('__')).reduce((n,[,v])=>n+Number(v||0),0);return {Darkness:units};}
-    if(slot?.cardId==='gym1-47'){const count=Object.values(next).reduce((n,x)=>n+Number(x||0),0);return {Grass:count};}const override=slot?.energyTypeOverride;if(override&&(override.expiresTurn==null||state.turnNumber<=override.expiresTurn)){const total=Object.values(next).reduce((a,b)=>a+Number(b||0),0);return {[override.type]:total};}return next;}
+    if(slot?.cardId==='gym1-47'){const count=Object.values(next).reduce((n,x)=>n+Number(x||0),0);return {Grass:count};}if(state.format==='classic'&&slot?.cardId==='xy12-11'&&!effects.abilitiesSuppressed(state,side,slot,data.cardById)){
+      const n=Object.values(next).reduce((total,value)=>total+Number(value||0),0);
+      return {Fire:n};
+    }const override=slot?.energyTypeOverride;if(override&&(override.expiresTurn==null||state.turnNumber<=override.expiresTurn)){const total=Object.values(next).reduce((a,b)=>a+Number(b||0),0);return {[override.type]:total};}return next;}
   function spendRetreatEnergy(state,side,slot,cost){
     let remaining=Math.max(0,Number(cost||0)),generated={...(slot.energy||{})},special=(slot.specialEnergy||[]).slice(),discardSpecial=[];
     const values=energyValues(state,side,slot),basicTotal=Object.entries(generated).reduce((sum,[type,n])=>sum+Number(n||0)*Number(values[type]||1),0);
@@ -1288,7 +1295,7 @@
         // applies. This covers Jungle Scyther's Swords Dance, Sandstorm
         // Vigoroth's Focus Energy and custom-set next-attack effects.
         for(const boost of attacker.nextAttackBonuses||[]){
-          if(Number(boost.turn)===Number(snapshot.turnNumber)&&boost.attackName===attack.name)
+          if(Number(boost.turn)===Number(snapshot.turnNumber)&&(boost.attackName===attack.name||boost.attackName==='*'))
             damage+=Number(boost.amount||0);
         }
       }
@@ -2101,7 +2108,7 @@
     if(!attacker||!defender){if(state.phase==='battle')endTurn(state);return false;}
     const attackName=pending.attackName||'Repeated attack';let damage=Math.max(0,Number(pending.amount||0));
     damage+=effects.modifierAmount(state,side,attacker,'attackDamage',data.cardById)+effects.modifierAmount(state,side,attacker,'attackDamageAllTargets',data.cardById)+effects.attackSpecificBonus(attacker,attackName,state.turnNumber);
-    for(const boost of attacker.nextAttackBonuses||[])if(Number(boost.turn)===state.turnNumber&&boost.attackName===attackName)damage+=Number(boost.amount||0);
+    for(const boost of attacker.nextAttackBonuses||[])if(Number(boost.turn)===state.turnNumber&&(boost.attackName===attackName||boost.attackName==='*'))damage+=Number(boost.amount||0);
     const attackerCard=data.cardById(attacker.cardId);
     if(state.format==='classic'&&damage>0&&!miraculousWindActive(state)&&attackerCard&&
       (attackerCard.types?.includes('Darkness')||/Dark/i.test(attackerCard.name||'')))
@@ -2592,6 +2599,14 @@
         }
         if(state.format==='classic'&&source?.attack&&source?.side===foeSide&&
           data.cardById(slot.cardId)?.types?.includes('Grass'))s.pl1GrassKoTurn=state.turnNumber;
+        if(state.format==='classic'&&slot?.cardId==='xy12-47'&&cause==='attack'&&eventSource?.attack&&eventSource.side===foeSide&&
+          Number(slot.xy12LittleGrudgeUntil)>=Number(state.turnNumber)){
+          const target=[foe.active,...foe.bench].find(x=>x&&x.uid===eventSource.uid)||foe.active;
+          if(target){const type=Object.keys(target.energy||{}).find(k=>Number(target.energy[k]||0)>0);
+            if(type){target.energy[type]--;foe.energyDiscard=foe.energyDiscard||{};foe.energyDiscard[type]=Number(foe.energyDiscard[type]||0)+1;}
+            else if(target.specialEnergy?.length)foe.discard.push(...target.specialEnergy.splice(0,1));
+            state.log.push({type:'xy12LittleGrudge',side,targetUid:target.uid});}
+        }
         any=true;const countsAsKnockout=!(slot.cardId==='dp3-26'&&slot.transformOnKO)&&!slot.dp2ForcedDiscard&&card?.effect?.countsAsKnockout!==false&&card?.countsAsKnockout!==false&&!['ex16-84','ex16-85','ex16-86'].includes(card?.id);if(countsAsKnockout){if(Number(s.lastKnockoutTurn)!==Number(state.turnNumber))s.lastKnockedOutCardIds=[];s.lastKnockoutTurn=state.turnNumber;s.lastKnockedOutCardIds.push(card.id);s.knockoutsTaken=Number(s.knockoutsTaken||0)+1;if(cause==='attack'&&source?.side===foeSide&&source?.attack)s.lastOpponentAttackKoTurn=state.turnNumber;}
         const arceusBeltBonus=state.format==='classic'&&activeToolsOf(state,slot).some(ref=>ref.cardId==='pl4-87')?1:0;
         const arceusLuckyEgg=state.format==='classic'&&cause==='attack'&&source?.side===foeSide&&activeToolsOf(state,slot).some(ref=>ref.cardId==='pl4-88');
@@ -3708,7 +3723,7 @@ const target=slotForTarget(s,action.target,action.benchIndex);if(card.id==='pl2-
           const deoxys=pokemonOn(s).filter(p=>['bw9-53','bw9-111'].includes(p.cardId)&&!effects.abilitiesSuppressed(state,side,p,data.cardById)).length;
           damage+=10*deoxys;
         }
-        damage+=effects.modifierAmount(state,side,s.active,'attackDamage',data.cardById)+effects.modifierAmount(state,side,s.active,'attackDamageAllTargets',data.cardById)+effects.attackSpecificBonus(s.active,attack.name,state.turnNumber);for(const boost of s.active.nextAttackBonuses||[])if(Number(boost.turn)===state.turnNumber&&boost.attackName===attack.name)damage+=Number(boost.amount||0);}
+        damage+=effects.modifierAmount(state,side,s.active,'attackDamage',data.cardById)+effects.modifierAmount(state,side,s.active,'attackDamageAllTargets',data.cardById)+effects.attackSpecificBonus(s.active,attack.name,state.turnNumber);for(const boost of s.active.nextAttackBonuses||[])if(Number(boost.turn)===state.turnNumber&&(boost.attackName===attack.name||boost.attackName==='*'))damage+=Number(boost.amount||0);}
       let resistanceReason='';
       if(state.format==='classic'&&!isActive&&foe.active?.cardId==='ex1-10'&&!effects.abilitiesSuppressed(state,foeSide,foe.active,data.cardById)&&
         !foe.active.conditions?.sleep&&!foe.active.conditions?.paralysis&&!foe.active.conditions?.confusion)damage=Math.max(0,damage-10);

@@ -50,17 +50,49 @@ ATK={
  ('69','Fury Attack'):COIN(3,10),
  ('70','Scrunch'):Q(E('preventDamage',target='self',duration='opponentTurn')),
  ('70','Double-Edge'):E('selfDamage',amount=80),('110','Fly'):E('neoRule',rule='xy4:fly'),
- # Conversion 3 needs expiry-safe type selection; leave gated until timed override exists.
+ # Conversion 3 uses the expiry-aware xy12Rule handler.
  ('72','Hyper Beam'):DISC(1,'opponentActive'),
  ('109','ふみつけ[Stomp]'):Q(BONUS(10)),
 }
+# Verified XY12 completion effects. Non-trivial attacks resolve via one
+# source-scoped rule handler so earlier-set attack text is never reinterpreted.
+ATK.update({
+ ('7','Swarming Sting'):E('xy12Rule',rule='swarmingSting'),
+ ('15','Lure'):E('xy12Rule',rule='lure'),
+ ('16','Explosive Fireball'):E('xy12Rule',rule='explosiveFireball'),
+ ('18','Scorching Breath'):E('lock',action='attack',target='self',duration='nextOwnTurn'),
+ ('25','Dashing Punch'):BONUS(50,{'type':'movedFromBenchThisTurn'}),
+ ('32','Break Star'):E('xy12Rule',rule='breakStar'),
+ ('36','Spark Bolt'):OPT('Discard all attached Energy for +70',S(DISC('all'),BONUS(70))),
+ ('46','Toxic Drill'):E('status',target='opponentActive',status='poison',amount=20),
+ ('47','Little Grudge'):E('xy12Rule',rule='littleGrudge'),
+ ('51','Barrier'):E('xy12Rule',rule='barrier'),
+ ('58','Karate Chop'):E('selfDamagePenalty',amount=1,mode='add'),
+ ('60','Boomerang Lariat'):E('xy12Rule',rule='boomerangLariat'),
+ ('67','Shadowy Bite'):E('xy12Rule',rule='shadowyBite'),
+ ('71','Conversion 3'):E('xy12Rule',rule='conversion3'),
+ ('112','Harmonize'):E('xy12Rule',rule='harmonize'),
+})
 # Official alternate art reprints: same attack effects by exact printed pair.
 for src,alts in [('2',['100']),('13',['101']),('22',['102']),('52',['103']),('64',['104']),('65',['105']),('72',['106'])]:
  for (number,name),effect in list(ATK.items()):
   if number==src:
    for alt in alts:ATK[(alt,name)]=effect
 
-ABILITIES={}
+ABILITIES={
+ 'Energy Burn':{'type':'passive','effect':N},
+ 'Burning Road':{'type':'activated','oncePerTurn':True,'effect':E('xy12Rule',rule='burningRoad')},
+ 'Space Beacon':{'type':'activated','oncePerTurn':True,'effect':E('xy12Rule',rule='spaceBeacon')},
+ 'Buzzap Thunder':{'type':'activated','oncePerTurn':True,'effect':E('xy12Rule',rule='buzzapThunder')},
+ 'Neutral Shield':{'type':'passive','effect':N},
+ 'Submerge':{'type':'passive','effect':N},
+ 'Counterattack':{'type':'triggered','event':'damagedByAttack','activeOnly':True,'effect':E('xy12Rule',rule='counterattack')},
+ 'Mischievous Fang':{'type':'triggered','event':'benched','fromHandOnly':True,'effect':E('xy12Rule',rule='mischievousFang')},
+ 'Pull Up':{'type':'triggered','event':'benched','fromHandOnly':True,'effect':E('xy12Rule',rule='pullUp')},
+ # Frenzied Escape describes a real-world physical card throw, which is not a
+ # digital game action. Preserve normal retreat and show a flavour log entry.
+ 'Frenzied Escape':{'type':'passive','effect':N},
+}
 UNVERIFIED_ABILITIES=set()
 
 TRAINERS={
@@ -74,7 +106,12 @@ TRAINERS={
  '85':('Item',E('benchFromDiscard',side='self',amount=1,filter={'kind':'pokemon','stage':'Basic'})),
  '84':('Supporter',S(E('drawToHandSize',size=7),E('endTurn'))),
  '88':('Item',E('switch',side='self')),
- # Prize-reveal action requires a real state renderer; gated until implemented.
+ '74':('Supporter',E('xy12Rule',rule='brocksGrit')),
+ '80':('Supporter',E('xy12Rule',rule='mistysDetermination')),
+ '87':('Item',E('xy12Rule',rule='superPotion')),
+ '113':('Supporter',E('xy12Rule',rule='hereComesTeamRocket')),
+ # Both players' prize cards already have faceUp state and rendered support.
+
 }
 # Trainer reprints share exact rules where present, not their card numbers only.
 for main,alt in [('74','107'),('80','108')]:

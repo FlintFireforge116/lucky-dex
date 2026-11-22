@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 """Evolutions XY12 source release and full generated print preflight.
 
-Stage 1 is intentionally *not* complete: all 113 official prints are included,
-but unsupported gameplay effects are gated. Any accidental activation fails.
+Completion requires every official print to be playable with tested effects;
+run --full to regenerate pinned metadata and verify independent gameplay gates.
 """
 from __future__ import annotations
 import argparse,json,os,re,subprocess,sys
@@ -13,22 +13,22 @@ CONTRACT=ROOT/'scripts/xy12_release_contract.json'
 def check():
  subprocess.run([sys.executable,'scripts/check-gradle-source.py','--self-test'],cwd=ROOT,check=True)
  c=json.loads(CONTRACT.read_text(encoding='utf-8'))
- assert c['set']=='xy12' and c['stage']=='stage1-reuse'
+ assert c['set']=='xy12' and c['stage']=='complete'
  assert (c['printedTotal'],c['attackPrints'],c['abilities'],c['pokemonBreak'],c['dualTypePrints'],c['energyPrints'])==(113,129,11,4,0,10)
  assert c['pin']=='7e80c06b0f3e5621058a29e26c90023d1033e65f'
- assert c['release']=='0.69.396'
- assert c['expectedPlayableMinimum']==len(c['requiredEnabledNumbers']) and c['expectedPlayableMinimum']>=75
+ assert c['release']=='0.69.397'
+ assert c['expectedPlayableMinimum']==len(c['requiredEnabledNumbers']) and c['expectedPlayableMinimum']==113
  assert len(c['requiredEnabledNumbers'])==len(set(c['requiredEnabledNumbers']))
  gradle=(ROOT/'app/build.gradle').read_text()
- assert re.search(r"versionName\s+['\"]0\.69\.396['\"]",gradle)
- assert 'versionCode 7396' in gradle
+ assert re.search(r"versionName\s+['\"]0\.69\.397['\"]",gradle)
+ assert 'versionCode 7397' in gradle
  for task in ('preflightXY12ContractForApk','generateXY12ForApk','auditXY12ForApk'):
   assert task in gradle,'Missing APK gate: '+task
  for name in ('xy9','xy10','xy11'):
   assert json.loads((ROOT/f'scripts/{name}_release_contract.json').read_text())['release']==c['release'],name+' release drift'
  assert 'tcg-classic-evolutions.js' in (ROOT/'app/src/main/assets/index.html').read_text()
- assert "v0.69.396" in (ROOT/'app/src/main/assets/index.html').read_text()
- assert "__LUCKYDEX_BUILD='0.69.396'" in (ROOT/'app/src/main/assets/app-v0167.js').read_text()
+ assert "v0.69.397" in (ROOT/'app/src/main/assets/index.html').read_text()
+ assert "__LUCKYDEX_BUILD='0.69.397'" in (ROOT/'app/src/main/assets/app-v0167.js').read_text()
  for name in ('tcg-classic-battle-data.js','tcg-classic-set-picker.js','tcg-classic-deck-builder.js','tcg-classic-opponents.js'):
   assert 'xy12' in (ROOT/'app/src/main/assets'/name).read_text(),name+' missing XY12'
  script=(ROOT/'scripts/build-xy12.py').read_text()
@@ -52,11 +52,11 @@ def main():
    assert 'xy12-'+number not in d['gated'],f'Required enabled card {number} is gated'
   assert (ROOT/'app/src/main/assets/tcg-classic-evolutions.js').stat().st_size>15000
   env={**os.environ,'GITHUB_ACTIONS':'true'}
-  subprocess.run(['node','--test','tests/v07396-evolutions-integration.test.cjs'],cwd=ROOT,check=True,env=env)
+  subprocess.run(['node','--test','tests/v07396-evolutions-integration.test.cjs','tests/v07397-evolutions-completion.test.cjs'],cwd=ROOT,check=True,env=env)
   subprocess.run(['node','--test','tests/v07333-classic-deck-quality.test.cjs'],cwd=ROOT,check=True,env=env)
   print(f"PASS XY12 FULL: {d['printed']} official prints, {d['battleReady']} explicitly enabled, {len(d['gated'])} safely gated, CI deck builder PASS")
  else:
-  subprocess.run(['node','--test','tests/v07396-evolutions-integration.test.cjs'],cwd=ROOT,check=True)
+  subprocess.run(['node','--test','tests/v07396-evolutions-integration.test.cjs','tests/v07397-evolutions-completion.test.cjs'],cwd=ROOT,check=True)
   print('SOURCE ONLY: run --full to regenerate all official prints and run full CI deck checks')
 if __name__=='__main__':
  try:main()
