@@ -1,5 +1,5 @@
 'use strict';
-// v0.69.393 XY11 release contract. Source-only is not the generated official audit.
+// v0.69.394 XY11 release contract. Source-only is not the generated official audit.
 const {test}=require('node:test'),assert=require('node:assert/strict'),fs=require('node:fs'),path=require('node:path'),{spawnSync}=require('node:child_process');
 const root=path.resolve(__dirname,'..'),read=x=>fs.readFileSync(path.join(root,x),'utf8');
 const xy=require('../app/src/main/assets/tcg-classic-steam-siege.js');
@@ -21,8 +21,8 @@ test('Steam Siege registry, set picker, player/CPU pool and launch load',()=>{
 });
 test('new-set release version, immutable upstream source and official-count contract',()=>{
  const g=read('app/build.gradle'),v=g.match(/versionName ['"]([^'"]+)['"]/)[1];
- assert.equal(v,'0.69.393');assert.equal(v,contract.release);
- assert.match(g,/versionCode 7393/);
+ assert.equal(v,'0.69.394');assert.equal(v,contract.release);
+ assert.match(g,/versionCode 7394/);
  for(const id of ['xy9','xy10'])assert.equal(require('../scripts/'+id+'_release_contract.json').release,v);
  for(const file of ['app/src/main/assets/index.html','app/src/main/assets/app-v0167.js'])assert.ok(read(file).includes(v),file+' stale build version');
  const builder=read('scripts/build-xy11.py');

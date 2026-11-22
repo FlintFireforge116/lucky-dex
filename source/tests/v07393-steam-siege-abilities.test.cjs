@@ -14,16 +14,16 @@ const ctx=(s,extra={})=>({state:s,side:'player',foeSide:'opponent',attacker:s.si
 const a=(n,name)=>{const c=xy.cardById('xy11-'+n);assert.ok(c?.battleEnabled,`Card ${n} gated`);return c.attacks.find(a=>a.name===name);};
 const ability=(n,name)=>{const c=xy.cardById('xy11-'+n);assert.ok(c?.battleEnabled,`Ability card ${n} gated`);return c.abilities.find(ab=>ab.name===name)?.effect;};
 
-test('Steam Siege Stage 3: 94 verified playable prints, all 116 prints and exact printed costs',()=>{
- assert.equal(contract.release,'0.69.393');assert.equal(contract.stage,'stage3-abilities-and-attack-choices');
+test('Steam Siege Stage 3: 116 verified playable prints, all 116 prints and exact printed costs',()=>{
+ assert.equal(contract.release,'0.69.394');assert.equal(contract.stage,'stage4-complete');
  assert.equal(source.length,116);assert.equal(xy.CARDS.length,116);
- assert.equal(xy.CARDS.filter(x=>x.battleEnabled).length,94);
+ assert.equal(xy.CARDS.filter(x=>x.battleEnabled).length,116);
  for(const row of source){const c=xy.cardById('xy11-'+row[0]);assert.equal(c.name,row[1]);
   assert.deepEqual((c.attacks||[]).map(x=>Array.isArray(x.cost)?x.cost.join(''):String(x.cost||'')),row[7].map(a=>a[1].join('')));
   if(c.battleEnabled){for(const atk of c.attacks||[])assert.deepEqual(effects.validateEffect(atk.effect),[],c.id+'/'+atk.name);
    for(const power of c.abilities||[])assert.deepEqual(effects.validateEffect(power.effect),[],c.id+'/'+power.name);}}
  for(const n of contract.requiredEnabledNumbers)assert.ok(xy.cardById('xy11-'+n)?.battleEnabled,n);
- for(const n of ['11','20','32','35','45','46','47','49','57','62','70','73','75','80','86','88','96','102','103','104','110','113'])assert.equal(xy.cardById('xy11-'+n)?.battleEnabled,false,'unfinished card '+n);
+ for(let n=1;n<=116;n++)assert.equal(xy.cardById('xy11-'+n)?.battleEnabled,true,'completed card '+n);
 });
 test('Yanmega Sonic Vision requires exactly four hand cards and unsuppressed Ability',()=>{
  const s=state(),p=s.sides.player;p.active=slot('xy11-7','yan');const attack=a('7','Assault Boom');

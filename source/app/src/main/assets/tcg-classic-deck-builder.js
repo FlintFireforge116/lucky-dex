@@ -718,6 +718,15 @@ function buildDeck(rows,options={}){
      // disruption, not a universal Trainer filler for unrelated archetypes.
      if(card?.id==='xy11-105'&&!cards.some(id=>classic.cardById(id)?.specialEnergy))return false;
      if(card?.id==='xy11-99')return false;
+     // Greedy Dice cannot be deliberately played from hand; it only triggers
+     // when the face-down Prize lottery reveals it. Never fill a generated
+     // 30-card deck with it as a generic Item. Keep explicit user picks.
+     if(card?.id==='xy11-102')return false;
+     // Ninja Boy and Pokémon Ranger are matchup / tactical Supporters, not
+     // four-copy draw engines. Cap their automatic packages across alt arts.
+     if(['xy11-103','xy11-104','xy11-113'].includes(card?.id)&&
+        cards.filter(id=>['Ninja Boy','Pokémon Ranger'].includes(classic.cardById(id)?.name)&&
+          classic.cardById(id)?.name===card.name).length>=2)return false;
      // Fates Collide: only place named, conditional cards when the actual
      // selected deck supplies their recipient. Otherwise these became the
      // identical default 17-Trainer filler package for unrelated archetypes.

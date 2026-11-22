@@ -107,22 +107,29 @@ ATK={
  ('26','Volcanic Heat'):E('lock',action='attack',target='selfActive',duration='nextOwnTurn'),
  ('97','Acrobatics'):COIN(2,20,False),
 }
+# Fully resolved Stage 4 mechanics (including turn hooks and choices).
+ATK.update({
+ ('11','Wicked Wind'):E('xy11Rule',rule='wickedWind'),
+ ('20','Flare Up'):E('xy11Rule',rule='flareUp'),
+ ('32','Ultimate Blade'):E('xy11Rule',rule='ultimateBlade'),
+ ('35','Lock-On'):E('xy11Rule',rule='lockOn'),
+ ('45','Power Lariat'):E('xy11Rule',rule='powerLariat'),
+ ('46','Transfer Pain'):E('xy11Rule',rule='transferPain'),
+ ('47','Burst Curse'):E('xy11Rule',rule='burstCurse'),
+ ('49','Mirror Mirror'):E('xy11Rule',rule='mirrorMirror'),
+ ('57','Rushing Water'):E('xy11Rule',rule='rushingWater'),
+ ('62','Damage Play'):E('xy11Rule',rule='damagePlay'),
+ ('70','Counter Head'):E('xy11Rule',rule='counterHead'),
+ ('73','Gear Spinner'):E('xy11Rule',rule='gearSpinner'),
+ ('75','Soul Blaster'):E('xy11Rule',rule='soulBlaster'),
+ ('86','Dark Burn'):E('xy11Rule',rule='darkBurn'),
+ ('88','Stall'):E('xy11Rule',rule='stall'),
+ ('96','Aero Blitz'):E('xy11Rule',rule='aeroBlitz'),
+})
 # These descriptors look similar to existing effects but miss essential
 # printed targeting, gating, or timing clauses and MUST NOT be marked ready.
-STRICT={
- ('11','Wicked Wind'),
- ('20','Flare Up'),
- ('32','Ultimate Blade'),('35','Lock-On'),
- ('45','Power Lariat'),('46','Transfer Pain'),
- ('47','Burst Curse'),('49','Mirror Mirror'),
- ('57','Rushing Water'),
- ('62','Damage Play'),
- ('70','Counter Head'),('73','Gear Spinner'),
- ('75','Soul Blaster'),
- ('86','Dark Burn'),
- ('88','Stall'),
- ('96','Aero Blitz'),
-}
+STRICT=set()  # Stage 4: former gated attacks have tested concrete implementations.
+
 # Reuse exact printed-equivalent trainers, never generic probabilistic guesses.
 TRAINERS={
  '99':('Item',S(E('revealHand',side='opponent'),E('benchBasicsFromOpponentHand'))),
@@ -132,6 +139,10 @@ TRAINERS={
  '101':('Tool',N), # Spirit Link: shared Mega turn rule needs XY11 entry.
  '106':('Tool',N),
  '114':('Supporter',E('neoRule',rule='xy4:sycamore')),
+ '102':('Item',E('xy11Rule',rule='greedyDice')),
+ '103':('Supporter',E('xy11Rule',rule='ninjaBoy')),
+ '104':('Supporter',E('xy11Rule',rule='pokemonRanger')),
+ '113':('Supporter',E('xy11Rule',rule='pokemonRanger')),
 }
 # The official alternate art prints have *identical* rules but remain
 # separate cards and source numbers; only exact print pairs are shared.
@@ -153,12 +164,14 @@ ABILITIES={
  'Sinister Selection':{'type':'activated','oncePerTurn':True,'effect':E('xy11Rule',rule='sinisterSelection')},
  'Poison Enzyme':{'type':'passive','effect':N},
  'Tear Away':{'type':'activated','oncePerTurn':False,'effect':E('xy11Rule',rule='tearAway')},
- 'Sudden Cyclone':{'type':'triggered','event':'benched','effect':E('xy11Rule',rule='suddenCyclone')}, # Executed by xy11RestoredBarrier in battle-effects' weakness paths
+ 'Sudden Cyclone':{'type':'triggered','event':'benched','effect':E('xy11Rule',rule='suddenCyclone')},
+ "King's Palace":{'type':'passive','effect':N},
+ 'Heavy Bumper':{'type':'passive','effect':N},
+ 'Mystic Heart':{'type':'passive','effect':N},
+ 'Wonder Lock':{'type':'activated','oncePerTurn':True,'benchOnly':True,'effect':E('xy11Rule',rule='wonderLock')},
+ 'Gale Wings':{'type':'passive','effect':N}, # Executed by xy11RestoredBarrier in battle-effects' weakness paths
 }
-UNVERIFIED_ABILITIES={
- "King's Palace",
- 'Heavy Bumper','Mystic Heart','Wonder Lock','Gale Wings',
-}
+UNVERIFIED_ABILITIES=set()
 # The 18 ability *prints* include alternative artworks reusing named effects.
 
 def attack(row,printed):

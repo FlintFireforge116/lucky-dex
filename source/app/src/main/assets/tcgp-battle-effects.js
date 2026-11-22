@@ -201,8 +201,14 @@
   function other(ctx){return ctx.state.sides[ctx.foeSide];}
   function pokemonOn(side){return [side.active,...side.bench].filter(Boolean);}
   function toolsOf(slot){return slot?[slot.tool,...(slot.extraTools||[])].filter(Boolean):[];}
+  // Wicked Wind blanks Tools and Stadiums, including new cards played while
+  // its effect remains active. The physical Stadium stays in play.
+  function xy11WickedWindActive(state){return state?.format==='classic'&&
+    Number(state.xy11WickedWindUntil||0)>=Number(state.turnNumber||0);}
+  function activeStadium(state){return xy11WickedWindActive(state)?null:state?.stadium||null;}
   function toolEffectsSuppressed(state,cardById){
     if(state?.format!=='classic'||!state.sides)return false;
+    if(xy11WickedWindActive(state))return true;
     // Evaluate the modern Ability without relying on the very Tool effects
     // that Banette disables. Garbotoxin still works: an attached Tool counts
     // as attached even while its *effect* is suppressed by Banette.
@@ -222,7 +228,7 @@
     if(!c)return true;
     const a=ctx.attacker,d=ctx.defender;
     switch(c.type){
-      case 'stadiumInPlay':return !!ctx.state.stadium&&(!c.cardId||ctx.state.stadium.cardId===c.cardId);
+      case 'stadiumInPlay':return !!ctx.state.stadium&&(!c.cardId||activeStadium(ctx.state)?.cardId===c.cardId);
       case 'selfHasTechnicalMachine':return toolsOf(a).some(ref=>ctx.cardById(ref.cardId)?.trainerType==='Technical Machine');
       case 'selfStackContains':return (a?.stack||[]).some(id=>ctx.cardById(id)?.name===c.name);
       case 'opponentDamageAtLeast':return Number(d?.damage||0)>=Number(c.amount||0);
@@ -342,9 +348,18 @@
     // that Pokémon, including a Special Condition scheduled for a later turn.
     if(state?.format==='classic'&&Array.isArray(state.delayedEffects))
       state.delayedEffects=state.delayedEffects.filter(item=>item.targetUid!==slot.uid);
-    clearConditions(slot);delete slot.locks;delete slot.attackGuard;delete slot.statusGuard;delete slot.attackGate;delete slot.retaliate;delete slot.stackedAttackBonuses;delete slot.abilitySuppressed;delete slot.energyTypeOverride;delete slot.typeOverride;delete slot.weaknessOverride;delete slot.resistanceOverride;delete slot.destinyBond;delete slot.gymShadowImages;delete slot.gymCounterGuard;delete slot.gymFireWall;delete slot.gymDeflector;delete slot.gymEnergyLock;delete slot.gym2Intimidate;delete slot.gym2GiantGrowth;delete slot.gym2PoisonAmount;delete slot.gym2NinjaTrick;delete slot.gym2FaceDown;delete slot.gym2BubblesLockTurn;delete slot.legendaryMirrorShellUntil;delete slot.neoMeanLook;delete slot.neoWebLock;delete slot.neoJawClamp;delete slot.neoLeer;delete slot.neoAmnesia;delete slot.neoScaryFace;delete slot.neoAttackLock;delete slot.neoDeflector;delete slot.neoPollenShield;delete slot.neoScreech;delete slot.neoLockOn;delete slot.neoCounter;delete slot.neoPursuit;delete slot.neoSecretePoison;delete slot.neoSlime;delete slot.neoGazeUntil;delete slot.dp2LazyBlowUntil;delete slot.dp4JawBite;delete slot.xy5AllergicShock;delete slot.xy7SlowingBeamUntil;delete slot.xy9ScreechUntil;delete slot.xy9ScreechFromSide;if(state)state.modifiers=(state.modifiers||[]).filter(m=>m.targetUid!==slot.uid||m.scope==='team'||m.scope==='active'||m.scope==='opponentActive');}
+    clearConditions(slot);delete slot.locks;delete slot.attackGuard;delete slot.statusGuard;delete slot.attackGate;delete slot.retaliate;delete slot.stackedAttackBonuses;delete slot.abilitySuppressed;delete slot.energyTypeOverride;delete slot.typeOverride;delete slot.weaknessOverride;delete slot.resistanceOverride;delete slot.destinyBond;delete slot.gymShadowImages;delete slot.gymCounterGuard;delete slot.gymFireWall;delete slot.gymDeflector;delete slot.gymEnergyLock;delete slot.gym2Intimidate;delete slot.gym2GiantGrowth;delete slot.gym2PoisonAmount;delete slot.gym2NinjaTrick;delete slot.gym2FaceDown;delete slot.gym2BubblesLockTurn;delete slot.legendaryMirrorShellUntil;delete slot.neoMeanLook;delete slot.neoWebLock;delete slot.neoJawClamp;delete slot.neoLeer;delete slot.neoAmnesia;delete slot.neoScaryFace;delete slot.neoAttackLock;delete slot.neoDeflector;delete slot.neoPollenShield;delete slot.neoScreech;delete slot.neoLockOn;delete slot.xy11LockOn;delete slot.xy11CounterHead;delete slot.neoCounter;delete slot.neoPursuit;delete slot.neoSecretePoison;delete slot.neoSlime;delete slot.neoGazeUntil;delete slot.dp2LazyBlowUntil;delete slot.dp4JawBite;delete slot.xy5AllergicShock;delete slot.xy7SlowingBeamUntil;delete slot.xy9ScreechUntil;delete slot.xy9ScreechFromSide;if(state)state.modifiers=(state.modifiers||[]).filter(m=>m.targetUid!==slot.uid||m.scope==='team'||m.scope==='active'||m.scope==='opponentActive');}
   function switchPokemon(side,benchIndex,state){const index=side.bench.findIndex(s=>s&&Number(s.benchSlot)===Number(benchIndex));if(index<0||!side.active)return false;const incoming=side.bench[index],outgoing=side.active;outgoing.benchSlot=Number(incoming.benchSlot);incoming.benchSlot=null;incoming.movedToActiveTurn=state?.turnNumber;outgoing.xy8DragonDance=false;side.bench[index]=outgoing;side.active=incoming;clearTemporaryEffects(state,outgoing);return true;}
   function protectedFromEffects(slot,ctx){
+    if(ctx?.isAttack&&ctx?.state?.format==='classic'&&slot&&
+       energyOwner(ctx,slot)===other(ctx)&&
+       pokemonOn(other(ctx)).some(p=>['xy11-75','xy11-110'].includes(p.cardId)&&
+         !abilitiesSuppressed(ctx.state,ctx.foeSide,p,ctx.cardById))){
+      const basic=Number(slot.energy?.Metal||0)>0,
+        special=(slot.specialEnergy||[]).some(r=>Number((r.provides||ctx.cardById(r.cardId)?.effect?.provides||{}).Metal||0)>0);
+      if(basic||special)return true;
+    }
+
     // Primal Clash Ω Barrier: this exact Pokémon is protected from effects
     // of opposing Item and Supporter Trainers, but not Stadiums or Tools.
     // The Trainer must be an actual source ref (not an attack with a name
@@ -3702,11 +3717,11 @@
       case '20:1':{d.ex5SilverWindUntil=turn+2;return;}
       case '21:0':{const types=Object.keys(us.energyDiscard||{}).filter(x=>x==='Metal'&&us.energyDiscard[x]>0);if(types.length){us.energyDiscard.Metal--;a.energy.Metal=Number(a.energy.Metal||0)+1;}return;}
       case '23:0':{us.deck.push(...us.hand.splice(0));ctx.shuffle?.(ctx.state,us.deck);for(let i=0;i<Math.min(5,us.deck.length);i++)ctx.drawCard?.(us);return;}
-      case '23:1':if(ctx.state.stadium?.cardId==='ex3-86')status('confusion');return;
+      case '23:1':if(activeStadium(ctx.state)?.cardId==='ex3-86')status('confusion');return;
       case '24:0':if(flip())status('sleep');return;
       case '25:0':status(flip()?'paralysis':'sleep');return;
       case '26:0':{if(ctx.resolvingChoice){const idx=Number(ctx.action?.choiceDiscardIndex),ref=us.discard[idx];if(ref&&get(ref)?.trainerType==='Stadium')us.hand.push(...us.discard.splice(idx,1));}else if(us.discard.some(ref=>get(ref)?.trainerType==='Stadium'))pick('discardCard',{selectionSide:ctx.side,optional:true,excludeUids:us.discard.filter(ref=>get(ref)?.trainerType!=='Stadium').map(ref=>ref.uid)});return;}
-      case '26:1':if(ctx.state.stadium?.cardId==='ex3-85')status('burn');return;
+      case '26:1':if(activeStadium(ctx.state)?.cardId==='ex3-85')status('burn');return;
       case '27:0':{ // Fruition can move any attached Energy, including Special Energy.
         if(ctx.resolvingChoice&&e.step==='energy'){
           const target=board(us).find(s=>s.uid===e.targetUid),choice=e.energies?.[Number(ctx.action?.choiceOption)];
@@ -3781,7 +3796,7 @@
       case '80:0':deckSearch(c=>c?.basicEnergy&&c.subtype==='Lightning',1,'attach');return;
       case '83:1':{if(!foe.hand.length)return;const idx=Math.floor(ctx.random(ctx.state)*foe.hand.length),ref=foe.hand.splice(idx,1)[0];foe.deck.push(ref);ctx.shuffle?.(ctx.state,foe.deck);return;}
       case '84:0':{let n=0;for(const slot of board(foe)){for(const ref of [slot.tool,...slot.extraTools||[]].filter(Boolean)){foe.discard.push(ref);n++;}slot.tool=null;slot.extraTools=[];}
-        if(ctx.state.stadium?.ownerSide===ctx.foeSide){foe.discard.push(ctx.state.stadium);ctx.state.stadium=null;n++;}
+        if(activeStadium(ctx.state)?.ownerSide===ctx.foeSide){foe.discard.push(ctx.state.stadium);ctx.state.stadium=null;n++;}
         if(n)a.attackGuard={kind:'preventDamage',expiresTurn:turn+1,effects:true};return;}
       case '85:0':{for(const slot of board(foe)){if((slot.stack||[]).length>1){const old=slot.stack.pop();foe.hand.push({uid:'ex5-devolve-'+turn+'-'+slot.uid,cardId:old});slot.cardId=slot.stack.at(-1);clearTemporaryEffects(ctx.state,slot);}}
         return;}
@@ -4896,7 +4911,7 @@
       if(effective)return Object.entries(effective).reduce((sum,[type,value])=>sum+(type.startsWith('__')?0:Number(value)||0),0);
       return Object.values(p?.energy||{}).reduce((sum,n)=>sum+Number(n||0),0)+(p?.specialEnergy||[]).length;};
     const isDelta=p=>!!card(p)?.deltaSpecies;
-    const holoStadium=()=>/Holon/.test(ctx.cardById(ctx.state.stadium?.cardId)?.name||'');
+    const holoStadium=()=>/Holon/.test(ctx.cardById(activeStadium(ctx.state)?.cardId)?.name||'');
     const hit=(side,p,amount)=>{if(!p||!amount)return;if(side===foe&&attackIsPrevented(ctx.state,ctx.foeSide,p,a,ctx.cardById))return;const dmg=(side===foe&&side.active===p)?attackDamageWithState(ctx.state,ctx.side,a,ctx.foeSide,p,amount,ctx.cardById):amount;p.damage=Number(p.damage||0)+Math.max(0,dmg);};
     const hitChoice=(side,amount,opts={})=>{if(ctx.resolvingChoice){if(!c.choiceSkip)hit(side,selected(side),amount);return;}if(pokemonOn(side).length)pickPokemon(side,opts);};
     const discardEnergy=(side,p,type)=>{if(!p)return false;const basic=Object.keys(p.energy||{}).find(t=>Number(p.energy[t])>0&&(!type||type===t));if(basic){p.energy[basic]--;recordDiscardedEnergy(side,basic,1);return true;}if(type)return false;const sp=p.specialEnergy?.shift();if(sp){side.discard.push(sp);return true;}return false;};
@@ -6598,7 +6613,7 @@
         if(e.stage==='target'&&ctx.resolvingChoice){const p=selected(foe);if(!p)return;
           // Rock Blast's selected hit is attack damage: respect protection and
           // reductions, but never apply Weakness or Resistance to this spread hit.
-          const drake=ctx.state.stadium?.cardId==='ex16-72'&&p===foe.active&&card(p)?.types?.includes('Colorless')?10:0;
+          const drake=activeStadium(ctx.state)?.cardId==='ex16-72'&&p===foe.active&&card(p)?.types?.includes('Colorless')?10:0;
           const hit=attackIsPrevented(ctx.state,ctx.foeSide,p,source,ctx.cardById)?0:
             Math.max(0,20-modifierAmount(ctx.state,ctx.foeSide,p,'damageReduction',ctx.cardById)-drake);
           p.damage=Number(p.damage||0)+hit;log('ex16RockBlastHit',{targetUid:p.uid,damage:hit});
@@ -6689,7 +6704,7 @@
         const heads=coin(ctx);log('coin',{reason:'Whirlpool',heads,results:[heads]});if(heads&&foe.active&&(Object.values(foe.active.energy||{}).some(n=>n>0)||(foe.active.specialEnergy||[]).length))request('energySource',{stage:'discard'},{selectionSide:ctx.foeSide,energySourceUid:foe.active.uid,includeSpecial:true});return;
       }
       case '95:scanblast':case '97:dirge':{
-        const name=card(foe.active)?.name;if(!name||ctx.state.stadium?.cardId==='SNAPFLORIO-112')return;
+        const name=card(foe.active)?.name;if(!name||activeStadium(ctx.state)?.cardId==='SNAPFLORIO-112')return;
         const hits=(foe.bench||[]).filter(p=>card(p)?.name===name);
         for(const p of hits){if(attackIsPrevented(ctx.state,ctx.foeSide,p,source,ctx.cardById))continue;
           const amount=Math.max(0,(rule==='95:scanblast'?70:60)-modifierAmount(ctx.state,ctx.foeSide,p,'damageReduction',ctx.cardById));
@@ -7605,7 +7620,7 @@
       if(a)a.dp6PsychicDefenseUntil=current+1;return;
     }
     if(rule==='48:weatherBall'){
-      if(ctx.state.stadium?.ownerSide===ctx.side&&a&&!healingIsBlocked(ctx.state,a,ctx.cardById))a.damage=Math.max(0,Number(a.damage||0)-30);
+      if(activeStadium(ctx.state)?.ownerSide===ctx.side&&a&&!healingIsBlocked(ctx.state,a,ctx.cardById))a.damage=Math.max(0,Number(a.damage||0)-30);
       return;
     }
     if(rule==='50:hail'){
@@ -8027,13 +8042,13 @@
     if(key==='29:greenAcid'){const first=coin(ctx),second=coin(ctx);log({results:[first,second]});if(first)applyEffect(ST('confusion'),ctx);if(second)applyEffect(ST('poison'),ctx);return;}
     if(key==='31:beeDrain'){const amount=Math.max(0,Number(ctx.dealtDamage||0));if(amount&&!healingIsBlocked(ctx.state,actor,ctx.cardById))actor.damage=Math.max(0,Number(actor.damage||0)-amount);return;}
     if(key==='30:spinningTail'){for(const p of foe.bench)targetHit(p,30);return;}
-    if(key==='35:trickRoom'){if(ctx.state.stadium?.ownerSide===ctx.foeSide&&!healingIsBlocked(ctx.state,actor,ctx.cardById))actor.damage=Math.max(0,Number(actor.damage||0)-20);return;}
+    if(key==='35:trickRoom'){if(activeStadium(ctx.state)?.ownerSide===ctx.foeSide&&!healingIsBlocked(ctx.state,actor,ctx.cardById))actor.damage=Math.max(0,Number(actor.damage||0)-20);return;}
     if(key==='40:hoodwink'){
       const pool=foe.discard.filter(ref=>['trainer','supporter','stadium'].includes(card(ref)?.kind)||card(ref)?.kind==='trainer');if(!pool.length||Number(e.count||0)>=3)return;
       if(ctx.resolvingChoice){const pick=picked();if(pick?.done)return;const ref=pick?.ref,ix=foe.discard.findIndex(r=>r.uid===ref?.uid);if(ix>=0)foe.hand.push(...foe.discard.splice(ix,1));handCap(foe);dp7Rule({...e,count:Number(e.count||0)+1},{...ctx,resolvingChoice:false});return;}
       option('return',[{label:'Done returning Trainer cards'},...pool.map(ref=>({label:'Return '+name(ref),ref}))]);return;
     }
-    if(key==='42:magneticResonance'){if(ctx.state.stadium?.ownerSide===ctx.side)applyEffect({type:'multiTargetDamage',target:'opponentBench',count:2,amount:20},ctx);return;}
+    if(key==='42:magneticResonance'){if(activeStadium(ctx.state)?.ownerSide===ctx.side)applyEffect({type:'multiTargetDamage',target:'opponentBench',count:2,amount:20},ctx);return;}
     if(key==='44:energyMilk'){
       if(!e.stage){let rolls=0;while(rolls<20&&coin(ctx))rolls++;log({heads:rolls});if(rolls)dp7Rule({...e,stage:'chooseHeal',remaining:rolls},{...ctx,resolvingChoice:false});return;}
       if(e.stage==='chooseHeal'){if(ctx.resolvingChoice){const p=chosen('self');if(p&&!healingIsBlocked(ctx.state,p,ctx.cardById))p.damage=Math.max(0,Number(p.damage||0)-20);if(Number(e.remaining)>1)dp7Rule({...e,stage:'chooseHeal',remaining:e.remaining-1},{...ctx,resolvingChoice:false});return;}pokemon('chooseHeal','self');return;}
@@ -8400,7 +8415,7 @@
            foeSide:who,attacker:ctx.state.sides[who===ctx.side?ctx.foeSide:ctx.side]?.active,
            defender:target});
       }
-      record({stadium:ctx.state.stadium.cardId,activeOnly:true,excludeSP:true});return;
+      record({stadium:activeStadium(ctx.state)?.cardId,activeOnly:true,excludeSP:true});return;
     }
     if(key==='lifeHerb'){
       if(ctx.resolvingChoice){if(ctx.action?.choiceSkip)return;const p=chosenOwn();if(!p)return;
@@ -8970,7 +8985,7 @@
     // Rising Rivals completion: precise pending-choice / printed effect rules.
     if(key==='1:burnOut')return; // Choice and bonus handled before damage in resolveAttack.
     if(key==='5:sandWall'){
-      if(ctx.state.stadium?.ownerSide===ctx.foeSide){
+      if(activeStadium(ctx.state)?.ownerSide===ctx.foeSide){
         const stadium=ctx.state.stadium;ctx.state.sides[stadium.ownerSide].discard.push({uid:stadium.uid,cardId:stadium.cardId});ctx.state.stadium=null;
         actor.attackGuard={type:'preventDamage',effects:true,duration:'opponentTurn',expiresTurn:ctx.state.turnNumber+1};record({discardStadium:stadium.cardId,protectedUid:actor.uid});
       }return;
@@ -10728,7 +10743,7 @@
     }
     if(key==='81:lostWorld'){
       const count=(foe.lostZone||[]).filter(ref=>card(ref)?.kind==='pokemon').length;
-      if(count<6||ctx.state.stadium?.cardId!=='col1-81')return;
+      if(count<6||activeStadium(ctx.state)?.cardId!=='col1-81')return;
       ctx.state.phase='finished';ctx.state.winner=ctx.side;ctx.state.reason='Lost World: opponent has 6 Pokémon in Lost Zone';
       ctx.state.log.push({type:'finish',winner:ctx.side,reason:ctx.state.reason,turnNumber:turn});return;
     }
@@ -11880,7 +11895,7 @@
       // this generic handler so Active Weakness, Resistance and guards apply.
       applyEffect({type:'multiTargetDamage',target:'opponentPokemon',count:2,amount:40,activeWeaknessResistance:true},ctx);return;
     }
-    if(key==='defog'){if(e.doDiscard&&ctx.state.stadium){ctx.state.log.push({type:'stadiumDiscarded',cardId:ctx.state.stadium.cardId});ctx.state.stadium=null;}return;}
+    if(key==='defog'){if(e.doDiscard&&ctx.state.stadium){ctx.state.log.push({type:'stadiumDiscarded',cardId:activeStadium(ctx.state)?.cardId});ctx.state.stadium=null;}return;}
     if(key==='astonish'){
       if(foe.hand.length){const i=Math.floor(ctx.random(ctx.state)*foe.hand.length);const ref=foe.hand.splice(i,1)[0];foe.deck.push(ref);ctx.shuffle?.(ctx.state,foe.deck);log({opponentHandToDeck:ref.cardId});}return;
     }
@@ -13811,7 +13826,7 @@
       const opponents=board(foe);
       if(step==='target'&&ctx.resolvingChoice){const targetUid=effect.targets?.[Number(action.choiceOption)],victim=opponents.find(p=>p.uid===targetUid);
         if(!victim)return;
-        if(victim!==foe.active&&ctx.state.stadium?.cardId==='xy3-97')return;
+        if(victim!==foe.active&&activeStadium(ctx.state)?.cardId==='xy3-97')return;
         const amount=victim===foe.active?attackDamageWithState(ctx.state,ctx.side,a,ctx.foeSide,victim,150,ctx.cardById):150;
         victim.damage=Number(victim.damage||0)+amount;
         victim.lastDamageSource={side:ctx.side,uid:a?.uid,cardId:a?.cardId,attack:true,turn:ctx.state.turnNumber,damage:amount};
@@ -13966,7 +13981,7 @@
       if(basics.length&&all.length)ask('energy',[...basics.map(ref=>'Attach '+name(ref)),'Done'],{uids:basics.map(ref=>ref.uid)});return;
     }
     if(k==='teleportRoom'){
-      const available=s.discard.filter(ref=>lookup(ref)?.trainerType==='Stadium'&&ref.cardId!==ctx.state.stadium?.cardId);
+      const available=s.discard.filter(ref=>lookup(ref)?.trainerType==='Stadium'&&ref.cardId!==activeStadium(ctx.state)?.cardId);
       if(!ctx.state.stadium||!available.length)return;
       if(step==='replace'&&ctx.resolvingChoice){const uid=effect.uids?.[Number(action.choiceOption)],i=s.discard.findIndex(ref=>ref.uid===uid&&lookup(ref)?.trainerType==='Stadium');if(i<0)return;
         const ref=s.discard.splice(i,1)[0],old=ctx.state.stadium;ctx.state.sides[old.ownerSide].discard.push({uid:old.uid,cardId:old.cardId});ctx.state.stadium={...ref,ownerSide:ctx.side};
@@ -18054,7 +18069,7 @@
       return;
     }
     if(rule==='natureStorm114'){
-      if(ctx.state.stadium?.cardId==='SNAPFLORIO-112')return;
+      if(activeStadium(ctx.state)?.cardId==='SNAPFLORIO-112')return;
       const left=Math.max(0,Number(e.left??10));if(!left||!ss.bench.some(s=>Number(s.damage||0)>=10)||!foe.bench.length)return;
       if(ctx.resolvingChoice&&e.phase==='source'){
         if(a.choiceSkip)return;const slot=ss.bench.find(s=>Number(s.benchSlot)===Number(a.choiceBenchIndex));
@@ -19474,7 +19489,179 @@
       }
       case 'xy11Rule':{
         const ss=own(ctx),foe=other(ctx),rule=effect.rule;
-        const ask=(spec,additional={})=>ctx.requestChoice?.({...spec,side:'self',effect:{...effect,...additional}});
+        const ask=(spec,additional={})=>ctx.requestChoice?.({...spec,side:spec.side||'self',effect:{...effect,...additional}});
+        const card=ref=>ctx.cardById(ref?.cardId),isEnergy=r=>card(r)?.kind==='energy',
+          actualOwner=p=>pokemonOn(ss).includes(p)?ss:pokemonOn(foe).includes(p)?foe:null,
+          basicCard=r=>card(r)?.kind==='pokemon'&&card(r)?.stage==='Basic',
+          energyCount=p=>Object.values(p?.energy||{}).reduce((n,x)=>n+Number(x||0),0)+(p?.specialEnergy||[]).length,
+          discardOne=(p,owner,type)=>{
+            if(!p||!owner)return false;
+            if(type&&Number(p.energy?.[type]||0)>0){p.energy[type]--;recordDiscardedEnergy(owner,type,1);return true;}
+            const k=Object.keys(p.energy||{}).find(x=>Number(p.energy[x]||0)>0&&(!type||type===x));
+            if(k){p.energy[k]--;recordDiscardedEnergy(owner,k,1);return true;}
+            const ix=(p.specialEnergy||[]).findIndex(ref=>!type||Number((ref.provides||card(ref)?.effect?.provides||{})[type]||0)>0);
+            if(ix>=0){owner.discard.push(...p.specialEnergy.splice(ix,1));return true;}
+            return false;
+          };
+        if(rule==='darkBurnDiscard'){
+          const seen=new Set();for(const token of effect.tokens||[]){
+            if(seen.has(token))continue;seen.add(token);
+            const [uid,kind,refUid]=token.split(':'),p=pokemonOn(ss).find(x=>x.uid===uid);if(!p)continue;
+            if(kind==='basic'&&Number(p.energy?.Darkness||0)>0){p.energy.Darkness--;recordDiscardedEnergy(ss,'Darkness',1);}
+            if(kind==='special'){const idx=p.specialEnergy?.findIndex(ref=>ref.uid===refUid);
+              if(idx>=0&&Number((p.specialEnergy[idx].provides||card(p.specialEnergy[idx])?.effect?.provides||{}).Darkness||0)>0)
+                ss.discard.push(...p.specialEnergy.splice(idx,1));}
+          }break;
+        }
+        if(rule==='wickedWind'){ctx.state.xy11WickedWindUntil=Number(ctx.state.turnNumber)+1;
+          ctx.state.log.push({type:'xy11WickedWind',side:ctx.side,expires:ctx.state.xy11WickedWindUntil});break;}
+        if(rule==='flareUp'){
+          const total=neoDiscardAvailable(ctx,ss,'Fire');if(total<10)break;
+          let restored=0;
+          for(let n=0;n<10;n++){
+            const idx=ss.discard.findIndex(ref=>card(ref)?.basicEnergy&&card(ref)?.subtype==='Fire');
+            if(idx>=0){ss.deck.push(...ss.discard.splice(idx,1));restored++;continue;}
+            if(Number(ss.energyDiscard?.Fire||0)>0){ss.energyDiscard.Fire--;
+              // Hybrid Classic has a virtual, ordered Basic Energy Zone instead of
+              // physical Basic Energy in the 30-card deck.
+              if(Array.isArray(ss.energySupply))ss.energySupply.push('Fire');
+              else ss.deck.push({uid:'xy11-flare-'+ctx.state.turnNumber+'-'+n,cardId:neoBasicIds.Fire});
+              restored++;
+            }
+          }
+          ctx.shuffle?.(ctx.state,ss.deck);ctx.shuffle?.(ctx.state,ss.energySupply);
+          ctx.state.log.push({type:'xy11FlareUp',side:ctx.side,restored});break;
+        }
+        if(rule==='ultimateBlade'){
+          // Damage occurs before pending effects; only the same Defending
+          // Pokémon is knocked out, based on its actual remaining HP.
+          const p=ctx.defender;if(p&&foe.active===p&&Number(ctx.dealtDamage||0)>0&&
+             Number(ctx.cardById(p.cardId)?.hp||0)-Number(p.damage||0)<=60&&
+             !protectedFromEffects(p,ctx))p.damage=Math.max(Number(p.damage||0),Number(ctx.cardById(p.cardId)?.hp||0));
+          break;
+        }
+        if(rule==='lockOn'){
+          const p=ctx.defender;if(!p||protectedFromEffects(p,ctx))break;
+          p.xy11LockOn={sourceSide:ctx.side,turn:ctx.state.turnNumber+2};
+          p.locks=p.locks||[];p.locks.push({action:'retreat',expiresTurn:ctx.state.turnNumber+1});break;
+        }
+        if(rule==='transferPain'){
+          if(ctx.resolvingChoice&&effect.stage==='target'){
+            const origin=pokemonOn(ss).find(p=>p.uid===effect.sourceUid),dest=selected(ctx,foe);
+            if(origin&&origin.damage>=10&&dest&&!protectedFromEffects(dest,ctx)){origin.damage-=10;dest.damage=Number(dest.damage||0)+10;}
+            break;
+          }
+          if(ctx.resolvingChoice){const origin=selected(ctx,ss);if(origin&&origin.damage>=10)
+            ask({kind:'pokemon',selectionSide:ctx.foeSide,includeActive:true},{stage:'target',sourceUid:origin.uid});break;}
+          if(pokemonOn(ss).some(p=>p.damage>=10)&&pokemonOn(foe).length)ask({kind:'pokemon',includeActive:true,filter:{damaged:true}});break;
+        }
+        if(rule==='burstCurse'){
+          if(effect.stage==='put'){
+            if(!ctx.resolvingChoice||ctx.action?.choiceSkip)break;
+            const p=selected(ctx,foe);if(p&&!protectedFromEffects(p,ctx))p.damage=Number(p.damage||0)+10;
+            const left=Number(effect.left||0)-1;
+            if(left>0)ask({kind:'pokemon',selectionSide:ctx.foeSide,includeActive:true},{stage:'put',left});break;
+          }
+          if(!ctx.attacker||energyCount(ctx.attacker)<2)break;
+          let n=2;while(n-->0)discardOne(ctx.attacker,ss);
+          if(pokemonOn(foe).length)ask({kind:'pokemon',selectionSide:ctx.foeSide,includeActive:true},{stage:'put',left:8});break;
+        }
+        if(rule==='mirrorMirror'){
+          const side=effect.stage==='self'?ss:foe,which=side===ss?ctx.side:ctx.foeSide;
+          if(ctx.resolvingChoice&&side.hand.length>4){
+            const idx=Number(ctx.action?.choiceHandIndex);
+            if(Number.isInteger(idx)&&idx>=0&&idx<side.hand.length){const [ref]=side.hand.splice(idx,1);side.discard.push(ref);}
+          }
+          while(side.hand.length<4&&side.deck.length)ctx.drawCard?.(side);
+          if(side.hand.length>4){ask({kind:'handCard',side:effect.stage==='self'?'self':'opponent',selectionSide:which},{stage:effect.stage||'opponent'});break;}
+          if(effect.stage!=='self')applyEffect({type:'xy11Rule',rule:'mirrorMirror',stage:'self'},{...ctx,resolvingChoice:false,action:{}});
+          break;
+        }
+        if(rule==='rushingWater'){
+          const source=foe.active;if(!source||!foe.bench.length||!energyCount(source))break;
+          if(effect.stage==='target'&&ctx.resolvingChoice){
+            const target=selected(ctx,foe);if(!target||target===source||protectedFromEffects(source,ctx)||protectedFromEffects(target,ctx))break;
+            if(effect.refUid){const ix=source.specialEnergy?.findIndex(r=>r.uid===effect.refUid);
+              if(ix>=0){target.specialEnergy=target.specialEnergy||[];target.specialEnergy.push(...source.specialEnergy.splice(ix,1));}}
+            else if(effect.energyType&&Number(source.energy?.[effect.energyType]||0)>0){source.energy[effect.energyType]--;
+              target.energy=target.energy||{};target.energy[effect.energyType]=Number(target.energy[effect.energyType]||0)+1;}
+            break;
+          }
+          if(ctx.resolvingChoice){const opts=effect.choices||[],picked=opts[Number(ctx.action?.choiceOption)];
+            if(picked)ask({kind:'pokemon',selectionSide:ctx.foeSide,includeActive:false},{stage:'target',...picked});break;}
+          const choices=[...Object.entries(source.energy||{}).filter(([,n])=>Number(n)>0).map(([energyType])=>({energyType})),
+            ...(source.specialEnergy||[]).map(r=>({refUid:r.uid}))];
+          if(choices.length)ask({kind:'option',options:choices.map(c=>'Move '+(c.energyType||card(source.specialEnergy.find(r=>r.uid===c.refUid))?.name||'Special Energy'))},{choices});break;
+        }
+        if(rule==='damagePlay'){
+          const src=pokemonOn(foe).find(p=>p.uid===effect.sourceUid);
+          if(effect.stage==='to'&&ctx.resolvingChoice){const dest=selected(ctx,foe);if(src&&src.damage>=10&&dest&&dest!==src&&
+            !protectedFromEffects(src,ctx)&&!protectedFromEffects(dest,ctx)){src.damage-=10;dest.damage=Number(dest.damage||0)+10;}
+            if(foe.bench.some(p=>p.damage>=10)&&typeof ctx.requestChoice==='function')
+              ask({kind:'option',options:['Move another counter','Finish']},{stage:'again'});break;}
+          if(effect.stage==='again'&&ctx.resolvingChoice&&Number(ctx.action?.choiceOption)===1)break;
+          if(effect.stage==='source'&&ctx.resolvingChoice){const p=selected(ctx,foe);
+            if(p&&p!==foe.active&&p.damage>=10)ask({kind:'pokemon',selectionSide:ctx.foeSide,includeActive:true,excludeUids:[p.uid]},{stage:'to',sourceUid:p.uid});break;}
+          if(foe.bench.some(p=>p.damage>=10))ask({kind:'pokemon',selectionSide:ctx.foeSide,includeActive:false,filter:{damaged:true}},{stage:'source'});break;
+        }
+        if(rule==='counterHead'){
+          if(ctx.attacker)ctx.attacker.xy11CounterHead={turn:ctx.state.turnNumber+1};break;
+        }
+        if(rule==='gearSpinner'){
+          if(ctx.attacker)ctx.attacker.xy11GearSpinnerUntil=ctx.state.turnNumber+2;break;
+        }
+        if(rule==='soulBlaster'){
+          if(ctx.attacker)ctx.attacker.xy11SoulBlasterUntil=ctx.state.turnNumber+2;break;
+        }
+        if(rule==='stall'){
+          if(ctx.state.turnNumber!==2||ctx.side===ctx.state.firstSide||ss.turnCount!==1)break;
+          if(effect.stage==='target'&&ctx.resolvingChoice){const target=selected(ctx,foe);
+            if(target&&!protectedFromEffects(target,ctx))discardOne(target,foe);break;}
+          if(pokemonOn(foe).some(p=>energyCount(p)>0))ask({kind:'pokemon',selectionSide:ctx.foeSide,includeActive:true,filter:{hasAnyEnergy:true}},{stage:'target'});break;
+        }
+        if(rule==='aeroBlitz'){
+          const picked=Number(effect.picked||0);if(ctx.resolvingChoice){if(ctx.action?.choiceSkip||picked>=2)break;
+            const idx=Number(ctx.action?.choiceDeckIndex);if(!Number.isInteger(idx)||idx<0||idx>=ss.deck.length)break;
+            ss.hand.push(...ss.deck.splice(idx,1));if(picked+1>=2||!ss.deck.length){ctx.shuffle?.(ctx.state,ss.deck);break;}
+            ask({kind:'deckCard',optional:true},{picked:picked+1});break;
+          }
+          if(ss.deck.length)ask({kind:'deckCard',optional:true});break;
+        }
+        if(rule==='ninjaBoy'){
+          if(effect.stage==='deck'&&ctx.resolvingChoice){const target=pokemonOn(ss).find(p=>p.uid===effect.targetUid),idx=Number(ctx.action?.choiceDeckIndex);
+            if(!target||card({cardId:target.cardId})?.stage!=='Basic'||idx<0||idx>=ss.deck.length||!basicCard(ss.deck[idx]))break;
+            const oldId=target.cardId,[chosen]=ss.deck.splice(idx,1);
+            ss.deck.push({uid:target.uid+'-ninjaswap-'+ctx.state.turnNumber,cardId:oldId});
+            target.cardId=chosen.cardId;target.stack=[chosen.cardId];
+            ctx.shuffle?.(ctx.state,ss.deck);break;}
+          if(ctx.resolvingChoice){const target=selected(ctx,ss);if(target&&card({cardId:target.cardId})?.stage==='Basic'&&ss.deck.some(basicCard))
+            ask({kind:'deckCard',filter:{kind:'pokemon',stage:'Basic'}},{stage:'deck',targetUid:target.uid});break;}
+          if(ss.deck.some(basicCard)&&pokemonOn(ss).some(p=>card({cardId:p.cardId})?.stage==='Basic'))
+            ask({kind:'pokemon',includeActive:true,filter:{stage:'Basic'}});break;
+        }
+        if(rule==='pokemonRanger'){
+          // All ongoing effects specifically created by attacks vanish.
+          ctx.state.modifiers=(ctx.state.modifiers||[]).filter(m=>!m.fromAttack);
+          for(const board of [ss,foe])for(const p of pokemonOn(board)){
+            p.locks=(p.locks||[]).filter(lock=>!lock.fromAttack);
+            for(const key of ['attackGate','koGuard','attackGuard','statusGuard','xy11CounterHead','xy11LockOn','xy11GearSpinnerUntil','xy11SoulBlasterUntil',
+              'neoScreech','neoMeanLook','neoWebLock','neoJawClamp','neoAmnesia','neoScaryFace','neoAttackLock','xy9ScreechUntil'])delete p[key];
+          }
+          delete ctx.state.xy11WickedWindUntil;
+          break;
+        }
+        if(rule==='wonderLock'){
+          const source=ctx.attacker;if(!source||!ss.bench.includes(source)||source.cardId!=='xy11-80')break;
+          if(ctx.resolvingChoice){const target=selected(ctx,ss);
+            if(!target||target===source||toolsOf(target).length>0)break;
+            ss.bench.splice(ss.bench.indexOf(source),1);
+            for(const id of source.stack||[source.cardId])if(id!=='xy11-80')ss.discard.push({uid:source.uid+'-stack-'+id,cardId:id});
+            for(const ref of [...toolsOf(source),...temporaryTrainersOf(source),...(source.specialEnergy||[])])ss.discard.push(ref);
+            for(const [type,n] of Object.entries(source.energy||{}))recordDiscardedEnergy(ss,type,Number(n||0));
+            const ref={uid:source.uid,cardId:'xy11-80',xy11ExpiresTurn:ctx.state.turnNumber+1,ownerSide:ctx.side};
+            target.tool=ref;ctx.state.log.push({type:'xy11WonderLock',side:ctx.side,targetUid:target.uid,until:ref.xy11ExpiresTurn});break;}
+          if(pokemonOn(ss).some(p=>p!==source&&toolsOf(p).length===0))ask({kind:'pokemon',includeActive:true,excludeUids:[source.uid],filter:{}});break;
+        }
         if(rule==='flameCharge'){
           const slot=ctx.attacker;if(!slot)break;
           const idx=ss.deck.findIndex(r=>{const c=ctx.cardById(r.cardId);return c?.basicEnergy&&c.subtype==='Fire';});
@@ -19767,7 +19954,7 @@
         if(typeof ctx.requestChoice==='function')ctx.requestChoice({kind:'energyTarget',side:'self',filter:effect.filter,energyTypes:available,effect:{...effect,usedTypes,placed}});
         break;
       }
-      case 'multiTargetDamage':{if(ctx.isAttack&&ctx.state.stadium?.cardId==='xy3-97'&&effect.target==='opponentBench')break;if(effect.upTo&&ctx.resolvingChoice&&ctx.action?.choiceSkip)break;const foe=other(ctx),remaining=Math.max(1,Number((effect.remaining??effect.count)||1)),chosen=Array.isArray(effect.chosenUids)?effect.chosenUids.slice():[];if(ctx.resolvingChoice){const target=selected(ctx,foe);if(target&&!protectedFromEffects(target,ctx)&&!chosen.includes(target.uid)){const side=ctx.foeSide,guard=ctx.isAttack&&attackIsPrevented(ctx.state,side,target,ctx.attacker,ctx.cardById)||fossilTransparencyBlocks(ctx,side,target);
+      case 'multiTargetDamage':{if(ctx.isAttack&&activeStadium(ctx.state)?.cardId==='xy3-97'&&effect.target==='opponentBench')break;if(effect.upTo&&ctx.resolvingChoice&&ctx.action?.choiceSkip)break;const foe=other(ctx),remaining=Math.max(1,Number((effect.remaining??effect.count)||1)),chosen=Array.isArray(effect.chosenUids)?effect.chosenUids.slice():[];if(ctx.resolvingChoice){const target=selected(ctx,foe);if(target&&!protectedFromEffects(target,ctx)&&!chosen.includes(target.uid)){const side=ctx.foeSide,guard=ctx.isAttack&&attackIsPrevented(ctx.state,side,target,ctx.attacker,ctx.cardById)||fossilTransparencyBlocks(ctx,side,target);
             const printed=Math.max(0,Number(effect.amount||0));
             const amount=guard?0:(effect.activeWeaknessResistance&&target===foe.active||effect.benchWeaknessResistance)&&ctx.isAttack&&ctx.attacker?
               attackDamageWithState(ctx.state,ctx.side,ctx.attacker,side,target,printed,ctx.cardById):
@@ -20325,8 +20512,8 @@
       case 'coinRepeatEffect':{let heads=0;const results=[];for(let i=0;i<effect.coins;i++){const hit=coin(ctx);results.push(hit);if(hit)heads++;}log({type:'coin',heads,coins:effect.coins,results});for(let i=0;i<heads;i++)applyEffect(effect.effect,ctx);break;}
       case 'endTurn':if(typeof ctx.endTurn==='function')ctx.endTurn();break;
       case 'removeRandomStatus':for(const s of affected()){const keys=Object.keys(s.conditions||{});if(!keys.length)continue;const key=keys[Math.floor(ctx.random(ctx.state)*keys.length)];delete s.conditions[key];}break;
-      case 'chainLightning':{if(ctx.isAttack&&ctx.state.stadium?.cardId==='SNAPFLORIO-112')break;const defenderType=ctx.cardById(ctx.defender?.cardId)?.types?.[0];if(!defenderType||defenderType==='Colorless')break;for(const side of [ctx.side,ctx.foeSide]){for(const slot of ctx.state.sides[side].bench||[]){if(!slot||!ctx.cardById(slot.cardId)?.types?.includes(defenderType))continue;const reduced=modifierAmount(ctx.state,side,slot,'damageReduction',ctx.cardById);const guard=attackIsPrevented(ctx.state,side,slot,ctx.attacker,ctx.cardById)||fossilTransparencyBlocks(ctx,side,slot);let amount=guard?0:Math.max(0,Number(effect.amount||10)-reduced);if(amount>0)amount=ctx.gymBenchRedirect?.(side,slot,amount)??amount;slot.damage=Number(slot.damage||0)+amount;if(amount)log({type:'benchDamage',targetSide:side,targetCardId:slot.cardId,sourceCardId:ctx.attacker?.cardId,amount,attack:ctx.attack?.name});}}break;}
-      case 'benchDamage':{if(ctx.isAttack&&['SNAPFLORIO-112','xy3-97'].includes(ctx.state.stadium?.cardId))break;const ss=effect.side==='self'?own(ctx):other(ctx);const list=effect.all?ss.bench:targets(effect.side==='self'?'selfBench':'opponentBench',ctx);for(const s of list.filter(s=>s&&!protectedFromEffects(s,ctx)&&matchesFilter(ctx.cardById(s.cardId),effect.filter,s))){const side=effect.side==='self'?ctx.side:ctx.foeSide;const guard=ctx.isAttack&&attackIsPrevented(ctx.state,side,s,ctx.attacker,ctx.cardById)||fossilTransparencyBlocks(ctx,side,s);const bonus=ctx.isAttack&&ctx.attacker?modifierAmount(ctx.state,ctx.side,ctx.attacker,'attackDamageAllTargets',ctx.cardById):0;
+      case 'chainLightning':{if(ctx.isAttack&&activeStadium(ctx.state)?.cardId==='SNAPFLORIO-112')break;const defenderType=ctx.cardById(ctx.defender?.cardId)?.types?.[0];if(!defenderType||defenderType==='Colorless')break;for(const side of [ctx.side,ctx.foeSide]){for(const slot of ctx.state.sides[side].bench||[]){if(!slot||!ctx.cardById(slot.cardId)?.types?.includes(defenderType))continue;const reduced=modifierAmount(ctx.state,side,slot,'damageReduction',ctx.cardById);const guard=attackIsPrevented(ctx.state,side,slot,ctx.attacker,ctx.cardById)||fossilTransparencyBlocks(ctx,side,slot);let amount=guard?0:Math.max(0,Number(effect.amount||10)-reduced);if(amount>0)amount=ctx.gymBenchRedirect?.(side,slot,amount)??amount;slot.damage=Number(slot.damage||0)+amount;if(amount)log({type:'benchDamage',targetSide:side,targetCardId:slot.cardId,sourceCardId:ctx.attacker?.cardId,amount,attack:ctx.attack?.name});}}break;}
+      case 'benchDamage':{if(ctx.isAttack&&['SNAPFLORIO-112','xy3-97'].includes(activeStadium(ctx.state)?.cardId))break;const ss=effect.side==='self'?own(ctx):other(ctx);const list=effect.all?ss.bench:targets(effect.side==='self'?'selfBench':'opponentBench',ctx);for(const s of list.filter(s=>s&&!protectedFromEffects(s,ctx)&&matchesFilter(ctx.cardById(s.cardId),effect.filter,s))){const side=effect.side==='self'?ctx.side:ctx.foeSide;const guard=ctx.isAttack&&attackIsPrevented(ctx.state,side,s,ctx.attacker,ctx.cardById)||fossilTransparencyBlocks(ctx,side,s);const bonus=ctx.isAttack&&ctx.attacker?modifierAmount(ctx.state,ctx.side,ctx.attacker,'attackDamageAllTargets',ctx.cardById):0;
         const charm=ctx.isAttack&&ctx.attacker&&Number(effect.amount||0)+bonus>0?activeToolsOf(ctx.state,ctx.attacker,ctx.cardById).find(r=>r.cardId==='ecard1-150'):null;
         const doubleRainbowPenalty=ctx.isAttack&&effect.side==='opponent'?10*(ctx.attacker?.specialEnergy||[]).filter(ref=>['ex9-87','ex14-88'].includes(ref.cardId)).length:0;
         const bwEvioliteReduction=ctx.isAttack&&ctx.state.format==='classic'&&ctx.cardById(s.cardId)?.stage==='Basic'&&activeToolsOf(ctx.state,s,ctx.cardById).some(ref=>['bw3-91','bw8-122'].includes(ref.cardId))?20:0;
@@ -20551,7 +20738,7 @@
             }
           }else if(Array.isArray(owner.energySupply))amount=neoSupplyTake(ctx,owner,effect.energyType,effect.amount);
           if(!amount)continue;s.energy[effect.energyType]=Number(s.energy[effect.energyType]||0)+amount;attachedBySide[side]+=amount;if(typeof ctx.onEnergyAttached==='function')ctx.onEnergyAttached(s,effect.energyType,amount,{fromHand:effect.source==='hand'});}log({type:'effectEnergy',amount:effect.amount,totalAmount:attachedBySide.player+attachedBySide.opponent,attachedBySide,energyType:effect.energyType});break;}
-      case 'discardEnergyCard':for(const s of affected()){const owner=energyOwner(ctx,s);if(!owner)continue;if(owner!==own(ctx)&&ctx.state?.format==='classic'&&ctx.cardById(s.cardId)?.stage==='Basic'&&pokemonOn(owner).some(p=>p.cardId==='xy10-49'&&!abilitiesSuppressed(ctx.state,ctx.foeSide,p,ctx.cardById))){log({type:'xy10EnergyKeeper',targetUid:s.uid});continue;}const protectedByBrock=(s.temporaryTrainers||[]).some(r=>ctx.cardById(r.cardId)?.id==='gym2-101');if(protectedByBrock&&owner!==own(ctx))continue;let left=effect.amount==='all'?(effect.strictEnergyType&&effect.energyType?Number(s.energy?.[effect.energyType]||0)+(s.specialEnergy||[]).filter(r=>Number((r.provides||ctx.cardById(r.cardId)?.effect?.provides||{})[effect.energyType]||0)>0).length:Object.values(s.energy||{}).reduce((n,x)=>n+Number(x||0),0)+(s.specialEnergy||[]).length):Number(effect.amount||1);while(left>0){const special=s.specialEnergy||[];const chosenUid=ctx.action?.effectSpecialEnergyUid;if(chosenUid){const index=special.findIndex(r=>r.uid===chosenUid);if(index>=0&&(!effect.strictEnergyType||!effect.energyType||Number((special[index].provides||ctx.cardById(special[index].cardId)?.effect?.provides||{})[effect.energyType]||0)>0)){const [ref]=special.splice(index,1);if(ref.cardId==='neo1-105'||ctx.state.stadium?.cardId==='neo1-84'&&owner!==own(ctx)&&ctx.cardById(ref.cardId)?.subtype!=='Colorless')owner.hand.push(ref);else owner.discard.push(ref);left--;continue;}}const chosenType=effect.energyType||ctx.action?.effectEnergyType;if(chosenType&&Number(s.energy?.[chosenType]||0)>0){s.energy[chosenType]--;if(ctx.state.stadium?.cardId==='neo1-84'&&owner!==own(ctx)&&chosenType!=='Colorless')neoRecoveredEnergyToHand(ctx,owner,chosenType,1);else recordDiscardedEnergy(owner,chosenType,1);left--;continue;}if(effect.strictEnergyType&&effect.energyType){const idx=special.findIndex(r=>Number((r.provides||ctx.cardById(r.cardId)?.effect?.provides||{})[effect.energyType]||0)>0);if(idx>=0){owner.discard.push(...special.splice(idx,1));left--;continue;}break;}const generated=Object.entries(s.energy||{}).find(([,n])=>Number(n)>0);if(generated){s.energy[generated[0]]--;if(ctx.state.stadium?.cardId==='neo1-84'&&owner!==own(ctx)&&generated[0]!=='Colorless')neoRecoveredEnergyToHand(ctx,owner,generated[0],1);else recordDiscardedEnergy(owner,generated[0],1);left--;continue;}if(special.length){const ref=special.shift();if(ref.cardId==='neo1-105'||ctx.state.stadium?.cardId==='neo1-84'&&owner!==own(ctx)&&ctx.cardById(ref.cardId)?.subtype!=='Colorless')owner.hand.push(ref);else owner.discard.push(ref);left--;continue;}break;}}break;
+      case 'discardEnergyCard':for(const s of affected()){const owner=energyOwner(ctx,s);if(!owner)continue;if(owner!==own(ctx)&&ctx.state?.format==='classic'&&ctx.cardById(s.cardId)?.stage==='Basic'&&pokemonOn(owner).some(p=>p.cardId==='xy10-49'&&!abilitiesSuppressed(ctx.state,ctx.foeSide,p,ctx.cardById))){log({type:'xy10EnergyKeeper',targetUid:s.uid});continue;}const protectedByBrock=(s.temporaryTrainers||[]).some(r=>ctx.cardById(r.cardId)?.id==='gym2-101');if(protectedByBrock&&owner!==own(ctx))continue;let left=effect.amount==='all'?(effect.strictEnergyType&&effect.energyType?Number(s.energy?.[effect.energyType]||0)+(s.specialEnergy||[]).filter(r=>Number((r.provides||ctx.cardById(r.cardId)?.effect?.provides||{})[effect.energyType]||0)>0).length:Object.values(s.energy||{}).reduce((n,x)=>n+Number(x||0),0)+(s.specialEnergy||[]).length):Number(effect.amount||1);while(left>0){const special=s.specialEnergy||[];const chosenUid=ctx.action?.effectSpecialEnergyUid;if(chosenUid){const index=special.findIndex(r=>r.uid===chosenUid);if(index>=0&&(!effect.strictEnergyType||!effect.energyType||Number((special[index].provides||ctx.cardById(special[index].cardId)?.effect?.provides||{})[effect.energyType]||0)>0)){const [ref]=special.splice(index,1);if(ref.cardId==='neo1-105'||activeStadium(ctx.state)?.cardId==='neo1-84'&&owner!==own(ctx)&&ctx.cardById(ref.cardId)?.subtype!=='Colorless')owner.hand.push(ref);else owner.discard.push(ref);left--;continue;}}const chosenType=effect.energyType||ctx.action?.effectEnergyType;if(chosenType&&Number(s.energy?.[chosenType]||0)>0){s.energy[chosenType]--;if(activeStadium(ctx.state)?.cardId==='neo1-84'&&owner!==own(ctx)&&chosenType!=='Colorless')neoRecoveredEnergyToHand(ctx,owner,chosenType,1);else recordDiscardedEnergy(owner,chosenType,1);left--;continue;}if(effect.strictEnergyType&&effect.energyType){const idx=special.findIndex(r=>Number((r.provides||ctx.cardById(r.cardId)?.effect?.provides||{})[effect.energyType]||0)>0);if(idx>=0){owner.discard.push(...special.splice(idx,1));left--;continue;}break;}const generated=Object.entries(s.energy||{}).find(([,n])=>Number(n)>0);if(generated){s.energy[generated[0]]--;if(activeStadium(ctx.state)?.cardId==='neo1-84'&&owner!==own(ctx)&&generated[0]!=='Colorless')neoRecoveredEnergyToHand(ctx,owner,generated[0],1);else recordDiscardedEnergy(owner,generated[0],1);left--;continue;}if(special.length){const ref=special.shift();if(ref.cardId==='neo1-105'||activeStadium(ctx.state)?.cardId==='neo1-84'&&owner!==own(ctx)&&ctx.cardById(ref.cardId)?.subtype!=='Colorless')owner.hand.push(ref);else owner.discard.push(ref);left--;continue;}break;}}break;
       case 'discardEnergy':for(const s of affected()){const owner=energyOwner(ctx,s);if(effect.random){const count=effect.amount==='all'?totalEnergy(s.energy):effect.amount;for(let i=0;i<count;i++){const units=Object.entries(s.energy).flatMap(([type,n])=>Array(Math.max(0,Math.floor(n))).fill(type));if(!units.length)break;const type=units[Math.floor(ctx.random(ctx.state)*units.length)];s.energy[type]--;recordDiscardedEnergy(owner,type,1);}}else if(effect.energyType){const before=Number(s.energy[effect.energyType]||0),after=effect.amount==='all'?0:Math.max(0,before-effect.amount);s.energy[effect.energyType]=after;recordDiscardedEnergy(owner,effect.energyType,before-after);}else if(ctx.action?.effectEnergyType){const type=ctx.action.effectEnergyType,before=Number(s.energy[type]||0),after=effect.amount==='all'?0:Math.max(0,before-Number(effect.amount||0));s.energy[type]=after;recordDiscardedEnergy(owner,type,before-after);}else{const before={...(s.energy||{})};s.energy=effect.amount==='all'?{}:spendGenericEnergy(s.energy,Math.min(effect.amount,totalEnergy(s.energy)));for(const [type,n] of Object.entries(before))recordDiscardedEnergy(owner,type,Number(n||0)-Number(s.energy?.[type]||0));}}break;
       case 'moveEnergy':{
         if(!ctx.resolvingChoice&&typeof ctx.requestChoice==='function'&&(effect.source==='selfBench'||effect.target==='selfBench')){
@@ -20618,11 +20805,11 @@
       case 'rareCandy':throw new Error('rareCandy must resolve as a Trainer evolution.');
       case 'discardSelf':{const slot=ctx.attacker,ss=own(ctx);if(!slot)break;for(let i=slot.stack.length-1;i>=0;i--)ss.discard.push({uid:slot.uid+'-stack-'+i,cardId:slot.stack[i]});for(const tool of toolsOf(slot))ss.discard.push(tool);for(const ref of slot.temporaryTrainers||[])ss.discard.push(ref);for(const ref of slot.specialEnergy||[])ss.discard.push(ref);for(const [type,n] of Object.entries(slot.energy||{}))recordDiscardedEnergy(ss,type,Number(n||0));if(ss.active===slot)ss.active=null;else{const index=ss.bench.indexOf(slot);if(index>=0)ss.bench.splice(index,1);}log({type:'discardPokemon',cardId:slot.cardId});break;}
       case 'lock':for(const s of affected()){s.locks=s.locks||[];s.locks.push({...effect,expiresTurn:effect.duration==='whileInPlay'?null:ctx.state.turnNumber+(effect.duration==='nextOwnTurn'?2:1)});}break;
-      case 'koGuard':for(const s of affected())s.koGuard={...effect,expiresTurn:effect.duration==='opponentTurn'?ctx.state.turnNumber+1:null};break;
+      case 'koGuard':for(const s of affected())s.koGuard={...effect,fromAttack:!!ctx.isAttack,expiresTurn:effect.duration==='opponentTurn'?ctx.state.turnNumber+1:null};break;
       case 'preventDamage':for(const s of affected())s.attackGuard={...effect,expiresTurn:effect.duration==='opponentTurn'?ctx.state.turnNumber+1:effect.duration==='nextOwnTurn'?ctx.state.turnNumber+2:null};break;
       case 'selectedDamage':case 'selectedEnergyDamage':throw new Error(`${effect.type} must resolve as part of an attack.`);
       case 'removeStatus':for(const s of affected())clearConditions(s);break;
-      case 'modifier':{const list=effect.scope==='both'||effect.scope==='team'||effect.scope==='active'||effect.scope==='opponentActive'?[ctx.attacker]:affected();ctx.state.modifiers=ctx.state.modifiers||[];for(const s of list)ctx.state.modifiers.push({...effect,ownerSide:effect.scope==='opponentActive'?ctx.foeSide:(own(ctx).active===s||own(ctx).bench.includes(s)?ctx.side:ctx.foeSide),sourceSide:ctx.side,sourceUid:ctx.attacker&&ctx.attacker.uid,targetUid:effect.scope==='both'||effect.scope==='team'||effect.scope==='active'||effect.scope==='opponentActive'?null:s.uid,startsTurn:effect.duration==='nextOwnTurn'?ctx.state.turnNumber+2:null,expiresTurn:effect.duration==='turn'?ctx.state.turnNumber:effect.duration==='opponentTurn'?ctx.state.turnNumber+1:effect.duration==='nextOwnTurn'?ctx.state.turnNumber+2:null});break;}
+      case 'modifier':{const list=effect.scope==='both'||effect.scope==='team'||effect.scope==='active'||effect.scope==='opponentActive'?[ctx.attacker]:affected();ctx.state.modifiers=ctx.state.modifiers||[];for(const s of list)ctx.state.modifiers.push({...effect,ownerSide:effect.scope==='opponentActive'?ctx.foeSide:(own(ctx).active===s||own(ctx).bench.includes(s)?ctx.side:ctx.foeSide),sourceSide:ctx.side,sourceUid:ctx.attacker&&ctx.attacker.uid,fromAttack:!!ctx.isAttack,targetUid:effect.scope==='both'||effect.scope==='team'||effect.scope==='active'||effect.scope==='opponentActive'?null:s.uid,startsTurn:effect.duration==='nextOwnTurn'?ctx.state.turnNumber+2:null,expiresTurn:effect.duration==='turn'?ctx.state.turnNumber:effect.duration==='opponentTurn'?ctx.state.turnNumber+1:effect.duration==='nextOwnTurn'?ctx.state.turnNumber+2:null});break;}
       case 'damageFromDamage':case 'bonusDamage':case 'coinDamage':case 'energyDamage':case 'benchCountDamage':case 'statusDamage':throw new Error(`${effect.type} must resolve as part of an attack.`);
     }
   }
@@ -21459,7 +21646,7 @@
           if(n>0)damage=80;return;
         }
         if(k==='18:wreck'){
-          if(ctx.state.stadium){damage=70;const owner=ctx.state.sides[ctx.state.stadium.ownerSide]||us;owner.discard.push({uid:'pl4-wreck-'+ctx.state.turnNumber,cardId:ctx.state.stadium.cardId});ctx.state.stadium=null;}return;
+          if(ctx.state.stadium){damage=70;const owner=ctx.state.sides[ctx.state.stadium.ownerSide]||us;owner.discard.push({uid:'pl4-wreck-'+ctx.state.turnNumber,cardId:activeStadium(ctx.state)?.cardId});ctx.state.stadium=null;}return;
         }
         if(k==='19:tumbleDown'){
           damage=0;const uids=String(ctx.action?.effectSelection||'').split(',').filter(Boolean);
@@ -21611,7 +21798,7 @@
         if(key==='34:chakraPoints'){damage=10+10*foe.hand.length;return;}
         if(key==='43:hornPierce'){const rolls=[coin(ctx),coin(ctx)];ctx.state.log.push({type:'coin',side:ctx.side,reason:'Horn Pierce',results:rolls,heads:rolls.filter(Boolean).length});if(rolls.some(x=>!x))damage=0;return;}
         if(key==='79:grandSwell'){
-          damage=30*(pokemonOn(foe).reduce((n,p)=>n+toolsOf(p).length,0)+(ctx.state.stadium?.ownerSide===ctx.foeSide?1:0));
+          damage=30*(pokemonOn(foe).reduce((n,p)=>n+toolsOf(p).length,0)+(activeStadium(ctx.state)?.ownerSide===ctx.foeSide?1:0));
           const act=ctx.action||{};if(act.target==='opponentBench'){const target=foe.bench.find(p=>Number(p.benchSlot)===Number(act.benchIndex));
             if(target){damageTarget=target;damageRules={...damageRules,ignoreWeakness:true,ignoreResistance:true};}}
           return;
@@ -21745,7 +21932,7 @@
         if(key==='20:takeOut'){if(c({cardId:d?.cardId})?.stage==='Basic'&&!(d?.stack||[]).some(id=>['Stage 1','Stage 2','Level-Up'].includes(ctx.cardById(id)?.stage))){damage=0;pending.push({type:'knockOut',target:'opponentActive'});}return;}
         if(key==='25:poundDown'){const powers=all(ours).some(slot=>(c({cardId:slot.cardId})?.abilities||[]).some(ab=>ab.printedPowerType==='power'));damage=powers?40:70;return;}
         if(key==='26:plunder'){const refs=[...(d?.tools||[]),...(d?.temporaryTrainers||[]),...(d?.tool?[d.tool]:[])];for(const ref of refs)if(ref)foes.discard.push(ref);if(d){d.tools=[];d.temporaryTrainers=[];d.tool=null;}return;}
-        if(key==='35:trickRoom'){damage=ctx.state.stadium?.ownerSide===ctx.side?60:40;pending.push(e);return;}
+        if(key==='35:trickRoom'){damage=activeStadium(ctx.state)?.ownerSide===ctx.side?60:40;pending.push(e);return;}
         if(key==='37:electroDiffusion'){damage=40+10*Number(a?.energy?.Lightning||0);const hit=coin(ctx);ctx.state.log.push({type:'coin',reason:'Electro Diffusion',side:ctx.side,heads:hit,results:[hit]});if(!hit)pending.push({type:'discardEnergyCard',target:'self',energyType:'Lightning',strictEnergyType:true,amount:'all'});return;}
         if(key==='48:overconfident'){const ownHp=Math.max(0,Number(c({cardId:a?.cardId})?.hp||0)-Number(a?.damage||0)),oppHp=Math.max(0,Number(c({cardId:d?.cardId})?.hp||0)-Number(d?.damage||0));damage=oppHp<ownHp?40:10;return;}
         if(key==='68:nightmareFeast'){damage=d?.conditions?.sleep?50:0;if(damage)pending.push(e);return;}
@@ -21834,7 +22021,7 @@
           pending.push(e);return;
         }
         if(key==='48:weatherBall'){
-          damage=30+(ctx.state.stadium?.ownerSide===ctx.foeSide?30:0);
+          damage=30+(activeStadium(ctx.state)?.ownerSide===ctx.foeSide?30:0);
           pending.push(e);return;
         }
         if(key==='50:hail'){
@@ -22434,7 +22621,7 @@
           damageRules={...damageRules,ignoreWeakness:true,ignoreResistance:true};
           ctx.state.log.push({type:'coin',side:ctx.foeSide,reason:'Banette Bench Manipulation',coins:results.length,heads:results.length-tails,results});
         }
-        if(key==='18:darkBurst'&&ctx.state.stadium?.cardId==='ex16-82')damage=70;
+        if(key==='18:darkBurst'&&activeStadium(ctx.state)?.cardId==='ex16-82')damage=70;
         if(key==='70:flail')damage=10*Math.floor(Number(a?.damage||0)/10);
         if(key==='18:plunder'&&ctx.defender){
           const d=ctx.defender,removed=[d.tool,...(d.extraTools||[]),...(d.temporaryTrainers||[])].filter(Boolean);
@@ -23008,7 +23195,7 @@
         if(key==='18:1')damage=20+10*board(us).concat(board(foe)).reduce((n,s)=>n+Number(s.energy?.Psychic||0),0);
         if(key==='19:1')damage=40+10*board(us).concat(board(foe)).filter(s=>get(s)?.types?.includes('Darkness')).length;
         if(key==='22:0')damage=20+20*roll(1);
-        if(key==='25:1')damage=50+(ctx.state.stadium?.cardId==='ex5-91'?20:0);
+        if(key==='25:1')damage=50+(activeStadium(ctx.state)?.cardId==='ex5-91'?20:0);
         if(key==='30:1')damage=20+(get(d)?.pokemonEx?20:0);
         if(key==='33:0')damage=Number(a?.damage||0);
         if(key==='35:1')damage=40*roll(2);
@@ -23777,6 +23964,42 @@
         pending.push(e);return;
       }
       if(attackDoesNothing)return;
+      if(e.type==='xy11Rule'&&e.rule==='flareUp'){
+        if(neoDiscardAvailable(ctx,own(ctx),'Fire')<10){damage=0;return;}
+        pending.push(e);return;
+      }
+      if(e.type==='xy11Rule'&&e.rule==='powerLariat'){
+        const count=(own(ctx).bench||[]).filter(p=>{
+          const c=ctx.cardById(p.cardId);return c&&c.stage!=='Basic'&&c.stage!=='Restored';}).length;
+        damage+=30*count;return;
+      }
+      if(e.type==='xy11Rule'&&e.rule==='ultimateBlade'){
+        pending.push(e);return;
+      }
+      if(e.type==='xy11Rule'&&e.rule==='gearSpinner'){
+        if(Number(ctx.attacker?.xy11GearSpinnerUntil)===Number(ctx.state.turnNumber))damage+=70;
+        pending.push(e);return;
+      }
+      if(e.type==='xy11Rule'&&e.rule==='soulBlaster'){
+        if(Number(ctx.attacker?.xy11SoulBlasterUntil)===Number(ctx.state.turnNumber))damage=60;
+        pending.push(e);return;
+      }
+      if(e.type==='xy11Rule'&&e.rule==='stall'){
+        if(ctx.state.turnNumber!==2||ctx.side===ctx.state.firstSide||own(ctx).turnCount!==1){damage=0;return;}
+        pending.push(e);return;
+      }
+      if(e.type==='xy11Rule'&&e.rule==='darkBurn'){
+        const tokens=String(ctx.action?.effectSelection||'').split(',').filter(Boolean);
+        const slots=pokemonOn(own(ctx));let count=0;
+        for(const token of new Set(tokens)){
+          const [uid,kind,type]=token.split(':');const p=slots.find(x=>x.uid===uid);
+          if(!p)continue;
+          if(kind==='basic'&&Number(p.energy?.Darkness||0)>Number(type||0)){count++;continue;}
+          if(kind==='special'&&p.specialEnergy?.some(x=>x.uid===type&&Number((x.provides||ctx.cardById(x.cardId)?.effect?.provides||{}).Darkness||0)>0)){count++;continue;}
+        }
+        damage=count*50;
+        pending.push({type:'xy11Rule',rule:'darkBurnDiscard',tokens:[...new Set(tokens)]});return;
+      }
       if(e.type==='xy11Rule'&&e.rule==='incinerate'){
         const p=ctx.defender,foe=other(ctx);if(p&&!protectedFromEffects(p,ctx)){
           const removed=toolsOf(p).slice();foe.discard.push(...removed);p.tool=null;p.extraTools=[];
@@ -24411,6 +24634,16 @@
     }
     if(effect?.type==='neoRule'&&effect.rule==='destiny:rushingFlames'){const total=pokemonOn(own(ctx)).reduce((n,slot)=>n+Number(slot.energy?.Fire||0),0);return Array.from({length:Math.min(20,total)+1},(_,n)=>({effectSelection:String(n),choiceLabel:'Discard '+n+' Fire Energy for '+n+' coin flips'}));}
     assertEffect(effect);if(!effect)return [{}];if(effect.type==='attackRequirement')return conditionMatches(effect.condition,ctx)||effect.allowWhenFailed?[{}]:[];if(!conditionMatches(effect.condition,ctx))return ctx.isAttack?[{}]:[];
+    if(effect.type==='xy11Rule'&&effect.rule==='darkBurn'){
+      const sources=pokemonOn(own(ctx)).flatMap(p=>[
+        ...Array.from({length:Number(p.energy?.Darkness||0)},(_,i)=>({token:p.uid+':basic:'+i,label:(ctx.cardById(p.cardId)?.name||p.cardId)+' Darkness '+(i+1)})),
+        ...(p.specialEnergy||[]).filter(ref=>Number((ref.provides||ctx.cardById(ref.cardId)?.effect?.provides||{}).Darkness||0)>0)
+          .map(ref=>({token:p.uid+':special:'+ref.uid,label:(ctx.cardById(p.cardId)?.name||p.cardId)+' '+(ctx.cardById(ref.cardId)?.name||'Special Energy')}))]);
+      // Print-specific engine respects the choice of each attached card.
+      const max=Math.min(12,sources.length),result=[{effectSelection:'',choiceLabel:'Discard no Darkness Energy'}];
+      for(let count=1;count<=max;count++)result.push({effectSelection:sources.slice(0,count).map(x=>x.token).join(','),choiceLabel:'Discard '+count+' Darkness Energy'});
+      return result;
+    }
     if(effect.type==='chooseDiscardForBonus'){const items=effect.zone==='bench'?(own(ctx).bench||[]).filter(s=>s&&matchesFilter(ctx.cardById(s.cardId),effect.filter,s)):(own(ctx).hand||[]).filter(r=>matchesFilter(ctx.cardById(r.cardId),effect.filter,r));const max=Math.min(Number(effect.max||items.length),items.length),out=[];for(let mask=0;mask<(1<<items.length);mask++){const picked=[];for(let i=0;i<items.length;i++)if(mask&(1<<i))picked.push(items[i].uid);if(picked.length<=max)out.push({effectSelection:picked.join(','),choiceLabel:`Discard ${picked.length}`});}return out;}
     if(effect.type==='lentalRule'&&String(effect.rule||'').startsWith('sv1:')){
       const rule=effect.rule.slice(4),foe=other(ctx),ss=own(ctx);
@@ -24692,7 +24925,7 @@ if(r==='lastResort')return ss.hand.length===0?[{}]:[];if(r==='surgeSwap')return 
     // Hex Maniac disables all Pokemon Abilities, including both sides and
     // new Pokemon brought into play during the opponent's next turn.
     if(state?.format==='classic'&&Number(state.xy7HexManiacUntil||0)>=Number(state.turnNumber))return true;
-    if(state?.format==='classic'&&state.stadium?.cardId==='xy5-140'&&
+    if(state?.format==='classic'&&activeStadium(state)?.cardId==='xy5-140'&&
        cardById(slot?.cardId)?.stage==='Basic')return true;
     // Wobbuffet's Bide Barricade affects both teams' non-Psychic Abilities.
     // Garbotoxin takes priority and suppresses Bide Barricade itself.
@@ -24739,7 +24972,7 @@ if(r==='lastResort')return ss.hand.length===0?[{}]:[];if(r==='surgeSwap')return 
        (cardById(slot.cardId)?.abilities||[]).every(ab=>ab.printedPowerType==='power'))return true;
     if(state?.format==='classic'&&slot&&Number(slot.dp6PowerLockUntil||-1)>=Number(state.turnNumber) && (cardById(slot.cardId)?.abilities||[]).some(x=>x.printedPowerType==='power'))return true;
     if(state?.format==='classic'&&slot&&Number(slot.imprisonMarkers||0)>0)return true;
-    if(state?.format==='classic'&&state.stadium?.cardId==='ex15-74'&&slot&&
+    if(state?.format==='classic'&&activeStadium(state)?.cardId==='ex15-74'&&slot&&
        (!!cardById(slot.cardId)?.deltaSpecies||pokemonOn(state.sides[side]).some(p=>p.cardId==='ex15-1'&&!p.imprisonMarkers&&!p.abilitySuppressed))&&(cardById(slot.cardId)?.abilities||[]).some(a=>a.printedPowerType==='power'))return true;
     if(state?.format==='classic'&&slot&&cardById(slot.cardId)?.stage==='Basic'){
       const fo=side==='player'?'opponent':'player',active=state.sides?.[fo]?.active;
@@ -24747,7 +24980,7 @@ if(r==='lastResort')return ss.hand.length===0?[{}]:[];if(r==='surgeSwap')return 
     }
     if(state?.format==='classic'&&slot&&(cardById(slot.cardId)?.abilities||[]).some(a=>a.printedPowerType==='power')){
       const enemy=side==='player'?'opponent':'player',active=state.sides?.[enemy]?.active;
-      if(active?.cardId==='ex16-13'&&!active.abilitySuppressed&&(!state.stadium||state.stadium.cardId!=='ex16-71'))return true;
+      if(active?.cardId==='ex16-13'&&!active.abilitySuppressed&&(!state.stadium||activeStadium(state)?.cardId!=='ex16-71'))return true;
     }
     // Shield Beam suppresses the defending player's active Poké-Powers for one turn.
     if(state?.format==='classic'&&slot&&(cardById(slot.cardId)?.abilities||[]).some(a=>a.printedPowerType==='power')&&
@@ -24782,11 +25015,11 @@ if(r==='lastResort')return ss.hand.length===0?[{}]:[];if(r==='surgeSwap')return 
           ([ss?.active,...(ss?.bench||[])].some(p=>p?.cardId==='ex12-25')&&[ss.active,...ss.bench].filter(Boolean).some(p=>p.cardId==='ex12-20')&&cardById(slot.cardId)?.types?.includes('Colorless')&&!cardById(slot.cardId)?.pokemonEx);}))return true;
     if(state?.format==='classic'&&slot){
       const c=cardById(slot.cardId),evolved=['Stage 1','Stage 2'].includes(c?.stage);
-      if(['ex9-75','ex16-71'].includes(state.stadium?.cardId)&&evolved&&c?.types?.some(t=>['Colorless','Darkness','Metal'].includes(t)))return true;
+      if(['ex9-75','ex16-71'].includes(activeStadium(state)?.cardId)&&evolved&&c?.types?.some(t=>['Colorless','Darkness','Metal'].includes(t)))return true;
       if(!c?.pokemonEx&&(c?.abilities||[]).some(a=>a.printedPowerType==='power')&&
         ['player','opponent'].some(w=>state.sides?.[w]?.active?.cardId==='ex9-95'&&!state.sides[w].active.abilitySuppressed))return true;
     }
-    if(state?.format==='classic'&&slot&&state.stadium?.cardId==='ex6-94'&&Number(cardById(slot.cardId)?.hp||0)<70&&(cardById(slot.cardId)?.abilities||[]).some(a=>a.printedPowerType==='power'))return true;
+    if(state?.format==='classic'&&slot&&activeStadium(state)?.cardId==='ex6-94'&&Number(cardById(slot.cardId)?.hp||0)<70&&(cardById(slot.cardId)?.abilities||[]).some(a=>a.printedPowerType==='power'))return true;
     if(state?.format==='classic'&&slot&&slot.cardId!=='ex3-96'&&['player','opponent'].some(w=>state.sides?.[w]?.active?.cardId==='ex3-96'))return true;if(state?.format==='classic'&&slot){const opp=side==='player'?'opponent':'player',enemy=state.sides?.[opp]?.active;
       if(enemy?.cardId==='ex1-12'&&!enemy.conditions?.sleep&&!enemy.conditions?.confusion&&!enemy.conditions?.paralysis&&(cardById(slot.cardId)?.abilities||[]).some(a=>a.printedPowerType==='power'))return true;}
     if(state?.format==='classic'&&Number(state.neoPowerLockUntil||0)>=Number(state.turnNumber))return true;if(slot?.gym2ShapeshiftSource)return true;if(slot?.neoGazeUntil===state?.turnNumber)return true;/* Brock's Ninetales cannot use the imitated Evolution's Power. */if(Number(state.sides[side]?.gym2PowerLockUntil||0)>=Number(state.turnNumber))return true;
@@ -24913,7 +25146,7 @@ if(r==='lastResort')return ss.hand.length===0?[{}]:[];if(r==='surgeSwap')return 
     return null;
   }
   function canUsePreviousEvolutionAttacks(state,side,slot,cardById){
-    if(!slot||!Array.isArray(slot.stack)||slot.stack.length<2)return false;if(state?.format==='classic'&&state.stadium?.cardId==='xy5-139')return true;if(state?.format==='classic'&&pokemonOn(state.sides[side]).some(p=>['bw7-9','bw7-141'].includes(p.cardId)&&!abilitiesSuppressed(state,side,p,cardById)))return true;if(state?.stadium?.cardId==='ex8-89'&&state.sides[side].active===slot&&['Stage 1','Stage 2'].includes(cardById(slot.cardId)?.stage)&&!cardById(slot.cardId)?.pokemonEx)return true;if(state.sides[side]?.gymRecallTurn===state.turnNumber&&state.sides[side]?.active===slot)return true;
+    if(!slot||!Array.isArray(slot.stack)||slot.stack.length<2)return false;if(state?.format==='classic'&&activeStadium(state)?.cardId==='xy5-139')return true;if(state?.format==='classic'&&pokemonOn(state.sides[side]).some(p=>['bw7-9','bw7-141'].includes(p.cardId)&&!abilitiesSuppressed(state,side,p,cardById)))return true;if(state?.stadium?.cardId==='ex8-89'&&state.sides[side].active===slot&&['Stage 1','Stage 2'].includes(cardById(slot.cardId)?.stage)&&!cardById(slot.cardId)?.pokemonEx)return true;if(state.sides[side]?.gymRecallTurn===state.turnNumber&&state.sides[side]?.active===slot)return true;
     const find=e=>{if(!e)return null;if(e.type==='sequence'){for(const child of e.effects){const r=find(child);if(r)return r;}return null;}return e.type==='previousEvolutionAttacks'?e:null;};
     const ss=state.sides[side];
     if(activeToolsOf(state,slot,cardById).some(ref=>ref.cardId==='ex14-80'))return true;
@@ -24947,7 +25180,7 @@ if(r==='lastResort')return ss.hand.length===0?[{}]:[];if(r==='surgeSwap')return 
       const card=cardById(source.cardId),abilities=upgradeAbilities(source,cardById);
       for(const a of abilities){if(a.type!=='passive')continue;const find=e=>e&&(e.type==='healingBlock'?e:e.type==='sequence'?(e.effects.map(find).find(Boolean)||null):null),rule=find(a.effect);if(!rule)continue;if(a.activeOnly&&state.sides[sourceSide].active!==source||a.benchOnly&&state.sides[sourceSide].active===source)continue;if(rule.scope==='both'||sourceSide===targetSide)return true;}
     }
-    if(state.stadium){const st=cardById(state.stadium.cardId);const find=e=>e&&(e.type==='healingBlock'?e:e.type==='sequence'?(e.effects.map(find).find(Boolean)||null):null);if(find(st?.effect))return true;}
+    if(state.stadium){const st=cardById(activeStadium(state)?.cardId);const find=e=>e&&(e.type==='healingBlock'?e:e.type==='sequence'?(e.effects.map(find).find(Boolean)||null):null);if(find(st?.effect))return true;}
     return false;
   }
   function modifierAmount(state,side,slot,stat,cardById){
@@ -24969,13 +25202,25 @@ if(r==='lastResort')return ss.hand.length===0?[{}]:[];if(r==='surgeSwap')return 
       for(const p of pokemonOn(state.sides[side]))if(p.cardId==='bw6-84'&&
         !abilitiesSuppressed(state,side,p,cardById))values.push(20);
     }
-    if(state?.format==='classic'&&state.stadium?.cardId==='xy9-110'&&state.stadium.xy9DownSide===side){
+    if(state?.format==='classic'&&activeStadium(state)?.cardId==='xy9-110'&&state.stadium.xy9DownSide===side){
       if(stat==='attackDamage'&&state.sides[side].active===slot&&cardById(slot.cardId)?.types?.includes('Darkness'))values.push(10);
       if(stat==='damageReduction'&&cardById(slot.cardId)?.types?.includes('Metal'))values.push(10);
     }
+    if(state?.format==='classic'&&stat==='attackDamage'&&state.sides[side]?.active===slot&&
+       cardById(slot.cardId)?.name==='Nidoqueen'){
+      for(const p of pokemonOn(state.sides[side]))if(p.cardId==='xy11-45'&&
+        !abilitiesSuppressed(state,side,p,cardById))values.push(20);
+    }
+    if(state?.format==='classic'&&stat==='damageReduction'&&['xy11-73'].includes(slot.cardId)&&
+       !abilitiesSuppressed(state,side,slot,cardById)){
+      const foe=state.sides[side==='player'?'opponent':'player']?.active;
+      const retreat=foe?Math.max(0,Number(cardById(foe.cardId)?.retreat||0)+
+        modifierAmount(state,side==='player'?'opponent':'player',foe,'retreatCost',cardById)):0;
+      values.push(retreat*10);
+    }
     if(state?.format==='classic'&&stat==='attackDamage'){
       if(slot.cardId==='xy8-111'&&slot.xy8DragonDance&&state.sides[side].active===slot)values.push(100);
-      if(state.stadium?.cardId==='xy8-145'&&state.stadium.xy8DamageSide===side&&
+      if(activeStadium(state)?.cardId==='xy8-145'&&state.stadium.xy8DamageSide===side&&
          cardById(slot.cardId)?.types?.some(t=>['Grass','Fire','Water'].includes(t)))values.push(-20);
     }
     if(state?.format==='classic'&&stat==='damageReduction'&&slot.cardId==='bw6-110'&&
@@ -24992,7 +25237,7 @@ if(r==='lastResort')return ss.hand.length===0?[{}]:[];if(r==='surgeSwap')return 
       values.push(20*(state.sides[side]?.discard||[]).filter(ref=>cardById(ref.cardId)?.name==='Marowak').length);
     if(state?.format==='classic'&&stat==='damageReduction'&&state.sides?.[side]?.active?.cardId==='pl2-41'&&
        !abilitiesSuppressed(state,side,state.sides[side].active,cardById))values.push(10);
-    if(state.stadium){const stadium=cardById(state.stadium.cardId);passiveModifiers(stadium?.effect,state.sides[side].active,side,state,slot,stat,values,cardById);}
+    if(state.stadium){const stadium=cardById(activeStadium(state)?.cardId);passiveModifiers(stadium?.effect,state.sides[side].active,side,state,slot,stat,values,cardById);}
     if(state?.format==='classic'&&stat==='damageReduction'&&cardById(slot.cardId)?.types?.includes('Metal'))
       values.push(10*(slot.specialEnergy||[]).filter(r=>['hgss3-80','col1-87'].includes(r.cardId)).length);
     for(const m of state.modifiers||[]){if(m.stat!==stat||(m.scope!=='both'&&m.ownerSide!==side)||(m.scope==='active'||m.scope==='opponentActive'?state.sides[side].active!==slot:m.scope==='both'||m.scope==='team'?false:m.targetUid!==slot.uid)||m.startsTurn!=null&&state.turnNumber<m.startsTurn||m.expiresTurn!=null&&state.turnNumber>m.expiresTurn)continue;const ss=state.sides[side];if(m.duration==='whileActive'&&ss.active?.uid!==m.sourceUid)continue;if(m.duration==='whileInPlay'&&!pokemonOn(ss).some(s=>s.uid===m.sourceUid))continue;const opposingActive=state.sides[side==='player'?'opponent':'player'].active;if(m.opponentFilter&&(!opposingActive||!matchesFilter(cardById(opposingActive.cardId),m.opponentFilter,opposingActive)))continue;if(matchesFilter(cardById(slot.cardId),m.filter,slot))values.push(m.amount);}
@@ -25016,6 +25261,10 @@ if(r==='lastResort')return ss.hand.length===0?[{}]:[];if(r==='surgeSwap')return 
        (state.sides?.[side]?.bench||[]).includes(slot)&&
        pokemonOn(state.sides[side]).some(p=>p.cardId==='xy10-61'&&!abilitiesSuppressed(state,side,p,cardById)))
       return {type:'preventDamage',reason:'Metal Fortress',effects:true};
+    if(state?.format==='classic'&&slot&&attacker&&cardById(attacker.cardId)?.megaEvolution&&
+       activeToolsOf(state,slot,cardById).some(ref=>ref.cardId==='xy11-80'&&
+         Number(ref.xy11ExpiresTurn)>=Number(state.turnNumber)))
+      return {type:'preventDamage',reason:'Wonder Lock',effects:false};
     // Ancient Origins Giratina-EX Renegade Pulse prevents both damage and
     // attack effects from opposing Mega Evolution Pokemon, unless suppressed.
     if(state?.format==='classic'&&['xy7-57','xy7-93'].includes(slot?.cardId)&&attacker&&
@@ -25108,7 +25357,7 @@ if(r==='lastResort')return ss.hand.length===0?[{}]:[];if(r==='surgeSwap')return 
           :Object.values(attacker?.energy||{}).reduce((sum,n)=>sum+Number(n||0),0)+(attacker?.specialEnergy||[]).length)<=2)
         return {type:'preventDamage',reason:'Airy Wall',effects:(slot.stack||[]).some(id=>cardById(id)?.name==='Mime Jr.')};
     }
-    if(state?.format==='classic'&&slot?.cardId==='ex16-22'&&state.stadium?.cardId==='ex16-79'&&
+    if(state?.format==='classic'&&slot?.cardId==='ex16-22'&&activeStadium(state)?.cardId==='ex16-79'&&
        cardById(attacker?.cardId)?.pokemonEx&&!abilitiesSuppressed(state,side,slot,cardById))
       return {type:'preventDamage',reason:'Synergy Effect',effects:false};
     if(state?.format==='classic'&&slot?.cardId==='ex16-101'&&Number(slot.ex16AgilityUntil||0)>=state.turnNumber)
@@ -25165,7 +25414,7 @@ if(r==='lastResort')return ss.hand.length===0?[{}]:[];if(r==='surgeSwap')return 
       if(slot.cardId==='ex5-22'&&!abilitiesSuppressed(state,side,slot,cardById)&&attackerCard?.pokemonEx)return {type:'preventDamage',reason:'EX Hidden Legends Safeguard',effects:true};
       if(slot.cardId==='ex5-46'&&bench.includes(slot)&&!abilitiesSuppressed(state,side,slot,cardById))return {type:'preventDamage',reason:'EX Hidden Legends Power Diffusion',effects:true};
       if(slot.cardId==='sv1-99'&&!abilitiesSuppressed(state,side,slot,cardById)&&attackerCard?.types?.includes('Fire'))return {type:'preventDamage',reason:'Well-Baked Body',effects:true};
-      if(bench.includes(slot)&&(state.stadium?.cardId==='SNAPFOUNJA-083'||pokemonOn(state.sides[side]).some(p=>p.cardId==='SNAPFOUNJA-001'&&!abilitiesSuppressed(state,side,p,cardById))))return {type:'preventDamage',reason:'Founja Bench protection',effects:true};
+      if(bench.includes(slot)&&(activeStadium(state)?.cardId==='SNAPFOUNJA-083'||pokemonOn(state.sides[side]).some(p=>p.cardId==='SNAPFOUNJA-001'&&!abilitiesSuppressed(state,side,p,cardById))))return {type:'preventDamage',reason:'Founja Bench protection',effects:true};
       if(slot.founjaSubmergeUntil>=state.turnNumber&&attackerCard?.stage!=='Basic')return {type:'preventDamage',reason:'Submerge',effects:true};
       const nesting=pokemonOn(state.sides[side]).find(p=>p.cardId==='SNAPFOUNJA-069'&&!abilitiesSuppressed(state,side,p,cardById));
       if(bench.includes(slot)&&nesting){
@@ -25175,7 +25424,7 @@ if(r==='lastResort')return ss.hand.length===0?[{}]:[];if(r==='surgeSwap')return 
         if(heads)return {type:'preventDamage',reason:'Nest Defender'};
       }
     }
-    if(state?.format==='classic'&&state.stadium?.cardId==='SNAPFLORIO-112'&&(state.sides?.[side]?.bench||[]).includes(slot))return {type:'preventDamage',reason:'Florio Nature Park'};
+    if(state?.format==='classic'&&activeStadium(state)?.cardId==='SNAPFLORIO-112'&&(state.sides?.[side]?.bench||[]).includes(slot))return {type:'preventDamage',reason:'Florio Nature Park'};
     const passiveFirst=findPassiveRule(state,side,slot,'firstDamageGuard',cardById);if(!slot?.firstDamageGuardConsumed&&(slot?.firstDamageGuard||passiveFirst))return {type:'firstDamageGuard',firstDamage:true};
     const matchesAttacker=guard=>guard?.kind==='preventEx'?!!attacker&&!!(cardById(attacker.cardId)?.pokemonEX||cardById(attacker.cardId)?.pokemonEx||cardById(attacker.cardId)?.isEx):!guard?.attackerFilter||!!attacker&&matchesFilter(cardById(attacker.cardId),guard.attackerFilter,attacker);
     // An effects-only barrier, such as Roaring Skies Latios-EX Light Pulse,
@@ -25228,7 +25477,7 @@ if(r==='lastResort')return ss.hand.length===0?[{}]:[];if(r==='surgeSwap')return 
       if(slot.cardId==='ex6-3'&&!abilitiesSuppressed(state,side,slot,cardById)&&cardById(attacker?.cardId)?.pokemonEx)return true;
       if(slot.cardId==='ex5-97'&&!abilitiesSuppressed(state,side,slot,cardById))return true;
             if(slot.cardId==='sv1-99'&&!abilitiesSuppressed(state,side,slot,cardById)&&cardById(attacker?.cardId)?.types?.includes('Fire'))return true;
-      if((state.sides[side]?.bench||[]).includes(slot)&&(state.stadium?.cardId==='SNAPFOUNJA-083'||pokemonOn(state.sides[side]).some(p=>p.cardId==='SNAPFOUNJA-001'&&!abilitiesSuppressed(state,side,p,cardById))))return true;
+      if((state.sides[side]?.bench||[]).includes(slot)&&(activeStadium(state)?.cardId==='SNAPFOUNJA-083'||pokemonOn(state.sides[side]).some(p=>p.cardId==='SNAPFOUNJA-001'&&!abilitiesSuppressed(state,side,p,cardById))))return true;
       if(slot.founjaSubmergeUntil>=state.turnNumber&&cardById(attacker?.cardId)?.stage!=='Basic')return true;
       if(slot.cardId==='SNAPFOUNJA-030'&&!abilitiesSuppressed(state,side,slot,cardById))return true;
       const ownSide=state.sides?.[side];
@@ -25251,7 +25500,7 @@ if(r==='lastResort')return ss.hand.length===0?[{}]:[];if(r==='surgeSwap')return 
         board.discard.push(ref);
         state.log.push({type:'xy7RestrictedEnergyDiscard',side,cardId:ref.cardId,targetUid:slot.uid});
       }
-      if(state.stadium?.cardId==='xy10-94'){
+      if(activeStadium(state)?.cardId==='xy10-94'){
         const controller=side===state.stadium.xy10ChaosSide;
         const cp=controller?state.stadium.xy10ChaosMode==='cp':state.stadium.xy10ChaosMode!=='cp';
         for(const slot of pokemonOn(board))for(const condition of (cp?['confusion','poison']:['sleep','paralysis']))delete (slot.conditions||{})[condition];
@@ -25324,15 +25573,15 @@ if(r==='lastResort')return ss.hand.length===0?[{}]:[];if(r==='surgeSwap')return 
         !abilitiesSuppressed(state,defenderSide,p,cardById))||
       xy11RestoredBarrier(state,defenderSide,defenderSlot,cardById)||
       !!findPassiveRule(state,defenderSide,defenderSlot,'weaknessGuard',cardById)||
-      state.stadium?.cardId==='ex5-87'&&!defender.pokemonEX||
-      state.stadium?.cardId==='pl2-94'&&defender.types?.includes('Lightning')||
+      activeStadium(state)?.cardId==='ex5-87'&&!defender.pokemonEX||
+      activeStadium(state)?.cardId==='pl2-94'&&defender.types?.includes('Lightning')||
       effectiveTypes(state,defenderSide,defenderSlot,cardById).includes('Lightning')&&
         (defenderSlot.specialEnergy||[]).some(ref=>ref.cardId==='xy7-83');
     if(weakness&&types.includes(weakness)&&!noWeakness){
       const raw=String(defender.weaknessValue||'×2'),mult=raw.match(/[×x]\s*(\d+(?:\.\d+)?)/i),add=raw.match(/^\+\s*(\d+)/);
       n=add?n+Number(add[1]):n*(mult?Number(mult[1]):2);
     }
-    const resistanceDisabled=['ex5-91','xy2-91','hgss3-76'].includes(state.stadium?.cardId);
+    const resistanceDisabled=['ex5-91','xy2-91','hgss3-76'].includes(activeStadium(state)?.cardId);
     if(resistance&&types.includes(resistance)&&!resistanceDisabled){
       const raw=String(defender.resistanceValue||'-20'),m=raw.match(/-\s*(\d+)/);n=Math.max(0,n-Number(m?.[1]||20));
     }
@@ -25448,7 +25697,7 @@ if(r==='lastResort')return ss.hand.length===0?[{}]:[];if(r==='surgeSwap')return 
        attackerSlot?.bw4DauntBy===defenderSide) n=Math.max(0,Number(n||0)-20);
     const attacker=cardById(attackerSlot.cardId),topDefender=cardById(defenderSlot.cardId),baseDefense=topDefender?.breakEvolution?previousUpgradeCard(defenderSlot,cardById):null,
       defender=baseDefense?{...topDefender,weakness:baseDefense.weakness,weaknessValue:baseDefense.weaknessValue,weaknesses:baseDefense.weaknesses,resistance:baseDefense.resistance,resistanceValue:baseDefense.resistanceValue,resistances:baseDefense.resistances}:topDefender,
-      weakness=defenderSlot?.weaknessOverride||defender?.weakness,resistance=(attackerSlot?.cardId==='xy3-63'||state.stadium?.cardId==='hgss3-76')?null:(defenderSlot?.resistanceOverride||defender?.resistance),types=effectiveTypes(state,attackSide,attackerSlot,cardById);
+      weakness=defenderSlot?.weaknessOverride||defender?.weakness,resistance=(attackerSlot?.cardId==='xy3-63'||activeStadium(state)?.cardId==='hgss3-76')?null:(defenderSlot?.resistanceOverride||defender?.resistance),types=effectiveTypes(state,attackSide,attackerSlot,cardById);
     // Whimsicott Fluffy Tag boosts only the selected Pokemon on its next own turn.
     if(state?.format==='classic'&&defenderSlot===state.sides[defenderSide]?.active&&
       Number(attackerSlot.bw7FluffyTagUntil||0)>=Number(state.turnNumber)&&
@@ -25459,7 +25708,7 @@ if(r==='lastResort')return ss.hand.length===0?[{}]:[];if(r==='surgeSwap')return 
     if(state?.format==='classic'&&n>0&&defenderSlot===state.sides?.[defenderSide]?.active){
       if(attacker?.types?.includes('Fighting')){
         n+=20*(attackerSlot.specialEnergy||[]).filter(r=>r.cardId==='xy3-104'||r.cardId==='xy10-115').length;
-        if(state.stadium?.cardId==='xy3-90'&&defender?.pokemonEX)n+=20;
+        if(activeStadium(state)?.cardId==='xy3-90'&&defender?.pokemonEX)n+=20;
       }
       if(attacker?.types?.includes('Fighting')&&attacker?.name!=='Regirock-EX'){
         const regirock=pokemonOn(state.sides[attackSide]).filter(p=>!abilitiesSuppressed(state,attackSide,p,cardById)&&
@@ -25499,7 +25748,7 @@ if(r==='lastResort')return ss.hand.length===0?[{}]:[];if(r==='surgeSwap')return 
         !abilitiesSuppressed(state,attackSide,attackerSlot,cardById))n+=30;
       if(n>0&&attacker?.id==='ex14-14'&&Number(attacker?.hp||0)-Number(attackerSlot.damage||0)<=40&&
         !abilitiesSuppressed(state,attackSide,attackerSlot,cardById))n+=40;
-      if(n>0&&attacker?.deltaSpecies&&/^Holon/.test(cardById(state.stadium?.cardId)?.name||'')&&
+      if(n>0&&attacker?.deltaSpecies&&/^Holon/.test(cardById(activeStadium(state)?.cardId)?.name||'')&&
         pokemonOn(state.sides[attackSide]).some(p=>p.cardId==='ex13-8'&&!abilitiesSuppressed(state,attackSide,p,cardById)))n+=10;
       if(n>0&&Number(attackerSlot.ex13NextAttackBonusUntil||0)===state.turnNumber)n+=40;
       if(n>0&&Number(state.sides?.[attackSide]?.ex9DragonDanceUntil||0)===state.turnNumber)n+=30;
@@ -25548,7 +25797,7 @@ if(r==='lastResort')return ss.hand.length===0?[{}]:[];if(r==='surgeSwap')return 
       if(n>0&&defender?.id==='ex10-4'&&state.sides[defenderSide].active===defenderSlot&&!abilitiesSuppressed(state,defenderSide,defenderSlot,cardById))n=Math.max(0,n-10);
       const darkHole=defender?.weakness==='Darkness'&&pokemonOn(state.sides[defenderSide]).some(p=>p.cardId==='ex9-94'&&state.sides[defenderSide].active!==p&&!abilitiesSuppressed(state,defenderSide,p,cardById));
       const electroGuard=defender?.id==='ex9-37'&&(Number(defenderSlot.energy?.Lightning||0)>0||(defenderSlot.specialEnergy||[]).some(r=>Number((r.provides||cardById(r.cardId)?.effect?.provides||{}).Lightning||0)>0))&&!abilitiesSuppressed(state,defenderSide,defenderSlot,cardById);
-      const pl2SunyshoreGuard=state.stadium?.cardId==='pl2-94'&&defender?.types?.includes('Lightning');
+      const pl2SunyshoreGuard=activeStadium(state)?.cardId==='pl2-94'&&defender?.types?.includes('Lightning');
       const pl2LucarioAura=['player','opponent'].some(w=>pokemonOn(state.sides[w]).some(p=>p.cardId==='pl2-8'&&!abilitiesSuppressed(state,w,p,cardById)));
       const hgssGreenShield=state?.format==='classic'&&effectiveTypes(state,defenderSide,defenderSlot,cardById).includes('Grass')&&pokemonOn(state.sides[defenderSide]).some(p=>p.cardId==='hgss1-46'&&!abilitiesSuppressed(state,defenderSide,p,cardById));
       const pl3ExploudNoWeakness=state?.format==='classic'&&pokemonOn(state.sides[defenderSide]).some(p=>p.cardId==='pl3-28'&&!abilitiesSuppressed(state,defenderSide,p,cardById));
@@ -25566,8 +25815,8 @@ if(r==='lastResort')return ss.hand.length===0?[{}]:[];if(r==='surgeSwap')return 
         pokemonOn(state.sides[defenderSide]).some(p=>p.cardId==='dp6-140'&&!abilitiesSuppressed(state,defenderSide,p,cardById));
       const majesticMoonlight=state?.format==='classic'&&(defender?.evolvesFrom==='Eevee'||defender?.isLevelX&&(defenderSlot?.stack||[]).some(id=>cardById(id)?.evolvesFrom==='Eevee'))&&
         pokemonOn(state.sides[defenderSide]).some(p=>p.cardId==='dp5-32'&&!abilitiesSuppressed(state,defenderSide,p,cardById));
-      const glaciaNoWeakness=state.stadium?.cardId==='ex16-76'&&defender?.types?.includes('Water')&&!defender?.pokemonEx;
-      const hiddenLegendsTomb=state.stadium?.cardId==='ex5-87'&&!defender?.pokemonEx&&!/^(?:Team Aqua's|Team Magma's|Brock's|Misty's|Lt. Surge's|Erika's|Koga's|Blaine's|Sabrina's|Giovanni's|Rocket's)/.test(defender?.name||'');
+      const glaciaNoWeakness=activeStadium(state)?.cardId==='ex16-76'&&defender?.types?.includes('Water')&&!defender?.pokemonEx;
+      const hiddenLegendsTomb=activeStadium(state)?.cardId==='ex5-87'&&!defender?.pokemonEx&&!/^(?:Team Aqua's|Team Magma's|Brock's|Misty's|Lt. Surge's|Erika's|Koga's|Blaine's|Sabrina's|Giovanni's|Rocket's)/.test(defender?.name||'');
       const ex15NoWeakness=Number(defenderSlot.ex15NoWeaknessUntil||0)>=Number(state.turnNumber)||
         state?.stadium?.cardId==='ex15-74'&&ex15IsDelta(state,defenderSide,defenderSlot,cardById);
       const ex10NoWeakness=activeToolsOf(state,defenderSlot,cardById).some(r=>r.cardId==='ex10-90')||(defender?.id==='ex10-28'&&Array.isArray(defenderSlot.stack)&&defenderSlot.stack.length>1&&!abilitiesSuppressed(state,defenderSide,defenderSlot,cardById));
@@ -25585,14 +25834,14 @@ if(r==='lastResort')return ss.hand.length===0?[{}]:[];if(r==='surgeSwap')return 
       const holonFire=!(defender?.pokemonEx)&&Number(defenderSlot?.energy?.Fire||0)>0&&(defenderSlot?.specialEnergy||[]).some(r=>['ex11-104','ex15-84'].includes(r.cardId));
       const ex14Shield=pokemonOn(state.sides[defenderSide]).some(p=>p.cardId==='ex14-2'&&!abilitiesSuppressed(state,defenderSide,p,cardById))&&
         state.sides[defenderSide].active===defenderSlot;
-      if((weakness&&types.includes(weakness)||!defenderSlot?.weaknessOverride&&defender?.weaknesses?.some(w=>types.includes(w)))&&!ex14Shield&&!blooming&&!hiddenLegendsTomb&&!glaciaNoWeakness&&!majesticMoonlight&&!dp6PsychicAura&&!rocketNoWeakness&&!pl2SunyshoreGuard&&!pl2ArcanineNoWeakness&&!pl3ExploudNoWeakness&&!xy5MiracleGuard&&!xy6ClearHumming&&!xy5WeaknessPolicy&&!xy7FlashEnergy&&!hgssGreenShield&&!bw3LeafTailor&&!bw10MentalShroud&&!xy1ShadowCircle&&!activeToolsOf(state,defenderSlot,cardById).some(r=>r.cardId==='dp6-129')&&!ex10NoWeakness&&!ex15NoWeakness&&!holonFire&&!holonRayquazaGuard&&!legendFossilShield&&!xy11RestoredBarrier(state,defenderSide,defenderSlot,cardById)&&!(guard&&(guard.expiresTurn==null||state.turnNumber<=guard.expiresTurn))){const raw=pl2LucarioAura||state.stadium?.cardId==='dp2-112'?'×2':String(defender?.weaknessValue||'×2'),m=raw.match(/[x×]\s*(\d+(?:\.\d+)?)/i),add=raw.match(/^\+\s*(\d+)/);n=state.format==='classic'&&['player','opponent'].some(w=>pokemonOn(state.sides[w]).some(p=>p.cardId==='bw7-3'&&!abilitiesSuppressed(state,w,p,cardById)))?n*4:add?n+Number(add[1]):m?n*Number(m[1]):n*2;}
+      if((weakness&&types.includes(weakness)||!defenderSlot?.weaknessOverride&&defender?.weaknesses?.some(w=>types.includes(w)))&&!ex14Shield&&!blooming&&!hiddenLegendsTomb&&!glaciaNoWeakness&&!majesticMoonlight&&!dp6PsychicAura&&!rocketNoWeakness&&!pl2SunyshoreGuard&&!pl2ArcanineNoWeakness&&!pl3ExploudNoWeakness&&!xy5MiracleGuard&&!xy6ClearHumming&&!xy5WeaknessPolicy&&!xy7FlashEnergy&&!hgssGreenShield&&!bw3LeafTailor&&!bw10MentalShroud&&!xy1ShadowCircle&&!activeToolsOf(state,defenderSlot,cardById).some(r=>r.cardId==='dp6-129')&&!ex10NoWeakness&&!ex15NoWeakness&&!holonFire&&!holonRayquazaGuard&&!legendFossilShield&&!xy11RestoredBarrier(state,defenderSide,defenderSlot,cardById)&&!(guard&&(guard.expiresTurn==null||state.turnNumber<=guard.expiresTurn))){const raw=pl2LucarioAura||activeStadium(state)?.cardId==='dp2-112'?'×2':String(defender?.weaknessValue||'×2'),m=raw.match(/[x×]\s*(\d+(?:\.\d+)?)/i),add=raw.match(/^\+\s*(\d+)/);n=state.format==='classic'&&['player','opponent'].some(w=>pokemonOn(state.sides[w]).some(p=>p.cardId==='bw7-3'&&!abilitiesSuppressed(state,w,p,cardById)))?n*4:add?n+Number(add[1]):m?n*Number(m[1]):n*2;}
       const bw10BadgeDiscipline=state?.format==='classic'&&types.includes('Fighting')&&pokemonOn(state.sides[attackSide]).some(p=>p.cardId==='bw10-49'&&!abilitiesSuppressed(state,attackSide,p,cardById));
       const ancientTentacles=state.format==='classic'&&['Omanyte','Omastar','Kabuto','Kabutops','Kabutops ex'].includes(attacker?.name)&&pokemonOn(state.sides[attackSide]).some(p=>p.cardId==='ex12-60'&&!abilitiesSuppressed(state,attackSide,p,cardById));
       const majesticMothim=state?.format==='classic'&&pokemonOn(state.sides[attackSide]).some(p=>p.cardId==='dp5-42'&&!abilitiesSuppressed(state,attackSide,p,cardById));
-      const xy2MagneticStorm=state?.format==='classic'&&state.stadium?.cardId==='xy2-91';
-      const magneticStorm=state.stadium?.cardId==='ex5-91'&&types.some(t=>t==='Fighting'||t==='Psychic');
+      const xy2MagneticStorm=state?.format==='classic'&&activeStadium(state)?.cardId==='xy2-91';
+      const magneticStorm=activeStadium(state)?.cardId==='ex5-91'&&types.some(t=>t==='Fighting'||t==='Psychic');
       const dp4Sunlight=state?.format==='classic'&&types.some(t=>['Psychic','Fighting'].includes(t))&&pokemonOn(state.sides[attackSide]).some(p=>p.cardId==='dp4-85'&&!abilitiesSuppressed(state,attackSide,p,cardById))&&pokemonOn(state.sides[attackSide]).some(p=>cardById(p.cardId)?.name==='Lunatone');
-      if(!(state.stadium?.cardId==='pl2-94'&&attacker?.types?.includes('Lightning'))&&(resistance&&types.includes(resistance)||!defenderSlot?.resistanceOverride&&defender?.resistances?.some(r=>types.includes(r.type)))&&!dp4Sunlight&&!majesticMothim&&!ancientTentacles&&!bw10BadgeDiscipline&&!holonFF&&!magneticStorm&&!xy2MagneticStorm&&!(state?.format==='classic'&&['player','opponent'].some(w=>pokemonOn(state.sides[w]).some(p=>p.cardId==='ex1-2'&&!abilitiesSuppressed(state,w,p,cardById))))){const klefki=state.format==='classic'&&defender?.types?.includes('Fairy')&&pokemonOn(state.sides[defenderSide]).some(p=>p.cardId==='xy3-73'&&!abilitiesSuppressed(state,defenderSide,p,cardById));const raw=klefki?'-40':String(defender?.resistanceValue||'-30'),m=raw.match(/-\s*(\d+)/);const enervating=defenderSlot===state.sides[defenderSide].active&&['player','opponent'].some(w=>pokemonOn(state.sides[w]).some(p=>p.cardId==='ecard2-49'&&!abilitiesSuppressed(state,w,p,cardById)));
+      if(!(activeStadium(state)?.cardId==='pl2-94'&&attacker?.types?.includes('Lightning'))&&(resistance&&types.includes(resistance)||!defenderSlot?.resistanceOverride&&defender?.resistances?.some(r=>types.includes(r.type)))&&!dp4Sunlight&&!majesticMothim&&!ancientTentacles&&!bw10BadgeDiscipline&&!holonFF&&!magneticStorm&&!xy2MagneticStorm&&!(state?.format==='classic'&&['player','opponent'].some(w=>pokemonOn(state.sides[w]).some(p=>p.cardId==='ex1-2'&&!abilitiesSuppressed(state,w,p,cardById))))){const klefki=state.format==='classic'&&defender?.types?.includes('Fairy')&&pokemonOn(state.sides[defenderSide]).some(p=>p.cardId==='xy3-73'&&!abilitiesSuppressed(state,defenderSide,p,cardById));const raw=klefki?'-40':String(defender?.resistanceValue||'-30'),m=raw.match(/-\s*(\d+)/);const enervating=defenderSlot===state.sides[defenderSide].active&&['player','opponent'].some(w=>pokemonOn(state.sides[w]).some(p=>p.cardId==='ecard2-49'&&!abilitiesSuppressed(state,w,p,cardById)));
         n=Math.max(0,n-(enervating?10:Number(m?.[1]||30)));}
       if(defender?.id==='dp2-73'&&types.includes('Lightning'))n=Math.max(0,n-20);
       if(!abilitiesSuppressed(state,defenderSide,defenderSlot,cardById)&&findPassiveRule(state,defenderSide,defenderSlot,'fossilArmor',cardById))n=Math.floor(n/20)*10;
@@ -25653,12 +25902,12 @@ if(r==='lastResort')return ss.hand.length===0?[{}]:[];if(r==='surgeSwap')return 
     if(attacker?.id==='xy3-63'&&!abilitiesSuppressed(state,attackSide,attackerSlot,cardById))return finishDamage(n);
     if(!weakness||!types.includes(weakness)||state?.format==='classic'&&(pokemonOn(state.sides[defenderSide]).some(p=>p.cardId==='xy5-100'&&!abilitiesSuppressed(state,defenderSide,p,cardById))||activeToolsOf(state,defenderSlot,cardById).some(ref=>['xy5-142','xy5-164'].includes(ref.cardId))))return finishDamage(n);
     if(guard&&(guard.expiresTurn==null||state.turnNumber<=guard.expiresTurn))return finishDamage(n);
-    let multiplier=null;if(state.stadium){const stadium=cardById(state.stadium.cardId);const find=e=>e&&(e.type==='weaknessMultiplier'?e:e.type==='sequence'?(e.effects.map(find).find(Boolean)||null):null),rule=find(stadium?.effect);if(rule&&(!rule.attackerFilter||matchesFilter(attacker,rule.attackerFilter,attackerSlot)))multiplier=Number(rule.multiplier||0);}
+    let multiplier=null;if(state.stadium){const stadium=cardById(activeStadium(state)?.cardId);const find=e=>e&&(e.type==='weaknessMultiplier'?e:e.type==='sequence'?(e.effects.map(find).find(Boolean)||null):null),rule=find(stadium?.effect);if(rule&&(!rule.attackerFilter||matchesFilter(attacker,rule.attackerFilter,attackerSlot)))multiplier=Number(rule.multiplier||0);}
     return finishDamage(multiplier&&multiplier>1?n*multiplier:n+20);
   }
   function resolveDelayedEffects(state,endingSide,cardById,contextFor){const due=(state.delayedEffects||[]).filter(x=>x.event==='endOpponentNextTurn'&&Number(x.dueTurn)<=Number(state.turnNumber)&&x.endingSide===endingSide),keep=(state.delayedEffects||[]).filter(x=>!due.includes(x));state.delayedEffects=keep;for(const item of due){let target=null;if(item.targetUid){for(const side of ['player','opponent'])target=pokemonOn(state.sides[side]).find(s=>s.uid===item.targetUid)||target;}else if(item.spot){const ss=state.sides[item.spot.side];target=item.spot.active?ss.active:(ss.bench||[]).find(s=>s&&Number(s.benchSlot)===Number(item.spot.benchIndex));}if(!target)continue;const sourceSide=item.originSide,source=pokemonOn(state.sides[sourceSide]).find(s=>s.uid===item.sourceUid)||state.sides[sourceSide].active,ctx=contextFor(sourceSide,source);applyEffect({...item.effect,target:'eventPokemon'},{...ctx,eventData:{target}});}}
   function statusIsPrevented(state,slot,cardById,status){
-    if(state?.format==='classic'&&state.stadium?.cardId==='xy10-94'){
+    if(state?.format==='classic'&&activeStadium(state)?.cardId==='xy10-94'){
       const side=pokemonOn(state.sides.player).includes(slot)?'player':pokemonOn(state.sides.opponent).includes(slot)?'opponent':null;
       if(side){
         const controller=side===state.stadium.xy10ChaosSide;
@@ -25669,7 +25918,7 @@ if(r==='lastResort')return ss.hand.length===0?[{}]:[];if(r==='surgeSwap')return 
     if(state?.format==='classic'&&status==='confusion'&&slot&&
        Number(cardById(slot.cardId)?.retreat||0)>=3&&
        activeToolsOf(state,slot,cardById).some(r=>r.cardId==='xy8-141'))return true;
-    if(state?.format==='classic'&&state.stadium?.cardId==='xy4-105'&&cardById(slot?.cardId)?.types?.includes('Metal'))return true;
+    if(state?.format==='classic'&&activeStadium(state)?.cardId==='xy4-105'&&cardById(slot?.cardId)?.types?.includes('Metal'))return true;
 
     if(state?.format==='classic'&&slot&&activeToolsOf(state,slot,cardById).some(r=>r.cardId==='xy3-99'))return true;
     if(state?.format==='classic'&&slot){
@@ -25708,8 +25957,8 @@ if(r==='lastResort')return ss.hand.length===0?[{}]:[];if(r==='surgeSwap')return 
       }
     }
     const card=cardById(slot?.cardId),immunity=card?.statusImmune??card?.effect?.statusImmune;
-    if(state.stadium?.cardId==='SNAPFLORIO-104'&&card?.types?.some(type=>type==='Grass'||type==='Psychic'))return true;
-    if(state?.format==='classic'&&state.stadium?.cardId==='ex16-82'&&card?.types?.includes('Darkness')&&['sleep','confusion','paralysis'].includes(status))return true;
+    if(activeStadium(state)?.cardId==='SNAPFLORIO-104'&&card?.types?.some(type=>type==='Grass'||type==='Psychic'))return true;
+    if(state?.format==='classic'&&activeStadium(state)?.cardId==='ex16-82'&&card?.types?.includes('Darkness')&&['sleep','confusion','paralysis'].includes(status))return true;
     if(Array.isArray(immunity)&&immunity.includes(status))return true;
     if(immunity===true)return true;
     const matches=guard=>!!guard&&(guard.expiresTurn==null||Number(state.turnNumber)<=Number(guard.expiresTurn))&&(!guard.status||guard.status===status);
