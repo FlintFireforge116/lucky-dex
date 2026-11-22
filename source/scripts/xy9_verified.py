@@ -80,6 +80,18 @@ ATK={
  ('91','Big Charge'):BONUS(50,{'type':'pokemonPresent','zone':'bench','filter':{'tag':'mega-evolution'}}),
  ('92','Elemental Feather'):E('multiTargetDamage',target='opponentBench',amount=30,count=1,upTo=True),
  ('94','Nyan Press'):Q(BONUS(40),ST('paralysis')),
+ ('31','Aqua Turbo'):E('neoRule',rule='xy9:aquaTurbo'),
+ ('33','Round'):E('neoRule',rule='xy9:round'),
+ ('40','Shadow Stitching'):E('neoRule',rule='xy9:shadowStitching'),
+ ('40','Moonlight Slash'):E('neoRule',rule='xy9:moonlightSlash'),
+ ('57','Offensive Bomb'):S(ST('confusion'),ST('poison')),
+ ('62','Painful Sword'):E('neoRule',rule='xy9:painfulSword'),
+ ('62','Megaton Slash'):E('multiTargetDamage',target='opponentBench',amount=10,count=2,upTo=True),
+ ('68','Never Enough'):E('neoRule',rule='xy9:neverEnough'),
+ ('70','Turbo Assault'):E('neoRule',rule='xy9:turboAssault'),
+ ('80','Spike Lash'):E('neoRule',rule='xy9:spikeLash'),
+ ('83','Mighty Wind'):E('neoRule',rule='xy9:mightyWind'),
+ ('93','Act Cute'):E('neoRule',rule='xy9:actCute'),
  ('95','Collect'):DRAW(1),
  ('95','Tight Jaw'):Q(ST('paralysis')),
 }
@@ -91,8 +103,14 @@ for src,alts in [('26',['114','123']),('27',['115']),('32',['116']),('52',['117'
 
 # Cards with the same name but different prints are never conflated.
 TRAINERS={
+ '98':('Supporter',E('neoRule',rule='xy9:delinquent')),
+ '98a':('Supporter',E('neoRule',rule='xy9:delinquent')),
+ '98b':('Supporter',E('neoRule',rule='xy9:delinquent')),
+ '99':('Tool',S(E('modifier',stat='maxHp',amount=40,scope='self',duration='whileInPlay',filter={'stage':'Basic'}),E('modifier',stat='attackDamage',amount=10,scope='self',duration='whileInPlay',filter={'stage':'Basic'}))),
  '100':('Item',E('selectTopToHand',count=7,filter={'kind':'pokemon'},optional=True)),
  '101':('Tool',N), # Gyarados Spirit Link: existing Mega turn-ending exemption.
+ '103':('Item',E('neoRule',rule='xy9:maxPotion')),
+ '104':('Supporter',E('neoRule',rule='xy9:mistysDetermination')),
  '105':('Item',Q(E('forceOpponentSwitch',chooseBy='attacker'))),
  '106':('Item',E('chooseTarget',target='selfPokemon',effect=H(30,'selfPokemon'))),
  '107':('Supporter',S(E('discardHand',side='self',amount=99),DRAW(7))),
@@ -109,6 +127,9 @@ ABILITIES={
  'Hyper Transfer':{'type':'activated','oncePerTurn':False,'effect':E('redistributeEnergy',includeSpecialEnergy=False)},
  'Goodnight, Babies':{'type':'activated','oncePerTurn':True,'effect':S(ST('sleep','selfActive'),ST('sleep'))},
  'Aqua Tube':{'type':'passive','effect':E('modifier',stat='retreatCost',amount=-99,scope='team',duration='whileInPlay',filter={'hasEnergyType':'Water'})},
+ 'Giant Water Shuriken':{'type':'activated','oncePerTurn':True,'activeOnly':True,'effect':E('neoRule',rule='xy9:giantWaterShuriken')},
+ 'Garbotoxin':{'type':'passive','effect':E('abilitySuppression',duration='whileInPlay',scope='both',condition={'type':'selfHasTool'})},
+ 'Purifying Fire':{'type':'activated','oncePerTurn':True,'effect':E('neoRule',rule='xy9:purifyingFire')},
  'Antibodies':{'type':'passive','effect':E('preventStatus',duration='whileInPlay',scope='self')},
  'Nervous Seed':{'type':'passive','activeOnly':True,'effect':E('modifier',stat='attackCostColorless',amount=1,scope='opponentActive',duration='whileActive',filter={'stage':'Basic'})},
  # Purifying Fire requires specifically BASIC Fire Energy; generic typed-energy

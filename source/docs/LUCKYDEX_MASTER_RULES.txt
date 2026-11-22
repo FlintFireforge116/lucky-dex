@@ -1,6 +1,6 @@
 LUCKYDEX — MASTER PROJECT RULES AND DEVELOPMENT CONTRACT
 =========================================================
-Document version: 2.61
+Document version: 2.62
 Compiled: 22 November 2026
 Current inspected source: v0.69.376 BREAKthrough complete (GitHub Actions run 45020904916 succeeded); v0.69.377 independent audit corrections locally tested, awaiting GitHub APK confirmation. Source-relative ZIP extraction into ~/lucky-dex/source/.
 Recommended repository location: ~/lucky-dex/source/docs/LUCKYDEX_MASTER_RULES.txt
@@ -4188,3 +4188,12 @@ AUDIT BEFORE CLAIMING SET COMPLETION: compare every attack and Ability against
 all 126 official prints; enable remaining cards only after tests prove real
 turn timing, required choices, special Energy, attachments, stadium and CPU
 outcomes. This integration is a substantial first pass, NOT a full set release.
+
+
+=======================================================================
+[CURRENT] BREAKPOINT XY9 CONTINUATION / BUILD GATE — 2026-11-22 (MASTER v2.62)
+  • v0.69.378 official BREAKpoint 126-print Stage 1 was confirmed as a successful GitHub APK build (run #45025311302). v0.69.379 extends this working version, with an independent 21-case outcome suite for new printed effects.
+  • Projected 110/126 prints currently supported; 16 remaining mechanisms and physical Special Energy effects MUST remain gated. See docs/XY9_BREAKPOINT_STAGE2_v0.69.379.md for the exact remaining printed numbers and test outcomes. Never turn an incomplete effect into a noop or mark FULL.
+  • Reuse prior LV.X/BREAK inheritance, Garbodor Tool-dependent Ability suppression, the physical hand/deck/discard and finite Energy Zone methods, and previous Stadium/Tool modifiers. Copies and alternate prints should share identical implementations without conflating print metadata.
+  • Every conditional ability must be tested with both its condition satisfied and unsatisfied. Explicit target choices go to the correct owner/player; no silent random effects. On hit, count and apply damage counters without Weakness/Resistance.
+  • Never mistake local tests with skipped generated-catalogue cases for a full APK build. Run all new and previously installed Gradle audit stages before handoff; verify GitHub Actions afterward.

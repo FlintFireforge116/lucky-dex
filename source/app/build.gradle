@@ -8,8 +8,8 @@ android {
         applicationId 'com.example.luckydex'
         minSdk 26
         targetSdk 35
-        versionCode 7378
-        versionName '0.69.378'
+        versionCode 7379
+        versionName '0.69.379'
     }
 
     signingConfigs {
@@ -888,7 +888,7 @@ tasks.register('generateXY9ForApk', Exec) {
 tasks.register('auditXY9ForApk', Exec) {
     dependsOn tasks.named('generateXY9ForApk')
     workingDir rootProject.projectDir
-    commandLine 'node', '--test', 'tests/v07378-breakpoint-integration.test.cjs', 'tests/v07378-breakpoint-effects.test.cjs'
+    commandLine 'node', '--test', 'tests/v07378-breakpoint-integration.test.cjs', 'tests/v07378-breakpoint-effects.test.cjs', 'tests/v07379-breakpoint-continuation.test.cjs'
 }
 tasks.matching { it.name == 'preBuild' || (it.name.startsWith('merge') && it.name.endsWith('Assets')) }.configureEach {
     dependsOn tasks.named('auditXY9ForApk')
