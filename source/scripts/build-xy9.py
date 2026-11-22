@@ -95,8 +95,8 @@ def generate(rows):
    card.update(trainerType=obj[0] if obj else next((s for s in subtypes if s in ('Item','Supporter','Stadium','Pokémon Tool')),'Item'),
     text='\n'.join(rules),effect=obj[1] if obj else {'type':'unsupported'},aceSpec=False,maxDeckCopies=4)
   elif kind=='energy':
-   # Splash Energy requires a physically attached card and a KO hook.
-   # It is gated until that engine-side trigger is implemented and audited.
+   # Splash Energy uses the existing Rescue Energy knockout path, restricted
+   # to Water Pokemon and to damage from an opponent's attack.
    t='Water'
    spec=V.ENERGIES.get(n) or {'type':'specialEnergy','provides':{t:1}}
    card.update(basicEnergy=False,specialEnergy=True,energyType=t,subtype=t,text='\n'.join(rules),effect=spec)

@@ -1,8 +1,8 @@
 LUCKYDEX — MASTER PROJECT RULES AND DEVELOPMENT CONTRACT
 =========================================================
-Document version: 2.64
+Document version: 2.65
 Compiled: 22 November 2026
-Current inspected source: v0.69.379 BREAKpoint Stage 2 and CI-contract repair (confirmed to build); v0.69.380 BREAKpoint Stage 3 mechanics locally tested, GitHub APK build not yet verified. Source-relative ZIP extraction into ~/lucky-dex/source/.
+Current inspected source: v0.69.380 BREAKpoint Stage 3 plus v0.69.381 four-card completion; new APK build pending GitHub confirmation. Source-relative ZIP extraction into ~/lucky-dex/source/.
 Recommended repository location: ~/lucky-dex/source/docs/LUCKYDEX_MASTER_RULES.txt
 Project: LuckyDex — Android application/PWA, managed with Termux and GitHub
 
@@ -4322,5 +4322,58 @@ Termux installation:
   unzip -o /sdcard/Download/LuckyDex_patch_v0.69.380_BREAKPOINT_STAGE3.zip -d source
   git add source
   git commit -m "LuckyDex v0.69.380 BREAKpoint Stage 3 mechanic reuse"
+  git push origin main
+================================================================================
+
+================================================================================
+XY9 BREAKPOINT v0.69.381 — FINAL FOUR / DOC v2.65
+================================================================================
+Completes the official pinned BREAKpoint XY9 set, 126 of 126 printed variants.
+Reuses old card engine paths; do not open a new attack-copy, top-deck,
+paired-Item, or KO-return subsystem for equivalent future effects.
+
+  #67 Sudowoodo Watch and Learn: replay the attack actually used by the
+      opposing side LAST TURN, including its printed damage/effects and
+      associated choices. Store the original attacking card ID; the opponent
+      may have switched or evolved since the last turn. If no valid prior
+      attack, do nothing, and cap copy depth to avoid recursion.
+  #102 Max Elixir: top SIX physical deck cards only, target a chosen Basic
+      Bench Pokémon; transfer one genuine Basic Energy attachment and shuffle
+      deck. For this app's Classic Energy Zone, if there are no physical Basic
+      Energy cards anywhere in deck, treat the next six ordered Zone units as
+      the limited substitute; never search arbitrarily deep Zone supply.
+  #109 Puzzle of Time: one-copy branch picks the top three cards in order;
+      two-copy branch consumes TWO distinct physical Puzzle cards from hand
+      then retrieves two chosen actual discard cards to hand. Neither Puzzle
+      can retrieve itself during its own resolution. All nested choices must
+      finish before player regains normal battle controls.
+  #113 Splash Energy: Water Pokémon only, provides one Water. On KO CAUSED
+      BY DAMAGE from an opposing attack, put the knocked-out Pokémon card
+      into the owner's hand, discard the prior stages and all attachments,
+      and award normal Prizes. No rescue for poison, damage-counter effects,
+      own damage or an off-type recipient. Reuses HGSS Rescue Energy KO hook.
+
+PERMANENT RELEASE-CHECK CONTRACT (past failures must not recur):
+  * Update single source scripts/xy9_release_contract.json first: expected
+    count 126, gated [], completion IDs 67,102,109,113.
+  * Never carry old test assertions requiring these four prints to stay gated.
+  * Always run: python3 scripts/preflight-xy9-release.py and node --test
+    tests/v07381-breakpoint-completion.test.cjs plus previous stage suites.
+  * Permanent full-engine KO regression: Basic Water and evolved Water with
+    Splash Energy both return the top Pokémon card, discard attachments and
+    earlier stages, still award the opponent a Prize, and require promotion.
+  * Mandatory GitHub tasks: generateXY9ForApk -> auditXY9ForApk (including
+    final outcome tests) -> preBuild. Build-time canonical print audit must
+    verify 126/126 fully enabled, attack costs, 159 attacks, 14 Abilities,
+    legal 30-card decks, version parity and zero contradictory gate IDs.
+  * When pinned official source fetch cannot run locally, report that as a
+    limitation, NOT as a passed full audit. The APK cannot be declared green
+    until GitHub has actually built the new SHA successfully.
+
+Termux installation:
+  cd ~/lucky-dex
+  unzip -o /sdcard/Download/LuckyDex_patch_v0.69.381_BREAKPOINT_COMPLETE.zip -d source
+  git add source
+  git commit -m "LuckyDex v0.69.381 BREAKpoint final four and complete audit"
   git push origin main
 ================================================================================

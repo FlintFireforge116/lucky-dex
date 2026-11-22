@@ -1534,6 +1534,7 @@
        if(['ex8-93','ex8-95','ex15-87','ex15-89'].includes(card.id)&&!['Stage 1','Stage 2'].includes(mon?.stage))return false;
        if(['ex8-95','ex15-89'].includes(card.id)&&mon?.pokemonEx)return false;
        if(card.id==='xy8-151'&&!mon?.types?.includes('Fire'))return false;
+       if(card.id==='xy9-113'&&!mon?.types?.includes('Water'))return false;
        if(card.id==='ex4-87'&&!mon?.name?.startsWith("Team Magma's"))return false;
        if(['ex4-88','ex9-87','ex14-88'].includes(card.id)&&(!['Stage 1','Stage 2'].includes(mon?.stage)||mon?.pokemonEx))return false;
        if(card.specialEnergy&&Number(s.dp2BindPulseUntil||0)>=state.turnNumber)return false;
@@ -2138,7 +2139,7 @@
         state.log.push({type:'spikyShield',side:foeSide,amount:30,sourceUid:defender.uid});
       }
       if(damage>0&&defender.retaliate&&(defender.retaliate.expiresTurn==null||state.turnNumber<=defender.retaliate.expiresTurn)){const amount=Number(defender.retaliate.amount||0);attacker.damage=Number(attacker.damage||0)+amount;state.log.push({type:'retaliate',side:foeSide,amount,cardId:defender.cardId});}
-    state.log.push({type:'attack',side,cardId:attacker.cardId,attack:attackName,damage,target:'active',repeat:true});ss.lastAttackName=attackName;ss.lastAttackTurn=state.turnNumber;ss.attackCounts=ss.attackCounts||{};ss.attackCounts[attackName]=Number(ss.attackCounts[attackName]||0)+1;attacker.attackUseCount=Number(attacker.attackUseCount||0)+1;
+    state.log.push({type:'attack',side,cardId:attacker.cardId,attack:attackName,damage,target:'active',repeat:true});ss.lastAttackName=attackName;ss.lastAttackTurn=state.turnNumber;ss.lastAttackCardId=attacker.cardId;ss.attackCounts=ss.attackCounts||{};ss.attackCounts[attackName]=Number(ss.attackCounts[attackName]||0)+1;attacker.attackUseCount=Number(attacker.attackUseCount||0)+1;
     if(damage>0&&state.format==='classic'&&defender===state.sides[foeSide].active&&activeToolsOf(state,defender).some(r=>r.cardId==='bw3-94')){attacker.damage=Number(attacker.damage||0)+20;state.log.push({type:'bw3RockyHelmet',side:foeSide,amount:20});}
     if(damage>0){const eventData={attacker,damage,source:{side,attack:true,uid:attacker.uid,cardId:attacker.cardId}};triggerAbilities(state,'damagedByAttack',foeSide,defender,eventData);triggerPersistent(state,'damagedByAttack',foeSide,defender,eventData);}
     const paused=resolveKnockOut(state,'endTurn','attack');if(!paused&&state.phase==='battle')endTurn(state);return true;
@@ -2566,6 +2567,18 @@
           const j=s.discard.findLastIndex(r=>r.cardId===top);
           if(j>=old&&s.hand.length<Number(s.handLimit||8))s.hand.push(...s.discard.splice(j,1));
           state.log.push({type:'bw6RescueScarf',side,cardId:top});
+        }
+        else if(state.format==='classic'&&cause==='attack'&&eventSource?.attack&&eventSource.side===foeSide&&
+          card?.types?.includes('Water')&&(slot.specialEnergy||[]).some(r=>r.cardId==='xy9-113')){
+          // BREAKpoint Splash Energy: return only the knocked-out Pokémon
+          // card (not attached lower stages, Tools or Energy) to its owner's
+          // hand. The Pokémon is still KO'd, so normal Prizes are awarded.
+          // This is the existing HGSS Rescue Energy pattern, Water-restricted.
+          const top=slot.stack.at(-1)||slot.cardId,old=s.discard.length;
+          discardKnockedOut(s,slot);
+          const j=s.discard.findLastIndex(r=>r.cardId===top);
+          if(j>=old)s.hand.push(...s.discard.splice(j,1));
+          state.log.push({type:'xy9SplashEnergyRescue',side,cardId:top});
         }
         else if(state.format==='classic'&&cause==='attack'&&eventSource?.attack&&eventSource.side===foeSide&&
           (slot.specialEnergy||[]).some(r=>r.cardId==='hgss4-90')){
@@ -3861,7 +3874,7 @@ const target=slotForTarget(s,action.target,action.benchIndex);if(card.id==='pl2-
       if(damage>0&&defender.retaliate&&(defender.retaliate.expiresTurn==null||state.turnNumber<=defender.retaliate.expiresTurn)){const amount=Number(defender.retaliate.amount||0);s.active.damage=Number(s.active.damage||0)+amount;state.log.push({type:'retaliate',side:foeSide,amount,cardId:defender.cardId});}
       if(state.format==='classic')foe.neoObservedAttack={turn:state.turnNumber,cardId:attackSourceCard.id,attackIndex:matched.attackIndex,witnesses:pokemonOn(foe).map(x=>x.uid)};
       if(state.format==='classic')s.active.pl1LastAttackTurn=state.turnNumber;
-      state.log.push({type:'attack',side,cardId:attackerCard.id,attack:attack.name,damage,damageReason:damage===0?resistanceReason:(attack.effect?.rule==='founja:swiftBeak'&&Number(s.active.movedToActiveTurn)===Number(state.turnNumber)?'Bench → Active this turn: +80':''),target:isActive?'active':'bench',benchIndex:defender.benchSlot});s.lastAttackName=attack.name;s.lastAttackTurn=state.turnNumber;s.attackCounts=s.attackCounts||{};s.attackCounts[attack.name]=Number(s.attackCounts[attack.name]||0)+1;s.active.attackUseCount=Number(s.active.attackUseCount||0)+1;
+      state.log.push({type:'attack',side,cardId:attackerCard.id,attack:attack.name,damage,damageReason:damage===0?resistanceReason:(attack.effect?.rule==='founja:swiftBeak'&&Number(s.active.movedToActiveTurn)===Number(state.turnNumber)?'Bench → Active this turn: +80':''),target:isActive?'active':'bench',benchIndex:defender.benchSlot});s.lastAttackName=attack.name;s.lastAttackTurn=state.turnNumber;s.lastAttackCardId=attackerCard.id;s.attackCounts=s.attackCounts||{};s.attackCounts[attack.name]=Number(s.attackCounts[attack.name]||0)+1;s.active.attackUseCount=Number(s.active.attackUseCount||0)+1;
       if(damage>0&&state.format==='classic'&&defender===foe.active&&
         pokemonOn(foe).some(p=>p.cardId==='pl2-29'&&!effects.abilitiesSuppressed(state,foeSide,p,data.cardById))){
         s.active.damage=Number(s.active.damage||0)+20;
@@ -3968,7 +3981,7 @@ const target=slotForTarget(s,action.target,action.benchIndex);if(card.id==='pl2-
       const board=state.sides[owner];for(const pokemon of pokemonOn(board)){
         const types=data.cardById(pokemon.cardId)?.types||[],kept=[];
         for(const ref of pokemon.specialEnergy||[]){
-          const required=ref.cardId==='xy8-151'?'Fire':ref.cardId==='xy3-103'?'Grass':ref.cardId==='xy3-104'?'Fighting':ref.cardId==='xy4-112'?'Psychic':ref.cardId==='xy5-143'?'Metal':ref.cardId==='xy5-144'?'Fairy':ref.cardId==='xy6-97'?'Dragon':null;
+          const required=ref.cardId==='xy9-113'?'Water':ref.cardId==='xy8-151'?'Fire':ref.cardId==='xy3-103'?'Grass':ref.cardId==='xy3-104'?'Fighting':ref.cardId==='xy4-112'?'Psychic':ref.cardId==='xy5-143'?'Metal':ref.cardId==='xy5-144'?'Fairy':ref.cardId==='xy6-97'?'Dragon':null;
           if(required&&!types.includes(required)){
             board.discard.push(ref);state.log.push({type:'xy3SpecialEnergyDiscard',side:owner,uid:ref.uid,reason:'ineligibleAttachedType',cardId:ref.cardId});
           }else kept.push(ref);

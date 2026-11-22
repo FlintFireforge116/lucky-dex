@@ -58,7 +58,7 @@ test('Shared BREAK evolution references existing audited LV.X infrastructure',()
  const source=require('node:fs').readFileSync(path.join(assets,'tcgp-battle-core.js'),'utf8');
  assert.match(source,/breakEvolution/);assert.match(source,/isLevelX/);
 });
-test('Newly implemented suppressed Abilities and previously gated effects are mapped, while unfinished special Energy stays gated',()=>{
+test('Newly implemented suppressed Abilities and previously gated effects are mapped, and completed Splash Energy is mapped',()=>{
  const q=py('import sys,json;sys.path.insert(0,sys.argv[1]);import xy9_verified as v;print(json.dumps({"ability":v.ABILITIES.get("Garbotoxin"),"energy":v.ENERGIES.get("113"),"stadium":v.TRAINERS.get("110"),"slowbro":v.ATK.get(("20","Walk-Off Homer"))}))');
- assert.equal(q.ability?.type,'passive');assert.equal(q.energy,null);assert.equal(q.stadium?.[0],'Stadium');assert.equal(q.slowbro?.rule,'xy9:walkOffHomer');
+ assert.equal(q.ability?.type,'passive');assert.equal(q.energy?.type,'specialEnergy');assert.equal(q.energy?.provides?.Water,1);assert.equal(q.stadium?.[0],'Stadium');assert.equal(q.slowbro?.rule,'xy9:walkOffHomer');
 });

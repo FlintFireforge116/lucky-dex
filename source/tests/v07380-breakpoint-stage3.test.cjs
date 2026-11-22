@@ -28,7 +28,7 @@ function scene(){
 }
 test('All BREAKpoint Stage 3 mapping effects pass shared DSL validation',()=>{
  for(const effect of [...maps.attacks,...maps.abilities,...maps.trainers])assert.deepEqual(fx.validateEffect(effect),[],JSON.stringify(effect));
- assert.equal(contract.expectedPlayable,122);assert.equal(contract.expectedGated.length,4);
+ assert.equal(contract.expectedPlayable,126);assert.equal(contract.expectedGated.length,0);
  for(const n of contract.stage3Playable)assert.ok(!contract.expectedGated.includes(n),'Newly enabled print stayed gated: '+n);
 });
 test('Kricketune Screech buffs the same Defending Pokémon only on the next attacking turn',()=>{

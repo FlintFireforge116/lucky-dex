@@ -1,14 +1,9 @@
 {
   "set": "xy9",
-  "release": "0.69.380",
+  "release": "0.69.381",
   "printedTotal": 126,
-  "expectedPlayable": 122,
-  "expectedGated": [
-    "67",
-    "102",
-    "109",
-    "113"
-  ],
+  "expectedPlayable": 126,
+  "expectedGated": [],
   "stage1BreakPlayable": [
     "18",
     "47",
@@ -36,7 +31,7 @@
     "92",
     "121"
   ],
-  "notes": "Mechanic-first coverage contract. Update on each batch, audit all generated print identities and complete effects in GitHub CI.",
+  "notes": "Full 126-print XY9 release; mandatory generated source audit, all attack/Ability/Trainer/Energy mappings; final 4 tested with physical-card and KO timing.",
   "stage3Playable": [
     "6",
     "20",
@@ -50,5 +45,11 @@
     "110",
     "49",
     "97"
+  ],
+  "completionPlayable": [
+    "67",
+    "102",
+    "109",
+    "113"
   ]
 }

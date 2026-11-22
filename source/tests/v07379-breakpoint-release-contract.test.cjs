@@ -8,13 +8,14 @@ const contract=require('../scripts/xy9_release_contract.json');
 const read=p=>fs.readFileSync(path.join(root,p),'utf8');
 test('BREAKpoint has one independent release contract across previous and new stage tests',()=>{
  assert.equal(contract.set,'xy9');assert.equal(contract.printedTotal,126);
- assert.equal(contract.expectedPlayable,122);
+ assert.equal(contract.expectedPlayable,126);
  assert.equal(contract.expectedGated.length,contract.printedTotal-contract.expectedPlayable);
  const gated=new Set(contract.expectedGated),newly=new Set(contract.stage2Playable);
  assert.equal(gated.size,contract.expectedGated.length,'Duplicated gated print');
  assert.equal(newly.size,contract.stage2Playable.length,'Duplicated newly playable print');
  for(const id of newly)assert.ok(!gated.has(id),'Outdated gated assertion for newly playable print '+id);
  for(const id of contract.stage3Playable)assert.ok(!gated.has(id),'Stage 3 print still gated: '+id);
+ for(const id of contract.completionPlayable)assert.ok(!gated.has(id),'Completed Stage 4 print still gated: '+id);
  for(const id of contract.stage1BreakPlayable)assert.ok(!gated.has(id),'BREAK inheritance must remain usable: '+id);
  const early=read('tests/v07378-breakpoint-integration.test.cjs');
  const later=read('tests/v07379-breakpoint-continuation.test.cjs');

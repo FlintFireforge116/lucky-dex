@@ -14615,6 +14615,73 @@
   // move between deck and attached Energy rather than granting free Zone units.
   function xy9Rule(effect,ctx){
     const key=String(effect.rule||'').slice(4),ss=own(ctx),slot=ctx.attacker;
+    if(key==='maxElixir'){
+      const bench=(ss.bench||[]).filter(p=>ctx.cardById(p.cardId)?.stage==='Basic');
+      const isBasic=ref=>!!ctx.cardById(ref?.cardId)?.basicEnergy;
+      // Only the top six PHYSICAL cards qualify. When this Classic format
+      // contains no physical Basic Energy anywhere, its separate Energy Zone
+      // substitutes the next six supply entries (not arbitrary future Energy).
+      const top=ss.deck.slice(0,6),physical=top.some(isBasic);
+      const zone=!ss.deck.some(isBasic)&&Array.isArray(ss.energySupply)?ss.energySupply.slice(0,6):[];
+      if(effect.phase==='source'&&ctx.resolvingChoice){
+        const target=(ss.bench||[]).find(p=>p.uid===effect.targetUid);
+        if(!target||ctx.cardById(target.cardId)?.stage!=='Basic')return;
+        if(effect.fromZone){
+          const entry=effect.entries?.[Number(ctx.action?.choiceOption)];
+          if(!entry||ss.energySupply[entry.index]!==entry.type||entry.index>=6)return;
+          ss.energySupply.splice(entry.index,1);ss.nextEnergyType=ss.energySupply[0]||null;
+          target.energy=target.energy||{};target.energy[entry.type]=Number(target.energy[entry.type]||0)+1;
+          ctx.onEnergyAttached?.(target,entry.type,1,{fromDeck:true});
+          ctx.state.log.push({type:'xy9MaxElixir',side:ctx.side,source:'energyZoneTopSix',energyType:entry.type,targetUid:target.uid});
+        }else{
+          const i=Number(ctx.action?.choiceDeckIndex),ref=ss.deck[i];
+          if(!Number.isInteger(i)||i<0||i>=Math.min(6,ss.deck.length)||!isBasic(ref))return;
+          const card=ctx.cardById(ref.cardId),type=card.energyType||card.subtype;
+          ss.deck.splice(i,1);target.energy=target.energy||{};target.energy[type]=Number(target.energy[type]||0)+1;
+          ctx.onEnergyAttached?.(target,type,1,{fromDeck:true,energyCardId:ref.cardId});
+          ctx.state.log.push({type:'xy9MaxElixir',side:ctx.side,source:'physicalTopSix',energyType:type,targetUid:target.uid});
+        }
+        ctx.shuffle?.(ctx.state,ss.deck);return;
+      }
+      if(effect.phase==='target'&&ctx.resolvingChoice){
+        const target=selected(ctx,ss);if(!target||!ss.bench.includes(target)||ctx.cardById(target.cardId)?.stage!=='Basic')return;
+        if(physical)ctx.requestChoice?.({kind:'topDeckCard',side:'self',deckSide:ctx.side,count:Math.min(6,ss.deck.length),filter:{kind:'energy',basicEnergy:true},effect:{...effect,phase:'source',targetUid:target.uid,fromZone:false}});
+        else if(zone.length){const entries=zone.map((type,index)=>({type,index}));ctx.requestChoice?.({kind:'option',side:'self',options:entries.map(e=>'Attach '+e.type+' Energy from Energy Zone position '+(e.index+1)),effect:{...effect,phase:'source',fromZone:true,targetUid:target.uid,entries}});}
+        return;
+      }
+      if(bench.length&&(physical||zone.length))ctx.requestChoice?.({kind:'pokemon',side:'self',selectionSide:ctx.side,includeActive:false,filter:{stage:'Basic'},effect:{...effect,phase:'target'}});
+      else ctx.shuffle?.(ctx.state,ss.deck);
+      return;
+    }
+    if(key==='puzzleOfTime'){
+      const isPuzzle=ref=>ref?.cardId==='xy9-109';
+      const currentUid=ctx.trainerRef?.uid||effect.firstUid||null;
+      const second=ss.hand.find(ref=>isPuzzle(ref)&&ref.uid!==currentUid);
+      if(effect.phase==='mode'&&ctx.resolvingChoice){
+        if(Number(ctx.action?.choiceOption)===1){
+          const i=ss.hand.findIndex(ref=>ref.uid===effect.secondUid&&isPuzzle(ref));if(i<0)return;
+          const ref=ss.hand.splice(i,1)[0];ss.discard.push(ref);
+          ctx.state.log.push({type:'xy9PuzzlePair',side:ctx.side,cardUids:[effect.firstUid,ref.uid]});
+          return xy9Rule({...effect,phase:'recover',remaining:2,excludeUids:[effect.firstUid,ref.uid]}, {...ctx,resolvingChoice:false});
+        }
+        applyEffect({type:'reorderTop',deckSide:'self',count:3},{...ctx,resolvingChoice:false});return;
+      }
+      if(effect.phase==='recover'){
+        const excluded=new Set(effect.excludeUids||[]);
+        if(ctx.resolvingChoice){
+          const i=Number(ctx.action?.choiceDiscardIndex),ref=ss.discard[i];
+          if(!Number.isInteger(i)||!ref||excluded.has(ref.uid))return;
+          ss.hand.push(...ss.discard.splice(i,1));
+          ctx.state.log.push({type:'xy9PuzzleRecovered',side:ctx.side,cardId:ref.cardId,uid:ref.uid});
+        }
+        const remaining=Number(effect.remaining||2)-(ctx.resolvingChoice?1:0);
+        if(remaining>0&&ss.discard.some(r=>!excluded.has(r.uid)))ctx.requestChoice?.({kind:'discardCard',side:'self',excludeUids:[...excluded],effect:{...effect,remaining}});
+        return;
+      }
+      if(second){ctx.requestChoice?.({kind:'option',side:'self',options:['Play one Puzzle of Time — reorder top 3','Play both Puzzles of Time — recover 2 discard cards'],effect:{...effect,phase:'mode',firstUid:currentUid,secondUid:second.uid}});}
+      else applyEffect({type:'reorderTop',deckSide:'self',count:3},{...ctx,resolvingChoice:false});
+      return;
+    }
     if(key==='burstingBalloonCounter'){
       // Apply counters immediately when an opposing attack damages the Active,
       // before knockout and prize-card resolution, even if the holder is KO'd.
@@ -20107,6 +20174,17 @@
       // Inferno Fang's discard happens after calculating its +80 bonus.
       // M Gyarados-EX's opt-in damage is calculated before applying Weakness
       // and before the printed two-card deck discard.
+      if(e.type==='neoRule'&&e.rule==='xy9:watchAndLearn'){
+        const foe=other(ctx),lastTurn=Number(foe.lastAttackTurn);
+        if(lastTurn!==Number(ctx.state.turnNumber)-1||Number(ctx.copyDepth||0)>4){damage=0;return;}
+        const source=ctx.cardById(foe.lastAttackCardId),copied=(source?.attacks||[]).find(a=>a.name===foe.lastAttackName);
+        if(!copied||copied.name==='Watch and Learn'){damage=0;return;}
+        const result=resolveAttack(copied,{...ctx,attack:copied,copyDepth:Number(ctx.copyDepth||0)+1});
+        damage=result.damage;damageTarget=result.damageTarget;damageRules={...damageRules,...result.damageRules};
+        pending.push(...result.pendingEffects);
+        ctx.state.log.push({type:'copyAttack',side:ctx.side,reason:'Watch and Learn',fromCardId:source.id,attack:copied.name});
+        return;
+      }
       if(e.type==='neoRule'&&e.rule==='xy9:crashingBolt'){
         const defender=ctx.cardById(ctx.defender?.cardId);
         if((ctx.defender?.resistanceOverride??defender?.resistance)==='Fighting')damage+=60;return;

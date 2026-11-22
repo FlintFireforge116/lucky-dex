@@ -45,7 +45,7 @@ print(json.dumps([{'id':c['id'],'enabled':c['battleEnabled'],'kind':c['kind']} f
  const result=spawnSync('python3',['-c',program,path.join(root,'scripts'),path.join(root,'scripts/build-xy9.py')],{encoding:'utf8'});
  assert.equal(result.status,0,result.stderr);
  const rows=JSON.parse(result.stdout);
- assert.deepEqual(rows.map(r=>r.enabled),[true,true,true,false]);
+ assert.deepEqual(rows.map(r=>r.enabled),[true,true,true,true]);
  assert.deepEqual(rows.map(r=>r.id),['xy9-18','xy9-20','xy9-100','xy9-113']);
 });
 

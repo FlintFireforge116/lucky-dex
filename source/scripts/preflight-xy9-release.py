@@ -48,8 +48,12 @@ def check_contract():
  assert not missing, 'A Stage 2 verified attack mapping was lost: '+str(sorted(missing))
  assert all(k in v.ABILITIES for k in ['Giant Water Shuriken','Garbotoxin','Purifying Fire']), 'A verified Ability mapping was lost'
  assert all(k in v.TRAINERS for k in ['96','97','98','98a','98b','99','103','104','108','110']), 'Verified Trainer mapping was lost'
- assert not any(k in v.TRAINERS for k in ['102','109']), 'An old unfinished Trainer is now mapped: update contract and verify print'
- assert '113' not in v.ENERGIES, 'Splash Energy is now mapped: update contract and audit new rule'
+ assert all(k in v.TRAINERS for k in ['102','109']), 'Completion Trainers Max Elixir and Puzzle of Time must both be mapped'
+ assert '113' in v.ENERGIES, 'Splash Energy must be mapped and verified in the shared KO pipeline'
+ assert ('67','Watch and Learn') in v.ATK, 'Sudowoodo Watch and Learn must be mapped'
+ assert c['expectedPlayable']==126 and c['expectedGated']==[], 'Completed XY9 must have all 126 prints playable'
+ assert set(c['completionPlayable'])=={'67','102','109','113'}, 'Completion coverage contract changed unexpectedly'
+ assert 'v07381-breakpoint-completion.test.cjs' in gradle, 'APK audit must execute final four outcome tests'
  assert all(key in v.ATK for key in [('6','Screech'),('20','Walk-Off Homer'),('35','Siphon Off'),('59','Energy Present'),('73','Roll Up')]),'Stage 3 effect mapping was lost'
  assert all(key in v.ABILITIES for key in ['Royal Flash','Wind Charm']),'Stage 3 Ability mapping was lost'
  print('XY9 source contract OK: '+str(c['expectedPlayable'])+'/126, '+str(len(c['expectedGated']))+' gated. Versions aligned.')
@@ -61,7 +65,7 @@ def run(args):
 def main():
  p=argparse.ArgumentParser(description=__doc__);p.add_argument('--full',action='store_true',help='Run pinned source generator and all generated XY9 audits, failing on missing catalogue')
  args=p.parse_args();check_contract()
- tests=['tests/v07380-breakpoint-stage3.test.cjs','tests/v07378-breakpoint-integration.test.cjs','tests/v07378-breakpoint-effects.test.cjs','tests/v07379-breakpoint-continuation.test.cjs','tests/v07379-breakpoint-release-contract.test.cjs']
+ tests=['tests/v07381-breakpoint-completion.test.cjs','tests/v07380-breakpoint-stage3.test.cjs','tests/v07378-breakpoint-integration.test.cjs','tests/v07378-breakpoint-effects.test.cjs','tests/v07379-breakpoint-continuation.test.cjs','tests/v07379-breakpoint-release-contract.test.cjs']
  if args.full:
   run([sys.executable,'scripts/build-xy9.py'])
   assert (ROOT/'data/classic/xy9-print-compact.json').exists(), 'Pinned official 126-print source was not generated'

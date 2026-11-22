@@ -60,6 +60,7 @@ ATK={
  ('64','Ascension'):E('chooseEvolutionFromDeck'),
  ('65','Energy Press'):E('energyDamage',source='opponent',amount=10,mode='add'),
  ('66','Silent Fear'):E('placeDamageCounters',target='opponentAll',amount=30),
+ ('67','Watch and Learn'):E('neoRule',rule='xy9:watchAndLearn'),
  ('69','Sand Tomb'):LOCK(),
  ('70','Bite Off'):BONUS(80,{'type':'opponentEx'}),
  ('72','Razor Wind'):E('coinAttackGate',heads=N),
@@ -115,6 +116,8 @@ TRAINERS={
  '97':('Tool',S(E('triggeredEffect',event='damagedByAttack',activeOnly=True,opponentAttackOnly=True,effect=E('neoRule',rule='xy9:burstingBalloonCounter')),E('triggeredEffect',event='endTurn',turn='opponent',effect=E('neoRule',rule='xy9:burstingBalloonExpire')))),
  '99':('Tool',S(E('modifier',stat='maxHp',amount=40,scope='self',duration='whileInPlay',filter={'stage':'Basic'}),E('modifier',stat='attackDamage',amount=10,scope='self',duration='whileInPlay',filter={'stage':'Basic'}))),
  '100':('Item',E('selectTopToHand',count=7,filter={'kind':'pokemon'},optional=True)),
+ '102':('Item',E('neoRule',rule='xy9:maxElixir')),
+ '109':('Item',E('neoRule',rule='xy9:puzzleOfTime')),
  '101':('Tool',N), # Gyarados Spirit Link: existing Mega turn-ending exemption.
  '103':('Item',E('neoRule',rule='xy9:maxPotion')),
  '104':('Supporter',E('neoRule',rule='xy9:mistysDetermination')),
@@ -148,9 +151,9 @@ ABILITIES={
  # Purifying Fire requires specifically BASIC Fire Energy; generic typed-energy
  # predicates also accept Special Energy, so it stays gated for correctness.
 }
-# Splash Energy's KO-return requires exact card-stack ownership. Until that
-# shared hook is verified, the card MUST remain gated.
-ENERGIES={}
+# Splash Energy is restricted to Water Pokemon. The shared KO pipeline
+# returns the knocked-out Pokemon card to hand after discarding attachments.
+ENERGIES={'113':E('specialEnergy',provides={'Water':1},xy9SplashRescue=True)}
 
 def attack(row,a):
  number,name=str(row[0]),a[0]
