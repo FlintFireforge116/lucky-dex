@@ -1517,7 +1517,7 @@
         const enemySide=side==='player'?'opponent':'player';
         if(state.format==='classic'&&/^Holon/.test(data.cardById(activeStadium(state)?.cardId)?.name||'')&&
           pokemonOn(state.sides[enemySide]).some(p=>p.cardId==='ex13-43'&&!effects.abilitiesSuppressed(state,enemySide,p,data.cardById)))return;
-        if(!s.stadiumUsed&&effects.supportsEffect(card.effect)&&(!state.stadium||data.cardById(activeStadium(state)?.cardId).name!==card.name)){
+        if(!s.stadiumUsed&&effects.supportsEffect(card.effect)&&(!state.stadium||data.cardById(state.stadium.cardId)?.name!==card.name)){
           if(card.id==='xy8-145')for(const face of ['selfBench','opponentBench'])actions.push({...base,effectSelection:face});
           else if(card.id==='xy9-110')for(const face of ['selfDown','opponentDown'])actions.push({...base,effectSelection:face});
           else if(card.id==='xy10-94')for(const face of ['selfCP','selfSP'])actions.push({...base,effectSelection:face});

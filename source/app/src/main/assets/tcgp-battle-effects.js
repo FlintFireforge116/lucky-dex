@@ -19644,8 +19644,15 @@
           ctx.state.modifiers=(ctx.state.modifiers||[]).filter(m=>!m.fromAttack);
           for(const board of [ss,foe])for(const p of pokemonOn(board)){
             p.locks=(p.locks||[]).filter(lock=>!lock.fromAttack);
+            // Some generic protections can also be granted by Trainers and
+            // Abilities. Ranger must clear attack-created ones only. Existing
+            // legacy guards without a provenance marker retain their previous
+            // attack-effect treatment for save compatibility.
             for(const key of ['attackGate','koGuard','attackGuard','statusGuard','xy11CounterHead','xy11LockOn','xy11GearSpinnerUntil','xy11SoulBlasterUntil',
-              'neoScreech','neoMeanLook','neoWebLock','neoJawClamp','neoAmnesia','neoScaryFace','neoAttackLock','xy9ScreechUntil'])delete p[key];
+              'neoScreech','neoMeanLook','neoWebLock','neoJawClamp','neoAmnesia','neoScaryFace','neoAttackLock','xy9ScreechUntil']){
+              if(p[key]?.fromAttack===false)continue;
+              delete p[key];
+            }
           }
           delete ctx.state.xy11WickedWindUntil;
           break;
@@ -20804,9 +20811,9 @@
       case 'playFossil':throw new Error('playFossil must resolve as a Trainer placement.');
       case 'rareCandy':throw new Error('rareCandy must resolve as a Trainer evolution.');
       case 'discardSelf':{const slot=ctx.attacker,ss=own(ctx);if(!slot)break;for(let i=slot.stack.length-1;i>=0;i--)ss.discard.push({uid:slot.uid+'-stack-'+i,cardId:slot.stack[i]});for(const tool of toolsOf(slot))ss.discard.push(tool);for(const ref of slot.temporaryTrainers||[])ss.discard.push(ref);for(const ref of slot.specialEnergy||[])ss.discard.push(ref);for(const [type,n] of Object.entries(slot.energy||{}))recordDiscardedEnergy(ss,type,Number(n||0));if(ss.active===slot)ss.active=null;else{const index=ss.bench.indexOf(slot);if(index>=0)ss.bench.splice(index,1);}log({type:'discardPokemon',cardId:slot.cardId});break;}
-      case 'lock':for(const s of affected()){s.locks=s.locks||[];s.locks.push({...effect,expiresTurn:effect.duration==='whileInPlay'?null:ctx.state.turnNumber+(effect.duration==='nextOwnTurn'?2:1)});}break;
+      case 'lock':for(const s of affected()){s.locks=s.locks||[];s.locks.push({...effect,fromAttack:!!ctx.isAttack,expiresTurn:effect.duration==='whileInPlay'?null:ctx.state.turnNumber+(effect.duration==='nextOwnTurn'?2:1)});}break;
       case 'koGuard':for(const s of affected())s.koGuard={...effect,fromAttack:!!ctx.isAttack,expiresTurn:effect.duration==='opponentTurn'?ctx.state.turnNumber+1:null};break;
-      case 'preventDamage':for(const s of affected())s.attackGuard={...effect,expiresTurn:effect.duration==='opponentTurn'?ctx.state.turnNumber+1:effect.duration==='nextOwnTurn'?ctx.state.turnNumber+2:null};break;
+      case 'preventDamage':for(const s of affected())s.attackGuard={...effect,fromAttack:!!ctx.isAttack,expiresTurn:effect.duration==='opponentTurn'?ctx.state.turnNumber+1:effect.duration==='nextOwnTurn'?ctx.state.turnNumber+2:null};break;
       case 'selectedDamage':case 'selectedEnergyDamage':throw new Error(`${effect.type} must resolve as part of an attack.`);
       case 'removeStatus':for(const s of affected())clearConditions(s);break;
       case 'modifier':{const list=effect.scope==='both'||effect.scope==='team'||effect.scope==='active'||effect.scope==='opponentActive'?[ctx.attacker]:affected();ctx.state.modifiers=ctx.state.modifiers||[];for(const s of list)ctx.state.modifiers.push({...effect,ownerSide:effect.scope==='opponentActive'?ctx.foeSide:(own(ctx).active===s||own(ctx).bench.includes(s)?ctx.side:ctx.foeSide),sourceSide:ctx.side,sourceUid:ctx.attacker&&ctx.attacker.uid,fromAttack:!!ctx.isAttack,targetUid:effect.scope==='both'||effect.scope==='team'||effect.scope==='active'||effect.scope==='opponentActive'?null:s.uid,startsTurn:effect.duration==='nextOwnTurn'?ctx.state.turnNumber+2:null,expiresTurn:effect.duration==='turn'?ctx.state.turnNumber:effect.duration==='opponentTurn'?ctx.state.turnNumber+1:effect.duration==='nextOwnTurn'?ctx.state.turnNumber+2:null});break;}
@@ -24641,7 +24648,26 @@
           .map(ref=>({token:p.uid+':special:'+ref.uid,label:(ctx.cardById(p.cardId)?.name||p.cardId)+' '+(ctx.cardById(ref.cardId)?.name||'Special Energy')}))]);
       // Print-specific engine respects the choice of each attached card.
       const max=Math.min(12,sources.length),result=[{effectSelection:'',choiceLabel:'Discard no Darkness Energy'}];
-      for(let count=1;count<=max;count++)result.push({effectSelection:sources.slice(0,count).map(x=>x.token).join(','),choiceLabel:'Discard '+count+' Darkness Energy'});
+      // All subsets are practical with up to seven attached Energy cards.
+      // With larger counts, include each physical card, pairs, and the
+      // original count-based group choices to avoid a huge mobile menu.
+      if(sources.length<=7){
+        const combos=[];
+        for(let mask=1;mask<(1<<sources.length);mask++){
+          const selected=sources.filter((_,i)=>!!(mask&(1<<i)));
+          combos.push(selected);
+        }
+        combos.sort((a,b)=>a.length-b.length||a.map(x=>x.token).join().localeCompare(b.map(x=>x.token).join()));
+        for(const selected of combos)result.push({effectSelection:selected.map(x=>x.token).join(','),
+          choiceLabel:'Discard '+selected.length+' Darkness Energy · '+selected.map(x=>x.label).join(' + ')});
+      }else{
+        const seen=new Set(['']);const offer=selected=>{const code=selected.map(x=>x.token).join(',');if(!seen.has(code)){
+          seen.add(code);result.push({effectSelection:code,choiceLabel:'Discard '+selected.length+' Darkness Energy · '+selected.map(x=>x.label).join(' + ')});
+        }};
+        for(const src of sources)offer([src]);
+        for(let i=0;i<sources.length;i++)for(let j=i+1;j<sources.length;j++)offer([sources[i],sources[j]]);
+        for(let count=1;count<=max;count++)offer(sources.slice(0,count));
+      }
       return result;
     }
     if(effect.type==='chooseDiscardForBonus'){const items=effect.zone==='bench'?(own(ctx).bench||[]).filter(s=>s&&matchesFilter(ctx.cardById(s.cardId),effect.filter,s)):(own(ctx).hand||[]).filter(r=>matchesFilter(ctx.cardById(r.cardId),effect.filter,r));const max=Math.min(Number(effect.max||items.length),items.length),out=[];for(let mask=0;mask<(1<<items.length);mask++){const picked=[];for(let i=0;i<items.length;i++)if(mask&(1<<i))picked.push(items[i].uid);if(picked.length<=max)out.push({effectSelection:picked.join(','),choiceLabel:`Discard ${picked.length}`});}return out;}

@@ -1,8 +1,8 @@
 {
   "set": "xy11",
   "name": "Steam Siege",
-  "release": "0.69.394",
-  "stage": "stage4-complete",
+  "release": "0.69.395",
+  "stage": "independent-audit",
   "printedTotal": 116,
   "attackPrints": 161,
   "abilities": 18,

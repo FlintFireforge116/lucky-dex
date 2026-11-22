@@ -8,8 +8,8 @@ android {
         applicationId 'com.example.luckydex'
         minSdk 26
         targetSdk 35
-        versionCode 7394
-        versionName '0.69.394'
+        versionCode 7395
+        versionName '0.69.395'
     }
 
     signingConfigs {
@@ -922,7 +922,7 @@ tasks.matching { it.name == 'preBuild' || (it.name.startsWith('merge') && it.nam
     dependsOn tasks.named('auditXY10ForApk')
 }
 
-// v0.69.394 — Steam Siege XY11 first-pass: pinned 116-print catalogue.
+// v0.69.395 — Steam Siege XY11 completed independent gameplay audit.
 // Source preflight runs before network generation; strict generated audit
 // runs before Android merges assets. Never ship a stale stub as the deck.
 tasks.register('preflightXY11ContractForApk', Exec) {
@@ -938,7 +938,7 @@ tasks.register('generateXY11ForApk', Exec) {
 tasks.register('auditXY11ForApk', Exec) {
     dependsOn tasks.named('generateXY11ForApk')
     workingDir rootProject.projectDir
-    commandLine 'node', '--test', 'tests/v07390-steam-siege-integration.test.cjs', 'tests/v07391-steam-siege-audit.test.cjs', 'tests/v07392-steam-siege-batch2.test.cjs', 'tests/v07393-steam-siege-abilities.test.cjs', 'tests/v07394-steam-siege-completion.test.cjs'
+    commandLine 'node', '--test', 'tests/v07390-steam-siege-integration.test.cjs', 'tests/v07391-steam-siege-audit.test.cjs', 'tests/v07392-steam-siege-batch2.test.cjs', 'tests/v07393-steam-siege-abilities.test.cjs', 'tests/v07394-steam-siege-completion.test.cjs', 'tests/v07395-steam-siege-independent-audit.test.cjs'
 }
 tasks.matching { it.name == 'preBuild' || (it.name.startsWith('merge') && it.name.endsWith('Assets')) }.configureEach {
     dependsOn tasks.named('auditXY11ForApk')

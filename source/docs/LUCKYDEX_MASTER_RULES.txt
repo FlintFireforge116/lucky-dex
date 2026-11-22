@@ -4941,3 +4941,30 @@ Steam Siege's successful v0.69.392b CI baseline fixes all-set sparse-pool deck b
 
 [XY11 v0.69.394 — STEAM SIEGE COMPLETE, PRE-PUSH MANDATORY]
 Steam Siege full gameplay mapping reaches all 116 pinned prints; previously gated mechanics implemented with engine integration, not unlocked by replacing them with placeholders. Maintain the source pin, printed attack cost symbols, seven inherited BREAK rules, physical Energy versus hybrid Energy Zone, and alt-art duplicates. Treat Greedy Dice (face-down Prize only), Talonflame Gale Wings (opening Active only), Meowth Stall (first turn going second only), Klefki Wonder Lock (turn-limited Tool), Pokémon Ranger (remove ongoing attack effects), Infernape Flare Up (requires 10 discarded Fire Energy), and Dark Burn (selected Darkness attachments) as distinct regression cases. Never auto-fill generated decks with Greedy Dice; cap unrelated Ninja Boy and Ranger tactical Supporter packages while preserving explicitly selected copies. Every Steam Siege patch MUST run `python3 source/scripts/check-gradle-source.py --self-test`, `cd source && python3 scripts/preflight-xy11-release.py --full && python3 scripts/preflight-xy10-release.py --full`, including 116-print generation and the exact CI all-set 30-card deck-quality gate. The Gradle APK gate MUST include v07394 completion tests and existing v07333 cross-set deck-quality tests. A local green gate is not proof of GitHub APK success; inspect the actual workflow. See `docs/STEAM_SIEGE_XY11_COMPLETION_v0.69.394.md` for implementation notes and cross-era audit risks.
+
+
+[XY11 v0.69.395 — STEAM SIEGE INDEPENDENT AUDIT, PRE-PUSH MANDATORY]
+1. Source metadata (116 prints, 161 attacks, 18 Abilities, seven BREAK, 12
+   dual-type) must be independently cross-checked against the pinned print
+   catalogue. Compare printed attack names, costs, and numeric base values;
+   XY runtime costs may be joined strings whereas generated costs are arrays.
+2. Pokémon Ranger must remove actual ATTACK-created retreat/attack locks
+   and protections, preserving restrictions or guards from unrelated sources.
+   Tag generic lock/preventDamage effects with `fromAttack` during resolution;
+   never rely on untagged locks that Ranger silently ignores.
+3. Shiftry Wicked Wind blanks the *effects* of Stadiums and Tools without
+   removing their physical cards. A player may still replace a suppressed
+   Stadium with a DIFFERENT named Stadium. Check the physical current
+   Stadium for the same-name play restriction: do not access the suppressed
+   activeStadium value or crash legalActions.
+4. Hydreigon Dark Burn must permit choosing the actual physical Darkness
+   attached Energy, not just an arbitrary fixed prefix that forces unwanted
+   Basic Energy discards ahead of Special Energy. Offer subsets for ordinary
+   attachment counts. For very dense boards an explicit UI multiselect is a
+   future upgrade and must not be misrepresented as fully complete.
+5. Require `tests/v07395-steam-siege-independent-audit.test.cjs` in both
+   `scripts/preflight-xy11-release.py --full` and `:app:auditXY11ForApk`,
+   AND run v07333 classic deck-quality plus prior XY10 and global Energy
+   regressions. Never skip a failing check to make CI green.
+6. After local tests, confirm the real GitHub Actions APK build separately.
+   Local source preflight never proves that an APK compiled successfully.
