@@ -1,8 +1,8 @@
 LUCKYDEX — MASTER PROJECT RULES AND DEVELOPMENT CONTRACT
 =========================================================
-Document version: 2.55
+Document version: 2.56
 Compiled: 22 November 2026
-Current inspected source: v0.69.374 XY8 BREAKthrough with v0.69.374 build-repair and LV.X-based BREAK reuse patch, based on v0.69.373 Ancient Origins completion. Repaired patch still requires GitHub APK verification. Source-relative ZIP extraction into ~/lucky-dex/source/.
+Current inspected source: v0.69.374 XY8 BREAKthrough with initial UI/Gradle version correction, LV.X-based BREAK reuse and subsequent pinned-catalogue audit-order repair, based on v0.69.373 Ancient Origins completion. Latest repair still requires GitHub APK verification. Source-relative ZIP extraction into ~/lucky-dex/source/.
 Recommended repository location: ~/lucky-dex/source/docs/LUCKYDEX_MASTER_RULES.txt
 Project: LuckyDex — Android application/PWA, managed with Termux and GitHub
 
@@ -3906,13 +3906,32 @@ practice of implementing an entire set in nine or ten short stages.
   remains gated pending its printed Bone Revenge scaling, not its BREAK stage.
   CI-generated coverage remains authoritative, and a local pass is not CI.
 
-  Until inheritance, suppression and zone/knockout rules are tested, all six
-  BREAK cards remain visible but NOT battleEnabled. This is not 'complete'.
+  BREAK inherited stats/attacks/Abilities and Bench evolution have focused
+  local tests. Five BREAK prints can be enabled when their individual effect
+  mappings are valid. Marowak BREAK Bone Revenge remains gated; do not revert
+  to a blanket six-card gate or claim that all six are complete.
 - Parallel City (oriented two-sided Stadium), Burning Energy (return to Fire
   after being discarded by its own attack) and other novel persistent hooks
   require separate truthful verification. Avoid fake 'FULL' flags.
 - User-approved goal: finish as many prints per pass as safely possible, and
   avoid nine/ten fragmented 'stage' patches for re-used effects.
+
+[LOCKED] CI GENERATED-CATALOGUE ORDER / CROSS-SET PREFLIGHT RULE (2026-11-22):
+- Run #664 failed at :app:auditV07333ClassicDeckQualityForApk. The older
+  `tests/v07333-classic-deck-quality.test.cjs` expected a populated `xy8`
+  catalogue before :app:generateXY8ForApk had executed. The source intentionally
+  contains a zero-card XY8 stub; its 165 prints are generated during GitHub CI.
+- When adding a pinned-generator set to the builder SET_IDS, update the early
+  deck-quality test's `emptyLocalCatalogues` exclusions (now includes xy8).
+  Do NOT remove the set from normal player/CPU deck building or weaken
+  the pinned post-generation set-specific audit. The Gradle XY8 audit MUST
+  depend on generateXY8ForApk and execute before APK asset packaging.
+- Cross-check every older CI preflight that enumerates all set IDs or makes
+  assumptions about already-generated catalogues. Run those preflights locally
+  against the exact source state BEFORE providing a ZIP; review the Gradle
+  preBuild task dependencies. A green isolated feature suite does NOT prove
+  the full APK build. Future chats must resolve the exact latest CI failure
+  and avoid changing unrelated mechanics when the failure is integration.
 
 TERMUX v0.69.374 (source-relative):
 cd ~/lucky-dex
