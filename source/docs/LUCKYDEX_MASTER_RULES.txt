@@ -5079,3 +5079,11 @@ Steam Siege full gameplay mapping reaches all 116 pinned prints; previously gate
 [CHECK] A passing local test cannot certify every cross-era combination; inspect the battle sequencing for multi-target choices, attached special Energy, ability suppression and KO triggers at independent audit.
 [CURRENT] v0.69.400 completion overlay and tests are the last local working source until an actual Android GitHub Actions success is confirmed.
 === END SM1 v0.69.400 COMPLETION ===
+
+
+=== v0.69.400b SUN & MOON GX / LEGACY AUDIT HOOK COMPATIBILITY ===
+[BUG] GitHub run #695 failed :app:auditXY8ForApk because tests/v07376-breakthrough-complete.test.cjs expected the literal source-code suffix "'xy8-152'].includes(card.id)". SM1 adds 'sm1-137' to the SAME valid Rainbow attachment damage handler; the older source-text assertion was stale, not a battle mechanic failure.
+[LOCKED] Test exact behavioural semantics for all affected generations, not arbitrary source formatting or the final ID in an expanding list. In particular verify XY8 Rainbow Energy and SM1 Rainbow Energy attach from a physical card, provide ONE flexible Energy unit and put 10 damage on the attached Pokemon. Do not convert either card into a virtual Energy Zone unit.
+[LOCKED] The mandatory SM1 pre-push full preflight MUST run the older tests/v07376-breakthrough-complete.test.cjs in addition to SM1 completion, cross-set deck quality, XY12, XY11 and XY10 preflights. New expansion patches must not invalidate earlier exact-code-source assertions merely by adding a valid reprint.
+[CURRENT] This is a test-only compatibility hotfix. Retain app versionName 0.69.400 and versionCode 7400; suffix b labels the ZIP, not a second APK version.
+=== END SM1 v0.69.400b LEGACY AUDIT HOOK COMPATIBILITY ===

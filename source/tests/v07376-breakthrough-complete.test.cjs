@@ -102,7 +102,13 @@ test('Physical Energy, Stadium, Tool and pending attack completion hooks are pre
  const src=fs.readFileSync(path.join(assets,'tcgp-battle-core.js'),'utf8');
  assert.match(src,/xy8BurningEnergyReturn/);assert.match(src,/card\.id==='xy8-151'&&!mon\?\.types\?\.includes\('Fire'\)/);
  assert.match(src,/xy8DamageSide/);assert.match(src,/xy8BenchSide/);
- assert.match(src,/card\.id==='xy8-141'&&Number/);assert.ok(src.includes("'xy8-152'].includes(card.id)"));
+ assert.match(src,/card\.id==='xy8-141'&&Number/);
+ // The shared hook must accept XY8 and newer Rainbow Energy printings.
+ // Do not lock this test to the final ID in a string: future sets will extend it.
+ const rainbowHook=src.match(/if\(\[([^\]\n]+)\]\.includes\(card\.id\)\)\{\s*target\.damage=Number\(target\.damage\|\|0\)\+10;/);
+ assert.ok(rainbowHook,'Rainbow Energy hand attachment must add 10 damage');
+ assert.match(rainbowHook[1],/'xy8-152'/);
+ assert.match(rainbowHook[1],/'sm1-137'/);
  assert.match(src,/p\.excludeUids\|\|\[\]\)\.includes\(slot\.uid\)/);
 });
 
@@ -114,6 +120,7 @@ test('Actual core resolves Rainbow damage, Fire-only Burning Energy and Heavy Bo
   water:{id:'water',name:'Water Test',kind:'pokemon',stage:'Basic',battleEnabled:true,hp:130,types:['Water'],retreat:3,attacks:[{name:'Poke',cost:'C',damage:10,effect:{type:'noop'}}]},
   'xy8-151':{id:'xy8-151',kind:'energy',specialEnergy:true,effect:{type:'specialEnergy',provides:{Fire:1},attachOnlyTypes:['Fire']}},
   'xy8-152':{id:'xy8-152',kind:'energy',specialEnergy:true,effect:{type:'specialEnergy',provides:{Miracle:1}}},
+  'sm1-137':{id:'sm1-137',kind:'energy',specialEnergy:true,effect:{type:'specialEnergy',provides:{Miracle:1}}},
   'xy8-141':{id:'xy8-141',name:'Heavy Boots',kind:'trainer',trainerType:'Tool',battleEnabled:true,effect:{type:'modifier',stat:'maxHp',amount:20,scope:'self',duration:'whileInPlay',condition:{type:'selfRetreatCostAtLeast',amount:3}}}
  };
  data.cardById=id=>fake[id]||orig(id);
@@ -126,6 +133,12 @@ test('Actual core resolves Rainbow damage, Fire-only Burning Energy and Heavy Bo
   let s=battle('fire',['xy8-152']),action=core.legalActions(s,'player').find(a=>a.type==='attachSpecial');assert.ok(action);
   core.applyAction(s,'player',action);assert.equal(s.sides.player.active.damage,10);
   assert.equal(core.effectiveEnergy(s,'player',s.sides.player.active).Miracle,1);
+  // Sun & Moon Rainbow Energy uses the same physical-card hook; neither
+  // energy should be mistaken for a generated Energy Zone unit.
+  s=battle('fire',['sm1-137']);action=core.legalActions(s,'player').find(a=>a.type==='attachSpecial');assert.ok(action);
+  core.applyAction(s,'player',action);assert.equal(s.sides.player.active.damage,10);
+  assert.equal(core.effectiveEnergy(s,'player',s.sides.player.active).Miracle,1);
+  assert.deepEqual(s.sides.player.active.specialEnergy.map(x=>x.cardId),['sm1-137']);
   s=battle('water',['xy8-151']);assert.ok(!core.legalActions(s,'player').some(a=>a.type==='attachSpecial'),'Burning cannot attach to Water');
   s=battle('fire',['xy8-141']);s.sides.player.active.conditions.confusion=true;
   action=core.legalActions(s,'player').find(a=>a.type==='trainer'&&a.target==='active');assert.ok(action);
