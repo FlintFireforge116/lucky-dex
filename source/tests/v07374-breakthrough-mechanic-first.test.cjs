@@ -9,6 +9,9 @@ const cpu=require(path.join(assets,'tcg-classic-opponents.js'));
 const xy8=require(path.join(assets,'tcg-classic-breakthrough.js'));
 const effects=require(path.join(assets,'tcgp-battle-effects.js'));
 const generated=fs.existsSync(path.join(root,'data/classic/xy8-print-compact.json'));
+// Shared Classic registration canonicalises printed Energy cost arrays to strings.
+// Audit both representations because the generator emits arrays before registration.
+function printedEnergyCodes(cost){assert.ok(Array.isArray(cost)||typeof cost==='string','printed Energy cost must be an array or string');return Array.isArray(cost)?cost.join(''):cost;}
 function runPy(src){const r=spawnSync('python3',['-c',src,path.join(root,'scripts')],{encoding:'utf8',maxBuffer:10*1024*1024});assert.equal(r.status,0,r.stderr);return JSON.parse(r.stdout);}
 test('XY8 registration: human, CPU, deck editor, collection and script order',()=>{
  assert.equal(xy8.SET.id,'xy8');assert.equal(xy8.SET.name,'BREAKthrough');
@@ -53,6 +56,11 @@ print(json.dumps(m.generate(rows)))`);
  assert.equal(by['xy8-33'].abilities[0].name,'Abyssal Hand');
  assert.deepEqual(effects.validateEffect(by['xy8-33'].abilities[0].effect),[]);
 });
+test('XY8 audit accepts canonical string and pre-registration array attack costs',()=>{
+ assert.equal(printedEnergyCodes(['P','C','C']),'PCC');
+ assert.equal(printedEnergyCodes('PCC'),'PCC');
+ assert.throws(()=>printedEnergyCodes(123),/printed Energy cost/);
+});
 test('Pinned XY8 runtime retains complete official catalogue and no fake enabled descriptors',{skip:!generated},()=>{
  const rows=JSON.parse(fs.readFileSync(path.join(root,'data/classic/xy8-print-compact.json'),'utf8'));
  const ids=[...Array.from({length:146},(_,i)=>String(i+1)),'146a',...Array.from({length:18},(_,i)=>String(i+147))];
@@ -63,7 +71,7 @@ test('Pinned XY8 runtime retains complete official catalogue and no fake enabled
  for(let i=0;i<rows.length;i++){
    const row=rows[i],card=xy8.CARDS[i];
    assert.equal(card.id,'xy8-'+row[0]);assert.equal(card.name,row[1]);assert.equal(classic.cardById(card.id),card);
-   assert.deepEqual(card.attacks?.map(a=>a.cost.join(''))||[],row[7].map(a=>a[1].join('')));
+   assert.deepEqual(card.attacks?.map(a=>printedEnergyCodes(a.cost))||[],row[7].map(a=>a[1].join('')));
    assert.equal(card.battleEnabled,card.deckEligible);
    if(card.battleEnabled){assert.equal(card.support.status,'FULL');for(const a of card.attacks||[])assert.deepEqual(effects.validateEffect(a.effect),[],card.id+':'+a.name);if(card.kind==='trainer')assert.deepEqual(effects.validateEffect(card.effect),[],card.id)}
  }

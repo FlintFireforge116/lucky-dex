@@ -1,8 +1,8 @@
 LUCKYDEX — MASTER PROJECT RULES AND DEVELOPMENT CONTRACT
 =========================================================
-Document version: 2.56
+Document version: 2.57
 Compiled: 22 November 2026
-Current inspected source: v0.69.374 XY8 BREAKthrough with initial UI/Gradle version correction, LV.X-based BREAK reuse and subsequent pinned-catalogue audit-order repair, based on v0.69.373 Ancient Origins completion. Latest repair still requires GitHub APK verification. Source-relative ZIP extraction into ~/lucky-dex/source/.
+Current inspected source: v0.69.374 XY8 BREAKthrough with version/UI, LV.X-based BREAK reuse, early catalogue order fixes, and the post-generation XY8 audit printed-Energy-cost compatibility repair, based on v0.69.373 Ancient Origins. GitHub APK build after this latest repair remains unverified. Source-relative ZIP extraction into ~/lucky-dex/source/.
 Recommended repository location: ~/lucky-dex/source/docs/LUCKYDEX_MASTER_RULES.txt
 Project: LuckyDex — Android application/PWA, managed with Termux and GitHub
 
@@ -3932,6 +3932,27 @@ practice of implementing an entire set in nine or ten short stages.
   preBuild task dependencies. A green isolated feature suite does NOT prove
   the full APK build. Future chats must resolve the exact latest CI failure
   and avoid changing unrelated mechanics when the failure is integration.
+
+[LOCKED] CI POST-GENERATION CARD AUDIT / ENERGY COST TYPE CONTRACT (2026-11-22, v2.57):
+- GitHub run #665 (2026-11-22) failed in :app:auditXY8ForApk, after successfully
+  generating 165 pinned XY8 prints, with TypeError: a.cost.join is not a
+  function at tests/v07374-breakthrough-mechanic-first.test.cjs.
+- The shared Classic registry tcg-classic-battle-data.js normalises Energy
+  cost arrays, e.g. ['P','C'], to the canonical string 'PC'. Generator source
+  rows retain arrays. Every card-identity/printed-cost audit must support BOTH
+  forms rather than assuming a `.join()` method exists on runtime card.cost.
+- Do not weaken printed attack validation: canonicalise both sides to the
+  exact printed Energy code sequence and assert equality for all attacks.
+  Add a regression that checks both source-array and runtime-string costs.
+- If a set is generated only during CI, a local green suite that SKIPS the
+  generated-catalogue test is incomplete. Validate post-generation checks
+  against a generated catalogue when possible, or explicitly disclose the
+  gap. Mandatory Gradle auditXY8ForApk must continue to follow generation.
+- Before delivery check for other type mismatches between generated JSON
+  and shared runtime registration. Keep source-level version 0.69.374; do
+  not needlessly bump the Android build number to fix CI-only tests.
+- CI success must be verified from GitHub after the patch is pushed; local
+  node tests are NOT a confirmed APK build.
 
 TERMUX v0.69.374 (source-relative):
 cd ~/lucky-dex
