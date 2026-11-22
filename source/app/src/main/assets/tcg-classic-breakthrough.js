@@ -1,0 +1,2 @@
+/* XY8 temporary local stub; replaced by generateXY8ForApk in every APK build. */
+(function(root,factory){const api=factory();if(typeof module==='object'&&module.exports)module.exports=api;if(root)root.LuckyDexClassicTCGXY8=api;})(typeof globalThis!=='undefined'?globalThis:this,function(){'use strict';const SET=Object.freeze({id:'xy8',name:'BREAKthrough',series:'XY',releaseDate:'2015-11-04',cardCount:164,printedTotal:165});const CARDS=Object.freeze([]);return{SET,CARDS,cardById:()=>null,coverage:()=>({total:0,printed:0,battleEnabled:0,gated:[],pendingGeneration:true})};});

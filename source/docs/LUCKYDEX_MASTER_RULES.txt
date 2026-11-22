@@ -1,8 +1,8 @@
 LUCKYDEX — MASTER PROJECT RULES AND DEVELOPMENT CONTRACT
 =========================================================
-Document version: 2.53
-Compiled: 21 November 2026
-Current inspected source: v0.69.364 Ancient Origins Stage 2, based on verified v0.69.363 Stage 1 (GitHub run #652 success); v0.69.364 passes local regression but awaits GitHub APK verification. Source-relative ZIP extraction into ~/lucky-dex/source/.
+Document version: 2.54
+Compiled: 22 November 2026
+Current inspected source: v0.69.374 XY8 BREAKthrough initial mechanic-first implementation, based on the v0.69.373 Ancient Origins completion patch. XY8 local changes require GitHub APK verification. Source-relative ZIP extraction into ~/lucky-dex/source/.
 Recommended repository location: ~/lucky-dex/source/docs/LUCKYDEX_MASTER_RULES.txt
 Project: LuckyDex — Android application/PWA, managed with Termux and GitHub
 
@@ -3814,5 +3814,97 @@ cd ~/lucky-dex
 unzip -o /sdcard/Download/LuckyDex_patch_v0.69.373_ANCIENT_ORIGINS_COMPLETE.zip -d source
 git add source
 git commit -m "LuckyDex v0.69.373 Ancient Origins complete"
+git push origin main
+===============================================================================
+
+===============================================================================
+LUCKYDEX v0.69.374 — MECHANIC-FIRST SET DELIVERY CONTRACT [LOCKED]
+===============================================================================
+DATE: 22 November 2026. USER-APPROVED WORKFLOW CHANGE. This section is the
+canonical workflow for future expansions and supersedes the prior habitual
+practice of implementing an entire set in nine or ten short stages.
+
+[LOCKED] MECHANIC-FIRST SET DELIVERY CONTRACT
+1. BEFORE CODING: inspect the latest supplied source and master TXT; obtain
+   the complete next official set print list and card text from a version-pinned
+   authoritative source. Keep unique printed IDs including alternates, EX,
+   secret rares, Trainer, Special Energy and unusual evolution forms.
+2. Produce a WHOLE-SET EFFECT INVENTORY, not a batch-by-batch card list:
+   (A) direct existing descriptor/engine handler; (B) a composition of
+   existing reusable descriptors; (C) same mechanic with different typed
+   parameters; (D) genuinely new shared engine mechanic; (E) card-specific
+   exception requiring dedicated logic. Count each category before changes.
+3. FIRST IMPLEMENT A/B/C for the entire expansion, reusing existing handlers
+   with the correct target, timing, randomness, provenance, damage formula,
+   coin outcomes, optional choice, resource zone and ownership. Compose shared
+   effect primitives rather than duplicating every card's code.
+4. Implement genuine D mechanics ONCE as shared engine support; check whether
+   later cards/sets can reuse it. Only add dedicated E handlers where printed
+   rules cannot be represented without compromising correctness. Avoid an
+   engine rewrite or changes to unrelated minigames.
+5. NEVER substitute noop, approximated damage, fabricated random choices or
+   a card with a similar name for unsupported printed text. Do NOT enable a
+   card with unsupported printed effects. A mapped attack alone is NOT enough
+   to enable a print with an unimplemented Ability, evolution, Stadium, Tool
+   passive, Special Energy triggered effect or game-state interaction.
+6. Give human and CPU identical legal options and AI follow-through: target
+   selection, Supporter choice, coin flip display, Energy source/destination,
+   discard-zone physical identity, damage/status, cleanup, Prize timing.
+   Rules stay compatible with existing LuckyDex Classic 30-card / Energy-Zone
+   adaptations. The Zone is NOT a substitute for printed real Special Energy.
+7. Aim for ONE substantial set implementation patch; follow with ONE
+   comprehensive audit/correction patch when needed. Don't artificially split
+   10 nearly identical implementations across 10 user turns. Genuine new
+   engine mechanics justify a separate, clearly scoped pass if necessary.
+8. For each set, permanently add a print-coverage ledger and automated tests
+   for every source print, attack, Ability, Trainer, Tool, Stadium, Special
+   Energy and named mechanics. Assert no broken old behaviour on earlier
+   sets, standard card/energy deck-building quality, genuine evolution lines,
+   CPU legality, and target/choice timing. Build on CI, fix compile failures
+   before declaring APK success; local tests ≠ GitHub success ≠ phone test.
+9. The next assistant must report EXACT numbers from the generated catalogue:
+   printed total, battleEnabled, gated and reasons; never claim 'complete'
+   unless there are zero gated prints AND tests passed. Distinguish collection
+   visibility, playable battle support, local audit and actual APK CI.
+10. Delivery contract: ship a source-relative changed-files-only ZIP, explain
+    extraction path, provide a working Termux snippet (cd ~/lucky-dex;
+    unzip -o /sdcard/Download/<PATCH>.zip -d source; git add source;
+    git commit -m "..."; git push origin main). No Codex unless requested.
+11. For mechanic-first handoff between chats: the current set's verifier lives
+    at source/scripts/<set>_verified.py, catalogue generator at
+    source/scripts/build-<set>.py, print ledger at source/docs/<SET>_BUILD_COVERAGE.json
+    after build, and tests under source/tests/. Read these before work.
+12. Do not treat old release notes marked [CURRENT] as more authoritative
+    than this new [LOCKED] workflow. Preserve all historical audits as evidence.
+
+[CURRENT] v0.69.374 — XY8 BREAKthrough initial mechanic-first integration:
+- Next official expansion: 165 separate prints (1..164 plus 146a), 220 printed
+  attacks, 19 Abilities, six Pokémon BREAK, 21 Trainer and two Special Energy.
+- The full pinned catalogue is generated from immutable upstream blob SHA
+  951db4c259e70ca2fbd4daa2705e797af19fa25c by scripts/build-xy8.py
+  during Gradle builds; local source includes a generation-only stub.
+- Existing reusable moves and conservative per-print mappings are in
+  scripts/xy8_verified.py. Unmapped effects are gated rather than bluffed.
+- Verified official-catalogue static projection for this patch: 108 playable,
+  57 gated prints. The authoritative counts come from
+  docs/XY8_BUILD_COVERAGE.json generated on GitHub; local catalogue is a stub.
+- Group remaining work by the shared mechanic, following
+  docs/XY8_GATED_HANDOFF_v0.69.374.md; do not return to one-card patches.
+- Pokémon BREAK must inherit their previous Evolution's attacks, Abilities,
+  Weakness, Resistance and Retreat Cost while taking the new HP and attack;
+  this is a NEW shared core requirement, not equivalent to regular Stage 2.
+  Until inheritance, suppression and zone/knockout rules are tested, all six
+  BREAK cards remain visible but NOT battleEnabled. This is not 'complete'.
+- Parallel City (oriented two-sided Stadium), Burning Energy (return to Fire
+  after being discarded by its own attack) and other novel persistent hooks
+  require separate truthful verification. Avoid fake 'FULL' flags.
+- User-approved goal: finish as many prints per pass as safely possible, and
+  avoid nine/ten fragmented 'stage' patches for re-used effects.
+
+TERMUX v0.69.374 (source-relative):
+cd ~/lucky-dex
+unzip -o /sdcard/Download/LuckyDex_patch_v0.69.374_BREAKTHROUGH_MECHANIC_FIRST.zip -d source
+git add source
+git commit -m "LuckyDex v0.69.374 BREAKthrough mechanic-first integration"
 git push origin main
 ===============================================================================

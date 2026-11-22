@@ -8,8 +8,8 @@ android {
         applicationId 'com.example.luckydex'
         minSdk 26
         targetSdk 35
-        versionCode 7373
-        versionName '0.69.373'
+        versionCode 7374
+        versionName '0.69.374'
     }
 
     signingConfigs {
@@ -860,4 +860,20 @@ tasks.register('auditXY7ForApk', Exec) {
 }
 tasks.matching { it.name == 'preBuild' || (it.name.startsWith('merge') && it.name.endsWith('Assets')) }.configureEach {
     dependsOn tasks.named('auditXY7ForApk')
+}
+
+// v0.69.374 — XY8 BREAKthrough mechanistic reuse; full 165-print pinned
+// catalogue. Unimplemented mechanics are strictly gated, never silently noops.
+tasks.register('generateXY8ForApk', Exec) {
+    dependsOn tasks.named('auditXY7ForApk')
+    workingDir rootProject.projectDir
+    commandLine (System.getenv('LUCKYDEX_PYTHON') ?: 'python3'), 'scripts/build-xy8.py'
+}
+tasks.register('auditXY8ForApk', Exec) {
+    dependsOn tasks.named('generateXY8ForApk')
+    workingDir rootProject.projectDir
+    commandLine 'node', '--test', 'tests/v07374-breakthrough-mechanic-first.test.cjs'
+}
+tasks.matching { it.name == 'preBuild' || (it.name.startsWith('merge') && it.name.endsWith('Assets')) }.configureEach {
+    dependsOn tasks.named('auditXY8ForApk')
 }
