@@ -14,7 +14,7 @@ function sourceMappings(){
  const py=String.raw`import json,sys;sys.path.insert(0,sys.argv[1]);import xy11_verified as v
 pairs=[('13','Strange Reaction'),('16','Returning Flames'),('52','Focus Energy'),('53','Spirited Throw'),('90','Fiddle Around')]
 assert all(p not in v.STRICT for p in pairs)
-assert ('20','Flare Up') in v.STRICT and ('79','Despair Ray') in v.STRICT
+assert ('20','Flare Up') in v.STRICT and ('79','Despair Ray') not in v.STRICT
 print(json.dumps({n+'|'+name:v.ATK[n,name] for n,name in pairs}))`;
  const r=spawnSync('python3',['-c',py,path.join(root,'scripts')],{encoding:'utf8'});
  assert.equal(r.status,0,r.stderr);
@@ -102,8 +102,9 @@ print(json.dumps({'attacks':{n+'|'+a:e for (n,a),e in v.ATK.items() if (n,a) not
  for(const [label,group] of Object.entries({attacks:out.attacks,trainers:out.trainers,abilities:out.abilities}))for(const [name,e] of Object.entries(group)){
   assert.deepEqual(effects.validateEffect(label==='abilities'?e.effect:e),[],label+':'+name);
  }
- for(const card of ['Steam Up','Gale Wings','Mystic Heart','Wonder Lock','Mega Boost'])assert.ok(out.unsupported.includes(card),card+' unverified');
- assert.ok(out.gates.some(pair=>pair[0]==='79'&&pair[1]==='Despair Ray'));
+ for(const card of ['Gale Wings','Mystic Heart','Wonder Lock'])assert.ok(out.unsupported.includes(card),card+' unverified');
+ for(const card of ['Steam Up','Mega Boost','Sonic Vision'])assert.ok(!out.unsupported.includes(card),card+' must now be implemented');
+ assert.ok(!out.gates.some(pair=>pair[0]==='79'&&pair[1]==='Despair Ray'));
  const g=fs.readFileSync(path.join(root,'app/build.gradle'),'utf8');
  assert.match(g,/tests\/v07391-steam-siege-audit\.test\.cjs/);
  assert.match(g,/dependsOn tasks\.named\('auditXY11ForApk'\)/);

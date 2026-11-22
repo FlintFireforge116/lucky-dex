@@ -1,0 +1,9 @@
+# LuckyDex v0.69.393 — Steam Siege Stage 3
+
+This overlay builds on the **confirmed successful** v0.69.392b GitHub APK build. 18 newly playable source prints advance XY11 from 76 to **94/116** playable, with 22 prints still gated. The printed 116/161/18 catalogue, all 7 BREAK cards and 12 dual-type prints remain intact; all attack energy costs remain exactly as pinned official card data.
+
+Implemented interactions: Yanmega Sonic Vision; Foongus Play Ball; Pyroar Flame Charge and Incinerate; Volcanion-EX Steam Up and Volcanic Heat (including both alternate arts); Gastrodon Sticky Shot; Clawitzer Mega Boost; Avalugg Melting Floe; Ampharos Shocking Light; Galvantula Double Thread with Bench weakness/resistance; Chandelure Sinister Selection; Croagunk Poison Up; Toxicroak Poison Enzyme; Weavile Tear Away; M Gardevoir-EX Despair Ray (including alternate art); Hawlucha Sudden Cyclone.
+
+Noteworthy rules: physical discard and hand are distinct from Classic virtual Energy Zone; Steam Up discards actual Fire Energy from hand and boosts Basic Fire attacks +30 per activation for the CURRENT turn; Mega Boost attaches a physical Special Energy card to a selected Mega Evolution; alternate-art effects are cloned by print number; Despair Ray discards all Bench cards and attached physical/virtual Energy before computing the bonus; Poison Enzyme affects damage only and is disabled by Ability suppression; Pyroar's Incinerate removes Tools *before* calculating damage; Yanmega's exact four-hand requirement is evaluated dynamically and disabled under suppression.
+
+All 22 remaining prints stay non-playable until their complete rule sets can be implemented, not just placeholder text. Test in CI includes XY11 generated catalogue and effects, cross-set Classic deck quality, previous XY10 checks and global attack-energy tests. GitHub APK success is not claimed from local test success.

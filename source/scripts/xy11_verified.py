@@ -27,20 +27,23 @@ ATK={
  ('20','Flare Blitz'):DISC('all','self','Fire'),
  ('21','Flare Blitz'):DISC('all','self','Fire'),
  ('22','Lunge'):E('coinAttackGate',heads=N),
- ('23','Flame Charge'):E('attachEnergy',energyType='Fire',amount=1,target='self'), # Actually from DECK; gated STRICT.
- ('23','Incinerate'):E('discardTool',target='opponentActive',amount=1), # Must remove ALL before damage: gated STRICT.
+ ('23','Flame Charge'):E('xy11Rule',rule='flameCharge'),
+ ('23','Incinerate'):E('xy11Rule',rule='incinerate'),
  ('24','Kaiser Tackle'):E('selfDamage',amount=50),
  ('25','Power Heater'):E('xy11Rule',rule='powerHeater'),
  ('27','Healing Wave'):E('xy11Rule',rule='healingWave'),
  ('27','Dwindling Wave'):E('selfDamagePenalty',amount=1,mode='add'),
+ ('29','Sticky Shot'):S(E('modifier',stat='attackCost',amount=1,target='opponentActive',duration='opponentTurn'),E('modifier',stat='retreatCost',amount=1,target='opponentActive',duration='opponentTurn')) ,
  ('29','Water Pulse'):ST('sleep'),
  ('32','Pike'):E('multiTargetDamage',target='opponentBench',amount=30,count=1,upTo=True),
  ('35','Lock-On'):LOCK(), # Plus next-turn +120: gated STRICT.
  ('36','Ice Block'):H(30),
  ('37','Crunch'):Q(E('discardEnergyCard',target='opponentActive',amount=1)),
+ ('37','Melting Floe'):E('xy11Rule',rule='meltingFloe'),
  ('38','Thunder Wave'):Q(ST('paralysis')),
  ('39','Thunder Shock'):Q(ST('paralysis')),
  ('40','Gigavolt'):Q(BONUS(40),ST('paralysis')),
+ ('42','Double Thread'):E('multiTargetDamage',target='opponentPokemon',count=2,amount=30,benchWeaknessResistance=True),
  ('42','Electroweb'):LOCK(),
  ('43','Come Along'):E('benchFromDeck',amount=1,filter={'kind':'pokemon','name':'Nidoran ♀'}),
  ('44','Nido Press'):BONUS(40,{'type':'pokemonPresent','zone':'bench','filter':{'name':'Nidorina'}}),
@@ -59,6 +62,7 @@ ATK={
  ('55','Rock Tomb'):LOCK(),
  ('56','X-Scissor'):Q(BONUS(20)),
  ('57','Guard Claw'):GUARD(30),
+ ('58','Poison Up'):E('xy11Rule',rule='poisonUp'),
  ('59','Poison Jab'):Q(ST('poison')),
  ('60','Nyan Roll'):Q(E('preventDamage',target='self',duration='opponentTurn',preventEffects=True)),
  ('62','Nightmare'):ST('sleep'),
@@ -81,6 +85,7 @@ ATK={
  ('77','Bubble Drain'):H(30),
  ('78','Link Blast'):BONUS(70,{'type':'equalEnergyCount'}),
  ('78','Luminous Blade'):DISC(),
+ ('79','Despair Ray'):E('chooseDiscardForBonus',zone='bench',max=3,amount=10),
  ('81','Geomancy'):E('distributeEnergy',source='zone',target='selfBench',energyType='Fairy',amount=2,distinctTargets=True),
  ('81','Rainbow Spear'):DISC(),
  ('82','Life Stream'):E('energyDamage',source='self',amount=20,mode='replace',all=True),
@@ -99,6 +104,7 @@ ATK={
  ('91','Double Hit'):COIN(2,50),
  ('92','Reckless Charge'):E('selfDamage',amount=10),
  ('93','Ambush'):Q(BONUS(50)),
+ ('26','Volcanic Heat'):E('lock',action='attack',target='selfActive',duration='nextOwnTurn'),
  ('97','Acrobatics'):COIN(2,20,False),
 }
 # These descriptors look similar to existing effects but miss essential
@@ -106,16 +112,13 @@ ATK={
 STRICT={
  ('11','Wicked Wind'),
  ('20','Flare Up'),
- ('23','Flame Charge'),('23','Incinerate'),
- ('29','Sticky Shot'),
- ('32','Ultimate Blade'),('35','Lock-On'),('37','Melting Floe'),
- ('42','Double Thread'),('45','Power Lariat'),('46','Transfer Pain'),
+ ('32','Ultimate Blade'),('35','Lock-On'),
+ ('45','Power Lariat'),('46','Transfer Pain'),
  ('47','Burst Curse'),('49','Mirror Mirror'),
  ('57','Rushing Water'),
- ('58','Poison Up'),('62','Damage Play'),
+ ('62','Damage Play'),
  ('70','Counter Head'),('73','Gear Spinner'),
  ('75','Soul Blaster'),
- ('79','Despair Ray'),
  ('86','Dark Burn'),
  ('88','Stall'),
  ('96','Aero Blitz'),
@@ -141,13 +144,20 @@ for src,alts in [('26',['107','115']),('67',['108']),('68',['109']),('75',['110'
    for alt in alts:STRICT.add((alt,title))
 # Inherited X/Y BREAK effects use previously tested LV.X machinery.
 ABILITIES={
- 'Restored Barrier':{'type':'passive','effect':N}, # Executed by xy11RestoredBarrier in battle-effects' weakness paths
- 'Poison Enzyme':{'type':'passive','effect':E('preventDamage',target='self',duration='whileInPlay',attackerFilter={'status':'poison'})}, # strict gated
+ 'Restored Barrier':{'type':'passive','effect':N},
+ 'Sonic Vision':{'type':'passive','effect':N},
+ 'Play Ball':{'type':'triggered','event':'benched','effect':E('xy11Rule',rule='playBall')},
+ 'Steam Up':{'type':'activated','oncePerTurn':True,'effect':E('xy11Rule',rule='steamUp')},
+ 'Mega Boost':{'type':'activated','oncePerTurn':True,'effect':E('xy11Rule',rule='megaBoost')},
+ 'Shocking Light':{'type':'activated','oncePerTurn':True,'effect':E('xy11Rule',rule='shockingLight')},
+ 'Sinister Selection':{'type':'activated','oncePerTurn':True,'effect':E('xy11Rule',rule='sinisterSelection')},
+ 'Poison Enzyme':{'type':'passive','effect':N},
+ 'Tear Away':{'type':'activated','oncePerTurn':False,'effect':E('xy11Rule',rule='tearAway')},
+ 'Sudden Cyclone':{'type':'triggered','event':'benched','effect':E('xy11Rule',rule='suddenCyclone')}, # Executed by xy11RestoredBarrier in battle-effects' weakness paths
 }
 UNVERIFIED_ABILITIES={
- 'Sonic Vision','Play Ball','Steam Up','Mega Boost','Shocking Light',"King's Palace",
- 'Sinister Selection','Poison Enzyme','Tear Away',
- 'Heavy Bumper','Mystic Heart','Wonder Lock','Gale Wings','Sudden Cyclone',
+ "King's Palace",
+ 'Heavy Bumper','Mystic Heart','Wonder Lock','Gale Wings',
 }
 # The 18 ability *prints* include alternative artworks reusing named effects.
 
