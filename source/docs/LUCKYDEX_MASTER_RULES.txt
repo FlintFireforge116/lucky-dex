@@ -1,6 +1,6 @@
 LUCKYDEX — MASTER PROJECT RULES AND DEVELOPMENT CONTRACT
 =========================================================
-Document version: 2.72
+Document version: 2.73
 Compiled: 22 November 2026
 Current verified APK: v0.69.384 GitHub success (run 45045876175); v0.69.385 Fates Collide Stage 3 is locally tested, GitHub APK unverified.
 Recommended repository location: ~/lucky-dex/source/docs/LUCKYDEX_MASTER_RULES.txt
@@ -4742,3 +4742,40 @@ FATES COLLIDE XY10 STAGE 4 — v0.69.386 / Master Rules v2.72 (2026-11-22)
    changed-files-only overlay. Keep versionCode, Gradle versionName, HTML
    title, boot JS, current and preceding set contracts identical. Never
    describe a future APK build as successful until its GitHub run succeeds.
+
+
+FATES COLLIDE XY10 STAGE 5 — v0.69.387 / Master Rules v2.73 (2026-11-22)
+------------------------------------------------------------------------------
+1. v0.69.386 Stage 4 succeeded on GitHub (run #45049337007) before this
+   Stage 5 patch was released; preserve that verified code as the baseline.
+   New Stage 5 projected coverage is at least 105 of 129 official prints; six
+   newly enabled: #14 Delphox BREAK, #51 Carbink BREAK, #95 Devolution Spray,
+   #97 Energy Pouch, #98 Energy Reset, #110 Scorched Earth.
+2. BREAK abilities inherit existing previous-stage attacks/powers. Delphox
+   Flare Witch requires explicit target and exact physical Fire Energy or
+   ONE matching unit taken from the Classic Energy Zone; only once per turn.
+   Carbink BREAK Diamond Gift selects ONE Fighting recipient, then up to two
+   actual discarded Energy cards; Basic ledger and physical Special Energy
+   identities must never be confused, duplicated or discarded arbitrarily.
+3. Devolution Spray returns ONLY the top Evolution to hand, retains damage
+   and Energy, and marks the Pokemon unable to evolve again during its owner's
+   current turn. Energy Reset is an optional, repeated per-card attached-Energy
+   choice, never an operation on available un-attached Energy Zone units.
+4. Energy Pouch is a TOOL rule on opponent-attack DAMAGE knockouts only:
+   return attached Basic Energy cards to hand, discard Tools and Specials
+   normally, award normal Prizes; do not also count those returned Energy
+   units in the Basic Energy discard ledger. Run a real KO test in core.
+5. Scorched Earth #110 reuses the audited XY5-138 Stadium action. No playable
+   Stadium action or deck-builder filler if a physical Fire/Fighting Energy
+   is unavailable in hand/deck; unused Energy Zone supply cannot pay a
+   from-hand discard cost. Actions are once per player turn as before.
+6. Add `tests/v07387-fates-collide-stage5.test.cjs` to BOTH the Gradle
+   post-generation audit and the standalone source preflight, and update
+   source-only stale gated assertions. `scripts/check-gradle-source.py` must
+   reject any missing test/quote. Include minimum and new IDs in the release
+   contract. Before pushing, run: `python3 scripts/check-gradle-source.py
+   --self-test` and `python3 scripts/preflight-xy10-release.py --full` from
+   source/. A skipped generated-catalogue test is NOT build verification.
+7. Output only changed source files, packaged as a patch ZIP extracted with
+   `unzip -o <filename> -d source`. Confirm all version markers and contract
+   are the SAME exact version. Never claim GitHub APK success before its run.

@@ -1,12 +1,9 @@
 {
   "printed": 129,
-  "battleReady": 99,
+  "battleReady": 105,
   "gated": {
     "xy10-9": [
       "Unimplemented printed attack: Flying Flare"
-    ],
-    "xy10-14": [
-      "Unimplemented printed Ability: Flare Witch"
     ],
     "xy10-17": [
       "Restored Pokémon requires fossil-entry battle legality audit"
@@ -38,9 +35,6 @@
     "xy10-49": [
       "Unimplemented printed Ability: Energy Keeper"
     ],
-    "xy10-51": [
-      "Unimplemented printed attack: Diamond Gift"
-    ],
     "xy10-56": [
       "Unimplemented printed attack: Dark Mountain",
       "Unimplemented printed Ability: Raging Roar"
@@ -64,16 +58,7 @@
     "xy10-94": [
       "Unimplemented Trainer rules"
     ],
-    "xy10-95": [
-      "Unimplemented Trainer rules"
-    ],
     "xy10-96": [
-      "Unimplemented Trainer rules"
-    ],
-    "xy10-97": [
-      "Unimplemented Trainer rules"
-    ],
-    "xy10-98": [
       "Unimplemented Trainer rules"
     ],
     "xy10-102": [
@@ -84,9 +69,6 @@
     ],
     "xy10-108": [
       "Unimplemented printed attack: All Cells Burn",
-      "Unimplemented Trainer rules"
-    ],
-    "xy10-110": [
       "Unimplemented Trainer rules"
     ],
     "xy10-117": [

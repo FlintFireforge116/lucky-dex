@@ -1,14 +1,14 @@
 {
   "set": "xy10",
-  "release": "0.69.386",
+  "release": "0.69.387",
   "printedTotal": 129,
   "attackPrints": 147,
   "abilities": 21,
   "pokemonBreak": 5,
-  "expectedPlayableMinimum": 99,
-  "stage": "mechanic-reuse-4",
+  "expectedPlayableMinimum": 105,
+  "stage": "mechanic-reuse-5",
   "pin": "aa097c8da85e960a5afa4f3b96312f64dcbec871",
-  "notes": "Stage 4: 7 additional prints enabled through audited attack/power reuse, persistent Bench protection, opponent-only Energy locks, EX-only Bench choices and exact attached Basic Lightning damage; generated catalogue pre-push mandatory.",
+  "notes": "Stage 5: six additional prints including two BREAK Energy effects, Devolution Spray, Energy Pouch, Energy Reset and Scorched Earth. Strict printed-effect and full generated-catalogue pre-push audits remain mandatory.",
   "requiredEnabledNumbers": [
     "1",
     "7",
@@ -57,6 +57,12 @@
     "61",
     "71",
     "73",
-    "122"
+    "122",
+    "14",
+    "51",
+    "95",
+    "97",
+    "98",
+    "110"
   ]
 }

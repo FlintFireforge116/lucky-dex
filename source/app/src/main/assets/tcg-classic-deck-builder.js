@@ -760,7 +760,7 @@ function buildDeck(rows,options={}){
      // scarce Trainer slots with copies in ultra-short Pokémon builds.
      if(['xy5-141','xy5-160'].includes(card?.id)&&pokemon.length<7)return false;
      if(card?.id==='xy5-137'&&!pokemon.some(p=>(p.types||[]).some(t=>t==='Water'||t==='Lightning')))return false;
-     if(card?.id==='xy5-138'&&!cards.some(id=>{const c=classic.cardById(id);return c?.basicEnergy&&['Fire','Fighting'].includes(c.energyType||c.subtype);} ))return false;
+     if(['xy5-138','xy10-110'].includes(card?.id)&&!cards.some(id=>{const c=classic.cardById(id);return c?.basicEnergy&&['Fire','Fighting'].includes(c.energyType||c.subtype);} ))return false;
      if(card?.id==='xy5-139'&&!pokemon.some(p=>p.stage!=='Basic'&&pokemon.some(b=>
        classicCardName(b.name)===classicCardName(p.evolvesFrom||'')&&b.id!==p.id)))return false;
      if(card?.id==='xy5-140'&&pokemon.some(p=>p.stage==='Basic'&&(p.abilities||[]).length))return false;

@@ -10,6 +10,7 @@ E=lambda t,**kw: {'type':t,**kw}
 ATK={
  ('1','Hide a Berry'):S(DRAW(2),E('xy10HandToDeckBottom',side='self')),
  ('71','Light Steps'):E('xy10LightSteps'),
+ ('51','Diamond Gift'):E('xy10DiamondGift'),
  ('1','Wrap'):Q(ST('paralysis')),
  ('3','Solar Ray'):H(20,'selfAll'),
  ('3','Leaf Cutter'):Q(BONUS(30)),
@@ -101,6 +102,10 @@ TRAINERS={
  '93':('Tool',E('preventEffects',scope='self',duration='whileInPlay')),
  '99':('Item',E('chooseTarget',target='selfPokemon',filter={'hasEnergyType':'Fairy'},effect=H(50,'selfPokemon'))),
  '100':('Stadium',E('modifier',stat='retreatCost',amount=-99,scope='both',duration='whileInPlay',filter={'hasEnergyType':'Fairy'})),
+ '95':('Item',E('xy10DevolutionSpray')),
+ '97':('Tool',E('noop')), # actual attachment KO hook lives in core, not a no-op rule
+ '98':('Item',E('xy10EnergyReset')),
+ '110':('Stadium',E('stadiumAction',effect=E('neoRule',rule='xy5:scorchedEarth'))),
  '103':('Supporter',E('fieldCountDraw',side='opponent',benchOnly=True,filter={'stage':'Basic'})),
  # Choose up to two REAL Fossil Items from discard, no Energy Zone proxies.
  '101':('Item',SEARCH(2,source='discard',kind='trainer',name=['Helix Fossil Omanyte','Dome Fossil Kabuto','Old Amber Aerodactyl'])),
@@ -129,6 +134,7 @@ ABILITIES={
  'Metal Fortress':{'type':'passive','effect':E('xy10MetalFortress')},
  'Dangerous Tentacle':{'type':'activated','oncePerTurn':True,'effect':E('xy10DangerousTentacle')},
  'Wormadam First':{'type':'activated','oncePerTurn':False,'effect':E('xy10WormadamFirst')},
+ 'Flare Witch':{'type':'activated','oncePerTurn':True,'effect':E('xy10FlareWitch')},
 }
 ENERGIES={
  '114':E('specialEnergy',provides={'Colorless':2}),

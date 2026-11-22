@@ -1557,7 +1557,7 @@
        if(['ecard2-37','ecard2-H25'].includes(slot.cardId)&&card.basicEnergy&&energyType==='Water'&&Object.values(slot.energy||{}).every(n=>Number(n)===0)&&!(slot.specialEnergy||[]).length)return false;
        return true;};
        if(aqValid(s.active))actions.push({type:'attachSpecial',handIndex,cardId:card.id,target:'active'});for(const slot of s.bench)if(aqValid(slot))actions.push({type:'attachSpecial',handIndex,cardId:card.id,target:'bench',benchIndex:Number(slot.benchSlot)});});}
-    if(state.stadium){const stadium=data.cardById(state.stadium.cardId),actionEffect=stadium?.effect?.type==='stadiumAction'?stadium.effect.effect:null,used=s.stadiumActionUsedTurn===state.turnNumber&&s.stadiumActionUsedUid===state.stadium.uid;if(actionEffect&&(!used||stadium?.id==='pl4-91')&&(stadium?.id!=='xy5-138'||s.hand.some(ref=>{const c=data.cardById(ref.cardId);return c?.basicEnergy&&['Fire','Fighting'].includes(c.energyType||c.subtype);} ))&&(stadium?.id!=='ex11-96'||s.deck.length&&s.hand.length<Number(s.handLimit||8)&&pokemonOn(s).some(p=>data.cardById(p.cardId)?.deltaSpecies))&&effectChoices(actionEffect,effectContext(state,side)).length)actions.push({type:'stadiumAction',cardId:stadium.id});}
+    if(state.stadium){const stadium=data.cardById(state.stadium.cardId),actionEffect=stadium?.effect?.type==='stadiumAction'?stadium.effect.effect:null,used=s.stadiumActionUsedTurn===state.turnNumber&&s.stadiumActionUsedUid===state.stadium.uid;if(actionEffect&&(!used||stadium?.id==='pl4-91')&&(!['xy5-138','xy10-110'].includes(stadium?.id)||s.hand.some(ref=>{const c=data.cardById(ref.cardId);return c?.basicEnergy&&['Fire','Fighting'].includes(c.energyType||c.subtype);} ))&&(stadium?.id!=='ex11-96'||s.deck.length&&s.hand.length<Number(s.handLimit||8)&&pokemonOn(s).some(p=>data.cardById(p.cardId)?.deltaSpecies))&&effectChoices(actionEffect,effectContext(state,side)).length)actions.push({type:'stadiumAction',cardId:stadium.id});}
     if (s.energyAvailable && !s.energyUsed){
       if (s.active&&!s.active.gymEnergyLock&&!effects.isActionLocked(state,side,'EnergyActive',data.cardById)) actions.push({type:'attach',target:'active'});
       s.bench.forEach(slot=>{if(slot&&!slot.gymEnergyLock)actions.push({type:'attach',target:'bench',benchIndex:Number(slot.benchSlot)});});
@@ -2130,7 +2130,7 @@
     }
     defender.damage=Number(defender.damage||0)+damage;
     if(state.format==='classic'&&damage>0)for(const ref of activeToolsOf(state,defender))if(ref.cardId==='dp6-129')ref.dp6BubbleCoatDamagedTurn=state.turnNumber;if(damage>0)effects.florioReactToAttackDamage?.(state,foeSide,defender,side,attacker,damage,data.cardById,random);
-    if(state.format==='classic'&&damage>0&&defender.cardId==='dp2-61'&&Number(defender.dp2SpikeArmorUntil||0)>=state.turnNumber){attacker.damage=Number(attacker.damage||0)+40;state.log.push({type:'dp2SpikeArmor',side:foeSide,target:attacker.cardId,amount:40});}if(damage>0)defender.lastDamageSource={side,uid:attacker.uid,cardId:attacker.cardId,attack:true,turn:state.turnNumber};
+    if(state.format==='classic'&&damage>0&&defender.cardId==='dp2-61'&&Number(defender.dp2SpikeArmorUntil||0)>=state.turnNumber){attacker.damage=Number(attacker.damage||0)+40;state.log.push({type:'dp2SpikeArmor',side:foeSide,target:attacker.cardId,amount:40});}if(damage>0)defender.lastDamageSource={side,uid:attacker.uid,cardId:attacker.cardId,attack:true,turn:state.turnNumber,damage};
     if(damage>0&&defender.legendaryMirrorShellUntil>=state.turnNumber&&state.format==='classic'){attacker.damage=Number(attacker.damage||0)+damage;state.log.push({type:'legendaryMirrorShell',side:foeSide,amount:damage,cardId:defender.cardId});}
       if(damage>0&&state.format==='classic'&&defender===state.sides[foeSide].active&&['ex16-41','ex16-47'].includes(defender.cardId)&&!effects.abilitiesSuppressed(state,foeSide,defender,data.cardById)){attacker.damage=Number(attacker.damage||0)+10;state.log.push({type:'ex16RoughSkin',side:foeSide,cardId:defender.cardId,amount:10});}
       if(damage>0&&state.format==='classic'&&defender.cardId==='xy1-14'&&
@@ -2558,6 +2558,19 @@
           state.log.push({type:'founjaTeleport',side,cardId:slot.cardId});
         }
         else if(slot.pl2WaterRescue){delete slot.pl2WaterRescue;for(const [i,id] of (slot.stack||[slot.cardId]).entries())s.hand.push({uid:slot.uid+'-waterrescue-'+i,cardId:id});s.hand.push(...toolsOf(slot),...temporaryTrainersOf(slot),...(slot.specialEnergy||[]));const ids={Grass:'dp1-123',Fire:'dp1-124',Water:'dp1-125',Lightning:'dp1-126',Psychic:'dp1-127',Fighting:'dp1-128',Darkness:'lental-basic-darkness',Metal:'lental-basic-metal',Fairy:'xy1-140'};for(const [type,n] of Object.entries(slot.energy||{}))for(let i=0;i<Number(n||0);i++)s.hand.push({uid:slot.uid+'-waterrescue-energy-'+type+'-'+i,cardId:ids[type],zoneGenerated:true});state.log.push({type:'pl2WaterRescue',side,cardId:slot.cardId});}
+        else if(state.format==='classic'&&cause==='attack'&&eventSource?.attack&&eventSource.side===foeSide&&
+          Number(eventSource.damage||0)>0&&Number(eventSource.turn)===Number(state.turnNumber)&&activeToolsOf(state,slot).some(ref=>ref.cardId==='xy10-97')){
+          // Fates Collide Energy Pouch: only actual Basic Energy attached to
+          // the knocked-out Pokemon returns to hand; Tools and Special Energy
+          // enter discard as normal. KO still awards the usual Prize cards.
+          const ids={Grass:'neo1-108',Fire:'neo1-107',Water:'neo1-111',Lightning:'neo1-109',Psychic:'neo1-110',Fighting:'neo1-106',Darkness:'lental-basic-darkness',Metal:'lental-basic-metal',Fairy:'xy1-140'};
+          const rescued={...(slot.energy||{})};slot.energy={};discardKnockedOut(s,slot);
+          for(const [type,count] of Object.entries(rescued))for(let i=0;i<Number(count||0);i++){
+            if(ids[type]&&s.hand.length<Number(s.handLimit||10))s.hand.push({uid:`xy10-pouch-${slot.uid}-${type}-${i}`,cardId:ids[type],zoneGenerated:true});
+            else{s.energyDiscard=s.energyDiscard||{};s.energyDiscard[type]=Number(s.energyDiscard[type]||0)+1;}
+          }
+          state.log.push({type:'xy10EnergyPouch',side,cardId:slot.cardId,recovered:rescued});
+        }
         else if(state.format==='classic'&&cause==='attack'&&eventSource?.attack&&eventSource.side===foeSide&&
           activeToolsOf(state,slot).some(r=>r.cardId==='bw6-115')){
           // Rescue Scarf returns the knocked-out Pokemon (not its attached
