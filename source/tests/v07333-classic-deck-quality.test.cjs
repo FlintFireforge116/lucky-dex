@@ -49,7 +49,7 @@ test('pinned BREAKthrough catalogue is audited after generation, not by the earl
   'XY8 specific audit must run AFTER the pinned generator');
 });
 
-test('all 59 locally populated Classic sets generate legal, Energy-compatible, usable 30-card decks under two styles',()=>{
+test('all locally populated Classic sets generate legal, Energy-compatible, usable 30-card decks under two styles',()=>{
  let audited=0;
  for(const set of builder.SET_IDS){
   // These pinned-source expansions are separately tested after pinned generation on GitHub;
@@ -70,7 +70,9 @@ test('all 59 locally populated Classic sets generate legal, Energy-compatible, u
    audited++;
   }
  }
- assert.equal(audited,118,'audit two independent choices from each of 59 populated Classic set IDs');
+ assert.equal(audited,2*builder.SET_IDS.filter(set=>!emptyLocalCatalogues.has(set)).length,
+   'audit two independent choices from each currently populated Classic set ID');
+ assert.ok(audited>=118,'do not silently lose previously audited Classic sets');
 });
 
 test('modern and dense historical sets diversify Trainers while retaining functional combos',()=>{

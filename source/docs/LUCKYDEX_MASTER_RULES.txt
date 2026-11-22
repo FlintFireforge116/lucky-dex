@@ -4932,3 +4932,6 @@ Xerneas BREAK's Life Stream counts Energy on the OWN board only; Pawniard's
 Charge Order counts own Pawniard; Furry Chance discards OPPONENT's top card.
 Keep full source pin, metadata, PRINTED energy symbols and all previously
 cleared tests fixed. Remaining gates must be completed before set sign-off.
+
+[XY11 v0.69.392b — BUILD FAILURE REGRESSION PREVENTION]
+GitHub Actions runs `:app:auditV07333ClassicDeckQualityForApk` BEFORE the XY11-specific audit. Previous releases v0.69.391b and v0.69.392 FAILED here: Steam Siege single-set competitive mode assembled only 22/30 cards. Source-only/XY11-only tests are not adequate build evidence. The full pre-push XY11 preflight MUST run the exact CI cross-set test `node --test tests/v07333-classic-deck-quality.test.cjs` after generation. Do not remove or skip xy11 from the populated-set quality check. Single-set fallback must count ACTUALLY USABLE Trainer cards (not raw Trainer prints) before relaxing the 18-Pokemon soft cap; never auto-add dead Trainer effects or cards outside the owned set. The all-set test's expected audited-set count must derive from current SET_IDS and stub exclusions, with a lower-bound regression guard, rather than a stale hardcoded 59-set / 118-run assumption. Confirm Gradle/GitHub APK separately; local Node success is not proof of an APK build.

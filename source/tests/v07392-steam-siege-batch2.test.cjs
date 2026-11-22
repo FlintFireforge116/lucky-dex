@@ -140,3 +140,29 @@ test('Automatic single-set decks avoid orphan Steam Siege Trainers while success
  }
  assert.ok(successes>0,'At least one complete legal Steam Siege 30-card archetype expected');
 });
+
+test('Steam Siege sparse Trainer pool still builds a full coherent 30-card deck under both styles',verify,()=>{
+ const classic=require('../app/src/main/assets/tcg-classic-battle-data.js');
+ const builder=require('../app/src/main/assets/tcg-classic-deck-builder.js');
+ const decks=require('../app/src/main/assets/tcg-classic-decks.js');
+ const synergy=require('../app/src/main/assets/tcg-deck-synergy.js');
+ const owned=classic.CARDS.filter(c=>c.setId==='xy11'&&c.battleEnabled&&c.deckEligible!==false).map(c=>({gameplayId:c.id,quantity:4}));
+ for(const [style,randomSeed] of [['competitive',3],['random',24]]){
+  const result=builder.buildDeck(owned,{sets:['xy11'],style,randomSeed});
+  assert.equal(result.ok,true,`${style}: ${result.errors?.join('; ')}`);
+  assert.equal(result.cards.length,30,`${style}: exactly 30 cards`);
+  assert.equal(decks.validateDraft(result.cards,owned,{requireFull:true}).ok,true,`${style}: legal owned deck`);
+  assert.deepEqual(decks.analyzeDeck(result.cards,result.energyTypes).missingEnergyTypes,[],`${style}: payable attacks`);
+  assert.deepEqual(synergy.report(result.cards.map(classic.cardById),result.energyTypes,'any').dead,[],`${style}: no dead Trainer effects`);
+  assert.ok(result.cards.every(id=>classic.cardById(id)?.setId==='xy11'),`${style}: no cross-set filler`);
+  assert.ok(!result.cards.includes('xy11-99'),`${style}: no generic Poké Puff filler`);
+  assert.ok(result.cards.filter(id=>classic.cardById(id)?.kind==='pokemon').length<=26,`${style}: at least four live support slots`);
+ }
+});
+test('Steam Siege preflight includes the exact cross-set CI deck-quality gate',()=>{
+ const fs=require('node:fs'),path=require('node:path');
+ const text=fs.readFileSync(path.join(__dirname,'../scripts/preflight-xy11-release.py'),'utf8');
+ assert.match(text,/node','--test','tests\/v07333-classic-deck-quality\.test\.cjs/);
+ const gate=fs.readFileSync(path.join(__dirname,'v07333-classic-deck-quality.test.cjs'),'utf8');
+ assert.match(gate,/audited,2\*builder\.SET_IDS\.filter/,'cross-set count must track new sets');
+});

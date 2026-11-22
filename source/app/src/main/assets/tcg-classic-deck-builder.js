@@ -1516,11 +1516,14 @@ function buildDeck(rows,options={}){
  // Final conservative fill: respect the planned mono/explicit dual Energy profile;
  // only the sparse-inventory rescue is allowed a second otherwise unrequested type.
  if(cards.length<30){for(const c of pool.filter(c=>(usefulFillerCard(c)||c.stage==='Basic')&&trainerIsUseful(c))){while(cards.length<30&&room(c)>0){const trial=[...cards,c.id],profile=decks.analyzeDeck(trial).recommendedEnergyTypes;if(options._allowSecondType===true&&!requestedEnergy.length?profile.length>2:!profile.every(t=>plannedEnergy.includes(t)))break;if(!add(c,1))break;}if(cards.length>=30)break;}}
- // Some authentic single-set pools (Jungle, Team Rocket, Neo Revelation)
- // only print one to three usable Trainers. A 30-card deck cannot meet the
- // normal 18-Pokémon soft cap in those sets. Relax only in that sparse-pool
- // emergency; do not apply this to the normal multi-era auto builder.
- if(cards.length<30&&scope.length===1&&pool.filter(c=>c.kind==='trainer').length<=4){
+ // Sparse single-set pools (including partially integrated Steam Siege) may
+ // print several Trainers but have only a few that are actually useful for the
+ // current deck. Count usable Trainers, not raw printed Trainer cards: otherwise
+ // an authentic 30-card deck cannot meet the normal 18-Pokémon soft cap and
+ // the mandatory all-set build quality gate fails. Never inject dead Trainers.
+ // Keep the relaxation limited to this single-set emergency; multi-era decks
+ // and explicitly retained cards keep the normal composition rules.
+ if(cards.length<30&&scope.length===1&&pool.filter(c=>c.kind==='trainer'&&trainerIsUseful(c)).length<=4){
    autoPokemonCap=30;
    // Add complete affordable Stage-1 families before loose Basics. This
    // rescues Team Rocket without stuffing isolated Dratini or Diglett into
