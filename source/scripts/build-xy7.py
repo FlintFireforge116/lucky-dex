@@ -75,6 +75,7 @@ def generate(rows):
    roles=[]
    for regex,role in [(r'\bdraw\b|\bdraws\b','draw'),('search your deck','search'),(r'\bheal\b','heal'),('is now asleep','status'),('is now poisoned','status'),('is now burned','status'),('is now paralyzed','status'),('is now confused','status'),('discard an energy attached to your opponent','control')]:
     if re.search(regex,printed) and role not in roles:roles.append(role)
+   if n in ('14','27','87') and 'ramp' not in roles:roles.append('ramp')  # audited Basic Energy acceleration
    partners=([evolves] if evolves else [])
    if mega:partners.append(name.replace('M ',''))
    if mega:roles.append('mega-evolution')

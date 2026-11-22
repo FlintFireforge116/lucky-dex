@@ -3749,3 +3749,40 @@ git push origin main
 - Metagross #49 Iron Cannon: explicit choice to keep Metal Energy at 80 damage or discard all attached Metal Energy for 160. Basic Metal enters physical Energy discard ledger; Special Metal cards enter physical discard pile; damage choice resolves before damage.
 - Keep legacy Legends Awakened optional switching test enabled in GitHub CI. Stage 8 regression suite executes before APK packaging.
 - Stage 8 cross-era nuance: an opposing θ Stop Active cannot be forcibly switched by Metagross's activated Magnetic Warp; the self-switch still succeeds. Beginner CPU chooses Iron Cannon's discard boost mainly when it enables a knockout.
+
+
+===============================================================================
+LUCKYDEX v0.69.372 — ANCIENT ORIGINS STAGE 9 (ENERGY ATTACKS)
+===============================================================================
+BASELINE: v0.69.371 passed GitHub run #660. Stage 9 unverified on GitHub
+until pushed. Android versionCode 7372 / versionName 0.69.372.
+
+ADDED:
+- Entei #14 Burning Roar: discard top four actual draw-deck refs; because
+  Basic Energy is in a separate zone, inspect top four *real ordered Zone*
+  Basic units as a hybrid adaptation of the printed mixed-deck attack. Record
+  non-Fire units in Basic Energy discard ledger; distribute every revealed
+  Fire to player-selected Active/Bench targets. No synthetic Energy; Special
+  Energy cards stay physical. Original Combat Blaze damage remains available.
+- Ampharos-EX #27/#87 Thunder Rod: reveal only top four actual Energy Zone
+  Basic units; choose how many revealed Lightning units to attach to the
+  attacking Ampharos; stop option returns and shuffles all leftover units.
+  Never touch physical draw deck or attach fifth/unrevealed or Special units.
+- Autobuilder: classify the new Energy acceleration prints as 'ramp' with
+  their printed compatible energy types. Do not pad with random Trainers.
+- CPU: continue Thunder Rod attachments while actual Lightning remains;
+  Burning Roar places mandatory Fire units on useful friendly Pokémon.
+- Stage 9 permanent tests wired into `auditXY7ForApk`, which runs AFTER
+  pinned official catalogue generation. Remaining unsupported prints gated.
+
+LOCAL TESTS: Ancient Origins Stage 1–9: 89 pass, 0 fail, 2 skip;
+selected cross-era: 62 pass, 0 fail, 5 skip; selected deck-quality:
+13 pass, 0 fail, 0 skip. GitHub APK test still required.
+
+TERMUX:
+cd ~/lucky-dex
+unzip -o /sdcard/Download/LuckyDex_patch_v0.69.372_ANCIENT_ORIGINS_STAGE9.zip -d source
+git add source
+git commit -m "LuckyDex v0.69.372 Ancient Origins Stage 9 Energy attacks"
+git push origin main
+===============================================================================

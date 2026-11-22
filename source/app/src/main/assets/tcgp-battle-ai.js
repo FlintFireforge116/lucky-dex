@@ -397,6 +397,22 @@
       // Ancient Origins M Sceptile-EX: Jagged Saber is optional but valuable.
       // Choose genuine Grass Basic Energy already in hand and a useful Bench
       // recipient; never manufacture Energy from the separate Energy Zone.
+      // Ancient Origins: Thunder Rod cannot attach an unrevealed or fabricated
+      // Lightning unit. The optional attachment is useful; do not select
+      // Done by default while one of the four revealed units is eligible.
+      if(e.type==='xy7ThunderRod'&&pending.kind==='option')
+        return choices.find(a=>a.choiceOption===1)||choices[0];
+      // Entei's milled Fire Energy MUST be placed on real Pokémon. Prefer a
+      // beneficiary with a Fire attack and few attached Energy units.
+      if(e.type==='xy7BurningRoar'&&pending.kind==='pokemon'){
+        const ss=state.sides[side];
+        const score=a=>{
+          const slot=a.choiceTarget==='active'?ss.active:ss.bench.find(p=>Number(p?.benchSlot)===Number(a.choiceBenchIndex));
+          const card=data.cardById(slot?.cardId),fireAttack=card?.attacks?.some(at=>(at.cost||[]).includes('R'));
+          return (fireAttack?50:0)-attachedCount(slot)*8+(a.choiceTarget==='active'?4:0);
+        };
+        choices.sort((a,b)=>score(b)-score(a));return choices[0];
+      }
       if(e.type==='xy7SolarBirth'&&pending.kind==='option'&&e.phase==='zone'){
         // Keep accelerating while there is real Energy remaining. The
         // choices themselves prove that the Zone still contains that type.

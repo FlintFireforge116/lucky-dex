@@ -1,4 +1,4 @@
-"""Ancient Origins (XY7), Stage 8: explicitly supported printed effects only.
+"""Ancient Origins (XY7), Stage 9: explicitly supported printed effects only.
 
 Do not enable a print if *any* attack, Ability, theta Ancient Trait,
 Trainer or Special Energy passive remains unaudited. Reuse battle effects only
@@ -22,6 +22,7 @@ ATTACKS={
  ('12','Bail Out'):SEARCH(2,source='discard',kind='pokemon'),
  ('12','Prize Count'):BONUS(80,{'type':'ownPrizesMore'}),
  ('13','Heat Breath'):Q(BONUS(20)),
+ ('14','Burning Roar'):E('xy7BurningRoar'),
  ('14','Combat Blaze'):E('benchCountDamage',side='opponent',amount=20,mode='add'),
  ('15','Flame Screen'):GUARD(30),('15','Heat Tackle'):Q(t=E('selfDamage',amount=30)),
  ('8','Jagged Saber'):E('xy7JaggedSaber',amount=2),
@@ -38,6 +39,7 @@ ATTACKS={
  ('24','Resistance Blizzard'):E('neoRule',rule='xy5:resistanceDesert'),
  ('25','Glaciate'):S(BONUS(30),BENCH(30,'opponent')),
  ('25','Icecalibur'):S(DISC(),E('lock',action='attack',target='opponentActive',duration='opponentTurn')),
+ ('27','Thunder Rod'):E('xy7ThunderRod'),
  ('27','Sparkling Tail'):E('damageRule',ignoreWeakness=True,ignoreResistance=True,ignoreEffects=True),
  ('29','Electric Mischief'):E('coinRepeatEffect',coins=3,effect=E('shuffleRandomHandCard',side='opponent')),
  ('28','Exavolt'):OPT('Do 50 extra damage, Paralyze, and 30 self-damage',S(BONUS(50),ST('paralysis'),E('selfDamage',amount=30))),
