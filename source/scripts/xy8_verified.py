@@ -2,8 +2,8 @@
 
 No speculative noop fallbacks. Pure damage is noop, all other attack text
 requires an exact reusable pattern or print-specific mapping. BREAK reuses
-LV.X previous-card inheritance, with normal Evolution timing; unmapped
-printed BREAK attacks, persistent modifiers and special energies are gated.
+LV.X previous-card inheritance with normal Evolution timing. All 165
+prints now have complete effect mappings; the generated audit enforces this.
 """
 import re
 from hgss1_verified import N,S,Q,ST,H,DISC,COIN,SEARCH,BENCH,BONUS,SWITCH,DRAW,LOCK,GUARD,OPT
@@ -12,6 +12,8 @@ STATUS={'Asleep':'sleep','Burned':'burn','Poisoned':'poison','Paralyzed':'paraly
 # The printed number, not only attack name, is used where rules differ.
 ATTACKS={
  ('1','Blot'):H(10),
+ ('2','Colorful Spores'):E('neoRule',rule='xy8:colorfulSpores'),
+ ('3','Overhead Throw'):E('neoRule',rule='xy8:overheadThrow'),
 
  ('3','Heavy Suplex'):E('retreatCostDamage',source='opponent',amount=20,mode='add'),
  ('4','Swagger'):Q(E('discardEnergyCard',amount=1,target='opponentActive')),
@@ -32,12 +34,14 @@ ATTACKS={
  ('20','Flare Destroy'):S(DISC(),DISC(1,'opponentActive')),
  ('21','Melting Horn'):E('discardTop',side='opponent',amount=2),
  ('21','Grand Flame'):E('attachEnergyFromDiscard',target='selfBench',subtype='Fire',amount=1),
+ ('22','Inferno Fang'):E('neoRule',rule='xy8:infernoFang'),
 
  ('24','Water Fling'):SEARCH(3,source='discard',kind='energy',basicEnergy=True,subtype='Water'),
  ('24','Hand Fling'):E('handCountDamage',source='self',amount=10,mode='replace'),
  ('27','Reckless Charge'):E('selfDamage',amount=10),
- # Soaking Horn needs a real heal-this-turn flag; gate pending engine integration.
+ # Soaking Horn uses the real per-Pokémon healed-this-turn tracker.
  ('28','Reckless Charge'):E('selfDamage',amount=10),
+ ('28','Soaking Horn'):BONUS(80,{'type':'xy8HealedThisTurn'}),
  ('30','Deep Sea Swirl'):E('handShuffle',draw=7),
  ('31','Wild River'):SWITCH(),('32','Ion Pool'):E('discardStadium'),
  ('33','Hug'):LOCK(),
@@ -50,6 +54,7 @@ ATTACKS={
  # Frigid Breath locks *both* Supporter and Stadium through the next turn, not merely a Supporter.
  ('48','Agility'):Q(E('preventDamage',target='self',duration='opponentTurn',preventEffects=True)),
 
+ ('49','Thunderclap Shot'):E('neoRule',rule='xy8:thunderclapShot'),
  ('50','Grand Bolt'):DISC('all'),
  ('53','Electro Ball'):DISC(),('54','Thunder Blast'):DISC(1,'self','Lightning'),
  ('55','Thunder Lance'):E('energyDamage',source='self',energyType='Lightning',amount=20,mode='add'),
@@ -59,6 +64,7 @@ ATTACKS={
  ('60','Sinister Fog'):S(ST('poison'),BENCH(10)),
  ('61','Photon Wave'):E('modifier',stat='attackDamage',amount=-30,scope='opponentActive',duration='opponentTurn'),
  ('62','Shatter Shot'):E('energyDamage',source='self',energyType='Psychic',amount=30,mode='replace'),
+ ('62','Damage Change'):E('neoRule',rule='xy8:damageChange'),
 
  # Shared conditional damage and board-state predicates (no card-specific engine forks).
  ('30','Balance Bind'):E('status',status='paralysis',target='opponentActive',condition={'type':'benchCountsEqual'}),
@@ -72,6 +78,7 @@ ATTACKS={
  ('81','Gathering Footsteps'):E('fieldCountDamage',side='self',retreatCostNames=['Swinub','Piloswine','Mamoswine'],amount=10,mode='add'),
  ('82','Primordial Boom'):S(BONUS(40,{'type':'ownStadiumInPlay'}),E('heal',target='self',amount=40,condition={'type':'opponentStadiumInPlay'})),
  ('107','Rainbow Force'):E('fieldCountDamage',side='self',benchOnly=True,distinctPokemonTypes=True,amount=30,mode='add'),
+ ('107','Power Creation'):BONUS(80,{'type':'xy8HealedThisTurn'}),
  ('114','Exhausted Tackle'):Q(BONUS(30),E('selfDamage',amount=30)),
  # Psychic Infinity requires combined Active Energy and Weakness exemption.
  ('65','Haunt'):E('placeDamageCounters',target='opponentActive',amount=20),
@@ -89,7 +96,7 @@ ATTACKS={
  ('77','Whimsy Tackle'):E('coinAttackGate',heads=N),
  ('78','Sharpshooting'):E('selectedDamage',target='opponentPokemon',amount=30),
  ('78','Bone Windmill'):E('switch',side='self',condition={'type':'opponentEx'}),
- # BREAK uses shared LV.X previous-card attacks; printed card effects still require verification.
+ # BREAK uses shared LV.X previous-card attacks and Abilities.
  ('81','Push Down'):E('forceOpponentSwitch',chooseBy='defender'),
 
  ('83','Nose Jet'):E('attackCoinGate',target='opponentActive',duration='opponentTurn'),
@@ -97,7 +104,8 @@ ATTACKS={
  ('85','Accelerating Spin'):S(E('attachEnergyFromDiscard',target='self',energyType='Fighting',amount=2),SWITCH()),
  ('85','Prima Rondo'):BONUS(50,{'type':'selfHasEnergyType','energyType':'Psychic'}),
  ('86','Pompous Punch'):E('discardHand',side='opponent',amount=1),
- # Derail must select a physical Special Energy rather than count-based Zone energy.
+ ('88','Derail'):E('neoRule',rule='xy8:derail'),
+ # Derail selects a physical Special Energy; never count-only Zone Energy.
  ('90','Whiny Voice'):E('shuffleRandomHandCard',side='opponent'),
  ('91','Mind Jack'):E('benchCountDamage',side='opponent',amount=30,mode='add'),
  ('92','Foul Play'):E('copyAttack',source='opponentActive'),
@@ -113,10 +121,12 @@ ATTACKS={
  ('103','Wonder Shine'):ST('confusion'),
  ('105','Flail'):E('damageFromDamage',source='self',amount=1,mode='replace'),
  ('106','Hug'):LOCK(),
+ ('106','Heavy Perfume'):E('neoRule',rule='xy8:heavyPerfume'),
 
  ('109','Extra Chop'):E('selfDamage',amount=10),
  ('110','Dragon Slayer'):BONUS(40,{'type':'opponentMatches','filter':{'subtype':'Dragon'}}),
  ('111','Dragon Pulse'):E('discardTop',side='self',amount=3),
+ ('111','Dragon Dance'):E('neoRule',rule='xy8:dragonDance'),
  ('112','Tuning'):E('handShuffle',draw='opponentHandCount'),
  ('112','Air Slash'):DISC(),
  ('113','Synchro Woofer'):BONUS(80,{'type':'handSizesEqual'}),
@@ -142,6 +152,14 @@ for src,alts in [('21',['153']),('22',['154']),('34',['155']),('35',['156']),('6
    for alt in alts:ATTACKS[(alt,name)]=effect
 
 TRAINERS={
+ '134':('Supporter',E('neoRule',rule='xy8:brigette')),
+ '135':('Item',E('neoRule',rule='xy8:buddyBuddyRescue')),
+ '141':('Tool',E('modifier',stat='maxHp',amount=20,scope='self',duration='whileInPlay',condition={'type':'selfRetreatCostAtLeast','amount':3})),
+ '145':('Stadium',E('neoRule',rule='xy8:parallelCity')),
+ '147':('Item',E('neoRule',rule='xy8:reservedTicket')),
+ '149':('Item',E('neoRule',rule='xy8:superRod')),
+ '150':('Item',E('neoRule',rule='xy8:townMap')),
+ '161':('Supporter',E('neoRule',rule='xy8:brigette')),
  '133':('Tool',E('modifier',stat='damageReduction',amount=40,scope='self',duration='whileInPlay',condition={'type':'opponentHasSpecialEnergy'})),
  '137':('Tool',E('modifier',stat='retreatCost',amount=-99,scope='self',duration='whileInPlay')),
  '139':('Tool',N), # Mega Glalie Spirit Link, enforced by shared evolve rule
@@ -166,6 +184,12 @@ TRAINERS={
 # Conservative: no BREAK Pokemon until the shared engine inherits previous
 # attacks, Abilities, weakness, resistance and retreat accurately.
 ABILITIES={
+ 'Energy Color':{'type':'activated','oncePerTurn':True,'effect':E('neoRule',rule='xy8:energyColor')},
+ 'Magnetic Circuit':{'type':'activated','oncePerTurn':False,'effect':E('neoRule',rule='xy8:magneticCircuit')},
+ 'Gothic Fear':{'type':'triggered','event':'evolved','effect':E('neoRule',rule='xy8:gothicFear')},
+ 'Twisted Incantation':{'type':'triggered','event':'evolved','effect':E('neoRule',rule='xy8:twistedIncantation')},
+ 'Stand In':{'type':'activated','benchOnly':True,'oncePerTurn':True,'effect':E('neoRule',rule='xy8:standIn')},
+ 'Second Coat':{'type':'activated','oncePerTurn':True,'effect':E('neoRule',rule='xy8:secondCoat')},
  'Sparkling Induction':{'type':'passive','activeOnly':True,'effect':E('modifier',stat='retreatCost',amount=-1,scope='self',duration='whileActive',perBenchFilter={'name':'Magnemite'})},
  'My Way':{'type':'passive','effect':E('modifier',stat='retreatCost',amount=-99,scope='self',duration='whileInPlay',condition={'type':'stadiumInPlay'})},
  'Fright Night':{'type':'passive','activeOnly':True,'effect':N}, # reuses global tool-effects suppression hook
@@ -211,3 +235,10 @@ def attack(row,a):
  m=re.fullmatch(r'This attack does (\d+) damage to 1 of your opponent.s Benched Pokémon\. \(Don.t apply Weakness and Resistance for Benched Pokémon\.\)',text)
  if m:return E('multiTargetDamage',target='opponentBench',amount=int(m[1]),count=1,upTo=True)
  return None
+
+# Real physical Special Energy units: never fake attachments or count flexible
+# Rainbow as nine simultaneous Energy units. Individual effects live in core.
+ENERGIES={
+ '151':E('specialEnergy',provides={'Fire':1},attachOnlyTypes=['Fire']),
+ '152':E('specialEnergy',provides={'Miracle':1}),
+}

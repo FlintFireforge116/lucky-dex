@@ -23,7 +23,7 @@ test('XY8 registration: human, CPU, deck editor, collection and script order',()
 });
 test('Pinned XY8 generator and mandatory Gradle audit, source rules documented',()=>{
  const gradle=fs.readFileSync(path.join(root,'app/build.gradle'),'utf8');
- assert.match(gradle,/versionCode 7375/);assert.match(gradle,/versionName '0\.69\.375'/);
+ assert.match(gradle,/versionCode 7376/);assert.match(gradle,/versionName '0\.69\.376'/);
  assert.match(gradle,/tasks\.register\('generateXY8ForApk'/);
  assert.match(gradle,/tasks\.register\('auditXY8ForApk'/);
  assert.match(gradle,/v07375-breakthrough-shared-mechanics\.test\.cjs/);
@@ -34,15 +34,15 @@ test('Pinned XY8 generator and mandatory Gradle audit, source rules documented',
  const master=fs.readFileSync(path.join(root,'docs/LUCKYDEX_MASTER_RULES.txt'),'utf8');
  assert.match(master,/MECHANIC-FIRST SET DELIVERY CONTRACT/);
  assert.match(master,/Do NOT enable a\s+card with unsupported printed effects/);
- assert.ok(fs.readFileSync(path.join(assets,'app-v0167.js'),'utf8').includes("window.__LUCKYDEX_BUILD='0.69.375'"));
+ assert.ok(fs.readFileSync(path.join(assets,'app-v0167.js'),'utf8').includes("window.__LUCKYDEX_BUILD='0.69.376'"));
 });
 test('All mapped attacks, Trainers and abilities validate via existing battle effect contract',()=>{
  const mapped=runPy(String.raw`import json,sys;sys.path.insert(0,sys.argv[1]);import xy8_verified as v
 print(json.dumps([[str(k),e] for k,e in v.ATTACKS.items()]+[[k,e[1]] for k,e in v.TRAINERS.items()]+[[k,e['effect']] for k,e in v.ABILITIES.items()]))`);
- assert.ok(mapped.length>110);
+ assert.ok(mapped.length>130);
  for(const [k,e] of mapped)assert.deepEqual(effects.validateEffect(e),[],k);
 });
-test('BREAK shares LV.X inheritance; no silent noop for genuinely unsupported printed effects',()=>{
+test('BREAK shares LV.X inheritance and previously gated prints now have full effects',()=>{
  const cards=runPy(String.raw`import json,sys,importlib.util
 p=sys.argv[1];sys.path.insert(0,p);spec=importlib.util.spec_from_file_location('xy8',p+'/build-xy8.py');m=importlib.util.module_from_spec(spec);spec.loader.exec_module(m)
 def row(n,name,typ='Pokémon',sub=None,att=None,abs=None):return[str(n),name,typ,sub or (['Basic'] if typ=='Pokémon' else ['Item']),100,['Grass'],None,att or [],abs or [],None,None,1,'Common',[],None,None]
@@ -50,7 +50,7 @@ rows=[row('1','Paras',att=[['Blot',['G'],'10','Heal 10 damage from this Pokémon
 print(json.dumps(m.generate(rows)))`);
  const by=Object.fromEntries(cards.map(c=>[c.id,c]));
  assert.equal(by['xy8-1'].battleEnabled,true);
- for(const id of ['xy8-2','xy8-151','xy8-145']){assert.equal(by[id].battleEnabled,false,id);assert.equal(by[id].deckEligible,false,id);assert.ok(by[id].support.reasons.length,id)}
+ for(const id of ['xy8-2','xy8-151','xy8-145']){assert.equal(by[id].battleEnabled,true,id);assert.equal(by[id].deckEligible,true,id);assert.equal(by[id].support.reasons.length,0,id)}
  assert.equal(by['xy8-12'].breakEvolution,true);
  assert.equal(by['xy8-12'].battleEnabled,true,'BREAK is not a separate engine block');
  assert.equal(by['xy8-12'].upgradeInheritance,'previous');
@@ -62,7 +62,7 @@ test('XY8 audit accepts canonical string and pre-registration array attack costs
  assert.equal(printedEnergyCodes('PCC'),'PCC');
  assert.throws(()=>printedEnergyCodes(123),/printed Energy cost/);
 });
-test('Pinned XY8 runtime retains complete official catalogue and no fake enabled descriptors',{skip:!generated},()=>{
+test('Pinned XY8 runtime retains complete official catalogue and no fake enabled descriptors',{skip:!generated&&process.env.GITHUB_ACTIONS!=='true'},()=>{
  const rows=JSON.parse(fs.readFileSync(path.join(root,'data/classic/xy8-print-compact.json'),'utf8'));
  const ids=[...Array.from({length:146},(_,i)=>String(i+1)),'146a',...Array.from({length:18},(_,i)=>String(i+147))];
  assert.deepEqual(rows.map(r=>String(r[0])),ids);
@@ -81,8 +81,8 @@ test('Pinned XY8 runtime retains complete official catalogue and no fake enabled
  for(const id of ['xy8-12','xy8-50','xy8-92','xy8-104','xy8-113'])assert.equal(xy8.cardById(id).battleEnabled,true,'BREAK uses verified prior-card inheritance');
  const newlyEnabled=['30','35','45','51','60','63','64','70','79','81','82','94','97','103','107','114','133','137','139','142','144','156','159','160'];
  for(const id of newlyEnabled)assert.equal(xy8.cardById('xy8-'+id).battleEnabled,true,`Shared mechanics should enable authentic XY8 print ${id}`);
- for(const id of ['2','3','15','22','28','49','54','59','62','66','88','91','106','111','123','134','135','141','145','147','149','150','151','152','154','158','161','164'])assert.equal(xy8.cardById('xy8-'+id).battleEnabled,false,`Do not unlock unsupported XY8 print ${id}`);
- assert.ok(xy8.coverage().battleEnabled>=130,'XY8 shared-mechanic second pass must enable substantially more prints');
+ for(const id of ['2','3','15','22','28','49','54','59','62','66','88','91','106','111','123','134','135','141','145','147','149','150','151','152','154','158','161','164'])assert.equal(xy8.cardById('xy8-'+id).battleEnabled,true,`Full implementation must enable authentic XY8 print ${id}`);
+ assert.equal(xy8.coverage().battleEnabled,165,'Every authentic BREAKthrough print must be battle-ready');
 });
 
 test('Mechanic reuse uses Energy UNITS, preserves physical top-deck cards and truly discards opponent hand',()=>{
@@ -117,11 +117,11 @@ print(json.dumps({n:v.ATTACKS[(number,title)] for n,number,title in [('thunder',
  assert.equal(state.sides.opponent.deck.length,0);
 });
 
-test('Risky near-miss mappings remain gated instead of misusing similar effects',()=>{
+test('Previously gated near-miss mappings use validated XY8 effects',()=>{
  const unsupported=runPy(String.raw`import json,sys;sys.path.insert(0,sys.argv[1]);import xy8_verified as v
 names=[('22','Inferno Fang'),('49','Thunderclap Shot'),('88','Derail'),('62','Damage Change'),('106','Heavy Perfume'),('111','Dragon Dance')]
 print(json.dumps({'attacks':[v.ATTACKS.get(k) for k in names],'reservedTicket':v.TRAINERS.get('147'),'punch':v.ATTACKS.get(('86','Pompous Punch'))}))`);
- assert.deepEqual(unsupported.attacks,[null,null,null,null,null,null]);
- assert.equal(unsupported.reservedTicket,null);
+ for(const a of unsupported.attacks)assert.deepEqual(effects.validateEffect(a),[]);
+ assert.equal(unsupported.reservedTicket[0],'Item');assert.deepEqual(effects.validateEffect(unsupported.reservedTicket[1]),[]);
  assert.equal(unsupported.punch.type,'discardHand');
 });

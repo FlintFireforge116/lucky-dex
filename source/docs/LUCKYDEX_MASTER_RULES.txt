@@ -1,6 +1,6 @@
 LUCKYDEX — MASTER PROJECT RULES AND DEVELOPMENT CONTRACT
 =========================================================
-Document version: 2.58
+Document version: 2.59
 Compiled: 22 November 2026
 Current inspected source: v0.69.374 XY8 BREAKthrough with version/UI, LV.X-based BREAK reuse, early catalogue order fixes, and the post-generation XY8 audit printed-Energy-cost compatibility repair, based on v0.69.373 Ancient Origins. GitHub APK build after this latest repair remains unverified. Source-relative ZIP extraction into ~/lucky-dex/source/.
 Recommended repository location: ~/lucky-dex/source/docs/LUCKYDEX_MASTER_RULES.txt
@@ -3995,3 +3995,61 @@ git push origin main
   git add source
   git commit -m "LuckyDex v0.69.375 BREAKthrough mechanic reuse and audit"
   git push origin main
+
+
+================================================================================
+2026-11-22 — XY8 BREAKthrough COMPLETE v0.69.376: 165/165 PRINTS
+================================================================================
+- The mechanic-first, reuse-first contract remains permanent. This release
+  completes all 165 distinct XY8 print IDs (including alternate artwork),
+  220 printed attacks, 19 Abilities and all six BREAK Pokémon. BREAK shares
+  the previous-card inheritance mechanisms already used for LV.X, but uses
+  ordinary evolution timing and may evolve on the Bench.
+- The build-time generator MUST fail when ANY XY8 print has missing printed
+  attack, Ability, Trainer, Ancient Trait or Special Energy coverage. The
+  generated-catalogue Node test MUST require exactly 165 battleEnabled and
+  deckEligible authentic prints. Never skip this generated-catalogue test
+  during GitHub Actions; source-only local tests can skip it.
+- Continue to reuse existing exact mechanics, then extend them at shared
+  resolution/choice/status hooks. Newly finished XY8 groups include physical
+  target/zone choices, full-attack Energy discard choices, once-per-turn and
+  recurring Abilities, source-specific flip logs, opponent-first recovery,
+  Energy redistribution, active-only Dragon Dance boost, and conditional
+  healing based on actual damage removed this turn.
+- Burning Energy (#151) is an actual special Energy card attachable only to
+  Fire Pokémon. After an attack from that Pokémon DISCARDs that exact attached
+  physical Burning Energy card, return the SAME UID after attack resolution,
+  including any prompted choices, only if the Pokémon remains in play and
+  still has Fire typing. Other discard events NEVER cause this return.
+- Rainbow Energy (#152) contributes ONE flexible Energy unit rather than
+  one of every type simultaneously; attach from hand puts 1 damage counter
+  on the attached Pokémon. Do not consume the Energy Zone attachment for
+  an additional Ability-granted hand Energy attachment.
+- Parallel City (#145) offers two distinct orientations when played. The
+  printed 3-Pokémon Bench restriction affects one side, and the other side
+  has -20 damage from Grass/Fire/Water attacks. Preserve stadium ownership
+  and selected orientation; three-Bench is already the app's default limit.
+- Heavy Boots (#141): only Pokémon with printed Retreat Cost 3+ gain +20 HP
+  and cannot be Confused; remove existing Confusion when attached. Do not
+  create a generic all-Pokémon HP boost.
+- Never mark a card fully implemented merely because its descriptor passes
+  validateEffect(). Run explicit battle-state outcome checks (UI choices,
+  physical card UIDs, Energy/KO/turn timing, opposing player choices, Tools,
+  deck builder legality). Use one local broad regression run and one final
+  GitHub CI build before declaring the APK confirmed.
+- CI regressions from v0.69.375 were fixed: Xerneas #107's Power Creation
+  needs the existing healed-this-turn predicate; version-consistency audit
+  must see the identical build in Gradle, HTML title and boot JavaScript.
+- LOCAL VERIFICATION: 257 passed / 0 failed / 10 skipped in the broad XY-era
+  regression selection; generated catalogue verification runs in GitHub only.
+  An independent official XY8 catalogue comparison found 165/165 mapped and
+  no remaining unmapped attacks/Abilities/Trainers/Energy cards. This is
+  NOT a claim that the GitHub APK build has already succeeded.
+
+INSTALL (Termux from repository root; source-relative patch):
+  cd ~/lucky-dex
+  unzip -o /sdcard/Download/LuckyDex_patch_v0.69.376_BREAKTHROUGH_COMPLETE.zip -d source
+  git add source
+  git commit -m "LuckyDex v0.69.376 BREAKthrough 165-print completion"
+  git push origin main
+================================================================================

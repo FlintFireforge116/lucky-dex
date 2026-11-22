@@ -64,7 +64,7 @@ def generate(rows):
    else:pw.append({'name':title,'text':printed,'printedPowerType':'ability','disabledByStatus':False,**impl})
 
   if kind=='trainer' and n not in V.TRAINERS:issues.append('Unimplemented Trainer rules')
-  if kind=='energy':issues.append('Unaudited Special Energy continuous effect')
+  if kind=='energy' and n not in V.ENERGIES:issues.append('Unaudited Special Energy continuous effect')
   ok=not issues;ex='EX' in subtypes;mega='MEGA' in subtypes
   card={'id':'xy8-'+n,'setId':'xy8','number':n,'name':name,'source':'tcg','battleFormat':'classic','kind':kind,
    'rarity':rarity,'image':f'https://images.pokemontcg.io/xy8/{n}.png','imageLarge':f'https://images.pokemontcg.io/xy8/{n}_hires.png',
@@ -99,8 +99,8 @@ def generate(rows):
    # by engine-wide attachment, retaliation and weakness hooks. Physical
    # Special Energy cards remain distinct from generated basic Zone units.
    t='Fire' if n=='151' else 'Colorless'
-   card.update(basicEnergy=False,specialEnergy=True,energyType=t,subtype=t,text='\n'.join(rules),
-      effect={'type':'specialEnergy','provides':{t:1},'attachOnlyTypes':[t]})
+   spec=V.ENERGIES.get(n) or {'type':'specialEnergy','provides':{t:1}}
+   card.update(basicEnergy=False,specialEnergy=True,energyType=t,subtype=t,text='\n'.join(rules),effect=spec)
   cards.append(card)
  return cards
 
