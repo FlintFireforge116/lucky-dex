@@ -5380,3 +5380,12 @@ SM5 STAGE 10 / v0.69.414 RELEASE RULES:
 - Blessings of the Frost triggers ONLY when evolved from hand, only if Water Energy exists in physical discard or Energy Discard ledger. Fire Blaster pays exactly two actual attached Energy for its bonus.
 - Happy Turn shuffles the actual attacker and attached cards into deck and requires legal Active promotion; Ancient Crystal reduces damage only to its four named Regi Pokémon and only if attached.
 - All Stage 1–9 tests must remain in SM5 Termux preflight and Gradle APK gate. Independent Stage 10 outcomes and SHA-locked printed text require passing before release. NEVER change older gate expectations or disable a test merely to make build green.
+
+SM5 STAGE 11 / v0.69.415 RELEASE RULES:
+- Fourteen individually pinned SM5 attacks extend the support catalogue; all previously gated mechanics remain gated until truly playable. Never skip original full 178-print canonical catalogue verification or assert a false playable total.
+- Coax benches at most 3 physical Basic Pokémon of DIFFERENT types, preserving actual UID and declining repeats; Flower Tornado moves an actual attached Grass Energy unit/card between different Pokémon, without copying it.
+- Snuggly Generator performs a SEPARATE genuine Lightning Basic Energy search for every eligible Nuzzle Benched Pokémon. Each virtual Energy Zone search flips independently, and tails never adds an Energy. Magical Swap must offer opponent-owned damage counter sources/targets and a Stop option.
+- Sticky Smokescreen takes TWO flips when the defending Pokémon attacks; either tails fails the whole attack. Weak Kneed takes ONE. Never default one-size-fits-all attack gates.
+- Own the Place discards only the OPPONENT-owned Stadium and then blocks BOTH attack damage and attack effects; no Stadium yields no guard. Dangerous Lick uses until-tails flips and Paralyzes only if the very FIRST flip is tails.
+- Spike Armor deals SIX damage counters on the attacker upon an actual damaging hit, including a Knock Out; Exact Revenge must validate a Fighting Pokémon KO caused by the opponent attack the previous turn.
+- Keep tests/v07436-ultra-prism-stage11-outcomes.test.cjs in BOTH the Gradle APK gate and SM5 Termux preflight. Run the full previous expansion preflights and Gradle source guard; do not delete stale gate assertions instead of updating them.

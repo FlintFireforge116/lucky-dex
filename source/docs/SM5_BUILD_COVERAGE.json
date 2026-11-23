@@ -1,21 +1,12 @@
 {
   "printed": 178,
-  "battleReady": 154,
+  "battleReady": 167,
   "gated": {
-    "sm5-5": [
-      "Unimplemented attack: Flower Tornado"
-    ],
-    "sm5-15": [
-      "Unimplemented attack: Coax"
-    ],
     "sm5-21": [
       "Unimplemented attack: Fury Swipes"
     ],
     "sm5-23": [
       "Unimplemented Ability: Flaming Fighter"
-    ],
-    "sm5-29": [
-      "Unimplemented attack: Spike Armor"
     ],
     "sm5-31": [
       "Unimplemented attack: Splatter"
@@ -26,42 +17,11 @@
     "sm5-48": [
       "Unimplemented attack: Volt Bolt"
     ],
-    "sm5-49": [
-      "Unimplemented attack: Snuggly Generator"
-    ],
-    "sm5-54": [
-      "Unimplemented attack: Hone Claws"
-    ],
-    "sm5-57": [
-      "Unimplemented attack: Exact Revenge"
-    ],
-    "sm5-69": [
-      "Unimplemented attack: Dust Cannon"
-    ],
-    "sm5-76": [
-      "Unimplemented attack: Sticky Smokescreen"
-    ],
-    "sm5-78": [
-      "Unimplemented attack: Iron Head"
-    ],
-    "sm5-94": [
-      "Unimplemented attack: Magical Swap"
-    ],
     "sm5-95": [
-      "Unimplemented attack: Exeggutor's Paradise",
-      "Unimplemented attack: Draco Meteor Barrage"
+      "Unimplemented attack: Exeggutor's Paradise"
     ],
     "sm5-102": [
       "Unimplemented attack: Slam"
-    ],
-    "sm5-103": [
-      "Unimplemented attack: Dangerous Lick"
-    ],
-    "sm5-106": [
-      "Unimplemented attack: Weak Kneed"
-    ],
-    "sm5-109": [
-      "Unimplemented attack: Own the Place"
     ],
     "sm5-129": [
       "Unimplemented Trainer effect"

@@ -18,6 +18,7 @@ import sm5_stage7_verified as STAGE7
 import sm5_stage8_verified as STAGE8
 import sm5_stage9_verified as STAGE9
 import sm5_stage10_verified as STAGE10
+import sm5_stage11_verified as STAGE11
 ROOT=Path(__file__).resolve().parents[1]
 E=lambda name,**kw:{'type':name,**kw}
 N=E('noop')
@@ -45,6 +46,8 @@ ATTACK_OVERRIDES={
 }
 
 def attack(row,a):
+ stage11=STAGE11.attack(row,a)
+ if stage11 is not None:return stage11
  stage10=STAGE10.attack(row,a)
  if stage10 is not None:return stage10
  stage9=STAGE9.attack(row,a)
