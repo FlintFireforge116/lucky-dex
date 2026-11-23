@@ -397,9 +397,9 @@
       // Ancient Origins M Sceptile-EX: Jagged Saber is optional but valuable.
       // Choose genuine Grass Basic Energy already in hand and a useful Bench
       // recipient; never manufacture Energy from the separate Energy Zone.
-      // Ancient Origins: Thunder Rod cannot attach an unrevealed or fabricated
-      // Lightning unit. The optional attachment is useful; do not select
-      // Done by default while one of the four revealed units is eligible.
+      // Ancient Origins hybrid Thunder Rod: four attack coin flips gate the
+      // genuine top-four Zone Lightning units. Offered attachment choices
+      // already enforce remaining heads; attach rather than default to Done.
       if(e.type==='xy7ThunderRod'&&pending.kind==='option')
         return choices.find(a=>a.choiceOption===1)||choices[0];
       // Entei's milled Fire Energy MUST be placed on real Pokémon. Prefer a

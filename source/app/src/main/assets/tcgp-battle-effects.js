@@ -19034,15 +19034,23 @@
         break;
       }
       case 'xy7ThunderRod':{
-        // Ampharos-EX: only the top four genuine Basic Energy Zone units can
-        // be revealed, and only revealed Lightning can be attached. Return and
-        // shuffle every unchosen unit. Ordinary deck refs and Special Energy
-        // are never searched or fabricated for this hybrid-deck effect.
+        // LuckyDex HYBRID balance override (NOT the printed TCG effect).
+        // Reveal at most four genuine Basic Energy Zone units and flip four
+        // coins ONCE for the attack. Each heads authorises at most one
+        // Lightning attachment from those four revealed units. A tails result
+        // never attaches Energy. Return/shuffle all remaining units to Zone.
+        // Never create Energy counters or search physical cards for this move.
         const ss=own(ctx),zone=Array.isArray(ss.energySupply)?ss.energySupply:null;
         if(!zone)break;
         let revealed=Array.isArray(effect.revealed)?effect.revealed.slice():null;
-        if(!revealed){revealed=zone.splice(0,4);
-          log({type:'xy7ThunderRodReveal',side:ctx.side,energyTypes:revealed.slice()});}
+        let remainingHeads=Number(effect.remainingHeads||0);
+        if(!revealed){
+          revealed=zone.splice(0,4);
+          log({type:'xy7ThunderRodReveal',side:ctx.side,energyTypes:revealed.slice()});
+          const results=Array.from({length:4},()=>coin(ctx));
+          remainingHeads=results.filter(Boolean).length;
+          log({type:'coin',side:ctx.side,reason:'Thunder Rod',coins:4,heads:remainingHeads,results});
+        }
         const finish=()=>{
           zone.push(...revealed);ctx.shuffle?.(ctx.state,zone);
           ss.nextEnergyType=zone[0]||null;
@@ -19053,17 +19061,17 @@
           if(!Number.isInteger(option)||option<0||option>1)break;
           if(option===0){finish();break;}
           const at=revealed.indexOf('Lightning');
-          if(at<0||!ctx.attacker)break;
-          revealed.splice(at,1);
+          if(remainingHeads<=0||at<0||!ctx.attacker){finish();break;}
+          revealed.splice(at,1);remainingHeads--;
           const target=ctx.attacker;target.energy=target.energy||{};
           target.energy.Lightning=Number(target.energy.Lightning||0)+1;
           ctx.onEnergyAttached?.(target,'Lightning',1,{fromDeck:true,fromZone:true});
           log({type:'xy7ThunderRodAttach',side:ctx.side,targetUid:target.uid,energyType:'Lightning'});
         }
-        if(!revealed.includes('Lightning')){finish();break;}
+        if(remainingHeads<=0||!revealed.includes('Lightning')){finish();break;}
         ctx.requestChoice?.({kind:'option',side:'self',
           options:['Done attaching Lightning Energy','Attach 1 revealed Lightning Energy'],
-          effect:{type:'xy7ThunderRod',revealed}});
+          effect:{type:'xy7ThunderRod',revealed,remainingHeads}});
         break;
       }
       case 'xy7BurningRoar':{

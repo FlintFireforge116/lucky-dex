@@ -8,7 +8,7 @@ Official printed effect: 30 base damage; flip a coin; on heads, discard one Ener
 
 ## Ampharos-EX (Ancient Origins XY7 #27/#87) — Thunder Rod
 
-The official attack does NOT flip any coins. It looks at the top four cards of the deck, attaches any Lightning Energy found to Ampharos-EX and shuffles the other cards back. LuckyDex has a distinct virtual Energy Zone, so the existing XY7 `xy7ThunderRod` implementation draws four ordered Zone units instead of fabricated Energy cards from the physical deck. Existing regression tests verify the four-unit limit, optional attachment, reshuffling, and CPU use. Do not replace this with arbitrary coin flips or a guaranteed Energy attach.
+The **printed TCG** attack does NOT flip coins. However, at the user's explicit request, LuckyDex's **hybrid-only balance override** now flips four coins and permits one Lightning attachment per heads, limited by available Lightning among the first four ordered Basic Energy Zone units. This prevents monotype Zone decks from automatically gaining four Energy in one attack. Unchosen Zone units are returned and shuffled, physical cards remain untouched, and no extra Energy is fabricated. The four rolls happen once per attack (never rerolled on resolving a choice). Stage 9 tests cover 0, 1 and 4 heads, CPU choices and fewer available Lightning than heads. This overrides the earlier documentation's 'do not flip' instruction for LuckyDex gameplay only.
 
 ## M Ampharos-EX (Ancient Origins XY7 #28/#88) — Exavolt
 

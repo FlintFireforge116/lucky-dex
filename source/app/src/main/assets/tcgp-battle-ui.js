@@ -606,6 +606,8 @@
   }
   function attackDescription(attack){
     if(!attack)return '';
+    // Explicit LuckyDex hybrid rule, intentionally different from printed TCG text.
+    if(attack.effect?.type==='xy7ThunderRod')return 'LuckyDex hybrid rule: Flip 4 coins. For each heads, you may attach 1 Lightning Energy from the top 4 Energy Zone units to this Pokémon. Return and shuffle all unused units into the Energy Zone.';
     const printed=typeof attack.text==='string'&&attack.text.trim()?attack.text:typeof attack.printedText==='string'&&attack.printedText.trim()?attack.printedText:'';
     const detail=printed||summarizeEffect(attack.effect);
     const special=attack.requiresAsleep?'This Pokémon must be Asleep to use this attack. ':'';

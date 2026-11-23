@@ -3764,10 +3764,11 @@ ADDED:
   non-Fire units in Basic Energy discard ledger; distribute every revealed
   Fire to player-selected Active/Bench targets. No synthetic Energy; Special
   Energy cards stay physical. Original Combat Blaze damage remains available.
-- Ampharos-EX #27/#87 Thunder Rod: reveal only top four actual Energy Zone
-  Basic units; choose how many revealed Lightning units to attach to the
-  attacking Ampharos; stop option returns and shuffles all leftover units.
-  Never touch physical draw deck or attach fifth/unrevealed or Special units.
+- Ampharos-EX #27/#87 Thunder Rod (original v0.69.372 behaviour;
+  SUPERSEDED by user-directed v2.81 hybrid balance override below): reveal
+  only top four actual Energy Zone Basic units. Four attack coin flips now
+  limit attachments to one eligible Lightning per heads; unused units return
+  and shuffle. Never fabricate Energy or touch the physical draw deck.
 - Autobuilder: classify the new Energy acceleration prints as 'ramp' with
   their printed compatible energy types. Do not pad with random Trainers.
 - CPU: continue Thunder Rod attachments while actual Lightning remains;
@@ -5104,7 +5105,7 @@ Steam Siege full gameplay mapping reaches all 116 pinned prints; previously gate
 
 === FIELD ATTACK FIXES — 23 NOVEMBER 2026 (v2.79; base APK 0.69.401) ===
 1. [LOCKED] Primal Clash Groudon-EX Rip Claw (#85/#150) is a 30-damage attack even when the defender has zero Energy. The heads-only optional Energy discard must NEVER prevent attacking. In generic `coinFlip` attack-choice enumeration, an empty contingent effect target set must not discard the base attack action. A heads result with a real Energy does discard one; tails never discards.
-2. [LOCKED] Ancient Origins Ampharos-EX Thunder Rod (#27/#87) does NOT flip coins. Printed attack looks at the top FOUR cards and attaches the found Lightning Energy, as desired. LuckyDex's documented virtual Energy Zone interpretation uses the four ordered Zone units with optional attachment and shuffles unused units back. Never replace it with invented per-head attachments; the matching XY7 Stage 9 player/CPU tests must keep passing.
+2. [SUPERSEDED HISTORICAL RULE] The printed TCG Thunder Rod (#27/#87) does NOT flip coins. The original LuckyDex hybrid implementation exposed four Zone units without coin flips, but this was overpowered in monotype Zone decks. The user's newer v2.81 rule BELOW overrides this: four coin flips gate the attachments, capped by real Lightning units in the top four Zone units. Do not revert the user's requested balance adaptation.
 3. [LOCKED] Ancient Origins M Ampharos-EX Exavolt (#28/#88) offers pre-attack BASE (120) or BOOST (170) choices. When BOOST is selected, Paralyse the opponent's Active and apply 30 recoil after the hit. Do NOT invoke `bonusDamage` from a post-damage `chooseOption`: `applyEffect` throws for attack damage effects. Implement alternative attack damage in `resolveAttack` and expose `effectSelection` options from `choicesForEffect`.
 4. [LOCKED] `tests/v07402-field-reported-attack-fixes.test.cjs` is a regression required by APK `auditXY7ForApk` and proves zero Energy, heads, tails, both EX print variants and both damage branches. The overlay does NOT change app build number or release contracts; preserve coordinated versioning for the next set. Run relevant source preflights before pushing. Do not claim GitHub build success until confirmed externally.
 5. [CURRENT] `docs/FIELD_REPORTED_ATTACK_FIXES_v0.69.401.md` records exact code paths and the intended patch overlay. Source-relative extraction remains `unzip -o PATCH.zip -d source`; no setup command is needed for these ordinary JS/Python/Gradle changes.
@@ -5117,3 +5118,10 @@ Steam Siege full gameplay mapping reaches all 116 pinned prints; previously gate
 [LOCKED] `tests/v07403-wild-edge-cpu-turn.test.cjs` MUST run in Gradle auditXY11ForApk AND --full XY11 preflight, alongside mandatory v07402 field-reported regression. Test damage, recoil, turn handoff, no pending choice and exact one attack per turn for both Wild Edge cards.
 [CURRENT] Use a single overlay for Groudon-EX Rip Claw, Ampharos-EX Thunder Rod, M Ampharos-EX Exavolt and Steelix-EX Wild Edge, not successive conflicting patches; keep versionName/versionCode 0.69.401/7401 until a coordinated release bump. Overlay is relative to `source/` and requires no prepare script.
 === END WILD EDGE CPU HOTFIX ===
+
+
+=== THUNDER ROD HYBRID BALANCE OVERRIDE — 23 NOVEMBER 2026 (v2.81) ===
+[USER-DIRECTED OVERRIDE] Ampharos-EX Ancient Origins (#27/#87) Thunder Rod is INTENTIONALLY changed from official printed TCG rules, because the hybrid Energy Zone otherwise makes four attachments automatic. Use FOUR fair coin flips ONCE at attack resolution; each heads may attach ONE Lightning unit from the four real top-of-Zone units revealed. Thus success is limited by BOTH heads count AND actual revealed Lightning supply. Never fabricate an Energy unit, never draw a physical deck card for this special hybrid acceleration, and return/shuffle all unused Zone units. Four tails = zero attachments; four heads with four available Lightning = four (rare). Partial heads and supply shortage must be tested. Do NOT revert to previous locked assertion at v2.79 that Thunder Rod must not flip; the user's balance override supersedes that rule FOR LUCKYDEX ONLY, not official TCG.
+[LOCKED] Player and CPU should be able to attach up to this earned count without re-flipping during choices. Reuse preexisting deterministic coin RNG and log one four-result coin entry. Preserve Stage 9 and v07402 regression gates, update Stage 9 tests to test deterministic all-tails/one-head/four-head outcomes. Do not change Exavolt, Rip Claw or Wild Edge as part of this special case.
+[CURRENT] This is a source-relative combined overlay on base APK 0.69.401; follow the previously tested source/ install and verify GitHub Actions APK build after push.
+=== END THUNDER ROD HYBRID BALANCE OVERRIDE ===

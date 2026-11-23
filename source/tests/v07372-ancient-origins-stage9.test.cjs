@@ -50,7 +50,7 @@ test('Stage 9 enables Entei and both Ampharos-EX prints with complete verified a
  assert.equal(cards['xy7-87'].attacks[0].effect.type,'xy7ThunderRod');
 });
 test('Thunder Rod reveals only four ordered Zone units; player may attach two Lightning and shuffles all leftovers',()=>using(()=>{
- const s=battle('xy7-27'),p=s.sides.player;p.energySupply=['Lightning','Fire','Lightning','Water','Lightning'];p.nextEnergyType='Lightning';
+ const s=battle('xy7-27'),p=s.sides.player;p.energySupply=['Lightning','Fire','Lightning','Water','Lightning'];p.nextEnergyType='Lightning';s.rngState=2;
  act(s,'player',a=>a.type==='attack'&&a.attackIndex===0);
  assert.equal(s.pendingChoice.kind,'option');assert.equal(p.energySupply.length,1,'Four energy units held aside while player chooses');
  act(s,'player',a=>a.choiceLabel==='Attach 1 revealed Lightning Energy');
@@ -62,17 +62,73 @@ test('Thunder Rod reveals only four ordered Zone units; player may attach two Li
  assert.equal(s.log.filter(x=>x.type==='xy7ThunderRodAttach').length,2);
 }));
 test('Thunder Rod Done returns unrecovered units without creating Energy or milling the physical deck',()=>using(()=>{
- const s=battle('xy7-87'),p=s.sides.player;p.energySupply=['Fire','Lightning','Grass','Lightning','Water'];p.deck=[ref('fixture-item','item')];
+ const s=battle('xy7-87'),p=s.sides.player;p.energySupply=['Fire','Lightning','Grass','Lightning','Water'];p.deck=[ref('fixture-item','item')];s.rngState=2;
  act(s,'player',a=>a.type==='attack'&&a.attackIndex===0);
  act(s,'player',a=>a.choiceLabel==='Done attaching Lightning Energy');
  assert.equal(p.active.energy.Lightning,4);assert.deepEqual(sorted(p.energySupply),sorted(['Fire','Lightning','Grass','Lightning','Water']));
  assert.equal(p.deck.length,1);assert.equal(s.phase,'battle');
 }));
 test('Thunder Rod with no Lightning in the first four creates no prompt even if fifth Zone unit is Lightning',()=>using(()=>{
- const s=battle('xy7-27'),p=s.sides.player;p.energySupply=['Fire','Water','Grass','Metal','Lightning'];
+ const s=battle('xy7-27'),p=s.sides.player;p.energySupply=['Fire','Water','Grass','Metal','Lightning'];s.rngState=2;
  act(s,'player',a=>a.type==='attack'&&a.attackIndex===0);
  assert.equal(p.active.energy.Lightning,4);assert.equal(p.energySupply.length,5);
  assert.equal(s.phase,'battle');
+}));
+test('Hybrid Thunder Rod four tails attaches zero Lightning even with four eligible Zone units',()=>using(()=>{
+ const s=battle('xy7-27'),p=s.sides.player;s.rngState=8225;
+ p.energySupply=['Lightning','Lightning','Lightning','Lightning','Fire'];
+ const before=p.energySupply.slice();
+ act(s,'player',a=>a.type==='attack'&&a.attackIndex===0);
+ const roll=s.log.filter(x=>x.type==='coin'&&x.reason==='Thunder Rod');
+ assert.equal(roll.length,1);assert.equal(roll[0].coins,4);assert.deepEqual(roll[0].results,[false,false,false,false]);
+ assert.equal(p.active.energy.Lightning,4);assert.equal(s.log.filter(x=>x.type==='xy7ThunderRodAttach').length,0);
+ assert.equal(s.phase,'battle');assert.equal(s.pendingChoice==null,true);
+ assert.deepEqual(sorted(p.energySupply),sorted(before));
+}));
+test('Hybrid Thunder Rod one heads grants exactly one Lightning and never repeats the coin rolls',()=>using(()=>{
+ const s=battle('xy7-87'),p=s.sides.player;s.rngState=36;
+ p.energySupply=['Lightning','Lightning','Lightning','Lightning','Water'];
+ act(s,'player',a=>a.type==='attack'&&a.attackIndex===0);
+ const roll=s.log.find(x=>x.type==='coin'&&x.reason==='Thunder Rod');
+ assert.deepEqual(roll.results,[true,false,false,false]);
+ act(s,'player',a=>a.choiceLabel==='Attach 1 revealed Lightning Energy');
+ assert.equal(p.active.energy.Lightning,5);assert.equal(s.phase,'battle');
+ assert.equal(s.log.filter(x=>x.type==='coin'&&x.reason==='Thunder Rod').length,1);
+ assert.deepEqual(sorted(p.energySupply),sorted(['Lightning','Lightning','Lightning','Water']));
+}));
+test('Hybrid Thunder Rod four heads is capped by the number of top-four Lightning Zone units',()=>using(()=>{
+ const s=battle('xy7-27'),p=s.sides.player;s.rngState=2;
+ p.energySupply=['Lightning','Water','Lightning','Grass','Lightning'];
+ act(s,'player',a=>a.type==='attack'&&a.attackIndex===0);
+ const roll=s.log.find(x=>x.type==='coin'&&x.reason==='Thunder Rod');
+ assert.deepEqual(roll.results,[true,true,true,true]);
+ for(let n=0;n<2;n++)act(s,'player',a=>a.choiceLabel==='Attach 1 revealed Lightning Energy');
+ assert.equal(p.active.energy.Lightning,6);assert.equal(s.phase,'battle');
+ assert.deepEqual(sorted(p.energySupply),sorted(['Water','Grass','Lightning']));
+ assert.equal(s.log.filter(x=>x.type==='xy7ThunderRodAttach').length,2);
+}));
+test('Hybrid Thunder Rod four heads can attach four real Lightning units, never a fifth',()=>using(()=>{
+ const s=battle('xy7-87'),p=s.sides.player;s.rngState=2;
+ p.energySupply=['Lightning','Lightning','Lightning','Lightning','Lightning'];
+ act(s,'player',a=>a.type==='attack'&&a.attackIndex===0);
+ for(let n=0;n<4;n++)act(s,'player',a=>a.choiceLabel==='Attach 1 revealed Lightning Energy');
+ assert.equal(p.active.energy.Lightning,8);
+ assert.equal(p.energySupply.length,1);assert.equal(p.energySupply[0],'Lightning');
+ assert.equal(s.log.filter(x=>x.type==='coin'&&x.reason==='Thunder Rod').length,1);
+ assert.equal(s.log.filter(x=>x.type==='xy7ThunderRodAttach').length,4);
+ assert.equal(s.pendingChoice==null,true);assert.equal(s.phase,'battle');
+}));
+test('Hybrid Thunder Rod CPU attaches only earned heads and hands off the turn',()=>using(()=>{
+ const s=battle('xy7-27'),p=s.sides.player;s.rngState=36;
+ p.energySupply=['Lightning','Lightning','Lightning','Lightning','Fire'];p.energyUsed=true;p.handEnergyUsed=true;
+ act(s,'player',a=>a.type==='attack'&&a.attackIndex===0);
+ assert.equal(s.pendingChoice.kind,'option');
+ const selected=ai.chooseAction(s,'player','Beginner',0);
+ assert.equal(selected.choiceOption,1);
+ core.applyAction(s,'player',selected);
+ assert.equal(p.active.energy.Lightning,5);assert.equal(s.phase,'battle');
+ assert.equal(s.log.filter(x=>x.type==='xy7ThunderRodAttach').length,1);
+ assert.equal(s.log.filter(x=>x.type==='attack'&&x.attack==='Thunder Rod').length,1);
 }));
 test('Burning Roar mills four genuine physical cards, and attaches both revealed Fire to chosen Pokémon',()=>using(()=>{
  const s=battle(),p=s.sides.player;p.deck=[ref('fixture-item','a'),ref('fixture-basic','b'),ref('fixture-stadium','c'),ref('fixture-special-fire','d'),ref('fixture-basic2','fifth')];
@@ -100,14 +156,14 @@ test('Burning Roar converts physical Basic Fire refs correctly and discards non-
  assert.equal(p.active.energy.Fire,5);assert.equal(p.energyDiscard.Water,1);assert.equal(s.phase,'battle');
 }));
 test('Basic Energy acceleration uses actual Energy units rather than Special Energy card refs',()=>using(()=>{
- const s=battle('xy7-87'),p=s.sides.player;p.energySupply=['Water','Lightning'];p.deck=[ref('fixture-special-fire','special')];
+ const s=battle('xy7-87'),p=s.sides.player;p.energySupply=['Water','Lightning'];p.deck=[ref('fixture-special-fire','special')];s.rngState=2;
  act(s,'player',a=>a.type==='attack'&&a.attackIndex===0);
  act(s,'player',a=>a.choiceLabel==='Attach 1 revealed Lightning Energy');
  assert.equal(p.active.energy.Lightning,5);assert.deepEqual(p.deck.map(x=>x.uid),['special']);
  assert.equal(p.active.specialEnergy.length,0);assert.equal(s.phase,'battle');
 }));
 test('CPU Thunder Rod attaches revealed Lightning rather than selecting Done prematurely',()=>using(()=>{
- const s=battle('xy7-87'),p=s.sides.player;p.energySupply=['Water','Lightning','Lightning','Fire'];
+ const s=battle('xy7-87'),p=s.sides.player;p.energySupply=['Water','Lightning','Lightning','Fire'];s.rngState=2;
  p.energyUsed=true;p.handEnergyUsed=true;
  act(s,'player',a=>a.type==='attack'&&a.attackIndex===0);
  for(let n=0;n<2;n++){
