@@ -75,7 +75,8 @@ test('Independent SM2 audit: all 180 records, legal gating, complete printed met
   for(const power of card.abilities||[])assert.deepEqual(fx.validateEffect(power.effect),[],card.id+' '+power.name);
   if(card.kind==='trainer')assert.deepEqual(fx.validateEffect(card.effect),[],card.id+' Trainer');
  }
- assert.ok(coverage.gated['sm2-23'].some(x=>x.includes('Sludge Shock')),'Heal-lock must stay gated until runtime supports it');
+ assert.equal(coverage.battleReady,180,'Final Guardians Rising audit must have all prints playable');
+ assert.deepEqual(coverage.gated,{},'No Guards Rising prints may be silently gated in the completion release');
 });
 test('All enabled SM2 printed attacks finish without exception or stranded choice, both sides',()=>withDummy(()=>{
  let attacks=0;

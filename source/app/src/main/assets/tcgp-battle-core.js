@@ -499,7 +499,10 @@
         return beginEffectChoice(state,side,attacker||state.sides[side].active,controlled);
       }
       return beginEffectChoice(state,side,attacker||state.sides[side].active,{...spec,trainerRef:action?.trainerRef||spec.trainerRef||null});
-    },queuePrize:(which,amount=1)=>{const q=state.pendingPrizeClaims=state.pendingPrizeClaims||[];const owner=state.sides[which];if(owner?.prizes?.length)q.push({side:which,remaining:Math.min(Number(amount||1),owner.prizes.length)});},benchCard:(ss,ref)=>{const slot=emptyBenchSlots(ss)[0];if(slot==null)return null;const placed=placeOnBench(ss,makePokemonSlot(ref.cardId,ss.turnCount,ref.uid),slot),targetSide=ss===state.sides.player?'player':'opponent';triggerAbilities(state,'benched',targetSide,placed,{fromDeck:true});return slot;},onEnergyAttached:(target,energyType,amount,sourceMeta)=>{if(state.format==='classic'&&energyType==='Water'&&['ex7-26','ex7-81'].includes(target?.cardId)){target.conditions={};target.damage=Math.max(0,Number(target.damage||0)-(target.cardId==='ex7-26'?20:10));}const targetSide=pokemonOn(state.sides.player).includes(target)?'player':'opponent';for(let i=0;i<Number(amount||1);i++){
+    },queuePrize:(which,amount=1)=>{const q=state.pendingPrizeClaims=state.pendingPrizeClaims||[];const owner=state.sides[which];if(owner?.prizes?.length)q.push({side:which,remaining:Math.min(Number(amount||1),owner.prizes.length)});},benchCard:(ss,ref)=>{const slot=emptyBenchSlots(ss)[0];if(slot==null)return null;const placed=placeOnBench(ss,makePokemonSlot(ref.cardId,ss.turnCount,ref.uid),slot),targetSide=ss===state.sides.player?'player':'opponent';triggerAbilities(state,'benched',targetSide,placed,{fromDeck:true});return slot;},onEnergyAttached:(target,energyType,amount,sourceMeta)=>{if(state.format==='classic'&&energyType==='Water'&&['ex7-26','ex7-81'].includes(target?.cardId)){target.conditions={};target.damage=Math.max(0,Number(target.damage||0)-(target.cardId==='ex7-26'?20:10));}const targetSide=pokemonOn(state.sides.player).includes(target)?'player':'opponent';
+      if(state.format==='classic'&&sourceMeta?.fromHand&&target?.cardId==='sm2-114'&&state.sides[targetSide]?.active===target&&
+         !effects.abilitiesSuppressed(state,targetSide,target,data.cardById))target.conditions={...(target.conditions||{}),sleep:true};
+      for(let i=0;i<Number(amount||1);i++){
         const fromHand=!!sourceMeta?.fromHand;
         triggerAbilities(state,'energyAttached',targetSide,target,{energyType,energyCardId:sourceMeta?.energyCardId,fromZone:!fromHand,fromHand});
         // Physical Basic Energy attached by a Power is still attached FROM
@@ -872,6 +875,8 @@
     if(state.format==='classic'&&slot?.cardId==='ecard3-46'&&!effects.abilitiesSuppressed(state,side,slot,data.cardById)&&Number(effectiveEnergy(state,side,slot).Psychic||0)>0)return 0;
     if(state.format==='classic'&&data.cardById(slot?.cardId)?.retreatZeroAgainstEvolution&&!effects.abilitiesSuppressed(state,side,slot,data.cardById)&&['Stage 1','Stage 2'].includes(data.cardById(state.sides[side==='player'?'opponent':'player']?.active?.cardId)?.stage))return 0;
     if(state.format==='classic'&&pokemonOn(state.sides[side]).some(s=>s.cardId==='ex6-9'&&!effects.abilitiesSuppressed(state,side,s,data.cardById))&&/^(?:Nidoran [♀♂]|Nidorina|Nidorino|Nidoking)$/.test(ownerName))return 0;
+    if(state.format==='classic'&&gym==='sm2-117'&&slot&&
+      (Number(effectiveEnergy(state,side,slot).Psychic||0)>0||Number(effectiveEnergy(state,side,slot).Darkness||0)>0))stadiumCost-=2;
     if(gym==='SNAPFLORIO-111'&&data.cardById(slot.cardId)?.stage==='Basic')stadiumCost-=1;
     if(gym==='ex16-79'&&data.cardById(slot.cardId)?.types?.includes('Psychic'))stadiumCost-=2;
     if(state.format==='classic'&&gym==='ex4-78'&&!ownerName.startsWith("Team Aqua's"))stadiumCost+=1;
@@ -1858,7 +1863,7 @@
         if(s.active?.dp3EncoreAttack&&Number(s.active.dp3EncoreUntil)>=state.turnNumber&&attack.name!==s.active.dp3EncoreAttack)continue;
         if(state.format==='classic'&&s.active.cardId==='pl1-16'&&Number(s.active.pl1LastAttackTurn||-1)===state.turnNumber-2&&!effects.abilitiesSuppressed(state,side,s.active,data.cardById))continue;
         if(attack.requiresAsleep&&!conditions.sleep)continue;
-        if(conditions.sleep&&!attack.allowAsleep&&!(state.format==='classic'&&s.active.cardId==='ex6-15'&&attack.name==='Toss and Turn'))continue;
+        if(conditions.sleep&&!attack.allowAsleep&&!(state.format==='classic'&&((s.active.cardId==='ex6-15'&&attack.name==='Toss and Turn')||(s.active.cardId==='sm2-114'&&attack.name==='Hypno Roll'))))continue;
         if(state.format==='classic'&&['ex4-3','ex4-9'].includes(s.active.cardId)&&!effects.abilitiesSuppressed(state,side,s.active,data.cardById)){
           const team=s.active.cardId==='ex4-3'?"Team Aqua's":"Team Magma's";
           if(['player','opponent'].flatMap(who=>pokemonOn(state.sides[who])).filter(slot=>data.cardById(slot.cardId)?.name?.startsWith(team)).length<=3)continue;
@@ -2722,7 +2727,9 @@
             source.uid===attacker?.uid&&Number(source.damage||0)>0&&
             ['xy10-55','xy10-119'].includes(source.cardId)&&foe.lastAttackName==='Endgame'&&
             card?.megaEvolution===true?2:0;
-          const prizeCount=awardsPrize?Math.max(0,prizeValue(card)+extraMoonSkip+arceusBeltBonus+arceusExtra+hgss3SpaceVirus+bw8Overflow+deltaPlus+xy10Endgame-bw9LifeDew):0;
+          const fluff=slot.sm2WagesOfFluff;
+          const sm2Extra=awardsPrize&&fluff&&fluff.side===foeSide&&Number(fluff.turn)===Number(state.turnNumber)&&cause==='attack'&&source?.attack&&source.side===foeSide?2:0;
+          const prizeCount=awardsPrize?Math.max(0,prizeValue(card)+extraMoonSkip+arceusBeltBonus+arceusExtra+hgss3SpaceVirus+bw8Overflow+deltaPlus+xy10Endgame+sm2Extra-bw9LifeDew):0;
           awarded=Math.min(prizeCount,Math.max(0,foe.prizes.length-(state.pendingPrizeClaims||[]).filter(q=>q.side===foeSide).reduce((n,q)=>n+q.remaining,0)));
           if(awarded){state.pendingPrizeClaims=state.pendingPrizeClaims||[];state.pendingPrizeClaims.push({side:foeSide,remaining:awarded});}
           state.log.push({type:'ko',side,cardId:card.id,turnNumber:state.turnNumber,prizesTaken:foe.prizesTaken,awarded});

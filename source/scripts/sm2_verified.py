@@ -279,10 +279,38 @@ CONTINUED_TEXT={
  'Hypno Roll':'This attack can be used if this Pokémon is Asleep.',
 }
 
+# Complete SM2-specific effects. An explicit rule name is checked against the
+# pinned printed text before it is made playable; avoid attack-name fallbacks.
+SM2_RULE_ATTACKS={
+ 'Kindle':('Discard an Energy from this Pokémon. If you do, discard an Energy from your opponent',E('sm2Rule',rule='kindle')),
+ 'Sludge Shock':("The Defending Pokémon can't be healed during your opponent",E('sm2Rule',rule='sludgeShock')),
+ 'Roll Call':('Search your deck for a Poliwag, a Poliwhirl, and a Poliwrath',E('sm2Rule',rule='rollCall')),
+ 'Hyper Jump':('You may shuffle this Pokémon and all cards attached to it into your deck.',E('sm2Rule',rule='hyperJump')),
+ 'All the Presents':('Flip a coin until you get tails. For each heads',E('sm2Rule',rule='allPresents')),
+ 'Frozen Breath':('You may discard 2 Water Energy from this Pokémon',E('sm2Rule',rule='frozenBreath')),
+ 'Copycat':("If your opponent's Pokémon used an attack that isn't a GX attack during their last turn",E('sm2Rule',rule='copycat')),
+ 'Landslip':('Discard the top 3 cards of your deck',E('sm2Rule',rule='landslip')),
+ 'Future Sight':("Look at the top 4 cards of either player's deck",E('sm2Rule',rule='futureSight')),
+ 'Doom News':('At the end of your opponent',E('sm2Rule',rule='doomNews')),
+ 'The Wages of Fluff':('If the Defending Pokémon is Knocked Out during your next turn',E('sm2Rule',rule='wagesOfFluff')),
+ 'Division':('Search your deck for up to 2 Sliggoo and put them onto your Bench',E('benchFromDeck',amount=2,filter={'name':'Sliggoo','kind':'pokemon'},choose=True)),
+ 'Amass':('Search your deck for a basic Energy card and attach it to this Pokémon.',E('sm2Rule',rule='amass')),
+ 'Swallow Dive':('If this Pokémon used Agility during your last turn',E('sm2Rule',rule='swallowDive')),
+ 'Glance':("Look at the top card of your opponent's deck.",E('inspectTop',side='opponent',amount=1)),
+ 'Scrutinize':("Look at the top 2 cards of your opponent's deck, discard 1 of them",E('sm2Rule',rule='scrutinize')),
+ 'Flame Charge':('Search your deck for a Fire Energy card and attach it to this Pokémon',E('sm2Rule',rule='flameCharge')),
+ 'Loop-the-Loop':('Put all Energy attached to this Pokémon into your hand.',E('sm2Rule',rule='loopTheLoop')),
+ 'Hypno Roll':('This attack can be used if this Pokémon is Asleep',E('sm2Rule',rule='hypnoRoll')),
+}
+
 def attack(row,a):
     title, cost, dmg, printed = a
     text=_norm(printed)
     if not text:return N
+    if title in SM2_RULE_ATTACKS:
+        required,descriptor=SM2_RULE_ATTACKS[title]
+        if _norm(required) in text:return descriptor
+
     if title in CONTINUED_EXACT and _norm(CONTINUED_TEXT[title]) in text:
         return CONTINUED_EXACT[title]
     if title in AUDITED_EXACT and _norm(AUDITED_TEXT[title]) in text:
@@ -311,7 +339,18 @@ TRAINERS={
  '129':('Item',E('moveEnergy',source='selfBench',target='selfActive',amount=1)),
  '144':('Supporter',DRAW(3)),
  '165':('Item',E('rareCandy')),
+ '116':('Stadium',E('sm2Rule',rule='aetherParadise')),
+ '117':('Stadium',E('sm2Rule',rule='altarMoone')),
+ '118':('Stadium',E('sm2Rule',rule='altarSunne')),
+ '120':('Stadium',E('stadiumAction',effect=E('sm2Rule',rule='brookletHill'))),
+ '121':('Pokémon Tool',E('modifier',stat='attackDamage',amount=30,scope='self',duration='whileInPlay',sm2ChoiceBand=True)),
+ '122':('Item',E('sm2Rule',rule='energyLoto')),
+ '123':('Item',E('sm2Rule',rule='energyRecycler')),
+ '127':('Supporter',E('sm2Rule',rule='mallow')),
+
 }
+TRAINERS['121a']=TRAINERS['121']
+TRAINERS['145']=TRAINERS['127']
 for a,b in [('119',['161']),('124',['124a','162']),('126',['143']),('128',['128a','164']),('125',['125a','163']),('130',['130a'])]:
     for x in b:TRAINERS[x]=TRAINERS[a]
 
@@ -328,6 +367,13 @@ ABILITIES={
  'Wonder Tag':{'type':'triggered','event':'benched','fromHandOnly':True,'effect':SEARCH(1,kind='trainer',trainerType='Supporter')},
  'Feather Arrow':SM1_ABILITIES['Feather Arrow'],
  'Victory Star':{'type':'passive','effect':E('coinReroll',scope='attack')},
+ 'Shady Move':{'type':'activated','oncePerTurn':True,'effect':E('sm2Rule',rule='shadyMove')},
+ 'Schooling':{'type':'activated','oncePerTurn':True,'effect':E('sm2Rule',rule='schooling')},
+ 'Aero Trail':{'type':'triggered','event':'benched','fromHandOnly':True,'effect':E('sm2Rule',rule='aeroTrail')},
+ 'Vital Dance':{'type':'triggered','event':'benched','fromHandOnly':True,'effect':E('sm2Rule',rule='vitalDance')},
+ 'Daunting Pose':{'type':'passive','effect':E('sm2Rule',rule='dauntingPose')},
+ 'Flower Shield':{'type':'passive','effect':E('sm2Rule',rule='flowerShield')},
+ 'Comatose':{'type':'passive','effect':E('sm2Rule',rule='comatose')},
  'Geotech System':{'type':'activated','oncePerTurn':True,'effect':E('chooseOption',options=[
    {'label':'Attach Psychic Energy from discard','effect':E('attachEnergyFromDiscard',target='selfActive',amount=1,energyType='Psychic')},
    {'label':'Attach Metal Energy from discard','effect':E('attachEnergyFromDiscard',target='selfActive',amount=1,energyType='Metal')},
