@@ -5352,3 +5352,13 @@ SM5 STAGE 7 / v0.69.411 REQUIREMENTS:
 - Lunar Payback: select and discard exactly one attached physical card or tracked Basic Energy unit before swapping damage counters; do not draw new Energy from the Zone.
 - Damage Transport: move no more than four damage counters from EACH own Pokemon; no damage should be fabricated.
 - Every expansion release version and Gradle check must be updated together. Mandatory Stage 7 outcome and pinned-text checks must pass before commit, as well as all older-set regressions.
+
+SM5 STAGE 8 / v0.69.412 REQUIREMENTS:
+- Stage 8 extends exact-text-locked Ultra Prism mappings: 9 attacks, 4 Abilities, 3 Pokemon Tools. The SHA-pinned 178-print catalogue and previously verified Prism/Unit Energy mechanisms remain unchanged.
+- Lighting-GX MUST move a physical selected opposing hand reference to its owner's face-down Prize cards; do not synthesise a new prize, accidentally claim a prize or lose the reference on the subsequent turn draw.
+- Grand Bloom-GX MUST select and evolve each eligible Benched Basic via actual matching evolution cards in the user's physical deck, preserving damage, Energy, Tools, and UID.
+- Garchomp Royal Blades +100 applies only if Cynthia was ACTUALLY played from hand on the same turn, not if merely in hand or previously played.
+- Empoleon Total Command counts Benched Pokemon on BOTH sides; Alolan Dugtrio Gold Rush must discard CHOSEN physical Metal Basic Energy cards from hand.
+- Weather Guard suppresses Grass Weakness while Cherrim is in play, unless the Ability is suppressed. Electric/Fire Memory change Silvally-GX type only; Escape Board permits retreat from Sleep/Paralysis with reduced cost.
+- Evolutionary Advantage only applies to the first turn of the player going SECOND; never the first player.
+- Always run mandatory Stage 8 outcome and pinned official-print checks before committing, along with all previous Ultra Prism and older expansion release gates.

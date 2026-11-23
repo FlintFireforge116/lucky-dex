@@ -1,6 +1,6 @@
 {
   "printed": 178,
-  "battleReady": 113,
+  "battleReady": 131,
   "gated": {
     "sm5-5": [
       "Unimplemented attack: Flower Tornado"
@@ -9,14 +9,8 @@
       "Unimplemented attack: Giga Drain",
       "Unimplemented attack: Earthquake"
     ],
-    "sm5-11": [
-      "Unimplemented Ability: Weather Guard"
-    ],
     "sm5-12": [
       "Unimplemented attack: Loom Over"
-    ],
-    "sm5-13": [
-      "Unimplemented attack: Grand Bloom-GX"
     ],
     "sm5-15": [
       "Unimplemented attack: Coax"
@@ -26,8 +20,7 @@
       "Unimplemented attack: Flamethrower"
     ],
     "sm5-19": [
-      "Unimplemented attack: Fire Blaster",
-      "Unimplemented Ability: Incandescent Body"
+      "Unimplemented attack: Fire Blaster"
     ],
     "sm5-21": [
       "Unimplemented attack: Fury Swipes"
@@ -56,9 +49,6 @@
     "sm5-42": [
       "Unimplemented attack: Deep Currents"
     ],
-    "sm5-45": [
-      "Unimplemented Ability: Evolutionary Advantage"
-    ],
     "sm5-48": [
       "Unimplemented attack: Volt Bolt"
     ],
@@ -74,9 +64,6 @@
     "sm5-57": [
       "Unimplemented attack: Exact Revenge"
     ],
-    "sm5-68": [
-      "Unimplemented attack: Eleventh Hour Tackle"
-    ],
     "sm5-69": [
       "Unimplemented attack: Dust Cannon"
     ],
@@ -89,15 +76,9 @@
     "sm5-78": [
       "Unimplemented attack: Iron Head"
     ],
-    "sm5-79": [
-      "Unimplemented attack: Gold Rush"
-    ],
     "sm5-88": [
       "Unimplemented attack: Guard Press",
       "Unimplemented attack: Boiling Impact"
-    ],
-    "sm5-91": [
-      "Unimplemented Ability: Change Clothes"
     ],
     "sm5-94": [
       "Unimplemented attack: Magical Swap"
@@ -105,9 +86,6 @@
     "sm5-95": [
       "Unimplemented attack: Exeggutor's Paradise",
       "Unimplemented attack: Draco Meteor Barrage"
-    ],
-    "sm5-99": [
-      "Unimplemented attack: Royal Blades"
     ],
     "sm5-100": [
       "Unimplemented attack: Timeless-GX"
@@ -147,32 +125,11 @@
     "sm5-118": [
       "Unimplemented Trainer effect"
     ],
-    "sm5-121": [
-      "Unimplemented Trainer effect"
-    ],
-    "sm5-122": [
-      "Unimplemented Trainer effect"
-    ],
-    "sm5-122a": [
-      "Unimplemented Trainer effect"
-    ],
-    "sm5-123": [
-      "Unimplemented Trainer effect"
-    ],
     "sm5-129": [
       "Unimplemented Trainer effect"
     ],
-    "sm5-139": [
-      "Unimplemented attack: Grand Bloom-GX"
-    ],
     "sm5-140": [
       "Unimplemented attack: Fast Raid"
-    ],
-    "sm5-142": [
-      "Unimplemented attack: Lighting-GX"
-    ],
-    "sm5-144": [
-      "Unimplemented attack: Blaster-GX"
     ],
     "sm5-146": [
       "Unimplemented attack: Timeless-GX"
@@ -181,17 +138,8 @@
       "Unimplemented attack: Spatial Control",
       "Unimplemented attack: Zero Vanish-GX"
     ],
-    "sm5-157": [
-      "Unimplemented attack: Grand Bloom-GX"
-    ],
     "sm5-158": [
       "Unimplemented attack: Fast Raid"
-    ],
-    "sm5-160": [
-      "Unimplemented attack: Lighting-GX"
-    ],
-    "sm5-162": [
-      "Unimplemented attack: Blaster-GX"
     ],
     "sm5-164": [
       "Unimplemented attack: Timeless-GX"
@@ -199,9 +147,6 @@
     "sm5-165": [
       "Unimplemented attack: Spatial Control",
       "Unimplemented attack: Zero Vanish-GX"
-    ],
-    "sm5-167": [
-      "Unimplemented Trainer effect"
     ],
     "sm5-168": [
       "Unimplemented Trainer effect"

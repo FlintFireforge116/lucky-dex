@@ -1668,7 +1668,9 @@
     // opponent's unsuppressed Dragalge is anywhere in play.
     const xy2PoisonBarrier=state.format==='classic'&&!!s.active?.conditions?.poison&&
       pokemonOn(foe).some(p=>p.cardId==='xy2-71'&&!effects.abilitiesSuppressed(state,side==='player'?'opponent':'player',p,data.cardById));
-    if (!xy2PoisonBarrier && !(state.format==='classic'&&state.sides[side==='player'?'opponent':'player'].active?.cardId==='bw8-101'&&!effects.abilitiesSuppressed(state,side==='player'?'opponent':'player',state.sides[side==='player'?'opponent':'player'].active,data.cardById)) && !pl2SnorlaxLock && !ex10Octillery && !s.retreated && s.active && !(state.format==='classic'&&state.sides[side==='player'?'opponent':'player'].active?.cardId==='ex2-3'&&!effects.abilitiesSuppressed(state,side==='player'?'opponent':'player',state.sides[side==='player'?'opponent':'player'].active,data.cardById)) && Number(s.skyridgeMirageFailedTurn)!==state.turnNumber && !(s.active.specialEnergy||[]).some(r=>['ecard2-145','ex8-93','ex10-98','ex15-87'].includes(r.cardId)) && s.bench.length&&(s.active.cardId==='SNAPFLORIO-073'||!neoTrapActive(state,side,s.active,'retreat'))&&(!conditions.sleep&&!conditions.paralysis||s.active.cardId==='ex5-33'&&!effects.abilitiesSuppressed(state,side,s.active,data.cardById))&&(s.active.cardId==='SNAPFLORIO-073'||!effects.isLocked(state,s.active,'retreat'))&&data.cardById(s.active.cardId).effect?.type!=='playFossil'){
+    if (!xy2PoisonBarrier && !(state.format==='classic'&&state.sides[side==='player'?'opponent':'player'].active?.cardId==='bw8-101'&&!effects.abilitiesSuppressed(state,side==='player'?'opponent':'player',state.sides[side==='player'?'opponent':'player'].active,data.cardById)) && !pl2SnorlaxLock && !ex10Octillery && !s.retreated && s.active && !(state.format==='classic'&&state.sides[side==='player'?'opponent':'player'].active?.cardId==='ex2-3'&&!effects.abilitiesSuppressed(state,side==='player'?'opponent':'player',state.sides[side==='player'?'opponent':'player'].active,data.cardById)) && Number(s.skyridgeMirageFailedTurn)!==state.turnNumber && !(s.active.specialEnergy||[]).some(r=>['ecard2-145','ex8-93','ex10-98','ex15-87'].includes(r.cardId)) && s.bench.length&&(s.active.cardId==='SNAPFLORIO-073'||!neoTrapActive(state,side,s.active,'retreat'))&&(!conditions.sleep&&!conditions.paralysis||
+        activeToolsOf(state,s.active).some(ref=>['sm5-122','sm5-122a','sm5-167'].includes(ref.cardId))||
+        s.active.cardId==='ex5-33'&&!effects.abilitiesSuppressed(state,side,s.active,data.cardById))&&(s.active.cardId==='SNAPFLORIO-073'||!effects.isLocked(state,s.active,'retreat'))&&data.cardById(s.active.cardId).effect?.type!=='playFossil'){
       if (s.active.cardId!=='xy4-102'&&effects.totalEnergy(effectiveEnergy(state,side,s.active)) >= retreatCost(state,side)){
         s.bench.forEach(slot=>{if(slot)actions.push({type:'retreat',benchIndex:Number(slot.benchSlot)});});
       }
@@ -1731,6 +1733,8 @@
         // Fellow Boost can only use an actual Basic Energy card in HAND,
         // never the next Energy Zone unit. Don't offer an inert Power.
         if(/^dp1-6[5-8]$/.test(source.cardId)&&s.active===source)return; // Unown Powers need the Bench.
+        if(state.format==='classic'&&source.cardId==='sm5-91'&&ability.name==='Change Clothes'&&
+           !pokemonOn(s).some(p=>p.tool||(p.extraTools||[]).length))return;
         if(source.cardId==='dp4-29'){
           // Printed HEAL needs four Unown on the Bench. Classic's normal
           // three-slot Bench cannot hold them; permit exactly one required
@@ -3023,6 +3027,7 @@
       const blockers=pokemonOn(state.sides[side==='player'?'opponent':'player']).filter(p=>p.cardId==='neo1-14'&&!effects.abilitiesSuppressed(state,side==='player'?'opponent':'player',p,data.cardById)&&!p.conditions?.sleep&&!p.conditions?.paralysis&&!p.conditions?.confusion);
       for(const blocker of blockers){const heads=random(state)<.5;state.log.push({type:'coin',side:side==='player'?'opponent':'player',reason:'Neo Mind Games',heads,results:[heads]});if(heads){s.deck.unshift(ref);return;}}
     }
+    if(type==='Supporter'&&card.name==='Cynthia')s.sm5CynthiaTurn=state.turnNumber;
     if(type==='Supporter'){ref.pl2PlayedThisTurn=state.turnNumber;s.supporterUsed=true;s.bw8SupportersPlayed=Number(s.bw8SupportersPlayed||0)+1;if(/^Holon/.test(card.name||''))s.holonSupporterPlayedTurn=state.turnNumber;}
     if(type==='AttachedTrainer'){const target=slotForTarget(s,action.target,action.benchIndex);if(!target)throw new Error('Attached Trainer target is no longer in play.');target.temporaryTrainers=target.temporaryTrainers||[];target.temporaryTrainers.push({...ref,ownerSide:side,attachedTurn:state.turnNumber});resolveKnockOut(state,null);return;}
     if(type==='Tool'){if(state.format==='classic'&&['player','opponent'].some(w=>pokemonOn(state.sides[w]).some(p=>p.cardId==='xy4-77'&&!effects.abilitiesSuppressed(state,w,p,data.cardById))))throw new Error('Slip Trip blocks Tool attachments.');      if(['xy4-97','xy4-98'].includes(card.id)){

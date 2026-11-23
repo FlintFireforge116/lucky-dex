@@ -15,6 +15,7 @@ import sm5_stage4_verified as STAGE4
 import sm5_stage5_verified as STAGE5
 import sm5_stage6_verified as STAGE6
 import sm5_stage7_verified as STAGE7
+import sm5_stage8_verified as STAGE8
 ROOT=Path(__file__).resolve().parents[1]
 E=lambda name,**kw:{'type':name,**kw}
 N=E('noop')
@@ -42,6 +43,8 @@ ATTACK_OVERRIDES={
 }
 
 def attack(row,a):
+ stage8=STAGE8.attack(row,a)
+ if stage8 is not None:return stage8
  stage7=STAGE7.attack(row,a)
  if stage7 is not None:return stage7
  stage6=STAGE6.attack(row,a)
@@ -65,6 +68,8 @@ def attack(row,a):
  return deepcopy(candidate)
 
 def ability(row,a):
+ stage8=STAGE8.ability(row,a)
+ if stage8 is not None:return stage8
  stage7=STAGE7.ability(row,a)
  if stage7 is not None:return stage7
  stage6=STAGE6.ability(row,a)
@@ -85,6 +90,8 @@ def ability(row,a):
  return None
 
 def trainer(row):
+ stage8=STAGE8.trainer(row)
+ if stage8 is not None:return stage8
  stage7=STAGE7.trainer(row)
  if stage7 is not None:return stage7
  stage6=STAGE6.trainer(row)

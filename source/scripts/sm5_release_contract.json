@@ -1,8 +1,8 @@
 {
   "set": "sm5",
   "name": "Ultra Prism",
-  "release": "0.69.411",
-  "stage": "stage7",
+  "release": "0.69.412",
+  "stage": "stage8",
   "printedTotal": 178,
   "attackPrints": 237,
   "abilities": 37,
@@ -37,5 +37,8 @@
   "stage6TextLockedTrainers": 1,
   "stage7TextLockedAttacks": 13,
   "stage7TextLockedAbilities": 1,
-  "stage7TextLockedTrainers": 1
+  "stage7TextLockedTrainers": 1,
+  "stage8TextLockedAttacks": 9,
+  "stage8TextLockedAbilities": 4,
+  "stage8TextLockedTrainers": 3
 }
