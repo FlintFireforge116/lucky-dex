@@ -1909,6 +1909,9 @@
       for(const ref of s.discard||[]){
         if(!['sm3-88','sm3-88a','sm3-139','sm3-158'].includes(ref.cardId)||
           s.sm3RestorationUsed[ref.uid]===s.turnCount)continue;
+        // Glaceon-GX Freezing Gaze names GX Abilities in the *discard* as
+        // well as in play or hand. Do not offer Restoration through this gate.
+        if(effects.abilitiesSuppressed(state,side,{cardId:ref.cardId,uid:ref.uid},data.cardById))continue;
         actions.push({type:'abilityDiscard',cardId:ref.cardId,sourceUid:ref.uid});
       }
     }

@@ -1,6 +1,6 @@
 {
   "printed": 178,
-  "battleReady": 93,
+  "battleReady": 107,
   "gated": {
     "sm5-5": [
       "Unimplemented attack: Flower Tornado"
@@ -18,10 +18,6 @@
     "sm5-13": [
       "Unimplemented attack: Grand Bloom-GX"
     ],
-    "sm5-14": [
-      "Unimplemented attack: Special Mow",
-      "Unimplemented Ability: Roto Motor"
-    ],
     "sm5-15": [
       "Unimplemented attack: Coax"
     ],
@@ -38,9 +34,6 @@
     ],
     "sm5-23": [
       "Unimplemented Ability: Flaming Fighter"
-    ],
-    "sm5-24": [
-      "Unimplemented Ability: Roto Motor"
     ],
     "sm5-29": [
       "Unimplemented attack: Spike Armor"
@@ -60,16 +53,6 @@
     "sm5-38": [
       "Unimplemented Ability: Blessings of the Frost"
     ],
-    "sm5-39": [
-      "Unimplemented Ability: Freezing Gaze"
-    ],
-    "sm5-40": [
-      "Unimplemented Ability: Roto Motor"
-    ],
-    "sm5-41": [
-      "Unimplemented attack: Frost Crush",
-      "Unimplemented Ability: Roto Motor"
-    ],
     "sm5-42": [
       "Unimplemented attack: Deep Currents"
     ],
@@ -81,9 +64,6 @@
     ],
     "sm5-49": [
       "Unimplemented attack: Snuggly Generator"
-    ],
-    "sm5-50": [
-      "Unimplemented Ability: Roto Motor"
     ],
     "sm5-52": [
       "Unimplemented attack: Damage Transport"
@@ -101,11 +81,7 @@
       "Unimplemented attack: Exact Revenge"
     ],
     "sm5-59": [
-      "Unimplemented attack: Lunar Payback",
-      "Unimplemented attack: Psychic"
-    ],
-    "sm5-63": [
-      "Unimplemented Ability: Invasion"
+      "Unimplemented attack: Lunar Payback"
     ],
     "sm5-68": [
       "Unimplemented attack: Eleventh Hour Tackle"
@@ -127,12 +103,6 @@
     ],
     "sm5-79": [
       "Unimplemented attack: Gold Rush"
-    ],
-    "sm5-83": [
-      "Unimplemented Ability: Magnetic Circuit"
-    ],
-    "sm5-85": [
-      "Unimplemented attack: Push Down"
     ],
     "sm5-88": [
       "Unimplemented attack: Guard Press",
@@ -183,8 +153,7 @@
       "Unimplemented attack: Toss Aside"
     ],
     "sm5-110": [
-      "Unimplemented attack: Spinning Fan",
-      "Unimplemented Ability: Roto Motor"
+      "Unimplemented attack: Spinning Fan"
     ],
     "sm5-113": [
       "Unimplemented attack: Identify"
@@ -213,23 +182,14 @@
     "sm5-129": [
       "Unimplemented Trainer effect"
     ],
-    "sm5-132": [
-      "Unimplemented Trainer effect"
-    ],
     "sm5-139": [
       "Unimplemented attack: Grand Bloom-GX"
     ],
     "sm5-140": [
       "Unimplemented attack: Fast Raid"
     ],
-    "sm5-141": [
-      "Unimplemented Ability: Freezing Gaze"
-    ],
     "sm5-142": [
       "Unimplemented attack: Lighting-GX"
-    ],
-    "sm5-143": [
-      "Unimplemented Ability: Invasion"
     ],
     "sm5-144": [
       "Unimplemented attack: Blaster-GX"
@@ -247,14 +207,8 @@
     "sm5-158": [
       "Unimplemented attack: Fast Raid"
     ],
-    "sm5-159": [
-      "Unimplemented Ability: Freezing Gaze"
-    ],
     "sm5-160": [
       "Unimplemented attack: Lighting-GX"
-    ],
-    "sm5-161": [
-      "Unimplemented Ability: Invasion"
     ],
     "sm5-162": [
       "Unimplemented attack: Blaster-GX"

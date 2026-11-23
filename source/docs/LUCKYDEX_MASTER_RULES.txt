@@ -5333,3 +5333,13 @@ SM3 BURNING SHADOWS STAGE 2 CONTINUATION (23 NOVEMBER 2026, v0.69.403)
 - Cyrus ◇ can only be played while an OWN Active Water or Metal Pokemon is in play; the defending player selects two of their Benched Pokemon to preserve. The others and all physically attached cards are shuffled into the defending player's real deck. Validate pre-play legality so both player and CPU cannot spend an illegal Supporter.
 - Stage 5 mandatory gameplay checks: `tests/v07430-ultra-prism-stage5-outcomes.test.cjs`. Preserve all Stage 2–4 and SM1–SM4 tests in the mandatory Gradle APK gate. Actual GitHub build green remains separately unverified until observed.
 - RELEASE-GATE DRIFT PREVENTION (hotfix for v0.69.409): Whenever later stages implement previously gated cards, update all earlier catalogue and reuse test assertions in the SAME patch; never leave `battleEnabled === false` checks for formerly unsupported Prism Star or Special Energy. SM5 Stage 4 enables all 5 Special Energy prints (136,137,138,170,171), and Stage 5 enables all 6 Prism Star prints (58,62,77,89,120,136); they must be battleEnabled/deckEligible=true with proper effects, maxDeckCopies=1 for Prism Star, and Lost Zone rules still enforced. Tests v07424 and v07425 must assert the final cumulative contract, not the obsolete Stage 1 restrictions. Preflight --full must run after build-sm5.py on a canonical catalogue.
+
+
+SM5 STAGE 6 / v0.69.410 REQUIREMENTS:
+- Stage 6 text-locked registry has 10 attacks, 6 Abilities and Pal Pad. Only exact printed rules may enable cards.
+- The 178-print SM5 source and immutable Git blob pin remain mandatory.
+- Lunar Fall-GX must prompt for and actually knock out a legal Basic non-GX target, including Benched Pokemon; a validated descriptor or a no-op is not sufficient.
+- Glaceon-GX Freezing Gaze also suppresses opponent GX/EX discard-zone Abilities, including Darkrai-GX Restoration, while active; check legalActions, not only an effect resolver.
+- Moongeist Beam must enforce healing prevention, not simply validate a healingBlock descriptor.
+- Mandatory tests include v07431 Stage 6 alongside Stage 1-5. Never leave tests asserting that intentionally enabled cards remain gated.
+- Source-only cumulative patches must include the latest Stage 5 release gate hotfix, and `sh source/scripts/prepare-sm5.sh` must be run before pushing.

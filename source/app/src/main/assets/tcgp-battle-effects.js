@@ -43,7 +43,7 @@
       case 'distributeDiscardCounters':need(integer(effect.amount)&&effect.amount>0&&effect.amount%10===0,'invalid discard counters');break;
       case 'sm3Rule':need(typeof effect.rule==='string'&&!!effect.rule,'invalid SM3 rule');break;
       case 'sm4Rule':need(typeof effect.rule==='string'&&!!effect.rule,'invalid SM4 rule');break;
-      case 'sm5Rule':need(['mars','prismHandEnergy','prismDiscardEnergy','cyrusPrism'].includes(effect.rule),'invalid SM5 rule');break;
+      case 'sm5Rule':need(['mars','prismHandEnergy','prismDiscardEnergy','cyrusPrism','palPad','specialMow','lunarFall'].includes(effect.rule),'invalid SM5 rule');break;
       case 'sm2Rule':need(typeof effect.rule==='string'&&!!effect.rule,'invalid SM2 rule');break;
       case 'sm2Hala':case 'sm2MaxPotion':case 'sm2FieldBlower':case 'sm2RescueStretcher':break;
       case 'multiTargetHeal':need(effect.target==='selfBench','invalid multi-target heal selector');need(integer(effect.count)&&effect.count>0,'invalid multi-target heal count');need(nonnegative(effect.amount),'invalid multi-target heal amount');break;
@@ -19290,6 +19290,57 @@
             effect:{...effect,kept,optionUids:remaining.map(p=>p.uid)}});
           break;
         }
+        if(effect.rule==='lunarFall'){
+          const foe=other(ctx),eligible=p=>{const c=ctx.cardById(p?.cardId);return c?.kind==='pokemon'&&c.stage==='Basic'&&
+            !(c.pokemonGX||c.isPokemonGX||/[- ]GX$/i.test(c.name||''));};
+          if(ctx.resolvingChoice){
+            if(ctx.action?.choiceSkip)break;
+            const target=selected(ctx,foe);
+            if(eligible(target)){
+              const hp=ctx.maxHp?ctx.maxHp(ctx.foeSide,target):Number(ctx.cardById(target.cardId)?.hp||0);
+              target.damage=Math.max(Number(target.damage||0),hp);
+              log({type:'sm5LunarFall',targetUid:target.uid,cardId:target.cardId});
+            }
+            break;
+          }
+          if(pokemonOn(foe).some(eligible))ctx.requestChoice?.({kind:'pokemon',side:'self',selectionSide:ctx.foeSide,includeActive:true,excludeUids:pokemonOn(foe).filter(p=>!eligible(p)).map(p=>p.uid),effect});
+          break;
+        }
+        // Ultra Prism Pal Pad: transfer chosen, PHYSICAL Supporter refs from
+        // discard into deck. Never manufacture new refs or draw from Energy Zone.
+        if(effect.rule==='palPad'){
+          const ss=own(ctx),remaining=Number(effect.remaining??2);
+          const supporter=ref=>ctx.cardById(ref?.cardId)?.kind==='trainer'&&ctx.cardById(ref.cardId)?.trainerType==='Supporter';
+          if(ctx.resolvingChoice){
+            if(ctx.action?.choiceSkip)break;
+            const i=Number(ctx.action?.choiceDiscardIndex),ref=ss.discard[i];
+            if(!Number.isInteger(i)||!supporter(ref))break;
+            ss.deck.push(...ss.discard.splice(i,1));
+            log({type:'sm5PalPad',cardId:ref.cardId,uid:ref.uid});
+            if(remaining>1&&ss.discard.some(supporter))ctx.requestChoice?.({kind:'discardCard',side:'self',filter:{trainerType:'Supporter'},optional:true,effect:{...effect,remaining:remaining-1}});
+            else ctx.shuffle?.(ctx.state,ss.deck);
+            break;
+          }
+          if(ss.discard.some(supporter))ctx.requestChoice?.({kind:'discardCard',side:'self',filter:{trainerType:'Supporter'},optional:true,effect});
+          break;
+        }
+        // Mow Rotom discards ONE real Special Energy. It must not remove a
+        // generated Basic Energy or an entire group of Unit Energy types.
+        if(effect.rule==='specialMow'){
+          const defender=other(ctx).active,foe=other(ctx);
+          if(!defender||(defender.specialEnergy||[]).length===0)break;
+          if(ctx.resolvingChoice){
+            if(ctx.action?.choiceSkip)break;
+            const uids=effect.uids||[],uid=uids[Number(ctx.action?.choiceOption)];
+            const index=(defender.specialEnergy||[]).findIndex(r=>r.uid===uid);
+            if(index>=0){const [ref]=defender.specialEnergy.splice(index,1);foe.discard.push(ref);log({type:'sm5SpecialMow',cardId:ref.cardId,uid:ref.uid});}
+            break;
+          }
+          const attached=defender.specialEnergy;
+          if(attached.length===1){const ref=attached.shift();foe.discard.push(ref);log({type:'sm5SpecialMow',cardId:ref.cardId,uid:ref.uid});}
+          else ctx.requestChoice?.({kind:'option',side:'self',options:attached.map(r=>'Discard '+(ctx.cardById(r.cardId)?.name||'Special Energy')),effect:{...effect,uids:attached.map(r=>r.uid)}});
+          break;
+        }
         // Ultra Prism Mars: the random opposing discard occurs ONLY if at
         // least one card was actually drawn. Unlike a generic sequence, this
         // cannot discard from the opponent when the user's deck is empty.
@@ -21569,6 +21620,7 @@ if(limit>1&&available().length)ask({kind:'option',options:available().map(x=>x.l
       case 'scheduleDelayed':{const a=ctx.action||{};let targetUid=null,spot=null;if(effect.targetMode==='defender')targetUid=ctx.defender?.uid||null;else{const t=a.choiceTarget||a.effectTarget||a.target;if(t==='opponentActive'||t==='active')spot={side:ctx.foeSide,active:true};else{const idx=a.choiceBenchIndex??a.effectBenchIndex??a.benchIndex;spot={side:ctx.foeSide,benchIndex:Number(idx)};}}ctx.state.delayedEffects=ctx.state.delayedEffects||[];ctx.state.delayedEffects.push({event:effect.event,dueTurn:ctx.state.turnNumber+1,endingSide:ctx.foeSide,originSide:ctx.side,sourceUid:ctx.attacker?.uid||null,targetUid,spot,effect:effect.effect});break;}
       case 'retreatRetaliation':for(const target of affected())target.retreatRetaliation={amount:Number(effect.amount||0),expiresTurn:ctx.state.turnNumber+1};break;
       case 'abilitySuppression':for(const target of affected())target.abilitySuppressed={duration:effect.duration||'whileActive'};break;
+      case 'healingBlock':for(const target of affected())target.healingBlockedUntil=Math.max(Number(target.healingBlockedUntil||0),ctx.state.turnNumber+(effect.duration==='opponentTurn'?1:0));break;
       case 'knockOut':for(const target of affected()){const which=pokemonOn(own(ctx)).includes(target)?ctx.side:ctx.foeSide,targetMax=ctx.maxHp?ctx.maxHp(which,target):Number(ctx.cardById(target.cardId)?.hp||0);target.damage=Math.max(Number(target.damage||0),targetMax);}break;
       case 'discardPokemon':for(const target of affected()){const ss=pokemonOn(own(ctx)).includes(target)?own(ctx):other(ctx);for(const cardId of target.stack||[target.cardId])ss.discard.push({uid:`${target.uid}-discard-${cardId}`,cardId});for(const tool of [...toolsOf(target),...temporaryTrainersOf(target),...(target.specialEnergy||[])])ss.discard.push(tool);for(const [type,n] of Object.entries(target.energy||{}))recordDiscardedEnergy(ss,type,Number(n||0));if(ss.active===target)ss.active=null;else{const i=ss.bench.indexOf(target);if(i>=0)ss.bench.splice(i,1);}log({type:'discardPokemon',cardId:target.cardId});}break;
       case 'koPointBonus':{const ss=own(ctx);ss.koPointBonuses=ss.koPointBonuses||[];ss.koPointBonuses.push({...effect,expiresTurn:ctx.state.turnNumber});break;}
@@ -25895,6 +25947,10 @@ if(ctx.isAbility){const targetSide=pokemonOn(own(ctx)).includes(s)?ctx.side:ctx.
     return [{}];
   }
   function choicesForEffect(effect,ctx){
+    if(effect?.type==='sm5Rule'&&effect.rule==='lunarFall'){
+      return pokemonOn(other(ctx)).some(p=>{const c=ctx.cardById(p.cardId);return c?.kind==='pokemon'&&c.stage==='Basic'&&
+        !(c.pokemonGX||c.isPokemonGX||/[- ]GX$/i.test(c.name||''));})?[{}]:[];
+    }
     if(effect?.type==='sm4Rule'){
       if(effect.rule==='hunt')return targetChoices('opponentBench',ctx);
       if(effect.rule==='forcefulTackle')return Array.from({length:10},(_,n)=>({effectSelection:'count:'+n,choiceLabel:n+' self-damage counters — '+(90+n*10)+' attack damage'}));
@@ -26874,6 +26930,15 @@ if(r==='lastResort')return ss.hand.length===0?[{}]:[];if(r==='surgeSwap')return 
        ['player','opponent'].some(w=>pokemonOn(state.sides[w]).some(p=>
          ['bw6-54','bw9-119','bw11-68'].includes(p.cardId)&&toolsOf(p).length>0&&
          !p.abilitySuppressed&&!p.locks?.some(l=>l.action==='ability'&&Number(l.expiresTurn)>=Number(state.turnNumber)))))return true;
+    // Glaceon-GX Freezing Gaze suppresses opposing GX/EX Abilities only
+    // while Glaceon is Active; it does NOT remove other Pokémon mechanics.
+    if(state?.format==='classic'&&slot){
+      const targetCard=cardById(slot.cardId),foe=state.sides[side==='player'?'opponent':'player']?.active,
+        gazer=foe&&cardById(foe.cardId),isGXEx=targetCard?.pokemonGX||targetCard?.isPokemonGX||targetCard?.pokemonEX||targetCard?.pokemonEx||targetCard?.isEx||/[- ](?:GX|EX|ex)$/.test(targetCard?.name||'');
+      if(isGXEx&&targetCard?.name!=='Glaceon-GX'&&gazer?.name==='Glaceon-GX'&&
+         gazer.abilities?.some(ab=>ab.name==='Freezing Gaze'&&ab.type==='passive')&&!foe.abilitySuppressed&&
+         !foe.locks?.some(l=>l.action==='ability'&&Number(l.expiresTurn)>=Number(state.turnNumber)))return true;
+    }
     // A modern printed *Ability* is neither a Poké-Power nor a
     // Poké-Body. Historic suppression effects that only name those older
     // mechanics must not disable newer Abilities (e.g. Cessation Crystal).
@@ -26991,6 +27056,10 @@ if(r==='lastResort')return ss.hand.length===0?[{}]:[];if(r==='surgeSwap')return 
     for(const ability of abilities){if(ability.disabledByStatus&&(slot.conditions?.sleep||slot.conditions?.paralysis||slot.conditions?.confusion))continue;if(ability.type!=='passive'||ability.activeOnly&&state.sides[side].active!==slot||ability.benchOnly&&state.sides[side].active===slot)continue;const rule=scanEffect(ability.effect,type,ctx);if(rule)return rule;}return null;
   }
   function attackCostOverride(state,side,slot,attack,cardById){
+    if(state?.format==='classic'&&slot&&!abilitiesSuppressed(state,side,slot,cardById)&&
+       upgradeAbilities(slot,cardById).some(ab=>ab.name==='Roto Motor'&&ab.type==='passive'&&ab.effect?.type==='conditionalAttackCost')&&
+       (state.sides[side]?.discard||[]).filter(ref=>{const c=cardById(ref.cardId);return c?.kind==='trainer'&&['Tool','Pokémon Tool'].includes(c.trainerType);}).length>=9)return '';
+
     // Stormfront's Regi Form and Battle Rush remove printed Colorless costs,
     // never a coloured unit or a whole required attached Energy card.
     if(state?.format==='classic'&&slot&&!abilitiesSuppressed(state,side,slot,cardById)){
@@ -27097,6 +27166,7 @@ if(r==='lastResort')return ss.hand.length===0?[{}]:[];if(r==='surgeSwap')return 
   function topDeckCountAmount(effect,ctx){const ss=effect.side==='opponent'?other(ctx):own(ctx),n=Math.min(Number(effect.count||0),ss.deck.length),refs=ss.deck.slice(0,n);ctx.state.log.push({type:'revealDeck',revealedSide:effect.side||'self',cards:refs.map(r=>r.cardId)});const count=refs.filter(r=>matchesFilter(ctx.cardById(r.cardId),effect.filter,r)).length;if(effect.shuffleAfter)ctx.shuffle?.(ctx.state,ss.deck);return count*Number(effect.amount||0);}
 
   function healingIsBlocked(state,slot,cardById){
+    if(slot&&Number(slot.healingBlockedUntil||0)>=Number(state.turnNumber))return true;
     if(state?.format==='classic'&&slot&&Number(slot.sm1NoHealUntil||0)>=Number(state.turnNumber))return true;
     if(!slot)return false;
     const targetSide=pokemonOn(state.sides.player).includes(slot)?'player':'opponent';
