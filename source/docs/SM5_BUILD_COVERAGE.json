@@ -1,10 +1,7 @@
 {
   "printed": 178,
-  "battleReady": 40,
+  "battleReady": 71,
   "gated": {
-    "sm5-2": [
-      "Unimplemented attack: Super Speed"
-    ],
     "sm5-5": [
       "Unimplemented attack: Flower Tornado"
     ],
@@ -46,10 +43,6 @@
     "sm5-24": [
       "Unimplemented Ability: Roto Motor"
     ],
-    "sm5-26": [
-      "Unimplemented attack: Panic Poison",
-      "Unimplemented attack: Hunter's Nails"
-    ],
     "sm5-29": [
       "Unimplemented attack: Spike Armor"
     ],
@@ -64,8 +57,7 @@
       "Unimplemented attack: Whirlpool"
     ],
     "sm5-36": [
-      "Unimplemented attack: Agility",
-      "Unimplemented attack: Aqua Blast"
+      "Unimplemented attack: Agility"
     ],
     "sm5-37": [
       "Unimplemented attack: Ice Shard"
@@ -87,17 +79,8 @@
     "sm5-42": [
       "Unimplemented attack: Deep Currents"
     ],
-    "sm5-44": [
-      "Unimplemented attack: Steel Short"
-    ],
     "sm5-45": [
       "Unimplemented Ability: Evolutionary Advantage"
-    ],
-    "sm5-46": [
-      "Unimplemented attack: Charge"
-    ],
-    "sm5-47": [
-      "Unimplemented attack: Disconnect"
     ],
     "sm5-48": [
       "Unimplemented attack: Volt Bolt",
@@ -107,16 +90,11 @@
       "Unimplemented attack: Snuggly Generator"
     ],
     "sm5-50": [
-      "Unimplemented attack: Plasma Slice",
       "Unimplemented Ability: Roto Motor"
     ],
     "sm5-52": [
       "Unimplemented attack: Damage Transport",
       "Unimplemented attack: Wind Wheel"
-    ],
-    "sm5-53": [
-      "Unimplemented attack: Lightless World",
-      "Unimplemented attack: Terrify"
     ],
     "sm5-54": [
       "Unimplemented attack: Hone Claws"
@@ -149,11 +127,7 @@
       "Unimplemented Ability: Invasion"
     ],
     "sm5-65": [
-      "Unimplemented attack: Clean Hit",
       "Unimplemented attack: Wild Crash"
-    ],
-    "sm5-66": [
-      "Unimplemented attack: Detect"
     ],
     "sm5-67": [
       "Unimplemented Ability: Precognitive Aura"
@@ -176,9 +150,6 @@
     "sm5-74": [
       "Unimplemented attack: Evil Admonition"
     ],
-    "sm5-75": [
-      "Unimplemented attack: Gas Bond"
-    ],
     "sm5-76": [
       "Unimplemented attack: Sticky Smokescreen"
     ],
@@ -193,9 +164,6 @@
     "sm5-79": [
       "Unimplemented attack: Gold Rush"
     ],
-    "sm5-80": [
-      "Unimplemented attack: Searching Magnet"
-    ],
     "sm5-82": [
       "Unimplemented attack: Zap Cannon"
     ],
@@ -206,9 +174,6 @@
     "sm5-85": [
       "Unimplemented attack: Push Down",
       "Unimplemented Ability: Earthen Shield"
-    ],
-    "sm5-87": [
-      "Unimplemented attack: Psychic Resonance"
     ],
     "sm5-88": [
       "Unimplemented attack: Guard Press",
@@ -237,22 +202,14 @@
       "Unimplemented attack: Exeggutor's Paradise",
       "Unimplemented attack: Draco Meteor Barrage"
     ],
-    "sm5-96": [
-      "Unimplemented attack: Ascension"
-    ],
     "sm5-97": [
       "Unimplemented Ability: Rock Hiding"
-    ],
-    "sm5-98": [
-      "Unimplemented attack: Ascension"
     ],
     "sm5-99": [
       "Unimplemented attack: Quick Dive",
       "Unimplemented attack: Royal Blades"
     ],
     "sm5-100": [
-      "Unimplemented attack: Overclock",
-      "Unimplemented attack: Shred",
       "Unimplemented attack: Timeless-GX"
     ],
     "sm5-101": [
@@ -274,11 +231,7 @@
       "Unimplemented attack: Weak Kneed"
     ],
     "sm5-107": [
-      "Unimplemented attack: Stompy Stomp",
       "Unimplemented attack: Happy Turn"
-    ],
-    "sm5-108": [
-      "Unimplemented attack: Gentle Bite"
     ],
     "sm5-109": [
       "Unimplemented attack: Own the Place",
@@ -287,9 +240,6 @@
     "sm5-110": [
       "Unimplemented attack: Spinning Fan",
       "Unimplemented Ability: Roto Motor"
-    ],
-    "sm5-112": [
-      "Unimplemented attack: Scout"
     ],
     "sm5-113": [
       "Unimplemented attack: Identify"
@@ -305,12 +255,6 @@
       "Unimplemented attack: Dragon Pulse"
     ],
     "sm5-118": [
-      "Unimplemented Trainer effect"
-    ],
-    "sm5-119": [
-      "Unimplemented Trainer effect"
-    ],
-    "sm5-119a": [
       "Unimplemented Trainer effect"
     ],
     "sm5-120": [
@@ -329,40 +273,13 @@
     "sm5-123": [
       "Unimplemented Trainer effect"
     ],
-    "sm5-124": [
-      "Unimplemented Trainer effect"
-    ],
-    "sm5-126": [
-      "Unimplemented Trainer effect"
-    ],
-    "sm5-127": [
-      "Unimplemented Trainer effect"
-    ],
-    "sm5-128": [
-      "Unimplemented Trainer effect"
-    ],
     "sm5-129": [
-      "Unimplemented Trainer effect"
-    ],
-    "sm5-130": [
-      "Unimplemented Trainer effect"
-    ],
-    "sm5-131": [
       "Unimplemented Trainer effect"
     ],
     "sm5-132": [
       "Unimplemented Trainer effect"
     ],
-    "sm5-133": [
-      "Unimplemented Trainer effect"
-    ],
     "sm5-134": [
-      "Unimplemented Trainer effect"
-    ],
-    "sm5-135": [
-      "Unimplemented Trainer effect"
-    ],
-    "sm5-135a": [
       "Unimplemented Trainer effect"
     ],
     "sm5-136": [
@@ -405,32 +322,12 @@
       "Unimplemented attack: Sun's Eclipse-GX"
     ],
     "sm5-146": [
-      "Unimplemented attack: Overclock",
-      "Unimplemented attack: Shred",
       "Unimplemented attack: Timeless-GX"
     ],
     "sm5-147": [
       "Unimplemented attack: Spatial Control",
       "Unimplemented attack: Hydro Pressure",
       "Unimplemented attack: Zero Vanish-GX"
-    ],
-    "sm5-148": [
-      "Unimplemented Trainer effect"
-    ],
-    "sm5-149": [
-      "Unimplemented Trainer effect"
-    ],
-    "sm5-152": [
-      "Unimplemented Trainer effect"
-    ],
-    "sm5-154": [
-      "Unimplemented Trainer effect"
-    ],
-    "sm5-155": [
-      "Unimplemented Trainer effect"
-    ],
-    "sm5-156": [
-      "Unimplemented Trainer effect"
     ],
     "sm5-157": [
       "Unimplemented attack: Grand Bloom-GX",
@@ -462,8 +359,6 @@
       "Unimplemented attack: Sun's Eclipse-GX"
     ],
     "sm5-164": [
-      "Unimplemented attack: Overclock",
-      "Unimplemented attack: Shred",
       "Unimplemented attack: Timeless-GX"
     ],
     "sm5-165": [

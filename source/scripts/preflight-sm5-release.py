@@ -4,11 +4,11 @@ from __future__ import annotations
 import argparse,hashlib,json,re,subprocess,sys
 from pathlib import Path
 ROOT=Path(__file__).resolve().parents[1]
-TESTS=['tests/v07424-ultra-prism-integration.test.cjs','tests/v07425-ultra-prism-reuse.test.cjs']
+TESTS=['tests/v07424-ultra-prism-integration.test.cjs','tests/v07425-ultra-prism-reuse.test.cjs','tests/v07427-ultra-prism-stage2-outcomes.test.cjs']
 def check():
  subprocess.run([sys.executable,'scripts/check-gradle-source.py','--self-test'],cwd=ROOT,check=True)
  c=json.loads((ROOT/'scripts/sm5_release_contract.json').read_text())
- assert (c['set'],c['stage'],c['release'])==('sm5','stage1','0.69.405')
+ assert (c['set'],c['stage'],c['release'])==('sm5','stage2','0.69.406')
  assert (c['printedTotal'],c['attackPrints'],c['abilities'],c['pokemonGX'],c['gxAttackPrints'],c['prismStarPrints'],c['trainerPrints'],c['energyPrints'])==(178,237,37,27,27,6,36,5)
  assert c['pin']=='66cbd13b706b789de3b8cce2f5c9fc95135a33b0'
  assert c['variants']==['119a','122a','125a','135a','153a']
@@ -21,8 +21,22 @@ def check():
  assert [r[0] for r in rows]==[x for n in range(1,174) for x in ([str(n),str(n)+'a'] if str(n)+'a' in c['variants'] else [str(n)])]
  assert (sum(len(r[7]) for r in rows),sum(len(r[8]) for r in rows),sum('GX' in r[3] for r in rows))==(237,37,27)
  assert (sum('Prism Star' in r[3] for r in rows),sum(r[2]=='Trainer' for r in rows),sum(r[2]=='Energy' for r in rows))==(6,36,5)
+ # All Stage 2 mappings must match an actual immutable official print.
+ # A card with merely the same attack title is not sufficient.
+ import sm5_stage2_verified as sm5stage2
+ assert len(sm5stage2.ATTACKS)==c['stage2TextLockedAttacks'] and len(sm5stage2.TRAINERS)==c['stage2TextLockedTrainers'],'SM5 Stage 2 mapping registry unexpectedly changed'
+ all_attacks=[(row,a) for row in rows for a in row[7]]
+ for name,(printed,descriptor) in sm5stage2.ATTACKS.items():
+  matches=[(row,a) for row,a in all_attacks if a[0]==name and sm5stage2.norm(a[3])==sm5stage2.norm(printed)]
+  assert matches,'SM5 Stage 2 attack does not match official printed text: '+name
+  assert all(sm5stage2.attack(row,a)==descriptor for row,a in matches),'SM5 Stage 2 attack descriptor drift: '+name
+ for name,(kind,descriptor) in sm5stage2.TRAINERS.items():
+  matches=[row for row in rows if row[2]=='Trainer' and row[1]==name and sm5stage2.norm(sm5stage2.TRAINER_RULES[name]) in sm5stage2.norm(' '.join(row[13] or []))]
+  assert matches,'SM5 Stage 2 Trainer does not match official printed text: '+name
+  assert all(sm5stage2.trainer(row)==(kind,descriptor) for row in matches),'SM5 Stage 2 Trainer drift: '+name
+ print(f'SM5 Stage 2 official-text audit PASS: {len(sm5stage2.ATTACKS)} attacks, {len(sm5stage2.TRAINERS)} Trainer/Stadium effects')
  gradle=(ROOT/'app/build.gradle').read_text()
- assert re.search(r"versionName\s+['\"]0\.69\.405['\"]",gradle) and 'versionCode 7405' in gradle
+ assert re.search(r"versionName\s+['\"]0\.69\.406['\"]",gradle) and 'versionCode 7406' in gradle
  for task in ['preflightSM5ContractForApk','generateSM5ForApk','auditSM5ForApk']:
   assert "tasks.register('"+task+"'" in gradle,task+' missing'
  assert "dependsOn tasks.named('auditSM4ForApk')" in gradle
@@ -31,10 +45,10 @@ def check():
  for f in ('tcg-classic-battle-data.js','tcg-classic-deck-builder.js','tcg-classic-opponents.js','tcg-classic-set-picker.js'):
   assert 'sm5' in (ROOT/'app/src/main/assets'/f).read_text(),f+' missing SM5 registration'
  html=(ROOT/'app/src/main/assets/index.html').read_text()
- assert 'tcg-classic-ultra-prism.js' in html and 'v0.69.405' in html
- assert "__LUCKYDEX_BUILD='0.69.405'" in (ROOT/'app/src/main/assets/app-v0167.js').read_text()
+ assert 'tcg-classic-ultra-prism.js' in html and 'v0.69.406' in html
+ assert "__LUCKYDEX_BUILD='0.69.406'" in (ROOT/'app/src/main/assets/app-v0167.js').read_text()
  for sid in ['xy9','xy10','xy11','xy12','sm1','sm2','sm3','sm4']:
-  assert json.loads((ROOT/f'scripts/{sid}_release_contract.json').read_text())['release']=='0.69.405'
+  assert json.loads((ROOT/f'scripts/{sid}_release_contract.json').read_text())['release']=='0.69.406'
  print('SM5 source gate PASS: SHA-pinned official 178 prints, 237 attacks, 37 Abilities, 27 GX, 6 Prism Star')
 def full():
  subprocess.run([sys.executable,'scripts/build-sm5.py'],cwd=ROOT,check=True)

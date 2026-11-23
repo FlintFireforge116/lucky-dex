@@ -9,6 +9,7 @@ from pathlib import Path
 from copy import deepcopy
 import sm1_verified as S1, sm2_verified as S2, sm3_verified as S3, sm4_verified as S4
 from xy8_verified import attack as generic_attack
+import sm5_stage2_verified as STAGE2
 ROOT=Path(__file__).resolve().parents[1]
 E=lambda name,**kw:{'type':name,**kw}
 N=E('noop')
@@ -36,6 +37,8 @@ ATTACK_OVERRIDES={
 }
 
 def attack(row,a):
+ stage2=STAGE2.attack(row,a)
+ if stage2 is not None:return stage2
  title,cost,damage,printed=a
  if not norm(printed):return deepcopy(N)
  entry=ATTACK_OVERRIDES.get(title)
@@ -59,6 +62,8 @@ def ability(row,a):
  return None
 
 def trainer(row):
+ stage2=STAGE2.trainer(row)
+ if stage2 is not None:return stage2
  key=(row[1],norm(' '.join(row[13] or [])))
  return deepcopy(TRAINERS[key]) if key in TRAINERS else None
 

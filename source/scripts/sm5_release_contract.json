@@ -1,8 +1,8 @@
 {
   "set": "sm5",
   "name": "Ultra Prism",
-  "release": "0.69.405",
-  "stage": "stage1",
+  "release": "0.69.406",
+  "stage": "stage2",
   "printedTotal": 178,
   "attackPrints": 237,
   "abilities": 37,
@@ -12,6 +12,14 @@
   "trainerPrints": 36,
   "energyPrints": 5,
   "pin": "66cbd13b706b789de3b8cce2f5c9fc95135a33b0",
-  "variants": ["119a", "122a", "125a", "135a", "153a"],
-  "minimumBattleEnabled": 1
+  "variants": [
+    "119a",
+    "122a",
+    "125a",
+    "135a",
+    "153a"
+  ],
+  "minimumBattleEnabled": 1,
+  "stage2TextLockedAttacks": 37,
+  "stage2TextLockedTrainers": 10
 }

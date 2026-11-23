@@ -5290,3 +5290,13 @@ SM3 BURNING SHADOWS STAGE 2 CONTINUATION (23 NOVEMBER 2026, v0.69.403)
 - Never substitute all three possible energy types simultaneously for Unit Energy, or a free generic multicolour energy for Super Boost Energy. Unimplemented rules must gate whole prints until exact outcome tests pass.
 - Cards share the SM1–SM4 strict reuse adapter (match printed text and Energy cost, not move name alone). Every generated descriptor is checked by the runtime validator, and any invalid effect gates that entire print. Do not conflate catalogue coverage with playable coverage.
 - Run Termux commands with `&&` so a failed canonical download or audit never commits/pushes a broken partial expansion. Termux stage 1 install: `unzip -o /sdcard/Download/LuckyDex_patch_v0.69.405_SM5_ULTRA_PRISM_STAGE1.zip -d source && sh source/scripts/prepare-sm5.sh && git add source && git commit -m "LuckyDex v0.69.405 Ultra Prism SM5 stage 1" && git push origin main`.
+
+
+# v0.69.406 / Ultra Prism SM5 stage 2: verified new attack/Trainer mechanics
+
+- Add `scripts/sm5_stage2_verified.py` as the shared text-locked rules adapter for SM5. Each new attack uses its complete official printed effect text, not just its title. Each new Trainer compares its unique printed rule line. Never interpret matching titles as matching effects when their printed mechanics differ.
+- Stage 2 contains 37 new attack-effect mappings and 10 Trainer/Stadium mappings, with a custom `sm5Rule:mars` so the opponent discards a random card only after you successfully drew cards. Include CPU-side outcomes and preserve physical discard identity.
+- Energy searches using SM5 Charge, Synthesis, Searching Magnet and Volkner must use the existing virtual Basic Energy Zone, not fake Basic Energy cards in the physical draw deck. Mt. Coronet instead recovers ONLY Metal Energy actually in the discard pile or energyDiscard ledger. Test both side effects and conservation.
+- Stage 2 mandatory outcome audit: `tests/v07427-ultra-prism-stage2-outcomes.test.cjs`, called from the Gradle auditSM5ForApk and the SM5 full preflight. Test exact Energy movement, target filters, Prize/hand mechanics where present, next-turn locks, and CPU parity.
+- Preserve Prism Star gates (Lost Zone + 1-per-deck) and unsupported Unit/Super Boost Energy gates. Do not enable a print if even one Ability/attack/Trainer/Special Energy mechanic is unsupported. A 178-print catalogue is NOT a 178-playable catalogue.
+- If Stage 1 already fetched the pinned SM5 compact source, `sh source/scripts/prepare-sm5.sh` must reuse it with verification, not attempt a network download again; otherwise fetch and attest it before committing. Full SM5 test and Android APK build may only be called passed after actually run.
