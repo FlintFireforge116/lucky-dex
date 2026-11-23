@@ -25,7 +25,7 @@ EXPECTED_XY10_AUDIT = [
     'tests/v07389-fates-collide-independent-audit.test.cjs',
 ]
 
-EXPECTED_XY11_AUDIT = ['node','--test','tests/v07390-steam-siege-integration.test.cjs','tests/v07391-steam-siege-audit.test.cjs','tests/v07392-steam-siege-batch2.test.cjs','tests/v07393-steam-siege-abilities.test.cjs','tests/v07394-steam-siege-completion.test.cjs','tests/v07395-steam-siege-independent-audit.test.cjs','tests/v07403-wild-edge-cpu-turn.test.cjs']
+EXPECTED_XY11_AUDIT = ['node','--test','tests/v07390-steam-siege-integration.test.cjs','tests/v07391-steam-siege-audit.test.cjs','tests/v07392-steam-siege-batch2.test.cjs','tests/v07393-steam-siege-abilities.test.cjs','tests/v07394-steam-siege-completion.test.cjs','tests/v07395-steam-siege-independent-audit.test.cjs','tests/v07403-wild-edge-cpu-turn.test.cjs','tests/v07404-basic-energy-search-coins.test.cjs']
 
 class GradleSourceError(ValueError):
     pass

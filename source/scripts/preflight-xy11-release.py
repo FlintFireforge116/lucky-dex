@@ -43,6 +43,7 @@ def check():
  assert 'tests/v07394-steam-siege-completion.test.cjs' in g
  assert 'tests/v07395-steam-siege-independent-audit.test.cjs' in g
  assert 'tests/v07403-wild-edge-cpu-turn.test.cjs' in g
+ assert 'tests/v07404-basic-energy-search-coins.test.cjs' in g
  assert 'build-xy11.py' in g
  builder=(ROOT/'scripts/build-xy11.py').read_text()
  assert c['pin'] in builder and 'len(rows)!=116' in builder
@@ -71,14 +72,14 @@ def main():
   for n in contract['requiredEnabledNumbers']:
    assert 'xy11-'+n not in report['gated'],'Required Steam Siege print is gated: '+n
   assert (ROOT/'app/src/main/assets/tcg-classic-steam-siege.js').stat().st_size>10000
-  subprocess.run(['node','--test','tests/v07390-steam-siege-integration.test.cjs','tests/v07391-steam-siege-audit.test.cjs','tests/v07392-steam-siege-batch2.test.cjs','tests/v07393-steam-siege-abilities.test.cjs','tests/v07394-steam-siege-completion.test.cjs','tests/v07395-steam-siege-independent-audit.test.cjs','tests/v07403-wild-edge-cpu-turn.test.cjs'],cwd=ROOT,check=True,env={**os.environ,'GITHUB_ACTIONS':'true'})
+  subprocess.run(['node','--test','tests/v07390-steam-siege-integration.test.cjs','tests/v07391-steam-siege-audit.test.cjs','tests/v07392-steam-siege-batch2.test.cjs','tests/v07393-steam-siege-abilities.test.cjs','tests/v07394-steam-siege-completion.test.cjs','tests/v07395-steam-siege-independent-audit.test.cjs','tests/v07403-wild-edge-cpu-turn.test.cjs','tests/v07404-basic-energy-search-coins.test.cjs'],cwd=ROOT,check=True,env={**os.environ,'GITHUB_ACTIONS':'true'})
   # Match the earlier Gradle/CI deck-quality gate, which covers all populated
   # expansions and would otherwise fail before the XY11-specific audit runs.
   subprocess.run(['node','--test','tests/v07333-classic-deck-quality.test.cjs'],cwd=ROOT,check=True,env={**os.environ,'GITHUB_ACTIONS':'true'})
   print('PASS XY11: pinned catalogue, strict gameplay tests and cross-set deck quality')
  else:
   env={**os.environ};env.pop('GITHUB_ACTIONS',None)
-  subprocess.run(['node','--test','tests/v07390-steam-siege-integration.test.cjs','tests/v07391-steam-siege-audit.test.cjs','tests/v07392-steam-siege-batch2.test.cjs','tests/v07393-steam-siege-abilities.test.cjs','tests/v07394-steam-siege-completion.test.cjs','tests/v07395-steam-siege-independent-audit.test.cjs','tests/v07403-wild-edge-cpu-turn.test.cjs'],cwd=ROOT,check=True,env=env)
+  subprocess.run(['node','--test','tests/v07390-steam-siege-integration.test.cjs','tests/v07391-steam-siege-audit.test.cjs','tests/v07392-steam-siege-batch2.test.cjs','tests/v07393-steam-siege-abilities.test.cjs','tests/v07394-steam-siege-completion.test.cjs','tests/v07395-steam-siege-independent-audit.test.cjs','tests/v07403-wild-edge-cpu-turn.test.cjs','tests/v07404-basic-energy-search-coins.test.cjs'],cwd=ROOT,check=True,env=env)
   print('SOURCE ONLY: no official XY11 catalogue audit. Run --full on Termux before pushing.')
 if __name__=='__main__':
  try:main()
