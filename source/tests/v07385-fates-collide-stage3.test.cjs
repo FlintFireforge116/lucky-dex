@@ -80,7 +80,15 @@ test('Ultra Ball uses existing real two-card hand-discard selection before takin
 });
 test('Endgame same-turn real damage KO check is present in the Classic Prize award path',()=>{
  const src=fs.readFileSync(path.join(root,'app/src/main/assets/tcgp-battle-core.js'),'utf8');
- for(const re of [/const xy10Endgame=awardsPrize/,/source\.uid===attacker\?\.uid/,/Number\(source\.damage\|\|0\)>0/,/foe\.lastAttackName==='Endgame'/,/card\?\.megaEvolution===true\?2:0/,/deltaPlus\+xy10Endgame-bw9LifeDew/])assert.match(src,re);
+ for(const re of [/const xy10Endgame=awardsPrize/,/source\.uid===attacker\?\.uid/,/Number\(source\.damage\|\|0\)>0/,/foe\.lastAttackName==='Endgame'/,/card\?\.megaEvolution===true\?2:0/])assert.match(src,re);
+ // Cross-era Prize modifiers can be added between older terms. Assert that
+ // Endgame still contributes and BW9 Life Dew still subtracts in the live
+ // Prize formula, rather than enforcing fragile literal adjacency.
+ const prizeFormula=src.match(/const prizeCount=awardsPrize\?Math\.max\(0,([^;\n]+)\):0;/)?.[1];
+ assert.ok(prizeFormula,'Classic Prize formula must be present');
+ assert.match(prizeFormula,/\+xy10Endgame\b/,'XY10 Endgame bonus must still contribute to Prizes');
+ assert.match(prizeFormula,/-bw9LifeDew\b/,'BW9 Life Dew must still reduce Prizes');
+ assert.match(prizeFormula,/\+sm2Extra\b/,'SM2 delayed Prize bonus must remain in the calculation');
 });
 test('Fossil Excavation Kit is prohibited as trainer filler without a viable Fossil evolution line',()=>{
  const src=fs.readFileSync(path.join(root,'app/src/main/assets/tcg-classic-deck-builder.js'),'utf8');
