@@ -19277,16 +19277,16 @@
             all=[...pokemonOn(ss),...pokemonOn(foe)],validSource=p=>p&&Number(p.damage||0)>=10;
           if(effect.stage==='dest'&&ctx.resolvingChoice){
             const d=selected(ctx,board(effect.destSide)),source=all.find(p=>p.uid===effect.sourceUid);
-            if(source&&d&&source!==d&&validSource(source)&&d.damage+10<Number(ctx.cardById(d.cardId)?.hp||0)){
+            if(source&&d&&source!==d&&validSource(source)&&d.damage+10<=Number(ctx.cardById(d.cardId)?.hp||0)){
               source.damage-=10;d.damage=Number(d.damage||0)+10;log({type:'sm2ShadyMove',from:source.uid,to:d.uid});}
             break;
           }
           if(effect.stage==='pickDestSide'&&ctx.resolvingChoice){
-            const destSide=Number(ctx.action?.choiceOption)===1?'opponent':'self',source=all.find(p=>p.uid===effect.sourceUid),targets=pokemonOn(board(destSide)).filter(p=>p.uid!==source?.uid&&p.damage+10<Number(ctx.cardById(p.cardId)?.hp||0));
+            const destSide=Number(ctx.action?.choiceOption)===1?'opponent':'self',source=all.find(p=>p.uid===effect.sourceUid),targets=pokemonOn(board(destSide)).filter(p=>p.uid!==source?.uid&&p.damage+10<=Number(ctx.cardById(p.cardId)?.hp||0));
             if(targets.length)ask({kind:'pokemon',selectionSide:side(destSide),includeActive:true,allowedUids:targets.map(p=>p.uid)},{stage:'dest',destSide});break;
           }
           if(effect.stage==='source'&&ctx.resolvingChoice){
-            const picked=selected(ctx,board(effect.sourceSide));if(validSource(picked)&&all.some(d=>d!==picked&&d.damage+10<Number(ctx.cardById(d.cardId)?.hp||0)))
+            const picked=selected(ctx,board(effect.sourceSide));if(validSource(picked)&&all.some(d=>d!==picked&&d.damage+10<=Number(ctx.cardById(d.cardId)?.hp||0)))
               ask({kind:'option',options:['Move counter to your Pokémon','Move counter to opposing Pokémon']},{stage:'pickDestSide',sourceUid:picked.uid});break;
           }
           if(ctx.resolvingChoice){
