@@ -5,7 +5,7 @@ All cards are listed; only cards with implemented, validated effects are playabl
 No dummy generic effects are ever substituted for unsupported printed rules.
 """
 from __future__ import annotations
-import json,re
+import json,re,hashlib
 from pathlib import Path
 from pinned_tcg_source import load_pinned_set
 import sm2_verified as V
@@ -14,11 +14,16 @@ SRC=ROOT/'data/classic/sm2-print-compact.json'
 OUT=ROOT/'app/src/main/assets/tcg-classic-guardians-rising.js'
 COVER=ROOT/'docs/SM2_BUILD_COVERAGE.json'
 BLOB='0d2296a8c32fac6442c9b407653d30f8e9c3f0d6'
+COMPACT_SHA256='4d3bd1b736723266199cfa8ce60d76ff81d6755ef71406c50f12ceb3b1dcd002'
 SYMBOL={'G':'Grass','R':'Fire','W':'Water','L':'Lightning','P':'Psychic','F':'Fighting','D':'Darkness','M':'Metal','Y':'Fairy'}
 REVERSE={v:k for k,v in SYMBOL.items()}
 
 def get_source():
- if SRC.exists():rows=json.loads(SRC.read_text(encoding='utf-8'))
+ if SRC.exists():
+  payload=SRC.read_bytes()
+  actual=hashlib.sha256(payload).hexdigest()
+  if actual!=COMPACT_SHA256:raise RuntimeError('Bundled SM2 catalogue checksum mismatch (expected pinned canonical compact print data)')
+  rows=json.loads(payload)
  else:
   raw=load_pinned_set('sm2',BLOB,timeout=75)
   rows=[[c.get('number'),c.get('name'),c.get('supertype'),c.get('subtypes',[]),c.get('hp'),c.get('types',[]),c.get('evolvesFrom'),

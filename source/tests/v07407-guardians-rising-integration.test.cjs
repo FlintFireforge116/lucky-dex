@@ -33,7 +33,7 @@ test('Pinned 180 collector prints, 11 alternates and 287 exact attacks',()=>{
   if(c.kind==='pokemon'){
    assert.equal(c.hp,Number(r[4]));assert.deepEqual(c.types,r[5]);
    assert.equal(c.evolvesFrom,r[6]);
-   assert.deepEqual(c.attacks.map(a=>a.cost.join('')),r[7].map(a=>a[1].join('')),'Cost mismatch '+c.id);
+   assert.deepEqual(c.attacks.map(a=>Array.isArray(a.cost)?a.cost.join(''):String(a.cost)),r[7].map(a=>a[1].join('')),'Cost mismatch '+c.id);
    assert.deepEqual(c.attacks.map(a=>a.name),r[7].map(a=>a[0]));
    assert.deepEqual(c.attacks.map(a=>a.damageText||''),r[7].map(a=>a[2]));
    assert.equal(c.abilities.length,r[8].length,'Ability count mismatch '+c.id);

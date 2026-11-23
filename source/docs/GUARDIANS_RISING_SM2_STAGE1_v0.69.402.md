@@ -18,3 +18,10 @@ Full APK builds run `auditSM1ForApk -> preflightSM2ContractForApk -> generateSM2
 ## Known incomplete work for independent audit
 
 This is a stage-1 **set integration**, not a declaration that all 180 print effects are playable. Unimplemented Trainer, Stadium, Tool, Ability and novel GX effects are marked `PARTIAL` and `battleEnabled: false`; run a later full per-print audit and implement those effects after initial APK compiles. Existing source-specific effects are never assumed correct solely on the basis of a shared attack name.
+
+## Build fix after stage-1 GitHub failure
+
+- Stage-1 shipped an empty SM2 JS bootstrap and omitted the canonical 180-print compact source. The source-only preflight did not exercise `generateSM2ForApk`, so an offline build could fail trying to reach GitHub.
+- Bundled the verified, original pinned compact source and SHA-256 gated it.
+- Fixed the generated-card integration assertion: the Classic battle registry deliberately normalises attack `cost` from an array into the engine string representation. The test now accepts both equivalent internal forms, while still checking every printed Energy cost.
+- Run `python3 scripts/preflight-sm2-release.py --full` before shipping; this invokes the real generator and all mandatory SM2 tests, not just the static structure checker.

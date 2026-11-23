@@ -1,11 +1,11 @@
 #!/usr/bin/env python3
 """Guardians Rising SM2 source, generated-card and Gradle APK gate checks.
 
-Default checks are network-free; --full downloads the *pinned* SM2 source, then
+Default checks are network-free; --full uses the bundled *pinned* SM2 source, then
 runs battle and deckbuilder tests on the actual 180 official collector prints.
 """
 from __future__ import annotations
-import json,subprocess,sys,argparse,re
+import json,subprocess,sys,argparse,re,hashlib
 from pathlib import Path
 ROOT=Path(__file__).resolve().parents[1]
 
@@ -15,6 +15,9 @@ def check():
  assert (c['set'],c['stage'],c['release'])==('sm2','stage1','0.69.402')
  assert (c['printedTotal'],c['attackPrints'],c['abilities'],c['pokemonGX'],c['gxAttackPrints'],c['energyPrints'])==(180,287,30,42,42,4)
  assert c['pin']=='0d2296a8c32fac6442c9b407653d30f8e9c3f0d6'
+ compact=ROOT/'data/classic/sm2-print-compact.json'
+ assert compact.exists(),'Bundled SM2 catalogue missing; release must not rely on a network fetch'
+ assert hashlib.sha256(compact.read_bytes()).hexdigest()==c['compactSha256'],'SM2 bundled source checksum differs from release contract'
  assert len(c['variants'])==11 and len(set(c['variants']))==11
  gen=(ROOT/'scripts/build-sm2.py').read_text()
  for term in (c['pin'],"load_pinned_set('sm2'",'sm2-print-compact.json','!=180','!=287','!=30','!=42','!=4','Guardians Rising'):
