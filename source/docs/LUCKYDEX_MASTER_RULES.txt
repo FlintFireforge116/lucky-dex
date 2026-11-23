@@ -1,7 +1,7 @@
 LUCKYDEX — MASTER PROJECT RULES AND DEVELOPMENT CONTRACT
 =========================================================
-Document version: 2.78
-Compiled: 22 November 2026
+Document version: 2.79
+Compiled: 23 November 2026
 Current verified APK: v0.69.398 Evolutions independent audit (GitHub Actions run 693 succeeded on 22 November 2026). v0.69.400 SM1 completion has local tests only until its GitHub APK build is confirmed.
 Recommended repository location: ~/lucky-dex/source/docs/LUCKYDEX_MASTER_RULES.txt
 Project: LuckyDex — Android application/PWA, managed with Termux and GitHub
@@ -30,6 +30,118 @@ RULE PRECEDENCE AND CONFLICT MANAGEMENT
 6. Never infer that an undocumented feature is authorised merely because a similar card or older set did something that way.
 7. When two instructions conflict: preserve existing user experience, document the contradiction as [CHECK], avoid unrelated changes, and seek an explicit decision before altering the game rule.
 8. Date or version every revised rule. Keep a change history; never silently rewrite a historical decision or disguise a bug as a design adaptation.
+
+
+===============================================================================
+[LOCKED] v2.79 / 23 NOV 2026 — WHOLE-EXPANSION DELIVERY AND AUTOMATION
+===============================================================================
+CONTEXT: Ultra Prism SM5 required 13 implementation stages despite the earlier
+v0.69.374 MECHANIC-FIRST CONTRACT already requiring a full-set-first workflow.
+Repeated micro-batches, delayed exact coverage, repeated full regression runs,
+manual release-version updates, and stale test assertions added avoidable turns.
+The earlier v0.69.374 contract STILL APPLIES. This section adds the required
+operational checks. It OVERRIDES any historical suggestion that an expansion
+should routinely be spread over many small staged patches. C-RELEASE-GATE-008
+"SMALL-BATCH OUTCOME" is a quality/test fixture rule, NOT delivery batch size.
+No card/gameplay rules or version history are changed by this process update.
+
+NON-NEGOTIABLE IMPLEMENTATION ORDER FOR EVERY NEW SET:
+  0. READ this master, the current source, the latest actually installed patch,
+     existing verified effect registries/engine handlers and the previous set's
+     independent audit. Do not start the next expansion from an outdated ZIP.
+  1. PIN THE ENTIRE OFFICIAL PRINT LIST FIRST. Prepare its canonical print file
+     and checksum BEFORE card implementation and long test runs, not at the end
+     of 10+ stages. Record collector IDs and alternates, attack names/text/costs,
+     Abilities, Trainer/Tool/Stadium, Special Energy, unusual card classes and
+     legal setup prerequisites. No source -> no unsupported completion claim.
+  2. AUTOMATICALLY COMPUTE the whole-set ledger and blocker groups. Build/generate
+     the set early, then use scripts/audit-expansion-readiness.py for exact print
+     coverage and a named gap report. The ledger is the authoritative current
+     backlog. Refresh it after each development pass; NEVER substitute number of
+     passing tests for battle-ready/gated print totals. Do not silently skip
+     unsigned or special-number prints.
+  3. GROUP BY SHARED MECHANIC, NOT BY SIX CARDS. Collapse duplicate text/effect
+     signatures and alternate arts. Classify every distinct rule/effect as:
+       A: existing tested descriptor; B: composition of existing actions;
+       C: existing action with typed parameters; D: missing reusable engine
+       primitive; E: genuinely card-specific exception. Before writing code,
+     identify ALL cards and previous-set users of each D mechanic. Prioritise
+     mechanisms by how many gated prints they unlock, not collector number.
+  4. IMPLEMENT *EVERY* A/B/C across the set in the first substantial pass. Then
+     implement D primitives once and map all their set users, and only then E.
+     Prefer complete set coverage in ONE implementation release; do not use
+     six-card chunks or stop after each easy group unless a real engine blocker
+     needs isolation. A genuinely risky new rule may justify one separately
+     scoped engine pass; document its exact blocker and downstream users.
+  5. Each effect has a deterministic execution contract: legality, affected
+     owner/target, source/destination and identity of physical cards, hybrid
+     virtual Basic Energy rules, quantity, coin outcomes, optional/Stop paths,
+     Bench/Active damage, status expiry, KO/Prize cleanup and player/CPU use.
+     Enable a print only when ALL printed attacks AND Abilities/passives and
+     relevant Tool/Special Energy/evolution mechanics work end-to-end. Text
+     matching and validator acceptance alone NEVER prove battle correctness.
+  6. TEST INCREMENTALLY, RELEASE ONCE. During implementation run fast targeted
+     unit/outcome tests by *effect family* plus a print-to-effect mapping/printed
+     cost census for ALL prints. Test nontrivial mechanics with player and CPU,
+     positive/negative conditions and real card movement. Run previous-set
+     regressions and source/Gradle gates at the final implementation boundary,
+     again only after shared engine changes; don't rerun entire multi-era suites
+     to celebrate each five-card mapping. Never delete tests to make CI pass.
+  7. BEFORE PACKAGING, run automated release parity:
+       python3 scripts/audit-expansion-readiness.py --set <set> --release-only
+     (replace <set> with the actual set ID). This checks versionName, HTML and
+     JS app version, all prior release contract versions, mandatory test-file
+     existence, Termux/Gradle TESTS parity and Gradle generation order. Fix
+     errors immediately before any ZIP or GitHub push. Do NOT bulk-regex-edit
+     arbitrary files or loosen expected counts; change named owners precisely.
+     Existing prior-release preflights and source guard are still required.
+  8. BUILD AND GENERATE CATALOGUE BEFORE FULL GENERATED TESTS. Keep a source-only
+     gate that works before generation; execute strict generated-catalogue and
+     quality/deckbuilder tests only AFTER pinned source+generation. Avoid
+     GITHUB_ACTIONS inheritance failures and do not let stale unbuilt assets
+     masquerade as missing Pokémon/deck-quality bugs. Check both CPU and player
+     deck generation and evolution families in the new set.
+  9. RUN the exact complete generated gate and produce the ledger with:
+       python3 scripts/audit-expansion-readiness.py --set <set> \
+         --check-release --report docs/<SET>_CURRENT_GAP_LEDGER.md
+     This script needs the pinned `data/classic/<set>-print-compact.json`,
+     attestation and generated `<SET>_BUILD_COVERAGE.json`. It fails loudly if
+     missing; NEVER turn that failure into a fabricated playable total.
+     `--require-complete` makes nonzero remaining gated a release-blocking
+     failure when the goal is a complete expansion. Compare alternate prints,
+     complete families and all named effect signatures in the independent audit.
+ 10. RECONCILE OLD TEST EXPECTATIONS whenever a card transitions gated->playable.
+     Search all prior tests for now-obsolete "must be gated" assertions BEFORE
+     running the release gate (SM5 Prism Star false failures are a cautionary
+     example). Replace with checks for real enabled card mechanics; don't merely
+     remove assertions. Keep preflight and Gradle test lists byte-consistent.
+ 11. RELEASE HONESTLY: provide exact printed, enabled, gated counts, grouped
+     blockers, tests actually run and GitHub build status. Use 1 substantial
+     integration ZIP + 1 independent audit/fix ZIP as the NORMAL target; extra
+     stages require a specific technical obstacle, not a fixed small card quota.
+     Do not claim an APK built merely because local Node tests pass. User's
+     Termux prepare/build and GitHub Actions remain independent checks.
+ 12. STOP REPEATING FAILED WORK. After one failed CI build diagnose the real
+     GitHub failure, patch generator/order/version/compile/test assumptions at
+     their common source and rerun locally before proposing another ZIP. Keep a
+     regression test and brief root-cause note; avoid multiple blind retries.
+
+PERSISTENT EVIDENCE FOR THE NEXT CONVERSATION:
+- Exact current source/ZIP baseline and verified GitHub APK SHA (or pending).
+- Pinned official source hash, generated 100%-print catalogue, file/attack/
+  Ability/Trainer/Energy totals, and CURRENT playable/gated list by print ID.
+- Shared mechanics completed, unresolved blockers grouped by handler with
+  all dependent cards, test files and observed outcomes on BOTH sides.
+- Release parity and preflight commands/results, source-only vs generated vs
+  APK CI evidence, the exact next intended gate, and canonical Termux command.
+- If completion is pending: one actionable whole-set backlog, not a new
+  arbitrary stage number or a fresh six-card shortlist.
+
+HELPER STATUS: scripts/audit-expansion-readiness.py is a read-only diagnostic
+except for its explicit --report file output. It does not alter any card or
+assert that a generated card's gameplay effects are correct. Source-only
+`--release-only` is safe before pinned catalogue generation; full mode is not.
+===============================================================================
 
 =======================================================================
 =======================================================================
@@ -5405,3 +5517,5 @@ SM5 STAGE 13 / v0.69.417 RELEASE RULES:
 - Turbo Drive does 120 damage and optionally attaches exactly one BASIC Energy card from the physical discard or the finite discarded Basic Energy ledger to a chosen BENCHED Pokemon. It NEVER creates Energy from the fresh Energy Zone, duplicates a physical card, attaches Special Energy, or targets Active.
 - Ultra Prism printed first-player attack restriction: on its own first turn, only SM5 Pheromosa-GX Fast Raid may attack. Preserve older expansions hybrid first-turn rules to avoid undocumented gameplay migration. This exception is tested for both first and second side.
 - No staged patch may claim full 178-print verification locally if pinned sm5-print-compact.json is not present. Always report that the on-device preparation gate and GitHub Actions build remain pending.
+
+CHANGE LOG v2.79 / 23 NOVEMBER 2026 — Added front-loaded whole-set automation contract, one-implementation-plus-audit cadence, strict source-first coverage ledger and release-parity helper. Historical rules retained.
