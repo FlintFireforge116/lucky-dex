@@ -236,3 +236,62 @@ ABILITIES.update({
 for _r in rows:
  if _r[1]=='Lusamine' and _r[2]=='Trainer':
   TRAINERS[str(_r[0])]=('Supporter',E('searchChosen',source='discard',amount=2,filter={'kind':'trainer','trainerType':['Supporter','Stadium']},excludePlayedTrainer=True))
+
+# SM4 complete-set implementation: individually text-locked to the pinned prints.
+# Shared SM4 rules are implemented in the battle engine, with explicit human and CPU choices.
+SM4_FINAL_ATTACKS = {
+ 'Hunt': E('sm4Rule',rule='hunt'),
+ 'Dance of Flames': E('sm4Rule',rule='danceOfFlames'),
+ 'Burning Bonemerang': E('coinDamageStatus',coins=2,amount=70,minHeads=1,status='burn'),
+ 'Dread Storm-GX': E('sm4Rule',rule='dreadStorm'),
+ 'Forceful Tackle': E('sm4Rule',rule='forcefulTackle'),
+ 'Special Artillery': E('sm4Rule',rule='specialArtillery'),
+ 'TLC': E('sm4Rule',rule='tlc'),
+ 'Heavy Rock-GX': E('sm4Rule',rule='heavyRock'),
+ 'Bell of Silence': E('sm4Rule',rule='bellOfSilence'),
+ 'Pumpkin Bomb': E('sm4Rule',rule='pumpkinBomb'),
+ 'Symbiont-GX': E('sm4Rule',rule='symbiont'),
+ 'Dark Destruction': E('sm4Rule',rule='darkDestruction'),
+ 'Eat Sloppily': E('sm4Rule',rule='eatSloppily'),
+ 'Glutton-GX': E('sm4Rule',rule='glutton'),
+ 'Gale Blade': E('chooseOption',options=[{'label':'Keep Kartana-GX in play','effect':N},
+  {'label':'Shuffle Kartana-GX and attachments into your deck','effect':E('shuffleIntoDeck',target='self',includeAttached=True)}]),
+ 'Blade-GX': E('sm4Rule',rule='bladeGX'),
+ 'Sky Hunting': E('sm4Rule',rule='skyHunting'),
+ 'Amazing Plea': E('sm4Rule',rule='amazingPlea'),
+}
+for _name,_effect in SM4_FINAL_ATTACKS.items():
+ _observed={norm(a[3]) for r in rows for a in r[7] if a[0]==_name}
+ if len(_observed)!=1 or not next(iter(_observed)):
+  raise RuntimeError('SM4 attack text mismatch: '+_name)
+ ATTACK_TEXT[_name]=next(a[3] for r in rows for a in r[7] if a[0]==_name)
+ ATTACK_MAP[_name]=deepcopy(_effect)
+ABILITIES.update({
+ 'Shell On':{'type':'activated','oncePerTurn':True,'effect':E('sm4Rule',rule='shellOn')},
+ 'Escape':{'type':'activated','oncePerTurn':True,'effect':E('shuffleIntoDeck',target='self',includeAttached=True)},
+ 'Iceberg Shield':{'type':'passive','effect':E('preventDamage',target='self',duration='whileInPlay',
+   condition={'type':'pokemonPresent','side':'self','zone':'inPlay','filter':{'name':'Regirock'}},
+   attackerFilter={'stage':'Stage 2'},effects=True)},
+ 'Gnawing Curse':{'type':'triggered','event':'opponentEnergyAttached','fromHandOnly':True,'effect':E('sm4Rule',rule='gnawingCurse')},
+ 'Empty Light':{'type':'triggered','event':'benched','fromHandOnly':True,'effect':E('sm4Rule',rule='emptyLight')},
+ 'Weed Out':{'type':'activated','oncePerTurn':True,'effect':E('sm4Rule',rule='weedOut')},
+ 'Slice Off':{'type':'triggered','event':'benched','fromHandOnly':True,'effect':E('sm4Rule',rule='sliceOff')},
+ 'Moomoo Malt':{'type':'passive','activeOnly':True,'effect':E('sm4Rule',rule='moomooMalt')},
+})
+for _r in rows:
+ if _r[2]!='Trainer': continue
+ _n=str(_r[0]);_name=_r[1]
+ _rules={
+  'Counter Catcher':('Item','counterCatcher'),
+  'Dashing Pouch':('Tool','dashingPouch'),
+  'Fighting Memory':('Tool','fightingMemory'),
+  'Gladion':('Supporter','gladion'),
+  'Peeking Red Card':('Item','peekingRedCard'),
+  'Psychic Memory':('Tool','psychicMemory'),
+  'Sea of Nothingness':('Stadium','seaOfNothingness'),
+ }
+ if _name in _rules:
+  _kind,_key=_rules[_name];TRAINERS[_n]=(_kind,E('sm4Rule',rule=_key))
+for _r in rows:
+ if _r[2]=='Energy' and _r[1] in ('Counter Energy','Warp Energy'):
+  ENERGIES[str(_r[0])]=E('specialEnergy',provides={'Colorless':1})

@@ -6,7 +6,7 @@ const pack=require('../app/src/main/assets/tcg-classic-crimson-invasion.js');
 const dummy={id:'sm4-test-dummy',kind:'pokemon',name:'Dummy',stage:'Basic',hp:4500,types:['Colorless'],retreat:1,battleEnabled:true,attacks:[{name:'Rest',cost:'C',damage:10,effect:{type:'noop'}}]};
 const old=data.cardById;
 const slot=(id,uid,energy={})=>({uid,cardId:id,stack:[id],damage:0,energy,specialEnergy:[],conditions:{},locks:[],tool:null,extraTools:[],playedOnSideTurn:1});
-const fullEnergy=()=>({Grass:4,Fire:4,Water:4,Lightning:4,Psychic:4,Fighting:4,Darkness:4,Metal:4,Fairy:4,Colorless:4});
+const fullEnergy=()=>({Grass:4,Fire:4,Water:4,Lightning:4,Psychic:4,Fighting:4,Darkness:5,Metal:4,Fairy:4,Colorless:4});
 function setup(id,side='player'){
  const s=core.createBattle({format:'classic',playerDeck:data.CLASSIC30_LOANER_DECK,opponentDeck:data.CLASSIC30_LOANER_DECK,seed:714,firstSide:side,playerEnergyTypes:['Grass','Fire','Water','Lightning','Psychic','Fighting','Darkness','Metal'],opponentEnergyTypes:['Grass','Fire','Water','Lightning','Psychic','Fighting','Darkness','Metal']});
  s.phase='battle';s.activeSide=side;s.turnNumber=5;

@@ -7,6 +7,7 @@ ROOT=Path(__file__).resolve().parents[1]
 TESTS=('tests/v07419-crimson-invasion-integration.test.cjs',
        'tests/v07420-crimson-invasion-outcomes.test.cjs',
        'tests/v07421-crimson-invasion-continuation.test.cjs',
+       'tests/v07422-crimson-invasion-completion.test.cjs',
        'tests/v07418-burning-shadows-independent-audit.test.cjs',
        'tests/v07385-fates-collide-stage3.test.cjs',
        'tests/v07404-basic-energy-search-coins.test.cjs',
