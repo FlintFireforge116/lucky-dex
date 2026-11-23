@@ -99,6 +99,43 @@ SM3_ATTACKS={
  'Muscle Punch-GX':("This attack's damage isn't affected by Resistance.",E('damageRule',ignoreResistance=True)),
 }
 
+
+# SM3 continuation: a printed-text guard is mandatory for EVERY new mapping.
+# No attack may be enabled merely because its name appears in this table.
+SM3_CONTINUATION_ATTACKS={
+ 'Giga Drain':('Heal from this Pokémon the same amount of damage you did',E('drain')),
+ 'Pitch':("Your opponent switches their Active Pokémon with 1 of their Benched Pokémon.",E('forceOpponentSwitch',chooseBy='defender')),
+ 'Bubble Net':("Energy can't be attached to the Defending Pokémon from your opponent's hand",E('actionLock',side='opponent',cardType='EnergyActive',duration='opponentTurn')),
+ 'Diabolical Claws':('This attack does 50 damage for each Prize card you have taken.',E('pointDamage',side='self',amount=50,prizesTaken=True)),
+ "Queen's Haze-GX":("Discard all Energy from your opponent's Active Pokémon.",E('discardEnergyCard',target='opponentActive',amount='all')),
+ 'Venting Anger':('This attack does 50 damage for each Magikarp in your discard pile.',E('discardCountDamage',side='self',filter={'name':'Magikarp'},amount=50,mode='replace')),
+ 'Aqua Shock':("If your opponent's Active Pokémon has any Water Energy attached to it",BONUS(30,{'type':'opponentEnergyAtLeast','energyType':'Water','amount':1,'countSpecial':True})),
+ 'Small Appetite':("If your opponent's Active Pokémon's maximum HP is 100 or more",E('attackDamageGate',condition={'type':'opponentMatches','filter':{'hpAtMost':99}})),
+ "Night Roam":("Put 1 damage counter on each Pokémon (both yours and your opponent's).",S(E('selfDamage',amount=10),E('benchDamage',side='self',amount=10,all=True),E('placeDamageCounters',target='opponentAll',amount=10))),
+ 'Poison Boost':('If this Pokémon is Poisoned, this attack does 80 more damage.',S(BONUS(80,{'type':'selfStatus','status':'poison'}),E('removeStatuses',target='self',statuses=['poison'],condition={'type':'selfStatus','status':'poison'}))),
+ 'Toppling Wind':('n/a',N), # Ability, never used as attack
+ 'Quick Guard':('Prevent all damage done to this Pokémon by attacks from Basic Pokémon',S(E('preventDamage',target='self',duration='opponentTurn',attackerFilter={'stage':'Basic'}),E('lock',action='attack',target='self',attackName='Quick Guard',duration='nextOwnTurn'))),
+ 'Vigorous Dash':('This Pokémon does 30 damage to itself. This attack does 30 damage',S(E('selfDamage',amount=30),E('selectedDamage',target='opponentBench',amount=30))),
+ 'Focus Energy':("During your next turn, this Pokémon's Bite attack's base damage is 60.",E('nextAttackBonus',attackName='Bite',amount=50)),
+ 'Division':('Search your deck for Alolan Grimer and put it onto your Bench.',E('benchFromDeck',amount=1,filter={'name':'Alolan Grimer','stage':'Basic'},choose=True)),
+ 'Chemical Breath':("This attack does 70 more damage for each Special Condition affecting your opponent's Active Pokémon.",E('statusCountDamage',amount=70,mode='add')),
+ 'Crunch':('Discard an Energy',E('discardEnergyCard',target='opponentActive',amount=1)),
+ 'Tri Hazard-GX':("Switch 1 of your opponent's Benched Pokémon with their Active Pokémon.",S(E('forceOpponentSwitch',chooseBy='attacker'),ST('burn'),ST('poison'),ST('paralysis'))),
+ 'Hone Claws':("During your next turn, this Pokémon's Slash attack's base damage is 80.",E('nextAttackBonus',attackName='Slash',amount=60)),
+ 'Dark Raid':('If your opponent has already used their GX attack',BONUS(80,{'type':'opponentGxUsed'})),
+ 'Energy Slosh':('You may move all Energy attached to this Pokémon to 1 of your Benched Pokémon.',E('moveEnergy',source='self',target='selfBench',amount='all',includeSpecialEnergy=True)),
+ 'Core Enforcer':('Discard a Darkness Energy and a Fairy Energy attached to this Pokémon.',S(E('discardEnergyCard',target='self',amount=1,energyType='Darkness',strictEnergyType=True),E('discardEnergyCard',target='self',amount=1,energyType='Fairy',strictEnergyType=True))),
+ 'Calculate':('Look at the top 6 cards of your deck and put them back in any order.',E('reorderTop',count=6,deckSide='self')),
+ 'Knock Over':('You may discard any Stadium card in play.',E('chooseOption',options=[{'label':'Keep Stadium','effect':N},{'label':'Discard Stadium','effect':E('discardStadium')}],optional=True)),
+ 'Lycanfang-GX':('Discard 2 Energy from this Pokémon.',E('discardEnergyCard',target='self',amount=2)),
+}
+# Names are disambiguated by both printed text and, where necessary, exact number.
+SM3_CONTINUATION_ABILITIES={
+ 'Evoshock':('When you play this Pokémon from your hand to evolve',{'type':'triggered','event':'evolved','fromHandOnly':True,'effect':ST('paralysis')}),
+ 'Toppling Wind':('When you play this Pokémon from your hand to evolve',{'type':'triggered','event':'evolved','fromHandOnly':True,'effect':E('discardTop',side='opponent',amount=3)}),
+ 'Honey Gather':('Once during your turn (before your attack), you may search your deck for up to 2 basic Energy cards',{'type':'activated','oncePerTurn':True,'effect':E('searchChosen',source='deck',amount=2,filter={'basicEnergy':True})}),
+}
+
 def attack(row,a):
     title,cost,damage,printed=a
     if not norm(printed):return N
@@ -106,6 +143,8 @@ def attack(row,a):
         import re
         amount=int(re.search(r'This attack does (\d+) damage',printed).group(1))
         return E('selectedDamage',target='opponentPokemon',amount=amount)
+    newly=SM3_CONTINUATION_ATTACKS.get(title)
+    if newly and norm(newly[0]) in norm(printed):return deepcopy(newly[1])
     verified=SM3_ATTACKS.get(title)
     if verified and norm(verified[0]) in norm(printed):return deepcopy(verified[1])
     key=(title,tuple(cost),damage,norm(printed))
@@ -129,6 +168,29 @@ for row in rows:
     if key in TRAINERS:TRAINER_EFFECTS[str(row[0])]=deepcopy(TRAINERS[key])
 
 # These Basic Energy prints are real card data, not Special Energy effects.
+# Trainer effects are validated against their individual pinned printed rules.
+SM3_TRAINER_MAP={
+    '113':('Bodybuilding Dumbbells',E('modifier',stat='maxHp',amount=40,scope='self',duration='whileInPlay',filter={'stage':'Stage 1'})),
+    '114':('Escape Rope',E('neoRule',rule='bw8:escapeRope')),
+    '117':('Lana',E('heal',target='selfAll',filter={'hasEnergyType':'Water'},amount=50)),
+    '118':('Mount Lanakila',E('modifier',stat='retreatCost',amount=1,scope='both',duration='whileInPlay',filter={'stage':'Basic'})),
+    '119':('Olivia',E('searchChosen',source='deck',amount=2,filter={'pokemonGX':True})),
+    '121':('Po Town',N), # Trigger implemented in battle-core for BOTH players on hand evolution.
+    '122':('Rotom Dex Poké Finder Mode',E('chooseOption',options=[
+        {'label':'Reorder top four physical deck cards','effect':E('reorderTop',count=4)},
+        {'label':'Shuffle the physical deck instead','effect':E('shuffleDeck',side='self')}],optional=True)),
+    '124':('Super Scoop Up',E('neoRule',rule='hgss2:83:superScoopUp')),
+    '126':('Weakness Policy',E('weaknessGuard',duration='whileInPlay')),
+    '127':('Wicke',E('handShuffle',side='both',draw='same')),
+}
+# Alternate and secret printed variants share exactly the same public rules.
+for original,variants in {'113':['161'],'114':['163'],'124':['166'],'127':['147']}.items():
+    for number in variants:SM3_TRAINER_MAP[number]=SM3_TRAINER_MAP[original]
+for row in rows:
+    if row[2]!='Trainer':continue
+    number=str(row[0]);pair=SM3_TRAINER_MAP.get(number)
+    if pair and row[1]==pair[0] and row[13]:TRAINER_EFFECTS[number]=(row[3][0],deepcopy(pair[1]))
+
 BASIC={'167':'Fire','168':'Darkness','169':'Fairy'}
 ENERGIES={}
 TRAINERS=TRAINER_EFFECTS
@@ -139,4 +201,9 @@ for row in rows:
     for a in row[8]:
         key=(a[0],norm(a[2]))
         if key in ABILITIES:ABILITY_EFFECTS[a[0]]=deepcopy(ABILITIES[key])
+# Ability content is checked against the pinned print before registry promotion.
+for row in rows:
+    for title,ability_type,printed in row[8]:
+        pair=SM3_CONTINUATION_ABILITIES.get(title)
+        if pair and norm(pair[0]) in norm(printed):ABILITY_EFFECTS[title]=deepcopy(pair[1])
 ABILITIES=ABILITY_EFFECTS

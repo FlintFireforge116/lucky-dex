@@ -634,6 +634,10 @@
     // Platinum Stadiums are continuous, symmetrical entry triggers, not
     // effects that fire only when the Stadium is initially played.
     if(state.format==='classic'&&onlySource&&meta.fromHand){
+      if(event==='evolved'&&activeStadium(state)?.cardId==='sm3-121'){
+        onlySource.damage=Number(onlySource.damage||0)+30;
+        state.log.push({type:'stadiumDamage',side,cardId:onlySource.cardId,stadium:'sm3-121',amount:30});
+      }
       if(event==='evolved'&&activeStadium(state)?.cardId==='pl1-106'){
         onlySource.damage=Number(onlySource.damage||0)+20;
         state.log.push({type:'stadiumDamage',side,cardId:onlySource.cardId,stadium:'pl1-106',amount:20});

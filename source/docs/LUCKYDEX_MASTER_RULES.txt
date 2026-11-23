@@ -5214,3 +5214,15 @@ Steam Siege full gameplay mapping reaches all 116 pinned prints; previously gate
 [DECK] Sparse single-set catalogues with <=4 useful Trainers may use up to 22 coherent Basics before automatic four-copy Trainer filler. Preserve manual copy counts. Do not weaken the `v07333` deck-quality gate: fewer than 3 unrelated four-copy Trainer packages per modern set; SM3-specific regression covers both player and CPU.
 [ENERGY] Inherit hybrid per-search coin flip, preserve official cost/card text, and only gate transformed deck Basic Energy searches. Discard recovery never flips. GX attacks remain once per game; SM3 secret/alternate prints share actual base-card effects.
 === END BURNING SHADOWS SM3 STAGE 1 ===
+
+
+SM3 BURNING SHADOWS STAGE 2 CONTINUATION (23 NOVEMBER 2026, v0.69.403)
+- Source-locked, offline 177-print SM3 catalogue; versionCode 7403 unchanged.
+- SM3 battle eligibility is based on verified printed effects, not display/catalogue completeness. This pass expands playability from 72 to 114 prints; remaining 63 stay gated for genuine missing mechanics.
+- Prefer printed-text guarded, reusable rule descriptors and per-print Trainer maps. No guessed whole-card noop or silent unsupported ability.
+- A Basic Energy *deck search* uses one independent hybrid Energy Zone flip per eligible unit, even after tails. Moving/discarding/attaching Energy from hand or discard is NOT that coin-gated search.
+- Move ALL Energy (SM3 Malamar Energy Slosh) means Basic and Special Energy to ONE selected Bench destination, conserving both kinds; set `includeSpecialEnergy` opt-in on the `moveEnergy` descriptor. Never change generic moveEnergy to grant free Energy.
+- Evolution-triggered abilities must require evolution from hand where printed; Po Town imposes three damage counters on either player's Pokémon evolved from hand, not deck/rare custom actions unless printed conditions match.
+- Stage-2 independent test: tests/v07415-burning-shadows-continuation.test.cjs; make it mandatory in Gradle `auditSM3ForApk` and scripts/preflight-sm3-release.py.
+- Before shipping, run full SM3 preflight and source-generator checks alongside XY10/XY11/XY12 older regression preflights. Tests must not assume a fragile exact Prize-formula substring; previously fixed XY10 Endgame test remains mandatory.
+- All delivered ZIP entries are source-relative (app/, scripts/, docs/, tests/). User installs with `unzip -o ... -d source` from ~/lucky-dex; test against clean Stage-1 state.

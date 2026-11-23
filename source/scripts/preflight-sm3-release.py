@@ -6,6 +6,7 @@ from pathlib import Path
 ROOT=Path(__file__).resolve().parents[1]
 TESTS=('tests/v07413-burning-shadows-integration.test.cjs',
        'tests/v07414-burning-shadows-outcomes.test.cjs',
+       'tests/v07415-burning-shadows-continuation.test.cjs',
        'tests/v07404-basic-energy-search-coins.test.cjs',
        'tests/v07406-basic-energy-search-special-cases.test.cjs',
        'tests/v07385-fates-collide-stage3.test.cjs',
