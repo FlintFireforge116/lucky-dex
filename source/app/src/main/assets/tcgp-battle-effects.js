@@ -43,7 +43,7 @@
       case 'distributeDiscardCounters':need(integer(effect.amount)&&effect.amount>0&&effect.amount%10===0,'invalid discard counters');break;
       case 'sm3Rule':need(typeof effect.rule==='string'&&!!effect.rule,'invalid SM3 rule');break;
       case 'sm4Rule':need(typeof effect.rule==='string'&&!!effect.rule,'invalid SM4 rule');break;
-      case 'sm5Rule':need(['mars','prismHandEnergy','prismDiscardEnergy','cyrusPrism','palPad','specialMow','lunarFall','lunarPayback','damageTransport','royalBlades','eleventhHour','lightingGX','blasterGX','grandBloom','changeClothes','memoryTool','loomOver','iceShard','psychicResonance','mercilessStrike','identify','deepCurrents','resourceManagement','gigaDrain','sneakySmash','paletteOfFriends'].includes(effect.rule),'invalid SM5 rule');break;
+      case 'sm5Rule':need(['mars','prismHandEnergy','prismDiscardEnergy','cyrusPrism','palPad','specialMow','lunarFall','lunarPayback','damageTransport','royalBlades','eleventhHour','lightingGX','blasterGX','grandBloom','changeClothes','memoryTool','loomOver','iceShard','psychicResonance','mercilessStrike','identify','deepCurrents','resourceManagement','gigaDrain','sneakySmash','paletteOfFriends','timelessGX','zeroVanishGX','solBurstGX','spatialControl','psychicTransfer','blessingsFrost','fireBlaster','happyTurn','ancientCrystal'].includes(effect.rule),'invalid SM5 rule');break;
       case 'sm2Rule':need(typeof effect.rule==='string'&&!!effect.rule,'invalid SM2 rule');break;
       case 'sm2Hala':case 'sm2MaxPotion':case 'sm2FieldBlower':case 'sm2RescueStretcher':break;
       case 'multiTargetHeal':need(effect.target==='selfBench','invalid multi-target heal selector');need(integer(effect.count)&&effect.count>0,'invalid multi-target heal count');need(nonnegative(effect.amount),'invalid multi-target heal amount');break;
@@ -19238,6 +19238,166 @@
         // Stage 5 Prism Star cards: each effect is tied to exact printed text.
         // Basic Energy discarded by an attack lives in energyDiscard, not the
         // fresh Energy Zone. No Prism Star effect may synthesize that energy.
+        // Stage 10: full turn, Energy reshuffle and choice-chain mechanics.
+        if(effect.rule==='timelessGX'){
+          ctx.state.sm5ExtraTurn={side:ctx.side,turn:ctx.state.turnNumber};
+          log({type:'sm5TimelessGX',extraTurnFor:ctx.side});
+          break;
+        }
+        if(effect.rule==='zeroVanishGX'){
+          const foe=other(ctx);let physical=0,basics=0;
+          for(const pokemon of pokemonOn(foe)){
+            for(const ref of pokemon.specialEnergy||[]){foe.deck.push(ref);physical++;}
+            pokemon.specialEnergy=[];
+            for(const [type,n] of Object.entries(pokemon.energy||{})){
+              const count=Math.max(0,Number(n)||0);
+              if(count){basics+=neoRecoveredToDeck(ctx,foe,type,count);}
+            }
+            pokemon.energy={};
+          }
+          if(physical+basics)ctx.shuffle?.(ctx.state,foe.deck);
+          log({type:'sm5ZeroVanishGX',target:ctx.foeSide,physical,basics});
+          break;
+        }
+        if(effect.rule==='solBurstGX'){
+          const ss=own(ctx),remaining=Math.max(0,Number(effect.remaining??5));
+          // Keep the finite Energy Zone separate from actual cards in deck.
+          const choices=()=>[
+            ...ss.deck.filter(ref=>ctx.cardById(ref.cardId)?.kind==='energy').map(ref=>({kind:'deck',uid:ref.uid,cardId:ref.cardId})),
+            ...[...new Set(ss.energySupply||[])].map(type=>({kind:'zone',type}))
+          ];
+          const offer=left=>{
+            const pool=choices();if(left<=0||!pool.length){ctx.shuffle?.(ctx.state,ss.deck);return;}
+            ctx.requestChoice?.({kind:'option',side:'self',options:[...pool.map(c=>c.kind==='zone'?('Search Energy Zone for '+c.type):(ctx.cardById(c.cardId)?.name||c.cardId)),'Stop attaching'],effect:{...effect,phase:'source',remaining:left,options:pool}});
+          };
+          if(ctx.resolvingChoice&&effect.phase==='source'){
+            const i=Number(ctx.action?.choiceOption);
+            if(i===(effect.options||[]).length){ctx.shuffle?.(ctx.state,ss.deck);break;}
+            const c=(effect.options||[])[i];
+            if(!c||c.kind==='deck'&&!ss.deck.some(r=>r.uid===c.uid)||c.kind==='zone'&&!(ss.energySupply||[]).includes(c.type))break;
+            ctx.requestChoice?.({kind:'pokemon',side:'self',includeActive:true,effect:{...effect,phase:'target',selectedSource:c,remaining}});
+            break;
+          }
+          if(ctx.resolvingChoice&&effect.phase==='target'){
+            const target=selected(ctx,ss),c=effect.selectedSource;
+            if(!target||!pokemonOn(ss).includes(target)||!c)break;
+            let type=null,uid=null,added=false;
+            if(c.kind==='deck'){
+              const i=ss.deck.findIndex(ref=>ref.uid===c.uid),ref=ss.deck[i],card=ref&&ctx.cardById(ref.cardId);
+              if(i>=0&&card?.kind==='energy'){
+                ss.deck.splice(i,1);uid=ref.uid;
+                if(card.basicEnergy){type=card.energyType||card.subtype;
+                  target.energy=target.energy||{};target.energy[type]=Number(target.energy[type]||0)+1;
+                  ctx.onEnergyAttached?.(target,type,1,{fromHand:false,energyCardId:ref.cardId});}
+                else{target.specialEnergy=target.specialEnergy||[];target.specialEnergy.push(ref);}
+                added=true;
+              }
+            }else if(c.kind==='zone'){
+              // Each NEW Basic Energy search gets a coin flip as required by
+              // the shared hybrid Energy Zone rule. Tails does not spend it.
+              const index=(ss.energySupply||[]).indexOf(c.type);
+              if(index>=0){const taken=neoSupplyTakeAt({...ctx,basicEnergyDeckSearch:true},ss,index,c.type);
+                if(taken){type=c.type;target.energy=target.energy||{};
+                  target.energy[type]=Number(target.energy[type]||0)+1;
+                  ctx.onEnergyAttached?.(target,type,1,{fromHand:false});added=true;}}
+            }
+            log({type:'sm5SolBurstGX',source:c.kind,energyType:type,uid,attached:added,targetUid:target.uid});
+            offer(remaining-1);break;
+          }
+          offer(remaining);break;
+        }
+        if(effect.rule==='spatialControl'||effect.rule==='psychicTransfer'){
+          const ss=own(ctx),self=ctx.attacker;
+          const sources=pokemonOn(ss).filter(p=>effect.rule==='spatialControl'?
+            p!==self:pokemonOn(ss).some(q=>q!==p));
+          const candidates=sources.flatMap(p=>[
+            ...Object.entries(p.energy||{}).filter(([t,n])=>Number(n)>0&&(effect.rule!=='psychicTransfer'||t==='Psychic')).map(([type])=>({uid:p.uid,type})),
+            ...(p.specialEnergy||[]).filter(ref=>effect.rule==='spatialControl'||attachedSpecialProvidesType(ref,'Psychic',p,ctx.cardById)).map(ref=>({uid:p.uid,specialUid:ref.uid}))
+          ]);
+          if(ctx.resolvingChoice&&effect.phase==='source'){
+            const c=(effect.options||[])[Number(ctx.action?.choiceOption)];
+            if(!c||c.stop)break;
+            if(effect.rule==='spatialControl'){const source=pokemonOn(ss).find(p=>p.uid===c.uid);
+              if(source&&self&&source!==self){
+                if(c.type&&Number(source.energy?.[c.type]||0)>0){source.energy[c.type]--;self.energy[c.type]=Number(self.energy?.[c.type]||0)+1;}
+                else if(c.specialUid){const i=(source.specialEnergy||[]).findIndex(ref=>ref.uid===c.specialUid);if(i>=0)self.specialEnergy.push(...source.specialEnergy.splice(i,1));}
+                log({type:'sm5SpatialControl',from:source.uid,to:self.uid,type:c.type||'special'});
+              }
+              // No arbitrary cap: choose one Energy unit at a time and stop.
+              if(pokemonOn(ss).some(p=>p!==self&&(Object.values(p.energy||{}).some(n=>Number(n)>0)||(p.specialEnergy||[]).length)))
+                ctx.requestChoice?.({kind:'option',side:'self',options:[...pokemonOn(ss).filter(p=>p!==self).flatMap(p=>[...Object.entries(p.energy||{}).filter(([,n])=>Number(n)>0).map(([type])=>({uid:p.uid,type,label:(ctx.cardById(p.cardId)?.name||p.cardId)+' '+type})),...(p.specialEnergy||[]).map(ref=>({uid:p.uid,specialUid:ref.uid,label:(ctx.cardById(p.cardId)?.name||p.cardId)+' special'}))]).map(x=>x.label),'Stop moving Energy'],effect:{...effect,phase:'spatialContinue'}});
+              break;
+            }
+            ctx.requestChoice?.({kind:'pokemon',side:'self',includeActive:true,excludeUids:[c.uid],effect:{...effect,phase:'target',moving:c}});break;
+          }
+          if(ctx.resolvingChoice&&effect.phase==='target'){
+            const c=effect.moving,source=pokemonOn(ss).find(p=>p.uid===c?.uid),target=selected(ctx,ss);
+            if(!source||!target||source===target)break;
+            if(c.type&&Number(source.energy?.[c.type]||0)>0){source.energy[c.type]--;target.energy[c.type]=Number(target.energy?.[c.type]||0)+1;}
+            else if(c.specialUid){const i=(source.specialEnergy||[]).findIndex(ref=>ref.uid===c.specialUid);
+              if(i<0)break;target.specialEnergy.push(...source.specialEnergy.splice(i,1));}
+            else break;
+            log({type:'sm5PsychicTransfer',sourceUid:source.uid,targetUid:target.uid,type:c.type||'special'});
+            break;
+          }
+          if(ctx.resolvingChoice&&effect.phase==='spatialContinue'){
+            const i=Number(ctx.action?.choiceOption);const available=pokemonOn(ss).filter(p=>p!==self).flatMap(p=>[
+              ...Object.entries(p.energy||{}).filter(([,n])=>Number(n)>0).map(([type])=>({uid:p.uid,type})),
+              ...(p.specialEnergy||[]).map(ref=>({uid:p.uid,specialUid:ref.uid}))
+            ]);
+            if(i===available.length)break;
+            const c=available[i],source=pokemonOn(ss).find(p=>p.uid===c?.uid);
+            if(!c||!source||!self)break;
+            if(c.type){source.energy[c.type]--;self.energy[c.type]=Number(self.energy?.[c.type]||0)+1;}
+            else{const index=source.specialEnergy.findIndex(ref=>ref.uid===c.specialUid);if(index<0)break;self.specialEnergy.push(...source.specialEnergy.splice(index,1));}
+            log({type:'sm5SpatialControl',from:source.uid,to:self.uid,type:c.type||'special'});
+            const refreshed=pokemonOn(ss).filter(p=>p!==self).flatMap(p=>[
+              ...Object.entries(p.energy||{}).filter(([,n])=>Number(n)>0).map(([type])=>({uid:p.uid,type,label:(ctx.cardById(p.cardId)?.name||p.cardId)+' '+type})),
+              ...(p.specialEnergy||[]).map(ref=>({uid:p.uid,specialUid:ref.uid,label:(ctx.cardById(p.cardId)?.name||p.cardId)+' special'}))
+            ]);
+            if(refreshed.length)ctx.requestChoice?.({kind:'option',side:'self',options:[...refreshed.map(x=>x.label),'Stop moving Energy'],effect:{...effect,phase:'spatialContinue'}});
+            break;
+          }
+          if(!ctx.resolvingChoice&&candidates.length){
+            const listed=effect.rule==='spatialControl'?[...candidates,{stop:true}]:candidates;
+            ctx.requestChoice?.({kind:'option',side:'self',options:listed.map(c=>c.stop?'Stop moving Energy':(ctx.cardById(pokemonOn(ss).find(p=>p.uid===c.uid)?.cardId)?.name||'Pokémon')+' '+(c.type||'Special Energy')),effect:{...effect,phase:'source',options:listed}});
+          }
+          break;
+        }
+        if(effect.rule==='blessingsFrost'){
+          const ss=own(ctx),hasWater=()=>Number(ss.energyDiscard?.Water||0)>0||ss.discard.some(ref=>{const card=ctx.cardById(ref.cardId);return card?.basicEnergy&&(card.energyType||card.subtype)==='Water';});
+          if(!ctx.eventData?.fromHand&&!ctx.resolvingChoice||!hasWater())break;
+          if(ctx.resolvingChoice){if(ctx.action?.choiceSkip)break;
+            const target=selected(ctx,ss);if(!target||!pokemonOn(ss).includes(target))break;
+            const i=ss.discard.findIndex(ref=>{const card=ctx.cardById(ref.cardId);return card?.basicEnergy&&(card.energyType||card.subtype)==='Water';});
+            if(i>=0){ss.discard.splice(i,1);}else if(Number(ss.energyDiscard?.Water||0)>0){ss.energyDiscard.Water--;}else break;
+            target.energy.Water=Number(target.energy?.Water||0)+1;
+            ctx.onEnergyAttached?.(target,'Water',1,{fromHand:false});
+            log({type:'sm5BlessingsFrost',uid:target.uid});break;
+          }
+          ctx.requestChoice?.({kind:'pokemon',side:'self',includeActive:true,optional:true,effect});break;
+        }
+        if(effect.rule==='ancientCrystal')break; // Tool modifier in damage calculation
+        if(effect.rule==='happyTurn'){
+          if(ctx.resolvingChoice){if(Number(ctx.action?.choiceOption)===1)applyEffectUnchecked({type:'shuffleIntoDeck',target:'self',includeAttached:true},ctx);break;}
+          ctx.requestChoice?.({kind:'option',side:'self',options:['Keep this Pokémon','Shuffle this Pokémon and attached cards into your deck'],effect});break;
+        }
+        if(effect.rule==='fireBlaster'){
+          const selection=String(ctx.action?.effectSelection||'');
+          if(!selection.startsWith('boost:'))break;
+          const chosen=selection.slice(6).split(';'),att=ctx.attacker,ss=own(ctx);
+          if(chosen.length!==2||!att||chosen[0]===chosen[1])break;
+          const basic={...att.energy},specials=[...(att.specialEnergy||[])];let valid=true;
+          for(const token of chosen){
+            if(token.startsWith('basic:')){const type=token.split(':')[1];if(Number(basic[type]||0)<1){valid=false;break;}basic[type]--;}
+            else if(token.startsWith('special:')){const uid=token.slice(8),i=specials.findIndex(ref=>ref.uid===uid);if(i<0){valid=false;break;}specials.splice(i,1);}
+            else{valid=false;break;}
+          }
+          if(!valid)break;
+          for(const token of chosen){if(token.startsWith('basic:')){const type=token.split(':')[1];att.energy[type]--;recordDiscardedEnergy(ss,type,1);}
+            else{const uid=token.slice(8),i=att.specialEnergy.findIndex(ref=>ref.uid===uid);if(i>=0)ss.discard.push(...att.specialEnergy.splice(i,1));}}
+          log({type:'sm5FireBlaster',discarded:chosen.length});break;
+        }
         if(effect.rule==='identify'){
           log({type:'sm5Identify',revealedSide:ctx.foeSide,cards:other(ctx).hand.map(r=>r.cardId)});
           break;
@@ -26049,6 +26209,10 @@ if(ctx.isAbility){const targetSide=pokemonOn(own(ctx)).includes(s)?ctx.side:ctx.
       if(e.type==='xy10Final'&&e.rule==='rapidBlaster'){
         damage+=20*Math.max(0,Number(ctx.action?.effectSelection||0));pending.push(e);return;
       }
+      if(e.type==='sm5Rule'&&e.rule==='fireBlaster'){
+        if(String(ctx.action?.effectSelection||'').startsWith('boost:')){damage+=80;pending.push(e);}
+        return;
+      }
       if(e.type==='sm5Rule'&&['loomOver','iceShard','psychicResonance','mercilessStrike','identify','paletteOfFriends'].includes(e.rule)){
         const us=own(ctx),foe=other(ctx),def=ctx.defender,a=ctx.attacker,card=p=>ctx.cardById(p?.cardId);
         if(e.rule==='loomOver')damage=Math.max(0,damage-10*Math.floor(Number(a?.damage||0)/10));
@@ -26141,6 +26305,15 @@ if(ctx.isAbility){const targetSide=pokemonOn(own(ctx)).includes(s)?ctx.side:ctx.
     return [{}];
   }
   function choicesForEffect(effect,ctx){
+    if(effect?.type==='sm5Rule'&&effect.rule==='fireBlaster'){
+      const att=ctx.attacker,options=[];
+      for(const [type,n] of Object.entries(att?.energy||{}))for(let i=0;i<Math.min(20,Number(n)||0);i++)options.push('basic:'+type+':'+i);
+      for(const ref of att?.specialEnergy||[])options.push('special:'+ref.uid);
+      const result=[{effectSelection:'',choiceLabel:'80 damage — keep Energy'}];
+      for(let i=0;i<options.length;i++)for(let j=i+1;j<options.length;j++)
+        result.push({effectSelection:'boost:'+options[i]+';'+options[j],choiceLabel:'160 damage — discard '+options[i]+' and '+options[j]});
+      return result;
+    }
     if(effect?.type==='sm5Rule'&&effect.rule==='lunarFall'){
       return pokemonOn(other(ctx)).some(p=>{const c=ctx.cardById(p.cardId);return c?.kind==='pokemon'&&c.stage==='Basic'&&
         !(c.pokemonGX||c.isPokemonGX||/[- ]GX$/i.test(c.name||''));})?[{}]:[];

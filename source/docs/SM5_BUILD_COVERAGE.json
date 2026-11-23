@@ -1,15 +1,12 @@
 {
   "printed": 178,
-  "battleReady": 144,
+  "battleReady": 154,
   "gated": {
     "sm5-5": [
       "Unimplemented attack: Flower Tornado"
     ],
     "sm5-15": [
       "Unimplemented attack: Coax"
-    ],
-    "sm5-19": [
-      "Unimplemented attack: Fire Blaster"
     ],
     "sm5-21": [
       "Unimplemented attack: Fury Swipes"
@@ -25,9 +22,6 @@
     ],
     "sm5-36": [
       "Unimplemented attack: Agility"
-    ],
-    "sm5-38": [
-      "Unimplemented Ability: Blessings of the Frost"
     ],
     "sm5-48": [
       "Unimplemented attack: Volt Bolt"
@@ -57,13 +51,6 @@
       "Unimplemented attack: Exeggutor's Paradise",
       "Unimplemented attack: Draco Meteor Barrage"
     ],
-    "sm5-100": [
-      "Unimplemented attack: Timeless-GX"
-    ],
-    "sm5-101": [
-      "Unimplemented attack: Spatial Control",
-      "Unimplemented attack: Zero Vanish-GX"
-    ],
     "sm5-102": [
       "Unimplemented attack: Slam"
     ],
@@ -73,14 +60,8 @@
     "sm5-106": [
       "Unimplemented attack: Weak Kneed"
     ],
-    "sm5-107": [
-      "Unimplemented attack: Happy Turn"
-    ],
     "sm5-109": [
       "Unimplemented attack: Own the Place"
-    ],
-    "sm5-118": [
-      "Unimplemented Trainer effect"
     ],
     "sm5-129": [
       "Unimplemented Trainer effect"
@@ -88,22 +69,8 @@
     "sm5-140": [
       "Unimplemented attack: Fast Raid"
     ],
-    "sm5-146": [
-      "Unimplemented attack: Timeless-GX"
-    ],
-    "sm5-147": [
-      "Unimplemented attack: Spatial Control",
-      "Unimplemented attack: Zero Vanish-GX"
-    ],
     "sm5-158": [
       "Unimplemented attack: Fast Raid"
-    ],
-    "sm5-164": [
-      "Unimplemented attack: Timeless-GX"
-    ],
-    "sm5-165": [
-      "Unimplemented attack: Spatial Control",
-      "Unimplemented attack: Zero Vanish-GX"
     ],
     "sm5-168": [
       "Unimplemented Trainer effect"

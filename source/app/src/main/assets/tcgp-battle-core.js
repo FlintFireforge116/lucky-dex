@@ -1875,6 +1875,13 @@
         // Breath of the Leaves is Active-only, once per turn, and heals only
         // damaged Pokemon with attached Energy (not unused Energy Zone units).
         if(state.format==='classic'&&source.cardId.startsWith('sm5-')){
+          if(ability.name==='Psychic Transfer'&&(
+            pokemonOn(s).length<2||!pokemonOn(s).some(p=>Number(p.energy?.Psychic||0)>0||
+              (p.specialEnergy||[]).some(ref=>{
+                const c=data.cardById(ref.cardId),provides=ref.provides||c?.effect?.provides||{};
+                return Number(provides.Psychic||provides.Rainbow||provides.Miracle||0)>0||
+                  ['sm5-138','sm5-171','sm5-136'].includes(ref.cardId);
+              }))))return;
           if(ability.name==='Breath of the Leaves'&&(
             source!==s.active||!pokemonOn(s).some(p=>Number(p.damage||0)>0&&
             (Object.values(p.energy||{}).some(n=>Number(n)>0)||(p.specialEnergy||[]).length))))return;
@@ -2325,6 +2332,19 @@
 
   function endTurn(state){
     if (state.phase !== 'battle') return;
+    // Ultra Prism Dialga Timeless-GX: a real extra owner turn, without a
+    // between-turn step, opponent draw, or changing Active side. Only valid
+    // after attack effects/KO and any Prize decisions have resolved.
+    if(state.format==='classic'&&state.sm5ExtraTurn?.side===state.activeSide&&
+       Number(state.sm5ExtraTurn.turn)===Number(state.turnNumber)){
+      const who=state.activeSide;delete state.sm5ExtraTurn;
+      if(state.turnNumber>=100){advanceTurn(state);return;}
+      const board=state.sides[who];board.pointsGainedLastTurn=Number(board.pointsGainedThisTurn||0);
+      board.pointsGainedThisTurn=0;state.turnNumber++;
+      state.modifiers=(state.modifiers||[]).filter(m=>m.expiresTurn==null||m.expiresTurn>=state.turnNumber);
+      state.log.push({type:'sm5TimelessExtraTurn',side:who,turnNumber:state.turnNumber});
+      beginTurn(state,who);return;
+    }
     if(state.format==='classic'){
       for(const owner of ['player','opponent'])for(const slot of pokemonOn(state.sides[owner])){
         const refs=toolsOf(slot).filter(r=>r.cardId==='xy11-80'&&
@@ -4011,6 +4031,13 @@ const target=slotForTarget(s,action.target,action.benchIndex);if(card.id==='pl2-
       }
       if(damage>0&&Number(defender.neoDestinyReflectUntil||0)>=state.turnNumber){const heads=random(state)<.5;state.log.push({type:'coin',side:foeSide,reason:'Neo Destiny Reflect Shield',heads,results:[heads]});if(heads){damage=0;s.active.damage=Number(s.active.damage||0)+20;}}
       damage=gymDamageDefender(state,foeSide,defender,s.active,damage);
+      // SM5 Ancient Crystal: attached Tool reduces damage to the four Regis
+      // after Weakness and Resistance, with standard Tool suppression and
+      // Shred-style ignore-effects respected. Not a global Metal shield.
+      if(state.format==='classic'&&damage>0&&!result.damageRules?.ignoreEffects&&
+         activeToolsOf(state,defender).some(ref=>ref.cardId==='sm5-118')&&
+         ['Regirock','Regice','Registeel','Regigigas'].includes(data.cardById(defender.cardId)?.name))
+        damage=Math.max(0,damage-30);
       if(state.format==='classic'&&damage>0&&['ex1-26','ex1-43'].includes(defender.cardId)&&
          !effects.abilitiesSuppressed(state,foeSide,defender,data.cardById)){
         const heads=random(state)<0.5;state.log.push({type:'coin',side:foeSide,reason:'Hard Cocoon',heads,results:[heads]});

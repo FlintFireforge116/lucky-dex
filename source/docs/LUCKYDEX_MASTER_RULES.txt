@@ -5371,3 +5371,12 @@ SM5 STAGE 9 / v0.69.413 RELEASE RULES:
 - Sneaky Smash is usable ONLY on the first turn of the player who went SECOND, on BOTH player and CPU. Offer actual opposing attached Basic/Special Energy for discard; preserve special-energy UID.
 - Guard Press reduces incoming damage only during the opponent turn, after Weakness/Resistance. Do not convert it into a permanent Ability.
 - All Stage 1-8 player and CPU tests remain mandatory. Bounded Node test concurrency is permitted when an older broad suite hangs in the container; NEVER disable tests to achieve a green build.
+
+SM5 STAGE 10 / v0.69.414 RELEASE RULES:
+- Timeless-GX is an actual full EXTRA TURN for the attacker (including turn draw), no poison/burn/checkup in between. Block or end pending move only after all prize/switch decisions, including on CPU side.
+- Zero Vanish-GX shuffles physical Special Energy cards preserving each UID, and reconstructs virtual attached Basic Energy in the deck ledger per classic engine; cannot affect the attacking side.
+- Sol Burst-GX draws at most five real Energy cards from the deck, each individually attached to the selected Pokémon. Hybrid virtual Zone searches still require independent heads flips and cannot invent or duplicate Energy.
+- Spatial Control is repeatable over Benched own Energy but must offer a correct Stop option after EACH transfer; Psychic Transfer is repeatable per turn only when a Psychic source and a different destination exist. Actual Special Energy card UIDs must be preserved.
+- Blessings of the Frost triggers ONLY when evolved from hand, only if Water Energy exists in physical discard or Energy Discard ledger. Fire Blaster pays exactly two actual attached Energy for its bonus.
+- Happy Turn shuffles the actual attacker and attached cards into deck and requires legal Active promotion; Ancient Crystal reduces damage only to its four named Regi Pokémon and only if attached.
+- All Stage 1–9 tests must remain in SM5 Termux preflight and Gradle APK gate. Independent Stage 10 outcomes and SHA-locked printed text require passing before release. NEVER change older gate expectations or disable a test merely to make build green.
