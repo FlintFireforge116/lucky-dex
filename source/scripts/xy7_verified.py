@@ -44,7 +44,7 @@ ATTACKS={
  ('27','Thunder Rod'):E('xy7ThunderRod'),
  ('27','Sparkling Tail'):E('damageRule',ignoreWeakness=True,ignoreResistance=True,ignoreEffects=True),
  ('29','Electric Mischief'):E('coinRepeatEffect',coins=3,effect=E('shuffleRandomHandCard',side='opponent')),
- ('28','Exavolt'):OPT('Do 50 extra damage, Paralyze, and 30 self-damage',S(BONUS(50),ST('paralysis'),E('selfDamage',amount=30))),
+ ('28','Exavolt'):E('xy7Exavolt'),
  ('32','Future Spin'):E('chooseOption',options=[
   {'label':'Arrange the top 3 cards of your deck','effect':E('reorderTop',deckSide='self',count=3)},
   {'label':"Arrange the top 3 cards of the opponent's deck",'effect':E('reorderTop',deckSide='opponent',count=3)}]),

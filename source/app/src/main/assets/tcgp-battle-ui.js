@@ -836,7 +836,7 @@
         const attrs=!indices.length?`data-tcgp-action="explain-unavailable" data-reason="${esc(availability.reason)}" aria-disabled="true"`:indices.length>1?`data-tcgp-action="open-context-actions" data-action-indices="${indices.join(',')}"`:`data-tcgp-action="battle-action" data-action-index="${actionIndex}"`;
         const boardTargetAttack=boardTargetOnlyActions(currentBattle,battleActionCache,indices);
         const blocker=indices.length?cost:(/^Needs /i.test(availability.reason)?availability.reason.replace(/\. Attached:.*$/,'').replace(/\.$/,''):availability.reason.replace(/\.$/,'')),origin=psymimic?`PSYMIMIC · ${String(source?.name||'OPPONENT').toUpperCase()} · `:technicalMachine?'TECHNICAL MACHINE · ':previous?`FROM ${String(source?.name||'PREVIOUS EVOLUTION').toUpperCase()} · `:'';
-        parts.push(`<button type="button" class="tcgp-live-context-action attack" title="${esc(availability.reason)}" ${attrs}><b>${esc(attack?.name||'ATTACK')}</b><small>${esc(origin+blocker)}${indices.length>1?(attack?.effect?.rule==='founja:flightPath'?' · CHOOSE BENCH ATTACK':attack?.effect?.rule==='expedition:lightningStrike'?' · CHOOSE DAMAGE':' · '+(boardTargetAttack?'TAP TARGET':'CHOOSE TARGET')):''}</small><em class="tcgp-live-attack-description">${esc(attackDescription(attack))}</em><strong>${esc(preview?.text??attack?.damageText??attack?.damage??0)} DMG</strong></button>`);
+        parts.push(`<button type="button" class="tcgp-live-context-action attack" title="${esc(availability.reason)}" ${attrs}><b>${esc(attack?.name||'ATTACK')}</b><small>${esc(origin+blocker)}${indices.length>1?(attack?.effect?.rule==='founja:flightPath'?' · CHOOSE BENCH ATTACK':attack?.effect?.rule==='expedition:lightningStrike'?' · CHOOSE DAMAGE':attack?.effect?.type==='xy7Exavolt'?' · CHOOSE EFFECT':' · '+(boardTargetAttack?'TAP TARGET':'CHOOSE TARGET')):''}</small><em class="tcgp-live-attack-description">${esc(attackDescription(attack))}</em><strong>${esc(preview?.text??attack?.damageText??attack?.damage??0)} DMG</strong></button>`);
       });
       const retreats=actionIndicesFor(action=>action.type==='retreat');
       if(retreats.length)parts.push(contextActionButton(retreats,'RETREAT','retreat'));
@@ -1325,11 +1325,19 @@
   // A failed AI search must not maroon an otherwise legal match on CPU TURN.
   // The fallback only uses actions legal in the *actual* position; the search
   // engine remains responsible for all legality checks and card effects.
-  function cpuSafeAction(){
+  function cpuSafeAction(failedAction=null){
     const legal=core.legalActions(currentBattle,'opponent');
     if(!legal.length)return null;
     if(currentBattle.phase==='battle')return legal.find(a=>a.type==='endTurn')||legal[0];
-    if(currentBattle.phase==='effectChoice')return legal.find(a=>a.choiceSkip===true&&currentBattle.pendingChoice?.optional===true)||legal[0];
+    if(currentBattle.phase==='effectChoice'){
+      const pending=currentBattle.pendingChoice||{};
+      // If resolving an optional effect threw, NEVER retry the exact failed
+      // choice: that used to trap CPU turns after a Wild Edge damage boost.
+      const remaining=legal.filter(a=>!failedAction||JSON.stringify(a)!==JSON.stringify(failedAction));
+      const decline=remaining.find(a=>a.choiceSkip===true)||
+        (pending.kind==='option'&&pending.optional===true?remaining.find(a=>/^(?:do not|skip|decline|done|no extra|keep base)/i.test(String(a.choiceLabel||''))):null);
+      return decline||remaining[0]||null;
+    }
     return legal[0];
   }
   function cpuStep(){
@@ -1353,7 +1361,7 @@
     catch(error){
       console.error('[TCGP Battle] CPU action failed; recovering',error);
       Object.keys(currentBattle).forEach(key=>delete currentBattle[key]);Object.assign(currentBattle,snapshot);
-      try{chosen=cpuSafeAction();if(!chosen)throw new Error('No legal fallback');try{anchors=capturePresentationAnchors(chosen,'opponent');}catch(_){anchors=null;}core.applyAction(currentBattle,'opponent',chosen);}
+      try{chosen=cpuSafeAction(chosen);if(!chosen)throw new Error('No legal fallback');try{anchors=capturePresentationAnchors(chosen,'opponent');}catch(_){anchors=null;}core.applyAction(currentBattle,'opponent',chosen);}
       catch(recoveryError){console.error('[TCGP Battle] recovery failed',recoveryError);cpuPending=false;setBattleEvent('CPU action failed · tap Resume CPU');renderBattle();return;}
     }
     cpuActions+=1;const added=currentBattle.log.slice(before);setBattleEvent(eventForAction(chosen,'opponent',before),'opponent',chosen,added);

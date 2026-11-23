@@ -72,7 +72,7 @@ ATK={
  ('64','Mach Claw'):E('damageRule',ignoreResistance=True),
  ('65','Oblivion Wing'):E('attachEnergyFromDiscard',target='selfBench',energyType='Darkness',amount=1),
  ('65','Darkness Blade'):Q(N,E('lock',action='attack',target='self',duration='nextOwnTurn')),
- ('67','Wild Edge'):OPT('Use Wild Edge boost (+50 damage and 20 recoil)',S(BONUS(50),E('selfDamage',amount=20))),
+ ('67','Wild Edge'):E('xy11Rule',rule='wildEdge'),
  ('67','Iron Tail'):COIN('untilTails',100),
  ('68','Canyon Axe'):BENCH(10),
  ('69','Rock Head'):GUARD(20),
