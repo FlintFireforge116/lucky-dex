@@ -5518,11 +5518,11 @@ SM5 STAGE 13 / v0.69.417 RELEASE RULES:
 - Ultra Prism printed first-player attack restriction: on its own first turn, only SM5 Pheromosa-GX Fast Raid may attack. Preserve older expansions hybrid first-turn rules to avoid undocumented gameplay migration. This exception is tested for both first and second side.
 - No staged patch may claim full 178-print verification locally if pinned sm5-print-compact.json is not present. Always report that the on-device preparation gate and GitHub Actions build remain pending.
 
-CHANGE LOG v2.79 / 23 NOVEMBER 2026 — Added front-loaded whole-set automation contract, one-implementation-plus-audit cadence, strict source-first coverage ledger and release-parity helper. Historical rules retained.
+[CURRENT] FORBIDDEN LIGHT SM6 FULL-SET INTEGRATION / v0.69.418 (23 NOV 2026)
+- Official sm6 card catalogue is pinned by Git blob 7c9956b85945322c9c981db7a231be36fc524224: 150 distinct prints (1..146 plus 2a/102a/112a/113a), 211 attacks, 25 Abilities, 27 Trainers, 3 Energy, 5 Prism Stars.
+- Use python3 scripts/build-sm6.py --prepare once to fetch, checksum, and write the canonical compact source. All APK builds thereafter must use checked-in compact source and attestation, never silently fetch or fabricate card text.
+- Full SM6 inventory now generates all prints, reuses SM5 descriptors only with exact printed-text signatures, and enables prints only when every attack, Ability, Trainer and Energy effect validates. Unsupported mechanics (including new Prize, Ultra Beast and Prism specifics) remain GATED, never converted to noop. The exact resulting playable/gated count is available only after canonical Termux prepare and must be copied from SM6_BUILD_COVERAGE.json.
+- SM6 Unit Energy FightingDarknessFairy provides exactly ONE Fighting, Darkness, Fairy OR Colorless pip per physical card, never multiple pips. Both print variants have distinct copy identity. SM6 new outcome tests cover selected shared damage, lock and discard Energy interactions. Every SM6 test must be in both preflight and Gradle gates.
+- No 150/150 complete claim until --require-complete passes AND independent effect outcome audit AND APK verification. This is a comprehensive first-pass integration, not a completed-set certification.
 
-# SM5 full-set completion handoff (23 November 2026; v2.79 workflow application)
-- The implementation-stage outcome count is NOT a whole-set completion count. SM5 must report actual generated `battleReady`, `gated` and exact blocker reasons against its SHA-pinned 178 official prints.
-- Mandatory release checks: `python3 scripts/audit-expansion-readiness.py --set sm5 --release-only` before packaging; `python3 scripts/audit-expansion-readiness.py --set sm5 --check-release --require-complete --report docs/SM5_CURRENT_GAP_LEDGER.md` after `prepare-sm5.sh` to assert zero gates.
-- `tests/v07439-ultra-prism-final-coverage.test.cjs` must stay in BOTH the SM5 Termux preflight and Gradle APK `auditSM5ForApk` test list; do not delete, soften or downgrade it when new sets are added. This is the template for every future expansion's complete-print gate.
-- Keep the global Android release at 0.69.417 for this audit-only change. Previous release assertions must be updated together ONLY when the application version genuinely changes.
-- A passed 227-test targeted outcome suite is necessary but not sufficient; do not call SM5 complete until the zero-gate canonical check and real APK build are confirmed. Do not invent or synthesize missing source rows for a completion claim.
+CHANGE LOG v2.79 / 23 NOVEMBER 2026 — Added front-loaded whole-set automation contract, one-implementation-plus-audit cadence, strict source-first coverage ledger and release-parity helper. Historical rules retained.

@@ -9,7 +9,7 @@ const synergy=require('../app/src/main/assets/tcg-deck-synergy.js');
 // These sets use checked-in stubs until their Gradle generator runs. This early
 // deck-quality gate executes BEFORE those generators, so audit their full cards
 // in each set's post-generation audit instead. Keep this list in sync with newly pinned expansions (including SM5).
-const emptyLocalCatalogues=new Set(['bw11','xy1','xy2','xy3','xy4','xy5','xy6','xy7','xy8','xy9','xy10','sm2','sm5']);
+const emptyLocalCatalogues=new Set(['bw11','xy1','xy2','xy3','xy4','xy5','xy6','xy7','xy8','xy9','xy10','sm2','sm5','sm6']);
 function ownedFor(set){return classic.CARDS.filter(c=>c.setId===set&&c.battleEnabled&&c.deckEligible!==false).map(c=>({gameplayId:c.id,quantity:4}));}
 function trainerCounts(ids){
  const byName=new Map();
@@ -56,6 +56,15 @@ test('Ultra Prism pinned catalogue is quality-gated after generation, not from t
  assert.match(gradle,/tasks\.register\('generateSM5ForApk'/);
  assert.match(gradle,/tasks\.register\('auditSM5ForApk'/);
  assert.match(gradle,/dependsOn tasks\.named\('generateSM5ForApk'\)/);
+});
+
+test('Forbidden Light generated deck catalogue is tested after its official SHA-pinned source is built',()=>{
+ const fs=require('node:fs'),path=require('node:path');
+ const gradle=fs.readFileSync(path.join(__dirname,'../app/build.gradle'),'utf8');
+ assert.ok(emptyLocalCatalogues.has('sm6'),'SM6 cannot be judged from its pre-generator empty stub');
+ assert.match(gradle,/tasks\.register\('generateSM6ForApk'/);
+ assert.match(gradle,/tasks\.register\('auditSM6ForApk'/);
+ assert.match(gradle,/dependsOn tasks\.named\('generateSM6ForApk'\)/);
 });
 
 test('all locally populated Classic sets generate legal, Energy-compatible, usable 30-card decks under two styles',()=>{

@@ -988,12 +988,12 @@
       pokemonOn(state.sides[side]).some(p=>p.cardId==='bw4-57'&&!effects.abilitiesSuppressed(state,side,p,data.cardById)))
       next.Psychic=Number(next.Psychic||0)+Number(slot?.energy?.Psychic||0);
     for(const ref of slot?.specialEnergy||[]){
-      if(['sm5-137','sm5-170','sm5-138','sm5-171'].includes(ref.cardId)&&!miracleWind){
+      if(['sm5-137','sm5-170','sm5-138','sm5-171','sm6-118','sm6-146'].includes(ref.cardId)&&!miracleWind){
         // A Unit Energy card is one selectable unit, not three simultaneous ones.
         // Crystal is just its counted unit; __sm5UnitCards records the physical
         // per-card options and canPayCost performs exact matching.
-        const allowed=['sm5-137','sm5-170'].includes(ref.cardId)?
-          ['Grass','Fire','Water']:['Lightning','Psychic','Metal'];
+        const allowed=['sm6-118','sm6-146'].includes(ref.cardId)?['Fighting','Darkness','Fairy']:
+          ['sm5-137','sm5-170'].includes(ref.cardId)?['Grass','Fire','Water']:['Lightning','Psychic','Metal'];
         next.Crystal=Number(next.Crystal||0)+1;
         (next.__sm5UnitCards||(next.__sm5UnitCards=[])).push(allowed);
         continue;

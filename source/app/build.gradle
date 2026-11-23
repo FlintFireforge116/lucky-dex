@@ -8,8 +8,8 @@ android {
         applicationId 'com.example.luckydex'
         minSdk 26
         targetSdk 35
-        versionCode 7417
-        versionName '0.69.417'
+        versionCode 7418
+        versionName '0.69.418'
     }
 
     signingConfigs {
@@ -1066,3 +1066,22 @@ tasks.matching { it.name == 'preBuild' || (it.name.startsWith('merge') && it.nam
     dependsOn tasks.named('auditSM5ForApk')
 }
 
+// v0.69.418 Forbidden Light SM6: SHA-pinned 150-print full-set source and audit.
+tasks.register('preflightSM6ContractForApk', Exec) {
+    dependsOn tasks.named('auditSM5ForApk')
+    workingDir rootProject.projectDir
+    commandLine (System.getenv('LUCKYDEX_PYTHON') ?: 'python3'), 'scripts/preflight-sm6-release.py'
+}
+tasks.register('generateSM6ForApk', Exec) {
+    dependsOn tasks.named('preflightSM6ContractForApk')
+    workingDir rootProject.projectDir
+    commandLine (System.getenv('LUCKYDEX_PYTHON') ?: 'python3'), 'scripts/build-sm6.py'
+}
+tasks.register('auditSM6ForApk', Exec) {
+    dependsOn tasks.named('generateSM6ForApk')
+    workingDir rootProject.projectDir
+    commandLine 'node', '--test', 'tests/v07440-forbidden-light-integration.test.cjs', 'tests/v07441-forbidden-light-mechanics.test.cjs', 'tests/v07442-forbidden-light-outcomes.test.cjs'
+}
+tasks.matching { it.name == 'preBuild' || (it.name.startsWith('merge') && it.name.endsWith('Assets')) }.configureEach {
+    dependsOn tasks.named('auditSM6ForApk')
+}
