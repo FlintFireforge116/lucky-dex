@@ -4,11 +4,11 @@ from __future__ import annotations
 import argparse,hashlib,json,re,subprocess,sys
 from pathlib import Path
 ROOT=Path(__file__).resolve().parents[1]
-TESTS=['tests/v07424-ultra-prism-integration.test.cjs','tests/v07425-ultra-prism-reuse.test.cjs','tests/v07427-ultra-prism-stage2-outcomes.test.cjs']
+TESTS=['tests/v07424-ultra-prism-integration.test.cjs','tests/v07425-ultra-prism-reuse.test.cjs','tests/v07427-ultra-prism-stage2-outcomes.test.cjs','tests/v07428-ultra-prism-stage3-outcomes.test.cjs']
 def check():
  subprocess.run([sys.executable,'scripts/check-gradle-source.py','--self-test'],cwd=ROOT,check=True)
  c=json.loads((ROOT/'scripts/sm5_release_contract.json').read_text())
- assert (c['set'],c['stage'],c['release'])==('sm5','stage2','0.69.406')
+ assert (c['set'],c['stage'],c['release'])==('sm5','stage3','0.69.407')
  assert (c['printedTotal'],c['attackPrints'],c['abilities'],c['pokemonGX'],c['gxAttackPrints'],c['prismStarPrints'],c['trainerPrints'],c['energyPrints'])==(178,237,37,27,27,6,36,5)
  assert c['pin']=='66cbd13b706b789de3b8cce2f5c9fc95135a33b0'
  assert c['variants']==['119a','122a','125a','135a','153a']
@@ -34,9 +34,25 @@ def check():
   matches=[row for row in rows if row[2]=='Trainer' and row[1]==name and sm5stage2.norm(sm5stage2.TRAINER_RULES[name]) in sm5stage2.norm(' '.join(row[13] or []))]
   assert matches,'SM5 Stage 2 Trainer does not match official printed text: '+name
   assert all(sm5stage2.trainer(row)==(kind,descriptor) for row in matches),'SM5 Stage 2 Trainer drift: '+name
- print(f'SM5 Stage 2 official-text audit PASS: {len(sm5stage2.ATTACKS)} attacks, {len(sm5stage2.TRAINERS)} Trainer/Stadium effects')
+ # Verify EVERY new Stage 3 attack/Ability/Trainer against the same official
+ # print source. The printed GX parenthetical is not stripped for these maps.
+ import sm5_stage3_verified as sm5stage3
+ assert (len(sm5stage3.ATTACKS),len(sm5stage3.ABILITIES),len(sm5stage3.TRAINERS))==(c['stage3TextLockedAttacks'],c['stage3TextLockedAbilities'],c['stage3TextLockedTrainers'])
+ for name,(printed,descriptor) in sm5stage3.ATTACKS.items():
+  matching=[(row,attack) for row in rows for attack in row[7] if attack[0]==name and sm5stage3.norm(attack[3])==sm5stage3.norm(printed)]
+  assert matching,'SM5 Stage 3 official attack print mismatch: '+name
+  assert all(sm5stage3.attack(row,attack)==descriptor for row,attack in matching),'SM5 Stage 3 attack rule mismatch: '+name
+ for name,(printed,descriptor) in sm5stage3.ABILITIES.items():
+  matching=[(row,a) for row in rows for a in row[8] if a[0]==name and sm5stage3.norm(a[2])==sm5stage3.norm(printed)]
+  assert matching,'SM5 Stage 3 official Ability print mismatch: '+name
+  assert all(sm5stage3.ability(row,a)==descriptor for row,a in matching),'SM5 Stage 3 Ability rule mismatch: '+name
+ for name,(klass,descriptor) in sm5stage3.TRAINERS.items():
+  matching=[row for row in rows if row[2]=='Trainer' and row[1]==name and all(sm5stage3.norm(x) in sm5stage3.norm(' '.join(row[13] or [])) for x in sm5stage3.TRAINER_RULES[name])]
+  assert matching,'SM5 Stage 3 official Trainer print mismatch: '+name
+  assert all(sm5stage3.trainer(row)==(klass,descriptor) for row in matching),'SM5 Stage 3 Trainer rule mismatch: '+name
+ print(f'SM5 Stages 2+3 official-text audit PASS: {len(sm5stage2.ATTACKS)} + {len(sm5stage3.ATTACKS)} attacks, {len(sm5stage3.ABILITIES)} Abilities, {len(sm5stage2.TRAINERS)+len(sm5stage3.TRAINERS)} Trainers')
  gradle=(ROOT/'app/build.gradle').read_text()
- assert re.search(r"versionName\s+['\"]0\.69\.406['\"]",gradle) and 'versionCode 7406' in gradle
+ assert re.search(r"versionName\s+['\"]0\.69\.407['\"]",gradle) and 'versionCode 7407' in gradle
  for task in ['preflightSM5ContractForApk','generateSM5ForApk','auditSM5ForApk']:
   assert "tasks.register('"+task+"'" in gradle,task+' missing'
  assert "dependsOn tasks.named('auditSM4ForApk')" in gradle
@@ -45,10 +61,10 @@ def check():
  for f in ('tcg-classic-battle-data.js','tcg-classic-deck-builder.js','tcg-classic-opponents.js','tcg-classic-set-picker.js'):
   assert 'sm5' in (ROOT/'app/src/main/assets'/f).read_text(),f+' missing SM5 registration'
  html=(ROOT/'app/src/main/assets/index.html').read_text()
- assert 'tcg-classic-ultra-prism.js' in html and 'v0.69.406' in html
- assert "__LUCKYDEX_BUILD='0.69.406'" in (ROOT/'app/src/main/assets/app-v0167.js').read_text()
+ assert 'tcg-classic-ultra-prism.js' in html and 'v0.69.407' in html
+ assert "__LUCKYDEX_BUILD='0.69.407'" in (ROOT/'app/src/main/assets/app-v0167.js').read_text()
  for sid in ['xy9','xy10','xy11','xy12','sm1','sm2','sm3','sm4']:
-  assert json.loads((ROOT/f'scripts/{sid}_release_contract.json').read_text())['release']=='0.69.406'
+  assert json.loads((ROOT/f'scripts/{sid}_release_contract.json').read_text())['release']=='0.69.407'
  print('SM5 source gate PASS: SHA-pinned official 178 prints, 237 attacks, 37 Abilities, 27 GX, 6 Prism Star')
 def full():
  subprocess.run([sys.executable,'scripts/build-sm5.py'],cwd=ROOT,check=True)

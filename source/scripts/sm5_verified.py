@@ -10,6 +10,7 @@ from copy import deepcopy
 import sm1_verified as S1, sm2_verified as S2, sm3_verified as S3, sm4_verified as S4
 from xy8_verified import attack as generic_attack
 import sm5_stage2_verified as STAGE2
+import sm5_stage3_verified as STAGE3
 ROOT=Path(__file__).resolve().parents[1]
 E=lambda name,**kw:{'type':name,**kw}
 N=E('noop')
@@ -37,6 +38,8 @@ ATTACK_OVERRIDES={
 }
 
 def attack(row,a):
+ stage3=STAGE3.attack(row,a)
+ if stage3 is not None:return stage3
  stage2=STAGE2.attack(row,a)
  if stage2 is not None:return stage2
  title,cost,damage,printed=a
@@ -52,6 +55,8 @@ def attack(row,a):
  return deepcopy(candidate)
 
 def ability(row,a):
+ stage3=STAGE3.ability(row,a)
+ if stage3 is not None:return stage3
  key=(a[0],norm(a[2]))
  if key in ABILITIES:return deepcopy(ABILITIES[key])
  # Bench protection uses the already-tested SM4 Submerge passive.
@@ -62,6 +67,8 @@ def ability(row,a):
  return None
 
 def trainer(row):
+ stage3=STAGE3.trainer(row)
+ if stage3 is not None:return stage3
  stage2=STAGE2.trainer(row)
  if stage2 is not None:return stage2
  key=(row[1],norm(' '.join(row[13] or [])))

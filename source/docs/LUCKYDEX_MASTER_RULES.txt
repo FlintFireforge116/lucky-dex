@@ -5300,3 +5300,14 @@ SM3 BURNING SHADOWS STAGE 2 CONTINUATION (23 NOVEMBER 2026, v0.69.403)
 - Stage 2 mandatory outcome audit: `tests/v07427-ultra-prism-stage2-outcomes.test.cjs`, called from the Gradle auditSM5ForApk and the SM5 full preflight. Test exact Energy movement, target filters, Prize/hand mechanics where present, next-turn locks, and CPU parity.
 - Preserve Prism Star gates (Lost Zone + 1-per-deck) and unsupported Unit/Super Boost Energy gates. Do not enable a print if even one Ability/attack/Trainer/Special Energy mechanic is unsupported. A 178-print catalogue is NOT a 178-playable catalogue.
 - If Stage 1 already fetched the pinned SM5 compact source, `sh source/scripts/prepare-sm5.sh` must reuse it with verification, not attempt a network download again; otherwise fetch and attest it before committing. Full SM5 test and Android APK build may only be called passed after actually run.
+
+
+# v0.69.407 / SM5 Ultra Prism Stage 3 — GX attacks and reusable Abilities
+
+- All official SM5 Stage 3 rule mappings must be verified against exact printed attack, Ability and Trainer text, including GX parentheticals. Never claim a card fully playable unless ALL printed effects are implemented.
+- Stage 3: 22 attack effects, 3 activated Abilities (Breath of the Leaves, Illuminate, Precognitive Aura), and Unidentified Fossil. The 24-test outcome gate is mandatory at `tests/v07428-ultra-prism-stage3-outcomes.test.cjs`. Keep Stage 2 21-test gate too.
+- Two Eclipse GX attacks are declaration-locked until the owner has MORE unclaimed Prizes than the opponent. Do not permit a selectable attack that silently fails the requirement. A failed attack requirement must stop all later effects in the sequence; never grant Moon Eclipse's attack immunity after an illegal declaration.
+- Breath of the Leaves is Active-only and must not appear when no energized damaged Pokémon exists. Illuminate searches physical Fairy Pokémon cards; Precognitive Aura needs Garchomp in play. CPU must not be offered an ability with no valid outcome.
+- Unidentified Fossil is a Pokémon-like Item with 60 HP. It can be placed on the Bench, never retreats, evolves by printed name, and can be voluntarily discarded using the existing Fossil action; preserve its actual reference UID when returning it to discard.
+- For new cards, use the existing hybrid virtual Basic Energy Zone and actual physical Special Energy/Trainer discard zones. Never generate physical Basic Energy cards from deck search or discard unused Energy Zone stock.
+- Keep Prism Star, Unit Energy and other unimplemented complex rules explicitly gated. Run all previous SM1–SM4 tests and report actual GitHub build status separately; source-only tests are not APK verification.

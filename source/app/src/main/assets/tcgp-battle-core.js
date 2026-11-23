@@ -1415,7 +1415,7 @@
       const bw3AncientPower=state.format==='classic'&&['player','opponent'].some(w=>pokemonOn(state.sides[w]).some(p=>p.cardId==='bw3-67'&&!effects.abilitiesSuppressed(state,w,p,data.cardById)));
       if(!evolutionLocked&&!bw3AncientPower)actions.push(...evolutionActions(state,side).filter(x=>(!activeEvolutionLocked||x.target!=='active')&&(!primalAura||x.target!=='bench')&&(!ex4Cradily||x.target!=='active')&&(!(state.format==='classic'&&state.sides[side==='player'?'opponent':'player'].active?.cardId==='ex16-10'&&!effects.abilitiesSuppressed(state,side==='player'?'opponent':'player',state.sides[side==='player'?'opponent':'player'].active,data.cardById))||x.target!=='active')&&(!bound||!slotForTarget(s,x.target,x.benchIndex)?.conditions?.sleep)&&Number(slotForTarget(s,x.target,x.benchIndex)?.xy4NoEvolveUntil||0)<state.turnNumber));}
 
-    if(state.format==='classic')for(const p of pokemonOn(s))if(['pl1-119','pl1-120','ex16-84','ex16-85','ex16-86','dp2-116','dp2-117','dp5-84','dp5-89','dp5-91','dp6-138','dp6-139','pl4-89','pl4-92','pl4-93'].includes(p.cardId))
+    if(state.format==='classic')for(const p of pokemonOn(s))if(['pl1-119','pl1-120','ex16-84','ex16-85','ex16-86','dp2-116','dp2-117','dp5-84','dp5-89','dp5-91','dp6-138','dp6-139','pl4-89','pl4-92','pl4-93'].includes(p.cardId)||data.cardById(p.cardId)?.effect?.type==='playFossil')
       actions.push({type:'discardFossil',target:p===s.active?'active':'bench',benchIndex:p===s.active?undefined:Number(p.benchSlot),cardId:p.cardId});
     s.hand.forEach((ref,handIndex)=>{
       const card = data.cardById(ref.cardId);
@@ -1845,6 +1845,19 @@
                !effects.statusIsPrevented(state,slot,data.cardById,'poison');
            }))return; // Never offer a no-op to the CPU or player.
         if(source.cardId==='xy6-10'&&ability.name==='Wing Buzz'&&(!s.hand.length||!foe.deck.length))return;
+        // Ultra Prism: do not offer conditional Abilities as no-op CPU actions.
+        // Breath of the Leaves is Active-only, once per turn, and heals only
+        // damaged Pokemon with attached Energy (not unused Energy Zone units).
+        if(state.format==='classic'&&source.cardId.startsWith('sm5-')){
+          if(ability.name==='Breath of the Leaves'&&(
+            source!==s.active||!pokemonOn(s).some(p=>Number(p.damage||0)>0&&
+            (Object.values(p.energy||{}).some(n=>Number(n)>0)||(p.specialEnergy||[]).length))))return;
+          if(ability.name==='Illuminate'&&!s.deck.some(ref=>{
+            const c=data.cardById(ref.cardId);return c?.kind==='pokemon'&&c.types?.includes('Fairy');
+          }))return;
+          if(ability.name==='Precognitive Aura'&&(
+            !pokemonOn(s).some(p=>data.cardById(p.cardId)?.name==='Garchomp')||!s.deck.length))return;
+        }
         if(ability.requiresBasicEnergyFromHand&&!s.hand.some(ref=>{
           const card=data.cardById(ref.cardId);
           return card?.basicEnergy&&card.subtype===ability.requiresBasicEnergyFromHand;
@@ -1896,6 +1909,10 @@
       for(const entry of attackOptions(state,side)){
         const {cardId:attackCardId,attackIndex,attack}=entry;
         if ((attack.gxAttack||/\bGX\b/i.test(attack.name||''))&&s.gxAttackUsed)continue;
+        // SM5 conditional Eclipse GX attacks cannot be declared while tied/ahead on Prizes.
+        if(state.format==='classic'&&attackCardId.startsWith('sm5-')&&
+          ["Moon's Eclipse-GX","Sun's Eclipse-GX"].includes(attack.name)&&
+          s.prizes.length<=foe.prizes.length)continue;
         if(state.format==='classic'&&attackCardId==='xy11-88'&&attack.name==='Stall'&&
            (state.turnNumber!==2||side===state.firstSide||s.turnCount!==1))continue;
         if(state.format==='classic'&&s.active.cardId==='pl3-145'&&attack.name==='Dragon Rush'&&Number(s.active.pl3DragonRushUsedTurn||-100)===Number(state.turnNumber)-2)continue;
@@ -3566,9 +3583,14 @@ const target=slotForTarget(s,action.target,action.benchIndex);if(card.id==='pl2-
     }
     if(matched.type==='discardFossil'){
       const slot=slotForTarget(s,matched.target,matched.benchIndex);
-      if(!slot||!['ex16-84','ex16-85','ex16-86','dp2-116','dp2-117','dp5-84','dp5-89','dp5-91','dp6-138','dp6-139'].includes(slot.cardId))throw new Error('This card is not a Fossil.');
+      if(!slot||(!['ex16-84','ex16-85','ex16-86','dp2-116','dp2-117','dp5-84','dp5-89','dp5-91','dp6-138','dp6-139'].includes(slot.cardId)&&data.cardById(slot.cardId)?.effect?.type!=='playFossil'))throw new Error('This card is not a Fossil.');
       if(slot===s.active)s.active=null;else s.bench.splice(s.bench.indexOf(slot),1);
-      discardKnockedOut(s,slot);state.log.push({type:'ex16DiscardFossil',side,cardId:slot.cardId});
+      const physicalUid=slot.uid,fossilCardId=slot.cardId,physicalFossil=data.cardById(fossilCardId)?.effect?.type==='playFossil';
+      discardKnockedOut(s,slot);
+      // Preserve the original physical Trainer reference when the player
+      // voluntarily discards an Item-as-Basic fossil from play.
+      if(physicalFossil){const ref=s.discard.find(r=>r.uid===physicalUid+'-stack-0'&&r.cardId===fossilCardId);if(ref)ref.uid=physicalUid;}
+      state.log.push({type:'ex16DiscardFossil',side,cardId:slot.cardId});
       if(!s.active){if(s.bench.length){state.phase='promote';state.promotionSide=side;}else resolveKnockOut(state,null,'effect');}return state;
     }
     if (matched.type === 'retreat'){

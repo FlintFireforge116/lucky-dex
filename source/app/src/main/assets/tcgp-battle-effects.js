@@ -22356,7 +22356,7 @@ if(ctx.isAbility){const targetSide=pokemonOn(own(ctx)).includes(s)?ctx.side:ctx.
     ctx={...ctx,attack};let damage=Math.max(0,Number(attack.damage)||0),damageTarget=undefined,damageRules={},attackDoesNothing=false;const pending=[];
     function visit(e){
       if(!e)return;assertEffect(e);if(ctx.ignoreUseCosts&&e.useCost)return;if(e.type==='attackDamageGate'){if(!conditionMatches(e.condition,ctx))damage=0;return;}if(e.type==='attackRequirement'){if(!conditionMatches(e.condition,ctx)){damage=0;attackDoesNothing=true;pending.length=0;}return;}if(!conditionMatches(e.condition,ctx))return;
-      if(e.type==='sequence'){for(const child of e.effects)visit(child);return;}
+      if(e.type==='sequence'){for(const child of e.effects){visit(child);if(attackDoesNothing)break;}return;}
       if(e.type==='sm4Rule'){
         const k=e.rule,att=ctx.attacker,ss=own(ctx);
         if(k==='hunt'){
