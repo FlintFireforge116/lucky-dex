@@ -8,22 +8,22 @@ C=ROOT/'scripts/sm1_release_contract.json'
 def check_source():
  subprocess.run([sys.executable,'scripts/check-gradle-source.py','--self-test'],cwd=ROOT,check=True)
  c=json.loads(C.read_text(encoding='utf-8'))
- assert c['set']=='sm1' and c['stage']=='complete' and c['release']=='0.69.403'
+ assert c['set']=='sm1' and c['stage']=='complete' and c['release']=='0.69.404'
  assert (c['printedTotal'],c['attackPrints'],c['abilities'],c['pokemonGX'],c['gxAttackPrints'],c['energyPrints'])==(173,238,26,27,27,13)
  assert c['pin']=='b3f5cd6f524ce45d59462fd2a56e237ff06063dc'
  assert c['expectedPlayableMinimum']==173 and len(c['requiredEnabledNumbers'])==173
  assert len(set(c['requiredEnabledNumbers']))==len(c['requiredEnabledNumbers'])
  gradle=(ROOT/'app/build.gradle').read_text(encoding='utf-8')
- assert re.search(r"versionName\s+['\"]0\.69\.403['\"]",gradle)
- assert 'versionCode 7403' in gradle
+ assert re.search(r"versionName\s+['\"]0\.69\.404['\"]",gradle)
+ assert 'versionCode 7404' in gradle
  assert "dependsOn tasks.named('auditXY12ForApk')" in gradle
  for name in ['preflightSM1ContractForApk','generateSM1ForApk','auditSM1ForApk']:
   assert name in gradle,'Missing SM1 Gradle gate: '+name
  for name in ['xy9','xy10','xy11','xy12']:
   assert json.loads((ROOT/f'scripts/{name}_release_contract.json').read_text())['release']==c['release'],name+' release version drift'
  html=(ROOT/'app/src/main/assets/index.html').read_text()
- assert 'tcg-classic-sun-moon.js' in html and 'v0.69.403' in html
- assert "__LUCKYDEX_BUILD='0.69.403'" in (ROOT/'app/src/main/assets/app-v0167.js').read_text()
+ assert 'tcg-classic-sun-moon.js' in html and 'v0.69.404' in html
+ assert "__LUCKYDEX_BUILD='0.69.404'" in (ROOT/'app/src/main/assets/app-v0167.js').read_text()
  for name in ['tcg-classic-battle-data.js','tcg-classic-set-picker.js','tcg-classic-deck-builder.js','tcg-classic-opponents.js']:
   assert "sm1" in (ROOT/'app/src/main/assets'/name).read_text(),'SM1 unregistered in '+name
  gen=(ROOT/'scripts/build-sm1.py').read_text()

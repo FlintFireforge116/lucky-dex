@@ -1,0 +1,245 @@
+{
+  "printed": 126,
+  "battleReady": 54,
+  "gated": {
+    "sm4-2": [
+      "Unimplemented attack: Multiply"
+    ],
+    "sm4-3": [
+      "Unimplemented attack: Sudden Sting"
+    ],
+    "sm4-6": [
+      "Unimplemented attack: Hunt"
+    ],
+    "sm4-7": [
+      "Unimplemented Ability: Shell On"
+    ],
+    "sm4-9": [
+      "Unimplemented attack: Recover"
+    ],
+    "sm4-11": [
+      "Unimplemented Ability: Sap Sipper"
+    ],
+    "sm4-12": [
+      "Unimplemented attack: Dance of Flames",
+      "Unimplemented attack: Burning Bonemerang"
+    ],
+    "sm4-16": [
+      "Unimplemented Ability: Escape"
+    ],
+    "sm4-17": [
+      "Unimplemented attack: Waterfall Evolution"
+    ],
+    "sm4-18": [
+      "Unimplemented attack: Dread Storm-GX"
+    ],
+    "sm4-21": [
+      "Unimplemented attack: Forceful Tackle"
+    ],
+    "sm4-23": [
+      "Unimplemented attack: Special Artillery"
+    ],
+    "sm4-27": [
+      "Unimplemented attack: TLC"
+    ],
+    "sm4-28": [
+      "Unimplemented Ability: Iceberg Shield"
+    ],
+    "sm4-34": [
+      "Unimplemented attack: Heavy Rock-GX"
+    ],
+    "sm4-35": [
+      "Unimplemented attack: Energy Catch",
+      "Unimplemented attack: Volt Switch"
+    ],
+    "sm4-37": [
+      "Unimplemented attack: Pain Amplifier"
+    ],
+    "sm4-38": [
+      "Unimplemented Ability: Gnawing Curse"
+    ],
+    "sm4-40": [
+      "Unimplemented attack: Chaos Wheel"
+    ],
+    "sm4-42": [
+      "Unimplemented Ability: Own Tempo"
+    ],
+    "sm4-43": [
+      "Unimplemented attack: Bell of Silence"
+    ],
+    "sm4-45": [
+      "Unimplemented attack: Pumpkin Bomb"
+    ],
+    "sm4-47": [
+      "Unimplemented attack: Severe Poison"
+    ],
+    "sm4-48": [
+      "Unimplemented attack: Fixer of the Forest"
+    ],
+    "sm4-49": [
+      "Unimplemented attack: Symbiont-GX",
+      "Unimplemented Ability: Empty Light"
+    ],
+    "sm4-51": [
+      "Unimplemented attack: Lucha Fight"
+    ],
+    "sm4-56": [
+      "Unimplemented Ability: Fluffy"
+    ],
+    "sm4-57": [
+      "Unimplemented attack: Absorption-GX"
+    ],
+    "sm4-62": [
+      "Unimplemented attack: Dark Destruction",
+      "Unimplemented Ability: Weed Out"
+    ],
+    "sm4-63": [
+      "Unimplemented attack: Eat Sloppily",
+      "Unimplemented attack: Glutton-GX"
+    ],
+    "sm4-63a": [
+      "Unimplemented attack: Eat Sloppily",
+      "Unimplemented attack: Glutton-GX"
+    ],
+    "sm4-67": [
+      "Unimplemented attack: Revenge Cannon"
+    ],
+    "sm4-68": [
+      "Unimplemented attack: Iron Hand"
+    ],
+    "sm4-70": [
+      "Unimplemented attack: Gale Blade",
+      "Unimplemented attack: Blade-GX",
+      "Unimplemented Ability: Slice Off"
+    ],
+    "sm4-72": [
+      "Unimplemented attack: Punishing Slap"
+    ],
+    "sm4-74": [
+      "Unimplemented attack: Tower-Go-Round-GX"
+    ],
+    "sm4-77": [
+      "Unimplemented attack: War Cry",
+      "Unimplemented attack: Clanging Scales"
+    ],
+    "sm4-78": [
+      "Unimplemented Ability: Moomoo Malt"
+    ],
+    "sm4-80": [
+      "Unimplemented attack: Draco Melody"
+    ],
+    "sm4-83": [
+      "Unimplemented attack: Sky Hunting"
+    ],
+    "sm4-84": [
+      "Unimplemented Ability: Seal of Antiquity"
+    ],
+    "sm4-84a": [
+      "Unimplemented Ability: Seal of Antiquity"
+    ],
+    "sm4-86": [
+      "Unimplemented attack: Amazing Plea"
+    ],
+    "sm4-91": [
+      "Unimplemented Trainer rules"
+    ],
+    "sm4-92": [
+      "Unimplemented Trainer rules"
+    ],
+    "sm4-93": [
+      "Unimplemented Trainer rules"
+    ],
+    "sm4-94": [
+      "Unimplemented Trainer rules"
+    ],
+    "sm4-95": [
+      "Unimplemented Trainer rules"
+    ],
+    "sm4-96": [
+      "Unimplemented Trainer rules"
+    ],
+    "sm4-97": [
+      "Unimplemented Trainer rules"
+    ],
+    "sm4-98": [
+      "Unimplemented Trainer rules"
+    ],
+    "sm4-99": [
+      "Unimplemented Trainer rules"
+    ],
+    "sm4-100": [
+      "Unimplemented Energy effect"
+    ],
+    "sm4-101": [
+      "Unimplemented attack: Dread Storm-GX"
+    ],
+    "sm4-102": [
+      "Unimplemented attack: Heavy Rock-GX"
+    ],
+    "sm4-103": [
+      "Unimplemented attack: Symbiont-GX",
+      "Unimplemented Ability: Empty Light"
+    ],
+    "sm4-104": [
+      "Unimplemented attack: Absorption-GX"
+    ],
+    "sm4-105": [
+      "Unimplemented attack: Eat Sloppily",
+      "Unimplemented attack: Glutton-GX"
+    ],
+    "sm4-106": [
+      "Unimplemented attack: Gale Blade",
+      "Unimplemented attack: Blade-GX",
+      "Unimplemented Ability: Slice Off"
+    ],
+    "sm4-107": [
+      "Unimplemented attack: Tower-Go-Round-GX"
+    ],
+    "sm4-109": [
+      "Unimplemented Trainer rules"
+    ],
+    "sm4-110": [
+      "Unimplemented Trainer rules"
+    ],
+    "sm4-112": [
+      "Unimplemented attack: Dread Storm-GX"
+    ],
+    "sm4-113": [
+      "Unimplemented attack: Heavy Rock-GX"
+    ],
+    "sm4-114": [
+      "Unimplemented attack: Symbiont-GX",
+      "Unimplemented Ability: Empty Light"
+    ],
+    "sm4-115": [
+      "Unimplemented attack: Absorption-GX"
+    ],
+    "sm4-116": [
+      "Unimplemented attack: Eat Sloppily",
+      "Unimplemented attack: Glutton-GX"
+    ],
+    "sm4-117": [
+      "Unimplemented attack: Gale Blade",
+      "Unimplemented attack: Blade-GX",
+      "Unimplemented Ability: Slice Off"
+    ],
+    "sm4-118": [
+      "Unimplemented attack: Tower-Go-Round-GX"
+    ],
+    "sm4-120": [
+      "Unimplemented Trainer rules"
+    ],
+    "sm4-122": [
+      "Unimplemented Energy effect"
+    ],
+    "sm4-123": [
+      "Unimplemented Energy effect"
+    ]
+  },
+  "attacks": 193,
+  "abilities": 23,
+  "pokemonGX": 25,
+  "gxAttackPrints": 25,
+  "energyPrints": 4,
+  "sourceGitBlob": "0b99823554d4da6d2da4fcafa030f9b675008490"
+}

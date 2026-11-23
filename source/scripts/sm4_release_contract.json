@@ -1,0 +1,19 @@
+{
+  "set": "sm4",
+  "name": "Crimson Invasion",
+  "release": "0.69.404",
+  "stage": "stage1",
+  "printedTotal": 126,
+  "attackPrints": 193,
+  "abilities": 23,
+  "pokemonGX": 25,
+  "gxAttackPrints": 25,
+  "energyPrints": 4,
+  "pin": "0b99823554d4da6d2da4fcafa030f9b675008490",
+  "variants": [
+    "63a",
+    "84a"
+  ],
+  "compactSha256": "3d111ddb14ac8ed8815b0d58dc753f92b9474f16eab1948d93487cdf9bcc52bf",
+  "minimumBattleEnabled": 50
+}
