@@ -4,7 +4,7 @@ from __future__ import annotations
 import argparse,hashlib,json,re,subprocess,sys
 from pathlib import Path
 ROOT=Path(__file__).resolve().parents[1]
-TESTS=['tests/v07424-ultra-prism-integration.test.cjs','tests/v07425-ultra-prism-reuse.test.cjs','tests/v07427-ultra-prism-stage2-outcomes.test.cjs','tests/v07428-ultra-prism-stage3-outcomes.test.cjs','tests/v07429-ultra-prism-stage4-outcomes.test.cjs','tests/v07430-ultra-prism-stage5-outcomes.test.cjs','tests/v07431-ultra-prism-stage6-outcomes.test.cjs','tests/v07432-ultra-prism-stage7-outcomes.test.cjs','tests/v07433-ultra-prism-stage8-outcomes.test.cjs','tests/v07434-ultra-prism-stage9-outcomes.test.cjs','tests/v07435-ultra-prism-stage10-outcomes.test.cjs','tests/v07436-ultra-prism-stage11-outcomes.test.cjs','tests/v07437-ultra-prism-stage12-outcomes.test.cjs','tests/v07438-ultra-prism-stage13-outcomes.test.cjs']
+TESTS=['tests/v07424-ultra-prism-integration.test.cjs','tests/v07425-ultra-prism-reuse.test.cjs','tests/v07427-ultra-prism-stage2-outcomes.test.cjs','tests/v07428-ultra-prism-stage3-outcomes.test.cjs','tests/v07429-ultra-prism-stage4-outcomes.test.cjs','tests/v07430-ultra-prism-stage5-outcomes.test.cjs','tests/v07431-ultra-prism-stage6-outcomes.test.cjs','tests/v07432-ultra-prism-stage7-outcomes.test.cjs','tests/v07433-ultra-prism-stage8-outcomes.test.cjs','tests/v07434-ultra-prism-stage9-outcomes.test.cjs','tests/v07435-ultra-prism-stage10-outcomes.test.cjs','tests/v07436-ultra-prism-stage11-outcomes.test.cjs','tests/v07437-ultra-prism-stage12-outcomes.test.cjs','tests/v07438-ultra-prism-stage13-outcomes.test.cjs','tests/v07439-ultra-prism-final-coverage.test.cjs']
 def check():
  subprocess.run([sys.executable,'scripts/check-gradle-source.py','--self-test'],cwd=ROOT,check=True)
  c=json.loads((ROOT/'scripts/sm5_release_contract.json').read_text())
@@ -219,6 +219,7 @@ def full():
  assert d['battleReady']>=6 and d['battleReady']+len(d['gated'])==178
  assert all(d['gated'].values())
  assert all('sm5-'+n not in d['gated'] for n in ['58','62','77','89','120','136']),'An implemented Prism Star was incorrectly gated'
+ subprocess.run([sys.executable,'scripts/audit-expansion-readiness.py','--set','sm5','--check-release','--require-complete','--report','docs/SM5_CURRENT_GAP_LEDGER.md'],cwd=ROOT,check=True)
  subprocess.run(['node','--test',*TESTS],cwd=ROOT,check=True)
  print(f"SM5 release gate PASS: {d['battleReady']}/178 playable, {len(d['gated'])} explicitly gated")
 if __name__=='__main__':
