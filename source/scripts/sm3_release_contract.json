@@ -1,0 +1,25 @@
+{
+  "set": "sm3",
+  "name": "Burning Shadows",
+  "release": "0.69.403",
+  "stage": "stage1",
+  "printedTotal": 177,
+  "attackPrints": 274,
+  "abilities": 27,
+  "pokemonGX": 40,
+  "gxAttackPrints": 40,
+  "energyPrints": 3,
+  "pin": "3476b25cb32b6e748c7fdd9405e6a5329a665d3d",
+  "variants": [
+    "18a",
+    "39a",
+    "88a",
+    "92a",
+    "105a",
+    "112a",
+    "115a",
+    "116a"
+  ],
+  "compactSha256": "99f8b1255e7801818b6d1be3d00858193787bbcc439869fc2470e9855463c2b6",
+  "minimumBattleEnabled": 65
+}

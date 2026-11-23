@@ -8,8 +8,8 @@ android {
         applicationId 'com.example.luckydex'
         minSdk 26
         targetSdk 35
-        versionCode 7402
-        versionName '0.69.402'
+        versionCode 7403
+        versionName '0.69.403'
     }
 
     signingConfigs {
@@ -1005,4 +1005,26 @@ tasks.register('auditSM2ForApk', Exec) {
 }
 tasks.matching { it.name == 'preBuild' || (it.name.startsWith('merge') && it.name.endsWith('Assets')) }.configureEach {
     dependsOn tasks.named('auditSM2ForApk')
+}
+
+// v0.69.403 Sun & Moon—Burning Shadows (SM3). Catalogue is committed
+// offline, checksum-pinned and verified before building the installable APK.
+// Gated effects are not eligible for player or CPU-generated battle decks.
+tasks.register('preflightSM3ContractForApk', Exec) {
+    dependsOn tasks.named('auditSM2ForApk')
+    workingDir rootProject.projectDir
+    commandLine (System.getenv('LUCKYDEX_PYTHON') ?: 'python3'), 'scripts/preflight-sm3-release.py'
+}
+tasks.register('generateSM3ForApk', Exec) {
+    dependsOn tasks.named('preflightSM3ContractForApk')
+    workingDir rootProject.projectDir
+    commandLine (System.getenv('LUCKYDEX_PYTHON') ?: 'python3'), 'scripts/build-sm3.py'
+}
+tasks.register('auditSM3ForApk', Exec) {
+    dependsOn tasks.named('generateSM3ForApk')
+    workingDir rootProject.projectDir
+    commandLine 'node', '--test', 'tests/v07413-burning-shadows-integration.test.cjs', 'tests/v07414-burning-shadows-outcomes.test.cjs', 'tests/v07404-basic-energy-search-coins.test.cjs', 'tests/v07406-basic-energy-search-special-cases.test.cjs', 'tests/v07385-fates-collide-stage3.test.cjs', 'tests/v07333-classic-deck-quality.test.cjs'
+}
+tasks.matching { it.name == 'preBuild' || (it.name.startsWith('merge') && it.name.endsWith('Assets')) }.configureEach {
+    dependsOn tasks.named('auditSM3ForApk')
 }

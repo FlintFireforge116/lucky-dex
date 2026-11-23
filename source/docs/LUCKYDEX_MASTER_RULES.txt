@@ -5205,3 +5205,12 @@ Steam Siege full gameplay mapping reaches all 116 pinned prints; previously gate
 [RULE] When adding independent cross-set Prize bonuses or penalties, preserve all existing components and their signs. Tests must assert each required term exists in the effective Prize formula and test actual award outcomes; never assert that unrelated named terms are adjacent. Run `python3 scripts/preflight-xy10-release.py` on every cross-era Prize-core modification BEFORE shipping SM2. Register any newly required dedicated test in APK preflights, without deleting older regression coverage.
 [RELEASE] This is a test contract and documentation repair only; no gameplay logic or version code changed.
 === END CROSS-ERA PRIZE SOURCE ASSERTION FIX ===
+
+
+=== BURNING SHADOWS SM3 STAGE 1 — 23 NOVEMBER 2026 (v0.69.403) ===
+[PINNED] Burned Shadows SM3 uses 177 official print records (274 attacks, 27 Abilities, 40 GX, 3 Energy). Bundle `data/classic/sm3-print-compact.json` offline with SHA256 99f8b1255e7801818b6d1be3d00858193787bbcc439869fc2470e9855463c2b6; no network needed for APK build. Eight a-numbered variant prints have independent IDs but equal rules/effects.
+[SAFE GATING] Stage1 enables 72 prints. The other 105 MUST stay deck-ineligible with per-card reasons in `docs/SM3_BUILD_COVERAGE.json` until effects are actually tested. Count valid battle actions and inspect actual outcomes for player and CPU; a descriptor that validates but silently does nothing is NOT an implemented card.
+[BUILD] `preflightSM3ContractForApk` => `generateSM3ForApk` => `auditSM3ForApk`, chained after SM2. Run `python3 scripts/preflight-sm3-release.py --full` and cross-set mandatory release gates, especially Fates Collide Prize test and full generated SM1/SM2/XY12/XY11 source checks.
+[DECK] Sparse single-set catalogues with <=4 useful Trainers may use up to 22 coherent Basics before automatic four-copy Trainer filler. Preserve manual copy counts. Do not weaken the `v07333` deck-quality gate: fewer than 3 unrelated four-copy Trainer packages per modern set; SM3-specific regression covers both player and CPU.
+[ENERGY] Inherit hybrid per-search coin flip, preserve official cost/card text, and only gate transformed deck Basic Energy searches. Discard recovery never flips. GX attacks remain once per game; SM3 secret/alternate prints share actual base-card effects.
+=== END BURNING SHADOWS SM3 STAGE 1 ===
