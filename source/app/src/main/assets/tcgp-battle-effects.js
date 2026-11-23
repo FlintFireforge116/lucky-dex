@@ -43,7 +43,7 @@
       case 'distributeDiscardCounters':need(integer(effect.amount)&&effect.amount>0&&effect.amount%10===0,'invalid discard counters');break;
       case 'sm3Rule':need(typeof effect.rule==='string'&&!!effect.rule,'invalid SM3 rule');break;
       case 'sm4Rule':need(typeof effect.rule==='string'&&!!effect.rule,'invalid SM4 rule');break;
-      case 'sm5Rule':need(['mars','prismHandEnergy','prismDiscardEnergy','cyrusPrism','palPad','specialMow','lunarFall'].includes(effect.rule),'invalid SM5 rule');break;
+      case 'sm5Rule':need(['mars','prismHandEnergy','prismDiscardEnergy','cyrusPrism','palPad','specialMow','lunarFall','lunarPayback','damageTransport'].includes(effect.rule),'invalid SM5 rule');break;
       case 'sm2Rule':need(typeof effect.rule==='string'&&!!effect.rule,'invalid SM2 rule');break;
       case 'sm2Hala':case 'sm2MaxPotion':case 'sm2FieldBlower':case 'sm2RescueStretcher':break;
       case 'multiTargetHeal':need(effect.target==='selfBench','invalid multi-target heal selector');need(integer(effect.count)&&effect.count>0,'invalid multi-target heal count');need(nonnegative(effect.amount),'invalid multi-target heal amount');break;
@@ -19238,6 +19238,47 @@
         // Stage 5 Prism Star cards: each effect is tied to exact printed text.
         // Basic Energy discarded by an attack lives in energyDiscard, not the
         // fresh Energy Zone. No Prism Star effect may synthesize that energy.
+        if(effect.rule==='damageTransport'){
+          const defender=other(ctx).active,owner=own(ctx);
+          if(!defender||protectedFromEffects(defender,ctx))break;
+          let moved=0;
+          for(const pokemon of pokemonOn(owner)){
+            const counters=Math.min(40,Math.max(0,Number(pokemon.damage||0)));
+            pokemon.damage=Number(pokemon.damage||0)-counters;
+            moved+=counters;
+          }
+          defender.damage=Number(defender.damage||0)+moved;
+          log({type:'sm5DamageTransport',counters:moved/10});
+          break;
+        }
+        if(effect.rule==='lunarPayback'){
+          const self=ctx.attacker,defender=other(ctx).active,owner=own(ctx);
+          if(!self||!defender||protectedFromEffects(defender,ctx))break;
+          const available=Object.entries(self.energy||{}).filter(([,n])=>Number(n)>0);
+          const specials=self.specialEnergy||[];
+          if(!available.length&&!specials.length)break;
+          // Discard exactly one attached card before exchanging DAMAGE COUNTERS.
+          // A virtual Basic Energy is recorded as discarded, never withdrawn
+          // from a fresh Energy Zone.
+          if(ctx.resolvingChoice){
+            if(ctx.action?.choiceSkip)break;
+            const n=Number(ctx.action?.choiceOption),k=effect.options?.[n];if(!k)break;
+            if(k.kind==='basic'){
+              if(Number(self.energy?.[k.type]||0)<1)break;
+              self.energy[k.type]--;recordDiscardedEnergy(owner,k.type,1);
+            }else{
+              const i=specials.findIndex(ref=>ref.uid===k.uid);if(i<0)break;
+              owner.discard.push(...specials.splice(i,1));
+            }
+            const beforeSelf=Number(self.damage||0),beforeOpp=Number(defender.damage||0);
+            self.damage=beforeOpp;defender.damage=beforeSelf;
+            log({type:'sm5LunarPayback',from:beforeSelf,to:beforeOpp,energy:k.kind});
+            break;
+          }
+          const options=[...available.map(([type])=>({kind:'basic',type})),...specials.map(ref=>({kind:'special',uid:ref.uid}))];
+          ctx.requestChoice?.({kind:'option',side:'self',options:options.map(x=>'Discard '+(x.kind==='basic'?x.type+' Energy':ctx.cardById(specials.find(r=>r.uid===x.uid)?.cardId)?.name||'Special Energy')),effect:{...effect,options}});
+          break;
+        }
         if(effect.rule==='prismDiscardEnergy'){
           const count=pokemonOn(other(ctx)).length;
           if(count>0)applyEffect({type:'distributeDiscardEnergy',energyType:effect.energyType,target:'selfPokemon',amount:count},ctx);

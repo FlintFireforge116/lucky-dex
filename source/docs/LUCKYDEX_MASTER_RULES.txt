@@ -5343,3 +5343,12 @@ SM5 STAGE 6 / v0.69.410 REQUIREMENTS:
 - Moongeist Beam must enforce healing prevention, not simply validate a healingBlock descriptor.
 - Mandatory tests include v07431 Stage 6 alongside Stage 1-5. Never leave tests asserting that intentionally enabled cards remain gated.
 - Source-only cumulative patches must include the latest Stage 5 release gate hotfix, and `sh source/scripts/prepare-sm5.sh` must be run before pushing.
+
+SM5 STAGE 7 / v0.69.411 REQUIREMENTS:
+- Stage 7 adds 13 text-locked attacks, Rock Hiding and Peeking Red Card. The source pin and 178 official prints are unchanged.
+- Quick Dive: when the selected target is Active, printed Weakness/Resistance MUST apply; ignore those modifiers only for Bench attacks.
+- Spinning Fan: process Active damage as proper attack damage, not a raw damage-counter effect; splash 20 damage to each Benched opposing Pokemon.
+- Peeking Red Card: always reveal opposing hand, then the user MAY decline the redraw; redraw the opponent's original hand count from their physical deck.
+- Lunar Payback: select and discard exactly one attached physical card or tracked Basic Energy unit before swapping damage counters; do not draw new Energy from the Zone.
+- Damage Transport: move no more than four damage counters from EACH own Pokemon; no damage should be fabricated.
+- Every expansion release version and Gradle check must be updated together. Mandatory Stage 7 outcome and pinned-text checks must pass before commit, as well as all older-set regressions.

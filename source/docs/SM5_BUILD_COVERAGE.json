@@ -1,6 +1,6 @@
 {
   "printed": 178,
-  "battleReady": 107,
+  "battleReady": 113,
   "gated": {
     "sm5-5": [
       "Unimplemented attack: Flower Tornado"
@@ -65,32 +65,20 @@
     "sm5-49": [
       "Unimplemented attack: Snuggly Generator"
     ],
-    "sm5-52": [
-      "Unimplemented attack: Damage Transport"
-    ],
     "sm5-54": [
       "Unimplemented attack: Hone Claws"
     ],
     "sm5-55": [
       "Unimplemented attack: Dangerous Stinger"
     ],
-    "sm5-56": [
-      "Unimplemented attack: Swagger"
-    ],
     "sm5-57": [
       "Unimplemented attack: Exact Revenge"
-    ],
-    "sm5-59": [
-      "Unimplemented attack: Lunar Payback"
     ],
     "sm5-68": [
       "Unimplemented attack: Eleventh Hour Tackle"
     ],
     "sm5-69": [
       "Unimplemented attack: Dust Cannon"
-    ],
-    "sm5-72": [
-      "Unimplemented attack: Rip and Run"
     ],
     "sm5-73": [
       "Unimplemented attack: Sneaky Smash"
@@ -118,11 +106,7 @@
       "Unimplemented attack: Exeggutor's Paradise",
       "Unimplemented attack: Draco Meteor Barrage"
     ],
-    "sm5-97": [
-      "Unimplemented Ability: Rock Hiding"
-    ],
     "sm5-99": [
-      "Unimplemented attack: Quick Dive",
       "Unimplemented attack: Royal Blades"
     ],
     "sm5-100": [
@@ -149,11 +133,7 @@
       "Unimplemented attack: Happy Turn"
     ],
     "sm5-109": [
-      "Unimplemented attack: Own the Place",
-      "Unimplemented attack: Toss Aside"
-    ],
-    "sm5-110": [
-      "Unimplemented attack: Spinning Fan"
+      "Unimplemented attack: Own the Place"
     ],
     "sm5-113": [
       "Unimplemented attack: Identify"
