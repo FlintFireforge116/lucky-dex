@@ -5389,3 +5389,11 @@ SM5 STAGE 11 / v0.69.415 RELEASE RULES:
 - Own the Place discards only the OPPONENT-owned Stadium and then blocks BOTH attack damage and attack effects; no Stadium yields no guard. Dangerous Lick uses until-tails flips and Paralyzes only if the very FIRST flip is tails.
 - Spike Armor deals SIX damage counters on the attacker upon an actual damaging hit, including a Knock Out; Exact Revenge must validate a Fighting Pokémon KO caused by the opponent attack the previous turn.
 - Keep tests/v07436-ultra-prism-stage11-outcomes.test.cjs in BOTH the Gradle APK gate and SM5 Termux preflight. Run the full previous expansion preflights and Gradle source guard; do not delete stale gate assertions instead of updating them.
+
+SM5 STAGE 12 / v0.69.416 RELEASE RULES:
+- Stage 12 is strictly pinned to the canonical SM5 source, not attack names alone. Only enable cards when ALL their effects validate; retain official collector numbers (including #168 gold Missing Clover) and attach new tests to Termux AND Gradle gates.
+- Volt Bolt deals 150 damage to ONE selected opposing Active or Benched Pokémon; Active receives normal Weakness and Resistance, Bench does not. Discard ALL attached Lightning-providing Energy AFTER attack, without duplicating Special Energy cards or discarding unrelated Energy.
+- Exeggutor's Paradise offers one real evolution choice per Benched Exeggcute, allows declining a target, uses physical cards removed from the deck, and never creates Alolan Exeggutor from thin air.
+- Infernape Flaming Fighter modifies the opponent's Burn damage to SIX counters instead of two, once, even with multiple copies; respects Ability suppression and does not affect its owner's Pokémon.
+- Missing Clover: playing ONE inspects the top physical deck card only. Playing FOUR as one Trainer action requires four real cards from hand (including alternate-art #168) and takes exactly ONE real Prize via the shared Prize selection and win-condition system. Three copies can NEVER claim a Prize, and CPU uses its normal hidden-Prize selector.
+- Every rule above has dedicated outcomes in tests/v07437-ultra-prism-stage12-outcomes.test.cjs; update all older release version checks without weakening prior coverage.

@@ -1,12 +1,9 @@
 {
   "printed": 178,
-  "battleReady": 167,
+  "battleReady": 172,
   "gated": {
     "sm5-21": [
       "Unimplemented attack: Fury Swipes"
-    ],
-    "sm5-23": [
-      "Unimplemented Ability: Flaming Fighter"
     ],
     "sm5-31": [
       "Unimplemented attack: Splatter"
@@ -14,26 +11,14 @@
     "sm5-36": [
       "Unimplemented attack: Agility"
     ],
-    "sm5-48": [
-      "Unimplemented attack: Volt Bolt"
-    ],
-    "sm5-95": [
-      "Unimplemented attack: Exeggutor's Paradise"
-    ],
     "sm5-102": [
       "Unimplemented attack: Slam"
-    ],
-    "sm5-129": [
-      "Unimplemented Trainer effect"
     ],
     "sm5-140": [
       "Unimplemented attack: Fast Raid"
     ],
     "sm5-158": [
       "Unimplemented attack: Fast Raid"
-    ],
-    "sm5-168": [
-      "Unimplemented Trainer effect"
     ]
   },
   "attacks": 237,

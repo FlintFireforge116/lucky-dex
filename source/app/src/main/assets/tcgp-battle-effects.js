@@ -43,7 +43,7 @@
       case 'distributeDiscardCounters':need(integer(effect.amount)&&effect.amount>0&&effect.amount%10===0,'invalid discard counters');break;
       case 'sm3Rule':need(typeof effect.rule==='string'&&!!effect.rule,'invalid SM3 rule');break;
       case 'sm4Rule':need(typeof effect.rule==='string'&&!!effect.rule,'invalid SM4 rule');break;
-      case 'sm5Rule':need(['mars','prismHandEnergy','prismDiscardEnergy','cyrusPrism','palPad','specialMow','lunarFall','lunarPayback','damageTransport','royalBlades','eleventhHour','lightingGX','blasterGX','grandBloom','changeClothes','memoryTool','loomOver','iceShard','psychicResonance','mercilessStrike','identify','deepCurrents','resourceManagement','gigaDrain','sneakySmash','paletteOfFriends','timelessGX','zeroVanishGX','solBurstGX','spatialControl','psychicTransfer','blessingsFrost','fireBlaster','happyTurn','ancientCrystal','stickySmokescreen','exactRevenge','ownThePlace','dangerousLick','coax','snugglyGenerator','flowerTornado','magicalSwap'].includes(effect.rule),'invalid SM5 rule');break;
+      case 'sm5Rule':need(['mars','prismHandEnergy','prismDiscardEnergy','cyrusPrism','palPad','specialMow','lunarFall','lunarPayback','damageTransport','royalBlades','eleventhHour','lightingGX','blasterGX','grandBloom','changeClothes','memoryTool','loomOver','iceShard','psychicResonance','mercilessStrike','identify','deepCurrents','resourceManagement','gigaDrain','sneakySmash','paletteOfFriends','timelessGX','zeroVanishGX','solBurstGX','spatialControl','psychicTransfer','blessingsFrost','fireBlaster','happyTurn','ancientCrystal','stickySmokescreen','exactRevenge','ownThePlace','dangerousLick','coax','snugglyGenerator','flowerTornado','magicalSwap','flamingFighter','exeggutorsParadise','missingClover'].includes(effect.rule),'invalid SM5 rule');break;
       case 'sm2Rule':need(typeof effect.rule==='string'&&!!effect.rule,'invalid SM2 rule');break;
       case 'sm2Hala':case 'sm2MaxPotion':case 'sm2FieldBlower':case 'sm2RescueStretcher':break;
       case 'multiTargetHeal':need(effect.target==='selfBench','invalid multi-target heal selector');need(integer(effect.count)&&effect.count>0,'invalid multi-target heal count');need(nonnegative(effect.amount),'invalid multi-target heal amount');break;
@@ -19611,6 +19611,65 @@
             return;
           }
           ctx.shuffle?.(ctx.state,ss.deck);
+          break;
+        }
+        // Ultra Prism Alolan Exeggutor: evolve each Benched Exeggcute from a
+        // real physical deck card. Each Benched target has its own choice;
+        // nothing is created if an evolution cannot be found.
+        if(effect.rule==='exeggutorsParadise'){
+          const ss=own(ctx),done=new Set(effect.done||[]);
+          const choicesFor=slot=>ss.deck.filter(ref=>{
+            const mon=ctx.cardById(ref.cardId);
+            return mon?.kind==='pokemon'&&mon?.battleEnabled!==false&&
+              ['Alolan Exeggutor','Alolan Exeggutor-GX'].includes(mon.name);
+          });
+          if(ctx.resolvingChoice){
+            const i=Number(ctx.action?.choiceOption),choice=effect.choices?.[i];
+            if(choice?.targetUid){
+              const slot=ss.bench.find(x=>x.uid===choice.targetUid),idx=ss.deck.findIndex(x=>x.uid===choice.cardUid);
+              if(slot&&ctx.cardById(slot.cardId)?.name==='Exeggcute'&&idx>=0&&
+                  choicesFor(slot).some(x=>x.uid===choice.cardUid)){
+                const [ref]=ss.deck.splice(idx,1);
+                slot.cardId=ref.cardId;slot.stack=[...(slot.stack||[]),ref.cardId];
+                slot.evolvedOnTurn=ctx.state.turnNumber;slot.playedOnSideTurn=ss.turnCount;
+                ctx.onEvolved?.(slot);
+                log({type:'sm5ExeggutorsParadise',targetUid:slot.uid,cardId:ref.cardId,uid:ref.uid});
+              }
+              done.add(choice.targetUid);
+            }else if(choice?.skipUid)done.add(choice.skipUid);
+          }
+          for(const slot of ss.bench){
+            if(done.has(slot.uid)||ctx.cardById(slot.cardId)?.name!=='Exeggcute')continue;
+            const evolutions=choicesFor(slot);
+            if(!evolutions.length){done.add(slot.uid);continue;}
+            const choices=evolutions.map(ref=>({targetUid:slot.uid,cardUid:ref.uid}));
+            choices.push({skipUid:slot.uid});
+            ctx.requestChoice?.({kind:'option',side:'self',
+              options:[...evolutions.map(ref=>'Evolve Exeggcute into '+ctx.cardById(ref.cardId).name),'Leave Exeggcute unevolved'],
+              effect:{...effect,done:[...done],choices}});
+            return;
+          }
+          ctx.shuffle?.(ctx.state,ss.deck);
+          break;
+        }
+        // One Missing Clover inspects, but does not take, the physical top
+        // deck card. Four played AT ONCE consume three additional physical
+        // hand copies and queue exactly one official Prize selection.
+        if(effect.rule==='missingClover'){
+          const ss=own(ctx),four=ctx.action?.effectSelection==='four';
+          if(four){
+            const refs=ss.hand.filter(ref=>ctx.cardById(ref.cardId)?.name==='Missing Clover');
+            if(refs.length<3){log({type:'sm5MissingClover',mode:'invalid-four'});break;}
+            for(const ref of refs.slice(0,3)){
+              const index=ss.hand.findIndex(x=>x.uid===ref.uid);
+              if(index>=0)ss.discard.push(...ss.hand.splice(index,1));
+            }
+            if(ss.prizes.length)ctx.queuePrize?.(ctx.side,1);
+            log({type:'sm5MissingClover',mode:'four',otherCopies:refs.slice(0,3).map(x=>x.uid),queuedPrize:ss.prizes.length>0});
+          }else{
+            applyEffect({type:'inspectTop',side:'self',amount:1},ctx);
+            log({type:'sm5MissingClover',mode:'one',topCard:ss.deck[0]?.cardId||null});
+          }
           break;
         }
         if(effect.rule==='changeClothes'){

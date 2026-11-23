@@ -4,11 +4,11 @@ from __future__ import annotations
 import argparse,hashlib,json,re,subprocess,sys
 from pathlib import Path
 ROOT=Path(__file__).resolve().parents[1]
-TESTS=['tests/v07424-ultra-prism-integration.test.cjs','tests/v07425-ultra-prism-reuse.test.cjs','tests/v07427-ultra-prism-stage2-outcomes.test.cjs','tests/v07428-ultra-prism-stage3-outcomes.test.cjs','tests/v07429-ultra-prism-stage4-outcomes.test.cjs','tests/v07430-ultra-prism-stage5-outcomes.test.cjs','tests/v07431-ultra-prism-stage6-outcomes.test.cjs','tests/v07432-ultra-prism-stage7-outcomes.test.cjs','tests/v07433-ultra-prism-stage8-outcomes.test.cjs','tests/v07434-ultra-prism-stage9-outcomes.test.cjs','tests/v07435-ultra-prism-stage10-outcomes.test.cjs','tests/v07436-ultra-prism-stage11-outcomes.test.cjs']
+TESTS=['tests/v07424-ultra-prism-integration.test.cjs','tests/v07425-ultra-prism-reuse.test.cjs','tests/v07427-ultra-prism-stage2-outcomes.test.cjs','tests/v07428-ultra-prism-stage3-outcomes.test.cjs','tests/v07429-ultra-prism-stage4-outcomes.test.cjs','tests/v07430-ultra-prism-stage5-outcomes.test.cjs','tests/v07431-ultra-prism-stage6-outcomes.test.cjs','tests/v07432-ultra-prism-stage7-outcomes.test.cjs','tests/v07433-ultra-prism-stage8-outcomes.test.cjs','tests/v07434-ultra-prism-stage9-outcomes.test.cjs','tests/v07435-ultra-prism-stage10-outcomes.test.cjs','tests/v07436-ultra-prism-stage11-outcomes.test.cjs','tests/v07437-ultra-prism-stage12-outcomes.test.cjs']
 def check():
  subprocess.run([sys.executable,'scripts/check-gradle-source.py','--self-test'],cwd=ROOT,check=True)
  c=json.loads((ROOT/'scripts/sm5_release_contract.json').read_text())
- assert (c['set'],c['stage'],c['release'])==('sm5','stage11','0.69.415')
+ assert (c['set'],c['stage'],c['release'])==('sm5','stage12','0.69.416')
  assert (c['printedTotal'],c['attackPrints'],c['abilities'],c['pokemonGX'],c['gxAttackPrints'],c['prismStarPrints'],c['trainerPrints'],c['energyPrints'])==(178,237,37,27,27,6,36,5)
  assert c['pin']=='66cbd13b706b789de3b8cce2f5c9fc95135a33b0'
  assert c['variants']==['119a','122a','125a','135a','153a']
@@ -160,6 +160,24 @@ def check():
   matches=[(row,a) for row,a in all_attacks if a[0]==name and stage11.N(a[3])==stage11.N(printed)]
   assert matches,'Stage 11 canonical print missing: '+name
   assert all(stage11.attack(row,a)==descriptor for row,a in matches),'Stage 11 effect drift: '+name
+ # Stage 12: printed effect and card identity audit. All alternate-art
+ # Missing Clover prints must resolve the same single/four-card mechanics.
+ import sm5_stage12_verified as stage12
+ assert (len(stage12.ATTACKS),len(stage12.ABILITIES),len(stage12.TRAINERS)) == (c['stage12TextLockedAttacks'],c['stage12TextLockedAbilities'],c['stage12TextLockedTrainers']), 'SM5 Stage 12 map counts drifted'
+ for name,(printed,descriptor) in stage12.ATTACKS.items():
+  matches=[(row,a) for row,a in all_attacks if a[0]==name and stage12.N(a[3])==stage12.N(printed)]
+  assert matches,'Stage 12 canonical attack missing: '+name
+  assert all(stage12.attack(row,a)==descriptor for row,a in matches),'Stage 12 attack descriptor drift: '+name
+ for name,(printed,descriptor) in stage12.ABILITIES.items():
+  matches=[(row,a) for row in rows for a in row[8] if a[0]==name and stage12.N(a[2])==stage12.N(printed)]
+  assert matches,'Stage 12 canonical Ability missing: '+name
+  assert all(stage12.ability(row,a)==descriptor for row,a in matches),'Stage 12 Ability descriptor drift: '+name
+ for name,(kind,descriptor) in stage12.TRAINERS.items():
+  matches=[row for row in rows if row[2]=='Trainer' and row[1]==name and all(stage12.N(x) in stage12.N(' '.join(row[13] or [])) for x in stage12.TRAINER_RULES[name])]
+  assert matches,'Stage 12 canonical Trainer missing: '+name
+  assert all(stage12.trainer(row)==(kind,descriptor) for row in matches),'Stage 12 Trainer descriptor drift: '+name
+ assert sorted(row[0] for row in rows if row[1]=='Missing Clover')==['129','168'],'SM5 Missing Clover alternates changed'
+ print('SM5 Stage 12 official-text audit PASS: 2 attacks, Flaming Fighter, 2 Missing Clover prints')
  print('SM5 Stage 11 official-text audit PASS: 14 attacks')
  print('SM5 Stage 10 pinned-text audit PASS: 6 attacks, 2 Abilities, Ancient Crystal')
  print('SM5 Stage 9 official-text audit PASS: 27 attacks')
@@ -169,7 +187,7 @@ def check():
  print('SM5 Stage 5 printed Prism Star mechanics PASS: 5 cards / 6 attacks / 2 Abilities / Cyrus')
  print(f'SM5 Stages 2+3 official-text audit PASS: {len(sm5stage2.ATTACKS)} + {len(sm5stage3.ATTACKS)} attacks, {len(sm5stage3.ABILITIES)} Abilities, {len(sm5stage2.TRAINERS)+len(sm5stage3.TRAINERS)} Trainers')
  gradle=(ROOT/'app/build.gradle').read_text()
- assert re.search(r"versionName\s+['\"]0\.69\.415['\"]",gradle) and 'versionCode 7415' in gradle
+ assert re.search(r"versionName\s+['\"]0\.69\.416['\"]",gradle) and 'versionCode 7416' in gradle
  for task in ['preflightSM5ContractForApk','generateSM5ForApk','auditSM5ForApk']:
   assert "tasks.register('"+task+"'" in gradle,task+' missing'
  assert "dependsOn tasks.named('auditSM4ForApk')" in gradle
@@ -178,10 +196,10 @@ def check():
  for f in ('tcg-classic-battle-data.js','tcg-classic-deck-builder.js','tcg-classic-opponents.js','tcg-classic-set-picker.js'):
   assert 'sm5' in (ROOT/'app/src/main/assets'/f).read_text(),f+' missing SM5 registration'
  html=(ROOT/'app/src/main/assets/index.html').read_text()
- assert 'tcg-classic-ultra-prism.js' in html and 'v0.69.415' in html
- assert "__LUCKYDEX_BUILD='0.69.415'" in (ROOT/'app/src/main/assets/app-v0167.js').read_text()
+ assert 'tcg-classic-ultra-prism.js' in html and 'v0.69.416' in html
+ assert "__LUCKYDEX_BUILD='0.69.416'" in (ROOT/'app/src/main/assets/app-v0167.js').read_text()
  for sid in ['xy9','xy10','xy11','xy12','sm1','sm2','sm3','sm4']:
-  assert json.loads((ROOT/f'scripts/{sid}_release_contract.json').read_text())['release']=='0.69.415'
+  assert json.loads((ROOT/f'scripts/{sid}_release_contract.json').read_text())['release']=='0.69.416'
  print('SM5 source gate PASS: SHA-pinned official 178 prints, 237 attacks, 37 Abilities, 27 GX, 6 Prism Star')
 def full():
  subprocess.run([sys.executable,'scripts/build-sm5.py'],cwd=ROOT,check=True)
