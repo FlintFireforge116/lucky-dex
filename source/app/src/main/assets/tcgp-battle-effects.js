@@ -813,6 +813,10 @@
       return true;
     }
     if(printed.effect&&basicSearchEffectMatches(printed.effect,live))return true;
+    // Printed coin gates (Stoke/Synthesis) resolve their inner search as a
+    // separate effectChoice; preserve originating search identity there too.
+    if(printed.heads&&basicSearchEffectMatches(printed.heads,live))return true;
+    if(printed.tails&&basicSearchEffectMatches(printed.tails,live))return true;
     if(Array.isArray(printed.effects)&&printed.effects.some(x=>basicSearchEffectMatches(x,live)))return true;
     if(Array.isArray(printed.options)&&printed.options.some(x=>basicSearchEffectMatches(x.effect,live)))return true;
     return false;
@@ -842,6 +846,92 @@
     if(isPrintedBasicDeckSearch(ctx,effect))return {...ctx,basicEnergyDeckSearch:true};
     return ctx;
   }
+  // AUDITED LEGACY COVERAGE: several EX/DP/HGSS/BW-era handlers support only
+  // physical draw-deck Basic Energy cards. Classic deck construction instead
+  // keeps those Energy in its finite Zone. Route these SIMPLE search variants
+  // through one shared chooser when the physical deck has no Basic Energy.
+  // Complex conditional / mixed-card searches retain their original handlers
+  // until separately audited; do not silently bypass their printed costs.
+  const legacyZoneSearchSpecs=Object.freeze({
+    'ex3:quickCharge':{count:3,distinct:true,mode:'hand'}, // Vibrava
+    'ex5:7:0':{count:2,type:'Grass',mode:'self',requireOpponentEx:true}, // Heracross
+    'ex5:80:0':{count:1,type:'Lightning',mode:'self'}, // Voltorb
+    'ex6:12:0':{count:2,type:'Lightning',mode:'self'}, // Raichu
+    'ex6:26:0':{count:2,type:'Water',mode:'self'}, // Kingler
+    'ex6:43:0':{count:2,mode:'nonEx'}, // Parasect
+    'ex7:28:0':{count:4,distinct:true,mode:'hand'}, // Yanma
+    'ex7:67:0':{count:1,mode:'hand'}, // Mareep
+    'ex7:68:0':{count:2,mode:'hand'}, // Marill
+    'dp3:50:attractCurrent':{count:1,type:'Lightning',mode:'any'}, // Flaaffy
+    'dp6:118:recharge':{count:1,type:'Lightning',mode:'self'}, // Shinx
+    'pl3:38:nutritionalSupport':{count:2,type:'Grass',mode:'any'}, // Parasect
+    'hgss3:21:steelCoat':{count:1,type:'Metal',mode:'any'}, // Skarmory, COL1 reprint
+    'bw9:flareNavigate':{count:1,type:'Fire',mode:'any',damageOnAttach:10} // Chandelure
+  });
+  function auditedLegacyBasicZoneSearch(ctx,effect){
+    if(effect?.type!=='neoRule'||ctx.state?.format!=='classic'||!ctx.basicEnergyDeckSearch)return false;
+    const spec=legacyZoneSearchSpecs[effect.rule];if(!spec)return false;
+    const ss=own(ctx),zone=ss.energySupply;
+    if(!Array.isArray(zone))return false;
+    if(!effect.hybridBasicStage&&(ss.deck||[]).some(ref=>ctx.cardById(ref.cardId)?.basicEnergy))return false;
+    const cards=pokemonOn(ss),foes=pokemonOn(other(ctx));
+    if(spec.requireOpponentEx&&!foes.some(p=>{
+      const c=ctx.cardById(p.cardId);return c?.pokemonEx||c?.pokemonEX||/[- ]ex$/i.test(c?.name||'');
+    }))return true;
+    const remaining=Math.max(0,Number(effect.hybridBasicRemaining??spec.count));
+    const successful=effect.hybridBasicSuccessfulTypes||[];
+    const eligible=()=>[...new Set(zone)].filter(type=>(!spec.type||spec.type===type)&&(!spec.distinct||!successful.includes(type))&&neoBasicIds[type]);
+    const continueSearch=(type,got)=>{
+      const success=got&&spec.distinct?[...successful,type]:successful;
+      if(remaining>1)return auditedLegacyBasicZoneSearch(ctx,{...effect,hybridBasicStage:'choose',hybridBasicRemaining:remaining-1,hybridBasicSuccessfulTypes:success});
+      return true;
+    };
+    const allowTarget=p=>!!p&&cards.includes(p)&&
+      (spec.mode!=='nonEx'||!ctx.cardById(p.cardId)?.pokemonEx&&!ctx.cardById(p.cardId)?.pokemonEX&&!/[- ]ex$/i.test(ctx.cardById(p.cardId)?.name||''));
+    const retrieve=(type,target)=>{
+      if(!type||!eligible().includes(type))return 0;
+      if(spec.mode==='hand'){
+        if(ss.hand.length>=Number(ss.handLimit||10))return 0;
+        return neoEnergyToHand(ctx,ss,type,1);
+      }
+      if(!allowTarget(target))return 0;
+      const got=neoSupplyTake(ctx,ss,type,1);
+      if(got){target.energy=target.energy||{};target.energy[type]=Number(target.energy[type]||0)+got;
+        ctx.onEnergyAttached?.(target,type,got,{fromZone:true,source:'printed Basic Energy deck search'});
+        if(spec.damageOnAttach)target.damage=Number(target.damage||0)+Number(spec.damageOnAttach);
+      }
+      return got;
+    };
+    if(effect.hybridBasicStage==='target'&&ctx.resolvingChoice){
+      const p=selected(ctx,ss),type=effect.hybridBasicType;
+      const got=retrieve(type,p);return continueSearch(type,got);
+    }
+    if(effect.hybridBasicStage==='type'&&ctx.resolvingChoice){
+      if(ctx.action?.choiceSkip)return true;
+      const type=(effect.hybridBasicOptions||[])[Number(ctx.action?.choiceOption)];if(!type)return true;
+      if(spec.mode==='hand'||spec.mode==='self'){
+        const got=retrieve(type,spec.mode==='self'?ctx.attacker:null);
+        return continueSearch(type,got);
+      }
+      const allowed=cards.filter(allowTarget);
+      if(!allowed.length)return true;
+      ctx.requestChoice?.({kind:'pokemon',side:'self',selectionSide:ctx.side,includeActive:true,
+        allowedUids:allowed.map(p=>p.uid),optional:true,
+        effect:{...effect,hybridBasicStage:'target',hybridBasicType:type}});
+      return true;
+    }
+    if(remaining<=0||!eligible().length)return true;
+    if(spec.mode==='self'&&spec.type){
+      const got=retrieve(spec.type,ctx.attacker);return continueSearch(spec.type,got);
+    }
+    if(spec.mode!=='self'&&spec.mode!=='hand'&&!cards.some(allowTarget))return true;
+    const options=eligible();
+    ctx.requestChoice?.({kind:'option',side:'self',optional:true,
+      options:options.map(t=>'Search for '+t+' Basic Energy'),
+      effect:{...effect,hybridBasicStage:'type',hybridBasicOptions:options,hybridBasicRemaining:remaining,hybridBasicSuccessfulTypes:successful}});
+    return true;
+  }
+
   function neoSupplyTakeAt(ctx,ss,index,type){
     if(!Array.isArray(ss?.energySupply)||!Number.isInteger(index)||index<0||index>=ss.energySupply.length)return 0;
     const eligible=ss.energySupply[index];
@@ -6505,8 +6595,17 @@
         if(ctx.state.stadium)pick('option',{options:['Keep Stadium','Discard Stadium']});return;
       case 'L:0':if(flip()){const hp=Number(card(d)?.hp||0);d.damage=Math.max(Number(d.damage||0),hp-10);}return;
       case 'P:0':for(const p of foeBoard)if(Number(p.damage||0)>0)p.damage+=10;return;
-      case 'Q:0':{const types=neoAvailableSupplyTypes(ctx,us,{basicEnergy:true}).filter(t=>!(e.types||[]).includes(t));if(ctx.resolvingChoice){if(choice.choiceSkip)return;const t=types[Number(choice.choiceOption)];if(t&&neoEnergyToHand(ctx,us,t,1)&&(e.types||[]).length<3)ex10Rule({...e,types:[...(e.types||[]),t]},{...ctx,resolvingChoice:false});return;}
-          if(types.length&&Number((e.types||[]).length)<3)pick('option',{options:types.map(t=>'Find '+t+' Energy'),effect:{...e,types:e.types||[]}});return;}
+      case 'Q:0':{ // Unown Q: tails spends one SEARCH, not the remaining search attempts.
+          const attempts=Number(e.searchAttempts||0),taken=e.types||[];
+          const types=neoAvailableSupplyTypes(ctx,us,{basicEnergy:true}).filter(t=>!taken.includes(t));
+          if(ctx.resolvingChoice){if(choice.choiceSkip)return;const t=types[Number(choice.choiceOption)];if(!t)return;
+            const got=neoEnergyToHand(ctx,us,t,1);
+            if(attempts+1<3)return ex10Rule({...e,searchAttempts:attempts+1,types:got?[...taken,t]:taken},{...ctx,resolvingChoice:false});
+            return;
+          }
+          if(types.length&&attempts<3)pick('option',{options:types.map(t=>'Find '+t+' Energy'),effect:{...e,types:taken,searchAttempts:attempts}});
+          return;
+        }
       case 'A:0':applyEffect({type:'searchChosen',source:'deck',filter:{kind:'trainer',trainerType:'Supporter'},amount:2},{...ctx,resolvingChoice:false});return;
       case 'F:0':{let heads=0;for(let i=0;i<3;i++)if(flip())heads++;
         if(heads===1)status('sleep');else if(heads===2)status('confusion');else if(heads===3)status('paralysis');return;}
@@ -9840,7 +9939,10 @@
       if(ctx.resolvingChoice&&e.stage==='target'){const slot=selection(ss);if(slot)hgss1Rule({...e,uid:slot.uid,stage:'energy',remaining:limit},{...ctx,resolvingChoice:false});return;}
       if(ctx.resolvingChoice&&e.stage==='energy'){const source=(e.sources||[])[Number(ctx.action.choiceOption)];if(source){let ref=null,t=source.type;
           if(source.uid){const i=ss.deck.findIndex(r=>r.uid===source.uid);if(i>=0)ref=ss.deck.splice(i,1)[0];}
-          else zoneTake(t);
+          else if(!zoneTake(t)){ // Tails: search opportunity spent, no Energy attached.
+            if(Number(e.remaining||1)>1)return hgss1Rule({...e,stage:'energy',remaining:Number(e.remaining)-1},{...ctx,resolvingChoice:false});
+            return;
+          }
           if(t&&target){add(target,t,ref);ctx.onEnergyAttached?.(target,t,1,{fromHand:false});log({targetUid:target.uid,energyType:t});}
         }else return; if(Number(e.remaining||1)>1)hgss1Rule({...e,stage:'energy',remaining:Number(e.remaining)-1},{...ctx,resolvingChoice:false});return;}
       if(e.stage==='energy'){
@@ -18882,6 +18984,7 @@
   function applyEffect(effect,ctx){
     if(!effect)return;
     ctx=searchAwareContext(ctx,effect);
+    if(auditedLegacyBasicZoneSearch(ctx,effect))return;
     // Shared and legacy Pokémon Abilities may mutate opponent slots directly,
     // without passing through generic effect target filtering. Restore only
     // enemy θ Stop Pokémon after an opposing Ability's full resolution.
@@ -19610,6 +19713,50 @@
           if(effect.stage==='target'&&ctx.resolvingChoice){const target=getTarget(),src=me.find(p=>p.uid===effect.sourceUid);if(!target||!src||src===target)return;const unit={slotUid:src.uid,type:effect.energyType};if(!src.energy?.[unit.type])return;src.energy[unit.type]--;target.energy[unit.type]=Number(target.energy?.[unit.type]||0)+1;ctx.onEnergyAttached?.(target,unit.type,1,{moved:true});break;}
           if(ctx.resolvingChoice){const src=getTarget(),type=ctx.action?.effectEnergyType;if(src&&energyTypes.includes(type)&&Number(src.energy?.[type]||0)>0&&me.length>1)ask({kind:'pokemon',includeActive:true,excludeUids:[src.uid]},{stage:'target',sourceUid:src.uid,energyType:type});break;}
           if(me.length>1&&me.some(p=>energyTypes.some(t=>Number(p.energy?.[t]||0)>0)))ask({kind:'energySource',energyTypes});break;
+        }
+        if((rule==='strongCharge'||rule==='synthesis')&&
+           (effect.zoneSearchMode||(ss.energySupply||[]).some(t=>(rule==='strongCharge'?['Grass','Lightning']:['Grass']).includes(t)))){
+          // SM1 Vikavolt / Fomantis: Basic Energy is held in the Classic
+          // Energy Zone, not the physical 30-card draw deck. A successful
+          // search from Zone requires one coin; tails cannot cancel a second
+          // (different-type) search from Strong Charge.
+          const remaining=Array.isArray(effect.remainingTypes)?effect.remainingTypes.slice():
+            rule==='strongCharge'?['Grass','Lightning']:['Grass'];
+          const sources=()=>{
+            const physical=ss.deck.filter(r=>basic(r)&&remaining.includes(c(r).energyType||c(r).subtype))
+              .map(r=>({uid:r.uid,type:c(r).energyType||c(r).subtype,label:'Deck: '+c(r).name}));
+            const zone=[...new Set(remaining)].filter(t=>(ss.energySupply||[]).includes(t))
+              .map(type=>({type,label:'Energy Zone: '+type}));
+            return [...physical,...zone];
+          };
+          if(effect.stage==='source'&&ctx.resolvingChoice){
+            if(ctx.action?.choiceSkip)break;
+            const src=(effect.sources||[])[Number(ctx.action?.choiceOption)];
+            if(src)ask({kind:'pokemon',includeActive:true},{stage:'target',selectedSource:src,remainingTypes:remaining,zoneSearchMode:true});
+            break;
+          }
+          if(effect.stage==='target'&&ctx.resolvingChoice){
+            const target=getTarget(),src=effect.selectedSource;
+            if(!target||!src||!remaining.includes(src.type))break;
+            if(src.uid){
+              const index=ss.deck.findIndex(r=>r.uid===src.uid),ref=ss.deck[index];
+              if(index<0||!basic(ref)||(c(ref).energyType||c(ref).subtype)!==src.type)break;
+              ss.deck.splice(index,1);ctx.shuffle?.(ctx.state,ss.deck);
+              target.energy[src.type]=Number(target.energy?.[src.type]||0)+1;
+              ctx.onEnergyAttached?.(target,src.type,1,{fromDeck:true});
+            }else if(neoSupplyTake(ctx,ss,src.type,1)){
+              target.energy[src.type]=Number(target.energy?.[src.type]||0)+1;
+              ctx.onEnergyAttached?.(target,src.type,1,{fromZone:true});
+            }
+            // Regardless of heads/tails, Strong Charge's next typed
+            // search remains an independent opportunity.
+            const left=remaining.filter(t=>t!==src.type);
+            if(left.length)applyEffect({...effect,stage:null,remainingTypes:left,zoneSearchMode:true},{...ctx,resolvingChoice:false});
+            break;
+          }
+          const opts=sources();
+          if(opts.length)ask({kind:'option',options:opts.map(src=>'Find '+src.label),optional:true},{stage:'source',sources:opts,remainingTypes:remaining,zoneSearchMode:true});
+          break;
         }
         if(rule==='strongCharge'||rule==='synthesis'||rule==='solBurst'){
           const required=rule==='synthesis'?['Grass']:rule==='strongCharge'?['Grass','Lightning']:null;
@@ -21009,7 +21156,9 @@ if(limit>1&&available().length)ask({kind:'option',options:available().map(x=>x.l
         if(!queue.length)break;
         const eligibleTargets=excluded=>{const ss=own(ctx),list=effect.target==='selfPokemon'?pokemonOn(ss):(ss.bench||[]).filter(Boolean),skip=new Set(excluded||[]);return list.filter(s=>{
           if(skip.has(s.uid)||!matchesFilter(ctx.cardById(s.cardId),effect.filter,s))return false;
-          const next=queue[0];if(next&&typeof next==='object'&&next.specialUid){
+          const next=queue[0];
+          if(effect.source==='zone'&&typeof next==='string'&&Array.isArray(own(ctx).energySupply)&&!own(ctx).energySupply.includes(next))return false;
+          if(next&&typeof next==='object'&&next.specialUid){
             const ref=(sourceSlot?.specialEnergy||[]).find(r=>r.uid===next.specialUid),card=ctx.cardById(ref?.cardId),types=card?.effect?.attachOnlyTypes||[];
             return !!ref&&(!types.length||types.some(t=>hasType(ctx.cardById(s.cardId),t)));
           }
@@ -21024,9 +21173,13 @@ if(limit>1&&available().length)ask({kind:'option',options:available().map(x=>x.l
             const [ref]=sourceSlot.specialEnergy.splice(index,1);
             selectedSlot.specialEnergy=selectedSlot.specialEnergy||[];selectedSlot.specialEnergy.push(ref);
           }else{
-            if(effect.source==='self'){if(Number(sourceSlot?.energy?.[type]||0)<=0)break;sourceSlot.energy[type]-=1;}
-            else if(!neoSupplyTake(ctx,own(ctx),type,1))break;
-            selectedSlot.energy[type]=Number(selectedSlot.energy[type]||0)+1;ctx.onEnergyAttached?.(selectedSlot,type,1);
+            if(effect.source==='self'){if(Number(sourceSlot?.energy?.[type]||0)<=0)break;sourceSlot.energy[type]-=1;
+              selectedSlot.energy[type]=Number(selectedSlot.energy[type]||0)+1;ctx.onEnergyAttached?.(selectedSlot,type,1);
+            }else if(neoSupplyTake(ctx,own(ctx),type,1)){
+              // A tails is still one requested Basic Energy search. Advance
+              // to the next requested Energy rather than aborting the effect.
+              selectedSlot.energy[type]=Number(selectedSlot.energy[type]||0)+1;ctx.onEnergyAttached?.(selectedSlot,type,1);
+            }
           }
           const used=[...(effect.usedUids||[])];if(effect.distinctTargets&&!used.includes(selectedSlot.uid))used.push(selectedSlot.uid);
           const excluded=effect.distinctTargets?used:[];
@@ -25152,7 +25305,10 @@ if(limit>1&&available().length)ask({kind:'option',options:available().map(x=>x.l
       if(rule==='digUnder')return [{target:'opponentActive',choiceLabel:'50 to Active'},...foe.bench.map(slot=>({target:'opponentBench',benchIndex:slot.benchSlot,choiceLabel:'50 to '+(ctx.cardById(slot.cardId)?.name||'Bench')}))];
       if(rule==='cowardice')return Number(p?.playedOnSideTurn)<Number(ss.turnCount)&&Number(ss.turnCount)>1?[{}]:[];
       if(rule==='psychicTransfer'||rule==='energySwitch')return pokemonOn(ss).length>1&&pokemonOn(ss).some(x=>Object.entries(x.energy||{}).some(([type,n])=>n>0&&(rule==='energySwitch'||type==='Psychic')))?[{}]:[];
-      if(rule==='strongCharge'||rule==='synthesis'||rule==='solBurst')return ss.deck.some(r=>{const c=ctx.cardById(r.cardId);return c?.kind==='energy'&&(rule==='solBurst'||c.basicEnergy&&(['Grass',...(rule==='strongCharge'?['Lightning']:[])].includes(c.energyType)));})?[{}]:[];
+      if(rule==='strongCharge'||rule==='synthesis'||rule==='solBurst')return (
+        ss.deck.some(r=>{const c=ctx.cardById(r.cardId);return c?.kind==='energy'&&(rule==='solBurst'||c.basicEnergy&&(['Grass',...(rule==='strongCharge'?['Lightning']:[])].includes(c.energyType||c.subtype)));}) ||
+        rule!=='solBurst'&&['Grass',...(rule==='strongCharge'?['Lightning']:[])].some(t=>(ss.energySupply||[]).includes(t))
+      )?[{}]:[];
       if(rule==='flowerSupply')return ss.discard.some(r=>ctx.cardById(r.cardId)?.basicEnergy)||Object.values(ss.energyDiscard||{}).some(n=>n>0)?[{}]:[];
       if(rule==='hollowHunt')return ss.discard.length||Object.values(ss.energyDiscard||{}).some(n=>n>0)?[{}]:[];
       if(rule==='darkCall')return pokemonOn(foe).some(x=>Object.values(x.energy||{}).some(n=>n>0)||(x.specialEnergy||[]).length>0)?[{}]:[];
