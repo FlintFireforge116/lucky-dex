@@ -1,57 +1,15 @@
 {
   "printed": 177,
-  "battleReady": 114,
+  "battleReady": 151,
   "gated": {
-    "sm3-6": [
-      "Unimplemented attack: Downer Shock",
-      "Unimplemented Ability: Disgusting Pollen"
-    ],
-    "sm3-11": [
-      "Unimplemented Ability: Guts"
-    ],
-    "sm3-13": [
-      "Unimplemented attack: Leaf Supply"
-    ],
-    "sm3-16": [
-      "Unimplemented Ability: Wimp Out"
-    ],
-    "sm3-21": [
-      "Unimplemented attack: Eternal Flame-GX"
-    ],
     "sm3-24": [
       "Unimplemented attack: Odor Sleuth"
-    ],
-    "sm3-28": [
-      "Unimplemented Ability: Luminous Barrier"
-    ],
-    "sm3-31": [
-      "Unimplemented attack: Brine",
-      "Unimplemented attack: Tornado Shot"
-    ],
-    "sm3-35": [
-      "Unimplemented Ability: Thick Fat"
-    ],
-    "sm3-38": [
-      "Unimplemented attack: Synchronoise"
-    ],
-    "sm3-39": [
-      "Unimplemented attack: Aqua Ring",
-      "Unimplemented attack: Hydro Shot",
-      "Unimplemented attack: Tapu Storm-GX"
-    ],
-    "sm3-39a": [
-      "Unimplemented attack: Aqua Ring",
-      "Unimplemented attack: Hydro Shot",
-      "Unimplemented attack: Tapu Storm-GX"
     ],
     "sm3-46": [
       "Unimplemented attack: Vacuum Bolt"
     ],
     "sm3-48": [
       "Unimplemented attack: Unarmed"
-    ],
-    "sm3-50": [
-      "Unimplemented Ability: More Poison"
     ],
     "sm3-53": [
       "Unimplemented Ability: Dark Invitation"
@@ -62,20 +20,6 @@
     "sm3-62": [
       "Unimplemented attack: Dust Storm"
     ],
-    "sm3-63": [
-      "Unimplemented attack: Prismatic Burst",
-      "Unimplemented attack: Black Ray-GX",
-      "Unimplemented Ability: Light's End"
-    ],
-    "sm3-68": [
-      "Unimplemented Ability: Heal Block"
-    ],
-    "sm3-71": [
-      "Unimplemented Ability: Stance"
-    ],
-    "sm3-74": [
-      "Unimplemented attack: Gutsy Hammer"
-    ],
     "sm3-79": [
       "Unimplemented attack: Intentional Grounding"
     ],
@@ -83,55 +27,23 @@
       "Unimplemented attack: Peerless Hundred Blows-GX",
       "Unimplemented Ability: Shadow Hunt"
     ],
-    "sm3-86": [
-      "Unimplemented attack: Rule of Evil"
-    ],
     "sm3-88": [
-      "Unimplemented attack: Dead End-GX",
       "Unimplemented Ability: Restoration"
     ],
     "sm3-88a": [
-      "Unimplemented attack: Dead End-GX",
       "Unimplemented Ability: Restoration"
     ],
-    "sm3-93": [
-      "Unimplemented attack: Infinite Force",
-      "Unimplemented attack: Twilight-GX",
-      "Unimplemented Ability: Secret Spring"
-    ],
     "sm3-94": [
-      "Unimplemented attack: Sparkling Wish",
-      "Unimplemented attack: Diamond Storm"
-    ],
-    "sm3-98": [
-      "Unimplemented attack: Strength Sap"
+      "Unimplemented attack: Sparkling Wish"
     ],
     "sm3-102": [
       "Unimplemented attack: Screech"
-    ],
-    "sm3-103": [
-      "Unimplemented attack: Code Check"
     ],
     "sm3-105": [
       "Unimplemented Ability: Initialize"
     ],
     "sm3-105a": [
       "Unimplemented Ability: Initialize"
-    ],
-    "sm3-107": [
-      "Unimplemented attack: Night Raid"
-    ],
-    "sm3-112": [
-      "Unimplemented Trainer rules"
-    ],
-    "sm3-112a": [
-      "Unimplemented Trainer rules"
-    ],
-    "sm3-115": [
-      "Unimplemented Trainer rules"
-    ],
-    "sm3-115a": [
-      "Unimplemented Trainer rules"
     ],
     "sm3-116": [
       "Unimplemented Trainer rules"
@@ -145,47 +57,15 @@
     "sm3-123": [
       "Unimplemented Trainer rules"
     ],
-    "sm3-125": [
-      "Unimplemented Trainer rules"
-    ],
     "sm3-128": [
       "Unimplemented Trainer rules"
-    ],
-    "sm3-130": [
-      "Unimplemented attack: Nature's Judgment",
-      "Unimplemented attack: Tapu Wilderness-GX"
-    ],
-    "sm3-131": [
-      "Unimplemented attack: Eternal Flame-GX"
-    ],
-    "sm3-133": [
-      "Unimplemented attack: Aqua Ring",
-      "Unimplemented attack: Hydro Shot",
-      "Unimplemented attack: Tapu Storm-GX"
-    ],
-    "sm3-134": [
-      "Unimplemented attack: Prismatic Burst",
-      "Unimplemented attack: Black Ray-GX",
-      "Unimplemented Ability: Light's End"
     ],
     "sm3-137": [
       "Unimplemented attack: Peerless Hundred Blows-GX",
       "Unimplemented Ability: Shadow Hunt"
     ],
     "sm3-139": [
-      "Unimplemented attack: Dead End-GX",
       "Unimplemented Ability: Restoration"
-    ],
-    "sm3-140": [
-      "Unimplemented attack: Infinite Force",
-      "Unimplemented attack: Twilight-GX",
-      "Unimplemented Ability: Secret Spring"
-    ],
-    "sm3-142": [
-      "Unimplemented Trainer rules"
-    ],
-    "sm3-143": [
-      "Unimplemented Trainer rules"
     ],
     "sm3-144": [
       "Unimplemented Trainer rules"
@@ -196,32 +76,12 @@
     "sm3-146": [
       "Unimplemented Trainer rules"
     ],
-    "sm3-149": [
-      "Unimplemented attack: Nature's Judgment",
-      "Unimplemented attack: Tapu Wilderness-GX"
-    ],
-    "sm3-152": [
-      "Unimplemented attack: Aqua Ring",
-      "Unimplemented attack: Hydro Shot",
-      "Unimplemented attack: Tapu Storm-GX"
-    ],
-    "sm3-153": [
-      "Unimplemented attack: Prismatic Burst",
-      "Unimplemented attack: Black Ray-GX",
-      "Unimplemented Ability: Light's End"
-    ],
     "sm3-156": [
       "Unimplemented attack: Peerless Hundred Blows-GX",
       "Unimplemented Ability: Shadow Hunt"
     ],
     "sm3-158": [
-      "Unimplemented attack: Dead End-GX",
       "Unimplemented Ability: Restoration"
-    ],
-    "sm3-159": [
-      "Unimplemented attack: Infinite Force",
-      "Unimplemented attack: Twilight-GX",
-      "Unimplemented Ability: Secret Spring"
     ]
   },
   "attacks": 274,

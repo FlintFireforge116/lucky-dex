@@ -136,6 +136,46 @@ SM3_CONTINUATION_ABILITIES={
  'Honey Gather':('Once during your turn (before your attack), you may search your deck for up to 2 basic Energy cards',{'type':'activated','oncePerTurn':True,'effect':E('searchChosen',source='deck',amount=2,filter={'basicEnergy':True})}),
 }
 
+
+# Stage 3: only printed-text matched mechanics; unsupported prints stay gated.
+SM3_STAGE3_ATTACKS={
+ 'Downer Shock':('Flip a coin. If heads, your opponent', E('coinFlip',heads=ST('sleep'),tails=ST('confusion'))),
+ 'Leaf Supply':('You may attach a Grass Energy card from your hand to 1 of your Pokémon.',E('sm3Rule',rule='leafSupply')),
+ 'Brine':('This attack does 90 damage to 1 of your opponent',E('sm3Rule',rule='brine')),
+ 'Tornado Shot':('Discard a Water Energy from this Pokémon.',S(E('discardEnergyCard',target='self',amount=1,energyType='Water',strictEnergyType=True),E('sm3Rule',rule='tornadoShotBench'))),
+ 'Aqua Ring':('You may switch this Pokémon with 1 of your Benched Pokémon.',E('sm3Rule',rule='aquaRing')),
+ 'Hydro Shot':('Discard 2 Water Energy from this Pokémon.',S(E('discardEnergyCard',target='self',amount=2,energyType='Water',strictEnergyType=True),E('selectedDamage',target='opponentPokemon',amount=120))),
+ 'Tapu Storm-GX':("Shuffle your opponent's Active Pokémon and all cards attached to it into their deck.",E('sm3Rule',rule='tapuStorm')),
+ 'Prismatic Burst':('Discard all Psychic Energy from this Pokémon.',E('sm3Rule',rule='prismaticBurst')),
+ 'Black Ray-GX':('This attack does 100 damage to each of your opponent',E('damage',target='opponentAll',filter={'isExOrGX':True},amount=100)),
+ 'Gutsy Hammer':('This Pokémon does 10 damage to itself for each damage counter on it.',E('sm3Rule',rule='gutsyHammer')),
+ 'Rule of Evil':('This attack does 60 damage to each Pokémon that has an Ability',E('sm3Rule',rule='ruleOfEvil')),
+ 'Dead End-GX':('If your opponent\'s Active Pokémon is affected by a Special Condition',E('knockOut',target='opponentActive',condition={'type':'opponentStatus'})),
+ 'Infinite Force':('This attack does 30 damage times the amount of Energy attached to both Active Pokémon.',E('energyDamage',source='both',amount=30,mode='replace')),
+ 'Twilight-GX':('Shuffle 10 cards from your discard pile into your deck.',E('sm3Rule',rule='twilight')),
+ 'Diamond Storm':('Heal 30 damage from each of your Fairy Pokémon.',E('heal',target='selfAll',filter={'subtype':'Fairy'},amount=30)),
+ 'Strength Sap':('Heal from this Pokémon 30 damage times the amount of Energy attached',E('sm3Rule',rule='strengthSap')),
+ 'Code Check':('Look at 1 of your opponent\'s face-down Prize cards.',E('sm3Rule',rule='codeCheck')),
+ 'Night Raid':('Your opponent reveals their hand. Discard a Pokémon from it.',E('sm3Rule',rule='nightRaid')),
+ "Nature's Judgment":('You may discard all Energy from this Pokémon.',E('sm3Rule',rule='naturesJudgment')),
+ 'Tapu Wilderness-GX':('Heal all damage from this Pokémon.',E('healSelf',amount=9999)),
+ 'Eternal Flame-GX':('Put 3 in any combination of Fire Pokémon-GX or Fire Pokémon-EX from your discard pile',E('sm3Rule',rule='eternalFlame')),
+ 'Synchronoise':("This attack does 20 damage to each of your opponent's Benched Pokémon that shares a type",E('sm3Rule',rule='synchronoise')),
+
+}
+SM3_STAGE3_ABILITIES={
+ 'Disgusting Pollen':('As long as this Pokémon is your Active Pokémon, your opponent',{'type':'passive','activeOnly':True,'effect':E('sm3Rule',rule='disgustingPollen')}),
+ 'Guts':('If this Pokémon would be Knocked Out by damage from an attack',{'type':'passive','effect':E('koGuard',mode='surviveCoin',remainingHp=10,attackOnly=True)}),
+ 'Wimp Out':('During your first turn, this Pokémon has no Retreat Cost.',{'type':'passive','effect':E('sm3Rule',rule='wimpOut')}),
+ 'Luminous Barrier':('Prevent all effects of attacks, including damage',{'type':'passive','effect':E('sm3Rule',rule='luminousBarrier')}),
+ 'Thick Fat':('This Pokémon takes 30 less damage from the attacks of your opponent',{'type':'passive','effect':E('modifier',stat='damageReduction',amount=30,scope='self',duration='whileInPlay',opponentFilter={'subtype':['Fire','Water']})}),
+ 'More Poison':("Put 1 more damage counter on your opponent's Poisoned Pokémon between turns.",{'type':'passive','effect':E('sm3Rule',rule='morePoison')}),
+ "Light's End":('Prevent all damage done to this Pokémon by attacks from Colorless Pokémon.',{'type':'passive','effect':E('sm3Rule',rule='lightsEnd')}),
+ 'Heal Block':('If you have Solrock in play',{'type':'passive','effect':E('healingBlock',scope='both',condition={'type':'pokemonPresent','zone':'inPlay','filter':{'name':'Solrock'}})}),
+ 'Secret Spring':('Once during your turn (before your attack), you may attach a Fairy Energy card from your hand',{'type':'activated','oncePerTurn':True,'effect':E('sm3Rule',rule='secretSpring')}),
+ 'Stance':('When you play this Pokémon from your hand to evolve',{'type':'triggered','event':'evolved','fromHandOnly':True,'effect':E('preventDamage',target='self',duration='opponentTurn',preventEffects=True)}),
+}
+
 def attack(row,a):
     title,cost,damage,printed=a
     if not norm(printed):return N
@@ -143,6 +183,8 @@ def attack(row,a):
         import re
         amount=int(re.search(r'This attack does (\d+) damage',printed).group(1))
         return E('selectedDamage',target='opponentPokemon',amount=amount)
+    stage3=SM3_STAGE3_ATTACKS.get(title)
+    if stage3 and norm(stage3[0]) in norm(printed):return deepcopy(stage3[1])
     newly=SM3_CONTINUATION_ATTACKS.get(title)
     if newly and norm(newly[0]) in norm(printed):return deepcopy(newly[1])
     verified=SM3_ATTACKS.get(title)
@@ -183,6 +225,12 @@ SM3_TRAINER_MAP={
     '126':('Weakness Policy',E('weaknessGuard',duration='whileInPlay')),
     '127':('Wicke',E('handShuffle',side='both',draw='same')),
 }
+# New Trainers: retain individual identity and enforce actual printed choices.
+for _n,_name,_rule in [
+  ('112','Acerola','acerola'),('112a','Acerola','acerola'),('142','Acerola','acerola'),
+  ('115','Guzma','guzma'),('115a','Guzma','guzma'),('143','Guzma','guzma'),
+  ('125','Tormenting Spray','tormentingSpray')]:
+    SM3_TRAINER_MAP[_n]=(_name,E('sm3Rule',rule=_rule))
 # Alternate and secret printed variants share exactly the same public rules.
 for original,variants in {'113':['161'],'114':['163'],'124':['166'],'127':['147']}.items():
     for number in variants:SM3_TRAINER_MAP[number]=SM3_TRAINER_MAP[original]
@@ -205,5 +253,9 @@ for row in rows:
 for row in rows:
     for title,ability_type,printed in row[8]:
         pair=SM3_CONTINUATION_ABILITIES.get(title)
+        if pair and norm(pair[0]) in norm(printed):ABILITY_EFFECTS[title]=deepcopy(pair[1])
+for row in rows:
+    for title,ability_type,printed in row[8]:
+        pair=SM3_STAGE3_ABILITIES.get(title)
         if pair and norm(pair[0]) in norm(printed):ABILITY_EFFECTS[title]=deepcopy(pair[1])
 ABILITIES=ABILITY_EFFECTS

@@ -775,6 +775,7 @@
     const printedRetreat=Number((previous||top)?.retreat||0)+tangling;
     // Fairy Garden (XY 117): all Pokemon with Fairy-providing attached Energy
     // have free retreat, including opposing Pokemon and flexible Rainbow.
+    if(state.format==='classic'&&slot?.cardId==='sm3-16'&&state.sides[side]?.turnCount===1&&!effects.abilitiesSuppressed(state,side,slot,data.cardById))return 0;
     if(state.format==='classic'&&slot&&activeStadium(state)?.cardId==='xy1-117'){
       const en=effectiveEnergy(state,side,slot);
       if(Number(en.Fairy||0)>0||Number(en.Miracle||0)>0)return 0;
@@ -1858,6 +1859,7 @@
         if(state.format==='classic'&&attackCardId==='xy11-88'&&attack.name==='Stall'&&
            (state.turnNumber!==2||side===state.firstSide||s.turnCount!==1))continue;
         if(state.format==='classic'&&s.active.cardId==='pl3-145'&&attack.name==='Dragon Rush'&&Number(s.active.pl3DragonRushUsedTurn||-100)===Number(state.turnNumber)-2)continue;
+        if(state.format==='classic'&&foe.active?.cardId==='sm3-6'&&!effects.abilitiesSuppressed(state,side==='player'?'opponent':'player',foe.active,data.cardById)&&data.cardById(s.active.cardId)?.stage==='Basic')continue;
         if(attack.vstarPower&&s.vstarPowerUsed)continue;
         if(state.format==='classic'&&Number(s.active?.bw9NoAttackUntil||0)>=Number(state.turnNumber))continue;
         if(state.format==='classic'&&Number(s.active?.xy4ChronoWindUntil||0)>=Number(state.turnNumber))continue;
@@ -2103,7 +2105,7 @@
       // Great Encounters: Sleeping Pulse heals a Sleeping Wailord between turns.
       if(slot.cardId==='dp4-30'&&c.sleep&&!effects.abilitiesSuppressed(state,side,slot,data.cardById))
         slot.damage=Math.max(0,Number(slot.damage||0)-10);
-      if(c.poison){const base=typeof c.poison==='object'?Number(c.poison.amount??10):10,amount=Math.max(0,base+effects.modifierAmount(state,side,slot,'poisonDamageBonus',data.cardById));const virus=state.format==='classic'?['player','opponent'].reduce((n,who)=>n+pokemonOn(state.sides[who]).filter(p=>p.cardId==='dp4-31'&&!effects.abilitiesSuppressed(state,who,p,data.cardById)).length,0)*10:0;const bw8Virbank=state.format==='classic'&&activeStadium(state)?.cardId==='bw8-126'?20:0;slot.damage+=amount+virus+bw8Virbank;state.log.push({type:'statusDamage',side,status:'poison',amount:amount+virus+bw8Virbank});}
+      if(c.poison){const base=typeof c.poison==='object'?Number(c.poison.amount??10):10,amount=Math.max(0,base+effects.modifierAmount(state,side,slot,'poisonDamageBonus',data.cardById));const virus=state.format==='classic'?['player','opponent'].reduce((n,who)=>n+pokemonOn(state.sides[who]).filter(p=>p.cardId==='dp4-31'&&!effects.abilitiesSuppressed(state,who,p,data.cardById)).length,0)*10:0;const bw8Virbank=state.format==='classic'&&activeStadium(state)?.cardId==='bw8-126'?20:0;const sm3MorePoison=state.format==='classic'?pokemonOn(state.sides[side==='player'?'opponent':'player']).filter(p=>p.cardId==='sm3-50'&&!effects.abilitiesSuppressed(state,side==='player'?'opponent':'player',p,data.cardById)).length*10:0;slot.damage+=amount+virus+bw8Virbank+sm3MorePoison;state.log.push({type:'statusDamage',side,status:'poison',amount:amount+virus+bw8Virbank+sm3MorePoison});}
       if(c.burn){const heatMetal=state.format==='classic'&&[side==='player'?'opponent':'player'].some(w=>pokemonOn(state.sides[w]).some(p=>p.cardId==='dp7-97'&&!effects.abilitiesSuppressed(state,w,p,data.cardById)));const fullFlame=state.format==='classic'&&activeStadium(state)?.cardId==='ex12-74';const aura=state.format==='classic' &&['player','opponent'].some(w=>{const p=state.sides[w].active;return p?.cardId==='ex6-13'&&!effects.abilitiesSuppressed(state,w,p,data.cardById);});// BW5 Scorching Scales: four instead of two counters on the opposing
       // Burned Active between turns; independent of ordinary burn coin flips.
       const scorch=state.format==='classic'&&pokemonOn(state.sides[side==='player'?'opponent':'player']).some(p=>p.cardId==='bw5-22'&&!effects.abilitiesSuppressed(state,side==='player'?'opponent':'player',p,data.cardById));
