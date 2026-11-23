@@ -8,8 +8,8 @@ const synergy=require('../app/src/main/assets/tcg-deck-synergy.js');
 
 // These sets use checked-in stubs until their Gradle generator runs. This early
 // deck-quality gate executes BEFORE those generators, so audit their full cards
-// in each set's post-generation audit instead. Keep this list in sync with new XY sets.
-const emptyLocalCatalogues=new Set(['bw11','xy1','xy2','xy3','xy4','xy5','xy6','xy7','xy8','xy9','xy10','sm2']);
+// in each set's post-generation audit instead. Keep this list in sync with newly pinned expansions (including SM5).
+const emptyLocalCatalogues=new Set(['bw11','xy1','xy2','xy3','xy4','xy5','xy6','xy7','xy8','xy9','xy10','sm2','sm5']);
 function ownedFor(set){return classic.CARDS.filter(c=>c.setId===set&&c.battleEnabled&&c.deckEligible!==false).map(c=>({gameplayId:c.id,quantity:4}));}
 function trainerCounts(ids){
  const byName=new Map();
@@ -47,6 +47,15 @@ test('pinned BREAKthrough catalogue is audited after generation, not by the earl
  assert.match(gradle,/tasks\.register\('auditXY8ForApk'/);
  assert.match(gradle,/dependsOn tasks\.named\('generateXY8ForApk'\)/,
   'XY8 specific audit must run AFTER the pinned generator');
+});
+
+test('Ultra Prism pinned catalogue is quality-gated after generation, not from the early local stub',()=>{
+ const fs=require('node:fs'),path=require('node:path');
+ const gradle=fs.readFileSync(path.join(__dirname,'../app/build.gradle'),'utf8');
+ assert.ok(emptyLocalCatalogues.has('sm5'),'SM5 requires its verified 178-card source before a meaningful deck audit');
+ assert.match(gradle,/tasks\.register\('generateSM5ForApk'/);
+ assert.match(gradle,/tasks\.register\('auditSM5ForApk'/);
+ assert.match(gradle,/dependsOn tasks\.named\('generateSM5ForApk'\)/);
 });
 
 test('all locally populated Classic sets generate legal, Energy-compatible, usable 30-card decks under two styles',()=>{

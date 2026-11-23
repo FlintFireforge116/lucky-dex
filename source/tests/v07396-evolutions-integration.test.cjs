@@ -18,12 +18,12 @@ const printedCost=x=>Array.isArray(x)?x.join(''):String(x??'');
 const by=n=>xy12.cardById('xy12-'+n);
 
 test('XY12 pinned upstream, build version, dependency and release contract',()=>{
- assert.equal(contract.release,'0.69.404');
+ assert.equal(contract.release,'0.69.405');
  assert.equal(contract.stage,'complete');
  assert.deepEqual([contract.printedTotal,contract.attackPrints,contract.abilities,contract.pokemonBreak,contract.energyPrints],[113,129,11,4,10]);
  assert.equal(contract.pin,'7e80c06b0f3e5621058a29e26c90023d1033e65f');
- assert.match(read('app/build.gradle'),/versionCode 7404/);
- assert.match(read('app/build.gradle'),/versionName '0\.69\.404'/);
+ assert.match(read('app/build.gradle'),/versionCode 7405/);
+ assert.match(read('app/build.gradle'),/versionName '0\.69\.405'/);
  for(const name of ['preflightXY12ContractForApk','generateXY12ForApk','auditXY12ForApk'])assert.ok(read('app/build.gradle').includes(name),'Gradle missing '+name);
  assert.match(read('app/build.gradle'),/dependsOn tasks\.named\('auditXY11ForApk'\)/);
  assert.match(read('app/build.gradle'),/tests\/v07396-evolutions-integration\.test\.cjs/);

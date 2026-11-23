@@ -1,0 +1,494 @@
+{
+  "printed": 178,
+  "battleReady": 40,
+  "gated": {
+    "sm5-2": [
+      "Unimplemented attack: Super Speed"
+    ],
+    "sm5-5": [
+      "Unimplemented attack: Flower Tornado"
+    ],
+    "sm5-9": [
+      "Unimplemented attack: Giga Drain",
+      "Unimplemented attack: Earthquake"
+    ],
+    "sm5-11": [
+      "Unimplemented Ability: Weather Guard"
+    ],
+    "sm5-12": [
+      "Unimplemented attack: Loom Over"
+    ],
+    "sm5-13": [
+      "Unimplemented attack: Grand Bloom-GX",
+      "Unimplemented Ability: Breath of the Leaves"
+    ],
+    "sm5-14": [
+      "Unimplemented attack: Special Mow",
+      "Unimplemented Ability: Roto Motor"
+    ],
+    "sm5-15": [
+      "Unimplemented attack: Coax"
+    ],
+    "sm5-18": [
+      "Unimplemented attack: Controlled Burn",
+      "Unimplemented attack: Flamethrower"
+    ],
+    "sm5-19": [
+      "Unimplemented attack: Fire Blaster",
+      "Unimplemented Ability: Incandescent Body"
+    ],
+    "sm5-21": [
+      "Unimplemented attack: Fury Swipes"
+    ],
+    "sm5-23": [
+      "Unimplemented Ability: Flaming Fighter"
+    ],
+    "sm5-24": [
+      "Unimplemented Ability: Roto Motor"
+    ],
+    "sm5-26": [
+      "Unimplemented attack: Panic Poison",
+      "Unimplemented attack: Hunter's Nails"
+    ],
+    "sm5-29": [
+      "Unimplemented attack: Spike Armor"
+    ],
+    "sm5-30": [
+      "Unimplemented attack: Roar"
+    ],
+    "sm5-31": [
+      "Unimplemented attack: Splatter"
+    ],
+    "sm5-34": [
+      "Unimplemented attack: Total Command",
+      "Unimplemented attack: Whirlpool"
+    ],
+    "sm5-36": [
+      "Unimplemented attack: Agility",
+      "Unimplemented attack: Aqua Blast"
+    ],
+    "sm5-37": [
+      "Unimplemented attack: Ice Shard"
+    ],
+    "sm5-38": [
+      "Unimplemented Ability: Blessings of the Frost"
+    ],
+    "sm5-39": [
+      "Unimplemented attack: Polar Spear-GX",
+      "Unimplemented Ability: Freezing Gaze"
+    ],
+    "sm5-40": [
+      "Unimplemented Ability: Roto Motor"
+    ],
+    "sm5-41": [
+      "Unimplemented attack: Frost Crush",
+      "Unimplemented Ability: Roto Motor"
+    ],
+    "sm5-42": [
+      "Unimplemented attack: Deep Currents"
+    ],
+    "sm5-44": [
+      "Unimplemented attack: Steel Short"
+    ],
+    "sm5-45": [
+      "Unimplemented Ability: Evolutionary Advantage"
+    ],
+    "sm5-46": [
+      "Unimplemented attack: Charge"
+    ],
+    "sm5-47": [
+      "Unimplemented attack: Disconnect"
+    ],
+    "sm5-48": [
+      "Unimplemented attack: Volt Bolt",
+      "Unimplemented Ability: Intimidating Fang"
+    ],
+    "sm5-49": [
+      "Unimplemented attack: Snuggly Generator"
+    ],
+    "sm5-50": [
+      "Unimplemented attack: Plasma Slice",
+      "Unimplemented Ability: Roto Motor"
+    ],
+    "sm5-52": [
+      "Unimplemented attack: Damage Transport",
+      "Unimplemented attack: Wind Wheel"
+    ],
+    "sm5-53": [
+      "Unimplemented attack: Lightless World",
+      "Unimplemented attack: Terrify"
+    ],
+    "sm5-54": [
+      "Unimplemented attack: Hone Claws"
+    ],
+    "sm5-55": [
+      "Unimplemented attack: Dangerous Stinger"
+    ],
+    "sm5-56": [
+      "Unimplemented attack: Swagger"
+    ],
+    "sm5-57": [
+      "Unimplemented attack: Exact Revenge"
+    ],
+    "sm5-58": [
+      "Prism Star rules (one-per-deck and Lost Zone) not yet implemented",
+      "Unimplemented attack: Crisis Dive",
+      "Unimplemented Ability: Chaotic Star"
+    ],
+    "sm5-59": [
+      "Unimplemented attack: Lunar Payback",
+      "Unimplemented attack: Psychic"
+    ],
+    "sm5-62": [
+      "Prism Star rules (one-per-deck and Lost Zone) not yet implemented",
+      "Unimplemented attack: Full Moon Star",
+      "Unimplemented attack: Psystorm"
+    ],
+    "sm5-63": [
+      "Unimplemented attack: Moon's Eclipse-GX",
+      "Unimplemented Ability: Invasion"
+    ],
+    "sm5-65": [
+      "Unimplemented attack: Clean Hit",
+      "Unimplemented attack: Wild Crash"
+    ],
+    "sm5-66": [
+      "Unimplemented attack: Detect"
+    ],
+    "sm5-67": [
+      "Unimplemented Ability: Precognitive Aura"
+    ],
+    "sm5-68": [
+      "Unimplemented attack: Eleventh Hour Tackle"
+    ],
+    "sm5-69": [
+      "Unimplemented attack: Dust Cannon"
+    ],
+    "sm5-70": [
+      "Unimplemented Ability: Power Huddle"
+    ],
+    "sm5-72": [
+      "Unimplemented attack: Rip and Run"
+    ],
+    "sm5-73": [
+      "Unimplemented attack: Sneaky Smash"
+    ],
+    "sm5-74": [
+      "Unimplemented attack: Evil Admonition"
+    ],
+    "sm5-75": [
+      "Unimplemented attack: Gas Bond"
+    ],
+    "sm5-76": [
+      "Unimplemented attack: Sticky Smokescreen"
+    ],
+    "sm5-77": [
+      "Prism Star rules (one-per-deck and Lost Zone) not yet implemented",
+      "Unimplemented attack: Abyssal Sleep",
+      "Unimplemented Ability: Nightmare Star"
+    ],
+    "sm5-78": [
+      "Unimplemented attack: Iron Head"
+    ],
+    "sm5-79": [
+      "Unimplemented attack: Gold Rush"
+    ],
+    "sm5-80": [
+      "Unimplemented attack: Searching Magnet"
+    ],
+    "sm5-82": [
+      "Unimplemented attack: Zap Cannon"
+    ],
+    "sm5-83": [
+      "Unimplemented attack: Zap Cannon",
+      "Unimplemented Ability: Magnetic Circuit"
+    ],
+    "sm5-85": [
+      "Unimplemented attack: Push Down",
+      "Unimplemented Ability: Earthen Shield"
+    ],
+    "sm5-87": [
+      "Unimplemented attack: Psychic Resonance"
+    ],
+    "sm5-88": [
+      "Unimplemented attack: Guard Press",
+      "Unimplemented attack: Boiling Impact"
+    ],
+    "sm5-89": [
+      "Prism Star rules (one-per-deck and Lost Zone) not yet implemented",
+      "Unimplemented attack: Radiant Star",
+      "Unimplemented attack: Corona Impact"
+    ],
+    "sm5-90": [
+      "Unimplemented attack: Meteor Tempest",
+      "Unimplemented attack: Sun's Eclipse-GX"
+    ],
+    "sm5-91": [
+      "Unimplemented Ability: Change Clothes"
+    ],
+    "sm5-93": [
+      "Unimplemented Ability: Illuminate"
+    ],
+    "sm5-94": [
+      "Unimplemented attack: Psywave",
+      "Unimplemented attack: Magical Swap"
+    ],
+    "sm5-95": [
+      "Unimplemented attack: Exeggutor's Paradise",
+      "Unimplemented attack: Draco Meteor Barrage"
+    ],
+    "sm5-96": [
+      "Unimplemented attack: Ascension"
+    ],
+    "sm5-97": [
+      "Unimplemented Ability: Rock Hiding"
+    ],
+    "sm5-98": [
+      "Unimplemented attack: Ascension"
+    ],
+    "sm5-99": [
+      "Unimplemented attack: Quick Dive",
+      "Unimplemented attack: Royal Blades"
+    ],
+    "sm5-100": [
+      "Unimplemented attack: Overclock",
+      "Unimplemented attack: Shred",
+      "Unimplemented attack: Timeless-GX"
+    ],
+    "sm5-101": [
+      "Unimplemented attack: Spatial Control",
+      "Unimplemented attack: Hydro Pressure",
+      "Unimplemented attack: Zero Vanish-GX"
+    ],
+    "sm5-102": [
+      "Unimplemented attack: Lap Up",
+      "Unimplemented attack: Slam"
+    ],
+    "sm5-103": [
+      "Unimplemented attack: Dangerous Lick"
+    ],
+    "sm5-105": [
+      "Unimplemented attack: Palette of Friends"
+    ],
+    "sm5-106": [
+      "Unimplemented attack: Weak Kneed"
+    ],
+    "sm5-107": [
+      "Unimplemented attack: Stompy Stomp",
+      "Unimplemented attack: Happy Turn"
+    ],
+    "sm5-108": [
+      "Unimplemented attack: Gentle Bite"
+    ],
+    "sm5-109": [
+      "Unimplemented attack: Own the Place",
+      "Unimplemented attack: Toss Aside"
+    ],
+    "sm5-110": [
+      "Unimplemented attack: Spinning Fan",
+      "Unimplemented Ability: Roto Motor"
+    ],
+    "sm5-112": [
+      "Unimplemented attack: Scout"
+    ],
+    "sm5-113": [
+      "Unimplemented attack: Identify"
+    ],
+    "sm5-114": [
+      "Unimplemented attack: Resource Management"
+    ],
+    "sm5-115": [
+      "Unimplemented attack: Merciless Strike"
+    ],
+    "sm5-117": [
+      "Unimplemented attack: Outrage",
+      "Unimplemented attack: Dragon Pulse"
+    ],
+    "sm5-118": [
+      "Unimplemented Trainer effect"
+    ],
+    "sm5-119": [
+      "Unimplemented Trainer effect"
+    ],
+    "sm5-119a": [
+      "Unimplemented Trainer effect"
+    ],
+    "sm5-120": [
+      "Prism Star rules (one-per-deck and Lost Zone) not yet implemented",
+      "Unimplemented Trainer effect"
+    ],
+    "sm5-121": [
+      "Unimplemented Trainer effect"
+    ],
+    "sm5-122": [
+      "Unimplemented Trainer effect"
+    ],
+    "sm5-122a": [
+      "Unimplemented Trainer effect"
+    ],
+    "sm5-123": [
+      "Unimplemented Trainer effect"
+    ],
+    "sm5-124": [
+      "Unimplemented Trainer effect"
+    ],
+    "sm5-126": [
+      "Unimplemented Trainer effect"
+    ],
+    "sm5-127": [
+      "Unimplemented Trainer effect"
+    ],
+    "sm5-128": [
+      "Unimplemented Trainer effect"
+    ],
+    "sm5-129": [
+      "Unimplemented Trainer effect"
+    ],
+    "sm5-130": [
+      "Unimplemented Trainer effect"
+    ],
+    "sm5-131": [
+      "Unimplemented Trainer effect"
+    ],
+    "sm5-132": [
+      "Unimplemented Trainer effect"
+    ],
+    "sm5-133": [
+      "Unimplemented Trainer effect"
+    ],
+    "sm5-134": [
+      "Unimplemented Trainer effect"
+    ],
+    "sm5-135": [
+      "Unimplemented Trainer effect"
+    ],
+    "sm5-135a": [
+      "Unimplemented Trainer effect"
+    ],
+    "sm5-136": [
+      "Prism Star rules (one-per-deck and Lost Zone) not yet implemented",
+      "Unimplemented Special Energy rules"
+    ],
+    "sm5-137": [
+      "Unimplemented Special Energy rules"
+    ],
+    "sm5-138": [
+      "Unimplemented Special Energy rules"
+    ],
+    "sm5-139": [
+      "Unimplemented attack: Grand Bloom-GX",
+      "Unimplemented Ability: Breath of the Leaves"
+    ],
+    "sm5-140": [
+      "Unimplemented attack: Fast Raid",
+      "Unimplemented attack: Beauty-GX"
+    ],
+    "sm5-141": [
+      "Unimplemented attack: Polar Spear-GX",
+      "Unimplemented Ability: Freezing Gaze"
+    ],
+    "sm5-142": [
+      "Unimplemented attack: Rumbling Wires",
+      "Unimplemented attack: Lighting-GX",
+      "Unimplemented Ability: Flashing Head"
+    ],
+    "sm5-143": [
+      "Unimplemented attack: Moon's Eclipse-GX",
+      "Unimplemented Ability: Invasion"
+    ],
+    "sm5-144": [
+      "Unimplemented attack: Rocket Fall",
+      "Unimplemented attack: Blaster-GX"
+    ],
+    "sm5-145": [
+      "Unimplemented attack: Meteor Tempest",
+      "Unimplemented attack: Sun's Eclipse-GX"
+    ],
+    "sm5-146": [
+      "Unimplemented attack: Overclock",
+      "Unimplemented attack: Shred",
+      "Unimplemented attack: Timeless-GX"
+    ],
+    "sm5-147": [
+      "Unimplemented attack: Spatial Control",
+      "Unimplemented attack: Hydro Pressure",
+      "Unimplemented attack: Zero Vanish-GX"
+    ],
+    "sm5-148": [
+      "Unimplemented Trainer effect"
+    ],
+    "sm5-149": [
+      "Unimplemented Trainer effect"
+    ],
+    "sm5-152": [
+      "Unimplemented Trainer effect"
+    ],
+    "sm5-154": [
+      "Unimplemented Trainer effect"
+    ],
+    "sm5-155": [
+      "Unimplemented Trainer effect"
+    ],
+    "sm5-156": [
+      "Unimplemented Trainer effect"
+    ],
+    "sm5-157": [
+      "Unimplemented attack: Grand Bloom-GX",
+      "Unimplemented Ability: Breath of the Leaves"
+    ],
+    "sm5-158": [
+      "Unimplemented attack: Fast Raid",
+      "Unimplemented attack: Beauty-GX"
+    ],
+    "sm5-159": [
+      "Unimplemented attack: Polar Spear-GX",
+      "Unimplemented Ability: Freezing Gaze"
+    ],
+    "sm5-160": [
+      "Unimplemented attack: Rumbling Wires",
+      "Unimplemented attack: Lighting-GX",
+      "Unimplemented Ability: Flashing Head"
+    ],
+    "sm5-161": [
+      "Unimplemented attack: Moon's Eclipse-GX",
+      "Unimplemented Ability: Invasion"
+    ],
+    "sm5-162": [
+      "Unimplemented attack: Rocket Fall",
+      "Unimplemented attack: Blaster-GX"
+    ],
+    "sm5-163": [
+      "Unimplemented attack: Meteor Tempest",
+      "Unimplemented attack: Sun's Eclipse-GX"
+    ],
+    "sm5-164": [
+      "Unimplemented attack: Overclock",
+      "Unimplemented attack: Shred",
+      "Unimplemented attack: Timeless-GX"
+    ],
+    "sm5-165": [
+      "Unimplemented attack: Spatial Control",
+      "Unimplemented attack: Hydro Pressure",
+      "Unimplemented attack: Zero Vanish-GX"
+    ],
+    "sm5-167": [
+      "Unimplemented Trainer effect"
+    ],
+    "sm5-168": [
+      "Unimplemented Trainer effect"
+    ],
+    "sm5-170": [
+      "Unimplemented Special Energy rules"
+    ],
+    "sm5-171": [
+      "Unimplemented Special Energy rules"
+    ]
+  },
+  "attacks": 237,
+  "abilities": 37,
+  "pokemonGX": 27,
+  "gxAttackPrints": 27,
+  "energyPrints": 5,
+  "prismStarPrints": 6,
+  "sourceGitBlob": "66cbd13b706b789de3b8cce2f5c9fc95135a33b0"
+}
