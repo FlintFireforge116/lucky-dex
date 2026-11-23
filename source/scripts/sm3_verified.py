@@ -176,6 +176,24 @@ SM3_STAGE3_ABILITIES={
  'Stance':('When you play this Pokémon from your hand to evolve',{'type':'triggered','event':'evolved','fromHandOnly':True,'effect':E('preventDamage',target='self',duration='opponentTurn',preventEffects=True)}),
 }
 
+# Stage 4: exact printed effects for the last 26 collector prints.
+SM3_STAGE4_ATTACKS={
+ 'Odor Sleuth':('Flip 2 coins. For each heads, put a card from your discard pile into your hand.',E('sm3Rule',rule='odorSleuth')),
+ 'Vacuum Bolt':('You may do 80 more damage.',E('sm3Rule',rule='vacuumBolt')),
+ 'Unarmed':("If you have no cards in your hand, ignore all Energy in this attack's cost.",E('sm3Rule',rule='unarmed')),
+ 'Perplexing Eyes':("The Defending Pokémon's Weakness is now Psychic",E('sm3Rule',rule='perplexingEyes')),
+ 'Dust Storm':('Discard all cards from both Active Pokémon.',E('sm3Rule',rule='dustStorm')),
+ 'Intentional Grounding':('Discard a Pokémon Tool card from your hand. If you don\'t, this attack does nothing.',E('sm3Rule',rule='intentionalGrounding')),
+ 'Peerless Hundred Blows-GX':('This attack does 50 damage times',E('sm3Rule',rule='peerlessHundredBlows')),
+ 'Sparkling Wish':('Search your deck for a card that evolves from 1 of your Pokémon',E('sm3Rule',rule='sparklingWish')),
+ 'Screech':('During your next turn, the Defending Pokémon takes 60 more damage',E('sm3Rule',rule='screech')),
+}
+SM3_STAGE4_ABILITIES={
+ 'Dark Invitation':('Once during your turn (before your attack), you may have your opponent reveal their hand.',{'type':'activated','oncePerTurn':True,'effect':E('sm3Rule',rule='darkInvitation')}),
+ 'Shadow Hunt':('This Pokémon can use the attacks of',{'type':'passive','effect':E('sm3Rule',rule='shadowHunt')}),
+ 'Restoration':('Once during your turn (before your attack), if this Pokémon is in your discard pile',{'type':'activated','oncePerTurn':True,'fromDiscard':True,'effect':E('sm3Rule',rule='restoration')}),
+ 'Initialize':('When you play this Pokémon from your hand to evolve',{'type':'triggered','event':'evolved','fromHandOnly':True,'effect':E('sm3Rule',rule='initialize')}),
+}
 def attack(row,a):
     title,cost,damage,printed=a
     if not norm(printed):return N
@@ -183,6 +201,8 @@ def attack(row,a):
         import re
         amount=int(re.search(r'This attack does (\d+) damage',printed).group(1))
         return E('selectedDamage',target='opponentPokemon',amount=amount)
+    stage4=SM3_STAGE4_ATTACKS.get(title)
+    if stage4 and norm(stage4[0]) in norm(printed):return deepcopy(stage4[1])
     stage3=SM3_STAGE3_ATTACKS.get(title)
     if stage3 and norm(stage3[0]) in norm(printed):return deepcopy(stage3[1])
     newly=SM3_CONTINUATION_ATTACKS.get(title)
@@ -239,7 +259,17 @@ for row in rows:
     number=str(row[0]);pair=SM3_TRAINER_MAP.get(number)
     if pair and row[1]==pair[0] and row[13]:TRAINER_EFFECTS[number]=(row[3][0],deepcopy(pair[1]))
 
-BASIC={'167':'Fire','168':'Darkness','169':'Fairy'}
+for _n,_name,_key in [
+  ('116','Kiawe','kiawe'),('116a','Kiawe','kiawe'),('144','Kiawe','kiawe'),
+  ('120','Plumeria','plumeria'),('145','Plumeria','plumeria'),
+  ('123','Sophocles','sophocles'),('146','Sophocles','sophocles'),
+  ('128','Wishful Baton','wishfulBaton')]:
+    for _r in rows:
+        if str(_r[0])==_n and _r[1]==_name and _r[2]=='Trainer':
+            TRAINER_EFFECTS[_n]=(_r[3][0],E('sm3Rule',rule=_key))
+            break
+
+BASIC={'167' :'Fire','168':'Darkness','169':'Fairy'}
 ENERGIES={}
 TRAINERS=TRAINER_EFFECTS
 
@@ -257,5 +287,9 @@ for row in rows:
 for row in rows:
     for title,ability_type,printed in row[8]:
         pair=SM3_STAGE3_ABILITIES.get(title)
+        if pair and norm(pair[0]) in norm(printed):ABILITY_EFFECTS[title]=deepcopy(pair[1])
+for row in rows:
+    for title,ability_type,printed in row[8]:
+        pair=SM3_STAGE4_ABILITIES.get(title)
         if pair and norm(pair[0]) in norm(printed):ABILITY_EFFECTS[title]=deepcopy(pair[1])
 ABILITIES=ABILITY_EFFECTS

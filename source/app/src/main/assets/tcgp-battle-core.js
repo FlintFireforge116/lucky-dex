@@ -902,6 +902,7 @@
     // symbol array. Array.toString() inserts commas (e.g. [R,R,C] -> R,R,C),
     // which appear as phantom Energy icons and make legal moves unpayable.
     cost=Array.isArray(cost)?cost.join(''):String(cost);
+    if(state.format==='classic'&&slot?.cardId==='sm3-48'&&attack?.name==='Unarmed'&&!state.sides[side].hand.length)cost='';
     if(state.format==='classic'&&['Poliwag','Poliwhirl','Poliwrath'].includes(data.cardById(slot?.cardId)?.name)&&
       pokemonOn(state.sides[side]).some(p=>p.cardId==='xy3-18'&&!effects.abilitiesSuppressed(state,side,p,data.cardById)))cost=cost.replace(/C/g,'');
     // Head Ringer is owned by the opponent but increases the holder's cost.
@@ -912,6 +913,7 @@
        data.cardById(slot?.cardId)?.types?.includes('Psychic'))cost=cost.replace('C','');
     if(state.format==='classic'&&slot?.cardId==='bw10-35'&&!effects.abilitiesSuppressed(state,side,slot,data.cardById)){
       cost=Array.isArray(cost)?cost.join(''):String(cost);
+    if(state.format==='classic'&&slot?.cardId==='sm3-48'&&attack?.name==='Unarmed'&&!state.sides[side].hand.length)cost='';
       const plasmaCount=pokemonOn(state.sides[side==='player'?'opponent':'player']).filter(p=>data.cardById(p.cardId)?.teamPlasma||activeToolsOf(state,p).some(r=>r.cardId==='bw9-104')).length;
       for(let i=0;i<plasmaCount;i++){const at=cost.lastIndexOf('C');if(at<0)break;cost=cost.slice(0,at)+cost.slice(at+1);}
     }
@@ -1113,6 +1115,20 @@
       const seen=new Set(out.map(x=>x.cardId+':'+x.attackIndex));
       for(const p of pokemonOn(state.sides[side])){const c=data.cardById(p.cardId);if(p===slot||c?.name!=='Arceus'||!c.battleEnabled)continue;
         for(const [attackIndex,attack] of (c.attacks||[]).entries()){const key=c.id+':'+attackIndex;if(seen.has(key))continue;seen.add(key);out.push({cardId:c.id,attackIndex,attack,borrowed:true});}}
+    }
+    // SM3 Marshadow-GX Shadow Hunt: borrow only Basic Pokémon attacks from our
+    // actual physical discard (not Energy Zone). Printed Energy costs and the
+    // once-per-game GX restriction still apply to borrowed attacks.
+    if(state.format==='classic'&&['sm3-80','sm3-137','sm3-156'].includes(slot.cardId)&&
+       !effects.abilitiesSuppressed(state,side,slot,data.cardById)){
+      const seen=new Set(out.map(x=>x.cardId+':'+x.attackIndex));
+      for(const ref of state.sides[side].discard||[]){
+        const c=data.cardById(ref.cardId);if(c?.kind!=='pokemon'||c.stage!=='Basic'||!c.battleEnabled)continue;
+        for(const [attackIndex,attack] of (c.attacks||[]).entries()){
+          const key=c.id+':'+attackIndex;if(seen.has(key))continue;seen.add(key);
+          out.push({cardId:c.id,attackIndex,attack,borrowed:true});
+        }
+      }
     }
     // Triumphant Mew Prime Lost Link borrows printed attacks of Pokémon in
     // either player's Lost Zone, never cards still in discard/deck/hand.
@@ -1675,7 +1691,7 @@
         if(state.format==='classic'&&source.cardId==='dp6-81'&&(
           source===s.active||!s.active||!/^Unown(?: \[|\b)/.test(data.cardById(s.active.cardId)?.name||'')))return;
 
-        if(pl1PowerBlocked(state,side,source,ability)||abilityBlockedByStatus(ability,source)||ability.type==='passive'||ability.type==='triggered'||ability.activeOnly&&source!==s.active||ability.benchOnly&&source===s.active)return;
+        if(pl1PowerBlocked(state,side,source,ability)||abilityBlockedByStatus(ability,source)||ability.type==='passive'||ability.type==='triggered'||ability.fromDiscard||ability.activeOnly&&source!==s.active||ability.benchOnly&&source===s.active)return;
         if(state.format==='classic'&&sourceCard?.pokemonEx&&ability.printedPowerType==='power'&&
            ['player','opponent'].some(w=>pokemonOn(state.sides[w]).some(p=>p.cardId==='ex14-96'&&!effects.abilitiesSuppressed(state,w,p,data.cardById))))return;
         // Fellow Boost can only use an actual Basic Energy card in HAND,
@@ -1775,6 +1791,7 @@
         if(source.cardId==='bw7-63'&&!(pokemonOn(foe).length>1&&pokemonOn(foe).some(p=>Number(p.damage||0)>=10)))return;
         if(source.cardId==='bw7-68'&&Number(s.bw7LongDistanceHypnosisTurn)===Number(s.turnCount))return;
         if(source.cardId==='bw7-108'&&!s.hand.some(r=>data.cardById(r.cardId)?.kind==='pokemon'&&data.cardById(r.cardId)?.stage==='Basic'))return;
+        if(state.format==='classic'&&source.cardId==='sm3-53'&&(foe.bench.length>=Number(foe.benchLimit||3)||!foe.hand.some(r=>{const c=data.cardById(r.cardId);return c?.kind==='pokemon'&&c.stage==='Basic';})))return;
         // XY2 Ability legality: do not offer repeatable no-op actions to CPU.
         if(state.format==='classic'&&source.cardId==='xy2-7'&&!s.hand.some(r=>data.cardById(r.cardId)?.basicEnergy&&data.cardById(r.cardId)?.energyType==='Grass'))return;
         if(state.format==='classic'&&source.cardId==='xy2-23'&&(
@@ -1834,6 +1851,17 @@
       s.bw6RebirthUsed=s.bw6RebirthUsed||{};
       for(const ref of s.discard){const mon=data.cardById(ref.cardId);
         if(mon?.name!=='Ho-Oh-EX'||mon.setId!=='bw6'||s.bw6RebirthUsed[ref.uid]===s.turnCount)continue;
+        actions.push({type:'abilityDiscard',cardId:ref.cardId,sourceUid:ref.uid});
+      }
+    }
+    // Darkrai-GX Restoration is used from the discard pile, NOT from a
+    // Pokémon already in play. It must exist in the real physical discard.
+    if(state.format==='classic'&&Number(state.xy7HexManiacUntil||0)<Number(state.turnNumber)&&
+       s.bench.length<Number(s.benchLimit||3)){
+      s.sm3RestorationUsed=s.sm3RestorationUsed||{};
+      for(const ref of s.discard||[]){
+        if(!['sm3-88','sm3-88a','sm3-139','sm3-158'].includes(ref.cardId)||
+          s.sm3RestorationUsed[ref.uid]===s.turnCount)continue;
         actions.push({type:'abilityDiscard',cardId:ref.cardId,sourceUid:ref.uid});
       }
     }
@@ -2556,6 +2584,20 @@
         }
         const eventSource=slot.dp2ForcedDiscard?null:cause==='attack'?source:null;
         if(state.format==='classic'&&slot===s.active&&eventSource?.attack&&eventSource.side===foeSide){
+          // SM3 Wishful Baton: only a defending Active KO by attack damage,
+          // only Basic Energy, only one receiving Bench Pokémon. The knockout
+          // pauses until owner selects how many units (up to three) to move.
+          if(!slot._sm3WishfulBatonResolved&&activeToolsOf(state,slot).some(r=>r.cardId==='sm3-128')&&
+             s.bench.length&&Object.values(slot.energy||{}).some(n=>Number(n)>0)){
+            slot._sm3WishfulBatonResolved=true;
+            const count=Math.min(3,Object.values(slot.energy).reduce((sum,n)=>sum+Math.max(0,Number(n||0)),0));
+            beginEffectChoice(state,side,slot,{kind:'option',side:'self',
+              options:Array.from({length:count+1},(_,n)=>'Move '+n+' Basic Energy'+(n===1?'':' units')),
+              effect:{type:'sm3Rule',rule:'wishfulBaton',stage:'count',sourceUid:slot.uid,max:count}});
+            state.pendingChoice.resume='knockout';state.pendingChoice.koResume=resume||null;
+            state.pendingChoice.koCause=cause||null;
+            return true;
+          }
           // EXP.ALL takes exactly one basic Energy from the knocked-out Active
           // before its remaining Energy enters the owner's discard ledger.
           const receiver=s.bench.find(p=>!data.cardById(p.cardId)?.pokemonEx&&activeToolsOf(state,p).some(t=>t.cardId==='ex6-91'));
@@ -3300,6 +3342,26 @@ const target=slotForTarget(s,action.target,action.benchIndex);if(card.id==='pl2-
         ability:propagation?'Propagation':'Prehistoric Call',fromDiscard:true});
       return state;
     }
+    if(matched.type==='abilityDiscard'&&['sm3-88','sm3-88a','sm3-139','sm3-158'].includes(matched.cardId)){
+      // The card itself must be present and the Bench must have a free slot.
+      const at=s.discard.findIndex(r=>r.uid===matched.sourceUid&&r.cardId===matched.cardId);
+      if(at<0||s.bench.length>=Number(s.benchLimit||3))throw new Error('Darkrai-GX Restoration is no longer legal.');
+      s.sm3RestorationUsed=s.sm3RestorationUsed||{};
+      if(s.sm3RestorationUsed[matched.sourceUid]===s.turnCount)throw new Error('Restoration already used this turn.');
+      const [ref]=s.discard.splice(at,1),newSlot=makePokemonSlot(ref.cardId,s.turnCount,ref.uid);
+      const atBench=emptyBenchSlots(s)[0];placeOnBench(s,newSlot,atBench);
+      s.sm3RestorationUsed[matched.sourceUid]=s.turnCount;
+      // Energy is taken from an actual discard source, never created from the
+      // fresh Zone. Physical Basic Darkness cards are preferred if present.
+      const actual=s.discard.findIndex(r=>{const c=data.cardById(r.cardId);return c?.basicEnergy&&(c.energyType||c.subtype)==='Darkness';});
+      if(actual>=0)s.discard.splice(actual,1);
+      else if(Number(s.energyDiscard?.Darkness||0)>0)s.energyDiscard.Darkness--;
+      else {state.log.push({type:'sm3Restoration',side,cardId:ref.cardId,energyAttached:0});triggerAbilities(state,'benched',side,newSlot,{fromDiscard:true});return state;}
+      newSlot.energy.Darkness=1;
+      state.log.push({type:'sm3Restoration',side,cardId:ref.cardId,energyAttached:1,targetUid:newSlot.uid});
+      triggerAbilities(state,'benched',side,newSlot,{fromDiscard:true});
+      return state;
+    }
     if(matched.type==='abilityDiscard'){
       const ref=s.discard.find(x=>x.uid===matched.sourceUid&&x.cardId===matched.cardId);
       const card=data.cardById(ref?.cardId),ability=card?.abilities?.find(a=>a.name==='Rebirth');
@@ -3790,6 +3852,8 @@ const target=slotForTarget(s,action.target,action.benchIndex);if(card.id==='pl2-
           const oldWeakness=defender.weaknessOverride;
           if(noPlasmaWeakness)defender.weaknessOverride='__bw8_no_weakness__';
           try{damage=effects.attackDamageWithState(state,side,s.active,foeSide,defender,damage,data.cardById);}finally{if(noPlasmaWeakness)defender.weaknessOverride=oldWeakness;}
+          if(state.format==='classic'&&damage>0&&Number(defender.sm3ScreechUntil||0)>=Number(state.turnNumber)&&
+             defender.sm3ScreechSource===side)damage+=60; // AFTER Weakness and Resistance
           if(state.format==='classic'&&Number(defender.xy11LockOn?.turn)===Number(state.turnNumber)&&
              defender.xy11LockOn.sourceSide===side&&damage>0)
             damage+=120; // AFTER Weakness and Resistance, before other damage modifiers.

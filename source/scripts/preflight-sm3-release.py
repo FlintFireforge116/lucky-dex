@@ -8,6 +8,7 @@ TESTS=('tests/v07413-burning-shadows-integration.test.cjs',
        'tests/v07414-burning-shadows-outcomes.test.cjs',
        'tests/v07415-burning-shadows-continuation.test.cjs',
        'tests/v07416-burning-shadows-stage3.test.cjs',
+       'tests/v07417-burning-shadows-final-26.test.cjs',
        'tests/v07404-basic-energy-search-coins.test.cjs',
        'tests/v07406-basic-energy-search-special-cases.test.cjs',
        'tests/v07385-fates-collide-stage3.test.cjs',
@@ -15,9 +16,10 @@ TESTS=('tests/v07413-burning-shadows-integration.test.cjs',
 def check():
  subprocess.run([sys.executable,'scripts/check-gradle-source.py','--self-test'],cwd=ROOT,check=True)
  c=json.loads((ROOT/'scripts/sm3_release_contract.json').read_text())
- assert (c['set'],c['stage'],c['release'])==('sm3','stage1','0.69.403')
+ assert (c['set'],c['stage'],c['release'])==('sm3','complete','0.69.403')
  assert (c['printedTotal'],c['attackPrints'],c['abilities'],c['pokemonGX'],c['gxAttackPrints'],c['energyPrints'])==(177,274,27,40,40,3)
  assert c['pin']=='3476b25cb32b6e748c7fdd9405e6a5329a665d3d'
+ assert c['minimumBattleEnabled']==177
  assert c['variants']==['18a','39a','88a','92a','105a','112a','115a','116a']
  p=ROOT/'data/classic/sm3-print-compact.json'
  assert p.exists(),'SM3 canonical compact source must be bundled (never fetch on GitHub build)'
@@ -48,7 +50,7 @@ def full():
  subprocess.run([sys.executable,'scripts/build-sm3.py'],cwd=ROOT,check=True)
  x=json.loads((ROOT/'docs/SM3_BUILD_COVERAGE.json').read_text())
  assert x['printed']==177 and x['attacks']==274 and x['abilities']==27
- assert x['battleReady']>=65 and len(x['gated'])==177-x['battleReady']
+ assert x['battleReady']==177 and len(x['gated'])==0,'SM3 completion requires all 177 prints implemented'
  assert all(x['gated'].values())
  subprocess.run(['node','--test',*TESTS],cwd=ROOT,check=True)
  print(f"PASS SM3 full build gate: {x['battleReady']} playable and {len(x['gated'])} explicitly gated")

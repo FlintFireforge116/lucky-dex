@@ -2,7 +2,7 @@
   "set": "sm3",
   "name": "Burning Shadows",
   "release": "0.69.403",
-  "stage": "stage1",
+  "stage": "complete",
   "printedTotal": 177,
   "attackPrints": 274,
   "abilities": 27,
@@ -21,5 +21,5 @@
     "116a"
   ],
   "compactSha256": "99f8b1255e7801818b6d1be3d00858193787bbcc439869fc2470e9855463c2b6",
-  "minimumBattleEnabled": 65
+  "minimumBattleEnabled": 177
 }

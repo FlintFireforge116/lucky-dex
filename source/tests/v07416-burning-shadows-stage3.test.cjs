@@ -111,7 +111,7 @@ test('Nature Judgment offers both 120 and 180 damage, boosted discards all Energ
 }));
 test('Tapu Wilderness GX heals all of own damage',()=>{const s=attack('sm3-130','Tapu Wilderness-GX',s=>{s.sides.player.active.damage=100;});assert.equal(s.sides.player.active.damage,0);});
 
-test('Stage 3 new support reaches 151 prints',()=>assert.equal(sm3.CARDS.filter(c=>c.battleEnabled).length,151));
+test('Stage 3 support is not lost when later prints are enabled',()=>assert.ok(sm3.CARDS.filter(c=>c.battleEnabled).length>=151));
 test('Acerola returns an actually damaged Pokemon with Basic Energy and tool',()=>withDummy(()=>{
  const s=setup('sm3-1');const own=s.sides.player;own.bench[0].damage=20;own.bench[0].energy={Fairy:1};own.bench[0].tool={uid:'tool',cardId:'sm2-121'};
  own.hand=[{uid:'acer',cardId:'sm3-112'}];choose(s,'player',a=>a.type==='trainer'&&a.cardId==='sm3-112');resolve(s);
