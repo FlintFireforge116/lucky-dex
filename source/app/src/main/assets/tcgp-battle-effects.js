@@ -43,7 +43,7 @@
       case 'distributeDiscardCounters':need(integer(effect.amount)&&effect.amount>0&&effect.amount%10===0,'invalid discard counters');break;
       case 'sm3Rule':need(typeof effect.rule==='string'&&!!effect.rule,'invalid SM3 rule');break;
       case 'sm4Rule':need(typeof effect.rule==='string'&&!!effect.rule,'invalid SM4 rule');break;
-      case 'sm5Rule':need(['mars','prismHandEnergy','prismDiscardEnergy','cyrusPrism','palPad','specialMow','lunarFall','lunarPayback','damageTransport','royalBlades','eleventhHour','lightingGX','blasterGX','grandBloom','changeClothes','memoryTool'].includes(effect.rule),'invalid SM5 rule');break;
+      case 'sm5Rule':need(['mars','prismHandEnergy','prismDiscardEnergy','cyrusPrism','palPad','specialMow','lunarFall','lunarPayback','damageTransport','royalBlades','eleventhHour','lightingGX','blasterGX','grandBloom','changeClothes','memoryTool','loomOver','iceShard','psychicResonance','mercilessStrike','identify','deepCurrents','resourceManagement','gigaDrain','sneakySmash','paletteOfFriends'].includes(effect.rule),'invalid SM5 rule');break;
       case 'sm2Rule':need(typeof effect.rule==='string'&&!!effect.rule,'invalid SM2 rule');break;
       case 'sm2Hala':case 'sm2MaxPotion':case 'sm2FieldBlower':case 'sm2RescueStretcher':break;
       case 'multiTargetHeal':need(effect.target==='selfBench','invalid multi-target heal selector');need(integer(effect.count)&&effect.count>0,'invalid multi-target heal count');need(nonnegative(effect.amount),'invalid multi-target heal amount');break;
@@ -19238,6 +19238,60 @@
         // Stage 5 Prism Star cards: each effect is tied to exact printed text.
         // Basic Energy discarded by an attack lives in energyDiscard, not the
         // fresh Energy Zone. No Prism Star effect may synthesize that energy.
+        if(effect.rule==='identify'){
+          log({type:'sm5Identify',revealedSide:ctx.foeSide,cards:other(ctx).hand.map(r=>r.cardId)});
+          break;
+        }
+        if(effect.rule==='gigaDrain'){
+          const a=ctx.attacker;if(a&&!healingIsBlocked(ctx.state,a,ctx.cardById)){
+            const healed=Math.min(Math.max(0,Number(a.damage||0)),Math.max(0,Number(ctx.dealtDamage||0)));
+            a.damage-=healed;log({type:'sm5GigaDrain',healed});
+          }break;
+        }
+        if(effect.rule==='deepCurrents'||effect.rule==='resourceManagement'){
+          const ss=own(ctx),count=effect.rule==='deepCurrents'?5:3,remaining=Math.max(0,Number(effect.remaining??count));
+          const eligible=r=>effect.rule==='resourceManagement'||
+            (ctx.cardById(r?.cardId)?.basicEnergy&&
+             (ctx.cardById(r.cardId)?.energyType||ctx.cardById(r.cardId)?.subtype)==='Water');
+          if(ctx.resolvingChoice){
+            if(ctx.action?.choiceSkip){if(effect.rule==='deepCurrents')ctx.shuffle?.(ctx.state,ss.deck);break;}
+            const index=Number(ctx.action?.choiceDiscardIndex),ref=ss.discard[index];
+            if(!Number.isInteger(index)||!eligible(ref))break;
+            ss.deck.push(...ss.discard.splice(index,1));
+            log({type:'sm5DiscardToDeck',rule:effect.rule,cardId:ref.cardId,uid:ref.uid});
+          }
+          const left=ctx.resolvingChoice?remaining-1:remaining;
+          const available=ss.discard.filter(eligible);
+          if(left>0&&available.length)ctx.requestChoice?.({kind:'discardCard',side:'self',allowedUids:available.map(r=>r.uid),effect:{...effect,remaining:left}});
+          else if(effect.rule==='deepCurrents')ctx.shuffle?.(ctx.state,ss.deck);
+          break;
+        }
+        if(effect.rule==='sneakySmash'){
+          const foe=other(ctx);
+          const options=p=>[
+            ...Object.entries(p.energy||{}).filter(([,count])=>Number(count)>0).map(([type])=>({kind:'basic',type})),
+            ...(p.specialEnergy||[]).map(r=>({kind:'special',uid:r.uid})),
+          ];
+          if(ctx.resolvingChoice&&effect.targetUid){
+            const target=pokemonOn(foe).find(p=>p.uid===effect.targetUid),pick=options(target||{})[Number(ctx.action?.choiceOption)];
+            if(!target||!pick)break;
+            if(pick.kind==='basic'&&target.energy[pick.type]>0){target.energy[pick.type]--;
+              recordDiscardedEnergy(foe,pick.type,1);}
+            else if(pick.kind==='special'){
+              const i=(target.specialEnergy||[]).findIndex(r=>r.uid===pick.uid);
+              if(i<0)break;foe.discard.push(...target.specialEnergy.splice(i,1));
+            }else break;
+            log({type:'sm5SneakySmash',targetUid:target.uid,pick});break;
+          }
+          if(ctx.resolvingChoice){
+            const target=selected(ctx,foe);
+            if(target&&options(target).length)ctx.requestChoice?.({kind:'option',side:'self',options:options(target).map(x=>x.kind==='basic'?x.type+' Energy':(ctx.cardById(target.specialEnergy.find(r=>r.uid===x.uid)?.cardId)?.name||'Special Energy')),effect:{...effect,targetUid:target.uid}});
+            break;
+          }
+          const eligible=pokemonOn(foe).filter(p=>options(p).length);
+          if(eligible.length)ctx.requestChoice?.({kind:'pokemon',side:'self',selectionSide:ctx.foeSide,includeActive:true,allowedUids:eligible.map(p=>p.uid),effect});
+          break;
+        }
         if(effect.rule==='blasterGX'){
           const ss=own(ctx);
           for(const ref of ss.prizes||[])ref.faceUp=true;
@@ -25994,6 +26048,19 @@ if(ctx.isAbility){const targetSide=pokemonOn(own(ctx)).includes(s)?ctx.side:ctx.
       }
       if(e.type==='xy10Final'&&e.rule==='rapidBlaster'){
         damage+=20*Math.max(0,Number(ctx.action?.effectSelection||0));pending.push(e);return;
+      }
+      if(e.type==='sm5Rule'&&['loomOver','iceShard','psychicResonance','mercilessStrike','identify','paletteOfFriends'].includes(e.rule)){
+        const us=own(ctx),foe=other(ctx),def=ctx.defender,a=ctx.attacker,card=p=>ctx.cardById(p?.cardId);
+        if(e.rule==='loomOver')damage=Math.max(0,damage-10*Math.floor(Number(a?.damage||0)/10));
+        if(e.rule==='iceShard'&&effectiveTypes(ctx.state,ctx.foeSide,def,ctx.cardById).includes('Fighting'))damage+=40;
+        if(e.rule==='psychicResonance'&&pokemonOn(foe).some(p=>effectiveTypes(ctx.state,ctx.foeSide,p,ctx.cardById).includes('Psychic')))damage+=60;
+        if(e.rule==='mercilessStrike'&&Number(def?.damage||0)>0)damage+=30;
+        if(e.rule==='identify'){if(foe.hand.some(ref=>card(ref)?.kind==='pokemon'))damage+=80;pending.push(e);}
+        if(e.rule==='paletteOfFriends'){
+          const types=new Set();for(const p of us.bench)for(const t of effectiveTypes(ctx.state,ctx.side,p,ctx.cardById))types.add(t);
+          damage=10*types.size;
+        }
+        return;
       }
       if(e.type==='sm5Rule'&&e.rule==='eleventhHour'){
         if((own(ctx).deck||[]).length<=3)damage+=130;

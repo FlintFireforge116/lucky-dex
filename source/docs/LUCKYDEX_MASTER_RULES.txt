@@ -5362,3 +5362,12 @@ SM5 STAGE 8 / v0.69.412 REQUIREMENTS:
 - Weather Guard suppresses Grass Weakness while Cherrim is in play, unless the Ability is suppressed. Electric/Fire Memory change Silvally-GX type only; Escape Board permits retreat from Sleep/Paralysis with reduced cost.
 - Evolutionary Advantage only applies to the first turn of the player going SECOND; never the first player.
 - Always run mandatory Stage 8 outcome and pinned official-print checks before committing, along with all previous Ultra Prism and older expansion release gates.
+
+SM5 STAGE 9 / v0.69.413 RELEASE RULES:
+- 27 more exact-text-locked SM5 attacks, verified against immutable 178-print SHA-pinned official source during prepare-sm5. Do NOT equate a valid descriptor with a correct playable card; Stage 9 adds 27 real battle checks.
+- The two generic-era regression hazards: stale version assertions and stale gate-list expectations must be updated in ALL prior expansion preflights and Gradle together before release.
+- Deep Currents uses Water Energy PHYSICAL cards in the discard, not new Zone Energy tokens. Resource Management selects physical card references and puts them on the BOTTOM of the deck in chosen order, NEVER shuffles.
+- Giga Drain heals only damage ACTUALLY dealt; Loom Over subtracts 10 per damage counter and clamps at zero; Ice Shard and Psychic Resonance inspect the defending board's effective current Types.
+- Sneaky Smash is usable ONLY on the first turn of the player who went SECOND, on BOTH player and CPU. Offer actual opposing attached Basic/Special Energy for discard; preserve special-energy UID.
+- Guard Press reduces incoming damage only during the opponent turn, after Weakness/Resistance. Do not convert it into a permanent Ability.
+- All Stage 1-8 player and CPU tests remain mandatory. Bounded Node test concurrency is permitted when an older broad suite hangs in the container; NEVER disable tests to achieve a green build.

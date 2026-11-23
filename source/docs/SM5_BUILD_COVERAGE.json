@@ -1,23 +1,12 @@
 {
   "printed": 178,
-  "battleReady": 131,
+  "battleReady": 144,
   "gated": {
     "sm5-5": [
       "Unimplemented attack: Flower Tornado"
     ],
-    "sm5-9": [
-      "Unimplemented attack: Giga Drain",
-      "Unimplemented attack: Earthquake"
-    ],
-    "sm5-12": [
-      "Unimplemented attack: Loom Over"
-    ],
     "sm5-15": [
       "Unimplemented attack: Coax"
-    ],
-    "sm5-18": [
-      "Unimplemented attack: Controlled Burn",
-      "Unimplemented attack: Flamethrower"
     ],
     "sm5-19": [
       "Unimplemented attack: Fire Blaster"
@@ -31,23 +20,14 @@
     "sm5-29": [
       "Unimplemented attack: Spike Armor"
     ],
-    "sm5-30": [
-      "Unimplemented attack: Roar"
-    ],
     "sm5-31": [
       "Unimplemented attack: Splatter"
     ],
     "sm5-36": [
       "Unimplemented attack: Agility"
     ],
-    "sm5-37": [
-      "Unimplemented attack: Ice Shard"
-    ],
     "sm5-38": [
       "Unimplemented Ability: Blessings of the Frost"
-    ],
-    "sm5-42": [
-      "Unimplemented attack: Deep Currents"
     ],
     "sm5-48": [
       "Unimplemented attack: Volt Bolt"
@@ -58,27 +38,17 @@
     "sm5-54": [
       "Unimplemented attack: Hone Claws"
     ],
-    "sm5-55": [
-      "Unimplemented attack: Dangerous Stinger"
-    ],
     "sm5-57": [
       "Unimplemented attack: Exact Revenge"
     ],
     "sm5-69": [
       "Unimplemented attack: Dust Cannon"
     ],
-    "sm5-73": [
-      "Unimplemented attack: Sneaky Smash"
-    ],
     "sm5-76": [
       "Unimplemented attack: Sticky Smokescreen"
     ],
     "sm5-78": [
       "Unimplemented attack: Iron Head"
-    ],
-    "sm5-88": [
-      "Unimplemented attack: Guard Press",
-      "Unimplemented attack: Boiling Impact"
     ],
     "sm5-94": [
       "Unimplemented attack: Magical Swap"
@@ -95,14 +65,10 @@
       "Unimplemented attack: Zero Vanish-GX"
     ],
     "sm5-102": [
-      "Unimplemented attack: Lap Up",
       "Unimplemented attack: Slam"
     ],
     "sm5-103": [
       "Unimplemented attack: Dangerous Lick"
-    ],
-    "sm5-105": [
-      "Unimplemented attack: Palette of Friends"
     ],
     "sm5-106": [
       "Unimplemented attack: Weak Kneed"
@@ -112,15 +78,6 @@
     ],
     "sm5-109": [
       "Unimplemented attack: Own the Place"
-    ],
-    "sm5-113": [
-      "Unimplemented attack: Identify"
-    ],
-    "sm5-114": [
-      "Unimplemented attack: Resource Management"
-    ],
-    "sm5-115": [
-      "Unimplemented attack: Merciless Strike"
     ],
     "sm5-118": [
       "Unimplemented Trainer effect"

@@ -1942,6 +1942,8 @@
         if(state.format==='classic'&&attackCardId.startsWith('sm5-')&&
           ["Moon's Eclipse-GX","Sun's Eclipse-GX"].includes(attack.name)&&
           s.prizes.length<=foe.prizes.length)continue;
+        if(state.format==='classic'&&attackCardId==='sm5-73'&&attack.name==='Sneaky Smash'&&
+           (side===state.firstSide||Number(s.turnCount)!==1))continue;
         if(state.format==='classic'&&attackCardId==='xy11-88'&&attack.name==='Stall'&&
            (state.turnNumber!==2||side===state.firstSide||s.turnCount!==1))continue;
         if(state.format==='classic'&&s.active.cardId==='pl3-145'&&attack.name==='Dragon Rush'&&Number(s.active.pl3DragonRushUsedTurn||-100)===Number(state.turnNumber)-2)continue;
