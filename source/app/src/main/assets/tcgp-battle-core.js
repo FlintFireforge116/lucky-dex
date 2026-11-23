@@ -1955,6 +1955,7 @@
         if(state.format==='classic'&&attackCardId.startsWith('sm5-')&&
           ["Moon's Eclipse-GX","Sun's Eclipse-GX"].includes(attack.name)&&
           s.prizes.length<=foe.prizes.length)continue;
+        if(state.format==='classic'&&attackCardId.startsWith('sm5-')&&state.firstSide===side&&Number(s.turnCount)===1&&attack.name!=='Fast Raid')continue;
         if(state.format==='classic'&&attackCardId==='sm5-73'&&attack.name==='Sneaky Smash'&&
            (side===state.firstSide||Number(s.turnCount)!==1))continue;
         if(state.format==='classic'&&attackCardId==='xy11-88'&&attack.name==='Stall'&&

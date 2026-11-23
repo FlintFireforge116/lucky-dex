@@ -43,7 +43,7 @@
       case 'distributeDiscardCounters':need(integer(effect.amount)&&effect.amount>0&&effect.amount%10===0,'invalid discard counters');break;
       case 'sm3Rule':need(typeof effect.rule==='string'&&!!effect.rule,'invalid SM3 rule');break;
       case 'sm4Rule':need(typeof effect.rule==='string'&&!!effect.rule,'invalid SM4 rule');break;
-      case 'sm5Rule':need(['mars','prismHandEnergy','prismDiscardEnergy','cyrusPrism','palPad','specialMow','lunarFall','lunarPayback','damageTransport','royalBlades','eleventhHour','lightingGX','blasterGX','grandBloom','changeClothes','memoryTool','loomOver','iceShard','psychicResonance','mercilessStrike','identify','deepCurrents','resourceManagement','gigaDrain','sneakySmash','paletteOfFriends','timelessGX','zeroVanishGX','solBurstGX','spatialControl','psychicTransfer','blessingsFrost','fireBlaster','happyTurn','ancientCrystal','stickySmokescreen','exactRevenge','ownThePlace','dangerousLick','coax','snugglyGenerator','flowerTornado','magicalSwap','flamingFighter','exeggutorsParadise','missingClover'].includes(effect.rule),'invalid SM5 rule');break;
+      case 'sm5Rule':need(['mars','prismHandEnergy','prismDiscardEnergy','cyrusPrism','palPad','specialMow','lunarFall','lunarPayback','damageTransport','royalBlades','eleventhHour','lightingGX','blasterGX','grandBloom','changeClothes','memoryTool','loomOver','iceShard','psychicResonance','mercilessStrike','identify','deepCurrents','resourceManagement','gigaDrain','sneakySmash','paletteOfFriends','timelessGX','zeroVanishGX','solBurstGX','spatialControl','psychicTransfer','blessingsFrost','fireBlaster','happyTurn','ancientCrystal','stickySmokescreen','exactRevenge','ownThePlace','dangerousLick','coax','snugglyGenerator','flowerTornado','magicalSwap','flamingFighter','exeggutorsParadise','missingClover','turboDrive','fastRaid'].includes(effect.rule),'invalid SM5 rule');break;
       case 'sm2Rule':need(typeof effect.rule==='string'&&!!effect.rule,'invalid SM2 rule');break;
       case 'sm2Hala':case 'sm2MaxPotion':case 'sm2FieldBlower':case 'sm2RescueStretcher':break;
       case 'multiTargetHeal':need(effect.target==='selfBench','invalid multi-target heal selector');need(integer(effect.count)&&effect.count>0,'invalid multi-target heal count');need(nonnegative(effect.amount),'invalid multi-target heal amount');break;
@@ -19241,6 +19241,49 @@
         // Stage 10: full turn, Energy reshuffle and choice-chain mechanics.
         // Stage 11: every optional deck/board selection uses an actual ref
         // or a typed Energy Zone coin search. Invalid choices never create cards.
+        if(effect.rule==='fastRaid'){
+          // The first-player attack exception is enforced in classic legalActions.
+          // This rule is intentional: the attack deals its printed 30 damage.
+          break;
+        }
+        if(effect.rule==='turboDrive'){
+          const ss=own(ctx),benches=ss.bench.filter(Boolean);
+          const sourceOptions=()=>[
+            ...ss.discard.flatMap(ref=>{const c=ctx.cardById(ref.cardId);return c?.basicEnergy===true?[{kind:'physical',uid:ref.uid,type:c.energyType||c.subtype,label:(c.name||'Basic Energy')+' from discard'}]:[];}),
+            ...Object.entries(ss.energyDiscard||{}).filter(([,n])=>Number(n)>0).map(([type])=>({kind:'ledger',type,label:type+' discarded Basic Energy'}))
+          ];
+          if(ctx.resolvingChoice&&effect.phase==='target'){
+            if(ctx.action?.choiceSkip)break;
+            const target=selected(ctx,ss);
+            if(!target||!benches.includes(target))break;
+            const choices=sourceOptions();
+            if(choices.length)ctx.requestChoice?.({kind:'option',side:'self',options:[...choices.map(x=>x.label),'Do not attach Energy'],effect:{...effect,phase:'energy',targetUid:target.uid,choices}});
+            break;
+          }
+          if(ctx.resolvingChoice&&effect.phase==='energy'){
+            const option=effect.choices?.[Number(ctx.action?.choiceOption)];
+            const target=benches.find(p=>p.uid===effect.targetUid);
+            if(!option||!target)break;
+            if(option.kind==='physical'){
+              const i=ss.discard.findIndex(ref=>ref.uid===option.uid);
+              if(i<0)break;
+              const ref=ss.discard[i],c=ctx.cardById(ref.cardId),type=c?.energyType||c?.subtype;
+              if(c?.basicEnergy!==true||!type||type!==option.type)break;
+              ss.discard.splice(i,1);
+              target.energy[type]=Number(target.energy[type]||0)+1;
+              ctx.onEnergyAttached?.(target,type,1,{fromHand:false,energyCardId:ref.cardId});
+              log({type:'sm5TurboDrive',source:'physicalDiscard',cardId:ref.cardId,uid:ref.uid,targetUid:target.uid,energyType:type});
+            }else if(option.kind==='ledger'&&Number(ss.energyDiscard?.[option.type]||0)>0){
+              ss.energyDiscard[option.type]--;
+              target.energy[option.type]=Number(target.energy[option.type]||0)+1;
+              ctx.onEnergyAttached?.(target,option.type,1,{fromHand:false});
+              log({type:'sm5TurboDrive',source:'discardLedger',targetUid:target.uid,energyType:option.type});
+            }
+            break;
+          }
+          if(benches.length&&sourceOptions().length)ctx.requestChoice?.({kind:'pokemon',side:'self',includeActive:false,optional:true,effect:{...effect,phase:'target'}});
+          break;
+        }
         if(effect.rule==='stickySmokescreen'){
           if(ctx.defender){ctx.defender.attackGate={duration:'opponentTurn',coins:2,expiresTurn:ctx.state.turnNumber+1};
             log({type:'sm5StickySmokescreen',targetUid:ctx.defender.uid});}

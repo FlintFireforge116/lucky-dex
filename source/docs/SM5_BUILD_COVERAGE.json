@@ -1,26 +1,7 @@
 {
   "printed": 178,
-  "battleReady": 172,
-  "gated": {
-    "sm5-21": [
-      "Unimplemented attack: Fury Swipes"
-    ],
-    "sm5-31": [
-      "Unimplemented attack: Splatter"
-    ],
-    "sm5-36": [
-      "Unimplemented attack: Agility"
-    ],
-    "sm5-102": [
-      "Unimplemented attack: Slam"
-    ],
-    "sm5-140": [
-      "Unimplemented attack: Fast Raid"
-    ],
-    "sm5-158": [
-      "Unimplemented attack: Fast Raid"
-    ]
-  },
+  "battleReady": 178,
+  "gated": {},
   "attacks": 237,
   "abilities": 37,
   "pokemonGX": 27,

@@ -5397,3 +5397,11 @@ SM5 STAGE 12 / v0.69.416 RELEASE RULES:
 - Infernape Flaming Fighter modifies the opponent's Burn damage to SIX counters instead of two, once, even with multiple copies; respects Ability suppression and does not affect its owner's Pokémon.
 - Missing Clover: playing ONE inspects the top physical deck card only. Playing FOUR as one Trainer action requires four real cards from hand (including alternate-art #168) and takes exactly ONE real Prize via the shared Prize selection and win-condition system. Three copies can NEVER claim a Prize, and CPU uses its normal hidden-Prize selector.
 - Every rule above has dedicated outcomes in tests/v07437-ultra-prism-stage12-outcomes.test.cjs; update all older release version checks without weakening prior coverage.
+
+SM5 STAGE 13 / v0.69.417 RELEASE RULES:
+- Before claiming a set complete, use the pinned 178-print catalogue to report exact playable and gated totals. A test count alone never implies a card is fully enabled. Reconcile any old assertion expecting a newly implemented card to remain gated.
+- Stage13 attack mappings match full printed text, not merely names. Every map has a player/CPU end-to-end outcome test in v07438, wired into both Termux and Gradle release gates.
+- Fury Swipes (both prints) flips exactly three coins for 10 damage per head; Slam two coins at 50 per head. Splatter offers a real opposing Active/Bench target; only the Active applies Weakness and Resistance.
+- Turbo Drive does 120 damage and optionally attaches exactly one BASIC Energy card from the physical discard or the finite discarded Basic Energy ledger to a chosen BENCHED Pokemon. It NEVER creates Energy from the fresh Energy Zone, duplicates a physical card, attaches Special Energy, or targets Active.
+- Ultra Prism printed first-player attack restriction: on its own first turn, only SM5 Pheromosa-GX Fast Raid may attack. Preserve older expansions hybrid first-turn rules to avoid undocumented gameplay migration. This exception is tested for both first and second side.
+- No staged patch may claim full 178-print verification locally if pinned sm5-print-compact.json is not present. Always report that the on-device preparation gate and GitHub Actions build remain pending.
