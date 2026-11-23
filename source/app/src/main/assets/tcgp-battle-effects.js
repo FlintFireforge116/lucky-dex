@@ -25758,7 +25758,7 @@ if(ctx.isAbility){const targetSide=pokemonOn(own(ctx)).includes(s)?ctx.side:ctx.
         else amount=selected.length*e.amount;}
       else if(e.type==='energyTypeCountDamage'){amount=Object.values(ctx.attacker?.energy||{}).filter(n=>Number(n)>0).length*e.amount;}
       else if(e.type==='statusCountDamage'){amount=Object.keys(ctx.defender?.conditions||{}).length*e.amount;}
-      else if(e.type==='handCountDamage'){amount=own(ctx).hand.length*e.amount;}
+      else if(e.type==='handCountDamage'){const countingSide=e.source==='opponent'||e.side==='opponent'?other(ctx):own(ctx);amount=countingSide.hand.length*e.amount;}
       else if(e.type==='remainingHpDamage'){const max=ctx.maxHp?ctx.maxHp(ctx.side,ctx.attacker):Number(ctx.cardById(ctx.attacker?.cardId)?.hp||0);amount=Math.max(0,max-Number(ctx.attacker?.damage||0));}
       else if(e.type==='selfDamagePenalty')amount=-Number(ctx.attacker?.damage||0)*Number(e.amount||1);
       else if(e.type==='deckCountDamage'){const ss=e.side==='self'?own(ctx):other(ctx);amount=(ss.deck||[]).filter(r=>matchesFilter(ctx.cardById(r.cardId),e.filter)).length*e.amount;}
