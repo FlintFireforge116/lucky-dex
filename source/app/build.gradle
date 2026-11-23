@@ -1001,7 +1001,7 @@ tasks.register('generateSM2ForApk', Exec) {
 tasks.register('auditSM2ForApk', Exec) {
     dependsOn tasks.named('generateSM2ForApk')
     workingDir rootProject.projectDir
-    commandLine 'node', '--test', 'tests/v07407-guardians-rising-integration.test.cjs', 'tests/v07408-guardians-rising-berserk-condition.test.cjs', 'tests/v07333-classic-deck-quality.test.cjs', 'tests/v07404-basic-energy-search-coins.test.cjs', 'tests/v07406-basic-energy-search-special-cases.test.cjs'
+    commandLine 'node', '--test', 'tests/v07407-guardians-rising-integration.test.cjs', 'tests/v07408-guardians-rising-berserk-condition.test.cjs', 'tests/v07409-guardians-rising-audit.test.cjs', 'tests/v07333-classic-deck-quality.test.cjs', 'tests/v07404-basic-energy-search-coins.test.cjs', 'tests/v07406-basic-energy-search-special-cases.test.cjs'
 }
 tasks.matching { it.name == 'preBuild' || (it.name.startsWith('merge') && it.name.endsWith('Assets')) }.configureEach {
     dependsOn tasks.named('auditSM2ForApk')

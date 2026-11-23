@@ -1,29 +1,7 @@
 {
   "printed": 180,
-  "battleReady": 57,
+  "battleReady": 101,
   "gated": {
-    "sm2-2": [
-      "Unimplemented attack: Muddy Acid"
-    ],
-    "sm2-3": [
-      "Unimplemented attack: Stick and Absorb"
-    ],
-    "sm2-5": [
-      "Unimplemented attack: Petal Blizzard",
-      "Unimplemented attack: Petal Dance"
-    ],
-    "sm2-7": [
-      "Unimplemented attack: Poltergeist"
-    ],
-    "sm2-8": [
-      "Unimplemented attack: Scamper Away"
-    ],
-    "sm2-9": [
-      "Unimplemented attack: Resolute Claws"
-    ],
-    "sm2-10": [
-      "Unimplemented Ability: Victory Star"
-    ],
     "sm2-13": [
       "Unimplemented Ability: Shady Move"
     ],
@@ -31,27 +9,15 @@
       "Unimplemented attack: Passionate Dance",
       "Unimplemented attack: Kindle"
     ],
-    "sm2-15": [
-      "Unimplemented attack: Venoshock"
-    ],
     "sm2-18": [
       "Unimplemented attack: Shell Trap",
       "Unimplemented attack: Nitro Tank-GX"
-    ],
-    "sm2-21": [
-      "Unimplemented attack: Beacon"
-    ],
-    "sm2-21a": [
-      "Unimplemented attack: Beacon"
     ],
     "sm2-22": [
       "Unimplemented attack: Ice Path-GX"
     ],
     "sm2-23": [
       "Unimplemented attack: Sludge Shock"
-    ],
-    "sm2-24": [
-      "Unimplemented attack: Seething Tentacles"
     ],
     "sm2-25": [
       "Unimplemented attack: Roll Call",
@@ -60,42 +26,20 @@
     "sm2-26": [
       "Unimplemented attack: All the Presents"
     ],
-    "sm2-30": [
-      "Unimplemented attack: Dive",
-      "Unimplemented attack: Open Sea"
-    ],
-    "sm2-32": [
-      "Unimplemented attack: Crunch",
-      "Unimplemented attack: Raging Floe"
-    ],
-    "sm2-33": [
-      "Unimplemented attack: Triple Spin"
-    ],
-    "sm2-34": [
-      "Unimplemented attack: Ice Shard"
-    ],
     "sm2-35": [
-      "Unimplemented attack: Hail",
       "Unimplemented attack: Frozen Breath"
     ],
     "sm2-36": [
       "Unimplemented attack: Borne Ashore"
     ],
     "sm2-37": [
-      "Unimplemented attack: Sharpshooting",
       "Unimplemented Ability: Schooling"
     ],
     "sm2-38": [
       "Unimplemented attack: Blue Surge-GX"
     ],
-    "sm2-39": [
-      "Unimplemented attack: Bail Out"
-    ],
     "sm2-40": [
       "Unimplemented attack: Rock Polish"
-    ],
-    "sm2-41": [
-      "Unimplemented attack: Thunder Punch"
     ],
     "sm2-42": [
       "Unimplemented attack: Electromagnetic Rock Wrecker",
@@ -114,16 +58,11 @@
       "Unimplemented attack: Amnesia",
       "Unimplemented attack: Facade"
     ],
-    "sm2-50": [
-      "Unimplemented attack: Stomp Off"
-    ],
     "sm2-51": [
-      "Unimplemented attack: Trashalanche",
-      "Unimplemented attack: Acid Spray"
+      "Unimplemented attack: Trashalanche"
     ],
     "sm2-51a": [
-      "Unimplemented attack: Trashalanche",
-      "Unimplemented attack: Acid Spray"
+      "Unimplemented attack: Trashalanche"
     ],
     "sm2-52": [
       "Unimplemented attack: Blown Kiss"
@@ -139,11 +78,7 @@
       "Unimplemented attack: Supernatural Dance",
       "Unimplemented attack: Revelation Dance"
     ],
-    "sm2-57": [
-      "Unimplemented attack: Super Intense Poison"
-    ],
     "sm2-58": [
-      "Unimplemented attack: Filch",
       "Unimplemented attack: Copycat"
     ],
     "sm2-60": [
@@ -153,20 +88,10 @@
       "Unimplemented attack: Tapu Cure-GX"
     ],
     "sm2-61": [
-      "Unimplemented attack: Shatter Shot",
       "Unimplemented attack: Wings of the Moone"
-    ],
-    "sm2-62": [
-      "Unimplemented attack: Dual Chop"
     ],
     "sm2-64": [
       "Unimplemented Ability: Daunting Pose"
-    ],
-    "sm2-65": [
-      "Unimplemented attack: Settle the Score"
-    ],
-    "sm2-67": [
-      "Unimplemented attack: Double Shot"
     ],
     "sm2-68": [
       "Unimplemented attack: Finishing Stinger"
@@ -177,54 +102,12 @@
     "sm2-72": [
       "Unimplemented attack: Karate Chop"
     ],
-    "sm2-75": [
-      "Unimplemented attack: Double Kick"
-    ],
-    "sm2-76": [
-      "Unimplemented attack: Enhanced Stomp"
-    ],
-    "sm2-77": [
-      "Unimplemented attack: Swift",
-      "Unimplemented attack: Cosmicsplosion"
-    ],
-    "sm2-78": [
-      "Unimplemented attack: Whirlwind"
-    ],
     "sm2-79": [
-      "Unimplemented attack: Feint Attack",
       "Unimplemented attack: Raven's Claw"
-    ],
-    "sm2-80": [
-      "Unimplemented attack: Limitation"
     ],
     "sm2-81": [
       "Unimplemented attack: Future Sight",
       "Unimplemented attack: Doom News"
-    ],
-    "sm2-83": [
-      "Unimplemented attack: Core Beam"
-    ],
-    "sm2-84": [
-      "Unimplemented attack: Core Beam"
-    ],
-    "sm2-85": [
-      "Unimplemented Ability: Geotech System"
-    ],
-    "sm2-86": [
-      "Unimplemented attack: Energy Link"
-    ],
-    "sm2-87": [
-      "Unimplemented attack: Shining Arrow",
-      "Unimplemented attack: Fangs of the Sunne"
-    ],
-    "sm2-88": [
-      "Unimplemented attack: Follow Me"
-    ],
-    "sm2-89": [
-      "Unimplemented attack: Meteor Mash"
-    ],
-    "sm2-90": [
-      "Unimplemented attack: Continuous Tumble"
     ],
     "sm2-91": [
       "Unimplemented attack: The Wages of Fluff"
@@ -236,11 +119,7 @@
       "Unimplemented attack: Plea-GX"
     ],
     "sm2-93": [
-      "Unimplemented attack: Sweet Kiss",
       "Unimplemented Ability: Flower Shield"
-    ],
-    "sm2-94": [
-      "Unimplemented attack: Bubble"
     ],
     "sm2-95": [
       "Unimplemented attack: Division"
@@ -250,18 +129,13 @@
       "Unimplemented attack: Beat Slider"
     ],
     "sm2-97": [
-      "Unimplemented attack: Amass",
-      "Unimplemented attack: Power Cyclone"
+      "Unimplemented attack: Amass"
     ],
     "sm2-101": [
       "Unimplemented attack: Bind Wound"
     ],
     "sm2-104": [
-      "Unimplemented attack: Agility",
       "Unimplemented attack: Swallow Dive"
-    ],
-    "sm2-105": [
-      "Unimplemented attack: Weather Teller"
     ],
     "sm2-106": [
       "Unimplemented attack: Turbo Storm"
@@ -273,15 +147,9 @@
       "Unimplemented attack: Scrutinize",
       "Unimplemented attack: Slam"
     ],
-    "sm2-109": [
-      "Unimplemented attack: Growl"
-    ],
     "sm2-111": [
       "Unimplemented attack: Flame Charge",
       "Unimplemented attack: Loop-the-Loop"
-    ],
-    "sm2-113": [
-      "Unimplemented attack: Dangerous Blow"
     ],
     "sm2-114": [
       "Unimplemented attack: Hypno Roll",
@@ -348,14 +216,8 @@
     "sm2-135": [
       "Unimplemented Ability: Aero Trail"
     ],
-    "sm2-136": [
-      "Unimplemented attack: Super Intense Poison"
-    ],
     "sm2-137": [
       "Unimplemented attack: Tapu Cure-GX"
-    ],
-    "sm2-139": [
-      "Unimplemented Ability: Geotech System"
     ],
     "sm2-140": [
       "Unimplemented attack: Plea-GX"
@@ -379,17 +241,8 @@
     "sm2-153": [
       "Unimplemented Ability: Aero Trail"
     ],
-    "sm2-154": [
-      "Unimplemented attack: Super Intense Poison"
-    ],
     "sm2-155": [
       "Unimplemented attack: Tapu Cure-GX"
-    ],
-    "sm2-157": [
-      "Unimplemented Ability: Geotech System"
-    ],
-    "sm2-157a": [
-      "Unimplemented Ability: Geotech System"
     ],
     "sm2-158": [
       "Unimplemented attack: Plea-GX"
