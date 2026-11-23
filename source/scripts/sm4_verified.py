@@ -172,3 +172,67 @@ for _name,_eff in SM4_FOLLOWUP.items():
 # additional engine validation, so are deliberately still disabled.
 # Undo mappings unsupported by effect validation or not yet outcome-proven.
 ATTACK_MAP.pop('Recover',None)
+
+# Crimson Invasion continuation — printed-text locked effects that are already
+# supported by the tested Classic runtime. Each attack mapping is added only
+# if every same-named SM4 print has identical official rules text; never infer
+# an effect merely because an unrelated move shares the name.
+SM4_CONTINUATION_ATTACKS={
+ 'Multiply':E('benchFromDeck',amount=3,choose=True,filter={'name':'Kakuna'}),
+ 'Sudden Sting':S(E('status',target='opponentActive',status='paralysis',condition={'type':'evolvedThisTurn'}),
+                  E('status',target='opponentActive',status='poison',condition={'type':'evolvedThisTurn'})),
+ 'Recover':S(E('discardEnergyCard',target='self',amount=1),E('heal',target='self',amount=9999)),
+ 'Waterfall Evolution':E('evolveFromDeck'),
+ 'Pain Amplifier':E('placeDamageCounters',target='opponentAll',filter={'damaged':True},amount=20),
+ 'Severe Poison':E('status',target='opponentActive',status='poison',amount=40),
+ 'Absorption-GX':E('pointDamage',amount=40,prizesRemaining=True,mode='replace'),
+ 'Iron Hand':E('heal',target='self',amount=30,condition={'type':'pokemonPresent','zone':'bench','filter':{'name':'Regice'}}),
+ 'War Cry':BONUS(90,{'type':'fewerPokemonInPlay'}),
+ 'Clanging Scales':E('modifier',stat='damageReduction',amount=-30,scope='self',duration='opponentTurn'),
+ 'Lucha Fight':E('modifier',stat='attackDamage',amount=30,target='opponentActive',scope='self',duration='opponentTurn'),
+}
+for _name,_effect in SM4_CONTINUATION_ATTACKS.items():
+ _texts={norm(a[3]) for row in rows for a in row[7] if a[0]==_name}
+ if len(_texts)==1 and next(iter(_texts)):
+  ATTACK_TEXT[_name]=next(a[3] for row in rows for a in row[7] if a[0]==_name)
+  ATTACK_MAP[_name]=deepcopy(_effect)
+
+# All passives are scoped to their printed owner; unlike attack rules they
+# must stay suppressed correctly by the normal Ability suppression pipeline.
+ABILITIES.update({
+ 'Sap Sipper':{'type':'passive','effect':E('modifier',stat='attackDamage',amount=80,scope='self',duration='whileInPlay',opponentFilter={'subtype':'Grass'})},
+ 'Own Tempo':{'type':'passive','effect':E('preventStatus',status='confusion',duration='whileInPlay',scope='team',filter={'name':'Grumpig'})},
+ 'Seal of Antiquity':{'type':'passive','effect':E('attackRequirement',condition={'type':'pokemonPresentAll','zone':'bench','names':['Regirock','Regice','Registeel']})},
+})
+# Devoured Field is bilateral and affects Darkness/Dragon attackers only.
+# The Stadium runtime already reads continuous modifier effects from the
+# Stadium slot, with independent suppression/expiry management.
+for _r in rows:
+ if _r[1]=='Devoured Field' and _r[2]=='Trainer':
+  TRAINERS[str(_r[0])]=('Stadium',E('modifier',stat='attackDamage',amount=10,scope='both',duration='whileInPlay',filter={'subtype':['Darkness','Dragon']}))
+
+# Stage-2b: verified cross-set primitives with printed targets, exact costs,
+# opt-in discard selection and optional turn-lock behaviour.
+SM4_CONTINUATION_ATTACKS_2={
+ 'Chaos Wheel':S(E('actionLock',cardType='Tool',side='opponent',duration='opponentTurn'),
+                 E('actionLock',cardType='SpecialEnergy',side='opponent',duration='opponentTurn'),
+                 E('actionLock',cardType='Stadium',side='opponent',duration='opponentTurn')),
+ 'Energy Catch':E('searchChosen',source='discard',amount=3,filter={'kind':'energy','basicEnergy':True}),
+ 'Volt Switch':E('switch',side='self',filter={'subtype':'Lightning'}),
+ 'Fixer of the Forest':E('searchChosen',source='discard',amount=3,filter={'trainerType':'Pokémon Tool'}),
+ 'Revenge Cannon':E('damageFromDamage',source='self',all=True,benchOnly=True,amount=1,mode='add'),
+ 'Punishing Slap':BONUS(60,{'type':'pokemonPresent','side':'opponent','zone':'inPlay','filter':{'hasEnergyType':'Darkness'}}),
+ 'Tower-Go-Round-GX':E('redistributeEnergy',includeSpecialEnergy=True),
+ 'Draco Melody':E('coinFlip',heads=E('benchFromDeck',amount=1,choose=True,filter={'subtype':'Dragon','kind':'pokemon'}),tails=N),
+}
+for _name,_effect in SM4_CONTINUATION_ATTACKS_2.items():
+ _texts={norm(a[3]) for row in rows for a in row[7] if a[0]==_name}
+ if len(_texts)==1 and next(iter(_texts)):
+  ATTACK_TEXT[_name]=next(a[3] for row in rows for a in row[7] if a[0]==_name)
+  ATTACK_MAP[_name]=deepcopy(_effect)
+ABILITIES.update({
+ 'Fluffy':{'type':'passive','effect':E('modifier',stat='damageReduction',amount=30,scope='self',duration='whileInPlay',opponentFilter={'notSubtype':'Fire'})},
+})
+for _r in rows:
+ if _r[1]=='Lusamine' and _r[2]=='Trainer':
+  TRAINERS[str(_r[0])]=('Supporter',E('searchChosen',source='discard',amount=2,filter={'kind':'trainer','trainerType':['Supporter','Stadium']},excludePlayedTrainer=True))

@@ -17,6 +17,7 @@ function setup(id,side='player'){
  }
  const other=side==='player'?'opponent':'player';s.sides[side].active=slot(id,side+'active',fullEnergy());
  s.sides[side].bench=[slot('sm4-12',side+'bench',{})];
+ if(['sm4-84','sm4-84a'].includes(id))s.sides[side].bench=['sm4-53','sm4-28','sm4-68'].map((cardId,i)=>slot(cardId,side+'regi'+i,{}));
  s.sides[other].active=slot(dummy.id,other+'active',{Water:4});s.sides[other].bench=[slot(dummy.id,other+'bench',{})];
  return s;
 }
@@ -30,7 +31,7 @@ function attack(id,name,side='player',modify=()=>{}){
   for(let n=0;['effectChoice','promote'].includes(s.phase)&&n<80;n++){
    const picker=s.phase==='promote'?(['player','opponent'].find(x=>core.legalActions(s,x).some(a=>a.type==='promote'))||s.activeSide):(s.pendingChoice?.side||s.activeSide);
    const opts=core.legalActions(s,picker);assert.ok(opts.length,`no choice: ${id} ${name} ${s.phase}`);
-   core.applyAction(s,picker,opts[0]);
+   core.applyAction(s,picker,opts.find(a=>/^Done(?:$|\b)/i.test(String(a.choiceLabel||'')))||opts[0]);
   }
   assert.ok(['battle','ended'].includes(s.phase),id+' '+name+' stuck phase '+s.phase);
   return s;
