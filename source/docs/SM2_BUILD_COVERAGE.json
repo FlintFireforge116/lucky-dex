@@ -1,20 +1,12 @@
 {
   "printed": 180,
-  "battleReady": 101,
+  "battleReady": 146,
   "gated": {
     "sm2-13": [
       "Unimplemented Ability: Shady Move"
     ],
     "sm2-14": [
-      "Unimplemented attack: Passionate Dance",
       "Unimplemented attack: Kindle"
-    ],
-    "sm2-18": [
-      "Unimplemented attack: Shell Trap",
-      "Unimplemented attack: Nitro Tank-GX"
-    ],
-    "sm2-22": [
-      "Unimplemented attack: Ice Path-GX"
     ],
     "sm2-23": [
       "Unimplemented attack: Sludge Shock"
@@ -29,81 +21,23 @@
     "sm2-35": [
       "Unimplemented attack: Frozen Breath"
     ],
-    "sm2-36": [
-      "Unimplemented attack: Borne Ashore"
-    ],
     "sm2-37": [
       "Unimplemented Ability: Schooling"
-    ],
-    "sm2-38": [
-      "Unimplemented attack: Blue Surge-GX"
-    ],
-    "sm2-40": [
-      "Unimplemented attack: Rock Polish"
-    ],
-    "sm2-42": [
-      "Unimplemented attack: Electromagnetic Rock Wrecker",
-      "Unimplemented attack: Heavy Slam"
-    ],
-    "sm2-44": [
-      "Unimplemented attack: Raging Thunder"
-    ],
-    "sm2-46": [
-      "Unimplemented attack: Feather Dance"
     ],
     "sm2-47": [
       "Unimplemented Ability: Aero Trail"
     ],
-    "sm2-49": [
-      "Unimplemented attack: Amnesia",
-      "Unimplemented attack: Facade"
-    ],
-    "sm2-51": [
-      "Unimplemented attack: Trashalanche"
-    ],
-    "sm2-51a": [
-      "Unimplemented attack: Trashalanche"
-    ],
-    "sm2-52": [
-      "Unimplemented attack: Blown Kiss"
-    ],
-    "sm2-54": [
-      "Unimplemented attack: Tractorbeam",
-      "Unimplemented attack: Link Blast"
-    ],
     "sm2-55": [
       "Unimplemented Ability: Vital Dance"
-    ],
-    "sm2-56": [
-      "Unimplemented attack: Supernatural Dance",
-      "Unimplemented attack: Revelation Dance"
     ],
     "sm2-58": [
       "Unimplemented attack: Copycat"
     ],
-    "sm2-60": [
-      "Unimplemented attack: Tapu Cure-GX"
-    ],
-    "sm2-60a": [
-      "Unimplemented attack: Tapu Cure-GX"
-    ],
-    "sm2-61": [
-      "Unimplemented attack: Wings of the Moone"
-    ],
     "sm2-64": [
       "Unimplemented Ability: Daunting Pose"
     ],
-    "sm2-68": [
-      "Unimplemented attack: Finishing Stinger"
-    ],
     "sm2-71": [
       "Unimplemented attack: Landslip"
-    ],
-    "sm2-72": [
-      "Unimplemented attack: Karate Chop"
-    ],
-    "sm2-79": [
-      "Unimplemented attack: Raven's Claw"
     ],
     "sm2-81": [
       "Unimplemented attack: Future Sight",
@@ -112,40 +46,23 @@
     "sm2-91": [
       "Unimplemented attack: The Wages of Fluff"
     ],
-    "sm2-92": [
-      "Unimplemented attack: Plea-GX"
-    ],
-    "sm2-92a": [
-      "Unimplemented attack: Plea-GX"
-    ],
     "sm2-93": [
       "Unimplemented Ability: Flower Shield"
     ],
     "sm2-95": [
       "Unimplemented attack: Division"
     ],
-    "sm2-96": [
-      "Unimplemented attack: Power Whip",
-      "Unimplemented attack: Beat Slider"
-    ],
     "sm2-97": [
       "Unimplemented attack: Amass"
     ],
-    "sm2-101": [
-      "Unimplemented attack: Bind Wound"
-    ],
     "sm2-104": [
       "Unimplemented attack: Swallow Dive"
-    ],
-    "sm2-106": [
-      "Unimplemented attack: Turbo Storm"
     ],
     "sm2-107": [
       "Unimplemented attack: Glance"
     ],
     "sm2-108": [
-      "Unimplemented attack: Scrutinize",
-      "Unimplemented attack: Slam"
+      "Unimplemented attack: Scrutinize"
     ],
     "sm2-111": [
       "Unimplemented attack: Flame Charge",
@@ -179,79 +96,17 @@
     "sm2-123": [
       "Unimplemented Trainer rules"
     ],
-    "sm2-125": [
-      "Unimplemented Trainer rules"
-    ],
-    "sm2-125a": [
-      "Unimplemented Trainer rules"
-    ],
-    "sm2-126": [
-      "Unimplemented Trainer rules"
-    ],
     "sm2-127": [
       "Unimplemented Trainer rules"
-    ],
-    "sm2-128": [
-      "Unimplemented Trainer rules"
-    ],
-    "sm2-128a": [
-      "Unimplemented Trainer rules"
-    ],
-    "sm2-130": [
-      "Unimplemented Trainer rules"
-    ],
-    "sm2-130a": [
-      "Unimplemented Trainer rules"
-    ],
-    "sm2-131": [
-      "Unimplemented attack: Shell Trap",
-      "Unimplemented attack: Nitro Tank-GX"
-    ],
-    "sm2-132": [
-      "Unimplemented attack: Ice Path-GX"
-    ],
-    "sm2-133": [
-      "Unimplemented attack: Blue Surge-GX"
     ],
     "sm2-135": [
       "Unimplemented Ability: Aero Trail"
     ],
-    "sm2-137": [
-      "Unimplemented attack: Tapu Cure-GX"
-    ],
-    "sm2-140": [
-      "Unimplemented attack: Plea-GX"
-    ],
-    "sm2-143": [
-      "Unimplemented Trainer rules"
-    ],
     "sm2-145": [
       "Unimplemented Trainer rules"
     ],
-    "sm2-148": [
-      "Unimplemented attack: Shell Trap",
-      "Unimplemented attack: Nitro Tank-GX"
-    ],
-    "sm2-150": [
-      "Unimplemented attack: Ice Path-GX"
-    ],
-    "sm2-151": [
-      "Unimplemented attack: Blue Surge-GX"
-    ],
     "sm2-153": [
       "Unimplemented Ability: Aero Trail"
-    ],
-    "sm2-155": [
-      "Unimplemented attack: Tapu Cure-GX"
-    ],
-    "sm2-158": [
-      "Unimplemented attack: Plea-GX"
-    ],
-    "sm2-163": [
-      "Unimplemented Trainer rules"
-    ],
-    "sm2-164": [
-      "Unimplemented Trainer rules"
     ]
   },
   "attacks": 287,

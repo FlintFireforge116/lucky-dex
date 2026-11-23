@@ -29,7 +29,7 @@ def check():
  assert "dependsOn tasks.named('auditSM1ForApk')" in gradle
  assert "dependsOn tasks.named('generateSM2ForApk')" in gradle
  assert "dependsOn tasks.named('auditSM2ForApk')" in gradle
- for test in ('tests/v07407-guardians-rising-integration.test.cjs','tests/v07408-guardians-rising-berserk-condition.test.cjs','tests/v07409-guardians-rising-audit.test.cjs','tests/v07333-classic-deck-quality.test.cjs','tests/v07404-basic-energy-search-coins.test.cjs','tests/v07406-basic-energy-search-special-cases.test.cjs'):
+ for test in ('tests/v07407-guardians-rising-integration.test.cjs','tests/v07408-guardians-rising-berserk-condition.test.cjs','tests/v07409-guardians-rising-audit.test.cjs','tests/v07410-guardians-rising-continuation.test.cjs','tests/v07333-classic-deck-quality.test.cjs','tests/v07404-basic-energy-search-coins.test.cjs','tests/v07406-basic-energy-search-special-cases.test.cjs'):
   assert "'"+test+"'" in gradle and (ROOT/test).is_file(),'Missing SM2 APK test '+test
  for file in ('tcg-classic-battle-data.js','tcg-classic-opponents.js','tcg-classic-deck-builder.js','tcg-classic-set-picker.js'):
   assert 'sm2' in (ROOT/'app/src/main/assets'/file).read_text(),file+' missing SM2'
@@ -44,10 +44,10 @@ def full():
  subprocess.run([sys.executable,'scripts/build-sm2.py'],cwd=ROOT,check=True)
  d=json.loads((ROOT/'docs/SM2_BUILD_COVERAGE.json').read_text());c=json.loads((ROOT/'scripts/sm2_release_contract.json').read_text())
  assert (d['printed'],d['attacks'],d['abilities'],d['pokemonGX'],d['gxAttackPrints'],d['energyPrints'],d['sourceGitBlob'])==(180,287,30,42,42,4,c['pin'])
- assert d['battleReady']>=101,'SM2 audit must retain at least 101 proven battle-enabled prints'
+ assert d['battleReady']>=146,'SM2 continuation must retain at least 146 proven battle-enabled prints'
  assert len(d['gated'])==180-d['battleReady']
  assert d['battleReady']+len(d['gated'])==180 and all(d['gated'].values()),'Each gated print needs named blockers'
- subprocess.run(['node','--test','tests/v07407-guardians-rising-integration.test.cjs','tests/v07408-guardians-rising-berserk-condition.test.cjs','tests/v07409-guardians-rising-audit.test.cjs','tests/v07333-classic-deck-quality.test.cjs','tests/v07404-basic-energy-search-coins.test.cjs','tests/v07406-basic-energy-search-special-cases.test.cjs'],cwd=ROOT,check=True)
+ subprocess.run(['node','--test','tests/v07407-guardians-rising-integration.test.cjs','tests/v07408-guardians-rising-berserk-condition.test.cjs','tests/v07409-guardians-rising-audit.test.cjs','tests/v07410-guardians-rising-continuation.test.cjs','tests/v07333-classic-deck-quality.test.cjs','tests/v07404-basic-energy-search-coins.test.cjs','tests/v07406-basic-energy-search-special-cases.test.cjs'],cwd=ROOT,check=True)
  print(f"PASS SM2 full APK gate: {d['battleReady']}/180 playable, {len(d['gated'])} correctly gated; both deck selectors audited")
 
 def main():

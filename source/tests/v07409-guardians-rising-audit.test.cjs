@@ -36,7 +36,7 @@ function play(state,side,attackIndex){
  const a=core.legalActions(state,side).filter(x=>x.type==='attack'&&x.attackIndex===attackIndex);
  assert.ok(a.length,`${side} attack ${attackIndex} unavailable`);
  core.applyAction(state,side,a[0]);
- for(let n=0;['effectChoice','promote'].includes(state.phase)&&n<15;n++){
+ for(let n=0;['effectChoice','promote'].includes(state.phase)&&n<85;n++){
   const picker=state.phase==='promote'?(['player','opponent'].find(s=>core.legalActions(state,s).some(a=>a.type==='promote'))||state.activeSide):(state.pendingChoice?.side||state.activeSide);
   const actions=core.legalActions(state,picker);
   assert.ok(actions.length,`Unresolvable ${picker} choice ${JSON.stringify(state.pendingChoice)}`);
@@ -81,7 +81,7 @@ test('All enabled SM2 printed attacks finish without exception or stranded choic
  let attacks=0;
  for(const card of pack.CARDS.filter(x=>x.battleEnabled&&x.kind==='pokemon'))for(let index=0;index<card.attacks.length;index++){
   for(const side of ['player','opponent']){
-   const state=setup(card,side);play(state,side,index);
+   const state=setup(card,side);try{play(state,side,index);}catch(e){e.message=card.id+' '+card.attacks[index].name+' '+side+': '+e.message;throw e;}
    assert.equal(state.log.filter(e=>e.type==='attack'&&e.attack===card.attacks[index].name&&e.side===side).length,1,`${card.id} ${card.attacks[index].name} ${side}: attack logged more than once`);
   }
   attacks++;
@@ -104,7 +104,7 @@ test('Petal Blizzard hits Active and Bench exactly once; Petal Dance scales with
  assert.equal(blizzard.foe.damage,10);assert.equal(blizzard.state.sides.opponent.bench[0].damage,10);
  const tails=simulate('sm2-5','Petal Dance',{setupState(s,side){s.sides[side].dp2ForceTailsUntil=5}});
  assert.equal(tails.foe.damage,0);assert.ok(tails.slot.conditions.confusion);
- assert.ok(coverage.gated['sm2-61'].some(x=>x.includes('Wings of the Moone')),'Lunala must stay gated until its other attack is supported');
+ assert.ok(pack.cardById('sm2-61').battleEnabled,'Lunala Wings of the Moone now uses tested full Energy redistribution');
 });
 test('Attack after-effects and Energy conservation: opponent draws, typed discard and copied GX rule',()=>{
  const beacon=simulate('sm2-21','Beacon');assert.ok(beacon.state.sides.player.hand.length>1,'Beacon must search physical Pokémon deck');

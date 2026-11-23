@@ -207,10 +207,84 @@ AUDITED_TEXT={
 # Avoid importing a descriptor from an unrelated print with the same title.
 # A source-text assertion is required even for one-off mappings.
 
+# Guardians Rising continuation: exact printed effects supported by the shared
+# battle interpreter, with attack text assertions below. Never enable an effect
+# by attack title alone.
+CONTINUED_EXACT={
+ 'Wings of the Moone': E('distributeEnergy',source='self',target='selfBench',amount='all',includeSpecialEnergy=True),
+ 'Shell Trap': E('retaliateDamage',target='self',duration='opponentTurn',amount=80),
+ 'Nitro Tank-GX': E('distributeDiscardEnergy',target='selfPokemon',energyType='Fire',amount=5),
+ 'Ice Path-GX': E('moveDamage',target='self',destination='opponentActive',amount='all'),
+ 'Blue Surge-GX': E('distributeEnergy',source='self',target='selfBench',amount='all',includeSpecialEnergy=True),
+ 'Plea-GX': E('returnOpponentBench',count=2),
+ 'Passionate Dance': E('benchFromDeck',amount=3,filter={'kind':'pokemon','stage':'Basic','subtype':'Fire'},choose=True),
+ 'Borne Ashore': E('chooseOption',options=[
+     {'label':'Bench a Basic Pokemon from your discard','effect':E('benchFromDiscard',side='self',amount=1,filter={'kind':'pokemon','stage':'Basic'})},
+     {'label':"Bench a Basic Pokemon from opponent's discard",'effect':E('benchFromDiscard',side='opponent',amount=1,filter={'kind':'pokemon','stage':'Basic'})}]),
+ 'Rock Polish': E('modifier',stat='retreatCost',amount=-99,scope='self',duration='nextOwnTurn'),
+ 'Electromagnetic Rock Wrecker': E('coinDamageByEnergy',energyType='Lightning',countAttachedEnergyType=True,amount=80,mode='replace'),
+ 'Heavy Slam': E('retreatCostDamage',amount=30,negative=True,mode='add'),
+ 'Raging Thunder': E('selectedSelfBenchDamage',amount=30),
+ 'Feather Dance': E('nextAttackBonus',attackName='Pom-Pom Punch',amount=80),
+ 'Amnesia': E('chooseAttackLock',duration='opponentTurn'),
+ 'Facade': E('bonusDamage',amount=80,condition={'type':'selfStatusAny'}),
+ 'Trashalanche': E('discardCountDamage',side='opponent',filter={'kind':'trainer','trainerType':'Item'},amount=20,mode='replace'),
+ 'Blown Kiss': E('placeDamageCounters',target='opponentPokemon',amount=10),
+ 'Link Blast': BONUS(80,{'type':'equalEnergyCount'}),
+ 'Tractorbeam': S(E('forceOpponentSwitch',chooseBy='attacker'),E('damage',target='opponentActive',amount=30)),
+ 'Supernatural Dance': E('distributeDiscardCounters',amount=10),
+ "Raven's Claw": E('damageFromDamage',source='opponent',all=True,amount=1,mode='add'),
+ 'Revelation Dance': E('attackDamageGate',condition={'type':'stadiumInPlay'}),
+ 'Tapu Cure-GX': E('multiTargetHeal',target='selfBench',amount=9999,count=2),
+ 'Finishing Stinger': E('attackDamageGate',condition={'type':'opponentDamaged'}),
+ 'Karate Chop': E('selfDamagePenalty',amount=1,mode='add'),
+ 'Power Whip': E('selectedEnergyDamage',target='opponentPokemon',source='self',amount=20),
+ 'Beat Slider': E('forceOpponentSwitch',chooseBy='defender'),
+ 'Bind Wound': Q(E('chooseTarget',target='selfPokemon',effect=H(30,'selfPokemon'))),
+ 'Turbo Storm': E('attachEnergyFromDiscard',target='selfBench',amount=2),
+ 'Slam': COIN(2,60),
+}
+CONTINUED_TEXT={
+ 'Wings of the Moone':'Move all Energy from this Pokémon to your Benched Pokémon in any way you like.',
+ 'Shell Trap': 'During your opponent\'s next turn, if this Pokémon is damaged by an attack',
+ 'Nitro Tank-GX': 'Attach 5 Fire Energy cards from your discard pile to your Pokémon in any way you like.',
+ 'Ice Path-GX': 'Move all damage counters from this Pokémon to your opponent\'s Active Pokémon.',
+ 'Blue Surge-GX': 'Move all Energy from this Pokémon to your Benched Pokémon in any way you like.',
+ 'Plea-GX': 'Put 2 of your opponent\'s Benched Pokémon and all cards attached to them into your opponent\'s hand.',
+ 'Passionate Dance':'Search your deck for up to 3 Basic Fire Pokémon and put them onto your Bench.',
+ 'All the Presents':'Flip a coin until you get tails. For each heads, you may search your deck for a card',
+ 'Borne Ashore':"Put a Basic Pokémon from either player's discard pile onto its owner's Bench.",
+ 'Rock Polish':'During your next turn, this Pokémon has no Retreat Cost.',
+ 'Electromagnetic Rock Wrecker':'Flip a coin for each Lightning Energy attached to this Pokémon.',
+ 'Heavy Slam':"This attack does 30 less damage for each Colorless in your opponent's Active Pokémon's Retreat Cost.",
+ 'Raging Thunder':'This attack does 30 damage to 1 of your Benched Pokémon.',
+ 'Feather Dance':"During your next turn, this Pokémon's Pom-Pom Punch attack's base damage is 100.",
+ 'Amnesia':"Choose 1 of your opponent's Active Pokémon's attacks.",
+ 'Facade':'If this Pokémon is Burned or Poisoned, this attack does 80 more damage.',
+ 'Trashalanche':"This attack does 20 damage for each Item card in your opponent's discard pile.",
+ 'Blown Kiss':"Put 1 damage counter on 1 of your opponent's Pokémon.",
+ 'Link Blast':"If this Pokémon and your opponent's Active Pokémon have the same amount of Energy",
+ 'Tractorbeam':"Switch 1 of your opponent's Benched Pokémon with their Active Pokémon. This attack does 30 damage to the new Active Pokémon.",
+ 'Supernatural Dance':"For each Pokémon in your opponent's discard pile, put 1 damage counter on your opponent's Pokémon",
+ "Raven's Claw":"This attack does 10 more damage for each damage counter on all of your opponent's Pokémon.",
+ 'Revelation Dance':'If there is no Stadium card in play, this attack does nothing.',
+ 'Tapu Cure-GX':'Heal all damage from 2 of your Benched Pokémon.',
+ 'Finishing Stinger':"If your opponent's Active Pokémon has no damage counters on it before this attack does damage, this attack does nothing.",
+ 'Karate Chop':'This attack does 10 less damage for each damage counter on this Pokémon.',
+ 'Power Whip':'This attack does 20 damage times the amount of Energy attached to this Pokémon to 1 of your opponent',
+ 'Beat Slider':'Your opponent switches their Active Pokémon with 1 of their Benched Pokémon.',
+ 'Bind Wound':'Flip a coin. If heads, heal 30 damage from 1 of your Pokémon.',
+ 'Turbo Storm':'Attach 2 basic Energy cards from your discard pile to 1 of your Benched Pokémon.',
+ 'Slam':'Flip 2 coins. This attack does 60 damage for each heads.',
+ 'Hypno Roll':'This attack can be used if this Pokémon is Asleep.',
+}
+
 def attack(row,a):
     title, cost, dmg, printed = a
     text=_norm(printed)
     if not text:return N
+    if title in CONTINUED_EXACT and _norm(CONTINUED_TEXT[title]) in text:
+        return CONTINUED_EXACT[title]
     if title in AUDITED_EXACT and _norm(AUDITED_TEXT[title]) in text:
         return AUDITED_EXACT[title]
     key=(title,text,dmg)
@@ -228,13 +302,17 @@ BASIC={'167':'Grass','168':'Lightning','169':'Fighting'}
 ENERGIES={'166':E('specialEnergy',provides={'Colorless':2})}
 # Only Trainer effects already supported by the existing battle renderer.
 TRAINERS={
+ '125':('Item',E('sm2FieldBlower')),
+ '130':('Item',E('sm2RescueStretcher')),
+ '126':('Supporter',E('sm2Hala')),
+ '128':('Item',E('sm2MaxPotion')),
  '119':('Item',E('attachEnergyFromDiscard',target='selfBench',energyType='Water',amount=1,filter={'subtype':'Water'})),
  '124':('Item',E('discardEnergyCard',amount=1,target='opponentPokemon',specialOnly=True)),
  '129':('Item',E('moveEnergy',source='selfBench',target='selfActive',amount=1)),
  '144':('Supporter',DRAW(3)),
  '165':('Item',E('rareCandy')),
 }
-for a,b in [('119',['161']),('124',['124a','162'])]:
+for a,b in [('119',['161']),('124',['124a','162']),('126',['143']),('128',['128a','164']),('125',['125a','163']),('130',['130a'])]:
     for x in b:TRAINERS[x]=TRAINERS[a]
 
 ABILITIES={

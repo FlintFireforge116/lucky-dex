@@ -23,5 +23,7 @@
     "130a",
     "157a"
   ],
-  "compactSha256": "4d3bd1b736723266199cfa8ce60d76ff81d6755ef71406c50f12ceb3b1dcd002"
+  "compactSha256": "4d3bd1b736723266199cfa8ce60d76ff81d6755ef71406c50f12ceb3b1dcd002",
+  "minimumBattleEnabled": 146,
+  "continuationAuditTest": "tests/v07410-guardians-rising-continuation.test.cjs"
 }
