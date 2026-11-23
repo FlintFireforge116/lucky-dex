@@ -1,0 +1,26 @@
+{
+  "set": "sm2",
+  "name": "Guardians Rising",
+  "release": "0.69.402",
+  "stage": "stage1",
+  "printedTotal": 180,
+  "attackPrints": 287,
+  "abilities": 30,
+  "pokemonGX": 42,
+  "gxAttackPrints": 42,
+  "energyPrints": 4,
+  "pin": "0d2296a8c32fac6442c9b407653d30f8e9c3f0d6",
+  "variants": [
+    "19a",
+    "21a",
+    "51a",
+    "60a",
+    "92a",
+    "121a",
+    "124a",
+    "125a",
+    "128a",
+    "130a",
+    "157a"
+  ]
+}

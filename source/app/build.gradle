@@ -8,8 +8,8 @@ android {
         applicationId 'com.example.luckydex'
         minSdk 26
         targetSdk 35
-        versionCode 7401
-        versionName '0.69.401'
+        versionCode 7402
+        versionName '0.69.402'
     }
 
     signingConfigs {
@@ -984,4 +984,25 @@ tasks.register('auditSM1ForApk', Exec) {
 }
 tasks.matching { it.name == 'preBuild' || (it.name.startsWith('merge') && it.name.endsWith('Assets')) }.configureEach {
     dependsOn tasks.named('auditSM1ForApk')
+}
+
+// v0.69.402 Guardians Rising SM2: source-locked expansion, strict playable/gated
+// coverage and game/deck/CPU integration checks are mandatory before APK merge.
+tasks.register('preflightSM2ContractForApk', Exec) {
+    dependsOn tasks.named('auditSM1ForApk')
+    workingDir rootProject.projectDir
+    commandLine (System.getenv('LUCKYDEX_PYTHON') ?: 'python3'), 'scripts/preflight-sm2-release.py'
+}
+tasks.register('generateSM2ForApk', Exec) {
+    dependsOn tasks.named('preflightSM2ContractForApk')
+    workingDir rootProject.projectDir
+    commandLine (System.getenv('LUCKYDEX_PYTHON') ?: 'python3'), 'scripts/build-sm2.py'
+}
+tasks.register('auditSM2ForApk', Exec) {
+    dependsOn tasks.named('generateSM2ForApk')
+    workingDir rootProject.projectDir
+    commandLine 'node', '--test', 'tests/v07407-guardians-rising-integration.test.cjs', 'tests/v07408-guardians-rising-berserk-condition.test.cjs', 'tests/v07333-classic-deck-quality.test.cjs', 'tests/v07404-basic-energy-search-coins.test.cjs', 'tests/v07406-basic-energy-search-special-cases.test.cjs'
+}
+tasks.matching { it.name == 'preBuild' || (it.name.startsWith('merge') && it.name.endsWith('Assets')) }.configureEach {
+    dependsOn tasks.named('auditSM2ForApk')
 }
