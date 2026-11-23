@@ -988,7 +988,28 @@
       pokemonOn(state.sides[side]).some(p=>p.cardId==='bw4-57'&&!effects.abilitiesSuppressed(state,side,p,data.cardById)))
       next.Psychic=Number(next.Psychic||0)+Number(slot?.energy?.Psychic||0);
     for(const ref of slot?.specialEnergy||[]){
-      if(ref.cardId==='xy6-97'&&!data.cardById(slot?.cardId)?.types?.includes('Dragon'))continue;
+      if(['sm5-137','sm5-170','sm5-138','sm5-171'].includes(ref.cardId)&&!miracleWind){
+        // A Unit Energy card is one selectable unit, not three simultaneous ones.
+        // Crystal is just its counted unit; __sm5UnitCards records the physical
+        // per-card options and canPayCost performs exact matching.
+        const allowed=['sm5-137','sm5-170'].includes(ref.cardId)?
+          ['Grass','Fire','Water']:['Lightning','Psychic','Metal'];
+        next.Crystal=Number(next.Crystal||0)+1;
+        (next.__sm5UnitCards||(next.__sm5UnitCards=[])).push(allowed);
+        continue;
+      }
+      if(ref.cardId==='sm5-136'&&!miracleWind){
+        const attachedStage2=data.cardById(slot?.cardId)?.stage==='Stage 2';
+        const stage2InPlay=pokemonOn(state.sides[side]).filter(p=>data.cardById(p.cardId)?.stage==='Stage 2').length;
+        const boosted=attachedStage2&&stage2InPlay>=3;
+        // Crystal Beach reduces a multi-unit Special Energy to one Colorless.
+        if(boosted&&activeStadium(state)?.cardId==='ex14-75')
+          next.Colorless=Number(next.Colorless||0)+1;
+        else if(attachedStage2)next.Miracle=Number(next.Miracle||0)+(boosted?4:1);
+        else next.Colorless=Number(next.Colorless||0)+1;
+        continue;
+      }
+      if(ref.cardId==='xy6-97' &&!data.cardById(slot?.cardId)?.types?.includes('Dragon'))continue;
       // Crystal Beach: two- or three-unit Special Energy becomes ONE Colorless
       // regardless of the attached Pokemon's Powers or Bodies. Keep the Basic
       // Energy Zone (slot.energy) completely separate.
@@ -1420,6 +1441,7 @@
     s.hand.forEach((ref,handIndex)=>{
       const card = data.cardById(ref.cardId);
       if(!card||card.kind!=='trainer'||!card.battleEnabled||card.id==='pl1-117')return; // Power Spray is an opponent-turn interrupt only.
+      if(state.format==='classic'&&card.id==='sm5-120'&&(!s.active||!effects.effectiveTypes(state,side,s.active,data.cardById).some(t=>t==='Water'||t==='Metal')))return; // Cyrus Prism: printed Active requirement, human and CPU.
       if(state.format==='classic'&&card.id==='pl2-89'&&s.hand.length<2)return; // Bebe must return a second card.
       if(state.format==='classic'&&['hgss4-85','hgss4-89'].includes(card.id)&&s.prizes.length<=foe.prizes.length)return;
       if(state.format==='classic'&&card.id==='hgss4-87'&&
@@ -2529,7 +2551,7 @@
   function discardKnockedOut(s, slot, options){
     if(slot.pl1LostZoneOnKO){
       s.lostZone=s.lostZone||[];
-      for(const [i,id] of (slot.stack||[slot.cardId]).entries())s.lostZone.push({uid:slot.uid+'-pl1-lost-'+i,cardId:id});
+      for(const [i,id] of (slot.stack||[slot.cardId]).entries())s.lostZone.push({uid:i===0&&data.cardById(id)?.prismStar?slot.uid:slot.uid+'-pl1-lost-'+i,cardId:id});
       s.lostZone.push(...toolsOf(slot),...temporaryTrainersOf(slot),...(slot.specialEnergy||[]));
       const types={Grass:'base1-99',Fire:'base1-98',Water:'base1-102',Lightning:'base1-100',Psychic:'base1-101',Fighting:'base1-97',Darkness:'lental-basic-darkness',Metal:'lental-basic-metal',Fairy:'xy1-140'};
       for(const [type,n] of Object.entries(slot.energy||{}))for(let i=0;i<Number(n||0);i++)
@@ -2538,7 +2560,7 @@
     }
     const keepTop=!!options?.keepTop,topIndex=slot.stack.length-1;
     s.energyDiscard=s.energyDiscard||{};for(const [type,n] of Object.entries(slot.energy||{}))if(Number(n)>0)s.energyDiscard[type]=Number(s.energyDiscard[type]||0)+Number(n||0);
-    for (let i=slot.stack.length-1;i>=0;i--){if(keepTop&&i===topIndex)continue;const ref={uid:`${slot.uid}-stack-${i}`,cardId:slot.stack[i]};if(ref.cardId==='SNAPFLORIO-029'){s.lostZone=s.lostZone||[];s.lostZone.push(ref);}else s.discard.push(ref);}
+    for (let i=slot.stack.length-1;i>=0;i--){if(keepTop&&i===topIndex)continue;const ref={uid:i===0&&data.cardById(slot.stack[i])?.prismStar?slot.uid:`${slot.uid}-stack-${i}`,cardId:slot.stack[i]};if(ref.cardId==='SNAPFLORIO-029'){s.lostZone=s.lostZone||[];s.lostZone.push(ref);}else s.discard.push(ref);}
     for(const tool of toolsOf(slot))s.discard.push(tool);
     for(const ref of temporaryTrainersOf(slot))s.discard.push(ref);
       for(const energy of slot.specialEnergy||[])neoRecycleSpecial(s,energy);
@@ -4240,6 +4262,21 @@ const target=slotForTarget(s,action.target,action.benchIndex);if(card.id==='pl2-
       }
     }
   }
+  function normalizePrismStarDiscard(state){
+    if(state.format!=='classic')return;
+    for(const side of ['player','opponent']){
+      const ss=state.sides[side],kept=[];
+      for(const ref of ss.discard||[]){
+        if(data.cardById(ref?.cardId)?.prismStar){
+          // Preserve original uid and return it only to the owner's Lost Zone.
+          const owner=ref.ownerSide&&state.sides[ref.ownerSide]?ref.ownerSide:side;
+          state.sides[owner].lostZone.push(ref);
+          state.log.push({type:'prismStarLostZone',side:owner,cardId:ref.cardId,uid:ref.uid});
+        }else kept.push(ref);
+      }
+      ss.discard=kept;
+    }
+  }
   function neoMonitoredAction(state,side,action){
     const before=Object.fromEntries(['player','opponent'].map(who=>[who,{uid:state.sides[who].active?.uid,bench:new Set((state.sides[who].bench||[]).map(p=>p.uid))}]));
     const healingBefore=Object.fromEntries(['player','opponent'].map(who=>[who,Object.fromEntries(pokemonOn(state.sides[who]).map(p=>[p.uid,Number(p.damage||0)]))]));
@@ -4286,7 +4323,7 @@ const target=slotForTarget(s,action.target,action.benchIndex);if(card.id==='pl2-
         state.log.push({type:'xy5AlphaRecovery',side:who,targetUid:p.uid,extraHealed:extra});
       }
     }
-    neoSpikesAfterAction(state,before);sandstormToolLock(state);enforceHandLimit(state);
+    neoSpikesAfterAction(state,before);sandstormToolLock(state);normalizePrismStarDiscard(state);enforceHandLimit(state);
     reconcileSkyField(state);return result;
   }
   function applyAction(state,side,action){

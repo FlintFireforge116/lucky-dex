@@ -8,8 +8,8 @@ android {
         applicationId 'com.example.luckydex'
         minSdk 26
         targetSdk 35
-        versionCode 7407
-        versionName '0.69.407'
+        versionCode 7409
+        versionName '0.69.409'
     }
 
     signingConfigs {
@@ -1046,7 +1046,7 @@ tasks.register('auditSM4ForApk', Exec) {
     workingDir rootProject.projectDir
     commandLine 'node', '--test', 'tests/v07419-crimson-invasion-integration.test.cjs', 'tests/v07420-crimson-invasion-outcomes.test.cjs', 'tests/v07421-crimson-invasion-continuation.test.cjs', 'tests/v07422-crimson-invasion-completion.test.cjs', 'tests/v07423-crimson-invasion-independent-audit.test.cjs', 'tests/v07418-burning-shadows-independent-audit.test.cjs', 'tests/v07385-fates-collide-stage3.test.cjs', 'tests/v07404-basic-energy-search-coins.test.cjs', 'tests/v07406-basic-energy-search-special-cases.test.cjs'
 }
-// v0.69.407 Sun & Moon Ultra Prism (SM5): SHA-verified 178-print catalogue.
+// v0.69.409 Sun & Moon Ultra Prism (SM5): SHA-verified 178-print catalogue.
 tasks.register('preflightSM5ContractForApk', Exec) {
     dependsOn tasks.named('auditSM4ForApk')
     workingDir rootProject.projectDir
@@ -1060,7 +1060,7 @@ tasks.register('generateSM5ForApk', Exec) {
 tasks.register('auditSM5ForApk', Exec) {
     dependsOn tasks.named('generateSM5ForApk')
     workingDir rootProject.projectDir
-    commandLine 'node', '--test', 'tests/v07424-ultra-prism-integration.test.cjs', 'tests/v07425-ultra-prism-reuse.test.cjs', 'tests/v07427-ultra-prism-stage2-outcomes.test.cjs', 'tests/v07428-ultra-prism-stage3-outcomes.test.cjs'
+    commandLine 'node', '--test', 'tests/v07424-ultra-prism-integration.test.cjs', 'tests/v07425-ultra-prism-reuse.test.cjs', 'tests/v07427-ultra-prism-stage2-outcomes.test.cjs', 'tests/v07428-ultra-prism-stage3-outcomes.test.cjs', 'tests/v07429-ultra-prism-stage4-outcomes.test.cjs', 'tests/v07430-ultra-prism-stage5-outcomes.test.cjs'
 }
 tasks.matching { it.name == 'preBuild' || (it.name.startsWith('merge') && it.name.endsWith('Assets')) }.configureEach {
     dependsOn tasks.named('auditSM5ForApk')

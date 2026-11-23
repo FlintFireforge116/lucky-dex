@@ -1,6 +1,6 @@
 {
   "printed": 178,
-  "battleReady": 82,
+  "battleReady": 93,
   "gated": {
     "sm5-5": [
       "Unimplemented attack: Flower Tornado"
@@ -77,8 +77,7 @@
       "Unimplemented Ability: Evolutionary Advantage"
     ],
     "sm5-48": [
-      "Unimplemented attack: Volt Bolt",
-      "Unimplemented Ability: Intimidating Fang"
+      "Unimplemented attack: Volt Bolt"
     ],
     "sm5-49": [
       "Unimplemented attack: Snuggly Generator"
@@ -101,19 +100,9 @@
     "sm5-57": [
       "Unimplemented attack: Exact Revenge"
     ],
-    "sm5-58": [
-      "Prism Star rules (one-per-deck and Lost Zone) not yet implemented",
-      "Unimplemented attack: Crisis Dive",
-      "Unimplemented Ability: Chaotic Star"
-    ],
     "sm5-59": [
       "Unimplemented attack: Lunar Payback",
       "Unimplemented attack: Psychic"
-    ],
-    "sm5-62": [
-      "Prism Star rules (one-per-deck and Lost Zone) not yet implemented",
-      "Unimplemented attack: Full Moon Star",
-      "Unimplemented attack: Psystorm"
     ],
     "sm5-63": [
       "Unimplemented Ability: Invasion"
@@ -124,9 +113,6 @@
     "sm5-69": [
       "Unimplemented attack: Dust Cannon"
     ],
-    "sm5-70": [
-      "Unimplemented Ability: Power Huddle"
-    ],
     "sm5-72": [
       "Unimplemented attack: Rip and Run"
     ],
@@ -135,11 +121,6 @@
     ],
     "sm5-76": [
       "Unimplemented attack: Sticky Smokescreen"
-    ],
-    "sm5-77": [
-      "Prism Star rules (one-per-deck and Lost Zone) not yet implemented",
-      "Unimplemented attack: Abyssal Sleep",
-      "Unimplemented Ability: Nightmare Star"
     ],
     "sm5-78": [
       "Unimplemented attack: Iron Head"
@@ -151,17 +132,11 @@
       "Unimplemented Ability: Magnetic Circuit"
     ],
     "sm5-85": [
-      "Unimplemented attack: Push Down",
-      "Unimplemented Ability: Earthen Shield"
+      "Unimplemented attack: Push Down"
     ],
     "sm5-88": [
       "Unimplemented attack: Guard Press",
       "Unimplemented attack: Boiling Impact"
-    ],
-    "sm5-89": [
-      "Prism Star rules (one-per-deck and Lost Zone) not yet implemented",
-      "Unimplemented attack: Radiant Star",
-      "Unimplemented attack: Corona Impact"
     ],
     "sm5-91": [
       "Unimplemented Ability: Change Clothes"
@@ -223,10 +198,6 @@
     "sm5-118": [
       "Unimplemented Trainer effect"
     ],
-    "sm5-120": [
-      "Prism Star rules (one-per-deck and Lost Zone) not yet implemented",
-      "Unimplemented Trainer effect"
-    ],
     "sm5-121": [
       "Unimplemented Trainer effect"
     ],
@@ -245,16 +216,6 @@
     "sm5-132": [
       "Unimplemented Trainer effect"
     ],
-    "sm5-136": [
-      "Prism Star rules (one-per-deck and Lost Zone) not yet implemented",
-      "Unimplemented Special Energy rules"
-    ],
-    "sm5-137": [
-      "Unimplemented Special Energy rules"
-    ],
-    "sm5-138": [
-      "Unimplemented Special Energy rules"
-    ],
     "sm5-139": [
       "Unimplemented attack: Grand Bloom-GX"
     ],
@@ -265,8 +226,7 @@
       "Unimplemented Ability: Freezing Gaze"
     ],
     "sm5-142": [
-      "Unimplemented attack: Lighting-GX",
-      "Unimplemented Ability: Flashing Head"
+      "Unimplemented attack: Lighting-GX"
     ],
     "sm5-143": [
       "Unimplemented Ability: Invasion"
@@ -291,8 +251,7 @@
       "Unimplemented Ability: Freezing Gaze"
     ],
     "sm5-160": [
-      "Unimplemented attack: Lighting-GX",
-      "Unimplemented Ability: Flashing Head"
+      "Unimplemented attack: Lighting-GX"
     ],
     "sm5-161": [
       "Unimplemented Ability: Invasion"
@@ -312,12 +271,6 @@
     ],
     "sm5-168": [
       "Unimplemented Trainer effect"
-    ],
-    "sm5-170": [
-      "Unimplemented Special Energy rules"
-    ],
-    "sm5-171": [
-      "Unimplemented Special Energy rules"
     ]
   },
   "attacks": 237,

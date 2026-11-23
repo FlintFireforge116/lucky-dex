@@ -1,8 +1,8 @@
 {
   "set": "sm5",
   "name": "Ultra Prism",
-  "release": "0.69.407",
-  "stage": "stage3",
+  "release": "0.69.409",
+  "stage": "stage5",
   "printedTotal": 178,
   "attackPrints": 237,
   "abilities": 37,
@@ -24,5 +24,12 @@
   "stage2TextLockedTrainers": 10,
   "stage3TextLockedAttacks": 22,
   "stage3TextLockedAbilities": 3,
-  "stage3TextLockedTrainers": 1
+  "stage3TextLockedTrainers": 1,
+  "stage4TextLockedAbilities": 4,
+  "stage4TextLockedEnergyNames": 3,
+  "stage4TextLockedEnergyPrints": 5,
+  "stage5TextLockedAttacks": 6,
+  "stage5TextLockedAbilities": 2,
+  "stage5TextLockedTrainers": 1,
+  "stage5EnabledPrismStars": 5
 }

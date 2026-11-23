@@ -66,7 +66,7 @@ def generate(rows):
   n,name,sup,subs,hp,types,evolves,attacks,abilities,weak,res,retreat,rarity,rules,trainer_class,trait=row
   n=str(n);kind={'Pokémon':'pokemon','Trainer':'trainer','Energy':'energy'}[sup];problems=[]
   prism='Prism Star' in subs
-  if prism:problems.append('Prism Star rules (one-per-deck and Lost Zone) not yet implemented')
+  if prism and kind!='energy' and not V.prism_ready(row):problems.append('Prism Star attack/Ability or Trainer effect not yet implemented')
   if trait:problems.append('Ancient Trait not yet supported')
   attack_objs=[];powers=[]
   for a in attacks:

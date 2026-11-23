@@ -8,7 +8,7 @@
   const ENERGY_TYPES=Object.values(ENERGY_CODE);
   const TARGETS=['eventPokemon','self','selfActive','selfBench','selfPokemon','opponentActive','opponentBench','opponentPokemon','opponentAll','selfAll','selfBenchAll'];
   const CONDITIONS=['opponentGxUsed','selfDamaged','selfBenchDamaged','selfUndamaged','opponentDamaged','opponentStatus','selfStatus','selfStatusAny','opponentEx','selfEnergyAtLeast','opponentEnergyAtLeast','benchAtLeast','selfHasTool','selfHasTechnicalMachine','selfStackContains','opponentDamageAtLeast','opponentPrizesRemaining','opponentPrizesAtMost','opponentHasTool','opponentHasSpecialEnergy','selfHasSpecialEnergy','selfExtraEnergyAtLeast','supporterPlayed','noSupporterInPlay','stadiumInPlay','opponentMatches','pokemonPresent','koLastOpponentTurn','koByOpponentAttackLastTurn','sweetsRelayLastTurn','movedFromBenchThisTurn','evolvedThisTurn','selfHasEnergyType','selfMoreEnergy','opponentHpGreater','selfRemainingHpAtMost','handSizeOneOf','sameEnergyTypeAtLeast','opponentPointsExact','combinedActiveEnergyAtLeast','teamEnergyAtLeast','teamDistinctEnergyTypesAtLeast','discardContains','equalEnergyCount','handSizesEqual','ownPointsExact','opponentHpLess','fewerPokemonInPlay','opponentHandSizeOneOf','selfDistinctEnergyTypesAtLeast','ownTurnCountAtMost','selfMatches','opponentStadiumInPlay','pokemonPresentAll','damagedByAttackLastOpponentTurn','notDamagedByAttackLastOpponentTurn','activeMatches','ownPointsAtLeast','ownPrizesMore','teamDistinctTypesAtLeast','firstAttackAfterPlay','opponentPointsGainedLastTurn','handAtLeast','selfRemainingHpAbove','selfRemainingHpFractionAtMost','selfRetreatCostAtLeast','koLastOpponentTurnFilter','selfOnBench','selfIsActive','selfNoEnergy','deckEmpty','opponentPointsAtLeast','ownTurnCountAtLeast','benchCountsEqual','selfDamageAtLeast','ownStadiumInPlay','xy8HealedThisTurn'];
-  const FILTER_KEYS=['kind','notName','stage','subtype','notSubtype','name','trainerType','isEx','isExOrGX','damaged','evolved','hasAbility','hasBody','evolvesFrom','hasEnergyType','hasAnyEnergy','basicEnergy','specialEnergy','classicRecoverable','nameContains','hpAtMost','retreatAtLeast','energyTypeAtLeast','pokemonGX','points','attackName','tag'];
+  const FILTER_KEYS=['kind','notName','stage','subtype','notSubtype','name','trainerType','isEx','isExOrGX','damaged','evolved','hasAbility','hasBody','evolvesFrom','hasEnergyType','hasAnyEnergy','hasSpecialEnergy','basicEnergy','specialEnergy','classicRecoverable','nameContains','hpAtMost','retreatAtLeast','energyTypeAtLeast','pokemonGX','points','attackName','tag'];
   const STATUSES=['poison','burn','sleep','paralysis','confusion'];
   const STATS=['attackDamage','damageReduction','retreatCost','attackCost','maxHp','energyMultiplier','poisonDamageBonus','attackCostGrass','attackCostFire','attackCostWater','attackCostLightning','attackCostPsychic','attackCostFighting','attackCostDarkness','attackCostMetal','attackCostFairy','attackCostColorless','damageTaken','attackDamageAllTargets','postWeaknessAttackDamage','darkShadow'];
   const effectTypes=Object.freeze(['lentalRule','neoRule','gymRule','ex16EnergyCardPick','ex16DigDeep','fossilWildfire','fossilThunderstorm','fossilProphecy','fossilMoveCounter','fossilTransparency','fossilArmor','fossilClairvoyance','fossilRecycle','chainLightning','returnIfSurvives','peek','noop','sequence','healSelf','heal','damage','bonusDamage','coinDamage','energyDamage','benchCountDamage','statusDamage','damageFromDamage','discardEnergyCard','discardTop','benchDamage','selfDamage','attachEnergy','discardEnergy','draw','search','searchRandomBasic','switch','status','coinFlip','modifier','removeStatus','lock','preventDamage','selectedDamage','coinUntilTails','playFossil','rareCandy','discardSelf','moveEnergy','handShuffle','preventStatus','actionLock','discardTool','discardHand','benchFromDeck','allHeadsBonus','attackCoinGate','retaliateDamage','pointDamage','namedAttackCountDamage','usedAttackCountDamage','coinDamageByPokemon','randomPokemonDamage','globalRandomDiscardEnergy','retreatCostDamage','toolCountDamage','discardStadium','drain','nextAttackBonus','coinAttackGate','damageRule','evolveFromDeck','coinDamageByEnergy','discardCountDamage','fieldCountDamage','energyTypeCountDamage','statusCountDamage','handCountDamage','remainingHpDamage','trimHand','shuffleRandomHandCard','halveRemainingHp','setRemainingHp','placeDamageCounters','removeRandomStatus','randomStatus','allHeadsEffect','selfDamagePenalty','deckCountDamage','attachEnergyFromDiscard','endTurn','coinRepeatEffect','coinDamageStatus','topDeckFilter','fieldCountDraw','selectedEnergyDamage','forceOpponentSwitch','revealHand','inspectTop','returnToHand','shuffleIntoDeck','discardChosenHand','shuffleChosenHand','searchChosen','takeTopMatching','revealUntilMatching','attachChosenBasicFromHand','chooseEvolutionFromDeck','shuffleAllAttached','selectTopToHand','swapHandWithRandomDeck','moveDamage','discardBenchPokemon','copyAttack','drawToHandSize','chooseTarget','attackRequirement','attackDamageGate','triggeredEffect','koGuard','coinDamageGuard','preventEffects','healingBlock','setNextEnergyRandom','changeRandomEnergyType','devolve','chooseOption','revealDeck','removeStatuses','topDeckDiscardBonus','topDeckBothDiscardBonus','dp6EnergySplit','coinAnyHeadsGate','shuffleDeck','returnAllTools','shuffleAllTools','evolveTargetFromDeck','moveRandomEnergy','stealRandomFromDiscard','filteredHandCountDamage','pointsGainedLastTurnDamage','koCountDamage','preventAbilityDamage','distributeEnergy','attachTopZoneEnergy','moveOpposingCounters','previousEvolutionAttacks','stackAttackBonus','firstDamageGuard','topDeckCountDamage','attachRandomEnergy','selfDamageIfDefenderKnockedOut','shuffleRandomCombinedHandCard','coinDiscardEnergyDamage','createCard','coinBonus','coinTierBonus','coinBenchDamage','searchThenShuffleChosen','stadiumAction','rerollEnergyZone','evolutionAsName','evolutionTimingOverride','abilitySuppression','conditionalAttackCost','additionalType','benchFromDiscard','attachRandomEnergyFromDiscard','knockOut','discardPokemon','koPointBonus','randomAttackLock','optionalDiscardBenchBonus','randomHitBonus','statusRecoveryAura','weaknessGuard','weaknessMultiplier','copyRandomTrainerEffect','healActiveReturnTrainer','copyRandomAttackFromPrivate','energyAttachStatusTrap','multiTargetDamage','sm5Rule','sm2Rule','sm2Hala','sm2MaxPotion','sm2FieldBlower','sm2RescueStretcher','multiTargetHeal','selectedSelfBenchDamage','distributeDiscardCounters','distributeDiscardEnergy','returnOpponentBench','scheduleDelayed','retreatRetaliation','chooseDiscardForBonus','reorderTop','redistributeEnergy','distributeDiscardEnergyDistinct','benchBasicsFromOpponentHand','forceFirstCoinHead','coinReroll','toolCapacity','repeatAttack','energyTypeOverride','redistributeDamage','chooseAttackLock','chooseTypeOverride','remainingHpFractionDamage','destinyBond','shuffleHandMatching','tradeHandForDeck','scoopUp','energyRetrieval','pokemonCenter','devolutionSpray','multiEnergyRemoval','specialEnergy','selfKoAttachAsEnergy','mirrorLastAttackResult','replayAttackResult','xy7MagneticWarp','xy7RenegadePulse','xy7IronCannon','xy7IronCannonDiscard','xy7ChaosWheel','xy7SolarBirth','xy7BurningRoar','xy7ThunderRod','xy7Exavolt','xy7Rewind','xy7WindyMischief','xy7DigitalReboot','xy7PoisonousNest','xy7HexManiac','xy7JaggedSaber','xy7AeroBall','xy7MagikarpRetaliation','xy7EntanglingControl','xy7CyberCrush','xy7SlowingBeam','xy7RecycleTools','xy7RecycleBasics','xy7EpicSplash','xy7DigOut','xy7BewitchingEyes','xy7LiquidBlow','xy7DataCheck','xy7ShiningBreath','xy10HandToDeckBottom','xy10FieldDeficitDamage','xy10RegiPower','xy10LugiaPressure','xy10MegaCatcher','xy10VeilOfDarkness','xy10MetalFortress','xy10DangerousTentacle','xy10WormadamFirst','xy10BasicLightningDamage','xy10LightSteps','xy10FlareWitch','xy10DiamondGift','xy10DevolutionSpray','xy10EnergyReset','xy10Final','xy11Rule','xy12Rule','sm1Rule','sm3Rule','sm4Rule']);
@@ -43,7 +43,7 @@
       case 'distributeDiscardCounters':need(integer(effect.amount)&&effect.amount>0&&effect.amount%10===0,'invalid discard counters');break;
       case 'sm3Rule':need(typeof effect.rule==='string'&&!!effect.rule,'invalid SM3 rule');break;
       case 'sm4Rule':need(typeof effect.rule==='string'&&!!effect.rule,'invalid SM4 rule');break;
-      case 'sm5Rule':need(['mars'].includes(effect.rule),'invalid SM5 rule');break;
+      case 'sm5Rule':need(['mars','prismHandEnergy','prismDiscardEnergy','cyrusPrism'].includes(effect.rule),'invalid SM5 rule');break;
       case 'sm2Rule':need(typeof effect.rule==='string'&&!!effect.rule,'invalid SM2 rule');break;
       case 'sm2Hala':case 'sm2MaxPotion':case 'sm2FieldBlower':case 'sm2RescueStretcher':break;
       case 'multiTargetHeal':need(effect.target==='selfBench','invalid multi-target heal selector');need(integer(effect.count)&&effect.count>0,'invalid multi-target heal count');need(nonnegative(effect.amount),'invalid multi-target heal amount');break;
@@ -186,6 +186,9 @@
   // Count a Special Energy once even if its provider uses several type labels.
   function attachedSpecialProvidesType(ref,type,slot,cardById){
     if(!ref||!type)return false;
+    if(['sm5-137','sm5-170'].includes(ref.cardId))return ['Grass','Fire','Water'].includes(type);
+    if(['sm5-138','sm5-171'].includes(ref.cardId))return ['Lightning','Psychic','Metal'].includes(type);
+    if(ref.cardId==='sm5-136')return true; // Conditional quantity is resolved in core.
     if(ref.cardId==='bw4-93')return cardById?.(slot?.cardId)?.stage==='Basic';
     if(ref.cardId==='bw6-117')return ['Grass','Fire','Psychic','Darkness'].includes(type);
     if(ref.cardId==='bw6-118')return ['Water','Lightning','Fighting','Metal'].includes(type);
@@ -198,6 +201,36 @@
     // Normalise legacy/imported symbol arrays before any typing checks.
     // String(["R","R","C"]) would otherwise create phantom comma costs.
     cost=Array.isArray(cost)?cost.join(''):String(cost||'');
+    // SM5 Unit Energy: each physical card offers a CHOICE of three types, but
+    // can pay only ONE cost symbol. Count Crystal in other legacy energy cards
+    // separately; a combined allowed-type map would let a single Grass/Fire/
+    // Water Unit Energy pay two Grass costs when paired with a Lightning Unit.
+    if(Array.isArray(energy?.__sm5UnitCards)&&energy.__sm5UnitCards.length){
+      const pool={...energy},resources=[];
+      const units=pool.__sm5UnitCards;
+      const sm5Units=units.length;
+      for(const u of units)resources.push(u.slice());
+      for(const [type,count] of Object.entries(pool)){
+        if(type.startsWith('__'))continue;
+        let n=Math.max(0,Math.floor(Number(count)||0));
+        if(type==='Crystal')n=Math.max(0,n-sm5Units);
+        for(let i=0;i<n;i++)resources.push(type==='Miracle'?['*']:
+          type==='Crystal'?Object.keys(pool.__crystalAllowed||{}):[type]);
+      }
+      const symbols=cost.split(''),typed=symbols.filter(c=>c!=='C').map(c=>ENERGY_CODE[c]);
+      if(typed.some(t=>!t)||resources.length<symbols.length)return false;
+      // Assign the most constrained type first; preserving resources for the
+      // remaining typed costs also enforces any number of Colorless units.
+      typed.sort((a,b)=>resources.filter(r=>r.includes(a)||r.includes('*')).length-
+                         resources.filter(r=>r.includes(b)||r.includes('*')).length);
+      const taken=new Set();
+      const assign=i=>{if(i===typed.length)return true;
+        for(let j=0;j<resources.length;j++)if(!taken.has(j)&&
+          (resources[j].includes(typed[i])||resources[j].includes('*'))){
+          taken.add(j);if(assign(i+1))return true;taken.delete(j);
+        }return false;};
+      return assign(0);
+    }
     if(energy?.__towerBasics){
       // Holon Research Tower: each Basic Energy can provide either its normal
       // type or Metal, never two units. Try all valid assignments so mixed
@@ -19202,6 +19235,61 @@
     const affected=()=>targets(effect.target,ctx).filter(s=>!protectedFromEffects(s,ctx)&&matchesFilter(ctx.cardById(s.cardId),effect.filter,s)),log=entry=>ctx.state.log.push(Object.assign({side:ctx.side},entry));
     switch(effect.type){
       case 'sm5Rule':{
+        // Stage 5 Prism Star cards: each effect is tied to exact printed text.
+        // Basic Energy discarded by an attack lives in energyDiscard, not the
+        // fresh Energy Zone. No Prism Star effect may synthesize that energy.
+        if(effect.rule==='prismDiscardEnergy'){
+          const count=pokemonOn(other(ctx)).length;
+          if(count>0)applyEffect({type:'distributeDiscardEnergy',energyType:effect.energyType,target:'selfPokemon',amount:count},ctx);
+          break;
+        }
+        if(effect.rule==='prismHandEnergy'){
+          const ss=own(ctx),source=ctx.attacker,remaining=Number(effect.remaining??effect.amount??2),type=effect.energyType;
+          if(!source||!ss.bench.includes(source))break;
+          // Trigger only on an ACTUAL hand-to-Bench play, never when a search
+          // benches a Pokemon or when it enters at battle setup.
+          if(!ctx.resolvingChoice&&ctx.eventData?.fromHand!==true)break;
+          const available=()=>ss.hand.findIndex(ref=>{const c=ctx.cardById(ref.cardId);return c?.basicEnergy===true&&(c.energyType||c.subtype)===type;});
+          if(ctx.resolvingChoice){
+            if(Number(ctx.action?.choiceOption)!==0)break;
+            const index=available();if(index<0)break;
+            const [ref]=ss.hand.splice(index,1);
+            source.energy=source.energy||{};source.energy[type]=Number(source.energy[type]||0)+1;
+            ctx.onEnergyAttached?.(source,type,1,{fromHand:true,energyCardId:ref.cardId});
+            log({type:'sm5PrismHandEnergy',cardId:source.cardId,uid:ref.uid,energyType:type});
+            if(remaining>1&&available()>=0)ctx.requestChoice?.({kind:'option',side:'self',options:['Attach one '+type+' Energy from hand','Finish'],effect:{...effect,remaining:remaining-1}});
+            break;
+          }
+          if(available()>=0)ctx.requestChoice?.({kind:'option',side:'self',options:['Attach one '+type+' Energy from hand','Finish'],effect:{...effect,remaining}});
+          break;
+        }
+        if(effect.rule==='cyrusPrism'){
+          const ss=own(ctx),foe=other(ctx),attacker=ss.active;
+          const types=attacker?effectiveTypes(ctx.state,ctx.side,attacker,ctx.cardById):[];
+          if(!ctx.resolvingChoice&&!types.some(t=>t==='Water'||t==='Metal'))break;
+          if(foe.bench.length<=2)break;
+          const kept=(effect.kept||[]).filter(uid=>foe.bench.some(p=>p.uid===uid));
+          if(ctx.resolvingChoice){
+            const i=Number(ctx.action?.choiceOption),uids=effect.optionUids||[],uid=uids[i];
+            if(!Number.isInteger(i)||!uid||kept.includes(uid)||!foe.bench.some(p=>p.uid===uid))break;
+            kept.push(uid);
+          }
+          if(kept.length>=2){
+            for(const pokemon of foe.bench.slice()){
+              if(kept.includes(pokemon.uid))continue;
+              // Return all printed stack/Tool/Special cards to the actual
+              // opponent deck. Basic attached Energy is handled by the
+              // existing hybrid shuffleIntoDeck implementation.
+              applyEffect({type:'shuffleIntoDeck',target:'opponentBench',includeAttached:true},{...ctx,action:{choiceTarget:'bench',choiceBenchIndex:pokemon.benchSlot}});
+            }
+            log({type:'sm5CyrusPrism',keptUids:kept,benched:foe.bench.length});
+            break;
+          }
+          const remaining=foe.bench.filter(p=>!kept.includes(p.uid));
+          if(remaining.length)ctx.requestChoice?.({kind:'option',side:'opponent',options:remaining.map(p=>'Keep '+(ctx.cardById(p.cardId)?.name||'Pokemon')),
+            effect:{...effect,kept,optionUids:remaining.map(p=>p.uid)}});
+          break;
+        }
         // Ultra Prism Mars: the random opposing discard occurs ONLY if at
         // least one card was actually drawn. Unlike a generic sequence, this
         // cannot discard from the opponent when the user's deck is empty.

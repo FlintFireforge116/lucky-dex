@@ -33,7 +33,11 @@ test('SM5 178 canonical prints, attack costs and explicit gates',()=>{
    assert.deepEqual(c.abilities.map(a=>a.text),r[8].map(a=>a[2]));
    assert.equal(c.prizeCards,r[3].includes('GX')?2:1);
   }
-  if(c.prismStar){assert.equal(c.battleEnabled,false,c.id+' Prism must be gated until one-copy/Lost Zone rules are implemented');assert.equal(c.maxDeckCopies,1);}
+  if(c.prismStar){
+   assert.equal(c.maxDeckCopies,1,c.id+' must remain limited to one per deck');
+   assert.equal(c.battleEnabled,true,c.id+' Prism Star was implemented in SM5 Stage 4/5');
+   assert.equal(c.deckEligible,true,c.id+' Prism Star should be deck-buildable');
+  }
   if(!c.battleEnabled){assert.ok(coverage.gated[c.id]?.length,c.id+' missing blockers');continue;}
   for(const a of c.attacks||[]){assert.deepEqual(fx.validateEffect(a.effect),[],c.id+' '+a.name);if(a.text.replace(/\(You can't use more than 1 GX attack in a game\.\)/g,'').trim())assert.notEqual(a.effect.type,'noop');}
   for(const a of c.abilities||[])assert.deepEqual(fx.validateEffect(a.effect),[],c.id+' '+a.name);

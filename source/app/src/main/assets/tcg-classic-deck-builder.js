@@ -914,7 +914,7 @@ function buildDeck(rows,options={}){
    const copiesOfName=[...counts].filter(([id])=>classicCardName(classic.cardById(id)?.name)===name).reduce((sum,[,count])=>sum+count,0);
    const starSlots=card.pokemonStar?Math.max(0,1-cards.filter(id=>classic.cardById(id)?.pokemonStar).length):arceusUnlimited?30:4;
    const aceSlots=card.aceSpec?Math.max(0,1-cards.filter(id=>classic.cardById(id)?.aceSpec).length):4;
-   const miracleSlots=name==='Miracle Energy'?Math.max(0,1-copiesOfName):4;
+   const miracleSlots=(name==='Miracle Energy'||card.prismStar)?Math.max(0,1-copiesOfName):4;
    const rawCap=stormfrontAutoCaps[card.id]??xy10SituationalCaps[card.id];
    let allowedCopies=arceusUnlimited?30:rawCap===undefined?4:Math.min(4,Math.max(rawCap,existing.filter(id=>id===card.id).length));
    if(energyFillerPhase&&card.specialEnergy){

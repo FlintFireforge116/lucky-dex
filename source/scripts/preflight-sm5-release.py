@@ -4,11 +4,11 @@ from __future__ import annotations
 import argparse,hashlib,json,re,subprocess,sys
 from pathlib import Path
 ROOT=Path(__file__).resolve().parents[1]
-TESTS=['tests/v07424-ultra-prism-integration.test.cjs','tests/v07425-ultra-prism-reuse.test.cjs','tests/v07427-ultra-prism-stage2-outcomes.test.cjs','tests/v07428-ultra-prism-stage3-outcomes.test.cjs']
+TESTS=['tests/v07424-ultra-prism-integration.test.cjs','tests/v07425-ultra-prism-reuse.test.cjs','tests/v07427-ultra-prism-stage2-outcomes.test.cjs','tests/v07428-ultra-prism-stage3-outcomes.test.cjs','tests/v07429-ultra-prism-stage4-outcomes.test.cjs','tests/v07430-ultra-prism-stage5-outcomes.test.cjs']
 def check():
  subprocess.run([sys.executable,'scripts/check-gradle-source.py','--self-test'],cwd=ROOT,check=True)
  c=json.loads((ROOT/'scripts/sm5_release_contract.json').read_text())
- assert (c['set'],c['stage'],c['release'])==('sm5','stage3','0.69.407')
+ assert (c['set'],c['stage'],c['release'])==('sm5','stage5','0.69.409')
  assert (c['printedTotal'],c['attackPrints'],c['abilities'],c['pokemonGX'],c['gxAttackPrints'],c['prismStarPrints'],c['trainerPrints'],c['energyPrints'])==(178,237,37,27,27,6,36,5)
  assert c['pin']=='66cbd13b706b789de3b8cce2f5c9fc95135a33b0'
  assert c['variants']==['119a','122a','125a','135a','153a']
@@ -50,9 +50,40 @@ def check():
   matching=[row for row in rows if row[2]=='Trainer' and row[1]==name and all(sm5stage3.norm(x) in sm5stage3.norm(' '.join(row[13] or [])) for x in sm5stage3.TRAINER_RULES[name])]
   assert matching,'SM5 Stage 3 official Trainer print mismatch: '+name
   assert all(sm5stage3.trainer(row)==(klass,descriptor) for row in matching),'SM5 Stage 3 Trainer rule mismatch: '+name
+ # Stage 4: verify the exact text of every re-used Ability and
+ # Special Energy print. The number of supported ENERGY *names* is three,
+ # but the two Unit Energy names each have an alternate-art print.
+ import sm5_stage4_verified as sm5stage4
+ assert (len(sm5stage4.ABILITIES),len(sm5stage4.ENERGY))==(c['stage4TextLockedAbilities'],c['stage4TextLockedEnergyNames'])
+ for name,(printed,descriptor) in sm5stage4.ABILITIES.items():
+  matches=[(row,a) for row in rows for a in row[8] if a[0]==name and sm5stage4.norm(a[2])==sm5stage4.norm(printed)]
+  assert matches,'SM5 Stage 4 official Ability mismatch: '+name
+  assert all(sm5stage4.ability(row,a)==descriptor for row,a in matches),name+' descriptor changed'
+ energy_rows=[row for row in rows if row[2]=='Energy' and row[1] in sm5stage4.ENERGY]
+ assert len(energy_rows)==c['stage4TextLockedEnergyPrints'],'SM5 Stage 4 Energy print count mismatch'
+ for row in energy_rows:
+  assert sm5stage4.energy(row)==sm5stage4.ENERGY[row[1]][1],f'SM5 Stage 4 Energy source mismatch: {row[1]}'
+ print(f'SM5 Stage 4 official-print check: {len(sm5stage4.ABILITIES)} Abilities and {len(energy_rows)} Energy prints')
+ # Stage 5: exact printed effects for ALL FIVE non-Energy Prism Stars.
+ # This does not authorize other SM5 effects or relax the source hash pin.
+ import sm5_stage5_verified as sm5stage5
+ assert (len(sm5stage5.ATTACKS),len(sm5stage5.ABILITIES),len(sm5stage5.TRAINERS))==(c['stage5TextLockedAttacks'],c['stage5TextLockedAbilities'],c['stage5TextLockedTrainers'])
+ assert len(sm5stage5.PRISM_PRINTS)==c['stage5EnabledPrismStars']
+ all_prism=[row for row in rows if 'Prism Star' in row[3] and row[2]!='Energy']
+ assert len(all_prism)==5 and all(sm5stage5.prism_ready(row) for row in all_prism),'SM5 Prism Star full printed mechanics not supported'
+ for name,(printed,descriptor) in sm5stage5.ATTACKS.items():
+  matches=[(row,a) for row in all_prism for a in row[7] if a[0]==name and sm5stage5.norm(a[3])==sm5stage5.norm(printed)]
+  assert matches and all(sm5stage5.attack(row,a)==descriptor for row,a in matches),'SM5 Prism attack print mismatch: '+name
+ for name,(printed,descriptor) in sm5stage5.ABILITIES.items():
+  matches=[(row,a) for row in all_prism for a in row[8] if a[0]==name and sm5stage5.norm(a[2])==sm5stage5.norm(printed)]
+  assert matches and all(sm5stage5.ability(row,a)==descriptor for row,a in matches),'SM5 Prism Ability print mismatch: '+name
+ for name,(kind,descriptor) in sm5stage5.TRAINERS.items():
+  matches=[row for row in all_prism if row[1]==name]
+  assert len(matches)==1 and sm5stage5.trainer(matches[0])==(kind,descriptor),'SM5 Prism Trainer mismatch: '+name
+ print('SM5 Stage 5 printed Prism Star mechanics PASS: 5 cards / 6 attacks / 2 Abilities / Cyrus')
  print(f'SM5 Stages 2+3 official-text audit PASS: {len(sm5stage2.ATTACKS)} + {len(sm5stage3.ATTACKS)} attacks, {len(sm5stage3.ABILITIES)} Abilities, {len(sm5stage2.TRAINERS)+len(sm5stage3.TRAINERS)} Trainers')
  gradle=(ROOT/'app/build.gradle').read_text()
- assert re.search(r"versionName\s+['\"]0\.69\.407['\"]",gradle) and 'versionCode 7407' in gradle
+ assert re.search(r"versionName\s+['\"]0\.69\.409['\"]",gradle) and 'versionCode 7409' in gradle
  for task in ['preflightSM5ContractForApk','generateSM5ForApk','auditSM5ForApk']:
   assert "tasks.register('"+task+"'" in gradle,task+' missing'
  assert "dependsOn tasks.named('auditSM4ForApk')" in gradle
@@ -61,17 +92,18 @@ def check():
  for f in ('tcg-classic-battle-data.js','tcg-classic-deck-builder.js','tcg-classic-opponents.js','tcg-classic-set-picker.js'):
   assert 'sm5' in (ROOT/'app/src/main/assets'/f).read_text(),f+' missing SM5 registration'
  html=(ROOT/'app/src/main/assets/index.html').read_text()
- assert 'tcg-classic-ultra-prism.js' in html and 'v0.69.407' in html
- assert "__LUCKYDEX_BUILD='0.69.407'" in (ROOT/'app/src/main/assets/app-v0167.js').read_text()
+ assert 'tcg-classic-ultra-prism.js' in html and 'v0.69.409' in html
+ assert "__LUCKYDEX_BUILD='0.69.409'" in (ROOT/'app/src/main/assets/app-v0167.js').read_text()
  for sid in ['xy9','xy10','xy11','xy12','sm1','sm2','sm3','sm4']:
-  assert json.loads((ROOT/f'scripts/{sid}_release_contract.json').read_text())['release']=='0.69.407'
+  assert json.loads((ROOT/f'scripts/{sid}_release_contract.json').read_text())['release']=='0.69.409'
  print('SM5 source gate PASS: SHA-pinned official 178 prints, 237 attacks, 37 Abilities, 27 GX, 6 Prism Star')
 def full():
  subprocess.run([sys.executable,'scripts/build-sm5.py'],cwd=ROOT,check=True)
  d=json.loads((ROOT/'docs/SM5_BUILD_COVERAGE.json').read_text())
  assert (d['printed'],d['attacks'],d['abilities'],d['pokemonGX'],d['gxAttackPrints'],d['prismStarPrints'],d['energyPrints'])==(178,237,37,27,27,6,5)
- assert d['battleReady']>=1 and d['battleReady']+len(d['gated'])==178
+ assert d['battleReady']>=6 and d['battleReady']+len(d['gated'])==178
  assert all(d['gated'].values())
+ assert all('sm5-'+n not in d['gated'] for n in ['58','62','77','89','120','136']),'An implemented Prism Star was incorrectly gated'
  subprocess.run(['node','--test',*TESTS],cwd=ROOT,check=True)
  print(f"SM5 release gate PASS: {d['battleReady']}/178 playable, {len(d['gated'])} explicitly gated")
 if __name__=='__main__':

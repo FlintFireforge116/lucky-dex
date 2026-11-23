@@ -11,6 +11,8 @@ import sm1_verified as S1, sm2_verified as S2, sm3_verified as S3, sm4_verified 
 from xy8_verified import attack as generic_attack
 import sm5_stage2_verified as STAGE2
 import sm5_stage3_verified as STAGE3
+import sm5_stage4_verified as STAGE4
+import sm5_stage5_verified as STAGE5
 ROOT=Path(__file__).resolve().parents[1]
 E=lambda name,**kw:{'type':name,**kw}
 N=E('noop')
@@ -38,6 +40,8 @@ ATTACK_OVERRIDES={
 }
 
 def attack(row,a):
+ stage5=STAGE5.attack(row,a)
+ if stage5 is not None:return stage5
  stage3=STAGE3.attack(row,a)
  if stage3 is not None:return stage3
  stage2=STAGE2.attack(row,a)
@@ -55,6 +59,10 @@ def attack(row,a):
  return deepcopy(candidate)
 
 def ability(row,a):
+ stage5=STAGE5.ability(row,a)
+ if stage5 is not None:return stage5
+ stage4=STAGE4.ability(row,a)
+ if stage4 is not None:return stage4
  stage3=STAGE3.ability(row,a)
  if stage3 is not None:return stage3
  key=(a[0],norm(a[2]))
@@ -67,6 +75,8 @@ def ability(row,a):
  return None
 
 def trainer(row):
+ stage5=STAGE5.trainer(row)
+ if stage5 is not None:return stage5
  stage3=STAGE3.trainer(row)
  if stage3 is not None:return stage3
  stage2=STAGE2.trainer(row)
@@ -75,6 +85,7 @@ def trainer(row):
  return deepcopy(TRAINERS[key]) if key in TRAINERS else None
 
 def energy(row):
- # Both Unit Energy types and Super Boost Energy Prism Star need bespoke
- # runtime handling. Providing all three types at once would be incorrect.
- return None
+ # Printed legality is pinned in STAGE4; runtime dynamic allocations live in core.
+ return STAGE4.energy(row)
+
+prism_ready=STAGE5.prism_ready
