@@ -171,3 +171,46 @@ for row in ROWS:
 at(190,'Destructive Drake-GX',Q('DestructiveDrake'))
 tr(190,'Tool',U('ZCrystal'))
 at(37,'Swirling Inferno',Q('SwirlingInferno'))
+
+# v463: reuse verified effect primitives; exact signatures only.
+at(8,'Solar Power',Q('SolarPower'))
+ab(11,passive(Q('SwayingStrangle')))
+ab(33,trig('evolved',R('TopAttach',count=8,includeSpecial=False),fromHandOnly=True))
+at(35,'Backfire',Q('Backfire',left=2))
+at(35,'Massive Heat Wave-GX',Q('MassiveWave'))
+ab(35,activated(Q('FlamingShot')))
+
+at(63,'Massive Catch-GX',Q('TopBench',window=12,left=12))
+at(65,'Liquidation',E('modifier',target='opponentActive',scope='self',stat='damageTaken',amount=60,duration='nextOwnTurn'))
+
+at(92,'Poison Cultivation',Q('PoisonCultivation'))
+ab(97,passive(Q('ShadowBox')))
+ab(102,activated(R('SearchAttach',amount=2,targetFilter={'name':['Solgaleo','Lunala']},includeSpecial=True,condition=has('self',name='Solgaleo'))))
+ab(117,activated(E('sm7Rule',rule='smoothOver')))
+ab(129,passive(Q('SmugFace')))
+at(134,'Bag Slash',Q('BagSlash'))
+at(148,'Sneaky Pocket',Q('SneakyPocket'))
+at(155,'Moonblast',E('modifier',stat='attackDamage',amount=-30,scope='self',target='opponentActive',duration='opponentTurn'))
+at(155,'Beloved Pulse',bonus(80,C('sm12TagSupporter')))
+at(163,'Shout of Power',Q('DiscardAttach',left=1,benchOnly=True))
+at(163,'Scaly Uppercut',Q('ScalyUppercut'))
+tr(187,'Stadium',Q('ChaoticSwell'))
+tr(191,'Supporter',Q('Erika'))
+
+
+tr(201,'Supporter',Q('OakSetup',left=3,types=[]))
+
+at(52,'Cold Snap',seq(E('actionLock',cardType='Trainer',duration='opponentTurn'),Q('ColdSnap')))
+at(75,'Light of the Protector-GX',E('preventDamage',target='selfAll',duration='opponentTurn',preventEffects=True,condition=C('sm10Supporter',name="Lillie's Full Force")))
+tr(196,'Supporter',seq(E('draw',amount=4),Q('FullForce')))
+tr(200,'Supporter',R('TopAttach',count=6,benchOnly=True,targetFilter={'subtype':'Dragon'},sameTarget=True,discardRest=True,mandatory=True))
+tr(194,'Tool',Q('IslandAmulet'))
+at(103,'Shadow Imitation',E('copyAttack',source='opponentActive',nonGxOnly=True,sm12Copy=True))
+at(133,'Ominous News',Q('OminousNews'))
+at(133,'Dirty Throw',Q('DirtyThrow'))
+ab(69,activated(Q('CallSignal')))
+
+at(157,'Fabled Flarebolts',Q('FabledFlarebolts'))
+at(157,'Cross Break-GX',Q('CrossBreak'))
+at(88,'Charming Stamp',Q('CharmingStamp'))
+at(143,'Supreme Puff-GX',Q('SupremePuff',cost='YYYYYYYYYYYYYYYY'))

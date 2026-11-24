@@ -1,24 +1,7 @@
 {
   "printed": 272,
-  "battleReady": 202,
+  "battleReady": 244,
   "gated": {
-    "sm12-8": [
-      "Unimplemented attack: Solar Power"
-    ],
-    "sm12-11": [
-      "Unimplemented Ability: Swaying Strangle"
-    ],
-    "sm12-33": [
-      "Unimplemented Ability: Explosive Fire Dance"
-    ],
-    "sm12-35": [
-      "Unimplemented attack: Backfire",
-      "Unimplemented attack: Massive Heat Wave-GX",
-      "Unimplemented Ability: Flaming Shot"
-    ],
-    "sm12-52": [
-      "Unimplemented attack: Cold Snap"
-    ],
     "sm12-56": [
       "Unimplemented attack: Recall"
     ],
@@ -27,18 +10,6 @@
     ],
     "sm12-62": [
       "Unimplemented Ability: Scatter"
-    ],
-    "sm12-63": [
-      "Unimplemented attack: Massive Catch-GX"
-    ],
-    "sm12-65": [
-      "Unimplemented attack: Liquidation"
-    ],
-    "sm12-69": [
-      "Unimplemented Ability: Call Signal"
-    ],
-    "sm12-75": [
-      "Unimplemented attack: Light of the Protector-GX"
     ],
     "sm12-76": [
       "Unimplemented Ability: Blow-Away Bomb"
@@ -54,67 +25,18 @@
     "sm12-85": [
       "Unimplemented Ability: Grim Marking"
     ],
-    "sm12-88": [
-      "Unimplemented attack: Charming Stamp"
-    ],
-    "sm12-92": [
-      "Unimplemented attack: Poison Cultivation"
-    ],
     "sm12-96": [
       "Unimplemented attack: Impersonation",
       "Unimplemented attack: Mischievous Hands"
     ],
-    "sm12-97": [
-      "Unimplemented Ability: Shadow Box"
-    ],
-    "sm12-102": [
-      "Unimplemented Ability: Blessing of the Moone"
-    ],
-    "sm12-103": [
-      "Unimplemented attack: Shadow Imitation"
-    ],
     "sm12-109": [
       "Unimplemented Ability: Obnoxious Whirring"
-    ],
-    "sm12-117": [
-      "Unimplemented Ability: Bulldoze"
-    ],
-    "sm12-129": [
-      "Unimplemented Ability: Smug Face"
-    ],
-    "sm12-133": [
-      "Unimplemented attack: Ominous News",
-      "Unimplemented attack: Dirty Throw"
-    ],
-    "sm12-134": [
-      "Unimplemented attack: Bag Slash"
-    ],
-    "sm12-143": [
-      "Unimplemented attack: Supreme Puff-GX"
-    ],
-    "sm12-143a": [
-      "Unimplemented attack: Supreme Puff-GX"
     ],
     "sm12-144": [
       "Unimplemented attack: Doll Swap"
     ],
-    "sm12-148": [
-      "Unimplemented attack: Sneaky Pocket"
-    ],
-    "sm12-155": [
-      "Unimplemented attack: Moonblast",
-      "Unimplemented attack: Beloved Pulse"
-    ],
-    "sm12-157": [
-      "Unimplemented attack: Fabled Flarebolts",
-      "Unimplemented attack: Cross Break-GX"
-    ],
     "sm12-162": [
       "Unimplemented Ability: Fighter's Roar"
-    ],
-    "sm12-163": [
-      "Unimplemented attack: Shout of Power",
-      "Unimplemented attack: Scaly Uppercut"
     ],
     "sm12-176": [
       "Unimplemented Ability: Arf Arf Bark"
@@ -122,19 +44,7 @@
     "sm12-186": [
       "Unimplemented Trainer effect"
     ],
-    "sm12-187": [
-      "Unimplemented Trainer effect"
-    ],
     "sm12-189": [
-      "Unimplemented Trainer effect"
-    ],
-    "sm12-191": [
-      "Unimplemented Trainer effect"
-    ],
-    "sm12-194": [
-      "Unimplemented Trainer effect"
-    ],
-    "sm12-196": [
       "Unimplemented Trainer effect"
     ],
     "sm12-197": [
@@ -146,12 +56,6 @@
     "sm12-199": [
       "Unimplemented Trainer effect"
     ],
-    "sm12-200": [
-      "Unimplemented Trainer effect"
-    ],
-    "sm12-201": [
-      "Unimplemented Trainer effect"
-    ],
     "sm12-202": [
       "Unimplemented Trainer effect"
     ],
@@ -161,34 +65,10 @@
     "sm12-208": [
       "Unimplemented Trainer effect"
     ],
-    "sm12-213": [
-      "Unimplemented attack: Backfire",
-      "Unimplemented attack: Massive Heat Wave-GX",
-      "Unimplemented Ability: Flaming Shot"
-    ],
-    "sm12-216": [
-      "Unimplemented attack: Light of the Protector-GX"
-    ],
-    "sm12-219": [
-      "Unimplemented Ability: Smug Face"
-    ],
-    "sm12-222": [
-      "Unimplemented attack: Fabled Flarebolts",
-      "Unimplemented attack: Cross Break-GX"
-    ],
     "sm12-228": [
       "Unimplemented Trainer effect"
     ],
-    "sm12-230": [
-      "Unimplemented Trainer effect"
-    ],
     "sm12-231": [
-      "Unimplemented Trainer effect"
-    ],
-    "sm12-232": [
-      "Unimplemented Trainer effect"
-    ],
-    "sm12-233": [
       "Unimplemented Trainer effect"
     ],
     "sm12-234": [
@@ -206,24 +86,6 @@
     ],
     "sm12-248": [
       "Unimplemented Ability: Arf Arf Bark"
-    ],
-    "sm12-252": [
-      "Unimplemented attack: Backfire",
-      "Unimplemented attack: Massive Heat Wave-GX",
-      "Unimplemented Ability: Flaming Shot"
-    ],
-    "sm12-254": [
-      "Unimplemented attack: Light of the Protector-GX"
-    ],
-    "sm12-257": [
-      "Unimplemented Ability: Smug Face"
-    ],
-    "sm12-259": [
-      "Unimplemented attack: Fabled Flarebolts",
-      "Unimplemented attack: Cross Break-GX"
-    ],
-    "sm12-265": [
-      "Unimplemented Trainer effect"
     ],
     "sm12-267": [
       "Unimplemented Trainer effect"
