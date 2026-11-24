@@ -8,8 +8,8 @@ android {
         applicationId 'com.example.luckydex'
         minSdk 26
         targetSdk 35
-        versionCode 7422
-        versionName '0.69.422'
+        versionCode 7423
+        versionName '0.69.423'
     }
 
     signingConfigs {
@@ -1066,7 +1066,7 @@ tasks.matching { it.name == 'preBuild' || (it.name.startsWith('merge') && it.nam
     dependsOn tasks.named('auditSM5ForApk')
 }
 
-// v0.69.422 Forbidden Light SM6: SHA-pinned 150-print full-set source and audit.
+// v0.69.423 Forbidden Light SM6: SHA-pinned 150-print full-set source and audit.
 tasks.register('preflightSM6ContractForApk', Exec) {
     dependsOn tasks.named('auditSM5ForApk')
     workingDir rootProject.projectDir
@@ -1100,7 +1100,7 @@ tasks.register('generateSM7ForApk', Exec) {
 tasks.register('auditSM7ForApk', Exec) {
     dependsOn tasks.named('generateSM7ForApk')
     workingDir rootProject.projectDir
-    commandLine 'node', '--test', 'tests/v07446-celestial-storm-integration.test.cjs', 'tests/v07447-celestial-storm-outcomes.test.cjs'
+    commandLine 'node', '--test', 'tests/v07446-celestial-storm-integration.test.cjs', 'tests/v07447-celestial-storm-outcomes.test.cjs', 'tests/v07448-celestial-storm-continuation.test.cjs'
 }
 tasks.matching { it.name == 'preBuild' || (it.name.startsWith('merge') && it.name.endsWith('Assets')) }.configureEach {
     dependsOn tasks.named('auditSM7ForApk')

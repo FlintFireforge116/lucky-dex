@@ -114,6 +114,66 @@ ab('Exoskeleton','This Pokémon takes 20 less damage from attacks (after applyin
 ab('Danger Perception',"If this Pokémon's remaining HP is 100 or less, its attacks do 80 more damage to your opponent's Active Pokémon (before applying Weakness and Resistance).",passive(E('modifier',stat='attackDamage',amount=80,scope='self',duration='whileInPlay',condition=cond('selfRemainingHpAtMost',amount=100))))
 tr('Copycat',"Shuffle your hand into your deck. Then, draw a card for each card in your opponent's hand.",'Supporter',E('handShuffle',draw='opponentHandCount'))
 
+# SM7 continuation: full printed-text mappings; staged choices share the SM7 handler.
+R=lambda rule,**kw:E('sm7Rule',rule=rule,**kw)
+add("You may switch 1 of your opponent's Benched Pokémon with their Active Pokémon. Your opponent's Active Pokémon is now Asleep and Poisoned.",R('spiderTrap'))
+add("Your opponent reveals their hand. Choose a Supporter card you find there. Your opponent shuffles that card into their deck.",R('clearRoom'))
+add("Choose 1 of your opponent's Pokémon. Your opponent shuffles that Pokémon and all cards attached to it into their deck.",R('den'))
+add("Discard all Special Energy from each of your opponent's Pokémon.",R('specialSweep'))
+add("If your Illumise used Pheromone Signals during your last turn, this attack does 100 more damage.",bonus(100,cond('sm7Pheromone')))
+add("This attack does 50 damage to 1 of your opponent's Pokémon. This damage isn't affected by Weakness, Resistance, or any other effects on that Pokémon.",E('selectedDamage',target='opponentPokemon',amount=50,ignoreWeakness=True,ignoreResistance=True,ignoreEffects=True))
+add("Discard 2 Energy from your opponent's Pokémon.",E('sm1Rule',rule='darkCall'))
+add('Discard all Energy from both Active Pokémon.',seq(E('discardEnergyCard',target='self',amount='all'),E('discardEnergyCard',target='opponentActive',amount='all')))
+add("Search your deck for a number of Basic Pokémon up to the number of your opponent's Benched Pokémon and put those Pokémon onto your Bench. Then, shuffle your deck.",R('evenGame'))
+add("This Pokémon can't use Grand Wave during your next turn.",E('lock',action='attack',target='self',duration='nextOwnTurn',attackName='Grand Wave'))
+add('You may discard any number of cards from your hand. Then, draw cards until you have 5 cards in your hand.',R('ditchDraw'))
+add("For each card in your opponent's hand, put 1 damage counter on their Active Pokémon.",R('breakdown'))
+add("If 1 of your opponent's Pokémon in play has the same name as 1 of your Pokémon in play, this attack does 70 more damage.",bonus(70,cond('sm7SameName')))
+add('You may switch this Pokémon with 1 of your Benched Pokémon.',E('sm3Rule',rule='aquaRing'))
+add("This attack does 50 damage to 1 of your opponent's Pokémon. This damage isn't affected by Weakness or Resistance.",E('selectedDamage',target='opponentPokemon',amount=50,ignoreWeakness=True,ignoreResistance=True))
+add('During your next turn, the Defending Pokémon takes 20 more damage from attacks (after applying Weakness and Resistance).',E('modifier',target='opponentActive',scope='self',stat='damageTaken',amount=20,duration='nextOwnTurn'))
+add('If there is any Stadium card in play, this attack does 50 more damage. Then, discard that Stadium card.',seq(bonus(50,cond('stadiumInPlay')),E('discardStadium')))
+add('Search your deck for Alolan Raticate or Alolan Raticate-GX, reveal it, and put it into your hand. Then, shuffle your deck.',E('searchChosen',amount=1,filter={'name':['Alolan Raticate','Alolan Raticate-GX']}))
+add('Discard up to 2 cards from your hand. This attack does 40 damage for each card you discarded in this way.',E('chooseDiscardForBonus',zone='hand',max=2,amount=40))
+add('Search your deck for up to 6 Item cards, reveal them, and put them into your hand. Then, shuffle your deck.',E('searchChosen',amount=6,filter={'kind':'trainer','trainerType':['Item','Tool']}))
+add('Flip a coin for each Pokémon you have in play. This attack does 30 damage for each heads.',E('coinDamageByPokemon',amount=30,mode='replace'))
+add("Choose 1 of your opponent's Active Pokémon's attacks. That Pokémon can't use that attack during your opponent's next turn.",E('chooseAttackLock',duration='opponentTurn'))
+add("If your opponent's Active Pokémon is a Pokémon-GX or a Pokémon-EX, this attack does 30 more damage (before applying Weakness and Resistance).",bonus(30,cond('opponentMatches',filter={'isExOrGX':True})))
+add('If this Pokémon has any damage counters on it, this attack does 50 more damage.',bonus(50,cond('selfDamaged')))
+add("Discard a Fire Energy from your opponent's Active Pokémon.",R('firefighting'))
+# Bench-only filter needs an explicit rule, not a generic all-field target.
+add("This attack does 30 damage to each of your opponent's Benched Pokémon that has any damage counters on it. (Don't apply Weakness and Resistance for Benched Pokémon.)",R('dangerousConcert'))
+ab('Power Draw','Once during your turn (before your attack), you may discard a card from your hand. If you do, draw 3 cards.',activated(R('powerDraw')))
+ab('Smooth Over','Once during your turn (before your attack), you may search your deck for a card, shuffle your deck, then put that card on top of it.',activated(R('smoothOver')))
+ab('Icy Barrier',"As long as this Pokémon is your Active Pokémon, your opponent can't play any Stadium cards from their hand.",passive(E('actionLock',side='opponent',cardType='Stadium',duration='whileActive'),activeOnly=True))
+ab('Shadow Shield','If this Pokémon has any Psychic Energy attached to it, it takes 20 less damage from attacks (after applying Weakness and Resistance).',passive(E('modifier',stat='damageReduction',scope='self',duration='whileInPlay',amount=20,condition=cond('selfHasEnergyType',energyType='Psychic'))))
+ab('Conductive Body','As long as this Pokémon is your Active Pokémon, its Retreat Cost is Colorless less for each Beldum on your Bench.',passive(E('modifier',stat='retreatCost',scope='self',duration='whileActive',amount=-1,perBenchFilter={'name':'Beldum'}),activeOnly=True))
+ab('Full Metal Body','If this Pokémon has any Metal Energy attached to it, it has no Weakness.',passive(E('weaknessGuard',duration='whileInPlay',condition=cond('selfHasEnergyType',energyType='Metal'))))
+ab('Ultra Wall',"Your Ultra Beasts take 10 less damage from your opponent's attacks (after applying Weakness and Resistance).",passive(E('modifier',stat='damageReduction',scope='team',duration='whileInPlay',amount=10,filter={'tag':'ultra-beast'})))
+ab('Dragon Wind',"If this Pokémon is your Active Pokémon, once during your turn (before your attack), you may switch 1 of your opponent's Benched Pokémon with their Active Pokémon.",activated(E('forceOpponentSwitch',chooseBy='attacker'),activeOnly=True))
+ab('Magic Evens',"Prevent all damage done to this Pokémon by your opponent's attacks if that damage is exactly 20, 40, 60, 80, 100, 120, 140, 160, 180, 200, 220, 240, or 260.",passive(R('magicEvens')))
+ab('Excavate','Once during your turn (before your attack), you may look at the top card of your deck. You may discard that card.',activated(R('excavate')))
+# Match the complete canonical rules for every print (including alternate art).
+for row in json.loads((ROOT/'data/classic/sm7-print-compact.json').read_text()):
+ if row[2]!='Trainer':continue
+ rule=row[13][0]; name=row[1]
+ mapping={
+ 'Acro Bike':('Item',R('acroBike')),
+ "Bill's Maintenance":('Supporter',R('bill')),
+ 'Life Herb':('Item',E('neoRule',rule='pl1:lifeHerb')),
+ 'Lure Ball':('Item',E('neoRule',rule='skyridge:lureBall')),
+ 'Last Chance Potion':('Item',R('lastPotion')),
+ 'Hustle Belt':('Tool',E('modifier',stat='attackDamage',scope='self',duration='whileInPlay',amount=60,condition=cond('sm7Hustle'))),
+ 'Rare Candy':('Item',E('rareCandy')),
+ 'Tate & Liza':('Supporter',E('chooseOption',options=[{'label':'Shuffle hand and draw 5','effect':E('handShuffle',draw=5)},{'label':'Switch Active Pokémon','effect':E('switch',side='self')} ])),
+ 'TV Reporter':('Supporter',R('tvReporter')),
+ 'Underground Expedition':('Supporter',R('underground')),
+ 'PokéNav':('Item',R('pokeNav')),
+ 'Friend Ball':('Item',R('friendBall')),
+ 'Energy Recycle System':('Item',R('energyRecycle')),
+ }
+ if name in mapping:tr(name,rule,*mapping[name])
+
 def attack(row,a):
  title,cost,damage,printed=a;t=attack_text(printed)
  if not t:return E('noop')
