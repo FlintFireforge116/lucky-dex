@@ -914,6 +914,7 @@
     if(state.format==='classic'&&['Poliwag','Poliwhirl','Poliwrath'].includes(data.cardById(slot?.cardId)?.name)&&
       pokemonOn(state.sides[side]).some(p=>p.cardId==='xy3-18'&&!effects.abilitiesSuppressed(state,side,p,data.cardById)))cost=cost.replace(/C/g,'');
     const sm6Foe=side==='player'?'opponent':'player',sm6Goomy=state.sides[sm6Foe].active;if(state.format==='classic'&&sm6Goomy?.cardId==='sm6-91'&&!effects.abilitiesSuppressed(state,sm6Foe,sm6Goomy,data.cardById))cost+='C';
+    if(state.format==='classic'&&activeStadium(state)?.cardId==='sm8-191'&&effects.effectiveTypes(state,side,slot,data.cardById).includes('Lightning'))cost=cost.replace('L','');
     // Head Ringer is owned by the opponent but increases the holder's cost.
     if(state.format==='classic'&&slot&&activeToolsOf(state,slot).some(r=>r.cardId==='xy4-97'))cost+='C';
     // XY4 Dimension Valley applies to BOTH players, reduces only one printed
@@ -1953,7 +1954,8 @@
     // BW5 Slowbro Airhead: even Prize counts (2/4/6) prohibit its attacks.
     const bw5Airhead=state.format==='classic'&&s.active?.cardId==='bw5-24'&&
       !effects.abilitiesSuppressed(state,side,s.active,data.cardById)&&[2,4,6].includes(Number(s.prizes?.length||0));
-    if (s.active&&!bw5Airhead&&!conditions.paralysis&&Number(s.active.ex11AttackLockUntil||0)!==Number(state.turnNumber)){
+    const sm8Shady=state.format==='classic'&&data.cardById(s.active?.cardId)?.prismStar&&['player','opponent'].some(w=>state.sides[w].bench.some(p=>p.cardId==='sm8-93'&&!effects.abilitiesSuppressed(state,w,p,data.cardById)));
+    if (s.active&&!sm8Shady&&!bw5Airhead&&!conditions.paralysis&&Number(s.active.ex11AttackLockUntil||0)!==Number(state.turnNumber)){
       for(const entry of attackOptions(state,side)){
         const {cardId:attackCardId,attackIndex,attack}=entry;
         if ((attack.gxAttack||/\bGX\b/i.test(attack.name||''))&&s.gxAttackUsed&&!(state.format==='classic'&&data.cardById(attackCardId)?.name==='Zygarde-GX'&&s.sm6BonnieTurn===state.turnNumber))continue;
@@ -2664,6 +2666,7 @@
       if(!knocked.length)break;
       for(const {side,slot} of knocked){
         const s=state.sides[side],foeSide=side==='player'?'opponent':'player',foe=state.sides[foeSide],card=data.cardById(slot.cardId),source=slot.lastDamageSource;
+        if(state.format==='classic'&&slot.cardId==='sm8-112'&&cause==='attack'&&source?.turn===state.turnNumber&&source?.side===foeSide&&source?.attack&&Number(source.damage||0)>0&&Number(slot.damage||0)-Number(source.damage||0)<=0&&!effects.abilitiesSuppressed(state,side,slot,data.cardById)){slot.damage=maxHp(state,side,slot)-10;continue;}
         if(state.format==='classic'&&cause==='attack'&&source?.side===foeSide&&source?.attack&&
           Number(source.damage||0)>0&&Number(slot.damage||0)-Number(source.damage||0)<=0&&
           data.cardById(slot.cardId)?.types?.includes('Fighting')){
@@ -2782,10 +2785,12 @@
             state.log.push({type:'xy12LittleGrudge',side,targetUid:target.uid});}
         }
         any=true;const countsAsKnockout=!(slot.cardId==='dp3-26'&&slot.transformOnKO)&&!slot.dp2ForcedDiscard&&card?.effect?.countsAsKnockout!==false&&card?.countsAsKnockout!==false&&!['ex16-84','ex16-85','ex16-86'].includes(card?.id);if(countsAsKnockout){if(Number(s.lastKnockoutTurn)!==Number(state.turnNumber))s.lastKnockedOutCardIds=[];s.lastKnockoutTurn=state.turnNumber;s.lastKnockedOutCardIds.push(card.id);s.knockoutsTaken=Number(s.knockoutsTaken||0)+1;if(cause==='attack'&&source?.side===foeSide&&source?.attack){if(Number(s.lastOpponentAttackKoTurn)!==Number(state.turnNumber))s.lastOpponentAttackKoCardIds=[];s.lastOpponentAttackKoTurn=state.turnNumber;s.lastOpponentAttackKoCardIds.push(card.id);}}
+        if(state.format==='classic'&&cause==='attack'&&source?.turn===state.turnNumber&&source?.side===foeSide&&source?.attack&&Number(source.damage)>0){const p=pokemonOn(foe).find(p=>p.uid===source.uid);if(p&&['sm8-121','sm8-203','sm8-223'].includes(p.cardId)&&!effects.abilitiesSuppressed(state,foeSide,p,data.cardById))slot.pl1LostZoneOnKO=true;}
         const arceusBeltBonus=state.format==='classic'&&activeToolsOf(state,slot).some(ref=>ref.cardId==='pl4-87')?1:0;
         const arceusLuckyEgg=state.format==='classic'&&cause==='attack'&&source?.side===foeSide&&activeToolsOf(state,slot).some(ref=>ref.cardId==='pl4-88');
         const teleport=state.format==='classic'&&cause==='attack'&&source?.side===foeSide&&source?.attack&&activeToolsOf(state,slot).some(r=>r.cardId==='SNAPFOUNJA-084');
-        if(teleport){
+        if(slot.pl1LostZoneOnKO&&['sm8-121','sm8-203','sm8-223'].includes(source?.cardId))discardKnockedOut(s,slot);
+        else if(teleport){
           for(let i=0;i<slot.stack.length;i++)s.hand.push({uid:`${slot.uid}-teleport-${i}`,cardId:slot.stack[i]});
           for(const ref of [...toolsOf(slot),...(slot.specialEnergy||[]),...temporaryTrainersOf(slot)])s.hand.push(ref);
           const basicEnergy={Fighting:'base1-97',Fire:'base1-98',Grass:'base1-99',Lightning:'base1-100',Psychic:'base1-101',Water:'base1-102',Darkness:'lental-basic-darkness',Metal:'lental-basic-metal',Fairy:'xy1-140'};
@@ -2900,6 +2905,7 @@
         }
         if(arceusLuckyEgg)while(s.hand.length<7&&s.deck.length)drawCard(s);
         if(attacker&&countsAsKnockout&&attacker.cardId==='SNAPFOUNJA-027'&&foe.lastAttackName==='Waterfall Climb'){attacker.founjaWaterfallKo=true;effects.applyEffect({type:'lentalRule',rule:'founja:waterfallClimb'},effectContext(state,foeSide,{},attacker));}
+        if(attacker&&countsAsKnockout&&slot.sm8ButterflySource?.uid===attacker.uid&&slot.sm8ButterflySource?.turn===state.turnNumber&&cause==='attack'&&source?.attack)attacker.attackGuard={type:'preventDamage',target:'self',duration:'opponentTurn',fromAttack:true,expiresTurn:state.turnNumber+1,preventEffects:true};
         if(attacker&&countsAsKnockout){triggerAbilities(state,'opponentKnockedOut',foeSide,attacker,{knockedOut:slot,points,prizes:Number(foe.prizesTaken||0)});triggerPersistent(state,'opponentKnockedOut',foeSide,attacker,{knockedOut:slot,points,prizes:Number(foe.prizesTaken||0)});}
       }
     }
@@ -3084,6 +3090,9 @@
 const target=slotForTarget(s,action.target,action.benchIndex);if(card.id==='pl2-95'&&!data.cardById(target?.cardId)?.isPokemonSP)throw new Error('Technical Machine G must attach to Pokémon SP.');ref.ownerSide=side;ref.attachedTurn=state.turnNumber;attachTool(target,ref);
       if(card.id==='xy8-141'&&Number(data.cardById(target.cardId)?.retreat||0)>=3){
         delete target.conditions?.confusion;state.log.push({type:'xy8HeavyBoots',side,targetUid:target.uid});
+      }
+      if(state.format==='classic'&&target.cardId==='sm8-150'&&card.name?.includes('Fairy Charm')&&!effects.abilitiesSuppressed(state,side,target,data.cardById)){
+        beginEffectChoice(state,side,target,{kind:'option',side:'self',options:['Do not use Charmed Charm','Confuse opposing Active'],effect:{type:'sm7Rule',rule:'sm8CharmedCharm'},resume:'trainer'});return;
       }
       const ctx=effectContext(state,side,action,target);effects.applyEffect(card.onAttach,ctx);effects.applyPersistentEvent(card.effect,'onAttach',ctx);resolveKnockOut(state,null);return;}
     if(type==='Stadium'){
