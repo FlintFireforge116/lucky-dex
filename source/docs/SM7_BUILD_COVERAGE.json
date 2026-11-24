@@ -1,0 +1,367 @@
+{
+  "printed": 187,
+  "battleReady": 80,
+  "gated": {
+    "sm7-6": [
+      "Unimplemented attack: Spider Trap"
+    ],
+    "sm7-10": [
+      "Unimplemented Ability: Power of Nature"
+    ],
+    "sm7-10a": [
+      "Unimplemented Ability: Power of Nature"
+    ],
+    "sm7-13": [
+      "Unimplemented attack: Clear the Room"
+    ],
+    "sm7-14": [
+      "Unimplemented attack: Den of Iniquity-GX"
+    ],
+    "sm7-16": [
+      "Unimplemented attack: Surprising Pattern"
+    ],
+    "sm7-17": [
+      "Unimplemented attack: Pheromone Catch"
+    ],
+    "sm7-20": [
+      "Unimplemented attack: Feint Attack"
+    ],
+    "sm7-24": [
+      "Unimplemented Ability: Smooth Over"
+    ],
+    "sm7-28": [
+      "Unimplemented attack: Blaze Out-GX"
+    ],
+    "sm7-29": [
+      "Unimplemented attack: Flaming Honk"
+    ],
+    "sm7-31": [
+      "Unimplemented attack: Cold Crush-GX",
+      "Unimplemented Ability: Legendary Ascent"
+    ],
+    "sm7-35": [
+      "Unimplemented Ability: Power Draw"
+    ],
+    "sm7-44": [
+      "Unimplemented attack: Even Game"
+    ],
+    "sm7-45": [
+      "Unimplemented Ability: Icy Barrier"
+    ],
+    "sm7-46": [
+      "Unimplemented attack: Grand Wave"
+    ],
+    "sm7-48": [
+      "Unimplemented attack: Crush and Burn-GX",
+      "Unimplemented Ability: Extra Energy Bomb"
+    ],
+    "sm7-50": [
+      "Unimplemented attack: Lightning Strike",
+      "Unimplemented Ability: Energy Grounding"
+    ],
+    "sm7-52": [
+      "Unimplemented attack: Double Charge",
+      "Unimplemented Ability: Electric Start"
+    ],
+    "sm7-54": [
+      "Unimplemented attack: Ditch and Draw"
+    ],
+    "sm7-55": [
+      "Unimplemented attack: Zappy Pom-Poms"
+    ],
+    "sm7-56": [
+      "Unimplemented attack: Breakdown",
+      "Unimplemented Ability: Magic Evens"
+    ],
+    "sm7-60": [
+      "Unimplemented attack: Mirror Step"
+    ],
+    "sm7-61": [
+      "Unimplemented Ability: Sol Shade"
+    ],
+    "sm7-62": [
+      "Unimplemented Ability: Sunbeam"
+    ],
+    "sm7-65": [
+      "Unimplemented attack: Enemy Show",
+      "Unimplemented Ability: Red Eyes"
+    ],
+    "sm7-66": [
+      "Unimplemented attack: Shadow Chant",
+      "Unimplemented attack: Tomb Hunt-GX",
+      "Unimplemented Ability: Shady Move"
+    ],
+    "sm7-69": [
+      "Unimplemented attack: Teleportation Burst",
+      "Unimplemented attack: Spear Dive"
+    ],
+    "sm7-70": [
+      "Unimplemented Ability: Shadow Shield"
+    ],
+    "sm7-71": [
+      "Unimplemented attack: Screech"
+    ],
+    "sm7-73": [
+      "Unimplemented attack: Rapid Spin"
+    ],
+    "sm7-75": [
+      "Unimplemented attack: Dust Devil"
+    ],
+    "sm7-81": [
+      "Unimplemented attack: Wreck"
+    ],
+    "sm7-82": [
+      "Unimplemented attack: Sandy Fear-GX"
+    ],
+    "sm7-83": [
+      "Unimplemented Ability: Falling Star"
+    ],
+    "sm7-84": [
+      "Unimplemented attack: Call for the Boss"
+    ],
+    "sm7-85": [
+      "Unimplemented attack: Chuck Away",
+      "Unimplemented attack: Item Maniac-GX"
+    ],
+    "sm7-86": [
+      "Unimplemented attack: Beat Up"
+    ],
+    "sm7-87": [
+      "Unimplemented attack: Trample"
+    ],
+    "sm7-88": [
+      "Unimplemented attack: Disable",
+      "Unimplemented Ability: Excavate"
+    ],
+    "sm7-91": [
+      "Unimplemented attack: Mining",
+      "Unimplemented attack: Bite Off"
+    ],
+    "sm7-92": [
+      "Unimplemented Ability: Conductive Body"
+    ],
+    "sm7-95": [
+      "Unimplemented Ability: Extend"
+    ],
+    "sm7-97": [
+      "Prism Star attack/Ability or Trainer effect not yet implemented",
+      "Unimplemented attack: Perish Dream",
+      "Unimplemented Ability: Wish Upon a Star"
+    ],
+    "sm7-98": [
+      "Unimplemented attack: Steelworks"
+    ],
+    "sm7-99": [
+      "Unimplemented Ability: Full Metal Body"
+    ],
+    "sm7-100": [
+      "Unimplemented attack: Moon Raker"
+    ],
+    "sm7-102": [
+      "Unimplemented Ability: Ultra Wall"
+    ],
+    "sm7-105": [
+      "Unimplemented attack: Raging Blade"
+    ],
+    "sm7-106": [
+      "Unimplemented Ability: Dragon Wind"
+    ],
+    "sm7-107": [
+      "Prism Star attack/Ability or Trainer effect not yet implemented",
+      "Unimplemented attack: Dreamy Mist"
+    ],
+    "sm7-109": [
+      "Unimplemented attack: Dragon Break",
+      "Unimplemented attack: Tempest-GX",
+      "Unimplemented Ability: Stormy Winds"
+    ],
+    "sm7-110": [
+      "Unimplemented attack: Strike and Run"
+    ],
+    "sm7-112": [
+      "Unimplemented attack: Firefighting"
+    ],
+    "sm7-115": [
+      "Unimplemented Ability: Lazy"
+    ],
+    "sm7-116": [
+      "Unimplemented attack: Bawl"
+    ],
+    "sm7-119": [
+      "Unimplemented attack: Dangerous Concert"
+    ],
+    "sm7-121": [
+      "Unimplemented Ability: Search for Friends"
+    ],
+    "sm7-122": [
+      "Unimplemented Ability: Unit Color 2"
+    ],
+    "sm7-123": [
+      "Unimplemented Trainer effect"
+    ],
+    "sm7-123a": [
+      "Unimplemented Trainer effect"
+    ],
+    "sm7-125": [
+      "Unimplemented Trainer effect"
+    ],
+    "sm7-126": [
+      "Unimplemented Trainer effect"
+    ],
+    "sm7-128": [
+      "Unimplemented Trainer effect"
+    ],
+    "sm7-131": [
+      "Unimplemented Trainer effect"
+    ],
+    "sm7-133": [
+      "Unimplemented Trainer effect"
+    ],
+    "sm7-134": [
+      "Unimplemented Trainer effect"
+    ],
+    "sm7-135": [
+      "Unimplemented Trainer effect"
+    ],
+    "sm7-136": [
+      "Unimplemented Trainer effect"
+    ],
+    "sm7-138": [
+      "Unimplemented Trainer effect"
+    ],
+    "sm7-139": [
+      "Unimplemented Trainer effect"
+    ],
+    "sm7-140": [
+      "Unimplemented Trainer effect"
+    ],
+    "sm7-141": [
+      "Unimplemented Trainer effect"
+    ],
+    "sm7-143": [
+      "Unimplemented Trainer effect"
+    ],
+    "sm7-144": [
+      "Unimplemented Trainer effect"
+    ],
+    "sm7-145": [
+      "Unimplemented Trainer effect"
+    ],
+    "sm7-148": [
+      "Unimplemented Trainer effect"
+    ],
+    "sm7-148a": [
+      "Unimplemented Trainer effect"
+    ],
+    "sm7-149": [
+      "Unimplemented Trainer effect"
+    ],
+    "sm7-150": [
+      "Unimplemented Trainer effect"
+    ],
+    "sm7-152": [
+      "Unimplemented attack: Den of Iniquity-GX"
+    ],
+    "sm7-153": [
+      "Unimplemented attack: Blaze Out-GX"
+    ],
+    "sm7-154": [
+      "Unimplemented attack: Cold Crush-GX",
+      "Unimplemented Ability: Legendary Ascent"
+    ],
+    "sm7-155": [
+      "Unimplemented attack: Crush and Burn-GX",
+      "Unimplemented Ability: Extra Energy Bomb"
+    ],
+    "sm7-156": [
+      "Unimplemented attack: Breakdown",
+      "Unimplemented Ability: Magic Evens"
+    ],
+    "sm7-157": [
+      "Unimplemented attack: Shadow Chant",
+      "Unimplemented attack: Tomb Hunt-GX",
+      "Unimplemented Ability: Shady Move"
+    ],
+    "sm7-159": [
+      "Unimplemented Ability: Ultra Wall"
+    ],
+    "sm7-160": [
+      "Unimplemented attack: Dragon Break",
+      "Unimplemented attack: Tempest-GX",
+      "Unimplemented Ability: Stormy Winds"
+    ],
+    "sm7-162": [
+      "Unimplemented Trainer effect"
+    ],
+    "sm7-165": [
+      "Unimplemented Trainer effect"
+    ],
+    "sm7-166": [
+      "Unimplemented Trainer effect"
+    ],
+    "sm7-167": [
+      "Unimplemented Trainer effect"
+    ],
+    "sm7-168": [
+      "Unimplemented Trainer effect"
+    ],
+    "sm7-169": [
+      "Unimplemented attack: Den of Iniquity-GX"
+    ],
+    "sm7-170": [
+      "Unimplemented attack: Blaze Out-GX"
+    ],
+    "sm7-171": [
+      "Unimplemented attack: Cold Crush-GX",
+      "Unimplemented Ability: Legendary Ascent"
+    ],
+    "sm7-172": [
+      "Unimplemented attack: Crush and Burn-GX",
+      "Unimplemented Ability: Extra Energy Bomb"
+    ],
+    "sm7-173": [
+      "Unimplemented attack: Breakdown",
+      "Unimplemented Ability: Magic Evens"
+    ],
+    "sm7-174": [
+      "Unimplemented attack: Shadow Chant",
+      "Unimplemented attack: Tomb Hunt-GX",
+      "Unimplemented Ability: Shady Move"
+    ],
+    "sm7-176": [
+      "Unimplemented Ability: Ultra Wall"
+    ],
+    "sm7-177": [
+      "Unimplemented attack: Dragon Break",
+      "Unimplemented attack: Tempest-GX",
+      "Unimplemented Ability: Stormy Winds"
+    ],
+    "sm7-177a": [
+      "Unimplemented attack: Dragon Break",
+      "Unimplemented attack: Tempest-GX",
+      "Unimplemented Ability: Stormy Winds"
+    ],
+    "sm7-178": [
+      "Unimplemented Trainer effect"
+    ],
+    "sm7-179": [
+      "Unimplemented Trainer effect"
+    ],
+    "sm7-180": [
+      "Unimplemented Trainer effect"
+    ],
+    "sm7-181": [
+      "Unimplemented Trainer effect"
+    ],
+    "sm7-182": [
+      "Unimplemented Trainer effect"
+    ]
+  },
+  "attacks": 232,
+  "abilities": 51,
+  "pokemonGX": 30,
+  "gxAttackPrints": 30,
+  "energyPrints": 2,
+  "prismStarPrints": 3,
+  "sourceGitBlob": "11606d6f86947a5906324a60d330ff88c702218b"
+}

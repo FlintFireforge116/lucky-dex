@@ -3566,9 +3566,9 @@ const target=slotForTarget(s,action.target,action.benchIndex);if(card.id==='pl2-
           effect:{type:'neoRule',rule:'skyridge:cycloneEnergy'},resume:'trainer'});
       if(card.id==='ecard3-144')beginEffectChoice(state,side,target,{kind:'option',side:'self',options:['Keep this Evolution','Heal 20 and devolve'],
         effect:{type:'neoRule',rule:'skyridge:retroEnergy'},resume:'trainer'});
-      if(['ecard2-144','ex1-95','ex12-81','pl1-121','hgss1-104','xy1-131','xy8-152','sm1-137'].includes(card.id)){
+      if(['ecard2-144','ex1-95','ex12-81','pl1-121','hgss1-104','xy1-131','xy8-152','sm1-137','sm7-151','sm7-183'].includes(card.id)){
         target.damage=Number(target.damage||0)+10;
-        if(['xy1-131','sm1-137'].includes(card.id))state.log.push({type:'rainbowEnergyAttachmentDamage',side,targetUid:target.uid,amount:10});
+        if(['xy1-131','sm1-137','sm7-151','sm7-183'].includes(card.id))state.log.push({type:'rainbowEnergyAttachmentDamage',side,targetUid:target.uid,amount:10});
       }
       if(card.id==='ecard2-147'&&target===s.active&&s.bench.length){
         // Warp Energy is an attachment-triggered, mandatory Bench choice.

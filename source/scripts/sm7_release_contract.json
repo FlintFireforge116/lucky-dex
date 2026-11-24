@@ -1,0 +1,21 @@
+{
+  "set": "sm7",
+  "name": "Celestial Storm",
+  "stage": "integration",
+  "release": "0.69.422",
+  "printedTotal": 187,
+  "attackPrints": 232,
+  "abilities": 51,
+  "pokemonGX": 30,
+  "gxAttackPrints": 30,
+  "prismStarPrints": 3,
+  "trainerPrints": 43,
+  "energyPrints": 2,
+  "pin": "11606d6f86947a5906324a60d330ff88c702218b",
+  "variants": [
+    "10a",
+    "123a",
+    "148a",
+    "177a"
+  ]
+}
