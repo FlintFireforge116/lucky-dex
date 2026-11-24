@@ -7,7 +7,8 @@ const rows=[
  ['SNAPFLORIO','Florio Nature Park','New Pokémon Snap'],['SNAPFOUNJA','Founja Jungle','New Pokémon Snap'],['sv1','Scarlet & Violet','Modern']
 ];
 const names=Object.fromEntries(rows.map(([id,name])=>[id,name]));
-const eras=['Original','Gym','Neo','e-Card','EX','Diamond & Pearl','Platinum','HeartGold & SoulSilver','Black & White','XY','Sun & Moon','New Pokémon Snap','Modern'];
+// Derive all era groups from the registered catalogue, retaining first-appearance order.
+const eras=[...new Set(rows.map(row=>row[2]))];
 const escape=s=>String(s??'').replace(/[&<>"']/g,ch=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));
 function html({ids,selected,mode='classic',title='Allowed sets',state={}}){
  const allowed=new Set(ids),chosen=new Set(selected),sort=state.sort||'release';

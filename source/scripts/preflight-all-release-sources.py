@@ -15,4 +15,8 @@ def main():
     for sid in ('sm7','sm75','sm8','sm9','det1','sm10','sm11','sm115','sma','sm12','swsh1'):
         subprocess.run([sys.executable,str(ROOT/'scripts'/f'preflight-{sid}-release.py')],cwd=ROOT,check=True)
     print('All 21 historical/new release source gates PASS',flush=True)
+    # These runtime tests run in the APK task graph even when the current set
+    # preflight is green. Run them on every Termux prepare before committing.
+    subprocess.run(['node','--test','tests/v07401b-sm1-deck-picker-availability.test.cjs','tests/v07407-guardians-rising-integration.test.cjs','tests/v07452-dragon-majesty-integration.test.cjs','tests/v07468-classic-deck-performance.test.cjs'],cwd=ROOT,check=True)
+    print('Shared set-picker, narrow-pool deck and performance gates PASS',flush=True)
 if __name__=='__main__':main()

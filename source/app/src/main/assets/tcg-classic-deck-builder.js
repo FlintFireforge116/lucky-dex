@@ -1569,7 +1569,7 @@ function buildDeck(rows,options={}){
  // automatic Trainer cap to four; otherwise three unrelated Trainer names
  // become compulsory four-copy packages in every generated deck. This applies
  // only to sparse, single-set pools and never overrides manual card choices.
- if(cards.length<30&&scope.length===1&&pool.filter(c=>c.kind==='trainer'&&trainerIsUseful(c)).length<=4){
+ if(cards.length<30&&scope.length===1&&new Set(pool.filter(c=>c.kind==='trainer'&&trainerIsUseful(c)).map(c=>classicCardName(c.name))).size<=4){
    autoPokemonCap=Math.max(autoPokemonCap,22);
    // Prefer coherent affordable Basics already in the selected Energy plan.
    // They can provide backup Active Pokémon instead of a mandatory fourth
@@ -1592,12 +1592,12 @@ function buildDeck(rows,options={}){
  if(cards.length<30){for(const c of pool.filter(c=>(usefulFillerCard(c)||c.stage==='Basic')&&trainerIsUseful(c))){while(cards.length<30&&room(c)>0){const trial=[...cards,c.id],profile=decks.analyzeDeck(trial).recommendedEnergyTypes;if(options._allowSecondType===true&&!requestedEnergy.length?profile.length>2:!profile.every(t=>plannedEnergy.includes(t)))break;if(!add(c,1))break;}if(cards.length>=30)break;}}
  // Sparse single-set pools (including partially integrated Steam Siege) may
  // print several Trainers but have only a few that are actually useful for the
- // current deck. Count usable Trainers, not raw printed Trainer cards: otherwise
+ // current deck. Count distinct usable Trainer names, not alternate-art prints: otherwise
  // an authentic 30-card deck cannot meet the normal 18-Pokémon soft cap and
  // the mandatory all-set build quality gate fails. Never inject dead Trainers.
  // Keep the relaxation limited to this single-set emergency; multi-era decks
  // and explicitly retained cards keep the normal composition rules.
- if(cards.length<30&&scope.length===1&&pool.filter(c=>c.kind==='trainer'&&trainerIsUseful(c)).length<=4){
+ if(cards.length<30&&scope.length===1&&new Set(pool.filter(c=>c.kind==='trainer'&&trainerIsUseful(c)).map(c=>classicCardName(c.name))).size<=4){
    autoPokemonCap=30;
    // Add complete affordable Stage-1 families before loose Basics. This
    // rescues Team Rocket without stuffing isolated Dratini or Diglett into

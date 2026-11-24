@@ -56,3 +56,15 @@ test('Dragon Majesty is selectable and builds legal player and CPU decks without
 });
 
 test('Dragon Majesty mono-Water generation succeeds for player and CPU across seeds',()=>{const d=require('../app/src/main/assets/tcg-classic-battle-data.js'),b=require('../app/src/main/assets/tcg-classic-deck-builder.js'),o=require('../app/src/main/assets/tcg-classic-opponents.js');const owned=set.CARDS.map(c=>({gameplayId:c.id,quantity:4}));for(const seed of [3,9,21])for(const r of [b.buildDeck(owned,{sets:['sm75'],types:['Water'],randomSeed:seed}),o.generate({sets:['sm75'],type:'Water',seed})]){assert.ok(r.ok,JSON.stringify(r));assert.equal(r.cards.length,30);assert.ok(d.validateDeck(r.cards).ok);assert.ok(r.cards.every(id=>d.cardById(id).setId==='sm75'&&d.cardById(id).battleEnabled));assert.deepEqual(r.energyTypes,['Water']);}});
+
+test('Narrow mono-Water fallback counts distinct Trainer names and never fills with an unmatched Dragon Talon',()=>{
+ const d=require('../app/src/main/assets/tcg-classic-battle-data.js'),b=require('../app/src/main/assets/tcg-classic-deck-builder.js'),decks=require('../app/src/main/assets/tcg-classic-decks.js');
+ const owned=set.CARDS.map(c=>({gameplayId:c.id,quantity:4}));
+ for(const style of ['competitive','random'])for(const seed of [3,9,21,42]){
+  const r=b.buildDeck(owned,{sets:['sm75'],types:['Water'],style,randomSeed:seed});
+  assert.ok(r.ok,JSON.stringify(r));assert.equal(r.cards.length,30);assert.deepEqual(r.energyTypes,['Water']);
+  assert.ok(decks.validateDraft(r.cards,owned,{requireFull:true}).ok);
+  const cards=r.cards.map(d.cardById);assert.ok(cards.every(c=>c.setId==='sm75'));
+  if(!cards.some(c=>c.kind==='pokemon'&&c.types.includes('Dragon')))assert.ok(!cards.some(c=>c.name==='Dragon Talon'));
+ }
+});

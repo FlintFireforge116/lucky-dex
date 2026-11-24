@@ -38,3 +38,12 @@ test('Selection corresponds to a legal SM1 player and opponent deck',()=>{
  assert.equal(opponent.cards.length,30);
  assert.ok(opponent.cards.every(id=>classic.cardById(id)?.setId==='sm1'));
 });
+
+test('All registered sets render once in every sort order and preserve their selections',()=>{
+ for(const ids of [builder.SET_IDS,cpu.SETS])for(const sort of ['release','az','za']){
+  const html=picker.html({ids,selected:ids,mode:'regression',state:{sort}});
+  const buttons=[...html.matchAll(/data-set-choice="([^"]+)"[^>]*aria-pressed="true"/g)].map(m=>m[1]);
+  assert.deepEqual(buttons.slice().sort(),ids.slice().sort());
+  if(sort==='release'&&ids.includes('swsh1'))assert.match(html,/data-set-era="Sword &amp; Shield"/);
+ }
+});
