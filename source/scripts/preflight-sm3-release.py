@@ -17,7 +17,7 @@ TESTS=('tests/v07413-burning-shadows-integration.test.cjs',
 def check():
  subprocess.run([sys.executable,'scripts/check-gradle-source.py','--self-test'],cwd=ROOT,check=True)
  c=json.loads((ROOT/'scripts/sm3_release_contract.json').read_text())
- assert (c['set'],c['stage'],c['release'])==('sm3','complete','0.69.452')
+ assert (c['set'],c['stage'],c['release'])==('sm3','complete','0.69.453')
  assert (c['printedTotal'],c['attackPrints'],c['abilities'],c['pokemonGX'],c['gxAttackPrints'],c['energyPrints'])==(177,274,27,40,40,3)
  assert c['pin']=='3476b25cb32b6e748c7fdd9405e6a5329a665d3d'
  assert c['minimumBattleEnabled']==177
@@ -45,7 +45,7 @@ def check():
  for name in ('sm1','sm2','xy9','xy10','xy11','xy12'):
   assert json.loads((ROOT/f'scripts/{name}_release_contract.json').read_text())['release']==c['release'],name+' contract version stale'
  for path in ('app/src/main/assets/index.html','app/src/main/assets/app-v0167.js'):
-  assert '0.69.452' in (ROOT/path).read_text(),path+' version stale'
+  assert '0.69.453' in (ROOT/path).read_text(),path+' version stale'
  print('PASS SM3 source gate: pinned 177 prints; 274 attacks, 27 Abilities, 40 GX, 3 Energy; all player/CPU/CDN surfaces registered.')
 def full():
  subprocess.run([sys.executable,'scripts/build-sm3.py'],cwd=ROOT,check=True)

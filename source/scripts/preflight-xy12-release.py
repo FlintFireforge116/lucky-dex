@@ -16,7 +16,7 @@ def check():
  assert c['set']=='xy12' and c['stage']=='complete'
  assert (c['printedTotal'],c['attackPrints'],c['abilities'],c['pokemonBreak'],c['dualTypePrints'],c['energyPrints'])==(113,129,11,4,0,10)
  assert c['pin']=='7e80c06b0f3e5621058a29e26c90023d1033e65f'
- assert c['release']=='0.69.452'
+ assert c['release']=='0.69.453'
  assert c['expectedPlayableMinimum']==len(c['requiredEnabledNumbers']) and c['expectedPlayableMinimum']==113
  assert len(c['requiredEnabledNumbers'])==len(set(c['requiredEnabledNumbers']))
  gradle=(ROOT/'app/build.gradle').read_text()
@@ -27,8 +27,8 @@ def check():
  for name in ('xy9','xy10','xy11'):
   assert json.loads((ROOT/f'scripts/{name}_release_contract.json').read_text())['release']==c['release'],name+' release drift'
  assert 'tcg-classic-evolutions.js' in (ROOT/'app/src/main/assets/index.html').read_text()
- assert "v0.69.452" in (ROOT/'app/src/main/assets/index.html').read_text()
- assert "__LUCKYDEX_BUILD='0.69.452'" in (ROOT/'app/src/main/assets/app-v0167.js').read_text()
+ assert "v0.69.453" in (ROOT/'app/src/main/assets/index.html').read_text()
+ assert "__LUCKYDEX_BUILD='0.69.453'" in (ROOT/'app/src/main/assets/app-v0167.js').read_text()
  for name in ('tcg-classic-battle-data.js','tcg-classic-set-picker.js','tcg-classic-deck-builder.js','tcg-classic-opponents.js'):
   assert 'xy12' in (ROOT/'app/src/main/assets'/name).read_text(),name+' missing XY12'
  script=(ROOT/'scripts/build-xy12.py').read_text()

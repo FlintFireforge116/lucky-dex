@@ -16,7 +16,7 @@ TESTS=('tests/v07419-crimson-invasion-integration.test.cjs',
 def check():
  subprocess.run([sys.executable,'scripts/check-gradle-source.py','--self-test'],cwd=ROOT,check=True)
  c=json.loads((ROOT/'scripts/sm4_release_contract.json').read_text())
- assert (c['set'],c['stage'],c['release'])==('sm4','stage1','0.69.452')
+ assert (c['set'],c['stage'],c['release'])==('sm4','stage1','0.69.453')
  assert (c['printedTotal'],c['attackPrints'],c['abilities'],c['pokemonGX'],c['gxAttackPrints'],c['energyPrints'])==(126,193,23,25,25,4)
  assert c['pin']=='0b99823554d4da6d2da4fcafa030f9b675008490'
  assert c['variants']==['63a','84a']
@@ -39,10 +39,10 @@ def check():
  for f in ('tcg-classic-battle-data.js','tcg-classic-deck-builder.js','tcg-classic-opponents.js','tcg-classic-set-picker.js'):
   assert 'sm4' in (ROOT/'app/src/main/assets'/f).read_text(),f+' lacks SM4'
  html=(ROOT/'app/src/main/assets/index.html').read_text()
- assert 'tcg-classic-crimson-invasion.js' in html and 'v0.69.452' in html
- assert "__LUCKYDEX_BUILD='0.69.452'" in (ROOT/'app/src/main/assets/app-v0167.js').read_text()
+ assert 'tcg-classic-crimson-invasion.js' in html and 'v0.69.453' in html
+ assert "__LUCKYDEX_BUILD='0.69.453'" in (ROOT/'app/src/main/assets/app-v0167.js').read_text()
  for name in ('xy9','xy10','xy11','xy12','sm1','sm2','sm3'):
-  assert json.loads((ROOT/f'scripts/{name}_release_contract.json').read_text())['release']=='0.69.452',name+' release contract stale'
+  assert json.loads((ROOT/f'scripts/{name}_release_contract.json').read_text())['release']=='0.69.453',name+' release contract stale'
  print('SM4 source gate PASS: canonical 126 prints bundled offline, shared UI/CPU/builder and version contracts')
 def full():
  subprocess.run([sys.executable,'scripts/build-sm4.py'],cwd=ROOT,check=True)

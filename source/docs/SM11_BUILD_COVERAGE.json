@@ -1,19 +1,9 @@
 {
   "printed": 261,
-  "battleReady": 208,
+  "battleReady": 241,
   "gated": {
-    "sm11-1": [
-      "Unimplemented attack: Super Growth",
-      "Unimplemented attack: Tropical Hour-GX"
-    ],
-    "sm11-14": [
-      "Unimplemented Ability: Bursting Spores"
-    ],
     "sm11-25": [
       "Unimplemented Ability: Burning Road"
-    ],
-    "sm11-26": [
-      "Unimplemented attack: Victory Sign"
     ],
     "sm11-30": [
       "Unimplemented attack: Spirit Burner"
@@ -27,39 +17,11 @@
     "sm11-66": [
       "Unimplemented Ability: Electric Swamp"
     ],
-    "sm11-76": [
-      "Unimplemented Ability: Ominous Posture"
-    ],
-    "sm11-86": [
-      "Unimplemented Ability: Dimension Breach"
-    ],
-    "sm11-95": [
-      "Unimplemented Ability: Durable Blade"
-    ],
-    "sm11-107": [
-      "Unimplemented attack: Turn the Tables"
-    ],
-    "sm11-123": [
-      "Unimplemented attack: Tag Cheer"
-    ],
-    "sm11-141": [
-      "Unimplemented Ability: Captivating Wink"
-    ],
-    "sm11-151": [
-      "Unimplemented Ability: Hurricane Charge"
-    ],
     "sm11-156": [
       "Unimplemented Ability: Grind Up"
     ],
-    "sm11-160": [
-      "Unimplemented attack: Injection-GX"
-    ],
     "sm11-167": [
       "Unimplemented attack: Lazy Howl"
-    ],
-    "sm11-170": [
-      "Unimplemented attack: Dynamic Swing",
-      "Unimplemented Ability: Counterattack"
     ],
     "sm11-173": [
       "Unimplemented Ability: Snack Search"
@@ -70,37 +32,13 @@
     "sm11-182": [
       "Unimplemented attack: Sage's Riddle"
     ],
-    "sm11-185": [
-      "Unimplemented Ability: Drowsing"
-    ],
     "sm11-186": [
-      "Unimplemented Trainer effect"
-    ],
-    "sm11-188": [
       "Unimplemented Trainer effect"
     ],
     "sm11-190": [
       "Unimplemented Trainer effect"
     ],
-    "sm11-194": [
-      "Unimplemented Trainer effect"
-    ],
-    "sm11-195": [
-      "Unimplemented Trainer effect"
-    ],
-    "sm11-196": [
-      "Unimplemented Trainer effect"
-    ],
-    "sm11-199": [
-      "Unimplemented Trainer effect"
-    ],
-    "sm11-203": [
-      "Unimplemented Trainer effect"
-    ],
     "sm11-205": [
-      "Unimplemented Trainer effect"
-    ],
-    "sm11-209": [
       "Unimplemented Trainer effect"
     ],
     "sm11-211": [
@@ -109,61 +47,19 @@
     "sm11-212": [
       "Unimplemented Special Energy rules"
     ],
-    "sm11-213": [
-      "Unimplemented Special Energy rules"
-    ],
-    "sm11-214": [
-      "Unimplemented attack: Super Growth",
-      "Unimplemented attack: Tropical Hour-GX"
-    ],
-    "sm11-215": [
-      "Unimplemented attack: Super Growth",
-      "Unimplemented attack: Tropical Hour-GX"
-    ],
     "sm11-216": [
       "Unimplemented Ability: Burning Road"
-    ],
-    "sm11-227": [
-      "Unimplemented Ability: Captivating Wink"
-    ],
-    "sm11-230": [
-      "Unimplemented attack: Injection-GX"
-    ],
-    "sm11-231": [
-      "Unimplemented Trainer effect"
     ],
     "sm11-232": [
       "Unimplemented Trainer effect"
     ],
-    "sm11-234": [
-      "Unimplemented Trainer effect"
-    ],
-    "sm11-237": [
-      "Unimplemented attack: Super Growth",
-      "Unimplemented attack: Tropical Hour-GX"
-    ],
     "sm11-238": [
       "Unimplemented Ability: Burning Road"
-    ],
-    "sm11-246": [
-      "Unimplemented Ability: Captivating Wink"
-    ],
-    "sm11-249": [
-      "Unimplemented attack: Injection-GX"
-    ],
-    "sm11-251": [
-      "Unimplemented Trainer effect"
-    ],
-    "sm11-254": [
-      "Unimplemented Trainer effect"
     ],
     "sm11-255": [
       "Unimplemented Trainer effect"
     ],
     "sm11-257": [
-      "Unimplemented Special Energy rules"
-    ],
-    "sm11-258": [
       "Unimplemented Special Energy rules"
     ]
   },

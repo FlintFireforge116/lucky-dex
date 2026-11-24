@@ -8,7 +8,7 @@ TESTS=['tests/v07424-ultra-prism-integration.test.cjs','tests/v07425-ultra-prism
 def check():
  subprocess.run([sys.executable,'scripts/check-gradle-source.py','--self-test'],cwd=ROOT,check=True)
  c=json.loads((ROOT/'scripts/sm5_release_contract.json').read_text())
- assert (c['set'],c['stage'],c['release'])==('sm5','stage13','0.69.452')
+ assert (c['set'],c['stage'],c['release'])==('sm5','stage13','0.69.453')
  assert (c['printedTotal'],c['attackPrints'],c['abilities'],c['pokemonGX'],c['gxAttackPrints'],c['prismStarPrints'],c['trainerPrints'],c['energyPrints'])==(178,237,37,27,27,6,36,5)
  assert c['pin']=='66cbd13b706b789de3b8cce2f5c9fc95135a33b0'
  assert c['variants']==['119a','122a','125a','135a','153a']
@@ -207,10 +207,10 @@ def check():
  for f in ('tcg-classic-battle-data.js','tcg-classic-deck-builder.js','tcg-classic-opponents.js','tcg-classic-set-picker.js'):
   assert 'sm5' in (ROOT/'app/src/main/assets'/f).read_text(),f+' missing SM5 registration'
  html=(ROOT/'app/src/main/assets/index.html').read_text()
- assert 'tcg-classic-ultra-prism.js' in html and 'v0.69.452' in html
- assert "__LUCKYDEX_BUILD='0.69.452'" in (ROOT/'app/src/main/assets/app-v0167.js').read_text()
+ assert 'tcg-classic-ultra-prism.js' in html and 'v0.69.453' in html
+ assert "__LUCKYDEX_BUILD='0.69.453'" in (ROOT/'app/src/main/assets/app-v0167.js').read_text()
  for sid in ['xy9','xy10','xy11','xy12','sm1','sm2','sm3','sm4']:
-  assert json.loads((ROOT/f'scripts/{sid}_release_contract.json').read_text())['release']=='0.69.452'
+  assert json.loads((ROOT/f'scripts/{sid}_release_contract.json').read_text())['release']=='0.69.453'
  print('SM5 source gate PASS: SHA-pinned official 178 prints, 237 attacks, 37 Abilities, 27 GX, 6 Prism Star')
 def full():
  subprocess.run([sys.executable,'scripts/build-sm5.py'],cwd=ROOT,check=True)

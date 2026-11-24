@@ -1,0 +1,5 @@
+# Unified Minds continuation — v0.69.453
+
+241/261 playable prints, +33 since v452. Twenty prints remain gated (see `SM11_CURRENT_GAP_LEDGER.md`). Deck performance optimisation unchanged.
+
+New mechanics: Tool-granted Z-Crystal GX attacks; additional Prize pile and win threshold, including the actual Basic Energy discard ledger; Weakness Guard Energy; Super Growth and Tropical Hour; distinct Energy selection for Victory Sign; Hurricane Charge, Tag Cheer, Tag Switch, Ominous Posture and Grimsley; Dimension Breach, Durable Blade, Captivating Wink, Bursting Spores, Drowsing, Dynamic Swing, Counterattack, Giant Bomb, Ear-Ringing Bell, Blue's Tactics and Turn the Tables. Existing hand cap and hybrid Energy rules remain. Tests exercise player and CPU, and distinguish actual attack damage from counter placement. The set is not complete; the independent cross-era audit and physical Android/CI APK verification are outstanding. Existing historical bespoke damage routes and unusual simultaneous trigger combinations remain audit targets.
