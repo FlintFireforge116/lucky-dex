@@ -10,7 +10,7 @@ def main():
  run(sys.executable,'scripts/check-gradle-source.py','--self-test')
  run(sys.executable,'scripts/audit-expansion-readiness.py','--set','sm10','--release-only')
  if a.full:
-  run(sys.executable,'scripts/audit-expansion-readiness.py','--set','sm10','--check-release','--report','docs/SM10_CURRENT_GAP_LEDGER.md')
+  run(sys.executable,'scripts/audit-expansion-readiness.py','--set','sm10','--check-release','--require-complete','--report','docs/SM10_CURRENT_GAP_LEDGER.md')
   run('node','--test',*TESTS)
   run(sys.executable,'scripts/preflight-det1-release.py','--full')
 if __name__=='__main__':main()

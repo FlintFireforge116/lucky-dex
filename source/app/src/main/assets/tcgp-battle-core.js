@@ -1621,7 +1621,7 @@
     // attachment are INDEPENDENT. Hand-attached Basic and Special both count
     // toward the hand attachment; card effects can separately accelerate.
     if(state.format==='classic'&&Number(s.dp7EmperorAuraUntil||0)<Number(state.turnNumber))s.dp7EmperorAuraUntil=0;
-    if(state.format==='classic'&&Number(s.dp7EmperorAuraUntil||0)<Number(state.turnNumber)){s.hand.forEach((ref,handIndex)=>{const card=data.cardById(ref.cardId);if(!(card?.specialEnergy||card?.basicEnergy||card?.holonEnergyPokemon)||card.battleEnabled===false&& !card.basicEnergy)return;if((card?.specialEnergy||card?.holonEnergyPokemon)&&effects.isActionLocked(state,side,'SpecialEnergy',data.cardById))return;if(card.specialEnergy&&state.sides[side==='player'?'opponent':'player']?.active?.cardId==='bw10-23'&&!effects.abilitiesSuppressed(state,side==='player'?'opponent':'player',state.sides[side==='player'?'opponent':'player'].active,data.cardById))return;if(s.handEnergyUsed&&!(s.sm8Harmonics?.turn===state.turnNumber&&pokemonOn(s).some(p=>p.cardId==='sm8-67'&&!effects.abilitiesSuppressed(state,side,p,data.cardById)))&&Number(s.xy5GrowthBonus?.turn)!==Number(state.turnNumber)&&Number(s.sm1UnlimitedHandEnergyTurn)!==Number(state.turnNumber))return;const validEnergyTarget=slot=>slot&&!slot.gymEnergyLock&&(card.id!=='neo4-16'||/^(?:Light |Shining )/.test(data.cardById(slot.cardId)?.name||''));const aqValid=(slot)=>{if(!validEnergyTarget(slot))return false;if(s.handEnergyUsed&&!(s.sm8Harmonics?.turn===state.turnNumber&&s.sm8Harmonics?.uid===slot.uid&&pokemonOn(s).some(p=>p.cardId==='sm8-67'&&!effects.abilitiesSuppressed(state,side,p,data.cardById)))&&s.xy5GrowthBonus?.targetUid!==slot.uid&&Number(s.sm1UnlimitedHandEnergyTurn)!==Number(state.turnNumber))return false;const mon=data.cardById(slot.cardId),energyType=card.basicEnergy?card.subtype:card.effect?.provides&&Object.keys(card.effect.provides)[0];
+    if(state.format==='classic'&&Number(s.dp7EmperorAuraUntil||0)<Number(state.turnNumber)){s.hand.forEach((ref,handIndex)=>{const card=data.cardById(ref.cardId),battery=card?.id==='sm10-58'&&!effects.abilitiesSuppressed(state,side,{cardId:card.id,uid:ref.uid,conditions:{}},data.cardById),crazy=!!card?.specialEnergy&&pokemonOn(s).some(p=>p.cardId==='sm10-157'&&!effects.abilitiesSuppressed(state,side,p,data.cardById));if(!(battery||card?.specialEnergy||card?.basicEnergy||card?.holonEnergyPokemon)||card.battleEnabled===false&& !card.basicEnergy)return;if((battery||card?.specialEnergy||card?.holonEnergyPokemon)&&effects.isActionLocked(state,side,'SpecialEnergy',data.cardById))return;if((battery||card.specialEnergy)&&state.sides[side==='player'?'opponent':'player']?.active?.cardId==='bw10-23'&&!effects.abilitiesSuppressed(state,side==='player'?'opponent':'player',state.sides[side==='player'?'opponent':'player'].active,data.cardById))return;if(!battery&&!crazy&&s.handEnergyUsed&&!(s.sm8Harmonics?.turn===state.turnNumber&&pokemonOn(s).some(p=>p.cardId==='sm8-67'&&!effects.abilitiesSuppressed(state,side,p,data.cardById)))&&Number(s.xy5GrowthBonus?.turn)!==Number(state.turnNumber)&&Number(s.sm1UnlimitedHandEnergyTurn)!==Number(state.turnNumber))return;const validEnergyTarget=slot=>slot&&!slot.gymEnergyLock&&(card.id!=='neo4-16'||/^(?:Light |Shining )/.test(data.cardById(slot.cardId)?.name||''));const aqValid=(slot)=>{if(!validEnergyTarget(slot))return false;if(battery&&!['Vikavolt','Vikavolt-GX'].includes(data.cardById(slot.cardId)?.name))return false;if(!battery&&!crazy&&s.handEnergyUsed&&!(s.sm8Harmonics?.turn===state.turnNumber&&s.sm8Harmonics?.uid===slot.uid&&pokemonOn(s).some(p=>p.cardId==='sm8-67'&&!effects.abilitiesSuppressed(state,side,p,data.cardById)))&&s.xy5GrowthBonus?.targetUid!==slot.uid&&Number(s.sm1UnlimitedHandEnergyTurn)!==Number(state.turnNumber))return false;const mon=data.cardById(slot.cardId),energyType=card.basicEnergy?card.subtype:card.effect?.provides&&Object.keys(card.effect.provides)[0];
        if(['sm10-190','sm10-234'].includes(card.id)&&!['Stage 1','Stage 2','BREAK'].includes(mon?.stage))return false;
        if(card.id==='xy3-103'&&!mon?.types?.includes('Grass'))return false;
        if(['xy3-104','xy10-115'].includes(card.id)&&!mon?.types?.includes('Fighting'))return false;
@@ -1646,12 +1646,12 @@
        if(card.id==='xy9-113'&&!mon?.types?.includes('Water'))return false;
        if(card.id==='ex4-87'&&!mon?.name?.startsWith("Team Magma's"))return false;
        if(['ex4-88','ex9-87','ex14-88'].includes(card.id)&&(!['Stage 1','Stage 2'].includes(mon?.stage)||mon?.pokemonEx))return false;
-       if(card.specialEnergy&&Number(s.dp2BindPulseUntil||0)>=state.turnNumber)return false;
-       if(card.specialEnergy&&slot===s.active&&
+       if((battery||card.specialEnergy)&&Number(s.dp2BindPulseUntil||0)>=state.turnNumber)return false;
+       if((battery||card.specialEnergy)&&slot===s.active&&
          state.sides[side==='player'?'opponent':'player'].active?.cardId==='ex14-17'&&
          !effects.abilitiesSuppressed(state,side==='player'?'opponent':'player',state.sides[side==='player'?'opponent':'player'].active,data.cardById)&&
          !['Darkness Energy','Metal Energy'].includes(card.name))return false;
-       if(card.specialEnergy&&state.sides[side==='player'?'opponent':'player'].active?.cardId==='ex9-91'&&slot===s.active&&!['Darkness Energy','Metal Energy'].includes(card.name))return false;
+       if((battery||card.specialEnergy)&&state.sides[side==='player'?'opponent':'player'].active?.cardId==='ex9-91'&&slot===s.active&&!['Darkness Energy','Metal Energy'].includes(card.name))return false;
        if(card.id==='ex10-98'&&!['Stage 1','Stage 2'].includes(mon?.stage))return false;
        if(card.id==='ecard3-142'&&!Object.values(slot.energy||{}).some(n=>Number(n)>0))return false;
        if(card.id==='ecard3-144'&&!['Stage 1','Stage 2'].includes(mon?.stage))return false;
@@ -2045,6 +2045,7 @@
   }
 
   function advanceTurn(state){
+    for(const board of Object.values(state.sides))delete board.sm10HypnoPending;
     const maxTurns=state.format==='classic'?100:50;
     if(state.turnNumber>=maxTurns){
       if(state.format==='classic'){
@@ -2329,9 +2330,9 @@
     const paused=resolveKnockOut(state,'endTurn','attack');if(!paused&&state.phase==='battle')endTurn(state);return true;
   }
 
+  function startNextPromotion(state){const next=state.promotionQueue?.shift();if(!next)return false;const enemy=next==='player'?'opponent':'player',ss=state.sides[enemy];if(state.format==='classic'&&state.sides[next].sm10HypnoPending){delete state.sides[next].sm10HypnoPending;for(const hypno of pokemonOn(ss).filter(p=>p.cardId==='sm10-72'&&!effects.abilitiesSuppressed(state,enemy,p,data.cardById))){const heads=random(state)<0.5;state.log.push({type:'coin',side:enemy,reason:'Hypnotic Pendulum',heads,results:[heads]});if(heads){beginEffectChoice(state,enemy,hypno,{kind:'switchBench',side:'self',selectionSide:next,special:'sm10HypnoPromote',victim:next});return true;}}}state.phase='promote';state.promotionSide=next;return true;}
   function resumeAfterPromotion(state){
-    const next=state.promotionQueue?.shift();
-    if(next){state.phase='promote';state.promotionSide=next;return;}
+    if(startNextPromotion(state))return;
     state.phase='battle';state.promotionSide=null;
     const resume=Object.prototype.hasOwnProperty.call(state,'pendingAfterPromotion')?state.pendingAfterPromotion:'endTurn';state.pendingAfterPromotion=null;
     if(resume==='endTurn')endTurn(state);else if(resume==='advanceTurn')advanceTurn(state);else if(resume==='repeatAttack')finishRepeatAttack(state);
@@ -2796,7 +2797,7 @@
             else if(target.specialEnergy?.length)foe.discard.push(...target.specialEnergy.splice(0,1));
             state.log.push({type:'xy12LittleGrudge',side,targetUid:target.uid});}
         }
-        const sm10WasActive=slot===s.active;any=true;const countsAsKnockout=!(slot.cardId==='dp3-26'&&slot.transformOnKO)&&!slot.dp2ForcedDiscard&&card?.effect?.countsAsKnockout!==false&&card?.countsAsKnockout!==false&&!['ex16-84','ex16-85','ex16-86'].includes(card?.id);if(countsAsKnockout){if(Number(s.lastKnockoutTurn)!==Number(state.turnNumber))s.lastKnockedOutCardIds=[];s.lastKnockoutTurn=state.turnNumber;s.lastKnockedOutCardIds.push(card.id);s.knockoutsTaken=Number(s.knockoutsTaken||0)+1;if(cause==='attack'&&source?.side===foeSide&&source?.attack){if(Number(s.lastOpponentAttackKoTurn)!==Number(state.turnNumber))s.lastOpponentAttackKoCardIds=[];s.lastOpponentAttackKoTurn=state.turnNumber;s.lastOpponentAttackKoCardIds.push(card.id);}}
+        const sm10WasActive=slot===s.active;any=true;const countsAsKnockout=!(slot.cardId==='dp3-26'&&slot.transformOnKO)&&!slot.dp2ForcedDiscard&&card?.effect?.countsAsKnockout!==false&&card?.countsAsKnockout!==false&&!['ex16-84','ex16-85','ex16-86'].includes(card?.id);if(countsAsKnockout){if(state.format==='classic'&&sm10WasActive)s.sm10HypnoPending=true;if(Number(s.lastKnockoutTurn)!==Number(state.turnNumber))s.lastKnockedOutCardIds=[];s.lastKnockoutTurn=state.turnNumber;s.lastKnockedOutCardIds.push(card.id);s.knockoutsTaken=Number(s.knockoutsTaken||0)+1;if(cause==='attack'&&source?.side===foeSide&&source?.attack){if(Number(s.lastOpponentAttackKoTurn)!==Number(state.turnNumber))s.lastOpponentAttackKoCardIds=[];s.lastOpponentAttackKoTurn=state.turnNumber;s.lastOpponentAttackKoCardIds.push(card.id);}}
         if(state.format==='classic'&&cause==='attack'&&source?.turn===state.turnNumber&&source?.side===foeSide&&source?.attack&&Number(source.damage)>0){const p=pokemonOn(foe).find(p=>p.uid===source.uid);if(p&&['sm8-121','sm8-203','sm8-223'].includes(p.cardId)&&!effects.abilitiesSuppressed(state,foeSide,p,data.cardById))slot.pl1LostZoneOnKO=true;}
         const blackMarket=state.format==='classic'&&activeStadium(state)?.cardId==='sm9-134'&&cause==='attack'&&source?.attack&&source.side===foeSide&&Number(source.damage||0)>0&&effects.effectiveTypes(state,side,slot,data.cardById).includes('Darkness')&&(Number(slot.energy?.Darkness||0)>0||(slot.specialEnergy||[]).some(r=>effects.attachedSpecialProvidesType(r,'Darkness',slot,data.cardById)))?1:0;
         const arceusBeltBonus=state.format==='classic'&&activeToolsOf(state,slot).some(ref=>ref.cardId==='pl4-87')?1:0;
@@ -2938,7 +2939,7 @@
     }
     const order=[state.activeSide,state.activeSide==='player'?'opponent':'player'];
     const needs=order.filter(side=>!state.sides[side].active&&state.sides[side].bench.length);
-    if(needs.length){state.pendingAfterPromotion=resume||null;state.promotionQueue=needs;state.phase='promote';state.promotionSide=state.promotionQueue.shift();return true;}
+    if(needs.length){state.pendingAfterPromotion=resume||null;state.promotionQueue=needs;return startNextPromotion(state);}
     return false;
   }
 
@@ -3171,6 +3172,22 @@ const target=slotForTarget(s,action.target,action.benchIndex);if(card.id==='pl2-
     }
     if(matched.type==='effectChoice'){
       const pending=state.pendingChoice;if(!pending)throw new Error('No pending effect choice.');
+      if(pending.special==='sm10HypnoticHand'||pending.special==='sm10HypnoticAttack'){
+        const ss=state.sides[side],enemy=state.sides[side==='player'?'opponent':'player'];state.pendingChoice=null;state.choiceSide=null;state.phase='battle';
+        if(pending.special==='sm10HypnoticHand'){
+          if(matched.choiceSkip)return finishDeclaredAttack(state,side,pending.attackAction);
+          const ref=enemy.hand[matched.choiceHandIndex],card=data.cardById(ref?.cardId);if(!ref||!pending.allowedUids.includes(ref.uid))return finishDeclaredAttack(state,side,pending.attackAction);
+          const opts=[];for(const [i,atk] of (card.attacks||[]).entries()){if(atk.gxAttack||/\bGX\b/i.test(atk.name)||atk.effect?.type==='copyAttack'||atk.effect?.rule==='sm10HypnoticReign')continue;const nested=effects.choicesForEffect(atk.effect,{...effectContext(state,side),isAttack:true,attack:atk});for(const sub of nested.length?nested:[{}])opts.push({i,sub,label:atk.name+(sub.choiceLabel?' — '+sub.choiceLabel:'')});}
+          if(!opts.length)return finishDeclaredAttack(state,side,pending.attackAction);
+          enemy.discard.push(...enemy.hand.splice(matched.choiceHandIndex,1));beginEffectChoice(state,side,ss.active,{kind:'option',side:'self',options:opts.map(x=>x.label),opts,copyCardId:card.id,special:'sm10HypnoticAttack',attackAction:pending.attackAction});return state;
+        }
+        const opt=pending.opts[matched.choiceOption],action={...pending.attackAction,choiceCardId:pending.copyCardId,choiceAttackIndex:opt.i,copiedEffectSelection:JSON.stringify(opt.sub)},rule=data.cardById(pending.copyCardId)?.attacks?.[opt.i]?.effect?.rule;
+        if(['sm10Fireball','sm10RocketSplash','crushBurn','sandyFear','sm75ExplosiveJet','sm8LavaFlow','sm8MindBlown','sm9ElectromagneticBomb'].includes(rule)&&sm7BeforeAttack(state,side,action,rule,0))return state;
+        return finishDeclaredAttack(state,side,action);
+      }
+      if(pending.special==='sm10HypnoPromote'){
+        const board=state.sides[pending.victim],index=benchArrayIndex(board,matched.choiceBenchIndex),[incoming]=board.bench.splice(index,1);incoming.benchSlot=null;incoming.movedToActiveTurn=state.turnNumber;board.active=incoming;state.log.push({type:'promote',side:pending.victim,cardId:incoming.cardId,reason:'Hypnotic Pendulum'});state.pendingChoice=null;state.choiceSide=null;resumeAfterPromotion(state);return state;
+      }
       if(pending.special==='sm7Grounding'||pending.special==='sm7WishPrize'){
         const ss=state.sides[side];
         if(pending.special==='sm7Grounding'&&!matched.choiceSkip){const src=findSlotByUid(state,side,pending.sourceUid),dst=findSlotByUid(state,side,pending.receiverUid),t=pending.types?.[matched.choiceOption];if(src&&dst&&Number(src.energy?.[t])>0){src.energy[t]--;dst.energy[t]=Number(dst.energy[t]||0)+1;}}
@@ -3583,23 +3600,23 @@ const target=slotForTarget(s,action.target,action.benchIndex);if(card.id==='pl2-
     if(matched.type==='stadiumAction'){const stadium=data.cardById(activeStadium(state)?.cardId),effect=stadium?.effect?.type==='stadiumAction'?stadium.effect.effect:null;if(!effect)throw new Error('No Stadium action is available.');s.stadiumActionUsedTurn=state.turnNumber;s.stadiumActionUsedUid=state.stadium.uid;effects.applyEffect(effect,{...effectContext(state,side,matched),isStadium:true});if(state.phase==='effectChoice')state.pendingChoice.resume=state.pendingChoice.resume||'stadiumAction';else resolveKnockOut(state,null);state.log.push({type:'stadiumAction',side,cardId:stadium.id});return state;}
     if (matched.type === 'attachSpecial'){
       const target=slotForTarget(s,matched.target,matched.benchIndex),[ref]=s.hand.splice(matched.handIndex,1),card=data.cardById(ref?.cardId);
-      if(!target||!ref||!(card?.specialEnergy||card?.basicEnergy||card?.holonEnergyPokemon))throw new Error('That Energy card attachment is no longer legal.');
+      const battery=card?.id==='sm10-58',crazy=!!card?.specialEnergy&&pokemonOn(s).some(p=>p.cardId==='sm10-157'&&!effects.abilitiesSuppressed(state,side,p,data.cardById));if(!target||!ref||!(battery||card?.specialEnergy||card?.basicEnergy||card?.holonEnergyPokemon))throw new Error('That Energy card attachment is no longer legal.');
       if(state.format==='classic'&&card.specialEnergy&&Number(s.dp2BindPulseUntil||0)>=state.turnNumber){s.hand.splice(matched.handIndex,0,ref);return state;}
       if(state.format==='classic'&&card.specialEnergy&&foe.active?.cardId==='bw10-23'&&!effects.abilitiesSuppressed(state,foeSide,foe.active,data.cardById)){s.hand.splice(matched.handIndex,0,ref);return state;}
       let provides={};if(card.basicEnergy){target.energy[card.subtype]=Number(target.energy[card.subtype]||0)+1;provides={[card.subtype]:1};}else{
         // Attached Holon Pokémon remain Pokémon cards in every other zone.
         // Holon's Voltorb/Magnemite = 1 Colorless; evolutions = 2 of any type.
-        if(card.holonEnergyPokemon)ref.provides=['ex11-21','ex11-22','ex13-44'].includes(card.id)?{Miracle:2}:{Colorless:1};
+        if(battery)ref.provides={Lightning:2};if(card.holonEnergyPokemon)ref.provides=['ex11-21','ex11-22','ex13-44'].includes(card.id)?{Miracle:2}:{Colorless:1};
         target.specialEnergy=target.specialEnergy||[];target.specialEnergy.push(ref);provides={...specialEnergyProvides(ref)};
       }
       // Alpha Growth permits exactly one additional HAND Energy card on the
       // same Pokemon. No generated Energy Zone or effect acceleration counts.
       const growthUsed=!!(s.handEnergyUsed&&s.xy5GrowthBonus?.targetUid===target.uid&&Number(s.xy5GrowthBonus.turn)===Number(state.turnNumber));
-      if(growthUsed)delete s.xy5GrowthBonus;
+      if(!battery&&!crazy){if(growthUsed)delete s.xy5GrowthBonus;
       else if(state.format==='classic'&&data.cardById(target.cardId)?.ancientTrait?.name==='α Growth')
         s.xy5GrowthBonus={turn:state.turnNumber,targetUid:target.uid};
       if(s.handEnergyUsed)delete s.sm8Harmonics;else if(state.format==='classic'&&pokemonOn(s).some(p=>p.cardId==='sm8-67'&&!effects.abilitiesSuppressed(state,side,p,data.cardById)))s.sm8Harmonics={turn:state.turnNumber,uid:target.uid};
-      s.handEnergyUsed=true;
+      s.handEnergyUsed=true;}
       if(card.id==='xy3-103'&&!effects.healingIsBlocked(state,target,data.cardById)){target.damage=Math.max(0,Number(target.damage||0)-30);state.log.push({type:'xy3HerbalEnergy',side,targetUid:target.uid,healed:30});}
       if(card.holonEnergyPokemon&&['ex11-21','ex11-22','ex13-44'].includes(card.id)){
         const eligible=[...Object.entries(target.energy||{}).filter(([,n])=>Number(n)>0).map(([type])=>({type,label:'Return '+type+' Basic Energy'})),
@@ -3919,6 +3936,12 @@ const target=slotForTarget(s,action.target,action.benchIndex);if(card.id==='pl2-
       const copiedSource=attack.effect?.type==='copyAttack'&&(attack.name==='Nightcap'||attack.effect.det1Copy)?slotForTarget(foe,matched.choiceTarget,matched.choiceBenchIndex):null;
       const copiedAttack=attack.effect?.type==='sm2Rule'&&attack.effect.rule==='copycat'&&foe.lastAttackTurn===state.turnNumber-1?data.cardById(foe.lastAttackCardId)?.attacks?.find(a=>a.name===foe.lastAttackName&&!a.name.endsWith('-GX')):copiedSource&&data.cardById(copiedSource.cardId)?.attacks?.[matched.choiceAttackIndex];
       if(attack.effect?.det1Copy)matched.det1CopiedCostPaid=!!copiedAttack&&effectContext(state,side).canPayCopiedCost(copiedAttack);
+      if(state.format==='classic'){const gx=attack.gxAttack||/\bGX\b/i.test(attack.name)||copiedAttack&&(copiedAttack.gxAttack||/\bGX\b/i.test(copiedAttack.name));if(gx)state.sm10GXAttack={side,uid:s.active.uid,turn:state.turnNumber};else delete state.sm10GXAttack;}
+      if(attack.effect?.rule==='sm10HypnoticReign'){
+        state.log.push({type:'revealHand',side,revealedSide:foeSide,cards:foe.hand.map(x=>x.cardId)});
+        const pool=foe.hand.filter(x=>data.cardById(x.cardId)?.kind==='pokemon'&&data.cardById(x.cardId)?.battleEnabled&&(data.cardById(x.cardId)?.attacks||[]).some(a=>!a.gxAttack&&!/\bGX\b/i.test(a.name)));
+        if(pool.length){beginEffectChoice(state,side,s.active,{kind:'handCard',side:'self',selectionSide:foeSide,allowedUids:pool.map(x=>x.uid),optional:true,special:'sm10HypnoticHand',attackAction:matched});return state;}
+      }
       const paymentEffect=attack.effect?.det1Copy&&!matched.det1CopiedCostPaid?attack.effect:copiedAttack?.effect||attack.effect;
       const sm7Rule=paymentEffect?.type==='sm7Rule'?paymentEffect.rule:null;
       if(['sm10Fireball','sm10RocketSplash','crushBurn','sandyFear','sm75ExplosiveJet','sm8LavaFlow','sm8MindBlown','sm9ElectromagneticBomb'].includes(sm7Rule)&&sm7BeforeAttack(state,side,matched,sm7Rule,0))return state;
@@ -3962,7 +3985,7 @@ const target=slotForTarget(s,action.target,action.benchIndex);if(card.id==='pl2-
   function finishDeclaredAttack(state,side,matched){
     const s=state.sides[side],foeSide=side==='player'?'opponent':'player',foe=state.sides[foeSide],attackerCard=data.cardById(s.active.cardId),attackSourceCard=data.cardById(matched.attackCardId||s.active.cardId),attack=attackSourceCard.attacks[matched.attackIndex];
       const context={...effectContext(state,side,matched),isAttack:true},result=effects.resolveAttack(attack,context);
-      if(attack.effect?.det1Copy){context.action={...JSON.parse(matched.copiedEffectSelection||'{}'),sm7SelectedCount:matched.sm7SelectedCount};context.attack=data.cardById(matched.choiceCardId)?.attacks?.[matched.choiceAttackIndex];}
+      if(attack.effect?.det1Copy||attack.effect?.rule==='sm10HypnoticReign'){context.action={...JSON.parse(matched.copiedEffectSelection||'{}'),sm7SelectedCount:matched.sm7SelectedCount};context.attack=data.cardById(matched.choiceCardId)?.attacks?.[matched.choiceAttackIndex];}
       // Some printed attacks explicitly resolve an effect BEFORE damage.
       // A Pokémon Tool removed by Peck Off must not reduce the incoming hit.
       // General timing metadata keeps those pre-damage effects out of the
@@ -3988,6 +4011,8 @@ const target=slotForTarget(s,action.target,action.benchIndex);if(card.id==='pl2-
       const defender=result.damageTarget===undefined?(leapFrog?foe.bench.find(x=>Number(x.benchSlot)===Number(matched.benchIndex)):foe.active):result.damageTarget;
       if(!defender)throw new Error('No legal target remains for this attack.');
       const isActive=defender===foe.active;
+      if(state.format==='classic'&&isActive&&s.active.sm10GrandioseUntil===state.turnNumber&&result.damage>0)result.damage+=120;
+      if(state.format==='classic'&&isActive&&attackerCard.ultraBeast&&s.sm10KartenvoyTurn===state.turnNumber)result.damageRules={...result.damageRules,ignoreEffects:true};
       state.pendingAttackResult={defenderSide:foeSide,defenderUid:defender.uid,turn:state.turnNumber,before:attackResultSnapshot(defender)};
       let damage=result.damage;
       if(state.format==='classic'&&s.active.cardId==='hgss2-85'&&attack.name==='Dragon Steam'&&

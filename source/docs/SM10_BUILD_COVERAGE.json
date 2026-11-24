@@ -1,67 +1,7 @@
 {
   "printed": 238,
-  "battleReady": 220,
-  "gated": {
-    "sm10-41": [
-      "Unimplemented attack: Wicked Tentacles"
-    ],
-    "sm10-53": [
-      "Unimplemented attack: Surprise Fist"
-    ],
-    "sm10-58": [
-      "Unimplemented Ability: Battery"
-    ],
-    "sm10-59": [
-      "Unimplemented attack: Electricannon",
-      "Unimplemented Ability: Stealthy Body"
-    ],
-    "sm10-67": [
-      "Unimplemented Ability: Swelling Spite"
-    ],
-    "sm10-72": [
-      "Unimplemented Ability: Hypnotic Pendulum"
-    ],
-    "sm10-74": [
-      "Unimplemented attack: Splattering Sludge",
-      "Unimplemented Ability: Detention Gas"
-    ],
-    "sm10-114": [
-      "Unimplemented attack: Grandiose Fangs"
-    ],
-    "sm10-119": [
-      "Unimplemented attack: Hypnotic Reign"
-    ],
-    "sm10-125": [
-      "Unimplemented attack: Extra-Tight Press"
-    ],
-    "sm10-157": [
-      "Unimplemented Ability: Crazy Code"
-    ],
-    "sm10-163": [
-      "Unimplemented attack: Discovery-GX",
-      "Unimplemented Ability: Force Canceler"
-    ],
-    "sm10-166": [
-      "Unimplemented Trainer effect"
-    ],
-    "sm10-168": [
-      "Unimplemented Trainer effect"
-    ],
-    "sm10-186": [
-      "Unimplemented Trainer effect"
-    ],
-    "sm10-188": [
-      "Unimplemented Trainer effect"
-    ],
-    "sm10-208": [
-      "Unimplemented attack: Discovery-GX",
-      "Unimplemented Ability: Force Canceler"
-    ],
-    "sm10-228": [
-      "Unimplemented attack: Discovery-GX",
-      "Unimplemented Ability: Force Canceler"
-    ]
-  },
+  "battleReady": 238,
+  "gated": {},
   "attacks": 338,
   "abilities": 53,
   "pokemonGX": 47,
