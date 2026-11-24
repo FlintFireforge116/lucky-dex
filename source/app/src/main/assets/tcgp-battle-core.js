@@ -441,7 +441,7 @@
       if(p.kind==='pokemon'&&p.includeActive!==false&&eligible(board.active))out.push({type:'effectChoice',choiceTarget:'active',choiceCardId:board.active.cardId});
       for(const slot of board.bench||[])if(eligible(slot))out.push({type:'effectChoice',choiceTarget:'bench',choiceBenchIndex:Number(slot.benchSlot),choiceCardId:slot.cardId});
     }else if(p.kind==='handCard'){
-      ss.hand.forEach((ref,index)=>{const card=data.cardById(ref.cardId);if(!p.filter||effects.matchesFilter(card,p.filter,ref))out.push({type:'effectChoice',choiceHandIndex:index,choiceCardId:ref.cardId});});
+      ss.hand.forEach((ref,index)=>{const card=data.cardById(ref.cardId);if(filterCard(ref))out.push({type:'effectChoice',choiceHandIndex:index,choiceCardId:ref.cardId});});
     }else if(p.kind==='deckCard'){
       ss.deck.forEach((ref,index)=>{const card=data.cardById(ref.cardId);if(!(p.excludeUids||[]).includes(ref.uid)&&(!p.allowedUids||p.allowedUids.includes(ref.uid))&&(!p.filter||effects.matchesFilter(card,p.filter,ref)))out.push({type:'effectChoice',choiceDeckIndex:index,choiceCardId:ref.cardId});});
     }else if(p.kind==='discardCard'){
@@ -461,7 +461,7 @@
     }else if(p.kind==='option'){
       (p.options||[]).forEach((label,index)=>out.push({type:'effectChoice',choiceOption:index,choiceLabel:label,...(p.optionCardIds?.[index]?{choiceCardId:p.optionCardIds[index]}:{})}));
     }else if(p.kind==='topDeckCard'){
-      const target=state.sides[p.deckSide||side],n=Math.min(Number(p.count||1),target.deck.length),excluded=new Set(p.excludeUids||[]);for(let i=0;i<n;i++){const ref=target.deck[i];if(!excluded.has(ref.uid)&&(!p.allowedKinds||p.allowedKinds.includes(data.cardById(ref.cardId)?.kind))&&(!p.filter||effects.matchesFilter(data.cardById(ref.cardId),p.filter,ref)))out.push({type:'effectChoice',choiceDeckIndex:i,choiceCardId:ref.cardId});}
+      const target=state.sides[p.deckSide||side],n=Math.min(Number(p.count||1),target.deck.length),excluded=new Set(p.excludeUids||[]);for(let i=0;i<n;i++){const ref=target.deck[i];if(!excluded.has(ref.uid)&&(!p.allowedUids||p.allowedUids.includes(ref.uid))&&(!p.allowedKinds||p.allowedKinds.includes(data.cardById(ref.cardId)?.kind))&&(!p.filter||effects.matchesFilter(data.cardById(ref.cardId),p.filter,ref)))out.push({type:'effectChoice',choiceDeckIndex:i,choiceCardId:ref.cardId});}
     }else if(p.kind==='energySource'){
       const energyBoard=state.sides[p.selectionSide||side];
       for(const slot of [energyBoard.active,...(energyBoard.bench||[])].filter(Boolean)){
@@ -914,6 +914,7 @@
     if(state.format==='classic'&&['Poliwag','Poliwhirl','Poliwrath'].includes(data.cardById(slot?.cardId)?.name)&&
       pokemonOn(state.sides[side]).some(p=>p.cardId==='xy3-18'&&!effects.abilitiesSuppressed(state,side,p,data.cardById)))cost=cost.replace(/C/g,'');
     const sm6Foe=side==='player'?'opponent':'player',sm6Goomy=state.sides[sm6Foe].active;if(state.format==='classic'&&sm6Goomy?.cardId==='sm6-91'&&!effects.abilitiesSuppressed(state,sm6Foe,sm6Goomy,data.cardById))cost+='C';
+    if(state.format==='classic'&&activeStadium(state)?.cardId==='sm9-158'&&!effects.effectiveTypes(state,side,slot,data.cardById).includes('Fairy'))cost+='C';
     if(state.format==='classic'&&activeStadium(state)?.cardId==='sm8-191'&&effects.effectiveTypes(state,side,slot,data.cardById).includes('Lightning'))cost=cost.replace('L','');
     // Head Ringer is owned by the opponent but increases the holder's cost.
     if(state.format==='classic'&&slot&&activeToolsOf(state,slot).some(r=>r.cardId==='xy4-97'))cost+='C';
@@ -2014,6 +2015,7 @@
     if(state.format==='classic'&&(Number(s.ex7TrainerLockedUntil||0)>=Number(state.turnNumber)||Number(s.ex8TrainerLockUntil||0)>=Number(state.turnNumber)))for(let i=actions.length-1;i>=0;i--)if(actions[i].type==='trainer'&&data.cardById(actions[i].cardId)?.trainerType!=='Supporter')actions.splice(i,1);
     if(state.format==='classic'&&Number(s.ex8SupporterLockUntil||0)>=Number(state.turnNumber))for(let i=actions.length-1;i>=0;i--)if(actions[i].type==='trainer'&&data.cardById(actions[i].cardId)?.trainerType==='Supporter')actions.splice(i,1);
     if(state.format==='classic'&&state.sides[side==='player'?'opponent':'player'].active?.cardId==='ex8-100')for(let i=actions.length-1;i>=0;i--)if(actions[i].type==='trainer'&&data.cardById(actions[i].cardId)?.trainerType==='Stadium')actions.splice(i,1);
+    if(state.format==='classic'&&Number(s.sm9HandLockUntil||0)>=state.turnNumber){for(let i=actions.length-1;i>=0;i--)if(actions[i].handIndex!=null||['bench','legendBench','evolve','trainer','attachSpecial','bw7Busybody','sm7FallingStar','sm8MountainPass'].includes(actions[i].type))actions.splice(i,1);}
     if(state.format==='classic'&&Number(s.sm4HandLockUntil||0)>=state.turnNumber){
       for(let i=actions.length-1;i>=0;i--)if(['bench','legendBench','evolve','trainer','attachSpecial','bw7Busybody','sm7FallingStar'].includes(actions[i].type))actions.splice(i,1);
     }
