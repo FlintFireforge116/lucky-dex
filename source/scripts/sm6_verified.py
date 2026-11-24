@@ -50,7 +50,7 @@ ATTACKS={
  'Teleportation Burst':('Switch this Pokémon with 1 of your Benched Pokémon.',e('switch')),
  'Metal Sound':("Your opponent's Active Pokémon is now Confused.",status('confusion')),
  'Draining Blade':('Heal 30 damage from this Pokémon.',e('heal',target='self',amount=30)),
- 'Hyperspace Ring':('Search your deck for up to 2 Item cards, reveal them, and put them into your hand. Then, shuffle your deck.',e('searchChosen',amount=2,filter={'kind':'trainer','trainerType':'Item'})),
+ 'Hyperspace Ring':('Search your deck for up to 2 Item cards, reveal them, and put them into your hand. Then, shuffle your deck.',e('searchChosen',amount=2,filter={'kind':'trainer','trainerType':['Item','Tool']})),
  'Spit Poison':("Your opponent's Active Pokémon is now Poisoned.",status('poison')),
  'Allotment':('Draw a card.',e('draw',amount=1)),
  'Glare':("Flip a coin. If heads, your opponent's Active Pokémon is now Paralyzed.",coin(status('paralysis'))),
@@ -60,7 +60,7 @@ ATTACKS={
  'Sonic Evil':("This attack's damage isn't affected by Weakness or Resistance.",e('damageRule',ignoreWeakness=True,ignoreResistance=True)),
  'Find a Friend':('Search your deck for a Pokémon, reveal it, and put it into your hand. Then, shuffle your deck.',e('searchChosen',amount=1,filter={'kind':'pokemon'})),
  'Fairy Lock':("The Defending Pokémon can't retreat during your opponent's next turn.",e('lock',action='retreat',target='opponentActive',duration='opponentTurn')),
- 'Overrun':("This attack does 20 damage to 1 of your opponent's Benched Pokémon. (Don't apply Weakness and Resistance for Benched Pokémon.)",e('benchDamage',side='opponent',amount=20)),
+ 'Overrun':("This attack does 20 damage to 1 of your opponent's Benched Pokémon. (Don't apply Weakness and Resistance for Benched Pokémon.)",e('multiTargetDamage',target='opponentBench',amount=20,count=1)),
  'Flail':('This attack does 10 damage for each damage counter on this Pokémon.',e('damageFromDamage',source='self',amount=1,mode='replace')),
  'Absorb':('Heal 30 damage from this Pokémon.',e('heal',target='self',amount=30)),
  'Collect':('Draw a card.',e('draw',amount=1)),
@@ -396,6 +396,8 @@ def attack(row,a):
  title,cost,damage,printed=a
  stage=STAGE_ATTACKS.get(title)
  if stage and n(stage[0])==n(printed):return deepcopy(stage[1])
+ # Audited overrides: printed Tools were Items in 2018; Overrun is mandatory when a Bench exists.
+ if title in ('Hyperspace Ring','Overrun') and n(ATTACKS[title][0])==n(printed):return deepcopy(ATTACKS[title][1])
  # Reuse existing exact previous-print implementation first. This includes
  # Palkia/Dialga GX, Garchomp, Ultra Prism energy attacks, and generic status.
  previous=PREVIOUS.attack(row,a)

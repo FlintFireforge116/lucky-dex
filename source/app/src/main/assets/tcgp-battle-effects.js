@@ -190,6 +190,7 @@
     if(['sm5-137','sm5-170'].includes(ref.cardId))return ['Grass','Fire','Water'].includes(type);
     if(['sm5-138','sm5-171'].includes(ref.cardId))return ['Lightning','Psychic','Metal'].includes(type);
     if(ref.cardId==='sm6-117')return type==='Colorless'||!!cardById?.(slot?.cardId)?.ultraBeast;
+    if(['sm6-118','sm6-146'].includes(ref.cardId))return ['Fighting','Darkness','Fairy','Colorless'].includes(type);
     if(ref.cardId==='sm5-136')return true; // Conditional quantity is resolved in core.
     if(ref.cardId==='bw4-93')return cardById?.(slot?.cardId)?.stage==='Basic';
     if(ref.cardId==='bw6-117')return ['Grass','Fire','Psychic','Darkness'].includes(type);
@@ -324,7 +325,7 @@
       case 'sweetsRelayLastTurn':return own(ctx).lastAttackName==='Sweets Relay'&&Number(own(ctx).lastAttackTurn||-99)===Number(ctx.state.turnNumber)-2;
       case 'movedFromBenchThisTurn':return Number(a?.movedToActiveTurn||-99)===Number(ctx.state.turnNumber);
       case 'evolvedThisTurn':return Number(a?.evolvedOnTurn||-99)===Number(ctx.state.turnNumber);
-      case 'selfHasEnergyType':return Number(a?.energy?.[c.energyType]||0)>=1||(a?.specialEnergy||[]).some(ref=>Number((ref.provides||ctx.cardById?.(ref.cardId)?.effect?.provides||{})[c.energyType]||0)>0);
+      case 'selfHasEnergyType':{const code=Object.keys(ENERGY_CODE).find(k=>ENERGY_CODE[k]===c.energyType);if(code&&a&&ctx.effectiveEnergy)return canPayCost(ctx.effectiveEnergy(a),code);return Number(a?.energy?.[c.energyType]||0)>=1||(a?.specialEnergy||[]).some(ref=>attachedSpecialProvidesType(ref,c.energyType,a,ctx.cardById));}
       case 'selfEvolved':return !!a&&Array.isArray(a.stack)&&a.stack.length>1;
       case 'selfNoEnergy':return !Object.values(a?.energy||{}).some(n=>Number(n)>0)&&!(a?.specialEnergy||[]).length;
       case 'selfMoreEnergy':return totalEnergy(a?.energy)>totalEnergy(d?.energy);
