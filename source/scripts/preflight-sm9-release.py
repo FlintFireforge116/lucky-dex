@@ -9,7 +9,7 @@ def main():
  def run(*args):subprocess.run(args,cwd=ROOT,check=True)
  run(sys.executable,'scripts/check-gradle-source.py','--self-test')
  c=json.loads((ROOT/'scripts/sm9_release_contract.json').read_text())
- assert c['set']=='sm9' and c['release']=='0.69.443' and c['stage']=='complete'
+ assert c['set']=='sm9' and c['release']=='0.69.444' and c['stage']=='complete'
  assert (c['printedTotal'],c['attackPrints'],c['abilities'],c['trainerPrints'],c['energyPrints'])==(198,260,36,43,0)
  run(sys.executable,'scripts/audit-expansion-readiness.py','--set','sm9','--release-only')
  if a.full:

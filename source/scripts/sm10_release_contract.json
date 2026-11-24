@@ -1,0 +1,22 @@
+{
+  "set": "sm10",
+  "name": "Unbroken Bonds",
+  "stage": "integration",
+  "release": "0.69.444",
+  "printedTotal": 238,
+  "attackPrints": 338,
+  "abilities": 53,
+  "pokemonGX": 47,
+  "gxAttackPrints": 47,
+  "tagTeamPrints": 26,
+  "prismStarPrints": 0,
+  "trainerPrints": 40,
+  "energyPrints": 2,
+  "pin": "2293c98b7086a4137928be1fa358ccad9209d006",
+  "variants": [
+    "182a",
+    "182b",
+    "189a",
+    "195a"
+  ]
+}
