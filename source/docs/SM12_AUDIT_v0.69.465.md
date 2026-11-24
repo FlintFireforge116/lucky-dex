@@ -1,0 +1,11 @@
+# Cosmic Eclipse independent audit and CPU Tool strategy — v0.69.465
+
+Coverage: 272/272 enabled, zero gates. No new set or card text changes.
+
+- Shared printed-recipient predicates are used for automatic Tool selection and deck construction. Spirit Link needs the named pre-Mega Pokémon-EX and a matching reachable Mega/Primal in hand/deck for CPU play; generated decks require both members of that evolution line. Manual attachments remain governed by the actual rules, not strategy. CPU prioritises a matching Link before evolving when both are available. Exact original-ID evolution exceptions remain compatible with name-matched reprints. Tests cover both sides and every difficulty; Rayquaza/Tornadus use explicit historical-ID fixtures because those generated XY6 records are missing offline, and Steam Siege Gardevoir tests the real local catalogue.
+- Check printed restrictions on Z-Crystals, Fairy Charms, Metal Goggles/Frying Pan, Core Barrier, Spell Tag, Dragon Talon, Memories, Ancient Crystal and Ultra Beast Tools. Avoid unusable GX-granting Tools, suppressed Tools, duplicate Links and immediately lethal Amulets. Preserve legal manual play and indexed deck-builder caches.
+- Stalking Claws-GX bypasses Wide Lens's Bench Weakness modification; Altered Creation preview is counted only once by the AI. Test Pure Heart, Recall/Shadow Imitation with nested Bench choices, and Shadow Box on damaged historical GX Pokémon.
+- Historical Blaine's Quiz #2/#3 must have an eligible separate reveal card; never queue an impossible choice when copied or applied to an empty hand. Added bilateral legal-action and choice regressions.
+- Known narrow-pool Neo Revelation generation failure reproduces with v464 engine/builder as well as v465 (Fire seed 45, among others). Not silently skipped or repaired by changing the user's filter. Full APK/Android build and physical-device play remain unverified.
+
+Verification: final SM12 full preflight 198/198 (38 new audit cases), all 20 historical source gates, final dedicated deck performance 3/3, JS syntax checks. Earlier focused historical runtime sweep 135 passed, 1 existing skip and 1 Neo Revelation narrow-pool failure reproduced on baseline. The wider APK suite and full nested prepare are not verified.

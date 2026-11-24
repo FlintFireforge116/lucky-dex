@@ -1334,7 +1334,7 @@
     }
     return out;
   }
-  function attackDamagePreview(state,side,attackIndex,attackCardId){
+  function attackDamagePreview(state,side,attackIndex,attackCardId,includeAlteredCreation=true){
     const source=state?.sides?.[side]?.active,attack=data.cardById(attackCardId||source?.cardId)?.attacks?.[attackIndex];
     if(!source||!attack)return {damage:0,text:'0',variable:false};
     if(attack.effect?.rule==='expedition:lightningStrike'){
@@ -1400,7 +1400,7 @@
             damage+=Number(boost.amount||0);
         }
       }
-      if(isActive&&damage>0&&snapshot.sides[side]?.sm12AlteredCreation)damage+=30;
+      if(includeAlteredCreation&&isActive&&damage>0&&snapshot.sides[side]?.sm12AlteredCreation)damage+=30;
       const effectiveDamage=Math.max(0,damage);
       const neoDarkBonus=isActive&&effectiveDamage>0?10*(attacker.specialEnergy||[]).filter(ref=>['neo1-104','ecard1-158','ecard2-142'].includes(ref.cardId)).length:0;
       return {damage:effectiveDamage,text:neoDarkBonus?`${effectiveDamage} + ${neoDarkBonus} after W/R`:String(effectiveDamage),variable:neoDarkBonus>0};
@@ -1569,6 +1569,9 @@
       if(state.format==='classic'&&['ex11-91','ex11-92','ex11-93','ex11-95','ex11-97'].includes(card.id)&&s.hand.length<2)return;
       if(card.id==='ex5-92'&&s.hand.length>7)return;
       if(card.id==='dp1-112'&&s.hand.length<=1)return;
+      // Quiz cards must have a separate eligible card after playing the Trainer.
+      if(card.id==='gym2-111'&&s.hand.length<=1)return;
+      if(card.id==='gym2-112'&&!s.hand.some((r,i)=>i!==handIndex&&data.cardById(r.cardId)?.kind==='pokemon'&&(data.cardById(r.cardId)?.attacks||[]).length))return;
       if(card.id==='ex16-83'&&s.hand.length>=7)return; // Steven's Advice counts the Supporter itself.
       // Ace Trainer is playable only while *behind* in unclaimed Prize cards.
       if(card.id==='xy7-69'&&(s.prizes||[]).length<=(state.sides[side==='player'?'opponent':'player'].prizes||[]).length)return;
@@ -3585,6 +3588,7 @@ const target=slotForTarget(s,action.target,action.benchIndex);if(card.id==='pl2-
       const [ref] = s.hand.splice(matched.handIndex,1);
       const target = slotForTarget(s,matched.target,matched.benchIndex);
       const xy4SpiritLink=state.format==='classic'&&!effects.toolEffectsSuppressed(state,data.cardById,target)&&(
+        toolsOf(target).some(t=>effects.usefulToolRecipient(data.cardById(t.cardId),data.cardById(target.cardId))&&effects.spiritLinkEvolution(data.cardById(t.cardId),data.cardById(ref.cardId)))||
         (['xy4-35','xy4-121'].includes(ref.cardId)&&toolsOf(target).some(t=>t.cardId==='xy4-95'))||
         (['xy4-24','xy4-24a','xy4-120'].includes(ref.cardId)&&toolsOf(target).some(t=>t.cardId==='xy4-100'))||
         (['xy5-94','xy5-154'].includes(ref.cardId)&&toolsOf(target).some(t=>t.cardId==='xy5-123'))||
@@ -4129,7 +4133,7 @@ const target=slotForTarget(s,action.target,action.benchIndex);if(card.id==='pl2-
          !effects.abilitiesSuppressed(state,side,s.active,data.cardById)&&
          !s.active.conditions?.sleep&&!s.active.conditions?.confusion&&!s.active.conditions?.paralysis&&damage>0){damage=120;}
       if(!isActive&&damage>0&&state.format==='classic'&&s.active.cardId==='sm6-26'&&attack.name==='Sharpshooting')for(const boost of s.active.nextAttackBonuses||[])if(Number(boost.turn)===state.turnNumber&&boost.attackName===attack.name)damage+=Number(boost.amount||0);
-      if(!isActive&&damage>0&&state.format==='classic')damage=effects.wideLensBenchMatchup(state,side,s.active,foeSide,defender,damage,data.cardById);
+      if(!isActive&&damage>0&&state.format==='classic'&&!(result.damageRules?.ignoreWeakness&&result.damageRules?.ignoreResistance&&result.damageRules?.ignoreEffects))damage=effects.wideLensBenchMatchup(state,side,s.active,foeSide,defender,damage,data.cardById);
       if(!isActive&&damage>0&&state.format==='classic'&&activeToolsOf(state,s.active).some(ref=>ref.cardId==='ecard1-150')){
         // Direct attacks on the Bench have no Weakness/Resistance; Strength
         // Charm still adds ten to an attack that dealt nonzero damage.

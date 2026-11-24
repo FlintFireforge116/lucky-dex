@@ -151,9 +151,29 @@
     // invoke them blindly when no measurable utility is available.
     return true;
   }
+  function usefulClassicTool(state,side,action,card){
+    const ss=state.sides[side];
+    // Opponent-targeting Team Flare Tools have their own printed legality.
+    if(String(action.target||'').startsWith('opponent'))return true;
+    const slot=slotFor(ss,action.target,action.benchIndex),mon=data.cardById(slot?.cardId);
+    if(!slot||!effects.usefulToolRecipient(card,mon))return false;
+    if(effects.spiritLinkSpecies(card)){
+      // It is reasonable to reserve a matching Link for a future Mega in
+      // our own deck, but never spend it on a different species or on an
+      // already evolved Mega. This is deck composition, not deck order.
+      if(effects.toolEffectsSuppressed(state,data.cardById,slot))return false;
+      if([slot.tool,...(slot.extraTools||[])].some(r=>effects.spiritLinkSpecies(data.cardById(r?.cardId))===effects.spiritLinkSpecies(card)))return false;
+      return [...ss.hand,...ss.deck].some(r=>effects.spiritLinkEvolution(card,data.cardById(r.cardId)));
+    }
+    if(/ium Z: /.test(card.name||'')&&(ss.sm11GxLocked||ss.gxAttackUsed&&!(ss.sm12WaterGxTurn===state.turnNumber&&effects.effectiveTypes(state,side,slot,data.cardById).includes('Water'))))return false;
+    // Never attach an HP-reducing Tool if the attachment itself would KO us.
+    if(card.name==='Island Challenge Amulet'&&core.maxHp(state,side,slot)-Number(slot.damage||0)<=100)return false;
+    return true;
+  }
   function usefulClassicTrainer(state,side,action){
     const card=data.cardById(action.cardId),s=state.sides[side],foe=state.sides[foeOf(side)];
     if(!card)return false;
+    if(card.trainerType==='Tool'&&!usefulClassicTool(state,side,action,card))return false;
     if(card.id==='sm11-186')return s.hand.some(r=>data.cardById(r.cardId)?.kind==='pokemon'&&data.cardById(r.cardId)?.attacks?.length);
     if((card.trainerType==='Stadium'||card.trainerSubtype==='Stadium'))return stadiumWorthPlaying(state,side,card);
     if(card.id==='neo3-64')return (s.discard||[]).some(ref=>{const c=data.cardById(ref.cardId);return c?.kind==='trainer'||c?.kind==='pokemon';});
@@ -184,7 +204,7 @@
     const foeSide=foeOf(side),target=state.sides[foeSide]?.active;
     if(!slot||!target||!attack)return 0;
     const active=state.sides[side].active===slot;
-    const raw=active?Number(core.attackDamagePreview(state,side,attackIndex,attackCardId)?.damage||0):Number(attack.damage||0);
+    const raw=active?Number(core.attackDamagePreview(state,side,attackIndex,attackCardId,false)?.damage||0):Number(attack.damage||0);
     return effects.attackDamageWithState(state,side,slot,foeSide,target,Math.max(0,raw),data.cardById);
   }
   function benchAttackValue(state,side,slot){
@@ -285,7 +305,7 @@
       // through their actual engine result in the action search.
       const maxCost=Math.max(1,...attacks.map(a=>String(a.cost||'').length));
       score+=Math.min(effects.totalEnergy(core.effectiveEnergy(state,side,slot)),maxCost)*9;
-      if(slot.tool)score+=8;if(slot.attackGuard)score+=8;
+      if(slot.tool){const tool=data.cardById(slot.tool.cardId);if(!tool||state.format!=='classic'||effects.usefulToolRecipient(tool,card))score+=8;}if(slot.attackGuard)score+=8;
       if(level>=2){score-=Object.keys(slot.conditions||{}).length*(active?14:2);score-=Number(slot.damage||0)/hp*points*(progress>=(state.format==='classic'?4:2)?24:10);}
       if(!active)score+=6;
     }
@@ -350,6 +370,11 @@
       return !(power?.oncePerTurn===false&&state.sides[side].abilityUsed?.[source.uid+':'+index]===state.sides[side].turnCount);
     });
     if(!legal.length)return null;
+    if(state.format==='classic'&&state.phase==='battle'){
+      const ss=state.sides[side];
+      const link=legal.find(a=>a.type==='trainer'&&effects.spiritLinkSpecies(data.cardById(a.cardId))&&legal.some(e=>e.type==='evolve'&&e.target===a.target&&e.benchIndex===a.benchIndex&&effects.spiritLinkEvolution(data.cardById(a.cardId),data.cardById(e.cardId||ss.hand[e.handIndex]?.cardId))));
+      if(link)return link;
+    }
     if(state.phase==='effectChoice'&&state.pendingChoice?.effect?.rule==='sm11Quiz'&&state.pendingChoice.effect.stage==='guess')return legal[Math.floor(core.random(state)*legal.length)];
     if(state.format==='classic'&&state.phase==='effectChoice'&&state.pendingChoice?.special==='skyFieldBenchTrim'){
       const bench=state.sides[side].bench;
@@ -780,7 +805,7 @@
     if(level===3&&ranked[0].score<1000000){
       for(const candidate of ranked.slice(0,8)){
         const next=candidate.next;if(!next||next.phase!=='battle'||next.activeSide!==side)continue;
-        const follow=core.legalActions(next,side);let best=candidate.score;
+        const follow=core.legalActions(next,side).filter(a=>{const c=data.cardById(a.cardId);return next.format!=='classic'||a.type!=='trainer'||c?.trainerType!=='Tool'||usefulClassicTool(next,side,a,c);});let best=candidate.score;
         for(const action of follow){const future=evaluate(next,action,side,level);best=Math.max(best,future.score-1);}
         candidate.score=best;
       }
@@ -821,5 +846,5 @@
     if(state.phase==='battle'&&state.activeSide===side){const end=core.legalActions(state,side).find(a=>a.type==='endTurn');if(end)core.applyAction(state,side,end);}
     return state;
   }
-  return {DIFFICULTIES,sameAction,chooseAction,runTurn,_test:{deficit,sideValue}};
+  return {DIFFICULTIES,sameAction,chooseAction,runTurn,_test:{deficit,sideValue,matchupDamage}};
 });

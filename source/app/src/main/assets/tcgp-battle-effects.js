@@ -266,6 +266,30 @@
   function xy11WickedWindActive(state){return state?.format==='classic'&&
     Number(state.xy11WickedWindUntil||0)>=Number(state.turnNumber||0);}
   function activeStadium(state){return xy11WickedWindActive(state)?null:state?.stadium||null;}
+  // A legal Tool attachment is not necessarily a useful one. Share the
+  // printed recipient predicate with both deck construction and CPU play.
+  function spiritLinkSpecies(tool){return /^(.+) Spirit Link$/i.exec(String(tool?.name||''))?.[1]||null;}
+  function spiritLinkEvolution(tool,evolution){
+    const species=spiritLinkSpecies(tool);if(!species||!evolution?.megaEvolution||evolution.battleEnabled===false)return false;
+    return evolution.evolvesFrom===species+'-EX'&&[ 'M '+species+'-EX','Primal '+species+'-EX'].includes(evolution.name);
+  }
+  function usefulToolRecipient(tool,pokemon){
+    if(!pokemon)return false;
+    const species=spiritLinkSpecies(tool);
+    if(species)return !pokemon.megaEvolution&&pokemon.name===species+'-EX';
+    const crystal=/ium Z: (.+)$/.exec(String(tool?.name||''));
+    if(crystal)return (pokemon.attacks||[]).some(a=>a.name===crystal[1]);
+    if(/^Fairy Charm /.test(tool?.name||''))return hasType(pokemon,'Fairy');
+    if(['Metal Goggles','Metal Frying Pan','Metal Core Barrier'].includes(tool?.name))return hasType(pokemon,'Metal');
+    if(tool?.name==='Spell Tag')return hasType(pokemon,'Psychic');
+    if(tool?.name==='Dragon Talon')return hasType(pokemon,'Dragon');
+    if(/^(Fighting|Psychic|Grass|Water) Memory$/.test(tool?.name||''))return pokemon.name==='Silvally-GX';
+    if(tool?.name==='Power Memory')return pokemon.name==='Zygarde-EX';
+    if(tool?.name==='Ancient Crystal')return ['Regirock','Regice','Registeel','Regigigas'].includes(pokemon.name);
+    if(tool?.name==='Beastite'||tool?.name==='Beast Bringer')return !!pokemon.ultraBeast;
+    if(tool?.name==='Island Challenge Amulet')return matchesFilter(pokemon,{isExOrGX:true});
+    return true;
+  }
   function toolEffectsSuppressed(state,cardById,slot){
     if(state?.format!=='classic'||!state.sides)return false;
     if(xy11WickedWindActive(state)||activeStadium(state)?.cardId==='sm6-111')return true;
@@ -645,7 +669,7 @@
       case 'masterBall':applyEffect({type:'selectTopToHand',count:7,filter:{kind:'pokemon'}},ctx);break;
       case 'fervor':{const top=s.deck.splice(0,Math.min(3,s.deck.length));let found=0;for(const r of top){if(card(r)?.basicEnergy&&card(r).subtype==='Fire'){s.hand.push(r);found++;}else s.discard.push(r);}if(!found){const n=neoEnergyToHand(ctx,s,'Fire',1,'gym2-128');log({energyType:'Fire',amount:n,adaptation:'Energy Supply'});}break;}
       case 'blainesQuiz2':case 'blainesQuiz3':{
-        if(!e.stage){request({kind:'handCard',side:'self',filter:name==='blainesQuiz3'?{kind:'pokemon'}:null},{stage:'reveal'});break;}
+        if(!e.stage){if(!s.hand.some(ref=>name==='blainesQuiz2'||(card(ref)?.kind==='pokemon'&&(card(ref)?.attacks||[]).length)))break;request({kind:'handCard',side:'self',filter:name==='blainesQuiz3'?{kind:'pokemon'}:null},{stage:'reveal'});break;}
         if(e.stage==='reveal'){
           const chosen=s.hand[Number(a.choiceHandIndex)],shown=card(chosen);if(!shown)break;
           if(name==='blainesQuiz2')request({kind:'option',side:'opponent',options:['Pokémon','Trainer','Energy']},{stage:'answer',cardId:shown.id});
@@ -30251,5 +30275,5 @@ if(r==='lastResort')return ss.hand.length===0?[{}]:[];if(r==='surgeSwap')return 
     return heads?0:amount;
   }
   function applyAttackEffect(effect,context){return applyEffect(effect,context);}
-  return {sm11ReturnSnapshot,sm11ReturnDiscarded,ENERGY_CODE,det1EvasionDamage,scoopUpBlocked,metalGogglesActive,attachedSpecialProvidesType,effectTypes,supportsEffect,validateEffect,matchesFilter,totalEnergy,canPayCost,spendGenericEnergy,spendGenericEnergyWithValue,attackDamage,applyAttackEffect,applyEffect,resolveAttack,choicesForEffect,neoDiscoveryReduction,modifierAmount,clearConditions,clearTemporaryEffects,revertShapeshift,switchPokemon,attackIsPrevented,attackEffectsPrevented,statusIsPrevented,isLocked,isActionLocked,passiveAttackAllowed,applyPersistentEvent,findPassiveRule,healingIsBlocked,canUsePreviousEvolutionAttacks,attackSpecificBonus,consumeDamageGuard,topDeckCountAmount,coinBonusAmount,abilitiesSuppressed,evolutionRule,attackCostOverride,effectiveTypes,applyContinuousRules,attackDamageWithState,wideLensBenchMatchup,toolEffectsSuppressed,resolveDelayedEffects,toolCapacity,coinRerollSource,lentalDefenseReduction,florioReactToAttackDamage,florio114RescueKO,florio114PrismCleanup};
+  return {spiritLinkSpecies,spiritLinkEvolution,usefulToolRecipient,sm11ReturnSnapshot,sm11ReturnDiscarded,ENERGY_CODE,det1EvasionDamage,scoopUpBlocked,metalGogglesActive,attachedSpecialProvidesType,effectTypes,supportsEffect,validateEffect,matchesFilter,totalEnergy,canPayCost,spendGenericEnergy,spendGenericEnergyWithValue,attackDamage,applyAttackEffect,applyEffect,resolveAttack,choicesForEffect,neoDiscoveryReduction,modifierAmount,clearConditions,clearTemporaryEffects,revertShapeshift,switchPokemon,attackIsPrevented,attackEffectsPrevented,statusIsPrevented,isLocked,isActionLocked,passiveAttackAllowed,applyPersistentEvent,findPassiveRule,healingIsBlocked,canUsePreviousEvolutionAttacks,attackSpecificBonus,consumeDamageGuard,topDeckCountAmount,coinBonusAmount,abilitiesSuppressed,evolutionRule,attackCostOverride,effectiveTypes,applyContinuousRules,attackDamageWithState,wideLensBenchMatchup,toolEffectsSuppressed,resolveDelayedEffects,toolCapacity,coinRerollSource,lentalDefenseReduction,florioReactToAttackDamage,florio114RescueKO,florio114PrismCleanup};
 });

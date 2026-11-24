@@ -2,8 +2,9 @@
  const classic=typeof module==='object'&&module.exports?require('./tcg-classic-battle-data.js'):root.LuckyDexClassicTCGBattleData;
  const decks=typeof module==='object'&&module.exports?require('./tcg-classic-decks.js'):root.LuckyDexClassicTCGDecks;
  const synergy=typeof module==='object'&&module.exports?require('./tcg-deck-synergy.js'):root.LuckyDexDeckSynergy;
- const api=factory(classic,decks,synergy);if(typeof module==='object'&&module.exports)module.exports=api;if(root)root.LuckyDexClassicTCGDeckBuilder=api;
-})(typeof globalThis!=='undefined'?globalThis:this,function(classic,decks,synergy){
+ const fx=typeof module==='object'&&module.exports?require('./tcgp-battle-effects.js'):root.LuckyDexTCGPBattleEffects;
+ const api=factory(classic,decks,synergy,fx);if(typeof module==='object'&&module.exports)module.exports=api;if(root)root.LuckyDexClassicTCGDeckBuilder=api;
+})(typeof globalThis!=='undefined'?globalThis:this,function(classic,decks,synergy,fx){
 'use strict';
 if(!classic||!decks)throw new Error('Classic TCG deck builder dependencies are missing.');
 const CODE_TO_TYPE=Object.freeze(Object.fromEntries(Object.entries(classic.ENERGY_CODE||{}).map(([type,code])=>[code,type])));
@@ -728,6 +729,11 @@ function buildDeck(rows,options={}){
    // Being battle-enabled does not mean the Trainer has a useful target.
    if(!manuallyKept){
      const pokemon=selectedPokemon();
+     if(card?.trainerType==='Tool'&&fx){
+       const species=fx.spiritLinkSpecies(card);
+       if(species&&(!pokemon.some(p=>fx.usefulToolRecipient(card,p))||!pokemon.some(p=>fx.spiritLinkEvolution(card,p))))return false;
+       if(!species&&!pokemon.some(p=>fx.usefulToolRecipient(card,p)))return false;
+     }
      // Banette's global Tool Concealment blanks every Pokémon Tool on both
      // boards while its Ability is live. Avoid spending the compact 30-card
      // support slots on inactive Tools when automatically building around it.
@@ -770,7 +776,7 @@ function buildDeck(rows,options={}){
      // Primal Clash Spirit Links are only useful with their exact Mega or
      // Primal Evolution prints IN the finished 30-card deck. A matching
      // ordinary Basic EX is not enough; do not auto-add dead Tool cards.
-     const xy5Links={'xy5-123':['xy5-94','xy5-154'],
+     const xy5Links={'xy4-95':['xy4-35','xy4-121'],'xy4-100':['xy4-24','xy4-24a','xy4-120'],'xy5-123':['xy5-94','xy5-154'],
        'xy5-130':['xy5-106','xy5-156'],
        'xy5-131':['xy5-86','xy5-151','xy7-97'],
        'xy5-132':['xy5-55','xy5-149','xy7-96'],
@@ -795,7 +801,7 @@ function buildDeck(rows,options={}){
        'xy12-81':['xy12-65','xy12-105'],
        'xy12-86':['xy12-27'],
        'xy12-89':['xy12-2','xy12-100']};
-     if(xy5Links[card?.id]&&!pokemon.some(p=>xy5Links[card.id].includes(p.id)))return false;
+     if(xy5Links[card?.id]&&!fx?.spiritLinkSpecies(card)&&!pokemon.some(p=>xy5Links[card.id].includes(p.id)))return false;
      // Primal Clash's new Trainers must match the *constructed* 30-card
      // deck, not the full collection. Basic Energy in the automatic Zone is
      // not a printed hand card, so it cannot pay Scorched Earth's discard.
@@ -1213,6 +1219,8 @@ function buildDeck(rows,options={}){
  // Reserve at most two *owned, matching* Tools before generic Trainer filler
  // takes the remaining slots; never add a link for a missing evolution.
  const xy5SpiritLinks=[
+   ['xy4-95',['xy4-35','xy4-121']], // Manectric Spirit Link
+   ['xy4-100',['xy4-24','xy4-24a','xy4-120']], // Gengar Spirit Link
    ['xy5-123',['xy5-94','xy5-154']],  // M Aggron-EX
    ['xy5-130',['xy5-106','xy5-156']],// M Gardevoir-EX
    ['xy5-131',['xy5-86','xy5-151','xy7-97']], // Primal Groudon-EX
@@ -1240,9 +1248,9 @@ function buildDeck(rows,options={}){
    ['xy12-89',['xy12-2','xy12-100']] // M Venusaur-EX
  ];
  for(const [id,partners] of xy5SpiritLinks){
-   if(!partners.some(p=>cards.includes(p)))continue;
    const link=classic.cardById(id);
-   if(link&&pool.includes(link))add(link,Math.min(2,room(link)));
+   if(!partners.some(p=>cards.includes(p))&&!selectedPokemon().some(p=>fx?.spiritLinkEvolution(link,p)))continue;
+   if(link&&pool.includes(link)&&trainerIsUseful(link))add(link,Math.min(2,room(link)));
  }
  // Double Dragon Energy provides two flexible units only on Dragon Pokémon.
  // Add it early to real Dragon lines (rather than as generic filler) and
