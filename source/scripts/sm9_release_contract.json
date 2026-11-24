@@ -1,0 +1,20 @@
+{
+  "set": "sm9",
+  "name": "Team Up",
+  "stage": "integration",
+  "release": "0.69.435",
+  "printedTotal": 198,
+  "attackPrints": 260,
+  "abilities": 36,
+  "pokemonGX": 34,
+  "gxAttackPrints": 34,
+  "tagTeamPrints": 20,
+  "prismStarPrints": 4,
+  "trainerPrints": 43,
+  "energyPrints": 0,
+  "pin": "f36aeea32bbf75861d1e3d4665e7deea4ea26d7e",
+  "variants": [
+    "152a",
+    "152b"
+  ]
+}

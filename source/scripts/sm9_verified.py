@@ -1,0 +1,102 @@
+"""Team Up: exact printed rule mappings, conservative gates."""
+from copy import deepcopy
+import re,json
+from pathlib import Path
+import sm8_verified as V
+from sm7_verified import E,seq,coin,status,bonus,cond,passive,activated
+ROWS=json.loads((Path(__file__).resolve().parents[1]/'data/classic/sm9-print-compact.json').read_text())
+A={};B={};T={};GATED=set()
+def at(no,title,effect):
+ r=next(r for r in ROWS if r[0]==str(no));a=next(a for a in r[7] if a[0]==title);A[(title,tuple(a[1]),a[2],a[3])]=effect
+def ab(no,effect):
+ r=next(r for r in ROWS if r[0]==str(no));B[tuple(r[8][0])]=effect
+def tr(no,kind,effect):
+ r=next(r for r in ROWS if r[0]==str(no));T[(r[1],tuple(r[13]))]=(kind,effect)
+def attack(row,a):
+ key=(a[0],tuple(a[1]),a[2],a[3]);return None if key in GATED else deepcopy(A.get(key)) or V.attack(row,a)
+def ability(row,a):return deepcopy(B.get(tuple(a))) or V.ability(row,a)
+def trainer(row):return deepcopy(T.get((row[1],tuple(row[13])))) or V.trainer(row)
+def energy(row):return None
+def prism_ready(row):return False
+# Shared extra-Energy condition reserves every printed requirement plus the bonus cost.
+def extra(cost,more):return cond('sm9ExtraEnergy',cost=cost+more)
+def R(rule,**kw):return E('sm7Rule',rule='sm9'+rule,**kw)
+at(1,'Pollen Hazard',seq(status('burn'),status('confusion'),status('poison')))
+at(1,'Evergreen-GX',seq(E('healSelf',amount=9999),R('RecycleAll',condition=extra('GGCC','G'))))
+at(33,'Full Blitz',E('chooseTarget',target='selfPokemon',forceChoose=True,effect=E('attachEnergy',source='deck',target='selfPokemon',energyType='Lightning',amount=3,optional=True)))
+at(33,'Tag Bolt-GX',E('multiTargetDamage',target='opponentBench',amount=170,count=1,condition=extra('LLL','LLL')))
+at(160,'Towering Splash-GX',E('benchDamage',side='opponent',all=True,amount=100,condition=extra('W','WWWWWWW')))
+at(113,'Aero Unit-GX',seq(E('preventDamage',target='self',duration='opponentTurn',preventEffects=True,condition=extra('P','C')),E('sm7Rule',rule='sm8DiscardAttach',amount=5)))
+# Cheer Up needs physical Special Energy attachment support before enabling this TAG TEAM.
+at(120,'Dump Truck Press',bonus(120,cond('opponentMatches',filter={'evolved':True})))
+at(120,'Megaton Friends-GX',R('DrawToLimit',amount=10,condition=extra('CCCC','C')))
+# Reusable non-TAG effects with exact complete printed signatures.
+at(2,'Tangle Drag',E('forceOpponentSwitch',chooseBy='attacker'))
+at(3,'Reckless Charge',E('selfDamage',amount=10))
+at(5,'Reckless Charge',E('selfDamage',amount=10))
+ab(4,passive(E('modifier',stat='damageReduction',scope='self',amount=30,duration='whileInPlay',condition=cond('selfHasEnergyType',energyType='Grass'))))
+at(9,'Guillotine Hug',E('allHeadsEffect',coins=2,effect=E('knockOut',target='opponentActive')))
+at(11,'Reprisal',E('damageFromDamage',source='self',amount=2,mode='replace'))
+at(85,'Bite Off',bonus(100,cond('opponentMatches',filter={'isExOrGX':True})))
+at(86,'Howl in the Dark',E('searchChosen',amount=2,filter={'kind':'pokemon','subtype':'Darkness'}))
+at(91,'Taunt',E('forceOpponentSwitch',chooseBy='attacker'))
+at(96,'Rogue Ring',E('searchChosen',amount=2,filter={}))
+at(97,'Darkest Tornado-GX',E('damageFromDamage',source='self',amount=5,mode='add'))
+at(98,'Calm Strike',bonus(70,cond('sm6OwnGX')))
+at(106,'Dueling Saber',bonus(60,cond('stadiumInPlay')))
+at(109,'Shield Bash',E('damageRule',ignoreEffects=True))
+ab(109,passive(E('modifier',stat='damageReduction',scope='self',amount=40,duration='whileInPlay')))
+ab(119,activated(E('searchChosen',amount=1,filter={'kind':'trainer','trainerType':'Supporter'})))
+at(128,'Fast Evolution',E('searchChosen',amount=2,filter={'kind':'pokemon','evolved':True}))
+at(131,'Power Charger',R('DeckAttach',energyType=None,amount=1))
+# Exact additional rules, including reprints.
+at(9,'Guillotine Hug',E('allHeadsEffect',coins=2,heads=E('knockOut',target='opponentActive')))
+at(5,'Destiny Stinger',seq(E('attackRequirement',condition=cond('selfDamaged')),E('knockOut',target='opponentActive'),E('knockOut',target='self')))
+at(10,'Flower Storm',E('energyDamage',source='self',all=True,basicOnly=True,amount=30,mode='replace'))
+def prism_ready(row):return row[1]=='Shaymin ◇' and all(attack(row,a) is not None for a in row[7])
+at(15,'Tail Whip',coin(E('lock',target='opponentActive',action='attack',duration='opponentTurn')))
+ab(22,passive(E('modifier',stat='retreatCost',scope='self',amount=-999,duration='whileInPlay',condition=cond('ownStadiumInPlay'))))
+at(26,'Headache',coin(E('actionLock',cardType='Trainer',duration='opponentTurn',side='opponent')))
+at(31,'Hydro Pump',E('energyDamage',source='self',energyType='Water',countProvidedType=True,amount=30,mode='add'))
+at(35,'Charge',E('attachEnergy',source='deck',target='self',energyType='Lightning',amount=2,optional=True))
+at(40,'Thunderous Assault',seq(bonus(70,cond('movedFromBenchThisTurn')),E('damageRule',ignoreWeakness=True)))
+for no,title in [(41,'Shock Bolt'),(42,'Shock Bolt'),(43,'Impact Bolt')]:at(no,title,E('discardEnergyCard',target='self',amount='all',energyType='Lightning',strictEnergyType=True))
+at(43,'Power Recharge',E('searchChosen',source='discard',amount=999,filter={'name':'Electropower'}))
+at(44,'Delivery Dash',E('searchChosen',amount=2,filter={'name':'Electropower'}))
+at(45,'Raid',bonus(90,cond('evolvedThisTurn')))
+ab(46,activated(E('searchChosen',amount=1,filter={'kind':'pokemon','attackName':'Nuzzle'})))
+at(48,'Spider Thread',E('searchChosen',source='discard',amount=1,filter={}))
+at(56,'Power Lariat',E('fieldCountDamage',side='self',zone='bench',filter={'evolved':True},amount=50,mode='add'))
+ab(56,activated(E('searchChosen',amount=1,filter={'kind':'pokemon','isExOrGX':False})))
+at(59,"King's Drum",bonus(100,cond('pokemonPresent',side='self',zone='bench',filter={'name':'Nidoqueen'})))
+at(61,'Void Tentacles',seq(status('confusion'),status('poison')))
+at(61,'Paranormal',E('preventDamage',target='self',duration='opponentTurn',attackerFilter={'tag':'ultra-beast'}))
+at(72,'Wreck',seq(bonus(80,cond('stadiumInPlay')),E('discardStadium',condition=cond('stadiumInPlay'))))
+at(77,'Ramming Shell',E('modifier',stat='damageReduction',scope='self',amount=20,duration='opponentTurn'))
+at(79,'Chip Away',E('damageRule',ignoreEffects=True))
+at(80,'Payback',bonus(90,cond('opponentPrizesRemaining',amount=1)))
+at(85,'Spinning Tail',seq(E('damage',target='opponentActive',amount=30),E('benchDamage',side='opponent',all=True,amount=30)))
+at(87,'Dark Fang',E('discardHand',side='opponent',amount=1))
+at(91,'Night Punishment',E('discardCountDamage',side='self',filter={'kind':'pokemon'},amount=20,mode='replace',maxAmount=200))
+at(94,'Tantrum',E('status',target='self',status='confusion'))
+for no,title in [(95,'Derail'),(97,'Crushing Punch')]:at(no,title,E('discardEnergyCard',target='opponentActive',amount=1,specialOnly=True))
+at(96,'Dark Strike',E('lock',target='self',action='attack',attackName='Dark Strike',duration='nextOwnTurn'))
+at(103,'Guard Press',E('modifier',stat='damageReduction',scope='self',amount=20,duration='opponentTurn'))
+at(105,'Single Lunge',bonus(90,cond('selfUndamaged')))
+at(107,'Cut Down',coin(E('discardEnergyCard',target='opponentActive',amount=1)))
+at(116,'Dragon Rage',E('allHeadsBonus',coins=2,amount=60,mode='replace'))
+at(124,'Spin Storm',E('returnToHand',target='opponentActive',returnBasicEnergy=True))
+tr(133,'Supporter',R('BillsAnalysis'))
+tr(137,'Supporter',E('searchChosen',amount=2,filter={},condition=cond('opponentMatches',filter={'stage':'Stage 2'})))
+tr(141,'Supporter',E('draw',amount=4,condition=cond('opponentMatches',filter={'stage':'Stage 1'})))
+tr(146,'Item',E('chooseOption',options=[{'label':'Draw a card','effect':E('draw',amount=1)},{'label':'Recover Judge','effect':E('searchChosen',source='discard',amount=1,filter={'name':'Judge'})}]))
+tr(155,'Item',E('playFossil',hp=60,subtype='Colorless',canRetreat=False))
+# Explicitly keep complex effects gated if no full outcome implementation exists.
+# The shared fieldCountDamage currently counts all in play, not bench-only; retain Nidoqueen gate.
+GATED.add(next(k for k in A if k[0]=='Power Lariat'))
+# Spinning Tail must use the shared attack damage pipeline, rather than flat effect damage on Active.
+GATED.add(next(k for k in A if k[0]=='Spinning Tail'))
+# Bill's Analysis needs a new deck inspection/choice handler before enabling.
+T.pop(next(k for k in T if k[0]=="Bill's Analysis"))
+# Full Blitz resolves a single recipient and physical card/Zone search choices.
+at(33,'Full Blitz',R('FullBlitz'))

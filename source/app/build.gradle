@@ -8,8 +8,8 @@ android {
         applicationId 'com.example.luckydex'
         minSdk 26
         targetSdk 35
-        versionCode 7434
-        versionName '0.69.434'
+        versionCode 7435
+        versionName '0.69.435'
     }
 
     signingConfigs {
@@ -1066,7 +1066,7 @@ tasks.matching { it.name == 'preBuild' || (it.name.startsWith('merge') && it.nam
     dependsOn tasks.named('auditSM5ForApk')
 }
 
-// v0.69.434 Forbidden Light SM6: SHA-pinned 150-print full-set source and audit.
+// v0.69.435 Forbidden Light SM6: SHA-pinned 150-print full-set source and audit.
 tasks.register('preflightSM6ContractForApk', Exec) {
     dependsOn tasks.named('auditSM5ForApk')
     workingDir rootProject.projectDir
@@ -1144,4 +1144,24 @@ tasks.register('auditSM8ForApk', Exec) {
 }
 tasks.matching { it.name == 'preBuild' || (it.name.startsWith('merge') && it.name.endsWith('Assets')) }.configureEach {
     dependsOn tasks.named('auditSM8ForApk')
+}
+
+// SM9 Team Up: canonical offline catalogue, gated integration.
+tasks.register('preflightSM9ContractForApk', Exec) {
+    dependsOn tasks.named('auditSM8ForApk')
+    workingDir rootProject.projectDir
+    commandLine (System.getenv('LUCKYDEX_PYTHON') ?: 'python3'), 'scripts/preflight-sm9-release.py'
+}
+tasks.register('generateSM9ForApk', Exec) {
+    dependsOn tasks.named('preflightSM9ContractForApk')
+    workingDir rootProject.projectDir
+    commandLine (System.getenv('LUCKYDEX_PYTHON') ?: 'python3'), 'scripts/build-sm9.py'
+}
+tasks.register('auditSM9ForApk', Exec) {
+    dependsOn tasks.named('generateSM9ForApk')
+    workingDir rootProject.projectDir
+    commandLine 'node', '--test', 'tests/v07459-team-up-integration.test.cjs', 'tests/v07460-team-up-outcomes.test.cjs'
+}
+tasks.matching { it.name == 'preBuild' || (it.name.startsWith('merge') && it.name.endsWith('Assets')) }.configureEach {
+    dependsOn tasks.named('auditSM9ForApk')
 }

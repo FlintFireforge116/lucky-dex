@@ -1,0 +1,340 @@
+{
+  "printed": 198,
+  "battleReady": 94,
+  "gated": {
+    "sm9-7": [
+      "Unimplemented Ability: Panic Spores"
+    ],
+    "sm9-14": [
+      "Unimplemented attack: Continuous Blaze Ball",
+      "Unimplemented Ability: Roaring Resolve"
+    ],
+    "sm9-16": [
+      "Unimplemented Ability: Nine Temptations"
+    ],
+    "sm9-19": [
+      "Unimplemented attack: Top Burner"
+    ],
+    "sm9-25": [
+      "Unimplemented Ability: Powerful Squall"
+    ],
+    "sm9-27": [
+      "Unimplemented attack: Swim"
+    ],
+    "sm9-29": [
+      "Unimplemented attack: Enter the Dragon"
+    ],
+    "sm9-30": [
+      "Unimplemented attack: Distilled Blast"
+    ],
+    "sm9-32": [
+      "Unimplemented attack: Cold Cyclone",
+      "Unimplemented Ability: Blizzard Veil"
+    ],
+    "sm9-37": [
+      "Unimplemented attack: Electromagnetic Bomb"
+    ],
+    "sm9-39": [
+      "Unimplemented Ability: Electro Shaker"
+    ],
+    "sm9-48": [
+      "Unimplemented Ability: Unnerve"
+    ],
+    "sm9-50": [
+      "Unimplemented attack: Volt Switch"
+    ],
+    "sm9-51": [
+      "Prism Star attack/Ability or Trainer effect not yet implemented",
+      "Unimplemented Ability: Dance of the Ancients"
+    ],
+    "sm9-53": [
+      "Unimplemented attack: Poltergeist",
+      "Unimplemented attack: Horror House-GX"
+    ],
+    "sm9-55": [
+      "Unimplemented attack: Family Rescue"
+    ],
+    "sm9-56": [
+      "Unimplemented attack: Power Lariat"
+    ],
+    "sm9-59": [
+      "Unimplemented attack: Drag Off"
+    ],
+    "sm9-63": [
+      "Unimplemented attack: Toxic Secretion",
+      "Unimplemented Ability: Poison Sacs"
+    ],
+    "sm9-64": [
+      "Unimplemented attack: Limbo Limbo"
+    ],
+    "sm9-65": [
+      "Unimplemented attack: Strange Wave"
+    ],
+    "sm9-66": [
+      "Unimplemented Ability: Scoop-Up Block"
+    ],
+    "sm9-67": [
+      "Unimplemented Ability: Magic Odds"
+    ],
+    "sm9-68": [
+      "Unimplemented attack: Mysterious Dance"
+    ],
+    "sm9-69": [
+      "Unimplemented Ability: Cosmic Guard"
+    ],
+    "sm9-73": [
+      "Unimplemented attack: Special Combo"
+    ],
+    "sm9-76": [
+      "Unimplemented Ability: Fossil Bind"
+    ],
+    "sm9-78": [
+      "Unimplemented Ability: Fossilized Memories"
+    ],
+    "sm9-81": [
+      "Unimplemented attack: Arm Thrust"
+    ],
+    "sm9-82": [
+      "Unimplemented attack: Splintered Shards-GX",
+      "Unimplemented Ability: Twilight Eyes"
+    ],
+    "sm9-84": [
+      "Unimplemented Ability: Adventurous Appetite"
+    ],
+    "sm9-85": [
+      "Unimplemented attack: Spinning Tail"
+    ],
+    "sm9-88": [
+      "Unimplemented Ability: Dark Ambition"
+    ],
+    "sm9-89": [
+      "Unimplemented attack: Spirit Compressor"
+    ],
+    "sm9-93": [
+      "Unimplemented attack: Trash Crash"
+    ],
+    "sm9-94": [
+      "Unimplemented attack: Tighten Up"
+    ],
+    "sm9-96": [
+      "Unimplemented attack: Devilish Hands-GX"
+    ],
+    "sm9-97": [
+      "Unimplemented Ability: Scar Charge"
+    ],
+    "sm9-99": [
+      "Unimplemented Ability: Stellar Wish"
+    ],
+    "sm9-101": [
+      "Unimplemented Ability: Heatproof"
+    ],
+    "sm9-103": [
+      "Unimplemented attack: Thorn Pod Throw"
+    ],
+    "sm9-106": [
+      "Unimplemented attack: Iron Rule-GX",
+      "Unimplemented Ability: Metal Symbol"
+    ],
+    "sm9-108": [
+      "Unimplemented attack: Tool Drop"
+    ],
+    "sm9-110": [
+      "Unimplemented Ability: Key of Secrets"
+    ],
+    "sm9-111": [
+      "Unimplemented Ability: Luminous Barrier"
+    ],
+    "sm9-112": [
+      "Unimplemented attack: Copycat"
+    ],
+    "sm9-114": [
+      "Unimplemented attack: Tropical Shake"
+    ],
+    "sm9-115": [
+      "Unimplemented attack: Paradise Draw",
+      "Unimplemented attack: Egg Splat"
+    ],
+    "sm9-117": [
+      "Unimplemented Ability: Defensive Scales"
+    ],
+    "sm9-118": [
+      "Unimplemented attack: Twister"
+    ],
+    "sm9-120": [
+      "Unimplemented attack: Cheer Up"
+    ],
+    "sm9-123": [
+      "Unimplemented Ability: Air Mail"
+    ],
+    "sm9-126": [
+      "Unimplemented attack: Make 'Em Pay"
+    ],
+    "sm9-127": [
+      "Unimplemented attack: Tool Buster"
+    ],
+    "sm9-129": [
+      "Unimplemented attack: Raging Herd"
+    ],
+    "sm9-130": [
+      "Unimplemented attack: Fossil Fangs"
+    ],
+    "sm9-132": [
+      "Unimplemented attack: Head Hunt"
+    ],
+    "sm9-133": [
+      "Unimplemented Trainer effect"
+    ],
+    "sm9-134": [
+      "Prism Star attack/Ability or Trainer effect not yet implemented",
+      "Unimplemented Trainer effect"
+    ],
+    "sm9-135": [
+      "Unimplemented Trainer effect"
+    ],
+    "sm9-136": [
+      "Unimplemented Trainer effect"
+    ],
+    "sm9-138": [
+      "Unimplemented Trainer effect"
+    ],
+    "sm9-139": [
+      "Unimplemented Trainer effect"
+    ],
+    "sm9-140": [
+      "Unimplemented Trainer effect"
+    ],
+    "sm9-142": [
+      "Unimplemented Trainer effect"
+    ],
+    "sm9-143": [
+      "Unimplemented Trainer effect"
+    ],
+    "sm9-144": [
+      "Unimplemented Trainer effect"
+    ],
+    "sm9-145": [
+      "Unimplemented Trainer effect"
+    ],
+    "sm9-147": [
+      "Unimplemented Trainer effect"
+    ],
+    "sm9-148": [
+      "Unimplemented Trainer effect"
+    ],
+    "sm9-149": [
+      "Unimplemented Trainer effect"
+    ],
+    "sm9-150": [
+      "Unimplemented Trainer effect"
+    ],
+    "sm9-151": [
+      "Unimplemented Trainer effect"
+    ],
+    "sm9-152": [
+      "Unimplemented Trainer effect"
+    ],
+    "sm9-152a": [
+      "Unimplemented Trainer effect"
+    ],
+    "sm9-152b": [
+      "Unimplemented Trainer effect"
+    ],
+    "sm9-153": [
+      "Unimplemented Trainer effect"
+    ],
+    "sm9-154": [
+      "Unimplemented Trainer effect"
+    ],
+    "sm9-156": [
+      "Unimplemented Trainer effect"
+    ],
+    "sm9-157": [
+      "Unimplemented Trainer effect"
+    ],
+    "sm9-158": [
+      "Prism Star attack/Ability or Trainer effect not yet implemented",
+      "Unimplemented Trainer effect"
+    ],
+    "sm9-164": [
+      "Unimplemented attack: Poltergeist",
+      "Unimplemented attack: Horror House-GX"
+    ],
+    "sm9-165": [
+      "Unimplemented attack: Poltergeist",
+      "Unimplemented attack: Horror House-GX"
+    ],
+    "sm9-166": [
+      "Unimplemented attack: Devilish Hands-GX"
+    ],
+    "sm9-167": [
+      "Unimplemented Ability: Scar Charge"
+    ],
+    "sm9-168": [
+      "Unimplemented attack: Iron Rule-GX",
+      "Unimplemented Ability: Metal Symbol"
+    ],
+    "sm9-171": [
+      "Unimplemented attack: Cheer Up"
+    ],
+    "sm9-172": [
+      "Unimplemented Trainer effect"
+    ],
+    "sm9-174": [
+      "Unimplemented Trainer effect"
+    ],
+    "sm9-176": [
+      "Unimplemented Trainer effect"
+    ],
+    "sm9-177": [
+      "Unimplemented Trainer effect"
+    ],
+    "sm9-178": [
+      "Unimplemented Trainer effect"
+    ],
+    "sm9-179": [
+      "Unimplemented Trainer effect"
+    ],
+    "sm9-180": [
+      "Unimplemented Trainer effect"
+    ],
+    "sm9-181": [
+      "Unimplemented Trainer effect"
+    ],
+    "sm9-186": [
+      "Unimplemented attack: Poltergeist",
+      "Unimplemented attack: Horror House-GX"
+    ],
+    "sm9-187": [
+      "Unimplemented attack: Devilish Hands-GX"
+    ],
+    "sm9-188": [
+      "Unimplemented Ability: Scar Charge"
+    ],
+    "sm9-189": [
+      "Unimplemented attack: Iron Rule-GX",
+      "Unimplemented Ability: Metal Symbol"
+    ],
+    "sm9-191": [
+      "Unimplemented attack: Cheer Up"
+    ],
+    "sm9-192": [
+      "Unimplemented Trainer effect"
+    ],
+    "sm9-193": [
+      "Unimplemented Trainer effect"
+    ],
+    "sm9-195": [
+      "Unimplemented Trainer effect"
+    ],
+    "sm9-196": [
+      "Unimplemented Trainer effect"
+    ]
+  },
+  "attacks": 260,
+  "abilities": 36,
+  "pokemonGX": 34,
+  "gxAttackPrints": 34,
+  "energyPrints": 0,
+  "prismStarPrints": 4,
+  "sourceGitBlob": "f36aeea32bbf75861d1e3d4665e7deea4ea26d7e"
+}
