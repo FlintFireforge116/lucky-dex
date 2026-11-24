@@ -160,7 +160,7 @@ tr(156,'Stadium',E('stadiumAction',effect=R('ViridianForest')))
 tr(158,'Stadium',R('WondrousLabyrinth'))
 def prism_ready(row):return row[1] in ('Shaymin ◇','Wondrous Labyrinth ◇')
 
-# v0.69.437: shared staged effects and continuous rules.
+# v0.69.438: shared staged effects and continuous rules.
 ab(7,passive(R('PanicSpores')))
 ab(16,activated(R('NineTemptations')))
 ab(25,activated(R('TopAttach',count=6,energyTypes=['Water'])))
@@ -189,3 +189,10 @@ at(93,'Trash Crash',R('TrashCrash'))
 ab(51,activated(R('DanceAncients'),benchOnly=True))
 ab(39,trigger('evolved',R('ElectroShaker'),fromHandOnly=True))
 def prism_ready(row):return row[1] in ('Shaymin ◇','Wondrous Labyrinth ◇','Black Market ◇','Tapu Koko ◇')
+
+# v0.69.438 continuation: explicit printed mappings.
+at(37,'Electromagnetic Bomb',R('ElectromagneticBomb'))
+at(112,'Copycat',E('sm2Rule',rule='copycat'))
+tr(149,'Supporter',R('Morgan'))
+tr(150,'Supporter',R('Nanu'))
+tr(154,'Supporter',R('Sabrina'))

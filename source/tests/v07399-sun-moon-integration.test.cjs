@@ -15,7 +15,7 @@ const by=n=>sm.cardById('sm1-'+n);
 const code=x=>Array.isArray(x)?x.join(''):String(x||'');
 test('SM1 pin/version/Gradle generation and all set registrations are consistent',()=>{
  assert.equal(contract.pin,'b3f5cd6f524ce45d59462fd2a56e237ff06063dc');
- assert.equal(contract.release,'0.69.437');assert.equal(contract.stage,'complete');
+ assert.equal(contract.release,'0.69.438');assert.equal(contract.stage,'complete');
  assert.deepEqual([contract.printedTotal,contract.attackPrints,contract.abilities,contract.pokemonGX,contract.gxAttackPrints,contract.energyPrints],[173,238,26,27,27,13]);
  const gradle=fs.readFileSync(path.join(root,'app/build.gradle'),'utf8');
  assert.match(gradle,/versionName '0\.69\.436'/);assert.match(gradle,/versionCode 7436/);

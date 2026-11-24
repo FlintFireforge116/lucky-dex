@@ -1,35 +1,11 @@
 {
   "printed": 198,
-  "battleReady": 187,
+  "battleReady": 195,
   "gated": {
-    "sm9-37": [
-      "Unimplemented attack: Electromagnetic Bomb"
-    ],
     "sm9-66": [
       "Unimplemented Ability: Scoop-Up Block"
     ],
-    "sm9-112": [
-      "Unimplemented attack: Copycat"
-    ],
     "sm9-148": [
-      "Unimplemented Trainer effect"
-    ],
-    "sm9-149": [
-      "Unimplemented Trainer effect"
-    ],
-    "sm9-150": [
-      "Unimplemented Trainer effect"
-    ],
-    "sm9-154": [
-      "Unimplemented Trainer effect"
-    ],
-    "sm9-178": [
-      "Unimplemented Trainer effect"
-    ],
-    "sm9-179": [
-      "Unimplemented Trainer effect"
-    ],
-    "sm9-181": [
       "Unimplemented Trainer effect"
     ],
     "sm9-195": [

@@ -5658,3 +5658,10 @@ v0.69.437 SM9 consolidated continuation II — 187/198 enabled, 11 gated.
 - Preserve both numeric versionCode and regex-escaped versionName in all earlier release scripts/tests when bumping the release; execute earlier preflights rather than only validating Gradle syntax. Do not treat attack execution as an outcome proof.
 - Local evidence: 84/84 SM9 preflight tests (42 new focused tests; 510 enabled attack paths across both sides); SM8 115/115; XY12 38/38; SM1-5, XY11, SM6/7/7.5/8/9 release preflights/structural checks. Full earlier gameplay suite and GitHub APK remain unverified.
 - Termux: cd ~/lucky-dex; unzip -t /sdcard/Download/LuckyDex_437.zip && unzip -o /sdcard/Download/LuckyDex_437.zip -d source && sh source/scripts/prepare-sm9.sh && git add source && git commit -m "LuckyDex v0.69.437 Team Up continuation II" && git push origin main.
+
+
+v0.69.438 SM9 continuation III — 195/198 enabled, 3 gated.
+- Alolan Golem Electromagnetic Bomb uses staged pre-damage Energy movement, never discard; copied attacks can invoke the same pre-damage handler. Morgan pays all three named Supporters, then selects physical basic or Special Energy within the original top 12; no Energy Zone fallback for deck-top effects. Nanu preserves the slot identity, damage, attached cards and temporary effects while replacing the Pokemon. Sabrina copies without discarding the opposing Supporter; exclude recursive self-copy.
+- Remaining gates: sm9-66 Scoop-Up Block; sm9-148/195 Metal Goggles. Shared return-to-hand and damage-counter protections need coverage across older engine pathways before enabling.
+- Local evidence: SM9 94/94 including 10 new focused outcomes, SM8 115/115, Gradle source self-test passed. Full earlier gameplay and Android APK not verified.
+- Termux: cd ~/lucky-dex; unzip -t /sdcard/Download/LuckyDex_438.zip && unzip -o /sdcard/Download/LuckyDex_438.zip -d source && sh source/scripts/prepare-sm9.sh && git add source && git commit -m "LuckyDex v0.69.438 Team Up continuation III" && git push origin main.
