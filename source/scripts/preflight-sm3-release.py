@@ -17,7 +17,7 @@ TESTS=('tests/v07413-burning-shadows-integration.test.cjs',
 def check():
  subprocess.run([sys.executable,'scripts/check-gradle-source.py','--self-test'],cwd=ROOT,check=True)
  c=json.loads((ROOT/'scripts/sm3_release_contract.json').read_text())
- assert (c['set'],c['stage'],c['release'])==('sm3','complete','0.69.451')
+ assert (c['set'],c['stage'],c['release'])==('sm3','complete','0.69.452')
  assert (c['printedTotal'],c['attackPrints'],c['abilities'],c['pokemonGX'],c['gxAttackPrints'],c['energyPrints'])==(177,274,27,40,40,3)
  assert c['pin']=='3476b25cb32b6e748c7fdd9405e6a5329a665d3d'
  assert c['minimumBattleEnabled']==177
@@ -32,7 +32,7 @@ def check():
  for needle in (c['pin'],c['compactSha256'],'sm3-print-compact.json',"load_pinned_set('sm3'",'177','274','27','40','Burning Shadows'):
   assert needle in gen,'SM3 generator missing '+needle
  gradle=(ROOT/'app/build.gradle').read_text()
- assert re.search(r"versionName\s+['\"]0\.69\.451['\"]",gradle) and 'versionCode 7451' in gradle
+ assert re.search(r"versionName\s+['\"]0\.69\.452['\"]",gradle) and 'versionCode 7452' in gradle
  for name in ('preflightSM3ContractForApk','generateSM3ForApk','auditSM3ForApk'):
   assert "tasks.register('"+name+"'" in gradle,'Missing Gradle task '+name
  assert "dependsOn tasks.named('auditSM2ForApk')" in gradle
@@ -45,7 +45,7 @@ def check():
  for name in ('sm1','sm2','xy9','xy10','xy11','xy12'):
   assert json.loads((ROOT/f'scripts/{name}_release_contract.json').read_text())['release']==c['release'],name+' contract version stale'
  for path in ('app/src/main/assets/index.html','app/src/main/assets/app-v0167.js'):
-  assert '0.69.451' in (ROOT/path).read_text(),path+' version stale'
+  assert '0.69.452' in (ROOT/path).read_text(),path+' version stale'
  print('PASS SM3 source gate: pinned 177 prints; 274 attacks, 27 Abilities, 40 GX, 3 Energy; all player/CPU/CDN surfaces registered.')
 def full():
  subprocess.run([sys.executable,'scripts/build-sm3.py'],cwd=ROOT,check=True)

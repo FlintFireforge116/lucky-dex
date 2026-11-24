@@ -1,0 +1,7 @@
+# Unified Minds continuation — v0.69.452
+
+208/261 playable prints (+71 from v451), 297 enabled attack prints, 34 enabled Ability prints, 24 enabled Trainer prints. Canonical source and alternate art signatures unchanged. 53 gated prints remain; consult SM11_CURRENT_GAP_LEDGER.md.
+
+Shared rules added for extra Energy GX effects, Perfection (friendly Benched/discarded EX/GX, printed costs), Clear Vision GX lock, Power Bind, targeted Energy movement, chosen damage counters, conditional attacks, retreat and attack cost changes, discard recovery and Trainer/stadium effects. Printed Power Bind requires five Pokémon, so Latios-GX needs an expanded bench or Ability suppression in the normal three-bench hybrid format. Mach Delivery respects the existing eight-card draw cap. CPU Shadow Connection prefers bench-to-active movement to avoid cyclic actions. Cross-era copied-attack interactions still need independent audit. Injection-GX remains gated: additional Prizes must alter both the victory threshold and the pile, including virtual Basic Energy discard eligibility. Z-Crystal Tools, new Special Energy rules and other ledger items remain gated. Existing v451 deck builder and indexed lookup preserved.
+
+Regression: both sides execute every enabled attack with real catalogue cards and legal prerequisites; added outcome assertions for Perfection, Power Bind/Clear Vision, Spiteful Sigh, Discerning Spear and Reset Stamp. Performance guard retained in preflight. APK CI and physical-device gameplay not verified locally.

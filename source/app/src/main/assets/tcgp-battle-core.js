@@ -910,6 +910,10 @@
     // symbol array. Array.toString() inserts commas (e.g. [R,R,C] -> R,R,C),
     // which appear as phantom Energy icons and make legal moves unpayable.
     cost=Array.isArray(cost)?cost.join(''):String(cost);
+    if(state.format==='classic'&&slot?.sm11StickyUntil===state.turnNumber)cost+='C';
+    const sm11FoeSide=side==='player'?'opponent':'player',sm11Foe=state.sides[sm11FoeSide].active;
+    if(state.format==='classic'&&['sm11-106','sm11-224','sm11-244'].includes(sm11Foe?.cardId)&&data.cardById(slot?.cardId)?.stage==='Basic'&&!effects.abilitiesSuppressed(state,sm11FoeSide,sm11Foe,data.cardById))cost+='C';
+    if(state.format==='classic'&&state.sides[side].prizes.length>state.sides[sm11FoeSide].prizes.length&&activeToolsOf(state,slot).some(t=>['sm11-201','sm11-252'].includes(t.cardId)))cost=cost.replace('F','');
     if(state.format==='classic'&&slot?.cardId==='sm3-48'&&attack?.name==='Unarmed'&&!state.sides[side].hand.length)cost='';
     if(state.format==='classic'&&['Poliwag','Poliwhirl','Poliwrath'].includes(data.cardById(slot?.cardId)?.name)&&
       pokemonOn(state.sides[side]).some(p=>p.cardId==='xy3-18'&&!effects.abilitiesSuppressed(state,side,p,data.cardById)))cost=cost.replace(/C/g,'');
@@ -1168,6 +1172,12 @@
           out.push({cardId:c.id,attackIndex,attack,borrowed:true});
         }
       }
+    }
+    // SM11 Perfection: borrow printed attacks of friendly Benched or discarded EX/GX.
+    if(state.format==='classic'&&['sm11-71','sm11-222','sm11-242'].includes(slot.cardId)&&!effects.abilitiesSuppressed(state,side,slot,data.cardById)){
+      const seen=new Set(out.map(x=>x.cardId+':'+x.attackIndex));
+      for(const ref of [...state.sides[side].bench,...state.sides[side].discard]){const c=data.cardById(ref.cardId);if(!c?.battleEnabled||!effects.matchesFilter(c,{isExOrGX:true}))continue;
+        for(const [attackIndex,attack] of (c.attacks||[]).entries()){const key=c.id+':'+attackIndex;if(seen.has(key))continue;seen.add(key);out.push({cardId:c.id,attackIndex,attack,borrowed:true});}}
     }
     // Triumphant Mew Prime Lost Link borrows printed attacks of Pokémon in
     // either player's Lost Zone, never cards still in discard/deck/hand.
@@ -1966,7 +1976,7 @@
       for(const entry of attackOptions(state,side)){
         const {cardId:attackCardId,attackIndex,attack}=entry;
         if(attackCardId==='sm8-106'&&attack.name==='Nightcap'&&foe.prizes.length!==2)continue;
-        if ((attack.gxAttack||/\bGX\b/i.test(attack.name||''))&&s.gxAttackUsed&&!(state.format==='classic'&&data.cardById(attackCardId)?.name==='Zygarde-GX'&&s.sm6BonnieTurn===state.turnNumber))continue;
+        if ((attack.gxAttack||/\bGX\b/i.test(attack.name||''))&&(s.sm11GxLocked||s.gxAttackUsed&&!(state.format==='classic'&&data.cardById(attackCardId)?.name==='Zygarde-GX'&&s.sm6BonnieTurn===state.turnNumber)))continue;
         // SM5 conditional Eclipse GX attacks cannot be declared while tied/ahead on Prizes.
         if(state.format==='classic'&&attackCardId.startsWith('sm5-')&&
           ["Moon's Eclipse-GX","Sun's Eclipse-GX"].includes(attack.name)&&
@@ -2241,7 +2251,7 @@
       const scorch=state.format==='classic'&&pokemonOn(state.sides[side==='player'?'opponent':'player']).some(p=>p.cardId==='bw5-22'&&!effects.abilitiesSuppressed(state,side==='player'?'opponent':'player',p,data.cardById));
       const sm5FlamingFighter=state.format==='classic'&&pokemonOn(state.sides[side==='player'?'opponent':'player']).some(p=>p.cardId==='sm5-23'&&!effects.abilitiesSuppressed(state,side==='player'?'opponent':'player',p,data.cardById));
       const burnDamage=Math.max(sm5FlamingFighter?60:(aura||fullFlame||scorch?40:20),Number(slot.dp2TorridDamage||0));slot.damage+=burnDamage;state.log.push({type:'statusDamage',side,status:'burn',amount:burnDamage});const heads=heatMetal?false:random(state)<0.5;state.log.push({type:'coin',side,heads,status:'burn',results:[heads],heatMetal});if(heads&&!(state.format==='classic'&&activeStadium(state)?.cardId==='sm75-63')){delete c.burn;slot.dp2TorridDamage=0;}}
-      if(c.sleep){const darkraiKo=!!c.sleep?.knockoutOnDoubleTails;const opp=side==='player'?'opponent':'player',lull=state.format==='classic'&&state.sides[opp].active?.cardId==='SNAPFOUNJA-041'&&state.sides[opp].active?.conditions?.sleep;const destinyGengar=state.format==='classic'&&['player','opponent'].some(who=>pokemonOn(state.sides[who]).some(p=>p.cardId==='neo4-6'&&!p.conditions?.sleep&&!p.conditions?.confusion&&!p.conditions?.paralysis&&!effects.abilitiesSuppressed(state,who,p,data.cardById)));const relic=state.format==='classic'&&['player','opponent'].some(w=>state.sides[w].active?.cardId==='ex5-24'&&!effects.abilitiesSuppressed(state,w,state.sides[w].active,data.cardById));const deepSleep=state.format==='classic'&&['player','opponent'].some(w=>state.sides[w].active?.cardId==='ex12-40'&&!effects.abilitiesSuppressed(state,w,state.sides[w].active,data.cardById));const xy2Stir=state.format==='classic'&&slot.cardId==='xy2-80'&&!effects.abilitiesSuppressed(state,side,slot,data.cardById);const coins=lull||destinyGengar||relic||deepSleep||xy2Stir?2:typeof c.sleep==='object'?Math.max(1,Number(c.sleep.recoveryCoins||1)):1;let allHeads=true,allTails=true;for(let i=0;i<coins;i++){const heads=random(state)<0.5;state.log.push({type:'coin',side,heads,status:'sleep',results:[heads]});if(!heads)allHeads=false;else allTails=false;}if(allHeads)delete c.sleep;if(darkraiKo&&allTails&&coins===2){slot.damage=Math.max(Number(slot.damage||0),maxHp(state,side,slot));state.log.push({type:'darkraiSleepKO',side,cardId:slot.cardId});}state.log.push({type:'sleepCheck',side,woke:allHeads,coins});}
+      if(c.sleep){const darkraiKo=!!c.sleep?.knockoutOnDoubleTails;const opp=side==='player'?'opponent':'player',lull=state.format==='classic'&&state.sides[opp].active?.cardId==='SNAPFOUNJA-041'&&state.sides[opp].active?.conditions?.sleep;const destinyGengar=state.format==='classic'&&['player','opponent'].some(who=>pokemonOn(state.sides[who]).some(p=>p.cardId==='neo4-6'&&!p.conditions?.sleep&&!p.conditions?.confusion&&!p.conditions?.paralysis&&!effects.abilitiesSuppressed(state,who,p,data.cardById)));const relic=state.format==='classic'&&['player','opponent'].some(w=>state.sides[w].active?.cardId==='ex5-24'&&!effects.abilitiesSuppressed(state,w,state.sides[w].active,data.cardById));const deepSleep=state.format==='classic'&&['player','opponent'].some(w=>state.sides[w].active?.cardId==='ex12-40'&&!effects.abilitiesSuppressed(state,w,state.sides[w].active,data.cardById));const xy2Stir=state.format==='classic'&&slot.cardId==='xy2-80'&&!effects.abilitiesSuppressed(state,side,slot,data.cardById);const coins=lull||destinyGengar||relic||deepSleep||xy2Stir||activeStadium(state)?.cardId==='sm11-207'?2:typeof c.sleep==='object'?Math.max(1,Number(c.sleep.recoveryCoins||1)):1;let allHeads=true,allTails=true;for(let i=0;i<coins;i++){const heads=random(state)<0.5;state.log.push({type:'coin',side,heads,status:'sleep',results:[heads]});if(!heads)allHeads=false;else allTails=false;}if(allHeads)delete c.sleep;if(darkraiKo&&allTails&&coins===2){slot.damage=Math.max(Number(slot.damage||0),maxHp(state,side,slot));state.log.push({type:'darkraiSleepKO',side,cardId:slot.cardId});}state.log.push({type:'sleepCheck',side,woke:allHeads,coins});}
       if(c.paralysis&&side===state.activeSide&&Number(c.paralysis.appliedTurn??-1)<state.turnNumber)delete c.paralysis;
     }
   }
@@ -2633,7 +2643,7 @@
     if(!Number.isInteger(i)||i<0||i>=ss.prizes.length)return false;
     const [ref]=ss.prizes.splice(i,1);
     if(state.format==='classic'&&ref.cardId==='sm7-97'&&!ref.faceUp&&state.activeSide===side&&emptyBenchSlots(ss).length&&ss.prizes.length)state.sm7WishPrize={side,ref};else ss.hand.push(ref);
-    ss.prizesTaken=Number(ss.prizesTaken||0)+1;
+    ss.prizesTaken=Number(ss.prizesTaken||0)+1;ss.pointsGainedThisTurn=Number(ss.pointsGainedThisTurn||0)+1;
     state.log.push({type:'prize',side,cardId:ref.cardId,prizePosition:i,remaining:ss.prizes.length,taken:ss.prizesTaken});
     if(state.format==='classic'&&ref.cardId==='xy11-102'&&!ref.faceUp){
       const heads=random(state)<0.5;
@@ -2913,7 +2923,8 @@
             ['sm4-63','sm4-63a','sm4-105','sm4-116'].includes(source.cardId)&&foe.lastAttackName==='Glutton-GX'?2:0;
           const beast=awardsPrize&&cause==='attack'&&source?.attack&&source.side===foeSide&&source.uid===attacker?.uid&&source.damage>0&&attacker?.sm10BeastGame?.turn===state.turnNumber&&foe.lastAttackName==='Beast Game-GX'?attacker.sm10BeastGame.amount:0;
           const beastBringer=awardsPrize&&cause==='attack'&&source?.attack&&source.side===foeSide&&source.uid===attacker?.uid&&source.damage>0&&sm10WasActive&&foe.prizes.length===6&&data.cardById(attacker?.cardId)?.ultraBeast&&effects.matchesFilter(card,{isExOrGX:true})&&!effects.toolEffectsSuppressed(state,data.cardById)&&toolsOf(attacker).some(r=>['sm10-164','sm10-229'].includes(r.cardId))?1:0;
-          const prizeCount=awardsPrize?Math.max(0,prizeValue(card)+beast+beastBringer-blackMarket+sm4Glutton+extraMoonSkip+arceusBeltBonus+arceusExtra+hgss3SpaceVirus+bw8Overflow+deltaPlus+xy10Endgame+sm2Extra-bw9LifeDew):0;
+          const greedy=awardsPrize&&cause==='attack'&&source?.attack&&source.side===foeSide&&source.uid===attacker?.uid&&source.damage>0&&attacker?.sm11GreedyTurn===state.turnNumber&&foe.lastAttackName==='Greedy Crush'&&effects.matchesFilter(card,{isExOrGX:true})?1:0;
+          const prizeCount=awardsPrize?Math.max(0,prizeValue(card)+greedy+beast+beastBringer-blackMarket+sm4Glutton+extraMoonSkip+arceusBeltBonus+arceusExtra+hgss3SpaceVirus+bw8Overflow+deltaPlus+xy10Endgame+sm2Extra-bw9LifeDew):0;
           awarded=Math.min(prizeCount,Math.max(0,foe.prizes.length-(state.pendingPrizeClaims||[]).filter(q=>q.side===foeSide).reduce((n,q)=>n+q.remaining,0)));
           if(awarded){state.pendingPrizeClaims=state.pendingPrizeClaims||[];state.pendingPrizeClaims.push({side:foeSide,remaining:awarded});}
           state.log.push({type:'ko',side,cardId:card.id,turnNumber:state.turnNumber,prizesTaken:foe.prizesTaken,awarded});
