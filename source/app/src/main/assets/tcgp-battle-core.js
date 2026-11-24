@@ -435,7 +435,7 @@
     if(p.kind==='narrowGymReturn'||p.kind==='skyFieldBenchTrim'){
       for(const slot of ss.bench||[])if(slot)out.push({type:'effectChoice',choiceTarget:'bench',choiceBenchIndex:Number(slot.benchSlot),choiceCardId:slot.cardId});
     }else if(p.kind==='prizeCard'){
-      const prizeBoard=state.sides[p.selectionSide||side];prizeBoard.prizes.forEach((ref,index)=>{if(p.effect?.rule==='dp3:6:psychicCut'&&ref.faceUp)return;out.push({type:'effectChoice',choicePrizeIndex:index,...(ref.faceUp?{choiceCardId:ref.cardId}:{})});});
+      const prizeBoard=state.sides[p.selectionSide||side];prizeBoard.prizes.forEach((ref,index)=>{if(['dp3:6:psychicCut','det1Pantomime'].includes(p.effect?.rule)&&ref.faceUp)return;out.push({type:'effectChoice',choicePrizeIndex:index,...(ref.faceUp?{choiceCardId:ref.cardId}:{})});});
     }else if(p.kind==='switchBench'||p.kind==='pokemon'){
       const board=state.sides[p.selectionSide||side],eligible=slot=>slot&&filterCard(slot)&&(!p.requireTool||toolsOf(slot).length>0);
       if(p.kind==='pokemon'&&p.includeActive!==false&&eligible(board.active))out.push({type:'effectChoice',choiceTarget:'active',choiceCardId:board.active.cardId});

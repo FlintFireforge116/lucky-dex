@@ -8,8 +8,8 @@ android {
         applicationId 'com.example.luckydex'
         minSdk 26
         targetSdk 35
-        versionCode 7440
-        versionName '0.69.440'
+        versionCode 7441
+        versionName '0.69.441'
     }
 
     signingConfigs {
@@ -1066,7 +1066,7 @@ tasks.matching { it.name == 'preBuild' || (it.name.startsWith('merge') && it.nam
     dependsOn tasks.named('auditSM5ForApk')
 }
 
-// v0.69.440 Forbidden Light SM6: SHA-pinned 150-print full-set source and audit.
+// v0.69.441 Forbidden Light SM6: SHA-pinned 150-print full-set source and audit.
 tasks.register('preflightSM6ContractForApk', Exec) {
     dependsOn tasks.named('auditSM5ForApk')
     workingDir rootProject.projectDir
@@ -1164,4 +1164,24 @@ tasks.register('auditSM9ForApk', Exec) {
 }
 tasks.matching { it.name == 'preBuild' || (it.name.startsWith('merge') && it.name.endsWith('Assets')) }.configureEach {
     dependsOn tasks.named('auditSM9ForApk')
+}
+
+// Detective Pikachu: canonical offline catalogue and staged coverage checks.
+tasks.register('preflightDET1ContractForApk', Exec) {
+    dependsOn tasks.named('auditSM9ForApk')
+    workingDir rootProject.projectDir
+    commandLine (System.getenv('LUCKYDEX_PYTHON') ?: 'python3'), 'scripts/preflight-det1-release.py'
+}
+tasks.register('generateDET1ForApk', Exec) {
+    dependsOn tasks.named('preflightDET1ContractForApk')
+    workingDir rootProject.projectDir
+    commandLine (System.getenv('LUCKYDEX_PYTHON') ?: 'python3'), 'scripts/build-det1.py'
+}
+tasks.register('auditDET1ForApk', Exec) {
+    dependsOn tasks.named('generateDET1ForApk')
+    workingDir rootProject.projectDir
+    commandLine 'node', '--test', 'tests/v07461-detective-pikachu-integration.test.cjs', 'tests/v07462-detective-pikachu-outcomes.test.cjs'
+}
+tasks.matching { it.name == 'preBuild' || (it.name.startsWith('merge') && it.name.endsWith('Assets')) }.configureEach {
+    dependsOn tasks.named('auditDET1ForApk')
 }
