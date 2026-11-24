@@ -1,0 +1,14 @@
+# Unified Minds v0.69.457 — independent audit
+
+Baseline v0.69.456. All 261 canonical prints remain enabled; no content or deck-builder changes. Independent outcome checks found two shared engine defects:
+
+1. Channeler left several historical attack-created fields intact, notably XY12 Porygon Conversion 3 Weakness and its expiry, Neo Deflector, and XY9 Shadow Stitching's side-specific Ability lock. Extend the tracked attack-origin field registry to older Weakness/Resistance/type overrides and Neo/Gym/Legendary effects. Preserve non-attack fields, opposing effects, Special Conditions, attachments, and usage counters. The current provenance registry is finite, not a proof of every historical bespoke interaction.
+2. Generic `discardEnergyCard` ignored `specialOnly` both in its legal choices and its fallback resolver. This allowed Enhanced Hammer and other Special-only effects to remove Basic Energy. The selector now excludes Basics from count/choices, and the resolver never falls back to a Basic for such a descriptor. Damaging attacks targeting the opposing Active still remain legal when no Special Energy exists, with the discard component doing nothing. The new tests verify actual Enhanced Hammer against mixed and Basic-only attachments, plus actual historical Garchomp Mach Cut against Basic-only Energy.
+
+Other cross-era audit coverage: Perfection exposes actual historical Mewtwo-EX attacks while excluding the opponent's discard and Tool-granted attacks; Power Plant blocks copying. Field Blower discards an attached U-Turn Board with return dependent on whether Lysandre Labs was removed before or after the Board. Enhanced Hammer returns the original Recycle Energy UID to the owner's hand exactly once. Faba places both returnable attachments in the Lost Zone, not hand or discard. All 18 new tests are bilateral. No gates relaxed or tests removed. Preserve the hybrid quiz and Lazy Howl adaptations, and prior v451 deck-building speed improvements.
+
+The full 17-source-gate and runtime checks are recorded below. Actual GitHub APK compilation/device testing remains separate; offline historical XY generated assets are a known limitation. Additional untested historical field interactions, simultaneous compound attachment removals, and obscure effect provenance remain possible.
+
+Verification: full Termux preparation exited 0; all 17 historical/current source release gates passed. 432/432 release tests passed (134 SM11/performance, 214 SM10, 48 DET1, 30 historical, 6 original SM1); separate SM2/Guardians Rising regression 77/77 passed. Node syntax check passed. No new gated prints.
+
+Wider APK test-list regression (213 files, not an APK build): 3,285 tests, 3,228 passed, 56 existing skips, 1 failed. The only failure is the known offline XY Base placeholder (0 vs 146), identical to v456. No new failing regression identified. No existing test was disabled.

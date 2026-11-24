@@ -118,3 +118,78 @@ for(const side of ['player','opponent']){
  test(side+' Recycle Energy and U-Turn Board return their original refs on opponent attack KO',()=>{const h=setup(side,'sm11-54');try{h.us.active.energy={Lightning:3};h.them.active={...slot('sm11-2',h.foe+'a'),specialEnergy:[ref('sm11-257','recycle-ko')],tool:ref('sm11-255','board-ko')};attack(h,'Tandem Shock');resolve(h);assert.ok(h.them.hand.some(r=>r.uid==='recycle-ko'));assert.ok(h.them.hand.some(r=>r.uid==='board-ko'));assert.ok(!h.them.discard.some(r=>['recycle-ko','board-ko'].includes(r.uid)));}finally{h.done();}});
  test(side+' Electric Swamp is blocked by Bell of Silence and Heavy Rock',()=>{const h=setup(side);try{h.us.hand=[ref('sm11-66','eel')];h.us.active.energy={Lightning:4};assert.ok(core.legalActions(h.s,side).some(a=>a.type==='sm11ElectricSwamp'));h.us.sm4AbilityPokemonLockUntil=h.s.turnNumber;assert.ok(!core.legalActions(h.s,side).some(a=>a.type==='sm11ElectricSwamp'));delete h.us.sm4AbilityPokemonLockUntil;h.us.sm4HandLockUntil=h.s.turnNumber;assert.ok(!core.legalActions(h.s,side).some(a=>a.type==='sm11ElectricSwamp'));}finally{h.done();}});
 }
+
+// v457 independent audit: real historical attacks, source-aware cleanup,
+// opponent-side isolation, and older EX attack borrowing.
+for(const side of ['player','opponent']){
+ test(side+' audit: Channeler removes actual Porygon Conversion 3 weakness and expiry',()=>{
+  const h=setup(side,'xy12-71');try{
+   h.us.active.energy={Colorless:1};attack(h,'Conversion 3');resolve(h);
+   assert.equal(h.s.activeSide,h.foe);assert.equal(h.them.active.weaknessOverride,'Grass');assert.ok(h.them.active.weaknessOverrideExpiresTurn);assert.ok(h.them.active.sm11AttackEffectKeys.includes('weaknessOverride'));
+   const receiver={...h,side:h.foe,foe:side,us:h.them,them:h.us};
+   h.them.bench[0].weaknessOverride='Water'; // unrelated non-attack effect
+   trainer(receiver,'sm11-190');resolve(receiver);
+   assert.equal(h.them.active.weaknessOverride,undefined);assert.equal(h.them.active.weaknessOverrideExpiresTurn,undefined);assert.equal(h.them.bench[0].weaknessOverride,'Water');
+  }finally{h.done();}
+ });
+ test(side+' audit: Channeler removes attack-origin Neo Deflector, not unrelated defensive state',()=>{
+  const h=setup(side,'neo1-53');try{
+   h.us.active.energy={Grass:1};attack(h,'Deflector');resolve(h);assert.ok(h.us.active.neoDeflector);assert.ok(h.us.active.sm11AttackEffectKeys.includes('neoDeflector'));
+   // Isolate the effect cleanup while the defensive effect is still present;
+   // direct effect resolution avoids advancing past its normal expiry.
+   const enemyEffect={expiresTurn:h.s.turnNumber};h.them.active.neoDeflector=enemyEffect;h.us.bench[0].neoDeflector={expiresTurn:h.s.turnNumber};
+   fx.applyEffect({type:'sm7Rule',rule:'sm11Channeler'},{state:h.s,side,foeSide:h.foe,attacker:h.us.active,defender:h.them.active,cardById:data.cardById,trainerRef:ref('sm11-190','channeler')});
+   assert.equal(h.us.active.neoDeflector,undefined);assert.ok(h.us.bench[0].neoDeflector);assert.equal(h.them.active.neoDeflector,enemyEffect);
+  }finally{h.done();}
+ });
+ test(side+' audit: Channeler clears older Shadow Stitching only on affected side',()=>{
+  const h=setup(side);try{
+   h.us.xy9ShadowStitchUntil=h.s.turnNumber;h.them.xy9ShadowStitchUntil=h.s.turnNumber;h.s.xy7HexManiacUntil=h.s.turnNumber;
+   trainer(h,'sm11-190');resolve(h);assert.equal(h.us.xy9ShadowStitchUntil,undefined);assert.equal(h.them.xy9ShadowStitchUntil,h.s.turnNumber);assert.equal(h.s.xy7HexManiacUntil,h.s.turnNumber);
+  }finally{h.done();}
+ });
+ test(side+' audit: Perfection copies actual historical EX attacks, not opposing or Tool attacks',()=>{
+  const h=setup(side,'sm11-71');try{
+   h.us.active.energy={Psychic:5,Colorless:3};h.us.bench[0].cardId='bw4-54';h.us.bench[0].tool=ref('sm11-203','z');h.us.discard=[ref('sm11-195','discard-z'),ref('sm11-47','gx')];h.them.discard=[ref('bw4-5','enemy-ex')];
+   const options=core.attackOptions(h.s,side);assert.ok(options.some(a=>a.cardId==='bw4-54'&&a.attack.name==='X Ball'));assert.ok(!options.some(a=>['sm11-195','sm11-203','bw4-5'].includes(a.cardId)));
+   h.s.stadium={cardId:'sm10-183',uid:'power-plant',ownerSide:side};assert.ok(!core.attackOptions(h.s,side).some(a=>a.cardId==='bw4-54'));
+  }finally{h.done();}
+ });
+}
+for(const side of ['player','opponent']){
+ test(side+' audit: Enhanced Hammer returns opponent Recycle Energy exactly once',()=>{
+  const h=setup(side);try{
+   h.them.active.specialEnergy=[ref('sm11-257','energy-hammer')];const basic=structuredClone(h.them.active.energy);h.us.hand=[ref('sm2-124','hammer')];const options=core.legalActions(h.s,side).filter(a=>a.type==='trainer'&&a.cardId==='sm2-124');assert.ok(options.length);assert.ok(options.every(a=>!a.effectEnergyType&&a.effectSpecialEnergyUid==='energy-hammer'));use(h,'trainer',a=>a.cardId==='sm2-124');resolve(h);assert.deepEqual(h.them.active.energy,basic);
+   assert.equal(h.them.active.specialEnergy.length,0);assert.equal(h.them.hand.filter(r=>r.uid==='energy-hammer').length,1);assert.ok(!h.them.discard.some(r=>r.uid==='energy-hammer'));assert.ok(!h.us.hand.some(r=>r.uid==='energy-hammer'));
+  }finally{h.done();}
+ });
+ test(side+' audit: Field Blower respects U-Turn Board suppression at the discard choice',()=>{
+  for(const stadiumFirst of [false,true]){const h=setup(side);try{
+   h.them.active.tool=ref('sm11-255','board-blower');h.s.stadium={cardId:'sm6-111',uid:'lab',ownerSide:side};trainer(h,'sm2-125');
+   choice(h,a=>a.choiceOption===(stadiumFirst?0:1));resolve(h,a=>a.choiceOption===0);
+   assert.equal(h.them.active.tool,null);assert.equal(h.s.stadium,null);assert.equal(h.them.hand.filter(r=>r.uid==='board-blower').length,stadiumFirst?1:0);assert.equal(h.them.discard.filter(r=>r.uid==='board-blower').length,stadiumFirst?0:1);
+  }finally{h.done();}}
+ });
+ test(side+' audit: Faba sends Recycle Energy and U-Turn Board to Lost Zone without returning',()=>{
+  for(const isEnergy of [false,true]){const h=setup(side);try{
+   if(isEnergy)h.them.active.specialEnergy=[ref('sm11-212','lost-attachment')];else h.them.active.tool=ref('sm11-211','lost-attachment');
+   trainer(h,'sm8-173');resolve(h);assert.equal(h.them.lostZone.filter(r=>r.uid==='lost-attachment').length,1);assert.ok(!h.them.hand.some(r=>r.uid==='lost-attachment'));assert.ok(!h.them.discard.some(r=>r.uid==='lost-attachment'));
+  }finally{h.done();}}
+ });
+}
+for(const side of ['player','opponent']){
+ test(side+' audit: Enhanced Hammer is unavailable against Basic Energy only and cannot discard it',()=>{
+  const h=setup(side);try{
+   h.us.hand=[ref('sm2-124','hammer')];assert.ok(!core.legalActions(h.s,side).some(a=>a.type==='trainer'&&a.cardId==='sm2-124'));
+   const before=structuredClone(h.them.active.energy);fx.applyEffect({type:'discardEnergyCard',target:'opponentActive',amount:1,specialOnly:true},{...core.effectContext(h.s,side,{effectEnergyType:'Grass'},h.us.active),trainerRef:ref('sm2-124','hammer')});assert.deepEqual(h.them.active.energy,before);
+  }finally{h.done();}
+ });
+}
+for(const side of ['player','opponent']){
+ test(side+' audit: historical Mach Cut still attacks when no Special Energy is attached',()=>{
+  const h=setup(side,'bw6-90');try{
+   h.us.active.energy={Fighting:2,Water:2,Colorless:2};const basic=structuredClone(h.them.active.energy);attack(h,'Mach Cut');resolve(h);
+   assert.ok(h.them.active.damage>0);assert.deepEqual(h.them.active.energy,basic);
+  }finally{h.done();}
+ });
+}
