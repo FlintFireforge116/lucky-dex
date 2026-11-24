@@ -8,8 +8,8 @@ android {
         applicationId 'com.example.luckydex'
         minSdk 26
         targetSdk 35
-        versionCode 7433
-        versionName '0.69.433'
+        versionCode 7434
+        versionName '0.69.434'
     }
 
     signingConfigs {
@@ -1066,7 +1066,7 @@ tasks.matching { it.name == 'preBuild' || (it.name.startsWith('merge') && it.nam
     dependsOn tasks.named('auditSM5ForApk')
 }
 
-// v0.69.433 Forbidden Light SM6: SHA-pinned 150-print full-set source and audit.
+// v0.69.434 Forbidden Light SM6: SHA-pinned 150-print full-set source and audit.
 tasks.register('preflightSM6ContractForApk', Exec) {
     dependsOn tasks.named('auditSM5ForApk')
     workingDir rootProject.projectDir
@@ -1140,7 +1140,7 @@ tasks.register('generateSM8ForApk', Exec) {
 tasks.register('auditSM8ForApk', Exec) {
     dependsOn tasks.named('generateSM8ForApk')
     workingDir rootProject.projectDir
-    commandLine 'node', '--test', 'tests/v07456-lost-thunder-integration.test.cjs', 'tests/v07457-lost-thunder-outcomes.test.cjs'
+    commandLine 'node', '--test', 'tests/v07456-lost-thunder-integration.test.cjs', 'tests/v07457-lost-thunder-outcomes.test.cjs', 'tests/v07458-lost-thunder-independent-audit.test.cjs'
 }
 tasks.matching { it.name == 'preBuild' || (it.name.startsWith('merge') && it.name.endsWith('Assets')) }.configureEach {
     dependsOn tasks.named('auditSM8ForApk')
