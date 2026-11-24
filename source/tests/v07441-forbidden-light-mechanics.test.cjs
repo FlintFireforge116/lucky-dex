@@ -27,11 +27,11 @@ test('two separate Unit cards satisfy two different costs but cannot create a th
  for(const cost of ['FD','FY','DY','FF','CC'])assert.equal(pay(h.state,'player',cost),true,cost);
  for(const cost of ['FFD','FDY','CCC','G'])assert.equal(pay(h.state,'player',cost),false,cost);
 }finally{h.done();}});
-test('discard-to-deck effects are gated until destination and physical Basic Energy identity are correct',()=>{
+test('discard-to-deck effects must use a dedicated deck destination, never discard-to-hand',()=>{
  const result=JSON.parse(execFileSync('python3',['-c',`import sys,json;sys.path.insert(0,'scripts');import sm6_verified as v;
 r=['84','Flabébé','Pokémon',['Basic'],'50',['Fairy'],None,[],[],None,None,0,'Common',[],None,None];
 a=['Secret Blessings',['Y'],'','Shuffle 3 in any combination of Pokémon and basic Energy cards from your discard pile into your deck.'];
 t=['143','Energy Recycler','Trainer',['Item'],None,[],None,[],[],None,None,0,'Uncommon',['Shuffle 5 basic Energy cards from your discard pile into your deck.'],None,None];
 print(json.dumps([v.attack(r,a),v.trainer(t)]))`],{encoding:'utf8'}));
- assert.deepEqual(result,[null,null],'searchChosen(discard) returns cards to hand; it must NOT stand in for shuffle-into-deck');
+ assert.deepEqual(result,[{type:'sm6Rule',rule:'secretBlessings'},null],'searchChosen(discard) returns cards to hand; it must NOT stand in for shuffle-into-deck');
 });

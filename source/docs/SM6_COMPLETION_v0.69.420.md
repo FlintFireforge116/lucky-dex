@@ -1,0 +1,5 @@
+# Forbidden Light completion implementation — 0.69.420
+
+150/150 official prints enabled (127 before this pass); zero explicitly gated. Exact printed-signature adapter extended, including all remaining Prism Stars and Eneporter alternate art. No unsupported placeholder attack was promoted. New mechanics: Abnormal Outbreak, Ultra Evolution, Limbo Limbo, Unnerve, Standing By, Jet Geyser, Silent Waves, Psychic Abduction, Energy Teaser, Final Hour, Ticking Knock Out, Twister, Poison Point, Knockout Reviver, Secret Blessings, Swirling Petals, Wondrous Gift, Wink Wink, Hydration, Trinity Star, First Law, Mountaintop Mining, Eneporter, Lysandre Prism.
+
+Local verification: 80 SM6 tests (44 new side-specific outcome tests), 235 SM5 regression tests, prior XY11 and XY12 regressions, SM1 tests, SM2/3/4 source contracts, Gradle source validation. The previous brittle SM1 GX limit assertion was updated for the printed Bonnie exception. Full APK and independent whole-set outcome audit remain pending.

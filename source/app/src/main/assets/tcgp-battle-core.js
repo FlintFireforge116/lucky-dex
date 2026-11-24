@@ -2851,7 +2851,7 @@
           }if(transform&&target){target.specialEnergy=target.specialEnergy||[];target.specialEnergy.push({uid:`${slot.uid}-transformed-energy`,cardId:card.id,provides:{...transform.provides},transformedPokemon:true});state.log.push({type:'transformEnergy',side,cardId:card.id,targetCardId:target.cardId,provides:{...transform.provides}});}}if(slot===s.active)s.active=null;else s.bench.splice(s.bench.indexOf(slot),1);
         const attacker=source&&[foe.active,...foe.bench].find(x=>x&&x.uid===source.uid);let points=0;
         if(state.rules?.winMode==='prizes'){
-          const awardsPrize=!(slot.cardId==='pl2-87'&&slot.conditions?.confusion&&!effects.abilitiesSuppressed(state,side,slot,data.cardById))&&!(slot.cardId==='dp3-26'&&slot.transformOnKO)&&!slot.dp2ForcedDiscard&&card?.effect?.noPrize!==true&&!(card?.noPrize===true&&(slot.cardId!=='bw6-48'||!effects.abilitiesSuppressed(state,side,slot,data.cardById)))&&!['ex16-84','ex16-85','ex16-86'].includes(card?.id);
+          const awardsPrize=!(Number(slot.sm6NoPrizeUntil||-1)===Number(state.turnNumber)&&resume!=='advanceTurn')&&!(slot.cardId==='pl2-87'&&slot.conditions?.confusion&&!effects.abilitiesSuppressed(state,side,slot,data.cardById))&&!(slot.cardId==='dp3-26'&&slot.transformOnKO)&&!slot.dp2ForcedDiscard&&card?.effect?.noPrize!==true&&!(card?.noPrize===true&&(slot.cardId!=='bw6-48'||!effects.abilitiesSuppressed(state,side,slot,data.cardById)))&&!['ex16-84','ex16-85','ex16-86'].includes(card?.id);
           let awarded=0;const extraMoonSkip=attacker?.cardId==='dp4-103'&&source?.attack&&source?.side===foeSide&&foe.lastAttackName==='Moon Skip'?1:0;
           const arceusExtra=state.format==='classic'&&source?.side===foeSide&&source?.attack&&foe.pl4DoubleFallUntil===state.turnNumber&&['pl4-98'].includes(attacker?.cardId)?1:0;
           const hgss3SpaceVirus=awardsPrize&&cause==='attack'&&eventSource?.attack&&
@@ -3908,6 +3908,7 @@ const target=slotForTarget(s,action.target,action.benchIndex);if(card.id==='pl2-
          maxHp(state,side,s.active)-Number(s.active.damage||0)<=20&&
          !effects.abilitiesSuppressed(state,side,s.active,data.cardById)&&
          !s.active.conditions?.sleep&&!s.active.conditions?.confusion&&!s.active.conditions?.paralysis&&damage>0){damage=120;}
+      if(!isActive&&damage>0&&state.format==='classic'&&s.active.cardId==='sm6-26'&&attack.name==='Sharpshooting')for(const boost of s.active.nextAttackBonuses||[])if(Number(boost.turn)===state.turnNumber&&boost.attackName===attack.name)damage+=Number(boost.amount||0);
       if(!isActive&&damage>0&&state.format==='classic')damage=effects.wideLensBenchMatchup(state,side,s.active,foeSide,defender,damage,data.cardById);
       if(!isActive&&damage>0&&state.format==='classic'&&activeToolsOf(state,s.active).some(ref=>ref.cardId==='ecard1-150')){
         // Direct attacks on the Bench have no Weakness/Resistance; Strength
@@ -4204,7 +4205,7 @@ const target=slotForTarget(s,action.target,action.benchIndex);if(card.id==='pl2-
         const amount=defender.cardId==='ex1-22'?20:10;s.active.damage=Number(s.active.damage||0)+amount;
         state.log.push({type:'ex1RoughSkin',side:foeSide,cardId:defender.cardId,amount});
       }
-      if(damage>0){defender.lastDamageSource={side,uid:s.active.uid,cardId:s.active.cardId,attack:true,turn:state.turnNumber,damage};defender.neoDestinyLastHitAmount=damage;}
+      if(damage>0){if(defender.cardId==='sm6-46'&&Number(defender.damage)>=maxHp(state,foeSide,defender))defender.sm6DamageKOOnTurn=state.turnNumber;defender.lastDamageSource={side,uid:s.active.uid,cardId:s.active.cardId,attack:true,turn:state.turnNumber,damage};defender.neoDestinyLastHitAmount=damage;}
       if(damage>0&&defender.legendaryMirrorShellUntil>=state.turnNumber&&state.format==='classic'){s.active.damage=Number(s.active.damage||0)+damage;state.log.push({type:'legendaryMirrorShell',side:foeSide,amount:damage,cardId:defender.cardId});}
       if(damage>0&&state.format==='classic'&&defender===foe.active&&['ex12-78','ex13-91'].includes(defender.cardId))s.active.damage=Number(s.active.damage||0)+10;
       if(damage>0&&state.format==='classic'&&defender===foe.active&&defender.cardId==='ex12-70'&&

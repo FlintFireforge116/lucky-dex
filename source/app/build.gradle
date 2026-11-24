@@ -8,8 +8,8 @@ android {
         applicationId 'com.example.luckydex'
         minSdk 26
         targetSdk 35
-        versionCode 7419
-        versionName '0.69.419'
+        versionCode 7420
+        versionName '0.69.420'
     }
 
     signingConfigs {
@@ -1066,7 +1066,7 @@ tasks.matching { it.name == 'preBuild' || (it.name.startsWith('merge') && it.nam
     dependsOn tasks.named('auditSM5ForApk')
 }
 
-// v0.69.419 Forbidden Light SM6: SHA-pinned 150-print full-set source and audit.
+// v0.69.420 Forbidden Light SM6: SHA-pinned 150-print full-set source and audit.
 tasks.register('preflightSM6ContractForApk', Exec) {
     dependsOn tasks.named('auditSM5ForApk')
     workingDir rootProject.projectDir
@@ -1080,7 +1080,7 @@ tasks.register('generateSM6ForApk', Exec) {
 tasks.register('auditSM6ForApk', Exec) {
     dependsOn tasks.named('generateSM6ForApk')
     workingDir rootProject.projectDir
-    commandLine 'node', '--test', 'tests/v07440-forbidden-light-integration.test.cjs', 'tests/v07441-forbidden-light-mechanics.test.cjs', 'tests/v07442-forbidden-light-outcomes.test.cjs', 'tests/v07443-forbidden-light-continuation.test.cjs'
+    commandLine 'node', '--test', 'tests/v07440-forbidden-light-integration.test.cjs', 'tests/v07441-forbidden-light-mechanics.test.cjs', 'tests/v07442-forbidden-light-outcomes.test.cjs', 'tests/v07443-forbidden-light-continuation.test.cjs', 'tests/v07444-forbidden-light-completion.test.cjs'
 }
 tasks.matching { it.name == 'preBuild' || (it.name.startsWith('merge') && it.name.endsWith('Assets')) }.configureEach {
     dependsOn tasks.named('auditSM6ForApk')

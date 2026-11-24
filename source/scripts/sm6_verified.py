@@ -297,6 +297,101 @@ STAGE_TRAINERS={'Bonnie': ('Supporter',
                  'You may play as many Item cards as you like during your turn (before your attack).'],
                 {'type': 'sm6Rule', 'rule': 'beastRing'})}
 
+# Final SM6 printed signatures. Shared rule handlers are below the existing stage adapter.
+STAGE_ATTACKS.update({'Ultra Evolution': ('Flip a coin. If heads, search your deck for Vivillon and put it onto this Scatterbug '
+                     'to evolve it. Then, shuffle your deck.',
+                     {'type': 'sm6Rule', 'rule': 'ultraEvolution'}),
+ 'Limbo Limbo': ('Search your deck for up to 2 basic Energy cards and attach them to your Pokémon in any way '
+                 'you like. Then, shuffle your deck.',
+                 {'type': 'sm6Rule', 'rule': 'energySpread', 'amount': 2}),
+ 'Standing By': ("During your next turn, this Pokémon's Sharpshooting attack does 120 damage instead of 40.",
+                 {'type': 'nextAttackBonus', 'attackName': 'Sharpshooting', 'amount': 80}),
+ 'Psychic Abduction': ('You can use this attack only if you go second, and only on your first turn. Shuffle '
+                       "1 of your opponent's Benched Pokémon and all cards attached to it into their deck.",
+                       {'type': 'sm6Rule', 'rule': 'psychicAbduction'}),
+ 'Energy Teaser': ("Move an Energy from 1 of your opponent's Benched Pokémon to another of their Pokémon.",
+                   {'type': 'sm6Rule', 'rule': 'moveOpposingEnergy', 'benchOnly': True}),
+ 'Ticking Knock Out': ('During your next turn, if the Defending Pokémon is damaged by an attack, it will be '
+                       'Knocked Out.',
+                       {'type': 'sm6Rule', 'rule': 'tickingKO'}),
+ 'Twister': ("Flip 2 coins. For each heads, discard an Energy from your opponent's Active Pokémon. If both "
+             'of them are tails, this attack does nothing.',
+             {'type': 'sm6Rule', 'rule': 'twister'}),
+ 'Secret Blessings': ('Shuffle 3 in any combination of Pokémon and basic Energy cards from your discard pile '
+                      'into your deck.',
+                      {'type': 'sm6Rule', 'rule': 'secretBlessings'}),
+ 'Swirling Petals': ("Switch 1 of your opponent's Benched Pokémon with their Active Pokémon. If you do, "
+                     'switch this Pokémon with 1 of your Benched Pokémon.',
+                     {'type': 'sm6Rule', 'rule': 'swirlingPetals'}),
+ 'Trinity Star': ('You can use this attack only if you have Grass, Water, and Lightning Pokémon on your '
+                  'Bench. Search your deck for up to 3 basic Energy cards and attach them to your Pokémon in '
+                  'any way you like. Then, shuffle your deck.',
+                  {'type': 'sm6Rule', 'rule': 'energySpread', 'amount': 3, 'trinity': True}),
+ 'Mountaintop Mining': ('You may do 40 more damage. If you do, discard the top 2 cards of your deck.',
+                        {'type': 'sm6Rule', 'rule': 'mountaintopMining'}),
+ 'Knockout Reviver': ("During your opponent's next turn, if this Pokémon is Knocked Out, your opponent can't "
+                      'take any Prize cards for it.',
+                      {'type': 'sm6Rule', 'rule': 'knockoutReviver'})})
+STAGE_ABILITIES.update({'Abnormal Outbreak': ('You can use this Ability only if you go second. Once during your first turn (before '
+                       'your attack), you may search your deck for a Spewpa and a Vivillon, reveal them, and '
+                       'put them into your hand. Then, shuffle your deck.',
+                       {'type': 'activated',
+                        'oncePerTurn': True,
+                        'effect': {'type': 'sm6Rule', 'rule': 'abnormalOutbreak'}}),
+ 'Unnerve': ('Whenever your opponent plays an Item or Supporter card from their hand, prevent all effects of '
+             'that card done to this Pokémon.',
+             {'type': 'passive', 'effect': {'type': 'sm6Rule', 'rule': 'unnerve'}}),
+ 'Jet Geyser': ('Once during your turn (before your attack), you may discard a Water Energy card from your '
+                'hand. If you do, your opponent switches their Active Pokémon with 1 of their Benched '
+                'Pokémon.',
+                {'type': 'activated',
+                 'oncePerTurn': True,
+                 'effect': {'type': 'sm6Rule', 'rule': 'jetGeyser'},
+                 'requiresBasicEnergyFromHand': 'Water'}),
+ 'Silent Waves': ("If you have Azelf in play, your opponent's Pokémon in play have no Resistance.",
+                  {'type': 'passive', 'effect': {'type': 'sm6Rule', 'rule': 'silentWaves'}}),
+ 'Final Hour': ("If this Pokémon is your Active Pokémon and is Knocked Out by damage from an opponent's "
+                "attack, put 3 damage counters on 1 of your opponent's Pokémon.",
+                {'type': 'triggered',
+                 'event': 'knockedOutByAttack',
+                 'effect': {'type': 'sm6Rule', 'rule': 'finalHour'},
+                 'activeOnly': True,
+                 'opponentAttackOnly': True}),
+ 'Poison Point': ("If this Pokémon is your Active Pokémon and is damaged by an opponent's attack (even if "
+                  'this Pokémon is Knocked Out), the Attacking Pokémon is now Poisoned.',
+                  {'type': 'triggered',
+                   'event': 'damagedByAttack',
+                   'effect': {'type': 'sm6Rule', 'rule': 'poisonPoint'},
+                   'activeOnly': True,
+                   'opponentAttackOnly': True}),
+ 'Wondrous Gift': ('Once during your turn (before your attack), you may flip a coin. If heads, put an Item '
+                   'card from your discard pile on top of your deck.',
+                   {'type': 'activated',
+                    'oncePerTurn': True,
+                    'effect': {'type': 'sm6Rule', 'rule': 'wondrousGift'}}),
+ 'Hydration': ('Whenever you attach a Water Energy card from your hand to this Pokémon, heal 20 damage from '
+               'it.',
+               {'type': 'triggered',
+                'event': 'energyAttached',
+                'effect': {'type': 'sm6Rule', 'rule': 'hydration'},
+                'energyType': 'Water',
+                'fromHandOnly': True}),
+ 'First Law': ("Prevent all effects of your opponent's attacks, except damage, done to this Pokémon.",
+               {'type': 'passive', 'effect': {'type': 'preventEffects', 'duration': 'whileInPlay'}})})
+STAGE_TRAINERS.update({'Eneporter': ('Item',
+               ["Move a Special Energy from 1 of your opponent's Pokémon to another of their Pokémon.",
+                'You may play as many Item cards as you like during your turn (before your attack).'],
+               {'type': 'sm6Rule', 'rule': 'moveOpposingEnergy', 'specialOnly': True}),
+ 'Lysandre ◇': ('Supporter',
+                ["For each of your Fire Pokémon in play, put a card from your opponent's discard pile in the "
+                 'Lost Zone.',
+                 'You may play only 1 Supporter card during your turn (before your attack).',
+                 "◇ (Prism Star) Rule: You can't have more than 1 ◇ card with the same name in your deck. If "
+                 'a ◇ card would go to the discard pile, put it in the Lost Zone instead.'],
+                {'type': 'sm6Rule', 'rule': 'lysandrePrism'})})
+
+STAGE_ATTACKS["Wink Wink"] = ('Your opponent reveals their hand. You may discard a Supporter card you find there and use the effect of that card as the effect of this attack.', e("sm6Rule",rule="winkWink"))
+
 def attack(row,a):
  title,cost,damage,printed=a
  stage=STAGE_ATTACKS.get(title)
@@ -342,4 +437,4 @@ def energy(row):
 def prism_ready(row):
  # Deck-copy and Lost-Zone rules already exist; individual new print mechanics
  # are not promoted until the printed effects are tested.
- return row[0]=='74'
+ return row[0] in ('31','74','96','110')
