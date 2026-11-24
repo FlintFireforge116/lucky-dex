@@ -8,8 +8,8 @@ android {
         applicationId 'com.example.luckydex'
         minSdk 26
         targetSdk 35
-        versionCode 7460
-        versionName '0.69.460'
+        versionCode 7461
+        versionName '0.69.461'
     }
 
     signingConfigs {
@@ -1066,7 +1066,7 @@ tasks.matching { it.name == 'preBuild' || (it.name.startsWith('merge') && it.nam
     dependsOn tasks.named('auditSM5ForApk')
 }
 
-// v0.69.460 Forbidden Light SM6: SHA-pinned 150-print full-set source and audit.
+// v0.69.461 Forbidden Light SM6: SHA-pinned 150-print full-set source and audit.
 tasks.register('preflightSM6ContractForApk', Exec) {
     dependsOn tasks.named('auditSM5ForApk')
     workingDir rootProject.projectDir
@@ -1264,4 +1264,24 @@ tasks.register('auditSMAForApk', Exec) {
 }
 tasks.matching { it.name == 'preBuild' || (it.name.startsWith('merge') && it.name.endsWith('Assets')) }.configureEach {
     dependsOn tasks.named('auditSMAForApk')
+}
+
+// Cosmic Eclipse: pinned catalogue and staged gameplay gate.
+tasks.register('preflightSM12ContractForApk', Exec) {
+    dependsOn tasks.named('auditSMAForApk')
+    workingDir rootProject.projectDir
+    commandLine (System.getenv('LUCKYDEX_PYTHON') ?: 'python3'), 'scripts/preflight-sm12-release.py'
+}
+tasks.register('generateSM12ForApk', Exec) {
+    dependsOn tasks.named('preflightSM12ContractForApk')
+    workingDir rootProject.projectDir
+    commandLine (System.getenv('LUCKYDEX_PYTHON') ?: 'python3'), 'scripts/build-sm12.py'
+}
+tasks.register('auditSM12ForApk', Exec) {
+    dependsOn tasks.named('generateSM12ForApk')
+    workingDir rootProject.projectDir
+    commandLine 'node', '--test', 'tests/v07472-cosmic-eclipse-integration.test.cjs', 'tests/v07473-cosmic-eclipse-outcomes.test.cjs'
+}
+tasks.matching { it.name == 'preBuild' || (it.name.startsWith('merge') && it.name.endsWith('Assets')) }.configureEach {
+    dependsOn tasks.named('auditSM12ForApk')
 }

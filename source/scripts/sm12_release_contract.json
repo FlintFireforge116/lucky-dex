@@ -1,0 +1,19 @@
+{
+  "set": "sm12",
+  "name": "Cosmic Eclipse",
+  "stage": "integration",
+  "release": "0.69.461",
+  "printedTotal": 272,
+  "attackPrints": 376,
+  "abilities": 64,
+  "pokemonGX": 49,
+  "gxAttackPrints": 50,
+  "tagTeamPrints": 40,
+  "prismStarPrints": 0,
+  "trainerPrints": 41,
+  "energyPrints": 2,
+  "pin": "e916e382122f759e4904762acd59b0d3a69a1bd1",
+  "variants": [
+    "143a"
+  ]
+}

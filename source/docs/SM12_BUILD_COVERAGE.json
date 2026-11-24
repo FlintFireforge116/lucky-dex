@@ -1,0 +1,448 @@
+{
+  "printed": 272,
+  "battleReady": 139,
+  "gated": {
+    "sm12-1": [
+      "Unimplemented attack: Solar Plant-GX",
+      "Unimplemented Ability: Shining Vine"
+    ],
+    "sm12-8": [
+      "Unimplemented attack: Solar Power"
+    ],
+    "sm12-11": [
+      "Unimplemented Ability: Swaying Strangle"
+    ],
+    "sm12-21": [
+      "Unimplemented Ability: Beast Boost"
+    ],
+    "sm12-22": [
+      "Unimplemented attack: Crimson Flame Pillar-GX"
+    ],
+    "sm12-25": [
+      "Unimplemented Ability: Power Cheer"
+    ],
+    "sm12-29": [
+      "Unimplemented attack: Fire Fling",
+      "Unimplemented attack: Kindle"
+    ],
+    "sm12-33": [
+      "Unimplemented Ability: Explosive Fire Dance"
+    ],
+    "sm12-35": [
+      "Unimplemented attack: Backfire",
+      "Unimplemented attack: Massive Heat Wave-GX",
+      "Unimplemented Ability: Flaming Shot"
+    ],
+    "sm12-37": [
+      "Unimplemented attack: Swirling Inferno"
+    ],
+    "sm12-38": [
+      "Unimplemented attack: Splash Maker",
+      "Unimplemented attack: Bubble Launcher-GX"
+    ],
+    "sm12-41": [
+      "Unimplemented attack: Energy Loop"
+    ],
+    "sm12-42": [
+      "Unimplemented Ability: Vitality Cheer"
+    ],
+    "sm12-52": [
+      "Unimplemented attack: Cold Snap"
+    ],
+    "sm12-56": [
+      "Unimplemented attack: Recall"
+    ],
+    "sm12-57": [
+      "Unimplemented Ability: Whirlpool Suction"
+    ],
+    "sm12-60": [
+      "Unimplemented attack: Tailwind"
+    ],
+    "sm12-62": [
+      "Unimplemented Ability: Scatter"
+    ],
+    "sm12-63": [
+      "Unimplemented attack: Massive Catch-GX"
+    ],
+    "sm12-65": [
+      "Unimplemented attack: Liquidation"
+    ],
+    "sm12-69": [
+      "Unimplemented Ability: Call Signal"
+    ],
+    "sm12-70": [
+      "Unimplemented Ability: Speed Cheer"
+    ],
+    "sm12-72": [
+      "Unimplemented Ability: Blinking Lights"
+    ],
+    "sm12-75": [
+      "Unimplemented attack: Light of the Protector-GX"
+    ],
+    "sm12-76": [
+      "Unimplemented Ability: Blow-Away Bomb"
+    ],
+    "sm12-77": [
+      "Unimplemented attack: Balloon Burst",
+      "Unimplemented Ability: Blow-Away Bomb"
+    ],
+    "sm12-78": [
+      "Unimplemented attack: Future Sight"
+    ],
+    "sm12-79": [
+      "Unimplemented attack: Life Drain"
+    ],
+    "sm12-83": [
+      "Unimplemented attack: Ominous Eyes",
+      "Unimplemented Ability: Spiritborne Evolution"
+    ],
+    "sm12-85": [
+      "Unimplemented Ability: Grim Marking"
+    ],
+    "sm12-86": [
+      "Unimplemented attack: Cycle Draw",
+      "Unimplemented attack: Energy Assist"
+    ],
+    "sm12-88": [
+      "Unimplemented attack: Charming Stamp"
+    ],
+    "sm12-90": [
+      "Unimplemented attack: Fist of Antiquity"
+    ],
+    "sm12-92": [
+      "Unimplemented attack: Poison Cultivation"
+    ],
+    "sm12-94": [
+      "Unimplemented attack: Perplexing Forest",
+      "Unimplemented attack: Shadow Impact"
+    ],
+    "sm12-95": [
+      "Unimplemented Ability: Dance of Tribute"
+    ],
+    "sm12-96": [
+      "Unimplemented attack: Impersonation",
+      "Unimplemented attack: Mischievous Hands"
+    ],
+    "sm12-97": [
+      "Unimplemented Ability: Shadow Box"
+    ],
+    "sm12-102": [
+      "Unimplemented Ability: Blessing of the Moone"
+    ],
+    "sm12-103": [
+      "Unimplemented attack: Shadow Imitation"
+    ],
+    "sm12-104": [
+      "Unimplemented attack: Fireworks Bomb"
+    ],
+    "sm12-109": [
+      "Unimplemented Ability: Obnoxious Whirring"
+    ],
+    "sm12-113": [
+      "Unimplemented attack: Drought"
+    ],
+    "sm12-114": [
+      "Unimplemented attack: Rototiller"
+    ],
+    "sm12-115": [
+      "Unimplemented attack: Eleventh Hour Tackle"
+    ],
+    "sm12-117": [
+      "Unimplemented Ability: Bulldoze"
+    ],
+    "sm12-129": [
+      "Unimplemented Ability: Smug Face"
+    ],
+    "sm12-133": [
+      "Unimplemented attack: Ominous News",
+      "Unimplemented attack: Dirty Throw"
+    ],
+    "sm12-134": [
+      "Unimplemented attack: Bag Slash"
+    ],
+    "sm12-136": [
+      "Unimplemented attack: Red Banquet"
+    ],
+    "sm12-140": [
+      "Unimplemented attack: Dual Calling"
+    ],
+    "sm12-142": [
+      "Unimplemented Ability: Armor of the Sunne"
+    ],
+    "sm12-143": [
+      "Unimplemented attack: Supreme Puff-GX"
+    ],
+    "sm12-143a": [
+      "Unimplemented attack: Supreme Puff-GX"
+    ],
+    "sm12-144": [
+      "Unimplemented attack: Doll Swap"
+    ],
+    "sm12-146": [
+      "Unimplemented Ability: Growing Up"
+    ],
+    "sm12-148": [
+      "Unimplemented attack: Sneaky Pocket"
+    ],
+    "sm12-151": [
+      "Unimplemented Ability: Flower Picking"
+    ],
+    "sm12-152": [
+      "Unimplemented Ability: Flower Picking"
+    ],
+    "sm12-155": [
+      "Unimplemented attack: Moonblast",
+      "Unimplemented attack: Beloved Pulse"
+    ],
+    "sm12-156": [
+      "Unimplemented attack: Ultimate Ray",
+      "Unimplemented attack: Altered Creation-GX"
+    ],
+    "sm12-157": [
+      "Unimplemented attack: Fabled Flarebolts",
+      "Unimplemented attack: Cross Break-GX"
+    ],
+    "sm12-158": [
+      "Unimplemented attack: Chaotic Order-GX",
+      "Unimplemented Ability: Violent Appetite"
+    ],
+    "sm12-162": [
+      "Unimplemented Ability: Fighter's Roar"
+    ],
+    "sm12-163": [
+      "Unimplemented attack: Shout of Power",
+      "Unimplemented attack: Scaly Uppercut"
+    ],
+    "sm12-169": [
+      "Unimplemented Ability: Scampering Tail"
+    ],
+    "sm12-176": [
+      "Unimplemented Ability: Arf Arf Bark"
+    ],
+    "sm12-185": [
+      "Unimplemented Trainer effect"
+    ],
+    "sm12-186": [
+      "Unimplemented Trainer effect"
+    ],
+    "sm12-187": [
+      "Unimplemented Trainer effect"
+    ],
+    "sm12-188": [
+      "Unimplemented Trainer effect"
+    ],
+    "sm12-189": [
+      "Unimplemented Trainer effect"
+    ],
+    "sm12-190": [
+      "Unimplemented attack: Destructive Drake-GX",
+      "Unimplemented Trainer effect"
+    ],
+    "sm12-191": [
+      "Unimplemented Trainer effect"
+    ],
+    "sm12-192": [
+      "Unimplemented Trainer effect"
+    ],
+    "sm12-193": [
+      "Unimplemented Trainer effect"
+    ],
+    "sm12-194": [
+      "Unimplemented Trainer effect"
+    ],
+    "sm12-195": [
+      "Unimplemented Trainer effect"
+    ],
+    "sm12-196": [
+      "Unimplemented Trainer effect"
+    ],
+    "sm12-197": [
+      "Unimplemented Trainer effect"
+    ],
+    "sm12-198": [
+      "Unimplemented Trainer effect"
+    ],
+    "sm12-199": [
+      "Unimplemented Trainer effect"
+    ],
+    "sm12-200": [
+      "Unimplemented Trainer effect"
+    ],
+    "sm12-201": [
+      "Unimplemented Trainer effect"
+    ],
+    "sm12-202": [
+      "Unimplemented Trainer effect"
+    ],
+    "sm12-203": [
+      "Unimplemented Trainer effect"
+    ],
+    "sm12-204": [
+      "Unimplemented Trainer effect"
+    ],
+    "sm12-205": [
+      "Unimplemented Trainer effect"
+    ],
+    "sm12-208": [
+      "Unimplemented Trainer effect"
+    ],
+    "sm12-209": [
+      "Unimplemented Special Energy rules"
+    ],
+    "sm12-210": [
+      "Unimplemented attack: Solar Plant-GX",
+      "Unimplemented Ability: Shining Vine"
+    ],
+    "sm12-212": [
+      "Unimplemented attack: Crimson Flame Pillar-GX"
+    ],
+    "sm12-213": [
+      "Unimplemented attack: Backfire",
+      "Unimplemented attack: Massive Heat Wave-GX",
+      "Unimplemented Ability: Flaming Shot"
+    ],
+    "sm12-214": [
+      "Unimplemented attack: Splash Maker",
+      "Unimplemented attack: Bubble Launcher-GX"
+    ],
+    "sm12-215": [
+      "Unimplemented attack: Splash Maker",
+      "Unimplemented attack: Bubble Launcher-GX"
+    ],
+    "sm12-216": [
+      "Unimplemented attack: Light of the Protector-GX"
+    ],
+    "sm12-217": [
+      "Unimplemented Ability: Dance of Tribute"
+    ],
+    "sm12-219": [
+      "Unimplemented Ability: Smug Face"
+    ],
+    "sm12-220": [
+      "Unimplemented attack: Ultimate Ray",
+      "Unimplemented attack: Altered Creation-GX"
+    ],
+    "sm12-221": [
+      "Unimplemented attack: Ultimate Ray",
+      "Unimplemented attack: Altered Creation-GX"
+    ],
+    "sm12-222": [
+      "Unimplemented attack: Fabled Flarebolts",
+      "Unimplemented attack: Cross Break-GX"
+    ],
+    "sm12-223": [
+      "Unimplemented attack: Chaotic Order-GX",
+      "Unimplemented Ability: Violent Appetite"
+    ],
+    "sm12-224": [
+      "Unimplemented attack: Chaotic Order-GX",
+      "Unimplemented Ability: Violent Appetite"
+    ],
+    "sm12-228": [
+      "Unimplemented Trainer effect"
+    ],
+    "sm12-229": [
+      "Unimplemented Trainer effect"
+    ],
+    "sm12-230": [
+      "Unimplemented Trainer effect"
+    ],
+    "sm12-231": [
+      "Unimplemented Trainer effect"
+    ],
+    "sm12-232": [
+      "Unimplemented Trainer effect"
+    ],
+    "sm12-233": [
+      "Unimplemented Trainer effect"
+    ],
+    "sm12-234": [
+      "Unimplemented Trainer effect"
+    ],
+    "sm12-235": [
+      "Unimplemented Trainer effect"
+    ],
+    "sm12-236": [
+      "Unimplemented Trainer effect"
+    ],
+    "sm12-237": [
+      "Unimplemented attack: Fire Fling",
+      "Unimplemented attack: Kindle"
+    ],
+    "sm12-240": [
+      "Unimplemented Ability: Scatter"
+    ],
+    "sm12-243": [
+      "Unimplemented Ability: Blow-Away Bomb"
+    ],
+    "sm12-245": [
+      "Unimplemented attack: Impersonation",
+      "Unimplemented attack: Mischievous Hands"
+    ],
+    "sm12-246": [
+      "Unimplemented attack: Eleventh Hour Tackle"
+    ],
+    "sm12-248": [
+      "Unimplemented Ability: Arf Arf Bark"
+    ],
+    "sm12-249": [
+      "Unimplemented attack: Solar Plant-GX",
+      "Unimplemented Ability: Shining Vine"
+    ],
+    "sm12-251": [
+      "Unimplemented attack: Crimson Flame Pillar-GX"
+    ],
+    "sm12-252": [
+      "Unimplemented attack: Backfire",
+      "Unimplemented attack: Massive Heat Wave-GX",
+      "Unimplemented Ability: Flaming Shot"
+    ],
+    "sm12-253": [
+      "Unimplemented attack: Splash Maker",
+      "Unimplemented attack: Bubble Launcher-GX"
+    ],
+    "sm12-254": [
+      "Unimplemented attack: Light of the Protector-GX"
+    ],
+    "sm12-255": [
+      "Unimplemented Ability: Dance of Tribute"
+    ],
+    "sm12-257": [
+      "Unimplemented Ability: Smug Face"
+    ],
+    "sm12-258": [
+      "Unimplemented attack: Ultimate Ray",
+      "Unimplemented attack: Altered Creation-GX"
+    ],
+    "sm12-259": [
+      "Unimplemented attack: Fabled Flarebolts",
+      "Unimplemented attack: Cross Break-GX"
+    ],
+    "sm12-260": [
+      "Unimplemented attack: Chaotic Order-GX",
+      "Unimplemented Ability: Violent Appetite"
+    ],
+    "sm12-264": [
+      "Unimplemented Trainer effect"
+    ],
+    "sm12-265": [
+      "Unimplemented Trainer effect"
+    ],
+    "sm12-266": [
+      "Unimplemented Trainer effect"
+    ],
+    "sm12-267": [
+      "Unimplemented Trainer effect"
+    ],
+    "sm12-271": [
+      "Unimplemented Special Energy rules"
+    ]
+  },
+  "attacks": 376,
+  "abilities": 64,
+  "pokemonGX": 49,
+  "gxAttackPrints": 50,
+  "energyPrints": 2,
+  "prismStarPrints": 0,
+  "sourceGitBlob": "e916e382122f759e4904762acd59b0d3a69a1bd1"
+}
