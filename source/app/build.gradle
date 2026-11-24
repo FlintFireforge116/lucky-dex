@@ -8,8 +8,8 @@ android {
         applicationId 'com.example.luckydex'
         minSdk 26
         targetSdk 35
-        versionCode 7429
-        versionName '0.69.429'
+        versionCode 7430
+        versionName '0.69.430'
     }
 
     signingConfigs {
@@ -1066,7 +1066,7 @@ tasks.matching { it.name == 'preBuild' || (it.name.startsWith('merge') && it.nam
     dependsOn tasks.named('auditSM5ForApk')
 }
 
-// v0.69.429 Forbidden Light SM6: SHA-pinned 150-print full-set source and audit.
+// v0.69.430 Forbidden Light SM6: SHA-pinned 150-print full-set source and audit.
 tasks.register('preflightSM6ContractForApk', Exec) {
     dependsOn tasks.named('auditSM5ForApk')
     workingDir rootProject.projectDir
@@ -1124,4 +1124,24 @@ tasks.register('auditSM75ForApk', Exec) {
 }
 tasks.matching { it.name == 'preBuild' || (it.name.startsWith('merge') && it.name.endsWith('Assets')) }.configureEach {
     dependsOn tasks.named('auditSM75ForApk')
+}
+
+// SM8 Lost Thunder: canonical offline catalogue, gated integration.
+tasks.register('preflightSM8ContractForApk', Exec) {
+    dependsOn tasks.named('auditSM75ForApk')
+    workingDir rootProject.projectDir
+    commandLine (System.getenv('LUCKYDEX_PYTHON') ?: 'python3'), 'scripts/preflight-sm8-release.py'
+}
+tasks.register('generateSM8ForApk', Exec) {
+    dependsOn tasks.named('preflightSM8ContractForApk')
+    workingDir rootProject.projectDir
+    commandLine (System.getenv('LUCKYDEX_PYTHON') ?: 'python3'), 'scripts/build-sm8.py'
+}
+tasks.register('auditSM8ForApk', Exec) {
+    dependsOn tasks.named('generateSM8ForApk')
+    workingDir rootProject.projectDir
+    commandLine 'node', '--test', 'tests/v07456-lost-thunder-integration.test.cjs', 'tests/v07457-lost-thunder-outcomes.test.cjs'
+}
+tasks.matching { it.name == 'preBuild' || (it.name.startsWith('merge') && it.name.endsWith('Assets')) }.configureEach {
+    dependsOn tasks.named('auditSM8ForApk')
 }

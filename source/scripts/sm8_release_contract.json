@@ -1,0 +1,21 @@
+{
+  "set": "sm8",
+  "name": "Lost Thunder",
+  "stage": "integration",
+  "release": "0.69.430",
+  "printedTotal": 240,
+  "attackPrints": 315,
+  "abilities": 61,
+  "pokemonGX": 39,
+  "gxAttackPrints": 39,
+  "prismStarPrints": 7,
+  "trainerPrints": 47,
+  "energyPrints": 1,
+  "pin": "354284780f7771d1a2530ef766e57228c06805cd",
+  "variants": [
+    "172a",
+    "187a",
+    "188a",
+    "189a"
+  ]
+}
