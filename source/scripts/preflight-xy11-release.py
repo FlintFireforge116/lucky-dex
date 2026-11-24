@@ -8,20 +8,21 @@ from __future__ import annotations
 import argparse,json,os,re,subprocess,sys
 from pathlib import Path
 ROOT=Path(__file__).resolve().parents[1]
+from release_version import verify_release_version
 sys.path.insert(0,str(ROOT/'scripts'))
 import xy11_verified as V
 
 def check():
  subprocess.run([sys.executable,'scripts/check-gradle-source.py','--self-test'],cwd=ROOT,check=True)
  c=json.loads((ROOT/'scripts/xy11_release_contract.json').read_text())
+ version=verify_release_version(ROOT)
  assert c['set']=='xy11' and c['stage']=='independent-audit'
  assert (c['printedTotal'],c['attackPrints'],c['abilities'],c['pokemonBreak'],c['dualTypePrints'])==(116,161,18,7,12)
  assert c['pin']=='22ea97ca00b595fe6b121494fd45dd65692deee6'
  assert c['expectedPlayableMinimum']>=35 and len(c['requiredEnabledNumbers'])>=35
  g=(ROOT/'app/build.gradle').read_text()
  m=re.search(r"versionName\s+['\"]([^'\"]+)['\"]",g)
- assert m and m.group(1)==c['release']=='0.69.453'
- assert 'versionCode 7452' in g
+ assert m and m.group(1)==c['release']==version
  for n in ('xy9_release_contract.json','xy10_release_contract.json'):
   assert json.loads((ROOT/'scripts'/n).read_text())['release']==c['release'],n+' release drift'
  html=(ROOT/'app/src/main/assets/index.html').read_text()

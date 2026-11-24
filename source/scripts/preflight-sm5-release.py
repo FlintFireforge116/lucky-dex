@@ -4,11 +4,13 @@ from __future__ import annotations
 import argparse,hashlib,json,re,subprocess,sys
 from pathlib import Path
 ROOT=Path(__file__).resolve().parents[1]
+from release_version import verify_release_version
 TESTS=['tests/v07424-ultra-prism-integration.test.cjs','tests/v07425-ultra-prism-reuse.test.cjs','tests/v07427-ultra-prism-stage2-outcomes.test.cjs','tests/v07428-ultra-prism-stage3-outcomes.test.cjs','tests/v07429-ultra-prism-stage4-outcomes.test.cjs','tests/v07430-ultra-prism-stage5-outcomes.test.cjs','tests/v07431-ultra-prism-stage6-outcomes.test.cjs','tests/v07432-ultra-prism-stage7-outcomes.test.cjs','tests/v07433-ultra-prism-stage8-outcomes.test.cjs','tests/v07434-ultra-prism-stage9-outcomes.test.cjs','tests/v07435-ultra-prism-stage10-outcomes.test.cjs','tests/v07436-ultra-prism-stage11-outcomes.test.cjs','tests/v07437-ultra-prism-stage12-outcomes.test.cjs','tests/v07438-ultra-prism-stage13-outcomes.test.cjs','tests/v07439-ultra-prism-final-coverage.test.cjs']
 def check():
  subprocess.run([sys.executable,'scripts/check-gradle-source.py','--self-test'],cwd=ROOT,check=True)
  c=json.loads((ROOT/'scripts/sm5_release_contract.json').read_text())
- assert (c['set'],c['stage'],c['release'])==('sm5','stage13','0.69.453')
+ version=verify_release_version(ROOT)
+ assert (c['set'],c['stage'],c['release'])==('sm5','stage13',version)
  assert (c['printedTotal'],c['attackPrints'],c['abilities'],c['pokemonGX'],c['gxAttackPrints'],c['prismStarPrints'],c['trainerPrints'],c['energyPrints'])==(178,237,37,27,27,6,36,5)
  assert c['pin']=='66cbd13b706b789de3b8cce2f5c9fc95135a33b0'
  assert c['variants']==['119a','122a','125a','135a','153a']
@@ -198,7 +200,6 @@ def check():
  print('SM5 Stage 5 printed Prism Star mechanics PASS: 5 cards / 6 attacks / 2 Abilities / Cyrus')
  print(f'SM5 Stages 2+3 official-text audit PASS: {len(sm5stage2.ATTACKS)} + {len(sm5stage3.ATTACKS)} attacks, {len(sm5stage3.ABILITIES)} Abilities, {len(sm5stage2.TRAINERS)+len(sm5stage3.TRAINERS)} Trainers')
  gradle=(ROOT/'app/build.gradle').read_text()
- assert re.search(r"versionName\s+['\"]0\.69\.452['\"]",gradle) and 'versionCode 7452' in gradle
  for task in ['preflightSM5ContractForApk','generateSM5ForApk','auditSM5ForApk']:
   assert "tasks.register('"+task+"'" in gradle,task+' missing'
  assert "dependsOn tasks.named('auditSM4ForApk')" in gradle
@@ -207,10 +208,10 @@ def check():
  for f in ('tcg-classic-battle-data.js','tcg-classic-deck-builder.js','tcg-classic-opponents.js','tcg-classic-set-picker.js'):
   assert 'sm5' in (ROOT/'app/src/main/assets'/f).read_text(),f+' missing SM5 registration'
  html=(ROOT/'app/src/main/assets/index.html').read_text()
- assert 'tcg-classic-ultra-prism.js' in html and 'v0.69.453' in html
- assert "__LUCKYDEX_BUILD='0.69.453'" in (ROOT/'app/src/main/assets/app-v0167.js').read_text()
+ assert 'tcg-classic-ultra-prism.js' in html and ('v'+version) in html
+ assert f"__LUCKYDEX_BUILD='{version}'" in (ROOT/'app/src/main/assets/app-v0167.js').read_text()
  for sid in ['xy9','xy10','xy11','xy12','sm1','sm2','sm3','sm4']:
-  assert json.loads((ROOT/f'scripts/{sid}_release_contract.json').read_text())['release']=='0.69.453'
+  assert json.loads((ROOT/f'scripts/{sid}_release_contract.json').read_text())['release']==version
  print('SM5 source gate PASS: SHA-pinned official 178 prints, 237 attacks, 37 Abilities, 27 GX, 6 Prism Star')
 def full():
  subprocess.run([sys.executable,'scripts/build-sm5.py'],cwd=ROOT,check=True)

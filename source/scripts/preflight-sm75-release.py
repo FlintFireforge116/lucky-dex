@@ -3,13 +3,15 @@
 import argparse,json,subprocess,sys
 from pathlib import Path
 ROOT=Path(__file__).resolve().parents[1]
+from release_version import verify_release_version
 TESTS=['tests/v07452-dragon-majesty-integration.test.cjs','tests/v07453-dragon-majesty-outcomes.test.cjs','tests/v07454-dragon-majesty-completion.test.cjs', 'tests/v07455-dragon-majesty-independent-audit.test.cjs']
 def main():
  p=argparse.ArgumentParser();p.add_argument('--full',action='store_true');a=p.parse_args()
  def run(*args):subprocess.run(args,cwd=ROOT,check=True)
  run(sys.executable,'scripts/check-gradle-source.py','--self-test')
  c=json.loads((ROOT/'scripts/sm75_release_contract.json').read_text())
- assert c['set']=='sm75' and c['release']=='0.69.453' and c['stage']=='complete'
+ version=verify_release_version(ROOT)
+ assert c['set']=='sm75' and c['release']==version and c['stage']=='complete'
  assert (c['printedTotal'],c['attackPrints'],c['abilities'],c['trainerPrints'],c['energyPrints'])==(80,115,18,13,0)
  run(sys.executable,'scripts/audit-expansion-readiness.py','--set','sm75','--release-only')
  if a.full:

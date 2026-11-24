@@ -69,7 +69,19 @@ test('GX is once per player per game; GX KOs take two prizes, non-GX takes one',
  const coreText=fs.readFileSync(path.join(root,'app/src/main/assets/tcgp-battle-core.js'),'utf8');
  assert.match(coreText,/attack\.gxAttack\|\|\/\\bGX\\b\/i\.test\(attack\.name/);
  assert.ok(coreText.includes('s.gxAttackUsed=true'));
- assert.match(coreText,/s\.gxAttackUsed&&[^\n]*sm6BonnieTurn===state\.turnNumber\)\)continue;/);
+ // Exercise actual legality instead of asserting a particular parenthesis layout.
+ for(const side of ['player','opponent']){
+  const state=core.createBattle({format:'classic',playerDeck:classic.CLASSIC30_LOANER_DECK,opponentDeck:classic.CLASSIC30_LOANER_DECK,seed:32132,firstSide:'player',playerEnergyTypes:['Water','Fighting'],opponentEnergyTypes:['Water','Fighting']});
+  state.phase='battle';state.activeSide=side;state.turnNumber=7;
+  const board=state.sides[side];board.turnCount=4;board.active={cardId:'sm6-73',uid:side+'gx',stack:['sm6-73'],damage:0,energy:{Fighting:5,Colorless:5},specialEnergy:[],conditions:{},tool:null,extraTools:[],playedOnSideTurn:1};
+  const canGX=()=>core.legalActions(state,side).some(a=>a.type==='attack'&&classic.cardById('sm6-73').attacks[a.attackIndex]?.gxAttack);
+  assert.equal(canGX(),true,side+' initial GX');
+  board.gxAttackUsed=true;assert.equal(canGX(),false,side+' already used GX');
+  board.sm6BonnieTurn=state.turnNumber;assert.equal(canGX(),true,side+' Bonnie exception');
+  board.sm11GxLocked=true;assert.equal(canGX(),false,side+' Clear Vision overrides Bonnie');
+  board.gxAttackUsed=false;assert.equal(canGX(),false,side+' Clear Vision even before first GX');
+  assert.ok(core.legalActions(state,side).some(a=>a.type==='attack'&&!classic.cardById('sm6-73').attacks[a.attackIndex]?.gxAttack),side+' ordinary attacks remain legal');
+ }
 });
 test('Physical Energy: special DCE plus 11 Basic reprints, Rainbow flexible unit and attachment effects are enabled',()=>{
  assert.equal(by(136).specialEnergy,true);assert.deepEqual(by(136).effect.provides,{Colorless:2});

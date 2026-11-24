@@ -3,13 +3,15 @@
 import argparse,json,subprocess,sys
 from pathlib import Path
 ROOT=Path(__file__).resolve().parents[1]
+from release_version import verify_release_version
 TESTS=['tests/v07446-celestial-storm-integration.test.cjs','tests/v07447-celestial-storm-outcomes.test.cjs', 'tests/v07448-celestial-storm-continuation.test.cjs', 'tests/v07449-celestial-storm-continuation2.test.cjs','tests/v07450-celestial-storm-completion.test.cjs', 'tests/v07451-celestial-storm-independent-audit.test.cjs']
 def main():
  p=argparse.ArgumentParser();p.add_argument('--full',action='store_true');a=p.parse_args()
  def run(*args):subprocess.run(args,cwd=ROOT,check=True)
  run(sys.executable,'scripts/check-gradle-source.py','--self-test')
  c=json.loads((ROOT/'scripts/sm7_release_contract.json').read_text())
- assert c['set']=='sm7' and c['release']=='0.69.453' and c['stage']=='complete'
+ version=verify_release_version(ROOT)
+ assert c['set']=='sm7' and c['release']==version and c['stage']=='complete'
  assert (c['printedTotal'],c['attackPrints'],c['abilities'],c['trainerPrints'],c['energyPrints'])==(187,232,51,43,2)
  run(sys.executable,'scripts/audit-expansion-readiness.py','--set','sm7','--release-only')
  if a.full:
