@@ -1547,7 +1547,7 @@
       if(state.format==='classic'&&type==='Supporter'&&Number(s.bw9SupportersLockedUntil||0)>=Number(state.turnNumber))return;
       if(state.format==='classic'&&type==='Item'&&Number(s.bw9ItemsLockedUntil||0)>=Number(state.turnNumber))return;
       if(state.format==='classic'&&['bw9-103','bw9-122'].includes(card.id)&&s.hand.length<3)return;
-      if(type==='Supporter'&&s.supporterUsed&&!(state.format==='classic'&&Number(s.bw8SupportersPlayed||0)<2&&pokemonOn(s).some(p=>p.cardId==='bw8-46'&&!effects.abilitiesSuppressed(state,side,p,data.cardById))))return;
+      if(type==='Supporter'&&s.supporterUsed&&!(state.format==='classic'&&s.sm10SurgeTurn===state.turnNumber&&Number(s.bw8SupportersPlayed||0)<3)&&!(state.format==='classic'&&Number(s.bw8SupportersPlayed||0)<2&&pokemonOn(s).some(p=>p.cardId==='bw8-46'&&!effects.abilitiesSuppressed(state,side,p,data.cardById))))return;
       if(state.format==='classic'&&(s.neoTrainerLockTurn===state.turnNumber||Number(s.neoDestinyTrainerLockUntil||0)>=state.turnNumber))return;
       if(state.format==='classic'&&card.id==='neo4-105'&&s.hand.length>=5)return;
       if(state.format==='classic'&&neoTrapActive(state,side,s.active,'switch')&&['Switch','Double Gust','Super Scoop Up'].includes(card.name))return;
@@ -2516,7 +2516,7 @@
             else slot.extraTools=(slot.extraTools||[]).filter(r=>r.uid!==ref.uid);
             board.discard.push(ref);state.log.push({type:'aquapolisHealingBerry',side:who,healed:30});
           }
-          for(const ref of [...toolsOf(slot)])if(['ex3-83','ex15-72'].includes(ref.cardId)&&who!==state.activeSide&&state.turnNumber>=Number(ref.attachedTurn||0)){
+          for(const ref of [...toolsOf(slot)])if(['ex3-83','ex15-72','sm10-180','sm10-232'].includes(ref.cardId)&&who!==state.activeSide&&state.turnNumber>=Number(ref.attachedTurn||0)){
             if(slot.tool?.uid===ref.uid)slot.tool=slot.extraTools?.shift()||null;
             else slot.extraTools=(slot.extraTools||[]).filter(x=>x.uid!==ref.uid);
             board.discard.push(ref);state.log.push({type:'ex3BufferPieceExpired',side:who});
@@ -2907,7 +2907,8 @@
             source?.attack&&source.side===foeSide&&Number(source.turn)===Number(state.turnNumber)&&
             source.uid===attacker?.uid&&Number(source.damage||0)>0&&
             ['sm4-63','sm4-63a','sm4-105','sm4-116'].includes(source.cardId)&&foe.lastAttackName==='Glutton-GX'?2:0;
-          const prizeCount=awardsPrize?Math.max(0,prizeValue(card)-blackMarket+sm4Glutton+extraMoonSkip+arceusBeltBonus+arceusExtra+hgss3SpaceVirus+bw8Overflow+deltaPlus+xy10Endgame+sm2Extra-bw9LifeDew):0;
+          const beast=awardsPrize&&cause==='attack'&&source?.attack&&source.side===foeSide&&source.uid===attacker?.uid&&source.damage>0&&attacker?.sm10BeastGame?.turn===state.turnNumber&&foe.lastAttackName==='Beast Game-GX'?attacker.sm10BeastGame.amount:0;
+          const prizeCount=awardsPrize?Math.max(0,prizeValue(card)+beast-blackMarket+sm4Glutton+extraMoonSkip+arceusBeltBonus+arceusExtra+hgss3SpaceVirus+bw8Overflow+deltaPlus+xy10Endgame+sm2Extra-bw9LifeDew):0;
           awarded=Math.min(prizeCount,Math.max(0,foe.prizes.length-(state.pendingPrizeClaims||[]).filter(q=>q.side===foeSide).reduce((n,q)=>n+q.remaining,0)));
           if(awarded){state.pendingPrizeClaims=state.pendingPrizeClaims||[];state.pendingPrizeClaims.push({side:foeSide,remaining:awarded});}
           state.log.push({type:'ko',side,cardId:card.id,turnNumber:state.turnNumber,prizesTaken:foe.prizesTaken,awarded});
@@ -3095,10 +3096,10 @@
         const enemy=state.sides[side==='player'?'opponent':'player'];
         const target=slotForTarget(enemy,action.target==='opponentActive'?'active':'bench',action.benchIndex);
         if(!target||!data.cardById(target.cardId)?.pokemonEX||toolsOf(target).length>=effects.toolCapacity(state,side,target,data.cardById))throw new Error('Team Flare Tool requires an opposing Pokemon-EX without a Tool.');
-        ref.ownerSide=side;ref.attachedTurn=state.turnNumber;attachTool(target,ref);
+        ref.ownerSide=side;ref.attachedTurn=state.turnNumber;ref.sm10FromHand=true;attachTool(target,ref);
         state.log.push({type:'xy4TeamFlareTool',side,targetUid:target.uid,cardId:card.id});return;
       }
-const target=slotForTarget(s,action.target,action.benchIndex);if(card.id==='pl2-95'&&!data.cardById(target?.cardId)?.isPokemonSP)throw new Error('Technical Machine G must attach to Pokémon SP.');ref.ownerSide=side;ref.attachedTurn=state.turnNumber;attachTool(target,ref);
+const target=slotForTarget(s,action.target,action.benchIndex);if(card.id==='pl2-95'&&!data.cardById(target?.cardId)?.isPokemonSP)throw new Error('Technical Machine G must attach to Pokémon SP.');ref.ownerSide=side;ref.attachedTurn=state.turnNumber;ref.sm10FromHand=true;target.sm10ToolFromHandTurn=state.turnNumber;attachTool(target,ref);
       if(card.id==='xy8-141'&&Number(data.cardById(target.cardId)?.retreat||0)>=3){
         delete target.conditions?.confusion;state.log.push({type:'xy8HeavyBoots',side,targetUid:target.uid});
       }

@@ -80,7 +80,7 @@ tr(182,'Item',E('selectTopToHand',count=7,filter={'kind':'trainer','trainerType'
 # Leave cards with conditional payment, choices across multiple recipients, or bespoke continuous rules gated.
 tr(176,'Supporter',E('sm7Rule',rule='sm9TopPick',count=4,amount=2,filter={},destination='hand',rest='shuffle'))
 tr(172,'Tool',E('preventDamage',duration='whileInPlay',target='self',filter={'subtype':'Fairy'},attackerFilter={'subtype':'Lightning','isExOrGX':True}))
-# v0.69.445: shared staged choices and portable exact-text effects.
+# v0.69.446: shared staged choices and portable exact-text effects.
 R=lambda rule,**kw:E('sm7Rule',rule='sm10'+rule,**kw)
 S=lambda rule,**kw:E('sm7Rule',rule='sm9'+rule,**kw)
 def trig(event,fx,**kw):return dict(type='triggered',event=event,effect=fx,**kw)
@@ -143,3 +143,36 @@ tr(184,'Supporter',R('Pay',amount=2,filter={},trainer=True,after=E('searchChosen
 tr(185,'Supporter',seq(E('draw',amount=2),E('draw',amount=2,condition=cond('sm10SameType'))))
 tr(187,'Item',R('SurpriseBox'))
 tr(189,'Supporter',R('HandAttach',amount=2,energyType='Fire',draw=3,optional=True))
+# v0.69.446: targeted shared mechanics; unresolved variants stay gated.
+at(1,'Elegant Sole',R('BaseNext',name='Elegant Sole',amount=60))
+at(1,'Beast Game-GX',R('BeastGame'))
+for no in [2,3]:ab(no,activated(coin(R('Evolution'))))
+ab(7,activated(coin(R('Gloom')),condition=cond('opponentBenchSpace')))
+at(43,'Three Strikes',R('ThreeCoin'))
+at(49,'Enhanced Horn',R('Horn'))
+at(69,'Sinister Fog',seq(status('poison'),R('Fog')))
+ab(70,trig('evolved',R('CounterSpread',amount=6,filter={'isExOrGX':True},optional=True),fromHandOnly=True))
+at(79,'Ear Kinesis',R('EarKinesis'))
+at(80,'Perplexing Eyes',R('PsychicWeakness'))
+# Resetting Hole requires existing Stadium owner metadata and bench-only condition.
+ab(81,activated(R('ResetHole'),condition=cond('sm10BenchStadium')))
+ab(85,passive(R('Exile')))
+at(90,'Focus Energy',R('BaseNext',name='Beat',amount=80))
+ab(111,trig('evolved',R('TopDark'),fromHandOnly=True))
+ab(148,passive(R('CatAura')))
+at(153,'Eat Up',R('EatUp'))
+at(154,'Digicharge',R('Digicharge'))
+ab(158,trig('checkup',E('healSelf',amount=10)))
+at(160,'Stray Cat Dash',seq(E('discardHand',side='opponent',amount=1),E('discardHand',side='opponent',amount=1,condition=cond('sm10EvolvedNow'))))
+tr(174,'Supporter',R('Exile'))
+tr(178,'Supporter',R('Surge',condition=cond('ownPrizesMore')))
+tr(181,'Supporter',R('Pay',amount=2,filter={'basicEnergy':True,'subtype':'Metal'},after=R('RecycleTrainer')))
+# Move conditional activation to the actual effect descriptor, not ability metadata.
+ab(7,activated(E('coinFlip',heads=R('Gloom'),condition=cond('sm10BenchSpace'))))
+ab(81,activated(R('ResetHole',condition=cond('sm10BenchStadium'))))
+at(107,'Dark Union-GX',R('DarkUnion'))
+at(126,'Rush Up',bonus(70,cond('sm10ToolNow')))
+tr(179,'Stadium',R('Stadium'))
+tr(180,'Tool',E('modifier',stat='damageReduction',scope='self',amount=70,duration='whileInPlay',condition=cond('selfMatches',filter={'subtype':'Metal'})))
+
+tr(185,'Supporter',R('Samson'))

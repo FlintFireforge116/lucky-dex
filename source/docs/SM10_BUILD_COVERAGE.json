@@ -1,20 +1,7 @@
 {
   "printed": 238,
-  "battleReady": 165,
+  "battleReady": 199,
   "gated": {
-    "sm10-1": [
-      "Unimplemented attack: Elegant Sole",
-      "Unimplemented attack: Beast Game-GX"
-    ],
-    "sm10-2": [
-      "Unimplemented Ability: Pupate"
-    ],
-    "sm10-3": [
-      "Unimplemented Ability: Emerge"
-    ],
-    "sm10-7": [
-      "Unimplemented Ability: Irresistible Aroma"
-    ],
     "sm10-32": [
       "Unimplemented attack: Blazer",
       "Unimplemented attack: Fireball Circus"
@@ -25,12 +12,6 @@
     ],
     "sm10-41": [
       "Unimplemented attack: Wicked Tentacles"
-    ],
-    "sm10-43": [
-      "Unimplemented attack: Three Strikes"
-    ],
-    "sm10-49": [
-      "Unimplemented attack: Enhanced Horn"
     ],
     "sm10-52": [
       "Unimplemented attack: Afterimage Strike"
@@ -51,12 +32,6 @@
     "sm10-67": [
       "Unimplemented Ability: Swelling Spite"
     ],
-    "sm10-69": [
-      "Unimplemented attack: Sinister Fog"
-    ],
-    "sm10-70": [
-      "Unimplemented Ability: Shadow Pain"
-    ],
     "sm10-72": [
       "Unimplemented Ability: Hypnotic Pendulum"
     ],
@@ -67,32 +42,11 @@
     "sm10-78": [
       "Unimplemented Ability: Mysterious Message"
     ],
-    "sm10-79": [
-      "Unimplemented attack: Ear Kinesis"
-    ],
-    "sm10-80": [
-      "Unimplemented attack: Perplexing Eyes"
-    ],
-    "sm10-81": [
-      "Unimplemented Ability: Resetting Hole"
-    ],
-    "sm10-85": [
-      "Unimplemented Ability: Underground Work"
-    ],
-    "sm10-90": [
-      "Unimplemented attack: Focus Energy"
-    ],
     "sm10-100": [
       "Unimplemented Ability: Bratty Kick"
     ],
     "sm10-101": [
       "Unimplemented attack: Finishing Combo"
-    ],
-    "sm10-107": [
-      "Unimplemented attack: Dark Union-GX"
-    ],
-    "sm10-111": [
-      "Unimplemented Ability: Greedy Evolution"
     ],
     "sm10-114": [
       "Unimplemented attack: Grandiose Fangs"
@@ -106,9 +60,6 @@
     "sm10-125": [
       "Unimplemented attack: Extra-Tight Press"
     ],
-    "sm10-126": [
-      "Unimplemented attack: Rush Up"
-    ],
     "sm10-131": [
       "Unimplemented Ability: Excitable Draw"
     ],
@@ -119,26 +70,11 @@
       "Unimplemented attack: Pungent Aroma",
       "Unimplemented attack: Miraculous Cologne"
     ],
-    "sm10-148": [
-      "Unimplemented Ability: Gathering of Cats"
-    ],
     "sm10-149": [
       "Unimplemented Ability: Cat Walk"
     ],
-    "sm10-153": [
-      "Unimplemented attack: Eat Up"
-    ],
-    "sm10-154": [
-      "Unimplemented attack: Digicharge"
-    ],
     "sm10-157": [
       "Unimplemented Ability: Crazy Code"
-    ],
-    "sm10-158": [
-      "Unimplemented Ability: Lazy Eating"
-    ],
-    "sm10-160": [
-      "Unimplemented attack: Stray Cat Dash"
     ],
     "sm10-161": [
       "Unimplemented Ability: Playhouse Heal"
@@ -159,21 +95,6 @@
     "sm10-168": [
       "Unimplemented Trainer effect"
     ],
-    "sm10-174": [
-      "Unimplemented Trainer effect"
-    ],
-    "sm10-178": [
-      "Unimplemented Trainer effect"
-    ],
-    "sm10-179": [
-      "Unimplemented Trainer effect"
-    ],
-    "sm10-180": [
-      "Unimplemented Trainer effect"
-    ],
-    "sm10-181": [
-      "Unimplemented Trainer effect"
-    ],
     "sm10-186": [
       "Unimplemented Trainer effect"
     ],
@@ -183,20 +104,6 @@
     "sm10-190": [
       "Unimplemented Special Energy rules"
     ],
-    "sm10-191": [
-      "Unimplemented attack: Elegant Sole",
-      "Unimplemented attack: Beast Game-GX"
-    ],
-    "sm10-192": [
-      "Unimplemented attack: Elegant Sole",
-      "Unimplemented attack: Beast Game-GX"
-    ],
-    "sm10-200": [
-      "Unimplemented attack: Dark Union-GX"
-    ],
-    "sm10-201": [
-      "Unimplemented attack: Dark Union-GX"
-    ],
     "sm10-207": [
       "Unimplemented Ability: Cat Walk"
     ],
@@ -204,19 +111,9 @@
       "Unimplemented attack: Discovery-GX",
       "Unimplemented Ability: Force Canceler"
     ],
-    "sm10-212": [
-      "Unimplemented Trainer effect"
-    ],
-    "sm10-215": [
-      "Unimplemented attack: Elegant Sole",
-      "Unimplemented attack: Beast Game-GX"
-    ],
     "sm10-218": [
       "Unimplemented attack: Rocket Splash",
       "Unimplemented attack: Giant Geyser-GX"
-    ],
-    "sm10-222": [
-      "Unimplemented attack: Dark Union-GX"
     ],
     "sm10-227": [
       "Unimplemented Ability: Cat Walk"
@@ -226,9 +123,6 @@
       "Unimplemented Ability: Force Canceler"
     ],
     "sm10-229": [
-      "Unimplemented Trainer effect"
-    ],
-    "sm10-232": [
       "Unimplemented Trainer effect"
     ],
     "sm10-234": [
