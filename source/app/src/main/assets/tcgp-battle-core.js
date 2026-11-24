@@ -1191,7 +1191,7 @@
     }
     // SM11 Z-Crystals grant their printed GX attack only to a holder with the matching printed attack.
     if(state.format==='classic')for(const ref of activeToolsOf(state,slot)){
-      const required=ref.cardId==='sm11-195'?'Air Slash':ref.cardId==='sm11-203'?'Tackle':null,c=data.cardById(ref.cardId);
+      const required=ref.cardId==='sm11-195'?'Air Slash':ref.cardId==='sm11-203'?'Tackle':ref.cardId==='sm12-190'?'Dragon Claw':null,c=data.cardById(ref.cardId);
       if(required&&c?.battleEnabled&&current.attacks?.some(a=>a.name===required))for(const [attackIndex,attack] of (c.attacks||[]).entries())out.push({cardId:c.id,attackIndex,attack,borrowed:true});
     }
     // SM11 Perfection: borrow printed attacks of friendly Benched or discarded EX/GX.
@@ -1399,6 +1399,7 @@
             damage+=Number(boost.amount||0);
         }
       }
+      if(isActive&&damage>0&&snapshot.sides[side]?.sm12AlteredCreation)damage+=30;
       const effectiveDamage=Math.max(0,damage);
       const neoDarkBonus=isActive&&effectiveDamage>0?10*(attacker.specialEnergy||[]).filter(ref=>['neo1-104','ecard1-158','ecard2-142'].includes(ref.cardId)).length:0;
       return {damage:effectiveDamage,text:neoDarkBonus?`${effectiveDamage} + ${neoDarkBonus} after W/R`:String(effectiveDamage),variable:neoDarkBonus>0};
@@ -1900,6 +1901,8 @@
           const card=data.cardById(ref.cardId);
           return card?.basicEnergy&&card.subtype===ability.requiresBasicEnergyFromHand;
         }))return;
+        // An unlimited information-only Ability must not consume every CPU action.
+        if(ability.name==='Blinking Lights'&&source.cardId==='sm12-72'&&(!foe.deck.length||(side==='opponent'&&source.sm12InspectedTop===foe.deck[0].uid)))return;
         const used=(s.abilityUsed||{})[source.uid+':'+abilityIndex];if(ability.oncePerTurn!==false&&used===s.turnCount)return;
         if(ability.lentalSharedOnce==='scavenge'&&s.lentalScavengeUsedTurn===s.turnCount)return;
         const base={type:'ability',cardId:source.cardId,abilityIndex,target:source===s.active?'active':'bench'};if(source!==s.active)base.benchIndex=Number(source.benchSlot);
@@ -2910,7 +2913,8 @@
           const beast=awardsPrize&&cause==='attack'&&source?.attack&&source.side===foeSide&&source.uid===attacker?.uid&&source.damage>0&&attacker?.sm10BeastGame?.turn===state.turnNumber&&foe.lastAttackName==='Beast Game-GX'?attacker.sm10BeastGame.amount:0;
           const beastBringer=awardsPrize&&cause==='attack'&&source?.attack&&source.side===foeSide&&source.uid===attacker?.uid&&source.damage>0&&sm10WasActive&&foe.prizes.length===6&&data.cardById(attacker?.cardId)?.ultraBeast&&effects.matchesFilter(card,{isExOrGX:true})&&!effects.toolEffectsSuppressed(state,data.cardById,attacker)&&toolsOf(attacker).some(r=>['sm10-164','sm10-229'].includes(r.cardId))?1:0;
           const greedy=awardsPrize&&cause==='attack'&&source?.attack&&source.side===foeSide&&source.uid===attacker?.uid&&source.damage>0&&attacker?.sm11GreedyTurn===state.turnNumber&&foe.lastAttackName==='Greedy Crush'&&effects.matchesFilter(card,{isExOrGX:true})?1:0;
-          const prizeCount=awardsPrize?Math.max(0,prizeValue(card)+greedy+beast+beastBringer-blackMarket+sm4Glutton+extraMoonSkip+arceusBeltBonus+arceusExtra+hgss3SpaceVirus+bw8Overflow+deltaPlus+xy10Endgame+sm2Extra-bw9LifeDew):0;
+          const sm12Bonus=awardsPrize&&cause==='attack'&&source?.attack&&source.side===foeSide&&source.turn===state.turnNumber&&source.damage>0?((sm10WasActive&&foe.sm12AlteredPrize?1:0)+(attacker?.sm12RedBanquetTurn===state.turnNumber&&source.uid===attacker.uid?1:0)):0;
+          const prizeCount=awardsPrize?Math.max(0,prizeValue(card)+sm12Bonus+greedy+beast+beastBringer-blackMarket+sm4Glutton+extraMoonSkip+arceusBeltBonus+arceusExtra+hgss3SpaceVirus+bw8Overflow+deltaPlus+xy10Endgame+sm2Extra-bw9LifeDew):0;
           awarded=Math.min(prizeCount,Math.max(0,foe.prizes.length-(state.pendingPrizeClaims||[]).filter(q=>q.side===foeSide).reduce((n,q)=>n+q.remaining,0)));
           if(awarded){state.pendingPrizeClaims=state.pendingPrizeClaims||[];state.pendingPrizeClaims.push({side:foeSide,remaining:awarded});}
           state.log.push({type:'ko',side,cardId:card.id,turnNumber:state.turnNumber,prizesTaken:foe.prizesTaken,awarded});
@@ -3320,6 +3324,7 @@ const target=slotForTarget(s,action.target,action.benchIndex);if(card.id==='pl2-
       }
 
       if(state.phase==='effectChoice')state.pendingChoice.resume=state.pendingChoice.resume||'trainer';
+      if(state.format==='classic'&&card.name==='Draw Energy')drawCard(s);
       sm11MarkLazyHowl(state,side,target);
       triggerAbilities(state,'energyAttached',side,target,{energyType:Object.keys(provides)[0]||'Colorless',energyCardId:card.id,fromZone:false,fromHand:true,specialEnergy:!!card.specialEnergy});
       triggerAbilities(state,'opponentEnergyAttached',foeSide,null,{target,energyType:Object.keys(provides)[0]||'Colorless',fromHand:true,sourceSide:side});
@@ -3744,6 +3749,7 @@ const target=slotForTarget(s,action.target,action.benchIndex);if(card.id==='pl2-
     if (matched.type === 'ability'){
       const source=slotForTarget(s,matched.target,matched.benchIndex),ability=abilitiesFor(data.cardById(source.cardId),source,state)[matched.abilityIndex||0];
       s.abilityUsed=s.abilityUsed||{};if(ability.oncePerTurn!==false)s.abilityUsed[source.uid+':'+(matched.abilityIndex||0)]=s.turnCount;
+      if(ability.name==='Blinking Lights'&&source.cardId==='sm12-72')source.sm12InspectedTop=foe.deck[0]?.uid;
       if(ability.name==='Nurse Call')s.pl1NurseCallUsedTurn=s.turnCount;
       if(source.cardId==='ex5-16')s.ex5HealDanceUsedTurn=state.turnNumber;
       if(['ex5-23','ex5-25','ex5-26','ex5-30'].includes(source.cardId))s.ex5TemperamentalWeatherTurn=s.turnCount;
@@ -4154,6 +4160,7 @@ const target=slotForTarget(s,action.target,action.benchIndex);if(card.id==='pl2-
         if(!kartenvoy)damage+=effects.modifierAmount(state,foeSide,defender,'damageTaken',data.cardById);
         if(state.format==='classic'&&damage>0){const metal=miraculousWindActive(state)?0:(s.active.specialEnergy||[]).filter(r=>['neo1-19','ecard1-159','ecard2-143'].includes(r.cardId)).length;if(metal&&!attackerCard.types?.includes('Metal'))damage=Math.max(0,damage-metal*10);}
         if(state.format==='classic'&&damage>0)damage=Math.max(0,damage-10*(s.active.specialEnergy||[]).filter(r=>['ex9-87','ex14-88'].includes(r.cardId)).length);
+        if(result.damageRules?.ignoreWeakness&&damage>0&&s.sm12AlteredCreation)damage+=30;
         if(!result.damageRules?.ignoreWeakness){
           const beforeMatchup=damage,defCard=data.cardById(defender.cardId),resistance=defender.resistanceOverride||defCard?.resistance;
           if(state.format==='classic'&&activeStadium(state)?.cardId!=='hgss3-76'&&beforeMatchup>0&&resistance&&effects.effectiveTypes(state,side,s.active,data.cardById).includes(resistance)){
