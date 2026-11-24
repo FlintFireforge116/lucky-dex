@@ -13,5 +13,5 @@ def main():
   run(sys.executable,'scripts/audit-expansion-readiness.py','--set','det1','--check-release','--report','docs/DET1_CURRENT_GAP_LEDGER.md')
   run('node','--test',*TESTS)
   run(sys.executable,'scripts/preflight-sm9-release.py')
-  run('node','--test','tests/v07381-breakpoint-completion.test.cjs')
+  run('node','--test','tests/v07381-breakpoint-completion.test.cjs','tests/v07309-dragons-exalted-independent-audit.test.cjs','tests/v07333-classic-deck-quality.test.cjs')
 if __name__=='__main__':main()

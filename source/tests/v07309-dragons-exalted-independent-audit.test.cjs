@@ -40,12 +40,19 @@ test('Probopass Magnetic Lines permits decline, Basic Energy and physical Specia
  assert.equal(o.active.energy.Fire,0);assert.equal(b.energy.Fire,1);
 });
 test('Registeel Triple Laser applies Active weakness but not Bench weakness, one hit per target',()=>{
- const s=scene();s.sides.player.active=slot(81);const o=s.sides.opponent;o.active=slot(110,'victim');o.active.weaknessOverride='Metal';const one=bench(o,85,'bench1'),two=bench(o,85,'bench2');one.weaknessOverride='Metal';two.weaknessOverride='Metal';
+ const s=scene();s.sides.player.active=slot(81);const o=s.sides.opponent;o.active=slot(85,'victim');o.active.weaknessOverride='Metal';const one=bench(o,85,'bench1'),two=bench(o,85,'bench2');one.weaknessOverride='Metal';two.weaknessOverride='Metal';
  const e=cards.cardById('bw6-81').attacks[0].effect;
  let ch=apply(s,e);assert.equal(ch.kind,'pokemon');ch=apply(s,ch.effect,{choiceTarget:'opponentActive'},true);
  assert.equal(o.active.damage,60,'weak Metal Active must take 60, not flat 30');assert.equal(ch.kind,'pokemon');
  ch=apply(s,ch.effect,{choiceTarget:'bench',choiceBenchIndex:0},true);assert.equal(one.damage,30,'Bench ignores Weakness');
  ch=apply(s,ch.effect,{choiceTarget:'bench',choiceBenchIndex:1},true);assert.equal(two.damage,30);assert.equal(o.active.damage,60);
+});
+test('Registeel Triple Laser applies Bouffer after Weakness, including on the Bench',()=>{
+ const s=scene();s.sides.player.active=slot(81);const o=s.sides.opponent;o.active=slot(110,'bouffer-active');o.active.weaknessOverride='Metal';const one=bench(o,110,'bouffer-bench'),two=bench(o,85,'unprotected');one.weaknessOverride='Metal';two.weaknessOverride='Metal';
+ const e=cards.cardById('bw6-81').attacks[0].effect;
+ let ch=apply(s,e);ch=apply(s,ch.effect,{choiceTarget:'opponentActive'},true);assert.equal(o.active.damage,40,'30 × 2 minus Bouffer 20');
+ ch=apply(s,ch.effect,{choiceTarget:'bench',choiceBenchIndex:0},true);assert.equal(one.damage,10,'30 minus Bouffer 20 without Bench Weakness');
+ apply(s,ch.effect,{choiceTarget:'bench',choiceBenchIndex:1},true);assert.equal(two.damage,30);assert.equal(o.active.damage,40);
 });
 test('Shedinja no-prize Ability yields one Prize if Garbotoxin is active',()=>{
  for(const suppress of [false,true]){
