@@ -1,0 +1,86 @@
+"""Sword & Shield exact printed-rule mappings, gated where unsupported."""
+from copy import deepcopy
+from pathlib import Path
+import json,re
+import sm12_verified as V
+from sm7_verified import E,seq,coin,status,bonus,cond,passive,activated
+ROWS=json.loads((Path(__file__).resolve().parents[1]/'data/classic/swsh1-print-compact.json').read_text())
+A={};B={};T={}
+def at(no,title,effect):
+ r=next(r for r in ROWS if r[0]==str(no));a=next(a for a in r[7] if a[0]==title);A[(title,tuple(a[1]),a[2],a[3])]=effect
+def ab(no,effect):
+ r=next(r for r in ROWS if r[0]==str(no));B[tuple(r[8][0])]=effect
+def tr(no,kind,effect):
+ r=next(r for r in ROWS if r[0]==str(no));T[(r[1],tuple(r[13]))]=(kind,effect)
+def attack(row,a):
+ t=a[3]; exact=A.get((a[0],tuple(a[1]),a[2],t))
+ if exact is not None:return deepcopy(exact)
+ for pattern,fn in PATTERNS:
+  m=re.fullmatch(pattern,t)
+  if m:return fn(m,a)
+ return V.attack(['_swsh1_',*row[1:]],a)
+def ability(row,a):return deepcopy(B.get(tuple(a))) or V.ability(['_swsh1_',*row[1:]],a)
+def trainer(row):return deepcopy(T.get((row[1],tuple(row[13]))))
+def energy(row):return None
+def prism_ready(row):return False
+def discard(n=1,target='self',**kw):return E('discardEnergyCard',target=target,amount=n,**kw)
+def lock(title=None):return E('lock',target='self',action='attack',duration='nextOwnTurn',**({'attackName':title} if title else {}))
+def search(n,**f):return E('searchChosen',amount=n,filter=f)
+def bench(n):return E('benchDamage',side='opponent',all=True,amount=n)
+def mod(stat,n,scope='self',duration='whileInPlay',**kw):return E('modifier',stat=stat,scope=scope,amount=n,duration=duration,**kw)
+PATTERNS=[
+ (r'This attack does (\d+) more damage for each of your Benched Pokémon\.',lambda m,a:E('benchCountDamage',side='self',amount=int(m[1]),mode='add')),
+ (r'This attack does (\d+) more damage for each (Water|Psychic|Fire|Metal|Lightning|Grass|Fighting|Darkness) Energy attached to this Pokémon\.',lambda m,a:E('energyDamage',source='self',energyType=m[2],countProvidedType=True,amount=int(m[1]),mode='add')),
+ (r"This attack does (\d+) more damage for each Energy attached to your opponent's Active Pokémon\.",lambda m,a:E('energyDamage',source='opponent',amount=int(m[1]),mode='add')),
+ (r"During your next turn, this Pokémon can't use (.+)\.",lambda m,a:lock(m[1])),
+ (r"During your next turn, this Pokémon can't attack\.",lambda m,a:lock()),
+ (r"During your opponent's next turn, the Defending Pokémon can't retreat\.",lambda m,a:E('lock',target='opponentActive',action='retreat',duration='opponentTurn')),
+ (r"This attack also does (\d+) damage to each of your opponent's Benched Pokémon\. \(Don't apply Weakness and Resistance for Benched Pokémon\.\)",lambda m,a:bench(int(m[1]))),
+ (r"This attack also does (\d+) damage to (\d+) of your opponent's Benched Pokémon\. \(Don't apply Weakness and Resistance for Benched Pokémon\.\)",lambda m,a:E('multiTargetDamage',target='opponentBench',amount=int(m[1]),count=int(m[2]))),
+ (r"This Pokémon also does (\d+) damage to itself\.",lambda m,a:E('selfDamage',amount=int(m[1]))),
+ (r"This Pokémon is now Asleep\.",lambda m,a:E('status',target='self',status='sleep')),
+ (r"Discard all Energy from this Pokémon\.",lambda m,a:discard('all')),
+ (r"Discard (\d+) Energy from your opponent's Active Pokémon\.",lambda m,a:discard(int(m[1]),'opponentActive')),
+ (r"Discard an Energy from your opponent's Active Pokémon\.",lambda m,a:discard(1,'opponentActive')),
+ (r"Discard a Special Energy from your opponent's Active Pokémon\.",lambda m,a:discard(1,'opponentActive',specialOnly=True)),
+ (r"Discard the top (\d+) cards of your opponent's deck\.",lambda m,a:E('discardTop',side='opponent',amount=int(m[1]))),
+ (r"Discard the top card of your opponent's deck\.",lambda m,a:E('discardTop',side='opponent',amount=1)),
+ (r"Discard the top (\d+) cards of your deck\.",lambda m,a:E('discardTop',side='self',amount=int(m[1]))),
+ (r"If your opponent's Active Pokémon already has any damage counters on it, this attack does (\d+) more damage\.",lambda m,a:bonus(int(m[1]),cond('opponentDamaged'))),
+ (r"If your opponent's Active Pokémon is Poisoned, this attack does (\d+) more damage\.",lambda m,a:bonus(int(m[1]),cond('opponentStatus',status='poison'))),
+ (r"If your opponent's Active Pokémon is Asleep, this attack does (\d+) more damage\.",lambda m,a:bonus(int(m[1]),cond('opponentStatus',status='sleep'))),
+ (r"Flip a coin until you get tails\. This attack does (\d+) damage for each heads\.",lambda m,a:E('coinDamage',coins='untilTails',amount=int(m[1]),mode='replace')),
+ (r"Flip a coin until you get tails\. This attack does (\d+) more damage for each heads\.",lambda m,a:E('coinDamage',coins='untilTails',amount=int(m[1]),mode='add')),
+ (r"During your opponent's next turn, this Pokémon takes (\d+) less damage from attacks \(after applying Weakness and Resistance\)\.",lambda m,a:mod('damageReduction',int(m[1]),duration='opponentTurn')),
+ (r"Attach a (Fire|Water|Grass|Metal|Lightning|Psychic|Fighting|Darkness) Energy card from your discard pile to this Pokémon\.",lambda m,a:E('attachEnergyFromDiscard',target='self',energyType=m[1],amount=1)),
+ (r"Draw (\d+) cards\.",lambda m,a:E('draw',amount=int(m[1]))),
+ (r"Each player draws (\d+) cards\.",lambda m,a:seq(E('draw',amount=int(m[1])),E('draw',side='opponent',amount=int(m[1])))),
+]
+at(4,'Paralyze Poison',seq(status('poison'),coin(status('paralysis'))))
+at(8,'Bite Together',bonus(60,cond('pokemonPresent',side='self',zone='bench',filter={'name':'Durant'})))
+at(36,'Bright Flame',E('coinFlip',tails=discard(2)))
+at(79,'Electro Wheel',seq(discard(1),E('switch',target='self',optional=False)))
+at(94,'Coordinated Strike',bonus(80,cond('pokemonPresent',side='self',zone='bench',filter={'name':'Hitmonchan'})))
+at(95,'Coordinated Beatdown',bonus(20,cond('pokemonPresent',side='self',zone='bench',filter={'name':'Hitmonlee'})))
+at(120,'Lode Search',E('searchChosen',source='discard',amount=1,filter={'kind':'trainer'}))
+at(120,'Crazy Claws',E('damageFromDamage',source='opponent',amount=6,mode='add'))
+at(134,'Charge Order',E('fieldCountDamage',side='self',benchOnly=True,amount=30,mode='add',filter={'name':'Pawniard'}))
+at(155,'Spit Shot',seq(discard('all'),E('selectedDamage',target='opponentPokemon',amount=160)))
+ab(91,activated(E('heal',target='selfActive',amount=20)))
+ab(110,passive(mod('damageReduction',30)))
+ab(128,passive(mod('attackDamage',20,scope='team',filter={'subtype':'Metal'})))
+# Verified standard Trainer descriptors; do not inherit historical collector-ID handlers.
+tr(156,'Tool',mod('retreatCost',-2))
+tr(158,'Tool',mod('maxHp',30))
+tr(159,'Item',coin(E('chooseTarget',target='opponentPokemon',chooser='owner',filter={'hasAnyEnergy':True},effect=E('discardEnergyCard',target='opponentPokemon',amount=1))))
+tr(160,'Item',E('searchChosen',source='discard',amount=2,filter={'kind':'energy','basicEnergy':True}))
+tr(161,'Item',search(1,kind='energy',basicEnergy=True))
+tr(163,'Item',search(1,kind='pokemon',evolved=True))
+tr(165,'Supporter',E('draw',amount=3))
+tr(173,'Supporter',search(1,kind='pokemon'))
+tr(175,'Item',coin(E('forceOpponentSwitch',chooseBy='attacker')))
+tr(177,'Item',E('chooseTarget',target='selfPokemon',effect=E('heal',target='selfPokemon',amount=30)))
+tr(183,'Item',E('switch',target='self'))
+tr(185,'Tool',mod('attackDamage',10))
+
+ab(139,passive(E('preventDamage',target='self',duration='whileInPlay',attackerFilter={'stage':'VMAX'})))

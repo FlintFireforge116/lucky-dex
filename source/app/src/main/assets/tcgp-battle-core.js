@@ -375,6 +375,7 @@
       // has normal evolution timing and cures Special Conditions. A second
       // BREAK cannot be stacked over a BREAK of the same Pokémon.
       if(evo.breakEvolution&&(!base||base.breakEvolution||!classicEvolutionMatches(base.name,evo.evolvesFrom)))return false;
+      if(evo.pokemonVMAX&&(!base?.pokemonV||base.pokemonVMAX||base.name!==evo.evolvesFrom))return false;
       const evolvesName=asName?.name||base?.name;if((state.format==='classic'?!classicEvolutionMatches(evolvesName,evo.evolvesFrom):evolvesName!==evo.evolvesFrom))return false;
       const fighterRoar=state.format==='classic'&&base?.abilities?.some(a=>a.effect?.rule==='sm12FighterRoar')&&!effects.abilitiesSuppressed(state,side,slot,data.cardById)&&!!(data.cardById(dialga?.cardId)?.pokemonGX||data.cardById(dialga?.cardId)?.pokemonEx||data.cardById(dialga?.cardId)?.pokemonEX);
       const firstTurn=s.turnCount<=1,sameTurn=Number(slot.playedOnSideTurn)>=Number(s.turnCount);

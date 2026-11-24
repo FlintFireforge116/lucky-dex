@@ -12,7 +12,7 @@ def main():
     for sid,fn in [('xy9','check_contract'),('xy10','check'),('xy11','check'),('xy12','check'),('sm1','check_source'),('sm2','check'),('sm3','check'),('sm4','check'),('sm5','check'),('sm6','check_static')]:
         print('Historical gate:',sid,flush=True)
         runpy.run_path(str(ROOT/'scripts'/f'preflight-{sid}-release.py'))[fn]()
-    for sid in ('sm7','sm75','sm8','sm9','det1','sm10','sm11','sm115','sma','sm12'):
+    for sid in ('sm7','sm75','sm8','sm9','det1','sm10','sm11','sm115','sma','sm12','swsh1'):
         subprocess.run([sys.executable,str(ROOT/'scripts'/f'preflight-{sid}-release.py')],cwd=ROOT,check=True)
-    print('All 20 historical/new release source gates PASS',flush=True)
+    print('All 21 historical/new release source gates PASS',flush=True)
 if __name__=='__main__':main()

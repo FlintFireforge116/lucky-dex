@@ -8,8 +8,8 @@ android {
         applicationId 'com.example.luckydex'
         minSdk 26
         targetSdk 35
-        versionCode 7465
-        versionName '0.69.465'
+        versionCode 7466
+        versionName '0.69.466'
     }
 
     signingConfigs {
@@ -1066,7 +1066,7 @@ tasks.matching { it.name == 'preBuild' || (it.name.startsWith('merge') && it.nam
     dependsOn tasks.named('auditSM5ForApk')
 }
 
-// v0.69.465 Forbidden Light SM6: SHA-pinned 150-print full-set source and audit.
+// v0.69.466 Forbidden Light SM6: SHA-pinned 150-print full-set source and audit.
 tasks.register('preflightSM6ContractForApk', Exec) {
     dependsOn tasks.named('auditSM5ForApk')
     workingDir rootProject.projectDir
@@ -1284,4 +1284,24 @@ tasks.register('auditSM12ForApk', Exec) {
 }
 tasks.matching { it.name == 'preBuild' || (it.name.startsWith('merge') && it.name.endsWith('Assets')) }.configureEach {
     dependsOn tasks.named('auditSM12ForApk')
+}
+
+// Sword & Shield: pinned catalogue and staged gameplay gate.
+tasks.register('preflightSWSH1ContractForApk', Exec) {
+    dependsOn tasks.named('auditSM12ForApk')
+    workingDir rootProject.projectDir
+    commandLine (System.getenv('LUCKYDEX_PYTHON') ?: 'python3'), 'scripts/preflight-swsh1-release.py'
+}
+tasks.register('generateSWSH1ForApk', Exec) {
+    dependsOn tasks.named('preflightSWSH1ContractForApk')
+    workingDir rootProject.projectDir
+    commandLine (System.getenv('LUCKYDEX_PYTHON') ?: 'python3'), 'scripts/build-swsh1.py'
+}
+tasks.register('auditSWSH1ForApk', Exec) {
+    dependsOn tasks.named('generateSWSH1ForApk')
+    workingDir rootProject.projectDir
+    commandLine 'node', '--test', 'tests/v07475-sword-shield-integration.test.cjs', 'tests/v07476-sword-shield-outcomes.test.cjs'
+}
+tasks.matching { it.name == 'preBuild' || (it.name.startsWith('merge') && it.name.endsWith('Assets')) }.configureEach {
+    dependsOn tasks.named('auditSWSH1ForApk')
 }

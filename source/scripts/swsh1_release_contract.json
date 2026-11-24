@@ -1,0 +1,15 @@
+{
+  "set": "swsh1",
+  "name": "Sword & Shield",
+  "stage": "integration",
+  "release": "0.69.466",
+  "printedTotal": 216,
+  "attackPrints": 277,
+  "abilities": 25,
+  "pokemonV": 31,
+  "pokemonVMAX": 8,
+  "trainerPrints": 42,
+  "energyPrints": 1,
+  "pin": "c43bc9ff9daa80e41bcd8952080b79825e8caa8f",
+  "variants": []
+}
