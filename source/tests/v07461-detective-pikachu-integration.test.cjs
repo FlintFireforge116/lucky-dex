@@ -35,7 +35,7 @@ test('every enabled print preserves every full printed attack, Ability, Trainer/
    }
   }else if(c.battleEnabled){assert.deepEqual(fx.validateEffect(c.effect),[],c.id);assert.notEqual(c.effect.type,'noop',c.id);}
  }
- assert.equal(cv.battleReady,set.CARDS.filter(c=>c.battleEnabled).length);assert.equal(cv.battleReady+Object.keys(cv.gated).length,18);assert.equal(cv.battleReady,16);assert.deepEqual(Object.keys(cv.gated),['det1-9','det1-17']);
+ assert.equal(cv.battleReady,set.CARDS.filter(c=>c.battleEnabled).length);assert.equal(cv.battleReady+Object.keys(cv.gated).length,18);assert.equal(cv.battleReady,18);assert.deepEqual(Object.keys(cv.gated),[]);
  assert.deepEqual(cv.gated,Object.fromEntries(set.CARDS.filter(c=>!c.battleEnabled).map(c=>[c.id,c.support.reasons])));
 });
 

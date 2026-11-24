@@ -18,17 +18,16 @@ A={
 ('13','Directing Traffic'):E('reorderTop',deckSide='self',count=5),
 ('14','Healing Melody'):E('heal',target='selfAll',amount=10),
 ('16','Continuous Lick'):E('coinDamage',coins='untilTails',amount=20,mode='replace'),
-# Copy Anything is explicitly gated pending full copied-cost and GX validation.
+('17','Copy Anything'):E('copyAttack',source='opponentPokemon',requiresCopiedCost=True,det1Copy=True),
 ('18','Pitch'):E('forceOpponentSwitch',chooseBy='defender'),
 }
 B={
  '2':activated(E('chooseTarget',target='selfPokemon',forceChoose=True,effect=E('heal',target='selfPokemon',amount=30))),
  '11':{'type':'triggered','event':'benched','fromHandOnly':True,'effect':E('sm7Rule',rule='det1Pantomime')},
  '6':passive(E('modifier',stat='damageReduction',scope='team',amount=30,duration='whileInPlay'),activeOnly=True),
- # Greninja remains gated until exact Active and Bench damage-instance prevention is covered.
+ '9':passive(E('coinDamageGuard',preventAll=True)),
 }
 def attack(row,a):
- if row[0]=='17':return None
  return deepcopy(A.get((row[0],a[0]))) or V.attack(row,a)
 def ability(row,a):return deepcopy(B.get(row[0]))
 def trainer(row):return None

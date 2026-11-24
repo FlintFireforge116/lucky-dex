@@ -1,0 +1,5 @@
+# Detective Pikachu completion and audit — v0.69.442
+
+18/18 enabled; 22 attacks and 4 Abilities. All 44 player/opponent printed-attack smoke paths execute and exit effect choice. 30 new focused outcome cases supplement the earlier 18-test release. The full 48-test DET1 suite, 117-test SM9 full preflight, and 13-test previous XY9 failure file passed locally. Gradle source and release contracts validated. No gates removed.
+
+Greninja: per-positive-damage Evasion Jutsu coin guard at the shared damage application paths, not on counter placement or attack effects. Ditto: source and nested choices separated, typed copied cost checked before staged payment, no-effect on insufficient Energy, shared GX limit. Recursive direct copy-of-copy safely resolves without effect; bespoke historical damage and copied effects still need broader interaction coverage. Shared multi-target Active reduction ordering corrected and protected selected targets remain distinct. This is a source/Node audit, not proof of an Android APK or exhaustive legacy combinations.

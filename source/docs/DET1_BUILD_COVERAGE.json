@@ -1,14 +1,7 @@
 {
   "printed": 18,
-  "battleReady": 16,
-  "gated": {
-    "det1-9": [
-      "Unimplemented Ability: Evasion Jutsu"
-    ],
-    "det1-17": [
-      "Unimplemented attack: Copy Anything"
-    ]
-  },
+  "battleReady": 18,
+  "gated": {},
   "attacks": 22,
   "abilities": 4,
   "pokemonGX": 0,

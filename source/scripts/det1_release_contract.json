@@ -1,8 +1,8 @@
 {
   "set": "det1",
   "name": "Detective Pikachu",
-  "stage": "integration",
-  "release": "0.69.441",
+  "stage": "complete",
+  "release": "0.69.442",
   "printedTotal": 18,
   "attackPrints": 22,
   "abilities": 4,

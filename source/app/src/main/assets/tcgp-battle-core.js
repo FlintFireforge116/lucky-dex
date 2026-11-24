@@ -2273,7 +2273,7 @@
       let results=[];for(let i=0;i<50;i++){const heads=random(state)<.5;results.push(heads);if(!heads)break;attacker.damage=Number(attacker.damage||0)+10;}
       state.log.push({type:'coin',side:foeSide,reason:'Skull Stone',heads:results.filter(Boolean).length,results});
     }
-    if(damage>0){const coinGuard=effects.findPassiveRule(state,foeSide,defender,'coinDamageGuard',data.cardById);if(coinGuard){const heads=random(state)<0.5;state.log.push({type:'coin',side:foeSide,heads,reason:'coinDamageGuard',results:[heads]});if(heads)damage=coinGuard.preventAll?0:Math.max(0,damage-Number(coinGuard.reduction||0));}}
+    if(damage>0){const coinGuard=effects.findPassiveRule(state,foeSide,defender,'coinDamageGuard',data.cardById);if(coinGuard&&defender.cardId!=='det1-9'){const heads=random(state)<0.5;state.log.push({type:'coin',side:foeSide,heads,reason:'coinDamageGuard',results:[heads]});if(heads)damage=coinGuard.preventAll?0:Math.max(0,damage-Number(coinGuard.reduction||0));}}
     if(state.format==='classic'&&damage>0&&defender===state.sides[foeSide].active){
       const refs=[defender.tool,...(defender.extraTools||[])].filter(Boolean),fruit=refs.find(ref=>ref.cardId==='SNAPFLORIO-115');
       if(fruit){if(defender.tool?.uid===fruit.uid)defender.tool=defender.extraTools?.shift()||null;
@@ -2302,6 +2302,7 @@
        Number(defender.pl4HardenUntil||0)>=Number(state.turnNumber)&&!result.damageRules?.ignoreEffects){
       state.log.push({type:'pl4HardenPrevent',side:foeSide,prevented:damage});damage=0;
     }
+    if(!result.damageRules?.ignoreEffects)damage=effects.det1EvasionDamage(state,foeSide,defender,damage,data.cardById,random);
     defender.damage=Number(defender.damage||0)+damage;
     if(state.format==='classic'&&damage>0)for(const ref of activeToolsOf(state,defender))if(ref.cardId==='dp6-129')ref.dp6BubbleCoatDamagedTurn=state.turnNumber;if(damage>0)effects.florioReactToAttackDamage?.(state,foeSide,defender,side,attacker,damage,data.cardById,random);
     if(state.format==='classic'&&damage>0&&defender.cardId==='dp2-61'&&Number(defender.dp2SpikeArmorUntil||0)>=state.turnNumber){attacker.damage=Number(attacker.damage||0)+40;state.log.push({type:'dp2SpikeArmor',side:foeSide,target:attacker.cardId,amount:40});}if(damage>0)defender.lastDamageSource={side,uid:attacker.uid,cardId:attacker.cardId,attack:true,turn:state.turnNumber,damage};
@@ -3910,9 +3911,10 @@ const target=slotForTarget(s,action.target,action.benchIndex);if(card.id==='pl2-
         cardUids:(s.active.specialEnergy||[]).filter(r=>r.cardId==='xy8-151').map(r=>r.uid)};
       // A copied attack can require the same staged pre-damage payment as the original.
       // Preserve the declaring attack and chosen copy; only the payment rule is borrowed.
-      const copiedSource=attack.effect?.type==='copyAttack'&&attack.name==='Nightcap'?slotForTarget(foe,matched.choiceTarget,matched.choiceBenchIndex):null;
+      const copiedSource=attack.effect?.type==='copyAttack'&&(attack.name==='Nightcap'||attack.effect.det1Copy)?slotForTarget(foe,matched.choiceTarget,matched.choiceBenchIndex):null;
       const copiedAttack=attack.effect?.type==='sm2Rule'&&attack.effect.rule==='copycat'&&foe.lastAttackTurn===state.turnNumber-1?data.cardById(foe.lastAttackCardId)?.attacks?.find(a=>a.name===foe.lastAttackName&&!a.name.endsWith('-GX')):copiedSource&&data.cardById(copiedSource.cardId)?.attacks?.[matched.choiceAttackIndex];
-      const paymentEffect=copiedAttack?.effect||attack.effect;
+      if(attack.effect?.det1Copy)matched.det1CopiedCostPaid=!!copiedAttack&&effectContext(state,side).canPayCopiedCost(copiedAttack);
+      const paymentEffect=attack.effect?.det1Copy&&!matched.det1CopiedCostPaid?attack.effect:copiedAttack?.effect||attack.effect;
       const sm7Rule=paymentEffect?.type==='sm7Rule'?paymentEffect.rule:null;
       if(['crushBurn','sandyFear','sm75ExplosiveJet','sm8LavaFlow','sm8MindBlown','sm9ElectromagneticBomb'].includes(sm7Rule)&&sm7BeforeAttack(state,side,matched,sm7Rule,0))return state;
       if(sm7Rule==='sandyFear')shuffle(state,foe.deck);
@@ -3953,6 +3955,7 @@ const target=slotForTarget(s,action.target,action.benchIndex);if(card.id==='pl2-
   function finishDeclaredAttack(state,side,matched){
     const s=state.sides[side],foeSide=side==='player'?'opponent':'player',foe=state.sides[foeSide],attackerCard=data.cardById(s.active.cardId),attackSourceCard=data.cardById(matched.attackCardId||s.active.cardId),attack=attackSourceCard.attacks[matched.attackIndex];
       const context={...effectContext(state,side,matched),isAttack:true},result=effects.resolveAttack(attack,context);
+      if(attack.effect?.det1Copy){context.action={...JSON.parse(matched.copiedEffectSelection||'{}'),sm7SelectedCount:matched.sm7SelectedCount};context.attack=data.cardById(matched.choiceCardId)?.attacks?.[matched.choiceAttackIndex];}
       // Some printed attacks explicitly resolve an effect BEFORE damage.
       // A Pokémon Tool removed by Peck Off must not reduce the incoming hit.
       // General timing metadata keeps those pre-damage effects out of the
@@ -4177,7 +4180,7 @@ const target=slotForTarget(s,action.target,action.benchIndex);if(card.id==='pl2-
       // EX16 Drake's Stadium: active Colorless Pokémon receive -10 after matchup.
       if(state.format==='classic'&&activeStadium(state)?.cardId==='ex16-72'&&isActive&&data.cardById(defender.cardId)?.types?.includes('Colorless'))damage=Math.max(0,damage-10);
       if(state.format==='classic'&&damage>0&&Number(defender.ex6ExpandUntil||0)>=state.turnNumber)damage=Math.max(0,damage-10);
-      if(damage>0&&!result.damageRules?.ignoreEffects){const coinGuard=effects.findPassiveRule(state,foeSide,defender,'coinDamageGuard',data.cardById);if(coinGuard){const heads=random(state)<0.5;state.log.push({type:'coin',side:foeSide,heads,reason:'coinDamageGuard',results:[heads]});if(heads)damage=coinGuard.preventAll?0:Math.max(0,damage-Number(coinGuard.reduction||0));}}
+      if(damage>0&&!result.damageRules?.ignoreEffects){const coinGuard=effects.findPassiveRule(state,foeSide,defender,'coinDamageGuard',data.cardById);if(coinGuard&&defender.cardId!=='det1-9'){const heads=random(state)<0.5;state.log.push({type:'coin',side:foeSide,heads,reason:'coinDamageGuard',results:[heads]});if(heads)damage=coinGuard.preventAll?0:Math.max(0,damage-Number(coinGuard.reduction||0));}}
       if(state.format==='classic'&&damage>0&&!result.damageRules?.ignoreEffects){
         damage=effects.neoDiscoveryReduction(state,foeSide,side,s.active,damage,data.cardById);
         if(defender.neoSlime&&state.turnNumber<=defender.neoSlime.until){const heads=random(state)<.5;state.log.push({type:'coin',side:foeSide,reason:'Neo Discovery Slime',heads,results:[heads]});if(!heads)damage=0;}
@@ -4223,6 +4226,7 @@ const target=slotForTarget(s,action.target,action.benchIndex);if(card.id==='pl2-
       state.log.push({type:'pl3FocusWall',side:foeSide,remainingHp:10});
     }
     if(state.format==='classic'&&defender.cardId==='pl4-69'&&damage>0&&damage<=30&&Number(defender.pl4HardenUntil||0)>=Number(state.turnNumber))damage=0;
+    if(!result.damageRules?.ignoreEffects)damage=effects.det1EvasionDamage(state,foeSide,defender,damage,data.cardById,random);
     defender.damage=Number(defender.damage||0)+damage;
     // Bastiodon Counter Head returns exactly the actual attack damage as
     // damage counters, even when Bastiodon is knocked out by that hit.

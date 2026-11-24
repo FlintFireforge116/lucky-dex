@@ -160,7 +160,9 @@
     const copied=copiedAttackOption(action,state,side);if(!copied)return null;
     const outcome=copied.damage==='0'||!copied.damage?'EFFECT ONLY':`${copied.damage} DMG`;
     const description=copied.text?` · ${copied.text}`:'';
-    return `${copied.originalName} → COPY ${copied.source.name}: ${copied.attack.name} (${outcome})${description}`;
+    const nested=action.copiedEffectSelection&&copied.originalName==='Copy Anything'?JSON.parse(action.copiedEffectSelection):null;
+    const suffix=nested?(action.choiceLabel||nested.choiceLabel||(nested.choiceTarget==='bench'?'Target Bench '+(Number(nested.choiceBenchIndex)+1):nested.choiceTarget==='active'?'Target Active':nested.effectSelection||nested.choiceCardId||'')):'';
+    return `${copied.originalName} → COPY ${copied.source.name}: ${copied.attack.name} (${outcome})${description}${suffix?' · '+suffix:''}`;
   }
   function shouldHoldPrizePresentation(state,logs){
     return state?.pendingChoice?.special==='chooseClassicPrize'&&Array.isArray(logs)&&logs.some(entry=>['coin','attack','attackFailed','benchDamage','status','heal','ko','draw'].includes(entry?.type));
