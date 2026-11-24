@@ -192,7 +192,7 @@
     if(['sm5-138','sm5-171'].includes(ref.cardId))return ['Lightning','Psychic','Metal'].includes(type);
     if(ref.cardId==='sm6-117')return type==='Colorless'||!!cardById?.(slot?.cardId)?.ultraBeast;
     if(['sm6-118','sm6-146'].includes(ref.cardId))return ['Fighting','Darkness','Fairy','Colorless'].includes(type);
-    if(ref.cardId==='sm5-136')return true; // Conditional quantity is resolved in core.
+    if(ref.cardId==='sm5-136')return type==='Colorless'||cardById?.(slot?.cardId)?.stage==='Stage 2'; // Conditional quantity is resolved in core.
     if(ref.cardId==='bw4-93')return cardById?.(slot?.cardId)?.stage==='Basic';
     if(ref.cardId==='bw6-117')return ['Grass','Fire','Psychic','Darkness'].includes(type);
     if(ref.cardId==='bw6-118')return ['Water','Lightning','Fighting','Metal'].includes(type);
@@ -19307,7 +19307,7 @@
         if(r==='dragonporter'){
           const valid=ref=>card(ref)?.kind==='pokemon'&&hasType(card(ref),'Dragon');let left=effect.remaining??3;
           if(res){if(skip)break;const i=act.choiceDiscardIndex,ref=ss.discard[i];if(!valid(ref)||!room(ss))break;ss.discard.splice(i,1);if(ctx.benchCard?.(ss,ref)==null){ss.discard.splice(i,0,ref);break;}left--;}
-          if(left>0&&room(ss)&&ss.discard.some(valid))ask({kind:'discardCard',filter:{kind:'pokemon',subtype:'Dragon'},optional:true},{remaining:left});break;
+          if(left>0&&room(ss)&&ss.discard.some(valid))ask({kind:'discardCard',filter:{kind:'pokemon',subtype:'Dragon'}},{remaining:left});break;
         }
         if(r==='fireHandSpread'){
           const fire=ref=>basicType(ref)==='Fire';let left=effect.remaining??effect.amount;
@@ -26846,7 +26846,7 @@ if(ctx.isAbility){const targetSide=pokemonOn(own(ctx)).includes(s)?ctx.side:ctx.
         const copied=resolveAttack(chosen,{...ctx,attack:chosen,copyDepth:Number(ctx.copyDepth||0)+1,ignoreUseCosts:!!e.ignoreUseCosts});damage=copied.damage;damageTarget=copied.damageTarget;damageRules={...damageRules,...copied.damageRules};pending.push(...copied.pendingEffects);return;
       }
       if(e.type==='selectedDamage'){damage=e.amount;damageTarget=targets(e.target,ctx).filter(s=>matchesFilter(ctx.cardById(s.cardId),e.filter,s))[0]||null;if(e.ignoreWeakness)damageRules.ignoreWeakness=true;if(e.ignoreResistance)damageRules.ignoreResistance=true;if(e.ignoreEffects)damageRules.ignoreEffects=true;if(!damageTarget)damage=0;return;}
-      if(e.type==='selectedEnergyDamage'){damageTarget=targets(e.target,ctx).filter(s=>matchesFilter(ctx.cardById(s.cardId),e.filter,s))[0]||null;const src=e.source==='self'?ctx.attacker:damageTarget;damage=damageTarget?(e.energyType?Number(src?.energy?.[e.energyType]||0)+(e.countProvidedType?(src?.specialEnergy||[]).filter(ref=>attachedSpecialProvidesType(ref,e.energyType,src,ctx.cardById)).length:0):totalEnergy(src?.energy))*e.amount:0;return;}
+      if(e.type==='selectedEnergyDamage'){damageTarget=targets(e.target,ctx).filter(s=>matchesFilter(ctx.cardById(s.cardId),e.filter,s))[0]||null;const src=e.source==='self'?ctx.attacker:damageTarget;const pool=e.countProvidedType&&ctx.effectiveEnergy?ctx.effectiveEnergy(src):src?.energy||{};const flexible=e.countProvidedType?(Number(pool.Miracle||0)+Number(pool.Rainbow||0)+(pool.__sm5UnitCards||[]).filter(types=>types.includes(e.energyType)).length):0;damage=damageTarget?(e.energyType?Number(pool[e.energyType]||0)+flexible:totalEnergy(src?.energy))*e.amount:0;return;}
       if(e.type==='bonusDamage')amount=e.amount;
       else if(e.type==='coinDamage'){let heads=0,coins=e.coins==='untilTails'?e.coins:Number(e.coins||0)+coinBonusAmount(ctx.state,ctx.side,ctx.attacker,ctx.attack?.name,ctx.cardById),results=[];if(coins!=='untilTails'&&e.extraCoinsIfTool&&toolsOf(ctx.attacker).some(t=>ctx.cardById(t.cardId)?.name===e.extraCoinsIfTool.name))coins+=Number(e.extraCoinsIfTool.amount||0);if(coins==='untilTails')heads=repeatHeads(ctx,()=>{},results);else for(let i=0;i<coins;i++){const hit=coin(ctx);results.push(hit);if(hit)heads++;}ctx.state.log.push({type:'coin',side:ctx.side,heads,coins,results});amount=heads*e.amount;}
       else if(e.type==='coinDiscardEnergyDamage'){let heads=0,discarded=0;const results=[];for(let i=0;i<e.coins;i++){const hit=coin(ctx);results.push(hit);if(hit)heads++;}for(let i=0;i<heads&&Number(ctx.attacker?.energy?.[e.energyType]||0)>0;i++){ctx.attacker.energy[e.energyType]--;recordDiscardedEnergy(own(ctx),e.energyType,1);discarded++;}ctx.state.log.push({type:'coin',side:ctx.side,heads,coins:e.coins,results});amount=discarded*e.amount;}

@@ -8,8 +8,8 @@ android {
         applicationId 'com.example.luckydex'
         minSdk 26
         targetSdk 35
-        versionCode 7428
-        versionName '0.69.428'
+        versionCode 7429
+        versionName '0.69.429'
     }
 
     signingConfigs {
@@ -1066,7 +1066,7 @@ tasks.matching { it.name == 'preBuild' || (it.name.startsWith('merge') && it.nam
     dependsOn tasks.named('auditSM5ForApk')
 }
 
-// v0.69.428 Forbidden Light SM6: SHA-pinned 150-print full-set source and audit.
+// v0.69.429 Forbidden Light SM6: SHA-pinned 150-print full-set source and audit.
 tasks.register('preflightSM6ContractForApk', Exec) {
     dependsOn tasks.named('auditSM5ForApk')
     workingDir rootProject.projectDir
@@ -1120,7 +1120,7 @@ tasks.register('generateSM75ForApk', Exec) {
 tasks.register('auditSM75ForApk', Exec) {
     dependsOn tasks.named('generateSM75ForApk')
     workingDir rootProject.projectDir
-    commandLine 'node', '--test', 'tests/v07452-dragon-majesty-integration.test.cjs', 'tests/v07453-dragon-majesty-outcomes.test.cjs', 'tests/v07454-dragon-majesty-completion.test.cjs'
+    commandLine 'node', '--test', 'tests/v07452-dragon-majesty-integration.test.cjs', 'tests/v07453-dragon-majesty-outcomes.test.cjs', 'tests/v07454-dragon-majesty-completion.test.cjs', 'tests/v07455-dragon-majesty-independent-audit.test.cjs'
 }
 tasks.matching { it.name == 'preBuild' || (it.name.startsWith('merge') && it.name.endsWith('Assets')) }.configureEach {
     dependsOn tasks.named('auditSM75ForApk')
