@@ -103,7 +103,8 @@ test('Splash Energy uses the existing real-card KO path and prevents off-type ha
  const source=fs.readFileSync(path.join(root,'app/src/main/assets/tcgp-battle-core.js'),'utf8');
  assert.match(source,/card\.id==='xy9-113'&&!mon\?\.types\?\.includes\('Water'\)/);
  assert.match(source,/ref\.cardId==='xy9-113'\?'Water'/);
- assert.match(source,/cause==='attack'&&eventSource\?\.attack&&eventSource\.side===foeSide&&\s*card\?\.types\?\.includes\('Water'\)&&\(slot\.specialEnergy\|\|\[\]\)\.some\(r=>r\.cardId==='xy9-113'\)/);
+ // Knockout eligibility is checked by the executable cases below, not a
+ // regex requiring adjacent predicates in the shared knockout pipeline.
  assert.match(source,/xy9SplashEnergyRescue/);assert.match(source,/discardKnockedOut\(s,slot\)/);
 });
 
@@ -136,5 +137,37 @@ test('Splash Energy returns the KO Water Pokémon while discarding attachments a
   assert.equal(o.prizes.length,beforePrizes-1,'the opponent still earns a Prize');
   assert.ok(s.log.some(x=>x.type==='xy9SplashEnergyRescue'&&x.cardId===rescued));
   assert.equal(s.phase,'promote','the player must promote a new Active Pokémon after the knockout');
+ }
+});
+
+// Team Up cross-era regression: the protection must stop the rescue, not
+// the KO or its Prize award. Test both orientations and suppression.
+for(const owner of ['player','opponent'])test(owner+' Splash Energy respects opposing Scoop-Up Block and Ability suppression',()=>{
+ const core=require('../app/src/main/assets/tcgp-battle-core.js');
+ const opponents=require('../app/src/main/assets/tcg-classic-opponents.js');
+ const data=require('../app/src/main/assets/tcg-classic-battle-data.js');
+ const deck=opponents.generate({sets:['base1'],seed:381,type:'Water'});
+ assert.equal(deck.ok,true);assert.ok(data.cardById('sm9-66')?.battleEnabled);
+ const attacker=owner==='player'?'opponent':'player';
+ for(const suppressed of [false,true]){
+  const s=core.createBattle({format:'classic',playerDeck:deck.cards,opponentDeck:deck.cards,seed:381,firstSide:attacker,playerEnergyTypes:['Water'],opponentEnergyTypes:['Colorless']});
+  s.phase='battle';s.activeSide=attacker;s.turnNumber=8;s.log=[];
+  for(const side of ['player','opponent']){const b=s.sides[side];b.turnCount=3;b.hand=[];b.discard=[];b.bench=[];b.energyDiscard={};b.supporterUsed=false;}
+  const p=s.sides[owner],o=s.sides[attacker];
+  p.active=core.makePokemonSlot('base1-35',3,'rescue-pokemon');
+  p.active.specialEnergy=[{uid:'splash-physical',cardId:'xy9-113',provides:{Water:1}}];p.active.energy={Water:1};
+  p.bench=[core.makePokemonSlot('base1-41',3,'seel')];p.bench[0].benchSlot=0;
+  o.active=core.makePokemonSlot('base1-3',3,'chansey');o.active.energy={Colorless:4};
+  o.bench=[core.makePokemonSlot('sm9-66',3,'mime')];o.bench[0].benchSlot=0;
+  if(suppressed)s.xy7HexManiacUntil=s.turnNumber;
+  const before=o.prizes.length;const a=core.legalActions(s,attacker).find(a=>a.type==='attack'&&a.attackIndex===1);assert.ok(a);
+  core.applyAction(s,attacker,a);
+  assert.equal(p.hand.some(r=>r.cardId==='base1-35'),suppressed);
+  assert.equal(p.discard.some(r=>r.cardId==='base1-35'),!suppressed);
+  assert.ok(p.discard.some(r=>r.uid==='splash-physical'));
+  if(s.pendingChoice?.special==='chooseClassicPrize'){const claim=core.legalActions(s,attacker).find(a=>a.type==='effectChoice');assert.ok(claim);core.applyAction(s,attacker,claim);}
+  assert.equal(o.prizes.length,before-1);
+  assert.equal(s.log.some(x=>x.type==='xy9SplashEnergyRescue'),suppressed);
+  assert.equal(s.phase,'promote');
  }
 });
