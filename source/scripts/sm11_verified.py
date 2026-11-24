@@ -225,3 +225,15 @@ tr(205,'Stadium',E('stadiumAction',effect=U('ResearchLab')))
 ab(25,passive(U('BurningRoad')))
 at(30,'Spirit Burner',U('SpiritBurner'))
 ab(45,passive(U('AncientCustom')))
+
+# v0.69.456 — remaining Energy, Tool, quiz and hand Ability rules.
+at(57,'Electro Rain',U('ElectroRain'))
+ab(66,passive(U('ElectricSwamp')))
+at(167,'Lazy Howl',U('LazyHowl'))
+at(182,"Sage's Riddle",U('Quiz',quizMode='type'))
+tr(186,'Supporter',U('Quiz',quizMode='attack'))
+tr(211,'Tool',E('modifier',stat='retreatCost',scope='self',amount=-1,duration='whileInPlay'))
+for row in ROWS:
+ if row[1]=='Recycle Energy':X[(row[1],tuple(row[13]))]=E('specialEnergy',provides={'Colorless':1})
+
+tr(190,'Supporter',U('Channeler'))

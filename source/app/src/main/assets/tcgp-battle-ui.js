@@ -179,6 +179,7 @@
     if(action.type==='setupReady')return'READY';
     if(action.type==='sm7FallingStar')return'FALLING STAR · PLAY MINIOR AS ACTIVE';
     if(action.type==='bw7Busybody')return'BUSYBODY · REVEAL AUDINO, HEAL 10 AND REMOVE A CONDITION';
+    if(action.type==='sm11ElectricSwamp')return 'ELECTRIC SWAMP · PLAY ONTO BENCH';
     if(action.type==='sm8HandAbility')return 'MOUNTAIN PASS · REVEAL FROM HAND';
     if(action.type==='abilityDiscard'&&action.cardId==='sm8-97')return 'DISTORTION DOOR · BENCH GIRATINA';
     if(action.type==='bw10DiscardAbility')return action.cardId==='bw10-102'?'PROPAGATION · RETURN EXEGGCUTE FROM DISCARD':'PREHISTORIC CALL · PUT RESTORED POKÉMON ON DECK BOTTOM';
@@ -225,6 +226,8 @@
     if(entry.type==='ability')return`${who} used ${entry.ability||entry.abilityName||'an ability'} · ${cardName(entry.cardId)}`;
     if(entry.type==='attach')return`${who} attached ${entry.energyType||'Energy'} to ${cardName(entry.cardId)}`;
     if(entry.type==='attachSpecial')return`${who} attached ${cardName(entry.energyCardId||entry.cardId)} to ${cardName(entry.cardId)}`;
+    if(entry.type==='sm11QuizReveal')return `Quiz: ${cardName(entry.cardId)} · guessed ${entry.guess} · ${entry.correct?'correct':'incorrect'} · ${entry.drawSide==='player'?'you draw':'CPU draws'} up to 4 cards`;
+    if(entry.type==='sm11AttachmentReturned')return `${cardName(entry.cardId)} returned to ${who==='You'?'your':'CPU’s'} hand`;
     if(entry.type==='effectChoice')return`${who} resolved a card effect`;
     if(entry.type==='retreat'){const count=Object.values(entry.spentEnergy||{}).reduce((n,v)=>n+Number(v||0),0)+Number(entry.spentSpecialEnergy||0);return`${who} retreated ${cardName(entry.cardId)} → ${cardName(entry.toCardId)} · ${count?`discarded ${count} Energy for Retreat`:'free Retreat (no Energy discarded)'}`;}
     if(entry.type==='attack')return`${who} used ${entry.attack} · ${Number(entry.damage||0)} damage${entry.damageReason?` · ${entry.damageReason}`:''}`;
@@ -241,6 +244,7 @@
   function eventForAction(action,side,beforeLogLength){
     if(!action||!currentBattle)return'';
     const added=currentBattle.log.slice(Number(beforeLogLength||0));
+    const quiz=added.find(entry=>entry.type==='sm11QuizReveal');if(quiz)return actionEventText(quiz);
     const attack=added.find(entry=>entry.type==='attack');
     if(attack){
       const ko=added.find(entry=>entry.type==='ko');
@@ -927,7 +931,7 @@
     return `<div data-hand-side="opponent" class="tcgp-live-hand-backs ${reveal?'is-revealed':''}" style="--back-count:${visible}" aria-label="Opponent hand ${side.hand.length} cards${reveal?', revealed by Clairvoyance':''}">${backs}<b>${side.hand.length}</b></div>`;
   }
   function centerHandActionIndices(actions,handIndex){
-    const allowed=new Set(['setupActive','setupBench','bench','legendBench','evolve','trainer','attachSpecial','bw7Busybody','sm7FallingStar','sm8HandAbility']);
+    const allowed=new Set(['setupActive','setupBench','bench','legendBench','evolve','trainer','attachSpecial','bw7Busybody','sm7FallingStar','sm8HandAbility','sm11ElectricSwamp']);
     const index=Number(handIndex);
     return (actions||[]).map((action,actionIndex)=>({action,actionIndex})).filter(row=>allowed.has(row.action?.type)&&Number(row.action?.handIndex)===index).map(row=>row.actionIndex);
   }
@@ -949,7 +953,7 @@
       // were dropped onto, so healing / Tool / similar plays need no chooser.
       const untargetedTrainer=zone==='active'?find(action=>action.type==='trainer'&&action.target==null&&action.effectTarget==null):-1;
       if(untargetedTrainer>=0)return untargetedTrainer;
-      if(zone==='active'){const busybody=find(action=>['bw7Busybody','sm7FallingStar','sm8HandAbility'].includes(action.type));if(busybody>=0)return busybody;return find(action=>action.type==='evolve'&&action.target==='active');}
+      if(zone==='active'){const busybody=find(action=>['bw7Busybody','sm7FallingStar','sm8HandAbility','sm11ElectricSwamp'].includes(action.type));if(busybody>=0)return busybody;return find(action=>action.type==='evolve'&&action.target==='active');}
       if(zone==='bench'){
         const occupied=core?.benchSlotAt?core.benchSlotAt(player,benchIndex):player.bench?.[benchIndex];
         if(occupied)return find(action=>action.type==='evolve'&&action.target==='bench'&&Number(action.benchIndex)===benchIndex);
@@ -1119,7 +1123,7 @@
     const buttons=rows.map(({index,action})=>{const copy=copiedAttackOption(action,currentBattle,'player'),id=copy?.source?.id||action.cardId||action.choiceCardId||(action.target==='bench'?core.benchSlotAt(currentBattle.sides.player,action.benchIndex)?.cardId:null),art=id?cardArtUrl(id,copy?.sourceSide||'player'):'';return `<button class="tcgp-live-context-card${copy?' is-copy-attack':''}" type="button" data-tcgp-action="battle-action" data-action-index="${index}">${art?`<img src="${esc(art)}" alt="">`:''}<span>${esc(actionLabel(action,currentBattle,'player'))}</span></button>`;}).join('');
     return `<div class="tcgp-live-context-centre" role="dialog" aria-label="Choose a play"><div class="tcgp-live-context-head"><b>Choose a play</b><button type="button" data-tcgp-action="close-overlay">×</button></div><div class="tcgp-live-context-rail">${buttons}</div></div>`;
   }
-  function handActionIndices(handIndex){return battleActionCache.map((action,index)=>({action,index})).filter(({action})=>Number(action.handIndex)===Number(handIndex)&&['setupActive','setupBench','bench','legendBench','evolve','trainer','attachSpecial','bw7Busybody','sm7FallingStar','sm8HandAbility'].includes(action.type)).map(({index})=>index);}
+  function handActionIndices(handIndex){return battleActionCache.map((action,index)=>({action,index})).filter(({action})=>Number(action.handIndex)===Number(handIndex)&&['setupActive','setupBench','bench','legendBench','evolve','trainer','attachSpecial','bw7Busybody','sm7FallingStar','sm8HandAbility','sm11ElectricSwamp'].includes(action.type)).map(({index})=>index);}
   function openHandActions(handIndex){
     if(!currentBattle?.sides?.player?.hand?.[handIndex]||battlePresentationBusy)return;
     battleHandIndex=Number(handIndex);battleInspect=null;battleOverlay='hand-actions';renderBattle();

@@ -1,41 +1,7 @@
 {
   "printed": 261,
-  "battleReady": 250,
-  "gated": {
-    "sm11-57": [
-      "Unimplemented attack: Electro Rain"
-    ],
-    "sm11-66": [
-      "Unimplemented Ability: Electric Swamp"
-    ],
-    "sm11-167": [
-      "Unimplemented attack: Lazy Howl"
-    ],
-    "sm11-182": [
-      "Unimplemented attack: Sage's Riddle"
-    ],
-    "sm11-186": [
-      "Unimplemented Trainer effect"
-    ],
-    "sm11-190": [
-      "Unimplemented Trainer effect"
-    ],
-    "sm11-211": [
-      "Unimplemented Trainer effect"
-    ],
-    "sm11-212": [
-      "Unimplemented Special Energy rules"
-    ],
-    "sm11-232": [
-      "Unimplemented Trainer effect"
-    ],
-    "sm11-255": [
-      "Unimplemented Trainer effect"
-    ],
-    "sm11-257": [
-      "Unimplemented Special Energy rules"
-    ]
-  },
+  "battleReady": 261,
+  "gated": {},
   "attacks": 354,
   "abilities": 54,
   "pokemonGX": 48,

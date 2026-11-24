@@ -154,6 +154,7 @@
   function usefulClassicTrainer(state,side,action){
     const card=data.cardById(action.cardId),s=state.sides[side],foe=state.sides[foeOf(side)];
     if(!card)return false;
+    if(card.id==='sm11-186')return s.hand.some(r=>data.cardById(r.cardId)?.kind==='pokemon'&&data.cardById(r.cardId)?.attacks?.length);
     if((card.trainerType==='Stadium'||card.trainerSubtype==='Stadium'))return stadiumWorthPlaying(state,side,card);
     if(card.id==='neo3-64')return (s.discard||[]).some(ref=>{const c=data.cardById(ref.cardId);return c?.kind==='trainer'||c?.kind==='pokemon';});
     if(card.id==='ex11-91')return Object.values(s.energyDiscard||{}).some(n=>Number(n)>0)||(s.discard||[]).some(ref=>data.cardById(ref.cardId)?.kind==='pokemon'||data.cardById(ref.cardId)?.basicEnergy);
@@ -238,7 +239,7 @@
     if(action.type==='setupBench')return 950;
     if(action.type==='setupReady')return 1;
     if(action.type==='evolve')return 900;
-    if(action.type==='sm8HandAbility'||action.type==='abilityDiscard'&&action.cardId==='sm8-97')return 800;
+    if(action.type==='sm11ElectricSwamp'||action.type==='sm8HandAbility'||action.type==='abilityDiscard'&&action.cardId==='sm8-97')return 800;
     if(action.type==='ability')return dangerous(abilityEffect(card,action.abilityIndex))?-100:800;
     if(action.type==='trainer')return dangerous(card?.effect)?-100:700;
     if(action.type==='stadiumAction')return worthwhileStadiumAction(state,side,action)?850:-100;
@@ -349,6 +350,7 @@
       return !(power?.oncePerTurn===false&&state.sides[side].abilityUsed?.[source.uid+':'+index]===state.sides[side].turnCount);
     });
     if(!legal.length)return null;
+    if(state.phase==='effectChoice'&&state.pendingChoice?.effect?.rule==='sm11Quiz'&&state.pendingChoice.effect.stage==='guess')return legal[Math.floor(core.random(state)*legal.length)];
     if(state.format==='classic'&&state.phase==='effectChoice'&&state.pendingChoice?.special==='skyFieldBenchTrim'){
       const bench=state.sides[side].bench;
       const score=action=>{
