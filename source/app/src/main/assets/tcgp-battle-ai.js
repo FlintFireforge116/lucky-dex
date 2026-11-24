@@ -491,6 +491,23 @@
     // leakage. Choose from the actual legal set instead.
     if(state.format==='classic'&&state.phase==='effectChoice'){
       const pending=state.pendingChoice||{},rule=String(pending.effect?.rule||'');
+      if(pending.special==='sm7WishPrize')return legal.find(a=>a.choiceOption===1)||legal[0];
+      if(pending.special==='sm7Grounding')return legal.find(a=>!a.choiceSkip)||legal[0];
+      if(pending.special==='sm7BeforeAttack'){
+        const picks=legal.filter(a=>!a.choiceSkip),stop=legal.find(a=>a.choiceSkip);
+        if(pending.rule==='sandyFear')return picks[0]||stop||legal[0];
+        const me=state.sides[side],target=state.sides[foeOf(side)].active;
+        const remaining=target?core.maxHp(state,foeOf(side),target)-Number(target.damage||0):0;
+        const current=effects.attackDamageWithState(state,side,me.active,foeOf(side),target,30+50*Number(pending.count||0),data.cardById);
+        if(current>=remaining||!picks.length)return stop||legal[0];
+        // Prefer surplus energy or an already-damaged Bench over draining the Active.
+        picks.sort((a,b)=>{const score=x=>{const p=slotFor(me,x.choiceTarget,x.choiceBenchIndex);return (p===me.active?-20:0)+attachedCount(p);};return score(b)-score(a);});
+        return picks[0]||stop||legal[0];
+      }
+      if(pending.effect?.type==='sm7Rule'&&['doubleCharge','redEyes','steelworks','strikeRun','mining','beastBall'].includes(rule)){
+        if(rule==='strikeRun'&&pending.effect.stage==='switch')return legal.find(a=>a.choiceSkip)||legal[0];
+        return legal.find(a=>!a.choiceSkip)||legal[0];
+      }
       // Mysterious Treasures (dp2): pick opposing-player decisions on their
       // own merits. Wager uses a public-state-derived choice, never the hidden
       // opponent selection, and changes its selection after an RPS tie.

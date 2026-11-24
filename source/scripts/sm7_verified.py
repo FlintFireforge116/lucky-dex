@@ -206,6 +206,25 @@ trainer7(143,'Stadium',R('shrine'))
 trainer7(144,'Stadium',R('skyPillar'))
 trainer7(145,'Supporter',R('steven'))
 
+# SM7 completion — explicit printed signatures, including physical card choices.
+at(48,'Crush and Burn-GX',R('crushBurn'))
+abil(48,activated(R('extraBomb')))
+at(50,'Lightning Strike',R('lightningStrike'))
+abil(50,passive(R('energyGrounding')))
+at(52,'Double Charge',R('doubleCharge'))
+abil(52,passive(R('electricStart')))
+at(65,'Enemy Show',R('enemyShow'))
+abil(65,trigger('evolved',R('redEyes')))
+at(82,'Sandy Fear-GX',R('sandyFear'))
+abil(83,passive(R('fallingStar')))
+at(91,'Mining',R('mining'))
+at(97,'Perish Dream',seq(E('status',target='self',status='sleep'),R('perishDream')))
+abil(97,passive(R('wishStar')))
+at(98,'Steelworks',R('steelworks'))
+at(110,'Strike and Run',R('strikeRun'))
+trainer7(125,'Item',R('beastBall'))
+trainer7(141,'Item',R('rainbowBrush'))
+
 def attack(row,a):
  title,cost,damage,printed=a;t=attack_text(printed)
  if not t:return E('noop')
@@ -242,4 +261,4 @@ def energy(row):
  if row[1]=='Rainbow Energy' and norm(' '.join(row[13]))==norm('This card provides Colorless Energy. While in play, this card provides every type of Energy but provides only 1 Energy at a time. When you attach this card from your hand to 1 of your Pokémon, put 1 damage counter on that Pokémon.'):
   return E('specialEnergy',provides={'Miracle':1})
  return None
-def prism_ready(row):return row[1] in ('Latios ◇','Latias ◇') and all(attack(row,a) is not None for a in row[7])
+def prism_ready(row):return row[1] in ('Latios ◇','Latias ◇','Jirachi ◇') and all(attack(row,a) is not None for a in row[7])

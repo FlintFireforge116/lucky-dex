@@ -1,8 +1,8 @@
 {
   "set": "sm7",
   "name": "Celestial Storm",
-  "stage": "continuation",
-  "release": "0.69.424",
+  "stage": "complete",
+  "release": "0.69.425",
   "printedTotal": 187,
   "attackPrints": 232,
   "abilities": 51,

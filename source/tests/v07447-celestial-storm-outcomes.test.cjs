@@ -32,7 +32,7 @@ for(const side of ['player','opponent']){
     if(['Psychic Abduction','Bawl'].includes(a.name)){h.s.firstSide=h.foe;h.us.turnCount=1;h.s.turnNumber=2;}
     const actions=core.legalActions(h.s,side).filter(x=>x.type==='attack'&&x.attackIndex===idx);
     assert.ok(actions.length,'no legal attack');core.applyAction(h.s,side,actions[0]);
-    let steps=0;while(h.s.phase==='effectChoice'&&steps++<40){const who=h.s.choiceSide||side,choices=core.legalActions(h.s,who).filter(x=>x.type==='effectChoice');assert.ok(choices.length,'empty choice');core.applyAction(h.s,who,choices.find(x=>!x.choiceSkip)||choices[0]);}
+    let steps=0;while(h.s.phase==='effectChoice'&&steps++<100){const who=h.s.choiceSide||side,choices=core.legalActions(h.s,who).filter(x=>x.type==='effectChoice');assert.ok(choices.length,'empty choice');core.applyAction(h.s,who,choices.find(x=>!x.choiceSkip)||choices[0]);}
     assert.notEqual(h.s.phase,'effectChoice','stuck effect choice');count++;
    }catch(e){failures.push(`${c.id} ${a.name}: ${e.message}`);}finally{h.done();}
   }

@@ -128,9 +128,10 @@
 
   // Steam Siege Talonflame's Gale Wings permits ONLY the opening Active
   // placement. It does not make Talonflame Basic for Bench or evolutions.
-  function isOpeningActive(ref){return isBasic(ref)||ref?.cardId==='xy11-96';}
+  function sm7SetupEligible(state,side,ref){return state?.format==='classic'&&side!==state.firstSide&&ref?.cardId==='sm7-52';}
+  function isOpeningActive(ref,state,side){return isBasic(ref)||ref?.cardId==='xy11-96'||sm7SetupEligible(state,side,ref);}
   function ensureOpeningBasic(state, sideState){
-    if (sideState.hand.some(isOpeningActive)) return;
+    if (sideState.hand.some(ref=>isOpeningActive(ref,state,sideState.id))) return;
     const idx = sideState.deck.findIndex(isBasic);
     if (idx < 0) throw new Error(`${state?.format==='classic'?'Classic TCG':'Pocket'} deck must contain at least one Basic Pokémon.`);
     const replacement = sideState.deck[idx];
@@ -178,12 +179,12 @@
   function autoSetup(state, side){
     const s = state.sides[side];
     if(!s.hand.length)prepareOpeningHand(state,side);
-    const activeIndex = s.hand.findIndex(isOpeningActive);
+    const activeIndex = s.hand.findIndex(ref=>isOpeningActive(ref,state,side));
     const [activeRef] = s.hand.splice(activeIndex,1);
     s.active = makePokemonSlot(activeRef.cardId,0,activeRef.uid);
     const benchLimit=Math.max(0,Number(state.rules?.benchSize??3));
     for (let i=s.hand.length-1;i>=0 && s.bench.length<benchLimit;i--){
-      if (!isBasic(s.hand[i])) continue;
+      if (!isBasic(s.hand[i])&&!sm7SetupEligible(state,side,s.hand[i])) continue;
       const [ref] = s.hand.splice(i,1);
       const slot=makePokemonSlot(ref.cardId,0,ref.uid);
       placeOnBench(s,slot,emptyBenchSlots(s)[0]);
@@ -407,14 +408,14 @@
     const actions = [];
     if (!s.active){
       s.hand.forEach((ref,handIndex)=>{
-        if (isOpeningActive(ref)) actions.push({type:'setupActive',handIndex,cardId:ref.cardId,target:'active'});
+        if (isOpeningActive(ref,state,side)) actions.push({type:'setupActive',handIndex,cardId:ref.cardId,target:'active'});
       });
       return actions;
     }
     if (s.bench.length < maxBenchSize(s)){
       const empty=emptyBenchSlots(s);
       s.hand.forEach((ref,handIndex)=>{
-        if (!isBasic(ref)) return;
+        if (!isBasic(ref)&&!sm7SetupEligible(state,side,ref)) return;
         empty.forEach(benchIndex=>actions.push({type:'setupBench',handIndex,cardId:ref.cardId,target:'bench',benchIndex}));
       });
     }
@@ -469,13 +470,13 @@
         const target={type:'effectChoice',choiceTarget:slot===energyBoard.active?'active':'bench',choiceBenchIndex:slot===energyBoard.active?undefined:Number(slot.benchSlot),choiceCardId:slot.cardId};
         for(const [energyType,amount] of Object.entries(slot.energy||{})){
           if(Number(amount)<=0||(p.energyTypes&&!p.energyTypes.includes(energyType)))continue;
-          out.push({...target,effectEnergyType:energyType});
+          out.push({...target,effectEnergyType:energyType,...(p.special==='sm7BeforeAttack'||p.effect?.rule==='rainbowBrush'?{choiceLabel:`${data.cardById(slot.cardId)?.name}: ${energyType} Energy`}:{})});
         }
         // Only effects that explicitly opt in can recover attached Special
         // Energy. Other Energy-source effects continue selecting Basic Energy.
         if(p.includeSpecial)for(const ref of slot.specialEnergy||[]){
           const provides=specialEnergyProvides(ref);
-          if(!p.energyTypes||p.energyTypes.some(t=>Number(provides[t]||0)>0))out.push({...target,effectSpecialEnergyUid:ref.uid});
+          if(!p.energyTypes||p.energyTypes.some(t=>Number(provides[t]||0)>0))out.push({...target,effectSpecialEnergyUid:ref.uid,...(p.special==='sm7BeforeAttack'||p.effect?.rule==='rainbowBrush'?{choiceLabel:`${data.cardById(slot.cardId)?.name}: ${data.cardById(ref.cardId)?.name}`}:{})});
         }
       }
     }else if(p.kind==='energyTarget'){
@@ -1612,6 +1613,7 @@
     if(state.format==='classic'&&s.active&&(Number(s.active.damage||0)>0||Object.keys(s.active.conditions||{}).length)&&
       !effects.isActionLocked(state,side,'Ability',data.cardById))for(const [handIndex,ref] of s.hand.entries())
       if(ref.cardId==='bw7-126')actions.push({type:'bw7Busybody',handIndex,cardId:ref.cardId});
+    if(state.format==='classic'&&s.active&&emptyBenchSlots(s).length&&!effects.isActionLocked(state,side,'Ability',data.cardById))for(const [handIndex,ref] of s.hand.entries())if(ref.cardId==='sm7-83')actions.push({type:'sm7FallingStar',handIndex,cardId:ref.cardId,target:'active'});
     // Classic: normal Energy Zone attachment and once-per-turn hand Energy
     // attachment are INDEPENDENT. Hand-attached Basic and Special both count
     // toward the hand attachment; card effects can separately accelerate.
@@ -2006,17 +2008,17 @@
     if(state.format==='classic'&&Number(s.ex8SupporterLockUntil||0)>=Number(state.turnNumber))for(let i=actions.length-1;i>=0;i--)if(actions[i].type==='trainer'&&data.cardById(actions[i].cardId)?.trainerType==='Supporter')actions.splice(i,1);
     if(state.format==='classic'&&state.sides[side==='player'?'opponent':'player'].active?.cardId==='ex8-100')for(let i=actions.length-1;i>=0;i--)if(actions[i].type==='trainer'&&data.cardById(actions[i].cardId)?.trainerType==='Stadium')actions.splice(i,1);
     if(state.format==='classic'&&Number(s.sm4HandLockUntil||0)>=state.turnNumber){
-      for(let i=actions.length-1;i>=0;i--)if(['bench','legendBench','evolve','trainer','attachSpecial','bw7Busybody'].includes(actions[i].type))actions.splice(i,1);
+      for(let i=actions.length-1;i>=0;i--)if(['bench','legendBench','evolve','trainer','attachSpecial','bw7Busybody','sm7FallingStar'].includes(actions[i].type))actions.splice(i,1);
     }
     if(state.format==='classic'&&Number(s.sm4AbilityPokemonLockUntil||0)>=state.turnNumber){
-      for(let i=actions.length-1;i>=0;i--){const a=actions[i];if(['bench','evolve','legendBench'].includes(a.type)&&
+      for(let i=actions.length-1;i>=0;i--){const a=actions[i];if(['bench','evolve','legendBench','sm7FallingStar'].includes(a.type)&&
          (data.cardById(a.cardId)?.abilities?.length||data.cardById(a.cardId)?.ability))actions.splice(i,1);
       }
     }
     actions.push({type:'endTurn'});
     if(state.format==='classic'&&state.xy5BarrageSecond?.side===side&&Number(state.xy5BarrageSecond.turn)===Number(state.turnNumber))
       return actions.filter(a=>a.type==='attack'||a.type==='endTurn');
-    if(state.format==='classic'&&Number(s.founjaNoHandUntil||0)>=Number(state.turnNumber))return actions.filter(a=>!['bench','evolve','trainer','attachSpecial'].includes(a.type));
+    if(state.format==='classic'&&Number(s.founjaNoHandUntil||0)>=Number(state.turnNumber))return actions.filter(a=>!['bench','evolve','trainer','attachSpecial','sm7FallingStar'].includes(a.type));
     return actions;
   }
 
@@ -2614,7 +2616,8 @@
   function awardClassicPrize(state,side,index){
     const ss=state.sides[side],i=Number(index);
     if(!Number.isInteger(i)||i<0||i>=ss.prizes.length)return false;
-    const [ref]=ss.prizes.splice(i,1);ss.hand.push(ref);
+    const [ref]=ss.prizes.splice(i,1);
+    if(state.format==='classic'&&ref.cardId==='sm7-97'&&!ref.faceUp&&state.activeSide===side&&emptyBenchSlots(ss).length&&ss.prizes.length)state.sm7WishPrize={side,ref};else ss.hand.push(ref);
     ss.prizesTaken=Number(ss.prizesTaken||0)+1;
     state.log.push({type:'prize',side,cardId:ref.cardId,prizePosition:i,remaining:ss.prizes.length,taken:ss.prizesTaken});
     if(state.format==='classic'&&ref.cardId==='xy11-102'&&!ref.faceUp){
@@ -2633,7 +2636,8 @@
   }
   function beginClassicPrizeChoice(state,resume,cause){
     const queue=state.pendingPrizeClaims||[];
-    while(queue.length){
+    while(queue.length||state.sm7WishPrize){
+      if(state.sm7WishPrize){const {side,ref}=state.sm7WishPrize;beginEffectChoice(state,side,state.sides[side].active,{kind:'option',side:'self',options:['Put Jirachi into hand','Bench Jirachi and take another Prize'],optionCardIds:[ref.cardId,ref.cardId],special:'sm7WishPrize',koResume:resume||null,koCause:cause||null});return true;}
       const next=queue[0],ss=state.sides[next.side];
       if(!ss?.prizes?.length||next.remaining<=0){queue.shift();continue;}
       if(next.side==='opponent'){
@@ -2729,6 +2733,11 @@
           }
         }
 
+        if(state.format==='classic'&&eventSource?.attack&&eventSource.side===foeSide&&Number(eventSource.turn)===Number(state.turnNumber)&&(eventSource.damage==null||Number(eventSource.damage)>0)){
+          const seen=slot.sm7GroundingSeen||(slot.sm7GroundingSeen=[]),types=Object.keys(slot.energy||{}).filter(t=>Number(slot.energy[t])>0);
+          const receiver=pokemonOn(s).find(p=>p!==slot&&p.cardId==='sm7-50'&&Number(p.damage||0)<maxHp(state,side,p)&&!seen.includes(p.uid)&&!effects.abilitiesSuppressed(state,side,p,data.cardById));
+          if(receiver&&types.length){seen.push(receiver.uid);beginEffectChoice(state,side,slot,{kind:'option',side:'self',options:types.map(t=>'Move '+t+' Energy to Lanturn'),optional:true,special:'sm7Grounding',sourceUid:slot.uid,receiverUid:receiver.uid,types,koResume:resume||null,koCause:cause||null});return true;}
+        }
         if(!slot._koTriggersResolved&&!slot.dp2ForcedDiscard){slot._koTriggersResolved=true;if(eventSource?.attack&&eventSource.side===foeSide){s.dp3AllyKoPreviousTurn=state.turnNumber;triggerAbilities(state,'knockedOutAlly',side,null,{source:eventSource,knockedOut:slot});}triggerAbilities(state,'knockedOutByAttack',side,slot,{source:eventSource,attacker:findSlotByUid(state,foeSide,eventSource?.uid)});triggerAbilities(state,'knockedOut',side,slot,{source:eventSource});triggerPersistent(state,'knockedOut',side,slot,{source:eventSource});
           // Exp. Share watches an ally Active being knocked out by attack damage.
           if(state.format==='classic'&&slot===s.active&&eventSource?.attack&&eventSource.side===foeSide)triggerPersistent(state,'teammateKnockedOut',side,null,{knockedOut:slot,source:eventSource});
@@ -3137,6 +3146,21 @@ const target=slotForTarget(s,action.target,action.benchIndex);if(card.id==='pl2-
     }
     if(matched.type==='effectChoice'){
       const pending=state.pendingChoice;if(!pending)throw new Error('No pending effect choice.');
+      if(pending.special==='sm7Grounding'||pending.special==='sm7WishPrize'){
+        const ss=state.sides[side];
+        if(pending.special==='sm7Grounding'&&!matched.choiceSkip){const src=findSlotByUid(state,side,pending.sourceUid),dst=findSlotByUid(state,side,pending.receiverUid),t=pending.types?.[matched.choiceOption];if(src&&dst&&Number(src.energy?.[t])>0){src.energy[t]--;dst.energy[t]=Number(dst.energy[t]||0)+1;}}
+        if(pending.special==='sm7WishPrize'){const ref=state.sm7WishPrize?.ref;delete state.sm7WishPrize;if(ref){const idx=emptyBenchSlots(ss)[0];if(matched.choiceOption===1&&idx!=null&&ss.prizes.length){placeOnBench(ss,makePokemonSlot(ref.cardId,ss.turnCount,ref.uid),idx);const queue=state.pendingPrizeClaims||(state.pendingPrizeClaims=[]);const claim=queue.find(x=>x.side===side);if(claim)claim.remaining++;else queue.push({side,remaining:1});}else ss.hand.push(ref);}}
+        state.pendingChoice=null;state.choiceSide=null;state.phase='battle';
+        const paused=resolveKnockOut(state,pending.koResume,pending.koCause);if(!paused&&state.phase==='battle'){if(pending.koResume==='endTurn')endTurn(state);else if(pending.koResume==='advanceTurn')advanceTurn(state);else if(pending.koResume==='repeatAttack')finishRepeatAttack(state);}return state;
+      }
+      if(pending.special==='sm7BeforeAttack'){
+        const ss=state.sides[side],opponent=state.sides[side==='player'?'opponent':'player'],rule=pending.rule;let count=pending.count||0;
+        if(!matched.choiceSkip){if(rule==='crushBurn'){const p=slotForTarget(ss,matched.choiceTarget,matched.choiceBenchIndex),t=matched.effectEnergyType;if(p&&t&&Number(p.energy?.[t])>0){p.energy[t]--;ss.energyDiscard[t]=Number(ss.energyDiscard[t]||0)+1;count++;}else if(p&&matched.effectSpecialEnergyUid){const i=p.specialEnergy.findIndex(x=>x.uid===matched.effectSpecialEnergyUid);if(i>=0){ss.discard.push(...p.specialEnergy.splice(i,1));count++;}}}else{const i=matched.choiceDeckIndex,ref=opponent.deck[i];if(ref&&pending.allowedUids.includes(ref.uid)&&data.cardById(ref.cardId)?.kind==='pokemon'){opponent.discard.push(...opponent.deck.splice(i,1));count++;}}}
+        state.pendingChoice=null;state.choiceSide=null;state.phase='battle';
+        if(!matched.choiceSkip&&sm7BeforeAttack(state,side,pending.attackAction,rule,count,pending.allowedUids))return state;
+        if(rule==='sandyFear')shuffle(state,opponent.deck);
+        return finishDeclaredAttack(state,side,{...pending.attackAction,sm7SelectedCount:count});
+      }
       if(pending.special==='chooseClassicPrize'){
         const claims=state.pendingPrizeClaims||[],entry=claims[0];
         if(!entry||entry.side!==side||!awardClassicPrize(state,side,matched.choicePrizeIndex))throw new Error('Choose a remaining Prize card.');
@@ -3417,6 +3441,11 @@ const target=slotForTarget(s,action.target,action.benchIndex);if(card.id==='pl2-
         if(state.phase==='battle')endTurn(state);
       }
       return state;
+    }
+    if(matched.type==='sm7FallingStar'){
+      const [ref]=s.hand.splice(matched.handIndex,1),old=s.active,idx=emptyBenchSlots(s)[0];
+      effects.clearTemporaryEffects(state,old);placeOnBench(s,old,idx);s.active=makePokemonSlot(ref.cardId,s.turnCount,ref.uid);s.active.movedToActiveTurn=state.turnNumber;
+      state.log.push({type:'ability',side,cardId:ref.cardId,ability:'Falling Star',fromHand:true});resolveKnockOut(state,null);return state;
     }
     if(matched.type==='bw7Busybody'){
       const [ref]=s.hand.splice(matched.handIndex,1);if(!ref||ref.cardId!=='bw7-126')throw new Error('Audino left the hand.');
@@ -3852,6 +3881,37 @@ const target=slotForTarget(s,action.target,action.benchIndex);if(card.id==='pl2-
       // return them; ordinary discards and opponent attacks cannot.
       if(state.format==='classic')state.xy8BurningAttack={side,attackerUid:s.active.uid,turn:state.turnNumber,
         cardUids:(s.active.specialEnergy||[]).filter(r=>r.cardId==='xy8-151').map(r=>r.uid)};
+      const sm7Rule=attack.effect?.type==='sm7Rule'?attack.effect.rule:null;
+      if(['crushBurn','sandyFear'].includes(sm7Rule)&&sm7BeforeAttack(state,side,matched,sm7Rule,0))return state;
+      if(sm7Rule==='sandyFear')shuffle(state,foe.deck);
+      return finishDeclaredAttack(state,side,matched);
+    }
+    if(matched.type==='xy4DiscardRoboSubstitute'){
+      const ss=state.sides[side],slot=slotForTarget(ss,matched.target,matched.benchIndex);
+      if(!slot||slot.cardId!=='xy4-102'||slot===ss.active&&!ss.bench.length)throw new Error('Cannot discard Robo Substitute without a replacement Active.');
+      discardKnockedOut(ss,slot);
+      if(slot===ss.active){const chosen=ss.bench.shift();chosen.benchSlot=null;ss.active=chosen;effects.clearTemporaryEffects(state,chosen);}
+      else ss.bench.splice(ss.bench.indexOf(slot),1);
+      state.log.push({type:'xy4RoboSubstituteDiscarded',side,uid:slot.uid});return;
+    }
+    if (matched.type === 'endTurn'){
+      endTurn(state);
+      return state;
+    }
+    throw new Error(`Unimplemented Pocket action: ${matched.type}`);
+  }
+
+  // Pre-damage choices are resolved once, after attack declaration (including
+  // confusion/GX use). Both paths continue into the same damage pipeline.
+  function sm7BeforeAttack(state,side,attackAction,rule,count,allowedUids){
+    const ss=state.sides[side],foeSide=side==='player'?'opponent':'player',foe=state.sides[foeSide];
+    let spec;
+    if(rule==='crushBurn'){if(!pokemonOn(ss).some(p=>Object.values(p.energy||{}).some(n=>Number(n)>0)||(p.specialEnergy||[]).length))return false;spec={kind:'energySource',includeSpecial:true};}
+    else{allowedUids=allowedUids||foe.deck.slice(0,13).map(x=>x.uid);if(!foe.deck.some(x=>allowedUids.includes(x.uid)&&data.cardById(x.cardId)?.kind==='pokemon'))return false;spec={kind:'deckCard',selectionSide:foeSide,allowedUids,filter:{kind:'pokemon'}};}
+    beginEffectChoice(state,side,ss.active,{...spec,side:'self',optional:true,special:'sm7BeforeAttack',rule,attackAction,count,prompt:rule==='crushBurn'?'Discard Energy for Crush and Burn-GX':'Choose Pokémon among the original top 13 cards'});return true;
+  }
+  function finishDeclaredAttack(state,side,matched){
+    const s=state.sides[side],foeSide=side==='player'?'opponent':'player',foe=state.sides[foeSide],attackerCard=data.cardById(s.active.cardId),attackSourceCard=data.cardById(matched.attackCardId||s.active.cardId),attack=attackSourceCard.attacks[matched.attackIndex];
       const context={...effectContext(state,side,matched),isAttack:true},result=effects.resolveAttack(attack,context);
       // Some printed attacks explicitly resolve an effect BEFORE damage.
       // A Pokémon Tool removed by Peck Off must not reduce the incoming hit.
@@ -4252,20 +4312,6 @@ const target=slotForTarget(s,action.target,action.benchIndex);if(card.id==='pl2-
       const paused=resolveKnockOut(state,'endTurn','attack');
       if(!paused&&state.phase==='battle'&&!(s.active?.dp7LinkLightningReady===state.turnNumber))endTurn(state);
       return state;
-    }
-    if(matched.type==='xy4DiscardRoboSubstitute'){
-      const ss=state.sides[side],slot=slotForTarget(ss,matched.target,matched.benchIndex);
-      if(!slot||slot.cardId!=='xy4-102'||slot===ss.active&&!ss.bench.length)throw new Error('Cannot discard Robo Substitute without a replacement Active.');
-      discardKnockedOut(ss,slot);
-      if(slot===ss.active){const chosen=ss.bench.shift();chosen.benchSlot=null;ss.active=chosen;effects.clearTemporaryEffects(state,chosen);}
-      else ss.bench.splice(ss.bench.indexOf(slot),1);
-      state.log.push({type:'xy4RoboSubstituteDiscarded',side,uid:slot.uid});return;
-    }
-    if (matched.type === 'endTurn'){
-      endTurn(state);
-      return state;
-    }
-    throw new Error(`Unimplemented Pocket action: ${matched.type}`);
   }
 
   function cloneState(state){return JSON.parse(JSON.stringify(state));}

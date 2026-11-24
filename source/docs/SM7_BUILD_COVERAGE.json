@@ -1,61 +1,7 @@
 {
   "printed": 187,
-  "battleReady": 172,
-  "gated": {
-    "sm7-48": [
-      "Unimplemented attack: Crush and Burn-GX",
-      "Unimplemented Ability: Extra Energy Bomb"
-    ],
-    "sm7-50": [
-      "Unimplemented attack: Lightning Strike",
-      "Unimplemented Ability: Energy Grounding"
-    ],
-    "sm7-52": [
-      "Unimplemented attack: Double Charge",
-      "Unimplemented Ability: Electric Start"
-    ],
-    "sm7-65": [
-      "Unimplemented attack: Enemy Show",
-      "Unimplemented Ability: Red Eyes"
-    ],
-    "sm7-82": [
-      "Unimplemented attack: Sandy Fear-GX"
-    ],
-    "sm7-83": [
-      "Unimplemented Ability: Falling Star"
-    ],
-    "sm7-91": [
-      "Unimplemented attack: Mining"
-    ],
-    "sm7-97": [
-      "Prism Star attack/Ability or Trainer effect not yet implemented",
-      "Unimplemented attack: Perish Dream",
-      "Unimplemented Ability: Wish Upon a Star"
-    ],
-    "sm7-98": [
-      "Unimplemented attack: Steelworks"
-    ],
-    "sm7-110": [
-      "Unimplemented attack: Strike and Run"
-    ],
-    "sm7-125": [
-      "Unimplemented Trainer effect"
-    ],
-    "sm7-141": [
-      "Unimplemented Trainer effect"
-    ],
-    "sm7-155": [
-      "Unimplemented attack: Crush and Burn-GX",
-      "Unimplemented Ability: Extra Energy Bomb"
-    ],
-    "sm7-172": [
-      "Unimplemented attack: Crush and Burn-GX",
-      "Unimplemented Ability: Extra Energy Bomb"
-    ],
-    "sm7-182": [
-      "Unimplemented Trainer effect"
-    ]
-  },
+  "battleReady": 187,
+  "gated": {},
   "attacks": 232,
   "abilities": 51,
   "pokemonGX": 30,
