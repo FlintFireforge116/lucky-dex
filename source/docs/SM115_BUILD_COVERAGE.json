@@ -1,54 +1,7 @@
 {
   "printed": 69,
-  "battleReady": 54,
-  "gated": {
-    "sm115-23": [
-      "Unimplemented Ability: Electromagnetic Wall"
-    ],
-    "sm115-24": [
-      "Unimplemented attack: Hurricane Call"
-    ],
-    "sm115-27": [
-      "Unimplemented attack: Rocket Tail",
-      "Unimplemented Ability: Last Pattern"
-    ],
-    "sm115-29": [
-      "Unimplemented Ability: Surrender Now"
-    ],
-    "sm115-44": [
-      "Unimplemented attack: Sky Legends-GX"
-    ],
-    "sm115-54": [
-      "Unimplemented Trainer effect"
-    ],
-    "sm115-55": [
-      "Unimplemented Trainer effect"
-    ],
-    "sm115-58": [
-      "Unimplemented Trainer effect"
-    ],
-    "sm115-61": [
-      "Unimplemented Trainer effect"
-    ],
-    "sm115-62": [
-      "Unimplemented Trainer effect"
-    ],
-    "sm115-63": [
-      "Unimplemented Trainer effect"
-    ],
-    "sm115-64": [
-      "Unimplemented Trainer effect"
-    ],
-    "sm115-66": [
-      "Unimplemented attack: Sky Legends-GX"
-    ],
-    "sm115-68": [
-      "Unimplemented Trainer effect"
-    ],
-    "sm115-69": [
-      "Unimplemented attack: Sky Legends-GX"
-    ]
-  },
+  "battleReady": 69,
+  "gated": {},
   "attacks": 82,
   "abilities": 3,
   "pokemonGX": 11,

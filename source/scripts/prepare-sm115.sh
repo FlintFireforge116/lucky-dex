@@ -7,4 +7,4 @@ python3 scripts/preflight-all-release-sources.py
 node --test tests/v07399-sun-moon-integration.test.cjs
 python3 scripts/preflight-sm11-release.py --full
 python3 scripts/preflight-sm115-release.py --full
-python3 scripts/audit-expansion-readiness.py --set sma --check-release --report docs/SMA_CURRENT_GAP_LEDGER.md
+python3 scripts/audit-expansion-readiness.py --set sma --check-release --require-complete --report docs/SMA_CURRENT_GAP_LEDGER.md

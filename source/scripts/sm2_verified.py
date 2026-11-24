@@ -362,7 +362,7 @@ ABILITIES={
  'Bulletproof':{'type':'passive','effect':E('modifier',stat='damageReduction',amount=10,scope='self',duration='whileInPlay')},
  'Fresh Egg':{'type':'triggered','event':'evolved','fromHandOnly':True,'effect':H(80,'selfActive')},
  'Rake It In':{'type':'triggered','event':'evolved','fromHandOnly':True,'effect':DRAW(3)},
- 'Roadblock':{'type':'passive','effect':N}, # Classic has max 3 Bench, so the printed max-4 rule is inert
+ 'Roadblock':{'type':'passive','effect':E('sm7Rule',rule='sm115Roadblock')}, # expanded Bench cap handled in core
  'Bloodthirsty Eyes':{'type':'triggered','event':'evolved','fromHandOnly':True,'effect':E('forceOpponentSwitch',chooseBy='attacker')},
  'Wonder Tag':{'type':'triggered','event':'benched','fromHandOnly':True,'effect':SEARCH(1,kind='trainer',trainerType='Supporter')},
  'Feather Arrow':SM1_ABILITIES['Feather Arrow'],

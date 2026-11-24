@@ -16,7 +16,7 @@ for(const [sid,file,total,attacks,abilities,trainers,gx,tags] of sets){
     if(c.battleEnabled)for(const a of [...c.attacks,...c.abilities]){assert.notEqual(a.effect.type,'unsupported');assert.deepEqual(fx.validateEffect(a.effect),[],c.id+' '+a.name);if(a.text&&!/^\(You can.t use more than 1 GX attack/.test(a.text))assert.notEqual(a.effect.type,'noop',c.id+' '+a.name);}
    }else {assert.equal(c.text,r[13].join('\n'));if(c.battleEnabled){assert.notEqual(c.effect.type,'unsupported');assert.deepEqual(fx.validateEffect(c.effect),[],c.id);}}
   }
-  assert.deepEqual(cv.gated,Object.fromEntries(set.CARDS.filter(c=>!c.battleEnabled).map(c=>[c.id,c.support.reasons])));assert.equal(cv.battleReady+Object.keys(cv.gated).length,total);
+  assert.deepEqual(cv.gated,Object.fromEntries(set.CARDS.filter(c=>!c.battleEnabled).map(c=>[c.id,c.support.reasons])));assert.equal(cv.battleReady,total);assert.deepEqual(cv.gated,{});
  });
  test(sid+' player and CPU can select this set and construct a legal deck',()=>{
   const b=require(assets+'tcg-classic-deck-builder.js'),o=require(assets+'tcg-classic-opponents.js'),p=require(assets+'tcg-classic-set-picker.js');assert.ok(b.SET_IDS.includes(sid));assert.ok(o.SETS.includes(sid));assert.equal(p.names[sid],set.SET.name);assert.ok(d.SETS.some(s=>s.id===sid));

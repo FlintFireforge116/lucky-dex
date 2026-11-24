@@ -66,7 +66,7 @@ def attack(row,a):
   if a[0]=='Psystrike-GX':return E('damageRule',ignoreEffects=True)
  return _oldattack(row,a)
 def ability(row,a):
- if row[0]=="SV20":return None # Roadblock must enforce the expanded-Bench cap, not a no-op.
+ if row[0]=="SV20":return passive(E("sm7Rule",rule="sm115Roadblock"))
  c=reprints().get(row[0]) if str(row[0]).startswith('SV') else None
  if c:return {k:deepcopy(v) for k,v in next(x for x in c['abilities'] if x['name']==a[0]).items() if k not in ('name','text','printedPowerType','disabledByStatus')}
  return _oldability(row,a)
@@ -74,3 +74,25 @@ def trainer(row):
  c=reprints().get(row[0]) if str(row[0]).startswith('SV') else None
  if c:return c['trainerType'],deepcopy(c['effect'])
  return _oldtrainer(row)
+
+# Shared existing descriptors plus explicit printed-rule handlers.
+def rule(name,**kw):return E('sm7Rule',rule='sm115'+name,**kw)
+def ab(no,name,descriptor):
+ r=next(r for r in ROWS if r[0]==str(no));B[tuple(next(a for a in r[8] if a[0]==name))]=descriptor
+ab(23,'Electromagnetic Wall',passive(rule('Wall')))
+ab(27,'Last Pattern',dict(type='triggered',event='knockedOutByAttack',opponentAttackOnly=True,effect=rule('LastPattern')))
+ab(29,'Surrender Now',passive(rule('Surrender')))
+at(24,'Hurricane Call',rule('Hurricane'))
+at(27,'Rocket Tail',bonus(80,cond('discardContains',filter={'name':'Jessie & James'})))
+at(44,'Sky Legends-GX',seq(E('multiTargetDamage',target='opponentPokemon',amount=110,count=3,activeWeaknessResistance=True,condition=cond('sm9ExtraEnergy',cost='CRWL')),E('shuffleIntoDeck',target='self')))
+tr(54,'Stadium',E('modifier',stat='damageReduction',scope='both',duration='whileInPlay',amount=40,filter={'name':'Onix-GX'}))
+tr(58,'Supporter',rule('JessieJames'))
+tr(61,'Stadium',E('modifier',stat='attackDamage',scope='both',duration='whileInPlay',amount=40,filter={'name':'Starmie-GX'}))
+tr(62,'Supporter',rule('Determination'))
+tr(63,'Supporter',rule('WaterCommand'))
+tr(64,'Supporter',rule('CenterLady'))
+tr(55,'Supporter',rule('BrockTraining'))
+_prior_attack=attack
+def attack(row,a):
+ if row[0]=='SV50' and a[0]=='Eternal Light-GX':return rule('EternalLight')
+ return _prior_attack(row,a)
