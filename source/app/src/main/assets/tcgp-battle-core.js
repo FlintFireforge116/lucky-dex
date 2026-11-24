@@ -466,7 +466,7 @@
       const energyBoard=state.sides[p.selectionSide||side];
       for(const slot of [energyBoard.active,...(energyBoard.bench||[])].filter(Boolean)){
         if(p.onlyBench&&slot===energyBoard.active)continue;
-        if(p.energySourceUid&&slot.uid!==p.energySourceUid)continue;
+        if(p.energySourceUid&&slot.uid!==p.energySourceUid||p.allowedUids&&!p.allowedUids.includes(slot.uid))continue;
         const target={type:'effectChoice',choiceTarget:slot===energyBoard.active?'active':'bench',choiceBenchIndex:slot===energyBoard.active?undefined:Number(slot.benchSlot),choiceCardId:slot.cardId};
         for(const [energyType,amount] of Object.entries(slot.energy||{})){
           if(Number(amount)<=0||(p.energyTypes&&!p.energyTypes.includes(energyType)))continue;
@@ -3155,7 +3155,7 @@ const target=slotForTarget(s,action.target,action.benchIndex);if(card.id==='pl2-
       }
       if(pending.special==='sm7BeforeAttack'){
         const ss=state.sides[side],opponent=state.sides[side==='player'?'opponent':'player'],rule=pending.rule;let count=pending.count||0;
-        if(!matched.choiceSkip){if(['crushBurn','sm75ExplosiveJet'].includes(rule)){const p=slotForTarget(ss,matched.choiceTarget,matched.choiceBenchIndex),t=matched.effectEnergyType;if(p&&t&&Number(p.energy?.[t])>0){p.energy[t]--;ss.energyDiscard[t]=Number(ss.energyDiscard[t]||0)+1;count++;}else if(p&&matched.effectSpecialEnergyUid){const i=p.specialEnergy.findIndex(x=>x.uid===matched.effectSpecialEnergyUid);if(i>=0){ss.discard.push(...p.specialEnergy.splice(i,1));count++;}}}else{const i=matched.choiceDeckIndex,ref=opponent.deck[i];if(ref&&pending.allowedUids.includes(ref.uid)&&data.cardById(ref.cardId)?.kind==='pokemon'){opponent.discard.push(...opponent.deck.splice(i,1));count++;}}}
+        if(!matched.choiceSkip){if(['crushBurn','sm75ExplosiveJet','sm8LavaFlow','sm8MindBlown'].includes(rule)){const p=slotForTarget(ss,matched.choiceTarget,matched.choiceBenchIndex),t=matched.effectEnergyType;if(p&&t&&Number(p.energy?.[t])>0){p.energy[t]--;if(rule==='sm8MindBlown'){const ids={Grass:'neo1-108',Fire:'neo1-107',Water:'neo1-111',Lightning:'neo1-109',Psychic:'neo1-110',Fighting:'neo1-106',Darkness:'lental-basic-darkness',Metal:'lental-basic-metal',Fairy:'xy1-140'};ss.lostZone.push({uid:'sm8-lost-'+state.turnNumber+'-'+ss.lostZone.length,cardId:ids[t],zoneGenerated:true});}else ss.energyDiscard[t]=Number(ss.energyDiscard[t]||0)+1;count++;}else if(p&&matched.effectSpecialEnergyUid){const i=p.specialEnergy.findIndex(x=>x.uid===matched.effectSpecialEnergyUid);if(i>=0){(rule==='sm8MindBlown'?ss.lostZone:ss.discard).push(...p.specialEnergy.splice(i,1));count++;}}}else{const i=matched.choiceDeckIndex,ref=opponent.deck[i];if(ref&&pending.allowedUids.includes(ref.uid)&&data.cardById(ref.cardId)?.kind==='pokemon'){opponent.discard.push(...opponent.deck.splice(i,1));count++;}}}
         state.pendingChoice=null;state.choiceSide=null;state.phase='battle';
         if(!matched.choiceSkip&&sm7BeforeAttack(state,side,pending.attackAction,rule,count,pending.allowedUids))return state;
         if(rule==='sandyFear')shuffle(state,opponent.deck);
@@ -3882,7 +3882,7 @@ const target=slotForTarget(s,action.target,action.benchIndex);if(card.id==='pl2-
       if(state.format==='classic')state.xy8BurningAttack={side,attackerUid:s.active.uid,turn:state.turnNumber,
         cardUids:(s.active.specialEnergy||[]).filter(r=>r.cardId==='xy8-151').map(r=>r.uid)};
       const sm7Rule=attack.effect?.type==='sm7Rule'?attack.effect.rule:null;
-      if(['crushBurn','sandyFear','sm75ExplosiveJet'].includes(sm7Rule)&&sm7BeforeAttack(state,side,matched,sm7Rule,0))return state;
+      if(['crushBurn','sandyFear','sm75ExplosiveJet','sm8LavaFlow','sm8MindBlown'].includes(sm7Rule)&&sm7BeforeAttack(state,side,matched,sm7Rule,0))return state;
       if(sm7Rule==='sandyFear')shuffle(state,foe.deck);
       return finishDeclaredAttack(state,side,matched);
     }
@@ -3906,10 +3906,11 @@ const target=slotForTarget(s,action.target,action.benchIndex);if(card.id==='pl2-
   function sm7BeforeAttack(state,side,attackAction,rule,count,allowedUids){
     const ss=state.sides[side],foeSide=side==='player'?'opponent':'player',foe=state.sides[foeSide];
     let spec;
-    if(rule==='sm75ExplosiveJet'){if(!pokemonOn(ss).some(p=>Number(p.energy?.Fire)>0||(p.specialEnergy||[]).some(ref=>effects.attachedSpecialProvidesType(ref,'Fire',p,data.cardById))))return false;spec={kind:'energySource',includeSpecial:true,energyTypes:['Fire']};}
+    if(rule==='sm8LavaFlow'){if(!Object.values(ss.active?.energy||{}).some(n=>n>0))return false;spec={kind:'energySource',energySourceUid:ss.active.uid};}
+    else if(rule==='sm75ExplosiveJet'||rule==='sm8MindBlown'){if(!pokemonOn(ss).some(p=>Number(p.energy?.Fire)>0||(p.specialEnergy||[]).some(ref=>effects.attachedSpecialProvidesType(ref,'Fire',p,data.cardById))))return false;spec={kind:'energySource',includeSpecial:true,energyTypes:['Fire']};}
     else if(rule==='crushBurn'){if(!pokemonOn(ss).some(p=>Object.values(p.energy||{}).some(n=>Number(n)>0)||(p.specialEnergy||[]).length))return false;spec={kind:'energySource',includeSpecial:true};}
     else{allowedUids=allowedUids||foe.deck.slice(0,13).map(x=>x.uid);if(!foe.deck.some(x=>allowedUids.includes(x.uid)&&data.cardById(x.cardId)?.kind==='pokemon'))return false;spec={kind:'deckCard',selectionSide:foeSide,allowedUids,filter:{kind:'pokemon'}};}
-    beginEffectChoice(state,side,ss.active,{...spec,side:'self',optional:true,special:'sm7BeforeAttack',rule,attackAction,count,prompt:rule==='sm75ExplosiveJet'?'Discard Fire Energy for Explosive Jet':rule==='crushBurn'?'Discard Energy for Crush and Burn-GX':'Choose Pokémon among the original top 13 cards'});return true;
+    beginEffectChoice(state,side,ss.active,{...spec,side:'self',optional:true,special:'sm7BeforeAttack',rule,attackAction,count,prompt:rule==='sm8LavaFlow'?'Discard Basic Energy for Lava Flow':rule==='sm8MindBlown'?'Put Fire Energy in the Lost Zone':rule==='sm75ExplosiveJet'?'Discard Fire Energy for Explosive Jet':rule==='crushBurn'?'Discard Energy for Crush and Burn-GX':'Choose Pokémon among the original top 13 cards'});return true;
   }
   function finishDeclaredAttack(state,side,matched){
     const s=state.sides[side],foeSide=side==='player'?'opponent':'player',foe=state.sides[foeSide],attackerCard=data.cardById(s.active.cardId),attackSourceCard=data.cardById(matched.attackCardId||s.active.cardId),attack=attackSourceCard.attacks[matched.attackIndex];

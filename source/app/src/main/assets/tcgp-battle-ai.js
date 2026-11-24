@@ -498,7 +498,7 @@
         if(pending.rule==='sandyFear')return picks[0]||stop||legal[0];
         const me=state.sides[side],target=state.sides[foeOf(side)].active;
         const remaining=target?core.maxHp(state,foeOf(side),target)-Number(target.damage||0):0;
-        const current=effects.attackDamageWithState(state,side,me.active,foeOf(side),target,(pending.rule==='sm75ExplosiveJet'?0:30)+50*Number(pending.count||0),data.cardById);
+        const current=effects.attackDamageWithState(state,side,me.active,foeOf(side),target,(['sm75ExplosiveJet','sm8MindBlown'].includes(pending.rule)?0:pending.rule==='sm8LavaFlow'?50:30)+50*Number(pending.count||0),data.cardById);
         if(current>=remaining||!picks.length)return stop||legal[0];
         // Prefer surplus energy or an already-damaged Bench over draining the Active.
         picks.sort((a,b)=>{const score=x=>{const p=slotFor(me,x.choiceTarget,x.choiceBenchIndex);return (p===me.active?-20:0)+attachedCount(p);};return score(b)-score(a);});

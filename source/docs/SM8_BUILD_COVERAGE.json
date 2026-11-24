@@ -1,12 +1,9 @@
 {
   "printed": 240,
-  "battleReady": 103,
+  "battleReady": 190,
   "gated": {
     "sm8-8": [
       "Unimplemented Ability: Quick-Ripening Herb"
-    ],
-    "sm8-9": [
-      "Unimplemented attack: Spider Scram"
     ],
     "sm8-10": [
       "Unimplemented attack: Trapping Thread"
@@ -14,91 +11,26 @@
     "sm8-13": [
       "Unimplemented Ability: Floral Path to the Sky"
     ],
-    "sm8-16": [
-      "Unimplemented attack: Energy Drink",
-      "Unimplemented Ability: Fresh Squeezed"
-    ],
-    "sm8-17": [
-      "Unimplemented Ability: Protective Shell"
-    ],
     "sm8-19": [
       "Prism Star attack/Ability or Trainer effect not yet implemented",
       "Unimplemented attack: Time Distortion"
     ],
-    "sm8-22": [
-      "Unimplemented attack: Leaf Cyclone",
-      "Unimplemented attack: Jungle Heal-GX"
-    ],
     "sm8-26": [
       "Unimplemented attack: Butterfly Edge"
-    ],
-    "sm8-28": [
-      "Unimplemented Ability: Hazardous Evolution"
-    ],
-    "sm8-30": [
-      "Unimplemented Ability: Molting"
-    ],
-    "sm8-32": [
-      "Unimplemented attack: Commanding Queen"
-    ],
-    "sm8-34": [
-      "Unimplemented attack: Breeze Away-GX"
-    ],
-    "sm8-38": [
-      "Unimplemented attack: Assisting Heater"
     ],
     "sm8-42": [
       "Unimplemented attack: Lost Flame",
       "Unimplemented Ability: Blazing Energy"
     ],
-    "sm8-44": [
-      "Unimplemented attack: Lava Flow",
-      "Unimplemented Ability: Crushing Charge"
-    ],
-    "sm8-46": [
-      "Unimplemented attack: Attack Operation"
-    ],
     "sm8-52": [
       "Unimplemented attack: Mind Blown",
       "Unimplemented attack: Burst-GX"
     ],
-    "sm8-55": [
-      "Unimplemented attack: Memory Melt"
-    ],
     "sm8-57": [
       "Unimplemented attack: Happy Delivery"
     ],
-    "sm8-60": [
-      "Unimplemented attack: Cure Stream",
-      "Unimplemented Ability: Phantom Winds"
-    ],
     "sm8-67": [
       "Unimplemented Ability: Harmonics"
-    ],
-    "sm8-69": [
-      "Unimplemented attack: Venom Fever"
-    ],
-    "sm8-74": [
-      "Unimplemented attack: Salvage"
-    ],
-    "sm8-78": [
-      "Unimplemented Ability: Unseen Flash"
-    ],
-    "sm8-79": [
-      "Unimplemented attack: Lost Voltage"
-    ],
-    "sm8-80": [
-      "Unimplemented attack: Overshort"
-    ],
-    "sm8-84": [
-      "Unimplemented attack: Nuzzle Shot"
-    ],
-    "sm8-86": [
-      "Unimplemented attack: Full Voltage-GX",
-      "Unimplemented Ability: Thunderclap Zone"
-    ],
-    "sm8-88": [
-      "Unimplemented attack: Energy Gaze"
     ],
     "sm8-90": [
       "Unimplemented Ability: DAMAGE"
@@ -112,28 +44,14 @@
     "sm8-93": [
       "Unimplemented Ability: Shady Tail"
     ],
-    "sm8-94": [
-      "Unimplemented attack: Get Lost"
-    ],
     "sm8-95": [
       "Unimplemented Ability: Vessel of Life"
     ],
     "sm8-96": [
-      "Unimplemented attack: Quick Hunt",
-      "Unimplemented attack: Cursed Drop"
+      "Unimplemented attack: Quick Hunt"
     ],
     "sm8-97": [
-      "Unimplemented attack: Shadow Impact",
       "Unimplemented Ability: Distortion Door"
-    ],
-    "sm8-98": [
-      "Unimplemented Ability: Mirror Counter"
-    ],
-    "sm8-100": [
-      "Unimplemented attack: Spirit Juggling"
-    ],
-    "sm8-103": [
-      "Unimplemented attack: Cursed Drop"
     ],
     "sm8-104": [
       "Unimplemented attack: Miracle Harmony"
@@ -144,40 +62,15 @@
     "sm8-107": [
       "Unimplemented attack: Eye Opener"
     ],
-    "sm8-108": [
-      "Unimplemented Ability: Charging Up"
-    ],
     "sm8-112": [
       "Unimplemented Ability: Sturdy"
-    ],
-    "sm8-117": [
-      "Unimplemented attack: Diamond Gate"
-    ],
-    "sm8-119": [
-      "Unimplemented attack: Empty Threat"
     ],
     "sm8-121": [
       "Unimplemented attack: Dusty Ruckus",
       "Unimplemented Ability: Lost Out"
     ],
-    "sm8-124": [
-      "Unimplemented attack: Thorny Eruption",
-      "Unimplemented attack: Lost Blast"
-    ],
-    "sm8-127": [
-      "Unimplemented attack: Turn Back Time"
-    ],
-    "sm8-130": [
-      "Unimplemented Ability: Double Drive"
-    ],
-    "sm8-134": [
-      "Unimplemented attack: Charmed Slap"
-    ],
     "sm8-136": [
       "Unimplemented attack: Polka-Dot Search"
-    ],
-    "sm8-137": [
-      "Unimplemented attack: Make a Mess"
     ],
     "sm8-144": [
       "Prism Star attack/Ability or Trainer effect not yet implemented",
@@ -186,25 +79,8 @@
     "sm8-146": [
       "Unimplemented Ability: Mysterious Buzz"
     ],
-    "sm8-148": [
-      "Unimplemented attack: Dream's Touch",
-      "Unimplemented Ability: Effect Spore"
-    ],
-    "sm8-149": [
-      "Unimplemented attack: Dream Fear-GX"
-    ],
     "sm8-150": [
       "Unimplemented Ability: Charmed Charm"
-    ],
-    "sm8-151": [
-      "Unimplemented attack: Dream Away"
-    ],
-    "sm8-152": [
-      "Unimplemented attack: Sympathetic Slap"
-    ],
-    "sm8-153": [
-      "Unimplemented attack: Powerful Slap",
-      "Unimplemented Ability: Happiness Supplement"
     ],
     "sm8-154": [
       "Prism Star attack/Ability or Trainer effect not yet implemented",
@@ -213,55 +89,13 @@
     "sm8-157": [
       "Unimplemented attack: Stunning Likeness"
     ],
-    "sm8-158": [
-      "Unimplemented attack: Milk Cannon"
-    ],
-    "sm8-159": [
-      "Unimplemented attack: Lost Purge-GX"
-    ],
-    "sm8-161": [
-      "Unimplemented Ability: Unit Color 1"
-    ],
-    "sm8-162": [
-      "Unimplemented Ability: Unit Color 3"
-    ],
-    "sm8-163": [
-      "Unimplemented attack: Peck Off"
-    ],
     "sm8-165": [
       "Unimplemented Ability: Mountain Pass"
-    ],
-    "sm8-166": [
-      "Unimplemented attack: Giganticannon"
-    ],
-    "sm8-169": [
-      "Unimplemented Trainer effect"
-    ],
-    "sm8-170": [
-      "Unimplemented Trainer effect"
     ],
     "sm8-171": [
       "Unimplemented Trainer effect"
     ],
-    "sm8-172": [
-      "Unimplemented Trainer effect"
-    ],
-    "sm8-172a": [
-      "Unimplemented Trainer effect"
-    ],
     "sm8-173": [
-      "Unimplemented Trainer effect"
-    ],
-    "sm8-174": [
-      "Unimplemented Trainer effect"
-    ],
-    "sm8-175": [
-      "Unimplemented Trainer effect"
-    ],
-    "sm8-176": [
-      "Unimplemented Trainer effect"
-    ],
-    "sm8-177": [
       "Unimplemented Trainer effect"
     ],
     "sm8-178": [
@@ -275,9 +109,6 @@
       "Prism Star attack/Ability or Trainer effect not yet implemented",
       "Unimplemented Trainer effect"
     ],
-    "sm8-181": [
-      "Unimplemented Trainer effect"
-    ],
     "sm8-182": [
       "Prism Star attack/Ability or Trainer effect not yet implemented",
       "Unimplemented Trainer effect"
@@ -288,22 +119,7 @@
     "sm8-184": [
       "Unimplemented Trainer effect"
     ],
-    "sm8-185": [
-      "Unimplemented Trainer effect"
-    ],
     "sm8-186": [
-      "Unimplemented Trainer effect"
-    ],
-    "sm8-187": [
-      "Unimplemented Trainer effect"
-    ],
-    "sm8-187a": [
-      "Unimplemented Trainer effect"
-    ],
-    "sm8-189": [
-      "Unimplemented Trainer effect"
-    ],
-    "sm8-189a": [
       "Unimplemented Trainer effect"
     ],
     "sm8-190": [
@@ -313,56 +129,16 @@
       "Prism Star attack/Ability or Trainer effect not yet implemented",
       "Unimplemented Trainer effect"
     ],
-    "sm8-192": [
-      "Unimplemented Trainer effect"
-    ],
-    "sm8-193": [
-      "Unimplemented Trainer effect"
-    ],
     "sm8-194": [
       "Unimplemented Special Energy rules"
-    ],
-    "sm8-195": [
-      "Unimplemented Ability: Protective Shell"
-    ],
-    "sm8-196": [
-      "Unimplemented attack: Leaf Cyclone",
-      "Unimplemented attack: Jungle Heal-GX"
-    ],
-    "sm8-197": [
-      "Unimplemented attack: Breeze Away-GX"
-    ],
-    "sm8-198": [
-      "Unimplemented attack: Lava Flow",
-      "Unimplemented Ability: Crushing Charge"
     ],
     "sm8-199": [
       "Unimplemented attack: Mind Blown",
       "Unimplemented attack: Burst-GX"
     ],
-    "sm8-200": [
-      "Unimplemented attack: Cure Stream",
-      "Unimplemented Ability: Phantom Winds"
-    ],
-    "sm8-201": [
-      "Unimplemented attack: Full Voltage-GX",
-      "Unimplemented Ability: Thunderclap Zone"
-    ],
-    "sm8-202": [
-      "Unimplemented Ability: Mirror Counter"
-    ],
     "sm8-203": [
       "Unimplemented attack: Dusty Ruckus",
       "Unimplemented Ability: Lost Out"
-    ],
-    "sm8-204": [
-      "Unimplemented Ability: Double Drive"
-    ],
-    "sm8-206": [
-      "Unimplemented attack: Dream Fear-GX"
-    ],
-    "sm8-207": [
-      "Unimplemented attack: Lost Purge-GX"
     ],
     "sm8-208": [
       "Unimplemented Trainer effect"
@@ -376,73 +152,18 @@
     "sm8-212": [
       "Unimplemented Trainer effect"
     ],
-    "sm8-214": [
-      "Unimplemented Trainer effect"
-    ],
-    "sm8-215": [
-      "Unimplemented Ability: Protective Shell"
-    ],
-    "sm8-216": [
-      "Unimplemented attack: Leaf Cyclone",
-      "Unimplemented attack: Jungle Heal-GX"
-    ],
-    "sm8-217": [
-      "Unimplemented attack: Breeze Away-GX"
-    ],
-    "sm8-218": [
-      "Unimplemented attack: Lava Flow",
-      "Unimplemented Ability: Crushing Charge"
-    ],
     "sm8-219": [
       "Unimplemented attack: Mind Blown",
       "Unimplemented attack: Burst-GX"
-    ],
-    "sm8-220": [
-      "Unimplemented attack: Cure Stream",
-      "Unimplemented Ability: Phantom Winds"
-    ],
-    "sm8-221": [
-      "Unimplemented attack: Full Voltage-GX",
-      "Unimplemented Ability: Thunderclap Zone"
-    ],
-    "sm8-222": [
-      "Unimplemented Ability: Mirror Counter"
     ],
     "sm8-223": [
       "Unimplemented attack: Dusty Ruckus",
       "Unimplemented Ability: Lost Out"
     ],
-    "sm8-224": [
-      "Unimplemented Ability: Double Drive"
-    ],
-    "sm8-226": [
-      "Unimplemented attack: Dream Fear-GX"
-    ],
-    "sm8-227": [
-      "Unimplemented attack: Lost Purge-GX"
-    ],
-    "sm8-229": [
-      "Unimplemented Trainer effect"
-    ],
-    "sm8-230": [
-      "Unimplemented Trainer effect"
-    ],
     "sm8-231": [
       "Unimplemented Trainer effect"
     ],
-    "sm8-232": [
-      "Unimplemented Trainer effect"
-    ],
-    "sm8-233": [
-      "Unimplemented Trainer effect"
-    ],
-    "sm8-234": [
-      "Unimplemented Trainer effect"
-    ],
     "sm8-235": [
-      "Unimplemented Trainer effect"
-    ],
-    "sm8-236": [
       "Unimplemented Trainer effect"
     ]
   },
