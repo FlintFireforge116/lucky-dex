@@ -215,3 +215,13 @@ at(170,'Dynamic Swing',U('DynamicSwing'))
 ab(170,trig('damagedByAttack',E('placeDamageCounters',target='opponentActive',amount=40),activeOnly=True,opponentAttackOnly=True))
 tr(194,'Tool',E('triggeredEffect',event='damagedByAttack',activeOnly=True,opponentAttackOnly=True,effect=E('status',target='opponentActive',status='confusion')))
 tr(196,'Tool',U('GiantBomb'))
+
+# v0.69.455 — targeted remaining effects.
+ab(156,activated(U('GrindUp')))
+ab(173,activated(seq(coin(U('SnackSearch')),E('endTurn'))))
+at(176,'Downburst',U('Downburst'))
+tr(205,'Stadium',E('stadiumAction',effect=U('ResearchLab')))
+
+ab(25,passive(U('BurningRoad')))
+at(30,'Spirit Burner',U('SpiritBurner'))
+ab(45,passive(U('AncientCustom')))

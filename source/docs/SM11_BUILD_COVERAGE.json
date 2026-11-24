@@ -1,33 +1,15 @@
 {
   "printed": 261,
-  "battleReady": 241,
+  "battleReady": 250,
   "gated": {
-    "sm11-25": [
-      "Unimplemented Ability: Burning Road"
-    ],
-    "sm11-30": [
-      "Unimplemented attack: Spirit Burner"
-    ],
-    "sm11-45": [
-      "Unimplemented Ability: Ancient Custom"
-    ],
     "sm11-57": [
       "Unimplemented attack: Electro Rain"
     ],
     "sm11-66": [
       "Unimplemented Ability: Electric Swamp"
     ],
-    "sm11-156": [
-      "Unimplemented Ability: Grind Up"
-    ],
     "sm11-167": [
       "Unimplemented attack: Lazy Howl"
-    ],
-    "sm11-173": [
-      "Unimplemented Ability: Snack Search"
-    ],
-    "sm11-176": [
-      "Unimplemented attack: Downburst"
     ],
     "sm11-182": [
       "Unimplemented attack: Sage's Riddle"
@@ -38,23 +20,14 @@
     "sm11-190": [
       "Unimplemented Trainer effect"
     ],
-    "sm11-205": [
-      "Unimplemented Trainer effect"
-    ],
     "sm11-211": [
       "Unimplemented Trainer effect"
     ],
     "sm11-212": [
       "Unimplemented Special Energy rules"
     ],
-    "sm11-216": [
-      "Unimplemented Ability: Burning Road"
-    ],
     "sm11-232": [
       "Unimplemented Trainer effect"
-    ],
-    "sm11-238": [
-      "Unimplemented Ability: Burning Road"
     ],
     "sm11-255": [
       "Unimplemented Trainer effect"

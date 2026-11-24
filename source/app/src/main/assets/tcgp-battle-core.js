@@ -57,7 +57,7 @@
 
   function pokemonOn(sideState){ return [sideState?.active,...(sideState?.bench||[])].filter(Boolean); }
   function toolsOf(slot){ return slot?[slot.tool,...(slot.extraTools||[])].filter(Boolean):[]; }
-  function activeToolsOf(state,slot){return effects.toolEffectsSuppressed(state,data.cardById)?[]:toolsOf(slot);}
+  function activeToolsOf(state,slot){return effects.toolEffectsSuppressed(state,data.cardById,slot)?[]:toolsOf(slot);}
   function activeStadium(state){return state?.format==='classic'&&
     Number(state.xy11WickedWindUntil||0)>=Number(state.turnNumber||0)?null:state?.stadium||null;}
 
@@ -2936,7 +2936,7 @@
             source.uid===attacker?.uid&&Number(source.damage||0)>0&&
             ['sm4-63','sm4-63a','sm4-105','sm4-116'].includes(source.cardId)&&foe.lastAttackName==='Glutton-GX'?2:0;
           const beast=awardsPrize&&cause==='attack'&&source?.attack&&source.side===foeSide&&source.uid===attacker?.uid&&source.damage>0&&attacker?.sm10BeastGame?.turn===state.turnNumber&&foe.lastAttackName==='Beast Game-GX'?attacker.sm10BeastGame.amount:0;
-          const beastBringer=awardsPrize&&cause==='attack'&&source?.attack&&source.side===foeSide&&source.uid===attacker?.uid&&source.damage>0&&sm10WasActive&&foe.prizes.length===6&&data.cardById(attacker?.cardId)?.ultraBeast&&effects.matchesFilter(card,{isExOrGX:true})&&!effects.toolEffectsSuppressed(state,data.cardById)&&toolsOf(attacker).some(r=>['sm10-164','sm10-229'].includes(r.cardId))?1:0;
+          const beastBringer=awardsPrize&&cause==='attack'&&source?.attack&&source.side===foeSide&&source.uid===attacker?.uid&&source.damage>0&&sm10WasActive&&foe.prizes.length===6&&data.cardById(attacker?.cardId)?.ultraBeast&&effects.matchesFilter(card,{isExOrGX:true})&&!effects.toolEffectsSuppressed(state,data.cardById,attacker)&&toolsOf(attacker).some(r=>['sm10-164','sm10-229'].includes(r.cardId))?1:0;
           const greedy=awardsPrize&&cause==='attack'&&source?.attack&&source.side===foeSide&&source.uid===attacker?.uid&&source.damage>0&&attacker?.sm11GreedyTurn===state.turnNumber&&foe.lastAttackName==='Greedy Crush'&&effects.matchesFilter(card,{isExOrGX:true})?1:0;
           const prizeCount=awardsPrize?Math.max(0,prizeValue(card)+greedy+beast+beastBringer-blackMarket+sm4Glutton+extraMoonSkip+arceusBeltBonus+arceusExtra+hgss3SpaceVirus+bw8Overflow+deltaPlus+xy10Endgame+sm2Extra-bw9LifeDew):0;
           awarded=Math.min(prizeCount,Math.max(0,foe.prizes.length-(state.pendingPrizeClaims||[]).filter(q=>q.side===foeSide).reduce((n,q)=>n+q.remaining,0)));
@@ -3424,7 +3424,7 @@ const target=slotForTarget(s,action.target,action.benchIndex);if(card.id==='pl2-
     if (matched.type === 'evolve'){
       const [ref] = s.hand.splice(matched.handIndex,1);
       const target = slotForTarget(s,matched.target,matched.benchIndex);
-      const xy4SpiritLink=state.format==='classic'&&!effects.toolEffectsSuppressed(state,data.cardById)&&(
+      const xy4SpiritLink=state.format==='classic'&&!effects.toolEffectsSuppressed(state,data.cardById,target)&&(
         (['xy4-35','xy4-121'].includes(ref.cardId)&&toolsOf(target).some(t=>t.cardId==='xy4-95'))||
         (['xy4-24','xy4-24a','xy4-120'].includes(ref.cardId)&&toolsOf(target).some(t=>t.cardId==='xy4-100'))||
         (['xy5-94','xy5-154'].includes(ref.cardId)&&toolsOf(target).some(t=>t.cardId==='xy5-123'))||
@@ -4492,6 +4492,12 @@ const target=slotForTarget(s,action.target,action.benchIndex);if(card.id==='pl2-
       const incoming=state.sides[owner].active,previous=before[owner];
       if(incoming&&previous&&incoming.uid!==previous.uid&&previous.bench.has(incoming.uid))
         {incoming.movedToActiveTurn=turnOfAction;if(incoming.cardId==='sm8-144'&&state.activeSide===owner&&state.turnNumber===turnOfAction&&state.phase==='battle'&&incoming.sm8PathUsed!==turnOfAction&&!effects.abilitiesSuppressed(state,owner,incoming,data.cardById)&&state.sides[owner].bench.some(p=>Object.values(p.energy||{}).some(n=>n>0)||(p.specialEnergy||[]).length)){incoming.sm8PathUsed=turnOfAction;effects.applyEffect({type:'sm7Rule',rule:'sm8PathLife'},effectContext(state,owner,{},incoming));}}
+    }
+    if(state.format==='classic'&&state.turnNumber===turnOfAction&&state.phase==='battle'){
+      const owner=state.activeSide,board=state.sides[owner],incoming=board.active;
+      if(incoming&&before[owner].uid!==incoming.uid&&before[owner].bench.has(incoming.uid)&&['sm11-25','sm11-216','sm11-238'].includes(incoming.cardId)&&incoming.sm11BurningRoadTurn!==turnOfAction&&!effects.abilitiesSuppressed(state,owner,incoming,data.cardById)&&board.bench.some(p=>Number(p.energy?.Fire||0)>0||(p.specialEnergy||[]).some(r=>effects.attachedSpecialProvidesType(r,'Fire',p,data.cardById)))){
+        incoming.sm11BurningRoadTurn=turnOfAction;effects.applyEffect({type:'sm7Rule',rule:'sm11BurningRoad'},{...effectContext(state,owner,{},incoming),isAbility:true});if(state.phase==='effectChoice'){state.pendingChoice.resume='ability';state.pendingChoice.isAbility=true;}
+      }
     }
     // XY3 Herbal/Strong Energy may only remain on a Pokémon of the printed
     // type. Evolving or changing its type must immediately discard it; a
