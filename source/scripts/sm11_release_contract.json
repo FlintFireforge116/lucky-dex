@@ -1,0 +1,21 @@
+{
+  "set": "sm11",
+  "name": "Unified Minds",
+  "stage": "integration",
+  "release": "0.69.450",
+  "printedTotal": 261,
+  "attackPrints": 354,
+  "abilities": 54,
+  "pokemonGX": 48,
+  "gxAttackPrints": 50,
+  "tagTeamPrints": 24,
+  "prismStarPrints": 0,
+  "trainerPrints": 41,
+  "energyPrints": 4,
+  "pin": "215307311fc5b7a4edc9d238d6bbc91ce62b3dbb",
+  "variants": [
+    "79a",
+    "191a",
+    "206a"
+  ]
+}

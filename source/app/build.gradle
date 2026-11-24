@@ -8,8 +8,8 @@ android {
         applicationId 'com.example.luckydex'
         minSdk 26
         targetSdk 35
-        versionCode 7449
-        versionName '0.69.449'
+        versionCode 7450
+        versionName '0.69.450'
     }
 
     signingConfigs {
@@ -1066,7 +1066,7 @@ tasks.matching { it.name == 'preBuild' || (it.name.startsWith('merge') && it.nam
     dependsOn tasks.named('auditSM5ForApk')
 }
 
-// v0.69.449 Forbidden Light SM6: SHA-pinned 150-print full-set source and audit.
+// v0.69.450 Forbidden Light SM6: SHA-pinned 150-print full-set source and audit.
 tasks.register('preflightSM6ContractForApk', Exec) {
     dependsOn tasks.named('auditSM5ForApk')
     workingDir rootProject.projectDir
@@ -1204,4 +1204,24 @@ tasks.register('auditSM10ForApk', Exec) {
 }
 tasks.matching { it.name == 'preBuild' || (it.name.startsWith('merge') && it.name.endsWith('Assets')) }.configureEach {
     dependsOn tasks.named('auditSM10ForApk')
+}
+
+// Unified Minds: pinned catalogue and staged gameplay gate.
+tasks.register('preflightSM11ContractForApk', Exec) {
+    dependsOn tasks.named('auditSM10ForApk')
+    workingDir rootProject.projectDir
+    commandLine (System.getenv('LUCKYDEX_PYTHON') ?: 'python3'), 'scripts/preflight-sm11-release.py'
+}
+tasks.register('generateSM11ForApk', Exec) {
+    dependsOn tasks.named('preflightSM11ContractForApk')
+    workingDir rootProject.projectDir
+    commandLine (System.getenv('LUCKYDEX_PYTHON') ?: 'python3'), 'scripts/build-sm11.py'
+}
+tasks.register('auditSM11ForApk', Exec) {
+    dependsOn tasks.named('generateSM11ForApk')
+    workingDir rootProject.projectDir
+    commandLine 'node', '--test', 'tests/v07466-unified-minds-integration.test.cjs', 'tests/v07467-unified-minds-outcomes.test.cjs'
+}
+tasks.matching { it.name == 'preBuild' || (it.name.startsWith('merge') && it.name.endsWith('Assets')) }.configureEach {
+    dependsOn tasks.named('auditSM11ForApk')
 }

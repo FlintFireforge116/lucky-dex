@@ -1,0 +1,400 @@
+{
+  "printed": 261,
+  "battleReady": 137,
+  "gated": {
+    "sm11-1": [
+      "Unimplemented attack: Super Growth",
+      "Unimplemented attack: Tropical Hour-GX"
+    ],
+    "sm11-4": [
+      "Unimplemented attack: Time Spiral"
+    ],
+    "sm11-14": [
+      "Unimplemented Ability: Bursting Spores"
+    ],
+    "sm11-25": [
+      "Unimplemented Ability: Burning Road"
+    ],
+    "sm11-26": [
+      "Unimplemented attack: Victory Sign"
+    ],
+    "sm11-30": [
+      "Unimplemented attack: Spirit Burner"
+    ],
+    "sm11-35": [
+      "Unimplemented attack: Ditch and Splash",
+      "Unimplemented attack: Thrilling Times-GX"
+    ],
+    "sm11-38": [
+      "Unimplemented attack: Spiteful Sigh"
+    ],
+    "sm11-40": [
+      "Unimplemented attack: Neon Trickery"
+    ],
+    "sm11-43": [
+      "Unimplemented attack: Swarming Bites"
+    ],
+    "sm11-45": [
+      "Unimplemented Ability: Ancient Custom"
+    ],
+    "sm11-49": [
+      "Unimplemented attack: Sticky Web"
+    ],
+    "sm11-51": [
+      "Unimplemented Ability: Emergency Exit"
+    ],
+    "sm11-53": [
+      "Unimplemented attack: Nature Wave"
+    ],
+    "sm11-55": [
+      "Unimplemented attack: Meal Time"
+    ],
+    "sm11-57": [
+      "Unimplemented attack: Electro Rain"
+    ],
+    "sm11-60": [
+      "Unimplemented Ability: Double Type"
+    ],
+    "sm11-62": [
+      "Unimplemented attack: Live Wire"
+    ],
+    "sm11-65": [
+      "Unimplemented attack: Overspark"
+    ],
+    "sm11-66": [
+      "Unimplemented Ability: Electric Swamp"
+    ],
+    "sm11-68": [
+      "Unimplemented attack: Raging Thunder"
+    ],
+    "sm11-71": [
+      "Unimplemented Ability: Perfection"
+    ],
+    "sm11-72": [
+      "Unimplemented attack: Cross Division-GX"
+    ],
+    "sm11-75": [
+      "Unimplemented attack: Spirit Smash"
+    ],
+    "sm11-76": [
+      "Unimplemented Ability: Ominous Posture"
+    ],
+    "sm11-78": [
+      "Unimplemented attack: Clear Vision-GX",
+      "Unimplemented Ability: Power Bind"
+    ],
+    "sm11-79": [
+      "Unimplemented attack: Star Search",
+      "Unimplemented Ability: Psychic Zone"
+    ],
+    "sm11-79a": [
+      "Unimplemented attack: Star Search",
+      "Unimplemented Ability: Psychic Zone"
+    ],
+    "sm11-83": [
+      "Unimplemented Ability: Secret Territory"
+    ],
+    "sm11-86": [
+      "Unimplemented Ability: Dimension Breach"
+    ],
+    "sm11-88": [
+      "Unimplemented attack: Future Sight"
+    ],
+    "sm11-89": [
+      "Unimplemented attack: Rest Well"
+    ],
+    "sm11-91": [
+      "Unimplemented attack: Mysterious Noise"
+    ],
+    "sm11-95": [
+      "Unimplemented Ability: Durable Blade"
+    ],
+    "sm11-102": [
+      "Unimplemented attack: Last Scene"
+    ],
+    "sm11-104": [
+      "Unimplemented attack: Gigaton Shake"
+    ],
+    "sm11-106": [
+      "Unimplemented Ability: Primal Winds"
+    ],
+    "sm11-107": [
+      "Unimplemented attack: Turn the Tables"
+    ],
+    "sm11-110": [
+      "Unimplemented attack: Pure Power",
+      "Unimplemented attack: Master Strike"
+    ],
+    "sm11-114": [
+      "Unimplemented attack: Over Slice"
+    ],
+    "sm11-119": [
+      "Unimplemented attack: Rototiller"
+    ],
+    "sm11-122": [
+      "Unimplemented attack: Cavern Counter"
+    ],
+    "sm11-123": [
+      "Unimplemented attack: Tag Cheer"
+    ],
+    "sm11-124": [
+      "Unimplemented Ability: Cellular Companions"
+    ],
+    "sm11-126": [
+      "Unimplemented attack: Greedy Crush"
+    ],
+    "sm11-132": [
+      "Unimplemented Ability: Shadow Connection"
+    ],
+    "sm11-138": [
+      "Unimplemented attack: Turf Raid"
+    ],
+    "sm11-139": [
+      "Unimplemented attack: Shadow Impact"
+    ],
+    "sm11-141": [
+      "Unimplemented Ability: Captivating Wink"
+    ],
+    "sm11-142": [
+      "Unimplemented attack: Discerning Spear"
+    ],
+    "sm11-144": [
+      "Unimplemented Ability: Prowl"
+    ],
+    "sm11-146": [
+      "Unimplemented attack: GG End-GX"
+    ],
+    "sm11-151": [
+      "Unimplemented Ability: Hurricane Charge"
+    ],
+    "sm11-152": [
+      "Unimplemented attack: Mach Delivery-GX"
+    ],
+    "sm11-153": [
+      "Unimplemented attack: Energy Arrow"
+    ],
+    "sm11-156": [
+      "Unimplemented Ability: Grind Up"
+    ],
+    "sm11-159": [
+      "Unimplemented attack: Boomburst"
+    ],
+    "sm11-160": [
+      "Unimplemented attack: Injection-GX"
+    ],
+    "sm11-161": [
+      "Unimplemented attack: Heavy Draw"
+    ],
+    "sm11-167": [
+      "Unimplemented attack: Lazy Howl"
+    ],
+    "sm11-170": [
+      "Unimplemented attack: Dynamic Swing",
+      "Unimplemented Ability: Counterattack"
+    ],
+    "sm11-173": [
+      "Unimplemented Ability: Snack Search"
+    ],
+    "sm11-176": [
+      "Unimplemented attack: Downburst"
+    ],
+    "sm11-181": [
+      "Unimplemented attack: Alert Headbutt"
+    ],
+    "sm11-182": [
+      "Unimplemented attack: Sage's Riddle"
+    ],
+    "sm11-184": [
+      "Unimplemented attack: Avenging Heart"
+    ],
+    "sm11-185": [
+      "Unimplemented Ability: Drowsing"
+    ],
+    "sm11-186": [
+      "Unimplemented Trainer effect"
+    ],
+    "sm11-187": [
+      "Unimplemented Trainer effect"
+    ],
+    "sm11-188": [
+      "Unimplemented Trainer effect"
+    ],
+    "sm11-190": [
+      "Unimplemented Trainer effect"
+    ],
+    "sm11-193": [
+      "Unimplemented Trainer effect"
+    ],
+    "sm11-194": [
+      "Unimplemented Trainer effect"
+    ],
+    "sm11-195": [
+      "Unimplemented Trainer effect"
+    ],
+    "sm11-196": [
+      "Unimplemented Trainer effect"
+    ],
+    "sm11-197": [
+      "Unimplemented Trainer effect"
+    ],
+    "sm11-199": [
+      "Unimplemented Trainer effect"
+    ],
+    "sm11-201": [
+      "Unimplemented Trainer effect"
+    ],
+    "sm11-203": [
+      "Unimplemented Trainer effect"
+    ],
+    "sm11-204": [
+      "Invalid effect: effect: invalid target filter key"
+    ],
+    "sm11-205": [
+      "Unimplemented Trainer effect"
+    ],
+    "sm11-206": [
+      "Unimplemented Trainer effect"
+    ],
+    "sm11-206a": [
+      "Unimplemented Trainer effect"
+    ],
+    "sm11-207": [
+      "Unimplemented Trainer effect"
+    ],
+    "sm11-209": [
+      "Unimplemented Trainer effect"
+    ],
+    "sm11-211": [
+      "Unimplemented Trainer effect"
+    ],
+    "sm11-212": [
+      "Unimplemented Special Energy rules"
+    ],
+    "sm11-213": [
+      "Unimplemented Special Energy rules"
+    ],
+    "sm11-214": [
+      "Unimplemented attack: Super Growth",
+      "Unimplemented attack: Tropical Hour-GX"
+    ],
+    "sm11-215": [
+      "Unimplemented attack: Super Growth",
+      "Unimplemented attack: Tropical Hour-GX"
+    ],
+    "sm11-216": [
+      "Unimplemented Ability: Burning Road"
+    ],
+    "sm11-217": [
+      "Unimplemented attack: Ditch and Splash",
+      "Unimplemented attack: Thrilling Times-GX"
+    ],
+    "sm11-218": [
+      "Unimplemented attack: Ditch and Splash",
+      "Unimplemented attack: Thrilling Times-GX"
+    ],
+    "sm11-222": [
+      "Unimplemented Ability: Perfection"
+    ],
+    "sm11-223": [
+      "Unimplemented attack: Clear Vision-GX",
+      "Unimplemented Ability: Power Bind"
+    ],
+    "sm11-224": [
+      "Unimplemented Ability: Primal Winds"
+    ],
+    "sm11-225": [
+      "Unimplemented attack: Greedy Crush"
+    ],
+    "sm11-226": [
+      "Unimplemented attack: Greedy Crush"
+    ],
+    "sm11-227": [
+      "Unimplemented Ability: Captivating Wink"
+    ],
+    "sm11-228": [
+      "Unimplemented attack: GG End-GX"
+    ],
+    "sm11-229": [
+      "Unimplemented attack: Mach Delivery-GX"
+    ],
+    "sm11-230": [
+      "Unimplemented attack: Injection-GX"
+    ],
+    "sm11-231": [
+      "Unimplemented Trainer effect"
+    ],
+    "sm11-232": [
+      "Unimplemented Trainer effect"
+    ],
+    "sm11-234": [
+      "Unimplemented Trainer effect"
+    ],
+    "sm11-236": [
+      "Invalid effect: effect: invalid target filter key"
+    ],
+    "sm11-237": [
+      "Unimplemented attack: Super Growth",
+      "Unimplemented attack: Tropical Hour-GX"
+    ],
+    "sm11-238": [
+      "Unimplemented Ability: Burning Road"
+    ],
+    "sm11-239": [
+      "Unimplemented attack: Ditch and Splash",
+      "Unimplemented attack: Thrilling Times-GX"
+    ],
+    "sm11-242": [
+      "Unimplemented Ability: Perfection"
+    ],
+    "sm11-243": [
+      "Unimplemented attack: Clear Vision-GX",
+      "Unimplemented Ability: Power Bind"
+    ],
+    "sm11-244": [
+      "Unimplemented Ability: Primal Winds"
+    ],
+    "sm11-245": [
+      "Unimplemented attack: Greedy Crush"
+    ],
+    "sm11-246": [
+      "Unimplemented Ability: Captivating Wink"
+    ],
+    "sm11-247": [
+      "Unimplemented attack: GG End-GX"
+    ],
+    "sm11-248": [
+      "Unimplemented attack: Mach Delivery-GX"
+    ],
+    "sm11-249": [
+      "Unimplemented attack: Injection-GX"
+    ],
+    "sm11-251": [
+      "Unimplemented Trainer effect"
+    ],
+    "sm11-252": [
+      "Unimplemented Trainer effect"
+    ],
+    "sm11-253": [
+      "Unimplemented Trainer effect"
+    ],
+    "sm11-254": [
+      "Unimplemented Trainer effect"
+    ],
+    "sm11-255": [
+      "Unimplemented Trainer effect"
+    ],
+    "sm11-257": [
+      "Unimplemented Special Energy rules"
+    ],
+    "sm11-258": [
+      "Unimplemented Special Energy rules"
+    ]
+  },
+  "attacks": 354,
+  "abilities": 54,
+  "pokemonGX": 48,
+  "gxAttackPrints": 50,
+  "energyPrints": 4,
+  "prismStarPrints": 0,
+  "sourceGitBlob": "215307311fc5b7a4edc9d238d6bbc91ce62b3dbb"
+}

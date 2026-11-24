@@ -28081,7 +28081,7 @@ if(ctx.isAbility){const targetSide=pokemonOn(own(ctx)).includes(s)?ctx.side:ctx.
         ...(hasLightning?[{effectSelection:'discard',choiceLabel:'80 damage · discard all Lightning Energy'}]:[])];
     }
     if(effect?.type==='neoRule'&&effect.rule==='destiny:rushingFlames'){const total=pokemonOn(own(ctx)).reduce((n,slot)=>n+Number(slot.energy?.Fire||0),0);return Array.from({length:Math.min(20,total)+1},(_,n)=>({effectSelection:String(n),choiceLabel:'Discard '+n+' Fire Energy for '+n+' coin flips'}));}
-    assertEffect(effect);if(!effect)return [{}];if(effect.type==='attackRequirement')return conditionMatches(effect.condition,ctx)||effect.allowWhenFailed?[{}]:[];if(!conditionMatches(effect.condition,ctx))return ctx.isAttack?[{}]:[];
+    assertEffect(effect);if(!effect)return [{}];if(effect.type==='attackRequirement')return conditionMatches(effect.condition,ctx)||effect.allowWhenFailed?[{}]:[];if(!conditionMatches(effect.condition,ctx))return ctx.isAttack||effect.optionalCondition?[{}]:[];
     if(effect.type==='sm7Rule'){
       const ss=own(ctx),foe=other(ctx),r=effect.rule;
       if(ctx.isAttack&&r==='sm10SurpriseFist')return ['Rock','Paper','Scissors'].map((move,i)=>({effectSelection:String(i),choiceLabel:move}));
