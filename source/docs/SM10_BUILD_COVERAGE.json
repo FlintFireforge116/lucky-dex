@@ -1,26 +1,12 @@
 {
   "printed": 238,
-  "battleReady": 199,
+  "battleReady": 220,
   "gated": {
-    "sm10-32": [
-      "Unimplemented attack: Blazer",
-      "Unimplemented attack: Fireball Circus"
-    ],
-    "sm10-35": [
-      "Unimplemented attack: Rocket Splash",
-      "Unimplemented attack: Giant Geyser-GX"
-    ],
     "sm10-41": [
       "Unimplemented attack: Wicked Tentacles"
     ],
-    "sm10-52": [
-      "Unimplemented attack: Afterimage Strike"
-    ],
     "sm10-53": [
       "Unimplemented attack: Surprise Fist"
-    ],
-    "sm10-55": [
-      "Unimplemented attack: Never Give Up"
     ],
     "sm10-58": [
       "Unimplemented Ability: Battery"
@@ -39,20 +25,8 @@
       "Unimplemented attack: Splattering Sludge",
       "Unimplemented Ability: Detention Gas"
     ],
-    "sm10-78": [
-      "Unimplemented Ability: Mysterious Message"
-    ],
-    "sm10-100": [
-      "Unimplemented Ability: Bratty Kick"
-    ],
-    "sm10-101": [
-      "Unimplemented attack: Finishing Combo"
-    ],
     "sm10-114": [
       "Unimplemented attack: Grandiose Fangs"
-    ],
-    "sm10-117": [
-      "Unimplemented attack: Bring Down"
     ],
     "sm10-119": [
       "Unimplemented attack: Hypnotic Reign"
@@ -60,36 +34,14 @@
     "sm10-125": [
       "Unimplemented attack: Extra-Tight Press"
     ],
-    "sm10-131": [
-      "Unimplemented Ability: Excitable Draw"
-    ],
-    "sm10-137": [
-      "Unimplemented attack: Energy Present"
-    ],
-    "sm10-142": [
-      "Unimplemented attack: Pungent Aroma",
-      "Unimplemented attack: Miraculous Cologne"
-    ],
-    "sm10-149": [
-      "Unimplemented Ability: Cat Walk"
-    ],
     "sm10-157": [
       "Unimplemented Ability: Crazy Code"
-    ],
-    "sm10-161": [
-      "Unimplemented Ability: Playhouse Heal"
     ],
     "sm10-163": [
       "Unimplemented attack: Discovery-GX",
       "Unimplemented Ability: Force Canceler"
     ],
-    "sm10-164": [
-      "Unimplemented Trainer effect"
-    ],
     "sm10-166": [
-      "Unimplemented Trainer effect"
-    ],
-    "sm10-167": [
       "Unimplemented Trainer effect"
     ],
     "sm10-168": [
@@ -101,32 +53,13 @@
     "sm10-188": [
       "Unimplemented Trainer effect"
     ],
-    "sm10-190": [
-      "Unimplemented Special Energy rules"
-    ],
-    "sm10-207": [
-      "Unimplemented Ability: Cat Walk"
-    ],
     "sm10-208": [
       "Unimplemented attack: Discovery-GX",
       "Unimplemented Ability: Force Canceler"
     ],
-    "sm10-218": [
-      "Unimplemented attack: Rocket Splash",
-      "Unimplemented attack: Giant Geyser-GX"
-    ],
-    "sm10-227": [
-      "Unimplemented Ability: Cat Walk"
-    ],
     "sm10-228": [
       "Unimplemented attack: Discovery-GX",
       "Unimplemented Ability: Force Canceler"
-    ],
-    "sm10-229": [
-      "Unimplemented Trainer effect"
-    ],
-    "sm10-234": [
-      "Unimplemented Special Energy rules"
     ]
   },
   "attacks": 338,

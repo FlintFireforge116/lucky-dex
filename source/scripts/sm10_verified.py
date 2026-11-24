@@ -80,7 +80,7 @@ tr(182,'Item',E('selectTopToHand',count=7,filter={'kind':'trainer','trainerType'
 # Leave cards with conditional payment, choices across multiple recipients, or bespoke continuous rules gated.
 tr(176,'Supporter',E('sm7Rule',rule='sm9TopPick',count=4,amount=2,filter={},destination='hand',rest='shuffle'))
 tr(172,'Tool',E('preventDamage',duration='whileInPlay',target='self',filter={'subtype':'Fairy'},attackerFilter={'subtype':'Lightning','isExOrGX':True}))
-# v0.69.446: shared staged choices and portable exact-text effects.
+# v0.69.447: shared staged choices and portable exact-text effects.
 R=lambda rule,**kw:E('sm7Rule',rule='sm10'+rule,**kw)
 S=lambda rule,**kw:E('sm7Rule',rule='sm9'+rule,**kw)
 def trig(event,fx,**kw):return dict(type='triggered',event=event,effect=fx,**kw)
@@ -143,7 +143,7 @@ tr(184,'Supporter',R('Pay',amount=2,filter={},trainer=True,after=E('searchChosen
 tr(185,'Supporter',seq(E('draw',amount=2),E('draw',amount=2,condition=cond('sm10SameType'))))
 tr(187,'Item',R('SurpriseBox'))
 tr(189,'Supporter',R('HandAttach',amount=2,energyType='Fire',draw=3,optional=True))
-# v0.69.446: targeted shared mechanics; unresolved variants stay gated.
+# v0.69.447: targeted shared mechanics; unresolved variants stay gated.
 at(1,'Elegant Sole',R('BaseNext',name='Elegant Sole',amount=60))
 at(1,'Beast Game-GX',R('BeastGame'))
 for no in [2,3]:ab(no,activated(coin(R('Evolution'))))
@@ -176,3 +176,23 @@ tr(179,'Stadium',R('Stadium'))
 tr(180,'Tool',E('modifier',stat='damageReduction',scope='self',amount=70,duration='whileInPlay',condition=cond('selfMatches',filter={'subtype':'Metal'})))
 
 tr(185,'Supporter',R('Samson'))
+# v0.69.447: shared staged choices and Energy lifecycle.
+at(52,'Afterimage Strike',R('Afterimage'))
+at(55,'Never Give Up',seq(E('attackRequirement',condition=cond('sm10PrizeDeficit',amount=3)),R('NeverGiveUp')))
+ab(78,activated(R('Mysterious')))
+ab(100,activated(seq(coin(R('BabyKick')),E('endTurn'))))
+at(101,'Finishing Combo',seq(E('attackRequirement',condition=cond('sm10SpecialCombo')),E('multiTargetDamage',target='opponentPokemon',amount=60,count=9,activeWeaknessResistance=True)))
+at(117,'Bring Down',R('BringDown'))
+ab(131,activated(seq(coin(E('handShuffle',side='self',draw=6)),E('endTurn'))))
+at(137,'Energy Present',R('EnergyPresent'))
+at(142,'Pungent Aroma',R('Pungent'))
+at(142,'Miraculous Cologne',coin(R('StatusChoice')))
+ab(149,activated(R('CatWalk')))
+ab(161,activated(seq(coin(R('BabyHeal')),E('endTurn'))))
+tr(164,'Tool',R('BeastBringer'))
+tr(167,'Item',R('DuskStone'))
+def energy(row):return E('specialEnergy',provides={'Colorless':3}) if row[1]=='Triple Acceleration Energy' else None
+at(32,'Blazer',R('Blazer'))
+at(32,'Fireball Circus',R('Fireball'))
+at(35,'Rocket Splash',R('RocketSplash'))
+at(35,'Giant Geyser-GX',R('Geyser'))
