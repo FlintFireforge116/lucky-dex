@@ -1,0 +1,19 @@
+{
+  "set": "sm75",
+  "name": "Dragon Majesty",
+  "stage": "integration",
+  "release": "0.69.427",
+  "printedTotal": 80,
+  "attackPrints": 115,
+  "abilities": 18,
+  "pokemonGX": 15,
+  "gxAttackPrints": 15,
+  "prismStarPrints": 2,
+  "trainerPrints": 13,
+  "energyPrints": 0,
+  "pin": "aea328fd17b49d6b4e84c6786c764301d3efa8e3",
+  "variants": [
+    "40a",
+    "60a"
+  ]
+}

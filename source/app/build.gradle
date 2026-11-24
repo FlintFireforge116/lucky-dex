@@ -8,8 +8,8 @@ android {
         applicationId 'com.example.luckydex'
         minSdk 26
         targetSdk 35
-        versionCode 7426
-        versionName '0.69.426'
+        versionCode 7427
+        versionName '0.69.427'
     }
 
     signingConfigs {
@@ -1066,7 +1066,7 @@ tasks.matching { it.name == 'preBuild' || (it.name.startsWith('merge') && it.nam
     dependsOn tasks.named('auditSM5ForApk')
 }
 
-// v0.69.426 Forbidden Light SM6: SHA-pinned 150-print full-set source and audit.
+// v0.69.427 Forbidden Light SM6: SHA-pinned 150-print full-set source and audit.
 tasks.register('preflightSM6ContractForApk', Exec) {
     dependsOn tasks.named('auditSM5ForApk')
     workingDir rootProject.projectDir
@@ -1104,4 +1104,24 @@ tasks.register('auditSM7ForApk', Exec) {
 }
 tasks.matching { it.name == 'preBuild' || (it.name.startsWith('merge') && it.name.endsWith('Assets')) }.configureEach {
     dependsOn tasks.named('auditSM7ForApk')
+}
+
+// SM75 Dragon Majesty: canonical offline catalogue, complete integration.
+tasks.register('preflightSM75ContractForApk', Exec) {
+    dependsOn tasks.named('auditSM7ForApk')
+    workingDir rootProject.projectDir
+    commandLine (System.getenv('LUCKYDEX_PYTHON') ?: 'python3'), 'scripts/preflight-sm75-release.py'
+}
+tasks.register('generateSM75ForApk', Exec) {
+    dependsOn tasks.named('preflightSM75ContractForApk')
+    workingDir rootProject.projectDir
+    commandLine (System.getenv('LUCKYDEX_PYTHON') ?: 'python3'), 'scripts/build-sm75.py'
+}
+tasks.register('auditSM75ForApk', Exec) {
+    dependsOn tasks.named('generateSM75ForApk')
+    workingDir rootProject.projectDir
+    commandLine 'node', '--test', 'tests/v07452-dragon-majesty-integration.test.cjs', 'tests/v07453-dragon-majesty-outcomes.test.cjs'
+}
+tasks.matching { it.name == 'preBuild' || (it.name.startsWith('merge') && it.name.endsWith('Assets')) }.configureEach {
+    dependsOn tasks.named('auditSM75ForApk')
 }
