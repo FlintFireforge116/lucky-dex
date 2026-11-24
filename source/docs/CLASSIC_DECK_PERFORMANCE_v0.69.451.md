@@ -1,0 +1,14 @@
+# Classic deck building performance — v0.69.451
+
+## Scope
+Shared Classic builder for the player (random, competitive, compare candidates and repair) and CPU. No change to card pool size, random seeds, candidate eligibility, Trainer rankings, copy limits, evolution selection, Energy constraints, CPU retry count, or optional match simulation. SM11 remains at 137/261 enabled. No battle effects changed.
+
+- Canonical ID Map replaces the sequential set lookup on ordinary card IDs; legacy alias, whitespace, case and unknown-ID fallback is preserved. All 9,388 canonical IDs returned the identical object in a comparison with the v450 lookup.
+- Build-local indexed evolution pool maps parent names (including Burmy aliases) and IDs; memoises computed lines and returns copies to callers. External mutable pools still use the original uncached computation.
+- Cache core score per card and derive Pokémon, synergy context, Trainer eligibility and Trainer score once per exact draft state. Invalidate whenever a card is added or Energy selection changes. Name counts and marginal Trainer role counts avoid repeated scans. No cached deck is returned across builds or ownership changes.
+
+## Measured performance
+Local Node benchmark, v450 generated assets, 9,388 prints / 9,009 deck-eligible entries, 85 builder set IDs. Build calls only (not app startup, inventory projection, rendering or optional CPU match simulations). Single runs; timings vary with hardware, seed and concurrent load. Same Water/random seed 13 full-pool build went from 95,067 ms to 1,783 ms (about 53x); both selected hgss1-88. Repeated optimised benchmark: random 1,734 ms; competitive seed 33 376 ms; CPU Lightning seed 1234 441 ms; SM10/SM11 subset 24 ms; warmed random Fire 435 ms. All five optimised results passed deck validation. No direct old CPU timing or Android measurements. `node scripts/benchmark-classic-decks.cjs` runs the repeatable cases (optional quoted case name).
+
+## Verification and limits
+Compared exact returned results (cards, order, Energy, warnings and strategy) with the original builder using the new lookup on five representative successful narrower-pool cases and the pre-existing unsuccessful loaner collection. New regression covers the full-pool player and CPU, canonical lookup, mutable external evolution pools, changed ownership, restricted sets and seeded determinism. Counts costly synergy-context computations instead of hard device timing thresholds. Wired into SM11 Termux and Gradle gates. One existing legacy test, `Classic auto builder can widen an unrestricted small collection to two Energy types`, fails identically with v450 and v451 (20/30); no assertions weakened, no unrelated deck-quality fix in this performance-only patch. The full historical test matrix and APK/device build remain unverified. Optional compare/playtest settings remain untouched.

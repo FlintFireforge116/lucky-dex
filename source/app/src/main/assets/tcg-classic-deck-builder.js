@@ -118,11 +118,27 @@ function babyEvolutionTargets(card){
  if(card?.kind!=='pokemon'||!(card.abilities||[]).some(a=>/^Baby Evolution$/i.test(a.name||'')))return [];
  const name=classicCardName(card.name);return BABY_EVOLUTION_FAMILIES[name]||[];
 }
+// Index only private, immutable-for-this-build evolution pools. External callers
+// can pass mutable arrays to familyLine; those continue to use the uncached path.
+const indexedEvolutionPools=new WeakMap();
+function indexEvolutionPool(pool){
+ const byId=new Map(),parents=new Map();
+ for(const c of pool){if(!byId.has(c.id))byId.set(c.id,c);if(c.kind!=='pokemon'&&!isEvolutionFossil(c))continue;
+  for(const key of parentKeys(c.name)){let group=parents.get(key);if(!group)parents.set(key,group=[]);group.push(c);}}
+ indexedEvolutionPools.set(pool,{byId,parents,lines:new Map()});
+}
 function familyLine(card,pool){
+ const index=indexedEvolutionPools.get(pool);
+ if(!index||!card||card.kind!=='pokemon')return computeFamilyLine(card,pool,index);
+ if(!index.lines.has(card))index.lines.set(card,computeFamilyLine(card,pool,index));
+ // Callers replace a focused Fossil/featured print; never mutate cached lines.
+ return index.lines.get(card).slice();
+}
+function computeFamilyLine(card,pool,index){
  if(!card||card.kind!=='pokemon')return [];
  // Old Amber Aerodactyl puts a Restored Pokemon directly on the Bench.
  // This is a required Item/Pokemon deck pair, NOT a Basic evolution.
- if(card.id==='bw5-53'){const amber=pool.find(c=>c.id==='bw5-97');return amber?[amber,card]:[];}
+ if(card.id==='bw5-53'){const amber=index?index.byId.get('bw5-97'):pool.find(c=>c.id==='bw5-97');return amber?[amber,card]:[];}
  const line=[card],seen=new Set([card.id]);let cur=card;
  // When an expansion includes different prints of a pre-evolution, choose
  // the print that can fight using the final attacker's Energy plan. Without
@@ -130,7 +146,7 @@ function familyLine(card,pool){
  // though the set contains a Lightning Charmeleon δ.
  const finalTypes=new Set(attackTypes(card));
  while(cur.evolvesFrom){
-  const parents=pool.filter(c=>(c.kind==='pokemon'||isEvolutionFossil(c))&&classicEvolutionMatches(c.name,cur.evolvesFrom));
+  const parents=index?(index.parents.get(classicCardName(cur.evolvesFrom))||[]).slice():pool.filter(c=>(c.kind==='pokemon'||isEvolutionFossil(c))&&classicEvolutionMatches(c.name,cur.evolvesFrom));
   if(!parents.length)return [];
   const fit=c=>{
    const needs=attackTypes(c),off=needs.filter(t=>!finalTypes.has(t)).length,
@@ -144,7 +160,7 @@ function familyLine(card,pool){
  }
  const restoredFossil={'bw10-3':'bw10-87','bw10-27':'bw10-79','bw10-53':'bw10-82','xy11-56':'xy11-100','xy11-69':'xy11-98'};
  const needed=restoredFossil[line[0]?.id];
- if(needed){const fossil=pool.find(c=>c.id===needed);
+ if(needed){const fossil=index?index.byId.get(needed):pool.find(c=>c.id===needed);
    if(!fossil)return [];line.unshift(fossil);
  }
  return line;
@@ -473,6 +489,7 @@ function rescueBW10Deck(rows,options={}){
 function buildDeck(rows,options={}){
  const rarityFocus=RARITY_FOCUS.some(r=>r.id===options.rarityFocus)?options.rarityFocus:'any',basicOnly=options.basicOnly===true,theme=synergy.THEMES.some(t=>t.id===options.theme)?options.theme:'any';
  const style=options.style==='random'?'random':'competitive',owned=ownedMap(rows),allowedSets=(options.sets||SET_IDS).filter(s=>SET_IDS.includes(s)),scope=allowedSets.length?allowedSets:SET_IDS,pool=classic.CARDS.filter(c=>allowedInSetPool(c,scope)&&c.battleEnabled&&c.deckEligible!==false&&Number(owned.get(c.id)||0)>0),pokemonPool=pool.filter(c=>c.kind==='pokemon'),evolutionPool=pool.filter(c=>c.kind==='pokemon'||isEvolutionFossil(c));
+ indexEvolutionPool(evolutionPool);
  if([...pool].reduce((sum,c)=>sum+Math.min(c.setId==='pl4'&&(/^AR[1-9]$/.test(String(c.number))||['94','95','96'].includes(String(c.number)))?30:4,owned.get(c.id)||0),0)<30)return fail('Not enough owned battle-ready Classic card copies to build a 30-card deck.');
  if(!pokemonPool.some(c=>c.stage==='Basic'))return fail('No owned battle-ready Basic Pokémon are available.');
  const requested=[...new Set((options.types||[]).filter(t=>ARCHETYPE_TYPES.includes(t)))].slice(0,2),requestedEnergy=requested.filter(t=>decks.ENERGY_TYPES.includes(t)),allowMixedEnergy=options.allowMixedEnergy===true,existing=Array.isArray(options.cards)?options.cards:[],random=rng(options.randomSeed),excluded=new Set(options.excludeArchetypes||[]);
@@ -587,8 +604,10 @@ function buildDeck(rows,options={}){
    else return fail(`Cannot build around ${focus.name} with the selected Energy types, owned cards and sets.`);
  }
  // Type selection applies to the featured family, not its Colorless supports.
- const coreScore=c=>pokemonScore(c,evolutionPool)+synergy.pokemonThemeScore(c,theme)*4+
+ const coreScores=new Map();
+ const computeCoreScore=c=>pokemonScore(c,evolutionPool)+synergy.pokemonThemeScore(c,theme)*4+
    (requested.length?effectiveTypes(c).includes(requested[0])?240:effectiveTypes(c).some(type=>requested.includes(type))?120:conditionalAttackTypes(c).some(type=>requested.includes(type))?100:0:0);
+ const coreScore=c=>{if(!coreScores.has(c))coreScores.set(c,computeCoreScore(c));return coreScores.get(c);};
  candidates.sort((a,b)=>coreScore(b)-coreScore(a)||Number(a.number)-Number(b.number));
  if(!candidates.length)return fail('No complete owned evolution family matches the selected rarity, Basic-only and Energy type preferences. Widen the filter or collect the required evolution stages.');
  if(theme!=='any'&&!candidates.some(c=>synergy.pokemonThemeScore(c,theme)>0))return fail(`No owned Pokémon supports the ${synergy.THEMES.find(t=>t.id===theme).label} strategy within the selected rarity, sets and Energy types.`);
@@ -669,7 +688,7 @@ function buildDeck(rows,options={}){
  if(allowMixedEnergy&&requestedEnergy.length===2&&lineEnergy.every(t=>requestedEnergy.includes(t))){selectedTypes.splice(0,selectedTypes.length,...requestedEnergy);} 
  if(!selectedTypes.length){const ownType=requestedEnergy[0]||(main.deckMeta?.preferredEnergyTypes||[]).find(t=>decks.ENERGY_TYPES.includes(t))||(main.types||[]).find(t=>decks.ENERGY_TYPES.includes(t));if(ownType)selectedTypes.push(ownType);}
  if(!selectedTypes.length)selectedTypes.push('Fighting');
- const cards=[],counts=new Map();
+ const cards=[],counts=new Map(),nameCounts=new Map();
  // The Classic format is only 30 cards. Trainer redundancy is useful, but
  // stuffing four copies of every high-scoring Supporter/Tool is not. Start
  // with varied two-copy support, relaxing only for inventories which cannot
@@ -677,8 +696,16 @@ function buildDeck(rows,options={}){
  let autoTrainerCap=2,autoPokemonCap=18,energyFillerPhase=false;
  const retainedNameCopies=new Map();
  for(const id of existing){const saved=classic.cardById(id);if(saved){const name=classicCardName(saved.name);retainedNameCopies.set(name,(retainedNameCopies.get(name)||0)+1);}}
- const selectedPokemon=()=>cards.map(classic.cardById).filter(c=>c?.kind==='pokemon');
- function trainerIsUseful(card){
+ // The deck grows only through add(); cache derived state for the current
+ // exact draft, not across ownership changes, builds or Energy selections.
+ let draftCacheSize=-1,draftCacheEnergy='',draftPokemon=[],draftCards=[],draftContext=null,draftUseful=new Map(),draftScores=new Map();
+ function refreshDraftCache(){const key=selectedTypes.join('|');if(draftCacheSize===cards.length&&draftCacheEnergy===key)return;
+  draftCacheSize=cards.length;draftCacheEnergy=key;draftCards=cards.map(classic.cardById).filter(Boolean);draftPokemon=draftCards.filter(c=>c.kind==='pokemon');draftContext=null;draftUseful=new Map();draftScores=new Map();}
+ const selectedPokemon=()=>{refreshDraftCache();return draftPokemon;};
+ const supportContext=()=>{refreshDraftCache();return draftContext||(draftContext=synergy.context(draftCards,selectedTypes,theme));};
+ const cachedTrainerScore=card=>{refreshDraftCache();if(!draftScores.has(card))draftScores.set(card,synergy.trainerScore(card,supportContext()));return draftScores.get(card);};
+ function trainerIsUseful(card){refreshDraftCache();if(!draftUseful.has(card))draftUseful.set(card,computeTrainerUseful(card));return draftUseful.get(card);}
+ function computeTrainerUseful(card){
    // Stormfront's specialist search/transfer cards must have real targets.
    // A Premier Ball is dead without a LV.X and Conductive Quarry is dead
    // without Lightning or Metal in the actual selected Energy Zone.
@@ -897,7 +924,7 @@ function buildDeck(rows,options={}){
      if(!eligible.length||eligible.every(p=>(p.abilities||[]).length>0))return false;
    }
 
-   if(card?.kind==='trainer'&&!manuallyKept){const ctx=synergy.context(cards.map(classic.cardById).filter(Boolean),selectedTypes,theme);if(synergy.trainerScore(card,ctx)===-Infinity)return false;}
+   if(card?.kind==='trainer'&&!manuallyKept){if(cachedTrainerScore(card)===-Infinity)return false;}
    if(card.name==="Brock's Training Method")return cards.some(id=>{const pokemon=classic.cardById(id);return pokemon?.kind==='pokemon'&&pokemon.name.startsWith("Brock's ");});
    return true;
  }
@@ -911,7 +938,7 @@ function buildDeck(rows,options={}){
  function room(card){
    const arceusUnlimited=card.setId==='pl4'&&(/^AR[1-9]$/.test(String(card.number))||['94','95','96'].includes(String(card.number)));
    const name=classicCardName(card.name);
-   const copiesOfName=[...counts].filter(([id])=>classicCardName(classic.cardById(id)?.name)===name).reduce((sum,[,count])=>sum+count,0);
+   const copiesOfName=nameCounts.get(name)||0;
    const starSlots=card.pokemonStar?Math.max(0,1-cards.filter(id=>classic.cardById(id)?.pokemonStar).length):arceusUnlimited?30:4;
    const aceSlots=card.aceSpec?Math.max(0,1-cards.filter(id=>classic.cardById(id)?.aceSpec).length):4;
    const miracleSlots=(name==='Miracle Energy'||card.prismStar)?Math.max(0,1-copiesOfName):4;
@@ -951,7 +978,7 @@ function buildDeck(rows,options={}){
      if(Number(owned.get(card.id)||0)<2||cards.length>28||room(card)<2)return 0;
      n=Math.max(n,2);
    }
-   if(!fromEvolutionLine&&isEvolutionFossil(card)&&!fossilEvolutionInDeck(card,cards))return 0;if(!fromEvolutionLine&&!hasBabyPartner(card))return 0;if(card?.kind==='trainer'&&!fromEvolutionLine&&!trainerIsUseful(card))return 0;if(card?.trainerType==='Stadium'&&cards.filter(id=>classic.cardById(id)?.trainerType==='Stadium').length>=1&&!cards.includes(card.id))return 0;let added=0;while(added<n&&cards.length<30&&room(card)>0&&(!['dp6-129','dp6-136','dp6-137'].includes(card?.id)||fromEvolutionLine||cards.filter(id=>id===card.id).length<Math.max(2,existing.filter(id=>id===card.id).length))&&!(card?.trainerType==='Stadium'&&cards.filter(id=>classic.cardById(id)?.trainerType==='Stadium').length>=2)){cards.push(card.id);counts.set(card.id,(counts.get(card.id)||0)+1);added++;}return added;}
+   if(!fromEvolutionLine&&isEvolutionFossil(card)&&!fossilEvolutionInDeck(card,cards))return 0;if(!fromEvolutionLine&&!hasBabyPartner(card))return 0;if(card?.kind==='trainer'&&!fromEvolutionLine&&!trainerIsUseful(card))return 0;if(card?.trainerType==='Stadium'&&cards.filter(id=>classic.cardById(id)?.trainerType==='Stadium').length>=1&&!cards.includes(card.id))return 0;let added=0;while(added<n&&cards.length<30&&room(card)>0&&(!['dp6-129','dp6-136','dp6-137'].includes(card?.id)||fromEvolutionLine||cards.filter(id=>id===card.id).length<Math.max(2,existing.filter(id=>id===card.id).length))&&!(card?.trainerType==='Stadium'&&cards.filter(id=>classic.cardById(id)?.trainerType==='Stadium').length>=2)){cards.push(card.id);counts.set(card.id,(counts.get(card.id)||0)+1);const name=classicCardName(card.name);nameCounts.set(name,(nameCounts.get(name)||0)+1);added++;}return added;}
  function addLine(line,copies){if(!line.length||line.some(c=>Number(owned.get(c.id)||0)<1))return false;for(let copy=0;copy<copies;copy++){if(line.some(c=>room(c)<1)||cards.length+line.length>30)break;for(const c of line)add(c,1,true);}return line.every(c=>(counts.get(c.id)||0)>0);}
  // Preserve legal existing cards first for Fill / repair, but never exceed ownership/copy limits.
  for(const id of existing){const c=classic.cardById(id);if(c&&allowedInSetPool(c,scope)&&c.battleEnabled&&c.deckEligible!==false&&!babyEvolutionTargets(c).length&&!isEvolutionFossil(c)&&!isFossilSupport(c))add(c,1);}
@@ -1386,8 +1413,7 @@ function buildDeck(rows,options={}){
  // Contextual strategy support: select rule-relevant cards before the generic
  // consistency backbone. A Stadium may be taken only if its Pokémon/Energy
  // requirements are satisfied by the completed core; no random dead Stadiums.
- const supportContext=()=>synergy.context(cards.map(classic.cardById).filter(Boolean),selectedTypes,theme);
- const strategicTrainers=pool.filter(c=>c.kind==='trainer'&&trainerIsUseful(c)).map(c=>({card:c,score:synergy.trainerScore(c,supportContext())}))
+ const strategicTrainers=pool.filter(c=>c.kind==='trainer'&&trainerIsUseful(c)).map(c=>({card:c,score:cachedTrainerScore(c)}))
    .filter(r=>Number.isFinite(r.score)).sort((a,b)=>b.score-a.score||(a.card.id||'').localeCompare(b.card.id||''));
  let strategyAdds=0,stadiumsAdded=cards.filter(id=>classic.cardById(id)?.trainerType==='Stadium').length;
  for(const {card,score} of strategicTrainers){
@@ -1477,32 +1503,34 @@ function buildDeck(rows,options={}){
  // Re-rank after EVERY addition: four of a generic draw Supporter are not
  // better than a balanced mix of search, switching, recovery and counterplay.
  // In particular the Supporter once-per-turn rule is factored into selection.
+ let marginalSize=-1,marginalOthers=[],marginalRoles=new Map(),marginalSupporters=0,marginalHandSource=false;
+ function refreshMarginal(){if(marginalSize===cards.length)return;marginalSize=cards.length;
+   marginalOthers=cards.map(classic.cardById).filter(c=>c?.kind==='trainer');marginalRoles=new Map();marginalSupporters=marginalOthers.filter(c=>c.trainerType==='Supporter').length;
+   for(const c of marginalOthers)for(const role of synergy.metadata(c).roles)marginalRoles.set(role,(marginalRoles.get(role)||0)+1);
+   marginalHandSource=cards.some(id=>{const c=classic.cardById(id);return c?.kind==='pokemon'&&((c.deckMeta?.triggerDependencies||[]).includes('basic-energy-in-hand')||(c.abilities||[]).some(a=>/Basic Energy card from your hand/i.test(a.text||'')));});
+ }
  function marginalTrainerScore(card){
-   const base=card.kind==='trainer'?synergy.trainerScore(card,supportContext()):
+   const base=card.kind==='trainer'?cachedTrainerScore(card):
      (card.specialEnergy&&usefulFillerSpecialEnergy(card)?20:-Infinity);
    if(!Number.isFinite(base))return -Infinity;
-   const others=cards.map(classic.cardById).filter(c=>c?.kind==='trainer');
-   const repeats=others.filter(c=>classicCardName(c.name)===classicCardName(card.name)).length;
+   refreshMarginal();
+   const repeats=marginalOthers.filter(c=>classicCardName(c.name)===classicCardName(card.name)).length;
    const roles=new Set(synergy.metadata(card).roles||[]);
    let penalty=repeats*34;
    if(card.trainerType==='Supporter'){
-     const supporters=others.filter(c=>c.trainerType==='Supporter').length;
+     const supporters=marginalSupporters;
      penalty+=Math.max(0,supporters-4)*12;
    }
    for(const role of ['draw','search','healing','energy','retreat','stall','disruption']){
      if(!roles.has(role))continue;
-     const otherRoleCount=others.filter(c=>synergy.metadata(c).roles.includes(role)).length;
+     const otherRoleCount=marginalRoles.get(role)||0;
      const threshold=role==='draw'||role==='search'?5:role==='energy'?3:2;
      penalty+=Math.max(0,otherRoleCount-threshold)*9;
    }
    // Energy from the hybrid Zone is already available for ordinary turn
    // attachments. Hand-only Energy search is not the strongest generic filler.
    if(['Energy Search','Cilan',"Professor's Letter"].includes(card.name)&&
-      !cards.some(id=>{
-        const c=classic.cardById(id);return c?.kind==='pokemon'&&
-        ((c.deckMeta?.triggerDependencies||[]).includes('basic-energy-in-hand')||
-         (c.abilities||[]).some(a=>/Basic Energy card from your hand/i.test(a.text||'')));
-      }))penalty+=23;
+      !marginalHandSource)penalty+=23;
    if(card.trainerType==='AttachedTrainer'||card.trainerType==='Tool')penalty+=8;
    return base-penalty;
  }
