@@ -35,7 +35,7 @@ test('every enabled print preserves every full printed attack, Ability, Trainer/
    }
   }else if(c.battleEnabled){assert.deepEqual(fx.validateEffect(c.effect),[],c.id);assert.notEqual(c.effect.type,'noop',c.id);}
  }
- assert.equal(cv.battleReady,set.CARDS.filter(c=>c.battleEnabled).length);assert.equal(cv.battleReady+Object.keys(cv.gated).length,80);assert.ok(cv.battleReady>=50);
+ assert.equal(cv.battleReady,set.CARDS.filter(c=>c.battleEnabled).length);assert.equal(cv.battleReady+Object.keys(cv.gated).length,80);assert.equal(cv.battleReady,80);assert.deepEqual(cv.gated,{});
  assert.deepEqual(cv.gated,Object.fromEntries(set.CARDS.filter(c=>!c.battleEnabled).map(c=>[c.id,c.support.reasons])));
 });
 test('alternate-art effects and one-copy/Lost-Zone Prism Star metadata are canonical',()=>{
@@ -54,3 +54,5 @@ test('Dragon Majesty is selectable and builds legal player and CPU decks without
  const player=b.buildDeck(owned,{sets:['sm75'],types:['Fire'],randomSeed:3}),cpu=o.generate({seed:3,sets:['sm75'],type:'Dragon'});
  for(const r of [player,cpu]){assert.ok(r.ok,JSON.stringify(r));assert.equal(r.cards.length,30);assert.ok(d.validateDeck(r.cards).ok);assert.ok(r.cards.every(id=>d.cardById(id).setId==='sm75'&&d.cardById(id).battleEnabled));}
 });
+
+test('Dragon Majesty mono-Water generation succeeds for player and CPU across seeds',()=>{const d=require('../app/src/main/assets/tcg-classic-battle-data.js'),b=require('../app/src/main/assets/tcg-classic-deck-builder.js'),o=require('../app/src/main/assets/tcg-classic-opponents.js');const owned=set.CARDS.map(c=>({gameplayId:c.id,quantity:4}));for(const seed of [3,9,21])for(const r of [b.buildDeck(owned,{sets:['sm75'],types:['Water'],randomSeed:seed}),o.generate({sets:['sm75'],type:'Water',seed})]){assert.ok(r.ok,JSON.stringify(r));assert.equal(r.cards.length,30);assert.ok(d.validateDeck(r.cards).ok);assert.ok(r.cards.every(id=>d.cardById(id).setId==='sm75'&&d.cardById(id).battleEnabled));assert.deepEqual(r.energyTypes,['Water']);}});

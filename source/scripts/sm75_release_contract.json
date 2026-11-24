@@ -1,8 +1,8 @@
 {
   "set": "sm75",
   "name": "Dragon Majesty",
-  "stage": "integration",
-  "release": "0.69.427",
+  "stage": "complete",
+  "release": "0.69.428",
   "printedTotal": 80,
   "attackPrints": 115,
   "abilities": 18,

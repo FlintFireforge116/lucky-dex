@@ -15,10 +15,10 @@ const by=n=>sm.cardById('sm1-'+n);
 const code=x=>Array.isArray(x)?x.join(''):String(x||'');
 test('SM1 pin/version/Gradle generation and all set registrations are consistent',()=>{
  assert.equal(contract.pin,'b3f5cd6f524ce45d59462fd2a56e237ff06063dc');
- assert.equal(contract.release,'0.69.427');assert.equal(contract.stage,'complete');
+ assert.equal(contract.release,'0.69.428');assert.equal(contract.stage,'complete');
  assert.deepEqual([contract.printedTotal,contract.attackPrints,contract.abilities,contract.pokemonGX,contract.gxAttackPrints,contract.energyPrints],[173,238,26,27,27,13]);
  const gradle=fs.readFileSync(path.join(root,'app/build.gradle'),'utf8');
- assert.match(gradle,/versionName '0\.69\.427'/);assert.match(gradle,/versionCode 7427/);
+ assert.match(gradle,/versionName '0\.69\.428'/);assert.match(gradle,/versionCode 7428/);
  for(const task of ['preflightSM1ContractForApk','generateSM1ForApk','auditSM1ForApk'])assert.ok(gradle.includes(task));
  assert.match(gradle,/dependsOn tasks\.named\('auditXY12ForApk'\)/);
  assert.equal(builder.SET_IDS.includes('sm1'),true);
