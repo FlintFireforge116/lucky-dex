@@ -1,86 +1,15 @@
 {
   "printed": 198,
-  "battleReady": 160,
+  "battleReady": 187,
   "gated": {
-    "sm9-7": [
-      "Unimplemented Ability: Panic Spores"
-    ],
-    "sm9-16": [
-      "Unimplemented Ability: Nine Temptations"
-    ],
-    "sm9-25": [
-      "Unimplemented Ability: Powerful Squall"
-    ],
-    "sm9-27": [
-      "Unimplemented attack: Swim"
-    ],
-    "sm9-29": [
-      "Unimplemented attack: Enter the Dragon"
-    ],
-    "sm9-32": [
-      "Unimplemented attack: Cold Cyclone",
-      "Unimplemented Ability: Blizzard Veil"
-    ],
     "sm9-37": [
       "Unimplemented attack: Electromagnetic Bomb"
-    ],
-    "sm9-39": [
-      "Unimplemented Ability: Electro Shaker"
-    ],
-    "sm9-51": [
-      "Prism Star attack/Ability or Trainer effect not yet implemented",
-      "Unimplemented Ability: Dance of the Ancients"
-    ],
-    "sm9-59": [
-      "Unimplemented attack: Drag Off"
-    ],
-    "sm9-63": [
-      "Unimplemented attack: Toxic Secretion",
-      "Unimplemented Ability: Poison Sacs"
-    ],
-    "sm9-64": [
-      "Unimplemented attack: Limbo Limbo"
-    ],
-    "sm9-65": [
-      "Unimplemented attack: Strange Wave"
     ],
     "sm9-66": [
       "Unimplemented Ability: Scoop-Up Block"
     ],
-    "sm9-73": [
-      "Unimplemented attack: Special Combo"
-    ],
-    "sm9-84": [
-      "Unimplemented Ability: Adventurous Appetite"
-    ],
-    "sm9-85": [
-      "Unimplemented attack: Spinning Tail"
-    ],
-    "sm9-93": [
-      "Unimplemented attack: Trash Crash"
-    ],
-    "sm9-96": [
-      "Unimplemented attack: Devilish Hands-GX"
-    ],
-    "sm9-103": [
-      "Unimplemented attack: Thorn Pod Throw"
-    ],
-    "sm9-106": [
-      "Unimplemented attack: Iron Rule-GX",
-      "Unimplemented Ability: Metal Symbol"
-    ],
-    "sm9-110": [
-      "Unimplemented Ability: Key of Secrets"
-    ],
     "sm9-112": [
       "Unimplemented attack: Copycat"
-    ],
-    "sm9-134": [
-      "Prism Star attack/Ability or Trainer effect not yet implemented",
-      "Unimplemented Trainer effect"
-    ],
-    "sm9-138": [
-      "Unimplemented Trainer effect"
     ],
     "sm9-148": [
       "Unimplemented Trainer effect"
@@ -94,13 +23,6 @@
     "sm9-154": [
       "Unimplemented Trainer effect"
     ],
-    "sm9-166": [
-      "Unimplemented attack: Devilish Hands-GX"
-    ],
-    "sm9-168": [
-      "Unimplemented attack: Iron Rule-GX",
-      "Unimplemented Ability: Metal Symbol"
-    ],
     "sm9-178": [
       "Unimplemented Trainer effect"
     ],
@@ -108,16 +30,6 @@
       "Unimplemented Trainer effect"
     ],
     "sm9-181": [
-      "Unimplemented Trainer effect"
-    ],
-    "sm9-187": [
-      "Unimplemented attack: Devilish Hands-GX"
-    ],
-    "sm9-189": [
-      "Unimplemented attack: Iron Rule-GX",
-      "Unimplemented Ability: Metal Symbol"
-    ],
-    "sm9-192": [
       "Unimplemented Trainer effect"
     ],
     "sm9-195": [

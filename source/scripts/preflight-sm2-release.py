@@ -12,7 +12,7 @@ ROOT=Path(__file__).resolve().parents[1]
 def check():
  subprocess.run([sys.executable,'scripts/check-gradle-source.py','--self-test'],cwd=ROOT,check=True)
  c=json.loads((ROOT/'scripts/sm2_release_contract.json').read_text())
- assert (c['set'],c['stage'],c['release'])==('sm2','stage1','0.69.436')
+ assert (c['set'],c['stage'],c['release'])==('sm2','stage1','0.69.437')
  assert (c['printedTotal'],c['attackPrints'],c['abilities'],c['pokemonGX'],c['gxAttackPrints'],c['energyPrints'])==(180,287,30,42,42,4)
  assert c['pin']=='0d2296a8c32fac6442c9b407653d30f8e9c3f0d6'
  compact=ROOT/'data/classic/sm2-print-compact.json'
@@ -23,7 +23,7 @@ def check():
  for term in (c['pin'],"load_pinned_set('sm2'",'sm2-print-compact.json','!=180','!=287','!=30','!=42','!=4','Guardians Rising'):
   assert term in gen,'SM2 generator missing: '+term
  gradle=(ROOT/'app/build.gradle').read_text()
- assert re.search(r"versionName\s+['\"]0\.69\.436['\"]",gradle) and 'versionCode 7436' in gradle
+ assert re.search(r"versionName\s+['\"]0\.69\.437['\"]",gradle) and 'versionCode 7437' in gradle
  for task in ('preflightSM2ContractForApk','generateSM2ForApk','auditSM2ForApk'):
   assert "tasks.register('"+task+"'" in gradle,task
  assert "dependsOn tasks.named('auditSM1ForApk')" in gradle
@@ -37,7 +37,7 @@ def check():
  for file in ('sm1','xy9','xy10','xy11','xy12'):
   assert json.loads((ROOT/f'scripts/{file}_release_contract.json').read_text())['release']==c['release'],file+' release version mismatch'
  for p in ['app/src/main/assets/index.html','app/src/main/assets/app-v0167.js']:
-  assert '0.69.436' in (ROOT/p).read_text(),p+' not versioned'
+  assert '0.69.437' in (ROOT/p).read_text(),p+' not versioned'
  print('PASS SM2 source gate: pinned 180 prints / 287 attacks / 30 Abilities / 42 GX / 4 Energy; registered all surfaces and chained into APK build.')
 
 def full():

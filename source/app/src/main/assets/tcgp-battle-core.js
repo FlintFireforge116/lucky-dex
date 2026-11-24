@@ -2071,6 +2071,7 @@
   }
 
   function checkup(state){
+    if(state.format==='classic')for(const side of ['player','opponent']){const foe=state.sides[side==='player'?'opponent':'player'];const n=pokemonOn(state.sides[side]).filter(p=>p.cardId==='sm9-7'&&!effects.abilitiesSuppressed(state,side,p,data.cardById)).length;if(n)for(const p of pokemonOn(foe))if(p.conditions?.confusion)p.damage=Number(p.damage||0)+20*n;}
     if(state.format==='classic'&&activeStadium(state)?.cardId==='sm7-143')for(const who of ['player','opponent'])for(const p of pokemonOn(state.sides[who]))if(effects.matchesFilter(data.cardById(p.cardId),{isExOrGX:true}))p.damage=Number(p.damage||0)+10;
     if(state.format==='classic'){
       // Rising Rivals: all of these trigger BETWEEN turns (both players).
@@ -2793,6 +2794,7 @@
         }
         any=true;const countsAsKnockout=!(slot.cardId==='dp3-26'&&slot.transformOnKO)&&!slot.dp2ForcedDiscard&&card?.effect?.countsAsKnockout!==false&&card?.countsAsKnockout!==false&&!['ex16-84','ex16-85','ex16-86'].includes(card?.id);if(countsAsKnockout){if(Number(s.lastKnockoutTurn)!==Number(state.turnNumber))s.lastKnockedOutCardIds=[];s.lastKnockoutTurn=state.turnNumber;s.lastKnockedOutCardIds.push(card.id);s.knockoutsTaken=Number(s.knockoutsTaken||0)+1;if(cause==='attack'&&source?.side===foeSide&&source?.attack){if(Number(s.lastOpponentAttackKoTurn)!==Number(state.turnNumber))s.lastOpponentAttackKoCardIds=[];s.lastOpponentAttackKoTurn=state.turnNumber;s.lastOpponentAttackKoCardIds.push(card.id);}}
         if(state.format==='classic'&&cause==='attack'&&source?.turn===state.turnNumber&&source?.side===foeSide&&source?.attack&&Number(source.damage)>0){const p=pokemonOn(foe).find(p=>p.uid===source.uid);if(p&&['sm8-121','sm8-203','sm8-223'].includes(p.cardId)&&!effects.abilitiesSuppressed(state,foeSide,p,data.cardById))slot.pl1LostZoneOnKO=true;}
+        const blackMarket=state.format==='classic'&&activeStadium(state)?.cardId==='sm9-134'&&cause==='attack'&&source?.attack&&source.side===foeSide&&Number(source.damage||0)>0&&effects.effectiveTypes(state,side,slot,data.cardById).includes('Darkness')&&(Number(slot.energy?.Darkness||0)>0||(slot.specialEnergy||[]).some(r=>effects.attachedSpecialProvidesType(r,'Darkness',slot,data.cardById)))?1:0;
         const arceusBeltBonus=state.format==='classic'&&activeToolsOf(state,slot).some(ref=>ref.cardId==='pl4-87')?1:0;
         const arceusLuckyEgg=state.format==='classic'&&cause==='attack'&&source?.side===foeSide&&activeToolsOf(state,slot).some(ref=>ref.cardId==='pl4-88');
         const teleport=state.format==='classic'&&cause==='attack'&&source?.side===foeSide&&source?.attack&&activeToolsOf(state,slot).some(r=>r.cardId==='SNAPFOUNJA-084');
@@ -2903,7 +2905,7 @@
             source?.attack&&source.side===foeSide&&Number(source.turn)===Number(state.turnNumber)&&
             source.uid===attacker?.uid&&Number(source.damage||0)>0&&
             ['sm4-63','sm4-63a','sm4-105','sm4-116'].includes(source.cardId)&&foe.lastAttackName==='Glutton-GX'?2:0;
-          const prizeCount=awardsPrize?Math.max(0,prizeValue(card)+sm4Glutton+extraMoonSkip+arceusBeltBonus+arceusExtra+hgss3SpaceVirus+bw8Overflow+deltaPlus+xy10Endgame+sm2Extra-bw9LifeDew):0;
+          const prizeCount=awardsPrize?Math.max(0,prizeValue(card)-blackMarket+sm4Glutton+extraMoonSkip+arceusBeltBonus+arceusExtra+hgss3SpaceVirus+bw8Overflow+deltaPlus+xy10Endgame+sm2Extra-bw9LifeDew):0;
           awarded=Math.min(prizeCount,Math.max(0,foe.prizes.length-(state.pendingPrizeClaims||[]).filter(q=>q.side===foeSide).reduce((n,q)=>n+q.remaining,0)));
           if(awarded){state.pendingPrizeClaims=state.pendingPrizeClaims||[];state.pendingPrizeClaims.push({side:foeSide,remaining:awarded});}
           state.log.push({type:'ko',side,cardId:card.id,turnNumber:state.turnNumber,prizesTaken:foe.prizesTaken,awarded});
@@ -3065,7 +3067,7 @@
       const evoIndex=s.hand.findIndex(candidate=>candidate.cardId===action.evolutionCardId);if(evoIndex<0)throw new Error('Rare Candy Stage 2 is no longer in hand.');
       const [evoRef]=s.hand.splice(evoIndex,1),target=slotForTarget(s,action.target,action.benchIndex);if(!target)throw new Error('Rare Candy target is no longer in play.');
       target.cardId=evoRef.cardId;target.stack.push(evoRef.cardId);
-      const foeSide=side==='player'?'opponent':'player',mukInPlay=[state.sides[foeSide].active,...state.sides[foeSide].bench].some(p=>p?.cardId==='sv1-127'&&!effects.abilitiesSuppressed(state,foeSide,p,data.cardById));
+      const foeSide=side==='player'?'opponent':'player',mukInPlay=[state.sides[foeSide].active,...state.sides[foeSide].bench].some(p=>['sv1-127','sm9-63'].includes(p?.cardId)&&!effects.abilitiesSuppressed(state,foeSide,p,data.cardById));
       const dp2PoisonSacs=pokemonOn(state.sides[foeSide]).some(p=>p.cardId==='dp2-36'&&!effects.abilitiesSuppressed(state,foeSide,p,data.cardById));const keepSM4=activeStadium(state)?.cardId==='sm4-99'?{...(target.conditions||{})}:null;const heldPoison=(mukInPlay||dp2PoisonSacs)?target.conditions?.poison:null,heldBurn=activeStadium(state)?.cardId==='ex12-74'?target.conditions?.burn:null;effects.clearTemporaryEffects(state,target);if(keepSM4)target.conditions={...keepSM4};if(heldPoison)target.conditions.poison=heldPoison;if(heldBurn)target.conditions.burn=heldBurn;target.playedOnSideTurn=s.turnCount;target.evolvedOnTurn=state.turnNumber;s.discard.push(ref);
       state.log.push({type:'evolve',side,cardId:evoRef.cardId,target:action.target,benchIndex:action.benchIndex,viaRareCandy:true});triggerAbilities(state,'evolved',side,target,{fromHand:true,viaRareCandy:true});resolveKnockOut(state,null);return;
     }
@@ -3422,7 +3424,7 @@ const target=slotForTarget(s,action.target,action.benchIndex);if(card.id==='pl2-
         state.log.push({type:'xy7ThetaMax',side,targetUid:target.uid,cardId:ref.cardId,healed});
       }
       if(!levelUp){
-        const keepPoison=!!target.conditions?.poison&&[foeSide].some(opp=>[state.sides[opp].active,...state.sides[opp].bench].some(p=>['sv1-127','dp2-36'].includes(p?.cardId)&&!effects.abilitiesSuppressed(state,opp,p,data.cardById)));
+        const keepPoison=!!target.conditions?.poison&&[foeSide].some(opp=>[state.sides[opp].active,...state.sides[opp].bench].some(p=>['sv1-127','dp2-36','sm9-63'].includes(p?.cardId)&&!effects.abilitiesSuppressed(state,opp,p,data.cardById)));
         const poison=keepPoison?target.conditions.poison:null,burn=activeStadium(state)?.cardId==='ex12-74'||[side==='player'?'opponent':'player'].some(w=>pokemonOn(state.sides[w]).some(p=>p.cardId==='dp7-97'&&!effects.abilitiesSuppressed(state,w,p,data.cardById)))?target.conditions?.burn:null;
         const keepSM4=activeStadium(state)?.cardId==='sm4-99'?{...(target.conditions||{})}:null;
         effects.clearTemporaryEffects(state,target);if(keepSM4)target.conditions={...keepSM4};if(poison)target.conditions.poison=poison;if(burn)target.conditions.burn=burn;
