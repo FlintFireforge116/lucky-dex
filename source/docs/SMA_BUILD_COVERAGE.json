@@ -1,0 +1,19 @@
+{
+  "printed": 94,
+  "battleReady": 92,
+  "gated": {
+    "sma-SV20": [
+      "Unimplemented Ability: Roadblock"
+    ],
+    "sma-SV50": [
+      "Unimplemented attack: Eternal Light-GX"
+    ]
+  },
+  "attacks": 164,
+  "abilities": 33,
+  "pokemonGX": 39,
+  "gxAttackPrints": 39,
+  "energyPrints": 0,
+  "prismStarPrints": 0,
+  "sourceGitBlob": "05b21c57ba622d5f5180e825e2d7edd14e156208"
+}

@@ -1,0 +1,17 @@
+{
+  "set": "sma",
+  "name": "Hidden Fates Shiny Vault",
+  "stage": "integration",
+  "release": "0.69.458",
+  "printedTotal": 94,
+  "attackPrints": 164,
+  "abilities": 33,
+  "pokemonGX": 39,
+  "gxAttackPrints": 39,
+  "tagTeamPrints": 0,
+  "prismStarPrints": 0,
+  "trainerPrints": 10,
+  "energyPrints": 0,
+  "pin": "05b21c57ba622d5f5180e825e2d7edd14e156208",
+  "variants": []
+}

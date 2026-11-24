@@ -793,8 +793,8 @@
     const printedRetreat=Number((previous||top)?.retreat||0)+tangling;
     // Fairy Garden (XY 117): all Pokemon with Fairy-providing attached Energy
     // have free retreat, including opposing Pokemon and flexible Rainbow.
-    if(state.format==='classic'&&slot?.cardId==='sm6-21'&&!effects.abilitiesSuppressed(state,side,slot,data.cardById)){const en=effectiveEnergy(state,side,slot);if(effects.canPayCost(en,'W'))return 0;}
-    if(state.format==='classic'&&slot?.cardId==='sm3-16'&&state.sides[side]?.turnCount===1&&!effects.abilitiesSuppressed(state,side,slot,data.cardById))return 0;
+    if(state.format==='classic'&&['sm6-21','sma-SV11'].includes(slot?.cardId)&&!effects.abilitiesSuppressed(state,side,slot,data.cardById)){const en=effectiveEnergy(state,side,slot);if(effects.canPayCost(en,'W'))return 0;}
+    if(state.format==='classic'&&['sm3-16','sma-SV4'].includes(slot?.cardId)&&state.sides[side]?.turnCount===1&&!effects.abilitiesSuppressed(state,side,slot,data.cardById))return 0;
     if(state.format==='classic'&&slot&&activeStadium(state)?.cardId==='xy1-117'){
       const en=effectiveEnergy(state,side,slot);
       if(Number(en.Fairy||0)>0||Number(en.Miracle||0)>0)return 0;
@@ -1917,7 +1917,7 @@
         // Ultra Prism: do not offer conditional Abilities as no-op CPU actions.
         // Breath of the Leaves is Active-only, once per turn, and heals only
         // damaged Pokemon with attached Energy (not unused Energy Zone units).
-        if(state.format==='classic'&&source.cardId.startsWith('sm5-')){
+        if(state.format==='classic'&&(source.cardId.startsWith('sm5-')||data.cardById(source.cardId)?.reprintOf?.startsWith('sm5-'))){
           if(ability.name==='Psychic Transfer'&&(
             pokemonOn(s).length<2||!pokemonOn(s).some(p=>Number(p.energy?.Psychic||0)>0||
               (p.specialEnergy||[]).some(ref=>{
@@ -1961,7 +1961,7 @@
        s.bench.length<Number(s.benchLimit||3)){
       s.sm3RestorationUsed=s.sm3RestorationUsed||{};
       for(const ref of s.discard||[]){
-        if(!['sm3-88','sm3-88a','sm3-139','sm3-158'].includes(ref.cardId)||
+        if(!['sm3-88','sm3-88a','sm3-139','sm3-158','sma-SV70'].includes(ref.cardId)||
           s.sm3RestorationUsed[ref.uid]===s.turnCount)continue;
         // Glaceon-GX Freezing Gaze names GX Abilities in the *discard* as
         // well as in play or hand. Do not offer Restoration through this gate.
@@ -1996,10 +1996,10 @@
         if(attackCardId==='sm8-106'&&attack.name==='Nightcap'&&foe.prizes.length!==2)continue;
         if ((attack.gxAttack||/\bGX\b/i.test(attack.name||''))&&(s.sm11GxLocked||s.gxAttackUsed&&!(state.format==='classic'&&data.cardById(attackCardId)?.name==='Zygarde-GX'&&s.sm6BonnieTurn===state.turnNumber)))continue;
         // SM5 conditional Eclipse GX attacks cannot be declared while tied/ahead on Prizes.
-        if(state.format==='classic'&&attackCardId.startsWith('sm5-')&&
+        if(state.format==='classic'&&(attackCardId.startsWith('sm5-')||data.cardById(attackCardId)?.reprintOf?.startsWith('sm5-'))&&
           ["Moon's Eclipse-GX","Sun's Eclipse-GX"].includes(attack.name)&&
           s.prizes.length<=foe.prizes.length)continue;
-        if(state.format==='classic'&&attackCardId.startsWith('sm5-')&&state.firstSide===side&&Number(s.turnCount)===1&&attack.name!=='Fast Raid')continue;
+        if(state.format==='classic'&&(attackCardId.startsWith('sm5-')||data.cardById(attackCardId)?.reprintOf?.startsWith('sm5-'))&&state.firstSide===side&&Number(s.turnCount)===1&&attack.name!=='Fast Raid')continue;
         if(state.format==='classic'&&attackCardId==='sm5-73'&&attack.name==='Sneaky Smash'&&
            (side===state.firstSide||Number(s.turnCount)!==1))continue;
         if(state.format==='classic'&&attackCardId==='xy11-88'&&attack.name==='Stall'&&
@@ -2103,7 +2103,7 @@
 
   function checkup(state){
     if(state.format==='classic')for(const side of ['player','opponent']){const foe=state.sides[side==='player'?'opponent':'player'];const n=pokemonOn(state.sides[side]).filter(p=>p.cardId==='sm9-7'&&!effects.abilitiesSuppressed(state,side,p,data.cardById)).length;if(n)for(const p of pokemonOn(foe))if(p.conditions?.confusion&&!effects.metalGogglesActive(state,side==='player'?'opponent':'player',p,data.cardById))p.damage=Number(p.damage||0)+20*n;}
-    if(state.format==='classic'&&activeStadium(state)?.cardId==='sm7-143')for(const who of ['player','opponent'])for(const p of pokemonOn(state.sides[who]))if(effects.matchesFilter(data.cardById(p.cardId),{isExOrGX:true}))p.damage=Number(p.damage||0)+10;
+    if(state.format==='classic'&&['sm7-143','sma-SV90'].includes(activeStadium(state)?.cardId))for(const who of ['player','opponent'])for(const p of pokemonOn(state.sides[who]))if(effects.matchesFilter(data.cardById(p.cardId),{isExOrGX:true}))p.damage=Number(p.damage||0)+10;
     if(state.format==='classic'){
       // Rising Rivals: all of these trigger BETWEEN turns (both players).
       const live=(side,p)=>p&&!effects.abilitiesSuppressed(state,side,p,data.cardById);
@@ -2263,7 +2263,7 @@
       // Great Encounters: Sleeping Pulse heals a Sleeping Wailord between turns.
       if(slot.cardId==='dp4-30'&&c.sleep&&!effects.abilitiesSuppressed(state,side,slot,data.cardById))
         slot.damage=Math.max(0,Number(slot.damage||0)-10);
-      if(c.poison){const base=typeof c.poison==='object'?Number(c.poison.amount??10):10,amount=Math.max(0,base+effects.modifierAmount(state,side,slot,'poisonDamageBonus',data.cardById));const virus=state.format==='classic'?['player','opponent'].reduce((n,who)=>n+pokemonOn(state.sides[who]).filter(p=>p.cardId==='dp4-31'&&!effects.abilitiesSuppressed(state,who,p,data.cardById)).length,0)*10:0;const bw8Virbank=state.format==='classic'&&activeStadium(state)?.cardId==='bw8-126'?20:0;const sm3MorePoison=state.format==='classic'?pokemonOn(state.sides[side==='player'?'opponent':'player']).filter(p=>p.cardId==='sm3-50'&&!effects.abilitiesSuppressed(state,side==='player'?'opponent':'player',p,data.cardById)).length*10:0;slot.damage+=amount+virus+bw8Virbank+sm3MorePoison;state.log.push({type:'statusDamage',side,status:'poison',amount:amount+virus+bw8Virbank+sm3MorePoison});}
+      if(c.poison){const base=typeof c.poison==='object'?Number(c.poison.amount??10):10,amount=Math.max(0,base+effects.modifierAmount(state,side,slot,'poisonDamageBonus',data.cardById));const virus=state.format==='classic'?['player','opponent'].reduce((n,who)=>n+pokemonOn(state.sides[who]).filter(p=>p.cardId==='dp4-31'&&!effects.abilitiesSuppressed(state,who,p,data.cardById)).length,0)*10:0;const bw8Virbank=state.format==='classic'&&activeStadium(state)?.cardId==='bw8-126'?20:0;const sm3MorePoison=state.format==='classic'?pokemonOn(state.sides[side==='player'?'opponent':'player']).filter(p=>['sm3-50','sma-SV15'].includes(p.cardId)&&!effects.abilitiesSuppressed(state,side==='player'?'opponent':'player',p,data.cardById)).length*10:0;slot.damage+=amount+virus+bw8Virbank+sm3MorePoison;state.log.push({type:'statusDamage',side,status:'poison',amount:amount+virus+bw8Virbank+sm3MorePoison});}
       if(c.burn){const heatMetal=state.format==='classic'&&[side==='player'?'opponent':'player'].some(w=>pokemonOn(state.sides[w]).some(p=>p.cardId==='dp7-97'&&!effects.abilitiesSuppressed(state,w,p,data.cardById)));const fullFlame=state.format==='classic'&&activeStadium(state)?.cardId==='ex12-74';const aura=state.format==='classic' &&['player','opponent'].some(w=>{const p=state.sides[w].active;return p?.cardId==='ex6-13'&&!effects.abilitiesSuppressed(state,w,p,data.cardById);});// BW5 Scorching Scales: four instead of two counters on the opposing
       // Burned Active between turns; independent of ordinary burn coin flips.
       const scorch=state.format==='classic'&&pokemonOn(state.sides[side==='player'?'opponent':'player']).some(p=>p.cardId==='bw5-22'&&!effects.abilitiesSuppressed(state,side==='player'?'opponent':'player',p,data.cardById));
@@ -2944,7 +2944,7 @@
           const sm4Glutton=awardsPrize&&state.format==='classic'&&cause==='attack'&&
             source?.attack&&source.side===foeSide&&Number(source.turn)===Number(state.turnNumber)&&
             source.uid===attacker?.uid&&Number(source.damage||0)>0&&
-            ['sm4-63','sm4-63a','sm4-105','sm4-116'].includes(source.cardId)&&foe.lastAttackName==='Glutton-GX'?2:0;
+            ['sm4-63','sm4-63a','sm4-105','sm4-116','sma-SV71'].includes(source.cardId)&&foe.lastAttackName==='Glutton-GX'?2:0;
           const beast=awardsPrize&&cause==='attack'&&source?.attack&&source.side===foeSide&&source.uid===attacker?.uid&&source.damage>0&&attacker?.sm10BeastGame?.turn===state.turnNumber&&foe.lastAttackName==='Beast Game-GX'?attacker.sm10BeastGame.amount:0;
           const beastBringer=awardsPrize&&cause==='attack'&&source?.attack&&source.side===foeSide&&source.uid===attacker?.uid&&source.damage>0&&sm10WasActive&&foe.prizes.length===6&&data.cardById(attacker?.cardId)?.ultraBeast&&effects.matchesFilter(card,{isExOrGX:true})&&!effects.toolEffectsSuppressed(state,data.cardById,attacker)&&toolsOf(attacker).some(r=>['sm10-164','sm10-229'].includes(r.cardId))?1:0;
           const greedy=awardsPrize&&cause==='attack'&&source?.attack&&source.side===foeSide&&source.uid===attacker?.uid&&source.damage>0&&attacker?.sm11GreedyTurn===state.turnNumber&&foe.lastAttackName==='Greedy Crush'&&effects.matchesFilter(card,{isExOrGX:true})?1:0;
@@ -3571,7 +3571,7 @@ const target=slotForTarget(s,action.target,action.benchIndex);if(card.id==='pl2-
     if(matched.type==='sm8HandAbility'){
       const ref=s.hand.splice(matched.handIndex,1)[0];s.lostZone.push(ref);const top=foe.deck[0];state.log.push({type:'inspectTop',side,cards:[top.cardId],privateTo:side});if(data.cardById(top.cardId)?.trainerType==='Supporter')beginEffectChoice(state,side,s.active,{kind:'option',side:'self',options:['Leave on deck','Put '+data.cardById(top.cardId).name+' in Lost Zone'],effect:{type:'sm7Rule',rule:'sm8MountainPass',uid:top.uid},resume:'trainer'});return state;
     }
-    if(matched.type==='abilityDiscard'&&['sm3-88','sm3-88a','sm3-139','sm3-158'].includes(matched.cardId)){
+    if(matched.type==='abilityDiscard'&&['sm3-88','sm3-88a','sm3-139','sm3-158','sma-SV70'].includes(matched.cardId)){
       // The card itself must be present and the Bench must have a free slot.
       const at=s.discard.findIndex(r=>r.uid===matched.sourceUid&&r.cardId===matched.cardId);
       if(at<0||s.bench.length>=Number(s.benchLimit||3))throw new Error('Darkrai-GX Restoration is no longer legal.');

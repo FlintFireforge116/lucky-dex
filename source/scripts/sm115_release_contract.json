@@ -1,0 +1,17 @@
+{
+  "set": "sm115",
+  "name": "Hidden Fates",
+  "stage": "integration",
+  "release": "0.69.458",
+  "printedTotal": 69,
+  "attackPrints": 82,
+  "abilities": 3,
+  "pokemonGX": 11,
+  "gxAttackPrints": 11,
+  "tagTeamPrints": 3,
+  "prismStarPrints": 0,
+  "trainerPrints": 17,
+  "energyPrints": 0,
+  "pin": "6d345da06f1218f06a92f64a86e53062263bd5de",
+  "variants": []
+}

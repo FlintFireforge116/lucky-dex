@@ -22373,7 +22373,7 @@
         if(rule==='energyEvolution'){
           const t=ctx.eventData?.energyType;if(!ctx.eventData?.fromHand||!types.includes(t)||!att||ctx.cardById(att.cardId)?.name!=='Eevee')break;
           const candidates=()=>ss.deck.filter(ref=>{const evo=c(ref);return evo?.battleEnabled&&evo.evolvesFrom==='Eevee'&&evo.types?.includes(t);});
-          if(ctx.resolvingChoice){if(ctx.action?.choiceSkip)return;const ref=candidates()[Number(ctx.action?.choiceOption)];if(!ref)return;const i=ss.deck.findIndex(r=>r.uid===ref.uid);if(i<0)return;ss.deck.splice(i,1);att.cardId=ref.cardId;att.stack=att.stack||['sm1-101'];att.stack.push(ref.cardId);att.playedOnSideTurn=ss.turnCount;att.evolvedOnTurn=ctx.state.turnNumber;ctx.shuffle(ctx.state,ss.deck);ctx.onEvolved?.(att);}
+          if(ctx.resolvingChoice){if(ctx.action?.choiceSkip)return;const ref=candidates()[Number(ctx.action?.choiceOption)];if(!ref)return;const i=ss.deck.findIndex(r=>r.uid===ref.uid);if(i<0)return;ss.deck.splice(i,1);att.stack=att.stack||[att.cardId];att.cardId=ref.cardId;att.stack.push(ref.cardId);att.playedOnSideTurn=ss.turnCount;att.evolvedOnTurn=ctx.state.turnNumber;ctx.shuffle(ctx.state,ss.deck);ctx.onEvolved?.(att);}
           else if(candidates().length)ask({kind:'option',options:candidates().map(r=>'Evolve into '+c(r).name),optional:true});break;
         }
         if(rule==='treasureHunt'){
@@ -28934,7 +28934,7 @@ if(r==='lastResort')return ss.hand.length===0?[{}]:[];if(r==='surgeSwap')return 
   }
   function attackCostOverride(state,side,slot,attack,cardById){
     if(state?.format==='classic'&&cardById(slot?.cardId)?.attacks?.some(a=>a.name==='Caturday')&&pokemonOn(state.sides[side]).some(p=>p.cardId==='sm10-148'&&!abilitiesSuppressed(state,side,p,cardById)))return '';
-    if(state?.format==='classic'&&slot?.cardId==='sm7-100'&&attack?.name==='Moon Raker'&&state.sides.player.prizes.length+state.sides.opponent.prizes.length===6)return 'M';
+    if(state?.format==='classic'&&['sm7-100','sma-SV32'].includes(slot?.cardId)&&attack?.name==='Moon Raker'&&state.sides.player.prizes.length+state.sides.opponent.prizes.length===6)return 'M';
     if(state?.format==='classic'&&slot&&!abilitiesSuppressed(state,side,slot,cardById)&&
        upgradeAbilities(slot,cardById).some(ab=>ab.name==='Roto Motor'&&ab.type==='passive'&&ab.effect?.type==='conditionalAttackCost')&&
        (state.sides[side]?.discard||[]).filter(ref=>{const c=cardById(ref.cardId);return c?.kind==='trainer'&&['Tool','Pokémon Tool'].includes(c.trainerType);}).length>=9)return '';
@@ -29134,7 +29134,7 @@ if(r==='lastResort')return ss.hand.length===0?[{}]:[];if(r==='surgeSwap')return 
       values.push(20*(state.sides[side]?.discard||[]).filter(ref=>cardById(ref.cardId)?.name==='Marowak').length);
     if(state?.format==='classic'&&stat==='damageReduction'&&state.sides?.[side]?.active?.cardId==='pl2-41'&&
        !abilitiesSuppressed(state,side,state.sides[side].active,cardById))values.push(10);
-    if(state?.format==='classic'&&stat==='damageReduction'&&activeStadium(state)?.cardId==='sm2-116'&&
+    if(state?.format==='classic'&&stat==='damageReduction'&&['sm2-116','sma-SV87'].includes(activeStadium(state)?.cardId)&&
        cardById(slot.cardId)?.stage==='Basic'&&cardById(slot.cardId)?.types?.some(t=>t==='Grass'||t==='Lightning'))values.push(30);
     if(state.stadium){const stadium=cardById(activeStadium(state)?.cardId);passiveModifiers(stadium?.effect,state.sides[side].active,side,state,slot,stat,values,cardById);}
     if(state?.format==='classic'&&stat==='damageReduction'&&cardById(slot.cardId)?.types?.includes('Metal'))

@@ -8,8 +8,8 @@ android {
         applicationId 'com.example.luckydex'
         minSdk 26
         targetSdk 35
-        versionCode 7457
-        versionName '0.69.457'
+        versionCode 7458
+        versionName '0.69.458'
     }
 
     signingConfigs {
@@ -1066,7 +1066,7 @@ tasks.matching { it.name == 'preBuild' || (it.name.startsWith('merge') && it.nam
     dependsOn tasks.named('auditSM5ForApk')
 }
 
-// v0.69.457 Forbidden Light SM6: SHA-pinned 150-print full-set source and audit.
+// v0.69.458 Forbidden Light SM6: SHA-pinned 150-print full-set source and audit.
 tasks.register('preflightSM6ContractForApk', Exec) {
     dependsOn tasks.named('auditSM5ForApk')
     workingDir rootProject.projectDir
@@ -1224,4 +1224,44 @@ tasks.register('auditSM11ForApk', Exec) {
 }
 tasks.matching { it.name == 'preBuild' || (it.name.startsWith('merge') && it.name.endsWith('Assets')) }.configureEach {
     dependsOn tasks.named('auditSM11ForApk')
+}
+
+// Hidden Fates: pinned catalogue and staged gameplay gate.
+tasks.register('preflightSM115ContractForApk', Exec) {
+    dependsOn tasks.named('auditSM11ForApk')
+    workingDir rootProject.projectDir
+    commandLine (System.getenv('LUCKYDEX_PYTHON') ?: 'python3'), 'scripts/preflight-sm115-release.py'
+}
+tasks.register('generateSM115ForApk', Exec) {
+    dependsOn tasks.named('preflightSM115ContractForApk')
+    workingDir rootProject.projectDir
+    commandLine (System.getenv('LUCKYDEX_PYTHON') ?: 'python3'), 'scripts/build-sm115.py'
+}
+tasks.register('auditSM115ForApk', Exec) {
+    dependsOn tasks.named('generateSM115ForApk')
+    workingDir rootProject.projectDir
+    commandLine 'node', '--test', 'tests/v07470-hidden-fates-integration.test.cjs', 'tests/v07471-hidden-fates-outcomes.test.cjs'
+}
+tasks.matching { it.name == 'preBuild' || (it.name.startsWith('merge') && it.name.endsWith('Assets')) }.configureEach {
+    dependsOn tasks.named('auditSM115ForApk')
+}
+
+// Hidden Fates Shiny Vault: pinned catalogue and staged gameplay gate.
+tasks.register('preflightSMAContractForApk', Exec) {
+    dependsOn tasks.named('auditSM115ForApk')
+    workingDir rootProject.projectDir
+    commandLine (System.getenv('LUCKYDEX_PYTHON') ?: 'python3'), 'scripts/preflight-sma-release.py'
+}
+tasks.register('generateSMAForApk', Exec) {
+    dependsOn tasks.named('preflightSMAContractForApk')
+    workingDir rootProject.projectDir
+    commandLine (System.getenv('LUCKYDEX_PYTHON') ?: 'python3'), 'scripts/build-sma.py'
+}
+tasks.register('auditSMAForApk', Exec) {
+    dependsOn tasks.named('generateSMAForApk')
+    workingDir rootProject.projectDir
+    commandLine 'node', '--test', 'tests/v07470-hidden-fates-integration.test.cjs', 'tests/v07471-hidden-fates-outcomes.test.cjs'
+}
+tasks.matching { it.name == 'preBuild' || (it.name.startsWith('merge') && it.name.endsWith('Assets')) }.configureEach {
+    dependsOn tasks.named('auditSMAForApk')
 }
