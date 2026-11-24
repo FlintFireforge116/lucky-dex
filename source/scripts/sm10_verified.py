@@ -207,7 +207,7 @@ ab(67,trig('knockedOut',E('benchFromDeck',amount=2,filter={'kind':'pokemon','nam
 at(74,'Splattering Sludge',E('benchDamage',side='opponent',all=True,amount=20,filter={'damaged':True}))
 ab(74,trig('checkup',R('DetentionGas'),activeOnly=True))
 at(114,'Grandiose Fangs',R('Grandiose'))
-at(125,'Extra-Tight Press',E('retaliateDamage',target='self',duration='opponentTurn',amount=80))
+at(125,'Extra-Tight Press',E('retaliateDamage',target='self',duration='opponentTurn',amount=80,sm10Counters=True))
 ab(157,passive(R('CrazyCode')))
 tr(166,'Item',R('DevolutionZ'))
 tr(168,'Stadium',R('DustIsland'))

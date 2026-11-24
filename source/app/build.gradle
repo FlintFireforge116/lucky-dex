@@ -8,8 +8,8 @@ android {
         applicationId 'com.example.luckydex'
         minSdk 26
         targetSdk 35
-        versionCode 7448
-        versionName '0.69.448'
+        versionCode 7449
+        versionName '0.69.449'
     }
 
     signingConfigs {
@@ -1066,7 +1066,7 @@ tasks.matching { it.name == 'preBuild' || (it.name.startsWith('merge') && it.nam
     dependsOn tasks.named('auditSM5ForApk')
 }
 
-// v0.69.448 Forbidden Light SM6: SHA-pinned 150-print full-set source and audit.
+// v0.69.449 Forbidden Light SM6: SHA-pinned 150-print full-set source and audit.
 tasks.register('preflightSM6ContractForApk', Exec) {
     dependsOn tasks.named('auditSM5ForApk')
     workingDir rootProject.projectDir
@@ -1200,7 +1200,7 @@ tasks.register('generateSM10ForApk', Exec) {
 tasks.register('auditSM10ForApk', Exec) {
     dependsOn tasks.named('generateSM10ForApk')
     workingDir rootProject.projectDir
-    commandLine 'node', '--test', 'tests/v07463-unbroken-bonds-integration.test.cjs', 'tests/v07464-unbroken-bonds-outcomes.test.cjs'
+    commandLine 'node', '--test', 'tests/v07463-unbroken-bonds-integration.test.cjs', 'tests/v07464-unbroken-bonds-outcomes.test.cjs', 'tests/v07465-unbroken-bonds-independent-audit.test.cjs'
 }
 tasks.matching { it.name == 'preBuild' || (it.name.startsWith('merge') && it.name.endsWith('Assets')) }.configureEach {
     dependsOn tasks.named('auditSM10ForApk')
