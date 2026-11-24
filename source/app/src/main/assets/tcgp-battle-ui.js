@@ -177,6 +177,8 @@
     if(action.type==='setupReady')return'READY';
     if(action.type==='sm7FallingStar')return'FALLING STAR · PLAY MINIOR AS ACTIVE';
     if(action.type==='bw7Busybody')return'BUSYBODY · REVEAL AUDINO, HEAL 10 AND REMOVE A CONDITION';
+    if(action.type==='sm8HandAbility')return 'MOUNTAIN PASS · REVEAL FROM HAND';
+    if(action.type==='abilityDiscard'&&action.cardId==='sm8-97')return 'DISTORTION DOOR · BENCH GIRATINA';
     if(action.type==='bw10DiscardAbility')return action.cardId==='bw10-102'?'PROPAGATION · RETURN EXEGGCUTE FROM DISCARD':'PREHISTORIC CALL · PUT RESTORED POKÉMON ON DECK BOTTOM';
     if(action.type==='effectChoice'){const c=action.choiceCardId?cardName(action.choiceCardId):'';if(state?.pendingChoice?.effect?.rule==='energyFlow'){const slot=action.choiceTarget==='active'?state.sides?.[side]?.active:state.sides?.[side]?.bench?.find(x=>x.benchSlot===Number(action.choiceBenchIndex));const special=slot?.specialEnergy?.find(r=>r.uid===action.effectSpecialEnergyUid);if(special)return `RETURN ${cardName(special.cardId)} · ${c}`;if(action.effectEnergyType)return `RETURN ${action.effectEnergyType} ENERGY · ${c}`;}if(action.choiceAttackIndex!=null){const attack=data.cardById(action.choiceCardId)?.attacks?.[Number(action.choiceAttackIndex)];return `CHOOSE ${c} · ${attack?.name||'ATTACK '+(Number(action.choiceAttackIndex)+1)}`;}if(action.choiceTarget==='bench')return `CHOOSE ${c||'BENCH '+(Number(action.choiceBenchIndex)+1)}`;if(action.choiceTarget==='active')return `CHOOSE ${c||'ACTIVE'}`;if(action.choiceHandIndex!=null)return `CHOOSE ${c||'HAND CARD'}`;if(action.choiceDiscardIndex!=null)return `CHOOSE ${c||'DISCARD CARD'}`;if(action.choiceDeckIndex!=null)return `CHOOSE ${c||'DECK CARD'}`;if(action.choiceOption!=null)return action.choiceLabel||`OPTION ${Number(action.choiceOption)+1}`;if(action.choiceSkip)return 'SKIP';return 'CHOOSE';}
     if(action.type==='promote')return`PROMOTE · ${slotName(state,side,'bench',action.benchIndex)}`;
@@ -923,7 +925,7 @@
     return `<div data-hand-side="opponent" class="tcgp-live-hand-backs ${reveal?'is-revealed':''}" style="--back-count:${visible}" aria-label="Opponent hand ${side.hand.length} cards${reveal?', revealed by Clairvoyance':''}">${backs}<b>${side.hand.length}</b></div>`;
   }
   function centerHandActionIndices(actions,handIndex){
-    const allowed=new Set(['setupActive','setupBench','bench','legendBench','evolve','trainer','attachSpecial','bw7Busybody','sm7FallingStar']);
+    const allowed=new Set(['setupActive','setupBench','bench','legendBench','evolve','trainer','attachSpecial','bw7Busybody','sm7FallingStar','sm8HandAbility']);
     const index=Number(handIndex);
     return (actions||[]).map((action,actionIndex)=>({action,actionIndex})).filter(row=>allowed.has(row.action?.type)&&Number(row.action?.handIndex)===index).map(row=>row.actionIndex);
   }
@@ -945,7 +947,7 @@
       // were dropped onto, so healing / Tool / similar plays need no chooser.
       const untargetedTrainer=zone==='active'?find(action=>action.type==='trainer'&&action.target==null&&action.effectTarget==null):-1;
       if(untargetedTrainer>=0)return untargetedTrainer;
-      if(zone==='active'){const busybody=find(action=>['bw7Busybody','sm7FallingStar'].includes(action.type));if(busybody>=0)return busybody;return find(action=>action.type==='evolve'&&action.target==='active');}
+      if(zone==='active'){const busybody=find(action=>['bw7Busybody','sm7FallingStar','sm8HandAbility'].includes(action.type));if(busybody>=0)return busybody;return find(action=>action.type==='evolve'&&action.target==='active');}
       if(zone==='bench'){
         const occupied=core?.benchSlotAt?core.benchSlotAt(player,benchIndex):player.bench?.[benchIndex];
         if(occupied)return find(action=>action.type==='evolve'&&action.target==='bench'&&Number(action.benchIndex)===benchIndex);
@@ -1115,7 +1117,7 @@
     const buttons=rows.map(({index,action})=>{const copy=copiedAttackOption(action,currentBattle,'player'),id=copy?.source?.id||action.cardId||action.choiceCardId||(action.target==='bench'?core.benchSlotAt(currentBattle.sides.player,action.benchIndex)?.cardId:null),art=id?cardArtUrl(id,copy?.sourceSide||'player'):'';return `<button class="tcgp-live-context-card${copy?' is-copy-attack':''}" type="button" data-tcgp-action="battle-action" data-action-index="${index}">${art?`<img src="${esc(art)}" alt="">`:''}<span>${esc(actionLabel(action,currentBattle,'player'))}</span></button>`;}).join('');
     return `<div class="tcgp-live-context-centre" role="dialog" aria-label="Choose a play"><div class="tcgp-live-context-head"><b>Choose a play</b><button type="button" data-tcgp-action="close-overlay">×</button></div><div class="tcgp-live-context-rail">${buttons}</div></div>`;
   }
-  function handActionIndices(handIndex){return battleActionCache.map((action,index)=>({action,index})).filter(({action})=>Number(action.handIndex)===Number(handIndex)&&['setupActive','setupBench','bench','legendBench','evolve','trainer','attachSpecial','bw7Busybody','sm7FallingStar'].includes(action.type)).map(({index})=>index);}
+  function handActionIndices(handIndex){return battleActionCache.map((action,index)=>({action,index})).filter(({action})=>Number(action.handIndex)===Number(handIndex)&&['setupActive','setupBench','bench','legendBench','evolve','trainer','attachSpecial','bw7Busybody','sm7FallingStar','sm8HandAbility'].includes(action.type)).map(({index})=>index);}
   function openHandActions(handIndex){
     if(!currentBattle?.sides?.player?.hand?.[handIndex]||battlePresentationBusy)return;
     battleHandIndex=Number(handIndex);battleInspect=null;battleOverlay='hand-actions';renderBattle();
@@ -1167,7 +1169,7 @@
     const basic=Object.entries(side?.energyDiscard||{}).filter(([,count])=>Number(count)>0),energyCount=basic.reduce((n,[,c])=>n+Number(c||0),0)+energyRefs.length;
     const cardsHtml=cardRefs.map(({ref,index})=>{const card=data.cardById(ref.cardId),art=cardArtUrl(ref.cardId,battleDiscardSide);
       const available=battleDiscardSide==='player'&&currentBattle?.activeSide==='player'&&currentBattle?.phase==='battle'
-        ?battleActionCache.findIndex(a=>a.type==='bw10DiscardAbility'&&a.sourceUid===ref.uid): -1;
+        ?battleActionCache.findIndex(a=>(a.type==='bw10DiscardAbility'||a.type==='abilityDiscard'&&a.cardId==='sm8-97')&&a.sourceUid===ref.uid): -1;
       const ability=available>=0?`<button type="button" class="tcgp-battle-action" data-tcgp-action="battle-action" data-action-index="${available}">${esc(actionLabel(battleActionCache[available],currentBattle,'player'))}</button>`:'';
       return `<div class="tcgp-live-discard-entry"><button type="button" class="tcgp-live-discard-card" ${inspectAttrs(battleDiscardSide,'discard',index)}>${art?`<img src="${esc(art)}" alt="${esc(card?.name||ref.cardId)}">`:''}<span>${esc(card?.name||ref.cardId)}</span></button>${ability}</div>`;}).join('');
     const energyIcons=basic.map(([type,count])=>`<div class="tcgp-live-discard-energy-tile">${energyIconHtml(type,{className:'discard'})}<b>${esc(type)}</b><span>×${Number(count)}</span></div>`).join('');

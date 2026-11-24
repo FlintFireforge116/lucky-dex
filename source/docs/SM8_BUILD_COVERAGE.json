@@ -1,43 +1,7 @@
 {
   "printed": 240,
-  "battleReady": 229,
-  "gated": {
-    "sm8-13": [
-      "Unimplemented Ability: Floral Path to the Sky"
-    ],
-    "sm8-42": [
-      "Unimplemented attack: Lost Flame",
-      "Unimplemented Ability: Blazing Energy"
-    ],
-    "sm8-57": [
-      "Unimplemented attack: Happy Delivery"
-    ],
-    "sm8-67": [
-      "Unimplemented Ability: Harmonics"
-    ],
-    "sm8-95": [
-      "Unimplemented Ability: Vessel of Life"
-    ],
-    "sm8-97": [
-      "Unimplemented Ability: Distortion Door"
-    ],
-    "sm8-106": [
-      "Unimplemented attack: Nightcap"
-    ],
-    "sm8-136": [
-      "Unimplemented attack: Polka-Dot Search"
-    ],
-    "sm8-144": [
-      "Prism Star attack/Ability or Trainer effect not yet implemented",
-      "Unimplemented Ability: Path of Life"
-    ],
-    "sm8-157": [
-      "Unimplemented attack: Stunning Likeness"
-    ],
-    "sm8-165": [
-      "Unimplemented Ability: Mountain Pass"
-    ]
-  },
+  "battleReady": 240,
+  "gated": {},
   "attacks": 315,
   "abilities": 61,
   "pokemonGX": 39,

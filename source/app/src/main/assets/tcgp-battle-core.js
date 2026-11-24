@@ -1105,7 +1105,7 @@
     if(slot?.cardId==='gym1-47'){const count=Object.values(next).reduce((n,x)=>n+Number(x||0),0);return {Grass:count};}if(state.format==='classic'&&slot?.cardId==='xy12-11'&&!effects.abilitiesSuppressed(state,side,slot,data.cardById)){
       const n=Object.values(next).reduce((total,value)=>total+Number(value||0),0);
       return {Fire:n};
-    }const override=slot?.energyTypeOverride;if(override&&(override.expiresTurn==null||state.turnNumber<=override.expiresTurn)){const total=Object.values(next).reduce((a,b)=>a+Number(b||0),0);return {[override.type]:total};}return next;}
+    }if(state.format==='classic'&&state.sides[side].sm8BlazingTurn===state.turnNumber)return {Fire:Object.entries(next).filter(([t])=>!t.startsWith('__')).reduce((n,[,v])=>n+Number(v||0),0)};const override=slot?.energyTypeOverride;if(override&&(override.expiresTurn==null||state.turnNumber<=override.expiresTurn)){const total=Object.values(next).reduce((a,b)=>a+Number(b||0),0);return {[override.type]:total};}return next;}
   function spendRetreatEnergy(state,side,slot,cost){
     let remaining=Math.max(0,Number(cost||0)),generated={...(slot.energy||{})},special=(slot.specialEnergy||[]).slice(),discardSpecial=[];
     const values=energyValues(state,side,slot),basicTotal=Object.entries(generated).reduce((sum,[type,n])=>sum+Number(n||0)*Number(values[type]||1),0);
@@ -1619,7 +1619,7 @@
     // attachment are INDEPENDENT. Hand-attached Basic and Special both count
     // toward the hand attachment; card effects can separately accelerate.
     if(state.format==='classic'&&Number(s.dp7EmperorAuraUntil||0)<Number(state.turnNumber))s.dp7EmperorAuraUntil=0;
-    if(state.format==='classic'&&Number(s.dp7EmperorAuraUntil||0)<Number(state.turnNumber)){s.hand.forEach((ref,handIndex)=>{const card=data.cardById(ref.cardId);if(!(card?.specialEnergy||card?.basicEnergy||card?.holonEnergyPokemon)||card.battleEnabled===false&& !card.basicEnergy)return;if((card?.specialEnergy||card?.holonEnergyPokemon)&&effects.isActionLocked(state,side,'SpecialEnergy',data.cardById))return;if(card.specialEnergy&&state.sides[side==='player'?'opponent':'player']?.active?.cardId==='bw10-23'&&!effects.abilitiesSuppressed(state,side==='player'?'opponent':'player',state.sides[side==='player'?'opponent':'player'].active,data.cardById))return;if(s.handEnergyUsed&&Number(s.xy5GrowthBonus?.turn)!==Number(state.turnNumber)&&Number(s.sm1UnlimitedHandEnergyTurn)!==Number(state.turnNumber))return;const validEnergyTarget=slot=>slot&&!slot.gymEnergyLock&&(card.id!=='neo4-16'||/^(?:Light |Shining )/.test(data.cardById(slot.cardId)?.name||''));const aqValid=(slot)=>{if(!validEnergyTarget(slot))return false;if(s.handEnergyUsed&&s.xy5GrowthBonus?.targetUid!==slot.uid&&Number(s.sm1UnlimitedHandEnergyTurn)!==Number(state.turnNumber))return false;const mon=data.cardById(slot.cardId),energyType=card.basicEnergy?card.subtype:card.effect?.provides&&Object.keys(card.effect.provides)[0];
+    if(state.format==='classic'&&Number(s.dp7EmperorAuraUntil||0)<Number(state.turnNumber)){s.hand.forEach((ref,handIndex)=>{const card=data.cardById(ref.cardId);if(!(card?.specialEnergy||card?.basicEnergy||card?.holonEnergyPokemon)||card.battleEnabled===false&& !card.basicEnergy)return;if((card?.specialEnergy||card?.holonEnergyPokemon)&&effects.isActionLocked(state,side,'SpecialEnergy',data.cardById))return;if(card.specialEnergy&&state.sides[side==='player'?'opponent':'player']?.active?.cardId==='bw10-23'&&!effects.abilitiesSuppressed(state,side==='player'?'opponent':'player',state.sides[side==='player'?'opponent':'player'].active,data.cardById))return;if(s.handEnergyUsed&&!(s.sm8Harmonics?.turn===state.turnNumber&&pokemonOn(s).some(p=>p.cardId==='sm8-67'&&!effects.abilitiesSuppressed(state,side,p,data.cardById)))&&Number(s.xy5GrowthBonus?.turn)!==Number(state.turnNumber)&&Number(s.sm1UnlimitedHandEnergyTurn)!==Number(state.turnNumber))return;const validEnergyTarget=slot=>slot&&!slot.gymEnergyLock&&(card.id!=='neo4-16'||/^(?:Light |Shining )/.test(data.cardById(slot.cardId)?.name||''));const aqValid=(slot)=>{if(!validEnergyTarget(slot))return false;if(s.handEnergyUsed&&!(s.sm8Harmonics?.turn===state.turnNumber&&s.sm8Harmonics?.uid===slot.uid&&pokemonOn(s).some(p=>p.cardId==='sm8-67'&&!effects.abilitiesSuppressed(state,side,p,data.cardById)))&&s.xy5GrowthBonus?.targetUid!==slot.uid&&Number(s.sm1UnlimitedHandEnergyTurn)!==Number(state.turnNumber))return false;const mon=data.cardById(slot.cardId),energyType=card.basicEnergy?card.subtype:card.effect?.provides&&Object.keys(card.effect.provides)[0];
        if(card.id==='xy3-103'&&!mon?.types?.includes('Grass'))return false;
        if(['xy3-104','xy10-115'].includes(card.id)&&!mon?.types?.includes('Fighting'))return false;
        if(card.id==='xy4-112'&&!mon?.types?.includes('Psychic'))return false;
@@ -1951,6 +1951,10 @@
         actions.push({type:'bw10DiscardAbility',cardId:ref.cardId,sourceUid:ref.uid});
       }
     }
+    if(state.format==='classic'){
+      if(emptyBenchSlots(s).length)for(const ref of s.discard||[])if(ref.cardId==='sm8-97'&&s.sm8DoorUsed?.[ref.uid]!==s.turnCount&&!effects.abilitiesSuppressed(state,side,ref,data.cardById))actions.push({type:'abilityDiscard',cardId:ref.cardId,sourceUid:ref.uid});
+      if(foe.deck.length)s.hand.forEach((ref,handIndex)=>{if(ref.cardId==='sm8-165'&&!effects.abilitiesSuppressed(state,side,ref,data.cardById))actions.push({type:'sm8HandAbility',cardId:ref.cardId,sourceUid:ref.uid,handIndex});});
+    }
     // BW5 Slowbro Airhead: even Prize counts (2/4/6) prohibit its attacks.
     const bw5Airhead=state.format==='classic'&&s.active?.cardId==='bw5-24'&&
       !effects.abilitiesSuppressed(state,side,s.active,data.cardById)&&[2,4,6].includes(Number(s.prizes?.length||0));
@@ -1958,6 +1962,7 @@
     if (s.active&&!sm8Shady&&!bw5Airhead&&!conditions.paralysis&&Number(s.active.ex11AttackLockUntil||0)!==Number(state.turnNumber)){
       for(const entry of attackOptions(state,side)){
         const {cardId:attackCardId,attackIndex,attack}=entry;
+        if(attackCardId==='sm8-106'&&attack.name==='Nightcap'&&foe.prizes.length!==2)continue;
         if ((attack.gxAttack||/\bGX\b/i.test(attack.name||''))&&s.gxAttackUsed&&!(state.format==='classic'&&data.cardById(attackCardId)?.name==='Zygarde-GX'&&s.sm6BonnieTurn===state.turnNumber))continue;
         // SM5 conditional Eclipse GX attacks cannot be declared while tied/ahead on Prizes.
         if(state.format==='classic'&&attackCardId.startsWith('sm5-')&&
@@ -2881,7 +2886,7 @@
             source?.attack&&source.side===foeSide&&
             Number(source.damage||0)>0&&Number(source.turn)===Number(state.turnNumber)&&
             data.cardById(source.cardId)?.ancientTrait?.name==='Δ Plus'?1:0;
-          const bw9LifeDew=state.format==='classic'&&activeToolsOf(state,slot).some(r=>r.cardId==='bw9-107')?1:0;
+          const bw9LifeDew=state.format==='classic'?activeToolsOf(state,slot).filter(r=>['bw9-107','sm8-95'].includes(r.cardId)).length:0;
           // Fates Collide Umbreon-EX Endgame awards TWO extra Prizes only
           // when Endgame itself damages and KOs the opposing Mega Evolution.
           // Secondary poison KOs, unrelated attacks, and other EX never count.
@@ -3487,6 +3492,13 @@ const target=slotForTarget(s,action.target,action.benchIndex);if(card.id==='pl2-
         ability:propagation?'Propagation':'Prehistoric Call',fromDiscard:true});
       return state;
     }
+    if(matched.type==='abilityDiscard'&&matched.cardId==='sm8-97'){
+      const i=s.discard.findIndex(r=>r.uid===matched.sourceUid),ref=s.discard.splice(i,1)[0],p=makePokemonSlot(ref.cardId,s.turnCount,ref.uid);placeOnBench(s,p,emptyBenchSlots(s)[0]);(s.sm8DoorUsed||(s.sm8DoorUsed={}))[ref.uid]=s.turnCount;
+      if(foe.bench.length)beginEffectChoice(state,side,p,{kind:'pokemon',side:'self',selectionSide:foeSide,includeActive:false,effect:{type:'sm7Rule',rule:'sm8DistortionDoor',left:2,used:[]},resume:'trainer'});return state;
+    }
+    if(matched.type==='sm8HandAbility'){
+      const ref=s.hand.splice(matched.handIndex,1)[0];s.lostZone.push(ref);const top=foe.deck[0];state.log.push({type:'inspectTop',side,cards:[top.cardId],privateTo:side});if(data.cardById(top.cardId)?.trainerType==='Supporter')beginEffectChoice(state,side,s.active,{kind:'option',side:'self',options:['Leave on deck','Put '+data.cardById(top.cardId).name+' in Lost Zone'],effect:{type:'sm7Rule',rule:'sm8MountainPass',uid:top.uid},resume:'trainer'});return state;
+    }
     if(matched.type==='abilityDiscard'&&['sm3-88','sm3-88a','sm3-139','sm3-158'].includes(matched.cardId)){
       // The card itself must be present and the Bench must have a free slot.
       const at=s.discard.findIndex(r=>r.uid===matched.sourceUid&&r.cardId===matched.cardId);
@@ -3575,6 +3587,7 @@ const target=slotForTarget(s,action.target,action.benchIndex);if(card.id==='pl2-
       if(growthUsed)delete s.xy5GrowthBonus;
       else if(state.format==='classic'&&data.cardById(target.cardId)?.ancientTrait?.name==='α Growth')
         s.xy5GrowthBonus={turn:state.turnNumber,targetUid:target.uid};
+      if(s.handEnergyUsed)delete s.sm8Harmonics;else if(state.format==='classic'&&pokemonOn(s).some(p=>p.cardId==='sm8-67'&&!effects.abilitiesSuppressed(state,side,p,data.cardById)))s.sm8Harmonics={turn:state.turnNumber,uid:target.uid};
       s.handEnergyUsed=true;
       if(card.id==='xy3-103'&&!effects.healingIsBlocked(state,target,data.cardById)){target.damage=Math.max(0,Number(target.damage||0)-30);state.log.push({type:'xy3HerbalEnergy',side,targetUid:target.uid,healed:30});}
       if(card.holonEnergyPokemon&&['ex11-21','ex11-22','ex13-44'].includes(card.id)){
@@ -4393,7 +4406,7 @@ const target=slotForTarget(s,action.target,action.benchIndex);if(card.id==='pl2-
     for(const owner of ['player','opponent']){
       const incoming=state.sides[owner].active,previous=before[owner];
       if(incoming&&previous&&incoming.uid!==previous.uid&&previous.bench.has(incoming.uid))
-        incoming.movedToActiveTurn=turnOfAction;
+        {incoming.movedToActiveTurn=turnOfAction;if(incoming.cardId==='sm8-144'&&state.activeSide===owner&&state.turnNumber===turnOfAction&&state.phase==='battle'&&incoming.sm8PathUsed!==turnOfAction&&!effects.abilitiesSuppressed(state,owner,incoming,data.cardById)&&state.sides[owner].bench.some(p=>Object.values(p.energy||{}).some(n=>n>0)||(p.specialEnergy||[]).length)){incoming.sm8PathUsed=turnOfAction;effects.applyEffect({type:'sm7Rule',rule:'sm8PathLife'},effectContext(state,owner,{},incoming));}}
     }
     // XY3 Herbal/Strong Energy may only remain on a Pokémon of the printed
     // type. Evolving or changing its type must immediately discard it; a

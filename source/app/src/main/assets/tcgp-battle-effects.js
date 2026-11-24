@@ -43,7 +43,7 @@
       case 'distributeDiscardCounters':need(integer(effect.amount)&&effect.amount>0&&effect.amount%10===0,'invalid discard counters');break;
       case 'sm3Rule':need(typeof effect.rule==='string'&&!!effect.rule,'invalid SM3 rule');break;
       case 'sm4Rule':need(typeof effect.rule==='string'&&!!effect.rule,'invalid SM4 rule');break;
-      case 'sm7Rule':need(['sm8TrappingThread','sm8ButterflyEdge','sm8MiracleHarmony','sm8MysteriousBuzz','sm8CharmedCharm','sm8SpellTag','sm8UnownDamage','sm8UnownHand','sm8UnownMissing','sm8ShadyTail','sm8Sturdy','sm8Burst','sm8EyeOpener','sm8LostOut','sm8TimeDistortion','sm8Ripening','sm8Ditto','sm8Catcher','sm8Faba','sm8HeatFactory','sm8Kahili','sm8LifeForest','sm8Lusamine','sm8Mina','sm8MixedHerbs','sm8Morty','sm8ThunderMountain','sm8AssistingHeater','sm8BreezeAway','sm8Counters','sm8CrushingCharge','sm8DiscardAttach','sm8DreamFear','sm8DreamTouch','sm8EmptyThreat','sm8EnergyGaze','sm8FreshSqueezed','sm8HazardousEvolution','sm8JungleHeal','sm8LavaFlow','sm8LeafCyclone','sm8LostCards','sm8LostPokemon','sm8MilkCannon','sm8Molting','sm8Sightseer','sm8MindBlown','sm8MirrorCounter','sm8MoomooMilk','sm8NetBall','sm8NuzzleShot','sm8Overshort','sm8PeckOff','sm8PowerfulSlap','sm8RecycleItems','sm8RemoveCondition','sm8ThornyEruption','sm8Thunderclap','sm8UnitColor','sm8WaitHammer','sm8Whitney','sm75Recycle','sm75WildTail','sm75Commotion','sm75Downpour','sm75WashOut','sm75ExplosiveJet','sm75DragonWisdom','sm75Zinnia','welaVolcano','switchRaft','lance','burningFighter','blainesLastStand','dragonporter','fireHandSpread','flameCharge','captivatingSalsa','spiderTrap','clearRoom','den','specialSweep','evenGame','ditchDraw','breakdown','firefighting','dangerousConcert','powerDraw','smoothOver','magicEvens','excavate','acroBike','bill','lastPotion','tvReporter','underground','pokeNav','friendBall','energyRecycle','powerNature','solShade','sunbeam','extend','lazy','unitColor','stormyWinds','legendaryAscent','shadyMove','searchFriends','tempest','fieldDamage','rapidSpin','flamingHonk','moonRaker','dreamyMist','hiker','maskedRoyal','shrine','skyPillar','steven','crushBurn','extraBomb','lightningStrike','energyGrounding','doubleCharge','electricStart','enemyShow','redEyes','sandyFear','fallingStar','mining','perishDream','wishStar','steelworks','strikeRun','beastBall','rainbowBrush'].includes(effect.rule),'invalid SM7 rule');break;
+      case 'sm7Rule':need(['sm8FloralPath','sm8LostFlame','sm8BlazingEnergy','sm8HappyDelivery','sm8Harmonics','sm8VesselLife','sm8DistortionDoor','sm8PolkaSearch','sm8PathLife','sm8StunningLikeness','sm8MountainPass','sm8TrappingThread','sm8ButterflyEdge','sm8MiracleHarmony','sm8MysteriousBuzz','sm8CharmedCharm','sm8SpellTag','sm8UnownDamage','sm8UnownHand','sm8UnownMissing','sm8ShadyTail','sm8Sturdy','sm8Burst','sm8EyeOpener','sm8LostOut','sm8TimeDistortion','sm8Ripening','sm8Ditto','sm8Catcher','sm8Faba','sm8HeatFactory','sm8Kahili','sm8LifeForest','sm8Lusamine','sm8Mina','sm8MixedHerbs','sm8Morty','sm8ThunderMountain','sm8AssistingHeater','sm8BreezeAway','sm8Counters','sm8CrushingCharge','sm8DiscardAttach','sm8DreamFear','sm8DreamTouch','sm8EmptyThreat','sm8EnergyGaze','sm8FreshSqueezed','sm8HazardousEvolution','sm8JungleHeal','sm8LavaFlow','sm8LeafCyclone','sm8LostCards','sm8LostPokemon','sm8MilkCannon','sm8Molting','sm8Sightseer','sm8MindBlown','sm8MirrorCounter','sm8MoomooMilk','sm8NetBall','sm8NuzzleShot','sm8Overshort','sm8PeckOff','sm8PowerfulSlap','sm8RecycleItems','sm8RemoveCondition','sm8ThornyEruption','sm8Thunderclap','sm8UnitColor','sm8WaitHammer','sm8Whitney','sm75Recycle','sm75WildTail','sm75Commotion','sm75Downpour','sm75WashOut','sm75ExplosiveJet','sm75DragonWisdom','sm75Zinnia','welaVolcano','switchRaft','lance','burningFighter','blainesLastStand','dragonporter','fireHandSpread','flameCharge','captivatingSalsa','spiderTrap','clearRoom','den','specialSweep','evenGame','ditchDraw','breakdown','firefighting','dangerousConcert','powerDraw','smoothOver','magicEvens','excavate','acroBike','bill','lastPotion','tvReporter','underground','pokeNav','friendBall','energyRecycle','powerNature','solShade','sunbeam','extend','lazy','unitColor','stormyWinds','legendaryAscent','shadyMove','searchFriends','tempest','fieldDamage','rapidSpin','flamingHonk','moonRaker','dreamyMist','hiker','maskedRoyal','shrine','skyPillar','steven','crushBurn','extraBomb','lightningStrike','energyGrounding','doubleCharge','electricStart','enemyShow','redEyes','sandyFear','fallingStar','mining','perishDream','wishStar','steelworks','strikeRun','beastBall','rainbowBrush'].includes(effect.rule),'invalid SM7 rule');break;
       case 'sm6Rule':need(['tropicalShake','milkDrink','breakOpen','curseBlade','stinger','doomCount','sanctuary','photonGeyser','destructiveSound','discardAttach','shuriken','frubbles','earthenAura','stickyMembrane','bonnie','discardSearch','diantha','lysandreLabs','recon','beastRing','ultraEvolution','energySpread','psychicAbduction','moveOpposingEnergy','tickingKO','twister','knockoutReviver','secretBlessings','swirlingPetals','mountaintopMining','abnormalOutbreak','unnerve','jetGeyser','silentWaves','finalHour','poisonPoint','wondrousGift','hydration','lysandrePrism','winkWink'].includes(effect.rule),'invalid SM6 rule');break;
       case 'sm5Rule':need(['mars','prismHandEnergy','prismDiscardEnergy','cyrusPrism','palPad','specialMow','lunarFall','lunarPayback','damageTransport','royalBlades','eleventhHour','lightingGX','blasterGX','grandBloom','changeClothes','memoryTool','loomOver','iceShard','psychicResonance','mercilessStrike','identify','deepCurrents','resourceManagement','gigaDrain','sneakySmash','paletteOfFriends','timelessGX','zeroVanishGX','solBurstGX','spatialControl','psychicTransfer','blessingsFrost','fireBlaster','happyTurn','ancientCrystal','stickySmokescreen','exactRevenge','ownThePlace','dangerousLick','coax','snugglyGenerator','flowerTornado','magicalSwap','flamingFighter','exeggutorsParadise','missingClover','turboDrive','fastRaid'].includes(effect.rule),'invalid SM5 rule');break;
       case 'sm2Rule':need(typeof effect.rule==='string'&&!!effect.rule,'invalid SM2 rule');break;
@@ -19297,6 +19297,54 @@
             discardItems=()=>ss.discard.filter(ref=>['Item','Tool'].includes(card(ref)?.trainerType));
           if(['Thunderclap','UnitColor','LavaFlow','MindBlown','EnergyGaze','EmptyThreat','Overshort','PeckOff','PowerfulSlap','MilkCannon'].includes(k))break;
           if(['ShadyTail','Sturdy','LostOut','ThunderMountain','MysteriousBuzz'].includes(k))break;
+          if(k==='Harmonics')break;
+          if(k==='MountainPass'){if(res&&act.choiceOption===1&&foe.deck[0]?.uid===effect.uid)lost(foe).push(...foe.deck.splice(0,1));break;}
+          if(k==='DistortionDoor'){if(!res)break;const p=selected(ctx,foe),used=[...(effect.used||[])];if(foe.bench.includes(p)&&!used.includes(p.uid)){p.damage=Number(p.damage||0)+10;used.push(p.uid);}const opts=foe.bench.filter(p=>!used.includes(p.uid));if(used.length<2&&opts.length)ask({kind:'pokemon',selectionSide:ctx.foeSide,includeActive:false,allowedUids:opts.map(p=>p.uid)},{used});break;}
+
+          if(k==='BlazingEnergy'){ss.sm8BlazingTurn=ctx.state.turnNumber;break;}
+          if(k==='FloralPath'){
+            const opts=()=>ss.deck.filter(ref=>card(ref)?.name==='Jumpluff'&&card(ref)?.battleEnabled);
+            if(!res){if(opts().length)ask({kind:'deckCard',allowedUids:opts().map(x=>x.uid),filter:{name:'Jumpluff'}});break;}
+            const ref=ss.deck[act.choiceDeckIndex];if(!opts().includes(ref)||!all().includes(a))break;
+            const active=a===ss.active,idx=ss.bench.indexOf(a),benchSlot=a.benchSlot;ss.deck.splice(act.choiceDeckIndex,1);lose(ss,a);
+            const next={uid:ref.uid,cardId:ref.cardId,stack:[ref.cardId],damage:0,energy:{},specialEnergy:[],conditions:{},tool:null,extraTools:[],benchSlot:active?null:benchSlot,playedOnSideTurn:ss.turnCount};
+            if(active)ss.active=next;else ss.bench.splice(idx,0,next);ctx.shuffle?.(ctx.state,ss.deck);break;
+          }
+          if(k==='LostFlame'){
+            const p=foe.active;if(!eligible(p))break;let left=effect.left??2;
+            if(res){const t=act.effectEnergyType,i=p.specialEnergy.findIndex(x=>x.uid===act.effectSpecialEnergyUid);if(t&&Number(p.energy[t])>0){p.energy[t]--;lost(foe).push({uid:p.uid+'-lost-flame-'+ctx.state.turnNumber+'-'+left,cardId:neoBasicIds[t],zoneGenerated:true});left--;}else if(i>=0){lost(foe).push(...p.specialEnergy.splice(i,1));left--;}}
+            if(left>0&&availableEnergy(p))ask({kind:'energySource',selectionSide:ctx.foeSide,energySourceUid:p.uid,includeSpecial:true},{left});break;
+          }
+          if(k==='HappyDelivery'){
+            const pool=()=>ss.bench.filter(p=>!toolsOf(p).length),tool=ref=>card(ref)?.trainerType==='Tool'&&card(ref)?.battleEnabled;
+            if(skip){ctx.shuffle?.(ctx.state,ss.deck);break;}
+            if(res&&effect.stage==='target'){const p=selected(ctx,ss);if(pool().includes(p)&&ss.deck.some(tool))ask({kind:'deckCard',filter:{trainerType:'Tool'},allowedUids:ss.deck.filter(tool).map(x=>x.uid)},{stage:'tool',uid:p.uid});break;}
+            if(res&&effect.stage==='tool'){const p=pool().find(x=>x.uid===effect.uid),ref=ss.deck[act.choiceDeckIndex];if(p&&tool(ref)){ss.deck.splice(act.choiceDeckIndex,1);p.tool=ref;}}
+            if(pool().length&&ss.deck.some(tool))choose(ss,pool(),{stage:'target'},true);else ctx.shuffle?.(ctx.state,ss.deck);break;
+          }
+          if(k==='VesselLife'){
+            const pool=()=>all().filter(p=>p!==a&&!toolsOf(p).length);
+            if(!res){choose(ss,pool(),{},true);break;}if(skip)break;const p=selected(ctx,ss);if(!pool().includes(p)||!all().includes(a))break;
+            for(const [i,id] of (a.stack||[a.cardId]).slice(0,-1).entries())ss.discard.push({uid:a.uid+'-vessel-'+i,cardId:id});ss.discard.push(...toolsOf(a),...temporaryTrainersOf(a),...(a.specialEnergy||[]));for(const [t,n] of Object.entries(a.energy||{}))recordDiscardedEnergy(ss,t,n);
+            p.tool={uid:a.uid,cardId:a.cardId};if(a===ss.active)ss.active=null;else ss.bench.splice(ss.bench.indexOf(a),1);break;
+          }
+          if(k==='PolkaSearch'){
+            const ids=effect.ids||ss.deck.slice(0,8).map(x=>x.uid),pool=()=>ss.deck.filter(x=>ids.includes(x.uid)&&basicOrSpecial(x));
+            if(!res)log({type:'inspectTop',side:ctx.side,cards:ss.deck.slice(0,8).map(x=>x.cardId),privateTo:ctx.side});
+            if(skip){ctx.shuffle?.(ctx.state,ss.deck);break;}
+            if(res&&effect.stage==='pick'){const ref=ss.deck[act.choiceDeckIndex];if(pool().includes(ref))choose(ss,all(),{stage:'target',ids,refUid:ref.uid});break;}
+            if(res&&effect.stage==='target'){const p=selected(ctx,ss),i=ss.deck.findIndex(x=>x.uid===effect.refUid),ref=ss.deck[i];if(p&&pool().includes(ref)){ss.deck.splice(i,1);const t=basicType(ref);if(t)attach(p,t);else p.specialEnergy.push({...ref,provides:card(ref)?.effect?.provides});}}
+            if(pool().length)ask({kind:'deckCard',allowedUids:pool().map(x=>x.uid),filter:{kind:'energy'},optional:true},{stage:'pick',ids});else ctx.shuffle?.(ctx.state,ss.deck);break;
+          }
+          if(k==='StunningLikeness'){
+            if(!res){log({type:'revealHand',revealedSide:ctx.foeSide,cards:foe.hand.map(x=>x.cardId)});if(foe.hand.some(x=>card(x)?.trainerType==='Supporter'&&card(x)?.effect&&card(x)?.battleEnabled))ask({kind:'opponentHandCard',filter:{trainerType:'Supporter',battleEnabled:true},optional:true});break;}
+            const c=card(foe.hand[act.choiceHandIndex]);if(!skip&&c?.trainerType==='Supporter'&&c.effect&&c.battleEnabled)applyEffect(c.effect,{...fresh,trainerRef:null,copyDepth:1});break;
+          }
+          if(k==='PathLife'){
+            if(a!==ss.active||skip)break;
+            if(res){const p=selected(ctx,ss),t=act.effectEnergyType;if(p&&p!==a){if(t&&Number(p.energy[t])>0){p.energy[t]--;a.energy[t]=Number(a.energy[t]||0)+1;}else{const i=p.specialEnergy.findIndex(x=>x.uid===act.effectSpecialEnergyUid);if(i>=0)a.specialEnergy.push(...p.specialEnergy.splice(i,1));}}}
+            if(ss.bench.some(availableEnergy))ask({kind:'energySource',onlyBench:true,includeSpecial:true,optional:true});break;
+          }
           if(k==='CharmedCharm'){if(res&&act.choiceOption===1)applyEffect({type:'status',target:'opponentActive',status:'confusion'},fresh);break;}
           if(k==='TrappingThread'){if(eligible(foe.active))foe.active.sm8TrappingThreadUntil=ctx.state.turnNumber+1;break;}
           if(k==='ButterflyEdge'){const p=foe.active;if(p&&Number(ctx.dealtDamage||0)>0&&Number(p.damage||0)>=ctx.maxHp(ctx.foeSide,p)&&Number(p.damage||0)-Number(ctx.dealtDamage)<ctx.maxHp(ctx.foeSide,p))p.sm8ButterflySource={uid:a.uid,turn:ctx.state.turnNumber};break;}
@@ -27002,6 +27050,7 @@ if(ctx.isAbility){const targetSide=pokemonOn(own(ctx)).includes(s)?ctx.side:ctx.
         if(e.excludeEx&&sourceCard&&(sourceCard.isEx||sourceCard.points>=2||/ ex$/.test(sourceCard.name))){damage=0;return;}
         if(e.requiresCopiedCost&&typeof ctx.canPayCopiedCost==='function'&&!ctx.canPayCopiedCost(chosen)){damage=0;return;}
         if(Number(ctx.copyDepth||0)>4){damage=0;return;}
+        if(ctx.attack?.name==='Nightcap'&&/\bGX\b/i.test(chosen.name)){if(own(ctx).gxAttackUsed){damage=0;return;}own(ctx).gxAttackUsed=true;}
         const copied=resolveAttack(chosen,{...ctx,attack:chosen,copyDepth:Number(ctx.copyDepth||0)+1,ignoreUseCosts:!!e.ignoreUseCosts});damage=copied.damage;damageTarget=copied.damageTarget;damageRules={...damageRules,...copied.damageRules};pending.push(...copied.pendingEffects);return;
       }
       if(e.type==='selectedDamage'){damage=e.amount;damageTarget=targets(e.target,ctx).filter(s=>matchesFilter(ctx.cardById(s.cardId),e.filter,s))[0]||null;if(e.ignoreWeakness)damageRules.ignoreWeakness=true;if(e.ignoreResistance)damageRules.ignoreResistance=true;if(e.ignoreEffects)damageRules.ignoreEffects=true;if(!damageTarget)damage=0;return;}
@@ -27661,6 +27710,8 @@ if(ctx.isAbility){const targetSide=pokemonOn(own(ctx)).includes(s)?ctx.side:ctx.
       if(r==='sm8MilkCannon')return Array.from({length:ss.hand.filter(x=>ctx.cardById(x.cardId)?.name==='Moomoo Milk').length+1},(_,n)=>({effectSelection:String(n),choiceLabel:'Reveal '+n+' Moomoo Milk'}));
       if(r.startsWith('sm8')&&!ctx.isAttack){
         const k=r.slice(3),filter=x=>ctx.cardById(x.cardId),types=()=>Object.entries(ss.energyDiscard||{}).some(([,n])=>n>0)||ss.discard.some(x=>filter(x)?.basicEnergy);
+        if(k==='FloralPath')return ss.deck.some(x=>filter(x)?.name==='Jumpluff'&&filter(x)?.battleEnabled)?[{}]:[];
+        if(k==='VesselLife')return pokemonOn(ss).some(p=>p!==ctx.attacker&&!toolsOf(p).length)?[{}]:[];
         if(k.startsWith('Unown'))return ctx.attacker===ss.active&&sm8UnownReady(k,ss,foe,ctx.cardById)?[{}]:[];
         if(k==='Ditto')return ss.turnCount>1&&ctx.attacker.playedOnSideTurn<ss.turnCount&&ss.hand.some(x=>filter(x)?.battleEnabled&&filter(x)?.stage==='Stage 1')?[{}]:[];
         if(k==='Ripening')return pokemonOn(ss).some(p=>ss.hand.some(x=>filter(x)?.battleEnabled&&ctx.rareCandyMatches?.(filter(x),ctx.cardById(p.cardId))))?[{}]:[];
@@ -27981,7 +28032,7 @@ if(r==='lastResort')return ss.hand.length===0?[{}]:[];if(r==='surgeSwap')return 
     }
     if(effect.type==='copyAttack'){
       const ss=effect.source==='selfBench'?own(ctx):other(ctx),slots=effect.source==='opponentActive'?[ss.active].filter(Boolean):['selfBench','opponentBench'].includes(effect.source)?(ss.bench||[]).filter(Boolean):pokemonOn(ss),out=[];
-      for(const slot of slots){const card=ctx.cardById(slot.cardId);if(effect.allowedNamePrefix&&!card?.name?.startsWith(effect.allowedNamePrefix))continue;if(effect.excludeEx&&(card?.isEx||card?.points>=2||/ ex$/.test(card?.name||'')))continue;for(const [attackIndex,attack] of (card?.attacks||[]).entries()){if(effect.requiresCopiedCost&&typeof ctx.canPayCopiedCost==='function'&&!ctx.canPayCopiedCost(attack))continue;const depth=Number(ctx.choiceDepth||0);const nested=depth>=2?[{}]:choicesForEffect(attack.effect,{...ctx,attack,choiceDepth:depth+1});const bases=nested.length?nested:[{}];for(const sub of bases)out.push({...sub,choiceTarget:slot===ss.active?'active':'bench',choiceBenchIndex:slot.benchSlot,choiceCardId:slot.cardId,choiceAttackIndex:attackIndex});}}
+      for(const slot of slots){const card=ctx.cardById(slot.cardId);if(effect.allowedNamePrefix&&!card?.name?.startsWith(effect.allowedNamePrefix))continue;if(effect.excludeEx&&(card?.isEx||card?.points>=2||/ ex$/.test(card?.name||'')))continue;for(const [attackIndex,attack] of (card?.attacks||[]).entries()){if(ctx.attack?.name==='Nightcap'&&/\bGX\b/i.test(attack.name)&&own(ctx).gxAttackUsed)continue;if(effect.requiresCopiedCost&&typeof ctx.canPayCopiedCost==='function'&&!ctx.canPayCopiedCost(attack))continue;const depth=Number(ctx.choiceDepth||0);const nested=depth>=2?[{}]:choicesForEffect(attack.effect,{...ctx,attack,choiceDepth:depth+1});const bases=nested.length?nested:[{}];for(const sub of bases)out.push({...sub,choiceTarget:slot===ss.active?'active':'bench',choiceBenchIndex:slot.benchSlot,choiceCardId:slot.cardId,choiceAttackIndex:attackIndex});}}
       if(out.length)return out;
       return effect.requiresCopiedCost?[]:(ctx.isAttack?[{}]:[]);
     }
