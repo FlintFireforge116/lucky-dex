@@ -1,17 +1,7 @@
 {
   "printed": 198,
-  "battleReady": 195,
-  "gated": {
-    "sm9-66": [
-      "Unimplemented Ability: Scoop-Up Block"
-    ],
-    "sm9-148": [
-      "Unimplemented Trainer effect"
-    ],
-    "sm9-195": [
-      "Unimplemented Trainer effect"
-    ]
-  },
+  "battleReady": 198,
+  "gated": {},
   "attacks": 260,
   "abilities": 36,
   "pokemonGX": 34,

@@ -196,3 +196,7 @@ at(112,'Copycat',E('sm2Rule',rule='copycat'))
 tr(149,'Supporter',R('Morgan'))
 tr(150,'Supporter',R('Nanu'))
 tr(154,'Supporter',R('Sabrina'))
+
+# v0.69.439 completion: shared return and counter protection.
+ab(66,passive(R('ScoopUpBlock')))
+tr(148,'Tool',R('MetalGoggles'))

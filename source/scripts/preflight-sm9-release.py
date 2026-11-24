@@ -9,10 +9,10 @@ def main():
  def run(*args):subprocess.run(args,cwd=ROOT,check=True)
  run(sys.executable,'scripts/check-gradle-source.py','--self-test')
  c=json.loads((ROOT/'scripts/sm9_release_contract.json').read_text())
- assert c['set']=='sm9' and c['release']=='0.69.438' and c['stage']=='integration'
+ assert c['set']=='sm9' and c['release']=='0.69.439' and c['stage']=='complete'
  assert (c['printedTotal'],c['attackPrints'],c['abilities'],c['trainerPrints'],c['energyPrints'])==(198,260,36,43,0)
  run(sys.executable,'scripts/audit-expansion-readiness.py','--set','sm9','--release-only')
  if a.full:
-  run(sys.executable,'scripts/audit-expansion-readiness.py','--set','sm9','--check-release','--report','docs/SM9_CURRENT_GAP_LEDGER.md')
+  run(sys.executable,'scripts/audit-expansion-readiness.py','--set','sm9','--check-release','--require-complete','--report','docs/SM9_CURRENT_GAP_LEDGER.md')
   run('node','--test',*TESTS)
 if __name__=='__main__':main()

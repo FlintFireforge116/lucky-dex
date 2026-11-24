@@ -2071,7 +2071,7 @@
   }
 
   function checkup(state){
-    if(state.format==='classic')for(const side of ['player','opponent']){const foe=state.sides[side==='player'?'opponent':'player'];const n=pokemonOn(state.sides[side]).filter(p=>p.cardId==='sm9-7'&&!effects.abilitiesSuppressed(state,side,p,data.cardById)).length;if(n)for(const p of pokemonOn(foe))if(p.conditions?.confusion)p.damage=Number(p.damage||0)+20*n;}
+    if(state.format==='classic')for(const side of ['player','opponent']){const foe=state.sides[side==='player'?'opponent':'player'];const n=pokemonOn(state.sides[side]).filter(p=>p.cardId==='sm9-7'&&!effects.abilitiesSuppressed(state,side,p,data.cardById)).length;if(n)for(const p of pokemonOn(foe))if(p.conditions?.confusion&&!effects.metalGogglesActive(state,side==='player'?'opponent':'player',p,data.cardById))p.damage=Number(p.damage||0)+20*n;}
     if(state.format==='classic'&&activeStadium(state)?.cardId==='sm7-143')for(const who of ['player','opponent'])for(const p of pokemonOn(state.sides[who]))if(effects.matchesFilter(data.cardById(p.cardId),{isExOrGX:true}))p.damage=Number(p.damage||0)+10;
     if(state.format==='classic'){
       // Rising Rivals: all of these trigger BETWEEN turns (both players).
@@ -2797,7 +2797,8 @@
         const blackMarket=state.format==='classic'&&activeStadium(state)?.cardId==='sm9-134'&&cause==='attack'&&source?.attack&&source.side===foeSide&&Number(source.damage||0)>0&&effects.effectiveTypes(state,side,slot,data.cardById).includes('Darkness')&&(Number(slot.energy?.Darkness||0)>0||(slot.specialEnergy||[]).some(r=>effects.attachedSpecialProvidesType(r,'Darkness',slot,data.cardById)))?1:0;
         const arceusBeltBonus=state.format==='classic'&&activeToolsOf(state,slot).some(ref=>ref.cardId==='pl4-87')?1:0;
         const arceusLuckyEgg=state.format==='classic'&&cause==='attack'&&source?.side===foeSide&&activeToolsOf(state,slot).some(ref=>ref.cardId==='pl4-88');
-        const teleport=state.format==='classic'&&cause==='attack'&&source?.side===foeSide&&source?.attack&&activeToolsOf(state,slot).some(r=>r.cardId==='SNAPFOUNJA-084');
+        const scoopBlocked=effects.scoopUpBlocked(state,side,slot,data.cardById);
+        const teleport=!scoopBlocked&&state.format==='classic'&&cause==='attack'&&source?.side===foeSide&&source?.attack&&activeToolsOf(state,slot).some(r=>r.cardId==='SNAPFOUNJA-084');
         if(slot.pl1LostZoneOnKO&&['sm8-121','sm8-203','sm8-223'].includes(source?.cardId))discardKnockedOut(s,slot);
         else if(teleport){
           for(let i=0;i<slot.stack.length;i++)s.hand.push({uid:`${slot.uid}-teleport-${i}`,cardId:slot.stack[i]});
@@ -2809,9 +2810,9 @@
           }
           state.log.push({type:'founjaTeleport',side,cardId:slot.cardId});
         }
-        else if(slot.pl2WaterRescue){delete slot.pl2WaterRescue;for(const [i,id] of (slot.stack||[slot.cardId]).entries())s.hand.push({uid:slot.uid+'-waterrescue-'+i,cardId:id});s.hand.push(...toolsOf(slot),...temporaryTrainersOf(slot),...(slot.specialEnergy||[]));const ids={Grass:'dp1-123',Fire:'dp1-124',Water:'dp1-125',Lightning:'dp1-126',Psychic:'dp1-127',Fighting:'dp1-128',Darkness:'lental-basic-darkness',Metal:'lental-basic-metal',Fairy:'xy1-140'};for(const [type,n] of Object.entries(slot.energy||{}))for(let i=0;i<Number(n||0);i++)s.hand.push({uid:slot.uid+'-waterrescue-energy-'+type+'-'+i,cardId:ids[type],zoneGenerated:true});state.log.push({type:'pl2WaterRescue',side,cardId:slot.cardId});}
+        else if(slot.pl2WaterRescue&&!scoopBlocked){delete slot.pl2WaterRescue;for(const [i,id] of (slot.stack||[slot.cardId]).entries())s.hand.push({uid:slot.uid+'-waterrescue-'+i,cardId:id});s.hand.push(...toolsOf(slot),...temporaryTrainersOf(slot),...(slot.specialEnergy||[]));const ids={Grass:'dp1-123',Fire:'dp1-124',Water:'dp1-125',Lightning:'dp1-126',Psychic:'dp1-127',Fighting:'dp1-128',Darkness:'lental-basic-darkness',Metal:'lental-basic-metal',Fairy:'xy1-140'};for(const [type,n] of Object.entries(slot.energy||{}))for(let i=0;i<Number(n||0);i++)s.hand.push({uid:slot.uid+'-waterrescue-energy-'+type+'-'+i,cardId:ids[type],zoneGenerated:true});state.log.push({type:'pl2WaterRescue',side,cardId:slot.cardId});}
         else if(state.format==='classic'&&cause==='attack'&&eventSource?.attack&&eventSource.side===foeSide&&
-          Number(eventSource.damage||0)>0&&Number(eventSource.turn)===Number(state.turnNumber)&&activeToolsOf(state,slot).some(ref=>ref.cardId==='xy10-97')){
+          !scoopBlocked&&Number(eventSource.damage||0)>0&&Number(eventSource.turn)===Number(state.turnNumber)&&activeToolsOf(state,slot).some(ref=>ref.cardId==='xy10-97')){
           // Fates Collide Energy Pouch: only actual Basic Energy attached to
           // the knocked-out Pokemon returns to hand; Tools and Special Energy
           // enter discard as normal. KO still awards the usual Prize cards.
@@ -2824,7 +2825,7 @@
           state.log.push({type:'xy10EnergyPouch',side,cardId:slot.cardId,recovered:rescued});
         }
         else if(state.format==='classic'&&cause==='attack'&&eventSource?.attack&&eventSource.side===foeSide&&
-          activeToolsOf(state,slot).some(r=>r.cardId==='bw6-115')){
+          !scoopBlocked&&activeToolsOf(state,slot).some(r=>r.cardId==='bw6-115')){
           // Rescue Scarf returns the knocked-out Pokemon (not its attached
           // cards) to hand. Discard Energy/Tools before the board is cleared.
           const top=(slot.stack||[]).at(-1)||slot.cardId,old=s.discard.length;
@@ -2834,7 +2835,7 @@
           state.log.push({type:'bw6RescueScarf',side,cardId:top});
         }
         else if(state.format==='classic'&&cause==='attack'&&eventSource?.attack&&eventSource.side===foeSide&&
-          card?.types?.includes('Water')&&(slot.specialEnergy||[]).some(r=>r.cardId==='xy9-113')){
+          !scoopBlocked&&card?.types?.includes('Water')&&(slot.specialEnergy||[]).some(r=>r.cardId==='xy9-113')){
           // BREAKpoint Splash Energy: return only the knocked-out Pokémon
           // card (not attached lower stages, Tools or Energy) to its owner's
           // hand. The Pokémon is still KO'd, so normal Prizes are awarded.
@@ -2846,7 +2847,7 @@
           state.log.push({type:'xy9SplashEnergyRescue',side,cardId:top});
         }
         else if(state.format==='classic'&&cause==='attack'&&eventSource?.attack&&eventSource.side===foeSide&&
-          (slot.specialEnergy||[]).some(r=>r.cardId==='hgss4-90')){
+          !scoopBlocked&&(slot.specialEnergy||[]).some(r=>r.cardId==='hgss4-90')){
           const top=slot.stack.at(-1)||slot.cardId,old=s.discard.length;
           discardKnockedOut(s,slot);
           const j=s.discard.findLastIndex(r=>r.cardId===top);
@@ -2865,7 +2866,7 @@
           state.log.push({type:'hgss4CatastropheLostZone',side,full,cardId:slot.cardId});
         }
         else if(effects.florio114RescueKO?.(state,side,slot,source,data.cardById)){}
-        else if(guardEligible&&koGuard.mode==='returnToHand'){
+        else if(guardEligible&&koGuard.mode==='returnToHand'&&!scoopBlocked){
           const top=slot.stack[slot.stack.length-1];for(let i=slot.stack.length-2;i>=0;i--)s.discard.push({uid:`${slot.uid}-stack-${i}`,cardId:slot.stack[i]});for(const tool of toolsOf(slot))s.discard.push(tool);for(const ref of temporaryTrainersOf(slot))s.discard.push(ref);for(const energy of slot.specialEnergy||[])s.discard.push(energy);if(top&&(s.handLimit==null||s.hand.length<s.handLimit))s.hand.push({uid:`${slot.uid}-rescued`,cardId:top});else if(top)s.discard.push({uid:`${slot.uid}-rescued`,cardId:top});
         }else{const transform=slot.transformOnKO,target=transform&&pokemonOn(s).find(x=>x&&x.uid===transform.targetUid&&x!==slot);discardKnockedOut(s,slot,{keepTop:!!(transform&&target)});
           if(slot.dp7EctoplasmTransform&&card.id==='dp7-96'){const ix=s.discard.findLastIndex(r=>r.cardId==='dp7-96');
@@ -3258,12 +3259,12 @@ const target=slotForTarget(s,action.target,action.benchIndex);if(card.id==='pl2-
         delete state.ex16FlygonPendingAttack;return result;
       }
       const originSide=pending.originSide,source=findSlotByUid(state,originSide,pending.sourceUid)||state.sides[originSide].active;
-      const after=(pending.afterEffects||[]).slice(),resume=pending.resume,isAttack=!!pending.isAttack,koResume=pending.koResume,koCause=pending.koCause;
+      const after=(pending.afterEffects||[]).slice(),resume=pending.resume,isAttack=!!pending.isAttack,isAbility=!!pending.isAbility||resume==='ability',koResume=pending.koResume,koCause=pending.koCause;
       state.pendingChoice=null;state.choiceSide=null;state.phase='battle';
-      const ctx={...effectContext(state,originSide,{...matched,trainerRef:pending.trainerRef||null},source),trainerRef:pending.trainerRef||null,isAttack,resolvingChoice:true};
+      const ctx={...effectContext(state,originSide,{...matched,trainerRef:pending.trainerRef||null},source),trainerRef:pending.trainerRef||null,isAttack,isAbility,resolvingChoice:true};
       effects.applyEffect(pending.effect,ctx);
-      if(state.phase==='effectChoice'){state.pendingChoice.afterEffects=[...(state.pendingChoice.afterEffects||[]),...after];state.pendingChoice.resume=resume||state.pendingChoice.resume;state.pendingChoice.isAttack=isAttack||state.pendingChoice.isAttack;state.pendingChoice.koResume=koResume;state.pendingChoice.koCause=koCause;return state;}
-      for(let i=0;i<after.length;i++){const afterCtx={...ctx,resolvingChoice:false};effects.applyEffect(after[i],afterCtx);if(state.phase==='effectChoice'){state.pendingChoice.afterEffects=[...(state.pendingChoice.afterEffects||[]),...after.slice(i+1)];state.pendingChoice.resume=resume||state.pendingChoice.resume;state.pendingChoice.isAttack=isAttack||state.pendingChoice.isAttack;state.pendingChoice.koResume=koResume;state.pendingChoice.koCause=koCause;return state;}}
+      if(state.phase==='effectChoice'){state.pendingChoice.afterEffects=[...(state.pendingChoice.afterEffects||[]),...after];state.pendingChoice.resume=resume||state.pendingChoice.resume;state.pendingChoice.isAttack=isAttack||state.pendingChoice.isAttack;state.pendingChoice.isAbility=isAbility||state.pendingChoice.isAbility;state.pendingChoice.koResume=koResume;state.pendingChoice.koCause=koCause;return state;}
+      for(let i=0;i<after.length;i++){const afterCtx={...ctx,resolvingChoice:false};effects.applyEffect(after[i],afterCtx);if(state.phase==='effectChoice'){state.pendingChoice.afterEffects=[...(state.pendingChoice.afterEffects||[]),...after.slice(i+1)];state.pendingChoice.resume=resume||state.pendingChoice.resume;state.pendingChoice.isAttack=isAttack||state.pendingChoice.isAttack;state.pendingChoice.isAbility=isAbility||state.pendingChoice.isAbility;state.pendingChoice.koResume=koResume;state.pendingChoice.koCause=koCause;return state;}}
       if(resume==='dp2PowerCancel'){
         const deferred=state.dp2DeferredAbility;delete state.dp2DeferredAbility;
         if(deferred&&!state.dp2PowerCancelled){const actor=state.sides[deferred.side],powerSource=pokemonOn(actor).find(p=>p.uid===deferred.sourceUid),ability=data.cardById(powerSource?.cardId)?.abilities?.[deferred.abilityIndex];
@@ -4324,7 +4325,7 @@ const target=slotForTarget(s,action.target,action.benchIndex);if(card.id==='pl2-
       if(state.format==='classic')s.active.pl1LastAttackTurn=state.turnNumber;
       state.log.push({type:'attack',side,cardId:attackerCard.id,attack:attack.name,damage,damageReason:damage===0?resistanceReason:(attack.effect?.rule==='founja:swiftBeak'&&Number(s.active.movedToActiveTurn)===Number(state.turnNumber)?'Bench → Active this turn: +80':''),target:isActive?'active':'bench',benchIndex:defender.benchSlot});s.lastAttackName=attack.name;s.lastAttackTurn=state.turnNumber;s.lastAttackCardId=attackerCard.id;s.attackCounts=s.attackCounts||{};s.attackCounts[attack.name]=Number(s.attackCounts[attack.name]||0)+1;s.active.attackUseCount=Number(s.active.attackUseCount||0)+1;
       if(damage>0&&state.format==='classic'&&defender===foe.active&&
-        pokemonOn(foe).some(p=>p.cardId==='pl2-29'&&!effects.abilitiesSuppressed(state,foeSide,p,data.cardById))){
+        pokemonOn(foe).some(p=>p.cardId==='pl2-29'&&!effects.abilitiesSuppressed(state,foeSide,p,data.cardById))&&!effects.metalGogglesActive(state,side,s.active,data.cardById)){
         s.active.damage=Number(s.active.damage||0)+20;
         state.log.push({type:'pl2Territoriality',side:foeSide,counters:2});
       }
