@@ -103,6 +103,7 @@ def generate(rows):
   elif kind=='trainer':
    c.update(trainerType=trainer[0] if trainer else next((s for s in subs if s in ('Item','Supporter','Stadium','Pokémon Tool')),'Item'),
     attacks=attack_objs,text='\n'.join(rules),effect=trainer[1] if trainer else {'type':'unsupported'},aceSpec=False)
+   if c['effect'].get('sm12Doll'):c.update(hp=30,types=['Colorless'],subtype='Colorless',stage='Basic',retreat=0,abilities=[],noPrize=True)
   else:
    c.update(basicEnergy=False,specialEnergy=True,energyType='Colorless',subtype='Colorless',effect=energy or {'type':'unsupported'},text='\n'.join(rules))
   cards.append(c)

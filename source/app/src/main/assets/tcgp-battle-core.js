@@ -376,6 +376,7 @@
       // BREAK cannot be stacked over a BREAK of the same Pokémon.
       if(evo.breakEvolution&&(!base||base.breakEvolution||!classicEvolutionMatches(base.name,evo.evolvesFrom)))return false;
       const evolvesName=asName?.name||base?.name;if((state.format==='classic'?!classicEvolutionMatches(evolvesName,evo.evolvesFrom):evolvesName!==evo.evolvesFrom))return false;
+      const fighterRoar=state.format==='classic'&&base?.abilities?.some(a=>a.effect?.rule==='sm12FighterRoar')&&!effects.abilitiesSuppressed(state,side,slot,data.cardById)&&!!(data.cardById(dialga?.cardId)?.pokemonGX||data.cardById(dialga?.cardId)?.pokemonEx||data.cardById(dialga?.cardId)?.pokemonEX);
       const firstTurn=s.turnCount<=1,sameTurn=Number(slot.playedOnSideTurn)>=Number(s.turnCount);
       // Flashfire Caterpie and Metapod: their own Adaptive Evolution ability
       // permits both first-turn evolution and evolving on the turn played.
@@ -391,7 +392,7 @@
       // evolution locks, nor make a non-Grass Pokemon eligible.
       const forestGrass=state.format==='classic'&&activeStadium(state)?.cardId==='xy7-74'&&!evo.isLevelX&&
         effects.effectiveTypes(state,side,slot,data.cardById).includes('Grass');
-      if(firstTurn&&!deltaEvolution&&!adaptive&&!timing?.firstTurn&&!giovanniBonus&&!timeSpace&&!forestGrass)return false;if(sameTurn&&!deltaEvolution&&!adaptive&&!timing?.sameTurn&&!giovanniBonus&&!timeSpace&&!forestGrass)return false;
+      if(firstTurn&&!deltaEvolution&&!adaptive&&!timing?.firstTurn&&!giovanniBonus&&!timeSpace&&!forestGrass)return false;if(sameTurn&&!fighterRoar&&!deltaEvolution&&!adaptive&&!timing?.sameTurn&&!giovanniBonus&&!timeSpace&&!forestGrass)return false;
       return true;
     };
     s.hand.forEach((ref,handIndex)=>{
@@ -507,7 +508,7 @@
         return beginEffectChoice(state,side,attacker||state.sides[side].active,controlled);
       }
       return beginEffectChoice(state,side,attacker||state.sides[side].active,{...spec,trainerRef:action?.trainerRef||spec.trainerRef||null});
-    },queuePrize:(which,amount=1)=>{const q=state.pendingPrizeClaims=state.pendingPrizeClaims||[];const owner=state.sides[which];if(owner?.prizes?.length)q.push({side:which,remaining:Math.min(Number(amount||1),owner.prizes.length)});},benchCard:(ss,ref)=>{const slot=emptyBenchSlots(ss)[0];if(slot==null)return null;const placed=placeOnBench(ss,makePokemonSlot(ref.cardId,ss.turnCount,ref.uid),slot),targetSide=ss===state.sides.player?'player':'opponent';triggerAbilities(state,'benched',targetSide,placed,{fromDeck:true});return slot;},onEnergyAttached:(target,energyType,amount,sourceMeta)=>{if(state.format==='classic'&&energyType==='Water'&&['ex7-26','ex7-81'].includes(target?.cardId)){target.conditions={};target.damage=Math.max(0,Number(target.damage||0)-(target.cardId==='ex7-26'?20:10));}const targetSide=pokemonOn(state.sides.player).includes(target)?'player':'opponent';
+    },placeActiveDoll:ref=>{const ss=state.sides[side],i=ss.hand.indexOf(ref);if(ss.active||i<0||!data.cardById(ref.cardId)?.effect?.sm12Doll)return false;ss.hand.splice(i,1);ss.active=makePokemonSlot(ref.cardId,ss.turnCount,ref.uid);return true;},queuePrize:(which,amount=1)=>{const q=state.pendingPrizeClaims=state.pendingPrizeClaims||[];const owner=state.sides[which];if(owner?.prizes?.length)q.push({side:which,remaining:Math.min(Number(amount||1),owner.prizes.length)});},benchCard:(ss,ref)=>{const slot=emptyBenchSlots(ss)[0];if(slot==null)return null;const placed=placeOnBench(ss,makePokemonSlot(ref.cardId,ss.turnCount,ref.uid),slot),targetSide=ss===state.sides.player?'player':'opponent';triggerAbilities(state,'benched',targetSide,placed,{fromDeck:true});return slot;},onEnergyAttached:(target,energyType,amount,sourceMeta)=>{if(state.format==='classic'&&energyType==='Water'&&['ex7-26','ex7-81'].includes(target?.cardId)){target.conditions={};target.damage=Math.max(0,Number(target.damage||0)-(target.cardId==='ex7-26'?20:10));}const targetSide=pokemonOn(state.sides.player).includes(target)?'player':'opponent';
       if(state.format==='classic'&&sourceMeta?.fromHand&&target?.cardId==='sm2-114'&&state.sides[targetSide]?.active===target&&
          !effects.abilitiesSuppressed(state,targetSide,target,data.cardById))target.conditions={...(target.conditions||{}),sleep:true};
       for(let i=0;i<Number(amount||1);i++){
@@ -1476,7 +1477,7 @@
       const bw3AncientPower=state.format==='classic'&&['player','opponent'].some(w=>pokemonOn(state.sides[w]).some(p=>p.cardId==='bw3-67'&&!effects.abilitiesSuppressed(state,w,p,data.cardById)));
       if(!evolutionLocked&&!bw3AncientPower)actions.push(...evolutionActions(state,side).filter(x=>(!activeEvolutionLocked||x.target!=='active')&&(!primalAura||x.target!=='bench')&&(!ex4Cradily||x.target!=='active')&&(!(state.format==='classic'&&state.sides[side==='player'?'opponent':'player'].active?.cardId==='ex16-10'&&!effects.abilitiesSuppressed(state,side==='player'?'opponent':'player',state.sides[side==='player'?'opponent':'player'].active,data.cardById))||x.target!=='active')&&(!bound||!slotForTarget(s,x.target,x.benchIndex)?.conditions?.sleep)&&Number(slotForTarget(s,x.target,x.benchIndex)?.xy4NoEvolveUntil||0)<state.turnNumber));}
 
-    if(state.format==='classic')for(const p of pokemonOn(s))if(['pl1-119','pl1-120','ex16-84','ex16-85','ex16-86','dp2-116','dp2-117','dp5-84','dp5-89','dp5-91','dp6-138','dp6-139','pl4-89','pl4-92','pl4-93'].includes(p.cardId)||data.cardById(p.cardId)?.effect?.type==='playFossil')
+    if(state.format==='classic')for(const p of pokemonOn(s))if((!data.cardById(p.cardId)?.effect?.sm12Doll||s.active===p)&&(['pl1-119','pl1-120','ex16-84','ex16-85','ex16-86','dp2-116','dp2-117','dp5-84','dp5-89','dp5-91','dp6-138','dp6-139','pl4-89','pl4-92','pl4-93'].includes(p.cardId)||data.cardById(p.cardId)?.effect?.type==='playFossil'))
       actions.push({type:'discardFossil',target:p===s.active?'active':'bench',benchIndex:p===s.active?undefined:Number(p.benchSlot),cardId:p.cardId});
     s.hand.forEach((ref,handIndex)=>{
       const card = data.cardById(ref.cardId);
@@ -1961,7 +1962,7 @@
         const {cardId:attackCardId,attackIndex,attack}=entry;
         if(attack.name==='Cold Snap'&&s.sm12ColdSnapTurn===s.turnCount-1)continue;
         if(attackCardId==='sm8-106'&&attack.name==='Nightcap'&&foe.prizes.length!==2)continue;
-        if ((attack.gxAttack||/\bGX\b/i.test(attack.name||''))&&(s.sm11GxLocked||s.gxAttackUsed&&!(state.format==='classic'&&data.cardById(attackCardId)?.name==='Zygarde-GX'&&s.sm6BonnieTurn===state.turnNumber)))continue;
+        if ((attack.gxAttack||/\bGX\b/i.test(attack.name||''))&&(s.sm11GxLocked||s.gxAttackUsed&&!(state.format==='classic'&&s.sm12WaterGxTurn===state.turnNumber&&effects.effectiveTypes(state,side,s.active,data.cardById).includes('Water'))&&!(state.format==='classic'&&data.cardById(attackCardId)?.name==='Zygarde-GX'&&s.sm6BonnieTurn===state.turnNumber)))continue;
         // SM5 conditional Eclipse GX attacks cannot be declared while tied/ahead on Prizes.
         if(state.format==='classic'&&(attackCardId.startsWith('sm5-')||data.cardById(attackCardId)?.reprintOf?.startsWith('sm5-'))&&
           ["Moon's Eclipse-GX","Sun's Eclipse-GX"].includes(attack.name)&&
@@ -2753,7 +2754,7 @@
           const receiver=pokemonOn(s).find(p=>p!==slot&&p.cardId==='sm7-50'&&Number(p.damage||0)<maxHp(state,side,p)&&!seen.includes(p.uid)&&!effects.abilitiesSuppressed(state,side,p,data.cardById));
           if(receiver&&types.length){seen.push(receiver.uid);beginEffectChoice(state,side,slot,{kind:'option',side:'self',options:types.map(t=>'Move '+t+' Energy to Lanturn'),optional:true,special:'sm7Grounding',sourceUid:slot.uid,receiverUid:receiver.uid,types,koResume:resume||null,koCause:cause||null});return true;}
         }
-        if(!slot._koTriggersResolved&&!slot.dp2ForcedDiscard){slot._koTriggersResolved=true;if(eventSource?.attack&&eventSource.side===foeSide){s.dp3AllyKoPreviousTurn=state.turnNumber;triggerAbilities(state,'knockedOutAlly',side,null,{source:eventSource,knockedOut:slot});}triggerAbilities(state,'knockedOutByAttack',side,slot,{source:eventSource,attacker:findSlotByUid(state,foeSide,eventSource?.uid)});triggerAbilities(state,'knockedOut',side,slot,{source:eventSource});triggerPersistent(state,'knockedOut',side,slot,{source:eventSource});
+        if(!slot._koTriggersResolved&&!slot.dp2ForcedDiscard){slot._koTriggersResolved=true;if(eventSource?.attack&&eventSource.side===foeSide){s.dp3AllyKoPreviousTurn=state.turnNumber;triggerAbilities(state,'knockedOutAlly',side,null,{source:eventSource,knockedOut:slot});}triggerAbilities(state,'knockedOutByAttack',side,slot,{source:eventSource,attacker:findSlotByUid(state,foeSide,eventSource?.uid)});triggerAbilities(state,'knockedOut',side,slot,{source:eventSource});if(state.format==='classic'&&slot===s.active&&eventSource?.attack&&eventSource.side===foeSide&&Number(eventSource.damage||0)>0&&data.cardById(slot.cardId)?.abilities?.some(a=>a.effect?.rule==='sm12ArfBark')&&!effects.abilitiesSuppressed(state,side,slot,data.cardById))effects.applyEffect({type:'sm7Rule',rule:'sm12ArfBark'},{...effectContext(state,side,{},slot),isAbility:true,eventData:{source:eventSource}});triggerPersistent(state,'knockedOut',side,slot,{source:eventSource});
           // Exp. Share watches an ally Active being knocked out by attack damage.
           if(state.format==='classic'&&slot===s.active&&eventSource?.attack&&eventSource.side===foeSide)triggerPersistent(state,'teammateKnockedOut',side,null,{knockedOut:slot,source:eventSource});
           if(state.format==='classic'&&slot===s.active&&eventSource?.attack&&eventSource.side===foeSide&&pokemonOn(s).some(p=>p!==slot&&activeToolsOf(state,p).some(r=>r.cardId==='neo4-93'))){
@@ -3812,7 +3813,7 @@ const target=slotForTarget(s,action.target,action.benchIndex);if(card.id==='pl2-
       discardKnockedOut(s,slot);
       // Preserve the original physical Trainer reference when the player
       // voluntarily discards an Item-as-Basic fossil from play.
-      if(physicalFossil){const ref=s.discard.find(r=>r.uid===physicalUid+'-stack-0'&&r.cardId===fossilCardId);if(ref)ref.uid=physicalUid;}
+      if(physicalFossil){const ref=s.discard.find(r=>r.uid===physicalUid+'-stack-0'&&r.cardId===fossilCardId);if(ref){ref.uid=physicalUid;if(data.cardById(fossilCardId)?.effect?.sm12Doll)s.deck.push(...s.discard.splice(s.discard.indexOf(ref),1));}}
       state.log.push({type:'ex16DiscardFossil',side,cardId:slot.cardId});
       if(!s.active){if(s.bench.length){state.phase='promote';state.promotionSide=side;}else resolveKnockOut(state,null,'effect');}return state;
     }
@@ -4013,7 +4014,7 @@ const target=slotForTarget(s,action.target,action.benchIndex);if(card.id==='pl2-
       // A copied attack can require the same staged pre-damage payment as the original.
       // Preserve the declaring attack and chosen copy; only the payment rule is borrowed.
       const copiedSource=attack.effect?.type==='copyAttack'&&(attack.name==='Nightcap'||attack.effect.det1Copy||attack.effect.sm12Copy)?slotForTarget(foe,matched.choiceTarget,matched.choiceBenchIndex):null;
-      const copiedAttack=attack.effect?.type==='sm2Rule'&&attack.effect.rule==='copycat'&&foe.lastAttackTurn===state.turnNumber-1?data.cardById(foe.lastAttackCardId)?.attacks?.find(a=>a.name===foe.lastAttackName&&!a.name.endsWith('-GX')):copiedSource&&data.cardById(copiedSource.cardId)?.attacks?.[matched.choiceAttackIndex];
+      const copiedAttack=attack.effect?.source==='previousEvolution'&&(s.active.stack||[]).slice(0,-1).includes(matched.choiceCardId)?data.cardById(matched.choiceCardId)?.attacks?.[matched.choiceAttackIndex]:attack.effect?.type==='sm2Rule'&&attack.effect.rule==='copycat'&&foe.lastAttackTurn===state.turnNumber-1?data.cardById(foe.lastAttackCardId)?.attacks?.find(a=>a.name===foe.lastAttackName&&!a.name.endsWith('-GX')):copiedSource&&data.cardById(copiedSource.cardId)?.attacks?.[matched.choiceAttackIndex];
       if(attack.effect?.det1Copy)matched.det1CopiedCostPaid=!!copiedAttack&&effectContext(state,side).canPayCopiedCost(copiedAttack);
       if(state.format==='classic'){const gx=attack.gxAttack||/\bGX\b/i.test(attack.name)||copiedAttack&&(copiedAttack.gxAttack||/\bGX\b/i.test(copiedAttack.name));if(gx)state.sm10GXAttack={side,uid:s.active.uid,turn:state.turnNumber};else delete state.sm10GXAttack;}
       if(attack.effect?.rule==='sm10HypnoticReign'){
@@ -4065,7 +4066,7 @@ const target=slotForTarget(s,action.target,action.benchIndex);if(card.id==='pl2-
   function finishDeclaredAttack(state,side,matched){
     const s=state.sides[side],foeSide=side==='player'?'opponent':'player',foe=state.sides[foeSide],attackerCard=data.cardById(s.active.cardId),attackSourceCard=data.cardById(matched.attackCardId||s.active.cardId),attack=attackSourceCard.attacks[matched.attackIndex];
       const context={...effectContext(state,side,matched),isAttack:true},result=effects.resolveAttack(attack,context);
-      if(attack.effect?.det1Copy||attack.effect?.rule==='sm10HypnoticReign'){context.action={...JSON.parse(matched.copiedEffectSelection||'{}'),sm7SelectedCount:matched.sm7SelectedCount};context.attack=data.cardById(matched.choiceCardId)?.attacks?.[matched.choiceAttackIndex];}
+      if(attack.effect?.det1Copy||attack.effect?.sm12Copy||attack.effect?.rule==='sm10HypnoticReign'){context.action={...JSON.parse(matched.copiedEffectSelection||'{}'),sm7SelectedCount:matched.sm7SelectedCount};context.attack=data.cardById(matched.choiceCardId)?.attacks?.[matched.choiceAttackIndex];}
       // Some printed attacks explicitly resolve an effect BEFORE damage.
       // A Pokémon Tool removed by Peck Off must not reduce the incoming hit.
       // General timing metadata keeps those pre-damage effects out of the

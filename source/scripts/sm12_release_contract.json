@@ -1,8 +1,8 @@
 {
   "set": "sm12",
   "name": "Cosmic Eclipse",
-  "stage": "integration",
-  "release": "0.69.463",
+  "stage": "complete",
+  "release": "0.69.464",
   "printedTotal": 272,
   "attackPrints": 376,
   "abilities": 64,
