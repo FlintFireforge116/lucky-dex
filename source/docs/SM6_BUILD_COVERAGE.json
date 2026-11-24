@@ -1,78 +1,25 @@
 {
   "printed": 150,
-  "battleReady": 58,
+  "battleReady": 127,
   "gated": {
-    "sm6-2": [
-      "Unimplemented attack: Tropical Shake"
-    ],
-    "sm6-2a": [
-      "Unimplemented attack: Tropical Shake"
-    ],
-    "sm6-4": [
-      "Unimplemented Ability: Blessings of the Frost"
-    ],
     "sm6-5": [
       "Unimplemented Ability: Abnormal Outbreak"
     ],
     "sm6-6": [
       "Unimplemented attack: Ultra Evolution"
     ],
-    "sm6-9": [
-      "Unimplemented attack: Growth"
-    ],
-    "sm6-10": [
-      "Unimplemented attack: Milk Drink"
-    ],
-    "sm6-11": [
-      "Unimplemented attack: White Ray"
-    ],
     "sm6-12": [
       "Unimplemented attack: Limbo Limbo"
     ],
-    "sm6-14": [
-      "Unimplemented attack: Ember"
-    ],
-    "sm6-17": [
-      "Unimplemented attack: Fire Spin",
-      "Unimplemented Ability: Mystical Torch"
-    ],
     "sm6-19": [
-      "Unimplemented attack: Dominating Fangs",
       "Unimplemented Ability: Unnerve"
-    ],
-    "sm6-21": [
-      "Unimplemented Ability: Frubbles"
-    ],
-    "sm6-23": [
-      "Unimplemented Ability: Gale Shuriken"
-    ],
-    "sm6-24": [
-      "Unimplemented Ability: Shuriken Flurry"
     ],
     "sm6-26": [
       "Unimplemented attack: Standing By"
     ],
-    "sm6-28": [
-      "Unimplemented attack: Frost Wall"
-    ],
-    "sm6-29": [
-      "Unimplemented attack: Break Open"
-    ],
     "sm6-31": [
       "Prism Star attack/Ability or Trainer effect not yet implemented",
       "Unimplemented Ability: Jet Geyser"
-    ],
-    "sm6-33": [
-      "Unimplemented attack: Bubble Trap"
-    ],
-    "sm6-34": [
-      "Unimplemented attack: Searching Magnet"
-    ],
-    "sm6-39": [
-      "Unimplemented attack: Cablegram"
-    ],
-    "sm6-41": [
-      "Unimplemented attack: Memory Skip"
     ],
     "sm6-42": [
       "Unimplemented Ability: Silent Waves"
@@ -83,20 +30,11 @@
     "sm6-44": [
       "Unimplemented attack: Energy Teaser"
     ],
-    "sm6-45": [
-      "Unimplemented attack: Psychic"
-    ],
     "sm6-46": [
       "Unimplemented Ability: Final Hour"
     ],
-    "sm6-48": [
-      "Unimplemented attack: Curse of the Blade"
-    ],
     "sm6-49": [
       "Unimplemented attack: Ticking Knock Out"
-    ],
-    "sm6-51": [
-      "Unimplemented Ability: Psychic Recharge"
     ],
     "sm6-53": [
       "Unimplemented attack: Twister",
@@ -104,40 +42,6 @@
     ],
     "sm6-55": [
       "Unimplemented attack: Knockout Reviver"
-    ],
-    "sm6-56": [
-      "Unimplemented attack: Stinger-GX"
-    ],
-    "sm6-64": [
-      "Unimplemented attack: Exact Revenge"
-    ],
-    "sm6-68": [
-      "Unimplemented attack: Crunch"
-    ],
-    "sm6-69": [
-      "Unimplemented Ability: Tyrannical Heart"
-    ],
-    "sm6-71": [
-      "Unimplemented Ability: Earthen Aura"
-    ],
-    "sm6-72": [
-      "Unimplemented attack: Calm Strike"
-    ],
-    "sm6-73": [
-      "Unimplemented attack: Verdict-GX"
-    ],
-    "sm6-74": [
-      "Prism Star attack/Ability or Trainer effect not yet implemented",
-      "Unimplemented attack: Diamond Rain"
-    ],
-    "sm6-78": [
-      "Unimplemented attack: Untamed Punch"
-    ],
-    "sm6-79": [
-      "Unimplemented attack: Doom Count-GX"
-    ],
-    "sm6-80": [
-      "Unimplemented attack: Lord's Valley"
     ],
     "sm6-84": [
       "Unimplemented attack: Secret Blessings"
@@ -151,18 +55,8 @@
     "sm6-87": [
       "Unimplemented attack: Wink Wink"
     ],
-    "sm6-90": [
-      "Unimplemented attack: Sanctuary-GX"
-    ],
-    "sm6-91": [
-      "Unimplemented Ability: Sticky Membrane"
-    ],
     "sm6-94": [
       "Unimplemented Ability: Hydration"
-    ],
-    "sm6-95": [
-      "Unimplemented attack: Photon Geyser",
-      "Unimplemented attack: Sky-Scorching Light-GX"
     ],
     "sm6-96": [
       "Prism Star attack/Ability or Trainer effect not yet implemented",
@@ -172,121 +66,14 @@
     "sm6-98": [
       "Unimplemented attack: Mountaintop Mining"
     ],
-    "sm6-100": [
-      "Unimplemented attack: Destructive Sound"
-    ],
-    "sm6-102": [
-      "Unimplemented Trainer effect"
-    ],
-    "sm6-102a": [
-      "Unimplemented Trainer effect"
-    ],
-    "sm6-103": [
-      "Unimplemented Trainer effect"
-    ],
-    "sm6-104": [
-      "Unimplemented Trainer effect"
-    ],
-    "sm6-105": [
-      "Unimplemented Trainer effect"
-    ],
     "sm6-106": [
-      "Unimplemented Trainer effect"
-    ],
-    "sm6-107": [
-      "Unimplemented Trainer effect"
-    ],
-    "sm6-108": [
       "Unimplemented Trainer effect"
     ],
     "sm6-110": [
       "Prism Star attack/Ability or Trainer effect not yet implemented",
       "Unimplemented Trainer effect"
     ],
-    "sm6-111": [
-      "Unimplemented Trainer effect"
-    ],
-    "sm6-112": [
-      "Unimplemented Trainer effect"
-    ],
-    "sm6-112a": [
-      "Unimplemented Trainer effect"
-    ],
-    "sm6-113": [
-      "Unimplemented Trainer effect"
-    ],
-    "sm6-113a": [
-      "Unimplemented Trainer effect"
-    ],
-    "sm6-114": [
-      "Unimplemented Trainer effect"
-    ],
-    "sm6-115": [
-      "Unimplemented Trainer effect"
-    ],
-    "sm6-117": [
-      "Unimplemented Special Energy rules"
-    ],
-    "sm6-120": [
-      "Unimplemented Ability: Shuriken Flurry"
-    ],
-    "sm6-121": [
-      "Unimplemented attack: Stinger-GX"
-    ],
-    "sm6-123": [
-      "Unimplemented attack: Verdict-GX"
-    ],
-    "sm6-124": [
-      "Unimplemented attack: Doom Count-GX"
-    ],
-    "sm6-126": [
-      "Unimplemented attack: Sanctuary-GX"
-    ],
-    "sm6-127": [
-      "Unimplemented attack: Photon Geyser",
-      "Unimplemented attack: Sky-Scorching Light-GX"
-    ],
-    "sm6-128": [
-      "Unimplemented Trainer effect"
-    ],
-    "sm6-129": [
-      "Unimplemented Trainer effect"
-    ],
-    "sm6-130": [
-      "Unimplemented Trainer effect"
-    ],
-    "sm6-131": [
-      "Unimplemented Trainer effect"
-    ],
-    "sm6-133": [
-      "Unimplemented Ability: Shuriken Flurry"
-    ],
-    "sm6-134": [
-      "Unimplemented attack: Stinger-GX"
-    ],
-    "sm6-136": [
-      "Unimplemented attack: Verdict-GX"
-    ],
-    "sm6-137": [
-      "Unimplemented attack: Doom Count-GX"
-    ],
-    "sm6-139": [
-      "Unimplemented attack: Sanctuary-GX"
-    ],
-    "sm6-140": [
-      "Unimplemented attack: Photon Geyser",
-      "Unimplemented attack: Sky-Scorching Light-GX"
-    ],
-    "sm6-141": [
-      "Unimplemented Trainer effect"
-    ],
     "sm6-142": [
-      "Unimplemented Trainer effect"
-    ],
-    "sm6-144": [
-      "Unimplemented Trainer effect"
-    ],
-    "sm6-145": [
       "Unimplemented Trainer effect"
     ]
   },

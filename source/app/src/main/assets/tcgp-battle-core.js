@@ -780,6 +780,7 @@
     const printedRetreat=Number((previous||top)?.retreat||0)+tangling;
     // Fairy Garden (XY 117): all Pokemon with Fairy-providing attached Energy
     // have free retreat, including opposing Pokemon and flexible Rainbow.
+    if(state.format==='classic'&&slot?.cardId==='sm6-21'&&!effects.abilitiesSuppressed(state,side,slot,data.cardById)){const en=effectiveEnergy(state,side,slot);if(effects.canPayCost(en,'W'))return 0;}
     if(state.format==='classic'&&slot?.cardId==='sm3-16'&&state.sides[side]?.turnCount===1&&!effects.abilitiesSuppressed(state,side,slot,data.cardById))return 0;
     if(state.format==='classic'&&slot&&activeStadium(state)?.cardId==='xy1-117'){
       const en=effectiveEnergy(state,side,slot);
@@ -910,6 +911,7 @@
     if(state.format==='classic'&&slot?.cardId==='sm3-48'&&attack?.name==='Unarmed'&&!state.sides[side].hand.length)cost='';
     if(state.format==='classic'&&['Poliwag','Poliwhirl','Poliwrath'].includes(data.cardById(slot?.cardId)?.name)&&
       pokemonOn(state.sides[side]).some(p=>p.cardId==='xy3-18'&&!effects.abilitiesSuppressed(state,side,p,data.cardById)))cost=cost.replace(/C/g,'');
+    const sm6Foe=side==='player'?'opponent':'player',sm6Goomy=state.sides[sm6Foe].active;if(state.format==='classic'&&sm6Goomy?.cardId==='sm6-91'&&!effects.abilitiesSuppressed(state,sm6Foe,sm6Goomy,data.cardById))cost+='C';
     // Head Ringer is owned by the opponent but increases the holder's cost.
     if(state.format==='classic'&&slot&&activeToolsOf(state,slot).some(r=>r.cardId==='xy4-97'))cost+='C';
     // XY4 Dimension Valley applies to BOTH players, reduces only one printed
@@ -988,6 +990,7 @@
       pokemonOn(state.sides[side]).some(p=>p.cardId==='bw4-57'&&!effects.abilitiesSuppressed(state,side,p,data.cardById)))
       next.Psychic=Number(next.Psychic||0)+Number(slot?.energy?.Psychic||0);
     for(const ref of slot?.specialEnergy||[]){
+      if(ref.cardId==='sm6-117'&&!miracleWind){const type=data.cardById(slot?.cardId)?.ultraBeast?'Miracle':'Colorless';next[type]=Number(next[type]||0)+1;continue;}
       if(['sm5-137','sm5-170','sm5-138','sm5-171','sm6-118','sm6-146'].includes(ref.cardId)&&!miracleWind){
         // A Unit Energy card is one selectable unit, not three simultaneous ones.
         // Crystal is just its counted unit; __sm5UnitCards records the physical
@@ -1950,7 +1953,7 @@
     if (s.active&&!bw5Airhead&&!conditions.paralysis&&Number(s.active.ex11AttackLockUntil||0)!==Number(state.turnNumber)){
       for(const entry of attackOptions(state,side)){
         const {cardId:attackCardId,attackIndex,attack}=entry;
-        if ((attack.gxAttack||/\bGX\b/i.test(attack.name||''))&&s.gxAttackUsed)continue;
+        if ((attack.gxAttack||/\bGX\b/i.test(attack.name||''))&&s.gxAttackUsed&&!(state.format==='classic'&&data.cardById(attackCardId)?.name==='Zygarde-GX'&&s.sm6BonnieTurn===state.turnNumber))continue;
         // SM5 conditional Eclipse GX attacks cannot be declared while tied/ahead on Prizes.
         if(state.format==='classic'&&attackCardId.startsWith('sm5-')&&
           ["Moon's Eclipse-GX","Sun's Eclipse-GX"].includes(attack.name)&&

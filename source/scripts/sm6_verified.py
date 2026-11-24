@@ -91,8 +91,216 @@ TRAINER_RULES={
  'Ultra Space':'Once during each player\'s turn, that player may search their deck for an Ultra Beast card',
 }
 
+# SM6 consolidated exact-print continuation.
+STAGE_ATTACKS={'Tropical Shake': ("This attack does 20 more damage for each type of basic Energy card in your discard pile. You can't add more than 100 "
+                    'damage in this way.',
+                    {'type': 'sm6Rule', 'rule': 'tropicalShake'}),
+ 'Growth': ('Attach a Grass Energy card from your hand to this Pokémon.',
+            {'type': 'attachEnergy', 'source': 'hand', 'amount': 1, 'energyType': 'Grass', 'target': 'self'}),
+ 'Milk Drink': ('Flip 2 coins. For each heads, heal 40 damage from this Pokémon.', {'type': 'sm6Rule', 'rule': 'milkDrink'}),
+ 'White Ray': ('If you have only 1 Prize card remaining, this attack does 90 more damage.',
+               {'type': 'bonusDamage', 'amount': 90, 'condition': {'type': 'sm6OwnPrizes', 'values': [1]}}),
+ 'Ember': ('Discard an Energy from this Pokémon.', {'type': 'discardEnergyCard', 'target': 'self', 'amount': 1}),
+ 'Fire Spin': ('Discard 2 Energy from this Pokémon.', {'type': 'discardEnergyCard', 'target': 'self', 'amount': 2}),
+ 'Dominating Fangs': ('If Lysandre Labs is in play, this attack does 60 more damage.',
+                      {'type': 'bonusDamage', 'amount': 60, 'condition': {'type': 'stadiumInPlay', 'cardId': 'sm6-111'}}),
+ 'Frost Wall': ("During your opponent's next turn, prevent all damage done to this Pokémon by attacks from Evolution Pokémon.",
+                {'type': 'preventDamage', 'target': 'self', 'duration': 'opponentTurn', 'attackerFilter': {'evolved': True}}),
+ 'Break Open': ("If your opponent has a Stadium card in play, discard it. If you do, your opponent's Active Pokémon is now Paralyzed.",
+                {'type': 'sm6Rule', 'rule': 'breakOpen'}),
+ 'Bubble Trap': ('If 1 of your Pokémon used Bubble during your last turn, this attack does 80 more damage.',
+                 {'type': 'bonusDamage', 'amount': 80, 'condition': {'type': 'sm6LastAttack', 'name': 'Bubble'}}),
+ 'Searching Magnet': ('Search your deck for up to 3 Lightning Energy cards, reveal them, and put them into your hand. Then, shuffle your '
+                      'deck.',
+                      {'type': 'searchChosen', 'amount': 3, 'filter': {'kind': 'energy', 'basicEnergy': True, 'subtype': 'Lightning'}}),
+ 'Cablegram': ("If you have exactly 3 Prize cards remaining, your opponent's Active Pokémon is now Paralyzed.",
+               {'type': 'status', 'status': 'paralysis', 'target': 'opponentActive', 'condition': {'type': 'sm6OwnPrizes', 'values': [3]}}),
+ 'Memory Skip': ("Choose 1 of your opponent's Active Pokémon's attacks. That Pokémon can't use that attack during your opponent's next "
+                 'turn.',
+                 {'type': 'chooseAttackLock', 'target': 'opponentActive', 'duration': 'opponentTurn'}),
+ 'Psychic': ("This attack does 30 more damage times the amount of Energy attached to your opponent's Active Pokémon.",
+             {'type': 'energyDamage', 'source': 'opponent', 'amount': 30, 'mode': 'add'}),
+ 'Curse of the Blade': ("Put 3 damage counters on each of your opponent's Pokémon that has a Pokémon Tool card attached to it.",
+                        {'type': 'sm6Rule', 'rule': 'curseBlade'}),
+ 'Stinger-GX': ('Both players shuffle their Prize cards into their decks. Then, each player puts the top 3 cards of their deck face down '
+                "as their Prize cards. (You can't use more than 1 GX attack in a game.)",
+                {'type': 'sm6Rule', 'rule': 'stinger'}),
+ 'Exact Revenge': ("If any of your Psychic Pokémon were Knocked Out by damage from an opponent's attack during their last turn, this "
+                   'attack does 70 more damage.',
+                   {'type': 'bonusDamage', 'amount': 70, 'condition': {'type': 'sm6PsychicKO'}}),
+ 'Crunch': ("Flip a coin. If heads, discard an Energy from your opponent's Active Pokémon.",
+            {'type': 'coinFlip',
+             'heads': {'type': 'discardEnergyCard', 'target': 'opponentActive', 'amount': 1},
+             'tails': {'type': 'noop'}}),
+ 'Calm Strike': ('If you have used your GX attack, this attack does 60 more damage.',
+                 {'type': 'bonusDamage', 'amount': 60, 'condition': {'type': 'sm6OwnGX'}}),
+ 'Verdict-GX': ("Prevent all damage done to this Pokémon by attacks from Pokémon-GX and Pokémon-EX during your opponent's next turn. (You "
+                "can't use more than 1 GX attack in a game.)",
+                {'type': 'preventDamage', 'target': 'self', 'duration': 'opponentTurn', 'attackerFilter': {'isExOrGX': True}}),
+ 'Diamond Rain': ('Heal 30 damage from each of your Benched Pokémon.', {'type': 'heal', 'target': 'selfBenchAll', 'amount': 30}),
+ 'Untamed Punch': ('If this Pokémon has any damage counters on it, this attack does 50 more damage, and both Active Pokémon are now '
+                   'Confused.',
+                   {'type': 'sequence',
+                    'effects': [{'type': 'bonusDamage', 'amount': 50, 'condition': {'type': 'selfDamaged'}},
+                                {'type': 'status', 'status': 'confusion', 'target': 'opponentActive', 'condition': {'type': 'selfDamaged'}},
+                                {'type': 'status', 'status': 'confusion', 'target': 'self', 'condition': {'type': 'selfDamaged'}}]}),
+ 'Doom Count-GX': ("If your opponent's Active Pokémon has exactly 4 damage counters on it, that Pokémon is Knocked Out. (You can't use "
+                   'more than 1 GX attack in a game.)',
+                   {'type': 'sm6Rule', 'rule': 'doomCount'}),
+ "Lord's Valley": ('If you have exactly 2, 4, or 6 Prize cards remaining, discard the top 10 cards of your deck.',
+                   {'type': 'discardTop', 'amount': 10, 'condition': {'type': 'sm6OwnPrizes', 'values': [2, 4, 6]}}),
+ 'Sanctuary-GX': ("Move all damage counters from each of your Pokémon to your opponent's Active Pokémon. (You can't use more than 1 GX "
+                  'attack in a game.)',
+                  {'type': 'sm6Rule', 'rule': 'sanctuary'}),
+ 'Photon Geyser': ('Discard all basic Psychic Energy from this Pokémon. This attack does 80 more damage for each card you discarded in '
+                   'this way.',
+                   {'type': 'sm6Rule', 'rule': 'photonGeyser'}),
+ 'Sky-Scorching Light-GX': ("You can use this attack only if the total of both players' remaining Prize cards is 6 or less. Put 6 damage "
+                            "counters on each of your opponent's Pokémon. (You can't use more than 1 GX attack in a game.)",
+                            {'type': 'sequence',
+                             'effects': [{'type': 'attackRequirement', 'condition': {'type': 'sm6CombinedPrizes', 'amount': 6}},
+                                         {'type': 'placeDamageCounters', 'target': 'opponentAll', 'amount': 60}]}),
+ 'Destructive Sound': ('Your opponent reveals their hand. Discard all Item cards you find there.',
+                       {'type': 'sm6Rule', 'rule': 'destructiveSound'})}
+STAGE_ABILITIES={'Blessings of the Frost': ('When you play this Pokémon from your hand to evolve 1 of your Pokémon during your turn, you may attach a '
+                            'Grass Energy card from your discard pile to 1 of your Pokémon.',
+                            {'type': 'triggered',
+                             'event': 'evolved',
+                             'fromHandOnly': True,
+                             'effect': {'type': 'sm6Rule',
+                                        'rule': 'discardAttach',
+                                        'energyType': 'Grass',
+                                        'benchOnly': False,
+                                        'fromHand': True}}),
+ 'Mystical Torch': ("Once during your turn (before your attack), you may leave your opponent's Active Pokémon Burned.",
+                    {'type': 'activated', 'oncePerTurn': True, 'effect': {'type': 'status', 'status': 'burn', 'target': 'opponentActive'}}),
+ 'Frubbles': ('If this Pokémon has any Water Energy attached to it, it has no Retreat Cost.',
+              {'type': 'passive', 'effect': {'type': 'sm6Rule', 'rule': 'frubbles'}}),
+ 'Gale Shuriken': ('When you play this Pokémon from your hand to evolve 1 of your Pokémon during your turn, you may put 2 damage counters '
+                   "on 1 of your opponent's Pokémon.",
+                   {'type': 'triggered',
+                    'event': 'evolved',
+                    'fromHandOnly': True,
+                    'effect': {'type': 'sm6Rule', 'rule': 'shuriken', 'amount': 20}}),
+ 'Shuriken Flurry': ('When you play this Pokémon from your hand to evolve 1 of your Pokémon during your turn, you may put 3 damage '
+                     "counters on 1 of your opponent's Pokémon.",
+                     {'type': 'triggered',
+                      'event': 'evolved',
+                      'fromHandOnly': True,
+                      'effect': {'type': 'sm6Rule', 'rule': 'shuriken', 'amount': 30}}),
+ 'Psychic Recharge': ('Once during your turn (before your attack), you may attach a Psychic Energy card from your discard pile to 1 of '
+                      'your Benched Pokémon.',
+                      {'type': 'activated',
+                       'oncePerTurn': True,
+                       'effect': {'type': 'sm6Rule', 'rule': 'discardAttach', 'energyType': 'Psychic', 'benchOnly': True}}),
+ 'Tyrannical Heart': ("As long as you don't have more Pokémon in play than your opponent, this Pokémon's attacks do 60 more damage (before "
+                      'applying Weakness and Resistance), and it takes 30 less damage from attacks (after applying Weakness and '
+                      'Resistance).',
+                      {'type': 'passive',
+                       'effect': {'type': 'sequence',
+                                  'effects': [{'type': 'modifier',
+                                               'stat': 'attackDamage',
+                                               'amount': 60,
+                                               'scope': 'self',
+                                               'duration': 'whileInPlay',
+                                               'condition': {'type': 'sm6NotMorePokemon'}},
+                                              {'type': 'modifier',
+                                               'stat': 'damageReduction',
+                                               'amount': 30,
+                                               'scope': 'self',
+                                               'duration': 'whileInPlay',
+                                               'condition': {'type': 'sm6NotMorePokemon'}}]}}),
+ 'Earthen Aura': ("Damage from this Pokémon's attacks isn't affected by Weakness or Resistance.",
+                  {'type': 'passive', 'effect': {'type': 'sm6Rule', 'rule': 'earthenAura'}}),
+ 'Sticky Membrane': ("As long as this Pokémon is your Active Pokémon, your opponent's Pokémon's attacks cost Colorless more.",
+                     {'type': 'passive', 'effect': {'type': 'sm6Rule', 'rule': 'stickyMembrane'}})}
+STAGE_TRAINERS={'Bonnie': ('Supporter',
+            ['You can play this card only if there is any Stadium card in play.',
+             'Discard that Stadium card. During this turn, your Zygarde-GX can use its GX attack even if you have used your GX attack.',
+             'You may play only 1 Supporter card during your turn (before your attack).'],
+            {'type': 'sm6Rule', 'rule': 'bonnie'}),
+ 'Crasher Wake': ('Supporter',
+                  ['Discard 2 Water Energy cards from your hand. If you do, search your deck for up to 2 cards and put them into your '
+                   'hand. Then, shuffle your deck.',
+                   'You may play only 1 Supporter card during your turn (before your attack).'],
+                  {'type': 'sm6Rule',
+                   'rule': 'discardSearch',
+                   'amount': 2,
+                   'costFilter': {'kind': 'energy', 'basicEnergy': True, 'subtype': 'Water'},
+                   'searchFilter': {},
+                   'searchAmount': 2}),
+ 'Diantha': ('Supporter',
+             ["You can play this card only if 1 of your Fairy Pokémon was Knocked Out during your opponent's last turn.",
+              'Put 2 cards from your discard pile into your hand.',
+              'You may play only 1 Supporter card during your turn (before your attack).'],
+             {'type': 'sm6Rule', 'rule': 'diantha'}),
+ 'Fossil Excavation Map': ('Item',
+                           ['Choose 1:\n'
+                            '• Search your deck for an Unidentified Fossil card, reveal it, and put it into your hand. Then, shuffle your '
+                            'deck.\n'
+                            '• Put an Unidentified Fossil card from your discard pile into your hand.',
+                            'You may play as many Item cards as you like during your turn (before your attack).'],
+                           {'type': 'chooseOption',
+                            'options': [{'label': 'Search deck for Unidentified Fossil',
+                                         'effect': {'type': 'searchChosen', 'amount': 1, 'filter': {'name': 'Unidentified Fossil'}}},
+                                        {'label': 'Recover Unidentified Fossil from discard',
+                                         'effect': {'type': 'searchChosen',
+                                                    'source': 'discard',
+                                                    'amount': 1,
+                                                    'filter': {'name': 'Unidentified Fossil'}}}]}),
+ 'Judge': ('Supporter',
+           ['Each player shuffles their hand into their deck and draws 4 cards.',
+            'You may play only 1 Supporter card during your turn (before your attack).'],
+           {'type': 'handShuffle', 'side': 'both', 'draw': 4}),
+ 'Lysandre Labs': ('Stadium',
+                   ["Pokémon Tool cards in play (both yours and your opponent's) have no effect.",
+                    'This card stays in play when you play it. Discard this card if another Stadium card comes into play. If another card '
+                    "with the same name is in play, you can't play this card."],
+                   {'type': 'sm6Rule', 'rule': 'lysandreLabs'}),
+ 'Metal Frying Pan': ('Tool',
+                      ["Attach a Pokémon Tool to 1 of your Pokémon that doesn't already have a Pokémon Tool attached to it.",
+                       "The Metal Pokémon this card is attached to takes 30 less damage from your opponent's attacks (after applying "
+                       'Weakness and Resistance) and has no Weakness.',
+                       'You may play as many Item cards as you like during your turn (before your attack).'],
+                      {'type': 'sequence',
+                       'effects': [{'type': 'modifier',
+                                    'stat': 'damageReduction',
+                                    'amount': 30,
+                                    'scope': 'self',
+                                    'duration': 'whileInPlay',
+                                    'filter': {'subtype': 'Metal'}},
+                                   {'type': 'weaknessGuard', 'duration':'whileInPlay', 'condition':{'type':'selfMatches','filter':{'subtype':'Metal'}}, 'filter': {'subtype': 'Metal'}}]}),
+ 'Mysterious Treasure': ('Item',
+                         ['Discard a card from your hand. If you do, search your deck for a Psychic or Dragon Pokémon, reveal it, and put '
+                          'it into your hand. Then, shuffle your deck.',
+                          'You may play as many Item cards as you like during your turn (before your attack).'],
+                         {'type': 'sm6Rule',
+                          'rule': 'discardSearch',
+                          'amount': 1,
+                          'costFilter': {},
+                          'searchFilter': {'kind': 'pokemon', 'subtype': ['Psychic', 'Dragon']},
+                          'searchAmount': 1}),
+ 'Ultra Recon Squad': ('Supporter',
+                       ['Discard up to 2 Ultra Beast cards from your hand. Draw 3 cards for each card you discarded in this way.',
+                        'You may play only 1 Supporter card during your turn (before your attack).'],
+                       {'type': 'sm6Rule', 'rule': 'recon'}),
+ 'Ultra Space': ('Stadium',
+                 ["Once during each player's turn, that player may search their deck for an Ultra Beast card, reveal it, put it into their "
+                  'hand, and shuffle their deck.',
+                  'This card stays in play when you play it. Discard this card if another Stadium card comes into play. If another card '
+                  "with the same name is in play, you can't play this card."],
+                 {'type': 'stadiumAction',
+                  'effect': {'type': 'searchChosen', 'amount': 1, 'filter': {'kind': 'pokemon', 'tag': 'ultra-beast'}}}),
+ 'Beast Ring': ('Item',
+                ['You can play this card only if your opponent has exactly 3 or 4 Prize cards remaining.',
+                 'Search your deck for up to 2 basic Energy cards and attach them to 1 of your Ultra Beasts. Then, shuffle your deck.',
+                 'You may play as many Item cards as you like during your turn (before your attack).'],
+                {'type': 'sm6Rule', 'rule': 'beastRing'})}
+
 def attack(row,a):
  title,cost,damage,printed=a
+ stage=STAGE_ATTACKS.get(title)
+ if stage and n(stage[0])==n(printed):return deepcopy(stage[1])
  # Reuse existing exact previous-print implementation first. This includes
  # Palkia/Dialga GX, Garchomp, Ultra Prism energy attacks, and generic status.
  previous=PREVIOUS.attack(row,a)
@@ -103,6 +311,8 @@ def attack(row,a):
  return None
 
 def ability(row,a):
+ stage=STAGE_ABILITIES.get(a[0])
+ if stage and n(stage[0])==n(a[2]):return deepcopy(stage[1])
  inherited=PREVIOUS.ability(row,a)
  if inherited is not None:return inherited
  title,_,printed=a
@@ -111,6 +321,8 @@ def ability(row,a):
  return deepcopy(item[1]) if item and n(item[0])==n(printed) else None
 
 def trainer(row):
+ stage=STAGE_TRAINERS.get(row[1])
+ if stage and [n(x) for x in stage[1]]==[n(x) for x in row[13]]:return (stage[0],deepcopy(stage[2]))
  previous=PREVIOUS.trainer(row)
  if previous is not None:return previous
  name=row[1];entry=TRAINERS.get(name)
@@ -120,6 +332,7 @@ def trainer(row):
 
 def energy(row):
  if row[2]!='Energy':return None
+ if row[1]=='Beast Energy ◇' and 'ultra beast' in n(' '.join(row[13])):return e('specialEnergy',provides={'Colorless':1})
  rules=n(' '.join(row[13] or []))
  # One physical Unit Energy can satisfy ONE colour pip, never three pips.
  if row[1]=='Unit Energy FightingDarknessFairy' and n('it provides Fighting, Darkness, and Fairy Energy but provides only 1 Energy at a time.') in rules:
@@ -129,4 +342,4 @@ def energy(row):
 def prism_ready(row):
  # Deck-copy and Lost-Zone rules already exist; individual new print mechanics
  # are not promoted until the printed effects are tested.
- return False
+ return row[0]=='74'
