@@ -492,7 +492,7 @@
     // leakage. Choose from the actual legal set instead.
     if(state.format==='classic'&&state.phase==='effectChoice'){
       const pending=state.pendingChoice||{},rule=String(pending.effect?.rule||'');
-      if(rule==='sm9ElectroShaker'){
+      if(rule==='sm9ElectroShaker'||rule==='sm10Kaleidostorm'){
         // Never cycle Energy endlessly between two slots. CPU moves toward its Active only.
         const board=state.sides[side],stop=legal.find(x=>x.choiceSkip);
         if(pending.effect.stage==='source')return legal.find(x=>!x.choiceSkip&&pending.effect.opts?.[x.choiceOption]?.p!==board.active?.uid)||stop||legal[0];

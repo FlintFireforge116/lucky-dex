@@ -13,7 +13,7 @@ TESTS=['tests/v07440-forbidden-light-integration.test.cjs','tests/v07441-forbidd
 def check_static():
  subprocess.run([sys.executable,'scripts/check-gradle-source.py','--self-test'],cwd=ROOT,check=True)
  contract=json.loads((ROOT/'scripts/sm6_release_contract.json').read_text())
- assert contract['set']=='sm6' and contract['release']=='0.69.444' and contract['stage']=='complete'
+ assert contract['set']=='sm6' and contract['release']=='0.69.445' and contract['stage']=='complete'
  assert (contract['printedTotal'],contract['attackPrints'],contract['abilities'],contract['trainerPrints'],contract['energyPrints'])==(150,211,25,27,3)
  assert contract['pin']=='7c9956b85945322c9c981db7a231be36fc524224'
  assert contract['variants']==['2a','102a','112a','113a']

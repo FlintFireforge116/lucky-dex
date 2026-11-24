@@ -1,6 +1,6 @@
 {
   "printed": 238,
-  "battleReady": 105,
+  "battleReady": 165,
   "gated": {
     "sm10-1": [
       "Unimplemented attack: Elegant Sole",
@@ -12,36 +12,8 @@
     "sm10-3": [
       "Unimplemented Ability: Emerge"
     ],
-    "sm10-4": [
-      "Unimplemented attack: Triple Charge"
-    ],
     "sm10-7": [
       "Unimplemented Ability: Irresistible Aroma"
-    ],
-    "sm10-8": [
-      "Unimplemented Ability: Varied Pollen"
-    ],
-    "sm10-12": [
-      "Unimplemented attack: Shinobi Mastery"
-    ],
-    "sm10-15": [
-      "Unimplemented attack: Gastro Acid"
-    ],
-    "sm10-19": [
-      "Unimplemented attack: False Swipe"
-    ],
-    "sm10-25": [
-      "Unimplemented attack: Flare Starter",
-      "Unimplemented attack: High-Heat Blast"
-    ],
-    "sm10-29": [
-      "Unimplemented Ability: Strong Cheer"
-    ],
-    "sm10-30": [
-      "Unimplemented attack: Grass Fire"
-    ],
-    "sm10-31": [
-      "Unimplemented Ability: Roast Reveal"
     ],
     "sm10-32": [
       "Unimplemented attack: Blazer",
@@ -50,12 +22,6 @@
     "sm10-35": [
       "Unimplemented attack: Rocket Splash",
       "Unimplemented attack: Giant Geyser-GX"
-    ],
-    "sm10-36": [
-      "Unimplemented Ability: Round ‘n' Round"
-    ],
-    "sm10-40": [
-      "Unimplemented attack: Bubble Jutsu"
     ],
     "sm10-41": [
       "Unimplemented attack: Wicked Tentacles"
@@ -75,29 +41,12 @@
     "sm10-55": [
       "Unimplemented attack: Never Give Up"
     ],
-    "sm10-56": [
-      "Unimplemented attack: Raging Thunder",
-      "Unimplemented attack: Electric Trap"
-    ],
-    "sm10-57": [
-      "Unimplemented attack: Tingly Return-GX",
-      "Unimplemented Ability: Dedechange"
-    ],
     "sm10-58": [
       "Unimplemented Ability: Battery"
     ],
     "sm10-59": [
       "Unimplemented attack: Electricannon",
       "Unimplemented Ability: Stealthy Body"
-    ],
-    "sm10-60": [
-      "Unimplemented attack: Discharge"
-    ],
-    "sm10-63": [
-      "Unimplemented attack: Heavy Choke"
-    ],
-    "sm10-66": [
-      "Unimplemented Ability: Sound Veil"
     ],
     "sm10-67": [
       "Unimplemented Ability: Swelling Spite"
@@ -115,13 +64,6 @@
       "Unimplemented attack: Splattering Sludge",
       "Unimplemented Ability: Detention Gas"
     ],
-    "sm10-75": [
-      "Unimplemented Ability: Mind Report"
-    ],
-    "sm10-76": [
-      "Unimplemented attack: Psypower",
-      "Unimplemented Ability: Bench Barrier"
-    ],
     "sm10-78": [
       "Unimplemented Ability: Mysterious Message"
     ],
@@ -137,17 +79,8 @@
     "sm10-85": [
       "Unimplemented Ability: Underground Work"
     ],
-    "sm10-89": [
-      "Unimplemented attack: Heavy Slam"
-    ],
     "sm10-90": [
       "Unimplemented attack: Focus Energy"
-    ],
-    "sm10-94": [
-      "Unimplemented attack: Dirty Work"
-    ],
-    "sm10-98": [
-      "Unimplemented attack: Shinobi Strike"
     ],
     "sm10-100": [
       "Unimplemented Ability: Bratty Kick"
@@ -155,26 +88,11 @@
     "sm10-101": [
       "Unimplemented attack: Finishing Combo"
     ],
-    "sm10-105": [
-      "Unimplemented attack: Fight Alone"
-    ],
-    "sm10-106": [
-      "Unimplemented attack: Top Down",
-      "Unimplemented Ability: Wall of Stone"
-    ],
     "sm10-107": [
       "Unimplemented attack: Dark Union-GX"
     ],
-    "sm10-109": [
-      "Unimplemented attack: Feather Storm",
-      "Unimplemented attack: Unfair-GX",
-      "Unimplemented Ability: Ruler of the Night"
-    ],
     "sm10-111": [
       "Unimplemented Ability: Greedy Evolution"
-    ],
-    "sm10-113": [
-      "Unimplemented Ability: Intimidating Fang"
     ],
     "sm10-114": [
       "Unimplemented attack: Grandiose Fangs"
@@ -185,39 +103,17 @@
     "sm10-119": [
       "Unimplemented attack: Hypnotic Reign"
     ],
-    "sm10-120": [
-      "Unimplemented attack: Full Metal Wall-GX"
-    ],
     "sm10-125": [
       "Unimplemented attack: Extra-Tight Press"
     ],
     "sm10-126": [
       "Unimplemented attack: Rush Up"
     ],
-    "sm10-127": [
-      "Unimplemented Ability: Fast-Flight Configuration"
-    ],
-    "sm10-129": [
-      "Unimplemented Ability: Metal Eater"
-    ],
-    "sm10-130": [
-      "Unimplemented attack: Fairy Song",
-      "Unimplemented attack: Kaleidostorm"
-    ],
     "sm10-131": [
       "Unimplemented Ability: Excitable Draw"
     ],
-    "sm10-133": [
-      "Unimplemented attack: Moon-Watching Dance"
-    ],
-    "sm10-136": [
-      "Unimplemented attack: Daunt"
-    ],
     "sm10-137": [
       "Unimplemented attack: Energy Present"
-    ],
-    "sm10-138": [
-      "Unimplemented Ability: Fairy Feast"
     ],
     "sm10-142": [
       "Unimplemented attack: Pungent Aroma",
@@ -239,11 +135,7 @@
       "Unimplemented Ability: Crazy Code"
     ],
     "sm10-158": [
-      "Unimplemented attack: Big Counter",
       "Unimplemented Ability: Lazy Eating"
-    ],
-    "sm10-159": [
-      "Unimplemented attack: Boing Boing Tail"
     ],
     "sm10-160": [
       "Unimplemented attack: Stray Cat Dash"
@@ -258,9 +150,6 @@
     "sm10-164": [
       "Unimplemented Trainer effect"
     ],
-    "sm10-165": [
-      "Unimplemented Trainer effect"
-    ],
     "sm10-166": [
       "Unimplemented Trainer effect"
     ],
@@ -270,19 +159,7 @@
     "sm10-168": [
       "Unimplemented Trainer effect"
     ],
-    "sm10-169": [
-      "Unimplemented Trainer effect"
-    ],
-    "sm10-170": [
-      "Unimplemented Trainer effect"
-    ],
-    "sm10-171": [
-      "Unimplemented Trainer effect"
-    ],
     "sm10-174": [
-      "Unimplemented Trainer effect"
-    ],
-    "sm10-175": [
       "Unimplemented Trainer effect"
     ],
     "sm10-178": [
@@ -297,28 +174,10 @@
     "sm10-181": [
       "Unimplemented Trainer effect"
     ],
-    "sm10-183": [
-      "Unimplemented Trainer effect"
-    ],
-    "sm10-184": [
-      "Unimplemented Trainer effect"
-    ],
-    "sm10-185": [
-      "Unimplemented Trainer effect"
-    ],
     "sm10-186": [
       "Unimplemented Trainer effect"
     ],
-    "sm10-187": [
-      "Unimplemented Trainer effect"
-    ],
     "sm10-188": [
-      "Unimplemented Trainer effect"
-    ],
-    "sm10-189": [
-      "Unimplemented Trainer effect"
-    ],
-    "sm10-189a": [
       "Unimplemented Trainer effect"
     ],
     "sm10-190": [
@@ -332,38 +191,11 @@
       "Unimplemented attack: Elegant Sole",
       "Unimplemented attack: Beast Game-GX"
     ],
-    "sm10-193": [
-      "Unimplemented attack: Shinobi Mastery"
-    ],
-    "sm10-195": [
-      "Unimplemented attack: Tingly Return-GX",
-      "Unimplemented Ability: Dedechange"
-    ],
-    "sm10-195a": [
-      "Unimplemented attack: Tingly Return-GX",
-      "Unimplemented Ability: Dedechange"
-    ],
     "sm10-200": [
       "Unimplemented attack: Dark Union-GX"
     ],
     "sm10-201": [
       "Unimplemented attack: Dark Union-GX"
-    ],
-    "sm10-202": [
-      "Unimplemented attack: Feather Storm",
-      "Unimplemented attack: Unfair-GX",
-      "Unimplemented Ability: Ruler of the Night"
-    ],
-    "sm10-203": [
-      "Unimplemented attack: Full Metal Wall-GX"
-    ],
-    "sm10-204": [
-      "Unimplemented attack: Fairy Song",
-      "Unimplemented attack: Kaleidostorm"
-    ],
-    "sm10-205": [
-      "Unimplemented attack: Fairy Song",
-      "Unimplemented attack: Kaleidostorm"
     ],
     "sm10-207": [
       "Unimplemented Ability: Cat Walk"
@@ -372,47 +204,19 @@
       "Unimplemented attack: Discovery-GX",
       "Unimplemented Ability: Force Canceler"
     ],
-    "sm10-209": [
-      "Unimplemented Trainer effect"
-    ],
     "sm10-212": [
-      "Unimplemented Trainer effect"
-    ],
-    "sm10-213": [
-      "Unimplemented Trainer effect"
-    ],
-    "sm10-214": [
       "Unimplemented Trainer effect"
     ],
     "sm10-215": [
       "Unimplemented attack: Elegant Sole",
       "Unimplemented attack: Beast Game-GX"
     ],
-    "sm10-216": [
-      "Unimplemented attack: Shinobi Mastery"
-    ],
     "sm10-218": [
       "Unimplemented attack: Rocket Splash",
       "Unimplemented attack: Giant Geyser-GX"
     ],
-    "sm10-219": [
-      "Unimplemented attack: Tingly Return-GX",
-      "Unimplemented Ability: Dedechange"
-    ],
     "sm10-222": [
       "Unimplemented attack: Dark Union-GX"
-    ],
-    "sm10-223": [
-      "Unimplemented attack: Feather Storm",
-      "Unimplemented attack: Unfair-GX",
-      "Unimplemented Ability: Ruler of the Night"
-    ],
-    "sm10-224": [
-      "Unimplemented attack: Full Metal Wall-GX"
-    ],
-    "sm10-225": [
-      "Unimplemented attack: Fairy Song",
-      "Unimplemented attack: Kaleidostorm"
     ],
     "sm10-227": [
       "Unimplemented Ability: Cat Walk"
@@ -422,9 +226,6 @@
       "Unimplemented Ability: Force Canceler"
     ],
     "sm10-229": [
-      "Unimplemented Trainer effect"
-    ],
-    "sm10-230": [
       "Unimplemented Trainer effect"
     ],
     "sm10-232": [
