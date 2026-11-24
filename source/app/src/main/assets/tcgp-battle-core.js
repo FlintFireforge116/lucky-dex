@@ -619,7 +619,8 @@
       (Number(slot.energy?.Grass||0)>0||(slot.specialEnergy||[]).some(ref=>
         Number((ref.provides||data.cardById(ref.cardId)?.effect?.provides||{}).Grass||0)>0));
     const xy3TrainingCenter=state.format==='classic'&&activeStadium(state)?.cardId==='xy3-102'&&['Stage 1','Stage 2'].includes(currentStage)?30:0;
-    const extra=xy3TrainingCenter+xy2FlowerVeil+bw9Shade+bw7Gym+bw7Wall+bw6Cape+hgss4Nidoking+hgss4Indigo+pl1Thankfulness+dp6Temple+majesticVeil+ex3LowPressure+rocketHideout+dp2Equip+(slot.cardId==='gym2-97'?10*Number(slot.energy?.Psychic||0):slot.cardId==='gym2-10'&&slot.gym2GiantGrowth&&state.sides[side].active===slot?40:0);return Math.max(1,(xy4Gourgantic?200:copyHp)+extra-gravitation+effects.modifierAmount(state,side,slot,'maxHp',data.cardById));}
+    const sm7Sunbeam=state.format==='classic'&&data.cardById(slot.cardId)?.name==='Lunatone'&&pokemonOn(state.sides[side]).some(p=>p.cardId==='sm7-62'&&!effects.abilitiesSuppressed(state,side,p,data.cardById));
+    const extra=xy3TrainingCenter+xy2FlowerVeil+bw9Shade+bw7Gym+bw7Wall+bw6Cape+hgss4Nidoking+hgss4Indigo+pl1Thankfulness+dp6Temple+majesticVeil+ex3LowPressure+rocketHideout+dp2Equip+(slot.cardId==='gym2-97'?10*Number(slot.energy?.Psychic||0):slot.cardId==='gym2-10'&&slot.gym2GiantGrowth&&state.sides[side].active===slot?40:0);return Math.max(1,(sm7Sunbeam?130:xy4Gourgantic?200:copyHp)+extra-gravitation+effects.modifierAmount(state,side,slot,'maxHp',data.cardById));}
   function ex14DarkEyes(state,usedBy,source,ability){
     if(state.format!=='classic'||!source||ability?.printedPowerType!=='power')return;
     const reacting=usedBy==='player'?'opponent':'player';
@@ -2059,6 +2060,7 @@
   }
 
   function checkup(state){
+    if(state.format==='classic'&&activeStadium(state)?.cardId==='sm7-143')for(const who of ['player','opponent'])for(const p of pokemonOn(state.sides[who]))if(effects.matchesFilter(data.cardById(p.cardId),{isExOrGX:true}))p.damage=Number(p.damage||0)+10;
     if(state.format==='classic'){
       // Rising Rivals: all of these trigger BETWEEN turns (both players).
       const live=(side,p)=>p&&!effects.abilitiesSuppressed(state,side,p,data.cardById);

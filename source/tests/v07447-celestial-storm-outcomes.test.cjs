@@ -29,7 +29,7 @@ for(const side of ['player','opponent']){
     h.us.energyDiscard={Grass:2,Psychic:2,Fighting:2};h.them.active.energy={Water:2};h.them.active.damage=40;
     h.them.hand=[ref('sm6-108','foe-judge'),ref('sm6-112','foe-tool')];
     h.them.bench[0].specialEnergy=[ref('sm6-118','foe-unit')];
-    if(a.name==='Psychic Abduction'){h.s.firstSide=h.foe;h.us.turnCount=1;h.s.turnNumber=2;}
+    if(['Psychic Abduction','Bawl'].includes(a.name)){h.s.firstSide=h.foe;h.us.turnCount=1;h.s.turnNumber=2;}
     const actions=core.legalActions(h.s,side).filter(x=>x.type==='attack'&&x.attackIndex===idx);
     assert.ok(actions.length,'no legal attack');core.applyAction(h.s,side,actions[0]);
     let steps=0;while(h.s.phase==='effectChoice'&&steps++<40){const who=h.s.choiceSide||side,choices=core.legalActions(h.s,who).filter(x=>x.type==='effectChoice');assert.ok(choices.length,'empty choice');core.applyAction(h.s,who,choices.find(x=>!x.choiceSkip)||choices[0]);}

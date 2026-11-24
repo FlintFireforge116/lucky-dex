@@ -1,19 +1,7 @@
 {
   "printed": 187,
-  "battleReady": 140,
+  "battleReady": 172,
   "gated": {
-    "sm7-10": [
-      "Unimplemented Ability: Power of Nature"
-    ],
-    "sm7-10a": [
-      "Unimplemented Ability: Power of Nature"
-    ],
-    "sm7-29": [
-      "Unimplemented attack: Flaming Honk"
-    ],
-    "sm7-31": [
-      "Unimplemented Ability: Legendary Ascent"
-    ],
     "sm7-48": [
       "Unimplemented attack: Crush and Burn-GX",
       "Unimplemented Ability: Extra Energy Bomb"
@@ -26,29 +14,9 @@
       "Unimplemented attack: Double Charge",
       "Unimplemented Ability: Electric Start"
     ],
-    "sm7-55": [
-      "Unimplemented attack: Zappy Pom-Poms"
-    ],
-    "sm7-61": [
-      "Unimplemented Ability: Sol Shade"
-    ],
-    "sm7-62": [
-      "Unimplemented Ability: Sunbeam"
-    ],
     "sm7-65": [
       "Unimplemented attack: Enemy Show",
       "Unimplemented Ability: Red Eyes"
-    ],
-    "sm7-66": [
-      "Unimplemented attack: Shadow Chant",
-      "Unimplemented attack: Tomb Hunt-GX",
-      "Unimplemented Ability: Shady Move"
-    ],
-    "sm7-73": [
-      "Unimplemented attack: Rapid Spin"
-    ],
-    "sm7-75": [
-      "Unimplemented attack: Dust Devil"
     ],
     "sm7-82": [
       "Unimplemented attack: Sandy Fear-GX"
@@ -56,14 +24,8 @@
     "sm7-83": [
       "Unimplemented Ability: Falling Star"
     ],
-    "sm7-87": [
-      "Unimplemented attack: Trample"
-    ],
     "sm7-91": [
       "Unimplemented attack: Mining"
-    ],
-    "sm7-95": [
-      "Unimplemented Ability: Extend"
     ],
     "sm7-97": [
       "Prism Star attack/Ability or Trainer effect not yet implemented",
@@ -73,95 +35,22 @@
     "sm7-98": [
       "Unimplemented attack: Steelworks"
     ],
-    "sm7-100": [
-      "Unimplemented attack: Moon Raker"
-    ],
-    "sm7-107": [
-      "Prism Star attack/Ability or Trainer effect not yet implemented",
-      "Unimplemented attack: Dreamy Mist"
-    ],
-    "sm7-109": [
-      "Unimplemented attack: Dragon Break",
-      "Unimplemented attack: Tempest-GX",
-      "Unimplemented Ability: Stormy Winds"
-    ],
     "sm7-110": [
       "Unimplemented attack: Strike and Run"
     ],
-    "sm7-115": [
-      "Unimplemented Ability: Lazy"
-    ],
-    "sm7-116": [
-      "Unimplemented attack: Bawl"
-    ],
-    "sm7-121": [
-      "Unimplemented Ability: Search for Friends"
-    ],
-    "sm7-122": [
-      "Unimplemented Ability: Unit Color 2"
-    ],
     "sm7-125": [
-      "Unimplemented Trainer effect"
-    ],
-    "sm7-133": [
-      "Unimplemented Trainer effect"
-    ],
-    "sm7-139": [
       "Unimplemented Trainer effect"
     ],
     "sm7-141": [
       "Unimplemented Trainer effect"
     ],
-    "sm7-143": [
-      "Unimplemented Trainer effect"
-    ],
-    "sm7-144": [
-      "Unimplemented Trainer effect"
-    ],
-    "sm7-145": [
-      "Unimplemented Trainer effect"
-    ],
-    "sm7-154": [
-      "Unimplemented Ability: Legendary Ascent"
-    ],
     "sm7-155": [
       "Unimplemented attack: Crush and Burn-GX",
       "Unimplemented Ability: Extra Energy Bomb"
     ],
-    "sm7-157": [
-      "Unimplemented attack: Shadow Chant",
-      "Unimplemented attack: Tomb Hunt-GX",
-      "Unimplemented Ability: Shady Move"
-    ],
-    "sm7-160": [
-      "Unimplemented attack: Dragon Break",
-      "Unimplemented attack: Tempest-GX",
-      "Unimplemented Ability: Stormy Winds"
-    ],
-    "sm7-165": [
-      "Unimplemented Trainer effect"
-    ],
-    "sm7-171": [
-      "Unimplemented Ability: Legendary Ascent"
-    ],
     "sm7-172": [
       "Unimplemented attack: Crush and Burn-GX",
       "Unimplemented Ability: Extra Energy Bomb"
-    ],
-    "sm7-174": [
-      "Unimplemented attack: Shadow Chant",
-      "Unimplemented attack: Tomb Hunt-GX",
-      "Unimplemented Ability: Shady Move"
-    ],
-    "sm7-177": [
-      "Unimplemented attack: Dragon Break",
-      "Unimplemented attack: Tempest-GX",
-      "Unimplemented Ability: Stormy Winds"
-    ],
-    "sm7-177a": [
-      "Unimplemented attack: Dragon Break",
-      "Unimplemented attack: Tempest-GX",
-      "Unimplemented Ability: Stormy Winds"
     ],
     "sm7-182": [
       "Unimplemented Trainer effect"

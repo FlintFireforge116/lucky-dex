@@ -174,6 +174,38 @@ for row in json.loads((ROOT/'data/classic/sm7-print-compact.json').read_text()):
  }
  if name in mapping:tr(name,rule,*mapping[name])
 
+# SM7 consolidated continuation II. Match complete printed signatures.
+rows7=json.loads((ROOT/'data/classic/sm7-print-compact.json').read_text())
+def at(no,name,fx):
+ row=next(r for r in rows7 if r[0]==str(no));add(next(a[3] for a in row[7] if a[0]==name),fx)
+def abil(no,fx):
+ row=next(r for r in rows7 if r[0]==str(no));a=row[8][0];ab(a[0],a[2],fx)
+def trainer7(no,kind,fx):
+ row=next(r for r in rows7 if r[0]==str(no));tr(row[1],row[13][0],kind,fx)
+def trigger(event,fx):return {'type':'triggered','event':event,'fromHandOnly':True,'effect':fx}
+for no,rule in [(10,'powerNature'),(61,'solShade'),(62,'sunbeam'),(95,'extend'),(115,'lazy'),(122,'unitColor')]:abil(no,passive(R(rule)))
+abil(109,trigger('benched',R('stormyWinds')))
+abil(31,trigger('benched',R('legendaryAscent')))
+abil(66,activated(R('shadyMove'),activeOnly=True))
+abil(121,trigger('evolved',R('searchFriends')))
+at(66,'Shadow Chant',E('discardCountDamage',side='self',filter={'trainerType':'Supporter'},amount=10,maxAmount=100,mode='add'))
+at(66,'Tomb Hunt-GX',E('searchChosen',source='discard',amount=3,filter={}))
+at(109,'Dragon Break',E('energyDamage',source='self',all=True,basicOnly=True,energyTypes=['Grass','Lightning'],amount=30,mode='replace'))
+at(109,'Tempest-GX',R('tempest'))
+at(55,'Zappy Pom-Poms',R('fieldDamage',amount=30,filter={'isExOrGX':True}))
+at(75,'Dust Devil',R('fieldDamage',amount=20,filter={'notSubtype':'Fighting'}))
+at(87,'Trample',R('fieldDamage',amount=60,benchOnly=True,coinEach=True,ignoreMatchup=True))
+at(73,'Rapid Spin',R('rapidSpin'))
+at(29,'Flaming Honk',R('flamingHonk'))
+at(100,'Moon Raker',R('moonRaker'))
+at(107,'Dreamy Mist',R('dreamyMist'))
+at(116,'Bawl',seq(E('attackRequirement',condition=cond('sm7FirstSecond')),E('actionLock',side='opponent',cardType='Trainer',duration='opponentTurn')))
+trainer7(133,'Supporter',R('hiker'))
+trainer7(139,'Supporter',R('maskedRoyal'))
+trainer7(143,'Stadium',R('shrine'))
+trainer7(144,'Stadium',R('skyPillar'))
+trainer7(145,'Supporter',R('steven'))
+
 def attack(row,a):
  title,cost,damage,printed=a;t=attack_text(printed)
  if not t:return E('noop')
@@ -210,4 +242,4 @@ def energy(row):
  if row[1]=='Rainbow Energy' and norm(' '.join(row[13]))==norm('This card provides Colorless Energy. While in play, this card provides every type of Energy but provides only 1 Energy at a time. When you attach this card from your hand to 1 of your Pokémon, put 1 damage counter on that Pokémon.'):
   return E('specialEnergy',provides={'Miracle':1})
  return None
-def prism_ready(row):return row[1]=='Latios ◇' and all(attack(row,a) is not None for a in row[7])
+def prism_ready(row):return row[1] in ('Latios ◇','Latias ◇') and all(attack(row,a) is not None for a in row[7])

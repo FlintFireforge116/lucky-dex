@@ -20,8 +20,8 @@ def check():
  assert c['expectedPlayableMinimum']>=35 and len(c['requiredEnabledNumbers'])>=35
  g=(ROOT/'app/build.gradle').read_text()
  m=re.search(r"versionName\s+['\"]([^'\"]+)['\"]",g)
- assert m and m.group(1)==c['release']=='0.69.423'
- assert 'versionCode 7423' in g
+ assert m and m.group(1)==c['release']=='0.69.424'
+ assert 'versionCode 7424' in g
  for n in ('xy9_release_contract.json','xy10_release_contract.json'):
   assert json.loads((ROOT/'scripts'/n).read_text())['release']==c['release'],n+' release drift'
  html=(ROOT/'app/src/main/assets/index.html').read_text()
