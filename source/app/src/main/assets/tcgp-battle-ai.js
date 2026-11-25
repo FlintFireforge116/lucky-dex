@@ -287,6 +287,7 @@
         return 200+Math.min(hit,remaining)-n*2+(hit>=remaining?100:0);
       }
       if(attack?.effect?.rule==='swsh6Tentacles')damage=40*state.sides[side].hand.filter(r=>data.cardById(r.cardId)?.rapidStrike).length;
+      if(['swsh7SpiralBurst','swsh7MaxBurst'].includes(attack?.effect?.rule)){const p=state.sides[side].active;damage=20+80*Math.min(attack.effect.rule==='swsh7SpiralBurst'?2:Infinity,Math.max(Number(p.energy?.Fire||0),Number(p.energy?.Lightning||0)));}
       if(attack?.effect?.rule==='swsh6MaxLance')damage=10+120*Math.min(2,attachedCount(state.sides[side].active));
       if(attack?.effect?.rule==='swsh6RepeatedStrike')damage=120+30*slots(state.sides[side]).reduce((n,p)=>n+attachedCount(p),0);
       if(attack?.effect?.rule==='swsh4FlyingFury')damage=10+40*slots(state.sides[side]).reduce((n,p)=>n+(p.tool?1:0)+(p.extraTools||[]).length,0);
@@ -632,6 +633,7 @@
         if(!target||hit>=core.maxHp(state,foeOf(side),target)-Number(target.damage||0)||!picks.length)return stop||legal[0];
         picks.sort((a,b)=>{const score=x=>{const p=slotFor(me,x.choiceTarget,x.choiceBenchIndex);return (p===me.active?-20:0)+attachedCount(p);};return score(b)-score(a);});return picks[0];
       }
+      if(pending.special==='sm7BeforeAttack'&&['swsh7SpiralBurst','swsh7MaxBurst'].includes(pending.rule)){const me=state.sides[side],target=state.sides[foeOf(side)].active,stop=legal.find(a=>a.choiceSkip),remaining=target?core.maxHp(state,foeOf(side),target)-Number(target.damage||0):0,hit=n=>effects.attackDamageWithState(state,side,me.active,foeOf(side),target,20+80*n,data.cardById);if(!target||hit(0)>=remaining)return stop||legal[0];const picks=legal.filter(a=>!a.choiceSkip).sort((a,b)=>pending.opts[a.choiceOption].n-pending.opts[b.choiceOption].n);return picks.find(a=>hit(pending.opts[a.choiceOption].n)>=remaining)||picks.at(-1)||stop||legal[0];}
       if(pending.special==='sm7BeforeAttack'){
         const picks=legal.filter(a=>!a.choiceSkip),stop=legal.find(a=>a.choiceSkip);
         if(pending.rule==='sandyFear')return picks[0]||stop||legal[0];
