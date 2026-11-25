@@ -1,0 +1,205 @@
+{
+  "printed": 183,
+  "battleReady": 122,
+  "gated": {
+    "swsh5-6": [
+      "Unimplemented Ability: Exciting Stage"
+    ],
+    "swsh5-8": [
+      "Unimplemented Ability: Spring Bloom"
+    ],
+    "swsh5-10": [
+      "Unimplemented attack: Devour"
+    ],
+    "swsh5-16": [
+      "Unimplemented attack: Nature's Judgment"
+    ],
+    "swsh5-18": [
+      "Unimplemented attack: Sour Spit"
+    ],
+    "swsh5-19": [
+      "Unimplemented attack: G-Max Rolling"
+    ],
+    "swsh5-30": [
+      "Unimplemented Ability: Overheater"
+    ],
+    "swsh5-33": [
+      "Unimplemented Ability: Deep Sea King"
+    ],
+    "swsh5-35": [
+      "Unimplemented attack: Ball Juggling"
+    ],
+    "swsh5-40": [
+      "Unimplemented attack: Swirling Slice",
+      "Unimplemented Ability: Emperor's Eyes"
+    ],
+    "swsh5-42": [
+      "Unimplemented attack: Sediment Sink"
+    ],
+    "swsh5-48": [
+      "Unimplemented attack: Electrostep"
+    ],
+    "swsh5-52": [
+      "Unimplemented Ability: Ball Search"
+    ],
+    "swsh5-53": [
+      "Unimplemented attack: Defiant Spark"
+    ],
+    "swsh5-58": [
+      "Unimplemented attack: Power Split"
+    ],
+    "swsh5-61": [
+      "Unimplemented Ability: Ear Moves"
+    ],
+    "swsh5-62": [
+      "Unimplemented attack: Jealous Eyes",
+      "Unimplemented Ability: Dummy Doll"
+    ],
+    "swsh5-65": [
+      "Unimplemented attack: Evomancy"
+    ],
+    "swsh5-67": [
+      "Unimplemented attack: Field Crush"
+    ],
+    "swsh5-82": [
+      "Unimplemented attack: Big Sand Cannon"
+    ],
+    "swsh5-96": [
+      "Unimplemented Ability: Single Strike Roar"
+    ],
+    "swsh5-102": [
+      "Unimplemented Ability: Metal Transfer"
+    ],
+    "swsh5-107": [
+      "Unimplemented attack: Full Metal Blade",
+      "Unimplemented Ability: Stance Change"
+    ],
+    "swsh5-108": [
+      "Unimplemented Ability: Stance Change"
+    ],
+    "swsh5-110": [
+      "Unimplemented Ability: Lustrous Body"
+    ],
+    "swsh5-114": [
+      "Unimplemented attack: Selickt"
+    ],
+    "swsh5-117": [
+      "Unimplemented attack: Double Dip Fangs"
+    ],
+    "swsh5-123": [
+      "Unimplemented Trainer effect"
+    ],
+    "swsh5-126": [
+      "Unimplemented Trainer effect"
+    ],
+    "swsh5-127": [
+      "Unimplemented Trainer effect"
+    ],
+    "swsh5-130": [
+      "Unimplemented Trainer effect"
+    ],
+    "swsh5-131": [
+      "Unimplemented attack: Matchless Maelstrom",
+      "Unimplemented Trainer effect"
+    ],
+    "swsh5-132": [
+      "Unimplemented Trainer effect"
+    ],
+    "swsh5-133": [
+      "Unimplemented Trainer effect"
+    ],
+    "swsh5-134": [
+      "Unimplemented Trainer effect"
+    ],
+    "swsh5-135": [
+      "Unimplemented Trainer effect"
+    ],
+    "swsh5-136": [
+      "Unimplemented Trainer effect"
+    ],
+    "swsh5-137": [
+      "Unimplemented Trainer effect"
+    ],
+    "swsh5-139": [
+      "Unimplemented Trainer effect"
+    ],
+    "swsh5-140": [
+      "Unimplemented Special Energy rules"
+    ],
+    "swsh5-141": [
+      "Unimplemented Special Energy rules"
+    ],
+    "swsh5-142": [
+      "Unimplemented Ability: Exciting Stage"
+    ],
+    "swsh5-143": [
+      "Unimplemented attack: Sour Spit"
+    ],
+    "swsh5-145": [
+      "Unimplemented attack: Swirling Slice",
+      "Unimplemented Ability: Emperor's Eyes"
+    ],
+    "swsh5-146": [
+      "Unimplemented attack: Swirling Slice",
+      "Unimplemented Ability: Emperor's Eyes"
+    ],
+    "swsh5-148": [
+      "Unimplemented attack: Jealous Eyes",
+      "Unimplemented Ability: Dummy Doll"
+    ],
+    "swsh5-157": [
+      "Unimplemented attack: Double Dip Fangs"
+    ],
+    "swsh5-159": [
+      "Unimplemented Trainer effect"
+    ],
+    "swsh5-161": [
+      "Unimplemented Trainer effect"
+    ],
+    "swsh5-162": [
+      "Unimplemented Trainer effect"
+    ],
+    "swsh5-163": [
+      "Unimplemented Trainer effect"
+    ],
+    "swsh5-164": [
+      "Unimplemented attack: G-Max Rolling"
+    ],
+    "swsh5-171": [
+      "Unimplemented Ability: Lustrous Body"
+    ],
+    "swsh5-173": [
+      "Unimplemented Trainer effect"
+    ],
+    "swsh5-175": [
+      "Unimplemented Trainer effect"
+    ],
+    "swsh5-176": [
+      "Unimplemented Trainer effect"
+    ],
+    "swsh5-177": [
+      "Unimplemented Trainer effect"
+    ],
+    "swsh5-179": [
+      "Unimplemented Ability: Single Strike Roar"
+    ],
+    "swsh5-180": [
+      "Unimplemented Trainer effect"
+    ],
+    "swsh5-182": [
+      "Unimplemented Special Energy rules"
+    ],
+    "swsh5-183": [
+      "Unimplemented Special Energy rules"
+    ]
+  },
+  "attacks": 234,
+  "abilities": 28,
+  "pokemonV": 28,
+  "pokemonVMAX": 14,
+  "pokemonGX": 0,
+  "gxAttackPrints": 0,
+  "energyPrints": 4,
+  "prismStarPrints": 0,
+  "sourceGitBlob": "41dbfbb564cdae9a8aca473b02589dcc18c8e351"
+}

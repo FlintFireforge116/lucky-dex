@@ -1,0 +1,15 @@
+{
+  "set": "swsh5",
+  "name": "Battle Styles",
+  "stage": "partial",
+  "release": "0.69.499",
+  "printedTotal": 183,
+  "attackPrints": 234,
+  "abilities": 28,
+  "pokemonV": 28,
+  "pokemonVMAX": 14,
+  "trainerPrints": 33,
+  "energyPrints": 4,
+  "pin": "41dbfbb564cdae9a8aca473b02589dcc18c8e351",
+  "variants": []
+}

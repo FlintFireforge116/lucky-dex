@@ -1972,6 +1972,7 @@
         if(ability.name==='Blinking Lights'&&source.cardId==='sm12-72'&&(!foe.deck.length||(side==='opponent'&&source.sm12InspectedTop===foe.deck[0].uid)))return;
         const used=(s.abilityUsed||{})[s.swsh45TransformedTurns?.[source.uid]===s.turnCount?source.uid+':name:'+ability.name:source.uid+':'+abilityIndex];if(ability.oncePerTurn!==false&&used===s.turnCount)return;
         if(ability.lentalSharedOnce==='scavenge'&&s.lentalScavengeUsedTurn===s.turnCount)return;
+        if(ability.sharedOncePerTurn&&s.sharedAbilityUsed?.[ability.sharedOncePerTurn]===s.turnCount)return;
         const base={type:'ability',cardId:source.cardId,abilityIndex,target:source===s.active?'active':'bench'};if(source!==s.active)base.benchIndex=Number(source.benchSlot);
         for(const target of effectChoices(ability.effect,effectContext(state,side,{},source))){const a={...base};if(target.target)a.effectTarget=target.target;if(target.benchIndex!=null)a.effectBenchIndex=target.benchIndex;actions.push(a);}
       });
@@ -3897,6 +3898,7 @@ const target=slotForTarget(s,action.target,action.benchIndex);if(card.id==='pl2-
       if(source.cardId==='ex5-16')s.ex5HealDanceUsedTurn=state.turnNumber;
       if(['ex5-23','ex5-25','ex5-26','ex5-30'].includes(source.cardId))s.ex5TemperamentalWeatherTurn=s.turnCount;
       if(ability.lentalSharedOnce==='scavenge')s.lentalScavengeUsedTurn=s.turnCount;
+      if(ability.sharedOncePerTurn)(s.sharedAbilityUsed||(s.sharedAbilityUsed={}))[ability.sharedOncePerTurn]=s.turnCount;
       if(ability.vstarPower)s.vstarPowerUsed=true;
       if(state.format==='classic'&&ability.printedPowerType==='power'&&
          pokemonOn(foe).filter(p=>data.cardById(p.cardId)?.isPokemonSP).length>=3&&
