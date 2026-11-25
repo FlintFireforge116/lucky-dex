@@ -130,3 +130,35 @@ for(const side of ['player','opponent']){
  test(side+' Eternal Zone Capture Energy offers only eligible Darkness Pokémon',()=>{const h=zoneFixture(side);try{darkBench(h,3);h.us.deck=[ref('swsh3-3','grass'),ref('swsh3-102','dark')];h.us.hand=[ref('swsh3-201','capture')];h.us.handEnergyUsed=false;use(h,'attachSpecial',x=>x.target==='active');assert.deepEqual(core.legalActions(h.s,side).filter(x=>!x.choiceSkip).map(x=>x.choiceCardId),['swsh3-102']);resolve(h);assert.equal(h.us.bench.length,4);assert.ok(h.us.deck.some(x=>x.uid==='grass'));}finally{h.done();}});
  test(side+' Eternal Zone generic revival does not consume an ineligible discard card',()=>{const h=zoneFixture(side);try{darkBench(h,3);core.legalActions(h.s,side);h.us.discard=[ref('swsh3-3','grass'),ref('swsh3-102','dark')];fx.applyEffect({type:'benchFromDiscard',side:'self',amount:1,filter:{kind:'pokemon',stage:'Basic'}},core.effectContext(h.s,side,{},h.us.active));assert.deepEqual(core.legalActions(h.s,side).filter(x=>!x.choiceSkip).map(x=>x.choiceCardId),['swsh3-102']);resolve(h);assert.equal(h.us.bench.length,4);assert.ok(h.us.discard.some(x=>x.uid==='grass'));}finally{h.done();}});
 }
+
+// Legacy candidate pools: verify both the choice and the physical source zone.
+for(const side of ['player','opponent']){
+ for(const rule of ['ex8:44:0','ex5:54:0','ex14:12:0','ex11:45:0','skyridge:callFriends']){
+  test(side+' Eternal Zone historical placement '+rule,()=>{const h=zoneFixture(side);try{
+   darkBench(h,3);core.legalActions(h.s,side);h.us.deck=[ref('swsh3-3','grass'),ref('swsh3-102','dark')];
+   fx.applyEffect({type:'neoRule',rule},core.effectContext(h.s,side,{},h.us.active));
+   assert.equal(h.s.phase,'effectChoice');assert.deepEqual(core.legalActions(h.s,side).filter(x=>!x.choiceSkip).map(x=>x.choiceCardId),['swsh3-102']);
+   resolve(h);assert.equal(h.us.bench.length,4);assert.ok(h.us.deck.some(x=>x.uid==='grass'));assert.ok(!h.us.deck.some(x=>x.uid==='dark'));
+  }finally{h.done();}});
+ }
+ test(side+' Eternal Zone Neo Destiny automatic revival keeps ineligible discard cards',()=>{const h=zoneFixture(side);try{
+  darkBench(h,3);core.legalActions(h.s,side);h.us.discard=[ref('swsh3-3','grass'),ref('swsh3-102','dark')];
+  fx.applyEffect({type:'neoRule',rule:'destiny:guidingFlame'},core.effectContext(h.s,side,{},h.us.active));
+  assert.equal(h.us.bench.length,4);assert.equal(h.us.bench.at(-1).uid,'dark');assert.deepEqual(h.us.discard.map(x=>x.uid),['grass']);
+ }finally{h.done();}});
+ test(side+' Eternal Zone does not restrict ordinary searches to hand',()=>{const h=zoneFixture(side);try{
+  darkBench(h,3);core.legalActions(h.s,side);h.us.deck=[ref('swsh3-3','grass'),ref('swsh3-102','dark')];
+  fx.applyEffect({type:'searchChosen',filter:{kind:'pokemon'},amount:1},core.effectContext(h.s,side,{},h.us.active));
+  assert.equal(h.s.phase,'effectChoice');assert.ok(core.legalActions(h.s,side).some(x=>x.choiceCardId==='swsh3-3'));choice(h,x=>x.choiceCardId==='swsh3-3');resolve(h);assert.ok(h.us.hand.some(x=>x.uid==='grass'));
+ }finally{h.done();}});
+ test(side+' Eternal Zone opponent-forced placement preserves the defending hand and picks legal Darkness only',()=>{const h=zoneFixture(side);try{
+  darkBench(h,3);core.legalActions(h.s,side);h.us.hand=[ref('swsh3-3','grass'),ref('swsh3-102','dark')];h.s.activeSide=h.foe;
+  fx.applyEffect({type:'neoRule',rule:'destiny:eerieHowl'},core.effectContext(h.s,h.foe,{},h.them.active));
+  assert.equal(h.us.active.uid,'dark');assert.deepEqual(h.us.hand.map(x=>x.uid),['grass']);assert.equal(h.us.bench.length,4);
+ }finally{h.done();}});
+ test(side+' Eternal Zone historical top-deck placement filters before choice',()=>{const h=zoneFixture(side);try{
+  darkBench(h,3);core.legalActions(h.s,side);h.us.deck=[ref('swsh3-3','grass'),ref('swsh3-102','dark')];
+  fx.applyEffect({type:'sm7Rule',rule:'sm12TopBench',left:1,window:2},core.effectContext(h.s,side,{},h.us.active));
+  assert.deepEqual(core.legalActions(h.s,side).filter(x=>!x.choiceSkip).map(x=>x.choiceCardId),['swsh3-102']);resolve(h);assert.equal(h.us.bench.length,4);assert.deepEqual(h.us.deck.map(x=>x.uid),['grass']);
+ }finally{h.done();}});
+}
