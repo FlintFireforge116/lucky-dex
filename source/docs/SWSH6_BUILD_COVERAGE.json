@@ -1,17 +1,7 @@
 {
   "printed": 233,
-  "battleReady": 230,
-  "gated": {
-    "swsh6-128": [
-      "Unimplemented Ability: Brazen Tail"
-    ],
-    "swsh6-152": [
-      "Unimplemented Trainer effect"
-    ],
-    "swsh6-228": [
-      "Unimplemented Trainer effect"
-    ]
-  },
+  "battleReady": 233,
+  "gated": {},
   "attacks": 251,
   "abilities": 44,
   "pokemonV": 41,

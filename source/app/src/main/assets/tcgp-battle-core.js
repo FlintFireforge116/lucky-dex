@@ -720,6 +720,12 @@
     if(state.format==='classic'&&event==='damagedByAttack'&&Number(meta.damage)>0&&onlySource===ss.active&&meta.source?.side!==side&&meta.attacker&&effects.effectiveTypes(state,side,onlySource,data.cardById).includes('Fire')&&activeToolsOf(state,onlySource).some(r=>data.cardById(r.cardId)?.effect?.rule==='swsh2BurningScarf')){
       effects.applyEffect({type:'status',target:'opponentActive',status:'burn'},{...effectContext(state,side,{},onlySource)});
     }
+    // Rugged Helmet queues the defending controller's choice before KO.
+    if(state.format==='classic'&&event==='damagedByAttack'&&Number(meta.damage)>0&&onlySource===ss.active&&meta.source?.side!==side&&meta.attacker){
+      for(const tool of activeToolsOf(state,onlySource).filter(r=>data.cardById(r.cardId)?.effect?.rule==='swsh6RuggedHelmet')){
+        (state.swsh1SnapTrapQueue||(state.swsh1SnapTrapQueue=[])).push({owner:side,sourceUid:onlySource.uid,attackerSide:meta.source.side,attackerUid:meta.attacker.uid,kind:'ruggedHelmet'});
+      }
+    }
     // Rocky Helmet (including secret print) activates on *attack damage* to
     // its Active holder. It does not trigger on poison, checkup or zero damage.
     if(state.format==='classic'&&event==='damagedByAttack'&&Number(meta.damage||0)>0&&onlySource===ss.active&&
@@ -2769,8 +2775,9 @@
     // but still resolves before removing either knocked-out Pokémon.
     while(state.phase==='battle'&&state.swsh1SnapTrapQueue?.length){
       const q=state.swsh1SnapTrapQueue.shift(),p=findSlotByUid(state,q.attackerSide,q.attackerUid),source=findSlotByUid(state,q.owner,q.sourceUid);if(!p)continue;
-      const opts=[...Object.entries(p.energy||{}).filter(([,n])=>Number(n)>0).map(([type])=>({type,label:type+' Energy'})),...(p.specialEnergy||[]).map(r=>({uid:r.uid,label:data.cardById(r.cardId)?.name||'Special Energy'}))];if(!opts.length)continue;
-      beginEffectChoice(state,q.owner,source,{kind:'option',side:'self',special:'swsh1SnapTrap',prompt:'Snap Trap: discard an Energy from the attacker',options:opts.map(x=>'Discard '+x.label),opts,attackerUid:q.attackerUid,attackerSide:q.attackerSide,koResume:resume,koCause:cause});return true;
+      const helmet=q.kind==='ruggedHelmet',basicIds={Fighting:'neo1-106',Fire:'neo1-107',Grass:'neo1-108',Lightning:'neo1-109',Psychic:'neo1-110',Water:'neo1-111',Darkness:'lental-basic-darkness',Metal:'lental-basic-metal',Fairy:'xy1-140'};
+      const opts=[...Object.entries(p.energy||{}).filter(([type,n])=>Number(n)>0&&(!helmet||basicIds[type])).map(([type])=>({type,cardId:basicIds[type],label:type+' Energy'})),...(p.specialEnergy||[]).map(r=>({uid:r.uid,label:data.cardById(r.cardId)?.name||'Special Energy'}))];if(!opts.length)continue;
+      beginEffectChoice(state,q.owner,source,{kind:'option',side:'self',special:helmet?'swsh6RuggedHelmet':'swsh1SnapTrap',prompt:helmet?'Rugged Helmet: return an Energy from the attacker to hand':'Snap Trap: discard an Energy from the attacker',options:opts.map(x=>(helmet?'Return ':'Discard ')+x.label),opts,attackerUid:q.attackerUid,attackerSide:q.attackerSide,koResume:resume,koCause:cause});return true;
     }
     let any=false;
     while(true){
@@ -3498,6 +3505,11 @@ const target=slotForTarget(s,action.target,action.benchIndex);if(card.id==='pl2-
         if(!pay||!energy||pay.uid===energy.uid||!target||!physicalHandEnergyTargetLegal(state,side,data.cardById(energy.cardId),target))throw new Error('Aurora Energy payment is no longer legal.');
         ss.discard.push(...ss.hand.splice(matched.choiceHandIndex,1));state.log.push({type:'auroraPayment',side,energyUid:energy.uid,paymentUid:pay.uid,cardId:pay.cardId});state.pendingChoice=null;state.choiceSide=null;state.phase='battle';
         return attachPhysicalHandEnergy(state,side,{handIndex:ss.hand.indexOf(energy),target:target===ss.active?'active':'bench',benchIndex:target.benchSlot});
+      }
+      if(pending.special==='swsh6RuggedHelmet'){
+        const p=findSlotByUid(state,pending.attackerSide,pending.attackerUid),board=state.sides[pending.attackerSide],pick=pending.opts?.[matched.choiceOption];state.pendingChoice=null;state.choiceSide=null;state.phase='battle';
+        if(p&&pick){if(pick.uid){const i=(p.specialEnergy||[]).findIndex(r=>r.uid===pick.uid);if(i>=0)board.hand.push(...p.specialEnergy.splice(i,1));}else if(pick.cardId&&Number(p.energy?.[pick.type])>0){p.energy[pick.type]--;board.hand.push({uid:'swsh6-helmet-'+state.turnNumber+'-'+p.uid+'-'+board.hand.length,cardId:pick.cardId,zoneGenerated:true});}state.log.push({type:'swsh6RuggedHelmet',side,attackerUid:p.uid,energy:pick.uid||pick.type});}
+        const paused=resolveKnockOut(state,pending.koResume,pending.koCause);if(!paused&&state.phase==='battle'){if(pending.koResume==='endTurn')endTurn(state);else if(pending.koResume==='advanceTurn')advanceTurn(state);else if(pending.koResume==='repeatAttack')finishRepeatAttack(state);}return state;
       }
       if(pending.special==='swsh1SnapTrap'){
         const p=findSlotByUid(state,pending.attackerSide,pending.attackerUid),source=findSlotByUid(state,side,pending.sourceUid),pick=pending.opts?.[matched.choiceOption];state.pendingChoice=null;state.choiceSide=null;state.phase='battle';

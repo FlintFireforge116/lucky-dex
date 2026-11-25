@@ -179,3 +179,7 @@ ab(88,passive(CR('ThrowingCoach')))
 at(103,'Ghostly Cries',CR('GhostlyCries'))
 at(111,'Seismic Rift',seq(E('selfDamage',amount=30),E('benchDamage',side='self',all=True,amount=30)))
 tr(149,'Supporter',CR('Peonia'))
+
+# Stage 6: Energy-only protection and pre-KO Tool reaction.
+ab(128,passive(CR('BrazenTail')))
+tr(152,'Tool',CR('RuggedHelmet'))
