@@ -578,7 +578,7 @@
       }
       if(rule==='swsh3Breeder'&&pending.effect.amazingBloom||rule==='sm12HandAttach'&&pending.effect.healAll)return legal.find(x=>!x.choiceSkip)||legal[0];
       if(rule==='sm9SearchAttach'&&slots(state.sides[side]).find(p=>p.uid===pending.sourceUid)?.cardId==='swsh4-46'&&pending.effect.stage==='attach')return legal.find(x=>x.choiceTarget==='active')||legal.find(x=>!x.choiceSkip&&x.choiceBenchIndex!==slots(state.sides[side]).find(p=>p.uid===pending.sourceUid)?.benchSlot)||legal[0];
-      if(['swsh4CaraLiss','swsh4Nessa','swsh4Cheese','swsh4Devolution','swsh35Adornment','sm9TopAttach','sm9SearchAttach','sm9DanceAncients','sm9NineTemptations','sm9AdventurousAppetite'].includes(rule))return legal.find(x=>!x.choiceSkip)||legal[0];
+      if(['swsh4CastOffShell','swsh4CaraLiss','swsh4Nessa','swsh4Cheese','swsh4Devolution','swsh35Adornment','sm9TopAttach','sm9SearchAttach','sm9DanceAncients','sm9NineTemptations','sm9AdventurousAppetite'].includes(rule))return legal.find(x=>!x.choiceSkip)||legal[0];
       if(pending.special==='sm7WishPrize')return legal.find(a=>a.choiceOption===1)||legal[0];
       if(pending.special==='sm7Grounding')return legal.find(a=>!a.choiceSkip)||legal[0];
       if(pending.special==='sm7BeforeAttack'){

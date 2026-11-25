@@ -895,7 +895,7 @@ function validateDeck(ids,options){
  for(const [name,count] of byName){if(count>4&&!['Arceus','Arceus LV.X'].includes(name))errors.push(`${name} exceeds the four-copy limit across all prints (${count}).`);if(name.startsWith('Shining ')&&count>1)errors.push(`${name} is limited to one card per deck.`);if(name==='Miracle Energy'&&count>1)errors.push('Miracle Energy is limited to one copy per deck.');if(count>1&&deck.some(id=>{const c=cardById(id);return c?.prismStar&&classicCardName(c.name)===name;}))errors.push(`${name} is a Prism Star card: only one copy across all prints.`);}
  if(deck.filter(id=>cardById(id)?.aceSpec).length>1)errors.push('Only one ACE SPEC card is permitted per Classic deck, across all prints.');
  if(deck.filter(id=>cardById(id)?.pokemonStar).length>1)errors.push('Only one Pokémon ★ is permitted per Classic deck.');
- if(!deck.some(id=>{const c=cardById(id);return c?.kind==='pokemon'&&c.stage==='Basic'&&c.battleEnabled;}))errors.push('Classic TCG decks require at least one battle-ready Basic Pokémon.');
+ if(!deck.some(id=>{const c=cardById(id);return c?.kind==='pokemon'&&c.stage==='Basic'&&c.battleEnabled&&c.id!=='swsh4-66';}))errors.push('Classic TCG decks require at least one battle-ready Basic Pokémon.');
  if(owned){const map=new Map(projectOwnedCards(owned).map(row=>[row.gameplayId,row.quantity]));for(const [id,count] of byId)if(count>Number(map.get(id)||0))errors.push(`Not enough owned copies of ${cardById(id)?.name||id}: need ${count}, own ${Number(map.get(id)||0)}.`);}
  return {ok:errors.length===0,errors};
 }

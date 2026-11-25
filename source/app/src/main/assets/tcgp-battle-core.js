@@ -108,7 +108,8 @@
       !effects.abilitiesSuppressed(state,side,p,data.cardById)))return false;
     return slots.every(p=>effects.effectiveTypes(state,side,p,data.cardById).includes('Darkness'));
   }
-  function eternalZoneCanPlace(state,side,cardId){
+  function eternalZoneCanPlace(state,side,cardId,castOff=false){
+    if(cardId==='swsh4-66'&&!castOff)return false;
     if(!eternalZoneActive(state,side))return true;
     const card=data.cardById(cardId);
     return card?.kind==='pokemon'&&(card.types||[card.subtype]).includes('Darkness');
@@ -137,7 +138,7 @@
 
   function isBasic(ref){
     const card = data.cardById(ref && ref.cardId);
-    return !!(card && card.kind === 'pokemon' && card.stage === 'Basic');
+    return !!(card && card.kind === 'pokemon' && card.stage === 'Basic' && card.id!=='swsh4-66');
   }
 
   // Steam Siege Talonflame's Gale Wings permits ONLY the opening Active
@@ -235,7 +236,7 @@
     if (playerDeck.length !== rules.deckSize || opponentDeck.length !== rules.deckSize) throw new Error(`${format==='classic'?'Classic TCG':'Pocket'} battles require ${rules.deckSize}-card decks.`);
     if(format==='classic'&&[playerDeck,opponentDeck].some(d=>d.filter(id=>id==='SNAPFLORIO-029').length>1))throw new Error('Shaymin Prism Star: at most one copy per deck.');
     if(format==='classic'){for(const deck of [playerDeck,opponentDeck]){const result=data.CLASSIC?.validateDeck?.(deck);if(!result?.ok)throw new Error(`Illegal Classic TCG deck: ${(result?.errors||['Classic card data is unavailable.'])[0]}`);}}
-    if([playerDeck,opponentDeck].some(deck=>!deck.some(id=>{const c=data.cardById(id);return c?.kind==='pokemon'&&c.stage==='Basic';})))throw new Error('Each deck requires at least one Basic Pokémon.');
+    if([playerDeck,opponentDeck].some(deck=>!deck.some(id=>{const c=data.cardById(id);return c?.kind==='pokemon'&&c.stage==='Basic'&&c.id!=='swsh4-66';})))throw new Error('Each deck requires at least one Basic Pokémon.');
     const firstSide = opts.firstSide === 'opponent' ? 'opponent' : 'player';
     const manualPlayerSetup = !!opts.manualPlayerSetup;
     const state = {
@@ -541,7 +542,7 @@
         return beginEffectChoice(state,side,attacker||state.sides[side].active,controlled);
       }
       return beginEffectChoice(state,side,attacker||state.sides[side].active,{...spec,trainerRef:action?.trainerRef||spec.trainerRef||null});
-    },placeActiveDoll:ref=>{const ss=state.sides[side],i=ss.hand.indexOf(ref);if(ss.active||i<0||!data.cardById(ref.cardId)?.effect?.sm12Doll||!eternalZoneCanPlace(state,side,ref.cardId))return false;ss.hand.splice(i,1);ss.active=makePokemonSlot(ref.cardId,ss.turnCount,ref.uid);return true;},queuePrize:(which,amount=1)=>{const q=state.pendingPrizeClaims=state.pendingPrizeClaims||[];const owner=state.sides[which];if(owner?.prizes?.length)q.push({side:which,remaining:Math.min(Number(amount||1),owner.prizes.length)});},canPutInPlay:(ss,ref)=>eternalZoneCanPlace(state,ss===state.sides.player?'player':'opponent',ref?.cardId),benchCard:(ss,ref)=>{const slot=emptyBenchSlots(ss)[0];if(slot==null||!eternalZoneCanPlace(state,ss===state.sides.player?'player':'opponent',ref?.cardId))return null;const placed=placeOnBench(ss,makePokemonSlot(ref.cardId,ss.turnCount,ref.uid),slot),targetSide=ss===state.sides.player?'player':'opponent';triggerAbilities(state,'benched',targetSide,placed,{fromDeck:true});return slot;},onEnergyAttached:(target,energyType,amount,sourceMeta)=>{if(state.format==='classic'&&energyType==='Water'&&['ex7-26','ex7-81'].includes(target?.cardId)){target.conditions={};target.damage=Math.max(0,Number(target.damage||0)-(target.cardId==='ex7-26'?20:10));}const targetSide=pokemonOn(state.sides.player).includes(target)?'player':'opponent';
+    },placeActiveDoll:ref=>{const ss=state.sides[side],i=ss.hand.indexOf(ref);if(ss.active||i<0||!data.cardById(ref.cardId)?.effect?.sm12Doll||!eternalZoneCanPlace(state,side,ref.cardId))return false;ss.hand.splice(i,1);ss.active=makePokemonSlot(ref.cardId,ss.turnCount,ref.uid);return true;},queuePrize:(which,amount=1)=>{const q=state.pendingPrizeClaims=state.pendingPrizeClaims||[];const owner=state.sides[which];if(owner?.prizes?.length)q.push({side:which,remaining:Math.min(Number(amount||1),owner.prizes.length)});},canCastOffShell:ref=>['swsh4-14','bw6-11'].includes(attacker?.cardId)&&pokemonOn(state.sides[side]).includes(attacker)&&!effects.abilitiesSuppressed(state,side,attacker,data.cardById)&&emptyBenchSlots(state.sides[side]).length>0&&state.sides[side].deck.includes(ref)&&data.cardById(ref?.cardId)?.name==='Shedinja'&&data.cardById(ref.cardId)?.battleEnabled&&eternalZoneCanPlace(state,side,ref.cardId,true),castOffShell:(ref)=>{const ss=state.sides[side],source=attacker,idx=emptyBenchSlots(ss)[0];if(!['swsh4-14','bw6-11'].includes(source?.cardId)||!pokemonOn(ss).includes(source)||effects.abilitiesSuppressed(state,side,source,data.cardById)||idx==null||!ss.deck.includes(ref)||data.cardById(ref?.cardId)?.name!=='Shedinja'||!data.cardById(ref.cardId)?.battleEnabled||!eternalZoneCanPlace(state,side,ref.cardId,true))return false;ss.deck.splice(ss.deck.indexOf(ref),1);const placed=placeOnBench(ss,makePokemonSlot(ref.cardId,ss.turnCount,ref.uid),idx);triggerAbilities(state,'benched',side,placed,{fromDeck:true});shuffle(state,ss.deck);state.log.push({type:'swsh4CastOffShell',side,cardId:ref.cardId});return true;},canPutInPlay:(ss,ref)=>eternalZoneCanPlace(state,ss===state.sides.player?'player':'opponent',ref?.cardId),benchCard:(ss,ref)=>{const slot=emptyBenchSlots(ss)[0];if(slot==null||!eternalZoneCanPlace(state,ss===state.sides.player?'player':'opponent',ref?.cardId))return null;const placed=placeOnBench(ss,makePokemonSlot(ref.cardId,ss.turnCount,ref.uid),slot),targetSide=ss===state.sides.player?'player':'opponent';triggerAbilities(state,'benched',targetSide,placed,{fromDeck:true});return slot;},onEnergyAttached:(target,energyType,amount,sourceMeta)=>{if(state.format==='classic'&&energyType==='Water'&&['ex7-26','ex7-81'].includes(target?.cardId)){target.conditions={};target.damage=Math.max(0,Number(target.damage||0)-(target.cardId==='ex7-26'?20:10));}const targetSide=pokemonOn(state.sides.player).includes(target)?'player':'opponent';
       if(state.format==='classic'&&sourceMeta?.fromHand&&target?.cardId==='sm2-114'&&state.sides[targetSide]?.active===target&&
          !effects.abilitiesSuppressed(state,targetSide,target,data.cardById))target.conditions={...(target.conditions||{}),sleep:true};
       for(let i=0;i<Number(amount||1);i++){

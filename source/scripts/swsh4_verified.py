@@ -145,3 +145,8 @@ at(63,'Mini-Metronome',E('copyAttack',source='opponentActive',swsh2Copy=True,sm1
 
 # v492: live Supporter replacement, shared legality and actual physical card bookkeeping.
 ab(12,passive(E('sm7Rule',rule='swsh4ShiftySubstitution')))
+
+# v493: exact-print Cast-off Shell and exclusive placement, plus protected counter placement.
+ab(14,trig('evolved',VV('CastOffShell'),fromHandOnly=True))
+ab(66,passive(VV('ShellSurvival')))
+at(66,'Life Squeeze',VV('LifeSqueeze'))

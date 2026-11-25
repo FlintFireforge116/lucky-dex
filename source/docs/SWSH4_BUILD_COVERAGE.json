@@ -1,14 +1,7 @@
 {
   "printed": 203,
-  "battleReady": 200,
+  "battleReady": 202,
   "gated": {
-    "swsh4-14": [
-      "Unimplemented Ability: Cast-off Shell"
-    ],
-    "swsh4-66": [
-      "Unimplemented attack: Life Squeeze",
-      "Unimplemented Ability: Shell Survival"
-    ],
     "swsh4-71": [
       "Unimplemented Ability: Spectral Breach"
     ]

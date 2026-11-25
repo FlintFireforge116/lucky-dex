@@ -489,7 +489,7 @@ function rescueBW10Deck(rows,options={}){
 }
 function buildDeck(rows,options={}){
  const rarityFocus=RARITY_FOCUS.some(r=>r.id===options.rarityFocus)?options.rarityFocus:'any',basicOnly=options.basicOnly===true,theme=synergy.THEMES.some(t=>t.id===options.theme)?options.theme:'any';
- const style=options.style==='random'?'random':'competitive',owned=ownedMap(rows),allowedSets=(options.sets||SET_IDS).filter(s=>SET_IDS.includes(s)),scope=allowedSets.length?allowedSets:SET_IDS,pool=classic.CARDS.filter(c=>allowedInSetPool(c,scope)&&c.battleEnabled&&c.deckEligible!==false&&Number(owned.get(c.id)||0)>0),pokemonPool=pool.filter(c=>c.kind==='pokemon'),evolutionPool=pool.filter(c=>c.kind==='pokemon'||isEvolutionFossil(c));
+ const style=options.style==='random'?'random':'competitive',owned=ownedMap(rows),allowedSets=(options.sets||SET_IDS).filter(s=>SET_IDS.includes(s)),scope=allowedSets.length?allowedSets:SET_IDS,pool=classic.CARDS.filter(c=>allowedInSetPool(c,scope)&&c.battleEnabled&&c.deckEligible!==false&&c.id!=='swsh4-66'&&Number(owned.get(c.id)||0)>0),pokemonPool=pool.filter(c=>c.kind==='pokemon'),evolutionPool=pool.filter(c=>c.kind==='pokemon'||isEvolutionFossil(c));
  indexEvolutionPool(evolutionPool);
  if([...pool].reduce((sum,c)=>sum+Math.min(c.setId==='pl4'&&(/^AR[1-9]$/.test(String(c.number))||['94','95','96'].includes(String(c.number)))?30:4,owned.get(c.id)||0),0)<30)return fail('Not enough owned battle-ready Classic card copies to build a 30-card deck.');
  if(!pokemonPool.some(c=>c.stage==='Basic'))return fail('No owned battle-ready Basic Pokémon are available.');
@@ -1678,6 +1678,12 @@ function buildDeck(rows,options={}){
  if(orphanFossilSupport)return fail(`${orphanFossilSupport.name} was included without a Fossil evolution line in this deck.`);
  if(cards.includes('dp6-143')&&!['dp6-140','dp6-146'].every(id=>cards.includes(id)))
    return fail('Mesprit LV.X Supreme Blast requires complete Azelf LV.X and Uxie LV.X lines.');
+ // Shedinja cannot open or be normally Benched. Include a single copy only
+ // alongside its exact Cast-off Shell partner; its attack is Colorless.
+ if(!basicOnly&&scope.includes('swsh4')&&cards.includes('swsh4-14')&&!cards.includes('swsh4-66')&&Number(owned.get('swsh4-66')||0)>0){
+   const replace=cards.findIndex(id=>cards.filter(x=>x===id).length>1&&classic.cardById(id)?.trainerType==='Item'&&!isEvolutionFossil(classic.cardById(id))&&!isFossilSupport(classic.cardById(id)));
+   if(replace>=0)cards[replace]='swsh4-66';
+ }
  const legal=decks.validateDraft(cards,rows,{requireFull:true});if(!legal.ok)return {ok:false,cards,energyTypes:selectedTypes,errors:legal.errors,warnings:[],strategy:''};
  const analysis=decks.analyzeDeck(cards),conditionalDual=requestedEnergy.length===2&&requestedEnergy.every(type=>conditionalAttackTypes(main).includes(type)),
   energyTypes=(main.pokemonEx&&main.stage==='Stage 2')||stage2Beneficiary||conditionalPayoffTypes.some(t=>selectedTypes.includes(t))||requestedEnergy.length===1||conditionalDual||lineEnergy.length>=2?selectedTypes.slice(0,maxEnergyTypes):(allowMixedEnergy&&requestedEnergy.length===2?requestedEnergy:neededTypes().length?analysis.recommendedEnergyTypes.slice(0,2):selectedTypes.slice(0,maxEnergyTypes));
