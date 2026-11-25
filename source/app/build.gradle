@@ -8,8 +8,8 @@ android {
         applicationId 'com.example.luckydex'
         minSdk 26
         targetSdk 35
-        versionCode 7495
-        versionName '0.69.495'
+        versionCode 7496
+        versionName '0.69.496'
     }
 
     signingConfigs {
@@ -1066,7 +1066,7 @@ tasks.matching { it.name == 'preBuild' || (it.name.startsWith('merge') && it.nam
     dependsOn tasks.named('auditSM5ForApk')
 }
 
-// v0.69.495 Forbidden Light SM6: SHA-pinned 150-print full-set source and audit.
+// v0.69.496 Forbidden Light SM6: SHA-pinned 150-print full-set source and audit.
 tasks.register('preflightSM6ContractForApk', Exec) {
     dependsOn tasks.named('auditSM5ForApk')
     workingDir rootProject.projectDir
@@ -1383,4 +1383,42 @@ tasks.register('auditSWSH4ForApk', Exec) {
 }
 tasks.matching { it.name == 'preBuild' || (it.name.startsWith('merge') && it.name.endsWith('Assets')) }.configureEach {
     dependsOn tasks.named('auditSWSH4ForApk')
+}
+
+tasks.register('preflightSWSH45ContractForApk', Exec) {
+    dependsOn tasks.named('auditSWSH4ForApk')
+    workingDir rootProject.projectDir
+    commandLine (System.getenv('LUCKYDEX_PYTHON') ?: 'python3'), 'scripts/preflight-swsh45-release.py'
+}
+tasks.register('generateSWSH45ForApk', Exec) {
+    dependsOn tasks.named('preflightSWSH45ContractForApk')
+    workingDir rootProject.projectDir
+    commandLine (System.getenv('LUCKYDEX_PYTHON') ?: 'python3'), 'scripts/build-swsh45.py'
+}
+tasks.register('auditSWSH45ForApk', Exec) {
+    dependsOn tasks.named('generateSWSH45ForApk')
+    workingDir rootProject.projectDir
+    commandLine 'node', '--test', 'tests/v07496-shining-fates-integration.test.cjs', 'tests/v07496-shining-fates-outcomes.test.cjs'
+}
+tasks.matching { it.name == 'preBuild' || (it.name.startsWith('merge') && it.name.endsWith('Assets')) }.configureEach {
+    dependsOn tasks.named('auditSWSH45ForApk')
+}
+
+tasks.register('preflightSWSH45SVContractForApk', Exec) {
+    dependsOn tasks.named('auditSWSH45ForApk')
+    workingDir rootProject.projectDir
+    commandLine (System.getenv('LUCKYDEX_PYTHON') ?: 'python3'), 'scripts/preflight-swsh45sv-release.py'
+}
+tasks.register('generateSWSH45SVForApk', Exec) {
+    dependsOn tasks.named('preflightSWSH45SVContractForApk')
+    workingDir rootProject.projectDir
+    commandLine (System.getenv('LUCKYDEX_PYTHON') ?: 'python3'), 'scripts/build-swsh45sv.py'
+}
+tasks.register('auditSWSH45SVForApk', Exec) {
+    dependsOn tasks.named('generateSWSH45SVForApk')
+    workingDir rootProject.projectDir
+    commandLine 'node', '--test', 'tests/v07496-shining-fates-vault.test.cjs'
+}
+tasks.matching { it.name == 'preBuild' || (it.name.startsWith('merge') && it.name.endsWith('Assets')) }.configureEach {
+    dependsOn tasks.named('auditSWSH45SVForApk')
 }

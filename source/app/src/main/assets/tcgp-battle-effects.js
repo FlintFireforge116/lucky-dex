@@ -29427,9 +29427,9 @@ if(r==='lastResort')return ss.hand.length===0?[{}]:[];if(r==='surgeSwap')return 
   }
   function abilitiesSuppressed(state,side,slot,cardById,zone='play'){
     if(state?.format==='classic'&&slot&&awakeningSuppresses(state,side,slot,cardById))return true;
-    if(zone==='play'&&state?.format==='classic'&&slot&&slot.cardId!=='swsh2-113'&&(cardById(slot.cardId)?.abilities||[]).some(a=>a.printedPowerType==='ability')){
+    if(zone==='play'&&state?.format==='classic'&&slot&&!['swsh2-113','swsh45-42','swsh45sv-SV077'].includes(slot.cardId)&&(cardById(slot.cardId)?.abilities||[]).some(a=>a.printedPowerType==='ability')){
       const foe=side==='player'?'opponent':'player',gas=state.sides[foe]?.active;
-      if(gas?.cardId==='swsh2-113'&&!abilitiesSuppressed(state,foe,gas,cardById))return true;
+      if(['swsh2-113','swsh45-42','swsh45sv-SV077'].includes(gas?.cardId)&&!abilitiesSuppressed(state,foe,gas,cardById))return true;
     }
     if(state?.format==='classic'&&Number(slot?.damage||0)>0&&cardById(slot?.cardId)?.pokemonGX&&['player','opponent'].some(w=>pokemonOn(state.sides[w]).some(p=>p.cardId==='sm12-97'&&!abilitiesSuppressed(state,w,p,cardById))))return true;
     if(state?.format==='classic'&&slot&&(Number(slot.sm10AbilityLockUntil??-1)>=Number(state.turnNumber)||activeStadium(state)?.cardId==='sm10-183'&&matchesFilter(cardById(slot.cardId),{isExOrGX:true})))return true;
@@ -30701,9 +30701,9 @@ if(r==='lastResort')return ss.hand.length===0?[{}]:[];if(r==='surgeSwap')return 
   function isLocked(state,slot,action,attackName){if(action==='retreat'&&slot?.swsh1Octolock&&state.sides[slot.swsh1Octolock.sourceSide]?.active?.uid===slot.swsh1Octolock.sourceUid)return true;return (slot?.locks||[]).some(l=>l.action===action&&(l.expiresTurn==null||state.turnNumber<=l.expiresTurn)&&(!l.attackName||l.attackName===attackName));}
   // Evasion Jutsu is damage prevention, not attack-effect or counter prevention.
   function det1EvasionDamage(state,side,slot,amount,cardById,random){
-    if(state?.format!=='classic'||amount<=0)return amount;const afterimage=Number(slot?.sm10AfterimageUntil)===state.turnNumber; if(!afterimage&&(!['det1-9','swsh2-91'].includes(slot?.cardId)||!findPassiveRule(state,side,slot,'coinDamageGuard',cardById)))return amount;
+    if(state?.format!=='classic'||amount<=0)return amount;const afterimage=Number(slot?.sm10AfterimageUntil)===state.turnNumber; if(!afterimage&&(!['det1-9','swsh2-91','swsh45sv-SV062'].includes(slot?.cardId)||!findPassiveRule(state,side,slot,'coinDamageGuard',cardById)))return amount;
     const heads=coin({state,side,cardById,random,isAbility:true});
-    state.log.push({type:'coin',side,reason:afterimage?'Afterimage Strike':slot.cardId==='swsh2-91'?'Infiltrator':'Evasion Jutsu',heads:Number(heads),results:[heads]});
+    state.log.push({type:'coin',side,reason:afterimage?'Afterimage Strike':['swsh2-91','swsh45sv-SV062'].includes(slot.cardId)?'Infiltrator':'Evasion Jutsu',heads:Number(heads),results:[heads]});
     return heads?0:amount;
   }
   function applyAttackEffect(effect,context){return applyEffect(effect,context);}

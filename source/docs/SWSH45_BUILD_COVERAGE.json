@@ -1,0 +1,33 @@
+{
+  "printed": 73,
+  "battleReady": 67,
+  "gated": {
+    "swsh45-50": [
+      "Unimplemented Ability: V Transformation"
+    ],
+    "swsh45-51": [
+      "Required Pokémon V evolution parent is not yet enabled"
+    ],
+    "swsh45-57": [
+      "Unimplemented Trainer effect"
+    ],
+    "swsh45-61": [
+      "Unimplemented Trainer effect"
+    ],
+    "swsh45-62": [
+      "Unimplemented Trainer effect"
+    ],
+    "swsh45-65": [
+      "Unimplemented Trainer effect"
+    ]
+  },
+  "attacks": 81,
+  "abilities": 15,
+  "pokemonV": 9,
+  "pokemonVMAX": 7,
+  "pokemonGX": 0,
+  "gxAttackPrints": 0,
+  "energyPrints": 0,
+  "prismStarPrints": 0,
+  "sourceGitBlob": "c04fe1c9abcc2e15866506f2d933f382280f0401"
+}

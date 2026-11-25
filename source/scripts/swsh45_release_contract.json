@@ -1,0 +1,15 @@
+{
+  "set": "swsh45",
+  "name": "Shining Fates",
+  "stage": "partial",
+  "release": "0.69.496",
+  "printedTotal": 73,
+  "attackPrints": 81,
+  "abilities": 15,
+  "pokemonV": 9,
+  "pokemonVMAX": 7,
+  "trainerPrints": 15,
+  "energyPrints": 0,
+  "pin": "c04fe1c9abcc2e15866506f2d933f382280f0401",
+  "variants": []
+}

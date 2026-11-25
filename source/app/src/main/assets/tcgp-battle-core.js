@@ -104,7 +104,7 @@
   function eternalZoneActive(state,side){
     if(state?.format!=='classic')return false;
     const board=state.sides?.[side],slots=pokemonOn(board);
-    if(!slots.some(p=>['swsh3-117','swsh3-192'].includes(p.cardId)&&data.cardById(p.cardId)?.battleEnabled&&
+    if(!slots.some(p=>['swsh3-117','swsh3-192','swsh45sv-SV122'].includes(p.cardId)&&data.cardById(p.cardId)?.battleEnabled&&
       !effects.abilitiesSuppressed(state,side,p,data.cardById)))return false;
     return slots.every(p=>effects.effectiveTypes(state,side,p,data.cardById).includes('Darkness'));
   }
@@ -970,7 +970,7 @@
     const aqHeavy=state.format==='classic'&&slot?.cardId==='ecard2-23'&&Number(slot.energy?.Grass||0)>0?2:0;
     const aqMagnet=state.format==='classic'&&slot?.cardId==='ecard2-91'&&!effects.abilitiesSuppressed(state,side,slot,data.cardById)?state.sides[side].bench.filter(p=>data.cardById(p?.cardId)?.name==='Magnemite').length:0;
     return Math.max(0,printedRetreat+effects.modifierAmount(state,side,slot,'retreatCost',data.cardById)+stadiumCost+aqHeavy+(aqGluey?1:0)-aqMagnet-ex6Dodrio-2*effects.activeSpecialEnergy(state,slot,data.cardById).filter(ref=>ref.cardId==='xy4-112').length+Number(slot.dp2RetreatAdjustment||0)+bw7Jellicent-(bw9Glaceon?2:0));}
-  function attackCost(state,side,attack){const slot=state.sides[side].active;if(state.format==='classic'&&['swsh3-11','swsh3-145','swsh3-149'].includes(slot?.cardId)&&state.sides[side].sm10SupporterTurns?.['Bird Keeper']===state.turnNumber&&!effects.abilitiesSuppressed(state,side,slot,data.cardById))return '';if(state.format==='classic'&&state.sides[side].sm12SolarPowerTurn===state.sides[side].turnCount&&effects.effectiveTypes(state,side,slot,data.cardById).some(t=>t==='Grass'||t==='Fire'))return '';let cost=effects.attackCostOverride(state,side,slot,attack,data.cardById)??attack.cost??'';
+  function attackCost(state,side,attack){const slot=state.sides[side].active;if(state.format==='classic'&&['swsh3-11','swsh3-145','swsh3-149','swsh45-6','swsh45sv-SV001','swsh45sv-SV096'].includes(slot?.cardId)&&state.sides[side].sm10SupporterTurns?.['Bird Keeper']===state.turnNumber&&!effects.abilitiesSuppressed(state,side,slot,data.cardById))return '';if(state.format==='classic'&&state.sides[side].sm12SolarPowerTurn===state.sides[side].turnCount&&effects.effectiveTypes(state,side,slot,data.cardById).some(t=>t==='Grass'||t==='Fire'))return '';let cost=effects.attackCostOverride(state,side,slot,attack,data.cardById)??attack.cost??'';
     // Some older/imported prints and conditional overrides store costs as a
     // symbol array. Array.toString() inserts commas (e.g. [R,R,C] -> R,R,C),
     // which appear as phantom Energy icons and make legal moves unpayable.
@@ -4697,7 +4697,7 @@ const target=slotForTarget(s,action.target,action.benchIndex);if(card.id==='pl2-
     }
     if(state.format==='classic'&&state.turnNumber===turnOfAction&&state.phase==='battle'){
       const owner=state.activeSide,board=state.sides[owner],incoming=board.active;
-      if(incoming&&before[owner].uid!==incoming.uid&&before[owner].bench.has(incoming.uid)&&incoming.cardId==='swsh1-34'&&incoming.swsh1LiberoTurn!==turnOfAction&&!effects.abilitiesSuppressed(state,owner,incoming,data.cardById)&&(Number(board.energyDiscard?.Fire||0)>0||board.discard.some(x=>data.cardById(x.cardId)?.basicEnergy&&data.cardById(x.cardId)?.subtype==='Fire'))){
+      if(incoming&&before[owner].uid!==incoming.uid&&before[owner].bench.has(incoming.uid)&&['swsh1-34','swsh45sv-SV017'].includes(incoming.cardId)&&incoming.swsh1LiberoTurn!==turnOfAction&&!effects.abilitiesSuppressed(state,owner,incoming,data.cardById)&&(Number(board.energyDiscard?.Fire||0)>0||board.discard.some(x=>data.cardById(x.cardId)?.basicEnergy&&data.cardById(x.cardId)?.subtype==='Fire'))){
         incoming.swsh1LiberoTurn=turnOfAction;effects.applyEffect({type:'sm7Rule',rule:'sm12DiscardAttach',left:2,energyType:'Fire',sourceSelf:true,optional:true},{...effectContext(state,owner,{},incoming),isAbility:true});if(state.phase==='effectChoice'){state.pendingChoice.resume='ability';state.pendingChoice.isAbility=true;}
       }
       if(incoming&&before[owner].uid!==incoming.uid&&before[owner].bench.has(incoming.uid)&&['sm11-25','sm11-216','sm11-238','swsh4-174'].includes(incoming.cardId)&&incoming.sm11BurningRoadTurn!==turnOfAction&&!effects.abilitiesSuppressed(state,owner,incoming,data.cardById)&&board.bench.some(p=>Number(p.energy?.[incoming.cardId==='swsh4-174'?'Fighting':'Fire']||0)>0||(p.specialEnergy||[]).some(r=>effects.attachedSpecialProvidesType(r,incoming.cardId==='swsh4-174'?'Fighting':'Fire',p,data.cardById,state)))){

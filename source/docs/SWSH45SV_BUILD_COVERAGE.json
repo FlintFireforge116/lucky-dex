@@ -1,0 +1,21 @@
+{
+  "printed": 122,
+  "battleReady": 120,
+  "gated": {
+    "swsh45sv-SV118": [
+      "Unimplemented Ability: V Transformation"
+    ],
+    "swsh45sv-SV119": [
+      "Required Pokémon V evolution parent is not yet enabled"
+    ]
+  },
+  "attacks": 175,
+  "abilities": 39,
+  "pokemonV": 10,
+  "pokemonVMAX": 8,
+  "pokemonGX": 0,
+  "gxAttackPrints": 0,
+  "energyPrints": 0,
+  "prismStarPrints": 0,
+  "sourceGitBlob": "2109b7363a8736dc66cbbaa739ca98df98be7dfe"
+}
