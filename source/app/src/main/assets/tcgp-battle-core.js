@@ -1213,7 +1213,7 @@
   function effectChoices(effect,ctx){return effects.supportsEffect(effect)?effects.choicesForEffect(effect,ctx):[];}
 
   function energyCostLabel(cost){const names={...effects.ENERGY_CODE,C:'Colourless'},counts={};const symbols=Array.isArray(cost)?cost.join(''):String(cost||'');for(const c of symbols)counts[c]=(counts[c]||0)+1;return Object.entries(counts).map(([c,n])=>`${n} ${names[c]||c}`).join(' + ')||'No Energy';}
-  function attackHasRandom(effect){if(!effect||typeof effect!=='object')return false;if(['coinFlip','coinDamage','coinUntilTails'].includes(effect.type))return true;if(Array.isArray(effect.effects)&&effect.effects.some(attackHasRandom))return true;return ['heads','tails','effect'].some(key=>attackHasRandom(effect[key]));}
+  function attackHasRandom(effect){if(!effect||typeof effect!=='object')return false;if(effect.swsh4CoinCopy||['coinFlip','coinDamage','coinUntilTails'].includes(effect.type))return true;if(Array.isArray(effect.effects)&&effect.effects.some(attackHasRandom))return true;return ['heads','tails','effect'].some(key=>attackHasRandom(effect[key]));}
   function attackOptions(state,side){
     const slot=state?.sides?.[side]?.active,current=data.cardById(slot?.cardId);if(!slot||!current)return[];
     const out=(current.attacks||[]).map((attack,attackIndex)=>({cardId:current.id,attackIndex,attack,previous:false}));
@@ -1504,7 +1504,8 @@
       const empty=emptyBenchSlots(s);
       s.hand.forEach((ref,handIndex)=>{
         const card = data.cardById(ref.cardId);
-        if (card && card.kind === 'pokemon' && card.stage === 'Basic' && card.battleEnabled&&eternalZoneCanPlace(state,side,card.id)){
+        const elusive=state.format==='classic'&&card?.id==='swsh4-3'&&s.hand.length===1&&!effects.isActionLocked(state,side,'Ability',data.cardById)&&!effects.abilitiesSuppressed(state,side,ref,data.cardById,'hand');
+        if (card && card.kind === 'pokemon' && (card.stage === 'Basic'||elusive) && card.battleEnabled&&eternalZoneCanPlace(state,side,card.id)){
           empty.forEach(benchIndex=>actions.push({type:'bench',handIndex,cardId:card.id,benchIndex}));
         }
       });
@@ -3669,6 +3670,10 @@ const target=slotForTarget(s,action.target,action.benchIndex);if(card.id==='pl2-
       const [ref] = s.hand.splice(matched.handIndex,1);
       const placed=placeOnBench(s,makePokemonSlot(ref.cardId,s.turnCount,ref.uid),matched.benchIndex);
       state.log.push({type:'bench',side,cardId:ref.cardId,benchIndex:matched.benchIndex});
+      if(state.format==='classic'&&ref.cardId==='swsh4-3'){
+        state.log.push({type:'ability',side,cardId:ref.cardId,ability:'Elusive Master',fromHand:true});
+        for(let i=0;i<3;i++)drawCard(s);
+      }
       if(state.format==='classic'&&activeStadium(state)?.cardId==='ex4-83'&&data.cardById(placed.cardId)?.stage==='Basic'&&!data.cardById(placed.cardId)?.name?.startsWith("Team Magma's")){placed.damage=Number(placed.damage||0)+10;state.log.push({type:'ex4MagmaHideout',side,cardId:placed.cardId,damage:10});}
       if(activeStadium(state)?.cardId==='SNAPFLORIO-106'&&data.cardById(placed.cardId)?.stage==='Basic'){
         placed.damage=Number(placed.damage||0)+20;
@@ -4135,6 +4140,11 @@ const target=slotForTarget(s,action.target,action.benchIndex);if(card.id==='pl2-
         cardUids:(s.active.specialEnergy||[]).filter(r=>r.cardId==='xy8-151').map(r=>r.uid)};
       // A copied attack can require the same staged pre-damage payment as the original.
       // Preserve the declaring attack and chosen copy; only the payment rule is borrowed.
+      if(attack.effect?.swsh4CoinCopy){
+        matched.swsh4CopyHeads=effects.coin({...effectContext(state,side,matched),isAttack:true});
+        state.log.push({type:'coin',side,reason:'Mini-Metronome',heads:matched.swsh4CopyHeads,results:[matched.swsh4CopyHeads]});
+        if(!matched.swsh4CopyHeads)return finishDeclaredAttack(state,side,matched);
+      }
       const copiedSource=attack.effect?.type==='copyAttack'&&(attack.name==='Nightcap'||attack.effect.det1Copy||attack.effect.sm12Copy)?slotForTarget(foe,matched.choiceTarget,matched.choiceBenchIndex):null;
       const copiedAttack=attack.effect?.source==='previousEvolution'&&(s.active.stack||[]).slice(0,-1).includes(matched.choiceCardId)?data.cardById(matched.choiceCardId)?.attacks?.[matched.choiceAttackIndex]:attack.effect?.type==='sm2Rule'&&attack.effect.rule==='copycat'&&foe.lastAttackTurn===state.turnNumber-1?data.cardById(foe.lastAttackCardId)?.attacks?.find(a=>a.name===foe.lastAttackName&&!a.name.endsWith('-GX')):copiedSource&&data.cardById(copiedSource.cardId)?.attacks?.[matched.choiceAttackIndex];
       if(attack.effect?.det1Copy)matched.det1CopiedCostPaid=!!copiedAttack&&effectContext(state,side).canPayCopiedCost(copiedAttack);
@@ -4602,7 +4612,7 @@ const target=slotForTarget(s,action.target,action.benchIndex);if(card.id==='pl2-
 
   function cloneState(state){return JSON.parse(JSON.stringify(state));}
   function restoreState(state,snapshot){for(const key of Object.keys(state))delete state[key];Object.assign(state,cloneState(snapshot));return state;}
-  function effectContainsCoin(effect){if(!effect||typeof effect!=='object')return false;const type=String(effect.type||'');if(type.startsWith('coin')||['allHeadsEffect','allHeadsBonus','attackCoinGate','coinAttackGate','coinAnyHeadsGate'].includes(type))return true;if(Array.isArray(effect.effects)&&effect.effects.some(effectContainsCoin))return true;if(effect.heads&&effectContainsCoin(effect.heads))return true;if(effect.tails&&effectContainsCoin(effect.tails))return true;if(effect.effect&&effectContainsCoin(effect.effect))return true;if(Array.isArray(effect.options)&&effect.options.some(x=>effectContainsCoin(x?.effect)))return true;return false;}
+  function effectContainsCoin(effect){if(!effect||typeof effect!=='object')return false;const type=String(effect.type||'');if(effect.swsh4CoinCopy||type.startsWith('coin')||['allHeadsEffect','allHeadsBonus','attackCoinGate','coinAttackGate','coinAnyHeadsGate'].includes(type))return true;if(Array.isArray(effect.effects)&&effect.effects.some(effectContainsCoin))return true;if(effect.heads&&effectContainsCoin(effect.heads))return true;if(effect.tails&&effectContainsCoin(effect.tails))return true;if(effect.effect&&effectContainsCoin(effect.effect))return true;if(Array.isArray(effect.options)&&effect.options.some(x=>effectContainsCoin(x?.effect)))return true;return false;}
   function rerollContext(state,side,action){
     if(!state||!action)return null;
     if(state.phase==='effectChoice'){

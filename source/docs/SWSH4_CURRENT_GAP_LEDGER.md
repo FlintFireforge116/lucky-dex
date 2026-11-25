@@ -1,6 +1,6 @@
 # SWSH4 — whole-set gap ledger
 
-Canonical prints: **203** | Playable: **194** | Gated: **9**
+Canonical prints: **203** | Playable: **199** | Gated: **4**
 Printed attacks: **269** (238 distinct full signatures) | Abilities: **29** (28 distinct signatures)
 Trainer rule signatures: **18** | Special Energy rule signatures: **4**
 Canonical Git blob: `182400b1d8f17a3f99a27dd00a060ad06ea98469`
@@ -10,27 +10,17 @@ Gated is determined by the validated generator output; do not infer it from test
 
 ## Blocker groups (implement shared handlers first)
 - **1 prints** — Unimplemented Ability: Cast-off Shell — swsh4-14
-- **1 prints** — Unimplemented Ability: Elusive Master — swsh4-3
-- **1 prints** — Unimplemented Ability: Incandescent Awakening — swsh4-26
 - **1 prints** — Unimplemented Ability: Shell Survival — swsh4-66
 - **1 prints** — Unimplemented Ability: Shifty Substitution — swsh4-12
 - **1 prints** — Unimplemented Ability: Spectral Breach — swsh4-71
-- **1 prints** — Unimplemented Ability: Thunderous Awakening — swsh4-47
-- **1 prints** — Unimplemented Ability: Torrential Awakening — swsh4-30
 - **1 prints** — Unimplemented attack: Life Squeeze — swsh4-66
-- **1 prints** — Unimplemented attack: Mini-Metronome — swsh4-63
 
 ## Every remaining gated print
 
 | Print | Card | Blocking reason(s) |
 |---|---|---|
-| `swsh4-3` | Beedrill | Unimplemented Ability: Elusive Master |
 | `swsh4-12` | Shiftry | Unimplemented Ability: Shifty Substitution |
 | `swsh4-14` | Ninjask | Unimplemented Ability: Cast-off Shell |
-| `swsh4-26` | Flareon | Unimplemented Ability: Incandescent Awakening |
-| `swsh4-30` | Vaporeon | Unimplemented Ability: Torrential Awakening |
-| `swsh4-47` | Jolteon | Unimplemented Ability: Thunderous Awakening |
-| `swsh4-63` | Clefairy | Unimplemented attack: Mini-Metronome |
 | `swsh4-66` | Shedinja | Unimplemented attack: Life Squeeze; Unimplemented Ability: Shell Survival |
 | `swsh4-71` | Dusknoir | Unimplemented Ability: Spectral Breach |
 

@@ -137,3 +137,8 @@ at(76,'Flying Fury',VV('FlyingFury'))
 ab(46,activated(seq(E('sm7Rule',rule='sm9SearchAttach',amount=2,energyTypes=['Lightning'],targetFilter={'subtype':'Lightning'}),E('knockOut',target='self')),benchOnly=True))
 ab(174,passive(VV('Spear')))
 tr(152,'Tool',E('modifier',stat='maxHp',amount=-100,scope='self',duration='whileInPlay',filter={'stage':'VMAX'}))
+
+# v491: direct-from-hand evolution placement, conditional suppression, and coin-gated copying.
+ab(3,passive(E('sm7Rule',rule='swsh4ElusiveMaster')))
+for no in [26,30,47]:ab(no,passive(E('sm7Rule',rule='swsh4Awakening')))
+at(63,'Mini-Metronome',E('copyAttack',source='opponentActive',swsh2Copy=True,sm12Copy=True,swsh4CoinCopy=True))

@@ -85,3 +85,39 @@ for(const side of ['player','opponent']){
  test(side+' Hero Medal modifies VMAX HP and rejects attachment at 100 remaining',()=>{const h=setup(side,'swsh4-44');try{const p=h.us.active;p.damage=210;h.us.hand=[ref('swsh4-152','medal')];assert.ok(!core.legalActions(h.s,side).some(a=>a.type==='trainer'&&a.cardId==='swsh4-152'&&a.target==='active'));p.damage=200;use(h,'trainer',a=>a.cardId==='swsh4-152'&&a.target==='active');assert.equal(core.maxHp(h.s,side,p),210);assert.equal(p.tool.uid,'medal');}finally{h.done();}});
  test(side+' Hero Medal reduces direct attack KO prize award only',()=>{const h=setup(side,'swsh4-82');try{h.them.active.cardId='swsh4-44';h.them.active.stack=['swsh4-43','swsh4-44'];h.them.active.tool=ref('swsh4-201','medal');h.them.active.damage=100;attack(h,'Amazing Sword');assert.equal(h.s.pendingPrizeClaims?.[0]?.remaining||h.us.prizesTaken,2);}finally{h.done();}});
 }
+
+// v491: last-card hand placement, conditional modern Ability suppression,
+// and a copied attack's coin gate before any staged Energy payment.
+for(const side of ['player','opponent']){
+ test(side+' Elusive Master benches the physical Beedrill only as last hand card',()=>{const h=setup(side,'swsh4-1');try{
+  h.us.hand=[ref('swsh4-3','bee'),ref('swsh4-4','other')];assert.ok(!core.legalActions(h.s,side).some(a=>a.type==='bench'&&a.cardId==='swsh4-3'));
+  h.us.hand.pop();const top=h.us.deck.slice(0,3).map(r=>r.uid);use(h,'bench',a=>a.cardId==='swsh4-3');assert.deepEqual(h.us.hand.map(r=>r.uid),top);const p=h.us.bench.find(p=>p.uid==='bee');assert.deepEqual(p.stack,['swsh4-3']);assert.equal(p.cardId,'swsh4-3');assert.ok(h.s.log.some(x=>x.ability==='Elusive Master'));
+ }finally{h.done();}});
+ test(side+' Elusive Master respects full Bench and Eternal Zone',()=>{const h=setup(side,'swsh4-1');try{
+  h.us.hand=[ref('swsh4-3','bee')];h.us.bench=Array.from({length:5},(_,i)=>Object.assign(slot('swsh4-1','full'+i),{benchSlot:i}));assert.ok(!core.legalActions(h.s,side).some(a=>a.type==='bench'&&a.cardId==='swsh4-3'));
+  h.us.active=slot('swsh3-117','et');h.us.bench=[Object.assign(slot('swsh3-104','dark'),{benchSlot:0})];assert.ok(core.eternalZoneActive(h.s,side));assert.ok(!core.legalActions(h.s,side).some(a=>a.type==='bench'&&a.cardId==='swsh4-3'));
+ }finally{h.done();}});
+ test(side+' Awakening requires an effective Memory Capsule and suppresses both boards',()=>{for(const [source,target] of [['swsh4-26','swsh3-13'],['swsh4-30','swsh4-25'],['swsh4-47','swsh3-39']]){const h=setup(side,source);try{
+  h.us.bench[0].cardId=target;h.them.active.cardId=target;
+  assert.equal(fx.abilitiesSuppressed(h.s,side,h.us.bench[0],data.cardById),false);h.us.active.tool=ref('swsh4-202','memory');
+  assert.equal(fx.abilitiesSuppressed(h.s,side,h.us.bench[0],data.cardById),true);assert.equal(fx.abilitiesSuppressed(h.s,h.foe,h.them.active,data.cardById),true);
+  h.us.active.abilitySuppressed={duration:'whileActive'};assert.equal(fx.abilitiesSuppressed(h.s,h.foe,h.them.active,data.cardById),false);delete h.us.active.abilitySuppressed;
+  h.s.stadium={cardId:'sm6-111',ownerSide:side,uid:'lab'};assert.equal(fx.abilitiesSuppressed(h.s,h.foe,h.them.active,data.cardById),false);
+ }finally{h.done();}}});
+ test(side+' Awakening chain restores Grass abilities when Flareon is suppressed',()=>{const h=setup(side,'swsh4-26');try{
+  h.us.active.tool=ref('swsh4-155','f');h.them.active.cardId='swsh3-13';h.us.bench[0].cardId='swsh4-30';h.us.bench[0].tool=ref('swsh4-155','v');assert.equal(fx.abilitiesSuppressed(h.s,h.foe,h.them.active,data.cardById),false);
+  h.them.bench[0].cardId='swsh4-47';h.them.bench[0].tool=ref('swsh4-155','j');assert.equal(fx.abilitiesSuppressed(h.s,h.foe,h.them.active,data.cardById),true);
+ }finally{h.done();}});
+ test(side+' Mini-Metronome heads copies Active attack without its printed Energy cost, tails does nothing',()=>{for(const heads of [true,false]){const h=setup(side,'swsh4-63');try{
+  h.us.active.energy={Colorless:2};h.them.active.cardId='swsh3-20';h.us.sm12WillTurn=h.s.turnNumber;h.us.sm12WillResult=heads;const a=use(h,'attack',a=>a.attackIndex===1&&a.choiceAttackIndex===0);assert.equal(a.choiceCardId,'swsh3-20');resolve(h);assert.equal(h.them.active.damage,heads?100:0);assert.equal(h.s.log.filter(x=>x.reason==='Mini-Metronome').length,1);
+ }finally{h.done();}}});
+ test(side+' Mini-Metronome tails never pays copied G-Max Whisk discard',()=>{const h=setup(side,'swsh4-63');try{
+  h.them.active.cardId='swsh35-23';h.us.active.energy={Colorless:2};h.us.bench[0].energy={Water:3};h.us.sm12WillTurn=h.s.turnNumber;h.us.sm12WillResult=false;use(h,'attack',a=>a.attackIndex===1&&a.choiceAttackIndex===1);assert.notEqual(h.s.phase,'effectChoice');assert.equal(h.us.active.energy.Colorless,2);assert.equal(h.us.bench[0].energy.Water,3);assert.equal(h.them.active.damage,0);
+ }finally{h.done();}});
+ test(side+' Mini-Metronome heads uses staged copied G-Max Whisk payment once',()=>{const h=setup(side,'swsh4-63');try{
+  h.them.active.cardId='swsh35-23';h.us.active.energy={Colorless:2};h.us.bench[0].energy={Water:3};h.us.sm12WillTurn=h.s.turnNumber;h.us.sm12WillResult=true;use(h,'attack',a=>a.attackIndex===1&&a.choiceAttackIndex===1);assert.equal(h.s.phase,'effectChoice');choice(h,a=>!a.choiceSkip);choice(h,a=>a.choiceSkip);assert.equal(h.them.active.damage,60);assert.equal(h.s.log.filter(x=>x.reason==='Mini-Metronome').length,1);
+ }finally{h.done();}});
+}
+for(const side of ['player','opponent']) test(side+' Elusive Master is a hand Ability, not a Gas-suppressed in-play Ability',()=>{const h=setup(side,'swsh4-1');try{
+ h.them.active.cardId='swsh2-113';h.us.hand=[ref('swsh4-3','bee')];assert.ok(core.legalActions(h.s,side).some(a=>a.type==='bench'&&a.cardId==='swsh4-3'));h.s.xy7HexManiacUntil=h.s.turnNumber;assert.ok(!core.legalActions(h.s,side).some(a=>a.type==='bench'&&a.cardId==='swsh4-3'));
+}finally{h.done();}});

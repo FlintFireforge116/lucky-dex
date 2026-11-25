@@ -1,27 +1,12 @@
 {
   "printed": 203,
-  "battleReady": 194,
+  "battleReady": 199,
   "gated": {
-    "swsh4-3": [
-      "Unimplemented Ability: Elusive Master"
-    ],
     "swsh4-12": [
       "Unimplemented Ability: Shifty Substitution"
     ],
     "swsh4-14": [
       "Unimplemented Ability: Cast-off Shell"
-    ],
-    "swsh4-26": [
-      "Unimplemented Ability: Incandescent Awakening"
-    ],
-    "swsh4-30": [
-      "Unimplemented Ability: Torrential Awakening"
-    ],
-    "swsh4-47": [
-      "Unimplemented Ability: Thunderous Awakening"
-    ],
-    "swsh4-63": [
-      "Unimplemented attack: Mini-Metronome"
     ],
     "swsh4-66": [
       "Unimplemented attack: Life Squeeze",
