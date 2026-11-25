@@ -1,6 +1,6 @@
 {
   "printed": 203,
-  "battleReady": 188,
+  "battleReady": 194,
   "gated": {
     "swsh4-3": [
       "Unimplemented Ability: Elusive Master"
@@ -17,15 +17,8 @@
     "swsh4-30": [
       "Unimplemented Ability: Torrential Awakening"
     ],
-    "swsh4-46": [
-      "Unimplemented Ability: Buzzap Generator"
-    ],
     "swsh4-47": [
       "Unimplemented Ability: Thunderous Awakening"
-    ],
-    "swsh4-59": [
-      "Unimplemented attack: Electrified Bite Mark",
-      "Unimplemented attack: Electro Sprinkler"
     ],
     "swsh4-63": [
       "Unimplemented attack: Mini-Metronome"
@@ -36,18 +29,6 @@
     ],
     "swsh4-71": [
       "Unimplemented Ability: Spectral Breach"
-    ],
-    "swsh4-76": [
-      "Unimplemented attack: Flying Fury"
-    ],
-    "swsh4-152": [
-      "Unimplemented Trainer effect"
-    ],
-    "swsh4-174": [
-      "Unimplemented Ability: Resolute Spear"
-    ],
-    "swsh4-201": [
-      "Unimplemented Trainer effect"
     ]
   },
   "attacks": 269,

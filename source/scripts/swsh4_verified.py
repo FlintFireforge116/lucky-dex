@@ -129,3 +129,11 @@ at(113,'Stealy Claws',VV('StealyClaws'))
 tr(160,'Tool',VV('TelescopicSight'))
 
 at(40,'Continuous Gulp Missile',VV('GulpMissile'))
+
+# v490 shared delayed attachment trap, choice payments, movement and Prize rules.
+at(59,'Electrified Bite Mark',VV('BiteMark'))
+at(59,'Electro Sprinkler',seq(E('selectedSelfBenchDamage',amount=30),E('multiTargetDamage',target='opponentBench',amount=30,count=1)))
+at(76,'Flying Fury',VV('FlyingFury'))
+ab(46,activated(seq(E('sm7Rule',rule='sm9SearchAttach',amount=2,energyTypes=['Lightning'],targetFilter={'subtype':'Lightning'}),E('knockOut',target='self')),benchOnly=True))
+ab(174,passive(VV('Spear')))
+tr(152,'Tool',E('modifier',stat='maxHp',amount=-100,scope='self',duration='whileInPlay',filter={'stage':'VMAX'}))

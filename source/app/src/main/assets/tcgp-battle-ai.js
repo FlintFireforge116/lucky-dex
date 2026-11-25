@@ -279,6 +279,7 @@
         const hit=target?effects.attackDamageWithState(state,side,state.sides[side].active,foeOf(side),target,60*n,data.cardById):0;
         return 200+Math.min(hit,remaining)-n*2+(hit>=remaining?100:0);
       }
+      if(attack?.effect?.rule==='swsh4FlyingFury')damage=10+40*slots(state.sides[side]).reduce((n,p)=>n+(p.tool?1:0)+(p.extraTools||[]).length,0);
       if(attack?.effect?.rule==='swsh35Whisk')damage=60*slots(state.sides[side]).reduce((n,p)=>n+attachedCount(p),0);
       if(attack?.effect?.rule==='swsh2MiningRush')damage=30*Number(action.effectSelection||0);
       if(attack?.effect?.rule==='swsh2SpiralJet'&&!action.effectSelection)damage=0;
@@ -378,6 +379,7 @@
       const source=slotFor(state.sides[side],action.target,action.benchIndex),card=data.cardById(source?.cardId),index=Number(action.abilityIndex||0),power=(card?.abilities||[])[index];
       // Powers remain freely repeatable for the human. The CPU may use them
       // once per turn so it cannot oscillate Energy/Damage forever.
+      if(source?.cardId==='swsh4-46'){const board=state.sides[side],enemy=state.sides[foeOf(side)];if(enemy.prizes.length<=1||!board.active||board.active===source||!effects.effectiveTypes(state,side,board.active,data.cardById).includes('Lightning')||attachedCount(board.active)>=3||!(board.energySupply||[]).includes('Lightning')&&!board.deck.some(r=>data.cardById(r.cardId)?.basicEnergy&&data.cardById(r.cardId)?.subtype==='Lightning'))return false;}
       if(power?.effect?.rule==='swsh2AppleDrop'&&source===state.sides[side].active&&!state.sides[side].bench.length)return false;
       return !(power?.oncePerTurn===false&&state.sides[side].abilityUsed?.[source.uid+':'+index]===state.sides[side].turnCount);
     });
@@ -542,6 +544,13 @@
         return available[0];
       }
     }
+    if(state.phase==='effectChoice'&&state.pendingChoice?.special==='sm7BeforeAttack'&&state.pendingChoice.rule==='swsh4FlyingFury'){
+      const board=state.sides[side],target=state.sides[foeOf(side)].active,stop=legal.find(a=>a.choiceSkip),picks=legal.filter(a=>!a.choiceSkip);
+      const remaining=target?core.maxHp(state,foeOf(side),target)-Number(target.damage||0):0;
+      const hit=target?effects.attackDamageWithState(state,side,board.active,foeOf(side),target,10+40*Number(state.pendingChoice.count||0),data.cardById):0;
+      if(!target||hit>=remaining||!picks.length)return stop||legal[0];
+      picks.sort((a,b)=>Number(state.pendingChoice.opts?.[a.choiceOption]?.slotUid===board.active?.uid)-Number(state.pendingChoice.opts?.[b.choiceOption]?.slotUid===board.active?.uid));return picks[0];
+    }
     // Finish Whisk payment even beyond the ordinary AI action budget.
     if(state.phase==='effectChoice'&&state.pendingChoice?.special==='sm7BeforeAttack'&&state.pendingChoice.rule==='swsh35Whisk'){
       const me=state.sides[side],foe=foeOf(side),target=state.sides[foe].active;
@@ -567,6 +576,7 @@
         return legal.find(x=>x.choiceTarget==='active')||stop||legal[0];
       }
       if(rule==='swsh3Breeder'&&pending.effect.amazingBloom||rule==='sm12HandAttach'&&pending.effect.healAll)return legal.find(x=>!x.choiceSkip)||legal[0];
+      if(rule==='sm9SearchAttach'&&slots(state.sides[side]).find(p=>p.uid===pending.sourceUid)?.cardId==='swsh4-46'&&pending.effect.stage==='attach')return legal.find(x=>x.choiceTarget==='active')||legal.find(x=>!x.choiceSkip&&x.choiceBenchIndex!==slots(state.sides[side]).find(p=>p.uid===pending.sourceUid)?.benchSlot)||legal[0];
       if(['swsh4CaraLiss','swsh4Nessa','swsh4Cheese','swsh4Devolution','swsh35Adornment','sm9TopAttach','sm9SearchAttach','sm9DanceAncients','sm9NineTemptations','sm9AdventurousAppetite'].includes(rule))return legal.find(x=>!x.choiceSkip)||legal[0];
       if(pending.special==='sm7WishPrize')return legal.find(a=>a.choiceOption===1)||legal[0];
       if(pending.special==='sm7Grounding')return legal.find(a=>!a.choiceSkip)||legal[0];
