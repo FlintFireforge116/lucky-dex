@@ -1,6 +1,6 @@
 {
   "printed": 216,
-  "battleReady": 162,
+  "battleReady": 191,
   "gated": {
     "swsh1-6": [
       "Unimplemented attack: Cotton Ride"
@@ -20,33 +20,11 @@
     "swsh1-47": [
       "Unimplemented attack: Ripping Horn"
     ],
-    "swsh1-48": [
-      "Unimplemented attack: Aqua Wash"
-    ],
-    "swsh1-49": [
-      "Unimplemented attack: Body Surf",
-      "Unimplemented attack: Ocean Loop"
-    ],
-    "swsh1-50": [
-      "Required Pokémon V evolution parent is not yet enabled"
-    ],
-    "swsh1-51": [
-      "Unimplemented Ability: Poison Point"
-    ],
-    "swsh1-59": [
-      "Unimplemented attack: Hydro Snipe"
-    ],
     "swsh1-64": [
       "Unimplemented Ability: Ice Dance"
     ],
-    "swsh1-69": [
-      "Unimplemented attack: Strobe Shock"
-    ],
     "swsh1-85": [
       "Unimplemented Ability: Life Shaker"
-    ],
-    "swsh1-86": [
-      "Unimplemented attack: Gritty Comeback"
     ],
     "swsh1-88": [
       "Unimplemented attack: Sleepy Pulse"
@@ -57,35 +35,14 @@
     "swsh1-113": [
       "Unimplemented attack: Octolock"
     ],
-    "swsh1-116": [
-      "Unimplemented attack: Stone Gift"
-    ],
-    "swsh1-117": [
-      "Unimplemented Ability: Headbutt Tantrum"
-    ],
-    "swsh1-119": [
-      "Unimplemented Ability: Untamed Shout"
-    ],
-    "swsh1-124": [
-      "Unimplemented Ability: More Poison"
-    ],
     "swsh1-126": [
       "Unimplemented attack: Thief"
-    ],
-    "swsh1-131": [
-      "Unimplemented attack: Energy Slap"
     ],
     "swsh1-132": [
       "Unimplemented Ability: Snap Trap"
     ],
     "swsh1-135": [
       "Unimplemented attack: Iron Wings"
-    ],
-    "swsh1-137": [
-      "Unimplemented attack: Muscular Nose"
-    ],
-    "swsh1-138": [
-      "Unimplemented Ability: Intrepid Sword"
     ],
     "swsh1-144": [
       "Unimplemented attack: Carry Off"
@@ -95,9 +52,6 @@
     ],
     "swsh1-151": [
       "Unimplemented attack: Pluck"
-    ],
-    "swsh1-157": [
-      "Unimplemented Trainer effect"
     ],
     "swsh1-166": [
       "Unimplemented Trainer effect"
@@ -111,19 +65,7 @@
     "swsh1-171": [
       "Unimplemented Trainer effect"
     ],
-    "swsh1-172": [
-      "Unimplemented Trainer effect"
-    ],
-    "swsh1-176": [
-      "Unimplemented Trainer effect"
-    ],
-    "swsh1-180": [
-      "Unimplemented Trainer effect"
-    ],
     "swsh1-182": [
-      "Unimplemented Trainer effect"
-    ],
-    "swsh1-184": [
       "Unimplemented Trainer effect"
     ],
     "swsh1-186": [
@@ -131,37 +73,6 @@
     ],
     "swsh1-187": [
       "Unimplemented attack: Anchor Anger"
-    ],
-    "swsh1-189": [
-      "Unimplemented attack: Body Surf",
-      "Unimplemented attack: Ocean Loop"
-    ],
-    "swsh1-191": [
-      "Unimplemented attack: Gritty Comeback"
-    ],
-    "swsh1-195": [
-      "Unimplemented Ability: Intrepid Sword"
-    ],
-    "swsh1-199": [
-      "Unimplemented Trainer effect"
-    ],
-    "swsh1-202": [
-      "Unimplemented Trainer effect"
-    ],
-    "swsh1-203": [
-      "Required Pokémon V evolution parent is not yet enabled"
-    ],
-    "swsh1-205": [
-      "Unimplemented attack: Stone Gift"
-    ],
-    "swsh1-207": [
-      "Unimplemented Trainer effect"
-    ],
-    "swsh1-210": [
-      "Unimplemented Trainer effect"
-    ],
-    "swsh1-211": [
-      "Unimplemented Ability: Intrepid Sword"
     ],
     "swsh1-215": [
       "Unimplemented Trainer effect"
