@@ -286,6 +286,7 @@
         const hit=target?effects.attackDamageWithState(state,side,state.sides[side].active,foeOf(side),target,10+40*n,data.cardById):0;
         return 200+Math.min(hit,remaining)-n*2+(hit>=remaining?100:0);
       }
+      if(attack?.effect?.rule==='swsh6Tentacles')damage=40*state.sides[side].hand.filter(r=>data.cardById(r.cardId)?.rapidStrike).length;
       if(attack?.effect?.rule==='swsh6MaxLance')damage=10+120*Math.min(2,attachedCount(state.sides[side].active));
       if(attack?.effect?.rule==='swsh6RepeatedStrike')damage=120+30*slots(state.sides[side]).reduce((n,p)=>n+attachedCount(p),0);
       if(attack?.effect?.rule==='swsh4FlyingFury')damage=10+40*slots(state.sides[side]).reduce((n,p)=>n+(p.tool?1:0)+(p.extraTools||[]).length,0);
@@ -619,6 +620,12 @@
       if(['swsh4CastOffShell','swsh4CaraLiss','swsh4Nessa','swsh4Cheese','swsh4Devolution','swsh35Adornment','sm9TopAttach','sm9SearchAttach','sm9DanceAncients','sm9NineTemptations','sm9AdventurousAppetite'].includes(rule))return legal.find(x=>!x.choiceSkip)||legal[0];
       if(pending.special==='sm7WishPrize')return legal.find(a=>a.choiceOption===1)||legal[0];
       if(pending.special==='sm7Grounding')return legal.find(a=>!a.choiceSkip)||legal[0];
+      if(pending.special==='sm7BeforeAttack'&&pending.rule==='swsh6Tentacles'){
+        const me=state.sides[side],target=state.sides[foeOf(side)].active,stop=legal.find(a=>a.choiceSkip),picks=legal.filter(a=>!a.choiceSkip);
+        const hit=target?effects.attackDamageWithState(state,side,me.active,foeOf(side),target,40*Number(pending.count||0),data.cardById):0;
+        if(!target||hit>=core.maxHp(state,foeOf(side),target)-Number(target.damage||0)||!picks.length)return stop||legal[0];
+        return picks[0];
+      }
       if(pending.special==='sm7BeforeAttack'&&['swsh6MaxLance','swsh6RepeatedStrike'].includes(pending.rule)){
         const me=state.sides[side],target=state.sides[foeOf(side)].active,stop=legal.find(a=>a.choiceSkip),picks=legal.filter(a=>!a.choiceSkip),max=pending.rule==='swsh6MaxLance';
         const hit=target?effects.attackDamageWithState(state,side,me.active,foeOf(side),target,(max?10:120)+(max?120:30)*Number(pending.count||0),data.cardById):0;

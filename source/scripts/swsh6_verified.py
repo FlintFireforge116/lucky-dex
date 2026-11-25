@@ -169,3 +169,13 @@ at(120,'Gale Claws',CR('StrikeSupporter',benchDamage=50,count=2,strike='rapid'))
 tr(130,'Supporter',CR('Avery'))
 tr(136,'Item',E('benchFromDiscard',side='opponent',amount=1,filter={'kind':'pokemon','stage':'Basic'}))
 tr(137,'Item',CR('ExpeditionUniform'))
+
+# Stage 5 — remaining exact effects, preserve printed optional selections.
+at(31,'Two-Hit KO',CR('TwoHit'))
+ab(61,activated(CR('Arcana')))
+at(63,'Resolute Spite',E('sm7Rule',rule='sm11SpitefulSigh'))
+at(70,'Rapid Strike Tentacles',CR('Tentacles'))
+ab(88,passive(CR('ThrowingCoach')))
+at(103,'Ghostly Cries',CR('GhostlyCries'))
+at(111,'Seismic Rift',seq(E('selfDamage',amount=30),E('benchDamage',side='self',all=True,amount=30)))
+tr(149,'Supporter',CR('Peonia'))

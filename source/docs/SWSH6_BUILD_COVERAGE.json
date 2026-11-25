@@ -1,41 +1,11 @@
 {
   "printed": 233,
-  "battleReady": 220,
+  "battleReady": 230,
   "gated": {
-    "swsh6-31": [
-      "Unimplemented attack: Two-Hit KO"
-    ],
-    "swsh6-61": [
-      "Unimplemented Ability: Shining Arcana"
-    ],
-    "swsh6-63": [
-      "Unimplemented attack: Resolute Spite"
-    ],
-    "swsh6-70": [
-      "Unimplemented attack: Rapid Strike Tentacles"
-    ],
-    "swsh6-88": [
-      "Unimplemented Ability: Throwing Coach"
-    ],
-    "swsh6-103": [
-      "Unimplemented attack: Ghostly Cries"
-    ],
-    "swsh6-111": [
-      "Unimplemented attack: Seismic Rift"
-    ],
     "swsh6-128": [
       "Unimplemented Ability: Brazen Tail"
     ],
-    "swsh6-149": [
-      "Unimplemented Trainer effect"
-    ],
     "swsh6-152": [
-      "Unimplemented Trainer effect"
-    ],
-    "swsh6-196": [
-      "Unimplemented Trainer effect"
-    ],
-    "swsh6-219": [
       "Unimplemented Trainer effect"
     ],
     "swsh6-228": [
