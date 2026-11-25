@@ -1,10 +1,7 @@
 {
   "printed": 209,
-  "battleReady": 147,
+  "battleReady": 189,
   "gated": {
-    "swsh2-5": [
-      "Unimplemented attack: Berry Picking"
-    ],
     "swsh2-8": [
       "Unimplemented Ability: Top Entry"
     ],
@@ -14,45 +11,20 @@
     "swsh2-18": [
       "Unimplemented attack: Max Beating"
     ],
-    "swsh2-22": [
-      "Unimplemented Ability: Apple Drop"
-    ],
-    "swsh2-23": [
-      "Unimplemented Ability: Delicious Aroma"
-    ],
     "swsh2-26": [
       "Unimplemented attack: Nine-Tailed Shapeshifter"
     ],
-    "swsh2-28": [
-      "Unimplemented Ability: Warming Up"
-    ],
-    "swsh2-30": [
-      "Unimplemented attack: Ground Burn"
-    ],
     "swsh2-32": [
-      "Unimplemented attack: Reignite",
       "Unimplemented Ability: Top Entry"
     ],
     "swsh2-33": [
       "Unimplemented Ability: Protective Glow"
     ],
-    "swsh2-36": [
-      "Unimplemented attack: Counter"
-    ],
     "swsh2-38": [
       "Unimplemented Ability: Screen Cleaner"
     ],
-    "swsh2-53": [
-      "Unimplemented attack: Spiral Jet"
-    ],
     "swsh2-61": [
       "Unimplemented Ability: Top Entry"
-    ],
-    "swsh2-62": [
-      "Unimplemented attack: Raid"
-    ],
-    "swsh2-72": [
-      "Unimplemented Ability: Counterattack Kerzap"
     ],
     "swsh2-75": [
       "Unimplemented Ability: Prankish"
@@ -60,92 +32,14 @@
     "swsh2-77": [
       "Unimplemented attack: Energy Warp"
     ],
-    "swsh2-79": [
-      "Unimplemented Ability: Perish Body"
-    ],
-    "swsh2-80": [
-      "Unimplemented attack: Psychic Assault",
-      "Unimplemented Ability: Counterattack"
-    ],
-    "swsh2-82": [
-      "Unimplemented attack: Sand Sink"
-    ],
-    "swsh2-85": [
-      "Unimplemented attack: Dripping Grudge",
-      "Unimplemented Ability: Mind Hat"
-    ],
-    "swsh2-87": [
-      "Unimplemented attack: Decorate"
-    ],
-    "swsh2-91": [
-      "Unimplemented attack: Phantom Force",
-      "Unimplemented Ability: Infiltrator"
-    ],
-    "swsh2-93": [
-      "Unimplemented attack: Max Phantom"
-    ],
-    "swsh2-95": [
-      "Unimplemented attack: Meteor Assault"
-    ],
-    "swsh2-102": [
-      "Unimplemented attack: Spreading Spite"
-    ],
-    "swsh2-104": [
-      "Unimplemented attack: Hand Press"
-    ],
-    "swsh2-107": [
-      "Unimplemented Ability: Tar Generator"
-    ],
     "swsh2-113": [
       "Unimplemented attack: Severe Poison",
       "Unimplemented Ability: Neutralizing Gas"
     ],
-    "swsh2-116": [
-      "Unimplemented attack: Dripping Grudge"
-    ],
-    "swsh2-128": [
-      "Unimplemented attack: Raid"
-    ],
-    "swsh2-132": [
-      "Unimplemented attack: Gathering Food"
-    ],
-    "swsh2-143": [
-      "Unimplemented attack: Chirp"
-    ],
-    "swsh2-147": [
-      "Unimplemented attack: Mining Rush"
-    ],
-    "swsh2-150": [
-      "Unimplemented attack: Big Throw"
-    ],
-    "swsh2-155": [
-      "Unimplemented Trainer effect"
-    ],
-    "swsh2-157": [
-      "Unimplemented Trainer effect"
-    ],
     "swsh2-158": [
       "Unimplemented Trainer effect"
     ],
-    "swsh2-161": [
-      "Unimplemented Trainer effect"
-    ],
     "swsh2-162": [
-      "Unimplemented Trainer effect"
-    ],
-    "swsh2-163": [
-      "Unimplemented Trainer effect"
-    ],
-    "swsh2-165": [
-      "Unimplemented Trainer effect"
-    ],
-    "swsh2-168": [
-      "Unimplemented Trainer effect"
-    ],
-    "swsh2-169": [
-      "Unimplemented Trainer effect"
-    ],
-    "swsh2-170": [
       "Unimplemented Trainer effect"
     ],
     "swsh2-171": [
@@ -163,32 +57,8 @@
     "swsh2-177": [
       "Unimplemented attack: Nine-Tailed Shapeshifter"
     ],
-    "swsh2-190": [
-      "Unimplemented Trainer effect"
-    ],
-    "swsh2-191": [
-      "Unimplemented Trainer effect"
-    ],
     "swsh2-193": [
       "Unimplemented attack: Max Beating"
-    ],
-    "swsh2-194": [
-      "Unimplemented attack: Counter"
-    ],
-    "swsh2-197": [
-      "Unimplemented attack: Max Phantom"
-    ],
-    "swsh2-201": [
-      "Unimplemented Trainer effect"
-    ],
-    "swsh2-202": [
-      "Unimplemented Trainer effect"
-    ],
-    "swsh2-207": [
-      "Unimplemented Trainer effect"
-    ],
-    "swsh2-208": [
-      "Unimplemented Trainer effect"
     ],
     "swsh2-209": [
       "Unimplemented Special Energy rules"

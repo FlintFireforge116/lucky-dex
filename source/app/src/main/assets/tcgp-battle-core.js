@@ -669,6 +669,9 @@
         state.log.push({type:'hgss4EyeOfDisaster',side:enemySide,targetUid:onlySource.uid,damage:20});
       }
     }
+    if(state.format==='classic'&&event==='damagedByAttack'&&Number(meta.damage)>0&&onlySource===ss.active&&meta.source?.side!==side&&meta.attacker&&effects.effectiveTypes(state,side,onlySource,data.cardById).includes('Fire')&&activeToolsOf(state,onlySource).some(r=>data.cardById(r.cardId)?.effect?.rule==='swsh2BurningScarf')){
+      effects.applyEffect({type:'status',target:'opponentActive',status:'burn'},{...effectContext(state,side,{},onlySource)});
+    }
     // Rocky Helmet (including secret print) activates on *attack damage* to
     // its Active holder. It does not trigger on poison, checkup or zero damage.
     if(state.format==='classic'&&event==='damagedByAttack'&&Number(meta.damage||0)>0&&onlySource===ss.active&&
@@ -2817,6 +2820,7 @@
         if(state.format==='classic'&&cause==='attack'&&source?.turn===state.turnNumber&&source?.side===foeSide&&source?.attack&&Number(source.damage)>0){const p=pokemonOn(foe).find(p=>p.uid===source.uid);if(p&&['sm8-121','sm8-203','sm8-223'].includes(p.cardId)&&!effects.abilitiesSuppressed(state,foeSide,p,data.cardById))slot.pl1LostZoneOnKO=true;}
         const blackMarket=state.format==='classic'&&activeStadium(state)?.cardId==='sm9-134'&&cause==='attack'&&source?.attack&&source.side===foeSide&&Number(source.damage||0)>0&&effects.effectiveTypes(state,side,slot,data.cardById).includes('Darkness')&&(Number(slot.energy?.Darkness||0)>0||(slot.specialEnergy||[]).some(r=>effects.attachedSpecialProvidesType(r,'Darkness',slot,data.cardById)))?1:0;
         const arceusBeltBonus=state.format==='classic'&&activeToolsOf(state,slot).some(ref=>ref.cardId==='pl4-87')?1:0;
+        if(state.format==='classic'&&cause==='attack'&&source?.side===foeSide&&source?.attack&&source.turn===state.turnNumber&&Number(source.damage)>0&&activeToolsOf(state,slot).some(r=>data.cardById(r.cardId)?.effect?.rule==='swsh2CursedShovel'))foe.discard.push(...foe.deck.splice(0,2));
         const arceusLuckyEgg=state.format==='classic'&&cause==='attack'&&source?.side===foeSide&&activeToolsOf(state,slot).some(ref=>ref.cardId==='pl4-88'||ref.cardId==='swsh1-167'&&source?.attack&&Number(source.damage||0)>0);
         const scoopBlocked=effects.scoopUpBlocked(state,side,slot,data.cardById);
         const teleport=!scoopBlocked&&state.format==='classic'&&cause==='attack'&&source?.side===foeSide&&source?.attack&&activeToolsOf(state,slot).some(r=>r.cardId==='SNAPFOUNJA-084');

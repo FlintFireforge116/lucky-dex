@@ -174,6 +174,8 @@
     const card=data.cardById(action.cardId),s=state.sides[side],foe=state.sides[foeOf(side)];
     if(!card)return false;
     if(card.trainerType==='Tool'&&!usefulClassicTool(state,side,action,card))return false;
+    if(card.effect?.rule==='swsh2ToolScrapper')return slots(foe).some(p=>p.tool||p.extraTools?.length);
+    if(card.effect?.rule==='swsh2ScoopNet')return slots(s).some(p=>{const c=data.cardById(p.cardId);return !c?.pokemonV&&!c?.pokemonGX&&(p!==s.active||s.bench.length)&&Number(p.damage||0)>=Math.max(40,core.maxHp(state,side,p)-40)&&attachedCount(p)<=1;});
     if(card.id==='sm11-186')return s.hand.some(r=>data.cardById(r.cardId)?.kind==='pokemon'&&data.cardById(r.cardId)?.attacks?.length);
     if((card.trainerType==='Stadium'||card.trainerSubtype==='Stadium'))return stadiumWorthPlaying(state,side,card);
     if(card.id==='neo3-64')return (s.discard||[]).some(ref=>{const c=data.cardById(ref.cardId);return c?.kind==='trainer'||c?.kind==='pokemon';});
@@ -271,6 +273,8 @@
       // discard amount rather than treating every option as a zero-damage hit.
       const fireCount=/^count:(\d+)$/.exec(String(action.effectSelection||''));
       let damage=attack?.effect?.rule==='xy5:explosiveJet'&&fireCount?Number(fireCount[1])*50:Number(attack?.damage||0);
+      if(attack?.effect?.rule==='swsh2MiningRush')damage=30*Number(action.effectSelection||0);
+      if(attack?.effect?.rule==='swsh2SpiralJet'&&!action.effectSelection)damage=0;
       if((action.attackCardId||state.sides[side].active.cardId)==='xy7-49'&&attack?.name==='Iron Cannon'){
         // Don't throw away all attached Metal for an unnecessary +80; do
         // choose the discard when it actually secures a knockout.
@@ -367,6 +371,7 @@
       const source=slotFor(state.sides[side],action.target,action.benchIndex),card=data.cardById(source?.cardId),index=Number(action.abilityIndex||0),power=(card?.abilities||[])[index];
       // Powers remain freely repeatable for the human. The CPU may use them
       // once per turn so it cannot oscillate Energy/Damage forever.
+      if(power?.effect?.rule==='swsh2AppleDrop'&&source===state.sides[side].active&&!state.sides[side].bench.length)return false;
       return !(power?.oncePerTurn===false&&state.sides[side].abilityUsed?.[source.uid+':'+index]===state.sides[side].turnCount);
     });
     if(!legal.length)return null;
@@ -422,6 +427,11 @@
     // All choices are drawn from its own known Zone and public Pokémon.
     if(state.format==='classic'&&state.phase==='effectChoice'&&state.pendingChoice?.originSide===side){
       const pending=state.pendingChoice,e=pending.effect||{},choices=legal.filter(a=>a.type==='effectChoice');
+      if(e.rule==='swsh2ToolScrapper')return choices.find(a=>!a.choiceSkip&&e.opts?.[a.choiceOption]?.owner===foeOf(side))||choices.find(a=>a.choiceSkip)||choices[0];
+      if(e.rule==='swsh2ScoopNet'){const ss=state.sides[side],score=a=>{const p=slotFor(ss,a.choiceTarget,a.choiceBenchIndex);return Number(p?.damage||0)-attachedCount(p)*40;};return choices.sort((a,b)=>score(b)-score(a))[0];}
+      if(['swsh2RecoverBasic','swsh2TarGenerator'].includes(e.rule))return choices.find(a=>!a.choiceSkip)||choices[0];
+      if(e.rule==='swsh2AppleDrop'){const ss=state.sides[side],source=slots(ss).find(p=>p.uid===pending.sourceUid);if(source===ss.active&&!ss.bench.length)return choices.find(a=>a.choiceSkip)||choices[0];return choices.find(a=>!a.choiceSkip)||choices[0];}
+      if(e.rule==='swsh2Milo'){const ss=state.sides[side],pick=choices.filter(a=>!a.choiceSkip).sort((a,b)=>{const score=x=>{const c=data.cardById(ss.hand[x.choiceHandIndex]?.cardId);return c?.kind==='energy'?0:c?.kind==='trainer'?1:2;};return score(a)-score(b);});return ss.deck.length?pick[0]||choices[0]:choices.find(a=>a.choiceSkip)||choices[0];}
       // Ancient Origins M Sceptile-EX: Jagged Saber is optional but valuable.
       // Choose genuine Grass Basic Energy already in hand and a useful Bench
       // recipient; never manufacture Energy from the separate Energy Zone.
