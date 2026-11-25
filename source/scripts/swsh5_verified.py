@@ -109,6 +109,22 @@ tr(126,'Tool',BS('ExpShare'))
 tr(127,'Item',BS('Fan'))
 tr(137,'Stadium',E('stadiumAction',effect=BS('Tower')))
 tr(139,'Item',BS('Urn'))
+# v501: additional exact handlers.
+ab(30,passive(BS('Overheater')))
+at(53,'Defiant Spark',BS('Defiant'))
+at(62,'Jealous Eyes',BS('Jealous'))
+ab(62,trig('benched',E('chooseOption',options=[{'label':'Protect Mimikyu V','effect':E('preventDamage',target='self',duration='opponentTurn')},{'label':'Skip','effect':E('noop')}]),fromHandOnly=True))
+at(107,'Full Metal Blade',discard(2,energyType='Metal',strictEnergyType=True))
+ab(107,activated(BS('Stance')))
+ab(108,activated(BS('Stance')))
+tr(130,'Supporter',BS('Phoebe'))
+# Active portion is ordinary attack damage; bench portion is a separate effect.
+at(131,'Matchless Maelstrom',seq(BS('Maelstrom'),E('benchDamage',side='opponent',all=True,amount=30)))
+at(133,'Furious Anger',E('damageFromDamage',source='self',amount=1,mode='add'))
+tr(131,'Tool',BS('Scroll'))
+tr(133,'Tool',BS('Scroll'))
+tr(132,'Supporter',BS('Mustard',rapid=True))
+tr(134,'Supporter',BS('Mustard',rapid=False))
 # Exact print lookup only, otherwise use already-reviewed attack signatures.
 def attack(row,a):
  c=REPRINT.get(sig(row))

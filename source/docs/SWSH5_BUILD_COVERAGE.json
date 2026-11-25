@@ -1,10 +1,7 @@
 {
   "printed": 183,
-  "battleReady": 152,
+  "battleReady": 169,
   "gated": {
-    "swsh5-30": [
-      "Unimplemented Ability: Overheater"
-    ],
     "swsh5-33": [
       "Unimplemented Ability: Deep Sea King"
     ],
@@ -14,31 +11,17 @@
     "swsh5-48": [
       "Unimplemented attack: Electrostep"
     ],
-    "swsh5-53": [
-      "Unimplemented attack: Defiant Spark"
-    ],
     "swsh5-58": [
       "Unimplemented attack: Power Split"
     ],
     "swsh5-61": [
       "Unimplemented Ability: Ear Moves"
     ],
-    "swsh5-62": [
-      "Unimplemented attack: Jealous Eyes",
-      "Unimplemented Ability: Dummy Doll"
-    ],
     "swsh5-65": [
       "Unimplemented attack: Evomancy"
     ],
     "swsh5-102": [
       "Unimplemented Ability: Metal Transfer"
-    ],
-    "swsh5-107": [
-      "Unimplemented attack: Full Metal Blade",
-      "Unimplemented Ability: Stance Change"
-    ],
-    "swsh5-108": [
-      "Unimplemented Ability: Stance Change"
     ],
     "swsh5-110": [
       "Unimplemented Ability: Lustrous Body"
@@ -49,55 +32,17 @@
     "swsh5-117": [
       "Unimplemented attack: Double Dip Fangs"
     ],
-    "swsh5-130": [
-      "Unimplemented Trainer effect"
-    ],
-    "swsh5-131": [
-      "Unimplemented attack: Matchless Maelstrom",
-      "Unimplemented Trainer effect"
-    ],
-    "swsh5-132": [
-      "Unimplemented Trainer effect"
-    ],
-    "swsh5-133": [
-      "Unimplemented Trainer effect"
-    ],
-    "swsh5-134": [
-      "Unimplemented Trainer effect"
-    ],
     "swsh5-135": [
       "Unimplemented Trainer effect"
     ],
     "swsh5-136": [
       "Unimplemented Trainer effect"
     ],
-    "swsh5-148": [
-      "Unimplemented attack: Jealous Eyes",
-      "Unimplemented Ability: Dummy Doll"
-    ],
     "swsh5-157": [
       "Unimplemented attack: Double Dip Fangs"
     ],
-    "swsh5-161": [
-      "Unimplemented Trainer effect"
-    ],
-    "swsh5-162": [
-      "Unimplemented Trainer effect"
-    ],
-    "swsh5-163": [
-      "Unimplemented Trainer effect"
-    ],
     "swsh5-171": [
       "Unimplemented Ability: Lustrous Body"
-    ],
-    "swsh5-175": [
-      "Unimplemented Trainer effect"
-    ],
-    "swsh5-176": [
-      "Unimplemented Trainer effect"
-    ],
-    "swsh5-177": [
-      "Unimplemented Trainer effect"
     ]
   },
   "attacks": 234,
