@@ -1,0 +1,6 @@
+# Vivid Voltage integration — v0.69.487
+
+- Pinned Git blob 182400b1d8f17a3f99a27dd00a060ad06ea98469, canonical compact SHA-256 5d9ee864363b5db6bfa98c9edfd8a1f2f09fcd6abb36e93b579f88b5b6c91b4b. Reconstructed source matched independently computed FNV-1a 11563a7b and 61,333 characters before SHA pinning.
+- 203 prints, 269 attacks, 29 Abilities, 33 Trainer prints and four Special Energy prints; 141 playable, 62 gated. Exact signatures reused; new Volt Tackle optional pre-damage payment and non-shuffling top-pick option. All supported prints selectable by both indexed deck builders; gated prints remain collection-only.
+- Tests: current release 27/27 including every enabled attack on both sides and 18 targeted outcomes; recent set/performance regression 492/492; full SM1 gate 67/67. Gradle source parity passed. Android compilation and exhaustive historical gates not run.
+- Remaining: see generated gap ledger. Shedinja's restricted placement, global Ability and Energy suppression, additional Trainer/energy mechanics, Celebi and Rayquaza require dedicated work. Audit copied Volt Tackle payment, conditional damage modifiers, passive suppression and optional triggered abilities across earlier eras. Do not claim all enabled effects independently audited based on smoke tests.

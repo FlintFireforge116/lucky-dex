@@ -1,0 +1,15 @@
+{
+  "set": "swsh4",
+  "name": "Vivid Voltage",
+  "stage": "integration",
+  "release": "0.69.487",
+  "printedTotal": 203,
+  "attackPrints": 269,
+  "abilities": 29,
+  "pokemonV": 24,
+  "pokemonVMAX": 12,
+  "trainerPrints": 33,
+  "energyPrints": 4,
+  "pin": "182400b1d8f17a3f99a27dd00a060ad06ea98469",
+  "variants": []
+}

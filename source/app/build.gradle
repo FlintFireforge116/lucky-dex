@@ -8,8 +8,8 @@ android {
         applicationId 'com.example.luckydex'
         minSdk 26
         targetSdk 35
-        versionCode 7486
-        versionName '0.69.486'
+        versionCode 7487
+        versionName '0.69.487'
     }
 
     signingConfigs {
@@ -1066,7 +1066,7 @@ tasks.matching { it.name == 'preBuild' || (it.name.startsWith('merge') && it.nam
     dependsOn tasks.named('auditSM5ForApk')
 }
 
-// v0.69.486 Forbidden Light SM6: SHA-pinned 150-print full-set source and audit.
+// v0.69.487 Forbidden Light SM6: SHA-pinned 150-print full-set source and audit.
 tasks.register('preflightSM6ContractForApk', Exec) {
     dependsOn tasks.named('auditSM5ForApk')
     workingDir rootProject.projectDir
@@ -1364,4 +1364,23 @@ tasks.register('auditSWSH35ForApk', Exec) {
 }
 tasks.matching { it.name == 'preBuild' || (it.name.startsWith('merge') && it.name.endsWith('Assets')) }.configureEach {
     dependsOn tasks.named('auditSWSH35ForApk')
+}
+
+tasks.register('preflightSWSH4ContractForApk', Exec) {
+    dependsOn tasks.named('auditSWSH3ForApk')
+    workingDir rootProject.projectDir
+    commandLine (System.getenv('LUCKYDEX_PYTHON') ?: 'python3'), 'scripts/preflight-swsh4-release.py'
+}
+tasks.register('generateSWSH4ForApk', Exec) {
+    dependsOn tasks.named('preflightSWSH4ContractForApk')
+    workingDir rootProject.projectDir
+    commandLine (System.getenv('LUCKYDEX_PYTHON') ?: 'python3'), 'scripts/build-swsh4.py'
+}
+tasks.register('auditSWSH4ForApk', Exec) {
+    dependsOn tasks.named('generateSWSH4ForApk')
+    workingDir rootProject.projectDir
+    commandLine 'node', '--test', 'tests/v07487-vivid-voltage-integration.test.cjs', 'tests/v07487-vivid-voltage-outcomes.test.cjs'
+}
+tasks.matching { it.name == 'preBuild' || (it.name.startsWith('merge') && it.name.endsWith('Assets')) }.configureEach {
+    dependsOn tasks.named('auditSWSH4ForApk')
 }
