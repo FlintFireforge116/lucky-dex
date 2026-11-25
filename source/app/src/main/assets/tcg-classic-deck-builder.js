@@ -1483,6 +1483,8 @@ function buildDeck(rows,options={}){
    if(!card?.specialEnergy)return false;
    const name=String(card.name||'');
    const pokemon=cards.map(classic.cardById).filter(c=>c?.kind==='pokemon');
+   if(name==='Single Strike Energy')return pokemon.some(p=>p.singleStrike);
+   if(name==='Rapid Strike Energy')return pokemon.some(p=>p.rapidStrike);
    if(name==='Darkness Energy')return pokemon.some(p=>(p.types||[]).includes('Darkness')||/^Dark\s/i.test(p.name||''));
    if(name==='Metal Energy')return pokemon.some(p=>(p.types||[]).includes('Metal'));
    if(name==='Shield Energy')return pokemon.some(p=>(p.types||[]).includes('Metal'));

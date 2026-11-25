@@ -1066,6 +1066,15 @@
       if(!effects.specialEnergyTextActive(state,ref,data.cardById)){next.Colorless=Number(next.Colorless||0)+1;continue;}
       if(['sm10-190','sm10-234'].includes(ref.cardId)&&!['Stage 1','Stage 2','BREAK'].includes(data.cardById(slot?.cardId)?.stage))continue;
       if(ref.cardId==='sm6-117'&&!miracleWind){const type=data.cardById(slot?.cardId)?.ultraBeast?'Miracle':'Colorless';next[type]=Number(next[type]||0)+1;continue;}
+      if(['swsh5-140','swsh5-182','swsh5-141','swsh5-183'].includes(ref.cardId)&&!miracleWind){
+        const rapid=['swsh5-140','swsh5-182'].includes(ref.cardId),mon=data.cardById(slot?.cardId);
+        if(!(rapid?mon?.rapidStrike:mon?.singleStrike))continue;
+        if(rapid&&activeStadium(state)?.cardId==='ex14-75'){next.Colorless=Number(next.Colorless||0)+1;continue;}
+        const units=rapid?2:1,allowed=rapid?['Water','Fighting']:['Fighting','Darkness'];
+        next.Crystal=Number(next.Crystal||0)+units;
+        for(let i=0;i<units;i++)(next.__sm5UnitCards||(next.__sm5UnitCards=[])).push(allowed);
+        continue;
+      }
       if(['sm5-137','sm5-170','sm5-138','sm5-171','sm6-118','sm6-146'].includes(ref.cardId)&&!miracleWind){
         // A Unit Energy card is one selectable unit, not three simultaneous ones.
         // Crystal is just its counted unit; __sm5UnitCards records the physical
@@ -2818,7 +2827,7 @@
         if(state.format==='classic'&&slot===s.active&&eventSource?.attack&&eventSource.side===foeSide&&
            !slot._bw4ExpShareResolved){
           const eligible=[];
-          for(const p of s.bench||[]){if(!p||!activeToolsOf(state,p).some(ref=>['bw4-87','xy5-128','sm1-118'].includes(ref.cardId)))continue;
+          for(const p of s.bench||[]){if(!p||!activeToolsOf(state,p).some(ref=>['bw4-87','xy5-128','sm1-118','swsh5-126','swsh5-180'].includes(ref.cardId)))continue;
             for(const [type,n] of Object.entries(slot.energy||{}))if(Number(n)>0)eligible.push({targetUid:p.uid,energyType:type});}
           if(eligible.length){slot._bw4ExpShareResolved=true;
             beginEffectChoice(state,side,slot,{kind:'option',side:'self',
@@ -3269,6 +3278,9 @@ const target=slotForTarget(s,action.target,action.benchIndex);if(card.id==='pl2-
     const s=state.sides[side],foeSide=side==='player'?'opponent':'player',foe=state.sides[foeSide];
     if(!card||!slot)return false;
     const energyTextActive=effects.specialEnergyTextActive(state,{cardId:card.id},data.cardById);
+    const recipient=data.cardById(slot.cardId);
+    if(['swsh5-140','swsh5-182'].includes(card.id)&&!recipient?.rapidStrike)return false;
+    if(['swsh5-141','swsh5-183'].includes(card.id)&&!recipient?.singleStrike)return false;
     if(card.id==='swsh1-186'&&!paid&&s.hand.length<2)return false;
     const battery=card.id==='sm10-58',crazy=!!card.specialEnergy&&pokemonOn(s).some(p=>p.cardId==='sm10-157'&&!effects.abilitiesSuppressed(state,side,p,data.cardById));
     if(extra){
@@ -4714,6 +4726,8 @@ const target=slotForTarget(s,action.target,action.benchIndex);if(card.id==='pl2-
         const types=data.cardById(pokemon.cardId)?.types||[],kept=[];
         for(const ref of pokemon.specialEnergy||[]){
           if(!effects.specialEnergyTextActive(state,ref,data.cardById)){kept.push(ref);continue;}
+          const mon=data.cardById(pokemon.cardId),wrongStrike=['swsh5-140','swsh5-182'].includes(ref.cardId)&&!mon?.rapidStrike||['swsh5-141','swsh5-183'].includes(ref.cardId)&&!mon?.singleStrike;
+          if(wrongStrike){board.discard.push(ref);state.log.push({type:'swsh5StrikeEnergyDiscard',side:owner,cardId:ref.cardId});continue;}
           const required=ref.cardId==='xy9-113'?'Water':ref.cardId==='xy8-151'?'Fire':ref.cardId==='xy3-103'?'Grass':['xy3-104','xy10-115'].includes(ref.cardId)?'Fighting':ref.cardId==='xy4-112'?'Psychic':ref.cardId==='xy5-143'?'Metal':ref.cardId==='xy5-144'?'Fairy':ref.cardId==='xy6-97'?'Dragon':null;
           if(required&&!types.includes(required)){
             board.discard.push(ref);state.log.push({type:'xy3SpecialEnergyDiscard',side:owner,uid:ref.uid,reason:'ineligibleAttachedType',cardId:ref.cardId});

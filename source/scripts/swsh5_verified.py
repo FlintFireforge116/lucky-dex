@@ -89,6 +89,26 @@ tr(125,'Item',E('neoRule',rule='bw8:escapeRope'))
 ab(25,passive(E('modifier',stat='attackDamageActiveOnly',amount=30,scope='team',duration='whileInPlay',filter={'tag':'single-strike'})))
 ab(37,dict(type='activated',sharedOncePerTurn='rapidStrikeSearch',effect=search(1,tag='rapid-strike')))
 tr(121,'Supporter',seq(E('handShuffle',side='self',draw=4),E('draw',amount=3,condition=cond('sm12OwnKoLastTurn'),optionalCondition=True)))
+# v500 shared strike energy and continuation.
+def BS(rule,**kw):return E('sm7Rule',rule='swsh5'+rule,**kw)
+ab(6,dict(type='activated',sharedOncePerTurn='excitingStage',effect=BS('ExcitingStage')))
+ab(8,dict(type='activated',oncePerTurn=False,effect=BS('SpringBloom')))
+at(10,'Devour',BS('Devour'))
+at(16,"Nature's Judgment",BS('Nature'))
+at(18,'Sour Spit',E('modifier',stat='attackCost',amount=2,target='opponentActive',duration='opponentTurn'))
+at(19,'G-Max Rolling',E('selfDamagePenalty',amount=1))
+at(40,'Swirling Slice',BS('Swirling'))
+ab(40,passive(BS('Emperor')))
+at(42,'Sediment Sink',BS('Sediment'))
+ab(52,trig('benched',BS('BallSearch'),fromHandOnly=True))
+at(67,'Field Crush',BS('FieldCrush'))
+at(82,'Big Sand Cannon',BS('BigSand'))
+ab(96,activated(BS('Roar')))
+tr(123,'Supporter',BS('Cheryl'))
+tr(126,'Tool',BS('ExpShare'))
+tr(127,'Item',BS('Fan'))
+tr(137,'Stadium',E('stadiumAction',effect=BS('Tower')))
+tr(139,'Item',BS('Urn'))
 # Exact print lookup only, otherwise use already-reviewed attack signatures.
 def attack(row,a):
  c=REPRINT.get(sig(row))
@@ -102,5 +122,8 @@ def trainer(row):
  c=REPRINT.get(sig(row))
  if c:return c['trainerType'],deepcopy(c['effect'])
  return deepcopy(T.get((row[1],tuple(row[13])))) or V.trainer(row)
-def energy(row):return None
+def energy(row):
+ if row[1]=='Rapid Strike Energy':return E('specialEnergy',provides={'Water':2})
+ if row[1]=='Single Strike Energy':return E('specialEnergy',provides={'Fighting':1})
+ return None
 def prism_ready(row):return False
