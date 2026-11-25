@@ -444,7 +444,14 @@
     // All choices are drawn from its own known Zone and public Pokémon.
     if(state.format==='classic'&&state.phase==='effectChoice'&&state.pendingChoice?.originSide===side){
       const pending=state.pendingChoice,e=pending.effect||{},choices=legal.filter(a=>a.type==='effectChoice');
-      if(['swsh3DarkAsset','swsh3FamiliarBell','swsh3Breeder','swsh3Rose','swsh3SpiderNet','swsh3ShuffleDance'].includes(e.rule))return choices.find(a=>!a.choiceSkip)||choices[0];
+      if(e.rule==='swsh45VTransformation'){
+        const board=state.sides[side],source=slots(board).find(p=>p.uid===pending.sourceUid),stop=choices.find(a=>a.choiceSkip);
+        if(!source)return stop||choices[0];
+        const score=c=>!c||Number(c.hp||0)<=Number(source.damage||0)?-Infinity:Number(c.hp||0)+Math.max(0,...(c.attacks||[]).map(a=>Number(a.damage||0)));
+        const picks=choices.filter(a=>!a.choiceSkip&&data.cardById(a.choiceCardId)?.name!=='Ditto V').sort((a,b)=>score(data.cardById(b.choiceCardId))-score(data.cardById(a.choiceCardId)));
+        return picks.length&&score(data.cardById(picks[0].choiceCardId))>score(data.cardById(source.cardId))?picks[0]:stop||choices[0];
+      }
+      if(['swsh45BallGuy','swsh3DarkAsset','swsh3FamiliarBell','swsh3Breeder','swsh3Rose','swsh3SpiderNet','swsh3ShuffleDance'].includes(e.rule))return choices.find(a=>!a.choiceSkip)||choices[0];
       if(e.rule==='sm10Kaleidostorm'&&slots(state.sides[side]).some(p=>p.uid===pending.sourceUid&&p.cardId==='swsh3-147')){
         const board=state.sides[side],stop=choices.find(x=>x.choiceSkip);
         if(e.stage==='source')return choices.find(x=>!x.choiceSkip&&e.opts?.[x.choiceOption]?.p!==board.active?.uid)||stop||choices[0];
