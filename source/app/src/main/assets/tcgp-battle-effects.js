@@ -19472,6 +19472,9 @@
           if(!a||!pokemonOn(ss).includes(a)||card(a)?.name!=='Ditto V')break;
           if(res){if(!skip){const ref=ss.discard[act.choiceDiscardIndex];if(pool.includes(ref)){
             const old=a.cardId;ss.discard.splice(act.choiceDiscardIndex,1,{uid:ref.uid,cardId:old});
+            // Underlying cards leave play too; attachments and all slot effects stay.
+            for(const [i,id] of (a.stack||[old]).slice(0,-1).entries())ss.discard.push({uid:ref.uid+'-transform-under-'+i,cardId:id});
+            ss.swsh45TransformedTurns=ss.swsh45TransformedTurns||{};ss.swsh45TransformedTurns[a.uid]=ss.turnCount;
             a.cardId=ref.cardId;a.stack=[ref.cardId];
             log({type:'swsh45VTransformation',from:old,to:ref.cardId,sourceUid:a.uid});
           }}break;}

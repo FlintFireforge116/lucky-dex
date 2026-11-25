@@ -1970,7 +1970,7 @@
         }))return;
         // An unlimited information-only Ability must not consume every CPU action.
         if(ability.name==='Blinking Lights'&&source.cardId==='sm12-72'&&(!foe.deck.length||(side==='opponent'&&source.sm12InspectedTop===foe.deck[0].uid)))return;
-        const used=(s.abilityUsed||{})[source.uid+':'+abilityIndex];if(ability.oncePerTurn!==false&&used===s.turnCount)return;
+        const used=(s.abilityUsed||{})[s.swsh45TransformedTurns?.[source.uid]===s.turnCount?source.uid+':name:'+ability.name:source.uid+':'+abilityIndex];if(ability.oncePerTurn!==false&&used===s.turnCount)return;
         if(ability.lentalSharedOnce==='scavenge'&&s.lentalScavengeUsedTurn===s.turnCount)return;
         const base={type:'ability',cardId:source.cardId,abilityIndex,target:source===s.active?'active':'bench'};if(source!==s.active)base.benchIndex=Number(source.benchSlot);
         for(const target of effectChoices(ability.effect,effectContext(state,side,{},source))){const a={...base};if(target.target)a.effectTarget=target.target;if(target.benchIndex!=null)a.effectBenchIndex=target.benchIndex;actions.push(a);}
@@ -3891,7 +3891,7 @@ const target=slotForTarget(s,action.target,action.benchIndex);if(card.id==='pl2-
     }
     if (matched.type === 'ability'){
       const source=slotForTarget(s,matched.target,matched.benchIndex),ability=abilitiesFor(data.cardById(source.cardId),source,state)[matched.abilityIndex||0];
-      s.abilityUsed=s.abilityUsed||{};if(ability.oncePerTurn!==false)s.abilityUsed[source.uid+':'+(matched.abilityIndex||0)]=s.turnCount;
+      s.abilityUsed=s.abilityUsed||{};if(ability.oncePerTurn!==false){s.abilityUsed[source.uid+':'+(matched.abilityIndex||0)]=s.turnCount;s.abilityUsed[source.uid+':name:'+ability.name]=s.turnCount;}
       if(ability.name==='Blinking Lights'&&source.cardId==='sm12-72')source.sm12InspectedTop=foe.deck[0]?.uid;
       if(ability.name==='Nurse Call')s.pl1NurseCallUsedTurn=s.turnCount;
       if(source.cardId==='ex5-16')s.ex5HealDanceUsedTurn=state.turnNumber;
