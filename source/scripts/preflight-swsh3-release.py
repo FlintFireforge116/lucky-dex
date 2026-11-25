@@ -3,7 +3,7 @@
 import argparse,subprocess,sys
 from pathlib import Path
 ROOT=Path(__file__).resolve().parents[1]
-TESTS=['tests/v07480-darkness-ablaze-integration.test.cjs','tests/v07481-darkness-ablaze-outcomes.test.cjs']
+TESTS=['tests/v07480-darkness-ablaze-integration.test.cjs','tests/v07481-darkness-ablaze-outcomes.test.cjs','tests/v07482-darkness-ablaze-independent-audit.test.cjs']
 def main():
  p=argparse.ArgumentParser();p.add_argument('--full',action='store_true');a=p.parse_args()
  def run(*args):subprocess.run(args,cwd=ROOT,check=True)

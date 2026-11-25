@@ -8,8 +8,8 @@ android {
         applicationId 'com.example.luckydex'
         minSdk 26
         targetSdk 35
-        versionCode 7482
-        versionName '0.69.482'
+        versionCode 7483
+        versionName '0.69.483'
     }
 
     signingConfigs {
@@ -1066,7 +1066,7 @@ tasks.matching { it.name == 'preBuild' || (it.name.startsWith('merge') && it.nam
     dependsOn tasks.named('auditSM5ForApk')
 }
 
-// v0.69.482 Forbidden Light SM6: SHA-pinned 150-print full-set source and audit.
+// v0.69.483 Forbidden Light SM6: SHA-pinned 150-print full-set source and audit.
 tasks.register('preflightSM6ContractForApk', Exec) {
     dependsOn tasks.named('auditSM5ForApk')
     workingDir rootProject.projectDir
@@ -1340,7 +1340,7 @@ tasks.register('generateSWSH3ForApk', Exec) {
 tasks.register('auditSWSH3ForApk', Exec) {
     dependsOn tasks.named('generateSWSH3ForApk')
     workingDir rootProject.projectDir
-    commandLine 'node', '--test', 'tests/v07480-darkness-ablaze-integration.test.cjs', 'tests/v07481-darkness-ablaze-outcomes.test.cjs'
+    commandLine 'node', '--test', 'tests/v07480-darkness-ablaze-integration.test.cjs', 'tests/v07481-darkness-ablaze-outcomes.test.cjs', 'tests/v07482-darkness-ablaze-independent-audit.test.cjs'
 }
 tasks.matching { it.name == 'preBuild' || (it.name.startsWith('merge') && it.name.endsWith('Assets')) }.configureEach {
     dependsOn tasks.named('auditSWSH3ForApk')

@@ -560,8 +560,10 @@
       const target=result.damageTarget===undefined?opponent.active:result.damageTarget;
       if(!target)return 0;
       let damage=Number(result.damage||0);
-      if(damage>0&&target===opponent.active&&!result.damageRules?.ignoreWeakness)
-        damage=effects.attackDamageWithState(state,side,source,foeSide,target,damage,data.cardById);
+      if(damage>0&&target===opponent.active){
+        if(!result.damageRules?.ignoreWeakness)damage=effects.attackDamageWithState(state,side,source,foeSide,target,damage,data.cardById);
+        else damage+=effects.swsh3ActiveDamageBonus(state,side,source,foeSide,target,data.cardById);
+      }
       if(damage>0){target.damage=Number(target.damage||0)+damage;
         const attackEvent={attacker:source,damage,source:{side,attack:true,uid:source?.uid,cardId:source?.cardId}};
         triggerAbilities(state,'damagedByAttack',foeSide,target,attackEvent);
@@ -1431,7 +1433,8 @@
         if(Number(snapshot.sides[side]?.ex9DragonDanceUntil||0)===Number(snapshot.turnNumber))damage+=30;
         damage+=effects.modifierAmount(snapshot,side,attacker,'attackDamage',data.cardById)
           +effects.modifierAmount(snapshot,side,attacker,'attackDamageAllTargets',data.cardById)
-          +effects.attackSpecificBonus(attacker,attack.name,snapshot.turnNumber);
+          +effects.attackSpecificBonus(attacker,attack.name,snapshot.turnNumber)
+          +effects.swsh3ActiveDamageBonus(snapshot,side,attacker,foeSide,defender,data.cardById);
         // Display the same next-turn attack boosts that battle execution
         // applies. This covers Jungle Scyther's Swords Dance, Sandstorm
         // Vigoroth's Focus Energy and custom-set next-attack effects.
@@ -4280,7 +4283,7 @@ const target=slotForTarget(s,action.target,action.benchIndex);if(card.id==='pl2-
         if(!kartenvoy)damage+=effects.modifierAmount(state,foeSide,defender,'damageTaken',data.cardById);
         if(state.format==='classic'&&damage>0){const metal=miraculousWindActive(state)?0:(s.active.specialEnergy||[]).filter(r=>['neo1-19','ecard1-159','ecard2-143'].includes(r.cardId)).length;if(metal&&!attackerCard.types?.includes('Metal'))damage=Math.max(0,damage-metal*10);}
         if(state.format==='classic'&&damage>0)damage=Math.max(0,damage-10*(s.active.specialEnergy||[]).filter(r=>['ex9-87','ex14-88'].includes(r.cardId)).length);
-        if(result.damageRules?.ignoreWeakness&&damage>0&&s.sm12AlteredCreation)damage+=30;
+        if(result.damageRules?.ignoreWeakness&&damage>0){if(s.sm12AlteredCreation)damage+=30;damage+=effects.swsh3ActiveDamageBonus(state,side,s.active,foeSide,defender,data.cardById);}
         if(!result.damageRules?.ignoreWeakness){
           const beforeMatchup=damage,defCard=data.cardById(defender.cardId),resistance=defender.resistanceOverride||defCard?.resistance;
           if(state.format==='classic'&&activeStadium(state)?.cardId!=='hgss3-76'&&beforeMatchup>0&&resistance&&effects.effectiveTypes(state,side,s.active,data.cardById).includes(resistance)){
@@ -4712,7 +4715,9 @@ const target=slotForTarget(s,action.target,action.benchIndex);if(card.id==='pl2-
   function applyAction(state,side,action){
     const rc=rerollContext(state,side,action),source=rc&&effects.coinRerollSource?.(state,rc.ownerSide,rc.scope,rc.subject,data.cardById);
     if(!source)return neoMonitoredAction(state,side,action);
-    const snapshot=cloneState(state),logStart=state.log?.length||0,result=neoMonitoredAction(state,side,action),newLogs=(state.log||[]).slice(logStart),flipped=newLogs.some(x=>x?.type==='coin');
+    const snapshot=cloneState(state),logStart=state.log?.length||0,result=neoMonitoredAction(state,side,action),newLogs=(state.log||[]).slice(logStart),flipped=source.abilityName==='Glimwood Tangle'
+      ?!newLogs.some(x=>x?.type==='attackFailed')&&newLogs.some(x=>x?.type==='coin'&&!x.status&&(!x.side||x.side===rc.ownerSide)&&!['Sand Attack','Neo Baby Pokémon rule','Misty Gyarados Rebellion','attackGate'].includes(x.reason))
+      :newLogs.some(x=>x?.type==='coin');
     if(!flipped)return result;
     const keepState=cloneState(state),rngAfter=state.rngState;state.phase='effectChoice';state.choiceSide=rc.ownerSide;delete state.winner;delete state.reason;
     state.pendingChoice={kind:'option',options:['Keep results','Reroll'],side:rc.ownerSide,originSide:rc.ownerSide,sourceUid:source.sourceUid,special:'coinReroll',keepState,snapshot,originalAction:cloneState(action),actionSide:side,rerollRngState:rngAfter,rerollOwnerSide:rc.ownerSide,rerollScope:rc.scope};

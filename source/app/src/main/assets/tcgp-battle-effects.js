@@ -29617,14 +29617,11 @@ if(r==='lastResort')return ss.hand.length===0?[{}]:[];if(r==='surgeSwap')return 
   }
   function modifierAmount(state,side,slot,stat,cardById){
     if(!slot)return 0;const values=[];if(stat==='attackCost'&&slot.swsh1Octolock&&state.sides[slot.swsh1Octolock.sourceSide]?.active?.uid===slot.swsh1Octolock.sourceUid)values.push(2);
-    if(state?.format==='classic'&&['maxHp','retreatCost','attackDamage'].includes(stat)){
+    if(state?.format==='classic'&&['maxHp','retreatCost'].includes(stat)){
       const types=effectiveTypes(state,side,slot,cardById),energy=slot.specialEnergy||[];
       if(stat==='maxHp'&&['swsh3-128','swsh3-184'].includes(slot.cardId)&&!abilitiesSuppressed(state,side,slot,cardById))values.push(20*(Number(slot.energy?.Metal||0)+energy.filter(r=>attachedSpecialProvidesType(r,'Metal',slot,cardById)).length));
       if(stat==='maxHp'&&types.includes('Fire'))values.push(20*energy.filter(r=>r.cardId==='swsh3-174').length);
       if(stat==='retreatCost'&&types.includes('Darkness')&&energy.some(r=>r.cardId==='swsh3-175'))values.push(-999);
-      if(stat==='attackDamage'&&types.includes('Colorless'))values.push(20*energy.filter(r=>r.cardId==='swsh3-176').length);
-      const foeSide=side==='player'?'opponent':'player',foe=state.sides[foeSide].active;
-      if(stat==='attackDamage'&&foe&&effectiveTypes(state,foeSide,foe,cardById).some(t=>t===cardById(slot.cardId)?.weakness))values.push(30*activeToolsOf(state,slot,cardById).filter(r=>r.cardId==='swsh3-171').length);
     }
     if(state?.format==='classic'&&stat==='retreatCost'&&slot.sm11StickyUntil===state.turnNumber)values.push(1);
     if(state?.format==='classic'&&stat==='retreatCost'&&activeStadium(state)?.cardId==='sm11-193'&&cardById(slot.cardId)?.stage==='Basic'&&effectiveTypes(state,side,slot,cardById).includes('Darkness'))values.push(-999);
@@ -30116,8 +30113,22 @@ if(r==='lastResort')return ss.hand.length===0?[{}]:[];if(r==='surgeSwap')return 
       pokemonOn(state.sides[defenderSide]).some(p=>p.cardId==='xy11-56'&&
         !abilitiesSuppressed(state,defenderSide,p,cardById));
   }
+  // Both Darkness Ablaze bonuses explicitly apply only to damage to the opposing Active.
+  // Compute at the actual target boundary, including deferred multi-target attacks.
+  function swsh3ActiveDamageBonus(state,attackSide,attackerSlot,defenderSide,defenderSlot,cardById){
+    if(state?.format!=='classic'||attackSide===defenderSide||!attackerSlot||!defenderSlot||defenderSlot!==state.sides[defenderSide]?.active)return 0;
+    let bonus=0;
+    const power=(attackerSlot.specialEnergy||[]).filter(r=>r.cardId==='swsh3-176').length;
+    if(power&&effectiveTypes(state,attackSide,attackerSlot,cardById).includes('Colorless'))bonus+=20*power;
+    if(toolsOf(attackerSlot).some(r=>r.cardId==='swsh3-171')){
+      const card=cardById(attackerSlot.cardId),weak=attackerSlot.weaknessOverride??card?.weakness;
+      if(weak&&effectiveTypes(state,defenderSide,defenderSlot,cardById).includes(weak))bonus+=30*activeToolsOf(state,attackerSlot,cardById).filter(r=>r.cardId==='swsh3-171').length;
+    }
+    return bonus;
+  }
   function attackDamageWithState(state,attackSide,attackerSlot,defenderSide,defenderSlot,damage,cardById,ignoreDefenderEffects=false){
     let n=Math.max(0,Number(damage||0));if(!n||!attackerSlot||!defenderSlot)return n;
+    n+=swsh3ActiveDamageBonus(state,attackSide,attackerSlot,defenderSide,defenderSlot,cardById);
     if(state?.format==='classic'&&state.activeSide===attackSide&&state.sides[attackSide]?.sm12AlteredCreation&&state.sides[defenderSide]?.active===defenderSlot)n+=30;
     // Professor Kukui boosts attacks against the opponent's Active only,
     // before Weakness/Resistance, and only on the Supporter player's turn.
@@ -30562,5 +30573,5 @@ if(r==='lastResort')return ss.hand.length===0?[{}]:[];if(r==='surgeSwap')return 
     return heads?0:amount;
   }
   function applyAttackEffect(effect,context){return applyEffect(effect,context);}
-  return {spiritLinkSpecies,spiritLinkEvolution,usefulToolRecipient,sm11ReturnSnapshot,sm11ReturnDiscarded,ENERGY_CODE,det1EvasionDamage,scoopUpBlocked,metalGogglesActive,attachedSpecialProvidesType,effectTypes,supportsEffect,validateEffect,matchesFilter,totalEnergy,canPayCost,spendGenericEnergy,spendGenericEnergyWithValue,attackDamage,applyAttackEffect,applyEffect,resolveAttack,choicesForEffect,neoDiscoveryReduction,modifierAmount,clearConditions,clearTemporaryEffects,revertShapeshift,switchPokemon,spikemuthSwitch,attackIsPrevented,attackEffectsPrevented,statusIsPrevented,isLocked,isActionLocked,passiveAttackAllowed,applyPersistentEvent,findPassiveRule,healingIsBlocked,canUsePreviousEvolutionAttacks,attackSpecificBonus,consumeDamageGuard,topDeckCountAmount,coinBonusAmount,abilitiesSuppressed,evolutionRule,attackCostOverride,effectiveTypes,applyContinuousRules,attackDamageWithState,wideLensBenchMatchup,toolEffectsSuppressed,resolveDelayedEffects,toolCapacity,coinRerollSource,lentalDefenseReduction,florioReactToAttackDamage,florio114RescueKO,florio114PrismCleanup};
+  return {spiritLinkSpecies,spiritLinkEvolution,usefulToolRecipient,sm11ReturnSnapshot,sm11ReturnDiscarded,ENERGY_CODE,det1EvasionDamage,scoopUpBlocked,metalGogglesActive,attachedSpecialProvidesType,effectTypes,supportsEffect,validateEffect,matchesFilter,totalEnergy,canPayCost,spendGenericEnergy,spendGenericEnergyWithValue,attackDamage,applyAttackEffect,applyEffect,resolveAttack,choicesForEffect,neoDiscoveryReduction,modifierAmount,clearConditions,clearTemporaryEffects,revertShapeshift,switchPokemon,spikemuthSwitch,attackIsPrevented,attackEffectsPrevented,statusIsPrevented,isLocked,isActionLocked,passiveAttackAllowed,applyPersistentEvent,findPassiveRule,healingIsBlocked,canUsePreviousEvolutionAttacks,attackSpecificBonus,consumeDamageGuard,topDeckCountAmount,coinBonusAmount,abilitiesSuppressed,evolutionRule,attackCostOverride,effectiveTypes,applyContinuousRules,swsh3ActiveDamageBonus,attackDamageWithState,wideLensBenchMatchup,toolEffectsSuppressed,resolveDelayedEffects,toolCapacity,coinRerollSource,lentalDefenseReduction,florioReactToAttackDamage,florio114RescueKO,florio114PrismCleanup};
 });
