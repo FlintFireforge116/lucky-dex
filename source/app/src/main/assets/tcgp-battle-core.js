@@ -2193,7 +2193,12 @@
     }
         for(const side of [state.activeSide,state.activeSide==='player'?'opponent':'player'])triggerAbilities(state,'checkup',side);
     const first=state.activeSide,second=first==='player'?'opponent':'player';
-    for(const side of [first,second])neoToolCheck(state,side);
+    for(const side of [first,second]){neoToolCheck(state,side);if(state.format==='classic')for(const slot of pokemonOn(state.sides[side]))for(const ref of activeToolsOf(state,slot)){
+      const cure=ref.cardId==='swsh1-168'&&Object.keys(slot.conditions||{}).length>0,heal=ref.cardId==='swsh1-182'&&slot.damage>=30&&!effects.healingIsBlocked(state,slot,data.cardById);
+      if(!cure&&!heal)continue;if(cure)slot.conditions={};if(heal)slot.damage-=30;
+      if(slot.tool?.uid===ref.uid){slot.tool=null;if(slot.extraTools?.length)slot.tool=slot.extraTools.shift();}else slot.extraTools=(slot.extraTools||[]).filter(x=>x.uid!==ref.uid);
+      state.sides[side].discard.push(ref);
+    }}
     if(state.format==='classic')for(const who of ['player','opponent']){
       const p=state.sides[who].active;
       // EX Dragon Frontiers Flygon ex: one Sand Damage trigger between turns
@@ -2805,7 +2810,7 @@
         if(state.format==='classic'&&cause==='attack'&&source?.turn===state.turnNumber&&source?.side===foeSide&&source?.attack&&Number(source.damage)>0){const p=pokemonOn(foe).find(p=>p.uid===source.uid);if(p&&['sm8-121','sm8-203','sm8-223'].includes(p.cardId)&&!effects.abilitiesSuppressed(state,foeSide,p,data.cardById))slot.pl1LostZoneOnKO=true;}
         const blackMarket=state.format==='classic'&&activeStadium(state)?.cardId==='sm9-134'&&cause==='attack'&&source?.attack&&source.side===foeSide&&Number(source.damage||0)>0&&effects.effectiveTypes(state,side,slot,data.cardById).includes('Darkness')&&(Number(slot.energy?.Darkness||0)>0||(slot.specialEnergy||[]).some(r=>effects.attachedSpecialProvidesType(r,'Darkness',slot,data.cardById)))?1:0;
         const arceusBeltBonus=state.format==='classic'&&activeToolsOf(state,slot).some(ref=>ref.cardId==='pl4-87')?1:0;
-        const arceusLuckyEgg=state.format==='classic'&&cause==='attack'&&source?.side===foeSide&&activeToolsOf(state,slot).some(ref=>ref.cardId==='pl4-88');
+        const arceusLuckyEgg=state.format==='classic'&&cause==='attack'&&source?.side===foeSide&&activeToolsOf(state,slot).some(ref=>ref.cardId==='pl4-88'||ref.cardId==='swsh1-167'&&source?.attack&&Number(source.damage||0)>0);
         const scoopBlocked=effects.scoopUpBlocked(state,side,slot,data.cardById);
         const teleport=!scoopBlocked&&state.format==='classic'&&cause==='attack'&&source?.side===foeSide&&source?.attack&&activeToolsOf(state,slot).some(r=>r.cardId==='SNAPFOUNJA-084');
         if(slot.pl1LostZoneOnKO&&['sm8-121','sm8-203','sm8-223'].includes(source?.cardId))discardKnockedOut(s,slot);
@@ -4554,6 +4559,9 @@ const target=slotForTarget(s,action.target,action.benchIndex);if(card.id==='pl2-
     }
     if(state.format==='classic'&&state.turnNumber===turnOfAction&&state.phase==='battle'){
       const owner=state.activeSide,board=state.sides[owner],incoming=board.active;
+      if(incoming&&before[owner].uid!==incoming.uid&&before[owner].bench.has(incoming.uid)&&incoming.cardId==='swsh1-34'&&incoming.swsh1LiberoTurn!==turnOfAction&&!effects.abilitiesSuppressed(state,owner,incoming,data.cardById)&&(Number(board.energyDiscard?.Fire||0)>0||board.discard.some(x=>data.cardById(x.cardId)?.basicEnergy&&data.cardById(x.cardId)?.subtype==='Fire'))){
+        incoming.swsh1LiberoTurn=turnOfAction;effects.applyEffect({type:'sm7Rule',rule:'sm12DiscardAttach',left:2,energyType:'Fire',sourceSelf:true,optional:true},{...effectContext(state,owner,{},incoming),isAbility:true});if(state.phase==='effectChoice'){state.pendingChoice.resume='ability';state.pendingChoice.isAbility=true;}
+      }
       if(incoming&&before[owner].uid!==incoming.uid&&before[owner].bench.has(incoming.uid)&&['sm11-25','sm11-216','sm11-238'].includes(incoming.cardId)&&incoming.sm11BurningRoadTurn!==turnOfAction&&!effects.abilitiesSuppressed(state,owner,incoming,data.cardById)&&board.bench.some(p=>Number(p.energy?.Fire||0)>0||(p.specialEnergy||[]).some(r=>effects.attachedSpecialProvidesType(r,'Fire',p,data.cardById)))){
         incoming.sm11BurningRoadTurn=turnOfAction;effects.applyEffect({type:'sm7Rule',rule:'sm11BurningRoad'},{...effectContext(state,owner,{},incoming),isAbility:true});if(state.phase==='effectChoice'){state.pendingChoice.resume='ability';state.pendingChoice.isAbility=true;}
       }

@@ -1,81 +1,9 @@
 {
   "printed": 216,
-  "battleReady": 191,
+  "battleReady": 215,
   "gated": {
-    "swsh1-6": [
-      "Unimplemented attack: Cotton Ride"
-    ],
-    "swsh1-9": [
-      "Unimplemented attack: Anchor Anger"
-    ],
-    "swsh1-19": [
-      "Unimplemented Ability: Bug's Radar"
-    ],
-    "swsh1-34": [
-      "Unimplemented Ability: Libero"
-    ],
-    "swsh1-39": [
-      "Unimplemented attack: Hundred Foot Flames"
-    ],
-    "swsh1-47": [
-      "Unimplemented attack: Ripping Horn"
-    ],
-    "swsh1-64": [
-      "Unimplemented Ability: Ice Dance"
-    ],
-    "swsh1-85": [
-      "Unimplemented Ability: Life Shaker"
-    ],
-    "swsh1-88": [
-      "Unimplemented attack: Sleepy Pulse"
-    ],
-    "swsh1-99": [
-      "Unimplemented attack: Bedrock Shake"
-    ],
-    "swsh1-113": [
-      "Unimplemented attack: Octolock"
-    ],
-    "swsh1-126": [
-      "Unimplemented attack: Thief"
-    ],
-    "swsh1-132": [
-      "Unimplemented Ability: Snap Trap"
-    ],
-    "swsh1-135": [
-      "Unimplemented attack: Iron Wings"
-    ],
-    "swsh1-144": [
-      "Unimplemented attack: Carry Off"
-    ],
-    "swsh1-148": [
-      "Unimplemented Ability: Primate Wisdom"
-    ],
-    "swsh1-151": [
-      "Unimplemented attack: Pluck"
-    ],
-    "swsh1-166": [
-      "Unimplemented Trainer effect"
-    ],
-    "swsh1-167": [
-      "Unimplemented Trainer effect"
-    ],
-    "swsh1-168": [
-      "Unimplemented Trainer effect"
-    ],
-    "swsh1-171": [
-      "Unimplemented Trainer effect"
-    ],
-    "swsh1-182": [
-      "Unimplemented Trainer effect"
-    ],
     "swsh1-186": [
       "Unimplemented Special Energy rules"
-    ],
-    "swsh1-187": [
-      "Unimplemented attack: Anchor Anger"
-    ],
-    "swsh1-215": [
-      "Unimplemented Trainer effect"
     ]
   },
   "attacks": 277,
