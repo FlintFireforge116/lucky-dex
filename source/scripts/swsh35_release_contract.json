@@ -1,8 +1,8 @@
 {
   "set": "swsh35",
   "name": "Champion's Path",
-  "stage": "partial",
-  "release": "0.69.484",
+  "stage": "complete",
+  "release": "0.69.485",
   "printedTotal": 80,
   "attackPrints": 89,
   "abilities": 12,

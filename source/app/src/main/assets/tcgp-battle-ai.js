@@ -273,6 +273,7 @@
       // discard amount rather than treating every option as a zero-damage hit.
       const fireCount=/^count:(\d+)$/.exec(String(action.effectSelection||''));
       let damage=attack?.effect?.rule==='xy5:explosiveJet'&&fireCount?Number(fireCount[1])*50:Number(attack?.damage||0);
+      if(attack?.effect?.rule==='swsh35Whisk')damage=60*slots(state.sides[side]).reduce((n,p)=>n+attachedCount(p),0);
       if(attack?.effect?.rule==='swsh2MiningRush')damage=30*Number(action.effectSelection||0);
       if(attack?.effect?.rule==='swsh2SpiralJet'&&!action.effectSelection)damage=0;
       if((action.attackCardId||state.sides[side].active.cardId)==='xy7-49'&&attack?.name==='Iron Cannon'){
@@ -377,6 +378,12 @@
     if(!legal.length)return null;
     if(state.format==='classic'&&state.phase==='battle'){
       const ss=state.sides[side];
+      const whisk=legal.find(a=>a.type==='attack'&&data.cardById(a.attackCardId||ss.active?.cardId)?.attacks?.[a.attackIndex]?.effect?.rule==='swsh35Whisk');
+      const target=state.sides[foeOf(side)].active;
+      if(whisk&&target&&!legal.some(a=>['attach','attachSpecial','evolve','ability','trainer'].includes(a.type))){
+        const raw=60*slots(ss).reduce((n,p)=>n+attachedCount(p),0),remaining=core.maxHp(state,foeOf(side),target)-Number(target.damage||0);
+        if(effects.attackDamageWithState(state,side,ss.active,foeOf(side),target,raw,data.cardById)>=remaining)return whisk;
+      }
       const link=legal.find(a=>a.type==='trainer'&&effects.spiritLinkSpecies(data.cardById(a.cardId))&&legal.some(e=>e.type==='evolve'&&e.target===a.target&&e.benchIndex===a.benchIndex&&effects.spiritLinkEvolution(data.cardById(a.cardId),data.cardById(e.cardId||ss.hand[e.handIndex]?.cardId))));
       if(link)return link;
     }
@@ -529,6 +536,17 @@
         return available[0];
       }
     }
+    // Finish Whisk payment even beyond the ordinary AI action budget.
+    if(state.phase==='effectChoice'&&state.pendingChoice?.special==='sm7BeforeAttack'&&state.pendingChoice.rule==='swsh35Whisk'){
+      const me=state.sides[side],foe=foeOf(side),target=state.sides[foe].active;
+      const stop=legal.find(a=>a.choiceSkip),picks=legal.filter(a=>!a.choiceSkip);
+      const remaining=target?core.maxHp(state,foe,target)-Number(target.damage||0):0;
+      const damage=target?effects.attackDamageWithState(state,side,me.active,foe,target,60*Number(state.pendingChoice.count||0),data.cardById):0;
+      if(!target||damage>=remaining||!picks.length)return stop||legal[0];
+      picks.sort((a,b)=>{const score=x=>{const p=slotFor(me,x.choiceTarget,x.choiceBenchIndex);return (p===me.active?-20:0)+attachedCount(p);};return score(b)-score(a);});
+      return picks[0];
+    }
+    if(state.phase==='effectChoice'&&state.pendingChoice?.effect?.rule==='swsh35Adornment')return legal.find(a=>!a.choiceSkip)||legal[0];
     if(Number(actionCount||0)>=30)return legal.find(a=>a.type==='attachSpecial')||legal.find(a=>a.type==='attach')||legal.find(a=>a.type==='attack')||legal.find(a=>a.type==='endTurn')||legal.find(a=>a.choiceLabel==='Done')||legal[0];
     // Effect choices may expose private deck/hand cards. Advanced search works
     // on a redacted public projection, where those card UIDs/positions are not
@@ -542,7 +560,7 @@
         if(pending.effect.stage==='source')return legal.find(x=>!x.choiceSkip&&pending.effect.opts?.[x.choiceOption]?.p!==board.active?.uid)||stop||legal[0];
         return legal.find(x=>x.choiceTarget==='active')||stop||legal[0];
       }
-      if(['sm9TopAttach','sm9SearchAttach','sm9DanceAncients','sm9NineTemptations','sm9AdventurousAppetite'].includes(rule))return legal.find(x=>!x.choiceSkip)||legal[0];
+      if(['swsh35Adornment','sm9TopAttach','sm9SearchAttach','sm9DanceAncients','sm9NineTemptations','sm9AdventurousAppetite'].includes(rule))return legal.find(x=>!x.choiceSkip)||legal[0];
       if(pending.special==='sm7WishPrize')return legal.find(a=>a.choiceOption===1)||legal[0];
       if(pending.special==='sm7Grounding')return legal.find(a=>!a.choiceSkip)||legal[0];
       if(pending.special==='sm7BeforeAttack'){
@@ -550,7 +568,7 @@
         if(pending.rule==='sandyFear')return picks[0]||stop||legal[0];
         const me=state.sides[side],target=state.sides[foeOf(side)].active;
         const remaining=target?core.maxHp(state,foeOf(side),target)-Number(target.damage||0):0;
-        const current=effects.attackDamageWithState(state,side,me.active,foeOf(side),target,(['sm75ExplosiveJet','sm8MindBlown','sm10Fireball','sm10RocketSplash'].includes(pending.rule)?0:pending.rule==='sm8LavaFlow'?50:30)+(pending.rule==='sm10RocketSplash'?60:50)*Number(pending.count||0),data.cardById);
+        const current=effects.attackDamageWithState(state,side,me.active,foeOf(side),target,(['swsh35Whisk','sm75ExplosiveJet','sm8MindBlown','sm10Fireball','sm10RocketSplash'].includes(pending.rule)?0:pending.rule==='sm8LavaFlow'?50:30)+(['sm10RocketSplash','swsh35Whisk'].includes(pending.rule)?60:50)*Number(pending.count||0),data.cardById);
         if(current>=remaining||!picks.length)return stop||legal[0];
         if(pending.rule==='sm10Fireball')return picks[0]||stop||legal[0];
         // Prefer surplus energy or an already-damaged Bench over draining the Active.

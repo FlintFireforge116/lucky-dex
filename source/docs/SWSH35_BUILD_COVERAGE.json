@@ -1,24 +1,7 @@
 {
   "printed": 80,
-  "battleReady": 75,
-  "gated": {
-    "swsh35-23": [
-      "Unimplemented attack: Adornment",
-      "Unimplemented attack: G-Max Whisk"
-    ],
-    "swsh35-37": [
-      "Unimplemented Ability: Wicked Ruler"
-    ],
-    "swsh35-64": [
-      "Unimplemented Trainer effect"
-    ],
-    "swsh35-66": [
-      "Unimplemented Trainer effect"
-    ],
-    "swsh35-80": [
-      "Unimplemented Trainer effect"
-    ]
-  },
+  "battleReady": 80,
+  "gated": {},
   "attacks": 89,
   "abilities": 12,
   "pokemonV": 16,

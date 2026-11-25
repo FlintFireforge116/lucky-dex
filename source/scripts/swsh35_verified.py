@@ -37,3 +37,11 @@ at(44,'Attack from Behind',bonus(50,cond('opponentStatus',status='confusion')))
 ab(47,passive(mod('damageReduction',30)))
 ab(49,passive(N('DeepForestCamo')))
 tr(51,'Item',E('removeStatus',target='selfActive'))
+
+# v485 completion: exact printed signatures.
+def CP(rule):return E('sm7Rule',rule='swsh35'+rule)
+at(23,'Adornment',CP('Adornment'))
+at(23,'G-Max Whisk',CP('Whisk'))
+ab(37,activated(CP('WickedRuler')))
+tr(64,'Item',CP('RotomPhone'))
+tr(66,'Item',CP('FoodTin'))
