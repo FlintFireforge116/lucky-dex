@@ -498,7 +498,7 @@
   function sm11MarkLazyHowl(state,side,target){if(state.format==='classic'&&state.activeSide===side&&target?.sm11LazyHowlUntil===state.turnNumber)state.sm11LazyEnd={side,turn:state.turnNumber};}
   function effectContext(state,side,action,attacker){
     const foeSide=side==='player'?'opponent':'player';
-    return {state,side,foeSide,attacker:attacker||state.sides[side].active,defender:state.sides[foeSide].active,action:action||{},cardById:data.cardById,handEnergyTargets:ref=>pokemonOn(state.sides[side]).filter(p=>physicalHandEnergyTargetLegal(state,side,data.cardById(ref?.cardId),p,true)),attachPhysicalEnergy:(ref,target)=>{const ss=state.sides[side],i=ss.hand.findIndex(x=>x.uid===ref?.uid);if(i<0||!pokemonOn(ss).includes(target)||!physicalHandEnergyTargetLegal(state,side,data.cardById(ref.cardId),target,true))return false;attachPhysicalHandEnergy(state,side,{handIndex:i,target:target===ss.active?'active':'bench',benchIndex:target.benchSlot},true);return true;},quizNames:(hint,answer)=>sm11QuizNames(state,hint,answer),rareCandyMatches,random,shuffle,drawCard:(who)=>{const ref=drawCard(who);if(ref&&state.format==='classic'){const from=who===state.sides.player?'player':'opponent',otherSide=from==='player'?'opponent':'player';if(state.sides[otherSide].active?.cardId==='SNAPFOUNJA-033'){
+    return {state,side,foeSide,attacker:attacker||state.sides[side].active,defender:state.sides[foeSide].active,action:action||{},cardById:data.cardById,handEnergyTargets:ref=>ref?.cardId==='swsh1-186'&&!state.sides[side].hand.some(x=>x.uid!==ref.uid&&x.uid!==action?.trainerRef?.uid)?[]:pokemonOn(state.sides[side]).filter(p=>physicalHandEnergyTargetLegal(state,side,data.cardById(ref?.cardId),p,true)),attachPhysicalEnergy:(ref,target,paid=false)=>{const ss=state.sides[side],i=ss.hand.findIndex(x=>x.uid===ref?.uid);if(i<0||!pokemonOn(ss).includes(target)||!physicalHandEnergyTargetLegal(state,side,data.cardById(ref.cardId),target,true,paid))return false;attachPhysicalHandEnergy(state,side,{handIndex:i,target:target===ss.active?'active':'bench',benchIndex:target.benchSlot},true);return true;},quizNames:(hint,answer)=>sm11QuizNames(state,hint,answer),rareCandyMatches,random,shuffle,drawCard:(who)=>{const ref=drawCard(who);if(ref&&state.format==='classic'){const from=who===state.sides.player?'player':'opponent',otherSide=from==='player'?'opponent':'player';if(state.sides[otherSide].active?.cardId==='SNAPFOUNJA-033'){
       const idx=who.hand.findIndex(r=>r.uid===ref.uid);if(idx>=0){who.hand.splice(idx,1);who.deck.push(ref);state.log.push({type:'founjaLookout',side:from,cardId:ref.cardId});}}
       if(state.sides[otherSide].active?.cardId==='SNAPFLORIO-096')state.log.push({type:'revealDraw',side:from,cardId:ref.cardId,reason:'Circle Soar'});}return ref;},maxHp:(which,slot)=>maxHp(state,which,slot),retreatCost:which=>retreatCost(state,which),effectiveEnergy:slot=>{const which=pokemonOn(state.sides.player).includes(slot)?'player':'opponent';return effectiveEnergy(state,which,slot);},canPayCopiedCost:attack=>effects.canPayCost(effectiveEnergy(state,side,attacker||state.sides[side].active),attackCost(state,side,attack)),endTurn:()=>endTurn(state),requestChoice:spec=>{
       const forced=state.xy3ForcedSupporter;
@@ -1646,7 +1646,7 @@
           else if(card.id==='xy10-94')for(const face of ['selfCP','selfSP'])actions.push({...base,effectSelection:face});
           else actions.push(base);
         }
-      }else for(const target of effectChoices(card.effect,effectContext(state,side)))actions.push({...base,...target});
+      }else for(const target of effectChoices(card.effect,effectContext(state,side,{trainerRef:ref})))actions.push({...base,...target});
     });
     // Audino Busybody is a HAND Ability: revealing it heals the Active and
     // clears its condition, then the actual physical Audino enters discard.
@@ -2681,6 +2681,13 @@
   }
 
   function resolveKnockOut(state,resume,cause){
+    // Reactive selection is delayed until any attack-effect choices finish,
+    // but still resolves before removing either knocked-out Pokémon.
+    while(state.phase==='battle'&&state.swsh1SnapTrapQueue?.length){
+      const q=state.swsh1SnapTrapQueue.shift(),p=findSlotByUid(state,q.attackerSide,q.attackerUid),source=findSlotByUid(state,q.owner,q.sourceUid);if(!p)continue;
+      const opts=[...Object.entries(p.energy||{}).filter(([,n])=>Number(n)>0).map(([type])=>({type,label:type+' Energy'})),...(p.specialEnergy||[]).map(r=>({uid:r.uid,label:data.cardById(r.cardId)?.name||'Special Energy'}))];if(!opts.length)continue;
+      beginEffectChoice(state,q.owner,source,{kind:'option',side:'self',special:'swsh1SnapTrap',prompt:'Snap Trap: discard an Energy from the attacker',options:opts.map(x=>'Discard '+x.label),opts,attackerUid:q.attackerUid,attackerSide:q.attackerSide,koResume:resume,koCause:cause});return true;
+    }
     let any=false;
     while(true){
       const knocked=[];
@@ -3177,9 +3184,10 @@ const target=slotForTarget(s,action.target,action.benchIndex);if(card.id==='pl2-
   }
 
   // Shared target legality for normal and effect-driven physical Energy attachments.
-  function physicalHandEnergyTargetLegal(state,side,card,slot,extra=false){
+  function physicalHandEnergyTargetLegal(state,side,card,slot,extra=false,paid=false){
     const s=state.sides[side],foeSide=side==='player'?'opponent':'player',foe=state.sides[foeSide];
     if(!card||!slot)return false;
+    if(card.id==='swsh1-186'&&!paid&&s.hand.length<2)return false;
     const battery=card.id==='sm10-58',crazy=!!card.specialEnergy&&pokemonOn(s).some(p=>p.cardId==='sm10-157'&&!effects.abilitiesSuppressed(state,side,p,data.cardById));
     if(extra){
       if(card.kind!=='energy'||!(card.basicEnergy||card.specialEnergy)||card.battleEnabled===false&&!card.basicEnergy)return false;
@@ -3366,6 +3374,17 @@ const target=slotForTarget(s,action.target,action.benchIndex);if(card.id==='pl2-
     }
     if(matched.type==='effectChoice'){
       const pending=state.pendingChoice;if(!pending)throw new Error('No pending effect choice.');
+      if(pending.special==='auroraNormalPayment'){
+        const ss=state.sides[side],pay=ss.hand[matched.choiceHandIndex],energy=ss.hand.find(x=>x.uid===pending.auroraEnergyUid),target=findSlotByUid(state,side,pending.auroraTargetUid);
+        if(!pay||!energy||pay.uid===energy.uid||!target||!physicalHandEnergyTargetLegal(state,side,data.cardById(energy.cardId),target))throw new Error('Aurora Energy payment is no longer legal.');
+        ss.discard.push(...ss.hand.splice(matched.choiceHandIndex,1));state.log.push({type:'auroraPayment',side,energyUid:energy.uid,paymentUid:pay.uid,cardId:pay.cardId});state.pendingChoice=null;state.choiceSide=null;state.phase='battle';
+        return attachPhysicalHandEnergy(state,side,{handIndex:ss.hand.indexOf(energy),target:target===ss.active?'active':'bench',benchIndex:target.benchSlot});
+      }
+      if(pending.special==='swsh1SnapTrap'){
+        const p=findSlotByUid(state,pending.attackerSide,pending.attackerUid),source=findSlotByUid(state,side,pending.sourceUid),pick=pending.opts?.[matched.choiceOption];state.pendingChoice=null;state.choiceSide=null;state.phase='battle';
+        if(p&&pick){const target=p===state.sides[pending.attackerSide].active?'opponentActive':'opponentBench';effects.applyEffect({type:'discardEnergyCard',target,amount:1},{...effectContext(state,side,{choiceTarget:p===state.sides[pending.attackerSide].active?'active':'bench',choiceBenchIndex:p.benchSlot,effectEnergyType:pick.type,effectSpecialEnergyUid:pick.uid},source),isAbility:true});}
+        const paused=resolveKnockOut(state,pending.koResume,pending.koCause);if(!paused&&state.phase==='battle'){if(pending.koResume==='endTurn')endTurn(state);else if(pending.koResume==='advanceTurn')advanceTurn(state);else if(pending.koResume==='repeatAttack')finishRepeatAttack(state);}return state;
+      }
       if(pending.special==='sm10HypnoticHand'||pending.special==='sm10HypnoticAttack'){
         const ss=state.sides[side],enemy=state.sides[side==='player'?'opponent':'player'];state.pendingChoice=null;state.choiceSide=null;state.phase='battle';
         if(pending.special==='sm10HypnoticHand'){
@@ -3478,7 +3497,12 @@ const target=slotForTarget(s,action.target,action.benchIndex);if(card.id==='pl2-
       const originSide=pending.originSide,source=findSlotByUid(state,originSide,pending.sourceUid)||state.sides[originSide].active;
       const after=(pending.afterEffects||[]).slice(),resume=pending.resume,isAttack=!!pending.isAttack,isAbility=!!pending.isAbility||resume==='ability',koResume=pending.koResume,koCause=pending.koCause;
       state.pendingChoice=null;state.choiceSide=null;state.phase='battle';
-      const ctx={...effectContext(state,originSide,{...matched,trainerRef:pending.trainerRef||null},source),trainerRef:pending.trainerRef||null,isAttack,isAbility,resolvingChoice:true};
+      let chosen=matched;
+      if(pending.special==='auroraEffectPayment'){
+        const board=state.sides[pending.selectionSide||originSide],pay=board.hand[matched.choiceHandIndex];if(!pay||pay.uid===pending.auroraEnergyUid)throw new Error('Invalid Aurora Energy payment.');
+        chosen={...pending.auroraOriginalAction,auroraPaymentUid:pay.uid};
+      }
+      const ctx={...effectContext(state,originSide,{...chosen,trainerRef:pending.trainerRef||null},source),trainerRef:pending.trainerRef||null,isAttack,isAbility,resolvingChoice:true};
       effects.applyEffect(pending.effect,ctx);
       if(state.phase==='effectChoice'){state.pendingChoice.afterEffects=[...(state.pendingChoice.afterEffects||[]),...after];state.pendingChoice.resume=resume||state.pendingChoice.resume;state.pendingChoice.isAttack=isAttack||state.pendingChoice.isAttack;state.pendingChoice.isAbility=isAbility||state.pendingChoice.isAbility;state.pendingChoice.koResume=koResume;state.pendingChoice.koCause=koCause;return state;}
       for(let i=0;i<after.length;i++){const afterCtx={...ctx,resolvingChoice:false};effects.applyEffect(after[i],afterCtx);if(state.phase==='effectChoice'){state.pendingChoice.afterEffects=[...(state.pendingChoice.afterEffects||[]),...after.slice(i+1)];state.pendingChoice.resume=resume||state.pendingChoice.resume;state.pendingChoice.isAttack=isAttack||state.pendingChoice.isAttack;state.pendingChoice.isAbility=isAbility||state.pendingChoice.isAbility;state.pendingChoice.koResume=koResume;state.pendingChoice.koCause=koCause;return state;}}
@@ -3803,7 +3827,11 @@ const target=slotForTarget(s,action.target,action.benchIndex);if(card.id==='pl2-
       return state;
     }
     if(matched.type==='stadiumAction'){const stadium=data.cardById(activeStadium(state)?.cardId),effect=stadium?.effect?.type==='stadiumAction'?stadium.effect.effect:null;if(!effect)throw new Error('No Stadium action is available.');s.stadiumActionUsedTurn=state.turnNumber;s.stadiumActionUsedUid=state.stadium.uid;effects.applyEffect(effect,{...effectContext(state,side,matched),isStadium:true});if(state.phase==='effectChoice')state.pendingChoice.resume=state.pendingChoice.resume||'stadiumAction';else resolveKnockOut(state,null);state.log.push({type:'stadiumAction',side,cardId:stadium.id});return state;}
-    if (matched.type === 'attachSpecial')return attachPhysicalHandEnergy(state,side,matched);
+    if (matched.type === 'attachSpecial'){
+      const ref=s.hand[matched.handIndex];if(ref?.cardId==='swsh1-186'){
+        const target=slotForTarget(s,matched.target,matched.benchIndex);beginEffectChoice(state,side,target,{kind:'handCard',side:'self',excludeUids:[ref.uid],special:'auroraNormalPayment',prompt:'Discard another card to attach Aurora Energy',auroraEnergyUid:ref.uid,auroraTargetUid:target.uid});return state;
+      }return attachPhysicalHandEnergy(state,side,matched);
+    }
     if (matched.type === 'attach'){
       const target = slotForTarget(s,matched.target,matched.benchIndex);
       const type = s.energyType;

@@ -145,6 +145,7 @@ def main():
   if c.get('pokemonVMAX') and c['battleEnabled'] and c['evolvesFrom'] not in ready_v:
    c['battleEnabled']=c['deckEligible']=False
    c['support']={'status':'PARTIAL','reasons':['Required Pokémon V evolution parent is not yet enabled']}
+ assert len(cards)==216 and all(c['battleEnabled'] for c in cards), 'Completed Sword & Shield must have 216 enabled prints'
  hdr='''/* SWSH1 Sword & Shield 216 pinned official prints; unsupported mechanics gated. */
 (function(root,factory){const api=factory();if(typeof module==='object'&&module.exports)module.exports=api;if(root)root.LuckyDexClassicTCGSWSH1=api;})(typeof globalThis!=='undefined'?globalThis:this,function(){'use strict';
 const SET=Object.freeze({id:'swsh1',name:'Sword & Shield',series:'Sword & Shield',releaseDate:'2020-02-07',cardCount:202,printedTotal:216});

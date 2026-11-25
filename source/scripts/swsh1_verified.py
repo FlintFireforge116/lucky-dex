@@ -21,7 +21,7 @@ def attack(row,a):
  return V.attack(['_swsh1_',*row[1:]],a)
 def ability(row,a):return deepcopy(B.get(tuple(a))) or V.ability(['_swsh1_',*row[1:]],a)
 def trainer(row):return deepcopy(T.get((row[1],tuple(row[13]))))
-def energy(row):return None
+def energy(row):return E('specialEnergy',provides={'Miracle':1}) if row[0]=='186' else None
 def prism_ready(row):return False
 def discard(n=1,target='self',**kw):return E('discardEnergyCard',target=target,amount=n,**kw)
 def lock(title=None):return E('lock',target='self',action='attack',duration='nextOwnTurn',**({'attackName':title} if title else {}))

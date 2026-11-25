@@ -1,11 +1,7 @@
 {
   "printed": 216,
-  "battleReady": 215,
-  "gated": {
-    "swsh1-186": [
-      "Unimplemented Special Energy rules"
-    ]
-  },
+  "battleReady": 216,
+  "gated": {},
   "attacks": 277,
   "abilities": 25,
   "pokemonV": 31,
