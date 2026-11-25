@@ -1,8 +1,8 @@
 {
   "set": "swsh2",
   "name": "Rebel Clash",
-  "stage": "partial",
-  "release": "0.69.473",
+  "stage": "complete",
+  "release": "0.69.474",
   "printedTotal": 209,
   "attackPrints": 283,
   "abilities": 37,

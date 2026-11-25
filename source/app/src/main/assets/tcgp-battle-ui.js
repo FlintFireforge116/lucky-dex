@@ -695,6 +695,9 @@
     }).join('');
   }
   function logText(entry){
+    if(entry.type==='rockPaperScissors')return `Dan: You chose ${entry.playerChoice}, CPU chose ${entry.opponentChoice} — ${entry.result==='tie'?'tie, play again':(entry.result==='win')===(entry.side==='player')?'you win':'CPU wins'}`;
+    if(entry.type==='swsh2TopEntry')return `${entry.side==='player'?'You':'CPU'} used Top Entry: ${cardName(entry.cardId)}`;
+    if(entry.type==='swsh2Nugget')return `${entry.side==='player'?'You':'CPU'} played Nugget from the turn draw`;
     if(entry.type==='turn')return`Turn ${entry.turnNumber}: ${entry.side==='player'?'Your':'CPU'} turn`;
     if(entry.type==='attack')return`${entry.side==='player'?'You':'CPU'} used ${entry.attack} for ${entry.damage}${entry.damageReason?` (${entry.damageReason})`:''}`;
     if(entry.type==='ko')return`${cardName(entry.cardId)} was Knocked Out`;

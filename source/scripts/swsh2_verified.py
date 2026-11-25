@@ -140,3 +140,21 @@ ab(85,activated(N('MindHat')))
 ab(107,activated(N('TarGenerator')))
 tr(165,'Item',N('ScoopNet'))
 tr(168,'Item',N('ToolScrapper',left=2))
+
+# v474: shared hand-attachment lock, choice transfers, and conditional Energy.
+at(11,'Threatening Pattern',N('ThreateningPattern'))
+at(18,'Max Beating',N('MaxBeating'))
+at(26,'Nine-Tailed Shapeshifter',E('copyAttack',source='opponentActive',sm12Copy=True,swsh2Copy=True))
+ab(33,passive(N('ProtectiveGlow')))
+ab(38,passive(N('ScreenCleaner')))
+ab(75,trig('evolved',N('Prankish'),fromHandOnly=True))
+at(77,'Energy Warp',N('EnergyWarp'))
+at(113,'Severe Poison',E('status',target='opponentActive',status='poison',amount=40))
+ab(113,passive(N('NeutralizingGas')))
+for row in ROWS:
+ if row[0] in ('171','172','173','174','209'):
+  X[(row[1],tuple(row[13]))]=E('specialEnergy',provides={ {'171':'Colorless','172':'Psychic','173':'Lightning','174':'Colorless','209':'Colorless'}[row[0]]:2 if row[0] in ('174','209') else 1})
+
+for n in (8,32,61):ab(n,passive(N('TopEntry')))
+tr(162,'Item',N('Nugget'))
+tr(158,'Supporter',N('Dan'))

@@ -380,6 +380,7 @@
       const link=legal.find(a=>a.type==='trainer'&&effects.spiritLinkSpecies(data.cardById(a.cardId))&&legal.some(e=>e.type==='evolve'&&e.target===a.target&&e.benchIndex===a.benchIndex&&effects.spiritLinkEvolution(data.cardById(a.cardId),data.cardById(e.cardId||ss.hand[e.handIndex]?.cardId))));
       if(link)return link;
     }
+    if(state.phase==='effectChoice'&&state.pendingChoice?.special==='swsh2NaturalDraw')return legal.find(x=>x.choiceOption===1)||legal[0];
     if(state.phase==='effectChoice'&&state.pendingChoice?.effect?.rule==='sm11Quiz'&&state.pendingChoice.effect.stage==='guess')return legal[Math.floor(core.random(state)*legal.length)];
     if(state.format==='classic'&&state.phase==='effectChoice'&&state.pendingChoice?.special==='skyFieldBenchTrim'){
       const bench=state.sides[side].bench;

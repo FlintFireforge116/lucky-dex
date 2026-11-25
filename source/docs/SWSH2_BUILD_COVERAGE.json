@@ -1,69 +1,7 @@
 {
   "printed": 209,
-  "battleReady": 189,
-  "gated": {
-    "swsh2-8": [
-      "Unimplemented Ability: Top Entry"
-    ],
-    "swsh2-11": [
-      "Unimplemented attack: Threatening Pattern"
-    ],
-    "swsh2-18": [
-      "Unimplemented attack: Max Beating"
-    ],
-    "swsh2-26": [
-      "Unimplemented attack: Nine-Tailed Shapeshifter"
-    ],
-    "swsh2-32": [
-      "Unimplemented Ability: Top Entry"
-    ],
-    "swsh2-33": [
-      "Unimplemented Ability: Protective Glow"
-    ],
-    "swsh2-38": [
-      "Unimplemented Ability: Screen Cleaner"
-    ],
-    "swsh2-61": [
-      "Unimplemented Ability: Top Entry"
-    ],
-    "swsh2-75": [
-      "Unimplemented Ability: Prankish"
-    ],
-    "swsh2-77": [
-      "Unimplemented attack: Energy Warp"
-    ],
-    "swsh2-113": [
-      "Unimplemented attack: Severe Poison",
-      "Unimplemented Ability: Neutralizing Gas"
-    ],
-    "swsh2-158": [
-      "Unimplemented Trainer effect"
-    ],
-    "swsh2-162": [
-      "Unimplemented Trainer effect"
-    ],
-    "swsh2-171": [
-      "Unimplemented Special Energy rules"
-    ],
-    "swsh2-172": [
-      "Unimplemented Special Energy rules"
-    ],
-    "swsh2-173": [
-      "Unimplemented Special Energy rules"
-    ],
-    "swsh2-174": [
-      "Unimplemented Special Energy rules"
-    ],
-    "swsh2-177": [
-      "Unimplemented attack: Nine-Tailed Shapeshifter"
-    ],
-    "swsh2-193": [
-      "Unimplemented attack: Max Beating"
-    ],
-    "swsh2-209": [
-      "Unimplemented Special Energy rules"
-    ]
-  },
+  "battleReady": 209,
+  "gated": {},
   "attacks": 283,
   "abilities": 37,
   "pokemonV": 30,

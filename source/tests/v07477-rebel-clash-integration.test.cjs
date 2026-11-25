@@ -35,7 +35,7 @@ test('every enabled print preserves every full printed attack, Ability, Trainer/
    }
   }else if(c.battleEnabled){assert.deepEqual(fx.validateEffect(c.effect),[],c.id);assert.notEqual(c.effect.type,'noop',c.id);}
  }
- assert.equal(cv.battleReady,set.CARDS.filter(c=>c.battleEnabled).length);assert.equal(cv.battleReady+Object.keys(cv.gated).length,209);assert.ok(cv.battleReady>=147&&cv.battleReady<=209);
+ assert.equal(cv.battleReady,set.CARDS.filter(c=>c.battleEnabled).length);assert.equal(cv.battleReady+Object.keys(cv.gated).length,209);assert.equal(cv.battleReady,209);assert.deepEqual(cv.gated,{});
  assert.deepEqual(cv.gated,Object.fromEntries(set.CARDS.filter(c=>!c.battleEnabled).map(c=>[c.id,c.support.reasons])));
 });
 test('alternate-art effects and one-copy/Lost-Zone Prism Star metadata are canonical',()=>{
