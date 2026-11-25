@@ -1,0 +1,15 @@
+{
+  "set": "swsh35",
+  "name": "Champion's Path",
+  "stage": "partial",
+  "release": "0.69.484",
+  "printedTotal": 80,
+  "attackPrints": 89,
+  "abilities": 12,
+  "pokemonV": 16,
+  "pokemonVMAX": 6,
+  "trainerPrints": 23,
+  "energyPrints": 0,
+  "pin": "27d5a373d5274cd0dde9e681de419157026addb8",
+  "variants": []
+}
