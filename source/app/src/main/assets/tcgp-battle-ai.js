@@ -560,7 +560,7 @@
         if(pending.effect.stage==='source')return legal.find(x=>!x.choiceSkip&&pending.effect.opts?.[x.choiceOption]?.p!==board.active?.uid)||stop||legal[0];
         return legal.find(x=>x.choiceTarget==='active')||stop||legal[0];
       }
-      if(['swsh35Adornment','sm9TopAttach','sm9SearchAttach','sm9DanceAncients','sm9NineTemptations','sm9AdventurousAppetite'].includes(rule))return legal.find(x=>!x.choiceSkip)||legal[0];
+      if(['swsh4CaraLiss','swsh4Nessa','swsh4Cheese','swsh4Devolution','swsh35Adornment','sm9TopAttach','sm9SearchAttach','sm9DanceAncients','sm9NineTemptations','sm9AdventurousAppetite'].includes(rule))return legal.find(x=>!x.choiceSkip)||legal[0];
       if(pending.special==='sm7WishPrize')return legal.find(a=>a.choiceOption===1)||legal[0];
       if(pending.special==='sm7Grounding')return legal.find(a=>!a.choiceSkip)||legal[0];
       if(pending.special==='sm7BeforeAttack'){

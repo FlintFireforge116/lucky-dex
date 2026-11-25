@@ -676,6 +676,8 @@
   }
   function triggerAbilities(state,event,side,onlySource,eventData){
     const ss=state.sides[side],meta=eventData||{};
+    if(state.format==='classic'&&onlySource&&['energyAttached','evolved'].includes(event)&&(onlySource.specialEnergy||[]).some(r=>r.cardId==='swsh4-162')&&effects.effectiveTypes(state,side,onlySource,data.cardById).includes('Grass'))onlySource.conditions={};
+    if(state.format==='classic'&&event==='evolved'&&meta.fromHand&&onlySource&&activeStadium(state)?.cardId==='swsh4-161'&&data.cardById(onlySource.cardId)?.pokemonVMAX){effects.applyEffect({type:'heal',target:'self',amount:100},effectContext(state,side,{},onlySource));}
     // Platinum Stadiums are continuous, symmetrical entry triggers, not
     // effects that fire only when the Stadium is initially played.
     if(state.format==='classic'&&onlySource&&meta.fromHand){
@@ -713,7 +715,7 @@
     // Rocky Helmet (including secret print) activates on *attack damage* to
     // its Active holder. It does not trigger on poison, checkup or zero damage.
     if(state.format==='classic'&&event==='damagedByAttack'&&Number(meta.damage||0)>0&&onlySource===ss.active&&
-       activeToolsOf(state,onlySource).some(r=>['bw7-133','bw7-153'].includes(r.cardId))&&
+       activeToolsOf(state,onlySource).some(r=>['bw7-133','bw7-153','swsh4-159'].includes(r.cardId))&&
        meta.source?.side!==(side)){
       const attacker=meta.attacker||state.sides[meta.source.side]?.active;
       if(attacker){attacker.damage=Number(attacker.damage||0)+20;state.log.push({type:'bw7RockyHelmet',side,attackerUid:attacker.uid,damage:20});}
@@ -2007,6 +2009,7 @@
     if (s.active&&!sm8Shady&&!bw5Airhead&&!conditions.paralysis&&Number(s.active.ex11AttackLockUntil||0)!==Number(state.turnNumber)){
       for(const entry of attackOptions(state,side)){
         const {cardId:attackCardId,attackIndex,attack}=entry;
+        if(state.format==='classic'&&['swsh4-29','swsh4-168'].includes(attackCardId)&&state.firstSide===side&&s.turnCount===1&&attack.name!=='Fast Flight')continue;
         if(attack.name==='Cold Snap'&&s.sm12ColdSnapTurn===s.turnCount-1)continue;
         if(attackCardId==='sm8-106'&&attack.name==='Nightcap'&&foe.prizes.length!==2)continue;
         if ((attack.gxAttack||/\bGX\b/i.test(attack.name||''))&&(s.sm11GxLocked||s.gxAttackUsed&&!(state.format==='classic'&&s.sm12WaterGxTurn===state.turnNumber&&effects.effectiveTypes(state,side,s.active,data.cardById).includes('Water'))&&!(state.format==='classic'&&data.cardById(attackCardId)?.name==='Zygarde-GX'&&s.sm6BonnieTurn===state.turnNumber)))continue;

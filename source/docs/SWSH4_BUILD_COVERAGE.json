@@ -1,6 +1,6 @@
 {
   "printed": 203,
-  "battleReady": 141,
+  "battleReady": 178,
   "gated": {
     "swsh4-3": [
       "Unimplemented Ability: Elusive Master"
@@ -23,17 +23,11 @@
     "swsh4-26": [
       "Unimplemented Ability: Incandescent Awakening"
     ],
-    "swsh4-29": [
-      "Unimplemented attack: Fast Flight"
-    ],
     "swsh4-30": [
       "Unimplemented Ability: Torrential Awakening"
     ],
     "swsh4-40": [
       "Unimplemented attack: Continuous Gulp Missile"
-    ],
-    "swsh4-42": [
-      "Unimplemented attack: Targeted Skewer"
     ],
     "swsh4-46": [
       "Unimplemented Ability: Buzzap Generator"
@@ -44,9 +38,6 @@
     "swsh4-48": [
       "Unimplemented attack: Thunder Snipe"
     ],
-    "swsh4-49": [
-      "Unimplemented attack: Damaging Spark"
-    ],
     "swsh4-59": [
       "Unimplemented attack: Electrified Bite Mark",
       "Unimplemented attack: Electro Sprinkler"
@@ -54,15 +45,9 @@
     "swsh4-63": [
       "Unimplemented attack: Mini-Metronome"
     ],
-    "swsh4-64": [
-      "Unimplemented Ability: Lunar Blessing"
-    ],
     "swsh4-66": [
       "Unimplemented attack: Life Squeeze",
       "Unimplemented Ability: Shell Survival"
-    ],
-    "swsh4-68": [
-      "Unimplemented Ability: Curse of Devolution"
     ],
     "swsh4-71": [
       "Unimplemented Ability: Spectral Breach"
@@ -70,119 +55,23 @@
     "swsh4-76": [
       "Unimplemented attack: Flying Fury"
     ],
-    "swsh4-81": [
-      "Unimplemented Ability: Sharing Sweets"
-    ],
-    "swsh4-97": [
-      "Unimplemented attack: Heavy Slam"
-    ],
-    "swsh4-99": [
-      "Unimplemented attack: Eruption Shot"
-    ],
     "swsh4-111": [
       "Unimplemented attack: Trash Cyclone"
     ],
     "swsh4-113": [
       "Unimplemented attack: Stealy Claws"
     ],
-    "swsh4-125": [
-      "Unimplemented Ability: Counterattack"
-    ],
-    "swsh4-138": [
-      "Unimplemented attack: Amazing Burst"
-    ],
-    "swsh4-146": [
-      "Unimplemented Trainer effect"
-    ],
-    "swsh4-147": [
-      "Unimplemented Trainer effect"
-    ],
-    "swsh4-148": [
-      "Unimplemented Trainer effect"
-    ],
-    "swsh4-149": [
-      "Unimplemented Trainer effect"
-    ],
     "swsh4-152": [
-      "Unimplemented Trainer effect"
-    ],
-    "swsh4-153": [
-      "Unimplemented Trainer effect"
-    ],
-    "swsh4-156": [
-      "Unimplemented Trainer effect"
-    ],
-    "swsh4-157": [
-      "Unimplemented Trainer effect"
-    ],
-    "swsh4-158": [
-      "Unimplemented Trainer effect"
-    ],
-    "swsh4-159": [
       "Unimplemented Trainer effect"
     ],
     "swsh4-160": [
       "Unimplemented Trainer effect"
     ],
-    "swsh4-161": [
-      "Unimplemented Trainer effect"
-    ],
-    "swsh4-162": [
-      "Unimplemented Special Energy rules"
-    ],
-    "swsh4-163": [
-      "Unimplemented Special Energy rules"
-    ],
-    "swsh4-164": [
-      "Unimplemented Special Energy rules"
-    ],
-    "swsh4-165": [
-      "Unimplemented Special Energy rules"
-    ],
     "swsh4-167": [
       "Unimplemented attack: Jungle Rising"
     ],
-    "swsh4-168": [
-      "Unimplemented attack: Fast Flight"
-    ],
-    "swsh4-171": [
-      "Unimplemented attack: Damaging Spark"
-    ],
     "swsh4-174": [
       "Unimplemented Ability: Resolute Spear"
-    ],
-    "swsh4-179": [
-      "Unimplemented Trainer effect"
-    ],
-    "swsh4-180": [
-      "Unimplemented Trainer effect"
-    ],
-    "swsh4-181": [
-      "Unimplemented Trainer effect"
-    ],
-    "swsh4-183": [
-      "Unimplemented Trainer effect"
-    ],
-    "swsh4-184": [
-      "Unimplemented Trainer effect"
-    ],
-    "swsh4-189": [
-      "Unimplemented attack: Eruption Shot"
-    ],
-    "swsh4-192": [
-      "Unimplemented Trainer effect"
-    ],
-    "swsh4-193": [
-      "Unimplemented Trainer effect"
-    ],
-    "swsh4-194": [
-      "Unimplemented Trainer effect"
-    ],
-    "swsh4-196": [
-      "Unimplemented Trainer effect"
-    ],
-    "swsh4-197": [
-      "Unimplemented Trainer effect"
     ],
     "swsh4-201": [
       "Unimplemented Trainer effect"
