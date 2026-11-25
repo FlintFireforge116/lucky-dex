@@ -1,0 +1,15 @@
+{
+  "set": "swsh2",
+  "name": "Rebel Clash",
+  "stage": "partial",
+  "release": "0.69.472",
+  "printedTotal": 209,
+  "attackPrints": 283,
+  "abilities": 37,
+  "pokemonV": 30,
+  "pokemonVMAX": 14,
+  "trainerPrints": 28,
+  "energyPrints": 5,
+  "pin": "500a9597c6e5989e900f93a1933420c568fbaab8",
+  "variants": []
+}

@@ -8,8 +8,8 @@ android {
         applicationId 'com.example.luckydex'
         minSdk 26
         targetSdk 35
-        versionCode 7471
-        versionName '0.69.471'
+        versionCode 7472
+        versionName '0.69.472'
     }
 
     signingConfigs {
@@ -1066,7 +1066,7 @@ tasks.matching { it.name == 'preBuild' || (it.name.startsWith('merge') && it.nam
     dependsOn tasks.named('auditSM5ForApk')
 }
 
-// v0.69.471 Forbidden Light SM6: SHA-pinned 150-print full-set source and audit.
+// v0.69.472 Forbidden Light SM6: SHA-pinned 150-print full-set source and audit.
 tasks.register('preflightSM6ContractForApk', Exec) {
     dependsOn tasks.named('auditSM5ForApk')
     workingDir rootProject.projectDir
@@ -1304,4 +1304,24 @@ tasks.register('auditSWSH1ForApk', Exec) {
 }
 tasks.matching { it.name == 'preBuild' || (it.name.startsWith('merge') && it.name.endsWith('Assets')) }.configureEach {
     dependsOn tasks.named('auditSWSH1ForApk')
+}
+
+// Rebel Clash: pinned catalogue and staged gameplay gate.
+tasks.register('preflightSWSH2ContractForApk', Exec) {
+    dependsOn tasks.named('auditSWSH1ForApk')
+    workingDir rootProject.projectDir
+    commandLine (System.getenv('LUCKYDEX_PYTHON') ?: 'python3'), 'scripts/preflight-swsh2-release.py'
+}
+tasks.register('generateSWSH2ForApk', Exec) {
+    dependsOn tasks.named('preflightSWSH2ContractForApk')
+    workingDir rootProject.projectDir
+    commandLine (System.getenv('LUCKYDEX_PYTHON') ?: 'python3'), 'scripts/build-swsh2.py'
+}
+tasks.register('auditSWSH2ForApk', Exec) {
+    dependsOn tasks.named('generateSWSH2ForApk')
+    workingDir rootProject.projectDir
+    commandLine 'node', '--test', 'tests/v07477-rebel-clash-integration.test.cjs', 'tests/v07478-rebel-clash-outcomes.test.cjs'
+}
+tasks.matching { it.name == 'preBuild' || (it.name.startsWith('merge') && it.name.endsWith('Assets')) }.configureEach {
+    dependsOn tasks.named('auditSWSH2ForApk')
 }
