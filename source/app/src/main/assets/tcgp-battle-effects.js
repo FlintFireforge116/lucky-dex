@@ -20467,7 +20467,7 @@
             if(effect.stage==='target'&&res){const p=selected(ctx,ss);if(!ss.bench.includes(p))break;const opts=[...(Number(a.energy?.Grass)>0?[{type:'Grass',label:'Basic Grass Energy'}]:[]),...(a.specialEnergy||[]).filter(x=>attachedSpecialProvidesType(x,'Grass',a,ctx.cardById)).map(x=>({uid:x.uid,label:card(x)?.name}))];if(opts.length)ask({kind:'option',options:opts.map(x=>x.label)},{stage:'move',uid:p.uid,opts});break;}
             if(res){const p=ss.bench.find(x=>x.uid===effect.uid),o=effect.opts?.[act.choiceOption];if(!p||!o)break;if(o.type&&a.energy.Grass>0){a.energy.Grass--;p.energy.Grass=Number(p.energy.Grass||0)+1;}else if(o.uid){const i=a.specialEnergy.findIndex(x=>x.uid===o.uid);if(i>=0)p.specialEnergy.push(...a.specialEnergy.splice(i,1));}}break;
           }
-          if(k==='JungleHeal'){for(const p of all())if(en(p,'Grass')&&!healingIsBlocked(ctx.state,p,ctx.cardById)){p.damage=0;p.xy8HealedTurn=ctx.state.turnNumber;}break;}
+          if(k==='JungleHeal'){for(const p of all())if(en(p,'Grass')&&Number(p.damage||0)>0&&!healingIsBlocked(ctx.state,p,ctx.cardById)){p.damage=0;p.xy8HealedTurn=ctx.state.turnNumber;}break;}
           if(k==='HazardousEvolution'){if(!res){ask({kind:'option',options:['Do not use Hazardous Evolution','Paralyze and Poison']});break;}if(act.choiceOption===1){applyEffect({type:'status',target:'opponentActive',status:'paralysis'},fresh);applyEffect({type:'status',target:'opponentActive',status:'poison',amount:30},fresh);}break;}
           if(k==='BreezeAway'){
             if(res&&!skip){const p=selected(ctx,ss);if(all().includes(p))applyEffect({type:'returnToHand',target:'selfPokemon',returnBasicEnergy:true},ctx);}
