@@ -1702,7 +1702,7 @@
     const xy2PoisonBarrier=state.format==='classic'&&!!s.active?.conditions?.poison&&
       pokemonOn(foe).some(p=>p.cardId==='xy2-71'&&!effects.abilitiesSuppressed(state,side==='player'?'opponent':'player',p,data.cardById));
     const sm12Strangle=state.format==='classic'&&Object.values(s.active?.conditions||{}).some(Boolean)&&pokemonOn(foe).some(p=>p.cardId==='sm12-11'&&!effects.abilitiesSuppressed(state,side==='player'?'opponent':'player',p,data.cardById));
-    if (!sm12Strangle && !xy2PoisonBarrier && !(state.format==='classic'&&state.sides[side==='player'?'opponent':'player'].active?.cardId==='bw8-101'&&!effects.abilitiesSuppressed(state,side==='player'?'opponent':'player',state.sides[side==='player'?'opponent':'player'].active,data.cardById)) && !pl2SnorlaxLock && !ex10Octillery && !s.retreated && s.active && !(state.format==='classic'&&state.sides[side==='player'?'opponent':'player'].active?.cardId==='ex2-3'&&!effects.abilitiesSuppressed(state,side==='player'?'opponent':'player',state.sides[side==='player'?'opponent':'player'].active,data.cardById)) && Number(s.skyridgeMirageFailedTurn)!==state.turnNumber && !(s.active.specialEnergy||[]).some(r=>['ecard2-145','ex8-93','ex10-98','ex15-87'].includes(r.cardId)) && s.bench.length&&(s.active.cardId==='SNAPFLORIO-073'||!neoTrapActive(state,side,s.active,'retreat'))&&(!conditions.sleep&&!conditions.paralysis||
+    if (!(state.format==='classic'&&foe.active?.cardId==='swsh3-91'&&!effects.abilitiesSuppressed(state,side==='player'?'opponent':'player',foe.active,data.cardById)) && !sm12Strangle && !xy2PoisonBarrier && !(state.format==='classic'&&state.sides[side==='player'?'opponent':'player'].active?.cardId==='bw8-101'&&!effects.abilitiesSuppressed(state,side==='player'?'opponent':'player',state.sides[side==='player'?'opponent':'player'].active,data.cardById)) && !pl2SnorlaxLock && !ex10Octillery && !s.retreated && s.active && !(state.format==='classic'&&state.sides[side==='player'?'opponent':'player'].active?.cardId==='ex2-3'&&!effects.abilitiesSuppressed(state,side==='player'?'opponent':'player',state.sides[side==='player'?'opponent':'player'].active,data.cardById)) && Number(s.skyridgeMirageFailedTurn)!==state.turnNumber && !(s.active.specialEnergy||[]).some(r=>['ecard2-145','ex8-93','ex10-98','ex15-87'].includes(r.cardId)) && s.bench.length&&(s.active.cardId==='SNAPFLORIO-073'||!neoTrapActive(state,side,s.active,'retreat'))&&(!conditions.sleep&&!conditions.paralysis||
         activeToolsOf(state,s.active).some(ref=>['sm5-122','sm5-122a','sm5-167'].includes(ref.cardId))||
         s.active.cardId==='ex5-33'&&!effects.abilitiesSuppressed(state,side,s.active,data.cardById))&&(s.active.cardId==='SNAPFLORIO-073'||!effects.isLocked(state,s.active,'retreat'))&&data.cardById(s.active.cardId).effect?.type!=='playFossil'){
       if (s.active.cardId!=='xy4-102'&&effects.totalEnergy(effectiveEnergy(state,side,s.active)) >= retreatCost(state,side)){
@@ -2659,14 +2659,14 @@
   // Official Prize choice: the human selects a position without seeing its
   // identity, while existing face-up Prize effects remain visible.  Multiple
   // Prize KOs grant successive choices rather than auto-taking deck order.
-  function awardClassicPrize(state,side,index){
+  function awardClassicPrize(state,side,index,discardInstead=false){
     const ss=state.sides[side],i=Number(index);
     if(!Number.isInteger(i)||i<0||i>=ss.prizes.length)return false;
     const [ref]=ss.prizes.splice(i,1);
-    if(state.format==='classic'&&ref.cardId==='sm7-97'&&!ref.faceUp&&state.activeSide===side&&emptyBenchSlots(ss).length&&ss.prizes.length)state.sm7WishPrize={side,ref};else ss.hand.push(ref);
+    if(discardInstead){ss.discard.push(ref);state.log.push({type:'swsh3BillowingSmoke',side,cardId:ref.cardId});}else if(state.format==='classic'&&ref.cardId==='sm7-97'&&!ref.faceUp&&state.activeSide===side&&emptyBenchSlots(ss).length&&ss.prizes.length)state.sm7WishPrize={side,ref};else ss.hand.push(ref);
     ss.prizesTaken=Number(ss.prizesTaken||0)+1;ss.pointsGainedThisTurn=Number(ss.pointsGainedThisTurn||0)+1;
     state.log.push({type:'prize',side,cardId:ref.cardId,prizePosition:i,remaining:ss.prizes.length,taken:ss.prizesTaken});
-    if(state.format==='classic'&&ref.cardId==='xy11-102'&&!ref.faceUp){
+    if(!discardInstead&&state.format==='classic'&&ref.cardId==='xy11-102'&&!ref.faceUp){
       const heads=random(state)<0.5;
       state.log.push({type:'coin',side,reason:'Greedy Dice',heads,results:[heads]});
       if(heads&&ss.prizes.length){
@@ -2690,7 +2690,7 @@
         // Choose only from visible information; never examine hidden Prize IDs.
         const visible=ss.prizes.map((r,i)=>r.faceUp?i:-1).filter(i=>i>=0);
         const index=visible.length?visible[Math.floor(random(state)*visible.length)]:Math.floor(random(state)*ss.prizes.length);
-        awardClassicPrize(state,next.side,index);next.remaining--;continue;
+        awardClassicPrize(state,next.side,index,next.discardInstead);next.remaining--;continue;
       }
       state.phase='effectChoice';state.choiceSide=next.side;
       state.pendingChoice={kind:'prizeCard',special:'chooseClassicPrize',side:next.side,
@@ -2838,6 +2838,7 @@
         const sm10WasActive=slot===s.active;any=true;const countsAsKnockout=!(slot.cardId==='dp3-26'&&slot.transformOnKO)&&!slot.dp2ForcedDiscard&&card?.effect?.countsAsKnockout!==false&&card?.countsAsKnockout!==false&&!['ex16-84','ex16-85','ex16-86'].includes(card?.id);if(countsAsKnockout){if(state.format==='classic'&&sm10WasActive)s.sm10HypnoPending=true;if(Number(s.lastKnockoutTurn)!==Number(state.turnNumber))s.lastKnockedOutCardIds=[];s.lastKnockoutTurn=state.turnNumber;s.lastKnockedOutCardIds.push(card.id);s.knockoutsTaken=Number(s.knockoutsTaken||0)+1;if(cause==='attack'&&source?.side===foeSide&&source?.attack){if(Number(s.lastOpponentAttackKoTurn)!==Number(state.turnNumber))s.lastOpponentAttackKoCardIds=[];s.lastOpponentAttackKoTurn=state.turnNumber;s.lastOpponentAttackKoCardIds.push(card.id);}}
         if(state.format==='classic'&&cause==='attack'&&source?.turn===state.turnNumber&&source?.side===foeSide&&source?.attack&&Number(source.damage)>0){const p=pokemonOn(foe).find(p=>p.uid===source.uid);if(p&&['sm8-121','sm8-203','sm8-223'].includes(p.cardId)&&!effects.abilitiesSuppressed(state,foeSide,p,data.cardById))slot.pl1LostZoneOnKO=true;}
         const blackMarket=state.format==='classic'&&activeStadium(state)?.cardId==='sm9-134'&&cause==='attack'&&source?.attack&&source.side===foeSide&&Number(source.damage||0)>0&&effects.effectiveTypes(state,side,slot,data.cardById).includes('Darkness')&&(Number(slot.energy?.Darkness||0)>0||(slot.specialEnergy||[]).some(r=>effects.attachedSpecialProvidesType(r,'Darkness',slot,data.cardById)))?1:0;
+        const swsh3Smoke=state.format==='classic'&&cause==='attack'&&source?.side===foeSide&&source?.attack&&source.turn===state.turnNumber&&Number(source.damage)>0&&activeToolsOf(state,slot).some(r=>r.cardId==='swsh3-158');
         const arceusBeltBonus=state.format==='classic'&&activeToolsOf(state,slot).some(ref=>ref.cardId==='pl4-87')?1:0;
         if(state.format==='classic'&&cause==='attack'&&source?.side===foeSide&&source?.attack&&source.turn===state.turnNumber&&Number(source.damage)>0&&activeToolsOf(state,slot).some(r=>data.cardById(r.cardId)?.effect?.rule==='swsh2CursedShovel'))foe.discard.push(...foe.deck.splice(0,2));
         const arceusLuckyEgg=state.format==='classic'&&cause==='attack'&&source?.side===foeSide&&activeToolsOf(state,slot).some(ref=>ref.cardId==='pl4-88'||ref.cardId==='swsh1-167'&&source?.attack&&Number(source.damage||0)>0);
@@ -2960,7 +2961,7 @@
           const island=awardsPrize&&cause==='attack'&&source?.attack&&source.side===foeSide&&source.turn===state.turnNumber&&source.damage>0&&effects.matchesFilter(card,{isExOrGX:true})?activeToolsOf(state,slot).filter(r=>['sm12-194','sm12-265'].includes(r.cardId)).length:0;
           const prizeCount=awardsPrize?Math.max(0,prizeValue(card)-island+sm12Bonus+greedy+beast+beastBringer-blackMarket+sm4Glutton+extraMoonSkip+arceusBeltBonus+arceusExtra+hgss3SpaceVirus+bw8Overflow+deltaPlus+xy10Endgame+sm2Extra-bw9LifeDew):0;
           awarded=Math.min(prizeCount,Math.max(0,foe.prizes.length-(state.pendingPrizeClaims||[]).filter(q=>q.side===foeSide).reduce((n,q)=>n+q.remaining,0)));
-          if(awarded){state.pendingPrizeClaims=state.pendingPrizeClaims||[];state.pendingPrizeClaims.push({side:foeSide,remaining:awarded});}
+          if(awarded){state.pendingPrizeClaims=state.pendingPrizeClaims||[];state.pendingPrizeClaims.push({side:foeSide,remaining:awarded,discardInstead:swsh3Smoke});}
           state.log.push({type:'ko',side,cardId:card.id,turnNumber:state.turnNumber,prizesTaken:foe.prizesTaken,awarded});
         }else{
           points=Math.max(1,Number(card.points||1));const pointBonuses=(foe.koPointBonuses||[]).filter(b=>(b.expiresTurn==null||state.turnNumber<=b.expiresTurn)&&(!b.attackerFilter||attacker&&effects.matchesFilter(data.cardById(attacker.cardId),b.attackerFilter,attacker)));for(const bonus of pointBonuses)points+=Number(bonus.amount||0);if(guardEligible&&koGuard.mode==='noPointsCoin'){const heads=random(state)<0.5;state.log.push({type:'coin',side,heads,reason:'noPointsKo',results:[heads]});if(heads)points=0;}foe.points+=points;foe.pointsGainedThisTurn=Number(foe.pointsGainedThisTurn||0)+points;state.log.push({type:'ko',side,cardId:card.id,turnNumber:state.turnNumber,points:foe.points,awarded:points});
@@ -3466,7 +3467,7 @@ const target=slotForTarget(s,action.target,action.benchIndex);if(card.id==='pl2-
       }
       if(pending.special==='chooseClassicPrize'){
         const claims=state.pendingPrizeClaims||[],entry=claims[0];
-        if(!entry||entry.side!==side||!awardClassicPrize(state,side,matched.choicePrizeIndex))throw new Error('Choose a remaining Prize card.');
+        if(!entry||entry.side!==side||!awardClassicPrize(state,side,matched.choicePrizeIndex,entry.discardInstead))throw new Error('Choose a remaining Prize card.');
         entry.remaining--;
         state.pendingChoice=null;state.choiceSide=null;state.phase='battle';
         const paused=resolveKnockOut(state,pending.koResume,pending.koCause);
@@ -3757,7 +3758,7 @@ const target=slotForTarget(s,action.target,action.benchIndex);if(card.id==='pl2-
     }
     if(matched.type==='sm7FallingStar'){
       const [ref]=s.hand.splice(matched.handIndex,1),old=s.active,idx=emptyBenchSlots(s)[0];
-      effects.clearTemporaryEffects(state,old);placeOnBench(s,old,idx);s.active=makePokemonSlot(ref.cardId,s.turnCount,ref.uid);s.active.movedToActiveTurn=state.turnNumber;
+      effects.clearTemporaryEffects(state,old);placeOnBench(s,old,idx);effects.spikemuthSwitch(state,s,old);s.active=makePokemonSlot(ref.cardId,s.turnCount,ref.uid);s.active.movedToActiveTurn=state.turnNumber;
       state.log.push({type:'ability',side,cardId:ref.cardId,ability:'Falling Star',fromHand:true});resolveKnockOut(state,null);return state;
     }
     if(matched.type==='bw7Busybody'){
@@ -3942,6 +3943,7 @@ const target=slotForTarget(s,action.target,action.benchIndex);if(card.id==='pl2-
       effects.clearTemporaryEffects(state,outgoing);
       s.bench[benchArray]=outgoing;
       s.active=incoming;
+      effects.spikemuthSwitch(state,s,outgoing);
       // SM1 Toxapex: only the NEW Active is poisoned after a voluntary retreat.
       if(state.format==='classic'&&incoming&&pokemonOn(foe).some(p=>p.cardId==='sm1-63'&&!effects.abilitiesSuppressed(state,foeSide,p,data.cardById))&&
           !effects.statusIsPrevented(state,incoming,data.cardById,'poison')){
@@ -3978,7 +3980,7 @@ const target=slotForTarget(s,action.target,action.benchIndex);if(card.id==='pl2-
         beginEffectChoice(state,side,outgoing,{kind:'option',side:'self',options:['Leave Energy on Gastrodon','Move Energy to the new Active'],effect:{type:'neoRule',rule:'pl2:21:stickyHoldOffer',sourceUid:outgoing.uid}});
         state.pendingChoice.resume='trainer';return state;
       }
-      if(state.format==='classic'&&foe&&pokemonOn(foe).some(p=>p.cardId==='pl1-24'))resolveKnockOut(state,null,'effect');return state;
+      if(state.format==='classic'&&(activeStadium(state)?.cardId==='swsh3-170'||foe&&pokemonOn(foe).some(p=>p.cardId==='pl1-24')))resolveKnockOut(state,null,'effect');return state;
     }
     if (matched.type === 'attack'){
       if(state.format==='classic'&&activeStadium(state)?.cardId==='SNAPFOUNJA-082'&&foe.active&&data.cardById(foe.active.cardId)?.types?.some(t=>t==='Water'||t==='Fighting')){const results=[random(state)<.5,random(state)<.5];state.log.push({type:'coin',side,reason:'Muddy Pond',heads:results.filter(Boolean).length,results});if(results.every(x=>!x)){state.log.push({type:'attackFailed',side,reason:'Muddy Pond'});endTurn(state);return state;}}

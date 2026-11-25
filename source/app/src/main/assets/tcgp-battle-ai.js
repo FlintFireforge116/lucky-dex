@@ -428,7 +428,7 @@
     // All choices are drawn from its own known Zone and public Pokémon.
     if(state.format==='classic'&&state.phase==='effectChoice'&&state.pendingChoice?.originSide===side){
       const pending=state.pendingChoice,e=pending.effect||{},choices=legal.filter(a=>a.type==='effectChoice');
-      if(['swsh3DarkAsset','swsh3FamiliarBell'].includes(e.rule))return choices.find(a=>!a.choiceSkip)||choices[0];
+      if(['swsh3DarkAsset','swsh3FamiliarBell','swsh3Breeder','swsh3Rose','swsh3SpiderNet','swsh3ShuffleDance'].includes(e.rule))return choices.find(a=>!a.choiceSkip)||choices[0];
       if(e.rule==='sm10Kaleidostorm'&&slots(state.sides[side]).some(p=>p.uid===pending.sourceUid&&p.cardId==='swsh3-147')){
         const board=state.sides[side],stop=choices.find(x=>x.choiceSkip);
         if(e.stage==='source')return choices.find(x=>!x.choiceSkip&&e.opts?.[x.choiceOption]?.p!==board.active?.uid)||stop||choices[0];

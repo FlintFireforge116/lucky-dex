@@ -1,78 +1,12 @@
 {
   "printed": 201,
-  "battleReady": 178,
+  "battleReady": 199,
   "gated": {
-    "swsh3-28": [
-      "Unimplemented attack: Frozen Heat"
-    ],
-    "swsh3-33": [
-      "Unimplemented attack: Radiating Heat"
-    ],
-    "swsh3-34": [
-      "Unimplemented attack: G-Max Centiferno"
-    ],
-    "swsh3-36": [
-      "Unimplemented Ability: Shuffle Dance"
-    ],
-    "swsh3-66": [
-      "Unimplemented Ability: Biting Whirlpool"
-    ],
-    "swsh3-91": [
-      "Unimplemented attack: Desert Geyser",
-      "Unimplemented Ability: Labyrinth of Sand"
-    ],
-    "swsh3-103": [
-      "Unimplemented Ability: Spider Net"
-    ],
     "swsh3-117": [
       "Unimplemented Ability: Eternal Zone"
     ],
-    "swsh3-128": [
-      "Unimplemented attack: Trapping Bite",
-      "Unimplemented Ability: Metal Skin"
-    ],
-    "swsh3-156": [
-      "Unimplemented Ability: Flying Taxi"
-    ],
-    "swsh3-158": [
-      "Unimplemented Trainer effect"
-    ],
-    "swsh3-162": [
-      "Unimplemented Trainer effect"
-    ],
-    "swsh3-166": [
-      "Unimplemented Trainer effect"
-    ],
-    "swsh3-168": [
-      "Unimplemented Trainer effect"
-    ],
-    "swsh3-170": [
-      "Unimplemented Trainer effect"
-    ],
-    "swsh3-179": [
-      "Unimplemented attack: Radiating Heat"
-    ],
-    "swsh3-184": [
-      "Unimplemented attack: Trapping Bite",
-      "Unimplemented Ability: Metal Skin"
-    ],
-    "swsh3-188": [
-      "Unimplemented Trainer effect"
-    ],
-    "swsh3-189": [
-      "Unimplemented Trainer effect"
-    ],
-    "swsh3-191": [
-      "Unimplemented attack: G-Max Centiferno"
-    ],
     "swsh3-192": [
       "Unimplemented Ability: Eternal Zone"
-    ],
-    "swsh3-195": [
-      "Unimplemented Trainer effect"
-    ],
-    "swsh3-196": [
-      "Unimplemented Trainer effect"
     ]
   },
   "attacks": 274,
