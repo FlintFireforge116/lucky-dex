@@ -389,7 +389,7 @@
       const source=slotFor(state.sides[side],action.target,action.benchIndex),card=data.cardById(source?.cardId),index=Number(action.abilityIndex||0),power=(card?.abilities||[])[index];
       // Powers remain freely repeatable for the human. The CPU may use them
       // once per turn so it cannot oscillate Energy/Damage forever.
-      if(source?.cardId==='swsh4-46'){const board=state.sides[side],enemy=state.sides[foeOf(side)];if(enemy.prizes.length<=1||!board.active||board.active===source||!effects.effectiveTypes(state,side,board.active,data.cardById).includes('Lightning')||attachedCount(board.active)>=3||!(board.energySupply||[]).includes('Lightning')&&!board.deck.some(r=>data.cardById(r.cardId)?.basicEnergy&&data.cardById(r.cardId)?.subtype==='Lightning'))return false;}
+      if(power?.name==='Buzzap Generator'){const board=state.sides[side],enemy=state.sides[foeOf(side)];if(enemy.prizes.length<=1||!board.active||board.active===source||!effects.effectiveTypes(state,side,board.active,data.cardById).includes('Lightning')||attachedCount(board.active)>=3||!(board.energySupply||[]).includes('Lightning')&&!board.deck.some(r=>data.cardById(r.cardId)?.basicEnergy&&data.cardById(r.cardId)?.subtype==='Lightning'))return false;}
       if(power?.effect?.rule==='swsh5MetalTransfer'){
         const board=state.sides[side],active=board.active;
         if(!active||!(data.cardById(active.cardId)?.attacks||[]).some(a=>!effects.canPayCost(core.effectiveEnergy(state,side,active),a.cost)))return false;
@@ -616,7 +616,7 @@
         return legal.find(x=>x.choiceTarget==='active')||stop||legal[0];
       }
       if(rule==='swsh3Breeder'&&pending.effect.amazingBloom||rule==='sm12HandAttach'&&pending.effect.healAll)return legal.find(x=>!x.choiceSkip)||legal[0];
-      if(rule==='sm9SearchAttach'&&slots(state.sides[side]).find(p=>p.uid===pending.sourceUid)?.cardId==='swsh4-46'&&pending.effect.stage==='attach')return legal.find(x=>x.choiceTarget==='active')||legal.find(x=>!x.choiceSkip&&x.choiceBenchIndex!==slots(state.sides[side]).find(p=>p.uid===pending.sourceUid)?.benchSlot)||legal[0];
+      if(rule==='sm9SearchAttach'&&data.cardById(slots(state.sides[side]).find(p=>p.uid===pending.sourceUid)?.cardId)?.abilities?.some(a=>a.name==='Buzzap Generator')&&pending.effect.stage==='attach')return legal.find(x=>x.choiceTarget==='active')||legal.find(x=>!x.choiceSkip&&x.choiceBenchIndex!==slots(state.sides[side]).find(p=>p.uid===pending.sourceUid)?.benchSlot)||legal[0];
       if(['swsh4CastOffShell','swsh4CaraLiss','swsh4Nessa','swsh4Cheese','swsh4Devolution','swsh35Adornment','sm9TopAttach','sm9SearchAttach','sm9DanceAncients','sm9NineTemptations','sm9AdventurousAppetite'].includes(rule))return legal.find(x=>!x.choiceSkip)||legal[0];
       if(pending.special==='sm7WishPrize')return legal.find(a=>a.choiceOption===1)||legal[0];
       if(pending.special==='sm7Grounding')return legal.find(a=>!a.choiceSkip)||legal[0];

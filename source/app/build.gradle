@@ -8,8 +8,8 @@ android {
         applicationId 'com.example.luckydex'
         minSdk 26
         targetSdk 35
-        versionCode 7510
-        versionName '0.69.510'
+        versionCode 7511
+        versionName '0.69.511'
     }
 
     signingConfigs {
@@ -1455,7 +1455,7 @@ tasks.register('generateSWSH6ForApk', Exec) {
 tasks.register('auditSWSH6ForApk', Exec) {
     dependsOn tasks.named('generateSWSH6ForApk')
     workingDir rootProject.projectDir
-    commandLine 'node', '--test', 'tests/v07505-chilling-reign-integration.test.cjs', 'tests/v07505-chilling-reign-outcomes.test.cjs'
+    commandLine 'node', '--test', 'tests/v07505-chilling-reign-integration.test.cjs', 'tests/v07505-chilling-reign-outcomes.test.cjs', 'tests/v07511-chilling-reign-independent-audit.test.cjs'
 }
 tasks.matching { it.name == 'preBuild' || (it.name.startsWith('merge') && it.name.endsWith('Assets')) }.configureEach {
     dependsOn tasks.named('auditSWSH6ForApk')
