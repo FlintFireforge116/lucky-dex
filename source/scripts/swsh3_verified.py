@@ -130,3 +130,6 @@ tr(166,'Supporter',N('Breeder',left=2))
 tr(168,'Supporter',N('Rose',left=2))
 tr(158,'Tool',N('BillowingSmoke'))
 tr(170,'Stadium',N('Spikemuth'))
+
+# v482: Eternal Zone continuous Bench and placement rules.
+ab(117,passive(N('EternalZone')))

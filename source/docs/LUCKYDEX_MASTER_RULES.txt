@@ -5959,3 +5959,9 @@ v0.69.481 — ETERNAL ZONE LEGACY PLACEMENT MIGRATION (partial, 199/201)
 - Expanded bilateral tests must assert both legal choices and physical source-zone conservation; direct effect fixtures are supplementary to whole-set smoke tests.
 - The older historical tests outside current Gradle gates may themselves be stale or have pre-existing failures. Compare against the exact previous effects/core before blaming a new change; do not weaken them. Keep known failures visible and separately tracked.
 - Eternal Zone is not yet fully enabled. See docs/SWSH3_ETERNAL_ZONE_LEGACY_v0.69.481.md for migrated handlers, checks and remaining blockers.
+
+v0.69.482 — Darkness Ablaze complete catalogue (201/201), Eternal Zone enabled
+- Enable both exact Eternal Zone print signatures (117/192) only with live owner-specific Bench capacity, Darkness placement eligibility, Dread End effective-type counting and non-KO Bench trim. No fixture-only battleEnabled overrides in release tests; full release preflight must assert zero gated prints.
+- Route historical concealed placement, replacement, Prize-to-Bench, multi-search, revival and forced-placement candidates through the same live placement predicate before consuming source cards. Preserve physical UID, choice indices and normal searches into hand. Never confuse rejecting a placement with permission to discard the selected source card.
+- v482 preflight: 135/135; recent regression 296/296; SM1 full gate 48/48; selected affected older tests 103/103. Android build and exhaustive cross-era sweep remain unverified. See docs/SWSH3_ETERNAL_ZONE_COMPLETION_v0.69.482.md for limits and follow-up independent audit priorities.
+- Termux: cd ~/lucky-dex; unzip -t /sdcard/Download/LuckyDex_482.zip && unzip -o /sdcard/Download/LuckyDex_482.zip -d source && sh source/scripts/prepare-swsh3.sh && git add source && git commit -m "LuckyDex v0.69.482 Darkness Ablaze completion" && git push origin main

@@ -91,11 +91,9 @@ for(const side of ['player','opponent']){
  test(side+' Spikemuth works with switch Trainer but not opponent gust',()=>{const h=setup(side,'swsh3-3');try{h.s.stadium={...ref('swsh3-170','spikemuth'),ownerSide:side};const outgoing=h.us.active;trainer(h,'swsh3-159');resolve(h);assert.equal(outgoing.damage,20);const victim=h.them.active;h.us.active.cardId='swsh3-15';h.us.active.energy={Grass:3};attack(h,'Captivate');resolve(h);assert.equal(victim.damage,0);}finally{h.done();}});
 }
 
-// Eternal Zone remains intentionally gated in production. Enable only these
-// fixture prints to exercise the new foundation without exposing old placement paths.
+// Production catalogue: no fixture override for either Eternatus print.
 function zoneFixture(side,id='swsh3-117'){
- const h=setup(side,id),old=data.cardById;
- data.cardById=x=>{const c=old(x);return ['swsh3-117','swsh3-192'].includes(x)?{...c,battleEnabled:true}:c;};
+ const h=setup(side,id);assert.equal(data.cardById(id).battleEnabled,true);
  h.us.active.energy={Darkness:2};h.us.bench=[];
  return h;
 }
@@ -160,5 +158,32 @@ for(const side of ['player','opponent']){
   darkBench(h,3);core.legalActions(h.s,side);h.us.deck=[ref('swsh3-3','grass'),ref('swsh3-102','dark')];
   fx.applyEffect({type:'sm7Rule',rule:'sm12TopBench',left:1,window:2},core.effectContext(h.s,side,{},h.us.active));
   assert.deepEqual(core.legalActions(h.s,side).filter(x=>!x.choiceSkip).map(x=>x.choiceCardId),['swsh3-102']);resolve(h);assert.equal(h.us.bench.length,4);assert.deepEqual(h.us.deck.map(x=>x.uid),['grass']);
+ }finally{h.done();}});
+}
+
+// Production-enabled Eternal Zone: legacy placement, replacement and Prize routes.
+for(const side of ['player','opponent']){
+ test(side+' Eternal Zone filters Target Whistle on defending board',()=>{const h=zoneFixture(side);try{
+  darkBench(h,3);core.legalActions(h.s,side);h.us.discard=[ref('swsh3-3','grass'),ref('swsh3-102','dark')];h.s.activeSide=h.foe;
+  fx.applyEffect({type:'neoRule',rule:'xy4:targetWhistle'},core.effectContext(h.s,h.foe,{},h.them.active));
+  assert.equal(h.s.pendingChoice.options.length,1);assert.match(h.s.pendingChoice.options[0],/Spinarak/);resolve(h);assert.deepEqual(h.us.discard.map(x=>x.uid),['grass']);assert.equal(h.us.bench.at(-1).uid,'dark');
+ }finally{h.done();}});
+ test(side+' Eternal Zone filters Ninja Boy replacement before consuming the deck card',()=>{const h=zoneFixture(side);try{
+  darkBench(h,3);core.legalActions(h.s,side);h.us.deck=[ref('swsh3-3','grass'),ref('swsh3-102','dark')];
+  fx.applyEffect({type:'xy11Rule',rule:'ninjaBoy'},core.effectContext(h.s,side,{},h.us.active));choice(h,x=>x.choiceBenchIndex===0);
+  assert.deepEqual(core.legalActions(h.s,side).filter(x=>!x.choiceSkip).map(x=>x.choiceCardId),['swsh3-102']);resolve(h);assert.ok(h.us.deck.some(x=>x.uid==='grass'));assert.ok(!h.us.deck.some(x=>x.uid==='dark'));assert.equal(core.eternalZoneActive(h.s,side),true);
+ }finally{h.done();}});
+ test(side+' Eternal Zone prevents concealed non-Darkness and allows Darkness Secret Plan',()=>{const h=zoneFixture(side);try{
+  darkBench(h,3);core.legalActions(h.s,side);h.us.hand=[ref('swsh3-3','grass'),ref('swsh3-102','dark'),ref('swsh3-160','tool')];
+  fx.applyEffect({type:'gymRule',rule:'challenge:surgeSecretPlan'},core.effectContext(h.s,side,{},h.us.active));assert.deepEqual(core.legalActions(h.s,side).map(x=>x.choiceCardId),['swsh3-102']);resolve(h);assert.deepEqual(h.us.hand.map(x=>x.uid),['grass','tool']);assert.equal(h.us.bench.at(-1).uid,'dark');
+ }finally{h.done();}});
+ test(side+' Eternal Zone prevents Wish Upon a Star from putting non-Darkness Jirachi in play',()=>{const h=zoneFixture(side);try{
+  darkBench(h,3);h.them.active=slot('swsh3-3','victim');h.us.prizes=[ref('sm7-97','star'),ref('swsh3-3','bonus')];h.us.prizesTaken=0;attack(h,'Dread End');
+  if(h.s.pendingChoice?.special==='chooseClassicPrize')choice(h,a=>a.choicePrizeIndex===0);
+  assert.notEqual(h.s.pendingChoice?.special,'sm7WishPrize');assert.ok(h.us.hand.some(x=>x.uid==='star'));assert.equal(h.us.prizesTaken,1);assert.equal(h.us.bench.length,3);
+ }finally{h.done();}});
+ test(side+' Eternal Zone filters Lt Surge hand replacement into an expanded slot',()=>{const h=zoneFixture(side);try{
+  darkBench(h,6);core.legalActions(h.s,side);h.us.hand=[ref('swsh3-3','grass'),ref('swsh3-102','dark')];
+  fx.applyEffect({type:'gymRule',rule:'surgeSwap'},core.effectContext(h.s,side,{},h.us.active));assert.deepEqual(core.legalActions(h.s,side).map(x=>x.choiceCardId),['swsh3-102']);resolve(h);assert.equal(h.us.active.uid,'dark');assert.equal(h.us.bench.at(-1).benchSlot,6);assert.equal(h.us.hand[0].uid,'grass');
  }finally{h.done();}});
 }

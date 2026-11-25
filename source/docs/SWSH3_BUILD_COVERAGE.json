@@ -1,14 +1,7 @@
 {
   "printed": 201,
-  "battleReady": 199,
-  "gated": {
-    "swsh3-117": [
-      "Unimplemented Ability: Eternal Zone"
-    ],
-    "swsh3-192": [
-      "Unimplemented Ability: Eternal Zone"
-    ]
-  },
+  "battleReady": 201,
+  "gated": {},
   "attacks": 274,
   "abilities": 32,
   "pokemonV": 23,

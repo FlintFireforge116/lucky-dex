@@ -1,8 +1,8 @@
 {
   "set": "swsh3",
   "name": "Darkness Ablaze",
-  "stage": "partial",
-  "release": "0.69.481",
+  "stage": "complete",
+  "release": "0.69.482",
   "printedTotal": 201,
   "attackPrints": 274,
   "abilities": 32,
