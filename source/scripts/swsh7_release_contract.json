@@ -1,0 +1,15 @@
+{
+  "set": "swsh7",
+  "name": "Evolving Skies",
+  "stage": "partial",
+  "release": "0.69.512",
+  "printedTotal": 237,
+  "attackPrints": 309,
+  "abilities": 44,
+  "pokemonV": 51,
+  "pokemonVMAX": 32,
+  "trainerPrints": 40,
+  "energyPrints": 4,
+  "pin": "6d9bff55310a38314eb3f627a2efc4f5d236c5f2",
+  "variants": []
+}

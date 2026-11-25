@@ -8,8 +8,8 @@ android {
         applicationId 'com.example.luckydex'
         minSdk 26
         targetSdk 35
-        versionCode 7511
-        versionName '0.69.511'
+        versionCode 7512
+        versionName '0.69.512'
     }
 
     signingConfigs {
@@ -1459,4 +1459,23 @@ tasks.register('auditSWSH6ForApk', Exec) {
 }
 tasks.matching { it.name == 'preBuild' || (it.name.startsWith('merge') && it.name.endsWith('Assets')) }.configureEach {
     dependsOn tasks.named('auditSWSH6ForApk')
+}
+
+tasks.register('preflightSWSH7ContractForApk', Exec) {
+    dependsOn tasks.named('auditSWSH6ForApk')
+    workingDir rootProject.projectDir
+    commandLine (System.getenv('LUCKYDEX_PYTHON') ?: 'python3'), 'scripts/preflight-swsh7-release.py'
+}
+tasks.register('generateSWSH7ForApk', Exec) {
+    dependsOn tasks.named('preflightSWSH7ContractForApk')
+    workingDir rootProject.projectDir
+    commandLine (System.getenv('LUCKYDEX_PYTHON') ?: 'python3'), 'scripts/build-swsh7.py'
+}
+tasks.register('auditSWSH7ForApk', Exec) {
+    dependsOn tasks.named('generateSWSH7ForApk')
+    workingDir rootProject.projectDir
+    commandLine 'node', '--test', 'tests/v07512-evolving-skies-integration.test.cjs', 'tests/v07512-evolving-skies-outcomes.test.cjs'
+}
+tasks.matching { it.name == 'preBuild' || (it.name.startsWith('merge') && it.name.endsWith('Assets')) }.configureEach {
+    dependsOn tasks.named('auditSWSH7ForApk')
 }

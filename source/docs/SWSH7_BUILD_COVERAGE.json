@@ -1,0 +1,333 @@
+{
+  "printed": 237,
+  "battleReady": 134,
+  "gated": {
+    "swsh7-1": [
+      "Unimplemented Ability: Vise Coach"
+    ],
+    "swsh7-3": [
+      "Unimplemented Ability: Solar Evolution"
+    ],
+    "swsh7-4": [
+      "Unimplemented Ability: Fluffy Barrage"
+    ],
+    "swsh7-6": [
+      "Unimplemented attack: Rally Back"
+    ],
+    "swsh7-18": [
+      "Unimplemented attack: Max Detonate"
+    ],
+    "swsh7-19": [
+      "Unimplemented attack: Angry Fang"
+    ],
+    "swsh7-21": [
+      "Unimplemented attack: Surging Flames"
+    ],
+    "swsh7-30": [
+      "Unimplemented attack: Bubble Pod"
+    ],
+    "swsh7-34": [
+      "Unimplemented Ability: Enthusiastic Dance"
+    ],
+    "swsh7-38": [
+      "Unimplemented Ability: Dew Guard"
+    ],
+    "swsh7-41": [
+      "Unimplemented Ability: Crystal Veil"
+    ],
+    "swsh7-43": [
+      "Unimplemented attack: Element Chain"
+    ],
+    "swsh7-46": [
+      "Unimplemented attack: Schooling Shot",
+      "Unimplemented Ability: Group Power"
+    ],
+    "swsh7-48": [
+      "Unimplemented attack: Ancient Freeze"
+    ],
+    "swsh7-50": [
+      "Unimplemented attack: Big Sparking"
+    ],
+    "swsh7-51": [
+      "Unimplemented attack: Max Thunder Rumble"
+    ],
+    "swsh7-53": [
+      "Unimplemented attack: Blinding Beam"
+    ],
+    "swsh7-56": [
+      "Unimplemented attack: Electron Crush"
+    ],
+    "swsh7-58": [
+      "Unimplemented attack: Primeval Beak"
+    ],
+    "swsh7-59": [
+      "Unimplemented attack: Spark Trap"
+    ],
+    "swsh7-60": [
+      "Unimplemented attack: Teraspark"
+    ],
+    "swsh7-62": [
+      "Unimplemented attack: Wake-Up Slap"
+    ],
+    "swsh7-63": [
+      "Unimplemented attack: Psylaser"
+    ],
+    "swsh7-65": [
+      "Unimplemented Ability: Solar Revelation"
+    ],
+    "swsh7-66": [
+      "Unimplemented attack: Mirror Pain"
+    ],
+    "swsh7-73": [
+      "Unimplemented Ability: Rapid Strike Connection"
+    ],
+    "swsh7-75": [
+      "Unimplemented attack: Precious Touch",
+      "Unimplemented attack: Max Harmony"
+    ],
+    "swsh7-77": [
+      "Unimplemented attack: Pandemonium"
+    ],
+    "swsh7-79": [
+      "Unimplemented attack: Tricky Steps"
+    ],
+    "swsh7-80": [
+      "Unimplemented attack: Shadow Flicker"
+    ],
+    "swsh7-82": [
+      "Unimplemented attack: Zapper Kick"
+    ],
+    "swsh7-83": [
+      "Unimplemented attack: Yoga Loop"
+    ],
+    "swsh7-88": [
+      "Unimplemented attack: Pressure Shot"
+    ],
+    "swsh7-90": [
+      "Unimplemented attack: Shaky Wave"
+    ],
+    "swsh7-92": [
+      "Unimplemented attack: Hunting Claw"
+    ],
+    "swsh7-97": [
+      "Unimplemented attack: Shiftadieu"
+    ],
+    "swsh7-101": [
+      "Unimplemented Ability: Rubbish Collecting"
+    ],
+    "swsh7-103": [
+      "Unimplemented Ability: Phantom Transformation"
+    ],
+    "swsh7-105": [
+      "Unimplemented Ability: Fumbling Hands"
+    ],
+    "swsh7-106": [
+      "Unimplemented Ability: Tempting Tune"
+    ],
+    "swsh7-110": [
+      "Unimplemented attack: Spiral Burst"
+    ],
+    "swsh7-111": [
+      "Unimplemented attack: Max Burst"
+    ],
+    "swsh7-115": [
+      "Unimplemented attack: Dragon Counter"
+    ],
+    "swsh7-116": [
+      "Unimplemented attack: Extreme Freeze"
+    ],
+    "swsh7-118": [
+      "Unimplemented attack: Judgment Surge"
+    ],
+    "swsh7-119": [
+      "Unimplemented attack: Berserk"
+    ],
+    "swsh7-121": [
+      "Unimplemented attack: Thick Mucus"
+    ],
+    "swsh7-123": [
+      "Unimplemented attack: G-Max Pulverization",
+      "Unimplemented Ability: Skyscraper"
+    ],
+    "swsh7-128": [
+      "Unimplemented attack: Live Painting"
+    ],
+    "swsh7-131": [
+      "Unimplemented attack: Rout",
+      "Unimplemented Ability: Act Freely"
+    ],
+    "swsh7-141": [
+      "Unimplemented Trainer effect"
+    ],
+    "swsh7-142": [
+      "Unimplemented Trainer effect"
+    ],
+    "swsh7-144": [
+      "Unimplemented Trainer effect"
+    ],
+    "swsh7-146": [
+      "Unimplemented Trainer effect"
+    ],
+    "swsh7-147": [
+      "Unimplemented Trainer effect"
+    ],
+    "swsh7-148": [
+      "Unimplemented Trainer effect"
+    ],
+    "swsh7-149": [
+      "Unimplemented Trainer effect"
+    ],
+    "swsh7-150": [
+      "Unimplemented Trainer effect"
+    ],
+    "swsh7-151": [
+      "Unimplemented Trainer effect"
+    ],
+    "swsh7-152": [
+      "Unimplemented Trainer effect"
+    ],
+    "swsh7-153": [
+      "Unimplemented attack: Meteor",
+      "Unimplemented Trainer effect"
+    ],
+    "swsh7-155": [
+      "Unimplemented Trainer effect"
+    ],
+    "swsh7-157": [
+      "Unimplemented Trainer effect"
+    ],
+    "swsh7-158": [
+      "Unimplemented Trainer effect"
+    ],
+    "swsh7-159": [
+      "Unimplemented Trainer effect"
+    ],
+    "swsh7-160": [
+      "Unimplemented Trainer effect"
+    ],
+    "swsh7-161": [
+      "Unimplemented Trainer effect"
+    ],
+    "swsh7-162": [
+      "Unimplemented Trainer effect"
+    ],
+    "swsh7-163": [
+      "Unimplemented Trainer effect"
+    ],
+    "swsh7-164": [
+      "Unimplemented Trainer effect"
+    ],
+    "swsh7-165": [
+      "Unimplemented Special Energy rules"
+    ],
+    "swsh7-170": [
+      "Unimplemented attack: Surging Flames"
+    ],
+    "swsh7-176": [
+      "Unimplemented attack: Ancient Freeze"
+    ],
+    "swsh7-178": [
+      "Unimplemented attack: Primeval Beak"
+    ],
+    "swsh7-185": [
+      "Unimplemented attack: Yoga Loop"
+    ],
+    "swsh7-186": [
+      "Unimplemented attack: Yoga Loop"
+    ],
+    "swsh7-193": [
+      "Unimplemented attack: Spiral Burst"
+    ],
+    "swsh7-194": [
+      "Unimplemented attack: Spiral Burst"
+    ],
+    "swsh7-199": [
+      "Unimplemented Trainer effect"
+    ],
+    "swsh7-201": [
+      "Unimplemented Trainer effect"
+    ],
+    "swsh7-202": [
+      "Unimplemented Trainer effect"
+    ],
+    "swsh7-203": [
+      "Unimplemented Trainer effect"
+    ],
+    "swsh7-208": [
+      "Unimplemented Ability: Crystal Veil"
+    ],
+    "swsh7-209": [
+      "Unimplemented Ability: Crystal Veil"
+    ],
+    "swsh7-210": [
+      "Unimplemented attack: Spark Trap"
+    ],
+    "swsh7-211": [
+      "Unimplemented attack: Precious Touch",
+      "Unimplemented attack: Max Harmony"
+    ],
+    "swsh7-212": [
+      "Unimplemented attack: Precious Touch",
+      "Unimplemented attack: Max Harmony"
+    ],
+    "swsh7-213": [
+      "Unimplemented attack: Hunting Claw"
+    ],
+    "swsh7-216": [
+      "Unimplemented Ability: Rubbish Collecting"
+    ],
+    "swsh7-217": [
+      "Unimplemented attack: Max Burst"
+    ],
+    "swsh7-218": [
+      "Unimplemented attack: Max Burst"
+    ],
+    "swsh7-219": [
+      "Unimplemented attack: G-Max Pulverization",
+      "Unimplemented Ability: Skyscraper"
+    ],
+    "swsh7-220": [
+      "Unimplemented attack: G-Max Pulverization",
+      "Unimplemented Ability: Skyscraper"
+    ],
+    "swsh7-221": [
+      "Unimplemented Trainer effect"
+    ],
+    "swsh7-223": [
+      "Unimplemented Trainer effect"
+    ],
+    "swsh7-224": [
+      "Unimplemented Trainer effect"
+    ],
+    "swsh7-225": [
+      "Unimplemented Trainer effect"
+    ],
+    "swsh7-229": [
+      "Unimplemented Trainer effect"
+    ],
+    "swsh7-230": [
+      "Unimplemented Trainer effect"
+    ],
+    "swsh7-231": [
+      "Unimplemented Trainer effect"
+    ],
+    "swsh7-232": [
+      "Unimplemented Trainer effect"
+    ],
+    "swsh7-233": [
+      "Unimplemented Trainer effect"
+    ],
+    "swsh7-234": [
+      "Unimplemented Trainer effect"
+    ]
+  },
+  "attacks": 309,
+  "abilities": 44,
+  "pokemonV": 51,
+  "pokemonVMAX": 32,
+  "pokemonGX": 0,
+  "gxAttackPrints": 0,
+  "energyPrints": 4,
+  "prismStarPrints": 0,
+  "sourceGitBlob": "6d9bff55310a38314eb3f627a2efc4f5d236c5f2"
+}
