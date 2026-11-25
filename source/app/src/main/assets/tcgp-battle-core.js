@@ -1206,6 +1206,13 @@
     // including Poison and Burn; many later card texts only name three.
     return !!(c.sleep||c.confusion||c.paralysis||((ability.expeditionSpecialCondition||ability.allSpecialConditions)&&(c.poison||c.burn)));}
   function trainerType(card){return card.trainerType||card.subtype||'Item';}
+  function shiftySubstitutionActive(state,side){
+    const foe=side==='player'?'opponent':'player',p=state.sides[foe]?.active;
+    return state.format==='classic'&&p?.cardId==='swsh4-12'&&data.cardById(p.cardId)?.battleEnabled&&!effects.abilitiesSuppressed(state,foe,p,data.cardById);
+  }
+  // Replace the printed effect for legality as well as resolution. Use an
+  // ephemeral descriptor so old card-specific costs do not leak through.
+  const shiftyDraw={type:'draw',amount:3};
   function rareCandyMatches(stage2,basic){
     if(!stage2||stage2.kind!=='pokemon'||stage2.stage!=='Stage 2'||!basic||basic.kind!=='pokemon'||basic.stage!=='Basic')return false;
     return data.CARDS.some(stage1=>stage1?.kind==='pokemon'&&classicCardName(stage1.name)===classicCardName(stage2.evolvesFrom)&&classicCardName(stage1.evolvesFrom)===classicCardName(basic.name));
@@ -1529,8 +1536,10 @@
     if(state.format==='classic')for(const p of pokemonOn(s))if((!data.cardById(p.cardId)?.effect?.sm12Doll||s.active===p)&&(['pl1-119','pl1-120','ex16-84','ex16-85','ex16-86','dp2-116','dp2-117','dp5-84','dp5-89','dp5-91','dp6-138','dp6-139','pl4-89','pl4-92','pl4-93'].includes(p.cardId)||data.cardById(p.cardId)?.effect?.type==='playFossil'))
       actions.push({type:'discardFossil',target:p===s.active?'active':'bench',benchIndex:p===s.active?undefined:Number(p.benchSlot),cardId:p.cardId});
     s.hand.forEach((ref,handIndex)=>{
-      const card = data.cardById(ref.cardId);
-      if(!card||card.kind!=='trainer'||!card.battleEnabled||card.id==='pl1-117')return; // Power Spray is an opponent-turn interrupt only.
+      const printed = data.cardById(ref.cardId);
+      if(!printed||printed.kind!=='trainer'||!printed.battleEnabled||printed.id==='pl1-117')return;
+      const substituted=trainerType(printed)==='Supporter'&&shiftySubstitutionActive(state,side);
+      const card=substituted?{...printed,id:'swsh4-shifty-draw',name:'Shifty Substitution',effect:shiftyDraw}:printed; // Power Spray is an opponent-turn interrupt only.
       if(state.format==='classic'&&card.id==='sm5-120'&&(!s.active||!effects.effectiveTypes(state,side,s.active,data.cardById).some(t=>t==='Water'||t==='Metal')))return; // Cyrus Prism: printed Active requirement, human and CPU.
       if(state.format==='classic'&&card.id==='pl2-89'&&s.hand.length<2)return; // Bebe must return a second card.
       if(state.format==='classic'&&['hgss4-85','hgss4-89'].includes(card.id)&&s.prizes.length<=foe.prizes.length)return;
@@ -1587,7 +1596,7 @@
       if(card.id==='sm11-186'&&!s.hand.some(r=>data.cardById(r.cardId)?.kind==='pokemon'&&data.cardById(r.cardId)?.attacks?.length))return;
       if(card.id==='xy11-102')return; // Greedy Dice is never playable from the hand.
       if(state.format==='classic'&&trainerType(card)==='Item'&&classicItemPlayLocked(state,side))return;
-      const type=trainerType(card),base={type:'trainer',handIndex,cardId:card.id};if(effects.isActionLocked(state,side,'Trainer',data.cardById)||effects.isActionLocked(state,side,type,data.cardById))return;
+      const type=trainerType(card),base={type:'trainer',handIndex,cardId:printed.id,...(substituted?{swsh4Substitution:true,choiceLabel:'Draw 3 cards (Shifty Substitution)'}:{})};if(effects.isActionLocked(state,side,'Trainer',data.cardById)||effects.isActionLocked(state,side,type,data.cardById))return;
       if(state.format==='classic'&&['sm5-129','sm5-168'].includes(card.id)){
         actions.push({...base,effectSelection:'one'});
         if(s.hand.filter(r=>data.cardById(r.cardId)?.name==='Missing Clover').length>=4)
@@ -3140,7 +3149,7 @@
   }
 
   function playTrainer(state,side,action){
-    const s=state.sides[side];const [ref]=s.hand.splice(action.handIndex,1);const card=data.cardById(ref.cardId),type=trainerType(card);if(state.format==='classic'&&activeStadium(state)?.cardId==='gym1-103'&&['Energy Removal','Super Energy Removal'].includes(card.name)){for(let n=0;n<2;n++){const index=s.hand.length-1;if(index>=0)s.discard.push(...s.hand.splice(index,1));}}
+    const s=state.sides[side];const [ref]=s.hand.splice(action.handIndex,1);const card=data.cardById(ref.cardId),type=trainerType(card),substituted=type==='Supporter'&&shiftySubstitutionActive(state,side),liveEffect=substituted?shiftyDraw:card.effect;if(state.format==='classic'&&activeStadium(state)?.cardId==='gym1-103'&&['Energy Removal','Super Energy Removal'].includes(card.name)){for(let n=0;n<2;n++){const index=s.hand.length-1;if(index>=0)s.discard.push(...s.hand.splice(index,1));}}
     state.log.push({type:'trainer',side,cardId:card.id,target:action.target,benchIndex:action.benchIndex});
     // Dizzying Wind: every Trainer played from hand on the affected turn flips.
     // A tails result discards even a Stadium/Tool/Supporter without resolving it.
@@ -3169,7 +3178,7 @@
         // their board. Unattached Item effects can be taken over directly;
         // attached cards still require a legal Pokémon target.
         const transferable=!['AttachedTrainer','Tool'].includes(type);
-        if(transferable&&otherSide.active){effects.applyEffect(card.effect,{...effectContext(state,foeSide,{trainerRef:ref},otherSide.active),trainerRef:ref});if(state.phase==='effectChoice')state.pendingChoice.resume='trainer';}
+        if(transferable&&otherSide.active){effects.applyEffect(liveEffect,{...effectContext(state,foeSide,{trainerRef:ref},otherSide.active),trainerRef:ref});if(state.phase==='effectChoice')state.pendingChoice.resume='trainer';}
         return;
       }
     }
@@ -3235,8 +3244,9 @@ const target=slotForTarget(s,action.target,action.benchIndex);if(card.id==='pl2-
     const conservation=state.format==='classic'&&type==='Item'&&s.founjaConservationUsedTurn!==state.turnNumber&&pokemonOn(s).some(slot=>slot.cardId==='SNAPFOUNJA-038'&&!effects.abilitiesSuppressed(state,side,slot,data.cardById));
     if(conservation){s.deck.push(ref);shuffle(state,s.deck);s.founjaConservationUsedTurn=state.turnNumber;state.log.push({type:'founjaConservation',side,cardId:card.id});}
     else s.discard.push(ref);
-    if(card.id==='pl2-RT6')s.pl2CharonRef=ref;
-    effects.applyEffect(card.effect,{...effectContext(state,side,{...action,trainerRef:ref}),trainerRef:ref});
+    if(card.id==='pl2-RT6'&&!substituted)s.pl2CharonRef=ref;
+    if(substituted)state.log.push({type:'swsh4ShiftySubstitution',side,cardId:card.id});
+    effects.applyEffect(liveEffect,{...effectContext(state,side,{...action,trainerRef:ref}),trainerRef:ref});
     if(type==='Supporter')triggerAbilities(state,'opponentSupporterPlayed',side==='player'?'opponent':'player',null,{sourceSide:side,cardId:card.id});
     if(state.phase==='effectChoice'){state.pendingChoice.resume=state.pendingChoice.resume||'trainer';return;}
     resolveKnockOut(state,null);

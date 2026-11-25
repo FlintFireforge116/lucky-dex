@@ -121,3 +121,19 @@ for(const side of ['player','opponent']){
 for(const side of ['player','opponent']) test(side+' Elusive Master is a hand Ability, not a Gas-suppressed in-play Ability',()=>{const h=setup(side,'swsh4-1');try{
  h.them.active.cardId='swsh2-113';h.us.hand=[ref('swsh4-3','bee')];assert.ok(core.legalActions(h.s,side).some(a=>a.type==='bench'&&a.cardId==='swsh4-3'));h.s.xy7HexManiacUntil=h.s.turnNumber;assert.ok(!core.legalActions(h.s,side).some(a=>a.type==='bench'&&a.cardId==='swsh4-3'));
 }finally{h.done();}});
+
+// v492: replacement is the live effect, not a modification of the printed card.
+for(const side of ['player','opponent']){
+ test(side+' Shifty Substitution replaces a target-dependent Supporter with draw three',()=>{const h=setup(side,'swsh4-1');try{
+  h.them.active.cardId='swsh4-12';h.us.hand=[ref('swsh4-149','cara')];const top=h.us.deck.slice(0,3).map(r=>r.uid);const a=use(h,'trainer',a=>a.cardId==='swsh4-149');assert.equal(a.swsh4Substitution,true);assert.deepEqual(h.us.hand.map(r=>r.uid),top);assert.equal(h.us.discard[0].uid,'cara');assert.equal(h.us.supporterUsed,true);assert.equal(h.us.sm10SupporterTurns['Cara Liss'],h.s.turnNumber);assert.equal(h.us.bench.length,1);
+ }finally{h.done();}});
+ test(side+' Shifty Substitution replaces discard costs without consuming other cards',()=>{const h=setup(side,'swsh4-1');try{
+  h.them.active.cardId='swsh4-12';h.us.hand=[ref('swsh35-62','research'),ref('swsh4-1','keep')];use(h,'trainer',a=>a.cardId==='swsh35-62');assert.equal(h.us.hand.length,4);assert.equal(h.us.hand[0].uid,'keep');assert.equal(h.us.discard.length,1);h.us.hand.push(ref('swsh4-154','leon'));assert.ok(!core.legalActions(h.s,side).some(a=>a.type==='trainer'&&a.cardId==='swsh4-154'));
+ }finally{h.done();}});
+ test(side+' Shifty Substitution respects Supporter locks, suppression and Active-only timing',()=>{const h=setup(side,'swsh4-1');try{
+  h.them.active.cardId='swsh4-12';h.us.hand=[ref('swsh4-149','cara')];const allowed=()=>core.legalActions(h.s,side).find(a=>a.type==='trainer'&&a.cardId==='swsh4-149');assert.ok(allowed()?.swsh4Substitution);h.us.bw9SupportersLockedUntil=h.s.turnNumber;assert.equal(allowed(),undefined);delete h.us.bw9SupportersLockedUntil;h.them.active.abilitySuppressed={duration:'whileActive'};assert.ok(!allowed()?.swsh4Substitution);delete h.them.active.abilitySuppressed;h.them.bench[0].cardId='swsh4-12';h.them.active.cardId='sm6-dummy';assert.ok(!allowed()?.swsh4Substitution);
+ }finally{h.done();}});
+ test(side+' Shifty Substitution does not replace Items or the controller’s Supporter',()=>{const h=setup(side,'swsh4-12');try{
+  h.them.bench[0].cardId='swsh4-12';h.us.hand=[ref('swsh4-154','leon'),ref('swsh4-156','cheese')];assert.ok(!core.legalActions(h.s,side).find(a=>a.type==='trainer'&&a.cardId==='swsh4-154')?.swsh4Substitution);h.them.active.cardId='swsh4-12';h.us.active.damage=30;const a=use(h,'trainer',a=>a.cardId==='swsh4-156');assert.ok(!a.swsh4Substitution);resolve(h);assert.equal(h.us.active.damage,0);assert.ok(!h.us.supporterUsed);
+ }finally{h.done();}});
+}

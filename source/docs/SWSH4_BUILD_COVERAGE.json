@@ -1,10 +1,7 @@
 {
   "printed": 203,
-  "battleReady": 199,
+  "battleReady": 200,
   "gated": {
-    "swsh4-12": [
-      "Unimplemented Ability: Shifty Substitution"
-    ],
     "swsh4-14": [
       "Unimplemented Ability: Cast-off Shell"
     ],

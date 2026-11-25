@@ -173,6 +173,7 @@
   function usefulClassicTrainer(state,side,action){
     const card=data.cardById(action.cardId),s=state.sides[side],foe=state.sides[foeOf(side)];
     if(!card)return false;
+    if(action.swsh4Substitution)return s.deck.length>0;
     if(card.trainerType==='Tool'&&!usefulClassicTool(state,side,action,card))return false;
     if(card.effect?.rule==='swsh2ToolScrapper')return slots(foe).some(p=>p.tool||p.extraTools?.length);
     if(card.effect?.rule==='swsh2ScoopNet')return slots(s).some(p=>{const c=data.cardById(p.cardId);return !c?.pokemonV&&!c?.pokemonGX&&(p!==s.active||s.bench.length)&&Number(p.damage||0)>=Math.max(40,core.maxHp(state,side,p)-40)&&attachedCount(p)<=1;});
@@ -263,7 +264,7 @@
     if(action.type==='evolve')return 900;
     if(action.type==='sm11ElectricSwamp'||action.type==='sm8HandAbility'||action.type==='abilityDiscard'&&action.cardId==='sm8-97')return 800;
     if(action.type==='ability')return dangerous(abilityEffect(card,action.abilityIndex))?-100:800;
-    if(action.type==='trainer')return dangerous(card?.effect)?-100:700;
+    if(action.type==='trainer')return !action.swsh4Substitution&&dangerous(card?.effect)?-100:700;
     if(action.type==='stadiumAction')return worthwhileStadiumAction(state,side,action)?850:-100;
     if(action.type==='bench'||action.type==='legendBench')return action.type==='legendBench'?720:600;
     if(action.type==='attach'||action.type==='attachSpecial')return 400+attachScore(action,state,side);
@@ -349,7 +350,7 @@
     if(action.type==='trainer'){
       const card=data.cardById(action.cardId);
       if(card?.trainerType==='Stadium'||card?.trainerSubtype==='Stadium')bonus+=stadiumUtility(position,side,card,side)*.5;
-      else bonus+=2+searchOpportunity(card?.effect,position.sides[side]);
+      else bonus+=2+searchOpportunity(action.swsh4Substitution?{type:'draw',amount:3}:card?.effect,position.sides[side]);
     }
     if(action.type==='stadiumAction'&&action.cardId==='neo3-61'&&position.sides[side]?.active?.damage>0)bonus+=32;
     if(action.type==='ability')bonus+=searchOpportunity(abilityEffect(data.cardById(action.cardId),action.abilityIndex),position.sides[side]);

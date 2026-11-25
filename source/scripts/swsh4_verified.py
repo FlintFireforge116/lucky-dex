@@ -142,3 +142,6 @@ tr(152,'Tool',E('modifier',stat='maxHp',amount=-100,scope='self',duration='while
 ab(3,passive(E('sm7Rule',rule='swsh4ElusiveMaster')))
 for no in [26,30,47]:ab(no,passive(E('sm7Rule',rule='swsh4Awakening')))
 at(63,'Mini-Metronome',E('copyAttack',source='opponentActive',swsh2Copy=True,sm12Copy=True,swsh4CoinCopy=True))
+
+# v492: live Supporter replacement, shared legality and actual physical card bookkeeping.
+ab(12,passive(E('sm7Rule',rule='swsh4ShiftySubstitution')))
