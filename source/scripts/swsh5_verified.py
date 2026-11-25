@@ -125,6 +125,16 @@ tr(131,'Tool',BS('Scroll'))
 tr(133,'Tool',BS('Scroll'))
 tr(132,'Supporter',BS('Mustard',rapid=True))
 tr(134,'Supporter',BS('Mustard',rapid=False))
+# v502: staged selections, movement, and attack KO provenance.
+at(35,'Ball Juggling',E('chooseDiscardForBonus',zone='hand',max=30,amount=40,filter={'kind':'trainer','trainerType':'Item','nameContains':'Ball'}))
+at(48,'Electrostep',seq(E('selectedDamage',target='opponentPokemon',amount=40),BS('ElectroSwitch')))
+at(58,'Power Split',BS('PowerSplit'))
+ab(61,activated(BS('EarMoves')))
+at(65,'Evomancy',BS('Evomancy'))
+ab(102,dict(type='activated',oncePerTurn=False,effect=BS('MetalTransfer')))
+at(114,'Selickt',BS('Selickt'))
+at(117,'Double Dip Fangs',BS('DoubleDip'))
+tr(135,'Supporter',BS('Sordward'))
 # Exact print lookup only, otherwise use already-reviewed attack signatures.
 def attack(row,a):
  c=REPRINT.get(sig(row))

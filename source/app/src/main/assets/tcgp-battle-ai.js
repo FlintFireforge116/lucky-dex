@@ -280,6 +280,12 @@
         const hit=target?effects.attackDamageWithState(state,side,state.sides[side].active,foeOf(side),target,60*n,data.cardById):0;
         return 200+Math.min(hit,remaining)-n*2+(hit>=remaining?100:0);
       }
+      if(attack?.name==='Ball Juggling'&&attack?.effect?.type==='chooseDiscardForBonus'){
+        const n=String(action.effectSelection||'').split(',').filter(Boolean).length,target=state.sides[foeOf(side)].active;
+        const remaining=target?core.maxHp(state,foeOf(side),target)-Number(target.damage||0):Infinity;
+        const hit=target?effects.attackDamageWithState(state,side,state.sides[side].active,foeOf(side),target,10+40*n,data.cardById):0;
+        return 200+Math.min(hit,remaining)-n*2+(hit>=remaining?100:0);
+      }
       if(attack?.effect?.rule==='swsh4FlyingFury')damage=10+40*slots(state.sides[side]).reduce((n,p)=>n+(p.tool?1:0)+(p.extraTools||[]).length,0);
       if(attack?.effect?.rule==='swsh35Whisk')damage=60*slots(state.sides[side]).reduce((n,p)=>n+attachedCount(p),0);
       if(attack?.effect?.rule==='swsh2MiningRush')damage=30*Number(action.effectSelection||0);
@@ -381,6 +387,11 @@
       // Powers remain freely repeatable for the human. The CPU may use them
       // once per turn so it cannot oscillate Energy/Damage forever.
       if(source?.cardId==='swsh4-46'){const board=state.sides[side],enemy=state.sides[foeOf(side)];if(enemy.prizes.length<=1||!board.active||board.active===source||!effects.effectiveTypes(state,side,board.active,data.cardById).includes('Lightning')||attachedCount(board.active)>=3||!(board.energySupply||[]).includes('Lightning')&&!board.deck.some(r=>data.cardById(r.cardId)?.basicEnergy&&data.cardById(r.cardId)?.subtype==='Lightning'))return false;}
+      if(power?.effect?.rule==='swsh5MetalTransfer'){
+        const board=state.sides[side],active=board.active;
+        if(!active||!(data.cardById(active.cardId)?.attacks||[]).some(a=>!effects.canPayCost(core.effectiveEnergy(state,side,active),a.cost)))return false;
+        if(!board.bench.some(p=>Number(p.energy?.Metal)>0||(p.specialEnergy||[]).some(x=>effects.attachedSpecialProvidesType(x,'Metal',p,data.cardById,state))))return false;
+      }
       if(power?.effect?.rule==='swsh2AppleDrop'&&source===state.sides[side].active&&!state.sides[side].bench.length)return false;
       return !(power?.oncePerTurn===false&&state.sides[side].abilityUsed?.[source.uid+':'+index]===state.sides[side].turnCount);
     });
@@ -451,6 +462,12 @@
         const picks=choices.filter(a=>!a.choiceSkip&&data.cardById(a.choiceCardId)?.name!=='Ditto V').sort((a,b)=>score(data.cardById(b.choiceCardId))-score(data.cardById(a.choiceCardId)));
         return picks.length&&score(data.cardById(picks[0].choiceCardId))>score(data.cardById(source.cardId))?picks[0]:stop||choices[0];
       }
+      if(e.rule==='swsh5MetalTransfer'){
+        const board=state.sides[side],stop=choices.find(a=>a.choiceSkip);
+        if(e.stage==='target')return choices.find(a=>a.choiceTarget==='active')||choices[0];
+        return choices.find(a=>!a.choiceSkip&&e.units?.[a.choiceOption]?.source!==board.active?.uid)||stop||choices[0];
+      }
+      if(['swsh5EarMoves','swsh5Evomancy','swsh5PowerSplit','swsh5Sordward'].includes(e.rule))return choices.find(a=>!a.choiceSkip)||choices[0];
       if(['swsh5Mustard','swsh5Stance','swsh5Roar','swsh5Urn','swsh5BallSearch','swsh5SpringBloom','swsh45BallGuy','swsh3DarkAsset','swsh3FamiliarBell','swsh3Breeder','swsh3Rose','swsh3SpiderNet','swsh3ShuffleDance'].includes(e.rule))return choices.find(a=>!a.choiceSkip)||choices[0];
       if(e.rule==='sm10Kaleidostorm'&&slots(state.sides[side]).some(p=>p.uid===pending.sourceUid&&p.cardId==='swsh3-147')){
         const board=state.sides[side],stop=choices.find(x=>x.choiceSkip);
@@ -577,6 +594,10 @@
     // leakage. Choose from the actual legal set instead.
     if(state.format==='classic'&&state.phase==='effectChoice'){
       const pending=state.pendingChoice||{},rule=String(pending.effect?.rule||'');
+      if(rule==='swsh5Selickt'&&pending.kind==='option'){
+        const board=state.sides[side];return legal.find(a=>pending.effect.zones?.[a.choiceOption]===(board.deck.length<=4||board.hand.length<=1?'hand':'deck'))||legal[0];
+      }
+      if(rule==='swsh5Sordward'&&pending.effect?.stage==='answer')return legal.find(a=>a.choiceOption===0)||legal[0];
       if(rule==='sm9ElectroShaker'||rule==='sm10Kaleidostorm'){
         // Never cycle Energy endlessly between two slots. CPU moves toward its Active only.
         const board=state.sides[side],stop=legal.find(x=>x.choiceSkip);
