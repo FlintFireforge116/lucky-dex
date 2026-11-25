@@ -1,40 +1,21 @@
 {
   "printed": 216,
-  "battleReady": 127,
+  "battleReady": 162,
   "gated": {
     "swsh1-6": [
       "Unimplemented attack: Cotton Ride"
     ],
-    "swsh1-7": [
-      "Unimplemented attack: Powerful Needles"
-    ],
     "swsh1-9": [
       "Unimplemented attack: Anchor Anger"
     ],
-    "swsh1-14": [
-      "Unimplemented Ability: Voltage Beat"
-    ],
     "swsh1-19": [
       "Unimplemented Ability: Bug's Radar"
-    ],
-    "swsh1-21": [
-      "Unimplemented attack: Blessing of Fluff"
-    ],
-    "swsh1-24": [
-      "Unimplemented attack: Combustion Pillar"
-    ],
-    "swsh1-25": [
-      "Unimplemented attack: Spreading Flames",
-      "Unimplemented attack: Energy Burst"
     ],
     "swsh1-34": [
       "Unimplemented Ability: Libero"
     ],
     "swsh1-39": [
       "Unimplemented attack: Hundred Foot Flames"
-    ],
-    "swsh1-43": [
-      "Unimplemented attack: Super Slice"
     ],
     "swsh1-47": [
       "Unimplemented attack: Ripping Horn"
@@ -52,36 +33,14 @@
     "swsh1-51": [
       "Unimplemented Ability: Poison Point"
     ],
-    "swsh1-56": [
-      "Unimplemented Ability: Shady Dealings"
-    ],
-    "swsh1-58": [
-      "Unimplemented Ability: Shady Dealings"
-    ],
     "swsh1-59": [
-      "Unimplemented attack: Silent Shot",
       "Unimplemented attack: Hydro Snipe"
-    ],
-    "swsh1-61": [
-      "Unimplemented attack: Vise Bite"
     ],
     "swsh1-64": [
       "Unimplemented Ability: Ice Dance"
     ],
     "swsh1-69": [
       "Unimplemented attack: Strobe Shock"
-    ],
-    "swsh1-75": [
-      "Unimplemented attack: Fighting Fangs"
-    ],
-    "swsh1-77": [
-      "Unimplemented attack: Shocking Needles"
-    ],
-    "swsh1-82": [
-      "Unimplemented Ability: Pastel Veil"
-    ],
-    "swsh1-83": [
-      "Unimplemented attack: Fade Out"
     ],
     "swsh1-85": [
       "Unimplemented Ability: Life Shaker"
@@ -92,20 +51,8 @@
     "swsh1-88": [
       "Unimplemented attack: Sleepy Pulse"
     ],
-    "swsh1-90": [
-      "Unimplemented attack: Poltergeist"
-    ],
     "swsh1-99": [
       "Unimplemented attack: Bedrock Shake"
-    ],
-    "swsh1-107": [
-      "Unimplemented attack: Sand Attack"
-    ],
-    "swsh1-109": [
-      "Unimplemented attack: Coil"
-    ],
-    "swsh1-110": [
-      "Unimplemented attack: Power Press"
     ],
     "swsh1-113": [
       "Unimplemented attack: Octolock"
@@ -117,20 +64,13 @@
       "Unimplemented Ability: Headbutt Tantrum"
     ],
     "swsh1-119": [
-      "Unimplemented attack: Obstruct",
       "Unimplemented Ability: Untamed Shout"
     ],
     "swsh1-124": [
       "Unimplemented Ability: More Poison"
     ],
-    "swsh1-125": [
-      "Unimplemented attack: Instigate"
-    ],
     "swsh1-126": [
       "Unimplemented attack: Thief"
-    ],
-    "swsh1-127": [
-      "Unimplemented attack: Hone Claws"
     ],
     "swsh1-131": [
       "Unimplemented attack: Energy Slap"
@@ -150,10 +90,6 @@
     "swsh1-144": [
       "Unimplemented attack: Carry Off"
     ],
-    "swsh1-147": [
-      "Unimplemented attack: Energy Assist",
-      "Unimplemented Ability: Make Do"
-    ],
     "swsh1-148": [
       "Unimplemented Ability: Primate Wisdom"
     ],
@@ -161,12 +97,6 @@
       "Unimplemented attack: Pluck"
     ],
     "swsh1-157": [
-      "Unimplemented Trainer effect"
-    ],
-    "swsh1-162": [
-      "Unimplemented Trainer effect"
-    ],
-    "swsh1-164": [
       "Unimplemented Trainer effect"
     ],
     "swsh1-166": [
@@ -178,34 +108,16 @@
     "swsh1-168": [
       "Unimplemented Trainer effect"
     ],
-    "swsh1-169": [
-      "Unimplemented Trainer effect"
-    ],
-    "swsh1-170": [
-      "Unimplemented Trainer effect"
-    ],
     "swsh1-171": [
       "Unimplemented Trainer effect"
     ],
     "swsh1-172": [
       "Unimplemented Trainer effect"
     ],
-    "swsh1-174": [
-      "Unimplemented Trainer effect"
-    ],
     "swsh1-176": [
       "Unimplemented Trainer effect"
     ],
-    "swsh1-178": [
-      "Unimplemented Trainer effect"
-    ],
-    "swsh1-179": [
-      "Unimplemented Trainer effect"
-    ],
     "swsh1-180": [
-      "Unimplemented Trainer effect"
-    ],
-    "swsh1-181": [
       "Unimplemented Trainer effect"
     ],
     "swsh1-182": [
@@ -220,9 +132,6 @@
     "swsh1-187": [
       "Unimplemented attack: Anchor Anger"
     ],
-    "swsh1-188": [
-      "Unimplemented attack: Combustion Pillar"
-    ],
     "swsh1-189": [
       "Unimplemented attack: Body Surf",
       "Unimplemented attack: Ocean Loop"
@@ -234,12 +143,6 @@
       "Unimplemented Ability: Intrepid Sword"
     ],
     "swsh1-199": [
-      "Unimplemented Trainer effect"
-    ],
-    "swsh1-200": [
-      "Unimplemented Trainer effect"
-    ],
-    "swsh1-201": [
       "Unimplemented Trainer effect"
     ],
     "swsh1-202": [
@@ -254,25 +157,13 @@
     "swsh1-207": [
       "Unimplemented Trainer effect"
     ],
-    "swsh1-208": [
-      "Unimplemented Trainer effect"
-    ],
-    "swsh1-209": [
-      "Unimplemented Trainer effect"
-    ],
     "swsh1-210": [
       "Unimplemented Trainer effect"
     ],
     "swsh1-211": [
       "Unimplemented Ability: Intrepid Sword"
     ],
-    "swsh1-214": [
-      "Unimplemented Trainer effect"
-    ],
     "swsh1-215": [
-      "Unimplemented Trainer effect"
-    ],
-    "swsh1-216": [
       "Unimplemented Trainer effect"
     ]
   },
