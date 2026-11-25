@@ -158,3 +158,6 @@ for row in ROWS:
 for n in (8,32,61):ab(n,passive(N('TopEntry')))
 tr(162,'Item',N('Nugget'))
 tr(158,'Supporter',N('Dan'))
+
+# v475: Drag Off switches before calculating damage; no target means no damage.
+at(121,'Drag Off',R('DragOff',amount=30))

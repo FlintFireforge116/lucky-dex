@@ -335,10 +335,7 @@
     const hadCardToDraw=s.deck.length>0,top=s.deck[0],foeSide=side==='player'?'opponent':'player';
     if(state.format==='classic'&&!xy2NoDraw&&!s.dp4SkipAfterDraw&&top&&state.sides[foeSide].active?.cardId!=='SNAPFOUNJA-033'){
       const mon=data.cardById(top.cardId),enemy=state.sides[foeSide].active,
-        itemLocked=effects.isActionLocked(state,side,'Trainer',data.cardById)||effects.isActionLocked(state,side,'Item',data.cardById)||
-          ['bw2-47','dp5-6'].includes(enemy?.cardId)&&!effects.abilitiesSuppressed(state,foeSide,enemy,data.cardById)||
-          ['player','opponent'].some(w=>pokemonOn(state.sides[w]).some(p=>p.cardId==='hgss3-24'&&!effects.abilitiesSuppressed(state,w,p,data.cardById)))||
-          ['bw9ItemsLockedUntil','ex15TrainerLockUntil','ex7TrainerLockedUntil','ex8TrainerLockUntil','neoDestinyTrainerLockUntil','sm9HandLockUntil','sm4HandLockUntil'].some(k=>Number(s[k]||0)>=state.turnNumber)||s.neoTrainerLockTurn===state.turnNumber,
+        itemLocked=classicItemPlayLocked(state,side),
         nugget=top.cardId==='swsh2-162'&&!itemLocked,
         entry=mon?.abilities?.some(ab=>ab.effect?.rule==='swsh2TopEntry')&&emptyBenchSlots(s).length; // Pokémon is still in deck; in-play Gas does not suppress it.
       if(nugget||entry){
@@ -1562,6 +1559,7 @@
       if(['sm4-91','sm4-120'].includes(card.id)&&((s.prizes||[]).length<=(foe.prizes||[]).length||!foe.bench.length))return;
       if(card.id==='sm11-186'&&!s.hand.some(r=>data.cardById(r.cardId)?.kind==='pokemon'&&data.cardById(r.cardId)?.attacks?.length))return;
       if(card.id==='xy11-102')return; // Greedy Dice is never playable from the hand.
+      if(state.format==='classic'&&trainerType(card)==='Item'&&classicItemPlayLocked(state,side))return;
       const type=trainerType(card),base={type:'trainer',handIndex,cardId:card.id};if(effects.isActionLocked(state,side,'Trainer',data.cardById)||effects.isActionLocked(state,side,type,data.cardById))return;
       if(state.format==='classic'&&['sm5-129','sm5-168'].includes(card.id)){
         actions.push({...base,effectSelection:'one'});
@@ -3209,6 +3207,15 @@ const target=slotForTarget(s,action.target,action.benchIndex);if(card.id==='pl2-
   }
 
   // Shared target legality for normal and effect-driven physical Energy attachments.
+  // A naturally drawn Item must obey the same restrictions as hand Items.
+  function classicItemPlayLocked(state,side){
+    const s=state.sides[side],foe=side==='player'?'opponent':'player',enemy=state.sides[foe].active;
+    return effects.isActionLocked(state,side,'Trainer',data.cardById)||effects.isActionLocked(state,side,'Item',data.cardById)||
+      ['bw2-47','dp5-6','ex5-100'].includes(enemy?.cardId)&&!effects.abilitiesSuppressed(state,foe,enemy,data.cardById)||
+      ['player','opponent'].some(w=>pokemonOn(state.sides[w]).some(p=>p.cardId==='hgss3-24'&&!effects.abilitiesSuppressed(state,w,p,data.cardById)))||
+      ['bw9ItemsLockedUntil','ex15TrainerLockUntil','ex7TrainerLockedUntil','ex8TrainerLockUntil','neoDestinyTrainerLockUntil','sm9HandLockUntil','sm4HandLockUntil','ex16ChillingBreathUntil','founjaNoHandUntil'].some(k=>Number(s[k]||0)>=state.turnNumber)||s.neoTrainerLockTurn===state.turnNumber;
+  }
+
   function physicalHandEnergyTargetLegal(state,side,card,slot,extra=false,paid=false){
     const s=state.sides[side],foeSide=side==='player'?'opponent':'player',foe=state.sides[foeSide];
     if(!card||!slot)return false;
