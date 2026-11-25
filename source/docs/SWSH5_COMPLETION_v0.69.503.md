@@ -1,0 +1,10 @@
+# Battle Styles v0.69.503 — completion
+
+- Canonical coverage: 183/183 prints enabled, no gated prints. Existing pinned catalogue retained.
+- Deep Sea King: owner-controlled optional sequential Water Energy movement after a defending Active is knocked out by opposing attack damage, before attachments are discarded. Only surviving unsuppressed Kingdra on the Bench can receive. Basic Energy units and physical Special Energy refs remain distinct. More than one eligible Kingdra can be offered sequentially; declining advances to the next receiver. CPU chooses available recovery. Restricted Special Energy still uses the shared continuous cleanup rules.
+- Lustrous Body: integrates both prints into the shared opposing-Ability protection and continuous lingering-effect cleanup. General Ability suppression disables this protection. It does not stop attacks or Trainers.
+- Tool Jammer: the shared active-Tool enumerator filters individual refs. Only the opposing Active's non-Jammer Tools are disabled; a Jammer is exempt from another Jammer, not global Tool suppression. Retains actual attachments; Scroll attack availability changes dynamically. Generic old checks for non-Jammer Tools still see the suppression boolean.
+- Twelve new bilateral outcome tests: KO movement and decline/suppression, both Corviknight prints and suppression, mutual Jammers/global suppression/Bench and Scroll availability. 108 current-set tests passed before full preflight. Release gate requires zero gated prints.
+- Earlier v501 remote build failure cannot be diagnosed without its remote log. Local v501 preparation log ended 73/73 and v502 local preparation exited 0; user confirmed v502 built. APK/device verification remains separate. Full independent audit still needed, particularly simultaneous KO timing, interaction ordering with multiple historical KO recovery triggers, and legacy Tool paths that bypass the shared active-Tool enumerator.
+
+Full verification: exact `sh scripts/prepare-swsh5.sh` exited 0, 1537/1537 test invocations passed, zero failures/skips/cancellations; 108/108 Battle Styles tests. Shared release version check passed. No Android compilation performed.

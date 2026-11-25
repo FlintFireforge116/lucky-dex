@@ -1,20 +1,7 @@
 {
   "printed": 183,
-  "battleReady": 179,
-  "gated": {
-    "swsh5-33": [
-      "Unimplemented Ability: Deep Sea King"
-    ],
-    "swsh5-110": [
-      "Unimplemented Ability: Lustrous Body"
-    ],
-    "swsh5-136": [
-      "Unimplemented Trainer effect"
-    ],
-    "swsh5-171": [
-      "Unimplemented Ability: Lustrous Body"
-    ]
-  },
+  "battleReady": 183,
+  "gated": {},
   "attacks": 234,
   "abilities": 28,
   "pokemonV": 28,

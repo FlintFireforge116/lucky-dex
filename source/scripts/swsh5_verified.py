@@ -135,6 +135,9 @@ ab(102,dict(type='activated',oncePerTurn=False,effect=BS('MetalTransfer')))
 at(114,'Selickt',BS('Selickt'))
 at(117,'Double Dip Fangs',BS('DoubleDip'))
 tr(135,'Supporter',BS('Sordward'))
+ab(33,passive(BS('DeepSeaKing')))
+ab(110,passive(BS('LustrousBody')))
+tr(136,'Tool',BS('ToolJammer'))
 # Exact print lookup only, otherwise use already-reviewed attack signatures.
 def attack(row,a):
  c=REPRINT.get(sig(row))

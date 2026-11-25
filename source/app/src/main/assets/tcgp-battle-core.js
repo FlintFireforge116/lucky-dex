@@ -57,7 +57,7 @@
 
   function pokemonOn(sideState){ return [sideState?.active,...(sideState?.bench||[])].filter(Boolean); }
   function toolsOf(slot){ return slot?[slot.tool,...(slot.extraTools||[])].filter(Boolean):[]; }
-  function activeToolsOf(state,slot){return effects.toolEffectsSuppressed(state,data.cardById,slot)?[]:toolsOf(slot);}
+  function activeToolsOf(state,slot){return effects.activeToolsOf(state,slot,data.cardById);}
   function activeStadium(state){return state?.format==='classic'&&
     Number(state.xy11WickedWindUntil||0)>=Number(state.turnNumber||0)?null:state?.stadium||null;}
 
@@ -2838,6 +2838,12 @@
           }
         }
 
+        if(state.format==='classic'&&slot===s.active&&eventSource?.attack&&eventSource.side===foeSide&&Number(eventSource.turn)===Number(state.turnNumber)&&Number(eventSource.damage)>0){
+          const seen=slot.swsh5DeepSeaSeen||(slot.swsh5DeepSeaSeen=[]);
+          const receiver=s.bench.find(p=>p.cardId==='swsh5-33'&&Number(p.damage||0)<maxHp(state,side,p)&&!seen.includes(p.uid)&&!effects.abilitiesSuppressed(state,side,p,data.cardById));
+          const units=[...(Number(slot.energy?.Water)>0?[{type:'Water',label:'Basic Water Energy'}]:[]),...(slot.specialEnergy||[]).filter(x=>effects.attachedSpecialProvidesType(x,'Water',slot,data.cardById,state)).map(x=>({uid:x.uid,label:data.cardById(x.cardId)?.name||'Special Energy'}))];
+          if(receiver&&units.length){beginEffectChoice(state,side,slot,{kind:'option',side:'self',options:units.map(x=>'Move '+x.label+' to Kingdra'),optional:true,special:'swsh5DeepSeaKing',receiverUid:receiver.uid,units,koResume:resume||null,koCause:cause||null});return true;}
+        }
         if(state.format==='classic'&&eventSource?.attack&&eventSource.side===foeSide&&Number(eventSource.turn)===Number(state.turnNumber)&&(eventSource.damage==null||Number(eventSource.damage)>0)){
           const seen=slot.sm7GroundingSeen||(slot.sm7GroundingSeen=[]),types=Object.keys(slot.energy||{}).filter(t=>Number(slot.energy[t])>0);
           const receiver=pokemonOn(s).find(p=>p!==slot&&p.cardId==='sm7-50'&&Number(p.damage||0)<maxHp(state,side,p)&&!seen.includes(p.uid)&&!effects.abilitiesSuppressed(state,side,p,data.cardById));
@@ -3502,6 +3508,11 @@ const target=slotForTarget(s,action.target,action.benchIndex);if(card.id==='pl2-
       }
       if(pending.special==='sm10HypnoPromote'){
         const board=state.sides[pending.victim],index=benchArrayIndex(board,matched.choiceBenchIndex),[incoming]=board.bench.splice(index,1);incoming.benchSlot=null;incoming.movedToActiveTurn=state.turnNumber;board.active=incoming;state.log.push({type:'promote',side:pending.victim,cardId:incoming.cardId,reason:'Hypnotic Pendulum'});state.pendingChoice=null;state.choiceSide=null;resumeAfterPromotion(state);return state;
+      }
+      if(pending.special==='swsh5DeepSeaKing'){
+        const src=findSlotByUid(state,side,pending.sourceUid),dst=findSlotByUid(state,side,pending.receiverUid),unit=pending.units?.[matched.choiceOption];
+        if(src&&dst){if(matched.choiceSkip){(src.swsh5DeepSeaSeen||(src.swsh5DeepSeaSeen=[])).push(dst.uid);}else if(unit?.type==='Water'&&Number(src.energy?.Water)>0){src.energy.Water--;dst.energy.Water=Number(dst.energy.Water||0)+1;}else if(unit?.uid){const i=(src.specialEnergy||[]).findIndex(x=>x.uid===unit.uid&&effects.attachedSpecialProvidesType(x,'Water',src,data.cardById,state));if(i>=0){dst.specialEnergy=dst.specialEnergy||[];dst.specialEnergy.push(...src.specialEnergy.splice(i,1));}}}
+        state.pendingChoice=null;state.choiceSide=null;state.phase='battle';const paused=resolveKnockOut(state,pending.koResume,pending.koCause);if(!paused&&state.phase==='battle'){if(pending.koResume==='endTurn')endTurn(state);else if(pending.koResume==='advanceTurn')advanceTurn(state);else if(pending.koResume==='repeatAttack')finishRepeatAttack(state);}return state;
       }
       if(pending.special==='sm7Grounding'||pending.special==='sm7WishPrize'){
         const ss=state.sides[side];

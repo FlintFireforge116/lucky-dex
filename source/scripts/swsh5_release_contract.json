@@ -1,8 +1,8 @@
 {
   "set": "swsh5",
   "name": "Battle Styles",
-  "stage": "partial",
-  "release": "0.69.502",
+  "stage": "complete",
+  "release": "0.69.503",
   "printedTotal": 183,
   "attackPrints": 234,
   "abilities": 28,
