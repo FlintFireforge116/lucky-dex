@@ -3382,7 +3382,7 @@ const target=slotForTarget(s,action.target,action.benchIndex);if(card.id==='pl2-
       if(state.phase==='effectChoice')state.pendingChoice.resume=state.pendingChoice.resume||'trainer';
       if(state.format==='classic'&&card.name==='Draw Energy')drawCard(s);
       if(state.format==='classic'&&card.id==='swsh2-173'&&effects.effectiveTypes(state,side,target,data.cardById).includes('Lightning')){drawCard(s);drawCard(s);}
-      if(state.format==='classic'&&card.id==='swsh2-171'){
+      if(state.format==='classic'&&['swsh2-171','swsh3-201'].includes(card.id)){
         const fx={type:'sm7Rule',rule:'swsh2CaptureEnergy'};
         if(state.phase==='effectChoice'&&state.pendingChoice)state.pendingChoice.afterEffects.push(fx);else effects.applyEffect(fx,effectContext(state,side,{},target));
         if(state.phase==='effectChoice')state.pendingChoice.resume=state.pendingChoice.resume||'trainer';

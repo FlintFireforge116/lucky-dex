@@ -1,0 +1,80 @@
+"""Darkness Ablaze exact printed-rule mappings; fail closed on unsupported effects."""
+from copy import deepcopy
+from pathlib import Path
+import json,re
+import swsh2_verified as V
+from sm7_verified import E,seq,coin,status,bonus,cond,passive,activated
+ROWS=json.loads((Path(__file__).resolve().parents[1]/'data/classic/swsh3-print-compact.json').read_text())
+A={};B={};T={};X={}
+def at(no,title,effect):
+ r=next(r for r in ROWS if r[0]==str(no));a=next(a for a in r[7] if a[0]==title);A[(title,tuple(a[1]),a[2],a[3])]=effect
+def ab(no,effect):
+ r=next(r for r in ROWS if r[0]==str(no));B[tuple(r[8][0])]=effect
+def tr(no,kind,effect):
+ r=next(r for r in ROWS if r[0]==str(no));T[(r[1],tuple(r[13]))]=(kind,effect)
+def attack(row,a):return deepcopy(A.get((a[0],tuple(a[1]),a[2],a[3]))) or V.attack(['_swsh3_',*row[1:]],a)
+def ability(row,a):return deepcopy(B.get(tuple(a))) or V.ability(['_swsh3_',*row[1:]],a)
+def trainer(row):return deepcopy(T.get((row[1],tuple(row[13])))) or V.trainer(row)
+def energy(row):return deepcopy(X.get((row[1],tuple(row[13])))) or V.energy(row)
+def prism_ready(row):return False
+
+
+# Exact signatures; use the already-tested descriptors wherever possible.
+def W(rule,**kw):return E('sm7Rule',rule='swsh1'+rule,**kw)
+def S(rule,**kw):return E('sm7Rule',rule='sm10'+rule,**kw)
+def Q(rule,**kw):return E('sm7Rule',rule='sm12'+rule,**kw)
+def R(rule,**kw):return E('sm7Rule',rule='sm9'+rule,**kw)
+def mod(stat,amount,**kw):return E('modifier',stat=stat,amount=amount,scope='self',duration='whileInPlay',**kw)
+def trig(event,fx,**kw):return dict(type='triggered',event=event,effect=fx,**kw)
+def search(n,**f):return E('searchChosen',amount=n,filter=f)
+for n,t in [(1,'Dizzying Poison'),(2,'G-Max Toxbreeze')]:at(n,t,seq(status('confusion'),status('poison')))
+at(16,'Power Whip',E('selectedEnergyDamage',target='opponentPokemon',source='self',amount=20,countProvidedType=True))
+at(16,'Time Out Kick',W('ReturnAttachments',target='opponentActive',left=1,optional=True))
+at(21,'Vengeful Flame',bonus(100,cond('pokemonPresent',zone='bench',filter={'subtype':'Fire','damaged':True})))
+at(30,'Cauterize',E('attackRequirement',allowWhenFailed=True,condition=cond('opponentDamaged')))
+ab(39,activated(E('heal',target='selfAll',amount=20)))
+ab(47,activated(coin(status('paralysis')),activeOnly=True))
+at(50,'Deep Sea Swirl',E('handShuffle',side='self',draw=8))
+at(59,'Flash Impact',E('selectedSelfBenchDamage',amount=30))
+at(60,'Paralyzing Bolt',E('actionLock',side='opponent',cardType='Item',duration='opponentTurn'))
+at(63,'Risk Taker',E('coinFlip',heads=E('discardTop',side='opponent',amount=5),tails=E('discardTop',side='self',amount=5)))
+at(65,'Amping Up',E('nextAttackBonus',attackName='Amping Up',amount=90))
+at(69,'X Ball',E('energyDamage',source='both',amount=30,mode='replace',countProvidedType=True))
+at(73,'Fortunate Eye',E('reorderTop',deckSide='opponent',count=5))
+# Filter counts physical discarded Pokemon, including alternate prints, not just names.
+for n in (36,78,83,150):at(n,'Mad Party',E('discardCountDamage',side='self',filter={'kind':'pokemon','attackName':'Mad Party'},amount=20,mode='replace'))
+for n,t in [(80,'Flickering Light'),(112,'Tail Whip')]:at(n,t,coin(E('lock',target='opponentActive',action='attack',duration='opponentTurn')))
+at(80,'Fear the Forest',bonus(60,cond('stadiumInPlay',cardId='swsh3-162')))
+at(82,'Furtive Drop',E('placeDamageCounters',target='opponentActive',amount=20))
+at(85,'Dig',coin(E('preventDamage',target='self',duration='opponentTurn',preventEffects=True)))
+at(88,'Bedrock Breaker',E('discardStadium'))
+at(89,"Land's Pulse",bonus(10,cond('stadiumInPlay')))
+ab(99,activated(status('poison'),activeOnly=True))
+at(101,'Triple Poison',E('status',target='opponentActive',status='poison',amount=30))
+ab(105,passive(mod('damageReduction',20,condition=cond('selfHasEnergyType',energyType='Darkness'))))
+ab(107,passive(E('preventStatus',scope='self',duration='whileInPlay',status='paralysis',clearExisting=True)))
+at(111,'Assault Gate',seq(E('attackRequirement',allowWhenFailed=True,condition=cond('movedFromBenchThisTurn')),E('damageRule',ignoreWeakness=True)))
+at(116,'Dynamax Cannon',bonus(120,cond('opponentMatches',filter={'stage':'VMAX'})))
+at(117,'Dread End',E('fieldCountDamage',side='self',amount=30,mode='replace',filter={'subtype':'Darkness'}))
+at(118,'Hack Off',seq(E('discardTool',target='opponentActive',amount=1),E('discardEnergyCard',target='opponentActive',amount=1,specialOnly=True)))
+at(120,'Metal Arms',bonus(40,cond('selfHasTool')))
+at(124,'Fury Cutter',E('coinTierBonus',coins=3,tiers={0:0,1:20,2:70,3:140}))
+for n in (125,126):at(n,'Call for Backup',search(1,kind='pokemon',subtype='Metal'))
+at(127,'Clockwork',E('attackRequirement',allowWhenFailed=True,condition=cond('pokemonPresentAll',zone='bench',names=['Klink','Klang'])))
+at(132,'Vengeful Stomp',bonus(120,cond('selfBenchDamaged')))
+ab(132,passive(E('preventStatus',scope='self',duration='whileInPlay',clearExisting=True)))
+at(133,'Rally Back',bonus(90,cond('koByOpponentAttackLastTurn')))
+ab(137,trig('knockedOutByAttack',E('discardTop',side='opponent',amount=2),opponentAttackOnly=True))
+at(140,'Energy Loop',W('ReturnAttachments',target='self',left=1))
+at(141,'Drawup Power',search(1,kind='energy'))
+# Active plus all benched targets use ordinary active damage then bench damage.
+at(143,'Swoop Across',seq(E('bonusDamage',amount=30),E('benchDamage',side='opponent',amount=30,all=True)))
+at(144,'Sonic Double',E('multiTargetDamage',target='opponentPokemon',amount=40,count=2,activeWeaknessResistance=True))
+for n,t in [(153,'Scrape Off'),(154,'Pluck')]:at(n,t,E('discardTool',target='opponentActive',amount='all',timing='beforeDamage'))
+# Tool filter distinguishes Basic V from GX; no blanket Rule Box exclusion.
+tr(160,'Tool',mod('maxHp',50,filter={'stage':'Basic','pokemonGX':False}))
+tr(164,'Item',E('allHeadsEffect',coins=2,heads=E('searchChosen',source='discard',amount=1,filter={})))
+tr(165,'Supporter',seq(search(1,kind='energy'),search(1,kind='pokemon',subtype='Darkness')))
+tr(169,'Stadium',E('stadiumAction',effect=E('drawToHandSize',size=3)))
+tr(173,'Item',seq(E('status',target='selfActive',status='confusion'),status('confusion')))
+# Capture Energy is the same print signature as Rebel Clash, with an independent ID.
