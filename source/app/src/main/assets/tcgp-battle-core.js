@@ -944,7 +944,7 @@
     const aqHeavy=state.format==='classic'&&slot?.cardId==='ecard2-23'&&Number(slot.energy?.Grass||0)>0?2:0;
     const aqMagnet=state.format==='classic'&&slot?.cardId==='ecard2-91'&&!effects.abilitiesSuppressed(state,side,slot,data.cardById)?state.sides[side].bench.filter(p=>data.cardById(p?.cardId)?.name==='Magnemite').length:0;
     return Math.max(0,printedRetreat+effects.modifierAmount(state,side,slot,'retreatCost',data.cardById)+stadiumCost+aqHeavy+(aqGluey?1:0)-aqMagnet-ex6Dodrio-2*(slot.specialEnergy||[]).filter(ref=>ref.cardId==='xy4-112').length+Number(slot.dp2RetreatAdjustment||0)+bw7Jellicent-(bw9Glaceon?2:0));}
-  function attackCost(state,side,attack){const slot=state.sides[side].active;if(state.format==='classic'&&state.sides[side].sm12SolarPowerTurn===state.sides[side].turnCount&&effects.effectiveTypes(state,side,slot,data.cardById).some(t=>t==='Grass'||t==='Fire'))return '';let cost=effects.attackCostOverride(state,side,slot,attack,data.cardById)??attack.cost??'';
+  function attackCost(state,side,attack){const slot=state.sides[side].active;if(state.format==='classic'&&['swsh3-11','swsh3-145','swsh3-149'].includes(slot?.cardId)&&state.sides[side].sm10SupporterTurns?.['Bird Keeper']===state.turnNumber&&!effects.abilitiesSuppressed(state,side,slot,data.cardById))return '';if(state.format==='classic'&&state.sides[side].sm12SolarPowerTurn===state.sides[side].turnCount&&effects.effectiveTypes(state,side,slot,data.cardById).some(t=>t==='Grass'||t==='Fire'))return '';let cost=effects.attackCostOverride(state,side,slot,attack,data.cardById)??attack.cost??'';
     // Some older/imported prints and conditional overrides store costs as a
     // symbol array. Array.toString() inserts commas (e.g. [R,R,C] -> R,R,C),
     // which appear as phantom Energy icons and make legal moves unpayable.
@@ -2717,7 +2717,7 @@
       if(!knocked.length)break;
       for(const {side,slot} of knocked){
         const s=state.sides[side],foeSide=side==='player'?'opponent':'player',foe=state.sides[foeSide],card=data.cardById(slot.cardId),source=slot.lastDamageSource;
-        if(state.format==='classic'&&slot.cardId==='sm8-112'&&cause==='attack'&&source?.turn===state.turnNumber&&source?.side===foeSide&&source?.attack&&Number(source.damage||0)>0&&Number(slot.damage||0)-Number(source.damage||0)<=0&&!effects.abilitiesSuppressed(state,side,slot,data.cardById)){slot.damage=maxHp(state,side,slot)-10;continue;}
+        if(state.format==='classic'&&['sm8-112','swsh3-123'].includes(slot.cardId)&&cause==='attack'&&source?.turn===state.turnNumber&&source?.side===foeSide&&source?.attack&&Number(source.damage||0)>0&&Number(slot.damage||0)-Number(source.damage||0)<=0&&!effects.abilitiesSuppressed(state,side,slot,data.cardById)){slot.damage=maxHp(state,side,slot)-10;continue;}
         if(state.format==='classic'&&cause==='attack'&&source?.side===foeSide&&source?.attack&&
           Number(source.damage||0)>0&&Number(slot.damage||0)-Number(source.damage||0)<=0&&
           data.cardById(slot.cardId)?.types?.includes('Fighting')){

@@ -98,11 +98,12 @@ def generate(rows):
     deckMeta={'roles':roles,'synergy':roles,'energyTypes':needed,'preferredEnergyTypes':needed,'conditionalAttackEnergyTypes':[],
      'preferredPartners':[evolves] if evolves else [],'inflicts':[],'payoffs':[]})
   elif kind=='trainer':
+   if trainer and trainer[1].get('type')=='playFossil':c.update(hp=trainer[1]['hp'],stage='Basic',types=['Colorless'],subtype='Colorless',retreat=0,prizeCards=1)
    c.update(trainerType=trainer[0] if trainer else next((s for s in subs if s in ('Item','Supporter','Stadium','Pokémon Tool')),'Item'),
     attacks=attack_objs,text='\n'.join(rules),effect=trainer[1] if trainer else {'type':'unsupported'},aceSpec=False)
    
   else:
-   c.update(basicEnergy=False,specialEnergy=True,energyType='Colorless',subtype='Colorless',effect=energy or {'type':'unsupported'},text='\n'.join(rules))
+   c.update(basicEnergy=False,specialEnergy=True,energyType=next(iter((energy or {}).get('provides',{'Colorless':1}))),subtype=next(iter((energy or {}).get('provides',{'Colorless':1}))),effect=energy or {'type':'unsupported'},text='\n'.join(rules))
   cards.append(c)
  return cards
 

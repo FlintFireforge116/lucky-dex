@@ -428,6 +428,12 @@
     // All choices are drawn from its own known Zone and public Pokémon.
     if(state.format==='classic'&&state.phase==='effectChoice'&&state.pendingChoice?.originSide===side){
       const pending=state.pendingChoice,e=pending.effect||{},choices=legal.filter(a=>a.type==='effectChoice');
+      if(['swsh3DarkAsset','swsh3FamiliarBell'].includes(e.rule))return choices.find(a=>!a.choiceSkip)||choices[0];
+      if(e.rule==='sm10Kaleidostorm'&&slots(state.sides[side]).some(p=>p.uid===pending.sourceUid&&p.cardId==='swsh3-147')){
+        const board=state.sides[side],stop=choices.find(x=>x.choiceSkip);
+        if(e.stage==='source')return choices.find(x=>!x.choiceSkip&&e.opts?.[x.choiceOption]?.p!==board.active?.uid)||stop||choices[0];
+        return choices.find(x=>x.choiceTarget==='active')||stop||choices[0];
+      }
       if(e.rule==='swsh2ToolScrapper')return choices.find(a=>!a.choiceSkip&&e.opts?.[a.choiceOption]?.owner===foeOf(side))||choices.find(a=>a.choiceSkip)||choices[0];
       if(e.rule==='swsh2ScoopNet'){const ss=state.sides[side],score=a=>{const p=slotFor(ss,a.choiceTarget,a.choiceBenchIndex);return Number(p?.damage||0)-attachedCount(p)*40;};return choices.sort((a,b)=>score(b)-score(a))[0];}
       if(['swsh2RecoverBasic','swsh2TarGenerator'].includes(e.rule))return choices.find(a=>!a.choiceSkip)||choices[0];

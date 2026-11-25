@@ -1,25 +1,9 @@
 {
   "printed": 201,
-  "battleReady": 138,
+  "battleReady": 178,
   "gated": {
-    "swsh3-11": [
-      "Unimplemented Ability: Sky Circus"
-    ],
-    "swsh3-13": [
-      "Unimplemented Ability: Deep Forest Camo"
-    ],
-    "swsh3-18": [
-      "Unimplemented attack: Hard Times Slash"
-    ],
-    "swsh3-24": [
-      "Unimplemented attack: Turbo Drive",
-      "Unimplemented Ability: Double Type"
-    ],
     "swsh3-28": [
       "Unimplemented attack: Frozen Heat"
-    ],
-    "swsh3-32": [
-      "Unimplemented Ability: Scorching Feathers"
     ],
     "swsh3-33": [
       "Unimplemented attack: Radiating Heat"
@@ -30,112 +14,33 @@
     "swsh3-36": [
       "Unimplemented Ability: Shuffle Dance"
     ],
-    "swsh3-37": [
-      "Unimplemented attack: Aurora Loop"
-    ],
-    "swsh3-40": [
-      "Unimplemented attack: Fossil Search"
-    ],
-    "swsh3-53": [
-      "Unimplemented Ability: Primal Law"
-    ],
-    "swsh3-54": [
-      "Required Rare Fossil evolution parent is not yet enabled"
-    ],
-    "swsh3-65": [
-      "Required Rare Fossil evolution parent is not yet enabled"
-    ],
     "swsh3-66": [
       "Unimplemented Ability: Biting Whirlpool"
-    ],
-    "swsh3-75": [
-      "Unimplemented attack: Bend"
-    ],
-    "swsh3-81": [
-      "Unimplemented Ability: Heal Jamming"
-    ],
-    "swsh3-83": [
-      "Unimplemented Ability: Tea Break"
-    ],
-    "swsh3-87": [
-      "Unimplemented attack: Rocket Evolution"
     ],
     "swsh3-91": [
       "Unimplemented attack: Desert Geyser",
       "Unimplemented Ability: Labyrinth of Sand"
     ],
-    "swsh3-92": [
-      "Unimplemented Ability: Resistance Shade"
-    ],
     "swsh3-103": [
       "Unimplemented Ability: Spider Net"
     ],
-    "swsh3-104": [
-      "Unimplemented Ability: Dark Asset"
-    ],
-    "swsh3-110": [
-      "Unimplemented Ability: Dark Squall"
-    ],
-    "swsh3-114": [
-      "Unimplemented attack: Spiky Knuckle"
-    ],
-    "swsh3-115": [
-      "Unimplemented attack: G-Max Drill"
-    ],
-    "swsh3-116": [
-      "Unimplemented attack: Power Accelerator"
-    ],
     "swsh3-117": [
       "Unimplemented Ability: Eternal Zone"
-    ],
-    "swsh3-123": [
-      "Unimplemented Ability: Sturdy"
     ],
     "swsh3-128": [
       "Unimplemented attack: Trapping Bite",
       "Unimplemented Ability: Metal Skin"
     ],
-    "swsh3-142": [
-      "Unimplemented attack: Captivating Tail"
-    ],
-    "swsh3-145": [
-      "Unimplemented Ability: Sky Circus"
-    ],
-    "swsh3-147": [
-      "Unimplemented attack: Hurricane Blender"
-    ],
-    "swsh3-149": [
-      "Unimplemented attack: Feather Slice",
-      "Unimplemented Ability: Sky Circus"
-    ],
-    "swsh3-153": [
-      "Unimplemented attack: Smack and Run"
-    ],
     "swsh3-156": [
       "Unimplemented Ability: Flying Taxi"
     ],
-    "swsh3-157": [
-      "Unimplemented Trainer effect"
-    ],
     "swsh3-158": [
-      "Unimplemented Trainer effect"
-    ],
-    "swsh3-159": [
-      "Unimplemented Trainer effect"
-    ],
-    "swsh3-161": [
       "Unimplemented Trainer effect"
     ],
     "swsh3-162": [
       "Unimplemented Trainer effect"
     ],
-    "swsh3-163": [
-      "Unimplemented Trainer effect"
-    ],
     "swsh3-166": [
-      "Unimplemented Trainer effect"
-    ],
-    "swsh3-167": [
       "Unimplemented Trainer effect"
     ],
     "swsh3-168": [
@@ -144,33 +49,12 @@
     "swsh3-170": [
       "Unimplemented Trainer effect"
     ],
-    "swsh3-171": [
-      "Unimplemented Trainer effect"
-    ],
-    "swsh3-172": [
-      "Unimplemented Trainer effect"
-    ],
-    "swsh3-174": [
-      "Unimplemented Special Energy rules"
-    ],
-    "swsh3-175": [
-      "Unimplemented Special Energy rules"
-    ],
-    "swsh3-176": [
-      "Unimplemented Special Energy rules"
-    ],
     "swsh3-179": [
       "Unimplemented attack: Radiating Heat"
-    ],
-    "swsh3-182": [
-      "Unimplemented Ability: Dark Asset"
     ],
     "swsh3-184": [
       "Unimplemented attack: Trapping Bite",
       "Unimplemented Ability: Metal Skin"
-    ],
-    "swsh3-186": [
-      "Unimplemented Trainer effect"
     ],
     "swsh3-188": [
       "Unimplemented Trainer effect"
@@ -188,12 +72,6 @@
       "Unimplemented Trainer effect"
     ],
     "swsh3-196": [
-      "Unimplemented Trainer effect"
-    ],
-    "swsh3-199": [
-      "Unimplemented Trainer effect"
-    ],
-    "swsh3-200": [
       "Unimplemented Trainer effect"
     ]
   },
