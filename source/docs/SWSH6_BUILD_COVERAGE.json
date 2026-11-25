@@ -1,25 +1,9 @@
 {
   "printed": 233,
-  "battleReady": 125,
+  "battleReady": 193,
   "gated": {
-    "swsh6-10": [
-      "Unimplemented Ability: Toughness Boost"
-    ],
-    "swsh6-18": [
-      "Unimplemented attack: Raging Repeated Strike"
-    ],
-    "swsh6-19": [
-      "Unimplemented attack: Pack Call"
-    ],
     "swsh6-21": [
       "Unimplemented attack: Max Blaze"
-    ],
-    "swsh6-22": [
-      "Unimplemented attack: High-Pressure Blast",
-      "Unimplemented Ability: Weather Reading"
-    ],
-    "swsh6-28": [
-      "Unimplemented Ability: Crisis Power"
     ],
     "swsh6-31": [
       "Unimplemented attack: Two-Hit KO"
@@ -27,40 +11,17 @@
     "swsh6-32": [
       "Unimplemented attack: Package Delivery"
     ],
-    "swsh6-33": [
-      "Unimplemented attack: Rainfall",
-      "Unimplemented Ability: Weather Reading"
-    ],
-    "swsh6-34": [
-      "Unimplemented Ability: Weather Reading"
-    ],
-    "swsh6-46": [
-      "Unimplemented attack: Max Lance"
-    ],
-    "swsh6-49": [
-      "Unimplemented attack: Searchlight Tail"
-    ],
     "swsh6-51": [
       "Unimplemented attack: Coordinated Bolt"
     ],
     "swsh6-53": [
       "Unimplemented attack: Cross Fist"
     ],
-    "swsh6-57": [
-      "Unimplemented Ability: Last Gift"
-    ],
-    "swsh6-60": [
-      "Unimplemented attack: Mirage Step"
-    ],
     "swsh6-61": [
       "Unimplemented Ability: Shining Arcana"
     ],
     "swsh6-63": [
       "Unimplemented attack: Resolute Spite"
-    ],
-    "swsh6-64": [
-      "Unimplemented attack: Crescent Glow",
-      "Unimplemented attack: Photon Laser"
     ],
     "swsh6-68": [
       "Unimplemented attack: Follow the Scent"
@@ -71,23 +32,8 @@
     "swsh6-73": [
       "Unimplemented Ability: Witch Rondo"
     ],
-    "swsh6-74": [
-      "Unimplemented attack: Shadow Mist",
-      "Unimplemented attack: Astral Barrage"
-    ],
-    "swsh6-75": [
-      "Unimplemented attack: Max Geist",
-      "Unimplemented Ability: Underworld Door"
-    ],
     "swsh6-77": [
       "Unimplemented attack: Triple Heads"
-    ],
-    "swsh6-80": [
-      "Unimplemented attack: Thunderous Kick",
-      "Unimplemented Ability: Fighting Instinct"
-    ],
-    "swsh6-83": [
-      "Unimplemented Ability: Spiteful Slate"
     ],
     "swsh6-88": [
       "Unimplemented Ability: Throwing Coach"
@@ -95,20 +41,8 @@
     "swsh6-90": [
       "Unimplemented attack: G-Max Cyclone"
     ],
-    "swsh6-96": [
-      "Unimplemented Ability: Energy Factory"
-    ],
     "swsh6-98": [
       "Unimplemented Ability: Mysterious Potion"
-    ],
-    "swsh6-99": [
-      "Unimplemented attack: Word of Ruin"
-    ],
-    "swsh6-100": [
-      "Required Pokémon V evolution parent is not yet enabled"
-    ],
-    "swsh6-101": [
-      "Unimplemented Ability: Bursting Needles"
     ],
     "swsh6-102": [
       "Unimplemented attack: Strong Tail"
@@ -117,14 +51,10 @@
       "Unimplemented attack: Ghostly Cries"
     ],
     "swsh6-104": [
-      "Unimplemented attack: Shadow Ripper",
       "Unimplemented Ability: Hidden Claw"
     ],
     "swsh6-111": [
       "Unimplemented attack: Seismic Rift"
-    ],
-    "swsh6-118": [
-      "Unimplemented Ability: Bug Transmission"
     ],
     "swsh6-119": [
       "Unimplemented attack: Blissful Blast"
@@ -132,28 +62,10 @@
     "swsh6-120": [
       "Unimplemented attack: Gale Claws"
     ],
-    "swsh6-121": [
-      "Unimplemented Ability: Weather Reading"
-    ],
-    "swsh6-122": [
-      "Unimplemented Ability: Chromashift"
-    ],
-    "swsh6-123": [
-      "Unimplemented attack: Sky Return"
-    ],
     "swsh6-128": [
       "Unimplemented Ability: Brazen Tail"
     ],
-    "swsh6-129": [
-      "Unimplemented Trainer effect"
-    ],
     "swsh6-130": [
-      "Unimplemented Trainer effect"
-    ],
-    "swsh6-132": [
-      "Unimplemented Trainer effect"
-    ],
-    "swsh6-135": [
       "Unimplemented Trainer effect"
     ],
     "swsh6-136": [
@@ -162,54 +74,11 @@
     "swsh6-137": [
       "Unimplemented Trainer effect"
     ],
-    "swsh6-139": [
-      "Unimplemented Trainer effect"
-    ],
-    "swsh6-140": [
-      "Unimplemented Trainer effect"
-    ],
-    "swsh6-141": [
-      "Unimplemented Trainer effect"
-    ],
-    "swsh6-142": [
-      "Unimplemented Trainer effect"
-    ],
-    "swsh6-144": [
-      "Unimplemented Trainer effect"
-    ],
-    "swsh6-146": [
-      "Unimplemented Trainer effect"
-    ],
-    "swsh6-147": [
-      "Unimplemented Trainer effect"
-    ],
-    "swsh6-148": [
-      "Unimplemented Trainer effect"
-    ],
     "swsh6-149": [
-      "Unimplemented Trainer effect"
-    ],
-    "swsh6-151": [
       "Unimplemented Trainer effect"
     ],
     "swsh6-152": [
       "Unimplemented Trainer effect"
-    ],
-    "swsh6-153": [
-      "Unimplemented Trainer effect"
-    ],
-    "swsh6-154": [
-      "Unimplemented attack: Bullet Breakthrough",
-      "Unimplemented Trainer effect"
-    ],
-    "swsh6-157": [
-      "Unimplemented Special Energy rules"
-    ],
-    "swsh6-158": [
-      "Unimplemented Special Energy rules"
-    ],
-    "swsh6-159": [
-      "Unimplemented Special Energy rules"
     ],
     "swsh6-165": [
       "Unimplemented attack: Cross Fist"
@@ -217,36 +86,7 @@
     "swsh6-166": [
       "Unimplemented attack: Cross Fist"
     ],
-    "swsh6-167": [
-      "Unimplemented attack: Libra Horn"
-    ],
-    "swsh6-168": [
-      "Unimplemented attack: Libra Horn"
-    ],
-    "swsh6-171": [
-      "Unimplemented attack: Shadow Mist",
-      "Unimplemented attack: Astral Barrage"
-    ],
-    "swsh6-172": [
-      "Unimplemented attack: Shadow Mist",
-      "Unimplemented attack: Astral Barrage"
-    ],
-    "swsh6-173": [
-      "Unimplemented attack: Thunderous Kick",
-      "Unimplemented Ability: Fighting Instinct"
-    ],
-    "swsh6-174": [
-      "Unimplemented attack: Thunderous Kick",
-      "Unimplemented Ability: Fighting Instinct"
-    ],
-    "swsh6-178": [
-      "Unimplemented attack: Word of Ruin"
-    ],
-    "swsh6-179": [
-      "Unimplemented attack: Word of Ruin"
-    ],
     "swsh6-180": [
-      "Unimplemented attack: Shadow Ripper",
       "Unimplemented Ability: Hidden Claw"
     ],
     "swsh6-182": [
@@ -255,31 +95,10 @@
     "swsh6-183": [
       "Unimplemented attack: Blissful Blast"
     ],
-    "swsh6-186": [
-      "Unimplemented Trainer effect"
-    ],
     "swsh6-187": [
       "Unimplemented Trainer effect"
     ],
-    "swsh6-189": [
-      "Unimplemented Trainer effect"
-    ],
-    "swsh6-191": [
-      "Unimplemented Trainer effect"
-    ],
-    "swsh6-192": [
-      "Unimplemented Trainer effect"
-    ],
-    "swsh6-193": [
-      "Unimplemented Trainer effect"
-    ],
-    "swsh6-195": [
-      "Unimplemented Trainer effect"
-    ],
     "swsh6-196": [
-      "Unimplemented Trainer effect"
-    ],
-    "swsh6-198": [
       "Unimplemented Trainer effect"
     ],
     "swsh6-200": [
@@ -288,54 +107,16 @@
     "swsh6-201": [
       "Unimplemented attack: Max Blaze"
     ],
-    "swsh6-202": [
-      "Unimplemented attack: Max Lance"
-    ],
-    "swsh6-203": [
-      "Unimplemented attack: Max Lance"
-    ],
-    "swsh6-204": [
-      "Unimplemented attack: Max Geist",
-      "Unimplemented Ability: Underworld Door"
-    ],
-    "swsh6-205": [
-      "Unimplemented attack: Max Geist",
-      "Unimplemented Ability: Underworld Door"
-    ],
     "swsh6-206": [
       "Unimplemented attack: G-Max Cyclone"
     ],
-    "swsh6-207": [
-      "Required Pokémon V evolution parent is not yet enabled"
-    ],
-    "swsh6-210": [
-      "Unimplemented Trainer effect"
-    ],
     "swsh6-211": [
-      "Unimplemented Trainer effect"
-    ],
-    "swsh6-213": [
-      "Unimplemented Trainer effect"
-    ],
-    "swsh6-215": [
-      "Unimplemented Trainer effect"
-    ],
-    "swsh6-216": [
-      "Unimplemented Trainer effect"
-    ],
-    "swsh6-218": [
       "Unimplemented Trainer effect"
     ],
     "swsh6-219": [
       "Unimplemented Trainer effect"
     ],
-    "swsh6-221": [
-      "Unimplemented Trainer effect"
-    ],
     "swsh6-225": [
-      "Unimplemented Trainer effect"
-    ],
-    "swsh6-227": [
       "Unimplemented Trainer effect"
     ],
     "swsh6-228": [

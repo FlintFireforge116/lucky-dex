@@ -42,7 +42,10 @@ def trainer(row):
  c=REPRINT.get(sig(row))
  if c:return c['trainerType'],deepcopy(c['effect'])
  return deepcopy(T.get((row[1],tuple(row[13])))) or V.trainer(row)
-def energy(row):return None
+def energy(row):
+ if row[0] in ('157','159'):return E('specialEnergy',provides={'Miracle':1})
+ if row[0]=='158':return E('specialEnergy',provides={'Colorless':1})
+ return None
 def prism_ready(row):return False
 # First pass: shared effects with full printed text matching; no ID-dependent
 # reprints or newly invented effect names. Complex reactive rules remain gated.
@@ -98,3 +101,53 @@ tr(134,'Supporter',seq(E('draw',amount=2),E('draw',amount=2,condition=cond('oppo
 tr(145,'Supporter',seq(E('searchChosen',source='discard',amount=2,filter={'kind':'pokemon'},optional=True),E('searchChosen',source='discard',amount=2,filter={'kind':'energy','basicEnergy':True},optional=True)))
 tr(150,'Supporter',seq(E('discardHand',side='self',amount=999),E('searchChosen',amount=2,filter={'kind':'trainer'},optional=True)))
 tr(156,'Item',E('searchChosen',source='discard',amount=1,filter={'kind':'trainer','trainerType':'Supporter','tag':'single-strike'}))
+
+# Stage 2 — shared primitives and reviewed Chilling Reign effects.
+def CR(rule,**kw):return E('sm7Rule',rule='swsh6'+rule,**kw)
+tr(129,'Supporter',CR('Agatha'))
+tr(132,'Supporter',CR('Caitlin'))
+tr(135,'Stadium',E('healingBlock',scope='both'))
+tr(139,'Supporter',CR('Flannery'))
+tr(140,'Item',CR('FogCrystal'))
+tr(141,'Tool',CR('Chestplate'))
+tr(142,'Supporter',CR('Honey'))
+tr(144,'Supporter',CR('Karen'))
+tr(146,'Supporter',CR('Melony'))
+tr(148,'Stadium',CR('Path'))
+tr(151,'Tool',BS('Scroll'))
+at(151,'Gravdrop',E('energyDamage',source='opponent',amount=50,mode='add'))
+tr(153,'Supporter',CR('Siebold'))
+tr(154,'Tool',BS('Scroll'))
+at(154,'Bullet Breakthrough',E('damageRule',ignoreWeakness=True,ignoreResistance=True,ignoreEffects=True))
+at(123,'Sky Return',E('returnToHand',target='self',returnBasicEnergy=True))
+at(104,'Shadow Ripper',E('chooseOption',options=[{'label':'Return this Pokémon and attachments','effect':E('returnToHand',target='self',returnBasicEnergy=True)},{'label':'Keep in play','effect':E('noop')}]))
+at(49,'Searchlight Tail',CR('Searchlight'))
+at(19,'Pack Call',CR('PackCall'))
+at(64,'Photon Laser',bonus(90,cond('teamEnergyAtLeast',amount=5)))
+at(64,'Crescent Glow',CR('CrescentGlow'))
+ab(28,passive(CR('Crisis')))
+ab(10,passive(CR('Toughness')))
+ab(34,passive(CR('Weather')))
+at(22,'High-Pressure Blast',CR('HighPressure'))
+at(33,'Rainfall',seq(E('bonusDamage',amount=20),E('benchDamage',side='opponent',all=True,amount=20)))
+
+at(46,'Max Lance',CR('MaxLance'))
+at(18,'Raging Repeated Strike',CR('RepeatedStrike'))
+
+# Stage 3: reuse turn locks, selected counters and delayed KO; exact variants inherit.
+at(74,'Shadow Mist',seq(*(E('actionLock',cardType=t,side='opponent',duration='opponentTurn') for t in ['SpecialEnergy','Stadium'])))
+at(74,'Astral Barrage',Q('FixedCounters',left=2,amount=50))
+at(75,'Max Geist',E('energyDamage',source='self',all=True,energyType='Psychic',countProvidedType=True,amount=30,mode='add'))
+ab(75,activated(Q('HandAttach',left=1,energyType='Psychic',basicOnly=True,benchOnly=True,targetType='Psychic',drawAfter=2)))
+at(99,'Word of Ruin',E('scheduleDelayed',event='endOpponentNextTurn',targetMode='defender',effect=E('knockOut',target='eventPokemon')))
+at(80,'Thunderous Kick',E('discardEnergyCard',target='opponentActive',amount=1,specialOnly=True,timing='beforeDamage'))
+ab(80,passive(CR('FightingInstinct')))
+at(167,'Libra Horn',CR('LibraHorn'))
+ab(57,trig('knockedOutByAttack',E('searchChosen',amount=2,filter={},optional=True),opponentAttackOnly=True))
+at(60,'Mirage Step',E('benchFromDeck',amount=3,filter={'kind':'pokemon','name':'Kirlia'},choose=True,optional=True))
+ab(101,trig('knockedOutByAttack',E('placeDamageCounters',target='opponentActive',amount=60),activeOnly=True,opponentAttackOnly=True))
+ab(118,trig('energyAttached',E('chooseOption',options=[{'label':'Make opposing Active Confused','effect':status('confusion')},{'label':'Skip','effect':E('noop')}]),fromHandOnly=True))
+ab(83,passive(CR('SpitefulSlate')))
+ab(122,passive(CR('Chromashift')))
+ab(96,passive(CR('EnergyFactory')))
+tr(147,'Stadium',CR('OldCemetery'))
