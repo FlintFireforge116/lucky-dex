@@ -8,8 +8,8 @@ android {
         applicationId 'com.example.luckydex'
         minSdk 26
         targetSdk 35
-        versionCode 7504
-        versionName '0.69.504'
+        versionCode 7505
+        versionName '0.69.505'
     }
 
     signingConfigs {
@@ -1440,4 +1440,23 @@ tasks.register('auditSWSH5ForApk', Exec) {
 }
 tasks.matching { it.name == 'preBuild' || (it.name.startsWith('merge') && it.name.endsWith('Assets')) }.configureEach {
     dependsOn tasks.named('auditSWSH5ForApk')
+}
+
+tasks.register('preflightSWSH6ContractForApk', Exec) {
+    dependsOn tasks.named('auditSWSH5ForApk')
+    workingDir rootProject.projectDir
+    commandLine (System.getenv('LUCKYDEX_PYTHON') ?: 'python3'), 'scripts/preflight-swsh6-release.py'
+}
+tasks.register('generateSWSH6ForApk', Exec) {
+    dependsOn tasks.named('preflightSWSH6ContractForApk')
+    workingDir rootProject.projectDir
+    commandLine (System.getenv('LUCKYDEX_PYTHON') ?: 'python3'), 'scripts/build-swsh6.py'
+}
+tasks.register('auditSWSH6ForApk', Exec) {
+    dependsOn tasks.named('generateSWSH6ForApk')
+    workingDir rootProject.projectDir
+    commandLine 'node', '--test', 'tests/v07505-chilling-reign-integration.test.cjs', 'tests/v07505-chilling-reign-outcomes.test.cjs'
+}
+tasks.matching { it.name == 'preBuild' || (it.name.startsWith('merge') && it.name.endsWith('Assets')) }.configureEach {
+    dependsOn tasks.named('auditSWSH6ForApk')
 }
