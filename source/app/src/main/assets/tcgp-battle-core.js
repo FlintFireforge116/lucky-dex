@@ -1667,6 +1667,7 @@
       if(state.format==='classic'&&(s.neoTrainerLockTurn===state.turnNumber||Number(s.neoDestinyTrainerLockUntil||0)>=state.turnNumber))return;
       if(state.format==='classic'&&card.id==='neo4-105'&&s.hand.length>=5)return;
       if(state.format==='classic'&&neoTrapActive(state,side,s.active,'switch')&&['Switch','Double Gust','Super Scoop Up'].includes(card.name))return;
+      if(['swsh6-136','swsh6-225'].includes(card.id)&&(!emptyBenchSlots(foe).length||!foe.discard.some(r=>data.cardById(r.cardId)?.kind==='pokemon'&&data.cardById(r.cardId)?.stage==='Basic'&&eternalZoneCanPlace(state,side==='player'?'opponent':'player',r.cardId))))return;
       if(card.id==='pl1-116'){for(const p of pokemonOn(s)){if(!data.cardById(p.cardId)?.isPokemonSP||toolsOf(p).length>=effects.toolCapacity(state,side,p,data.cardById))continue;actions.push({...base,target:p===s.active?'active':'bench',benchIndex:p===s.active?undefined:Number(p.benchSlot)});}return;}
       if(type==='AttachedTrainer'){
         const valid=slot=>!(card.id==='gym2-101'||card.id==='gym2-115') || (card.id==='gym2-101'&&data.cardById(slot.cardId)?.name?.startsWith("Brock's")) || (card.id==='gym2-115'&&data.cardById(slot.cardId)?.name?.startsWith("Koga's"));
@@ -3215,7 +3216,7 @@
     }
     if(type==='Supporter'&&card.name==='Cynthia')s.sm5CynthiaTurn=state.turnNumber;
     if(type==='Supporter'&&card.tags?.includes('tag-team'))s.sm12TagSupporterTurn=state.turnNumber;
-    if(type==='Supporter'){(s.sm10SupporterTurns||(s.sm10SupporterTurns={}))[card.name]=state.turnNumber;ref.pl2PlayedThisTurn=state.turnNumber;s.supporterUsed=true;s.bw8SupportersPlayed=Number(s.bw8SupportersPlayed||0)+1;if(/^Holon/.test(card.name||''))s.holonSupporterPlayedTurn=state.turnNumber;}
+    if(type==='Supporter'){if(card.singleStrike||card.rapidStrike)(s.swsh6StrikeSupporterTurns||(s.swsh6StrikeSupporterTurns={}))[card.singleStrike?'single':'rapid']=state.turnNumber;(s.sm10SupporterTurns||(s.sm10SupporterTurns={}))[card.name]=state.turnNumber;ref.pl2PlayedThisTurn=state.turnNumber;s.supporterUsed=true;s.bw8SupportersPlayed=Number(s.bw8SupportersPlayed||0)+1;if(/^Holon/.test(card.name||''))s.holonSupporterPlayedTurn=state.turnNumber;}
     if(type==='AttachedTrainer'){const target=slotForTarget(s,action.target,action.benchIndex);if(!target)throw new Error('Attached Trainer target is no longer in play.');target.temporaryTrainers=target.temporaryTrainers||[];target.temporaryTrainers.push({...ref,ownerSide:side,attachedTurn:state.turnNumber});resolveKnockOut(state,null);return;}
     if(type==='Tool'){if(state.format==='classic'&&['player','opponent'].some(w=>pokemonOn(state.sides[w]).some(p=>p.cardId==='xy4-77'&&!effects.abilitiesSuppressed(state,w,p,data.cardById))))throw new Error('Slip Trip blocks Tool attachments.');      if(['xy4-97','xy4-98'].includes(card.id)){
         const enemy=state.sides[side==='player'?'opponent':'player'];

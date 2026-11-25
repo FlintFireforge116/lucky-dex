@@ -457,6 +457,13 @@
     // All choices are drawn from its own known Zone and public Pokémon.
     if(state.format==='classic'&&state.phase==='effectChoice'&&state.pendingChoice?.originSide===side){
       const pending=state.pendingChoice,e=pending.effect||{},choices=legal.filter(a=>a.type==='effectChoice');
+      if(e.rule==='swsh6HiddenClaw')return choices.find(a=>!a.choiceSkip&&e.opts?.[a.choiceOption]?.side===foeOf(side))||choices.find(a=>a.choiceSkip)||choices[0];
+      if(['swsh6DiscardAttach','swsh6BlissfulBlast'].includes(e.rule))return choices.find(a=>!a.choiceSkip)||choices[0];
+      if(e.type==='redistributeEnergy'&&e.optional){
+        if(e.phase==='continue')return choices.find(a=>a.choiceLabel==='Done')||choices[0];
+        if(e.remaining)return choices.find(a=>a.choiceTarget==='active')||choices[0];
+        return choices.find(a=>!a.choiceSkip&&a.choiceTarget==='bench')||choices.find(a=>a.choiceSkip)||choices[0];
+      }
       if(e.rule==='swsh45VTransformation'){
         const board=state.sides[side],source=slots(board).find(p=>p.uid===pending.sourceUid),stop=choices.find(a=>a.choiceSkip);
         if(!source)return stop||choices[0];
