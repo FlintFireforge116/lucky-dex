@@ -19467,7 +19467,7 @@
             if(skip)break;const p=selected(ctx,board);if(pool.includes(p)){if(k==='SpiderNet')switchPokemon(foe,p.benchSlot,ctx.state);else applyEffect({type:'returnToHand',target:'selfPokemon',returnBasicEnergy:true},ctx);}break;
           }
           if(k==='Breeder'){
-            const evolutions=p=>ss.deck.filter(x=>card(x)?.battleEnabled&&card(x)?.evolvesFrom===card(p)?.name&&card(x)?.stage!=='Level-Up'),pool=()=>pokemonOn(ss).filter(p=>ss.turnCount>1&&Number(p.playedOnSideTurn)<ss.turnCount&&p.evolvedOnTurn!==ctx.state.turnNumber&&evolutions(p).length);
+            const evolutions=p=>ss.deck.filter(x=>ctx.canPutInPlay?.(ss,x)!==false&&card(x)?.battleEnabled&&card(x)?.evolvesFrom===card(p)?.name&&card(x)?.stage!=='Level-Up'),pool=()=>pokemonOn(ss).filter(p=>ss.turnCount>1&&Number(p.playedOnSideTurn)<ss.turnCount&&p.evolvedOnTurn!==ctx.state.turnNumber&&evolutions(p).length);
             if(skip){ctx.shuffle?.(ctx.state,ss.deck);break;}
             if(effect.stage==='card'&&res){const p=pool().find(x=>x.uid===effect.uid),ref=ss.deck[act.choiceDeckIndex];if(p&&evolutions(p).includes(ref)){ss.deck.splice(act.choiceDeckIndex,1);p.cardId=ref.cardId;p.stack.push(ref.cardId);clearTemporaryEffects(ctx.state,p);p.evolvedOnTurn=ctx.state.turnNumber;p.playedOnSideTurn=ss.turnCount;ctx.onEvolved?.(p);const next={...effect,stage:null,left:effect.left-1};if(ctx.state.phase==='effectChoice')ctx.state.pendingChoice.afterEffects.push(next);else applyEffect(next,fresh);}break;}
             if(effect.stage==='target'&&res){const p=selected(ctx,ss);if(pool().includes(p))ask({kind:'deckCard',allowedUids:evolutions(p).map(x=>x.uid)},{stage:'card',uid:p.uid});break;}
@@ -19509,7 +19509,7 @@
         if(r.startsWith('swsh2')){
           const k=r.slice(5),left=effect.left??0;
           if(k==='CaptureEnergy'){
-            const pool=ss.deck.filter(r=>card(r)?.kind==='pokemon'&&card(r)?.stage==='Basic'&&card(r)?.battleEnabled);
+            const pool=ss.deck.filter(r=>ctx.canPutInPlay?.(ss,r)!==false&&card(r)?.kind==='pokemon'&&card(r)?.stage==='Basic'&&card(r)?.battleEnabled);
             if(!res&&room(ss)&&pool.length){ask({kind:'deckCard',allowedUids:pool.map(r=>r.uid),optional:true});break;}
             if(res&&!skip&&room(ss)){const ref=ss.deck[act.choiceDeckIndex];if(pool.includes(ref)){ss.deck.splice(act.choiceDeckIndex,1);if(ctx.benchCard?.(ss,ref)==null)ss.deck.splice(act.choiceDeckIndex,0,ref);}}
             ctx.shuffle?.(ctx.state,ss.deck);break;
@@ -23755,7 +23755,7 @@ if(limit>1&&available().length)ask({kind:'option',options:available().map(x=>x.l
       case 'shuffleDeck':{const ss=effect.side==='opponent'?other(ctx):own(ctx);ctx.shuffle?.(ctx.state,ss.deck);break;}
       case 'returnAllTools':{for(const ss of [own(ctx),other(ctx)])for(const slot of pokemonOn(ss)){const tools=toolsOf(slot);if(!tools.length||returnBlocked(ctx,slot))continue;ss.hand.push(...tools);slot.tool=null;slot.extraTools=[];}break;}
       case 'shuffleAllTools':{const sides=effect.side==='self'?[own(ctx)]:effect.side==='opponent'?[other(ctx)]:[own(ctx),other(ctx)];for(const ss of sides){for(const slot of pokemonOn(ss)){const tools=toolsOf(slot);if(!tools.length)continue;ss.deck.push(...tools);slot.tool=null;slot.extraTools=[];}ctx.shuffle?.(ctx.state,ss.deck);}break;}
-      case 'evolveTargetFromDeck':{for(const slot of affected()){const ss=energyOwner(ctx,slot),base=ctx.cardById(slot.cardId);if(effect.requirePlayedBeforeTurn&&Number(slot.playedOnSideTurn)>=Number(ss?.turnCount))continue;if(!ss||!base)continue;const candidates=ss.deck.map((r,index)=>({r,index,card:ctx.cardById(r.cardId)})).filter(x=>x.card?.kind==='pokemon'&&x.card?.battleEnabled&&x.card.evolvesFrom===base.name&&(!effect.evolutionFilter||matchesFilter(x.card,effect.evolutionFilter,x.r)));if(!candidates.length)continue;const hit=candidates[Math.floor(ctx.random(ctx.state)*candidates.length)],[ref]=ss.deck.splice(hit.index,1);slot.cardId=ref.cardId;slot.stack.push(ref.cardId);slot.evolvedOnTurn=ctx.state.turnNumber;slot.playedOnSideTurn=ss.turnCount;ctx.shuffle?.(ctx.state,ss.deck);log({type:'evolve',cardId:ref.cardId,fromDeck:true});ctx.onEvolved?.(slot); }break;}
+      case 'evolveTargetFromDeck':{for(const slot of affected()){const ss=energyOwner(ctx,slot),base=ctx.cardById(slot.cardId);if(effect.requirePlayedBeforeTurn&&Number(slot.playedOnSideTurn)>=Number(ss?.turnCount))continue;if(!ss||!base)continue;const candidates=ss.deck.map((r,index)=>({r,index,card:ctx.cardById(r.cardId)})).filter(x=>ctx.canPutInPlay?.(ss,x.r)!==false&&x.card?.kind==='pokemon'&&x.card?.battleEnabled&&x.card.evolvesFrom===base.name&&(!effect.evolutionFilter||matchesFilter(x.card,effect.evolutionFilter,x.r)));if(!candidates.length)continue;const hit=candidates[Math.floor(ctx.random(ctx.state)*candidates.length)],[ref]=ss.deck.splice(hit.index,1);slot.cardId=ref.cardId;slot.stack.push(ref.cardId);slot.evolvedOnTurn=ctx.state.turnNumber;slot.playedOnSideTurn=ss.turnCount;ctx.shuffle?.(ctx.state,ss.deck);log({type:'evolve',cardId:ref.cardId,fromDeck:true});ctx.onEvolved?.(slot); }break;}
       case 'moveRandomEnergy':{for(const slot of affected()){const src=effect.source==='opponentActive'?other(ctx).active:effect.source==='opponentBench'?selected(ctx,other(ctx)):effect.source==='selfActive'?own(ctx).active:ctx.attacker;if(!src||src===slot&&effect.source!=='self')continue;const units=[];for(const [type,n] of Object.entries(src.energy||{}))for(let i=0;i<Number(n||0);i++)units.push(type);if(!units.length)continue;const type=units[Math.floor(ctx.random(ctx.state)*units.length)];src.energy[type]=Math.max(0,Number(src.energy[type]||0)-1);slot.energy[type]=Number(slot.energy[type]||0)+1;}break;}
       case 'stealRandomFromDiscard':{const src=effect.side==='opponent'?other(ctx):own(ctx),dst=effect.side==='opponent'?own(ctx):other(ctx);const choices=src.discard.map((r,index)=>({r,index})).filter(({r})=>!effect.filter||matchesFilter(ctx.cardById(r.cardId),effect.filter,r));if(choices.length){const hit=choices[Math.floor(ctx.random(ctx.state)*choices.length)],[ref]=src.discard.splice(hit.index,1);dst.hand.push(ref);}break;}
       case 'discardTop':{const ss=effect.side==='opponent'?other(ctx):own(ctx);const discarded=ss.deck.splice(0,effect.amount);ss.discard.push(...discarded);log({type:'discardDeck',count:discarded.length});break;}
@@ -23813,24 +23813,24 @@ if(limit>1&&available().length)ask({kind:'option',options:available().map(x=>x.l
       case 'drain':if(ctx.attacker&&Number(ctx.dealtDamage||0)>0){const amount=effect.fraction!=null?Math.ceil(Number(ctx.dealtDamage||0)*Number(effect.fraction)/10)*10:effect.amount==null?Number(ctx.dealtDamage||0):Math.min(Number(ctx.dealtDamage||0),Number(effect.amount||0));ctx.attacker.damage=Math.max(0,Number(ctx.attacker.damage||0)-Math.max(0,amount));}break;
       case 'nextAttackBonus':if(ctx.attacker){ctx.attacker.nextAttackBonuses=ctx.attacker.nextAttackBonuses||[];ctx.attacker.nextAttackBonuses.push({attackName:effect.attackName,amount:effect.amount,turn:ctx.state.turnNumber+2});}break;
       case 'evolveFromDeck':if(ctx.attacker&&typeof ctx.evolveFromDeck==='function')ctx.evolveFromDeck(ctx.attacker);break;
-      case 'benchFromDiscard':{const ss=effect.side==='self'?own(ctx):other(ctx),source=ss.discard;if(ctx.resolvingChoice&&Number.isInteger(ctx.action?.choiceDiscardIndex)){const index=ctx.action.choiceDiscardIndex,ref=source[index];if(!ref||!matchesFilter(ctx.cardById(ref.cardId),effect.filter))break;const empty=Math.max(0,Number(ss.benchLimit||3)-ss.bench.length);if(!empty)break;source.splice(index,1);const benchSlot=ctx.benchCard(ss,ref);if(benchSlot==null){source.splice(index,0,ref);break;}if(effect.damageFraction!=null){const slot=(ss.bench||[]).find(x=>x&&Number(x.benchSlot)===Number(benchSlot)),max=Number(ctx.cardById(ref.cardId)?.hp||0),remaining=Math.floor((max*Number(effect.damageFraction))/10)*10;if(slot)slot.damage=Math.max(0,max-remaining);}break;}if(ss.bench.length<Number(ss.benchLimit||3)&&source.some(r=>matchesFilter(ctx.cardById(r.cardId),effect.filter))&&typeof ctx.requestChoice==='function')ctx.requestChoice({kind:'discardCard',side:'self',discardZone:effect.side==='opponent'?'opponent':'self',filter:effect.filter,effect});break;}
+      case 'benchFromDiscard':{const ss=effect.side==='self'?own(ctx):other(ctx),source=ss.discard;if(ctx.resolvingChoice&&Number.isInteger(ctx.action?.choiceDiscardIndex)){const index=ctx.action.choiceDiscardIndex,ref=source[index];if(!ref||ctx.canPutInPlay?.(ss,ref)===false||!matchesFilter(ctx.cardById(ref.cardId),effect.filter))break;const empty=Math.max(0,Number(ss.benchLimit||3)-ss.bench.length);if(!empty)break;source.splice(index,1);const benchSlot=ctx.benchCard(ss,ref);if(benchSlot==null){source.splice(index,0,ref);break;}if(effect.damageFraction!=null){const slot=(ss.bench||[]).find(x=>x&&Number(x.benchSlot)===Number(benchSlot)),max=Number(ctx.cardById(ref.cardId)?.hp||0),remaining=Math.floor((max*Number(effect.damageFraction))/10)*10;if(slot)slot.damage=Math.max(0,max-remaining);}break;}if(ss.bench.length<Number(ss.benchLimit||3)&&source.some(r=>ctx.canPutInPlay?.(ss,r)!==false&&matchesFilter(ctx.cardById(r.cardId),effect.filter))&&typeof ctx.requestChoice==='function')ctx.requestChoice({kind:'discardCard',side:'self',discardZone:effect.side==='opponent'?'opponent':'self',filter:effect.filter,effect});break;}
       case 'benchFromDeck':{const ss=own(ctx);
         if(effect.choose){
           const left=Math.min(Number(effect.remaining||effect.amount||1),Math.max(0,Number(ss.benchLimit||3)-ss.bench.length));
           if(ctx.resolvingChoice&&Number.isInteger(ctx.action?.choiceDeckIndex)){
             const index=ctx.action.choiceDeckIndex,ref=ss.deck[index];
-            if(ref&&matchesFilter(ctx.cardById(ref.cardId),effect.filter,ref)&&ss.bench.length<Number(ss.benchLimit||3)){
+            if(ref&&ctx.canPutInPlay?.(ss,ref)!==false&&matchesFilter(ctx.cardById(ref.cardId),effect.filter,ref)&&ss.bench.length<Number(ss.benchLimit||3)){
               ss.deck.splice(index,1);
               if(ctx.benchCard?.(ss,ref)==null)ss.deck.splice(index,0,ref);
-              else if(left>1&&ss.bench.length<Number(ss.benchLimit||3)&&ss.deck.some(r=>matchesFilter(ctx.cardById(r.cardId),effect.filter,r)))
+              else if(left>1&&ss.bench.length<Number(ss.benchLimit||3)&&ss.deck.some(r=>ctx.canPutInPlay?.(ss,r)!==false&&matchesFilter(ctx.cardById(r.cardId),effect.filter,r)))
                 ctx.requestChoice?.({kind:'deckCard',side:'self',filter:effect.filter,optional:true,effect:{...effect,remaining:left-1}});
             }
-          }else if(!ctx.resolvingChoice&&left>0&&ss.deck.some(r=>matchesFilter(ctx.cardById(r.cardId),effect.filter,r)))
+          }else if(!ctx.resolvingChoice&&left>0&&ss.deck.some(r=>ctx.canPutInPlay?.(ss,r)!==false&&matchesFilter(ctx.cardById(r.cardId),effect.filter,r)))
             ctx.requestChoice?.({kind:'deckCard',side:'self',filter:effect.filter,optional:true,effect:{...effect,remaining:left}});
           if(ctx.resolvingChoice&&!ctx.state.pendingChoice)ctx.shuffle?.(ctx.state,ss.deck);
           break;
         }
-        for(let i=0;i<effect.amount;i++){const candidates=ss.deck.map((r,index)=>({r,index})).filter(({r})=>matchesFilter(ctx.cardById(r.cardId),effect.filter));if(!candidates.length||typeof ctx.benchCard!=='function')break;const hit=candidates[Math.floor(ctx.random(ctx.state)*candidates.length)],[ref]=ss.deck.splice(hit.index,1);if(ctx.benchCard(ss,ref)==null){ss.deck.splice(hit.index,0,ref);break;}log({type:'benchFromDeck',cardId:ref.cardId});}if(ctx.shuffle)ctx.shuffle(ctx.state,ss.deck);break;}
+        for(let i=0;i<effect.amount;i++){const candidates=ss.deck.map((r,index)=>({r,index})).filter(({r})=>ctx.canPutInPlay?.(ss,r)!==false&&matchesFilter(ctx.cardById(r.cardId),effect.filter));if(!candidates.length||typeof ctx.benchCard!=='function')break;const hit=candidates[Math.floor(ctx.random(ctx.state)*candidates.length)],[ref]=ss.deck.splice(hit.index,1);if(ctx.benchCard(ss,ref)==null){ss.deck.splice(hit.index,0,ref);break;}log({type:'benchFromDeck',cardId:ref.cardId});}if(ctx.shuffle)ctx.shuffle(ctx.state,ss.deck);break;}
       case 'xy10VeilOfDarkness':{
         // Choose as many PHYSICAL cards from hand as desired, one at a time.
         // Only after the player stops, draw exactly that many cards from deck.
@@ -24409,7 +24409,7 @@ if(ctx.isAbility){const targetSide=pokemonOn(own(ctx)).includes(s)?ctx.side:ctx.
           const card=ctx.cardById(slot.cardId);
           if(!card||effect.excludeEx&&(card.pokemonEX||card.tags?.includes('pokemon-ex')||/[- ]EX$/i.test(card.name||'')))return false;
           if(Number(slot.neoDestinyEvolutionLockUntil||0)>=Number(ctx.state.turnNumber)||Number(slot.pl2NoEvolveUntil||0)>=Number(ctx.state.turnNumber)||Number(slot.xy4NoEvolveUntil||0)>=Number(ctx.state.turnNumber))return false;
-          return ss.deck.some(ref=>{const evo=ctx.cardById(ref.cardId);return evo?.battleEnabled&&evo.kind==='pokemon'&&evo.evolvesFrom===card.name;});
+          return ss.deck.some(ref=>{const evo=ctx.cardById(ref.cardId);return ctx.canPutInPlay?.(ss,ref)!==false&&evo?.battleEnabled&&evo.kind==='pokemon'&&evo.evolvesFrom===card.name;});
         };
         if(ctx.resolvingChoice){
           if(!effect.targetUid){const picked=selected(ctx,ss);if(!picked||!isEligible(picked))break;
@@ -24421,7 +24421,7 @@ if(ctx.isAbility){const targetSide=pokemonOn(own(ctx)).includes(s)?ctx.side:ctx.
           const index=ctx.action?.choiceDeckIndex,ref=Number.isInteger(index)?ss.deck[index]:null;
           if(!picked||!ref||!isEligible(picked))break;
           const evo=ctx.cardById(ref.cardId),base=ctx.cardById(picked.cardId);
-          if(!evo?.battleEnabled||evo.kind!=='pokemon'||evo.evolvesFrom!==base?.name)break;
+          if(ctx.canPutInPlay?.(ss,ref)===false||!evo?.battleEnabled||evo.kind!=='pokemon'||evo.evolvesFrom!==base?.name)break;
           ss.deck.splice(index,1);picked.cardId=ref.cardId;picked.stack.push(ref.cardId);
           picked.evolvedOnTurn=ctx.state.turnNumber;picked.playedOnSideTurn=ss.turnCount;
           ctx.shuffle?.(ctx.state,ss.deck);
@@ -28128,7 +28128,7 @@ if(ctx.isAbility){const targetSide=pokemonOn(own(ctx)).includes(s)?ctx.side:ctx.
       else if(e.type==='discardCountDamage'){const list=(e.side==='opponent'?other(ctx):own(ctx))[e.zone==='lostZone'?'lostZone':'discard']||[];amount=list.filter(r=>matchesFilter(ctx.cardById(r.cardId),e.filter)).length*e.amount;if(e.maxAmount!=null)amount=Math.min(amount,e.maxAmount);}
       else if(e.type==='xy10FieldDeficitDamage'){amount=Math.max(0,pokemonOn(other(ctx)).length-pokemonOn(own(ctx)).length)*Number(e.amount||0);}
       else if(e.type==='xy10BasicLightningDamage'){amount=Number(ctx.attacker?.energy?.Lightning||0)*Number(e.amount||0);}
-      else if(e.type==='fieldCountDamage'){const side=e.side==='opponent'?ctx.foeSide:ctx.side,ss=ctx.state.sides[side],pool=e.benchOnly?ss.bench:pokemonOn(ss),selected=pool.filter(s=>matchesFilter(ctx.cardById(s.cardId),e.filter,s));
+      else if(e.type==='fieldCountDamage'){const side=e.side==='opponent'?ctx.foeSide:ctx.side,ss=ctx.state.sides[side],pool=e.benchOnly?ss.bench:pokemonOn(ss),selected=pool.filter(s=>e.effectiveType?effectiveTypes(ctx.state,side,s,ctx.cardById).includes(e.effectiveType):matchesFilter(ctx.cardById(s.cardId),e.filter,s));
         if(e.retreatCostNames){amount=selected.filter(s=>e.retreatCostNames.includes(ctx.cardById(s.cardId)?.name)).reduce((n,s)=>n+Math.max(0,Number(ctx.cardById(s.cardId)?.retreat||0)+modifierAmount(ctx.state,side,s,'retreatCost',ctx.cardById)),0)*e.amount;}
         else if(e.distinctPokemonTypes){const types=new Set();for(const s of selected)for(const t of ctx.cardById(s.cardId)?.types||[ctx.cardById(s.cardId)?.subtype])types.add(t);amount=types.size*e.amount;}
         else amount=selected.length*e.amount;}
@@ -28774,7 +28774,7 @@ if(ctx.isAbility){const targetSide=pokemonOn(own(ctx)).includes(s)?ctx.side:ctx.
       if(!ctx.isAttack&&r==='swsh1IntrepidSword')return ss.deck.length?[{}]:[];
       if(ctx.isAttack&&r==='swsh3FrozenHeat')return [{effectSelection:'',choiceLabel:'110 damage — keep Water Energy'},...(Number(ctx.attacker?.energy?.Water)>0||(ctx.attacker?.specialEnergy||[]).some(x=>attachedSpecialProvidesType(x,'Water',ctx.attacker,ctx.cardById))?[{effectSelection:'boost',choiceLabel:'170 damage — discard all Water Energy'}]:[])];
       if(!ctx.isAttack&&r==='swsh3ShuffleDance')return foe.deck.length&&foe.prizes.some(x=>!x.faceUp)?[{}]:[];
-      if(!ctx.isAttack&&r==='swsh3Breeder')return ss.turnCount>1&&pokemonOn(ss).some(p=>Number(p.playedOnSideTurn)<ss.turnCount&&p.evolvedOnTurn!==ctx.state.turnNumber&&ss.deck.some(x=>ctx.cardById(x.cardId)?.battleEnabled&&ctx.cardById(x.cardId)?.evolvesFrom===ctx.cardById(p.cardId)?.name&&ctx.cardById(x.cardId)?.stage!=='Level-Up'))?[{}]:[];
+      if(!ctx.isAttack&&r==='swsh3Breeder')return ss.turnCount>1&&pokemonOn(ss).some(p=>Number(p.playedOnSideTurn)<ss.turnCount&&p.evolvedOnTurn!==ctx.state.turnNumber&&ss.deck.some(x=>ctx.canPutInPlay?.(ss,x)!==false&&ctx.cardById(x.cardId)?.battleEnabled&&ctx.cardById(x.cardId)?.evolvesFrom===ctx.cardById(p.cardId)?.name&&ctx.cardById(x.cardId)?.stage!=='Level-Up'))?[{}]:[];
       if(!ctx.isAttack&&r==='swsh3Rose')return pokemonOn(ss).some(p=>ctx.cardById(p.cardId)?.pokemonVMAX)&&(Object.values(ss.energyDiscard||{}).some(n=>n>0)||ss.discard.some(x=>ctx.cardById(x.cardId)?.basicEnergy))?[{}]:[];
       if(ctx.isAttack&&r==='swsh2MiningRush')return Array.from({length:Math.min(6,ss.deck.length)+1},(_,n)=>({effectSelection:String(n),choiceLabel:'Discard '+n+' cards'}));
       if(ctx.isAttack&&r==='swsh2SpiralJet'){const pool=ss.hand.filter(x=>ctx.cardById(x.cardId)?.basicEnergy&&ctx.cardById(x.cardId)?.subtype==='Water'),out=[];for(let i=0;i<pool.length;i++)for(let j=i+1;j<pool.length;j++)out.push({effectSelection:pool[i].uid+','+pool[j].uid,choiceLabel:'Discard 2 Water Energy'});return out.length?out:[{}];}

@@ -99,6 +99,20 @@
     return index>=0?sideState.bench[index]:null;
   }
 
+  // Eternal Zone shares the existing physical eight-slot Bench. Keep the
+  // predicate live: a suppressed Ability or a type change can disable it.
+  function eternalZoneActive(state,side){
+    if(state?.format!=='classic')return false;
+    const board=state.sides?.[side],slots=pokemonOn(board);
+    if(!slots.some(p=>['swsh3-117','swsh3-192'].includes(p.cardId)&&data.cardById(p.cardId)?.battleEnabled&&
+      !effects.abilitiesSuppressed(state,side,p,data.cardById)))return false;
+    return slots.every(p=>effects.effectiveTypes(state,side,p,data.cardById).includes('Darkness'));
+  }
+  function eternalZoneCanPlace(state,side,cardId){
+    if(!eternalZoneActive(state,side))return true;
+    const card=data.cardById(cardId);
+    return card?.kind==='pokemon'&&(card.types||[card.subtype]).includes('Darkness');
+  }
   function maxBenchSize(sideState){return Math.max(0,Math.min(8,Number(sideState?.benchLimit??3)));}
 
   function emptyBenchSlots(sideState){
@@ -337,7 +351,7 @@
       const mon=data.cardById(top.cardId),enemy=state.sides[foeSide].active,
         itemLocked=classicItemPlayLocked(state,side),
         nugget=top.cardId==='swsh2-162'&&!itemLocked,
-        entry=mon?.abilities?.some(ab=>ab.effect?.rule==='swsh2TopEntry')&&emptyBenchSlots(s).length; // Pokémon is still in deck; in-play Gas does not suppress it.
+        entry=mon?.abilities?.some(ab=>ab.effect?.rule==='swsh2TopEntry')&&emptyBenchSlots(s).length&&eternalZoneCanPlace(state,side,top.cardId); // Pokémon is still in deck; in-play Gas does not suppress it.
       if(nugget||entry){
         s.deck.shift();beginEffectChoice(state,side,s.active,{kind:'option',side:'self',special:'swsh2NaturalDraw',drawRef:top,nugget,options:['Put '+mon.name+' into hand',nugget?'Play Nugget — draw 3 cards':'Use Top Entry — put '+mon.name+' on Bench'],prompt:'Beginning-of-turn draw: '+mon.name});return;
       }
@@ -411,7 +425,7 @@
       return true;
     };
     s.hand.forEach((ref,handIndex)=>{
-      const evo=data.cardById(ref.cardId);if(!evo||evo.kind!=='pokemon'||evo.stage==='Basic'||!evo.battleEnabled)return;
+      const evo=data.cardById(ref.cardId);if(!evo||evo.kind!=='pokemon'||evo.stage==='Basic'||!evo.battleEnabled||!eternalZoneCanPlace(state,side,evo.id))return;
       if(canEvolveTarget(s.active,evo,'active'))actions.push({type:'evolve',handIndex,cardId:evo.id,target:'active'});
       normalizeBenchSlots(s);s.bench.forEach((slot,index)=>{if(!slot)return;const benchIndex=Number(slot.benchSlot??index);if(canEvolveTarget(slot,evo,'bench'))actions.push({type:'evolve',handIndex,cardId:evo.id,target:'bench',benchIndex});});
     });
@@ -500,6 +514,10 @@
     }else if(p.kind==='toolCard'){
       const board=state.sides[p.selectionSide||side],slot=[board.active,...(board.bench||[])].find(x=>x&&x.uid===p.targetUid);if(slot)toolsOf(slot).forEach((tool,index)=>out.push({type:'effectChoice',choiceTarget:p.choiceTarget||(slot===board.active?'active':'bench'),choiceBenchIndex:p.choiceBenchIndex!=null?p.choiceBenchIndex:(slot===board.active?undefined:Number(slot.benchSlot)),choiceToolIndex:index,choiceCardId:tool.cardId}));
     }
+    if(['benchFromDeck','benchFromDiscard','chooseEvolutionFromDeck'].includes(p.effect?.type)&&['deckCard','discardCard'].includes(p.kind)){
+      const dest=p.effect.type==='benchFromDiscard'&&p.effect.side==='opponent'?(p.originSide==='player'?'opponent':'player'):p.originSide;
+      for(let i=out.length-1;i>=0;i--)if(!eternalZoneCanPlace(state,dest,out[i].choiceCardId))out.splice(i,1);
+    }
     if(p.optional)out.push({type:'effectChoice',choiceSkip:true});
     return out;
   }
@@ -523,7 +541,7 @@
         return beginEffectChoice(state,side,attacker||state.sides[side].active,controlled);
       }
       return beginEffectChoice(state,side,attacker||state.sides[side].active,{...spec,trainerRef:action?.trainerRef||spec.trainerRef||null});
-    },placeActiveDoll:ref=>{const ss=state.sides[side],i=ss.hand.indexOf(ref);if(ss.active||i<0||!data.cardById(ref.cardId)?.effect?.sm12Doll)return false;ss.hand.splice(i,1);ss.active=makePokemonSlot(ref.cardId,ss.turnCount,ref.uid);return true;},queuePrize:(which,amount=1)=>{const q=state.pendingPrizeClaims=state.pendingPrizeClaims||[];const owner=state.sides[which];if(owner?.prizes?.length)q.push({side:which,remaining:Math.min(Number(amount||1),owner.prizes.length)});},benchCard:(ss,ref)=>{const slot=emptyBenchSlots(ss)[0];if(slot==null)return null;const placed=placeOnBench(ss,makePokemonSlot(ref.cardId,ss.turnCount,ref.uid),slot),targetSide=ss===state.sides.player?'player':'opponent';triggerAbilities(state,'benched',targetSide,placed,{fromDeck:true});return slot;},onEnergyAttached:(target,energyType,amount,sourceMeta)=>{if(state.format==='classic'&&energyType==='Water'&&['ex7-26','ex7-81'].includes(target?.cardId)){target.conditions={};target.damage=Math.max(0,Number(target.damage||0)-(target.cardId==='ex7-26'?20:10));}const targetSide=pokemonOn(state.sides.player).includes(target)?'player':'opponent';
+    },placeActiveDoll:ref=>{const ss=state.sides[side],i=ss.hand.indexOf(ref);if(ss.active||i<0||!data.cardById(ref.cardId)?.effect?.sm12Doll)return false;ss.hand.splice(i,1);ss.active=makePokemonSlot(ref.cardId,ss.turnCount,ref.uid);return true;},queuePrize:(which,amount=1)=>{const q=state.pendingPrizeClaims=state.pendingPrizeClaims||[];const owner=state.sides[which];if(owner?.prizes?.length)q.push({side:which,remaining:Math.min(Number(amount||1),owner.prizes.length)});},canPutInPlay:(ss,ref)=>eternalZoneCanPlace(state,ss===state.sides.player?'player':'opponent',ref?.cardId),benchCard:(ss,ref)=>{const slot=emptyBenchSlots(ss)[0];if(slot==null||!eternalZoneCanPlace(state,ss===state.sides.player?'player':'opponent',ref?.cardId))return null;const placed=placeOnBench(ss,makePokemonSlot(ref.cardId,ss.turnCount,ref.uid),slot),targetSide=ss===state.sides.player?'player':'opponent';triggerAbilities(state,'benched',targetSide,placed,{fromDeck:true});return slot;},onEnergyAttached:(target,energyType,amount,sourceMeta)=>{if(state.format==='classic'&&energyType==='Water'&&['ex7-26','ex7-81'].includes(target?.cardId)){target.conditions={};target.damage=Math.max(0,Number(target.damage||0)-(target.cardId==='ex7-26'?20:10));}const targetSide=pokemonOn(state.sides.player).includes(target)?'player':'opponent';
       if(state.format==='classic'&&sourceMeta?.fromHand&&target?.cardId==='sm2-114'&&state.sides[targetSide]?.active===target&&
          !effects.abilitiesSuppressed(state,targetSide,target,data.cardById))target.conditions={...(target.conditions||{}),sleep:true};
       for(let i=0;i<Number(amount||1);i++){
@@ -533,7 +551,7 @@
         // HAND. Opposing reactive Bodies (Electivire LV.X Shocking Tail) must
         // see that event, unlike an attachment from the Classic Energy Zone.
         if(fromHand)triggerAbilities(state,'opponentEnergyAttached',targetSide==='player'?'opponent':'player',null,{target,energyType,fromHand:true,fromZone:false,sourceSide:targetSide});
-      }},gymBenchRedirect:(which,slot,amount)=>gymBenchRedirect(state,which,slot,amount),onEvolved:target=>{const targetSide=pokemonOn(state.sides.player).includes(target)?'player':'opponent';triggerAbilities(state,'evolved',targetSide,target,{fromDeck:true});},onBabyEvolved:target=>{const targetSide=pokemonOn(state.sides.player).includes(target)?'player':'opponent';effects.clearTemporaryEffects(state,target);triggerAbilities(state,'evolved',targetSide,target,{fromHand:true,babyEvolution:true});},evolveFromDeck:target=>{const targetSide=pokemonOn(state.sides.player).includes(target)?'player':'opponent',ss=state.sides[targetSide],base=data.cardById(target.cardId),candidates=ss.deck.map((r,index)=>({r,index,card:data.cardById(r.cardId)})).filter(x=>x.card?.battleEnabled&&x.card.kind==='pokemon'&&(state.format==='classic'?classicEvolutionMatches(base?.name,x.card.evolvesFrom):x.card.evolvesFrom===base?.name));if(!candidates.length)return false;const hit=candidates[Math.floor(random(state)*candidates.length)],[ref]=ss.deck.splice(hit.index,1);target.cardId=ref.cardId;target.stack.push(ref.cardId);target.playedOnSideTurn=ss.turnCount;target.evolvedOnTurn=state.turnNumber;shuffle(state,ss.deck);state.log.push({type:'evolve',side:targetSide,cardId:ref.cardId,fromDeck:true});triggerAbilities(state,'evolved',targetSide,target,{fromDeck:true});return true;},transformSelfToEnergy:(source,targetUid,energyType,amount)=>{if(!source)return false;const target=pokemonOn(state.sides[side]).find(slot=>slot&&slot.uid===targetUid&&slot!==source);if(!target)return false;source.transformOnKO={targetUid,provides:{[energyType]:Math.max(1,Number(amount||2))}};source.damage=Math.max(Number(source.damage||0),maxHp(state,side,source));return true;},applyCopiedAttack:(copiedAttack,copiedFrom)=>{
+      }},gymBenchRedirect:(which,slot,amount)=>gymBenchRedirect(state,which,slot,amount),onEvolved:target=>{const targetSide=pokemonOn(state.sides.player).includes(target)?'player':'opponent';triggerAbilities(state,'evolved',targetSide,target,{fromDeck:true});},onBabyEvolved:target=>{const targetSide=pokemonOn(state.sides.player).includes(target)?'player':'opponent';effects.clearTemporaryEffects(state,target);triggerAbilities(state,'evolved',targetSide,target,{fromHand:true,babyEvolution:true});},evolveFromDeck:target=>{const targetSide=pokemonOn(state.sides.player).includes(target)?'player':'opponent',ss=state.sides[targetSide],base=data.cardById(target.cardId),candidates=ss.deck.map((r,index)=>({r,index,card:data.cardById(r.cardId)})).filter(x=>eternalZoneCanPlace(state,targetSide,x.r.cardId)&&x.card?.battleEnabled&&x.card.kind==='pokemon'&&(state.format==='classic'?classicEvolutionMatches(base?.name,x.card.evolvesFrom):x.card.evolvesFrom===base?.name));if(!candidates.length)return false;const hit=candidates[Math.floor(random(state)*candidates.length)],[ref]=ss.deck.splice(hit.index,1);target.cardId=ref.cardId;target.stack.push(ref.cardId);target.playedOnSideTurn=ss.turnCount;target.evolvedOnTurn=state.turnNumber;shuffle(state,ss.deck);state.log.push({type:'evolve',side:targetSide,cardId:ref.cardId,fromDeck:true});triggerAbilities(state,'evolved',targetSide,target,{fromDeck:true});return true;},transformSelfToEnergy:(source,targetUid,energyType,amount)=>{if(!source)return false;const target=pokemonOn(state.sides[side]).find(slot=>slot&&slot.uid===targetUid&&slot!==source);if(!target)return false;source.transformOnKO={targetUid,provides:{[energyType]:Math.max(1,Number(amount||2))}};source.damage=Math.max(Number(source.damage||0),maxHp(state,side,source));return true;},applyCopiedAttack:(copiedAttack,copiedFrom)=>{
       // Resolve Benched-Pokemon attacks as the current Active's attack. The
       // printed Assist cost is already paid; copied attack Energy is not.
       // The original attack remains the one-per-turn declaration.
@@ -1478,7 +1496,7 @@
       const empty=emptyBenchSlots(s);
       s.hand.forEach((ref,handIndex)=>{
         const card = data.cardById(ref.cardId);
-        if (card && card.kind === 'pokemon' && card.stage === 'Basic' && card.battleEnabled){
+        if (card && card.kind === 'pokemon' && card.stage === 'Basic' && card.battleEnabled&&eternalZoneCanPlace(state,side,card.id)){
           empty.forEach(benchIndex=>actions.push({type:'bench',handIndex,cardId:card.id,benchIndex}));
         }
       });
@@ -1488,7 +1506,7 @@
     if(state.format==='classic'&&s.bench.length<maxBenchSize(s)){
       for(const [first,second] of [['hgss1-111','hgss1-112'],['hgss1-113','hgss1-114'],['hgss2-90','hgss2-91'],['hgss2-92','hgss2-93'],['hgss2-94','hgss2-95'],['hgss3-87','hgss3-88'],['hgss3-89','hgss3-90'],['hgss4-99','hgss4-100'],['hgss4-101','hgss4-102']]){
         const i=s.hand.findIndex(r=>r.cardId===first),j=s.hand.findIndex(r=>r.cardId===second);
-        if(i>=0&&j>=0&&data.cardById(first)?.battleEnabled&&data.cardById(second)?.battleEnabled)
+        if(i>=0&&j>=0&&data.cardById(first)?.battleEnabled&&data.cardById(second)?.battleEnabled&&eternalZoneCanPlace(state,side,first))
           for(const benchIndex of emptyBenchSlots(s))actions.push({type:'legendBench',cardId:first,handIndex:i,secondHandIndex:j,benchIndex});
       }
     }
@@ -1567,14 +1585,14 @@
           actions.push({...base,effectSelection:'four'});
         return;
       }
-      if(card.id==='xy4-102'){for(const benchIndex of emptyBenchSlots(s))actions.push({...base,target:'bench',benchIndex});return;}
-      if(card.effect?.type==='playFossil'){for(const benchIndex of emptyBenchSlots(s))actions.push({...base,target:'bench',benchIndex});return;}
+      if(card.id==='xy4-102'){if(!eternalZoneCanPlace(state,side,card.id))return;for(const benchIndex of emptyBenchSlots(s))actions.push({...base,target:'bench',benchIndex});return;}
+      if(card.effect?.type==='playFossil'){if(!eternalZoneCanPlace(state,side,card.id))return;for(const benchIndex of emptyBenchSlots(s))actions.push({...base,target:'bench',benchIndex});return;}
       if(card.effect?.type==='rareCandy'){
         if(state.format==='classic'&&['player','opponent'].some(w=>pokemonOn(state.sides[w]).some(p=>p.cardId==='bw3-67'&&!effects.abilitiesSuppressed(state,w,p,data.cardById))))return;
         if(s.turnCount<=1)return;
         const stage2Refs=s.hand.map((candidate,evolutionHandIndex)=>({candidate,evolutionHandIndex,card:data.cardById(candidate.cardId)})).filter(x=>x.evolutionHandIndex!==handIndex&&x.card?.battleEnabled&&x.card.kind==='pokemon'&&(x.card.stage==='Stage 2'||card.effect.allowStage1&&x.card.stage==='Stage 1'));
         const targets=[];if(s.active)targets.push({target:'active',slot:s.active});for(const slot of s.bench)if(slot)targets.push({target:'bench',benchIndex:Number(slot.benchSlot),slot});
-        for(const evo of stage2Refs)for(const target of targets){const basic=data.cardById(target.slot.cardId);
+        for(const evo of stage2Refs)for(const target of targets){const basic=data.cardById(target.slot.cardId);if(!eternalZoneCanPlace(state,side,evo.card.id))continue;
           if(state.format==='classic'&&Number(s.sm4AbilityPokemonLockUntil||0)>=state.turnNumber&&(evo.card.abilities?.length||evo.card.ability))continue;
           const opposingActive=state.sides[side==='player'?'opponent':'player']?.active;
           if(target.target==='active'&&state.format==='classic'&&opposingActive?.cardId==='pl1-6'&&
@@ -2048,6 +2066,7 @@
          (data.cardById(a.cardId)?.abilities?.length||data.cardById(a.cardId)?.ability))actions.splice(i,1);
       }
     }
+    if(eternalZoneActive(state,side))for(let i=actions.length-1;i>=0;i--){const a=actions[i];if(['sm7FallingStar','sm11ElectricSwamp'].includes(a.type)||a.type==='abilityDiscard'&&a.cardId==='sm8-97'){if(!eternalZoneCanPlace(state,side,a.cardId))actions.splice(i,1);}}
     actions.push({type:'endTurn'});
     if(state.format==='classic'&&state.xy5BarrageSecond?.side===side&&Number(state.xy5BarrageSecond.turn)===Number(state.turnNumber))
       return actions.filter(a=>a.type==='attack'||a.type==='endTurn');
@@ -3016,9 +3035,12 @@
     const roadblock=who=>{const enemy=who==='player'?'opponent':'player';return pokemonOn(state.sides[enemy]).some(p=>['sm2-66','sma-SV20'].includes(p.cardId)&&!effects.abilitiesSuppressed(state,enemy,p,data.cardById));};
     for(const who of ['player','opponent']){
       const s=state.sides[who];
+      const zone=eternalZoneActive(state,who);
+      if(zone){s.swsh3EternalZoneActive=true;s.swsh3EternalZoneFiveAfter=true;}
+      else if(s.swsh3EternalZoneActive){delete s.swsh3EternalZoneActive;s.swsh3EternalZoneTrim=true;state.log.push({type:'swsh3EternalZoneEnded',side:who});}
       const cap=active?8:parallel&&limitedSide===who?3:activeStadium(state)?.cardId==='gym1-124'?2:
         activeStadium(state)?.cardId==='SNAPFLORIO-108'?5:
-        state.xy6SkyFieldFiveAfter?5:3;
+        zone?8:state.xy6SkyFieldFiveAfter||s.swsh3EternalZoneFiveAfter?5:3;
       // Preserve the unrelated Ditto expanded Bench until its own rule ends.
       const foe=state.sides[who==='player'?'opponent':'player'];
       const ditto=activeStadium(state)?.cardId!=='gym1-124'&&!active&&
@@ -3031,16 +3053,17 @@
     // down to THREE; the other player keeps the normal post-Sky Field cap.
     // Use the existing physical-card discard flow, never an automatic KO.
     const roadblockOverflow=['player','opponent'].some(w=>roadblock(w)&&state.sides[w].bench.length>state.sides[w].benchLimit);
-    if(!roadblockOverflow&&(active||(!state.xy6SkyFieldTrim&&!parallel)))return false;
+    const zoneTrim=['player','opponent'].some(w=>{const s=state.sides[w];if(s.swsh3EternalZoneTrim&&s.bench.length<=s.benchLimit)delete s.swsh3EternalZoneTrim;return !!s.swsh3EternalZoneTrim;});
+    if(!roadblockOverflow&&!zoneTrim&&(active||(!state.xy6SkyFieldTrim&&!parallel)))return false;
     if(state.phase!=='battle'||state.pendingChoice)return false;
-    const first=parallel?(limitedSide||state.stadium.ownerSide||'player'):(state.xy6SkyFieldOwner||'player');
+    const first=parallel?(limitedSide||state.stadium.ownerSide||'player'):zoneTrim&&!state.xy6SkyFieldTrim?(state.activeSide||'player'):(state.xy6SkyFieldOwner||'player');
     const other=first==='player'?'opponent':'player';
-    const cap=who=>roadblock(who)||parallel||active?Math.max(0,Number(state.sides[who]?.benchLimit??3)):5;
-    const owner=[first,other].find(w=>state.sides[w].bench.length>cap(w));
+    const cap=who=>roadblock(who)||parallel||active||state.sides[who].swsh3EternalZoneTrim||state.sides[who].swsh3EternalZoneActive?Math.max(0,Number(state.sides[who]?.benchLimit??3)):5;
+    const owner=[first,other].find(w=>(!zoneTrim||state.xy6SkyFieldTrim||parallel||roadblock(w)||state.sides[w].swsh3EternalZoneTrim)&&state.sides[w].bench.length>cap(w));
     if(!owner){delete state.xy6SkyFieldTrim;return false;}
     const keep=cap(owner);
     state.pendingChoice={kind:'skyFieldBenchTrim',special:'skyFieldBenchTrim',side:owner,originSide:first,
-      prompt:(roadblock(owner)?'Roadblock limits this player’s Bench. ':parallel&&owner===limitedSide?'Parallel City limits this player to three Benched Pokémon. ':'Sky Field left play. ')+
+      prompt:(state.sides[owner].swsh3EternalZoneTrim?'Eternal Zone stopped working. ':roadblock(owner)?'Roadblock limits this player’s Bench. ':parallel&&owner===limitedSide?'Parallel City limits this player to three Benched Pokémon. ':'Sky Field left play. ')+
         `Choose a Benched Pokémon to discard with all attachments; keep ${keep}.`};
     state.phase='effectChoice';state.choiceSide=owner;
     return true;
@@ -3051,7 +3074,7 @@
     const [pokemon]=board.bench.splice(index,1);
     // Stadium removal is not a Knock Out: no Prize and no damage/KO triggers.
     discardKnockedOut(board,pokemon);
-    state.log.push({type:'xy6SkyFieldBenchDiscard',side,cardId:pokemon.cardId,uid:pokemon.uid,benchIndex});
+    state.log.push({type:board.swsh3EternalZoneTrim?'swsh3EternalZoneBenchDiscard':'xy6SkyFieldBenchDiscard',side,cardId:pokemon.cardId,uid:pokemon.uid,benchIndex});
     // Compact high physical slots to ensure every remaining card is visible,
     // including on a normal five-slot Bench with old slot 7 occupied.
     board.bench.sort((a,b)=>Number(a.benchSlot)-Number(b.benchSlot));
@@ -4698,5 +4721,5 @@ const target=slotForTarget(s,action.target,action.benchIndex);if(card.id==='pl2-
 
   function publicSnapshot(state){ return JSON.parse(JSON.stringify(state)); }
 
-  return {createBattle,makePokemonSlot,legalActions,attackOptions,attackAvailability,attackDamagePreview,effectiveEnergy,energyCostLabel,applyAction,publicSnapshot,drawCard,endTurn,benchSlotAt,benchArrayIndex,normalizeBenchSlots,random,shuffle,checkup,effectContext,maxHp,retreatCost};
+  return {createBattle,makePokemonSlot,eternalZoneActive,eternalZoneCanPlace,legalActions,attackOptions,attackAvailability,attackDamagePreview,effectiveEnergy,energyCostLabel,applyAction,publicSnapshot,drawCard,endTurn,benchSlotAt,benchArrayIndex,normalizeBenchSlots,random,shuffle,checkup,effectContext,maxHp,retreatCost};
 });

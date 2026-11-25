@@ -55,7 +55,7 @@ ab(105,passive(mod('damageReduction',20,condition=cond('selfHasEnergyType',energ
 ab(107,passive(E('preventStatus',scope='self',duration='whileInPlay',status='paralysis',clearExisting=True)))
 at(111,'Assault Gate',seq(E('attackRequirement',allowWhenFailed=True,condition=cond('movedFromBenchThisTurn')),E('damageRule',ignoreWeakness=True)))
 at(116,'Dynamax Cannon',bonus(120,cond('opponentMatches',filter={'stage':'VMAX'})))
-at(117,'Dread End',E('fieldCountDamage',side='self',amount=30,mode='replace',filter={'subtype':'Darkness'}))
+at(117,'Dread End',E('fieldCountDamage',side='self',amount=30,mode='replace',filter={'subtype':'Darkness'},effectiveType='Darkness'))
 at(118,'Hack Off',seq(E('discardTool',target='opponentActive',amount=1),E('discardEnergyCard',target='opponentActive',amount=1,specialOnly=True)))
 at(120,'Metal Arms',bonus(40,cond('selfHasTool')))
 at(124,'Fury Cutter',E('coinTierBonus',coins=3,tiers={0:0,1:20,2:70,3:140}))

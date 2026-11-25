@@ -90,3 +90,43 @@ for(const side of ['player','opponent']){
  test(side+' Spikemuth places two counters on own outgoing Active on retreat',()=>{const h=setup(side,'swsh3-3');try{h.s.stadium={...ref('swsh3-170','spikemuth'),ownerSide:h.foe};const outgoing=h.us.active;use(h,'retreat');resolve(h);assert.equal(outgoing.damage,20);assert.equal(h.us.active.damage,0);}finally{h.done();}});
  test(side+' Spikemuth works with switch Trainer but not opponent gust',()=>{const h=setup(side,'swsh3-3');try{h.s.stadium={...ref('swsh3-170','spikemuth'),ownerSide:side};const outgoing=h.us.active;trainer(h,'swsh3-159');resolve(h);assert.equal(outgoing.damage,20);const victim=h.them.active;h.us.active.cardId='swsh3-15';h.us.active.energy={Grass:3};attack(h,'Captivate');resolve(h);assert.equal(victim.damage,0);}finally{h.done();}});
 }
+
+// Eternal Zone remains intentionally gated in production. Enable only these
+// fixture prints to exercise the new foundation without exposing old placement paths.
+function zoneFixture(side,id='swsh3-117'){
+ const h=setup(side,id),old=data.cardById;
+ data.cardById=x=>{const c=old(x);return ['swsh3-117','swsh3-192'].includes(x)?{...c,battleEnabled:true}:c;};
+ h.us.active.energy={Darkness:2};h.us.bench=[];
+ return h;
+}
+function darkBench(h,n){h.us.bench=Array.from({length:n},(_,i)=>({...slot('swsh3-102','dark-'+i),benchSlot:i}));}
+for(const side of ['player','opponent']){
+ test(side+' Eternal Zone foundation expands only its controller and blocks non-Darkness hand and Fossil plays',()=>{const h=zoneFixture(side,side==='player'?'swsh3-117':'swsh3-192');try{
+  h.us.hand=[ref('swsh3-102','dark'),ref('swsh3-3','grass'),ref('swsh3-167','fossil')];darkBench(h,7);
+  const a=core.legalActions(h.s,side);assert.equal(h.us.benchLimit,8);assert.equal(h.them.benchLimit,3);assert.equal(core.eternalZoneActive(h.s,side),true);
+  assert.deepEqual(a.filter(x=>x.type==='bench').map(x=>[x.cardId,x.benchIndex]),[['swsh3-102',7]]);assert.ok(!a.some(x=>x.type==='trainer'&&x.cardId==='swsh3-167'));
+  use(h,'bench',x=>x.benchIndex===7);assert.equal(h.us.bench.length,8);assert.ok(!core.legalActions(h.s,side).some(x=>x.type==='bench'));
+ }finally{h.done();}});
+ test(side+' Eternal Zone loss by Neutralizing Gas trims only its board with no Prizes',()=>{const h=zoneFixture(side);try{
+  darkBench(h,8);core.legalActions(h.s,side);const last=h.us.bench[7];last.energy={Darkness:2};last.tool=ref('swsh3-160','cape');last.specialEnergy=[ref('swsh3-175','hiding')];h.them.active.cardId='swsh2-113';
+  core.legalActions(h.s,side);assert.equal(h.us.benchLimit,5);assert.equal(h.s.choiceSide,side);assert.equal(h.s.pendingChoice.special,'skyFieldBenchTrim');assert.match(h.s.pendingChoice.prompt,/Eternal Zone/);
+  choice(h,x=>x.choiceBenchIndex===7);resolve(h);assert.equal(h.us.bench.length,5);assert.equal(h.them.bench.length,1);assert.equal(h.us.energyDiscard.Darkness,2);assert.ok(h.us.discard.some(x=>x.uid==='cape'));assert.ok(h.us.discard.some(x=>x.uid==='hiding'));assert.equal(h.us.prizes.length,5);assert.equal(h.them.prizes.length,5);assert.deepEqual(h.us.bench.map(x=>x.benchSlot),[0,1,2,3,4]);
+  h.them.active.cardId='swsh3-3';core.legalActions(h.s,side);assert.equal(h.us.benchLimit,8);
+ }finally{h.done();}});
+ test(side+' Eternal Zone requires all in-play Pokémon to be Darkness and survives loss of one of two sources',()=>{const h=zoneFixture(side);try{
+  darkBench(h,3);h.us.bench[0].cardId='swsh3-3';core.legalActions(h.s,side);assert.equal(h.us.benchLimit,3);assert.equal(core.eternalZoneActive(h.s,side),false);
+  h.us.bench[0].cardId='swsh3-192';core.legalActions(h.s,side);assert.equal(h.us.benchLimit,8);h.us.active.cardId='swsh3-102';core.legalActions(h.s,side);assert.equal(h.us.benchLimit,8);
+  h.us.bench[0].cardId='swsh3-102';core.legalActions(h.s,side);assert.equal(h.us.benchLimit,5);
+ }finally{h.done();}});
+ test(side+' generic Bench placement choices exclude non-Darkness and preserve the rejected card',()=>{const h=zoneFixture(side);try{
+  darkBench(h,3);core.legalActions(h.s,side);h.us.deck=[ref('swsh3-3','grass'),ref('swsh3-102','dark')];
+  fx.applyEffect({type:'benchFromDeck',amount:1,filter:{kind:'pokemon',stage:'Basic'},choose:true},core.effectContext(h.s,side,{},h.us.active));
+  assert.deepEqual(core.legalActions(h.s,side).filter(x=>!x.choiceSkip).map(x=>x.choiceCardId),['swsh3-102']);
+  choice(h,x=>x.choiceCardId==='swsh3-102');assert.equal(h.us.bench.length,4);assert.ok(h.us.deck.some(x=>x.uid==='grass'));
+ }finally{h.done();}});
+ test(side+' Dread End counts all nine Darkness Pokémon',()=>{const h=zoneFixture(side);try{darkBench(h,8);core.legalActions(h.s,side);attack(h,'Dread End');resolve(h);assert.equal(h.them.active.damage,270);}finally{h.done();}});
+}
+for(const side of ['player','opponent']){
+ test(side+' Eternal Zone Capture Energy offers only eligible Darkness Pokémon',()=>{const h=zoneFixture(side);try{darkBench(h,3);h.us.deck=[ref('swsh3-3','grass'),ref('swsh3-102','dark')];h.us.hand=[ref('swsh3-201','capture')];h.us.handEnergyUsed=false;use(h,'attachSpecial',x=>x.target==='active');assert.deepEqual(core.legalActions(h.s,side).filter(x=>!x.choiceSkip).map(x=>x.choiceCardId),['swsh3-102']);resolve(h);assert.equal(h.us.bench.length,4);assert.ok(h.us.deck.some(x=>x.uid==='grass'));}finally{h.done();}});
+ test(side+' Eternal Zone generic revival does not consume an ineligible discard card',()=>{const h=zoneFixture(side);try{darkBench(h,3);core.legalActions(h.s,side);h.us.discard=[ref('swsh3-3','grass'),ref('swsh3-102','dark')];fx.applyEffect({type:'benchFromDiscard',side:'self',amount:1,filter:{kind:'pokemon',stage:'Basic'}},core.effectContext(h.s,side,{},h.us.active));assert.deepEqual(core.legalActions(h.s,side).filter(x=>!x.choiceSkip).map(x=>x.choiceCardId),['swsh3-102']);resolve(h);assert.equal(h.us.bench.length,4);assert.ok(h.us.discard.some(x=>x.uid==='grass'));}finally{h.done();}});
+}
