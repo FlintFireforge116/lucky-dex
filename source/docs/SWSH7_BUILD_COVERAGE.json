@@ -1,36 +1,18 @@
 {
   "printed": 237,
-  "battleReady": 177,
+  "battleReady": 205,
   "gated": {
-    "swsh7-1": [
-      "Unimplemented Ability: Vise Coach"
-    ],
     "swsh7-3": [
       "Unimplemented Ability: Solar Evolution"
     ],
     "swsh7-4": [
       "Unimplemented Ability: Fluffy Barrage"
     ],
-    "swsh7-21": [
-      "Unimplemented attack: Surging Flames"
-    ],
-    "swsh7-30": [
-      "Unimplemented attack: Bubble Pod"
-    ],
-    "swsh7-34": [
-      "Unimplemented Ability: Enthusiastic Dance"
-    ],
     "swsh7-38": [
       "Unimplemented Ability: Dew Guard"
     ],
-    "swsh7-43": [
-      "Unimplemented attack: Element Chain"
-    ],
     "swsh7-50": [
       "Unimplemented attack: Big Sparking"
-    ],
-    "swsh7-53": [
-      "Unimplemented attack: Blinding Beam"
     ],
     "swsh7-56": [
       "Unimplemented attack: Electron Crush"
@@ -39,10 +21,7 @@
       "Unimplemented attack: Primeval Beak"
     ],
     "swsh7-59": [
-      "Unimplemented attack: Spark Trap"
-    ],
-    "swsh7-63": [
-      "Unimplemented attack: Psylaser"
+      "Required Pokémon V evolution parent is not yet enabled"
     ],
     "swsh7-66": [
       "Unimplemented attack: Mirror Pain"
@@ -65,18 +44,6 @@
     "swsh7-83": [
       "Unimplemented attack: Yoga Loop"
     ],
-    "swsh7-88": [
-      "Unimplemented attack: Pressure Shot"
-    ],
-    "swsh7-90": [
-      "Unimplemented attack: Shaky Wave"
-    ],
-    "swsh7-92": [
-      "Unimplemented attack: Hunting Claw"
-    ],
-    "swsh7-97": [
-      "Unimplemented attack: Shiftadieu"
-    ],
     "swsh7-101": [
       "Unimplemented Ability: Rubbish Collecting"
     ],
@@ -85,9 +52,6 @@
     ],
     "swsh7-105": [
       "Unimplemented Ability: Fumbling Hands"
-    ],
-    "swsh7-106": [
-      "Unimplemented Ability: Tempting Tune"
     ],
     "swsh7-116": [
       "Unimplemented attack: Extreme Freeze"
@@ -98,33 +62,10 @@
     "swsh7-128": [
       "Unimplemented attack: Live Painting"
     ],
-    "swsh7-131": [
-      "Unimplemented attack: Rout",
-      "Unimplemented Ability: Act Freely"
-    ],
-    "swsh7-142": [
-      "Unimplemented Trainer effect"
-    ],
     "swsh7-146": [
       "Unimplemented Trainer effect"
     ],
-    "swsh7-147": [
-      "Unimplemented Trainer effect"
-    ],
-    "swsh7-148": [
-      "Unimplemented Trainer effect"
-    ],
-    "swsh7-150": [
-      "Unimplemented Trainer effect"
-    ],
     "swsh7-151": [
-      "Unimplemented Trainer effect"
-    ],
-    "swsh7-152": [
-      "Unimplemented Trainer effect"
-    ],
-    "swsh7-153": [
-      "Unimplemented attack: Meteor",
       "Unimplemented Trainer effect"
     ],
     "swsh7-155": [
@@ -139,17 +80,8 @@
     "swsh7-160": [
       "Unimplemented Trainer effect"
     ],
-    "swsh7-162": [
-      "Unimplemented Trainer effect"
-    ],
-    "swsh7-163": [
-      "Unimplemented Trainer effect"
-    ],
     "swsh7-165": [
       "Unimplemented Special Energy rules"
-    ],
-    "swsh7-170": [
-      "Unimplemented attack: Surging Flames"
     ],
     "swsh7-178": [
       "Unimplemented attack: Primeval Beak"
@@ -160,29 +92,11 @@
     "swsh7-186": [
       "Unimplemented attack: Yoga Loop"
     ],
-    "swsh7-202": [
-      "Unimplemented Trainer effect"
-    ],
     "swsh7-210": [
-      "Unimplemented attack: Spark Trap"
-    ],
-    "swsh7-213": [
-      "Unimplemented attack: Hunting Claw"
+      "Required Pokémon V evolution parent is not yet enabled"
     ],
     "swsh7-216": [
       "Unimplemented Ability: Rubbish Collecting"
-    ],
-    "swsh7-224": [
-      "Unimplemented Trainer effect"
-    ],
-    "swsh7-229": [
-      "Unimplemented Trainer effect"
-    ],
-    "swsh7-231": [
-      "Unimplemented Trainer effect"
-    ],
-    "swsh7-233": [
-      "Unimplemented Trainer effect"
     ]
   },
   "attacks": 309,

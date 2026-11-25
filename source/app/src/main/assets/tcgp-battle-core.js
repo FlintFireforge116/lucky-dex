@@ -680,6 +680,7 @@
     if(state.format==='classic'&&event==='energyAttached'&&meta.fromHand&&onlySource&&activeStadium(state)?.cardId==='swsh6-147'&&!effects.effectiveTypes(state,side,onlySource,data.cardById).includes('Psychic')){
       onlySource.damage=Number(onlySource.damage||0)+20;state.log.push({type:'swsh6OldCemetery',side,targetUid:onlySource.uid,amount:20});
     }
+    if(state.format==='classic'&&event==='damagedByAttack'&&onlySource?.swsh7SparkTrapUntil===state.turnNumber&&meta.source?.side!==side&&meta.attacker&&Number(meta.damage)>0&&!effects.metalGogglesActive(state,meta.source.side,meta.attacker,data.cardById)&&!effects.attackEffectsPrevented(state,meta.source.side,meta.attacker,onlySource,data.cardById)){meta.attacker.damage=Number(meta.attacker.damage||0)+120;state.log.push({type:'swsh7SparkTrap',side,amount:120});}
     if(state.format==='classic'&&event==='damagedByAttack'&&onlySource?.swsh6TwoHit?.turn===state.turnNumber&&onlySource.swsh6TwoHit.side===meta.source?.side&&meta.source?.side!==side&&Number(meta.damage)>0&&data.cardById(meta.attacker?.cardId)?.rapidStrike&&!effects.attackEffectsPrevented(state,side,onlySource,meta.attacker,data.cardById)){onlySource.damage=Math.max(onlySource.damage,maxHp(state,side,onlySource));delete onlySource.swsh6TwoHit;}
     if(state.format==='classic'&&event==='damagedByAttack'&&onlySource===ss.active&&onlySource?.cardId==='swsh6-83'&&meta.attacker&&meta.source?.side!==side&&Number(meta.damage)>0&&data.cardById(meta.attacker.cardId)?.pokemonVMAX&&!effects.abilitiesSuppressed(state,side,onlySource,data.cardById)&&!effects.metalGogglesActive(state,meta.source.side,meta.attacker,data.cardById)){
       meta.attacker.damage=Number(meta.attacker.damage||0)+Number(meta.damage);state.log.push({type:'swsh6SpitefulSlate',side,amount:meta.damage});
@@ -1404,7 +1405,7 @@
       }
       // Technical Machines grant a temporary attack, not a new Pokémon identity.
       for(const ref of toolsOf(slot)){
-        const tool=data.cardById(ref.cardId);if(['swsh5-131','swsh5-133','swsh6-151','swsh6-154','swsh7-158'].includes(tool?.id)){if(!activeToolsOf(state,slot).includes(ref)||!(['swsh5-131','swsh6-151'].includes(tool.id)?current.rapidStrike:current.singleStrike))continue;for(const [attackIndex,attack] of (tool.attacks||[]).entries())out.push({cardId:tool.id,attackIndex,attack,scrollAttack:true});continue;}if(!tool?.technicalMachine&&tool?.id!=='xy10-108')continue;
+        const tool=data.cardById(ref.cardId);if(['swsh5-131','swsh5-133','swsh6-151','swsh6-154','swsh7-158','swsh7-153'].includes(tool?.id)){if(!activeToolsOf(state,slot).includes(ref)||!(['swsh5-131','swsh6-151','swsh7-153'].includes(tool.id)?current.rapidStrike:current.singleStrike))continue;for(const [attackIndex,attack] of (tool.attacks||[]).entries())out.push({cardId:tool.id,attackIndex,attack,scrollAttack:true});continue;}if(!tool?.technicalMachine&&tool?.id!=='xy10-108')continue;
         if(tool.id==='xy10-108'&&!['xy10-54','xy10-54a'].includes(current.id))continue;
         // G Booster/G Scope attacks belong exclusively to Genesect-EX.
         if(['bw10-92','bw10-93'].includes(tool.id)&&current.name!=='Genesect-EX')continue;
@@ -2049,7 +2050,8 @@
     const bw5Airhead=state.format==='classic'&&s.active?.cardId==='bw5-24'&&
       !effects.abilitiesSuppressed(state,side,s.active,data.cardById)&&[2,4,6].includes(Number(s.prizes?.length||0));
     const sm8Shady=state.format==='classic'&&data.cardById(s.active?.cardId)?.prismStar&&['player','opponent'].some(w=>state.sides[w].bench.some(p=>p.cardId==='sm8-93'&&!effects.abilitiesSuppressed(state,w,p,data.cardById)));
-    if (s.active&&!sm8Shady&&!bw5Airhead&&!conditions.paralysis&&Number(s.active.ex11AttackLockUntil||0)!==Number(state.turnNumber)){
+    const swsh7Slaking=state.format==='classic'&&activeStadium(state)&&data.cardById(s.active?.cardId)?.abilities?.some(a=>a.effect?.rule==='swsh7ActFreely')&&!effects.abilitiesSuppressed(state,side,s.active,data.cardById);
+    if (s.active&&!swsh7Slaking&&!sm8Shady&&!bw5Airhead&&!conditions.paralysis&&Number(s.active.ex11AttackLockUntil||0)!==Number(state.turnNumber)){
       for(const entry of attackOptions(state,side)){
         const {cardId:attackCardId,attackIndex,attack}=entry;
         if(state.format==='classic'&&['swsh4-29','swsh4-168'].includes(attackCardId)&&state.firstSide===side&&s.turnCount===1&&attack.name!=='Fast Flight')continue;

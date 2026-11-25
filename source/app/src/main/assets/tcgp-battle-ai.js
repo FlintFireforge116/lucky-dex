@@ -459,6 +459,12 @@
     // All choices are drawn from its own known Zone and public Pokémon.
     if(state.format==='classic'&&state.phase==='effectChoice'&&state.pendingChoice?.originSide===side){
       const pending=state.pendingChoice,e=pending.effect||{},choices=legal.filter(a=>a.type==='effectChoice');
+      if(e.rule==='swsh7BubblePod'){
+        const picks=choices.filter(a=>!a.choiceSkip);
+        if(pending.kind==='option')return picks.sort((a,b)=>b.choiceOption-a.choiceOption)[0]||choices[0];
+        return picks.sort((a,b)=>Number(data.cardById(b.choiceCardId)?.hp||0)-Number(data.cardById(a.choiceCardId)?.hp||0))[0]||choices[0];
+      }
+      if(e.rule==='swsh7ElementChain')return choices.find(a=>!a.choiceSkip&&a.choiceTarget==='active')||choices.find(a=>!a.choiceSkip)||choices[0];
       if(e.rule==='swsh6HiddenClaw')return choices.find(a=>!a.choiceSkip&&e.opts?.[a.choiceOption]?.side===foeOf(side))||choices.find(a=>a.choiceSkip)||choices[0];
       if(['swsh6DiscardAttach','swsh6BlissfulBlast'].includes(e.rule))return choices.find(a=>!a.choiceSkip)||choices[0];
       if(e.type==='redistributeEnergy'&&e.optional){
