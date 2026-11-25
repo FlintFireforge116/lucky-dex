@@ -273,6 +273,12 @@
       // discard amount rather than treating every option as a zero-damage hit.
       const fireCount=/^count:(\d+)$/.exec(String(action.effectSelection||''));
       let damage=attack?.effect?.rule==='xy5:explosiveJet'&&fireCount?Number(fireCount[1])*50:Number(attack?.damage||0);
+      if(attack?.effect?.rule==='swsh4GulpMissile'){
+        const n=String(action.effectSelection||'').split(',').filter(Boolean).length,target=state.sides[foeOf(side)].active;
+        const remaining=target?core.maxHp(state,foeOf(side),target)-Number(target.damage||0):Infinity;
+        const hit=target?effects.attackDamageWithState(state,side,state.sides[side].active,foeOf(side),target,60*n,data.cardById):0;
+        return 200+Math.min(hit,remaining)-n*2+(hit>=remaining?100:0);
+      }
       if(attack?.effect?.rule==='swsh35Whisk')damage=60*slots(state.sides[side]).reduce((n,p)=>n+attachedCount(p),0);
       if(attack?.effect?.rule==='swsh2MiningRush')damage=30*Number(action.effectSelection||0);
       if(attack?.effect?.rule==='swsh2SpiralJet'&&!action.effectSelection)damage=0;
@@ -560,6 +566,7 @@
         if(pending.effect.stage==='source')return legal.find(x=>!x.choiceSkip&&pending.effect.opts?.[x.choiceOption]?.p!==board.active?.uid)||stop||legal[0];
         return legal.find(x=>x.choiceTarget==='active')||stop||legal[0];
       }
+      if(rule==='swsh3Breeder'&&pending.effect.amazingBloom||rule==='sm12HandAttach'&&pending.effect.healAll)return legal.find(x=>!x.choiceSkip)||legal[0];
       if(['swsh4CaraLiss','swsh4Nessa','swsh4Cheese','swsh4Devolution','swsh35Adornment','sm9TopAttach','sm9SearchAttach','sm9DanceAncients','sm9NineTemptations','sm9AdventurousAppetite'].includes(rule))return legal.find(x=>!x.choiceSkip)||legal[0];
       if(pending.special==='sm7WishPrize')return legal.find(a=>a.choiceOption===1)||legal[0];
       if(pending.special==='sm7Grounding')return legal.find(a=>!a.choiceSkip)||legal[0];

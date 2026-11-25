@@ -1,12 +1,9 @@
 {
   "printed": 203,
-  "battleReady": 178,
+  "battleReady": 188,
   "gated": {
     "swsh4-3": [
       "Unimplemented Ability: Elusive Master"
-    ],
-    "swsh4-9": [
-      "Unimplemented attack: Amazing Bloom"
     ],
     "swsh4-12": [
       "Unimplemented Ability: Shifty Substitution"
@@ -14,29 +11,17 @@
     "swsh4-14": [
       "Unimplemented Ability: Cast-off Shell"
     ],
-    "swsh4-15": [
-      "Unimplemented attack: Flower Bearing"
-    ],
-    "swsh4-22": [
-      "Unimplemented attack: Jungle Rising"
-    ],
     "swsh4-26": [
       "Unimplemented Ability: Incandescent Awakening"
     ],
     "swsh4-30": [
       "Unimplemented Ability: Torrential Awakening"
     ],
-    "swsh4-40": [
-      "Unimplemented attack: Continuous Gulp Missile"
-    ],
     "swsh4-46": [
       "Unimplemented Ability: Buzzap Generator"
     ],
     "swsh4-47": [
       "Unimplemented Ability: Thunderous Awakening"
-    ],
-    "swsh4-48": [
-      "Unimplemented attack: Thunder Snipe"
     ],
     "swsh4-59": [
       "Unimplemented attack: Electrified Bite Mark",
@@ -55,28 +40,13 @@
     "swsh4-76": [
       "Unimplemented attack: Flying Fury"
     ],
-    "swsh4-111": [
-      "Unimplemented attack: Trash Cyclone"
-    ],
-    "swsh4-113": [
-      "Unimplemented attack: Stealy Claws"
-    ],
     "swsh4-152": [
       "Unimplemented Trainer effect"
-    ],
-    "swsh4-160": [
-      "Unimplemented Trainer effect"
-    ],
-    "swsh4-167": [
-      "Unimplemented attack: Jungle Rising"
     ],
     "swsh4-174": [
       "Unimplemented Ability: Resolute Spear"
     ],
     "swsh4-201": [
-      "Unimplemented Trainer effect"
-    ],
-    "swsh4-203": [
       "Unimplemented Trainer effect"
     ]
   },

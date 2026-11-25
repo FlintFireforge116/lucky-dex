@@ -118,3 +118,14 @@ tr(159,'Tool',VV('RockyHelmet'))
 tr(161,'Stadium',VV('Wyndon'))
 for no,typ in [(162,'Grass'),(163,'Metal'),(164,'Fighting'),(165,'Water')]:
  row=next(r for r in ROWS if r[0]==str(no));X[(row[1],tuple(row[13]))]=E('specialEnergy',provides={typ:1})
+
+# v489: exact signatures, reuse staged evolution and attachment handlers.
+at(9,'Amazing Bloom',N('Breeder',left=8,amazingBloom=True))
+at(15,'Flower Bearing',coin(E('shuffleIntoDeck',target='opponentActive',includeAttached=True,bottomOnly=True)))
+at(22,'Jungle Rising',E('sm7Rule',rule='sm12HandAttach',left=2,benchOnly=True,basicOnly=True,optional=True,healAll=True))
+at(48,'Thunder Snipe',VV('ThunderSnipe'))
+at(111,'Trash Cyclone',VV('TrashCyclone'))
+at(113,'Stealy Claws',VV('StealyClaws'))
+tr(160,'Tool',VV('TelescopicSight'))
+
+at(40,'Continuous Gulp Missile',VV('GulpMissile'))
