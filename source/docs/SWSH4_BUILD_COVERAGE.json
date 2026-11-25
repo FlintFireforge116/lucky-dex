@@ -1,11 +1,7 @@
 {
   "printed": 203,
-  "battleReady": 202,
-  "gated": {
-    "swsh4-71": [
-      "Unimplemented Ability: Spectral Breach"
-    ]
-  },
+  "battleReady": 203,
+  "gated": {},
   "attacks": 269,
   "abilities": 29,
   "pokemonV": 24,

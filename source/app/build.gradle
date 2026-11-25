@@ -8,8 +8,8 @@ android {
         applicationId 'com.example.luckydex'
         minSdk 26
         targetSdk 35
-        versionCode 7493
-        versionName '0.69.493'
+        versionCode 7495
+        versionName '0.69.495'
     }
 
     signingConfigs {
@@ -1066,7 +1066,7 @@ tasks.matching { it.name == 'preBuild' || (it.name.startsWith('merge') && it.nam
     dependsOn tasks.named('auditSM5ForApk')
 }
 
-// v0.69.493 Forbidden Light SM6: SHA-pinned 150-print full-set source and audit.
+// v0.69.495 Forbidden Light SM6: SHA-pinned 150-print full-set source and audit.
 tasks.register('preflightSM6ContractForApk', Exec) {
     dependsOn tasks.named('auditSM5ForApk')
     workingDir rootProject.projectDir
@@ -1379,7 +1379,7 @@ tasks.register('generateSWSH4ForApk', Exec) {
 tasks.register('auditSWSH4ForApk', Exec) {
     dependsOn tasks.named('generateSWSH4ForApk')
     workingDir rootProject.projectDir
-    commandLine 'node', '--test', 'tests/v07487-vivid-voltage-integration.test.cjs', 'tests/v07487-vivid-voltage-outcomes.test.cjs'
+    commandLine 'node', '--test', 'tests/v07487-vivid-voltage-integration.test.cjs', 'tests/v07487-vivid-voltage-outcomes.test.cjs', 'tests/v07494-vivid-voltage-independent-audit.test.cjs'
 }
 tasks.matching { it.name == 'preBuild' || (it.name.startsWith('merge') && it.name.endsWith('Assets')) }.configureEach {
     dependsOn tasks.named('auditSWSH4ForApk')

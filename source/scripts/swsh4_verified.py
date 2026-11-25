@@ -150,3 +150,6 @@ ab(12,passive(E('sm7Rule',rule='swsh4ShiftySubstitution')))
 ab(14,trig('evolved',VV('CastOffShell'),fromHandOnly=True))
 ab(66,passive(VV('ShellSurvival')))
 at(66,'Life Squeeze',VV('LifeSqueeze'))
+
+# v494: state-aware global attached Special Energy suppression.
+ab(71,passive(VV('SpectralBreach')))

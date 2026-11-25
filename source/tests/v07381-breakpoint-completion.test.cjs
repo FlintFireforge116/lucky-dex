@@ -105,7 +105,10 @@ test('Splash Energy uses the existing real-card KO path and prevents off-type ha
  assert.match(source,/ref\.cardId==='xy9-113'\?'Water'/);
  // Knockout eligibility is checked by the executable cases below, not a
  // regex requiring adjacent predicates in the shared knockout pipeline.
- assert.match(source,/xy9SplashEnergyRescue/);assert.match(source,/discardKnockedOut\(s,slot\)/);
+ // Spectral Breach requires live battle state when discarding attached Energy.
+ const rescue=source.slice(source.indexOf('// BREAKpoint Splash Energy:'),source.indexOf("type:'xy9SplashEnergyRescue'"));
+ assert.ok(rescue.length>0,'Splash Energy KO branch is present');
+ assert.match(rescue,/discardKnockedOut\(state,\s*s,\s*slot\)/);
 });
 
 // Full battle integration: the branch is testable with a pre-existing classic
@@ -170,4 +173,42 @@ for(const owner of ['player','opponent'])test(owner+' Splash Energy respects opp
   assert.equal(s.log.some(x=>x.type==='xy9SplashEnergyRescue'),suppressed);
   assert.equal(s.phase,'promote');
  }
+});
+
+// v495: both orientations must preserve normal KO/Prize handling while
+// suppressing both Splash rescue and Recycle return under live Spectral Breach.
+for(const owner of ['player','opponent'])test(owner+' Splash/Recycle Energy KO respects live Spectral Breach',()=>{
+ const core=require('../app/src/main/assets/tcgp-battle-core.js');
+ const opponents=require('../app/src/main/assets/tcg-classic-opponents.js');
+ const deck=opponents.generate({sets:['base1'],seed:381,type:'Water'});
+ assert.equal(deck.ok,true);
+ const attacker=owner==='player'?'opponent':'player';
+ const data=require('../app/src/main/assets/tcg-classic-battle-data.js'),original=data.cardById;
+ // The offline historical gate may run before XY9 catalogue generation. Use
+ // the same explicit Special Energy descriptor as the generated print in that case.
+ if(!original('xy9-113'))data.cardById=id=>id==='xy9-113'?{id,kind:'energy',basicEnergy:false,specialEnergy:true,effect:{type:'specialEnergy',provides:{Water:1}}}:original(id);
+ try{
+ for(const breach of [false,true]){
+  const s=core.createBattle({format:'classic',playerDeck:deck.cards,opponentDeck:deck.cards,seed:381,firstSide:attacker,playerEnergyTypes:['Water'],opponentEnergyTypes:['Colorless']});
+  s.phase='battle';s.activeSide=attacker;s.turnNumber=8;s.log=[];
+  for(const side of ['player','opponent']){const b=s.sides[side];b.turnCount=3;b.hand=[];b.discard=[];b.bench=[];b.energyDiscard={};b.supporterUsed=false;}
+  const p=s.sides[owner],o=s.sides[attacker];
+  p.active=core.makePokemonSlot('base1-35',3,'rescue-pokemon');
+  p.active.specialEnergy=[{uid:'splash-physical',cardId:'xy9-113',provides:{Water:1}},{uid:'recycle-physical',cardId:'sm11-212',provides:{Colorless:1}}];
+  p.bench=[core.makePokemonSlot('base1-41',3,'seel')];p.bench[0].benchSlot=0;
+  o.active=core.makePokemonSlot('base1-3',3,'chansey');o.active.energy={Colorless:4};
+  if(breach){o.bench=[core.makePokemonSlot('swsh4-71',3,'dusknoir')];o.bench[0].benchSlot=0;}
+  const before=o.prizes.length;const a=core.legalActions(s,attacker).find(a=>a.type==='attack'&&a.attackIndex===1);assert.ok(a);
+  core.applyAction(s,attacker,a);
+  assert.equal(p.hand.some(r=>r.cardId==='base1-35'),!breach);
+  assert.equal(p.discard.some(r=>r.cardId==='base1-35'),breach);
+  assert.ok(p.discard.some(r=>r.uid==='splash-physical'));
+  assert.equal(p.hand.some(r=>r.uid==='recycle-physical'),!breach);
+  assert.equal(p.discard.some(r=>r.uid==='recycle-physical'),breach);
+  if(s.pendingChoice?.special==='chooseClassicPrize'){const claim=core.legalActions(s,attacker).find(a=>a.type==='effectChoice');assert.ok(claim);core.applyAction(s,attacker,claim);}
+  assert.equal(o.prizes.length,before-1);
+  assert.equal(s.log.some(x=>x.type==='xy9SplashEnergyRescue'),!breach);
+  assert.equal(s.phase,'promote');
+ }
+ }finally{data.cardById=original;}
 });
