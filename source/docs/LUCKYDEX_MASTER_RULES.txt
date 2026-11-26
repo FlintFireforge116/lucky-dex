@@ -6217,3 +6217,10 @@ v0.69.530 — Fusion Strike stage 5 (shared conditions and field mechanics)
 - 81/81 focused checks passed, with 24 new bilateral outcome checks. Full offline preparation and Android/device validation are separate evidence. See docs/SWSH8_STAGE5_v0.69.530.md.
 
 Final v0.69.530 validation: full offline preparation exited 0; 2054/2054 gameplay checks, including 81/81 Fusion Strike checks; 12/12 manifest unit tests. Zero failures, skips or cancellations.
+
+v0.69.531 — Fusion Strike stage 6 (paired Trainers and continuous field mechanics)
+- 269/284 playable, full catalogue imported; 15 prints remain gated. Pair-only Items require two matching hand refs and consume both once; Crossceiver recovers a Pokémon or Supporter only. Cross Switcher selects opposing then friendly Bench, not an arbitrary target. If the acting side has an empty Bench, complete only the opposing switch; no opposing Bench means no legal play.
+- Sidney reveals the opposing hand and offers up to two eligible Tool, Stadium or Special Energy refs; Skaters' Park returns paid Basic retreat Energy to hand on either side, not Special Energy. Healing Circle returns the evolution stack and attachments only if a Bench heal occurs. Bone Block blocks hand evolution including Rare Candy, follows the affected defender and clears on moving to Bench. Rapid Strike Canceler, Maximum Downer and Expert in Roundness use suppressible continuous rules.
+- 103/103 focused tests passed, including 22 new bilateral outcomes; prior 258 playable descriptors unchanged. Remaining complex cards explicitly gated. Android compilation and physical-device testing separate.
+
+Final v0.69.531 validation: full offline preparation exited 0; 2076/2076 gameplay checks, including 103/103 Fusion Strike checks; 12/12 manifest unit tests. Zero failures, skips or cancellations.

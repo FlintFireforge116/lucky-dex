@@ -2,16 +2,10 @@
   "printed": 284,
   "canonicalTotal": 284,
   "notImported": [],
-  "battleReady": 258,
+  "battleReady": 269,
   "gated": {
-    "swsh8-11": [
-      "Unimplemented attack: Healing Circle"
-    ],
     "swsh8-53": [
       "Unimplemented attack: Multishot Star"
-    ],
-    "swsh8-67": [
-      "Unimplemented Ability: Rapid Strike Canceler"
     ],
     "swsh8-77": [
       "Unimplemented Ability: Pitch a Pyukumuku"
@@ -19,9 +13,6 @@
     "swsh8-79": [
       "Unimplemented attack: G-Max Spiral",
       "Unimplemented Ability: Double Gunner"
-    ],
-    "swsh8-108": [
-      "Unimplemented Ability: Maximum Downer"
     ],
     "swsh8-118": [
       "Unimplemented attack: Force Regeneration"
@@ -35,20 +26,8 @@
     "swsh8-137": [
       "Unimplemented Ability: Desperate Blast"
     ],
-    "swsh8-173": [
-      "Unimplemented attack: Bone Block"
-    ],
     "swsh8-197": [
       "Unimplemented Ability: Slimy Room"
-    ],
-    "swsh8-203": [
-      "Unimplemented Ability: Expert in Roundness"
-    ],
-    "swsh8-230": [
-      "Unimplemented Trainer effect"
-    ],
-    "swsh8-231": [
-      "Unimplemented Trainer effect"
     ],
     "swsh8-233": [
       "Unimplemented Trainer effect"
@@ -56,19 +35,10 @@
     "swsh8-234": [
       "Unimplemented Trainer effect"
     ],
-    "swsh8-241": [
-      "Unimplemented Trainer effect"
-    ],
-    "swsh8-242": [
-      "Unimplemented Trainer effect"
-    ],
     "swsh8-244": [
       "Unimplemented Special Energy rules"
     ],
     "swsh8-260": [
-      "Unimplemented Trainer effect"
-    ],
-    "swsh8-264": [
       "Unimplemented Trainer effect"
     ],
     "swsh8-266": [
@@ -79,9 +49,6 @@
       "Required Pokémon V evolution parent is not yet enabled"
     ],
     "swsh8-275": [
-      "Unimplemented Trainer effect"
-    ],
-    "swsh8-279": [
       "Unimplemented Trainer effect"
     ]
   },

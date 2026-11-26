@@ -250,3 +250,31 @@ def trainer(row):
  t=row[13]
  if t and t[0]=='You can use this card only during your first turn.' and t[1]=='Search your deck for up to 2 Basic Pokémon and put them onto your Bench. Then, shuffle your deck.':return 'Item',E('benchFromDeck',amount=2,filter={'kind':'pokemon','stage':'Basic'},choose=True,optional=True,condition=cond('ownTurnCountAtMost',amount=1))
  return _stage4_trainer(row)
+
+# Stage 6: paired Items, selected disruption and continuous field mechanics.
+_stage5_attack=attack
+_stage5_ability=ability
+_stage5_trainer=trainer
+
+def attack(row,a):
+ e=_stage5_attack(row,a)
+ if e is not None:return e
+ t=a[3]
+ if t=='Heal all damage from each of your Benched Pokémon. If you healed any damage in this way, shuffle this Pokémon and all attached cards into your deck.':return E('sm7Rule',rule='swsh8HealingCircle')
+ if t=="During your opponent's next turn, Pokémon can't be played from your opponent's hand to evolve the Defending Pokémon.":return E('sm7Rule',rule='swsh8BoneBlock')
+ return None
+
+def ability(row,a):
+ e=_stage5_ability(row,a)
+ if e is not None:return e
+ if a[2] in ["Your opponent's Rapid Strike Pokémon in play have no Abilities.","If all your Pokémon in play are Fusion Strike Pokémon, your opponent's Pokémon VMAX in play get -30 HP.","Prevent all damage done to each of your Pokémon that has the Let's All Rollout attack by attacks from your opponent's Pokémon VMAX."]:
+  return passive(E('noop')) # continuous checks in battle core/effects
+ return None
+
+def trainer(row):
+ t=row[13];name=row[1]
+ if name=='Cross Switcher' and t[0]=='You must play 2 Cross Switcher cards at once. (This effect works one time for 2 cards.)':return 'Item',E('sm7Rule',rule='swsh8CrossSwitcher')
+ if name=='Crossceiver' and t[0]=='You must play 2 Crossceiver cards at once. (This effect works one time for 2 cards.)':return 'Item',E('sm7Rule',rule='swsh8Crossceiver')
+ if t and t[0]=="Your opponent reveals their hand. Discard up to 2 in any combination of Pokémon Tool cards, Special Energy cards, and Stadium cards from it.":return 'Supporter',E('sm7Rule',rule='swsh8Sidney')
+ if t and t[0]=="Whenever either player's Active Pokémon retreats, put any basic Energy that would be discarded into their hand instead of the discard pile.":return 'Stadium',E('noop') # retreat payment in core
+ return _stage5_trainer(row)

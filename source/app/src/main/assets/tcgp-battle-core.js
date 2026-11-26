@@ -390,7 +390,7 @@
   function evolutionActions(state,side){
     const s=state.sides[side],actions=[];
     const canEvolveTarget=(slot,evo,target)=>{
-      if(!slot||state.format==='classic'&&(Number(slot.neoDestinyEvolutionLockUntil||0)>=state.turnNumber||Number(slot.pl2NoEvolveUntil||0)>=state.turnNumber||Number(slot.xy4NoEvolveUntil||0)>=state.turnNumber))return false;
+      if(!slot||state.format==='classic'&&(Number(slot.neoDestinyEvolutionLockUntil||0)>=state.turnNumber||Number(slot.pl2NoEvolveUntil||0)>=state.turnNumber||Number(slot.xy4NoEvolveUntil||0)>=state.turnNumber||Number(slot.swsh8NoEvolveUntil||0)>=state.turnNumber))return false;
       // Dialga's Time Aura only locks evolutions played from hand onto the
       // opposing Active. It must not block Bench evolution or LV.X level-ups.
       const foeSide=side==='player'?'opponent':'player',dialga=state.sides[foeSide]?.active;
@@ -666,7 +666,8 @@
         Number((effects.attachedSpecialProvider(state,ref,data.cardById)).Grass||0)>0));
     const xy3TrainingCenter=state.format==='classic'&&activeStadium(state)?.cardId==='xy3-102'&&['Stage 1','Stage 2'].includes(currentStage)?30:0;
     const sm7Sunbeam=state.format==='classic'&&data.cardById(slot.cardId)?.name==='Lunatone'&&pokemonOn(state.sides[side]).some(p=>p.cardId==='sm7-62'&&!effects.abilitiesSuppressed(state,side,p,data.cardById));
-    const extra=xy3TrainingCenter+xy2FlowerVeil+bw9Shade+bw7Gym+bw7Wall+bw6Cape+hgss4Nidoking+hgss4Indigo+pl1Thankfulness+dp6Temple+majesticVeil+ex3LowPressure+rocketHideout+dp2Equip+(slot.cardId==='gym2-97'?10*Number(slot.energy?.Psychic||0):slot.cardId==='gym2-10'&&slot.gym2GiantGrowth&&state.sides[side].active===slot?40:0);return Math.max(1,(sm7Sunbeam?130:xy4Gourgantic?200:copyHp)+extra-gravitation+effects.modifierAmount(state,side,slot,'maxHp',data.cardById));}
+    const swsh8Foe=side==='player'?'opponent':'player',swsh8Board=pokemonOn(state.sides[swsh8Foe]),swsh8Downer=state.format==='classic'&&data.cardById(slot.cardId)?.pokemonVMAX&&swsh8Board.every(p=>data.cardById(p.cardId)?.fusionStrike)?30*swsh8Board.filter(p=>p.cardId==='swsh8-108'&&!effects.abilitiesSuppressed(state,swsh8Foe,p,data.cardById)).length:0;
+    const extra=-swsh8Downer+xy3TrainingCenter+xy2FlowerVeil+bw9Shade+bw7Gym+bw7Wall+bw6Cape+hgss4Nidoking+hgss4Indigo+pl1Thankfulness+dp6Temple+majesticVeil+ex3LowPressure+rocketHideout+dp2Equip+(slot.cardId==='gym2-97'?10*Number(slot.energy?.Psychic||0):slot.cardId==='gym2-10'&&slot.gym2GiantGrowth&&state.sides[side].active===slot?40:0);return Math.max(1,(sm7Sunbeam?130:xy4Gourgantic?200:copyHp)+extra-gravitation+effects.modifierAmount(state,side,slot,'maxHp',data.cardById));}
   function ex14DarkEyes(state,usedBy,source,ability){
     if(state.format!=='classic'||!source||ability?.printedPowerType!=='power')return;
     const reacting=usedBy==='player'?'opponent':'player';
@@ -1566,7 +1567,7 @@
       const primalAura=state.format==='classic'&&['player','opponent'].some(w=>['ecard3-14','ecard3-H13'].includes(state.sides[w].active?.cardId)&&!effects.abilitiesSuppressed(state,w,state.sides[w].active,data.cardById));
       const bound=state.format==='classic'&&pokemonOn(state.sides[side==='player'?'opponent':'player']).some(p=>p.cardId==='ex11-23'&&!effects.abilitiesSuppressed(state,side==='player'?'opponent':'player',p,data.cardById));
       const bw3AncientPower=state.format==='classic'&&['player','opponent'].some(w=>pokemonOn(state.sides[w]).some(p=>p.cardId==='bw3-67'&&!effects.abilitiesSuppressed(state,w,p,data.cardById)));
-      if(!evolutionLocked&&!bw3AncientPower)actions.push(...evolutionActions(state,side).filter(x=>(!activeEvolutionLocked||x.target!=='active')&&(!primalAura||x.target!=='bench')&&(!ex4Cradily||x.target!=='active')&&(!(state.format==='classic'&&state.sides[side==='player'?'opponent':'player'].active?.cardId==='ex16-10'&&!effects.abilitiesSuppressed(state,side==='player'?'opponent':'player',state.sides[side==='player'?'opponent':'player'].active,data.cardById))||x.target!=='active')&&(!bound||!slotForTarget(s,x.target,x.benchIndex)?.conditions?.sleep)&&Number(slotForTarget(s,x.target,x.benchIndex)?.xy4NoEvolveUntil||0)<state.turnNumber));}
+      if(!evolutionLocked&&!bw3AncientPower)actions.push(...evolutionActions(state,side).filter(x=>(!activeEvolutionLocked||x.target!=='active')&&(!primalAura||x.target!=='bench')&&(!ex4Cradily||x.target!=='active')&&(!(state.format==='classic'&&state.sides[side==='player'?'opponent':'player'].active?.cardId==='ex16-10'&&!effects.abilitiesSuppressed(state,side==='player'?'opponent':'player',state.sides[side==='player'?'opponent':'player'].active,data.cardById))||x.target!=='active')&&(!bound||!slotForTarget(s,x.target,x.benchIndex)?.conditions?.sleep)&&Number(slotForTarget(s,x.target,x.benchIndex)?.xy4NoEvolveUntil||0)<state.turnNumber&&Number(slotForTarget(s,x.target,x.benchIndex)?.swsh8NoEvolveUntil||0)<state.turnNumber));}
 
     if(state.format==='classic')for(const p of pokemonOn(s))if((!data.cardById(p.cardId)?.effect?.sm12Doll||s.active===p)&&(['pl1-119','pl1-120','ex16-84','ex16-85','ex16-86','dp2-116','dp2-117','dp5-84','dp5-89','dp5-91','dp6-138','dp6-139','pl4-89','pl4-92','pl4-93'].includes(p.cardId)||data.cardById(p.cardId)?.effect?.type==='playFossil'))
       actions.push({type:'discardFossil',target:p===s.active?'active':'bench',benchIndex:p===s.active?undefined:Number(p.benchSlot),cardId:p.cardId});
@@ -1646,6 +1647,7 @@
         const stage2Refs=s.hand.map((candidate,evolutionHandIndex)=>({candidate,evolutionHandIndex,card:data.cardById(candidate.cardId)})).filter(x=>x.evolutionHandIndex!==handIndex&&x.card?.battleEnabled&&x.card.kind==='pokemon'&&(x.card.stage==='Stage 2'||card.effect.allowStage1&&x.card.stage==='Stage 1'));
         const targets=[];if(s.active)targets.push({target:'active',slot:s.active});for(const slot of s.bench)if(slot)targets.push({target:'bench',benchIndex:Number(slot.benchSlot),slot});
         for(const evo of stage2Refs)for(const target of targets){const basic=data.cardById(target.slot.cardId);if(!eternalZoneCanPlace(state,side,evo.card.id))continue;
+          if(state.format==='classic'&&Number(target.slot.swsh8NoEvolveUntil||0)>=state.turnNumber)continue;
           if(state.format==='classic'&&Number(s.sm4AbilityPokemonLockUntil||0)>=state.turnNumber&&(evo.card.abilities?.length||evo.card.ability))continue;
           const opposingActive=state.sides[side==='player'?'opponent':'player']?.active;
           if(target.target==='active'&&state.format==='classic'&&opposingActive?.cardId==='pl1-6'&&
@@ -4074,7 +4076,7 @@ const target=slotForTarget(s,action.target,action.benchIndex);if(card.id==='pl2-
       if (!paid) throw new Error('Not enough Energy to retreat.');
       const pouch=state.format==='classic'&&activeToolsOf(state,s.active).some(r=>r.cardId==='sm4-92');
       s.energyDiscard=s.energyDiscard||{};const spentEnergy={};for(const [type,n] of Object.entries(beforeEnergy)){const spent=Number(n||0)-Number(paid.energy[type]||0);if(spent>0){
-        if(pouch){
+        if(pouch||state.format==='classic'&&activeStadium(state)?.cardId==='swsh8-242'){
           const cardId=Object.keys(data.allCards||{}).find(id=>{const c=data.cardById(id);return c?.basicEnergy&&(c.energyType||c.subtype)===type;})||({Grass:'base1-99',Fire:'base1-98',Water:'base1-102',Lightning:'base1-100',Psychic:'base1-101',Fighting:'base1-97',Darkness:'neo1-104',Metal:'neo1-105',Fairy:'xy1-140'})[type];
           for(let i=0;i<spent;i++)s.hand.push({uid:'sm4-pouch-'+state.turnNumber+'-'+type+'-'+i+'-'+Math.floor(random(state)*1000000),cardId});
         }else s.energyDiscard[type]=Number(s.energyDiscard[type]||0)+spent;spentEnergy[type]=spent;

@@ -1,0 +1,7 @@
+# Fusion Strike stage 6 — v0.69.531
+
+269/284 playable (+11), 15 gated. No source catalogue changes. All 258 previously playable descriptors compare equal. Paired Cross Switcher/Crossceiver consume exactly two named Item refs, Sidney chooses up to two matching opposing hand refs, Skaters' Park returns Basic retreat payments to hand. Healing Circle shuffles only after a successful Bench heal. Bone Block is an expiring defender-specific hand evolution restriction (including Rare Candy) and clears on switching. Gorebyss suppresses opposing Rapid Strike Abilities, Toxtricity reduces opposing VMAX HP only with an all-Fusion Strike board, and Blissey guards Rollout Pokémon against VMAX attack damage, not effects. All continuous rules are suppressible. Cross Switcher requires an opposing Bench target but can still resolve the first switch when the acting side has no Bench (see https://www.pokedatavault.com/cards/cross-switcher-swsh8-230/).
+
+Focused regression suite: 103/103, including 22 new bilateral checks. Remaining gaps include Fusion Strike Energy and related cards, hand-only Ability, damage distribution and other explicit ledger entries. Android compilation and physical-device testing not performed.
+
+Final validation: complete offline preparation exited 0; 2076/2076 gameplay test invocations, including 103/103 Fusion Strike checks. Release manifest unit tests 12/12. No failures, skips or cancellations.
