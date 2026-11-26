@@ -17,10 +17,19 @@ test('Gardevoir screenshot reproduction: broad collection no longer takes the le
  assert.ok(!na.has('Holon Lass')&&!nb.has('Holon Lass'));assert.ok(uniqueFrom(na,nb).length>=3&&uniqueFrom(nb,na).length>=3);
  assert.deepEqual(builder.buildDeck(owned,fairyOpts),a,'same seed and inputs remain reproducible');
 });
-test('Fire, Water, Lightning builds select relevant support, not the same fixed Trainer package',()=>{
- const results={};for(const type of ['Fire','Water','Lightning']){const r=builder.buildDeck(owned,{style:'competitive',types:[type],randomSeed:13});results[type]=legal(r);}
- assert.ok(['Welder','Kiawe','Fervor'].some(x=>results.Fire.has(x)));assert.ok(['Melony','Aqua Patch','Irida','Switch Raft'].some(x=>results.Water.has(x)));assert.ok(['Electropower','Aether Paradise Conservation Area','Electric Generator'].some(x=>results.Lightning.has(x)));
- for(const [a,b] of [['Fire','Water'],['Water','Lightning'],['Lightning','Fire']])assert.ok(uniqueFrom(results[a],results[b]).length>=3);
+// Keep exact expected names in a bounded, historical card pool with explicit
+// Pokemon cores. Adding another expansion must not silently change this fixture.
+const supportFixtureSets=['base1','ex3','xy11','sm8','sm9','sm10','sm115','sm12','swsh2','swsh6','swsh9','swsh10','sv1'];
+const supportFixture=owned.filter(r=>supportFixtureSets.includes(data.cardById(r.gameplayId).setId));
+const typeCases=[['Fire','swsh9-26',['Welder','Kiawe','Fervor']],['Water','swsh9-31',['Melony','Aqua Patch','Irida','Switch Raft']],['Lightning','sm9-51',['Electropower','Aether Paradise Conservation Area','Electric Generator','Electromagnetic Radar']]];
+function distinctTypeSupport(results){for(const [a,b] of [['Fire','Water'],['Water','Lightning'],['Lightning','Fire']])assert.ok(uniqueFrom(results[a],results[b]).length>=3,`${a} vs ${b}: ${[...results[a]]} / ${[...results[b]]}`);}
+test('Bounded Fire, Water, Lightning fixtures select relevant type-specific support',()=>{
+ const results={};for(const [type,focusCardId,expected] of typeCases){const r=builder.buildDeck(supportFixture,{style:'competitive',types:[type],sets:supportFixtureSets,focusCardId,randomSeed:13});const n=results[type]=legal(r,supportFixture);assert.equal(r.focusCardId,focusCardId);assert.ok(expected.some(x=>n.has(x)),`${type} support: ${[...n]}`);}
+ distinctTypeSupport(results);
+});
+test('Growing all-set Fire, Water, Lightning decks remain legal and varied without freezing Trainer names',()=>{
+ const results={};for(const [type] of typeCases){const r=builder.buildDeck(owned,{style:'competitive',types:[type],randomSeed:13});results[type]=legal(r);const chosen=r.cards.map(data.cardById),ctx=synergy.context(chosen,r.energyTypes);const usable=trainers(r).filter(c=>Number.isFinite(synergy.trainerScore(c,ctx)));assert.ok(new Set(usable.map(c=>c.name)).size>=3,`${type} has too few useful Trainers`);assert.ok(usable.some(c=>synergy.metadata(c).roles.some(role=>role==='search'||role==='draw')),`${type} has no consistency support`);}
+ distinctTypeSupport(results);
 });
 test('CPU uses the same adaptive path; restricted inventory, manual retained cards and seed changes do not leak eligibility',()=>{
  const a=cpu.generate({sets:cpu.SETS,type:'Lightning',seed:1234}),b=cpu.generate({sets:cpu.SETS,type:'Lightning',seed:5678});const na=legal(a),nb=legal(b);assert.ok(uniqueFrom(na,nb).length>=2);
