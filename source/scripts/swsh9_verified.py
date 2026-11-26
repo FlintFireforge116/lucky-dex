@@ -167,3 +167,51 @@ def trainer(row):
  if t=='Put 1 of your Colorless Pokémon that has any damage counters on it and all attached cards into your hand.':return 'Supporter',E('chooseTarget',target='selfPokemon',filter={'subtype':'Colorless','damaged':True},effect=E('returnToHand',target='selfPokemon',returnBasicEnergy=True))
  if t=='You can use this card only if you discard a Fire Energy card from your hand. Look at the top 7 cards of your deck and put up to 2 of them into your hand. Shuffle the other cards back into your deck.':return 'Supporter',E('sm7Rule',rule='sm10Pay',amount=1,filter={'kind':'energy','basicEnergy':True,'subtype':'Fire'},after=E('sm7Rule',rule='sm9TopPick',count=7,amount=2,filter={},destination='hand',rest='shuffle',optional=True))
  return _stage3_trainer(row)
+
+# Stage 5: reuse battle-tested target, evolution and continuous ability paths.
+_stage4_attack=attack
+_stage4_ability=ability
+
+def attack(row,a):
+ t=a[3]
+ if t=='If any of your Benched Magmortar have any damage counters on them, this attack does 90 more damage.':return bonus(90,cond('pokemonPresent',zone='bench',filter={'name':'Magmortar','damaged':True}))
+ if t=="This attack does 50 damage to each of your opponent's Pokémon. (Don't apply Weakness and Resistance for Benched Pokémon.)":return seq(E('bonusDamage',amount=50),E('benchDamage',side='opponent',all=True,amount=50))
+ if t=='Flip a coin. If heads, search your deck for a Haxorus and put it onto this Axew to evolve it. Then, shuffle your deck.':return E('sm6Rule',rule='ultraEvolution',evolutionName='Haxorus')
+ if t=='Discard all Fighting Energy from this Pokémon. This attack does 60 more damage for each card you discarded in this way.':return E('sm7Rule',rule='sm9TypedDiscardDamage',energyType='Fighting',amount=60,mode='add')
+ if t=='You may discard all Lightning Energy from this Pokémon. If you do, this attack does 120 more damage.':return E('sm7Rule',rule='swsh9OptionalAllLightning')
+ return _stage4_attack(row,a)
+
+def ability(row,a):
+ t=a[2]
+ if t=="Prevent all damage done to your Benched Pokémon by attacks from your opponent's Pokémon.":return passive(E('sm7Rule',rule='sm10BenchBarrier'))
+ if t=="All of your Pokémon that have Grass Energy attached can't be Confused, and if they are already Confused, they recover from that Special Condition.":return passive(E('preventStatus',scope='team',duration='whileInPlay',status='confusion',clearExisting=True,filter={'hasEnergyType':'Grass'}))
+ if t=='As often as you like during your turn, you may move a Special Energy from 1 of your Pokémon to another of your Pokémon.':return dict(type='activated',oncePerTurn=False,effect=E('sm7Rule',rule='swsh7RapidConnection',specialOnly=True,anyRecipient=True))
+ if t=='Once during your turn, you may put 2 damage counters on this Pokémon. If you do, search your deck for a Fighting Energy card and attach it to this Pokémon. Then, shuffle your deck.':return activated(seq(E('placeDamageCounters',target='self',amount=20),E('sm7Rule',rule='sm9SearchAttach',amount=1,energyTypes=['Fighting'],sourceSelf=True)))
+ return _stage4_ability(row,a)
+
+_stage5_attack=attack
+_stage4_trainer=trainer
+
+def attack(row,a):
+ t=a[3]
+ if t=='Flip 3 coins. Attach a number of basic Energy cards up to the number of heads from your discard pile to your Benched Pokémon in any way you like.':return E('sm7Rule',rule='swsh9TriRecharge')
+ return _stage5_attack(row,a)
+
+def trainer(row):
+ t=row[13][0]
+ if t=="Once during each player's turn, that player may attach a Fire Energy card from their discard pile to 1 of their Benched Fire Pokémon. If a player attached Energy to a Pokémon in this way, put 2 damage counters on that Pokémon.":return 'Stadium',E('stadiumAction',effect=E('sm7Rule',rule='sm12DiscardAttach',left=1,energyType='Fire',benchOnly=True,targetType='Fire',counterAfter=20,optional=True))
+ if t=="Shuffle up to 3 in any combination of Pokémon and Supporter cards, except for Team Yell's Cheer, from your discard pile into your deck.":return 'Supporter',E('sm7Rule',rule='sm9Recycle',amount=3,filter={'anyOf':[{'kind':'pokemon'},{'kind':'trainer','trainerType':'Supporter'}],'notName':"Team Yell's Cheer"},optional=True)
+ if t=="Choose 1 or more:\n• Shuffle a Pokémon from your discard pile into your deck.\n• Shuffle a Pokémon Tool card from your discard pile into your deck.\n• Shuffle a Stadium card from your discard pile into your deck.\n• Shuffle an Energy card from your discard pile into your deck.":return 'Supporter',E('sm7Rule',rule='swsh9Roseanne')
+ return _stage4_trainer(row)
+
+# Stage 6: reuse the existing multi-Tool and two-coin hand disruption paths.
+_stage5_ability=ability
+_stage5_final_attack=attack
+
+def ability(row,a):
+ if a[2]=="This Pokémon may have up to 4 Pokémon Tools attached to it. If it loses this Ability, discard Pokémon Tools from it until only 1 remains.":return passive(E('toolCapacity',amount=4))
+ return _stage5_ability(row,a)
+
+def attack(row,a):
+ if a[3]=="Flip 2 coins. If either of them is heads, your opponent reveals their hand. For each heads, choose a card you find there and put it on the bottom of your opponent's deck in any order.":return E('neoRule',rule='pl3:137:cyrusInitiative',reason='Ransack',reveal=True)
+ return _stage5_final_attack(row,a)

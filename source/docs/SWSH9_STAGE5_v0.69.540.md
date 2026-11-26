@@ -1,0 +1,3 @@
+# Brilliant Stars — stage 5 (v0.69.540)
+
+172/186 main-set prints enabled, 14 explicitly gated. Newly enabled: Tropius, Manaphy, Electivire, Dusknoir, Sigilyph, Lucario, Axew, Magma Basin (2), Roseanne's Backup (3), Team Yell's Cheer, Pikachu V. All previous 158 playable descriptors unchanged. Added 24 bilateral focused outcomes (114 total). Wave Veil uses the existing Bench Barrier shared damage guard; direct and distributed attacks, counters and suppression are tested. Double Turbo Energy remains gated because legacy bespoke damage paths still need review. APK and physical-device testing are not part of offline validation.

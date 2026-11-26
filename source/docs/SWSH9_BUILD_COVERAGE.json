@@ -2,53 +2,24 @@
   "printed": 186,
   "canonicalTotal": 186,
   "notImported": [],
-  "battleReady": 158,
+  "battleReady": 176,
   "gated": {
-    "swsh9-5": [
-      "Unimplemented Ability: Curative Bower"
-    ],
     "swsh9-37": [
       "Unimplemented Ability: Emergency Surfacing"
-    ],
-    "swsh9-41": [
-      "Unimplemented Ability: Wave Veil"
     ],
     "swsh9-45": [
       "Unimplemented attack: Fast Charge",
       "Unimplemented attack: Dynamic Spark"
     ],
-    "swsh9-47": [
-      "Unimplemented attack: Explosive Bolt",
-      "Unimplemented attack: High-Voltage Current"
-    ],
     "swsh9-54": [
       "Unimplemented attack: Moonlit Miracle"
-    ],
-    "swsh9-62": [
-      "Unimplemented Ability: Special Transfer"
-    ],
-    "swsh9-66": [
-      "Unimplemented attack: Tri Recharge"
     ],
     "swsh9-71": [
       "Unimplemented attack: Rainbow Flavor",
       "Unimplemented Ability: Additional Order"
     ],
-    "swsh9-79": [
-      "Unimplemented attack: Aura Sphere Volley",
-      "Unimplemented Ability: Roaring Resolve"
-    ],
-    "swsh9-87": [
-      "Unimplemented attack: Ransack"
-    ],
-    "swsh9-88": [
-      "Unimplemented Ability: Boss Pockets"
-    ],
     "swsh9-89": [
       "Unimplemented attack: Ticking Terror"
-    ],
-    "swsh9-110": [
-      "Unimplemented attack: Ultra Evolution"
     ],
     "swsh9-131": [
       "Unimplemented Trainer effect"
@@ -59,39 +30,12 @@
     "swsh9-137": [
       "Unimplemented Trainer effect"
     ],
-    "swsh9-144": [
-      "Unimplemented Trainer effect"
-    ],
-    "swsh9-148": [
-      "Unimplemented Trainer effect"
-    ],
-    "swsh9-149": [
-      "Unimplemented Trainer effect"
-    ],
     "swsh9-151": [
       "Unimplemented Special Energy rules"
-    ],
-    "swsh9-157": [
-      "Unimplemented attack: Lightning Blast"
     ],
     "swsh9-158": [
       "Unimplemented attack: Fast Charge",
       "Unimplemented attack: Dynamic Spark"
-    ],
-    "swsh9-161": [
-      "Unimplemented Ability: Boss Pockets"
-    ],
-    "swsh9-162": [
-      "Unimplemented Ability: Boss Pockets"
-    ],
-    "swsh9-172": [
-      "Unimplemented Trainer effect"
-    ],
-    "swsh9-180": [
-      "Unimplemented Trainer effect"
-    ],
-    "swsh9-185": [
-      "Unimplemented Trainer effect"
     ]
   },
   "attacks": 235,

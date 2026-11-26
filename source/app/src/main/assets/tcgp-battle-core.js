@@ -2790,10 +2790,10 @@
   function swsh7ToolOverflow(state,resume,cause){
     if(state.format!=='classic'||state.phase!=='battle')return false;
     for(const side of [state.activeSide,state.activeSide==='player'?'opponent':'player'])for(const p of pokemonOn(state.sides[side])){
-      const garb=['swsh7-101','swsh7-216'].includes(p.cardId);if(garb&&toolsOf(p).length>1)p.swsh7DoubleTool=true;
-      if(!garb&&!p.swsh7DoubleTool)continue;
+      const garb=['swsh7-101','swsh7-216'].includes(p.cardId),boss=['swsh9-88','swsh9-161','swsh9-162'].includes(p.cardId);if((garb||boss)&&toolsOf(p).length>1)p.swsh7DoubleTool=true;
+      if(!garb&&!boss&&!p.swsh7DoubleTool)continue;
       if(toolsOf(p).length<=1){delete p.swsh7DoubleTool;continue;}
-      if(toolsOf(p).length>effects.toolCapacity(state,side,p,data.cardById)){beginEffectChoice(state,side,p,{kind:'toolCard',side:'self',targetUid:p.uid,special:'swsh7ToolOverflow',prompt:'Rubbish Collecting: discard a Pokémon Tool',koResume:resume||null,koCause:cause||null});return true;}
+      if(toolsOf(p).length>effects.toolCapacity(state,side,p,data.cardById)){beginEffectChoice(state,side,p,{kind:'toolCard',side:'self',targetUid:p.uid,special:'swsh7ToolOverflow',prompt:(boss?'Boss Pockets':'Rubbish Collecting')+': discard a Pokémon Tool',koResume:resume||null,koCause:cause||null});return true;}
     }return false;
   }
   function resolveKnockOut(state,resume,cause){
