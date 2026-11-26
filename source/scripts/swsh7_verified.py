@@ -135,7 +135,7 @@ at(30,'Bubble Pod',ES('BubblePod'))
 ab(34,trig('evolved',E('chooseOption',options=[{'label':'Use Enthusiastic Dance','effect':E('modifier',stat='attackDamageActiveOnly',scope='team',filter={'stage':'Basic'},amount=100,duration='turn')},{'label':'Skip','effect':E('noop')}]),fromHandOnly=True))
 at(43,'Element Chain',ES('ElementChain'))
 at(53,'Blinding Beam',E('attackCoinGate',target='opponentActive',duration='opponentTurn'))
-# Primeval Beak is gated pending an audit of older direct hand-attachment paths.
+# Primeval Beak is mapped in stage 7 below.
 at(59,'Spark Trap',ES('SparkTrap'))
 at(63,'Psylaser',seq(discard('all',energyType='Psychic',strictEnergyType=True),E('selectedDamage',target='opponentPokemon',amount=120)))
 at(88,'Pressure Shot',ES('PressureShot'))
@@ -188,3 +188,6 @@ tr(151,'Tool',ES('MoonSunBadge'))
 def energy(row):
  if row[0]=='165':return E('specialEnergy',provides={'Colorless':1})
  return None
+
+# Stage 7: defender-scoped physical hand attachment lock.
+at(58,'Primeval Beak',ES('PrimevalBeak'))

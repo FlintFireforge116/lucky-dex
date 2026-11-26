@@ -3327,6 +3327,7 @@ const target=slotForTarget(s,action.target,action.benchIndex);if(card.id==='pl2-
   }
 
   function physicalHandEnergyTargetLegal(state,side,card,slot,extra=false,paid=false){
+    if(state.format==='classic'&&Number(slot?.swsh7PrimevalUntil||0)===state.turnNumber)return false;
     const s=state.sides[side],foeSide=side==='player'?'opponent':'player',foe=state.sides[foeSide];
     if(!card||!slot)return false;
     const energyTextActive=effects.specialEnergyTextActive(state,{cardId:card.id},data.cardById);

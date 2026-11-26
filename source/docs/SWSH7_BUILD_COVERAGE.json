@@ -1,21 +1,9 @@
 {
   "printed": 237,
-  "battleReady": 232,
+  "battleReady": 236,
   "gated": {
     "swsh7-38": [
       "Unimplemented Ability: Dew Guard"
-    ],
-    "swsh7-58": [
-      "Unimplemented attack: Primeval Beak"
-    ],
-    "swsh7-59": [
-      "Required Pokémon V evolution parent is not yet enabled"
-    ],
-    "swsh7-178": [
-      "Unimplemented attack: Primeval Beak"
-    ],
-    "swsh7-210": [
-      "Required Pokémon V evolution parent is not yet enabled"
     ]
   },
   "attacks": 309,
