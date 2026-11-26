@@ -250,7 +250,16 @@
   // Extra points reward actual matching Basic types rather than the card's name.
   return (payoff?150:0)+(search?50:0)+conditions.length*70+(eligible.length?10:0);
  }
+ // Exact recipients are a hard prerequisite, not a type-synergy bonus.
+ // Match printed full names, just as the battle handler does: a TAG TEAM
+ // containing Magikarp is not named Magikarp, and Golem-GX is not Golem.
+ const namedTrainerRecipients=Object.freeze({
+  sm115WaterCommand:Object.freeze(['Psyduck','Horsea','Staryu','Starmie-GX','Magikarp','Gyarados','Lapras']),
+  sm115BrockTraining:Object.freeze(['Geodude','Graveler','Golem','Onix-GX','Cubone','Rhyhorn','Rhydon','Sudowoodo'])
+ });
  function trainerScore(card,ctx){
+  const recipients=namedTrainerRecipients[card.effect?.rule];
+  if(recipients&&!ctx.pokemon.some(p=>recipients.includes(p.name)))return -Infinity;
   if(!card||card.kind!=='trainer')return -Infinity;
   const p=metadata(card);
   // An Archie/Magma Belt/Team-specific TM with no matching Team Pokemon is

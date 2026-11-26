@@ -32,3 +32,34 @@ test('competitive candidate comparison uses adaptive Trainer selection across se
  const r=await optimizer.optimise({build:builder.buildDeck,rows:owned,options:{...fairyOpts,optimiserBudgetMs:30000},maxCandidates:4,simulate:false,seed:13});
  const n=legal(r);assert.ok(n.has('Gardevoir Spirit Link'));assert.ok(r.rankedCandidates>=2);assert.ok(!n.has('Holon Lass'));
 });
+
+const synergy=require('../app/src/main/assets/tcg-deck-synergy.js');
+test('Named Trainer targets use exact printed names, not type or TAG TEAM name fragments',()=>{
+ const misty=data.cardById('sm115-63'),brock=data.cardById('sm115-55');
+ const score=(trainer,mons,types)=>synergy.trainerScore(trainer,synergy.context(mons.map(data.cardById),types));
+ assert.equal(score(misty,['sm9-160','sm12-38'],['Water']),-Infinity);
+ assert.equal(score(misty,['sm9-160','sm12-38','sm9-25'],['Water']),-Infinity);
+ const exact=n=>data.CARDS.find(c=>c.kind==='pokemon'&&c.battleEnabled&&c.name===n).id;
+ for(const n of ['Psyduck','Horsea','Staryu','Starmie-GX','Magikarp','Gyarados','Lapras'])assert.ok(Number.isFinite(score(misty,[exact(n),'sm9-160'],['Water'])),n);
+ assert.equal(score(brock,[exact('Machop')],['Fighting']),-Infinity);
+ for(const n of ['Geodude','Graveler','Golem','Onix-GX','Cubone','Rhyhorn','Rhydon','Sudowoodo'])assert.ok(Number.isFinite(score(brock,[exact(n)],['Fighting'])),n);
+});
+test('Both reported TAG TEAM cores exclude Misty when the final draft contains no named recipient',()=>{
+ const eligible=new Set(['Psyduck','Horsea','Staryu','Starmie-GX','Magikarp','Gyarados','Lapras']);
+ for(const focusCardId of ['sm9-160','sm12-38'])for(const randomSeed of [13,24]){
+  const r=builder.buildDeck(owned,{style:'competitive',types:['Water'],focusCardId,randomSeed});legal(r);
+  const mons=r.cards.map(data.cardById).filter(c=>c.kind==='pokemon');
+  if(!mons.some(c=>eligible.has(c.name)))assert.ok(!r.cards.includes('sm115-63'),focusCardId);
+  if(randomSeed===13){assert.ok(!mons.some(c=>eligible.has(c.name)),'reproduce reported recipient-free core');assert.ok(!r.cards.includes('sm115-63'));}
+ }
+});
+test('Explicit retained named Trainer is not silently removed by auto fill',()=>{
+ const r=builder.buildDeck(owned,{style:'competitive',types:['Water'],focusCardId:'sm9-160',randomSeed:13,cards:['sm115-63']});legal(r);assert.ok(r.cards.includes('sm115-63'));
+});
+test('CPU and optimiser share the hard named-recipient guard',async()=>{
+ const optimizer=require('../app/src/main/assets/tcg-deck-optimizer.js');
+ const allowed=new Set(['Psyduck','Horsea','Staryu','Starmie-GX','Magikarp','Gyarados','Lapras']);
+ const check=r=>{legal(r);if(r.cards.includes('sm115-63'))assert.ok(r.cards.map(data.cardById).some(p=>p.kind==='pokemon'&&allowed.has(p.name)));};
+ check(cpu.generate({sets:cpu.SETS,type:'Water',seed:1234}));
+ check(await optimizer.optimise({build:builder.buildDeck,rows:owned,options:{style:'competitive',types:['Water'],focusCardId:'sm9-160',optimiserBudgetMs:30000},maxCandidates:4,simulate:false,seed:13}));
+});
