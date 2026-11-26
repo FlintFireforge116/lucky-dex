@@ -679,6 +679,11 @@
   }
   function triggerAbilities(state,event,side,onlySource,eventData){
     const ss=state.sides[side],meta=eventData||{};
+    if(state.format==='classic'&&event==='evolved'&&meta.fromHand&&state.activeSide===side&&onlySource&&data.cardById(onlySource.cardId)?.evolvesFrom==='Eevee'&&data.cardById(onlySource.stack?.at(-2))?.name==='Eevee'){
+      for(const p of pokemonOn(ss))if(p!==onlySource&&p.cardId==='swsh10-119'&&p.swsh10ResonantTurn!==state.turnNumber&&!effects.abilitiesSuppressed(state,side,p,data.cardById)){
+        p.swsh10ResonantTurn=state.turnNumber;(state.swsh10ResonantQueue||(state.swsh10ResonantQueue=[])).push({side,uid:p.uid});
+      }
+    }
     if(state.format==='classic'&&event==='energyAttached'&&meta.fromHand&&onlySource&&activeStadium(state)?.cardId==='swsh6-147'&&!effects.effectiveTypes(state,side,onlySource,data.cardById).includes('Psychic')){
       onlySource.damage=Number(onlySource.damage||0)+20;state.log.push({type:'swsh6OldCemetery',side,targetUid:onlySource.uid,amount:20});
     }
@@ -2802,6 +2807,13 @@
   }
   function resolveKnockOut(state,resume,cause){
     if(swsh7ToolOverflow(state,resume,cause))return true;
+    while(state.phase==='battle'&&state.swsh10ResonantQueue?.length){
+      const q=state.swsh10ResonantQueue.shift(),p=findSlotByUid(state,q.side,q.uid);
+      if(!p||p.cardId!=='swsh10-119'||effects.abilitiesSuppressed(state,q.side,p,data.cardById))continue;
+      effects.applyEffect({type:'sm7Rule',rule:'swsh10ResonantEvolution'},{...effectContext(state,q.side,{},p),isAbility:true});
+      if(state.phase==='effectChoice'){state.pendingChoice.resume='knockout';state.pendingChoice.koResume=resume||null;state.pendingChoice.koCause=cause||null;return true;}
+    }
+
     // Reactive selection is delayed until any attack-effect choices finish,
     // but still resolves before removing either knocked-out Pokémon.
     while(state.phase==='battle'&&state.swsh1SnapTrapQueue?.length){
@@ -2848,6 +2860,14 @@
         const eventSource=slot.dp2ForcedDiscard?null:cause==='attack'?source:null;
         // Fusion Strike: only a fresh opposing attack-damage KO triggers these cards.
         if(state.format==='classic'&&eventSource?.attack&&eventSource.side===foeSide&&Number(eventSource.turn)===Number(state.turnNumber)&&Number(eventSource.damage)>0&&eventSource.damageKo!==false){
+          if(card?.pokemonV&&card.stage==='Basic'&&!card.pokemonVMAX&&!card.pokemonVSTAR){
+            const seen=slot.swsh10WishSeen||(slot.swsh10WishSeen=[]),types=Object.keys(slot.energy||{}).filter(t=>Number(slot.energy[t])>0),targets=pokemonOn(s).filter(p=>p!==slot&&p.damage<maxHp(state,side,p)&&!p.gymEnergyLock&&Number(p.swsh7PrimevalUntil||0)!==state.turnNumber),source=pokemonOn(s).find(p=>p.cardId==='swsh10-170'&&!seen.includes(p.uid)&&!effects.abilitiesSuppressed(state,side,p,data.cardById));
+            if(source&&types.length&&targets.length){
+              seen.push(source.uid);const opts=targets.flatMap(p=>types.map(type=>({uid:p.uid,type,label:data.cardById(p.cardId)?.name+': '+type+' Energy'})));
+              beginEffectChoice(state,side,source,{kind:'option',side:'self',optional:true,options:opts.map(o=>o.label),effect:{type:'sm7Rule',rule:'swsh10WishConnector',fromUid:slot.uid,opts}});
+              state.pendingChoice.resume='knockout';state.pendingChoice.koResume=resume||null;state.pendingChoice.koCause=cause||null;return true;
+            }
+          }
           if(!slot.swsh8DesperateResolved&&slot.cardId==='swsh8-137'&&slot===s.active&&!effects.abilitiesSuppressed(state,side,slot,data.cardById)){
             slot.swsh8DesperateResolved=true;
             if(foe.active?.uid===eventSource.uid)effects.applyEffect({type:'placeDamageCounters',target:'opponentActive',amount:100},{...effectContext(state,side,{},slot),isAbility:true});

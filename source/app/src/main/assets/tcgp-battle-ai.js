@@ -431,6 +431,7 @@
       const link=legal.find(a=>a.type==='trainer'&&effects.spiritLinkSpecies(data.cardById(a.cardId))&&legal.some(e=>e.type==='evolve'&&e.target===a.target&&e.benchIndex===a.benchIndex&&effects.spiritLinkEvolution(data.cardById(a.cardId),data.cardById(e.cardId||ss.hand[e.handIndex]?.cardId))));
       if(link)return link;
     }
+    if(state.phase==='effectChoice'&&['swsh10ResonantEvolution','swsh10WishConnector'].includes(state.pendingChoice?.effect?.rule))return legal.find(a=>!a.choiceSkip)||legal[0];
     if(state.phase==='effectChoice'&&['swsh10GrantRecover','swsh10AncientWisdom'].includes(state.pendingChoice?.effect?.rule)){const available=legal.filter(a=>!a.choiceSkip);return available.find(a=>a.choiceTarget==='active')||available[0]||legal[0];}
     if(state.phase==='effectChoice'&&state.pendingChoice?.special==='swsh2NaturalDraw')return legal.find(x=>x.choiceOption===1)||legal[0];
     if(state.phase==='effectChoice'&&state.pendingChoice?.effect?.rule==='sm11Quiz'&&state.pendingChoice.effect.stage==='guess')return legal[Math.floor(core.random(state)*legal.length)];

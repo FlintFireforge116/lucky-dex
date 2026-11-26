@@ -262,3 +262,14 @@ def ability(row,a):
 def trainer(row):
  if row[1]=='Grant' and row[13][0]=="During this turn, your Fighting Pokémon's attacks do 30 more damage to your opponent's Active Pokémon (before applying Weakness and Resistance). During your turn, if this Grant is in your discard pile, you may discard 2 cards, except any Grant, from your hand. If you do, put this Grant into your hand. (This effect doesn't use up your Supporter card for the turn.)":return 'Supporter',E('sm7Rule',rule='swsh10Grant')
  return _stage8_trainer(row)
+
+# Stage 10: cross-Pokemon evolution and pre-KO Energy movement.
+_stage9_attack=attack
+_stage9_ability=ability
+def attack(row,a):
+ if a[3]=='Both Active Pokémon are now Asleep.':return seq(status('sleep'),E('status',target='selfActive',status='sleep'))
+ return _stage9_attack(row,a)
+def ability(row,a):
+ if row[0]=='119' and a[0]=='Resonant Evolution':return passive(E('sm7Rule',rule='swsh10ResonantEvolution'))
+ if row[0]=='170' and a[0]=='Wish Connector':return passive(E('sm7Rule',rule='swsh10WishConnector'))
+ return _stage9_ability(row,a)

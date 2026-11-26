@@ -2,17 +2,10 @@
   "printed": 216,
   "canonicalTotal": 216,
   "notImported": [],
-  "battleReady": 212,
+  "battleReady": 214,
   "gated": {
-    "swsh10-119": [
-      "Unimplemented Ability: Resonant Evolution"
-    ],
     "swsh10-120": [
       "Unimplemented Ability: Stand Sentry"
-    ],
-    "swsh10-170": [
-      "Unimplemented attack: Hypnostrike",
-      "Unimplemented Ability: Wish Connector"
     ],
     "swsh10-216": [
       "Unimplemented Special Energy rules"
