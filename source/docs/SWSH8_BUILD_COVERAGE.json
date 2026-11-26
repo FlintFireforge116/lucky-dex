@@ -2,12 +2,8 @@
   "printed": 284,
   "canonicalTotal": 284,
   "notImported": [],
-  "battleReady": 283,
-  "gated": {
-    "swsh8-197": [
-      "Unimplemented Ability: Slimy Room"
-    ]
-  },
+  "battleReady": 284,
+  "gated": {},
   "attacks": 391,
   "abilities": 30,
   "pokemonV": 32,

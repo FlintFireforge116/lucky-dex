@@ -6244,3 +6244,9 @@ v0.69.534 — Fusion Strike stage 9 (repeat targets and cross-set evolution)
 - 139/139 focused tests passed (16 new), including CPU choice and set-local deck regression. Android/device tests separate.
 
 Final v0.69.534 validation: full offline preparation exited 0; 2112/2112 gameplay checks, including 139/139 Fusion Strike; 12/12 manifest unit tests. No failures, skips or cancellations.
+
+v0.69.535 — Fusion Strike complete (284/284 battle-enabled; zero gated)
+- Slimy Room checks the exact physical Energy ref before attachment mutation; use seeded RNG, discard the exact card on tails, do not mark hand allowance used or trigger attachment effects. Opposing Active unsuppressed Goodra only; no Zone/deck/discard flips. Route all new physical hand attachment handlers through the shared slimyRoomAllows/takeHandAttachment check. Multiple attempted cards must keep their independent flips and conditional attachment rewards must require successful attachments. A protected Pokémon may be selected for Double Gunner; protection still prevents counter placement. Require two distinct opposing Bench targets, not two unprotected targets.
+- Whole-set audit verifies all canonical print fields, effect schemas and equivalent alternate signatures, both-side attack execution and targeted outcome tests. Preserve 283 previously enabled descriptors. See SWSH8_STAGE10_v0.69.535.md for scope and limitations. Zero gated is not proof of every cross-set interaction; APK/device testing remains separate.
+
+Final v0.69.535 validation: full offline preparation exited 0; 2134/2134 gameplay tests, including 161/161 Fusion Strike; 12/12 release-manifest unit tests. No failures, skips or cancellations.

@@ -229,6 +229,8 @@
     if(entry.type==='ability')return`${who} used ${entry.ability||entry.abilityName||'an ability'} · ${cardName(entry.cardId)}`;
     if(entry.type==='attach')return`${who} attached ${entry.energyType||'Energy'} to ${cardName(entry.cardId)}`;
     if(entry.type==='attachSpecial')return`${who} attached ${cardName(entry.energyCardId||entry.cardId)} to ${cardName(entry.cardId)}`;
+    if(entry.type==='swsh8SlimyRoom')return`Slimy Room — ${who} discarded ${cardName(entry.cardId)}; attachment failed`;
+    if(entry.type==='coin'&&entry.reason==='Slimy Room')return`Slimy Room · ${entry.heads?'HEADS — attach Energy':'TAILS — discard Energy'}`;
     if(entry.type==='sm11QuizReveal')return `Quiz: ${cardName(entry.cardId)} · guessed ${entry.guess} · ${entry.correct?'correct':'incorrect'} · ${entry.drawSide==='player'?'you draw':'CPU draws'} up to 4 cards`;
     if(entry.type==='sm11AttachmentReturned')return `${cardName(entry.cardId)} returned to ${who==='You'?'your':'CPU’s'} hand`;
     if(entry.type==='effectChoice')return`${who} resolved a card effect`;

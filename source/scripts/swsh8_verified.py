@@ -331,3 +331,9 @@ def attack(row,a):
 def ability(row,a):
  if a[2]=="You must discard a Water Energy card from your hand in order to use this Ability. Once during your turn, you may choose 2 of your opponent's Benched Pokémon and put 2 damage counters on each of them.":return activated(E('sm7Rule',rule='swsh8DoubleGunner'))
  return _stage8_ability(row,a)
+
+# Stage 10: pre-attachment interception shared by physical hand Energy paths.
+_stage9_ability=ability
+def ability(row,a):
+ if a[2]=="As long as this Pokémon is in the Active Spot, whenever your opponent tries to attach an Energy card from their hand to a Pokémon, they must flip a coin. If tails, your opponent discards that Energy card instead of attaching it, and this doesn't use up their Energy attachment for the turn.":return passive(E('noop')) # shared Slimy Room hook
+ return _stage9_ability(row,a)

@@ -1,8 +1,8 @@
 {
   "set": "swsh8",
   "name": "Fusion Strike",
-  "stage": "complete-import-partial-mechanics",
-  "release": "0.69.534",
+  "stage": "complete-import-mechanics-audited",
+  "release": "0.69.535",
   "printedTotal": 284,
   "importedTotal": 284,
   "attackPrints": 391,
