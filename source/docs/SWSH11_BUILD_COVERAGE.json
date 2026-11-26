@@ -1,47 +1,7 @@
 {
-  "printed": 105,
+  "printed": 145,
   "canonicalTotal": 217,
   "notImported": [
-    "swsh11-66",
-    "swsh11-67",
-    "swsh11-68",
-    "swsh11-69",
-    "swsh11-70",
-    "swsh11-71",
-    "swsh11-72",
-    "swsh11-73",
-    "swsh11-74",
-    "swsh11-75",
-    "swsh11-76",
-    "swsh11-77",
-    "swsh11-78",
-    "swsh11-79",
-    "swsh11-80",
-    "swsh11-81",
-    "swsh11-82",
-    "swsh11-83",
-    "swsh11-84",
-    "swsh11-85",
-    "swsh11-86",
-    "swsh11-87",
-    "swsh11-88",
-    "swsh11-89",
-    "swsh11-90",
-    "swsh11-91",
-    "swsh11-92",
-    "swsh11-93",
-    "swsh11-94",
-    "swsh11-95",
-    "swsh11-96",
-    "swsh11-97",
-    "swsh11-98",
-    "swsh11-99",
-    "swsh11-100",
-    "swsh11-101",
-    "swsh11-102",
-    "swsh11-103",
-    "swsh11-104",
-    "swsh11-105",
     "swsh11-106",
     "swsh11-107",
     "swsh11-108",
@@ -115,7 +75,7 @@
     "swsh11-212",
     "swsh11-213"
   ],
-  "battleReady": 67,
+  "battleReady": 94,
   "gated": {
     "swsh11-13": [
       "Unimplemented attack: Tearing Gust"
@@ -165,8 +125,51 @@
       "Unimplemented attack: Wonder Storm",
       "Unimplemented Ability: Moon-Watching Party"
     ],
-    "swsh11-65": [
-      "Unimplemented attack: Cursed Drop"
+    "swsh11-66": [
+      "Unimplemented attack: Screaming Circle",
+      "Unimplemented Ability: Netherworld Gate"
+    ],
+    "swsh11-67": [
+      "Unimplemented attack: Tricky Slap"
+    ],
+    "swsh11-71": [
+      "Unimplemented attack: Tempting Trap"
+    ],
+    "swsh11-73": [
+      "Unimplemented Ability: Puppet Offering"
+    ],
+    "swsh11-74": [
+      "Unimplemented attack: Moonglow Reverse"
+    ],
+    "swsh11-76": [
+      "Unimplemented attack: Doom Curse"
+    ],
+    "swsh11-78": [
+      "Unimplemented attack: Synchro Kinesis"
+    ],
+    "swsh11-81": [
+      "Unimplemented attack: Night Footsteps"
+    ],
+    "swsh11-82": [
+      "Unimplemented attack: Blossom Tail",
+      "Unimplemented Ability: Guardian of Love"
+    ],
+    "swsh11-85": [
+      "Unimplemented attack: Splash Loop"
+    ],
+    "swsh11-88": [
+      "Unimplemented attack: Strong-Arm Lariat",
+      "Unimplemented Ability: Crisis Muscles"
+    ],
+    "swsh11-91": [
+      "Unimplemented attack: Geo Cannon"
+    ],
+    "swsh11-93": [
+      "Unimplemented attack: Lost Dive",
+      "Unimplemented attack: Ancient Star"
+    ],
+    "swsh11-102": [
+      "Unimplemented attack: Recover"
     ],
     "swsh11-152": [
       "Unimplemented Trainer effect"
@@ -235,7 +238,7 @@
       "Unimplemented Trainer effect"
     ]
   },
-  "attacks": 97,
-  "abilities": 15,
+  "attacks": 161,
+  "abilities": 21,
   "sourceGitBlob": "157da08c0435be1c0692faac35e3a7580e638afb"
 }

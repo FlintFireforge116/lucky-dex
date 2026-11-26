@@ -9,22 +9,22 @@ OUT=ROOT/'app/src/main/assets/tcg-classic-lost-origin.js'
 COVER=ROOT/'docs/SWSH11_BUILD_COVERAGE.json'
 ATTEST=ROOT/'docs/SWSH11_CANONICAL_SOURCE.json'
 PIN='157da08c0435be1c0692faac35e3a7580e638afb'
-COMPACT_SHA='4b82ad0ce7b76493c7d864ece37714c80969c1443fff9077e351ca876a9319c3'
+COMPACT_SHA='e0164d0cb7a4d7b2f7e59042834b90bcd2cb710b7ddf3b4a3bf2c86d2f20bd8c'
 SYMBOL={'G':'Grass','R':'Fire','W':'Water','L':'Lightning','P':'Psychic','F':'Fighting','D':'Darkness','M':'Metal','Y':'Fairy','N':'Dragon'}
 REVERSE={v:k for k,v in SYMBOL.items()}
 VARIANTS=[]
 def validate(rows):
  from swsh11_source import rows as verified_rows
- assert rows==verified_rows(), 'Stage 1 source differs from independently checked transfer packets'
- assert len(rows)==105 and len({r[0] for r in rows})==105
- assert sum(len(r[7]) for r in rows)==97
+ assert rows==verified_rows(), 'Stage 2 source differs from independently checked transfer packets'
+ assert len(rows)==145 and len({r[0] for r in rows})==145
+ assert sum(len(r[7]) for r in rows)==161
  return rows
 
 def prepare():
  from swsh11_source import rows as verified_rows
  rows=validate(verified_rows())
  SRC.write_text(json.dumps(rows,ensure_ascii=False,separators=(',',':'))+'\n',encoding='utf-8')
- ATTEST.write_text(json.dumps({'set':'swsh11','sourceGitBlob':PIN,'compactSha256':hashlib.sha256(SRC.read_bytes()).hexdigest(),'printedTotal':217,'importedTotal':105,'sourceScope':'verified stage-one packets'},indent=2)+'\n')
+ ATTEST.write_text(json.dumps({'set':'swsh11','sourceGitBlob':PIN,'compactSha256':hashlib.sha256(SRC.read_bytes()).hexdigest(),'printedTotal':217,'importedTotal':145,'sourceScope':'verified stage-one and stage-two packets'},indent=2)+'\n')
  return rows
 
 def get_source():

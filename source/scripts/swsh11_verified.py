@@ -63,3 +63,24 @@ def trainer(row):
 
 def energy(row):return None
 prism_ready=previous.prism_ready
+
+# Stage 2: exact text, shared attack descriptors and physical Lost Zone choices.
+_stage1_attack=attack
+def attack(row,a):
+ t=a[3]
+ if t=="Put 3 damage counters on your opponent's Pokémon in any way you like.":return E('distributeDiscardCounters',amount=10,remaining=3)
+ if t=="You can use this attack only if you have 10 or more cards in the Lost Zone. Put 12 damage counters on your opponent's Pokémon in any way you like.":return seq(E('attackRequirement',condition=cond('swsh11LostAtLeast',amount=10)),E('distributeDiscardCounters',amount=10,remaining=12))
+ if t=="Switch 1 of your opponent's Benched Pokémon with their Active Pokémon. The new Active Pokémon is now Confused.":return E('sequence',condition=cond('benchAtLeast',side='opponent',amount=1),effects=[E('forceOpponentSwitch',chooseBy='attacker'),status('confusion')])
+ if t=="This attack does 10 damage for each damage counter on all of your opponent's Pokémon.":return E('damageFromDamage',source='opponent',all=True,amount=1,mode='replace')
+ if t=='If you have no cards in your hand, this attack does 150 more damage.':return bonus(150,cond('handSizeOneOf',values=[0]))
+ if t=="Flip 4 coins. This attack does 50 damage for each heads. If at least 2 of them are heads, your opponent's Active Pokémon is now Paralyzed.":return E('coinDamageStatus',coins=4,amount=50,minHeads=2,status='paralysis')
+ if t=="This attack's damage isn't affected by Resistance.":return E('damageRule',ignoreResistance=True)
+ if t=='Put up to 2 basic Energy cards from your discard pile into your hand.':return E('searchChosen',source='discard',amount=2,filter={'kind':'energy','basicEnergy':True},optional=True)
+ if t=='Search your deck for up to 2 Fighting Energy cards and attach them to your Benched Pokémon in any way you like. Then, shuffle your deck.':return E('distributeEnergy',source='zone',target='selfBench',energyType='Fighting',amount=2,optional=True)
+ return _stage1_attack(row,a)
+_stage1_ability=ability
+def ability(row,a):
+ t=a[2]
+ if t=="All of your Pokémon take 20 less damage from attacks from your opponent's Pokémon V (after applying Weakness and Resistance).":return passive(E('modifier',stat='damageReduction',amount=20,scope='team',duration='whileInPlay',opponentFilter={'tag':'pokemon-v'}))
+ if t=='Once during your turn, if this Pokémon is in the Active Spot, you may look at the top 2 cards of your deck and put 1 of them into your hand. Put the other card in the Lost Zone.':return activated(E('sm7Rule',rule='swsh11FlowerSelecting'),activeOnly=True)
+ return _stage1_ability(row,a)
