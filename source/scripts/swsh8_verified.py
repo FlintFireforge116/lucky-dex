@@ -153,3 +153,56 @@ def trainer(row):
  for values,word in [([1,3,5],'1, 3, or 5'),([2,4,6],'2, 4, or 6')]:
   if t==f'Draw 2 cards. If your opponent has exactly {word} Prize cards remaining, draw 2 more cards.':return 'Supporter',seq(E('draw',amount=2),*[E('draw',amount=2,condition=cond('opponentPrizesRemaining',amount=n),optionalCondition=True) for n in values])
  return _stage2_trainer(row)
+
+# Stage 4: complete print catalogue; use existing shared rules with exact text.
+_stage3_attack=attack
+_stage3_ability=ability
+_stage3_trainer=trainer
+
+def attack(row,a):
+ t=a[3];e=_stage3_attack(row,a)
+ if e is not None:return e
+ if t=='Discard any number of Pokémon Tool cards from your hand. This attack does 50 damage for each card you discarded in this way.':return E('chooseDiscardForBonus',zone='hand',max=30,amount=50,filter={'kind':'trainer','trainerType':'Tool'})
+ if t=='Discard up to 2 basic Energy cards from your hand. This attack does 60 damage for each card you discarded in this way.':return E('chooseDiscardForBonus',zone='hand',max=2,amount=60,filter={'kind':'energy','basicEnergy':True})
+ if t=='Move an Energy from this Pokémon to 1 of your Benched Pokémon.':return E('moveEnergy',source='self',target='selfBench',amount=1)
+ if t=='Move all Energy from this Pokémon to your Benched Pokémon in any way you like.':return E('distributeEnergy',source='self',target='selfBench',amount='all',includeSpecialEnergy=True)
+ if t=='Attach a Fire Energy card from your discard pile to this Pokémon.':return E('attachEnergyFromDiscard',target='self',energyType='Fire',amount=1)
+ if t=='Put an Energy attached to this Pokémon into your hand.':return E('sm7Rule',rule='swsh1ReturnAttachments',target='self',left=1)
+ if t=='Put all Energy attached to this Pokémon into your hand.':return E('sm2Rule',rule='loopTheLoop')
+ if t=='Put all Energy attached to this Pokémon into your hand. This attack does 100 damage to 1 of your opponent\'s Benched Pokémon. (Don\'t apply Weakness and Resistance for Benched Pokémon.)':return seq(E('sm2Rule',rule='loopTheLoop'),E('selectedDamage',target='opponentBench',amount=100))
+ if t=="Discard all Pokémon Tools from all of your opponent's Pokémon.":return E('discardTool',target='opponentAll',amount='all')
+ if t=="Before doing damage, discard all Pokémon Tools from your opponent's Active Pokémon.":return E('discardTool',target='opponentActive',amount='all',timing='beforeDamage')
+ if t=="If this Pokémon evolved from Eelektrik during this turn, your opponent's Active Pokémon is now Paralyzed.":return E('status',target='opponentActive',status='paralysis',condition=cond('evolvedThisTurn'))
+ if t=="Discard 2 Lightning Energy from this Pokémon. This attack does 200 damage to 1 of your opponent's Pokémon. (Don't apply Weakness and Resistance for Benched Pokémon.)":return seq(discard(2,energyType='Lightning',strictEnergyType=True),E('selectedDamage',target='opponentPokemon',amount=200))
+ m=re.fullmatch(r"During your opponent's next turn, the Defending Pokémon's attacks do (\d+) less damage \(before applying Weakness and Resistance\)\.",t)
+ if m:return E('modifier',stat='attackDamage',amount=-int(m[1]),target='opponentActive',duration='opponentTurn')
+ if t=="You may choose to make your opponent's Active Pokémon Paralyzed. If you do, this Pokémon also does 70 damage to itself.":return E('chooseOption',options=[{'label':'Paralyze and take 70 damage','effect':seq(status('paralysis'),E('selfDamage',amount=70))},{'label':'Skip paralysis','effect':E('noop')}])
+ if t=="During your opponent's next turn, the Defending Pokémon's attacks cost Colorless more, and its Retreat Cost is Colorless more.":return seq(E('modifier',stat='attackCostColorless',amount=1,target='opponentActive',duration='opponentTurn'),E('modifier',stat='retreatCost',amount=1,target='opponentActive',duration='opponentTurn'))
+ if t=="Switch 1 of your opponent's Benched Pokémon with their Active Pokémon. The new Active Pokémon is now Asleep.":return E('sequence',condition=cond('benchAtLeast',side='opponent',amount=1),effects=[E('forceOpponentSwitch',chooseBy='attacker'),status('sleep')])
+ if t=="This attack does 30 more damage for each Energy attached to your opponent's Active Pokémon.":return E('energyDamage',source='opponent',amount=30,mode='add')
+ if t=="If your opponent's Active Pokémon is a Basic Pokémon, it is Knocked Out.":return E('knockOut',target='opponentActive',condition=cond('opponentMatches',filter={'stage':'Basic'}))
+ if t=='This attack does 20 damage for each damage counter on this Pokémon.':return E('damageFromDamage',source='self',amount=2,mode='replace')
+ m=re.fullmatch(r"This attack also does (\d+) damage to each of your Benched Pokémon\. \(Don't apply Weakness and Resistance for Benched Pokémon\.\)",t)
+ if m:return E('benchDamage',side='self',all=True,amount=int(m[1]))
+ if t=="Put damage counters on your opponent's Active Pokémon until its remaining HP is 60.":return E('setRemainingHp',target='opponentActive',amount=60)
+ if t=="Choose 1 of your opponent's Active Pokémon's attacks. During your opponent's next turn, that Pokémon can't use that attack.":return E('chooseAttackLock',duration='opponentTurn')
+ if t=="If your opponent's Active Pokémon already has any damage counters on it, this attack does 90 more damage.":return bonus(90,cond('opponentDamaged'))
+ if t=="Switch 1 of your opponent's Benched Pokémon with their Active Pokémon. This attack does 30 damage to the new Active Pokémon.":return E('sequence',condition=cond('benchAtLeast',side='opponent',amount=1),effects=[E('forceOpponentSwitch',chooseBy='attacker'),E('damage',target='opponentActive',amount=30)])
+ if t=="If your opponent's Active Pokémon is a Fire Pokémon, it is now Paralyzed.":return E('status',target='opponentActive',status='paralysis',condition=cond('opponentMatches',filter={'subtype':'Fire'}))
+ if t=="During your opponent's next turn, prevent all damage done to this Pokémon by attacks from Pokémon that have an Ability.":return E('preventDamage',target='self',duration='opponentTurn',attackerFilter={'hasAbility':True})
+ if t=="During your opponent's next turn, prevent all damage done to this Pokémon by attacks from Pokémon VMAX.":return E('preventDamage',target='self',duration='opponentTurn',attackerFilter={'stage':'VMAX'})
+ if t=='Discard 2 Energy from this Pokémon.':return discard(2)
+ if t=="During your opponent's next turn, if this Pokémon is damaged by an attack (even if it is Knocked Out), put 8 damage counters on the Attacking Pokémon.":return E('retaliateDamage',target='self',duration='opponentTurn',amount=80,sm10Counters=True)
+ # Pokémon and Supporter union: kind and trainerType cannot express an OR across fields.
+ return None
+
+def ability(row,a):
+ t=a[2];e=_stage3_ability(row,a)
+ if e is not None:return e
+ def evo(effect):return {'type':'triggered','event':'evolved','fromHandOnly':True,'effect':effect}
+ if t=="When you play this Pokémon from your hand to evolve 1 of your Pokémon during your turn, you may make your opponent's Active Pokémon Burned, Confused, and Poisoned.":return evo(E('chooseOption',options=[{'label':'Apply all three conditions','effect':seq(status('burn'),status('confusion'),status('poison'))},{'label':'Skip','effect':E('noop')}]))
+ if t=='When you play this Pokémon from your hand to evolve 1 of your Pokémon during your turn, you must flip a coin. If heads, discard the top 5 cards of your opponent\'s deck. If tails, discard the top 5 cards of your deck.':return evo(E('coinFlip',heads=E('discardTop',side='opponent',amount=5),tails=E('discardTop',side='self',amount=5)))
+ if t=='When you play this Pokémon from your hand to evolve 1 of your Pokémon during your turn, you may put up to 2 Pokémon Tool cards from your discard pile into your hand.':return evo(E('searchChosen',source='discard',amount=2,filter={'kind':'trainer','trainerType':'Tool'},optional=True))
+ if t=='If this Pokémon would be Knocked Out by damage from an attack, flip a coin. If heads, this Pokémon is not Knocked Out, and its remaining HP becomes 10.':return passive(E('koGuard',mode='surviveCoin',remainingHp=10,attackOnly=True))
+ if t=="Your opponent's Single Strike Pokémon's attacks cost Colorless more.":return passive(E('modifier',stat='attackCostColorless',scope='opponentTeam',filter={'tag':'single-strike'},amount=1,duration='whileInPlay'))
+ return None

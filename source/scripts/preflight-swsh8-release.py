@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Fusion Strike partial import release gate."""
+"""Fusion Strike full catalogue, partial mechanics release gate."""
 import argparse,subprocess,sys
 from pathlib import Path
 ROOT=Path(__file__).resolve().parents[1]

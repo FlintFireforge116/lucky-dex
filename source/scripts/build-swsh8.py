@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
 """Pinned Sword & Shield—Fusion Strike generator; conservatively gate unknown mechanics.
 
-Prepare from checked local stage-three source packets: python3 scripts/build-swsh8.py --prepare
+Prepare from checked local stage-four source packets: python3 scripts/build-swsh8.py --prepare
 After this, the canonical compact file is bundled and all CI/Gradle builds are
-fully offline. A source file with the wrong verified counts is rejected. This stage is not a complete catalogue.
+fully offline. A source file with the wrong verified counts is rejected. All 284 prints are imported; unsupported mechanics remain gated.
 """
 from __future__ import annotations
 import argparse,hashlib,json,re,sys,subprocess
@@ -15,22 +15,22 @@ OUT=ROOT/'app/src/main/assets/tcg-classic-fusion-strike.js'
 COVER=ROOT/'docs/SWSH8_BUILD_COVERAGE.json'
 ATTEST=ROOT/'docs/SWSH8_CANONICAL_SOURCE.json'
 PIN='d88289e9b1469bc1c27cf268461f9efdec00134d'
-COMPACT_SHA='876f362b56b8e5fddd82b7e3ff0bfcd67eb4e17e72d51f352ee6431253d9ef0c'
+COMPACT_SHA='88e97f1540d70316a3358edd10121c68fe8fe0b1794ae7dcb5f993cdbbaad4cc'
 SYMBOL={'G':'Grass','R':'Fire','W':'Water','L':'Lightning','P':'Psychic','F':'Fighting','D':'Darkness','M':'Metal','Y':'Fairy','N':'Dragon'}
 REVERSE={v:k for k,v in SYMBOL.items()}
 VARIANTS=[]
 def validate(rows):
  from swsh8_source import rows as verified_rows
- assert rows==verified_rows(), 'Stage 3 source differs from independently checked transfer packets'
- assert len(rows)==227 and len({r[0] for r in rows})==227
- assert sum(len(r[7]) for r in rows)==300
+ assert rows==verified_rows(), 'Stage 4 source differs from independently checked transfer packets'
+ assert len(rows)==284 and len({r[0] for r in rows})==284
+ assert sum(len(r[7]) for r in rows)==391
  return rows
 
 def prepare():
  from swsh8_source import rows as verified_rows
  rows=validate(verified_rows())
  SRC.write_text(json.dumps(rows,ensure_ascii=False,separators=(',',':'))+'\n',encoding='utf-8')
- ATTEST.write_text(json.dumps({'set':'swsh8','sourceGitBlob':PIN,'compactSha256':hashlib.sha256(SRC.read_bytes()).hexdigest(),'printedTotal':284,'importedTotal':227,'sourceScope':'partial verified subset'},indent=2)+'\n')
+ ATTEST.write_text(json.dumps({'set':'swsh8','sourceGitBlob':PIN,'compactSha256':hashlib.sha256(SRC.read_bytes()).hexdigest(),'printedTotal':284,'importedTotal':284,'sourceScope':'complete verified print catalogue'},indent=2)+'\n')
  return rows
 
 def get_source():
@@ -141,8 +141,8 @@ def main():
    if c.get('evolvesFrom')=='Rare Fossil' and c['battleEnabled']:
     c['battleEnabled']=c['deckEligible']=False
     c['support']={'status':'PARTIAL','reasons':['Required Rare Fossil evolution parent is not yet enabled']}
- assert len(cards)==227 and any(c['battleEnabled'] for c in cards), 'Fusion Strike must have 227 imported prints and playable cards'
- hdr='''/* SWSH8 Fusion Strike 227 verified imported prints out of 284; unsupported mechanics gated. */
+ assert len(cards)==284 and any(c['battleEnabled'] for c in cards), 'Fusion Strike must have 284 imported prints and playable cards'
+ hdr='''/* SWSH8 Fusion Strike 284 verified imported prints out of 284; unsupported mechanics gated. */
 (function(root,factory){const api=factory();if(typeof module==='object'&&module.exports)module.exports=api;if(root)root.LuckyDexClassicTCGSWSH8=api;})(typeof globalThis!=='undefined'?globalThis:this,function(){'use strict';
 const SET=Object.freeze({id:'swsh8',name:'Fusion Strike',series:'Sword & Shield',releaseDate:'2021-11-12',cardCount:264,printedTotal:284});
 const CARDS=Object.freeze(__CARDS__.map(c=>Object.freeze(c)));const INDEX=new Map(CARDS.map(c=>[c.id,c]));
@@ -155,7 +155,7 @@ return {SET,CARDS,cardById:id=>INDEX.get(String(id||''))||null,coverage:()=>({to
   'pokemonV':sum('V' in r[3] for r in rows),'pokemonVMAX':sum('VMAX' in r[3] for r in rows),'pokemonGX':sum('GX' in r[3] for r in rows),'gxAttackPrints':sum(a[0].endswith('-GX') for r in rows for a in r[7]),
   'energyPrints':sum(r[2]=='Energy' for r in rows),'prismStarPrints':sum('Prism Star' in r[3] for r in rows),'sourceGitBlob':PIN}
  COVER.write_text(json.dumps(report,indent=2,ensure_ascii=False)+'\n',encoding='utf-8')
- print(f'Fusion Strike SWSH8: {report["battleReady"]}/284 playable; {len(report["gated"])} explicitly gated; 57 not yet imported')
+ print(f'Fusion Strike SWSH8: {report["battleReady"]}/284 playable; {len(report["gated"])} explicitly gated; 0 not yet imported')
 if __name__=='__main__':
  try:main()
  except (AssertionError,RuntimeError) as e:print('SWSH8 BUILD FAILED:',str(e),file=sys.stderr);sys.exit(1)

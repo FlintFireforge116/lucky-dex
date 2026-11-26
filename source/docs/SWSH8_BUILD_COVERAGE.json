@@ -1,79 +1,106 @@
 {
-  "printed": 227,
+  "printed": 284,
   "canonicalTotal": 284,
-  "notImported": [
-    "swsh8-11",
-    "swsh8-12",
-    "swsh8-14",
-    "swsh8-20",
-    "swsh8-35",
-    "swsh8-38",
-    "swsh8-41",
-    "swsh8-42",
-    "swsh8-53",
-    "swsh8-54",
-    "swsh8-57",
-    "swsh8-63",
-    "swsh8-64",
-    "swsh8-66",
-    "swsh8-67",
-    "swsh8-72",
-    "swsh8-77",
-    "swsh8-85",
-    "swsh8-89",
-    "swsh8-94",
-    "swsh8-97",
-    "swsh8-101",
-    "swsh8-106",
-    "swsh8-107",
-    "swsh8-108",
-    "swsh8-116",
-    "swsh8-118",
-    "swsh8-119",
-    "swsh8-120",
-    "swsh8-122",
-    "swsh8-123",
-    "swsh8-124",
-    "swsh8-126",
-    "swsh8-131",
-    "swsh8-137",
-    "swsh8-139",
-    "swsh8-143",
-    "swsh8-145",
-    "swsh8-148",
-    "swsh8-149",
-    "swsh8-161",
-    "swsh8-164",
-    "swsh8-173",
-    "swsh8-180",
-    "swsh8-181",
-    "swsh8-184",
-    "swsh8-189",
-    "swsh8-190",
-    "swsh8-193",
-    "swsh8-194",
-    "swsh8-197",
-    "swsh8-198",
-    "swsh8-203",
-    "swsh8-207",
-    "swsh8-209",
-    "swsh8-211",
-    "swsh8-245"
-  ],
-  "battleReady": 206,
+  "notImported": [],
+  "battleReady": 234,
   "gated": {
-    "swsh8-3": [
-      "Unimplemented Ability: Tricolored Scales"
+    "swsh8-11": [
+      "Unimplemented attack: Healing Circle"
+    ],
+    "swsh8-14": [
+      "Unimplemented attack: Ninja Tornado"
+    ],
+    "swsh8-35": [
+      "Unimplemented attack: Body Splash"
+    ],
+    "swsh8-41": [
+      "Unimplemented attack: Exciting Flame"
+    ],
+    "swsh8-42": [
+      "Unimplemented attack: Glistening Droplets",
+      "Unimplemented Ability: Lesson in Zeal"
+    ],
+    "swsh8-53": [
+      "Unimplemented attack: Multishot Star"
     ],
     "swsh8-59": [
       "Unimplemented attack: Dive and Rescue"
+    ],
+    "swsh8-64": [
+      "Unimplemented Ability: Muddy Maker"
+    ],
+    "swsh8-66": [
+      "Invalid effect: Single Strike Jammer: effect: invalid modifier scope"
+    ],
+    "swsh8-67": [
+      "Unimplemented Ability: Rapid Strike Canceler"
+    ],
+    "swsh8-72": [
+      "Unimplemented attack: Daruma Headbutt"
+    ],
+    "swsh8-77": [
+      "Unimplemented Ability: Pitch a Pyukumuku"
     ],
     "swsh8-79": [
       "Unimplemented attack: G-Max Spiral",
       "Unimplemented Ability: Double Gunner"
     ],
+    "swsh8-89": [
+      "Unimplemented attack: Spark Duo"
+    ],
+    "swsh8-108": [
+      "Unimplemented Ability: Maximum Downer"
+    ],
+    "swsh8-118": [
+      "Unimplemented attack: Force Regeneration"
+    ],
+    "swsh8-120": [
+      "Unimplemented attack: Photon Boost"
+    ],
+    "swsh8-124": [
+      "Unimplemented attack: Melodious Echo"
+    ],
+    "swsh8-131": [
+      "Unimplemented attack: Dig It Up"
+    ],
+    "swsh8-137": [
+      "Unimplemented Ability: Desperate Blast"
+    ],
+    "swsh8-145": [
+      "Unimplemented attack: Rapid Spin"
+    ],
+    "swsh8-149": [
+      "Unimplemented attack: Raised Bad"
+    ],
+    "swsh8-173": [
+      "Unimplemented attack: Bone Block"
+    ],
     "swsh8-178": [
       "Unimplemented attack: Rear Attack"
+    ],
+    "swsh8-181": [
+      "Unimplemented attack: Call to Muster"
+    ],
+    "swsh8-193": [
+      "Unimplemented Ability: Red Assist"
+    ],
+    "swsh8-194": [
+      "Unimplemented Ability: Blue Assist"
+    ],
+    "swsh8-197": [
+      "Unimplemented Ability: Slimy Room"
+    ],
+    "swsh8-203": [
+      "Unimplemented Ability: Expert in Roundness"
+    ],
+    "swsh8-207": [
+      "Unimplemented Ability: Mysterious Nest"
+    ],
+    "swsh8-209": [
+      "Unimplemented attack: Sketching Trash"
+    ],
+    "swsh8-211": [
+      "Unimplemented attack: Willful Busybody"
     ],
     "swsh8-218": [
       "Unimplemented attack: Turn a Profit"
@@ -102,6 +129,9 @@
     "swsh8-244": [
       "Unimplemented Special Energy rules"
     ],
+    "swsh8-245": [
+      "Unimplemented attack: Leaflet Dance"
+    ],
     "swsh8-253": [
       "Unimplemented attack: Shadow Impact",
       "Unimplemented Ability: Two-Faced"
@@ -129,9 +159,9 @@
       "Unimplemented Trainer effect"
     ]
   },
-  "attacks": 300,
-  "abilities": 15,
-  "pokemonV": 31,
+  "attacks": 391,
+  "abilities": 30,
+  "pokemonV": 32,
   "pokemonVMAX": 16,
   "pokemonGX": 0,
   "gxAttackPrints": 0,

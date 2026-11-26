@@ -1,8 +1,8 @@
 {
   "set": "swsh8",
   "sourceGitBlob": "d88289e9b1469bc1c27cf268461f9efdec00134d",
-  "compactSha256": "876f362b56b8e5fddd82b7e3ff0bfcd67eb4e17e72d51f352ee6431253d9ef0c",
+  "compactSha256": "88e97f1540d70316a3358edd10121c68fe8fe0b1794ae7dcb5f993cdbbaad4cc",
   "printedTotal": 284,
-  "importedTotal": 227,
-  "sourceScope": "partial verified subset"
+  "importedTotal": 284,
+  "sourceScope": "complete verified print catalogue"
 }

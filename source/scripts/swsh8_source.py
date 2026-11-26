@@ -1,6 +1,6 @@
-"""Verified stage-three subset from pinned Fusion Strike Git blob.
+"""Verified full print catalogue from pinned Fusion Strike Git blob.
 The source packets are exact compact projections checked against connector output.
-No fabricated rows for the remaining prints. Full source can replace this subset later.
+All 284 print IDs are represented by the checked offline packets.
 """
 import hashlib,json
 from pathlib import Path
@@ -43,6 +43,11 @@ def rows():
   assert row[0] not in result
   result[row[0]]=row
  assert len(result)==227
+ for line in packet("swsh8-stage4-pokemon.jsonl",1798254853):
+  row=json.loads(line)
+  assert row[0] not in result
+  result[row[0]]=row
+ assert len(result)==284
  return sorted(result.values(),key=lambda r:int(r[0]))
 if __name__=='__main__':
  r=rows();p=ROOT/'data/classic/swsh8-print-compact.json';p.write_text(json.dumps(r,ensure_ascii=False,separators=(',',':'))+'\n',encoding='utf-8')
