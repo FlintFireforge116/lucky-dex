@@ -85,3 +85,42 @@ def trainer(row):
  if t=='You can use this card only if you discard 2 Metal Energy cards from your hand. Search your deck for up to 2 cards and put them into your hand. Then, shuffle your deck.':return 'Supporter',E('sm7Rule',rule='sm10Pay',amount=2,filter={'kind':'energy','basicEnergy':True,'subtype':'Metal'},after=E('searchChosen',amount=2,filter={},optional=True))
  if t=="Pokémon with a Rule Box in play (both yours and your opponent's) have no Abilities. (Pokémon V, Pokémon-GX, etc. have Rule Boxes.)":return 'Stadium',E('sm7Rule',rule='swsh6Path')
  return _stage1_trainer(row)
+
+# Stage three: full printed signatures, including alternate prints.
+_stage2_attack=attack
+_stage2_ability=ability
+_stage2_trainer=trainer
+def attack(row,a):
+ t=a[3]
+ if t=="This attack does 20 damage to each of your opponent's Pokémon. (Don't apply Weakness and Resistance for Benched Pokémon.) Switch this Pokémon with 1 of your Benched Pokémon.":return seq(E('bonusDamage',amount=20),E('benchDamage',side='opponent',all=True,amount=20),E('switch',target='self',optional=False))
+ if t=='If a Stadium is in play, this attack does 120 more damage. Then, discard that Stadium.':return seq(bonus(120,cond('stadiumInPlay')),E('discardStadium',condition=cond('stadiumInPlay')))
+ if t=="Choose a random card from your opponent's hand. Your opponent reveals that card and shuffles it into their deck.":return E('shuffleRandomHandCard',side='opponent',amount=1,reveal=True)
+ if t=="This attack does 30 damage for each damage counter on your opponent's Active Pokémon.":return E('damageFromDamage',source='opponent',amount=3,mode='replace')
+ if t=="This attack does 80 damage to 1 of your opponent's Pokémon. (Don't apply Weakness and Resistance for Benched Pokémon.)":return E('selectedDamage',target='opponentPokemon',amount=80,activeWeaknessResistance=True)
+ if t=="Flip 2 coins. If both of them are heads, your opponent's Active Pokémon is Knocked Out.":return E('allHeadsEffect',coins=2,heads=E('knockOut',target='opponentActive'))
+ if t=='If you have at least 3 Darkness Energy in play, this attack does 90 more damage.':return bonus(90,cond('swsh10FieldEnergyAtLeast',energyType='Darkness',amount=3))
+ if t=="If your opponent's Active Pokémon already has any damage counters on it, this attack does 110 more damage.":return bonus(110,cond('opponentDamaged'))
+ if t=="Flip a coin. If heads, during your opponent's next turn, prevent all damage from and effects of attacks done to this Pokémon.":return coin(E('preventDamage',target='self',duration='opponentTurn',preventEffects=True))
+ if t=='Your opponent reveals their hand.':return E('revealHand',side='opponent')
+ if t=='Flip a coin. If heads, put an Item card from your discard pile into your hand.':return coin(E('searchChosen',source='discard',amount=1,filter={'kind':'trainer','trainerType':'Item'}))
+ if t=='Put up to 2 cards from your discard pile into your hand.':return E('searchChosen',source='discard',amount=2,filter={},optional=True)
+ if t=="This attack does 20 more damage for each of your opponent's Benched Pokémon.":return E('benchCountDamage',side='opponent',amount=20,mode='add')
+ if t=="This attack does 50 more damage for each Energy attached to your opponent's Active Pokémon.":return E('energyDamage',source='opponent',amount=50,mode='add',countSpecial=True)
+ if t=="Put 2 damage counters on 1 of your opponent's Benched Pokémon.":return E('placeDamageCounters',target='opponentBench',amount=20)
+ return _stage2_attack(row,a)
+def ability(row,a):
+ t=a[2]
+ if t=='Once during your turn, if you have a Stadium in play, you may heal 50 damage from this Pokémon.':return activated(E('healSelf',amount=50,condition=cond('ownStadiumInPlay')))
+ if t=='This Pokémon takes 30 less damage from attacks (after applying Weakness and Resistance).':return passive(E('modifier',stat='damageReduction',amount=30,scope='self',duration='whileInPlay'))
+ if t=="As long as this Pokémon is on your Bench, your Active Pokémon's Retreat Cost is ColorlessColorless less.":return dict(type='passive',benchOnly=True,effect=E('modifier',stat='retreatCost',amount=-2,scope='active',duration='whileInPlay'))
+ if t=="If your opponent has any Pokémon VMAX in play, this Pokémon's attacks cost ColorlessColorlessColorless less.":return passive(E('modifier',stat='attackCostColorless',amount=-3,scope='self',duration='whileInPlay',condition=cond('pokemonPresent',side='opponent',zone='inPlay',filter={'tag':'pokemon-vmax'})))
+ if t=="During your turn, you may put 4 damage counters on 1 of your opponent's Pokémon. (You can't use more than 1 VSTAR Power in a game.)":return activated(E('chooseTarget',target='opponentPokemon',forceChoose=True,effect=E('placeDamageCounters',target='opponentPokemon',amount=40)),vstarPower=True)
+ if t=="Once during your turn, if this Pokémon is in the Active Spot, you may draw cards until you have 4 cards in your hand. You can't use more than 1 Dragon's Hoard Ability each turn.":return activated(E('drawToHandSize',size=4),activeOnly=True,sharedOncePerTurn='Dragon\'s Hoard')
+ if t=="Prevent all damage done to this Pokémon by attacks from your opponent's Pokémon V.":return passive(E('preventDamage',target='self',duration='whileInPlay',attackerFilter={'tag':'pokemon-v'}))
+ if t=='Once during your turn, if this Pokémon is in the Active Spot, you may search your deck for up to 2 Pokémon Tool cards, reveal them, and put them into your hand. Then, shuffle your deck.':return activated(E('searchChosen',amount=2,filter={'kind':'trainer','trainerType':'Tool'},optional=True),activeOnly=True)
+ return _stage2_ability(row,a)
+def trainer(row):
+ t=row[13][0]
+ if t=='Draw cards until you have 1 more card in your hand than your opponent.':return 'Supporter',E('drawToHandSize',matchSide='opponent',offset=1)
+ if t=='You can use this card only if your opponent has 3 or fewer Prize cards remaining. Each player shuffles their hand into their deck. Then, you draw 6 cards, and your opponent draws 2 cards.':return 'Supporter',E('handShuffle',side='both',draw=6,opponentDraw=2,condition=cond('swsh10OpponentPrizesAtMost',amount=3))
+ return _stage2_trainer(row)

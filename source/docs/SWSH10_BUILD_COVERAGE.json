@@ -1,23 +1,18 @@
 {
-  "printed": 112,
+  "printed": 155,
   "canonicalTotal": 216,
   "notImported": [
     "swsh10-1",
     "swsh10-2",
-    "swsh10-3",
     "swsh10-10",
     "swsh10-12",
     "swsh10-13",
     "swsh10-14",
-    "swsh10-16",
     "swsh10-18",
-    "swsh10-26",
     "swsh10-29",
     "swsh10-34",
     "swsh10-38",
-    "swsh10-48",
     "swsh10-52",
-    "swsh10-53",
     "swsh10-54",
     "swsh10-59",
     "swsh10-66",
@@ -25,104 +20,96 @@
     "swsh10-74",
     "swsh10-76",
     "swsh10-77",
-    "swsh10-82",
     "swsh10-84",
-    "swsh10-86",
-    "swsh10-91",
-    "swsh10-93",
-    "swsh10-96",
     "swsh10-100",
     "swsh10-101",
-    "swsh10-102",
     "swsh10-104",
     "swsh10-107",
-    "swsh10-109",
     "swsh10-110",
     "swsh10-114",
     "swsh10-116",
     "swsh10-117",
-    "swsh10-118",
     "swsh10-119",
-    "swsh10-120",
-    "swsh10-121",
-    "swsh10-122",
-    "swsh10-123",
-    "swsh10-124",
-    "swsh10-126",
-    "swsh10-127",
-    "swsh10-128",
     "swsh10-130",
-    "swsh10-133",
     "swsh10-134",
     "swsh10-136",
-    "swsh10-138",
     "swsh10-141",
     "swsh10-142",
-    "swsh10-143",
     "swsh10-144",
     "swsh10-145",
     "swsh10-146",
     "swsh10-148",
-    "swsh10-149",
-    "swsh10-150",
     "swsh10-152",
     "swsh10-153",
-    "swsh10-154",
     "swsh10-155",
     "swsh10-156",
     "swsh10-158",
-    "swsh10-159",
     "swsh10-160",
     "swsh10-161",
     "swsh10-164",
-    "swsh10-169",
     "swsh10-170",
     "swsh10-176",
     "swsh10-177",
     "swsh10-178",
-    "swsh10-179",
     "swsh10-180",
-    "swsh10-183",
-    "swsh10-184",
     "swsh10-185",
-    "swsh10-187",
-    "swsh10-188",
-    "swsh10-189",
     "swsh10-190",
-    "swsh10-191",
     "swsh10-193",
     "swsh10-195",
     "swsh10-196",
-    "swsh10-197",
     "swsh10-198",
-    "swsh10-201",
-    "swsh10-202",
     "swsh10-203",
-    "swsh10-205",
-    "swsh10-206",
-    "swsh10-207",
-    "swsh10-209",
     "swsh10-210",
     "swsh10-212",
     "swsh10-214",
     "swsh10-215"
   ],
-  "battleReady": 108,
+  "battleReady": 141,
   "gated": {
-    "swsh10-64": [
-      "Unimplemented attack: Spooky Balloon"
-    ],
     "swsh10-87": [
       "Unimplemented attack: Axe Slash"
     ],
+    "swsh10-120": [
+      "Unimplemented Ability: Stand Sentry"
+    ],
+    "swsh10-138": [
+      "Unimplemented Trainer effect"
+    ],
+    "swsh10-143": [
+      "Unimplemented Trainer effect"
+    ],
+    "swsh10-149": [
+      "Unimplemented Trainer effect"
+    ],
+    "swsh10-154": [
+      "Unimplemented Trainer effect"
+    ],
     "swsh10-157": [
+      "Unimplemented Trainer effect"
+    ],
+    "swsh10-183": [
+      "Unimplemented Trainer effect"
+    ],
+    "swsh10-184": [
+      "Unimplemented Trainer effect"
+    ],
+    "swsh10-187": [
+      "Unimplemented Trainer effect"
+    ],
+    "swsh10-201": [
+      "Unimplemented Trainer effect"
+    ],
+    "swsh10-202": [
+      "Unimplemented Trainer effect"
+    ],
+    "swsh10-205": [
       "Unimplemented Trainer effect"
     ],
     "swsh10-216": [
       "Unimplemented Special Energy rules"
     ]
   },
-  "attacks": 155,
-  "abilities": 12,
+  "attacks": 195,
+  "abilities": 25,
   "sourceGitBlob": "888a5253d3bf05bc4107d52742003ce42f1980f3"
 }
