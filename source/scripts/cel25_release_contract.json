@@ -1,8 +1,8 @@
 {
   "set": "cel25",
   "name": "Celebrations",
-  "stage": "stage1",
-  "release": "0.69.521",
+  "stage": "complete",
+  "release": "0.69.522",
   "printedTotal": 25,
   "attackPrints": 35,
   "abilities": 6,

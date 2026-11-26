@@ -47,3 +47,8 @@ tr(23,'Supporter',seq(E('discardHand',side='self',amount=999),E('draw',amount=7)
 ab(11,activated(E('selectTopToHand',count=6,filter={'kind':'trainer','trainerType':'Item'},optional=True),activeOnly=True))
 at(21,'Solar Geyser',Q('DiscardAttach',left=2,benchOnly=True,basicOnly=True,sameTarget=True,optional=True))
 ab(21,activated(E('neoRule',rule='bw7:rushIn'),benchOnly=True))
+
+at(3,'Aqua Storm',E('sm7Rule',rule='cel25AquaStorm'))
+at(12,'Breath of Life',R('SearchAttach',amount=3,distinctTypes=True))
+at(15,'Lunar Pain',E('sm7Rule',rule='cel25LunarPain'))
+at(19,'Cry of Destruction',E('sm7Rule',rule='cel25CryOfDestruction'))

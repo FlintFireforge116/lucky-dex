@@ -633,6 +633,10 @@
     // leakage. Choose from the actual legal set instead.
     if(state.format==='classic'&&state.phase==='effectChoice'){
       const pending=state.pendingChoice||{},rule=String(pending.effect?.rule||'');
+      if(rule==='cel25CryOfDestruction'){
+        const enemy=state.sides[foeOf(side)],picks=legal.filter(a=>!a.choiceSkip);
+        return picks.sort((a,b)=>{const score=x=>{const p=slotFor(enemy,x.choiceTarget,x.choiceBenchIndex);return (p===enemy.active?50:0)+effects.totalEnergy(p?.energy||{})+(p?.specialEnergy||[]).length*2;};return score(b)-score(a);})[0]||legal[0];
+      }
       if(rule==='swsh5Selickt'&&pending.kind==='option'){
         const board=state.sides[side];return legal.find(a=>pending.effect.zones?.[a.choiceOption]===(board.deck.length<=4||board.hand.length<=1?'hand':'deck'))||legal[0];
       }

@@ -1,20 +1,7 @@
 {
   "printed": 25,
-  "battleReady": 21,
-  "gated": {
-    "cel25-3": [
-      "Unimplemented attack: Aqua Storm"
-    ],
-    "cel25-12": [
-      "Unimplemented attack: Breath of Life"
-    ],
-    "cel25-15": [
-      "Unimplemented attack: Lunar Pain"
-    ],
-    "cel25-19": [
-      "Unimplemented attack: Cry of Destruction"
-    ]
-  },
+  "battleReady": 25,
+  "gated": {},
   "attacks": 35,
   "abilities": 6,
   "pokemonV": 4,
