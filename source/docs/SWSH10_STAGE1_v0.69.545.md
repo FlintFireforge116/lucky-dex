@@ -1,0 +1,16 @@
+# Astral Radiance stage 1 — v0.69.545
+
+## Scope and decisions
+- Main sets first; defer standalone promo/reprint backlog. Keep distinct card identity, artwork, and ownership separate from verified mechanics; future reprint batches must match complete printed mechanical signatures and review ID-specific hooks.
+- Astral Radiance main set: pinned blob `888a5253d3bf05bc4107d52742003ce42f1980f3` at source commit `90f27d0e14cefe48ccb2b8922a7a356b2fcf0072`. 216 official prints; 80 imported (FNV-1a UTF-8 packet checksum 2006158932), 76 enabled, 4 gated and 136 not imported. 109 printed attacks, 3 abilities. Trainer Gallery is separate and not imported in this stage.
+- Four gates: Drifblim (Spooky Balloon selected counter placement), Unidentified Fossil (placement/discard integration), Path to the Peak (shared stadium hook), Double Turbo Energy (remaining damage paths). The first packet supports six single-type deck pools; Lightning and Metal require further families. Gated cards cannot enter either builder.
+- Reused exact printed effect mappings, including Irida, Dark Patch, Choice Belt, Heatran V, Overqwil, and the three Happiness abilities. No Radiant or Astral VSTAR cards enabled yet. Existing hybrid Energy rules retained.
+
+## Brilliant Stars independent audit and Double Turbo groundwork
+- Main set audit: 185/186 enabled, 16/16 legal CPU deck checks, zero definite catalog/schema failures or warnings, two shared-hook follow-up flags (Blunder Policy and Collapsed Stadium). Gallery: 30/30 enabled, 12 legal CPU builds, 4 unsupported type/seed combinations, zero failures/warnings/follow-up flags. See accompanying independent audit reports. Risk tags are not proof of failure or exhaustive runtime validation. Historical Blunder Policy raw-RNG coin paths remain an audit item.
+- Shared outgoing attack damage function applies -20 per unsuppressed attached Double Turbo Energy card before Weakness/Resistance, to opposing attack damage only; neither counter placement nor friendly recoil nor non-attack damage. Both known print IDs recognized. Shared standard, selected, spread, copied and preview damage paths covered. Fourteen focused tests use synthetic attached physical references while card is gated; not a claim that all legacy bespoke damage paths are covered. Both main-set and Astral alternate prints remain gated until remaining legacy direct writes are audited.
+- Android APK/device testing not performed here. All enabled Astral attacks exercised through legal action smoke checks on both sides; specific outcome tests cover key interactions, not every possible deck or cross-set scenario.
+- The all-set deck-quality regression caught a competitive Astral pool overusing four-copy Trainer packages. Reused the small-pool family-first fallback for this initial packet: compatible evolution families precede a fourth Trainer copy. The historical all-set deck-quality check and 39 Astral/Gallery focused tests pass after the correction; rerun full preparation on the final files.
+
+## Final validation
+Full offline preparation `sh scripts/prepare-swsh10.sh` exited 0 after deck-quality correction: 2331/2331 gameplay checks, including 179 Brilliant Stars/Gallery and 18 Astral Radiance checks. No failures, skips or cancellations. 12/12 release-manifest unit tests passed.

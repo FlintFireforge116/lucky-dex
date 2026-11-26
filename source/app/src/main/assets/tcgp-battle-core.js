@@ -564,8 +564,8 @@
       let damage=Number(result.damage||0);
       if(damage>0&&target===opponent.active){
         if(!result.damageRules?.ignoreWeakness)damage=effects.attackDamageWithState(state,side,source,foeSide,target,damage,data.cardById);
-        else damage+=effects.swsh3ActiveDamageBonus(state,side,source,foeSide,target,data.cardById);
-      }
+        else damage=effects.outgoingAttackDamage(state,side,source,foeSide,damage+effects.swsh3ActiveDamageBonus(state,side,source,foeSide,target,data.cardById),data.cardById);
+      }else if(damage>0)damage=effects.outgoingAttackDamage(state,side,source,foeSide,damage,data.cardById);
       if(damage>0){target.damage=Number(target.damage||0)+damage;
         const attackEvent={attacker:source,damage,source:{side,attack:true,uid:source?.uid,cardId:source?.cardId}};
         triggerAbilities(state,'damagedByAttack',foeSide,target,attackEvent);
@@ -1492,7 +1492,7 @@
         }
       }
       if(includeAlteredCreation&&isActive&&damage>0&&snapshot.sides[side]?.sm12AlteredCreation)damage+=30;
-      const effectiveDamage=Math.max(0,damage);
+      const effectiveDamage=effects.outgoingAttackDamage(snapshot,side,attacker,foeSide,damage,data.cardById);
       const neoDarkBonus=isActive&&effectiveDamage>0?10*effects.activeSpecialEnergy(state,attacker,data.cardById).filter(ref=>['neo1-104','ecard1-158','ecard2-142'].includes(ref.cardId)).length:0;
       return {damage:effectiveDamage,text:neoDarkBonus?`${effectiveDamage} + ${neoDarkBonus} after W/R`:String(effectiveDamage),variable:neoDarkBonus>0};
     }catch(_previewError){
@@ -4411,7 +4411,7 @@ const target=slotForTarget(s,action.target,action.benchIndex);if(card.id==='pl2-
          !effects.abilitiesSuppressed(state,side,s.active,data.cardById)&&
          !s.active.conditions?.sleep&&!s.active.conditions?.confusion&&!s.active.conditions?.paralysis&&damage>0){damage=120;}
       if(!isActive&&damage>0&&state.format==='classic'&&s.active.cardId==='sm6-26'&&attack.name==='Sharpshooting')for(const boost of s.active.nextAttackBonuses||[])if(Number(boost.turn)===state.turnNumber&&boost.attackName===attack.name)damage+=Number(boost.amount||0);
-      if(!isActive&&damage>0&&state.format==='classic'&&!(result.damageRules?.ignoreWeakness&&result.damageRules?.ignoreResistance&&result.damageRules?.ignoreEffects))damage=effects.wideLensBenchMatchup(state,side,s.active,foeSide,defender,damage,data.cardById);
+      if(!isActive&&damage>0&&state.format==='classic'){if(result.damageRules?.ignoreWeakness&&result.damageRules?.ignoreResistance&&result.damageRules?.ignoreEffects)damage=effects.outgoingAttackDamage(state,side,s.active,foeSide,damage,data.cardById);else damage=effects.wideLensBenchMatchup(state,side,s.active,foeSide,defender,damage,data.cardById);}
       if(!isActive&&damage>0&&state.format==='classic'&&activeToolsOf(state,s.active).some(ref=>ref.cardId==='ecard1-150')){
         // Direct attacks on the Bench have no Weakness/Resistance; Strength
         // Charm still adds ten to an attack that dealt nonzero damage.
@@ -4450,7 +4450,7 @@ const target=slotForTarget(s,action.target,action.benchIndex);if(card.id==='pl2-
         if(!kartenvoy)damage+=effects.modifierAmount(state,foeSide,defender,'damageTaken',data.cardById);
         if(state.format==='classic'&&damage>0){const metal=miraculousWindActive(state)?0:effects.activeSpecialEnergy(state,s.active,data.cardById).filter(r=>['neo1-19','ecard1-159','ecard2-143'].includes(r.cardId)).length;if(metal&&!attackerCard.types?.includes('Metal'))damage=Math.max(0,damage-metal*10);}
         if(state.format==='classic'&&damage>0)damage=Math.max(0,damage-10*effects.activeSpecialEnergy(state,s.active,data.cardById).filter(r=>['ex9-87','ex14-88'].includes(r.cardId)).length);
-        if(result.damageRules?.ignoreWeakness&&damage>0){if(s.sm12AlteredCreation)damage+=30;damage+=effects.swsh3ActiveDamageBonus(state,side,s.active,foeSide,defender,data.cardById);}
+        if(result.damageRules?.ignoreWeakness&&damage>0){if(s.sm12AlteredCreation)damage+=30;damage+=effects.swsh3ActiveDamageBonus(state,side,s.active,foeSide,defender,data.cardById);damage=effects.outgoingAttackDamage(state,side,s.active,foeSide,damage,data.cardById);}
         if(!result.damageRules?.ignoreWeakness){
           const beforeMatchup=damage,defCard=data.cardById(defender.cardId),resistance=defender.resistanceOverride||defCard?.resistance;
           if(state.format==='classic'&&activeStadium(state)?.cardId!=='hgss3-76'&&beforeMatchup>0&&resistance&&effects.effectiveTypes(state,side,s.active,data.cardById).includes(resistance)){
@@ -4691,7 +4691,7 @@ const target=slotForTarget(s,action.target,action.benchIndex);if(card.id==='pl2-
       if(state.format==='classic'&&damage>0){
         // Resolve reactive attacks before KO; Wobbuffet can counter even when
         // the incoming blow knocks it out.
-        if(defender.neoCounter&&state.turnNumber<=defender.neoCounter.until){const heads=random(state)<.5;state.log.push({type:'coin',side:foeSide,reason:'Neo Discovery Counter',heads,results:[heads]});if(heads){const reflected=effects.attackDamageWithState(state,foeSide,defender,side,s.active,damage,data.cardById);s.active.damage=Number(s.active.damage||0)+Math.max(0,reflected);}}
+        if(defender.neoCounter&&state.turnNumber<=defender.neoCounter.until){const heads=random(state)<.5;state.log.push({type:'coin',side:foeSide,reason:'Neo Discovery Counter',heads,results:[heads]});if(heads){const reflected=effects.attackDamageWithState(state,foeSide,defender,side,s.active,damage,data.cardById,false,false);s.active.damage=Number(s.active.damage||0)+Math.max(0,reflected);}}
         if(defender.neoSecretePoison&&state.turnNumber<=defender.neoSecretePoison.until){s.active.conditions={...(s.active.conditions||{}),poison:true};for(const b of s.bench)b.damage=Number(b.damage||0)+effects.neoDiscoveryReduction(state,side,foeSide,defender,10,data.cardById);}
       }
       if(damage>0&&s.gym2KogaPoisonTurn===state.turnNumber&&attackerCard.name?.startsWith("Koga's"))defender.conditions={...(defender.conditions||{}),poison:true};
