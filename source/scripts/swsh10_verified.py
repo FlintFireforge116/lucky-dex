@@ -187,3 +187,26 @@ def trainer(row):
  if t=='Play this card as if it were a 60-HP Basic Colorless Pokémon. At any time during your turn, you may discard this card from play. This card can\'t retreat.':return 'Item',E('playFossil',hp=60,subtype='Colorless',canRetreat=False)
  if t=='You can use this card only if you go second, and only during your first turn. Search your deck for a basic Energy card and attach it to 1 of your Pokémon. Then, shuffle your deck. Your turn ends.':return 'Item',E('sm7Rule',rule='swsh10WaitTurbo',condition=cond('sm7FirstSecond'))
  return _stage4_trainer(row)
+
+# Stage six: reuse the verified extra-turn lifecycle and selected-target paths.
+_stage5_attack=attack
+def attack(row,a):
+ t=a[3]
+ if t=="Take another turn after this one. (Skip Pokémon Checkup.) (You can't use more than 1 VSTAR Power in a game.)":return E('sm5Rule',rule='timelessGX')
+ if t=='Search your deck for up to 3 basic Energy cards of different types and attach them to your Pokémon in any way you like. Then, shuffle your deck.':return E('sm7Rule',rule='sm9SearchAttach',amount=3,distinctTypes=True)
+ if t=='You can use this attack only if you go second, and only during your first turn. Choose up to 2 of your Benched Pokémon. For each of those Pokémon, search your deck for a basic Energy card and attach it to that Pokémon. Then, shuffle your deck.':return seq(E('attackRequirement',condition=cond('sm7FirstSecond')),E('sm7Rule',rule='sm9SearchAttach',amount=2,benchOnly=True,distinctTargets=True))
+ if t=="This attack also does 60 damage to 1 of your opponent's Benched Pokémon V. (Don't apply Weakness and Resistance for Benched Pokémon.)":return E('benchDamage',side='opponent',amount=60,filter={'tag':'pokemon-v'})
+ if t=='Your opponent reveals their hand. If they have 4 or more cards in their hand, choose all but 3, and your opponent shuffles the chosen cards into their deck.':return seq(E('revealHand',side='opponent'),E('sm7Rule',rule='swsh10OminousProse'))
+ return _stage5_attack(row,a)
+
+_stage5_ability=ability
+def ability(row,a):
+ t=a[2]
+ if t=='Once during your turn, you may look at the top 6 cards of your deck and attach any number of Metal Energy cards you find there to your Pokémon in any way you like. Shuffle the other cards back into your deck.':return activated(E('sm7Rule',rule='sm9TopAttach',count=6,energyTypes=['Metal'],includeSpecial=False))
+ return _stage5_ability(row,a)
+
+_stage5_trainer=trainer
+def trainer(row):
+ t=row[13][0]
+ if t=='Whenever either player puts a Basic Pokémon from their hand onto their Bench, put 2 damage counters on that Pokémon.':return 'Stadium',E('noop') # from-hand Basic placement hook
+ return _stage5_trainer(row)

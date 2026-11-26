@@ -2,25 +2,16 @@
   "printed": 216,
   "canonicalTotal": 216,
   "notImported": [],
-  "battleReady": 188,
+  "battleReady": 197,
   "gated": {
-    "swsh10-2": [
-      "Unimplemented attack: Cheerful Charge"
-    ],
     "swsh10-12": [
       "Unimplemented attack: Honey Rush"
-    ],
-    "swsh10-13": [
-      "Unimplemented attack: Energy Garden"
     ],
     "swsh10-29": [
       "Unimplemented attack: Entangled Dive"
     ],
     "swsh10-34": [
       "Unimplemented attack: Borne Ashore"
-    ],
-    "swsh10-59": [
-      "Unimplemented attack: Ominous Prose"
     ],
     "swsh10-66": [
       "Unimplemented Ability: Mental Shroud"
@@ -30,12 +21,6 @@
     ],
     "swsh10-104": [
       "Unimplemented Ability: Baffling"
-    ],
-    "swsh10-107": [
-      "Unimplemented Ability: Giga Magnet"
-    ],
-    "swsh10-114": [
-      "Unimplemented attack: Star Chronos"
     ],
     "swsh10-119": [
       "Unimplemented Ability: Resonant Evolution"
@@ -50,9 +35,6 @@
     "swsh10-134": [
       "Unimplemented attack: Psyshield Bash",
       "Unimplemented Ability: Frontier Road"
-    ],
-    "swsh10-142": [
-      "Unimplemented Trainer effect"
     ],
     "swsh10-144": [
       "Unimplemented Trainer effect"
@@ -77,17 +59,8 @@
     "swsh10-185": [
       "Unimplemented Trainer effect"
     ],
-    "swsh10-196": [
-      "Unimplemented attack: Axe Break"
-    ],
-    "swsh10-198": [
-      "Unimplemented attack: Star Chronos"
-    ],
     "swsh10-203": [
       "Unimplemented Trainer effect"
-    ],
-    "swsh10-210": [
-      "Unimplemented attack: Star Chronos"
     ],
     "swsh10-216": [
       "Unimplemented Special Energy rules"
