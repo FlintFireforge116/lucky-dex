@@ -263,7 +263,7 @@
     if(action.type==='setupBench')return 950;
     if(action.type==='setupReady')return 1;
     if(action.type==='evolve')return 900;
-    if(action.type==='sm11ElectricSwamp'||action.type==='sm8HandAbility'||action.type==='abilityDiscard'&&action.cardId==='sm8-97')return 800;
+    if(action.type==='swsh8Pitch'||action.type==='sm11ElectricSwamp'||action.type==='sm8HandAbility'||action.type==='abilityDiscard'&&action.cardId==='sm8-97')return 800;
     if(action.type==='ability')return dangerous(abilityEffect(card,action.abilityIndex))?-100:800;
     if(action.type==='trainer')return !action.swsh4Substitution&&dangerous(card?.effect)?-100:700;
     if(action.type==='stadiumAction')return worthwhileStadiumAction(state,side,action)?850:-100;

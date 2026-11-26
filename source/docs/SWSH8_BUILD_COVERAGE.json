@@ -2,13 +2,10 @@
   "printed": 284,
   "canonicalTotal": 284,
   "notImported": [],
-  "battleReady": 269,
+  "battleReady": 276,
   "gated": {
     "swsh8-53": [
       "Unimplemented attack: Multishot Star"
-    ],
-    "swsh8-77": [
-      "Unimplemented Ability: Pitch a Pyukumuku"
     ],
     "swsh8-79": [
       "Unimplemented attack: G-Max Spiral",
@@ -17,28 +14,13 @@
     "swsh8-118": [
       "Unimplemented attack: Force Regeneration"
     ],
-    "swsh8-120": [
-      "Unimplemented attack: Photon Boost"
-    ],
-    "swsh8-124": [
-      "Unimplemented attack: Melodious Echo"
-    ],
     "swsh8-137": [
       "Unimplemented Ability: Desperate Blast"
     ],
     "swsh8-197": [
       "Unimplemented Ability: Slimy Room"
     ],
-    "swsh8-233": [
-      "Unimplemented Trainer effect"
-    ],
     "swsh8-234": [
-      "Unimplemented Trainer effect"
-    ],
-    "swsh8-244": [
-      "Unimplemented Special Energy rules"
-    ],
-    "swsh8-260": [
       "Unimplemented Trainer effect"
     ],
     "swsh8-266": [
@@ -47,9 +29,6 @@
     ],
     "swsh8-270": [
       "Required Pokémon V evolution parent is not yet enabled"
-    ],
-    "swsh8-275": [
-      "Unimplemented Trainer effect"
     ]
   },
   "attacks": 391,

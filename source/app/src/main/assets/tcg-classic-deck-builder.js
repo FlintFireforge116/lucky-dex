@@ -729,6 +729,7 @@ function buildDeck(rows,options={}){
    // Being battle-enabled does not mean the Trainer has a useful target.
    if(!manuallyKept){
      const pokemon=selectedPokemon();
+     if(card?.name==="Elesa's Sparkle"&&(!pokemon.some(p=>p.fusionStrike)||!cards.some(id=>id==='swsh8-244')))return false;
      if(card?.trainerType==='Tool'&&fx){
        const species=fx.spiritLinkSpecies(card);
        if(species&&(!pokemon.some(p=>fx.usefulToolRecipient(card,p))||!pokemon.some(p=>fx.spiritLinkEvolution(card,p))))return false;
@@ -1413,6 +1414,10 @@ function buildDeck(rows,options={}){
    let need=3;
    for(const tool of tools){if(!need)break;need-=add(tool,Math.min(need,room(tool)));}
  }
+ // Reserve actual Fusion Strike Energy for a matching core before Trainer filler.
+ const fusionCore=cards.map(classic.cardById).filter(c=>c?.kind==='pokemon'&&c.fusionStrike);
+ const fusionEnergy=pool.find(c=>c.id==='swsh8-244');
+ if(fusionEnergy&&fusionCore.length>=2){const target=fusionCore.some(c=>['Deoxys','Meloetta'].includes(c.name))?4:2;add(fusionEnergy,Math.min(Math.max(0,target-(counts.get(fusionEnergy.id)||0)),room(fusionEnergy)));}
  // Stage 2 decks value Breeder; add it before generic staples when owned.
  if(cards.map(classic.cardById).some(c=>c?.stage==='Stage 2')){const breeder=classic.cardById('base1-76');if(breeder&&scope.includes(breeder.setId))add(breeder,Math.min(2,room(breeder)));}
  if(focus&&scope.includes(focus.setId)&&focus.kind!=='pokemon')add(focus,Math.min(2,room(focus)));
@@ -1485,6 +1490,7 @@ function buildDeck(rows,options={}){
    const pokemon=cards.map(classic.cardById).filter(c=>c?.kind==='pokemon');
    if(name==='Single Strike Energy')return pokemon.some(p=>p.singleStrike);
    if(name==='Rapid Strike Energy')return pokemon.some(p=>p.rapidStrike);
+   if(name==='Fusion Strike Energy')return pokemon.some(p=>p.fusionStrike);
    if(name==='Darkness Energy')return pokemon.some(p=>(p.types||[]).includes('Darkness')||/^Dark\s/i.test(p.name||''));
    if(name==='Metal Energy')return pokemon.some(p=>(p.types||[]).includes('Metal'));
    if(name==='Shield Energy')return pokemon.some(p=>(p.types||[]).includes('Metal'));

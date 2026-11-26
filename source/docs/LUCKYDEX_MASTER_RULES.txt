@@ -6224,3 +6224,10 @@ v0.69.531 — Fusion Strike stage 6 (paired Trainers and continuous field mechan
 - 103/103 focused tests passed, including 22 new bilateral outcomes; prior 258 playable descriptors unchanged. Remaining complex cards explicitly gated. Android compilation and physical-device testing separate.
 
 Final v0.69.531 validation: full offline preparation exited 0; 2076/2076 gameplay checks, including 103/103 Fusion Strike checks; 12/12 manifest unit tests. Zero failures, skips or cancellations.
+
+v0.69.532 — Fusion Strike stage 7 (physical Energy and linked mechanics)
+- 276/284 playable, 8 gated, all 284 canonical prints imported. All 269 previously playable descriptors compare equal. Fusion Strike Energy is one physical flexible unit, never several simultaneous units. Require a Fusion Strike recipient, discard off-tag attachments during legality cleanup, and share opposing Ability-effect protection across generic targeting and legacy mutation guards. Spectral Breach suppresses Energy text. Count physical refs, not generated Zone Energy, for Photon Boost and Melodious Echo.
+- Elesa's Sparkle attaches actual Special Energy from deck, up to one per distinct friendly Fusion Strike Pokémon; do not use the Basic Energy hybrid coin gate for Special Energy. Preserve other search restrictions. Auto-build only with compatible targets and a physical source; reserve physical Energy before Trainer filler. Pyukumuku is a once-per-side-per-turn hand action, not a field Ability; move the same ref to deck bottom before draw and expose it in UI and CPU action selection.
+- 113/113 focused tests (10 new bilateral outcomes); 269 previously playable descriptors unchanged. Remaining eight prints explicitly gated. APK and device checks are separate.
+
+Final v0.69.532 validation: full offline preparation exited 0; 2086/2086 gameplay checks, including 113/113 Fusion Strike; 12/12 manifest unit tests. No failures, skips or cancellations.

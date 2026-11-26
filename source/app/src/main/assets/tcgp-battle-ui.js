@@ -180,6 +180,7 @@
     if(action.type==='setupBench')return`BENCH · ${cardName(action.cardId)}`;
     if(action.type==='setupReady')return'READY';
     if(action.type==='sm7FallingStar')return'FALLING STAR · PLAY MINIOR AS ACTIVE';
+    if(action.type==='swsh8Pitch')return 'PITCH A PYUKUMUKU · PUT ON DECK BOTTOM AND DRAW';
     if(action.type==='bw7Busybody')return'BUSYBODY · REVEAL AUDINO, HEAL 10 AND REMOVE A CONDITION';
     if(action.type==='sm11ElectricSwamp')return 'ELECTRIC SWAMP · PLAY ONTO BENCH';
     if(action.type==='sm8HandAbility')return 'MOUNTAIN PASS · REVEAL FROM HAND';
@@ -936,7 +937,7 @@
     return `<div data-hand-side="opponent" class="tcgp-live-hand-backs ${reveal?'is-revealed':''}" style="--back-count:${visible}" aria-label="Opponent hand ${side.hand.length} cards${reveal?', revealed by Clairvoyance':''}">${backs}<b>${side.hand.length}</b></div>`;
   }
   function centerHandActionIndices(actions,handIndex){
-    const allowed=new Set(['setupActive','setupBench','bench','legendBench','evolve','trainer','attachSpecial','bw7Busybody','sm7FallingStar','sm8HandAbility','sm11ElectricSwamp']);
+    const allowed=new Set(['setupActive','setupBench','bench','legendBench','evolve','trainer','attachSpecial','swsh8Pitch','bw7Busybody','sm7FallingStar','sm8HandAbility','sm11ElectricSwamp']);
     const index=Number(handIndex);
     return (actions||[]).map((action,actionIndex)=>({action,actionIndex})).filter(row=>allowed.has(row.action?.type)&&Number(row.action?.handIndex)===index).map(row=>row.actionIndex);
   }
@@ -958,7 +959,7 @@
       // were dropped onto, so healing / Tool / similar plays need no chooser.
       const untargetedTrainer=zone==='active'?find(action=>action.type==='trainer'&&action.target==null&&action.effectTarget==null):-1;
       if(untargetedTrainer>=0)return untargetedTrainer;
-      if(zone==='active'){const busybody=find(action=>['bw7Busybody','sm7FallingStar','sm8HandAbility','sm11ElectricSwamp'].includes(action.type));if(busybody>=0)return busybody;return find(action=>action.type==='evolve'&&action.target==='active');}
+      if(zone==='active'){const busybody=find(action=>['swsh8Pitch','bw7Busybody','sm7FallingStar','sm8HandAbility','sm11ElectricSwamp'].includes(action.type));if(busybody>=0)return busybody;return find(action=>action.type==='evolve'&&action.target==='active');}
       if(zone==='bench'){
         const occupied=core?.benchSlotAt?core.benchSlotAt(player,benchIndex):player.bench?.[benchIndex];
         if(occupied)return find(action=>action.type==='evolve'&&action.target==='bench'&&Number(action.benchIndex)===benchIndex);
@@ -1128,7 +1129,7 @@
     const buttons=rows.map(({index,action})=>{const copy=copiedAttackOption(action,currentBattle,'player'),id=copy?.source?.id||action.cardId||action.choiceCardId||(action.target==='bench'?core.benchSlotAt(currentBattle.sides.player,action.benchIndex)?.cardId:null),art=id?cardArtUrl(id,copy?.sourceSide||'player'):'';return `<button class="tcgp-live-context-card${copy?' is-copy-attack':''}" type="button" data-tcgp-action="battle-action" data-action-index="${index}">${art?`<img src="${esc(art)}" alt="">`:''}<span>${esc(actionLabel(action,currentBattle,'player'))}</span></button>`;}).join('');
     return `<div class="tcgp-live-context-centre" role="dialog" aria-label="Choose a play"><div class="tcgp-live-context-head"><b>Choose a play</b><button type="button" data-tcgp-action="close-overlay">×</button></div><div class="tcgp-live-context-rail">${buttons}</div></div>`;
   }
-  function handActionIndices(handIndex){return battleActionCache.map((action,index)=>({action,index})).filter(({action})=>Number(action.handIndex)===Number(handIndex)&&['setupActive','setupBench','bench','legendBench','evolve','trainer','attachSpecial','bw7Busybody','sm7FallingStar','sm8HandAbility','sm11ElectricSwamp'].includes(action.type)).map(({index})=>index);}
+  function handActionIndices(handIndex){return battleActionCache.map((action,index)=>({action,index})).filter(({action})=>Number(action.handIndex)===Number(handIndex)&&['setupActive','setupBench','bench','legendBench','evolve','trainer','attachSpecial','swsh8Pitch','bw7Busybody','sm7FallingStar','sm8HandAbility','sm11ElectricSwamp'].includes(action.type)).map(({index})=>index);}
   function openHandActions(handIndex){
     if(!currentBattle?.sides?.player?.hand?.[handIndex]||battlePresentationBusy)return;
     battleHandIndex=Number(handIndex);battleInspect=null;battleOverlay='hand-actions';renderBattle();

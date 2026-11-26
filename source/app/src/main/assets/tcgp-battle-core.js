@@ -1086,6 +1086,7 @@
       next.Psychic=Number(next.Psychic||0)+Number(slot?.energy?.Psychic||0);
     for(const ref of slot?.specialEnergy||[]){
       if(!effects.specialEnergyTextActive(state,ref,data.cardById)){next.Colorless=Number(next.Colorless||0)+1;continue;}
+      if(ref.cardId==='swsh8-244'&&!data.cardById(slot?.cardId)?.fusionStrike)continue;
       if(['sm10-190','sm10-234'].includes(ref.cardId)&&!['Stage 1','Stage 2','BREAK'].includes(data.cardById(slot?.cardId)?.stage))continue;
       if(ref.cardId==='sm6-117'&&!miracleWind){const type=data.cardById(slot?.cardId)?.ultraBeast?'Miracle':'Colorless';next[type]=Number(next[type]||0)+1;continue;}
       if(['swsh6-157','swsh6-159'].includes(ref.cardId)&&!miracleWind){const mon=data.cardById(slot?.cardId);if(ref.cardId==='swsh6-157'?mon?.singleStrike:mon?.rapidStrike)next.Miracle=Number(next.Miracle||0)+1;continue;}
@@ -1751,6 +1752,7 @@
     if(state.format==='classic'&&s.active&&(Number(s.active.damage||0)>0||Object.keys(s.active.conditions||{}).length)&&
       !effects.isActionLocked(state,side,'Ability',data.cardById))for(const [handIndex,ref] of s.hand.entries())
       if(ref.cardId==='bw7-126')actions.push({type:'bw7Busybody',handIndex,cardId:ref.cardId});
+    if(state.format==='classic'&&s.swsh8PitchTurn!==state.turnNumber&&!effects.isActionLocked(state,side,'Ability',data.cardById))s.hand.forEach((ref,handIndex)=>{if(ref.cardId==='swsh8-77'&&!effects.abilitiesSuppressed(state,side,ref,data.cardById,'hand'))actions.push({type:'swsh8Pitch',handIndex,cardId:ref.cardId});});
     if(state.format==='classic'&&s.active&&emptyBenchSlots(s).length&&!effects.isActionLocked(state,side,'Ability',data.cardById))for(const [handIndex,ref] of s.hand.entries())if(ref.cardId==='sm7-83')actions.push({type:'sm7FallingStar',handIndex,cardId:ref.cardId,target:'active'});
     // Classic: normal Energy Zone attachment and once-per-turn hand Energy
     // attachment are INDEPENDENT. Hand-attached Basic and Special both count
@@ -2117,9 +2119,9 @@
     if(state.format==='classic'&&(Number(s.ex7TrainerLockedUntil||0)>=Number(state.turnNumber)||Number(s.ex8TrainerLockUntil||0)>=Number(state.turnNumber)))for(let i=actions.length-1;i>=0;i--)if(actions[i].type==='trainer'&&data.cardById(actions[i].cardId)?.trainerType!=='Supporter')actions.splice(i,1);
     if(state.format==='classic'&&Number(s.ex8SupporterLockUntil||0)>=Number(state.turnNumber))for(let i=actions.length-1;i>=0;i--)if(actions[i].type==='trainer'&&data.cardById(actions[i].cardId)?.trainerType==='Supporter')actions.splice(i,1);
     if(state.format==='classic'&&state.sides[side==='player'?'opponent':'player'].active?.cardId==='ex8-100')for(let i=actions.length-1;i>=0;i--)if(actions[i].type==='trainer'&&data.cardById(actions[i].cardId)?.trainerType==='Stadium')actions.splice(i,1);
-    if(state.format==='classic'&&Number(s.sm9HandLockUntil||0)>=state.turnNumber){for(let i=actions.length-1;i>=0;i--)if(actions[i].handIndex!=null||['bench','legendBench','evolve','trainer','attachSpecial','bw7Busybody','sm7FallingStar','sm8MountainPass'].includes(actions[i].type))actions.splice(i,1);}
+    if(state.format==='classic'&&Number(s.sm9HandLockUntil||0)>=state.turnNumber){for(let i=actions.length-1;i>=0;i--)if(actions[i].handIndex!=null||['bench','legendBench','evolve','trainer','attachSpecial','swsh8Pitch','bw7Busybody','sm7FallingStar','sm8MountainPass'].includes(actions[i].type))actions.splice(i,1);}
     if(state.format==='classic'&&Number(s.sm4HandLockUntil||0)>=state.turnNumber){
-      for(let i=actions.length-1;i>=0;i--)if(['bench','legendBench','evolve','trainer','attachSpecial','bw7Busybody','sm7FallingStar','sm11ElectricSwamp'].includes(actions[i].type))actions.splice(i,1);
+      for(let i=actions.length-1;i>=0;i--)if(['bench','legendBench','evolve','trainer','attachSpecial','swsh8Pitch','bw7Busybody','sm7FallingStar','sm11ElectricSwamp'].includes(actions[i].type))actions.splice(i,1);
     }
     if(state.format==='classic'&&Number(s.sm4AbilityPokemonLockUntil||0)>=state.turnNumber){
       for(let i=actions.length-1;i>=0;i--){const a=actions[i];if(['bench','evolve','legendBench','sm7FallingStar','sm11ElectricSwamp'].includes(a.type)&&
@@ -3336,6 +3338,7 @@ const target=slotForTarget(s,action.target,action.benchIndex);if(card.id==='pl2-
     if(!card||!slot)return false;
     const energyTextActive=effects.specialEnergyTextActive(state,{cardId:card.id},data.cardById);
     const recipient=data.cardById(slot.cardId);
+    if(card.id==='swsh8-244'&&!recipient?.fusionStrike)return false;
     if(['swsh5-140','swsh5-182','swsh6-159'].includes(card.id)&&!recipient?.rapidStrike)return false;
     if(['swsh5-141','swsh5-183','swsh6-157'].includes(card.id)&&!recipient?.singleStrike)return false;
     if(card.id==='swsh1-186'&&!paid&&s.hand.length<2)return false;
@@ -3905,6 +3908,9 @@ const target=slotForTarget(s,action.target,action.benchIndex);if(card.id==='pl2-
         if(state.phase==='battle')endTurn(state);
       }
       return state;
+    }
+    if(matched.type==='swsh8Pitch'){
+      const [ref]=s.hand.splice(matched.handIndex,1);s.deck.push(ref);s.swsh8PitchTurn=state.turnNumber;state.log.push({type:'ability',side,cardId:ref.cardId,ability:'Pitch a Pyukumuku',fromHand:true,cards:[ref.cardId]});effectContext(state,side,{}).drawCard(s);return state;
     }
     if(matched.type==='sm7FallingStar'){
       const [ref]=s.hand.splice(matched.handIndex,1),old=s.active,idx=emptyBenchSlots(s)[0];
@@ -4815,7 +4821,7 @@ const target=slotForTarget(s,action.target,action.benchIndex);if(card.id==='pl2-
         const types=data.cardById(pokemon.cardId)?.types||[],kept=[];
         for(const ref of pokemon.specialEnergy||[]){
           if(!effects.specialEnergyTextActive(state,ref,data.cardById)){kept.push(ref);continue;}
-          const mon=data.cardById(pokemon.cardId),wrongStrike=['swsh5-140','swsh5-182','swsh6-159'].includes(ref.cardId)&&!mon?.rapidStrike||['swsh5-141','swsh5-183','swsh6-157'].includes(ref.cardId)&&!mon?.singleStrike;
+          const mon=data.cardById(pokemon.cardId),wrongStrike=ref.cardId==='swsh8-244'&&!mon?.fusionStrike||['swsh5-140','swsh5-182','swsh6-159'].includes(ref.cardId)&&!mon?.rapidStrike||['swsh5-141','swsh5-183','swsh6-157'].includes(ref.cardId)&&!mon?.singleStrike;
           if(wrongStrike){board.discard.push(ref);state.log.push({type:'swsh5StrikeEnergyDiscard',side:owner,cardId:ref.cardId});continue;}
           const required=ref.cardId==='xy9-113'?'Water':ref.cardId==='xy8-151'?'Fire':ref.cardId==='xy3-103'?'Grass':['xy3-104','xy10-115'].includes(ref.cardId)?'Fighting':ref.cardId==='xy4-112'?'Psychic':ref.cardId==='xy5-143'?'Metal':ref.cardId==='xy5-144'?'Fairy':ref.cardId==='xy6-97'?'Dragon':null;
           if(required&&!types.includes(required)){

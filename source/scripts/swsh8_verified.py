@@ -278,3 +278,26 @@ def trainer(row):
  if t and t[0]=="Your opponent reveals their hand. Discard up to 2 in any combination of Pokémon Tool cards, Special Energy cards, and Stadium cards from it.":return 'Supporter',E('sm7Rule',rule='swsh8Sidney')
  if t and t[0]=="Whenever either player's Active Pokémon retreats, put any basic Energy that would be discarded into their hand instead of the discard pile.":return 'Stadium',E('noop') # retreat payment in core
  return _stage5_trainer(row)
+
+# Stage 7: physical Fusion Strike Energy, linked damage and hand Ability.
+_stage6_attack=attack
+_stage6_ability=ability
+_stage6_trainer=trainer
+
+def energy(row):
+ if row[0]=='244':return E('specialEnergy',provides={'Miracle':1})
+ return None
+
+def attack(row,a):
+ t=a[3]
+ if t=='If this Pokémon has any Fusion Strike Energy attached, this attack does 80 more damage.':return E('sm7Rule',rule='swsh8PhotonBoost')
+ if t=='This attack does 70 damage for each Fusion Strike Energy attached to all of your Pokémon.':return E('sm7Rule',rule='swsh8MelodiousEcho')
+ return _stage6_attack(row,a)
+
+def ability(row,a):
+ if a[2]=="Once during your turn, if this Pokémon is in your hand, you may reveal it and put it on the bottom of your deck. If you do, draw a card. You can't use more than 1 Pitch a Pyukumuku Ability each turn.":return passive(E('noop')) # hand action in core, not a field activation
+ return _stage6_ability(row,a)
+
+def trainer(row):
+ if row[13] and row[13][0]=='Choose up to 2 of your Fusion Strike Pokémon. For each of those Pokémon, search your deck for a Fusion Strike Energy card and attach it to that Pokémon. Then, shuffle your deck.':return 'Supporter',E('sm7Rule',rule='swsh8Elesa')
+ return _stage6_trainer(row)
