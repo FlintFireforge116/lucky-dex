@@ -1,0 +1,7 @@
+# Fusion Strike stage 8 — v0.69.533
+
+279/284 playable (+3), five prints remain gated. All 276 previously enabled card descriptors compare equal. Canonical source rows are unchanged. Galarian Cursola Force Regeneration selects a legal opposing discarded Basic Pokémon V, physically moves it to an open Bench slot and places damage counters to leave 30 HP, respecting counter protection. Golem Desperate Blast triggers from an Active knockout by opposing attack damage, uses ordinary opposing Ability-effect protection (including Fusion Strike Energy), and places 10 damage counters (100 damage). Farewell Bell triggers on a VMAX holder knocked out by opposing attack damage, including on the Bench, and searches its controller's deck before resuming the KO. Each physical Tool fires at most once per knockout. Direct and shared selected/Bench attack damage now record whether the hit itself was lethal, preventing a later counter-placement KO from masquerading as a damage KO. Tests distinguish direct damage from counters and check both sides.
+
+Remaining gates: Starmie, Inteleon VMAX (two prints), Goodra, Espeon VMAX (set-local evolution parent). No speculative or partial mechanics enabled for these cards. Android APK and physical-device tests not performed.
+
+Final validation: full offline preparation exited 0; 2096/2096 gameplay checks, including 123/123 Fusion Strike; 12/12 manifest unit tests. No failures, skips or cancellations.

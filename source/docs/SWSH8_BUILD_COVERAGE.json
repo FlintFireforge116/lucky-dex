@@ -2,7 +2,7 @@
   "printed": 284,
   "canonicalTotal": 284,
   "notImported": [],
-  "battleReady": 276,
+  "battleReady": 279,
   "gated": {
     "swsh8-53": [
       "Unimplemented attack: Multishot Star"
@@ -11,17 +11,8 @@
       "Unimplemented attack: G-Max Spiral",
       "Unimplemented Ability: Double Gunner"
     ],
-    "swsh8-118": [
-      "Unimplemented attack: Force Regeneration"
-    ],
-    "swsh8-137": [
-      "Unimplemented Ability: Desperate Blast"
-    ],
     "swsh8-197": [
       "Unimplemented Ability: Slimy Room"
-    ],
-    "swsh8-234": [
-      "Unimplemented Trainer effect"
     ],
     "swsh8-266": [
       "Unimplemented attack: G-Max Spiral",

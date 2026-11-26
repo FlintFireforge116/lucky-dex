@@ -2416,7 +2416,7 @@
     if(!result.damageRules?.ignoreEffects)damage=effects.det1EvasionDamage(state,foeSide,defender,damage,data.cardById,random);
     defender.damage=Number(defender.damage||0)+damage;
     if(state.format==='classic'&&damage>0)for(const ref of activeToolsOf(state,defender))if(ref.cardId==='dp6-129')ref.dp6BubbleCoatDamagedTurn=state.turnNumber;if(damage>0)effects.florioReactToAttackDamage?.(state,foeSide,defender,side,attacker,damage,data.cardById,random);
-    if(state.format==='classic'&&damage>0&&defender.cardId==='dp2-61'&&Number(defender.dp2SpikeArmorUntil||0)>=state.turnNumber){attacker.damage=Number(attacker.damage||0)+40;state.log.push({type:'dp2SpikeArmor',side:foeSide,target:attacker.cardId,amount:40});}if(damage>0)defender.lastDamageSource={side,uid:attacker.uid,cardId:attacker.cardId,attack:true,turn:state.turnNumber,damage};
+    if(state.format==='classic'&&damage>0&&defender.cardId==='dp2-61'&&Number(defender.dp2SpikeArmorUntil||0)>=state.turnNumber){attacker.damage=Number(attacker.damage||0)+40;state.log.push({type:'dp2SpikeArmor',side:foeSide,target:attacker.cardId,amount:40});}if(damage>0)defender.lastDamageSource={side,uid:attacker.uid,cardId:attacker.cardId,attack:true,turn:state.turnNumber,damage,damageKo:Number(defender.damage)>=maxHp(state,foeSide,defender)};
     if(damage>0&&defender.legendaryMirrorShellUntil>=state.turnNumber&&state.format==='classic'){attacker.damage=Number(attacker.damage||0)+damage;state.log.push({type:'legendaryMirrorShell',side:foeSide,amount:damage,cardId:defender.cardId});}
       if(damage>0&&state.format==='classic'&&defender===state.sides[foeSide].active&&['ex16-41','ex16-47'].includes(defender.cardId)&&!effects.abilitiesSuppressed(state,foeSide,defender,data.cardById)){attacker.damage=Number(attacker.damage||0)+10;state.log.push({type:'ex16RoughSkin',side:foeSide,cardId:defender.cardId,amount:10});}
       if(damage>0&&state.format==='classic'&&defender.cardId==='xy1-14'&&
@@ -2842,6 +2842,19 @@
           if(koGuard.mode==='survive'){slot.damage=Math.max(0,maxHp(state,side,slot)-Number(koGuard.remainingHp||10));state.log.push({type:'koPrevented',side,cardId:card.id});continue;}
         }
         const eventSource=slot.dp2ForcedDiscard?null:cause==='attack'?source:null;
+        // Fusion Strike: only a fresh opposing attack-damage KO triggers these cards.
+        if(state.format==='classic'&&eventSource?.attack&&eventSource.side===foeSide&&Number(eventSource.turn)===Number(state.turnNumber)&&Number(eventSource.damage)>0&&eventSource.damageKo!==false){
+          if(!slot.swsh8DesperateResolved&&slot.cardId==='swsh8-137'&&slot===s.active&&!effects.abilitiesSuppressed(state,side,slot,data.cardById)){
+            slot.swsh8DesperateResolved=true;
+            if(foe.active?.uid===eventSource.uid)effects.applyEffect({type:'placeDamageCounters',target:'opponentActive',amount:100},{...effectContext(state,side,{},slot),isAbility:true});
+          }
+          if(card?.pokemonVMAX&&s.deck.length){
+            const seen=slot.swsh8BellSeen||(slot.swsh8BellSeen=[]),bell=activeToolsOf(state,slot).find(r=>r.cardId==='swsh8-234'&&!seen.includes(r.uid));
+            if(bell){seen.push(bell.uid);effects.applyEffect({type:'searchChosen',amount:1},{...effectContext(state,side,{},slot),sourceTool:bell});
+              if(state.phase==='effectChoice'){state.pendingChoice.resume='knockout';state.pendingChoice.koResume=resume||null;state.pendingChoice.koCause=cause||null;return true;}}
+          }
+        }
+
         if(state.format==='classic'&&slot===s.active&&eventSource?.attack&&eventSource.side===foeSide){
           // SM3 Wishful Baton: only a defending Active KO by attack damage,
           // only Basic Energy, only one receiving Bench Pokémon. The knockout
@@ -4685,7 +4698,7 @@ const target=slotForTarget(s,action.target,action.benchIndex);if(card.id==='pl2-
         const amount=defender.cardId==='ex1-22'?20:10;s.active.damage=Number(s.active.damage||0)+amount;
         state.log.push({type:'ex1RoughSkin',side:foeSide,cardId:defender.cardId,amount});
       }
-      if(damage>0){if(defender.cardId==='sm6-46'&&Number(defender.damage)>=maxHp(state,foeSide,defender))defender.sm6DamageKOOnTurn=state.turnNumber;defender.lastDamageSource={side,uid:s.active.uid,cardId:s.active.cardId,attack:true,turn:state.turnNumber,damage};defender.neoDestinyLastHitAmount=damage;}
+      if(damage>0){if(defender.cardId==='sm6-46'&&Number(defender.damage)>=maxHp(state,foeSide,defender))defender.sm6DamageKOOnTurn=state.turnNumber;defender.lastDamageSource={side,uid:s.active.uid,cardId:s.active.cardId,attack:true,turn:state.turnNumber,damage,damageKo:Number(defender.damage)>=maxHp(state,foeSide,defender)};defender.neoDestinyLastHitAmount=damage;}
       if(damage>0&&defender.legendaryMirrorShellUntil>=state.turnNumber&&state.format==='classic'){s.active.damage=Number(s.active.damage||0)+damage;state.log.push({type:'legendaryMirrorShell',side:foeSide,amount:damage,cardId:defender.cardId});}
       if(damage>0&&state.format==='classic'&&defender===foe.active&&['ex12-78','ex13-91'].includes(defender.cardId))s.active.damage=Number(s.active.damage||0)+10;
       if(!hoodAttacker&&damage>0&&state.format==='classic'&&defender===foe.active&&defender.cardId==='ex12-70'&&

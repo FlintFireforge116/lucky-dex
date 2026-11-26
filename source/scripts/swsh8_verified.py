@@ -301,3 +301,20 @@ def ability(row,a):
 def trainer(row):
  if row[13] and row[13][0]=='Choose up to 2 of your Fusion Strike Pokémon. For each of those Pokémon, search your deck for a Fusion Strike Energy card and attach it to that Pokémon. Then, shuffle your deck.':return 'Supporter',E('sm7Rule',rule='swsh8Elesa')
  return _stage6_trainer(row)
+
+# Stage 8: exact damage-based KO triggers and Force Regeneration.
+_stage7_attack=attack
+_stage7_ability=ability
+_stage7_trainer=trainer
+
+def attack(row,a):
+ if a[3]=="Put a Basic Pokémon V from your opponent's discard pile onto their Bench. If you do, put damage counters on that Pokémon until its remaining HP is 30.":return E('benchFromDiscard',side='opponent',amount=1,filter={'kind':'pokemon','stage':'Basic','tag':'pokemon-v'},remainingHp=30)
+ return _stage7_attack(row,a)
+
+def ability(row,a):
+ if a[2]=="If this Pokémon is in the Active Spot and is Knocked Out by damage from an attack from your opponent's Pokémon, put 10 damage counters on the Attacking Pokémon.":return passive(E('noop')) # exact KO hook in core
+ return _stage7_ability(row,a)
+
+def trainer(row):
+ if row[13] and row[13][0]=="If the Pokémon VMAX this card is attached to is Knocked Out by damage from an attack from your opponent's Pokémon, search your deck for a card and put it into your hand. Then, shuffle your deck.":return 'Tool',E('noop') # exact KO hook in core
+ return _stage7_trainer(row)

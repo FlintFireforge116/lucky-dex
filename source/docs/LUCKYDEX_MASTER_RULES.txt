@@ -6231,3 +6231,9 @@ v0.69.532 — Fusion Strike stage 7 (physical Energy and linked mechanics)
 - 113/113 focused tests (10 new bilateral outcomes); 269 previously playable descriptors unchanged. Remaining eight prints explicitly gated. APK and device checks are separate.
 
 Final v0.69.532 validation: full offline preparation exited 0; 2086/2086 gameplay checks, including 113/113 Fusion Strike; 12/12 manifest unit tests. No failures, skips or cancellations.
+
+v0.69.533 — Fusion Strike stage 8 (damage-KO provenance and revival)
+- 279/284 playable; five prints gated. All 276 prior playable descriptors unchanged. Force Regeneration requires a legal Basic Pokémon V from the opposing discard and an open opposing Bench slot. Use the actual physical ref, live maximum HP and counter placement protection; leave 30 HP when permitted. Desperate Blast requires Golem in Active and a fresh KO by actual opposing attack damage, then places 10 counters on the attacker subject to opposing Ability-effect protection. Farewell Bell requires a VMAX holder and fresh opposing attack-damage KO, including Bench; search the holder's controller's deck before KO removal, mark each physical Tool resolved before asking for a choice, and resume knockout after choice. Standard attack damage provenance records whether the hit itself was lethal; a later counter-placement KO must not trigger these two effects. Test both sides, Bench vs Active, protected attacker, nonlethal damage followed by counters, and exact deck/discard ownership.
+- Do not disable set-local parent gates to claim full completion. Five prints remain: Starmie, Inteleon VMAX x2, Goodra and Espeon VMAX.
+
+Final v0.69.533 validation: full offline preparation exited 0; 2096/2096 gameplay tests, including 123/123 Fusion Strike; 12/12 release-manifest unit tests. Zero failures, skips or cancellations.
