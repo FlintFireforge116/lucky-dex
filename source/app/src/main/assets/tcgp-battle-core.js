@@ -1362,10 +1362,10 @@
         }
       }
     }
-    if(state.format==='classic'&&current.id==='ex12-88'&&!effects.abilitiesSuppressed(state,side,slot,data.cardById)){
+    if(state.format==='classic'&&(current.reprintOf||current.id)==='ex12-88'&&!effects.abilitiesSuppressed(state,side,slot,data.cardById)){
       const seen=new Set(out.map(x=>x.cardId+':'+x.attackIndex));
       for(const which of ['player','opponent'])for(const p of [state.sides[which].active,...state.sides[which].bench].filter(Boolean)){
-        const other=data.cardById(p.cardId);if(!other?.battleEnabled||other.id==='ex12-88')continue;
+        const other=data.cardById(p.cardId);if(!other?.battleEnabled||(other.reprintOf||other.id)==='ex12-88')continue;
         for(const [attackIndex,attack] of (other.attacks||[]).entries()){
           if(seen.has(other.id+':'+attackIndex))continue;seen.add(other.id+':'+attackIndex);
           out.push({cardId:other.id,attackIndex,attack,borrowed:true});
@@ -2073,7 +2073,7 @@
            (side===state.firstSide||Number(s.turnCount)!==1))continue;
         if(state.format==='classic'&&attackCardId==='xy11-88'&&attack.name==='Stall'&&
            (state.turnNumber!==2||side===state.firstSide||s.turnCount!==1))continue;
-        if(state.format==='classic'&&s.active.cardId==='pl3-145'&&attack.name==='Dragon Rush'&&Number(s.active.pl3DragonRushUsedTurn||-100)===Number(state.turnNumber)-2)continue;
+        if(state.format==='classic'&&['pl3-145','cel25c-145_A'].includes(s.active.cardId)&&attack.name==='Dragon Rush'&&Number(s.active.pl3DragonRushUsedTurn||-100)===Number(state.turnNumber)-2)continue;
         if(state.format==='classic'&&foe.active?.cardId==='sm3-6'&&!effects.abilitiesSuppressed(state,side==='player'?'opponent':'player',foe.active,data.cardById)&&data.cardById(s.active.cardId)?.stage==='Basic')continue;
         if(attack.vstarPower&&s.vstarPowerUsed)continue;
         if(state.format==='classic'&&Number(s.active?.bw9NoAttackUntil||0)>=Number(state.turnNumber))continue;
@@ -2085,7 +2085,7 @@
         if(state.format==='classic'&&s.active.cardId==='pl1-16'&&Number(s.active.pl1LastAttackTurn||-1)===state.turnNumber-2&&!effects.abilitiesSuppressed(state,side,s.active,data.cardById))continue;
         if(attack.requiresAsleep&&!conditions.sleep)continue;
         if(conditions.sleep&&!attack.allowAsleep&&!(state.format==='classic'&&((s.active.cardId==='ex6-15'&&attack.name==='Toss and Turn')||(s.active.cardId==='sm2-114'&&attack.name==='Hypno Roll'))))continue;
-        if(state.format==='classic'&&['ex4-3','ex4-9'].includes(s.active.cardId)&&!effects.abilitiesSuppressed(state,side,s.active,data.cardById)){
+        if(state.format==='classic'&&['ex4-3','ex4-9','cel25c-9_A'].includes(s.active.cardId)&&!effects.abilitiesSuppressed(state,side,s.active,data.cardById)){
           const team=s.active.cardId==='ex4-3'?"Team Aqua's":"Team Magma's";
           if(['player','opponent'].flatMap(who=>pokemonOn(state.sides[who])).filter(slot=>data.cardById(slot.cardId)?.name?.startsWith(team)).length<=3)continue;
         }

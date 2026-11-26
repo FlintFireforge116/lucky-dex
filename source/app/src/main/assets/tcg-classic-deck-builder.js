@@ -28,7 +28,7 @@ const STAPLES=Object.freeze([
  ['base1-83',1], // Maintenance
  ['base1-87',1]  // Pokedex
 ]);
-const SET_IDS=Object.freeze(['base1','base2','base3','base5','gym1','gym2','neo1','neo2','neo3','neo4','base6','ecard1','ecard2','ecard3','ex1','ex2','ex3','ex4','ex5','ex6','ex7','ex8','ex9','ex10','ex11','ex12','ex13','ex14','ex15','ex16','dp1','dp2','dp3','dp4','dp5','dp6','dp7','pl1','pl2','pl3','pl4','hgss1','hgss2','hgss3','hgss4','col1','bw1','bw2','bw3','bw4','bw5','bw6','bw7','bw8','bw9','bw10','bw11','xy1','xy2','xy3','xy4','xy5','xy6','xy7','xy8','xy9','xy10','xy11','xy12','sm1','sm2','sm3','sm4','sm5','sm6','sm7','sm75','sm8','sm9','det1','sm10','sm11','sm115','sma','sm12','swsh1','swsh2','swsh3','swsh35','swsh4','swsh45','swsh45sv','swsh5','swsh6','swsh7','cel25','SNAPFLORIO','SNAPFOUNJA','sv1']);
+const SET_IDS=Object.freeze(['base1','base2','base3','base5','gym1','gym2','neo1','neo2','neo3','neo4','base6','ecard1','ecard2','ecard3','ex1','ex2','ex3','ex4','ex5','ex6','ex7','ex8','ex9','ex10','ex11','ex12','ex13','ex14','ex15','ex16','dp1','dp2','dp3','dp4','dp5','dp6','dp7','pl1','pl2','pl3','pl4','hgss1','hgss2','hgss3','hgss4','col1','bw1','bw2','bw3','bw4','bw5','bw6','bw7','bw8','bw9','bw10','bw11','xy1','xy2','xy3','xy4','xy5','xy6','xy7','xy8','xy9','xy10','xy11','xy12','sm1','sm2','sm3','sm4','sm5','sm6','sm7','sm75','sm8','sm9','det1','sm10','sm11','sm115','sma','sm12','swsh1','swsh2','swsh3','swsh35','swsh4','swsh45','swsh45sv','swsh5','swsh6','swsh7','cel25','cel25c','SNAPFLORIO','SNAPFOUNJA','sv1']);
 // Darkness and Metal are already Basic Energy types. Deduplicate before rendering
 // archetype chips so each energy type has exactly one toggle.
 // Dragon is a Pokémon type, never a Basic Energy type. Include it as an
@@ -73,7 +73,7 @@ const isHolonPhantomsEnergySupply=(card,sets)=>sets.includes('ex13')&&card?.setI
 const allowedInSetPool=(card,sets)=>!!card&&(sets.includes(card.setId)||isDiscoveryEnergySupply(card,sets)||isHolonPhantomsEnergySupply(card,sets));
 function specialCosts(_cards){return {D:0,M:0};} // Basic Darkness/Metal satisfies typed attack costs; Special Energy is optional.
 
-function classicCardName(name){return String(name||'').replace(/[’]/g,"'").replace(/\s+(?=[♀♂])/g,'').replace(/\s*δ\s*$/u,'').trim();}
+function classicCardName(name){return String(name||'').replace(/^Imposter Professor Oak$/,'Impostor Professor Oak').replace(/[’]/g,"'").replace(/\s+(?=[♀♂])/g,'').replace(/\s*δ\s*$/u,'').trim();}
 function classicEvolutionMatches(baseName,parentName){const a=classicCardName(baseName),p=classicCardName(parentName);return a===p||(p==='Burmy'&&/^Burmy (?:Plant|Sandy|Trash) Cloak$/.test(a));}
 function parentKeys(baseName){const n=classicCardName(baseName);return /^Burmy (?:Plant|Sandy|Trash) Cloak$/.test(n)?[n,'Burmy']:[n];}
 // A Fossil printed as a playable Trainer is an evolution prerequisite, not
@@ -1692,7 +1692,7 @@ function buildDeck(rows,options={}){
  const finalEnergy=energyTypes.length?energyTypes:selectedTypes.slice(0,maxEnergyTypes);
  // Tiny Celebrations pools must never return an unpayable Energy plan.
  // Unfiltered builds may try an explicit pair; user filters stay unchanged.
- if(scope.length===1&&scope[0]==='cel25'&&decks.analyzeDeck(cards,finalEnergy).missingEnergyTypes.length){
+ if(scope.length===1&&['cel25','cel25c'].includes(scope[0])&&decks.analyzeDeck(cards,finalEnergy).missingEnergyTypes.length){
    if(!requested.length){
      const types=decks.ENERGY_TYPES.filter(t=>pokemonPool.some(c=>attackTypes(c).includes(t)));
      const pairs=types.flatMap((t,i)=>types.slice(i+1).map(u=>[t,u]));
