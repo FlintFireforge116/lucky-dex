@@ -175,6 +175,7 @@
     if(!card)return false;
     if(card.id==='cel25c-15_A2')return !state.cel25cOpenPrizes&&(s.prizes.some(r=>!r.faceUp)||foe.prizes.some(r=>!r.faceUp));
     if(action.swsh4Substitution)return s.deck.length>0;
+    if(card.effect?.rule==='swsh10Grant')return effects.effectiveTypes(state,side,s.active,data.cardById).includes('Fighting');
     if(card.trainerType==='Tool'&&!usefulClassicTool(state,side,action,card))return false;
     if(card.effect?.rule==='swsh2ToolScrapper')return slots(foe).some(p=>p.tool||p.extraTools?.length);
     if(card.effect?.rule==='swsh2ScoopNet')return slots(s).some(p=>{const c=data.cardById(p.cardId);return !c?.pokemonV&&!c?.pokemonGX&&(p!==s.active||s.bench.length)&&Number(p.damage||0)>=Math.max(40,core.maxHp(state,side,p)-40)&&attachedCount(p)<=1;});
@@ -265,6 +266,7 @@
     if(action.type==='evolve')return 900;
     if(action.type==='swsh8Pitch'||action.type==='sm11ElectricSwamp'||action.type==='sm8HandAbility'||action.type==='abilityDiscard'&&['sm8-97','swsh9-37'].includes(action.cardId))return 800;
     if(action.type==='ability')return dangerous(abilityEffect(card,action.abilityIndex))?-100:800;
+    if(action.type==='swsh10GrantRecover')return 690;
     if(action.type==='trainer')return !action.swsh4Substitution&&dangerous(card?.effect)?-100:700;
     if(action.type==='stadiumAction')return worthwhileStadiumAction(state,side,action)?850:-100;
     if(action.type==='bench'||action.type==='legendBench')return action.type==='legendBench'?720:600;
@@ -397,6 +399,7 @@
   function chooseAction(state,side,difficulty,actionCount){
     const level=DIFFICULTIES.indexOf(String(difficulty||'Beginner'));if(level<0)throw new Error('Unknown AI difficulty: '+difficulty);
     const legal=core.legalActions(state,side).filter(action=>{
+      if(action.type==='swsh10GrantRecover'){const b=state.sides[side];return !b.supporterUsed&&b.swsh10GrantTurn!==state.turnNumber&&!b.hand.some(x=>data.cardById(x.cardId)?.name==='Grant')&&b.hand.length>=3&&effects.effectiveTypes(state,side,b.active,data.cardById).includes('Fighting');}
       if(state.format==='classic'&&uselessDoubleColorless(state,side,action))return false;
       if(state.format==='classic'&&action.type==='trainer'&&!usefulClassicTrainer(state,side,action))return false;
       if(state.format!=='classic'||action.type!=='ability')return true;
@@ -428,6 +431,7 @@
       const link=legal.find(a=>a.type==='trainer'&&effects.spiritLinkSpecies(data.cardById(a.cardId))&&legal.some(e=>e.type==='evolve'&&e.target===a.target&&e.benchIndex===a.benchIndex&&effects.spiritLinkEvolution(data.cardById(a.cardId),data.cardById(e.cardId||ss.hand[e.handIndex]?.cardId))));
       if(link)return link;
     }
+    if(state.phase==='effectChoice'&&['swsh10GrantRecover','swsh10AncientWisdom'].includes(state.pendingChoice?.effect?.rule)){const available=legal.filter(a=>!a.choiceSkip);return available.find(a=>a.choiceTarget==='active')||available[0]||legal[0];}
     if(state.phase==='effectChoice'&&state.pendingChoice?.special==='swsh2NaturalDraw')return legal.find(x=>x.choiceOption===1)||legal[0];
     if(state.phase==='effectChoice'&&state.pendingChoice?.effect?.rule==='sm11Quiz'&&state.pendingChoice.effect.stage==='guess')return legal[Math.floor(core.random(state)*legal.length)];
     if(state.format==='classic'&&state.phase==='effectChoice'&&state.pendingChoice?.special==='skyFieldBenchTrim'){

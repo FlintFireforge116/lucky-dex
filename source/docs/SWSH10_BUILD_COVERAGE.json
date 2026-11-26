@@ -2,7 +2,7 @@
   "printed": 216,
   "canonicalTotal": 216,
   "notImported": [],
-  "battleReady": 208,
+  "battleReady": 212,
   "gated": {
     "swsh10-119": [
       "Unimplemented Ability: Resonant Evolution"
@@ -10,22 +10,9 @@
     "swsh10-120": [
       "Unimplemented Ability: Stand Sentry"
     ],
-    "swsh10-130": [
-      "Unimplemented attack: Gigaton Break",
-      "Unimplemented Ability: Ancient Wisdom"
-    ],
-    "swsh10-144": [
-      "Unimplemented Trainer effect"
-    ],
     "swsh10-170": [
       "Unimplemented attack: Hypnostrike",
       "Unimplemented Ability: Wish Connector"
-    ],
-    "swsh10-185": [
-      "Unimplemented Trainer effect"
-    ],
-    "swsh10-203": [
-      "Unimplemented Trainer effect"
     ],
     "swsh10-216": [
       "Unimplemented Special Energy rules"

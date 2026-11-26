@@ -248,3 +248,17 @@ def trainer(row):
  t=row[13][0]
  if t=="Look at your face-down Prize cards. You may reveal a Basic Pokémon you find there, put it into your hand, and put this Hisuian Heavy Ball in its place as a face-down Prize card. (If you don't reveal a Basic Pokémon, put this card in the discard pile.) Then, shuffle your face-down Prize cards.":return 'Item',E('sm7Rule',rule='beastBall',basicPokemon=True)
  return _stage7_trainer(row)
+
+# Stage nine: discard-zone Supporter recovery and single-recipient Energy recovery.
+_stage8_attack=attack
+_stage8_ability=ability
+_stage8_trainer=trainer
+def attack(row,a):
+ if a[3]=="If your opponent's Active Pokémon is a Pokémon VMAX, this attack does 150 more damage.":return bonus(150,cond('opponentMatches',filter={'tag':'pokemon-vmax'}))
+ return _stage8_attack(row,a)
+def ability(row,a):
+ if a[2]=='Once during your turn, if you have Regirock, Regice, Registeel, Regieleki, and Regidrago in play, you may attach up to 3 Energy cards from your discard pile to 1 of your Pokémon.':return activated(E('sm7Rule',rule='swsh10AncientWisdom',condition=cond('pokemonPresentAll',names=['Regirock','Regice','Registeel','Regieleki','Regidrago'])))
+ return _stage8_ability(row,a)
+def trainer(row):
+ if row[1]=='Grant' and row[13][0]=="During this turn, your Fighting Pokémon's attacks do 30 more damage to your opponent's Active Pokémon (before applying Weakness and Resistance). During your turn, if this Grant is in your discard pile, you may discard 2 cards, except any Grant, from your hand. If you do, put this Grant into your hand. (This effect doesn't use up your Supporter card for the turn.)":return 'Supporter',E('sm7Rule',rule='swsh10Grant')
+ return _stage8_trainer(row)
