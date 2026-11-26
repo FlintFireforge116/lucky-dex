@@ -191,3 +191,24 @@ def trainer(row):
  if row[1]=='Miss Fortune Sisters':return 'Supporter',E('sm7Rule',rule='swsh11MissFortune')
  if row[1]=='Lake Acuity':return 'Stadium',E('noop') # continuous typed Energy check in modifierAmount
  return _stage6_trainer(row)
+
+# Stage 8: selectable pre-damage resources, physical prize exchange and damage movement.
+_stage7_attack=attack
+_stage7_ability=ability
+_stage7_trainer=trainer
+def attack(row,a):
+ t=a[3]
+ if a[0]=='Scrap Short':return E('sm7Rule',rule='swsh11ScrapShort')
+ if a[0]=='Max Frost':return E('sm7Rule',rule='swsh11MaxFrost')
+ if a[0]=='Floe Return':return E('sm7Rule',rule='swsh11FloeReturn')
+ if a[0]=='Upstream Spirits':return E('sm7Rule',rule='swsh11UpstreamSpirits')
+ if a[0]=='Dynamic Tail':return E('sm7Rule',rule='swsh11DynamicTail')
+ return _stage7_attack(row,a)
+def ability(row,a):
+ if a[0]=='Glaciated World':return activated(E('sm7Rule',rule='swsh11GlaciatedWorld'))
+ if a[0]=='Wild Style':return passive(E('noop')) # shared attack-cost hook
+ return _stage7_ability(row,a)
+def trainer(row):
+ if row[1]=='Arc Phone':return 'Item',E('sm7Rule',rule='swsh11ArcPhone')
+ if row[1]=='Damage Pump':return 'Item',E('sm7Rule',rule='swsh11DamagePump')
+ return _stage7_trainer(row)

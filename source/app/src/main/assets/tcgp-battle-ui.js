@@ -624,6 +624,8 @@
     if(!attack)return '';
     // Explicit LuckyDex hybrid rule, intentionally different from printed TCG text.
     if(attack.effect?.rule==='ex4:10:1')return 'LuckyDex hybrid rule: Flip 5 coins. For each heads, discard the next Basic Energy from your Energy Zone, if available. This attack does 30 damage for each Fire or Fighting Energy discarded this way. Other Energy types are discarded but do not add damage.';
+    if(attack.effect?.rule==='swsh11FloeReturn')return 'LuckyDex hybrid rule: Return any amount of attached Water Energy from your Pokémon. Basic Energy returns to the Energy Zone; physical Special Energy returns to your deck. Shuffle the returned Energy into its destination. Deal 40 damage per Energy card returned.';
+    if(attack.effect?.rule==='swsh11UpstreamSpirits')return 'LuckyDex hybrid rule: Deal 20 damage for each Basic Energy in your discard pile (including the Energy discard ledger). Return discarded Zone Energy to the Energy Zone and physical Basic Energy to your deck, then shuffle. Special Energy and the Lost Zone are not affected.';
     const zoneSpec=effects.zoneSampleSpec(attack);
     if(zoneSpec){const {count,types,base,amount,both,mode}=zoneSpec,typed=types.join(' or ');
       const sample=both?'Flip 1 coin for each player. On heads, take the next Basic Energy from that player’s Energy Zone, if available.':`Flip ${count} ${count===1?'coin':'coins'}. For each heads, take the next Basic Energy from your Energy Zone, if available.`;
@@ -642,7 +644,7 @@
     const paragraph=value=>value?`<p>${esc(value)}</p>`:'';
     const abilities=cardAbilities(card);
     const abilityName=ability=>card.source!=='tcg'?'Ability':ability.printedPowerType==='body'?'Poké-Body':ability.printedPowerType==='power'?'Poké-Power':'Pokémon Power';
-    const abilityHtml=abilities.map(ability=>`<article><div><b>${esc(abilityName(ability))} · ${esc(ability.name||'Ability')}</b></div>${paragraph(text(ability.text)||summarizeEffect(ability.effect))}${paragraph(text(ability.timing))}</article>`).join('');
+    const abilityHtml=abilities.map(ability=>`<article><div><b>${esc(abilityName(ability))} · ${esc(ability.name||'Ability')}</b></div>${paragraph(ability.effect?.rule==='swsh11GlaciatedWorld'?'LuckyDex hybrid rule: Once per turn, flip a coin. On heads, take the next Energy Zone unit if available. Attach it to one of your Pokémon if it is Water; otherwise discard it. On tails (or an empty Energy Zone), take the top physical deck card; attach it if it is Water Energy, otherwise discard it.':text(ability.text)||summarizeEffect(ability.effect))}${paragraph(text(ability.timing))}</article>`).join('');
     const handEnergyNote=card.id==='ex15-95'&&currentBattle?.format==='classic'?'<p><b>Fellow Boost:</b> This needs a Basic Energy card in your hand, not the Energy Zone. Mr. Stone\'s Project can retrieve Basic Energy into your hand.</p>':'';
     const attacks=(card.attacks||[]).map((attack,i)=>`<article><div><b>${esc(attack.name)}</b><strong>${esc(attack.damageText??attack.damage??0)}</strong></div>${energyCostHtml(availability?.[i]?.cost??attack.cost)}${paragraph(attackDescription(attack))}${paragraph(availability?.[i]?.reason)}</article>`).join('');
     const subtype=card.trainerSubtype||card.trainerType||'Trainer';

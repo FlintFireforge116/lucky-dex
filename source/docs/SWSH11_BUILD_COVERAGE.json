@@ -2,26 +2,13 @@
   "printed": 217,
   "canonicalTotal": 217,
   "notImported": [],
-  "battleReady": 178,
+  "battleReady": 189,
   "gated": {
     "swsh11-20": [
       "Unimplemented Ability: Jamming Attachment"
     ],
-    "swsh11-34": [
-      "Unimplemented attack: Floe Return"
-    ],
     "swsh11-40": [
       "Unimplemented Ability: Oceanic Accompaniment"
-    ],
-    "swsh11-45": [
-      "Unimplemented attack: Upstream Spirits"
-    ],
-    "swsh11-49": [
-      "Unimplemented attack: Max Frost",
-      "Unimplemented Ability: Glaciated World"
-    ],
-    "swsh11-58": [
-      "Unimplemented attack: Scrap Short"
     ],
     "swsh11-62": [
       "Unimplemented attack: Wonder Storm",
@@ -64,10 +51,6 @@
       "Unimplemented attack: Chain of Spirits",
       "Unimplemented Ability: Cursed Message"
     ],
-    "swsh11-118": [
-      "Unimplemented attack: Dynamic Tail",
-      "Unimplemented Ability: Wild Style"
-    ],
     "swsh11-124": [
       "Unimplemented attack: Destructive Finish"
     ],
@@ -81,13 +64,7 @@
       "Unimplemented attack: Thumping Snore",
       "Unimplemented Ability: Unfazed Fat"
     ],
-    "swsh11-152": [
-      "Unimplemented Trainer effect"
-    ],
     "swsh11-154": [
-      "Unimplemented Trainer effect"
-    ],
-    "swsh11-156": [
       "Unimplemented Trainer effect"
     ],
     "swsh11-165": [
@@ -102,26 +79,12 @@
     "swsh11-170": [
       "Unimplemented Trainer effect"
     ],
-    "swsh11-176": [
-      "Unimplemented attack: Scrap Short"
-    ],
-    "swsh11-177": [
-      "Unimplemented attack: Scrap Short"
-    ],
     "swsh11-178": [
       "Unimplemented attack: Blossom Tail",
       "Unimplemented Ability: Guardian of Love"
     ],
-    "swsh11-182": [
-      "Unimplemented attack: Dynamic Tail",
-      "Unimplemented Ability: Wild Style"
-    ],
     "swsh11-195": [
       "Unimplemented Trainer effect"
-    ],
-    "swsh11-197": [
-      "Unimplemented attack: Max Frost",
-      "Unimplemented Ability: Glaciated World"
     ],
     "swsh11-199": [
       "Unimplemented attack: Ancient Star"
