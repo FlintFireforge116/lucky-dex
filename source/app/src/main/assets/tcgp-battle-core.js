@@ -1528,6 +1528,7 @@
     if (!state) return [];
     if(state.phase==='battle'&&reconcileSkyField(state))return effectChoiceActions(state,side);
     if(state.lentalDamOverflow&&state.phase==='battle'&&checkNarrowGymOverflow(state))return effectChoiceActions(state,side);
+    if(state.phase==='battle'&&swsh7ToolOverflow(state,null,null))return effectChoiceActions(state,side);
     if (state.phase === 'setup') return setupActions(state,side);
     if (state.phase === 'effectChoice') return effectChoiceActions(state,side);
     if (state.phase === 'promote') {
@@ -1627,7 +1628,7 @@
         !effects.abilitiesSuppressed(state,side==='player'?'opponent':'player',foe.active,data.cardById))return;
       if(['sm4-91','sm4-120'].includes(card.id)&&((s.prizes||[]).length<=(foe.prizes||[]).length||!foe.bench.length))return;
       if(card.id==='sm11-186'&&!s.hand.some(r=>data.cardById(r.cardId)?.kind==='pokemon'&&data.cardById(r.cardId)?.attacks?.length))return;
-      if(card.id==='xy11-102')return; // Greedy Dice is never playable from the hand.
+      if(['xy11-102','swsh7-146'].includes(card.id))return; // Prize-only Items are never playable from the hand.
       if(state.format==='classic'&&trainerType(card)==='Item'&&classicItemPlayLocked(state,side))return;
       const type=trainerType(card),base={type:'trainer',handIndex,cardId:printed.id,...(substituted?{swsh4Substitution:true,choiceLabel:'Draw 3 cards (Shifty Substitution)'}:{})};if(effects.isActionLocked(state,side,'Trainer',data.cardById)||effects.isActionLocked(state,side,type,data.cardById))return;
       if(state.format==='classic'&&['sm5-129','sm5-168'].includes(card.id)){
@@ -2739,7 +2740,7 @@
     const ss=state.sides[side],i=Number(index);
     if(!Number.isInteger(i)||i<0||i>=ss.prizes.length)return false;
     const [ref]=ss.prizes.splice(i,1);
-    if(discardInstead){ss.discard.push(ref);state.log.push({type:'swsh3BillowingSmoke',side,cardId:ref.cardId});}else if(state.format==='classic'&&ref.cardId==='sm7-97'&&!ref.faceUp&&state.activeSide===side&&emptyBenchSlots(ss).length&&ss.prizes.length&&eternalZoneCanPlace(state,side,ref.cardId))state.sm7WishPrize={side,ref};else ss.hand.push(ref);
+    if(discardInstead){ss.discard.push(ref);state.log.push({type:'swsh3BillowingSmoke',side,cardId:ref.cardId});}else if(state.format==='classic'&&!ref.faceUp&&((ref.cardId==='swsh7-146'&&emptyBenchSlots(ss).length&&!classicItemPlayLocked(state,side)&&!effects.isActionLocked(state,side,'Item',data.cardById)&&!effects.isActionLocked(state,side,'Trainer',data.cardById)&&ss.deck.some(r=>data.cardById(r.cardId)?.kind==='pokemon'&&data.cardById(r.cardId)?.battleEnabled&&eternalZoneCanPlace(state,side,r.cardId)))||(ref.cardId==='swsh7-165'&&state.activeSide===side&&pokemonOn(ss).length)))state.swsh7PrizeReaction={side,ref};else if(state.format==='classic'&&ref.cardId==='sm7-97'&&!ref.faceUp&&state.activeSide===side&&emptyBenchSlots(ss).length&&ss.prizes.length&&eternalZoneCanPlace(state,side,ref.cardId))state.sm7WishPrize={side,ref};else ss.hand.push(ref);
     ss.prizesTaken=Number(ss.prizesTaken||0)+1;ss.pointsGainedThisTurn=Number(ss.pointsGainedThisTurn||0)+1;
     state.log.push({type:'prize',side,cardId:ref.cardId,prizePosition:i,remaining:ss.prizes.length,taken:ss.prizesTaken});
     if(!discardInstead&&state.format==='classic'&&ref.cardId==='xy11-102'&&!ref.faceUp){
@@ -2758,7 +2759,9 @@
   }
   function beginClassicPrizeChoice(state,resume,cause){
     const queue=state.pendingPrizeClaims||[];
-    while(queue.length||state.sm7WishPrize){
+    while(queue.length||state.sm7WishPrize||state.swsh7PrizeReaction){
+      if(state.swsh7PrizeReaction){const {side,ref}=state.swsh7PrizeReaction,ss=state.sides[side],dream=ref.cardId==='swsh7-146';const allowedUids=dream?ss.deck.filter(r=>data.cardById(r.cardId)?.kind==='pokemon'&&data.cardById(r.cardId)?.battleEnabled&&eternalZoneCanPlace(state,side,r.cardId)).map(r=>r.uid):pokemonOn(ss).map(p=>p.uid);beginEffectChoice(state,side,ss.active,{kind:dream?'deckCard':'pokemon',side:'self',allowedUids,optional:true,special:'swsh7PrizeReaction',prompt:dream?'Dream Ball: choose a Pokémon to Bench, or take this card into hand':'Treasure Energy: attach to a Pokémon, or take into hand',koResume:resume||null,koCause:cause||null});return true;}
+
       if(state.sm7WishPrize){const {side,ref}=state.sm7WishPrize;beginEffectChoice(state,side,state.sides[side].active,{kind:'option',side:'self',options:['Put Jirachi into hand','Bench Jirachi and take another Prize'],optionCardIds:[ref.cardId,ref.cardId],special:'sm7WishPrize',koResume:resume||null,koCause:cause||null});return true;}
       const next=queue[0],ss=state.sides[next.side];
       if(!ss?.prizes?.length||next.remaining<=0){queue.shift();continue;}
@@ -2778,7 +2781,17 @@
     return false;
   }
 
+  function swsh7ToolOverflow(state,resume,cause){
+    if(state.format!=='classic'||state.phase!=='battle')return false;
+    for(const side of [state.activeSide,state.activeSide==='player'?'opponent':'player'])for(const p of pokemonOn(state.sides[side])){
+      const garb=['swsh7-101','swsh7-216'].includes(p.cardId);if(garb&&toolsOf(p).length>1)p.swsh7DoubleTool=true;
+      if(!garb&&!p.swsh7DoubleTool)continue;
+      if(toolsOf(p).length<=1){delete p.swsh7DoubleTool;continue;}
+      if(toolsOf(p).length>effects.toolCapacity(state,side,p,data.cardById)){beginEffectChoice(state,side,p,{kind:'toolCard',side:'self',targetUid:p.uid,special:'swsh7ToolOverflow',prompt:'Rubbish Collecting: discard a Pokémon Tool',koResume:resume||null,koCause:cause||null});return true;}
+    }return false;
+  }
   function resolveKnockOut(state,resume,cause){
+    if(swsh7ToolOverflow(state,resume,cause))return true;
     // Reactive selection is delayed until any attack-effect choices finish,
     // but still resolves before removing either knocked-out Pokémon.
     while(state.phase==='battle'&&state.swsh1SnapTrapQueue?.length){
@@ -3580,6 +3593,18 @@ const target=slotForTarget(s,action.target,action.benchIndex);if(card.id==='pl2-
         if(!matched.choiceSkip&&sm7BeforeAttack(state,side,pending.attackAction,rule,count,pending.allowedUids))return state;
         if(rule==='swsh6Tentacles'&&count)shuffle(state,ss.deck);if(rule==='sandyFear')shuffle(state,opponent.deck);if(rule==='sm10RocketSplash'&&count)shuffle(state,ss.deck);
         return finishDeclaredAttack(state,side,{...pending.attackAction,sm7SelectedCount:count});
+      }
+      if(pending.special==='swsh7PrizeReaction'){
+        const ss=state.sides[side],ref=state.swsh7PrizeReaction?.ref;delete state.swsh7PrizeReaction;state.pendingChoice=null;state.choiceSide=null;state.phase='battle';
+        if(ref){let used=false;if(!matched.choiceSkip&&ref.cardId==='swsh7-146'){const pick=ss.deck[matched.choiceDeckIndex],idx=emptyBenchSlots(ss)[0];if(pick&&pending.allowedUids.includes(pick.uid)&&idx!=null&&eternalZoneCanPlace(state,side,pick.cardId)){ss.deck.splice(matched.choiceDeckIndex,1);const placed=placeOnBench(ss,makePokemonSlot(pick.cardId,ss.turnCount,pick.uid),idx);ss.discard.push(ref);shuffle(state,ss.deck);triggerAbilities(state,'benched',side,placed,{fromDeck:true});used=true;}}
+          if(!matched.choiceSkip&&ref.cardId==='swsh7-165'){const p=slotForTarget(ss,matched.choiceTarget,matched.choiceBenchIndex);if(p&&pending.allowedUids.includes(p.uid)){p.specialEnergy.push(ref);triggerAbilities(state,'energyAttached',side,p,{energyType:'Colorless',energyCardId:ref.cardId,fromHand:false,fromZone:false,specialEnergy:true});used=true;}}
+          if(!used)ss.hand.push(ref);state.log.push({type:'swsh7PrizeReaction',side,cardId:ref.cardId,used});}
+        if(state.phase==='effectChoice'){state.pendingChoice.resume='knockout';state.pendingChoice.koResume=pending.koResume;state.pendingChoice.koCause=pending.koCause;return state;}
+        const paused=resolveKnockOut(state,pending.koResume,pending.koCause);if(!paused&&state.phase==='battle'){if(pending.koResume==='endTurn')endTurn(state);else if(pending.koResume==='advanceTurn')advanceTurn(state);else if(pending.koResume==='repeatAttack')finishRepeatAttack(state);}return state;
+      }
+      if(pending.special==='swsh7ToolOverflow'){
+        const ss=state.sides[side],p=findSlotByUid(state,side,pending.sourceUid),list=toolsOf(p),i=matched.choiceToolIndex;if(p&&list[i]){const [ref]=list.splice(i,1);state.sides[ref.ownerSide||side].discard.push(ref);p.tool=list.shift()||null;p.extraTools=list;state.log.push({type:'swsh7ToolOverflow',side,cardId:ref.cardId});}state.pendingChoice=null;state.choiceSide=null;state.phase='battle';
+        const paused=resolveKnockOut(state,pending.koResume,pending.koCause);if(!paused&&state.phase==='battle'){if(pending.koResume==='endTurn')endTurn(state);else if(pending.koResume==='advanceTurn')advanceTurn(state);else if(pending.koResume==='repeatAttack')finishRepeatAttack(state);}return state;
       }
       if(pending.special==='chooseClassicPrize'){
         const claims=state.pendingPrizeClaims||[],entry=claims[0];

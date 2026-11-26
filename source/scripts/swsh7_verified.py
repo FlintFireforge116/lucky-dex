@@ -180,3 +180,11 @@ ab(4,passive(ES('FluffyBarrage')))
 at(83,'Yoga Loop',ES('YogaLoop'))
 at(116,'Extreme Freeze',ES('ExtremeFreeze'))
 ab(103,activated(ES('PhantomTransformation')))
+
+# Stage 6: prize-only effects, two-Tool capacity and Supporter protection.
+ab(101,passive(E('toolCapacity',amount=2)))
+tr(146,'Item',ES('DreamBall'))
+tr(151,'Tool',ES('MoonSunBadge'))
+def energy(row):
+ if row[0]=='165':return E('specialEnergy',provides={'Colorless':1})
+ return None

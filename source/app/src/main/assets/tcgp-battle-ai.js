@@ -646,6 +646,8 @@
       if(rule==='swsh3Breeder'&&pending.effect.amazingBloom||rule==='sm12HandAttach'&&pending.effect.healAll)return legal.find(x=>!x.choiceSkip)||legal[0];
       if(rule==='sm9SearchAttach'&&data.cardById(slots(state.sides[side]).find(p=>p.uid===pending.sourceUid)?.cardId)?.abilities?.some(a=>a.name==='Buzzap Generator')&&pending.effect.stage==='attach')return legal.find(x=>x.choiceTarget==='active')||legal.find(x=>!x.choiceSkip&&x.choiceBenchIndex!==slots(state.sides[side]).find(p=>p.uid===pending.sourceUid)?.benchSlot)||legal[0];
       if(['swsh4CastOffShell','swsh4CaraLiss','swsh4Nessa','swsh4Cheese','swsh4Devolution','swsh35Adornment','sm9TopAttach','sm9SearchAttach','sm9DanceAncients','sm9NineTemptations','sm9AdventurousAppetite'].includes(rule))return legal.find(x=>!x.choiceSkip)||legal[0];
+      if(pending.special==='swsh7ToolOverflow'){const board=state.sides[side],p=slots(board).find(x=>x.uid===pending.sourceUid),c=data.cardById(p?.cardId);return legal.find(a=>!effects.usefulToolRecipient(data.cardById(a.choiceCardId),c))||legal[0];}
+      if(pending.special==='swsh7PrizeReaction')return legal.find(a=>a.choiceTarget==='active')||legal.find(a=>!a.choiceSkip)||legal[0];
       if(pending.special==='sm7WishPrize')return legal.find(a=>a.choiceOption===1)||legal[0];
       if(pending.special==='sm7Grounding')return legal.find(a=>!a.choiceSkip)||legal[0];
       if(pending.special==='sm7BeforeAttack'&&pending.rule==='swsh6Tentacles'){
