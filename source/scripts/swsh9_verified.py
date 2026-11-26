@@ -215,3 +215,28 @@ def ability(row,a):
 def attack(row,a):
  if a[3]=="Flip 2 coins. If either of them is heads, your opponent reveals their hand. For each heads, choose a card you find there and put it on the bottom of your opponent's deck in any order.":return E('neoRule',rule='pl3:137:cyrusInitiative',reason='Ransack',reveal=True)
  return _stage5_final_attack(row,a)
+
+# Stage 7: discard-zone revival, temporary weakness and distinct deck evolutions.
+_stage6_attack=attack
+_stage6_ability=ability
+def attack(row,a):
+ t=a[3]
+ if t=="Until the end of your next turn, the Defending Pokémon's Weakness is now Darkness. (The amount of Weakness doesn't change.)":return E('sm7Rule',rule='sm10PsychicWeakness',weakness='Darkness')
+ if t=='Flip 3 coins. Choose a number of your Pokémon in play up to the number of heads. For each of those Pokémon, search your deck for a card that evolves from that Pokémon and put it onto that Pokémon to evolve it. Then, shuffle your deck.':return E('sm7Rule',rule='swsh9MoonlitMiracle')
+ return _stage6_attack(row,a)
+def ability(row,a):
+ if a[2]=='Once during your turn, if this Pokémon is in your discard pile and you have no cards in your hand, you may put this Pokémon onto your Bench. If you do, draw 3 cards.':return passive(E('sm7Rule',rule='swsh9EmergencySurfacing'))
+ return _stage6_ability(row,a)
+
+_stage7_attack=attack
+_stage7_ability=ability
+_stage6_trainer=trainer
+def attack(row,a):
+ if a[3]=='This attack does 40 more damage for each type of basic Energy attached to all of your Pokémon.':return E('sm7Rule',rule='swsh9RainbowFlavor')
+ return _stage7_attack(row,a)
+def ability(row,a):
+ if a[2]=='As long as this Pokémon is in the Active Spot, your turn does not end when you use Café Master.':return passive(E('sm7Rule',rule='swsh9AdditionalOrder'),activeOnly=True)
+ return _stage7_ability(row,a)
+def trainer(row):
+ if row[13][0]=='Choose up to 3 of your Benched Pokémon. For each of those Pokémon, search your deck for a different type of basic Energy card and attach it to that Pokémon. Then, shuffle your deck. Your turn ends.':return 'Supporter',E('sm7Rule',rule='swsh9CafeMaster')
+ return _stage6_trainer(row)

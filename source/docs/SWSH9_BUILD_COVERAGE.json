@@ -2,29 +2,13 @@
   "printed": 186,
   "canonicalTotal": 186,
   "notImported": [],
-  "battleReady": 176,
+  "battleReady": 181,
   "gated": {
-    "swsh9-37": [
-      "Unimplemented Ability: Emergency Surfacing"
-    ],
     "swsh9-45": [
       "Unimplemented attack: Fast Charge",
       "Unimplemented attack: Dynamic Spark"
     ],
-    "swsh9-54": [
-      "Unimplemented attack: Moonlit Miracle"
-    ],
-    "swsh9-71": [
-      "Unimplemented attack: Rainbow Flavor",
-      "Unimplemented Ability: Additional Order"
-    ],
-    "swsh9-89": [
-      "Unimplemented attack: Ticking Terror"
-    ],
     "swsh9-131": [
-      "Unimplemented Trainer effect"
-    ],
-    "swsh9-133": [
       "Unimplemented Trainer effect"
     ],
     "swsh9-137": [

@@ -2053,6 +2053,7 @@
       }
     }
     if(state.format==='classic'){
+      if(!s.hand.length&&emptyBenchSlots(s).length&&!effects.isActionLocked(state,side,'Ability',data.cardById))for(const ref of s.discard||[])if(ref.cardId==='swsh9-37'&&!effects.abilitiesSuppressed(state,side,ref,data.cardById,'discard')&&eternalZoneCanPlace(state,side,ref.cardId))actions.push({type:'abilityDiscard',cardId:ref.cardId,sourceUid:ref.uid});
       if(emptyBenchSlots(s).length)for(const ref of s.discard||[])if(ref.cardId==='sm8-97'&&s.sm8DoorUsed?.[ref.uid]!==s.turnCount&&!effects.abilitiesSuppressed(state,side,ref,data.cardById))actions.push({type:'abilityDiscard',cardId:ref.cardId,sourceUid:ref.uid});
       if(emptyBenchSlots(s).length&&sm11LightningCards(s,state)>=4&&!effects.isActionLocked(state,side,'Ability',data.cardById))s.hand.forEach((ref,handIndex)=>{if(ref.cardId==='sm11-66'&&!effects.abilitiesSuppressed(state,side,ref,data.cardById))actions.push({type:'sm11ElectricSwamp',cardId:ref.cardId,sourceUid:ref.uid,handIndex});});
       if(foe.deck.length)s.hand.forEach((ref,handIndex)=>{if(ref.cardId==='sm8-165'&&!effects.abilitiesSuppressed(state,side,ref,data.cardById))actions.push({type:'sm8HandAbility',cardId:ref.cardId,sourceUid:ref.uid,handIndex});});
@@ -3965,6 +3966,10 @@ const target=slotForTarget(s,action.target,action.benchIndex);if(card.id==='pl2-
       state.log.push({type:'ability',side,cardId:ref.cardId,
         ability:propagation?'Propagation':'Prehistoric Call',fromDiscard:true});
       return state;
+    }
+    if(matched.type==='abilityDiscard'&&matched.cardId==='swsh9-37'){
+      const i=s.discard.findIndex(r=>r.uid===matched.sourceUid&&r.cardId===matched.cardId),[ref]=s.discard.splice(i,1);const p=placeOnBench(s,makePokemonSlot(ref.cardId,s.turnCount,ref.uid),emptyBenchSlots(s)[0]);
+      state.log.push({type:'ability',side,cardId:ref.cardId,ability:'Emergency Surfacing',fromDiscard:true});for(let j=0;j<3;j++)effectContext(state,side,{}).drawCard(s);return state;
     }
     if(matched.type==='abilityDiscard'&&matched.cardId==='sm8-97'){
       const i=s.discard.findIndex(r=>r.uid===matched.sourceUid),ref=s.discard.splice(i,1)[0],p=makePokemonSlot(ref.cardId,s.turnCount,ref.uid);placeOnBench(s,p,emptyBenchSlots(s)[0]);(s.sm8DoorUsed||(s.sm8DoorUsed={}))[ref.uid]=s.turnCount;
