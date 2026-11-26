@@ -92,3 +92,64 @@ def trainer(row):
  t=row[13][0] if row[13] else ''
  if t=="During this turn, your Fusion Strike Pokémon's attacks do 30 more damage to your opponent's Active Pokémon (before applying Weakness and Resistance).":return 'Item',E('modifier',stat='attackDamageActiveOnly',amount=30,scope='team',duration='turn',filter={'tag':'fusion-strike'})
  return _old_trainer(row)
+
+# Stage 3: exact full-text signatures; reuse validated shared primitives.
+from sm7_verified import bonus
+from swsh1_verified import PATTERNS as SWSH1_PATTERNS
+_stage2_attack=attack
+_stage2_ability=ability
+_stage2_trainer=trainer
+def attack(row,a):
+ t=a[3];e=_stage2_attack(row,a)
+ if e is not None:return e
+ for pattern,fn in SWSH1_PATTERNS:
+  m=re.fullmatch(pattern,t)
+  if m:return fn(m,a)
+ if t=='Flip a coin. If tails, this attack does nothing.':return E('coinDamage',coins=1,amount=int(a[2]),mode='replace')
+ if t=='Search your deck for a Caterpie and put it onto your Bench. Then, shuffle your deck.':return E('benchFromDeck',amount=1,filter={'kind':'pokemon','stage':'Basic','name':'Caterpie'},choose=True)
+ if t in ('Search your deck for up to 2 Basic Pokémon and put them onto your Bench. Then, shuffle your deck.','Search your deck for a Basic Pokémon and put it onto your Bench. Then, shuffle your deck.'):
+  n=2 if 'up to 2' in t else 1
+  return E('benchFromDeck',amount=n,filter={'kind':'pokemon','stage':'Basic'},choose=True,optional=n==2)
+ if t=='You may draw cards until you have 6 cards in your hand.':return E('chooseOption',options=[{'label':'Draw until you have 6 cards','effect':E('drawToHandSize',size=6)},{'label':'Do not draw','effect':E('noop')}])
+ if t=="Discard a Grass Energy from your opponent's Active Pokémon.":return discard(1,'opponentActive',energyType='Grass',strictEnergyType=True,allowNoTarget=True)
+ if t=='Put up to 2 Pokémon from your discard pile into your hand.':return E('searchChosen',source='discard',amount=2,filter={'kind':'pokemon'},optional=True)
+ if t=='Search your deck for a Fire Energy card and attach it to 1 of your Pokémon. Then, shuffle your deck.':return E('sm7Rule',rule='sm9SearchAttach',amount=1,energyTypes=['Fire'])
+ if t=='Attach a basic Energy card from your discard pile to 1 of your Benched Pokémon.':return E('attachEnergyFromDiscard',target='selfBench',amount=1,basicEnergy=True)
+ if t=="During your next turn, this Pokémon's attacks do 90 more damage to your opponent's Active Pokémon (before applying Weakness and Resistance).":return E('nextAttackBonus',attackName='*',amount=90)
+ if t=='Attach a Water Energy card from your hand to this Pokémon.':return E('attachEnergy',source='hand',target='self',amount=1,energyType='Water')
+ if t=="This attack does 20 damage for each of your Benched Pokémon that has the Let's All Rollout attack.":return E('fieldCountDamage',side='self',benchOnly=True,filter={'attackName':"Let's All Rollout"},amount=20,mode='replace')
+ if t=="Your opponent reveals their hand.":return E('revealHand',side='opponent')
+ if t=='Your opponent reveals their hand. This attack does 60 damage for each Supporter card you find there.':return seq(E('filteredHandCountDamage',side='opponent',filter={'kind':'trainer','trainerType':'Supporter'},amount=60,mode='replace'),E('revealHand',side='opponent'))
+ if t=="This attack does 10 more damage for each damage counter on your opponent's Active Pokémon.":return E('damageFromDamage',source='opponent',amount=1,mode='add')
+ if t=='Flip a coin. If tails, this Pokémon also does 10 damage to itself.':return E('coinFlip',tails=E('selfDamage',amount=10))
+ m=re.fullmatch(r"This attack does (\d+) damage to 1 of your opponent's (Benched Pokémon|Pokémon)\. \(Don't apply Weakness and Resistance for Benched Pokémon\.\)",t)
+ if m:return E('selectedDamage',target='opponentBench' if m[2]=='Benched Pokémon' else 'opponentPokemon',amount=int(m[1]))
+ if t=='Search your deck for up to 2 Water Energy cards, reveal them, and put them into your hand. Then, shuffle your deck.':return E('searchChosen',amount=2,filter={'kind':'energy','basicEnergy':True,'subtype':'Water'},optional=True)
+ if t=="This attack's damage isn't affected by Weakness or Resistance.":return E('damageRule',ignoreWeakness=True,ignoreResistance=True)
+ if t=='Search your deck for up to 2 cards and put them into your hand. Then, shuffle your deck.':return E('searchChosen',amount=2,filter={},optional=True)
+ if t=='This attack does 30 damage for each of your Fusion Strike Pokémon in play.':return E('fieldCountDamage',side='self',filter={'tag':'fusion-strike'},amount=30,mode='replace')
+ if t=='Put a card from your discard pile into your hand.':return E('searchChosen',source='discard',amount=1,filter={})
+ if t=="If your opponent's Active Pokémon is a Pokémon V, this attack does 60 more damage.":return bonus(60,cond('opponentMatches',filter={'tag':'pokemon-v'}))
+ if t=='If your opponent has exactly 1 Prize card remaining, this attack does 160 more damage.':return bonus(160,cond('opponentPrizesRemaining',amount=1))
+ if t=="Your opponent's Active Pokémon is now Poisoned. During Pokémon Checkup, put 4 damage counters on that Pokémon instead of 1.":return E('status',target='opponentActive',status='poison',amount=40)
+ if t=="Discard a random card from your opponent's hand.":return E('discardHand',side='opponent',amount=1,random=True)
+ if t=="Flip a coin. If heads, discard an Energy from your opponent's Active Pokémon.":return coin(discard(1,'opponentActive'))
+ if t=='This attack does 30 damage for each damage counter on this Pokémon.':return E('damageFromDamage',source='self',amount=3,mode='replace')
+ if t=="This attack does 30 damage for each Energy attached to your opponent's Active Pokémon.":return E('energyDamage',source='opponent',amount=30,mode='replace')
+ if t=='Search your deck for a Pokémon, reveal it, and put it into your hand. Then, shuffle your deck.':return E('searchChosen',amount=1,filter={'kind':'pokemon'})
+ return None
+
+def ability(row,a):
+ t=a[2];e=_stage2_ability(row,a)
+ if e is not None:return e
+ if t=='This Pokémon takes 20 less damage from attacks (after applying Weakness and Resistance).':return passive(mod('damageReduction',20))
+ if t=='The Retreat Cost of each of your Pokémon that has any Fire Energy attached is ColorlessColorless less.':return passive(E('modifier',stat='retreatCost',amount=-2,scope='team',duration='whileInPlay',filter={'hasEnergyType':'Fire'}))
+ if t=='Once during your turn (before your attack), you may attach a Lightning Energy card from your discard pile to 1 of your Benched Pokémon.':return activated(E('attachEnergyFromDiscard',target='selfBench',energyType='Lightning',amount=1))
+ return None
+
+def trainer(row):
+ t=row[13][0] if row[13] else ''
+ if t=='You can use this card only if you discard another Item card from your hand. Flip a coin. If heads, search your deck for a card and put it into your hand. Then, shuffle your deck.':return 'Item',E('sm7Rule',rule='sm10Pay',amount=1,filter={'kind':'trainer','trainerType':'Item'},after=coin(E('searchChosen',amount=1,filter={})),trainer=True)
+ for values,word in [([1,3,5],'1, 3, or 5'),([2,4,6],'2, 4, or 6')]:
+  if t==f'Draw 2 cards. If your opponent has exactly {word} Prize cards remaining, draw 2 more cards.':return 'Supporter',seq(E('draw',amount=2),*[E('draw',amount=2,condition=cond('opponentPrizesRemaining',amount=n),optionalCondition=True) for n in values])
+ return _stage2_trainer(row)

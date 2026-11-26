@@ -1,63 +1,32 @@
 {
-  "printed": 172,
+  "printed": 227,
   "canonicalTotal": 284,
   "notImported": [
-    "swsh8-1",
-    "swsh8-2",
-    "swsh8-3",
-    "swsh8-5",
-    "swsh8-8",
-    "swsh8-9",
     "swsh8-11",
     "swsh8-12",
     "swsh8-14",
-    "swsh8-15",
-    "swsh8-18",
     "swsh8-20",
-    "swsh8-31",
-    "swsh8-32",
     "swsh8-35",
-    "swsh8-36",
-    "swsh8-37",
     "swsh8-38",
     "swsh8-41",
     "swsh8-42",
-    "swsh8-48",
-    "swsh8-51",
-    "swsh8-52",
     "swsh8-53",
     "swsh8-54",
     "swsh8-57",
-    "swsh8-58",
-    "swsh8-59",
-    "swsh8-61",
     "swsh8-63",
     "swsh8-64",
     "swsh8-66",
     "swsh8-67",
-    "swsh8-68",
-    "swsh8-69",
-    "swsh8-70",
-    "swsh8-71",
     "swsh8-72",
-    "swsh8-75",
     "swsh8-77",
-    "swsh8-84",
     "swsh8-85",
-    "swsh8-87",
-    "swsh8-88",
     "swsh8-89",
-    "swsh8-90",
     "swsh8-94",
     "swsh8-97",
-    "swsh8-99",
     "swsh8-101",
     "swsh8-106",
     "swsh8-107",
     "swsh8-108",
-    "swsh8-109",
-    "swsh8-110",
-    "swsh8-111",
     "swsh8-116",
     "swsh8-118",
     "swsh8-119",
@@ -66,35 +35,19 @@
     "swsh8-123",
     "swsh8-124",
     "swsh8-126",
-    "swsh8-127",
-    "swsh8-128",
-    "swsh8-130",
     "swsh8-131",
-    "swsh8-132",
-    "swsh8-134",
     "swsh8-137",
-    "swsh8-138",
     "swsh8-139",
     "swsh8-143",
     "swsh8-145",
     "swsh8-148",
     "swsh8-149",
-    "swsh8-154",
     "swsh8-161",
     "swsh8-164",
-    "swsh8-166",
-    "swsh8-168",
     "swsh8-173",
-    "swsh8-174",
-    "swsh8-177",
-    "swsh8-178",
-    "swsh8-179",
     "swsh8-180",
     "swsh8-181",
-    "swsh8-182",
-    "swsh8-183",
     "swsh8-184",
-    "swsh8-187",
     "swsh8-189",
     "swsh8-190",
     "swsh8-193",
@@ -102,32 +55,30 @@
     "swsh8-197",
     "swsh8-198",
     "swsh8-203",
-    "swsh8-205",
     "swsh8-207",
-    "swsh8-208",
     "swsh8-209",
-    "swsh8-210",
     "swsh8-211",
-    "swsh8-214",
-    "swsh8-216",
-    "swsh8-221",
-    "swsh8-223",
-    "swsh8-245",
-    "swsh8-280"
+    "swsh8-245"
   ],
-  "battleReady": 147,
+  "battleReady": 206,
   "gated": {
+    "swsh8-3": [
+      "Unimplemented Ability: Tricolored Scales"
+    ],
+    "swsh8-59": [
+      "Unimplemented attack: Dive and Rescue"
+    ],
     "swsh8-79": [
       "Unimplemented attack: G-Max Spiral",
       "Unimplemented Ability: Double Gunner"
+    ],
+    "swsh8-178": [
+      "Unimplemented attack: Rear Attack"
     ],
     "swsh8-218": [
       "Unimplemented attack: Turn a Profit"
     ],
     "swsh8-225": [
-      "Unimplemented Trainer effect"
-    ],
-    "swsh8-229": [
       "Unimplemented Trainer effect"
     ],
     "swsh8-230": [
@@ -140,12 +91,6 @@
       "Unimplemented Trainer effect"
     ],
     "swsh8-234": [
-      "Unimplemented Trainer effect"
-    ],
-    "swsh8-238": [
-      "Unimplemented Trainer effect"
-    ],
-    "swsh8-239": [
       "Unimplemented Trainer effect"
     ],
     "swsh8-241": [
@@ -164,12 +109,6 @@
     "swsh8-260": [
       "Unimplemented Trainer effect"
     ],
-    "swsh8-261": [
-      "Unimplemented Trainer effect"
-    ],
-    "swsh8-262": [
-      "Unimplemented Trainer effect"
-    ],
     "swsh8-264": [
       "Unimplemented Trainer effect"
     ],
@@ -186,18 +125,12 @@
     "swsh8-275": [
       "Unimplemented Trainer effect"
     ],
-    "swsh8-276": [
-      "Unimplemented Trainer effect"
-    ],
-    "swsh8-277": [
-      "Unimplemented Trainer effect"
-    ],
     "swsh8-279": [
       "Unimplemented Trainer effect"
     ]
   },
-  "attacks": 210,
-  "abilities": 10,
+  "attacks": 300,
+  "abilities": 15,
   "pokemonV": 31,
   "pokemonVMAX": 16,
   "pokemonGX": 0,

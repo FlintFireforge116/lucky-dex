@@ -1,4 +1,4 @@
-"""Verified stage-two subset from pinned Fusion Strike Git blob.
+"""Verified stage-three subset from pinned Fusion Strike Git blob.
 The source packets are exact compact projections checked against connector output.
 No fabricated rows for the remaining prints. Full source can replace this subset later.
 """
@@ -38,6 +38,11 @@ def rows():
   assert row[0] not in result
   result[row[0]]=row
  assert len(result)==172
+ for line in packet("swsh8-stage3-pokemon.jsonl",1247124573):
+  row=json.loads(line)
+  assert row[0] not in result
+  result[row[0]]=row
+ assert len(result)==227
  return sorted(result.values(),key=lambda r:int(r[0]))
 if __name__=='__main__':
  r=rows();p=ROOT/'data/classic/swsh8-print-compact.json';p.write_text(json.dumps(r,ensure_ascii=False,separators=(',',':'))+'\n',encoding='utf-8')
