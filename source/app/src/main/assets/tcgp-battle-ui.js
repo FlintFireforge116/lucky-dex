@@ -623,6 +623,7 @@
   function attackDescription(attack){
     if(!attack)return '';
     // Explicit LuckyDex hybrid rule, intentionally different from printed TCG text.
+    if(attack.effect?.rule==='ex4:10:1')return 'LuckyDex hybrid rule: Flip 5 coins. For each heads, discard the next Basic Energy from your Energy Zone, if available. This attack does 30 damage for each Fire or Fighting Energy discarded this way. Other Energy types are discarded but do not add damage.';
     if(attack.effect?.type==='xy7ThunderRod')return 'LuckyDex hybrid rule: Flip 4 coins. For each heads, you may attach 1 Lightning Energy from the top 4 Energy Zone units to this Pokémon. Return and shuffle all unused units into the Energy Zone.';
     const printed=typeof attack.text==='string'&&attack.text.trim()?attack.text:typeof attack.printedText==='string'&&attack.printedText.trim()?attack.printedText:'';
     const detail=printed||summarizeEffect(attack.effect);

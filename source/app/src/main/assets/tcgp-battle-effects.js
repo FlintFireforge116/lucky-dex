@@ -4360,7 +4360,7 @@
     // Passive Poké-Bodies are continuously enforced by the Classic core.
     if(['power:3','power:9','power:25','power:46','power:90','trainer:74','trainer:76','trainer:78','trainer:81','trainer:83','trainer:79','trainer:84'].includes(key))return;
     switch(key){
-      case '10:1':{for(let i=0;i<5;i++){const ref=us.deck.shift();if(ref)us.discard.push(ref);}return;}
+      case '10:1':return; // Magma Spurt consumes the Zone in resolveAttack, exactly once.
       case '11:1':if(isTeam(d,'Aqua'))status('confusion');return;
       case '12:0':{const ref=foe.deck.shift();if(ref)foe.discard.push(ref);if(!flip())disc(us,a,'Fire');return;}
       case '12:1':if(ctx.resolvingChoice){const b=targetBench(foe);if(b)switchPokemon(foe,Number(b.benchSlot),ctx.state);return;}disc(us,a,'Fire');if(foe.bench.length)chooseBench(foe);return;
@@ -28019,7 +28019,22 @@ if(ctx.isAbility){const targetSide=pokemonOn(own(ctx)).includes(s)?ctx.side:ctx.
         if(key==='8:0')damage=40+(us.hand.length>foe.hand.length?20:0);
         if(key==='9:1')damage=50+(Number(d?.damage||0)>=20?20:0);
         if(key==='10:0')damage=30+(d?.conditions?.burn?20:0);
-        if(key==='10:1')damage=30*us.deck.slice(0,5).filter(ref=>{const c=ctx.cardById(ref.cardId);return c?.basicEnergy&&['Fire','Fighting'].includes(c.subtype);}).length;
+        if(key==='10:1'){
+          // LuckyDex Classic hybrid: five coin attempts, each heads spends the
+          // next future Basic Energy unit, never the physical deck or current
+          // turn's already drawn Energy. Wrong types are still discarded.
+          const results=[],discarded=[];
+          for(let i=0;i<5;i++){
+            const heads=coin(ctx);results.push(heads);
+            if(!heads||!Array.isArray(us.energySupply)||!us.energySupply.length)continue;
+            const type=us.energySupply.shift();us.nextEnergyType=us.energySupply[0]||null;
+            recordDiscardedEnergy(us,type,1);discarded.push(type);
+          }
+          damage=30*discarded.filter(t=>t==='Fire'||t==='Fighting').length;
+          ctx.state.log.push({type:'coin',side:ctx.side,reason:'Magma Spurt',heads:results.filter(Boolean).length,coins:5,results});
+          ctx.state.log.push({type:'ex4MagmaSpurt',side:ctx.side,discarded,damage});
+          return;
+        }
         if(key==='13:1'){const heads=roll(1);damage=40+(heads?40:0);pending.push({...e,heads});return;}
         if(key==='14:0')damage=20+(d?.conditions?.poison?20:0);
         if(key==='14:1')damage=30+20*roll(2);

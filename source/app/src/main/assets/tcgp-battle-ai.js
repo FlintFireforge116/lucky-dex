@@ -209,7 +209,15 @@
     const foeSide=foeOf(side),target=state.sides[foeSide]?.active;
     if(!slot||!target||!attack)return 0;
     const active=state.sides[side].active===slot;
-    const raw=active?Number(core.attackDamagePreview(state,side,attackIndex,attackCardId,false)?.damage||0):Number(attack.damage||0);
+    let raw=active?Number(core.attackDamagePreview(state,side,attackIndex,attackCardId,false)?.damage||0):Number(attack.damage||0);
+    if(attack.effect?.rule==='ex4:10:1'){
+      const us=state.sides[side],types=us.energyTypes||[],remaining=us.energySupply?.length||0;
+      // Expected successful discards, capped by the finite supply. Do not peek
+      // at hidden Energy order or roll actual coins while ranking attacks.
+      const weights=[1,5,10,10,5,1];
+      const expected=weights.reduce((n,w,h)=>n+w*Math.min(h,remaining),0)/32;
+      raw=types.length?30*expected*types.filter(t=>t==='Fire'||t==='Fighting').length/types.length:0;
+    }
     return effects.attackDamageWithState(state,side,slot,foeSide,target,Math.max(0,raw),data.cardById);
   }
   function benchAttackValue(state,side,slot){
