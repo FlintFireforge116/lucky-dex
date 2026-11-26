@@ -9,22 +9,22 @@ OUT=ROOT/'app/src/main/assets/tcg-classic-astral-radiance.js'
 COVER=ROOT/'docs/SWSH10_BUILD_COVERAGE.json'
 ATTEST=ROOT/'docs/SWSH10_CANONICAL_SOURCE.json'
 PIN='888a5253d3bf05bc4107d52742003ce42f1980f3'
-COMPACT_SHA='50964a08bd1710c02612fd06cc136d281de020a6cb593cac6716f89668a1e147'
+COMPACT_SHA='054508fb81b73757141a220df641c8078c99774dd962d40043c52cdc1cc1f4f2'
 SYMBOL={'G':'Grass','R':'Fire','W':'Water','L':'Lightning','P':'Psychic','F':'Fighting','D':'Darkness','M':'Metal','Y':'Fairy','N':'Dragon'}
 REVERSE={v:k for k,v in SYMBOL.items()}
 VARIANTS=[]
 def validate(rows):
  from swsh10_source import rows as verified_rows
- assert rows==verified_rows(), 'Stage 3 source differs from independently checked transfer packets'
- assert len(rows)==155 and len({r[0] for r in rows})==155
- assert sum(len(r[7]) for r in rows)==195
+ assert rows==verified_rows(), 'Stage 4 source differs from independently checked transfer packets'
+ assert len(rows)==216 and len({r[0] for r in rows})==216
+ assert sum(len(r[7]) for r in rows)==264
  return rows
 
 def prepare():
  from swsh10_source import rows as verified_rows
  rows=validate(verified_rows())
  SRC.write_text(json.dumps(rows,ensure_ascii=False,separators=(',',':'))+'\n',encoding='utf-8')
- ATTEST.write_text(json.dumps({'set':'swsh10','sourceGitBlob':PIN,'compactSha256':hashlib.sha256(SRC.read_bytes()).hexdigest(),'printedTotal':216,'importedTotal':155,'sourceScope':'verified stage-three packet'},indent=2)+'\n')
+ ATTEST.write_text(json.dumps({'set':'swsh10','sourceGitBlob':PIN,'compactSha256':hashlib.sha256(SRC.read_bytes()).hexdigest(),'printedTotal':216,'importedTotal':216,'sourceScope':'verified stage-four packets'},indent=2)+'\n')
  return rows
 
 def get_source():

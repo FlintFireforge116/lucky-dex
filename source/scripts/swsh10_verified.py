@@ -124,3 +124,39 @@ def trainer(row):
  if t=='Draw cards until you have 1 more card in your hand than your opponent.':return 'Supporter',E('drawToHandSize',matchSide='opponent',offset=1)
  if t=='You can use this card only if your opponent has 3 or fewer Prize cards remaining. Each player shuffles their hand into their deck. Then, you draw 6 cards, and your opponent draws 2 cards.':return 'Supporter',E('handShuffle',side='both',draw=6,opponentDraw=2,condition=cond('swsh10OpponentPrizesAtMost',amount=3))
  return _stage2_trainer(row)
+
+# Stage four: complete source projection; reuse effect descriptors, not guessed text.
+_stage3_attack=attack
+_stage3_ability=ability
+_stage3_trainer=trainer
+def attack(row,a):
+ t=a[3]
+ if t=="This attack does 50 damage to 1 of your opponent's Pokémon for each of your Beedrill V in play. (Don't apply Weakness and Resistance for Benched Pokémon.)":return E('selectedEnergyDamage',target='opponentPokemon',source='self',amount=50,fieldFilter={'name':'Beedrill V'})
+ if t=='You can use this attack only if you go second, and only during your first turn. Search your deck for up to 3 cards and put them into your hand. Then, shuffle your deck.':return seq(E('attackRequirement',condition=cond('sm7FirstSecond')),E('searchChosen',amount=3,filter={},optional=True))
+ if t=="During your opponent's next turn, prevent all damage done to this Pokémon by attacks from Evolution Pokémon.":return E('preventDamage',target='self',duration='opponentTurn',attackerFilter={'evolved':True})
+ if t=="Put 3 damage counters on your opponent's Benched Pokémon in any way you like.":return E('sm7Rule',rule='sm10CounterSpread',amount=3,benchOnly=True)
+ if t=="If your opponent's Active Pokémon has exactly 4 damage counters on it, that Pokémon is Knocked Out. (You can't use more than 1 VSTAR Power in a game.)":return E('knockOut',target='opponentActive',condition=cond('swsh10OpponentDamageExact',amount=40))
+ if t=='If your opponent has 3 or fewer cards in their hand, this attack does nothing.':return E('attackRequirement',allowWhenFailed=True,condition=cond('swsh10OpponentHandAtLeast',amount=4))
+ if t=='You may discard up to 3 Energy cards from your hand. This attack does 30 more damage for each card you discarded in this way.':return E('chooseDiscardForBonus',zone='hand',max=3,amount=30,filter={'kind':'energy'})
+ if t=='This attack does 20 more damage for each Energy attached to all of your Pokémon.':return E('energyDamage',source='self',all=True,amount=20,mode='add')
+ if t=="Discard 3 Energy from this Pokémon. This attack does 220 damage to 1 of your opponent's Pokémon. (Don't apply Weakness and Resistance for Benched Pokémon.)":return seq(discard(3),E('selectedDamage',target='opponentPokemon',amount=220,activeWeaknessResistance=True))
+ if t=='This attack does 30 more damage for each damage counter on all of your Benched Pawniard.':return E('damageFromDamage',source='self',all=True,benchOnly=True,filter={'name':'Pawniard'},amount=3,mode='add')
+ if t=='This attack does 40 more damage for each Metal Energy attached to this Pokémon.':return E('energyDamage',source='self',energyType='Metal',countProvidedType=True,amount=40,mode='add')
+ return _stage3_attack(row,a)
+def ability(row,a):
+ t=a[2]
+ if t=="Your Grass Pokémon in play, except any Kricketune, get +40 HP. You can't apply more than 1 Swelling Tune Ability at a time.":return passive(E('modifier',stat='maxHp',amount=40,scope='team',duration='whileInPlay',filter={'subtype':'Grass','notName':'Kricketune'},nonStacking=True))
+ if t=="You must discard a Psychic Energy card from your hand in order to use this Ability. Once during your turn, you may make your opponent's Active Pokémon Burned and Confused.":return activated(E('sm7Rule',rule='sm10Pay',amount=1,filter={'kind':'energy','subtype':'Psychic'},after=seq(status('burn'),status('confusion'))))
+ if t=='If this Pokémon has any damage counters on it, it has no Retreat Cost.':return passive(E('modifier',stat='retreatCost',amount=-999,scope='self',duration='whileInPlay',condition=cond('selfDamaged')))
+ if t=="During your turn, you may draw cards until you have 8 cards in your hand. (You can't use more than 1 VSTAR Power in a game.)":return activated(E('drawToHandSize',size=8),vstarPower=True)
+ if t=='You must discard a card from your hand in order to use this Ability. Once during your turn, you may draw 3 cards.':return activated(E('sm7Rule',rule='sm10Pay',amount=1,filter={},after=E('draw',amount=3)))
+ if t=="Your Pokémon take 30 less damage from attacks from your opponent's Pokémon V (after applying Weakness and Resistance).":return passive(E('modifier',stat='damageReduction',amount=30,scope='team',duration='whileInPlay',opponentFilter={'tag':'pokemon-v'}))
+ if t=='Each of your Pokémon that has any Grass Energy attached to it can\'t be affected by any Special Conditions. (Remove any Special Conditions affecting those Pokémon.)':return passive(E('preventStatus',scope='team',duration='whileInPlay',clearExisting=True,filter={'hasEnergyType':'Grass'}))
+ return _stage3_ability(row,a)
+def trainer(row):
+ t=row[13][0]
+ if t=='Search your deck for a Pokémon that has no Retreat Cost, reveal it, and put it into your hand. Then, shuffle your deck.':return 'Item',E('searchChosen',amount=1,filter={'kind':'pokemon','retreat':0})
+ if t=="Once during each player's turn, that player may shuffle their hand into their deck and draw 5 cards. If they do, their turn ends.":return 'Stadium',E('stadiumAction',effect=seq(E('handShuffle',side='self',draw=5),E('endTurn')))
+ if t=='All Special Energy attached to Pokémon (both yours and your opponent\'s) provide Colorless Energy and have no other effect.':return 'Stadium',E('noop') # continuous stadium suppression hook
+ if t=="Look at the top card of your deck. You may put that card into your hand. If you don't, discard that card and draw a card.":return 'Item',E('sm7Rule',rule='swsh10TrekkingShoes')
+ return _stage3_trainer(row)

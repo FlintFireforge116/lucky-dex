@@ -1,8 +1,8 @@
 {
   "set": "swsh10",
   "sourceGitBlob": "888a5253d3bf05bc4107d52742003ce42f1980f3",
-  "compactSha256": "50964a08bd1710c02612fd06cc136d281de020a6cb593cac6716f89668a1e147",
+  "compactSha256": "054508fb81b73757141a220df641c8078c99774dd962d40043c52cdc1cc1f4f2",
   "printedTotal": 216,
-  "importedTotal": 155,
-  "sourceScope": "verified stage-three packet"
+  "importedTotal": 216,
+  "sourceScope": "verified stage-four packets"
 }

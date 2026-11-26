@@ -1,84 +1,94 @@
 {
-  "printed": 155,
+  "printed": 216,
   "canonicalTotal": 216,
-  "notImported": [
-    "swsh10-1",
-    "swsh10-2",
-    "swsh10-10",
-    "swsh10-12",
-    "swsh10-13",
-    "swsh10-14",
-    "swsh10-18",
-    "swsh10-29",
-    "swsh10-34",
-    "swsh10-38",
-    "swsh10-52",
-    "swsh10-54",
-    "swsh10-59",
-    "swsh10-66",
-    "swsh10-68",
-    "swsh10-74",
-    "swsh10-76",
-    "swsh10-77",
-    "swsh10-84",
-    "swsh10-100",
-    "swsh10-101",
-    "swsh10-104",
-    "swsh10-107",
-    "swsh10-110",
-    "swsh10-114",
-    "swsh10-116",
-    "swsh10-117",
-    "swsh10-119",
-    "swsh10-130",
-    "swsh10-134",
-    "swsh10-136",
-    "swsh10-141",
-    "swsh10-142",
-    "swsh10-144",
-    "swsh10-145",
-    "swsh10-146",
-    "swsh10-148",
-    "swsh10-152",
-    "swsh10-153",
-    "swsh10-155",
-    "swsh10-156",
-    "swsh10-158",
-    "swsh10-160",
-    "swsh10-161",
-    "swsh10-164",
-    "swsh10-170",
-    "swsh10-176",
-    "swsh10-177",
-    "swsh10-178",
-    "swsh10-180",
-    "swsh10-185",
-    "swsh10-190",
-    "swsh10-193",
-    "swsh10-195",
-    "swsh10-196",
-    "swsh10-198",
-    "swsh10-203",
-    "swsh10-210",
-    "swsh10-212",
-    "swsh10-214",
-    "swsh10-215"
-  ],
-  "battleReady": 141,
+  "notImported": [],
+  "battleReady": 169,
   "gated": {
+    "swsh10-2": [
+      "Unimplemented attack: Cheerful Charge"
+    ],
+    "swsh10-12": [
+      "Unimplemented attack: Honey Rush"
+    ],
+    "swsh10-13": [
+      "Unimplemented attack: Energy Garden"
+    ],
+    "swsh10-18": [
+      "Unimplemented attack: Parallel Spin",
+      "Unimplemented Ability: Star Perfume"
+    ],
+    "swsh10-29": [
+      "Unimplemented attack: Entangled Dive"
+    ],
+    "swsh10-34": [
+      "Unimplemented attack: Borne Ashore"
+    ],
+    "swsh10-59": [
+      "Unimplemented attack: Ominous Prose"
+    ],
+    "swsh10-66": [
+      "Unimplemented Ability: Mental Shroud"
+    ],
+    "swsh10-68": [
+      "Unimplemented Ability: Princess's Curtain"
+    ],
     "swsh10-87": [
       "Unimplemented attack: Axe Slash"
+    ],
+    "swsh10-101": [
+      "Unimplemented attack: Basket Crash"
+    ],
+    "swsh10-104": [
+      "Unimplemented Ability: Baffling"
+    ],
+    "swsh10-107": [
+      "Unimplemented Ability: Giga Magnet"
+    ],
+    "swsh10-114": [
+      "Unimplemented attack: Star Chronos"
+    ],
+    "swsh10-119": [
+      "Unimplemented Ability: Resonant Evolution"
     ],
     "swsh10-120": [
       "Unimplemented Ability: Stand Sentry"
     ],
+    "swsh10-130": [
+      "Unimplemented attack: Gigaton Break",
+      "Unimplemented Ability: Ancient Wisdom"
+    ],
+    "swsh10-134": [
+      "Unimplemented attack: Psyshield Bash",
+      "Unimplemented Ability: Frontier Road"
+    ],
+    "swsh10-136": [
+      "Unimplemented Trainer effect"
+    ],
     "swsh10-138": [
+      "Unimplemented Trainer effect"
+    ],
+    "swsh10-142": [
       "Unimplemented Trainer effect"
     ],
     "swsh10-143": [
       "Unimplemented Trainer effect"
     ],
+    "swsh10-144": [
+      "Unimplemented Trainer effect"
+    ],
+    "swsh10-145": [
+      "Unimplemented Trainer effect"
+    ],
+    "swsh10-146": [
+      "Unimplemented Trainer effect"
+    ],
     "swsh10-149": [
+      "Unimplemented Trainer effect"
+    ],
+    "swsh10-152": [
+      "Unimplemented Trainer effect"
+    ],
+    "swsh10-153": [
       "Unimplemented Trainer effect"
     ],
     "swsh10-154": [
@@ -87,14 +97,42 @@
     "swsh10-157": [
       "Unimplemented Trainer effect"
     ],
+    "swsh10-158": [
+      "Unimplemented Trainer effect"
+    ],
+    "swsh10-170": [
+      "Unimplemented attack: Hypnostrike",
+      "Unimplemented Ability: Wish Connector"
+    ],
+    "swsh10-176": [
+      "Unimplemented attack: Basket Crash"
+    ],
+    "swsh10-180": [
+      "Unimplemented attack: Psyshield Bash",
+      "Unimplemented Ability: Frontier Road"
+    ],
     "swsh10-183": [
       "Unimplemented Trainer effect"
     ],
     "swsh10-184": [
       "Unimplemented Trainer effect"
     ],
+    "swsh10-185": [
+      "Unimplemented Trainer effect"
+    ],
     "swsh10-187": [
       "Unimplemented Trainer effect"
+    ],
+    "swsh10-190": [
+      "Unimplemented attack: Parallel Spin",
+      "Unimplemented Ability: Star Perfume"
+    ],
+    "swsh10-196": [
+      "Unimplemented attack: Axe Break",
+      "Unimplemented attack: Rampaging Star"
+    ],
+    "swsh10-198": [
+      "Unimplemented attack: Star Chronos"
     ],
     "swsh10-201": [
       "Unimplemented Trainer effect"
@@ -102,14 +140,20 @@
     "swsh10-202": [
       "Unimplemented Trainer effect"
     ],
+    "swsh10-203": [
+      "Unimplemented Trainer effect"
+    ],
     "swsh10-205": [
       "Unimplemented Trainer effect"
+    ],
+    "swsh10-210": [
+      "Unimplemented attack: Star Chronos"
     ],
     "swsh10-216": [
       "Unimplemented Special Energy rules"
     ]
   },
-  "attacks": 195,
-  "abilities": 25,
+  "attacks": 264,
+  "abilities": 44,
   "sourceGitBlob": "888a5253d3bf05bc4107d52742003ce42f1980f3"
 }

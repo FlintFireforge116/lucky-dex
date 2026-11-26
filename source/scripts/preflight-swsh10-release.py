@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Astral Radiance stage three release gate."""
+"""Astral Radiance stage four release gate."""
 import argparse,subprocess,sys
 from pathlib import Path
 ROOT=Path(__file__).resolve().parents[1]
