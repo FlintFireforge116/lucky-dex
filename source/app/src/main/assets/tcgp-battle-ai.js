@@ -173,6 +173,7 @@
   function usefulClassicTrainer(state,side,action){
     const card=data.cardById(action.cardId),s=state.sides[side],foe=state.sides[foeOf(side)];
     if(!card)return false;
+    if(card.id==='cel25c-15_A2')return !state.cel25cOpenPrizes&&(s.prizes.some(r=>!r.faceUp)||foe.prizes.some(r=>!r.faceUp));
     if(action.swsh4Substitution)return s.deck.length>0;
     if(card.trainerType==='Tool'&&!usefulClassicTool(state,side,action,card))return false;
     if(card.effect?.rule==='swsh2ToolScrapper')return slots(foe).some(p=>p.tool||p.extraTools?.length);
@@ -633,6 +634,7 @@
     // leakage. Choose from the actual legal set instead.
     if(state.format==='classic'&&state.phase==='effectChoice'){
       const pending=state.pendingChoice||{},rule=String(pending.effect?.rule||'');
+      if(rule==='cel25c:darkRay')return legal.find(a=>!a.choiceSkip)||legal[0];
       if(rule==='cel25CryOfDestruction'){
         const enemy=state.sides[foeOf(side)],picks=legal.filter(a=>!a.choiceSkip);
         return picks.sort((a,b)=>{const score=x=>{const p=slotFor(enemy,x.choiceTarget,x.choiceBenchIndex);return (p===enemy.active?50:0)+effects.totalEnergy(p?.energy||{})+(p?.specialEnergy||[]).length*2;};return score(b)-score(a);})[0]||legal[0];

@@ -14,8 +14,11 @@ const mappings={
  '107_A':['heartgold-soulsilver','hgss1-107'],'113_A':['black-white','bw1-113'],
  '114_A':['black-white','bw1-114'],'54_A':['next-destinies','bw4-54'],'60_A':['guardians-rising','sm2-60']
 };
-const gaps={'15_A2':'Original Item requires persistent face-up Prize display and selection (not the later Supporter).','8_A':'Final Beam needs knockout reaction, coin, status gate and weakness/resistance.','24_A':'Birthday Surprise requires an explicit in-game birthday policy.','17_A':'Dark Ray optional hidden hand discard and Star rules need dedicated outcome tests.'};
+const gaps={};
 const manual={
+ '24_A':[{type:'coinDamage',coins:1,amount:50,condition:{type:'cel25cBirthday'}}],
+ '8_A':[{type:'coinFlip',heads:{type:'status',target:'opponentActive',status:'paralysis'}}],
+ '17_A':[{type:'selectedDamage',target:'opponentPokemon',amount:30,ignoreWeakness:true,ignoreResistance:true,ignoreEffects:true}],
  '97_A':[{type:'benchDamage',side:'opponent',count:1,amount:30},{type:'lock',action:'attack',target:'self',duration:'nextOwnTurn',attackName:'X Blast'}],
  '76_A':[{type:'benchCountDamage',side:'self',amount:30,mode:'replace'}]
 };
@@ -25,13 +28,15 @@ const cards=rows.map(r=>{
  const original=historical(suffix), id='cel25c-'+suffix, reason=gaps[suffix];
  if(original){assert.equal(original.kind,sup==='Trainer'?'trainer':'pokemon');if(sup==='Pokémon'){assert.equal(original.name,name);assert.equal(original.hp,Number(hp));assert.deepEqual(original.types,types);assert.equal(original.evolvesFrom??null,parent);assert.equal(original.retreat,retreat);assert.deepEqual((original.attacks||[]).map(a=>[a.name,[...a.cost].join('')]),attacks.map(a=>[a[0],a[1].join('')]));assert.deepEqual((original.abilities||[]).map(a=>a.name),abilities.map(a=>a[0]));}}
  const c={...(original?structuredClone(original):{}),id,name,setId:'cel25c',number,source:'tcg',battleFormat:'classic',kind:sup==='Trainer'?'trainer':'pokemon',rarity,image:`https://images.pokemontcg.io/cel25c/${art}.png`,imageLarge:`https://images.pokemontcg.io/cel25c/${art}_hires.png`,battleEnabled:!reason,deckEligible:!reason,support:{status:reason?'PARTIAL':'FULL',reasons:reason?[reason]:[]},printedRules:rules.join(' § '),reprintOf:original?.id||null};
- if(c.kind==='trainer'){c.trainerType=subs.includes('Supporter')?'Supporter':'Item';c.text=rules.join(' § ');c.effect=original?.effect||{type:'unsupported',reason};}
+ if(c.kind==='trainer'){c.trainerType=subs.includes('Supporter')?'Supporter':'Item';c.text=rules.join(' § ');c.effect=original?.effect||(suffix==='15_A2'?{type:'neoRule',rule:'cel25c:revealPrizes'}:{type:'unsupported',reason});}
  else{
   const mega=subs.includes('MEGA'),ex=subs.includes('EX'),oldEx=subs.includes('ex'),gx=subs.includes('GX'),star=subs.includes('Star');
   Object.assign(c,{stage:mega?'Stage 1':subs.includes('Baby')?'Basic':subs[0],hp:Number(hp),types,subtype:types[0],evolvesFrom:parent,retreat,weakness:weak?.type??null,weaknessValue:weak?.value??null,weaknesses:weak?[weak]:[],resistance:res?.type??null,resistanceValue:res?.value??null,resistances:res?[res]:[],ancientTrait:trait,megaEvolution:mega,pokemonEX:ex,pokemonEx:oldEx,isEx:oldEx,pokemonGX:gx,isPokemonGX:gx,pokemonStar:star,isPokemonStar:star,isLevelX:subs.includes('Level-Up'),isPokemonSP:subs.includes('SP'),baby:subs.includes('Baby'),prizeCards:ex||oldEx||gx?2:1,maxDeckCopies:star||name.startsWith('Shining ')?1:4});
   c.tags=[...new Set([...(c.tags||[]).filter(t=>t!=='full-art'),...(ex||oldEx?['pokemon-ex']:[]),...(mega?['mega-evolution']:[]),...(trait?['ancient-trait']:[]),...(gx?['pokemon-gx']:[]),...(star?['pokemon-star']:[])])];
   c.attacks=attacks.map(([title,cost,damage,text],i)=>{const old=original?.attacks?.[i];const effect=old?(old.effect||{type:'noop'}):manual[suffix]?.[i]||{type:'unsupported',reason};const base=damage.includes('×')?0:Number(damage.match(/^\d+/)?.[0]||0);if(old)assert.equal(old.damage,base,`${id} ${title} base damage`);return {...old,name:title,cost:cost.join(''),damage:base,damageText:damage||null,text,gxAttack:title.endsWith('-GX'),effect};});
   c.abilities=abilities.map(([title,type,text],i)=>({...original?.abilities?.[i],name:title,text,printedPowerType:type==='Ability'?'ability':type==='Poké-Body'?'body':'power',effect:original?.abilities?.[i]?.effect||{type:'unsupported',reason}}));
+  if(suffix==='8_A')Object.assign(c.abilities[0],{type:'triggered',event:'knockedOutByAttack',opponentAttackOnly:true,disabledByStatus:true,effect:{type:'neoRule',rule:'cel25c:finalBeam'}});
+  if(suffix==='17_A')Object.assign(c.abilities[0],{type:'triggered',event:'benched',fromHandOnly:true,disabledByStatus:true,effect:{type:'neoRule',rule:'cel25c:darkRay'}});
   // The printed reprint text is authoritative when historical metadata is weaker.
   // Claydol and Gardevoir ex are blocked by *any* Special Condition, and
   // Wonder Tag is optional rather than a forced Supporter search.

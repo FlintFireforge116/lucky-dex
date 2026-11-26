@@ -1,20 +1,7 @@
 {
   "printed": 25,
-  "battleReady": 21,
-  "gated": {
-    "cel25c-15_A2": [
-      "Original Item requires persistent face-up Prize display and selection (not the later Supporter)."
-    ],
-    "cel25c-8_A": [
-      "Final Beam needs knockout reaction, coin, status gate and weakness/resistance."
-    ],
-    "cel25c-24_A": [
-      "Birthday Surprise requires an explicit in-game birthday policy."
-    ],
-    "cel25c-17_A": [
-      "Dark Ray optional hidden hand discard and Star rules need dedicated outcome tests."
-    ]
-  },
+  "battleReady": 25,
+  "gated": {},
   "attacks": 31,
   "abilities": 13,
   "sourceGitBlob": "3de4dd54bb073113773f4797d3bb13f23c311038"

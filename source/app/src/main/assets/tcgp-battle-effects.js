@@ -7,7 +7,7 @@
   const ENERGY_CODE = Object.freeze({G:'Grass',R:'Fire',W:'Water',L:'Lightning',P:'Psychic',F:'Fighting',D:'Darkness',M:'Metal',Y:'Fairy',C:'Colorless'});
   const ENERGY_TYPES=Object.values(ENERGY_CODE);
   const TARGETS=['opponentBenchAll','eventPokemon','self','selfActive','selfBench','selfPokemon','opponentActive','opponentBench','opponentPokemon','opponentAll','selfAll','selfBenchAll'];
-  const CONDITIONS=['swsh1GrassAttackKO','selfDamageBelow','sm12TagSupporter','sm12NoSupporterDiscard','sm12DeckAtMost','sm12OwnKoLastTurn','sm11EnergyAtMost','sm11OwnPokemonAtLeast','sm11BothPrizes','sm11AllBenchDamaged','sm11ToolName','sm10SpecialCombo','sm10StadiumPresent','sm10ToolNow','sm10BenchSpace','sm10PrizeDeficit','sm10EvolvedNow','sm10BenchStadium','sm10Caturday','sm10TeamFire','sm10LastAttackSelf','sm10Supporter','sm10NoAbilities','sm10SameType','sm10OpponentGX','sm9HitAndRun','sm9FewerPokemon','sm9NoBenchGX','sm9RetreatFour','sm9Erika','sm9ExtraEnergy','sm8GrassBenchFive','sm8HasCharm','sm8LostLightning','sm8MoreHand','sm8NotEvolved','sm8OpponentEnergyAtMost','sm8OpponentUndamaged','sm7FirstSecond','sm7Pheromone','sm7SameName','sm7Hustle','sm6OwnPrizes','sm6CombinedPrizes','sm6OwnGX','sm6LastAttack','sm6PsychicKO','sm6NotMorePokemon','opponentGxUsed','selfDamaged','selfBenchDamaged','selfUndamaged','opponentDamaged','opponentStatus','selfStatus','selfStatusAny','opponentEx','selfEnergyAtLeast','opponentEnergyAtLeast','benchAtLeast','selfHasTool','selfHasTechnicalMachine','selfStackContains','opponentDamageAtLeast','opponentPrizesRemaining','opponentPrizesAtMost','opponentHasTool','opponentHasSpecialEnergy','selfHasSpecialEnergy','selfExtraEnergyAtLeast','supporterPlayed','noSupporterInPlay','stadiumInPlay','opponentMatches','pokemonPresent','koLastOpponentTurn','koByOpponentAttackLastTurn','sweetsRelayLastTurn','movedFromBenchThisTurn','evolvedThisTurn','selfHasEnergyType','selfMoreEnergy','opponentHpGreater','selfRemainingHpAtMost','handSizeOneOf','sameEnergyTypeAtLeast','opponentPointsExact','combinedActiveEnergyAtLeast','teamEnergyAtLeast','teamDistinctEnergyTypesAtLeast','discardContains','equalEnergyCount','handSizesEqual','ownPointsExact','opponentHpLess','fewerPokemonInPlay','opponentHandSizeOneOf','selfDistinctEnergyTypesAtLeast','ownTurnCountAtMost','selfMatches','opponentStadiumInPlay','pokemonPresentAll','damagedByAttackLastOpponentTurn','notDamagedByAttackLastOpponentTurn','activeMatches','ownPointsAtLeast','ownPrizesMore','teamDistinctTypesAtLeast','firstAttackAfterPlay','opponentPointsGainedLastTurn','handAtLeast','selfRemainingHpAbove','selfRemainingHpFractionAtMost','selfRetreatCostAtLeast','koLastOpponentTurnFilter','selfOnBench','selfIsActive','selfNoEnergy','deckEmpty','opponentPointsAtLeast','ownTurnCountAtLeast','benchCountsEqual','selfDamageAtLeast','ownStadiumInPlay','xy8HealedThisTurn'];
+  const CONDITIONS=['cel25cBirthday','swsh1GrassAttackKO','selfDamageBelow','sm12TagSupporter','sm12NoSupporterDiscard','sm12DeckAtMost','sm12OwnKoLastTurn','sm11EnergyAtMost','sm11OwnPokemonAtLeast','sm11BothPrizes','sm11AllBenchDamaged','sm11ToolName','sm10SpecialCombo','sm10StadiumPresent','sm10ToolNow','sm10BenchSpace','sm10PrizeDeficit','sm10EvolvedNow','sm10BenchStadium','sm10Caturday','sm10TeamFire','sm10LastAttackSelf','sm10Supporter','sm10NoAbilities','sm10SameType','sm10OpponentGX','sm9HitAndRun','sm9FewerPokemon','sm9NoBenchGX','sm9RetreatFour','sm9Erika','sm9ExtraEnergy','sm8GrassBenchFive','sm8HasCharm','sm8LostLightning','sm8MoreHand','sm8NotEvolved','sm8OpponentEnergyAtMost','sm8OpponentUndamaged','sm7FirstSecond','sm7Pheromone','sm7SameName','sm7Hustle','sm6OwnPrizes','sm6CombinedPrizes','sm6OwnGX','sm6LastAttack','sm6PsychicKO','sm6NotMorePokemon','opponentGxUsed','selfDamaged','selfBenchDamaged','selfUndamaged','opponentDamaged','opponentStatus','selfStatus','selfStatusAny','opponentEx','selfEnergyAtLeast','opponentEnergyAtLeast','benchAtLeast','selfHasTool','selfHasTechnicalMachine','selfStackContains','opponentDamageAtLeast','opponentPrizesRemaining','opponentPrizesAtMost','opponentHasTool','opponentHasSpecialEnergy','selfHasSpecialEnergy','selfExtraEnergyAtLeast','supporterPlayed','noSupporterInPlay','stadiumInPlay','opponentMatches','pokemonPresent','koLastOpponentTurn','koByOpponentAttackLastTurn','sweetsRelayLastTurn','movedFromBenchThisTurn','evolvedThisTurn','selfHasEnergyType','selfMoreEnergy','opponentHpGreater','selfRemainingHpAtMost','handSizeOneOf','sameEnergyTypeAtLeast','opponentPointsExact','combinedActiveEnergyAtLeast','teamEnergyAtLeast','teamDistinctEnergyTypesAtLeast','discardContains','equalEnergyCount','handSizesEqual','ownPointsExact','opponentHpLess','fewerPokemonInPlay','opponentHandSizeOneOf','selfDistinctEnergyTypesAtLeast','ownTurnCountAtMost','selfMatches','opponentStadiumInPlay','pokemonPresentAll','damagedByAttackLastOpponentTurn','notDamagedByAttackLastOpponentTurn','activeMatches','ownPointsAtLeast','ownPrizesMore','teamDistinctTypesAtLeast','firstAttackAfterPlay','opponentPointsGainedLastTurn','handAtLeast','selfRemainingHpAbove','selfRemainingHpFractionAtMost','selfRetreatCostAtLeast','koLastOpponentTurnFilter','selfOnBench','selfIsActive','selfNoEnergy','deckEmpty','opponentPointsAtLeast','ownTurnCountAtLeast','benchCountsEqual','selfDamageAtLeast','ownStadiumInPlay','xy8HealedThisTurn'];
   const FILTER_KEYS=['resistance','retreat','battleEnabled','kind','notName','stage','subtype','notSubtype','name','trainerType','isEx','isExOrGX','damaged','evolved','hasAbility','hasBody','evolvesFrom','hasEnergyType','hasAnyEnergy','hasSpecialEnergy','basicEnergy','specialEnergy','classicRecoverable','nameContains','hpAtMost','retreatAtLeast','energyTypeAtLeast','pokemonGX','points','attackName','tag','prismStar'];
   const STATUSES=['poison','burn','sleep','paralysis','confusion'];
   const STATS=['attackDamage','attackDamageActiveOnly','damageReduction','retreatCost','attackCost','maxHp','energyMultiplier','poisonDamageBonus','attackCostGrass','attackCostFire','attackCostWater','attackCostLightning','attackCostPsychic','attackCostFighting','attackCostDarkness','attackCostMetal','attackCostFairy','attackCostColorless','damageTaken','attackDamageAllTargets','postWeaknessAttackDamage','darkShadow'];
@@ -379,6 +379,7 @@
     if(!c)return true;
     const a=ctx.attacker,d=ctx.defender;
     switch(c.type){
+      case 'cel25cBirthday':return ctx.state?.format==='classic'&&own(ctx)?.birthdayDeclared===true;
       case 'sm12TagSupporter':return own(ctx).sm12TagSupporterTurn===ctx.state.turnNumber;
       case 'sm12NoSupporterDiscard':return !own(ctx).discard.some(x=>ctx.cardById(x.cardId)?.trainerType==='Supporter');
       case 'sm12DeckAtMost':return own(ctx).deck.length<=c.amount;
@@ -15595,6 +15596,31 @@
   }
 
   function neoRule(e,ctx){
+    if(e.rule==='cel25c:revealPrizes'){
+      ctx.state.cel25cOpenPrizes=true;
+      for(const who of ['player','opponent'])for(const ref of ctx.state.sides[who].prizes||[])ref.faceUp=true;
+      return;
+    }
+    if(e.rule==='cel25c:darkRay'){
+      const foe=other(ctx);
+      if(ctx.resolvingChoice){if(ctx.action?.choiceSkip)return;const i=Number(ctx.action?.choiceOption);if(Number.isInteger(i)&&i>=0&&i<foe.hand.length){const ref=foe.hand.splice(i,1)[0],c=ctx.cardById(ref.cardId);if(c?.basicEnergy)recordDiscardedEnergy(foe,c.subtype,1);else foe.discard.push(ref);}return;}
+      if(foe.hand.length)ctx.requestChoice?.({kind:'option',side:'self',options:foe.hand.map((_,i)=>'Discard hidden card '+(i+1)),optional:true,effect:e});return;
+    }
+    if(e.rule==='cel25c:finalBeam'){
+      const a=ctx.attacker,target=ctx.eventData?.attacker,source=ctx.eventData?.source;
+      if(!a||!target||!source?.attack||source.side!==ctx.foeSide||source.turn!==ctx.state.turnNumber)return;
+      const heads=coin(ctx);ctx.state.log.push({type:'coin',side:ctx.side,reason:'Final Beam',heads,results:[heads]});if(!heads)return;
+      const water=Number(a.energy?.Water||0)+(a.specialEnergy||[]).filter(r=>attachedSpecialProvidesType(r,'Water',a,ctx.cardById,ctx.state)).length;
+      let n=20*water;if(!n)return;
+      const c=ctx.cardById(target.cardId),types=effectiveTypes(ctx.state,ctx.side,a,ctx.cardById);
+      const weak=target.weaknessOverride??c?.weakness,res=target.resistanceOverride??c?.resistance;
+      if(types.includes(weak)&&!findPassiveRule(ctx.state,ctx.foeSide,target,'weaknessGuard',ctx.cardById)){
+        const v=String(c.weaknessValue||'×2'),add=v.match(/^\+\s*(\d+)/),mul=v.match(/[×x]\s*(\d+)/);n=add?n+Number(add[1]):n*Number(mul?.[1]||2);
+      }
+      if(types.includes(res))n=Math.max(0,n-Number(String(c.resistanceValue||'-30').match(/-\s*(\d+)/)?.[1]||30));
+      target.damage=Number(target.damage||0)+n;ctx.state.log.push({type:'cel25cFinalBeam',side:ctx.side,amount:n,targetUid:target.uid});return;
+    }
+
     if(String(e.rule||'').startsWith('xy9:'))return xy9Rule(e,ctx);
     if(String(e.rule||'').startsWith('xy8:'))return xy8Rule(e,ctx);
     if(String(e.rule||'').startsWith('xy5:'))return xy5Rule(e,ctx);
@@ -19406,6 +19432,7 @@
   }
   function brazenPureTrainer(ctx){return brazenTail(ctx)&&BRAZEN_PURE_TRAINERS.has(ctx.cardById((ctx.trainerRef||ctx.action?.trainerRef)?.cardId)?.name);}
   function applyEffect(effect,ctx){
+    if(ctx?.state?.cel25cOpenPrizes&&!ctx.cel25cPrizeTracking){try{return applyEffect(effect,{...ctx,cel25cPrizeTracking:true});}finally{for(const who of ['player','opponent'])for(const ref of ctx.state.sides[who].prizes||[])ref.faceUp=true;}}
     if(effect&&dewBlockedEffect(effect,ctx)){ctx.state.log.push({type:"swsh7DewGuard",side:ctx.foeSide});return;}
     if(effect&&brazenPureTrainer(ctx)){ctx.state.log.push({type:'swsh6BrazenTail',side:ctx.foeSide});return;}
 

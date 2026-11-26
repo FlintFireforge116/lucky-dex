@@ -253,6 +253,7 @@
         opponent:createSide('opponent',opponentDeck,opts.opponentEnergyType,opts.opponentEnergyTypes,rules)
       }
     };
+    if(format==='classic'){state.sides.player.birthdayDeclared=opts.playerBirthday===true;state.sides.opponent.birthdayDeclared=opts.opponentBirthday===true;}
     shuffle(state,state.sides.player.deck);
     shuffle(state,state.sides.opponent.deck);
     // Classic uses a real, ordered Basic Energy supply outside the 30 cards.
@@ -2758,6 +2759,7 @@
     return true;
   }
   function beginClassicPrizeChoice(state,resume,cause){
+    if(state.cel25cOpenPrizes)for(const who of ['player','opponent'])for(const ref of state.sides[who].prizes||[])ref.faceUp=true;
     const queue=state.pendingPrizeClaims||[];
     while(queue.length||state.sm7WishPrize||state.swsh7PrizeReaction){
       if(state.swsh7PrizeReaction){const {side,ref}=state.swsh7PrizeReaction,ss=state.sides[side],dream=ref.cardId==='swsh7-146';const allowedUids=dream?ss.deck.filter(r=>data.cardById(r.cardId)?.kind==='pokemon'&&data.cardById(r.cardId)?.battleEnabled&&eternalZoneCanPlace(state,side,r.cardId)).map(r=>r.uid):pokemonOn(ss).map(p=>p.uid);beginEffectChoice(state,side,ss.active,{kind:dream?'deckCard':'pokemon',side:'self',allowedUids,optional:true,special:'swsh7PrizeReaction',prompt:dream?'Dream Ball: choose a Pokémon to Bench, or take this card into hand':'Treasure Energy: attach to a Pokémon, or take into hand',koResume:resume||null,koCause:cause||null});return true;}
@@ -4788,6 +4790,7 @@ const target=slotForTarget(s,action.target,action.benchIndex);if(card.id==='pl2-
     const turnOfAction=state.turnNumber;
     const sm11Attachments=effects.sm11ReturnSnapshot(state,data.cardById);
     const result=applyActionRaw(state,side,action);
+    if(state.cel25cOpenPrizes)for(const who of ['player','opponent'])for(const ref of state.sides[who].prizes||[])ref.faceUp=true;
     for(const owner of ['player','opponent']){
       const incoming=state.sides[owner].active,previous=before[owner];
       if(incoming&&previous&&incoming.uid!==previous.uid&&previous.bench.has(incoming.uid))
