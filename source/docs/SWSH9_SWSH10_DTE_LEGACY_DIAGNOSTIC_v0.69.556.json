@@ -1,0 +1,158 @@
+{
+  "scope": "synthetic neutral-target diagnostic; review printed effects and unexercised branches; not a completion gate",
+  "eligible": 422,
+  "ran": 360,
+  "zero": 50,
+  "errors": [
+    {
+      "side": "player",
+      "id": "ex4-9",
+      "name": "Linear Attack",
+      "reason": "no attack action"
+    },
+    {
+      "side": "player",
+      "id": "pl4-51",
+      "name": "Cloak Shard",
+      "reason": "selectedDamage must resolve as part of an attack."
+    },
+    {
+      "side": "player",
+      "id": "pl4-71",
+      "name": "Mega Shot",
+      "reason": "selectedDamage must resolve as part of an attack."
+    },
+    {
+      "side": "player",
+      "id": "pl4-AR5",
+      "name": "Sky Spear",
+      "reason": "selectedDamage must resolve as part of an attack."
+    },
+    {
+      "side": "player",
+      "id": "swsh4-48",
+      "name": "Thunder Snipe",
+      "reason": "no attack action"
+    },
+    {
+      "side": "player",
+      "id": "cel25c-9_A",
+      "name": "Linear Attack",
+      "reason": "no attack action"
+    },
+    {
+      "side": "opponent",
+      "id": "ex4-9",
+      "name": "Linear Attack",
+      "reason": "no attack action"
+    },
+    {
+      "side": "opponent",
+      "id": "pl4-51",
+      "name": "Cloak Shard",
+      "reason": "selectedDamage must resolve as part of an attack."
+    },
+    {
+      "side": "opponent",
+      "id": "pl4-71",
+      "name": "Mega Shot",
+      "reason": "selectedDamage must resolve as part of an attack."
+    },
+    {
+      "side": "opponent",
+      "id": "pl4-AR5",
+      "name": "Sky Spear",
+      "reason": "selectedDamage must resolve as part of an attack."
+    },
+    {
+      "side": "opponent",
+      "id": "swsh4-48",
+      "name": "Thunder Snipe",
+      "reason": "no attack action"
+    },
+    {
+      "side": "opponent",
+      "id": "cel25c-9_A",
+      "name": "Linear Attack",
+      "reason": "no attack action"
+    }
+  ],
+  "mismatches": [
+    {
+      "side": "player",
+      "id": "ex7-17",
+      "name": "Spread Poison",
+      "base": [
+        20,
+        0
+      ],
+      "turbo": [
+        10,
+        0
+      ],
+      "expected": [
+        0,
+        0
+      ],
+      "rule": "ex7:17:1",
+      "text": "The Defending Pokémon is now Poisoned. This attack does 20 damage to 1 of your opponent's Benched Pokémon. (Don't apply Weakness and Resistance for Benched Pokémon.)"
+    },
+    {
+      "side": "player",
+      "id": "ex12-89",
+      "name": "Water Arrow",
+      "base": [
+        10,
+        40
+      ],
+      "turbo": [
+        10,
+        20
+      ],
+      "expected": [
+        0,
+        20
+      ],
+      "rule": "ex12:89:0",
+      "text": "Choose 1 of your opponent's Pokémon. This attack does 40 damage to that Pokémon. (Don't apply Weakness and Resistance for Benched Pokémon.)"
+    },
+    {
+      "side": "opponent",
+      "id": "ex7-17",
+      "name": "Spread Poison",
+      "base": [
+        20,
+        0
+      ],
+      "turbo": [
+        10,
+        0
+      ],
+      "expected": [
+        0,
+        0
+      ],
+      "rule": "ex7:17:1",
+      "text": "The Defending Pokémon is now Poisoned. This attack does 20 damage to 1 of your opponent's Benched Pokémon. (Don't apply Weakness and Resistance for Benched Pokémon.)"
+    },
+    {
+      "side": "opponent",
+      "id": "ex12-89",
+      "name": "Water Arrow",
+      "base": [
+        10,
+        40
+      ],
+      "turbo": [
+        10,
+        20
+      ],
+      "expected": [
+        0,
+        20
+      ],
+      "rule": "ex12:89:0",
+      "text": "Choose 1 of your opponent's Pokémon. This attack does 40 damage to that Pokémon. (Don't apply Weakness and Resistance for Benched Pokémon.)"
+    }
+  ]
+}

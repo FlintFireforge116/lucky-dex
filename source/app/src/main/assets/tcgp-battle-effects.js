@@ -3364,7 +3364,7 @@
       return;
     }
     if(n===4&&i===0){ex8Rule({...e,step:'source',remaining:2},{...ctx,resolvingChoice:false});return;}
-    if(n===4&&i===1){if(ctx.resolvingChoice){const p=target(foe),uids=new Set(e.targets||[]);if(p&&!uids.has(p.uid)){p.damage=Number(p.damage||0)+30;uids.add(p.uid);}
+    if(n===4&&i===1){if(ctx.resolvingChoice){const p=target(foe),uids=new Set(e.targets||[]);if(p&&!uids.has(p.uid)){p.damage=Number(p.damage||0)+outgoingAttackDamage(ctx.state,ctx.side,a,ctx.foeSide,30,ctx.cardById);uids.add(p.uid);}
         if(uids.size<2&&board(foe).some(x=>!uids.has(x.uid)))askPokemon(foe,{excludeUids:[...uids],effect:{...e,targets:[...uids]}});return;}
       askPokemon(foe);return;}
     if(n===12&&i===0){searchDeck(()=>true);return;}
@@ -3384,7 +3384,7 @@
     if(n===100&&i===0){if(foe.hand.length){if(ctx.resolvingChoice){const ix=Number(ctx.action?.choiceOption),ref=foe.hand[ix];if(ref){foe.hand.splice(ix,1);foe.discard.push(ref);}return;}choose('option',{options:foe.hand.map((_,idx)=>'Face-down card '+(idx+1))});}return;}
     if(n===5&&i===0){if(Number(a?.energy?.Psychic||0)>0)status('confusion');return;}
     if(n===24&&i===0){const seen=new Set(e.targets||[]);
-      if(ctx.resolvingChoice){const p=target(foe);if(p&&!seen.has(p.uid)){p.damage=Number(p.damage||0)+10;seen.add(p.uid);}}
+      if(ctx.resolvingChoice){const p=target(foe);if(p&&!seen.has(p.uid)){p.damage=Number(p.damage||0)+outgoingAttackDamage(ctx.state,ctx.side,a,ctx.foeSide,10,ctx.cardById);seen.add(p.uid);}}
       if(seen.size<Math.min(3,board(foe).length))askPokemon(foe,{excludeUids:[...seen],effect:{...e,targets:[...seen]}});return;}
     if(n===20&&i===0){if(ctx.action?.effectSelection==='discard'&&ctx.state.stadium)ctx.state.stadium=null;return;}
     if(n===13&&i===0){a.ex8SlashBonusUntil=turn+2;return;}
@@ -3699,7 +3699,7 @@
       return;
     }
     if(key==='3:0'){for(const p of foe.bench)p.damage=Number(p.damage||0)+10;heal(a,10*board(foe).length);return;}
-    if(key==='19:1'){for(const p of foe.bench)p.damage=Number(p.damage||0)+20;return;}
+    if(key==='19:1'){for(const p of foe.bench)p.damage=Number(p.damage||0)+outgoingAttackDamage(ctx.state,ctx.side,a,ctx.foeSide,20,ctx.cardById);return;}
     if(key==='17:0'){if(d){d.locks=[...(d.locks||[]),{action:'retreat',expiresTurn:turn+1}];applyEffect({type:'scheduleDelayed',event:'endOpponentNextTurn',targetMode:'defender',effect:{type:'damage',amount:50}},ctx);}return;}
     if(key==='99:0'){if(a&&d&&expend(us,a)){const x=a.damage||0;a.damage=d.damage||0;d.damage=x;}return;}
     if(key==='2:1'){while(a?.energy?.Lightning>0)expend(us,a,'Lightning');return;}
@@ -3786,7 +3786,7 @@
       }else if(qty(a)>0)choose('option',{optional:false,options:['Keep Energy on Dark Electrode','Distribute all Energy to your Benched Pokémon'],effect:{...e,step:'mode'}});
       return;
     }
-    if(key==='40:0'&&flip()){const target=foe.active;if(target)target.damage=Number(target.damage||0)+10;for(const p of foe.bench)p.damage=Number(p.damage||0)+10;search(c=>c?.evolvesFrom===get(a)?.name,{mode:'evolve'});return;}
+    if(key==='40:0'&&flip()){const target=foe.active;if(target)target.damage=Number(target.damage||0)+outgoingAttackDamage(ctx.state,ctx.side,a,ctx.foeSide,10,ctx.cardById);for(const p of foe.bench)p.damage=Number(p.damage||0)+outgoingAttackDamage(ctx.state,ctx.side,a,ctx.foeSide,10,ctx.cardById);search(c=>c?.evolvesFrom===get(a)?.name,{mode:'evolve'});return;}
     if(key==='43:0'||key==='69:1'||key==='75:1')return;
     if(key==='103:0'&&!ctx.action?.ex7DragOffResolved&&ctx.action?.effectSelection&&foe.bench.length){const p=foe.bench.find(x=>x.uid===ctx.action.effectSelection);if(p)switchPokemon(foe,p.benchSlot,ctx.state);return;}
     if(key==='73:0'){
@@ -4069,7 +4069,7 @@
     if(number===116&&index===0&&ctx.action?.effectSelection==='discard')consumeAny(us,a);
     if(number===109&&index===0){for(let i=0;i<Number(e.heads||0);i++)consumeAny(foe,d);}
     if((number===110||number===111)&&index===0&&d)d.damage=Number(d.damage||0)+10*foe.hand.length;
-    if(number===24&&index===0&&foe.bench.length){const target=foe.bench.find(p=>p.uid===ctx.action?.effectSelection);if(target)target.damage=Number(target.damage||0)+20;}
+    if(number===24&&index===0&&foe.bench.length){const target=foe.bench.find(p=>p.uid===ctx.action?.effectSelection);if(target)target.damage=Number(target.damage||0)+outgoingAttackDamage(ctx.state,ctx.side,a,ctx.foeSide,20,ctx.cardById);}
     if(number===42&&index===1){for(const target of foe.bench.slice(0,2))target.damage=Number(target.damage||0)+10;}
     if(number===28&&index===0){let count=Math.max(0,Math.min(10,Number(ctx.action?.effectSelection||0)));for(let i=us.hand.length-1;i>=0&&count>0;i--){if(tool(us.hand[i])){us.discard.push(...us.hand.splice(i,1));count--;}}}
     if(number===107&&index===0){let count=Math.max(0,Math.min(20,Number(ctx.action?.effectSelection||0)));for(const p of board(us)){for(const type of energyTypes(p)){while(p.energy[type]>0&&count>0){popEnergy(us,p,type);count--;}}}}
@@ -4140,9 +4140,9 @@
         return;}
       case '4:1':case '51:1':status('poison',key==='51:1'?20:10);return;
       case '5:1':if(!(a?.specialEnergy||[]).length){if(a)a.damage=Number(get(a)?.hp||0);if(d)d.damage=Number(get(d)?.hp||0);}return;
-      case '6:0':for(const slot of foe.bench)damage(slot,10);return;
+      case '6:0':for(const slot of foe.bench)damage(slot,outgoingAttackDamage(ctx.state,ctx.side,a,ctx.foeSide,10,ctx.cardById));return;
       case '6:1':case '45:1':case '49:0':case '57:0':case '93:0':case '94:0':return; // damage target determined before resolving
-      case '56:1':{if(ctx.resolvingChoice){const target=slotChoice(foe);if(target&&!e.hitUids?.includes(target.uid)){damage(target,10);const hit=[...(e.hitUids||[]),target.uid];if(hit.length<2&&foe.bench.some(p=>!hit.includes(p.uid)))choicePokemon(foe,{includeActive:false,excludeUids:hit,effect:{...e,hitUids:hit}});}}else if(foe.bench.length)choicePokemon(foe,{includeActive:false});return;}
+      case '56:1':{if(ctx.resolvingChoice){const target=slotChoice(foe);if(target&&!e.hitUids?.includes(target.uid)){damage(target,outgoingAttackDamage(ctx.state,ctx.side,a,ctx.foeSide,10,ctx.cardById));const hit=[...(e.hitUids||[]),target.uid];if(hit.length<2&&foe.bench.some(p=>!hit.includes(p.uid)))choicePokemon(foe,{includeActive:false,excludeUids:hit,effect:{...e,hitUids:hit}});}}else if(foe.bench.length)choicePokemon(foe,{includeActive:false});return;}
       case '6:2':case '36:0':status('confusion');return;
       case '7:0':if(board(foe).some(s=>get(s)?.pokemonEx))deckSearch(c=>c?.basicEnergy&&c.subtype==='Grass',2,'attach');return;
       case '8:0':{ // Make a Wish: choose a Pokémon, then choose its valid evolution from deck.
@@ -4221,7 +4221,7 @@
       case '43:0':if(flip())status('paralysis');return;
       case '43:1':damage(d,50);return;
       case '45:0':case '50:0':{if(ctx.resolvingChoice){const idx=Number(ctx.action?.choiceOption),move=get(d)?.attacks?.[idx];if(move)d.locks=[...(d.locks||[]),{action:'attack',attackName:move.name,expiresTurn:turn+1}];}else if(get(d)?.attacks?.length)option(get(d).attacks.map(x=>'Disable '+x.name));return;}
-      case '47:0':for(const slot of foe.bench)damage(slot,10);return;
+      case '47:0':for(const slot of foe.bench)damage(slot,outgoingAttackDamage(ctx.state,ctx.side,a,ctx.foeSide,10,ctx.cardById));return;
       case '48:0':{status('confusion');if(!flip())applyEffect({type:'status',target:'self',status:'confusion'},ctx);return;}
       case '51:0':if(flip())status('confusion');else detachOne(foe,d);return;
       case '54:0':deckSearch(c=>c?.kind==='pokemon'&&c.stage==='Basic',1,'bench');return;
@@ -4284,7 +4284,7 @@
       case '96:1':discardEnergy(us,a,'Fire');return;
       case '97:0':if(flip())d.ex5NoHandEnergyUntil=turn+1;return;
       case '98:0':if(ctx.action?.effectSelection==='boost')damage(a,30,us);return;
-      case '99:0':{const type=get(d)?.types?.[0];for(const p of foe.bench)if(get(p)?.types?.includes(type))damage(p,20);return;}
+      case '99:0':{const type=get(d)?.types?.[0];for(const p of foe.bench)if(get(p)?.types?.includes(type))damage(p,outgoingAttackDamage(ctx.state,ctx.side,a,ctx.foeSide,20,ctx.cardById));return;}
       case '100:0':if(flip()){status('sleep');status('poison');}else status('confusion');return;
       case '101:0':status('sleep');return;
       case '102:1':for(const p of us.bench)damage(p,10,us);return;
@@ -4359,7 +4359,7 @@
       case '11:1':if(isTeam(d,'Aqua'))status('confusion');return;
       case '12:0':{const ref=foe.deck.shift();if(ref)foe.discard.push(ref);if(!flip())disc(us,a,'Fire');return;}
       case '12:1':if(ctx.resolvingChoice){const b=targetBench(foe);if(b)switchPokemon(foe,Number(b.benchSlot),ctx.state);return;}disc(us,a,'Fire');if(foe.bench.length)chooseBench(foe);return;
-      case '13:0':for(const slot of foe.bench.slice(0,2))slot.damage=Number(slot.damage||0)+10;return;
+      case '13:0':for(const slot of foe.bench.slice(0,2))slot.damage=Number(slot.damage||0)+outgoingAttackDamage(ctx.state,ctx.side,a,ctx.foeSide,10,ctx.cardById);return;
       case '13:1':if(e.heads){while(disc(us,a,'Lightning')){}}return;
       case '15:1':if(get({cardId:d?.cardId})?.pokemonEx)status('confusion');return;
       case '16:0':case '18:0':case '25:0':case '51:1':case '57:1':delay(key==='16:0'||key==='57:1'?'sleep':'poison');return;
@@ -4700,8 +4700,8 @@
     const draw=k=>{for(let i=0;i<k;i++)ctx.drawCard?.(us);};
     const count=p=>{const energy=ctx.effectiveEnergy?.(p)||p?.energy||{};return Object.entries(energy).reduce((sum,[t,n])=>sum+(t.startsWith('__')?0:Number(n)||0),0);};
     const isDelta=(p,who=ctx.side)=>ex15IsDelta(ctx.state,who,p,ctx.cardById);
-    const damage=(side,p,amount)=>{if(!p||amount<=0)return;if(side===foe&&attackIsPrevented(ctx.state,ctx.foeSide,p,a,ctx.cardById))return;
-      const hit=side===foe&&p===foe.active?attackDamageWithState(ctx.state,ctx.side,a,ctx.foeSide,p,amount,ctx.cardById):amount;
+    const damage=(side,p,amount,counters=false)=>{if(!p||amount<=0)return;if(side===foe&&attackIsPrevented(ctx.state,ctx.foeSide,p,a,ctx.cardById))return;
+      const hit=counters?amount:side===foe&&p===foe.active?attackDamageWithState(ctx.state,ctx.side,a,ctx.foeSide,p,amount,ctx.cardById):outgoingAttackDamage(ctx.state,ctx.side,a,side===foe?ctx.foeSide:ctx.side,amount,ctx.cardById);
       const dealt=Math.max(0,hit);p.damage=Number(p.damage||0)+dealt;
       ctx.state.log.push({type:'ex15TargetDamage',side:ctx.side,targetSide:side===foe?ctx.foeSide:ctx.side,targetUid:p.uid,amount:dealt,bench:p!==side.active});};
     const targetDamage=(side,amount,opts={})=>{if(ctx.resolvingChoice){if(!c.choiceSkip)damage(side,chosen(side),amount);return;}
@@ -4951,7 +4951,7 @@
         if(flip()){status('paralysis');if(us.bench.length)pokemonPick(us,{includeActive:false,optional:false});}return;}
       case '18:0':if(toolsOf(a).length)draw(3);return;
       case '19:0':draw(2);return;
-      case '19:1':if(ctx.resolvingChoice){const p=chosen(foe);if(p)damage(foe,p,isDelta(p)?30:10);return;}if(theirs.length)pokemonPick(foe,{optional:false});return;
+      case '19:1':if(ctx.resolvingChoice){const p=chosen(foe);if(p)damage(foe,p,isDelta(p)?30:10,true);return;}if(theirs.length)pokemonPick(foe,{optional:false});return;
       case '22:0':d.attackGate={expiresTurn:turn+1,reason:'Smokescreen'};return;
       case '26:0':status('poison');return;
       case '27:0':if(flip()){d.locks=d.locks||[];d.locks.push({action:'attack',expiresTurn:turn+1},{action:'retreat',expiresTurn:turn+1});}return;
@@ -4993,7 +4993,7 @@
           if(remaining>0&&foe.bench.length)ex15Rule({...e,step:'overflow',remaining},{...ctx,resolvingChoice:false});return;}
         if(e.step==='overflow'){
           if(ctx.resolvingChoice){const target=chosen(foe);if(!target||!foe.bench.includes(target))return;
-            damage(foe,target,10);if(Number(e.remaining)>10)ex15Rule({...e,remaining:Number(e.remaining)-10},{...ctx,resolvingChoice:false});return;}
+            damage(foe,target,10,true);if(Number(e.remaining)>10)ex15Rule({...e,remaining:Number(e.remaining)-10},{...ctx,resolvingChoice:false});return;}
           if(foe.bench.length)pokemonPick(foe,{includeActive:false,optional:false});return;}return;}
       case '93:0':{ // Flame Ball optional Fire Energy movement AFTER doing 80 damage.
         const options=[...Object.entries(a.energy||{}).filter(([type,num])=>type==='Fire'&&Number(num)>0).map(([type])=>({kind:'basic',type})),
@@ -5068,7 +5068,7 @@
     const flip=()=>{const heads=coin(ctx);ctx.state.log.push({type:'coin',side:ctx.side,heads,reason:'EX Crystal Guardians '+key});return heads;};
     const status=name=>applyEffect({type:'status',target:'opponentActive',status:name},ctx);
     const damage= (side,p,amount)=>{if(!p||!(amount>0))return;if(side===foe&&attackIsPrevented(ctx.state,ctx.foeSide,p,a,ctx.cardById))return;
-      const hit=side===foe&&p===foe.active?attackDamageWithState(ctx.state,ctx.side,a,ctx.foeSide,p,amount,ctx.cardById):amount;
+      const hit=side===foe&&p===foe.active?attackDamageWithState(ctx.state,ctx.side,a,ctx.foeSide,p,amount,ctx.cardById):outgoingAttackDamage(ctx.state,ctx.side,a,side===foe?ctx.foeSide:ctx.side,amount,ctx.cardById);
       p.damage=Number(p.damage||0)+Math.max(0,hit);};
     const targetDamage=(side,amount,opts={})=>{if(ctx.resolvingChoice){if(!c.choiceSkip)damage(side,chosen(side),amount);return;}
       if(pokemonOn(side).length)pokemonPick(side,{optional:false,...opts});};
@@ -5307,7 +5307,7 @@
           if(ctx.resolvingChoice){const idx=Number(c.choiceDeckIndex),item=valid.find(x=>x.index===idx);if(!item)return;const [ref]=us.deck.splice(idx,1);a.stack=[...(a.stack||[a.cardId]),ref.cardId];a.cardId=ref.cardId;a.evolvedOnTurn=turn;ctx.shuffle?.(ctx.state,us.deck);ctx.onEvolved?.(a);return;}
           if(valid.length)pick('deckCard',{excludeUids:us.deck.filter(r=>!valid.some(x=>x.ref.uid===r.uid)).map(r=>r.uid),optional:false});return;}
       case '41:1':{ // Feint Attack ignores all Weakness, Resistance and Pokémon effects.
-        if(ctx.resolvingChoice){const p=chosen(foe);if(p)p.damage=Number(p.damage||0)+20;return;}
+        if(ctx.resolvingChoice){const p=chosen(foe);if(p)p.damage=Number(p.damage||0)+outgoingAttackDamage(ctx.state,ctx.side,a,ctx.foeSide,20,ctx.cardById);return;}
         if(theirs.length)pokemonPick(foe,{optional:false});return;}
       case '43:0':if(flip())d.locks=(d.locks||[]).concat({action:'attack',expiresTurn:turn+1});return;
       case '45:1':status('poison');return;
@@ -5402,7 +5402,7 @@
       return Object.values(p?.energy||{}).reduce((sum,n)=>sum+Number(n||0),0)+(p?.specialEnergy||[]).length;};
     const isDelta=p=>!!card(p)?.deltaSpecies;
     const holoStadium=()=>/Holon/.test(ctx.cardById(activeStadium(ctx.state)?.cardId)?.name||'');
-    const hit=(side,p,amount)=>{if(!p||!amount)return;if(side===foe&&attackIsPrevented(ctx.state,ctx.foeSide,p,a,ctx.cardById))return;const dmg=(side===foe&&side.active===p)?attackDamageWithState(ctx.state,ctx.side,a,ctx.foeSide,p,amount,ctx.cardById):amount;p.damage=Number(p.damage||0)+Math.max(0,dmg);};
+    const hit=(side,p,amount,counters=false)=>{if(!p||!amount)return;if(side===foe&&attackIsPrevented(ctx.state,ctx.foeSide,p,a,ctx.cardById))return;const dmg=counters?amount:(side===foe&&side.active===p)?attackDamageWithState(ctx.state,ctx.side,a,ctx.foeSide,p,amount,ctx.cardById):outgoingAttackDamage(ctx.state,ctx.side,a,side===foe?ctx.foeSide:ctx.side,amount,ctx.cardById);p.damage=Number(p.damage||0)+Math.max(0,dmg);};
     const hitChoice=(side,amount,opts={})=>{if(ctx.resolvingChoice){if(!c.choiceSkip)hit(side,selected(side),amount);return;}if(pokemonOn(side).length)pickPokemon(side,opts);};
     const discardEnergy=(side,p,type)=>{if(!p)return false;const basic=Object.keys(p.energy||{}).find(t=>Number(p.energy[t])>0&&(!type||type===t));if(basic){p.energy[basic]--;recordDiscardedEnergy(side,basic,1);return true;}if(type)return false;const sp=p.specialEnergy?.shift();if(sp){side.discard.push(sp);return true;}return false;};
     const draw=(side,amount=1)=>{for(let i=0;i<Math.max(0,Number(amount)||0);i++)ctx.drawCard?.(side);};
@@ -5569,7 +5569,7 @@
         if(eligible.some(p=>!e.used?.includes(p.uid)))pickPokemon(foe,{includeActive:key!=='25:1',excludeUids:e.used||[],optional:false});return;
       }
       case '23:0':{ // Mawile Feint Attack ignores Weakness, Resistance, Powers/Bodies and other effects.
-        if(ctx.resolvingChoice){const p=selected(foe);if(p)p.damage=Number(p.damage||0)+10;return;}
+        if(ctx.resolvingChoice){const p=selected(foe);if(p)p.damage=Number(p.damage||0)+outgoingAttackDamage(ctx.state,ctx.side,a,ctx.foeSide,10,ctx.cardById);return;}
         if(theirs.length)pickPokemon(foe,{optional:false});return;}
       case '65:1':case '74:1':hitChoice(foe,20);return;
       case '23:1':case '31:1':{if(!foe.hand.length)return;const ix=Math.floor(ctx.random(ctx.state)*foe.hand.length),[ref]=foe.hand.splice(ix,1);
@@ -5611,7 +5611,7 @@
           if(Number(e.remaining||2)>1)ex13Rule({...e,remaining:1},{...ctx,resolvingChoice:false});return;}
         if(us.bench.length<Number(us.benchLimit||3))pullDeck(ce=>ce?.kind==='pokemon'&&ce.stage==='Basic','bench');return;
       }
-      case '48:1':{if(ctx.resolvingChoice){const p=selected(foe);if(p)hit(foe,p,40);return;}pickPokemon(foe,{side:'opponent',optional:false});return;}
+      case '48:1':{if(ctx.resolvingChoice){const p=selected(foe);if(p)hit(foe,p,40,true);return;}pickPokemon(foe,{side:'opponent',optional:false});return;}
       case '71:1':draw(us,1);return;
       case '73:1':a.damage=Math.max(0,Number(a.damage||0)-20);return;
       case '74:0':draw(us,3);return;
@@ -5683,7 +5683,7 @@
         return;}
       if(available.length)pick('option',{options:available.map(x=>(mode==='top'?'Put on deck: ':mode==='hand'?'Recover: ':'Attach: ')+x.label)});};
     const hit=(side,slot,amount)=>{if(!slot||!amount)return;if(side===foe&&attackIsPrevented(ctx.state,ctx.foeSide,slot,a,ctx.cardById))return;
-      const active=slot===side.active,raw=side===foe&&active?attackDamageWithState(ctx.state,ctx.side,a,ctx.foeSide,slot,amount,ctx.cardById):amount;
+      const active=slot===side.active,raw=side===foe&&active?attackDamageWithState(ctx.state,ctx.side,a,ctx.foeSide,slot,amount,ctx.cardById):outgoingAttackDamage(ctx.state,ctx.side,a,side===foe?ctx.foeSide:ctx.side,amount,ctx.cardById);
       slot.damage=Number(slot.damage||0)+Math.max(0,raw);};
     const chosenHit=(side,amount,opts={})=>{if(ctx.resolvingChoice){if(!c.choiceSkip)hit(side,selection(side),amount);return;}
       if(pokemonOn(side).length)pickPokemon(side,{...opts});};
@@ -5872,7 +5872,7 @@
         if(foe.bench.length)pickPokemon(foe,{includeActive:false});return;}
       case '71:0':status('confusion');a.conditions={...(a.conditions||{}),confusion:true};return;
       case '15:0':deckPick(x=>x?.kind==='pokemon'&&x.pokemonEx);return;
-      case '15:1':if(ctx.resolvingChoice){const p=selection(foe);if(p)p.damage=Number(p.damage||0)+20;return;}
+      case '15:1':if(ctx.resolvingChoice){const p=selection(foe);if(p)p.damage=Number(p.damage||0)+outgoingAttackDamage(ctx.state,ctx.side,a,ctx.foeSide,20,ctx.cardById);return;}
         if(theirs.length)pickPokemon(foe);return;
       case '24:0':deckPick(x=>x?.kind==='pokemon'&&x.types?.includes('Grass')&&!x.pokemonEx);return;
       case '24:1':if(ctx.resolvingChoice){const p=selection(us);if(p&&us.bench.includes(p))p.damage=Number(p.damage||0)+20;return;}
@@ -6028,7 +6028,7 @@
       if(attackIsPrevented(ctx.state,ctx.foeSide,target,a,ctx.cardById))return;
       const active=target===foe.active;
       const raw=active?attackDamageWithState(ctx.state,ctx.side,a,ctx.foeSide,target,amount,ctx.cardById):
-        Math.max(0,amount-modifierAmount(ctx.state,ctx.foeSide,target,'damageReduction',ctx.cardById));
+        Math.max(0,outgoingAttackDamage(ctx.state,ctx.side,a,ctx.foeSide,amount,ctx.cardById)-modifierAmount(ctx.state,ctx.foeSide,target,'damageReduction',ctx.cardById));
       target.damage=Number(target.damage||0)+Math.max(0,raw);};
     const choiceOf=(side)=>selected(side);
     const basicDiscard=(side,type)=>[...Object.entries(side.energyDiscard||{}).filter(([t,n])=>(!type||t===type)&&n>0).map(([t])=>({kind:'basic',type:t,label:t+' Basic Energy (discarded)'})),
@@ -6329,7 +6329,7 @@
       case '24:0':if(card(d)?.pokemonEx)applyEffect({type:'lock',target:'opponentActive',action:'attack',duration:'opponentTurn'},ctx);return;
       case '2:1':case '6:0':case '17:0':case '50:0':case '62:0':case '70:0':case '82:0':case '86:0':{
         if(ctx.resolvingChoice){const p=selected(foe);if(!p)return;const n=key==='2:1'?(p.damage>0?60:40):key==='6:0'?Math.floor(a.damage/10)*10:key==='17:0'?30:key==='50:0'?30:key==='62:0'?20:10;
-          p.damage=Number(p.damage||0)+(p===foe.active&&key!=='82:0'?attackDamageWithState(ctx.state,ctx.side,a,ctx.foeSide,p,n,ctx.cardById):n);return;}
+          p.damage=Number(p.damage||0)+(p===foe.active&&key!=='82:0'?attackDamageWithState(ctx.state,ctx.side,a,ctx.foeSide,p,n,ctx.cardById):outgoingAttackDamage(ctx.state,ctx.side,a,ctx.foeSide,n,ctx.cardById));return;}
         if(foeBoard.length)choosePokemon(foe,{optional:false});return;
       }
       case '5:0':case '7:0':case '18:0':return deckPick(t=>t?.kind==='energy'&&/Holon Energy/.test(t.name),'attach',a);
@@ -6359,7 +6359,7 @@
         if(e.step==='opponent'){const entries=[...Object.entries(d?.energy||{}).filter(([,n])=>n>0).map(([type])=>({kind:'basic',type,label:type+' Energy'})),...(d?.specialEnergy||[]).map(ref=>({kind:'special',ref,label:card(ref)?.name}))];
           if(ctx.resolvingChoice){if(!c.choiceSkip){const x=entries[Number(c.choiceOption)];if(x)moveToHand(foe,d,x);}return;}
           if(entries.length)pick('option',{options:entries.map(x=>'Return opponent '+x.label+' to hand')});return;}
-        if(e.step==='bench'){if(ctx.resolvingChoice){const p=selected(foe);if(p&&foe.bench.includes(p))p.damage=Number(p.damage||0)+20;return;}
+        if(e.step==='bench'){if(ctx.resolvingChoice){const p=selected(foe);if(p&&foe.bench.includes(p))p.damage=Number(p.damage||0)+outgoingAttackDamage(ctx.state,ctx.side,a,ctx.foeSide,20,ctx.cardById);return;}
           choosePokemon(foe,{includeActive:false,optional:false});return;}
         pickEnergy(a,entry=>{if(moveToHand(us,a,entry)){
           if(key==='5:1')status('burn');
@@ -6372,7 +6372,7 @@
       case '39:0':for(const [type,n] of Object.entries(a.energy||{}))if(n){recordDiscardedEnergy(us,type,n);a.energy[type]=0;}us.discard.push(...(a.specialEnergy||[]));a.specialEnergy=[];return;
       case '40:0':if(ctx.resolvingChoice){if(!c.choiceSkip)switchPokemon(us,c.choiceBenchIndex,ctx.state);return;}if(us.bench.length)pick('switchBench',{optional:true});return;
       case '34:0':draw((a.specialEnergy||[]).some(ref=>/^Holon Energy/.test(card(ref)?.name||''))?3:1);return;
-      case '33:0':foeBoard.forEach(p=>{p.damage=Number(p.damage||0)+10;});return;
+      case '33:0':foeBoard.forEach(p=>{p.damage=Number(p.damage||0)+outgoingAttackDamage(ctx.state,ctx.side,a,ctx.foeSide,10,ctx.cardById);});return;
       case '29:0':if((a.specialEnergy||[]).some(ref=>/^Holon Energy/.test(card(ref)?.name||'')))foe.bench.forEach(p=>{p.damage=Number(p.damage||0)+10;});return;
       case '79:0':if(!foe.bench.length)return;if(ctx.resolvingChoice){const target=selected(foe);if(target&&foe.bench.includes(target))switchPokemon(foe,target.benchSlot,ctx.state);return;}choosePokemon(foe,{includeActive:false,optional:false});return;
       case '46:0':return deckPick(t=>t?.kind==='pokemon'&&t.stage!=='Basic');
@@ -6707,7 +6707,7 @@
       case '23:0': if(ctx.state.stadium&&card(ctx.state.stadium)?.name==='Low Pressure System')status('confusion');return;
       case '24:1':return; // ignore matchup/effects set in resolver
       case '25:0':{const candidates=foe.bench;
-        if(ctx.resolvingChoice){const target=selected(foe);if(target&&candidates.includes(target))target.damage=Number(target.damage||0)+10;return;}
+        if(ctx.resolvingChoice){const target=selected(foe);if(target&&candidates.includes(target))target.damage=Number(target.damage||0)+outgoingAttackDamage(ctx.state,ctx.side,a,ctx.foeSide,10,ctx.cardById);return;}
         if(candidates.length)pokemon(foe,{includeActive:false,effect:e,optional:false});return;}
       case '26:0':return; // Damage scaling resolved pre-Weakness.
       case '28:0':if(flip())status('paralysis');else status('burn');return;
@@ -6731,7 +6731,7 @@
         if(ctx.resolvingChoice){const idx=Number(choice.choiceDeckIndex),ref=us.deck[idx];if(!choice.choiceSkip&&ref&&eligible(ref)){us.hand.push(...us.deck.splice(idx,1));shuffle();}return;}
         if(us.deck.some(eligible))pick('deckCard',{excludeUids:us.deck.filter(r=>!eligible(r)).map(r=>r.uid),effect:e});return;}
       case '37:1':{ // Double Attack: up to TWO DISTINCT opposing Bench targets.
-        const chosen=e.chosen||[];if(ctx.resolvingChoice){const p=selected(foe);if(p&&foe.bench.includes(p)&&!chosen.includes(p.uid)){p.damage=Number(p.damage||0)+10;chosen.push(p.uid);}}
+        const chosen=e.chosen||[];if(ctx.resolvingChoice){const p=selected(foe);if(p&&foe.bench.includes(p)&&!chosen.includes(p.uid)){p.damage=Number(p.damage||0)+outgoingAttackDamage(ctx.state,ctx.side,a,ctx.foeSide,10,ctx.cardById);chosen.push(p.uid);}}
         const targets=foe.bench.filter(p=>!chosen.includes(p.uid));if(targets.length&&chosen.length<2)pokemon(foe,{includeActive:false,excludeUids:chosen,effect:{...e,chosen},optional:false});return;}
       case '42:0':{ // Heal 20 per heads; choose EACH recipient.
         if(!e.step){let heads=0;for(let i=0;i<2;i++)if(flip())heads++;if(heads)ex10Rule({...e,step:'heal',remaining:heads},{...ctx,resolvingChoice:false});return;}
@@ -6740,7 +6740,7 @@
         if(eligible.length&&remaining)pokemon(us,{excludeUids:ownBoard.filter(p=>!eligible.includes(p)).map(p=>p.uid),effect:e,optional:false});return;}
       case '102:0':{ // Snap Tail chooses a real enemy and deals 30 (Bench ignores W/R).
         if(ctx.resolvingChoice){const target=selected(foe);if(!target)return;
-          const amount=target===foe.active?attackDamageWithState(ctx.state,ctx.side,a,ctx.foeSide,target,30,ctx.cardById):30;
+          const amount=target===foe.active?attackDamageWithState(ctx.state,ctx.side,a,ctx.foeSide,target,30,ctx.cardById):outgoingAttackDamage(ctx.state,ctx.side,a,ctx.foeSide,30,ctx.cardById);
           target.damage=Number(target.damage||0)+amount;return;}
         if(foeBoard.length)pokemon(foe,{effect:e,optional:false});return;
       }
@@ -6748,7 +6748,7 @@
       case '109:1':{ // Mudslide: discard two Fighting Energy, then choose exact target for 100.
         if(Number(a.energy?.Fighting||0)<2)return;
         if(!e.step){a.energy.Fighting-=2;recordDiscardedEnergy(us,'Fighting',2);ex10Rule({...e,step:'target'},{...ctx,resolvingChoice:false});return;}
-        if(ctx.resolvingChoice){const p=selected(foe);if(p)p.damage=Number(p.damage||0)+100;return;}
+        if(ctx.resolvingChoice){const p=selected(foe);if(p)p.damage=Number(p.damage||0)+outgoingAttackDamage(ctx.state,ctx.side,a,ctx.foeSide,100,ctx.cardById);return;}
         pokemon(foe,{effect:e,optional:false});return;}
       case '110:0':{ // Kindle: Energy from self AND defender (not arbitrary silently chosen).
         const owner=e.step==='opponent'?foe:us,target=e.step==='opponent'?d:a;
@@ -6981,7 +6981,7 @@
         pokemon(e.targetSide==='opponent'?foe:us);return;}
       case '63:0':case '78:0':{
         const amount=key==='63:0'?10:10;
-        if(ctx.resolvingChoice){const p=selected(foe);if(p)p.damage=Number(p.damage||0)+amount;return;}
+        if(ctx.resolvingChoice){const p=selected(foe);if(p)p.damage=Number(p.damage||0)+outgoingAttackDamage(ctx.state,ctx.side,a,ctx.foeSide,amount,ctx.cardById);return;}
         pokemon(foe);return;
       }
       case '65:0':{const list=discarded();if(ctx.resolvingChoice){if(!choice.choiceSkip)recover(list[Number(choice.choiceOption)],'hand');return;}
@@ -7124,7 +7124,7 @@
       case '102:blueRay':for(const side of [us,foe])if(side.active){side.active.conditions={};if(!healingIsBlocked(ctx.state,side.active,ctx.cardById))side.active.damage=Math.max(0,Number(side.active.damage||0)-30);}log('ex16BlueRay');return;
       case '92:psychicPulse':{
         for(const p of foe.bench||[]){if(Number(p.damage||0)<10||attackIsPrevented(ctx.state,ctx.foeSide,p,source,ctx.cardById))continue;
-          const amount=Math.max(0,10-modifierAmount(ctx.state,ctx.foeSide,p,'damageReduction',ctx.cardById));
+          const amount=Math.max(0,outgoingAttackDamage(ctx.state,ctx.side,source,ctx.foeSide,10,ctx.cardById)-modifierAmount(ctx.state,ctx.foeSide,p,'damageReduction',ctx.cardById));
           p.damage=Number(p.damage||0)+amount;log('ex16PsychicPulseBench',{targetUid:p.uid,damage:amount});}
         return;
       }
@@ -7134,7 +7134,7 @@
           // reductions, but never apply Weakness or Resistance to this spread hit.
           const drake=activeStadium(ctx.state)?.cardId==='ex16-72'&&p===foe.active&&card(p)?.types?.includes('Colorless')?10:0;
           const hit=attackIsPrevented(ctx.state,ctx.foeSide,p,source,ctx.cardById)?0:
-            Math.max(0,20-modifierAmount(ctx.state,ctx.foeSide,p,'damageReduction',ctx.cardById)-drake);
+            Math.max(0,outgoingAttackDamage(ctx.state,ctx.side,source,ctx.foeSide,20,ctx.cardById)-modifierAmount(ctx.state,ctx.foeSide,p,'damageReduction',ctx.cardById)-drake);
           p.damage=Number(p.damage||0)+hit;log('ex16RockBlastHit',{targetUid:p.uid,damage:hit});
           if(Number(e.remaining)>1)return ex16Rule({...e,stage:'chooseEnergy',remaining:Number(e.remaining)-1},{...ctx,resolvingChoice:false});return;}
         if(e.stage==='chooseEnergy'&&ctx.resolvingChoice){if(ctx.action.choiceSkip)return;
@@ -7151,7 +7151,7 @@
         if(e.stage==='discard'&&ctx.resolvingChoice){if(ctx.action.choiceSkip)return;
           const list=[...Object.keys(source.energy||{}).filter(t=>t===typ&&source.energy[t]>0).map(t=>({type:t,kind:'basic'})),...(source.specialEnergy||[]).filter(r=>Number((r.provides||card(r)?.effect?.provides||{})[typ])>0).map(r=>({kind:'special',uid:r.uid}))],x=list[Number(ctx.action.choiceOption)];if(!x)return;
           if(x.kind==='basic'){source.energy[x.type]--;us.energyDiscard[x.type]=Number(us.energyDiscard?.[x.type]||0)+1;}else{const i=source.specialEnergy.findIndex(r=>r.uid===x.uid);if(i<0)return;us.discard.push(...source.specialEnergy.splice(i,1));}
-          if(rule==='5:fireStream')for(const p of foe.bench||[]){if(attackIsPrevented(ctx.state,ctx.foeSide,p,source,ctx.cardById))continue;const amt=Math.max(0,10-modifierAmount(ctx.state,ctx.foeSide,p,'damageReduction',ctx.cardById));p.damage=Number(p.damage||0)+amt;}
+          if(rule==='5:fireStream')for(const p of foe.bench||[]){if(attackIsPrevented(ctx.state,ctx.foeSide,p,source,ctx.cardById))continue;const amt=Math.max(0,outgoingAttackDamage(ctx.state,ctx.side,source,ctx.foeSide,10,ctx.cardById)-modifierAmount(ctx.state,ctx.foeSide,p,'damageReduction',ctx.cardById));p.damage=Number(p.damage||0)+amt;}
           if(rule==='93:shadowCrush')return ex16Rule({...e,stage:'opponentDiscard'},{...ctx,resolvingChoice:false});return;}
         if(e.stage==='opponentDiscard'&&ctx.resolvingChoice){const p=foe.active,t=ctx.action.effectEnergyType,uid=ctx.action.effectSpecialEnergyUid;
           if(!p)return;if(uid){const i=(p.specialEnergy||[]).findIndex(r=>r.uid===uid);if(i>=0)foe.discard.push(...p.specialEnergy.splice(i,1));}
@@ -7190,7 +7190,7 @@
       }
       case '22:downDraw':for(let i=0;i<2&&us.deck.length&&us.hand.length<Number(us.handLimit||8);i++){const ref=us.deck.pop();if(ref)us.hand.push(ref);}log('ex16DownDraw');return;
       case '22:feintAttack':{
-        if(ctx.resolvingChoice){const p=selected(foe);if(p){p.damage=Number(p.damage||0)+20;log('ex16FeintAttack',{targetUid:p.uid});}return;}
+        if(ctx.resolvingChoice){const p=selected(foe);if(p){p.damage=Number(p.damage||0)+outgoingAttackDamage(ctx.state,ctx.side,source,ctx.foeSide,20,ctx.cardById);log('ex16FeintAttack',{targetUid:p.uid});}return;}
         request('pokemon',{}, {selectionSide:ctx.foeSide,includeActive:true});return;
       }
       case '45:magneticLines':{
@@ -7226,7 +7226,7 @@
         const name=card(foe.active)?.name;if(!name||activeStadium(ctx.state)?.cardId==='SNAPFLORIO-112')return;
         const hits=(foe.bench||[]).filter(p=>card(p)?.name===name);
         for(const p of hits){if(attackIsPrevented(ctx.state,ctx.foeSide,p,source,ctx.cardById))continue;
-          const amount=Math.max(0,(rule==='95:scanblast'?70:60)-modifierAmount(ctx.state,ctx.foeSide,p,'damageReduction',ctx.cardById));
+          const amount=Math.max(0,outgoingAttackDamage(ctx.state,ctx.side,source,ctx.foeSide,(rule==='95:scanblast'?70:60),ctx.cardById)-modifierAmount(ctx.state,ctx.foeSide,p,'damageReduction',ctx.cardById));
           p.damage=Number(p.damage||0)+amount;log('ex16SameNameBench',{targetUid:p.uid,damage:amount});}return;
       }
       case '97:skillHack':{
@@ -8813,7 +8813,7 @@
       if(e.stage==='target'){
         const pickedTarget=chosen(),source=us.hand.filter(ref=>card(ref)?.basicEnergy&&card(ref)?.subtype==='Lightning');if(!pickedTarget||source.length<2)return;
         for(let i=0;i<2;i++){const index=us.hand.findIndex(ref=>card(ref)?.basicEnergy&&card(ref)?.subtype==='Lightning');if(index>=0)us.discard.push(...us.hand.splice(index,1));}
-        const hit=foe.bench.includes(pickedTarget)?80:attackDamageWithState(ctx.state,ctx.side,actor,ctx.foeSide,pickedTarget,80,ctx.cardById);
+        const hit=foe.bench.includes(pickedTarget)?outgoingAttackDamage(ctx.state,ctx.side,actor,ctx.foeSide,80,ctx.cardById):attackDamageWithState(ctx.state,ctx.side,actor,ctx.foeSide,pickedTarget,80,ctx.cardById);
         pickedTarget.damage=Number(pickedTarget.damage||0)+hit;
         if(actor.cardId==='dp7-99'&&Number(actor.evolvedOnTurn)===Number(turn)&&!Object.keys(actor.conditions||{}).some(x=>actor.conditions[x])){actor.dp7LinkLightningReady=turn;log({linkLightning:true});}
         log({damage:hit,targetUid:pickedTarget.uid,attack:'Voltage Shoot'});return;
@@ -9334,7 +9334,7 @@
       if(ctx.isAttack&&(attackIsPrevented(ctx.state,which,slot,actor,ctx.cardById)||fossilTransparencyBlocks(ctx,which,slot)))return 0;
       let total=damage;
       if(slot===owner.active&&opponent)total=attackDamageWithState(ctx.state,ctx.side,actor,ctx.foeSide,slot,damage,ctx.cardById);
-      else if(ctx.isAttack)total=Math.max(0,damage-modifierAmount(ctx.state,which,slot,'damageReduction',ctx.cardById));
+      else if(ctx.isAttack)total=Math.max(0,outgoingAttackDamage(ctx.state,ctx.side,actor,which,damage,ctx.cardById)-modifierAmount(ctx.state,which,slot,'damageReduction',ctx.cardById));
       slot.damage=Number(slot.damage||0)+total;record({targetUid:slot.uid,damage:total});return total;
     };
     const physicalEnergy=(type,source='discard')=>ss[source].filter(ref=>card(ref)?.basicEnergy&&(!type||card(ref).subtype===type));
@@ -10571,7 +10571,7 @@
     const hit=(slot,damage,owner='opponent')=>{if(!slot||damage<=0)return;const board=owner==='self'?ss:foe,which=owner==='self'?ctx.side:ctx.foeSide;
       if(ctx.isAttack&&(attackIsPrevented(ctx.state,which,slot,source,ctx.cardById)||fossilTransparencyBlocks(ctx,which,slot)))return;
       const reduction=ctx.isAttack?modifierAmount(ctx.state,which,slot,'damageReduction',ctx.cardById):0;
-      let amount=Math.max(0,damage-reduction);
+      let amount=Math.max(0,(ctx.isAttack?outgoingAttackDamage(ctx.state,ctx.side,source,which,damage,ctx.cardById):damage)-reduction);
       if(ctx.isAttack&&board.active===slot&&owner==='opponent')amount=attackDamageWithState(ctx.state,ctx.side,source,ctx.foeSide,slot,damage,ctx.cardById);
       slot.damage=Number(slot.damage||0)+amount;log('damage',{targetUid:slot.uid,amount});};
     const doDraw=(board,n)=>{for(let i=0;i<n;i++)ctx.drawCard(board);};
@@ -10971,7 +10971,7 @@
           else (owner[destination]=owner[destination]||[]).push({uid:'hgss4-energy-'+n+'-'+owner[destination].length,cardId:energyIDs[which.type]||'dp1-123',zoneGenerated:true});return true;}
         const j=(slot.specialEnergy||[]).findIndex(ref=>ref.uid===which.ref?.uid);if(j<0)return false;(owner[destination]=owner[destination]||[]).push(slot.specialEnergy.splice(j,1)[0]);return true;},
       damage=(target,amount,which='opponent',weak=true)=>{if(!target||!amount)return;const side=which==='opponent'?ctx.foeSide:ctx.side;if(attackIsPrevented(ctx.state,side,target,src,ctx.cardById))return;
-        const raw=weak?attackDamageWithState(ctx.state,ctx.side,src,side,target,amount,ctx.cardById):Math.max(0,amount-modifierAmount(ctx.state,side,target,'damageReduction',ctx.cardById));target.damage=Number(target.damage||0)+Math.max(0,raw);},
+        const raw=weak?attackDamageWithState(ctx.state,ctx.side,src,side,target,amount,ctx.cardById):Math.max(0,outgoingAttackDamage(ctx.state,ctx.side,src,side,amount,ctx.cardById)-modifierAmount(ctx.state,side,target,'damageReduction',ctx.cardById));target.damage=Number(target.damage||0)+Math.max(0,raw);},
       bonus=(base,extra)=>{if(!def||!extra)return;const was=attackDamageWithState(ctx.state,ctx.side,src,ctx.foeSide,def,base,ctx.cardById),now=attackDamageWithState(ctx.state,ctx.side,src,ctx.foeSide,def,base+extra,ctx.cardById);def.damage=Number(def.damage||0)+Math.max(0,now-was);},
       basicDiscard=(board,type)=>{const x=Number(board.energyDiscard?.[type]||0);return x>0?[...Array.from({length:x},(_,k)=>({type,label:type+' Basic Energy'}))]:[];},
       energyDiscard=(board,types)=>[...(board.discard||[]).filter(ref=>{const c=card(ref);return c?.kind==='energy'&&(!types||types.includes(c.subtype)||types.includes(c.energyType));}).map(ref=>({ref,label:card(ref)?.name})),
@@ -11238,7 +11238,7 @@
         const n=(slot.specialEnergy||[]).findIndex(r=>r.uid===x.ref?.uid);if(n<0)return false;owner.lostZone.push(slot.specialEnergy.splice(n,1)[0]);return true;},
       hit=(board,target,amount)=>{if(!target||attackIsPrevented(ctx.state,board===ss?ctx.side:ctx.foeSide,target,a,ctx.cardById))return;
         const side=board===ss?ctx.side:ctx.foeSide,active=board.active===target,
-          dealt=active?attackDamageWithState(ctx.state,ctx.side,a,side,target,amount,ctx.cardById):Math.max(0,amount-modifierAmount(ctx.state,side,target,'damageReduction',ctx.cardById));
+          dealt=active?attackDamageWithState(ctx.state,ctx.side,a,side,target,amount,ctx.cardById):Math.max(0,outgoingAttackDamage(ctx.state,ctx.side,a,side,amount,ctx.cardById)-modifierAmount(ctx.state,side,target,'damageReduction',ctx.cardById));
         target.damage=Number(target.damage||0)+Math.max(0,dealt);};
     if(key==='12:destructiveTsunami'){
       const heads=coin(ctx);ctx.state.log.push({type:'coin',side:ctx.side,reason:'Destructive Tsunami',heads,results:[heads]});
@@ -11735,7 +11735,7 @@
       const def=card(d),types=def?.types||[];if(!types.length)return;
       for(const p of foe.bench||[]){if(!card(p)?.types?.some(t=>types.includes(t)))continue;
         if(attackIsPrevented(ctx.state,ctx.foeSide,p,a,ctx.cardById))continue;
-        p.damage=Number(p.damage||0)+Math.max(0,20-modifierAmount(ctx.state,ctx.foeSide,p,'damageReduction',ctx.cardById));}return;
+        p.damage=Number(p.damage||0)+Math.max(0,outgoingAttackDamage(ctx.state,ctx.side,a,ctx.foeSide,20,ctx.cardById)-modifierAmount(ctx.state,ctx.foeSide,p,'damageReduction',ctx.cardById));}return;
     }
     if(key==='topDown'){let n=0;while(n<100&&coin(ctx)){if(!foe.deck.length)break;foe.discard.push(...foe.deck.splice(0,1));n++;}log({cardsDiscarded:n});return;}
     if(key==='devour'){const n=mine().filter(p=>card(p)?.name==='Durant').length;foe.discard.push(...foe.deck.splice(0,n));log({cardsDiscarded:n});return;}
@@ -12449,7 +12449,7 @@
     if(key==='grassKnot'||key==='hundredFurious'||key==='gigaHorn'||key==='extrasensory'||key==='dreamWaltz'||key==='venoshock')return;
     if(key==='jetWoofer'){const n=Number(ctx.effectiveEnergy?.(a)?.Psychic??a?.energy?.Psychic??0);for(let i=0;i<n&&foe.deck.length;i++)foe.discard.push(foe.deck.shift());log({opponentTopDeckDiscarded:n});return;}
     if(key==='psychUp'){if(a){a.bw7PsychUpUntil=turn+2;a.bw7PsychUpPrimedAt=turn;}return;}
-    if(key==='hammerhead'){if(stage==='target'&&ctx.resolvingChoice){const p=picked(foe);if(p&&foe.bench.includes(p)){p.damage=Number(p.damage||0)+30;log({benchDamage:30,target:p.uid});}return;}if(foe.bench.length)choose('target','opponent',{includeActive:false});return;}
+    if(key==='hammerhead'){if(stage==='target'&&ctx.resolvingChoice){const p=picked(foe);if(p&&foe.bench.includes(p)){p.damage=Number(p.damage||0)+outgoingAttackDamage(ctx.state,ctx.side,a,ctx.foeSide,30,ctx.cardById);log({benchDamage:outgoingAttackDamage(ctx.state,ctx.side,a,ctx.foeSide,30,ctx.cardById),target:p.uid});}return;}if(foe.bench.length)choose('target','opponent',{includeActive:false});return;}
     if(key==='superFang'){if(d){const hp=Number(ctx.maxHp?.(ctx.foeSide,d)||card(d)?.hp||0);d.damage=Math.max(Number(d.damage||0),hp-10);log({remainingHP:10});}return;}
     if(key==='deepDive'){let n=0;for(let i=0;i<2;i++)n+=Number(flip());a.damage=Math.max(0,Number(a.damage||0)-40*n);return;}
     if(key==='fluffyTag'){
@@ -12478,7 +12478,7 @@
       if(foe.hand.length){const i=Math.floor(ctx.random(ctx.state)*foe.hand.length);const ref=foe.hand.splice(i,1)[0];foe.deck.push(ref);ctx.shuffle?.(ctx.state,foe.deck);log({opponentHandToDeck:ref.cardId});}return;
     }
     if(key==='telekinesis'){
-      if(stage==='target'&&ctx.resolvingChoice){const p=picked(foe);if(p){p.damage=Number(p.damage||0)+30;log({target:p.uid,damage:30});}return;}choose('target','opponent');return;
+      if(stage==='target'&&ctx.resolvingChoice){const p=picked(foe);if(p){p.damage=Number(p.damage||0)+outgoingAttackDamage(ctx.state,ctx.side,a,ctx.foeSide,30,ctx.cardById);log({target:p.uid,damage:outgoingAttackDamage(ctx.state,ctx.side,a,ctx.foeSide,30,ctx.cardById)});}return;}choose('target','opponent');return;
     }
     if(key==='landsJudgment'){
       if(!e.doDiscard||!a)return;let n=0;
@@ -22931,7 +22931,7 @@
           const active=foe.active,types=ctx.cardById(active?.cardId)?.types||[];
           for(const p of foe.bench||[]){if(!ctx.cardById(p.cardId)?.types?.some(type=>types.includes(type)))continue;
             if(attackIsPrevented(ctx.state,ctx.foeSide,p,a,ctx.cardById))continue;
-            const amount=Math.max(0,20-modifierAmount(ctx.state,ctx.foeSide,p,'damageReduction',ctx.cardById));p.damage=Number(p.damage||0)+amount;log({type:'sm3Synchronoise',cardId:p.cardId,amount});
+            const amount=Math.max(0,outgoingAttackDamage(ctx.state,ctx.side,a,ctx.foeSide,20,ctx.cardById)-modifierAmount(ctx.state,ctx.foeSide,p,'damageReduction',ctx.cardById));p.damage=Number(p.damage||0)+amount;log({type:'sm3Synchronoise',cardId:p.cardId,amount});
           }break;
         }
         if(k==='tornadoShotBench'){

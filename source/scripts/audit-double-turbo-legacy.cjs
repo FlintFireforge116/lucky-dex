@@ -27,6 +27,7 @@ function run(id,name,turbo,side){
   return [them.active?.damage||0,them.bench[0]?.damage||0];
  }finally{data.cardById=lookup;}
 }
+function main(){
 const legacy=new Set(['neoRule','sm7Rule','sm1Rule','sm3Rule','sm5Rule','sm6Rule','sm8Rule','sm9Rule']);
 const known=new Set(['ex10-102:Snap Tail','ex11-82:Dig Under','dp7-99:Voltage Shoot']);
 const printed=/\b(?:does|do|deal) (?:\d+|that much) (?:more )?damage to (?:\d+ of |each of |all of |any of |one of )?(?:your opponent|the opponent|each Pokémon)/i;
@@ -40,3 +41,6 @@ for(const side of process.argv.includes('--both')?['player','opponent']:['player
  catch(e){report.errors.push({side,id:c.id,name:a.name,reason:e.message.slice(0,150)});}
 }
 console.log(JSON.stringify(report,null,2));
+}
+if(require.main===module)main();
+module.exports={run};
