@@ -303,6 +303,7 @@
       if(attack?.effect?.rule==='swsh6RepeatedStrike')damage=120+30*slots(state.sides[side]).reduce((n,p)=>n+attachedCount(p),0);
       if(attack?.effect?.rule==='swsh4FlyingFury')damage=10+40*slots(state.sides[side]).reduce((n,p)=>n+(p.tool?1:0)+(p.extraTools||[]).length,0);
       if(attack?.effect?.rule==='swsh35Whisk')damage=60*slots(state.sides[side]).reduce((n,p)=>n+attachedCount(p),0);
+      if(attack?.name==='Psyshield Bash'&&['swsh10-134','swsh10-180'].includes(action.attackCardId||state.sides[side].active.cardId))damage=40*effects.totalEnergy(core.effectiveEnergy(state,side,state.sides[side].active));
       if(attack?.effect?.rule==='swsh10HoneyRush')damage=60*Number(action.effectSelection||0);
       if(attack?.effect?.rule==='swsh2MiningRush')damage=30*Number(action.effectSelection||0);
       if(attack?.effect?.rule==='swsh2SpiralJet'&&!action.effectSelection)damage=0;
@@ -475,6 +476,11 @@
     // All choices are drawn from its own known Zone and public Pokémon.
     if(state.format==='classic'&&state.phase==='effectChoice'&&state.pendingChoice?.originSide===side){
       const pending=state.pendingChoice,e=pending.effect||{},choices=legal.filter(a=>a.type==='effectChoice');
+      if(e.rule==='swsh10FrontierRoad'){
+        const board=state.sides[side],target=state.sides[foeOf(side)].active,stop=choices.find(a=>a.choiceSkip),picks=choices.filter(a=>!a.choiceSkip),units=effects.totalEnergy(core.effectiveEnergy(state,side,board.active));
+        if(!picks.length||target&&units>=3&&effects.attackDamageWithState(state,side,board.active,foeOf(side),target,40*units,data.cardById)>=core.maxHp(state,foeOf(side),target)-Number(target.damage||0))return stop||choices[0];
+        return picks.sort((a,b)=>attachedCount(slotFor(board,b.choiceTarget,b.choiceBenchIndex))-attachedCount(slotFor(board,a.choiceTarget,a.choiceBenchIndex)))[0];
+      }
       if(e.rule==='swsh8Multishot'||e.rule==='swsh8DoubleGunner'){
         const board=state.sides[foeOf(side)],picks=choices.filter(a=>!a.choiceSkip);
         if(e.stage==='hit'){

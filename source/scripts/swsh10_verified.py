@@ -228,3 +228,23 @@ def trainer(row):
  if t=='Reveal the top card of your deck. If that card is a Fighting Energy card, attach it to 1 of your Benched Pokémon. If it is not a Fighting Energy card, put it into your hand.':return 'Item',E('sm7Rule',rule='swsh10Pickaxe')
  if t=="When applying Weakness to damage from the attacks of the Pokémon this card is attached to done to your opponent's Active Pokémon, apply it as ×3.":return 'Tool',E('weaknessMultiplier',multiplier=3)
  return _stage6_trainer(row)
+
+# Stage eight: physical Prize exchange, non-KO discard, and switch-triggered transfer.
+_stage7_attack=attack
+_stage7_ability=ability
+_stage7_trainer=trainer
+def attack(row,a):
+ t=a[3]
+ if t=="Discard each player's Active Pokémon and all attached cards. (You choose a new Active Pokémon first.)":return seq(E('discardPokemon',target='opponentActive'),E('discardPokemon',target='self'))
+ if t=='This attack does 40 damage for each Energy attached to this Pokémon.':return E('energyDamage',source='self',amount=40,mode='replace')
+ return _stage7_attack(row,a)
+def ability(row,a):
+ t=a[2]
+ if t=='Once during your turn, when this Pokémon moves from your Bench to the Active Spot, you may move any amount of Energy from your other Pokémon to it.':return passive(E('sm7Rule',rule='swsh10FrontierRoad'))
+ if t=='As long as this Pokémon is in the Active Spot, whenever your opponent plays a Supporter card from their hand, prevent all effects of that card done to your Benched Basic Pokémon.':return passive(E('noop')) # shared opposing Trainer guard
+ if t=='If your opponent has 2 or fewer Prize cards remaining, whenever your opponent plays a Supporter card from their hand, prevent all effects of that card done to your Benched Pokémon V.':return passive(E('noop')) # shared opposing Trainer guard
+ return _stage7_ability(row,a)
+def trainer(row):
+ t=row[13][0]
+ if t=="Look at your face-down Prize cards. You may reveal a Basic Pokémon you find there, put it into your hand, and put this Hisuian Heavy Ball in its place as a face-down Prize card. (If you don't reveal a Basic Pokémon, put this card in the discard pile.) Then, shuffle your face-down Prize cards.":return 'Item',E('sm7Rule',rule='beastBall',basicPokemon=True)
+ return _stage7_trainer(row)

@@ -502,13 +502,13 @@
         const target={type:'effectChoice',choiceTarget:slot===energyBoard.active?'active':'bench',choiceBenchIndex:slot===energyBoard.active?undefined:Number(slot.benchSlot),choiceCardId:slot.cardId};
         for(const [energyType,amount] of Object.entries(slot.energy||{})){
           if(p.specialOnly||Number(amount)<=0||(p.energyTypes&&!p.energyTypes.includes(energyType)))continue;
-          out.push({...target,effectEnergyType:energyType,...(p.special==='sm7BeforeAttack'||p.effect?.rule==='rainbowBrush'?{choiceLabel:`${data.cardById(slot.cardId)?.name}: ${energyType} Energy`}:{})});
+          out.push({...target,effectEnergyType:energyType,...(p.special==='sm7BeforeAttack'||['rainbowBrush','swsh10FrontierRoad'].includes(p.effect?.rule)?{choiceLabel:`${data.cardById(slot.cardId)?.name}: ${energyType} Energy`}:{})});
         }
         // Only effects that explicitly opt in can recover attached Special
         // Energy. Other Energy-source effects continue selecting Basic Energy.
         if(p.includeSpecial)for(const ref of slot.specialEnergy||[]){
           const provides=specialEnergyProvides(ref,slot,state);
-          if(p.specialOnly||!p.energyTypes||p.energyTypes.some(t=>(p.special==='sm7BeforeAttack'||p.effect?.rule==='swsh35FoodTin')?effects.attachedSpecialProvidesType(ref,t,slot,data.cardById,state):Number(provides[t]||0)>0))out.push({...target,effectSpecialEnergyUid:ref.uid,...(p.special==='sm7BeforeAttack'||p.effect?.rule==='rainbowBrush'?{choiceLabel:`${data.cardById(slot.cardId)?.name}: ${data.cardById(ref.cardId)?.name}`}:{})});
+          if(p.specialOnly||!p.energyTypes||p.energyTypes.some(t=>(p.special==='sm7BeforeAttack'||p.effect?.rule==='swsh35FoodTin')?effects.attachedSpecialProvidesType(ref,t,slot,data.cardById,state):Number(provides[t]||0)>0))out.push({...target,effectSpecialEnergyUid:ref.uid,...(p.special==='sm7BeforeAttack'||['rainbowBrush','swsh10FrontierRoad'].includes(p.effect?.rule)?{choiceLabel:`${data.cardById(slot.cardId)?.name}: ${data.cardById(ref.cardId)?.name}`}:{})});
         }
       }
     }else if(p.kind==='energyTarget'){
@@ -4833,6 +4833,9 @@ const target=slotForTarget(s,action.target,action.benchIndex);if(card.id==='pl2-
     }
     if(state.format==='classic'&&state.turnNumber===turnOfAction&&state.phase==='battle'){
       const owner=state.activeSide,board=state.sides[owner],incoming=board.active;
+      if(incoming&&before[owner].uid!==incoming.uid&&before[owner].bench.has(incoming.uid)&&['swsh10-134','swsh10-180'].includes(incoming.cardId)&&incoming.swsh10FrontierTurn!==turnOfAction&&!effects.abilitiesSuppressed(state,owner,incoming,data.cardById)&&board.bench.some(p=>Object.values(p.energy||{}).some(n=>Number(n)>0)||(p.specialEnergy||[]).length)){
+        incoming.swsh10FrontierTurn=turnOfAction;effects.applyEffect({type:'sm7Rule',rule:'swsh10FrontierRoad'},{...effectContext(state,owner,{},incoming),isAbility:true});if(state.phase==='effectChoice'){state.pendingChoice.resume='ability';state.pendingChoice.isAbility=true;}
+      }
       if(incoming&&before[owner].uid!==incoming.uid&&before[owner].bench.has(incoming.uid)&&['swsh1-34','swsh45sv-SV017'].includes(incoming.cardId)&&incoming.swsh1LiberoTurn!==turnOfAction&&!effects.abilitiesSuppressed(state,owner,incoming,data.cardById)&&(Number(board.energyDiscard?.Fire||0)>0||board.discard.some(x=>data.cardById(x.cardId)?.basicEnergy&&data.cardById(x.cardId)?.subtype==='Fire'))){
         incoming.swsh1LiberoTurn=turnOfAction;effects.applyEffect({type:'sm7Rule',rule:'sm12DiscardAttach',left:2,energyType:'Fire',sourceSelf:true,optional:true},{...effectContext(state,owner,{},incoming),isAbility:true});if(state.phase==='effectChoice'){state.pendingChoice.resume='ability';state.pendingChoice.isAbility=true;}
       }

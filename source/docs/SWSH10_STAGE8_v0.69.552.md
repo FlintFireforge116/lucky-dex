@@ -1,0 +1,10 @@
+# Astral Radiance stage 8 — v0.69.552
+
+All 216 exact pinned prints remain imported; 208 are playable (+6), eight gated. The 202 previously enabled generated records compare deeply equal with the uploaded stage 7 build.
+
+- Golduck Entangled Dive discards both Active Pokémon, their evolution stacks and attachments without awarding Prizes. The common promotion queue gives the attacker first choice, then the opponent. Existing protection rules remain in force.
+- Diancie Princess's Curtain and Thievul Baffling use the shared opposing Item/Supporter guard for both modern and bespoke handlers, limited to opposing Supporters and the printed Bench, stage/tag, Prize and suppression requirements. Protected slots are excluded from forced-target prompts.
+- Both Wyrdeer V prints use the existing own-turn Bench-to-Active monitor; Frontier Road offers optional repeated physical Basic/Special Energy moves from other Pokémon. Psyshield Bash counts provided Energy units, not physical cards. No fresh Energy is generated or discarded by movement.
+- Hisuian Heavy Ball reuses the Beast Ball exchange mechanism with a Basic Pokémon filter; only face-down Prizes are inspected/swapped, the original Item and selected Prize retain their physical references, and face-down Prizes are shuffled without disturbing face-up Prizes. Inspection names are in the owner's private choice prompt, not the shared log; only the taken Basic is revealed. Skip or no eligible card leaves the Item in discard.
+
+14 new bilateral outcome tests passed; 155/155 focused tests and 12/12 manifest unit tests passed. CPU scoring reflects provided Energy for Psyshield Bash; Frontier Road stops moving Energy once the attack can take a knockout, preserving surplus Bench Energy. Remaining gates: Eevee, Hoothoot, Regigigas, Grant (three prints), Jirachi V, Double Turbo Energy. DTE remains gated across both main sets pending legacy damage-path audit. Android build and physical-device testing remain separate. No new gallery or promotional sets included.

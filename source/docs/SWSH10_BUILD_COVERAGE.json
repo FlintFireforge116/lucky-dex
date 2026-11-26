@@ -2,17 +2,8 @@
   "printed": 216,
   "canonicalTotal": 216,
   "notImported": [],
-  "battleReady": 202,
+  "battleReady": 208,
   "gated": {
-    "swsh10-29": [
-      "Unimplemented attack: Entangled Dive"
-    ],
-    "swsh10-68": [
-      "Unimplemented Ability: Princess's Curtain"
-    ],
-    "swsh10-104": [
-      "Unimplemented Ability: Baffling"
-    ],
     "swsh10-119": [
       "Unimplemented Ability: Resonant Evolution"
     ],
@@ -23,23 +14,12 @@
       "Unimplemented attack: Gigaton Break",
       "Unimplemented Ability: Ancient Wisdom"
     ],
-    "swsh10-134": [
-      "Unimplemented attack: Psyshield Bash",
-      "Unimplemented Ability: Frontier Road"
-    ],
     "swsh10-144": [
-      "Unimplemented Trainer effect"
-    ],
-    "swsh10-146": [
       "Unimplemented Trainer effect"
     ],
     "swsh10-170": [
       "Unimplemented attack: Hypnostrike",
       "Unimplemented Ability: Wish Connector"
-    ],
-    "swsh10-180": [
-      "Unimplemented attack: Psyshield Bash",
-      "Unimplemented Ability: Frontier Road"
     ],
     "swsh10-185": [
       "Unimplemented Trainer effect"
