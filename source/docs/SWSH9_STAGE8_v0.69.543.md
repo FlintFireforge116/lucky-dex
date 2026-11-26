@@ -1,0 +1,15 @@
+# Brilliant Stars — stage 8 (v0.69.543)
+
+185/186 main-set prints enabled. Raichu V (two prints), Blunder Policy and Collapsed Stadium. Dynamic Spark uses the existing optional pre-damage field Energy payment with Lightning filtering and one count per card; Fast Charge retains the hybrid deck/Zone search rule. Collapsed Stadium caps expanded Benches at four, trimming the Stadium player's first and discarding rather than knocking out. The ordinary hybrid three-slot cap is not expanded by a limiting Stadium. Blunder Policy records tails in the shared attack-effect coin helper and draws at end of turn, once per attached Tool; legacy bespoke attacks using raw RNG require further cross-set audit. Double Turbo Energy remains gated pending the full damage-path audit. Trainer Gallery separate. APK/device checks separate.
+
+## Final Special Energy audit checklist
+
+- Two Colorless units from one physical card; Special Energy suppression reduces it to one Colorless and disables its damage text, not the card itself.
+- Reduce ordinary outgoing opposing attack damage by 20 per unsuppressed attached copy, floor at zero, before Weakness/Resistance. Do not reduce friendly recoil, damage-counter placement, counter movement, checkup damage, or damage from independent Trainer/Ability effects.
+- Preserve one penalty per target per hit, including selected opposing Bench hits and repeat attacks. Do not apply twice to older effects that calculate a baseline and bonus via two matchup calls.
+- Main attack paths in core: normal damage, no-Weakness branch, selected Bench branch, repeated attacks and damage preview. Effect paths: shared `multiTargetDamage`, `benchDamage`, direct `damage` and attack-targeted effects, `wideLensBenchMatchup`, then bespoke set rules. The static reconnaissance found 440 candidate addition-style damage-write lines in the effects file (not 440 attack effects); the largest groups are `applyEffectUnchecked` (76), `neoRule` (58), `ex10Rule` (21), `dp7Rule` (15), and `dp2Rule` (13). Each needs classification as attack damage vs counter placement/recoil/other; the count alone is not evidence of unsupported damage. Reuse a typed damage helper to avoid a card-by-card bonus patch or generic mutation of damage counters.
+- Outcome tests must cover stacking, Spectral Breach, Weakness, Resistance, primary Active damage, selected Bench damage, spread, secondary damage, damage counters, friendly damage, copied/repeated attacks, and physical discard/retreat cost. Audit legacy paths separately, not just all 186 Brilliant Stars descriptors.
+
+The shared coin helper covers printed attack flips routed through it; do not count defensive Ability flips, confusion, attack-gate checks, or unrelated stadium/status/Trainer flips for Blunder Policy. Review legacy bespoke paths separately.
+
+Validation: full offline preparation exited 0; 2,278/2,278 gameplay tests including 144/144 focused Brilliant Stars tests; 12/12 manifest unit tests. Zero failures, skips or cancellations. 181 prior playable descriptors preserved.

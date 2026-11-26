@@ -2,24 +2,10 @@
   "printed": 186,
   "canonicalTotal": 186,
   "notImported": [],
-  "battleReady": 181,
+  "battleReady": 185,
   "gated": {
-    "swsh9-45": [
-      "Unimplemented attack: Fast Charge",
-      "Unimplemented attack: Dynamic Spark"
-    ],
-    "swsh9-131": [
-      "Unimplemented Trainer effect"
-    ],
-    "swsh9-137": [
-      "Unimplemented Trainer effect"
-    ],
     "swsh9-151": [
       "Unimplemented Special Energy rules"
-    ],
-    "swsh9-158": [
-      "Unimplemented attack: Fast Charge",
-      "Unimplemented attack: Dynamic Spark"
     ]
   },
   "attacks": 235,

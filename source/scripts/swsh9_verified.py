@@ -240,3 +240,17 @@ def ability(row,a):
 def trainer(row):
  if row[13][0]=='Choose up to 3 of your Benched Pokémon. For each of those Pokémon, search your deck for a different type of basic Energy card and attach it to that Pokémon. Then, shuffle your deck. Your turn ends.':return 'Supporter',E('sm7Rule',rule='swsh9CafeMaster')
  return _stage6_trainer(row)
+
+# Stage 8: shared pre-damage payment, delayed coin reward, and Bench limits.
+_stage7_final_attack=attack
+_stage7_trainer=trainer
+def attack(row,a):
+ t=a[3]
+ if t=='If you go first, you can use this attack during your first turn. Search your deck for a Lightning Energy card and attach it to this Pokémon. Then, shuffle your deck.':return E('sm7Rule',rule='sm9SearchAttach',amount=1,energyTypes=['Lightning'],sourceSelf=True)
+ if t=='You may discard any amount of Lightning Energy from your Pokémon. This attack does 60 damage for each card you discarded in this way.':return E('sm7Rule',rule='swsh9DynamicSpark')
+ return _stage7_final_attack(row,a)
+def trainer(row):
+ t=row[13][0]
+ if t=='If the Pokémon this card is attached to uses an attack, if you flip any coins for the damage or effect of that attack, and if any of them are tails, draw 3 cards at the end of your turn.':return 'Tool',E('noop') # tracked by attack-effect coin and end-turn hooks
+ if t=='Each player can\'t have more than 4 Benched Pokémon. If a player has 5 or more Benched Pokémon, they discard Benched Pokémon until they have 4 Pokémon on the Bench. The player who played this card discards first. If more than one effect changes the number of Benched Pokémon allowed, use the smaller number.':return 'Stadium',E('noop') # shared stadium bench reconciliation
+ return _stage7_trainer(row)

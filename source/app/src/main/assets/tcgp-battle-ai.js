@@ -289,7 +289,7 @@
       }
       if(attack?.effect?.rule==='swsh8Multishot'){const p=state.sides[side].active;damage=30*(Number(p.energy?.Water||0)+(p.specialEnergy||[]).filter(r=>effects.attachedSpecialProvidesType(r,'Water',p,data.cardById,state)).length);}
       if(attack?.effect?.rule==='swsh8Spiral'){const p=state.sides[side].active,target=state.sides[foeOf(side)].active,remaining=target?core.maxHp(state,foeOf(side),target)-Number(target.damage||0):Infinity,hit=n=>target?effects.attackDamageWithState(state,side,p,foeOf(side),target,n,data.cardById):0;const returning=action.effectSelection&&action.effectSelection!=='keep',dealt=hit(returning?140:70);return 200+Math.min(remaining,dealt)+(dealt>=remaining?100:0)-(returning?20:0);}
-      if(attack?.effect?.rule==='swsh7ExtremeFreeze')damage=60*slots(state.sides[side]).reduce((n,p)=>n+Number(p.energy?.Water||0)+(p.specialEnergy||[]).filter(r=>effects.attachedSpecialProvidesType(r,'Water',p,data.cardById,state)).length,0);
+      if(['swsh7ExtremeFreeze','swsh9DynamicSpark'].includes(attack?.effect?.rule)){const t=attack.effect.rule==='swsh9DynamicSpark'?'Lightning':'Water';damage=60*slots(state.sides[side]).reduce((n,p)=>n+Number(p.energy?.[t]||0)+(p.specialEnergy||[]).filter(r=>effects.attachedSpecialProvidesType(r,t,p,data.cardById,state)).length,0);}
       if(attack?.effect?.rule==='swsh7YogaLoop'){const foe=state.sides[foeOf(side)],p=action.target==='opponentBench'?slotFor(foe,'bench',action.benchIndex):foe.active;return p&&core.maxHp(state,foeOf(side),p)-Number(p.damage||0)<=20?430:10;}
       if(attack?.effect?.rule==='swsh7LivePainting')damage=30+30*String(action.effectSelection||'').split(',').filter(Boolean).length;
       if(attack?.effect?.rule==='swsh7JudgmentSurge')damage=40*Number(state.sides[foeOf(side)].prizesTaken||0);
@@ -687,7 +687,7 @@
         if(!target||hit>=core.maxHp(state,foeOf(side),target)-Number(target.damage||0)||!picks.length)return stop||legal[0];
         return picks[0];
       }
-      if(pending.special==='sm7BeforeAttack'&&pending.rule==='swsh7ExtremeFreeze'){const me=state.sides[side],target=state.sides[foeOf(side)].active,stop=legal.find(a=>a.choiceSkip),picks=legal.filter(a=>!a.choiceSkip);const hit=target?effects.attackDamageWithState(state,side,me.active,foeOf(side),target,60*Number(pending.count||0),data.cardById):0;if(!target||hit>=core.maxHp(state,foeOf(side),target)-Number(target.damage||0)||!picks.length)return stop||legal[0];return picks.find(a=>a.choiceTarget==='bench')||picks[0];}
+      if(pending.special==='sm7BeforeAttack'&&['swsh7ExtremeFreeze','swsh9DynamicSpark'].includes(pending.rule)){const me=state.sides[side],target=state.sides[foeOf(side)].active,stop=legal.find(a=>a.choiceSkip),picks=legal.filter(a=>!a.choiceSkip);const hit=target?effects.attackDamageWithState(state,side,me.active,foeOf(side),target,60*Number(pending.count||0),data.cardById):0;if(!target||hit>=core.maxHp(state,foeOf(side),target)-Number(target.damage||0)||!picks.length)return stop||legal[0];return picks.find(a=>a.choiceTarget==='bench')||picks[0];}
       if(pending.special==='sm7BeforeAttack'&&['swsh6MaxLance','swsh6RepeatedStrike'].includes(pending.rule)){
         const me=state.sides[side],target=state.sides[foeOf(side)].active,stop=legal.find(a=>a.choiceSkip),picks=legal.filter(a=>!a.choiceSkip),max=pending.rule==='swsh6MaxLance';
         const hit=target?effects.attackDamageWithState(state,side,me.active,foeOf(side),target,(max?10:120)+(max?120:30)*Number(pending.count||0),data.cardById):0;
