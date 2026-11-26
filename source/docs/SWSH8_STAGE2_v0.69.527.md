@@ -1,0 +1,5 @@
+# Fusion Strike stage 2 — v0.69.527
+
+37 verified new V/VMAX prints, including alternate prints, added to the existing 135. 147/284 playable (+33), 25 imported but gated, 112 not imported. The upstream Git blob is unchanged and each source packet is verified offline. Direct raw host lookup remains unavailable; this is not a full catalogue.
+
+Enabled Mew V/VMAX, Genesect V, Gengar V/VMAX, Rillaboom VMAX, Chandelure V/VMAX, Cinderace V/VMAX, Boltund V/VMAX, Inteleon V, Crabominable V, Breloom V, Tsareena V, Dodrio V, Sandaconda V, and Power Tablet. Existing copy, field-count, targeted damage, modifier and energy-search mechanics reused. Dynamic hand-size count and self-bench copy selection needed narrow shared changes; self-counter placement bypasses recoil-only Protection Cube. Bilateral outcome tests exercise filtered attack choices, cost, copied attack lock, field count, restricted Energy Mix, counters, stacking and Trainer count. Two initial fixture failures were corrected to use existing GX and EX IDs. APK/device verification remains outstanding.

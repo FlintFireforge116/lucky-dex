@@ -1,4 +1,4 @@
-"""Verified stage-one subset from pinned Fusion Strike Git blob.
+"""Verified stage-two subset from pinned Fusion Strike Git blob.
 The source packets are exact compact projections checked against connector output.
 No fabricated rows for the remaining prints. Full source can replace this subset later.
 """
@@ -31,6 +31,13 @@ def rows():
   assert row[0] not in result
   result[row[0]]=row
  assert len(result)==135
+ for line in packet("swsh8-stage2-v.jsonl",3158659783):
+  row=json.loads(line)
+  if len(row)==3:
+   n,original,rarity=row;row=result[original].copy();row[0]=n;row[12]=rarity
+  assert row[0] not in result
+  result[row[0]]=row
+ assert len(result)==172
  return sorted(result.values(),key=lambda r:int(r[0]))
 if __name__=='__main__':
  r=rows();p=ROOT/'data/classic/swsh8-print-compact.json';p.write_text(json.dumps(r,ensure_ascii=False,separators=(',',':'))+'\n',encoding='utf-8')

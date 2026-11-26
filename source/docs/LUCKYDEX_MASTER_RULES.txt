@@ -6188,3 +6188,11 @@ v0.69.526 — Fusion Strike stage 1 (partial verified source import)
 - Termux / Gradle gates use scripts/prepare-swsh8.sh and v07526 Fusion Strike tests. Fast release manifest remains a file consistency gate, not a replacement for APK build/device tests.
 
 Final v0.69.526 validation: full offline preparation exited 0; 1990/1990 gameplay test invocations, 17/17 Fusion Strike focused tests and 12/12 manifest tests, zero failures, skips or cancellations. 135/284 exact prints imported and 114 enabled; full set completion is explicitly not claimed.
+
+v0.69.527 — Fusion Strike stage 2 (verified V/VMAX packet)
+- Immutable source blob remains d88289e9b1469bc1c27cf268461f9efdec00134d. New exact packet swsh8-stage2-v.jsonl contains 37 prints, FNV-1a 3158659783. Preserve stage 1's 135 rows. Combined compact SHA-256 26664b5c032b7fe4da3422b9d8c222431473ee777f511ffddf04af44ff1c8e8f; 172 imported, 210 attacks, 10 Abilities, 147 enabled, 25 gated, 112 unimported. The raw host is inaccessible in the build environment; no full source or completion claim.
+- Copy attacks from selfBench must use the controller's board for declared-attack payments as well as resolution; apply the descriptor's exact tag filter in both legal choice generation and resolution. Cross Fusion Strike uses its own two-Colorless attack cost, preserves copied effects and excludes unsupported recursive copies. Energy Mix uses the existing hybrid search/attachment pathway with exact Fusion Strike recipient filter.
+- Fusion Strike System uses dynamic field-filter draw-to-hand-size (not draw a card for every Pokémon); stop if no card entered hand. Power Tablet stacks per use, affects only Fusion Strike attackers and only opposing Active damage. Pain Explosion places counters, not recoil damage; Protection Cube must not prevent it. Fear and Panic counts V and GX once per Pokémon, including VMAX but excluding EX.
+- Stage 2 preserves all 114 previously enabled prints. Do not enable G-Max Spiral/Double Gunner, Turn a Profit, Hoopa's dual type, or Fusion Strike Energy protection until targeted and historical tests pass. Remaining official prints must be retrieved with the pinned checksum; the incomplete-source guard remains active.
+
+Final v0.69.527 validation: full offline preparation exited 0; 2004/2004 gameplay checks, including 31/31 Fusion Strike tests; manifest unit tests 12/12.

@@ -4255,7 +4255,7 @@ const target=slotForTarget(s,action.target,action.benchIndex);if(card.id==='pl2-
         state.log.push({type:'coin',side,reason:'Mini-Metronome',heads:matched.swsh4CopyHeads,results:[matched.swsh4CopyHeads]});
         if(!matched.swsh4CopyHeads)return finishDeclaredAttack(state,side,matched);
       }
-      const copiedSource=attack.effect?.type==='copyAttack'&&(attack.name==='Nightcap'||attack.effect.det1Copy||attack.effect.sm12Copy)?slotForTarget(foe,matched.choiceTarget,matched.choiceBenchIndex):null;
+      const copiedSource=attack.effect?.type==='copyAttack'&&(attack.name==='Nightcap'||attack.effect.det1Copy||attack.effect.sm12Copy)?slotForTarget(attack.effect.source==='selfBench'?s:foe,matched.choiceTarget,matched.choiceBenchIndex):null;
       const copiedAttack=attack.effect?.source==='previousEvolution'&&(s.active.stack||[]).slice(0,-1).includes(matched.choiceCardId)?data.cardById(matched.choiceCardId)?.attacks?.[matched.choiceAttackIndex]:attack.effect?.type==='sm2Rule'&&attack.effect.rule==='copycat'&&foe.lastAttackTurn===state.turnNumber-1?data.cardById(foe.lastAttackCardId)?.attacks?.find(a=>a.name===foe.lastAttackName&&!a.name.endsWith('-GX')):copiedSource&&data.cardById(copiedSource.cardId)?.attacks?.[matched.choiceAttackIndex];
       if(attack.effect?.det1Copy)matched.det1CopiedCostPaid=!!copiedAttack&&effectContext(state,side).canPayCopiedCost(copiedAttack);
       if(state.format==='classic'){const gx=attack.gxAttack||/\bGX\b/i.test(attack.name)||copiedAttack&&(copiedAttack.gxAttack||/\bGX\b/i.test(copiedAttack.name));if(gx)state.sm10GXAttack={side,uid:s.active.uid,turn:state.turnNumber};else delete state.sm10GXAttack;}

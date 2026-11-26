@@ -48,3 +48,47 @@ def trainer(row):
 def energy(row):return None
 
 def prism_ready(row):return False
+
+# Stage 2: verified V/VMAX packet; match full text, including alternate prints.
+from sm7_verified import activated,passive
+_old_attack=attack
+_old_trainer=trainer
+def attack(row,a):
+ t=a[3]
+ e=_old_attack(row,a)
+ if e is not None:return e
+ if t=="If this Pokémon was damaged by an attack during your opponent's last turn, this attack does that much more damage.":return E('sm7Rule',rule='swsh2CounterDamage')
+ if t=='You may discard any number of your Benched Pokémon. This attack does 40 more damage for each Benched Pokémon you discarded in this way.':return E('chooseDiscardForBonus',zone='bench',max=5,amount=40)
+ m=re.fullmatch(r"This attack also does (\d+) damage to (\d+) of your opponent's Benched Pokémon\. \(Don't apply Weakness and Resistance for Benched Pokémon\.\)",t)
+ if m:return E('multiTargetDamage',target='opponentBench',amount=int(m[1]),count=int(m[2]))
+ m=re.fullmatch(r'Your opponent reveals their hand\. This attack does (\d+) damage for each Trainer card you find there\.',t)
+ if m:return seq(E('filteredHandCountDamage',side='opponent',filter={'kind':'trainer'},amount=int(m[1]),mode='replace'),E('revealHand',side='opponent'))
+ if t=='Discard 2 Fire Energy from this Pokémon.':return discard(2,energyType='Fire',strictEnergyType=True)
+ if t=="Your opponent's Active Pokémon is now Burned. During your next turn, this Pokémon can't attack.":return seq(status('burn'),E('lock',target='self',action='attack',duration='nextOwnTurn'))
+ if t=="Discard the top 2 cards of your opponent's deck.":return E('discardTop',side='opponent',amount=2)
+ if t=="This attack does 60 more damage for each damage counter on your opponent's Active Pokémon.":return E('damageFromDamage',source='opponent',amount=6,mode='add')
+ if t=='You may switch this Pokémon with 1 of your Benched Pokémon.':return E('chooseOption',options=[{'label':'Switch this Pokémon','effect':E('switch',target='self',optional=False)},{'label':'Keep in play','effect':E('noop')}])
+ if t=='This attack does 30 more damage for each Lightning Energy attached to all of your Pokémon.':return E('energyDamage',source='self',all=True,energyType='Lightning',countProvidedType=True,amount=30,mode='add')
+ if t=="During your next turn, this Pokémon can't use Max Bolt.":return E('lock',target='self',action='attack',attackName='Max Bolt',duration='nextOwnTurn')
+ if t=='Search your deck for an Energy card and attach it to 1 of your Fusion Strike Pokémon. Then, shuffle your deck.':return E('sm7Rule',rule='sm9SearchAttach',amount=1,includeSpecial=True,targetFilter={'tag':'fusion-strike'})
+ if t=='You may shuffle this Pokémon and all attached cards into your deck.':return E('chooseOption',options=[{'label':'Shuffle this Pokémon into deck','effect':E('shuffleIntoDeck',target='self',includeAttached=True)},{'label':'Keep in play','effect':E('noop')}])
+ if t=="Choose 1 of your Benched Fusion Strike Pokémon's attacks and use it as this attack.":return E('copyAttack',source='selfBench',filter={'tag':'fusion-strike'},swsh2Copy=True,sm12Copy=True,nonGxOnly=True)
+ if t=="This attack's damage isn't affected by any effects on your opponent's Active Pokémon.":return E('damageRule',ignoreEffects=True)
+ if t=="Your opponent's Active Pokémon is now Asleep.":return status('sleep')
+ if t=='Put 3 damage counters on this Pokémon.':return E('selfDamage',amount=30,asCounters=True)
+ if t=="This attack does 60 damage for each of your opponent's Pokémon V and Pokémon-GX in play.":return E('fieldCountDamage',side='opponent',filter={'tag':['pokemon-v','pokemon-gx']},amount=60,mode='replace')
+ if t=="During your next turn, this Pokémon's attacks do 80 more damage to your opponent's Active Pokémon (before applying Weakness and Resistance).":return E('nextAttackBonus',attackName='*',amount=80)
+ if t=="This attack does 60 damage for each Energy attached to all of your opponent's Pokémon.":return E('energyDamage',source='opponent',all=True,amount=60,mode='replace')
+ return None
+
+def ability(row,a):
+ t=a[2]
+ if t=="As long as this Pokémon is in the Active Spot, your opponent can't play any Pokémon Tool cards from their hand.":return passive(E('actionLock',side='opponent',cardType='Tool',duration='whileActive'),activeOnly=True)
+ if t=='Once during your turn, you may draw cards until you have as many cards in your hand as you have Fusion Strike Pokémon in play.':return activated(E('drawToHandSize',size=0,fieldFilter={'tag':'fusion-strike'}))
+ if t=='This Pokémon takes 30 less damage from attacks (after applying Weakness and Resistance).':return passive(mod('damageReduction',30))
+ return None
+
+def trainer(row):
+ t=row[13][0] if row[13] else ''
+ if t=="During this turn, your Fusion Strike Pokémon's attacks do 30 more damage to your opponent's Active Pokémon (before applying Weakness and Resistance).":return 'Item',E('modifier',stat='attackDamageActiveOnly',amount=30,scope='team',duration='turn',filter={'tag':'fusion-strike'})
+ return _old_trainer(row)
