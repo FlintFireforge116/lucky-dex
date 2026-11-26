@@ -173,3 +173,10 @@ tr(159,'Tool',ES('SnowLeafBadge'))
 at(50,'Big Sparking',ES('BigSparking'))
 ab(73,dict(type='activated',oncePerTurn=False,effect=ES('RapidConnection')))
 tr(160,'Tool',ES('SpiritMask'))
+
+# Stage 5: shared extra attack/turn and typed payment, deck evolution, replacement.
+ab(3,trig('energyAttached',ES('SolarEvolution'),fromHandOnly=True))
+ab(4,passive(ES('FluffyBarrage')))
+at(83,'Yoga Loop',ES('YogaLoop'))
+at(116,'Extreme Freeze',ES('ExtremeFreeze'))
+ab(103,activated(ES('PhantomTransformation')))

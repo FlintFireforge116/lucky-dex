@@ -1,13 +1,7 @@
 {
   "printed": 237,
-  "battleReady": 220,
+  "battleReady": 227,
   "gated": {
-    "swsh7-3": [
-      "Unimplemented Ability: Solar Evolution"
-    ],
-    "swsh7-4": [
-      "Unimplemented Ability: Fluffy Barrage"
-    ],
     "swsh7-38": [
       "Unimplemented Ability: Dew Guard"
     ],
@@ -17,17 +11,8 @@
     "swsh7-59": [
       "Required Pokémon V evolution parent is not yet enabled"
     ],
-    "swsh7-83": [
-      "Unimplemented attack: Yoga Loop"
-    ],
     "swsh7-101": [
       "Unimplemented Ability: Rubbish Collecting"
-    ],
-    "swsh7-103": [
-      "Unimplemented Ability: Phantom Transformation"
-    ],
-    "swsh7-116": [
-      "Unimplemented attack: Extreme Freeze"
     ],
     "swsh7-146": [
       "Unimplemented Trainer effect"
@@ -40,12 +25,6 @@
     ],
     "swsh7-178": [
       "Unimplemented attack: Primeval Beak"
-    ],
-    "swsh7-185": [
-      "Unimplemented attack: Yoga Loop"
-    ],
-    "swsh7-186": [
-      "Unimplemented attack: Yoga Loop"
     ],
     "swsh7-210": [
       "Required Pokémon V evolution parent is not yet enabled"
