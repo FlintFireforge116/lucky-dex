@@ -1431,6 +1431,10 @@
   function attackDamagePreview(state,side,attackIndex,attackCardId,includeAlteredCreation=true){
     const source=state?.sides?.[side]?.active,attack=data.cardById(attackCardId||source?.cardId)?.attacks?.[attackIndex];
     if(!source||!attack)return {damage:0,text:'0',variable:false};
+    if(['swsh11Lariat','swsh11GeoCannon'].includes(attack.effect?.rule)){
+      const board=state.sides[side],foe=side==='player'?'opponent':'player',base=Number(attack.damage||0),potential=attack.effect.rule==='swsh11Lariat'||board.energySupply?.length||board.deck.some(r=>data.cardById(r.cardId)?.kind==='energy'),min=effects.outgoingAttackDamage(state,side,source,foe,base,data.cardById),max=effects.outgoingAttackDamage(state,side,source,foe,base+(potential?100:0),data.cardById);
+      return {damage:min,text:max>min?`${min}–${max}`:String(min),variable:max>min};
+    }
     if(['swsh11ScrapShort','swsh11MaxFrost','swsh11FloeReturn'].includes(attack.effect?.rule)){
       const rule=attack.effect.rule,board=state.sides[side],foe=side==='player'?'opponent':'player',pool=rule==='swsh11MaxFrost'?[source]:pokemonOn(board);
       const count=rule==='swsh11ScrapShort'?board.discard.filter(r=>data.cardById(r.cardId)?.trainerType==='Tool').length:pool.reduce((n,p)=>n+Number(p.energy?.Water||0)+(p.specialEnergy||[]).filter(r=>effects.attachedSpecialProvidesType(r,'Water',p,data.cardById,state)).length,0);

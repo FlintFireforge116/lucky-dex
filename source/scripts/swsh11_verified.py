@@ -245,3 +245,19 @@ def ability(row,a):
 def trainer(row):
  if row[0]=='170' and row[1]=='Windup Arm':return 'Tool',E('noop') # legal attack status exception
  return _stage9_trainer(row)
+
+# Stage 11: optional attack damage, dynamic HP, opponent choices and devolution.
+_stage10_attack=attack
+_stage10_ability=ability
+_stage10_trainer=trainer
+def attack(row,a):
+ if row[0]=='88' and a[0]=='Strong-Arm Lariat':return E('sm7Rule',rule='swsh11Lariat')
+ if row[0]=='91' and a[0]=='Geo Cannon':return E('sm7Rule',rule='swsh11GeoCannon')
+ if row[0]=='142' and a[0]=='Downgrading Beam':return E('sm7Rule',rule='swsh11Downgrade')
+ return _stage10_attack(row,a)
+def ability(row,a):
+ if row[0]=='88' and a[0]=='Crisis Muscles':return passive(E('noop')) # dynamic HP hook
+ return _stage10_ability(row,a)
+def trainer(row):
+ if row[0]=='166' and row[1]=='Riley':return 'Supporter',E('sm7Rule',rule='swsh11Riley')
+ return _stage10_trainer(row)

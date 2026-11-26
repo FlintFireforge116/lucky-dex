@@ -625,6 +625,7 @@
     if(!attack)return '';
     // Explicit LuckyDex hybrid rule, intentionally different from printed TCG text.
     if(attack.effect?.rule==='ex4:10:1')return 'LuckyDex hybrid rule: Flip 5 coins. For each heads, discard the next Basic Energy from your Energy Zone, if available. This attack does 30 damage for each Fire or Fighting Energy discarded this way. Other Energy types are discarded but do not add damage.';
+    if(attack.effect?.rule==='swsh11GeoCannon')return 'LuckyDex hybrid rule: Flip a coin. On heads, if available, take the next Basic Energy from your Energy Zone. Otherwise discard the top card of your physical deck. If you took or discarded an Energy card, do 100 more damage and attach that Energy to this Pokémon.';
     if(attack.effect?.rule==='swsh11FloeReturn')return 'LuckyDex hybrid rule: Return any amount of attached Water Energy from your Pokémon. Basic Energy returns to the Energy Zone; physical Special Energy returns to your deck. Shuffle the returned Energy into its destination. Deal 40 damage per Energy card returned.';
     if(attack.effect?.rule==='swsh11UpstreamSpirits')return 'LuckyDex hybrid rule: Deal 20 damage for each Basic Energy in your discard pile (including the Energy discard ledger). Return discarded Zone Energy to the Energy Zone and physical Basic Energy to your deck, then shuffle. Special Energy and the Lost Zone are not affected.';
     const zoneSpec=effects.zoneSampleSpec(attack);

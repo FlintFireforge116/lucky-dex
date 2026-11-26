@@ -291,6 +291,14 @@
         const hit=target?effects.attackDamageWithState(state,side,state.sides[side].active,foeOf(side),target,10+40*n,data.cardById):0;
         return 200+Math.min(hit,remaining)-n*2+(hit>=remaining?100:0);
       }
+      if(attack?.effect?.rule==='swsh11Lariat'){
+        const target=state.sides[foeOf(side)].active,me=state.sides[side].active,remaining=target?core.maxHp(state,foeOf(side),target)-Number(target.damage||0):Infinity,boost=action.effectSelection==='boost',hit=target?effects.attackDamageWithState(state,side,me,foeOf(side),target,boost?200:100,data.cardById):0;
+        return 200+Math.min(remaining,hit)+(hit>=remaining?100:0)-(boost?50:0);
+      }
+      if(attack?.effect?.rule==='swsh11GeoCannon'){
+        const me=state.sides[side];const physical=me.deck.length?me.deck.filter(r=>data.cardById(r.cardId)?.kind==='energy').length/me.deck.length:0;
+        damage=50+100*(me.energySupply?.length?0.5+0.5*physical:physical);
+      }
       if(attack?.effect?.rule==='swsh11ScrapShort')damage=40+40*state.sides[side].discard.filter(r=>data.cardById(r.cardId)?.trainerType==='Tool').length;
       if(['swsh11MaxFrost','swsh11FloeReturn'].includes(attack?.effect?.rule)){const me=state.sides[side],pool=attack.effect.rule==='swsh11MaxFrost'?[me.active]:slots(me);damage=Number(attack.damage||0)+(attack.effect.rule==='swsh11MaxFrost'?50:40)*pool.reduce((n,p)=>n+Number(p.energy?.Water||0)+(p.specialEnergy||[]).filter(r=>effects.attachedSpecialProvidesType(r,'Water',p,data.cardById,state)).length,0);}
       if(attack?.effect?.rule==='swsh11UpstreamSpirits'){const me=state.sides[side];damage=20*(Object.values(me.energyDiscard||{}).reduce((n,v)=>n+Number(v||0),0)+me.discard.filter(r=>data.cardById(r.cardId)?.basicEnergy).length);}
