@@ -212,3 +212,19 @@ def trainer(row):
  if row[1]=='Arc Phone':return 'Item',E('sm7Rule',rule='swsh11ArcPhone')
  if row[1]=='Damage Pump':return 'Item',E('sm7Rule',rule='swsh11DamagePump')
  return _stage7_trainer(row)
+
+# Stage 9: exact named-recipient Energy support, discard-pile Ability and protection.
+_stage8_attack=attack
+_stage8_ability=ability
+def attack(row,a):
+ if row[0]=='62' and a[0]=='Wonder Storm':return E('energyDamage',source='self',all=True,energyType='Psychic',countProvidedType=True,amount=20,mode='replace')
+ if row[0]=='66' and a[0]=='Screaming Circle':return E('sm7Rule',rule='swsh11ScreamingCircle')
+ if row[0]=='71' and a[0]=='Tempting Trap':return seq(E('lock',target='opponentActive',action='retreat',duration='opponentTurn'),E('modifier',target='opponentActive',scope='self',stat='damageTaken',amount=90,duration='nextOwnTurn'))
+ if row[0]=='85' and a[0]=='Splash Loop':return seq(*(E('sm7Rule',rule='sm12ReturnEnergy',left=1) for _ in range(2)))
+ return _stage8_attack(row,a)
+def ability(row,a):
+ if row[0]=='62' and a[0]=='Moon-Watching Party':return activated(E('sm7Rule',rule='swsh11MoonParty'),activeOnly=True)
+ if row[0]=='66' and a[0]=='Netherworld Gate':return dict(type='activated',oncePerTurn=True,fromDiscard=True,effect=E('noop')) # zone action in core
+ if row[0]=='40' and a[0]=='Oceanic Accompaniment':return dict(type='activated',oncePerTurn=False,effect=E('sm7Rule',rule='sm12HandAttach',left=1,energyType='Water',basicOnly=True,targetFilter={'attackName':'Swim Freely'}))
+ if row[0]=='134' and a[0]=='Metal Lodging':return passive(E('noop')) # shared attack protection hook
+ return _stage8_ability(row,a)
