@@ -6152,3 +6152,9 @@ v0.69.519 — Evolving Skies completion
 - Completion contract and generated zero-gap ledger; independent audit of exact reprints, obscure cross-era Supporter interactions, direct Prize moves and hand-Energy targeting remains required. APK/device testing separate. See SWSH7_COMPLETION_v0.69.519.md.
 
 Final v0.69.519 validation: 1857/1857 gameplay test invocations, 178/178 SWSH7, 29/29 source gates, 12/12 manifest tests. Initial Dan RPS control-flow regression corrected; both older bilateral tests pass.
+
+
+v0.69.520 — Evolving Skies independent audit
+- Keep all 237 prints enabled; compare complete canonical print signatures, not only names. Verified 176 unique identities, 61 equivalent reprints, and 54 legal deck-generation combinations across nine available types, three seeds and both controllers.
+- Genuine Prize awards (including Lt. Surge's Treaty) must use the shared claim queue, unlike Peonia exchanges. Preserve owner-turn Treasure Energy restriction and exactly-once counts. Primeval Beak blocks historical Erika's Venusaur Growth physical hand acceleration without consuming the cards; retain the existing distinct Zone adaptation. CPU Prize choices should prefer useful attack-cost progress and viable evolved Pokémon instead of unconditional Active/top-deck preference. See SWSH7_INDEPENDENT_AUDIT_v0.69.520.md.
+- Independent test file must be in both Gradle and full preparation. Exhaustive historical combinations and APK/device testing remain separate.

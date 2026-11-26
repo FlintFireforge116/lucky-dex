@@ -647,7 +647,18 @@
       if(rule==='sm9SearchAttach'&&data.cardById(slots(state.sides[side]).find(p=>p.uid===pending.sourceUid)?.cardId)?.abilities?.some(a=>a.name==='Buzzap Generator')&&pending.effect.stage==='attach')return legal.find(x=>x.choiceTarget==='active')||legal.find(x=>!x.choiceSkip&&x.choiceBenchIndex!==slots(state.sides[side]).find(p=>p.uid===pending.sourceUid)?.benchSlot)||legal[0];
       if(['swsh4CastOffShell','swsh4CaraLiss','swsh4Nessa','swsh4Cheese','swsh4Devolution','swsh35Adornment','sm9TopAttach','sm9SearchAttach','sm9DanceAncients','sm9NineTemptations','sm9AdventurousAppetite'].includes(rule))return legal.find(x=>!x.choiceSkip)||legal[0];
       if(pending.special==='swsh7ToolOverflow'){const board=state.sides[side],p=slots(board).find(x=>x.uid===pending.sourceUid),c=data.cardById(p?.cardId);return legal.find(a=>!effects.usefulToolRecipient(data.cardById(a.choiceCardId),c))||legal[0];}
-      if(pending.special==='swsh7PrizeReaction')return legal.find(a=>a.choiceTarget==='active')||legal.find(a=>!a.choiceSkip)||legal[0];
+      if(pending.special==='swsh7PrizeReaction'){
+        const board=state.sides[side],ref=state.swsh7PrizeReaction?.ref,picks=legal.filter(a=>!a.choiceSkip);
+        if(ref?.cardId==='swsh7-165'){
+          const score=a=>{const p=slotFor(board,a.choiceTarget,a.choiceBenchIndex);if(!p)return -Infinity;const c=data.cardById(p.cardId),before=core.effectiveEnergy(state,side,p),after=core.effectiveEnergy(state,side,{...p,specialEnergy:[...(p.specialEnergy||[]),ref]});const gain=Math.max(0,...(c?.attacks||[]).map(at=>missingForCost(at.cost,before)-missingForCost(at.cost,after)));return gain*50+(a.choiceTarget==='active'?15:5)-effects.totalEnergy(before)*2;};
+          return picks.sort((a,b)=>score(b)-score(a))[0]||legal[0];
+        }
+        if(ref?.cardId==='swsh7-146'){
+          const score=a=>{const c=data.cardById(a.choiceCardId);if(!c)return -Infinity;const supply=board.energySupply||[],coverage=Math.max(0,...(c.attacks||[]).map(at=>[...String(at.cost||'')].every(k=>k==='C'||supply.includes(effects.ENERGY_CODE[k]))?Number(at.damage||0):0));return Number(c.hp||0)+coverage+(c.stage==='Basic'?0:20);};
+          return picks.sort((a,b)=>score(b)-score(a))[0]||legal[0];
+        }
+        return picks[0]||legal[0];
+      }
       if(pending.special==='sm7WishPrize')return legal.find(a=>a.choiceOption===1)||legal[0];
       if(pending.special==='sm7Grounding')return legal.find(a=>!a.choiceSkip)||legal[0];
       if(pending.special==='sm7BeforeAttack'&&pending.rule==='swsh6Tentacles'){

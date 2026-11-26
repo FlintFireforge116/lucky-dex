@@ -662,7 +662,7 @@
     };
     const chooseTarget=(ss,filter,stage,optional)=>request({kind:'pokemon',side:'self',selectionSide:ss===s?ctx.side:ctx.foeSide,includeActive:true,filter,optional},{stage});
     switch(name){
-      case 'growth':{if(!slot)return;const basics=s.hand.filter(r=>card(r)?.basicEnergy&&card(r).subtype==='Grass');const n=Math.min(2,basics.length);for(let i=0;i<n;i++){const ix=s.hand.findIndex(r=>card(r)?.basicEnergy&&card(r).subtype==='Grass');s.hand.splice(ix,1);addEnergy(slot,'Grass');}if(!n&&s.energyAvailable){addEnergy(slot,'Grass',2);log({adaptation:'Energy Zone',attached:2});}else log({attached:n});break;}
+      case 'growth':{if(!slot)return;const basics=s.hand.filter(r=>card(r)?.basicEnergy&&(card(r).energyType||card(r).subtype)==='Grass');const n=primevalLocked(ctx,slot)?0:Math.min(2,basics.length);for(let i=0;i<n;i++){const ix=s.hand.findIndex(r=>card(r)?.basicEnergy&&(card(r).energyType||card(r).subtype)==='Grass');s.hand.splice(ix,1);addEnergy(slot,'Grass');}if(!basics.length&&s.energyAvailable){addEnergy(slot,'Grass',2);log({adaptation:'Energy Zone',attached:2});}else log({attached:n});break;}
       case 'summonStorm':{for(const p of [...foe.bench,...s.bench,foe.active].filter(Boolean))p.damage=Number(p.damage||0)+20;break;}
       case 'dragonTornado':{if(!foe.active||!foe.bench.length||Number(foe.active.damage)>=ctx.maxHp?.(ctx.foeSide,foe.active))break;if(ctx.resolvingChoice)switchBench(foe,a.choiceBenchIndex);else chooseTarget(foe,null,'dragonTornado');break;}
       case 'intimidate':if(ctx.defender&&Number(card(ctx.defender)?.hp||0)<=50)ctx.defender.gym2Intimidate={sourceUid:slot.uid,expiresTurn:ctx.state.turnNumber+1};break;
@@ -929,7 +929,7 @@
       case 'lastResort':if(ss.hand.length===0)for(let i=0;i<5;i++)ctx.drawCard(ss);break;
       case 'goodManners':if(!ss.hand.some(ref=>card(ref)?.stage==='Basic'&&card(ref)?.kind==='pokemon')){log({cards:ss.hand.map(r=>r.cardId)});applyEffect({type:'searchChosen',source:'deck',amount:1,filter:{kind:'pokemon',stage:'Basic'}},ctx);}break;
       case 'surgeTreaty':{
-        if(ctx.resolvingChoice){if(Number(a.choiceOption)===1)ctx.drawCard(ss);else for(const side of [ss,foe]){const prize=side.prizes?.shift();if(prize){side.hand.push(prize);side.prizesTaken=Number(side.prizesTaken||0)+1;}}}
+        if(ctx.resolvingChoice){if(Number(a.choiceOption)===1)ctx.drawCard(ss);else for(const which of [ctx.side,ctx.foeSide]){ctx.queuePrize?.(which,1);}}
         else choose({kind:'option',side:'opponent',options:['Each player takes a Prize','Opponent draws a card']});break;
       }
       case 'rocketMinion':{
