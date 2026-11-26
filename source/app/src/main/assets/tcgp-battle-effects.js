@@ -24716,7 +24716,7 @@ if(limit>1&&available().length)ask({kind:'option',options:available().map(x=>x.l
       case 'selectTopToHand':{
         const ss=own(ctx),n=Math.min(Number(effect.count||1),ss.deck.length);
         if(ctx.resolvingChoice&&ctx.action?.choiceSkip){ctx.shuffle?.(ctx.state,ss.deck);break;}
-        if(ctx.resolvingChoice&&Number.isInteger(ctx.action?.choiceDeckIndex)&&ctx.action.choiceDeckIndex<n){const ref=ss.deck[ctx.action.choiceDeckIndex];if(ref&&(!effect.filter||matchesFilter(ctx.cardById(ref.cardId),effect.filter,ref))){ss.deck.splice(ctx.action.choiceDeckIndex,1);if(ss.hand.length<10)ss.hand.push(ref);}ctx.shuffle?.(ctx.state,ss.deck);break;}
+        if(ctx.resolvingChoice&&Number.isInteger(ctx.action?.choiceDeckIndex)&&ctx.action.choiceDeckIndex<n){const ref=ss.deck[ctx.action.choiceDeckIndex];if(ref&&ss.hand.length<Number(ss.handLimit||10)&&(!effect.filter||matchesFilter(ctx.cardById(ref.cardId),effect.filter,ref))){ss.hand.push(...ss.deck.splice(ctx.action.choiceDeckIndex,1));}ctx.shuffle?.(ctx.state,ss.deck);break;}
         if(n&&ss.deck.slice(0,n).some(ref=>!effect.filter||matchesFilter(ctx.cardById(ref.cardId),effect.filter,ref))&&typeof ctx.requestChoice==='function')ctx.requestChoice({kind:'topDeckCard',side:'self',deckSide:ctx.side,count:n,filter:effect.filter,effect,optional:!!effect.optional});else ctx.shuffle?.(ctx.state,ss.deck);break;
       }
       case 'swapHandWithRandomDeck':{

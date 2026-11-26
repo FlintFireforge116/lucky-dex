@@ -8,8 +8,8 @@ android {
         applicationId 'com.example.luckydex'
         minSdk 26
         targetSdk 35
-        versionCode 7520
-        versionName '0.69.520'
+        versionCode 7521
+        versionName '0.69.521'
     }
 
     signingConfigs {
@@ -1478,4 +1478,23 @@ tasks.register('auditSWSH7ForApk', Exec) {
 }
 tasks.matching { it.name == 'preBuild' || (it.name.startsWith('merge') && it.name.endsWith('Assets')) }.configureEach {
     dependsOn tasks.named('auditSWSH7ForApk')
+}
+
+tasks.register('preflightCEL25ContractForApk', Exec) {
+    dependsOn tasks.named('auditSWSH7ForApk')
+    workingDir rootProject.projectDir
+    commandLine (System.getenv('LUCKYDEX_PYTHON') ?: 'python3'), 'scripts/preflight-cel25-release.py'
+}
+tasks.register('generateCEL25ForApk', Exec) {
+    dependsOn tasks.named('preflightCEL25ContractForApk')
+    workingDir rootProject.projectDir
+    commandLine (System.getenv('LUCKYDEX_PYTHON') ?: 'python3'), 'scripts/build-cel25.py'
+}
+tasks.register('auditCEL25ForApk', Exec) {
+    dependsOn tasks.named('generateCEL25ForApk')
+    workingDir rootProject.projectDir
+    commandLine 'node', '--test', 'tests/v07521-celebrations-integration.test.cjs', 'tests/v07521-celebrations-outcomes.test.cjs'
+}
+tasks.matching { it.name == 'preBuild' || (it.name.startsWith('merge') && it.name.endsWith('Assets')) }.configureEach {
+    dependsOn tasks.named('auditCEL25ForApk')
 }

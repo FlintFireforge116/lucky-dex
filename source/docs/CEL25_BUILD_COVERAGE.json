@@ -1,0 +1,27 @@
+{
+  "printed": 25,
+  "battleReady": 21,
+  "gated": {
+    "cel25-3": [
+      "Unimplemented attack: Aqua Storm"
+    ],
+    "cel25-12": [
+      "Unimplemented attack: Breath of Life"
+    ],
+    "cel25-15": [
+      "Unimplemented attack: Lunar Pain"
+    ],
+    "cel25-19": [
+      "Unimplemented attack: Cry of Destruction"
+    ]
+  },
+  "attacks": 35,
+  "abilities": 6,
+  "pokemonV": 4,
+  "pokemonVMAX": 2,
+  "pokemonGX": 0,
+  "gxAttackPrints": 0,
+  "energyPrints": 0,
+  "prismStarPrints": 0,
+  "sourceGitBlob": "acf67f8e6a03676a02c81faaa7eefcc68a0ea97a"
+}

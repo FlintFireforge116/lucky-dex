@@ -1,0 +1,15 @@
+{
+  "set": "cel25",
+  "name": "Celebrations",
+  "stage": "stage1",
+  "release": "0.69.521",
+  "printedTotal": 25,
+  "attackPrints": 35,
+  "abilities": 6,
+  "pokemonV": 4,
+  "pokemonVMAX": 2,
+  "trainerPrints": 2,
+  "energyPrints": 0,
+  "pin": "acf67f8e6a03676a02c81faaa7eefcc68a0ea97a",
+  "variants": []
+}
