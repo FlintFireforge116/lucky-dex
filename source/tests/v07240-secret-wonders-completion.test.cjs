@@ -60,16 +60,14 @@ test('Gallade face-up prizes are selected individually and add 20 per new face-u
  assert.equal(s.sides.opponent.active.damage,60); // 60+20 minus Salamence Fighting resistance 20, +20 counter after
 });
 
-test('Raikou Thunder Climb discards only top three once, then selects correct attachment target',()=>{
- const s=board('dp3-16');s.sides.player.deck=[ref('base1-100','l1'),ref('base1-100','l2'),ref('dp3-77','bulb'),ref('dp3-82','next')];
- const bench=slot('dp3-82','be');bench.benchSlot=0;s.sides.player.bench=[bench];
+test('Raikou Thunder Climb samples Zone once, then selects correct attachment target',()=>{
+ const s=board('dp3-16');s.rngState=1;const us=s.sides.player;us.energySupply=['Lightning','Lightning','Fire','Water'];us.nextEnergyType='Lightning';const deck=structuredClone(us.deck),discard=structuredClone(us.discard);
+ const bench=slot('dp3-82','be');bench.benchSlot=0;us.bench=[bench];
  hit(s,0);assert.equal(s.phase,'effectChoice');
- choice(s,a=>a.find(x=>x.choiceTarget==='bench'));
- finish(s);
- assert.equal(s.sides.player.bench[0].energy.Lightning,2);
- assert.equal(s.sides.player.discard.filter(r=>r.uid==='bulb').length,1);
- assert.ok(!s.sides.player.discard.some(r=>['l1','l2'].includes(r.uid)));
- assert.ok(!s.sides.player.deck.some(r=>['l1','l2','bulb'].includes(r.uid)));
+ const ev=s.log.find(x=>x.type==='zoneSample'&&x.attack==='Thunder Climb');assert.equal(ev.captured.length,2);
+ choice(s,a=>a.find(x=>x.choiceTarget==='bench'));finish(s);
+ assert.equal(us.bench[0].energy.Lightning,2);assert.deepEqual(us.deck,deck);assert.deepEqual(us.discard,discard);
+ assert.equal(us.energyDiscard.Lightning||0,0);assert.equal(s.log.filter(x=>x.type==='zoneSample').length,1);
 });
 
 test('Jumpluff Cottonweed Punch flips two coins and gives an actual target choice',()=>{

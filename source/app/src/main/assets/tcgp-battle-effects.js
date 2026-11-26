@@ -25421,6 +25421,56 @@ if(ctx.isAbility){const targetSide=pokemonOn(own(ctx)).includes(s)?ctx.side:ctx.
       case 'damageFromDamage':case 'bonusDamage':case 'coinDamage':case 'energyDamage':case 'benchCountDamage':case 'statusDamage':throw new Error(`${effect.type} must resolve as part of an attack.`);
     }
   }
+  // Classic hybrid adaptations: sample the separate Energy Zone instead of the physical deck.
+  const zoneSampleRules=Object.freeze({
+    'ex4:10:1':{count:5,types:['Fire','Fighting'],base:0,amount:30},
+    'lavaBurst':{count:5,types:['Fire'],base:0,amount:20},
+    'destiny:rushingMagma':{count:5,types:['Fire'],base:0,amount:20},
+    'bw8:fieryLicks':{count:4,types:['Fire'],base:0,amount:50},
+    'swsh5BigSand':{count:6,types:['Fighting'],base:0,amount:60},
+    'pl4:3:magmaMantle':{count:3,types:['Fire','Metal'],base:60,amount:20},
+    'skyridge:eruption':{count:1,types:['Fire'],base:20,amount:20,both:true},
+    'dp3:16:thunderClimb':{count:3,types:['Lightning'],base:50,amount:10,mode:'attach'},
+    'sm9DistilledBlast':{count:7,types:['Water'],base:30,amount:30,mode:'return'}
+  });
+  const combustionPillarSample=Object.freeze({count:1,types:['Fire'],base:90,amount:90});
+  function zoneSampleSpec(attack){
+    if(attack?.name==='Combustion Pillar'&&attack.effect?.type==='topDeckDiscardBonus'&&attack.effect?.filter?.subtype==='Fire')return combustionPillarSample;
+    return Object.hasOwn(zoneSampleRules,attack?.effect?.rule)?zoneSampleRules[attack.effect.rule]:null;
+  }
+  function zoneSampleBounds(state,side,spec){
+    const boards=[state.sides[side],...(spec.both?[state.sides[side==='player'?'opponent':'player']]:[])];
+    let max=spec.base,expected=spec.base;
+    for(const board of boards){
+      const n=Math.min(spec.count,board?.energySupply?.length||0),types=board?.energyTypes||[];
+      max+=n*spec.amount;
+      let weight=1,success=0;for(let h=0;h<=spec.count;h++){success+=weight*Math.min(h,n);weight=weight*(spec.count-h)/(h+1);}
+      expected+=spec.amount*success/(2**spec.count)*(types.length?types.filter(t=>spec.types.includes(t)).length/types.length:0);
+    }
+    return {min:spec.base,max,expected};
+  }
+  function resolveZoneSample(attack,ctx,spec,pending){
+    const results=[],discarded=[],captured=[],samples=[];
+    for(const side of [ctx.side,...(spec.both?[ctx.foeSide]:[])]){
+      const board=ctx.state.sides[side],returned=[];
+      for(let i=0;i<spec.count;i++){
+        const heads=coin(ctx);results.push(heads);
+        if(!heads||!Array.isArray(board.energySupply)||!board.energySupply.length)continue;
+        const type=board.energySupply.shift(),match=spec.types.includes(type);samples.push({side,type});
+        if(match&&spec.mode==='attach'){captured.push(type);continue;}
+        if(match&&spec.mode==='return'){returned.push(type);continue;}
+        recordDiscardedEnergy(board,type,1);discarded.push(type);
+      }
+      if(returned.length){board.energySupply.push(...returned);if(ctx.shuffle)ctx.shuffle(ctx.state,board.energySupply);else for(let i=board.energySupply.length-1;i>0;i--){const j=Math.floor(ctx.random(ctx.state)*(i+1));[board.energySupply[i],board.energySupply[j]]=[board.energySupply[j],board.energySupply[i]];}}
+      board.nextEnergyType=board.energySupply?.[0]||null;
+    }
+    const damage=spec.base+spec.amount*samples.filter(x=>spec.types.includes(x.type)).length;
+    if(captured.length)pending.push({...attack.effect,stage:'attach',lightning:captured.length});
+    ctx.state.log.push({type:'coin',side:ctx.side,reason:attack.name,heads:results.filter(Boolean).length,coins:results.length,results});
+    ctx.state.log.push({type:'zoneSample',side:ctx.side,attack:attack.name,samples,discarded,captured,damage});
+    if(attack.effect?.rule==='ex4:10:1')ctx.state.log.push({type:'ex4MagmaSpurt',side:ctx.side,discarded,damage});
+    return damage;
+  }
   function resolveAttack(attack,ctx){
     // Copying an attack-based VSTAR Power consumes the copying player's
     // game-wide VSTAR use, not the original card owner's. Previews use a snapshot.
@@ -28019,22 +28069,7 @@ if(ctx.isAbility){const targetSide=pokemonOn(own(ctx)).includes(s)?ctx.side:ctx.
         if(key==='8:0')damage=40+(us.hand.length>foe.hand.length?20:0);
         if(key==='9:1')damage=50+(Number(d?.damage||0)>=20?20:0);
         if(key==='10:0')damage=30+(d?.conditions?.burn?20:0);
-        if(key==='10:1'){
-          // LuckyDex Classic hybrid: five coin attempts, each heads spends the
-          // next future Basic Energy unit, never the physical deck or current
-          // turn's already drawn Energy. Wrong types are still discarded.
-          const results=[],discarded=[];
-          for(let i=0;i<5;i++){
-            const heads=coin(ctx);results.push(heads);
-            if(!heads||!Array.isArray(us.energySupply)||!us.energySupply.length)continue;
-            const type=us.energySupply.shift();us.nextEnergyType=us.energySupply[0]||null;
-            recordDiscardedEnergy(us,type,1);discarded.push(type);
-          }
-          damage=30*discarded.filter(t=>t==='Fire'||t==='Fighting').length;
-          ctx.state.log.push({type:'coin',side:ctx.side,reason:'Magma Spurt',heads:results.filter(Boolean).length,coins:5,results});
-          ctx.state.log.push({type:'ex4MagmaSpurt',side:ctx.side,discarded,damage});
-          return;
-        }
+        if(key==='10:1'){damage=resolveZoneSample(attack,ctx,zoneSampleRules['ex4:10:1'],pending);return;}
         if(key==='13:1'){const heads=roll(1);damage=40+(heads?40:0);pending.push({...e,heads});return;}
         if(key==='14:0')damage=20+(d?.conditions?.poison?20:0);
         if(key==='14:1')damage=30+20*roll(2);
@@ -29045,7 +29080,8 @@ if(ctx.isAbility){const targetSide=pokemonOn(own(ctx)).includes(s)?ctx.side:ctx.
       else{pending.push(e);return;}
       damage=e.mode==='replace'?amount:damage+amount;
     }
-    visit(attack.effect);
+    const zoneSpec=ctx.state.format==='classic'&&zoneSampleSpec(attack);
+    if(zoneSpec)damage=resolveZoneSample(attack,ctx,zoneSpec,pending);else visit(attack.effect);
     if(ctx.state.format==='classic'&&own(ctx).swsh5PhoebeTurn===ctx.state.turnNumber&&ctx.cardById(ctx.attacker?.cardId)?.pokemonVMAX&&(!damageTarget||damageTarget===other(ctx).active))damageRules.ignoreEffects=true;
     if(ctx.state.format==='classic'&&ctx.cardById(ctx.attacker?.cardId)?.singleStrike&&pokemonOn(own(ctx)).some(p=>ctx.cardById(p.cardId)?.abilities?.some(a=>a.effect?.rule==='swsh7ViseCoach')&&!abilitiesSuppressed(ctx.state,ctx.side,p,ctx.cardById)))damageRules.ignoreResistance=true;
     if(ctx.state.format==='classic'&&ctx.attacker?.cardId==='sm6-71'&&!abilitiesSuppressed(ctx.state,ctx.side,ctx.attacker,ctx.cardById))damageRules={...damageRules,ignoreWeakness:true,ignoreResistance:true};
@@ -31608,5 +31644,5 @@ if(r==='lastResort')return ss.hand.length===0?[{}]:[];if(r==='surgeSwap')return 
     return heads?0:amount;
   }
   function applyAttackEffect(effect,context){return applyEffect(effect,context);}
-  return {outgoingAttackDamage,slimyRoomAllows,activeToolsOf,spectralBreachActive,specialEnergyTextActive,activeSpecialEnergy,attachedSpecialProvider,coin,spiritLinkSpecies,spiritLinkEvolution,usefulToolRecipient,sm11ReturnSnapshot,sm11ReturnDiscarded,ENERGY_CODE,det1EvasionDamage,scoopUpBlocked,metalGogglesActive,attachedSpecialProvidesType,effectTypes,supportsEffect,validateEffect,matchesFilter,totalEnergy,canPayCost,spendGenericEnergy,spendGenericEnergyWithValue,attackDamage,applyAttackEffect,applyEffect,resolveAttack,choicesForEffect,neoDiscoveryReduction,modifierAmount,clearConditions,clearTemporaryEffects,revertShapeshift,switchPokemon,spikemuthSwitch,attackIsPrevented,attackEffectsPrevented,statusIsPrevented,isLocked,isActionLocked,passiveAttackAllowed,applyPersistentEvent,findPassiveRule,healingIsBlocked,canUsePreviousEvolutionAttacks,attackSpecificBonus,consumeDamageGuard,topDeckCountAmount,coinBonusAmount,abilitiesSuppressed,evolutionRule,attackCostOverride,effectiveTypes,applyContinuousRules,swsh3ActiveDamageBonus,attackDamageWithState,wideLensBenchMatchup,toolEffectsSuppressed,resolveDelayedEffects,toolCapacity,coinRerollSource,lentalDefenseReduction,florioReactToAttackDamage,florio114RescueKO,florio114PrismCleanup};
+  return {zoneSampleSpec,zoneSampleBounds,outgoingAttackDamage,slimyRoomAllows,activeToolsOf,spectralBreachActive,specialEnergyTextActive,activeSpecialEnergy,attachedSpecialProvider,coin,spiritLinkSpecies,spiritLinkEvolution,usefulToolRecipient,sm11ReturnSnapshot,sm11ReturnDiscarded,ENERGY_CODE,det1EvasionDamage,scoopUpBlocked,metalGogglesActive,attachedSpecialProvidesType,effectTypes,supportsEffect,validateEffect,matchesFilter,totalEnergy,canPayCost,spendGenericEnergy,spendGenericEnergyWithValue,attackDamage,applyAttackEffect,applyEffect,resolveAttack,choicesForEffect,neoDiscoveryReduction,modifierAmount,clearConditions,clearTemporaryEffects,revertShapeshift,switchPokemon,spikemuthSwitch,attackIsPrevented,attackEffectsPrevented,statusIsPrevented,isLocked,isActionLocked,passiveAttackAllowed,applyPersistentEvent,findPassiveRule,healingIsBlocked,canUsePreviousEvolutionAttacks,attackSpecificBonus,consumeDamageGuard,topDeckCountAmount,coinBonusAmount,abilitiesSuppressed,evolutionRule,attackCostOverride,effectiveTypes,applyContinuousRules,swsh3ActiveDamageBonus,attackDamageWithState,wideLensBenchMatchup,toolEffectsSuppressed,resolveDelayedEffects,toolCapacity,coinRerollSource,lentalDefenseReduction,florioReactToAttackDamage,florio114RescueKO,florio114PrismCleanup};
 });

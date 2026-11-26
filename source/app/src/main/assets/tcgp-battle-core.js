@@ -1459,7 +1459,8 @@
       const base=Math.max(0,Number(attack.damage)||0);
       return {damage:base,text:count?`${base}–${base+40*count}`:String(base),variable:count>0};
     }
-    if(attack.effect?.rule==='ex4:10:1'){const max=30*Math.min(5,state.sides[side].energySupply?.length||0);return {damage:0,text:max?`0–${max}`:'0',variable:max>0};}
+    const zoneSpec=state.format==='classic'&&effects.zoneSampleSpec(attack);
+    if(zoneSpec){const {min,max}=effects.zoneSampleBounds(state,side,zoneSpec);return {damage:min,text:max>min?`${min}–${max}`:String(min),variable:max>min};}
     if(attackHasRandom(attack.effect))return {damage:Math.max(0,Number(attack.damage)||0),text:String(attack.damageText??attack.damage??0),variable:true};
     // Beak Invasion requires a 0-5 card choice before it can resolve. A
     // damage PREVIEW must never run that choice-dependent effect as though
