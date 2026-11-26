@@ -1,11 +1,7 @@
 {
   "printed": 237,
-  "battleReady": 236,
-  "gated": {
-    "swsh7-38": [
-      "Unimplemented Ability: Dew Guard"
-    ]
-  },
+  "battleReady": 237,
+  "gated": {},
   "attacks": 309,
   "abilities": 44,
   "pokemonV": 51,

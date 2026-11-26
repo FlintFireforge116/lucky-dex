@@ -1,6 +1,6 @@
 # SWSH7 — whole-set gap ledger
 
-Canonical prints: **237** | Playable: **236** | Gated: **1**
+Canonical prints: **237** | Playable: **237** | Gated: **0**
 Printed attacks: **309** (228 distinct full signatures) | Abilities: **44** (30 distinct signatures)
 Trainer rule signatures: **25** | Special Energy rule signatures: **4**
 Canonical Git blob: `6d9bff55310a38314eb3f627a2efc4f5d236c5f2`
@@ -9,13 +9,7 @@ The distinct-signature count is an implementation inventory, **not** a count of 
 Gated is determined by the validated generator output; do not infer it from test counts.
 
 ## Blocker groups (implement shared handlers first)
-- **1 prints** — Unimplemented Ability: Dew Guard — swsh7-38
-
-## Every remaining gated print
-
-| Print | Card | Blocking reason(s) |
-|---|---|---|
-| `swsh7-38` | Milotic | Unimplemented Ability: Dew Guard |
+No gated prints in the generated coverage. Independent outcome audit and APK build are still required.
 
 ## Release definition
 

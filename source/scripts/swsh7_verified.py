@@ -191,3 +191,6 @@ def energy(row):
 
 # Stage 7: defender-scoped physical hand attachment lock.
 at(58,'Primeval Beak',ES('PrimevalBeak'))
+
+# Stage 8: player/hand-only Supporter protection (not direct Pokémon effects).
+ab(38,passive(ES('DewGuard')))
