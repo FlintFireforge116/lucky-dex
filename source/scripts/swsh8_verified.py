@@ -206,3 +206,47 @@ def ability(row,a):
  if t=='If this Pokémon would be Knocked Out by damage from an attack, flip a coin. If heads, this Pokémon is not Knocked Out, and its remaining HP becomes 10.':return passive(E('koGuard',mode='surviveCoin',remainingHp=10,attackOnly=True))
  if t=="Your opponent's Single Strike Pokémon's attacks cost Colorless more.":return passive(E('modifier',stat='attackCostColorless',scope='opponentTeam',filter={'tag':'single-strike'},amount=1,duration='whileInPlay'))
  return None
+
+# Stage 5: shared conditions, exact union filters and continuous field rules.
+_stage4_attack=attack
+_stage4_ability=ability
+_stage4_trainer=trainer
+
+def attack(row,a):
+ t=a[3];e=_stage4_attack(row,a)
+ if e is not None:return e
+ if t=='If this Pokémon moved from your Bench to the Active Spot this turn, this attack can be used for Grass.':return E('conditionalAttackCost',cost='G',condition=cond('movedFromBenchThisTurn'))
+ if t=='If this Pokémon has any damage counters on it, this attack can be used for Water.':return E('conditionalAttackCost',cost='W',condition=cond('selfDamaged'))
+ if t=="Put 5 damage counters on your opponent's Pokémon in any way you like.":return E('sm7Rule',rule='sm10CounterSpread',amount=5)
+ if t=='Flip 3 coins. For each tails, discard an Energy from this Pokémon.':return seq(*[E('coinFlip',tails=discard(1)) for _ in range(3)])
+ if t=="If this Pokémon has at least 3 extra Energy attached (in addition to this attack's cost), this attack also does 180 damage to 1 of your opponent's Benched Pokémon. (Don't apply Weakness and Resistance for Benched Pokémon.)":return E('benchDamage',side='opponent',count=1,amount=180,condition=cond('sm9ExtraEnergy',cost='RRCCCC'),optionalCondition=True)
+ if t=='Put up to 3 in any combination of Pokémon and Supporter cards from your discard pile into your hand.':return E('searchChosen',source='discard',amount=3,filter={'anyOf':[{'kind':'pokemon'},{'kind':'trainer','trainerType':'Supporter'}]},optional=True)
+ if t=='If 1 of your Minun used an attack during your last turn, this attack does 100 more damage.':return bonus(100,cond('swsh8LastAttackSpecies',name='Minun'))
+ if t=='Look at the top card of your deck. You may discard that card.':return seq(E('inspectTop',side='self',amount=1),E('chooseOption',options=[{'label':'Keep top card','effect':E('noop')},{'label':'Discard top card','effect':E('discardTop',side='self',amount=1)}]))
+ if t=='If you have 2 or fewer Benched Pokémon, this attack does 140 more damage.':return bonus(140,cond('swsh8BenchAtMost',amount=2))
+ if t=='Search your deck for up to 2 Darkness Energy cards and attach them to this Pokémon. Then, shuffle your deck.':return E('sm7Rule',rule='sm9SearchAttach',amount=2,energyTypes=['Darkness'],sourceSelf=True)
+ if t=='Search your deck for up to 2 basic Energy cards and attach them to your Pokémon in any way you like. Then, shuffle your deck.':return E('sm7Rule',rule='sm9SearchAttach',amount=2)
+ if t=='Put up to 2 Fusion Strike Trainer cards from your discard pile into your hand.':return E('searchChosen',source='discard',amount=2,filter={'kind':'trainer','tag':'fusion-strike'},optional=True)
+ if t=='Your opponent reveals their hand. Choose a card you find there and put it on the bottom of their deck.':return seq(E('revealHand',side='opponent'),E('xy10HandToDeckBottom',side='opponent'))
+ if t=="If your opponent's Basic Pokémon is Knocked Out by damage from this attack, take 2 more Prize cards.":return E('sm7Rule',rule='swsh8TurnProfit')
+ if t=='Put 3 damage counters on 1 of your Pokémon.':return E('chooseTarget',target='selfPokemon',forceChoose=True,effect=E('placeDamageCounters',target='selfPokemon',amount=30))
+ if t=='Attach any number of Grass Energy cards from your hand to your Pokémon in any way you like.':return E('sm7Rule',rule='sm12HandAttach',left=99,basicOnly=True,energyType='Grass',optional=True)
+ if t=='Switch this Pokémon with 1 of your Benched Pokémon. If you do, your opponent switches their Active Pokémon with 1 of their Benched Pokémon.':return E('sequence',condition=cond('benchAtLeast',amount=1),effects=[E('switch',target='self'),E('forceOpponentSwitch',chooseBy='defender')])
+ return None
+
+def ability(row,a):
+ t=a[2];e=_stage4_ability(row,a)
+ if e is not None:return e
+ if t=="Prevent all effects of attacks from your opponent's Pokémon done to all of your Pokémon that have Energy attached.(Existing effects are not removed. Damage is not an effect.)":return passive(E('sm7Rule',rule='swsh7SolarRevelation'))
+ if t=='All of your Fusion Strike Pokémon take 20 less damage from attacks from your opponent\'s Pokémon (after applying Weakness and Resistance). You can\'t apply more than 1 Lesson in Zeal Ability at a time.':return passive(E('modifier',stat='damageReduction',amount=20,scope='team',duration='whileInPlay',filter={'tag':'fusion-strike'},nonStacking=True))
+ if t=='Once during your turn, you may attach a Water Energy card or a Fighting Energy card from your hand to 1 of your Pokémon.':return activated(E('sm7Rule',rule='sm12HandAttach',left=1,basicOnly=True,energyTypes=['Water','Fighting'],optional=True))
+ for name in ['Latios','Latias']:
+  if t==f'Once during your turn, you may attach a Psychic Energy card from your hand to 1 of your {name}.':return activated(E('sm7Rule',rule='sm12HandAttach',left=1,basicOnly=True,energyType='Psychic',targetFilter={'name':name},optional=True))
+ if t=='Colorless Pokémon in play (both yours and your opponent\'s) have no Weakness.':return passive(E('weaknessGuard',duration='whileInPlay',scope='both',filter={'subtype':'Colorless'}))
+ if t=='As long as this Pokémon is in play, it is Psychic and Darkness type.':return passive(E('noop')) # effectiveTypes implements the continuous dual type
+ return None
+
+def trainer(row):
+ t=row[13]
+ if t and t[0]=='You can use this card only during your first turn.' and t[1]=='Search your deck for up to 2 Basic Pokémon and put them onto your Bench. Then, shuffle your deck.':return 'Item',E('benchFromDeck',amount=2,filter={'kind':'pokemon','stage':'Basic'},choose=True,optional=True,condition=cond('ownTurnCountAtMost',amount=1))
+ return _stage4_trainer(row)

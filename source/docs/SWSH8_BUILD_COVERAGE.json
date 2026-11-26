@@ -2,41 +2,16 @@
   "printed": 284,
   "canonicalTotal": 284,
   "notImported": [],
-  "battleReady": 234,
+  "battleReady": 258,
   "gated": {
     "swsh8-11": [
       "Unimplemented attack: Healing Circle"
     ],
-    "swsh8-14": [
-      "Unimplemented attack: Ninja Tornado"
-    ],
-    "swsh8-35": [
-      "Unimplemented attack: Body Splash"
-    ],
-    "swsh8-41": [
-      "Unimplemented attack: Exciting Flame"
-    ],
-    "swsh8-42": [
-      "Unimplemented attack: Glistening Droplets",
-      "Unimplemented Ability: Lesson in Zeal"
-    ],
     "swsh8-53": [
       "Unimplemented attack: Multishot Star"
     ],
-    "swsh8-59": [
-      "Unimplemented attack: Dive and Rescue"
-    ],
-    "swsh8-64": [
-      "Unimplemented Ability: Muddy Maker"
-    ],
-    "swsh8-66": [
-      "Invalid effect: Single Strike Jammer: effect: invalid modifier scope"
-    ],
     "swsh8-67": [
       "Unimplemented Ability: Rapid Strike Canceler"
-    ],
-    "swsh8-72": [
-      "Unimplemented attack: Daruma Headbutt"
     ],
     "swsh8-77": [
       "Unimplemented Ability: Pitch a Pyukumuku"
@@ -44,9 +19,6 @@
     "swsh8-79": [
       "Unimplemented attack: G-Max Spiral",
       "Unimplemented Ability: Double Gunner"
-    ],
-    "swsh8-89": [
-      "Unimplemented attack: Spark Duo"
     ],
     "swsh8-108": [
       "Unimplemented Ability: Maximum Downer"
@@ -60,53 +32,17 @@
     "swsh8-124": [
       "Unimplemented attack: Melodious Echo"
     ],
-    "swsh8-131": [
-      "Unimplemented attack: Dig It Up"
-    ],
     "swsh8-137": [
       "Unimplemented Ability: Desperate Blast"
     ],
-    "swsh8-145": [
-      "Unimplemented attack: Rapid Spin"
-    ],
-    "swsh8-149": [
-      "Unimplemented attack: Raised Bad"
-    ],
     "swsh8-173": [
       "Unimplemented attack: Bone Block"
-    ],
-    "swsh8-178": [
-      "Unimplemented attack: Rear Attack"
-    ],
-    "swsh8-181": [
-      "Unimplemented attack: Call to Muster"
-    ],
-    "swsh8-193": [
-      "Unimplemented Ability: Red Assist"
-    ],
-    "swsh8-194": [
-      "Unimplemented Ability: Blue Assist"
     ],
     "swsh8-197": [
       "Unimplemented Ability: Slimy Room"
     ],
     "swsh8-203": [
       "Unimplemented Ability: Expert in Roundness"
-    ],
-    "swsh8-207": [
-      "Unimplemented Ability: Mysterious Nest"
-    ],
-    "swsh8-209": [
-      "Unimplemented attack: Sketching Trash"
-    ],
-    "swsh8-211": [
-      "Unimplemented attack: Willful Busybody"
-    ],
-    "swsh8-218": [
-      "Unimplemented attack: Turn a Profit"
-    ],
-    "swsh8-225": [
-      "Unimplemented Trainer effect"
     ],
     "swsh8-230": [
       "Unimplemented Trainer effect"
@@ -129,13 +65,6 @@
     "swsh8-244": [
       "Unimplemented Special Energy rules"
     ],
-    "swsh8-245": [
-      "Unimplemented attack: Leaflet Dance"
-    ],
-    "swsh8-253": [
-      "Unimplemented attack: Shadow Impact",
-      "Unimplemented Ability: Two-Faced"
-    ],
     "swsh8-260": [
       "Unimplemented Trainer effect"
     ],
@@ -147,10 +76,7 @@
       "Unimplemented Ability: Double Gunner"
     ],
     "swsh8-270": [
-      "Unimplemented Ability: Solar Revelation"
-    ],
-    "swsh8-272": [
-      "Unimplemented attack: Turn a Profit"
+      "Required Pokémon V evolution parent is not yet enabled"
     ],
     "swsh8-275": [
       "Unimplemented Trainer effect"

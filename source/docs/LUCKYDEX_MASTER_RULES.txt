@@ -6209,3 +6209,11 @@ v0.69.529 — Fusion Strike stage 4 (complete 284-print source, partial mechanic
 - Focused suite 57/57 includes 14 new bilateral checks. Remaining 50 gated prints are explicitly listed in the ledger. Next batch should prioritise shared complex mechanics and cross-print variants; independent audit and APK/device checks are separate evidence.
 
 Final v0.69.529 validation: full offline preparation exited 0; 2030/2030 gameplay test invocations, including 57/57 Fusion Strike checks; zero failures, skips or cancellations.
+
+v0.69.530 — Fusion Strike stage 5 (shared conditions and field mechanics)
+- Canonical source unchanged: 284 prints, 391 attacks, 30 Abilities; 258 enabled (+24), 26 gated. All 234 previously enabled card descriptors compare equal. Use exact full printed text and reusable primitives; keep unsupported effects gated. Espeon VMAX remains gated by the set-local evolution-parent guard even though Solar Revelation has a mapping.
+- Conditional attack cost must use the current slot and exact turn. Opponent-team modifiers must be honored by both validation and runtime, including positive typed cost adjustments. Use OR filters for union recovery; never drop the printed restrictions. Energy acceleration from hand uses actual physical cards and precise recipient filters. Preserve hybrid deck-search coin gate.
+- Additional Bench damage is not a selected-only replacement of normal attack damage. Greedent bonus Prizes require the actual qualifying attack damage KO, not incidental KO. Lesson in Zeal is non-stacking. Dunsparce protects Colorless on both sides. Hoopa's dual type is continuous/suppressible and friendly damage counters are not attack recoil.
+- 81/81 focused checks passed, with 24 new bilateral outcome checks. Full offline preparation and Android/device validation are separate evidence. See docs/SWSH8_STAGE5_v0.69.530.md.
+
+Final v0.69.530 validation: full offline preparation exited 0; 2054/2054 gameplay checks, including 81/81 Fusion Strike checks; 12/12 manifest unit tests. Zero failures, skips or cancellations.
