@@ -144,3 +144,29 @@ def energy(row):
 def ability(row,a):
  if (row[0],a[0]) in [('17','Elder Tree Barrier'),('149','All Just a Dream'),('29','Scorching Aura'),('123','Poison Peak')]:return passive(E('noop')) # core KO/checkup hooks
  return _stage4_ability(row,a)
+
+# Stage 6: exact conditional attack effects and Lost Zone support.
+_stage5_attack=attack
+_stage5_ability=ability
+_stage5_trainer=trainer
+def attack(row,a):
+ t=a[3]
+ if t=="During your next turn, this Pokémon's attacks do 120 more damage to your opponent's Active Pokémon (before applying Weakness and Resistance).":return E('nextAttackBonus',attackName='*',amount=120)
+ if t=='Each player reveals their hand. If a card in your opponent\'s hand has the same name as a card in your hand, this attack does 90 more damage.':return seq(bonus(90,cond('swsh11SharedHandName')),E('revealHand',side='self'),E('revealHand',side='opponent'))
+ if t=="Choose 2 of your opponent's Pokémon and put 2 damage counters on each of them.":return E('sm7Rule',rule='swsh11DistinctCounters')
+ if t=='This attack does 20 damage for each Pokémon Tool card in the Lost Zone (both yours and your opponent\'s).':return seq(E('discardCountDamage',zone='lostZone',side='self',filter={'kind':'trainer','trainerType':'Tool'},amount=20,mode='replace'),E('discardCountDamage',zone='lostZone',side='opponent',filter={'kind':'trainer','trainerType':'Tool'},amount=20,mode='add'))
+ if t=="Look at the top card of your opponent's deck. You may have your opponent shuffle their deck.":return seq(E('inspectTop',side='opponent',amount=1),optional('Shuffle opponent’s deck',E('shuffleDeck',side='opponent')))
+ if t=='Discard your hand. If you discarded 5 or more cards in this way, this attack does 150 more damage.':return seq(bonus(150,cond('swsh11HandAtLeast',amount=5)),E('discardHand',side='self',amount=999))
+ if t=='Attach up to 2 Fighting Energy cards from your hand to your Pokémon in any way you like.':return E('sm7Rule',rule='sm12HandAttach',left=2,energyType='Fighting',optional=True)
+ if t=="Put the top card of your opponent's deck in the Lost Zone.":return E('sm7Rule',rule='swsh11LostTop',side='opponent',amount=1)
+ if t=="Put the top 3 cards of your deck in the Lost Zone.":return E('sm7Rule',rule='swsh11LostTop',amount=3)
+ if t=="Move 2 damage counters from each of your Pokémon to 1 of your opponent's Pokémon.":return E('sm7Rule',rule='swsh11Moonglow')
+ return _stage5_attack(row,a)
+def ability(row,a):
+ t=a[2]
+ if t=='Once during your turn, you may have either player shuffle their hand and put it on the bottom of their deck. If that player put any cards on the bottom of their deck in this way, they draw 4 cards.':return activated(E('sm7Rule',rule='swsh11Seething'))
+ if t=='Once during your turn, you may draw 3 cards. If you use this Ability, your turn ends.':return activated(seq(E('draw',amount=3),E('endTurn')))
+ return _stage5_ability(row,a)
+def trainer(row):
+ if row[1]=='Fantina':return 'Supporter',E('modifier',stat='damageReduction',scope='team',amount=120,duration='opponentTurn',opponentFilter={'tag':'pokemon-v'},condition=cond('swsh11LostAtLeast',amount=10))
+ return _stage5_trainer(row)

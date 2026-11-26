@@ -2,16 +2,13 @@
   "printed": 217,
   "canonicalTotal": 217,
   "notImported": [],
-  "battleReady": 156,
+  "battleReady": 168,
   "gated": {
     "swsh11-20": [
       "Unimplemented Ability: Jamming Attachment"
     ],
     "swsh11-34": [
       "Unimplemented attack: Floe Return"
-    ],
-    "swsh11-37": [
-      "Unimplemented Ability: Seething Currents"
     ],
     "swsh11-40": [
       "Unimplemented Ability: Oceanic Accompaniment"
@@ -24,11 +21,7 @@
       "Unimplemented Ability: Glaciated World"
     ],
     "swsh11-58": [
-      "Unimplemented attack: Scrap Short",
-      "Unimplemented Ability: Instant Charge"
-    ],
-    "swsh11-61": [
-      "Unimplemented attack: Coil"
+      "Unimplemented attack: Scrap Short"
     ],
     "swsh11-62": [
       "Unimplemented attack: Wonder Storm",
@@ -47,15 +40,6 @@
     "swsh11-73": [
       "Unimplemented Ability: Puppet Offering"
     ],
-    "swsh11-74": [
-      "Unimplemented attack: Moonglow Reverse"
-    ],
-    "swsh11-78": [
-      "Unimplemented attack: Synchro Kinesis"
-    ],
-    "swsh11-81": [
-      "Unimplemented attack: Night Footsteps"
-    ],
     "swsh11-82": [
       "Unimplemented attack: Blossom Tail",
       "Unimplemented Ability: Guardian of Love"
@@ -71,15 +55,10 @@
       "Unimplemented attack: Geo Cannon"
     ],
     "swsh11-93": [
-      "Unimplemented attack: Lost Dive",
       "Unimplemented attack: Ancient Star"
     ],
     "swsh11-107": [
       "Unimplemented Ability: Lost Block"
-    ],
-    "swsh11-111": [
-      "Unimplemented attack: Power Stone",
-      "Unimplemented attack: Lost Shot"
     ],
     "swsh11-116": [
       "Unimplemented attack: Sucker Punch and Turn"
@@ -108,9 +87,6 @@
     "swsh11-140": [
       "Unimplemented attack: Branch Calculation"
     ],
-    "swsh11-141": [
-      "Unimplemented attack: Garbage Attack"
-    ],
     "swsh11-142": [
       "Unimplemented attack: Downgrading Beam"
     ],
@@ -118,14 +94,8 @@
       "Unimplemented attack: Thumping Snore",
       "Unimplemented Ability: Unfazed Fat"
     ],
-    "swsh11-144": [
-      "Unimplemented attack: Mischievous Tail"
-    ],
     "swsh11-145": [
       "Unimplemented attack: All-You-Can-Grab"
-    ],
-    "swsh11-151": [
-      "Unimplemented attack: Spill Out"
     ],
     "swsh11-152": [
       "Unimplemented Trainer effect"
@@ -134,9 +104,6 @@
       "Unimplemented Trainer effect"
     ],
     "swsh11-156": [
-      "Unimplemented Trainer effect"
-    ],
-    "swsh11-157": [
       "Unimplemented Trainer effect"
     ],
     "swsh11-160": [
@@ -158,12 +125,10 @@
       "Unimplemented Trainer effect"
     ],
     "swsh11-176": [
-      "Unimplemented attack: Scrap Short",
-      "Unimplemented Ability: Instant Charge"
+      "Unimplemented attack: Scrap Short"
     ],
     "swsh11-177": [
-      "Unimplemented attack: Scrap Short",
-      "Unimplemented Ability: Instant Charge"
+      "Unimplemented attack: Scrap Short"
     ],
     "swsh11-178": [
       "Unimplemented attack: Blossom Tail",
@@ -177,9 +142,6 @@
       "Unimplemented attack: Flight Surf",
       "Unimplemented Ability: Vanishing Wings"
     ],
-    "swsh11-191": [
-      "Unimplemented Trainer effect"
-    ],
     "swsh11-194": [
       "Unimplemented Trainer effect"
     ],
@@ -191,11 +153,7 @@
       "Unimplemented Ability: Glaciated World"
     ],
     "swsh11-199": [
-      "Unimplemented attack: Lost Dive",
       "Unimplemented attack: Ancient Star"
-    ],
-    "swsh11-206": [
-      "Unimplemented Trainer effect"
     ],
     "swsh11-209": [
       "Unimplemented Trainer effect"
