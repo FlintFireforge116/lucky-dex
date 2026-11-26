@@ -1,103 +1,148 @@
 {
-  "printed": 121,
+  "printed": 186,
   "canonicalTotal": 186,
-  "notImported": [
-    "swsh9-4",
-    "swsh9-5",
-    "swsh9-12",
-    "swsh9-21",
-    "swsh9-26",
-    "swsh9-27",
-    "swsh9-28",
-    "swsh9-29",
-    "swsh9-37",
-    "swsh9-41",
-    "swsh9-45",
-    "swsh9-54",
-    "swsh9-62",
-    "swsh9-65",
-    "swsh9-66",
-    "swsh9-68",
-    "swsh9-69",
-    "swsh9-71",
-    "swsh9-79",
-    "swsh9-85",
-    "swsh9-87",
-    "swsh9-88",
-    "swsh9-89",
-    "swsh9-94",
-    "swsh9-95",
-    "swsh9-99",
-    "swsh9-101",
-    "swsh9-104",
-    "swsh9-105",
-    "swsh9-109",
-    "swsh9-110",
-    "swsh9-113",
-    "swsh9-114",
-    "swsh9-116",
-    "swsh9-119",
-    "swsh9-122",
-    "swsh9-123",
-    "swsh9-131",
-    "swsh9-133",
-    "swsh9-134",
-    "swsh9-137",
-    "swsh9-141",
-    "swsh9-143",
-    "swsh9-144",
-    "swsh9-146",
-    "swsh9-148",
-    "swsh9-149",
-    "swsh9-157",
-    "swsh9-158",
-    "swsh9-161",
-    "swsh9-162",
-    "swsh9-163",
-    "swsh9-164",
-    "swsh9-165",
-    "swsh9-166",
-    "swsh9-168",
-    "swsh9-170",
-    "swsh9-172",
-    "swsh9-175",
-    "swsh9-176",
-    "swsh9-177",
-    "swsh9-179",
-    "swsh9-180",
-    "swsh9-184",
-    "swsh9-185"
-  ],
-  "battleReady": 113,
+  "notImported": [],
+  "battleReady": 142,
   "gated": {
-    "swsh9-44": [
-      "Unimplemented attack: Block Slider"
+    "swsh9-4": [
+      "Unimplemented attack: Powdery Uppercut"
+    ],
+    "swsh9-5": [
+      "Unimplemented Ability: Curative Bower"
+    ],
+    "swsh9-12": [
+      "Unimplemented Ability: Lively Fruit"
+    ],
+    "swsh9-26": [
+      "Unimplemented attack: Infernal Vortex"
+    ],
+    "swsh9-37": [
+      "Unimplemented Ability: Emergency Surfacing"
+    ],
+    "swsh9-41": [
+      "Unimplemented Ability: Wave Veil"
+    ],
+    "swsh9-45": [
+      "Unimplemented attack: Fast Charge",
+      "Unimplemented attack: Dynamic Spark"
     ],
     "swsh9-47": [
       "Unimplemented attack: Explosive Bolt",
       "Unimplemented attack: High-Voltage Current"
     ],
-    "swsh9-106": [
-      "Unimplemented attack: Draconic Impulse"
+    "swsh9-54": [
+      "Unimplemented attack: Moonlit Miracle"
     ],
-    "swsh9-126": [
-      "Unimplemented Ability: Sudden Cyclone"
+    "swsh9-62": [
+      "Unimplemented Ability: Special Transfer"
     ],
-    "swsh9-127": [
-      "Unimplemented attack: Showboating Pose"
+    "swsh9-66": [
+      "Unimplemented attack: Tri Recharge"
     ],
-    "swsh9-129": [
+    "swsh9-68": [
+      "Unimplemented attack: Jealous Eyes"
+    ],
+    "swsh9-69": [
+      "Unimplemented attack: Ominous Numbers"
+    ],
+    "swsh9-71": [
+      "Unimplemented attack: Rainbow Flavor",
+      "Unimplemented Ability: Additional Order"
+    ],
+    "swsh9-79": [
+      "Unimplemented attack: Aura Sphere Volley",
+      "Unimplemented Ability: Roaring Resolve"
+    ],
+    "swsh9-85": [
+      "Unimplemented Ability: Sludge Street"
+    ],
+    "swsh9-87": [
+      "Unimplemented attack: Ransack"
+    ],
+    "swsh9-88": [
+      "Unimplemented Ability: Boss Pockets"
+    ],
+    "swsh9-89": [
+      "Unimplemented attack: Ticking Terror"
+    ],
+    "swsh9-95": [
+      "Unimplemented attack: Hangry Spike"
+    ],
+    "swsh9-110": [
+      "Unimplemented attack: Ultra Evolution"
+    ],
+    "swsh9-114": [
+      "Unimplemented attack: Slosh 'n' Crash"
+    ],
+    "swsh9-116": [
+      "Unimplemented attack: Hurricane"
+    ],
+    "swsh9-131": [
+      "Unimplemented Trainer effect"
+    ],
+    "swsh9-133": [
+      "Unimplemented Trainer effect"
+    ],
+    "swsh9-134": [
+      "Unimplemented Trainer effect"
+    ],
+    "swsh9-137": [
+      "Unimplemented Trainer effect"
+    ],
+    "swsh9-143": [
+      "Unimplemented Trainer effect"
+    ],
+    "swsh9-144": [
+      "Unimplemented Trainer effect"
+    ],
+    "swsh9-148": [
+      "Unimplemented Trainer effect"
+    ],
+    "swsh9-149": [
       "Unimplemented Trainer effect"
     ],
     "swsh9-151": [
       "Unimplemented Special Energy rules"
     ],
+    "swsh9-157": [
+      "Unimplemented attack: Lightning Blast"
+    ],
+    "swsh9-158": [
+      "Unimplemented attack: Fast Charge",
+      "Unimplemented attack: Dynamic Spark"
+    ],
+    "swsh9-161": [
+      "Unimplemented Ability: Boss Pockets"
+    ],
+    "swsh9-162": [
+      "Unimplemented Ability: Boss Pockets"
+    ],
+    "swsh9-168": [
+      "Unimplemented Trainer effect"
+    ],
+    "swsh9-170": [
+      "Unimplemented Trainer effect"
+    ],
+    "swsh9-172": [
+      "Unimplemented Trainer effect"
+    ],
+    "swsh9-177": [
+      "Unimplemented Trainer effect"
+    ],
+    "swsh9-179": [
+      "Unimplemented Trainer effect"
+    ],
+    "swsh9-180": [
+      "Unimplemented Trainer effect"
+    ],
     "swsh9-182": [
-      "Unimplemented attack: Thunderous Kick",
-      "Unimplemented Ability: Fighting Instinct"
+      "Unimplemented attack: Thunderous Kick"
+    ],
+    "swsh9-185": [
+      "Unimplemented Trainer effect"
     ]
   },
-  "attacks": 162,
-  "abilities": 14,
+  "attacks": 235,
+  "abilities": 34,
   "sourceGitBlob": "6c33800813e0375da544c26d2e97992a768c015f"
 }

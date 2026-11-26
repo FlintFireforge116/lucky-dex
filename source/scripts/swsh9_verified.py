@@ -89,3 +89,52 @@ def trainer(row):
 
 def seq_trainer():
  return 'Supporter',seq(E('drawToHandSize',size=5),E('drawToHandSize',size=8,condition=cond('sm12OwnKoLastTurn'),optionalCondition=True))
+
+# Stage 3: complete main-set source, reuse validated target/choice machinery.
+from sm7_verified import passive
+_stage2_attack=attack
+_stage2_ability=ability
+_stage2_trainer=trainer
+
+def attack(row,a):
+ t=a[3]
+ if t=="If this Pokémon has any damage counters on it, this attack does 70 more damage. This attack's damage isn't affected by Weakness.":return seq(bonus(70,cond('selfDamaged')),E('damageRule',ignoreWeakness=True))
+ if t=='Discard all Energy from this Pokémon.':return E('discardEnergyCard',target='self',amount='all')
+ if t=='You may attach up to 2 basic Energy cards from your hand to your Pokémon in any way you like.':return E('sm7Rule',rule='sm12HandAttach',left=2,basicOnly=True,optional=True)
+ if t=='Search your deck for up to 5 Water Energy cards and attach them to your Pokémon in any way you like. Then, shuffle your deck.':return E('sm7Rule',rule='sm9SearchAttach',amount=5,energyTypes=['Water'])
+ if t=='Flip a coin. If heads, search your deck for up to 5 Water Energy cards and attach them to your Pokémon in any way you like. Then, shuffle your deck.':return coin(E('sm7Rule',rule='sm9SearchAttach',amount=5,energyTypes=['Water']))
+ if t=='Search your deck for up to 3 basic Energy cards and attach them to your Pokémon V in any way you like. Then, shuffle your deck.':return E('sm7Rule',rule='sm9SearchAttach',amount=3,targetFilter={'tag':'pokemon-v'})
+ if t=="During your opponent's next turn, they can't play any Pokémon Tool or Special Energy cards from their hand.":return seq(*(E('actionLock',side='opponent',cardType=k,duration='opponentTurn') for k in ['Tool','SpecialEnergy']))
+ if t=="This attack does 60 damage to 1 of your opponent's Pokémon for each Energy attached to this Pokémon. (Don't apply Weakness and Resistance for Benched Pokémon.) (You can't use more than 1 VSTAR Power in a game.)":return E('selectedEnergyDamage',target='opponentPokemon',source='self',amount=60,countProvidedType=True)
+ if t=="This attack does 30 damage to 1 of your opponent's Pokémon for each Darkness Energy attached to this Pokémon. (Don't apply Weakness and Resistance for Benched Pokémon.)":return E('selectedEnergyDamage',target='opponentPokemon',source='self',amount=30,energyType='Darkness',countProvidedType=True)
+ if t=='Attach up to 2 basic Energy cards from your discard pile to 1 of your Benched Pokémon.':return E('sm7Rule',rule='sm12DiscardAttach',left=2,benchOnly=True,sameTarget=True,optional=True)
+ if t=="If your opponent's Active Pokémon is a Pokémon VMAX, this attack does 160 more damage, and discard 3 Energy from this Pokémon.":return seq(bonus(160,cond('opponentMatches',filter={'tag':'pokemon-vmax'})),E('discardEnergyCard',target='self',amount=3,condition=cond('opponentMatches',filter={'tag':'pokemon-vmax'})))
+ if t=="Switch 1 of your opponent's Benched Pokémon with their Active Pokémon. This attack does 40 damage to the new Active Pokémon.":return E('sm7Rule',rule='sm9DragOff',amount=40)
+ if t=="Your opponent shuffles their Active Pokémon and all attached cards into their deck.":return E('shuffleIntoDeck',target='opponentActive',includeAttached=True)
+ if t=="If any of your Pokémon were Knocked Out by damage from an attack from your opponent's Pokémon during their last turn, this attack does 120 more damage.":return bonus(120,cond('koByOpponentAttackLastTurn'))
+ if t=="Put 2 damage counters on your opponent's Pokémon in any way you like.":return E('sm7Rule',rule='sm10CounterSpread',amount=2)
+ if t=="During your next turn, this Pokémon can't use Dragon Strike.":return E('lock',target='self',action='attack',attackName='Dragon Strike',duration='nextOwnTurn')
+ if t=="Your opponent's Active Pokémon is now Confused and Poisoned.":return seq(E('status',target='opponentActive',status='confusion'),E('status',target='opponentActive',status='poison'))
+ if t=="Discard a random card from your opponent's hand.":return E('discardHand',side='opponent',amount=1,random=True)
+ if t=="If this Pokémon has any damage counters on it, this attack does 70 more damage.":return bonus(70,cond('selfDamaged'))
+ if t=='This attack does 40 damage to 1 of your opponent\'s Pokémon for each Fusion Strike Energy attached to all of your Pokémon. (Don\'t apply Weakness and Resistance for Benched Pokémon.)':return E('selectedEnergyDamage',target='opponentPokemon',source='self',amount=40,swsh9FusionField=True)
+ return _stage2_attack(row,a)
+
+def ability(row,a):
+ t=a[2]
+ if t=="During your turn, you may search your deck for up to 2 cards and put them into your hand. Then, shuffle your deck. (You can't use more than 1 VSTAR Power in a game.)":return activated(E('searchChosen',amount=2,filter={},optional=True),vstarPower=True)
+ if t=="Once during your turn, you may discard your hand and draw 5 cards. If you use this Ability, your turn ends.":return activated(seq(E('discardHand',side='self',amount=999),E('draw',amount=5),E('endTurn')))
+ if t=="This Pokémon takes 100 less damage from attacks from your opponent's Pokémon V (after applying Weakness and Resistance).":return passive(mod('damageReduction',100,opponentFilter={'tag':'pokemon-v'}))
+ if t=="Your Basic Pokémon take 20 less damage from attacks from your opponent's Pokémon (after applying Weakness and Resistance).":return passive(E('modifier',stat='damageReduction',amount=20,scope='team',duration='whileInPlay',filter={'stage':'Basic'}))
+ if t=="When you play this Pokémon from your hand onto your Bench, you may have your opponent switch their Active Pokémon with 1 of their Benched Pokémon.":return dict(type='triggered',event='benched',fromHandOnly=True,effect=E('sm7Rule',rule='sm12OptionalSwitch'))
+ if t=="When you play this Pokémon from your hand onto your Bench during your turn, you may prevent all damage done to this Mimikyu V by attacks from your opponent's Pokémon until the end of your opponent's next turn.":return dict(type='triggered',event='benched',fromHandOnly=True,effect=E('chooseOption',options=[{'label':'Protect Mimikyu V','effect':E('preventDamage',target='self',duration='opponentTurn')},{'label':'Skip','effect':E('noop')}]))
+ if t=="When you play this Pokémon from your hand to evolve 1 of your Pokémon during your turn, you may prevent all damage from and effects of attacks from your opponent's Pokémon done to this Pokémon until the end of your opponent's next turn.":return dict(type='triggered',event='evolved',fromHandOnly=True,effect=E('chooseOption',options=[{'label':'Protect Garchomp','effect':E('preventDamage',target='self',duration='opponentTurn',preventEffects=True)},{'label':'Skip','effect':E('noop')}]))
+ if t=="This Pokémon's attacks cost Colorless less for each of your opponent's Pokémon V in play.":return passive(mod('attackCost',-1,perOpponentFilter={'tag':'pokemon-v'}))
+ return _stage2_ability(row,a)
+
+def trainer(row):
+ t=row[13][0]
+ if t=="Your opponent reveals their hand, and you draw a card for each Trainer card you find there.":return 'Supporter',seq(E('revealHand',side='opponent'),E('draw',amount=0,swsh9OpponentTrainerCount=True))
+ if t=="Search your deck for up to 3 Basic Pokémon that don't have a Rule Box and put them onto your Bench. Then, shuffle your deck. (Pokémon V, Pokémon-GX, etc. have Rule Boxes.)":return 'Supporter',E('benchFromDeck',amount=3,filter={'kind':'pokemon','stage':'Basic','hasRuleBox':False},choose=True,optional=True)
+ if t=="If the Pokémon this card is attached to doesn't have a Rule Box, it takes 30 less damage from attacks from your opponent's Pokémon (after applying Weakness and Resistance). (Pokémon V, Pokémon-GX, etc. have Rule Boxes.)":return 'Tool',mod('damageReduction',30,filter={'hasRuleBox':False})
+ return _stage2_trainer(row)
