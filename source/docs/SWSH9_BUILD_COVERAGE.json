@@ -1,43 +1,25 @@
 {
-  "printed": 85,
+  "printed": 121,
   "canonicalTotal": 186,
   "notImported": [
     "swsh9-4",
     "swsh9-5",
-    "swsh9-7",
-    "swsh9-8",
-    "swsh9-10",
-    "swsh9-11",
     "swsh9-12",
-    "swsh9-14",
-    "swsh9-20",
     "swsh9-21",
     "swsh9-26",
     "swsh9-27",
     "swsh9-28",
     "swsh9-29",
-    "swsh9-31",
     "swsh9-37",
-    "swsh9-38",
-    "swsh9-40",
     "swsh9-41",
-    "swsh9-44",
     "swsh9-45",
-    "swsh9-47",
-    "swsh9-51",
-    "swsh9-52",
     "swsh9-54",
-    "swsh9-59",
     "swsh9-62",
-    "swsh9-64",
     "swsh9-65",
     "swsh9-66",
-    "swsh9-67",
     "swsh9-68",
     "swsh9-69",
     "swsh9-71",
-    "swsh9-76",
-    "swsh9-77",
     "swsh9-79",
     "swsh9-85",
     "swsh9-87",
@@ -45,13 +27,10 @@
     "swsh9-89",
     "swsh9-94",
     "swsh9-95",
-    "swsh9-98",
     "swsh9-99",
-    "swsh9-100",
     "swsh9-101",
     "swsh9-104",
     "swsh9-105",
-    "swsh9-106",
     "swsh9-109",
     "swsh9-110",
     "swsh9-113",
@@ -60,26 +39,18 @@
     "swsh9-119",
     "swsh9-122",
     "swsh9-123",
-    "swsh9-126",
-    "swsh9-127",
-    "swsh9-129",
     "swsh9-131",
     "swsh9-133",
     "swsh9-134",
     "swsh9-137",
-    "swsh9-138",
     "swsh9-141",
     "swsh9-143",
     "swsh9-144",
-    "swsh9-145",
     "swsh9-146",
     "swsh9-148",
     "swsh9-149",
-    "swsh9-155",
-    "swsh9-156",
     "swsh9-157",
     "swsh9-158",
-    "swsh9-160",
     "swsh9-161",
     "swsh9-162",
     "swsh9-163",
@@ -87,38 +58,46 @@
     "swsh9-165",
     "swsh9-166",
     "swsh9-168",
-    "swsh9-169",
     "swsh9-170",
-    "swsh9-171",
     "swsh9-172",
-    "swsh9-173",
     "swsh9-175",
     "swsh9-176",
     "swsh9-177",
-    "swsh9-178",
     "swsh9-179",
     "swsh9-180",
-    "swsh9-181",
-    "swsh9-182",
-    "swsh9-183",
     "swsh9-184",
     "swsh9-185"
   ],
-  "battleReady": 82,
+  "battleReady": 113,
   "gated": {
-    "swsh9-18": [
-      "Unimplemented attack: Star Blaze",
-      "VSTAR integration awaiting dedicated outcome tests"
+    "swsh9-44": [
+      "Unimplemented attack: Block Slider"
+    ],
+    "swsh9-47": [
+      "Unimplemented attack: Explosive Bolt",
+      "Unimplemented attack: High-Voltage Current"
+    ],
+    "swsh9-106": [
+      "Unimplemented attack: Draconic Impulse"
+    ],
+    "swsh9-126": [
+      "Unimplemented Ability: Sudden Cyclone"
+    ],
+    "swsh9-127": [
+      "Unimplemented attack: Showboating Pose"
+    ],
+    "swsh9-129": [
+      "Unimplemented Trainer effect"
     ],
     "swsh9-151": [
       "Unimplemented Special Energy rules"
     ],
-    "swsh9-174": [
-      "Unimplemented attack: Star Blaze",
-      "VSTAR integration awaiting dedicated outcome tests"
+    "swsh9-182": [
+      "Unimplemented attack: Thunderous Kick",
+      "Unimplemented Ability: Fighting Instinct"
     ]
   },
-  "attacks": 116,
-  "abilities": 4,
+  "attacks": 162,
+  "abilities": 14,
   "sourceGitBlob": "6c33800813e0375da544c26d2e97992a768c015f"
 }

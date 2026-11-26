@@ -1,0 +1,9 @@
+# Brilliant Stars — stage 2 (v0.69.537)
+
+Main set remains pinned to blob `6c33800813e0375da544c26d2e97992a768c015f`. Two new independent transfer packets add 36 exact rows (30 and 6 rows, FNV-1a checksums 4077627955 and 1051944304). All 85 prior source rows and 82 prior enabled descriptors remain unchanged. Total 121 imported, 113 playable, 8 gated, 65 missing; 162 attacks, 14 Abilities, 17 Trainer prints and 1 Special Energy print. The 30-print Trainer Gallery remains separate and is not included in these totals.
+
+VSTAR evolution requires an actual matching Basic V, not a VMAX or VSTAR. Both builders use the stage rank and complete-family rules. Attack and Ability VSTAR Powers share the existing per-side persistent `vstarPowerUsed` flag; the shared copied-attack resolver and its choices enforce the same allowance. VSTAR knockouts award two Prizes. Charizard VSTAR (18, 174) and Shaymin VSTAR (14, 173) are enabled. Tests cover evolution, persistent once-per-game usage across different cards, copy use, both sides, prize awards, and focused deck building.
+
+Other verified additions include Grotle/Torterra, Wormadam, Mothim, Magmortar, Buizel, Lumineon V, Luxray, Pachirisu, Claydol, Dedenne, Flygon, Heatran, Whimsicott V, Galarian Articuno V, Galarian Moltres V, Cynthia's Ambition and Marnie's Pride. The existing Energy Zone and hybrid deck-search rules are unchanged. Double Turbo Energy remains gated: it requires a comprehensive damage-penalty path audit, particularly direct targeted damage, distributed attacks and legacy handlers. See the gap ledger for all remaining mechanics.
+
+Validation scope: 48 focused Brilliant Stars tests (all enabled attacks execute on both sides; specific effect outcome tests); 12 release manifest unit tests. Android compilation and physical-device testing remain separate. Not every cross-set interaction has an independent outcome test.

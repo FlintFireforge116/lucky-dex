@@ -1,8 +1,8 @@
 {
   "set": "swsh9",
   "sourceGitBlob": "6c33800813e0375da544c26d2e97992a768c015f",
-  "compactSha256": "5102ccd449c056244b5944d4fd257987b69607c92c43ae2b30cfb7edeb28d92d",
+  "compactSha256": "1c4fab95790fa532e1683be1807dff98f6013373d57042b93b457a80acf6441c",
   "printedTotal": 186,
-  "importedTotal": 85,
-  "sourceScope": "verified stage-one print subset"
+  "importedTotal": 121,
+  "sourceScope": "verified stage-two print subset"
 }

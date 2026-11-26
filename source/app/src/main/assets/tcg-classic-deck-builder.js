@@ -34,7 +34,7 @@ const SET_IDS=Object.freeze(['base1','base2','base3','base5','gym1','gym2','neo1
 // Dragon is a Pokémon type, never a Basic Energy type. Include it as an
 // archetype choice; actual deck Energy comes from each Dragon's printed costs.
 const ARCHETYPE_TYPES=Object.freeze([...new Set([...decks.ENERGY_TYPES,'Colorless','Dragon'])]);
-const STAGE_RANK=Object.freeze({'Basic':0,'Stage 1':1,'Stage 2':2,'Level-Up':3,'BREAK':3,'VMAX':1});
+const STAGE_RANK=Object.freeze({'Basic':0,'Stage 1':1,'Stage 2':2,'Level-Up':3,'BREAK':3,'VMAX':1,'VSTAR':1});
 const RARITY_FOCUS=Object.freeze([{id:'any',label:'Any rarity'},{id:'common',label:'Common'},{id:'uncommon',label:'Uncommon'},{id:'rare',label:'Rare / Holo'},{id:'ultra',label:'Ultra Rare · V / ex / VMAX'}]);
 function rarityTier(card){
  // Original Pokemon-ex prints are Ultra/ex targets even when the printed
@@ -283,7 +283,7 @@ function rescueXY1Deck(rows,options={}){
    if(c.stage==='Basic'){
      if(hasKnownEvolution(c)||babyEvolutionTargets(c).length)continue;
      line=[c];
-   }else if(['Stage 1','Stage 2','VMAX'].includes(c.stage)){
+   }else if(['Stage 1','Stage 2','VMAX','VSTAR'].includes(c.stage)){
      // If the chosen Pokemon itself can evolve again, don't stop the line
      // halfway through (e.g. a Quilava without a Typhlosion).
      if(hasKnownEvolution(c))continue;
@@ -362,7 +362,7 @@ function rescueXY2Deck(rows,options={}){
    if(c.stage==='Basic'){
      if(hasKnownEvolution(c)||babyEvolutionTargets(c).length)continue;
      line=[c];
-   }else if(['Stage 1','Stage 2','VMAX'].includes(c.stage)){
+   }else if(['Stage 1','Stage 2','VMAX','VSTAR'].includes(c.stage)){
      // If the chosen Pokemon itself can evolve again, don't stop the line
      // halfway through (e.g. a Quilava without a Typhlosion).
      if(hasKnownEvolution(c))continue;

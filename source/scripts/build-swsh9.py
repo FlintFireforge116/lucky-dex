@@ -9,22 +9,22 @@ OUT=ROOT/'app/src/main/assets/tcg-classic-brilliant-stars.js'
 COVER=ROOT/'docs/SWSH9_BUILD_COVERAGE.json'
 ATTEST=ROOT/'docs/SWSH9_CANONICAL_SOURCE.json'
 PIN='6c33800813e0375da544c26d2e97992a768c015f'
-COMPACT_SHA='5102ccd449c056244b5944d4fd257987b69607c92c43ae2b30cfb7edeb28d92d'
+COMPACT_SHA='1c4fab95790fa532e1683be1807dff98f6013373d57042b93b457a80acf6441c'
 SYMBOL={'G':'Grass','R':'Fire','W':'Water','L':'Lightning','P':'Psychic','F':'Fighting','D':'Darkness','M':'Metal','Y':'Fairy','N':'Dragon'}
 REVERSE={v:k for k,v in SYMBOL.items()}
 VARIANTS=[]
 def validate(rows):
  from swsh9_source import rows as verified_rows
- assert rows==verified_rows(), 'Stage 1 source differs from independently checked transfer packets'
- assert len(rows)==85 and len({r[0] for r in rows})==85
- assert sum(len(r[7]) for r in rows)==116
+ assert rows==verified_rows(), 'Stage 2 source differs from independently checked transfer packets'
+ assert len(rows)==121 and len({r[0] for r in rows})==121
+ assert sum(len(r[7]) for r in rows)==162
  return rows
 
 def prepare():
  from swsh9_source import rows as verified_rows
  rows=validate(verified_rows())
  SRC.write_text(json.dumps(rows,ensure_ascii=False,separators=(',',':'))+'\n',encoding='utf-8')
- ATTEST.write_text(json.dumps({'set':'swsh9','sourceGitBlob':PIN,'compactSha256':hashlib.sha256(SRC.read_bytes()).hexdigest(),'printedTotal':186,'importedTotal':85,'sourceScope':'verified stage-one print subset'},indent=2)+'\n')
+ ATTEST.write_text(json.dumps({'set':'swsh9','sourceGitBlob':PIN,'compactSha256':hashlib.sha256(SRC.read_bytes()).hexdigest(),'printedTotal':186,'importedTotal':121,'sourceScope':'verified stage-two print subset'},indent=2)+'\n')
  return rows
 
 def get_source():
@@ -123,11 +123,7 @@ def main():
  parser=argparse.ArgumentParser();parser.add_argument('--prepare',action='store_true');args=parser.parse_args()
  if args.prepare:prepare()
  rows=get_source();cards=gate_invalid_descriptors(generate(rows))
- # Do not enable VSTAR until the shared evolution and power rules have outcome tests.
- for c in cards:
-  if c.get('pokemonVSTAR'):
-   c['battleEnabled']=c['deckEligible']=False;c['support']['status']='PARTIAL';c['support']['reasons'].append('VSTAR integration awaiting dedicated outcome tests')
- hdr="""/* SWSH9 Brilliant Stars verified stage-one prints. */
+ hdr="""/* SWSH9 Brilliant Stars verified stage-two prints. */
 (function(root,factory){const api=factory();if(typeof module==='object'&&module.exports)module.exports=api;if(root)root.LuckyDexClassicTCGSWSH9=api;})(typeof globalThis!=='undefined'?globalThis:this,function(){'use strict';
 const SET=Object.freeze({id:'swsh9',name:'Brilliant Stars',series:'Sword & Shield',releaseDate:'2022-02-25',cardCount:172,printedTotal:186});
 const CARDS=Object.freeze(__CARDS__.map(c=>Object.freeze(c)));const INDEX=new Map(CARDS.map(c=>[c.id,c]));

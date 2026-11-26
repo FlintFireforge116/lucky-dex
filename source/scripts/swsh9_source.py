@@ -27,3 +27,16 @@ def rows():
  out.extend(json.loads(line) for line in b.decode().splitlines())
  assert len({r[0] for r in out})==85
  return sorted(out,key=lambda r:int(r[0]))
+
+_stage1_rows=rows
+def rows():
+ out=_stage1_rows();b=(ROOT/'data/classic/swsh9-stage2.jsonl').read_bytes();h=2166136261
+ for v in b:h=((h^v)*16777619)&0xffffffff
+ assert h==4077627955,h
+ out.extend(json.loads(line) for line in b.decode().splitlines())
+ b=(ROOT/'data/classic/swsh9-stage2-support.jsonl').read_bytes();h=2166136261
+ for v in b:h=((h^v)*16777619)&0xffffffff
+ assert h==1051944304,h
+ out.extend(json.loads(line) for line in b.decode().splitlines())
+ assert len({r[0] for r in out})==121
+ return sorted(out,key=lambda r:int(r[0]))

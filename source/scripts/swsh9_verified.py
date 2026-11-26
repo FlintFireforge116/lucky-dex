@@ -46,3 +46,46 @@ def trainer(row):
 def energy(row):return None # Double Turbo Energy damage penalty needs a separate audit
 
 def prism_ready(row):return False
+
+# Stage 2: exact printed text, shared VSTAR marker for attack and ability.
+_stage1_attack=attack
+_stage1_ability=ability
+_stage1_trainer=trainer
+def attack(row,a):
+ t=a[3]
+ if t=="Discard 2 Energy from this Pokémon. (You can't use more than 1 VSTAR Power in a game.)":return E('discardEnergyCard',target='self',amount=2)
+ if t=='This attack does 50 damage for each of your Evolution Pokémon in play.':return E('fieldCountDamage',side='self',filter={'evolved':True},amount=50,mode='replace')
+ if t=='This attack does 10 more damage for each Pokémon in your discard pile.':return E('discardCountDamage',side='self',filter={'kind':'pokemon'},amount=10,mode='add')
+ if t=='If this Pokémon evolved from Burmy during this turn, this attack does 90 more damage.':return bonus(90,cond('evolvedThisTurn'))
+ if t=="If any of your Pokémon were Knocked Out by damage from an attack from your opponent's Pokémon during their last turn, your opponent's Active Pokémon is now Paralyzed.":return E('status',target='opponentActive',status='paralysis',condition=cond('koByOpponentAttackLastTurn'))
+ if t=="Flip a coin. If heads, during your opponent's next turn, prevent all damage from and effects of attacks done to this Pokémon.":return coin(E('preventDamage',target='self',duration='opponentTurn',preventEffects=True))
+ if t=='Shuffle this Pokémon and all attached cards into your deck.':return E('shuffleIntoDeck',target='self',includeAttached=True)
+ if t=="This attack does 50 damage for each Energy attached to all of your opponent's Pokémon.":return E('energyDamage',source='opponent',all=True,amount=50,mode='replace')
+ if t=="This attack also does 30 damage to 1 of your Benched Pokémon. (Don't apply Weakness and Resistance for Benched Pokémon.)":return E('selectedSelfBenchDamage',amount=30)
+ if t=='This attack does 30 damage for each Pokémon Tool attached to all of your Pokémon.':return E('toolCountDamage',amount=30,mode='replace')
+ if t=='If you and your opponent have the same number of Benched Pokémon, this attack does 90 more damage.':return bonus(90,cond('benchCountsEqual'))
+ if t=="If your opponent has exactly 1 Prize card remaining, this attack does 60 more damage, and your opponent's Active Pokémon is now Confused.":return seq(bonus(60,cond('opponentPrizesRemaining',amount=1)),E('status',target='opponentActive',status='confusion',condition=cond('opponentPrizesRemaining',amount=1)))
+ if t=="This attack does 50 damage for each Colorless in your opponent's Active Pokémon's Retreat Cost.":return E('retreatCostDamage',amount=50,mode='replace')
+ if t=='If Electivire is on your Bench, this attack does 120 more damage.':return bonus(120,cond('pokemonPresent',zone='bench',filter={'name':'Electivire'}))
+ if t=='If this Pokémon has any Fire Energy attached, this attack does 80 more damage.':return bonus(80,cond('selfEnergyAtLeast',energyType='Fire',amount=1,countSpecial=True))
+ if t=="If your opponent's Active Pokémon is an Evolution Pokémon, this attack does 30 more damage.":return bonus(30,cond('opponentMatches',filter={'evolved':True}))
+ if t=="If the Defending Pokémon is a Basic Pokémon, it can't attack during your opponent's next turn.":return E('lock',target='opponentActive',action='attack',duration='opponentTurn',condition=cond('opponentMatches',filter={'stage':'Basic'}))
+ return _stage1_attack(row,a)
+
+def ability(row,a):
+ t=a[2]
+ if t=="During your turn, you may heal 120 damage from each of your Benched Grass Pokémon. (You can't use more than 1 VSTAR Power in a game.)":return activated(E('heal',target='selfBenchAll',amount=120,filter={'subtype':'Grass'}),vstarPower=True)
+ if t=='When you play this Pokémon from your hand onto your Bench during your turn, you may search your deck for a Supporter card, reveal it, and put it into your hand. Then, shuffle your deck.':return dict(type='triggered',event='benched',fromHandOnly=True,effect=E('searchChosen',amount=1,filter={'kind':'trainer','trainerType':'Supporter'},optional=True))
+ if t=='Once during your turn, you may search your deck for a Grass Pokémon, reveal it, and put it into your hand. Then, shuffle your deck.':return activated(E('searchChosen',amount=1,filter={'kind':'pokemon','subtype':'Grass'},optional=True))
+ if t=='You must discard 2 cards from your hand in order to use this Ability. Once during your turn, you may draw a card.':return activated(E('sm7Rule',rule='sm10Pay',amount=2,filter={},after=E('draw',amount=1)))
+ if t=="Once during your turn, you may attach a Darkness Energy card from your discard pile to this Pokémon. You can't use more than 1 Direflame Wings Ability each turn.":return activated(E('attachEnergyFromDiscard',target='self',energyType='Darkness',amount=1),sharedOncePerTurn='Direflame Wings')
+ return _stage1_ability(row,a)
+
+def trainer(row):
+ t=row[13][0]
+ if t=='Attach a basic Energy card from your discard pile to 1 of your Benched Pokémon.':return 'Supporter',E('attachEnergyFromDiscard',target='selfBench',amount=1,basicEnergy=True)
+ if t=="Draw cards until you have 5 cards in your hand. If any of your Pokémon were Knocked Out during your opponent's last turn, draw cards until you have 8 cards in your hand instead.":return seq_trainer()
+ return _stage1_trainer(row)
+
+def seq_trainer():
+ return 'Supporter',seq(E('drawToHandSize',size=5),E('drawToHandSize',size=8,condition=cond('sm12OwnKoLastTurn'),optionalCondition=True))
