@@ -2,22 +2,13 @@
   "printed": 217,
   "canonicalTotal": 217,
   "notImported": [],
-  "battleReady": 136,
+  "battleReady": 148,
   "gated": {
-    "swsh11-13": [
-      "Unimplemented attack: Tearing Gust"
-    ],
     "swsh11-17": [
       "Unimplemented Ability: Elder Tree Barrier"
     ],
     "swsh11-20": [
       "Unimplemented Ability: Jamming Attachment"
-    ],
-    "swsh11-22": [
-      "Unimplemented attack: Lost Volcano"
-    ],
-    "swsh11-27": [
-      "Unimplemented attack: Magical Fire"
     ],
     "swsh11-29": [
       "Unimplemented Ability: Scorching Aura"
@@ -65,9 +56,6 @@
     "swsh11-74": [
       "Unimplemented attack: Moonglow Reverse"
     ],
-    "swsh11-76": [
-      "Unimplemented attack: Doom Curse"
-    ],
     "swsh11-78": [
       "Unimplemented attack: Synchro Kinesis"
     ],
@@ -91,9 +79,6 @@
     "swsh11-93": [
       "Unimplemented attack: Lost Dive",
       "Unimplemented attack: Ancient Star"
-    ],
-    "swsh11-102": [
-      "Unimplemented attack: Recover"
     ],
     "swsh11-107": [
       "Unimplemented Ability: Lost Block"
@@ -122,10 +107,6 @@
     "swsh11-127": [
       "Unimplemented attack: Field Trap"
     ],
-    "swsh11-131": [
-      "Unimplemented attack: Lost Impact",
-      "Unimplemented attack: Star Requiem"
-    ],
     "swsh11-134": [
       "Unimplemented Ability: Metal Lodging"
     ],
@@ -151,9 +132,6 @@
     ],
     "swsh11-145": [
       "Unimplemented attack: All-You-Can-Grab"
-    ],
-    "swsh11-148": [
-      "Unimplemented attack: Lost Headbutt"
     ],
     "swsh11-149": [
       "Unimplemented Ability: All Just a Dream"
@@ -182,9 +160,6 @@
     "swsh11-162": [
       "Unimplemented Trainer effect"
     ],
-    "swsh11-163": [
-      "Unimplemented Trainer effect"
-    ],
     "swsh11-164": [
       "Unimplemented Trainer effect"
     ],
@@ -202,12 +177,6 @@
     ],
     "swsh11-171": [
       "Unimplemented Special Energy rules"
-    ],
-    "swsh11-172": [
-      "Unimplemented attack: Tantrum Blast"
-    ],
-    "swsh11-173": [
-      "Unimplemented attack: Magical Fire"
     ],
     "swsh11-176": [
       "Unimplemented attack: Scrap Short",
@@ -246,10 +215,6 @@
       "Unimplemented attack: Lost Dive",
       "Unimplemented attack: Ancient Star"
     ],
-    "swsh11-201": [
-      "Unimplemented attack: Lost Impact",
-      "Unimplemented attack: Star Requiem"
-    ],
     "swsh11-206": [
       "Unimplemented Trainer effect"
     ],
@@ -258,10 +223,6 @@
     ],
     "swsh11-210": [
       "Unimplemented Trainer effect"
-    ],
-    "swsh11-212": [
-      "Unimplemented attack: Lost Impact",
-      "Unimplemented attack: Star Requiem"
     ],
     "swsh11-214": [
       "Unimplemented Trainer effect"

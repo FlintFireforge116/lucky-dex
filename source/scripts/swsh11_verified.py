@@ -109,3 +109,24 @@ def ability(row,a):
  if t=="During your turn, you may discard your hand and draw 7 cards. (You can't use more than 1 VSTAR Power in a game.)":return activated(seq(E('discardHand',side='self',amount=999),E('draw',amount=7)),vstarPower=True)
  if t=="During your turn, you may make your opponent's Active Pokémon Paralyzed and Poisoned. During Pokémon Checkup, put 3 damage counters on that Pokémon instead of 1. (You can't use more than 1 VSTAR Power in a game.)":return activated(seq(status('paralysis'),E('status',target='opponentActive',status='poison',amount=30)),vstarPower=True)
  return _stage2_ability(row,a)
+
+# Stage 4: physical Lost Zone Energy choices and the shared distinct-type search.
+_stage3_attack=attack
+_stage3_trainer=trainer
+def attack(row,a):
+ t=a[3]
+ if t=='Put this Pokémon and all attached cards in the Lost Zone.':return E('sm7Rule',rule='sm8LostPokemon',target='self')
+ if t=='Put all Energy attached to this Pokémon in the Lost Zone.':return E('sm7Rule',rule='swsh11LoseEnergy',source='self',amount='all')
+ if t=="Put 2 Energy attached to this Pokémon in the Lost Zone. This attack also does 120 damage to 1 of your opponent's Benched Pokémon. (Don't apply Weakness and Resistance for Benched Pokémon.)":return seq(E('sm7Rule',rule='swsh11LoseEnergy',source='self',amount=2),E('multiTargetDamage',target='opponentBench',amount=120,count=1))
+ if t=='Put 2 Energy attached to your Pokémon in the Lost Zone.':return E('sm7Rule',rule='swsh11LoseEnergy',source='team',amount=2)
+ if t=="You can use this attack only if you have 10 or more cards in the Lost Zone. Your opponent's Active Pokémon is Knocked Out. (You can't use more than 1 VSTAR Power in a game.)":return seq(E('attackRequirement',condition=cond('swsh11LostAtLeast',amount=10)),E('knockOut',target='opponentActive'))
+ if t=="Put an Energy attached to your opponent's Active Pokémon in the Lost Zone.":return E('sm7Rule',rule='swsh11LoseEnergy',source='opponent',amount=1)
+ if t=="At the end of your opponent's next turn, the Defending Pokémon will be Knocked Out.":return E('scheduleDelayed',event='endOpponentNextTurn',targetMode='defender',effect=E('knockOut',target='eventPokemon'))
+ if t=='Put a card from your discard pile into your hand.':return E('searchChosen',source='discard',amount=1,filter={})
+ if t=='Discard an Energy from this Pokémon and heal all damage from it.':return seq(E('attackRequirement',condition=cond('selfMatches',filter={'hasAnyEnergy':True})),E('discardEnergyCard',target='self',amount=1),E('heal',target='self',amount=999))
+ if t=='This attack does 100 damage for each Special Condition affecting this Pokémon.':return E('statusCountDamage',source='self',amount=100,mode='replace')
+ return _stage3_attack(row,a)
+def trainer(row):
+ t=row[13][0]
+ if t=='You can use this card only if you have 7 or more cards in the Lost Zone. Search your deck for up to 2 basic Energy cards of different types and attach them to your Pokémon in any way you like. Then, shuffle your deck.':return 'Item',E('sm7Rule',rule='sm9SearchAttach',amount=2,distinctTypes=True,condition=cond('swsh11LostAtLeast',amount=7))
+ return _stage3_trainer(row)
