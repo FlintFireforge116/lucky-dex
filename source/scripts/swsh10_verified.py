@@ -160,3 +160,30 @@ def trainer(row):
  if t=='All Special Energy attached to Pokémon (both yours and your opponent\'s) provide Colorless Energy and have no other effect.':return 'Stadium',E('noop') # continuous stadium suppression hook
  if t=="Look at the top card of your deck. You may put that card into your hand. If you don't, discard that card and draw a card.":return 'Item',E('sm7Rule',rule='swsh10TrekkingShoes')
  return _stage3_trainer(row)
+
+# Stage five: exact-text shared Trainer and attack handlers.
+_stage4_attack=attack
+_stage4_ability=ability
+_stage4_trainer=trainer
+def attack(row,a):
+ t=a[3]
+ if t=="Discard an Energy from this Pokémon. If you do, discard an Energy from your opponent's Active Pokémon.":return E('sm7Rule',rule='sm12Kindle')
+ if t=="Discard up to 2 Pokémon Tools from your opponent's Pokémon.":return E('sm7Rule',rule='swsh2ToolScrapper',left=2,opponentOnly=True)
+ if t=='This attack does 30 damage for each Pokémon in your discard pile. (You can\'t use more than 1 VSTAR Power in a game.)':return E('discardCountDamage',filter={'kind':'pokemon'},amount=30,mode='replace')
+ if t=='You may put an Energy attached to this Pokémon into your hand. If you do, this attack does 100 more damage.':return E('sm7Rule',rule='swsh8Spiral',bonus=100)
+ return _stage4_attack(row,a)
+def ability(row,a):
+ t=a[2]
+ if t=='During your turn, you may search your deck for up to 5 in any combination of Grass Pokémon and Grass Energy cards, reveal them, and put them into your hand. Then, shuffle your deck. (You can\'t use more than 1 VSTAR Power in a game.)':return activated(E('searchChosen',amount=5,optional=True,filter={'anyOf':[{'kind':'pokemon','subtype':'Grass'},{'kind':'energy','subtype':'Grass'}]}),vstarPower=True)
+ return _stage4_ability(row,a)
+def trainer(row):
+ t=row[13][0]
+ if t=="Until the end of your turn, your opponent's Active Pokémon has no Abilities. (This includes Pokémon that come into play during that turn.)":return 'Item',E('sm7Rule',rule='swsh10Cologne')
+ if t=='Flip 2 coins. Put a number of cards up to the number of heads from your discard pile on top of your deck in any order.':return 'Supporter',E('sm7Rule',rule='swsh10Cyllene')
+ if t=='Draw 2 cards. If you drew any cards in this way, attach up to 2 Grass Energy cards from your hand to 1 of your Benched Pokémon.':return 'Supporter',E('sm7Rule',rule='swsh10Gardenia')
+ if t=='Choose a card in your hand, and discard the other cards. If you do, draw 4 cards. (If you have no other cards in your hand, you can\'t use this card.)':return 'Supporter',E('sm7Rule',rule='swsh10Kamado')
+ if t=='Choose 1 of your Pokémon, and then flip a coin until you get tails. For each heads, heal 40 damage from that Pokémon.':return 'Item',E('chooseTarget',target='selfPokemon',forceChoose=True,filter={'damaged':True},effect=E('coinUntilTails',effect=E('heal',target='selfPokemon',amount=40)))
+ if t=='Switch your Active Basic Pokémon with 1 of your Benched Pokémon. If you do, heal 30 damage from the Pokémon you moved to your Bench.':return 'Item',E('sm7Rule',rule='swsh10SwitchCart')
+ if t=='Play this card as if it were a 60-HP Basic Colorless Pokémon. At any time during your turn, you may discard this card from play. This card can\'t retreat.':return 'Item',E('playFossil',hp=60,subtype='Colorless',canRetreat=False)
+ if t=='You can use this card only if you go second, and only during your first turn. Search your deck for a basic Energy card and attach it to 1 of your Pokémon. Then, shuffle your deck. Your turn ends.':return 'Item',E('sm7Rule',rule='swsh10WaitTurbo',condition=cond('sm7FirstSecond'))
+ return _stage4_trainer(row)
