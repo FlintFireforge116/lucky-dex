@@ -189,8 +189,8 @@
   const spectralChecks=new WeakSet();
   function spectralBreachActive(state,cardById){
     if(state?.format!=='classic'||!state.sides||spectralChecks.has(state))return false;
-    if(!['player','opponent'].some(side=>pokemonOn(state.sides[side]).some(p=>p.cardId==='swsh4-71')))return false;
-    const sources=['player','opponent'].flatMap(side=>pokemonOn(state.sides[side]).filter(p=>p.cardId==='swsh4-71').map(p=>[side,p]));
+    if(!['player','opponent'].some(side=>pokemonOn(state.sides[side]).some(p=>['swsh4-71','swsh9tg-TG06'].includes(p.cardId))))return false;
+    const sources=['player','opponent'].flatMap(side=>pokemonOn(state.sides[side]).filter(p=>['swsh4-71','swsh9tg-TG06'].includes(p.cardId)).map(p=>[side,p]));
     spectralChecks.add(state);
     try{return sources.some(([side,p])=>!abilitiesSuppressed(state,side,p,cardById));}
     finally{spectralChecks.delete(state);}
@@ -19580,7 +19580,7 @@
           const usedTypes=[...(effect.usedTypes||[])],usedUids=[...(effect.usedUids||[])];
           const targets=()=>ss.bench.filter(p=>!usedUids.includes(p.uid)&&!p.gymEnergyLock&&!primevalLocked(ctx,p));
           const opts=()=>[...ss.deck.filter(ref=>basicType(ref)&&!usedTypes.includes(basicType(ref))).map(ref=>({uid:ref.uid,type:basicType(ref),label:card(ref).name})),...new Set((ss.energySupply||[]).filter(t=>!usedTypes.includes(t)))].map(o=>typeof o==='string'?{type:o,label:o+' Energy (Zone search)'}:o);
-          const finish=()=>{ctx.shuffle?.(ctx.state,ss.deck);if(!(ss.active?.cardId==='swsh9-71'&&!abilitiesSuppressed(ctx.state,ctx.side,ss.active,ctx.cardById)))ctx.endTurn?.();};
+          const finish=()=>{ctx.shuffle?.(ctx.state,ss.deck);if(!(['swsh9-71','swsh9tg-TG08'].includes(ss.active?.cardId)&&!abilitiesSuppressed(ctx.state,ctx.side,ss.active,ctx.cardById)))ctx.endTurn?.();};
           if(skip){finish();break;}
           if(res&&effect.stage==='target'){
             const p=selected(ctx,ss),os=opts();if(!targets().includes(p)||!os.length){finish();break;}
@@ -30104,7 +30104,7 @@ if(r==='lastResort')return ss.hand.length===0?[{}]:[];if(r==='surgeSwap')return 
   // Awakening is a live, Tool-dependent modern Ability. A per-slot guard
   // allows current-type queries (which themselves consult suppression) and
   // chains of opposing Awakening sources without unbounded recursion.
-  const awakeningChecks=new WeakSet(),awakeningTargets={'swsh4-26':'Grass','swsh4-30':'Fire','swsh4-47':'Water'};
+  const awakeningChecks=new WeakSet(),awakeningTargets={'swsh4-26':'Grass','swsh4-30':'Fire','swsh4-47':'Water','swsh9tg-TG01':'Grass','swsh9tg-TG02':'Fire','swsh9tg-TG04':'Water'};
   function awakeningSuppresses(state,side,slot,cardById){
     if(awakeningChecks.has(slot)||!(cardById(slot.cardId)?.abilities||[]).some(a=>a.printedPowerType==='ability')||!pokemonOn(state.sides[side]).includes(slot))return false;
     const sources=['player','opponent'].flatMap(w=>pokemonOn(state.sides[w]).filter(p=>p!==slot&&awakeningTargets[p.cardId]&&toolsOf(p).some(r=>['swsh4-155','swsh4-202'].includes(r.cardId))).map(p=>[w,p]));

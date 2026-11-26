@@ -28,7 +28,7 @@ const STAPLES=Object.freeze([
  ['base1-83',1], // Maintenance
  ['base1-87',1]  // Pokedex
 ]);
-const SET_IDS=Object.freeze(['base1','base2','base3','base5','gym1','gym2','neo1','neo2','neo3','neo4','base6','ecard1','ecard2','ecard3','ex1','ex2','ex3','ex4','ex5','ex6','ex7','ex8','ex9','ex10','ex11','ex12','ex13','ex14','ex15','ex16','dp1','dp2','dp3','dp4','dp5','dp6','dp7','pl1','pl2','pl3','pl4','hgss1','hgss2','hgss3','hgss4','col1','bw1','bw2','bw3','bw4','bw5','bw6','bw7','bw8','bw9','bw10','bw11','xy1','xy2','xy3','xy4','xy5','xy6','xy7','xy8','xy9','xy10','xy11','xy12','sm1','sm2','sm3','sm4','sm5','sm6','sm7','sm75','sm8','sm9','det1','sm10','sm11','sm115','sma','sm12','swsh1','swsh2','swsh3','swsh35','swsh4','swsh45','swsh45sv','swsh5','swsh6','swsh7','cel25','cel25c','swsh8','swsh9','SNAPFLORIO','SNAPFOUNJA','sv1']);
+const SET_IDS=Object.freeze(['base1','base2','base3','base5','gym1','gym2','neo1','neo2','neo3','neo4','base6','ecard1','ecard2','ecard3','ex1','ex2','ex3','ex4','ex5','ex6','ex7','ex8','ex9','ex10','ex11','ex12','ex13','ex14','ex15','ex16','dp1','dp2','dp3','dp4','dp5','dp6','dp7','pl1','pl2','pl3','pl4','hgss1','hgss2','hgss3','hgss4','col1','bw1','bw2','bw3','bw4','bw5','bw6','bw7','bw8','bw9','bw10','bw11','xy1','xy2','xy3','xy4','xy5','xy6','xy7','xy8','xy9','xy10','xy11','xy12','sm1','sm2','sm3','sm4','sm5','sm6','sm7','sm75','sm8','sm9','det1','sm10','sm11','sm115','sma','sm12','swsh1','swsh2','swsh3','swsh35','swsh4','swsh45','swsh45sv','swsh5','swsh6','swsh7','cel25','cel25c','swsh8','swsh9','swsh9tg','SNAPFLORIO','SNAPFOUNJA','sv1']);
 // Darkness and Metal are already Basic Energy types. Deduplicate before rendering
 // archetype chips so each energy type has exactly one toggle.
 // Dragon is a Pokémon type, never a Basic Energy type. Include it as an
@@ -1594,6 +1594,14 @@ function buildDeck(rows,options={}){
  // Try a third copy only after diversifying trainers and choosing compatible
  // Pokémon. Some eras have very narrow trainer pools; retain legal recovery.
  if(cards.length<30){autoTrainerCap=3;fillTrainerSlots();}
+ // A small Trainer Gallery has only five Supporter names. Before forcing a
+ // fourth copy of unrelated Supporters, fill with complete compatible families.
+ if(cards.length<30&&scope.length===1&&scope[0]==='swsh9tg'){
+   const families=endpointCards(pokemonPool).filter(c=>canFitEnergy(c)&&familyLine(c,evolutionPool).length===2)
+     .sort((a,b)=>Number(familyRoot(b,evolutionPool)===mainRoot)-Number(familyRoot(a,evolutionPool)===mainRoot)||pokemonScore(b,evolutionPool)-pokemonScore(a,evolutionPool));
+   for(const endpoint of families){const line=familyLine(endpoint,evolutionPool);const repeats=Math.min(Math.floor((30-cards.length)/line.length),Math.floor((18-pokemonCount())/line.length),...line.map(member=>room(member)));if(repeats>0)addLine(line,repeats);if(cards.length>=30||pokemonCount()>=18)break;}
+   for(const basic of pokemonPool.filter(c=>c.stage==='Basic'&&canFitEnergy(c)&&cohesiveBasic(c)&&!hasKnownEvolutionInEra(c)).sort((a,b)=>standaloneScore(b)-standaloneScore(a))){while(cards.length<30&&pokemonCount()<18&&room(basic)>0)if(!add(basic,1))break;}
+ }
  if(cards.length<30){autoTrainerCap=4;fillTrainerSlots();}
  // Final conservative fill: respect the planned mono/explicit dual Energy profile;
  // only the sparse-inventory rescue is allowed a second otherwise unrequested type.

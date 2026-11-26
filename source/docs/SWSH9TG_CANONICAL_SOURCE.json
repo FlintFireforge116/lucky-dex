@@ -1,0 +1,10 @@
+{
+  "set": "swsh9tg",
+  "sourceGitBlob": "2f273e6e47f0573ca8706da65a6e5bee6c2172a4",
+  "upstreamCommit": "90f27d0e14cefe48ccb2b8922a7a356b2fcf0072",
+  "compactSha256": "aad1f259b4762489274ea9bda264585a5714b08e1049481a91f0ce0945212dd0",
+  "transferFNV1a32": 2959585281,
+  "printedTotal": 30,
+  "importedTotal": 30,
+  "sourceScope": "30 exact print rows verified against upstream transfer checksum; all have equivalent source mechanics from earlier sets"
+}
