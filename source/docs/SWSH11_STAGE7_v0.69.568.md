@@ -1,0 +1,3 @@
+# Lost Origin stage 7 — v0.69.568
+
+217 imported, 178 playable, 39 gated. Newly enabled IDs: 116, 127, 137, 140, 145, 160, 164, 188, 194, 209. The 168 previously playable definitions are unchanged. Exact printed source and checksums preserved. New bilateral tests exercise Pidgeot V's Bench return and Stadium ownership, filtered Darkness switch, opposing Stadium discard followed by Energy discard, four-card reorder, early termination of a coin-count search, top-five Item selection, and bilateral typed Energy damage reduction. Initial 132/132 focused checks passed. Retain previous adaptive Trainer fixture safeguards. APK and device validation remain separate.

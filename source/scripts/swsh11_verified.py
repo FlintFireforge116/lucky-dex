@@ -170,3 +170,24 @@ def ability(row,a):
 def trainer(row):
  if row[1]=='Fantina':return 'Supporter',E('modifier',stat='damageReduction',scope='team',amount=120,duration='opponentTurn',opponentFilter={'tag':'pokemon-v'},condition=cond('swsh11LostAtLeast',amount=10))
  return _stage5_trainer(row)
+
+# Stage 7: deck ordering, filtered discard/switch, and Stadium effects.
+_stage6_attack=attack
+_stage6_ability=ability
+_stage6_trainer=trainer
+def attack(row,a):
+ t=a[3]
+ if t=='If you have a Stadium in play, this attack does 80 more damage.':return bonus(80,cond('ownStadiumInPlay'))
+ if t=="Look at the top 4 cards of either player's deck and put them back in any order.":return E('chooseOption',options=[{'label':'Your deck','effect':E('reorderTop',deckSide='self',count=4)},{'label':'Opponent’s deck','effect':E('reorderTop',deckSide='opponent',count=4)}])
+ if t=='Switch this Pokémon with 1 of your Benched Darkness Pokémon.':return E('sm7Rule',rule='swsh11DarkSwitch')
+ if t=="If your opponent has a Stadium in play, discard it. If you discarded a Stadium in this way, discard 2 Energy from your opponent's Active Pokémon.":return E('sm7Rule',rule='swsh11FieldTrap')
+ if t=='Flip a coin until you get tails. Search your deck for a number of cards up to the number of heads and put them into your hand. Then, shuffle your deck.':return E('sm7Rule',rule='swsh11AllGrab')
+ return _stage6_attack(row,a)
+def ability(row,a):
+ t=a[2]
+ if t=='Once during your turn, if this Pokémon is on your Bench, you may shuffle it and all attached cards into your deck.':return activated(E('shuffleIntoDeck',target='self',includeAttached=True),benchOnly=True)
+ return _stage6_ability(row,a)
+def trainer(row):
+ if row[1]=='Miss Fortune Sisters':return 'Supporter',E('sm7Rule',rule='swsh11MissFortune')
+ if row[1]=='Lake Acuity':return 'Stadium',E('noop') # continuous typed Energy check in modifierAmount
+ return _stage6_trainer(row)
