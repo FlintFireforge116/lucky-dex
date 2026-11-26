@@ -228,3 +228,20 @@ def ability(row,a):
  if row[0]=='40' and a[0]=='Oceanic Accompaniment':return dict(type='activated',oncePerTurn=False,effect=E('sm7Rule',rule='sm12HandAttach',left=1,energyType='Water',basicOnly=True,targetFilter={'attackName':'Swim Freely'}))
  if row[0]=='134' and a[0]=='Metal Lodging':return passive(E('noop')) # shared attack protection hook
  return _stage8_ability(row,a)
+
+# Stage 10: persistent VSTAR suppression, prize routing, self sacrifice, and status rules.
+_stage9_attack=attack
+_stage9_ability=ability
+_stage9_trainer=trainer
+def attack(row,a):
+ if a[0]=='Ancient Star' and row[0] in ['93','199']:return E('sm7Rule',rule='swsh11AncientStar')
+ if row[0]=='143' and a[0]=='Thumping Snore':return E('status',target='self',status='sleep',recoveryCoins=2)
+ return _stage9_attack(row,a)
+def ability(row,a):
+ if row[0]=='143' and a[0]=='Unfazed Fat':return passive(E('noop')) # shared opposing attack-effects protection
+ if row[0]=='107' and a[0]=='Lost Block':return passive(E('noop')) # prize destination hook
+ if row[0]=='73' and a[0]=='Puppet Offering':return activated(E('sm7Rule',rule='swsh11PuppetOffering'))
+ return _stage9_ability(row,a)
+def trainer(row):
+ if row[0]=='170' and row[1]=='Windup Arm':return 'Tool',E('noop') # legal attack status exception
+ return _stage9_trainer(row)

@@ -2,16 +2,13 @@
   "printed": 217,
   "canonicalTotal": 217,
   "notImported": [],
-  "battleReady": 195,
+  "battleReady": 201,
   "gated": {
     "swsh11-20": [
       "Unimplemented Ability: Jamming Attachment"
     ],
     "swsh11-67": [
       "Unimplemented attack: Tricky Slap"
-    ],
-    "swsh11-73": [
-      "Unimplemented Ability: Puppet Offering"
     ],
     "swsh11-82": [
       "Unimplemented attack: Blossom Tail",
@@ -24,12 +21,6 @@
     "swsh11-91": [
       "Unimplemented attack: Geo Cannon"
     ],
-    "swsh11-93": [
-      "Unimplemented attack: Ancient Star"
-    ],
-    "swsh11-107": [
-      "Unimplemented Ability: Lost Block"
-    ],
     "swsh11-117": [
       "Unimplemented attack: Chain of Spirits",
       "Unimplemented Ability: Cursed Message"
@@ -39,10 +30,6 @@
     ],
     "swsh11-142": [
       "Unimplemented attack: Downgrading Beam"
-    ],
-    "swsh11-143": [
-      "Unimplemented attack: Thumping Snore",
-      "Unimplemented Ability: Unfazed Fat"
     ],
     "swsh11-154": [
       "Unimplemented Trainer effect"
@@ -56,18 +43,12 @@
     "swsh11-167": [
       "Unimplemented Trainer effect"
     ],
-    "swsh11-170": [
-      "Unimplemented Trainer effect"
-    ],
     "swsh11-178": [
       "Unimplemented attack: Blossom Tail",
       "Unimplemented Ability: Guardian of Love"
     ],
     "swsh11-195": [
       "Unimplemented Trainer effect"
-    ],
-    "swsh11-199": [
-      "Unimplemented attack: Ancient Star"
     ],
     "swsh11-210": [
       "Unimplemented Trainer effect"

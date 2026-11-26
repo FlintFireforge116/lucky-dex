@@ -2078,7 +2078,8 @@
       !effects.abilitiesSuppressed(state,side,s.active,data.cardById)&&[2,4,6].includes(Number(s.prizes?.length||0));
     const sm8Shady=state.format==='classic'&&data.cardById(s.active?.cardId)?.prismStar&&['player','opponent'].some(w=>state.sides[w].bench.some(p=>p.cardId==='sm8-93'&&!effects.abilitiesSuppressed(state,w,p,data.cardById)));
     const swsh7Slaking=state.format==='classic'&&activeStadium(state)&&data.cardById(s.active?.cardId)?.abilities?.some(a=>a.effect?.rule==='swsh7ActFreely')&&!effects.abilitiesSuppressed(state,side,s.active,data.cardById);
-    if (s.active&&!swsh7Slaking&&!sm8Shady&&!bw5Airhead&&!conditions.paralysis&&Number(s.active.ex11AttackLockUntil||0)!==Number(state.turnNumber)){
+    const windupArm=state.format==='classic'&&activeToolsOf(state,s.active).some(r=>r.cardId==='swsh11-170');
+    if (s.active&&!swsh7Slaking&&!sm8Shady&&!bw5Airhead&&(!conditions.paralysis||windupArm)&&Number(s.active.ex11AttackLockUntil||0)!==Number(state.turnNumber)){
       for(const entry of attackOptions(state,side)){
         const {cardId:attackCardId,attackIndex,attack}=entry;
         if(state.format==='classic'&&['swsh9-45','swsh9-158'].includes(attackCardId)&&state.firstSide===side&&s.turnCount===1&&attack.name!=='Fast Charge')continue;
@@ -2106,7 +2107,7 @@
         if(s.active?.dp3EncoreAttack&&Number(s.active.dp3EncoreUntil)>=state.turnNumber&&attack.name!==s.active.dp3EncoreAttack)continue;
         if(state.format==='classic'&&s.active.cardId==='pl1-16'&&Number(s.active.pl1LastAttackTurn||-1)===state.turnNumber-2&&!effects.abilitiesSuppressed(state,side,s.active,data.cardById))continue;
         if(attack.requiresAsleep&&!conditions.sleep)continue;
-        if(conditions.sleep&&!attack.allowAsleep&&!(state.format==='classic'&&((s.active.cardId==='ex6-15'&&attack.name==='Toss and Turn')||(s.active.cardId==='sm2-114'&&attack.name==='Hypno Roll'))))continue;
+        if(conditions.sleep&&!windupArm&&!attack.allowAsleep&&!(state.format==='classic'&&((s.active.cardId==='ex6-15'&&attack.name==='Toss and Turn')||(s.active.cardId==='sm2-114'&&attack.name==='Hypno Roll'))))continue;
         if(state.format==='classic'&&['ex4-3','ex4-9','cel25c-9_A'].includes(s.active.cardId)&&!effects.abilitiesSuppressed(state,side,s.active,data.cardById)){
           const team=s.active.cardId==='ex4-3'?"Team Aqua's":"Team Magma's";
           if(['player','opponent'].flatMap(who=>pokemonOn(state.sides[who])).filter(slot=>data.cardById(slot.cardId)?.name?.startsWith(team)).length<=3)continue;
@@ -2763,10 +2764,11 @@
     const ss=state.sides[side],i=Number(index);
     if(!Number.isInteger(i)||i<0||i>=ss.prizes.length)return false;
     const [ref]=ss.prizes.splice(i,1);
-    if(discardInstead){ss.discard.push(ref);state.log.push({type:'swsh3BillowingSmoke',side,cardId:ref.cardId});}else if(state.format==='classic'&&!ref.faceUp&&((ref.cardId==='swsh7-146'&&emptyBenchSlots(ss).length&&!classicItemPlayLocked(state,side)&&!effects.isActionLocked(state,side,'Item',data.cardById)&&!effects.isActionLocked(state,side,'Trainer',data.cardById)&&ss.deck.some(r=>data.cardById(r.cardId)?.kind==='pokemon'&&data.cardById(r.cardId)?.battleEnabled&&eternalZoneCanPlace(state,side,r.cardId)))||(ref.cardId==='swsh7-165'&&state.activeSide===side&&pokemonOn(ss).length)))state.swsh7PrizeReaction={side,ref};else if(state.format==='classic'&&ref.cardId==='sm7-97'&&!ref.faceUp&&state.activeSide===side&&emptyBenchSlots(ss).length&&ss.prizes.length&&eternalZoneCanPlace(state,side,ref.cardId))state.sm7WishPrize={side,ref};else ss.hand.push(ref);
+    const foe=side==='player'?'opponent':'player',lostBlock=state.format==='classic'&&pokemonOn(state.sides[foe]).some(p=>p.cardId==='swsh11-107'&&!effects.abilitiesSuppressed(state,foe,p,data.cardById));
+    if(lostBlock){(ss.lostZone||(ss.lostZone=[])).push(ref);state.log.push({type:'swsh11LostBlock',side,cardId:ref.cardId});}else if(discardInstead){ss.discard.push(ref);state.log.push({type:'swsh3BillowingSmoke',side,cardId:ref.cardId});}else if(state.format==='classic'&&!ref.faceUp&&((ref.cardId==='swsh7-146'&&emptyBenchSlots(ss).length&&!classicItemPlayLocked(state,side)&&!effects.isActionLocked(state,side,'Item',data.cardById)&&!effects.isActionLocked(state,side,'Trainer',data.cardById)&&ss.deck.some(r=>data.cardById(r.cardId)?.kind==='pokemon'&&data.cardById(r.cardId)?.battleEnabled&&eternalZoneCanPlace(state,side,r.cardId)))||(ref.cardId==='swsh7-165'&&state.activeSide===side&&pokemonOn(ss).length)))state.swsh7PrizeReaction={side,ref};else if(state.format==='classic'&&ref.cardId==='sm7-97'&&!ref.faceUp&&state.activeSide===side&&emptyBenchSlots(ss).length&&ss.prizes.length&&eternalZoneCanPlace(state,side,ref.cardId))state.sm7WishPrize={side,ref};else ss.hand.push(ref);
     ss.prizesTaken=Number(ss.prizesTaken||0)+1;ss.pointsGainedThisTurn=Number(ss.pointsGainedThisTurn||0)+1;
     state.log.push({type:'prize',side,cardId:ref.cardId,prizePosition:i,remaining:ss.prizes.length,taken:ss.prizesTaken});
-    if(!discardInstead&&state.format==='classic'&&ref.cardId==='xy11-102'&&!ref.faceUp){
+    if(!lostBlock&&!discardInstead&&state.format==='classic'&&ref.cardId==='xy11-102'&&!ref.faceUp){
       const heads=random(state)<0.5;
       state.log.push({type:'coin',side,reason:'Greedy Dice',heads,results:[heads]});
       if(heads&&ss.prizes.length){
