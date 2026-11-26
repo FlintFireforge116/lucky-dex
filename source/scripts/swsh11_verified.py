@@ -130,3 +130,17 @@ def trainer(row):
  t=row[13][0]
  if t=='You can use this card only if you have 7 or more cards in the Lost Zone. Search your deck for up to 2 basic Energy cards of different types and attach them to your Pokémon in any way you like. Then, shuffle your deck.':return 'Item',E('sm7Rule',rule='sm9SearchAttach',amount=2,distinctTypes=True,condition=cond('swsh11LostAtLeast',amount=7))
  return _stage3_trainer(row)
+
+# Stage 5: shared knockout routing, prize protection and checkup modifiers.
+_stage4_trainer=trainer
+_stage4_ability=ability
+def trainer(row):
+ if row[0]=='161' and row[1]=='Lost City':return 'Stadium',E('noop') # actual KO destination handled in core
+ if row[0] in ['162','217'] and row[1]=='Lost Vacuum':return 'Item',E('sm7Rule',rule='swsh11LostVacuum')
+ return _stage4_trainer(row)
+def energy(row):
+ if row[0]=='171' and row[1]=='Gift Energy':return E('specialEnergy',provides={'Colorless':1}) # attack-damage KO trigger in core
+ return None
+def ability(row,a):
+ if (row[0],a[0]) in [('17','Elder Tree Barrier'),('149','All Just a Dream'),('29','Scorching Aura'),('123','Poison Peak')]:return passive(E('noop')) # core KO/checkup hooks
+ return _stage4_ability(row,a)

@@ -2,16 +2,10 @@
   "printed": 217,
   "canonicalTotal": 217,
   "notImported": [],
-  "battleReady": 148,
+  "battleReady": 156,
   "gated": {
-    "swsh11-17": [
-      "Unimplemented Ability: Elder Tree Barrier"
-    ],
     "swsh11-20": [
       "Unimplemented Ability: Jamming Attachment"
-    ],
-    "swsh11-29": [
-      "Unimplemented Ability: Scorching Aura"
     ],
     "swsh11-34": [
       "Unimplemented attack: Floe Return"
@@ -98,9 +92,6 @@
       "Unimplemented attack: Dynamic Tail",
       "Unimplemented Ability: Wild Style"
     ],
-    "swsh11-123": [
-      "Unimplemented Ability: Poison Peak"
-    ],
     "swsh11-124": [
       "Unimplemented attack: Destructive Finish"
     ],
@@ -133,9 +124,6 @@
     "swsh11-145": [
       "Unimplemented attack: All-You-Can-Grab"
     ],
-    "swsh11-149": [
-      "Unimplemented Ability: All Just a Dream"
-    ],
     "swsh11-151": [
       "Unimplemented attack: Spill Out"
     ],
@@ -154,12 +142,6 @@
     "swsh11-160": [
       "Unimplemented Trainer effect"
     ],
-    "swsh11-161": [
-      "Unimplemented Trainer effect"
-    ],
-    "swsh11-162": [
-      "Unimplemented Trainer effect"
-    ],
     "swsh11-164": [
       "Unimplemented Trainer effect"
     ],
@@ -174,9 +156,6 @@
     ],
     "swsh11-170": [
       "Unimplemented Trainer effect"
-    ],
-    "swsh11-171": [
-      "Unimplemented Special Energy rules"
     ],
     "swsh11-176": [
       "Unimplemented attack: Scrap Short",
@@ -225,9 +204,6 @@
       "Unimplemented Trainer effect"
     ],
     "swsh11-214": [
-      "Unimplemented Trainer effect"
-    ],
-    "swsh11-217": [
       "Unimplemented Trainer effect"
     ]
   },
