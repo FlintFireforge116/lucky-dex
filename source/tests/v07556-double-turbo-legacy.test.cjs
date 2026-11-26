@@ -907,3 +907,25 @@ for(const side of ['player','opponent']){
  for(const f of fixtures)test(`${side} legacy DTE ${f.id} ${f.name}`,()=>{assert.deepEqual(run(f.id,f.name,false,side),f.base,'unmodified control');assert.deepEqual(run(f.id,f.name,true,side),f.expected,'reduced outgoing damage');});
  for(const [id,name,damage] of [['ex15-19','Delta Mind',10],['ex13-48','Deceive',40]])test(`${side} DTE leaves ${name} counters intact`,()=>{assert.deepEqual(run(id,name,false,side),[0,damage]);assert.deepEqual(run(id,name,true,side),[0,damage]);});
 }
+
+// Stage 13: check the two mixed damage cases and previously invalid fixtures.
+for(const side of ['player','opponent']){
+ for(const [id,name,base,expected] of [
+  ['ex7-17','Spread Poison',[20,20],[10,0]], // 10 poison checkup remains
+  ['ex12-89','Water Arrow',[10,40],[10,20]], // Icy Aura adds one counter outside the attack
+  ['ex4-9','Linear Attack',[0,20],[0,0]],
+  ['cel25c-9_A','Linear Attack',[0,20],[0,0]],
+  ['pl4-51','Cloak Shard',[0,10],[0,0]],
+  ['pl4-71','Mega Shot',[0,40],[0,20]],
+  ['pl4-AR5','Sky Spear',[0,80],[0,60]],
+  ['swsh4-48','Thunder Snipe',[0,160],[0,140]]
+ ])test(`${side} DTE stage 13 ${id} ${name}`,()=>{assert.deepEqual(run(id,name,false,side),base);assert.deepEqual(run(id,name,true,side),expected);});
+ for(const [id,name,base,turbo] of [['ex4-9','Linear Attack',20,0],['cel25c-9_A','Linear Attack',20,0],['pl4-51','Cloak Shard',10,0],['pl4-71','Mega Shot',40,20],['pl4-AR5','Sky Spear',80,60],['swsh4-48','Thunder Snipe',160,140]])test(`${side} DTE active target ${id}`,()=>{
+   assert.deepEqual(run(id,name,false,side,{active:true}),[base,0]);assert.deepEqual(run(id,name,true,side,{active:true}),[turbo,0]);
+ });
+ test(`${side} Cloak Shard with its matching Plant Cloak`,()=>{assert.deepEqual(run('pl4-51','Cloak Shard',false,side,{strong:true}),[0,40]);assert.deepEqual(run('pl4-51','Cloak Shard',true,side,{strong:true}),[0,20]);});
+ test(`${side} Sky Spear and Thunder Snipe remove DTE after applying its damage modifier`,()=>{
+   const sky=run('pl4-AR5','Sky Spear',true,side,{detail:true});assert.deepEqual(sky.damage,[0,60]);assert.equal(sky.special.length,0);assert.ok(sky.lostZone.some(r=>r.cardId==='swsh9-151'));assert.equal(Object.values(sky.energy).reduce((a,b)=>a+b,0),0);
+   const thunder=run('swsh4-48','Thunder Snipe',true,side,{detail:true});assert.deepEqual(thunder.damage,[0,140]);assert.equal(thunder.special.length,0);assert.ok(thunder.discard.some(r=>r.cardId==='swsh9-151'));assert.equal(Object.values(thunder.energy).reduce((a,b)=>a+b,0),0);
+ });
+}

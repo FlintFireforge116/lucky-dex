@@ -690,6 +690,72 @@ function buildDeck(rows,options={}){
  if(!selectedTypes.length){const ownType=requestedEnergy[0]||(main.deckMeta?.preferredEnergyTypes||[]).find(t=>decks.ENERGY_TYPES.includes(t))||(main.types||[]).find(t=>decks.ENERGY_TYPES.includes(t));if(ownType)selectedTypes.push(ownType);}
  if(!selectedTypes.length)selectedTypes.push('Fighting');
  const cards=[],counts=new Map(),nameCounts=new Map();
+ const ownedTrainerPool=pool.filter(c=>c.kind==='trainer'&&!isEvolutionFossil(c));
+ const adaptiveSupport=new Set(ownedTrainerPool.map(c=>c.setId)).size>=4&&new Set(ownedTrainerPool.map(c=>classicCardName(c.name))).size>=24;
+ // A seed changes close calls, not whether a card is legal or its strategic role.
+ const supportSeed=Number(options.randomSeed)||0;
+ const supportJitter=new Map();
+ function supportTie(card){const name=classicCardName(card.name);if(!supportJitter.has(name)){
+   let h=(2166136261^supportSeed)>>>0;for(const ch of name)h=Math.imul(h^ch.charCodeAt(0),16777619)>>>0;
+   h=Math.imul(h^(h>>>16),0x45d9f3b)>>>0;h=Math.imul(h^(h>>>16),0x45d9f3b)>>>0;
+   supportJitter.set(name,((h^(h>>>16))>>>0)%19);}
+   return supportJitter.get(name);
+ }
+ const supportProfiles=new Map();
+ function supportProfile(card){if(supportProfiles.has(card))return supportProfiles.get(card);
+   // Reminder text and our own costs are not opponent disruption or card draw.
+   const text=String(card.text||card.printedRules||'').replace(/You (?:can|may) play (?:only|as many|any number of)[^.]*\./gi,'').replace(/When you play this card, put it next to your Active Pok[eé]mon\./gi,'').replace(/When your turn ends, discard this card\./gi,'').toLowerCase();
+   const roles=new Set(),meta=synergy.metadata(card),fxType=card.effect?.type||'';
+   // Only your draw and actual search effects count towards consistency.
+   if(/(?:^|[.!;]\s*|\bthen,?\s+|\b(?:if you do|in this way),?\s+|\byou\s+)draw (?:up to )?(?:\d+|one|two|three|four|five|six|seven|cards?|until)/i.test(text)||fxType==='draw')roles.add('draw');
+   if(/\bsearch (?:your deck|the deck)|\breveal cards? (?:from your deck|until)|\blook at (?:the )?top.{0,85}(?:choose|put|reveal)|\blook at the top.{0,40}cards/i.test(text)||fxType==='search')roles.add('search');
+   if(/\b(?:heal|remove) (?:all|up to|\d+|one|two|three|four|five|six)/i.test(text)||fxType==='heal')roles.add('healing');
+   if(/\battach (?:up to |a |an |one |two |\d+ )?(?:basic |special )?(?:grass |fire |water |lightning |psychic |fighting |darkness |metal |fairy )?energy|\bmove.{0,35}energy.{0,45}(?:another|your)/i.test(text))roles.add('energy');
+   if(/\bswitch (?:your|one of your|1 of your|the active|each player)|\b(?:no|less|reduced) retreat cost|\bretreat cost.{0,35}(?:less|reduced|0)|\b(?:less to retreat|instead of discarding energy)/i.test(text)||fxType==='switch')roles.add('retreat');
+   if(/\b(?:opponent(?:'s)?|defending pok[eé]mon).{0,65}(?:can't|cannot|discards?|shuffles?)|\b(?:discard|switch|shuffle|choose).{0,50}(?:of )?your opponent.s (?:active|benched|pok[eé]mon|hand|energy|deck)/i.test(text))roles.add('disruption');
+   if(/\b(?:prevent all damage|takes? \d+ less damage|damage done.{0,60}reduced)/i.test(text))roles.add('stall');
+   if(/(?:does?|do) \d+ more damage|attacks? (?:do|does) (?:\d+|more) damage/i.test(text))roles.add('damage');
+   if(/(?:search|recover|reveal|choose|put).{0,100}energy.{0,65}(?:discard pile|into your hand|in your hand)/i.test(text)&&!/(?:search|choose).{0,70}pok[eé]mon/i.test(text)&&!/attach.{0,60}energy/i.test(text)){roles.delete('search');roles.add('recovery');}
+   if(/\bsearch your discard pile|\bfrom your discard pile.{0,75}(?:into your hand|into your deck|put it)/i.test(text)&&!roles.has('energy'))roles.add('recovery');
+   // Compact older records may not carry full text. Retain single well-defined
+   // roles only when the executable effect itself supports them.
+   if(!roles.size&&['draw','search','heal','switch','energyRetrieval'].includes(fxType))roles.add(({heal:'healing',switch:'retreat',energyRetrieval:'recovery'})[fxType]||fxType);
+   const result={text,roles};supportProfiles.set(card,result);return result;
+ }
+ function adaptiveScore(card){refreshDraftCache();if(adaptiveScores.has(card))return adaptiveScores.get(card);
+   const original=cachedTrainerScore(card);if(!Number.isFinite(original))return original;
+   const profile=supportProfile(card),roles=profile.roles,text=profile.text,mons=selectedPokemon(),meta=synergy.metadata(card);
+   const oldWeights={draw:37,search:35,healing:20,energy:25,retreat:16,disruption:15,stall:18};
+   const weights={draw:46,search:44,healing:22,energy:35,retreat:30,disruption:28,stall:20,damage:29,recovery:12};
+   const ranked=[...roles].map(r=>weights[r]||0).sort((a,b)=>b-a);
+   const legacyBonus=original-8-(meta.roles||[]).reduce((n,r)=>n+(oldWeights[r]||0),0);
+   const named= supportContext().optionalPartnerNames?.has(String(card.name||'').toLowerCase().replace(/[^a-z0-9]+/g,' ').trim());
+   let score=10+(ranked[0]||0)+(ranked[1]||0)*0.25+(named?legacyBonus:Math.min(20,legacyBonus));
+   if(roles.has('draw')){const amount=Number(/draw (?:up to )?(\d+) cards?/.exec(text)?.[1]||0);score+=Math.min(amount,5)*4;if(/if you have less cards in your hand than your opponent/i.test(text))score-=28;if(/discard your hand|discard the other cards/i.test(text))score-=13;}
+   if(roles.has('search')){if(/flip (?:a|two|\d+) coin|per heads/i.test(text))score-=16;if(/search.{0,35}(?:deck|your deck).{0,65}pok[eé]mon|reveal cards.{0,60}pok[eé]mon/i.test(text))score+=12;
+      if(/evolution pok[eé]mon/i.test(text)){if(mons.some(p=>['Stage 1','Stage 2','VMAX','VSTAR','BREAK'].includes(p.stage)))score+=14;else score-=60;}
+      if(/look at the top/i.test(text))score-=7;
+   }
+   if(/discard (?:a|1|one|another|2|two) cards? from your hand/i.test(text))score-=9;
+   if(/only if|only when|last card in your hand/i.test(text))score-=20;
+   if(/flip (?:a|one) coin/i.test(text)&&!roles.has('search'))score-=9;
+   if(meta.energyTypes?.length&&meta.energyTypes.some(t=>selectedTypes.includes(t)))score+=22;
+   if(mons.some(p=>p.setId===card.setId))score+=10;
+   if(roles.has('healing')&&mons.some(p=>Number(p.hp)>=150))score+=8;
+   if(roles.has('retreat')&&mons.some(p=>Number(p.retreat)>=2))score+=8;
+   if(card.trainerType==='Supporter')score-=8;
+   if(card.name==='Energy Recycle System')score-=20;
+   if(['Friend Ball','Familiar Bell','Good Manners','Maintenance','Nugget'].includes(card.name))score-=25;
+   if(card.name==='Battle VIP Pass')score-=20;
+   if(card.name==='Luxury Ball')score-=3;
+   if(meta.energyTypes?.some(t=>selectedTypes.includes(t))&&['energy','damage','retreat','healing'].some(r=>roles.has(r)))score+=12;
+   if(card.name==='Switch'||card.name==='Escape Rope')score+=12;
+   if(card.name==='Bill')score+=8; // efficient Item draw, not a mandatory inclusion
+
+   if(theme==='energy'&&roles.has('energy')||theme==='healing'&&(roles.has('healing')||roles.has('stall'))||theme==='disruption'&&roles.has('disruption'))score+=26;
+   const value=score+supportTie(card);adaptiveScores.set(card,value);return value;
+ }
+
  // The Classic format is only 30 cards. Trainer redundancy is useful, but
  // stuffing four copies of every high-scoring Supporter/Tool is not. Start
  // with varied two-copy support, relaxing only for inventories which cannot
@@ -699,9 +765,14 @@ function buildDeck(rows,options={}){
  for(const id of existing){const saved=classic.cardById(id);if(saved){const name=classicCardName(saved.name);retainedNameCopies.set(name,(retainedNameCopies.get(name)||0)+1);}}
  // The deck grows only through add(); cache derived state for the current
  // exact draft, not across ownership changes, builds or Energy selections.
- let draftCacheSize=-1,draftCacheEnergy='',draftPokemon=[],draftCards=[],draftContext=null,draftUseful=new Map(),draftScores=new Map();
+ let draftCacheSize=-1,draftCacheEnergy='',draftPokemon=[],draftCards=[],draftContext=null,draftUseful=new Map(),draftScores=new Map(),adaptiveScores=new Map(),supportCoreKey='';
  function refreshDraftCache(){const key=selectedTypes.join('|');if(draftCacheSize===cards.length&&draftCacheEnergy===key)return;
-  draftCacheSize=cards.length;draftCacheEnergy=key;draftCards=cards.map(classic.cardById).filter(Boolean);draftPokemon=draftCards.filter(c=>c.kind==='pokemon');draftContext=null;draftUseful=new Map();draftScores=new Map();}
+  draftCacheSize=cards.length;draftCacheEnergy=key;draftCards=cards.map(classic.cardById).filter(Boolean);draftPokemon=draftCards.filter(c=>c.kind==='pokemon');draftUseful=new Map();
+  // Pure synergy scores depend on the Pokemon core, Energy and TM presence;
+  // eligibility/role saturation still re-evaluate each physical draft.
+  const nextKey=key+'|'+draftPokemon.map(c=>c.id).join(',')+'|'+Number(draftCards.some(c=>c.technicalMachine));
+  if(!adaptiveSupport||supportCoreKey!==nextKey){supportCoreKey=nextKey;draftContext=null;draftScores=new Map();adaptiveScores=new Map();}
+ }
  const selectedPokemon=()=>{refreshDraftCache();return draftPokemon;};
  const supportContext=()=>{refreshDraftCache();return draftContext||(draftContext=synergy.context(draftCards,selectedTypes,theme));};
  const cachedTrainerScore=card=>{refreshDraftCache();if(!draftScores.has(card))draftScores.set(card,synergy.trainerScore(card,supportContext()));return draftScores.get(card);};
@@ -729,6 +800,31 @@ function buildDeck(rows,options={}){
    // Being battle-enabled does not mean the Trainer has a useful target.
    if(!manuallyKept){
      const pokemon=selectedPokemon();
+     if(adaptiveSupport){
+       // Holon Lass examines physical deck Energy, not the virtual Zone.
+       if(card.name==='Holon Lass'&&cards.filter(id=>classic.cardById(id)?.kind==='energy').length<5)return false;
+       if(card.name==='Evolution Incense'&&!pokemon.some(p=>['Stage 1','Stage 2','VMAX','VSTAR','BREAK'].includes(p.stage)))return false;
+       if(card.name==='Level Ball'&&!pokemon.some(p=>Number(p.hp)<=90))return false;
+       if(card.name==='Single Strike Style Mustard'&&!pokemon.some(p=>p.singleStrike))return false;
+       if(card.name==='Rapid Strike Style Mustard'&&!pokemon.some(p=>p.rapidStrike))return false;
+       if(card.name==='Feather Ball'&&!pokemon.some(p=>Number(p.retreat)===0))return false;
+       if(card.name==='Holon Transceiver'&&!cards.some(id=>/^Holon /.test(classic.cardById(id)?.name||'')&&classic.cardById(id)?.trainerType==='Supporter'))return false;
+       if(/ Memory$/.test(card.name)&&/Silvally-GX/i.test(card.text||'')&&!pokemon.some(p=>p.name==='Silvally-GX'))return false;
+       if(card.name==='Suspicious Food Tin'&&!selectedTypes.includes('Psychic'))return false;
+       if(card.name==='Swoop! Teleporter'&&!pokemon.some(p=>p.stage==='Basic'&&!p.pokemonEx&&!p.isEx&&!p.pokemonEX))return false;
+       if(card.name==='Life Herb'&&!pokemon.some(p=>!p.pokemonEx&&!p.isEx&&!p.pokemonEX))return false;
+       if(card.name==='Fog Crystal'&&!selectedTypes.includes('Psychic')&&!pokemon.some(p=>p.stage==='Basic'&&p.types?.includes('Psychic')))return false;
+       if(card.name==='Colress Machine'&&(!pokemon.some(p=>p.teamPlasma)||!cards.some(id=>classic.cardById(id)?.name==='Plasma Energy')))return false;
+       if(card.name==='Team Plasma Ball'&&!pokemon.some(p=>p.teamPlasma))return false;
+       if(card.name==='Power Tablet'&&!pokemon.some(p=>p.fusionStrike))return false;
+       if(card.name==='Electric Generator'&&!pokemon.some(p=>p.stage==='Basic'&&p.types?.includes('Lightning')))return false;
+       if(card.name==='Dusk Stone'&&!pokemon.some(p=>/^(Mismagius|Honchkrow|Chandelure|Aegislash)(?:[- ]|$)/i.test(p.name)&&pokemon.some(b=>b.name===p.evolvesFrom)))return false;
+       if(card.name==='Cherish Ball'&&!pokemon.some(p=>p.pokemonGX||p.isPokemonGX))return false;
+       if(card.name==='Adventure Bag'&&cards.filter(id=>['Tool','Pokémon Tool'].includes(classic.cardById(id)?.trainerType)).length<2)return false;
+       if(card.name==='Cross Switcher')return false; // requires a two-card package, not a filler singleton
+       if(card.name==='The Masked Royal'&&!pokemon.some(p=>p.stage==='Stage 2'&&p.types?.some(t=>['Fire','Water','Grass'].includes(t))))return false;
+       if(card.name==='Melony'&&!pokemon.some(p=>p.pokemonV||p.isPokemonV||/ V$/i.test(p.name)))return false;
+     }
      if(card?.name==="Elesa's Sparkle"&&(!pokemon.some(p=>p.fusionStrike)||!cards.some(id=>id==='swsh8-244')))return false;
      if(card?.trainerType==='Tool'&&fx){
        const species=fx.spiritLinkSpecies(card);
@@ -1427,10 +1523,10 @@ function buildDeck(rows,options={}){
  // Contextual strategy support: select rule-relevant cards before the generic
  // consistency backbone. A Stadium may be taken only if its Pokémon/Energy
  // requirements are satisfied by the completed core; no random dead Stadiums.
- const strategicTrainers=pool.filter(c=>c.kind==='trainer'&&trainerIsUseful(c)).map(c=>({card:c,score:cachedTrainerScore(c)}))
+ const strategicTrainers=adaptiveSupport?[]:pool.filter(c=>c.kind==='trainer'&&trainerIsUseful(c)).map(c=>({card:c,score:cachedTrainerScore(c)}))
    .filter(r=>Number.isFinite(r.score)).sort((a,b)=>b.score-a.score||(a.card.id||'').localeCompare(b.card.id||''));
  let strategyAdds=0,stadiumsAdded=cards.filter(id=>classic.cardById(id)?.trainerType==='Stadium').length;
- for(const {card,score} of strategicTrainers){
+ if(!adaptiveSupport)for(const {card,score} of strategicTrainers){
    if(cards.length>=30||strategyAdds>=7)break;
    if(card.trainerType==='Stadium'&&stadiumsAdded>=1)continue;
    if(theme==='any'&&score<33)continue;
@@ -1441,7 +1537,7 @@ function buildDeck(rows,options={}){
  }
  // Start with a compact consistency backbone, rather than spending every
  // Trainer slot on Base Set before later sets are even considered.
- for(const [id,want] of [['base1-91',2],['base1-88',1],['base1-71',1],['base1-77',1],['base1-95',1],['base1-93',1]]){
+ if(!adaptiveSupport)for(const [id,want] of [['base1-91',2],['base1-88',1],['base1-71',1],['base1-77',1],['base1-95',1],['base1-93',1]]){
    const card=classic.cardById(id);if(card&&scope.includes(card.setId))add(card,Math.min(want,room(card)));
  }
  const themedNames=new Set(cards.map(classic.cardById).filter(c=>c?.kind==='pokemon').map(c=>c.name));
@@ -1475,11 +1571,12 @@ function buildDeck(rows,options={}){
  let gymAdded=0;
  const supports=gymSupport.filter(([id,score,need])=>{
    const c=classic.cardById(id);if(!c||!scope.includes(c.setId)||!pool.includes(c)||!trainerIsUseful(c))return false;
+   if(adaptiveSupport&&!need)return false;
    if(need==='Fire')return selectedTypes.includes('Fire');
    return !need||activeThemes.has(need);
  }).sort((a,b)=>b[1]-a[1]);
  for(const [id] of supports){if(cards.length>=30||gymAdded>=4)break;gymAdded+=add(classic.cardById(id),1);}
- for(const [id,want] of STAPLES){const card=classic.cardById(id);if(card&&scope.includes(card.setId)){const already=cards.filter(cid=>classicCardName(classic.cardById(cid)?.name)===classicCardName(card.name)).length;add(card,Math.min(Math.max(0,want-already),room(card)));}if(cards.length>=30)break;}
+ if(!adaptiveSupport)for(const [id,want] of STAPLES){const card=classic.cardById(id);if(card&&scope.includes(card.setId)){const already=cards.filter(cid=>classicCardName(classic.cardById(cid)?.name)===classicCardName(card.name)).length;add(card,Math.min(Math.max(0,want-already),room(card)));}if(cards.length>=30)break;}
  // Special Energy must never be treated as generic 30-card filler. In the
  // hybrid rules Basic Darkness/Metal already comes from the Energy Zone;
  // their Special prints are only worthwhile if the *printed additional effect*
@@ -1523,26 +1620,27 @@ function buildDeck(rows,options={}){
  let marginalSize=-1,marginalOthers=[],marginalRoles=new Map(),marginalSupporters=0,marginalHandSource=false;
  function refreshMarginal(){if(marginalSize===cards.length)return;marginalSize=cards.length;
    marginalOthers=cards.map(classic.cardById).filter(c=>c?.kind==='trainer');marginalRoles=new Map();marginalSupporters=marginalOthers.filter(c=>c.trainerType==='Supporter').length;
-   for(const c of marginalOthers)for(const role of synergy.metadata(c).roles)marginalRoles.set(role,(marginalRoles.get(role)||0)+1);
+   for(const c of marginalOthers)for(const role of (adaptiveSupport?supportProfile(c).roles:synergy.metadata(c).roles))marginalRoles.set(role,(marginalRoles.get(role)||0)+1);
    marginalHandSource=cards.some(id=>{const c=classic.cardById(id);return c?.kind==='pokemon'&&((c.deckMeta?.triggerDependencies||[]).includes('basic-energy-in-hand')||(c.abilities||[]).some(a=>/Basic Energy card from your hand/i.test(a.text||'')));});
  }
  function marginalTrainerScore(card){
-   const base=card.kind==='trainer'?cachedTrainerScore(card):
+   const base=card.kind==='trainer'?(adaptiveSupport?adaptiveScore(card):cachedTrainerScore(card)):
      (card.specialEnergy&&usefulFillerSpecialEnergy(card)?20:-Infinity);
    if(!Number.isFinite(base))return -Infinity;
    refreshMarginal();
    const repeats=marginalOthers.filter(c=>classicCardName(c.name)===classicCardName(card.name)).length;
-   const roles=new Set(synergy.metadata(card).roles||[]);
-   let penalty=repeats*34;
+   const roles=adaptiveSupport?supportProfile(card).roles:new Set(synergy.metadata(card).roles||[]);
+   let penalty=repeats*(adaptiveSupport?25:34);
    if(card.trainerType==='Supporter'){
      const supporters=marginalSupporters;
      penalty+=Math.max(0,supporters-4)*12;
    }
-   for(const role of ['draw','search','healing','energy','retreat','stall','disruption']){
+   for(const role of ['draw','search','healing','energy','retreat','stall','disruption',...(adaptiveSupport?['damage','recovery']:[])]){
      if(!roles.has(role))continue;
      const otherRoleCount=marginalRoles.get(role)||0;
-     const threshold=role==='draw'||role==='search'?5:role==='energy'?3:2;
-     penalty+=Math.max(0,otherRoleCount-threshold)*9;
+     const threshold=role==='draw'||role==='search'?(adaptiveSupport?3:5):role==='energy'?3:2;
+     penalty+=Math.max(0,otherRoleCount-threshold)*(adaptiveSupport?15:9);
+     if(adaptiveSupport&&otherRoleCount===0&&['draw','search','retreat','disruption'].includes(role))penalty-=12;
    }
    // Energy from the hybrid Zone is already available for ordinary turn
    // attachments. Hand-only Energy search is not the strongest generic filler.

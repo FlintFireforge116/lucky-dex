@@ -1,0 +1,8 @@
+{
+  "scope": "synthetic neutral-target diagnostic; review printed effects and unexercised branches; not a completion gate",
+  "eligible": 422,
+  "ran": 372,
+  "zero": 50,
+  "errors": [],
+  "mismatches": []
+}

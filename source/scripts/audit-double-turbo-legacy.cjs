@@ -12,21 +12,24 @@ const energy=Object.fromEntries(['Grass','Fire','Water','Lightning','Psychic','F
 const dummy={id:'sm6-dummy',name:'Audit target',kind:'pokemon',stage:'Basic',hp:1000,types:['Colorless'],subtype:'Colorless',retreat:1,battleEnabled:true,deckEligible:true,attacks:[{name:'Tap',cost:[],damage:10,effect:{type:'noop'}}],abilities:[]};
 const template=core.createBattle({format:'classic',playerDeck:data.CLASSIC30_LOANER_DECK,opponentDeck:data.CLASSIC30_LOANER_DECK,seed:32132,firstSide:'player',playerEnergyTypes:['Psychic','Fighting'],opponentEnergyTypes:['Psychic','Fighting']});
 const basicCards=data.CARDS.filter(c=>c.basicEnergy).slice(0,6);
-function run(id,name,turbo,side){
- const lookup=data.cardById;data.cardById=x=>x===dummy.id?dummy:lookup(x);
+function run(id,name,turbo,side,options={}){
+ const lookup=data.cardById;data.cardById=x=>x===dummy.id?(id==='swsh4-48'?{...dummy,pokemonV:true}:dummy):lookup(x);
  try{
   const state=structuredClone(template),foe=side==='player'?'opponent':'player',us=state.sides[side],them=state.sides[foe];state.phase='battle';state.activeSide=side;state.turnNumber=7;
   for(const who of ['player','opponent']){const board=state.sides[who];board.turnCount=4;board.hand=[];board.deck=Array.from({length:15},(_,i)=>ref('sm6-1',who+'d'+i));board.prizes=Array.from({length:5},(_,i)=>ref('sm6-1',who+'p'+i));board.discard=[];board.energyDiscard={};board.energySupply=['Psychic','Fighting','Psychic'];board.active=slot(who===side?id:dummy.id,who+'a');board.bench=[slot(dummy.id,who+'b')];board.bench[0].benchSlot=0;}
   us.active.energy={...energy};us.active.specialEnergy=[{...ref(turbo?'swsh9-151':'base1-96','energy'),provides:{Colorless:2}}];us.hand=basicCards.map((c,i)=>ref(c.id,'hand'+i));us.sm12WillTurn=state.turnNumber;us.sm12WillResult=true;them.active.energy={Water:2};them.bench[0].energy={Water:2};
+  if(['ex4-9','cel25c-9_A'].includes(id))us.bench=['ex4-12','ex4-23','ex4-32'].map((cardId,i)=>({...slot(cardId,side+'m'+i),benchSlot:i}));
+  if(id==='pl4-51'&&options.strong)us.bench=[{...slot('pl4-49',side+'plant'),benchSlot:0}];
   if(id==='dp7-99')us.hand=[ref('base1-100','light1'),ref('base1-100','light2')];
   const idx=data.cardById(id).attacks.findIndex(a=>a.name===name),actions=core.legalActions(state,side).filter(a=>a.type==='attack'&&a.attackIndex===idx);
   if(!actions.length)throw Error('no attack action');
-  core.applyAction(state,side,actions.find(a=>a.target==='opponentBench'||a.effectTarget==='opponentBench'||a.choiceTarget==='bench')||actions[0]);
-  let n=0;while(state.phase==='effectChoice'&&n++<100){const who=state.choiceSide||side,opts=core.legalActions(state,who).filter(a=>a.type==='effectChoice');if(!opts.length)throw Error('empty choice');core.applyAction(state,who,opts.find(a=>a.choiceTarget==='bench'&&!a.choiceSkip)||opts.find(a=>!a.choiceSkip)||opts[0]);}
+  core.applyAction(state,side,actions.find(a=>options.active?(a.target==='opponentActive'||a.effectTarget==='opponentActive'||(['ex4-9','cel25c-9_A'].includes(id)&&a.effectSelection==='')):(a.target==='opponentBench'||a.effectTarget==='opponentBench'||a.choiceTarget==='bench'||(['ex4-9','cel25c-9_A'].includes(id)&&a.effectSelection===them.bench[0].uid)))||actions[0]);
+  let n=0;while(state.phase==='effectChoice'&&n++<100){const who=state.choiceSide||side,opts=core.legalActions(state,who).filter(a=>a.type==='effectChoice');if(!opts.length)throw Error('empty choice');core.applyAction(state,who,opts.find(a=>a.choiceTarget===(options.active?'active':'bench')&&!a.choiceSkip)||opts.find(a=>!a.choiceSkip)||opts[0]);}
   if(state.phase==='effectChoice')throw Error('choice loop');
-  return [them.active?.damage||0,them.bench[0]?.damage||0];
+  const damage=[them.active?.damage||0,them.bench[0]?.damage||0];return options.detail?{damage,energy:us.active?.energy,special:us.active?.specialEnergy,discard:us.discard,lostZone:us.lostZone,conditions:them.active?.conditions}:damage;
  }finally{data.cardById=lookup;}
 }
+function idNonAttack(id,name){return (id==='ex7-17'&&name==='Spread Poison')||(id==='ex12-89'&&name==='Water Arrow')?[10,0]:[0,0];}
 function main(){
 const legacy=new Set(['neoRule','sm7Rule','sm1Rule','sm3Rule','sm5Rule','sm6Rule','sm8Rule','sm9Rule']);
 const known=new Set(['ex10-102:Snap Tail','ex11-82:Dig Under','dp7-99:Voltage Shoot']);
@@ -37,7 +40,7 @@ for(const side of process.argv.includes('--both')?['player','opponent']:['player
  const explicit=known.has(c.id+':'+a.name);
  if(!explicit&&(!legacy.has(a.effect?.type)||/damage counter/i.test(a.text||'')||!(printed.test(a.text||'')||selected.test(a.text||''))))continue;
  report.eligible++;
- try{const base=run(c.id,a.name,false,side),turbo=run(c.id,a.name,true,side);if(!base.some(x=>x>0)){report.zero++;continue;}report.ran++;const expected=base.map(v=>Math.max(0,v-20));if(turbo.some((v,i)=>v!==expected[i]))report.mismatches.push({side,id:c.id,name:a.name,base,turbo,expected,rule:a.effect?.rule,text:a.text});}
+ try{const base=run(c.id,a.name,false,side),turbo=run(c.id,a.name,true,side);if(!base.some(x=>x>0)){report.zero++;continue;}report.ran++;const nonAttack=idNonAttack(c.id,a.name);const expected=base.map((v,i)=>Math.max(0,v-nonAttack[i]-20)+nonAttack[i]);if(turbo.some((v,i)=>v!==expected[i]))report.mismatches.push({side,id:c.id,name:a.name,base,turbo,expected,rule:a.effect?.rule,text:a.text});}
  catch(e){report.errors.push({side,id:c.id,name:a.name,reason:e.message.slice(0,150)});}
 }
 console.log(JSON.stringify(report,null,2));

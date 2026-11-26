@@ -8,8 +8,8 @@ android {
         applicationId 'com.example.luckydex'
         minSdk 26
         targetSdk 35
-        versionCode 7556
-        versionName '0.69.556'
+        versionCode 7557
+        versionName '0.69.557'
     }
 
     signingConfigs {
@@ -1570,7 +1570,7 @@ tasks.register('generateSWSH10ForApk', Exec) {
 tasks.register('auditSWSH10ForApk', Exec) {
     dependsOn tasks.named('generateSWSH10ForApk')
     workingDir rootProject.projectDir
-    commandLine 'node', '--test', 'tests/v07545-astral-radiance.test.cjs', 'tests/v07556-double-turbo-legacy.test.cjs'
+    commandLine 'node', '--test', 'tests/v07545-astral-radiance.test.cjs', 'tests/v07556-double-turbo-legacy.test.cjs', 'tests/v07557-adaptive-trainers.test.cjs', 'tests/v07468-classic-deck-performance.test.cjs'
 }
 tasks.matching { it.name == 'preBuild' || (it.name.startsWith('merge') && it.name.endsWith('Assets')) }.configureEach {
     dependsOn tasks.named('auditSWSH10ForApk')

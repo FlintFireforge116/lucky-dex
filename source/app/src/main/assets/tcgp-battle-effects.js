@@ -3699,6 +3699,11 @@
       return;
     }
     if(key==='3:0'){for(const p of foe.bench)p.damage=Number(p.damage||0)+10;heal(a,10*board(foe).length);return;}
+    if(key==='17:1'){ // Spread Poison: poison checkup is not attack damage.
+      if(ctx.resolvingChoice){const p=pickTarget(foe);if(p&&foe.bench.includes(p))applyEffect({type:'benchDamage',side:'opponent',amount:20},{...ctx,action:{...ctx.action,choiceTarget:'bench',choiceBenchIndex:p.benchSlot}});}
+      else{status('poison');if(foe.bench.length)selectPokemon(foe,{includeActive:false,optional:false});}
+      return;
+    }
     if(key==='19:1'){for(const p of foe.bench)p.damage=Number(p.damage||0)+outgoingAttackDamage(ctx.state,ctx.side,a,ctx.foeSide,20,ctx.cardById);return;}
     if(key==='17:0'){if(d){d.locks=[...(d.locks||[]),{action:'retreat',expiresTurn:turn+1}];applyEffect({type:'scheduleDelayed',event:'endOpponentNextTurn',targetMode:'defender',effect:{type:'damage',amount:50}},ctx);}return;}
     if(key==='99:0'){if(a&&d&&expend(us,a)){const x=a.damage||0;a.damage=d.damage||0;d.damage=x;}return;}
@@ -25476,7 +25481,7 @@ if(ctx.isAbility){const targetSide=pokemonOn(own(ctx)).includes(s)?ctx.side:ctx.
       if(e.type==='sm7Rule'&&e.rule==='swsh4FlyingFury'){damage+=40*Number(ctx.action?.sm7SelectedCount||0);return;}
       if(e.type==='sm7Rule'&&e.rule==='swsh4GulpMissile'){const ss=own(ctx),ids=new Set(String(ctx.action?.effectSelection||'').split(',')),picked=ss.bench.filter(p=>ids.has(p.uid)&&ctx.cardById(p.cardId)?.name==='Arrokuda');damage=60*picked.length;for(const p of picked){ss.bench.splice(ss.bench.indexOf(p),1);for(const [i,id] of p.stack.entries())ss.discard.push({uid:p.uid+'-gulp-'+i,cardId:id});ss.discard.push(...toolsOf(p),...temporaryTrainersOf(p),...(p.specialEnergy||[]));for(const [type,n] of Object.entries(p.energy||{}))recordDiscardedEnergy(ss,type,Number(n||0));}return;}
       if(e.type==='sm7Rule'&&e.rule==='swsh4TrashCyclone'){const ss=own(ctx),tools=ss.discard.filter(x=>ctx.cardById(x.cardId)?.trainerType==='Tool');damage=30*tools.length;if(tools.length){ss.discard=ss.discard.filter(x=>!tools.includes(x));ss.deck.push(...tools);ctx.shuffle?.(ctx.state,ss.deck);}return;}
-      if(e.type==='sm7Rule'&&e.rule==='swsh4ThunderSnipe'){const p=selected(ctx,other(ctx));const c=ctx.cardById(p?.cardId);damageTarget=c&&(c.pokemonV||c.pokemonGX)?p:undefined;damage=damageTarget?160:0;pending.push({type:'discardEnergyCard',target:'self',amount:'all',timing:'beforeDamage'});return;}
+      if(e.type==='sm7Rule'&&e.rule==='swsh4ThunderSnipe'){const p=selected(ctx,other(ctx));const c=ctx.cardById(p?.cardId);damageTarget=c&&(c.pokemonV||c.pokemonGX)?p:undefined;damage=damageTarget?160:0;pending.push({type:'discardEnergyCard',target:'self',amount:'all'});return;}
       if(e.type==='sm7Rule'&&e.rule==='swsh4EruptionShot'){const ss=own(ctx),ref=ss.deck.shift();if(ref){const c=ctx.cardById(ref.cardId);if(c?.kind==='energy'){damage+=90;if(c.basicEnergy){const t=c.energyType||c.subtype;ctx.attacker.energy[t]=Number(ctx.attacker.energy[t]||0)+1;ctx.onEnergyAttached?.(ctx.attacker,t,1);}else{(ctx.attacker.specialEnergy||(ctx.attacker.specialEnergy=[])).push(ref);ctx.onEnergyAttached?.(ctx.attacker,c.energyType||c.subtype,1);}}else ss.discard.push(ref);}return;}
       if(e.type==='sm7Rule'&&e.rule==='swsh4AmazingBurst'){const p=ctx.attacker,ss=own(ctx),types=Object.keys(p.energy||{}).filter(t=>Number(p.energy[t])>0);damage=80*types.length;for(const t of types){recordDiscardedEnergy(ss,t,p.energy[t]);p.energy[t]=0;}return;}
       if(e.type==='sm7Rule'&&e.rule==='swsh4TargetedSkewer'){damageTarget=targets('opponentBench',ctx)[0]||null;damage=damageTarget?Number(damageTarget.damage||0)*2:0;damageRules.ignoreWeakness=true;damageRules.ignoreResistance=true;return;}
@@ -26415,7 +26420,7 @@ if(ctx.isAbility){const targetSide=pokemonOn(own(ctx)).includes(s)?ctx.side:ctx.
         if(k==='23:primalTentacles'){damage=30+10*us.discard.filter(ref=>['Helix Fossil','Dome Fossil','Old Amber'].includes(name(ref))).length;return;}
         if(k==='33:wideLaser'){damage=10;pending.push({type:'benchDamage',side:'opponent',all:true,amount:10});return;}
         if(k==='51:cloakShard'){
-          damage=0;const strong=pokemonOn(us).some(p=>name(p)==='Wormadam Plant Cloak');pending.push({type:'selectedDamage',target:'opponentPokemon',amount:strong?40:10,ignoreWeakness:true,ignoreResistance:true});return;
+          const strong=pokemonOn(us).some(p=>name(p)==='Wormadam Plant Cloak');visit({type:'selectedDamage',target:'opponentPokemon',amount:strong?40:10});return;
         }
         if(k==='SH10:dragonRage'){
           const first=addCoin('Dragon Rage'),second=addCoin('Dragon Rage');damage=first&&second?40:0;return;
@@ -26423,9 +26428,9 @@ if(ctx.isAbility){const targetSide=pokemonOn(own(ctx)).includes(s)?ctx.side:ctx.
         if(k==='AR1:prizeCount'){damage=20+(us.prizes.length>foe.prizes.length?60:0);return;}
         if(k==='AR9:metalBarrier'){pending.push({type:'preventDamage',target:'self',duration:'opponentTurn',attackerFilter:{stage:'Level-Up'},effects:true});return;}
         if(k==='97:compoundPain'){damage=Number(d?.damage||0)>0?30:0;pending.push({type:'benchDamage',side:'opponent',all:true,amount:30,filter:{damaged:true}});return;}
-        if(k==='AR5:skySpear'){damage=0;pending.push({type:'selectedDamage',target:'opponentPokemon',amount:80,ignoreWeakness:true,ignoreResistance:true},e);return;}
+        if(k==='AR5:skySpear'){visit({type:'selectedDamage',target:'opponentPokemon',amount:80});pending.push(e);return;}
         if(k==='AR5:rippleSwell'){damage=0;pending.push(e);return;}
-        if(k==='71:megaShot'){damage=0;for(const [t,n] of Object.entries(a?.energy||{}))if(t==='Lightning'&&n>0){recordDiscardedEnergy(us,t,n);a.energy[t]=0;}pending.push({type:'selectedDamage',target:'opponentPokemon',amount:40,ignoreWeakness:true,ignoreResistance:true});return;}
+        if(k==='71:megaShot'){damage=0;for(const [t,n] of Object.entries(a?.energy||{}))if(t==='Lightning'&&n>0){recordDiscardedEnergy(us,t,n);a.energy[t]=0;}visit({type:'selectedDamage',target:'opponentPokemon',amount:40});return;}
         if(k==='29:recruit'||k==='46:ascension'||k==='69:harden'||k==='99:bigGrowth'||k==='9:damageRoller'||k==='25:babySteps'||k==='6:cloakParty'||k==='13:unearth'||k==='16:curse'||k==='21:relaxingShower'||k==='23:timeSpiral'||k==='24:continuousCrush'||k==='26:dowsingCode'||k==='32:darknessGrace'||k==='51:serveTrash'||k==='31:leafSupply'||k==='49:cloakScale'||k==='97:levelDown'||k==='90:professorOakVisit'||k==='86:energyRestore'||k==='98:doubleFall'||k==='9:entangleRecoil'){
           if(k==='29:recruit'||k==='46:ascension'||k==='69:harden'||k==='99:bigGrowth'||k==='9:damageRoller'||k==='25:babySteps'||k==='32:darknessGrace'||k==='23:timeSpiral')damage=0;
           pending.push(e);return;
@@ -29387,6 +29392,7 @@ if(ctx.isAbility){const targetSide=pokemonOn(own(ctx)).includes(s)?ctx.side:ctx.
 
     if(effect?.type==='neoRule'&&String(effect.rule||'').startsWith('pl4:')){
       const k=effect.rule.slice(4),us=own(ctx),slot=ctx.attacker;
+      if(ctx.isAttack&&['51:cloakShard','71:megaShot','AR5:skySpear'].includes(k))return targetChoices('opponentPokemon',ctx);
       if(k==='91:ultimateZone')return ctx.state.sides?.[ctx.side]?.active&&ctx.cardById(ctx.state.sides[ctx.side].active.cardId)?.name==='Arceus'&&own(ctx).bench.some(x=>Object.values(x.energy||{}).some(n=>Number(n)>0)||(x.specialEnergy||[]).length)?[{}]:[];
       if(k==='4:primalScythe')return [{effectSelection:'',choiceLabel:'20 damage — keep Fossils'},...us.hand.filter(ref=>['Old Amber','Dome Fossil','Helix Fossil'].includes(ctx.cardById(ref.cardId)?.name)).map(ref=>({effectSelection:ref.uid,choiceLabel:'Discard '+ctx.cardById(ref.cardId).name+' for 70 damage'}))];
       if(k==='5:gadgetBolt')return [{effectSelection:'',choiceLabel:'60 damage — keep attached Tool'},...(slot?.tool||slot?.extraTools?.length?[{effectSelection:'use',choiceLabel:'100 damage — discard a Tool attached to Luxray'}]:[])];
