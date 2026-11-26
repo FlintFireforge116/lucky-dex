@@ -286,6 +286,12 @@
         const hit=target?effects.attackDamageWithState(state,side,state.sides[side].active,foeOf(side),target,10+40*n,data.cardById):0;
         return 200+Math.min(hit,remaining)-n*2+(hit>=remaining?100:0);
       }
+      if(attack?.effect?.rule==='swsh7LivePainting')damage=30+30*String(action.effectSelection||'').split(',').filter(Boolean).length;
+      if(attack?.effect?.rule==='swsh7JudgmentSurge')damage=40*Number(state.sides[foeOf(side)].prizesTaken||0);
+      if(attack?.effect?.rule==='swsh7ElectronCrush'){
+        const target=state.sides[foeOf(side)].active,me=state.sides[side].active,remaining=target?core.maxHp(state,foeOf(side),target)-Number(target.damage||0):Infinity,hit=n=>target?effects.attackDamageWithState(state,side,me,foeOf(side),target,n,data.cardById):0;
+        if(action.effectSelection)return 200+Math.min(remaining,hit(220))-35+(hit(220)>=remaining&&hit(100)<remaining?100:0);return 200+Math.min(remaining,hit(100))+(hit(100)>=remaining?100:0);
+      }
       if(attack?.effect?.rule==='swsh6Tentacles')damage=40*state.sides[side].hand.filter(r=>data.cardById(r.cardId)?.rapidStrike).length;
       if(['swsh7SpiralBurst','swsh7MaxBurst'].includes(attack?.effect?.rule)){const p=state.sides[side].active;damage=20+80*Math.min(attack.effect.rule==='swsh7SpiralBurst'?2:Infinity,Math.max(Number(p.energy?.Fire||0),Number(p.energy?.Lightning||0)));}
       if(attack?.effect?.rule==='swsh6MaxLance')damage=10+120*Math.min(2,attachedCount(state.sides[side].active));
@@ -391,6 +397,10 @@
       // Powers remain freely repeatable for the human. The CPU may use them
       // once per turn so it cannot oscillate Energy/Damage forever.
       if(power?.name==='Buzzap Generator'){const board=state.sides[side],enemy=state.sides[foeOf(side)];if(enemy.prizes.length<=1||!board.active||board.active===source||!effects.effectiveTypes(state,side,board.active,data.cardById).includes('Lightning')||attachedCount(board.active)>=3||!(board.energySupply||[]).includes('Lightning')&&!board.deck.some(r=>data.cardById(r.cardId)?.basicEnergy&&data.cardById(r.cardId)?.subtype==='Lightning'))return false;}
+      if(power?.effect?.rule==='swsh7RapidConnection'){
+        const board=state.sides[side],active=board.active;
+        if(!active||!data.cardById(active.cardId)?.rapidStrike||!board.bench.some(p=>attachedCount(p)>0)||!(data.cardById(active.cardId)?.attacks||[]).some(a=>!effects.canPayCost(core.effectiveEnergy(state,side,active),a.cost)))return false;
+      }
       if(power?.effect?.rule==='swsh5MetalTransfer'){
         const board=state.sides[side],active=board.active;
         if(!active||!(data.cardById(active.cardId)?.attacks||[]).some(a=>!effects.canPayCost(core.effectiveEnergy(state,side,active),a.cost)))return false;
@@ -459,6 +469,15 @@
     // All choices are drawn from its own known Zone and public Pokémon.
     if(state.format==='classic'&&state.phase==='effectChoice'&&state.pendingChoice?.originSide===side){
       const pending=state.pendingChoice,e=pending.effect||{},choices=legal.filter(a=>a.type==='effectChoice');
+      if(e.rule==='swsh7RapidConnection'){
+        const board=state.sides[side],stop=choices.find(a=>a.choiceSkip);
+        if(e.stage==='target')return choices.find(a=>a.choiceTarget==='active')||choices[0];
+        return choices.find(a=>!a.choiceSkip&&e.units?.[a.choiceOption]?.source!==board.active?.uid)||stop||choices[0];
+      }
+      if(e.rule==='swsh7MirrorPain'){const board=state.sides[side];return choices.sort((a,b)=>Number(slotFor(board,b.choiceTarget,b.choiceBenchIndex)?.damage||0)-Number(slotFor(board,a.choiceTarget,a.choiceBenchIndex)?.damage||0))[0];}
+      if(e.rule==='swsh7TrickySteps'){const board=state.sides[foeOf(side)];if(e.stage==='energy')return choices.find(a=>!a.choiceSkip&&e.opts?.[a.choiceOption]?.uid)||choices.find(a=>!a.choiceSkip)||choices[0];return choices.sort((a,b)=>attachedCount(slotFor(board,a.choiceTarget,a.choiceBenchIndex))-attachedCount(slotFor(board,b.choiceTarget,b.choiceBenchIndex)))[0];}
+      if(e.rule==='swsh7ZapperKick'){const board=state.sides[side],enemy=state.sides[foeOf(side)],target=enemy.active;return target&&target.damage<core.maxHp(state,foeOf(side),target)&&!target.conditions?.paralysis&&attachedCount(board.active)<=3?choices.find(a=>!a.choiceSkip)||choices[0]:choices.find(a=>a.choiceSkip)||choices[0];}
+      if(pending.special==='swsh7SpiritMask')return choices.slice().sort((a,b)=>{const v=x=>{const c=data.cardById(state.sides[side].hand[x.choiceHandIndex]?.cardId);return c?.basicEnergy?0:c?.kind==='energy'?2:c?.kind==='trainer'?1:3;};return v(a)-v(b);})[0];
       if(e.rule==='swsh7BubblePod'){
         const picks=choices.filter(a=>!a.choiceSkip);
         if(pending.kind==='option')return picks.sort((a,b)=>b.choiceOption-a.choiceOption)[0]||choices[0];

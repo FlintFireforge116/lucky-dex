@@ -1,6 +1,6 @@
 {
   "printed": 237,
-  "battleReady": 205,
+  "battleReady": 220,
   "gated": {
     "swsh7-3": [
       "Unimplemented Ability: Solar Evolution"
@@ -11,35 +11,11 @@
     "swsh7-38": [
       "Unimplemented Ability: Dew Guard"
     ],
-    "swsh7-50": [
-      "Unimplemented attack: Big Sparking"
-    ],
-    "swsh7-56": [
-      "Unimplemented attack: Electron Crush"
-    ],
     "swsh7-58": [
       "Unimplemented attack: Primeval Beak"
     ],
     "swsh7-59": [
       "Required Pokémon V evolution parent is not yet enabled"
-    ],
-    "swsh7-66": [
-      "Unimplemented attack: Mirror Pain"
-    ],
-    "swsh7-73": [
-      "Unimplemented Ability: Rapid Strike Connection"
-    ],
-    "swsh7-77": [
-      "Unimplemented attack: Pandemonium"
-    ],
-    "swsh7-79": [
-      "Unimplemented attack: Tricky Steps"
-    ],
-    "swsh7-80": [
-      "Unimplemented attack: Shadow Flicker"
-    ],
-    "swsh7-82": [
-      "Unimplemented attack: Zapper Kick"
     ],
     "swsh7-83": [
       "Unimplemented attack: Yoga Loop"
@@ -50,34 +26,13 @@
     "swsh7-103": [
       "Unimplemented Ability: Phantom Transformation"
     ],
-    "swsh7-105": [
-      "Unimplemented Ability: Fumbling Hands"
-    ],
     "swsh7-116": [
       "Unimplemented attack: Extreme Freeze"
-    ],
-    "swsh7-118": [
-      "Unimplemented attack: Judgment Surge"
-    ],
-    "swsh7-128": [
-      "Unimplemented attack: Live Painting"
     ],
     "swsh7-146": [
       "Unimplemented Trainer effect"
     ],
     "swsh7-151": [
-      "Unimplemented Trainer effect"
-    ],
-    "swsh7-155": [
-      "Unimplemented Trainer effect"
-    ],
-    "swsh7-157": [
-      "Unimplemented Trainer effect"
-    ],
-    "swsh7-159": [
-      "Unimplemented Trainer effect"
-    ],
-    "swsh7-160": [
       "Unimplemented Trainer effect"
     ],
     "swsh7-165": [
