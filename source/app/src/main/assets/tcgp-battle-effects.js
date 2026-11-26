@@ -15612,13 +15612,16 @@
       const heads=coin(ctx);ctx.state.log.push({type:'coin',side:ctx.side,reason:'Final Beam',heads,results:[heads]});if(!heads)return;
       const water=Number(a.energy?.Water||0)+(a.specialEnergy||[]).filter(r=>attachedSpecialProvidesType(r,'Water',a,ctx.cardById,ctx.state)).length;
       let n=20*water;if(!n)return;
-      const c=ctx.cardById(target.cardId),types=effectiveTypes(ctx.state,ctx.side,a,ctx.cardById);
+      const top=ctx.cardById(target.cardId),c=top?.breakEvolution?(previousUpgradeCard(target,ctx.cardById)||top):top,types=effectiveTypes(ctx.state,ctx.side,a,ctx.cardById);
       const weak=target.weaknessOverride??c?.weakness,res=target.resistanceOverride??c?.resistance;
-      if(types.includes(weak)&&!findPassiveRule(ctx.state,ctx.foeSide,target,'weaknessGuard',ctx.cardById)){
+      // This is Power damage, not an attack. Respect actual no-Weakness effects
+      // without importing attack-only modifiers or damage reduction.
+      const noWeakness=activeSpecialEnergy(ctx.state,target,ctx.cardById).some(r=>['sm11-213','sm11-258'].includes(r.cardId))||activeToolsOf(ctx.state,target,ctx.cardById).some(r=>['xy5-142','xy5-164','sm3-126','ex10-90','dp6-129'].includes(r.cardId))||swsh4TypedEnergy(ctx.state,ctx.foeSide,target,ctx.cardById,'swsh4-163','Metal')||!!findPassiveRule(ctx.state,ctx.foeSide,target,'weaknessGuard',ctx.cardById);
+      if(types.includes(weak)&&!noWeakness){
         const v=String(c.weaknessValue||'×2'),add=v.match(/^\+\s*(\d+)/),mul=v.match(/[×x]\s*(\d+)/);n=add?n+Number(add[1]):n*Number(mul?.[1]||2);
       }
       if(types.includes(res))n=Math.max(0,n-Number(String(c.resistanceValue||'-30').match(/-\s*(\d+)/)?.[1]||30));
-      target.damage=Number(target.damage||0)+n;ctx.state.log.push({type:'cel25cFinalBeam',side:ctx.side,amount:n,targetUid:target.uid});return;
+      target.damage=Number(target.damage||0)+n;if(n>0)target.lastDamageSource={side:ctx.side,uid:a.uid,cardId:a.cardId,attack:false,turn:ctx.state.turnNumber,damage:n};ctx.state.log.push({type:'cel25cFinalBeam',side:ctx.side,amount:n,targetUid:target.uid});return;
     }
 
     if(String(e.rule||'').startsWith('xy9:'))return xy9Rule(e,ctx);

@@ -8,8 +8,8 @@ android {
         applicationId 'com.example.luckydex'
         minSdk 26
         targetSdk 35
-        versionCode 7524
-        versionName '0.69.524'
+        versionCode 7525
+        versionName '0.69.525'
     }
 
     signingConfigs {
@@ -1512,7 +1512,7 @@ tasks.register('generateCEL25CForApk', Exec) {
 tasks.register('auditCEL25CForApk', Exec) {
     dependsOn tasks.named('generateCEL25CForApk')
     workingDir rootProject.projectDir
-    commandLine 'node', '--test', 'tests/v07523-celebrations-collection.test.cjs'
+    commandLine 'node', '--test', 'tests/v07523-celebrations-collection.test.cjs', 'tests/v07525-celebrations-independent-audit.test.cjs'
 }
 tasks.matching { it.name == 'preBuild' || (it.name.startsWith('merge') && it.name.endsWith('Assets')) }.configureEach {
     dependsOn tasks.named('auditCEL25CForApk')
