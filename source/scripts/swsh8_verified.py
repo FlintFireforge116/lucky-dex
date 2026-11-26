@@ -318,3 +318,16 @@ def ability(row,a):
 def trainer(row):
  if row[13] and row[13][0]=="If the Pokémon VMAX this card is attached to is Knocked Out by damage from an attack from your opponent's Pokémon, search your deck for a card and put it into your hand. Then, shuffle your deck.":return 'Tool',E('noop') # exact KO hook in core
  return _stage7_trainer(row)
+
+# Stage 9: repeatable targeted attack and paid, distinct Bench Ability.
+_stage8_attack=attack
+_stage8_ability=ability
+
+def attack(row,a):
+ if a[3]=="Discard any amount of Water Energy from this Pokémon. Then, for each Energy card you discarded in this way, choose 1 of your opponent's Pokémon and do 30 damage to it. (You can choose the same Pokémon more than once.) This damage isn't affected by Weakness or Resistance.":return E('sm7Rule',rule='swsh8Multishot')
+ if a[3]=='You may put an Energy attached to this Pokémon into your hand. If you do, this attack does 70 more damage.':return E('sm7Rule',rule='swsh8Spiral')
+ return _stage8_attack(row,a)
+
+def ability(row,a):
+ if a[2]=="You must discard a Water Energy card from your hand in order to use this Ability. Once during your turn, you may choose 2 of your opponent's Benched Pokémon and put 2 damage counters on each of them.":return activated(E('sm7Rule',rule='swsh8DoubleGunner'))
+ return _stage8_ability(row,a)

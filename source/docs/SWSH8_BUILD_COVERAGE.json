@@ -2,24 +2,10 @@
   "printed": 284,
   "canonicalTotal": 284,
   "notImported": [],
-  "battleReady": 279,
+  "battleReady": 283,
   "gated": {
-    "swsh8-53": [
-      "Unimplemented attack: Multishot Star"
-    ],
-    "swsh8-79": [
-      "Unimplemented attack: G-Max Spiral",
-      "Unimplemented Ability: Double Gunner"
-    ],
     "swsh8-197": [
       "Unimplemented Ability: Slimy Room"
-    ],
-    "swsh8-266": [
-      "Unimplemented attack: G-Max Spiral",
-      "Unimplemented Ability: Double Gunner"
-    ],
-    "swsh8-270": [
-      "Required Pokémon V evolution parent is not yet enabled"
     ]
   },
   "attacks": 391,

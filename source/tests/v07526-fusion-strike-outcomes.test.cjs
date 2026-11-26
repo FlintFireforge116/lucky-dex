@@ -126,3 +126,34 @@ for(const side of ['player','opponent']){
  test(side+' nonlethal damage followed by counter-placement KO does not trigger Desperate Blast or Farewell Bell',()=>{for(const id of ['swsh8-137','swsh8-114']){const h=setup(side,'sm6-dummy');try{const lookup=data.cardById;data.cardById=x=>x==='sm6-dummy'?{...lookup(x),attacks:[{name:'Tap',cost:[],damage:10,effect:{type:'placeDamageCounters',target:'opponentActive',amount:40}}]}:lookup(x);h.them.active=slot(id,'victim');h.them.active.damage=data.cardById(id).hp-40;if(id==='swsh8-114')h.them.active.tool=ref('swsh8-234','bell');const before=h.them.deck.length;attack(h,'Tap');resolve(h);assert.equal(h.us.active.damage,0);assert.ok(h.them.discard.some(r=>r.cardId===id));assert.equal(h.them.deck.length,before);}finally{h.done();}}});
  test(side+' Benched Golem does not retaliate, but Farewell Bell triggers on a Benched VMAX damage KO',()=>{for(const id of ['swsh8-137','swsh8-114']){const h=setup(side,'swsh8-75');try{h.us.active.energy={Water:1};h.them.bench[0]=Object.assign(slot(id,'bench-victim'),{benchSlot:0});h.them.bench[0].damage=data.cardById(id).hp-50;if(id==='swsh8-114')h.them.bench[0].tool=ref('swsh8-234','bell');const picked=h.them.deck[5].uid;attack(h,'Snipe Shot');if(id==='swsh8-114'){assert.equal(h.s.choiceSide,h.foe);choice(h,a=>a.choiceDeckIndex===5);}resolve(h);assert.equal(h.us.active.damage,0);assert.ok(h.them.discard.some(r=>r.cardId===id));assert.equal(h.them.hand.some(r=>r.uid===picked),id==='swsh8-114');}finally{h.done();}}});
 }
+
+// Stage 9: targeted paid attacks, distinct counter placement, cross-set evolution.
+for(const side of ['player','opponent']){
+ test(side+' Multishot Star spends chosen Water cards and can hit the same target twice',()=>{
+  const h=setup(side,'swsh8-53');try{h.us.active.energy={Water:2,Fire:1};h.them.active.cardId='swsh8-6';h.them.active.damage=0;attack(h,'Multishot Star');
+  choice(h,a=>!a.choiceSkip);choice(h,a=>!a.choiceSkip);resolve(h,a=>a.choiceTarget==='active');
+  assert.equal(h.us.active.energy.Water,0);assert.equal(h.us.active.energy.Fire,1);assert.equal(h.us.energyDiscard.Water,2);assert.equal(h.them.active.damage,60);assert.equal(h.them.bench[0].damage,0);
+  }finally{h.done();}
+ });
+ test(side+' Multishot Star can decline payment or split hits without Weakness',()=>{
+  for(const spend of [false,true]){const h=setup(side,'swsh8-53');try{h.us.active.energy={Water:1};h.us.active.specialEnergy=[ref('swsh5-140','rapid')];h.them.active.cardId='swsh8-33';attack(h,'Multishot Star');if(spend){choice(h,a=>!a.choiceSkip);choice(h,a=>!a.choiceSkip);choice(h,a=>a.choiceTarget==='active');choice(h,a=>a.choiceTarget==='bench');}else choice(h,a=>a.choiceSkip);resolve(h);assert.equal(h.them.active.damage,spend?30:0);assert.equal(h.them.bench[0].damage,spend?30:0);assert.equal(h.us.active.energy.Water,spend?0:1);assert.equal(h.us.active.specialEnergy.length,spend?0:1);}finally{h.done();}}
+ });
+ test(side+' G-Max Spiral returns one chosen Energy to hand, or keeps it for 70 damage',()=>{
+  for(const selection of ['keep','basic:Water:0','special:rapid']){const h=setup(side,'swsh8-79');try{h.us.active.energy={Water:1};h.us.active.specialEnergy=[ref('swsh5-140','rapid')];use(h,'attack',a=>a.effectSelection===selection);resolve(h);assert.equal(h.them.active.damage,selection==='keep'?70:140);assert.equal(h.us.active.energy.Water,selection==='basic:Water:0'?0:1);assert.equal(h.us.active.specialEnergy.length,selection==='special:rapid'?0:1);assert.equal(h.us.hand.length,selection==='keep'?0:1);if(selection==='special:rapid')assert.equal(h.us.hand[0].uid,'rapid');if(selection==='basic:Water:0')assert.equal(data.cardById(h.us.hand[0].cardId).subtype,'Water');assert.equal(h.us.discard.length,0);}finally{h.done();}}
+ });
+ test(side+' Double Gunner requires Water payment and two distinct opposing Bench targets',()=>{
+  const h=setup(side,'swsh8-79');try{h.us.hand=[ref('neo1-111','water'),ref('neo1-110','psychic')];const legal=()=>core.legalActions(h.s,side).some(a=>a.type==='ability');assert.equal(legal(),false);h.them.bench.push(Object.assign(slot('sm6-dummy','second'),{benchSlot:1}));assert.equal(legal(),true);use(h,'ability');resolve(h);assert.equal(h.them.active.damage,0);assert.deepEqual(h.them.bench.map(p=>p.damage),[20,20]);assert.deepEqual(h.us.hand.map(x=>x.uid),['psychic']);assert.deepEqual(h.us.discard.map(x=>x.uid),['water']);assert.equal(legal(),false);}finally{h.done();}
+ });
+ test(side+' Espeon VMAX can evolve from a verified Evolving Skies Espeon V',()=>{
+  const h=setup(side,'swsh7-64');try{h.us.hand=[ref('swsh8-270','espeon')];use(h,'evolve');resolve(h);assert.equal(h.us.active.cardId,'swsh8-270');assert.deepEqual(h.us.active.stack,['swsh7-64','swsh8-270']);}finally{h.done();}
+ });
+}
+for(const side of ['player','opponent']){
+ test(side+' Double Gunner respects Fusion Strike Energy and rejects Special Energy in hand',()=>{
+  const h=setup(side,'swsh8-79');try{h.us.hand=[ref('swsh5-140','rapid'),ref('swsh4-165','wash')];h.them.bench.push(Object.assign(slot('swsh8-120','protected'),{benchSlot:1,specialEnergy:[ref('swsh8-244','fse')]}));const legal=()=>core.legalActions(h.s,side).some(a=>a.type==='ability');assert.equal(legal(),false);h.us.hand.push(ref('neo1-111','water'));assert.equal(legal(),true);use(h,'ability');resolve(h);assert.deepEqual(h.them.bench.map(p=>p.damage),[20,0]);assert.deepEqual(h.us.discard.map(x=>x.uid),['water']);}finally{h.done();}
+ });
+ test(side+' Espeon VMAX Solar Revelation protects energized teammates but not damage',()=>{const h=setup(side,'swsh8-270');try{h.us.bench[0].energy={Water:1};assert.equal(fx.attackEffectsPrevented(h.s,side,h.us.bench[0],h.them.active,data.cardById),true);h.us.bench[0].energy={};assert.equal(fx.attackEffectsPrevented(h.s,side,h.us.bench[0],h.them.active,data.cardById),false);h.us.bench[0].energy={Water:1};h.us.active.abilitySuppressed={duration:'whileInPlay'};assert.equal(fx.attackEffectsPrevented(h.s,side,h.us.bench[0],h.them.active,data.cardById),false);}finally{h.done();}});
+}
+
+test('CPU Multishot Star pays Energy and resolves every shot instead of skipping',()=>{
+ const ai=require('../app/src/main/assets/tcgp-battle-ai.js'),h=setup('opponent','swsh8-53');try{h.us.active.energy={Water:2};attack(h,'Multishot Star');let n=0;while(h.s.phase==='effectChoice'&&n++<20){const who=h.s.choiceSide||h.side;const a=ai.chooseAction(h.s,who,'Beginner',n);assert.ok(a);core.applyAction(h.s,who,a);}assert.notEqual(h.s.phase,'effectChoice');assert.equal(h.us.energyDiscard.Water,2);assert.equal(h.them.active.damage+h.them.bench[0].damage,60);}finally{h.done();}});

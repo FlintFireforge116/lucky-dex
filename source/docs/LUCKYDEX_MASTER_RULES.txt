@@ -6237,3 +6237,10 @@ v0.69.533 — Fusion Strike stage 8 (damage-KO provenance and revival)
 - Do not disable set-local parent gates to claim full completion. Five prints remain: Starmie, Inteleon VMAX x2, Goodra and Espeon VMAX.
 
 Final v0.69.533 validation: full offline preparation exited 0; 2096/2096 gameplay tests, including 123/123 Fusion Strike; 12/12 release-manifest unit tests. Zero failures, skips or cancellations.
+
+v0.69.534 — Fusion Strike stage 9 (repeat targets and cross-set evolution)
+- 283/284 playable; only Goodra (swsh8-197) gated. All 279 prior playable descriptors unchanged; canonical rows unchanged. Multishot Star spends selected attached Water Energy cards before choosing independent hits; repeat targets allowed, no Weakness/Resistance, distinguish physical cards from provided units. G-Max Spiral returns exactly one chosen attached Energy to hand, not discard, for +70; legal decline. Double Gunner requires a physical Basic Water card from hand and two opposing Bench targets; distinct targets and opposing Ability-effect protection. CPU choices must consume actual payment and resolve targeting rather than skip. Verify the actual enabled Espeon V parent from swsh7 for swsh8-270, without weakening selected-pool chain construction. Set-only decks must exclude the orphan; cross-set evolution and Solar Revelation suppression tested on both sides.
+- Slimy Room remains gated pending explicit pre-attachment interception for physical Energy from hand, including legacy effects. Failed attempt must discard the card without spending the normal attachment allowance or firing attachment triggers. Generated Energy Zone is not a hand attachment. Do not report complete coverage until implemented and audited.
+- 139/139 focused tests passed (16 new), including CPU choice and set-local deck regression. Android/device tests separate.
+
+Final v0.69.534 validation: full offline preparation exited 0; 2112/2112 gameplay checks, including 139/139 Fusion Strike; 12/12 manifest unit tests. No failures, skips or cancellations.

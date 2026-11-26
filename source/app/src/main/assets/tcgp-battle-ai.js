@@ -287,6 +287,8 @@
         const hit=target?effects.attackDamageWithState(state,side,state.sides[side].active,foeOf(side),target,10+40*n,data.cardById):0;
         return 200+Math.min(hit,remaining)-n*2+(hit>=remaining?100:0);
       }
+      if(attack?.effect?.rule==='swsh8Multishot'){const p=state.sides[side].active;damage=30*(Number(p.energy?.Water||0)+(p.specialEnergy||[]).filter(r=>effects.attachedSpecialProvidesType(r,'Water',p,data.cardById,state)).length);}
+      if(attack?.effect?.rule==='swsh8Spiral'){const p=state.sides[side].active,target=state.sides[foeOf(side)].active,remaining=target?core.maxHp(state,foeOf(side),target)-Number(target.damage||0):Infinity,hit=n=>target?effects.attackDamageWithState(state,side,p,foeOf(side),target,n,data.cardById):0;const returning=action.effectSelection&&action.effectSelection!=='keep',dealt=hit(returning?140:70);return 200+Math.min(remaining,dealt)+(dealt>=remaining?100:0)-(returning?20:0);}
       if(attack?.effect?.rule==='swsh7ExtremeFreeze')damage=60*slots(state.sides[side]).reduce((n,p)=>n+Number(p.energy?.Water||0)+(p.specialEnergy||[]).filter(r=>effects.attachedSpecialProvidesType(r,'Water',p,data.cardById,state)).length,0);
       if(attack?.effect?.rule==='swsh7YogaLoop'){const foe=state.sides[foeOf(side)],p=action.target==='opponentBench'?slotFor(foe,'bench',action.benchIndex):foe.active;return p&&core.maxHp(state,foeOf(side),p)-Number(p.damage||0)<=20?430:10;}
       if(attack?.effect?.rule==='swsh7LivePainting')damage=30+30*String(action.effectSelection||'').split(',').filter(Boolean).length;
@@ -472,6 +474,18 @@
     // All choices are drawn from its own known Zone and public Pokémon.
     if(state.format==='classic'&&state.phase==='effectChoice'&&state.pendingChoice?.originSide===side){
       const pending=state.pendingChoice,e=pending.effect||{},choices=legal.filter(a=>a.type==='effectChoice');
+      if(e.rule==='swsh8Multishot'||e.rule==='swsh8DoubleGunner'){
+        const board=state.sides[foeOf(side)],picks=choices.filter(a=>!a.choiceSkip);
+        if(e.stage==='hit'){
+          const hit=e.rule==='swsh8Multishot'?30:20,score=a=>{const p=slotFor(board,a.choiceTarget,a.choiceBenchIndex);if(!p)return -Infinity;const remaining=core.maxHp(state,foeOf(side),p)-Number(p.damage||0);if(remaining<=0)return -1000;return (remaining<=hit?1000:0)+(p===board.active?60:0)+Number(p.damage||0);};
+          return picks.sort((a,b)=>score(b)-score(a))[0]||choices[0];
+        }
+        if(e.rule==='swsh8Multishot'){
+          const remaining=slots(board).reduce((n,p)=>n+Math.max(0,Math.ceil((core.maxHp(state,foeOf(side),p)-Number(p.damage||0))/30)),0);
+          if(Number(e.left||0)>=remaining)return choices.find(a=>a.choiceSkip)||picks[0];
+        }
+        return picks[0]||choices[0];
+      }
       if(e.rule==='swsh7RapidConnection'){
         const board=state.sides[side],stop=choices.find(a=>a.choiceSkip);
         if(e.stage==='target')return choices.find(a=>a.choiceTarget==='active')||choices[0];

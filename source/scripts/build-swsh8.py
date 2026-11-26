@@ -132,6 +132,10 @@ def main():
  # VMAX can only enter play with its actual V parent; do not advertise an
  # otherwise supported VMAX as playable while all of its V prints are gated.
  ready_v={c['name'] for c in cards if c.get('pokemonV') and not c.get('pokemonVMAX') and c['battleEnabled']}
+ # Espeon VMAX is an alternate print whose Basic V is in Evolving Skies.
+ # Verify the actual enabled parent rather than require a same-set reprint.
+ parent_check=subprocess.run(['node','-e',"const s=require('./app/src/main/assets/tcg-classic-evolving-skies.js');process.stdout.write(JSON.stringify(s.CARDS.filter(c=>c.name==='Espeon V'&&c.stage==='Basic'&&c.pokemonV&&c.battleEnabled).map(c=>c.name)))"],cwd=ROOT,text=True,capture_output=True,check=True)
+ ready_v.update(json.loads(parent_check.stdout))
  for c in cards:
   if c.get('pokemonVMAX') and c['battleEnabled'] and c['evolvesFrom'] not in ready_v:
    c['battleEnabled']=c['deckEligible']=False

@@ -1,0 +1,7 @@
+# Fusion Strike stage 9 — v0.69.534
+
+283/284 playable (+4); Goodra alone remains gated. All 279 previously enabled card descriptors compare equal. Canonical source unchanged. Multishot Star chooses attached Water Energy cards, then aims an independent 30-damage hit for each payment, with repeat targets and no Weakness/Resistance. The CPU selects actual payments and useful public targets. G-Max Spiral returns one selected attached Basic or Special Energy card to the hand for +70 damage; choosing to keep Energy deals 70. Double Gunner requires a Basic Water Energy from hand and two distinct opposing Benched Pokémon; protected Pokémon remain unaffected. Espeon VMAX is enabled only after verifying the exact, already enabled Evolving Skies Basic Espeon V parent; set-local auto-build must still exclude orphan evolutions. Solar Revelation continues to use its shared suppressible attack-effect guard. Tests cover both sides, actual CPU choices, and set-local builder exclusion.
+
+Goodra's Slimy Room remains gated: the hand-attachment interception must cover normal and effect-driven physical Energy before attachment-triggered effects, preserve normal attachment allowance on tails, and distinguish generated Zone Energy. Legacy effect paths require an explicit audit. No speculative mapping enabled. Android APK and physical-device testing are separate.
+
+Final validation: full offline preparation exited 0; 2112/2112 gameplay checks, including 139/139 Fusion Strike, and 12/12 manifest unit tests. No failures, skips or cancellations.
