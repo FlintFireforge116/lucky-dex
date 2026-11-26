@@ -84,3 +84,28 @@ def ability(row,a):
  if t=="All of your Pokémon take 20 less damage from attacks from your opponent's Pokémon V (after applying Weakness and Resistance).":return passive(E('modifier',stat='damageReduction',amount=20,scope='team',duration='whileInPlay',opponentFilter={'tag':'pokemon-v'}))
  if t=='Once during your turn, if this Pokémon is in the Active Spot, you may look at the top 2 cards of your deck and put 1 of them into your hand. Put the other card in the Lost Zone.':return activated(E('sm7Rule',rule='swsh11FlowerSelecting'),activeOnly=True)
  return _stage1_ability(row,a)
+
+# Stage 3: full print catalogue; reuse exact shared damage and choice descriptors.
+_stage2_attack=attack
+_stage2_ability=ability
+def attack(row,a):
+ t=a[3]
+ if t=="This attack's damage isn't affected by Weakness. If your opponent's Active Pokémon is a Pokémon V, this attack does 50 more damage.":return seq(E('damageRule',ignoreWeakness=True),bonus(50,cond('opponentMatches',filter={'tag':'pokemon-v'})))
+ if t=="This attack does 30 more damage for each Colorless in your opponent's Active Pokémon's Retreat Cost.":return E('retreatCostDamage',amount=30,mode='add')
+ if t=="This attack does 40 more damage for each Colorless in your opponent's Active Pokémon's Retreat Cost.":return E('retreatCostDamage',amount=40,mode='add')
+ if t=='This attack does 20 damage for each card in your hand.':return E('handCountDamage',source='self',amount=20,mode='replace')
+ if t=='This attack does 50 more damage for each Prize card you have taken.':return E('pointDamage',side='self',prizesTaken=True,amount=50,mode='add')
+ if t=='If this Pokémon has a Pokémon Tool attached, this attack does 60 more damage, and your opponent\'s Active Pokémon is now Confused.':return seq(bonus(60,cond('selfHasTool')),E('status',target='opponentActive',status='confusion',condition=cond('selfHasTool')))
+ if t=='Search your deck for a Darkness Energy card and attach it to 1 of your Pokémon. Then, shuffle your deck.':return E('sm7Rule',rule='sm9SearchAttach',amount=1,energyTypes=['Darkness'])
+ if t=='Attach any number of Water Energy cards from your hand to your Pokémon in any way you like.':return E('sm7Rule',rule='sm12HandAttach',left=99,basicOnly=True,energyType='Water',optional=True)
+ if t=='This attack does 50 damage for each of your Pokémon that has any damage counters on it.':return E('fieldCountDamage',side='self',filter={'damaged':True},amount=50,mode='replace')
+ if t=='This attack does 10 less damage for each damage counter on this Pokémon.':return E('selfDamagePenalty',amount=1)
+ if t=='Look at the top 4 cards of your deck and put 2 of them into your hand. Put the other cards in the Lost Zone.':return E('sm7Rule',rule='swsh11AbyssSeeking')
+ if t=="This attack's damage isn't affected by any effects on your opponent's Active Pokémon.":return E('damageRule',ignoreEffects=True)
+ return _stage2_attack(row,a)
+def ability(row,a):
+ t=a[2]
+ if t=="During your turn, you may heal all damage from this Pokémon. (You can't use more than 1 VSTAR Power in a game.)":return activated(E('heal',target='self',amount=999),vstarPower=True)
+ if t=="During your turn, you may discard your hand and draw 7 cards. (You can't use more than 1 VSTAR Power in a game.)":return activated(seq(E('discardHand',side='self',amount=999),E('draw',amount=7)),vstarPower=True)
+ if t=="During your turn, you may make your opponent's Active Pokémon Paralyzed and Poisoned. During Pokémon Checkup, put 3 damage counters on that Pokémon instead of 1. (You can't use more than 1 VSTAR Power in a game.)":return activated(seq(status('paralysis'),E('status',target='opponentActive',status='poison',amount=30)),vstarPower=True)
+ return _stage2_ability(row,a)

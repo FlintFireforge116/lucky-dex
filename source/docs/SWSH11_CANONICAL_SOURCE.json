@@ -1,8 +1,8 @@
 {
   "set": "swsh11",
   "sourceGitBlob": "157da08c0435be1c0692faac35e3a7580e638afb",
-  "compactSha256": "e0164d0cb7a4d7b2f7e59042834b90bcd2cb710b7ddf3b4a3bf2c86d2f20bd8c",
+  "compactSha256": "a2895674069d7823259f09ba3c33e14edecb9f2bba85e69a470b052c03fd1f14",
   "printedTotal": 217,
-  "importedTotal": 145,
-  "sourceScope": "verified stage-one and stage-two packets"
+  "importedTotal": 217,
+  "sourceScope": "verified stage-one through stage-three packets"
 }

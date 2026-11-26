@@ -6,7 +6,7 @@ from pathlib import Path
 
 def rows():
  root=Path(__file__).resolve().parents[1]/'data/classic'; result=[]
- for name,expected in [('swsh11-stage1-pokemon.jsonl',2107628560),('swsh11-stage1-support.jsonl',1340233365),('swsh11-stage2-pokemon.jsonl',3181807879)]:
+ for name,expected in [('swsh11-stage1-pokemon.jsonl',2107628560),('swsh11-stage1-support.jsonl',1340233365),('swsh11-stage2-pokemon.jsonl',3181807879),('swsh11-stage3-pokemon.jsonl',3538490719)]:
   data=(root/name).read_bytes();h=2166136261
   for b in data:h=((h^b)*16777619)&0xffffffff
   assert h==expected,'Lost Origin source transfer checksum mismatch: '+name
