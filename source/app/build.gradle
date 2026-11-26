@@ -8,8 +8,8 @@ android {
         applicationId 'com.example.luckydex'
         minSdk 26
         targetSdk 35
-        versionCode 7525
-        versionName '0.69.525'
+        versionCode 7526
+        versionName '0.69.526'
     }
 
     signingConfigs {
@@ -1516,4 +1516,24 @@ tasks.register('auditCEL25CForApk', Exec) {
 }
 tasks.matching { it.name == 'preBuild' || (it.name.startsWith('merge') && it.name.endsWith('Assets')) }.configureEach {
     dependsOn tasks.named('auditCEL25CForApk')
+}
+
+
+tasks.register('preflightSWSH8ContractForApk', Exec) {
+    dependsOn tasks.named('auditCEL25CForApk')
+    workingDir rootProject.projectDir
+    commandLine (System.getenv('LUCKYDEX_PYTHON') ?: 'python3'), 'scripts/preflight-swsh8-release.py'
+}
+tasks.register('generateSWSH8ForApk', Exec) {
+    dependsOn tasks.named('preflightSWSH8ContractForApk')
+    workingDir rootProject.projectDir
+    commandLine (System.getenv('LUCKYDEX_PYTHON') ?: 'python3'), 'scripts/build-swsh8.py'
+}
+tasks.register('auditSWSH8ForApk', Exec) {
+    dependsOn tasks.named('generateSWSH8ForApk')
+    workingDir rootProject.projectDir
+    commandLine 'node', '--test', 'tests/v07526-fusion-strike-integration.test.cjs', 'tests/v07526-fusion-strike-outcomes.test.cjs'
+}
+tasks.matching { it.name == 'preBuild' || (it.name.startsWith('merge') && it.name.endsWith('Assets')) }.configureEach {
+    dependsOn tasks.named('auditSWSH8ForApk')
 }

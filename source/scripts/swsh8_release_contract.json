@@ -1,0 +1,16 @@
+{
+  "set": "swsh8",
+  "name": "Fusion Strike",
+  "stage": "partial-import-stage1",
+  "release": "0.69.526",
+  "printedTotal": 284,
+  "importedTotal": 135,
+  "attackPrints": 151,
+  "abilities": 0,
+  "pokemonV": 10,
+  "pokemonVMAX": 0,
+  "trainerPrints": 36,
+  "energyPrints": 3,
+  "pin": "d88289e9b1469bc1c27cf268461f9efdec00134d",
+  "variants": []
+}

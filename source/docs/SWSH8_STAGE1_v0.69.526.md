@@ -1,0 +1,7 @@
+# Fusion Strike — stage 1
+
+The pinned source lists 284 prints (391 attacks, 30 abilities, 36 Trainer prints, 3 Energy prints). The authoring environment cannot directly fetch the source file, and the attempted full transfer was not reliable. Two independently checksummed source packets and the combined exact upstream projection are retained offline. 135 prints are imported; 114 playable, 21 gated, and 149 not yet imported. The generated coverage includes an explicit missing-ID list. The full-set readiness gate rejects partial imports.
+
+Both deck builders and the set picker expose Fusion Strike. Fusion Strike Pokémon and Trainers have the printed style tag, enabling the corresponding search while excluding other Strike styles and Trainers. No new shared battle-engine handlers are introduced in this stage. Standard damage, healing, recoil, coin flips, status, discards, draw, switches and reviewed Trainer effects are mapped using full printed text. Tests exercise every enabled attack bilaterally and targeted outcome checks, six primary type filters in both builders, and Greedent V reprint equivalence. Some evolution lines have parents outside the current subset; standalone deck selection may exclude those until the remaining prints arrive. Cross-set and unsupported type filters are not silently widened.
+
+The next stage should import all remaining prints from the same pinned Git blob and continue implementing their mechanics. APK/device testing remains separate.

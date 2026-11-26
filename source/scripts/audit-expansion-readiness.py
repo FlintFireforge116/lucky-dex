@@ -120,7 +120,7 @@ def release_check(set_id: str, root: Path, contract: dict) -> list[str]:
 
 
 def audit(set_id: str, root: Path, contract: dict, rows: list, ids: list, coverage: dict, compact_path: Path) -> str:
-    expected = contract.get('printedTotal')
+    expected = contract.get('importedTotal', contract.get('printedTotal'))
     if expected is not None:
         require(expected == len(rows), f'{set_id}: {len(rows)} source prints != contract {expected}')
     require(coverage.get('printed') == len(rows), f'{set_id}: generated coverage print count differs from pinned source')
@@ -163,7 +163,7 @@ def audit(set_id: str, root: Path, contract: dict, rows: list, ids: list, covera
             grouped.setdefault(str(reason), []).append(cid)
     by_id = {f'{set_id}-{r[0]}': r for r in rows}
     lines = [f'# {set_id.upper()} — whole-set gap ledger', '',
-             f'Canonical prints: **{len(rows)}** | Playable: **{ready}** | Gated: **{len(gated)}**',
+             f'Canonical prints: **{contract.get("printedTotal",len(rows))}** | Imported: **{len(rows)}** | Playable: **{ready}** | Gated: **{len(gated)}** | Not imported: **{contract.get("printedTotal",len(rows))-len(rows)}**' if 'importedTotal' in contract else f'Canonical prints: **{len(rows)}** | Playable: **{ready}** | Gated: **{len(gated)}**',
              f'Printed attacks: **{counted_attacks}** ({len(attacks)} distinct full signatures) | '
              f'Abilities: **{counted_abilities}** ({len(abilities)} distinct signatures)',
              f'Trainer rule signatures: **{len(trainers)}** | Special Energy rule signatures: **{len(energy)}**',
@@ -220,6 +220,8 @@ def main() -> int:
         output.write_text(report, encoding='utf-8')
         print(f'Gap ledger written: {output}')
     print('\n'.join(report.splitlines()[:5]))
+    if args.require_complete and len(rows)!=contract.get('printedTotal',len(rows)):
+        raise ValueError(f'{set_id}: {contract["printedTotal"]-len(rows)} official prints not yet imported')
     if args.require_complete and coverage['gated']:
         raise ValueError(f'{set_id}: {len(coverage["gated"])} prints remain gated; see generated gap ledger')
     return 0

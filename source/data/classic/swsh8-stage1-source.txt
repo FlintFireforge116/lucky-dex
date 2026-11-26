@@ -1,0 +1,96 @@
+4|Shroomish|0|60|G||R||1|0|Tackle~G~10~0|Seed Bomb~GC~20~0
+7|Pansage|0|60|G||R||1|0|Scratch~G~20~0
+10|Swadloon|1|80|G|Sewaddle|R||2|1|Trip Over~G~10+~1|Seed Bomb~GCC~60~0
+13|Shelmet|06|70|G||R||3|0|Spit Beam~G~20~0
+16|Phantump|0|60|G||R||1|0|Tackle~C~10~0|Seed Bomb~GC~20~0
+17|Trevenant|1|120|G|Phantump|R||2|1|Gentle Slap~GC~40~0|Wood Hammer~GCC~90~0
+19|Dewpider|0|50|G||R||1|0|Bug Bite~G~20~0
+22|Rillaboom V|035|220|G||R||2|2|Drain Punch~GCC~60~2|Drum Rush~GCCC~160~0
+24|Gossifleur|0|50|G||R||1|0|Leafage~C~10~0
+25|Eldegoss|1|90|G|Gossifleur|R||1|1|Sunny Wind~C~50~3
+26|Appletun V|03|210|G||R||3|2|Headbutt~G~30~0|Sweet Impact~GGC~100~2
+27|Zarude|0|110|G||R||2|1|Scratch~C~20~0|Wild Whip~GC~40+~4
+28|Vulpix|0|70|R||W||1|0|Live Coal~RC~30~0
+29|Vulpix|0|70|R||W||1|0|Smash Kick~C~10~0
+30|Ninetales|1|110|R|Vulpix|W||1|1|Supernatural Flames~RC~70~0
+33|Arcanine|1|130|R|Growlithe|W||2|3|Fire Claws~R~40~0|Heat Tackle~RRC~160~5
+34|Slugma|0|80|R||W||3|0|Live Coal~R~10~0|Flare~CC~20~0
+44|Cinderace V|034|210|R||W||2|2|Flare~CC~50~0|All-Out Shot~RCCC~210~6
+46|Sizzlipede|0|80|R||W||2|0|Gnaw~R~10~0|Ember~RC~20~0
+47|Sizzlipede|05|70|R||W||2|0|Singe~R~~7
+49|Centiskorch|1|130|R|Sizzlipede|W||3|1|Steady Firebreathing~R~30~0|Heat Blast~RRC~100~0
+50|Shellder|05|70|W||L||2|0|Tongue Slap~W~10~0|Wave Splash~WC~20~0
+55|Totodile|0|70|W||L||1|0|Rain Splash~W~20~0
+56|Croconaw|1|100|W|Totodile|L||2|1|Wave Splash~W~30~0|Surf~WCC~60~0
+60|Qwilfish|0|80|W||L||1|0|Collect~C~~8|Spike Sting~WC~30~0
+62|Mudkip|0|70|W||L||1|0|Mud-Slap~CC~20~0|Playful Kick~WCC~30~0
+65|Clamperl|06|60|W||L||2|0|Bursting Bubble~C~10~0
+73|Greninja V|03|210|W||L||2|2|Water Drip~WC~40~0|Dancing Shuriken~WWC~80×~9
+74|Clauncher|0|70|W||L||2|0|Water Gun~W~10~0|Vise Grip~WC~20~0
+80|Chewtle|0|80|W||L||2|0|Bite~WC~30~0
+81|Drednaw|1|140|W|Chewtle|L||4|1|Hard Bite~WCC~80+~10
+82|Arrokuda|0|60|W||L||1|0|Peck~W~10~0
+83|Barraskewda|1|120|W|Arrokuda|L||1|1|Pierce~W~50~0
+86|Pikachu V|03|200|L||F||1|2|Tail Whap~C~20~0|Thunderbolt~LCC~100~0
+91|Shinx|0|50|L||F||1|0|Gnaw~L~10~0|Electric Claws~LC~20~0
+92|Luxio|1|90|L|Shinx|F||1|1|Electric Claws~LC~50~0
+93|Luxray|2|160|L|Luxio|F||0|3|Thunder Claws~LC~90~0
+95|Tynamo|0|40|L||F||1|0|Thunder Wave~L~~11|Tackle~CC~20~0
+96|Eelektrik|1|90|L|Tynamo|F||2|1|Lightning Ball~L~20~0|Thunder~LCC~80~12
+98|Helioptile|0|70|L||F||1|0|Gnaw~C~10~0|Electro Ball~LC~20~0
+100|Charjabug|1|100|L|Grubbin|F||3|1|Vise Grip~CC~30~0|Head Bolt~LCC~60~0
+102|Zeraora|0|120|L||F||1|3|Wild Charge~LC~70~12
+105|Toxel|0|70|L||F||2|0|Ram~L~20~0
+112|Jynx|0|100|P||D|F|1|0|Double Draw~C~~13|Dazzle Dance~PC~30~14
+115|Snubbull|0|70|P||M||1|0|Headbutt~C~10~0|Bite~CCC~30~0
+117|Galarian Corsola|0|70|P||D|F|1|0|Tackle~CC~30~0
+121|Munna|0|80|P||D|F|2|0|Ram~C~10~0
+125|Sandygast|0|80|P||D|F|3|0|Vibration~P~10~0|Spooky Shot~PP~30~0
+129|Drakloak|16|90|P|Dreepy|D|F|1|1|Spooky Shot~P~20~0|U-turn~PC~30~15
+133|Mankey|0|60|F||P||1|0|Scratch~F~10~0
+135|Geodude|0|80|F||G||3|0|Rollout~F~10~0|Light Punch~CC~20~0
+136|Graveler|1|110|F|Geodude|G||4|1|Tackle~F~30~0|Boulder Crush~FCC~70~0
+140|Gligar|0|70|F||G||1|0|Poison Sting~F~~16|Pierce~FC~30~0
+141|Gliscor|1|110|F|Gligar|G||1|1|Cut Down~FC~30~17|Venomous Hit~FFC~100~16
+142|Makuhita|04|90|F||P||3|0|Lunge Out~C~10~0|Hammer In~FCC~60~0
+144|Baltoy|0|60|F||G||1|0|Smack~CC~20~0
+146|Lucario V|03|210|F||P||2|2|Aura Sphere~FFC~120~0
+147|Drilbur|0|60|F||G||2|0|Scratch~C~20~0
+150|Stufful|0|70|F||P||2|0|Beat~C~10~0|Rollout~FC~30~0
+151|Bewear|1|130|F|Stufful|P||3|1|Split Spiral Punch~FC~40~14|Strength~FFC~130~0
+152|Clobbopus|0|80|F||P||2|0|Beat~F~10~0|Knuckle Punch~FC~20~0
+153|Grapploct|1|130|F|Clobbopus|P||2|1|Lunge Out~FC~40~0|Magnum Punch~FCC~90~0
+155|Falinks|0|90|F||P||1|0|Invade~F~30~0
+158|Tyranitar V|03|230|D||G||4|2|Hammer In~DCC~80~0|Land Crush~DDDC~150~0
+159|Galarian Zigzagoon|0|60|D||G||1|0|Lick~D~10~11
+160|Galarian Linoone|1|90|D|Galarian Zigzagoon|G||1|1|Rear Kick~D~30~0
+162|Carvanha|0|50|D||G||1|0|Bite~C~10~0
+163|Sharpedo|1|100|D|Carvanha|G||1|1|Sharp Fang~DC~70~0
+165|Croagunk|0|60|D||F||1|0|Corkscrew Punch~D~20~0
+167|Darkrai|0|110|D||G||2|1|Dark Cutter~DCC~90~0
+169|Garbodor|1|120|D|Trubbish|F||3|1|Poison Gas~D~30~16|Sludge Whirlpool~DDC~130~0
+170|Zorua|0|60|D||G||1|0|Ram~C~10~0|Rear Kick~DC~20~0
+171|Zoroark|1|120|D|Zorua|G||2|1|Double Claw~C~40×~18|Night Daze~DDC~100~0
+172|Vullaby|0|60|D||L|F|1|0|Razor Wing~C~10~0|Air Slash~DC~30~19
+175|Yveltal|04|130|D||L|F|2|3|Dark Cutter~DD~50~0|Single Strike Wings~DDD~110~0
+176|Impidimp|04|70|D||G||1|0|Play Rough~D~10+~4
+186|Klefki|0|70|M||R|G|1|0|Unlock~C~10~13
+188|Meltan|04|70|M||R|G|1|0|Iron Intake~M~~2|Headbutt~CC~20~0
+191|Cufant|04|100|M||R|G|3|0|Rollout~C~10~0|High Horsepower~MCC~80~12
+192|Copperajah|14|190|M|Cufant|R|G|4|1|Strength~MCC~90~0|High Horsepower~MCCC~160~5
+195|Goomy|0|50|N||||1|0|Tackle~C~10~0|Melt~WP~20~0
+196|Sliggoo|1|80|N|Goomy|||3|1|Melt~C~20~0|Body Slam~WP~50~11
+199|Meowth|0|70|C||F||1|0|Pay Day~C~10~8
+200|Persian|1|110|C|Meowth|F||1|1|Pay Day~C~30~8|Bite~CC~70~0
+202|Chansey|0|110|C||F||2|0|Drain Slap~CC~30~2|Gentle Slap~CCC~70~0
+204|Kangaskhan|05|120|C||F||2|3|Pound~C~30~0|Coordinated One-Two Punch~CCC~60+~20
+206|Snorlax|0|160|C||F||3|0|Heavy Impact~CCC~80~0
+212|Buneary|05|50|C||F||1|0|Double Kick~CC~20×~21
+213|Lopunny|15|110|C|Buneary|F||1|1|Hopping Shot~CC~70~0
+215|Diggersby|1|140|C|Bunnelby|F||4|1|Hammer In~CCC~80~0|Take Down~CCCC~150~5
+217|Greedent V|03|210|C||F||2|2|Body Slam~CC~40~11|Nom-Nom-Nom Incisors~CCC~120~22
+219|Rookidee|0|60|C||L|F|1|0|Fury Attack~C~10×~23
+220|Corvisquire|1|80|C|Rookidee|L|F|1|1|Fury Attack~CC~30×~24
+222|Wooloo|0|70|C||F||1|0|Knock Away~CC~20+~25
+256|Greedent V|03|210|C||F||2|4|Body Slam~CC~40~11|Nom-Nom-Nom Incisors~CCC~120~22
+257|Greedent V|03|210|C||F||2|4|Body Slam~CC~40~11|Nom-Nom-Nom Incisors~CCC~120~22
