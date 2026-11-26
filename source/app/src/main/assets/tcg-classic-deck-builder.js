@@ -947,6 +947,7 @@ function buildDeck(rows,options={}){
    const name=classicCardName(card.name);
    const copiesOfName=nameCounts.get(name)||0;
    const starSlots=card.pokemonStar?Math.max(0,1-cards.filter(id=>classic.cardById(id)?.pokemonStar).length):arceusUnlimited?30:4;
+   const radiantSlots=card.radiant?Math.max(0,1-cards.filter(id=>classic.cardById(id)?.radiant).length):4;
    const aceSlots=card.aceSpec?Math.max(0,1-cards.filter(id=>classic.cardById(id)?.aceSpec).length):4;
    const miracleSlots=(name==='Miracle Energy'||card.prismStar)?Math.max(0,1-copiesOfName):4;
    const rawCap=stormfrontAutoCaps[card.id]??xy10SituationalCaps[card.id];
@@ -967,7 +968,7 @@ function buildDeck(rows,options={}){
      const strategicCap=namedDependency?Math.min(4,autoTrainerCap+1):autoTrainerCap;
      allowedCopies=Math.min(allowedCopies,Math.max(saved,strategicCap));
    }
-   return Math.max(0,Math.min(starSlots,aceSlots,miracleSlots,(card.name.startsWith('Shining ')?1:allowedCopies)-copiesOfName,Number(owned.get(card.id)||0)-(counts.get(card.id)||0)));
+   return Math.max(0,Math.min(starSlots,aceSlots,miracleSlots,radiantSlots,(card.name.startsWith('Shining ')?1:allowedCopies)-copiesOfName,Number(owned.get(card.id)||0)-(counts.get(card.id)||0)));
  }
  function hasBabyPartner(card){
    const names=babyEvolutionTargets(card);

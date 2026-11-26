@@ -9,22 +9,22 @@ OUT=ROOT/'app/src/main/assets/tcg-classic-astral-radiance.js'
 COVER=ROOT/'docs/SWSH10_BUILD_COVERAGE.json'
 ATTEST=ROOT/'docs/SWSH10_CANONICAL_SOURCE.json'
 PIN='888a5253d3bf05bc4107d52742003ce42f1980f3'
-COMPACT_SHA='beec33bebf9a0d0bf1f655976bde8bdbbe51e9e0062cfcc8dfb6566f2f52ecee'
+COMPACT_SHA='abf722e36f7d497239ec7399162faac3d61c4d3388b935365fe308eff514e8eb'
 SYMBOL={'G':'Grass','R':'Fire','W':'Water','L':'Lightning','P':'Psychic','F':'Fighting','D':'Darkness','M':'Metal','Y':'Fairy','N':'Dragon'}
 REVERSE={v:k for k,v in SYMBOL.items()}
 VARIANTS=[]
 def validate(rows):
  from swsh10_source import rows as verified_rows
- assert rows==verified_rows(), 'Stage 3 source differs from independently checked transfer packets'
- assert len(rows)==80 and len({r[0] for r in rows})==80
- assert sum(len(r[7]) for r in rows)==109
+ assert rows==verified_rows(), 'Stage 2 source differs from independently checked transfer packets'
+ assert len(rows)==112 and len({r[0] for r in rows})==112
+ assert sum(len(r[7]) for r in rows)==155
  return rows
 
 def prepare():
  from swsh10_source import rows as verified_rows
  rows=validate(verified_rows())
  SRC.write_text(json.dumps(rows,ensure_ascii=False,separators=(',',':'))+'\n',encoding='utf-8')
- ATTEST.write_text(json.dumps({'set':'swsh10','sourceGitBlob':PIN,'compactSha256':hashlib.sha256(SRC.read_bytes()).hexdigest(),'printedTotal':216,'importedTotal':80,'sourceScope':'verified stage-one packet'},indent=2)+'\n')
+ ATTEST.write_text(json.dumps({'set':'swsh10','sourceGitBlob':PIN,'compactSha256':hashlib.sha256(SRC.read_bytes()).hexdigest(),'printedTotal':216,'importedTotal':112,'sourceScope':'verified stage-two packet'},indent=2)+'\n')
  return rows
 
 def get_source():
@@ -65,6 +65,7 @@ def generate(rows):
    'image':f'https://images.pokemontcg.io/swsh10/{n}.png','imageLarge':f'https://images.pokemontcg.io/swsh10/{n}_hires.png',
    'battleEnabled':ok,'deckEligible':ok,'support':{'status':'FULL' if ok else 'PARTIAL','reasons':problems},
    'tags':(['pokemon-gx'] if gx else [])+(['tag-team'] if tag else [])+(['pokemon-v'] if v else [])+(['pokemon-vmax'] if vmax else [])+(['pokemon-vstar'] if 'VSTAR' in subs else [])+(['ultra-beast'] if 'Ultra Beast' in subs else []),'ultraBeast':'Ultra Beast' in subs,'teamPlasma':False,'prismStar':prism,'maxDeckCopies':1 if prism else 4}
+  if 'Radiant' in subs:c.update(radiant=True,maxDeckCopies=1);c['tags'].append('radiant')
   c.update(singleStrike='Single Strike' in subs,rapidStrike='Rapid Strike' in subs,fusionStrike='Fusion Strike' in subs)
   c['tags']+=(['single-strike'] if c['singleStrike'] else [])+(['rapid-strike'] if c['rapidStrike'] else [])+(['fusion-strike'] if c['fusionStrike'] else [])
   if kind=='pokemon':
@@ -75,7 +76,7 @@ def generate(rows):
    c.update(stage=next((s for s in subs if s in ('Basic','Stage 1','Stage 2','VMAX','VSTAR','BREAK','Restored')),'Basic'),hp=int(hp or 0),types=types or ['Colorless'],subtype=types[0] if types else 'Colorless',evolvesFrom=evolves,
     retreat=retreat,weakness=weak,weaknessValue='×2' if weak else None,weaknesses=[{'type':weak,'value':'×2'}] if weak else [],
     resistance=res,resistanceValue='-30' if res else None,resistances=[{'type':res,'value':'-30'}] if res else [],
-    attacks=attack_objs,abilities=powers,ancientTrait=trait,prizeCards=3 if vmax else 2 if v else 1,tagTeam=False,pokemonGX=False,isPokemonGX=False,pokemonV=v,pokemonVMAX=vmax,pokemonVSTAR='VSTAR' in subs,ruleBox=v,
+    attacks=attack_objs,abilities=powers,ancientTrait=trait,prizeCards=3 if vmax else 2 if v else 1,tagTeam=False,pokemonGX=False,isPokemonGX=False,pokemonV=v,pokemonVMAX=vmax,pokemonVSTAR='VSTAR' in subs,ruleBox=v or 'Radiant' in subs,
     pokemonEX=False,pokemonEx=False,megaEvolution=False,breakEvolution=False,isLevelX=False,
     deckMeta={'roles':roles,'synergy':roles,'energyTypes':needed,'preferredEnergyTypes':needed,'conditionalAttackEnergyTypes':[],
      'preferredPartners':[evolves] if evolves else [],'inflicts':[],'payoffs':[]})
@@ -123,7 +124,7 @@ def main():
  parser=argparse.ArgumentParser();parser.add_argument('--prepare',action='store_true');args=parser.parse_args()
  if args.prepare:prepare()
  rows=get_source();cards=gate_invalid_descriptors(generate(rows))
- hdr="""/* SWSH10 Astral Radiance verified stage-one prints. */
+ hdr="""/* SWSH10 Astral Radiance verified stage-two prints. */
 (function(root,factory){const api=factory();if(typeof module==='object'&&module.exports)module.exports=api;if(root)root.LuckyDexClassicTCGSWSH10=api;})(typeof globalThis!=='undefined'?globalThis:this,function(){'use strict';
 const SET=Object.freeze({id:'swsh10',name:'Astral Radiance',series:'Sword & Shield',releaseDate:'2022-05-27',cardCount:189,printedTotal:216});
 const CARDS=Object.freeze(__CARDS__.map(c=>Object.freeze(c)));const INDEX=new Map(CARDS.map(c=>[c.id,c]));
