@@ -1,0 +1,14 @@
+{
+  "set": "swsh11",
+  "name": "Lost Origin",
+  "stage": "stage1",
+  "release": "0.69.560",
+  "printedTotal": 217,
+  "importedTotal": 105,
+  "attackPrints": 97,
+  "abilities": 15,
+  "trainerPrints": 39,
+  "energyPrints": 1,
+  "pin": "157da08c0435be1c0692faac35e3a7580e638afb",
+  "variants": []
+}

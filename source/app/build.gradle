@@ -8,8 +8,8 @@ android {
         applicationId 'com.example.luckydex'
         minSdk 26
         targetSdk 35
-        versionCode 7559
-        versionName '0.69.559'
+        versionCode 7560
+        versionName '0.69.560'
     }
 
     signingConfigs {
@@ -1574,4 +1574,23 @@ tasks.register('auditSWSH10ForApk', Exec) {
 }
 tasks.matching { it.name == 'preBuild' || (it.name.startsWith('merge') && it.name.endsWith('Assets')) }.configureEach {
     dependsOn tasks.named('auditSWSH10ForApk')
+}
+
+tasks.register('preflightSWSH11ContractForApk', Exec) {
+    dependsOn tasks.named('auditSWSH10ForApk')
+    workingDir rootProject.projectDir
+    commandLine (System.getenv('LUCKYDEX_PYTHON') ?: 'python3'), 'scripts/preflight-swsh11-release.py'
+}
+tasks.register('generateSWSH11ForApk', Exec) {
+    dependsOn tasks.named('preflightSWSH11ContractForApk')
+    workingDir rootProject.projectDir
+    commandLine (System.getenv('LUCKYDEX_PYTHON') ?: 'python3'), 'scripts/build-swsh11.py'
+}
+tasks.register('auditSWSH11ForApk', Exec) {
+    dependsOn tasks.named('generateSWSH11ForApk')
+    workingDir rootProject.projectDir
+    commandLine 'node', '--test', 'tests/v07560-lost-origin.test.cjs'
+}
+tasks.matching { it.name == 'preBuild' || (it.name.startsWith('merge') && it.name.endsWith('Assets')) }.configureEach {
+    dependsOn tasks.named('auditSWSH11ForApk')
 }

@@ -1,6 +1,6 @@
 # SWSH10 — whole-set gap ledger
 
-Canonical prints: **216** | Imported: **216** | Playable: **215** | Gated: **1** | Not imported: **0**
+Canonical prints: **216** | Imported: **216** | Playable: **216** | Gated: **0** | Not imported: **0**
 Printed attacks: **264** (211 distinct full signatures) | Abilities: **44** (35 distinct signatures)
 Trainer rule signatures: **27** | Special Energy rule signatures: **1**
 Canonical Git blob: `888a5253d3bf05bc4107d52742003ce42f1980f3`
@@ -9,13 +9,7 @@ The distinct-signature count is an implementation inventory, **not** a count of 
 Gated is determined by the validated generator output; do not infer it from test counts.
 
 ## Blocker groups (implement shared handlers first)
-- **1 prints** — Unimplemented Special Energy rules — swsh10-216
-
-## Every remaining gated print
-
-| Print | Card | Blocking reason(s) |
-|---|---|---|
-| `swsh10-216` | Double Turbo Energy | Unimplemented Special Energy rules |
+No gated prints in the generated coverage. Independent outcome audit and APK build are still required.
 
 ## Release definition
 

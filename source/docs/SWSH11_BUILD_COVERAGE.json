@@ -1,0 +1,241 @@
+{
+  "printed": 105,
+  "canonicalTotal": 217,
+  "notImported": [
+    "swsh11-66",
+    "swsh11-67",
+    "swsh11-68",
+    "swsh11-69",
+    "swsh11-70",
+    "swsh11-71",
+    "swsh11-72",
+    "swsh11-73",
+    "swsh11-74",
+    "swsh11-75",
+    "swsh11-76",
+    "swsh11-77",
+    "swsh11-78",
+    "swsh11-79",
+    "swsh11-80",
+    "swsh11-81",
+    "swsh11-82",
+    "swsh11-83",
+    "swsh11-84",
+    "swsh11-85",
+    "swsh11-86",
+    "swsh11-87",
+    "swsh11-88",
+    "swsh11-89",
+    "swsh11-90",
+    "swsh11-91",
+    "swsh11-92",
+    "swsh11-93",
+    "swsh11-94",
+    "swsh11-95",
+    "swsh11-96",
+    "swsh11-97",
+    "swsh11-98",
+    "swsh11-99",
+    "swsh11-100",
+    "swsh11-101",
+    "swsh11-102",
+    "swsh11-103",
+    "swsh11-104",
+    "swsh11-105",
+    "swsh11-106",
+    "swsh11-107",
+    "swsh11-108",
+    "swsh11-109",
+    "swsh11-110",
+    "swsh11-111",
+    "swsh11-112",
+    "swsh11-113",
+    "swsh11-114",
+    "swsh11-115",
+    "swsh11-116",
+    "swsh11-117",
+    "swsh11-118",
+    "swsh11-119",
+    "swsh11-120",
+    "swsh11-121",
+    "swsh11-122",
+    "swsh11-123",
+    "swsh11-124",
+    "swsh11-125",
+    "swsh11-126",
+    "swsh11-127",
+    "swsh11-128",
+    "swsh11-129",
+    "swsh11-130",
+    "swsh11-131",
+    "swsh11-132",
+    "swsh11-133",
+    "swsh11-134",
+    "swsh11-135",
+    "swsh11-136",
+    "swsh11-137",
+    "swsh11-138",
+    "swsh11-139",
+    "swsh11-140",
+    "swsh11-141",
+    "swsh11-142",
+    "swsh11-143",
+    "swsh11-144",
+    "swsh11-145",
+    "swsh11-146",
+    "swsh11-147",
+    "swsh11-148",
+    "swsh11-149",
+    "swsh11-150",
+    "swsh11-151",
+    "swsh11-172",
+    "swsh11-173",
+    "swsh11-174",
+    "swsh11-175",
+    "swsh11-176",
+    "swsh11-177",
+    "swsh11-178",
+    "swsh11-179",
+    "swsh11-180",
+    "swsh11-181",
+    "swsh11-182",
+    "swsh11-183",
+    "swsh11-184",
+    "swsh11-185",
+    "swsh11-186",
+    "swsh11-187",
+    "swsh11-188",
+    "swsh11-197",
+    "swsh11-198",
+    "swsh11-199",
+    "swsh11-200",
+    "swsh11-201",
+    "swsh11-202",
+    "swsh11-203",
+    "swsh11-212",
+    "swsh11-213"
+  ],
+  "battleReady": 67,
+  "gated": {
+    "swsh11-13": [
+      "Unimplemented attack: Tearing Gust"
+    ],
+    "swsh11-17": [
+      "Unimplemented Ability: Elder Tree Barrier"
+    ],
+    "swsh11-20": [
+      "Unimplemented Ability: Jamming Attachment"
+    ],
+    "swsh11-22": [
+      "Unimplemented attack: Lost Volcano"
+    ],
+    "swsh11-27": [
+      "Unimplemented attack: Magical Fire"
+    ],
+    "swsh11-29": [
+      "Unimplemented Ability: Scorching Aura"
+    ],
+    "swsh11-34": [
+      "Unimplemented attack: Floe Return"
+    ],
+    "swsh11-37": [
+      "Unimplemented Ability: Seething Currents"
+    ],
+    "swsh11-40": [
+      "Unimplemented Ability: Oceanic Accompaniment"
+    ],
+    "swsh11-45": [
+      "Unimplemented attack: Upstream Spirits"
+    ],
+    "swsh11-48": [
+      "Unimplemented attack: Rapid Freeze"
+    ],
+    "swsh11-49": [
+      "Unimplemented attack: Max Frost",
+      "Unimplemented Ability: Glaciated World"
+    ],
+    "swsh11-58": [
+      "Unimplemented attack: Scrap Short",
+      "Unimplemented Ability: Instant Charge"
+    ],
+    "swsh11-61": [
+      "Unimplemented attack: Coil"
+    ],
+    "swsh11-62": [
+      "Unimplemented attack: Wonder Storm",
+      "Unimplemented Ability: Moon-Watching Party"
+    ],
+    "swsh11-65": [
+      "Unimplemented attack: Cursed Drop"
+    ],
+    "swsh11-152": [
+      "Unimplemented Trainer effect"
+    ],
+    "swsh11-154": [
+      "Unimplemented Trainer effect"
+    ],
+    "swsh11-156": [
+      "Unimplemented Trainer effect"
+    ],
+    "swsh11-157": [
+      "Unimplemented Trainer effect"
+    ],
+    "swsh11-160": [
+      "Unimplemented Trainer effect"
+    ],
+    "swsh11-161": [
+      "Unimplemented Trainer effect"
+    ],
+    "swsh11-162": [
+      "Unimplemented Trainer effect"
+    ],
+    "swsh11-163": [
+      "Unimplemented Trainer effect"
+    ],
+    "swsh11-164": [
+      "Unimplemented Trainer effect"
+    ],
+    "swsh11-165": [
+      "Unimplemented Trainer effect"
+    ],
+    "swsh11-166": [
+      "Unimplemented Trainer effect"
+    ],
+    "swsh11-167": [
+      "Unimplemented Trainer effect"
+    ],
+    "swsh11-170": [
+      "Unimplemented Trainer effect"
+    ],
+    "swsh11-171": [
+      "Unimplemented Special Energy rules"
+    ],
+    "swsh11-191": [
+      "Unimplemented Trainer effect"
+    ],
+    "swsh11-194": [
+      "Unimplemented Trainer effect"
+    ],
+    "swsh11-195": [
+      "Unimplemented Trainer effect"
+    ],
+    "swsh11-206": [
+      "Unimplemented Trainer effect"
+    ],
+    "swsh11-209": [
+      "Unimplemented Trainer effect"
+    ],
+    "swsh11-210": [
+      "Unimplemented Trainer effect"
+    ],
+    "swsh11-214": [
+      "Unimplemented Trainer effect"
+    ],
+    "swsh11-217": [
+      "Unimplemented Trainer effect"
+    ]
+  },
+  "attacks": 97,
+  "abilities": 15,
+  "sourceGitBlob": "157da08c0435be1c0692faac35e3a7580e638afb"
+}

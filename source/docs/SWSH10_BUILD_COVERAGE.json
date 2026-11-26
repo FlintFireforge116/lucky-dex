@@ -2,12 +2,8 @@
   "printed": 216,
   "canonicalTotal": 216,
   "notImported": [],
-  "battleReady": 215,
-  "gated": {
-    "swsh10-216": [
-      "Unimplemented Special Energy rules"
-    ]
-  },
+  "battleReady": 216,
+  "gated": {},
   "attacks": 264,
   "abilities": 44,
   "sourceGitBlob": "888a5253d3bf05bc4107d52742003ce42f1980f3"

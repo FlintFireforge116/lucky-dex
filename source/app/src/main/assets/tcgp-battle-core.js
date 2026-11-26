@@ -3149,7 +3149,7 @@
     if(state?.format!=='classic'||!state.sides)return false;
     const active=activeStadium(state)?.cardId==='xy6-89';
     const parallel=activeStadium(state)?.cardId==='xy8-145';
-    const collapsed=activeStadium(state)?.cardId==='swsh9-137';
+    const collapsed=['swsh9-137','swsh11-215'].includes(activeStadium(state)?.cardId);
     const limitedSide=parallel?state.stadium.xy8BenchSide:null;
     if(active){
       if(!state.xy6SkyFieldActive||state.xy6SkyFieldUid!==state.stadium.uid){

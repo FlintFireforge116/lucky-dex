@@ -43,7 +43,9 @@ def trainer(row):
  if m:return 'Tool',mod('attackDamageActiveOnly',30,opponentFilter={'subtype':m[1]})
  return None
 
-def energy(row):return None # Double Turbo Energy damage penalty needs a separate audit
+def energy(row):
+ if row[1]=='Double Turbo Energy' and row[13]==["As long as this card is attached to a Pokémon, it provides ColorlessColorless Energy. The attacks of the Pokémon this card is attached to do 20 less damage to your opponent's Pokémon (before applying Weakness and Resistance)."]:return E('specialEnergy',provides={'Colorless':2})
+ return None
 
 def prism_ready(row):return False
 
