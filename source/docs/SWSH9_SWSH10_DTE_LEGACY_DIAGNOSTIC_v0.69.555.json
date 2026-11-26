@@ -1,0 +1,3008 @@
+{
+  "scope": "synthetic neutral-target diagnostic; review printed effects and unexercised branches; not a completion gate",
+  "eligible": 422,
+  "ran": 360,
+  "zero": 50,
+  "errors": [
+    {
+      "side": "player",
+      "id": "ex4-9",
+      "name": "Linear Attack",
+      "reason": "no attack action"
+    },
+    {
+      "side": "player",
+      "id": "pl4-51",
+      "name": "Cloak Shard",
+      "reason": "selectedDamage must resolve as part of an attack."
+    },
+    {
+      "side": "player",
+      "id": "pl4-71",
+      "name": "Mega Shot",
+      "reason": "selectedDamage must resolve as part of an attack."
+    },
+    {
+      "side": "player",
+      "id": "pl4-AR5",
+      "name": "Sky Spear",
+      "reason": "selectedDamage must resolve as part of an attack."
+    },
+    {
+      "side": "player",
+      "id": "swsh4-48",
+      "name": "Thunder Snipe",
+      "reason": "no attack action"
+    },
+    {
+      "side": "player",
+      "id": "cel25c-9_A",
+      "name": "Linear Attack",
+      "reason": "no attack action"
+    },
+    {
+      "side": "opponent",
+      "id": "ex4-9",
+      "name": "Linear Attack",
+      "reason": "no attack action"
+    },
+    {
+      "side": "opponent",
+      "id": "pl4-51",
+      "name": "Cloak Shard",
+      "reason": "selectedDamage must resolve as part of an attack."
+    },
+    {
+      "side": "opponent",
+      "id": "pl4-71",
+      "name": "Mega Shot",
+      "reason": "selectedDamage must resolve as part of an attack."
+    },
+    {
+      "side": "opponent",
+      "id": "pl4-AR5",
+      "name": "Sky Spear",
+      "reason": "selectedDamage must resolve as part of an attack."
+    },
+    {
+      "side": "opponent",
+      "id": "swsh4-48",
+      "name": "Thunder Snipe",
+      "reason": "no attack action"
+    },
+    {
+      "side": "opponent",
+      "id": "cel25c-9_A",
+      "name": "Linear Attack",
+      "reason": "no attack action"
+    }
+  ],
+  "mismatches": [
+    {
+      "side": "player",
+      "id": "ex4-13",
+      "name": "Spark",
+      "base": [
+        20,
+        10
+      ],
+      "turbo": [
+        0,
+        10
+      ],
+      "expected": [
+        0,
+        0
+      ],
+      "rule": "ex4:13:0",
+      "text": "Does 10 damage to 2 of your opponent's Benched Pokémon (1 if there is only 1). (Don't apply Weakness and Resistance for Benched Pokémon.)"
+    },
+    {
+      "side": "player",
+      "id": "ex5-6",
+      "name": "Breaking Sound",
+      "base": [
+        10,
+        10
+      ],
+      "turbo": [
+        0,
+        10
+      ],
+      "expected": [
+        0,
+        0
+      ],
+      "rule": "ex5:6:0",
+      "text": "Does 10 damage to each of your opponent's Pokémon. (Don't apply Weakness and Resistance for Benched Pokémon.)"
+    },
+    {
+      "side": "player",
+      "id": "ex5-47",
+      "name": "Super Icy Wind",
+      "base": [
+        10,
+        10
+      ],
+      "turbo": [
+        0,
+        10
+      ],
+      "expected": [
+        0,
+        0
+      ],
+      "rule": "ex5:47:0",
+      "text": "Does 10 damage to each of your opponent's Pokémon. This attack's damage isn't affected by Weakness or Resistance."
+    },
+    {
+      "side": "player",
+      "id": "ex5-56",
+      "name": "Spark",
+      "base": [
+        10,
+        10
+      ],
+      "turbo": [
+        0,
+        10
+      ],
+      "expected": [
+        0,
+        0
+      ],
+      "rule": "ex5:56:1",
+      "text": "Choose 2 of your opponent's Benched Pokémon. This attack does 10 damage to each of those Pokémon. (Don't apply Weakness and Resistance for Benched Pokémon.)"
+    },
+    {
+      "side": "player",
+      "id": "ex5-99",
+      "name": "Steel Wave",
+      "base": [
+        50,
+        20
+      ],
+      "turbo": [
+        30,
+        20
+      ],
+      "expected": [
+        30,
+        0
+      ],
+      "rule": "ex5:99:0",
+      "text": "Does 20 damage to each of your opponent's Benched Pokémon of the same type as the Defending Pokémon. (Don't apply Weakness and Resistance for Benched Pokémon.)"
+    },
+    {
+      "side": "player",
+      "id": "ex6-24",
+      "name": "Shot Air",
+      "base": [
+        10,
+        20
+      ],
+      "turbo": [
+        0,
+        20
+      ],
+      "expected": [
+        0,
+        0
+      ],
+      "rule": "ex6:24:0",
+      "text": "Does 20 damage to 1 of your opponent's Benched Pokémon. (Don't apply Weakness and Resistance for Benched Pokémon.)"
+    },
+    {
+      "side": "player",
+      "id": "ex7-17",
+      "name": "Spread Poison",
+      "base": [
+        20,
+        0
+      ],
+      "turbo": [
+        10,
+        0
+      ],
+      "expected": [
+        0,
+        0
+      ],
+      "rule": "ex7:17:1",
+      "text": "The Defending Pokémon is now Poisoned. This attack does 20 damage to 1 of your opponent's Benched Pokémon. (Don't apply Weakness and Resistance for Benched Pokémon.)"
+    },
+    {
+      "side": "player",
+      "id": "ex7-19",
+      "name": "Spinning Tail",
+      "base": [
+        20,
+        20
+      ],
+      "turbo": [
+        0,
+        20
+      ],
+      "expected": [
+        0,
+        0
+      ],
+      "rule": "ex7:19:1",
+      "text": "Does 20 damage to each of your opponent's Pokémon. (Don't apply Weakness and Resistance for Benched Pokémon.)"
+    },
+    {
+      "side": "player",
+      "id": "ex7-40",
+      "name": "Explosive Evolution",
+      "base": [
+        10,
+        10
+      ],
+      "turbo": [
+        10,
+        10
+      ],
+      "expected": [
+        0,
+        0
+      ],
+      "rule": "ex7:40:0",
+      "text": "Flip a coin. If heads, this attack does 10 damage to each of your opponent's Pokémon. (Don't apply Weakness and Resistance.) Then, search your deck for a card that evolves from Dark Pupitar and put it on Dark Pupitar. (This counts as evolving Dark Pupitar.) Shuffle your deck afterward."
+    },
+    {
+      "side": "player",
+      "id": "ex8-4",
+      "name": "Split Bomb",
+      "base": [
+        30,
+        30
+      ],
+      "turbo": [
+        30,
+        30
+      ],
+      "expected": [
+        10,
+        10
+      ],
+      "rule": "ex8:4:1",
+      "text": "Choose 2 of your opponent's Pokémon. This attack does 30 damage to each of them. (Don't apply Weakness and Resistance for Benched Pokémon.)"
+    },
+    {
+      "side": "player",
+      "id": "ex8-24",
+      "name": "Triple Breach",
+      "base": [
+        10,
+        10
+      ],
+      "turbo": [
+        10,
+        10
+      ],
+      "expected": [
+        0,
+        0
+      ],
+      "rule": "ex8:24:0",
+      "text": "Choose 3 of your opponent's Pokémon. This attack does 10 damage to each of those Pokémon. (Don't apply Weakness and Resistance for Benched Pokémon.)"
+    },
+    {
+      "side": "player",
+      "id": "ex10-25",
+      "name": "Stretch Kick",
+      "base": [
+        0,
+        10
+      ],
+      "turbo": [
+        0,
+        10
+      ],
+      "expected": [
+        0,
+        0
+      ],
+      "rule": "ex10:25:0",
+      "text": "Choose 1 of your opponent's Benched Pokémon. This attack does 10 damage to that Pokémon. (Don't apply Weakness and Resistance for Benched Pokémon.)"
+    },
+    {
+      "side": "player",
+      "id": "ex10-37",
+      "name": "Double Attack",
+      "base": [
+        0,
+        10
+      ],
+      "turbo": [
+        0,
+        10
+      ],
+      "expected": [
+        0,
+        0
+      ],
+      "rule": "ex10:37:1",
+      "text": "Choose 2 of your opponent's Benched Pokémon. This attack does 10 damage to each of them. (Don't apply Weakness and Resistance for Benched Pokémon.)"
+    },
+    {
+      "side": "player",
+      "id": "ex10-63",
+      "name": "Telekinesis",
+      "base": [
+        0,
+        10
+      ],
+      "turbo": [
+        0,
+        10
+      ],
+      "expected": [
+        0,
+        0
+      ],
+      "rule": "ex10:63:0",
+      "text": "Choose 1 of your opponent's Pokémon. This attack does 10 damage to that Pokémon. This attack's damage isn't affected by Weakness or Resistance."
+    },
+    {
+      "side": "player",
+      "id": "ex10-78",
+      "name": "Splatter",
+      "base": [
+        0,
+        10
+      ],
+      "turbo": [
+        0,
+        10
+      ],
+      "expected": [
+        0,
+        0
+      ],
+      "rule": "ex10:78:0",
+      "text": "Choose 1 of your opponent's Pokémon. This attack does 10 damage to that Pokémon. This attack's damage isn't affected by Weakness or Resistance."
+    },
+    {
+      "side": "player",
+      "id": "ex10-102",
+      "name": "Snap Tail",
+      "base": [
+        0,
+        30
+      ],
+      "turbo": [
+        0,
+        30
+      ],
+      "expected": [
+        0,
+        10
+      ],
+      "rule": "ex10:102:0",
+      "text": "Choose 1 of your opponent's Pokémon. This attack does 30 damage to that Pokémon. (Don't apply Weakness and Resistance for Benched Pokémon.)"
+    },
+    {
+      "side": "player",
+      "id": "ex10-109",
+      "name": "Mudslide",
+      "base": [
+        0,
+        100
+      ],
+      "turbo": [
+        0,
+        100
+      ],
+      "expected": [
+        0,
+        80
+      ],
+      "rule": "ex10:109:1",
+      "text": "Discard 2 Fighting Energy attached to Steelix ex and choose 1 of your opponent's Pokémon. This attack does 100 damage to that Pokémon. (Don't apply Weakness and Resistance for Benched Pokémon.)"
+    },
+    {
+      "side": "player",
+      "id": "ex11-7",
+      "name": "Return Spark",
+      "base": [
+        50,
+        20
+      ],
+      "turbo": [
+        30,
+        20
+      ],
+      "expected": [
+        30,
+        0
+      ],
+      "rule": "ex11:7:1",
+      "text": "You may return an Energy card attached to Jolteon to your hand. If you do, this attack does 20 damage to 1 of your opponent's Benched Pokémon. (Don't apply Weakness and Resistance for Benched Pokémon.)"
+    },
+    {
+      "side": "player",
+      "id": "ex11-17",
+      "name": "Feint Attack",
+      "base": [
+        0,
+        30
+      ],
+      "turbo": [
+        0,
+        30
+      ],
+      "expected": [
+        0,
+        10
+      ],
+      "rule": "ex11:17:0",
+      "text": "Choose 1 of your opponent's Pokémon. This attack does 30 damage to that Pokémon. This attack's damage isn't affected by Weakness, Resistance, Poké-Powers, Poké-Bodies, or any other effects on that Pokémon."
+    },
+    {
+      "side": "player",
+      "id": "ex11-33",
+      "name": "Mist Attack",
+      "base": [
+        10,
+        10
+      ],
+      "turbo": [
+        10,
+        10
+      ],
+      "expected": [
+        0,
+        0
+      ],
+      "rule": "ex11:33:0",
+      "text": "Does 10 damage to each of your opponent's Pokémon. (Don't apply Weakness and Resistance for Benched Pokémon.)"
+    },
+    {
+      "side": "player",
+      "id": "ex11-43",
+      "name": "Sonic Signal",
+      "base": [
+        10,
+        10
+      ],
+      "turbo": [
+        0,
+        10
+      ],
+      "expected": [
+        0,
+        0
+      ],
+      "rule": "ex11:43:1",
+      "text": "Choose 2 of your opponent's Pokémon. This attack does 10 damage to each of them. (Don't apply Weakness and Resistance for Benched Pokémon.)"
+    },
+    {
+      "side": "player",
+      "id": "ex11-50",
+      "name": "Snap Tail",
+      "base": [
+        0,
+        30
+      ],
+      "turbo": [
+        0,
+        30
+      ],
+      "expected": [
+        0,
+        10
+      ],
+      "rule": "ex11:50:0",
+      "text": "Choose 1 of your opponent's Pokémon. This attack does 30 damage to that Pokémon. (Don't apply Weakness and Resistance for Benched Pokémon.)"
+    },
+    {
+      "side": "player",
+      "id": "ex11-62",
+      "name": "Linear Attack",
+      "base": [
+        0,
+        20
+      ],
+      "turbo": [
+        0,
+        20
+      ],
+      "expected": [
+        0,
+        0
+      ],
+      "rule": "ex11:62:0",
+      "text": "Choose 1 of your opponent's Pokémon. This attack does 20 damage to that Pokémon. (Don't apply Weakness and Resistance for Benched Pokémon.)"
+    },
+    {
+      "side": "player",
+      "id": "ex11-70",
+      "name": "Linear Attack",
+      "base": [
+        0,
+        10
+      ],
+      "turbo": [
+        0,
+        10
+      ],
+      "expected": [
+        0,
+        0
+      ],
+      "rule": "ex11:70:0",
+      "text": "Choose 1 of your opponent's Pokémon. This attack does 10 damage to that Pokémon. (Don't apply Weakness and Resistance for Benched Pokémon.)"
+    },
+    {
+      "side": "player",
+      "id": "ex11-82",
+      "name": "Dig Under",
+      "base": [
+        0,
+        10
+      ],
+      "turbo": [
+        0,
+        10
+      ],
+      "expected": [
+        0,
+        0
+      ],
+      "rule": "ex11:82:0",
+      "text": "Choose 1 of your opponent's Pokémon. This attack does 10 damage to that Pokémon. This attack's damage isn't affected by Weakness or Resistance."
+    },
+    {
+      "side": "player",
+      "id": "ex11-86",
+      "name": "Skill Dive",
+      "base": [
+        0,
+        10
+      ],
+      "turbo": [
+        0,
+        10
+      ],
+      "expected": [
+        0,
+        0
+      ],
+      "rule": "ex11:86:0",
+      "text": "Does 10 damage to 1 of your opponent's Pokémon. (Don't apply Weakness and Resistance for Benched Pokémon.)"
+    },
+    {
+      "side": "player",
+      "id": "ex12-2",
+      "name": "Bound Crush",
+      "base": [
+        0,
+        60
+      ],
+      "turbo": [
+        0,
+        60
+      ],
+      "expected": [
+        0,
+        40
+      ],
+      "rule": "ex12:2:1",
+      "text": "Choose 1 of your opponent's Pokémon. This attack does 60 damage to that Pokémon. (Don't apply Weakness and Resistance for Benched Pokémon.) During your next turn, Aggron can't use Bound Crush."
+    },
+    {
+      "side": "player",
+      "id": "ex12-15",
+      "name": "Feint Attack",
+      "base": [
+        0,
+        20
+      ],
+      "turbo": [
+        0,
+        20
+      ],
+      "expected": [
+        0,
+        0
+      ],
+      "rule": "ex12:15:1",
+      "text": "Choose 1 of your opponent's Pokémon. This attack does 20 damage to that Pokémon. This attack's damage isn't affected by Weakness, Resistance, Poké-Powers, Poké-Bodies, or any other effects on that Pokémon."
+    },
+    {
+      "side": "player",
+      "id": "ex12-34",
+      "name": "Rock Slide",
+      "base": [
+        20,
+        10
+      ],
+      "turbo": [
+        0,
+        10
+      ],
+      "expected": [
+        0,
+        0
+      ],
+      "rule": "ex12:34:0",
+      "text": "Does 10 damage to 2 of your opponent's Benched Pokémon (1 if there is only 1). (Don't apply Weakness and Resistance for Benched Pokémon.)"
+    },
+    {
+      "side": "player",
+      "id": "ex12-37",
+      "name": "Tongue Whip",
+      "base": [
+        0,
+        10
+      ],
+      "turbo": [
+        0,
+        10
+      ],
+      "expected": [
+        0,
+        0
+      ],
+      "rule": "ex12:37:0",
+      "text": "Choose 1 of your opponent's Pokémon. This attack does 10 damage to that Pokémon. (Don't apply Weakness and Resistance for Benched Pokémon.)"
+    },
+    {
+      "side": "player",
+      "id": "ex12-45",
+      "name": "Water Arrow",
+      "base": [
+        0,
+        20
+      ],
+      "turbo": [
+        0,
+        20
+      ],
+      "expected": [
+        0,
+        0
+      ],
+      "rule": "ex12:45:0",
+      "text": "Choose 1 of your opponent's Pokémon. This attack does 20 damage to that Pokémon. (Don't apply Weakness and Resistance for Benched Pokémon.)"
+    },
+    {
+      "side": "player",
+      "id": "ex12-50",
+      "name": "Random Spark",
+      "base": [
+        0,
+        10
+      ],
+      "turbo": [
+        0,
+        10
+      ],
+      "expected": [
+        0,
+        0
+      ],
+      "rule": "ex12:50:0",
+      "text": "Choose 1 of your opponent's Pokémon. This attack does 10 damage to that Pokémon. (Don't apply Weakness and Resistance for Benched Pokémon.)"
+    },
+    {
+      "side": "player",
+      "id": "ex12-57",
+      "name": "Mach Punch",
+      "base": [
+        10,
+        10
+      ],
+      "turbo": [
+        0,
+        10
+      ],
+      "expected": [
+        0,
+        0
+      ],
+      "rule": "ex12:57:0",
+      "text": "Does 10 damage to 1 of your opponent's Benched Pokémon. (Don't apply Weakness and Resistance for Benched Pokémon.)"
+    },
+    {
+      "side": "player",
+      "id": "ex12-67",
+      "name": "Pebble Throw",
+      "base": [
+        0,
+        10
+      ],
+      "turbo": [
+        0,
+        10
+      ],
+      "expected": [
+        0,
+        0
+      ],
+      "rule": "ex12:67:0",
+      "text": "Choose 1 of your opponent's Benched Pokémon. This attack does 10 damage to that Pokémon. (Don't apply Weakness and Resistance for Benched Pokémon.)"
+    },
+    {
+      "side": "player",
+      "id": "ex12-83",
+      "name": "Overrun",
+      "base": [
+        30,
+        20
+      ],
+      "turbo": [
+        10,
+        20
+      ],
+      "expected": [
+        10,
+        0
+      ],
+      "rule": "ex12:83:0",
+      "text": "Does 20 damage to 1 of your opponent's Benched Pokémon. (Don't apply Weakness and Resistance for Benched Pokémon.)"
+    },
+    {
+      "side": "player",
+      "id": "ex12-89",
+      "name": "Water Arrow",
+      "base": [
+        10,
+        40
+      ],
+      "turbo": [
+        10,
+        40
+      ],
+      "expected": [
+        0,
+        20
+      ],
+      "rule": "ex12:89:0",
+      "text": "Choose 1 of your opponent's Pokémon. This attack does 40 damage to that Pokémon. (Don't apply Weakness and Resistance for Benched Pokémon.)"
+    },
+    {
+      "side": "player",
+      "id": "ex13-18",
+      "name": "Overrun",
+      "base": [
+        0,
+        20
+      ],
+      "turbo": [
+        0,
+        20
+      ],
+      "expected": [
+        0,
+        0
+      ],
+      "rule": "ex13:18:1",
+      "text": "Choose 1 of your opponent's Benched Pokémon. This attack does 20 damage to that Pokémon. (Don't apply Weakness and Resistance for Benched Pokémon.)"
+    },
+    {
+      "side": "player",
+      "id": "ex13-23",
+      "name": "Feint Attack",
+      "base": [
+        0,
+        10
+      ],
+      "turbo": [
+        0,
+        10
+      ],
+      "expected": [
+        0,
+        0
+      ],
+      "rule": "ex13:23:0",
+      "text": "Choose 1 of your opponent's Pokémon. This attack does 10 damage to that Pokémon. This attack's damage isn't affected by Weakness, Resistance, Poké-Powers, Poké-Bodies, or any other effects on that Pokémon."
+    },
+    {
+      "side": "player",
+      "id": "ex13-25",
+      "name": "Rock Slide",
+      "base": [
+        0,
+        10
+      ],
+      "turbo": [
+        0,
+        10
+      ],
+      "expected": [
+        0,
+        0
+      ],
+      "rule": "ex13:25:1",
+      "text": "Does 10 damage to 2 of your opponent's Benched Pokémon. (Don't apply Weakness and Resistance for Benched Pokémon.)"
+    },
+    {
+      "side": "player",
+      "id": "ex13-28",
+      "name": "Rock Slide",
+      "base": [
+        40,
+        10
+      ],
+      "turbo": [
+        20,
+        10
+      ],
+      "expected": [
+        20,
+        0
+      ],
+      "rule": "ex13:28:0",
+      "text": "Does 10 damage to 2 of your opponent's Benched Pokémon. (Don't apply Weakness and Resistance for Benched Pokémon.)"
+    },
+    {
+      "side": "player",
+      "id": "ex13-38",
+      "name": "Wide Laser",
+      "base": [
+        10,
+        10
+      ],
+      "turbo": [
+        0,
+        10
+      ],
+      "expected": [
+        0,
+        0
+      ],
+      "rule": "ex13:38:0",
+      "text": "Does 10 damage to each of your opponent's Pokémon. (Don't apply Weakness and Resistance for Benched Pokémon.)"
+    },
+    {
+      "side": "player",
+      "id": "ex13-41",
+      "name": "Split Bomb",
+      "base": [
+        30,
+        30
+      ],
+      "turbo": [
+        10,
+        30
+      ],
+      "expected": [
+        10,
+        10
+      ],
+      "rule": "ex13:41:1",
+      "text": "Choose 2 of your opponent's Pokémon. This attack does 30 damage to each of them. (Don't apply Weakness and Resistance for Benched Pokémon.)"
+    },
+    {
+      "side": "player",
+      "id": "ex13-65",
+      "name": "Pebble Throw",
+      "base": [
+        0,
+        20
+      ],
+      "turbo": [
+        0,
+        20
+      ],
+      "expected": [
+        0,
+        0
+      ],
+      "rule": "ex13:65:1",
+      "text": "Choose 1 of your opponent's Benched Pokémon. This attack does 20 damage to that Pokémon. (Don't apply Weakness and Resistance for Benched Pokémon.)"
+    },
+    {
+      "side": "player",
+      "id": "ex13-74",
+      "name": "Water Arrow",
+      "base": [
+        0,
+        20
+      ],
+      "turbo": [
+        0,
+        20
+      ],
+      "expected": [
+        0,
+        0
+      ],
+      "rule": "ex13:74:1",
+      "text": "Choose 1 of your opponent's Pokémon. This attack does 20 damage to that Pokémon. (Don't apply Weakness and Resistance for Benched Pokémon.)"
+    },
+    {
+      "side": "player",
+      "id": "ex14-3",
+      "name": "Linear Attack",
+      "base": [
+        0,
+        30
+      ],
+      "turbo": [
+        0,
+        30
+      ],
+      "expected": [
+        0,
+        10
+      ],
+      "rule": "ex14:3:0",
+      "text": "Choose 1 of your opponent's Pokémon. This attack does 30 damage to that Pokémon. (Don't apply Weakness and Resistance for Benched Pokémon.)"
+    },
+    {
+      "side": "player",
+      "id": "ex14-5",
+      "name": "Dig Under",
+      "base": [
+        0,
+        30
+      ],
+      "turbo": [
+        0,
+        30
+      ],
+      "expected": [
+        0,
+        10
+      ],
+      "rule": "ex14:5:0",
+      "text": "Choose 1 of your opponent's Pokémon. This attack does 30 damage to that Pokémon. This attack's damage isn't affected by Weakness or Resistance."
+    },
+    {
+      "side": "player",
+      "id": "ex14-15",
+      "name": "Triple Needle",
+      "base": [
+        10,
+        10
+      ],
+      "turbo": [
+        0,
+        10
+      ],
+      "expected": [
+        0,
+        0
+      ],
+      "rule": "ex14:15:0",
+      "text": "Choose 3 of your opponent's Pokémon. This attack does 10 damage to each of those Pokémon. (Don't apply Weakness and Resistance for Benched Pokémon.)"
+    },
+    {
+      "side": "player",
+      "id": "ex14-23",
+      "name": "Bass Control",
+      "base": [
+        0,
+        40
+      ],
+      "turbo": [
+        0,
+        40
+      ],
+      "expected": [
+        0,
+        20
+      ],
+      "rule": "ex14:23:1",
+      "text": "Choose 1 of your opponent's Pokémon. This attack does 40 damage to that Pokémon. (Don't apply Weakness and Resistance for Benched Pokémon.)"
+    },
+    {
+      "side": "player",
+      "id": "ex14-24",
+      "name": "Mud Splash",
+      "base": [
+        0,
+        30
+      ],
+      "turbo": [
+        0,
+        30
+      ],
+      "expected": [
+        0,
+        10
+      ],
+      "rule": "ex14:24:1",
+      "text": "Does 30 damage to 1 of your opponent's Benched Pokémon. (Don't apply Weakness and Resistance for Benched Pokémon.)"
+    },
+    {
+      "side": "player",
+      "id": "ex14-35",
+      "name": "Stretch Vine",
+      "base": [
+        0,
+        30
+      ],
+      "turbo": [
+        0,
+        30
+      ],
+      "expected": [
+        0,
+        10
+      ],
+      "rule": "ex14:35:0",
+      "text": "Choose 1 of your opponent's Benched Pokémon. This attack does 30 damage to that Pokémon. (Don't apply Weakness and Resistance for Benched Pokémon.)"
+    },
+    {
+      "side": "player",
+      "id": "ex14-41",
+      "name": "Feint Attack",
+      "base": [
+        0,
+        20
+      ],
+      "turbo": [
+        0,
+        20
+      ],
+      "expected": [
+        0,
+        0
+      ],
+      "rule": "ex14:41:1",
+      "text": "Choose 1 of your opponent's Pokémon. This attack does 20 damage to that Pokémon. This attack's damage isn't affected by Weakness, Resistance, Poké-Powers, Poké-Bodies, or any other effects on that Pokémon."
+    },
+    {
+      "side": "player",
+      "id": "ex14-95",
+      "name": "Hydro Shot",
+      "base": [
+        0,
+        70
+      ],
+      "turbo": [
+        0,
+        70
+      ],
+      "expected": [
+        0,
+        50
+      ],
+      "rule": "ex14:95:0",
+      "text": "Discard 2 Energy attached to Kyogre ex. Choose 1 of your opponent's Pokémon. This attack does 70 damage to that Pokémon. (Don't apply Weakness and Resistance for Benched Pokémon.)"
+    },
+    {
+      "side": "player",
+      "id": "ex15-6",
+      "name": "Linear Attack",
+      "base": [
+        0,
+        30
+      ],
+      "turbo": [
+        0,
+        30
+      ],
+      "expected": [
+        0,
+        10
+      ],
+      "rule": "ex15:6:0",
+      "text": "Choose 1 of your opponent's Pokémon. This attack does 30 damage to that Pokémon. (Don't apply Weakness and Resistance for Benched Pokémon.)"
+    },
+    {
+      "side": "player",
+      "id": "ex15-48",
+      "name": "Thunder Spear",
+      "base": [
+        0,
+        10
+      ],
+      "turbo": [
+        0,
+        10
+      ],
+      "expected": [
+        0,
+        0
+      ],
+      "rule": "ex15:48:0",
+      "text": "Choose 1 of your opponent's Pokémon. This attack does 10 damage to that Pokémon. (Don't apply Weakness and Resistance for Benched Pokémon.)"
+    },
+    {
+      "side": "player",
+      "id": "ex15-69",
+      "name": "Quick Bind",
+      "base": [
+        0,
+        10
+      ],
+      "turbo": [
+        0,
+        10
+      ],
+      "expected": [
+        0,
+        0
+      ],
+      "rule": "ex15:69:0",
+      "text": "Choose 1 of your opponent's Pokémon. This attack does 10 damage to that Pokémon. This attack's damage isn't affected by Weakness, Resistance, Poké-Powers, Poké-Bodies, or any other effects on that Pokémon."
+    },
+    {
+      "side": "player",
+      "id": "ex16-5",
+      "name": "Fire Stream",
+      "base": [
+        50,
+        10
+      ],
+      "turbo": [
+        30,
+        10
+      ],
+      "expected": [
+        30,
+        0
+      ],
+      "rule": "ex16:5:fireStream",
+      "text": "Discard a Fire Energy card attached to Blaziken. This attack does 10 damage to each of your opponent's Benched Pokémon. (Don't apply Weakness and Resistance for Benched Pokémon.)"
+    },
+    {
+      "side": "player",
+      "id": "ex16-22",
+      "name": "Feint Attack",
+      "base": [
+        0,
+        20
+      ],
+      "turbo": [
+        0,
+        20
+      ],
+      "expected": [
+        0,
+        0
+      ],
+      "rule": "ex16:22:feintAttack",
+      "text": "Choose 1 of your opponent's Pokémon. This attack does 20 damage to that Pokémon. This attack's damage isn't affected by Weakness, Resistance, Poké-Powers, Poké-Bodies, or any other effects on that Pokémon."
+    },
+    {
+      "side": "player",
+      "id": "ex16-95",
+      "name": "Scanblast",
+      "base": [
+        70,
+        70
+      ],
+      "turbo": [
+        50,
+        70
+      ],
+      "expected": [
+        50,
+        50
+      ],
+      "rule": "ex16:95:scanblast",
+      "text": "Does 70 damage to each of your opponent's Benched Pokémon that has the same name as the Defending Pokémon. (Don't apply Weakness and Resistance for Benched Pokémon.)"
+    },
+    {
+      "side": "player",
+      "id": "ex16-97",
+      "name": "Dirge",
+      "base": [
+        60,
+        60
+      ],
+      "turbo": [
+        40,
+        60
+      ],
+      "expected": [
+        40,
+        40
+      ],
+      "rule": "ex16:97:dirge",
+      "text": "Does 60 damage to each of your opponent's Benched Pokémon that has the same name as the Defending Pokémon. (Don't apply Weakness and Resistance for Benched Pokémon.)"
+    },
+    {
+      "side": "player",
+      "id": "dp7-99",
+      "name": "Voltage Shoot",
+      "base": [
+        0,
+        80
+      ],
+      "turbo": [
+        0,
+        80
+      ],
+      "expected": [
+        0,
+        60
+      ],
+      "rule": "dp7:99:voltageShoot",
+      "text": "Discard 2 Lightning Energy cards from your hand and choose 1 of your opponent's Pokémon. This attack does 80 to that Pokémon. (Don't apply Weakness and Resistance for Benched Pokémon.)"
+    },
+    {
+      "side": "player",
+      "id": "pl2-22",
+      "name": "Muddy Bomb",
+      "base": [
+        10,
+        30
+      ],
+      "turbo": [
+        0,
+        30
+      ],
+      "expected": [
+        0,
+        10
+      ],
+      "rule": "pl2:22:muddyBomb",
+      "text": "Choose 1 of your opponent's Pokémon. This attack does 30 damage to that Pokémon and 10 damage to each of your opponent's other Pokémon. (Don't apply Weakness and Resistance for Benched Pokémon.)"
+    },
+    {
+      "side": "player",
+      "id": "pl2-29",
+      "name": "Fling Away",
+      "base": [
+        30,
+        30
+      ],
+      "turbo": [
+        10,
+        30
+      ],
+      "expected": [
+        10,
+        10
+      ],
+      "rule": "pl2:29:flingAway",
+      "text": "If your opponent has any Benched Pokémon, this attack's base damage is 30 instead of 60 and this attack does 30 damage to 1 of your opponent's Benched Pokémon. (Don't apply Weakness and Resistance for Benched Pokémon.)"
+    },
+    {
+      "side": "player",
+      "id": "hgss2-6",
+      "name": "Switch Cannon",
+      "base": [
+        0,
+        30
+      ],
+      "turbo": [
+        0,
+        30
+      ],
+      "expected": [
+        0,
+        10
+      ],
+      "rule": "hgss2:6:switchCannon",
+      "text": "Choose 1 of your opponent's Pokémon. This attack does 30 damage to that Pokémon. (Don't apply Weakness and Resistance for Benched Pokémon.) Switch Octillery with 1 of your Benched Pokémon."
+    },
+    {
+      "side": "player",
+      "id": "hgss2-13",
+      "name": "Hydro Launcher",
+      "base": [
+        0,
+        100
+      ],
+      "turbo": [
+        0,
+        100
+      ],
+      "expected": [
+        0,
+        80
+      ],
+      "rule": "hgss2:13:hydroLauncher",
+      "text": "Return 2 Water Energy attached to Blastoise to your hand. Choose 1 of your opponent's Pokémon. This attack does 100 damage to that Pokémon. (Don't apply Weakness and Resistance for Benched Pokémon.)"
+    },
+    {
+      "side": "player",
+      "id": "hgss2-88",
+      "name": "Darkness Howl",
+      "base": [
+        20,
+        20
+      ],
+      "turbo": [
+        0,
+        20
+      ],
+      "expected": [
+        0,
+        0
+      ],
+      "rule": "hgss2:88:darknessHowl",
+      "text": "This attack does 20 damage to each Pokémon in play (both yours and your opponent's) (excluding any Darkness Pokémon). (Don't apply Weakness and Resistance for Benched Pokémon.)"
+    },
+    {
+      "side": "player",
+      "id": "hgss2-94",
+      "name": "Torrent Blade",
+      "base": [
+        0,
+        100
+      ],
+      "turbo": [
+        0,
+        100
+      ],
+      "expected": [
+        0,
+        80
+      ],
+      "rule": "hgss2:94:torrentBlade",
+      "text": "Return 2 Water Energy attached to Suicune & Entei LEGEND to your hand. Choose 1 of your opponent's Benched Pokémon. This attack does 100 damage to that Pokémon. (Don't apply Weakness or Resistance for Benched Pokémon.)"
+    },
+    {
+      "side": "player",
+      "id": "hgss2-95",
+      "name": "Torrent Blade",
+      "base": [
+        0,
+        100
+      ],
+      "turbo": [
+        0,
+        100
+      ],
+      "expected": [
+        0,
+        80
+      ],
+      "rule": "hgss2:94:torrentBlade",
+      "text": "Return 2 Water Energy attached to Suicune & Entei LEGEND to your hand. Choose 1 of your opponent's Benched Pokémon. This attack does 100 damage to that Pokémon. (Don't apply Weakness or Resistance for Benched Pokémon.)"
+    },
+    {
+      "side": "player",
+      "id": "hgss4-20",
+      "name": "Thunder Shot",
+      "base": [
+        50,
+        50
+      ],
+      "turbo": [
+        30,
+        50
+      ],
+      "expected": [
+        30,
+        30
+      ],
+      "rule": "hgss4:20:thunderShot",
+      "text": "This attack does 50 damage to each of your opponent's Pokémon that has any Energy cards attached to it. (Don't apply Weakness and Resistance for Benched Pokémon.)"
+    },
+    {
+      "side": "player",
+      "id": "hgss4-38",
+      "name": "Licking Shot",
+      "base": [
+        0,
+        510
+      ],
+      "turbo": [
+        0,
+        510
+      ],
+      "expected": [
+        0,
+        490
+      ],
+      "rule": "hgss4:38:lickingShot",
+      "text": "Choose 1 of your opponent's Pokémon. This attack does 10 damage to that Pokémon for each Energy attached to Lickilicky. (Don't apply Weakness and Resistance for Benched Pokémon.)"
+    },
+    {
+      "side": "player",
+      "id": "hgss4-74",
+      "name": "Tripping Headbutt",
+      "base": [
+        0,
+        30
+      ],
+      "turbo": [
+        0,
+        30
+      ],
+      "expected": [
+        0,
+        10
+      ],
+      "rule": "hgss4:74:trippingHeadbutt",
+      "text": "Flip a coin. If heads, this attack does 30 damage to 1 of your opponent's Pokémon. If tails, this attack does 30 damage to 1 of your Pokémon. (Don't apply Weakness and Resistance for Benched Pokémon.)"
+    },
+    {
+      "side": "player",
+      "id": "col1-12",
+      "name": "Destructive Tsunami",
+      "base": [
+        40,
+        40
+      ],
+      "turbo": [
+        20,
+        40
+      ],
+      "expected": [
+        20,
+        20
+      ],
+      "rule": "col1:12:destructiveTsunami",
+      "text": "Flip a coin. If heads, this attack does 40 damage to each of your opponent's Pokémon. If tails, this attack does 40 damage to each of your Pokémon. (Don't apply Weakness and Resistance for Benched Pokémon.)"
+    },
+    {
+      "side": "player",
+      "id": "col1-SL6",
+      "name": "Destructive Tsunami",
+      "base": [
+        40,
+        40
+      ],
+      "turbo": [
+        20,
+        40
+      ],
+      "expected": [
+        20,
+        20
+      ],
+      "rule": "col1:12:destructiveTsunami",
+      "text": "Flip a coin. If heads, this attack does 40 damage to each of your opponent's Pokémon. If tails, this attack does 40 damage to each of your Pokémon. (Don't apply Weakness and Resistance for Benched Pokémon.)"
+    },
+    {
+      "side": "player",
+      "id": "bw3-56",
+      "name": "Synchronoise",
+      "base": [
+        20,
+        20
+      ],
+      "turbo": [
+        0,
+        20
+      ],
+      "expected": [
+        0,
+        0
+      ],
+      "rule": "bw3:synchronoise",
+      "text": "Does 20 damage to each of your opponent's Benched Pokémon that shares a type with the Defending Pokémon. (Don't apply Weakness and Resistance for Benched Pokémon.)"
+    },
+    {
+      "side": "player",
+      "id": "bw7-69",
+      "name": "Telekinesis",
+      "base": [
+        0,
+        30
+      ],
+      "turbo": [
+        0,
+        30
+      ],
+      "expected": [
+        0,
+        10
+      ],
+      "rule": "bw7:telekinesis",
+      "text": "This attack does 30 damage to 1 of your opponent's Pokémon. This attack's damage isn't affected by Weakness or Resistance."
+    },
+    {
+      "side": "player",
+      "id": "bw7-89",
+      "name": "Hammerhead",
+      "base": [
+        30,
+        30
+      ],
+      "turbo": [
+        10,
+        30
+      ],
+      "expected": [
+        10,
+        10
+      ],
+      "rule": "bw7:hammerhead",
+      "text": "Does 30 damage to 1 of your opponent's Benched Pokémon. (Don't apply Weakness and Resistance for Benched Pokémon.)"
+    },
+    {
+      "side": "player",
+      "id": "bw7-144",
+      "name": "Hammerhead",
+      "base": [
+        30,
+        30
+      ],
+      "turbo": [
+        10,
+        30
+      ],
+      "expected": [
+        10,
+        10
+      ],
+      "rule": "bw7:hammerhead",
+      "text": "Does 30 damage to 1 of your opponent's Benched Pokémon. (Don't apply Weakness and Resistance for Benched Pokémon.)"
+    },
+    {
+      "side": "player",
+      "id": "sm3-38",
+      "name": "Synchronoise",
+      "base": [
+        60,
+        20
+      ],
+      "turbo": [
+        40,
+        20
+      ],
+      "expected": [
+        40,
+        0
+      ],
+      "rule": "synchronoise",
+      "text": "This attack does 20 damage to each of your opponent's Benched Pokémon that shares a type with your opponent's Active Pokémon. (Don't apply Weakness and Resistance for Benched Pokémon.)"
+    },
+    {
+      "side": "opponent",
+      "id": "ex4-13",
+      "name": "Spark",
+      "base": [
+        20,
+        10
+      ],
+      "turbo": [
+        0,
+        10
+      ],
+      "expected": [
+        0,
+        0
+      ],
+      "rule": "ex4:13:0",
+      "text": "Does 10 damage to 2 of your opponent's Benched Pokémon (1 if there is only 1). (Don't apply Weakness and Resistance for Benched Pokémon.)"
+    },
+    {
+      "side": "opponent",
+      "id": "ex5-6",
+      "name": "Breaking Sound",
+      "base": [
+        10,
+        10
+      ],
+      "turbo": [
+        0,
+        10
+      ],
+      "expected": [
+        0,
+        0
+      ],
+      "rule": "ex5:6:0",
+      "text": "Does 10 damage to each of your opponent's Pokémon. (Don't apply Weakness and Resistance for Benched Pokémon.)"
+    },
+    {
+      "side": "opponent",
+      "id": "ex5-47",
+      "name": "Super Icy Wind",
+      "base": [
+        10,
+        10
+      ],
+      "turbo": [
+        0,
+        10
+      ],
+      "expected": [
+        0,
+        0
+      ],
+      "rule": "ex5:47:0",
+      "text": "Does 10 damage to each of your opponent's Pokémon. This attack's damage isn't affected by Weakness or Resistance."
+    },
+    {
+      "side": "opponent",
+      "id": "ex5-56",
+      "name": "Spark",
+      "base": [
+        10,
+        10
+      ],
+      "turbo": [
+        0,
+        10
+      ],
+      "expected": [
+        0,
+        0
+      ],
+      "rule": "ex5:56:1",
+      "text": "Choose 2 of your opponent's Benched Pokémon. This attack does 10 damage to each of those Pokémon. (Don't apply Weakness and Resistance for Benched Pokémon.)"
+    },
+    {
+      "side": "opponent",
+      "id": "ex5-99",
+      "name": "Steel Wave",
+      "base": [
+        50,
+        20
+      ],
+      "turbo": [
+        30,
+        20
+      ],
+      "expected": [
+        30,
+        0
+      ],
+      "rule": "ex5:99:0",
+      "text": "Does 20 damage to each of your opponent's Benched Pokémon of the same type as the Defending Pokémon. (Don't apply Weakness and Resistance for Benched Pokémon.)"
+    },
+    {
+      "side": "opponent",
+      "id": "ex6-24",
+      "name": "Shot Air",
+      "base": [
+        10,
+        20
+      ],
+      "turbo": [
+        0,
+        20
+      ],
+      "expected": [
+        0,
+        0
+      ],
+      "rule": "ex6:24:0",
+      "text": "Does 20 damage to 1 of your opponent's Benched Pokémon. (Don't apply Weakness and Resistance for Benched Pokémon.)"
+    },
+    {
+      "side": "opponent",
+      "id": "ex7-17",
+      "name": "Spread Poison",
+      "base": [
+        20,
+        0
+      ],
+      "turbo": [
+        10,
+        0
+      ],
+      "expected": [
+        0,
+        0
+      ],
+      "rule": "ex7:17:1",
+      "text": "The Defending Pokémon is now Poisoned. This attack does 20 damage to 1 of your opponent's Benched Pokémon. (Don't apply Weakness and Resistance for Benched Pokémon.)"
+    },
+    {
+      "side": "opponent",
+      "id": "ex7-19",
+      "name": "Spinning Tail",
+      "base": [
+        20,
+        20
+      ],
+      "turbo": [
+        0,
+        20
+      ],
+      "expected": [
+        0,
+        0
+      ],
+      "rule": "ex7:19:1",
+      "text": "Does 20 damage to each of your opponent's Pokémon. (Don't apply Weakness and Resistance for Benched Pokémon.)"
+    },
+    {
+      "side": "opponent",
+      "id": "ex7-40",
+      "name": "Explosive Evolution",
+      "base": [
+        10,
+        10
+      ],
+      "turbo": [
+        10,
+        10
+      ],
+      "expected": [
+        0,
+        0
+      ],
+      "rule": "ex7:40:0",
+      "text": "Flip a coin. If heads, this attack does 10 damage to each of your opponent's Pokémon. (Don't apply Weakness and Resistance.) Then, search your deck for a card that evolves from Dark Pupitar and put it on Dark Pupitar. (This counts as evolving Dark Pupitar.) Shuffle your deck afterward."
+    },
+    {
+      "side": "opponent",
+      "id": "ex8-4",
+      "name": "Split Bomb",
+      "base": [
+        30,
+        30
+      ],
+      "turbo": [
+        30,
+        30
+      ],
+      "expected": [
+        10,
+        10
+      ],
+      "rule": "ex8:4:1",
+      "text": "Choose 2 of your opponent's Pokémon. This attack does 30 damage to each of them. (Don't apply Weakness and Resistance for Benched Pokémon.)"
+    },
+    {
+      "side": "opponent",
+      "id": "ex8-24",
+      "name": "Triple Breach",
+      "base": [
+        10,
+        10
+      ],
+      "turbo": [
+        10,
+        10
+      ],
+      "expected": [
+        0,
+        0
+      ],
+      "rule": "ex8:24:0",
+      "text": "Choose 3 of your opponent's Pokémon. This attack does 10 damage to each of those Pokémon. (Don't apply Weakness and Resistance for Benched Pokémon.)"
+    },
+    {
+      "side": "opponent",
+      "id": "ex10-25",
+      "name": "Stretch Kick",
+      "base": [
+        0,
+        10
+      ],
+      "turbo": [
+        0,
+        10
+      ],
+      "expected": [
+        0,
+        0
+      ],
+      "rule": "ex10:25:0",
+      "text": "Choose 1 of your opponent's Benched Pokémon. This attack does 10 damage to that Pokémon. (Don't apply Weakness and Resistance for Benched Pokémon.)"
+    },
+    {
+      "side": "opponent",
+      "id": "ex10-37",
+      "name": "Double Attack",
+      "base": [
+        0,
+        10
+      ],
+      "turbo": [
+        0,
+        10
+      ],
+      "expected": [
+        0,
+        0
+      ],
+      "rule": "ex10:37:1",
+      "text": "Choose 2 of your opponent's Benched Pokémon. This attack does 10 damage to each of them. (Don't apply Weakness and Resistance for Benched Pokémon.)"
+    },
+    {
+      "side": "opponent",
+      "id": "ex10-63",
+      "name": "Telekinesis",
+      "base": [
+        0,
+        10
+      ],
+      "turbo": [
+        0,
+        10
+      ],
+      "expected": [
+        0,
+        0
+      ],
+      "rule": "ex10:63:0",
+      "text": "Choose 1 of your opponent's Pokémon. This attack does 10 damage to that Pokémon. This attack's damage isn't affected by Weakness or Resistance."
+    },
+    {
+      "side": "opponent",
+      "id": "ex10-78",
+      "name": "Splatter",
+      "base": [
+        0,
+        10
+      ],
+      "turbo": [
+        0,
+        10
+      ],
+      "expected": [
+        0,
+        0
+      ],
+      "rule": "ex10:78:0",
+      "text": "Choose 1 of your opponent's Pokémon. This attack does 10 damage to that Pokémon. This attack's damage isn't affected by Weakness or Resistance."
+    },
+    {
+      "side": "opponent",
+      "id": "ex10-102",
+      "name": "Snap Tail",
+      "base": [
+        0,
+        30
+      ],
+      "turbo": [
+        0,
+        30
+      ],
+      "expected": [
+        0,
+        10
+      ],
+      "rule": "ex10:102:0",
+      "text": "Choose 1 of your opponent's Pokémon. This attack does 30 damage to that Pokémon. (Don't apply Weakness and Resistance for Benched Pokémon.)"
+    },
+    {
+      "side": "opponent",
+      "id": "ex10-109",
+      "name": "Mudslide",
+      "base": [
+        0,
+        100
+      ],
+      "turbo": [
+        0,
+        100
+      ],
+      "expected": [
+        0,
+        80
+      ],
+      "rule": "ex10:109:1",
+      "text": "Discard 2 Fighting Energy attached to Steelix ex and choose 1 of your opponent's Pokémon. This attack does 100 damage to that Pokémon. (Don't apply Weakness and Resistance for Benched Pokémon.)"
+    },
+    {
+      "side": "opponent",
+      "id": "ex11-7",
+      "name": "Return Spark",
+      "base": [
+        50,
+        20
+      ],
+      "turbo": [
+        30,
+        20
+      ],
+      "expected": [
+        30,
+        0
+      ],
+      "rule": "ex11:7:1",
+      "text": "You may return an Energy card attached to Jolteon to your hand. If you do, this attack does 20 damage to 1 of your opponent's Benched Pokémon. (Don't apply Weakness and Resistance for Benched Pokémon.)"
+    },
+    {
+      "side": "opponent",
+      "id": "ex11-17",
+      "name": "Feint Attack",
+      "base": [
+        0,
+        30
+      ],
+      "turbo": [
+        0,
+        30
+      ],
+      "expected": [
+        0,
+        10
+      ],
+      "rule": "ex11:17:0",
+      "text": "Choose 1 of your opponent's Pokémon. This attack does 30 damage to that Pokémon. This attack's damage isn't affected by Weakness, Resistance, Poké-Powers, Poké-Bodies, or any other effects on that Pokémon."
+    },
+    {
+      "side": "opponent",
+      "id": "ex11-33",
+      "name": "Mist Attack",
+      "base": [
+        10,
+        10
+      ],
+      "turbo": [
+        10,
+        10
+      ],
+      "expected": [
+        0,
+        0
+      ],
+      "rule": "ex11:33:0",
+      "text": "Does 10 damage to each of your opponent's Pokémon. (Don't apply Weakness and Resistance for Benched Pokémon.)"
+    },
+    {
+      "side": "opponent",
+      "id": "ex11-43",
+      "name": "Sonic Signal",
+      "base": [
+        10,
+        10
+      ],
+      "turbo": [
+        0,
+        10
+      ],
+      "expected": [
+        0,
+        0
+      ],
+      "rule": "ex11:43:1",
+      "text": "Choose 2 of your opponent's Pokémon. This attack does 10 damage to each of them. (Don't apply Weakness and Resistance for Benched Pokémon.)"
+    },
+    {
+      "side": "opponent",
+      "id": "ex11-50",
+      "name": "Snap Tail",
+      "base": [
+        0,
+        30
+      ],
+      "turbo": [
+        0,
+        30
+      ],
+      "expected": [
+        0,
+        10
+      ],
+      "rule": "ex11:50:0",
+      "text": "Choose 1 of your opponent's Pokémon. This attack does 30 damage to that Pokémon. (Don't apply Weakness and Resistance for Benched Pokémon.)"
+    },
+    {
+      "side": "opponent",
+      "id": "ex11-62",
+      "name": "Linear Attack",
+      "base": [
+        0,
+        20
+      ],
+      "turbo": [
+        0,
+        20
+      ],
+      "expected": [
+        0,
+        0
+      ],
+      "rule": "ex11:62:0",
+      "text": "Choose 1 of your opponent's Pokémon. This attack does 20 damage to that Pokémon. (Don't apply Weakness and Resistance for Benched Pokémon.)"
+    },
+    {
+      "side": "opponent",
+      "id": "ex11-70",
+      "name": "Linear Attack",
+      "base": [
+        0,
+        10
+      ],
+      "turbo": [
+        0,
+        10
+      ],
+      "expected": [
+        0,
+        0
+      ],
+      "rule": "ex11:70:0",
+      "text": "Choose 1 of your opponent's Pokémon. This attack does 10 damage to that Pokémon. (Don't apply Weakness and Resistance for Benched Pokémon.)"
+    },
+    {
+      "side": "opponent",
+      "id": "ex11-82",
+      "name": "Dig Under",
+      "base": [
+        0,
+        10
+      ],
+      "turbo": [
+        0,
+        10
+      ],
+      "expected": [
+        0,
+        0
+      ],
+      "rule": "ex11:82:0",
+      "text": "Choose 1 of your opponent's Pokémon. This attack does 10 damage to that Pokémon. This attack's damage isn't affected by Weakness or Resistance."
+    },
+    {
+      "side": "opponent",
+      "id": "ex11-86",
+      "name": "Skill Dive",
+      "base": [
+        0,
+        10
+      ],
+      "turbo": [
+        0,
+        10
+      ],
+      "expected": [
+        0,
+        0
+      ],
+      "rule": "ex11:86:0",
+      "text": "Does 10 damage to 1 of your opponent's Pokémon. (Don't apply Weakness and Resistance for Benched Pokémon.)"
+    },
+    {
+      "side": "opponent",
+      "id": "ex12-2",
+      "name": "Bound Crush",
+      "base": [
+        0,
+        60
+      ],
+      "turbo": [
+        0,
+        60
+      ],
+      "expected": [
+        0,
+        40
+      ],
+      "rule": "ex12:2:1",
+      "text": "Choose 1 of your opponent's Pokémon. This attack does 60 damage to that Pokémon. (Don't apply Weakness and Resistance for Benched Pokémon.) During your next turn, Aggron can't use Bound Crush."
+    },
+    {
+      "side": "opponent",
+      "id": "ex12-15",
+      "name": "Feint Attack",
+      "base": [
+        0,
+        20
+      ],
+      "turbo": [
+        0,
+        20
+      ],
+      "expected": [
+        0,
+        0
+      ],
+      "rule": "ex12:15:1",
+      "text": "Choose 1 of your opponent's Pokémon. This attack does 20 damage to that Pokémon. This attack's damage isn't affected by Weakness, Resistance, Poké-Powers, Poké-Bodies, or any other effects on that Pokémon."
+    },
+    {
+      "side": "opponent",
+      "id": "ex12-34",
+      "name": "Rock Slide",
+      "base": [
+        20,
+        10
+      ],
+      "turbo": [
+        0,
+        10
+      ],
+      "expected": [
+        0,
+        0
+      ],
+      "rule": "ex12:34:0",
+      "text": "Does 10 damage to 2 of your opponent's Benched Pokémon (1 if there is only 1). (Don't apply Weakness and Resistance for Benched Pokémon.)"
+    },
+    {
+      "side": "opponent",
+      "id": "ex12-37",
+      "name": "Tongue Whip",
+      "base": [
+        0,
+        10
+      ],
+      "turbo": [
+        0,
+        10
+      ],
+      "expected": [
+        0,
+        0
+      ],
+      "rule": "ex12:37:0",
+      "text": "Choose 1 of your opponent's Pokémon. This attack does 10 damage to that Pokémon. (Don't apply Weakness and Resistance for Benched Pokémon.)"
+    },
+    {
+      "side": "opponent",
+      "id": "ex12-45",
+      "name": "Water Arrow",
+      "base": [
+        0,
+        20
+      ],
+      "turbo": [
+        0,
+        20
+      ],
+      "expected": [
+        0,
+        0
+      ],
+      "rule": "ex12:45:0",
+      "text": "Choose 1 of your opponent's Pokémon. This attack does 20 damage to that Pokémon. (Don't apply Weakness and Resistance for Benched Pokémon.)"
+    },
+    {
+      "side": "opponent",
+      "id": "ex12-50",
+      "name": "Random Spark",
+      "base": [
+        0,
+        10
+      ],
+      "turbo": [
+        0,
+        10
+      ],
+      "expected": [
+        0,
+        0
+      ],
+      "rule": "ex12:50:0",
+      "text": "Choose 1 of your opponent's Pokémon. This attack does 10 damage to that Pokémon. (Don't apply Weakness and Resistance for Benched Pokémon.)"
+    },
+    {
+      "side": "opponent",
+      "id": "ex12-57",
+      "name": "Mach Punch",
+      "base": [
+        10,
+        10
+      ],
+      "turbo": [
+        0,
+        10
+      ],
+      "expected": [
+        0,
+        0
+      ],
+      "rule": "ex12:57:0",
+      "text": "Does 10 damage to 1 of your opponent's Benched Pokémon. (Don't apply Weakness and Resistance for Benched Pokémon.)"
+    },
+    {
+      "side": "opponent",
+      "id": "ex12-67",
+      "name": "Pebble Throw",
+      "base": [
+        0,
+        10
+      ],
+      "turbo": [
+        0,
+        10
+      ],
+      "expected": [
+        0,
+        0
+      ],
+      "rule": "ex12:67:0",
+      "text": "Choose 1 of your opponent's Benched Pokémon. This attack does 10 damage to that Pokémon. (Don't apply Weakness and Resistance for Benched Pokémon.)"
+    },
+    {
+      "side": "opponent",
+      "id": "ex12-83",
+      "name": "Overrun",
+      "base": [
+        30,
+        20
+      ],
+      "turbo": [
+        10,
+        20
+      ],
+      "expected": [
+        10,
+        0
+      ],
+      "rule": "ex12:83:0",
+      "text": "Does 20 damage to 1 of your opponent's Benched Pokémon. (Don't apply Weakness and Resistance for Benched Pokémon.)"
+    },
+    {
+      "side": "opponent",
+      "id": "ex12-89",
+      "name": "Water Arrow",
+      "base": [
+        10,
+        40
+      ],
+      "turbo": [
+        10,
+        40
+      ],
+      "expected": [
+        0,
+        20
+      ],
+      "rule": "ex12:89:0",
+      "text": "Choose 1 of your opponent's Pokémon. This attack does 40 damage to that Pokémon. (Don't apply Weakness and Resistance for Benched Pokémon.)"
+    },
+    {
+      "side": "opponent",
+      "id": "ex13-18",
+      "name": "Overrun",
+      "base": [
+        0,
+        20
+      ],
+      "turbo": [
+        0,
+        20
+      ],
+      "expected": [
+        0,
+        0
+      ],
+      "rule": "ex13:18:1",
+      "text": "Choose 1 of your opponent's Benched Pokémon. This attack does 20 damage to that Pokémon. (Don't apply Weakness and Resistance for Benched Pokémon.)"
+    },
+    {
+      "side": "opponent",
+      "id": "ex13-23",
+      "name": "Feint Attack",
+      "base": [
+        0,
+        10
+      ],
+      "turbo": [
+        0,
+        10
+      ],
+      "expected": [
+        0,
+        0
+      ],
+      "rule": "ex13:23:0",
+      "text": "Choose 1 of your opponent's Pokémon. This attack does 10 damage to that Pokémon. This attack's damage isn't affected by Weakness, Resistance, Poké-Powers, Poké-Bodies, or any other effects on that Pokémon."
+    },
+    {
+      "side": "opponent",
+      "id": "ex13-25",
+      "name": "Rock Slide",
+      "base": [
+        0,
+        10
+      ],
+      "turbo": [
+        0,
+        10
+      ],
+      "expected": [
+        0,
+        0
+      ],
+      "rule": "ex13:25:1",
+      "text": "Does 10 damage to 2 of your opponent's Benched Pokémon. (Don't apply Weakness and Resistance for Benched Pokémon.)"
+    },
+    {
+      "side": "opponent",
+      "id": "ex13-28",
+      "name": "Rock Slide",
+      "base": [
+        40,
+        10
+      ],
+      "turbo": [
+        20,
+        10
+      ],
+      "expected": [
+        20,
+        0
+      ],
+      "rule": "ex13:28:0",
+      "text": "Does 10 damage to 2 of your opponent's Benched Pokémon. (Don't apply Weakness and Resistance for Benched Pokémon.)"
+    },
+    {
+      "side": "opponent",
+      "id": "ex13-38",
+      "name": "Wide Laser",
+      "base": [
+        10,
+        10
+      ],
+      "turbo": [
+        0,
+        10
+      ],
+      "expected": [
+        0,
+        0
+      ],
+      "rule": "ex13:38:0",
+      "text": "Does 10 damage to each of your opponent's Pokémon. (Don't apply Weakness and Resistance for Benched Pokémon.)"
+    },
+    {
+      "side": "opponent",
+      "id": "ex13-41",
+      "name": "Split Bomb",
+      "base": [
+        30,
+        30
+      ],
+      "turbo": [
+        10,
+        30
+      ],
+      "expected": [
+        10,
+        10
+      ],
+      "rule": "ex13:41:1",
+      "text": "Choose 2 of your opponent's Pokémon. This attack does 30 damage to each of them. (Don't apply Weakness and Resistance for Benched Pokémon.)"
+    },
+    {
+      "side": "opponent",
+      "id": "ex13-65",
+      "name": "Pebble Throw",
+      "base": [
+        0,
+        20
+      ],
+      "turbo": [
+        0,
+        20
+      ],
+      "expected": [
+        0,
+        0
+      ],
+      "rule": "ex13:65:1",
+      "text": "Choose 1 of your opponent's Benched Pokémon. This attack does 20 damage to that Pokémon. (Don't apply Weakness and Resistance for Benched Pokémon.)"
+    },
+    {
+      "side": "opponent",
+      "id": "ex13-74",
+      "name": "Water Arrow",
+      "base": [
+        0,
+        20
+      ],
+      "turbo": [
+        0,
+        20
+      ],
+      "expected": [
+        0,
+        0
+      ],
+      "rule": "ex13:74:1",
+      "text": "Choose 1 of your opponent's Pokémon. This attack does 20 damage to that Pokémon. (Don't apply Weakness and Resistance for Benched Pokémon.)"
+    },
+    {
+      "side": "opponent",
+      "id": "ex14-3",
+      "name": "Linear Attack",
+      "base": [
+        0,
+        30
+      ],
+      "turbo": [
+        0,
+        30
+      ],
+      "expected": [
+        0,
+        10
+      ],
+      "rule": "ex14:3:0",
+      "text": "Choose 1 of your opponent's Pokémon. This attack does 30 damage to that Pokémon. (Don't apply Weakness and Resistance for Benched Pokémon.)"
+    },
+    {
+      "side": "opponent",
+      "id": "ex14-5",
+      "name": "Dig Under",
+      "base": [
+        0,
+        30
+      ],
+      "turbo": [
+        0,
+        30
+      ],
+      "expected": [
+        0,
+        10
+      ],
+      "rule": "ex14:5:0",
+      "text": "Choose 1 of your opponent's Pokémon. This attack does 30 damage to that Pokémon. This attack's damage isn't affected by Weakness or Resistance."
+    },
+    {
+      "side": "opponent",
+      "id": "ex14-15",
+      "name": "Triple Needle",
+      "base": [
+        10,
+        10
+      ],
+      "turbo": [
+        0,
+        10
+      ],
+      "expected": [
+        0,
+        0
+      ],
+      "rule": "ex14:15:0",
+      "text": "Choose 3 of your opponent's Pokémon. This attack does 10 damage to each of those Pokémon. (Don't apply Weakness and Resistance for Benched Pokémon.)"
+    },
+    {
+      "side": "opponent",
+      "id": "ex14-23",
+      "name": "Bass Control",
+      "base": [
+        0,
+        40
+      ],
+      "turbo": [
+        0,
+        40
+      ],
+      "expected": [
+        0,
+        20
+      ],
+      "rule": "ex14:23:1",
+      "text": "Choose 1 of your opponent's Pokémon. This attack does 40 damage to that Pokémon. (Don't apply Weakness and Resistance for Benched Pokémon.)"
+    },
+    {
+      "side": "opponent",
+      "id": "ex14-24",
+      "name": "Mud Splash",
+      "base": [
+        0,
+        30
+      ],
+      "turbo": [
+        0,
+        30
+      ],
+      "expected": [
+        0,
+        10
+      ],
+      "rule": "ex14:24:1",
+      "text": "Does 30 damage to 1 of your opponent's Benched Pokémon. (Don't apply Weakness and Resistance for Benched Pokémon.)"
+    },
+    {
+      "side": "opponent",
+      "id": "ex14-35",
+      "name": "Stretch Vine",
+      "base": [
+        0,
+        30
+      ],
+      "turbo": [
+        0,
+        30
+      ],
+      "expected": [
+        0,
+        10
+      ],
+      "rule": "ex14:35:0",
+      "text": "Choose 1 of your opponent's Benched Pokémon. This attack does 30 damage to that Pokémon. (Don't apply Weakness and Resistance for Benched Pokémon.)"
+    },
+    {
+      "side": "opponent",
+      "id": "ex14-41",
+      "name": "Feint Attack",
+      "base": [
+        0,
+        20
+      ],
+      "turbo": [
+        0,
+        20
+      ],
+      "expected": [
+        0,
+        0
+      ],
+      "rule": "ex14:41:1",
+      "text": "Choose 1 of your opponent's Pokémon. This attack does 20 damage to that Pokémon. This attack's damage isn't affected by Weakness, Resistance, Poké-Powers, Poké-Bodies, or any other effects on that Pokémon."
+    },
+    {
+      "side": "opponent",
+      "id": "ex14-95",
+      "name": "Hydro Shot",
+      "base": [
+        0,
+        70
+      ],
+      "turbo": [
+        0,
+        70
+      ],
+      "expected": [
+        0,
+        50
+      ],
+      "rule": "ex14:95:0",
+      "text": "Discard 2 Energy attached to Kyogre ex. Choose 1 of your opponent's Pokémon. This attack does 70 damage to that Pokémon. (Don't apply Weakness and Resistance for Benched Pokémon.)"
+    },
+    {
+      "side": "opponent",
+      "id": "ex15-6",
+      "name": "Linear Attack",
+      "base": [
+        0,
+        30
+      ],
+      "turbo": [
+        0,
+        30
+      ],
+      "expected": [
+        0,
+        10
+      ],
+      "rule": "ex15:6:0",
+      "text": "Choose 1 of your opponent's Pokémon. This attack does 30 damage to that Pokémon. (Don't apply Weakness and Resistance for Benched Pokémon.)"
+    },
+    {
+      "side": "opponent",
+      "id": "ex15-48",
+      "name": "Thunder Spear",
+      "base": [
+        0,
+        10
+      ],
+      "turbo": [
+        0,
+        10
+      ],
+      "expected": [
+        0,
+        0
+      ],
+      "rule": "ex15:48:0",
+      "text": "Choose 1 of your opponent's Pokémon. This attack does 10 damage to that Pokémon. (Don't apply Weakness and Resistance for Benched Pokémon.)"
+    },
+    {
+      "side": "opponent",
+      "id": "ex15-69",
+      "name": "Quick Bind",
+      "base": [
+        0,
+        10
+      ],
+      "turbo": [
+        0,
+        10
+      ],
+      "expected": [
+        0,
+        0
+      ],
+      "rule": "ex15:69:0",
+      "text": "Choose 1 of your opponent's Pokémon. This attack does 10 damage to that Pokémon. This attack's damage isn't affected by Weakness, Resistance, Poké-Powers, Poké-Bodies, or any other effects on that Pokémon."
+    },
+    {
+      "side": "opponent",
+      "id": "ex16-5",
+      "name": "Fire Stream",
+      "base": [
+        50,
+        10
+      ],
+      "turbo": [
+        30,
+        10
+      ],
+      "expected": [
+        30,
+        0
+      ],
+      "rule": "ex16:5:fireStream",
+      "text": "Discard a Fire Energy card attached to Blaziken. This attack does 10 damage to each of your opponent's Benched Pokémon. (Don't apply Weakness and Resistance for Benched Pokémon.)"
+    },
+    {
+      "side": "opponent",
+      "id": "ex16-22",
+      "name": "Feint Attack",
+      "base": [
+        0,
+        20
+      ],
+      "turbo": [
+        0,
+        20
+      ],
+      "expected": [
+        0,
+        0
+      ],
+      "rule": "ex16:22:feintAttack",
+      "text": "Choose 1 of your opponent's Pokémon. This attack does 20 damage to that Pokémon. This attack's damage isn't affected by Weakness, Resistance, Poké-Powers, Poké-Bodies, or any other effects on that Pokémon."
+    },
+    {
+      "side": "opponent",
+      "id": "ex16-95",
+      "name": "Scanblast",
+      "base": [
+        70,
+        70
+      ],
+      "turbo": [
+        50,
+        70
+      ],
+      "expected": [
+        50,
+        50
+      ],
+      "rule": "ex16:95:scanblast",
+      "text": "Does 70 damage to each of your opponent's Benched Pokémon that has the same name as the Defending Pokémon. (Don't apply Weakness and Resistance for Benched Pokémon.)"
+    },
+    {
+      "side": "opponent",
+      "id": "ex16-97",
+      "name": "Dirge",
+      "base": [
+        60,
+        60
+      ],
+      "turbo": [
+        40,
+        60
+      ],
+      "expected": [
+        40,
+        40
+      ],
+      "rule": "ex16:97:dirge",
+      "text": "Does 60 damage to each of your opponent's Benched Pokémon that has the same name as the Defending Pokémon. (Don't apply Weakness and Resistance for Benched Pokémon.)"
+    },
+    {
+      "side": "opponent",
+      "id": "dp7-99",
+      "name": "Voltage Shoot",
+      "base": [
+        0,
+        80
+      ],
+      "turbo": [
+        0,
+        80
+      ],
+      "expected": [
+        0,
+        60
+      ],
+      "rule": "dp7:99:voltageShoot",
+      "text": "Discard 2 Lightning Energy cards from your hand and choose 1 of your opponent's Pokémon. This attack does 80 to that Pokémon. (Don't apply Weakness and Resistance for Benched Pokémon.)"
+    },
+    {
+      "side": "opponent",
+      "id": "pl2-22",
+      "name": "Muddy Bomb",
+      "base": [
+        10,
+        30
+      ],
+      "turbo": [
+        0,
+        30
+      ],
+      "expected": [
+        0,
+        10
+      ],
+      "rule": "pl2:22:muddyBomb",
+      "text": "Choose 1 of your opponent's Pokémon. This attack does 30 damage to that Pokémon and 10 damage to each of your opponent's other Pokémon. (Don't apply Weakness and Resistance for Benched Pokémon.)"
+    },
+    {
+      "side": "opponent",
+      "id": "pl2-29",
+      "name": "Fling Away",
+      "base": [
+        30,
+        30
+      ],
+      "turbo": [
+        10,
+        30
+      ],
+      "expected": [
+        10,
+        10
+      ],
+      "rule": "pl2:29:flingAway",
+      "text": "If your opponent has any Benched Pokémon, this attack's base damage is 30 instead of 60 and this attack does 30 damage to 1 of your opponent's Benched Pokémon. (Don't apply Weakness and Resistance for Benched Pokémon.)"
+    },
+    {
+      "side": "opponent",
+      "id": "hgss2-6",
+      "name": "Switch Cannon",
+      "base": [
+        0,
+        30
+      ],
+      "turbo": [
+        0,
+        30
+      ],
+      "expected": [
+        0,
+        10
+      ],
+      "rule": "hgss2:6:switchCannon",
+      "text": "Choose 1 of your opponent's Pokémon. This attack does 30 damage to that Pokémon. (Don't apply Weakness and Resistance for Benched Pokémon.) Switch Octillery with 1 of your Benched Pokémon."
+    },
+    {
+      "side": "opponent",
+      "id": "hgss2-13",
+      "name": "Hydro Launcher",
+      "base": [
+        0,
+        100
+      ],
+      "turbo": [
+        0,
+        100
+      ],
+      "expected": [
+        0,
+        80
+      ],
+      "rule": "hgss2:13:hydroLauncher",
+      "text": "Return 2 Water Energy attached to Blastoise to your hand. Choose 1 of your opponent's Pokémon. This attack does 100 damage to that Pokémon. (Don't apply Weakness and Resistance for Benched Pokémon.)"
+    },
+    {
+      "side": "opponent",
+      "id": "hgss2-88",
+      "name": "Darkness Howl",
+      "base": [
+        20,
+        20
+      ],
+      "turbo": [
+        0,
+        20
+      ],
+      "expected": [
+        0,
+        0
+      ],
+      "rule": "hgss2:88:darknessHowl",
+      "text": "This attack does 20 damage to each Pokémon in play (both yours and your opponent's) (excluding any Darkness Pokémon). (Don't apply Weakness and Resistance for Benched Pokémon.)"
+    },
+    {
+      "side": "opponent",
+      "id": "hgss2-94",
+      "name": "Torrent Blade",
+      "base": [
+        0,
+        100
+      ],
+      "turbo": [
+        0,
+        100
+      ],
+      "expected": [
+        0,
+        80
+      ],
+      "rule": "hgss2:94:torrentBlade",
+      "text": "Return 2 Water Energy attached to Suicune & Entei LEGEND to your hand. Choose 1 of your opponent's Benched Pokémon. This attack does 100 damage to that Pokémon. (Don't apply Weakness or Resistance for Benched Pokémon.)"
+    },
+    {
+      "side": "opponent",
+      "id": "hgss2-95",
+      "name": "Torrent Blade",
+      "base": [
+        0,
+        100
+      ],
+      "turbo": [
+        0,
+        100
+      ],
+      "expected": [
+        0,
+        80
+      ],
+      "rule": "hgss2:94:torrentBlade",
+      "text": "Return 2 Water Energy attached to Suicune & Entei LEGEND to your hand. Choose 1 of your opponent's Benched Pokémon. This attack does 100 damage to that Pokémon. (Don't apply Weakness or Resistance for Benched Pokémon.)"
+    },
+    {
+      "side": "opponent",
+      "id": "hgss4-20",
+      "name": "Thunder Shot",
+      "base": [
+        50,
+        50
+      ],
+      "turbo": [
+        30,
+        50
+      ],
+      "expected": [
+        30,
+        30
+      ],
+      "rule": "hgss4:20:thunderShot",
+      "text": "This attack does 50 damage to each of your opponent's Pokémon that has any Energy cards attached to it. (Don't apply Weakness and Resistance for Benched Pokémon.)"
+    },
+    {
+      "side": "opponent",
+      "id": "hgss4-38",
+      "name": "Licking Shot",
+      "base": [
+        0,
+        510
+      ],
+      "turbo": [
+        0,
+        510
+      ],
+      "expected": [
+        0,
+        490
+      ],
+      "rule": "hgss4:38:lickingShot",
+      "text": "Choose 1 of your opponent's Pokémon. This attack does 10 damage to that Pokémon for each Energy attached to Lickilicky. (Don't apply Weakness and Resistance for Benched Pokémon.)"
+    },
+    {
+      "side": "opponent",
+      "id": "hgss4-74",
+      "name": "Tripping Headbutt",
+      "base": [
+        0,
+        30
+      ],
+      "turbo": [
+        0,
+        30
+      ],
+      "expected": [
+        0,
+        10
+      ],
+      "rule": "hgss4:74:trippingHeadbutt",
+      "text": "Flip a coin. If heads, this attack does 30 damage to 1 of your opponent's Pokémon. If tails, this attack does 30 damage to 1 of your Pokémon. (Don't apply Weakness and Resistance for Benched Pokémon.)"
+    },
+    {
+      "side": "opponent",
+      "id": "col1-12",
+      "name": "Destructive Tsunami",
+      "base": [
+        40,
+        40
+      ],
+      "turbo": [
+        20,
+        40
+      ],
+      "expected": [
+        20,
+        20
+      ],
+      "rule": "col1:12:destructiveTsunami",
+      "text": "Flip a coin. If heads, this attack does 40 damage to each of your opponent's Pokémon. If tails, this attack does 40 damage to each of your Pokémon. (Don't apply Weakness and Resistance for Benched Pokémon.)"
+    },
+    {
+      "side": "opponent",
+      "id": "col1-SL6",
+      "name": "Destructive Tsunami",
+      "base": [
+        40,
+        40
+      ],
+      "turbo": [
+        20,
+        40
+      ],
+      "expected": [
+        20,
+        20
+      ],
+      "rule": "col1:12:destructiveTsunami",
+      "text": "Flip a coin. If heads, this attack does 40 damage to each of your opponent's Pokémon. If tails, this attack does 40 damage to each of your Pokémon. (Don't apply Weakness and Resistance for Benched Pokémon.)"
+    },
+    {
+      "side": "opponent",
+      "id": "bw3-56",
+      "name": "Synchronoise",
+      "base": [
+        20,
+        20
+      ],
+      "turbo": [
+        0,
+        20
+      ],
+      "expected": [
+        0,
+        0
+      ],
+      "rule": "bw3:synchronoise",
+      "text": "Does 20 damage to each of your opponent's Benched Pokémon that shares a type with the Defending Pokémon. (Don't apply Weakness and Resistance for Benched Pokémon.)"
+    },
+    {
+      "side": "opponent",
+      "id": "bw7-69",
+      "name": "Telekinesis",
+      "base": [
+        0,
+        30
+      ],
+      "turbo": [
+        0,
+        30
+      ],
+      "expected": [
+        0,
+        10
+      ],
+      "rule": "bw7:telekinesis",
+      "text": "This attack does 30 damage to 1 of your opponent's Pokémon. This attack's damage isn't affected by Weakness or Resistance."
+    },
+    {
+      "side": "opponent",
+      "id": "bw7-89",
+      "name": "Hammerhead",
+      "base": [
+        30,
+        30
+      ],
+      "turbo": [
+        10,
+        30
+      ],
+      "expected": [
+        10,
+        10
+      ],
+      "rule": "bw7:hammerhead",
+      "text": "Does 30 damage to 1 of your opponent's Benched Pokémon. (Don't apply Weakness and Resistance for Benched Pokémon.)"
+    },
+    {
+      "side": "opponent",
+      "id": "bw7-144",
+      "name": "Hammerhead",
+      "base": [
+        30,
+        30
+      ],
+      "turbo": [
+        10,
+        30
+      ],
+      "expected": [
+        10,
+        10
+      ],
+      "rule": "bw7:hammerhead",
+      "text": "Does 30 damage to 1 of your opponent's Benched Pokémon. (Don't apply Weakness and Resistance for Benched Pokémon.)"
+    },
+    {
+      "side": "opponent",
+      "id": "sm3-38",
+      "name": "Synchronoise",
+      "base": [
+        60,
+        20
+      ],
+      "turbo": [
+        40,
+        20
+      ],
+      "expected": [
+        40,
+        0
+      ],
+      "rule": "synchronoise",
+      "text": "This attack does 20 damage to each of your opponent's Benched Pokémon that shares a type with your opponent's Active Pokémon. (Don't apply Weakness and Resistance for Benched Pokémon.)"
+    }
+  ]
+}

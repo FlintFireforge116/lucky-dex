@@ -498,10 +498,10 @@
       const energyBoard=state.sides[p.selectionSide||side];
       for(const slot of [energyBoard.active,...(energyBoard.bench||[])].filter(Boolean)){
         if(p.onlyBench&&slot===energyBoard.active)continue;
-        if(p.energySourceUid&&slot.uid!==p.energySourceUid||p.allowedUids&&!p.allowedUids.includes(slot.uid))continue;
+        if((p.excludeUids||[]).includes(slot.uid)||p.energySourceUid&&slot.uid!==p.energySourceUid||p.allowedUids&&!p.allowedUids.includes(slot.uid))continue;
         const target={type:'effectChoice',choiceTarget:slot===energyBoard.active?'active':'bench',choiceBenchIndex:slot===energyBoard.active?undefined:Number(slot.benchSlot),choiceCardId:slot.cardId};
         for(const [energyType,amount] of Object.entries(slot.energy||{})){
-          if(p.specialOnly||Number(amount)<=0||(p.energyTypes&&!p.energyTypes.includes(energyType)))continue;
+          if((p.excludeBasicEnergyUids||[]).includes(slot.uid)||p.specialOnly||Number(amount)<=0||(p.energyTypes&&!p.energyTypes.includes(energyType)))continue;
           out.push({...target,effectEnergyType:energyType,...(p.special==='sm7BeforeAttack'||['rainbowBrush','swsh10FrontierRoad'].includes(p.effect?.rule)?{choiceLabel:`${data.cardById(slot.cardId)?.name}: ${energyType} Energy`}:{})});
         }
         // Only effects that explicitly opt in can recover attached Special

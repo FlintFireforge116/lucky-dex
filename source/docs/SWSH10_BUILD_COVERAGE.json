@@ -2,11 +2,8 @@
   "printed": 216,
   "canonicalTotal": 216,
   "notImported": [],
-  "battleReady": 214,
+  "battleReady": 215,
   "gated": {
-    "swsh10-120": [
-      "Unimplemented Ability: Stand Sentry"
-    ],
     "swsh10-216": [
       "Unimplemented Special Energy rules"
     ]

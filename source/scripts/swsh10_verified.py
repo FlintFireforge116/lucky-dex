@@ -273,3 +273,9 @@ def ability(row,a):
  if row[0]=='119' and a[0]=='Resonant Evolution':return passive(E('sm7Rule',rule='swsh10ResonantEvolution'))
  if row[0]=='170' and a[0]=='Wish Connector':return passive(E('sm7Rule',rule='swsh10WishConnector'))
  return _stage9_ability(row,a)
+
+# Stage 11: Stand Sentry is an attachment-specific opposing Trainer guard.
+_stage10_ability=ability
+def ability(row,a):
+ if row[0]=='120' and a[0]=='Stand Sentry':return passive(E('noop')) # shared discard Trainer guard
+ return _stage10_ability(row,a)
