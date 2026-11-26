@@ -138,3 +138,32 @@ def trainer(row):
  if t=="Search your deck for up to 3 Basic Pokémon that don't have a Rule Box and put them onto your Bench. Then, shuffle your deck. (Pokémon V, Pokémon-GX, etc. have Rule Boxes.)":return 'Supporter',E('benchFromDeck',amount=3,filter={'kind':'pokemon','stage':'Basic','hasRuleBox':False},choose=True,optional=True)
  if t=="If the Pokémon this card is attached to doesn't have a Rule Box, it takes 30 less damage from attacks from your opponent's Pokémon (after applying Weakness and Resistance). (Pokémon V, Pokémon-GX, etc. have Rule Boxes.)":return 'Tool',mod('damageReduction',30,filter={'hasRuleBox':False})
  return _stage2_trainer(row)
+
+# Stage 4: exact text gates and parameterized shared choice effects.
+_stage3_attack=attack
+_stage3_ability=ability
+_stage3_trainer=trainer
+
+def attack(row,a):
+ t=a[3]
+ if t=='You can use this attack only if this Pokémon used Spore Ball during your last turn.':return E('attackRequirement',condition=cond('sm10LastAttackSelf',name='Spore Ball'))
+ if t=='Reveal the top 5 cards of your deck. This attack does 80 damage for each Energy card you find there. Then, discard those Energy cards and shuffle the other cards back into your deck.':return E('topDeckCountDamage',count=5,amount=80,filter={'kind':'energy'},mode='replace',discardMatches=True,shuffleAfter=True)
+ if t=="Put 3 damage counters on your opponent's Active Pokémon for each Prize card your opponent has taken.":return E('placeDamageCounters',target='opponentActive',amount=30,perOpponentPrizeTaken=True)
+ if t=="Put 4 damage counters on your opponent's Pokémon in any way you like. If you played Acerola's Premonition from your hand during this turn, place 13 damage counters instead.":return E('sm7Rule',rule='sm10CounterSpread',amount=4,supporterBoost={'name':"Acerola's Premonition",'amount':13})
+ if t=="If you played Marnie's Pride from your hand during this turn, this attack does 120 more damage.":return bonus(120,cond('sm10Supporter',name="Marnie's Pride"))
+ if t=="Before doing damage, discard all Pokémon Tools from your opponent's Active Pokémon. If you discarded a Pokémon Tool in this way, this attack does 120 more damage.":return E('sm7Rule',rule='sm9ToolBuster',amount=120,mode='add')
+ if t=="Before doing damage, discard a Special Energy from your opponent's Active Pokémon.":return E('discardEnergyCard',target='opponentActive',amount=1,specialOnly=True,timing='beforeDamage')
+ if t=='Move a basic Energy from this Pokémon to 1 of your Benched Pokémon.':return E('moveEnergy',source='self',target='selfBench',amount=1,allowedEnergyTypes=['Grass','Fire','Water','Lightning','Psychic','Fighting','Darkness','Metal','Fairy','Colorless'])
+ return _stage3_attack(row,a)
+
+def ability(row,a):
+ t=a[2]
+ if t=='Prevent all effects of attacks from your opponent\'s Pokémon done to this Pokémon. (Damage is not an effect.)':return passive(E('preventEffects',duration='whileInPlay',scope='self'))
+ if t=="The Retreat Cost of your opponent's Poisoned Pokémon is Colorless more.":return passive(E('modifier',stat='retreatCost',amount=1,scope='opponentActive',duration='whileInPlay',condition=cond('opponentStatus',status='poison')))
+ return _stage3_ability(row,a)
+
+def trainer(row):
+ t=row[13][0]
+ if t=='Put 1 of your Colorless Pokémon that has any damage counters on it and all attached cards into your hand.':return 'Supporter',E('chooseTarget',target='selfPokemon',filter={'subtype':'Colorless','damaged':True},effect=E('returnToHand',target='selfPokemon',returnBasicEnergy=True))
+ if t=='You can use this card only if you discard a Fire Energy card from your hand. Look at the top 7 cards of your deck and put up to 2 of them into your hand. Shuffle the other cards back into your deck.':return 'Supporter',E('sm7Rule',rule='sm10Pay',amount=1,filter={'kind':'energy','basicEnergy':True,'subtype':'Fire'},after=E('sm7Rule',rule='sm9TopPick',count=7,amount=2,filter={},destination='hand',rest='shuffle',optional=True))
+ return _stage3_trainer(row)

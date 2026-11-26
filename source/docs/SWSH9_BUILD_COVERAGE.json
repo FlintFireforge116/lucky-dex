@@ -2,19 +2,10 @@
   "printed": 186,
   "canonicalTotal": 186,
   "notImported": [],
-  "battleReady": 142,
+  "battleReady": 158,
   "gated": {
-    "swsh9-4": [
-      "Unimplemented attack: Powdery Uppercut"
-    ],
     "swsh9-5": [
       "Unimplemented Ability: Curative Bower"
-    ],
-    "swsh9-12": [
-      "Unimplemented Ability: Lively Fruit"
-    ],
-    "swsh9-26": [
-      "Unimplemented attack: Infernal Vortex"
     ],
     "swsh9-37": [
       "Unimplemented Ability: Emergency Surfacing"
@@ -39,12 +30,6 @@
     "swsh9-66": [
       "Unimplemented attack: Tri Recharge"
     ],
-    "swsh9-68": [
-      "Unimplemented attack: Jealous Eyes"
-    ],
-    "swsh9-69": [
-      "Unimplemented attack: Ominous Numbers"
-    ],
     "swsh9-71": [
       "Unimplemented attack: Rainbow Flavor",
       "Unimplemented Ability: Additional Order"
@@ -52,9 +37,6 @@
     "swsh9-79": [
       "Unimplemented attack: Aura Sphere Volley",
       "Unimplemented Ability: Roaring Resolve"
-    ],
-    "swsh9-85": [
-      "Unimplemented Ability: Sludge Street"
     ],
     "swsh9-87": [
       "Unimplemented attack: Ransack"
@@ -65,17 +47,8 @@
     "swsh9-89": [
       "Unimplemented attack: Ticking Terror"
     ],
-    "swsh9-95": [
-      "Unimplemented attack: Hangry Spike"
-    ],
     "swsh9-110": [
       "Unimplemented attack: Ultra Evolution"
-    ],
-    "swsh9-114": [
-      "Unimplemented attack: Slosh 'n' Crash"
-    ],
-    "swsh9-116": [
-      "Unimplemented attack: Hurricane"
     ],
     "swsh9-131": [
       "Unimplemented Trainer effect"
@@ -83,13 +56,7 @@
     "swsh9-133": [
       "Unimplemented Trainer effect"
     ],
-    "swsh9-134": [
-      "Unimplemented Trainer effect"
-    ],
     "swsh9-137": [
-      "Unimplemented Trainer effect"
-    ],
-    "swsh9-143": [
       "Unimplemented Trainer effect"
     ],
     "swsh9-144": [
@@ -117,26 +84,11 @@
     "swsh9-162": [
       "Unimplemented Ability: Boss Pockets"
     ],
-    "swsh9-168": [
-      "Unimplemented Trainer effect"
-    ],
-    "swsh9-170": [
-      "Unimplemented Trainer effect"
-    ],
     "swsh9-172": [
-      "Unimplemented Trainer effect"
-    ],
-    "swsh9-177": [
-      "Unimplemented Trainer effect"
-    ],
-    "swsh9-179": [
       "Unimplemented Trainer effect"
     ],
     "swsh9-180": [
       "Unimplemented Trainer effect"
-    ],
-    "swsh9-182": [
-      "Unimplemented attack: Thunderous Kick"
     ],
     "swsh9-185": [
       "Unimplemented Trainer effect"
