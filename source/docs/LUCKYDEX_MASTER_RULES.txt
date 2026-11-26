@@ -6250,3 +6250,10 @@ v0.69.535 — Fusion Strike complete (284/284 battle-enabled; zero gated)
 - Whole-set audit verifies all canonical print fields, effect schemas and equivalent alternate signatures, both-side attack execution and targeted outcome tests. Preserve 283 previously enabled descriptors. See SWSH8_STAGE10_v0.69.535.md for scope and limitations. Zero gated is not proof of every cross-set interaction; APK/device testing remains separate.
 
 Final v0.69.535 validation: full offline preparation exited 0; 2134/2134 gameplay tests, including 161/161 Fusion Strike; 12/12 release-manifest unit tests. No failures, skips or cancellations.
+
+SWSH9 Brilliant Stars stage 1 (v0.69.536)
+- Main set: pinned blob 6c33800813e0375da544c26d2e97992a768c015f, 186 prints. Separate Trainer Gallery swsh9tg: pinned blob 2f273e6e47f0573ca8706da65a6e5bee6c2172a4, 30 prints, not yet imported into battle catalogue. Do not conflate gallery with main-set collector numbers.
+- Stage 1 exact offline source: 85 imported, 82 battle-enabled, 3 gated (Charizard VSTAR 18/174, Double Turbo Energy 151), 101 not imported. The stage-one transfer checks and canonical compact SHA must remain intact.
+- Register each new expansion in the central battle catalogue, owned-card projection, player builder SET_IDS, opponent SETS, set-picker, browser script order, Gradle and Termux preflight. Test narrow single-type pools on both builders; incomplete evolution families must remain excluded rather than forcing a dead core.
+- VSTAR: existing per-side once-per-game tracking is not sufficient alone. Verify evolution from the actual Basic V, stage ranks and family filters, two-Prize award, attack and Ability sharing the same per-side VSTAR use flag, and independent player/opponent use. Gate until outcome-tested.
+- Double Turbo Energy: two Colorless units from one physical card; verify -20 damage before Weakness/Resistance, all opposing attack targets (not counters), stacking and Special Energy suppression. Preserve existing hybrid Energy Zone and deck-search coin rules.

@@ -1,0 +1,82 @@
+1|Exeggcute|P|0|50|G||R||1|0|Ram~C~10~0^Seed Bomb~GC~20~0||
+2|Exeggutor|P|1|140|G|Exeggcute|R||3|1|Mega Drain~GCC~70~1^Seed Bomb~GCCC~130~0||
+3|Shroomish|P|0|50|G||R||1|0|Headbutt~G~20~0||
+6|Turtwig|P|0|80|G||R||2|0|Bite~G~10~0^Headbutt Bounce~GC~20~0||
+9|Burmy|P|0|60|G||R||1|0|Hang Down~CC~20~0||
+13|Shaymin V|P|03|190|G||R||1|4|Flap~G~30~0^Revenge Blast~GC~60+~7||0
+15|Karrablast|P|0|70|G||R||1|0|Peck~C~10~0||
+16|Zarude V|P|03|220|G||R||2|4|Leap to Leap~G~30~8^Jungle Rage~GGC~120+~9||0
+17|Charizard V|P|03|220|R||W||2|4|Incinerate~RRC~90~10^Heat Blast~RRRC~180~0||0
+18|Charizard VSTAR|P|5|280|R|Charizard V|W||2|5|Explosive Fire~RRC~130+~11^Star Blaze~RRRC~320~12||1
+19|Magmar|P|0|90|R||W||2|0|Low Kick~CC~20~0^Fiery Punch~RRC~70~0||
+23|Torkoal|P|0|120|R||W||2|1|Firebreathing~CC~30+~16^Guard Press~RCC~90~17||
+24|Chimchar|P|0|50|R||W||1|0|Ember~R~30~18||
+25|Monferno|P|1|80|R|Chimchar|W||1|1|Flare~R~30~0^Flamethrower~RC~50~18||
+30|Staryu|P|0|60|W||L||1|0|Double Spin~C~10×~26||
+32|Corphish|P|0|70|W||L||2|0|Water Gun~C~10~0^Crabhammer~WCC~50~0||
+33|Crawdaunt|P|1|130|W|Corphish|L||3|1|Corkscrew Punch~C~30~0^Crab Impact~WCC~150~28||
+34|Snorunt|P|0|60|W||M||2|0|Ice Breath~W~~29^Icy Snow~WC~20~0||
+35|Piplup|P|0|60|W||L||1|0|Bubble~W~10~29||
+36|Prinplup|P|1|90|W|Piplup|L||1|1|Peck~W~30~0||
+39|Floatzel|P|1|110|W|Buizel|L||1|1|Floatify~W~~32^Water Gun~WC~60~0||
+42|Cubchoo|P|0|60|W||M||1|0|Chilly~W~20~0||
+43|Beartic|P|1|140|W|Cubchoo|M||3|1|Sheer Cold~WC~40~34^Frost Smash~WWC~130~0||
+46|Electabuzz|P|0|80|L||F||2|0|Thunder Wave~L~~29^Head Bolt~LC~30~0||
+49|Shinx|P|0|40|L||F||0|0|Gnaw~L~10~0||
+50|Luxio|P|1|90|L|Shinx|F||1|1|Thunder Shock~L~30~29||
+53|Clefairy|P|0|60|P||M||1|0|Pound~C~10~0^Magical Shot~PC~30~0||
+55|Starmie|P|1|90|P|Staryu|D|F|0|1|Psychic~P~10+~22^Power Gem~P~60~0||
+56|Mewtwo|P|0|130|P||D|F|2|2|Life Sucker~P~20~44^Psyburn~PPC~110~0||
+57|Granbull V|P|03|210|P||M||2|4|Chomp~CC~30+~45^Bull Dash~PPC~190~24||0
+58|Baltoy|P|0|50|P||D|F|1|0|Triple Spin~CC~20×~46||
+60|Duskull|P|0|60|P||D|F|1|0|Perplex~P~10~48||
+61|Dusclops|P|1|90|P|Duskull|D|F|2|1|Fade to Black~P~30~49||
+63|Chimecho|P|0|70|P||D|F|1|0|Clear Tone~C~~50^Hang Down~CC~30~0||
+70|Milcery|P|0|50|P||M||1|0|Lead~P~~59^Ram~P~10~0||
+72|Hitmontop|P|0|100|F||P||1|1|Spinning Draw~C~20~61^Cyclone Kick~FFC~100~0||
+73|Nosepass|P|0|90|F||G||4|0|Ram~C~20~0||
+74|Trapinch|P|0|60|F||G||1|0|Rising Lunge~F~10+~62||
+75|Vibrava|P|1|90|F|Trapinch|G||1|1|Razor Wing~F~30~0||
+78|Riolu|P|0|60|F||P||1|0|Low Kick~FF~50~0||
+80|Throh|P|0|120|F||P||3|0|Lunge Out~CC~30~0^Seismic Toss~FFC~110~0||
+81|Sawk|P|0|90|F||P||1|0|Sweep the Leg~F~30~66||
+82|Golett|P|0|100|F||G||4|0|Mud-Slap~F~10~0^Pound~FC~20~0||
+83|Golurk|P|1|150|F|Golett|G||4|2|Big Hand~CC~30+~67^Mega Punch~FFC~120~0||
+84|Grimer|P|0|80|D||F||3|0|Poison Gas~D~~68||
+86|Sneasel|P|0|70|D||G||1|0|Scratch~D~10~0^Slash~CC~20~0||
+90|Purrloin|P|0|60|D||G||1|0|Surprise Attack~CC~30~74||
+92|Impidimp|P|0|60|D||G||1|0|Call for Family~D~~75^Bite~CC~30~0||
+93|Morgrem|P|1|90|D|Impidimp|G||1|1|Smash Kick~D~30~0^Pierce~DC~50~0||
+96|Aggron V|P|03|230|M||R|G|4|4|Rock Slide~MCC~90~79^Merciless Strike~MCCCC~150+~80||0
+97|Aggron VMAX|P|4|330|M|Aggron V|R|G|4|6|Cracking Stomp~MCC~150~81^Max Take Down~MMCCC~270~24||2
+102|Klink|P|0|50|M||R|G|1|0|Vise Grip~M~10~0^Spinning Attack~MC~20~0||
+103|Klang|P|1|90|M|Klink|R|G|2|1|Beam~M~20~0^Guard Press~MCC~70~17||
+107|Gible|P|0|70|N||||1|0|Gnaw~WF~30~0||
+108|Gabite|P|1|90|N|Gible|||1|1|Dragon Claw~WF~70~0||
+111|Fraxure|P|1|100|N|Axew|||2|1|Sharp Fang~C~30~0^Dragon Claw~FM~60~0||
+112|Haxorus|P|2|170|N|Fraxure|||2|2|Slash~C~60~0^Wild Axe~FM~160~24||
+115|Farfetch'd|P|0|80|C||L|F|1|0|Leek Lash~CC~20+~93||
+117|Starly|P|0|60|C||L|F|1|0|Claw~C~30~74||
+118|Staravia|P|1|90|C|Starly|L|F|1|1|Wing Attack~CC~50~0||
+120|Bidoof|P|0|70|C||F||2|0|Rollout~CC~30~0||
+121|Bibarel|P|1|120|C|Bidoof|F||2|3|Tail Smash~CCC~100~74|19|
+124|Minccino|P|0|60|C||F||1|0|Call for Family~C~~98^Pound~C~10~0||
+125|Cinccino|P|1|90|C|Minccino|F||1|1|Slap~C~40~0^Triple Axel~CC~50×~99||
+128|Drampa V|P|03|210|C||F||2|4|Spike Draw~C~20~94^Dragon Pulse~CCC~160~88||0
+130|Barry|T|Supporter||||||0|1|||5,4
+132|Boss's Orders|T|Supporter||||||0|3|||9,4
+135|Choice Belt|T|Item/Pokémon Tool||||||0|1|||12,7,8
+136|Cleansing Gloves|T|Item/Pokémon Tool||||||0|1|||13,7,8
+139|Fresh Water Set|T|Item||||||0|1|||16,7
+140|Friends in Galar|T|Supporter||||||0|1|||5,4
+142|Hunting Gloves|T|Item/Pokémon Tool||||||0|1|||18,7,8
+147|Professor's Research|T|Supporter||||||0|3|||23,4
+150|Ultra Ball|T|Item||||||0|1|||26,7
+151|Double Turbo Energy|E|Special||||||0|1|||27
+152|Shaymin V|P|03|190|G||R||1|7|Flap~G~30~0^Revenge Blast~GC~60+~7||0
+153|Charizard V|P|03|220|R||W||2|7|Incinerate~RRC~90~10^Heat Blast~RRRC~180~0||0
+154|Charizard V|P|03|220|R||W||2|7|Incinerate~RRC~90~10^Heat Blast~RRRC~180~0||0
+159|Granbull V|P|03|210|P||M||2|7|Chomp~CC~30+~45^Bull Dash~PPC~190~24||0
+167|Barry|T|Supporter||||||0|7|||5,4
+174|Charizard VSTAR|P|5|280|R|Charizard V|W||2|8|Explosive Fire~RRC~130+~11^Star Blaze~RRRC~320~12||1
+186|Ultra Ball|T|Item||||||0|9|||26,7
