@@ -2,19 +2,10 @@
   "printed": 216,
   "canonicalTotal": 216,
   "notImported": [],
-  "battleReady": 197,
+  "battleReady": 202,
   "gated": {
-    "swsh10-12": [
-      "Unimplemented attack: Honey Rush"
-    ],
     "swsh10-29": [
       "Unimplemented attack: Entangled Dive"
-    ],
-    "swsh10-34": [
-      "Unimplemented attack: Borne Ashore"
-    ],
-    "swsh10-66": [
-      "Unimplemented Ability: Mental Shroud"
     ],
     "swsh10-68": [
       "Unimplemented Ability: Princess's Curtain"
@@ -39,13 +30,7 @@
     "swsh10-144": [
       "Unimplemented Trainer effect"
     ],
-    "swsh10-145": [
-      "Unimplemented Trainer effect"
-    ],
     "swsh10-146": [
-      "Unimplemented Trainer effect"
-    ],
-    "swsh10-152": [
       "Unimplemented Trainer effect"
     ],
     "swsh10-170": [

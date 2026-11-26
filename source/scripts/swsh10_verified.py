@@ -210,3 +210,21 @@ def trainer(row):
  t=row[13][0]
  if t=='Whenever either player puts a Basic Pokémon from their hand onto their Bench, put 2 damage counters on that Pokémon.':return 'Stadium',E('noop') # from-hand Basic placement hook
  return _stage5_trainer(row)
+
+# Stage seven: selective reveal, bilateral discard recovery and matchup effects.
+_stage6_attack=attack
+_stage6_ability=ability
+_stage6_trainer=trainer
+def attack(row,a):
+ t=a[3]
+ if t=='Reveal any number of Sweet Honey cards from your hand. This attack does 60 damage for each card you revealed in this way.':return E('sm7Rule',rule='swsh10HoneyRush')
+ if t=="Put a Basic Pokémon from either player's discard pile onto that player's Bench.":return E('sm7Rule',rule='swsh10BorneAshore')
+ return _stage6_attack(row,a)
+def ability(row,a):
+ if a[2]=='If you have Uxie and Azelf in play, each of your Pokémon has no Weakness.':return passive(E('weaknessGuard',duration='whileInPlay',scope='team',condition=cond('pokemonPresentAll',names=['Uxie','Azelf'])))
+ return _stage6_ability(row,a)
+def trainer(row):
+ t=row[13][0]
+ if t=='Reveal the top card of your deck. If that card is a Fighting Energy card, attach it to 1 of your Benched Pokémon. If it is not a Fighting Energy card, put it into your hand.':return 'Item',E('sm7Rule',rule='swsh10Pickaxe')
+ if t=="When applying Weakness to damage from the attacks of the Pokémon this card is attached to done to your opponent's Active Pokémon, apply it as ×3.":return 'Tool',E('weaknessMultiplier',multiplier=3)
+ return _stage6_trainer(row)

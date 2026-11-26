@@ -303,6 +303,7 @@
       if(attack?.effect?.rule==='swsh6RepeatedStrike')damage=120+30*slots(state.sides[side]).reduce((n,p)=>n+attachedCount(p),0);
       if(attack?.effect?.rule==='swsh4FlyingFury')damage=10+40*slots(state.sides[side]).reduce((n,p)=>n+(p.tool?1:0)+(p.extraTools||[]).length,0);
       if(attack?.effect?.rule==='swsh35Whisk')damage=60*slots(state.sides[side]).reduce((n,p)=>n+attachedCount(p),0);
+      if(attack?.effect?.rule==='swsh10HoneyRush')damage=60*Number(action.effectSelection||0);
       if(attack?.effect?.rule==='swsh2MiningRush')damage=30*Number(action.effectSelection||0);
       if(attack?.effect?.rule==='swsh2SpiralJet'&&!action.effectSelection)damage=0;
       if((action.attackCardId||state.sides[side].active.cardId)==='xy7-49'&&attack?.name==='Iron Cannon'){
