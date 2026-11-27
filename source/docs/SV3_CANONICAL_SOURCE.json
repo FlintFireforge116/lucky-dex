@@ -3,8 +3,8 @@
   "sourceGitBlob": "a53eff1ec698a53053c0364fdfde8f6fae52e4a6",
   "upstreamCommit": "90f27d0e14cefe48ccb2b8922a7a356b2fcf0072",
   "printedTotal": 230,
-  "importedTotal": 180,
-  "compactSha256": "6f95e40937aeb480f13de54274439627bc1c1ecaf782c8baa1dd7072fc6ce65b",
+  "importedTotal": 230,
+  "compactSha256": "8f2010a8ecd2bdfb4b9d8acd0602fd819a677a40b8db9c3e7588274d871375b6",
   "basePacketSignatures": [
     "92886a5a",
     "7e0eb0c9",
@@ -165,7 +165,32 @@
     "a8de0b9f",
     "f67a63f0",
     "6e3856c7",
-    "ea96a0d0"
+    "ea96a0d0",
+    "ae28b9ee",
+    "246e744b",
+    "bc66bcfb",
+    "aaa1d1f7",
+    "8b63feb3",
+    "6269f08e",
+    "fe47dd86",
+    "4d755c0f",
+    "bf731915",
+    "3b2f61e5",
+    "ec0f4900",
+    "6abc9816",
+    "3b1b96d8",
+    "913e1ae3",
+    "5e242778",
+    "c8d93791",
+    "11c12207",
+    "3894a085",
+    "9b4b92ba",
+    "b9ebc09e",
+    "2ad096dc",
+    "899e925c",
+    "eb543bb7",
+    "b357e05d",
+    "f948bc0d"
   ],
   "variants": [
     [
@@ -267,6 +292,156 @@
       228,
       125,
       "Hyper Rare"
+    ],
+    [
+      207,
+      162,
+      "Illustration Rare"
+    ],
+    [
+      208,
+      163,
+      "Illustration Rare"
+    ],
+    [
+      209,
+      180,
+      "Illustration Rare"
+    ],
+    [
+      217,
+      164,
+      "Ultra Rare"
+    ],
+    [
+      225,
+      164,
+      "Special Illustration Rare"
+    ]
+  ],
+  "trainerVariants": [
+    [
+      218,
+      188,
+      "Ultra Rare"
+    ],
+    [
+      219,
+      190,
+      "Ultra Rare"
+    ],
+    [
+      220,
+      193,
+      "Ultra Rare"
+    ],
+    [
+      221,
+      194,
+      "Ultra Rare"
+    ],
+    [
+      226,
+      188,
+      "Special Illustration Rare"
+    ],
+    [
+      227,
+      193,
+      "Special Illustration Rare"
+    ]
+  ],
+  "trainerPacket": [
+    [
+      186,
+      "Arven",
+      "Uncommon",
+      "Supporter",
+      "Search your deck for an Item card and a Pokémon Tool card, reveal them, and put them into your hand. Then, shuffle your deck."
+    ],
+    [
+      187,
+      "Brassius",
+      "Uncommon",
+      "Supporter",
+      "Count the cards in your hand, shuffle those cards into your deck, then draw that many cards plus 1."
+    ],
+    [
+      188,
+      "Geeta",
+      "Rare",
+      "Supporter",
+      "Search your deck for up to 2 Basic Energy cards and attach them to 1 of your Pokémon. Then, shuffle your deck. During this turn, your Pokémon can't attack. (This includes Pokémon that come into play this turn.)"
+    ],
+    [
+      189,
+      "Letter of Encouragement",
+      "Uncommon",
+      "Item",
+      "You can use this card only if any of your Pokémon were Knocked Out during your opponent's last turn. Search your deck for up to 3 Basic Energy cards, reveal them, and put them into your hand. Then, shuffle your deck."
+    ],
+    [
+      190,
+      "Ortega",
+      "Uncommon",
+      "Supporter",
+      "Your opponent reveals their hand, and you choose a card you find there and put it on the bottom of their deck. If you put a card on the bottom of your opponent's deck in this way, your opponent may draw a card."
+    ],
+    [
+      191,
+      "Patrol Cap",
+      "Uncommon",
+      "Tool",
+      "As long as the Pokémon this card is attached to is in the Active Spot, cards in your deck can't be discarded by effects of your opponent's attacks, Abilities, Item cards, Pokémon Tool cards, or Supporter cards."
+    ],
+    [
+      192,
+      "Pokémon League Headquarters",
+      "Uncommon",
+      "Stadium",
+      "Attacks used by each Basic Pokémon in play (both yours and your opponent's) cost Colorless more."
+    ],
+    [
+      193,
+      "Poppy",
+      "Uncommon",
+      "Supporter",
+      "Move up to 2 Energy from 1 of your Pokémon to another of your Pokémon."
+    ],
+    [
+      194,
+      "Ryme",
+      "Common",
+      "Supporter",
+      "Draw 3 cards. Switch out your opponent's Active Pokémon to the Bench. (Your opponent chooses the new Active Pokémon.)"
+    ],
+    [
+      195,
+      "Team Star Grunt",
+      "Uncommon",
+      "Supporter",
+      "Put an Energy attached to your opponent's Active Pokémon on top of their deck."
+    ],
+    [
+      196,
+      "Town Store",
+      "Common",
+      "Stadium",
+      "Once during each player's turn, that player may search their deck for a Pokémon Tool card, reveal it, and put it into their hand. Then, that player shuffles their deck."
+    ],
+    [
+      197,
+      "Vengeful Punch",
+      "Uncommon",
+      "Tool",
+      "If the Pokémon this card is attached to is Knocked Out by damage from an attack from your opponent's Pokémon, put 4 damage counters on the Attacking Pokémon."
+    ],
+    [
+      229,
+      "Artazon",
+      "Hyper Rare",
+      "Stadium",
+      "Once during each player's turn, that player may search their deck for a Basic Pokémon that doesn't have a Rule Box and put it onto their Bench. Then, that player shuffles their deck. (Pokémon ex, Pokémon V, etc. have Rule Boxes.)"
     ]
   ]
 }
