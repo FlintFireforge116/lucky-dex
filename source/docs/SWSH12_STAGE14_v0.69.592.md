@@ -1,0 +1,8 @@
+# Silver Tempest stage 14 — v0.69.592
+
+All 215 main-set prints imported and enabled, zero gates. Alternate prints share verified descriptors.
+
+- Regidrago VSTAR: Apex Dragon uses the declaring attack's Grass/Grass/Fire cost and selects a supported printed attack from a physical friendly discarded Dragon Pokémon, without consuming that card or requiring its original printed Energy cost. Nested target choices and staged extra payments reuse the shared copy/attack pipeline. Copied GX and VSTAR Powers respect the side's usage flags; recursive copy descriptors are excluded. Legacy Star mills seven physical cards, then optionally recovers up to two actual discard cards or Basic Energy from the hybrid discard ledger. Uses the game-wide VSTAR flag. UI identifies the friendly discarded source and selected copied target; CPU can score and choose a copy.
+- Amoonguss: Surprise Spores monitors physical hand-to-discard identity transfers from the opponent's attack, Ability, Item or Supporter action while it is their turn, including opponent-controlled choices. It queues retaliation until staged mandatory effects finish, then discards the acting opponent's remaining hand. Does not trigger from voluntary own-turn discards, deck mill, hand shuffles, or Stadium actions. Shared hand-zone Ability suppression is respected.
+
+Focused tests include both sides, Dragonite, Regidrago V, Giratina VSTAR, Rayquaza VMAX staged payments, ADP GX, CPU selection, Mars, Mawile, Krookodile and Jessie & James. Exhaustive cross-era copied-attack outcomes and discard attribution for legacy special cases remain an independent audit task; recursive copies are intentionally excluded. APK compilation and physical-device testing remain separate evidence.

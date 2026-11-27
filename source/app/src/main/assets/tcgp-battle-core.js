@@ -1199,6 +1199,7 @@
   }
   function abilitiesFor(card,slot,state){
     const own=[...(card?.abilities?.length?card.abilities:Array.isArray(card?.ability)?card.ability:[card?.ability]).filter(Boolean)];
+    if(card?.pokemonV&&activeToolsOf(state,slot).some(ref=>ref.cardId==='swsh12-156'))own.push({name:'Star Alchemy',type:'activated',oncePerTurn:true,vstarPower:true,printedPowerType:'tool',disabledByStatus:false,effect:{type:'searchChosen',amount:1,filter:{}}});
     // An attached Call Energy is a usable Active-Pokémon action, not a
     // Pokémon Poké-Power or another Energy Zone attachment.
     if(activeToolsOf(state,slot).some(ref=>ref.cardId==='dp7-83'))own.push({name:'Energy Link',type:'activated',oncePerTurn:false,printedPowerType:'tool',disabledByStatus:false,effect:{type:'neoRule',rule:'dp7:83:energyLink'}});
@@ -1391,7 +1392,7 @@
       }
       // Technical Machines grant a temporary attack, not a new Pokémon identity.
       for(const ref of toolsOf(slot)){
-        const tool=data.cardById(ref.cardId);if(['swsh5-131','swsh5-133','swsh6-151','swsh6-154','swsh7-158','swsh7-153'].includes(tool?.id)){if(!activeToolsOf(state,slot).includes(ref)||!(['swsh5-131','swsh6-151','swsh7-153'].includes(tool.id)?current.rapidStrike:current.singleStrike))continue;for(const [attackIndex,attack] of (tool.attacks||[]).entries())out.push({cardId:tool.id,attackIndex,attack,scrollAttack:true});continue;}if(!tool?.technicalMachine&&tool?.id!=='xy10-108')continue;
+        const tool=data.cardById(ref.cardId);if(tool?.id==='swsh12-154'){if(current.pokemonV&&activeToolsOf(state,slot).includes(ref))for(const [attackIndex,attack] of (tool.attacks||[]).entries())out.push({cardId:tool.id,attackIndex,attack,technicalMachine:true});continue;}if(['swsh5-131','swsh5-133','swsh6-151','swsh6-154','swsh7-158','swsh7-153'].includes(tool?.id)){if(!activeToolsOf(state,slot).includes(ref)||!(['swsh5-131','swsh6-151','swsh7-153'].includes(tool.id)?current.rapidStrike:current.singleStrike))continue;for(const [attackIndex,attack] of (tool.attacks||[]).entries())out.push({cardId:tool.id,attackIndex,attack,scrollAttack:true});continue;}if(!tool?.technicalMachine&&tool?.id!=='xy10-108')continue;
         if(tool.id==='xy10-108'&&!['xy10-54','xy10-54a'].includes(current.id))continue;
         // G Booster/G Scope attacks belong exclusively to Genesect-EX.
         if(['bw10-92','bw10-93'].includes(tool.id)&&current.name!=='Genesect-EX')continue;
@@ -1404,6 +1405,7 @@
   function attackDamagePreview(state,side,attackIndex,attackCardId,includeAlteredCreation=true){
     const source=state?.sides?.[side]?.active,attack=data.cardById(attackCardId||source?.cardId)?.attacks?.[attackIndex];
     if(!source||!attack)return {damage:0,text:'0',variable:false};
+    if(attack.effect?.source==='dragonDiscard')return {damage:0,text:'Varies by copied attack',variable:true};
     if(attack.effect?.rule==='swsh11DestructiveFinish'){
       const board=state.sides[side],foe=side==='player'?'opponent':'player',count=board.deck.filter(r=>data.cardById(r.cardId)?.kind==='energy').length;
       const low=Math.max(0,count-1),high=Math.min(count,Math.max(0,board.deck.length-1)),min=effects.outgoingAttackDamage(state,side,source,foe,60+30*low,data.cardById),max=effects.outgoingAttackDamage(state,side,source,foe,60+30*high,data.cardById);
@@ -1916,6 +1918,7 @@
         }
         if(ability.effect?.rule==='swsh12RevivingFlame')return; // discard-zone only
         if(ability.vstarPower&&s.vstarPowerUsed)return;
+        if(ability.name==='Star Alchemy'&&(!s.deck.length||s.hand.length>=Number(s.handLimit||10)))return;
         // Mesprit Psychic Bind blocks Powers, never printed Poké-Bodies.
         if(state.format==='classic'&&ability.printedPowerType==='power'&&Number(s.dp6PsychicBindUntil||-1)>=Number(state.turnNumber))return;
         if(state.format==='classic'&&ability.printedPowerType==='power'&&Number(s.hgss4PowersLockedUntil||-1)>=Number(state.turnNumber))return;
@@ -2012,7 +2015,7 @@
         const used=(s.abilityUsed||{})[s.swsh45TransformedTurns?.[source.uid]===s.turnCount?source.uid+':name:'+ability.name:source.uid+':'+abilityIndex];if(ability.oncePerTurn!==false&&used===s.turnCount)return;
         if(ability.lentalSharedOnce==='scavenge'&&s.lentalScavengeUsedTurn===s.turnCount)return;
         if(ability.sharedOncePerTurn&&s.sharedAbilityUsed?.[ability.sharedOncePerTurn]===s.turnCount)return;
-        const base={type:'ability',cardId:source.cardId,abilityIndex,target:source===s.active?'active':'bench'};if(source!==s.active)base.benchIndex=Number(source.benchSlot);
+        const base={type:'ability',cardId:source.cardId,abilityIndex,target:source===s.active?'active':'bench',...(ability.name==='Star Alchemy'?{choiceLabel:'Star Alchemy'}:{})};if(source!==s.active)base.benchIndex=Number(source.benchSlot);
         for(const target of effectChoices(ability.effect,effectContext(state,side,{},source))){const victim=target.target==='opponentActive'?foe.active:target.target==='opponentBench'?foe.bench.find(p=>Number(p.benchSlot)===Number(target.benchIndex)):null;if(victim&&effects.guardianOfLove(state,side==='player'?'opponent':'player',victim,data.cardById))continue;const a={...base};if(target.target)a.effectTarget=target.target;if(target.benchIndex!=null)a.effectBenchIndex=target.benchIndex;actions.push(a);}
       });
     }
@@ -4367,7 +4370,7 @@ const target=slotForTarget(s,action.target,action.benchIndex);if(card.id==='pl2-
         if(!matched.swsh4CopyHeads)return finishDeclaredAttack(state,side,matched);
       }
       const copiedSource=attack.effect?.type==='copyAttack'&&(attack.name==='Nightcap'||attack.effect.det1Copy||attack.effect.sm12Copy)?slotForTarget(attack.effect.source==='selfBench'?s:foe,matched.choiceTarget,matched.choiceBenchIndex):null;
-      const copiedAttack=attack.effect?.source==='previousEvolution'&&(s.active.stack||[]).slice(0,-1).includes(matched.choiceCardId)?data.cardById(matched.choiceCardId)?.attacks?.[matched.choiceAttackIndex]:attack.effect?.type==='sm2Rule'&&attack.effect.rule==='copycat'&&foe.lastAttackTurn===state.turnNumber-1?data.cardById(foe.lastAttackCardId)?.attacks?.find(a=>a.name===foe.lastAttackName&&!a.name.endsWith('-GX')):copiedSource&&data.cardById(copiedSource.cardId)?.attacks?.[matched.choiceAttackIndex];
+      const copiedAttack=attack.effect?.source==='dragonDiscard'&&s.discard.some(r=>r.cardId===matched.choiceCardId)?data.cardById(matched.choiceCardId)?.attacks?.[matched.choiceAttackIndex]:attack.effect?.source==='previousEvolution'&&(s.active.stack||[]).slice(0,-1).includes(matched.choiceCardId)?data.cardById(matched.choiceCardId)?.attacks?.[matched.choiceAttackIndex]:attack.effect?.type==='sm2Rule'&&attack.effect.rule==='copycat'&&foe.lastAttackTurn===state.turnNumber-1?data.cardById(foe.lastAttackCardId)?.attacks?.find(a=>a.name===foe.lastAttackName&&!a.name.endsWith('-GX')):copiedSource&&data.cardById(copiedSource.cardId)?.attacks?.[matched.choiceAttackIndex];
       if(attack.effect?.det1Copy)matched.det1CopiedCostPaid=!!copiedAttack&&effectContext(state,side).canPayCopiedCost(copiedAttack);
       if(state.format==='classic'){const gx=attack.gxAttack||/\bGX\b/i.test(attack.name)||copiedAttack&&(copiedAttack.gxAttack||/\bGX\b/i.test(copiedAttack.name));if(gx)state.sm10GXAttack={side,uid:s.active.uid,turn:state.turnNumber};else delete state.sm10GXAttack;}
       if(attack.effect?.rule==='sm10HypnoticReign'){
@@ -4427,7 +4430,7 @@ const target=slotForTarget(s,action.target,action.benchIndex);if(card.id==='pl2-
   function finishDeclaredAttack(state,side,matched){
     const s=state.sides[side],foeSide=side==='player'?'opponent':'player',foe=state.sides[foeSide],attackerCard=data.cardById(s.active.cardId),attackSourceCard=data.cardById(matched.attackCardId||s.active.cardId),attack=attackSourceCard.attacks[matched.attackIndex];
       const context={...effectContext(state,side,matched),isAttack:true},result=effects.resolveAttack(attack,context);
-      if(attack.effect?.det1Copy||attack.effect?.sm12Copy||attack.effect?.rule==='sm10HypnoticReign'){context.action={...JSON.parse(matched.copiedEffectSelection||'{}'),sm7SelectedCount:matched.sm7SelectedCount};context.attack=data.cardById(matched.choiceCardId)?.attacks?.[matched.choiceAttackIndex];}
+      if(attack.effect?.det1Copy||attack.effect?.sm12Copy||attack.effect?.source==='dragonDiscard'||attack.effect?.rule==='sm10HypnoticReign'){context.action={...JSON.parse(matched.copiedEffectSelection||'{}'),sm7SelectedCount:matched.sm7SelectedCount};context.attack=data.cardById(matched.choiceCardId)?.attacks?.[matched.choiceAttackIndex];}
       // Some printed attacks explicitly resolve an effect BEFORE damage.
       // A Pokémon Tool removed by Peck Off must not reduce the incoming hit.
       // General timing metadata keeps those pre-damage effects out of the
@@ -4897,12 +4900,51 @@ const target=slotForTarget(s,action.target,action.benchIndex);if(card.id==='pl2-
       ss.discard=kept;
     }
   }
+  // Surprise Spores tracks physical hand-to-discard transfers and effect ownership.
+  function swsh12SporesSource(state,side,action){
+    if(state.format!=='classic')return null;
+    const active=state.activeSide, pending=state.pendingChoice;
+    if(action.type==='effectChoice'){
+      if(!pending||pending.originSide!==active)return null;
+      const t=data.cardById(pending.trainerRef?.cardId);
+      if(t)return ['Item','Supporter'].includes(t.trainerType)?active:null;
+      if(pending.isAttack||pending.isAbility||pending.swsh12SporesSource===active)return active;
+      return null;
+    }
+    if(state.phase!=='battle'||side!==active)return null;
+    if(action.type==='attack')return active;
+    if(action.type==='trainer'){
+      const t=data.cardById(action.cardId||state.sides[side].hand[action.handIndex]?.cardId);
+      return ['Item','Supporter'].includes(t?.trainerType)?active:null;
+    }
+    if(action.type==='ability'){
+      const slot=slotForTarget(state.sides[side],action.target,action.benchIndex),a=abilitiesFor(data.cardById(slot?.cardId),slot,state)[action.abilityIndex||0];
+      return a?.printedPowerType==='ability'?active:null;
+    }
+    if(['evolve','bench','abilityDiscard','sm8HandAbility','sm11ElectricSwamp'].includes(action.type))return active;
+    return null;
+  }
   function neoMonitoredAction(state,side,action){
+    const sporesSource=swsh12SporesSource(state,side,action),sporesOwner=sporesSource==='player'?'opponent':'player';
+    const sporesHand=sporesSource?(state.sides[sporesOwner].hand||[]).filter(r=>data.cardById(r.cardId)?.battleEnabled&&data.cardById(r.cardId)?.abilities?.some(a=>a.effect?.rule==='swsh12SurpriseSpores')&&!effects.abilitiesSuppressed(state,sporesOwner,r,data.cardById,'hand')):[];
     const before=Object.fromEntries(['player','opponent'].map(who=>[who,{uid:state.sides[who].active?.uid,bench:new Set((state.sides[who].bench||[]).map(p=>p.uid))}]));
     const healingBefore=Object.fromEntries(['player','opponent'].map(who=>[who,Object.fromEntries(pokemonOn(state.sides[who]).map(p=>[p.uid,Number(p.damage||0)]))]));
     const turnOfAction=state.turnNumber;
     const sm11Attachments=effects.sm11ReturnSnapshot(state,data.cardById);
     const result=applyActionRaw(state,side,action);
+    if(sporesSource&&state.phase==='effectChoice'&&state.pendingChoice?.originSide===sporesSource&&state.turnNumber===turnOfAction)state.pendingChoice.swsh12SporesSource=sporesSource;
+    if(sporesHand.length&&sporesHand.some(r=>state.sides[sporesOwner].discard.some(d=>d.uid===r.uid)))
+      state.swsh12SporesPending={source:sporesSource,owner:sporesOwner,turn:turnOfAction};
+    // Wait until the triggering attack/Trainer/Ability finishes its choices.
+    // E.g. Jessie & James still has its own mandatory discard after the
+    // defender chooses Amoonguss. Emptying the hand mid-choice would stall it.
+    const spores=state.swsh12SporesPending;
+    if(spores&&(state.phase!=='effectChoice'||state.turnNumber!==spores.turn||state.pendingChoice?.special==='chooseClassicPrize')){
+      delete state.swsh12SporesPending;
+      const board=state.sides[spores.source],discarded=board.hand.splice(0);
+      board.discard.push(...discarded);
+      state.log.push({type:'swsh12SurpriseSpores',side:spores.owner,discarded:discarded.length});
+    }
     if(state.cel25cOpenPrizes)for(const who of ['player','opponent'])for(const ref of state.sides[who].prizes||[])ref.faceUp=true;
     for(const owner of ['player','opponent']){
       const incoming=state.sides[owner].active,previous=before[owner];

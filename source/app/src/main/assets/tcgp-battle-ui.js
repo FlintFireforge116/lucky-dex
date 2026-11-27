@@ -156,13 +156,13 @@
     if(!source||!copied)return null;
     const damage=copied.damageText||String(Number(copied.damage||0)||0);
     const text=String(copied.text||'').trim();
-    return {source,attack:copied,damage,text,sourceSide:copyEffect.source==='selfBench'?side:side==='player'?'opponent':'player',originalName:attack?.name||'COPY ATTACK'};
+    return {source,attack:copied,damage,text,sourceSide:['selfBench','previousEvolution','dragonDiscard'].includes(copyEffect.source)?side:side==='player'?'opponent':'player',originalName:attack?.name||'COPY ATTACK'};
   }
   function copiedAttackLabel(action,state,side){
     const copied=copiedAttackOption(action,state,side);if(!copied)return null;
     const outcome=copied.damage==='0'||!copied.damage?'EFFECT ONLY':`${copied.damage} DMG`;
     const description=copied.text?` · ${copied.text}`:'';
-    const nested=action.copiedEffectSelection&&copied.originalName==='Copy Anything'?JSON.parse(action.copiedEffectSelection):null;
+    const nested=action.copiedEffectSelection&&['Copy Anything','Apex Dragon','Secret Attack'].includes(copied.originalName)?JSON.parse(action.copiedEffectSelection):null;
     const suffix=nested?(action.choiceLabel||nested.choiceLabel||(nested.choiceTarget==='bench'?'Target Bench '+(Number(nested.choiceBenchIndex)+1):nested.choiceTarget==='active'?'Target Active':nested.effectSelection||nested.choiceCardId||'')):'';
     return `${copied.originalName} → COPY ${copied.source.name}: ${copied.attack.name} (${outcome})${description}${suffix?' · '+suffix:''}`;
   }
@@ -199,7 +199,7 @@
     if(action.type==='ability'){
       const s=state?.sides?.[side],slot=action.target==='bench'?(core.benchSlotAt?core.benchSlotAt(s,action.benchIndex):s?.bench?.[action.benchIndex]):s?.active,card=data.cardById(slot?.cardId);
       const ability=cardAbilities(card)[Number(action.abilityIndex||0)];
-      return `${ability?.name||'ABILITY'} · ${cardName(slot?.cardId)}${action.effectTarget?targetLabel(action,state,side):''}`;
+      return `${action.choiceLabel||ability?.name||'ABILITY'} · ${cardName(slot?.cardId)}${action.effectTarget?targetLabel(action,state,side):''}`;
     }
     if(action.type==='stadiumAction')return `STADIUM · ${cardName(action.cardId)}`;
     if(action.type==='attach')return`ATTACH ${String(state?.sides?.[side]?.energyType||'Grass').toUpperCase()} → ${slotName(state,side,action.target,action.benchIndex)}`;
@@ -875,10 +875,10 @@
       const retreats=actionIndicesFor(action=>action.type==='retreat');
       if(retreats.length)parts.push(contextActionButton(retreats,'RETREAT','retreat'));
       const abilities=actionIndicesFor(action=>action.type==='ability'&&action.target==='active');
-      if(abilities.length){const first=battleActionCache[abilities[0]],card=data.cardById(currentBattle?.sides?.player?.active?.cardId),ability=cardAbilities(card)[Number(first?.abilityIndex||0)];parts.push(contextActionButton(abilities,ability?.name||'ABILITY','ability'));}
+      if(abilities.length){const first=battleActionCache[abilities[0]],card=data.cardById(currentBattle?.sides?.player?.active?.cardId),ability=cardAbilities(card)[Number(first?.abilityIndex||0)];parts.push(contextActionButton(abilities,abilities.length>1?'ABILITIES':first?.choiceLabel||ability?.name||'ABILITY','ability'));}
     }else if(zone==='bench'){
       const abilities=actionIndicesFor(action=>action.type==='ability'&&action.target==='bench'&&Number(action.benchIndex)===Number(index||0));
-      if(abilities.length){const slot=core?.benchSlotAt?core.benchSlotAt(currentBattle?.sides?.player,index):currentBattle?.sides?.player?.bench?.[Number(index||0)],first=battleActionCache[abilities[0]],card=data.cardById(slot?.cardId),ability=cardAbilities(card)[Number(first?.abilityIndex||0)];parts.push(contextActionButton(abilities,ability?.name||'ABILITY','ability'));}
+      if(abilities.length){const slot=core?.benchSlotAt?core.benchSlotAt(currentBattle?.sides?.player,index):currentBattle?.sides?.player?.bench?.[Number(index||0)],first=battleActionCache[abilities[0]],card=data.cardById(slot?.cardId),ability=cardAbilities(card)[Number(first?.abilityIndex||0)];parts.push(contextActionButton(abilities,abilities.length>1?'ABILITIES':first?.choiceLabel||ability?.name||'ABILITY','ability'));}
       if(currentBattle?.format==='classic'){
         for(const actionIndex of benchSwitchActionIndices(battleActionCache,index)){
           const action=battleActionCache[actionIndex];

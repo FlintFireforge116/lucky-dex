@@ -324,3 +324,32 @@ def ability(row,a):
 def trainer(row):
  if row[1]=='Leafy Camo Poncho':return 'Tool',E('noop')
  return _stage11_trainer(row)
+
+# Stage 13: discard friendly Dreepy as payment, and Tool-granted VSTAR attack.
+_stage12_attack,_stage12_trainer,_stage12_ability=attack,trainer,ability
+
+def attack(row,a):
+ n=int(_base_row(row)[0]);title=a[0]
+ if n==89 and title=='Dragon Launcher':return E('sm7Rule',rule='swsh12DragonLauncher')
+ if n==154 and title=='Star Gravity':return E('sm7Rule',rule='swsh12StarGravity')
+ return _stage12_attack(row,a)
+
+def trainer(row):
+ if row[1] in ('Earthen Seal Stone','Forest Seal Stone'):return 'Tool',E('noop')
+ return _stage12_trainer(row)
+
+def ability(row,a):
+ if int(row[0])==156 and a[0]=='Star Alchemy':return dict(type='activated',oncePerTurn=True,vstarPower=True,printedPowerType='tool',effect=E('searchChosen',amount=1,filter={}))
+ return _stage12_ability(row,a)
+
+# Stage 14: Dragon discard attack copy, shared VSTAR recovery, hand-discard retaliation.
+_stage13_attack,_stage13_ability=attack,ability
+def attack(row,a):
+ n=int(_base_row(row)[0])
+ if n==136 and a[0]=='Apex Dragon':return E('copyAttack',source='dragonDiscard')
+ return _stage13_attack(row,a)
+def ability(row,a):
+ n=int(_base_row(row)[0])
+ if n==136 and a[0]=='Legacy Star':return activated(seq(E('discardTop',side='self',amount=7),E('searchChosen',source='discard',amount=2,filter={},optional=True)),vstarPower=True)
+ if n==12 and a[0]=='Surprise Spores':return passive(E('sm7Rule',rule='swsh12SurpriseSpores'))
+ return _stage13_ability(row,a)

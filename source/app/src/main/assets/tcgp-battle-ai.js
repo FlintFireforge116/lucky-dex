@@ -293,6 +293,10 @@
     if(action.type==='attach'||action.type==='attachSpecial')return 400+attachScore(action,state,side);
     if(action.type==='attack'){
       const attack=data.cardById(action.attackCardId||state.sides[side].active.cardId)?.attacks[action.attackIndex];
+      if(attack?.effect?.source==='dragonDiscard'){
+        const copied=data.cardById(action.choiceCardId)?.attacks?.[action.choiceAttackIndex];
+        return copied?200+Number(copied.damage||0):1;
+      }
       // Explosive Jet has no printed fixed damage: score its explicitly chosen
       // discard amount rather than treating every option as a zero-damage hit.
       const fireCount=/^count:(\d+)$/.exec(String(action.effectSelection||''));
@@ -471,6 +475,7 @@
     if(state.phase==='effectChoice'&&state.pendingChoice?.originSide===side){
       const e=state.pendingChoice.effect,board=state.sides[side],foe=state.sides[foeOf(side)];
       if(e?.rule==='swsh12RevivingFlame')return legal.find(a=>!a.choiceSkip)||legal[0];
+      if(e?.rule==='swsh12DragonLauncher'){const picks=legal.filter(a=>!a.choiceSkip).sort((a,b)=>attachedCount(slotFor(board,a.choiceTarget,a.choiceBenchIndex))-attachedCount(slotFor(board,b.choiceTarget,b.choiceBenchIndex)));return picks[0]||legal.find(a=>a.choiceSkip)||legal[0];}
       if(e?.rule==='swsh12SummoningStar'){
         const picks=legal.filter(a=>!a.choiceSkip);
         return picks.sort((a,b)=>{const score=x=>{const c=data.cardById(x.choiceCardId);return (c?.name==='Archeops'?1000:0)+(c?.hp||0);};return score(b)-score(a);})[0]||legal[0];
