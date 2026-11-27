@@ -6482,3 +6482,5 @@ SV2 stage 10 (v0.69.620): reuse rapidSpin for mandatory own switch followed by d
 
 
 PACK SHOP CATALOGUE IMMUTABILITY (v0.69.621): Catalogue providers may return frozen canonical rows (e.g. SNAPFLORIO and SNAPFOUNJA). Always create mutable view copies before attaching booster artwork or other UI metadata; do not modify source rows. Regression must render both actual Lental catalogue stubs through the production shop renderer online/offline, verify searchable names, IDs, artwork, price and pack size, and preserve official booster/promo filtering.
+
+Release 0.69.622 — Bulk booster shop: physical TCG opens five independently collated boosters, Pocket opens ten. Use the existing source-specific price, pack-size, product eligibility, acquisition, rarity, reveal and commit paths. Never flatten before per-pack collation; preserve per-pack event odds (Snap has no jackpot rolls), boundaries and counters. Bulk is coins-only and atomic at tear; failure, cancellation, insufficient balance or an excluded product must not grant cards or spend funds. Daily/ticket entitlements stay single-pack.

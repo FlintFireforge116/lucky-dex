@@ -904,49 +904,65 @@ async function preparePack() {
   }
 }
 
-async function preparePocketTenPack(){
+async function prepareShopBatch(){
+  const source=document.getElementById('cardSource')?.value||'tcg';
+  return source==='tcgp'?preparePocketTenPack():preparePhysicalFivePack();
+}
+async function preparePocketTenPack(){return prepareBoosterBatch('tcgp',TCGP_TEN_PACK_COUNT);}
+async function preparePhysicalFivePack(){return prepareBoosterBatch('tcg',TCG_FIVE_PACK_COUNT);}
+async function prepareBoosterBatch(source,count){
   if(packRun?.building)return false;
-  const source=document.getElementById('cardSource')?.value||'tcg',setId=document.getElementById('setSelect')?.value||'';
-  if(source!=='tcgp'||!setId){showToast('Choose a TCG Pocket set first.');return false;}
-  const initialSet=setCache.tcgp?.find(s=>String(s.id)===String(setId))||cachedSetV13(setId,'tcgp');
-  const cost=pocketTenPackCost(initialSet);
-  if(Number(state.profile.coins||0)<cost){showToast(`You need ${fmt(cost)} Lucky Coins for 10 packs.`);return false;}
+  const selectedSource=document.getElementById('cardSource')?.value,setId=document.getElementById('setSelect')?.value||'';
+  const initialSet=setCache[source]?.find(s=>String(s.id)===String(setId))||cachedSetV13(setId,source);
+  if(selectedSource!==source||!shopBatchAvailable(initialSet,source)){showToast('Choose an eligible booster set first.');return false;}
+  const physical=source==='tcg',cost=physical?physicalFivePackCost(initialSet):pocketTenPackCost(initialSet);
+  if(Number(state.profile.coins||0)<cost){showToast(`You need ${fmt(cost)} Lucky Coins for ${count} packs.`);return false;}
   const run=newPackRun();run.building=true;preparedPack=null;
-  const stage=packStageLoading('Building 10 Pocket packs…'),singleBtn=document.getElementById('openPackBtn'),tenBtn=document.getElementById('openTenPackBtn');
+  const stage=packStageLoading(`Building ${count} ${physical?'TCG':'Pocket'} packs…`),singleBtn=document.getElementById('openPackBtn'),tenBtn=document.getElementById('openTenPackBtn');
   if(singleBtn)singleBtn.disabled=true;if(tenBtn)tenBtn.disabled=true;
   const watchdog=setTimeout(()=>{
     if(run!==packRun||!run.building)return;
     run.timedOut=true;run.abort.abort();
-    stage.innerHTML='<button class="pack-exit" id="packExitBtn">‹ SHOP</button><div class="empty"><b>10-PACK DATA TIMED OUT</b><br>The set did not finish loading. Your coins were not spent.</div>';
+    stage.innerHTML=`<button class="pack-exit" id="packExitBtn">‹ SHOP</button><div class="empty"><b>${count}-PACK DATA TIMED OUT</b><br>The set did not finish loading. Your coins were not spent.</div>`;
     const exit=document.getElementById('packExitBtn');if(exit)exit.onclick=()=>closePackOpening();
-  },20000);
+  },physical?120000:20000);
   try{
     let set=initialSet;
-    if(isOnlineV13()){
-      if(window.LuckyDexPocket&&(!POCKET_EXACT_DATASETS_V0261.has(set?._pocketDataset)||!set?.cards?.length)){
-        try{set=await LuckyDexPocket.setDetail(setId,run.abort.signal);}catch(error){const cached=cachedSetV13(setId,'tcgp');if(cached?.cards?.length)set=cached;else throw error;}
-      }
-      if(!set?.cards?.length)throw new Error('pocket-set-missing');
-      cacheSetV13(set,'tcgp');
+    const libraryInstall=physical&&!!set?._libraryKey&&!!window.LuckyDexCardArt;
+    const online=isOnlineV13();
+    if(libraryInstall){
+      set=await LuckyDexCardArt.prepareSet(set,run.abort.signal);
+      if(!validPackRun(run))return false;
+      if(!shopBatchAvailable(set,source)||window.LuckyDexPackPolicy?.resolve?.(set,source)?.productKind!=='booster')throw new Error('batch-not-booster');
+      cacheSetV13({...set,cards:[]},source);
+    }else if(online){
+      if(!physical&&window.LuckyDexPocket&&(!POCKET_EXACT_DATASETS_V0261.has(set?._pocketDataset)||!set?.cards?.length)){
+        try{set=await LuckyDexPocket.setDetail(setId,run.abort.signal);}catch(error){const cached=cachedSetV13(setId,source);if(cached?.cards?.length)set=cached;else throw error;}
+      }else if(physical&&!set?.cards?.length)set=await packFetch(API.tcgSet(setId),run.abort.signal,5000);
+      if(!set?.cards?.length)throw new Error('batch-set-missing');
+      cacheSetV13(set,source);
     }else if(!set){throw new Error('offline-set-missing');}
     if(!validPackRun(run))return false;
     const packGroups=[];
-    for(let i=0;i<TCGP_TEN_PACK_COUNT;i++){
-      const godPack=window.LuckyDexGodPack.shouldRoll()===true,luckyPack=!godPack&&Math.random()<1/500;
-      const cards=isOnlineV13()?await buildBalancedPackWithRetry(set,'tcgp',luckyPack,run.abort.signal,godPack):await buildOfflinePackV13(set,'tcgp',luckyPack,godPack);
+    for(let i=0;i<count;i++){
+      const godPack=!set._lentalSet&&window.LuckyDexGodPack.shouldRoll()===true,luckyPack=!set._lentalSet&&!godPack&&Math.random()<1/500;
+      const cards=libraryInstall||online?await buildBalancedPackWithRetry(set,source,luckyPack,run.abort.signal,godPack):await buildOfflinePackV13(set,source,luckyPack,godPack);
       if(!validPackRun(run))return false;
+      if(!cards?.length)throw new Error('empty-batch-booster');
       packGroups.push({cards, luckyPack, godPack});
-      if(isOnlineV13())cacheCardsV13(cards,set,'tcgp');
+      if(online&&!libraryInstall)cacheCardsV13(cards,set,source);
     }
     const cards=packGroups.flatMap(group=>group.cards);
-    preparedPack={set,source:'tcgp',cards,packGroups,packCount:TCGP_TEN_PACK_COUNT,batch:true,luckyPack:false,godPack:false,revealed:new Set(),committed:false,entitlement:{mode:'coins',label:`OPEN 10 · ${fmt(cost)} COINS`,cost},currentIndex:0};
+    preparedPack={set,source,cards,packGroups,packCount:count,batch:true,luckyPack:false,godPack:false,revealed:new Set(),committed:false,entitlement:{mode:'coins',label:`OPEN ${count} · ${fmt(cost)} COINS`,cost},currentIndex:0};
+    // Match single-pack preloading: art is not a purchase prerequisite.
     cards.forEach(card=>preloadPackCard(card,run));
     await renderSealedPack();
     return true;
   }catch(error){
     if(run.timedOut||run!==packRun)return false;
-    recordPackOpeningError(error,'prepare-ten-pack',null,null,{set:initialSet,setId,source:'tcgp'});
-    stage.innerHTML=`<button class="pack-exit" id="packExitBtn">‹ SHOP</button><div class="empty"><b>${isOnlineV13()?'10-PACK ERROR':'OFFLINE CACHE NEEDED'}</b><br>${isOnlineV13()?'Could not prepare all 10 packs. Nothing was spent. Please try again.':'Open this set online once to cache its cards and artwork. Nothing was spent.'}</div>`;
+    preparedPack=null;
+    recordPackOpeningError(error,'prepare-batch-pack',null,null,{set:initialSet,setId,source});
+    stage.innerHTML=`<button class="pack-exit" id="packExitBtn">‹ SHOP</button><div class="empty"><b>${isOnlineV13()?`${count}-PACK ERROR`:'OFFLINE CACHE NEEDED'}</b><br>${isOnlineV13()?`Could not prepare all ${count} packs. Nothing was spent. Please try again.`:'Open this set online once to cache its cards and artwork. Nothing was spent.'}</div>`;
     const exit=document.getElementById('packExitBtn');if(exit)exit.onclick=()=>closePackOpening();
     return false;
   }finally{
@@ -1024,7 +1040,7 @@ async function playPocketTenPackGroupIntro(run,pack,groupInfo=pocketTenPackGroup
   pack.batchIntroPlayed=pack.batchIntroPlayed||new Set();if(pack.batchIntroPlayed.has(groupInfo.groupIndex))return true;pack.batchIntroPlayed.add(groupInfo.groupIndex);
   const group=groupInfo.group;
   if(group.godPack)return await playGodPackIntroV0291(run,pack);
-  if(group.luckyPack)return await playRarePackIntroV04030(run,pack);
+  if(group.luckyPack&&pack.source==='tcgp')return await playRarePackIntroV04030(run,pack);
   return true;
 }
 async function startPocketTenPackReveal(run,pack){
@@ -1113,11 +1129,11 @@ function renderPocketTenPackSummary(){
   const stage=document.getElementById('packStage'),groups=pack.packGroups||[];stage.dataset.packPhase='summary';stage.classList.remove('god-pack-omen','god-pack-active','rare-pack-active');
   let flatIndex=0;
   const groupMarkup=groups.map((group,index)=>{
-    const eventLabel=group.godPack?'GOD PACK':group.luckyPack?'RARE PACK · UPLIFT':'',eventClass=group.godPack?' god-pack-group':group.luckyPack?' rare-pack-group':'';
+    const eventLabel=group.godPack?'GOD PACK':group.luckyPack?(pack.source==='tcgp'?'RARE PACK · UPLIFT':'LUCKY PACK'):'',eventClass=group.godPack?' god-pack-group':group.luckyPack?' rare-pack-group':'';
     const cardsMarkup=(group.cards||[]).map(card=>{const cardIndex=flatIndex++;return `<button class="v13-summary-card level-${LuckyDexPack.profileFor(card).level}${card._wasNew?' is-new':''}" data-batch-summary-card="${cardIndex}"><div class="card-art-wrap">${card._wasNew?'<span class="pack-summary-new">NEW</span>':''}<img src="${escapeHtml(card._packArtwork||card.image||LuckyDexPack.placeholder(card.name))}" alt="${escapeHtml(card.name)}"></div><b>${escapeHtml(card.name)}</b><span>${escapeHtml(packSummaryLabelV03515(card,pack.set))}</span></button>`;}).join('');
     return `<section class="pocket-ten-pack-group${eventClass}"><div class="pocket-ten-pack-head"><b>PACK ${index+1}</b>${eventLabel?`<span>${eventLabel}</span>`:''}</div><div class="v13-summary-grid pocket-ten-pack-grid">${cardsMarkup}</div></section>`;
   }).join('');
-  stage.innerHTML=`<button class="pack-exit" id="packExitBtn">‹ SHOP</button><div class="v13-summary pocket-ten-pack-summary"><div class="screen-title"><div><div class="eyebrow">10 PACKS COMPLETE</div><h2>${escapeHtml(pack.set.name)}</h2></div><span class="pill">${pack.cards.length} cards</span></div><div class="pocket-ten-pack-groups">${groupMarkup}</div><button class="primary full v13-back-shop" id="shopAnotherPackBtn">BACK TO PACK SHOP</button></div>`;
+  stage.innerHTML=`<button class="pack-exit" id="packExitBtn">‹ SHOP</button><div class="v13-summary pocket-ten-pack-summary"><div class="screen-title"><div><div class="eyebrow">${groups.length} PACKS COMPLETE</div><h2>${escapeHtml(pack.set.name)}</h2></div><span class="pill">${pack.cards.length} cards</span></div><div class="pocket-ten-pack-groups">${groupMarkup}</div><button class="primary full v13-back-shop" id="shopAnotherPackBtn">BACK TO PACK SHOP</button></div>`;
   document.getElementById('packExitBtn').onclick=document.getElementById('shopAnotherPackBtn').onclick=()=>closePackOpening();
   stage.querySelectorAll('[data-batch-summary-card]').forEach(button=>button.onclick=()=>{const card=pack.cards[Number(button.dataset.batchSummaryCard)];if(card)openCardModal({...card,image:card._packArtwork||card.image});});
 }
@@ -1134,7 +1150,7 @@ function renderPackSummary() {
 }
 function closePackOpening(force=false) {
   const stage=document.getElementById('packStage');if(!stage)return;
-  if(!force&&preparedPack&&!preparedPack.committed&&!preparedPack.debug&&document.getElementById('sealedPack')&&!confirm(preparedPack.sealedRewardSetId?'Keep this booster sealed and leave the opener?':Number(preparedPack.packCount||1)>1?'Leave these 10 unopened packs? Nothing has been spent yet.':'Leave this unopened pack? Nothing has been spent yet.'))return;
+  if(!force&&preparedPack&&!preparedPack.committed&&!preparedPack.debug&&document.getElementById('sealedPack')&&!confirm(preparedPack.sealedRewardSetId?'Keep this booster sealed and leave the opener?':Number(preparedPack.packCount||1)>1?`Leave these ${preparedPack.packCount} unopened packs? Nothing has been spent yet.`:'Leave this unopened pack? Nothing has been spent yet.'))return;
   const hooks=preparedPack?.rewardHooks||null,info=preparedPack?{setId:preparedPack.sealedRewardSetId||'',committed:!!preparedPack.committed}:null;
   const dialog=document.getElementById('cardDialog');if(dialog?.open)dialog.close();
   cancelPackRun();preparedPack=null;stage.hidden=true;stage.innerHTML='';stage.classList.remove('god-pack-omen','god-pack-active','rare-pack-active');delete stage.dataset.packPhase;document.body.classList.remove('pack-opening');updatePackButton();

@@ -32,9 +32,9 @@ test('TCG Pocket exposes a dedicated 10-pack control at exactly ten times the si
 test('Pocket 10-pack construction rolls ten independent packs and preserves pack boundaries',()=>{
   const flow=read('pack-flow-v0165.js');
   assert.match(flow,/async function preparePocketTenPack/);
-  assert.match(flow,/for\s*\(let\s+i=0;\s*i<TCGP_TEN_PACK_COUNT;\s*i\+\+\)/);
+  assert.match(flow,/for\s*\(let\s+i=0;\s*i<count;\s*i\+\+\)/);
   assert.match(flow,/packGroups\.push\(\{cards,\s*luckyPack,\s*godPack\}\)/);
-  assert.match(flow,/packCount:TCGP_TEN_PACK_COUNT/);
+  assert.match(flow,/packCount:count/);
   assert.match(flow,/packGroups/);
 });
 
@@ -52,5 +52,5 @@ test('10-pack summary groups the 50 cards by their original boosters',()=>{
   const flow=read('pack-flow-v0165.js');
   assert.match(flow,/function renderPocketTenPackSummary/);
   assert.match(flow,/PACK \$\{index\+1\}/);
-  assert.match(flow,/10 PACKS COMPLETE/);
+  assert.match(flow,/\$\{groups\.length\} PACKS COMPLETE/);
 });
