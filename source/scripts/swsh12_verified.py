@@ -115,3 +115,36 @@ def ability(row,a):
 def energy(row):
  if row[1]=='V Guard Energy':return E('specialEnergy',provides={'Colorless':1})
  return _stage2_energy(row)
+
+# Stage 4: pinned Fighting, Darkness and Metal prints, plus reviewed existing gates.
+_stage3_attack,_stage3_ability=attack,ability
+
+def attack(row,a):
+ n=int(row[0]);title=a[0]
+ if n==8 and title=='Regal Blender':return E('redistributeEnergy',includeSpecialEnergy=True,optional=True)
+ if n==8 and title=='Star Winder':return seq(E('energyDamage',source='self',countProvidedType=True,amount=60,mode='replace'),E('switch',target='self',mandatory=True))
+ if n==92 and title=='Overspin':return E('attackDamageGate',condition=cond('sm8NotEvolved'))
+ if n==96 and title=='Reaping Claw':return E('knockOut',target='opponentActive',condition=cond('swsh12OpponentRemainingHpAtMost',amount=100))
+ if n==97 and title=='Cavern Tackle':return seq(E('attackRequirement',condition=cond('swsh12NoCavernTackle')),E('preventDamage',target='self',duration='opponentTurn'))
+ if n in (98,107) and title in ('Allure','Triple Draw'):return E('draw',amount=2 if n==98 else 3)
+ if n in (98,118,124) and title in ('Acrobatics','Bullet Punch','Gear Grind'):return E('coinDamage',coins=2,amount={98:20,118:30,124:80}[n],mode='replace' if n==124 else 'add')
+ if n==99 and title=='Corner':return E('lock',target='opponentActive',action='retreat',duration='opponentTurn')
+ if n==100 and title=='Sandpot Trap':return seq(E('bonusDamage',amount=30),E('benchDamage',side='opponent',all=True,amount=30))
+ if n==101 and title=='Mystery Press':return bonus(130,cond('sm12NoSupporterDiscard'))
+ if n==102 and title=='Peat Shoulder':return E('selfDamagePenalty',amount=1,mode='add')
+ if n==106 and title=='Flock':return E('benchFromDeck',amount=2,filter={'kind':'pokemon','name':'Murkrow','stage':'Basic'},choose=True,optional=True)
+ if n==110 and title=='Diving Uppercut':return E('modifier',stat='damageReduction',amount=-50,scope='self',duration='opponentTurn')
+ if n==112 and title=='Crunch':return coin(discard(1,'opponentActive'))
+ if n==114 and title=='Poison Sting':return status('poison')
+ if n==115 and title=='Venoshock':return bonus(120,cond('opponentStatus',status='poison'))
+ if n==117 and title=='Magnetic Lift':return E('neoRule',rule='dp6:31:oneDesire')
+ if n==120 and title=='Astral Misfortune':return E('allHeadsEffect',coins=2,heads=E('knockOut',target='opponentActive'))
+ if n==123 and title=='Call Sign':return E('searchChosen',amount=1,filter={'kind':'pokemon'})
+ return _stage3_attack(row,a)
+
+def ability(row,a):
+ n=int(row[0]);title=a[0]
+ if n==102 and title=='Hard Coat':return passive(E('modifier',stat='damageReduction',amount=30,scope='self',duration='whileInPlay'))
+ if n==120 and title=='Entrusted Wishes':return dict(type='triggered',event='knockedOutByAttack',activeOnly=True,opponentAttackOnly=True,effect=E('searchChosen',amount=3,filter={},optional=True))
+ if n==125 and title=='Triple Gears':return dict(type='triggered',event='evolved',fromHandOnly=True,effect=E('sm7Rule',rule='sm9SearchAttach',amount=3))
+ return _stage3_ability(row,a)

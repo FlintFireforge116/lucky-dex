@@ -1,37 +1,7 @@
 {
-  "printed": 133,
+  "printed": 163,
   "canonicalTotal": 215,
   "notImported": [
-    "swsh12-96",
-    "swsh12-97",
-    "swsh12-98",
-    "swsh12-99",
-    "swsh12-100",
-    "swsh12-101",
-    "swsh12-102",
-    "swsh12-103",
-    "swsh12-104",
-    "swsh12-105",
-    "swsh12-106",
-    "swsh12-107",
-    "swsh12-108",
-    "swsh12-109",
-    "swsh12-110",
-    "swsh12-111",
-    "swsh12-112",
-    "swsh12-113",
-    "swsh12-114",
-    "swsh12-115",
-    "swsh12-116",
-    "swsh12-117",
-    "swsh12-118",
-    "swsh12-119",
-    "swsh12-120",
-    "swsh12-121",
-    "swsh12-122",
-    "swsh12-123",
-    "swsh12-124",
-    "swsh12-125",
     "swsh12-126",
     "swsh12-127",
     "swsh12-128",
@@ -85,12 +55,8 @@
     "swsh12-210",
     "swsh12-211"
   ],
-  "battleReady": 100,
+  "battleReady": 126,
   "gated": {
-    "swsh12-8": [
-      "Unimplemented attack: Regal Blender",
-      "Unimplemented attack: Star Winder"
-    ],
     "swsh12-12": [
       "Unimplemented Ability: Surprise Spores"
     ],
@@ -150,8 +116,27 @@
       "Unimplemented attack: Rock Bullet",
       "Unimplemented Ability: Irresistible Force"
     ],
-    "swsh12-92": [
-      "Unimplemented attack: Overspin"
+    "swsh12-105": [
+      "Unimplemented attack: Venomous Fang",
+      "Unimplemented attack: Critical Bite"
+    ],
+    "swsh12-107": [
+      "Unimplemented attack: Callous Wings"
+    ],
+    "swsh12-108": [
+      "Unimplemented attack: Pursuit Blast",
+      "Unimplemented attack: Shrieking Poison"
+    ],
+    "swsh12-113": [
+      "Unimplemented attack: Double-Edge",
+      "Unimplemented Ability: Bully of the Sands"
+    ],
+    "swsh12-116": [
+      "Unimplemented attack: Peko Blaster"
+    ],
+    "swsh12-119": [
+      "Unimplemented attack: Meteor Mash",
+      "Unimplemented Ability: Emergency Entry"
     ],
     "swsh12-154": [
       "Unimplemented attack: Star Gravity",
@@ -195,7 +180,7 @@
       "Unimplemented Trainer effect"
     ]
   },
-  "attacks": 153,
-  "abilities": 20,
+  "attacks": 196,
+  "abilities": 25,
   "sourceGitBlob": "a57779d463a4f8ddf2bc21ad4ae66e9f4c3eaac2"
 }
