@@ -1,37 +1,7 @@
 {
-  "printed": 87,
+  "printed": 117,
   "canonicalTotal": 160,
   "notImported": [
-    "swsh12pt5-51",
-    "swsh12pt5-52",
-    "swsh12pt5-53",
-    "swsh12pt5-54",
-    "swsh12pt5-55",
-    "swsh12pt5-56",
-    "swsh12pt5-57",
-    "swsh12pt5-58",
-    "swsh12pt5-59",
-    "swsh12pt5-60",
-    "swsh12pt5-61",
-    "swsh12pt5-62",
-    "swsh12pt5-63",
-    "swsh12pt5-64",
-    "swsh12pt5-65",
-    "swsh12pt5-66",
-    "swsh12pt5-67",
-    "swsh12pt5-68",
-    "swsh12pt5-69",
-    "swsh12pt5-70",
-    "swsh12pt5-71",
-    "swsh12pt5-72",
-    "swsh12pt5-73",
-    "swsh12pt5-74",
-    "swsh12pt5-75",
-    "swsh12pt5-76",
-    "swsh12pt5-77",
-    "swsh12pt5-78",
-    "swsh12pt5-79",
-    "swsh12pt5-80",
     "swsh12pt5-81",
     "swsh12pt5-82",
     "swsh12pt5-83",
@@ -76,7 +46,7 @@
     "swsh12pt5-122",
     "swsh12pt5-160"
   ],
-  "battleReady": 79,
+  "battleReady": 100,
   "gated": {
     "swsh12pt5-20": [
       "Unimplemented Ability: Excited Heart"
@@ -97,6 +67,33 @@
     "swsh12pt5-46": [
       "Unimplemented Ability: Conversion Star"
     ],
+    "swsh12pt5-51": [
+      "Unimplemented Ability: Shocking Block"
+    ],
+    "swsh12pt5-54": [
+      "Unimplemented attack: Reactive Pulse"
+    ],
+    "swsh12pt5-55": [
+      "Unimplemented attack: Lightning Storm Star"
+    ],
+    "swsh12pt5-59": [
+      "Unimplemented attack: Psypump"
+    ],
+    "swsh12pt5-65": [
+      "Unimplemented attack: Horoscope"
+    ],
+    "swsh12pt5-66": [
+      "Unimplemented Ability: Witch's Domain"
+    ],
+    "swsh12pt5-69": [
+      "Unimplemented Ability: Sun Energy"
+    ],
+    "swsh12pt5-74": [
+      "Unimplemented attack: Midnight Fang"
+    ],
+    "swsh12pt5-76": [
+      "Unimplemented attack: Lost Claw"
+    ],
     "swsh12pt5-126": [
       "Unimplemented Trainer effect"
     ],
@@ -105,7 +102,7 @@
       "Unimplemented Trainer effect"
     ]
   },
-  "attacks": 81,
-  "abilities": 8,
+  "attacks": 129,
+  "abilities": 11,
   "sourceGitBlob": "6d0748e2be253b335093187554e6a947a66c3089"
 }

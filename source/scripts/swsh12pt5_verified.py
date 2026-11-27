@@ -144,3 +144,38 @@ def attack(row,a):
  if n==47:return coin(status('paralysis'))
  if n==50:return E('selfDamage',amount=50)
  return _stage1_attack(row,a)
+
+# Stage 3: existing damage, physical deck search, hand cost and status handlers.
+_stage2_attack=attack
+
+def attack(row,a):
+ n=int(row[0]);title,cost,damage,t=a
+ if n<51:return _stage2_attack(row,a)
+ if not t and damage.isdigit():return E('noop')
+ if n==51:return E('multiTargetDamage',target='opponentPokemon',amount=30,count=1)
+ if n==52:return E('selfDamage',amount=20)
+ if n==53:return E('lock',target='self',action='attack',duration='nextOwnTurn')
+ if n==54 and title=='Max Fist':return E('discardEnergyCard',target='self',amount=2)
+ if n==55 and title=='Crushing Beat':return E('chooseOption',condition=cond('stadiumInPlay'),options=[{'label':'Discard Stadium','effect':E('discardStadium')},{'label':'Keep Stadium','effect':E('noop')}])
+ if n==56 and title=='Call for Family':return E('benchFromDeck',amount=2,filter={'kind':'pokemon','stage':'Basic'},choose=True,optional=True)
+ if n==56:return E('coinDamage',coins='untilTails',amount=30,mode='add')
+ if n==57:return coin(status('paralysis'))
+ if n==58:return E('energyDamage',source='self',all=True,amount=20,mode='replace')
+ if n==59 and title=='Limit Break':return bonus(90,cond('opponentPrizesAtMost',amount=3))
+ if n==60 and title=='Energy Mix':return E('sm7Rule',rule='sm9SearchAttach',amount=1,includeSpecial=True,targetFilter={'tag':'fusion-strike'})
+ if n==60:return E('chooseOption',options=[{'label':'Shuffle this Pokémon into deck','effect':E('shuffleIntoDeck',target='self',includeAttached=True)},{'label':'Keep in play','effect':E('noop')}])
+ if n==61 and title=='Double Draw':return E('draw',amount=2)
+ if n in (61,63,66):return status('confusion')
+ if n==62 and title=='Cycle Draw':return E('sm7Rule',rule='sm10Pay',amount=1,filter={},after=E('draw',amount=3))
+ if n==62:return E('energyDamage',source='self',energyType='Psychic',countProvidedType=True,amount=30,mode='add')
+ if n==64 and title=='Energy Burst':return E('energyDamage',source='both',amount=20,mode='replace')
+ if n==64:return E('heal',target='self',amount=30)
+ if n==65 and title=='Teleportation Burst':return E('switch',target='self')
+ if n==67 and title=='Draining Kiss':return E('heal',target='self',amount=20)
+ if n==67:return bonus(70,cond('handSizesEqual'))
+ if n==73:return coin(E('forceOpponentSwitch',chooseBy='attacker'))
+ if n==75:return status('poison')
+ if n in (77,78):return E('coinDamage',coins=3,amount=10 if n==77 else 40,mode='replace')
+ if n==79:return E('discardTop',side='opponent',amount=3)
+ if n==80:return E('selfDamage',amount=30)
+ return None
