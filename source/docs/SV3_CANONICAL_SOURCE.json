@@ -3,8 +3,8 @@
   "sourceGitBlob": "a53eff1ec698a53053c0364fdfde8f6fae52e4a6",
   "upstreamCommit": "90f27d0e14cefe48ccb2b8922a7a356b2fcf0072",
   "printedTotal": 230,
-  "importedTotal": 130,
-  "compactSha256": "e567cc8535ee0ad0a345fce95e283b3e88012ba1d9193a524e9f56dd4afc8a9a",
+  "importedTotal": 180,
+  "compactSha256": "6f95e40937aeb480f13de54274439627bc1c1ecaf782c8baa1dd7072fc6ce65b",
   "basePacketSignatures": [
     "92886a5a",
     "7e0eb0c9",
@@ -125,7 +125,47 @@
     "1b7d0d5c",
     "347eb2f2",
     "698bef5a",
-    "58a7744e"
+    "58a7744e",
+    "549ccef4",
+    "ae5cb526",
+    "59086cde",
+    "71f21b11",
+    "de207bc2",
+    "4ef1dc77",
+    "d326f001",
+    "ad4a7555",
+    "adf932f9",
+    "4cd4340b",
+    "6aedbb68",
+    "205c2d42",
+    "707b463b",
+    "4e57bb2a",
+    "c5cd8bbb",
+    "61584d45",
+    "8c3af928",
+    "ffb33fda",
+    "944e08b0",
+    "099724f2",
+    "4661c89e",
+    "d56063e6",
+    "b02e9d45",
+    "d6ecf737",
+    "03e9e865",
+    "e7d32d26",
+    "a7f978ca",
+    "0f1ebb73",
+    "8992e15f",
+    "fa044104",
+    "7f51e78c",
+    "9d76aa5a",
+    "1e2749d5",
+    "47222834",
+    "8073732b",
+    "c7855b35",
+    "a8de0b9f",
+    "f67a63f0",
+    "6e3856c7",
+    "ea96a0d0"
   ],
   "variants": [
     [
@@ -177,6 +217,56 @@
       212,
       96,
       "Ultra Rare"
+    ],
+    [
+      204,
+      131,
+      "Illustration Rare"
+    ],
+    [
+      205,
+      141,
+      "Illustration Rare"
+    ],
+    [
+      206,
+      154,
+      "Illustration Rare"
+    ],
+    [
+      213,
+      123,
+      "Ultra Rare"
+    ],
+    [
+      214,
+      135,
+      "Ultra Rare"
+    ],
+    [
+      215,
+      125,
+      "Ultra Rare"
+    ],
+    [
+      216,
+      156,
+      "Ultra Rare"
+    ],
+    [
+      223,
+      125,
+      "Special Illustration Rare"
+    ],
+    [
+      224,
+      156,
+      "Special Illustration Rare"
+    ],
+    [
+      228,
+      125,
+      "Hyper Rare"
     ]
   ]
 }

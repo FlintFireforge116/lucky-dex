@@ -295,6 +295,9 @@ function runSmokes(cards,{data,core,opponents}){
       if(card.name==='Saguaro')own.active.damage=60;
       if(card.name==='Superior Energy Retrieval'){own.hand.push({cardId:'sv2-1',uid:'audit-superior-pay1'},{cardId:'sv2-4',uid:'audit-superior-pay2'});own.discard.push({cardId:'base1-102',uid:'audit-superior-water'});}
     }
+    // Night Cyclone moves every attached unit; use a realistic paid attack fixture
+    // rather than the default 108-energy stress board and 35-choice cap.
+    if(card.id==='sv3-136'&&ix===1)s.sides[side].active.energy={Darkness:2,Colorless:1,Fire:1};
     if(card.id==='sv2-73'&&ix===1){const own=s.sides[side];own.lastAttackUid=own.active.uid;own.lastAttackName='Stun Needle';own.lastAttackTurn=s.turnNumber-2;own.lastAttackCardId=card.id;}
     if(card.setId==='sv1'&&card.kind==='trainer'){
       const own=s.sides[side],enemy=s.sides[side==='player'?'opponent':'player'];
