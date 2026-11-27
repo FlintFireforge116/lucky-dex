@@ -305,3 +305,22 @@ def ability(row,a):
 def trainer(row):
  if row[1]=='Quad Stone':return 'Item',E('sm7Rule',rule='swsh12QuadStone')
  return _stage10_trainer(row)
+
+# Stage 12: discard-zone revival, gained weakness aura and Supporter protection.
+_stage11_attack,_stage11_ability,_stage11_trainer=attack,ability,trainer
+
+def attack(row,a):
+ n=int(_base_row(row)[0]);title=a[0]
+ if n==66 and title=='Tri Power':return E('coinDamage',coins=3,amount=70,mode='replace')
+ if n==66 and title=='Star Cipher':return E('sm7Rule',rule='swsh12StarCipher')
+ if n==140 and title=='Rainbow Burn':return E('energyTypeCountDamage',amount=30,mode='add')
+ return _stage11_attack(row,a)
+
+def ability(row,a):
+ n=int(_base_row(row)[0]);title=a[0]
+ if n==140 and title=='Reviving Flame':return activated(E('sm7Rule',rule='swsh12RevivingFlame'))
+ return _stage11_ability(row,a)
+
+def trainer(row):
+ if row[1]=='Leafy Camo Poncho':return 'Tool',E('noop')
+ return _stage11_trainer(row)

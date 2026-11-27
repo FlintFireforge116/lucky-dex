@@ -2,14 +2,10 @@
   "printed": 215,
   "canonicalTotal": 215,
   "notImported": [],
-  "battleReady": 203,
+  "battleReady": 209,
   "gated": {
     "swsh12-12": [
       "Unimplemented Ability: Surprise Spores"
-    ],
-    "swsh12-66": [
-      "Unimplemented attack: Tri Power",
-      "Unimplemented attack: Star Cipher"
     ],
     "swsh12-89": [
       "Unimplemented attack: Dragon Launcher"
@@ -17,10 +13,6 @@
     "swsh12-136": [
       "Unimplemented attack: Apex Dragon",
       "Unimplemented Ability: Legacy Star"
-    ],
-    "swsh12-140": [
-      "Unimplemented attack: Rainbow Burn",
-      "Unimplemented Ability: Reviving Flame"
     ],
     "swsh12-154": [
       "Unimplemented attack: Star Gravity",
@@ -30,23 +22,9 @@
       "Unimplemented Ability: Star Alchemy",
       "Unimplemented Trainer effect"
     ],
-    "swsh12-160": [
-      "Unimplemented Trainer effect"
-    ],
-    "swsh12-187": [
-      "Unimplemented attack: Rainbow Burn",
-      "Unimplemented Ability: Reviving Flame"
-    ],
-    "swsh12-199": [
-      "Unimplemented attack: Tri Power",
-      "Unimplemented attack: Star Cipher"
-    ],
     "swsh12-201": [
       "Unimplemented attack: Apex Dragon",
       "Unimplemented Ability: Legacy Star"
-    ],
-    "swsh12-214": [
-      "Unimplemented Trainer effect"
     ]
   },
   "attacks": 280,

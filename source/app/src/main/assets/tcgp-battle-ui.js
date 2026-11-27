@@ -185,6 +185,7 @@
     if(action.type==='sm11ElectricSwamp')return 'ELECTRIC SWAMP · PLAY ONTO BENCH';
     if(action.type==='sm8HandAbility')return 'MOUNTAIN PASS · REVEAL FROM HAND';
     if(action.type==='swsh10GrantRecover')return 'GRANT · DISCARD 2 CARDS TO RECOVER';
+    if(action.type==='abilityDiscard'&&['swsh12-140','swsh12-187'].includes(action.cardId))return 'REVIVING FLAME · BENCH HO-OH V AND END TURN';
     if(action.type==='abilityDiscard'&&action.cardId==='swsh11-66')return 'NETHERWORLD GATE · BENCH GENGAR WITH 30 DAMAGE';
     if(action.type==='abilityDiscard'&&action.cardId==='swsh9-37')return 'EMERGENCY SURFACING · BENCH EMPOLEON AND DRAW 3';
     if(action.type==='abilityDiscard'&&action.cardId==='sm8-97')return 'DISTORTION DOOR · BENCH GIRATINA';
@@ -1197,7 +1198,7 @@
     const basic=Object.entries(side?.energyDiscard||{}).filter(([,count])=>Number(count)>0),energyCount=basic.reduce((n,[,c])=>n+Number(c||0),0)+energyRefs.length;
     const cardsHtml=cardRefs.map(({ref,index})=>{const card=data.cardById(ref.cardId),art=cardArtUrl(ref.cardId,battleDiscardSide);
       const available=battleDiscardSide==='player'&&currentBattle?.activeSide==='player'&&currentBattle?.phase==='battle'
-        ?battleActionCache.findIndex(a=>(a.type==='swsh10GrantRecover'||a.type==='bw10DiscardAbility'||a.type==='abilityDiscard'&&['sm8-97','swsh9-37','swsh11-66'].includes(a.cardId))&&a.sourceUid===ref.uid): -1;
+        ?battleActionCache.findIndex(a=>(a.type==='swsh10GrantRecover'||a.type==='bw10DiscardAbility'||a.type==='abilityDiscard'&&['sm8-97','swsh9-37','swsh11-66','swsh12-140','swsh12-187'].includes(a.cardId))&&a.sourceUid===ref.uid): -1;
       const ability=available>=0?`<button type="button" class="tcgp-battle-action" data-tcgp-action="battle-action" data-action-index="${available}">${esc(actionLabel(battleActionCache[available],currentBattle,'player'))}</button>`:'';
       return `<div class="tcgp-live-discard-entry"><button type="button" class="tcgp-live-discard-card" ${inspectAttrs(battleDiscardSide,'discard',index)}>${art?`<img src="${esc(art)}" alt="${esc(card?.name||ref.cardId)}">`:''}<span>${esc(card?.name||ref.cardId)}</span></button>${ability}</div>`;}).join('');
     const energyIcons=basic.map(([type,count])=>`<div class="tcgp-live-discard-energy-tile">${energyIconHtml(type,{className:'discard'})}<b>${esc(type)}</b><span>×${Number(count)}</span></div>`).join('');

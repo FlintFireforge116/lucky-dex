@@ -157,6 +157,7 @@
     if(String(action.target||'').startsWith('opponent'))return true;
     const slot=slotFor(ss,action.target,action.benchIndex),mon=data.cardById(slot?.cardId);
     if(!slot||!effects.usefulToolRecipient(card,mon))return false;
+    if(card?.name==='Leafy Camo Poncho'&&!['VSTAR','VMAX'].includes(mon?.stage))return !!mon?.pokemonV&&[...ss.hand,...ss.deck].some(ref=>{const c=data.cardById(ref.cardId);return ['VSTAR','VMAX'].includes(c?.stage)&&c.evolvesFrom===mon.name;});
     if(effects.spiritLinkSpecies(card)){
       // It is reasonable to reserve a matching Link for a future Mega in
       // our own deck, but never spend it on a different species or on an
@@ -282,6 +283,7 @@
     if(action.type==='setupBench')return 950;
     if(action.type==='setupReady')return 1;
     if(action.type==='evolve')return 900;
+    if(action.type==='abilityDiscard'&&['swsh12-140','swsh12-187'].includes(action.cardId))return 30+30*Math.min(4,state.sides[side].discard.filter(r=>data.cardById(r.cardId)?.basicEnergy).length+Object.values(state.sides[side].energyDiscard||{}).reduce((n,v)=>n+Number(v||0),0));
     if(action.type==='swsh8Pitch'||action.type==='sm11ElectricSwamp'||action.type==='sm8HandAbility'||action.type==='abilityDiscard'&&['sm8-97','swsh9-37','swsh11-66'].includes(action.cardId))return 800;
     if(action.type==='ability')return dangerous(abilityEffect(card,action.abilityIndex))?-100:800;
     if(action.type==='swsh10GrantRecover')return 690;
@@ -468,6 +470,7 @@
     }
     if(state.phase==='effectChoice'&&state.pendingChoice?.originSide===side){
       const e=state.pendingChoice.effect,board=state.sides[side],foe=state.sides[foeOf(side)];
+      if(e?.rule==='swsh12RevivingFlame')return legal.find(a=>!a.choiceSkip)||legal[0];
       if(e?.rule==='swsh12SummoningStar'){
         const picks=legal.filter(a=>!a.choiceSkip);
         return picks.sort((a,b)=>{const score=x=>{const c=data.cardById(x.choiceCardId);return (c?.name==='Archeops'?1000:0)+(c?.hp||0);};return score(b)-score(a);})[0]||legal[0];

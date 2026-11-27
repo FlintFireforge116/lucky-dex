@@ -1914,6 +1914,7 @@
           const enemy=state.sides[side==='player'?'opponent':'player'];
           if((enemy?.bench||[]).filter(Boolean).length<Math.min(3,Number(enemy?.benchLimit||3)))return;
         }
+        if(ability.effect?.rule==='swsh12RevivingFlame')return; // discard-zone only
         if(ability.vstarPower&&s.vstarPowerUsed)return;
         // Mesprit Psychic Bind blocks Powers, never printed Poké-Bodies.
         if(state.format==='classic'&&ability.printedPowerType==='power'&&Number(s.dp6PsychicBindUntil||-1)>=Number(state.turnNumber))return;
@@ -2054,6 +2055,7 @@
     }
     if(state.format==='classic'){
       if(s.hand.filter(x=>data.cardById(x.cardId)?.name!=='Grant').length>=2)for(const ref of s.discard||[])if(['swsh10-144','swsh10-185','swsh10-203'].includes(ref.cardId)&&data.cardById(ref.cardId)?.battleEnabled)actions.push({type:'swsh10GrantRecover',cardId:ref.cardId,sourceUid:ref.uid});
+      if(emptyBenchSlots(s).length&&!effects.isActionLocked(state,side,'Ability',data.cardById))for(const ref of s.discard||[])if(['swsh12-140','swsh12-187'].includes(ref.cardId)&&data.cardById(ref.cardId)?.battleEnabled&&eternalZoneCanPlace(state,side,ref.cardId)&&s.swsh12RevivingUsed?.[ref.uid]!==s.turnCount&&!effects.abilitiesSuppressed(state,side,ref,data.cardById,'discard'))actions.push({type:'abilityDiscard',cardId:ref.cardId,sourceUid:ref.uid});
       if(emptyBenchSlots(s).length&&!effects.isActionLocked(state,side,'Ability',data.cardById)&&eternalZoneCanPlace(state,side,'swsh11-66'))for(const ref of s.discard||[])if(ref.cardId==='swsh11-66'&&s.swsh11GateUsed?.[ref.uid]!==s.turnCount&&!effects.abilitiesSuppressed(state,side,ref,data.cardById,'discard'))actions.push({type:'abilityDiscard',cardId:ref.cardId,sourceUid:ref.uid});
       if(!s.hand.length&&emptyBenchSlots(s).length&&!effects.isActionLocked(state,side,'Ability',data.cardById))for(const ref of s.discard||[])if(ref.cardId==='swsh9-37'&&!effects.abilitiesSuppressed(state,side,ref,data.cardById,'discard')&&eternalZoneCanPlace(state,side,ref.cardId))actions.push({type:'abilityDiscard',cardId:ref.cardId,sourceUid:ref.uid});
       if(emptyBenchSlots(s).length)for(const ref of s.discard||[])if(ref.cardId==='sm8-97'&&s.sm8DoorUsed?.[ref.uid]!==s.turnCount&&!effects.abilitiesSuppressed(state,side,ref,data.cardById))actions.push({type:'abilityDiscard',cardId:ref.cardId,sourceUid:ref.uid});
@@ -4033,6 +4035,13 @@ const target=slotForTarget(s,action.target,action.benchIndex);if(card.id==='pl2-
       state.log.push({type:'ability',side,cardId:ref.cardId,
         ability:propagation?'Propagation':'Prehistoric Call',fromDiscard:true});
       return state;
+    }
+    if(matched.type==='abilityDiscard'&&['swsh12-140','swsh12-187'].includes(matched.cardId)){
+      const i=s.discard.findIndex(r=>r.uid===matched.sourceUid&&r.cardId===matched.cardId),[ref]=s.discard.splice(i,1),p=makePokemonSlot(ref.cardId,s.turnCount,ref.uid);
+      placeOnBench(s,p,emptyBenchSlots(s)[0]);(s.swsh12RevivingUsed||(s.swsh12RevivingUsed={}))[ref.uid]=s.turnCount;
+      state.log.push({type:'ability',side,cardId:ref.cardId,ability:'Reviving Flame',fromDiscard:true});
+      effects.applyEffect({type:'sm7Rule',rule:'swsh12RevivingFlame',left:4},{...effectContext(state,side,{},p),isAbility:true});
+      if(state.phase==='effectChoice'){state.pendingChoice.resume='ability';state.pendingChoice.isAbility=true;}return state;
     }
     if(matched.type==='abilityDiscard'&&matched.cardId==='swsh11-66'){
       const i=s.discard.findIndex(r=>r.uid===matched.sourceUid&&r.cardId===matched.cardId),[ref]=s.discard.splice(i,1),p=makePokemonSlot(ref.cardId,s.turnCount,ref.uid);p.damage=30;placeOnBench(s,p,emptyBenchSlots(s)[0]);(s.swsh11GateUsed||(s.swsh11GateUsed={}))[ref.uid]=s.turnCount;state.log.push({type:'ability',side,cardId:ref.cardId,ability:'Netherworld Gate',fromDiscard:true});triggerAbilities(state,'benched',side,p,{fromDiscard:true});if(state.phase!=='effectChoice')resolveKnockOut(state,null);return state;
