@@ -19070,9 +19070,9 @@
         const available=[...new Set(held.length?held:(ss.energySupply?.length?[ss.energySupply[0]]:[]))];
         if(!available.length)return;
         if(ctx.resolvingChoice){if(a.choiceSkip)return;const target=chosen(ss),type=a.effectEnergyType;if(!target||!available.includes(type))return;
-          if(held.length){const idx=ss.hand.findIndex(ref=>{const card=ctx.cardById(ref.cardId);return card?.basicEnergy&&card.subtype===type;});if(idx<0||!slimyRoomAllows(ctx,ss,ss.hand[idx]))return;ss.hand.splice(idx,1);}
+          let ref=null;if(held.length){const idx=ss.hand.findIndex(ref=>{const card=ctx.cardById(ref.cardId);return card?.basicEnergy&&card.subtype===type;});if(idx<0||!slimyRoomAllows(ctx,ss,ss.hand[idx]))return;[ref]=ss.hand.splice(idx,1);}
           else if(!sv1ZoneTake(ctx,ss,type))return;
-          target.energy[type]=Number(target.energy[type]||0)+1;ctx.onEnergyAttached?.(target,type,1);note({to:target.cardId,energyType:type});
+          target.energy[type]=Number(target.energy[type]||0)+1;ctx.onEnergyAttached?.(target,type,1,{fromHand:!!ref,energyCardId:ref?.cardId});note({to:target.cardId,energyType:type});
         }else ask({kind:'energyTarget',energyTypes:available});return;
       }
       case 'miseEnPlace':case 'passionateSinging':case 'dinoCry':case 'psychicEmbrace':{
@@ -19084,7 +19084,7 @@
         const available=[...new Set(types)].filter(t=>!fixedType||fixedType===t);
         if(!available.length){if(rule==='dinoCry'&&remaining===max)ctx.endTurn?.();return;}
         if(ctx.resolvingChoice){if(a.choiceSkip){if(rule==='dinoCry')ctx.endTurn?.();return;}const target=chosen(ss),type=a.effectEnergyType||available[0];
-          if(target&&available.includes(type)&&matchesFilter(ctx.cardById(target.cardId),filter,target)&&!(rule==='psychicEmbrace'&&Number(ctx.cardById(target.cardId)?.hp||0)-Number(target.damage||0)<=20)){
+          if(target&&available.includes(type)&&matchesFilter(ctx.cardById(target.cardId),filter,target)&&!(rule==='psychicEmbrace'&&(ctx.maxHp?.(ctx.side,target)??Number(ctx.cardById(target.cardId)?.hp||0))-Number(target.damage||0)<=20)){
             let success=false;if(source==='zone')success=!!sv1ZoneTake(ctx,ss,type);else success=neoTakeDiscard(ctx,ss,type,1)===1;
             if(success){target.energy[type]=Number(target.energy[type]||0)+1;ctx.onEnergyAttached?.(target,type,1);if(rule==='psychicEmbrace'){target.damage=Number(target.damage||0)+20;}note({to:target.cardId,energyType:type});}
           }
@@ -19126,15 +19126,18 @@
       case 'flyFailure':note({outcome:'Tails — attack fails'});break;
       case 'pokegear':{
         const count=Math.min(7,ss.deck.length);
-        if(ctx.resolvingChoice){const idx=Number(a.choiceDeckIndex);if(idx>=0&&idx<count&&ctx.cardById(ss.deck[idx]?.cardId)?.trainerType==='Supporter')ss.hand.push(...ss.deck.splice(idx,1));ctx.shuffle?.(ctx.state,ss.deck);}
-        else if(ss.deck.slice(0,count).some(ref=>ctx.cardById(ref.cardId)?.trainerType==='Supporter'))ask({kind:'topDeckCard',count,deckSide:ctx.side,filter:{trainerType:'Supporter'}});
+        if(ctx.resolvingChoice){const idx=Number(a.choiceDeckIndex);if(!a.choiceSkip&&idx>=0&&idx<count&&ctx.cardById(ss.deck[idx]?.cardId)?.trainerType==='Supporter')ss.hand.push(...ss.deck.splice(idx,1));ctx.shuffle?.(ctx.state,ss.deck);}
+        else if(ss.deck.slice(0,count).some(ref=>ctx.cardById(ref.cardId)?.trainerType==='Supporter'))ask({kind:'topDeckCard',count,deckSide:ctx.side,filter:{trainerType:'Supporter'},optional:true});
+        else ctx.shuffle?.(ctx.state,ss.deck);
         break;
       }
       case 'arven':{
-        if(ctx.resolvingChoice){const idx=Number(a.choiceDeckIndex),ref=ss.deck[idx];if(ref){const c=ctx.cardById(ref.cardId);if(c?.trainerType===effect.phase){ss.hand.push(...ss.deck.splice(idx,1));ctx.shuffle?.(ctx.state,ss.deck);}}
-          if(effect.phase==='Item'&&ss.deck.some(r=>ctx.cardById(r.cardId)?.trainerType==='Tool'))ask({kind:'deckCard',filter:{kind:'trainer',trainerType:'Tool'},effect:{...effect,phase:'Tool'}});
-        }else if(ss.deck.some(r=>ctx.cardById(r.cardId)?.trainerType==='Item'))ask({kind:'deckCard',filter:{kind:'trainer',trainerType:'Item'},effect:{...effect,phase:'Item'}});
-        else if(ss.deck.some(r=>ctx.cardById(r.cardId)?.trainerType==='Tool'))ask({kind:'deckCard',filter:{kind:'trainer',trainerType:'Tool'},effect:{...effect,phase:'Tool'}});
+        if(ctx.resolvingChoice){const idx=Number(a.choiceDeckIndex),ref=ss.deck[idx];if(!a.choiceSkip&&ref&&ctx.cardById(ref.cardId)?.trainerType===effect.phase)ss.hand.push(...ss.deck.splice(idx,1));
+          if(effect.phase==='Item'&&ss.deck.some(r=>ctx.cardById(r.cardId)?.trainerType==='Tool'))ask({kind:'deckCard',filter:{kind:'trainer',trainerType:'Tool'},optional:true,effect:{...effect,phase:'Tool'}});
+          else ctx.shuffle?.(ctx.state,ss.deck);
+        }else if(ss.deck.some(r=>ctx.cardById(r.cardId)?.trainerType==='Item'))ask({kind:'deckCard',filter:{kind:'trainer',trainerType:'Item'},optional:true,effect:{...effect,phase:'Item'}});
+        else if(ss.deck.some(r=>ctx.cardById(r.cardId)?.trainerType==='Tool'))ask({kind:'deckCard',filter:{kind:'trainer',trainerType:'Tool'},optional:true,effect:{...effect,phase:'Tool'}});
+        else ctx.shuffle?.(ctx.state,ss.deck);
         break;
       }
       case 'electricGenerator':{
@@ -19186,8 +19189,10 @@
         break;
       }
       case 'teamStarGrunt':{
-        const target=foe.active,type=a.effectEnergyType||Object.keys(target?.energy||{}).find(t=>target.energy[t]>0);
-        if(target&&type&&target.energy[type]>0){target.energy[type]--;foe.energySupply=foe.energySupply||[];foe.energySupply.unshift(type);foe.nextEnergyType=type;note({returned:type,zone:'top of Energy Zone'});}
+        const target=foe.active;if(!target)break;
+        if(ctx.resolvingChoice){const type=a.effectEnergyType;if(a.effectSpecialEnergyUid){const idx=(target.specialEnergy||[]).findIndex(r=>r.uid===a.effectSpecialEnergyUid);if(idx>=0){const [ref]=target.specialEnergy.splice(idx,1);foe.deck.unshift(ref);note({returned:ref.cardId,zone:'top of deck'});}}
+          else if(type&&target.energy[type]>0){target.energy[type]--;foe.energySupply=foe.energySupply||[];foe.energySupply.unshift(type);foe.nextEnergyType=type;note({returned:type,zone:'top of Energy Zone'});}}
+        else if(Object.values(target.energy||{}).some(n=>n>0)||(target.specialEnergy||[]).length)ask({kind:'energySource',selectionSide:ctx.foeSide,energySourceUid:target.uid,includeSpecial:true});
         break;
       }
       case 'expShare':{const ko=ctx.eventData?.knockedOut,target=self;

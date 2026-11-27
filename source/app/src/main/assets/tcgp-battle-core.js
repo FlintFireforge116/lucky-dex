@@ -513,7 +513,7 @@
         }
       }
     }else if(p.kind==='energyTarget'){
-      const energyTypes=(p.energyTypes||[]).filter(Boolean);for(const slot of [ss.active,...(ss.bench||[])].filter(Boolean)){const card=data.cardById(slot.cardId);if((p.excludeUids||[]).includes(slot.uid))continue;if(p.filter&&!effects.matchesFilter(card,p.filter,slot))continue;if(p.effect?.rule==='sv1:psychicEmbrace'&&Number(card?.hp||0)-Number(slot.damage||0)<=20)continue;for(const energyType of energyTypes)out.push({type:'effectChoice',choiceTarget:slot===ss.active?'active':'bench',choiceBenchIndex:slot===ss.active?undefined:Number(slot.benchSlot),choiceCardId:slot.cardId,effectEnergyType:energyType});}
+      const energyTypes=(p.energyTypes||[]).filter(Boolean);for(const slot of [ss.active,...(ss.bench||[])].filter(Boolean)){const card=data.cardById(slot.cardId);if((p.excludeUids||[]).includes(slot.uid))continue;if(p.filter&&!effects.matchesFilter(card,p.filter,slot))continue;if(p.effect?.rule==='sv1:psychicEmbrace'&&maxHp(state,side,slot)-Number(slot.damage||0)<=20)continue;for(const energyType of energyTypes)out.push({type:'effectChoice',choiceTarget:slot===ss.active?'active':'bench',choiceBenchIndex:slot===ss.active?undefined:Number(slot.benchSlot),choiceCardId:slot.cardId,effectEnergyType:energyType});}
     }else if(p.kind==='toolCard'){
       const board=state.sides[p.selectionSide||side],slot=[board.active,...(board.bench||[])].find(x=>x&&x.uid===p.targetUid);if(slot)toolsOf(slot).forEach((tool,index)=>out.push({type:'effectChoice',choiceTarget:p.choiceTarget||(slot===board.active?'active':'bench'),choiceBenchIndex:p.choiceBenchIndex!=null?p.choiceBenchIndex:(slot===board.active?undefined:Number(slot.benchSlot)),choiceToolIndex:index,choiceCardId:tool.cardId}));
     }
