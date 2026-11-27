@@ -656,6 +656,10 @@
       meta.attacker.damage=Number(meta.attacker.damage||0)+Number(meta.damage);state.log.push({type:'swsh6SpitefulSlate',side,amount:meta.damage});
     }
     if(state.format==='classic'&&onlySource&&['energyAttached','evolved'].includes(event)&&effects.activeSpecialEnergy(state,onlySource,data.cardById).some(r=>r.cardId==='swsh4-162')&&effects.effectiveTypes(state,side,onlySource,data.cardById).includes('Grass'))onlySource.conditions={};
+    if(state.format==='classic'&&event==='evolved'&&meta.fromHand&&onlySource&&data.cardById(onlySource.stack?.at(-2))?.pokemonV){
+      const copies=effects.activeSpecialEnergy(state,onlySource,data.cardById).filter(r=>r.cardId==='swsh12-168').length;
+      if(copies)effects.applyEffect({type:'heal',target:'self',amount:100*copies},effectContext(state,side,{},onlySource));
+    }
     if(state.format==='classic'&&event==='evolved'&&meta.fromHand&&onlySource&&activeStadium(state)?.cardId==='swsh4-161'&&data.cardById(onlySource.cardId)?.pokemonVMAX){effects.applyEffect({type:'heal',target:'self',amount:100},effectContext(state,side,{},onlySource));}
     // Platinum Stadiums are continuous, symmetrical entry triggers, not
     // effects that fire only when the Stadium is initially played.
@@ -2054,6 +2058,7 @@
     if (s.active&&!swsh7Slaking&&!sm8Shady&&!bw5Airhead&&(!conditions.paralysis||windupArm)&&Number(s.active.ex11AttackLockUntil||0)!==Number(state.turnNumber)){
       for(const entry of attackOptions(state,side)){
         const {cardId:attackCardId,attackIndex,attack}=entry;
+        if(state.format==='classic'&&attackCardId==='swsh12-86'&&state.firstSide===side&&s.turnCount===1&&attack.name!=='Smart Service')continue;
         if(state.format==='classic'&&['swsh9-45','swsh9-158'].includes(attackCardId)&&state.firstSide===side&&s.turnCount===1&&attack.name!=='Fast Charge')continue;
         if(state.format==='classic'&&['swsh4-29','swsh4-168'].includes(attackCardId)&&state.firstSide===side&&s.turnCount===1&&attack.name!=='Fast Flight')continue;
         if(attack.name==='Cold Snap'&&s.sm12ColdSnapTurn===s.turnCount-1)continue;
@@ -2835,7 +2840,7 @@
             if(heads){slot.damage=Math.max(0,maxHp(state,side,slot)-10);continue;}
           }
         }
-        const tempGuard=slot.koGuard&&(slot.koGuard.expiresTurn==null||state.turnNumber<=slot.koGuard.expiresTurn)?slot.koGuard:null,koGuard=tempGuard||effects.findPassiveRule(state,side,slot,'koGuard',data.cardById),guardEligible=!!koGuard&&(!koGuard.attackOnly||source?.attack&&source.side===foeSide);
+        const tempGuard=slot.koGuard&&(slot.koGuard.expiresTurn==null||state.turnNumber<=slot.koGuard.expiresTurn)?slot.koGuard:null,koGuard=tempGuard||effects.findPassiveRule(state,side,slot,'koGuard',data.cardById),guardEligible=!!koGuard&&(!koGuard.attackOnly||source?.attack&&source.side===foeSide)&&(!koGuard.fullHpDamageOnly||cause==='attack'&&source?.attack&&source.side===foeSide&&Number(source.turn)===Number(state.turnNumber)&&source.damageKo===true&&Number(slot.damage)===Number(source.damage));
         if(guardEligible){
           if(koGuard.mode==='surviveCoin'){const heads=random(state)<0.5;state.log.push({type:'coin',side,heads,reason:'koGuard',results:[heads]});if(heads){slot.damage=Math.max(0,maxHp(state,side,slot)-Number(koGuard.remainingHp||10));state.log.push({type:'koPrevented',side,cardId:card.id});continue;}}
           if(koGuard.mode==='survive'){slot.damage=Math.max(0,maxHp(state,side,slot)-Number(koGuard.remainingHp||10));state.log.push({type:'koPrevented',side,cardId:card.id});continue;}
@@ -2988,7 +2993,7 @@
         const teleport=!scoopBlocked&&state.format==='classic'&&cause==='attack'&&source?.side===foeSide&&source?.attack&&activeToolsOf(state,slot).some(r=>r.cardId==='SNAPFOUNJA-084');
         const swsh11AttackDamageKO=state.format==='classic'&&eventSource?.attack&&eventSource.side===foeSide&&Number(eventSource.turn)===Number(state.turnNumber)&&Number(eventSource.damage)>0&&eventSource.damageKo!==false;
         const swsh11Gift=swsh11AttackDamageKO&&effects.activeSpecialEnergy(state,slot,data.cardById).some(r=>r.cardId==='swsh11-171');
-        const swsh11NoPrize=swsh11AttackDamageKO&&!effects.abilitiesSuppressed(state,side,slot,data.cardById)&&((slot.cardId==='swsh11-17'&&data.cardById(eventSource.cardId||pokemonOn(foe).find(p=>p.uid===eventSource.uid)?.cardId)?.pokemonV)||(slot.cardId==='swsh11-149'&&!!slot.conditions?.sleep));
+        const swsh11NoPrize=swsh11AttackDamageKO&&!effects.abilitiesSuppressed(state,side,slot,data.cardById)&&((slot.cardId==='swsh11-17'&&data.cardById(eventSource.cardId||pokemonOn(foe).find(p=>p.uid===eventSource.uid)?.cardId)?.pokemonV)||(slot.cardId==='swsh11-149'&&!!slot.conditions?.sleep)||(slot.cardId==='swsh12-62'&&data.cardById(eventSource.cardId||pokemonOn(foe).find(p=>p.uid===eventSource.uid)?.cardId)?.pokemonV));
         if(slot.pl1LostZoneOnKO&&['sm8-121','sm8-203','sm8-223'].includes(source?.cardId))discardKnockedOut(state,s,slot);
         else if(state.format==='classic'&&countsAsKnockout&&activeStadium(state)?.cardId==='swsh11-161'){
           // Lost City replaces the Pokemon stack destination only, never its attachments.

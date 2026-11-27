@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Silver Tempest Stage four release gate."""
+"""Silver Tempest Stage seven release gate."""
 import argparse,subprocess,sys
 from pathlib import Path
 ROOT=Path(__file__).resolve().parents[1]

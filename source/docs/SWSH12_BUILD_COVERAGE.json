@@ -2,19 +2,10 @@
   "printed": 215,
   "canonicalTotal": 215,
   "notImported": [],
-  "battleReady": 163,
+  "battleReady": 176,
   "gated": {
     "swsh12-12": [
       "Unimplemented Ability: Surprise Spores"
-    ],
-    "swsh12-31": [
-      "Unimplemented attack: Gritty Claws"
-    ],
-    "swsh12-32": [
-      "Unimplemented attack: Secret Attack"
-    ],
-    "swsh12-35": [
-      "Unimplemented attack: Primal Guidance"
     ],
     "swsh12-49": [
       "Unimplemented attack: Pika Strike"
@@ -22,15 +13,9 @@
     "swsh12-59": [
       "Unimplemented Ability: Painful Spoons"
     ],
-    "swsh12-62": [
-      "Unimplemented Ability: Selfish Lips"
-    ],
     "swsh12-64": [
       "Unimplemented attack: Eerie Voice",
       "Unimplemented Ability: Spiteful Magic"
-    ],
-    "swsh12-65": [
-      "Unimplemented attack: Victory Symbol"
     ],
     "swsh12-66": [
       "Unimplemented attack: Tri Power",
@@ -43,18 +28,12 @@
     "swsh12-74": [
       "Unimplemented attack: Dreaming Tone"
     ],
-    "swsh12-75": [
-      "Unimplemented attack: Warning"
-    ],
     "swsh12-78": [
       "Unimplemented attack: Cell Fork",
       "Unimplemented Ability: Persistent Cells"
     ],
     "swsh12-85": [
       "Unimplemented attack: Dede-Short"
-    ],
-    "swsh12-86": [
-      "Unimplemented attack: Smart Service"
     ],
     "swsh12-89": [
       "Unimplemented attack: Dragon Launcher"
@@ -66,9 +45,6 @@
     "swsh12-105": [
       "Unimplemented attack: Venomous Fang",
       "Unimplemented attack: Critical Bite"
-    ],
-    "swsh12-107": [
-      "Unimplemented attack: Callous Wings"
     ],
     "swsh12-108": [
       "Unimplemented attack: Pursuit Blast",
@@ -84,10 +60,6 @@
     "swsh12-119": [
       "Unimplemented attack: Meteor Mash",
       "Unimplemented Ability: Emergency Entry"
-    ],
-    "swsh12-126": [
-      "Unimplemented attack: Follow-Up",
-      "Unimplemented Ability: Justified Law"
     ],
     "swsh12-127": [
       "Unimplemented attack: Toge Dash"
@@ -125,18 +97,6 @@
     ],
     "swsh12-166": [
       "Unimplemented Trainer effect"
-    ],
-    "swsh12-168": [
-      "Unimplemented Special Energy rules"
-    ],
-    "swsh12-174": [
-      "Unimplemented attack: Primal Guidance"
-    ],
-    "swsh12-176": [
-      "Unimplemented attack: Victory Symbol"
-    ],
-    "swsh12-177": [
-      "Unimplemented attack: Victory Symbol"
     ],
     "swsh12-179": [
       "Unimplemented attack: Rock Bullet",

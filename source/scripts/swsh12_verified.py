@@ -204,3 +204,28 @@ def _base_row(row):
 
 def attack(row,a):return _stage6_attack(_base_row(row),a)
 def ability(row,a):return _stage5_ability(_base_row(row),a)
+
+# Stage 7: narrowly scoped knockout, fossil, evolution and choice mechanics.
+_stage6_final_attack,_stage6_final_ability,_stage6_energy=attack,ability,energy
+
+def attack(row,a):
+ n=int(_base_row(row)[0]);title=a[0]
+ if n==31 and title=='Gritty Claws':return E('koGuard',target='self',mode='survive',remainingHp=10,duration='opponentTurn',attackOnly=True,fullHpDamageOnly=True)
+ if n==32 and title=='Secret Attack':return E('copyAttack',source='previousEvolution')
+ if n==35 and title=='Primal Guidance':return E('benchFromDeck',amount=2,filter={'kind':'pokemon','evolvesFrom':['Mysterious Fossil','Claw Fossil','Root Fossil','Skull Fossil','Armor Fossil','Dome Fossil','Helix Fossil','Cover Fossil','Plume Fossil','Root Fossil Lileep','Helix Fossil Omanyte','Dome Fossil Kabuto','Claw Fossil Anorith','Armor Fossil Shieldon','Unidentified Fossil','Rare Fossil']},choose=True,optional=True)
+ if n==65 and title=='Victory Symbol':return E('sm7Rule',rule='swsh12VictorySymbol')
+ if n==75 and title=='Warning':return E('sm7Rule',rule='swsh12Warning')
+ if n==86 and title=='Smart Service':return E('searchChosen',amount=1,filter={})
+ if n==107 and title=='Callous Wings':return E('sm7Rule',rule='swsh12CallousWings')
+ if n==126 and title=='Follow-Up':return E('sm7Rule',rule='sm9SearchAttach',amount=2,benchOnly=True,distinctTargets=True)
+ return _stage6_final_attack(row,a)
+
+def ability(row,a):
+ n=int(_base_row(row)[0]);title=a[0]
+ if n==62 and title=='Selfish Lips':return passive(E('sm7Rule',rule='swsh12SelfishLips'))
+ if n==126 and title=='Justified Law':return passive(E('modifier',stat='attackDamageActiveOnly',amount=30,scope='team',duration='whileInPlay',filter={'stage':'Basic'},opponentFilter={'subtype':'Darkness'}))
+ return _stage6_final_ability(row,a)
+
+def energy(row):
+ if row[1]=='Regenerative Energy':return E('specialEnergy',provides={'Colorless':1})
+ return _stage6_energy(row)

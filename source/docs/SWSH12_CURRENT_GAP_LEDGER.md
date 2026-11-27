@@ -1,6 +1,6 @@
 # SWSH12 — whole-set gap ledger
 
-Canonical prints: **215** | Imported: **215** | Playable: **163** | Gated: **52** | Not imported: **0**
+Canonical prints: **215** | Imported: **215** | Playable: **176** | Gated: **39** | Not imported: **0**
 Printed attacks: **280** (231 distinct full signatures) | Abilities: **38** (29 distinct signatures)
 Trainer rule signatures: **19** | Special Energy rule signatures: **2**
 Canonical Git blob: `a57779d463a4f8ddf2bc21ad4ae66e9f4c3eaac2`
@@ -12,13 +12,11 @@ Gated is determined by the validated generator output; do not infer it from test
 - **12 prints** — Unimplemented Trainer effect — swsh12-154, swsh12-155, swsh12-156, swsh12-157, swsh12-160, swsh12-163, swsh12-166, swsh12-190, swsh12-194, swsh12-205, swsh12-208, swsh12-214
 - **3 prints** — Unimplemented attack: Pursuit Blast — swsh12-108, swsh12-180, swsh12-181
 - **3 prints** — Unimplemented attack: Shrieking Poison — swsh12-108, swsh12-180, swsh12-181
-- **3 prints** — Unimplemented attack: Victory Symbol — swsh12-65, swsh12-176, swsh12-177
 - **2 prints** — Unimplemented Ability: Irresistible Force — swsh12-90, swsh12-179
 - **2 prints** — Unimplemented Ability: Legacy Star — swsh12-136, swsh12-201
 - **2 prints** — Unimplemented Ability: Reviving Flame — swsh12-140, swsh12-187
 - **2 prints** — Unimplemented Ability: Star Rondo — swsh12-71, swsh12-200
 - **2 prints** — Unimplemented attack: Apex Dragon — swsh12-136, swsh12-201
-- **2 prints** — Unimplemented attack: Primal Guidance — swsh12-35, swsh12-174
 - **2 prints** — Unimplemented attack: Rainbow Burn — swsh12-140, swsh12-187
 - **2 prints** — Unimplemented attack: Rock Bullet — swsh12-90, swsh12-179
 - **2 prints** — Unimplemented attack: Star Cipher — swsh12-66, swsh12-199
@@ -26,15 +24,11 @@ Gated is determined by the validated generator output; do not infer it from test
 - **2 prints** — Unimplemented attack: Tri Power — swsh12-66, swsh12-199
 - **1 prints** — Unimplemented Ability: Bully of the Sands — swsh12-113
 - **1 prints** — Unimplemented Ability: Emergency Entry — swsh12-119
-- **1 prints** — Unimplemented Ability: Justified Law — swsh12-126
 - **1 prints** — Unimplemented Ability: Painful Spoons — swsh12-59
 - **1 prints** — Unimplemented Ability: Persistent Cells — swsh12-78
-- **1 prints** — Unimplemented Ability: Selfish Lips — swsh12-62
 - **1 prints** — Unimplemented Ability: Spiteful Magic — swsh12-64
 - **1 prints** — Unimplemented Ability: Star Alchemy — swsh12-156
 - **1 prints** — Unimplemented Ability: Surprise Spores — swsh12-12
-- **1 prints** — Unimplemented Special Energy rules — swsh12-168
-- **1 prints** — Unimplemented attack: Callous Wings — swsh12-107
 - **1 prints** — Unimplemented attack: Cell Fork — swsh12-78
 - **1 prints** — Unimplemented attack: Colorful Palette — swsh12-137
 - **1 prints** — Unimplemented attack: Critical Bite — swsh12-105
@@ -43,47 +37,33 @@ Gated is determined by the validated generator output; do not infer it from test
 - **1 prints** — Unimplemented attack: Dragon Launcher — swsh12-89
 - **1 prints** — Unimplemented attack: Dreaming Tone — swsh12-74
 - **1 prints** — Unimplemented attack: Eerie Voice — swsh12-64
-- **1 prints** — Unimplemented attack: Follow-Up — swsh12-126
-- **1 prints** — Unimplemented attack: Gritty Claws — swsh12-31
 - **1 prints** — Unimplemented attack: Meteor Mash — swsh12-119
 - **1 prints** — Unimplemented attack: Peko Blaster — swsh12-116
 - **1 prints** — Unimplemented attack: Pika Strike — swsh12-49
-- **1 prints** — Unimplemented attack: Secret Attack — swsh12-32
-- **1 prints** — Unimplemented attack: Smart Service — swsh12-86
 - **1 prints** — Unimplemented attack: Star Gravity — swsh12-154
 - **1 prints** — Unimplemented attack: Toge Dash — swsh12-127
 - **1 prints** — Unimplemented attack: Venomous Fang — swsh12-105
-- **1 prints** — Unimplemented attack: Warning — swsh12-75
 
 ## Every remaining gated print
 
 | Print | Card | Blocking reason(s) |
 |---|---|---|
 | `swsh12-12` | Amoonguss | Unimplemented Ability: Surprise Spores |
-| `swsh12-31` | Torracat | Unimplemented attack: Gritty Claws |
-| `swsh12-32` | Incineroar | Unimplemented attack: Secret Attack |
-| `swsh12-35` | Omastar V | Unimplemented attack: Primal Guidance |
 | `swsh12-49` | Pikachu | Unimplemented attack: Pika Strike |
 | `swsh12-59` | Radiant Alakazam | Unimplemented Ability: Painful Spoons |
-| `swsh12-62` | Jynx | Unimplemented Ability: Selfish Lips |
 | `swsh12-64` | Mismagius | Unimplemented attack: Eerie Voice; Unimplemented Ability: Spiteful Magic |
-| `swsh12-65` | Unown V | Unimplemented attack: Victory Symbol |
 | `swsh12-66` | Unown VSTAR | Unimplemented attack: Tri Power; Unimplemented attack: Star Cipher |
 | `swsh12-71` | Mawile VSTAR | Unimplemented attack: Sudden Eater; Unimplemented Ability: Star Rondo |
 | `swsh12-74` | Chimecho | Unimplemented attack: Dreaming Tone |
-| `swsh12-75` | Sigilyph | Unimplemented attack: Warning |
 | `swsh12-78` | Reuniclus | Unimplemented attack: Cell Fork; Unimplemented Ability: Persistent Cells |
 | `swsh12-85` | Dedenne | Unimplemented attack: Dede-Short |
-| `swsh12-86` | Indeedee | Unimplemented attack: Smart Service |
 | `swsh12-89` | Dragapult | Unimplemented attack: Dragon Launcher |
 | `swsh12-90` | Hisuian Arcanine V | Unimplemented attack: Rock Bullet; Unimplemented Ability: Irresistible Force |
 | `swsh12-105` | Crobat | Unimplemented attack: Venomous Fang; Unimplemented attack: Critical Bite |
-| `swsh12-107` | Honchkrow | Unimplemented attack: Callous Wings |
 | `swsh12-108` | Skuntank V | Unimplemented attack: Pursuit Blast; Unimplemented attack: Shrieking Poison |
 | `swsh12-113` | Krookodile | Unimplemented attack: Double-Edge; Unimplemented Ability: Bully of the Sands |
 | `swsh12-116` | Morpeko | Unimplemented attack: Peko Blaster |
 | `swsh12-119` | Metagross | Unimplemented attack: Meteor Mash; Unimplemented Ability: Emergency Entry |
-| `swsh12-126` | Cobalion | Unimplemented attack: Follow-Up; Unimplemented Ability: Justified Law |
 | `swsh12-127` | Togedemaru | Unimplemented attack: Toge Dash |
 | `swsh12-136` | Regidrago VSTAR | Unimplemented attack: Apex Dragon; Unimplemented Ability: Legacy Star |
 | `swsh12-137` | Smeargle | Unimplemented attack: Colorful Palette |
@@ -95,10 +75,6 @@ Gated is determined by the validated generator output; do not infer it from test
 | `swsh12-160` | Leafy Camo Poncho | Unimplemented Trainer effect |
 | `swsh12-163` | Quad Stone | Unimplemented Trainer effect |
 | `swsh12-166` | Wallace | Unimplemented Trainer effect |
-| `swsh12-168` | Regenerative Energy | Unimplemented Special Energy rules |
-| `swsh12-174` | Omastar V | Unimplemented attack: Primal Guidance |
-| `swsh12-176` | Unown V | Unimplemented attack: Victory Symbol |
-| `swsh12-177` | Unown V | Unimplemented attack: Victory Symbol |
 | `swsh12-179` | Hisuian Arcanine V | Unimplemented attack: Rock Bullet; Unimplemented Ability: Irresistible Force |
 | `swsh12-180` | Skuntank V | Unimplemented attack: Pursuit Blast; Unimplemented attack: Shrieking Poison |
 | `swsh12-181` | Skuntank V | Unimplemented attack: Pursuit Blast; Unimplemented attack: Shrieking Poison |
