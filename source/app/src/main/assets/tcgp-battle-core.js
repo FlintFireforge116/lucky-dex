@@ -836,6 +836,7 @@
           if(targets.length<2||!targets.some(p=>Number(p.damage||0)>=30))continue;
         }
         if(pl1PowerBlocked(state,side,source,ability)||abilityBlockedByStatus(ability,source)||ability.type!=='triggered'||(ability.event!==event&&!(ability.effect?.rule==='swsh12BullyOfTheSands'&&event==='knockedOutByAttack'))||ability.activeOnly&&ss.active!==source||ability.benchOnly&&ss.active===source)continue;if(event==='endTurn'){const ownersTurn=state.activeSide===side,turn=ability.turn||'owner';if(turn==='owner'&&!ownersTurn||turn==='opponent'&&ownersTurn)continue;}if(ability.opponentAttackOnly&&!(meta.source?.attack&&meta.source.side===(side==='player'?'opponent':'player')))continue;if(ability.energyType&&ability.energyType!==meta.energyType)continue;if(ability.fromHandOnly&&!meta.fromHand)continue;if(ability.firstTurnOnly&&ss.turnCount!==1)continue;
+        if(ability.effect?.rule==='sv3PreciousGift')continue;
         if(ability.effect?.rule==='swsh12BullyOfTheSands'&&!(event==='evolved'&&meta.fromHand||event==='knockedOutByAttack'&&source===ss.active&&meta.source?.attack&&meta.source.side!==side&&Number(meta.source.damage||0)>0&&meta.source.damageKo!==false&&meta.source.turn===state.turnNumber))continue;
         effects.applyEffect(ability.effect,{...effectContext(state,side,{},source),isAbility:true,eventData:meta});state.log.push({type:'ability',side,cardId:source.cardId,ability:ability.name,event});
         ex14DarkEyes(state,side,source,ability);
@@ -2617,6 +2618,11 @@
         state.pendingChoice.resume='dp7ContinueEndTurn';return;
       }}
     delete state.dp7HeatWaveEndDone;
+    if(state.format==='classic'){
+      const owner=state.activeSide,board=state.sides[owner];
+      const source=pokemonOn(board).find(p=>p.cardId==='sv3-85'&&p.sv3PreciousGiftTurn!==state.turnNumber&&!effects.abilitiesSuppressed(state,owner,p,data.cardById));
+      if(source&&board.lastAttackTurn===state.turnNumber&&board.hand.length<8&&board.deck.length){source.sv3PreciousGiftTurn=state.turnNumber;beginEffectChoice(state,owner,source,{kind:'option',side:'self',options:['Draw until 8 cards','Skip Precious Gift'],effect:{type:'sm7Rule',rule:'sv3PreciousGift'},resume:'dp7ContinueEndTurn'});return;}
+    }
     triggerAbilities(state,'endTurn','player');triggerAbilities(state,'endTurn','opponent');
     triggerPersistent(state,'endTurn','player');triggerPersistent(state,'endTurn','opponent');
     effects.resolveDelayedEffects?.(state,state.activeSide,data.cardById,(side,source)=>effectContext(state,side,{},source));
