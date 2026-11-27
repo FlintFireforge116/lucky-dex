@@ -255,7 +255,7 @@ Object.assign(ATTACK_RULES,{
  '7:0':{type:'heal',target:'selfBench',amount:60},
  '10:0':flip(sv('specialCondition')),
  '15:0':sv('trickCape'),
- '16:0':flip({type:'forceOpponentSwitch'}),
+ '16:0':flip({type:'forceOpponentSwitch',chooseBy:'attacker'}),
  '19:0':{type:'retreatCostDamage',amount:30},
  '21:0':{type:'heal',target:'selfPokemon',amount:30},
  '22:1':{type:'attackCoinGate',target:'opponentActive',duration:'opponentTurn'},
@@ -328,12 +328,12 @@ Object.assign(ATTACK_RULES,{
  '127:0':{type:'status',target:'opponentActive',status:'poison'},
  '128:0':{type:'status',target:'opponentActive',status:'poison'},
  '128:1':{type:'bonusDamage',amount:120,condition:{type:'opponentStatus',status:'poison'}},
- '129:0':{type:'forceOpponentSwitch'},
+ '129:0':{type:'forceOpponentSwitch',chooseBy:'attacker'},
  '129:1':sv('doomDecree'),
- '131:0':{type:'searchChosen',source:'deck',amount:2},
+ '131:0':{type:'searchChosen',source:'deck',amount:2,optional:true},
  '131:1':{type:'status',target:'opponentActive',status:'poison',amount:60},
  '137:0':{type:'selfDamage',amount:30},
- '138:0':{type:'searchChosen',source:'deck',amount:3,filter:{kind:'trainer',trainerType:'Tool'}},
+ '138:0':{type:'searchChosen',source:'deck',amount:3,optional:true,filter:{kind:'trainer',trainerType:'Tool'}},
  '138:1':{type:'lock',target:'opponentActive',action:'retreat',duration:'opponentTurn'},
  '139:0':{type:'coinDamage',coins:'untilTails',amount:50,mode:'replace'},
  '139:1':guarded(50),
@@ -367,8 +367,8 @@ const ABILITIES={
 
 // Full-print SV1 Abilities. The modern Tera rule is handled separately.
 Object.assign(ABILITIES,{
- 5:[{name:'Counterattack Quills',type:'triggered',event:'damagedByAttack',activeOnly:true,opponentAttackOnly:true,effect:{type:'damage',target:'opponentActive',amount:30}}],
- 6:[{name:'Counterattack Quills',type:'triggered',event:'damagedByAttack',activeOnly:true,opponentAttackOnly:true,effect:{type:'damage',target:'opponentActive',amount:30}}],
+ 5:[{name:'Counterattack Quills',type:'triggered',event:'damagedByAttack',activeOnly:true,opponentAttackOnly:true,effect:{type:'placeDamageCounters',target:'opponentActive',amount:30}}],
+ 6:[{name:'Counterattack Quills',type:'triggered',event:'damagedByAttack',activeOnly:true,opponentAttackOnly:true,effect:{type:'placeDamageCounters',target:'opponentActive',amount:30}}],
  8:[{name:'Adaptive Evolution',type:'passive',effect:{type:'evolutionTimingOverride',firstTurn:true,sameTurn:true}}],
  9:[{name:'Adaptive Evolution',type:'passive',effect:{type:'evolutionTimingOverride',firstTurn:true,sameTurn:true}}],
  19:[{name:'Trap Territory',type:'passive',effect:{type:'modifier',stat:'retreatCost',amount:1,scope:'opponentActive',duration:'whileInPlay'}}],
@@ -549,7 +549,7 @@ const TRAINERS={
   191:{type:'rareCandy'},
   181:{type:'benchFromDeck',amount:1,filter:{kind:'pokemon',stage:'Basic'}},
   168:coin({type:'discardEnergyCard',target:'opponentPokemon',amount:1}),
-  187:coin({type:'switch',side:'opponent'})
+  187:coin({type:'forceOpponentSwitch',chooseBy:'attacker'})
 };
 
 Object.assign(TRAINERS,{
@@ -561,7 +561,7 @@ Object.assign(TRAINERS,{
  172:sv('energySearch'),
  173:sv('energySwitch'),
  174:{type:'triggeredEffect',event:'teammateKnockedOut',effect:sv('expShare')},
- 175:{type:'searchChosen',source:'deck',amount:2,filter:{kind:'pokemon',evolved:true}},
+ 175:{type:'searchChosen',source:'deck',amount:2,optional:true,filter:{kind:'pokemon',evolved:true}},
  178:{type:'stadiumAction',effect:flip({type:'searchChosen',source:'deck',amount:1,filter:{kind:'pokemon'}})},
  179:sv('miriam'),
  182:sv('palPad'),
@@ -569,13 +569,29 @@ Object.assign(TRAINERS,{
  184:{type:'sequence',effects:[{type:'heal',target:'selfAll',amount:30},{type:'heal',target:'opponentAll',amount:30}]},
  186:sv('pokegear'),
  192:{type:'modifier',stat:'damageReduction',amount:30,duration:'whileInPlay',filter:{subtype:'Fighting'}},
- 193:{type:'triggeredEffect',event:'damagedByAttack',activeOnly:true,opponentAttackOnly:true,effect:{type:'damage',target:'opponentActive',amount:20}},
+ 193:{type:'triggeredEffect',event:'damagedByAttack',activeOnly:true,opponentAttackOnly:true,effect:{type:'placeDamageCounters',target:'opponentActive',amount:20}},
  195:sv('teamStarGrunt'),
  197:{type:'modifier',stat:'attackDamage',amount:10,duration:'whileInPlay'}
 });
 
 // Verified blank attack text in pinned source; explicit no-op only for these attacks.
 const PLAIN_ATTACKS=new Set('2:1 4:0 5:0 6:0 7:1 8:0 9:0 10:1 11:0 11:1 12:1 13:0 13:1 14:0 14:1 15:1 16:1 20:0 21:1 22:0 23:0 25:1 28:1 31:1 33:0 33:1 34:0 35:0 36:0 36:1 37:0 37:1 40:0 42:1 45:0 46:0 46:1 48:0 49:0 50:0 51:1 52:0 52:1 53:0 53:1 54:0 56:1 57:0 58:0 59:0 59:1 60:0 61:1 63:1 64:0 66:0 66:1 67:1 71:0 74:0 74:1 75:1 77:1 78:0 80:0 82:1 83:1 84:0 85:0 89:0 90:0 91:0 97:0 98:1 99:0 100:0 101:0 105:1 112:0 112:1 113:0 115:0 115:1 116:1 118:0 119:0 120:0 121:0 122:0 124:0 130:0 130:1 132:0 132:1 133:0 134:0 135:0 135:1 141:0 144:0 146:0 147:1 148:0 149:0 149:1 151:0 152:0 154:1 155:1 157:0 159:0 161:0 164:1 165:0'.split(' '));
+// Source-reviewed deck hints: typed attack requirements are not the Pokémon's type.
+// Optional payoffs are separate from mandatory Energy requirements.
+const META_GROUPS={
+ healing:[3,7,21,23,42,43,92],search:[28,31,51,62,70,76,81,131,138,153,162],
+ energy:[28,31,38,41,51,54,62,76,86,125,145],draw:[77,142,151,155,164],
+ retreat:[63,102,143],disruption:[15,16,22,26,56,57,72,82,87,88,94,96,103,105,111,117,120,123,129,136,137,147,154],
+ stall:[1,55,93,98,99,121,139,150,162]};
+const STATUS_GROUPS={poison:[126,127,128,131],burn:[27,29,41],sleep:[25,82,153],paralysis:[17,67,70,73,75],confusion:[]};
+function deckMetadata(n,moves,evolvesFrom){
+ const roles=Object.keys(META_GROUPS).filter(k=>META_GROUPS[k].includes(n));
+ const energyTypes=[...new Set(moves.flatMap(a=>[...a.cost].filter(c=>c!=='C').map(c=>T[c]).filter(Boolean)))];
+ const partners=[...(evolvesFrom?[evolvesFrom]:[]),...(n===61?['Tatsugiri']:n===161?['Maushold']:[])];
+ return {roles,synergy:roles,energyTypes,preferredEnergyTypes:[...energyTypes],
+  conditionalAttackEnergyTypes:n===29?['Fire']:[],preferredPartners:partners,
+  inflicts:n===10?Object.keys(STATUS_GROUPS):Object.keys(STATUS_GROUPS).filter(k=>STATUS_GROUPS[k].includes(n)),payoffs:n===128?['poison']:[],requiresTools:n===152?['pokemonTool']:[]};
+}
 const cardRows=[];const sourceByNumber=new Map();
 for(const line of RAW){
  const [rawNum,name,letter,type,stage,hp,retreat,weak,resistance,evolvesFrom,rarity,attacks,hasAbility]=line.split('|');
@@ -604,7 +620,7 @@ for(const line of RAW){
      hp:Number(hp),retreat:Number(retreat),weakness:T[weak]||null,weaknessValue:weak?'×2':null,
      resistance:T[resistance]||null,resistanceValue:resistance?'-30':null,
      evolvesFrom:evolvesFrom||null,attacks:moves,abilities:[...abilities],
-     points:isEx?2:1,prizeCards:isEx?2:1,isEx,imageLarge:`https://images.pokemontcg.io/sv1/${n}_hires.png`});
+     points:isEx?2:1,prizeCards:isEx?2:1,isEx,deckMeta:deckMetadata(n,moves,evolvesFrom),imageLarge:`https://images.pokemontcg.io/sv1/${n}_hires.png`});
    if(TERA.has(n))s.tera=true; // Printed rule, not an Ability.
  }else if(letter==='T')Object.assign(s,{trainerType:TRAINER_TYPES[n]||'Item',...(TRAINERS[n]?{effect:TRAINERS[n]}:{}),imageLarge:`https://images.pokemontcg.io/sv1/${n}_hires.png`});
  sourceByNumber.set(n,Object.freeze(s));cardRows.push(sourceByNumber.get(n));

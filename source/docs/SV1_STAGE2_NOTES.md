@@ -1,0 +1,7 @@
+# Scarlet & Violet — stage 2, v0.69.606
+
+Rechecked the pinned SV1 source (blob 9ec168ce0ea7bf03fe9f22dd7e447d1eb35c8678) for printed switch ownership, damage counter retaliation, optional searches and deck hints. All 209 Pokémon prints now have deck metadata derived from typed costs, evolution lines and reviewed synergy cues; alternate prints inherit the same descriptors. Optional Fire payoff for Scovillain, poison payoff for Venoshock, Tool payoff for Enhanced Fang, and Tatsugiri/Maushold partner hints are separate from required typed costs.
+
+String Haul, Taunt and Pokémon Catcher now let the attacker/Trainer player choose the opposing Bench; Repelling Odor and Intimidating Howl still leave the choice to the defender. Counterattack Quills (both species) and Rocky Helmet place damage counters rather than ordinary damage, including after an attack KO. Nasty Plot, Knickknack Carrying and Jacq allow stopping before their maximum search count. Bilateral tests cover actual outcome, chooser, coin branches, and stopping. No shared engine changes in this stage.
+
+258/258 enabled; zero errors/warnings; 29 custom/continuous rule review flags still remain. 742/742 strict smoke, 16/16 CPU decks, 67 SV1 tests and 12 cross-era deck-quality tests, 194 Crown Zenith/Gallery regression tests. The old hybrid Energy-source adaptations and remaining complex effects are not certified by this audit. Full historical preparation chain and Android compilation not run locally; keep CI checks active.
