@@ -19,4 +19,9 @@ def main():
     # preflight is green. Run them on every Termux prepare before committing.
     subprocess.run(['node','--test','tests/v07401b-sm1-deck-picker-availability.test.cjs','tests/v07407-guardians-rising-integration.test.cjs','tests/v07452-dragon-majesty-integration.test.cjs','tests/v07468-classic-deck-performance.test.cjs'],cwd=ROOT,check=True)
     print('Shared set-picker, narrow-pool deck and performance gates PASS',flush=True)
+    # XY3's shared HP and energy hooks are live across all expansions. The
+    # outcome tests must also run in source-only preparation, even when the
+    # older canonical print source is only materialised by APK Gradle.
+    subprocess.run(['node','--test','tests/v07334-furious-fists-stage1.test.cjs','tests/v07335-furious-fists-completion.test.cjs','tests/v07336-furious-fists-independent-audit.test.cjs'],cwd=ROOT,check=True)
+    print('Historical XY3 shared-engine outcomes PASS (generated catalogue checks require CI source)',flush=True)
 if __name__=='__main__':main()

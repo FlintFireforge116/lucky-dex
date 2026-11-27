@@ -85,9 +85,34 @@ test('Rainbow Shower attaches actual chosen physical Basic Energy from hand',()=
  q=choose(s,q,0);assert.equal(q.options.length,2);q=choose(s,q,1);assert.equal(p.bench[0].energy.Grass,1);
  q=choose(s,q,0);choose(s,q,0);assert.equal(p.active.energy.Water,1);assert.equal(p.hand.length,0);
 });
-test('Training Center and Politoed cost hooks are installed in core',()=>{
+test('Training Center adds 30 maximum HP to Stage 1 and Stage 2 on both boards, not Basics, and reverts when removed',()=>{
+ const old=data.cardById;data.cardById=id=>C[id]||old(id);
+ try{
+  const s=scene();
+  for(const side of ['player','opponent']){
+   const b=s.sides[side];b.active=mon('xy3-52',side+'-stage1');
+   b.bench=[mon('xy3-18',side+'-stage2',0),mon('xy3-63',side+'-basic',1)];
+  }
+  for(const ownerSide of ['player','opponent']){
+   s.stadium={...ref('xy3-102','training-center'),ownerSide};
+   for(const side of ['player','opponent']){
+    const b=s.sides[side];
+    for(const [slot,expected] of [[b.active,150],[b.bench[0],160],[b.bench[1],70]]){
+     assert.equal(core.maxHp(s,side,slot),expected,side+' '+slot.cardId);
+     assert.equal(effects.maxHp(s,side,slot,data.cardById),expected,'shared HP calculation agrees');
+    }
+   }
+  }
+  s.stadium=null;
+  for(const side of ['player','opponent']){
+   const b=s.sides[side];assert.equal(core.maxHp(s,side,b.active),120);
+   assert.equal(core.maxHp(s,side,b.bench[0]),130);assert.equal(core.maxHp(s,side,b.bench[1]),70);
+  }
+ }finally{data.cardById=old;}
+});
+test('Politoed cost and Herbal Energy hooks remain installed in core',()=>{
  const source=fs.readFileSync(path.join(assets,'tcgp-battle-core.js'),'utf8');
- assert.match(source,/xy3TrainingCenter/);assert.match(source,/xy3-18/);assert.match(source,/xy3-103/);
+ assert.match(source,/xy3-18/);assert.match(source,/xy3-103/);
 });
 
 test('Echolocation prevents damage on heads and logs the visible heads/tails result',()=>{

@@ -1,0 +1,3 @@
+# v0.69.576 – Furious Fists shared HP regression repair
+
+GitHub Actions #887 and #888 failed at :app:auditXY3ForApk, test Training Center and Politoed cost hooks are installed in core. v574 moved xy3TrainingCenter into effects.maxHp; the old assertion demanded the identifier in core. Replaced it with real bilateral Training Center HP tests, including Basic exclusion, either Stadium owner, removal, and shared/core parity. Retained Politoed and Herbal Energy source checks. Added exact XY3 group to historical preparation. No battle engine or Lost Origin definitions changed relative to v575: 215/217 playable, Enamorus V remains gated. CI/Android build not yet verified.
