@@ -1,0 +1,8 @@
+{
+  "set": "swshp",
+  "upstreamCommit": "90f27d0e14cefe48ccb2b8922a7a356b2fcf0072",
+  "sourceGitBlob": "96d70b133737c11cdab856bfcb4839ed8b3e6ad6",
+  "printedTotal": 304,
+  "implementedPrerequisitePrints": ["SWSH223", "SWSH229", "SWSH266"],
+  "scope": "Only evolution prerequisites for Galarian Gallery; remaining promo inventory not yet integrated."
+}
