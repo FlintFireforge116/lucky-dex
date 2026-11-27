@@ -229,3 +229,25 @@ def ability(row,a):
 def energy(row):
  if row[1]=='Regenerative Energy':return E('specialEnergy',provides={'Colorless':1})
  return _stage6_energy(row)
+
+# Stage 8: connected attack sequence, exact Energy movement, and selected effects.
+_stage7_attack,_stage7_ability,_stage7_trainer=attack,ability,trainer
+
+def attack(row,a):
+ n=int(_base_row(row)[0]);title=a[0]
+ if n==49 and title=='Pika Strike':return bonus(180,cond('swsh12LastAttack',name='Dedenne',attack='Dede-Short'))
+ if n==85 and title=='Dede-Short':return seq(E('attackRequirement',condition=cond('swsh12LastAttack',name='Togedemaru',attack='Toge Dash')),status('paralysis'))
+ if n==116 and title=='Peko Blaster':return seq(E('attackRequirement',condition=cond('swsh12LastAttack',name='Dedenne',attack='Dede-Short')),E('bonusDamage',amount=60),E('benchDamage',side='opponent',all=True,amount=60))
+ if n==127 and title=='Toge Dash':return coin(E('sm6Rule',rule='knockoutReviver'))
+ if n==90 and title=='Rock Bullet':return E('energyDamage',source='self',energyType='Fighting',countProvidedType=True,amount=30,mode='add')
+ return _stage7_attack(row,a)
+
+def ability(row,a):
+ n=int(_base_row(row)[0]);title=a[0]
+ if n==59 and title=='Painful Spoons':return activated(E('sm7Rule',rule='swsh12PainfulSpoons'))
+ if n==90 and title=='Irresistible Force':return dict(type='activated',oncePerTurn=False,effect=E('sm7Rule',rule='swsh12IrresistibleForce'))
+ return _stage7_ability(row,a)
+
+def trainer(row):
+ if row[1]=='Furisode Girl':return 'Supporter',E('sm7Rule',rule='swsh12FurisodeGirl')
+ return _stage7_trainer(row)
