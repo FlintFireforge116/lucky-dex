@@ -8,8 +8,8 @@ android {
         applicationId 'com.example.luckydex'
         minSdk 26
         targetSdk 35
-        versionCode 7593
-        versionName '0.69.593'
+        versionCode 7594
+        versionName '0.69.594'
     }
 
     signingConfigs {
@@ -1612,4 +1612,23 @@ tasks.register('auditSWSH12ForApk', Exec) {
 }
 tasks.matching { it.name == 'preBuild' || (it.name.startsWith('merge') && it.name.endsWith('Assets')) }.configureEach {
     dependsOn tasks.named('auditSWSH12ForApk')
+}
+
+tasks.register('preflightSWSH12PT5ContractForApk', Exec) {
+    dependsOn tasks.named('auditSWSH12ForApk')
+    workingDir rootProject.projectDir
+    commandLine (System.getenv('LUCKYDEX_PYTHON') ?: 'python3'), 'scripts/preflight-swsh12pt5-release.py'
+}
+tasks.register('generateSWSH12PT5ForApk', Exec) {
+    dependsOn tasks.named('preflightSWSH12PT5ContractForApk')
+    workingDir rootProject.projectDir
+    commandLine (System.getenv('LUCKYDEX_PYTHON') ?: 'python3'), 'scripts/build-swsh12pt5.py'
+}
+tasks.register('auditSWSH12PT5ForApk', Exec) {
+    dependsOn tasks.named('generateSWSH12PT5ForApk')
+    workingDir rootProject.projectDir
+    commandLine 'node', '--test', 'tests/v07594-crown-zenith.test.cjs'
+}
+tasks.matching { it.name == 'preBuild' || (it.name.startsWith('merge') && it.name.endsWith('Assets')) }.configureEach {
+    dependsOn tasks.named('auditSWSH12PT5ForApk')
 }

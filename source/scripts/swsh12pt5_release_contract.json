@@ -1,0 +1,14 @@
+{
+  "set": "swsh12pt5",
+  "name": "Crown Zenith",
+  "stage": "stage1",
+  "release": "0.69.594",
+  "printedTotal": 160,
+  "importedTotal": 57,
+  "attackPrints": 31,
+  "abilities": 3,
+  "trainerPrints": 29,
+  "energyPrints": 8,
+  "pin": "6d0748e2be253b335093187554e6a947a66c3089",
+  "variants": []
+}
