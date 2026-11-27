@@ -726,6 +726,12 @@ function buildDeck(rows,options={}){
  function adaptiveScore(card){refreshDraftCache();if(adaptiveScores.has(card))return adaptiveScores.get(card);
    const original=cachedTrainerScore(card);if(!Number.isFinite(original))return original;
    const profile=supportProfile(card),roles=profile.roles,text=profile.text,mons=selectedPokemon(),meta=synergy.metadata(card);
+   // The requested type is the primary strategy, not simply any type present
+   // in a mixed evolution line. Reward useful primary-specific support ahead
+   // of secondary-type support in wide competitive automatic decks.
+   const primaryType=requestedEnergy.length===1?requestedEnergy[0]:null;
+   const primarySpecific=primaryType&&meta.energyTypes?.length===1&&meta.energyTypes[0]===primaryType;
+
    const oldWeights={draw:37,search:35,healing:20,energy:25,retreat:16,disruption:15,stall:18};
    const weights={draw:46,search:44,healing:22,energy:35,retreat:30,disruption:28,stall:20,damage:29,recovery:12};
    const ranked=[...roles].map(r=>weights[r]||0).sort((a,b)=>b-a);
@@ -741,6 +747,8 @@ function buildDeck(rows,options={}){
    if(/only if|only when|last card in your hand/i.test(text))score-=20;
    if(/flip (?:a|one) coin/i.test(text)&&!roles.has('search'))score-=9;
    if(meta.energyTypes?.length&&meta.energyTypes.some(t=>selectedTypes.includes(t)))score+=22;
+   if(primarySpecific&&style==='competitive'&&!focus&&selectedTypes.includes(primaryType))score+=32;
+
    if(mons.some(p=>p.setId===card.setId))score+=10;
    if(roles.has('healing')&&mons.some(p=>Number(p.hp)>=150))score+=8;
    if(roles.has('retreat')&&mons.some(p=>Number(p.retreat)>=2))score+=8;
@@ -819,6 +827,12 @@ function buildDeck(rows,options={}){
        if(card.name==='Team Plasma Ball'&&!pokemon.some(p=>p.teamPlasma))return false;
        if(card.name==='Power Tablet'&&!pokemon.some(p=>p.fusionStrike))return false;
        if(card.name==='Electric Generator'&&!pokemon.some(p=>p.stage==='Basic'&&p.types?.includes('Lightning')))return false;
+       // Primary-type weighting must never promote targetless specialised cards.
+       if(card.name==='Electromagnetic Radar'&&!pokemon.some(p=>effectiveTypes(p).includes('Lightning')&&(p.pokemonGX||p.isPokemonGX||/-EX$|-GX$/.test(p.name||''))))return false;
+       if(card.name==='Switch Raft'&&!pokemon.some(p=>effectiveTypes(p).includes('Water')))return false;
+       if(card.name==='Aether Paradise Conservation Area'&&!pokemon.some(p=>p.stage==='Basic'&&effectiveTypes(p).some(t=>t==='Grass'||t==='Lightning')))return false;
+       if(card.name==='Miracle Sphere γ'&&!pokemon.some(p=>['Stage 1','Stage 2'].includes(p.stage)&&effectiveTypes(p).some(t=>['Grass','Water','Lightning'].includes(t))))return false;
+
        if(card.name==='Dusk Stone'&&!pokemon.some(p=>/^(Mismagius|Honchkrow|Chandelure|Aegislash)(?:[- ]|$)/i.test(p.name)&&pokemon.some(b=>b.name===p.evolvesFrom)))return false;
        if(card.name==='Cherish Ball'&&!pokemon.some(p=>p.pokemonGX||p.isPokemonGX))return false;
        if(card.name==='Adventure Bag'&&cards.filter(id=>['Tool','Pokémon Tool'].includes(classic.cardById(id)?.trainerType)).length<2)return false;

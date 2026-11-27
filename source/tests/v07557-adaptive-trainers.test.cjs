@@ -72,3 +72,24 @@ test('CPU and optimiser share the hard named-recipient guard',async()=>{
  check(cpu.generate({sets:cpu.SETS,type:'Water',seed:1234}));
  check(await optimizer.optimise({build:builder.buildDeck,rows:owned,options:{style:'competitive',types:['Water'],focusCardId:'sm9-160',optimiserBudgetMs:30000},maxCandidates:4,simulate:false,seed:13}));
 });
+
+test('Mixed Fire/Lightning core prioritises the selected Lightning strategy without losing secondary Energy support',()=>{
+ // Stable Pokémon inventory, intentionally broad Trainer catalogue. The old
+ // adaptive ranking gave Fire and Lightning specialists equal priority and
+ // could fill almost all specialised slots with secondary Fire support.
+ const ids=new Set(['pl2-RT3','sv3-70','sv3-79','sm9-52','sv3-33','sv3-26','hgss2-90','hgss2-91']);
+ const rows=owned.filter(r=>data.cardById(r.gameplayId).kind!=='pokemon'||ids.has(r.gameplayId));
+ const opts={style:'competitive',types:['Lightning'],randomSeed:3};
+ const r=builder.buildDeck(rows,opts);legal(r,rows);
+ assert.ok(['hgss2-90','hgss2-91'].includes(r.focusCardId),r.focusCardId);
+ assert.deepEqual(r.energyTypes,['Lightning','Fire']);
+ const ctx=synergy.context(r.cards.map(data.cardById),r.energyTypes);
+ const specific=type=>new Set(trainers(r).filter(c=>Number.isFinite(synergy.trainerScore(c,ctx))&&synergy.metadata(c).energyTypes.length===1&&synergy.metadata(c).energyTypes[0]===type).map(c=>c.name));
+ assert.ok(specific('Lightning').size>=3,`primary support: ${[...specific('Lightning')]}`);
+ assert.ok(specific('Fire').size>=1,'keep relevant secondary support');
+ assert.ok(!names(r).has('Electromagnetic Radar'),'no legacy Lightning EX/GX target');
+ assert.ok(!names(r).has('Switch Raft'),'no Water recipient');
+ assert.ok(!names(r).has('Miracle Sphere γ'),'no eligible evolved recipient');
+ assert.ok(trainers(r).some(c=>synergy.metadata(c).roles.some(role=>role==='search'||role==='draw')),'consistency support');
+ assert.deepEqual(builder.buildDeck(rows,opts),r,'same seed remains reproducible');
+});
