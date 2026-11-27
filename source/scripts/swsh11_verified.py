@@ -276,3 +276,13 @@ def ability(row,a):
 def trainer(row):
  if row[0] in ['154','214'] and row[1]=='Box of Disaster':return 'Tool',E('noop') # full-HP opposing attack-damage KO hook
  return _stage11_trainer(row)
+
+# Stage 13: physical deck sacrifice and remaining-HP damage protection.
+_stage12_attack=attack
+_stage12_trainer=trainer
+def attack(row,a):
+ if row[0]=='124' and a[0]=='Destructive Finish':return E('sm7Rule',rule='swsh11DestructiveFinish')
+ return _stage12_attack(row,a)
+def trainer(row):
+ if row[0]=='165' and row[1]=='Panic Mask':return 'Tool',E('noop') # damage-only protection in shared attack guard
+ return _stage12_trainer(row)

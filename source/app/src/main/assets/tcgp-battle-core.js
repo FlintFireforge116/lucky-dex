@@ -630,44 +630,7 @@
     const c=data.cardById(slot?.cardId);
     return c?.evolvesFrom==='Eevee'||!!(c?.isLevelX&&(slot?.stack||[]).some(id=>data.cardById(id)?.evolvesFrom==='Eevee'));
   }
-  function maxHp(state,side,slot){const eeveeStage=majesticEeveeEvolution(slot);
-    const majesticVeil=state.format==='classic'&&eeveeStage&&pokemonOn(state.sides[side]).some(p=>p.cardId==='dp5-18'&&!effects.abilitiesSuppressed(state,side,p,data.cardById))?20:0;
-    const ex3LowPressure=state.format==='classic'&&activeStadium(state)?.cardId==='ex3-86'&&data.cardById(slot?.cardId)?.types?.some(t=>['Grass','Lightning'].includes(t))?10:0;const rocketHideout=state.format==='classic'&&activeStadium(state)?.cardId==='ex7-87'&&/^(Dark |Rocket's )/.test(data.cardById(slot?.cardId)?.name||'')?20:0;const dp2Equip=activeToolsOf(state,slot).some(r=>r.cardId==='dp2-65')?10:0;// LV.X is a *level-up*, not an Evolution card: Azelf/Mewtwo/Uxie
-    // LV.X over a Basic receive Snowpoint Temple's +20 HP. A Stage 1/2
-    // underneath an LV.X is still Evolved and must NOT receive that bonus.
-    const currentStage=data.cardById(slot.cardId)?.stage;
-    const priorLevel=currentStage==='Level-Up'?(slot.stack||[]).slice(0,-1).at(-1):null;
-    const underlyingStage=priorLevel?data.cardById(priorLevel)?.stage:null;
-    const snowpointEligible=['Basic','Baby'].includes(currentStage)||
-      currentStage==='Level-Up'&&['Basic','Baby'].includes(underlyingStage)||
-      ['dp6-138','dp6-139','pl4-89','pl4-92','pl4-93'].includes(slot.cardId);
-    const dp6Temple=state.format==='classic'&&activeStadium(state)?.cardId==='dp6-134'&&snowpointEligible?20:0;
-    const copyHp=state.format==='classic'&&slot.cardId==='dp6-27'&&state.sides[side].active===slot&&!effects.abilitiesSuppressed(state,side,slot,data.cardById)?Number(data.cardById(state.sides[side==='player'?'opponent':'player'].active?.cardId)?.hp||60):Number(data.cardById(slot.cardId)?.hp||data.cardById(slot.cardId)?.effect?.hp||0);
-    const pl1Thankfulness=state.format==='classic'&&data.cardById(slot?.cardId)?.types?.includes('Grass')&&
-      !/^Shaymin(?: LV\.X)?$/.test(data.cardById(slot?.cardId)?.name||'')&&
-      pokemonOn(state.sides[side]).some(p=>p.cardId==='pl1-126'&&!effects.abilitiesSuppressed(state,side,p,data.cardById))?40:0;
-    const gravitation=state.format==='classic'&&['player','opponent'].some(w=>pokemonOn(state.sides[w]).some(p=>p.cardId==='pl3-7'&&!effects.abilitiesSuppressed(state,w,p,data.cardById)))?20:0;
-    const hgss4Nidoking=state.format==='classic'&&slot?.cardId==='hgss4-6'&&!effects.abilitiesSuppressed(state,side,slot,data.cardById)
-      ?20*pokemonOn(state.sides[side]).filter(p=>data.cardById(p.cardId)?.name==='Nidoqueen').length:0;
-    const hgss4Indigo=state.format==='classic'&&activeStadium(state)?.cardId==='hgss4-86'&&data.cardById(slot?.cardId)?.stage==='LEGEND'?30:0;
-    const bw6Cape=activeToolsOf(state,slot).some(ref=>ref.cardId==='bw6-114')?20:0;
-    const bw7Gym=state.format==='classic'&&activeStadium(state)?.cardId==='bw7-127'&&data.cardById(slot.cardId)?.types?.includes('Colorless')?20:0;
-    const bw7Wall=state.format==='classic'&&['bw7-101','bw7-145'].includes(slot.cardId)&&activeToolsOf(state,slot).some(ref=>ref.cardId==='bw7-139')?120:0;
-    const bw9Plasma=state.format==='classic'&&slot&&(data.cardById(slot.cardId)?.teamPlasma||activeToolsOf(state,slot).some(r=>r.cardId==='bw9-104'));
-    const bw9Shade=bw9Plasma?20*pokemonOn(state.sides[side]).filter(p=>p.cardId==='bw9-64'&&!effects.abilitiesSuppressed(state,side,p,data.cardById)).length:0;
-    // Each unsuppressed Floette (XY Flashfire #64) gives all allied Grass
-    // Pokemon 20 additional maximum HP, including itself if it changes type.
-    const xy2FlowerVeil=state.format==='classic'&&data.cardById(slot?.cardId)?.types?.includes('Grass')?
-      20*pokemonOn(state.sides[side]).filter(p=>p.cardId==='xy2-64'&&
-        !effects.abilitiesSuppressed(state,side,p,data.cardById)).length:0;
-    const xy4Gourgantic=state.format==='classic'&&slot.cardId==='xy4-45'&&
-      !effects.abilitiesSuppressed(state,side,slot,data.cardById)&&
-      (Number(slot.energy?.Grass||0)>0||(slot.specialEnergy||[]).some(ref=>
-        Number((effects.attachedSpecialProvider(state,ref,data.cardById)).Grass||0)>0));
-    const xy3TrainingCenter=state.format==='classic'&&activeStadium(state)?.cardId==='xy3-102'&&['Stage 1','Stage 2'].includes(currentStage)?30:0;
-    const sm7Sunbeam=state.format==='classic'&&data.cardById(slot.cardId)?.name==='Lunatone'&&pokemonOn(state.sides[side]).some(p=>p.cardId==='sm7-62'&&!effects.abilitiesSuppressed(state,side,p,data.cardById));
-    const swsh8Foe=side==='player'?'opponent':'player',swsh8Board=pokemonOn(state.sides[swsh8Foe]),swsh8Downer=state.format==='classic'&&data.cardById(slot.cardId)?.pokemonVMAX&&swsh8Board.every(p=>data.cardById(p.cardId)?.fusionStrike)?30*swsh8Board.filter(p=>p.cardId==='swsh8-108'&&!effects.abilitiesSuppressed(state,swsh8Foe,p,data.cardById)).length:0;
-    const extra=-swsh8Downer+xy3TrainingCenter+xy2FlowerVeil+bw9Shade+bw7Gym+bw7Wall+bw6Cape+hgss4Nidoking+hgss4Indigo+pl1Thankfulness+dp6Temple+majesticVeil+ex3LowPressure+rocketHideout+dp2Equip+(slot.cardId==='gym2-97'?10*Number(slot.energy?.Psychic||0):slot.cardId==='gym2-10'&&slot.gym2GiantGrowth&&state.sides[side].active===slot?40:0);return Math.max(1,(sm7Sunbeam?130:xy4Gourgantic?200:copyHp)+extra-gravitation+effects.modifierAmount(state,side,slot,'maxHp',data.cardById));}
+  function maxHp(state,side,slot){return effects.maxHp(state,side,slot,data.cardById);}
   function ex14DarkEyes(state,usedBy,source,ability){
     if(state.format!=='classic'||!source||ability?.printedPowerType!=='power')return;
     const reacting=usedBy==='player'?'opponent':'player';
@@ -1431,6 +1394,11 @@
   function attackDamagePreview(state,side,attackIndex,attackCardId,includeAlteredCreation=true){
     const source=state?.sides?.[side]?.active,attack=data.cardById(attackCardId||source?.cardId)?.attacks?.[attackIndex];
     if(!source||!attack)return {damage:0,text:'0',variable:false};
+    if(attack.effect?.rule==='swsh11DestructiveFinish'){
+      const board=state.sides[side],foe=side==='player'?'opponent':'player',count=board.deck.filter(r=>data.cardById(r.cardId)?.kind==='energy').length;
+      const low=Math.max(0,count-1),high=Math.min(count,Math.max(0,board.deck.length-1)),min=effects.outgoingAttackDamage(state,side,source,foe,60+30*low,data.cardById),max=effects.outgoingAttackDamage(state,side,source,foe,60+30*high,data.cardById);
+      return {damage:min,text:max>min?`${min}–${max}`:String(min),variable:max>min};
+    }
     if(['swsh11Lariat','swsh11GeoCannon'].includes(attack.effect?.rule)){
       const board=state.sides[side],foe=side==='player'?'opponent':'player',base=Number(attack.damage||0),potential=attack.effect.rule==='swsh11Lariat'||board.energySupply?.length||board.deck.some(r=>data.cardById(r.cardId)?.kind==='energy'),min=effects.outgoingAttackDamage(state,side,source,foe,base,data.cardById),max=effects.outgoingAttackDamage(state,side,source,foe,base+(potential?100:0),data.cardById);
       return {damage:min,text:max>min?`${min}–${max}`:String(min),variable:max>min};

@@ -291,6 +291,12 @@
         const hit=target?effects.attackDamageWithState(state,side,state.sides[side].active,foeOf(side),target,10+40*n,data.cardById):0;
         return 200+Math.min(hit,remaining)-n*2+(hit>=remaining?100:0);
       }
+      if(attack?.effect?.rule==='swsh11DestructiveFinish'){
+        const board=state.sides[side],foe=foeOf(side),target=state.sides[foe].active,deck=board.deck,n=deck.filter(r=>data.cardById(r.cardId)?.kind==='energy').length;
+        const base=60+30*Math.max(0,n-(deck.length?n/deck.length:0)),hit=target&&!effects.attackIsPrevented(state,foe,target,board.active,data.cardById)?Math.max(0,effects.attackDamageWithState(state,side,board.active,foe,target,base,data.cardById)-effects.modifierAmount(state,foe,target,'damageReduction',data.cardById)):0;
+        const remaining=target?core.maxHp(state,foe,target)-Number(target.damage||0):Infinity,prizes=Number(data.cardById(target?.cardId)?.prizeCards||1),winning=hit>=remaining&&board.prizes.length<=prizes;
+        return 200+Math.min(remaining,hit)+(winning?350:hit>=remaining?70:0)-(winning?0:Math.min(160,Math.max(0,deck.length-1)*12));
+      }
       if(attack?.effect?.rule==='swsh11Lariat'){
         const target=state.sides[foeOf(side)].active,me=state.sides[side].active,remaining=target?core.maxHp(state,foeOf(side),target)-Number(target.damage||0):Infinity,boost=action.effectSelection==='boost',hit=target?effects.attackDamageWithState(state,side,me,foeOf(side),target,boost?200:100,data.cardById):0;
         return 200+Math.min(remaining,hit)+(hit>=remaining?100:0)-(boost?50:0);
