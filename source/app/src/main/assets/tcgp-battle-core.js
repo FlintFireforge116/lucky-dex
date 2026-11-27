@@ -2875,6 +2875,22 @@
         const eventSource=slot.dp2ForcedDiscard?null:cause==='attack'?source:null;
         // Fusion Strike: only a fresh opposing attack-damage KO triggers these cards.
         if(state.format==='classic'&&eventSource?.attack&&eventSource.side===foeSide&&Number(eventSource.turn)===Number(state.turnNumber)&&Number(eventSource.damage)>0&&eventSource.damageKo!==false){
+          // A physical deck search must resolve before this Spiritomb is removed.
+          if(slot.cardId==='swsh11-117'&&!slot.swsh11CursedMessageResolved&&!effects.abilitiesSuppressed(state,side,slot,data.cardById)){
+            slot.swsh11CursedMessageResolved=true;
+            if(s.deck.length&&s.hand.length<Number(s.handLimit??10)){
+              effects.applyEffect({type:'searchChosen',source:'deck',amount:1,forcePhysical:true},{...effectContext(state,side,{},slot),isAbility:true});
+              if(state.phase==='effectChoice'){state.pendingChoice.resume='knockout';state.pendingChoice.koResume=resume||null;state.pendingChoice.koCause=cause||null;return true;}
+            }
+          }
+          if(card?.pokemonV&&Number(slot.damage||0)-Number(eventSource.damage||0)<=0&&!slot.swsh11BoxResolved){
+            slot.swsh11BoxResolved=true;
+            const target=pokemonOn(foe).find(p=>p.uid===eventSource.uid);
+            const boxes=activeToolsOf(state,slot).filter(r=>['swsh11-154','swsh11-214'].includes(r.cardId));
+            if(target&&boxes.length){const amount=80*boxes.length;target.damage=Number(target.damage||0)+amount;
+              target.lastDamageSource={side,uid:slot.uid,cardId:slot.cardId,attack:false,turn:state.turnNumber,damage:amount};
+              state.log.push({type:'damageCounters',side,sourceCardId:boxes[0].cardId,targetCardId:target.cardId,amount});}
+          }
           if(card?.pokemonV&&card.stage==='Basic'&&!card.pokemonVMAX&&!card.pokemonVSTAR){
             const seen=slot.swsh10WishSeen||(slot.swsh10WishSeen=[]),types=Object.keys(slot.energy||{}).filter(t=>Number(slot.energy[t])>0),targets=pokemonOn(s).filter(p=>p!==slot&&p.damage<maxHp(state,side,p)&&!p.gymEnergyLock&&Number(p.swsh7PrimevalUntil||0)!==state.turnNumber),source=pokemonOn(s).find(p=>p.cardId==='swsh10-170'&&!seen.includes(p.uid)&&!effects.abilitiesSuppressed(state,side,p,data.cardById));
             if(source&&types.length&&targets.length){

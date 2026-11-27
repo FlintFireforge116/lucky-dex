@@ -261,3 +261,18 @@ def ability(row,a):
 def trainer(row):
  if row[0]=='166' and row[1]=='Riley':return 'Supporter',E('sm7Rule',rule='swsh11Riley')
  return _stage10_trainer(row)
+
+# Stage 12: reactive knockout effects and rock-paper-scissors.
+_stage11_attack=attack
+_stage11_ability=ability
+_stage11_trainer=trainer
+def attack(row,a):
+ if row[0]=='67' and a[0]=='Tricky Slap':return E('sm7Rule',rule='swsh11TrickySlap')
+ if row[0]=='117' and a[0]=='Chain of Spirits':return E('discardCountDamage',side='self',filter={'kind':'pokemon','name':'Spiritomb'},amount=60,mode='add')
+ return _stage11_attack(row,a)
+def ability(row,a):
+ if row[0]=='117' and a[0]=='Cursed Message':return passive(E('noop')) # pre-KO mandatory physical search in core
+ return _stage11_ability(row,a)
+def trainer(row):
+ if row[0] in ['154','214'] and row[1]=='Box of Disaster':return 'Tool',E('noop') # full-HP opposing attack-damage KO hook
+ return _stage11_trainer(row)
