@@ -286,6 +286,12 @@ function runSmokes(cards,{data,core,opponents}){
       if(card.id==='swsh12pt5-147'){bench('swsh8-124');own.deck.unshift({cardId:'swsh8-244',uid:'cz-fusion'});}
       if(card.id==='swsh12pt5-151')bench('swsh12pt5-18');
     }
+    if(card.setId==='sv1'&&card.kind==='trainer'){
+      const own=s.sides[side],enemy=s.sides[side==='player'?'opponent':'player'];
+      if(card.name==='Picnic Basket'){own.active.damage=30;enemy.active.damage=20;}
+      if(card.name==='Rare Candy'){own.bench[0].cardId='sv1-13';own.bench[0].stack=['sv1-13'];own.hand.push({cardId:'sv1-15',uid:'sv-candy-stage2'});}
+      if(card.name==='Ultra Ball'){own.hand.push({cardId:'sv1-13',uid:'sv-ultra-1'},{cardId:'sv1-14',uid:'sv-ultra-2'});}
+    }
     if(card.setId==='swsh12pt5gg'){
       const own=s.sides[side],enemy=s.sides[side==='player'?'opponent':'player'];
       const hand=id=>own.hand.push({cardId:id,uid:'gg-hand-'+own.hand.length});

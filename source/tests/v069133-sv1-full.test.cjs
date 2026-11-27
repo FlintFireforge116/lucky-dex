@@ -25,7 +25,7 @@ function attack(st,i=0){use(st,a=>a.type==='attack'&&a.attackIndex===i);resolve(
 function ability(st,name){return use(st,a=>a.type==='ability'&&dat.cardById(a.cardId)?.abilities?.some(x=>x.name===name));}
 
 test('SV1 has 258 registered prints; 256 non-Energy battle ready; alternate print mapping',()=>{
- assert.equal(sv.CARDS.length,258);assert.equal(sv.CARDS.filter(c=>c.battleEnabled).length,256);
+ assert.equal(sv.CARDS.length,258);assert.equal(sv.CARDS.filter(c=>c.battleEnabled&&c.kind!=='energy').length,256);
  for(const n of [223,228,243,245,253])assert.equal(sv.CARDS[n-1].battleEnabled,true);
  for(const n of [257,258])assert.equal(sv.CARDS[n-1].deckEligible,false);
 });

@@ -358,7 +358,7 @@ Object.assign(ATTACK_RULES,{
 
 // Modern Pokémon ex are worth TWO Prizes. Their print variants reuse identical
 // gameplay only after a signature-verified matching normal print was identified.
-// A Tera Bench protection rule is implemented as a Bench-only passive Ability.
+// Tera Bench protection is a printed rule, not a suppressible Ability.
 const TERA=new Set([32,45]);
 const ABILITIES={
   81:[{name:'Tandem Unit',type:'activated',oncePerTurn:true,
@@ -574,6 +574,8 @@ Object.assign(TRAINERS,{
  197:{type:'modifier',stat:'attackDamage',amount:10,duration:'whileInPlay'}
 });
 
+// Verified blank attack text in pinned source; explicit no-op only for these attacks.
+const PLAIN_ATTACKS=new Set('2:1 4:0 5:0 6:0 7:1 8:0 9:0 10:1 11:0 11:1 12:1 13:0 13:1 14:0 14:1 15:1 16:1 20:0 21:1 22:0 23:0 25:1 28:1 31:1 33:0 33:1 34:0 35:0 36:0 36:1 37:0 37:1 40:0 42:1 45:0 46:0 46:1 48:0 49:0 50:0 51:1 52:0 52:1 53:0 53:1 54:0 56:1 57:0 58:0 59:0 59:1 60:0 61:1 63:1 64:0 66:0 66:1 67:1 71:0 74:0 74:1 75:1 77:1 78:0 80:0 82:1 83:1 84:0 85:0 89:0 90:0 91:0 97:0 98:1 99:0 100:0 101:0 105:1 112:0 112:1 113:0 115:0 115:1 116:1 118:0 119:0 120:0 121:0 122:0 124:0 130:0 130:1 132:0 132:1 133:0 134:0 135:0 135:1 141:0 144:0 146:0 147:1 148:0 149:0 149:1 151:0 152:0 154:1 155:1 157:0 159:0 161:0 164:1 165:0'.split(' '));
 const cardRows=[];const sourceByNumber=new Map();
 for(const line of RAW){
  const [rawNum,name,letter,type,stage,hp,retreat,weak,resistance,evolvesFrom,rarity,attacks,hasAbility]=line.split('|');
@@ -588,7 +590,7 @@ for(const line of RAW){
       'Has a printed effect that is not yet supported in Classic battle.' :
       (numeric?`Deal ${numeric} damage.`:'No damage.');
    return {name,cost,damage:numeric,damageText:rawDamage,description:explain,
-     ...(rule?{effect:rule}:{}),_needsRule:!!needsRule&&!rule};
+     ...(rule?{effect:rule}:PLAIN_ATTACKS.has(n+':'+index)?{effect:{type:'noop'},text:''}:{}),_needsRule:!rule&&!PLAIN_ATTACKS.has(n+':'+index)};
  });
  const abilities=ABILITIES[n]||[];
  const unsupported=baseAttacks.some(x=>x._needsRule)||(special&&!abilities.length&&!TERA.has(n));
@@ -603,8 +605,7 @@ for(const line of RAW){
      resistance:T[resistance]||null,resistanceValue:resistance?'-30':null,
      evolvesFrom:evolvesFrom||null,attacks:moves,abilities:[...abilities],
      points:isEx?2:1,prizeCards:isEx?2:1,isEx,imageLarge:`https://images.pokemontcg.io/sv1/${n}_hires.png`});
-   if(TERA.has(n))s.abilities.push({name:'Tera Bench Guard',type:'passive',benchOnly:true,
-     effect:{type:'preventDamage',target:'self',duration:'whileInPlay'}});
+   if(TERA.has(n))s.tera=true; // Printed rule, not an Ability.
  }else if(letter==='T')Object.assign(s,{trainerType:TRAINER_TYPES[n]||'Item',...(TRAINERS[n]?{effect:TRAINERS[n]}:{}),imageLarge:`https://images.pokemontcg.io/sv1/${n}_hires.png`});
  sourceByNumber.set(n,Object.freeze(s));cardRows.push(sourceByNumber.get(n));
 }
@@ -613,7 +614,7 @@ for(let n=199;n<=256;n++){
  const rarity=n<=222?'Illustration Rare':n<=242?'Ultra Rare':n<=252?'Special Illustration Rare':'Hyper Rare';
  cardRows.push(Object.freeze({...src,id:'sv1-'+n,number:String(n),rarity,image:`https://images.pokemontcg.io/sv1/${n}.png`,imageLarge:`https://images.pokemontcg.io/sv1/${n}_hires.png`}));
 }
-for(const [n,subtype] of [[257,'Lightning'],[258,'Fighting']])cardRows.push(Object.freeze({id:'sv1-'+n,name:'Basic '+subtype+' Energy',number:String(n),setId:'sv1',kind:'energy',subtype,basicEnergy:true,battleEnabled:false,deckEligible:false,source:'tcg',battleFormat:'classic',rarity:'Hyper Rare',image:`https://images.pokemontcg.io/sv1/${n}.png`,support:{status:'PARTIAL',reasons:['Basic Energy comes from Classic Energy Zone']}}));
+for(const [n,subtype] of [[257,'Lightning'],[258,'Fighting']])cardRows.push(Object.freeze({id:'sv1-'+n,name:'Basic '+subtype+' Energy',number:String(n),setId:'sv1',kind:'energy',subtype,basicEnergy:true,specialEnergy:false,energyType:subtype,battleEnabled:true,deckEligible:false,effect:{type:'noop'},text:'',source:'tcg',battleFormat:'classic',rarity:'Hyper Rare',image:`https://images.pokemontcg.io/sv1/${n}.png`,imageLarge:`https://images.pokemontcg.io/sv1/${n}_hires.png`,support:{status:'FULL',reasons:[]}}));
 const CARDS=Object.freeze(cardRows);const MAP=new Map(CARDS.map(c=>[c.id,c]));
 function cardById(id){return MAP.get(String(id||'').toLowerCase())||null;}
 function coverage(){return {total:CARDS.length,battleEnabled:CARDS.filter(c=>c.battleEnabled).length,disabled:CARDS.filter(c=>!c.battleEnabled).map(c=>c.id),set:SET};}

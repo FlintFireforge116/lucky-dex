@@ -11,7 +11,7 @@ const builder=require(path.join(A,'tcg-classic-deck-builder.js'));
 const draft=[...Array(4).fill('sv1-30'),...Array(4).fill('sv1-32'),...Array(4).fill('sv1-33'),...Array(4).fill('sv1-36'),...Array(4).fill('sv1-188'),...Array(4).fill('sv1-180'),...Array(4).fill('sv1-189'),...Array(2).fill('sv1-194')];
 test('all 258 original prints have real identities, images and rarity labels',()=>{
  assert.equal(sv.CARDS.length,258);assert.equal(new Set(sv.CARDS.map(x=>x.id)).size,258);
- assert.equal(sv.CARDS.filter(x=>x.battleEnabled).length,256);
+ assert.equal(sv.CARDS.filter(x=>x.battleEnabled&&x.kind!=='energy').length,256);
  for(const c of sv.CARDS){assert.ok(c.name&&c.rarity&&c.setId==='sv1'&&c.image.includes('/sv1/'));assert.equal(sv.cardById(c.id),c);}
 });
 test('hyper and full-art variants reuse the matching normal print mechanics only',()=>{

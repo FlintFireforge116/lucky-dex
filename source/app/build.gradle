@@ -8,8 +8,8 @@ android {
         applicationId 'com.example.luckydex'
         minSdk 26
         targetSdk 35
-        versionCode 7603
-        versionName '0.69.603'
+        versionCode 7604
+        versionName '0.69.604'
     }
 
     signingConfigs {
@@ -1645,4 +1645,18 @@ tasks.register('smokeGalarianGalleryForApk', Exec) {
 }
 tasks.matching { it.name == 'preBuild' || (it.name.startsWith('merge') && it.name.endsWith('Assets')) }.configureEach {
     dependsOn tasks.named('smokeGalarianGalleryForApk')
+}
+
+tasks.register('auditScarletVioletStage1ForApk', Exec) {
+    dependsOn tasks.named('smokeGalarianGalleryForApk')
+    workingDir rootProject.projectDir
+    commandLine 'node', '--test', 'tests/v069132-scarlet-violet-slice.test.cjs', 'tests/v069133-sv1-full.test.cjs', 'tests/v069134-sv1-audit.test.cjs', 'tests/v07604-sv1-stage1.test.cjs'
+}
+tasks.register('smokeScarletVioletStage1ForApk', Exec) {
+    dependsOn tasks.named('auditScarletVioletStage1ForApk')
+    workingDir rootProject.projectDir
+    commandLine 'node', 'scripts/audit-classic-set.cjs', '--set', 'sv1', '--strict-smoke', '--no-write'
+}
+tasks.matching { it.name == 'preBuild' || (it.name.startsWith('merge') && it.name.endsWith('Assets')) }.configureEach {
+    dependsOn tasks.named('smokeScarletVioletStage1ForApk')
 }
