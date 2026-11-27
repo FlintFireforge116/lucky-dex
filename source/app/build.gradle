@@ -8,8 +8,8 @@ android {
         applicationId 'com.example.luckydex'
         minSdk 26
         targetSdk 35
-        versionCode 7578
-        versionName '0.69.578'
+        versionCode 7579
+        versionName '0.69.579'
     }
 
     signingConfigs {
@@ -1593,4 +1593,23 @@ tasks.register('auditSWSH11ForApk', Exec) {
 }
 tasks.matching { it.name == 'preBuild' || (it.name.startsWith('merge') && it.name.endsWith('Assets')) }.configureEach {
     dependsOn tasks.named('auditSWSH11ForApk')
+}
+
+tasks.register('preflightSWSH12ContractForApk', Exec) {
+    dependsOn tasks.named('auditSWSH11ForApk')
+    workingDir rootProject.projectDir
+    commandLine (System.getenv('LUCKYDEX_PYTHON') ?: 'python3'), 'scripts/preflight-swsh12-release.py'
+}
+tasks.register('generateSWSH12ForApk', Exec) {
+    dependsOn tasks.named('preflightSWSH12ContractForApk')
+    workingDir rootProject.projectDir
+    commandLine (System.getenv('LUCKYDEX_PYTHON') ?: 'python3'), 'scripts/build-swsh12.py'
+}
+tasks.register('auditSWSH12ForApk', Exec) {
+    dependsOn tasks.named('generateSWSH12ForApk')
+    workingDir rootProject.projectDir
+    commandLine 'node', '--test', 'tests/v07579-silver-tempest.test.cjs'
+}
+tasks.matching { it.name == 'preBuild' || (it.name.startsWith('merge') && it.name.endsWith('Assets')) }.configureEach {
+    dependsOn tasks.named('auditSWSH12ForApk')
 }

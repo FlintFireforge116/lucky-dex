@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Silver Tempest stage-one source packets, not registered gameplay data.
+"""Silver Tempest stage-one pinned source packets for the gameplay generator.
 
 Compact rows transferred from the pinned PokemonTCG upstream commit via
 GitHub. The upstream blob ID and FNV-1a packet checksums were captured before
@@ -43,4 +43,4 @@ def rows():
     return sorted(result, key=lambda r: int(r[0]))
 
 if __name__ == '__main__':
-    print(f'Silver Tempest: {len(rows())}/{PRINTED_TOTAL} source prints prepared (not registered for gameplay); packet checksums PASS.')
+    print(f'Silver Tempest: {len(rows())}/{PRINTED_TOTAL} source prints prepared; packet checksums PASS.')
