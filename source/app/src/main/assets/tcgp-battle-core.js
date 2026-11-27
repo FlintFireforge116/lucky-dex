@@ -353,9 +353,10 @@
       const mon=data.cardById(top.cardId),enemy=state.sides[foeSide].active,
         itemLocked=classicItemPlayLocked(state,side),
         nugget=top.cardId==='swsh2-162'&&!itemLocked,
-        entry=mon?.abilities?.some(ab=>ab.effect?.rule==='swsh2TopEntry')&&emptyBenchSlots(s).length&&eternalZoneCanPlace(state,side,top.cardId); // Pokémon is still in deck; in-play Gas does not suppress it.
+        emergency=mon?.abilities?.some(ab=>ab.effect?.rule==='swsh12EmergencyEntry'),
+        entry=mon?.abilities?.some(ab=>['swsh2TopEntry','swsh12EmergencyEntry'].includes(ab.effect?.rule))&&emptyBenchSlots(s).length&&eternalZoneCanPlace(state,side,top.cardId); // Pokémon is still in deck; in-play Gas does not suppress it.
       if(nugget||entry){
-        s.deck.shift();beginEffectChoice(state,side,s.active,{kind:'option',side:'self',special:'swsh2NaturalDraw',drawRef:top,nugget,options:['Put '+mon.name+' into hand',nugget?'Play Nugget — draw 3 cards':'Use Top Entry — put '+mon.name+' on Bench'],prompt:'Beginning-of-turn draw: '+mon.name});return;
+        s.deck.shift();beginEffectChoice(state,side,s.active,{kind:'option',side:'self',special:'swsh2NaturalDraw',drawRef:top,nugget,emergency,options:['Put '+mon.name+' into hand',nugget?'Play Nugget — draw 3 cards':(emergency?'Use Emergency Entry — put '+mon.name+' on Bench and draw 3 cards':'Use Top Entry — put '+mon.name+' on Bench')],prompt:'Beginning-of-turn draw: '+mon.name});return;
       }
     }
     const drawn=xy2NoDraw?null:drawCard(s);
@@ -822,7 +823,8 @@
           const targets=pokemonOn(state.sides[side==='player'?'opponent':'player']);
           if(targets.length<2||!targets.some(p=>Number(p.damage||0)>=30))continue;
         }
-        if(pl1PowerBlocked(state,side,source,ability)||abilityBlockedByStatus(ability,source)||ability.type!=='triggered'||ability.event!==event||ability.activeOnly&&ss.active!==source||ability.benchOnly&&ss.active===source)continue;if(event==='endTurn'){const ownersTurn=state.activeSide===side,turn=ability.turn||'owner';if(turn==='owner'&&!ownersTurn||turn==='opponent'&&ownersTurn)continue;}if(ability.opponentAttackOnly&&!(meta.source?.attack&&meta.source.side===(side==='player'?'opponent':'player')))continue;if(ability.energyType&&ability.energyType!==meta.energyType)continue;if(ability.fromHandOnly&&!meta.fromHand)continue;if(ability.firstTurnOnly&&ss.turnCount!==1)continue;
+        if(pl1PowerBlocked(state,side,source,ability)||abilityBlockedByStatus(ability,source)||ability.type!=='triggered'||(ability.event!==event&&!(ability.effect?.rule==='swsh12BullyOfTheSands'&&event==='knockedOutByAttack'))||ability.activeOnly&&ss.active!==source||ability.benchOnly&&ss.active===source)continue;if(event==='endTurn'){const ownersTurn=state.activeSide===side,turn=ability.turn||'owner';if(turn==='owner'&&!ownersTurn||turn==='opponent'&&ownersTurn)continue;}if(ability.opponentAttackOnly&&!(meta.source?.attack&&meta.source.side===(side==='player'?'opponent':'player')))continue;if(ability.energyType&&ability.energyType!==meta.energyType)continue;if(ability.fromHandOnly&&!meta.fromHand)continue;if(ability.firstTurnOnly&&ss.turnCount!==1)continue;
+        if(ability.effect?.rule==='swsh12BullyOfTheSands'&&!(event==='evolved'&&meta.fromHand||event==='knockedOutByAttack'&&source===ss.active&&meta.source?.attack&&meta.source.side!==side&&Number(meta.source.damage||0)>0&&meta.source.damageKo!==false&&meta.source.turn===state.turnNumber))continue;
         effects.applyEffect(ability.effect,{...effectContext(state,side,{},source),isAbility:true,eventData:meta});state.log.push({type:'ability',side,cardId:source.cardId,ability:ability.name,event});
         ex14DarkEyes(state,side,source,ability);
       }
@@ -1627,6 +1629,11 @@
       if(['xy11-102','swsh7-146'].includes(card.id))return; // Prize-only Items are never playable from the hand.
       if(state.format==='classic'&&trainerType(card)==='Item'&&classicItemPlayLocked(state,side))return;
       const type=trainerType(card),base={type:'trainer',handIndex,cardId:printed.id,...(substituted?{swsh4Substitution:true,choiceLabel:'Draw 3 cards (Shifty Substitution)'}:{})};if(effects.isActionLocked(state,side,'Trainer',data.cardById)||effects.isActionLocked(state,side,type,data.cardById))return;
+      if(state.format==='classic'&&card.id==='swsh12-163'){
+        actions.push({...base,effectSelection:'one',choiceLabel:'Heal 10 damage from Active Pokémon'});
+        if(s.hand.filter(r=>r.cardId==='swsh12-163').length>=4)actions.push({...base,effectSelection:'four',choiceLabel:'Play four Quad Stone — heal all Pokémon'});
+        return;
+      }
       if(state.format==='classic'&&['sm5-129','sm5-168'].includes(card.id)){
         actions.push({...base,effectSelection:'one'});
         if(s.hand.filter(r=>data.cardById(r.cardId)?.name==='Missing Clover').length>=4)
@@ -3040,6 +3047,9 @@
           }
           state.log.push({type:'xy10EnergyPouch',side,cardId:slot.cardId,recovered:rescued});
         }
+        else if(swsh11AttackDamageKO&&slot.cardId==='swsh12-78'&&!effects.abilitiesSuppressed(state,side,slot,data.cardById)){
+          const top=slot.stack.at(-1)||slot.cardId;discardKnockedOut(state,s,slot,{keepTop:true});s.hand.push({uid:slot.uid+'-persistent-cells',cardId:top});state.log.push({type:'swsh12PersistentCells',side,cardId:top});
+        }
         else if(state.format==='classic'&&slot.cardId==='sm11-95'&&cause==='attack'&&eventSource?.attack&&eventSource.side===foeSide&&Number(eventSource.damage||0)>0&&!effects.abilitiesSuppressed(state,side,slot,data.cardById)){
           const top=slot.stack.at(-1)||slot.cardId;discardKnockedOut(state,s,slot,{keepTop:true});s.hand.push({uid:slot.uid+'-durable-blade',cardId:top});
         }
@@ -3659,7 +3669,7 @@ const target=slotForTarget(s,action.target,action.benchIndex);if(card.id==='pl2-
         const board=state.sides[side],ref=pending.drawRef;state.pendingChoice=null;state.choiceSide=null;state.phase='battle';
         if(Number(matched.choiceOption)===1){
           if(pending.nugget){board.discard.push(ref);for(let i=0;i<3;i++)drawCard(board);state.log.push({type:'swsh2Nugget',side,cardId:ref.cardId});}
-          else {const idx=emptyBenchSlots(board)[0];if(idx==null)throw new Error('Top Entry needs a free Bench slot.');const placed=placeOnBench(board,makePokemonSlot(ref.cardId,board.turnCount,ref.uid),idx);state.log.push({type:'swsh2TopEntry',side,cardId:ref.cardId});triggerAbilities(state,'benched',side,placed,{fromDeck:true});}
+          else {const idx=emptyBenchSlots(board)[0];if(idx==null)throw new Error('Top Entry needs a free Bench slot.');const placed=placeOnBench(board,makePokemonSlot(ref.cardId,board.turnCount,ref.uid),idx);state.log.push({type:'swsh2TopEntry',side,cardId:ref.cardId});triggerAbilities(state,'benched',side,placed,{fromDeck:true});if(pending.emergency){for(let i=0;i<3;i++)drawCard(board);state.log.push({type:'swsh12EmergencyEntry',side,cardId:ref.cardId});}}
           // The intercepted physical card was drawn but never added to hand.
           finishTurnStart(state,side,ref,true,false);
         }else{board.deck.unshift(ref);finishTurnStart(state,side,drawCard(board),true,false);}

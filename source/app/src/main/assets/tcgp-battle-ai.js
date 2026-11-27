@@ -184,6 +184,12 @@
     if(!card)return false;
     if(card.id==='cel25c-15_A2')return !state.cel25cOpenPrizes&&(s.prizes.some(r=>!r.faceUp)||foe.prizes.some(r=>!r.faceUp));
     if(action.swsh4Substitution)return s.deck.length>0;
+    if(card.effect?.rule==='swsh12QuadStone'){
+      const total=slots(s).filter(p=>!effects.healingIsBlocked(state,p,data.cardById)).reduce((n,p)=>n+Number(p.damage||0),0);
+      const four=s.hand.filter(r=>r.cardId==='swsh12-163').length>=4;
+      if(action.effectSelection==='four')return total>=40;
+      return !!s.active&&!effects.healingIsBlocked(state,s.active,data.cardById)&&Number(s.active.damage||0)>0&&!(four&&total>=40);
+    }
     if(card.effect?.rule==='swsh11Thorton')return s.discard.some(ref=>slots(s).some(p=>thortonGain(state,side,p,ref)>15));
     if(card.effect?.rule==='swsh10Grant')return effects.effectiveTypes(state,side,s.active,data.cardById).includes('Fighting');
     if(card.trainerType==='Tool'&&!usefulClassicTool(state,side,action,card))return false;

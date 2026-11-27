@@ -2,7 +2,7 @@
   "printed": 215,
   "canonicalTotal": 215,
   "notImported": [],
-  "battleReady": 199,
+  "battleReady": 203,
   "gated": {
     "swsh12-12": [
       "Unimplemented Ability: Surprise Spores"
@@ -11,20 +11,8 @@
       "Unimplemented attack: Tri Power",
       "Unimplemented attack: Star Cipher"
     ],
-    "swsh12-78": [
-      "Unimplemented attack: Cell Fork",
-      "Unimplemented Ability: Persistent Cells"
-    ],
     "swsh12-89": [
       "Unimplemented attack: Dragon Launcher"
-    ],
-    "swsh12-113": [
-      "Unimplemented attack: Double-Edge",
-      "Unimplemented Ability: Bully of the Sands"
-    ],
-    "swsh12-119": [
-      "Unimplemented attack: Meteor Mash",
-      "Unimplemented Ability: Emergency Entry"
     ],
     "swsh12-136": [
       "Unimplemented attack: Apex Dragon",
@@ -43,9 +31,6 @@
       "Unimplemented Trainer effect"
     ],
     "swsh12-160": [
-      "Unimplemented Trainer effect"
-    ],
-    "swsh12-163": [
       "Unimplemented Trainer effect"
     ],
     "swsh12-187": [

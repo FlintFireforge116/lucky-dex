@@ -284,3 +284,24 @@ def attack(row,a):
  if n==105 and title=='Venomous Fang':return status('poison')
  if n==105 and title=='Critical Bite':return E('selectedDamage',target='opponentPokemon',amount=30)
  return _stage9_attack(row,a)
+
+# Stage 11: natural draw, dual Ability events, distinct Bench counters and multi-copy Items.
+_stage10_attack,_stage10_ability,_stage10_trainer=attack,ability,trainer
+
+def attack(row,a):
+ n=int(_base_row(row)[0]);title=a[0]
+ if n==78 and title=='Cell Fork':return E('sm7Rule',rule='swsh12CellFork',left=2,used=[])
+ if n==113 and title=='Double-Edge':return E('selfDamage',amount=30)
+ if n==119 and title=='Meteor Mash':return E('nextAttackBonus',attackName='Meteor Mash',amount=100)
+ return _stage10_attack(row,a)
+
+def ability(row,a):
+ n=int(_base_row(row)[0]);title=a[0]
+ if n==78 and title=='Persistent Cells':return passive(E('sm7Rule',rule='swsh12PersistentCells'))
+ if n==113 and title=='Bully of the Sands':return dict(type='triggered',event='evolved',effect=E('sm7Rule',rule='swsh12BullyOfTheSands'))
+ if n==119 and title=='Emergency Entry':return passive(E('sm7Rule',rule='swsh12EmergencyEntry'))
+ return _stage10_ability(row,a)
+
+def trainer(row):
+ if row[1]=='Quad Stone':return 'Item',E('sm7Rule',rule='swsh12QuadStone')
+ return _stage10_trainer(row)
