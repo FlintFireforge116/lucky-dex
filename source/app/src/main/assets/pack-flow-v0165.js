@@ -527,7 +527,7 @@ window.LuckyDexPromoVault={open:openPromoVault,grantCard:grantPromoCard,priceFor
 
 function renderSetOptionsV13(source,sets) {
   const select=document.getElementById('setSelect');if(!select)return;
-  const old=select.value,valid=(sets||[]).filter(s=>s.cardCount?.total>0);
+  const old=select.value,valid=(sets||[]).filter(s=>s.cardCount?.total>0).map(s=>({...s}));
   if(source==='tcg'&&window.LuckyDexBoosterArt?.attach)valid.forEach(set=>window.LuckyDexBoosterArt.attach(set));
   if(source==='tcg')promoSetCache.tcg=packChronologicalSetsV0242(valid.filter(set=>(LuckyDexPack.isPromoSet(set)||window.LuckyDexCardAcquisition?.setMayContainPromoCards?.(set))&&window.LuckyDexCardAcquisition?.promoCatalogSetEligible?.(set)!==false));
   const boosterSets=source==='tcg'?valid.filter(set=>window.LuckyDexCardAcquisition?.boosterProductEligible?.(set,'tcg')===true&&!LuckyDexPack.isPromoSet(set)):valid;
