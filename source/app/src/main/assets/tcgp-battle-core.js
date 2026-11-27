@@ -509,7 +509,7 @@
         // Energy. Other Energy-source effects continue selecting Basic Energy.
         if(p.includeSpecial)for(const ref of slot.specialEnergy||[]){
           const provides=specialEnergyProvides(ref,slot,state);
-          if(p.specialOnly||!p.energyTypes||p.energyTypes.some(t=>(p.special==='sm7BeforeAttack'||p.effect?.rule==='swsh35FoodTin')?effects.attachedSpecialProvidesType(ref,t,slot,data.cardById,state):Number(provides[t]||0)>0))out.push({...target,effectSpecialEnergyUid:ref.uid,...(p.special==='sm7BeforeAttack'||['rainbowBrush','swsh10FrontierRoad'].includes(p.effect?.rule)?{choiceLabel:`${data.cardById(slot.cardId)?.name}: ${data.cardById(ref.cardId)?.name}`}:{})});
+          if(p.specialOnly||!p.energyTypes||p.energyTypes.some(t=>(p.special==='sm7BeforeAttack'||p.effect?.rule==='swsh35FoodTin'||p.effect?.type==='redistributeEnergy')?effects.attachedSpecialProvidesType(ref,t,slot,data.cardById,state):Number(provides[t]||0)>0))out.push({...target,effectSpecialEnergyUid:ref.uid,...(p.special==='sm7BeforeAttack'||['rainbowBrush','swsh10FrontierRoad'].includes(p.effect?.rule)?{choiceLabel:`${data.cardById(slot.cardId)?.name}: ${data.cardById(ref.cardId)?.name}`}:{})});
         }
       }
     }else if(p.kind==='energyTarget'){
