@@ -1,0 +1,235 @@
+{
+  "set": "sv2",
+  "sourceGitBlob": "2fce95cea018139f3bc10608b80cc6931af42559",
+  "upstreamCommit": "90f27d0e14cefe48ccb2b8922a7a356b2fcf0072",
+  "printedTotal": 279,
+  "importedTotal": 97,
+  "compactSha256": "b889c17778057efe476eab321164f96295cfe7b1f6a91f81b34c8da6a4c3ddfd",
+  "basePacketSignatures": [
+    "a01585af",
+    "ac6a470c",
+    "0eef5275",
+    "55f0671c",
+    "f4585f19",
+    "601fa542",
+    "44b71f04",
+    "3592e451",
+    "22fb944b",
+    "7ed3eb1f",
+    "19d2cf2c",
+    "931756b3",
+    "548f891e",
+    "83bf6d64",
+    "313c32d2",
+    "16fbb457",
+    "cf046c11",
+    "233f5c60",
+    "4372d0e9",
+    "2a3039db",
+    "9f777492",
+    "717591d5",
+    "82e28bad",
+    "a1a91fc3",
+    "af8a9fdb",
+    "e944ff58",
+    "fe1bf349",
+    "2216070d",
+    "69420622",
+    "ff25780d",
+    "571db7eb",
+    "2cb005a2",
+    "703f8b91",
+    "d2aa445e",
+    "ce9a46d3",
+    "b9f8a860",
+    "c5de4ce0",
+    "0184438d",
+    "5956dc02",
+    "01cdf902",
+    "e6a320e6",
+    "02dc491c",
+    "0dd26d84",
+    "51c2d910",
+    "323219bf",
+    "167bf361",
+    "779c1e1d",
+    "67a2d300",
+    "a02cba08",
+    "620fbbbf",
+    "e00eaa62",
+    "95b9bcd5",
+    "8eace4da",
+    "53d972bc",
+    "88353bb1",
+    "37fd491a",
+    "5bbd1716",
+    "e5ee8ad7",
+    "a066ce17",
+    "2c6bcc79"
+  ],
+  "variants": [
+    [
+      194,
+      6,
+      "Illustration Rare"
+    ],
+    [
+      195,
+      7,
+      "Illustration Rare"
+    ],
+    [
+      196,
+      12,
+      "Illustration Rare"
+    ],
+    [
+      197,
+      14,
+      "Illustration Rare"
+    ],
+    [
+      198,
+      23,
+      "Illustration Rare"
+    ],
+    [
+      199,
+      29,
+      "Illustration Rare"
+    ],
+    [
+      200,
+      32,
+      "Illustration Rare"
+    ],
+    [
+      201,
+      35,
+      "Illustration Rare"
+    ],
+    [
+      202,
+      36,
+      "Illustration Rare"
+    ],
+    [
+      203,
+      42,
+      "Illustration Rare"
+    ],
+    [
+      204,
+      44,
+      "Illustration Rare"
+    ],
+    [
+      205,
+      48,
+      "Illustration Rare"
+    ],
+    [
+      206,
+      49,
+      "Illustration Rare"
+    ],
+    [
+      207,
+      51,
+      "Illustration Rare"
+    ],
+    [
+      208,
+      57,
+      "Illustration Rare"
+    ],
+    [
+      209,
+      59,
+      "Illustration Rare"
+    ],
+    [
+      210,
+      60,
+      "Illustration Rare"
+    ],
+    [
+      230,
+      5,
+      "Ultra Rare"
+    ],
+    [
+      231,
+      15,
+      "Ultra Rare"
+    ],
+    [
+      232,
+      27,
+      "Ultra Rare"
+    ],
+    [
+      233,
+      37,
+      "Ultra Rare"
+    ],
+    [
+      234,
+      40,
+      "Ultra Rare"
+    ],
+    [
+      235,
+      52,
+      "Ultra Rare"
+    ],
+    [
+      256,
+      15,
+      "Special Illustration Rare"
+    ],
+    [
+      257,
+      27,
+      "Special Illustration Rare"
+    ],
+    [
+      258,
+      37,
+      "Special Illustration Rare"
+    ],
+    [
+      259,
+      40,
+      "Special Illustration Rare"
+    ],
+    [
+      260,
+      52,
+      "Special Illustration Rare"
+    ],
+    [
+      271,
+      15,
+      "Hyper Rare"
+    ],
+    [
+      272,
+      37,
+      "Hyper Rare"
+    ],
+    [
+      273,
+      52,
+      "Hyper Rare"
+    ]
+  ],
+  "extraPrints": [
+    172,
+    176,
+    248,
+    265,
+    278,
+    279
+  ]
+}

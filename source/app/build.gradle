@@ -8,8 +8,8 @@ android {
         applicationId 'com.example.luckydex'
         minSdk 26
         targetSdk 35
-        versionCode 7610
-        versionName '0.69.610'
+        versionCode 7611
+        versionName '0.69.611'
     }
 
     signingConfigs {
@@ -1659,4 +1659,18 @@ tasks.register('smokeScarletVioletStage1ForApk', Exec) {
 }
 tasks.matching { it.name == 'preBuild' || (it.name.startsWith('merge') && it.name.endsWith('Assets')) }.configureEach {
     dependsOn tasks.named('smokeScarletVioletStage1ForApk')
+}
+
+tasks.register('auditPaldeaEvolvedForApk', Exec) {
+    dependsOn tasks.named('smokeScarletVioletStage1ForApk')
+    workingDir rootProject.projectDir
+    commandLine 'node', '--test', 'tests/v07611-paldea-evolved.test.cjs'
+}
+tasks.register('smokePaldeaEvolvedForApk', Exec) {
+    dependsOn tasks.named('auditPaldeaEvolvedForApk')
+    workingDir rootProject.projectDir
+    commandLine 'node', 'scripts/audit-classic-set.cjs', '--set', 'sv2', '--strict-smoke', '--no-write'
+}
+tasks.matching { it.name == 'preBuild' || (it.name.startsWith('merge') && it.name.endsWith('Assets')) }.configureEach {
+    dependsOn tasks.named('smokePaldeaEvolvedForApk')
 }

@@ -18,7 +18,7 @@ function ensureState(state){
 }
 function ownedRows(cards){return classic.projectOwnedCards(cards||{});}
 function ownedMap(rows){const map=new Map();for(const row of rows||[])map.set(row.gameplayId,(map.get(row.gameplayId)||0)+Math.max(0,Number(row.quantity)||0));return map;}
-function classicCardName(name){return String(name||'').replace(/[’]/g,"'").replace(/\s+(?=[♀♂])/g,'').trim();}
+function classicCardName(name){return String(name||'').replace(/[’]/g,"'").replace(/^Boss's Orders \([^)]*\)$/,"Boss's Orders").replace(/\s+(?=[♀♂])/g,'').trim();}
 // Platinum—Arceus prints marked 'as many as you like' are exempt from the normal
 // four-copy limit in every deck path, including manual edits and draft saves.
 function unlimitedArceus(card){return card?.setId==='pl4'&&(/^(?:AR[1-9])$/.test(String(card.number))||['94','95','96'].includes(String(card.number)));}

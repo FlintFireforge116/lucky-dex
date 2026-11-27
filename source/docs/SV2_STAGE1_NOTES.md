@@ -1,0 +1,3 @@
+# SV2 stage 1 (v0.69.611)
+
+Pinned canonical source: 279 prints. Registered 97; 66 enabled (including two gold Basic Energy resources), 31 gated, 182 not yet imported. Base prints 1–60, 31 exact alternate prints and six Trainer/Energy prints. All 60 compact rows independently checked against upstream full metadata/attack/Ability signatures. Gated mechanics require further implementation. Gather Sunlight uses existing hybrid Energy Zone adaptation. Sparse CPU fallback preserves requested primary and exact set scope; only Grass, Fire and Water currently supported. No completed-set or Android certification is claimed. Boss's Orders shares its name cap across named artwork variants.
