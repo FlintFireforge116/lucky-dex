@@ -75,6 +75,7 @@ const RULES={
 '8:0':{type:'heal',amount:20,target:'selfBench'},'10:0':flip(seq(status('paralysis'),status('poison'))),'12:0':lock,'14:0':bench(20),'15:0':bench(30),'16:1':self(10),'17:0':{type:'heal',target:'selfAll',amount:30},'18:1':self(20),'19:0':heal(10),'20:0':heal(30),'23:0':self(10),'24:0':coin(2,50),'25:0':{type:'damageRule',ignoreResistance:true},'26:0':self(10),'27:0':self(20),'28:1':status('confusion'),'30:0':{type:'energyDamage',source:'self',energyType:'Fire',amount:20},'31:0':status('burn'),'33:0':{type:'chooseOption',options:[{label:'Do not switch',effect:noop},{label:'Switch',effect:{type:'switch',side:'self'}}]},'33:1':{type:'lock',target:'self',action:'attack',duration:'nextOwnTurn'},'34:1':{type:'coinAttackGate',heads:noop},'35:0':bonus(60,'selfDamaged'),'36:0':{type:'coinDamage',coins:1,amount:10,mode:'add'},'38:0':{type:'energyDamage',source:'opponent',amount:50},'39:0':{type:'energyDamage',source:'opponent',amount:30},'40:1':self(10)
 };
 const ABILITIES={
+92:{type:'passive',effect:{type:'sm7Rule',rule:'sv3NewMoon'}},
 85:{type:'triggered',event:'endTurn',effect:{type:'sm7Rule',rule:'sv3PreciousGift'}},
 112:{type:'triggered',event:'damagedByAttack',activeOnly:true,opponentAttackOnly:true,effect:{type:'placeDamageCounters',target:'opponentActive',amount:50,condition:{type:'selfHasTool'}}},
 123:{type:'passive',activeOnly:true,effect:{type:'sm7Rule',rule:'sv3DustField'}},
