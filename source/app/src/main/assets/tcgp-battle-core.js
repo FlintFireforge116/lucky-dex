@@ -2090,7 +2090,7 @@
     const sm8Shady=state.format==='classic'&&data.cardById(s.active?.cardId)?.prismStar&&['player','opponent'].some(w=>state.sides[w].bench.some(p=>p.cardId==='sm8-93'&&!effects.abilitiesSuppressed(state,w,p,data.cardById)));
     const swsh7Slaking=state.format==='classic'&&activeStadium(state)&&data.cardById(s.active?.cardId)?.abilities?.some(a=>a.effect?.rule==='swsh7ActFreely')&&!effects.abilitiesSuppressed(state,side,s.active,data.cardById);
     const windupArm=state.format==='classic'&&activeToolsOf(state,s.active).some(r=>r.cardId==='swsh11-170');
-    if (s.active&&!swsh7Slaking&&!sm8Shady&&!bw5Airhead&&(!conditions.paralysis||windupArm)&&Number(s.active.ex11AttackLockUntil||0)!==Number(state.turnNumber)){
+    if (s.active&&s.sv3GeetaTurn!==state.turnNumber&&!swsh7Slaking&&!sm8Shady&&!bw5Airhead&&(!conditions.paralysis||windupArm)&&Number(s.active.ex11AttackLockUntil||0)!==Number(state.turnNumber)){
       for(const entry of attackOptions(state,side)){
         const {cardId:attackCardId,attackIndex,attack}=entry;
         if(state.format==='classic'&&attackCardId==='swsh12-86'&&state.firstSide===side&&s.turnCount===1&&attack.name!=='Smart Service')continue;
@@ -2833,10 +2833,10 @@
   function swsh7ToolOverflow(state,resume,cause){
     if(state.format!=='classic'||state.phase!=='battle')return false;
     for(const side of [state.activeSide,state.activeSide==='player'?'opponent':'player'])for(const p of pokemonOn(state.sides[side])){
-      const garb=['swsh7-101','swsh7-216'].includes(p.cardId),boss=['swsh9-88','swsh9-161','swsh9-162'].includes(p.cardId);if((garb||boss)&&toolsOf(p).length>1)p.swsh7DoubleTool=true;
-      if(!garb&&!boss&&!p.swsh7DoubleTool)continue;
+      const garb=['swsh7-101','swsh7-216'].includes(p.cardId),boss=['swsh9-88','swsh9-161','swsh9-162'].includes(p.cardId),tune=['sv3-156','sv3-216','sv3-224'].includes(p.cardId);if((garb||boss||tune)&&toolsOf(p).length>1)p.swsh7DoubleTool=true;
+      if(!garb&&!boss&&!tune&&!p.swsh7DoubleTool)continue;
       if(toolsOf(p).length<=1){delete p.swsh7DoubleTool;continue;}
-      if(toolsOf(p).length>effects.toolCapacity(state,side,p,data.cardById)){beginEffectChoice(state,side,p,{kind:'toolCard',side:'self',targetUid:p.uid,special:'swsh7ToolOverflow',prompt:(boss?'Boss Pockets':'Rubbish Collecting')+': discard a Pokémon Tool',koResume:resume||null,koCause:cause||null});return true;}
+      if(toolsOf(p).length>effects.toolCapacity(state,side,p,data.cardById)){beginEffectChoice(state,side,p,{kind:'toolCard',side:'self',targetUid:p.uid,special:'swsh7ToolOverflow',prompt:(tune?'Tune-Up':boss?'Boss Pockets':'Rubbish Collecting')+': discard a Pokémon Tool',koResume:resume||null,koCause:cause||null});return true;}
     }return false;
   }
   function resolveKnockOut(state,resume,cause){
@@ -3226,6 +3226,7 @@
       state.xy6SkyFieldTrim=true;
       state.log.push({type:'xy6SkyFieldLeft',side:state.xy6SkyFieldOwner||'player'});
     }
+    const dust=who=>{const enemy=who==='player'?'opponent':'player',p=state.sides[enemy].active;return ['sv3-123','sv3-213'].includes(p?.cardId)&&!effects.abilitiesSuppressed(state,enemy,p,data.cardById);};
     const roadblock=who=>{const enemy=who==='player'?'opponent':'player';return pokemonOn(state.sides[enemy]).some(p=>['sm2-66','sma-SV20'].includes(p.cardId)&&!effects.abilitiesSuppressed(state,enemy,p,data.cardById));};
     for(const who of ['player','opponent']){
       const s=state.sides[who];
@@ -3239,25 +3240,26 @@
       const foe=state.sides[who==='player'?'opponent':'player'];
       const ditto=activeStadium(state)?.cardId!=='gym1-124'&&!active&&
         pokemonOn(foe).some(p=>p.cardId==='hgss4-17'&&!effects.abilitiesSuppressed(state,foe.id,p,data.cardById));
-      s.benchLimit=Math.min(ditto?Math.max(cap,4):cap,roadblock(who)||collapsed?4:8);
+      s.benchLimit=Math.min(ditto?Math.max(cap,4):cap,roadblock(who)||collapsed?4:8,dust(who)?3:8);
       normalizeBenchSlots(s);
     }
     // Parallel City can follow Sky Field, leaving up to eight Benched
     // Pokémon in play. Its indicated player must choose which to discard
     // down to THREE; the other player keeps the normal post-Sky Field cap.
     // Use the existing physical-card discard flow, never an automatic KO.
+    const dustOverflow=['player','opponent'].some(w=>dust(w)&&state.sides[w].bench.length>state.sides[w].benchLimit);
     const roadblockOverflow=['player','opponent'].some(w=>roadblock(w)&&state.sides[w].bench.length>state.sides[w].benchLimit);
     const zoneTrim=['player','opponent'].some(w=>{const s=state.sides[w];if(s.swsh3EternalZoneTrim&&s.bench.length<=s.benchLimit)delete s.swsh3EternalZoneTrim;return !!s.swsh3EternalZoneTrim;});
-    if(!collapsed&&!roadblockOverflow&&!zoneTrim&&(active||(!state.xy6SkyFieldTrim&&!parallel)))return false;
+    if(!collapsed&&!dustOverflow&&!roadblockOverflow&&!zoneTrim&&(active||(!state.xy6SkyFieldTrim&&!parallel)))return false;
     if(state.phase!=='battle'||state.pendingChoice)return false;
     const first=collapsed?(state.stadium.ownerSide||state.activeSide):parallel?(limitedSide||state.stadium.ownerSide||'player'):zoneTrim&&!state.xy6SkyFieldTrim?(state.activeSide||'player'):(state.xy6SkyFieldOwner||'player');
     const other=first==='player'?'opponent':'player';
-    const cap=who=>collapsed||roadblock(who)||parallel||active||state.sides[who].swsh3EternalZoneTrim||state.sides[who].swsh3EternalZoneActive?Math.max(0,Number(state.sides[who]?.benchLimit??3)):5;
-    const owner=[first,other].find(w=>(!zoneTrim||state.xy6SkyFieldTrim||parallel||collapsed||roadblock(w)||state.sides[w].swsh3EternalZoneTrim)&&state.sides[w].bench.length>cap(w));
+    const cap=who=>dust(who)||collapsed||roadblock(who)||parallel||active||state.sides[who].swsh3EternalZoneTrim||state.sides[who].swsh3EternalZoneActive?Math.max(0,Number(state.sides[who]?.benchLimit??3)):5;
+    const owner=[first,other].find(w=>(!zoneTrim||state.xy6SkyFieldTrim||parallel||collapsed||dust(w)||roadblock(w)||state.sides[w].swsh3EternalZoneTrim)&&state.sides[w].bench.length>cap(w));
     if(!owner){delete state.xy6SkyFieldTrim;return false;}
     const keep=cap(owner);
     state.pendingChoice={kind:'skyFieldBenchTrim',special:'skyFieldBenchTrim',side:owner,originSide:first,
-      prompt:(collapsed?'Collapsed Stadium limits this player’s Bench. ':state.sides[owner].swsh3EternalZoneTrim?'Eternal Zone stopped working. ':roadblock(owner)?'Roadblock limits this player’s Bench. ':parallel&&owner===limitedSide?'Parallel City limits this player to three Benched Pokémon. ':'Sky Field left play. ')+
+      prompt:(dust(owner)?'Dust Field limits this player’s Bench. ':collapsed?'Collapsed Stadium limits this player’s Bench. ':state.sides[owner].swsh3EternalZoneTrim?'Eternal Zone stopped working. ':roadblock(owner)?'Roadblock limits this player’s Bench. ':parallel&&owner===limitedSide?'Parallel City limits this player to three Benched Pokémon. ':'Sky Field left play. ')+
         `Choose a Benched Pokémon to discard with all attachments; keep ${keep}.`};
     state.phase='effectChoice';state.choiceSide=owner;
     return true;
