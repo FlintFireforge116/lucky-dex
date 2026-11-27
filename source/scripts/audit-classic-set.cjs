@@ -234,6 +234,25 @@ function runSmokes(cards,{data,core,opponents}){
         if(fossil)s.sides[side].discard.push({cardId:fossil.id,uid:'auditor-fossil-target'});
       }
     }
+    // Lost Origin smoke fixtures supply the actual prerequisites instead of
+    // interpreting an unavailable action on a blank board as missing support.
+    if(card.setId==='swsh11'){
+      const own=s.sides[side],enemy=s.sides[side==='player'?'opponent':'player'];
+      own.active.energy={Grass:3,Fire:3,Water:3,Lightning:3,Psychic:3,Fighting:3,Darkness:3,Metal:3,Colorless:3};
+      own.lostZone=Array.from({length:10},(_,i)=>({cardId:'swsh11-1',uid:'audit-lost-'+i}));
+      if(card.kind==='trainer'){
+        own.active.damage=30;
+        own.active.cardId='swsh11-86';
+        own.active.stack=['swsh11-86'];
+        own.bench[0].cardId=card.name==='Dark Patch'?'swsh11-114':'swsh11-92';
+        own.bench[0].stack=[own.bench[0].cardId];
+        own.discard.push({cardId:'swsh11-1',uid:'audit-discard-basic'});
+        own.energyDiscard={Darkness:2};
+        own.energySupply=['Darkness','Psychic','Fighting'];
+        own.hand.push({cardId:'swsh11-1',uid:'audit-payment'});
+        enemy.active.tool={cardId:'swsh11-165',uid:'audit-tool'};
+      }
+    }
     const actions=core.legalActions(s,side);
     const action=actions.find(a=>card.kind==='trainer'?a.type==='trainer'&&a.cardId===card.id:a.type==='attack'&&a.attackIndex===ix&&(!a.attackCardId||a.attackCardId===card.id));
     if(!action){result.skipped++;result.skippedDetails.push({cardId:card.id,side,action:actionName});continue;}
