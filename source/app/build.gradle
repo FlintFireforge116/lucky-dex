@@ -8,8 +8,8 @@ android {
         applicationId 'com.example.luckydex'
         minSdk 26
         targetSdk 35
-        versionCode 7625
-        versionName '0.69.625'
+        versionCode 7626
+        versionName '0.69.626'
     }
 
     signingConfigs {
@@ -1673,4 +1673,19 @@ tasks.register('smokePaldeaEvolvedForApk', Exec) {
 }
 tasks.matching { it.name == 'preBuild' || (it.name.startsWith('merge') && it.name.endsWith('Assets')) }.configureEach {
     dependsOn tasks.named('smokePaldeaEvolvedForApk')
+}
+
+// Obsidian Flames: keep set-picker parity and strict new-set checks in APK preflight.
+tasks.register('auditObsidianFlamesForApk', Exec) {
+    dependsOn tasks.named('smokePaldeaEvolvedForApk')
+    workingDir rootProject.projectDir
+    commandLine 'node', '--test', 'tests/v07624-obsidian-flames.test.cjs', 'tests/v07401b-sm1-deck-picker-availability.test.cjs'
+}
+tasks.register('smokeObsidianFlamesForApk', Exec) {
+    dependsOn tasks.named('auditObsidianFlamesForApk')
+    workingDir rootProject.projectDir
+    commandLine 'node', 'scripts/audit-classic-set.cjs', '--set', 'sv3', '--strict-smoke', '--no-write'
+}
+tasks.matching { it.name == 'preBuild' || (it.name.startsWith('merge') && it.name.endsWith('Assets')) }.configureEach {
+    dependsOn tasks.named('smokeObsidianFlamesForApk')
 }
