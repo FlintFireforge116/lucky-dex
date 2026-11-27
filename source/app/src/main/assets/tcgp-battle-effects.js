@@ -20850,7 +20850,7 @@
         }
         if(r==='swsh1BottomHands'){
           const sides=(effect.enemyOnly?[foe]:[ss,foe]).filter(b=>b!==foe||!dewGuard(ctx)),moved=sides.map(b=>{const refs=b.hand.splice(0);ctx.shuffle?.(ctx.state,refs);b.deck.push(...refs);return refs.length;});
-          if(moved.some(Boolean)){if(!effect.enemyOnly)draw(5);if(!dewGuard(ctx))for(let i=0;i<(effect.enemyOnly?3:4)&&foe.deck.length;i++)ctx.drawCard(foe);}break;
+          if(moved.some(Boolean)){if(!effect.enemyOnly)draw(effect.drawRemainingPrizes?(ss.prizes||[]).length:5);if(!dewGuard(ctx))for(let i=0;i<(effect.drawRemainingPrizes?(foe.prizes||[]).length:effect.enemyOnly?3:4)&&foe.deck.length;i++)ctx.drawCard(foe);}break;
         }
         if(r.startsWith('sm12')){
           const k=r.slice(4),all=()=>pokemonOn(ss),pick=(board,pool,next={},optional=false)=>{if(pool.length)ask({kind:'pokemon',includeActive:pool.includes(board.active),selectionSide:board===ss?ctx.side:ctx.foeSide,allowedUids:pool.map(p=>p.uid),optional},next);};

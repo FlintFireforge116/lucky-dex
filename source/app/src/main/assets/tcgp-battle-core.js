@@ -3606,6 +3606,7 @@ const target=slotForTarget(s,action.target,action.benchIndex);if(card.id==='pl2-
       }
 
       if(state.phase==='effectChoice')state.pendingChoice.resume=state.pendingChoice.resume||'trainer';
+      if(energyTextActive&&state.format==='classic'&&card.id==='sv2-190'&&s.bench.includes(target))effects.switchPokemon(s,Number(target.benchSlot),state);
       if(energyTextActive&&state.format==='classic'&&card.name==='Draw Energy')drawCard(s);
       if(energyTextActive&&state.format==='classic'&&card.id==='swsh2-173'&&effects.effectiveTypes(state,side,target,data.cardById).includes('Lightning')){drawCard(s);drawCard(s);}
       if(energyTextActive&&state.format==='classic'&&['swsh2-171','swsh3-201'].includes(card.id)){

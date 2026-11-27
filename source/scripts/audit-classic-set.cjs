@@ -286,6 +286,11 @@ function runSmokes(cards,{data,core,opponents}){
       if(card.id==='swsh12pt5-147'){bench('swsh8-124');own.deck.unshift({cardId:'swsh8-244',uid:'cz-fusion'});}
       if(card.id==='swsh12pt5-151')bench('swsh12pt5-18');
     }
+    if(card.setId==='sv2'&&card.kind==='trainer'){
+      const own=s.sides[side],enemy=s.sides[side==='player'?'opponent':'player'];
+      if(card.name==='Fighting Au Lait'){enemy.prizes=enemy.prizes.slice(0,2);own.active.damage=60;}
+      if(card.name==='Super Rod')own.discard.push({cardId:'sv2-1',uid:'audit-rod-recovery'});
+    }
     if(card.id==='sv2-73'&&ix===1){const own=s.sides[side];own.lastAttackUid=own.active.uid;own.lastAttackName='Stun Needle';own.lastAttackTurn=s.turnNumber-2;own.lastAttackCardId=card.id;}
     if(card.setId==='sv1'&&card.kind==='trainer'){
       const own=s.sides[side],enemy=s.sides[side==='player'?'opponent':'player'];

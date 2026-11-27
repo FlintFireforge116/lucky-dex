@@ -3,8 +3,8 @@
   "sourceGitBlob": "2fce95cea018139f3bc10608b80cc6931af42559",
   "upstreamCommit": "90f27d0e14cefe48ccb2b8922a7a356b2fcf0072",
   "printedTotal": 279,
-  "importedTotal": 241,
-  "compactSha256": "3ac7262ffbcc2705fa2e7f7825baccdb1d4101e257fac43b765146002040dde1",
+  "importedTotal": 279,
+  "compactSha256": "6edc4fd8f9681e6e908fb15f0b7255b39e16ae8dd69c8a74a18794c2a0bed570",
   "basePacketSignatures": [
     "a01585af",
     "ac6a470c",
@@ -175,7 +175,9 @@
     "ad095197",
     "46005997",
     "89f68e7b",
-    "cfb54363"
+    "cfb54363",
+    "b3229f80",
+    "49b4bec9"
   ],
   "variants": [
     [
@@ -502,6 +504,11 @@
       264,
       169,
       "Special Illustration Rare"
+    ],
+    [
+      262,
+      240,
+      "Special Illustration Rare"
     ]
   ],
   "extraPrints": [
@@ -511,5 +518,77 @@
     265,
     278,
     279
+  ],
+  "trainerVariants": [
+    [
+      249,
+      177,
+      "Ultra Rare"
+    ],
+    [
+      250,
+      179,
+      "Ultra Rare"
+    ],
+    [
+      251,
+      180,
+      "Ultra Rare"
+    ],
+    [
+      252,
+      182,
+      "Ultra Rare"
+    ],
+    [
+      253,
+      184,
+      "Ultra Rare"
+    ],
+    [
+      254,
+      185,
+      "Ultra Rare"
+    ],
+    [
+      255,
+      187,
+      "Ultra Rare"
+    ],
+    [
+      266,
+      179,
+      "Special Illustration Rare"
+    ],
+    [
+      267,
+      182,
+      "Special Illustration Rare"
+    ],
+    [
+      268,
+      184,
+      "Special Illustration Rare"
+    ],
+    [
+      269,
+      185,
+      "Special Illustration Rare"
+    ],
+    [
+      270,
+      187,
+      "Special Illustration Rare"
+    ],
+    [
+      276,
+      188,
+      "Hyper Rare"
+    ],
+    [
+      277,
+      189,
+      "Hyper Rare"
+    ]
   ]
 }
