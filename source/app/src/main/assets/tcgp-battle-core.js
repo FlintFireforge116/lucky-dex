@@ -3839,7 +3839,7 @@ const target=slotForTarget(s,action.target,action.benchIndex);if(card.id==='pl2-
         state.log.push({type:'ability',side,cardId:ref.cardId,ability:'Elusive Master',fromHand:true});
         for(let i=0;i<3;i++)drawCard(s);
       }
-      if(state.format==='classic'&&activeStadium(state)?.cardId==='swsh10-142'&&data.cardById(placed.cardId)?.kind==='pokemon'&&data.cardById(placed.cardId)?.stage==='Basic'){placed.damage=Number(placed.damage||0)+20;state.log.push({type:'stadiumCounters',side,cardId:placed.cardId,stadium:'swsh10-142',amount:20});}
+      if(state.format==='classic'&&['swsh10-142','swsh12-213'].includes(activeStadium(state)?.cardId)&&data.cardById(placed.cardId)?.kind==='pokemon'&&data.cardById(placed.cardId)?.stage==='Basic'){placed.damage=Number(placed.damage||0)+20;state.log.push({type:'stadiumCounters',side,cardId:placed.cardId,stadium:activeStadium(state).cardId,amount:20});}
       if(state.format==='classic'&&activeStadium(state)?.cardId==='ex4-83'&&data.cardById(placed.cardId)?.stage==='Basic'&&!data.cardById(placed.cardId)?.name?.startsWith("Team Magma's")){placed.damage=Number(placed.damage||0)+10;state.log.push({type:'ex4MagmaHideout',side,cardId:placed.cardId,damage:10});}
       if(activeStadium(state)?.cardId==='SNAPFLORIO-106'&&data.cardById(placed.cardId)?.stage==='Basic'){
         placed.damage=Number(placed.damage||0)+20;
@@ -3854,7 +3854,7 @@ const target=slotForTarget(s,action.target,action.benchIndex);if(card.id==='pl2-
         const sources=pokemonOn(s).filter(p=>p.cardId==='sm11-14'&&!effects.abilitiesSuppressed(state,side,p,data.cardById));
         if(sources.length)beginEffectChoice(state,side,sources[0],{kind:'option',side:'self',options:['Make opposing Active Asleep and Poisoned','Skip Bursting Spores'],effect:{type:'sm7Rule',rule:'sm11BurstingSpores'},isAbility:true});
       }
-      if(['SNAPFLORIO-106','ex4-83','pl1-111','swsh10-142'].includes(activeStadium(state)?.cardId))resolveKnockOut(state,null);
+      if(['SNAPFLORIO-106','ex4-83','pl1-111','swsh10-142','swsh12-213'].includes(activeStadium(state)?.cardId))resolveKnockOut(state,null);
       if(state.format==='classic'&&ref.cardId==='ex8-102'&&state.phase==='battle'){
         beginEffectChoice(state,side,placed,{kind:'option',side:'self',options:['Do not move basic Energy','Move basic Energy to Rayquaza ex'],
           effect:{type:'neoRule',rule:'ex8:power:102',rayUid:placed.uid,step:'offer'},resume:'trainer'});

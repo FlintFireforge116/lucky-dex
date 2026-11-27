@@ -1,0 +1,5 @@
+# Silver Tempest stage 2 — v0.69.580
+
+72/215 playable, 103 imported, 31 gated, 112 not yet imported. 24 newly enabled prints: Serena, Brandon, Candice, Capturing Aroma, Gym Trainer, Primordial Altar, Gapejaw Bog and associated alternate prints; Venomoth, Radiant Tsareena, Rapidash, Victini, Glalie, Froslass, Relicanth, Raichu, Stunfisk and Regieleki VMAX. Serena's discard path requires at least one card and allows three; its gust path selects only eligible opposing Benched Pokémon V. Brandon is legal only when it is the last hand card. Candice's top-seven window shrinks as cards are removed. Flare Parade now has a legal Serena synergy. Glalie/Froslass use the actual current-turn Supporter name. Shared selected-damage routing preserves bench attack protection and Weakness/Resistance rules. No new source prints inferred or imported.
+
+Focused 48-test suite passed, including bilateral smoke and outcome checks. Physical-device and APK testing are separate. Seal Stones, remaining Special Energy and unsupported mechanics stay gated.

@@ -44,3 +44,36 @@ def trainer(row):
 
 def energy(row):return None
 prism_ready=previous.prism_ready
+
+# Stage 2: selected support cards and matching Pokémon payoffs.
+_stage1_attack,_stage1_ability,_stage1_trainer=attack,ability,trainer
+
+def attack(row,a):
+ n=int(row[0]);title=a[0]
+ if n==2 and title=='Miracle Powder':return coin(E('chooseOption',options=[{'label':label,'effect':status(key)} for label,key in [('Asleep','sleep'),('Burned','burn'),('Confused','confusion'),('Paralyzed','paralysis'),('Poisoned','poison')]]))
+ if n==16 and title=='Aroma Shot':return E('removeStatus',target='self')
+ if n==23 and title=='Assisting Flame':return E('sm7Rule',rule='sm12DiscardAttach',left=2,energyType='Fire',optional=True)
+ if n==42 and title=='Big Mouth':return bonus(130,cond('sm10Supporter',name='Candice'))
+ if n==43 and title=='Frosty Jail':return seq(bonus(90,cond('sm10Supporter',name='Candice')),E('status',target='opponentActive',status='paralysis',condition=cond('sm10Supporter',name='Candice')))
+ if n==44 and title=='Fossil Finding':return E('sm7Rule',rule='sm9Recycle',amount=4,filter={'name':['Unidentified Fossil','Rare Fossil']},optional=True)
+ if n==50 and title=='Ambushing Spark':return bonus(100,cond('swsh12OpponentVstarUsed'))
+ if n==55 and title=='Mystery Bolt':return seq(E('attackRequirement',condition=cond('sm12NoSupporterDiscard')),E('selectedDamage',target='opponentPokemon',amount=100))
+ return _stage1_attack(row,a)
+
+def ability(row,a):
+ n=int(row[0]);title=a[0]
+ if n==16 and title=='Elegant Heal':return activated(E('heal',target='selfAll',amount=20))
+ if n==22 and title=='Heat Boost':return activated(E('sm7Rule',rule='sm10Pay',amount=1,filter={'kind':'energy','basicEnergy':True,'subtype':'Fire'},after=E('modifier',stat='attackDamageActiveOnly',amount=30,scope='team',duration='turn',filter={'subtype':'Fire'})))
+ if n==58 and title=='Transistor':return passive(E('modifier',stat='attackDamageActiveOnly',amount=30,scope='team',duration='whileInPlay',filter={'stage':'Basic','subtype':'Lightning'}))
+ return _stage1_ability(row,a)
+
+def trainer(row):
+ name=row[1]
+ if name=='Serena':return 'Supporter',E('sm7Rule',rule='swsh12Serena')
+ if name=='Brandon':return 'Supporter',E('sm7Rule',rule='swsh12Brandon')
+ if name=='Candice':return 'Supporter',E('sm7Rule',rule='sm9TopPick',count=7,amount=7,filter={'anyOf':[{'kind':'pokemon','subtype':'Water'},{'kind':'energy','subtype':'Water','basicEnergy':True}]},destination='hand',rest='shuffle',optional=True)
+ if name=='Capturing Aroma':return 'Item',E('coinFlip',heads=E('searchChosen',amount=1,filter={'kind':'pokemon','evolved':True}),tails=E('searchChosen',amount=1,filter={'kind':'pokemon','stage':'Basic'}))
+ if name=='Gym Trainer':return 'Supporter',seq(E('draw',amount=2),E('draw',amount=2,condition=cond('koLastOpponentTurn'),optionalCondition=True))
+ if name=='Primordial Altar':return 'Stadium',E('stadiumAction',effect=seq(E('inspectTop',side='self',amount=1),E('chooseOption',options=[{'label':'Keep top card','effect':E('noop')},{'label':'Discard top card','effect':E('discardTop',side='self',amount=1)}])))
+ if name=='Gapejaw Bog':return 'Stadium',E('noop')
+ return _stage1_trainer(row)

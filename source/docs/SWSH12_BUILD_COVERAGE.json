@@ -115,11 +115,8 @@
     "swsh12-210",
     "swsh12-211"
   ],
-  "battleReady": 48,
+  "battleReady": 72,
   "gated": {
-    "swsh12-2": [
-      "Unimplemented attack: Miracle Powder"
-    ],
     "swsh12-4": [
       "Unimplemented Ability: Hidden Threads"
     ],
@@ -135,16 +132,6 @@
     ],
     "swsh12-15": [
       "Unimplemented Ability: Needle Line"
-    ],
-    "swsh12-16": [
-      "Unimplemented attack: Aroma Shot",
-      "Unimplemented Ability: Elegant Heal"
-    ],
-    "swsh12-22": [
-      "Unimplemented Ability: Heat Boost"
-    ],
-    "swsh12-23": [
-      "Unimplemented attack: Assisting Flame"
     ],
     "swsh12-24": [
       "Unimplemented attack: Sparkling Wing"
@@ -162,29 +149,11 @@
     "swsh12-35": [
       "Unimplemented attack: Primal Guidance"
     ],
-    "swsh12-42": [
-      "Unimplemented attack: Big Mouth"
-    ],
-    "swsh12-43": [
-      "Unimplemented attack: Frosty Jail"
-    ],
-    "swsh12-44": [
-      "Unimplemented attack: Fossil Finding"
-    ],
     "swsh12-46": [
       "Unimplemented attack: Four as One"
     ],
     "swsh12-49": [
       "Unimplemented attack: Pika Strike"
-    ],
-    "swsh12-50": [
-      "Unimplemented attack: Ambushing Spark"
-    ],
-    "swsh12-55": [
-      "Unimplemented attack: Mystery Bolt"
-    ],
-    "swsh12-58": [
-      "Unimplemented Ability: Transistor"
     ],
     "swsh12-59": [
       "Unimplemented Ability: Painful Spoons"
@@ -198,15 +167,6 @@
     ],
     "swsh12-65": [
       "Unimplemented attack: Victory Symbol"
-    ],
-    "swsh12-151": [
-      "Unimplemented Trainer effect"
-    ],
-    "swsh12-152": [
-      "Unimplemented Trainer effect"
-    ],
-    "swsh12-153": [
-      "Unimplemented Trainer effect"
     ],
     "swsh12-154": [
       "Unimplemented attack: Star Gravity",
@@ -222,19 +182,10 @@
     "swsh12-157": [
       "Unimplemented Trainer effect"
     ],
-    "swsh12-158": [
-      "Unimplemented Trainer effect"
-    ],
     "swsh12-160": [
       "Unimplemented Trainer effect"
     ],
-    "swsh12-161": [
-      "Unimplemented Trainer effect"
-    ],
     "swsh12-163": [
-      "Unimplemented Trainer effect"
-    ],
-    "swsh12-164": [
       "Unimplemented Trainer effect"
     ],
     "swsh12-166": [
@@ -246,40 +197,16 @@
     "swsh12-169": [
       "Unimplemented Special Energy rules"
     ],
-    "swsh12-188": [
-      "Unimplemented Trainer effect"
-    ],
-    "swsh12-189": [
-      "Unimplemented Trainer effect"
-    ],
     "swsh12-190": [
-      "Unimplemented Trainer effect"
-    ],
-    "swsh12-191": [
-      "Unimplemented Trainer effect"
-    ],
-    "swsh12-193": [
       "Unimplemented Trainer effect"
     ],
     "swsh12-194": [
       "Unimplemented Trainer effect"
     ],
-    "swsh12-203": [
-      "Unimplemented Trainer effect"
-    ],
-    "swsh12-204": [
-      "Unimplemented Trainer effect"
-    ],
     "swsh12-205": [
       "Unimplemented Trainer effect"
     ],
-    "swsh12-207": [
-      "Unimplemented Trainer effect"
-    ],
     "swsh12-208": [
-      "Unimplemented Trainer effect"
-    ],
-    "swsh12-213": [
       "Unimplemented Trainer effect"
     ],
     "swsh12-214": [
