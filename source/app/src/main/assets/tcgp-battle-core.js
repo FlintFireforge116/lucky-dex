@@ -144,7 +144,7 @@
   // Steam Siege Talonflame's Gale Wings permits ONLY the opening Active
   // placement. It does not make Talonflame Basic for Bench or evolutions.
   function sm7SetupEligible(state,side,ref){return state?.format==='classic'&&side!==state.firstSide&&ref?.cardId==='sm7-52';}
-  function isOpeningActive(ref,state,side){return isBasic(ref)||ref?.cardId==='xy11-96'||sm7SetupEligible(state,side,ref);}
+  function isOpeningActive(ref,state,side){return isBasic(ref)||ref?.cardId==='xy11-96'||(state?.format==='classic'&&ref?.cardId==='swsh12pt5-44')||sm7SetupEligible(state,side,ref);}
   function ensureOpeningBasic(state, sideState){
     if (sideState.hand.some(ref=>isOpeningActive(ref,state,sideState.id))) return;
     const idx = sideState.deck.findIndex(isBasic);
@@ -1209,6 +1209,7 @@
   function abilitiesFor(card,slot,state){
     const own=[...(card?.abilities?.length?card.abilities:Array.isArray(card?.ability)?card.ability:[card?.ability]).filter(Boolean)];
     if(card?.pokemonV&&activeToolsOf(state,slot).some(ref=>ref.cardId==='swsh12-156'))own.push({name:'Star Alchemy',type:'activated',oncePerTurn:true,vstarPower:true,printedPowerType:'tool',disabledByStatus:false,effect:{type:'searchChosen',amount:1,filter:{}}});
+    if(card?.pokemonV&&activeToolsOf(state,slot).some(ref=>ref.cardId==='swsh12pt5-143'))own.push({name:'Star Order',type:'activated',oncePerTurn:true,vstarPower:true,printedPowerType:'tool',disabledByStatus:false,effect:{type:'sm7Rule',rule:'czStarOrder'}});
     // An attached Call Energy is a usable Active-Pokémon action, not a
     // Pokémon Poké-Power or another Energy Zone attachment.
     if(activeToolsOf(state,slot).some(ref=>ref.cardId==='dp7-83'))own.push({name:'Energy Link',type:'activated',oncePerTurn:false,printedPowerType:'tool',disabledByStatus:false,effect:{type:'neoRule',rule:'dp7:83:energyLink'}});
@@ -1251,6 +1252,11 @@
     if(state.format==='classic'&&current.id==='pl4-94'&&!effects.abilitiesSuppressed(state,side,slot,data.cardById)){
       const seen=new Set(out.map(x=>x.cardId+':'+x.attackIndex));
       for(const p of pokemonOn(state.sides[side])){const c=data.cardById(p.cardId);if(p===slot||c?.name!=='Arceus'||!c.battleEnabled)continue;
+        for(const [attackIndex,attack] of (c.attacks||[]).entries()){const key=c.id+':'+attackIndex;if(seen.has(key))continue;seen.add(key);out.push({cardId:c.id,attackIndex,attack,borrowed:true});}}
+    }
+    if(state.format==='classic'&&current.id==='swsh12pt5-107'&&!effects.abilitiesSuppressed(state,side,slot,data.cardById)){
+      const seen=new Set();for(const ref of state.sides[side].discard||[]){const c=data.cardById(ref.cardId);
+        if(!c?.battleEnabled||!effects.matchesFilter(c,{kind:'pokemon',stage:'Basic',hasRuleBox:false}))continue;
         for(const [attackIndex,attack] of (c.attacks||[]).entries()){const key=c.id+':'+attackIndex;if(seen.has(key))continue;seen.add(key);out.push({cardId:c.id,attackIndex,attack,borrowed:true});}}
     }
     // SM3 Marshadow-GX Shadow Hunt: borrow only Basic Pokémon attacks from our
@@ -3159,7 +3165,8 @@
           const swsh7Ribbon=awardsPrize&&cause==='attack'&&source?.attack&&source.side===foeSide&&source.turn===state.turnNumber&&source.damage>0&&card?.pokemonV&&/Sylveon/.test(card.name)?activeToolsOf(state,slot).filter(r=>r.cardId==='swsh7-155').length:0;
           const swsh7Flicker=awardsPrize&&slot.swsh7ShadowFlicker?.side===foeSide&&slot.swsh7ShadowFlicker.turn===state.turnNumber&&state.activeSide===foeSide&&resume!=='advanceTurn'?1:0;
           const criticalBite=awardsPrize&&swsh11AttackDamageKO&&eventSource.cardId==='swsh12-105'&&foe.lastAttackName==='Critical Bite'?2:0;
-          const prizeCount=awardsPrize?Math.max(0,prizeValue(card)-medal-island-swsh7Ribbon+swsh7Flicker+sm12Bonus+greedy+beast+beastBringer-blackMarket+sm4Glutton+extraMoonSkip+arceusBeltBonus+arceusExtra+hgss3SpaceVirus+bw8Overflow+deltaPlus+criticalBite+xy10Endgame+sm2Extra-bw9LifeDew+swsh5DoubleDip):0;
+          const czStarOrder=awardsPrize&&sm10WasActive&&cause==='attack'&&source?.attack&&source.side===foeSide&&source.turn===state.turnNumber&&source.damage>0&&foe.czStarOrderTurn===state.turnNumber&&data.cardById(source.cardId)?.pokemonV&&data.cardById(source.cardId)?.stage==='Basic'&&(card?.pokemonVSTAR||card?.pokemonVMAX)?1:0;
+          const prizeCount=awardsPrize?Math.max(0,prizeValue(card)-medal-island-swsh7Ribbon+swsh7Flicker+sm12Bonus+greedy+beast+beastBringer-blackMarket+sm4Glutton+extraMoonSkip+arceusBeltBonus+arceusExtra+hgss3SpaceVirus+bw8Overflow+deltaPlus+criticalBite+xy10Endgame+sm2Extra-bw9LifeDew+swsh5DoubleDip+czStarOrder):0;
           awarded=Math.min(prizeCount,Math.max(0,foe.prizes.length-(state.pendingPrizeClaims||[]).filter(q=>q.side===foeSide).reduce((n,q)=>n+q.remaining,0)));
           if(awarded){state.pendingPrizeClaims=state.pendingPrizeClaims||[];state.pendingPrizeClaims.push({side:foeSide,remaining:awarded,...(swsh3Smoke?{discardInstead:true}:{})});}
           state.log.push({type:'ko',side,cardId:card.id,turnNumber:state.turnNumber,prizesTaken:foe.prizesTaken,awarded});

@@ -20,7 +20,7 @@ def prepare():
  from swsh12pt5_source import rows as verified_rows
  rows=validate(verified_rows())
  SRC.write_text(json.dumps(rows,ensure_ascii=False,separators=(',',':'))+'\n',encoding='utf-8')
- ATTEST.write_text(json.dumps({'set':'swsh12pt5','sourceGitBlob':PIN,'compactSha256':hashlib.sha256(SRC.read_bytes()).hexdigest(),'printedTotal':160,'importedTotal':len(rows),'sourceScope':'verified pinned source packets, stage seven'},indent=2)+'\n')
+ ATTEST.write_text(json.dumps({'set':'swsh12pt5','sourceGitBlob':PIN,'compactSha256':hashlib.sha256(SRC.read_bytes()).hexdigest(),'printedTotal':160,'importedTotal':len(rows),'sourceScope':'verified pinned source packets, stage eight'},indent=2)+'\n')
  return rows
 
 def get_source():

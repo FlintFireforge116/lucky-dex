@@ -298,3 +298,21 @@ def ability(row,a):
  if n==51:return passive(E('sm7Rule',rule='czShockingBlock'))
  if n==105:return dict(type='triggered',event='benched',fromHandOnly=True,effect=E('sm7Rule',rule='czClimacticGate'))
  return _stage6_ability(row,a)
+
+# Stage 8: opening Active, borrowed attacks, copied Supporter and Tool VSTAR.
+_stage7_attack,_stage7_ability,_stage7_trainer=attack,ability,trainer
+
+def ability(row,a):
+ n=int(row[0])
+ if n==44:return passive(E('sm7Rule',rule='czExplosiveness'))
+ if n==107:return passive(E('sm7Rule',rule='czSuddenTransformation'))
+ if n==143:return dict(type='activated',oncePerTurn=True,vstarPower=True,printedPowerType='tool',effect=E('sm7Rule',rule='czStarOrder'))
+ return _stage7_ability(row,a)
+
+def attack(row,a):
+ if int(row[0])==119 and a[0]=='Primate Acting':return E('sm7Rule',rule='czPrimateActing')
+ return _stage7_attack(row,a)
+
+def trainer(row):
+ if int(row[0])==143:return 'Tool',E('noop')
+ return _stage7_trainer(row)
