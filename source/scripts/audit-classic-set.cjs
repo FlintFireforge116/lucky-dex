@@ -33,7 +33,7 @@ function walkEffects(v,callback,seen=new Set()){
  }
 }
 function parseCli(argv){
- const args={set:CONTRACT.defaultSetId||'dp2',all:false,cpu:true,smoke:false,write:true,out:null,help:false};
+ const args={set:CONTRACT.defaultSetId||'dp2',all:false,cpu:true,smoke:false,strictSmoke:false,write:true,out:null,help:false};
  for(let i=0;i<argv.length;i++){
   const a=argv[i];
   if(a==='--set'){if(!argv[i+1])throw Error('--set needs a set id');args.set=argv[++i].toLowerCase();}
@@ -41,6 +41,7 @@ function parseCli(argv){
   else if(a==='--cpu')args.cpu=true;
   else if(a==='--no-cpu')args.cpu=false;
   else if(a==='--smoke')args.smoke=true;
+  else if(a==='--strict-smoke'){args.smoke=true;args.strictSmoke=true;}
   else if(a==='--no-smoke')args.smoke=false;
   else if(a==='--out'){if(!argv[i+1])throw Error('--out needs a path');args.out=argv[++i];}
   else if(a==='--no-write')args.write=false;
@@ -253,6 +254,24 @@ function runSmokes(cards,{data,core,opponents}){
         enemy.active.tool={cardId:'swsh11-165',uid:'audit-tool'};
       }
     }
+    // Silver Tempest prerequisites: previous-turn attack chains, Radiant target,
+    // and a real Serena discard/gust choice. These are disposable smoke boards.
+    if(card.setId==='swsh12'){
+      const own=s.sides[side],enemy=s.sides[side==='player'?'opponent':'player'];
+      own.active.energy={Grass:3,Fire:3,Water:3,Lightning:3,Psychic:3,Fighting:3,Darkness:3,Metal:3,Colorless:3};
+      if(card.id==='swsh12-85'||card.id==='swsh12-116'){
+        own.lastAttackTurn=s.turnNumber-2;
+        own.lastAttackName=card.id==='swsh12-85'?'Toge Dash':'Dede-Short';
+        own.lastAttackCardId=card.id==='swsh12-85'?'swsh12-127':'swsh12-85';
+      }
+      if(card.id==='swsh12-133'){
+        enemy.bench[0].cardId='swsh12-59';enemy.bench[0].stack=['swsh12-59'];
+      }
+      if(card.name==='Serena'){
+        own.hand.push({cardId:'swsh12-1',uid:'audit-serena-payment'});
+        enemy.bench[0].cardId='swsh12-138';enemy.bench[0].stack=['swsh12-138'];
+      }
+    }
     const actions=core.legalActions(s,side);
     const action=actions.find(a=>card.kind==='trainer'?a.type==='trainer'&&a.cardId===card.id:a.type==='attack'&&a.attackIndex===ix&&(!a.attackCardId||a.attackCardId===card.id));
     if(!action){result.skipped++;result.skippedDetails.push({cardId:card.id,side,action:actionName});continue;}
@@ -312,7 +331,7 @@ function toMarkdown(report){
 }
 function runCli(argv){
  const args=parseCli(argv);
- if(args.help){process.stdout.write('Usage: node scripts/audit-classic-set.cjs [--set dp2 | --all] [--smoke] [--no-cpu] [--out path] [--no-write]\n');return 0;}
+ if(args.help){process.stdout.write('Usage: node scripts/audit-classic-set.cjs [--set dp2 | --all] [--smoke | --strict-smoke] [--no-cpu] [--out path] [--no-write]\n');return 0;}
  const data=require('../app/src/main/assets/tcg-classic-battle-data');
  const fx=require('../app/src/main/assets/tcgp-battle-effects');
  const opp=require('../app/src/main/assets/tcg-classic-opponents');
@@ -340,7 +359,7 @@ function runCli(argv){
   const s=report.summary;
   process.stdout.write(`${id}: ${s.counts.enabled}/${s.total} enabled | ${s.errors} errors | ${s.warnings} warnings | ${s.reviewFlags} review | ${s.withStaticTestMentions} IDs in tests${report.cpu?` | CPU ${report.cpu.valid}/${report.cpu.attempted}`:''}${report.smoke?` | smokes ${report.smoke.executed}/${report.smoke.attempted} (${report.smoke.skipped} skipped)` : ''}\n`);
  }
- return reports.some(r=>r.summary.errors>0)?1:0;
+ return reports.some(r=>r.summary.errors>0||(args.strictSmoke&&(r.smoke?.failures.length||r.smoke?.skipped||r.smoke?.executed!==r.smoke?.attempted||!r.smoke?.attempted||r.cpu?.failures.length)))?1:0;
 }
 if(require.main===module){try{process.exitCode=runCli(process.argv.slice(2));}catch(e){console.error('Classic auditor: '+(e.stack||e));process.exitCode=2;}}
 module.exports={auditSet,toMarkdown,walkEffects,gatherRisks,parseCli,runCli,runSmokes};

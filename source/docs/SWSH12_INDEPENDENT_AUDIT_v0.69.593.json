@@ -1,0 +1,4280 @@
+{
+  "schemaVersion": 1,
+  "contract": "docs/LUCKYDEX_MASTER_RULES.txt",
+  "scope": "Static preflight + optional synthetic execution, not printed correctness or Android certification",
+  "summary": {
+    "setId": "swsh12",
+    "setName": "Silver Tempest",
+    "total": 215,
+    "declared": 215,
+    "counts": {
+      "pokemon": 177,
+      "trainer": 35,
+      "energy": 3,
+      "attacks": 280,
+      "abilities": 37,
+      "enabled": 215,
+      "gated": 0
+    },
+    "risks": {
+      "choice": 85,
+      "privacy": 13,
+      "timing": 25,
+      "energyMovement": 39,
+      "status": 24,
+      "deckSearch": 43,
+      "coin": 24
+    },
+    "withStaticTestMentions": 128,
+    "errors": 0,
+    "warnings": 0,
+    "reviewFlags": 9
+  },
+  "findings": [
+    {
+      "severity": "review",
+      "rule": "C-AUDIT-002",
+      "cardId": "swsh12-135",
+      "message": "attack Celestial Roar: custom rule bw6:celestialRoar has no obvious source literal; inspect dispatcher."
+    },
+    {
+      "severity": "review",
+      "rule": "C-AUDIT-002",
+      "cardId": "swsh12-154",
+      "message": "card effect: no-op Trainer/Stadium effect; verify shared continuous rule."
+    },
+    {
+      "severity": "review",
+      "rule": "C-AUDIT-002",
+      "cardId": "swsh12-155",
+      "message": "card effect: no-op Trainer/Stadium effect; verify shared continuous rule."
+    },
+    {
+      "severity": "review",
+      "rule": "C-AUDIT-002",
+      "cardId": "swsh12-156",
+      "message": "card effect: no-op Trainer/Stadium effect; verify shared continuous rule."
+    },
+    {
+      "severity": "review",
+      "rule": "C-AUDIT-002",
+      "cardId": "swsh12-160",
+      "message": "card effect: no-op Trainer/Stadium effect; verify shared continuous rule."
+    },
+    {
+      "severity": "review",
+      "rule": "C-AUDIT-002",
+      "cardId": "swsh12-183",
+      "message": "attack Celestial Roar: custom rule bw6:celestialRoar has no obvious source literal; inspect dispatcher."
+    },
+    {
+      "severity": "review",
+      "rule": "C-AUDIT-002",
+      "cardId": "swsh12-184",
+      "message": "attack Celestial Roar: custom rule bw6:celestialRoar has no obvious source literal; inspect dispatcher."
+    },
+    {
+      "severity": "review",
+      "rule": "C-AUDIT-002",
+      "cardId": "swsh12-213",
+      "message": "card effect: no-op Trainer/Stadium effect; verify shared continuous rule."
+    },
+    {
+      "severity": "review",
+      "rule": "C-AUDIT-002",
+      "cardId": "swsh12-214",
+      "message": "card effect: no-op Trainer/Stadium effect; verify shared continuous rule."
+    }
+  ],
+  "cardLedger": [
+    {
+      "id": "swsh12-1",
+      "name": "Venonat",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 1,
+      "abilityCount": 0,
+      "riskTags": [],
+      "effectTypes": [
+        "noop"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [
+        "v07579-silver-tempest.test.cjs"
+      ],
+      "findings": []
+    },
+    {
+      "id": "swsh12-2",
+      "name": "Venomoth",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [
+        "choice",
+        "status",
+        "coin"
+      ],
+      "effectTypes": [
+        "coinFlip",
+        "chooseOption",
+        "status",
+        "noop"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [],
+      "findings": []
+    },
+    {
+      "id": "swsh12-3",
+      "name": "Spinarak",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 1,
+      "abilityCount": 0,
+      "riskTags": [],
+      "effectTypes": [
+        "noop"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [],
+      "findings": []
+    },
+    {
+      "id": "swsh12-4",
+      "name": "Ariados",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 1,
+      "abilityCount": 1,
+      "riskTags": [],
+      "effectTypes": [
+        "noop",
+        "modifier"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [
+        "v07579-silver-tempest.test.cjs"
+      ],
+      "findings": []
+    },
+    {
+      "id": "swsh12-5",
+      "name": "Sunkern",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 1,
+      "abilityCount": 0,
+      "riskTags": [],
+      "effectTypes": [
+        "noop"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [],
+      "findings": []
+    },
+    {
+      "id": "swsh12-6",
+      "name": "Sunflora",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 1,
+      "abilityCount": 0,
+      "riskTags": [
+        "choice",
+        "energyMovement"
+      ],
+      "effectTypes": [
+        "chooseDiscardForBonus"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [
+        "v07579-silver-tempest.test.cjs"
+      ],
+      "findings": []
+    },
+    {
+      "id": "swsh12-7",
+      "name": "Serperior V",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [],
+      "effectTypes": [
+        "sequence",
+        "heal",
+        "noop"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [
+        "v07579-silver-tempest.test.cjs"
+      ],
+      "findings": []
+    },
+    {
+      "id": "swsh12-8",
+      "name": "Serperior VSTAR",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [
+        "choice",
+        "energyMovement"
+      ],
+      "effectTypes": [
+        "redistributeEnergy",
+        "sequence",
+        "energyDamage",
+        "switch"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [
+        "v07579-silver-tempest.test.cjs"
+      ],
+      "findings": []
+    },
+    {
+      "id": "swsh12-9",
+      "name": "Petilil",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [],
+      "effectTypes": [
+        "noop"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [],
+      "findings": []
+    },
+    {
+      "id": "swsh12-10",
+      "name": "Hisuian Lilligant",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [
+        "choice",
+        "deckSearch"
+      ],
+      "effectTypes": [
+        "distributeEnergy",
+        "noop"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [],
+      "findings": []
+    },
+    {
+      "id": "swsh12-11",
+      "name": "Foongus",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 1,
+      "abilityCount": 0,
+      "riskTags": [],
+      "effectTypes": [
+        "noop"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [],
+      "findings": []
+    },
+    {
+      "id": "swsh12-12",
+      "name": "Amoonguss",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 1,
+      "abilityCount": 1,
+      "riskTags": [
+        "timing",
+        "status"
+      ],
+      "effectTypes": [
+        "status",
+        "sm7Rule"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [
+        "v07579-silver-tempest.test.cjs"
+      ],
+      "findings": []
+    },
+    {
+      "id": "swsh12-13",
+      "name": "Durant",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [
+        "choice",
+        "privacy",
+        "energyMovement",
+        "deckSearch"
+      ],
+      "effectTypes": [
+        "searchChosen",
+        "noop"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [],
+      "findings": []
+    },
+    {
+      "id": "swsh12-14",
+      "name": "Virizion",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [],
+      "effectTypes": [
+        "bonusDamage",
+        "healSelf"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [
+        "v07579-silver-tempest.test.cjs"
+      ],
+      "findings": []
+    },
+    {
+      "id": "swsh12-15",
+      "name": "Chesnaught V",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 1,
+      "abilityCount": 1,
+      "riskTags": [],
+      "effectTypes": [
+        "healSelf",
+        "placeDamageCounters"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [
+        "v07579-silver-tempest.test.cjs"
+      ],
+      "findings": []
+    },
+    {
+      "id": "swsh12-16",
+      "name": "Radiant Tsareena",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 1,
+      "abilityCount": 1,
+      "riskTags": [
+        "choice"
+      ],
+      "effectTypes": [
+        "removeStatus",
+        "heal"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [
+        "v07579-silver-tempest.test.cjs"
+      ],
+      "findings": []
+    },
+    {
+      "id": "swsh12-17",
+      "name": "Vulpix",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 1,
+      "abilityCount": 0,
+      "riskTags": [
+        "coin"
+      ],
+      "effectTypes": [
+        "coinDamage"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [
+        "v07579-silver-tempest.test.cjs"
+      ],
+      "findings": []
+    },
+    {
+      "id": "swsh12-18",
+      "name": "Ninetales",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [
+        "timing",
+        "status"
+      ],
+      "effectTypes": [
+        "status",
+        "lock"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [],
+      "findings": []
+    },
+    {
+      "id": "swsh12-19",
+      "name": "Growlithe",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [],
+      "effectTypes": [
+        "noop"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [],
+      "findings": []
+    },
+    {
+      "id": "swsh12-20",
+      "name": "Arcanine",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [
+        "energyMovement"
+      ],
+      "effectTypes": [
+        "attachEnergyFromDiscard",
+        "bonusDamage"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [],
+      "findings": []
+    },
+    {
+      "id": "swsh12-21",
+      "name": "Ponyta",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 1,
+      "abilityCount": 0,
+      "riskTags": [],
+      "effectTypes": [
+        "selfDamage"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [],
+      "findings": []
+    },
+    {
+      "id": "swsh12-22",
+      "name": "Rapidash",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 1,
+      "abilityCount": 1,
+      "riskTags": [
+        "choice",
+        "energyMovement"
+      ],
+      "effectTypes": [
+        "noop",
+        "sm7Rule",
+        "modifier"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [
+        "v07579-silver-tempest.test.cjs"
+      ],
+      "findings": []
+    },
+    {
+      "id": "swsh12-23",
+      "name": "Victini",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [
+        "choice",
+        "energyMovement"
+      ],
+      "effectTypes": [
+        "sm7Rule",
+        "noop"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [],
+      "findings": []
+    },
+    {
+      "id": "swsh12-24",
+      "name": "Reshiram V",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [
+        "choice",
+        "timing",
+        "energyMovement",
+        "deckSearch",
+        "coin"
+      ],
+      "effectTypes": [
+        "sm7Rule",
+        "coinFlip",
+        "noop",
+        "lock"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [],
+      "findings": []
+    },
+    {
+      "id": "swsh12-25",
+      "name": "Fennekin",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [
+        "privacy",
+        "deckSearch"
+      ],
+      "effectTypes": [
+        "searchChosen",
+        "noop"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [],
+      "findings": []
+    },
+    {
+      "id": "swsh12-26",
+      "name": "Braixen",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [],
+      "effectTypes": [
+        "noop",
+        "discardCountDamage"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [
+        "v07579-silver-tempest.test.cjs"
+      ],
+      "findings": []
+    },
+    {
+      "id": "swsh12-27",
+      "name": "Delphox",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [
+        "energyMovement"
+      ],
+      "effectTypes": [
+        "discardCountDamage",
+        "energyDamage"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [],
+      "findings": []
+    },
+    {
+      "id": "swsh12-28",
+      "name": "Fletchinder",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 1,
+      "abilityCount": 0,
+      "riskTags": [],
+      "effectTypes": [
+        "noop"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [],
+      "findings": []
+    },
+    {
+      "id": "swsh12-29",
+      "name": "Talonflame",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [],
+      "effectTypes": [
+        "selectedDamage",
+        "bonusDamage"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [],
+      "findings": []
+    },
+    {
+      "id": "swsh12-30",
+      "name": "Litten",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [],
+      "effectTypes": [
+        "noop",
+        "damageFromDamage"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [
+        "v07579-silver-tempest.test.cjs"
+      ],
+      "findings": []
+    },
+    {
+      "id": "swsh12-31",
+      "name": "Torracat",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [
+        "timing"
+      ],
+      "effectTypes": [
+        "koGuard",
+        "noop"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [
+        "v07579-silver-tempest.test.cjs"
+      ],
+      "findings": []
+    },
+    {
+      "id": "swsh12-32",
+      "name": "Incineroar",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [
+        "choice",
+        "energyMovement"
+      ],
+      "effectTypes": [
+        "copyAttack",
+        "discardEnergyCard"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [
+        "v07579-silver-tempest.test.cjs"
+      ],
+      "findings": []
+    },
+    {
+      "id": "swsh12-33",
+      "name": "Alolan Vulpix V",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [],
+      "effectTypes": [
+        "bonusDamage",
+        "noop"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [],
+      "findings": []
+    },
+    {
+      "id": "swsh12-34",
+      "name": "Alolan Vulpix VSTAR",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [
+        "timing"
+      ],
+      "effectTypes": [
+        "sequence",
+        "damageRule",
+        "preventDamage",
+        "fieldCountDamage"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [
+        "v07579-silver-tempest.test.cjs"
+      ],
+      "findings": []
+    },
+    {
+      "id": "swsh12-35",
+      "name": "Omastar V",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [
+        "choice",
+        "timing",
+        "deckSearch"
+      ],
+      "effectTypes": [
+        "benchFromDeck",
+        "lock"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [],
+      "findings": []
+    },
+    {
+      "id": "swsh12-36",
+      "name": "Articuno",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [
+        "status"
+      ],
+      "effectTypes": [
+        "noop",
+        "sequence",
+        "selfDamage",
+        "status"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [],
+      "findings": []
+    },
+    {
+      "id": "swsh12-37",
+      "name": "Wailmer",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [],
+      "effectTypes": [
+        "drain",
+        "noop"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [
+        "v07579-silver-tempest.test.cjs"
+      ],
+      "findings": []
+    },
+    {
+      "id": "swsh12-38",
+      "name": "Wailord",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 1,
+      "abilityCount": 1,
+      "riskTags": [
+        "energyMovement"
+      ],
+      "effectTypes": [
+        "bonusDamage",
+        "modifier"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [
+        "v07579-silver-tempest.test.cjs"
+      ],
+      "findings": []
+    },
+    {
+      "id": "swsh12-39",
+      "name": "Feebas",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [
+        "deckSearch"
+      ],
+      "effectTypes": [
+        "evolveFromDeck",
+        "noop"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [],
+      "findings": []
+    },
+    {
+      "id": "swsh12-40",
+      "name": "Milotic",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [
+        "status"
+      ],
+      "effectTypes": [
+        "selectedDamage",
+        "status"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [
+        "v07579-silver-tempest.test.cjs"
+      ],
+      "findings": []
+    },
+    {
+      "id": "swsh12-41",
+      "name": "Snorunt",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [],
+      "effectTypes": [
+        "draw",
+        "noop"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [],
+      "findings": []
+    },
+    {
+      "id": "swsh12-42",
+      "name": "Glalie",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [],
+      "effectTypes": [
+        "noop",
+        "bonusDamage"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [
+        "v07579-silver-tempest.test.cjs"
+      ],
+      "findings": []
+    },
+    {
+      "id": "swsh12-43",
+      "name": "Froslass",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [
+        "status"
+      ],
+      "effectTypes": [
+        "sequence",
+        "bonusDamage",
+        "status",
+        "noop"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [
+        "v07579-silver-tempest.test.cjs"
+      ],
+      "findings": []
+    },
+    {
+      "id": "swsh12-44",
+      "name": "Relicanth",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [
+        "choice",
+        "status",
+        "deckSearch"
+      ],
+      "effectTypes": [
+        "sm7Rule",
+        "status"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [],
+      "findings": []
+    },
+    {
+      "id": "swsh12-45",
+      "name": "Phione",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [
+        "choice",
+        "deckSearch"
+      ],
+      "effectTypes": [
+        "benchFromDeck",
+        "noop"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [],
+      "findings": []
+    },
+    {
+      "id": "swsh12-46",
+      "name": "Keldeo",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [],
+      "effectTypes": [
+        "noop",
+        "bonusDamage"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [
+        "v07579-silver-tempest.test.cjs"
+      ],
+      "findings": []
+    },
+    {
+      "id": "swsh12-47",
+      "name": "Dewpider",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 1,
+      "abilityCount": 0,
+      "riskTags": [],
+      "effectTypes": [
+        "noop"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [],
+      "findings": []
+    },
+    {
+      "id": "swsh12-48",
+      "name": "Araquanid",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [
+        "energyMovement",
+        "status",
+        "coin"
+      ],
+      "effectTypes": [
+        "coinFlip",
+        "sequence",
+        "status",
+        "discardEnergyCard",
+        "noop"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [],
+      "findings": []
+    },
+    {
+      "id": "swsh12-49",
+      "name": "Pikachu",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 1,
+      "abilityCount": 0,
+      "riskTags": [],
+      "effectTypes": [
+        "bonusDamage"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [
+        "v07579-silver-tempest.test.cjs"
+      ],
+      "findings": []
+    },
+    {
+      "id": "swsh12-50",
+      "name": "Raichu",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [],
+      "effectTypes": [
+        "bonusDamage",
+        "noop"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [
+        "v07579-silver-tempest.test.cjs"
+      ],
+      "findings": []
+    },
+    {
+      "id": "swsh12-51",
+      "name": "Chinchou",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [],
+      "effectTypes": [
+        "noop"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [],
+      "findings": []
+    },
+    {
+      "id": "swsh12-52",
+      "name": "Lanturn",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [
+        "energyMovement"
+      ],
+      "effectTypes": [
+        "noop",
+        "discardEnergyCard"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [],
+      "findings": []
+    },
+    {
+      "id": "swsh12-53",
+      "name": "Rotom",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [
+        "deckSearch"
+      ],
+      "effectTypes": [
+        "handShuffle",
+        "noop"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [],
+      "findings": []
+    },
+    {
+      "id": "swsh12-54",
+      "name": "Emolga",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [
+        "privacy",
+        "deckSearch"
+      ],
+      "effectTypes": [
+        "searchChosen",
+        "noop"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [],
+      "findings": []
+    },
+    {
+      "id": "swsh12-55",
+      "name": "Stunfisk",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [],
+      "effectTypes": [
+        "noop",
+        "sequence",
+        "attackRequirement",
+        "selectedDamage"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [
+        "v07579-silver-tempest.test.cjs"
+      ],
+      "findings": []
+    },
+    {
+      "id": "swsh12-56",
+      "name": "Zeraora",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [],
+      "effectTypes": [
+        "bonusDamage",
+        "noop"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [
+        "v07579-silver-tempest.test.cjs"
+      ],
+      "findings": []
+    },
+    {
+      "id": "swsh12-57",
+      "name": "Regieleki V",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [
+        "timing"
+      ],
+      "effectTypes": [
+        "switch",
+        "modifier"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [
+        "v07579-silver-tempest.test.cjs"
+      ],
+      "findings": []
+    },
+    {
+      "id": "swsh12-58",
+      "name": "Regieleki VMAX",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 1,
+      "abilityCount": 1,
+      "riskTags": [
+        "timing"
+      ],
+      "effectTypes": [
+        "lock",
+        "modifier"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [
+        "v07579-silver-tempest.test.cjs"
+      ],
+      "findings": []
+    },
+    {
+      "id": "swsh12-59",
+      "name": "Radiant Alakazam",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 1,
+      "abilityCount": 1,
+      "riskTags": [
+        "choice"
+      ],
+      "effectTypes": [
+        "handCountDamage",
+        "sm7Rule"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [
+        "v07579-silver-tempest.test.cjs"
+      ],
+      "findings": []
+    },
+    {
+      "id": "swsh12-60",
+      "name": "Drowzee",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [
+        "status"
+      ],
+      "effectTypes": [
+        "noop",
+        "status"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [
+        "v07579-silver-tempest.test.cjs"
+      ],
+      "findings": []
+    },
+    {
+      "id": "swsh12-61",
+      "name": "Hypno",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [
+        "choice",
+        "deckSearch"
+      ],
+      "effectTypes": [
+        "benchFromDeck",
+        "noop"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [
+        "v07579-silver-tempest.test.cjs"
+      ],
+      "findings": []
+    },
+    {
+      "id": "swsh12-62",
+      "name": "Jynx",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 1,
+      "abilityCount": 1,
+      "riskTags": [],
+      "effectTypes": [
+        "damageFromDamage",
+        "sm7Rule"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [
+        "v07579-silver-tempest.test.cjs"
+      ],
+      "findings": []
+    },
+    {
+      "id": "swsh12-63",
+      "name": "Misdreavus",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 1,
+      "abilityCount": 0,
+      "riskTags": [
+        "status",
+        "coin"
+      ],
+      "effectTypes": [
+        "coinFlip",
+        "status",
+        "noop"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [],
+      "findings": []
+    },
+    {
+      "id": "swsh12-64",
+      "name": "Mismagius",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 1,
+      "abilityCount": 1,
+      "riskTags": [],
+      "effectTypes": [
+        "placeDamageCounters",
+        "sm7Rule"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [
+        "v07579-silver-tempest.test.cjs"
+      ],
+      "findings": []
+    },
+    {
+      "id": "swsh12-65",
+      "name": "Unown V",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [
+        "status"
+      ],
+      "effectTypes": [
+        "status",
+        "sm7Rule"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [
+        "v07579-silver-tempest.test.cjs"
+      ],
+      "findings": []
+    },
+    {
+      "id": "swsh12-66",
+      "name": "Unown VSTAR",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [
+        "coin"
+      ],
+      "effectTypes": [
+        "coinDamage",
+        "sm7Rule"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [
+        "v07579-silver-tempest.test.cjs"
+      ],
+      "findings": []
+    },
+    {
+      "id": "swsh12-67",
+      "name": "Ralts",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 1,
+      "abilityCount": 0,
+      "riskTags": [
+        "choice",
+        "timing"
+      ],
+      "effectTypes": [
+        "chooseAttackLock"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [],
+      "findings": []
+    },
+    {
+      "id": "swsh12-68",
+      "name": "Kirlia",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 1,
+      "abilityCount": 1,
+      "riskTags": [
+        "choice"
+      ],
+      "effectTypes": [
+        "noop",
+        "sm7Rule",
+        "draw"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [
+        "v07579-silver-tempest.test.cjs"
+      ],
+      "findings": []
+    },
+    {
+      "id": "swsh12-69",
+      "name": "Gardevoir",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 1,
+      "abilityCount": 1,
+      "riskTags": [
+        "choice"
+      ],
+      "effectTypes": [
+        "noop",
+        "sm7Rule",
+        "draw"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [
+        "v07579-silver-tempest.test.cjs"
+      ],
+      "findings": []
+    },
+    {
+      "id": "swsh12-70",
+      "name": "Mawile V",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [
+        "energyMovement",
+        "coin"
+      ],
+      "effectTypes": [
+        "coinFlip",
+        "discardEnergyCard",
+        "noop",
+        "discardHand"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [
+        "v07579-silver-tempest.test.cjs"
+      ],
+      "findings": []
+    },
+    {
+      "id": "swsh12-71",
+      "name": "Mawile VSTAR",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 1,
+      "abilityCount": 1,
+      "riskTags": [
+        "choice"
+      ],
+      "effectTypes": [
+        "bonusDamage",
+        "sm7Rule"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [
+        "v07579-silver-tempest.test.cjs"
+      ],
+      "findings": []
+    },
+    {
+      "id": "swsh12-72",
+      "name": "Meditite",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 1,
+      "abilityCount": 1,
+      "riskTags": [],
+      "effectTypes": [
+        "noop",
+        "preventDamage"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [
+        "v07579-silver-tempest.test.cjs"
+      ],
+      "findings": []
+    },
+    {
+      "id": "swsh12-73",
+      "name": "Medicham",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 1,
+      "abilityCount": 1,
+      "riskTags": [],
+      "effectTypes": [
+        "bonusDamage",
+        "modifier"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [
+        "v07579-silver-tempest.test.cjs"
+      ],
+      "findings": []
+    },
+    {
+      "id": "swsh12-74",
+      "name": "Chimecho",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [
+        "timing",
+        "status"
+      ],
+      "effectTypes": [
+        "energyAttachStatusTrap",
+        "noop"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [
+        "v07579-silver-tempest.test.cjs"
+      ],
+      "findings": []
+    },
+    {
+      "id": "swsh12-75",
+      "name": "Sigilyph",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [
+        "choice",
+        "deckSearch"
+      ],
+      "effectTypes": [
+        "sm7Rule",
+        "noop"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [
+        "v07579-silver-tempest.test.cjs"
+      ],
+      "findings": []
+    },
+    {
+      "id": "swsh12-76",
+      "name": "Solosis",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 1,
+      "abilityCount": 0,
+      "riskTags": [],
+      "effectTypes": [
+        "noop"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [
+        "v07579-silver-tempest.test.cjs"
+      ],
+      "findings": []
+    },
+    {
+      "id": "swsh12-77",
+      "name": "Duosion",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 1,
+      "abilityCount": 0,
+      "riskTags": [],
+      "effectTypes": [
+        "placeDamageCounters"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [
+        "v07579-silver-tempest.test.cjs"
+      ],
+      "findings": []
+    },
+    {
+      "id": "swsh12-78",
+      "name": "Reuniclus",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 1,
+      "abilityCount": 1,
+      "riskTags": [
+        "choice"
+      ],
+      "effectTypes": [
+        "sm7Rule"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [
+        "v07579-silver-tempest.test.cjs"
+      ],
+      "findings": []
+    },
+    {
+      "id": "swsh12-79",
+      "name": "Elgyem",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 1,
+      "abilityCount": 0,
+      "riskTags": [],
+      "effectTypes": [
+        "noop"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [],
+      "findings": []
+    },
+    {
+      "id": "swsh12-80",
+      "name": "Beheeyem",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [],
+      "effectTypes": [
+        "noop",
+        "selectedDamage"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [],
+      "findings": []
+    },
+    {
+      "id": "swsh12-81",
+      "name": "Espurr",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [],
+      "effectTypes": [
+        "noop"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [],
+      "findings": []
+    },
+    {
+      "id": "swsh12-82",
+      "name": "Meowstic",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 1,
+      "abilityCount": 1,
+      "riskTags": [
+        "choice",
+        "privacy",
+        "deckSearch"
+      ],
+      "effectTypes": [
+        "noop",
+        "searchChosen"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [],
+      "findings": []
+    },
+    {
+      "id": "swsh12-83",
+      "name": "Swirlix",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [],
+      "effectTypes": [
+        "noop"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [],
+      "findings": []
+    },
+    {
+      "id": "swsh12-84",
+      "name": "Slurpuff",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [],
+      "effectTypes": [
+        "heal",
+        "noop"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [],
+      "findings": []
+    },
+    {
+      "id": "swsh12-85",
+      "name": "Dedenne",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [
+        "status"
+      ],
+      "effectTypes": [
+        "noop",
+        "sequence",
+        "attackRequirement",
+        "status"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [
+        "v07579-silver-tempest.test.cjs"
+      ],
+      "findings": []
+    },
+    {
+      "id": "swsh12-86",
+      "name": "Indeedee",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [
+        "deckSearch"
+      ],
+      "effectTypes": [
+        "searchChosen",
+        "noop"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [
+        "v07579-silver-tempest.test.cjs"
+      ],
+      "findings": []
+    },
+    {
+      "id": "swsh12-87",
+      "name": "Dreepy",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 1,
+      "abilityCount": 0,
+      "riskTags": [],
+      "effectTypes": [
+        "selfDamage"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [
+        "v07579-silver-tempest.test.cjs"
+      ],
+      "findings": []
+    },
+    {
+      "id": "swsh12-88",
+      "name": "Drakloak",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 1,
+      "abilityCount": 0,
+      "riskTags": [],
+      "effectTypes": [
+        "noop"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [
+        "v07579-silver-tempest.test.cjs"
+      ],
+      "findings": []
+    },
+    {
+      "id": "swsh12-89",
+      "name": "Dragapult",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [
+        "choice"
+      ],
+      "effectTypes": [
+        "sm7Rule",
+        "noop"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [
+        "v07579-silver-tempest.test.cjs"
+      ],
+      "findings": []
+    },
+    {
+      "id": "swsh12-90",
+      "name": "Hisuian Arcanine V",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 1,
+      "abilityCount": 1,
+      "riskTags": [
+        "choice",
+        "energyMovement"
+      ],
+      "effectTypes": [
+        "energyDamage",
+        "sm7Rule"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [
+        "v07579-silver-tempest.test.cjs"
+      ],
+      "findings": []
+    },
+    {
+      "id": "swsh12-91",
+      "name": "Phanpy",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 1,
+      "abilityCount": 0,
+      "riskTags": [
+        "coin"
+      ],
+      "effectTypes": [
+        "coinFlip",
+        "bonusDamage",
+        "noop"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [],
+      "findings": []
+    },
+    {
+      "id": "swsh12-92",
+      "name": "Donphan",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [],
+      "effectTypes": [
+        "attackDamageGate",
+        "noop"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [
+        "v07579-silver-tempest.test.cjs"
+      ],
+      "findings": []
+    },
+    {
+      "id": "swsh12-93",
+      "name": "Baltoy",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [
+        "privacy",
+        "deckSearch"
+      ],
+      "effectTypes": [
+        "searchChosen",
+        "noop"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [],
+      "findings": []
+    },
+    {
+      "id": "swsh12-94",
+      "name": "Claydol",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 1,
+      "abilityCount": 1,
+      "riskTags": [
+        "choice",
+        "energyMovement"
+      ],
+      "effectTypes": [
+        "noop",
+        "sm7Rule"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [
+        "v07579-silver-tempest.test.cjs"
+      ],
+      "findings": []
+    },
+    {
+      "id": "swsh12-95",
+      "name": "Anorith",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 1,
+      "abilityCount": 0,
+      "riskTags": [
+        "choice"
+      ],
+      "effectTypes": [
+        "chooseDiscardForBonus"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [
+        "v07579-silver-tempest.test.cjs"
+      ],
+      "findings": []
+    },
+    {
+      "id": "swsh12-96",
+      "name": "Armaldo",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [],
+      "effectTypes": [
+        "knockOut",
+        "noop"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [
+        "v07579-silver-tempest.test.cjs"
+      ],
+      "findings": []
+    },
+    {
+      "id": "swsh12-97",
+      "name": "Terrakion",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 1,
+      "abilityCount": 0,
+      "riskTags": [
+        "timing"
+      ],
+      "effectTypes": [
+        "sequence",
+        "attackRequirement",
+        "preventDamage"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [
+        "v07579-silver-tempest.test.cjs"
+      ],
+      "findings": []
+    },
+    {
+      "id": "swsh12-98",
+      "name": "Hawlucha",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [
+        "coin"
+      ],
+      "effectTypes": [
+        "draw",
+        "coinDamage"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [],
+      "findings": []
+    },
+    {
+      "id": "swsh12-99",
+      "name": "Sandygast",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 1,
+      "abilityCount": 0,
+      "riskTags": [
+        "timing"
+      ],
+      "effectTypes": [
+        "lock"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [],
+      "findings": []
+    },
+    {
+      "id": "swsh12-100",
+      "name": "Palossand",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [],
+      "effectTypes": [
+        "sequence",
+        "bonusDamage",
+        "benchDamage",
+        "noop"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [
+        "v07579-silver-tempest.test.cjs"
+      ],
+      "findings": []
+    },
+    {
+      "id": "swsh12-101",
+      "name": "Stonjourner",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [],
+      "effectTypes": [
+        "noop",
+        "bonusDamage"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [
+        "v07579-silver-tempest.test.cjs"
+      ],
+      "findings": []
+    },
+    {
+      "id": "swsh12-102",
+      "name": "Ursaluna V",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 1,
+      "abilityCount": 1,
+      "riskTags": [],
+      "effectTypes": [
+        "selfDamagePenalty",
+        "modifier"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [
+        "v07579-silver-tempest.test.cjs"
+      ],
+      "findings": []
+    },
+    {
+      "id": "swsh12-103",
+      "name": "Zubat",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 1,
+      "abilityCount": 0,
+      "riskTags": [],
+      "effectTypes": [
+        "noop"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [
+        "v07579-silver-tempest.test.cjs"
+      ],
+      "findings": []
+    },
+    {
+      "id": "swsh12-104",
+      "name": "Golbat",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 1,
+      "abilityCount": 0,
+      "riskTags": [],
+      "effectTypes": [
+        "noop"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [],
+      "findings": []
+    },
+    {
+      "id": "swsh12-105",
+      "name": "Crobat",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [
+        "status"
+      ],
+      "effectTypes": [
+        "status",
+        "selectedDamage"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [
+        "v07579-silver-tempest.test.cjs"
+      ],
+      "findings": []
+    },
+    {
+      "id": "swsh12-106",
+      "name": "Murkrow",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [
+        "choice",
+        "deckSearch"
+      ],
+      "effectTypes": [
+        "benchFromDeck",
+        "noop"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [
+        "v07579-silver-tempest.test.cjs"
+      ],
+      "findings": []
+    },
+    {
+      "id": "swsh12-107",
+      "name": "Honchkrow",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [
+        "choice"
+      ],
+      "effectTypes": [
+        "draw",
+        "sm7Rule"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [
+        "v07579-silver-tempest.test.cjs"
+      ],
+      "findings": []
+    },
+    {
+      "id": "swsh12-108",
+      "name": "Skuntank V",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [
+        "timing",
+        "status"
+      ],
+      "effectTypes": [
+        "selectedDamage",
+        "sequence",
+        "status"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [
+        "v07579-silver-tempest.test.cjs"
+      ],
+      "findings": []
+    },
+    {
+      "id": "swsh12-109",
+      "name": "Croagunk",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 1,
+      "abilityCount": 0,
+      "riskTags": [],
+      "effectTypes": [
+        "noop"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [],
+      "findings": []
+    },
+    {
+      "id": "swsh12-110",
+      "name": "Toxicroak",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [
+        "timing"
+      ],
+      "effectTypes": [
+        "noop",
+        "modifier"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [
+        "v07579-silver-tempest.test.cjs"
+      ],
+      "findings": []
+    },
+    {
+      "id": "swsh12-111",
+      "name": "Sandile",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 1,
+      "abilityCount": 0,
+      "riskTags": [],
+      "effectTypes": [
+        "noop"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [],
+      "findings": []
+    },
+    {
+      "id": "swsh12-112",
+      "name": "Krokorok",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 1,
+      "abilityCount": 0,
+      "riskTags": [
+        "energyMovement",
+        "coin"
+      ],
+      "effectTypes": [
+        "coinFlip",
+        "discardEnergyCard",
+        "noop"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [
+        "v07579-silver-tempest.test.cjs"
+      ],
+      "findings": []
+    },
+    {
+      "id": "swsh12-113",
+      "name": "Krookodile",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 1,
+      "abilityCount": 1,
+      "riskTags": [
+        "choice"
+      ],
+      "effectTypes": [
+        "selfDamage",
+        "sm7Rule"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [
+        "v07579-silver-tempest.test.cjs"
+      ],
+      "findings": []
+    },
+    {
+      "id": "swsh12-114",
+      "name": "Mareanie",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 1,
+      "abilityCount": 0,
+      "riskTags": [
+        "status"
+      ],
+      "effectTypes": [
+        "status"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [],
+      "findings": []
+    },
+    {
+      "id": "swsh12-115",
+      "name": "Toxapex",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [
+        "status"
+      ],
+      "effectTypes": [
+        "bonusDamage",
+        "noop"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [
+        "v07579-silver-tempest.test.cjs"
+      ],
+      "findings": []
+    },
+    {
+      "id": "swsh12-116",
+      "name": "Morpeko",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 1,
+      "abilityCount": 0,
+      "riskTags": [],
+      "effectTypes": [
+        "sequence",
+        "attackRequirement",
+        "bonusDamage",
+        "benchDamage"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [
+        "v07579-silver-tempest.test.cjs"
+      ],
+      "findings": []
+    },
+    {
+      "id": "swsh12-117",
+      "name": "Beldum",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [
+        "deckSearch"
+      ],
+      "effectTypes": [
+        "neoRule",
+        "noop"
+      ],
+      "customRules": [
+        "dp6:31:oneDesire"
+      ],
+      "testFilesMentioningId": [
+        "v07579-silver-tempest.test.cjs"
+      ],
+      "findings": []
+    },
+    {
+      "id": "swsh12-118",
+      "name": "Metang",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 1,
+      "abilityCount": 0,
+      "riskTags": [
+        "coin"
+      ],
+      "effectTypes": [
+        "coinDamage"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [],
+      "findings": []
+    },
+    {
+      "id": "swsh12-119",
+      "name": "Metagross",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 1,
+      "abilityCount": 1,
+      "riskTags": [
+        "choice",
+        "timing"
+      ],
+      "effectTypes": [
+        "nextAttackBonus",
+        "sm7Rule"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [
+        "v07579-silver-tempest.test.cjs"
+      ],
+      "findings": []
+    },
+    {
+      "id": "swsh12-120",
+      "name": "Radiant Jirachi",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 1,
+      "abilityCount": 1,
+      "riskTags": [
+        "choice",
+        "deckSearch",
+        "coin"
+      ],
+      "effectTypes": [
+        "allHeadsEffect",
+        "knockOut",
+        "searchChosen"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [
+        "v07579-silver-tempest.test.cjs"
+      ],
+      "findings": []
+    },
+    {
+      "id": "swsh12-121",
+      "name": "Ferroseed",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [],
+      "effectTypes": [
+        "noop"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [],
+      "findings": []
+    },
+    {
+      "id": "swsh12-122",
+      "name": "Ferrothorn",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [],
+      "effectTypes": [
+        "noop"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [],
+      "findings": []
+    },
+    {
+      "id": "swsh12-123",
+      "name": "Klink",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 1,
+      "abilityCount": 0,
+      "riskTags": [
+        "privacy",
+        "deckSearch"
+      ],
+      "effectTypes": [
+        "searchChosen"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [],
+      "findings": []
+    },
+    {
+      "id": "swsh12-124",
+      "name": "Klang",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 1,
+      "abilityCount": 0,
+      "riskTags": [
+        "coin"
+      ],
+      "effectTypes": [
+        "coinDamage"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [
+        "v07579-silver-tempest.test.cjs"
+      ],
+      "findings": []
+    },
+    {
+      "id": "swsh12-125",
+      "name": "Klinklang",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 1,
+      "abilityCount": 1,
+      "riskTags": [
+        "choice",
+        "energyMovement",
+        "deckSearch"
+      ],
+      "effectTypes": [
+        "noop",
+        "sm7Rule"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [
+        "v07579-silver-tempest.test.cjs"
+      ],
+      "findings": []
+    },
+    {
+      "id": "swsh12-126",
+      "name": "Cobalion",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 1,
+      "abilityCount": 1,
+      "riskTags": [
+        "choice",
+        "energyMovement",
+        "deckSearch"
+      ],
+      "effectTypes": [
+        "sm7Rule",
+        "modifier"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [
+        "v07579-silver-tempest.test.cjs"
+      ],
+      "findings": []
+    },
+    {
+      "id": "swsh12-127",
+      "name": "Togedemaru",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 1,
+      "abilityCount": 0,
+      "riskTags": [
+        "timing",
+        "coin"
+      ],
+      "effectTypes": [
+        "coinFlip",
+        "sm6Rule",
+        "noop"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [
+        "v07579-silver-tempest.test.cjs"
+      ],
+      "findings": []
+    },
+    {
+      "id": "swsh12-128",
+      "name": "Magearna V",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [
+        "energyMovement"
+      ],
+      "effectTypes": [
+        "selectedDamage",
+        "bonusDamage"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [],
+      "findings": []
+    },
+    {
+      "id": "swsh12-129",
+      "name": "Dratini",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 1,
+      "abilityCount": 0,
+      "riskTags": [
+        "coin"
+      ],
+      "effectTypes": [
+        "coinDamage"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [],
+      "findings": []
+    },
+    {
+      "id": "swsh12-130",
+      "name": "Dragonair",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [
+        "status",
+        "coin"
+      ],
+      "effectTypes": [
+        "coinFlip",
+        "status",
+        "noop"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [],
+      "findings": []
+    },
+    {
+      "id": "swsh12-131",
+      "name": "Dragonite",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [
+        "choice",
+        "energyMovement",
+        "deckSearch"
+      ],
+      "effectTypes": [
+        "noop",
+        "sm7Rule"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [
+        "v07579-silver-tempest.test.cjs"
+      ],
+      "findings": []
+    },
+    {
+      "id": "swsh12-132",
+      "name": "Noibat",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [],
+      "effectTypes": [
+        "noop"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [
+        "v07579-silver-tempest.test.cjs"
+      ],
+      "findings": []
+    },
+    {
+      "id": "swsh12-133",
+      "name": "Noivern",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [],
+      "effectTypes": [
+        "chooseTarget",
+        "knockOut",
+        "drawToHandSize"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [
+        "v07579-silver-tempest.test.cjs"
+      ],
+      "findings": []
+    },
+    {
+      "id": "swsh12-134",
+      "name": "Zygarde",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [
+        "energyMovement"
+      ],
+      "effectTypes": [
+        "sm7Rule",
+        "noop"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [
+        "v07579-silver-tempest.test.cjs"
+      ],
+      "findings": []
+    },
+    {
+      "id": "swsh12-135",
+      "name": "Regidrago V",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [
+        "energyMovement",
+        "deckSearch"
+      ],
+      "effectTypes": [
+        "neoRule",
+        "benchDamage"
+      ],
+      "customRules": [
+        "bw6:celestialRoar"
+      ],
+      "testFilesMentioningId": [
+        "v07579-silver-tempest.test.cjs"
+      ],
+      "findings": [
+        {
+          "severity": "review",
+          "rule": "C-AUDIT-002",
+          "message": "attack Celestial Roar: custom rule bw6:celestialRoar has no obvious source literal; inspect dispatcher."
+        }
+      ]
+    },
+    {
+      "id": "swsh12-136",
+      "name": "Regidrago VSTAR",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 1,
+      "abilityCount": 1,
+      "riskTags": [
+        "choice",
+        "deckSearch"
+      ],
+      "effectTypes": [
+        "copyAttack",
+        "sequence",
+        "discardTop",
+        "searchChosen"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [
+        "v07579-silver-tempest.test.cjs"
+      ],
+      "findings": []
+    },
+    {
+      "id": "swsh12-137",
+      "name": "Smeargle",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [
+        "choice",
+        "energyMovement",
+        "deckSearch"
+      ],
+      "effectTypes": [
+        "sm7Rule",
+        "noop"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [
+        "v07579-silver-tempest.test.cjs"
+      ],
+      "findings": []
+    },
+    {
+      "id": "swsh12-138",
+      "name": "Lugia V",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [
+        "choice"
+      ],
+      "effectTypes": [
+        "sm7Rule",
+        "draw",
+        "chooseOption",
+        "discardStadium",
+        "noop"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [
+        "v07579-silver-tempest.test.cjs"
+      ],
+      "findings": []
+    },
+    {
+      "id": "swsh12-139",
+      "name": "Lugia VSTAR",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 1,
+      "abilityCount": 1,
+      "riskTags": [
+        "choice"
+      ],
+      "effectTypes": [
+        "chooseOption",
+        "discardStadium",
+        "noop",
+        "sm7Rule"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [
+        "v07579-silver-tempest.test.cjs"
+      ],
+      "findings": []
+    },
+    {
+      "id": "swsh12-140",
+      "name": "Ho-Oh V",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 1,
+      "abilityCount": 1,
+      "riskTags": [
+        "choice",
+        "energyMovement"
+      ],
+      "effectTypes": [
+        "energyTypeCountDamage",
+        "sm7Rule"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [
+        "v07579-silver-tempest.test.cjs"
+      ],
+      "findings": []
+    },
+    {
+      "id": "swsh12-141",
+      "name": "Spinda",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 1,
+      "abilityCount": 0,
+      "riskTags": [
+        "status"
+      ],
+      "effectTypes": [
+        "sequence",
+        "bonusDamage",
+        "benchDamage",
+        "status"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [],
+      "findings": []
+    },
+    {
+      "id": "swsh12-142",
+      "name": "Swablu",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 1,
+      "abilityCount": 0,
+      "riskTags": [
+        "coin"
+      ],
+      "effectTypes": [
+        "coinDamage"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [],
+      "findings": []
+    },
+    {
+      "id": "swsh12-143",
+      "name": "Altaria",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [],
+      "effectTypes": [
+        "chooseTarget",
+        "moveDamage",
+        "noop"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [
+        "v07579-silver-tempest.test.cjs"
+      ],
+      "findings": []
+    },
+    {
+      "id": "swsh12-144",
+      "name": "Buneary",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 1,
+      "abilityCount": 0,
+      "riskTags": [
+        "coin"
+      ],
+      "effectTypes": [
+        "coinDamage"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [],
+      "findings": []
+    },
+    {
+      "id": "swsh12-145",
+      "name": "Lopunny",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [
+        "coin"
+      ],
+      "effectTypes": [
+        "noop",
+        "coinDamage"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [],
+      "findings": []
+    },
+    {
+      "id": "swsh12-146",
+      "name": "Archen",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [],
+      "effectTypes": [
+        "noop"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [
+        "v07579-silver-tempest.test.cjs"
+      ],
+      "findings": []
+    },
+    {
+      "id": "swsh12-147",
+      "name": "Archeops",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 1,
+      "abilityCount": 1,
+      "riskTags": [
+        "choice",
+        "energyMovement",
+        "deckSearch"
+      ],
+      "effectTypes": [
+        "noop",
+        "sm7Rule"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [
+        "v07579-silver-tempest.test.cjs"
+      ],
+      "findings": []
+    },
+    {
+      "id": "swsh12-148",
+      "name": "Rufflet",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 1,
+      "abilityCount": 0,
+      "riskTags": [
+        "coin"
+      ],
+      "effectTypes": [
+        "coinFlip",
+        "bonusDamage",
+        "noop"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [],
+      "findings": []
+    },
+    {
+      "id": "swsh12-149",
+      "name": "Hisuian Braviary",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [
+        "status"
+      ],
+      "effectTypes": [
+        "placeDamageCounters",
+        "status"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [
+        "v07579-silver-tempest.test.cjs"
+      ],
+      "findings": []
+    },
+    {
+      "id": "swsh12-150",
+      "name": "Fletchling",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 1,
+      "abilityCount": 0,
+      "riskTags": [],
+      "effectTypes": [
+        "noop"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [
+        "v07579-silver-tempest.test.cjs"
+      ],
+      "findings": []
+    },
+    {
+      "id": "swsh12-151",
+      "name": "Brandon",
+      "kind": "trainer",
+      "battleEnabled": true,
+      "attackCount": 0,
+      "abilityCount": 0,
+      "riskTags": [
+        "choice"
+      ],
+      "effectTypes": [
+        "sm7Rule"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [
+        "v07579-silver-tempest.test.cjs"
+      ],
+      "findings": []
+    },
+    {
+      "id": "swsh12-152",
+      "name": "Candice",
+      "kind": "trainer",
+      "battleEnabled": true,
+      "attackCount": 0,
+      "abilityCount": 0,
+      "riskTags": [
+        "choice",
+        "privacy",
+        "deckSearch"
+      ],
+      "effectTypes": [
+        "sm7Rule"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [
+        "v07579-silver-tempest.test.cjs"
+      ],
+      "findings": []
+    },
+    {
+      "id": "swsh12-153",
+      "name": "Capturing Aroma",
+      "kind": "trainer",
+      "battleEnabled": true,
+      "attackCount": 0,
+      "abilityCount": 0,
+      "riskTags": [
+        "choice",
+        "privacy",
+        "deckSearch",
+        "coin"
+      ],
+      "effectTypes": [
+        "coinFlip",
+        "searchChosen"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [
+        "v07579-silver-tempest.test.cjs"
+      ],
+      "findings": []
+    },
+    {
+      "id": "swsh12-154",
+      "name": "Earthen Seal Stone",
+      "kind": "trainer",
+      "battleEnabled": true,
+      "attackCount": 1,
+      "abilityCount": 0,
+      "riskTags": [
+        "choice",
+        "energyMovement"
+      ],
+      "effectTypes": [
+        "noop"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [
+        "v07579-silver-tempest.test.cjs"
+      ],
+      "findings": [
+        {
+          "severity": "review",
+          "rule": "C-AUDIT-002",
+          "message": "card effect: no-op Trainer/Stadium effect; verify shared continuous rule."
+        }
+      ]
+    },
+    {
+      "id": "swsh12-155",
+      "name": "Emergency Jelly",
+      "kind": "trainer",
+      "battleEnabled": true,
+      "attackCount": 0,
+      "abilityCount": 0,
+      "riskTags": [
+        "choice"
+      ],
+      "effectTypes": [
+        "noop"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [
+        "v07579-silver-tempest.test.cjs"
+      ],
+      "findings": [
+        {
+          "severity": "review",
+          "rule": "C-AUDIT-002",
+          "message": "card effect: no-op Trainer/Stadium effect; verify shared continuous rule."
+        }
+      ]
+    },
+    {
+      "id": "swsh12-156",
+      "name": "Forest Seal Stone",
+      "kind": "trainer",
+      "battleEnabled": true,
+      "attackCount": 0,
+      "abilityCount": 1,
+      "riskTags": [
+        "choice",
+        "deckSearch"
+      ],
+      "effectTypes": [
+        "noop"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [
+        "v07579-silver-tempest.test.cjs"
+      ],
+      "findings": [
+        {
+          "severity": "review",
+          "rule": "C-AUDIT-002",
+          "message": "card effect: no-op Trainer/Stadium effect; verify shared continuous rule."
+        }
+      ]
+    },
+    {
+      "id": "swsh12-157",
+      "name": "Furisode Girl",
+      "kind": "trainer",
+      "battleEnabled": true,
+      "attackCount": 0,
+      "abilityCount": 0,
+      "riskTags": [
+        "choice",
+        "deckSearch"
+      ],
+      "effectTypes": [
+        "sm7Rule"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [
+        "v07579-silver-tempest.test.cjs"
+      ],
+      "findings": []
+    },
+    {
+      "id": "swsh12-158",
+      "name": "Gym Trainer",
+      "kind": "trainer",
+      "battleEnabled": true,
+      "attackCount": 0,
+      "abilityCount": 0,
+      "riskTags": [
+        "choice",
+        "timing"
+      ],
+      "effectTypes": [
+        "sequence",
+        "draw"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [
+        "v07579-silver-tempest.test.cjs"
+      ],
+      "findings": []
+    },
+    {
+      "id": "swsh12-159",
+      "name": "Lance",
+      "kind": "trainer",
+      "battleEnabled": true,
+      "attackCount": 0,
+      "abilityCount": 0,
+      "riskTags": [
+        "choice",
+        "privacy",
+        "deckSearch"
+      ],
+      "effectTypes": [
+        "searchChosen"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [],
+      "findings": []
+    },
+    {
+      "id": "swsh12-160",
+      "name": "Leafy Camo Poncho",
+      "kind": "trainer",
+      "battleEnabled": true,
+      "attackCount": 0,
+      "abilityCount": 0,
+      "riskTags": [
+        "choice"
+      ],
+      "effectTypes": [
+        "noop"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [
+        "v07579-silver-tempest.test.cjs"
+      ],
+      "findings": [
+        {
+          "severity": "review",
+          "rule": "C-AUDIT-002",
+          "message": "card effect: no-op Trainer/Stadium effect; verify shared continuous rule."
+        }
+      ]
+    },
+    {
+      "id": "swsh12-161",
+      "name": "Primordial Altar",
+      "kind": "trainer",
+      "battleEnabled": true,
+      "attackCount": 0,
+      "abilityCount": 0,
+      "riskTags": [
+        "deckSearch"
+      ],
+      "effectTypes": [
+        "stadiumAction",
+        "sequence",
+        "inspectTop",
+        "chooseOption",
+        "noop",
+        "discardTop"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [
+        "v07579-silver-tempest.test.cjs"
+      ],
+      "findings": []
+    },
+    {
+      "id": "swsh12-162",
+      "name": "Professor Laventon",
+      "kind": "trainer",
+      "battleEnabled": true,
+      "attackCount": 0,
+      "abilityCount": 0,
+      "riskTags": [
+        "choice"
+      ],
+      "effectTypes": [
+        "searchChosen"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [],
+      "findings": []
+    },
+    {
+      "id": "swsh12-163",
+      "name": "Quad Stone",
+      "kind": "trainer",
+      "battleEnabled": true,
+      "attackCount": 0,
+      "abilityCount": 0,
+      "riskTags": [
+        "choice"
+      ],
+      "effectTypes": [
+        "sm7Rule"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [
+        "v07579-silver-tempest.test.cjs"
+      ],
+      "findings": []
+    },
+    {
+      "id": "swsh12-164",
+      "name": "Serena",
+      "kind": "trainer",
+      "battleEnabled": true,
+      "attackCount": 0,
+      "abilityCount": 0,
+      "riskTags": [
+        "choice"
+      ],
+      "effectTypes": [
+        "sm7Rule"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [
+        "v07579-silver-tempest.test.cjs"
+      ],
+      "findings": []
+    },
+    {
+      "id": "swsh12-165",
+      "name": "Unidentified Fossil",
+      "kind": "trainer",
+      "battleEnabled": true,
+      "attackCount": 0,
+      "abilityCount": 0,
+      "riskTags": [
+        "choice"
+      ],
+      "effectTypes": [
+        "playFossil"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [
+        "v07579-silver-tempest.test.cjs"
+      ],
+      "findings": []
+    },
+    {
+      "id": "swsh12-166",
+      "name": "Wallace",
+      "kind": "trainer",
+      "battleEnabled": true,
+      "attackCount": 0,
+      "abilityCount": 0,
+      "riskTags": [
+        "choice"
+      ],
+      "effectTypes": [
+        "sm7Rule"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [
+        "v07579-silver-tempest.test.cjs"
+      ],
+      "findings": []
+    },
+    {
+      "id": "swsh12-167",
+      "name": "Worker",
+      "kind": "trainer",
+      "battleEnabled": true,
+      "attackCount": 0,
+      "abilityCount": 0,
+      "riskTags": [
+        "choice"
+      ],
+      "effectTypes": [
+        "sequence",
+        "draw",
+        "discardStadium"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [
+        "v07579-silver-tempest.test.cjs"
+      ],
+      "findings": []
+    },
+    {
+      "id": "swsh12-168",
+      "name": "Regenerative Energy",
+      "kind": "energy",
+      "battleEnabled": true,
+      "attackCount": 0,
+      "abilityCount": 0,
+      "riskTags": [
+        "energyMovement"
+      ],
+      "effectTypes": [
+        "specialEnergy"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [
+        "v07579-silver-tempest.test.cjs"
+      ],
+      "findings": []
+    },
+    {
+      "id": "swsh12-169",
+      "name": "V Guard Energy",
+      "kind": "energy",
+      "battleEnabled": true,
+      "attackCount": 0,
+      "abilityCount": 0,
+      "riskTags": [
+        "energyMovement"
+      ],
+      "effectTypes": [
+        "specialEnergy"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [
+        "v07579-silver-tempest.test.cjs"
+      ],
+      "findings": []
+    },
+    {
+      "id": "swsh12-170",
+      "name": "Serperior V",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [],
+      "effectTypes": [
+        "sequence",
+        "heal",
+        "noop"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [],
+      "findings": []
+    },
+    {
+      "id": "swsh12-171",
+      "name": "Chesnaught V",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 1,
+      "abilityCount": 1,
+      "riskTags": [],
+      "effectTypes": [
+        "healSelf",
+        "placeDamageCounters"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [],
+      "findings": []
+    },
+    {
+      "id": "swsh12-172",
+      "name": "Reshiram V",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [
+        "choice",
+        "timing",
+        "energyMovement",
+        "deckSearch",
+        "coin"
+      ],
+      "effectTypes": [
+        "sm7Rule",
+        "coinFlip",
+        "noop",
+        "lock"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [],
+      "findings": []
+    },
+    {
+      "id": "swsh12-173",
+      "name": "Alolan Vulpix V",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [],
+      "effectTypes": [
+        "bonusDamage",
+        "noop"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [],
+      "findings": []
+    },
+    {
+      "id": "swsh12-174",
+      "name": "Omastar V",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [
+        "choice",
+        "timing",
+        "deckSearch"
+      ],
+      "effectTypes": [
+        "benchFromDeck",
+        "lock"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [
+        "v07579-silver-tempest.test.cjs"
+      ],
+      "findings": []
+    },
+    {
+      "id": "swsh12-175",
+      "name": "Regieleki V",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [
+        "timing"
+      ],
+      "effectTypes": [
+        "switch",
+        "modifier"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [],
+      "findings": []
+    },
+    {
+      "id": "swsh12-176",
+      "name": "Unown V",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [
+        "status"
+      ],
+      "effectTypes": [
+        "status",
+        "sm7Rule"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [
+        "v07579-silver-tempest.test.cjs"
+      ],
+      "findings": []
+    },
+    {
+      "id": "swsh12-177",
+      "name": "Unown V",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [
+        "status"
+      ],
+      "effectTypes": [
+        "status",
+        "sm7Rule"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [
+        "v07579-silver-tempest.test.cjs"
+      ],
+      "findings": []
+    },
+    {
+      "id": "swsh12-178",
+      "name": "Mawile V",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [
+        "energyMovement",
+        "coin"
+      ],
+      "effectTypes": [
+        "coinFlip",
+        "discardEnergyCard",
+        "noop",
+        "discardHand"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [],
+      "findings": []
+    },
+    {
+      "id": "swsh12-179",
+      "name": "Hisuian Arcanine V",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 1,
+      "abilityCount": 1,
+      "riskTags": [
+        "choice",
+        "energyMovement"
+      ],
+      "effectTypes": [
+        "energyDamage",
+        "sm7Rule"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [
+        "v07579-silver-tempest.test.cjs"
+      ],
+      "findings": []
+    },
+    {
+      "id": "swsh12-180",
+      "name": "Skuntank V",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [
+        "timing",
+        "status"
+      ],
+      "effectTypes": [
+        "selectedDamage",
+        "sequence",
+        "status"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [
+        "v07579-silver-tempest.test.cjs"
+      ],
+      "findings": []
+    },
+    {
+      "id": "swsh12-181",
+      "name": "Skuntank V",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [
+        "timing",
+        "status"
+      ],
+      "effectTypes": [
+        "selectedDamage",
+        "sequence",
+        "status"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [
+        "v07579-silver-tempest.test.cjs"
+      ],
+      "findings": []
+    },
+    {
+      "id": "swsh12-182",
+      "name": "Magearna V",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [
+        "energyMovement"
+      ],
+      "effectTypes": [
+        "selectedDamage",
+        "bonusDamage"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [],
+      "findings": []
+    },
+    {
+      "id": "swsh12-183",
+      "name": "Regidrago V",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [
+        "energyMovement",
+        "deckSearch"
+      ],
+      "effectTypes": [
+        "neoRule",
+        "benchDamage"
+      ],
+      "customRules": [
+        "bw6:celestialRoar"
+      ],
+      "testFilesMentioningId": [
+        "v07579-silver-tempest.test.cjs"
+      ],
+      "findings": [
+        {
+          "severity": "review",
+          "rule": "C-AUDIT-002",
+          "message": "attack Celestial Roar: custom rule bw6:celestialRoar has no obvious source literal; inspect dispatcher."
+        }
+      ]
+    },
+    {
+      "id": "swsh12-184",
+      "name": "Regidrago V",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [
+        "energyMovement",
+        "deckSearch"
+      ],
+      "effectTypes": [
+        "neoRule",
+        "benchDamage"
+      ],
+      "customRules": [
+        "bw6:celestialRoar"
+      ],
+      "testFilesMentioningId": [
+        "v07579-silver-tempest.test.cjs"
+      ],
+      "findings": [
+        {
+          "severity": "review",
+          "rule": "C-AUDIT-002",
+          "message": "attack Celestial Roar: custom rule bw6:celestialRoar has no obvious source literal; inspect dispatcher."
+        }
+      ]
+    },
+    {
+      "id": "swsh12-185",
+      "name": "Lugia V",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [
+        "choice"
+      ],
+      "effectTypes": [
+        "sm7Rule",
+        "draw",
+        "chooseOption",
+        "discardStadium",
+        "noop"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [],
+      "findings": []
+    },
+    {
+      "id": "swsh12-186",
+      "name": "Lugia V",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [
+        "choice"
+      ],
+      "effectTypes": [
+        "sm7Rule",
+        "draw",
+        "chooseOption",
+        "discardStadium",
+        "noop"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [],
+      "findings": []
+    },
+    {
+      "id": "swsh12-187",
+      "name": "Ho-Oh V",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 1,
+      "abilityCount": 1,
+      "riskTags": [
+        "choice",
+        "energyMovement"
+      ],
+      "effectTypes": [
+        "energyTypeCountDamage",
+        "sm7Rule"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [
+        "v07579-silver-tempest.test.cjs"
+      ],
+      "findings": []
+    },
+    {
+      "id": "swsh12-188",
+      "name": "Brandon",
+      "kind": "trainer",
+      "battleEnabled": true,
+      "attackCount": 0,
+      "abilityCount": 0,
+      "riskTags": [
+        "choice"
+      ],
+      "effectTypes": [
+        "sm7Rule"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [],
+      "findings": []
+    },
+    {
+      "id": "swsh12-189",
+      "name": "Candice",
+      "kind": "trainer",
+      "battleEnabled": true,
+      "attackCount": 0,
+      "abilityCount": 0,
+      "riskTags": [
+        "choice",
+        "privacy",
+        "deckSearch"
+      ],
+      "effectTypes": [
+        "sm7Rule"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [],
+      "findings": []
+    },
+    {
+      "id": "swsh12-190",
+      "name": "Furisode Girl",
+      "kind": "trainer",
+      "battleEnabled": true,
+      "attackCount": 0,
+      "abilityCount": 0,
+      "riskTags": [
+        "choice",
+        "deckSearch"
+      ],
+      "effectTypes": [
+        "sm7Rule"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [],
+      "findings": []
+    },
+    {
+      "id": "swsh12-191",
+      "name": "Gym Trainer",
+      "kind": "trainer",
+      "battleEnabled": true,
+      "attackCount": 0,
+      "abilityCount": 0,
+      "riskTags": [
+        "choice",
+        "timing"
+      ],
+      "effectTypes": [
+        "sequence",
+        "draw"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [],
+      "findings": []
+    },
+    {
+      "id": "swsh12-192",
+      "name": "Lance",
+      "kind": "trainer",
+      "battleEnabled": true,
+      "attackCount": 0,
+      "abilityCount": 0,
+      "riskTags": [
+        "choice",
+        "privacy",
+        "deckSearch"
+      ],
+      "effectTypes": [
+        "searchChosen"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [],
+      "findings": []
+    },
+    {
+      "id": "swsh12-193",
+      "name": "Serena",
+      "kind": "trainer",
+      "battleEnabled": true,
+      "attackCount": 0,
+      "abilityCount": 0,
+      "riskTags": [
+        "choice"
+      ],
+      "effectTypes": [
+        "sm7Rule"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [
+        "v07579-silver-tempest.test.cjs"
+      ],
+      "findings": []
+    },
+    {
+      "id": "swsh12-194",
+      "name": "Wallace",
+      "kind": "trainer",
+      "battleEnabled": true,
+      "attackCount": 0,
+      "abilityCount": 0,
+      "riskTags": [
+        "choice"
+      ],
+      "effectTypes": [
+        "sm7Rule"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [
+        "v07579-silver-tempest.test.cjs"
+      ],
+      "findings": []
+    },
+    {
+      "id": "swsh12-195",
+      "name": "Worker",
+      "kind": "trainer",
+      "battleEnabled": true,
+      "attackCount": 0,
+      "abilityCount": 0,
+      "riskTags": [
+        "choice"
+      ],
+      "effectTypes": [
+        "sequence",
+        "draw",
+        "discardStadium"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [],
+      "findings": []
+    },
+    {
+      "id": "swsh12-196",
+      "name": "Serperior VSTAR",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [
+        "choice",
+        "energyMovement"
+      ],
+      "effectTypes": [
+        "redistributeEnergy",
+        "sequence",
+        "energyDamage",
+        "switch"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [],
+      "findings": []
+    },
+    {
+      "id": "swsh12-197",
+      "name": "Alolan Vulpix VSTAR",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [
+        "timing"
+      ],
+      "effectTypes": [
+        "sequence",
+        "damageRule",
+        "preventDamage",
+        "fieldCountDamage"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [],
+      "findings": []
+    },
+    {
+      "id": "swsh12-198",
+      "name": "Regieleki VMAX",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 1,
+      "abilityCount": 1,
+      "riskTags": [
+        "timing"
+      ],
+      "effectTypes": [
+        "lock",
+        "modifier"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [],
+      "findings": []
+    },
+    {
+      "id": "swsh12-199",
+      "name": "Unown VSTAR",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [
+        "coin"
+      ],
+      "effectTypes": [
+        "coinDamage",
+        "sm7Rule"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [
+        "v07579-silver-tempest.test.cjs"
+      ],
+      "findings": []
+    },
+    {
+      "id": "swsh12-200",
+      "name": "Mawile VSTAR",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 1,
+      "abilityCount": 1,
+      "riskTags": [
+        "choice"
+      ],
+      "effectTypes": [
+        "bonusDamage",
+        "sm7Rule"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [
+        "v07579-silver-tempest.test.cjs"
+      ],
+      "findings": []
+    },
+    {
+      "id": "swsh12-201",
+      "name": "Regidrago VSTAR",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 1,
+      "abilityCount": 1,
+      "riskTags": [
+        "choice",
+        "deckSearch"
+      ],
+      "effectTypes": [
+        "copyAttack",
+        "sequence",
+        "discardTop",
+        "searchChosen"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [
+        "v07579-silver-tempest.test.cjs"
+      ],
+      "findings": []
+    },
+    {
+      "id": "swsh12-202",
+      "name": "Lugia VSTAR",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 1,
+      "abilityCount": 1,
+      "riskTags": [
+        "choice"
+      ],
+      "effectTypes": [
+        "chooseOption",
+        "discardStadium",
+        "noop",
+        "sm7Rule"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [],
+      "findings": []
+    },
+    {
+      "id": "swsh12-203",
+      "name": "Brandon",
+      "kind": "trainer",
+      "battleEnabled": true,
+      "attackCount": 0,
+      "abilityCount": 0,
+      "riskTags": [
+        "choice"
+      ],
+      "effectTypes": [
+        "sm7Rule"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [],
+      "findings": []
+    },
+    {
+      "id": "swsh12-204",
+      "name": "Candice",
+      "kind": "trainer",
+      "battleEnabled": true,
+      "attackCount": 0,
+      "abilityCount": 0,
+      "riskTags": [
+        "choice",
+        "privacy",
+        "deckSearch"
+      ],
+      "effectTypes": [
+        "sm7Rule"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [],
+      "findings": []
+    },
+    {
+      "id": "swsh12-205",
+      "name": "Furisode Girl",
+      "kind": "trainer",
+      "battleEnabled": true,
+      "attackCount": 0,
+      "abilityCount": 0,
+      "riskTags": [
+        "choice",
+        "deckSearch"
+      ],
+      "effectTypes": [
+        "sm7Rule"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [],
+      "findings": []
+    },
+    {
+      "id": "swsh12-206",
+      "name": "Lance",
+      "kind": "trainer",
+      "battleEnabled": true,
+      "attackCount": 0,
+      "abilityCount": 0,
+      "riskTags": [
+        "choice",
+        "privacy",
+        "deckSearch"
+      ],
+      "effectTypes": [
+        "searchChosen"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [],
+      "findings": []
+    },
+    {
+      "id": "swsh12-207",
+      "name": "Serena",
+      "kind": "trainer",
+      "battleEnabled": true,
+      "attackCount": 0,
+      "abilityCount": 0,
+      "riskTags": [
+        "choice"
+      ],
+      "effectTypes": [
+        "sm7Rule"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [],
+      "findings": []
+    },
+    {
+      "id": "swsh12-208",
+      "name": "Wallace",
+      "kind": "trainer",
+      "battleEnabled": true,
+      "attackCount": 0,
+      "abilityCount": 0,
+      "riskTags": [
+        "choice"
+      ],
+      "effectTypes": [
+        "sm7Rule"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [
+        "v07579-silver-tempest.test.cjs"
+      ],
+      "findings": []
+    },
+    {
+      "id": "swsh12-209",
+      "name": "Worker",
+      "kind": "trainer",
+      "battleEnabled": true,
+      "attackCount": 0,
+      "abilityCount": 0,
+      "riskTags": [
+        "choice"
+      ],
+      "effectTypes": [
+        "sequence",
+        "draw",
+        "discardStadium"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [],
+      "findings": []
+    },
+    {
+      "id": "swsh12-210",
+      "name": "Serperior VSTAR",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 2,
+      "abilityCount": 0,
+      "riskTags": [
+        "choice",
+        "energyMovement"
+      ],
+      "effectTypes": [
+        "redistributeEnergy",
+        "sequence",
+        "energyDamage",
+        "switch"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [],
+      "findings": []
+    },
+    {
+      "id": "swsh12-211",
+      "name": "Lugia VSTAR",
+      "kind": "pokemon",
+      "battleEnabled": true,
+      "attackCount": 1,
+      "abilityCount": 1,
+      "riskTags": [
+        "choice"
+      ],
+      "effectTypes": [
+        "chooseOption",
+        "discardStadium",
+        "noop",
+        "sm7Rule"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [],
+      "findings": []
+    },
+    {
+      "id": "swsh12-212",
+      "name": "Energy Switch",
+      "kind": "trainer",
+      "battleEnabled": true,
+      "attackCount": 0,
+      "abilityCount": 0,
+      "riskTags": [
+        "choice",
+        "energyMovement"
+      ],
+      "effectTypes": [
+        "sm1Rule"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [
+        "v07579-silver-tempest.test.cjs"
+      ],
+      "findings": []
+    },
+    {
+      "id": "swsh12-213",
+      "name": "Gapejaw Bog",
+      "kind": "trainer",
+      "battleEnabled": true,
+      "attackCount": 0,
+      "abilityCount": 0,
+      "riskTags": [],
+      "effectTypes": [
+        "noop"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [
+        "v07579-silver-tempest.test.cjs"
+      ],
+      "findings": [
+        {
+          "severity": "review",
+          "rule": "C-AUDIT-002",
+          "message": "card effect: no-op Trainer/Stadium effect; verify shared continuous rule."
+        }
+      ]
+    },
+    {
+      "id": "swsh12-214",
+      "name": "Leafy Camo Poncho",
+      "kind": "trainer",
+      "battleEnabled": true,
+      "attackCount": 0,
+      "abilityCount": 0,
+      "riskTags": [
+        "choice"
+      ],
+      "effectTypes": [
+        "noop"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [
+        "v07579-silver-tempest.test.cjs"
+      ],
+      "findings": [
+        {
+          "severity": "review",
+          "rule": "C-AUDIT-002",
+          "message": "card effect: no-op Trainer/Stadium effect; verify shared continuous rule."
+        }
+      ]
+    },
+    {
+      "id": "swsh12-215",
+      "name": "V Guard Energy",
+      "kind": "energy",
+      "battleEnabled": true,
+      "attackCount": 0,
+      "abilityCount": 0,
+      "riskTags": [
+        "energyMovement"
+      ],
+      "effectTypes": [
+        "specialEnergy"
+      ],
+      "customRules": [],
+      "testFilesMentioningId": [
+        "v07579-silver-tempest.test.cjs"
+      ],
+      "findings": []
+    }
+  ],
+  "cpu": {
+    "attempted": 16,
+    "valid": 16,
+    "skipped": [],
+    "failures": []
+  },
+  "smoke": {
+    "attempted": 628,
+    "executed": 628,
+    "skipped": 0,
+    "skippedDetails": [],
+    "failures": []
+  }
+}
