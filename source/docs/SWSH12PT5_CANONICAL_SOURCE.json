@@ -1,8 +1,8 @@
 {
   "set": "swsh12pt5",
   "sourceGitBlob": "6d0748e2be253b335093187554e6a947a66c3089",
-  "compactSha256": "1261e0f3368ba9e773a7f938f996b19933157ed48136468943712d4743c6c86c",
+  "compactSha256": "92e85dfca870ef79d4ed1af5b2c52b2075b747bc74fdd00952ad59846cf47540",
   "printedTotal": 160,
-  "importedTotal": 57,
-  "sourceScope": "verified pinned source packets, stage one"
+  "importedTotal": 87,
+  "sourceScope": "verified pinned source packets, stage two"
 }

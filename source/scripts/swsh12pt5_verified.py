@@ -106,3 +106,41 @@ def attack(row,a):
  if n==19 and title=='Star Blaze':return E('discardEnergyCard',target='self',amount=2)
  if n==20 and title=='Combustion Blast':return E('lock',target='self',action='attack',attackName=title,duration='nextOwnTurn')
  return None
+
+# Stage 2: reuse reviewed descriptors; unimplemented setup/variable-payment effects stay gated.
+_stage1_attack=attack
+_stage1_ability=ability
+from swsh11_verified import evolved,optional
+from swsh9_verified import coin
+
+def ability(row,a):
+ n=int(row[0])
+ if n==21:return passive(E('modifier',stat='retreatCost',amount=-999,scope='self',duration='whileInPlay',condition=cond('selfEnergyAtLeast',energyType='Fire',amount=1,countSpecial=True)))
+ if n==45:return activated(seq(E('draw',amount=3),E('endTurn')))
+ if n==48:return evolved(optional('Flip for Paralysis',coin(status('paralysis'))))
+ return _stage1_ability(row,a)
+
+def attack(row,a):
+ n=int(row[0]);title,cost,damage,t=a
+ if not t and damage.isdigit():return E('noop')
+ if n==22 and title=='Bursting Power':return E('sm7Rule',rule='sm12HandAttach',left=2,basicOnly=True,optional=True)
+ if n==22 and title=='Flare Juggling':return E('energyDamage',source='opponent',amount=30,mode='add')
+ if n==25:return E('lock',target='self',action='attack',duration='nextOwnTurn')
+ if n==26:return bonus(80,cond('selfEnergyAtLeast',energyType='Water',amount=1,countSpecial=True))
+ if n==27:return E('benchFromDeck',amount=1,filter={'kind':'pokemon','stage':'Basic'},choose=True)
+ if n==28:return status('confusion' if title=='Tail Trickery' else 'burn')
+ if n==30:return E('searchChosen',amount=1,filter={'kind':'trainer','trainerType':'Item'})
+ if n in (31,32):return E('heal',target='self',amount=30)
+ if n==35:return E('handShuffle',side='self',draw=5)
+ if (n,title) in [(36,'Wave Summoning'),(38,'Frost Charge')]:return E('sm7Rule',rule='sm9SearchAttach',amount=1,energyTypes=['Water'],sourceSelf=True)
+ if n==37 and title=='Dual Splash':return E('multiTargetDamage',target='opponentPokemon',amount=50,count=2)
+ if n==37 and title=='Aqua Typhoon':return E('lock',target='self',action='attack',attackName=title,duration='nextOwnTurn')
+ if n==40:return E('selfDamage',amount=10)
+ if n==41:return E('selectedDamage',target='opponentPokemon',amount=30)
+ if n==43 and title=='Electrostep':return seq(E('selectedDamage',target='opponentPokemon',amount=40),E('sm7Rule',rule='swsh5ElectroSwitch'))
+ if n==43 and title=='Scar Strikes':return bonus(100,cond('opponentDamaged'))
+ if n==44:return E('searchChosen',amount=2,filter={'kind':'trainer'},optional=True)
+ if n in (45,46):return E('sm7Rule',rule='swsh11ScrapShort')
+ if n==47:return coin(status('paralysis'))
+ if n==50:return E('selfDamage',amount=50)
+ return _stage1_attack(row,a)

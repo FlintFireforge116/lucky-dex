@@ -1,37 +1,7 @@
 {
-  "printed": 57,
+  "printed": 87,
   "canonicalTotal": 160,
   "notImported": [
-    "swsh12pt5-21",
-    "swsh12pt5-22",
-    "swsh12pt5-23",
-    "swsh12pt5-24",
-    "swsh12pt5-25",
-    "swsh12pt5-26",
-    "swsh12pt5-27",
-    "swsh12pt5-28",
-    "swsh12pt5-29",
-    "swsh12pt5-30",
-    "swsh12pt5-31",
-    "swsh12pt5-32",
-    "swsh12pt5-33",
-    "swsh12pt5-34",
-    "swsh12pt5-35",
-    "swsh12pt5-36",
-    "swsh12pt5-37",
-    "swsh12pt5-38",
-    "swsh12pt5-39",
-    "swsh12pt5-40",
-    "swsh12pt5-41",
-    "swsh12pt5-42",
-    "swsh12pt5-43",
-    "swsh12pt5-44",
-    "swsh12pt5-45",
-    "swsh12pt5-46",
-    "swsh12pt5-47",
-    "swsh12pt5-48",
-    "swsh12pt5-49",
-    "swsh12pt5-50",
     "swsh12pt5-51",
     "swsh12pt5-52",
     "swsh12pt5-53",
@@ -106,10 +76,26 @@
     "swsh12pt5-122",
     "swsh12pt5-160"
   ],
-  "battleReady": 54,
+  "battleReady": 79,
   "gated": {
     "swsh12pt5-20": [
       "Unimplemented Ability: Excited Heart"
+    ],
+    "swsh12pt5-23": [
+      "Unimplemented attack: Fireball Fever",
+      "Unimplemented attack: Ember Star"
+    ],
+    "swsh12pt5-36": [
+      "Unimplemented attack: Dynamic Wave"
+    ],
+    "swsh12pt5-42": [
+      "Unimplemented attack: Shorting Spark"
+    ],
+    "swsh12pt5-44": [
+      "Unimplemented Ability: Explosiveness"
+    ],
+    "swsh12pt5-46": [
+      "Unimplemented Ability: Conversion Star"
     ],
     "swsh12pt5-126": [
       "Unimplemented Trainer effect"
@@ -119,7 +105,7 @@
       "Unimplemented Trainer effect"
     ]
   },
-  "attacks": 31,
-  "abilities": 3,
+  "attacks": 81,
+  "abilities": 8,
   "sourceGitBlob": "6d0748e2be253b335093187554e6a947a66c3089"
 }
