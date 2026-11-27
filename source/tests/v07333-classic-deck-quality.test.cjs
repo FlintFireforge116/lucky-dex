@@ -10,8 +10,9 @@ const synergy=require('../app/src/main/assets/tcg-deck-synergy.js');
 // deck-quality gate executes BEFORE those generators, so audit their full cards
 // in each set's post-generation audit instead. Keep this list in sync with newly pinned expansions (including SM5).
 const emptyLocalCatalogues=new Set(['bw11','xy1','xy2','xy3','xy4','xy5','xy6','xy7','xy8','xy9','xy10','sm2','sm5','sm6']);
-// DET1 has no Trainers and incomplete evolution lines. Test its owned mixed-set pool separately, not as a standalone full expansion.
-const mixedOnlyCatalogues=new Set(['det1']);
+// DET1 and the three prerequisite SWSH promo prints are deliberately mixed-only.
+// Each has a separate mixed-set audit below; never skip a complete expansion here.
+const mixedOnlyCatalogues=new Set(['det1','swshp']);
 function ownedFor(set){return classic.CARDS.filter(c=>c.setId===set&&c.battleEnabled&&c.deckEligible!==false).map(c=>({gameplayId:c.id,quantity:4}));}
 function trainerCounts(ids){
  const byName=new Map();
@@ -105,6 +106,24 @@ test('Detective Pikachu mixed-set owned decks and CPU remain legal in both style
  }
  const result=cpu.generate({sets,type:'Fire',seed:42});assert.ok(result.ok,result.error);assert.ok(classic.validateDeck(result.cards).ok);assert.deepEqual(decks.analyzeDeck(result.cards,result.energyTypes).missingEnergyTypes,[]);
  assert.ok(result.cards.every(id=>sets.includes(classic.cardById(id).setId)));
+});
+test('partial SWSH promos retain exact prerequisites, reject standalone drafts, and build legal mixed Gallery decks',()=>{
+ const sets=['swsh12pt5gg','swshp'],promo=ownedFor('swshp'),owned=sets.flatMap(ownedFor),cpu=require('../app/src/main/assets/tcg-classic-opponents.js');
+ assert.deepEqual(promo.map(c=>c.gameplayId).sort(),['swshp-SWSH223','swshp-SWSH229','swshp-SWSH266']);
+ assert.equal(classic.CARDS.filter(c=>c.setId==='swshp').length,3,'revisit this explicit mixed-only audit when the promo catalogue expands');
+ for(const style of ['competitive','random']){
+  assert.equal(builder.buildDeck(promo,{sets:['swshp'],style,types:['Psychic'],randomSeed:3}).ok,false);
+  for(const [suffix,parents] of [['GG44',['swshp-SWSH223','swshp-SWSH229']],['GG45',['swshp-SWSH266']],['GG46',['swshp-SWSH266']]]){
+   const focus='swsh12pt5gg-'+suffix,label=focus+'/'+style;
+   const result=builder.buildDeck(owned,{sets,style,types:['Psychic'],focusCardId:focus,randomSeed:3});
+   assertDeckQuality(result,owned,label);assert.ok(result.cards.includes(focus),label+' keeps the chosen evolution');
+   assert.ok(result.cards.some(id=>parents.includes(id)),label+' retains a legal Basic prerequisite');
+   assert.ok(result.cards.every(id=>sets.includes(classic.cardById(id).setId)),label+' stays within selected sets');
+  }
+ }
+ assert.equal(cpu.generate({sets:['swshp'],type:'Psychic',seed:42}).ok,false);
+ const result=cpu.generate({sets,type:'Psychic',seed:42});assertDeckQuality(result,owned,'mixed Gallery/promo CPU');
+ assert.ok(result.cards.some(id=>id.startsWith('swshp-')));assert.ok(result.cards.every(id=>sets.includes(classic.cardById(id).setId)));
 });
 test('modern and dense historical sets diversify Trainers while retaining functional combos',()=>{
  for(const set of ['gym2','neo4','ecard3','dp5','hgss2','bw4']){
