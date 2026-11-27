@@ -281,3 +281,20 @@ def ability(row,a):
 def trainer(row):
  if int(row[0])==126:return 'Supporter',E('sm7Rule',rule='czDiggingDuo')
  return _stage5_trainer(row)
+
+# Stage 7: hand-attachment reactions, actual top cards, counterattack, VMAX search.
+_stage6_attack=attack
+_stage6_ability=ability
+
+def attack(row,a):
+ n=int(row[0]);title,cost,damage,t=a
+ if n==51:return E('multiTargetDamage',target='opponentPokemon',amount=30,count=1,activeWeaknessResistance=True)
+ if n==65 and title=='Horoscope':return E('sm7Rule',rule='czHoroscope')
+ if n==89 and title=='Counter Press':return E('sm7Rule',rule='czCounterPress')
+ return _stage6_attack(row,a)
+
+def ability(row,a):
+ n=int(row[0])
+ if n==51:return passive(E('sm7Rule',rule='czShockingBlock'))
+ if n==105:return dict(type='triggered',event='benched',fromHandOnly=True,effect=E('sm7Rule',rule='czClimacticGate'))
+ return _stage6_ability(row,a)

@@ -272,6 +272,20 @@ function runSmokes(cards,{data,core,opponents}){
         enemy.bench[0].cardId='swsh12-138';enemy.bench[0].stack=['swsh12-138'];
       }
     }
+    // Crown Zenith: satisfy printed Trainer prerequisites using physical refs.
+    if(card.setId==='swsh12pt5'&&card.kind==='trainer'){
+      const own=s.sides[side],enemy=s.sides[side==='player'?'opponent':'player'];
+      const hand=id=>own.hand.push({cardId:id,uid:'cz-hand-'+own.hand.length});
+      const bench=id=>{own.bench[0].cardId=id;own.bench[0].stack=[id];};
+      if(card.id==='swsh12pt5-124')hand('neo1-111');
+      if(card.id==='swsh12pt5-135'){hand('swsh12pt5-1');enemy.active.tool={cardId:'swsh9-134',uid:'cz-tool'};}
+      if(card.id==='swsh12pt5-136')own.discard.push({cardId:'neo1-111',uid:'cz-water'});
+      if(card.id==='swsh12pt5-140'){own.lastKnockoutTurn=s.turnNumber-1;own.energyDiscard={Water:1};}
+      if(card.id==='swsh12pt5-141'){bench('swsh1-11');hand('swsh1-14');}
+      if(card.id==='swsh12pt5-146'){hand('swsh12pt5-1');hand('swsh12pt5-2');}
+      if(card.id==='swsh12pt5-147'){bench('swsh8-124');own.deck.unshift({cardId:'swsh8-244',uid:'cz-fusion'});}
+      if(card.id==='swsh12pt5-151')bench('swsh12pt5-18');
+    }
     const actions=core.legalActions(s,side);
     const action=actions.find(a=>card.kind==='trainer'?a.type==='trainer'&&a.cardId===card.id:a.type==='attack'&&a.attackIndex===ix&&(!a.attackCardId||a.attackCardId===card.id));
     if(!action){result.skipped++;result.skippedDetails.push({cardId:card.id,side,action:actionName});continue;}

@@ -648,6 +648,15 @@
         p.swsh10ResonantTurn=state.turnNumber;(state.swsh10ResonantQueue||(state.swsh10ResonantQueue=[])).push({side,uid:p.uid});
       }
     }
+    if(state.format==='classic'&&event==='energyAttached'&&meta.fromHand&&onlySource&&data.cardById(onlySource.cardId)?.pokemonV){
+      for(const owner of ['player','opponent'])for(const p of pokemonOn(state.sides[owner])){
+        if(!(data.cardById(p.cardId)?.abilities||[]).some(a=>a.effect?.rule==='czShockingBlock')||effects.abilitiesSuppressed(state,owner,p,data.cardById)||owner!==side&&effects.metalGogglesActive(state,side,onlySource,data.cardById))continue;
+        onlySource.damage=Number(onlySource.damage||0)+20;state.log.push({type:'czShockingBlock',side:owner,targetUid:onlySource.uid,amount:20});
+      }
+    }
+    if(state.format==='classic'&&event==='damagedByAttack'&&onlySource?.czCounterPressUntil===state.turnNumber&&meta.source?.side!==side&&meta.attacker&&Number(meta.damage)>0&&!effects.metalGogglesActive(state,meta.source.side,meta.attacker,data.cardById)&&!effects.attackEffectsPrevented(state,meta.source.side,meta.attacker,onlySource,data.cardById)){
+      meta.attacker.damage=Number(meta.attacker.damage||0)+Number(meta.damage);state.log.push({type:'czCounterPress',side,amount:meta.damage});
+    }
     if(state.format==='classic'&&event==='energyAttached'&&meta.fromHand&&onlySource&&activeStadium(state)?.cardId==='swsh6-147'&&!effects.effectiveTypes(state,side,onlySource,data.cardById).includes('Psychic')){
       onlySource.damage=Number(onlySource.damage||0)+20;state.log.push({type:'swsh6OldCemetery',side,targetUid:onlySource.uid,amount:20});
     }

@@ -2,22 +2,10 @@
   "printed": 160,
   "canonicalTotal": 160,
   "notImported": [],
-  "battleReady": 152,
+  "battleReady": 156,
   "gated": {
     "swsh12pt5-44": [
       "Unimplemented Ability: Explosiveness"
-    ],
-    "swsh12pt5-51": [
-      "Unimplemented Ability: Shocking Block"
-    ],
-    "swsh12pt5-65": [
-      "Unimplemented attack: Horoscope"
-    ],
-    "swsh12pt5-89": [
-      "Unimplemented attack: Counter Press"
-    ],
-    "swsh12pt5-105": [
-      "Unimplemented Ability: Climactic Gate"
     ],
     "swsh12pt5-107": [
       "Unimplemented Ability: Sudden Transformation"
