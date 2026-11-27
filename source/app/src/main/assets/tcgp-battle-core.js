@@ -2219,7 +2219,7 @@
           if(active.cardId==='pl2-3')for(const p of pokemonOn(foe))if(p.conditions?.sleep)p.damage=Number(p.damage||0)+10;
           if(active.cardId==='pl2-25')for(const p of pokemonOn(foe))if(data.cardById(p.cardId)?.isLevelX)p.damage=Number(p.damage||0)+10;
           if(active.cardId==='pl2-27')for(const p of [active,foe.active].filter(Boolean))if(!effects.effectiveTypes(state,p===active?side:side==='player'?'opponent':'player',p,data.cardById).includes('Water'))p.damage=Number(p.damage||0)+10;
-          if(active.cardId==='pl2-105'&&foe.deck.length)foe.discard.push(foe.deck.shift());
+          if(active.cardId==='pl2-105'&&foe.deck.length)effects.discardFromDeck(state,side,foe,0,1,data.cardById);
         }
         if(pokemonOn(ss).some(p=>p.cardId==='pl2-30'&&live(side,p)))for(const p of pokemonOn(ss))if(!effects.healingIsBlocked(state,p,data.cardById))p.damage=Math.max(0,Number(p.damage||0)-10);
       }
@@ -3039,7 +3039,7 @@
         const blackMarket=state.format==='classic'&&activeStadium(state)?.cardId==='sm9-134'&&cause==='attack'&&source?.attack&&source.side===foeSide&&Number(source.damage||0)>0&&effects.effectiveTypes(state,side,slot,data.cardById).includes('Darkness')&&(Number(slot.energy?.Darkness||0)>0||(slot.specialEnergy||[]).some(r=>effects.attachedSpecialProvidesType(r,'Darkness',slot,data.cardById,state)))?1:0;
         const swsh3Smoke=state.format==='classic'&&cause==='attack'&&source?.side===foeSide&&source?.attack&&source.turn===state.turnNumber&&Number(source.damage)>0&&activeToolsOf(state,slot).some(r=>r.cardId==='swsh3-158');
         const arceusBeltBonus=state.format==='classic'&&activeToolsOf(state,slot).some(ref=>ref.cardId==='pl4-87')?1:0;
-        if(state.format==='classic'&&cause==='attack'&&source?.side===foeSide&&source?.attack&&source.turn===state.turnNumber&&Number(source.damage)>0&&activeToolsOf(state,slot).some(r=>data.cardById(r.cardId)?.effect?.rule==='swsh2CursedShovel'))foe.discard.push(...foe.deck.splice(0,2));
+        if(state.format==='classic'&&cause==='attack'&&source?.side===foeSide&&source?.attack&&source.turn===state.turnNumber&&Number(source.damage)>0&&activeToolsOf(state,slot).some(r=>data.cardById(r.cardId)?.effect?.rule==='swsh2CursedShovel'))effects.discardFromDeck(state,side,foe,0,2,data.cardById);
         const arceusLuckyEgg=state.format==='classic'&&cause==='attack'&&source?.side===foeSide&&activeToolsOf(state,slot).some(ref=>ref.cardId==='pl4-88'||ref.cardId==='swsh1-167'&&source?.attack&&Number(source.damage||0)>0);
         const scoopBlocked=effects.scoopUpBlocked(state,side,slot,data.cardById);
         const teleport=!scoopBlocked&&state.format==='classic'&&cause==='attack'&&source?.side===foeSide&&source?.attack&&activeToolsOf(state,slot).some(r=>r.cardId==='SNAPFOUNJA-084');
