@@ -19089,7 +19089,7 @@
             if(success){target.energy[type]=Number(target.energy[type]||0)+1;ctx.onEnergyAttached?.(target,type,1);if(rule==='psychicEmbrace'){target.damage=Number(target.damage||0)+20;}note({to:target.cardId,energyType:type});}
           }
           if(rule==='dinoCry'){if(remaining<=1){ctx.endTurn?.();return;}}
-          const next=remaining-1,still=source==='zone'?(ss.energySupply?.length?[ss.energySupply[0]]:[]):Object.keys(ss.energyDiscard||{}).filter(t=>Number(ss.energyDiscard[t]||0)>0);
+          const next=remaining-1,still=source==='zone'?(ss.energySupply?.length?[ss.energySupply[0]]:[]):[...new Set(Object.keys(ss.energyDiscard||{}).filter(t=>Number(ss.energyDiscard[t]||0)>0).concat(ss.discard.map(ref=>ctx.cardById(ref.cardId)).filter(c=>c?.basicEnergy).map(c=>c.subtype)))];
           const nextTypes=still.filter(t=>!fixedType||fixedType===t);
           if(next>0&&nextTypes.length)ask({kind:'energyTarget',energyTypes:nextTypes,filter,optional:true,effect:{...effect,remaining:next}});
           else if(rule==='dinoCry')ctx.endTurn?.();
@@ -19098,7 +19098,7 @@
       }
       case 'curseSpreading':{
         const left=Math.max(0,Number(effect.remaining??8));
-        if(ctx.resolvingChoice){const target=chosen(foe);if(target)target.damage=Number(target.damage||0)+10;
+        if(ctx.resolvingChoice){const target=chosen(foe);if(target)apply({type:'placeDamageCounters',target:'opponentPokemon',amount:10});
           if(left>1&&[foe.active,...foe.bench].some(Boolean))ask({kind:'pokemon',selectionSide:ctx.foeSide,includeActive:true,effect:{...effect,remaining:left-1}});
         }else ask({kind:'pokemon',selectionSide:ctx.foeSide,includeActive:true,effect:{...effect,remaining:left}});break;
       }
@@ -19112,7 +19112,7 @@
         apply({type:'shuffleIntoDeck',target:'opponentActive',includeAttached:true});break;
       }
       case 'doomDecree':if(sv1Roll(ctx,'Doom Decree',2).every(Boolean))apply({type:'knockOut',target:'opponentActive'});break;
-      case 'tripleLaser':apply({type:'multiTargetDamage',target:'opponentPokemon',amount:30,count:3});break;
+      case 'tripleLaser':apply({type:'multiTargetDamage',target:'opponentPokemon',amount:30,count:3,activeWeaknessResistance:true});break;
       case 'happyCyclone':{
         const chosenUid=a.effectSelection,target=ss.bench.find(s=>s.uid===chosenUid);
         if(!target)return;
@@ -19140,13 +19140,13 @@
       case 'electricGenerator':{
         // Energy cards are not in Classic deck: reveal the NEXT five Energy
         // Zone cards and attach up to two Lightning among those five.
-        const visible=(ss.energySupply||[]).slice(0,5),amount=Math.min(2,visible.filter(t=>t==='Lightning').length);
+        const window=Math.max(0,Number(effect.zoneWindow??5)),visible=(ss.energySupply||[]).slice(0,window),amount=Math.min(2,visible.filter(t=>t==='Lightning').length);
         if(!amount||!ss.bench.some(s=>ctx.cardById(s.cardId)?.types?.includes('Lightning')))break;
-        if(ctx.resolvingChoice){const target=chosen(ss);if(target&&ss.bench.includes(target)&&ctx.cardById(target.cardId)?.types?.includes('Lightning')){
-            const index=ss.energySupply.slice(0,5).indexOf('Lightning');if(index>=0){ss.energySupply.splice(index,1);ss.nextEnergyType=ss.energySupply[0]||null;target.energy.Lightning=Number(target.energy.Lightning||0)+1;ctx.onEnergyAttached?.(target,'Lightning',1);}
+        if(ctx.resolvingChoice){if(a.choiceSkip)return;const target=chosen(ss);if(target&&ss.bench.includes(target)&&ctx.cardById(target.cardId)?.types?.includes('Lightning')){
+            const index=visible.indexOf('Lightning');if(index>=0){ss.energySupply.splice(index,1);ss.nextEnergyType=ss.energySupply[0]||null;target.energy.Lightning=Number(target.energy.Lightning||0)+1;ctx.onEnergyAttached?.(target,'Lightning',1);
+              if(Number(effect.remaining??amount)>1&&ss.energySupply.slice(0,window-1).includes('Lightning'))ask({kind:'pokemon',includeActive:false,filter:{subtype:'Lightning'},optional:true,effect:{...effect,remaining:Number(effect.remaining??amount)-1,zoneWindow:window-1}});}
           }
-          if(Number(effect.remaining||amount)>1&&ss.energySupply.slice(0,5).includes('Lightning'))ask({kind:'pokemon',includeActive:false,filter:{subtype:'Lightning'},effect:{...effect,remaining:Number(effect.remaining||amount)-1}});
-        }else ask({kind:'pokemon',includeActive:false,filter:{subtype:'Lightning'},effect:{...effect,remaining:amount}});
+        }else ask({kind:'pokemon',includeActive:false,filter:{subtype:'Lightning'},optional:true,effect:{...effect,remaining:amount,zoneWindow:window}});
         break;
       }
       case 'energySwitch':case 'fireOff':case 'strangeBehavior':{
@@ -19158,9 +19158,9 @@
         }
         const sources=rule==='fireOff'?ss.bench.filter(s=>Number(s.energy?.Fire||0)>0):[ss.active,...ss.bench].filter(s=>s&&Object.values(s.energy||{}).some(n=>n>0));
         if(ctx.resolvingChoice){
-          if(!effect.fromUid){const source=chosen(ss);if(source&&sources.some(s=>s.uid===source.uid)){const types=rule==='fireOff'?['Fire']:Object.keys(source.energy||{}).filter(t=>source.energy[t]>0);ask({kind:'energyTarget',energyTypes:types,effect:{...effect,fromUid:source.uid}});} }
+          if(!effect.fromUid){const source=chosen(ss);if(source&&sources.some(s=>s.uid===source.uid)){if(rule==='fireOff'){if(ss.active&&source!==ss.active){source.energy.Fire--;ss.active.energy.Fire=Number(ss.active.energy.Fire||0)+1;note({energyType:'Fire',from:source.cardId,to:ss.active.cardId});}}else{const types=Object.keys(source.energy||{}).filter(t=>source.energy[t]>0);ask({kind:'energyTarget',energyTypes:types,excludeUids:[source.uid],effect:{...effect,fromUid:source.uid}});}} }
           else {const from=sources.find(s=>s.uid===effect.fromUid),to=chosen(ss),type=a.effectEnergyType;
-            if(from&&to&&from!==to&&Number(from.energy?.[type]||0)>0){from.energy[type]--;to.energy[type]=Number(to.energy[type]||0)+1;ctx.onEnergyAttached?.(to,type,1);}
+            if(from&&to&&from!==to&&Number(from.energy?.[type]||0)>0){from.energy[type]--;to.energy[type]=Number(to.energy[type]||0)+1;note({energyType:type,from:from.cardId,to:to.cardId});}
           }
         }else if(sources.length)ask({kind:'pokemon',includeActive:rule!=='fireOff',filter:rule==='fireOff'?{hasEnergyType:'Fire'}:{hasAnyEnergy:true}});
         break;
@@ -19172,7 +19172,7 @@
         while(ss.hand.length<6&&ss.deck.length)ctx.drawCard(ss);break;
       }
       case 'nestStash':{
-        if(!ss.hand.length)return;ss.deck.push(...ss.hand.splice(0));ctx.drawCard(ss);break;
+        if(!ss.hand.length)return;const bottom=ss.hand.splice(0);ctx.shuffle?.(ctx.state,bottom);ss.deck.push(...bottom);ctx.drawCard(ss);break;
       }
       case 'miriam':case 'palPad':{
         const max=rule==='miriam'?5:2,filter=rule==='miriam'?{kind:'pokemon'}:{kind:'trainer',trainerType:'Supporter'};
@@ -19198,7 +19198,7 @@
       }
       case 'flyingEntry':{
         const previous=[...(effect.pickedUids||[])],eligible=foe.bench.filter(t=>t&&!previous.includes(t.uid));
-        if(ctx.resolvingChoice){if(a.choiceSkip)return;const target=chosen(foe);if(target&&eligible.includes(target)){target.damage=Number(target.damage||0)+10;previous.push(target.uid);}
+        if(ctx.resolvingChoice){if(a.choiceSkip)return;const target=chosen(foe);if(target&&eligible.includes(target)){applyEffect({type:'placeDamageCounters',target:'opponentBench',amount:10},{...ctx,isAbility:true});previous.push(target.uid);}
           if(previous.length<2&&foe.bench.some(t=>t&&!previous.includes(t.uid)))ask({kind:'pokemon',selectionSide:ctx.foeSide,includeActive:false,excludeUids:previous,optional:true,effect:{...effect,pickedUids:previous}});
         }else if(eligible.length)ask({kind:'pokemon',selectionSide:ctx.foeSide,includeActive:false,optional:true});
         break;

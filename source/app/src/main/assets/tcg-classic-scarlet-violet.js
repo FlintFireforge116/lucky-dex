@@ -306,7 +306,7 @@ Object.assign(ATTACK_RULES,{
  '93:0':{type:'modifier',stat:'attackDamage',amount:-30,scope:'opponentActive',duration:'opponentTurn'},
  '94:0':flip({type:'discardEnergyCard',target:'opponentActive',amount:1}),
  '95:0':{type:'damageFromDamage',source:'opponent',amount:1},
- '96:0':{type:'discardTool',target:'opponentActive'},
+ '96:0':{type:'discardTool',target:'opponentActive',timing:'beforeDamage'},
  '98:0':guarded(30),
  '102:0':{type:'switch',side:'self'},
  '103:0':{type:'lock',target:'opponentActive',action:'retreat',duration:'opponentTurn'},
