@@ -1,0 +1,3 @@
+# Paldea Evolved completion — v0.69.623
+
+279/279 prints enabled; 0 gates. Final implementations: Order a Raid, Entangling Trap, Swelling Flash, Paralyzing Ball, Read the Stars, Poison Petals/Shattering Crystal, Assaulting Hunt, Colorful Graffiti, Hearsay and Calamitous Snowy Mountain. Graffiti uses sequential optional pre-damage physical Basic Energy choices, counting distinct types including duplicate discards. Active removal uses normal promotion order without prizes. Tests cover both players. 164 focused tests, 444 combined selected regressions (including Snap shop and physical bulk), strict smoke 822/822, CPU 16/16, zero catalogue errors/warnings, two structural review flags. Full historical prepare and Android build not run locally.
