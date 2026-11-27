@@ -2507,6 +2507,17 @@
       }
     }
     delete state.xy5BarrageSecond;
+    // Emergency Jelly resolves at either turn end, before Pokémon Checkup.
+    if(state.format==='classic')for(const owner of ['player','opponent']){
+      const board=state.sides[owner];for(const p of pokemonOn(board)){
+        const remaining=maxHp(state,owner,p)-Number(p.damage||0);
+        if(remaining<=0||remaining>30||!p.damage||effects.healingIsBlocked(state,p,data.cardById))continue;
+        const ref=activeToolsOf(state,p).find(r=>r.cardId==='swsh12-155');if(!ref)continue;
+        const healed=Math.min(120,Number(p.damage));p.damage-=healed;
+        if(p.tool?.uid===ref.uid)p.tool=p.extraTools?.shift()||null;else p.extraTools=(p.extraTools||[]).filter(r=>r.uid!==ref.uid);
+        board.discard.push(ref);state.log.push({type:'heal',side:owner,targetUid:p.uid,amount:healed,reason:'Emergency Jelly'});
+      }
+    }
     // Serperior Royal Heal: between-turn healing is global to its owner's
     // Pokémon, once per active copy, and respects Ability suppression.
     if(state.format==='classic')for(const who of ['player','opponent']){

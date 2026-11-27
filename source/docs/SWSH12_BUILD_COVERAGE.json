@@ -2,22 +2,14 @@
   "printed": 215,
   "canonicalTotal": 215,
   "notImported": [],
-  "battleReady": 186,
+  "battleReady": 194,
   "gated": {
     "swsh12-12": [
       "Unimplemented Ability: Surprise Spores"
     ],
-    "swsh12-64": [
-      "Unimplemented attack: Eerie Voice",
-      "Unimplemented Ability: Spiteful Magic"
-    ],
     "swsh12-66": [
       "Unimplemented attack: Tri Power",
       "Unimplemented attack: Star Cipher"
-    ],
-    "swsh12-71": [
-      "Unimplemented attack: Sudden Eater",
-      "Unimplemented Ability: Star Rondo"
     ],
     "swsh12-74": [
       "Unimplemented attack: Dreaming Tone"
@@ -49,18 +41,12 @@
       "Unimplemented attack: Apex Dragon",
       "Unimplemented Ability: Legacy Star"
     ],
-    "swsh12-137": [
-      "Unimplemented attack: Colorful Palette"
-    ],
     "swsh12-140": [
       "Unimplemented attack: Rainbow Burn",
       "Unimplemented Ability: Reviving Flame"
     ],
     "swsh12-154": [
       "Unimplemented attack: Star Gravity",
-      "Unimplemented Trainer effect"
-    ],
-    "swsh12-155": [
       "Unimplemented Trainer effect"
     ],
     "swsh12-156": [
@@ -71,9 +57,6 @@
       "Unimplemented Trainer effect"
     ],
     "swsh12-163": [
-      "Unimplemented Trainer effect"
-    ],
-    "swsh12-166": [
       "Unimplemented Trainer effect"
     ],
     "swsh12-180": [
@@ -88,23 +71,13 @@
       "Unimplemented attack: Rainbow Burn",
       "Unimplemented Ability: Reviving Flame"
     ],
-    "swsh12-194": [
-      "Unimplemented Trainer effect"
-    ],
     "swsh12-199": [
       "Unimplemented attack: Tri Power",
       "Unimplemented attack: Star Cipher"
     ],
-    "swsh12-200": [
-      "Unimplemented attack: Sudden Eater",
-      "Unimplemented Ability: Star Rondo"
-    ],
     "swsh12-201": [
       "Unimplemented attack: Apex Dragon",
       "Unimplemented Ability: Legacy Star"
-    ],
-    "swsh12-208": [
-      "Unimplemented Trainer effect"
     ],
     "swsh12-214": [
       "Unimplemented Trainer effect"

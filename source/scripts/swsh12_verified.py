@@ -251,3 +251,24 @@ def ability(row,a):
 def trainer(row):
  if row[1]=='Furisode Girl':return 'Supporter',E('sm7Rule',rule='swsh12FurisodeGirl')
  return _stage7_trainer(row)
+
+# Stage 9: targeted top-deck attachment, VSTAR switch, opponent choice and reactive effects.
+_stage8_attack,_stage8_ability,_stage8_trainer=attack,ability,trainer
+
+def attack(row,a):
+ n=int(_base_row(row)[0]);title=a[0]
+ if n==64 and title=='Eerie Voice':return E('placeDamageCounters',target='opponentAll',amount=20)
+ if n==71 and title=='Sudden Eater':return bonus(90,cond('movedFromBenchThisTurn'))
+ if n==137 and title=='Colorful Palette':return E('sm7Rule',rule='sm9TopAttach',count=5,includeSpecial=False,sameTarget=True)
+ return _stage8_attack(row,a)
+
+def ability(row,a):
+ n=int(_base_row(row)[0]);title=a[0]
+ if n==64 and title=='Spiteful Magic':return dict(type='triggered',event='damagedByAttack',opponentAttackOnly=True,effect=E('sm7Rule',rule='swsh12SpitefulMagic'))
+ if n==71 and title=='Star Rondo':return activated(E('sm7Rule',rule='swsh12StarRondo'),vstarPower=True)
+ return _stage8_ability(row,a)
+
+def trainer(row):
+ if row[1]=='Wallace':return 'Supporter',E('sm7Rule',rule='swsh12Wallace')
+ if row[1]=='Emergency Jelly':return 'Tool',E('noop') # exact end-turn hook in core
+ return _stage8_trainer(row)
