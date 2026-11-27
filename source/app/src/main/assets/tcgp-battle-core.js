@@ -652,7 +652,7 @@
     }
     if(state.format==='classic'&&event==='damagedByAttack'&&onlySource?.swsh7SparkTrapUntil===state.turnNumber&&meta.source?.side!==side&&meta.attacker&&Number(meta.damage)>0&&!effects.metalGogglesActive(state,meta.source.side,meta.attacker,data.cardById)&&!effects.attackEffectsPrevented(state,meta.source.side,meta.attacker,onlySource,data.cardById)){meta.attacker.damage=Number(meta.attacker.damage||0)+120;state.log.push({type:'swsh7SparkTrap',side,amount:120});}
     if(state.format==='classic'&&event==='damagedByAttack'&&onlySource?.swsh6TwoHit?.turn===state.turnNumber&&onlySource.swsh6TwoHit.side===meta.source?.side&&meta.source?.side!==side&&Number(meta.damage)>0&&data.cardById(meta.attacker?.cardId)?.rapidStrike&&!effects.attackEffectsPrevented(state,side,onlySource,meta.attacker,data.cardById)){onlySource.damage=Math.max(onlySource.damage,maxHp(state,side,onlySource));delete onlySource.swsh6TwoHit;}
-    if(state.format==='classic'&&event==='damagedByAttack'&&onlySource===ss.active&&onlySource?.cardId==='swsh6-83'&&meta.attacker&&meta.source?.side!==side&&Number(meta.damage)>0&&data.cardById(meta.attacker.cardId)?.pokemonVMAX&&!effects.abilitiesSuppressed(state,side,onlySource,data.cardById)&&!effects.metalGogglesActive(state,meta.source.side,meta.attacker,data.cardById)){
+    if(state.format==='classic'&&event==='damagedByAttack'&&onlySource===ss.active&&onlySource?.cardId==='swsh6-83'&&meta.attacker&&!effects.guardianOfLove(state,meta.source?.side,meta.attacker,data.cardById)&&meta.source?.side!==side&&Number(meta.damage)>0&&data.cardById(meta.attacker.cardId)?.pokemonVMAX&&!effects.abilitiesSuppressed(state,side,onlySource,data.cardById)&&!effects.metalGogglesActive(state,meta.source.side,meta.attacker,data.cardById)){
       meta.attacker.damage=Number(meta.attacker.damage||0)+Number(meta.damage);state.log.push({type:'swsh6SpitefulSlate',side,amount:meta.damage});
     }
     if(state.format==='classic'&&onlySource&&['energyAttached','evolved'].includes(event)&&effects.activeSpecialEnergy(state,onlySource,data.cardById).some(r=>r.cardId==='swsh4-162')&&effects.effectiveTypes(state,side,onlySource,data.cardById).includes('Grass'))onlySource.conditions={};
@@ -679,7 +679,7 @@
     if(state.format==='classic'&&event==='benched'&&meta.fromHand&&onlySource&&
        data.cardById(onlySource.cardId)?.stage==='Basic'){
       const enemySide=side==='player'?'opponent':'player',active=state.sides[enemySide].active;
-      if(active?.cardId==='hgss4-91'&&!effects.abilitiesSuppressed(state,enemySide,active,data.cardById)){
+      if(active?.cardId==='hgss4-91'&&!effects.guardianOfLove(state,side,onlySource,data.cardById)&&!effects.abilitiesSuppressed(state,enemySide,active,data.cardById)){
         onlySource.damage=Number(onlySource.damage||0)+20;
         state.log.push({type:'hgss4EyeOfDisaster',side:enemySide,targetUid:onlySource.uid,damage:20});
       }
@@ -798,8 +798,8 @@
     }
 
 
-    if(event==='evolved'&&state.format==='classic'&&eventData?.fromHand){const foe=side==='player'?'opponent':'player';for(const source of pokemonOn(state.sides[foe]))if(source.cardId==='ex7-2'&&!effects.abilitiesSuppressed(state,foe,source,data.cardById)&&Number(source.ex7DarkestImpulseTurn)!==state.turnNumber){source.ex7DarkestImpulseTurn=state.turnNumber;onlySource.damage=Number(onlySource.damage||0)+20;state.log.push({type:'ex7DarkestImpulse',side:foe,damaged:onlySource.cardId});}}
-    if(event==='evolved'&&state.format==='classic'&&onlySource?.cardId==='ex7-1'&&state.sides[side]?.active===onlySource&&!effects.abilitiesSuppressed(state,side,onlySource,data.cardById)){const defender=state.sides[side==='player'?'opponent':'player']?.active;if(defender)defender.conditions={...(defender.conditions||{}),paralysis:{appliedTurn:state.turnNumber}};}
+    if(event==='evolved'&&state.format==='classic'&&eventData?.fromHand&&!effects.guardianOfLove(state,side,onlySource,data.cardById)){const foe=side==='player'?'opponent':'player';for(const source of pokemonOn(state.sides[foe]))if(source.cardId==='ex7-2'&&!effects.abilitiesSuppressed(state,foe,source,data.cardById)&&Number(source.ex7DarkestImpulseTurn)!==state.turnNumber){source.ex7DarkestImpulseTurn=state.turnNumber;onlySource.damage=Number(onlySource.damage||0)+20;state.log.push({type:'ex7DarkestImpulse',side:foe,damaged:onlySource.cardId});}}
+    if(event==='evolved'&&state.format==='classic'&&onlySource?.cardId==='ex7-1'&&state.sides[side]?.active===onlySource&&!effects.abilitiesSuppressed(state,side,onlySource,data.cardById)){const defender=state.sides[side==='player'?'opponent':'player']?.active;if(defender&&!effects.guardianOfLove(state,side==='player'?'opponent':'player',defender,data.cardById))defender.conditions={...(defender.conditions||{}),paralysis:{appliedTurn:state.turnNumber}};}
     if(event==='evolved'&&activeStadium(state)?.cardId==='gym2-123'&&onlySource&&data.cardById(onlySource.cardId)?.name?.startsWith("Giovanni's"))onlySource.damage=Math.max(0,Number(onlySource.damage||0)-20);
     for(const source of [ss.active,...ss.bench].filter(Boolean)){if(onlySource&&source!==onlySource)continue;if(Number(source.neoDestinyPowerLockUntil||0)>=state.turnNumber||effects.abilitiesSuppressed(state,side,source,data.cardById)||Number(state.sides[side]?.gym2PowerLockUntil||0)>=state.turnNumber)continue;
       for(const ability of abilitiesFor(data.cardById(source.cardId),source,state)){if(state.format==='classic'&&data.cardById(source.cardId)?.pokemonEx&&ability.printedPowerType==='power'&&
@@ -1997,7 +1997,7 @@
         if(ability.lentalSharedOnce==='scavenge'&&s.lentalScavengeUsedTurn===s.turnCount)return;
         if(ability.sharedOncePerTurn&&s.sharedAbilityUsed?.[ability.sharedOncePerTurn]===s.turnCount)return;
         const base={type:'ability',cardId:source.cardId,abilityIndex,target:source===s.active?'active':'bench'};if(source!==s.active)base.benchIndex=Number(source.benchSlot);
-        for(const target of effectChoices(ability.effect,effectContext(state,side,{},source))){const a={...base};if(target.target)a.effectTarget=target.target;if(target.benchIndex!=null)a.effectBenchIndex=target.benchIndex;actions.push(a);}
+        for(const target of effectChoices(ability.effect,effectContext(state,side,{},source))){const victim=target.target==='opponentActive'?foe.active:target.target==='opponentBench'?foe.bench.find(p=>Number(p.benchSlot)===Number(target.benchIndex)):null;if(victim&&effects.guardianOfLove(state,side==='player'?'opponent':'player',victim,data.cardById))continue;const a={...base};if(target.target)a.effectTarget=target.target;if(target.benchIndex!=null)a.effectBenchIndex=target.benchIndex;actions.push(a);}
       });
     }
     if(state.format==='classic'&&Number(state.xy7HexManiacUntil||0)<Number(state.turnNumber)&&
@@ -2273,11 +2273,11 @@
     if(state.format==='classic')for(const side of ['player','opponent'])for(const slot of pokemonOn(state.sides[side])){
       if(state.sides[side].active===slot&&!effects.abilitiesSuppressed(state,side,slot,data.cardById)){
         if(slot.cardId==='ex6-15'&&slot.conditions?.sleep&&!effects.healingIsBlocked(state,slot,data.cardById))slot.damage=Math.max(0,Number(slot.damage||0)-20);
-        if(slot.cardId==='ex6-17'){const opp=state.sides[side==='player'?'opponent':'player'].active;if(opp)opp.damage=Number(opp.damage||0)+10;}
-        if(slot.cardId==='ex6-25'){for(const who of ['player','opponent']){const target=state.sides[who].active;if(target?.conditions?.sleep)target.damage=Number(target.damage||0)+20;}}
+        if(slot.cardId==='ex6-17'){const enemy=side==='player'?'opponent':'player',opp=state.sides[enemy].active;if(opp&&!effects.guardianOfLove(state,enemy,opp,data.cardById))opp.damage=Number(opp.damage||0)+10;}
+        if(slot.cardId==='ex6-25'){for(const who of ['player','opponent']){const target=state.sides[who].active;if(target?.conditions?.sleep&&(who===side||!effects.guardianOfLove(state,who,target,data.cardById)))target.damage=Number(target.damage||0)+20;}}
       }
             if(slot.cardId==='ex7-104'&&Number(slot.energy?.Darkness||0)>0&&!effects.abilitiesSuppressed(state,side,slot,data.cardById)&&!effects.healingIsBlocked(state,slot,data.cardById))slot.damage=Math.max(0,Number(slot.damage||0)-10);
-      if(state.sides[side].active===slot&&!effects.abilitiesSuppressed(state,side,slot,data.cardById)&&['ex7-20','ex7-42'].includes(slot.cardId)){const opponent=state.sides[side==='player'?'opponent':'player'];for(const target of slot.cardId==='ex7-20'?opponent.bench.filter(p=>data.cardById(p.cardId)?.stage==='Basic'):[opponent.active].filter(p=>p?.conditions?.poison))target.damage=Number(target.damage||0)+10;}
+      if(state.sides[side].active===slot&&!effects.abilitiesSuppressed(state,side,slot,data.cardById)&&['ex7-20','ex7-42'].includes(slot.cardId)){const opponent=state.sides[side==='player'?'opponent':'player'];for(const target of slot.cardId==='ex7-20'?opponent.bench.filter(p=>data.cardById(p.cardId)?.stage==='Basic'):[opponent.active].filter(p=>p?.conditions?.poison))if(!effects.guardianOfLove(state,side==='player'?'opponent':'player',target,data.cardById))target.damage=Number(target.damage||0)+10;}
       if(slot.cardId==='ex5-98'&&!effects.abilitiesSuppressed(state,side,slot,data.cardById)&&!effects.healingIsBlocked(state,slot,data.cardById))slot.damage=Math.max(0,Number(slot.damage||0)-10);
       if(activeStadium(state)?.cardId==='ex5-88'&&data.cardById(slot.cardId)?.pokemonEx&&maxHp(state,side,slot)>=100){slot.damage=Number(slot.damage||0)+10;state.log.push({type:'ex5DesertRuins',side,cardId:slot.cardId,amount:10});}
     }
@@ -2408,8 +2408,8 @@
     if(state.format==='classic'&&damage>0)for(const ref of activeToolsOf(state,defender))if(ref.cardId==='dp6-129')ref.dp6BubbleCoatDamagedTurn=state.turnNumber;if(damage>0)effects.florioReactToAttackDamage?.(state,foeSide,defender,side,attacker,damage,data.cardById,random);
     if(state.format==='classic'&&damage>0&&defender.cardId==='dp2-61'&&Number(defender.dp2SpikeArmorUntil||0)>=state.turnNumber){attacker.damage=Number(attacker.damage||0)+40;state.log.push({type:'dp2SpikeArmor',side:foeSide,target:attacker.cardId,amount:40});}if(damage>0)defender.lastDamageSource={side,uid:attacker.uid,cardId:attacker.cardId,attack:true,turn:state.turnNumber,damage,damageKo:Number(defender.damage)>=maxHp(state,foeSide,defender)};
     if(damage>0&&defender.legendaryMirrorShellUntil>=state.turnNumber&&state.format==='classic'){attacker.damage=Number(attacker.damage||0)+damage;state.log.push({type:'legendaryMirrorShell',side:foeSide,amount:damage,cardId:defender.cardId});}
-      if(damage>0&&state.format==='classic'&&defender===state.sides[foeSide].active&&['ex16-41','ex16-47'].includes(defender.cardId)&&!effects.abilitiesSuppressed(state,foeSide,defender,data.cardById)){attacker.damage=Number(attacker.damage||0)+10;state.log.push({type:'ex16RoughSkin',side:foeSide,cardId:defender.cardId,amount:10});}
-      if(damage>0&&state.format==='classic'&&defender.cardId==='xy1-14'&&
+      if(damage>0&&state.format==='classic'&&!effects.guardianOfLove(state,side,attacker,data.cardById)&&defender===state.sides[foeSide].active&&['ex16-41','ex16-47'].includes(defender.cardId)&&!effects.abilitiesSuppressed(state,foeSide,defender,data.cardById)){attacker.damage=Number(attacker.damage||0)+10;state.log.push({type:'ex16RoughSkin',side:foeSide,cardId:defender.cardId,amount:10});}
+      if(damage>0&&state.format==='classic'&&!effects.guardianOfLove(state,side,attacker,data.cardById)&&defender.cardId==='xy1-14'&&
          !effects.abilitiesSuppressed(state,foeSide,defender,data.cardById)){
         attacker.damage=Number(attacker.damage||0)+30;
         state.log.push({type:'spikyShield',side:foeSide,amount:30,sourceUid:defender.uid});
@@ -4164,14 +4164,14 @@ const target=slotForTarget(s,action.target,action.benchIndex);if(card.id==='pl2-
       s.active=incoming;
       effects.spikemuthSwitch(state,s,outgoing);
       // SM1 Toxapex: only the NEW Active is poisoned after a voluntary retreat.
-      if(state.format==='classic'&&incoming&&pokemonOn(foe).some(p=>p.cardId==='sm1-63'&&!effects.abilitiesSuppressed(state,foeSide,p,data.cardById))&&
+      if(state.format==='classic'&&incoming&&!effects.guardianOfLove(state,side,incoming,data.cardById)&&pokemonOn(foe).some(p=>p.cardId==='sm1-63'&&!effects.abilitiesSuppressed(state,foeSide,p,data.cardById))&&
           !effects.statusIsPrevented(state,incoming,data.cardById,'poison')){
         incoming.conditions={...(incoming.conditions||{}),poison:{amount:10}};
         state.log.push({type:'sm1ToxicSpikes',side:foeSide,targetUid:incoming.uid});
       }
       // Aquapolis Octillery Suction Cups: when Defending Pokémon retreats,
       // it loses every Energy card after paying the Retreat Cost.
-      if(state.format==='classic'&&['ecard2-26','ecard2-H20'].includes(foe.active?.cardId)&&
+      if(state.format==='classic'&&!effects.guardianOfLove(state,side,outgoing,data.cardById)&&['ecard2-26','ecard2-H20'].includes(foe.active?.cardId)&&
          !effects.abilitiesSuppressed(state,foeSide,foe.active,data.cardById)){
         const lost={};for(const [type,n] of Object.entries(outgoing.energy||{})){
           if(Number(n)>0){lost[type]=Number(n);s.energyDiscard[type]=Number(s.energyDiscard[type]||0)+Number(n);}
@@ -4179,7 +4179,7 @@ const target=slotForTarget(s,action.target,action.benchIndex);if(card.id==='pl2-
         outgoing.energy={};for(const ref of outgoing.specialEnergy||[])neoRecycleSpecial(s,ref,state);
         outgoing.specialEnergy=[];state.log.push({type:'aquapolisSuctionCups',side:foeSide,target:outgoing.cardId,discardedBasic:lost});
       }
-      if(state.format==='classic'&&maxHp(state,side,outgoing)-Number(outgoing.damage||0)>=40&&
+      if(state.format==='classic'&&!effects.guardianOfLove(state,side,outgoing,data.cardById)&&maxHp(state,side,outgoing)-Number(outgoing.damage||0)>=40&&
          Number(foe.ex16MetalGravityUsedTurn)!==state.turnNumber){
         const source=pokemonOn(foe).find(p=>p.cardId==='ex16-98'&&!effects.abilitiesSuppressed(state,side==='player'?'opponent':'player',p,data.cardById));
         if(source){outgoing.damage=Number(outgoing.damage||0)+30;foe.ex16MetalGravityUsedTurn=state.turnNumber;
@@ -4187,7 +4187,7 @@ const target=slotForTarget(s,action.target,action.benchIndex);if(card.id==='pl2-
       }
       // Dugtrio Sinkhole is placed on the POKÉMON THAT RETREATED, which is
       // now on the Bench; each unsuppressed opposing Dugtrio contributes 20.
-      if(state.format==='classic')for(const source of pokemonOn(foe))if(source.cardId==='pl1-24'&&
+      if(state.format==='classic'&&!effects.guardianOfLove(state,side,outgoing,data.cardById))for(const source of pokemonOn(foe))if(source.cardId==='pl1-24'&&
          !effects.abilitiesSuppressed(state,side==='player'?'opponent':'player',source,data.cardById)){
         outgoing.damage=Number(outgoing.damage||0)+20;
         state.log.push({type:'platinumSinkhole',side:side==='player'?'opponent':'player',targetUid:outgoing.uid,amount:20});
@@ -4412,7 +4412,7 @@ const target=slotForTarget(s,action.target,action.benchIndex);if(card.id==='pl2-
       const defender=result.damageTarget===undefined?(leapFrog?foe.bench.find(x=>Number(x.benchSlot)===Number(matched.benchIndex)):foe.active):result.damageTarget;
       if(!defender)throw new Error('No legal target remains for this attack.');
       const isActive=defender===foe.active;
-      const hoodAttacker=state.format==='classic'&&activeToolsOf(state,s.active).some(r=>r.cardId==='sm10-186');
+      const hoodAttacker=state.format==='classic'&&(effects.guardianOfLove(state,side,s.active,data.cardById)||activeToolsOf(state,s.active).some(r=>r.cardId==='sm10-186'));
       if(state.format==='classic'&&isActive&&s.active.sm10GrandioseUntil===state.turnNumber&&result.damage>0)result.damage+=120;
       const kartenvoy=state.format==='classic'&&isActive&&attackerCard.ultraBeast&&s.sm10KartenvoyTurn===state.turnNumber;
       if(kartenvoy)result.damageRules={...result.damageRules,ignoreEffects:true};
@@ -4767,7 +4767,7 @@ const target=slotForTarget(s,action.target,action.benchIndex);if(card.id==='pl2-
       if(state.format==='classic')s.active.pl1LastAttackTurn=state.turnNumber;
       state.log.push({type:'attack',side,cardId:attackerCard.id,attack:attack.name,damage,damageReason:damage===0?resistanceReason:(attack.effect?.rule==='founja:swiftBeak'&&Number(s.active.movedToActiveTurn)===Number(state.turnNumber)?'Bench → Active this turn: +80':''),target:isActive?'active':'bench',benchIndex:defender.benchSlot});s.lastAttackName=attack.name;if(attack.effect?.rule==='swsh7YogaLoop')s.swsh7YogaLoopTurn=s.turnCount;s.lastAttackTurn=state.turnNumber;s.lastAttackCardId=attackerCard.id;s.lastAttackUid=s.active.uid;s.attackCounts=s.attackCounts||{};s.attackCounts[attack.name]=Number(s.attackCounts[attack.name]||0)+1;s.active.attackUseCount=Number(s.active.attackUseCount||0)+1;
       if(damage>0&&state.format==='classic'&&defender===foe.active&&
-        pokemonOn(foe).some(p=>p.cardId==='pl2-29'&&!effects.abilitiesSuppressed(state,foeSide,p,data.cardById))&&!effects.metalGogglesActive(state,side,s.active,data.cardById)){
+        !effects.guardianOfLove(state,side,s.active,data.cardById)&&pokemonOn(foe).some(p=>p.cardId==='pl2-29'&&!effects.abilitiesSuppressed(state,foeSide,p,data.cardById))&&!effects.metalGogglesActive(state,side,s.active,data.cardById)){
         s.active.damage=Number(s.active.damage||0)+20;
         state.log.push({type:'pl2Territoriality',side:foeSide,counters:2});
       }

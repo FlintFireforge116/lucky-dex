@@ -198,6 +198,12 @@
   }
   function specialEnergyTextActive(state,ref,cardById){return !cardById(ref?.cardId)?.specialEnergy||!spectralBreachActive(state,cardById);}
   function activeSpecialEnergy(state,slot,cardById){const refs=slot?.specialEnergy||[];return refs.length&&spectralBreachActive(state,cardById)?refs.filter(ref=>!cardById(ref.cardId)?.specialEnergy):refs;}
+  // Guardian of Love is live, team-wide, and never protects any Enamorus V.
+  function guardianOfLove(state,side,slot,cardById){
+    if(state?.format!=='classic'||!state.sides?.[side]||!slot||cardById(slot.cardId)?.name==='Enamorus V'||!pokemonOn(state.sides[side]).includes(slot))return false;
+    if(!(Number(slot.energy?.Psychic||0)>0||activeSpecialEnergy(state,slot,cardById).some(r=>attachedSpecialProvidesType(r,'Psychic',slot,cardById,state))))return false;
+    return pokemonOn(state.sides[side]).some(p=>['swsh11-82','swsh11-178'].includes(p.cardId)&&!abilitiesSuppressed(state,side,p,cardById));
+  }
   function fusionEnergyGuard(state,slot,cardById){return state?.format==='classic'&&!!cardById(slot?.cardId)?.fusionStrike&&activeSpecialEnergy(state,slot,cardById).some(r=>r.cardId==='swsh8-244');}
   function attachedSpecialProvider(state,ref,cardById){return !specialEnergyTextActive(state,ref,cardById)?{Colorless:1}:ref?.provides||cardById(ref?.cardId)?.effect?.provides||{};}
   function attachedSpecialProvidesType(ref,type,slot,cardById,state){
@@ -633,7 +639,7 @@
     // Silent Lab, Hex Maniac or Garbotoxin.
     if(ctx?.isAbility&&ctx?.state?.format==='classic'&&slot&&
        energyOwner(ctx,slot)===other(ctx)&&
-       (fusionEnergyGuard(ctx.state,slot,ctx.cardById)||ctx.cardById(slot.cardId)?.ancientTrait?.name==='θ Stop'||lustrousBody(ctx.state,ctx.foeSide,slot,ctx.cardById)||activeToolsOf(ctx.state,slot,ctx.cardById).some(r=>r.cardId==='sm10-186')))return true;
+       (guardianOfLove(ctx.state,ctx.foeSide,slot,ctx.cardById)||fusionEnergyGuard(ctx.state,slot,ctx.cardById)||ctx.cardById(slot.cardId)?.ancientTrait?.name==='θ Stop'||lustrousBody(ctx.state,ctx.foeSide,slot,ctx.cardById)||activeToolsOf(ctx.state,slot,ctx.cardById).some(r=>r.cardId==='sm10-186')))return true;
     if(ctx?.isAttack&&ctx?.state?.format==='classic'&&slot&&
        (slot.specialEnergy||[]).some(ref=>ref.cardId==='xy5-144')&&
        ctx.cardById(slot.cardId)?.types?.includes('Fairy')&&
@@ -18379,11 +18385,11 @@
       attacker.conditions=attacker.conditions||{};attacker.conditions.poison={amount:10};
       state.log.push({type:'lentalReaction',side:defendingSide,rule:'Poison Spray',attackerCardId:attacker.cardId});
     }
-    if(id==='SNAPFLORIO-061'&&!abilitiesSuppressed(state,defendingSide,defender,cardById)&&flip('Counter Strike')){
+    if(id==='SNAPFLORIO-061'&&!guardianOfLove(state,attackingSide,attacker,cardById)&&!abilitiesSuppressed(state,defendingSide,defender,cardById)&&flip('Counter Strike')){
       attacker.damage=Number(attacker.damage||0)+amount;
       state.log.push({type:'lentalReaction',side:defendingSide,rule:'Counter Strike',damage:amount});
     }
-    if(id==='SNAPFLORIO-067'&&!abilitiesSuppressed(state,defendingSide,defender,cardById)&&flip('Stun Shock')&&statusAllowed('paralysis')){
+    if(id==='SNAPFLORIO-067'&&!guardianOfLove(state,attackingSide,attacker,cardById)&&!abilitiesSuppressed(state,defendingSide,defender,cardById)&&flip('Stun Shock')&&statusAllowed('paralysis')){
       attacker.conditions=attacker.conditions||{};
       delete attacker.conditions.sleep;delete attacker.conditions.confusion;
       attacker.conditions.paralysis={appliedTurn:state.turnNumber};
@@ -19424,7 +19430,7 @@
   }
   function thetaAbilityGuard(ctx){
     if(ctx?.state?.format!=='classic'||!ctx.isAbility||ctx.isAttack)return null;
-    const ss=other(ctx),slots=pokemonOn(ss).filter(p=>fusionEnergyGuard(ctx.state,p,ctx.cardById)||ctx.cardById(p.cardId)?.ancientTrait?.name==='θ Stop'||lustrousBody(ctx.state,ctx.foeSide,p,ctx.cardById)||activeToolsOf(ctx.state,p,ctx.cardById).some(r=>r.cardId==='sm10-186'));
+    const ss=other(ctx),slots=pokemonOn(ss).filter(p=>guardianOfLove(ctx.state,ctx.foeSide,p,ctx.cardById)||fusionEnergyGuard(ctx.state,p,ctx.cardById)||ctx.cardById(p.cardId)?.ancientTrait?.name==='θ Stop'||lustrousBody(ctx.state,ctx.foeSide,p,ctx.cardById)||activeToolsOf(ctx.state,p,ctx.cardById).some(r=>r.cardId==='sm10-186'));
     if(!slots.length)return null;
     return {ss,positions:{active:ss.active,bench:ss.bench.slice()},
       energyDiscard:{...(ss.energyDiscard||{})},
@@ -30902,7 +30908,7 @@ if(r==='lastResort')return ss.hand.length===0?[{}]:[];if(r==='surgeSwap')return 
       const card=cardById(source.cardId);if(!abilitiesSuppressed(state,side,source,cardById))for(const a of upgradeAbilities(source,cardById))if(a.type==='passive'&&(!a.activeOnly||state.sides[side].active===source)&&(!a.benchOnly||state.sides[side].active!==source))passiveModifiers(a.effect,source,side,state,slot,stat,values,cardById);
       for(const tool of activeToolsOf(state,source,cardById))passiveModifiers(cardById(tool.cardId)?.effect,source,side,state,slot,stat,values,cardById);for(const ref of temporaryTrainersOf(source))passiveModifiers(cardById(ref.cardId)?.effect,source,side,state,slot,stat,values,cardById);
     }
-    const foeSide=side==='player'?'opponent':'player';for(const source of pokemonOn(state.sides[foeSide])){if(abilitiesSuppressed(state,foeSide,source,cardById))continue;const card=cardById(source.cardId);for(const a of upgradeAbilities(source,cardById))if(a.type==='passive'&&['opponentActive','opponentTeam'].includes(a.effect?.scope)&&(!a.activeOnly||state.sides[foeSide].active===source)&&(!a.benchOnly||state.sides[foeSide].active!==source))passiveModifiers(a.effect,source,foeSide,state,slot,stat,values,cardById);}
+    const foeSide=side==='player'?'opponent':'player';for(const source of pokemonOn(state.sides[foeSide])){if(guardianOfLove(state,side,slot,cardById)||abilitiesSuppressed(state,foeSide,source,cardById))continue;const card=cardById(source.cardId);for(const a of upgradeAbilities(source,cardById))if(a.type==='passive'&&['opponentActive','opponentTeam'].includes(a.effect?.scope)&&(!a.activeOnly||state.sides[foeSide].active===source)&&(!a.benchOnly||state.sides[foeSide].active!==source))passiveModifiers(a.effect,source,foeSide,state,slot,stat,values,cardById);}
     if(state?.format==='classic'&&stat==='retreatCost'&&pokemonOn(state.sides[side]).some(p=>['sm8-86','sm8-201','sm8-221'].includes(p.cardId)&&!abilitiesSuppressed(state,side,p,cardById))&&
       (Number(slot.energy?.Lightning)>0||(slot.specialEnergy||[]).some(ref=>attachedSpecialProvidesType(ref,'Lightning',slot,cardById,state))))values.push(-999);
     // Steam Up stacks per activated Volcanion-EX, this turn only, on Basic Fire attacks.
@@ -31305,7 +31311,7 @@ if(r==='lastResort')return ss.hand.length===0?[{}]:[];if(r==='surgeSwap')return 
   function applyContinuousRules(state,cardById){
     if(state?.format==='classic')for(const side of ['player','opponent'])for(const slot of pokemonOn(state.sides[side]))for(const status of ['poison','paralysis'])if(activeSpecialEnergy(state,slot,cardById).some(r=>status==='poison'&&r.cardId==='swsh6-157'&&cardById(slot.cardId)?.singleStrike||status==='paralysis'&&r.cardId==='swsh6-159'&&cardById(slot.cardId)?.rapidStrike))delete (slot.conditions||{})[status];
     if(state?.format==='classic')for(const side of ['player','opponent'])for(const slot of pokemonOn(state.sides[side])){
-      const hood=lustrousBody(state,side,slot,cardById)||activeToolsOf(state,slot,cardById).some(r=>r.cardId==='sm10-186');
+      const hood=guardianOfLove(state,side,slot,cardById)||lustrousBody(state,side,slot,cardById)||activeToolsOf(state,slot,cardById).some(r=>r.cardId==='sm10-186');
       for(const [k,value] of Object.entries(slot.sm10AbilityConditions||{})){
         if(JSON.stringify(slot.conditions?.[k])!==value||hood){if(hood&&JSON.stringify(slot.conditions?.[k])===value)delete slot.conditions[k];delete slot.sm10AbilityConditions[k];}
       }
@@ -31912,5 +31918,5 @@ if(r==='lastResort')return ss.hand.length===0?[{}]:[];if(r==='surgeSwap')return 
     return heads?0:amount;
   }
   function applyAttackEffect(effect,context){return applyEffect(effect,context);}
-  return {maxHp,zoneSampleSpec,zoneSampleBounds,outgoingAttackDamage,slimyRoomAllows,activeToolsOf,spectralBreachActive,specialEnergyTextActive,activeSpecialEnergy,attachedSpecialProvider,coin,spiritLinkSpecies,spiritLinkEvolution,usefulToolRecipient,sm11ReturnSnapshot,sm11ReturnDiscarded,ENERGY_CODE,det1EvasionDamage,scoopUpBlocked,metalGogglesActive,attachedSpecialProvidesType,effectTypes,supportsEffect,validateEffect,matchesFilter,totalEnergy,canPayCost,spendGenericEnergy,spendGenericEnergyWithValue,attackDamage,applyAttackEffect,applyEffect,resolveAttack,choicesForEffect,neoDiscoveryReduction,modifierAmount,clearConditions,clearTemporaryEffects,revertShapeshift,switchPokemon,spikemuthSwitch,attackIsPrevented,attackEffectsPrevented,statusIsPrevented,isLocked,isActionLocked,passiveAttackAllowed,applyPersistentEvent,findPassiveRule,healingIsBlocked,canUsePreviousEvolutionAttacks,attackSpecificBonus,consumeDamageGuard,topDeckCountAmount,coinBonusAmount,abilitiesSuppressed,evolutionRule,attackCostOverride,effectiveTypes,applyContinuousRules,swsh3ActiveDamageBonus,attackDamageWithState,wideLensBenchMatchup,toolEffectsSuppressed,resolveDelayedEffects,toolCapacity,coinRerollSource,lentalDefenseReduction,florioReactToAttackDamage,florio114RescueKO,florio114PrismCleanup};
+  return {maxHp,guardianOfLove,zoneSampleSpec,zoneSampleBounds,outgoingAttackDamage,slimyRoomAllows,activeToolsOf,spectralBreachActive,specialEnergyTextActive,activeSpecialEnergy,attachedSpecialProvider,coin,spiritLinkSpecies,spiritLinkEvolution,usefulToolRecipient,sm11ReturnSnapshot,sm11ReturnDiscarded,ENERGY_CODE,det1EvasionDamage,scoopUpBlocked,metalGogglesActive,attachedSpecialProvidesType,effectTypes,supportsEffect,validateEffect,matchesFilter,totalEnergy,canPayCost,spendGenericEnergy,spendGenericEnergyWithValue,attackDamage,applyAttackEffect,applyEffect,resolveAttack,choicesForEffect,neoDiscoveryReduction,modifierAmount,clearConditions,clearTemporaryEffects,revertShapeshift,switchPokemon,spikemuthSwitch,attackIsPrevented,attackEffectsPrevented,statusIsPrevented,isLocked,isActionLocked,passiveAttackAllowed,applyPersistentEvent,findPassiveRule,healingIsBlocked,canUsePreviousEvolutionAttacks,attackSpecificBonus,consumeDamageGuard,topDeckCountAmount,coinBonusAmount,abilitiesSuppressed,evolutionRule,attackCostOverride,effectiveTypes,applyContinuousRules,swsh3ActiveDamageBonus,attackDamageWithState,wideLensBenchMatchup,toolEffectsSuppressed,resolveDelayedEffects,toolCapacity,coinRerollSource,lentalDefenseReduction,florioReactToAttackDamage,florio114RescueKO,florio114PrismCleanup};
 });

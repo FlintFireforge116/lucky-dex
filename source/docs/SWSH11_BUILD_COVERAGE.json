@@ -2,17 +2,8 @@
   "printed": 217,
   "canonicalTotal": 217,
   "notImported": [],
-  "battleReady": 215,
-  "gated": {
-    "swsh11-82": [
-      "Unimplemented attack: Blossom Tail",
-      "Unimplemented Ability: Guardian of Love"
-    ],
-    "swsh11-178": [
-      "Unimplemented attack: Blossom Tail",
-      "Unimplemented Ability: Guardian of Love"
-    ]
-  },
+  "battleReady": 217,
+  "gated": {},
   "attacks": 278,
   "abilities": 42,
   "sourceGitBlob": "157da08c0435be1c0692faac35e3a7580e638afb"

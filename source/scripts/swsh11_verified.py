@@ -296,3 +296,13 @@ def ability(row,a):
 def trainer(row):
  if row[1]=='Thorton':return 'Supporter',E('sm7Rule',rule='swsh11Thorton')
  return _stage13_trainer(row)
+
+# Stage 15: Enamorus V, shared opposing Ability protection and real discard recovery.
+_stage14_attack=attack
+_stage14_ability=ability
+def attack(row,a):
+ if row[0] in ['82','178'] and a[0]=='Blossom Tail':return E('sm7Rule',rule='sm12DiscardAttach',left=2,benchOnly=True,optional=True)
+ return _stage14_attack(row,a)
+def ability(row,a):
+ if row[0] in ['82','178'] and a[0]=='Guardian of Love':return passive(E('noop')) # shared Ability protection hook
+ return _stage14_ability(row,a)
