@@ -1,0 +1,62 @@
+{
+  "set": "sv3",
+  "sourceGitBlob": "a53eff1ec698a53053c0364fdfde8f6fae52e4a6",
+  "upstreamCommit": "90f27d0e14cefe48ccb2b8922a7a356b2fcf0072",
+  "printedTotal": 230,
+  "importedTotal": 42,
+  "compactSha256": "216b6c611f383173bd62e2b4701b6ca3799655d17c4177b3833f04e75533567d",
+  "basePacketSignatures": [
+    "92886a5a",
+    "7e0eb0c9",
+    "e16f0c3c",
+    "c445edfe",
+    "055f7164",
+    "d6b509b0",
+    "55288fd9",
+    "c9e22e1a",
+    "3b4ced40",
+    "6d6653ef",
+    "d1eab604",
+    "0a437904",
+    "e3983546",
+    "0106e6f6",
+    "25bf9495",
+    "b497ff8c",
+    "92b65c25",
+    "2ab6868f",
+    "4cef82c7",
+    "ee9684e9",
+    "e4ede424",
+    "5321f652",
+    "559d3e59",
+    "dc53b0b4",
+    "a14c46d5",
+    "0de2de75",
+    "61d9961b",
+    "a881dbb7",
+    "f1c1eefa",
+    "3f1d45ca",
+    "2bdaaab6",
+    "bc9a8d8d",
+    "86bb7ddf",
+    "c597ffd4",
+    "6e692bdd",
+    "ed3ecd03",
+    "6b3a9ba4",
+    "ba7c04bd",
+    "af9215c8",
+    "0e460115"
+  ],
+  "variants": [
+    [
+      198,
+      2,
+      "Illustration Rare"
+    ],
+    [
+      199,
+      29,
+      "Illustration Rare"
+    ]
+  ]
+}
