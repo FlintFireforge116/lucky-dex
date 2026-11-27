@@ -1,36 +1,8 @@
 {
-  "printed": 188,
+  "printed": 215,
   "canonicalTotal": 215,
-  "notImported": [
-    "swsh12-170",
-    "swsh12-171",
-    "swsh12-172",
-    "swsh12-173",
-    "swsh12-174",
-    "swsh12-175",
-    "swsh12-176",
-    "swsh12-177",
-    "swsh12-178",
-    "swsh12-179",
-    "swsh12-180",
-    "swsh12-181",
-    "swsh12-182",
-    "swsh12-183",
-    "swsh12-184",
-    "swsh12-185",
-    "swsh12-186",
-    "swsh12-187",
-    "swsh12-196",
-    "swsh12-197",
-    "swsh12-198",
-    "swsh12-199",
-    "swsh12-200",
-    "swsh12-201",
-    "swsh12-202",
-    "swsh12-210",
-    "swsh12-211"
-  ],
-  "battleReady": 142,
+  "notImported": [],
+  "battleReady": 163,
   "gated": {
     "swsh12-12": [
       "Unimplemented Ability: Surprise Spores"
@@ -120,14 +92,6 @@
     "swsh12-127": [
       "Unimplemented attack: Toge Dash"
     ],
-    "swsh12-133": [
-      "Unimplemented attack: Radiant Hunt",
-      "Unimplemented attack: Seventh Echo"
-    ],
-    "swsh12-135": [
-      "Unimplemented attack: Celestial Roar",
-      "Unimplemented attack: Dragon Laser"
-    ],
     "swsh12-136": [
       "Unimplemented attack: Apex Dragon",
       "Unimplemented Ability: Legacy Star"
@@ -138,13 +102,6 @@
     "swsh12-140": [
       "Unimplemented attack: Rainbow Burn",
       "Unimplemented Ability: Reviving Flame"
-    ],
-    "swsh12-143": [
-      "Unimplemented attack: Magical Echo"
-    ],
-    "swsh12-149": [
-      "Unimplemented attack: Eerie Cry",
-      "Unimplemented attack: Mind Bend"
     ],
     "swsh12-154": [
       "Unimplemented attack: Star Gravity",
@@ -172,11 +129,48 @@
     "swsh12-168": [
       "Unimplemented Special Energy rules"
     ],
+    "swsh12-174": [
+      "Unimplemented attack: Primal Guidance"
+    ],
+    "swsh12-176": [
+      "Unimplemented attack: Victory Symbol"
+    ],
+    "swsh12-177": [
+      "Unimplemented attack: Victory Symbol"
+    ],
+    "swsh12-179": [
+      "Unimplemented attack: Rock Bullet",
+      "Unimplemented Ability: Irresistible Force"
+    ],
+    "swsh12-180": [
+      "Unimplemented attack: Pursuit Blast",
+      "Unimplemented attack: Shrieking Poison"
+    ],
+    "swsh12-181": [
+      "Unimplemented attack: Pursuit Blast",
+      "Unimplemented attack: Shrieking Poison"
+    ],
+    "swsh12-187": [
+      "Unimplemented attack: Rainbow Burn",
+      "Unimplemented Ability: Reviving Flame"
+    ],
     "swsh12-190": [
       "Unimplemented Trainer effect"
     ],
     "swsh12-194": [
       "Unimplemented Trainer effect"
+    ],
+    "swsh12-199": [
+      "Unimplemented attack: Tri Power",
+      "Unimplemented attack: Star Cipher"
+    ],
+    "swsh12-200": [
+      "Unimplemented attack: Sudden Eater",
+      "Unimplemented Ability: Star Rondo"
+    ],
+    "swsh12-201": [
+      "Unimplemented attack: Apex Dragon",
+      "Unimplemented Ability: Legacy Star"
     ],
     "swsh12-205": [
       "Unimplemented Trainer effect"
@@ -188,7 +182,7 @@
       "Unimplemented Trainer effect"
     ]
   },
-  "attacks": 234,
-  "abilities": 30,
+  "attacks": 280,
+  "abilities": 38,
   "sourceGitBlob": "a57779d463a4f8ddf2bc21ad4ae66e9f4c3eaac2"
 }

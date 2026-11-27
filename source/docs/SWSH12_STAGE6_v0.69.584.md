@@ -1,0 +1,3 @@
+# Silver Tempest stage 6 — complete main-set import
+
+All 215 pinned main-set print IDs imported; 163 playable, 52 gated. The 27 alternate Pokémon prints use exact-signature delegation, with independent upstream packet checksum 1339882063 and generated parity tests. No shared engine code changed in this stage. Newly enabled numbered cards: Noivern (Radiant Hunt and Seventh Echo), Regidrago V (Celestial Roar and Dragon Laser), Altaria (Magical Echo), Hisuian Braviary (Eerie Cry and Mind Bend), plus supported alternate prints. Dreaming Tone remains gated because the legacy energyAttachStatusTrap descriptor has no observed attachment consumer. Regidrago VSTAR, Ho-Oh V and Seal Stones remain gated. Trainer Gallery is a separate set, not included here.

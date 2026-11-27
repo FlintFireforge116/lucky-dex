@@ -173,3 +173,34 @@ def ability(row,a):
  if n==139 and title=='Summoning Star':return activated(E('sm7Rule',rule='swsh12SummoningStar'),vstarPower=True)
  if n==147 and title=='Primal Turbo':return activated(E('sm7Rule',rule='swsh12PrimalTurbo'))
  return _stage4_ability(row,a)
+
+
+# Stage 6: reuse verified effect handlers and exact alternate-print signatures.
+_stage5_attack,_stage5_ability=attack,ability
+
+def attack(row,a):
+ n=int(row[0]);title=a[0]
+ if n==133 and title=='Radiant Hunt':return E('chooseTarget',target='opponentPokemon',filter={'tag':'radiant'},effect=E('knockOut',target='opponentPokemon',filter={'tag':'radiant'}))
+ if n==133 and title=='Seventh Echo':return E('drawToHandSize',size=7)
+ if n==135 and title=='Celestial Roar':return E('neoRule',rule='bw6:celestialRoar')
+ if n==135 and title=='Dragon Laser':return E('benchDamage',side='opponent',target='opponentBench',amount=30)
+ if n==143 and title=='Magical Echo':return E('chooseTarget',target='selfBench',effect=E('moveDamage',target='selfBench',destination='opponentActive',amount='all'))
+ if n==149 and title=='Eerie Cry':return E('placeDamageCounters',target='opponentAll',filter={'damaged':True},amount=30)
+ if n==149 and title=='Mind Bend':return status('confusion')
+ return _stage5_attack(row,a)
+
+_stage6_attack=attack
+ALT_BASE={170: 7, 171: 15, 172: 24, 173: 33, 174: 35, 175: 57, 176: 65, 177: 65, 178: 70, 179: 90, 180: 108, 181: 108, 182: 128, 183: 135, 184: 135, 185: 138, 186: 138, 187: 140, 196: 8, 197: 34, 198: 58, 199: 66, 200: 71, 201: 136, 202: 139, 210: 8, 211: 139}
+def _base_row(row):
+ # Source packet is byte-verified against the upstream catalogue. Require full
+ # gameplay signature equivalence, not just matching names, before delegation.
+ n=int(row[0]);base=ALT_BASE.get(n)
+ if base is None:return row
+ from swsh12_source import rows
+ if not hasattr(_base_row,'index'):_base_row.index={int(r[0]):r for r in rows()}
+ original=_base_row.index[base]
+ assert all(row[i]==original[i] for i in range(1,16) if i!=12), (n,base)
+ return original
+
+def attack(row,a):return _stage6_attack(_base_row(row),a)
+def ability(row,a):return _stage5_ability(_base_row(row),a)
