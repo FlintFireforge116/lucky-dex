@@ -179,3 +179,78 @@ def attack(row,a):
  if n==79:return E('discardTop',side='opponent',amount=3)
  if n==80:return E('selfDamage',amount=30)
  return None
+
+# Stage 4: dynamic Prize reduction, named discard attachment and the Metal/Dragon batch.
+_stage3_attack=attack
+_stage3_ability=ability
+
+def ability(row,a):
+ n=int(row[0])
+ if n==20:return passive(E('modifier',stat='attackCost',amount=-1,scope='self',duration='whileInPlay',perOpponentPrizeTaken=True))
+ if n==69:return activated(E('attachEnergyFromDiscard',target='selfPokemon',energyType='Psychic',amount=1,filter={'name':'Lunatone'}))
+ if n==97:return passive(E('modifier',stat='damageReduction',amount=30,scope='self',duration='whileInPlay',condition=cond('selfEnergyAtLeast',amount=1,countSpecial=True)))
+ if n==98:return activated(seq(E('discardHand',side='self',amount=999),E('draw',amount=5),E('endTurn')))
+ if n==99:return activated(E('modifier',stat='damageReduction',amount=100,scope='team',duration='opponentTurn'),vstarPower=True)
+ if n in (101,102):return activated(seq(E('discardHand',side='self',amount=999),E('draw',amount=3)))
+ if n==104:return passive(E('preventDamage',target='self',duration='whileInPlay',attackerFilter={'hasSpecialEnergy':True}))
+ return _stage3_ability(row,a)
+
+def attack(row,a):
+ n=int(row[0]);title,cost,damage,t=a
+ if n==54 and title=='Reactive Pulse':return E('fieldCountDamage',side='opponent',filter={'hasAbility':True},amount=60,mode='replace')
+ if n<81:return _stage3_attack(row,a)
+ if not t and damage.isdigit():return E('noop')
+ if n==83:return seq(E('attackRequirement',allowWhenFailed=True,condition=cond('movedFromBenchThisTurn')),E('damageRule',ignoreWeakness=True))
+ if n in (84,85,90):return E('coinDamage',coins=2 if n==90 else 1,amount={84:20,85:60,90:30}[n],mode='add')
+ if n==86 and title=='X-Scissor':return E('coinDamage',coins=1,amount=30,mode='add')
+ if n==86:return bonus(80,cond('opponentMatches',filter={'stage':'Basic'}))
+ if n in (87,91):return E('selfDamage',amount=10)
+ if n==88:return E('coinUntilTails',effect=E('discardTop',side='opponent',amount=1))
+ if n==93:return E('draw',amount=2)
+ if n==94:return seq(E('benchCountDamage',side='self',amount=10,mode='add'),E('damageRule',ignoreWeakness=True,ignoreEffects=True))
+ if n in (95,96) and title in ('Piercing Strike','Break Edge'):return E('damageRule',ignoreWeakness=True,ignoreResistance=True,ignoreEffects=True)
+ if n==95:return bonus(160,cond('opponentMatches',filter={'tag':'pokemon-vmax'}))
+ if n==96:return E('selfDamage',amount=30)
+ if n==97:return bonus(120,cond('koLastOpponentTurn'))
+ if n==98:return E('pointDamage',side='opponent',prizesTaken=True,amount=30,mode='add')
+ if n==99:return E('lock',target='self',action='attack',duration='nextOwnTurn')
+ if n==100 and title=='Dragon Pulse':return E('discardTop',side='self',amount=2)
+ if n==100:return E('sm7Rule',rule='swsh7SpiralBurst')
+ if n in (101,102):return E('sm7Rule',rule='swsh7MaxBurst')
+ if n==103:return E('modifier',stat='attackDamage',scope='opponentActive',amount=-30,duration='opponentTurn')
+ if n==104:return E('damageRule',ignoreEffects=True)
+ if n==108:return bonus(80,cond('opponentMatches',filter={'tag':'pokemon-v'}))
+ if n==110:return E('coinDamage',coins=1,amount=30,mode='replace')
+ return None
+
+# Stage 5: complete main-set inventory; reuse validated battle handlers.
+_stage4_attack=attack
+_stage4_ability=ability
+
+def ability(row,a):
+ n=int(row[0])
+ if n==46:return activated(E('xy10VeilOfDarkness'),vstarPower=True)
+ if n==111:return passive(E('preventDamage',target='self',duration='whileInPlay'),benchOnly=True)
+ return _stage4_ability(row,a)
+
+def attack(row,a):
+ n=int(row[0]);title,cost,damage,t=a
+ if n==59 and title=='Psypump':return E('sm7Rule',rule='sm12DiscardAttach',left=2,energyType='Psychic',sameTarget=True,optional=True)
+ if n==74:return seq(*(bonus(-80,cond('opponentEnergyAtLeast',amount=i,countSpecial=True)) for i in (1,2,3)))
+ if n==106 and title=='Adrena-Tackle':return E('attackRequirement',allowWhenFailed=True,condition=cond('selfDamaged'))
+ if n==76 and title=='Lost Claw':return E('neoRule',rule='col1:39:lostClaw')
+ if n<111:return _stage4_attack(row,a)
+ if not t and damage.isdigit():return E('noop')
+ if n==111:return E('coinDamage',coins=1,amount=30,mode='replace')
+ if n==112:return E('sm7Rule',rule='sm10Pay',amount=1,filter={},after=E('draw',amount=2))
+ if n==113:return seq(E('damageFromDamage',source='self',amount=1,mode='add'),E('status',target='self',status='confusion'))
+ if n==114:return E('lock',target='self',action='attack',duration='nextOwnTurn')
+ if n==116 and title=='Double Dip Fangs':return E('sm7Rule',rule='swsh5DoubleDip')
+ if n==116:return E('selfDamage',amount=30)
+ if n==120 and title=='Body Slam':return coin(status('paralysis'))
+ if n==120:return E('draw',amount=3)
+ if n==121:return E('coinDamage',coins='untilTails',amount=30,mode='replace')
+ if n==122 and title=='Overhead Throw':return E('selectedSelfBenchDamage',amount=10)
+ if n==122:return E('coinDamage',coins='untilTails',amount=30,mode='add')
+ if n==160:return E('selfDamage',amount=30)
+ return None

@@ -1,56 +1,9 @@
 {
-  "printed": 117,
+  "printed": 160,
   "canonicalTotal": 160,
-  "notImported": [
-    "swsh12pt5-81",
-    "swsh12pt5-82",
-    "swsh12pt5-83",
-    "swsh12pt5-84",
-    "swsh12pt5-85",
-    "swsh12pt5-86",
-    "swsh12pt5-87",
-    "swsh12pt5-88",
-    "swsh12pt5-89",
-    "swsh12pt5-90",
-    "swsh12pt5-91",
-    "swsh12pt5-92",
-    "swsh12pt5-93",
-    "swsh12pt5-94",
-    "swsh12pt5-95",
-    "swsh12pt5-96",
-    "swsh12pt5-97",
-    "swsh12pt5-98",
-    "swsh12pt5-99",
-    "swsh12pt5-100",
-    "swsh12pt5-101",
-    "swsh12pt5-102",
-    "swsh12pt5-103",
-    "swsh12pt5-104",
-    "swsh12pt5-105",
-    "swsh12pt5-106",
-    "swsh12pt5-107",
-    "swsh12pt5-108",
-    "swsh12pt5-109",
-    "swsh12pt5-110",
-    "swsh12pt5-111",
-    "swsh12pt5-112",
-    "swsh12pt5-113",
-    "swsh12pt5-114",
-    "swsh12pt5-115",
-    "swsh12pt5-116",
-    "swsh12pt5-117",
-    "swsh12pt5-118",
-    "swsh12pt5-119",
-    "swsh12pt5-120",
-    "swsh12pt5-121",
-    "swsh12pt5-122",
-    "swsh12pt5-160"
-  ],
-  "battleReady": 100,
+  "notImported": [],
+  "battleReady": 142,
   "gated": {
-    "swsh12pt5-20": [
-      "Unimplemented Ability: Excited Heart"
-    ],
     "swsh12pt5-23": [
       "Unimplemented attack: Fireball Fever",
       "Unimplemented attack: Ember Star"
@@ -64,20 +17,11 @@
     "swsh12pt5-44": [
       "Unimplemented Ability: Explosiveness"
     ],
-    "swsh12pt5-46": [
-      "Unimplemented Ability: Conversion Star"
-    ],
     "swsh12pt5-51": [
       "Unimplemented Ability: Shocking Block"
     ],
-    "swsh12pt5-54": [
-      "Unimplemented attack: Reactive Pulse"
-    ],
     "swsh12pt5-55": [
       "Unimplemented attack: Lightning Storm Star"
-    ],
-    "swsh12pt5-59": [
-      "Unimplemented attack: Psypump"
     ],
     "swsh12pt5-65": [
       "Unimplemented attack: Horoscope"
@@ -85,14 +29,29 @@
     "swsh12pt5-66": [
       "Unimplemented Ability: Witch's Domain"
     ],
-    "swsh12pt5-69": [
-      "Unimplemented Ability: Sun Energy"
+    "swsh12pt5-82": [
+      "Unimplemented attack: Rocket Poison"
     ],
-    "swsh12pt5-74": [
-      "Unimplemented attack: Midnight Fang"
+    "swsh12pt5-89": [
+      "Unimplemented attack: Counter Press"
     ],
-    "swsh12pt5-76": [
-      "Unimplemented attack: Lost Claw"
+    "swsh12pt5-105": [
+      "Unimplemented Ability: Climactic Gate"
+    ],
+    "swsh12pt5-107": [
+      "Unimplemented Ability: Sudden Transformation"
+    ],
+    "swsh12pt5-114": [
+      "Unimplemented Ability: Star Guardian"
+    ],
+    "swsh12pt5-115": [
+      "Unimplemented attack: Gather Flowers"
+    ],
+    "swsh12pt5-118": [
+      "Unimplemented attack: Stakeout Headbutt"
+    ],
+    "swsh12pt5-119": [
+      "Unimplemented attack: Primate Acting"
     ],
     "swsh12pt5-126": [
       "Unimplemented Trainer effect"
@@ -102,7 +61,7 @@
       "Unimplemented Trainer effect"
     ]
   },
-  "attacks": 129,
-  "abilities": 11,
+  "attacks": 194,
+  "abilities": 21,
   "sourceGitBlob": "6d0748e2be253b335093187554e6a947a66c3089"
 }

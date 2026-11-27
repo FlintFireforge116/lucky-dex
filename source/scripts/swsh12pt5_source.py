@@ -10,8 +10,8 @@ ATTACK_PRINTS = 194
 ABILITY_PRINTS = 21
 TRAINER_PRINTS = 29
 ENERGY_PRINTS = 8
-PACKETS = (('swsh12pt5-stage0-pokemon-a.jsonl', 2105825884), ('swsh12pt5-stage0-support.jsonl', 253090390), ('swsh12pt5-stage2-pokemon-b.jsonl', 655009990), ('swsh12pt5-stage3-pokemon-c.jsonl', 3053875564))
-STAGED_IDS = set(range(1,81)) | set(range(123,160))
+PACKETS = (('swsh12pt5-stage0-pokemon-a.jsonl', 2105825884), ('swsh12pt5-stage0-support.jsonl', 253090390), ('swsh12pt5-stage2-pokemon-b.jsonl', 655009990), ('swsh12pt5-stage3-pokemon-c.jsonl', 3053875564), ('swsh12pt5-stage4-pokemon-d.jsonl', 1816721707), ('swsh12pt5-stage5-pokemon-e.jsonl', 200459038))
+STAGED_IDS = set(range(1,161))
 def rows():
     result=[]
     root=Path(__file__).resolve().parents[1]/'data/classic'

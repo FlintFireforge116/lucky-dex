@@ -20,7 +20,7 @@ def prepare():
  from swsh12pt5_source import rows as verified_rows
  rows=validate(verified_rows())
  SRC.write_text(json.dumps(rows,ensure_ascii=False,separators=(',',':'))+'\n',encoding='utf-8')
- ATTEST.write_text(json.dumps({'set':'swsh12pt5','sourceGitBlob':PIN,'compactSha256':hashlib.sha256(SRC.read_bytes()).hexdigest(),'printedTotal':160,'importedTotal':len(rows),'sourceScope':'verified pinned source packets, stage three'},indent=2)+'\n')
+ ATTEST.write_text(json.dumps({'set':'swsh12pt5','sourceGitBlob':PIN,'compactSha256':hashlib.sha256(SRC.read_bytes()).hexdigest(),'printedTotal':160,'importedTotal':len(rows),'sourceScope':'verified pinned source packets, stage five'},indent=2)+'\n')
  return rows
 
 def get_source():
@@ -40,6 +40,8 @@ def generate(rows):
   attack_objs=[];powers=[]
   for a in attacks:
    title,cost,damage,printed=a;eff=V.attack(row,a)
+   # Pinned upstream omits Tauros damage; retain raw packet and correct the generated print.
+   if n=='106' and title=='Adrena-Tackle' and damage=='':damage='180'
    if eff is None:problems.append('Unimplemented attack: '+title)
    m=re.search(r'\d+',damage or '');base=int(m.group()) if m and not re.search(r'[×xX]',damage) else 0
    attack_objs.append({'name':title,'cost':cost,'damage':base,'damageText':damage or None,'text':printed,'gxAttack':title.endswith('-GX'),'vstarPower':"You can't use more than 1 VSTAR Power in a game" in printed,
