@@ -2,7 +2,7 @@
   "printed": 215,
   "canonicalTotal": 215,
   "notImported": [],
-  "battleReady": 194,
+  "battleReady": 199,
   "gated": {
     "swsh12-12": [
       "Unimplemented Ability: Surprise Spores"
@@ -11,23 +11,12 @@
       "Unimplemented attack: Tri Power",
       "Unimplemented attack: Star Cipher"
     ],
-    "swsh12-74": [
-      "Unimplemented attack: Dreaming Tone"
-    ],
     "swsh12-78": [
       "Unimplemented attack: Cell Fork",
       "Unimplemented Ability: Persistent Cells"
     ],
     "swsh12-89": [
       "Unimplemented attack: Dragon Launcher"
-    ],
-    "swsh12-105": [
-      "Unimplemented attack: Venomous Fang",
-      "Unimplemented attack: Critical Bite"
-    ],
-    "swsh12-108": [
-      "Unimplemented attack: Pursuit Blast",
-      "Unimplemented attack: Shrieking Poison"
     ],
     "swsh12-113": [
       "Unimplemented attack: Double-Edge",
@@ -58,14 +47,6 @@
     ],
     "swsh12-163": [
       "Unimplemented Trainer effect"
-    ],
-    "swsh12-180": [
-      "Unimplemented attack: Pursuit Blast",
-      "Unimplemented attack: Shrieking Poison"
-    ],
-    "swsh12-181": [
-      "Unimplemented attack: Pursuit Blast",
-      "Unimplemented attack: Shrieking Poison"
     ],
     "swsh12-187": [
       "Unimplemented attack: Rainbow Burn",

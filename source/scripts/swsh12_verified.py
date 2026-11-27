@@ -272,3 +272,15 @@ def trainer(row):
  if row[1]=='Wallace':return 'Supporter',E('sm7Rule',rule='swsh12Wallace')
  if row[1]=='Emergency Jelly':return 'Tool',E('noop') # exact end-turn hook in core
  return _stage8_trainer(row)
+
+# Stage 10: real retreat history, delayed hand-attachment trap, and damage-only Prize bonus.
+_stage9_attack=attack
+
+def attack(row,a):
+ n=int(_base_row(row)[0]);title=a[0]
+ if n==74 and title=='Dreaming Tone':return E('energyAttachStatusTrap',target='opponentActive',status='sleep')
+ if n==108 and title=='Pursuit Blast':return E('selectedDamage',target='opponentBench',amount=30,retreatedLastTurnAmount=120)
+ if n==108 and title=='Shrieking Poison':return seq(status('confusion'),status('poison'))
+ if n==105 and title=='Venomous Fang':return status('poison')
+ if n==105 and title=='Critical Bite':return E('selectedDamage',target='opponentPokemon',amount=30)
+ return _stage9_attack(row,a)

@@ -1,6 +1,6 @@
 # SWSH12 — whole-set gap ledger
 
-Canonical prints: **215** | Imported: **215** | Playable: **194** | Gated: **21** | Not imported: **0**
+Canonical prints: **215** | Imported: **215** | Playable: **199** | Gated: **16** | Not imported: **0**
 Printed attacks: **280** (231 distinct full signatures) | Abilities: **38** (29 distinct signatures)
 Trainer rule signatures: **19** | Special Energy rule signatures: **2**
 Canonical Git blob: `a57779d463a4f8ddf2bc21ad4ae66e9f4c3eaac2`
@@ -10,8 +10,6 @@ Gated is determined by the validated generator output; do not infer it from test
 
 ## Blocker groups (implement shared handlers first)
 - **5 prints** — Unimplemented Trainer effect — swsh12-154, swsh12-156, swsh12-160, swsh12-163, swsh12-214
-- **3 prints** — Unimplemented attack: Pursuit Blast — swsh12-108, swsh12-180, swsh12-181
-- **3 prints** — Unimplemented attack: Shrieking Poison — swsh12-108, swsh12-180, swsh12-181
 - **2 prints** — Unimplemented Ability: Legacy Star — swsh12-136, swsh12-201
 - **2 prints** — Unimplemented Ability: Reviving Flame — swsh12-140, swsh12-187
 - **2 prints** — Unimplemented attack: Apex Dragon — swsh12-136, swsh12-201
@@ -24,13 +22,10 @@ Gated is determined by the validated generator output; do not infer it from test
 - **1 prints** — Unimplemented Ability: Star Alchemy — swsh12-156
 - **1 prints** — Unimplemented Ability: Surprise Spores — swsh12-12
 - **1 prints** — Unimplemented attack: Cell Fork — swsh12-78
-- **1 prints** — Unimplemented attack: Critical Bite — swsh12-105
 - **1 prints** — Unimplemented attack: Double-Edge — swsh12-113
 - **1 prints** — Unimplemented attack: Dragon Launcher — swsh12-89
-- **1 prints** — Unimplemented attack: Dreaming Tone — swsh12-74
 - **1 prints** — Unimplemented attack: Meteor Mash — swsh12-119
 - **1 prints** — Unimplemented attack: Star Gravity — swsh12-154
-- **1 prints** — Unimplemented attack: Venomous Fang — swsh12-105
 
 ## Every remaining gated print
 
@@ -38,11 +33,8 @@ Gated is determined by the validated generator output; do not infer it from test
 |---|---|---|
 | `swsh12-12` | Amoonguss | Unimplemented Ability: Surprise Spores |
 | `swsh12-66` | Unown VSTAR | Unimplemented attack: Tri Power; Unimplemented attack: Star Cipher |
-| `swsh12-74` | Chimecho | Unimplemented attack: Dreaming Tone |
 | `swsh12-78` | Reuniclus | Unimplemented attack: Cell Fork; Unimplemented Ability: Persistent Cells |
 | `swsh12-89` | Dragapult | Unimplemented attack: Dragon Launcher |
-| `swsh12-105` | Crobat | Unimplemented attack: Venomous Fang; Unimplemented attack: Critical Bite |
-| `swsh12-108` | Skuntank V | Unimplemented attack: Pursuit Blast; Unimplemented attack: Shrieking Poison |
 | `swsh12-113` | Krookodile | Unimplemented attack: Double-Edge; Unimplemented Ability: Bully of the Sands |
 | `swsh12-119` | Metagross | Unimplemented attack: Meteor Mash; Unimplemented Ability: Emergency Entry |
 | `swsh12-136` | Regidrago VSTAR | Unimplemented attack: Apex Dragon; Unimplemented Ability: Legacy Star |
@@ -51,8 +43,6 @@ Gated is determined by the validated generator output; do not infer it from test
 | `swsh12-156` | Forest Seal Stone | Unimplemented Ability: Star Alchemy; Unimplemented Trainer effect |
 | `swsh12-160` | Leafy Camo Poncho | Unimplemented Trainer effect |
 | `swsh12-163` | Quad Stone | Unimplemented Trainer effect |
-| `swsh12-180` | Skuntank V | Unimplemented attack: Pursuit Blast; Unimplemented attack: Shrieking Poison |
-| `swsh12-181` | Skuntank V | Unimplemented attack: Pursuit Blast; Unimplemented attack: Shrieking Poison |
 | `swsh12-187` | Ho-Oh V | Unimplemented attack: Rainbow Burn; Unimplemented Ability: Reviving Flame |
 | `swsh12-199` | Unown VSTAR | Unimplemented attack: Tri Power; Unimplemented attack: Star Cipher |
 | `swsh12-201` | Regidrago VSTAR | Unimplemented attack: Apex Dragon; Unimplemented Ability: Legacy Star |

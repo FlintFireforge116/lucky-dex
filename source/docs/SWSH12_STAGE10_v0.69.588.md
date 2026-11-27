@@ -1,0 +1,3 @@
+# Silver Tempest stage 10
+
+199/215 playable; 16 gated. Chimecho, Crobat, and Skuntank V (all three prints). Dreaming Tone and the historical XY9 Boo-Hoo descriptor now resolve from the shared physical hand-Energy attachment event on the exact affected Active Pokémon in the next turn; switching/evolution clears the trap. Pursuit Blast checks the selected Pokémon's actual previous-turn retreat, not ordinary switches. Critical Bite awards two extra Prizes only for damage-based opposing KOs. Tested on both sides, including Basic/Special/Zone Energy and ordinary switches, expired effects, and Active/Bench KO versus poison. No partial card enabled; remaining mechanics are in the generated gap ledger.

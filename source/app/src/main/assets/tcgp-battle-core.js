@@ -717,6 +717,10 @@
       const copies=activeToolsOf(state,onlySource).filter(r=>['sm11-196','sm11-251'].includes(r.cardId)).length;
       if(copies&&!effects.metalGogglesActive(state,meta.source.side,meta.attacker,data.cardById))meta.attacker.damage=Number(meta.attacker.damage||0)+100*copies;
     }
+    // Delayed attack effect: only a physical hand attachment to the same Active Pokémon on the next turn.
+    if(state.format==='classic'&&event==='energyAttached'&&meta.fromHand&&onlySource===ss.active&&onlySource?.energyAttachStatusTrap?.expiresTurn===state.turnNumber){
+      effects.applyEffect({type:'status',target:'self',status:onlySource.energyAttachStatusTrap.status},effectContext(state,side,{},onlySource));
+    }
     if(state.format==='classic'&&event==='energyAttached'&&meta.fromHand&&onlySource){
       const enemy=side==='player'?'opponent':'player',wall=state.sides[enemy].active;
       if(wall?.cardId==='sm115-23'&&!effects.abilitiesSuppressed(state,enemy,wall,data.cardById))
@@ -3130,7 +3134,8 @@
           const swsh5DoubleDip=awardsPrize&&state.format==='classic'&&cause==='attack'&&source?.attack&&source.side===foeSide&&source.turn===state.turnNumber&&source.damage>0&&source.uid===attacker?.uid&&(attacker?.swsh5DoubleDipTurn===state.turnNumber||attacker?.swsh8ProfitTurn===state.turnNumber)&&card?.stage==='Basic'?(attacker?.swsh8ProfitTurn===state.turnNumber?2:1):0;
           const swsh7Ribbon=awardsPrize&&cause==='attack'&&source?.attack&&source.side===foeSide&&source.turn===state.turnNumber&&source.damage>0&&card?.pokemonV&&/Sylveon/.test(card.name)?activeToolsOf(state,slot).filter(r=>r.cardId==='swsh7-155').length:0;
           const swsh7Flicker=awardsPrize&&slot.swsh7ShadowFlicker?.side===foeSide&&slot.swsh7ShadowFlicker.turn===state.turnNumber&&state.activeSide===foeSide&&resume!=='advanceTurn'?1:0;
-          const prizeCount=awardsPrize?Math.max(0,prizeValue(card)-medal-island-swsh7Ribbon+swsh7Flicker+sm12Bonus+greedy+beast+beastBringer-blackMarket+sm4Glutton+extraMoonSkip+arceusBeltBonus+arceusExtra+hgss3SpaceVirus+bw8Overflow+deltaPlus+xy10Endgame+sm2Extra-bw9LifeDew+swsh5DoubleDip):0;
+          const criticalBite=awardsPrize&&swsh11AttackDamageKO&&eventSource.cardId==='swsh12-105'&&foe.lastAttackName==='Critical Bite'?2:0;
+          const prizeCount=awardsPrize?Math.max(0,prizeValue(card)-medal-island-swsh7Ribbon+swsh7Flicker+sm12Bonus+greedy+beast+beastBringer-blackMarket+sm4Glutton+extraMoonSkip+arceusBeltBonus+arceusExtra+hgss3SpaceVirus+bw8Overflow+deltaPlus+criticalBite+xy10Endgame+sm2Extra-bw9LifeDew+swsh5DoubleDip):0;
           awarded=Math.min(prizeCount,Math.max(0,foe.prizes.length-(state.pendingPrizeClaims||[]).filter(q=>q.side===foeSide).reduce((n,q)=>n+q.remaining,0)));
           if(awarded){state.pendingPrizeClaims=state.pendingPrizeClaims||[];state.pendingPrizeClaims.push({side:foeSide,remaining:awarded,...(swsh3Smoke?{discardInstead:true}:{})});}
           state.log.push({type:'ko',side,cardId:card.id,turnNumber:state.turnNumber,prizesTaken:foe.prizesTaken,awarded});
@@ -4209,6 +4214,7 @@ const target=slotForTarget(s,action.target,action.benchIndex);if(card.id==='pl2-
         state.log.push({type:'platinumSinkhole',side:side==='player'?'opponent':'player',targetUid:outgoing.uid,amount:20});
       }
       s.retreated = true;
+      if(state.format==='classic')outgoing.lastRetreatedTurn=state.turnNumber;
       state.log.push({type:'retreat',side,cardId:outgoing.cardId,toCardId:incoming.cardId,benchIndex:physical,spentEnergy,spentSpecialEnergy:paid.discardSpecial.length});const retaliator=state.sides[foeSide].active;if(retaliator?.retreatRetaliation&&(retaliator.retreatRetaliation.expiresTurn==null||state.turnNumber<=retaliator.retreatRetaliation.expiresTurn)){s.active.damage=Number(s.active.damage||0)+Number(retaliator.retreatRetaliation.amount||0);state.log.push({type:'retreatRetaliation',side:foeSide,amount:Number(retaliator.retreatRetaliation.amount||0)});resolveKnockOut(state,null);}
       if(state.format==='classic'&&outgoing.cardId==='pl2-21'&&!effects.abilitiesSuppressed(state,side,outgoing,data.cardById)&&
          (Object.values(outgoing.energy||{}).some(n=>Number(n)>0)||(outgoing.specialEnergy||[]).length)){
