@@ -13,7 +13,7 @@
  if(!classic||!decks||!builder)throw new Error('Classic opponent generation dependencies are missing.');
  const ALL_PLAYABLE=Object.freeze(classic.CARDS.filter(card=>card.battleEnabled&&card.deckEligible!==false).map(card=>Object.freeze({gameplayId:card.id,quantity:card.setId==='pl4'&&(/^AR[1-9]$/.test(String(card.number))||['94','95','96'].includes(String(card.number)))?30:4})));
  const TYPES=builder.ARCHETYPE_TYPES.slice();
- const SETS=['base1','base2','base3','base5','gym1','gym2','neo1','neo2','neo3','neo4','base6','ecard1','ecard2','ecard3','ex1','ex2','ex3','ex4','ex5','ex6','ex7','ex8','ex9','ex10','ex11','ex12','ex13','ex14','ex15','ex16','dp1','dp2','dp3','dp4','dp5','dp6','dp7','pl1','pl2','pl3','pl4','hgss1','hgss2','hgss3','hgss4','col1','bw1','bw2','bw3','bw4','bw5','bw6','bw7','bw8','bw9','bw10','bw11','xy1','xy2','xy3','xy4','xy5','xy6','xy7','xy8','xy9','xy10','xy11','xy12','sm1','sm2','sm3','sm4','sm5','sm6','sm7','sm75','sm8','sm9','det1','sm10','sm11','sm115','sma','sm12','swsh1','swsh2','swsh3','swsh35','swsh4','swsh45','swsh45sv','swsh5','swsh6','swsh7','cel25','cel25c','swsh8','swsh9','swsh9tg','swsh10','swsh11','swsh12','swsh12pt5','SNAPFLORIO','SNAPFOUNJA','sv1'];
+ const SETS=['base1','base2','base3','base5','gym1','gym2','neo1','neo2','neo3','neo4','base6','ecard1','ecard2','ecard3','ex1','ex2','ex3','ex4','ex5','ex6','ex7','ex8','ex9','ex10','ex11','ex12','ex13','ex14','ex15','ex16','dp1','dp2','dp3','dp4','dp5','dp6','dp7','pl1','pl2','pl3','pl4','hgss1','hgss2','hgss3','hgss4','col1','bw1','bw2','bw3','bw4','bw5','bw6','bw7','bw8','bw9','bw10','bw11','xy1','xy2','xy3','xy4','xy5','xy6','xy7','xy8','xy9','xy10','xy11','xy12','sm1','sm2','sm3','sm4','sm5','sm6','sm7','sm75','sm8','sm9','det1','sm10','sm11','sm115','sma','sm12','swsh1','swsh2','swsh3','swsh35','swsh4','swsh45','swsh45sv','swsh5','swsh6','swsh7','cel25','cel25c','swsh8','swsh9','swsh9tg','swsh10','swsh11','swsh12','swsh12pt5','swsh12pt5gg','SNAPFLORIO','SNAPFOUNJA','sv1'];
  function pick(seed,size){let x=(Number(seed)||0x9e3779b9)>>>0;x^=x<<13;x^=x>>>17;x^=x<<5;return (x>>>0)%size;}
  function pickType({seed=Date.now(),excludeTypes=[],includeColorless=false}={}){
    const availableTypes=includeColorless?TYPES:decks.ENERGY_TYPES.slice();
@@ -35,7 +35,7 @@
    // One unlucky seed must not make an otherwise buildable selected-type
    // opponent unavailable. Retry with distinct seeded candidate mixes while
    // preserving the requested type, set filter and all legality checks.
-   const attempts=allowed.length===1&&['cel25','cel25c'].includes(allowed[0])?candidates.length:(candidates.length===1?22:candidates.length);
+   const attempts=allowed.length===1&&['cel25','cel25c','swsh12pt5gg'].includes(allowed[0])?candidates.length:(candidates.length===1?22:candidates.length);
    for(let step=0;step<attempts;step++){
      const type=candidates[(first+step)%candidates.length];
      const result=builder.buildDeck(ALL_PLAYABLE,{style:'random',types:[type],sets:allowed,rarityFocus,basicOnly,theme,randomSeed:(Number(seed)+step*2654435761)>>>0,excludeArchetypes});
@@ -73,16 +73,17 @@
    }
    // Celebrations has only 25 prints. Preserve the primary type and
    // use a second type in this exact set-local pool when necessary.
-   if(allowed.length===1&&['cel25','cel25c'].includes(allowed[0])){
+   if(allowed.length===1&&['cel25','cel25c','swsh12pt5gg'].includes(allowed[0])){
      for(let i=0;i<candidates.length;i++){
        const primary=candidates[(first+i)%candidates.length];
        const secondary=decks.ENERGY_TYPES.filter(t=>t!==primary);
        for(let j=0;j<secondary.length;j++){
          const other=secondary[(pick(Number(seed)+i,secondary.length)+j)%secondary.length];
-         const result=builder.buildDeck(ALL_PLAYABLE,{style:'random',types:[primary,other],sets:allowed,rarityFocus,basicOnly,theme,randomSeed:(Number(seed)+j*2654435761)>>>0,excludeArchetypes});
+         const focusCardId=allowed[0]==='swsh12pt5gg'?({'Grass':'swsh12pt5gg-GG01','Metal':'swsh12pt5gg-GG54'}[primary]):undefined;
+         const result=builder.buildDeck(ALL_PLAYABLE,{style:'random',types:[primary,other],sets:allowed,rarityFocus,basicOnly,theme,randomSeed:(Number(seed)+j*2654435761)>>>0,excludeArchetypes,...(focusCardId?{focusCardId,allowMixedEnergy:true}:{})});
          if(!result.ok||!classic.validateDeck(result.cards).ok||decks.analyzeDeck(result.cards,result.energyTypes).missingEnergyTypes.length)continue;
          if(!result.cards.some(id=>classic.cardById(id)?.types?.includes(primary))||result.cards.some(id=>!builder.allowedInSetPool(classic.cardById(id),allowed)))continue;
-         const archetype='Celebrations mixed core';
+         const archetype=allowed[0]==='swsh12pt5gg'?'Galarian Gallery mixed core':'Celebrations mixed core';
          return {ok:true,type:primary,rarityFocus,basicOnly,theme,cards:result.cards.slice(),energyTypes:result.energyTypes.slice(),sets:allowed.slice(),archetype,archetypeKey:result.archetypeKey,name:`${primary} · ${archetype}`};
        }
      }

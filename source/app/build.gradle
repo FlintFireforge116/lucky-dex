@@ -8,8 +8,8 @@ android {
         applicationId 'com.example.luckydex'
         minSdk 26
         targetSdk 35
-        versionCode 7601
-        versionName '0.69.601'
+        versionCode 7602
+        versionName '0.69.602'
     }
 
     signingConfigs {
@@ -1631,4 +1631,18 @@ tasks.register('auditSWSH12PT5ForApk', Exec) {
 }
 tasks.matching { it.name == 'preBuild' || (it.name.startsWith('merge') && it.name.endsWith('Assets')) }.configureEach {
     dependsOn tasks.named('auditSWSH12PT5ForApk')
+}
+
+tasks.register('auditGalarianGalleryForApk', Exec) {
+    dependsOn tasks.named('auditSWSH12PT5ForApk')
+    workingDir rootProject.projectDir
+    commandLine 'node', '--test', 'tests/v07602-galarian-gallery.test.cjs'
+}
+tasks.register('smokeGalarianGalleryForApk', Exec) {
+    dependsOn tasks.named('auditGalarianGalleryForApk')
+    workingDir rootProject.projectDir
+    commandLine 'node', 'scripts/audit-classic-set.cjs', '--set', 'swsh12pt5gg', '--strict-smoke', '--no-write'
+}
+tasks.matching { it.name == 'preBuild' || (it.name.startsWith('merge') && it.name.endsWith('Assets')) }.configureEach {
+    dependsOn tasks.named('smokeGalarianGalleryForApk')
 }

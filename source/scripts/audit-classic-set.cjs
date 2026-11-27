@@ -286,6 +286,17 @@ function runSmokes(cards,{data,core,opponents}){
       if(card.id==='swsh12pt5-147'){bench('swsh8-124');own.deck.unshift({cardId:'swsh8-244',uid:'cz-fusion'});}
       if(card.id==='swsh12pt5-151')bench('swsh12pt5-18');
     }
+    if(card.setId==='swsh12pt5gg'){
+      const own=s.sides[side],enemy=s.sides[side==='player'?'opponent':'player'];
+      const hand=id=>own.hand.push({cardId:id,uid:'gg-hand-'+own.hand.length});
+      if(card.number==='GG01'){s.firstSide=side==='player'?'opponent':'player';own.turnCount=1;}
+      if(card.number==='GG57'){hand('swsh12pt5-159');hand('swsh12pt5-159');}
+      if(card.number==='GG58'){own.active.cardId='swsh12pt5gg-GG23';own.active.stack=[own.active.cardId];own.active.damage=20;}
+      if(card.number==='GG64'){own.active.cardId='swsh12pt5gg-GG38';own.active.stack=[own.active.cardId];own.energyDiscard={Water:2};own.discard.push({cardId:'neo1-111',uid:'gg-water'});}
+      if(card.number==='GG65'){own.lastKnockoutTurn=s.turnNumber-1;own.energyDiscard={Water:1};}
+      if(card.number==='GG66')enemy.prizes=enemy.prizes.slice(0,3);
+      if(card.number==='GG69')own.lostZone=Array.from({length:10},(_,i)=>({cardId:'swsh11-1',uid:'gg-lost-'+i}));
+    }
     const actions=core.legalActions(s,side);
     const action=actions.find(a=>card.kind==='trainer'?a.type==='trainer'&&a.cardId===card.id:a.type==='attack'&&a.attackIndex===ix&&(!a.attackCardId||a.attackCardId===card.id));
     if(!action){result.skipped++;result.skippedDetails.push({cardId:card.id,side,action:actionName});continue;}

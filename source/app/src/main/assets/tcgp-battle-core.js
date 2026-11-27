@@ -1254,7 +1254,7 @@
       for(const p of pokemonOn(state.sides[side])){const c=data.cardById(p.cardId);if(p===slot||c?.name!=='Arceus'||!c.battleEnabled)continue;
         for(const [attackIndex,attack] of (c.attacks||[]).entries()){const key=c.id+':'+attackIndex;if(seen.has(key))continue;seen.add(key);out.push({cardId:c.id,attackIndex,attack,borrowed:true});}}
     }
-    if(state.format==='classic'&&current.id==='swsh12pt5-107'&&!effects.abilitiesSuppressed(state,side,slot,data.cardById)){
+    if(state.format==='classic'&&(current.reprintOf||current.id)==='swsh12pt5-107'&&!effects.abilitiesSuppressed(state,side,slot,data.cardById)){
       const seen=new Set();for(const ref of state.sides[side].discard||[]){const c=data.cardById(ref.cardId);
         if(!c?.battleEnabled||!effects.matchesFilter(c,{kind:'pokemon',stage:'Basic',hasRuleBox:false}))continue;
         for(const [attackIndex,attack] of (c.attacks||[]).entries()){const key=c.id+':'+attackIndex;if(seen.has(key))continue;seen.add(key);out.push({cardId:c.id,attackIndex,attack,borrowed:true});}}
@@ -2072,7 +2072,7 @@
       }
     }
     if(state.format==='classic'){
-      if(s.hand.filter(x=>data.cardById(x.cardId)?.name!=='Grant').length>=2)for(const ref of s.discard||[])if(['swsh10-144','swsh10-185','swsh10-203'].includes(ref.cardId)&&data.cardById(ref.cardId)?.battleEnabled)actions.push({type:'swsh10GrantRecover',cardId:ref.cardId,sourceUid:ref.uid});
+      if(s.hand.filter(x=>data.cardById(x.cardId)?.name!=='Grant').length>=2)for(const ref of s.discard||[])if(['swsh10-144','swsh10-185','swsh10-203'].includes(data.cardById(ref.cardId)?.reprintOf||ref.cardId)&&data.cardById(ref.cardId)?.battleEnabled)actions.push({type:'swsh10GrantRecover',cardId:ref.cardId,sourceUid:ref.uid});
       if(emptyBenchSlots(s).length&&!effects.isActionLocked(state,side,'Ability',data.cardById))for(const ref of s.discard||[])if(['swsh12-140','swsh12-187'].includes(ref.cardId)&&data.cardById(ref.cardId)?.battleEnabled&&eternalZoneCanPlace(state,side,ref.cardId)&&s.swsh12RevivingUsed?.[ref.uid]!==s.turnCount&&!effects.abilitiesSuppressed(state,side,ref,data.cardById,'discard'))actions.push({type:'abilityDiscard',cardId:ref.cardId,sourceUid:ref.uid});
       if(emptyBenchSlots(s).length&&!effects.isActionLocked(state,side,'Ability',data.cardById)&&eternalZoneCanPlace(state,side,'swsh11-66'))for(const ref of s.discard||[])if(ref.cardId==='swsh11-66'&&s.swsh11GateUsed?.[ref.uid]!==s.turnCount&&!effects.abilitiesSuppressed(state,side,ref,data.cardById,'discard'))actions.push({type:'abilityDiscard',cardId:ref.cardId,sourceUid:ref.uid});
       if(!s.hand.length&&emptyBenchSlots(s).length&&!effects.isActionLocked(state,side,'Ability',data.cardById))for(const ref of s.discard||[])if(ref.cardId==='swsh9-37'&&!effects.abilitiesSuppressed(state,side,ref,data.cardById,'discard')&&eternalZoneCanPlace(state,side,ref.cardId))actions.push({type:'abilityDiscard',cardId:ref.cardId,sourceUid:ref.uid});

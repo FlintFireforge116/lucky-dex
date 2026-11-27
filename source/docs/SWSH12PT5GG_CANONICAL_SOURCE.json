@@ -1,0 +1,429 @@
+{
+  "set": "swsh12pt5gg",
+  "sourceGitBlob": "b3760db93bd9fb9f5e0f5e24a05c50b7058f5c63",
+  "upstreamCommit": "90f27d0e14cefe48ccb2b8922a7a356b2fcf0072",
+  "printedTotal": 70,
+  "signatureAlgorithm": "FNV-1a on UTF-16 code units of compact JSON fields name, supertype, sorted subtypes, HP, types, evolvesFrom, attacks, abilities, weakness type, resistance type, retreat (missing=0), rules. Upstream weaknesses all \u00d72 and resistances all -30 when present.",
+  "prints": [
+    {
+      "number": "GG01",
+      "signature": "1809ef4b",
+      "rarity": "Trainer Gallery Rare Holo",
+      "reprintOf": "swsh10-2"
+    },
+    {
+      "number": "GG02",
+      "signature": "26b805b3",
+      "rarity": "Trainer Gallery Rare Holo",
+      "reprintOf": "swsh10-10"
+    },
+    {
+      "number": "GG03",
+      "signature": "6653ed55",
+      "rarity": "Trainer Gallery Rare Holo",
+      "reprintOf": "swsh9-20"
+    },
+    {
+      "number": "GG04",
+      "signature": "6bb6bd6a",
+      "rarity": "Trainer Gallery Rare Holo",
+      "reprintOf": "swsh8-42"
+    },
+    {
+      "number": "GG05",
+      "signature": "c73cab11",
+      "rarity": "Trainer Gallery Rare Holo",
+      "reprintOf": "swsh9-31"
+    },
+    {
+      "number": "GG06",
+      "signature": "bc657fa3",
+      "rarity": "Trainer Gallery Rare Holo",
+      "reprintOf": "swsh9-41"
+    },
+    {
+      "number": "GG07",
+      "signature": "66fcd38d",
+      "rarity": "Trainer Gallery Rare Holo",
+      "reprintOf": "swsh10-45"
+    },
+    {
+      "number": "GG08",
+      "signature": "dcabf28f",
+      "rarity": "Trainer Gallery Rare Holo",
+      "reprintOf": "swsh9-47"
+    },
+    {
+      "number": "GG09",
+      "signature": "5931100c",
+      "rarity": "Trainer Gallery Rare Holo",
+      "reprintOf": "swsh8-108"
+    },
+    {
+      "number": "GG10",
+      "signature": "4cfaf48b",
+      "rarity": "Trainer Gallery Rare Holo",
+      "reprintOf": "cel25-11"
+    },
+    {
+      "number": "GG11",
+      "signature": "b3f3c810",
+      "rarity": "Trainer Gallery Rare Holo",
+      "reprintOf": "swsh12pt5-62"
+    },
+    {
+      "number": "GG12",
+      "signature": "1ea66215",
+      "rarity": "Trainer Gallery Rare Holo",
+      "reprintOf": "swsh8-120"
+    },
+    {
+      "number": "GG13",
+      "signature": "52861af5",
+      "rarity": "Trainer Gallery Rare Holo",
+      "reprintOf": "swsh10-68"
+    },
+    {
+      "number": "GG14",
+      "signature": "4c48ff04",
+      "rarity": "Trainer Gallery Rare Holo",
+      "reprintOf": "swsh11-79"
+    },
+    {
+      "number": "GG15",
+      "signature": "e0edd977",
+      "rarity": "Trainer Gallery Rare Holo",
+      "reprintOf": "swsh12pt5-69"
+    },
+    {
+      "number": "GG16",
+      "signature": "9d60189b",
+      "rarity": "Trainer Gallery Rare Holo",
+      "reprintOf": "swsh10-97"
+    },
+    {
+      "number": "GG17",
+      "signature": "263ae6ec",
+      "rarity": "Trainer Gallery Rare Holo",
+      "reprintOf": "swsh10-104"
+    },
+    {
+      "number": "GG18",
+      "signature": "06283949",
+      "rarity": "Trainer Gallery Rare Holo",
+      "reprintOf": "swsh10-107"
+    },
+    {
+      "number": "GG19",
+      "signature": "5882393a",
+      "rarity": "Trainer Gallery Rare Holo",
+      "reprintOf": "swsh7-106"
+    },
+    {
+      "number": "GG20",
+      "signature": "3a3c0fe0",
+      "rarity": "Trainer Gallery Rare Holo",
+      "reprintOf": "swsh8-193"
+    },
+    {
+      "number": "GG21",
+      "signature": "c10ec85f",
+      "rarity": "Trainer Gallery Rare Holo",
+      "reprintOf": "swsh11-134"
+    },
+    {
+      "number": "GG22",
+      "signature": "bb9a83dc",
+      "rarity": "Trainer Gallery Rare Holo",
+      "reprintOf": "swsh12pt5-107"
+    },
+    {
+      "number": "GG23",
+      "signature": "2d3453cd",
+      "rarity": "Trainer Gallery Rare Holo",
+      "reprintOf": "swsh8-207"
+    },
+    {
+      "number": "GG24",
+      "signature": "1a7d2eca",
+      "rarity": "Trainer Gallery Rare Holo",
+      "reprintOf": "swsh10-126"
+    },
+    {
+      "number": "GG25",
+      "signature": "9874e39e",
+      "rarity": "Trainer Gallery Rare Holo",
+      "reprintOf": "swsh9-121"
+    },
+    {
+      "number": "GG26",
+      "signature": "2f1c3888",
+      "rarity": "Trainer Gallery Rare Holo",
+      "reprintOf": "swsh12pt5-71"
+    },
+    {
+      "number": "GG27",
+      "signature": "09ec5925",
+      "rarity": "Trainer Gallery Rare Holo",
+      "reprintOf": "swsh7-132"
+    },
+    {
+      "number": "GG28",
+      "signature": "bc1bd244",
+      "rarity": "Trainer Gallery Rare Holo",
+      "reprintOf": "swsh9-60"
+    },
+    {
+      "number": "GG29",
+      "signature": "0c1abaa2",
+      "rarity": "Trainer Gallery Rare Holo",
+      "reprintOf": "swsh12pt5-111"
+    },
+    {
+      "number": "GG30",
+      "signature": "a33faa6e",
+      "rarity": "Trainer Gallery Rare Holo",
+      "reprintOf": "swsh11-52"
+    },
+    {
+      "number": "GG31",
+      "signature": "16618a5d",
+      "rarity": "Trainer Gallery Rare Holo",
+      "reprintOf": "swsh9-6"
+    },
+    {
+      "number": "GG32",
+      "signature": "dffc58a1",
+      "rarity": "Trainer Gallery Rare Holo",
+      "reprintOf": "swsh11-4"
+    },
+    {
+      "number": "GG33",
+      "signature": "2052b379",
+      "rarity": "Trainer Gallery Rare Holo",
+      "reprintOf": "swsh10-95"
+    },
+    {
+      "number": "GG34",
+      "signature": "e6a918ea",
+      "rarity": "Trainer Gallery Rare Holo",
+      "reprintOf": "swsh7-54"
+    },
+    {
+      "number": "GG35",
+      "signature": "26f6700e",
+      "rarity": "Rare Holo VSTAR",
+      "reprintOf": "swsh12pt5-14"
+    },
+    {
+      "number": "GG36",
+      "signature": "b10aa9aa",
+      "rarity": "Rare Holo V",
+      "reprintOf": "swsh9-22"
+    },
+    {
+      "number": "GG37",
+      "signature": "ed371dd2",
+      "rarity": "Rare Holo VSTAR",
+      "reprintOf": "swsh12pt5-23"
+    },
+    {
+      "number": "GG38",
+      "signature": "eb23a486",
+      "rarity": "Rare Holo V",
+      "reprintOf": "swsh7-31"
+    },
+    {
+      "number": "GG39",
+      "signature": "d8dde116",
+      "rarity": "Rare Holo V",
+      "reprintOf": "swsh9-40"
+    },
+    {
+      "number": "GG40",
+      "signature": "05424bb8",
+      "rarity": "Rare Holo VSTAR",
+      "reprintOf": null
+    },
+    {
+      "number": "GG41",
+      "signature": "1ad4eeb3",
+      "rarity": "Rare Holo V",
+      "reprintOf": "swsh9-48"
+    },
+    {
+      "number": "GG42",
+      "signature": "d61fd895",
+      "rarity": "Rare Holo VMAX",
+      "reprintOf": "swsh12pt5-54"
+    },
+    {
+      "number": "GG43",
+      "signature": "a779b4d7",
+      "rarity": "Rare Holo VSTAR",
+      "reprintOf": "swsh12pt5-55"
+    },
+    {
+      "number": "GG44",
+      "signature": "c4a053f9",
+      "rarity": "Rare Holo VSTAR",
+      "reprintOf": null
+    },
+    {
+      "number": "GG45",
+      "signature": "638a3afe",
+      "rarity": "Rare Holo VMAX",
+      "reprintOf": null
+    },
+    {
+      "number": "GG46",
+      "signature": "a034cd7a",
+      "rarity": "Rare Holo VSTAR",
+      "reprintOf": null
+    },
+    {
+      "number": "GG47",
+      "signature": "87a0fbbc",
+      "rarity": "Rare Holo VMAX",
+      "reprintOf": "swsh12pt5-66"
+    },
+    {
+      "number": "GG48",
+      "signature": "397e7306",
+      "rarity": "Rare Holo V",
+      "reprintOf": "cel25-16"
+    },
+    {
+      "number": "GG49",
+      "signature": "e7639706",
+      "rarity": "Rare Holo V",
+      "reprintOf": "swsh11-118"
+    },
+    {
+      "number": "GG50",
+      "signature": "66f6d2e3",
+      "rarity": "Rare Holo VSTAR",
+      "reprintOf": "swsh10-99"
+    },
+    {
+      "number": "GG51",
+      "signature": "9611db6f",
+      "rarity": "Rare Holo V",
+      "reprintOf": "swsh10-101"
+    },
+    {
+      "number": "GG52",
+      "signature": "0f33630d",
+      "rarity": "Rare Holo VSTAR",
+      "reprintOf": "swsh10-102"
+    },
+    {
+      "number": "GG53",
+      "signature": "1b679b04",
+      "rarity": "Rare Holo V",
+      "reprintOf": "swsh8-253"
+    },
+    {
+      "number": "GG54",
+      "signature": "a70b3a56",
+      "rarity": "Rare Holo V",
+      "reprintOf": "swsh12pt5-98"
+    },
+    {
+      "number": "GG55",
+      "signature": "2d24c80c",
+      "rarity": "Rare Holo VSTAR",
+      "reprintOf": "swsh12pt5-114"
+    },
+    {
+      "number": "GG56",
+      "signature": "6f689069",
+      "rarity": "Rare Holo VSTAR",
+      "reprintOf": "swsh11-147"
+    },
+    {
+      "number": "GG57",
+      "signature": "7f608c64",
+      "rarity": "Rare Ultra",
+      "reprintOf": "swsh10-135"
+    },
+    {
+      "number": "GG58",
+      "signature": "53f66bbd",
+      "rarity": "Rare Ultra",
+      "reprintOf": "swsh9-134"
+    },
+    {
+      "number": "GG59",
+      "signature": "254b443c",
+      "rarity": "Rare Ultra",
+      "reprintOf": "swsh11-155"
+    },
+    {
+      "number": "GG60",
+      "signature": "8adb2318",
+      "rarity": "Rare Ultra",
+      "reprintOf": "swsh9-138"
+    },
+    {
+      "number": "GG61",
+      "signature": "f0356dea",
+      "rarity": "Rare Ultra",
+      "reprintOf": "swsh10-143"
+    },
+    {
+      "number": "GG62",
+      "signature": "5d5e9414",
+      "rarity": "Rare Ultra",
+      "reprintOf": "swsh10-144"
+    },
+    {
+      "number": "GG63",
+      "signature": "84e9ae49",
+      "rarity": "Rare Ultra",
+      "reprintOf": "swsh10-147"
+    },
+    {
+      "number": "GG64",
+      "signature": "43aa21c8",
+      "rarity": "Rare Ultra",
+      "reprintOf": "swsh6-146"
+    },
+    {
+      "number": "GG65",
+      "signature": "33a04a86",
+      "rarity": "Rare Ultra",
+      "reprintOf": "swsh12pt5-140"
+    },
+    {
+      "number": "GG66",
+      "signature": "9eaa7174",
+      "rarity": "Rare Ultra",
+      "reprintOf": "swsh10-150"
+    },
+    {
+      "number": "GG67",
+      "signature": "cf540ea2",
+      "rarity": "Rare Secret",
+      "reprintOf": "swsh10-40"
+    },
+    {
+      "number": "GG68",
+      "signature": "8cade903",
+      "rarity": "Rare Secret",
+      "reprintOf": "swsh10-114"
+    },
+    {
+      "number": "GG69",
+      "signature": "4ef32778",
+      "rarity": "Rare Secret",
+      "reprintOf": "swsh11-131"
+    },
+    {
+      "number": "GG70",
+      "signature": "2bda5701",
+      "rarity": "Rare Secret",
+      "reprintOf": "swsh9-123"
+    }
+  ]
+}
