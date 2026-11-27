@@ -1,0 +1,5 @@
+# Silver Tempest stage 3 — v0.69.581
+
+100/215 playable, 133 imported, 33 gated and 82 not yet imported. Imported the next 30 Pokémon prints (66–95) from the pinned canonical blob with packet checksum 4004781684. Enabled 28 prints (20 newly imported, 8 previously gated). Reused existing shared rules for Refinement, Memory Skip, Inviting Ears, Yoga Guard, Chakra Awakening, Mystery Charge, Four as One, Needle Line, Sparkling Wing, Snow Mirage and Silvery Snow Star. Added one non-stacking V Guard Energy damage reduction for both print IDs through the shared damage-reduction path, respecting Special Energy suppression. No previously playable definitions changed.
+
+The focused suite contains 72 tests including both-side attack smoke, catalogue projection, deck generation, conditional damage, discard costs, Ability protection, non-stacking reduction and VSTAR cost/power use. The 33 remaining gated prints require further implementation; missing 82 prints remain unimported. Cross-era interactions and physical APK build/device tests remain separate.

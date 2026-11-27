@@ -77,3 +77,41 @@ def trainer(row):
  if name=='Primordial Altar':return 'Stadium',E('stadiumAction',effect=seq(E('inspectTop',side='self',amount=1),E('chooseOption',options=[{'label':'Keep top card','effect':E('noop')},{'label':'Discard top card','effect':E('discardTop',side='self',amount=1)}])))
  if name=='Gapejaw Bog':return 'Stadium',E('noop')
  return _stage1_trainer(row)
+
+# Stage 3: next pinned Pokémon packet; existing reusable mechanics.
+_stage2_attack,_stage2_ability,_stage2_energy=attack,ability,energy
+
+def attack(row,a):
+ n=int(row[0]);title=a[0]
+ if n in (14,46) and title=='Four as One':
+  return bonus(70 if n==14 else 170,cond('pokemonPresentAll',side='self',zone='bench',names=['Cobalion','Terrakion','Keldeo' if n==14 else 'Virizion']))
+ if n==24 and title=='Sparkling Wing':return E('sm7Rule',rule='sm9SearchAttach',amount=2,sameTarget=True)
+ if n==34 and title=='Snow Mirage':return seq(E('damageRule',ignoreEffects=True),E('preventDamage',target='self',duration='opponentTurn',attackerFilter={'hasAbility':True}))
+ if n==34 and title=='Silvery Snow Star':return seq(E('fieldCountDamage',side='opponent',filter={'tag':'pokemon-v'},amount=70,mode='replace'),E('damageRule',ignoreWeakness=True,ignoreResistance=True))
+ if n==67 and title=='Memory Skip':return E('chooseAttackLock',duration='opponentTurn')
+ if n==70 and title=='Pouty Slap':return coin(discard(1,'opponentActive'))
+ if n==70 and title=='Chomp Down':return E('discardHand',side='opponent',amount=1,random=True)
+ if n==73 and title=='Vigorous Kick':return bonus(90,cond('pokemonPresent',side='opponent',zone='inPlay',filter={'tag':'pokemon-vmax'}))
+ if n==77 and title=='Cell Spear':return E('placeDamageCounters',target='opponentBench',amount=20)
+ if n==80 and title=='Psychic Arrow':return E('selectedDamage',target='opponentPokemon',amount=60,activeWeaknessResistance=True,benchWeaknessResistance=True)
+ if n==84 and title=='Draining Kiss':return E('heal',target='self',amount=30)
+ if n==87 and title=='Reckless Charge':return E('selfDamage',amount=10)
+ if n==91 and title=='Knock Away':return coin(E('bonusDamage',amount=20))
+ if n==93 and title=='Find a Friend':return E('searchChosen',amount=1,filter={'kind':'pokemon'})
+ if n==95 and title=='Fossil Drop':return E('chooseDiscardForBonus',zone='hand',max=1,amount=120,filter={'kind':'trainer','name':'Unidentified Fossil'})
+ return _stage2_attack(row,a)
+
+def ability(row,a):
+ n=int(row[0]);title=a[0]
+ if n==4 and title=='Hidden Threads':return passive(E('modifier',stat='attackCostColorless',amount=1,scope='opponentTeam',duration='whileInPlay',filter={'tag':'pokemon-vstar'},nonStacking=True))
+ if n==15 and title=='Needle Line':return dict(type='triggered',event='damagedByAttack',activeOnly=True,opponentAttackOnly=True,effect=E('placeDamageCounters',target='opponentActive',amount=30))
+ if n in (68,69) and title=='Refinement':return activated(E('sm7Rule',rule='sm10Pay',amount=1,filter={},after=E('draw',amount=2)))
+ if n==72 and title=='Yoga Guard':return passive(E('preventDamage',target='self',duration='whileInPlay'),benchOnly=True)
+ if n==73 and title=='Chakra Awakening':return passive(E('modifier',stat='attackCostColorless',amount=-3,scope='self',duration='whileInPlay',condition=cond('handSizeOneOf',values=[4])))
+ if n==82 and title=='Inviting Ears':return dict(type='triggered',event='evolved',fromHandOnly=True,effect=E('searchChosen',amount=2,filter={'kind':'trainer','trainerType':'Supporter'},optional=True))
+ if n==94 and title=='Mystery Charge':return activated(E('sm7Rule',rule='sm12DiscardAttach',left=1,energyType='Fighting',optional=True,condition=cond('sm12NoSupporterDiscard')))
+ return _stage2_ability(row,a)
+
+def energy(row):
+ if row[1]=='V Guard Energy':return E('specialEnergy',provides={'Colorless':1})
+ return _stage2_energy(row)

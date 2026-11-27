@@ -1,37 +1,7 @@
 {
-  "printed": 103,
+  "printed": 133,
   "canonicalTotal": 215,
   "notImported": [
-    "swsh12-66",
-    "swsh12-67",
-    "swsh12-68",
-    "swsh12-69",
-    "swsh12-70",
-    "swsh12-71",
-    "swsh12-72",
-    "swsh12-73",
-    "swsh12-74",
-    "swsh12-75",
-    "swsh12-76",
-    "swsh12-77",
-    "swsh12-78",
-    "swsh12-79",
-    "swsh12-80",
-    "swsh12-81",
-    "swsh12-82",
-    "swsh12-83",
-    "swsh12-84",
-    "swsh12-85",
-    "swsh12-86",
-    "swsh12-87",
-    "swsh12-88",
-    "swsh12-89",
-    "swsh12-90",
-    "swsh12-91",
-    "swsh12-92",
-    "swsh12-93",
-    "swsh12-94",
-    "swsh12-95",
     "swsh12-96",
     "swsh12-97",
     "swsh12-98",
@@ -115,11 +85,8 @@
     "swsh12-210",
     "swsh12-211"
   ],
-  "battleReady": 72,
+  "battleReady": 100,
   "gated": {
-    "swsh12-4": [
-      "Unimplemented Ability: Hidden Threads"
-    ],
     "swsh12-8": [
       "Unimplemented attack: Regal Blender",
       "Unimplemented attack: Star Winder"
@@ -127,30 +94,14 @@
     "swsh12-12": [
       "Unimplemented Ability: Surprise Spores"
     ],
-    "swsh12-14": [
-      "Unimplemented attack: Four as One"
-    ],
-    "swsh12-15": [
-      "Unimplemented Ability: Needle Line"
-    ],
-    "swsh12-24": [
-      "Unimplemented attack: Sparkling Wing"
-    ],
     "swsh12-31": [
       "Unimplemented attack: Gritty Claws"
     ],
     "swsh12-32": [
       "Unimplemented attack: Secret Attack"
     ],
-    "swsh12-34": [
-      "Unimplemented attack: Snow Mirage",
-      "Unimplemented attack: Silvery Snow Star"
-    ],
     "swsh12-35": [
       "Unimplemented attack: Primal Guidance"
-    ],
-    "swsh12-46": [
-      "Unimplemented attack: Four as One"
     ],
     "swsh12-49": [
       "Unimplemented attack: Pika Strike"
@@ -167,6 +118,40 @@
     ],
     "swsh12-65": [
       "Unimplemented attack: Victory Symbol"
+    ],
+    "swsh12-66": [
+      "Unimplemented attack: Tri Power",
+      "Unimplemented attack: Star Cipher"
+    ],
+    "swsh12-71": [
+      "Unimplemented attack: Sudden Eater",
+      "Unimplemented Ability: Star Rondo"
+    ],
+    "swsh12-74": [
+      "Unimplemented attack: Dreaming Tone"
+    ],
+    "swsh12-75": [
+      "Unimplemented attack: Warning"
+    ],
+    "swsh12-78": [
+      "Unimplemented attack: Cell Fork",
+      "Unimplemented Ability: Persistent Cells"
+    ],
+    "swsh12-85": [
+      "Unimplemented attack: Dede-Short"
+    ],
+    "swsh12-86": [
+      "Unimplemented attack: Smart Service"
+    ],
+    "swsh12-89": [
+      "Unimplemented attack: Dragon Launcher"
+    ],
+    "swsh12-90": [
+      "Unimplemented attack: Rock Bullet",
+      "Unimplemented Ability: Irresistible Force"
+    ],
+    "swsh12-92": [
+      "Unimplemented attack: Overspin"
     ],
     "swsh12-154": [
       "Unimplemented attack: Star Gravity",
@@ -194,9 +179,6 @@
     "swsh12-168": [
       "Unimplemented Special Energy rules"
     ],
-    "swsh12-169": [
-      "Unimplemented Special Energy rules"
-    ],
     "swsh12-190": [
       "Unimplemented Trainer effect"
     ],
@@ -211,12 +193,9 @@
     ],
     "swsh12-214": [
       "Unimplemented Trainer effect"
-    ],
-    "swsh12-215": [
-      "Unimplemented Special Energy rules"
     ]
   },
-  "attacks": 110,
-  "abilities": 11,
+  "attacks": 153,
+  "abilities": 20,
   "sourceGitBlob": "a57779d463a4f8ddf2bc21ad4ae66e9f4c3eaac2"
 }

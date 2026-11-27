@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Silver Tempest stage-one pinned source packets for the gameplay generator.
+"""Silver Tempest pinned source packets for the gameplay generator.
 
 Compact rows transferred from the pinned PokemonTCG upstream commit via
 GitHub. The upstream blob ID and FNV-1a packet checksums were captured before
@@ -19,6 +19,7 @@ PACKETS = (
     ('swsh12-stage1-pokemon-a.jsonl', 3834687902),
     ('swsh12-stage1-pokemon-b.jsonl', 3868267172),
     ('swsh12-stage1-support.jsonl', 2770570990),
+    ('swsh12-stage3-pokemon-c.jsonl', 4004781684),
 )
 
 def rows():
@@ -33,8 +34,8 @@ def rows():
             raise ValueError('Silver Tempest source transfer checksum mismatch: ' + filename)
         result.extend(json.loads(line) for line in data.splitlines())
     numbers = [int(r[0]) for r in result]
-    expected_ids = set(range(1, 66)) | set(range(151, 170)) | set(range(188, 196)) | set(range(203, 210)) | set(range(212, 216))
-    if len(numbers) != 103 or set(numbers) != expected_ids:
+    expected_ids = set(range(1, 96)) | set(range(151, 170)) | set(range(188, 196)) | set(range(203, 210)) | set(range(212, 216))
+    if len(numbers) != 133 or set(numbers) != expected_ids:
         raise ValueError('Silver Tempest staged print ID inventory mismatch')
     if sum(r[2] == 'Trainer' for r in result) != TRAINER_PRINTS or sum(r[2] == 'Energy' for r in result) != ENERGY_PRINTS:
         raise ValueError('Silver Tempest staged support print inventory mismatch')
