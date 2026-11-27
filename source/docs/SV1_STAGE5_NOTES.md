@@ -1,0 +1,3 @@
+# Scarlet & Violet — stage 5, v0.69.609
+
+Eerie Tentacles offers optional movement of exact opposing Basic or Special Energy to a selected Bench, retaining physical references; Rumbling Engine chooses a physical Energy from hand, preserving its discard identity and allowing Special Energy, with existing ordered Zone fallback retained; Miriam and Pal Pad complete optional selections before one shuffle (Miriam draws only after a successful recovery); Enriching Oil obeys shared healing prevention. Eight bilateral outcome tests cover these changes. No new prints; structural audit flags remain. Full recursive preflight and Android compilation not run locally.

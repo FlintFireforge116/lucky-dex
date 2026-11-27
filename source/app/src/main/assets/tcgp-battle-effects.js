@@ -19048,8 +19048,9 @@
         note({effect:'returned opposing Energy to hand'});break;
       }
       case 'eerieTentacles':{
-        const [uid,type]=String(a.effectSelection||'').split('|'),target=foe.bench.find(s=>s.uid===uid);
-        if(target&&Number(foe.active?.energy?.[type]||0)>0){foe.active.energy[type]--;target.energy[type]=Number(target.energy[type]||0)+1;note({energyType:type,to:target.cardId});}
+        const [uid,type,specialUid]=String(a.effectSelection||'').split('|'),target=foe.bench.find(s=>s.uid===uid);
+        if(target&&type==='special'){const idx=(foe.active?.specialEnergy||[]).findIndex(r=>r.uid===specialUid);if(idx>=0){const [ref]=foe.active.specialEnergy.splice(idx,1);(target.specialEnergy??=[]).push(ref);note({energyCardId:ref.cardId,to:target.cardId});}}
+        else if(target&&Number(foe.active?.energy?.[type]||0)>0){foe.active.energy[type]--;target.energy[type]=Number(target.energy[type]||0)+1;note({energyType:type,to:target.cardId});}
         break;
       }
       case 'energyFromZoneToHand':case 'energySearch':{
@@ -19059,7 +19060,7 @@
       }
       case 'enrichingOil':{
         if(ctx.resolvingChoice){if(a.choiceSkip)return;const target=chosen(ss);
-          if(target&&Number(target.damage||0)>0){target.damage=0;note({healed:target.cardId,amount:'all'});}
+          if(target&&Number(target.damage||0)>0&&!healingIsBlocked(ctx.state,target,ctx.cardById)){target.damage=0;note({healed:target.cardId,amount:'all'});}
         }else if(pokemonOn(ss).some(p=>Number(p.damage||0)>0))ask({kind:'pokemon',includeActive:true,filter:{damaged:true},optional:true});
         break;
       }
@@ -19169,9 +19170,10 @@
         break;
       }
       case 'rumblingEngine':{
-        const card=ss.hand.findIndex(ref=>ctx.cardById(ref.cardId)?.basicEnergy);
-        if(card<0){const type=ss.energySupply?.[0];if(!type)return;const taken=sv1ZoneTake(ctx,ss,type);recordDiscardedEnergy(ss,taken,1);}
-        else {const [ref]=ss.hand.splice(card,1);recordDiscardedEnergy(ss,ctx.cardById(ref.cardId)?.subtype,1);}
+        const held=ss.hand.filter(ref=>ctx.cardById(ref.cardId)?.kind==='energy');
+        if(ctx.resolvingChoice){const idx=Number(a.choiceHandIndex),ref=ss.hand[idx];if(!ref||!held.includes(ref))return;ss.discard.push(...ss.hand.splice(idx,1));}
+        else if(held.length){ask({kind:'handCard',filter:{kind:'energy'}});return;}
+        else {const type=ss.energySupply?.[0];if(!type)return;const taken=sv1ZoneTake(ctx,ss,type);if(!taken)return;recordDiscardedEnergy(ss,taken,1);}
         while(ss.hand.length<6&&ss.deck.length)ctx.drawCard(ss);break;
       }
       case 'nestStash':{
@@ -19180,11 +19182,10 @@
       case 'miriam':case 'palPad':{
         const max=rule==='miriam'?5:2,filter=rule==='miriam'?{kind:'pokemon'}:{kind:'trainer',trainerType:'Supporter'};
         const candidates=ss.discard.filter(ref=>matchesFilter(ctx.cardById(ref.cardId),filter));
-        if(ctx.resolvingChoice){if(a.choiceSkip){if(rule==='miriam'&&Number(effect.done||0))for(let j=0;j<3;j++)ctx.drawCard(ss);return;}
-          const idx=Number(a.choiceDiscardIndex),ref=ss.discard[idx];if(ref&&matchesFilter(ctx.cardById(ref.cardId),filter)){ss.deck.push(...ss.discard.splice(idx,1));ctx.shuffle?.(ctx.state,ss.deck);}
-          const done=Number(effect.done||0)+1;
-          if(done<max&&ss.discard.some(r=>matchesFilter(ctx.cardById(r.cardId),filter)))ask({kind:'discardCard',filter,optional:true,effect:{...effect,done}});
-          else if(rule==='miriam')for(let j=0;j<3;j++)ctx.drawCard(ss);
+        if(ctx.resolvingChoice){let done=Number(effect.done||0);
+          if(!a.choiceSkip){const idx=Number(a.choiceDiscardIndex),ref=ss.discard[idx];if(ref&&matchesFilter(ctx.cardById(ref.cardId),filter)){ss.deck.push(...ss.discard.splice(idx,1));done++;}}
+          if(!a.choiceSkip&&done<max&&ss.discard.some(r=>matchesFilter(ctx.cardById(r.cardId),filter)))ask({kind:'discardCard',filter,optional:true,effect:{...effect,done}});
+          else if(done){ctx.shuffle?.(ctx.state,ss.deck);if(rule==='miriam')for(let j=0;j<3;j++)ctx.drawCard(ss);}
         }else if(candidates.length)ask({kind:'discardCard',filter,optional:true,effect:{...effect,done:0}});
         break;
       }
@@ -30453,7 +30454,7 @@ if(ctx.isAbility){const targetSide=pokemonOn(own(ctx)).includes(s)?ctx.side:ctx.
     if(effect.type==='lentalRule'&&String(effect.rule||'').startsWith('sv1:')){
       const rule=effect.rule.slice(4),foe=other(ctx),ss=own(ctx);
       if(rule==='trickCape')return [{effectSelection:'',choiceLabel:'Keep Energy'},...Object.entries(foe.active?.energy||{}).filter(([,n])=>n>0).map(([t])=>({effectSelection:t,choiceLabel:'Return '+t+' Energy'})),...(foe.active?.specialEnergy||[]).map(ref=>({effectSelection:'special|'+ref.uid,choiceLabel:'Return Special Energy'}))];
-      if(rule==='eerieTentacles')return foe.bench.flatMap(slot=>Object.entries(foe.active?.energy||{}).filter(([,n])=>n>0).map(([type])=>({effectSelection:slot.uid+'|'+type,choiceLabel:'Move '+type+' to '+ctx.cardById(slot.cardId)?.name}))).concat([{}]);
+      if(rule==='eerieTentacles')return [{effectSelection:'',choiceLabel:'Keep Energy'},...foe.bench.flatMap(slot=>[...Object.entries(foe.active?.energy||{}).filter(([,n])=>n>0).map(([type])=>({effectSelection:slot.uid+'|'+type,choiceLabel:'Move '+type+' to '+ctx.cardById(slot.cardId)?.name})),...(foe.active?.specialEnergy||[]).map(ref=>({effectSelection:slot.uid+'|special|'+ref.uid,choiceLabel:'Move '+ctx.cardById(ref.cardId)?.name+' to '+ctx.cardById(slot.cardId)?.name}))])];
       if(rule==='happyCyclone')return ss.bench.map(slot=>({effectSelection:slot.uid,choiceLabel:'Move Energy to '+ctx.cardById(slot.cardId)?.name}));
       if(['sandstormSpray'].includes(rule))return totalEnergy(ctx.attacker?.energy)>=2?[{}]:[];
       return [{}];
