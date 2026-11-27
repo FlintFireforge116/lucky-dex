@@ -1,32 +1,7 @@
 {
-  "printed": 163,
+  "printed": 188,
   "canonicalTotal": 215,
   "notImported": [
-    "swsh12-126",
-    "swsh12-127",
-    "swsh12-128",
-    "swsh12-129",
-    "swsh12-130",
-    "swsh12-131",
-    "swsh12-132",
-    "swsh12-133",
-    "swsh12-134",
-    "swsh12-135",
-    "swsh12-136",
-    "swsh12-137",
-    "swsh12-138",
-    "swsh12-139",
-    "swsh12-140",
-    "swsh12-141",
-    "swsh12-142",
-    "swsh12-143",
-    "swsh12-144",
-    "swsh12-145",
-    "swsh12-146",
-    "swsh12-147",
-    "swsh12-148",
-    "swsh12-149",
-    "swsh12-150",
     "swsh12-170",
     "swsh12-171",
     "swsh12-172",
@@ -55,7 +30,7 @@
     "swsh12-210",
     "swsh12-211"
   ],
-  "battleReady": 126,
+  "battleReady": 142,
   "gated": {
     "swsh12-12": [
       "Unimplemented Ability: Surprise Spores"
@@ -138,6 +113,39 @@
       "Unimplemented attack: Meteor Mash",
       "Unimplemented Ability: Emergency Entry"
     ],
+    "swsh12-126": [
+      "Unimplemented attack: Follow-Up",
+      "Unimplemented Ability: Justified Law"
+    ],
+    "swsh12-127": [
+      "Unimplemented attack: Toge Dash"
+    ],
+    "swsh12-133": [
+      "Unimplemented attack: Radiant Hunt",
+      "Unimplemented attack: Seventh Echo"
+    ],
+    "swsh12-135": [
+      "Unimplemented attack: Celestial Roar",
+      "Unimplemented attack: Dragon Laser"
+    ],
+    "swsh12-136": [
+      "Unimplemented attack: Apex Dragon",
+      "Unimplemented Ability: Legacy Star"
+    ],
+    "swsh12-137": [
+      "Unimplemented attack: Colorful Palette"
+    ],
+    "swsh12-140": [
+      "Unimplemented attack: Rainbow Burn",
+      "Unimplemented Ability: Reviving Flame"
+    ],
+    "swsh12-143": [
+      "Unimplemented attack: Magical Echo"
+    ],
+    "swsh12-149": [
+      "Unimplemented attack: Eerie Cry",
+      "Unimplemented attack: Mind Bend"
+    ],
     "swsh12-154": [
       "Unimplemented attack: Star Gravity",
       "Unimplemented Trainer effect"
@@ -180,7 +188,7 @@
       "Unimplemented Trainer effect"
     ]
   },
-  "attacks": 196,
-  "abilities": 25,
+  "attacks": 234,
+  "abilities": 30,
   "sourceGitBlob": "a57779d463a4f8ddf2bc21ad4ae66e9f4c3eaac2"
 }

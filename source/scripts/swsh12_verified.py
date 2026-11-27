@@ -148,3 +148,28 @@ def ability(row,a):
  if n==120 and title=='Entrusted Wishes':return dict(type='triggered',event='knockedOutByAttack',activeOnly=True,opponentAttackOnly=True,effect=E('searchChosen',amount=3,filter={},optional=True))
  if n==125 and title=='Triple Gears':return dict(type='triggered',event='evolved',fromHandOnly=True,effect=E('sm7Rule',rule='sm9SearchAttach',amount=3))
  return _stage3_ability(row,a)
+
+# Stage 5: physical discard and Special Energy acceleration.
+_stage4_attack,_stage4_ability=attack,ability
+
+def attack(row,a):
+ n=int(row[0]);title=a[0]
+ if n==128 and title=='Gear Throw':return E('selectedDamage',target='opponentPokemon',amount=30)
+ if n==128 and title=='Special Laser':return bonus(120,cond('selfMatches',filter={'hasSpecialEnergy':True}))
+ if n in (129,145) and title in ('Slam','Double Kick'):return E('coinDamage',coins=2,amount=30 if n==129 else 100,mode='replace')
+ if n==130 and title=='Wrap':return coin(status('paralysis'))
+ if n==131 and title=='Energy Hurricane':return E('sm7Rule',rule='sm9SearchAttach',amount=3)
+ if n==134 and title=='Shout of Power':return E('sm7Rule',rule='sm12DiscardAttach',left=1,benchOnly=True,optional=True)
+ if n==138 and title=='Read the Wind':return E('sm7Rule',rule='sm10Pay',amount=1,filter={},after=E('draw',amount=3))
+ if n in (138,139) and title in ('Aero Dive','Tempest Dive'):return E('chooseOption',condition=cond('stadiumInPlay'),options=[{'label':'Discard Stadium','effect':E('discardStadium')},{'label':'Keep Stadium','effect':E('noop')}])
+ if n==141 and title=='Dizzying Spin':return seq(E('bonusDamage',amount=10),E('benchDamage',side='opponent',all=True,amount=10),status('confusion'))
+ if n==142 and title=='Continuous Spin':return E('coinDamage',coins='untilTails',amount=20,mode='replace')
+ if n==144 and title=='Try Bouncing':return E('coinDamage',coins=1,amount=30,mode='replace')
+ if n==148 and title=='Jump On':return coin(E('bonusDamage',amount=30))
+ return _stage4_attack(row,a)
+
+def ability(row,a):
+ n=int(row[0]);title=a[0]
+ if n==139 and title=='Summoning Star':return activated(E('sm7Rule',rule='swsh12SummoningStar'),vstarPower=True)
+ if n==147 and title=='Primal Turbo':return activated(E('sm7Rule',rule='swsh12PrimalTurbo'))
+ return _stage4_ability(row,a)

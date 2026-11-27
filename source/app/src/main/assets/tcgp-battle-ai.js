@@ -407,7 +407,7 @@
       else bonus+=2+searchOpportunity(action.swsh4Substitution?{type:'draw',amount:3}:card?.effect,position.sides[side]);
     }
     if(action.type==='stadiumAction'&&action.cardId==='neo3-61'&&position.sides[side]?.active?.damage>0)bonus+=32;
-    if(action.type==='ability')bonus+=searchOpportunity(abilityEffect(data.cardById(action.cardId),action.abilityIndex),position.sides[side]);
+    if(action.type==='ability'){const eff=abilityEffect(data.cardById(action.cardId),action.abilityIndex);bonus+=searchOpportunity(eff,position.sides[side]);if(eff?.rule==='swsh12SummoningStar')bonus+=35;if(eff?.rule==='swsh12PrimalTurbo')bonus+=20;}
     if(action.type==='endTurn')bonus-=4;
     if(action.type==='retreat')bonus-=level>=2?7:12;
     return bonus;
@@ -462,6 +462,15 @@
     }
     if(state.phase==='effectChoice'&&state.pendingChoice?.originSide===side){
       const e=state.pendingChoice.effect,board=state.sides[side],foe=state.sides[foeOf(side)];
+      if(e?.rule==='swsh12SummoningStar'){
+        const picks=legal.filter(a=>!a.choiceSkip);
+        return picks.sort((a,b)=>{const score=x=>{const c=data.cardById(x.choiceCardId);return (c?.name==='Archeops'?1000:0)+(c?.hp||0);};return score(b)-score(a);})[0]||legal[0];
+      }
+      if(e?.rule==='swsh12PrimalTurbo'){
+        const picks=legal.filter(a=>!a.choiceSkip);
+        if(e.stage==='target')return picks.sort((a,b)=>{const score=x=>{const p=slotFor(board,x.choiceTarget,x.choiceBenchIndex),attacks=data.cardById(p?.cardId)?.attacks||[];return Math.max(0,...attacks.map(at=>deficit(p,at,state,side)>0?Math.min(3,deficit(p,at,state,side)):0))*10+(p===board.active?5:0);};return score(b)-score(a);})[0]||legal[0];
+        return picks.find(x=>x.choiceCardId==='swsh9-151')||picks[0]||legal[0];
+      }
       if(e?.rule==='swsh11Thorton'){
         const score=a=>e.stage==='source'?Math.max(-Infinity,...slots(board).map(p=>thortonGain(state,side,p,board.discard[a.choiceDiscardIndex]))):thortonGain(state,side,slotFor(board,a.choiceTarget,a.choiceBenchIndex),board.discard.find(x=>x.uid===e.refUid));
         return legal.slice().sort((a,b)=>score(b)-score(a))[0];

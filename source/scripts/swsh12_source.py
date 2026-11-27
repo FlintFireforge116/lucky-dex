@@ -21,6 +21,7 @@ PACKETS = (
     ('swsh12-stage1-support.jsonl', 2770570990),
     ('swsh12-stage3-pokemon-c.jsonl', 4004781684),
     ('swsh12-stage4-pokemon-d.jsonl', 2740508329),
+    ('swsh12-stage5-pokemon-e.jsonl', 3860066309),
 )
 
 def rows():
@@ -35,8 +36,8 @@ def rows():
             raise ValueError('Silver Tempest source transfer checksum mismatch: ' + filename)
         result.extend(json.loads(line) for line in data.splitlines())
     numbers = [int(r[0]) for r in result]
-    expected_ids = set(range(1, 126)) | set(range(151, 170)) | set(range(188, 196)) | set(range(203, 210)) | set(range(212, 216))
-    if len(numbers) != 163 or set(numbers) != expected_ids:
+    expected_ids = set(range(1, 151)) | set(range(151, 170)) | set(range(188, 196)) | set(range(203, 210)) | set(range(212, 216))
+    if len(numbers) != 188 or set(numbers) != expected_ids:
         raise ValueError('Silver Tempest staged print ID inventory mismatch')
     if sum(r[2] == 'Trainer' for r in result) != TRAINER_PRINTS or sum(r[2] == 'Energy' for r in result) != ENERGY_PRINTS:
         raise ValueError('Silver Tempest staged support print inventory mismatch')
