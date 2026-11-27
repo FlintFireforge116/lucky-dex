@@ -1,0 +1,3 @@
+# Scarlet & Violet — stage 6, v0.69.610
+
+Mise en Place attaches up to two ordered Zone Water to the same Basic target. Sandstorm Spray selects exact attached Energy cards, including physical Special Energy, before returning the opposing Active and attachments to the deck (no Prize). Drag Off selects the incoming opposing Bench before damage, uses the shared Active attack pipeline and respects switch protection; Happy Cyclone remains a damaging attack when the user's Bench is empty. Eight new bilateral tests; 111 SV1 tests, 317 combined regression tests, 742/742 strict smoke with no skips, 16/16 CPU deck cases. 28 structural flags remain, and smoke does not certify full fidelity. No new cards. Full historical recursive chain and Android compilation not verified locally.
