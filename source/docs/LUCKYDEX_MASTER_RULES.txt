@@ -6464,3 +6464,5 @@ v0.69.612 SV2 stage 2: Exact reprints inherit both enabled and gated status. Reu
 
 
 v0.69.613 SV2 stage 3: Modern Ability suppression must run before the historical-Power exclusion; test both owners, Basic V, evolved V, ex and ordinary Pokemon. Damage-only protection must not prevent counters or other attack effects. Test printed Tera flags on exact alternate prints even while gated. Keep partial-set deck quality and exact upstream text signatures enforced; do not enable approximated effects.
+
+ v0.69.614 SV2 stage 4: Continue exact upstream print signatures and matching alternate-art metadata; test team damage reduction on both owners and stacking, Stadium-dependent status, named own-Bench conditions, correct deck side for milling and physical Basic Energy recovery excluding Special Energy and Trainers. Retain explicit gating for unsupported mechanics and keep unsupported sparse types unavailable.
