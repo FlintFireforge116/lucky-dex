@@ -30850,6 +30850,10 @@ if(r==='lastResort')return ss.hand.length===0?[{}]:[];if(r==='surgeSwap')return 
       const c=cardById(slot.cardId);
       if(c?.types?.includes('Fire')&&!matchesFilter(c,{isExOrGX:true})&&['player','opponent'].some(w=>pokemonOn(state.sides[w]).some(p=>p.cardId==='sm7-61'&&live(p))&&pokemonOn(state.sides[w]).some(p=>cardById(p.cardId)?.name==='Solrock')))return true;
     }
+    // Spiritomb is a modern Ability lock on Basic Pokemon V on either side.
+    // Its non-V source cannot be suppressed by this same rule.
+    if(zone==='play'&&state?.format==='classic'&&slot&&cardById(slot.cardId)?.stage==='Basic'&&cardById(slot.cardId)?.pokemonV&&
+       ['player','opponent'].some(w=>pokemonOn(state.sides[w]).some(p=>p.cardId==='sv2-89'&&!abilitiesSuppressed(state,w,p,cardById))))return true;
     // A modern printed *Ability* is neither a Poké-Power nor a
     // Poké-Body. Historic suppression effects that only name those older
     // mechanics must not disable newer Abilities (e.g. Cessation Crystal).

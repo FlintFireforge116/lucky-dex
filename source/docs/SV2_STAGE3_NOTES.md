@@ -1,0 +1,3 @@
+# SV2 stage 3 (v0.69.613)
+
+162/279 imported, 125 enabled, 37 gated, 117 missing. Added originals 81–110 and ten verified variants. Big Roar unlocked on Shinx; active-only activation and defender choice tested. Spiritomb Fettered in Misfortune suppresses Basic V on both sides before modern Ability early return, not ex or evolved V. Mimikyu Safeguard protects from ex/V damage only, not damage counters; Fighting Sword uses same category distinction. Tera printed flag on Slowking ex and Dedenne ex and their variants. Dedenne remains gated for Tail Swap. Other unsupported effects explicitly gated. 35 targeted tests passed, including both sides for the new outcome tests. Full historical preparation chain and Android build not run locally.
