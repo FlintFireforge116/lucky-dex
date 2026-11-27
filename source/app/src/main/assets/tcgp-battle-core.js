@@ -1051,7 +1051,7 @@
   }return values;}
 
   function miraculousWindActive(state){return state.format==='classic'&&['player','opponent'].some(w=>{const p=state.sides[w].active;return p?.cardId==='neo4-14'&&!p.conditions?.sleep&&!p.conditions?.paralysis&&!p.conditions?.confusion&&!effects.abilitiesSuppressed(state,w,p,data.cardById);});}
-  function specialEnergyProvides(ref,slot,state){if(state&&!effects.specialEnergyTextActive(state,ref,data.cardById))return {Colorless:1};if(['swsh2-174','swsh2-209'].includes(ref?.cardId)&&slot){const mon=data.cardById(slot.cardId);return {Colorless:mon?.pokemonV||mon?.pokemonGX?1:2};}if(ref?.provides&&typeof ref.provides==='object')return ref.provides;const card=data.cardById(ref?.cardId),provides=card?.specialEnergy?card.effect?.provides:null;return provides&&typeof provides==='object'?provides:{};}
+  function specialEnergyProvides(ref,slot,state){const sv2=effects.sv2SpecialProvider(state,ref,slot,data.cardById);if(sv2)return sv2;if(state&&!effects.specialEnergyTextActive(state,ref,data.cardById))return {Colorless:1};if(['swsh2-174','swsh2-209'].includes(ref?.cardId)&&slot){const mon=data.cardById(slot.cardId);return {Colorless:mon?.pokemonV||mon?.pokemonGX?1:2};}if(ref?.provides&&typeof ref.provides==='object')return ref.provides;const card=data.cardById(ref?.cardId),provides=card?.specialEnergy?card.effect?.provides:null;return provides&&typeof provides==='object'?provides:{};}
   function effectiveEnergy(state,side,slot){const next={...(slot?.energy||{})},values=energyValues(state,side,slot);for(const [type,n] of Object.entries(next))next[type]=Number(n||0)*Number(values[type]||1);const miracleWind=miraculousWindActive(state);
     // Expedition Burning Energy converts ONLY Basic Energy for this turn.
     // Keep the card's special Energy units unchanged.
@@ -3606,6 +3606,7 @@ const target=slotForTarget(s,action.target,action.benchIndex);if(card.id==='pl2-
       }
 
       if(state.phase==='effectChoice')state.pendingChoice.resume=state.pendingChoice.resume||'trainer';
+      if(energyTextActive&&state.format==='classic'&&card.id==='sv2-193')for(const status of ['sleep','confusion','paralysis'])delete (target.conditions||{})[status];
       if(energyTextActive&&state.format==='classic'&&card.id==='sv2-190'&&s.bench.includes(target))effects.switchPokemon(s,Number(target.benchSlot),state);
       if(energyTextActive&&state.format==='classic'&&card.name==='Draw Energy')drawCard(s);
       if(energyTextActive&&state.format==='classic'&&card.id==='swsh2-173'&&effects.effectiveTypes(state,side,target,data.cardById).includes('Lightning')){drawCard(s);drawCard(s);}

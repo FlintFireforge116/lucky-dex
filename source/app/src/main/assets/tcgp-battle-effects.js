@@ -205,10 +205,21 @@
     return pokemonOn(state.sides[side]).some(p=>['swsh11-82','swsh11-178'].includes(p.cardId)&&!abilitiesSuppressed(state,side,p,cardById));
   }
   function fusionEnergyGuard(state,slot,cardById){return state?.format==='classic'&&!!cardById(slot?.cardId)?.fusionStrike&&activeSpecialEnergy(state,slot,cardById).some(r=>r.cardId==='swsh8-244');}
-  function attachedSpecialProvider(state,ref,cardById){return !specialEnergyTextActive(state,ref,cardById)?{Colorless:1}:ref?.provides||cardById(ref?.cardId)?.effect?.provides||{};}
+  // SV2 conditional Energy values are evaluated live, not cached on attachment.
+  function sv2SpecialProvider(state,ref,slot,cardById){
+    if(!['sv2-191','sv2-192'].includes(ref?.cardId))return null;
+    if(!specialEnergyTextActive(state,ref,cardById))return {Colorless:1};
+    if(!slot&&state?.sides)slot=Object.values(state.sides).flatMap(pokemonOn).find(p=>(p.specialEnergy||[]).some(r=>r===ref||r.uid===ref.uid));
+    if(ref.cardId==='sv2-191')return slot&&!(slot.specialEnergy||[]).some(r=>r!==ref&&r.uid!==ref.uid&&cardById(r.cardId)?.specialEnergy)?{Miracle:1}:{Colorless:1};
+    const side=state?.sides&&['player','opponent'].find(w=>pokemonOn(state.sides[w]).includes(slot));
+    const c=cardById(slot?.cardId);
+    return side&&activeStadium(state)?.cardId!=='ex14-75'&&state.sides[side].prizes.length>state.sides[side==='player'?'opponent':'player'].prizes.length&&['Stage 1','Stage 2'].includes(c?.stage)&&!swsh5RuleBox(c)?{Miracle:3}:{Colorless:1};
+  }
+  function attachedSpecialProvider(state,ref,cardById){return sv2SpecialProvider(state,ref,null,cardById)||(!specialEnergyTextActive(state,ref,cardById)?{Colorless:1}:ref?.provides||cardById(ref?.cardId)?.effect?.provides||{});}
   function attachedSpecialProvidesType(ref,type,slot,cardById,state){
     if(!ref||!type)return false;
     if(state&&!specialEnergyTextActive(state,ref,cardById))return type==='Colorless';
+    const sv2=sv2SpecialProvider(state,ref,slot,cardById);if(sv2)return !!(sv2[type]||sv2.Miracle);
     if(ref.cardId==='swsh8-244')return !!cardById(slot?.cardId)?.fusionStrike;
     if(['swsh6-157','swsh6-159'].includes(ref.cardId))return !!cardById(slot?.cardId)?.[ref.cardId==='swsh6-157'?'singleStrike':'rapidStrike'];
     if(['swsh5-140','swsh5-182'].includes(ref.cardId))return !!cardById(slot?.cardId)?.rapidStrike&&['Water','Fighting'].includes(type);
@@ -31554,6 +31565,7 @@ if(r==='lastResort')return ss.hand.length===0?[{}]:[];if(r==='surgeSwap')return 
   }
   function sm9MetalGuard(state,side,slot,cardById){return (Number(slot.energy?.Metal||0)>0||activeSpecialEnergy(state,slot,cardById).some(r=>attachedSpecialProvidesType(r,'Metal',slot,cardById,state)))&&pokemonOn(state.sides[side]).some(p=>['sm9-106','sm9-168','sm9-189'].includes(p.cardId)&&!abilitiesSuppressed(state,side,p,cardById));}
   function applyContinuousRules(state,cardById){
+    if(state?.format==='classic')for(const side of ['player','opponent'])for(const slot of pokemonOn(state.sides[side]))if(activeSpecialEnergy(state,slot,cardById).some(r=>r.cardId==='sv2-193'))for(const status of ['sleep','confusion','paralysis'])delete (slot.conditions||{})[status];
     if(state?.format==='classic')for(const side of ['player','opponent'])for(const slot of pokemonOn(state.sides[side]))for(const status of ['poison','paralysis'])if(activeSpecialEnergy(state,slot,cardById).some(r=>status==='poison'&&r.cardId==='swsh6-157'&&cardById(slot.cardId)?.singleStrike||status==='paralysis'&&r.cardId==='swsh6-159'&&cardById(slot.cardId)?.rapidStrike))delete (slot.conditions||{})[status];
     if(state?.format==='classic')for(const side of ['player','opponent'])for(const slot of pokemonOn(state.sides[side])){
       const hood=guardianOfLove(state,side,slot,cardById)||lustrousBody(state,side,slot,cardById)||activeToolsOf(state,slot,cardById).some(r=>r.cardId==='sm10-186');
@@ -32057,6 +32069,7 @@ if(r==='lastResort')return ss.hand.length===0?[{}]:[];if(r==='surgeSwap')return 
   }
   function resolveDelayedEffects(state,endingSide,cardById,contextFor){const due=(state.delayedEffects||[]).filter(x=>x.event==='endOpponentNextTurn'&&Number(x.dueTurn)<=Number(state.turnNumber)&&x.endingSide===endingSide),keep=(state.delayedEffects||[]).filter(x=>!due.includes(x));state.delayedEffects=keep;for(const item of due){let target=null;if(item.targetUid){for(const side of ['player','opponent'])target=pokemonOn(state.sides[side]).find(s=>s.uid===item.targetUid)||target;}else if(item.spot){const ss=state.sides[item.spot.side];target=item.spot.active?ss.active:(ss.bench||[]).find(s=>s&&Number(s.benchSlot)===Number(item.spot.benchIndex));}if(!target)continue;const sourceSide=item.originSide,source=pokemonOn(state.sides[sourceSide]).find(s=>s.uid===item.sourceUid)||state.sides[sourceSide].active,ctx=contextFor(sourceSide,source);applyEffect({...item.effect,target:'eventPokemon'},{...ctx,eventData:{target}});}}
   function statusIsPrevented(state,slot,cardById,status){
+    if(state?.format==='classic'&&['sleep','confusion','paralysis'].includes(status)&&activeSpecialEnergy(state,slot,cardById).some(r=>r.cardId==='sv2-193'))return true;
     if(state?.format==='classic'&&slot&&activeSpecialEnergy(state,slot,cardById).some(r=>status==='poison'&&r.cardId==='swsh6-157'&&cardById(slot.cardId)?.singleStrike||status==='paralysis'&&r.cardId==='swsh6-159'&&cardById(slot.cardId)?.rapidStrike))return true;
     if(state?.format==='classic'&&slot&&swsh4TypedEnergy(state,pokemonOn(state.sides.player).includes(slot)?'player':'opponent',slot,cardById,'swsh4-162','Grass'))return true;
     if(state?.format==='classic'&&slot?.cardId==='swsh3-167')return true;
@@ -32170,5 +32183,5 @@ if(r==='lastResort')return ss.hand.length===0?[{}]:[];if(r==='surgeSwap')return 
     return heads?0:amount;
   }
   function applyAttackEffect(effect,context){return applyEffect(effect,context);}
-  return {maxHp,guardianOfLove,zoneSampleSpec,zoneSampleBounds,outgoingAttackDamage,slimyRoomAllows,activeToolsOf,spectralBreachActive,specialEnergyTextActive,activeSpecialEnergy,attachedSpecialProvider,coin,spiritLinkSpecies,spiritLinkEvolution,usefulToolRecipient,sm11ReturnSnapshot,sm11ReturnDiscarded,ENERGY_CODE,det1EvasionDamage,scoopUpBlocked,metalGogglesActive,attachedSpecialProvidesType,effectTypes,supportsEffect,validateEffect,matchesFilter,totalEnergy,canPayCost,spendGenericEnergy,spendGenericEnergyWithValue,attackDamage,applyAttackEffect,applyEffect,resolveAttack,choicesForEffect,neoDiscoveryReduction,modifierAmount,clearConditions,clearTemporaryEffects,revertShapeshift,switchPokemon,spikemuthSwitch,attackIsPrevented,attackEffectsPrevented,statusIsPrevented,isLocked,isActionLocked,passiveAttackAllowed,applyPersistentEvent,findPassiveRule,healingIsBlocked,canUsePreviousEvolutionAttacks,attackSpecificBonus,consumeDamageGuard,topDeckCountAmount,coinBonusAmount,abilitiesSuppressed,evolutionRule,attackCostOverride,effectiveTypes,applyContinuousRules,swsh3ActiveDamageBonus,attackDamageWithState,wideLensBenchMatchup,toolEffectsSuppressed,resolveDelayedEffects,toolCapacity,coinRerollSource,lentalDefenseReduction,florioReactToAttackDamage,florio114RescueKO,florio114PrismCleanup};
+  return {sv2SpecialProvider,maxHp,guardianOfLove,zoneSampleSpec,zoneSampleBounds,outgoingAttackDamage,slimyRoomAllows,activeToolsOf,spectralBreachActive,specialEnergyTextActive,activeSpecialEnergy,attachedSpecialProvider,coin,spiritLinkSpecies,spiritLinkEvolution,usefulToolRecipient,sm11ReturnSnapshot,sm11ReturnDiscarded,ENERGY_CODE,det1EvasionDamage,scoopUpBlocked,metalGogglesActive,attachedSpecialProvidesType,effectTypes,supportsEffect,validateEffect,matchesFilter,totalEnergy,canPayCost,spendGenericEnergy,spendGenericEnergyWithValue,attackDamage,applyAttackEffect,applyEffect,resolveAttack,choicesForEffect,neoDiscoveryReduction,modifierAmount,clearConditions,clearTemporaryEffects,revertShapeshift,switchPokemon,spikemuthSwitch,attackIsPrevented,attackEffectsPrevented,statusIsPrevented,isLocked,isActionLocked,passiveAttackAllowed,applyPersistentEvent,findPassiveRule,healingIsBlocked,canUsePreviousEvolutionAttacks,attackSpecificBonus,consumeDamageGuard,topDeckCountAmount,coinBonusAmount,abilitiesSuppressed,evolutionRule,attackCostOverride,effectiveTypes,applyContinuousRules,swsh3ActiveDamageBonus,attackDamageWithState,wideLensBenchMatchup,toolEffectsSuppressed,resolveDelayedEffects,toolCapacity,coinRerollSource,lentalDefenseReduction,florioReactToAttackDamage,florio114RescueKO,florio114PrismCleanup};
 });
