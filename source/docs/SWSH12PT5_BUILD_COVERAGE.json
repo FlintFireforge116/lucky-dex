@@ -2,35 +2,16 @@
   "printed": 160,
   "canonicalTotal": 160,
   "notImported": [],
-  "battleReady": 142,
+  "battleReady": 152,
   "gated": {
-    "swsh12pt5-23": [
-      "Unimplemented attack: Fireball Fever",
-      "Unimplemented attack: Ember Star"
-    ],
-    "swsh12pt5-36": [
-      "Unimplemented attack: Dynamic Wave"
-    ],
-    "swsh12pt5-42": [
-      "Unimplemented attack: Shorting Spark"
-    ],
     "swsh12pt5-44": [
       "Unimplemented Ability: Explosiveness"
     ],
     "swsh12pt5-51": [
       "Unimplemented Ability: Shocking Block"
     ],
-    "swsh12pt5-55": [
-      "Unimplemented attack: Lightning Storm Star"
-    ],
     "swsh12pt5-65": [
       "Unimplemented attack: Horoscope"
-    ],
-    "swsh12pt5-66": [
-      "Unimplemented Ability: Witch's Domain"
-    ],
-    "swsh12pt5-82": [
-      "Unimplemented attack: Rocket Poison"
     ],
     "swsh12pt5-89": [
       "Unimplemented attack: Counter Press"
@@ -41,20 +22,8 @@
     "swsh12pt5-107": [
       "Unimplemented Ability: Sudden Transformation"
     ],
-    "swsh12pt5-114": [
-      "Unimplemented Ability: Star Guardian"
-    ],
-    "swsh12pt5-115": [
-      "Unimplemented attack: Gather Flowers"
-    ],
-    "swsh12pt5-118": [
-      "Unimplemented attack: Stakeout Headbutt"
-    ],
     "swsh12pt5-119": [
       "Unimplemented attack: Primate Acting"
-    ],
-    "swsh12pt5-126": [
-      "Unimplemented Trainer effect"
     ],
     "swsh12pt5-143": [
       "Unimplemented Ability: Star Order",

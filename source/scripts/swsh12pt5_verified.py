@@ -254,3 +254,30 @@ def attack(row,a):
  if n==122:return E('coinDamage',coins='untilTails',amount=30,mode='add')
  if n==160:return E('selfDamage',amount=30)
  return None
+
+# Stage 6: shared targeted effects, selection and discard accounting.
+_stage5_attack=attack
+_stage5_ability=ability
+_stage5_trainer=trainer
+
+def attack(row,a):
+ n=int(row[0]);title,cost,damage,t=a
+ if n==23 and title=='Fireball Fever':return E('sm7Rule',rule='czFireballFever')
+ if n==23 and title=='Ember Star':return E('sm7Rule',rule='czEmberStar')
+ if n==36 and title=='Dynamic Wave':return seq(E('sm7Rule',rule='swsh1ReturnAttachments',target='self',left=3),E('multiTargetDamage',target='opponentPokemon',count=1,amount=180,activeWeaknessResistance=True))
+ if n==42 and title=='Shorting Spark':return E('sm7Rule',rule='czShortingSpark')
+ if n==55 and title=='Lightning Storm Star':return E('sm7Rule',rule='czLightningStorm')
+ if n==82 and title=='Rocket Poison':return E('sm7Rule',rule='czRocketPoison')
+ if n==115 and title=='Gather Flowers':return E('sm7Rule',rule='sm9Recycle',amount=2,filter={'kind':'energy'},includeBasicLedger=True,optional=True)
+ if n==118 and title=='Stakeout Headbutt':return bonus(120,cond('czOpponentMovedLastTurn'))
+ return _stage5_attack(row,a)
+
+def ability(row,a):
+ n=int(row[0])
+ if n==66:return activated(E('sm7Rule',rule='czWitchDomain'))
+ if n==114:return activated(E('sm7Rule',rule='czStarGuardian',condition=cond('opponentPrizesRemaining',amount=1)),vstarPower=True)
+ return _stage5_ability(row,a)
+
+def trainer(row):
+ if int(row[0])==126:return 'Supporter',E('sm7Rule',rule='czDiggingDuo')
+ return _stage5_trainer(row)
