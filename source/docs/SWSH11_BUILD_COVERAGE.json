@@ -2,27 +2,15 @@
   "printed": 217,
   "canonicalTotal": 217,
   "notImported": [],
-  "battleReady": 211,
+  "battleReady": 215,
   "gated": {
-    "swsh11-20": [
-      "Unimplemented Ability: Jamming Attachment"
-    ],
     "swsh11-82": [
       "Unimplemented attack: Blossom Tail",
       "Unimplemented Ability: Guardian of Love"
     ],
-    "swsh11-167": [
-      "Unimplemented Trainer effect"
-    ],
     "swsh11-178": [
       "Unimplemented attack: Blossom Tail",
       "Unimplemented Ability: Guardian of Love"
-    ],
-    "swsh11-195": [
-      "Unimplemented Trainer effect"
-    ],
-    "swsh11-210": [
-      "Unimplemented Trainer effect"
     ]
   },
   "attacks": 278,

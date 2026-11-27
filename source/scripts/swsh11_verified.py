@@ -286,3 +286,13 @@ def attack(row,a):
 def trainer(row):
  if row[0]=='165' and row[1]=='Panic Mask':return 'Tool',E('noop') # damage-only protection in shared attack guard
  return _stage12_trainer(row)
+
+# Stage 14: state-preserving Basic substitution and optional opposing Energy placement.
+_stage13_ability=ability
+_stage13_trainer=trainer
+def ability(row,a):
+ if row[0]=='20' and a[0]=='Jamming Attachment':return evolved(E('sm7Rule',rule='swsh11JammingAttachment'))
+ return _stage13_ability(row,a)
+def trainer(row):
+ if row[1]=='Thorton':return 'Supporter',E('sm7Rule',rule='swsh11Thorton')
+ return _stage13_trainer(row)

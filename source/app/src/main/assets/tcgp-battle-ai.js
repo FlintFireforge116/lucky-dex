@@ -170,11 +170,21 @@
     if(card.name==='Island Challenge Amulet'&&core.maxHp(state,side,slot)-Number(slot.damage||0)<=100)return false;
     return true;
   }
+  // Thorton must improve an existing Basic rather than blindly replace it.
+  function thortonGain(state,side,p,ref){
+    const before=data.cardById(p?.cardId),after=data.cardById(ref?.cardId);
+    if(before?.kind!=='pokemon'||before.stage!=='Basic'||p.stack?.length!==1||after?.kind!=='pokemon'||after.stage!=='Basic'||!after.battleEnabled||after.id===before.id||after.id==='swsh4-66')return -Infinity;
+    const next={...p,cardId:after.id,stack:[after.id]},hp=core.maxHp(state,side,next),oldHp=core.maxHp(state,side,p);
+    if(hp<=Number(p.damage||0))return -Infinity;
+    const power=(slot,c)=>Math.max(0,...(c.attacks||[]).map(a=>Number(a.damage||0)*.6-deficit(slot,a,state,side)*25));
+    return (hp-oldHp)*.35+power(next,after)-power(p,before)-Math.max(0,Number(after.prizeCards||1)-Number(before.prizeCards||1))*18;
+  }
   function usefulClassicTrainer(state,side,action){
     const card=data.cardById(action.cardId),s=state.sides[side],foe=state.sides[foeOf(side)];
     if(!card)return false;
     if(card.id==='cel25c-15_A2')return !state.cel25cOpenPrizes&&(s.prizes.some(r=>!r.faceUp)||foe.prizes.some(r=>!r.faceUp));
     if(action.swsh4Substitution)return s.deck.length>0;
+    if(card.effect?.rule==='swsh11Thorton')return s.discard.some(ref=>slots(s).some(p=>thortonGain(state,side,p,ref)>15));
     if(card.effect?.rule==='swsh10Grant')return effects.effectiveTypes(state,side,s.active,data.cardById).includes('Fighting');
     if(card.trainerType==='Tool'&&!usefulClassicTool(state,side,action,card))return false;
     if(card.effect?.rule==='swsh2ToolScrapper')return slots(foe).some(p=>p.tool||p.extraTools?.length);
@@ -449,6 +459,22 @@
       }
       const link=legal.find(a=>a.type==='trainer'&&effects.spiritLinkSpecies(data.cardById(a.cardId))&&legal.some(e=>e.type==='evolve'&&e.target===a.target&&e.benchIndex===a.benchIndex&&effects.spiritLinkEvolution(data.cardById(a.cardId),data.cardById(e.cardId||ss.hand[e.handIndex]?.cardId))));
       if(link)return link;
+    }
+    if(state.phase==='effectChoice'&&state.pendingChoice?.originSide===side){
+      const e=state.pendingChoice.effect,board=state.sides[side],foe=state.sides[foeOf(side)];
+      if(e?.rule==='swsh11Thorton'){
+        const score=a=>e.stage==='source'?Math.max(-Infinity,...slots(board).map(p=>thortonGain(state,side,p,board.discard[a.choiceDiscardIndex]))):thortonGain(state,side,slotFor(board,a.choiceTarget,a.choiceBenchIndex),board.discard.find(x=>x.uid===e.refUid));
+        return legal.slice().sort((a,b)=>score(b)-score(a))[0];
+      }
+      if(e?.rule==='swsh11JammingAttachment'){
+        // Only feed the opposing Active when it helps a ready Mysterious Wave.
+        const stop=legal.find(a=>a.choiceSkip),active=foe.active,source=board.active,atk=data.cardById(source?.cardId)?.attacks?.find(a=>a.name==='Mysterious Wave');
+        if(e.stage==='target')return legal.find(a=>a.choiceTarget==='active')||stop||legal[0];
+        if(!active||!atk||deficit(source,atk,state,side)>0||effects.attackIsPrevented(state,foeOf(side),active,source,data.cardById))return stop||legal[0];
+        const raw=30+50*effects.totalEnergy(core.effectiveEnergy(state,foeOf(side),active)),remaining=core.maxHp(state,foeOf(side),active)-Number(active.damage||0),hit=n=>effects.attackDamageWithState(state,side,source,foeOf(side),active,n,data.cardById)-effects.modifierAmount(state,foeOf(side),active,'damageReduction',data.cardById);
+        if(hit(raw)>=remaining||hit(raw+50*Number(e.left??3))<remaining)return stop||legal[0];
+        return legal.find(a=>a.effectEnergyType)||legal.find(a=>!a.choiceSkip)||stop||legal[0];
+      }
     }
     if(state.phase==='effectChoice'&&['swsh10ResonantEvolution','swsh10WishConnector'].includes(state.pendingChoice?.effect?.rule))return legal.find(a=>!a.choiceSkip)||legal[0];
     if(state.phase==='effectChoice'&&['swsh10GrantRecover','swsh10AncientWisdom'].includes(state.pendingChoice?.effect?.rule)){const available=legal.filter(a=>!a.choiceSkip);return available.find(a=>a.choiceTarget==='active')||available[0]||legal[0];}
