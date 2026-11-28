@@ -5015,6 +5015,10 @@ const target=slotForTarget(s,action.target,action.benchIndex);if(card.id==='pl2-
     }
     if(state.format==='classic'&&state.turnNumber===turnOfAction&&state.phase==='battle'){
       const owner=state.activeSide,board=state.sides[owner],incoming=board.active;
+      const sv4Moved=incoming&&before[owner].uid!==incoming.uid&&before[owner].bench.has(incoming.uid)&&incoming.sv4MovedUsedTurn!==turnOfAction&&!effects.abilitiesSuppressed(state,owner,incoming,data.cardById)?data.cardById(incoming.cardId)?.abilities?.find(a=>a.event==='sv4MovedActive'):null;
+      if(sv4Moved&&(sv4Moved.effect.rule!=='sm11BurningRoad'||board.bench.some(p=>Number(p.energy?.Fire||0)>0||(p.specialEnergy||[]).some(r=>effects.attachedSpecialProvidesType(r,'Fire',p,data.cardById,state))))){
+        incoming.sv4MovedUsedTurn=turnOfAction;effects.applyEffect(sv4Moved.effect,{...effectContext(state,owner,{},incoming),isAbility:true});if(state.phase==='effectChoice'){state.pendingChoice.resume='ability';state.pendingChoice.isAbility=true;}
+      }
       if(incoming&&before[owner].uid!==incoming.uid&&before[owner].bench.has(incoming.uid)&&incoming.cardId==='sv2-134'&&incoming.sv2AssaultTurn!==turnOfAction&&!effects.abilitiesSuppressed(state,owner,incoming,data.cardById)&&state.sides[owner==='player'?'opponent':'player'].bench.some(p=>data.cardById(p.cardId)?.stage==='Basic')){
         incoming.sv2AssaultTurn=turnOfAction;effects.applyEffect({type:'sm7Rule',rule:'sv2Assault'},{...effectContext(state,owner,{},incoming),isAbility:true});if(state.phase==='effectChoice'){state.pendingChoice.resume='ability';state.pendingChoice.isAbility=true;}
       }
