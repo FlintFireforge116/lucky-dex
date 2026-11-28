@@ -68,3 +68,30 @@ for(const side of ['player','opponent']){
    const d=sv.cardById('sv3pt5-55');assert.deepEqual(d.attacks[0].effect,{type:'searchChosen',source:'discard',amount:4,optional:true,filter:{kind:'pokemon'}});
  });
 }
+
+// Stage 3: preserve previous catalogue and gates; check precise new effect schemas.
+test('151 stage 3 shared effects, target filters and alternate Trainer prints',()=>{
+ const by=n=>sv.cardById('sv3pt5-'+n);
+ for(const n of [14,15,31,41,49,58,76,79,80,87,94,107,124,146,150,156,194]){
+  const c=by(n);assert.ok(c.battleEnabled,`${c.id}: ${c.support.reasons}`);
+  for(const a of [...(c.attacks||[]),...(c.abilities||[])])assert.ok(fx.supportsEffect(a.effect),`${c.id} ${a.name}`);
+  if(c.kind==='trainer')assert.ok(fx.supportsEffect(c.effect),c.id);
+ }
+ assert.deepEqual(by(14).abilities[0].effect,{type:'preventEffects',duration:'whileInPlay',scope:'self'});
+ assert.deepEqual(by(31).attacks[0].effect.attackerFilter,{stage:'Basic'});
+ assert.deepEqual(by(58).attacks[0].effect,{type:'discardEnergyCard',target:'opponentActive',amount:1,energyType:'Water',strictEnergyType:true,allowNoTarget:true});
+ assert.equal(by(49).attacks[0].effect.effects[1].cardType,'Item');
+ assert.equal(by(76).attacks[0].effect.attackName,'*');
+ assert.equal(by(87).attacks[0].effect.activeWeaknessResistance,true);
+ assert.equal(by(94).attacks[1].effect.benchOnly,true);
+ assert.equal(by(107).abilities[0].opponentAttackOnly,true);
+ assert.equal(by(146).attacks[0].effect.effects[1].target,'opponentBench');
+ assert.deepEqual(by(156).effect,by(194).effect);
+ assert.equal(by(156).effect.count,8);assert.equal(by(156).effect.amount,8);
+});
+for(const side of ['player','opponent']){
+ test(side+' Slowpoke Sea Bathing heals 30 damage',()=>{
+  const {s,us}=scene(side,'sv3pt5-79');const actor=us.active;actor.damage=40;
+  attack(s,side);assert.equal(actor.damage,10);
+ });
+}

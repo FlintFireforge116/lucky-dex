@@ -5,3 +5,7 @@
 ## v0.69.637 stage 2
 
 Additional shared effects, passive/activated/evolution Abilities and three Trainer effects. Named support and advanced mechanics remain gated where unverified. Dragonite Dragon Pulse now explicitly mills two cards from its own deck, with exact mapping and player/opponent regression fixtures. The historical mixed-only exception is paired with focused mixed-deck and CPU quality tests. The compact catalogue is unchanged. Fast installation checks only syntax, exact pinned metadata and module eligibility; CI is responsible for the full suite.
+
+## v0.69.638 stage 3
+
+Additional shared attack and Ability mechanics and Bill's Transfer, including its alternate print. No change to the canonical collector packet, builder, or mixed-only stage restriction. Outcome regression for Sea Bathing on both sides. Complex named support and Fossil lines remain gated.

@@ -30,7 +30,44 @@ const passive=(stat,amount,scope='self',filter)=>({type:'passive',effect:{type:'
 const activate=effect=>({type:'activated',oncePerTurn:true,effect});
 const evo=effect=>({type:'triggered',event:'evolved',fromHandOnly:true,effect});
 const optional=(label,effect)=>({type:'chooseOption',options:[{label:'Do not use',effect:noop},{label,effect}]});
+
+// 151 stage 3: exact printed text; reuse established engine effects.
+function stage3Attack(a){
+ const t=a.text||'';
+ if(a.name==='Nadir Needle'&&t==="If you have no cards in your hand, this attack does 120 more damage, and your opponent's Active Pokémon is now Paralyzed and Poisoned."){
+  const condition={type:'handSizeOneOf',values:[0]};
+  return seq({type:'bonusDamage',amount:120,condition},{...status('paralysis'),condition},{...status('poison'),condition});
+ }
+ if(a.name==='Queen Press'&&t==="During your opponent's next turn, prevent all damage done to this Pokémon by attacks from Basic Pokémon.")return {...protect(false),attackerFilter:{stage:'Basic'}};
+ if(a.name==='Perplexing Powder'&&t==="Your opponent's Active Pokémon is now Confused. During your opponent's next turn, they can't play any Item cards from their hand.")return seq(status('confusion'),{type:'actionLock',side:'opponent',cardType:'Item',duration:'opponentTurn'});
+ if(a.name==='Vaporize'&&t==="Discard a Water Energy from your opponent's Active Pokémon.")return {type:'discardEnergyCard',target:'opponentActive',amount:1,energyType:'Water',strictEnergyType:true,allowNoTarget:true};
+ if(a.name==='Dynamic Roll'&&t==="During your next turn, attacks used by this Pokémon do 120 more damage to your opponent's Active Pokémon (before applying Weakness and Resistance).")return {type:'nextAttackBonus',attackName:'*',amount:120};
+ if(a.name==='Sea Bathing'&&t==='Heal 30 damage from this Pokémon, and it recovers from all Special Conditions.')return seq(heal(30),{type:'removeStatus',target:'self'});
+ if(a.name==='Big Yawn'&&t==='Both Active Pokémon are now Asleep.')return seq(status('sleep'),{type:'status',target:'selfActive',status:'sleep'});
+ if(a.name==='Laid-Back Tackle'&&t==='If this Pokémon evolved during this turn, this attack does nothing.')return {type:'attackDamageGate',condition:{type:'sm8NotEvolved'}};
+ if(a.name==='Dual Splash'&&t==="This attack does 50 damage to 2 of your opponent's Pokémon. (Don't apply Weakness and Resistance for Benched Pokémon.)")return {type:'multiTargetDamage',target:'opponentPokemon',amount:50,count:2,activeWeaknessResistance:true};
+ if(a.name==='Poltergeist'&&t==='Your opponent reveals their hand. This attack does 50 damage for each Trainer card you find there.')return seq({type:'filteredHandCountDamage',side:'opponent',filter:{kind:'trainer'},amount:50,mode:'replace'},{type:'revealHand',side:'opponent'});
+ if(a.name==='Hollow Dive'&&t==="Put 3 damage counters on your opponent's Benched Pokémon in any way you like.")return {type:'sm7Rule',rule:'sm10CounterSpread',amount:3,benchOnly:true};
+ if(a.name==='Excited Punch'&&t==="During your next turn, this Pokémon's Excited Punch attack does 60 more damage (before applying Weakness and Resistance).")return {type:'nextAttackBonus',attackName:'Excited Punch',amount:60};
+ if(a.name==='Heart-Stopping Kiss'&&t==="If your opponent's Active Pokémon is Asleep, it is Knocked Out.")return {type:'knockOut',target:'opponentActive',condition:{type:'opponentStatus',status:'sleep'}};
+ if(a.name==='Blazing Flight'&&t==="Discard 2 Fire Energy from this Pokémon. This attack does 120 damage to 1 of your opponent's Benched Pokémon. (Don't apply Weakness and Resistance for Benched Pokémon.)")return seq({type:'discardEnergyCard',target:'self',amount:2,energyType:'Fire',strictEnergyType:true},{type:'selectedDamage',target:'opponentBench',amount:120});
+ if(a.name==='Reflective Barrier'&&t==="During your opponent's next turn, if this Pokémon is damaged by an attack (even if it is Knocked Out), put damage counters on the Attacking Pokémon equal to the damage done to this Pokémon.")return {type:'sm7Rule',rule:'czCounterPress'};
+ return null;
+}
+function stage3Ability(a){
+ const t=a.text||'';
+ if(a.name==='Cocoon Cover'&&t==="Prevent all effects of attacks used by your opponent's Pokémon done to this Pokémon. (Damage is not an effect.)")return {type:'passive',effect:{type:'preventEffects',duration:'whileInPlay',scope:'self'}};
+ if(a.name==='Revealing Echo'&&t==='Once during your turn, if this Pokémon is in the Active Spot, you may have your opponent reveal their hand.')return {...activate({type:'revealHand',side:'opponent'}),activeOnly:true};
+ if(a.name==='Counterattack'&&t==="If this Pokémon is in the Active Spot and is damaged by an attack from your opponent's Pokémon (even if this Pokémon is Knocked Out), put 3 damage counters on the Attacking Pokémon.")return {type:'triggered',event:'damagedByAttack',activeOnly:true,opponentAttackOnly:true,effect:{type:'placeDamageCounters',target:'opponentActive',amount:30}};
+ return null;
+}
+function stage3Trainer(c,text){
+ if(c.name==="Bill's Transfer"&&text==='Look at the top 8 cards of your deck. You may reveal any number of Pokémon you find there and put them into your hand. Shuffle the other cards back into your deck.')return {type:'sm7Rule',rule:'sm9TopPick',count:8,amount:8,filter:{kind:'pokemon'},destination:'hand',rest:'shuffle',optional:true};
+ return null;
+}
+
 function stage2Attack(a){
+ const third=stage3Attack(a);if(third)return third;
  const t=a.text||'';
  if(a.name==='Dragon Pulse'&&t==='Discard the top 2 cards of your deck.')return {type:'discardTop',side:'self',amount:2};
  if(a.name==='Dangerous Toxwhip'&&t==="Your opponent's Active Pokémon is now Confused and Poisoned.")return seq(status('confusion'),status('poison'));
@@ -64,6 +101,7 @@ function stage2Attack(a){
  return null;
 }
 function stage2Ability(a){
+ const third=stage3Ability(a);if(third)return third;
  const t=a.text;
  if(a.name==='Tranquil Flower'&&t==='Once during your turn, if this Pokémon is in the Active Spot, you may heal 60 damage from 1 of your Pokémon.')return {...activate({type:'heal',target:'selfPokemon',amount:60}),activeOnly:true};
  if(a.name==='Solid Shell'&&t==='This Pokémon takes 30 less damage from attacks (after applying Weakness and Resistance).')return passive('damageReduction',30);
@@ -79,6 +117,7 @@ function stage2Ability(a){
  return null;
 }
 function stage2Trainer(c,text){
+ const third=stage3Trainer(c,text);if(third)return third;
  if(c.name==='Big Air Balloon'&&text==='The Stage 2 Pokémon this card is attached to has no Retreat Cost.')return passive('retreatCost',-999,'self',{stage:'Stage 2'}).effect;
  if(c.name==='Rigid Band'&&text==='The Stage 1 Pokémon this card is attached to takes 30 less damage from attacks from your opponent\'s Pokémon (after applying Weakness and Resistance).')return passive('damageReduction',30,'self',{stage:'Stage 1'}).effect;
  if(c.name==='Energy Sticker'&&text==='Flip a coin. If heads, attach a Basic Energy card from your discard pile to 1 of your Benched Pokémon.')return flip({type:'sm7Rule',rule:'sm12DiscardAttach',left:1,basicOnly:true,benchOnly:true});
