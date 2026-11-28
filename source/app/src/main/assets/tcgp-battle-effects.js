@@ -20670,7 +20670,7 @@
         if(r==='swsh6LibraHorn'){
           const pool=()=>pokemonOn(foe).filter(p=>eligible(p)&&!counterPlacementBlocked(ctx,p));
           if(!res){const list=pool();if(list.length)ask({kind:'pokemon',selectionSide:ctx.foeSide,includeActive:list.includes(foe.active),allowedUids:list.map(p=>p.uid)});break;}
-          const p=selected(ctx,foe);if(pool().includes(p)){const n=Math.max(0,ctx.maxHp(ctx.foeSide,p)-100-Number(p.damage||0));if(n)applyEffect({type:'placeDamageCounters',target:'opponentPokemon',amount:n},{...ctx,action:act});}break;
+          const p=selected(ctx,foe);if(pool().includes(p)){const n=Math.max(0,ctx.maxHp(ctx.foeSide,p)-Number(effect.remainingHp??100)-Number(p.damage||0));if(n)applyEffect({type:'placeDamageCounters',target:'opponentPokemon',amount:n},{...ctx,action:act});}break;
         }
         if(['swsh6FightingInstinct','swsh6SpitefulSlate','swsh6Chromashift','swsh6EnergyFactory','swsh6OldCemetery'].includes(r))break;
         if(r==='swsh6PackCall'){applyEffect({type:'searchChosen',amount:conditionMatches({type:'sm7FirstSecond'},ctx)?3:1,filter:{kind:'pokemon',subtype:'Grass'},optional:true},fresh);break;}
@@ -21032,7 +21032,7 @@
             if(types.length&&pokemonOn(ss).length)ask({kind:'option',options:types.map(t=>t+' Energy'),optional:true},{stage:'source',types});break;
           }
           if(k==='ScoopNet'){
-            const pool=pokemonOn(ss).filter(p=>!card(p)?.pokemonV&&!card(p)?.pokemonGX&&!returnBlocked(ctx,p)&&(p!==ss.active||ss.bench.length));
+            const pool=pokemonOn(ss).filter(p=>(effect.allowRuleBox||!card(p)?.pokemonV&&!card(p)?.pokemonGX)&&!returnBlocked(ctx,p)&&(p!==ss.active||ss.bench.length));
             if(!res){if(pool.length)ask({kind:'pokemon',includeActive:pool.includes(ss.active),allowedUids:pool.map(p=>p.uid)});break;}
             const p=selected(ctx,ss);if(pool.includes(p))applyEffect({type:'returnToHand',target:'selfPokemon',discardAttached:true},ctx);break;
           }
@@ -30576,7 +30576,7 @@ if(ctx.isAbility){const targetSide=pokemonOn(own(ctx)).includes(s)?ctx.side:ctx.
       if(!ctx.isAttack&&r==='swsh45VTransformation')return ss.discard.some(ref=>{const c=ctx.cardById(ref.cardId);return c?.kind==='pokemon'&&c.stage==='Basic'&&c.pokemonV&&c.battleEnabled&&ctx.canPutInPlay?.(ss,ref)!==false;})?[{}]:[];
       if(!ctx.isAttack&&r==='swsh45BallGuy')return ss.deck.some(ref=>{const c=ctx.cardById(ref.cardId);return c?.kind==='trainer'&&c.trainerType==='Item'&&String(c.name).includes('Ball');})?[{}]:[];
       if(!ctx.isAttack&&r==='swsh3FamiliarBell')return ss.deck.some(x=>ctx.cardById(x.cardId)?.kind==='pokemon'&&ss.discard.some(y=>ctx.cardById(y.cardId)?.kind==='pokemon'&&ctx.cardById(y.cardId)?.name===ctx.cardById(x.cardId)?.name))?[{}]:[];
-      if(!ctx.isAttack&&r==='swsh2ScoopNet')return pokemonOn(ss).some(p=>!ctx.cardById(p.cardId)?.pokemonV&&!ctx.cardById(p.cardId)?.pokemonGX&&!returnBlocked(ctx,p)&&(p!==ss.active||ss.bench.length))?[{}]:[];
+      if(!ctx.isAttack&&r==='swsh2ScoopNet')return pokemonOn(ss).some(p=>(effect.allowRuleBox||!ctx.cardById(p.cardId)?.pokemonV&&!ctx.cardById(p.cardId)?.pokemonGX)&&!returnBlocked(ctx,p)&&(p!==ss.active||ss.bench.length))?[{}]:[];
       if(!ctx.isAttack&&r==='swsh2ToolScrapper')return [...pokemonOn(ss),...pokemonOn(foe)].some(p=>toolsOf(p).length)?[{}]:[];
       if(!ctx.isAttack&&r==='swsh2AppleDrop')return pokemonOn(other(ctx)).some(p=>!counterPlacementBlocked(ctx,p)&&!protectedFromEffects(p,ctx))?[{}]:[];
       if(!ctx.isAttack&&r==='swsh2DeliciousAroma')return other(ctx).bench.some(p=>ctx.cardById(p.cardId)?.stage==='Basic')?[{}]:[];

@@ -6576,3 +6576,5 @@ SV4 STAGE 7 v0.69.658: 162/266 prints. Sada selects distinct Ancient slots and c
 SV4 STAGE 8 v0.69.659: 173/266 prints. Future move-to-Active Abilities trigger only on own turn from a pre-existing Bench slot, once per slot per turn, respecting suppression. Hyper Blower requires a Bench source and opposing Bench, opponent chooses replacement, discard source without Prizes after switch. Octillery/Wugtrio evolve from hand only; Ferrothorn uses shared timed attack bonus. Standalone remains gated.
 
 SV4 STAGE 9 v0.69.660: 190/266 prints. Direct knockout effects must respect effect immunity; Frenzied Gouging recoil only on successful knockout, not attack-damage KO triggers. Calamity Storm only boosts after successful Stadium discard. Baryon Beam checks attached Capsule identity even under Tool suppression. Standalone remains gated.
+
+SV4 STAGE 10 v0.69.661: 200/266 prints. Icicle Sole places counters rather than damage, cannot heal a target already at or below 30 HP, respects effect/counter protection and not Tera damage-only immunity. Turo allows rule-box Pokémon, returns evolution stack and discards attachments. Standalone remains gated.
