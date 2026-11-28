@@ -175,6 +175,7 @@ function stage2Attack(a){
  return null;
 }
 function stage2Ability(a){
+ if(a.name==='Sand Screen'&&a.text==="Trainer cards in your opponent's discard pile can't be put into their deck by an effect of your opponent's Item or Supporter cards.")return {type:'passive',effect:{type:'sm7Rule',rule:'sv151SandScreen'}};
  if(a.name==='Transformative Start'&&a.text==="Once during your first turn, if this Pokémon is in the Active Spot, you may search your deck and choose a Basic Pokémon you find there, except any Ditto. If you do, discard this Pokémon and all attached cards, and put the chosen Pokémon in its place. Then, shuffle your deck.")return {...activate({type:'sm7Rule',rule:'sv151TransformativeStart'}),activeOnly:true};
  if(a.name==='Electrical Grounding'&&a.text==="When 1 of your Pokémon is Knocked Out by damage from an attack from your opponent's Pokémon, you may move a Lightning Energy from that Pokémon to this Pokémon.")return {type:'passive',effect:{type:'sm7Rule',rule:'sv151ElectricalGrounding'}};
  if(a.name==='Lucky Bonus'&&a.text==="If you took this Pokémon as a face-down Prize card during your turn and your Bench isn't full, before you put it into your hand, you may put it onto your Bench. If you put this Pokémon onto your Bench in this way, flip a coin. If heads, take 1 more Prize card.")return {type:'passive',effect:{type:'sm7Rule',rule:'sv151LuckyBonus'}};

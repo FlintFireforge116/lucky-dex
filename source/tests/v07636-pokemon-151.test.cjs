@@ -10,7 +10,7 @@ test('pinned 151 catalogue has all 207 numbered prints with exact identity, rule
   if(c.kind==='pokemon'){assert.deepEqual([c.hp,c.types,c.evolvesFrom,c.retreat,c.weakness,c.resistance],[p.hp,p.types,p.evolvesFrom,p.retreat,p.weakness,p.resistance]);assert.deepEqual(c.attacks.map(a=>[a.name,a.cost,a.damageText||'',a.text]),p.attacks.map(a=>[a.name,a.cost.map(x=>codes[x]).join(''),a.damage,a.text]));assert.deepEqual(c.abilities.map(a=>[a.name,a.text]),p.abilities.map(a=>[a.name,a.text]));for(const a of c.attacks)if(c.battleEnabled){assert.ok(fx.supportsEffect(a.effect),`${c.id} ${a.name}: ${fx.validateEffect(a.effect).join('; ')}`);assert.equal(a.effect.type==='noop',!a.text);}}
   if(c.kind==='trainer')assert.equal(c.text,p.rules[0]);if(!c.battleEnabled){assert.equal(c.deckEligible,false);assert.ok(c.support.reasons.length);}
  }
- for(const n of [65,27])assert.equal(sv.cardById('sv3pt5-'+n).battleEnabled,false);
+ for(const n of [65])assert.equal(sv.cardById('sv3pt5-'+n).battleEnabled,false);
  for(const n of [1,2,13,17,32,50,63,83,86,115,206,207])assert.equal(sv.cardById('sv3pt5-'+n).battleEnabled,true);
  assert.equal(sv.cardById('sv3pt5-207').deckEligible,false);
  assert.ok(sv.CARDS.filter(c=>c.battleEnabled).length>=50);
@@ -33,7 +33,7 @@ for(const side of ['player','opponent']){
 test('151 stage 2 exact shared effects and explicit remaining dependencies',()=>{
  const by=n=>sv.cardById('sv3pt5-'+n);
  for(const n of [3,4,8,10,18,22,25,35,38,52,55,56,59,82,88,89,97,98,120,123,125,126,127,129,130,134,135,136,144,149,155,159,165])assert.ok(by(n).battleEnabled,`${n}: ${by(n).support.reasons}`);
- for(const n of [65,27])assert.equal(by(n).battleEnabled,false,by(n).name);
+ for(const n of [65])assert.equal(by(n).battleEnabled,false,by(n).name);
  for(const c of sv.CARDS.filter(c=>c.battleEnabled)){
    for(const a of c.abilities||[])assert.ok(fx.supportsEffect(a.effect),`${c.id} ${a.name}`);
    if(c.kind==='trainer')assert.ok(fx.supportsEffect(c.effect),c.id);
@@ -390,7 +390,7 @@ for(const side of ['player','opponent']){
 }
 
 // Stage 13: next-turn coin restriction, both shared and legacy coin routes.
-test('151 stage 13 enables both Psyduck prints only',()=>{for(const n of [54,175])assert.ok(sv.cardById('sv3pt5-'+n).battleEnabled);assert.equal(sv.CARDS.filter(c=>c.battleEnabled).length,203);});
+test('151 stage 13 enables both Psyduck prints',()=>{for(const n of [54,175])assert.ok(sv.cardById('sv3pt5-'+n).battleEnabled);assert.equal(sv.CARDS.filter(c=>c.battleEnabled).length,204);});
 for(const side of ['player','opponent']){
  const foe=side==='player'?'opponent':'player';
  test(side+' Overthink marks next opposing turn, not the other player; shared flips advance RNG and override guaranteed heads',()=>{
@@ -402,4 +402,39 @@ for(const side of ['player','opponent']){
   const {s,them}=scene(side,'sv3pt5-54');attack(s,side);them.active.conditions={confusion:true};s.rngState=1;const target=them.active;const a=core.legalActions(s,foe).find(a=>a.type==='attack');assert.ok(a);core.applyAction(s,foe,a);assert.ok(s.log.some(x=>x.type==='coin'&&x.side===foe&&x.status==='confusion'&&x.heads===false));assert.equal(target.damage,30);
  });
  test(side+' Overthink does not force Pokémon Checkup recovery flips',()=>{const {s,them}=scene(side,'sv3pt5-54');attack(s,side);them.active.conditions={sleep:true};s.rngState=1;const next=core.legalActions(s,foe).find(a=>a.type==='endTurn');assert.ok(next);core.applyAction(s,foe,next);assert.ok(s.log.some(x=>x.type==='coin'&&x.side===foe&&x.status==='sleep'&&x.heads===true));});
+}
+
+// Stage 14: Sand Screen only protects opposing Trainer recovery to deck.
+test('151 Sandshrew enabled; only Alakazam ex remains gated',()=>{assert.ok(sv.cardById('sv3pt5-27').battleEnabled);assert.deepEqual(sv.coverage().disabled,['sv3pt5-65','sv3pt5-188','sv3pt5-201']);});
+for(const side of ['player','opponent']){
+ test(side+' Sand Screen blocks Pal Pad on Active and Bench, respects suppression',()=>{
+  for(const mode of ['active','bench','suppressed','absent']){
+   const {s,us,them}=scene(side,'sv3pt5-6');const sand=core.makePokemonSlot('sv3pt5-27',1,'sand');if(mode==='active'||mode==='suppressed')them.active=sand;else if(mode==='bench')them.bench[0]=Object.assign(sand,{benchSlot:0});if(mode==='suppressed')sand.sm10AbilityLockUntil=s.turnNumber;
+   us.hand=[{uid:'pad',cardId:'sm5-132'}];us.discard=[{uid:'support',cardId:'sv3pt5-160'}];
+   const a=core.legalActions(s,side).find(x=>x.type==='trainer'&&x.cardId==='sm5-132');if(a){core.applyAction(s,side,a);const pick=core.legalActions(s,side).find(x=>x.choiceCardId==='sv3pt5-160');if(pick)core.applyAction(s,side,pick);}
+   assert.equal(us.deck.some(x=>x.uid==='support'),mode==='suppressed'||mode==='absent',mode);assert.equal(us.discard.some(x=>x.uid==='support'),mode==='active'||mode==='bench',mode);
+  }
+ });
+ test(side+' Sand Screen filters mixed Team Yell recovery and preserves index',()=>{
+  const {s,us,them}=scene(side,'sv3pt5-6');them.active=core.makePokemonSlot('sv3pt5-27',1,'sand');us.hand=[{uid:'cheer',cardId:'swsh9-149'}];us.discard=[{uid:'support',cardId:'sv3pt5-160'},{uid:'pokemon',cardId:'sv3pt5-1'}];trainer(s,side,'swsh9-149');
+  const opts=core.legalActions(s,side);assert.ok(!opts.some(x=>x.choiceCardId==='sv3pt5-160'));const p=opts.find(x=>x.choiceCardId==='sv3pt5-1');assert.equal(p.choiceDiscardIndex,1);core.applyAction(s,side,p);assert.ok(us.deck.some(x=>x.uid==='pokemon'));assert.ok(us.discard.some(x=>x.uid==='support'));
+ });
+ test(side+' Sand Screen does not block attack recovery',()=>{
+  const {s,us,them}=scene(side,'sv3pt5-6');them.active=core.makePokemonSlot('sv3pt5-27',1,'sand');us.discard=[{uid:'attack-recover',cardId:'sv3pt5-163'}];fx.applyEffect({type:'fossilRecycle'},{...core.effectContext(s,side,{choiceDiscardIndex:0}),isAttack:true,resolvingChoice:true});assert.equal(us.deck[0].uid,'attack-recover');
+ });
+ test(side+' Sand Screen protects Trainers during Trash Exchange but permits Pokémon',()=>{
+  const {s,us,them}=scene(side,'sv3pt5-6');them.active=core.makePokemonSlot('sv3pt5-27',1,'sand');us.discard=[{uid:'protected',cardId:'sv3pt5-160'},{uid:'allowed',cardId:'sv3pt5-1'}];us.deck=[{uid:'old',cardId:'sv3pt5-4'}];const ctx={...core.effectContext(s,side),trainerRef:{uid:'trash',cardId:'gym1-126'},shuffle:()=>{}};fx.applyEffect({type:'gymRule',rule:'trashExchange'},ctx);assert.deepEqual(us.deck.map(x=>x.uid),['allowed']);assert.deepEqual(new Set(us.discard.map(x=>x.uid)),new Set(['protected','old']));
+ });
+}
+for(const side of ['player','opponent']){
+ test(side+' Sand Screen prevents recovery through all remaining audited Trainer families',()=>{
+  for(const [id,refId] of [['base3-61','sv3pt5-160'],['bw2-96','sv3pt5-160'],['hgss2-76','sv3pt5-160'],['sv1-182','sv3pt5-160'],['sm9-139','sm8-172'],['sm10-181','sv3pt5-160'],['sm12-195','sv3pt5-163'],['swsh9-148','sv3pt5-163'],['swsh10-138','sv3pt5-160']]){
+   const {s,us,them}=scene(side,'sv3pt5-6');them.active=core.makePokemonSlot('sv3pt5-27',1,'sand');us.discard=[{uid:'blocked',cardId:refId},{uid:'allowed',cardId:'sv3pt5-1'}];us.hand=[{uid:'played',cardId:id}];const ctx={...core.effectContext(s,side,{trainerRef:us.hand[0]}),trainerRef:us.hand[0],random:()=>id==='hgss2-76'?.9:0};
+   fx.applyEffect(data.cardById(id).effect,ctx);
+   for(let n=0;n<12&&s.phase==='effectChoice';n++){
+    const opts=core.legalActions(s,s.choiceSide||side);assert.ok(!opts.some(a=>a.choiceCardId===refId),id);const a=opts.find(x=>!x.choiceSkip);if(!a)break;core.applyAction(s,s.choiceSide||side,a);
+   }
+   assert.ok(us.discard.some(x=>x.uid==='blocked'),id);assert.ok(!us.deck.some(x=>x.uid==='blocked'),id);
+  }
+ });
 }
