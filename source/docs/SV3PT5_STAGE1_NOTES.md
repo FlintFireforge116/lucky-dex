@@ -17,3 +17,7 @@ Eleven more battle-enabled prints using shared discard, timing, conditional priz
 ## v0.69.640 stage 5
 
 Nine additional battle-enabled prints using shared attack copying, conditional HP, damage-counter draw, Bench synergy, spread and weakness protection. Remaining unsupported cards and mixed-only restriction are retained. Full gameplay and APK validation pending CI.
+
+## v0.69.641 recovery
+
+Both v639/v640 failed on Slow-Acting Acid validation: the runtime already resolves eventPokemon but the counter validator omitted it. Corrected the selector without changing the attack or any card eligibility. Added eight direct scheduler outcomes (both sides, normal resolution, clear, switch, original target removed), diagnostic assertions and a reusable lightweight engine-compatibility preflight. All 154 enabled prints retained. Full APK validation pending CI.

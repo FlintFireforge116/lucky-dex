@@ -7,7 +7,7 @@ test('pinned 151 catalogue has all 207 numbered prints with exact identity, rule
  assert.equal(sv.CARDS.length,207);assert.equal(new Set(sv.CARDS.map(c=>c.id)).size,207);
  const codes={Grass:'G',Fire:'R',Water:'W',Lightning:'L',Psychic:'P',Fighting:'F',Darkness:'D',Metal:'M',Colorless:'C',Dragon:'N',Fairy:'Y'};
  for(const p of raw){const c=sv.cardById(p.id);assert.equal(data.cardById(p.id),c);assert.deepEqual([c.name,c.number,c.rarity,c.kind,c.image,c.imageLarge],[p.name,p.number,p.rarity,p.kind,p.image,p.imageLarge]);
-  if(c.kind==='pokemon'){assert.deepEqual([c.hp,c.types,c.evolvesFrom,c.retreat,c.weakness,c.resistance],[p.hp,p.types,p.evolvesFrom,p.retreat,p.weakness,p.resistance]);assert.deepEqual(c.attacks.map(a=>[a.name,a.cost,a.damageText||'',a.text]),p.attacks.map(a=>[a.name,a.cost.map(x=>codes[x]).join(''),a.damage,a.text]));assert.deepEqual(c.abilities.map(a=>[a.name,a.text]),p.abilities.map(a=>[a.name,a.text]));for(const a of c.attacks)if(c.battleEnabled){assert.ok(fx.supportsEffect(a.effect));assert.equal(a.effect.type==='noop',!a.text);}}
+  if(c.kind==='pokemon'){assert.deepEqual([c.hp,c.types,c.evolvesFrom,c.retreat,c.weakness,c.resistance],[p.hp,p.types,p.evolvesFrom,p.retreat,p.weakness,p.resistance]);assert.deepEqual(c.attacks.map(a=>[a.name,a.cost,a.damageText||'',a.text]),p.attacks.map(a=>[a.name,a.cost.map(x=>codes[x]).join(''),a.damage,a.text]));assert.deepEqual(c.abilities.map(a=>[a.name,a.text]),p.abilities.map(a=>[a.name,a.text]));for(const a of c.attacks)if(c.battleEnabled){assert.ok(fx.supportsEffect(a.effect),`${c.id} ${a.name}: ${fx.validateEffect(a.effect).join('; ')}`);assert.equal(a.effect.type==='noop',!a.text);}}
   if(c.kind==='trainer')assert.equal(c.text,p.rules[0]);if(!c.battleEnabled){assert.equal(c.deckEligible,false);assert.ok(c.support.reasons.length);}
  }
  for(const n of [65,113,132,152,153,154])assert.equal(sv.cardById('sv3pt5-'+n).battleEnabled,false);
@@ -149,3 +149,35 @@ test('151 stage 5 exact attack copy, damage counters and modifiers',()=>{
  }
  assert.deepEqual(by(164).effect,{type:'weaknessGuard',duration:'whileInPlay',scope:'self',filter:{stage:'Basic'}});
 });
+
+// Exercise the real scheduler, validator, and counter resolver without loading the full catalogue.
+function check151DelayedCounters(sv,fx,assert){
+ const effect=sv.cardById('sv3pt5-71').attacks[1].effect;
+ const lookup=id=>sv.cardById(id);
+ assert.ok(fx.supportsEffect(effect),fx.validateEffect(effect).join('; '));
+ assert.equal(fx.supportsEffect({...effect,effect:{...effect.effect,target:'invalid'}}),false);
+ assert.equal(fx.supportsEffect({...effect,effect:{...effect.effect,amount:125}}),false);
+ const make=(id,uid)=>({cardId:id,uid,damage:0,energy:{},conditions:{},specialEnergy:[],stack:[]});
+ for(const side of ['player','opponent'])for(const mode of ['remain','clear','switch','removed']){
+  const label=side+' '+mode,foeSide=side==='player'?'opponent':'player';
+  const att=make('sv3pt5-71','a'),def=make('sv3pt5-149','d'),bench={...make('sv3pt5-149','b'),benchSlot:0};
+  const board=active=>({active,bench:[],hand:[],deck:[],discard:[],prizes:[],turnCount:4});
+  const state={format:'classic',turnNumber:8,activeSide:side,sides:{[side]:board(att),[foeSide]:board(def)},log:[],modifiers:[],delayedEffects:[]};
+  state.sides[foeSide].bench=[bench];
+  const ctx=(who=side,source=att)=>({state,side:who,foeSide:who==='player'?'opponent':'player',attacker:source,defender:state.sides[who==='player'?'opponent':'player'].active,cardById:lookup,random:()=>0.1,action:{},isAttack:false});
+  fx.applyEffect(effect,{...ctx(),isAttack:true});
+  assert.equal(state.delayedEffects.length,1,label);assert.equal(state.delayedEffects[0].targetUid,def.uid,label);
+  assert.equal(def.damage,0,label);fx.resolveDelayedEffects(state,side,lookup,ctx);assert.equal(def.damage,0,label);
+  state.turnNumber=9;state.activeSide=foeSide;
+  if(mode==='clear')fx.clearTemporaryEffects(state,def);
+  if(mode==='switch')assert.ok(fx.switchPokemon(state.sides[foeSide],0,state));
+  if(mode==='removed'){state.sides[foeSide].active=bench;state.sides[foeSide].bench=[];}
+  fx.resolveDelayedEffects(state,foeSide,lookup,ctx);
+  const expected=mode==='remain'?120:0;
+  assert.equal(def.damage,expected,label);assert.equal(bench.damage,0,label);assert.equal(state.delayedEffects.length,0,label);
+  fx.resolveDelayedEffects(state,foeSide,lookup,ctx);assert.equal(def.damage,expected,label+' resolves only once');
+  if(mode==='remain')assert.equal(state.log.filter(x=>x.type==='damageCounters'&&x.amount===120).length,1,label);
+ }
+}
+
+test('151 Slow-Acting Acid resolves twelve counters on the original defender exactly once, and clears on switch/removal',()=>check151DelayedCounters(sv,fx,assert));
