@@ -8,8 +8,8 @@ android {
         applicationId 'com.example.luckydex'
         minSdk 26
         targetSdk 35
-        versionCode 7635
-        versionName '0.69.635'
+        versionCode 7636
+        versionName '0.69.636'
     }
 
     signingConfigs {
@@ -1688,4 +1688,15 @@ tasks.register('smokeObsidianFlamesForApk', Exec) {
 }
 tasks.matching { it.name == 'preBuild' || (it.name.startsWith('merge') && it.name.endsWith('Assets')) }.configureEach {
     dependsOn tasks.named('smokeObsidianFlamesForApk')
+}
+
+
+// 151 stage 1: structural/effect regression and mixed-pool availability.
+tasks.register('auditPokemon151ForApk', Exec) {
+    dependsOn tasks.named('smokeObsidianFlamesForApk')
+    workingDir rootProject.projectDir
+    commandLine 'node', '--test', 'tests/v07636-pokemon-151.test.cjs', 'tests/v07401b-sm1-deck-picker-availability.test.cjs'
+}
+tasks.matching { it.name == 'preBuild' || (it.name.startsWith('merge') && it.name.endsWith('Assets')) }.configureEach {
+    dependsOn tasks.named('auditPokemon151ForApk')
 }
