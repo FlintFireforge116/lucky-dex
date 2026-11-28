@@ -693,6 +693,13 @@ function buildDeck(rows,options={}){
  const cards=[],counts=new Map(),nameCounts=new Map();
  const ownedTrainerPool=pool.filter(c=>c.kind==='trainer'&&!isEvolutionFossil(c));
  const adaptiveSupport=new Set(ownedTrainerPool.map(c=>c.setId)).size>=4&&new Set(ownedTrainerPool.map(c=>classicCardName(c.name))).size>=24;
+ // Broad, automatic competitive builds have enough choices to aim for a
+ // varied consistency package. Keep focused, saved, random and narrow decks
+ // on their established composition paths. A compact retry is internal and
+ // uses the same seed/core; it never removes an existing or essential card.
+ const variedTrainerPlan=adaptiveSupport&&style==='competitive'&&!focus&&!existing.length&&requestedEnergy.length===1;
+ const compactTrainerCore=variedTrainerPlan&&options._compactTrainerCore===true;
+ const distinctTrainerGoal=6;
  // A seed changes close calls, not whether a card is legal or its strategic role.
  const supportSeed=Number(options.randomSeed)||0;
  const supportJitter=new Map();
@@ -1119,7 +1126,7 @@ function buildDeck(rows,options={}){
    if(isEvolutionFossil(c)&&fossilEvolutionInDeck(c,cards))add(c,1);
    if(isFossilSupport(c)&&anyFossilEvolutionInDeck(cards))add(c,1);
  }
- const mainCopies=mainLine.length>=2?3:4;addLine(mainLine,mainCopies);
+ const mainCopies=(mainLine.length>=2?3:4)-(compactTrainerCore?1:0);addLine(mainLine,mainCopies);
  // Reserve the Baby's real Basic evolution partner *before* generic
  // Pokémon and Trainers fill the deck. This is not an ordinary evolution line
  // and must not be inferred from the evolvesFrom field.
@@ -1230,7 +1237,7 @@ function buildDeck(rows,options={}){
    const namedPartners=endpointCards(pokemonPool).filter(c=>c.id!==main.id&&c.stage!=='Basic'&&
       namedEffects.includes(c.name.toLowerCase())&&familyLine(c,evolutionPool).length>=2&&canFitEnergy(c));
    const partner=chooseCandidate(namedPartners.length?namedPartners:partnerCandidates);
-   if(partner)addLine(familyLine(partner,evolutionPool),namedPartners.length?1:2);
+   if(partner)addLine(familyLine(partner,evolutionPool),(namedPartners.length||compactTrainerCore)?1:2);
  }
  // Printed in-play partner effects are optional support plans. A Water
  // Regice ex deck may Bench Regirock ex to unlock Iceberg Crush without
@@ -1280,7 +1287,7 @@ function buildDeck(rows,options={}){
  });
  if(pokemonCount()<12){
    const support=chooseCandidate(usefulBasics);
-   if(support)add(support,Math.min(2,room(support)));
+   if(support)add(support,Math.min(compactTrainerCore?1:2,room(support)));
  }
  // Legends Awakened: these Powers require physically distinct form prints
  // in the deck. The battle engine already swaps from the actual deck; having
@@ -1664,6 +1671,11 @@ function buildDeck(rows,options={}){
    if(card.trainerType==='AttachedTrainer'||card.trainerType==='Tool')penalty+=8;
    return base-penalty;
  }
+ // Count playable Trainer names, not print variants or Fossil prerequisites.
+ // A full catalogue can still produce a tight core after its real physical
+ // Energy packages. Prefer distinct useful support over filler Energy or
+ // repeat copies when the remaining slots cannot otherwise reach the goal.
+ const distinctUsefulTrainers=ids=>new Set(ids.map(classic.cardById).filter(c=>c?.kind==='trainer'&&!isEvolutionFossil(c)&&Number.isFinite(cachedTrainerScore(c))).map(c=>classicCardName(c.name)));
  function fillTrainerSlots(){
    const blocked=new Set();
    while(cards.length<30){
@@ -1674,7 +1686,15 @@ function buildDeck(rows,options={}){
        (c.kind!=='trainer'||trainerIsUseful(c))).map(card=>({card,score:marginalTrainerScore(card)}))
        .filter(x=>Number.isFinite(x.score)).sort((a,b)=>b.score-a.score||a.card.id.localeCompare(b.card.id));
      if(!ranked.length)break;
-     if(!add(ranked[0].card,1))blocked.add(ranked[0].card.id);
+     let choice=ranked[0].card;
+     if(variedTrainerPlan){
+       const names=distinctUsefulTrainers(cards),deficit=distinctTrainerGoal-names.size;
+       if(deficit>0&&(compactTrainerCore||30-cards.length<=deficit+1)){
+         const next=ranked.find(({card})=>card.kind==='trainer'&&!isEvolutionFossil(card)&&!names.has(classicCardName(card.name)));
+         if(next)choice=next.card;
+       }
+     }
+     if(!add(choice,1))blocked.add(choice.id);
    }
  }
  fillTrainerSlots();
@@ -1815,6 +1835,30 @@ function buildDeck(rows,options={}){
    if(replace>=0)cards[replace]='swsh4-66';
  }
  const legal=decks.validateDraft(cards,rows,{requireFull:true});if(!legal.ok)return {ok:false,cards,energyTypes:selectedTypes,errors:legal.errors,warnings:[],strategy:''};
+ // If the normal core consumed too much room, rebuild it once with fewer
+ // repeat Pokémon/partner copies. Re-run ALL dependency and eligibility
+ // checks instead of deleting Special Energy or required Trainer packages
+ // from the finished deck. Retain the original if the compact build fails
+ // or changes the featured Pokémon. Sparse or narrowly useful pools are
+ // not forced to meet an artificial Trainer quota.
+ if(variedTrainerPlan&&!compactTrainerCore){
+   const current=distinctUsefulTrainers(cards);
+   if(current.size<distinctTrainerGoal){
+     const stadiums=cards.filter(id=>classic.cardById(id)?.trainerType==='Stadium');
+     const alternatives=new Set(ownedTrainerPool.filter(c=>!current.has(classicCardName(c.name))&&room(c)>0&&trainerIsUseful(c)&&
+       !(c.trainerType==='Stadium'&&stadiums.length&&!stadiums.includes(c.id))).map(c=>classicCardName(c.name)));
+     if(current.size+alternatives.size>=distinctTrainerGoal){
+       const compact=buildDeck(rows,{...options,_compactTrainerCore:true});
+       if(compact.ok&&compact.focusCardId===(featured?.id||main.id)){
+         const chosen=compact.cards.map(classic.cardById).filter(Boolean);
+         const ctx=synergy.context(chosen,compact.energyTypes);
+         const improved=new Set(chosen.filter(c=>c.kind==='trainer'&&!isEvolutionFossil(c)&&Number.isFinite(synergy.trainerScore(c,ctx))).map(c=>classicCardName(c.name)));
+         const hasConsistency=chosen.some(c=>c.kind==='trainer'&&Number.isFinite(synergy.trainerScore(c,ctx))&&synergy.metadata(c).roles.some(role=>role==='search'||role==='draw'));
+         if(improved.size>current.size&&hasConsistency&&!decks.analyzeDeck(compact.cards,compact.energyTypes).missingEnergyTypes.length)return compact;
+       }
+     }
+   }
+ }
  const analysis=decks.analyzeDeck(cards),conditionalDual=requestedEnergy.length===2&&requestedEnergy.every(type=>conditionalAttackTypes(main).includes(type)),
   energyTypes=(main.pokemonEx&&main.stage==='Stage 2')||stage2Beneficiary||conditionalPayoffTypes.some(t=>selectedTypes.includes(t))||requestedEnergy.length===1||conditionalDual||lineEnergy.length>=2?selectedTypes.slice(0,maxEnergyTypes):(allowMixedEnergy&&requestedEnergy.length===2?requestedEnergy:neededTypes().length?analysis.recommendedEnergyTypes.slice(0,2):selectedTypes.slice(0,maxEnergyTypes));
  const finalEnergy=energyTypes.length?energyTypes:selectedTypes.slice(0,maxEnergyTypes);
