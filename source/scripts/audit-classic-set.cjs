@@ -313,6 +313,8 @@ function runSmokes(cards,{data,core,opponents}){
     if(['sv1','sv4pt5'].includes(card.setId)&&card.kind==='trainer'){
       const own=s.sides[side],enemy=s.sides[side==='player'?'opponent':'player'];
       if(card.name==='Picnic Basket'){own.active.damage=30;enemy.active.damage=20;}
+      if(card.name==='Atticus')enemy.active.conditions.poison=true;
+      if(card.name==='Clive')enemy.hand.push({cardId:'sv4pt5-82',uid:'audit-clive-supporter'});
       if(card.name==='Rare Candy'){own.bench[0].cardId='sv1-13';own.bench[0].stack=['sv1-13'];own.hand.push({cardId:'sv1-15',uid:'sv-candy-stage2'});}
       if(card.name==='Ultra Ball'){own.hand.push({cardId:'sv1-13',uid:'sv-ultra-1'},{cardId:'sv1-14',uid:'sv-ultra-2'});}
     }
