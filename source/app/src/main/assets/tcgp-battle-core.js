@@ -2089,7 +2089,7 @@
       for(const ref of s.discard||[]){
         if(!['bw10-3','bw10-27','bw10-53','bw10-102'].includes(ref.cardId))continue;
         if(s.bw10DiscardAbilityUsed[ref.uid]===Number(s.turnCount))continue;
-        if(ref.cardId==='bw10-102'&&s.hand.length>=Number(s.handLimit||8))continue;
+        if(ref.cardId==='bw10-102'&&(s.hand.length>=Number(s.handLimit||8)||effects.slimeMoldActive(state,side,data.cardById)))continue;
         actions.push({type:'bw10DiscardAbility',cardId:ref.cardId,sourceUid:ref.uid});
       }
     }
@@ -3097,7 +3097,7 @@
           }
           state.log.push({type:'founjaTeleport',side,cardId:slot.cardId});
         }
-        else if(slot.pl2WaterRescue&&!scoopBlocked){delete slot.pl2WaterRescue;for(const [i,id] of (slot.stack||[slot.cardId]).entries())s.hand.push({uid:slot.uid+'-waterrescue-'+i,cardId:id});s.hand.push(...toolsOf(slot),...temporaryTrainersOf(slot),...(slot.specialEnergy||[]));const ids={Grass:'dp1-123',Fire:'dp1-124',Water:'dp1-125',Lightning:'dp1-126',Psychic:'dp1-127',Fighting:'dp1-128',Darkness:'lental-basic-darkness',Metal:'lental-basic-metal',Fairy:'xy1-140'};for(const [type,n] of Object.entries(slot.energy||{}))for(let i=0;i<Number(n||0);i++)s.hand.push({uid:slot.uid+'-waterrescue-energy-'+type+'-'+i,cardId:ids[type],zoneGenerated:true});state.log.push({type:'pl2WaterRescue',side,cardId:slot.cardId});}
+        else if(slot.pl2WaterRescue&&!scoopBlocked&&!effects.slimeMoldActive(state,side,data.cardById)){delete slot.pl2WaterRescue;for(const [i,id] of (slot.stack||[slot.cardId]).entries())s.hand.push({uid:slot.uid+'-waterrescue-'+i,cardId:id});s.hand.push(...toolsOf(slot),...temporaryTrainersOf(slot),...(slot.specialEnergy||[]));const ids={Grass:'dp1-123',Fire:'dp1-124',Water:'dp1-125',Lightning:'dp1-126',Psychic:'dp1-127',Fighting:'dp1-128',Darkness:'lental-basic-darkness',Metal:'lental-basic-metal',Fairy:'xy1-140'};for(const [type,n] of Object.entries(slot.energy||{}))for(let i=0;i<Number(n||0);i++)s.hand.push({uid:slot.uid+'-waterrescue-energy-'+type+'-'+i,cardId:ids[type],zoneGenerated:true});state.log.push({type:'pl2WaterRescue',side,cardId:slot.cardId});}
         else if(state.format==='classic'&&cause==='attack'&&eventSource?.attack&&eventSource.side===foeSide&&
           !scoopBlocked&&Number(eventSource.damage||0)>0&&Number(eventSource.turn)===Number(state.turnNumber)&&activeToolsOf(state,slot).some(ref=>ref.cardId==='xy10-97')){
           // Fates Collide Energy Pouch: only actual Basic Energy attached to
