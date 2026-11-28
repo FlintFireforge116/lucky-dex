@@ -10,7 +10,7 @@ test('pinned 151 catalogue has all 207 numbered prints with exact identity, rule
   if(c.kind==='pokemon'){assert.deepEqual([c.hp,c.types,c.evolvesFrom,c.retreat,c.weakness,c.resistance],[p.hp,p.types,p.evolvesFrom,p.retreat,p.weakness,p.resistance]);assert.deepEqual(c.attacks.map(a=>[a.name,a.cost,a.damageText||'',a.text]),p.attacks.map(a=>[a.name,a.cost.map(x=>codes[x]).join(''),a.damage,a.text]));assert.deepEqual(c.abilities.map(a=>[a.name,a.text]),p.abilities.map(a=>[a.name,a.text]));for(const a of c.attacks)if(c.battleEnabled){assert.ok(fx.supportsEffect(a.effect),`${c.id} ${a.name}: ${fx.validateEffect(a.effect).join('; ')}`);assert.equal(a.effect.type==='noop',!a.text);}}
   if(c.kind==='trainer')assert.equal(c.text,p.rules[0]);if(!c.battleEnabled){assert.equal(c.deckEligible,false);assert.ok(c.support.reasons.length);}
  }
- for(const n of [65,113,132,152,153,154])assert.equal(sv.cardById('sv3pt5-'+n).battleEnabled,false);
+ for(const n of [65,113,132,154])assert.equal(sv.cardById('sv3pt5-'+n).battleEnabled,false);
  for(const n of [1,2,13,17,32,50,63,83,86,115,206,207])assert.equal(sv.cardById('sv3pt5-'+n).battleEnabled,true);
  assert.equal(sv.cardById('sv3pt5-207').deckEligible,false);
  assert.ok(sv.CARDS.filter(c=>c.battleEnabled).length>=50);
@@ -33,7 +33,7 @@ for(const side of ['player','opponent']){
 test('151 stage 2 exact shared effects and explicit remaining dependencies',()=>{
  const by=n=>sv.cardById('sv3pt5-'+n);
  for(const n of [3,4,8,10,18,22,25,35,38,52,55,56,59,82,88,89,97,98,120,123,125,126,127,129,130,134,135,136,144,149,155,159,165])assert.ok(by(n).battleEnabled,`${n}: ${by(n).support.reasons}`);
- for(const n of [65,113,132,152,153,154])assert.equal(by(n).battleEnabled,false,by(n).name);
+ for(const n of [65,113,132,154])assert.equal(by(n).battleEnabled,false,by(n).name);
  for(const c of sv.CARDS.filter(c=>c.battleEnabled)){
    for(const a of c.abilities||[])assert.ok(fx.supportsEffect(a.effect),`${c.id} ${a.name}`);
    if(c.kind==='trainer')assert.ok(fx.supportsEffect(c.effect),c.id);
@@ -262,7 +262,7 @@ for(const side of ['player','opponent']){
 // Stage 8: named Supporters and their dependent Pokémon.
 test('151 stage 8 enables ten prints and preserves Supporter artwork parity',()=>{
  for(const n of [53,112,114,160,161,178,196,197,203,204])assert.ok(sv.cardById('sv3pt5-'+n).battleEnabled,n);
- assert.equal(sv.CARDS.filter(c=>c.battleEnabled).length,181);
+ assert.equal(sv.CARDS.filter(c=>c.battleEnabled).length>=181,true);
  for(const [a,b] of [[160,196],[160,203],[161,197],[161,204]])assert.deepEqual(sv.cardById('sv3pt5-'+a).effect,sv.cardById('sv3pt5-'+b).effect);
 });
 function trainer(s,side,id){const a=core.legalActions(s,side).find(a=>a.type==='trainer'&&a.cardId===id);assert.ok(a,JSON.stringify(core.legalActions(s,side)));core.applyAction(s,side,a);}
@@ -288,3 +288,41 @@ for(const side of ['player','opponent']){
   const {s,us}=scene(side,'sv3pt5-53');us.hand=[];us.deck=[{uid:'gio-search',cardId:'sv3pt5-204'},{uid:'other',cardId:'sv3pt5-203'}];const a=core.legalActions(s,side).find(a=>a.type==='ability'&&a.target==='active');assert.ok(a,JSON.stringify(core.legalActions(s,side)));core.applyAction(s,side,a);const pick=core.legalActions(s,side).find(x=>x.choiceCardId==='sv3pt5-204');assert.ok(pick,JSON.stringify(core.legalActions(s,side)));core.applyAction(s,side,pick);assert.equal(us.hand[0].uid,'gio-search');assert.equal(!!us.supporterUsed,false);
  });
 }
+
+// Stage 9: real printed Dome and Helix Fossil Abilities and their evolution lines.
+test('151 stage 9 enables seven prints, preserves Amber gate and includes missing printed Fossil Abilities',()=>{
+ for(const n of [138,139,140,141,152,153,180])assert.ok(sv.cardById('sv3pt5-'+n).battleEnabled,n);
+ assert.equal(sv.CARDS.filter(c=>c.battleEnabled).length,188);
+ assert.equal(sv.cardById('sv3pt5-154').battleEnabled,false);assert.equal(sv.cardById('sv3pt5-142').battleEnabled,false);
+ assert.equal(sv.cardById('sv3pt5-152').abilities[0].name,'Domed Armor');assert.equal(sv.cardById('sv3pt5-153').abilities[0].name,'Helical Swell');
+});
+for(const side of ['player','opponent']){
+ const foe=side==='player'?'opponent':'player';
+ test(side+' Fossil placement and exact evolution dependencies',()=>{
+  for(const [fossil,evolution,wrong,final] of [[152,140,138,141],[153,138,140,139]]){
+   const {s,us}=scene(side,'sv3pt5-1');us.bench.pop();us.hand=[{uid:'fossil',cardId:'sv3pt5-'+fossil},{uid:'evo',cardId:'sv3pt5-'+evolution},{uid:'wrong',cardId:'sv3pt5-'+wrong},{uid:'final',cardId:'sv3pt5-'+final}];
+   trainer(s,side,'sv3pt5-'+fossil);const slot=us.bench.find(p=>p.uid==='fossil');assert.ok(slot);assert.equal(data.cardById(slot.cardId).hp,60);assert.ok(!core.legalActions(s,side).some(a=>a.type==='evolve'&&a.benchIndex===slot.benchSlot));
+   slot.playedOnSideTurn=1;const actions=core.legalActions(s,side).filter(a=>a.type==='evolve'&&a.benchIndex===slot.benchSlot);assert.equal(actions.length,1);core.applyAction(s,side,actions[0]);assert.equal(slot.cardId,'sv3pt5-'+evolution);slot.playedOnSideTurn=1;const stage2=core.legalActions(s,side).find(a=>a.type==='evolve'&&a.benchIndex===slot.benchSlot);assert.ok(stage2);core.applyAction(s,side,stage2);assert.equal(slot.cardId,'sv3pt5-'+final);
+  }
+ });
+ test(side+' Domed Armor reduces attack damage by 30 and respects Ability suppression',()=>{
+  for(const suppressed of [false,true]){const {s,them}=scene(side,'sv3pt5-117');them.active=core.makePokemonSlot('sv3pt5-152',1,'fossil');const target=them.active;if(suppressed)them.swsh10CologneTurn=s.turnNumber;assert.equal(fx.modifierAmount(s,foe,target,'damageReduction',data.cardById),suppressed?0:30);attack(s,side,0);assert.equal(target.damage,suppressed?50:20);}
+ });
+ test(side+' Helical Swell and Primordial Tentacles lock only the opposing player while Active',()=>{
+  for(const [id,kind] of [[153,'trainer'],[139,'retreat']]){
+   const {s,us,them}=scene(side,'sv3pt5-1');them.active=core.makePokemonSlot('sv3pt5-'+id,1,'fossil');us.hand=[{uid:'stadium',cardId:'sm4-99'}];const legal=()=>core.legalActions(s,side).some(a=>a.type===kind&&(kind!=='trainer'||a.cardId==='sm4-99'));assert.equal(legal(),false);them.swsh10CologneTurn=s.turnNumber;assert.equal(legal(),true);delete them.swsh10CologneTurn;them.bench[0]=them.active;them.active=core.makePokemonSlot('sv3pt5-1',1,'new');assert.equal(legal(),true);
+  }
+ });
+ test(side+' Ancient Way quadruples opposing Active weakness with Kabutops on Bench, not own weakness',()=>{
+  const {s,us,them}=scene(side,'sv3pt5-4');them.active=core.makePokemonSlot('sv3pt5-3',1,'target');us.bench[0]=core.makePokemonSlot('sv3pt5-141',1,'kabutops');assert.equal(fx.attackDamageWithState(s,side,us.active,foe,them.active,30,data.cardById),120);them.bench[0]=core.makePokemonSlot('sv3pt5-3',1,'bench');assert.notEqual(fx.attackDamageWithState(s,side,us.active,foe,them.bench[0],30,data.cardById),120);us.bench[0]=core.makePokemonSlot('sv3pt5-1',1,'other');assert.equal(fx.attackDamageWithState(s,side,us.active,foe,them.active,30,data.cardById),60);
+ });
+ test(side+' Omanyte returns chosen physical Energy without Giovanni attachment',()=>{
+  const {s,us,them}=scene(side,'sv3pt5-180');them.active=core.makePokemonSlot('sv3pt5-3',1,'target');them.active.energy={Water:1};them.active.specialEnergy=[{uid:'special-fossil',cardId:'base1-96'}];them.hand=[];us.hand=[{uid:'own-energy',cardId:'base1-99'}];const target=them.active;attack(s,side);assert.equal(target.damage,50);assert.equal(s.phase,'effectChoice');const pick=core.legalActions(s,side).find(a=>a.choiceOption===1);assert.ok(pick);core.applyAction(s,side,pick);assert.equal(target.energy.Water,1);assert.equal(target.specialEnergy.length,0);assert.equal(them.hand[0].uid,'special-fossil');assert.equal(us.hand[0].uid,'own-energy');assert.notEqual(s.phase,'effectChoice');
+ });
+ test(side+' Aqua Split adds two distinct Bench hits without replacing the Active hit',()=>{
+  const {s,them}=scene(side,'sv3pt5-139');them.active=core.makePokemonSlot('sv3pt5-3',1,'target');const target=them.active;them.bench=[0,1,2].map(i=>({...core.makePokemonSlot('sv3pt5-6',1,'aqua-b'+i),benchSlot:i}));const bench=them.bench.slice();attack(s,side);assert.equal(target.damage,90);for(let i=0;i<2;i++){assert.equal(s.phase,'effectChoice');const pick=core.legalActions(s,side).find(a=>a.choiceBenchIndex===i);assert.ok(pick,JSON.stringify(core.legalActions(s,side)));core.applyAction(s,side,pick);}assert.deepEqual(bench.map(p=>p.damage),[30,30,0]);
+ });
+}
+for(const side of ['player','opponent'])test(side+' Antique Fossils are status immune, cannot retreat, and voluntary discard awards no Prize',()=>{
+ for(const id of [152,153]){const {s,us,them}=scene(side,'sv3pt5-'+id);const target=us.active;for(const status of ['sleep','confusion','paralysis','poison','burn'])assert.ok(fx.statusIsPrevented(s,target,data.cardById,status));assert.ok(!core.legalActions(s,side).some(a=>a.type==='retreat'));const prizes=them.prizes.length;const a=core.legalActions(s,side).find(a=>a.type==='discardFossil'&&a.target==='active');assert.ok(a);core.applyAction(s,side,a);assert.equal(them.prizes.length,prizes);assert.ok(us.discard.some(r=>r.uid===target.uid&&r.cardId===target.cardId));assert.equal(s.phase,'promote');}
+});
