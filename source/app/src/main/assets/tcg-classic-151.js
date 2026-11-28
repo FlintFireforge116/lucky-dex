@@ -38,6 +38,10 @@ const optional=(label,effect)=>({type:'chooseOption',options:[{label:'Do not use
 // 151 stage 5: shared attack copying, HP modifiers and bench synergy.
 function stage5Attack(a){
  const t=a.text||'';
+ if(a.name==='Tentacular Panic'&&t==="Flip a coin until you get tails. This attack does 90 damage for each heads. If the first flip is tails, your opponent's Active Pokémon is now Confused.")return {type:'coinDamage',coins:'untilTails',amount:90,mode:'replace',firstTailStatus:'confusion'};
+ if(a.name==='Thumpalanche'&&t==='Discard the top 5 cards of your deck. This attack does 80 damage for each Pokémon with a Retreat Cost of exactly 4 that you discarded in this way.')return {type:'topDeckCountDamage',count:5,amount:80,filter:{kind:'pokemon',retreat:4},discardAll:true};
+ if(a.name==='Bang Boom Chain'&&t==='Before doing damage, you may discard any number of Pokémon Tools from your Pokémon. This attack does 40 more damage for each card you discarded in this way.')return {type:'sm7Rule',rule:'swsh4FlyingFury'};
+ if(a.name==='Blinding Ink'&&t==="During your opponent's next turn, if the Defending Pokémon tries to use an attack, your opponent flips 2 coins. If either of them is tails, that attack doesn't happen.")return {type:'sm5Rule',rule:'stickySmokescreen'};
  if(a.name==='Rant and Rave'&&t==='This Pokémon is now Confused.')return {type:'status',target:'self',status:'confusion'};
  if(a.name==='Raging Smash'&&t==="If this Pokémon isn't Confused, this attack does nothing.")return {type:'attackDamageGate',condition:{type:'selfStatus',status:'confusion'}};
  if(a.name==='Friend Tackle'&&t==='If you played a Supporter card from your hand during this turn, this attack does 90 more damage.')return bonus(90,'supporterPlayed');
@@ -47,6 +51,7 @@ function stage5Attack(a){
 }
 function stage5Ability(a){
  const t=a.text||'';
+ for(const [name,count] of [['Semi-Blooming Energy',3],['Fully Blooming Energy',8]])if(a.name===name&&t===`When you play this Pokémon from your hand to evolve 1 of your Pokémon during your turn, you may look at the top ${count} cards of your deck and attach any number of Basic Energy cards you find there to your Pokémon in any way you like. Shuffle the other cards back into your deck.`)return evo({type:'sm7Rule',rule:'sm9TopAttach',count,includeSpecial:false});
  if(a.name==='Enthusiastic King'&&t==='If you have Nidoqueen in play, ignore all Energy in the costs of attacks used by this Pokémon.')return {type:'passive',effect:{type:'conditionalAttackCost',cost:'',condition:{type:'pokemonPresent',side:'self',zone:'inPlay',filter:{name:'Nidoqueen'}}}};
  if(a.name==='Expanding Body'&&t==='If this Pokémon has any Special Energy attached, it gets +100 HP.')return passive('maxHp',100,'self',{hasSpecialEnergy:true});
  if(a.name==='Zooming Draw'&&t==='Once during your turn, you may put 1 damage counter on this Pokémon. If you do, draw a card.')return activate(seq({type:'placeDamageCounters',target:'self',amount:10},{type:'draw',amount:1}));

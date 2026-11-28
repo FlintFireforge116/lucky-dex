@@ -227,3 +227,34 @@ for(const side of ['player','opponent']){
   us.bench.push(actor);us.active=us.bench.shift();fx.applyPersistentEvent(effect,'endTurn',ctx);assert.equal(actor.damage,30);
  });
 }
+
+// Stage 7: exact physical deck windows and reused pre-damage choices.
+test('151 stage 7 enables six prints',()=>{
+ for(const n of [44,45,73,95,101,117])assert.ok(sv.cardById('sv3pt5-'+n).battleEnabled,n);
+ assert.equal(sv.CARDS.filter(c=>c.battleEnabled).length,171);
+ const e=sv.cardById('sv3pt5-73').attacks[1].effect;assert.equal(fx.supportsEffect({...e,coins:2}),false);assert.equal(fx.supportsEffect({...e,firstTailStatus:'invalid'}),false);
+});
+for(const side of ['player','opponent']){
+ test(side+' Tentacular Panic uses a single coin sequence and confuses only on first tails',()=>{
+  for(const flips of [[0.9],[0.1,0.9],[0.1,0.1,0.9]]){
+   const {s,us,them}=scene(side,'sv3pt5-73');let i=0;const ctx={state:s,side,foeSide:side==='player'?'opponent':'player',attacker:us.active,defender:them.active,cardById:data.cardById,random:()=>flips[i++],action:{},isAttack:true};
+   const r=fx.resolveAttack(sv.cardById('sv3pt5-73').attacks[1],ctx);assert.equal(r.damage,90*(flips.length-1));assert.equal(i,flips.length);assert.equal(r.pendingEffects.some(e=>e.type==='status'&&e.status==='confusion'),flips.length===1);
+  }
+ });
+ test(side+' Thumpalanche discards all five cards and counts only exact printed retreat four',()=>{
+  const {s,us,them}=scene(side,'sv3pt5-95');const ids=['base2-11','sv3pt5-1','base1-99','base3-36','sv3pt5-158','base2-27'];us.deck=ids.map((cardId,i)=>({cardId,uid:'mill'+i}));us.discard=[];
+  const r=fx.resolveAttack(sv.cardById('sv3pt5-95').attacks[0],{state:s,side,foeSide:side==='player'?'opponent':'player',attacker:us.active,defender:them.active,cardById:data.cardById,action:{},isAttack:true});assert.equal(r.damage,160);assert.deepEqual(us.discard.map(x=>x.cardId),ids.slice(0,5));assert.equal(us.deck[0].cardId,ids[5]);
+ });
+ test(side+' Blinding Ink applies a two-coin gate to the original defender',()=>{
+  const {s,them}=scene(side,'sv3pt5-117');them.active=core.makePokemonSlot('sv3pt5-3',1,'target');const target=them.active;attack(s,side);assert.equal(target.damage,50);assert.equal(target.attackGate.coins,2);assert.equal(target.attackGate.expiresTurn,9);fx.clearTemporaryEffects(s,target);assert.equal(target.attackGate,undefined);
+ });
+ test(side+' Bang Boom Chain discards a chosen Tool before base plus bonus damage',()=>{
+  const {s,us,them}=scene(side,'sv3pt5-101');them.active=core.makePokemonSlot('sv3pt5-6',1,'target');const target=them.active;us.bench[0].tool={cardId:'sv3pt5-163',uid:'tool-643'};attack(s,side);assert.equal(s.phase,'effectChoice');const pick=core.legalActions(s,side).find(a=>a.choiceOption===0&&!a.choiceSkip);assert.ok(pick);core.applyAction(s,side,pick);assert.ok(us.discard.some(x=>x.uid==='tool-643'));assert.equal(target.damage,60);
+ });
+ test(side+' blooming abilities use their exact evolution windows',()=>{
+  for(const [id,from,count] of [['sv3pt5-44','sv3pt5-43',3],['sv3pt5-45','sv3pt5-44',8]]){
+   const {s,us}=scene(side,from);us.hand=[{cardId:id,uid:'evolve-643'}];us.deck=Array.from({length:count+1},(_,i)=>({cardId:i===0||i===count?'base1-99':'sv3pt5-1',uid:'window'+i}));const initial=us.active.energy.Grass;
+   const evo=core.legalActions(s,side).find(a=>a.type==='evolve'&&a.target==='active');assert.ok(evo,JSON.stringify(core.legalActions(s,side)));core.applyAction(s,side,evo);assert.equal(us.active.cardId,id);assert.equal(s.phase,'effectChoice');const options=core.legalActions(s,side).filter(a=>!a.choiceSkip);assert.equal(options.length,1);core.applyAction(s,side,options[0]);const pick=core.legalActions(s,side).find(a=>a.choiceTarget==='active');assert.ok(pick,JSON.stringify(core.legalActions(s,side)));core.applyAction(s,side,pick);assert.equal(us.active.energy.Grass,initial+1);assert.ok(us.deck.some(r=>r.uid==='window'+count));assert.ok(!us.deck.some(r=>r.uid==='window0'));
+  }
+ });
+}

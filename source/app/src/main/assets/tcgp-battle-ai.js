@@ -345,7 +345,7 @@
       if(['swsh7SpiralBurst','swsh7MaxBurst'].includes(attack?.effect?.rule)){const p=state.sides[side].active;damage=20+80*Math.min(attack.effect.rule==='swsh7SpiralBurst'?2:Infinity,Math.max(Number(p.energy?.Fire||0),Number(p.energy?.Lightning||0)));}
       if(attack?.effect?.rule==='swsh6MaxLance')damage=10+120*Math.min(2,attachedCount(state.sides[side].active));
       if(attack?.effect?.rule==='swsh6RepeatedStrike')damage=120+30*slots(state.sides[side]).reduce((n,p)=>n+attachedCount(p),0);
-      if(attack?.effect?.rule==='swsh4FlyingFury')damage=10+40*slots(state.sides[side]).reduce((n,p)=>n+(p.tool?1:0)+(p.extraTools||[]).length,0);
+      if(attack?.effect?.rule==='swsh4FlyingFury')damage=Number(attack.damage||0)+40*slots(state.sides[side]).reduce((n,p)=>n+(p.tool?1:0)+(p.extraTools||[]).length,0);
       if(attack?.effect?.rule==='swsh35Whisk')damage=60*slots(state.sides[side]).reduce((n,p)=>n+attachedCount(p),0);
       if(attack?.name==='Psyshield Bash'&&['swsh10-134','swsh10-180'].includes(action.attackCardId||state.sides[side].active.cardId))damage=40*effects.totalEnergy(core.effectiveEnergy(state,side,state.sides[side].active));
       if(attack?.effect?.rule==='swsh10HoneyRush')damage=60*Number(action.effectSelection||0);
