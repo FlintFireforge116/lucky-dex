@@ -10,7 +10,7 @@ test('pinned 151 catalogue has all 207 numbered prints with exact identity, rule
   if(c.kind==='pokemon'){assert.deepEqual([c.hp,c.types,c.evolvesFrom,c.retreat,c.weakness,c.resistance],[p.hp,p.types,p.evolvesFrom,p.retreat,p.weakness,p.resistance]);assert.deepEqual(c.attacks.map(a=>[a.name,a.cost,a.damageText||'',a.text]),p.attacks.map(a=>[a.name,a.cost.map(x=>codes[x]).join(''),a.damage,a.text]));assert.deepEqual(c.abilities.map(a=>[a.name,a.text]),p.abilities.map(a=>[a.name,a.text]));for(const a of c.attacks)if(c.battleEnabled){assert.ok(fx.supportsEffect(a.effect));assert.equal(a.effect.type==='noop',!a.text);}}
   if(c.kind==='trainer')assert.equal(c.text,p.rules[0]);if(!c.battleEnabled){assert.equal(c.deckEligible,false);assert.ok(c.support.reasons.length);}
  }
- for(const n of [3,9,65,113,132,151,152,153,154])assert.equal(sv.cardById('sv3pt5-'+n).battleEnabled,false);
+ for(const n of [9,65,113,132,151,152,153,154])assert.equal(sv.cardById('sv3pt5-'+n).battleEnabled,false);
  for(const n of [1,2,13,17,32,50,63,83,86,115,206,207])assert.equal(sv.cardById('sv3pt5-'+n).battleEnabled,true);
  assert.equal(sv.cardById('sv3pt5-207').deckEligible,false);
  assert.ok(sv.CARDS.filter(c=>c.battleEnabled).length>=50);
@@ -27,4 +27,44 @@ for(const side of ['player','opponent']){
  test(side+' Bulbasaur Leech Seed heals exactly 20',()=>{const {s,us}=scene(side,'sv3pt5-1');const a=us.active;a.damage=30;attack(s,side);assert.equal(a.damage,10);});
  test(side+' Doduo Reckless Charge deals 10 recoil',()=>{const {s,us}=scene(side,'sv3pt5-84');const a=us.active;attack(s,side);assert.equal(a.damage,10);});
  test(side+' Machop Mountain Mashing discards the real top card',()=>{const {s,them}=scene(side,'sv3pt5-66');them.deck.unshift({uid:'151-top',cardId:'sv3-1'});attack(s,side);assert.ok(them.discard.some(r=>r.uid==='151-top'));});
+}
+
+// Stage 2: verify new effects, variants and actual symmetric battle outcomes.
+test('151 stage 2 exact shared effects and explicit remaining dependencies',()=>{
+ const by=n=>sv.cardById('sv3pt5-'+n);
+ for(const n of [3,4,8,10,18,22,25,35,38,52,55,56,59,82,88,89,97,98,120,123,125,126,127,129,130,134,135,136,144,149,155,159,165])assert.ok(by(n).battleEnabled,`${n}: ${by(n).support.reasons}`);
+ for(const n of [9,53,65,113,132,143,145,151,152,153,154])assert.equal(by(n).battleEnabled,false,by(n).name);
+ for(const c of sv.CARDS.filter(c=>c.battleEnabled)){
+   for(const a of c.abilities||[])assert.ok(fx.supportsEffect(a.effect),`${c.id} ${a.name}`);
+   if(c.kind==='trainer')assert.ok(fx.supportsEffect(c.effect),c.id);
+ }
+ for(const c of sv.CARDS.filter(c=>+c.number>151&&c.kind==='pokemon')){
+   const match=sv.CARDS.find(p=>+p.number<=151&&p.name===c.name&&p.kind===c.kind&&p.hp===c.hp);
+   assert.ok(match,c.id);assert.deepEqual(c.attacks,match.attacks);assert.deepEqual(c.abilities,match.abilities);assert.equal(c.battleEnabled,match.battleEnabled);
+ }
+ assert.equal(by(155).effect.filter.stage,'Stage 2');assert.equal(by(165).effect.filter.stage,'Stage 1');
+ assert.equal(by(130).abilities[0].event,'evolved');assert.equal(by(130).abilities[0].fromHandOnly,true);
+ assert.deepEqual(by(149).attacks[0].effect,{type:'discardTop',side:'self',amount:2});
+ assert.equal(by(149).abilities[0].effect.scope,'team');
+});
+for(const side of ['player','opponent']){
+ test(side+' Ninetales ex Mirrored Flames changes damage only for matching hand sizes',()=>{
+  for(const same of [true,false]){const {s,us,them}=scene(side,'sv3pt5-38');them.active=core.makePokemonSlot('sv3pt5-6',1,'target');us.hand=[];them.hand=same?[]:[{uid:'extra',cardId:'sv3pt5-1'}];const target=them.active;
+   attack(s,side,1);assert.equal(target.damage,same?220:80);}
+ });
+ test(side+' Dragonite Dragon Pulse discards exactly two of its own deck cards',()=>{
+   const {s,us,them}=scene(side,'sv3pt5-149');
+   them.active=core.makePokemonSlot('sv3pt5-6',1,'target');
+   us.deck.unshift({uid:'dragon-pulse-first',cardId:'sv3pt5-1'},{uid:'dragon-pulse-second',cardId:'sv3pt5-2'},{uid:'dragon-pulse-third',cardId:'sv3pt5-3'});
+   them.deck.unshift({uid:'dragon-pulse-opponent',cardId:'sv3pt5-4'});
+   attack(s,side);
+   assert.ok(us.discard.some(r=>r.uid==='dragon-pulse-first'));
+   assert.ok(us.discard.some(r=>r.uid==='dragon-pulse-second'));
+   assert.ok(us.deck.some(r=>r.uid==='dragon-pulse-third'));
+   assert.ok(!them.discard.some(r=>r.uid==='dragon-pulse-opponent'));
+ });
+ test(side+' Fearow Beak Catch and recovery retain optional physical targets',()=>{
+   const c=sv.cardById('sv3pt5-22');assert.deepEqual(c.attacks[0].effect,{type:'searchChosen',source:'deck',amount:3,optional:true,filter:{}});
+   const d=sv.cardById('sv3pt5-55');assert.deepEqual(d.attacks[0].effect,{type:'searchChosen',source:'discard',amount:4,optional:true,filter:{kind:'pokemon'}});
+ });
 }

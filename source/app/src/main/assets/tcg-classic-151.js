@@ -20,7 +20,73 @@ const search=amount=>({type:'searchChosen',source:'deck',amount,optional:true,fi
 const switchSelf={type:'switch',side:'self'};
 const discard=(target,amount)=>({type:'discardEnergyCard',target,amount});
 // Exact text matches below are limited to established shared mechanics.
+
+const seq=(...effects)=>({type:'sequence',effects});
+const namedBench=(name,amount)=>({type:'benchFromDeck',amount,filter:{kind:'pokemon',stage:'Basic',name},choose:true,optional:true});
+const recover=(amount,filter)=>({type:'searchChosen',source:'discard',amount,optional:true,filter});
+const ramp=(amount,energyType,sourceSelf=true)=>({type:'sm7Rule',rule:'sm12DiscardAttach',left:amount,basicOnly:true,energyType,...(sourceSelf?{sourceSelf:true}:{benchOnly:true}),optional:true});
+const zoneRamp=(amount,energyType)=>({type:'sm7Rule',rule:'sm9SearchAttach',amount,energyTypes:[energyType],sourceSelf:true});
+const passive=(stat,amount,scope='self',filter)=>({type:'passive',effect:{type:'modifier',stat,amount,scope,duration:'whileInPlay',...(filter?{filter}:{})}});
+const activate=effect=>({type:'activated',oncePerTurn:true,effect});
+const evo=effect=>({type:'triggered',event:'evolved',fromHandOnly:true,effect});
+const optional=(label,effect)=>({type:'chooseOption',options:[{label:'Do not use',effect:noop},{label,effect}]});
+function stage2Attack(a){
+ const t=a.text||'';
+ if(a.name==='Dragon Pulse'&&t==='Discard the top 2 cards of your deck.')return {type:'discardTop',side:'self',amount:2};
+ if(a.name==='Dangerous Toxwhip'&&t==="Your opponent's Active Pokémon is now Confused and Poisoned.")return seq(status('confusion'),status('poison'));
+ if(a.name==='Blazing Destruction'&&t==='Discard a Stadium in play.')return {type:'discardStadium'};
+ if(a.name==='Free Diving'&&t==='Put up to 3 Basic Water Energy cards from your discard pile into your hand.')return recover(3,{kind:'energy',basicEnergy:true,subtype:'Water'});
+ if(a.name==='Leaf Munch'&&t==="If your opponent's Active Pokémon is a Grass Pokémon, this attack does 30 more damage.")return {type:'bonusDamage',amount:30,condition:{type:'opponentMatches',filter:{subtype:'Grass'}}};
+ if(a.name==='Fly'&&t==="Flip a coin. If tails, this attack does nothing. If heads, during your opponent's next turn, prevent all damage from and effects of attacks done to this Pokémon.")return {type:'coinAttackGate',heads:protect(true)};
+ if(a.name==='Beak Catch'&&t==='Search your deck for up to 3 cards and put them into your hand. Then, shuffle your deck.')return {type:'searchChosen',source:'deck',amount:3,optional:true,filter:{}};
+ if(a.name==='Charge'&&t==='Search your deck for a Basic Lightning Energy card and attach it to this Pokémon. Then, shuffle your deck.')return zoneRamp(1,'Lightning');
+ if(a.name==='Moon-Viewing Invitation'&&t==='Search your deck for up to 3 Clefairy and put them onto your Bench. Then, shuffle your deck.')return namedBench('Clefairy',3);
+ if(a.name==='Mirrored Flames'&&t==='If you have the same number of cards in your hand as your opponent, this attack does 140 more damage.')return bonus(140,'handSizesEqual');
+ if(a.name==='Come Here Right Meow'&&t==="Flip a coin. If heads, switch in 1 of your opponent's Benched Pokémon to the Active Spot.")return flip({type:'forceOpponentSwitch',chooseBy:'attacker'});
+ if(a.name==='Aquatic Rescue'&&t==='Put up to 4 Pokémon from your discard pile into your hand.')return recover(4,{kind:'pokemon'});
+ if(a.name==='Thrash'&&t==='Flip a coin. If tails, this Pokémon also does 20 damage to itself. If heads, this attack does 20 more damage.')return {type:'coinFlip',heads:{type:'bonusDamage',amount:20},tails:self(20)};
+ if(a.name==='Torrid Torrent'&&t==='Attach up to 2 Basic Fire Energy cards from your discard pile to this Pokémon.')return ramp(2,'Fire');
+ if(a.name==='Dynamite Fang'&&t==='Discard 2 Fire Energy from this Pokémon.')return {...discard('self',2),energyType:'Fire'};
+ if(a.name==='Mind Jack'&&t==="This attack does 30 more damage for each of your opponent's Benched Pokémon.")return {type:'benchCountDamage',side:'opponent',amount:30,mode:'add'};
+ if(a.name==='Junk Magnet'&&t==='Put up to 2 Item cards from your discard pile into your hand.')return recover(2,{kind:'trainer',trainerType:'Item'});
+ if(a.name==='Gummy Press'&&t==="During your opponent's next turn, the Defending Pokémon's Retreat Cost is Colorless more.")return {type:'modifier',stat:'retreatCost',amount:1,target:'opponentActive',duration:'opponentTurn'};
+ if(a.name==='Sticky Jail'&&t==="During your opponent's next turn, attacks used by the Defending Pokémon cost Colorless more, and its Retreat Cost is Colorless more.")return seq({type:'modifier',stat:'attackCost',amount:1,target:'opponentActive',duration:'opponentTurn'},{type:'modifier',stat:'retreatCost',amount:1,target:'opponentActive',duration:'opponentTurn'});
+ if(a.name==='Salt Water'&&t==='Flip a coin. If heads, search your deck for up to 2 Basic Water Energy cards and attach them to this Pokémon. Then, shuffle your deck.')return flip(zoneRamp(2,'Water'));
+ if(a.name==='Swift'&&t==="This attack's damage isn't affected by Weakness or Resistance, or by any effects on your opponent's Active Pokémon.")return {type:'damageRule',ignoreWeakness:true,ignoreResistance:true,ignoreEffects:true};
+ if(a.name==='Helpful Slash'&&t==='Attach a Basic Grass Energy card from your discard pile to 1 of your Benched Pokémon.')return {...ramp(1,'Grass',false),optional:false};
+ if(a.name==='Electro Combo'&&t==='If Magmar is on your Bench, this attack does 40 more damage.')return {type:'bonusDamage',amount:40,condition:{type:'pokemonPresent',side:'self',zone:'bench',filter:{name:'Magmar'}}};
+ if(a.name==='Flare Combo'&&t==='If Electabuzz is on your Bench, this attack does 80 more damage.')return {type:'bonusDamage',amount:80,condition:{type:'pokemonPresent',side:'self',zone:'bench',filter:{name:'Electabuzz'}}};
+ if(a.name==='Reckless Throw'&&t==='If you have more Prize cards remaining than your opponent, this attack does 90 more damage.')return bonus(90,'ownPrizesMore');
+ if(a.name==='Splashy Splash'&&t==='Flip a coin until you get tails. For each heads, draw a card.')return {type:'coinUntilTails',effect:{type:'draw',amount:1}};
+ if(['Fighting Whirlpool','Fighting Lightning','Fighting Blaze'].includes(a.name)&&t==="If your opponent's Active Pokémon is a Pokémon ex or Pokémon V, this attack does 90 more damage.")return {type:'bonusDamage',amount:90,condition:{type:'opponentMatches',filter:{anyOf:[{nameContains:' ex'},{tag:'pokemon-v'}]}}};
+ if(a.name==='Blizzard'&&t==="This attack also does 10 damage to each of your opponent's Benched Pokémon. (Don't apply Weakness and Resistance for Benched Pokémon.)")return {type:'benchDamage',side:'opponent',all:true,amount:10};
+ if(a.name==='Multishot Lightning'&&t==="This attack also does 90 damage to 1 of your opponent's Benched Pokémon that has any damage counters on it. (Don't apply Weakness and Resistance for Benched Pokémon.)")return {type:'selectedDamage',target:'opponentBench',amount:90,filter:{damaged:true}};
+ return null;
+}
+function stage2Ability(a){
+ const t=a.text;
+ if(a.name==='Tranquil Flower'&&t==='Once during your turn, if this Pokémon is in the Active Spot, you may heal 60 damage from 1 of your Pokémon.')return {...activate({type:'heal',target:'selfPokemon',amount:60}),activeOnly:true};
+ if(a.name==='Solid Shell'&&t==='This Pokémon takes 30 less damage from attacks (after applying Weakness and Resistance).')return passive('damageReduction',30);
+ if(a.name==='Here for Hypnosis'&&t==="When you play this Pokémon from your hand to evolve 1 of your Pokémon during your turn, you may make your opponent's Active Pokémon Asleep.")return evo(optional('Make opponent Asleep',status('sleep')));
+ if(a.name==='Untamed One'&&t==='When you play this Pokémon from your hand to evolve 1 of your Pokémon during your turn, you must discard the top 5 cards of your deck.')return evo({type:'discardTop',side:'self',amount:5});
+ if(a.name==='Rocket Call'&&t==="Once during your turn, you may search your deck for a Giovanni's Charisma card, reveal it, and put it into your hand. Then, shuffle your deck.")return activate({type:'searchChosen',source:'deck',amount:1,optional:true,filter:{kind:'trainer',name:"Giovanni's Charisma"}});
+ if(a.name==='Voraciousness'&&t==='Once during your turn, you may put up to 2 Leftovers cards from your discard pile into your hand.')return activate(recover(2,{kind:'trainer',name:'Leftovers'}));
+ if(a.name==='Ice Float'&&t==='If this Pokémon has any Water Energy attached, it has no Retreat Cost.')return passive('retreatCost',-999,'self',{hasEnergyType:'Water'});
+ if(a.name==='Voltaic Float'&&t==='If this Pokémon has any Lightning Energy attached, it has no Retreat Cost.')return passive('retreatCost',-999,'self',{hasEnergyType:'Lightning'});
+ if(a.name==='Flare Float'&&t==='If this Pokémon has any Fire Energy attached, it has no Retreat Cost.')return passive('retreatCost',-999,'self',{hasEnergyType:'Fire'});
+ if(a.name==='Jet Cruise'&&t==='Your Pokémon in play have no Retreat Cost.')return passive('retreatCost',-999,'team');
+ if(a.name==='Restart'&&t==='Once during your turn, you may draw cards until you have 3 cards in your hand.')return activate({type:'drawToHandSize',size:3});
+ return null;
+}
+function stage2Trainer(c,text){
+ if(c.name==='Big Air Balloon'&&text==='The Stage 2 Pokémon this card is attached to has no Retreat Cost.')return passive('retreatCost',-999,'self',{stage:'Stage 2'}).effect;
+ if(c.name==='Rigid Band'&&text==='The Stage 1 Pokémon this card is attached to takes 30 less damage from attacks from your opponent\'s Pokémon (after applying Weakness and Resistance).')return passive('damageReduction',30,'self',{stage:'Stage 1'}).effect;
+ if(c.name==='Energy Sticker'&&text==='Flip a coin. If heads, attach a Basic Energy card from your discard pile to 1 of your Benched Pokémon.')return flip({type:'sm7Rule',rule:'sm12DiscardAttach',left:1,basicOnly:true,benchOnly:true});
+ return null;
+}
+
 function attackEffect(a){
+ const extra=stage2Attack(a);if(extra)return extra;
  const t=a.text||'';
  if(!t&&/^\d+$/.test(a.damage||''))return noop;
  let m;
@@ -67,13 +133,16 @@ function makeCard(c){
  const reasons=[];let result;
  if(c.kind==='pokemon'){
   const attacks=c.attacks.map(a=>{const effect=attackEffect(a);if(effect.type==='unsupported')reasons.push('Unimplemented attack: '+a.name);return {name:a.name,cost:a.cost.map(t=>codes[t]).join(''),damage:a.damage.includes('×')?0:Number(a.damage.match(/\d+/)?.[0]||0),damageText:a.damage||null,text:a.text,effect};});
-  const abilities=c.abilities.map(a=>{reasons.push('Unimplemented Ability: '+a.name);return {name:a.name,text:a.text,printedPowerType:'ability',disabledByStatus:false,type:'passive',effect:unsupported};});
+  const abilities=c.abilities.map(a=>{const implemented=stage2Ability(a);if(!implemented)reasons.push('Unimplemented Ability: '+a.name);return {name:a.name,text:a.text,printedPowerType:'ability',disabledByStatus:false,...(implemented||{type:'passive',effect:unsupported})};});
+  if(['Persian','Snorlax'].includes(c.name))reasons.push('Named 151 Trainer dependency awaits implementation');
+  if(c.name==='Zapdos ex')reasons.push('Multishot Lightning damaged Bench target selection awaits outcome audit');
+
   if(/^Antique /.test(c.evolvesFrom||''))reasons.push('Antique Fossil evolution dependency not implemented');
   const ex=c.subtypes.includes('ex'),energyTypes=[...new Set(c.attacks.flatMap(a=>a.cost).filter(t=>t!=='Colorless'))];
   const roles=[...new Set(attacks.flatMap(a=>/heal/i.test(a.text)?['healing']:/search/i.test(a.text)?['search']:/draw/i.test(a.text)?['draw']:[]))];
   result={...common,kind:'pokemon',stage:c.subtypes.find(t=>['Basic','Stage 1','Stage 2'].includes(t)),hp:c.hp,types:c.types,subtype:c.types[0],evolvesFrom:c.evolvesFrom,retreat:c.retreat,weakness:c.weakness,weaknessValue:c.weaknessValue,resistance:c.resistance,resistanceValue:c.resistanceValue,attacks,abilities,isEx:ex,pokemonEx:ex,ruleBox:ex,tera:c.subtypes.includes('Tera'),points:ex?2:1,prizeCards:ex?2:1,deckMeta:{roles,synergy:roles,energyTypes,preferredEnergyTypes:energyTypes,conditionalAttackEnergyTypes:[],preferredPartners:c.evolvesFrom?[c.evolvesFrom]:[],inflicts:[],payoffs:[]}};
  }else if(c.kind==='trainer'){
-  const text=c.rules[0]||'',effect=c.name==='Switch'&&text==='Switch your Active Pokémon with 1 of your Benched Pokémon.'?switchSelf:unsupported;
+  const text=c.rules[0]||'',effect=c.name==='Switch'&&text==='Switch your Active Pokémon with 1 of your Benched Pokémon.'?switchSelf:(stage2Trainer(c,text)||unsupported);
   if(effect.type==='unsupported')reasons.push('Unimplemented Trainer: '+c.name);
   result={...common,kind:'trainer',trainerType:c.subtypes[0]==='Pokémon Tool'?'Tool':c.subtypes[0],text,effect};
  }else{
