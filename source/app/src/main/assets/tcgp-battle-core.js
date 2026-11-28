@@ -146,7 +146,8 @@
   // Steam Siege Talonflame's Gale Wings permits ONLY the opening Active
   // placement. It does not make Talonflame Basic for Bench or evolutions.
   function sm7SetupEligible(state,side,ref){return state?.format==='classic'&&side!==state.firstSide&&ref?.cardId==='sm7-52';}
-  function isOpeningActive(ref,state,side){return isBasic(ref)||ref?.cardId==='xy11-96'||(state?.format==='classic'&&ref?.cardId==='swsh12pt5-44')||sm7SetupEligible(state,side,ref);}
+  function setupDoll(ref,state){return state?.format==='classic'&&ref?.cardId==='sv4-175';}
+  function isOpeningActive(ref,state,side){return setupDoll(ref,state)||isBasic(ref)||ref?.cardId==='xy11-96'||(state?.format==='classic'&&ref?.cardId==='swsh12pt5-44')||sm7SetupEligible(state,side,ref);}
   function ensureOpeningBasic(state, sideState){
     if (sideState.hand.some(ref=>isOpeningActive(ref,state,sideState.id))) return;
     const idx = sideState.deck.findIndex(isBasic);
@@ -201,7 +202,7 @@
     s.active = makePokemonSlot(activeRef.cardId,0,activeRef.uid);
     const benchLimit=Math.max(0,Number(state.rules?.benchSize??3));
     for (let i=s.hand.length-1;i>=0 && s.bench.length<benchLimit;i--){
-      if (!isBasic(s.hand[i])&&!sm7SetupEligible(state,side,s.hand[i])) continue;
+      if (!isBasic(s.hand[i])&&!sm7SetupEligible(state,side,s.hand[i])&&!setupDoll(s.hand[i],state)) continue;
       const [ref] = s.hand.splice(i,1);
       const slot=makePokemonSlot(ref.cardId,0,ref.uid);
       placeOnBench(s,slot,emptyBenchSlots(s)[0]);
@@ -450,7 +451,7 @@
     if (s.bench.length < maxBenchSize(s)){
       const empty=emptyBenchSlots(s);
       s.hand.forEach((ref,handIndex)=>{
-        if (!isBasic(ref)&&!sm7SetupEligible(state,side,ref)) return;
+        if (!isBasic(ref)&&!sm7SetupEligible(state,side,ref)&&!setupDoll(ref,state)) return;
         empty.forEach(benchIndex=>actions.push({type:'setupBench',handIndex,cardId:ref.cardId,target:'bench',benchIndex}));
       });
     }
@@ -1678,7 +1679,7 @@
         return;
       }
       if(card.id==='xy4-102'){if(!eternalZoneCanPlace(state,side,card.id))return;for(const benchIndex of emptyBenchSlots(s))actions.push({...base,target:'bench',benchIndex});return;}
-      if(card.effect?.type==='playFossil'){if(!eternalZoneCanPlace(state,side,card.id))return;for(const benchIndex of emptyBenchSlots(s))actions.push({...base,target:'bench',benchIndex});return;}
+      if(card.effect?.type==='playFossil'){if(card.effect.setupOnly)return;if(!eternalZoneCanPlace(state,side,card.id))return;for(const benchIndex of emptyBenchSlots(s))actions.push({...base,target:'bench',benchIndex});return;}
       if(card.effect?.type==='rareCandy'){
         if(state.format==='classic'&&['player','opponent'].some(w=>pokemonOn(state.sides[w]).some(p=>p.cardId==='bw3-67'&&!effects.abilitiesSuppressed(state,w,p,data.cardById))))return;
         if(s.turnCount<=1)return;
@@ -3375,7 +3376,7 @@
       const slot=makePokemonSlot(card.id,s.turnCount,ref.uid);placeOnBench(s,slot,action.benchIndex);
       state.log.push({type:'xy4RoboSubstitutePlayed',side,uid:slot.uid,benchIndex:action.benchIndex});return;
     }
-    if(card.effect?.type==='playFossil'){placeOnBench(s,makePokemonSlot(card.id,s.turnCount,ref.uid),action.benchIndex);return;}
+    if(card.effect?.type==='playFossil'){if(card.effect.setupOnly)throw new Error('This card can only be placed during setup.');placeOnBench(s,makePokemonSlot(card.id,s.turnCount,ref.uid),action.benchIndex);return;}
     if(card.effect?.type==='rareCandy'){
       const evoIndex=s.hand.findIndex(candidate=>candidate.cardId===action.evolutionCardId);if(evoIndex<0)throw new Error('Rare Candy Stage 2 is no longer in hand.');
       const [evoRef]=s.hand.splice(evoIndex,1),target=slotForTarget(s,action.target,action.benchIndex);if(!target)throw new Error('Rare Candy target is no longer in play.');

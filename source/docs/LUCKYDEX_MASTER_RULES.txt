@@ -6599,3 +6599,5 @@ SV4 STAGE 19 v0.69.670: 252/266 prints. Lifeboat optional on evolution from hand
 
 SV4 STAGE 20 v0.69.671: 262/266 prints. Whirltide reveals six, counts and discards Energy, shuffles other cards, targeted attack damage. Magma Purge selects up to four attached Energy from own board before damage. Incendiary Song consumes Basic Fire from hand and boosts own team Active-target attack damage for the turn. Standalone gated.
 Bombirdier Fast Carrier permits first turn going first, Shadowy Wind optionally returns entire stack and attachments. Four SV4 Technical Machines use the existing granted-attack and end-of-turn discard system; respect Tool suppression; Evolution uses distinct Bench targets, Turbo Energize attaches Basic Energy from physical deck to Bench.
+
+SV4 STAGE 21 v0.69.672: 264/266 prints. Stellar Veil protects Benched Pokemon from opposing Basic attack damage-counter effects, not attack damage or Abilities. Snorlax Doll only enters during setup, can be voluntarily discarded, has 120 HP, no retreat or Special Conditions and no Prize reward. Toedscruel remains gated pending cross-generation discard recovery verification. Standalone gated.

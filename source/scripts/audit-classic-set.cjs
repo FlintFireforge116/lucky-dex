@@ -327,6 +327,7 @@ function runSmokes(cards,{data,core,opponents}){
       if(card.number==='GG66')enemy.prizes=enemy.prizes.slice(0,3);
       if(card.number==='GG69')own.lostZone=Array.from({length:10},(_,i)=>({cardId:'swsh11-1',uid:'gg-lost-'+i}));
     }
+    if(card.effect?.setupOnly){s.phase='setup';s.setupSide=side;s.sides[side].active=null;const setup=core.legalActions(s,side).find(a=>a.type==='setupActive'&&a.cardId===card.id);if(!setup)throw Error('Setup-only card unavailable');core.applyAction(s,side,setup);if(s.sides[side].active?.cardId!==card.id)throw Error('Setup-only placement failed');result.executed++;continue;}
     const actions=core.legalActions(s,side);
     const action=actions.find(a=>card.kind==='trainer'?a.type==='trainer'&&a.cardId===card.id:a.type==='attack'&&a.attackIndex===ix&&(!a.attackCardId||a.attackCardId===card.id));
     if(!action){result.skipped++;result.skippedDetails.push({cardId:card.id,side,action:actionName});continue;}
