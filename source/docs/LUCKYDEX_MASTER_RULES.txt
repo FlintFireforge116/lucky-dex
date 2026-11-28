@@ -6584,3 +6584,5 @@ SV4 STAGE 11 v0.69.662: 208/266 prints. Hollow Hands places counters on Bench on
 SV4 STAGE 12 v0.69.663: 215/266 prints. Mela requires a KO last opponent turn, attaches Fire from discard then draws to six only if attached. Garganacl heals the recipient of Fighting Energy by 30; Espathra optional evolution guard, Glittering Eyes checks Tulip in own discard. Standalone remains gated.
 
 SV4 STAGE 13 v0.69.664: 222/266 prints. Vanilluxe checks opposing remaining HP including modifiers, Morpeko moves typed Energy to one Bench recipient, Spinda only guards damage while confused, Porygon coin-triggered opposing Energy movement is mandatory when possible, Gaia Punk discards three Lightning Energy from own board. Standalone gated.
+
+SV4 STAGE 14 v0.69.665: 231/266 prints. Buddy Pulse is non-stacking and reacts to physical opposing hand Energy only. Solidarity counts family members including the damaged Active before KO; Minior uses a once-per-turn optional switch after hand attachment; Porygon-Z coin branches use selected Basic discard recovery or attached Energy discard; Volcanion attaches one Fire to each of up to two distinct Bench targets. Standalone gated.

@@ -645,6 +645,10 @@
   }
   function triggerAbilities(state,event,side,onlySource,eventData){
     const ss=state.sides[side],meta=eventData||{};
+    if(state.format==='classic'&&event==='opponentEnergyAttached'&&meta.fromHand&&meta.target&&pokemonOn(ss).some(p=>data.cardById(p.cardId)?.name==='Plusle')){
+      const source=pokemonOn(ss).find(p=>data.cardById(p.cardId)?.abilities?.some(a=>a.effect?.rule==='sv4BuddyPulse')&&!effects.abilitiesSuppressed(state,side,p,data.cardById));
+      if(source)effects.applyEffect({type:'placeDamageCounters',target:'eventPokemon',amount:20},{...effectContext(state,side,{},source),isAbility:true,eventData:{target:meta.target}});
+    }
     if(state.format==='classic'&&event==='evolved'&&meta.fromHand&&state.activeSide===side&&onlySource&&data.cardById(onlySource.cardId)?.evolvesFrom==='Eevee'&&data.cardById(onlySource.stack?.at(-2))?.name==='Eevee'){
       for(const p of pokemonOn(ss))if(p!==onlySource&&p.cardId==='swsh10-119'&&p.swsh10ResonantTurn!==state.turnNumber&&!effects.abilitiesSuppressed(state,side,p,data.cardById)){
         p.swsh10ResonantTurn=state.turnNumber;(state.swsh10ResonantQueue||(state.swsh10ResonantQueue=[])).push({side,uid:p.uid});
