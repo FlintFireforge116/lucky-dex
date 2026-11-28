@@ -10,7 +10,7 @@ test('pinned 151 catalogue has all 207 numbered prints with exact identity, rule
   if(c.kind==='pokemon'){assert.deepEqual([c.hp,c.types,c.evolvesFrom,c.retreat,c.weakness,c.resistance],[p.hp,p.types,p.evolvesFrom,p.retreat,p.weakness,p.resistance]);assert.deepEqual(c.attacks.map(a=>[a.name,a.cost,a.damageText||'',a.text]),p.attacks.map(a=>[a.name,a.cost.map(x=>codes[x]).join(''),a.damage,a.text]));assert.deepEqual(c.abilities.map(a=>[a.name,a.text]),p.abilities.map(a=>[a.name,a.text]));for(const a of c.attacks)if(c.battleEnabled){assert.ok(fx.supportsEffect(a.effect));assert.equal(a.effect.type==='noop',!a.text);}}
   if(c.kind==='trainer')assert.equal(c.text,p.rules[0]);if(!c.battleEnabled){assert.equal(c.deckEligible,false);assert.ok(c.support.reasons.length);}
  }
- for(const n of [9,65,113,132,151,152,153,154])assert.equal(sv.cardById('sv3pt5-'+n).battleEnabled,false);
+ for(const n of [65,113,132,151,152,153,154])assert.equal(sv.cardById('sv3pt5-'+n).battleEnabled,false);
  for(const n of [1,2,13,17,32,50,63,83,86,115,206,207])assert.equal(sv.cardById('sv3pt5-'+n).battleEnabled,true);
  assert.equal(sv.cardById('sv3pt5-207').deckEligible,false);
  assert.ok(sv.CARDS.filter(c=>c.battleEnabled).length>=50);
@@ -33,7 +33,7 @@ for(const side of ['player','opponent']){
 test('151 stage 2 exact shared effects and explicit remaining dependencies',()=>{
  const by=n=>sv.cardById('sv3pt5-'+n);
  for(const n of [3,4,8,10,18,22,25,35,38,52,55,56,59,82,88,89,97,98,120,123,125,126,127,129,130,134,135,136,144,149,155,159,165])assert.ok(by(n).battleEnabled,`${n}: ${by(n).support.reasons}`);
- for(const n of [9,53,65,113,132,143,145,151,152,153,154])assert.equal(by(n).battleEnabled,false,by(n).name);
+ for(const n of [53,65,113,132,143,145,151,152,153,154])assert.equal(by(n).battleEnabled,false,by(n).name);
  for(const c of sv.CARDS.filter(c=>c.battleEnabled)){
    for(const a of c.abilities||[])assert.ok(fx.supportsEffect(a.effect),`${c.id} ${a.name}`);
    if(c.kind==='trainer')assert.ok(fx.supportsEffect(c.effect),c.id);
@@ -93,5 +93,34 @@ for(const side of ['player','opponent']){
  test(side+' Slowpoke Sea Bathing heals 30 damage',()=>{
   const {s,us}=scene(side,'sv3pt5-79');const actor=us.active;actor.damage=40;
   attack(s,side);assert.equal(actor.damage,10);
+ });
+}
+
+// Stage 4: check real card costs, alternate arts, conditional KO and timing.
+test('151 stage 4 shared effects and exact resource restrictions',()=>{
+ const by=n=>sv.cardById('sv3pt5-'+n);
+ for(const n of [9,21,24,36,68,71,110,157,184,185,200]){
+  const c=by(n);assert.ok(c.battleEnabled,`${c.id}: ${c.support.reasons}`);
+  for(const a of [...(c.attacks||[]),...(c.abilities||[])])assert.ok(fx.supportsEffect(a.effect),`${c.id} ${a.name}`);
+  if(c.kind==='trainer')assert.ok(fx.supportsEffect(c.effect),c.id);
+ }
+ const twin=by(9).attacks[0].effect;
+ assert.deepEqual(twin,{type:'chooseDiscardForBonus',zone:'hand',max:2,amount:140,filter:{kind:'energy',basicEnergy:true,subtype:'Water'}});
+ assert.deepEqual(by(9).attacks,by(184).attacks);assert.deepEqual(by(9).attacks,by(200).attacks);
+ assert.deepEqual(by(24).attacks,by(185).attacks);
+ assert.equal(by(24).attacks[1].effect.opponentChooses,true);
+ assert.equal(by(21).abilities[0].effect.firstTurn,true);
+ assert.equal(by(36).attacks[1].effect.rule,'sm12RedBanquet');
+ assert.deepEqual(by(68).abilities[0].effect,{type:'koGuard',mode:'surviveCoin',remainingHp:10,attackOnly:true});
+ assert.deepEqual(by(71).attacks[1].effect,{type:'scheduleDelayed',event:'endOpponentNextTurn',targetMode:'defender',effect:{type:'placeDamageCounters',target:'eventPokemon',amount:120}});
+ assert.equal(by(110).abilities[0].event,'knockedOutByAttack');
+ assert.equal(by(110).abilities[0].activeOnly,true);
+ assert.equal(by(157).effect.effect.filter.basicEnergy,true);
+});
+for(const side of ['player','opponent']){
+ test(side+' Machamp Mountain Chopping mills exactly the top two cards',()=>{
+  const {s,them}=scene(side,'sv3pt5-68');
+  them.deck.unshift({uid:'151-638-mill1',cardId:'sv3-1'},{uid:'151-638-mill2',cardId:'sv3-2'},{uid:'151-638-mill3',cardId:'sv3-3'});
+  attack(s,side);assert.ok(them.discard.some(c=>c.uid==='151-638-mill1'));assert.ok(them.discard.some(c=>c.uid==='151-638-mill2'));assert.ok(!them.discard.some(c=>c.uid==='151-638-mill3'));
  });
 }

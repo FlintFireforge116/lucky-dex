@@ -9,3 +9,7 @@ Additional shared effects, passive/activated/evolution Abilities and three Train
 ## v0.69.638 stage 3
 
 Additional shared attack and Ability mechanics and Bill's Transfer, including its alternate print. No change to the canonical collector packet, builder, or mixed-only stage restriction. Outcome regression for Sea Bathing on both sides. Complex named support and Fossil lines remain gated.
+
+## v0.69.639 stage 4
+
+Eleven more battle-enabled prints using shared discard, timing, conditional prize, delayed-counter, survival and Stadium mechanisms. Physical hand Energy must be provided by compatible mixed-set Trainers; no Zone conversion. Mixed-only restriction and all remaining unsupported cards are retained. Full gameplay and APK validation pending CI.

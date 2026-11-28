@@ -32,7 +32,31 @@ const evo=effect=>({type:'triggered',event:'evolved',fromHandOnly:true,effect});
 const optional=(label,effect)=>({type:'chooseOption',options:[{label:'Do not use',effect:noop},{label,effect}]});
 
 // 151 stage 3: exact printed text; reuse established engine effects.
+ 
+// 151 stage 4: exact text shared mechanics, including physical hand Energy.
+function stage4Attack(a){
+ const t=a.text||'';
+ if(a.name==='Twin Cannons'&&t==='Discard up to 2 Basic Water Energy cards from your hand. This attack does 140 damage for each card you discarded in this way.')return {type:'chooseDiscardForBonus',zone:'hand',max:2,amount:140,filter:{kind:'energy',basicEnergy:true,subtype:'Water'}};
+ if(a.name==='Menacing Fangs'&&t==='Your opponent discards 2 cards from their hand.')return {type:'sm7Rule',rule:'sm9HandDiscard',amount:2,opponentChooses:true};
+ if(a.name==='More Moon'&&t==="If your opponent's Pokémon is Knocked Out by damage from this attack, take 1 more Prize card.")return {type:'sm7Rule',rule:'sm12RedBanquet'};
+ if(a.name==='Slow-Acting Acid'&&t==="At the end of your opponent's next turn, put 12 damage counters on the Defending Pokémon.")return {type:'scheduleDelayed',event:'endOpponentNextTurn',targetMode:'defender',effect:{type:'placeDamageCounters',target:'eventPokemon',amount:120}};
+ if(a.name==='Spinning Fumes'&&t==="This attack also does 10 damage to each of your opponent's Benched Pokémon. (Don't apply Weakness and Resistance for Benched Pokémon.)")return {type:'benchDamage',side:'opponent',all:true,amount:10};
+ return null;
+}
+function stage4Ability(a){
+ const t=a.text||'';
+ if(a.name==='Evolutionary Advantage'&&t==='If you go second, this Pokémon can evolve during your first turn.')return {type:'passive',effect:{type:'evolutionTimingOverride',firstTurn:true}};
+ if(a.name==='Guts'&&t==='If this Pokémon would be Knocked Out by damage from an attack, flip a coin. If heads, this Pokémon is not Knocked Out, and its remaining HP becomes 10.')return {type:'passive',effect:{type:'koGuard',mode:'surviveCoin',remainingHp:10,attackOnly:true}};
+ if(a.name==="Let's Have a Blast"&&t==="If this Pokémon is in the Active Spot and is Knocked Out by damage from an attack from your opponent's Pokémon, flip a coin. If heads, the Attacking Pokémon is Knocked Out.")return {type:'triggered',event:'knockedOutByAttack',activeOnly:true,opponentAttackOnly:true,effect:flip({type:'knockOut',target:'opponentActive'})};
+ return null;
+}
+function stage4Trainer(c,text){
+ if(c.name==='Cycling Road'&&text==="Once during each player's turn, that player may discard a Basic Energy card from their hand in order to draw a card.")return {type:'stadiumAction',effect:{type:'sm7Rule',rule:'sm10Pay',amount:1,filter:{kind:'energy',basicEnergy:true},after:{type:'draw',amount:1},optional:true}};
+ return null;
+}
+
 function stage3Attack(a){
+ const fourth=stage4Attack(a);if(fourth)return fourth;
  const t=a.text||'';
  if(a.name==='Nadir Needle'&&t==="If you have no cards in your hand, this attack does 120 more damage, and your opponent's Active Pokémon is now Paralyzed and Poisoned."){
   const condition={type:'handSizeOneOf',values:[0]};
@@ -55,6 +79,7 @@ function stage3Attack(a){
  return null;
 }
 function stage3Ability(a){
+ const fourth=stage4Ability(a);if(fourth)return fourth;
  const t=a.text||'';
  if(a.name==='Cocoon Cover'&&t==="Prevent all effects of attacks used by your opponent's Pokémon done to this Pokémon. (Damage is not an effect.)")return {type:'passive',effect:{type:'preventEffects',duration:'whileInPlay',scope:'self'}};
  if(a.name==='Revealing Echo'&&t==='Once during your turn, if this Pokémon is in the Active Spot, you may have your opponent reveal their hand.')return {...activate({type:'revealHand',side:'opponent'}),activeOnly:true};
@@ -62,6 +87,7 @@ function stage3Ability(a){
  return null;
 }
 function stage3Trainer(c,text){
+ const fourth=stage4Trainer(c,text);if(fourth)return fourth;
  if(c.name==="Bill's Transfer"&&text==='Look at the top 8 cards of your deck. You may reveal any number of Pokémon you find there and put them into your hand. Shuffle the other cards back into your deck.')return {type:'sm7Rule',rule:'sm9TopPick',count:8,amount:8,filter:{kind:'pokemon'},destination:'hand',rest:'shuffle',optional:true};
  return null;
 }
